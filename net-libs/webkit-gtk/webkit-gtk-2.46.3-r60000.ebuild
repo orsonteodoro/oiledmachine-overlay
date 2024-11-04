@@ -1065,6 +1065,7 @@ _PATCHES=(
 get_gcc_ver_from_cxxabi() {
 	local cxxabi_ver="${1}"
 	local gcc_ver
+# See https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html
 	if ver_test "${cxxabi_ver}" -eq "1.3.15" ; then
 		gcc_ver="14.1.0"
 	elif ver_test "${cxxabi_ver}" -eq "1.3.14" ; then
@@ -1127,19 +1128,12 @@ check_icu_build() {
 		| tail -n 1 \
 		| cut -f 2 -d "_")
 
-
 	local icu_gcc_ver=$(get_gcc_ver_from_cxxabi "${icu_cxxabi_ver}")
 
-	if ver_test "${gcc_current_profile_slot}" -ne "${icu_gcc_ver%%.*}" ; then
+	if ver_test "${icu_cxxabi_ver}" -gt "${gcc_cxxabi_ver}" ; then
+# The CXXABI is less accurate than GLIBCXX
 eerror
-eerror "Please use the same GCC for both ICU and ${PN}."
-eerror
-eerror "Actual GCC slot:  ${gcc_current_profile_slot}"
-eerror "Actual dev-libs/icu slot:  ${icu_gcc_ver}"
-eerror "Expected dev-libs/icu GCC slot:  ${icu_gcc_ver%%.*}"
-eerror "Upstream GCC supported slots:  10, 11, 12, 13"
-eerror "gcc_cxxabi_ver:  ${gcc_cxxabi_ver} ${gcc_pv}"
-eerror "icu_cxxabi_ver:  ${icu_cxxabi_ver} ${icu_gcc_ver}"
+eerror "Detected missing symbol.  Please use the same GCC for both ICU and ${PN}."
 eerror
 eerror "Example solution:"
 eerror
