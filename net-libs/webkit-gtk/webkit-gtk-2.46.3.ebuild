@@ -1157,11 +1157,19 @@ _set_cxx() {
 	# U24 - gcc 13.2
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)
+		export CPP="${CXX} -E"
 		if true || tc-is-gcc ; then
 			local gcc_current_profile=$(gcc-config -c)
 			local gcc_current_profile_slot="${gcc_current_profile##*-}"
 
-			if has_version "sys-devel/gcc:13" ; then
+			if ver_test "${gcc_current_profile_slot}" -ge "14" ; then
+ewarn
+ewarn "Upstream only supports GCC 11, 12, 13"
+ewarn "If problems encountered rebuild dev-libs/icu and ${CATEGORY}/${PN} with the same GCC slot"
+ewarn
+				export CC="${CHOST}-gcc-${gcc_current_profile_slot}"
+				export CXX="${CHOST}-g++-${gcc_current_profile_slot}"
+			elif has_version "sys-devel/gcc:13" ; then
 				export CC="${CHOST}-gcc-13"
 				export CXX="${CHOST}-g++-13"
 			elif has_version "sys-devel/gcc:12" ; then
@@ -1184,6 +1192,7 @@ eerror "  emerge -1vO =${CATEGORY}/${PN}-${PVR}"
 eerror
 				die
 			fi
+			export CPP="${CXX} -E"
 			strip-unsupported-flags
 		fi
 	fi
