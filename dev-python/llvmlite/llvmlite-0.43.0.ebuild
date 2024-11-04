@@ -24,6 +24,11 @@ DESCRIPTION="A lightweight wrapper around basic LLVM functionality"
 HOMEPAGE="https://github.com/numba/llvmlite"
 LICENSE="BSD"
 SLOT="0"
+REQUIRED_USE+="
+	^^ (
+		${LLVM_COMPAT[@]/#/llvm_slot_}
+	)
+"
 RDEPEND="
 	dev-libs/icu:=
 	dev-libs/libffi:=
