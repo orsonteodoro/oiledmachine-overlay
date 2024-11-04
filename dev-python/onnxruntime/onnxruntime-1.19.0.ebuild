@@ -537,14 +537,14 @@ RDEPEND="
 		sys-cluster/openmpi:=
 	)
 	>=dev-python/numpy-2.0.0
-	>=sci-libs/pytorch-1.13.1
+	>=sci-libs/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
 	app-admin/chrpath
 	cuda? (
 		|| (
 			(
 				=dev-util/nvidia-cuda-toolkit-11.8*
 				!python? (
-					>=sci-libs/pytorch-2.0.0
+					>=sci-libs/pytorch-2.0.0[${PYTHON_SINGLE_USEDEP}]
 				)
 				cudnn? (
 					=dev-libs/cudnn-8.8*
@@ -556,7 +556,7 @@ RDEPEND="
 			(
 				=dev-util/nvidia-cuda-toolkit-12.3*
 				!python? (
-					>=sci-libs/pytorch-2.1.0
+					>=sci-libs/pytorch-2.1.0[${PYTHON_SINGLE_USEDEP}]
 				)
 				cudnn? (
 					=dev-libs/cudnn-8.6*
@@ -594,8 +594,8 @@ RDEPEND="
 		rocm_5_7? (
 			!python? (
 				|| (
-					=sci-libs/pytorch-2.3*
-					=sci-libs/pytorch-2.2*
+					=sci-libs/pytorch-2.3*[${PYTHON_SINGLE_USEDEP}]
+					=sci-libs/pytorch-2.2*[${PYTHON_SINGLE_USEDEP}]
 				)
 			)
 			python? (
@@ -608,7 +608,7 @@ RDEPEND="
 		rocm_6_0? (
 			!python? (
 				|| (
-					=sci-libs/pytorch-2.3*
+					=sci-libs/pytorch-2.3*[${PYTHON_SINGLE_USEDEP}]
 				)
 			)
 			python? (

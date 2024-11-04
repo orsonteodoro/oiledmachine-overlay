@@ -55,14 +55,16 @@ BDEPEND+="
 		dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}]
 	)
 	test? (
+		$(python_gen_any_dep '
+			sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+			sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
+		')
 		>=dev-python/imageio-2.27[${PYTHON_USEDEP}]
 		>=dev-python/protobuf-python-4.22.3[${PYTHON_USEDEP}]
 		dev-python/boto3[${PYTHON_USEDEP}]
 		dev-python/flake8[${PYTHON_USEDEP}]
 		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/torch[${PYTHON_USEDEP}]
-		dev-python/torchvision[${PYTHON_USEDEP}]
 		dev-python/tensorboard[${PYTHON_USEDEP}]
 		dev-python/matplotlib[${PYTHON_USEDEP}]
 		dev-python/moto[${PYTHON_USEDEP}]

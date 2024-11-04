@@ -67,7 +67,6 @@ RDEPEND+="
 	dev-python/numpy[${PYTHON_USEDEP}]
 	virtual/pillow[${PYTHON_USEDEP}]
 	dev-python/requests[${PYTHON_USEDEP}]
-	dev-python/torchsde[${PYTHON_USEDEP}]
 	sci-libs/onnx[${PYTHON_USEDEP}]
 	flax? (
 		>=dev-python/flax-0.4.1[${PYTHON_USEDEP}]
@@ -89,6 +88,7 @@ RDEPEND+="
 		>=dev-python/accelerate-0.29.3[${PYTHON_USEDEP}]
 		$(python_gen_any_dep '
 			>=sci-libs/pytorch-1.4[${PYTHON_SINGLE_USEDEP}]
+			dev-python/torchsde[${PYTHON_SINGLE_USEDEP}]
 		')
 	)
 "
