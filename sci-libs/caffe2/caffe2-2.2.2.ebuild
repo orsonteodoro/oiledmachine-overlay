@@ -127,7 +127,7 @@ LIBNOP_COMMIT="910b55815be16109f04f4180e9adee14fb4ce281" # tensorpipe dep
 LIBUV_COMMIT="1dff88e5161cba5c59276d2070d2e304e4dcb242" # tensorpipe dep
 LLVM_COMPAT=(
 	17 # ROCm slot
-	16 15 12 10 9 # Upstream build.sh, pull.yml
+	15 12 10 9 # Upstream build.sh, pull.yml
 )
 MIMALLOC_COMMIT="b66e3214d8a104669c2ec05ae91ebc26a8f5ab78"
 MKL_DNN_COMMIT="2dc95a2ad0841e29db8b22fbccaf3e5da7992b01"

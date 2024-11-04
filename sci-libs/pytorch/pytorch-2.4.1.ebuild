@@ -6,7 +6,7 @@ EAPI=8
 # This is the python portion of the package.
 
 # For requirements, see
-# https://github.com/pytorch/pytorch/blob/v2.3.1/RELEASE.md?plain=1#L49
+# https://github.com/pytorch/pytorch/blob/v2.4.1/RELEASE.md?plain=1#L49
 
 AMDGPU_TARGETS_COMPAT=(
 	gfx700

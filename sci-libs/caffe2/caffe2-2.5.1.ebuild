@@ -13,11 +13,11 @@ EAPI=8
 # This package is a misnomer.  This is the non-python portions of pytorch.
 
 # For requirements, see
-# https://github.com/pytorch/pytorch/blob/v2.4.0/RELEASE.md?plain=1#L49
-# https://github.com/pytorch/pytorch/tree/v2.4.0/third_party
-# https://github.com/pytorch/pytorch/blob/v2.4.0/.ci/docker/common/install_rocm_magma.sh#L10 for magma
-# https://github.com/pytorch/pytorch/blob/v2.4.0/cmake/External/aotriton.cmake
-#   https://github.com/pytorch/pytorch/blob/v2.4.0/.ci/docker/aotriton_version.txt
+# https://github.com/pytorch/pytorch/blob/v2.5.1/RELEASE.md?plain=1#L49
+# https://github.com/pytorch/pytorch/tree/v2.5.1/third_party
+# https://github.com/pytorch/pytorch/blob/v2.5.1/.ci/docker/common/install_rocm_magma.sh#L10 for magma
+# https://github.com/pytorch/pytorch/blob/v2.5.1/cmake/External/aotriton.cmake
+#   https://github.com/pytorch/pytorch/blob/v2.5.1/.ci/docker/aotriton_version.txt
 
 AMDGPU_TARGETS_COMPAT=(
 # Based on rocm_agent_enumerator
@@ -46,7 +46,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1035
 )
 AMDGPU_TARGETS_UNTESTED=(
-# Based on https://github.com/pytorch/pytorch/blob/v2.4.0/.ci/pytorch/build.sh#L169
+# Based on https://github.com/pytorch/pytorch/blob/v2.5.1/.ci/pytorch/build.sh#L169
 	gfx700
 	gfx701
 	gfx801
@@ -80,7 +80,7 @@ BENCHMARK_COMMIT_5="d572f4777349d43653b21d6c2fc63020ab326db2"
 CIVETWEB_COMMIT="eefb26f82b233268fc98577d265352720d477ba4"
 CPP_HTTPLIB_COMMIT="3b6597bba913d51161383657829b7e644e59c006"
 CPR_COMMIT="871ed52d350214a034f6ef8a3b8f51c5ce1bd400" # dynolog dep
-CPUINFO_COMMIT_1="d6860c477c99f1fce9e28eb206891af3c0e1a1d7"
+CPUINFO_COMMIT_1="094fc30b9256f54dad5ad23bcbfb5de74781422f"
 CPUINFO_COMMIT_2="ed8b86a253800bafdb7b25c5c399f91bff9cb1f3" # fbgemm dep
 # CUDA 12 not supported yet: https://github.com/pytorch/pytorch/issues/91122
 CUDA_TARGETS_COMPAT=(
@@ -100,14 +100,14 @@ CUDA_TARGETS_COMPAT=(
 	compute_50
 	compute_70
 )
-CUDNN_FRONTEND_COMMIT="b740542818f36857acf7f9853f749bbad4118c65"
+CUDNN_FRONTEND_COMMIT="2533f5e5c1877fd76266133c1479ef1643ce3a8b"
 CUTLASS_COMMIT_1="bbe579a9e3beb6ea6626d9227ec32d0dae119a49"
 CUTLASS_COMMIT_2="fc9ebc645b63f3a6bc80aaefde5c063fb72110d6" # fbgemm dep
 DCGM_COMMIT="ffde4e54bc7249a6039a5e6b45b395141e1217f9" # dynolog dep
-DYNOLOG_COMMIT="950cd3f80a3b1d966314380e8ecdd47ee0c586cc" # kineto dep ; committer-date:<=2024-05-24
+DYNOLOG_COMMIT="7d04a0053a845370ae06ce317a22a48e9edcc74e" # kineto dep ; committer-date:<=2024-05-24
 FLATBUFFERS_COMMIT="01834de25e4bf3975a9a00e816292b1ad0fe184b"
-FMT_COMMIT_1="e69e5f977d458f2650bb346dadf2ad30c5320281"
-FMT_COMMIT_2="d9063baf227882da0f48c761abcbb08247eb1296" # kineto dep ; committer-date:<=2024-05-24
+FMT_COMMIT_1="0c9fce2ffefecfdce794e1859584e25877b7b592"
+FMT_COMMIT_2="0041a40c1350ba702d475b9c4ad62da77caea164" # kineto dep ; committer-date:<=2024-05-24
 FMT_COMMIT_3="cd4af11efc9c622896a3e4cb599fa28668ca3d05" # dynolog dep
 FOXI_COMMIT="c278588e34e535f0bb8f00df3880d26928038cad"
 FP16_COMMIT="4dfe081cf6bcd15db339cf2680b9281b8451eeb3"
@@ -118,7 +118,7 @@ GLOG_COMMIT="b33e3bad4c46c8a6345525fd822af355e5ef9446" # dynolog dep
 GLOO_COMMIT="5354032ea08eadd7fc4456477f7f7c6308818509"
 GOOGLETEST_COMMIT_1="518387203b573f35477fa6872dd54620e70d2bdb" # gloo dep ; committer-date:<=2023-12-02
 GOOGLETEST_COMMIT_2="5ec7f0c4a113e2f18ac2c6cc7df51ad6afc24081" # protobuf dep
-GOOGLETEST_COMMIT_3="518387203b573f35477fa6872dd54620e70d2bdb" # kineto dep ; committer-date:<=2024-05-24
+GOOGLETEST_COMMIT_3="7aca84427f224eeed3144123d5230d5871e93347" # kineto dep ; committer-date:<=2024-05-24
 GOOGLETEST_COMMIT_4="58d77fa8070e8cec2dc1ed015d66b454c8d78850" # dynolog dep
 GOOGLETEST_COMMIT_5="cbf019de22c8dd37b2108da35b2748fd702d1796" # fbgemm dep
 GOOGLETEST_COMMIT_6="aee0f9d9b5b87796ee8a0ab26b7587ec30e8858e" # tensorpipe dep
@@ -128,25 +128,26 @@ GSL_COMMIT="6f4529395c5b7c2d661812257cd6780c67e54afa"
 EIGEN_COMMIT="3147391d946bb4b6c68edd901f2add6ac1f31f8c"
 FBGEMM_COMMIT="dbc3157bf256f1339b3fa1fef2be89ac4078be0e"
 HIPIFY_TORCH_COMMIT="23f53b025b466d8ec3c45d52290d3442f7fbe6b1" # fbgemm dep
-IDEEP_COMMIT="55ca0191687aaf19aca5cdb7881c791e3bea442b"
+IDEEP_COMMIT="41d636c2bbcea6bff0faf97cdb65a48cdde987af"
 INCBIN_COMMIT="6e576cae5ab5810f25e2631f2e0b80cbe7dc8cbf" # aotriton dep
 ITTAPI_COMMIT="5b8a7d7422611c3a0d799fb5fc5dd4abfae35b42"
-KINETO_COMMIT="be1317644c68b4bfc4646024a6b221066e430031"
+KINETO_COMMIT="d9753139d181b9ff42872465aac0e5d3018be415"
 LIBNOP_COMMIT="910b55815be16109f04f4180e9adee14fb4ce281" # tensorpipe dep
 LIBUV_COMMIT="1dff88e5161cba5c59276d2070d2e304e4dcb242" # tensorpipe dep
 LLVM_COMPAT=(
-	17 # ROCm slot
-	16 15 12 10 9 # Upstream build.sh, pull.yml
+	18 17 # ROCm slots
+	15 12 10 9 # Upstream build.sh, pull.yml
 )
 MIMALLOC_COMMIT="b66e3214d8a104669c2ec05ae91ebc26a8f5ab78"
-MKL_DNN_COMMIT="1137e04ec0b5251ca2b4400a4fd3c667ce843d67"
+MKL_DNN_COMMIT="66f0cb9eb66affd2da3bf5f8d897376f04aae6af"
 MYPN="pytorch"
 MYP="${MYPN}-${PV}"
 NLOHMANN_COMMIT_1="87cda1d6646592ac5866dc703c8e1839046a6806"
 NLOHMANN_COMMIT_2="4f8fba14066156b73f1189a2b8bd568bde5284c5" # dynolog dep
 NLOHMANN_COMMIT_3="bc889afb4c5bf1c0d8ee29ef35eaaf4c8bef8a5d"
 NNPACK_COMMIT="c07e3a0400713d546e0dea2d5466dd22ea389c73"
-ONNX_COMMIT_1="990217f043af7222348ca8f0301e17fa7b841781"
+NVTX_COMMIT="e170594ac7cf1dac584da473d4ca9301087090c1"
+ONNX_COMMIT_1="3bf92c03a9f27eba3bda1e5b9e63ea20ec213557"
 OPENTELEMETRY_CPP_COMMIT="a799f4aed9c94b765dcdaabaeab7d5e7e2310878"
 OPENTELEMETRY_PROTO_COMMIT="4ca4f0335c63cda7ab31ea7ed70d6553aee14dce"
 OPENTRACING_CPP_COMMIT="06b57f48ded1fa3bdd3d4346f6ef29e40e08eaf5"
@@ -157,16 +158,16 @@ PROMETHEUS_CPP_COMMIT="c9ffcdda9086ffd9e1283ea7a0276d831f3c8a8d"
 PROTOBUF_COMMIT="d1eca4e4b421cd2997495c4b4e65cea6be4e9b8a"
 PSIMD_COMMIT="072586a71b55b7f8c584153d223e95687148a900"
 PTHREADPOOL_COMMIT="4fe0e1e183925bf8cfa6aae24237e724a96479b8"
-PYBIND11_COMMIT_1="3e9dfa2866941655c56877882565e7577de6fc7b"
+PYBIND11_COMMIT_1="7c33cdc2d39c7b99a122579f53bc94c8eb3332ff"
 PYBIND11_COMMIT_2="5b0a6fc2017fcc176545afe3e09c9f9885283242" # onnx dep
 PYBIND11_COMMIT_4="a23996fce38ff6ccfbcdc09f1e63f2c4be5ea2ef" # tensorpipe dep
 PYBIND11_COMMIT_5="8a099e44b3d5f85b20f05828d919d2332a8de841" # aotriton dep
-PYTHON_COMPAT=( python3_{10..11} ) # Upstream only allows <=3.11
+PYTHON_COMPAT=( python3_{10..12} ) # Upstream only allows <=3.12
 inherit hip-versions
 ROCM_SLOTS=(
-# See https://github.com/pytorch/pytorch/blob/v2.4.0/.ci/docker/build.sh#L190
+# See https://github.com/pytorch/pytorch/blob/v2.5.1/.ci/docker/build.sh#L190
+	"${HIP_6_2_VERSION}"
 	"${HIP_6_1_VERSION}"
-	"${HIP_6_0_VERSION}"
 )
 gen_rocm_slots() {
 	local s
@@ -294,6 +295,8 @@ https://github.com/NVIDIA/cutlass/archive/${CUTLASS_COMMIT_2}.tar.gz
 	-> cutlass-${CUTLASS_COMMIT_2:0:7}.tar.gz
 https://github.com/NVIDIA/DCGM/archive/${DCGM_COMMIT}.tar.gz
 	-> DCGM-${DCGM_COMMIT:0:7}.tar.gz
+https://github.com/NVIDIA/NVTX/archive/e170594ac7cf1dac584da473d4ca9301087090c1.tar.gz
+	-> NVTX-${NVTX_COMMIT:0:7}.tar.gz
 https://github.com/oneapi-src/oneDNN/archive/${MKL_DNN_COMMIT}.tar.gz
 	-> oneDNN-${MKL_DNN_COMMIT:0:7}.tar.gz
 https://github.com/onnx/onnx/archive/${ONNX_COMMIT_1}.tar.gz
@@ -466,7 +469,7 @@ REQUIRED_USE="
 	)
 	amdgpu_targets_gfx942? (
 		|| (
-			rocm_6_0
+			rocm_6_2
 			rocm_6_1
 		)
 	)
@@ -520,10 +523,10 @@ REQUIRED_USE="
 			${ROCM_SLOTS2[@]}
 		)
 	)
-	rocm_6_1? (
-		llvm_slot_17
+	rocm_6_2? (
+		llvm_slot_18
 	)
-	rocm_6_0? (
+	rocm_6_1? (
 		llvm_slot_17
 	)
 	tensorpipe? (
@@ -713,16 +716,16 @@ RDEPEND="
 			dev-cpp/gflags:=
 		)
 		>=dev-cpp/glog-0.4.0
-		>=dev-libs/cpuinfo-2023.11.03
-		>=dev-libs/libfmt-10.2.1
+		>=dev-libs/cpuinfo-2024.10.22
+		>=dev-libs/libfmt-11.0.2
 		>=dev-libs/protobuf-3.13.1:0/3.21
 		>=dev-libs/pthreadpool-2023.08.28
 		>=dev-libs/sleef-3.6.0
 		>=sci-libs/foxi-2021.05.26
-		>=sci-libs/onnx-1.16.0
+		>=sci-libs/onnx-1.16.2
 		dev-cpp/opentelemetry-cpp
 		cuda? (
-			>=dev-libs/cudnn-frontend-1.4.0:0/8
+			>=dev-libs/cudnn-frontend-1.6.1:0/8
 		)
 		fbgemm? (
 			>=sci-libs/FBGEMM-2023.12.04
@@ -758,19 +761,19 @@ DEPEND="
 	${RDEPEND}
 	system-libs? (
 		$(python_gen_cond_dep '
-			>=dev-python/pybind11-2.12.0[${PYTHON_USEDEP}]
+			>=dev-python/pybind11-2.13.5[${PYTHON_USEDEP}]
 		')
 		>=dev-libs/flatbuffers-23.3.3
 		>=dev-libs/FP16-2020.05.14
 		>=dev-libs/FXdiv-2020.04.17
 		>=dev-libs/pocketfft-2023.12.30
 		>=dev-libs/psimd-2020.05.17
-		>=sci-misc/kineto-0.4.0_p20240524
+		>=sci-misc/kineto-0.4.0_p20240824
 		cuda? (
 			>=dev-libs/cutlass-3.4.1
 		)
 		onednn? (
-			>=sci-libs/ideep-3.4.2
+			>=sci-libs/ideep-3.5.3
 		)
 	)
 "
@@ -783,15 +786,14 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-2.4.0-gentoo.patch"
-	"${FILESDIR}/${PN}-2.4.0-install-dirs.patch"
+	"${FILESDIR}/${PN}-2.5.1-gentoo.patch"
+	"${FILESDIR}/${PN}-2.5.1-install-dirs.patch"
 	"${FILESDIR}/${PN}-1.12.0-glog-0.6.0.patch"
 	"${FILESDIR}/${PN}-2.3.0-cudnn_include_fix.patch"
 	"${FILESDIR}/${PN}-2.1.2-fix-rpath.patch"
 	"${FILESDIR}/${PN}-2.4.0-fix-openmp-link.patch"
 	"${FILESDIR}/${PN}-2.4.0-rocm-fix-std-cpp17.patch"
 	"${FILESDIR}/${PN}-2.2.2-musl.patch"
-	"${FILESDIR}/${PN}-2.3.0-fix-rocm-gcc14-clamp.patch"
 	"${FILESDIR}/${PN}-2.3.0-fix-libcpp.patch"
 	"${FILESDIR}/${PN}-2.4.0-aotriton-offline-install.patch"
 )
@@ -808,15 +810,15 @@ ewarn "${gpu} is not CI tested upstream."
 pkg_setup() {
 	dhms_start
 	warn_untested_gpu
-	if use rocm_6_1 ; then
+	if use rocm_6_2 ; then
+		LLVM_SLOT="18"
+		LLVM_MAX_SLOT="${LLVM_SLOT}"
+		ROCM_SLOT="6.2"
+		rocm_pkg_setup
+	elif use rocm_6_1 ; then
 		LLVM_SLOT="17"
 		LLVM_MAX_SLOT="${LLVM_SLOT}"
 		ROCM_SLOT="6.1"
-		rocm_pkg_setup
-	elif use rocm_6_0 ; then
-		LLVM_SLOT="17"
-		LLVM_MAX_SLOT="${LLVM_SLOT}"
-		ROCM_SLOT="6.0"
 		rocm_pkg_setup
 	else
 		local s
@@ -910,6 +912,8 @@ src_prepare() {
 
 		dep_prepare_mv "${WORKDIR}/mimalloc-${MIMALLOC_COMMIT}" "${S}/third_party/mimalloc"
 		dep_prepare_mv "${WORKDIR}/NNPACK-${NNPACK_COMMIT}" "${S}/third_party/NNPACK"
+
+		dep_prepare_mv "${WORKDIR}/NVTX-${NVTX_COMMIT}" "${S}/third_party/NVTX"
 
 		dep_prepare_mv "${WORKDIR}/onnx-${ONNX_COMMIT_1}" "${S}/third_party/onnx"
 		dep_prepare_mv "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_3}" "${S}/third_party/onnx/third_party/benchmark"
