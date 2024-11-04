@@ -102,18 +102,13 @@ tr uk vi zh_CN
 LLVM_COMPAT=( 14 )
 LLVM_MAX_SLOT="${LLVM_COMPAT[-1]}"
 MESA_PV="18.0.0_rc5"
-MITIGATION_DATE="Sep 25, 2024"
+MITIGATION_DATE="Oct 31, 2024"
 MITIGATION_LAST_UPDATE=1730292540 # From `date +%s -d "2024-10-30 5:49 AM PDT"` from tag in GH for this version
-MITIGATION_URI="https://webkitgtk.org/security/WSA-2024-0005.html" # Shown if minor version matches in report.
+MITIGATION_URI="https://webkitgtk.org/security/WSA-2024-0006.html" # Shown if minor version matches in report.
 VULNERABILITIES_FIXED=(
-	"CVE-2024-27808;CE, DoS, DT, ID;High"
-	"CVE-2024-27820;CE, DoS, DT, ID;High"
-	"CVE-2024-27833;CE, DoS, DT, ID;High"
-	"CVE-2024-27851;CE, DoS, DT, ID;High"
-	"CVE-2024-23271;DoS, DT, ID;High"
-	"CVE-2024-27838;DT;Medium"
-	"CVE-2024-40866;DT;Medium"
-	"CVE-2024-44187;ID;Medium"
+	"CVE-2024-44296;ID, DT;Medium"
+	"CVE-2024-44185;DoS;Medium"
+	"CVE-2024-44244;DoS;Medium"
 )
 OCDM_WV="virtual/libc" # Placeholder
 PYTHON_COMPAT=( python3_{10..12} )
