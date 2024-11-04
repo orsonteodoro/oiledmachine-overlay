@@ -398,7 +398,7 @@ LICENSE="
 	GPL-3.0
 	Unlicense
 	ZLIB
-	^^ (
+	|| (
 		Apache-2.0
 		BSD
 	)

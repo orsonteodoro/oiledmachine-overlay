@@ -396,7 +396,7 @@ LICENSE="
 	PSF-3.3.0
 	GPL-3.0
 	ZLIB
-	^^ (
+	|| (
 		Apache-2.0
 		BSD
 	)
