@@ -1300,12 +1300,12 @@ eerror
 # See https://firefox-source-docs.mozilla.org/setup/linux_build.html
 adjust_makeopts() {
 	local total_ram=$(free | grep "Mem:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
-	local total_ram_gib=$(( ${total_ram} / (1024*1024) ))
+	local total_ram_gib=$(python -c "print(round(${total_ram} / (1024*1024)))")
 	local total_swap=$(free | grep "Swap:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
 	[[ -z "${total_swap}" ]] && total_swap=0
 	local total_swap_gib=$(( ${total_swap} / (1024*1024) ))
 	local total_mem=$(free -t | grep "Total:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
-	local total_mem_gib=$(( ${total_mem} / (1024*1024) ))
+	local total_mem_gib=$(python -c "print(round(${total_mem} / (1024*1024)))")
 
 	local jobs=$(get_makeopts_jobs)
 	local cores=$(get_nproc)
@@ -1336,7 +1336,7 @@ ewarn "No swap detected."
 ewarn "Downgrading MAKEOPTS=-j${njobs} to prevent lock-up"
 	fi
 
-	if (( ${total_ram_gib} >= 7 )) ; then # 4 core, 8 GiB RAM total
+	if (( ${total_ram_gib} >= 8 )) ; then # 4 core, 8 GiB RAM total
 einfo "Jumbo build on"
 		MEETS_JUMBO_BUILD_MEMORY_REQ=1
 	else
