@@ -1145,7 +1145,8 @@ eerror "Example solution:"
 eerror
 eerror "  eselect gcc set ${CHOST}-gcc-${icu_gcc_ver%%.*}"
 eerror "  source /etc/profile"
-eerror "  emerge -1vO dev-libs/icu"
+eerror "  emerge -C dev-libs/icu"
+eerror "  emerge -1vuDN dev-libs/icu"
 eerror "  emerge -1vO =${CATEGORY}/${PN}-${PVR}"
 eerror
 		die
@@ -1182,7 +1183,8 @@ eerror "Example:"
 eerror
 eerror "  eselect gcc set ${CHOST}-gcc-13"
 eerror "  source /etc/profile"
-eerror "  emerge -1vO dev-libs/icu"
+eerror "  emerge -C dev-libs/icu"
+eerror "  emerge -1vuDN dev-libs/icu"
 eerror "  emerge -1vO =${CATEGORY}/${PN}-${PVR}"
 eerror
 				die
