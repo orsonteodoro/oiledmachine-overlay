@@ -16,7 +16,7 @@ if [[ ${PV} =~ "99999999" ]] ; then
 	FALLBACK_COMMIT="6dc1667f580357e8a2154c28b7867bea7e8ad3a7" # May 21, 2023
 	S="${WORKDIR}/${P}"
 else
-	KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
+	KEYWORDS="~amd64 ~arm64"
 	S="${WORKDIR}/${P}"
 	SRC_URI="
 https://github.com/recastnavigation/recastnavigation/archive/refs/tags/v${PV}.tar.gz

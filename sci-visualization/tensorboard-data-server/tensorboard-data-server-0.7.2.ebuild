@@ -232,7 +232,7 @@ QA_FLAGS_IGNORED="usr/bin/${PN}"
 
 inherit cargo distutils-r1
 
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64 ~arm64"
 SRC_URI="
 	$(cargo_crate_uris)
 "

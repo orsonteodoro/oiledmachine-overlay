@@ -28,7 +28,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/hub-${PV}"
 bazel_external_uris="
 https://github.com/bazelbuild/rules_license/releases/download/${RULES_LICENSE_PV}/rules_license-${RULES_LICENSE_PV}.tar.gz

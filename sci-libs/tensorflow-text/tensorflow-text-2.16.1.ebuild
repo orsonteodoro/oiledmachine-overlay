@@ -64,7 +64,7 @@ ZLIB_PV="1.2.13"							# https://github.com/tensorflow/tensorflow/blob/v2.16.1/t
 
 inherit bazel distutils-r1 flag-o-matic
 
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 S="${WORKDIR}/text-${PV}"
 bazel_external_uris="
 https://github.com/abseil/abseil-cpp/archive/${ABSEIL_CPP_COMMIT}.tar.gz -> abseil-cpp-${ABSEIL_CPP_COMMIT}.tar.gz

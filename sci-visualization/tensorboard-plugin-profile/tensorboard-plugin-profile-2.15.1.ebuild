@@ -20,7 +20,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	EGIT_COMMIT="f3deeb88dcdab123ebaf45712fb3952bbb874be6"
 	S="${WORKDIR}/profiler-${EGIT_COMMIT}"
 	SRC_URI="

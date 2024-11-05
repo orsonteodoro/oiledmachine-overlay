@@ -29,11 +29,11 @@ if [[ "${PV}" =~ "9999" ]] ; then
 			=dev-python/keras-9999[${PYTHON_USEDEP}]
 		)
 		tfds? (
-			=sci-libs/tensorflow-datasets-9999[${PYTHON_USEDEP}]
+			=sci-misc/tensorflow-datasets-9999[${PYTHON_USEDEP}]
 		)
 	"
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/probability-${PV}"
 	SRC_URI="
 https://github.com/tensorflow/probability/archive/refs/tags/v${PV}.tar.gz
@@ -49,7 +49,7 @@ https://github.com/tensorflow/probability/archive/refs/tags/v${PV}.tar.gz
 			>=dev-python/keras-2.16[${PYTHON_USEDEP}]
 		)
 		tfds? (
-			>=sci-libs/tensorflow-datasets-2.2.0[${PYTHON_USEDEP}]
+			>=sci-misc/tensorflow-datasets-2.2.0[${PYTHON_USEDEP}]
 		)
 	"
 fi

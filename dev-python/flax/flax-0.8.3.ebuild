@@ -105,7 +105,7 @@ BDEPEND+="
 		dev-python/sphinx_design[${PYTHON_USEDEP}]
 		dev-python/sphinx-book-theme[${PYTHON_USEDEP}]
 		sci-libs/tensorflow[${PYTHON_USEDEP}]
-		sci-libs/tensorflow-datasets[${PYTHON_USEDEP}]
+		sci-misc/tensorflow-datasets[${PYTHON_USEDEP}]
 	)
 	test? (
 		$(python_gen_any_dep '
@@ -130,7 +130,7 @@ BDEPEND+="
 		dev-python/sentencepiece[${PYTHON_USEDEP},python]
 		media-libs/opencv[${PYTHON_USEDEP},python]
 		sci-libs/tensorflow[${PYTHON_USEDEP},python]
-		sci-libs/tensorflow-datasets[${PYTHON_USEDEP}]
+		sci-misc/tensorflow-datasets[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "CHANGELOG.md" "README.md" )

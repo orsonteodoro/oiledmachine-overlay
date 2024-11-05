@@ -66,7 +66,7 @@ PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit autotools cargo distutils-r1 lcnr
 
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${PN}-${PV}"
 SRC_URI="
 $(cargo_crate_uris ${CRATES})

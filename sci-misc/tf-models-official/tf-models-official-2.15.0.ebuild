@@ -53,12 +53,12 @@ else
 fi
 RDEPEND+="
 	>=dev-python/google-api-python-client-1.6.7[${PYTHON_USEDEP}]
+	>=dev-python/kaggle-1.3.9[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.20[${PYTHON_USEDEP}]
 	>=dev-python/pandas-0.22.0[${PYTHON_USEDEP}]
 	>=dev-python/psutil-5.4.3[${PYTHON_USEDEP}]
 	>=dev-python/py-cpuinfo-3.3.0[${PYTHON_USEDEP}]
 	>=dev-python/scipy-0.19.1[${PYTHON_USEDEP}]
-	>=dev-python/kaggle-1.3.9[${PYTHON_USEDEP}]
 	>=sci-libs/tensorflow-hub-0.6.0[${PYTHON_USEDEP}]
 	>=sci-libs/tensorflow-model-optimization-0.4.1[${PYTHON_USEDEP}]
 	>=sci-libs/tf-slim-1.1.0[${PYTHON_USEDEP}]
@@ -66,10 +66,10 @@ RDEPEND+="
 	dev-python/immutabledict[${PYTHON_USEDEP}]
 	dev-python/matplotlib[${PYTHON_USEDEP}]
 	dev-python/oauth2client[${PYTHON_USEDEP}]
-	virtual/pillow[${PYTHON_USEDEP}]
 	dev-python/pycocotools[${PYTHON_USEDEP}]
 	dev-python/six[${PYTHON_USEDEP}]
-	sci-libs/tensorflow-datasets[${PYTHON_USEDEP}]
+	sci-misc/tensorflow-datasets[${PYTHON_USEDEP}]
+	virtual/pillow[${PYTHON_USEDEP}]
 	nlp? (
 		dev-python/sacrebleu[${PYTHON_USEDEP}]
 		dev-python/sentencepiece[${PYTHON_USEDEP},python]

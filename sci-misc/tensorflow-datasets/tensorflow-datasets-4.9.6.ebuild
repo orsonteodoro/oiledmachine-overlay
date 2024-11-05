@@ -32,7 +32,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="7eeb2004bca47b83fabb477019d081d67c4a3c06" # Jun 5, 2024
 	inherit git-r3
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	SRC_URI="
 https://github.com/tensorflow/datasets/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz

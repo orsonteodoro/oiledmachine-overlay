@@ -11,7 +11,7 @@ PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit distutils-r1
 
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 S="${WORKDIR}"
 SRC_URI="
 https://files.pythonhosted.org/packages/py3/${MY_PN::1}/${MY_PN}/${MY_PN}-${PV}-py3-none-any.whl

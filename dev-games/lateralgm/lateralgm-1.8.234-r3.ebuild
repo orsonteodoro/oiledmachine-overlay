@@ -69,7 +69,7 @@ LICENSE="
 	)
 "
 # lgmplugin is GPL-3+
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 HOMEPAGE="
 	http://lateralgm.org/
 	https://github.com/IsmAvatar/LateralGM

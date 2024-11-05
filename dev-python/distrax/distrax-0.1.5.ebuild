@@ -47,7 +47,7 @@ RDEPEND+="
 		>=dev-python/dm-haiku-0.0.3[${PYTHON_USEDEP}]
 		>=dev-python/optax-0.0.6[${PYTHON_USEDEP}]
 		>=sci-libs/tensorflow-2.4.0[${PYTHON_USEDEP}]
-		>=sci-libs/tensorflow-datasets-4.2.0[${PYTHON_USEDEP}]
+		>=sci-misc/tensorflow-datasets-4.2.0[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="

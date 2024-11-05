@@ -17,7 +17,7 @@ DESCRIPTION="library of floating-point neural network inference operators"
 HOMEPAGE="https://github.com/google/XNNPACK/"
 LICENSE="MIT"
 SLOT="0"
-KEYWORDS="~amd64"
+KEYWORDS="~amd64 ~arm64"
 IUSE="+assembly jit +memopt +sparse static-libs test"
 RDEPEND="
 	dev-libs/cpuinfo

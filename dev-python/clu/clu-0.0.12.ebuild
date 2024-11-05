@@ -59,7 +59,7 @@ BDEPEND+="
 		>=sci-libs/pytorch-2.0.0[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		sci-libs/tensorflow[${PYTHON_USEDEP}]
-		sci-libs/tensorflow-datasets[${PYTHON_USEDEP}]
+		sci-misc/tensorflow-datasets[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "AUTHORS" "CHANGELOG.md" "README.md" )
