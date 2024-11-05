@@ -8,7 +8,7 @@ EGIT_COMMIT="kalman-v1.0"
 
 inherit cmake
 
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/mobilinkd/m17-cxx-demod/archive/refs/tags/${EGIT_COMMIT}.tar.gz

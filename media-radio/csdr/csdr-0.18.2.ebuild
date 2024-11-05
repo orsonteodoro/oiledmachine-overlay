@@ -10,7 +10,7 @@ CMAKE_MAKEFILE_GENERATOR="emake"
 
 inherit cmake
 
-KEYWORDS="~amd64 ~arm ~arm64"
+KEYWORDS="~amd64"
 SRC_URI="
 https://github.com/jketterl/csdr/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz

@@ -8,7 +8,7 @@ EAPI=7
 
 inherit cmake user-info
 
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/jketterl/codecserver/archive/refs/tags/${PV}.tar.gz

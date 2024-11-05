@@ -17,7 +17,7 @@ EGO_SUM=(
 )
 go-module_set_globals
 
-KEYWORDS="~amd64 ~arm ~arm64"
+KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
 SRC_URI="
 ${EGO_SUM_SRC_URI}

@@ -56,7 +56,7 @@ SOAPY_DEVICES=(
 
 inherit distutils-r1 user-info
 
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/jketterl/openwebrx/archive/refs/tags/${PV}.tar.gz
