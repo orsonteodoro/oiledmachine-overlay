@@ -22,7 +22,7 @@ LICENSE="
 	)
 "
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86"
+KEYWORDS="~amd64"
 IUSE+=" system-libcaca r5"
 RESTRICT="mirror"
 PERL_PV="5.6"

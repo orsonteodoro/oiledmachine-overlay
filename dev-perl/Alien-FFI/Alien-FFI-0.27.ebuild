@@ -20,7 +20,7 @@ LICENSE="
 	)
 "
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86"
+KEYWORDS="~amd64"
 RESTRICT="mirror"
 ALIEN_BUILD_PV="2.10"
 PERL_PV="5.6"
