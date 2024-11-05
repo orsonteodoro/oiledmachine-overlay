@@ -21,7 +21,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="87a30af2dc06a7f0a48f1bcebc787bf05b0e41a0" # May 10, 2024
 	inherit git-r3
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/${P}/checkpoint"
 	inherit pypi
 fi

@@ -12,7 +12,7 @@ PYTHON_COMPAT=( "python3_"{10..11} )
 
 inherit distutils-r1
 
-KEYWORDS="~amd64"
+KEYWORDS="~amd64 ~arm64 ~ppc64"
 S="${WORKDIR}/jax-jax-v${PV}"
 SRC_URI="
 https://github.com/google/jax/archive/refs/tags/${PN}-v${PV}.tar.gz
