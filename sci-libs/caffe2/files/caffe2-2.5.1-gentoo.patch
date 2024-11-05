@@ -309,7 +309,7 @@ diff '--color=auto' -urp pytorch-2.5.1.orig/torch/CMakeLists.txt pytorch-2.5.1/t
  
 +if(USE_SYSTEM_LIBFMT)
 +else()
-+  list(TORCH_PYTHON_LINK_LIBRARIES fmt::fmt-header-only)
++  list(APPEND TORCH_PYTHON_LINK_LIBRARIES fmt::fmt-header-only)
 +endif()
 +
  if(USE_ASAN AND TARGET Sanitizer::address)
