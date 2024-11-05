@@ -30,7 +30,7 @@ https://github.com/deepmind/optax
 LICENSE="
 	Apache-2.0
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc examples dp-accounting test"
 REQUIRED_USE+="
