@@ -786,7 +786,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"A${FILESDIR}/${PN}-2.5.1-gentoo.patch"
+	"${FILESDIR}/${PN}-2.5.1-gentoo.patch"
 	"${FILESDIR}/${PN}-2.5.1-install-dirs.patch"
 	"${FILESDIR}/${PN}-1.12.0-glog-0.6.0.patch"
 	"${FILESDIR}/${PN}-2.3.0-cudnn_include_fix.patch"
