@@ -82,13 +82,18 @@ diff '--color=auto' -urp pytorch-2.5.1.orig/caffe2/CMakeLists.txt pytorch-2.5.1/
  endif()
  
  # ==========================================================
-@@ -1184,8 +1183,7 @@ target_include_directories(torch_cpu PRI
+@@ -1184,8 +1183,12 @@ target_include_directories(torch_cpu PRI
  target_include_directories(torch_cpu PRIVATE
    ${TORCH_ROOT}/third_party/miniz-2.1.0)
  
 -target_include_directories(torch_cpu PRIVATE
 -  ${TORCH_ROOT}/third_party/kineto/libkineto/include)
-+target_include_directories(torch_cpu PRIVATE /usr/include/kineto)
++if(USE_SYSTEM_KINETO)
++  target_include_directories(torch_cpu PRIVATE /usr/include/kineto)
++else()
++  target_include_directories(torch_cpu PRIVATE
++    ${TORCH_ROOT}/third_party/kineto/libkineto/include)
++endif()
  
  if(USE_KINETO)
    target_include_directories(torch_cpu PRIVATE

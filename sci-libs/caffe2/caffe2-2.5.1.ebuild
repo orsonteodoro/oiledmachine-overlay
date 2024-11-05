@@ -1066,6 +1066,7 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		-DUSE_SYSTEM_FP16=$(usex system-libs)
 		-DUSE_SYSTEM_FXDIV=$(usex system-libs)
 		-DUSE_SYSTEM_GLOO=$(usex system-libs)
+		-DUSE_SYSTEM_KINETO=$(usex system-libs)
 		-DUSE_SYSTEM_ONNX=$(usex system-libs)
 		-DUSE_SYSTEM_PSIMD=$(usex system-libs)
 		-DUSE_SYSTEM_PTHREADPOOL=$(usex system-libs)
