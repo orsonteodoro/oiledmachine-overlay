@@ -73,7 +73,7 @@ inherit bash-completion-r1 flag-o-matic flag-o-matic-om linux-info
 inherit multiprocessing ninja-utils pax-utils python-any-r1 check-linker lcnr
 inherit toolchain-funcs uopts xdg-utils
 
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc64 ~riscv ~s390 ~x86 ~amd64-linux ~x64-macos"
+KEYWORDS="~amd64 ~arm64"
 if [[ -d "${WORKDIR}/node-v${PV}" ]] ; then
 	S="${WORKDIR}/node-v${PV}"
 else
