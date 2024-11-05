@@ -18,11 +18,7 @@ else
 	TEST_COMMIT="400f3ff05b2b1c0ae17797a0bd50e75e35c1f1b1"
 	VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/aacid.asc"
 	inherit verify-sig
-	KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390
-~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos
-~x64-solaris
-	"
+	KEYWORDS="~amd64 ~arm64"
 	SLOT="0/136"   # CHECK THIS WHEN BUMPING!!! SUBSLOT IS libpoppler.so SOVERSION
 	SRC_URI="
 https://poppler.freedesktop.org/${P}.tar.xz

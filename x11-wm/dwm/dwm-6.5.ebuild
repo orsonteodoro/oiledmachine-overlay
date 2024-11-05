@@ -20,7 +20,7 @@ c0bc9f1bf399ba16d53f92193e5d990a75a9ef73d7820ef9c72b639205575f10\
 
 inherit toolchain-funcs
 
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86"
+KEYWORDS="~amd64"
 SRC_URI="
 https://dl.suckless.org/${PN}/${DWM_FN}
 mod_fibonacci? (

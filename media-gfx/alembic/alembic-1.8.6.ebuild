@@ -9,7 +9,7 @@ PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit cmake python-single-r1
 
-KEYWORDS="~amd64 ~arm ~arm64 ~x86"
+KEYWORDS="~amd64 ~arm64"
 SRC_URI="
 https://github.com/alembic/alembic/archive/${PV}.tar.gz
 	-> ${P}.tar.gz

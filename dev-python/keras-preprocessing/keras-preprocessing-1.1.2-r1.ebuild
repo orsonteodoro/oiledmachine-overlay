@@ -10,7 +10,7 @@ PYTHON_COMPAT=( "python3_"{9..11} ) # Upstream list up to 3.6
 
 inherit distutils-r1
 
-KEYWORDS="amd64 ~arm64 ~x86"
+KEYWORDS="~amd64"
 SRC_URI="
 https://github.com/keras-team/keras-preprocessing/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz

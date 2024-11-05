@@ -37,7 +37,7 @@ LICENSE="
 # (Apache-2.0 all-rights-reserved) - CopyrightNotice.txt
 # Apache-2.0 is the main
 # Rest of the licenses are third party licenses
-KEYWORDS="~amd64 ~amd64-linux ~x64-macos ~arm ~arm64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64 ~arm64"
 SLOT="$(ver_cut 1-2 ${PV})/${PV}"
 IUSE+="
 test ebuild-revision-4

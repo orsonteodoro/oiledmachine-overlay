@@ -53,7 +53,7 @@ else
 
 	#GEN_EBUILD=1 # Uncomment to generate ebuild for live snapshot.
 
-	KEYWORDS="~amd64 ~arm ~arm64 ~x86" # This is a tagged release.
+	KEYWORDS="~amd64" # This is a tagged release.
 
 	# From:  date -d "${EGIT_COMMIT_TIMESTAMP}" -u
 	TIMESTAMP_YYMMDD="20240414"

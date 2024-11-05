@@ -380,8 +380,7 @@ inherit flag-o-matic-om llvm uopts
 
 if [[ "${MY_PV#9999}" == "${MY_PV}" ]] ; then
 	KEYWORDS="
-~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc
-~x86 ~amd64-linux ~x86-linux ~x64-macos
+~amd64 ~arm ~arm64 ~hppa ~loong ~m64k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86
 	"
 fi
 if [[ "${MY_PV#9999}" != "${MY_PV}" ]] ; then
