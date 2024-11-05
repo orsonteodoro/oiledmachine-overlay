@@ -13,7 +13,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/sobotka/filmic-blender.git"
 	inherit git-r3
 else
-	KEYWORDS="amd64 ~x86"
+	KEYWORDS="amd64"
 	SRC_URI="FIXME"
 fi
 S="${WORKDIR}/${P}"
