@@ -26,6 +26,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 else
 	#MY_PV="${PV}"
 	MY_PV="2.0.0.dev2"
+	KEYWORDS="~amd64 ~arm64"
 	SRC_URI="
 https://github.com/Zulko/moviepy/archive/refs/tags/v${MY_PV}.tar.gz
 	-> ${MY_PV}.tar.gz
@@ -39,7 +40,6 @@ https://zulko.github.io/moviepy/
 https://github.com/Zulko/moviepy
 "
 LICENSE="MIT"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="

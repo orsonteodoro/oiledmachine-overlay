@@ -33,7 +33,7 @@ PYTHON_COMPAT=( "python3_10" )  # Upstream only tests with 3.10 for this version
 
 inherit distutils-r1
 
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
 S_PROJ="${WORKDIR}/${P}"
 SRC_URI="

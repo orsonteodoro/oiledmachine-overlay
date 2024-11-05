@@ -18,7 +18,7 @@ if [[ ${PV} =~ 9999 ]] ; then
 	FALLBACK_COMMIT="6d7e8f058428025cd4253f1ef6a1ed6618d9b0ea" # Nov 3, 2022
 	IUSE+=" fallback-commit"
 else
-	# KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Live ebuilds do not get keyworded
+	# KEYWORDS="~amd64" # Live ebuilds do not get keyworded
 	SRC_URI="
 ${bazel_external_uris}
 https://github.com/deepmind/labmaze/archive/refs/tags/${PV}.tar.gz

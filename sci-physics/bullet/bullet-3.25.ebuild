@@ -17,7 +17,7 @@ UOPTS_SUPPORT_TPGO=1
 
 inherit cmake flag-o-matic lcnr multilib-build python-single-r1 toolchain-funcs uopts
 
-KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86 ~amd64-linux ~x86-linux"
+KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}3-${PV}"
 SRC_URI="
 https://github.com/bulletphysics/bullet3/archive/${PV}.tar.gz
