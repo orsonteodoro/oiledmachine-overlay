@@ -20,7 +20,7 @@ LICENSE="
 	)
 "
 SLOT="0"
-KEYWORDS="~amd64 ~arm64"
+KEYWORDS="~amd64 ~arm64 ~arm64-macos"
 RESTRICT="mirror"
 CAPTURE_TINY_PV="0"
 EXTUTILS_MAKEMAKER_PV="7.12"

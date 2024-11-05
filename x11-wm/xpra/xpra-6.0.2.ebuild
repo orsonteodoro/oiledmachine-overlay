@@ -10,7 +10,7 @@ MY_PV="$(ver_cut 1-4)"
 
 unset DISTUTILS_USE_PEP517
 DISTUTILS_EXT=1
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit cuda distutils-r1 flag-o-matic linux-info prefix tmpfiles udev
 inherit user-info xdg
@@ -40,7 +40,7 @@ LICENSE="
 # LGPL-3+ - xpra/gtk_common/gtk_notifier.py
 # MIT - xpra/platform/win32/lsa_logon_lib.py
 #	- xpra/client/gl/gl_colorspace_conversions.py
-KEYWORDS="~amd64 ~arm64 ~x86"
+KEYWORDS="~amd64"
 GSTREAMER_IUSE+="
 aac alsa flac jack lame matroska ogg opus oss pulseaudio speex twolame vorbis
 wavpack

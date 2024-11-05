@@ -20,7 +20,7 @@ inherit distutils-r1 toolchain-funcs elisp-common
 
 # Based on CI
 KEYWORDS="
-~amd64 ~arm64
+~amd64 ~amd64-linux ~amd64-macos ~arm64 ~arm64-macos
 "
 S="${WORKDIR}/${PN}-${MY_PV}"
 SRC_URI="

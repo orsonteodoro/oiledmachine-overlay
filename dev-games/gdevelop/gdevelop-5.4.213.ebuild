@@ -3909,7 +3909,7 @@ LICENSE="
 # MIT
 # W3C-Software-Notice-and-License - newIDE/electron-app/app/node_modules/sax/LICENSE-W3C.html
 
-KEYWORDS="~amd64 ~arm64"
+KEYWORDS="~amd64"
 SLOT_MAJOR=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
 IUSE+="
