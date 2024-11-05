@@ -276,7 +276,7 @@ https://github.com/openxla/triton/archive/${TRITON_TAG}.tar.gz -> trition-${TRIT
 	)
 "
 
-#KEYWORDS="~amd64" # Downgraded SRC_URI links is not complete.
+#KEYWORDS="~amd64 ~arm64" # Downgraded SRC_URI links is not complete.
 SRC_URI="
 ${bazel_external_uris}
 https://github.com/${PN}/${PN}/archive/v${MY_PV}.tar.gz -> ${P}.tar.gz

@@ -9,12 +9,12 @@ DISTUTILS_USE_PEP517="standalone"
 GCC_SLOT=12
 LLVM_COMPAT=( {16..15} )
 PROTOBUF_SLOT="0/3.21"
-PYTHON_COMPAT=( python3_{10..11} )
+PYTHON_COMPAT=( "python3_"{10..11} )
 YARN_SLOT="1"
 
 inherit bazel flag-o-matic llvm-r1 distutils-r1 yarn
 
-KEYWORDS="~amd64"
+KEYWORDS="~amd64 ~arm64"
 bazel_external_uris="
 "
 #${bazel_external_uris}

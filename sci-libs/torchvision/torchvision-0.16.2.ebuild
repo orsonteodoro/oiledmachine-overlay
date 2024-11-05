@@ -11,7 +11,7 @@ ROCM_SKIP_GLOBALS=1
 
 inherit cuda distutils-r1 multiprocessing rocm
 
-KEYWORDS="~amd64"
+KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/vision-${PV}"
 SRC_URI="
 https://github.com/pytorch/vision/archive/v${PV}.tar.gz

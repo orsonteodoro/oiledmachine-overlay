@@ -17,7 +17,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 	IUSE+=" fallback-commit"
 else
-	KEYWORDS="~amd64"
+	KEYWORDS="~amd64 ~arm64"
 fi
 
 DESCRIPTION="A lightweight wrapper around basic LLVM functionality"

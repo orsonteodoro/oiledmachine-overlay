@@ -17,7 +17,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="deea4acaacb3c4a53cab286490550c32d5d0c2b4" # May 5, 2024
 	SRC_URI=""
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64 ~arm64"
 	SRC_URI="
 https://github.com/breezy-team/merge3/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz

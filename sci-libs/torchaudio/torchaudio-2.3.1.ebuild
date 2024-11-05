@@ -11,7 +11,7 @@ PYTHON_COMPAT=( "python3_"{10..11} )
 
 inherit distutils-r1 pypi
 
-KEYWORDS="~amd64"
+KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${MY_PN}-${PV}"
 SRC_URI="
 https://github.com/pytorch/audio/archive/refs/tags/v${PV}.tar.gz

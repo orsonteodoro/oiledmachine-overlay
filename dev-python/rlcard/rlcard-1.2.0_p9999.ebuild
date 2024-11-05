@@ -17,7 +17,7 @@ if [[ ${PV} =~ 9999 ]] ; then
 	FALLBACK_COMMIT="7fc56edebe9a2e39c94f872edd8dbe325c61b806" # Jul 11, 2023
 	IUSE+=" fallback-commit"
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	SRC_URI="
 https://github.com/datamllab/rlcard/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
