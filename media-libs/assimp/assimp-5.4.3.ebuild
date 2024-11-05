@@ -5,7 +5,7 @@ EAPI=8
 
 inherit cmake-multilib
 
-KEYWORDS="~amd64 ~arm ~arm64 ~riscv ~x86"
+KEYWORDS="~amd64 ~arm64"
 SRC_URI="https://github.com/${PN}/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 DESCRIPTION="Importer library to import assets from 3D files"

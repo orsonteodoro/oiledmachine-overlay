@@ -26,7 +26,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="72895d05c9219e04960ebc7862aae2b017aed954" # May 21, 2024
 	S="${WORKDIR}/${P}"
 else
-	KEYWORDS="~amd64"
+	KEYWORDS="~amd64 ~arm64"
 	S="${WORKDIR}/${P}"
 	SRC_URI="FIXME"
 fi

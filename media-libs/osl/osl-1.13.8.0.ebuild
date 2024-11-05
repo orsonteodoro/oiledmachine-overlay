@@ -43,8 +43,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 	EGIT_REPO_URI="https://github.com/AcademySoftwareFoundation/OpenShadingLanguage.git"
 else
-	# If a development release, please don't keyword!
-	KEYWORDS="~amd64 ~arm ~arm64 ~ppc64"
+	KEYWORDS="~amd64 ~arm64"
 	SRC_URI="
 https://github.com/AcademySoftwareFoundation/OpenShadingLanguage/archive/refs/tags/v${PV}.tar.gz
 		-> ${P}.tar.gz

@@ -9,11 +9,15 @@ MY_P="SDL2-${PV/_pre}"
 
 inherit cmake flag-o-matic linux-info toolchain-funcs multilib-minimal
 
-SRC_URI="https://www.libsdl.org/release/${MY_P}.tar.gz"
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~x86"
 S="${WORKDIR}/${MY_P}"
+SRC_URI="https://www.libsdl.org/release/${MY_P}.tar.gz"
 
 DESCRIPTION="Simple Direct Media Layer"
-HOMEPAGE="https://www.libsdl.org/"
+HOMEPAGE="
+	https://www.libsdl.org/
+	https://github.com/libsdl-org/SDL
+"
 LICENSE_HIDAPI="
 	|| (
 		BSD
@@ -79,7 +83,6 @@ LICENSE="
 #   contain all rights reserved without mentioned terms or corresponding license
 #   and are transported with the tarball.
 
-KEYWORDS="~amd64 ~arm64"
 RESTRICT="
 	!test? (
 		test

@@ -14,11 +14,11 @@ LEGACY_TBB_SLOT="2"
 ONETBB_SLOT="0"
 OPENEXR_V2_PV="2.5.10 2.5.11 2.5.10 2.5.9 2.5.8 2.5.7"
 OPENEXR_V3_PV="3.1.12 3.1.11 3.1.10 3.1.9 3.1.8 3.1.7 3.1.6 3.1.5"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit cmake python-single-r1 flag-o-matic
 
-KEYWORDS="~amd64"
+KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/USD-${PV}"
 SRC_URI="
 https://github.com/PixarAnimationStudios/USD/archive/refs/tags/v${PV}.tar.gz

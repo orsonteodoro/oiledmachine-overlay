@@ -24,7 +24,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 	S="${WORKDIR}/${P}"
 else
-	KEYWORDS="~arm ~arm64 ~amd64 ~x86" # Live ebuilds don't get KEYWORDed
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/SFML-${PV}"
 	SRC_URI="
 https://github.com/SFML/SFML/archive/refs/tags/${PV}.tar.gz

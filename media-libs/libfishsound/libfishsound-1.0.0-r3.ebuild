@@ -11,7 +11,7 @@ DESCRIPTION="Simple programming interface to decode and encode audio with vorbis
 HOMEPAGE="https://www.xiph.org/fishsound/"
 LICENSE="BSD"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-KEYWORDS="amd64 x86"
+KEYWORDS="~amd64"
 IUSE+=" flac speex"
 DEPEND+="
 	media-libs/libogg[${MULTILIB_USEDEP}]

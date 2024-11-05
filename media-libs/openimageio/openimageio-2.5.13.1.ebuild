@@ -37,7 +37,7 @@ CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} ) # Place after X86_CPU_F
 
 inherit cmake flag-o-matic font llvm python-single-r1 virtualx
 
-KEYWORDS="~amd64 ~ppc64 ~x86"
+KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/OpenImageIO-${PV}"
 SRC_URI="
 https://github.com/OpenImageIO/oiio/archive/refs/tags/v${PV}.tar.gz

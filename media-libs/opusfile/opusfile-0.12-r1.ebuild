@@ -11,7 +11,7 @@ DESCRIPTION="A high-level decoding and seeking API for .opus files"
 HOMEPAGE="https://www.opus-codec.org/"
 LICENSE="BSD"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ppc ~ppc64 ~sparc ~x86"
+KEYWORDS="~amd64"
 IUSE="doc fixed-point +float +http libressl static-libs"
 RDEPEND="media-libs/libogg[${MULTILIB_USEDEP}]
 	media-libs/opus[${MULTILIB_USEDEP}]
@@ -45,7 +45,7 @@ src_prepare() {
 multilib_src_configure() {
 	local myeconfargs=(
 		$(use_enable doc)
-		$(use_enable fixed-point)\
+		$(use_enable fixed-point)
 		$(use_enable float)
 		$(use_enable http)
 		$(use_enable static-libs static)

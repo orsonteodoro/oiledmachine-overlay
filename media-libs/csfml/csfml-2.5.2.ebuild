@@ -9,7 +9,7 @@ EAPI=8
 
 inherit cmake multilib-build
 
-KEYWORDS="~arm ~arm64 ~amd64 ~x86"
+KEYWORDS="~arm64 ~amd64"
 S="${WORKDIR}/CSFML-${PV}"
 SRC_URI="
 https://github.com/SFML/CSFML/archive/refs/tags/${PV}.tar.gz

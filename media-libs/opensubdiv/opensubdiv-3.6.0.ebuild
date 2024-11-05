@@ -17,7 +17,7 @@ PYTHON_COMPAT=( python3_{8..11} )
 
 inherit cmake cuda flag-o-matic python-any-r1 toolchain-funcs
 
-KEYWORDS="~amd64 ~arm ~arm64 ~x86"
+KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/OpenSubdiv-${MY_PV}"
 SRC_URI="
 https://github.com/PixarAnimationStudios/OpenSubdiv/archive/v${MY_PV}.tar.gz

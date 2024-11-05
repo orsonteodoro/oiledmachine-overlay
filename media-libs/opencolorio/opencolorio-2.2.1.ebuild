@@ -44,7 +44,7 @@ gen_imath_bdepend() {
 	done
 }
 
-KEYWORDS="amd64 ~arm ~arm64 ~ppc64 ~riscv x86"
+KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/OpenColorIO-${PV}"
 SRC_URI="
 https://github.com/AcademySoftwareFoundation/OpenColorIO/archive/refs/tags/v${PV}.tar.gz

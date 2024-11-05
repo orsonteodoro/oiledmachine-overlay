@@ -9,7 +9,7 @@ DESCRIPTION="GLUI User Interface Library"
 HOMEPAGE="http://www.cs.unc.edu/~rademach/glui/"
 LICENSE="ZLIB"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64"
 DEPEND+=" virtual/opengl[${MULTILIB_USEDEP}]
 	  media-libs/freeglut[${MULTILIB_USEDEP}]"
 RDEPEND+=" ${DEPEND}"

@@ -25,7 +25,7 @@ CPU_FLAGS=(
 
 inherit cmake flag-o-matic python-any-r1 toolchain-funcs
 
-KEYWORDS="-* ~amd64 ~arm64"
+KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${PV/_/-}"
 SRC_URI="
 https://github.com/OpenPathGuidingLibrary/openpgl/archive/refs/tags/v${PV/_/-}.tar.gz

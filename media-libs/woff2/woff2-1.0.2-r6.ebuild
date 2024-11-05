@@ -11,10 +11,7 @@ DESCRIPTION="Encode/decode WOFF2 font format"
 HOMEPAGE="https://github.com/google/woff2"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~ppc ~ppc64 ~s390 ~sparc ~x86 ~amd64-linux
-~x86-linux ~x64-macos ~x86-macos ~x64-solaris
-"
+KEYWORDS="~amd64"
 RDEPEND+="
 	>=app-arch/brotli-1.0.1[${MULTILIB_USEDEP}]
 "

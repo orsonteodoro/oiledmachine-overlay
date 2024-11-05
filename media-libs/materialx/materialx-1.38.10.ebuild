@@ -67,7 +67,7 @@ LICENSE="
 	MIT
 	ZLIB
 "
-KEYWORDS="~amd64"
+KEYWORDS="~amd64 ~arm64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" -examples -oiio -python test wayland +X r1"
 REQUIRED_USE+="
