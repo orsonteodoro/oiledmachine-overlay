@@ -44,7 +44,7 @@ IUSE_OPENMPI_RM="
 	openmpi_rm_slurm
 "
 
-KEYWORDS="~amd64 -arm -ppc -x86 ~amd64-linux"
+KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${MY_P}"
 SRC_URI="https://www.open-mpi.org/software/ompi/v$(ver_cut 1-2)/downloads/${MY_P}.tar.bz2"
 

@@ -47,7 +47,7 @@ UCG_COMMIT="aaa65c30af52115aa601c9b17529cb295797864f"
 
 inherit autotools dep-prepare flag-o-matic rocm linux-info toolchain-funcs
 
-KEYWORDS="~amd64 ~arm64 -riscv ~ppc64 ~x86 ~amd64-linux ~x86-linux"
+KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${PN}-${MY_PV}"
 SRC_URI="
 https://github.com/openucx/ucx/releases/download/v${PV}/${P}.tar.gz
