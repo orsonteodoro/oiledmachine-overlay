@@ -8,7 +8,7 @@ PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit distutils-r1 xdg
 
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${PV}"
 SRC_URI="
 https://github.com/puddletag/puddletag/archive/refs/tags/${PV}.tar.gz
