@@ -10,7 +10,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/gabime/${PN}"
 	inherit git-r3
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86"
+	KEYWORDS="~amd64 ~arm64"
 	SRC_URI="
 https://github.com/gabime/spdlog/archive/v${PV}.tar.gz -> ${P}.tar.gz
 	"

@@ -11,7 +11,7 @@ DESCRIPTION="CRC32C implementation with support for CPU-specific acceleration in
 HOMEPAGE="https://github.com/google/crc32c"
 LICENSE="BSD"
 SLOT="0"
-KEYWORDS="amd64 arm arm64 ~mips ppc ppc64 ~riscv ~sparc x86"
+KEYWORDS="~amd64"
 IUSE="test"
 RESTRICT="
 	!test? (

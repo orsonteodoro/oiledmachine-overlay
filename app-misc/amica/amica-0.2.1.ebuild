@@ -2880,6 +2880,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" coqui debug ollama tray voice-recognition wayland whisper-cpp X"
 REQUIRED_USE="
+	voice-recognition
 	whisper-cpp? (
 		voice-recognition
 	)

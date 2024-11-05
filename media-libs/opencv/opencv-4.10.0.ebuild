@@ -231,7 +231,7 @@ else
 	XFEATURES2D_BOOSTDESC_COMMIT="34e4206aef44d50e6bbcd0ab06354b52e7466d26"		# See https://github.com/opencv/opencv_contrib/blob/4.10.0/modules/xfeatures2d/cmake/download_boostdesc.cmake#L2
 	XFEATURES2D_VGG_COMMIT="fccf7cd6a4b12079f73bbfb21745f9babcd4eb1d"		# See https://github.com/opencv/opencv_contrib/blob/4.10.0/modules/xfeatures2d/cmake/download_vgg.cmake#L2
 
-	KEYWORDS="~amd64 ~arm ~arm64 ~loong ~riscv ~x86"
+	KEYWORDS="~amd64 ~arm64 ~riscv"
 	SRC_URI="
 		https://github.com/${PN}/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz
 		https://github.com/opencv/ade/archive/v${ADE_PV}.tar.gz -> ade-${ADE_PV}.tar.gz

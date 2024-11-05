@@ -11,7 +11,7 @@ DESCRIPTION="Ultralightweight JSON parser in ANSI C"
 HOMEPAGE="https://github.com/DaveGamble/cJSON"
 LICENSE="MIT"
 SLOT="0"
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
+KEYWORDS="~amd64 ~arm64"
 IUSE="test"
 RESTRICT="!test? ( test )"
 

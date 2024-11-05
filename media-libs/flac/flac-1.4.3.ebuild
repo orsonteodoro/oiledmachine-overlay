@@ -10,10 +10,7 @@ LIBFLACXX_SONAME="12"
 
 inherit autotools flag-o-matic multilib-minimal toolchain-funcs
 
-KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
-~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-solaris
-"
+KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 S="${WORKDIR}/${P}"
 S_orig="${WORKDIR}/${P}"
 SRC_URI="https://downloads.xiph.org/releases/${PN}/${P}.tar.xz"

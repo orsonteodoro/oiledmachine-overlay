@@ -23,7 +23,7 @@ UOPTS_SUPPORT_TPGO=1
 inherit autotools multilib-minimal
 inherit uopts
 
-KEYWORDS+=" amd64 arm arm64 hppa ~loong ~m68k ppc ppc64 ~riscv ~s390 ~sparc x86"
+KEYWORDS+=" ~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 SRC_URI="https://github.com/jemalloc/jemalloc/releases/download/${PV}/${P}.tar.bz2"
 
 DESCRIPTION="Jemalloc is a general-purpose scalable concurrent allocator"

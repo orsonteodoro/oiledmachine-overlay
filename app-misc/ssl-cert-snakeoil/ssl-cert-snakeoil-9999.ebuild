@@ -8,7 +8,7 @@ SSL_CERT_MANDATORY=1
 
 inherit ssl-cert user-info
 
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64"
 S="${T}"
 
 DESCRIPTION="A self-signed certificate required by some *.deb packages or projects"

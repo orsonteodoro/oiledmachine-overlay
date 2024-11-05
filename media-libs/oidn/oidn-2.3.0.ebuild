@@ -65,7 +65,7 @@ if [[ ${PV} = *9999 ]]; then
 	EGIT_REPO_URI="${ORG_GH}/oidn.git"
 	EGIT_BRANCH="master"
 else
-	KEYWORDS="~amd64"
+	KEYWORDS="~amd64 ~arm64"
 	SRC_URI="
 ${ORG_GH}/${PN}/releases/download/v${PV}/${P}.src.tar.gz
 	-> ${P}.tar.gz

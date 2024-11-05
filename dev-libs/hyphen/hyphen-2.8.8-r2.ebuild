@@ -19,9 +19,7 @@ LICENSE="
 	LGPL-2.1
 	MPL-1.1
 "
-KEYWORDS="
-~alpha amd64 ~amd64-linux arm ~arm64 ~hppa ppc ppc64 ~sparc x86 ~x86-linux
-"
+KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="static-libs"
 RDEPEND="

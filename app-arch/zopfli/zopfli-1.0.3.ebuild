@@ -11,10 +11,7 @@ UOPTS_SUPPORT_TPGO=1
 
 inherit cmake flag-o-matic uopts
 
-KEYWORDS="
-~alpha amd64 arm arm64 hppa ~loong ppc ppc64 ~riscv ~s390 sparc x86
-~amd64-linux ~x86-linux
-"
+KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${P}"
 SRC_URI="
 	https://github.com/google/zopfli/archive/${P}.tar.gz

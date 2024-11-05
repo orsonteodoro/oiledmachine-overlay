@@ -10,8 +10,7 @@ SRC_URI="https://github.com/google/leveldb/archive/refs/tags/${PV}.tar.gz -> ${P
 DESCRIPTION="a fast key-value storage library written at Google"
 HOMEPAGE="http://leveldb.org/ https://github.com/google/leveldb"
 LICENSE="BSD"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~ppc ~ppc64 ~x86 ~amd64-fbsd ~amd64-linux
-~x86-linux"
+KEYWORDS="~amd64 ~arm64"
 KEYWORDS="amd64 arm arm64 ~mips ppc ppc64 ~riscv ~sparc x86 ~amd64-linux ~x86-linux"
 SLOT="0/$(ver_cut 1 ${PV})"
 IUSE+=" +snappy +tcmalloc static-libs test"

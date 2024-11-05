@@ -20,9 +20,7 @@ HOMEPAGE="
 "
 LICENSE="MIT"
 SLOT="0"
-KEYWORDS="
-~alpha amd64 arm arm64 ~hppa ~loong ppc ppc64 ~riscv ~s390 sparc x86
-"
+KEYWORDS="~amd64"
 IUSE="test"
 PATCHES=(
 	# https://github.com/unittest-cpp/unittest-cpp/commit/2423fcac7668aa9c331a2dcf024c3ca06742942d \

@@ -5,7 +5,7 @@ EAPI=8
 
 inherit multilib multilib-minimal
 
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64"
 SRC_URI="http://prdownloads.sourceforge.net/log4c/log4c-1.2.4.tar.gz"
 
 DESCRIPTION="Logging FrameWork for C, as Log4j or Log4Cpp"

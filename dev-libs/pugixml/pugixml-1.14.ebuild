@@ -16,7 +16,7 @@ HOMEPAGE="
 "
 LICENSE="MIT"
 KEYWORDS="
-amd64 ~arm arm64 ~hppa ppc ppc64 ~riscv sparc x86 ~amd64-linux ~x86-linux
+~amd64 ~arm64 ~x86
 "
 IUSE+=" doc static-libs"
 SLOT="0/$(ver_cut 1-2 ${PV})"

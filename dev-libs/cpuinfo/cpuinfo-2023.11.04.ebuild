@@ -10,7 +10,7 @@ CommitId="d6860c477c99f1fce9e28eb206891af3c0e1a1d7" # committer-date:2023-11-04 
 
 inherit cmake
 
-KEYWORDS="~amd64"
+KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 S="${WORKDIR}/${PN}-${CommitId}"
 SRC_URI="
 https://github.com/pytorch/${PN}/archive/${CommitId}.tar.gz
