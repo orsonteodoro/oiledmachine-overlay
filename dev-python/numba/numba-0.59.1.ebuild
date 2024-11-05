@@ -21,7 +21,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="9ce83ef5c35d7f68a547bf2fd1266b9a88d3a00d" # Mar 18, 2024
 	inherit git-r3
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64 ~arm64"
 	SRC_URI="
 https://github.com/numba/numba/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz

@@ -16,7 +16,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="dcd185843a62953e27c2d54dc8c2d647d604b635" # Jan 30, 2023
 	IUSE+=" fallback-commit"
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	SRC_URI="
 https://github.com/openai/gym/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz

@@ -24,7 +24,7 @@ USE_RUBY="ruby31 ruby32"
 
 inherit cmake flag-o-matic multilib-minimal python-r1 ruby-ng
 
-KEYWORDS="~amd64 ~ppc64 ~x86"
+KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${MY_PV}"
 S_OPENCENSUS_PROTO="${WORKDIR}/opencensus-proto-${OPENCENSUS_PROTO_PV}"
 SRC_URI="

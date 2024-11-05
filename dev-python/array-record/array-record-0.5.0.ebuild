@@ -70,7 +70,7 @@ https://mirror.bazel.build/bazel_coverage_output_generator/releases/coverage_out
 https://mirror.bazel.build/openjdk/azul-zulu${ZULU_VER}/zulu${ZULU_VER}-linux_x64.tar.gz -> zulu${ZULU_VER}-linux_x64.tar.gz
 http://zlib.net/fossils/zlib-${ZLIB_PV}.tar.gz -> zlib-${ZLIB_PV}.tar.gz
 "
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	SRC_URI="
 	${bazel_external_uris}
 https://github.com/google/array_record/archive/refs/tags/v${PV}.tar.gz

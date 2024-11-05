@@ -15,7 +15,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="9596114567580db30c4d1735f540e84da480199a"
 	inherit git-r3
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	SRC_URI="
 https://github.com/Farama-Foundation/Farama-Notifications/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz

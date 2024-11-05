@@ -16,7 +16,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 	IUSE+=" fallback-commit"
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	SRC_URI="
 https://github.com/Farama-Foundation/gym-notices/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
