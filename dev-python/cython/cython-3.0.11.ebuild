@@ -9,6 +9,7 @@ EAPI=8
 MY_PV="${PV/_beta/b}"
 MY_PV="${PV/_rc/rc}"
 
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} "pypy3" )
 PYTHON_REQ_USE="threads(+)"
@@ -40,7 +41,7 @@ RESTRICT="
 	)
 "
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
-IUSE="emacs test"
+IUSE="emacs test ebuild-revision-1"
 RDEPEND="
 	app-eselect/eselect-cython
 	emacs? (

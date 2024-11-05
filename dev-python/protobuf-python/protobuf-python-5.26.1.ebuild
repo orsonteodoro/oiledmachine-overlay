@@ -3,6 +3,7 @@
 
 EAPI=8
 
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
@@ -35,6 +36,7 @@ HOMEPAGE="
 "
 LICENSE="BSD"
 SLOT="0/$(ver_cut 1-2 ${PV})"
+IUSE+=" ebuild-revision-1"
 RDEPEND="
 	${PYTHON_DEPS}
 	dev-libs/protobuf:${SLOT}

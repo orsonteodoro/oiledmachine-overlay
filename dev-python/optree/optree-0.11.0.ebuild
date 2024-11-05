@@ -7,6 +7,7 @@ EAPI=8
 # TODO package:
 # flake8-pyi
 
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{8..12} )
 
@@ -26,7 +27,7 @@ LICENSE="
 "
 RESTRICT="mirror test" # Not tested
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" benchmark doc jax numpy test torch"
+IUSE+=" benchmark doc jax numpy test pytorch ebuild-revision-2"
 RDEPEND+="
 	dev-python/typing-extensions[${PYTHON_USEDEP}]
 	jax? (
@@ -35,7 +36,7 @@ RDEPEND+="
 	numpy? (
 		dev-python/numpy[${PYTHON_USEDEP}]
 	)
-	torch? (
+	pytorch? (
 		$(python_gen_any_dep '
 			sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
 		')

@@ -3,6 +3,7 @@
 
 EAPI=8
 
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
@@ -23,7 +24,7 @@ DESCRIPTION="High-performance RPC framework (python libraries)"
 HOMEPAGE="https://grpc.io"
 LICENSE="Apache-2.0"
 SLOT="0"
-IUSE+=" doc ebuild-revision-1"
+IUSE+=" doc ebuild-revision-2"
 # See src/include/openssl/crypto.h#L99 for versioning
 # See src/include/openssl/base.h#L187 for versioning
 # See https://github.com/grpc/grpc/blob/v1.59.5/bazel/grpc_python_deps.bzl#L45

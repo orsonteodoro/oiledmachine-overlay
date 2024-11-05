@@ -5,6 +5,7 @@
 EAPI=8
 
 BLIS_COMMIT="8137f660d8351c3a3c3b38f4606121578e128b70"
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
@@ -29,7 +30,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" test"
+IUSE+=" test ebuild-revision-1"
 RDEPEND+="
 	>=dev-python/numpy-2.0.0[${PYTHON_USEDEP}]
 "

@@ -7,6 +7,7 @@ EAPI=8
 MY_PN="tree"
 
 ABSEIL_CPP_PV="20210324.2"
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{8..11} )
 
@@ -28,7 +29,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc test"
+IUSE+=" doc test ebuild-revision-1"
 RDEPEND+="
 "
 DEPEND+="

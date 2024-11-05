@@ -3,7 +3,8 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..11} )
+DISTUTILS_EXT=1
+PYTHON_COMPAT=( "python3_"{8..11} )
 PYTHON_REQ_USE="threads(+)"
 
 FORTRAN_NEEDED="lapack"
@@ -34,7 +35,7 @@ KEYWORDS="
 sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris
 ~x64-solaris ~x86-solaris
 "
-IUSE="doc lapack"
+IUSE="doc lapack ebuild-revision-1"
 
 RDEPEND="
 	lapack? (

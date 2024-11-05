@@ -8,6 +8,7 @@ EAPI=8
 
 MY_PN="${PN/-/_}"
 
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
@@ -40,7 +41,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" test"
+IUSE+=" test ebuild-revision-1"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.21.2[${PYTHON_USEDEP}]

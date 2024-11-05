@@ -11,6 +11,7 @@ EAPI=8
 # 3.21.12 is equivalent to 4.21.12 and equivalent to 21.12.
 #
 
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream supports up to 3.10
 
@@ -42,6 +43,7 @@ HOMEPAGE="
 "
 LICENSE="BSD"
 SLOT="0/$(ver_cut 1-2 ${PV})"
+IUSE+=" ebuild-revision-1"
 RDEPEND="
 	${PYTHON_DEPS}
 	dev-libs/protobuf:${SLOT}

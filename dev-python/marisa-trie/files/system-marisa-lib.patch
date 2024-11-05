@@ -1,0 +1,50 @@
+diff -Naur marisa-trie-0.8.0-orig/setup.py marisa-trie-0.8.0/setup.py
+--- marisa-trie-0.8.0-orig/setup.py	2023-03-25 15:08:43.000000000 -0700
++++ marisa-trie-0.8.0/setup.py	2023-05-07 15:40:21.228948693 -0700
+@@ -17,21 +17,6 @@
+     "setuptools",
+ ]
+ 
+-MARISA_ROOT_DIR = "marisa-trie"
+-MARISA_SOURCE_DIR = os.path.join(MARISA_ROOT_DIR, "lib")
+-MARISA_INCLUDE_DIR = os.path.join(MARISA_ROOT_DIR, "include")
+-MARISA_FILES = [
+-    "marisa/*.cc",
+-    "marisa/grimoire.cc",
+-    "marisa/grimoire/io/*.cc",
+-    "marisa/grimoire/trie/*.cc",
+-    "marisa/grimoire/vector/*.cc",
+-]
+-
+-MARISA_FILES[:] = itertools.chain(
+-    *(glob.glob(os.path.join(MARISA_SOURCE_DIR, path)) for path in MARISA_FILES)
+-)
+-
+ DESCRIPTION = __doc__
+ # TODO: Switch back to builtin `open(FILE, encoding="utf-8")` when dropping Python 2.7 support
+ with open("README.rst", encoding="utf-8") as f1, open(
+@@ -75,15 +60,6 @@
+     license=LICENSE,
+     url="https://github.com/kmike/marisa-trie",
+     classifiers=CLASSIFIERS,
+-    libraries=[
+-        (
+-            "libmarisa-trie",
+-            {
+-                "sources": MARISA_FILES,
+-                "include_dirs": [MARISA_SOURCE_DIR, MARISA_INCLUDE_DIR],
+-            },
+-        )
+-    ],
+     ext_modules=[
+         Extension(
+             "marisa_trie",
+@@ -98,7 +74,7 @@
+                 "src/std_iostream.cpp",
+                 "src/trie.cpp",
+             ],
+-            include_dirs=[MARISA_INCLUDE_DIR],
++            libraries=["marisa"],
+         )
+     ],
+     python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*",

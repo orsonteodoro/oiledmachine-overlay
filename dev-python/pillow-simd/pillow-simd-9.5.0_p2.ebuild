@@ -10,6 +10,7 @@ EAPI=8
 
 MY_PV="${PV/_p/.post}"
 
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..11} "pypy3" )
 PYTHON_REQ_USE='tk?,threads(+)'
@@ -40,6 +41,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_X86_FLAGS[@]}
 doc imagequant jpeg jpeg2k lcms test tiff tk truetype webp xcb zlib
+ebuild-revision-1
 "
 REQUIRED_USE="
 	|| (

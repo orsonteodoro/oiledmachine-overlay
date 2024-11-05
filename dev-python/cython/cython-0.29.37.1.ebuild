@@ -6,6 +6,7 @@ EAPI=8
 
 # U 20.04
 
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..11} "pypy3" )
 PYTHON_REQ_USE="threads(+)"
@@ -36,7 +37,7 @@ RESTRICT="
 	)
 "
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
-IUSE="emacs test"
+IUSE="emacs test ebuild-revision-1"
 RDEPEND="
 	app-eselect/eselect-cython
 	emacs? (

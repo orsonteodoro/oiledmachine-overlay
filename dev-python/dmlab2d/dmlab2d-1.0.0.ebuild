@@ -16,6 +16,7 @@ ABSEIL_PY_COMMIT="9e543208a72300a4f8677fe725550fe8dc242bac"		# From patch
 BAZEL_SKYLIB_COMMIT="288731ef9f7f688932bd50e704a91a45ec185f9b"		# From patch
 BAZEL_SLOT="6.1"							# Undocumented version
 BENCHMARK_COMMIT="27d64a2351b98d48dd5b18c75ff536982a4ce26a"		# From patch
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 DM_ENV_COMMIT="3c6844db2aa4ed5994b2c45dbfd9f31ad948fbb8"		# https://github.com/google-deepmind/lab2d/blob/release_v1.0.0/WORKSPACE#L113
 DM_TREE_COMMIT="df359fddcd8db21f6065a418ebf8873e2c9aedd5"		# From patch
@@ -86,7 +87,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" -jit"
+IUSE+=" -jit ebuild-revision-1"
 REQUIRED_USE="
 	!jit
 "

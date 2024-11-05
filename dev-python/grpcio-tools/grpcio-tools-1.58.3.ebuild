@@ -3,6 +3,7 @@
 
 EAPI=8
 
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 GRPC_PN="grpc"
 GRPC_P="${GRPC_PN}-${PV}"
@@ -26,6 +27,7 @@ DESCRIPTION="Protobuf code generator for gRPC"
 HOMEPAGE="https://grpc.io"
 LICENSE="Apache-2.0"
 SLOT="0"
+IUSE+=" ebuild-revision-1"
 # See https://github.com/grpc/grpc/blob/v1.58.3/bazel/grpc_python_deps.bzl#L45
 # See https://github.com/grpc/grpc/tree/v1.58.3/third_party
 RDEPEND="

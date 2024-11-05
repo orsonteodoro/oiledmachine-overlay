@@ -4,10 +4,10 @@
 EAPI=8
 
 DISTUTILS_EXT=1
-DISTUTILS_USE_PEP517=meson-python
-PYTHON_COMPAT=( python3_{10..12} pypy3 )
+DISTUTILS_USE_PEP517="meson-python"
+FORTRAN_NEEDED="lapack"
+PYTHON_COMPAT=( "python3_"{10..12} "pypy3" )
 PYTHON_REQ_USE="threads(+)"
-FORTRAN_NEEDED=lapack
 
 inherit distutils-r1 flag-o-matic fortran-2 pypi toolchain-funcs
 
@@ -22,7 +22,7 @@ LICENSE="BSD"
 SLOT="0"
 # +lapack because the internal fallbacks are pretty slow. Building without blas
 # is barely supported anyway, see bug #914358.
-IUSE="+lapack"
+IUSE="+lapack ebuild-revision-1"
 if [[ ${PV} != *_[rab]* ]] ; then
 	KEYWORDS="~alpha amd64 arm arm64 hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86"
 fi

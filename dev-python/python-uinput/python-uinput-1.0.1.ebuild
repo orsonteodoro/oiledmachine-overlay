@@ -4,6 +4,7 @@
 
 EAPI=8
 
+DISTUTILS_EXT=1
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1
@@ -21,7 +22,7 @@ https://github.com/pyinput/python-uinput
 "
 LICENSE="GPL-3+"
 SLOT="0"
-IUSE=""
+IUSE=" ebuild-revision-1"
 RDEPEND="
 	virtual/udev
 "

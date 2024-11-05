@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>zoltan@sinustrom.info</email>
+    <name>Zoltan Puskas</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/pytries/marisa-trie/issues</bugs-to>
+    <remote-id type="github">pytries/marisa-trie</remote-id>
+  <remote-id type="pypi">marisa-trie</remote-id>
+  </upstream>
+  <longdescription lang="en">
+    Static memory-efficient Trie-like structures for Python (2.7 and 3.4+)
+    based on marisa-trie C++ library.
+  </longdescription>
+  <!--
+
+  oiledmachine-overlay notes:
+
+    Ebuild obtained from sinustrom overlay.
+    Added DISTUTILS_EXT=1
+
+  -->
+</pkgmetadata>
