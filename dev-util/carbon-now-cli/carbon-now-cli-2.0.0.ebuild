@@ -25,7 +25,7 @@ NPM_INSTALL_PATH="/opt/${PN}"
 
 inherit desktop npm playwright
 
-KEYWORDS="~amd64 ~amd64-linux ~x64-macos ~arm ~arm64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 # Initially generated from:
 #   grep "resolved" ${NPM_INSTALL_PATH}/package-lock.json | cut -f 4 -d '"' | cut -f 1 -d "#" | sort | uniq
 # For the generator script, see the typescript/transform-uris.sh ebuild-package.

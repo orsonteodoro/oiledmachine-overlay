@@ -9,7 +9,7 @@ PYTHON_COMPAT=( "python3_10" ) # CI only tests with 3.10
 
 inherit cmake python-any-r1
 
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86"
+KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${PV/_/-}"
 SRC_URI="
 https://github.com/Dobiasd/frugally-deep/archive/refs/tags/v${PV/_/-}.tar.gz

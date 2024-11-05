@@ -19,7 +19,7 @@ LICENSE="
 # menorah.xpm CC0-1.0
 #   https://openclipart.org/detail/291738/hannukah-symbol
 SLOT="0"
-KEYWORDS="~amd64 ~arm64 ~ppc ~ppc64 ~sparc ~x86"
+KEYWORDS="~amd64"
 IUSE="custom-image keffiyeh-woman keffiyeh-woman-mask-on menorah palestine-flag +ukraine-flag no-flag r1"
 REQUIRED_USE="
 	|| (

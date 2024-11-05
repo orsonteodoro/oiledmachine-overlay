@@ -17,7 +17,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="17d7580d6407802f85855d2cc9190634e2c95624" # Feb 19, 2024
 	inherit git-r3
 else
-	KEYWORDS="~amd64 ~arm64 ~alpha ~ppc ~ppc64 ~m68k ~riscv ~s390 ~sparc ~x86"
+	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~m68k ~riscv ~s390 ~sparc ~x86"
 	SRC_URI="
 https://github.com/google/sentencepiece/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz

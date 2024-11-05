@@ -3,13 +3,17 @@
 
 EAPI=8
 
+# U24
+
 inherit cmake toolchain-funcs
 
 if [[ "${PV}" == "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/rui314/mold.git"
 	inherit git-r3
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~riscv ~sparc ~x86"
+	KEYWORDS="
+~amd64 ~arm ~arm64 ~loong ~m68k ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86
+	"
 	SRC_URI="
 https://github.com/rui314/mold/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz

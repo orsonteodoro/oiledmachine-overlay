@@ -15,10 +15,7 @@ SOVER_TBBBIND="2" # See https://github.com/oneapi-src/oneTBB/blob/2019_U7/build/
 inherit flag-o-matic multilib-minimal multilib toolchain-funcs
 
 # Ebuild provided for testing compatibility only.  For production use latest.
-#KEYWORDS="
-#~alpha amd64 arm arm64 ~hppa ppc ppc64 ~riscv ~sparc x86 ~amd64-linux
-#~x86-linux
-#"
+#KEYWORDS="~amd64"
 S="${WORKDIR}/oneTBB-${MY_PV}"
 SRC_URI="
 https://github.com/intel/${PN}/archive/${MY_PV}.tar.gz

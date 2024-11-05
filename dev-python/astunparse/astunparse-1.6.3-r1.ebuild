@@ -8,7 +8,7 @@ PYTHON_COMPAT=( "python3_"{9..11} )
 
 inherit distutils-r1 pypi
 
-KEYWORDS="amd64 arm arm64 ~ppc ppc64 ~riscv ~sparc x86"
+KEYWORDS="~amd64"
 
 DESCRIPTION="Astun parser for python"
 HOMEPAGE="

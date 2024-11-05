@@ -12,10 +12,7 @@ VALA_USE_DEPEND="vapigen"
 inherit flag-o-matic gnome.org gnome2-utils meson python-any-r1 vala xdg
 inherit multilib-minimal
 
-KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86
-~amd64-linux ~x86-linux ~sparc-solaris ~x86-solaris
-"
+KEYWORDS="~amd64"
 
 DESCRIPTION="Libraries for cryptographic UIs and accessing PKCS#11 modules"
 HOMEPAGE="https://gitlab.gnome.org/GNOME/gcr"

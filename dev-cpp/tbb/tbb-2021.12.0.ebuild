@@ -30,10 +30,7 @@ VER_SCH="semver" # valid values (left column):
 
 inherit cmake flag-o-matic multilib-minimal python-r1 toolchain-funcs
 
-KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~ppc ~ppc64 ~sparc ~x86 ~amd64-linux
-~x86-linux
-"
+KEYWORDS="~amd64"
 if [[ "${VER_SCH}" == "marketing" ]] ; then
 	S="${WORKDIR}/${MY_PN}-${MY_PV}"
 	S_BAK="${WORKDIR}/${MY_PN}-${MY_PV}"

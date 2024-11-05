@@ -12,7 +12,7 @@ PYPI_NO_NORMALIZE=1
 
 inherit distutils-r1 pypi
 
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 S="${WORKDIR}/${PYPI_PN}-$(pypi_translate_version "${PV}")"
 SRC_URI="
 	$(pypi_sdist_url --no-normalize)
