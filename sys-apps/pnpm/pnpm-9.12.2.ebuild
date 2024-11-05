@@ -4,7 +4,7 @@
 
 EAPI=8
 
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 S="${WORKDIR}"
 SRC_URI=""
 

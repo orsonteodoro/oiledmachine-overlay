@@ -33,7 +33,7 @@ HOMEPAGE="
 LICENSE="
 	MIT
 "
-#KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Ebuild needs retest.
+#KEYWORDS="~amd64" # Ebuild needs test
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" codestyle doc linkify rtd test test-docutils"
 REQUIRED_USE="

@@ -9,7 +9,7 @@ PYTHON_COMPAT=( "python3_10" "pypy3" ) # Upstream supports up to 3.10.  See READ
 
 inherit distutils-r1
 
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${PV}"
 SRC_URI="
 https://github.com/jazzband/contextlib2/archive/refs/tags/${PV}.tar.gz

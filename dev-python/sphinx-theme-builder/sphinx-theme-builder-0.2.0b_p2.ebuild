@@ -27,7 +27,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="0ab51536e250d14b511481e1afaa1fc249000ba4" # Mar 27, 2023
 	inherit git-r3
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/${MY_P}"
 	SRC_URI="
 https://github.com/pradyunsg/sphinx-theme-builder/archive/refs/tags/${MY_PV}.tar.gz

@@ -25,7 +25,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="6aa535ec6ef0cddbd964ac52921e98456fd1e17d" # Apr 24, 2024
 	inherit git-r3
 else
-#	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Missing dependencies
+#	KEYWORDS="~amd64" # Missing dependencies
 	SRC_URI="
 https://github.com/intel/openvino-ai-plugins-gimp/archive/refs/tags/v${MY_PV}.tar.gz
 	-> ${P}.tar.gz

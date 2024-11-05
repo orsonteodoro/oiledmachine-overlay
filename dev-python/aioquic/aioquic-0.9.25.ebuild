@@ -21,7 +21,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="0c383217db10e6168dc8d4c295d8a504aad5cde1" # Jan 6, 2024
 	inherit git-r3
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	SRC_URI="
 https://github.com/aiortc/aioquic/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz

@@ -29,7 +29,7 @@ http://mahimahi.mit.edu/
 https://github.com/ravinet/mahimahi
 "
 LICENSE="GPL-3+"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" alt-ssl gnuplot +sudo +sysctl"
 REQUIRED_USE+="

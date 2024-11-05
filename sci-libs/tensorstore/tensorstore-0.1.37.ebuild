@@ -43,7 +43,7 @@ https://storage.googleapis.com/tensorstore-bazel-mirror/chromium.googlesource.co
 "
 #https://github.com/glennrp/libpng/archive/v${LIBPNG_PV}.tar.gz -> libpng-${LIBPNG_PV}.tar.gz
 #https://github.com/libjpeg-turbo/libjpeg-turbo/archive/${LIBJPEG_TURBO_PV}.tar.gz -> libjpeg-turbo-2.1.4.tar.gz
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${P}"
 SRC_URI="
 ${bazel_external_uris}

@@ -21,7 +21,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 else
 	EGIT_EIGEN_COMMIT="7bf2968fed5f246c0589e1111004cb420fcd7c71" # Mar 7, 2023
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	SRC_URI="
 https://github.com/jax-ml/ml_dtypes/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz

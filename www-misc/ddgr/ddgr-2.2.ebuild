@@ -17,7 +17,7 @@ S="${WORKDIR}/${P}"
 DESCRIPTION="DuckDuckGo from the terminal"
 HOMEPAGE="https://github.com/jarun/ddgr"
 LICENSE="GPL-3+"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 SLOT="0"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}

@@ -24,7 +24,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 else
 	EGIT_COMMIT="6e13ed9bdb9a0fad818c6aa17b649e0e76ce15ca" # May 6, 2024
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 	SRC_URI="
 https://github.com/tammoippen/plotille/archive/${EGIT_COMMIT}.tar.gz

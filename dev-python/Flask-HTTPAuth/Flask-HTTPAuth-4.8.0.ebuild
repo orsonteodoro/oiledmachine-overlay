@@ -17,7 +17,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
 	inherit git-r3
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	SRC_URI="
 https://github.com/miguelgrinberg/Flask-HTTPAuth/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz

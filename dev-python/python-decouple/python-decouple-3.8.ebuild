@@ -16,7 +16,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="860969c0bc7ea9f6815447b498cbaf206813865b" # Mar 1, 2023
 	inherit git-r3
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/${P}"
 	SRC_URI="
 https://github.com/HBNetwork/python-decouple/archive/refs/tags/v${PV}.tar.gz

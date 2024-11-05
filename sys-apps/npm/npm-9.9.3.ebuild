@@ -7,7 +7,7 @@ EAPI=8
 LOCKFILE_VER="3" # See https://docs.npmjs.com/cli/v9/configuring-npm/package-lock-json#lockfileversion
 # See also https://github.com/npm/cli/blob/v9.9.3/package-lock.json
 
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}"
 SRC_URI=""
 

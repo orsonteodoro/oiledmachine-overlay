@@ -14,7 +14,7 @@ PYTHON_COMPAT=( "python3_"{8..11} ) # Originally for 2.7
 
 inherit flag-o-matic python-single-r1 toolchain-funcs
 
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${PV}"
 SRC_URI=" mirror://sourceforge/${PN}/${P}.tar.gz"
 

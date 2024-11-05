@@ -32,7 +32,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${PN}-${PV}"
 	inherit git-r3
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	EGIT_COMMIT="4b6d2cfa59c7442af115dfc6e50fd8d7d40b96ef" # Jan 15, 2024
 	S="${WORKDIR}/custom-models-${EGIT_COMMIT}"
 	SRC_URI="

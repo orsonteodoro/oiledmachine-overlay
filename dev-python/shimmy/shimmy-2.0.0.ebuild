@@ -14,7 +14,7 @@ PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1
 
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/Farama-Foundation/Shimmy/archive/refs/tags/v${PV}.tar.gz
