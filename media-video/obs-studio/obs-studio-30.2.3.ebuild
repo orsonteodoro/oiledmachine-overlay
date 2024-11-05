@@ -58,7 +58,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
 	inherit git
 else
-	KEYWORDS="~amd64 ~x86"
+	KEYWORDS="~amd64 ~arm64"
 	SRC_URI="
 https://github.com/akheron/jansson/archive/${JANSSON_COMMIT}.tar.gz
 	-> jansson-${JANSSON_COMMIT:0:7}.tar.gz
