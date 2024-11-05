@@ -17,7 +17,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="1c4c6aa0ff31b5ab04f951ece3a5438b2c506ea6" # Nov 21, 2023
 	inherit git-r3
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	SRC_URI="
 https://github.com/google-deepmind/distrax/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz

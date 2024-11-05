@@ -19,7 +19,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 else
 	EGIT_COMMIT="4552f69af4763053d87ee4ce6d3da59ca3232f3c" # May 6, 2024
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/dopamine-${EGIT_COMMIT}"
 	SRC_URI="
 https://github.com/google/dopamine/archive/${EGIT_COMMIT}.tar.gz

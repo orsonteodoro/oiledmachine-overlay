@@ -21,18 +21,19 @@ if [[ "${PV}" =~ "9999" || 1 ]] ; then
 	EGIT_COMMIT="8d6acefcfdd1d4feebc2c0653f51407ecc577263"
 	inherit git-r3
 else
+	KEYWORDS="~amd64"
 	SRC_URI="
 https://github.com/aiortc/pylsqpack/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
 fi
+S="${WORKDIR}/${MY_PN}-${PV}"
 
 DESCRIPTION="Python bindings for ls-qpack"
 HOMEPAGE="https://github.com/aiortc/pylsqpack"
 LICENSE="
 	BSD
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
 RDEPEND+="
@@ -52,7 +53,6 @@ BDEPEND+="
 		dev-util/ruff
 	)
 "
-S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="mirror"
 DOCS=( "docs/index.rst" "README.rst" )
 

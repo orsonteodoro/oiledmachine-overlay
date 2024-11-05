@@ -17,7 +17,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="2e38ac3c42c8744e9db5163068f6f451eeb78d67" # Jan 22, 2024
 	inherit git-r3
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	SRC_URI="
 https://github.com/MatthieuDartiailh/pyclibrary/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz

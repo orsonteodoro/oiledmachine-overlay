@@ -20,7 +20,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="a2479ecfc31b074ec1b43faa15f7fc7960a42f6b" # Jun 14, 2024
 	inherit git-r3
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64 ~arm64"
 	SRC_URI="
 mirror://pypi/${PN:0:1}/${PN}/${PN}-${PV}.tar.gz
 	"

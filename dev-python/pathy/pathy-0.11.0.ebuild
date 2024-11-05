@@ -15,7 +15,7 @@ PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 pypi
 
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${PV}"
 SRC_URI="
 https://github.com/justindujardin/pathy/archive/refs/tags/v${PV}.tar.gz

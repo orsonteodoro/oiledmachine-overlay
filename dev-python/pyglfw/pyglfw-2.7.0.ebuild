@@ -14,7 +14,7 @@ PYTHON_COMPAT=( "python3_"{8..11} ) # CI only test up to 3.8
 
 inherit distutils-r1
 
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 S="${WORKDIR}/${MY_PN}-${PV}"
 SRC_URI="
 https://github.com/FlorianRhiem/pyGLFW/archive/refs/tags/v${PV}.tar.gz

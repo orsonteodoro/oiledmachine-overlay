@@ -10,11 +10,12 @@ PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 pypi
 
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 S="${WORKDIR}/${PN/-/_}-${PV}"
 
 DESCRIPTION="System V IPC primitives (semaphores, shared memory and message queues) for Python"
 HOMEPAGE="
+	https://semanchuk.com/philip/sysv_ipc/
 	https://pypi.org/project/sysv-ipc
 "
 LICENSE="

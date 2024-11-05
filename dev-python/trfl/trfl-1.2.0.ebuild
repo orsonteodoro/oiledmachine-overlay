@@ -19,7 +19,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 else
 	EGIT_COMMIT="ed6eff5b79ed56923bcb102e152c01ea52451d4c" # Aug 16, 2021
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 	SRC_URI="
 https://github.com/google-deepmind/trfl/archive/${EGIT_COMMIT}.tar.gz

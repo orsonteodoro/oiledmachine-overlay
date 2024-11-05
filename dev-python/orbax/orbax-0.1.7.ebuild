@@ -18,7 +18,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="cde8f95c466b889a0e0642e4474baea983b33134" # Mar 29, 2023
 	IUSE+=" fallback-commit"
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/${P}"
 	SRC_URI="
 https://github.com/google/orbax/archive/refs/tags/v${PV}.tar.gz

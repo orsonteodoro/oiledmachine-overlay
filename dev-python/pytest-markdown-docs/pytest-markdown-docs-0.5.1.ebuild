@@ -17,7 +17,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="dbe75eb099452473ebb5393ca7409d186c9cac1f" # Mar 4, 2024
 	inherit git-r3
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	SRC_URI="
 https://github.com/modal-labs/pytest-markdown-docs/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz

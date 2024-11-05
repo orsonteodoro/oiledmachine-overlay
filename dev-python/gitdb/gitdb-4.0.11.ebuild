@@ -14,7 +14,7 @@ SMMAP_COMMIT="256c5a21de2d14aca02c9689d7d63f78c4e0ef61" # Sep 17, 2023
 
 inherit distutils-r1
 
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 S="${WORKDIR}/${MY_PN}-${PV}"
 SRC_URI="
 https://github.com/gitpython-developers/gitdb/archive/refs/tags/${PV}.tar.gz

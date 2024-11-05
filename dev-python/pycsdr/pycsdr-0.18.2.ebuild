@@ -11,7 +11,7 @@ PYTHON_COMPAT=( "python3_"{8..11} ) # D10 uses 3.7
 
 inherit distutils-r1
 
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/jketterl/pycsdr/archive/refs/tags/${PV}.tar.gz

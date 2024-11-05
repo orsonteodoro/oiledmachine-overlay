@@ -19,7 +19,7 @@ if [[ ${PV} =~ "9999" ]] ; then
 	inherit git-r3
 else
 	CHIPMUNK2D_COMMIT="7a29dcfa49931f26632f3019582f289ba811a2b9" # May 9, 2024
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64 ~arm64"
 	SRC_URI="
 https://github.com/viblo/pymunk/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz

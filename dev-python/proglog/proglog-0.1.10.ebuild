@@ -9,7 +9,7 @@ PYTHON_COMPAT=( "python3_10" ) # Upstream tested up to 3.9
 
 inherit distutils-r1
 
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 S="${WORKDIR}/${PN^}-${PV}"
 SRC_URI="
 https://github.com/Edinburgh-Genome-Foundry/Proglog/archive/refs/tags/v${PV}.tar.gz
