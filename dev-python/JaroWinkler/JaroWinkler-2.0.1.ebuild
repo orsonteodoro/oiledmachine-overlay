@@ -13,7 +13,7 @@ PYTHON_COMPAT=( "python3_"{8..12} )
 
 inherit distutils-r1 pypi
 
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 
 DESCRIPTION="Python library for fast approximate string matching using Jaro and \
 Jaro-Winkler similarity"

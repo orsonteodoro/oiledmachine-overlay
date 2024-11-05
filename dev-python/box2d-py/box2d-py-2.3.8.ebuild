@@ -9,7 +9,7 @@ PYTHON_COMPAT=( python3_10 ) # Upstream tested up to 3.7 for this release
 
 inherit distutils-r1
 
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64 ~arm ~arm64"
 S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/openai/box2d-py/archive/refs/tags/${PV}.tar.gz

@@ -22,7 +22,7 @@ DESCRIPTION="The Levenshtein Python C extension module contains functions for \
 fast computation of Levenshtein distance and string similarity"
 LICENSE="GPL-2+"
 HOMEPAGE="https://github.com/maxbachmann/Levenshtein"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64 ~arm64"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc"
