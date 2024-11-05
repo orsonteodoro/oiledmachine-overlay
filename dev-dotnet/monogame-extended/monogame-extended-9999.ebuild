@@ -11,7 +11,7 @@ DESCRIPTION="MonoGame.Extended are classes and extensions to make MonoGame more 
 awesome"
 HOMEPAGE="http://www.monogameextended.net/"
 LICENSE="MIT"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64"
 PROJECT_NAME="MonoGame.Extended"
 TARGET_FRAMEWORK="net60"
 IUSE="${TARGET_FRAMEWORK} developer"

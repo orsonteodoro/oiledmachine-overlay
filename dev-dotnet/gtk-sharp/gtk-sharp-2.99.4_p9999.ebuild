@@ -15,7 +15,7 @@ and the foundation of most GUI apps built with Mono"
 HOMEPAGE="https://github.com/mono/gtk-sharp"
 LICENSE="LGPL-2 MIT GPL-2"
 # GPL-2 - gtk/gui-thread-check/profiler/gui-thread-check.c
-KEYWORDS="~amd64 ~x86 ~ppc"
+KEYWORDS="~amd64"
 ETFM="net35"
 IUSE="${ETFM[@]} mono static-libs"
 REQUIRED_USE="

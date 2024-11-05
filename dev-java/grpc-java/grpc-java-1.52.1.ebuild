@@ -67,7 +67,7 @@ LICENSE="
 # Apache-2.0, W3C-Software-Notice-and-License - ./repository/org/apache/ant/ant-launcher/1.10.11/ant-launcher-1.10.11/META-INF/LICENSE.txt
 
 SLOT="0"
-KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~s390 ~x86"
+KEYWORDS="~amd64"
 IUSE+="
 android doc source test
 r1

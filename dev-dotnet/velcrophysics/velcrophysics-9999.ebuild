@@ -12,7 +12,7 @@ HOMEPAGE="https://github.com/Genbox/VelcroPhysics"
 PROJECT_NAME="VelcroPhysics"
 LICENSE="MIT Ms-PL"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64"
 IUSE="net50 net60 demo hello-world mono monogame samples standalone testbed"
 REQUIRED_USE="
 	|| ( monogame standalone )

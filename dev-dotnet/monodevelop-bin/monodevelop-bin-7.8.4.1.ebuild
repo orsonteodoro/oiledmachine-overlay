@@ -53,7 +53,7 @@ LICENSE="
 # monotools - GPL-2, LGPL-2, MIT
 # nuget-binary - Apache-2.0
 #
-KEYWORDS="~amd64 ~arm64 ~x86"
+KEYWORDS="~amd64 ~amd64-linux ~arm64 ~arm64-linux ~x86 ~x86-linux"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE=" database nunit versioncontrol"
 REQUIRED_USE=" "

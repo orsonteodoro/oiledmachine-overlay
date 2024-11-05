@@ -12,11 +12,7 @@ km ku lt lv mi mk ms nb nl nn pl pt pt-BR ro ru sk sl sq sv sw tn uk zu
 
 inherit autotools flag-o-matic multilib-minimal
 
-KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc
-~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris ~x64-solaris
-~x86-solaris
-"
+KEYWORDS="~amd64 ~arm64 ~ppc64 ~s390"
 SRC_URI="
 https://github.com/hunspell/hunspell/releases/download/v${PV}/${P}.tar.gz
 "

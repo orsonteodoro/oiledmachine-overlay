@@ -10,7 +10,7 @@ inherit dotnet
 DESCRIPTION="FNA - Accuracy-focused XNA4 reimplementation for open platforms"
 HOMEPAGE="http://fna-xna.github.io/"
 LICENSE="Ms-PL MIT LGPL-2.1"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64"
 IUSE="${USE_DOTNET} mojoshader openal sdl2 theoraplay vorbis"
 REQUIRED_USE="|| ( ${USE_DOTNET} )"
 RDEPEND="

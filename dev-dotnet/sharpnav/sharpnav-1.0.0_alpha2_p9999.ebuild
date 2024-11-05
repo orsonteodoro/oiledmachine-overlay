@@ -9,7 +9,7 @@ inherit git-r3 lcnr
 DESCRIPTION="SharpNav is advanced pathfinding for C#"
 HOMEPAGE="http://sharpnav.com"
 LICENSE="MIT"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64"
 PROJECT_NAME="SharpNav"
 USE_DOTNET="net451"
 UCONFIGURATIONS=(

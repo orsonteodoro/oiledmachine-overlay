@@ -8,13 +8,15 @@ EAPI=8
 # The libfmt requirement is based on the CMakeLists.txt is different from the \
 # INSTALL.md requiring 6.2.
 
+# 4.x will be rust.  3.x is still c++.
+
 MY_PN="${PN/b/B}"
 
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit cmake-multilib python-any-r1
 
-KEYWORDS="~amd64 ~arm64"
+KEYWORDS="~amd64 ~arm64 ~arm64-macos ~ppc64 ~s390"
 S="${WORKDIR}/${MY_PN}-${PV}"
 SRC_URI="
 https://github.com/rizsotto/Bear/archive/${PV}.tar.gz
@@ -40,10 +42,9 @@ CDEPEND="
 "
 RDEPEND+="
 	${CDEPEND}
-	!=dev-cpp/nlohmann_json-3.10.3[${MULTILIB_USEDEP}]
-	>=dev-cpp/nlohmann_json-3.11.2[${MULTILIB_USEDEP}]
-	>=dev-libs/libfmt-10.1.0[${MULTILIB_USEDEP}]
-	>=dev-libs/spdlog-1.12.0[${MULTILIB_USEDEP}]
+	>=dev-cpp/nlohmann_json-3.11.3[${MULTILIB_USEDEP}]
+	>=dev-libs/libfmt-11.0.2[${MULTILIB_USEDEP}]
+	>=dev-libs/spdlog-1.14.1[${MULTILIB_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}

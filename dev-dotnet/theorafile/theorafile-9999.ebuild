@@ -10,7 +10,7 @@ inherit dotnet git-r3 multilib-minimal
 DESCRIPTION="Theorafile - Ogg Theora Video Decoder Library"
 HOMEPAGE="https://github.com/FNA-XNA/Theorafile"
 LICENSE="ZLIB"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~arm64-macos"
 PROJECT_NAME="Theorafile"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 USE_DOTNET="net40"

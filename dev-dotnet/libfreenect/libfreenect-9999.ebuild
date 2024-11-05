@@ -10,7 +10,7 @@ DESCRIPTION="Drivers and libraries for the Xbox Kinect device on Windows, \
 Linux, and OS X"
 HOMEPAGE="https://github.com/OpenKinect/libfreenect"
 LICENSE="|| ( Apache-2.0 GPL-2 )"
-KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
+KEYWORDS="~amd64 ~x86"
 IUSE="${USE_DOTNET}"
 REQUIRED_USE="|| ( ${USE_DOTNET} )"
 MY_PV="0.5.7"

@@ -14,7 +14,7 @@ HOMEPAGE="https://github.com/GtkSharp/GtkSharp"
 LICENSE="LGPL-2 MIT GPL-2"
 # GPL-2 - Source/OldStuff/parser/gapi-parser.cs
 # GPL-2 - Source/Tools/GapiCodegen/CodeGenerator.cs
-KEYWORDS="~amd64 ~x86 ~ppc"
+KEYWORDS="~amd64"
 ETFM="net60 netstandard20"
 IUSE="${ETFM[@]} developer fsharp gtksourceview mono nupkg vbnet webkit-gtk"
 REQUIRED_USE="

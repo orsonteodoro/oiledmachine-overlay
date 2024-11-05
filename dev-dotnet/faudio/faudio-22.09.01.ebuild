@@ -11,7 +11,7 @@ inherit cmake-multilib dotnet lcnr
 DESCRIPTION="FAudio - Accuracy-focused XAudio reimplementation for open platforms"
 HOMEPAGE="http://fna-xna.github.io/"
 LICENSE="ZLIB"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~arm64-macos ~x64-macos ~x86"
 IUSE="${USE_DOTNET}"
 REQUIRED_USE="|| ( ${USE_DOTNET} )"
 RDEPEND="

@@ -9,7 +9,7 @@ SLOT_MAJOR="${PV%%.*}"
 
 inherit cmake python-any-r1 toolchain-funcs
 
-KEYWORDS="~amd64 ~arm64 ~x86"
+KEYWORDS="~amd64 ~arm64 ~arm64-macos"
 S="${WORKDIR}/${PN}-version_${PV}"
 SRC_URI="
 https://github.com/WebAssembly/binaryen/archive/version_${PV}.tar.gz

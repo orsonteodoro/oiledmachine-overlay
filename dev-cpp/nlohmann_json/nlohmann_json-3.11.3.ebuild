@@ -26,7 +26,7 @@ HOMEPAGE="
 LICENSE="MIT"
 RESTRICT="test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86"
+KEYWORDS="~amd64 ~arm64 ~arm64-macos"
 IUSE="doc test"
 # U 22.04
 BDEPEND="

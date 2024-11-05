@@ -3,17 +3,46 @@
 
 EAPI=7
 
-TARGET_FRAMEWORK="netstandard2.0"
+MY_PN="SFML.Net"
+
+GIT_USER="SFML"
 DOTNET_PV="6.0"
-inherit dotnet git-r3
+# The dotnet-sdk-bin supports only 1 ABI at a time.
+DOTNET_SUPPORTED_SDKS=( "dotnet-sdk-bin-${DOTNET_PV}" )
+PROJECT_NAME="SFML.Net"
+TARGET_FRAMEWORK="netstandard2.0"
+
+inherit dotnet
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_REPO_URI="https://github.com/SFML/SFML.Net.git"
+	EGIT_BRANCH="master"
+	EGIT_COMMIT="HEAD"
+EXPECTED_BUILD_FILES="\
+6c7f2bcc6e2f4a2749df6c366a77b31094c8fa28b1a3873738e33c0731a888e3\
+f664b59e1280ad5c6b5d35fbc8d8c6e4bc739d3229bb3dd291632877deb16038\
+"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
+	IUSE+=" fallback-commit"
+	S="${WORKDIR}/${P}"
+	inherit git-r3
+else
+	KEYWORDS="~amd64"
+	S="${WORKDIR}/${MY_PN}-${PV}"
+	SRC_URI="
+https://github.com/SFML/SFML.Net/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
+	"
+fi
 
 DESCRIPTION="SFML.Net is a C# language binding for SFML"
 HOMEPAGE="http://www.sfml-dev.org"
 LICENSE="ZLIB"
+RESTRICT="mirror"
+SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
-${USE_DOTNET} developer mono nupkg
-
-fallback-commit
+${USE_DOTNET}
+developer mono nupkg
 "
 REQUIRED_USE=""
 RDEPEND="
@@ -24,25 +53,6 @@ RDEPEND="
 	)
 "
 DEPEND="${RDEPEND}"
-GIT_USER="SFML"
-PROJECT_NAME="SFML.Net"
-SRC_URI=""
-SLOT="0/$(ver_cut 1-2 ${PV})"
-KEYWORDS="~amd64 ~x86"
-S="${WORKDIR}/${P}"
-RESTRICT="mirror"
-
-EGIT_REPO_URI="https://github.com/SFML/SFML.Net.git"
-EGIT_BRANCH="master"
-EGIT_COMMIT="HEAD"
-
-# The dotnet-sdk-bin supports only 1 ABI at a time.
-DOTNET_SUPPORTED_SDKS=( "dotnet-sdk-bin-${DOTNET_PV}" )
-
-EXPECTED_BUILD_FILES="\
-6c7f2bcc6e2f4a2749df6c366a77b31094c8fa28b1a3873738e33c0731a888e3\
-f664b59e1280ad5c6b5d35fbc8d8c6e4bc739d3229bb3dd291632877deb16038\
-"
 
 # Copy and sanitize permissions
 copy_next_to_file() {
@@ -95,7 +105,7 @@ eerror
 	fi
 }
 
-src_unpack() {
+src_unpack_live() {
 	use fallback-commit && export EGIT_COMMIT="f678eb2cf1eadf1a4f95cf1febd1da1d78ddcd7f" # Oct 27, 2022
 	git-r3_fetch
 	git-r3_checkout
@@ -111,6 +121,14 @@ eerror "Expected build files:\t${EXPECTED_BUILD_FILES}"
 eerror "Actual build files:\t${actual_build_files}"
 eerror
 		die
+	fi
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		src_unpack_live
+	else
+		unpack ${A}
 	fi
 }
 

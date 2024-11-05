@@ -25,7 +25,7 @@ LICENSE="
 	ZLIB
 "
 # ZLIB - NUnit
-KEYWORDS="~amd64 ~arm64 ~x86"
+KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE=" r1"
 REQUIRED_USE=" "

@@ -10,7 +10,7 @@ inherit cmake
 DESCRIPTION="FNA3D - 3D Graphics Library for FNA"
 HOMEPAGE="http://fna-xna.github.io/"
 LICENSE="ZLIB"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64"
 IUSE+=" hlsl"
 REQUIRED_USE="
 	hlsl? ( || ( elibc_mingw ) )

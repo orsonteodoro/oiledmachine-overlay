@@ -16,7 +16,7 @@ DESCRIPTION="C# library for parsing and importing TMX and TSX files generated \
 by Tiled, a tile map generation tool."
 HOMEPAGE="https://github.com/marshallward/TiledSharp"
 LICENSE="Apache-2.0"
-KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
+KEYWORDS="~amd64"
 IUSE+=" ${USE_DOTNET} doc test"
 REQUIRED_USE+="
 	^^ ( ${USE_DOTNET} )
