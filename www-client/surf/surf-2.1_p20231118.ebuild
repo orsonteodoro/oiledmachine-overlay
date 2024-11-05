@@ -57,10 +57,7 @@ LICENSE="
 		all-rights-reserved
 	)
 "
-KEYWORDS="
-~alpha ~amd64 ~amd64-fbsd ~amd64-linux ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86
-~x86-linux ~x86-macos
-"
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86" # Same as webkit-gtk
 SLOT="0"
 IUSE+="
 ${EXTERNAL_IUSE}

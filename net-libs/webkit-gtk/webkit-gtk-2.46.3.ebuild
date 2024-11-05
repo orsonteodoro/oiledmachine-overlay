@@ -129,7 +129,7 @@ inherit cflags-depends check-linker check-reqs cmake desktop dhms flag-o-matic
 inherit git-r3 gnome2 lcnr linux-info llvm multilib-minimal multiprocessing
 inherit pax-utils python-any-r1 ruby-single toolchain-funcs
 
-KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc64 ~sparc ~riscv ~x86"
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~s390 ~sparc ~riscv ~x86"
 #
 # Revisions and commit hashes provided since no tags specifically for the
 # webkit-gtk project.
