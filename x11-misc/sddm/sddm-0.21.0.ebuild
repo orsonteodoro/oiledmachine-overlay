@@ -19,7 +19,7 @@ else
 https://github.com/sddm/sddm/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
-	KEYWORDS="amd64 ~arm arm64 ~loong ~ppc64 ~riscv x86"
+	KEYWORDS="~amd64"
 fi
 
 DESCRIPTION="Simple Desktop Display Manager"

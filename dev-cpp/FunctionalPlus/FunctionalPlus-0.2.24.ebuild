@@ -11,7 +11,7 @@ GCC_SLOTS=( {13..9} )
 
 inherit cmake-multilib
 
-KEYWORDS="~amd64 ~arm64 ~x64~macos"
+KEYWORDS="~amd64 ~arm64 ~arm64-macos"
 S="${WORKDIR}/${PN}-${PV/_/-}"
 SRC_URI="
 https://github.com/Dobiasd/FunctionalPlus/archive/refs/tags/v${PV/_/-}.tar.gz

@@ -8,7 +8,7 @@ DESCRIPTION="w3crapcli/last.fm provides a command line interface for the \
 last.fm web service"
 LICENSE="WTFPL-2"
 HOMEPAGE="https://github.com/l29ah/w3crapcli"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 SLOT="0"
 IUSE+="
 doc download-tracks gettracks glistfm grab-lastfm-userpic lastfmpost mpv

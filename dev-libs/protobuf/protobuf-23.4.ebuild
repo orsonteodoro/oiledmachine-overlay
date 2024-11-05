@@ -20,7 +20,7 @@ https://github.com/protocolbuffers/protobuf/archive/v${PV}.tar.gz -> ${P}.tar.gz
 https://github.com/open-source-parsers/jsoncpp/archive/${JSONCPP_COMMIT}.tar.gz -> jsoncpp-${JSONCPP_COMMIT}.tar.gz
 	)
 	"
-	KEYWORDS="~amd64 ~arm64 ~ppc64 ~s390 ~x86"
+	KEYWORDS="~amd64 ~amd64-linux ~amd64-macos ~arm64 ~ppc64 ~s390 ~x86"
 fi
 
 DESCRIPTION="An extensible mechanism for serializing structured data"

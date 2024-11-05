@@ -28,7 +28,7 @@ TEST_PATH="${WORKDIR}/test/"
 
 inherit flag-o-matic java-pkg-opt-2 llvm python-single-r1 toolchain-funcs
 
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~amd64-linux ~arm64 ~arm64-macos"
 SRC_URI="https://github.com/kripken/${PN}/archive/${PV}.tar.gz -> ${DEST_FILENAME}"
 
 DESCRIPTION="LLVM-to-JavaScript Compiler"

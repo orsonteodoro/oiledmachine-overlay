@@ -12,7 +12,8 @@ if [[ "${PV}" == "9999" ]] ; then
 	inherit git-r3
 else
 	KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~m68k ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86
+~amd64 ~amd64-linux ~arm ~arm64 ~arm64-macos ~loong ~m68k ~ppc ~ppc64 ~riscv
+~s390 ~sparc ~x86 ~x86-linux
 	"
 	SRC_URI="
 https://github.com/rui314/mold/archive/refs/tags/v${PV}.tar.gz

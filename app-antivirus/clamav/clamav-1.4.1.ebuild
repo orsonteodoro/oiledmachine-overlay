@@ -182,7 +182,7 @@ PYTHON_COMPAT=( python3_{10..12} ) # CI uses 3.8
 inherit cargo cmake flag-o-matic lcnr llvm python-any-r1 systemd tmpfiles
 
 if ! [[ "${PV}" =~ "_rc" ]] ; then
-	KEYWORDS="~amd64 ~arm64 ~x64~macos"
+	KEYWORDS="~amd64 ~arm64 ~arm64-macos"
 fi
 S="${WORKDIR}/clamav-${MY_P}"
 SRC_URI="

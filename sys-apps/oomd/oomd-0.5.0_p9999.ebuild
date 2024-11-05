@@ -16,7 +16,7 @@ LICENSE="
 "
 # src/oomd/util/FixtureTest.cpp contains all-rights-reserved
 HOMEPAGE="https://github.com/facebookincubator/oomd"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~x86"
+KEYWORDS="~amd64"
 PLUGINS_CORE=(
 	BaseKillPlugin
 	ContinuePlugin
