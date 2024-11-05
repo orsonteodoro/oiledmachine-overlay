@@ -786,7 +786,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-2.5.1-gentoo.patch"
+	"A${FILESDIR}/${PN}-2.5.1-gentoo.patch"
 	"${FILESDIR}/${PN}-2.5.1-install-dirs.patch"
 	"${FILESDIR}/${PN}-1.12.0-glog-0.6.0.patch"
 	"${FILESDIR}/${PN}-2.3.0-cudnn_include_fix.patch"
@@ -1062,11 +1062,17 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		-DUSE_OPENMP=$(usex openmp)
 		-DUSE_ROCM=$(usex rocm)
 		-DUSE_SYSTEM_BENCHMARK=$(usex system-libs)
+		-DUSE_SYSTEM_CLOG=$(usex system-libs)
+		-DUSE_SYSTEM_CPP_HTTPLIB=$(usex system-libs)
 		-DUSE_SYSTEM_CPUINFO=$(usex system-libs)
 		-DUSE_SYSTEM_FP16=$(usex system-libs)
 		-DUSE_SYSTEM_FXDIV=$(usex system-libs)
+		-DUSE_SYSTEM_FBGEMM=$(usex system-libs)
+		-DUSE_SYSTEM_FLATBUFFERS=$(usex system-libs)
 		-DUSE_SYSTEM_GLOO=$(usex system-libs)
 		-DUSE_SYSTEM_KINETO=$(usex system-libs)
+		-DUSE_SYSTEM_LIBFMT=$(usex system-libs)
+		-DUSE_SYSTEM_NNPACK=$(usex system-libs)
 		-DUSE_SYSTEM_ONNX=$(usex system-libs)
 		-DUSE_SYSTEM_PSIMD=$(usex system-libs)
 		-DUSE_SYSTEM_PTHREADPOOL=$(usex system-libs)

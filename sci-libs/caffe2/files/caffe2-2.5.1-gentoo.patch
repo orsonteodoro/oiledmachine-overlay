@@ -1,6 +1,6 @@
 diff '--color=auto' -urp pytorch-2.5.1.orig/CMakeLists.txt pytorch-2.5.1/CMakeLists.txt
 --- pytorch-2.5.1.orig/CMakeLists.txt	2024-10-22 18:14:52.000000000 -0700
-+++ pytorch-2.5.1/CMakeLists.txt	2024-11-03 15:26:43.738629778 -0800
++++ pytorch-2.5.1/CMakeLists.txt	2024-11-05 13:37:06.374806896 -0800
 @@ -986,12 +986,11 @@ endif()
  # third_party/FBGEMM
  include(cmake/public/utils.cmake)
@@ -23,11 +23,10 @@ diff '--color=auto' -urp pytorch-2.5.1.orig/CMakeLists.txt pytorch-2.5.1/CMakeLi
  else()
    # skip unwanted includes from windows.h
    add_compile_definitions(WIN32_LEAN_AND_MEAN)
-Only in pytorch-2.5.1: CMakeLists.txt.orig
 diff '--color=auto' -urp pytorch-2.5.1.orig/aten/src/ATen/native/quantized/cpu/qnnpack/CMakeLists.txt pytorch-2.5.1/aten/src/ATen/native/quantized/cpu/qnnpack/CMakeLists.txt
 --- pytorch-2.5.1.orig/aten/src/ATen/native/quantized/cpu/qnnpack/CMakeLists.txt	2024-10-22 18:14:52.000000000 -0700
-+++ pytorch-2.5.1/aten/src/ATen/native/quantized/cpu/qnnpack/CMakeLists.txt	2024-11-03 15:26:43.774629235 -0800
-@@ -324,16 +324,8 @@ set_target_properties(pytorch_qnnpack PR
++++ pytorch-2.5.1/aten/src/ATen/native/quantized/cpu/qnnpack/CMakeLists.txt	2024-11-05 14:11:44.403946074 -0800
+@@ -324,16 +324,22 @@ set_target_properties(pytorch_qnnpack PR
  set_target_properties(pytorch_qnnpack PROPERTIES PUBLIC_HEADER include/qnnpack_func.h)
  
  # ---[ Configure clog
@@ -39,50 +38,67 @@ diff '--color=auto' -urp pytorch-2.5.1.orig/aten/src/ATen/native/quantized/cpu/q
 -    "${CONFU_DEPENDENCIES_BINARY_DIR}/clog")
 -  # We build static version of clog but a dynamic library may indirectly depend on it
 -  set_property(TARGET clog PROPERTY POSITION_INDEPENDENT_CODE ON)
--endif()
++option(USE_SYSTEM_CLOG "Use system cloog" OFF)
++if(USE_SYSTEM_CLOG)
++  find_library(CLOG_LIBRARY NAMES clog REQUIRED)
++  target_link_libraries(pytorch_qnnpack PUBLIC ${CLOG_LIBRARY})
++else()
++  if(NOT TARGET clog)
++    set(CLOG_BUILD_TESTS OFF CACHE BOOL "")
++    set(CLOG_RUNTIME_TYPE "${CPUINFO_RUNTIME_TYPE}" CACHE STRING "")
++    add_subdirectory(
++      "${CLOG_SOURCE_DIR}"
++      "${CONFU_DEPENDENCIES_BINARY_DIR}/clog")
++    # We build static version of clog but a dynamic library may indirectly depend on it
++    set_property(TARGET clog PROPERTY POSITION_INDEPENDENT_CODE ON)
++  endif()
++  target_link_libraries(pytorch_qnnpack PUBLIC clog)
+ endif()
 -target_link_libraries(pytorch_qnnpack PUBLIC clog)
-+find_library(CLOG_LIBRARY NAMES clog REQUIRED)
-+target_link_libraries(pytorch_qnnpack PUBLIC ${CLOG_LIBRARY})
  
  # ---[ Configure cpuinfo
  if(NOT TARGET cpuinfo AND USE_SYSTEM_CPUINFO)
 diff '--color=auto' -urp pytorch-2.5.1.orig/c10/CMakeLists.txt pytorch-2.5.1/c10/CMakeLists.txt
 --- pytorch-2.5.1.orig/c10/CMakeLists.txt	2024-10-22 18:14:52.000000000 -0700
-+++ pytorch-2.5.1/c10/CMakeLists.txt	2024-11-03 15:28:51.432701399 -0800
-@@ -94,8 +94,8 @@ if(NOT BUILD_LIBTORCHLESS)
++++ pytorch-2.5.1/c10/CMakeLists.txt	2024-11-05 13:52:18.105299192 -0800
+@@ -94,7 +94,13 @@ if(NOT BUILD_LIBTORCHLESS)
    if(C10_USE_GLOG)
      target_link_libraries(c10 PUBLIC glog::glog)
    endif()
 -  target_link_libraries(c10 PRIVATE fmt::fmt-header-only)
--  target_link_libraries(c10 PRIVATE nlohmann)
-+  target_link_libraries(c10 PRIVATE fmt)
-+   target_link_libraries(c10 PRIVATE nlohmann)
++
++  if(USE_SYSTEM_LIBFMT)
++    target_link_libraries(c10 PRIVATE fmt)
++  else()
++    target_link_libraries(c10 PRIVATE fmt::fmt-header-only)
++  endif()
++
+   target_link_libraries(c10 PRIVATE nlohmann)
  
    if(C10_USE_NUMA)
-     message(STATUS "NUMA paths:")
-Only in pytorch-2.5.1/c10: CMakeLists.txt.orig
-Only in pytorch-2.5.1/c10: CMakeLists.txt.rej
 diff '--color=auto' -urp pytorch-2.5.1.orig/caffe2/CMakeLists.txt pytorch-2.5.1/caffe2/CMakeLists.txt
 --- pytorch-2.5.1.orig/caffe2/CMakeLists.txt	2024-10-22 18:14:52.000000000 -0700
-+++ pytorch-2.5.1/caffe2/CMakeLists.txt	2024-11-03 15:26:43.842628209 -0800
++++ pytorch-2.5.1/caffe2/CMakeLists.txt	2024-11-05 13:59:15.063130526 -0800
 @@ -87,7 +87,7 @@ endif()
  # Note: the folders that are being commented out have not been properly
  # addressed yet.
  
 -if(NOT MSVC AND USE_XNNPACK)
-+if(FALSE)
++if(NOT MSVC AND USE_XNNPACK AND USE_FXDIV)
    if(NOT TARGET fxdiv)
      set(FXDIV_BUILD_TESTS OFF CACHE BOOL "")
      set(FXDIV_BUILD_BENCHMARKS OFF CACHE BOOL "")
-@@ -1081,7 +1081,6 @@ if(USE_XPU)
+@@ -1080,7 +1080,8 @@ if(USE_XPU)
+   endif()
  endif()
  
- if(NOT MSVC AND USE_XNNPACK)
--  TARGET_LINK_LIBRARIES(torch_cpu PRIVATE fxdiv)
+-if(NOT MSVC AND USE_XNNPACK)
++option(USE_FXDIV "Use FXDiv" ON)
++if(NOT MSVC AND USE_XNNPACK AND USE_FXDIV)
+   TARGET_LINK_LIBRARIES(torch_cpu PRIVATE fxdiv)
  endif()
  
- # ==========================================================
-@@ -1184,8 +1183,12 @@ target_include_directories(torch_cpu PRI
+@@ -1184,8 +1185,12 @@ target_include_directories(torch_cpu PRI
  target_include_directories(torch_cpu PRIVATE
    ${TORCH_ROOT}/third_party/miniz-2.1.0)
  
@@ -97,10 +113,9 @@ diff '--color=auto' -urp pytorch-2.5.1.orig/caffe2/CMakeLists.txt pytorch-2.5.1/
  
  if(USE_KINETO)
    target_include_directories(torch_cpu PRIVATE
-Only in pytorch-2.5.1/caffe2: CMakeLists.txt.orig
 diff '--color=auto' -urp pytorch-2.5.1.orig/cmake/Codegen.cmake pytorch-2.5.1/cmake/Codegen.cmake
 --- pytorch-2.5.1.orig/cmake/Codegen.cmake	2024-10-22 18:14:52.000000000 -0700
-+++ pytorch-2.5.1/cmake/Codegen.cmake	2024-11-03 15:26:43.858627967 -0800
++++ pytorch-2.5.1/cmake/Codegen.cmake	2024-11-05 13:37:06.594803633 -0800
 @@ -57,7 +57,7 @@ if(INTERN_BUILD_ATEN_OPS)
    if(MSVC)
      set(OPT_FLAG "/fp:strict ")
@@ -112,7 +127,7 @@ diff '--color=auto' -urp pytorch-2.5.1.orig/cmake/Codegen.cmake pytorch-2.5.1/cm
      endif()
 diff '--color=auto' -urp pytorch-2.5.1.orig/cmake/Dependencies.cmake pytorch-2.5.1/cmake/Dependencies.cmake
 --- pytorch-2.5.1.orig/cmake/Dependencies.cmake	2024-10-22 18:14:52.000000000 -0700
-+++ pytorch-2.5.1/cmake/Dependencies.cmake	2024-11-03 15:26:43.874627725 -0800
++++ pytorch-2.5.1/cmake/Dependencies.cmake	2024-11-05 14:03:44.743143319 -0800
 @@ -473,7 +473,9 @@ if(USE_PYTORCH_QNNPACK)
        set_property(TARGET pytorch_qnnpack PROPERTY POSITION_INDEPENDENT_CODE ON)
        set_property(TARGET cpuinfo PROPERTY POSITION_INDEPENDENT_CODE ON)
@@ -124,58 +139,67 @@ diff '--color=auto' -urp pytorch-2.5.1.orig/cmake/Dependencies.cmake pytorch-2.5
  
        if(PYTORCH_QNNPACK_CUSTOM_THREADPOOL)
          target_compile_definitions(
-@@ -712,7 +714,7 @@ if(BUILD_TEST OR BUILD_MOBILE_BENCHMARK
+@@ -712,7 +714,8 @@ if(BUILD_TEST OR BUILD_MOBILE_BENCHMARK
  endif()
  
  # ---[ FBGEMM
 -if(USE_FBGEMM)
-+if(FALSE)
++option(USE_SYSTEM_FBGEMM "Use system FBGEMM" OFF)
++if(USE_FBGEMM AND NOT USE_SYSTEM_FBGEMM)
    set(CAFFE2_THIRD_PARTY_ROOT "${PROJECT_SOURCE_DIR}/third_party")
    if(NOT DEFINED FBGEMM_SOURCE_DIR)
      set(FBGEMM_SOURCE_DIR "${CAFFE2_THIRD_PARTY_ROOT}/fbgemm" CACHE STRING "FBGEMM source directory")
-@@ -760,6 +762,7 @@ if(USE_FBGEMM)
+@@ -760,6 +763,9 @@ if(USE_FBGEMM)
  endif()
  
  if(USE_FBGEMM)
-+  list(APPEND Caffe2_DEPENDENCY_LIBS fbgemm)
++  if(USE_SYSTEM_FBGEMM)
++    list(APPEND Caffe2_DEPENDENCY_LIBS fbgemm)
++  endif()
    caffe2_update_option(USE_FBGEMM ON)
  else()
    caffe2_update_option(USE_FBGEMM OFF)
-@@ -1519,7 +1522,6 @@ endif()
+@@ -1519,7 +1525,9 @@ endif()
  #
  set(TEMP_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
  set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libs" FORCE)
 -add_subdirectory(${PROJECT_SOURCE_DIR}/third_party/fmt)
++if(NOT USE_SYSTEM_LIBFMT)
++  add_subdirectory(${PROJECT_SOURCE_DIR}/third_party/fmt)
++endif()
  
  # Disable compiler feature checks for `fmt`.
  #
-@@ -1528,9 +1530,7 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/t
+@@ -1528,9 +1536,11 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/t
  # CMAKE_CXX_FLAGS in ways that break feature checks. Since we already know
  # `fmt` is compatible with a superset of the compilers that PyTorch is, it
  # shouldn't be too bad to just disable the checks.
 -set_target_properties(fmt-header-only PROPERTIES INTERFACE_COMPILE_FEATURES "")
++if(NOT USE_SYSTEM_LIBFMT)
++  set_target_properties(fmt-header-only PROPERTIES INTERFACE_COMPILE_FEATURES "")
++  list(APPEND Caffe2_DEPENDENCY_LIBS fmt::fmt-header-only)
++endif()
  
 -list(APPEND Caffe2_DEPENDENCY_LIBS fmt::fmt-header-only)
  set(BUILD_SHARED_LIBS ${TEMP_BUILD_SHARED_LIBS} CACHE BOOL "Build shared libs" FORCE)
  
  # ---[ Kineto
-Only in pytorch-2.5.1/cmake: Dependencies.cmake.orig
-Only in pytorch-2.5.1/cmake: Dependencies.cmake.rej
 diff '--color=auto' -urp pytorch-2.5.1.orig/cmake/External/nnpack.cmake pytorch-2.5.1/cmake/External/nnpack.cmake
 --- pytorch-2.5.1.orig/cmake/External/nnpack.cmake	2024-10-22 18:14:52.000000000 -0700
-+++ pytorch-2.5.1/cmake/External/nnpack.cmake	2024-11-03 15:26:43.874627725 -0800
-@@ -56,7 +56,7 @@ if(ANDROID OR IOS OR ${CMAKE_SYSTEM_NAME
++++ pytorch-2.5.1/cmake/External/nnpack.cmake	2024-11-05 14:09:19.298172916 -0800
+@@ -56,7 +56,8 @@ if(ANDROID OR IOS OR ${CMAKE_SYSTEM_NAME
    set(PTHREADPOOL_SOURCE_DIR "${CAFFE2_THIRD_PARTY_ROOT}/pthreadpool" CACHE STRING "pthreadpool source directory")
    set(GOOGLETEST_SOURCE_DIR "${CAFFE2_THIRD_PARTY_ROOT}/googletest" CACHE STRING "Google Test source directory")
  
 -  if(NOT TARGET nnpack)
-+  if(FALSE)
++  option(USE_SYSTEM_NNPACK "Use system nnpack" OFF)
++  if(NOT TARGET nnpack AND NOT USE_SYSTEM_NNPACK)
      if(NOT USE_SYSTEM_PTHREADPOOL AND USE_INTERNAL_PTHREADPOOL_IMPL)
        set(NNPACK_CUSTOM_THREADPOOL ON CACHE BOOL "")
      endif()
 diff '--color=auto' -urp pytorch-2.5.1.orig/cmake/public/utils.cmake pytorch-2.5.1/cmake/public/utils.cmake
 --- pytorch-2.5.1.orig/cmake/public/utils.cmake	2024-10-22 18:14:52.000000000 -0700
-+++ pytorch-2.5.1/cmake/public/utils.cmake	2024-11-03 15:26:43.874627725 -0800
++++ pytorch-2.5.1/cmake/public/utils.cmake	2024-11-05 13:37:06.602803514 -0800
 @@ -422,8 +422,6 @@ function(torch_compile_options libname)
    endif()
  
@@ -185,10 +209,9 @@ diff '--color=auto' -urp pytorch-2.5.1.orig/cmake/public/utils.cmake pytorch-2.5
  
  endfunction()
  
-Only in pytorch-2.5.1/cmake/public: utils.cmake.orig
 diff '--color=auto' -urp pytorch-2.5.1.orig/functorch/CMakeLists.txt pytorch-2.5.1/functorch/CMakeLists.txt
 --- pytorch-2.5.1.orig/functorch/CMakeLists.txt	2024-10-22 18:14:52.000000000 -0700
-+++ pytorch-2.5.1/functorch/CMakeLists.txt	2024-11-03 15:26:43.894627424 -0800
++++ pytorch-2.5.1/functorch/CMakeLists.txt	2024-11-05 13:37:06.634803040 -0800
 @@ -42,4 +42,4 @@ endif()
  if(NOT ${TORCH_PYTHON_LINK_FLAGS} STREQUAL "")
    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS ${TORCH_PYTHON_LINK_FLAGS})
@@ -197,8 +220,8 @@ diff '--color=auto' -urp pytorch-2.5.1.orig/functorch/CMakeLists.txt pytorch-2.5
 +install(TARGETS ${PROJECT_NAME} DESTINATION "${CMAKE_INSTALL_LIBDIR}")
 diff '--color=auto' -urp pytorch-2.5.1.orig/torch/CMakeLists.txt pytorch-2.5.1/torch/CMakeLists.txt
 --- pytorch-2.5.1.orig/torch/CMakeLists.txt	2024-10-22 18:14:52.000000000 -0700
-+++ pytorch-2.5.1/torch/CMakeLists.txt	2024-11-03 15:27:46.633680122 -0800
-@@ -59,17 +59,10 @@ set(TORCH_PYTHON_INCLUDE_DIRECTORIES
++++ pytorch-2.5.1/torch/CMakeLists.txt	2024-11-05 14:06:49.284415968 -0800
+@@ -59,23 +59,68 @@ set(TORCH_PYTHON_INCLUDE_DIRECTORIES
      ${CMAKE_BINARY_DIR}
      ${CMAKE_BINARY_DIR}/aten/src
      ${CMAKE_BINARY_DIR}/caffe2/aten/src
@@ -206,25 +229,89 @@ diff '--color=auto' -urp pytorch-2.5.1.orig/torch/CMakeLists.txt pytorch-2.5.1/t
 -    ${CMAKE_BINARY_DIR}/third_party/onnx
  
 -    ${TORCH_ROOT}/third_party/valgrind-headers
-+     ${TORCH_ROOT}/third_party/nlohmann/include
- 
+-
 -    ${TORCH_ROOT}/third_party/gloo
 -    ${TORCH_ROOT}/third_party/onnx
 -    ${TORCH_ROOT}/third_party/flatbuffers/include
 -    ${TORCH_ROOT}/third_party/kineto/libkineto/include
 -    ${TORCH_ROOT}/third_party/cpp-httplib
 -    ${TORCH_ROOT}/third_party/nlohmann/include
-+    /usr/include/kineto
++     ${TORCH_ROOT}/third_party/nlohmann/include
  
      ${TORCH_SRC_DIR}/csrc
      ${TORCH_SRC_DIR}/csrc/api/include
-@@ -85,7 +78,6 @@ set(TORCH_PYTHON_LINK_LIBRARIES
+     ${TORCH_SRC_DIR}/lib
+     )
+ 
++option(USE_SYSTEM_CPP_GLOO "Use system gloo" OFF)
++option(USE_SYSTEM_CPP_HTTPLIB "Use system cpp-httplib" OFF)
++option(USE_SYSTEM_FLATBUFFERS "Use system flatbuffers" OFF)
++option(USE_SYSTEM_KINETO "Use system kineto" OFF)
++option(USE_SYSTEM_LIBFMT "Use system libfmt" OFF)
++option(USE_SYSTEM_ONNX "Use system onnx" OFF)
++if(USE_SYSTEM_CPP_GLOO AND USE_SYSTEM_ONNX AND USE_SYSTEM_FLATBUFFERS AND USE_SYSTEM_KINETO AND USE_SYSTEM_CPP_HTTPLIB)
++else()
++    list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES
++        ${CMAKE_BINARY_DIR}/third_party
++    )
++endif()
++
++if(USE_SYSTEM_CPP_GLOO)
++else()
++    list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES
++        ${TORCH_ROOT}/third_party/gloo
++    )
++endf()
++
++if(USE_SYSTEM_ONNX)
++    list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES
++    )
++else()
++    list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES
++        ${CMAKE_BINARY_DIR}/third_party/onnx
++        ${TORCH_ROOT}/third_party/onnx
++    )
++endif()
++
++if(USE_SYSTEM_FLATBUFFERS)
++else()
++    list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES
++        ${TORCH_ROOT}/third_party/flatbuffers/include
++    )
++endif()
++
++if(USE_SYSTEM_KINETO)
++    list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES
++        /usr/include/kineto
++    )
++else()
++    list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES
++        ${TORCH_ROOT}/third_party/kineto/libkineto/include
++    )
++endif()
++
++if(USE_SYSTEM_CPP_HTTPLIB)
++else()
++    list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES
++        ${TORCH_ROOT}/third_party/cpp-httplib
++    )
++endif()
++
+ list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES ${LIBSHM_SRCDIR})
+ 
+ set(TORCH_PYTHON_LINK_LIBRARIES
+@@ -85,9 +130,13 @@ set(TORCH_PYTHON_LINK_LIBRARIES
      httplib
      nlohmann
      shm
 -    fmt::fmt-header-only
      ATEN_CPU_FILES_GEN_LIB)
  
++if(USE_SYSTEM_LIBFMT)
++else
++  list(TORCH_PYTHON_LINK_LIBRARIES fmt::fmt-header-only)
++endif()
++
  if(USE_ASAN AND TARGET Sanitizer::address)
-Only in pytorch-2.5.1/torch: CMakeLists.txt.orig
-Only in pytorch-2.5.1/torch: CMakeLists.txt.rej
+   list(APPEND TORCH_PYTHON_LINK_LIBRARIES Sanitizer::address)
+ endif()
