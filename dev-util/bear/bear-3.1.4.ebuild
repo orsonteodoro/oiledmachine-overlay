@@ -14,7 +14,7 @@ PYTHON_COMPAT=( python3_{8..11} )
 
 inherit cmake-multilib python-any-r1
 
-KEYWORDS="~amd64 ~ppc64 ~s390 ~x86"
+KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${MY_PN}-${PV}"
 SRC_URI="
 https://github.com/rizsotto/Bear/archive/${PV}.tar.gz

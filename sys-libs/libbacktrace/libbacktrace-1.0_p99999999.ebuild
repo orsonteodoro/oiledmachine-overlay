@@ -13,6 +13,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/ianlancetaylor/libbacktrace.git"
 else
 	EGIT_COMMIT="14818b7783eeb9a56c3f0fca78cefd3143f8c5f6"
+	KEYWORDS="~amd64"
 	SRC_URI="
 https://github.com/ianlancetaylor/libbacktrace/archive/${EGIT_COMMIT}.tar.gz
 	-> ${P}-${EGIT_COMMIT:0:7}.tar.gz
@@ -37,7 +38,6 @@ LICENSE="
 # GPL-2+ - test-driver
 # GPL-3+ - move-if-change
 SLOT="0"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~ppc64 ~riscv ~x86"
 IUSE+=" static-libs +system-libunwind test"
 RESTRICT="
 	!test? (

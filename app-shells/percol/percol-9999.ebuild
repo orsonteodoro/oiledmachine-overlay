@@ -11,7 +11,7 @@ DESCRIPTION="Adds flavor of interactive filtering to the traditional pipe \
 concept of shell"
 HOMEPAGE="https://github.com/mooz/percol"
 LICENSE="MIT"
-KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 SLOT="0"
 LANGS="en ja"
 IUSE+=" doc fallback-commit +l10n_en l10n_ja"

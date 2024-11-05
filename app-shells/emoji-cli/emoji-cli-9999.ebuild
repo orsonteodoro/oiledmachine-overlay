@@ -8,7 +8,7 @@ inherit git-r3
 DESCRIPTION="Emoji completion on the command line"
 LICENSE="MIT"
 HOMEPAGE="https://github.com/b4b4r07/emoji-cli"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 SLOT="0"
 IUSE="doc fallback-commit fzf peco percol"
 REQUIRED_USE="
