@@ -921,14 +921,16 @@ src_prepare() {
 		eapply "${FILESDIR}/${PN}-2.2.2-rocm-hardcoded-paths-third-party.patch"
 	fi
 
-	pushd torch/csrc/jit/serialization >/dev/null 2>&1 || die
-		flatc \
-			--cpp \
-			--gen-mutable \
-			--scoped-enums \
-			mobile_bytecode.fbs \
-			|| die
-	popd >/dev/null 2>&1 || die
+	if use system-libs ; then
+		pushd "torch/csrc/jit/serialization" >/dev/null 2>&1 || die
+			flatc \
+				--cpp \
+				--gen-mutable \
+				--scoped-enums \
+				mobile_bytecode.fbs \
+				|| die
+		popd >/dev/null 2>&1 || die
+	fi
 	if use rocm ; then
 		rocm_src_prepare
 		ebegin "HIPifying cuda sources"
