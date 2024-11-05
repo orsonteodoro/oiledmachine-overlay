@@ -20,7 +20,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="4a8f74cb950b99bb108485c6f08adf1eb6dc4fa2" # Feb 27, 2023
 	inherit git-r3
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64 ~arm64"
 	DOFUUZ_SOXR_COMMIT="acc0dacd79bf48229d33f6efa209e4f9d8fbb41c"
 	SRC_URI="
 	!system-soxr? (

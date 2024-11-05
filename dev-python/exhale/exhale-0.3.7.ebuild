@@ -9,7 +9,7 @@ SPHINX_PV="4.3.2"
 
 inherit distutils-r1
 
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/svenevs/exhale/archive/v${PV}.tar.gz

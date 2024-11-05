@@ -12,7 +12,7 @@ PYTHON_COMPAT=( "python3_"{8..11} )
 inherit distutils-r1
 
 EGIT_COMMIT="9eefac4a2ef94b71c407dfd5d997dad451547181"
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 S="${WORKDIR}/${MY_PN}-${EGIT_COMMIT}"
 SRC_URI="
 https://github.com/Kaggle/kaggle-api/archive/${EGIT_COMMIT}.tar.gz

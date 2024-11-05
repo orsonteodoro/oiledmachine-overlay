@@ -21,7 +21,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 else
 	EGIT_COMMIT="ec3016c1bd2165f9e720b686a83376def1705a60" # Nov 30, 2022
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/API-Access-UI_component-${EGIT_COMMIT}"
 	SRC_URI="
 https://github.com/Lightning-Universe/API-Access-UI_component/archive/${EGIT_COMMIT}.tar.gz -> ${P}-gh-${EGIT_COMMIT:0:7}.tar.gz

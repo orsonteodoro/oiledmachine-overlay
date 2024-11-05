@@ -21,7 +21,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 else
 	EGIT_COMMIT="a39af5f8aaa2a90b8fc7180744a855282360067a" # Mar 22, 2021
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/model-index-${EGIT_COMMIT}"
 	SRC_URI="
 https://github.com/paperswithcode/model-index/archive/${EGIT_COMMIT}.tar.gz

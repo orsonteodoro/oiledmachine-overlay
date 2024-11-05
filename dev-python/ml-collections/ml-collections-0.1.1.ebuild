@@ -19,7 +19,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="d2edd90d9c54b9654a10fa74da7d255c4872bbc3" # Dec 6, 2021
 	inherit git-r3
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	SRC_URI="
 https://github.com/google/ml_collections/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz

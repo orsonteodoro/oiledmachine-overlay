@@ -9,7 +9,7 @@ PYTHON_COMPAT=( "python3_"{8..11} ) # Upstream lists up to 3.10
 
 inherit distutils-r1
 
-#KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86" # Test failure
+#KEYWORDS="~amd64" # Test failure
 S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/xZise/flake8-future-import/archive/refs/tags/${PV}.tar.gz

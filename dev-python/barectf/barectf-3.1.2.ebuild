@@ -17,7 +17,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="a3ccab79d8fc99c90403adcc33aa2e6ba4878b84" # May 16, 2023
 	inherit git-r3
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	SRC_URI="
 https://github.com/efficios/barectf/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz

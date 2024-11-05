@@ -8,7 +8,7 @@ PYTHON_COMPAT=( python3_10 ) # Upstream tested up to 3.10
 
 inherit distutils-r1
 
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 S="${WORKDIR}/AutoROM-${PV}/packages/AutoROM"
 SRC_URI="
 https://github.com/Farama-Foundation/AutoROM/archive/refs/tags/v${PV}.tar.gz

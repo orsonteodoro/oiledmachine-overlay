@@ -21,7 +21,7 @@ CPU_X86_FLAGS=(
 
 inherit distutils-r1 pypi toolchain-funcs
 
-KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${MY_PV}"
 SRC_URI="
 https://github.com/uploadcare/pillow-simd/archive/refs/tags/v${MY_PV}.tar.gz

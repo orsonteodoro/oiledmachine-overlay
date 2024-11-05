@@ -25,7 +25,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="668c9b8f5690b478a738646fee5d68e2536fe7a8" # Dec 11, 2022
 	IUSE+=" fallback-commit"
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	SRC_URI="
 https://github.com/Farama-Foundation/Multi-Agent-ALE/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz

@@ -16,7 +16,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="e7970b63feafc8941c325111c5ce3706698a18b5" # Nov 21, 2022
 	inherit git-r3
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	SRC_URI="
 https://github.com/tapanpandita/pocket/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz

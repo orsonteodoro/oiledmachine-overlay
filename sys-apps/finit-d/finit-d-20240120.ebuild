@@ -21,7 +21,7 @@ if [[ "${PV}" =~ "99999999" ]] ; then
 	# No KEYWORDS for live
 	:
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 fi
 RESTRICT="mirror test"
 SLOT="0"

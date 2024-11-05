@@ -18,7 +18,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	EGIT_COMMIT="ba6fddfb24846f3d0c9d8b33cb3c9f777792ed3d"
 	S="${WORKDIR}/google-visualization-python-${EGIT_COMMIT}"
 	SRC_URI="

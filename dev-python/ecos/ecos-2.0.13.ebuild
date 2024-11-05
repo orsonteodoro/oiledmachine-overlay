@@ -22,7 +22,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 else
 	ECOS_COMMIT="5d3aa62ef437e41c0314b4a16427d5d06a90b7e6"
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/${MY_PN}-${PV}"
 	SRC_URI="
 https://github.com/embotech/ecos-python/archive/refs/tags/v${PV}.tar.gz

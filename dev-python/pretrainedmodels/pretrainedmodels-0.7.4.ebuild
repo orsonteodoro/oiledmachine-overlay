@@ -19,7 +19,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="8aae3d8f1135b6b13fed79c1d431e3449fdbf6e0" # Apr 16, 2020
 	IUSE+=" fallback-commit"
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64"
 	EGIT_COMMIT="ac8682febf8533e7c009425407e84de7b8567109"
 	S="${WORKDIR}/pretrained-models.pytorch-${EGIT_COMMIT}"
 	SRC_URI="
