@@ -24,7 +24,7 @@ SLOT="0"
 # is barely supported anyway, see bug #914358.
 IUSE="+lapack ebuild-revision-1"
 if [[ ${PV} != *_[rab]* ]] ; then
-	KEYWORDS="~alpha amd64 arm arm64 hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86"
+	KEYWORDS="~amd64 ~amd64-linux ~arm64 ~arm64-linux ~arm64-macos ~arm64-linux ~x86 ~x86-linux"
 fi
 
 RDEPEND="

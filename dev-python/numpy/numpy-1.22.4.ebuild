@@ -30,11 +30,7 @@ SRC_URI="
 "
 LICENSE="BSD"
 SLOT="0"
-KEYWORDS="
-~alpha amd64 arm arm64 hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390
-sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~sparc-solaris
-~x64-solaris ~x86-solaris
-"
+KEYWORDS="~amd64 ~arm64 ~arm64-linux ~ppc64 ~s390"
 IUSE="doc lapack ebuild-revision-1"
 
 RDEPEND="

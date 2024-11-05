@@ -17,11 +17,11 @@ UOPTS_SUPPORT_TPGO=1
 inherit aocc flag-o-matic flag-o-matic-om llvm multilib-minimal toolchain-funcs uopts
 
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86
-~amd64-linux ~x86-linux
+~amd64 ~amd64-linux ~amd64-macos ~arm64 ~arm ~arm-linux ~arm64 ~loong ~mips
+~ppc64 ~ppc64-linux ~sparc ~x86 ~x86-linux ~x86-macos
 "
 S="${WORKDIR}/${P}"
-S_orig="${WORKDIR}/${P}"
+S_ORIG="${WORKDIR}/${P}"
 SRC_URI="
 	https://github.com/webmproject/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
 	test? (
@@ -434,9 +434,9 @@ src_prepare() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
 			einfo "Build type is ${lib_type}"
-			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+			export S="${S_ORIG}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			einfo "Copying to ${S}"
-			cp -a "${S_orig}" "${S}" || die
+			cp -a "${S_ORIG}" "${S}" || die
 			uopts_src_prepare
 		done
 	}
@@ -455,7 +455,7 @@ _src_configure_compiler() {
 }
 
 _src_configure() {
-	export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+	export S="${S_ORIG}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 	export BUILD_DIR="${S}"
 	cd "${BUILD_DIR}" || die
 	[[ -f Makefile ]] && emake clean
@@ -895,7 +895,7 @@ _trainer_plan_lossless() {
 train_trainer_custom() {
 	einfo "Called train_trainer_custom"
 	[[ "${lib_type}" == "static" ]] && return # Reuse the shared PGO profile
-	export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+	export S="${S_ORIG}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 	export BUILD_DIR="${S}"
 	if use trainer-2-pass-constrained-quality ; then
 		_trainer_plan_2_pass_constrained_quality "libvpx" "full"
@@ -924,7 +924,7 @@ train_trainer_custom() {
 }
 
 _src_compile() {
-	export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+	export S="${S_ORIG}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 	export BUILD_DIR="${S}"
 	cd "${BUILD_DIR}" || die
 	# build verbose by default and do not build examples that will not be installed
@@ -969,7 +969,7 @@ src_test() {
 	test_abi() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
-			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+			export S="${S_ORIG}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			local -x LD_LIBRARY_PATH="${BUILD_DIR}"
@@ -984,7 +984,7 @@ src_install() {
 	install_abi() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
-			export S="${S_orig}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+			export S="${S_ORIG}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}"
 			cd "${BUILD_DIR}" || die
 			emake verbose=yes GEN_EXAMPLES= DESTDIR="${D}" install

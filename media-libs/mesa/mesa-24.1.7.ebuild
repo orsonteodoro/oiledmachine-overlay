@@ -73,8 +73,8 @@ if [[ "${PV}" == "9999" ]] ; then
 	inherit git-r3
 else
 	KEYWORDS="
-~alpha amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv ~s390 sparc x86
-~amd64-linux ~x86-linux ~x64-solaris
+~amd64 ~amd64-linux ~arm ~arm-linux ~arm64 ~arm64-linux ~loong ~mips ~ppc64
+~riscv ~s390 ~sparc ~x86 ~x86-linux
 	"
 	SRC_URI="
 		https://archive.mesa3d.org/${MY_P}.tar.xz

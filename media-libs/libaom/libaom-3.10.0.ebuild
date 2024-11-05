@@ -10,7 +10,7 @@ CMAKE_ECLASS="cmake"
 GCC_MIN_SLOT=6
 CLANG_MIN_SLOT=7
 N_SAMPLES=1
-PYTHON_COMPAT=( python3_{8..13} )
+PYTHON_COMPAT=( "python3_"{8..13} )
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
@@ -24,7 +24,7 @@ if [[ ${PV} == *9999* ]]; then
 	inherit git-r3
 	EGIT_REPO_URI="https://aomedia.googlesource.com/aom"
 else
-	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
+	KEYWORDS="~amd64 ~arm ~arm-linux ~arm64 ~arm64-linux ~mips ~x86 ~x86-linux ~x86-macos"
 	S="${WORKDIR}/${P}"
 	# To update test data tarball, follow these steps:
 	# 1.  Clone the upstream repo and check out the relevant tag, or
