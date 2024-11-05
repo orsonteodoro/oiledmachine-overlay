@@ -261,7 +261,7 @@ diff '--color=auto' -urp pytorch-2.5.1.orig/torch/CMakeLists.txt pytorch-2.5.1/t
 +    list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES
 +        ${TORCH_ROOT}/third_party/gloo
 +    )
-+endf()
++endif()
 +
 +if(USE_SYSTEM_ONNX)
 +    list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES
