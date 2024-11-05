@@ -44,7 +44,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	KEYWORDS="~amd64 ~arm ~arm64 ~mips ~mips64 ~ppc ~ppc64 ~x86"
+	KEYWORDS="~amd64 ~arm64"
 	S="${WORKDIR}/lab2d-release_v${PV}"
 bazel_external_uris="
 https://github.com/abseil/abseil-cpp/archive/${ABSEIL_CPP_COMMIT}.zip -> abseil-cpp-${ABSEIL_CPP_COMMIT}.zip
