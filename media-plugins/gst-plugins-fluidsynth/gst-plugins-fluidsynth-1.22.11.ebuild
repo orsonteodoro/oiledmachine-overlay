@@ -8,7 +8,7 @@ GST_ORG_MODULE="gst-plugins-bad"
 inherit gstreamer-meson
 
 DESCRIPTION="FluidSynth plugin for GStreamer"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64 ~amd64-macos ~arm ~arm64 ~arm64-macos ~x86"
 # See ext/fluidsynth/meson.build
 RDEPEND="
 	>=media-sound/fluidsynth-2.1:=[${MULTILIB_USEDEP}]

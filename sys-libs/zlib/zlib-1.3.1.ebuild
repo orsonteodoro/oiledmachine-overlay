@@ -15,11 +15,7 @@ VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/madler.asc"
 inherit autotools edo flag-o-matic flag-o-matic-om multilib-minimal
 inherit toolchain-funcs uopts usr-ldscript verify-sig
 
-KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv
-~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos
-~x64-solaris
-"
+KEYWORDS="~amd64  ~arm ~arm-linux ~arm64 ~arm64-linux ~arm64-macos ~ppc ~ppc64 ~ppc64-linux ~s390"
 S="${WORKDIR}/${P}"
 S_orig="${WORKDIR}/${P}"
 SRC_URI="

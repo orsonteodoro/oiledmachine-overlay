@@ -11,7 +11,7 @@ LUA_COMPAT=( "lua5-"{1..4} )
 
 inherit lua toolchain-funcs
 
-KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~mips ~ppc ~ppc64 ~sparc ~x86"
+KEYWORDS="~amd64 ~arm64 ~arm64-macos"
 S="${WORKDIR}/${PN}-${MY_PV}"
 SRC_URI="
 https://github.com/lunarmodules/luafilesystem/archive/refs/tags/v${MY_PV}.tar.gz

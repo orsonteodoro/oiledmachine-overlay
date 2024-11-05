@@ -19,7 +19,7 @@ DESCRIPTION="Stack overflow command line client. Search and browse stack \
 overflow without leaving the terminal"
 HOMEPAGE="https://github.com/gautamkrishnar/socli"
 LICENSE="BSD"
-KEYWORDS="~amd64 ~arm ~mips ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64"
 IUSE+=" man test"
 SLOT="0"
 # Last DEPENDs commit date Jan 17, 2021

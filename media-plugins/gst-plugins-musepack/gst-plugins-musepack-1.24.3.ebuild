@@ -8,7 +8,7 @@ GST_ORG_MODULE="gst-plugins-bad"
 inherit gstreamer-meson
 
 DESCRIPTION="Musepack plugin for GStreamer"
-#KEYWORDS="~amd64 ~x86" # Missing gstreamer 1.24 from distro repo
+#KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~m68k ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86" # Missing gstreamer 1.24 from distro repo
 # See ext/musepack/meson.build
 RDEPEND="
 	media-sound/musepack-tools:=[${MULTILIB_USEDEP}]
