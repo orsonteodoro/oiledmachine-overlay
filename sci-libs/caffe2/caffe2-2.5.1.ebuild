@@ -439,6 +439,7 @@ cuda +distributed +eigen +fbgemm +flash-attention +gloo +kineto +magma -mimalloc
 +qnnpack +rccl rocm roctracer -ssl system-libs test +xnnpack
 ebuild-revision-8
 "
+# bin/torch_shm_manager requires openmp
 gen_cuda_required_use() {
 	local x
 	for x in ${CUDA_TARGETS_COMPAT[@]} ; do
