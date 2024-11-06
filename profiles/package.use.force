@@ -1,4 +1,5 @@
 # This list can be used to force ON USE flags.
+# The cpu_flags_x86_ cannot be forced on.  It needs that prefix removed to be forced on.
 # Copy the - unmask lines you need below to your /etc/portage/profile/package.use.mask
 # - unmasking will not work from the overlay directory.
 
