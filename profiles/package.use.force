@@ -26,3 +26,5 @@ dev-python/cython -python_targets_pypy3
 
 # Prevent type confusion, arbitrary code execution, high vulnerabilities
 www-client/chromium partition-alloc partitionalloc
+
+sci-libs/caffe2 openmp

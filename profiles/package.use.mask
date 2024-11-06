@@ -102,4 +102,4 @@ sys-apps/firejail -suid
 >virtual/pillow-10.0.1 pillow-simd
 
 # Required for linking torch_shm_manager
-sci-libs/caffe2 openmp
+sci-libs/caffe2 -openmp
