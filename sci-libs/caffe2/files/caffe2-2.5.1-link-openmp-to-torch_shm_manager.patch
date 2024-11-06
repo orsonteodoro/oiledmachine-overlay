@@ -1,0 +1,15 @@
+--- a/torch/lib/libshm/CMakeLists.txt.orig	2024-11-05 20:53:53.878673926 -0800
++++ b/torch/lib/libshm/CMakeLists.txt	2024-11-05 21:06:48.846050400 -0800
+@@ -61,10 +61,10 @@ endif()
+ 
+ add_executable(torch_shm_manager manager.cpp)
+ if(BUILD_LIBTORCHLESS)
+-  target_link_libraries(torch_shm_manager PRIVATE shm ${C10_LIB})
++  target_link_libraries(torch_shm_manager PRIVATE shm ${C10_LIB} ${OpenMP_CXX_LIBRARIES})
+ else()
+   # we need to link directly to c10 here otherwise we miss symbols
+-  target_link_libraries(torch_shm_manager PRIVATE shm c10)
++  target_link_libraries(torch_shm_manager PRIVATE shm c10 ${OpenMP_CXX_LIBRARIES})
+ endif()
+ set_target_properties(torch_shm_manager PROPERTIES
+   INSTALL_RPATH "${_rpath_portable_origin}/../lib")

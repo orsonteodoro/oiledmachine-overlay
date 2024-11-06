@@ -797,6 +797,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.2.2-musl.patch"
 	"${FILESDIR}/${PN}-2.3.0-fix-libcpp.patch"
 	"${FILESDIR}/${PN}-2.4.0-aotriton-offline-install.patch"
+	"${FILESDIR}/${PN}-2.5.1-link-openmp-to-torch_shm_manager.patch"
 )
 
 warn_untested_gpu() {
