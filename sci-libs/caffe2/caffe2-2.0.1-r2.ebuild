@@ -1168,7 +1168,7 @@ src_install() {
 		"python/torch/" \
 		|| die
 	rm -rf "${ED}/var/tmp" || die
-	python_domodule python/caffe2
-	python_domodule python/torch
+	python_domodule "python/caffe2"
+	python_domodule "python/torch"
 	dhms_end
 }

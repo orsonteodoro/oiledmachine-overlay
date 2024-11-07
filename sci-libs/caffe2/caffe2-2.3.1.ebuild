@@ -1213,7 +1213,7 @@ ewarn "No nccl package exist in the ecosystem.  You must package nccl locally yo
 	cmake_src_configure
 
 	# Do not rerun cmake and the build process in src_install
-	sed '/RERUN/,+1d' -i "${BUILD_DIR}"/build.ninja || die
+	sed '/RERUN/,+1d' -i "${BUILD_DIR}/build.ninja" || die
 }
 
 src_install() {
@@ -1233,8 +1233,8 @@ src_install() {
 		"python/torch/" \
 		|| die
 	rm -rf "${ED}/var/tmp" || die
-	python_domodule python/caffe2
-	python_domodule python/torch
+	python_domodule "python/caffe2"
+	python_domodule "python/torch"
 	ln -s \
 		"../../../../../include/torch" \
 		"${D}$(python_get_sitedir)/torch/include/torch" \
