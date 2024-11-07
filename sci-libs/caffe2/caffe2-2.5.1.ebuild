@@ -1204,18 +1204,15 @@ src_install() {
 	insinto "/var/lib/${PN}"
 	doins "${BUILD_DIR}/CMakeCache.txt"
 
+	# Removed caffe2/python since 2.4.0.  See 18cbaf6
+
 	rm -rf "python"
 	mkdir -p "python/torch/include" || die
-	mv \
-		"${ED}/usr/lib/python"*"/site-packages/caffe2" \
-		"python/" \
-		|| die
 	cp \
 		"torch/version.py" \
 		"python/torch/" \
 		|| die
 	rm -rf "${ED}/var/tmp" || die
-	python_domodule "python/caffe2"
 	python_domodule "python/torch"
 	ln -s \
 		"../../../../../include/torch" \
