@@ -126,7 +126,7 @@ KINETO_COMMIT="a30ca3f9509c2cfd28561abbca51328f0bdf9014"
 LIBNOP_COMMIT="910b55815be16109f04f4180e9adee14fb4ce281" # tensorpipe dep
 LIBUV_COMMIT="1dff88e5161cba5c59276d2070d2e304e4dcb242" # tensorpipe dep
 LLVM_COMPAT=(
-	17 # ROCm slot
+	17 16 # ROCm slots
 	15 12 10 9 # Upstream build.sh, pull.yml
 )
 MIMALLOC_COMMIT="b66e3214d8a104669c2ec05ae91ebc26a8f5ab78"
@@ -751,7 +751,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"A${FILESDIR}/${PN}-2.2.1-gentoo.patch"
+	"${FILESDIR}/${PN}-2.2.2-gentoo.patch"
 	"${FILESDIR}/${PN}-1.13.0-install-dirs.patch"
 	"${FILESDIR}/${PN}-1.12.0-glog-0.6.0.patch"
 	"${FILESDIR}/${PN}-2.0.0-gcc13.patch"
@@ -1028,14 +1028,22 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		-DUSE_ROCM=$(usex rocm)
 		-DUSE_SYSTEM_BENCHMARK=$(usex system-libs)
 		-DUSE_SYSTEM_CPUINFO=$(usex system-libs)
+		-DUSE_SYSTEM_FBGEMM=$(usex system-libs)
+		-DUSE_SYSTEM_FLATBUFFERS=$(usex system-libs)
+		-DUSE_SYSTEM_FOXI=$(usex system-libs)
 		-DUSE_SYSTEM_FP16=$(usex system-libs)
 		-DUSE_SYSTEM_FXDIV=$(usex system-libs)
 		-DUSE_SYSTEM_GLOO=$(usex system-libs)
+		-DUSE_SYSTEM_KINETO=$(usex system-libs)
+		-DUSE_SYSTEM_LIBFMT=$(usex system-libs)
 		-DUSE_SYSTEM_ONNX=$(usex system-libs)
+		-DUSE_SYSTEM_NNPACK=$(usex system-libs)
 		-DUSE_SYSTEM_PSIMD=$(usex system-libs)
 		-DUSE_SYSTEM_PTHREADPOOL=$(usex system-libs)
 		-DUSE_SYSTEM_PYBIND11=$(usex system-libs)
+		-DUSE_SYSTEM_QNNPACK=$(usex system-libs)
 		-DUSE_SYSTEM_SLEEF=$(usex system-libs)
+		-DUSE_SYSTEM_VALGRIND_HEADERS=$(usex system-libs)
 		-DUSE_SYSTEM_XNNPACK=$(usex system-libs)
 		-DUSE_UCC=OFF
 		-DUSE_VALGRIND=OFF

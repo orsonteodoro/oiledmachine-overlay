@@ -1,6 +1,6 @@
 diff '--color=auto' -urp pytorch-2.5.1.orig/CMakeLists.txt pytorch-2.5.1/CMakeLists.txt
 --- pytorch-2.5.1.orig/CMakeLists.txt	2024-10-22 18:14:52.000000000 -0700
-+++ pytorch-2.5.1/CMakeLists.txt	2024-11-06 10:53:54.789268876 -0800
++++ pytorch-2.5.1/CMakeLists.txt	2024-11-06 13:14:40.984426776 -0800
 @@ -986,12 +986,11 @@ endif()
  # third_party/FBGEMM
  include(cmake/public/utils.cmake)
@@ -25,7 +25,7 @@ diff '--color=auto' -urp pytorch-2.5.1.orig/CMakeLists.txt pytorch-2.5.1/CMakeLi
    add_compile_definitions(WIN32_LEAN_AND_MEAN)
 diff '--color=auto' -urp pytorch-2.5.1.orig/aten/src/ATen/native/quantized/cpu/qnnpack/CMakeLists.txt pytorch-2.5.1/aten/src/ATen/native/quantized/cpu/qnnpack/CMakeLists.txt
 --- pytorch-2.5.1.orig/aten/src/ATen/native/quantized/cpu/qnnpack/CMakeLists.txt	2024-10-22 18:14:52.000000000 -0700
-+++ pytorch-2.5.1/aten/src/ATen/native/quantized/cpu/qnnpack/CMakeLists.txt	2024-11-06 11:26:51.076040090 -0800
++++ pytorch-2.5.1/aten/src/ATen/native/quantized/cpu/qnnpack/CMakeLists.txt	2024-11-06 13:14:40.984426776 -0800
 @@ -324,16 +324,22 @@ set_target_properties(pytorch_qnnpack PR
  set_target_properties(pytorch_qnnpack PROPERTIES PUBLIC_HEADER include/qnnpack_func.h)
  
@@ -60,13 +60,13 @@ diff '--color=auto' -urp pytorch-2.5.1.orig/aten/src/ATen/native/quantized/cpu/q
  if(NOT TARGET cpuinfo AND USE_SYSTEM_CPUINFO)
 diff '--color=auto' -urp pytorch-2.5.1.orig/c10/CMakeLists.txt pytorch-2.5.1/c10/CMakeLists.txt
 --- pytorch-2.5.1.orig/c10/CMakeLists.txt	2024-10-22 18:14:52.000000000 -0700
-+++ pytorch-2.5.1/c10/CMakeLists.txt	2024-11-06 10:53:54.877267526 -0800
++++ pytorch-2.5.1/c10/CMakeLists.txt	2024-11-06 13:14:40.984426776 -0800
 @@ -94,7 +94,13 @@ if(NOT BUILD_LIBTORCHLESS)
    if(C10_USE_GLOG)
      target_link_libraries(c10 PUBLIC glog::glog)
    endif()
 -  target_link_libraries(c10 PRIVATE fmt::fmt-header-only)
-+
++  option(USE_SYSTEM_LIBFMT "Use system libfmt" OFF)
 +  if(USE_SYSTEM_LIBFMT)
 +    target_link_libraries(c10 PRIVATE fmt)
 +  else()
@@ -78,14 +78,14 @@ diff '--color=auto' -urp pytorch-2.5.1.orig/c10/CMakeLists.txt pytorch-2.5.1/c10
    if(C10_USE_NUMA)
 diff '--color=auto' -urp pytorch-2.5.1.orig/caffe2/CMakeLists.txt pytorch-2.5.1/caffe2/CMakeLists.txt
 --- pytorch-2.5.1.orig/caffe2/CMakeLists.txt	2024-10-22 18:14:52.000000000 -0700
-+++ pytorch-2.5.1/caffe2/CMakeLists.txt	2024-11-06 11:26:06.932630757 -0800
++++ pytorch-2.5.1/caffe2/CMakeLists.txt	2024-11-06 13:14:40.984426776 -0800
 @@ -87,7 +87,8 @@ endif()
  # Note: the folders that are being commented out have not been properly
  # addressed yet.
  
 -if(NOT MSVC AND USE_XNNPACK)
-+option(USE_SYSTEM_FXDIV "Use FXDiv" ON)
-+if(NOT MSVC AND USE_XNNPACK AND USE_SYSTEM_FXDIV)
++option(USE_SYSTEM_FXDIV "Use system fxdiv" OFF)
++if(NOT MSVC AND USE_XNNPACK AND NOT USE_SYSTEM_FXDIV)
    if(NOT TARGET fxdiv)
      set(FXDIV_BUILD_TESTS OFF CACHE BOOL "")
      set(FXDIV_BUILD_BENCHMARKS OFF CACHE BOOL "")
@@ -94,16 +94,17 @@ diff '--color=auto' -urp pytorch-2.5.1.orig/caffe2/CMakeLists.txt pytorch-2.5.1/
  endif()
  
 -if(NOT MSVC AND USE_XNNPACK)
-+if(NOT MSVC AND USE_XNNPACK AND USE_SYSTEM_FXDIV)
++if(NOT MSVC AND USE_XNNPACK AND NOT USE_SYSTEM_FXDIV)
    TARGET_LINK_LIBRARIES(torch_cpu PRIVATE fxdiv)
  endif()
  
-@@ -1184,8 +1185,12 @@ target_include_directories(torch_cpu PRI
+@@ -1184,8 +1185,13 @@ target_include_directories(torch_cpu PRI
  target_include_directories(torch_cpu PRIVATE
    ${TORCH_ROOT}/third_party/miniz-2.1.0)
  
 -target_include_directories(torch_cpu PRIVATE
 -  ${TORCH_ROOT}/third_party/kineto/libkineto/include)
++option(USE_SYSTEM_KINETO "Use system kineto" OFF)
 +if(USE_SYSTEM_KINETO)
 +  target_include_directories(torch_cpu PRIVATE /usr/include/kineto)
 +else()
@@ -115,7 +116,7 @@ diff '--color=auto' -urp pytorch-2.5.1.orig/caffe2/CMakeLists.txt pytorch-2.5.1/
    target_include_directories(torch_cpu PRIVATE
 diff '--color=auto' -urp pytorch-2.5.1.orig/cmake/Codegen.cmake pytorch-2.5.1/cmake/Codegen.cmake
 --- pytorch-2.5.1.orig/cmake/Codegen.cmake	2024-10-22 18:14:52.000000000 -0700
-+++ pytorch-2.5.1/cmake/Codegen.cmake	2024-11-06 10:53:54.881267464 -0800
++++ pytorch-2.5.1/cmake/Codegen.cmake	2024-11-06 13:14:40.984426776 -0800
 @@ -57,7 +57,7 @@ if(INTERN_BUILD_ATEN_OPS)
    if(MSVC)
      set(OPT_FLAG "/fp:strict ")
@@ -127,29 +128,34 @@ diff '--color=auto' -urp pytorch-2.5.1.orig/cmake/Codegen.cmake pytorch-2.5.1/cm
      endif()
 diff '--color=auto' -urp pytorch-2.5.1.orig/cmake/Dependencies.cmake pytorch-2.5.1/cmake/Dependencies.cmake
 --- pytorch-2.5.1.orig/cmake/Dependencies.cmake	2024-10-22 18:14:52.000000000 -0700
-+++ pytorch-2.5.1/cmake/Dependencies.cmake	2024-11-06 10:53:54.881267464 -0800
-@@ -473,7 +473,9 @@ if(USE_PYTORCH_QNNPACK)
++++ pytorch-2.5.1/cmake/Dependencies.cmake	2024-11-06 13:17:13.322106426 -0800
+@@ -473,7 +473,14 @@ if(USE_PYTORCH_QNNPACK)
        set_property(TARGET pytorch_qnnpack PROPERTY POSITION_INDEPENDENT_CODE ON)
        set_property(TARGET cpuinfo PROPERTY POSITION_INDEPENDENT_CODE ON)
        # QNNPACK depends on gemmlowp headers
 -      target_include_directories(pytorch_qnnpack PRIVATE "${CAFFE2_THIRD_PARTY_ROOT}/gemmlowp")
-+      find_package(gemmlowp REQUIRED)
-+      get_target_property(GEMMLOWP_INCLUDE_DIRS gemmlowp::gemmlowp INTERFACE_INCLUDE_DIRECTORIES)
-+      target_include_directories(pytorch_qnnpack PRIVATE ${GEMMLOWP_INCLUDE_DIRS})
++      option(USE_SYSTEM_GEMMLOWP "Use system gemmlowp" OFF)
++      if(USE_SYSTEM_GEMMLOWP)
++        find_package(gemmlowp REQUIRED)
++        get_target_property(GEMMLOWP_INCLUDE_DIRS gemmlowp::gemmlowp INTERFACE_INCLUDE_DIRECTORIES)
++        target_include_directories(pytorch_qnnpack PRIVATE ${GEMMLOWP_INCLUDE_DIRS})
++      else()
++        target_include_directories(pytorch_qnnpack PRIVATE "${CAFFE2_THIRD_PARTY_ROOT}/gemmlowp")
++      endif()
  
        if(PYTORCH_QNNPACK_CUSTOM_THREADPOOL)
          target_compile_definitions(
-@@ -712,7 +714,8 @@ if(BUILD_TEST OR BUILD_MOBILE_BENCHMARK
+@@ -712,7 +719,8 @@ if(BUILD_TEST OR BUILD_MOBILE_BENCHMARK
  endif()
  
  # ---[ FBGEMM
 -if(USE_FBGEMM)
-+option(USE_SYSTEM_FBGEMM "Use system FBGEMM" OFF)
++option(USE_SYSTEM_FBGEMM "Use system fbgemm" OFF)
 +if(USE_FBGEMM AND NOT USE_SYSTEM_FBGEMM)
    set(CAFFE2_THIRD_PARTY_ROOT "${PROJECT_SOURCE_DIR}/third_party")
    if(NOT DEFINED FBGEMM_SOURCE_DIR)
      set(FBGEMM_SOURCE_DIR "${CAFFE2_THIRD_PARTY_ROOT}/fbgemm" CACHE STRING "FBGEMM source directory")
-@@ -760,6 +763,9 @@ if(USE_FBGEMM)
+@@ -760,6 +768,9 @@ if(USE_FBGEMM)
  endif()
  
  if(USE_FBGEMM)
@@ -159,18 +165,19 @@ diff '--color=auto' -urp pytorch-2.5.1.orig/cmake/Dependencies.cmake pytorch-2.5
    caffe2_update_option(USE_FBGEMM ON)
  else()
    caffe2_update_option(USE_FBGEMM OFF)
-@@ -1519,7 +1525,9 @@ endif()
+@@ -1519,7 +1530,10 @@ endif()
  #
  set(TEMP_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
  set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libs" FORCE)
 -add_subdirectory(${PROJECT_SOURCE_DIR}/third_party/fmt)
++option(USE_SYSTEM_LIBFMT "Use system libfmt" OFF)
 +if(NOT USE_SYSTEM_LIBFMT)
 +  add_subdirectory(${PROJECT_SOURCE_DIR}/third_party/fmt)
 +endif()
  
  # Disable compiler feature checks for `fmt`.
  #
-@@ -1528,9 +1536,11 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/t
+@@ -1528,9 +1542,11 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/t
  # CMAKE_CXX_FLAGS in ways that break feature checks. Since we already know
  # `fmt` is compatible with a superset of the compilers that PyTorch is, it
  # shouldn't be too bad to just disable the checks.
@@ -186,7 +193,7 @@ diff '--color=auto' -urp pytorch-2.5.1.orig/cmake/Dependencies.cmake pytorch-2.5
  # ---[ Kineto
 diff '--color=auto' -urp pytorch-2.5.1.orig/cmake/External/nnpack.cmake pytorch-2.5.1/cmake/External/nnpack.cmake
 --- pytorch-2.5.1.orig/cmake/External/nnpack.cmake	2024-10-22 18:14:52.000000000 -0700
-+++ pytorch-2.5.1/cmake/External/nnpack.cmake	2024-11-06 10:53:54.881267464 -0800
++++ pytorch-2.5.1/cmake/External/nnpack.cmake	2024-11-06 13:14:40.988426715 -0800
 @@ -56,7 +56,8 @@ if(ANDROID OR IOS OR ${CMAKE_SYSTEM_NAME
    set(PTHREADPOOL_SOURCE_DIR "${CAFFE2_THIRD_PARTY_ROOT}/pthreadpool" CACHE STRING "pthreadpool source directory")
    set(GOOGLETEST_SOURCE_DIR "${CAFFE2_THIRD_PARTY_ROOT}/googletest" CACHE STRING "Google Test source directory")
@@ -199,7 +206,7 @@ diff '--color=auto' -urp pytorch-2.5.1.orig/cmake/External/nnpack.cmake pytorch-
      endif()
 diff '--color=auto' -urp pytorch-2.5.1.orig/cmake/public/utils.cmake pytorch-2.5.1/cmake/public/utils.cmake
 --- pytorch-2.5.1.orig/cmake/public/utils.cmake	2024-10-22 18:14:52.000000000 -0700
-+++ pytorch-2.5.1/cmake/public/utils.cmake	2024-11-06 10:53:54.881267464 -0800
++++ pytorch-2.5.1/cmake/public/utils.cmake	2024-11-06 13:14:40.988426715 -0800
 @@ -422,8 +422,6 @@ function(torch_compile_options libname)
    endif()
  
@@ -211,7 +218,7 @@ diff '--color=auto' -urp pytorch-2.5.1.orig/cmake/public/utils.cmake pytorch-2.5
  
 diff '--color=auto' -urp pytorch-2.5.1.orig/functorch/CMakeLists.txt pytorch-2.5.1/functorch/CMakeLists.txt
 --- pytorch-2.5.1.orig/functorch/CMakeLists.txt	2024-10-22 18:14:52.000000000 -0700
-+++ pytorch-2.5.1/functorch/CMakeLists.txt	2024-11-06 10:53:54.901267157 -0800
++++ pytorch-2.5.1/functorch/CMakeLists.txt	2024-11-06 13:14:40.988426715 -0800
 @@ -42,4 +42,4 @@ endif()
  if(NOT ${TORCH_PYTHON_LINK_FLAGS} STREQUAL "")
    set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS ${TORCH_PYTHON_LINK_FLAGS})
@@ -220,7 +227,7 @@ diff '--color=auto' -urp pytorch-2.5.1.orig/functorch/CMakeLists.txt pytorch-2.5
 +install(TARGETS ${PROJECT_NAME} DESTINATION "${CMAKE_INSTALL_LIBDIR}")
 diff '--color=auto' -urp pytorch-2.5.1.orig/torch/CMakeLists.txt pytorch-2.5.1/torch/CMakeLists.txt
 --- pytorch-2.5.1.orig/torch/CMakeLists.txt	2024-10-22 18:14:52.000000000 -0700
-+++ pytorch-2.5.1/torch/CMakeLists.txt	2024-11-06 11:24:45.029725257 -0800
++++ pytorch-2.5.1/torch/CMakeLists.txt	2024-11-06 13:14:40.988426715 -0800
 @@ -59,23 +59,76 @@ set(TORCH_PYTHON_INCLUDE_DIRECTORIES
      ${CMAKE_BINARY_DIR}
      ${CMAKE_BINARY_DIR}/aten/src
@@ -236,28 +243,28 @@ diff '--color=auto' -urp pytorch-2.5.1.orig/torch/CMakeLists.txt pytorch-2.5.1/t
 -    ${TORCH_ROOT}/third_party/kineto/libkineto/include
 -    ${TORCH_ROOT}/third_party/cpp-httplib
 -    ${TORCH_ROOT}/third_party/nlohmann/include
-+     ${TORCH_ROOT}/third_party/nlohmann/include
++    ${TORCH_ROOT}/third_party/nlohmann/include
  
      ${TORCH_SRC_DIR}/csrc
      ${TORCH_SRC_DIR}/csrc/api/include
      ${TORCH_SRC_DIR}/lib
      )
  
-+option(USE_SYSTEM_CPP_GLOO "Use system gloo" OFF)
 +option(USE_SYSTEM_CPP_HTTPLIB "Use system cpp-httplib" OFF)
 +option(USE_SYSTEM_FLATBUFFERS "Use system flatbuffers" OFF)
++option(USE_SYSTEM_GLOO "Use system gloo" OFF)
 +option(USE_SYSTEM_KINETO "Use system kineto" OFF)
 +option(USE_SYSTEM_LIBFMT "Use system libfmt" OFF)
 +option(USE_SYSTEM_ONNX "Use system onnx" OFF)
 +option(USE_SYSTEM_VALGRIND_HEADERS "Use system valgrind headers" OFF)
-+if(USE_SYSTEM_CPP_GLOO AND USE_SYSTEM_ONNX AND USE_SYSTEM_FLATBUFFERS AND USE_SYSTEM_KINETO AND USE_SYSTEM_CPP_HTTPLIB)
++if(USE_SYSTEM_GLOO AND USE_SYSTEM_CPP_HTTPLIB AND USE_SYSTEM_FLATBUFFERS AND USE_SYSTEM_KINETO AND USE_SYSTEM_LIBFMT AND USE_SYSTEM_ONNX AND USE_SYSTEM_VALGRIND_HEADERS)
 +else()
 +    list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES
 +        ${CMAKE_BINARY_DIR}/third_party
 +    )
 +endif()
 +
-+if(USE_SYSTEM_CPP_GLOO)
++if(USE_SYSTEM_GLOO)
 +else()
 +    list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES
 +        ${TORCH_ROOT}/third_party/gloo
@@ -308,16 +315,18 @@ diff '--color=auto' -urp pytorch-2.5.1.orig/torch/CMakeLists.txt pytorch-2.5.1/t
  list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES ${LIBSHM_SRCDIR})
  
  set(TORCH_PYTHON_LINK_LIBRARIES
-@@ -85,9 +138,13 @@ set(TORCH_PYTHON_LINK_LIBRARIES
+@@ -85,9 +138,15 @@ set(TORCH_PYTHON_LINK_LIBRARIES
      httplib
      nlohmann
      shm
 -    fmt::fmt-header-only
      ATEN_CPU_FILES_GEN_LIB)
  
-+if(USE_SYSTEM_LIBFMT)
-+else()
-+  list(APPEND TORCH_PYTHON_LINK_LIBRARIES fmt::fmt-header-only)
++option(USE_SYSTEM_LIBFMT "Use system libfmt" OFF)
++if(NOT USE_SYSTEM_LIBFMT)
++  list(APPEND TORCH_PYTHON_LINK_LIBRARIES
++    fmt::fmt-header-only
++  )
 +endif()
 +
  if(USE_ASAN AND TARGET Sanitizer::address)

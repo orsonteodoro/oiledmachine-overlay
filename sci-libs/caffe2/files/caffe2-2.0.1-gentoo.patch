@@ -1,0 +1,308 @@
+diff '--color=auto' -urp pytorch-2.0.1.orig/CMakeLists.txt pytorch-2.0.1/CMakeLists.txt
+--- pytorch-2.0.1.orig/CMakeLists.txt	2023-04-24 06:27:27.000000000 -0700
++++ pytorch-2.0.1/CMakeLists.txt	2024-11-06 14:08:02.404007026 -0800
+@@ -799,12 +799,11 @@ endif()
+ 
+ # ---[ Build flags
+ if(NOT MSVC)
+-  string(APPEND CMAKE_CXX_FLAGS " -O2 -fPIC")
++  string(APPEND CMAKE_CXX_FLAGS " -fPIC")
+   # Eigen fails to build with some versions, so convert this to a warning
+   # Details at http://eigen.tuxfamily.org/bz/show_bug.cgi?id=1459
+   string(APPEND CMAKE_CXX_FLAGS " -Wall")
+   string(APPEND CMAKE_CXX_FLAGS " -Wextra")
+-  append_cxx_flag_if_supported("-Werror=return-type" CMAKE_CXX_FLAGS)
+   append_cxx_flag_if_supported("-Werror=non-virtual-dtor" CMAKE_CXX_FLAGS)
+   append_cxx_flag_if_supported("-Werror=braced-scalar-init" CMAKE_CXX_FLAGS)
+   append_cxx_flag_if_supported("-Werror=range-loop-construct" CMAKE_CXX_FLAGS)
+@@ -912,8 +911,6 @@ if(NOT MSVC)
+   string(APPEND CMAKE_LINKER_FLAGS_DEBUG " -fno-omit-frame-pointer -O0")
+   append_cxx_flag_if_supported("-fno-math-errno" CMAKE_CXX_FLAGS)
+   append_cxx_flag_if_supported("-fno-trapping-math" CMAKE_CXX_FLAGS)
+-  append_cxx_flag_if_supported("-Werror=format" CMAKE_CXX_FLAGS)
+-  append_cxx_flag_if_supported("-Werror=cast-function-type" CMAKE_CXX_FLAGS)
+ endif()
+ 
+ if(USE_ASAN)
+diff '--color=auto' -urp pytorch-2.0.1.orig/c10/CMakeLists.txt pytorch-2.0.1/c10/CMakeLists.txt
+--- pytorch-2.0.1.orig/c10/CMakeLists.txt	2023-04-24 06:27:27.000000000 -0700
++++ pytorch-2.0.1/c10/CMakeLists.txt	2024-11-06 14:14:50.465811148 -0800
+@@ -65,7 +65,12 @@ endif()
+ if(${USE_GLOG})
+     target_link_libraries(c10 PUBLIC glog::glog)
+ endif()
+-target_link_libraries(c10 PRIVATE fmt::fmt-header-only)
++option(USE_SYSTEM_LIBFMT "Use system libfmt" OFF)
++if(USE_SYSTEM_LIBFMT)
++  target_link_libraries(c10 PRIVATE fmt)
++else()
++  target_link_libraries(c10 PRIVATE fmt::fmt-header-only)
++endif()
+ 
+ find_package(Backtrace)
+ if(Backtrace_FOUND)
+diff '--color=auto' -urp pytorch-2.0.1.orig/caffe2/CMakeLists.txt pytorch-2.0.1/caffe2/CMakeLists.txt
+--- pytorch-2.0.1.orig/caffe2/CMakeLists.txt	2023-04-24 06:27:27.000000000 -0700
++++ pytorch-2.0.1/caffe2/CMakeLists.txt	2024-11-06 14:22:22.082960496 -0800
+@@ -106,7 +106,8 @@ endif()
+ # Note: the folders that are being commented out have not been properly
+ # addressed yet.
+ 
+-if(NOT MSVC AND USE_XNNPACK)
++option(USE_SYSTEM_FXDIV "Use system fxdiv" OFF)
++if(NOT MSVC AND USE_XNNPACK AND NOT USE_SYSTEM_FXDIV)
+   if(NOT TARGET fxdiv)
+     set(FXDIV_BUILD_TESTS OFF CACHE BOOL "")
+     set(FXDIV_BUILD_BENCHMARKS OFF CACHE BOOL "")
+@@ -533,7 +534,6 @@ endif()
+ if(NOT MSVC)
+   set_source_files_properties(${TORCH_SRC_DIR}/csrc/jit/tensorexpr/llvm_jit.cpp PROPERTIES COMPILE_FLAGS -Wno-noexcept-type)
+   # Force -Werror on several files
+-  set_source_files_properties(${CMAKE_CURRENT_LIST_DIR}/../aten/src/ATen/native/mkldnn/Pooling.cpp PROPERTIES COMPILE_FLAGS "-Werror")
+ endif()
+ # Disable certain warnings for GCC-9.X
+ if(CMAKE_COMPILER_IS_GNUCXX AND (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 9.0.0))
+@@ -811,7 +811,6 @@ endif()
+ torch_compile_options(torch_cpu)  # see cmake/public/utils.cmake
+ if(HAS_WERROR_SIGN_COMPARE AND WERROR)
+   # target_compile_options(torch_cpu PRIVATE "-Werror=sign-compare")
+-  set_property(SOURCE ${ATen_CORE_SRCS} ${ATen_CPU_SRCS} APPEND PROPERTY COMPILE_OPTIONS "-Werror=sign-compare")
+ endif()
+ 
+ set_property(SOURCE ${ATen_CORE_SRCS} APPEND
+@@ -975,7 +974,9 @@ elseif(USE_CUDA)
+ endif()
+ 
+ if(NOT MSVC AND USE_XNNPACK)
+-  TARGET_LINK_LIBRARIES(torch_cpu PRIVATE fxdiv)
++  if(NOT USE_SYSTEM_FXDIV)
++    TARGET_LINK_LIBRARIES(torch_cpu PRIVATE fxdiv)
++  endif()
+ endif()
+ 
+ # ==========================================================
+@@ -1095,8 +1093,13 @@ target_include_directories(torch_cpu PRI
+ target_include_directories(torch_cpu PRIVATE
+   ${TORCH_ROOT}/third_party/miniz-2.1.0)
+ 
+-target_include_directories(torch_cpu PRIVATE
+-  ${TORCH_ROOT}/third_party/kineto/libkineto/include)
++option(USE_SYSTEM_KINETO "Use system kineto" OFF)
++if(USE_SYSTEM_KINETO)
++  target_include_directories(torch_cpu PRIVATE /usr/include/kineto)
++else()
++  target_include_directories(torch_cpu PRIVATE
++    ${TORCH_ROOT}/third_party/kineto/libkineto/include)
++endif()
+ 
+ if(USE_KINETO)
+   target_include_directories(torch_cpu PRIVATE
+diff '--color=auto' -urp pytorch-2.0.1.orig/cmake/Codegen.cmake pytorch-2.0.1/cmake/Codegen.cmake
+--- pytorch-2.0.1.orig/cmake/Codegen.cmake	2023-04-24 06:27:27.000000000 -0700
++++ pytorch-2.0.1/cmake/Codegen.cmake	2024-11-06 14:08:02.428006661 -0800
+@@ -57,7 +57,7 @@ if(INTERN_BUILD_ATEN_OPS)
+   if(MSVC)
+     set(OPT_FLAG "/fp:strict ")
+   else(MSVC)
+-    set(OPT_FLAG "-O3 ")
++    set(OPT_FLAG " ")
+     if("${CMAKE_BUILD_TYPE}" MATCHES "Debug")
+       set(OPT_FLAG " ")
+     endif()
+diff '--color=auto' -urp pytorch-2.0.1.orig/cmake/Dependencies.cmake pytorch-2.0.1/cmake/Dependencies.cmake
+--- pytorch-2.0.1.orig/cmake/Dependencies.cmake	2023-04-24 06:27:27.000000000 -0700
++++ pytorch-2.0.1/cmake/Dependencies.cmake	2024-11-06 14:13:39.222892455 -0800
+@@ -486,7 +486,8 @@ endif()
+ list(APPEND Caffe2_DEPENDENCY_LIBS cpuinfo)
+ 
+ # ---[ QNNPACK
+-if(USE_QNNPACK)
++option(USE_SYSTEM_QNNPACK "Use system qnnpack" OFF)
++if(USE_QNNPACK AND NOT USE_SYSTEM_QNNPACK)
+   set(CAFFE2_THIRD_PARTY_ROOT "${PROJECT_SOURCE_DIR}/third_party")
+ 
+   if(NOT DEFINED QNNPACK_SOURCE_DIR)
+@@ -542,7 +543,7 @@ if(USE_QNNPACK)
+ endif()
+ 
+ # ---[ Caffe2 Int8 operators (enabled by USE_QNNPACK) depend on gemmlowp and neon2sse headers
+-if(USE_QNNPACK)
++if(USE_QNNPACK AND NOT USE_SYSTEM_QNNPACK)
+   set(CAFFE2_THIRD_PARTY_ROOT "${PROJECT_SOURCE_DIR}/third_party")
+   include_directories(SYSTEM "${CAFFE2_THIRD_PARTY_ROOT}/gemmlowp")
+   include_directories(SYSTEM "${CAFFE2_THIRD_PARTY_ROOT}/neon2sse")
+@@ -802,7 +803,8 @@ if(BUILD_TEST OR BUILD_MOBILE_BENCHMARK
+ endif()
+ 
+ # ---[ FBGEMM
+-if(USE_FBGEMM)
++option(USE_SYSTEM_FBGEMM "Use system fbgemm" OFF)
++if(USE_FBGEMM AND NOT USE_SYSTEM_FBGEMM)
+   set(CAFFE2_THIRD_PARTY_ROOT "${PROJECT_SOURCE_DIR}/third_party")
+   if(NOT DEFINED FBGEMM_SOURCE_DIR)
+     set(FBGEMM_SOURCE_DIR "${CAFFE2_THIRD_PARTY_ROOT}/fbgemm" CACHE STRING "FBGEMM source directory")
+@@ -847,6 +849,9 @@ if(USE_FBGEMM)
+ endif()
+ 
+ if(USE_FBGEMM)
++  if(USE_SYSTEM_FBGEMM)
++    list(APPEND Caffe2_DEPENDENCY_LIBS fbgemm)
++  endif()
+   caffe2_update_option(USE_FBGEMM ON)
+ else()
+   caffe2_update_option(USE_FBGEMM OFF)
+@@ -1551,7 +1556,10 @@ if(CAFFE2_CMAKE_BUILDING_WITH_MAIN_REPO
+       set_target_properties(onnx_proto PROPERTIES CXX_STANDARD 17)
+     endif()
+   endif()
+-  add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../third_party/foxi EXCLUDE_FROM_ALL)
++  option(USE_SYSTEM_FOXI "Use system foxi" OFF)
++  if(NOT USE_SYSTEM_FOXI)
++    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/../third_party/foxi EXCLUDE_FROM_ALL)
++  endif()
+ 
+   add_definitions(-DONNX_NAMESPACE=${ONNX_NAMESPACE})
+   if(NOT USE_SYSTEM_ONNX)
+@@ -1819,7 +1827,10 @@ endif()
+ #
+ set(TEMP_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
+ set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libs" FORCE)
+-add_subdirectory(${PROJECT_SOURCE_DIR}/third_party/fmt)
++option(USE_SYSTEM_LIBFMT "Use system libfmt" OFF)
++if(NOT USE_SYSTEM_LIBFMT)
++  add_subdirectory(${PROJECT_SOURCE_DIR}/third_party/fmt)
++endif()
+ 
+ # Disable compiler feature checks for `fmt`.
+ #
+@@ -1828,9 +1839,11 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/t
+ # CMAKE_CXX_FLAGS in ways that break feature checks. Since we already know
+ # `fmt` is compatible with a superset of the compilers that PyTorch is, it
+ # shouldn't be too bad to just disable the checks.
+-set_target_properties(fmt-header-only PROPERTIES INTERFACE_COMPILE_FEATURES "")
++if(NOT USE_SYSTEM_LIBFMT)
++  set_target_properties(fmt-header-only PROPERTIES INTERFACE_COMPILE_FEATURES "")
++  list(APPEND Caffe2_DEPENDENCY_LIBS fmt::fmt-header-only)
++endif()
+ 
+-list(APPEND Caffe2_DEPENDENCY_LIBS fmt::fmt-header-only)
+ set(BUILD_SHARED_LIBS ${TEMP_BUILD_SHARED_LIBS} CACHE BOOL "Build shared libs" FORCE)
+ 
+ # ---[ Kineto
+Only in pytorch-2.0.1/cmake: Dependencies.cmake.orig
+diff '--color=auto' -urp pytorch-2.0.1.orig/cmake/External/nnpack.cmake pytorch-2.0.1/cmake/External/nnpack.cmake
+--- pytorch-2.0.1.orig/cmake/External/nnpack.cmake	2023-04-24 06:27:27.000000000 -0700
++++ pytorch-2.0.1/cmake/External/nnpack.cmake	2024-11-06 14:23:33.085884019 -0800
+@@ -58,7 +58,8 @@ if(ANDROID OR IOS OR ${CMAKE_SYSTEM_NAME
+   set(PTHREADPOOL_SOURCE_DIR "${CAFFE2_THIRD_PARTY_ROOT}/pthreadpool" CACHE STRING "pthreadpool source directory")
+   set(GOOGLETEST_SOURCE_DIR "${CAFFE2_THIRD_PARTY_ROOT}/googletest" CACHE STRING "Google Test source directory")
+ 
+-  if(NOT TARGET nnpack)
++  option(USE_SYSTEM_NNPACK "Use system nnpack" OFF)
++  if(NOT TARGET nnpack AND NOT USE_SYSTEM_NNPACK)
+     if(NOT USE_SYSTEM_PTHREADPOOL AND USE_INTERNAL_PTHREADPOOL_IMPL)
+       set(NNPACK_CUSTOM_THREADPOOL ON CACHE BOOL "")
+     endif()
+diff '--color=auto' -urp pytorch-2.0.1.orig/cmake/public/utils.cmake pytorch-2.0.1/cmake/public/utils.cmake
+--- pytorch-2.0.1.orig/cmake/public/utils.cmake	2023-04-24 06:27:27.000000000 -0700
++++ pytorch-2.0.1/cmake/public/utils.cmake	2024-11-06 14:08:02.424006722 -0800
+@@ -507,8 +507,6 @@ function(torch_compile_options libname)
+   endif()
+ 
+   # Use -O2 for release builds (-O3 doesn't improve perf, and -Os results in perf regression)
+-  target_compile_options(${libname} PRIVATE
+-      $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<OR:$<CONFIG:Release>,$<CONFIG:RelWithDebInfo>>>:-O2>)
+ 
+ endfunction()
+ 
+diff '--color=auto' -urp pytorch-2.0.1.orig/torch/CMakeLists.txt pytorch-2.0.1/torch/CMakeLists.txt
+--- pytorch-2.0.1.orig/torch/CMakeLists.txt	2023-04-24 06:27:27.000000000 -0700
++++ pytorch-2.0.1/torch/CMakeLists.txt	2024-11-06 14:19:33.905510848 -0800
+@@ -66,20 +66,63 @@ set(TORCH_PYTHON_INCLUDE_DIRECTORIES
+     ${CMAKE_BINARY_DIR}
+     ${CMAKE_BINARY_DIR}/aten/src
+     ${CMAKE_BINARY_DIR}/caffe2/aten/src
+-    ${CMAKE_BINARY_DIR}/third_party
++
++    ${TORCH_SRC_DIR}/csrc
++    ${TORCH_SRC_DIR}/csrc/api/include
++    ${TORCH_SRC_DIR}/lib
++    )
++
++option(USE_SYSTEM_FLATBUFFERS "Use system flatbuffers" OFF)
++option(USE_SYSTEM_GLOO "Use system gloo" OFF)
++option(USE_SYSTEM_KINETO "Use system kineto" OFF)
++option(USE_SYSTEM_ONNX "Use system onnx" OFF)
++option(USE_SYSTEM_VALGRIND_HEADERS "Use system valgrind headers" OFF)
++
++if(USE_SYSTEM_FLATBUFFERS AND USE_SYSTEM_GLOO AND USE_SYSTEM_KINETO AND USE_SYSTEM_ONNX AND USE_SYSTEM_VALGRIND_HEADERS)
++else()
++  list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES
++    ${CMAKE_BINARY_DIR}/third_party
++  )
++endif()
++
++if(USE_SYSTEM_ONNX)
++else()
++  list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES
+     ${CMAKE_BINARY_DIR}/third_party/onnx
++    ${TORCH_ROOT}/third_party/onnx
++  )
++endif()
+ 
++if(USE_SYSTEM_VALGRIND_HEADERS)
++else()
++  list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES
+     ${TORCH_ROOT}/third_party/valgrind-headers
++  )
++endif()
+ 
++if(USE_SYSTEM_GLOO)
++else()
++  list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES
+     ${TORCH_ROOT}/third_party/gloo
+-    ${TORCH_ROOT}/third_party/onnx
++  )
++endif()
++
++if(USE_SYSTEM_FLATBUFFERS)
++else()
++  list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES
+     ${TORCH_ROOT}/third_party/flatbuffers/include
+-    ${TORCH_ROOT}/third_party/kineto/libkineto/include
++  )
++endif()
+ 
+-    ${TORCH_SRC_DIR}/csrc
+-    ${TORCH_SRC_DIR}/csrc/api/include
+-    ${TORCH_SRC_DIR}/lib
+-    )
++if(USE_SYSTEM_KINETO)
++  list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES
++    /usr/include/kineto
++  )
++else()
++  list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES
++    ${TORCH_ROOT}/third_party/kineto/libkineto/include
++  )
++endif()
+ 
+ list(APPEND TORCH_PYTHON_INCLUDE_DIRECTORIES ${LIBSHM_SRCDIR})
+ 
+@@ -87,9 +123,15 @@ set(TORCH_PYTHON_LINK_LIBRARIES
+     python::python
+     pybind::pybind11
+     shm
+-    fmt::fmt-header-only
+     ATEN_CPU_FILES_GEN_LIB)
+ 
++option(USE_SYSTEM_LIBFMT "Use system libfmt" OFF)
++if(NOT USE_SYSTEM_LIBFMT)
++  list(APPEND TORCH_PYTHON_LINK_LIBRARIES
++    fmt::fmt-header-only
++  )
++endif()
++
+ set(TORCH_PYTHON_COMPILE_DEFINITIONS)
+ 
+ set(TORCH_PYTHON_PUBLIC_COMPILE_DEFINITIONS)
