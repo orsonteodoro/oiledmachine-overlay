@@ -935,7 +935,7 @@ src_prepare() {
 				--cpp \
 				--gen-mutable \
 				--scoped-enums \
-				mobile_bytecode.fbs \
+				"mobile_bytecode.fbs" \
 				|| die
 		popd >/dev/null 2>&1 || die
 	fi
