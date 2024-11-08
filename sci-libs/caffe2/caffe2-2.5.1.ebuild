@@ -798,6 +798,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.3.0-fix-libcpp.patch"
 	"${FILESDIR}/${PN}-2.4.0-aotriton-offline-install.patch"
 	"${FILESDIR}/${PN}-2.5.1-link-openmp-to-torch_shm_manager.patch"
+	"${FILESDIR}/${PN}-2.5.1-prefixed-install.patch"
 )
 
 warn_untested_gpu() {
@@ -1091,6 +1092,12 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		-DUSE_XNNPACK=$(usex xnnpack)
 		-DUSE_XPU=OFF
 		-Wno-dev
+
+		-DCMAKE_INSTALL_PREFIXED_DATAROOTDIR="lib/${PN}/share"
+		-DCMAKE_INSTALL_PREFIXED_INCLUDEDIR="lib/${PN}/include"
+		-DCMAKE_INSTALL_PREFIXED_LIBDIR="lib/${PN}/$(get_libdir)"
+		-DCMAKE_INSTALL_PREFIXED_BINDIR="lib/${PN}/bin"
+		#-DCMAKE_INSTALL_FULL_INCLUDEDIR="lib/${PN}/include"
 	)
 
 	if use onednn ; then
@@ -1218,5 +1225,11 @@ src_install() {
 		"../../../../../include/torch" \
 		"${D}$(python_get_sitedir)/torch/include/torch" \
 		|| die # bug 923269
+
+	# FIXME: fix cmake build scripts and remove below.
+	mv \
+		"${ED}/usr/include/pybind11" \
+		"${ED}/usr/lib/${PN}/include" \
+		|| die
 	dhms_end
 }
