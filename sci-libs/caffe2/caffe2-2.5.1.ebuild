@@ -1097,7 +1097,6 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		-DCMAKE_INSTALL_PREFIXED_INCLUDEDIR="lib/${PN}/include"
 		-DCMAKE_INSTALL_PREFIXED_LIBDIR="lib/${PN}/$(get_libdir)"
 		-DCMAKE_INSTALL_PREFIXED_BINDIR="lib/${PN}/bin"
-		#-DCMAKE_INSTALL_FULL_INCLUDEDIR="lib/${PN}/include"
 	)
 
 	if use onednn ; then

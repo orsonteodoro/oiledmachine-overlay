@@ -767,6 +767,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.0.0-gcc13.patch"
 	"${FILESDIR}/${PN}-2.0.0-cudnn_include_fix.patch"
 	"${FILESDIR}/${PN}-2.0.1-cudaExtra.patch"
+	"${FILESDIR}/${PN}-2.0.1-prefixed-install.patch"
 )
 
 warn_untested_gpu() {
@@ -1055,6 +1056,11 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		-DUSE_VALGRIND=OFF
 		-DUSE_XNNPACK=$(usex xnnpack)
 		-Wno-dev
+
+		-DCMAKE_INSTALL_PREFIXED_DATAROOTDIR="lib/${PN}/share"
+		-DCMAKE_INSTALL_PREFIXED_INCLUDEDIR="lib/${PN}/include"
+		-DCMAKE_INSTALL_PREFIXED_LIBDIR="lib/${PN}/$(get_libdir)"
+		-DCMAKE_INSTALL_PREFIXED_BINDIR="lib/${PN}/bin"
 	)
 
 	if use onednn ; then
@@ -1170,5 +1176,11 @@ src_install() {
 	rm -rf "${ED}/var/tmp" || die
 	python_domodule "python/caffe2"
 	python_domodule "python/torch"
+
+	# FIXME: fix cmake build scripts and remove below.
+	mv \
+		"${ED}/usr/include/pybind11" \
+		"${ED}/usr/lib/${PN}/include" \
+		|| die
 	dhms_end
 }
