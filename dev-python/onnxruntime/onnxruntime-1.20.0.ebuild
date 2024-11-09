@@ -903,7 +903,9 @@ src_configure() {
 
 	append-cxxflags \
 		-Wno-c++20-compat \
-		-Wno-dangling-reference
+		-Wno-dangling-reference \
+		-Wno-error=unused-parameter \
+		-Wno-error=maybe-uninitialized
 
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_INCLUDEDIR="include/${PN}"
