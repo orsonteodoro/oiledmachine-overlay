@@ -15,7 +15,7 @@ DESCRIPTION="JACK audio server source/sink plugin for GStreamer"
 RDEPEND="
 	|| (
 		>=media-sound/jack2-1.9.7[${MULTILIB_USEDEP}]
-		media-video/pipewire[jack-sdk(-),${MULTILIB_USEDEP}]
+		media-video/pipewire[${MULTILIB_USEDEP},jack-sdk(-)]
 	)
 "
 DEPEND="
