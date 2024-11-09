@@ -13,7 +13,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc
 
 DESCRIPTION="Image decoder, overlay and sink plugin for GStreamer"
 RDEPEND="
-	>=x11-libs/gdk-pixbuf-2.30.7:2[${MULTILIB_USEDEP}]
+	>=x11-libs/gdk-pixbuf-2.8.0:2[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
