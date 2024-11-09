@@ -111,7 +111,7 @@ VULNERABILITIES_FIXED=(
 	"CVE-2024-44244;DoS;Medium"
 )
 OCDM_WV="virtual/libc" # Placeholder
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( python3_{11..12} )
 SELECTED_LTO="" # global var not const
 SLOT_MAJOR=$(ver_cut 1 "${API_VERSION}")
 # See Source/cmake/OptionsGTK.cmake
@@ -922,7 +922,12 @@ RDEPEND+="
 		)
 	)
 	introspection? (
-		>=dev-libs/gobject-introspection-1.56.1:=
+		>=dev-libs/gobject-introspection-1.56.1
+		$(python_gen_any_dep '
+			=dev-libs/gobject-introspection-1.78*[${PYTHON_SINGLE_USEDEP}]
+			=dev-libs/gobject-introspection-common-1.78*
+		' python3_{11,12})
+		dev-libs/gobject-introspection:=
 	)
 	journald? (
 		|| (
@@ -1162,8 +1167,12 @@ _set_cxx() {
 			local gcc_current_profile=$(gcc-config -c)
 			local gcc_current_profile_slot="${gcc_current_profile##*-}"
 
-	# GCC-14 segfaults
-			if has_version "sys-devel/gcc:13" ; then
+			if ver_test "${gcc_current_profile_slot}" -gt "13" ; then
+ewarn "GCC ${gcc_current_profile_slot} is not supported upstream."
+ewarn "If problems encountered, build both dev-libs/icu and ${CATEGORY}/${PN} with either GCC 11, 12, 13."
+				export CC="${CHOST}-gcc-${gcc_current_profile_slot}"
+				export CXX="${CHOST}-g++-${gcc_current_profile_slot}"
+			elif has_version "sys-devel/gcc:13" ; then
 				export CC="${CHOST}-gcc-13"
 				export CXX="${CHOST}-g++-13"
 			elif has_version "sys-devel/gcc:12" ; then
