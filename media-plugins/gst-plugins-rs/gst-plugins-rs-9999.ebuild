@@ -883,6 +883,7 @@ BDEPEND+="
 	|| (
 		$(gen_virtual_rust_bdepend)
 	)
+	virtual/rust:=
 "
 PATCHES=(
 )
