@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<maintainer type="project">
-		<email>gstreamer@gentoo.org</email>
-		<name>GStreamer package maintainers</name>
-	</maintainer>
+  <maintainer type="project">
+    <!-- Ebuild originators -->
+    <email>gstreamer@gentoo.org</email>
+    <name>GStreamer package maintainers</name>
+  </maintainer>
+  <!--
+
+  oiledmachine-overlay changes:
+
+  Added ffmpeg multislot changes
+
+  -->
 </pkgmetadata>

@@ -49,6 +49,7 @@ einfo "Using ffmpeg 5.1.x multislot"
 einfo "Using ffmpeg 4.4.x multislot"
 			prefix="usr/$(get_libdir)/ffmpeg/56.58.58"
 		elif has_version "media-video/ffmpeg:0" ; then
+einfo "Using ffmpeg monoslot"
 			prefix="usr"
 		fi
 		export PKG_CONFIG_PATH="/${prefix}/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
