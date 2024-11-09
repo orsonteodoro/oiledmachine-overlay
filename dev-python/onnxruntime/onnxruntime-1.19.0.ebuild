@@ -6,7 +6,6 @@ EAPI=8
 # TODO package:
 # clang-format
 # lintrunner-adapters
-# neural-compressor
 # onnxmltools
 # pydocstyle
 # synr
