@@ -13,25 +13,25 @@ EAPI=8
 # torch-ort
 
 # For deps versioning, see
-# https://github.com/microsoft/onnxruntime/blob/v1.19.0/cmake/deps.txt
-# https://github.com/microsoft/onnxruntime/blob/v1.19.0/tools/ci_build/github/linux/docker/scripts/manylinux/requirements.txt
-# https://github.com/microsoft/onnxruntime/blob/v1.19.0/onnxruntime/python/tools/transformers/requirements.txt
-# https://github.com/microsoft/onnxruntime/blob/v1.19.0/cmake/external/dnnl.cmake#L5
-# https://github.com/microsoft/onnxruntime/blob/v1.19.0/requirements.txt
-# https://github.com/microsoft/onnxruntime/blob/v1.19.0/requirements-dev.txt
-# https://github.com/microsoft/onnxruntime/blob/v1.19.0/requirements-doc.txt
-# https://github.com/microsoft/onnxruntime/blob/v1.19.0/requirements-lintrunner.txt
-# https://github.com/microsoft/onnxruntime/blob/v1.19.0/requirements-training.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.20.0/cmake/deps.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.20.0/tools/ci_build/github/linux/docker/scripts/manylinux/requirements.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.20.0/onnxruntime/python/tools/transformers/requirements.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.20.0/cmake/external/dnnl.cmake#L5
+# https://github.com/microsoft/onnxruntime/blob/v1.20.0/requirements.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.20.0/requirements-dev.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.20.0/requirements-doc.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.20.0/requirements-lintrunner.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.20.0/requirements-training.txt
 # https://github.com/apache/tvm/blob/2379917985919ed3918dc12cad47f469f245be7a/python/gen_requirements.py#L65
 
 # clog has same version as cpuinfo
 
 # https://github.com/abseil/abseil-cpp/releases/download/20240722.0/abseil-cpp-20240722.0.tar.gz
-ABSEIL_CPP_COMMIT_1="f46495ea96f68fc3f6c394f099b2992743f6ff7f" # From cmake/deps.txt
+ABSEIL_CPP_PV2="20240722.0" # From cmake/deps.txt
 ABSEIL_CPP_COMMIT_2="4a2c63365eff8823a5221db86ef490e828306f9d" # # protobuf dep
 ABSEIL_CPP_PV="20230125.3" # From cmake/external/onnx/CMakeLists.txt
 AMDGPU_TARGETS_COMPAT=(
-# See https://github.com/microsoft/onnxruntime/blob/v1.19.0/cmake/CMakeLists.txt#L299
+# See https://github.com/microsoft/onnxruntime/blob/v1.20.0/cmake/CMakeLists.txt#L299
 	gfx906
 	gfx908
 	gfx90a # ck
@@ -51,18 +51,20 @@ CPU_FLAGS="
 	cpu_flags_x86_avx512
 "
 CPUINFO_COMMIT="ca678952a9a8eaa6de112d154e8e104b22f9ab3f" # From cmake/deps.txt
-CUTLASS_PV="3.5.0" # From cmake/deps.txt
+CUDNN_FRONTEND_PV="1.7.0"
+CUTLASS_PV="3.5.1" # From cmake/deps.txt
 CUTLASS_COMMIT="c2ee13a0fe99241b0e798ce647acf98e237f1d0c" # tvm dep
 CXXOPTS_COMMIT="3c73d91c0b04e2b59462f0a741be8c07024c1bc0"
 DATE_PV_1="3.0.1" # From cmake/deps.txt
 DATE_PV_2="3.0.0" # From cmake/external/date/CMakeLists.txt
+DAWN_COMMIT="511eb80847afe6bded34ec491a38d5d78ba2d604"
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 DLPACK_COMMIT="ddeb264880a1fa7e7be238ab3901a810324fbe5f" # tvm dep
 DMLC_CORE_COMMIT="09511cf9fe5ff103900a5eafb50870dc84cc17c8" # tvm dep
 CUDA_TARGETS_COMPAT=(
-# See https://github.com/microsoft/onnxruntime/blob/v1.19.0/cmake/CMakeLists.txt#L1453
+# See https://github.com/microsoft/onnxruntime/blob/v1.20.0/cmake/CMakeLists.txt#L1453
 	sm_30
 	sm_37
 	sm_50
@@ -89,6 +91,7 @@ GOOGLETEST_COMMIT_3="e2239ee6043f73722e7aa812a459f54a28552929" # From cmake/exte
 GSL_PV="4.0.0" # From cmake/deps.txt
 JSON_PV="3.10.5" # From cmake/deps.txt
 JSONCPP_COMMIT="9059f5cad030ba11d37818847443a53918c327b1" # protobuf dep
+KLEIDIAI_PV="0.2.0"
 LIBBACKTRACE_COMMIT="08f7c7e69f8ea61a0c4151359bc8023be8e9217b" # tvm dep
 LIBPROTOBUF_MUTATOR_COMMIT="7a2ed51a6b682a83e345ff49fc4cfd7ca47550db"
 MP11_PV="1.82.0"
@@ -104,7 +107,7 @@ LLVM_COMPAT=( 17 18 )
 LLVM_OPTIONAL=1
 MIMALLOC_PV="2.1.1" # From cmake/deps.txt
 NEURAL_SPEED_PV="0.3" # From cmake/deps.txt
-ONNX_TENSORRT_COMMIT="f161f95883b4ebd8cb789de5efc67b73c0a6e694" # From cmake/deps.txt
+ONNX_TENSORRT_COMMIT="9f98e2ebe7507fe0774d06a44bbf4b0e82cc9ce7" # From cmake/deps.txt
 ONNXRUNTIME_EXTENSIONS_COMMIT="94142d8391c9791ec71c38336436319a2d4ac7a0" # From cmake/deps.txt
 OPENVINO_PV="2024.0"
 OPENVINO_TARGETS=(
@@ -130,7 +133,7 @@ TENSORBOARD_COMMIT="373eb09e4c5d2b3cc2493f0949dc4be6b6a45e81" # From cmake/deps.
 TVM_COMMIT="2379917985919ed3918dc12cad47f469f245be7a" # From cmake/external/tvm.cmake
 TVM_VTA_COMMIT="36a91576edf633479c78649e050f18dd2ddc8103" # tvm dep
 UTF8_RANGE_COMMIT="72c943dea2b9240cd09efde15191e144bc7c7d38" # From cmake/deps.txt, protobuf dep
-XNNPACK_COMMIT="0da379fc4808f9601faef392352018c741c0f297" # From cmake/deps.txt
+XNNPACK_COMMIT="309b75c9e56e0a674bf78d59872ce131f814dfb6" # From cmake/deps.txt
 
 inherit cmake cuda dep-prepare distutils-r1 flag-o-matic llvm-r1 rocm toolchain-funcs
 
@@ -154,6 +157,8 @@ https://github.com/emscripten-core/emsdk/archive/${EMSDK_COMMIT}.tar.gz
 	-> emsdk-${EMSDK_COMMIT:0:7}.tar.gz
 https://github.com/google/benchmark/archive/${BENCHMARK_COMMIT_1}.tar.gz
 	-> benchmark-${BENCHMARK_COMMIT_1:0:7}.tar.gz
+https://github.com/google/dawn/archive/${DAWN_COMMIT}.tar.gz
+	-> dawn-${DAWN_COMMIT}.tar.gz
 https://github.com/google/flatbuffers/archive/v${FLATBUFFERS_PV}.tar.gz
 	-> flatbuffers-${FLATBUFFERS_PV}.tar.gz
 https://github.com/google/libprotobuf-mutator/archive/${LIBPROTOBUF_MUTATOR_COMMIT}.tar.gz
@@ -186,13 +191,15 @@ https://github.com/pytorch/cpuinfo/archive/${CPUINFO_COMMIT}.tar.gz
 	-> pytorch-cpuinfo-${CPUINFO_COMMIT:0:7}.tar.gz
 https://github.com/jarro2783/cxxopts/archive/${CXXOPTS_COMMIT}.tar.gz
 	-> cxxopts-${CXXOPTS_COMMIT:0:7}.tar.gz
+https://gitlab.arm.com/kleidi/kleidiai/-/archive/v${KLEIDIAI_PV}/kleidiai-v${KLEIDIAI_PV}.tar.gz
+	-> kleidiai-${KLEIDIAI_PV}.tar.gz
 	!system-eigen? (
 https://gitlab.com/libeigen/eigen/-/archive/${EIGEN_COMMIT}/eigen-${EIGEN_COMMIT}.tar.gz
 	-> eigen-${EIGEN_COMMIT:0:7}.tar.gz
 	)
 	abseil-cpp? (
-https://github.com/abseil/abseil-cpp/archive/${ABSEIL_CPP_COMMIT_1}.tar.gz
-	-> abseil-cpp-${ABSEIL_CPP_COMMIT_1:0:7}.tar.gz
+https://github.com/abseil/abseil-cpp/archive/${ABSEIL_CPP_PV2}.tar.gz
+	-> abseil-cpp-${ABSEIL_CPP_PV2}.tar.gz
 	)
 	benchmark? (
 https://github.com/google/benchmark/archive/refs/tags/v${BENCHMARK_PV}.tar.gz
@@ -201,6 +208,8 @@ https://github.com/google/benchmark/archive/${BENCHMARK_COMMIT_2}.tar.gz
 	-> benchmark-${BENCHMAR_COMMIT_2:0:7}.tar.gz
 	)
 	cuda? (
+https://github.com/NVIDIA/cudnn-frontend/archive/refs/tags/v${CUDNN_FRONTEND_PV}.tar.gz
+	-> cudnn-frontend-${CUDNN_FRONTEND_PV}.tar.gz
 https://github.com/NVIDIA/cutlass/archive/refs/tags/v${CUTLASS_PV}.tar.gz
 	-> cutlass-${CUTLASS_PV}.tar.gz
 	)
@@ -277,6 +286,7 @@ https://github.com/google/XNNPACK/archive/${XNNPACK_COMMIT}.tar.gz
 
 "
 
+
 LICENSE="
 	(
 		all-rights-reserved
@@ -341,7 +351,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="mirror test" # Untested
 SLOT="0"
-KEYWORDS="~amd64"
+#KEYWORDS="~amd64" # TODO dawn .gitmodules, review removal of neural_speed
 IUSE="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${CPU_FLAGS}
@@ -378,7 +388,7 @@ gen_rocm_required_use() {
 		"
 	done
 }
-# For providers, see also https://github.com/microsoft/onnxruntime/blob/v1.19.0/onnxruntime/test/perftest/command_args_parser.cc#L40
+# For providers, see also https://github.com/microsoft/onnxruntime/blob/v1.20.0/onnxruntime/test/perftest/command_args_parser.cc#L40
 # abseil-cpp is required for protobuf and still links to it if disabled.
 REQUIRED_USE="
 	$(gen_cuda_required_use)
@@ -749,8 +759,12 @@ src_unpack() {
 	dep_prepare_mv "${WORKDIR}/mp11-boost-${MP11_PV}" "${S}/cmake/external/mp11"
 	dep_prepare_mv "${WORKDIR}/utf8_range-${UTF8_RANGE_COMMIT}" "${S}/cmake/external/utf8_range"
 
+	dep_prepare_mv "${WORKDIR}/dawn-${DAWN_COMMIT}" "${S}/cmake/external/dawn"
+	dep_prepare_mv "${WORKDIR}/cudnn-frontend-${CUDNN_FRONTEND_PV}" "${S}/cmake/external/cudnn-frontend"
+	dep_prepare_mv "${WORKDIR}/kleidiai-${KLEIDIAI_PV}" "${S}/cmake/external/kleidiai"
+
 	if use abseil-cpp ; then
-		dep_prepare_mv "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_COMMIT_1}" "${S}/cmake/external/abseil_cpp"
+		dep_prepare_mv "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_PV2}" "${S}/cmake/external/abseil_cpp"
 	fi
 	if use benchmark ; then
 		dep_prepare_mv "${WORKDIR}/benchmark-${BENCHMARK_PV}" "${S}/cmake/external/google_benchmark"
@@ -903,6 +917,8 @@ src_configure() {
 		-DFETCHCONTENT_SOURCE_DIR_NLOHMANN_JSON="${S}/cmake/external/json"
 		-DFETCHCONTENT_SOURCE_DIR_ONNX="${S}/cmake/external/onnx"
 		-DFETCHCONTENT_SOURCE_DIR_ABSEIL="${S}/cmake/external/onnx/third_party/abseil" # For cmake/external/onnx/CMakeLists.txt
+		-DFETCHCONTENT_SOURCE_DIR_DAWN="${S}/cmake/external/dawn"
+		-DFETCHCONTENT_SOURCE_DIR_KLEIDIAI="${S}/cmake/external/kleidiai"
 		#-DFETCHCONTENT_SOURCE_DIR_PROTOBUF="${S}/cmake/external/onnx/third_party/protobuf" # For cmake/external/onnx/CMakeLists.txt # Disabled because it is ambiguous.
 		-DFETCHCONTENT_SOURCE_DIR_PROTOBUF="${S}/cmake/external/protobuf"
 		-DFETCHCONTENT_SOURCE_DIR_PYTORCH_CLOG="${S}/cmake/external/pytorch_cpuinfo"
@@ -1042,6 +1058,7 @@ src_configure() {
 			-DCMAKE_CUDA_FLAGS="-forward-unknown-opts -fno-lto ${NVCCFLAGS}"
 			-DCMAKE_CUDA_STANDARD_REQUIRED=ON
 			-DCMAKE_CXX_STANDARD_REQUIRED=ON
+			-DFETCHCONTENT_SOURCE_DIR_CUDNN_FRONTEND="${S}/cmake/external/cudnn-frontend"
 			-DFETCHCONTENT_SOURCE_DIR_CUTLASS="${S}/cmake/external/cutlass"
 			-Donnxruntime_CUDA_HOME="/opt/cuda"
 			-Donnxruntime_CUDNN_HOME="/usr"
