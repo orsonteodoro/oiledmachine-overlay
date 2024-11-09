@@ -882,6 +882,7 @@ src_prepare() {
 }
 
 src_configure() {
+	die "This ebuild is still in development.  Use the 1.19.x series instead."
 	export ROCM_PATH="${ESYSROOT}/${EROCM_PATH}"
 	export MIOPEN_PATH="${ESYSROOT}/${EROCM_PATH}"
 	#export ROCM_VERSION="${ROCM_VERSION}"-
