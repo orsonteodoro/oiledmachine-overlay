@@ -2,7 +2,7 @@
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
   <maintainer type="project">
-    <!-- Ebuild originator -->
+    <!-- Ebuild originators -->
     <email>gstreamer@gentoo.org</email>
     <name>GStreamer package maintainers</name>
   </maintainer>
@@ -12,13 +12,6 @@
     plugins.  This will allow USE flags to be changed without re-compiling apps,
     since gstreamer plugins are all run-time dependencies.
   </longdescription>
-  <!--
-
-    oiledmachine-overlay notes:
-
-    Temporary fork until ebuild maintainer gets it bumped.
-
-  -->
   <use>
     <flag name="http">
       Enable http streaming via <pkg>net-libs/libsoup</pkg>

@@ -1,0 +1,26 @@
+# Copyright 1999-2024 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+GST_ORG_MODULE="gst-plugins-bad"
+
+inherit gstreamer-meson
+
+KEYWORDS="~amd64 ~arm64 ~x86"
+
+DESCRIPTION="MPEG-1/2 video encoding plugin for GStreamer"
+RDEPEND="
+	>=media-video/mjpegtools-2.0.0:=[${MULTILIB_USEDEP}]
+"
+DEPEND="
+	${RDEPEND}
+"
+
+multilib_src_configure() {
+	local emesonargs=(
+		-Dgpl=enabled
+	)
+
+	gstreamer_multilib_src_configure
+}

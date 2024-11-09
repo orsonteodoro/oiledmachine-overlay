@@ -21,12 +21,12 @@ unset -f _gst_plugins_rs_globals
 
 MY_PV="${PV}"
 EXPECTED_BUILD_FILES_FINGERPRINT="\
-de4c864456b9b8d70431d7bf8004df768bd3b732205af4dfeb6f6c0f1625b834\
-a62a593764b6df74837908ff04e40584b940c7d66bd8462c7a63a9fa4d2b5a0b\
+2afe4a2cd2f72e3edccfe0063b8acce4d4a81c607c02f51e08c6883a821b9f78\
+c151afa1bfa83ee21ba41fb141cc1ffc204a8f67c08cf3871e1c33474231cd69\
 "
 GOBJECT_INTROSPECTION_PV="1.74.0"
 GST_PV="1.20.0" # Based on meson.build
-LLVM_COMPAT=( 17 16 ) # For clang-sys ; slot based on virtual/rust subslot
+LLVM_COMPAT=( {19..16} ) # For clang-sys ; slot based on virtual/rust subslot
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MODULES=(
 	audiofx
@@ -53,6 +53,7 @@ MODULES=(
 	lewton
 	livesync
 	mp4
+	mpegtslive
 	ndi
 	onvif
 	originalbuffer
@@ -61,11 +62,14 @@ MODULES=(
 	raptorq
 	rav1e
 	regex
+	relationmeta
 	reqwest
 	rtp
 	rtsp
+	speechmatics
 	spotify
 	sodium
+	streamgrouper
 #	test
 	textahead
 	textwrap
@@ -80,8 +84,14 @@ MODULES=(
 )
 PYTHON_COMPAT=( python3_{8..11} )
 declare -A VIRTUAL_RUST_PV_TO_LLVM_SLOT=(
-# See https://github.com/rust-lang/rust/blob/1.78.0/src/doc/rustc/src/linker-plugin-lto.md?plain=1#L203
-	["1.77"]=17 # Rust inclusion based "check commits" on CI for tag
+# See https://github.com/rust-lang/rust/blob/1.82.0/src/doc/rustc/src/linker-plugin-lto.md?plain=1#L203
+# See https://github.com/rust-lang/rust/blob/1.82.0/.gitmodules#L36
+	["1.82"]=19 # Rust inclusion based "check commits" on CI for tag
+	["1.81"]=18
+	["1.80"]=18
+	["1.79"]=18
+	["1.78"]=18
+	["1.77"]=17
 	["1.76"]=17
 	["1.75"]=17
 	["1.74"]=17
@@ -94,7 +104,8 @@ declare -A VIRTUAL_RUST_PV_TO_LLVM_SLOT=(
 if [[ "${MY_PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
 	EGIT_COMMIT="HEAD"
-	EGIT_COMMIT_FALLBACK="2bfb6ee01673f673c12dac6b97b36d11dc0f87e7" # May 2, 2024
+	EGIT_COMMIT_FALLBACK="f88c88ddb31f4d67e60ca71bed0b7fb26f1fc17c" # Oct 29, 2024
+#	EGIT_COMMIT_FALLBACK="2bfb6ee01673f673c12dac6b97b36d11dc0f87e7" # May 2, 2024
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs.git"
 	MY_PV="9999"
 	inherit git-r3

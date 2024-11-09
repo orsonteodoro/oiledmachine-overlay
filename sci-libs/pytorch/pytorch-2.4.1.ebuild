@@ -200,13 +200,17 @@ pkg_setup() {
 	warn_untested_gpu
 	python-single-r1_pkg_setup
 	if use rocm_6_1 ; then
+		export LLVM_SLOT="17"
 		export ROCM_SLOT="6.1"
 		export ROCM_VERSION="${HIP_6_1_VERSION}"
 	elif use rocm_6_0 ; then
+		export LLVM_SLOT="17"
 		export ROCM_SLOT="6.0"
 		export ROCM_VERSION="${HIP_6_0_VERSION}"
 	fi
-	rocm_pkg_setup
+	if use rocm ; then
+		rocm_pkg_setup
+	fi
 }
 
 src_prepare() {

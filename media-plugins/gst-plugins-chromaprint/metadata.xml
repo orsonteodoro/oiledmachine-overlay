@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="project">
+    <!-- Ebuild originators -->
+    <email>gstreamer@gentoo.org</email>
+    <name>GStreamer package maintainers</name>
+  </maintainer>
+  <longdescription lang="en">
+
+    A GStreamer plugin for calculating Chromaprint fingerprint from audio files.
+
+    It includes the following elements:
+
+    * chromaprint - Find an audio fingerprint using the Chromaprint library
+
+  </longdescription>
+</pkgmetadata>

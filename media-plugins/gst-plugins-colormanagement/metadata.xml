@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="project">
+    <!-- Ebuild originators -->
+    <email>gstreamer@gentoo.org</email>
+    <name>GStreamer package maintainers</name>
+  </maintainer>
+  <longdescription lang="en">
+
+    A GStreamer plugin for color management correction.
+
+    It includes the following elements:
+
+    * lcms - Uses LittleCMS 2 to perform ICC profile correction
+
+  </longdescription>
+</pkgmetadata>
