@@ -225,7 +225,7 @@ fi
 if [[ "${PN}" != "gstreamer" ]]; then
 	RDEPEND="
 		${RDEPEND}
-		~media-libs/gstreamer-$(ver_cut 1-2):${SLOT}[${MULTILIB_USEDEP}]
+		~media-libs/gstreamer-${PV}:${SLOT}[${MULTILIB_USEDEP}]
 	"
 fi
 
