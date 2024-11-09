@@ -747,6 +747,7 @@ src_unpack() {
 	dep_prepare_mv "${WORKDIR}/re2-${RE2_PV}" "${S}/cmake/external/re2"
 	dep_prepare_mv "${WORKDIR}/SafeInt-${SAFEINT_PV}" "${S}/cmake/external/safeint"
 	dep_prepare_mv "${WORKDIR}/mp11-boost-${MP11_PV}" "${S}/cmake/external/mp11"
+	dep_prepare_mv "${WORKDIR}/utf8_range-${UTF8_RANGE_COMMIT}" "${S}/cmake/external/utf8_range"
 
 	if use abseil-cpp ; then
 		dep_prepare_mv "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_COMMIT_1}" "${S}/cmake/external/abseil_cpp"
