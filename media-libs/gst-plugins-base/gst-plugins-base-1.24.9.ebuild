@@ -107,10 +107,7 @@ GL_DEPS="
 		>=dev-libs/wayland-protocols-1.15
 	)
 
-	|| (
-		=media-libs/mesa-22.3*[${MULTILIB_USEDEP},egl(+)?,gbm(+)?,gles2?,wayland?,${MULTILIB_USEDEP}]
-		=media-libs/mesa-24.1*[${MULTILIB_USEDEP},egl(+)?,gbm(+)?,gles2?,wayland?,${MULTILIB_USEDEP}]
-	)
+	>=media-libs/mesa-22.3[${MULTILIB_USEDEP},egl(+)?,gbm(+)?,gles2?,wayland?]
 	media-libs/mesa:=
 "
 # graphene is for optional gltransformation and glvideoflip elements and more
