@@ -14,9 +14,8 @@ KEYWORDS="~amd64 ~arm64"
 DESCRIPTION="WebRTC plugins for GStreamer"
 RDEPEND="
 	~media-plugins/gst-plugins-sctp-${PV}:1.0[${MULTILIB_USEDEP}]
-	>=media-libs/webrtc-audio-processing-0.2:0[${MULTILIB_USEDEP}]
-	<media-libs/webrtc-audio-processing-0.4:0
-	>=net-libs/libnice-0.1.21[${MULTILIB_USEDEP}]
+	>=media-libs/webrtc-audio-processing-1.0:0[${MULTILIB_USEDEP}]
+	net-libs/libnice[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
