@@ -11,7 +11,7 @@ KEYWORDS="~amd64 ~arm64 ~x86"
 
 DESCRIPTION="AAC encoder plugin for GStreamer"
 RDEPEND="
-	>=media-libs/vo-aacenc-0.1.3[${MULTILIB_USEDEP}]
+	media-libs/vo-aacenc[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
