@@ -357,6 +357,7 @@ onnxruntime_USE_EXTENSIONS
 openvino-auto
 openvino-hetero
 openvino-multi
+ebuild-revision-1
 "
 gen_cuda_required_use() {
 	local x
@@ -893,7 +894,7 @@ src_configure() {
 		-Wno-error=maybe-uninitialized
 
 	local mycmakeargs=(
-		-DCMAKE_INSTALL_INCLUDEDIR="include/${PN}"
+		-DCMAKE_INSTALL_INCLUDEDIR="include"
 		-DFETCHCONTENT_FULLY_DISCONNECTED=ON
 		-DFETCHCONTENT_QUIET=OFF
 		-DFETCHCONTENT_SOURCE_DIR_DATE="${S}/cmake/external/date-1"
