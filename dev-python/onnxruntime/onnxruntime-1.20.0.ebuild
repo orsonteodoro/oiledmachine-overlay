@@ -104,7 +104,7 @@ GPUWEB_COMMIT="23db3e47ed3b3c7ab2c3638bcde7c7f76324457d"
 GSL_PV="4.0.0" # From cmake/deps.txt
 JINJA2_COMMIT="e2d024354e11cc6b041b0cff032d73f0c7e43a07"
 JSON_PV="3.10.5" # From cmake/deps.txt
-JSONCPP_COMMIT_1="9059f5cad030ba11d37818847443a53918c327b1" # protobuf dep
+JSONCPP_COMMIT_1="9059f5cad030ba11d37818847443a53918c327b1" # protobuf 22.3 dep
 JSONCPP_COMMIT_2="69098a18b9af0c47549d9a271c054d13ca92b006" # dawn dep
 KLEIDIAI_PV="0.2.0"
 LANGSVR_COMMIT="303c526231a90049a3e384549720f3fbd453cf66"
@@ -182,6 +182,8 @@ https://chromium.googlesource.com/chromium/src/build/+archive/${BUILD_COMMIT:0:7
 	-> build-${BUILD_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/chromium/src/buildtools/+archive/${BUILDTOOLS_COMMIT:0:7}.tar.gz
 	-> buildtools-${BUILDTOOLS_COMMIT:0:7}.tar.gz
+https://chromium.googlesource.com/chromium/src/third_party/abseil-cpp/+archive/${ABSEIL_CPP_COMMIT_3:0:7}.tar.gz
+	-> abseil-cpp-${ABSEIL_CPP_COMMIT_3:0:7}.tar.gz
 https://chromium.googlesource.com/chromium/src/third_party/jinja2/+archive/${JINJA2_COMMIT:0:7}.tar.gz
 	-> jinja2-${JINJA2_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/chromium/src/third_party/markupsafe/+archive/${MARKUPSAFE_COMMIT:0:7}.tar.gz
@@ -222,8 +224,6 @@ https://github.com/abseil/abseil-cpp/archive/refs/tags/${ABSEIL_CPP_PV}.tar.gz
 	-> abseil-cpp-${ABSEIL_CPP_PV}.tar.gz
 https://github.com/abseil/abseil-cpp/archive/${ABSEIL_CPP_COMMIT_2}.tar.gz
 	-> abseil-cpp-${ABSEIL_CPP_COMMIT_2:0:7}.tar.gz
-https://chromium.googlesource.com/chromium/src/third_party/abseil-cpp/+archive/${ABSEIL_CPP_COMMIT_3:0:7}.tar.gz
-	-> abseil-cpp-${ABSEIL_CPP_COMMIT_3:0:7}.tar.gz
 https://github.com/boostorg/mp11/archive/refs/tags/boost-${MP11_PV}.tar.gz
 	-> mp11-${MP11_PV}.tar.gz
 https://github.com/dcleblanc/SafeInt/archive/${SAFEINT_PV}.tar.gz
@@ -805,6 +805,7 @@ BDEPEND+="
 "
 _PATCHES=(
 	"${FILESDIR}/${PN}-1.19.0-use-system-composable-kernel.patch"
+	"${FILESDIR}/${PN}-1.20.0-drop-nsync.patch"
 )
 
 pkg_setup() {
@@ -824,8 +825,57 @@ pkg_setup() {
 	use rocm && rocm_pkg_setup
 }
 
+_unpack() {
+	local ARGS=( ${A} )
+	local DAWN_TARBALLS=(
+		"angle-${ANGLE_COMMIT:0:7}.tar.gz;angle-${ANGLE_COMMIT}"
+		"abseil-cpp-${ABSEIL_CPP_COMMIT_3:0:7}.tar.gz;abseil-cpp-${ABSEIL_CPP_COMMIT_3}"
+		"catapult-${CATAPULT_COMMIT:0:7}.tar.gz;catapult-${CATAPULT_COMMIT}"
+		"partition_allocator-${PARTITION_ALLOCATOR_COMMIT:0:7}.tar.gz;partition_allocator-${PARTITION_ALLOCATOR_COMMIT}"
+		"build-${BUILD_COMMIT:0:7}.tar.gz;build-${BUILD_COMMIT}"
+		"buildtools-${BUILDTOOLS_COMMIT:0:7}.tar.gz;buildtools-${BUILDTOOLS_COMMIT}"
+		"jinja2-${JINJA2_COMMIT:0:7}.tar.gz;jinja2-${JINJA2_COMMIT}"
+		"markupsafe-${MARKUPSAFE_COMMIT:0:7}.tar.gz;markupsafe-${MARKUPSAFE_COMMIT}"
+		"protobuf-${PROTOBUF_COMMIT:0:7}.tar.gz;protobuf-${PROTOBUF_COMMIT}"
+		"zlib-${ZLIB_COMMIT:0:7}.tar.gz;zlib-${ZLIB_COMMIT}"
+		"testing-${TESTING_COMMIT:0:7}.tar.gz;testing-${TESTING_COMMIT}"
+		"depot_tools-${DEPOT_TOOLS_COMMIT:0:7}.tar.gz;depot_tools-${DEPOT_TOOLS_COMMIT}"
+		"glfw-${GLFW_COMMIT:0:7}.tar.gz;glfw-${GLFW_COMMIT}"
+		"VulkanMemoryAllocator-${VULKANMEMORYALLOCATOR_COMMIT:0:7}.tar.gz;VulkanMemoryAllocator-${VULKANMEMORYALLOCATOR_COMMIT}"
+		"webgpu-cts-${WEBGPU_CTS_COMMIT:0:7}.tar.gz;webgpu-cts-${WEBGPU_CTS_COMMIT}"
+		"glslang-${GLSLANG_COMMIT:0:7}.tar.gz;glslang-${GLSLANG_COMMIT}"
+		"clang-format-script-${CLANG_FORMAT_SCRIPT_COMMIT:0:7}.tar.gz;clang-format-script-${CLANG_FORMAT_SCRIPT_COMMIT}"
+		"dxheaders-${DXHEADERS_COMMIT:0:7}.tar.gz;dxheaders-${DXHEADERS_COMMIT}"
+		"dxc-${DXC_COMMIT:0:7}.tar.gz;dxc-${DXC_COMMIT}"
+		"webgpu-headers-${WEBGPU_HEADERS:0:7}.tar.gz;webgpu-headers-${WEBGPU_HEADERS}"
+		"swiftshader-${SWIFTSHADER_COMMIT:0:7}.tar.gz;swiftshader-${SWIFTSHADER_COMMIT}"
+		"vulkan-deps-${VULKAN_DEPS_COMMIT:0:7}.tar.gz;vulkan-deps-${VULKAN_DEPS_COMMIT}"
+	)
+
+	local f
+	for f in ${ARGS[@]} ; do
+		local is_dawn_submodule=0
+		local row
+		for row in ${DAWN_TARBALLS[@]} ; do
+			local f2="${row%;*}"
+			local path="${row#*;}"
+			if [[ "${f}" == "${f2}" ]] ; then
+				mkdir -p "${WORKDIR}/${path}" || die
+				pushd "${WORKDIR}/${path}" >/dev/null 2>&1 || die
+					unpack "${f}"
+				popd >/dev/null 2>&1 || die
+				is_dawn_submodule=1
+				break
+			fi
+		done
+		if (( ${is_dawn_submodule} == 0 )) ; then
+			unpack "${f}"
+		fi
+	done
+}
+
 src_unpack() {
-	unpack ${A}
+	_unpack ${A}
 
 	dep_prepare_mv "${WORKDIR}/emsdk-${EMSDK_COMMIT}" "${S}/cmake/external/emsdk"
 	dep_prepare_mv "${WORKDIR}/libprotobuf-mutator-${LIBPROTOBUF_MUTATOR_COMMIT}" "${S}/cmake/external/libprotobuf-mutator"
@@ -835,6 +885,7 @@ src_unpack() {
 	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1}" "${S}/cmake/external/onnx/third_party/pybind11"
 	dep_prepare_mv "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_PV}" "${S}/cmake/external/onnx/third_party/abseil"
 	dep_prepare_mv "${WORKDIR}/protobuf-${PROTOBUF_PV_2}" "${S}/cmake/external/onnx/third_party/protobuf"
+	dep_prepare_mv "${WORKDIR}/jsoncpp-${JSONCPP_COMMIT_1}" "${S}/cmake/external/onnx/third_party/protobuf/third_party/jsoncpp"
 
 	dep_prepare_mv "${WORKDIR}/cpuinfo-${CPUINFO_COMMIT}" "${S}/cmake/external/pytorch_cpuinfo"
 	dep_prepare_mv "${WORKDIR}/date-${DATE_PV_1}" "${S}/cmake/external/date-1"
@@ -856,7 +907,7 @@ src_unpack() {
 	dep_prepare_mv "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_COMMIT_3}" "${S}/cmake/external/dawn/third_party/abseil-cpp"
 	dep_prepare_mv "${WORKDIR}/angle-${ANGLE_COMMIT}" "${S}/cmake/external/dawn/third_party/angle"
 	dep_prepare_mv "${WORKDIR}/catapult-${CATAPULT_COMMIT}" "${S}/cmake/external/dawn/third_party/catapult"
-	dep_prepare_mv "${WORKDIR}/clang-format-script-${CLANG_FORMAT_SCRIPT_COMMIT:0:7}" "${S}/cmake/external/dawn/third_party/clang-format/script"
+	dep_prepare_mv "${WORKDIR}/clang-format-script-${CLANG_FORMAT_SCRIPT_COMMIT}" "${S}/cmake/external/dawn/third_party/clang-format/script"
 	dep_prepare_mv "${WORKDIR}/depot_tools-${DEPOT_TOOLS_COMMIT}" "${S}/cmake/external/dawn/third_party/depot_tools"
 	dep_prepare_mv "${WORKDIR}/dxc-${DXC_COMMIT}" "${S}/cmake/external/dawn/third_party/dxc"
 	dep_prepare_mv "${WORKDIR}/dxheaders-${DXHEADERS_COMMIT}" "${S}/cmake/external/dawn/third_party/dxheaders"
@@ -878,8 +929,7 @@ src_unpack() {
 	dep_prepare_mv "${WORKDIR}/zlib-${ZLIB_COMMIT}" "${S}/cmake/external/dawn/third_party/zlib"
 	dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT}" "${S}/cmake/external/dawn/third_party/glslang/src"
 
-	dep_prepare_mv "${WORKDIR}/cudnn-frontend-${CUDNN_FRONTEND_PV}" "${S}/cmake/external/cudnn-frontend"
-	dep_prepare_mv "${WORKDIR}/kleidiai-${KLEIDIAI_PV}" "${S}/cmake/external/kleidiai"
+	dep_prepare_mv "${WORKDIR}/kleidiai-v${KLEIDIAI_PV}" "${S}/cmake/external/kleidiai"
 
 	if use abseil-cpp ; then
 		dep_prepare_mv "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_PV2}" "${S}/cmake/external/abseil_cpp"
@@ -888,6 +938,7 @@ src_unpack() {
 		dep_prepare_mv "${WORKDIR}/benchmark-${BENCHMARK_PV}" "${S}/cmake/external/google_benchmark"
 	fi
 	if use cuda ; then
+		dep_prepare_mv "${WORKDIR}/cudnn-frontend-${CUDNN_FRONTEND_PV}" "${S}/cmake/external/cudnn-frontend"
 		dep_prepare_mv "${WORKDIR}/cutlass-${CUTLASS_PV}" "${S}/cmake/external/cutlass"
 	fi
 	if use composable-kernel && ! use system-composable-kernel ; then
@@ -1070,7 +1121,6 @@ src_configure() {
 # CMake Error: install(EXPORT "onnxruntimeTargets" ...) includes target "onnxruntime" which requires target "absl_log_internal_message" that is not in any export set.
 # ...
 # CMake Error: install(EXPORT "onnxruntimeTargets" ...) includes target "onnxruntime" which requires target "nsync_cpp" that is not in any export set.
-		-Donnxruntime_BUILD_SHARED_LIB=ON
 
 		-Donnxruntime_BUILD_UNIT_TESTS=$(usex test)
 		-Donnxruntime_BUILD_WEBASSEMBLY_STATIC_LIB=OFF

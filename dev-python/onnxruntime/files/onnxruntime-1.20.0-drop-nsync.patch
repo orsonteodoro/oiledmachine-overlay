@@ -1,0 +1,3686 @@
+From 88676e62b966add2cc144a4e7d8ae1dbda1148e8 Mon Sep 17 00:00:00 2001
+From: Changming Sun <chasun@microsoft.com>
+Date: Mon, 21 Oct 2024 15:32:14 -0700
+Subject: [PATCH] Remove nsync (#20413)
+
+### Description
+1. Remove the onnxruntime::OrtMutex class and replace it with
+~absl::Mutex~ std::mutex.
+2. After this change, most source files will not include <Windows.h>
+indirectly.
+
+
+### Motivation and Context
+To reduce the number of deps we have, and address some Github issues
+that are related to build ONNX Runtime from source.
+In PR #3000 , I added a custom implementation of std::mutex . It was
+mainly because at that time std::mutex's default constructor was not
+trivial on Windows. If you had such a mutex as a global var, it could
+not be initialized at compile time. Then VC++ team fixed this issue.
+Therefore we don't need this custom implementation anymore.
+
+This PR also removes nsync. I ran several models tests on Linux. I
+didn't see any perf difference.
+This PR also reverts PR #21005 , which is no longer needed since conda
+has updated its msvc runtime DLL.
+
+This PR unblocks #22173 and resolves #22092 . We have a lot of open
+issues with nsync. This PR can resolve all of them.
+---
+ ThirdPartyNotices.txt                         | 206 ------------------
+ cgmanifests/generated/cgmanifest.json         |  10 -
+ cmake/CMakeLists.txt                          |   3 -
+ cmake/deps.txt                                |   1 -
+ .../external/onnxruntime_external_deps.cmake  |  21 --
+ cmake/onnxruntime_mlas.cmake                  |   2 +-
+ cmake/onnxruntime_providers_cann.cmake        |   2 +-
+ cmake/onnxruntime_providers_cuda.cmake        |   2 -
+ cmake/onnxruntime_providers_dnnl.cmake        |   2 -
+ cmake/onnxruntime_providers_migraphx.cmake    |   2 +-
+ cmake/onnxruntime_providers_rocm.cmake        |   1 -
+ cmake/onnxruntime_providers_tensorrt.cmake    |   2 -
+ cmake/onnxruntime_providers_vsinpu.cmake      |   2 +-
+ cmake/onnxruntime_unittests.cmake             |  20 +-
+ cmake/onnxruntime_webassembly.cmake           |   4 +-
+ .../onnxruntime/core/common/logging/logging.h |   3 +-
+ .../onnxruntime/core/graph/schema_registry.h  |   3 +-
+ include/onnxruntime/core/platform/Barrier.h   |  10 +-
+ .../platform/EigenNonBlockingThreadPool.h     |  19 +-
+ include/onnxruntime/core/platform/ort_mutex.h | 189 ----------------
+ onnxruntime/contrib_ops/cuda/fused_conv.cc    |   2 +-
+ onnxruntime/contrib_ops/rocm/fused_conv.cc    |   6 +-
+ onnxruntime/core/common/logging/logging.cc    |  14 +-
+ onnxruntime/core/common/profiler.cc           |   4 +-
+ onnxruntime/core/common/profiler.h            |   4 +-
+ onnxruntime/core/common/threadpool.cc         |   3 +-
+ onnxruntime/core/framework/bfc_arena.cc       |  16 +-
+ onnxruntime/core/framework/bfc_arena.h        |   4 +-
+ .../core/framework/execution_providers.h      |   1 +
+ .../core/framework/kernel_registry_manager.h  |   2 +-
+ .../core/framework/kernel_type_str_resolver.h |   4 +-
+ .../core/framework/mem_pattern_planner.h      |  12 +-
+ .../framework/model_metadef_id_generator.cc   |   6 +-
+ .../framework/prepacked_weights_container.h   |   4 +-
+ onnxruntime/core/framework/random_generator.h |   8 +-
+ onnxruntime/core/framework/session_state.cc   |  12 +-
+ onnxruntime/core/framework/session_state.h    |   6 +-
+ onnxruntime/core/framework/tuning_context.h   |   4 +-
+ onnxruntime/core/graph/schema_registry.cc     |   2 +-
+ onnxruntime/core/platform/posix/ort_mutex.cc  |  42 ----
+ .../core/platform/windows/logging/etw_sink.cc |  20 +-
+ .../core/platform/windows/logging/etw_sink.h  |   8 +-
+ .../core/platform/windows/telemetry.cc        |  28 +--
+ onnxruntime/core/platform/windows/telemetry.h |   8 +-
+ .../core/providers/cann/cann_allocator.h      |   2 +-
+ .../providers/cann/cann_execution_provider.cc |   4 +-
+ .../providers/cann/cann_execution_provider.h  |   2 +-
+ onnxruntime/core/providers/cann/cann_kernel.h |   2 +-
+ .../coreml/coreml_execution_provider.cc       |   2 +-
+ .../core/providers/coreml/model/model.h       |   6 +-
+ .../core/providers/cpu/generator/random.cc    |  10 +-
+ .../core/providers/cpu/generator/random.h     |  12 +-
+ .../providers/cpu/ml/tree_ensemble_common.h   |   2 +-
+ .../providers/cpu/text/string_normalizer.cc   |   1 +
+ .../core/providers/cuda/cuda_allocator.cc     |   4 +-
+ .../core/providers/cuda/cuda_allocator.h      |   4 +-
+ .../providers/cuda/cuda_execution_provider.cc |   6 +-
+ .../providers/cuda/cuda_execution_provider.h  |   4 +-
+ onnxruntime/core/providers/cuda/cuda_graph.h  |   2 +-
+ onnxruntime/core/providers/cuda/cuda_kernel.h |   2 +-
+ onnxruntime/core/providers/cuda/nn/conv.cc    |   2 +-
+ onnxruntime/core/providers/cuda/nn/conv.h     |   4 +-
+ onnxruntime/core/providers/cuda/nn/conv_8.h   |   2 +-
+ .../core/providers/cuda/nn/conv_transpose.cc  |   2 +-
+ .../core/providers/cuda/nn/conv_transpose_8.h |   2 +-
+ .../providers/cuda/nvtx_profile_context.h     |   8 +-
+ .../providers/cuda/tensor/nonzero_impl.cu     |   2 +-
+ .../providers/dnnl/dnnl_execution_provider.cc |   4 +-
+ .../dnnl/subgraph/dnnl_subgraph_primitive.h   |   6 +-
+ .../providers/migraphx/migraphx_allocator.cc  |   4 +-
+ .../providers/migraphx/migraphx_allocator.h   |   4 +-
+ .../migraphx/migraphx_execution_provider.cc   |   2 +-
+ .../migraphx/migraphx_execution_provider.h    |   6 +-
+ .../providers/nnapi/nnapi_builtin/model.h     |   6 +-
+ .../nnapi_builtin/nnapi_execution_provider.cc |   2 +-
+ .../core/providers/qnn/builder/qnn_model.cc   |   2 +-
+ .../core/providers/qnn/builder/qnn_model.h    |   4 +-
+ .../providers/qnn/qnn_execution_provider.cc   |  10 +-
+ .../providers/qnn/qnn_execution_provider.h    |  10 +-
+ onnxruntime/core/providers/rocm/nn/conv.cc    |   2 +-
+ onnxruntime/core/providers/rocm/nn/conv.h     |   4 +-
+ .../core/providers/rocm/nn/conv_transpose.cc  |   2 +-
+ .../core/providers/rocm/rocm_allocator.cc     |   4 +-
+ .../core/providers/rocm/rocm_allocator.h      |   4 +-
+ .../providers/rocm/rocm_execution_provider.cc |   6 +-
+ .../providers/rocm/rocm_execution_provider.h  |   4 +-
+ .../tensorrt/tensorrt_execution_provider.cc   |  16 +-
+ .../tensorrt/tensorrt_execution_provider.h    |  12 +-
+ .../tensorrt_execution_provider_custom_ops.cc |   4 +-
+ .../providers/tvm/tvm_execution_provider.h    |   2 +-
+ .../providers/tvm/tvm_so_execution_provider.h |   2 +-
+ .../core/providers/vitisai/imp/global_api.cc  |   4 +-
+ .../vsinpu/vsinpu_execution_provider.cc       |   2 +-
+ .../vsinpu/vsinpu_execution_provider.h        |   4 +-
+ .../core/providers/webnn/builders/model.h     |   6 +-
+ .../webnn/webnn_execution_provider.cc         |   2 +-
+ onnxruntime/core/session/inference_session.cc |  34 +--
+ onnxruntime/core/session/inference_session.h  |  12 +-
+ onnxruntime/core/session/onnxruntime_c_api.cc |   2 +-
+ onnxruntime/core/session/ort_env.cc           |   6 +-
+ onnxruntime/core/session/ort_env.h            |   4 +-
+ onnxruntime/test/onnx/TestCase.cc             |  10 +-
+ onnxruntime/test/onnx/TestResultStat.h        |  12 +-
+ onnxruntime/test/onnx/onnxruntime_event.h     |   6 +-
+ .../test/perftest/performance_runner.cc       |  16 +-
+ .../test/perftest/performance_runner.h        |   6 +-
+ onnxruntime/test/platform/threadpool_test.cc  |   6 +-
+ .../training_ops/cuda/nn/conv_shared.cc       |   8 +-
+ .../training_ops/rocm/nn/conv_grad.cc         |   8 +-
+ tools/ci_build/build.py                       |   6 +-
+ 110 files changed, 299 insertions(+), 788 deletions(-)
+ delete mode 100644 include/onnxruntime/core/platform/ort_mutex.h
+ delete mode 100644 onnxruntime/core/platform/posix/ort_mutex.cc
+
+diff --git a/ThirdPartyNotices.txt b/ThirdPartyNotices.txt
+index 6a11f414361bd..20142e734dfac 100644
+--- a/ThirdPartyNotices.txt
++++ b/ThirdPartyNotices.txt
+@@ -2492,212 +2492,6 @@ DAMAGE.
+ 
+ _____
+ 
+-google/nsync
+-
+-Apache License
+-	Version 2.0, January 2004
+-	http://www.apache.org/licenses/
+-
+-	TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+-
+-	1. Definitions.
+-
+-	"License" shall mean the terms and conditions for use, reproduction,
+-	and distribution as defined by Sections 1 through 9 of this document.
+-
+-	"Licensor" shall mean the copyright owner or entity authorized by
+-	the copyright owner that is granting the License.
+-
+-	"Legal Entity" shall mean the union of the acting entity and all
+-	other entities that control, are controlled by, or are under common
+-	control with that entity. For the purposes of this definition,
+-	"control" means (i) the power, direct or indirect, to cause the
+-	direction or management of such entity, whether by contract or
+-	otherwise, or (ii) ownership of fifty percent (50%) or more of the
+-	outstanding shares, or (iii) beneficial ownership of such entity.
+-
+-	"You" (or "Your") shall mean an individual or Legal Entity
+-	exercising permissions granted by this License.
+-
+-	"Source" form shall mean the preferred form for making modifications,
+-	including but not limited to software source code, documentation
+-	source, and configuration files.
+-
+-	"Object" form shall mean any form resulting from mechanical
+-	transformation or translation of a Source form, including but
+-	not limited to compiled object code, generated documentation,
+-	and conversions to other media types.
+-
+-	"Work" shall mean the work of authorship, whether in Source or
+-	Object form, made available under the License, as indicated by a
+-	copyright notice that is included in or attached to the work
+-	(an example is provided in the Appendix below).
+-
+-	"Derivative Works" shall mean any work, whether in Source or Object
+-	form, that is based on (or derived from) the Work and for which the
+-	editorial revisions, annotations, elaborations, or other modifications
+-	represent, as a whole, an original work of authorship. For the purposes
+-	of this License, Derivative Works shall not include works that remain
+-	separable from, or merely link (or bind by name) to the interfaces of,
+-	the Work and Derivative Works thereof.
+-
+-	"Contribution" shall mean any work of authorship, including
+-	the original version of the Work and any modifications or additions
+-	to that Work or Derivative Works thereof, that is intentionally
+-	submitted to Licensor for inclusion in the Work by the copyright owner
+-	or by an individual or Legal Entity authorized to submit on behalf of
+-	the copyright owner. For the purposes of this definition, "submitted"
+-	means any form of electronic, verbal, or written communication sent
+-	to the Licensor or its representatives, including but not limited to
+-	communication on electronic mailing lists, source code control systems,
+-	and issue tracking systems that are managed by, or on behalf of, the
+-	Licensor for the purpose of discussing and improving the Work, but
+-	excluding communication that is conspicuously marked or otherwise
+-	designated in writing by the copyright owner as "Not a Contribution."
+-
+-	"Contributor" shall mean Licensor and any individual or Legal Entity
+-	on behalf of whom a Contribution has been received by Licensor and
+-	subsequently incorporated within the Work.
+-
+-	2. Grant of Copyright License. Subject to the terms and conditions of
+-	this License, each Contributor hereby grants to You a perpetual,
+-	worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+-	copyright license to reproduce, prepare Derivative Works of,
+-	publicly display, publicly perform, sublicense, and distribute the
+-	Work and such Derivative Works in Source or Object form.
+-
+-	3. Grant of Patent License. Subject to the terms and conditions of
+-	this License, each Contributor hereby grants to You a perpetual,
+-	worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+-	(except as stated in this section) patent license to make, have made,
+-	use, offer to sell, sell, import, and otherwise transfer the Work,
+-	where such license applies only to those patent claims licensable
+-	by such Contributor that are necessarily infringed by their
+-	Contribution(s) alone or by combination of their Contribution(s)
+-	with the Work to which such Contribution(s) was submitted. If You
+-	institute patent litigation against any entity (including a
+-	cross-claim or counterclaim in a lawsuit) alleging that the Work
+-	or a Contribution incorporated within the Work constitutes direct
+-	or contributory patent infringement, then any patent licenses
+-	granted to You under this License for that Work shall terminate
+-	as of the date such litigation is filed.
+-
+-	4. Redistribution. You may reproduce and distribute copies of the
+-	Work or Derivative Works thereof in any medium, with or without
+-	modifications, and in Source or Object form, provided that You
+-	meet the following conditions:
+-
+-	(a) You must give any other recipients of the Work or
+-	Derivative Works a copy of this License; and
+-
+-	(b) You must cause any modified files to carry prominent notices
+-	stating that You changed the files; and
+-
+-	(c) You must retain, in the Source form of any Derivative Works
+-	that You distribute, all copyright, patent, trademark, and
+-	attribution notices from the Source form of the Work,
+-	excluding those notices that do not pertain to any part of
+-	the Derivative Works; and
+-
+-	(d) If the Work includes a "NOTICE" text file as part of its
+-	distribution, then any Derivative Works that You distribute must
+-	include a readable copy of the attribution notices contained
+-	within such NOTICE file, excluding those notices that do not
+-	pertain to any part of the Derivative Works, in at least one
+-	of the following places: within a NOTICE text file distributed
+-	as part of the Derivative Works; within the Source form or
+-	documentation, if provided along with the Derivative Works; or,
+-	within a display generated by the Derivative Works, if and
+-	wherever such third-party notices normally appear. The contents
+-	of the NOTICE file are for informational purposes only and
+-	do not modify the License. You may add Your own attribution
+-	notices within Derivative Works that You distribute, alongside
+-	or as an addendum to the NOTICE text from the Work, provided
+-	that such additional attribution notices cannot be construed
+-	as modifying the License.
+-
+-	You may add Your own copyright statement to Your modifications and
+-	may provide additional or different license terms and conditions
+-	for use, reproduction, or distribution of Your modifications, or
+-	for any such Derivative Works as a whole, provided Your use,
+-	reproduction, and distribution of the Work otherwise complies with
+-	the conditions stated in this License.
+-
+-	5. Submission of Contributions. Unless You explicitly state otherwise,
+-	any Contribution intentionally submitted for inclusion in the Work
+-	by You to the Licensor shall be under the terms and conditions of
+-	this License, without any additional terms or conditions.
+-	Notwithstanding the above, nothing herein shall supersede or modify
+-	the terms of any separate license agreement you may have executed
+-	with Licensor regarding such Contributions.
+-
+-	6. Trademarks. This License does not grant permission to use the trade
+-	names, trademarks, service marks, or product names of the Licensor,
+-	except as required for reasonable and customary use in describing the
+-	origin of the Work and reproducing the content of the NOTICE file.
+-
+-	7. Disclaimer of Warranty. Unless required by applicable law or
+-	agreed to in writing, Licensor provides the Work (and each
+-	Contributor provides its Contributions) on an "AS IS" BASIS,
+-	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+-	implied, including, without limitation, any warranties or conditions
+-	of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+-	PARTICULAR PURPOSE. You are solely responsible for determining the
+-	appropriateness of using or redistributing the Work and assume any
+-	risks associated with Your exercise of permissions under this License.
+-
+-	8. Limitation of Liability. In no event and under no legal theory,
+-	whether in tort (including negligence), contract, or otherwise,
+-	unless required by applicable law (such as deliberate and grossly
+-	negligent acts) or agreed to in writing, shall any Contributor be
+-	liable to You for damages, including any direct, indirect, special,
+-	incidental, or consequential damages of any character arising as a
+-	result of this License or out of the use or inability to use the
+-	Work (including but not limited to damages for loss of goodwill,
+-	work stoppage, computer failure or malfunction, or any and all
+-	other commercial damages or losses), even if such Contributor
+-	has been advised of the possibility of such damages.
+-
+-	9. Accepting Warranty or Additional Liability. While redistributing
+-	the Work or Derivative Works thereof, You may choose to offer,
+-	and charge a fee for, acceptance of support, warranty, indemnity,
+-	or other liability obligations and/or rights consistent with this
+-	License. However, in accepting such obligations, You may act only
+-	on Your own behalf and on Your sole responsibility, not on behalf
+-	of any other Contributor, and only if You agree to indemnify,
+-	defend, and hold each Contributor harmless for any liability
+-	incurred by, or claims asserted against, such Contributor by reason
+-	of your accepting any such warranty or additional liability.
+-
+-	END OF TERMS AND CONDITIONS
+-
+-	APPENDIX: How to apply the Apache License to your work.
+-
+-	To apply the Apache License to your work, attach the following
+-	boilerplate notice, with the fields enclosed by brackets "[]"
+-	replaced with your own identifying information. (Don't include
+-	the brackets!) The text should be enclosed in the appropriate
+-	comment syntax for the file format. We also recommend that a
+-	file or class name and description of purpose be included on the
+-	same "printed page" as the copyright notice for easier
+-	identification within third-party archives.
+-
+-	Copyright [yyyy] [name of copyright owner]
+-
+-	Licensed under the Apache License, Version 2.0 (the "License");
+-	you may not use this file except in compliance with the License.
+-	You may obtain a copy of the License at
+-
+-	http://www.apache.org/licenses/LICENSE-2.0
+-
+-	Unless required by applicable law or agreed to in writing, software
+-	distributed under the License is distributed on an "AS IS" BASIS,
+-	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-	See the License for the specific language governing permissions and
+-	limitations under the License.
+-
+-_____
+-
+ google/re2
+ 
+ Copyright (c) 2009 The RE2 Authors. All rights reserved.
+diff --git a/cgmanifests/generated/cgmanifest.json b/cgmanifests/generated/cgmanifest.json
+index dc27a39ef1420..c8236c7c529a6 100644
+--- a/cgmanifests/generated/cgmanifest.json
++++ b/cgmanifests/generated/cgmanifest.json
+@@ -122,16 +122,6 @@
+         "comments": "google_benchmark"
+       }
+     },
+-    {
+-      "component": {
+-        "type": "git",
+-        "git": {
+-          "commitHash": "13de152c2a1cd73ff4df97bd2c406b6d15d34af3",
+-          "repositoryUrl": "https://github.com/google/nsync.git"
+-        },
+-        "comments": "google_nsync"
+-      }
+-    },
+     {
+       "component": {
+         "type": "git",
+diff --git a/cmake/CMakeLists.txt b/cmake/CMakeLists.txt
+index d90a2a355045e..15b5e42b1f2e2 100644
+--- a/cmake/CMakeLists.txt
++++ b/cmake/CMakeLists.txt
+@@ -1082,8 +1082,6 @@ function(onnxruntime_set_compile_flags target_name)
+       if (CMAKE_CXX_COMPILER_ID STREQUAL "IBMClang")
+         target_compile_options(${target_name} PRIVATE "-Wno-unused-function")
+       endif()
+-      target_compile_definitions(${target_name} PUBLIC -DNSYNC_ATOMIC_CPP11)
+-      onnxruntime_add_include_to_target(${target_name} nsync::nsync_cpp)
+     endif()
+     foreach(ORT_FLAG ${ORT_PROVIDER_FLAGS})
+       target_compile_definitions(${target_name} PRIVATE ${ORT_FLAG})
+@@ -1672,7 +1670,6 @@ if (WIN32)
+     list(APPEND onnxruntime_EXTERNAL_LIBRARIES advapi32)
+   endif()
+ else()
+-  list(APPEND onnxruntime_EXTERNAL_LIBRARIES nsync::nsync_cpp)
+   list(APPEND onnxruntime_EXTERNAL_LIBRARIES ${ICONV_LIB} ${CMAKE_DL_LIBS} Threads::Threads)
+ endif()
+ 
+diff --git a/cmake/deps.txt b/cmake/deps.txt
+index 9219f16be0207..2aec0e35e1d7f 100644
+--- a/cmake/deps.txt
++++ b/cmake/deps.txt
+@@ -27,7 +27,6 @@ flatbuffers;https://github.com/google/flatbuffers/archive/refs/tags/v23.5.26.zip
+ fp16;https://github.com/Maratyszcza/FP16/archive/0a92994d729ff76a58f692d3028ca1b64b145d91.zip;b985f6985a05a1c03ff1bb71190f66d8f98a1494
+ fxdiv;https://github.com/Maratyszcza/FXdiv/archive/63058eff77e11aa15bf531df5dd34395ec3017c8.zip;a5658f4036402dbca7cebee32be57fb8149811e1
+ google_benchmark;https://github.com/google/benchmark/archive/refs/tags/v1.8.5.zip;cd47d3d272faf353600c8cc2fdec2b52d6f69177
+-google_nsync;https://github.com/google/nsync/archive/refs/tags/1.26.0.zip;5e7c00ef6bf5b787386fc040067903ec774e2752
+ googletest;https://github.com/google/googletest/archive/refs/tags/v1.15.0.zip;9d2d0af8d77ac726ea55d44a8fa727ec98311349
+ #xnnpack 2024.09.04
+ googlexnnpack;https://github.com/google/XNNPACK/archive/309b75c9e56e0a674bf78d59872ce131f814dfb6.zip;39FA5259EAEACE0547284B63D5CEDC4F05553F5A
+diff --git a/cmake/external/onnxruntime_external_deps.cmake b/cmake/external/onnxruntime_external_deps.cmake
+index 85746027d4e8c..a69d2649ad832 100644
+--- a/cmake/external/onnxruntime_external_deps.cmake
++++ b/cmake/external/onnxruntime_external_deps.cmake
+@@ -86,27 +86,6 @@ if (onnxruntime_BUILD_BENCHMARKS)
+   onnxruntime_fetchcontent_makeavailable(google_benchmark)
+ endif()
+ 
+-if (NOT WIN32)
+-  FetchContent_Declare(
+-    google_nsync
+-    URL ${DEP_URL_google_nsync}
+-    URL_HASH SHA1=${DEP_SHA1_google_nsync}
+-    PATCH_COMMAND ${Patch_EXECUTABLE} --binary --ignore-whitespace -p1 < ${PROJECT_SOURCE_DIR}/patches/nsync/nsync_1.26.0.patch
+-    FIND_PACKAGE_ARGS NAMES nsync unofficial-nsync
+-  )
+-  #nsync tests failed on Mac Build
+-  set(NSYNC_ENABLE_TESTS OFF CACHE BOOL "" FORCE)
+-  onnxruntime_fetchcontent_makeavailable(google_nsync)
+-
+-  if (google_nsync_SOURCE_DIR)
+-    add_library(nsync::nsync_cpp ALIAS nsync_cpp)
+-    target_include_directories(nsync_cpp PUBLIC ${google_nsync_SOURCE_DIR}/public)
+-  endif()
+-  if(TARGET unofficial::nsync::nsync_cpp AND NOT TARGET nsync::nsync_cpp)
+-    message(STATUS "Aliasing unofficial::nsync::nsync_cpp to nsync::nsync_cpp")
+-    add_library(nsync::nsync_cpp ALIAS unofficial::nsync::nsync_cpp)
+-  endif()
+-endif()
+ 
+ if(onnxruntime_USE_MIMALLOC)
+   FetchContent_Declare(
+diff --git a/cmake/onnxruntime_mlas.cmake b/cmake/onnxruntime_mlas.cmake
+index 0ba4694c329e3..20bb1fb772189 100644
+--- a/cmake/onnxruntime_mlas.cmake
++++ b/cmake/onnxruntime_mlas.cmake
+@@ -743,7 +743,7 @@ if (NOT onnxruntime_ORT_MINIMAL_BUILD)
+     target_link_libraries(onnxruntime_mlas_q4dq PRIVATE cpuinfo)
+   endif()
+   if(NOT WIN32)
+-    target_link_libraries(onnxruntime_mlas_q4dq PRIVATE nsync::nsync_cpp ${CMAKE_DL_LIBS})
++    target_link_libraries(onnxruntime_mlas_q4dq PRIVATE  ${CMAKE_DL_LIBS})
+   endif()
+   if (CMAKE_SYSTEM_NAME STREQUAL "Android")
+     target_link_libraries(onnxruntime_mlas_q4dq PRIVATE ${android_shared_libs})
+diff --git a/cmake/onnxruntime_providers_cann.cmake b/cmake/onnxruntime_providers_cann.cmake
+index 0e26f7ee3a57b..2b82379ed66a9 100644
+--- a/cmake/onnxruntime_providers_cann.cmake
++++ b/cmake/onnxruntime_providers_cann.cmake
+@@ -21,7 +21,7 @@
+   onnxruntime_add_include_to_target(onnxruntime_providers_cann onnxruntime_common onnxruntime_framework onnx onnx_proto ${PROTOBUF_LIB} flatbuffers::flatbuffers Boost::mp11 safeint_interface)
+ 
+   add_dependencies(onnxruntime_providers_cann onnxruntime_providers_shared ${onnxruntime_EXTERNAL_DEPENDENCIES})
+-  target_link_libraries(onnxruntime_providers_cann PRIVATE ascendcl acl_op_compiler fmk_onnx_parser nsync::nsync_cpp ${ABSEIL_LIBS} ${ONNXRUNTIME_PROVIDERS_SHARED})
++  target_link_libraries(onnxruntime_providers_cann PRIVATE ascendcl acl_op_compiler fmk_onnx_parser  ${ABSEIL_LIBS} ${ONNXRUNTIME_PROVIDERS_SHARED})
+   target_link_directories(onnxruntime_providers_cann PRIVATE ${onnxruntime_CANN_HOME}/lib64)
+   target_include_directories(onnxruntime_providers_cann PRIVATE ${ONNXRUNTIME_ROOT} ${CMAKE_CURRENT_BINARY_DIR} ${eigen_INCLUDE_DIRS} ${onnxruntime_CANN_HOME} ${onnxruntime_CANN_HOME}/include)
+ 
+diff --git a/cmake/onnxruntime_providers_cuda.cmake b/cmake/onnxruntime_providers_cuda.cmake
+index 774b7a4f6bd77..39ad530146b33 100644
+--- a/cmake/onnxruntime_providers_cuda.cmake
++++ b/cmake/onnxruntime_providers_cuda.cmake
+@@ -275,10 +275,8 @@
+ 
+     if(APPLE)
+       set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS "-Xlinker -exported_symbols_list ${ONNXRUNTIME_ROOT}/core/providers/cuda/exported_symbols.lst")
+-      target_link_libraries(${target} PRIVATE nsync::nsync_cpp)
+     elseif(UNIX)
+       set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS "-Xlinker --version-script=${ONNXRUNTIME_ROOT}/core/providers/cuda/version_script.lds -Xlinker --gc-sections")
+-      target_link_libraries(${target} PRIVATE nsync::nsync_cpp)
+     elseif(WIN32)
+       set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS "-DEF:${ONNXRUNTIME_ROOT}/core/providers/cuda/symbols.def")
+     else()
+diff --git a/cmake/onnxruntime_providers_dnnl.cmake b/cmake/onnxruntime_providers_dnnl.cmake
+index f2965728524b7..9e5a7eed44fff 100644
+--- a/cmake/onnxruntime_providers_dnnl.cmake
++++ b/cmake/onnxruntime_providers_dnnl.cmake
+@@ -41,10 +41,8 @@
+       INSTALL_RPATH "@loader_path"
+       BUILD_WITH_INSTALL_RPATH TRUE
+       INSTALL_RPATH_USE_LINK_PATH FALSE)
+-    target_link_libraries(onnxruntime_providers_dnnl PRIVATE nsync::nsync_cpp)
+   elseif(UNIX)
+     set_property(TARGET onnxruntime_providers_dnnl APPEND_STRING PROPERTY LINK_FLAGS "-Xlinker --version-script=${ONNXRUNTIME_ROOT}/core/providers/dnnl/version_script.lds -Xlinker --gc-sections -Xlinker -rpath=\$ORIGIN")
+-    target_link_libraries(onnxruntime_providers_dnnl PRIVATE nsync::nsync_cpp)
+   elseif(WIN32)
+     set_property(TARGET onnxruntime_providers_dnnl APPEND_STRING PROPERTY LINK_FLAGS "-DEF:${ONNXRUNTIME_ROOT}/core/providers/dnnl/symbols.def")
+   else()
+diff --git a/cmake/onnxruntime_providers_migraphx.cmake b/cmake/onnxruntime_providers_migraphx.cmake
+index d7d83b0ce8d64..685e77bc483bd 100644
+--- a/cmake/onnxruntime_providers_migraphx.cmake
++++ b/cmake/onnxruntime_providers_migraphx.cmake
+@@ -57,7 +57,7 @@
+   endif()
+   if(UNIX)
+     set_property(TARGET onnxruntime_providers_migraphx APPEND_STRING PROPERTY LINK_FLAGS "-Xlinker --version-script=${ONNXRUNTIME_ROOT}/core/providers/migraphx/version_script.lds -Xlinker --gc-sections")
+-    target_link_libraries(onnxruntime_providers_migraphx PRIVATE nsync::nsync_cpp stdc++fs)
++    target_link_libraries(onnxruntime_providers_migraphx PRIVATE  stdc++fs)
+   endif()
+ 
+   if (onnxruntime_ENABLE_TRAINING_OPS)
+diff --git a/cmake/onnxruntime_providers_rocm.cmake b/cmake/onnxruntime_providers_rocm.cmake
+index 47cd151fb12ed..68f5319c0ae8d 100644
+--- a/cmake/onnxruntime_providers_rocm.cmake
++++ b/cmake/onnxruntime_providers_rocm.cmake
+@@ -217,7 +217,6 @@
+ 
+   if(UNIX)
+     set_property(TARGET onnxruntime_providers_rocm APPEND_STRING PROPERTY LINK_FLAGS "-Xlinker --version-script=${ONNXRUNTIME_ROOT}/core/providers/rocm/version_script.lds -Xlinker --gc-sections")
+-    target_link_libraries(onnxruntime_providers_rocm PRIVATE nsync::nsync_cpp)
+   else()
+     message(FATAL_ERROR "onnxruntime_providers_rocm unknown platform, need to specify shared library exports for it")
+   endif()
+diff --git a/cmake/onnxruntime_providers_tensorrt.cmake b/cmake/onnxruntime_providers_tensorrt.cmake
+index 468aaa44ec4ee..7b18222f334f9 100644
+--- a/cmake/onnxruntime_providers_tensorrt.cmake
++++ b/cmake/onnxruntime_providers_tensorrt.cmake
+@@ -206,11 +206,9 @@
+ 
+   if(APPLE)
+     set_property(TARGET onnxruntime_providers_tensorrt APPEND_STRING PROPERTY LINK_FLAGS "-Xlinker -exported_symbols_list ${ONNXRUNTIME_ROOT}/core/providers/tensorrt/exported_symbols.lst")
+-    target_link_libraries(onnxruntime_providers_tensorrt PRIVATE nsync::nsync_cpp)
+   elseif(UNIX)
+     set_property(TARGET onnxruntime_providers_tensorrt APPEND_STRING PROPERTY COMPILE_FLAGS "-Wno-deprecated-declarations")
+     set_property(TARGET onnxruntime_providers_tensorrt APPEND_STRING PROPERTY LINK_FLAGS "-Xlinker --version-script=${ONNXRUNTIME_ROOT}/core/providers/tensorrt/version_script.lds -Xlinker --gc-sections")
+-    target_link_libraries(onnxruntime_providers_tensorrt PRIVATE nsync::nsync_cpp)
+   elseif(WIN32)
+     set_property(TARGET onnxruntime_providers_tensorrt APPEND_STRING PROPERTY LINK_FLAGS "-DEF:${ONNXRUNTIME_ROOT}/core/providers/tensorrt/symbols.def")
+   else()
+diff --git a/cmake/onnxruntime_providers_vsinpu.cmake b/cmake/onnxruntime_providers_vsinpu.cmake
+index 4b987fd1e424b..e3b6c3c302c82 100644
+--- a/cmake/onnxruntime_providers_vsinpu.cmake
++++ b/cmake/onnxruntime_providers_vsinpu.cmake
+@@ -11,7 +11,7 @@
+   add_library(onnxruntime_providers_vsinpu ${onnxruntime_providers_vsinpu_srcs})
+   onnxruntime_add_include_to_target(onnxruntime_providers_vsinpu
+     onnxruntime_common onnxruntime_framework onnx onnx_proto protobuf::libprotobuf-lite flatbuffers Boost::mp11
+-    safeint_interface nsync::nsync_cpp)
++    safeint_interface )
+   add_dependencies(onnxruntime_providers_vsinpu ${onnxruntime_EXTERNAL_DEPENDENCIES})
+   set_target_properties(onnxruntime_providers_vsinpu PROPERTIES FOLDER "ONNXRuntime" LINKER_LANGUAGE CXX)
+   target_include_directories(onnxruntime_providers_vsinpu PRIVATE ${ONNXRUNTIME_ROOT} $ENV{TIM_VX_INSTALL}/include)
+diff --git a/cmake/onnxruntime_unittests.cmake b/cmake/onnxruntime_unittests.cmake
+index cbae6990cd0b6..67e5a9c0aa08b 100644
+--- a/cmake/onnxruntime_unittests.cmake
++++ b/cmake/onnxruntime_unittests.cmake
+@@ -766,9 +766,7 @@ if(MSVC)
+   target_compile_options(onnxruntime_test_utils PRIVATE "$<$<COMPILE_LANGUAGE:CUDA>:SHELL:--compiler-options /wd6326>"
+                 "$<$<NOT:$<COMPILE_LANGUAGE:CUDA>>:/wd6326>")
+ else()
+-  target_compile_definitions(onnxruntime_test_utils PUBLIC -DNSYNC_ATOMIC_CPP11)
+   target_include_directories(onnxruntime_test_utils PRIVATE ${CMAKE_CURRENT_BINARY_DIR} ${ONNXRUNTIME_ROOT})
+-  onnxruntime_add_include_to_target(onnxruntime_test_utils nsync::nsync_cpp)
+ endif()
+ if (onnxruntime_USE_NCCL)
+   target_include_directories(onnxruntime_test_utils PRIVATE ${NCCL_INCLUDE_DIRS})
+@@ -802,9 +800,7 @@ if(NOT IOS)
+       target_compile_options(onnx_test_runner_common PRIVATE "$<$<COMPILE_LANGUAGE:CUDA>:SHELL:--compiler-options /utf-8>"
+               "$<$<NOT:$<COMPILE_LANGUAGE:CUDA>>:/utf-8>")
+     else()
+-      target_compile_definitions(onnx_test_runner_common PUBLIC -DNSYNC_ATOMIC_CPP11)
+       target_include_directories(onnx_test_runner_common PRIVATE ${CMAKE_CURRENT_BINARY_DIR} ${ONNXRUNTIME_ROOT})
+-      onnxruntime_add_include_to_target(onnx_test_runner_common nsync::nsync_cpp)
+     endif()
+     if (MSVC AND NOT CMAKE_SIZEOF_VOID_P EQUAL 8)
+       #TODO: fix the warnings, they are dangerous
+@@ -1207,7 +1203,7 @@ if (NOT onnxruntime_ENABLE_TRAINING_TORCH_INTEROP)
+       # "Global initializer calls a non-constexpr function." BENCHMARK_CAPTURE macro needs this.
+       target_compile_options(onnxruntime_mlas_benchmark PRIVATE /wd26426)
+     else()
+-      target_link_libraries(onnxruntime_mlas_benchmark PRIVATE nsync::nsync_cpp ${CMAKE_DL_LIBS})
++      target_link_libraries(onnxruntime_mlas_benchmark PRIVATE  ${CMAKE_DL_LIBS})
+     endif()
+     if (CPUINFO_SUPPORTED AND NOT CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
+       target_link_libraries(onnxruntime_mlas_benchmark PRIVATE cpuinfo)
+@@ -1280,7 +1276,6 @@ if (NOT onnxruntime_ENABLE_TRAINING_TORCH_INTEROP)
+             ${onnxruntime_EXTERNAL_LIBRARIES}
+             ${GETOPT_LIB_WIDE} ${SYS_PATH_LIB} ${CMAKE_DL_LIBS})
+       if(NOT WIN32)
+-        list(APPEND onnxruntime_perf_test_libs nsync::nsync_cpp)
+         if(onnxruntime_USE_SNPE)
+           list(APPEND onnxruntime_perf_test_libs onnxruntime_providers_snpe)
+         endif()
+@@ -1348,7 +1343,6 @@ if (NOT onnxruntime_ENABLE_TRAINING_TORCH_INTEROP)
+     # test inference using shared lib
+     set(onnxruntime_shared_lib_test_LIBS onnxruntime_mocked_allocator onnxruntime_test_utils onnxruntime_common onnx_proto)
+     if(NOT WIN32)
+-      list(APPEND onnxruntime_shared_lib_test_LIBS nsync::nsync_cpp)
+       if(onnxruntime_USE_SNPE)
+         list(APPEND onnxruntime_shared_lib_test_LIBS onnxruntime_providers_snpe)
+       endif()
+@@ -1497,7 +1491,7 @@ if (NOT onnxruntime_ENABLE_TRAINING_TORCH_INTEROP)
+       target_link_libraries(onnxruntime_mlas_test PRIVATE cpuinfo)
+     endif()
+     if(NOT WIN32)
+-      target_link_libraries(onnxruntime_mlas_test PRIVATE nsync::nsync_cpp ${CMAKE_DL_LIBS})
++      target_link_libraries(onnxruntime_mlas_test PRIVATE  ${CMAKE_DL_LIBS})
+     endif()
+     if (CMAKE_SYSTEM_NAME STREQUAL "Android")
+       target_link_libraries(onnxruntime_mlas_test PRIVATE ${android_shared_libs})
+@@ -1683,9 +1677,7 @@ if (NOT CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
+             ${ONNXRUNTIME_CUSTOM_OP_REGISTRATION_TEST_SRC_DIR}/test_registercustomops.cc)
+ 
+     set(onnxruntime_customopregistration_test_LIBS custom_op_library onnxruntime_common onnxruntime_test_utils)
+-    if (NOT WIN32)
+-      list(APPEND onnxruntime_customopregistration_test_LIBS nsync::nsync_cpp)
+-    endif()
++
+     if (CPUINFO_SUPPORTED AND NOT CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
+       list(APPEND onnxruntime_customopregistration_test_LIBS cpuinfo)
+     endif()
+@@ -1693,7 +1685,7 @@ if (NOT CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
+       list(APPEND onnxruntime_customopregistration_test_LIBS ${TENSORRT_LIBRARY_INFER})
+     endif()
+     if (${CMAKE_SYSTEM_NAME} MATCHES "AIX")
+-      list(APPEND onnxruntime_customopregistration_test_LIBS onnxruntime_graph onnxruntime_session onnxruntime_providers onnxruntime_lora onnxruntime_framework onnxruntime_util onnxruntime_mlas onnxruntime_optimizer onnxruntime_flatbuffers iconv re2 ${PROTOBUF_LIB} onnx onnx_proto nsync_cpp)
++      list(APPEND onnxruntime_customopregistration_test_LIBS onnxruntime_graph onnxruntime_session onnxruntime_providers onnxruntime_lora onnxruntime_framework onnxruntime_util onnxruntime_mlas onnxruntime_optimizer onnxruntime_flatbuffers iconv re2 ${PROTOBUF_LIB} onnx onnx_proto)
+     endif()
+     AddTest(DYN
+             TARGET onnxruntime_customopregistration_test
+@@ -1812,11 +1804,11 @@ if (onnxruntime_BUILD_SHARED_LIB AND NOT CMAKE_SYSTEM_NAME STREQUAL "Emscripten"
+ 
+   set(onnxruntime_logging_apis_test_LIBS onnxruntime_common onnxruntime_test_utils)
+   if (${CMAKE_SYSTEM_NAME} MATCHES "AIX")
+-    list(APPEND onnxruntime_logging_apis_test_LIBS onnxruntime_session onnxruntime_util onnxruntime_lora onnxruntime_framework onnxruntime_common onnxruntime_graph  onnxruntime_providers onnxruntime_mlas onnxruntime_optimizer onnxruntime_flatbuffers iconv re2 ${PROTOBUF_LIB} onnx onnx_proto nsync_cpp)
++    list(APPEND onnxruntime_logging_apis_test_LIBS onnxruntime_session onnxruntime_util onnxruntime_lora onnxruntime_framework onnxruntime_common onnxruntime_graph  onnxruntime_providers onnxruntime_mlas onnxruntime_optimizer onnxruntime_flatbuffers iconv re2 ${PROTOBUF_LIB} onnx onnx_proto)
+      endif()
+ 
+   if(NOT WIN32)
+-    list(APPEND onnxruntime_logging_apis_test_LIBS nsync::nsync_cpp ${CMAKE_DL_LIBS})
++    list(APPEND onnxruntime_logging_apis_test_LIBS  ${CMAKE_DL_LIBS})
+   endif()
+ 
+   AddTest(DYN
+diff --git a/cmake/onnxruntime_webassembly.cmake b/cmake/onnxruntime_webassembly.cmake
+index 3a1576065205f..54a65b57301cc 100644
+--- a/cmake/onnxruntime_webassembly.cmake
++++ b/cmake/onnxruntime_webassembly.cmake
+@@ -97,7 +97,7 @@ target_compile_options(onnx PRIVATE -Wno-unused-parameter -Wno-unused-variable)
+ 
+ if (onnxruntime_BUILD_WEBASSEMBLY_STATIC_LIB)
+     bundle_static_library(onnxruntime_webassembly
+-      nsync::nsync_cpp
++      
+       ${PROTOBUF_LIB}
+       onnx
+       onnx_proto
+@@ -175,7 +175,7 @@ else()
+   endif()
+ 
+   target_link_libraries(onnxruntime_webassembly PRIVATE
+-    nsync::nsync_cpp
++    
+     ${PROTOBUF_LIB}
+     onnx
+     onnx_proto
+diff --git a/include/onnxruntime/core/common/logging/logging.h b/include/onnxruntime/core/common/logging/logging.h
+index 9cdf42e222051..ab2c476f2975a 100644
+--- a/include/onnxruntime/core/common/logging/logging.h
++++ b/include/onnxruntime/core/common/logging/logging.h
+@@ -17,7 +17,6 @@
+ #include "core/common/logging/macros.h"
+ #include "core/common/logging/severity.h"
+ #include "core/common/logging/sink_types.h"
+-#include "core/platform/ort_mutex.h"
+ #include "date/date.h"
+ 
+ /*
+@@ -259,7 +258,7 @@ class LoggingManager final {
+ 
+   std::unique_ptr<ISink> sink_;
+ #ifdef _WIN32
+-  mutable OrtMutex sink_mutex_;
++  mutable std::mutex sink_mutex_;
+ #endif
+   Severity default_min_severity_;
+   const bool default_filter_user_data_;
+diff --git a/include/onnxruntime/core/graph/schema_registry.h b/include/onnxruntime/core/graph/schema_registry.h
+index b128e91afa9ae..ca51e3621b2c6 100644
+--- a/include/onnxruntime/core/graph/schema_registry.h
++++ b/include/onnxruntime/core/graph/schema_registry.h
+@@ -12,7 +12,6 @@
+ #include "core/graph/constants.h"
+ #include "core/common/common.h"
+ #include "core/common/status.h"
+-#include "core/platform/ort_mutex.h"
+ 
+ namespace onnxruntime {
+ using OpName_Domain_Version_Schema_Map = std::unordered_map<
+@@ -102,7 +101,7 @@ class OnnxRuntimeOpSchemaRegistry : public IOnnxRuntimeOpSchemaCollection {
+ 
+   common::Status RegisterOpSchemaInternal(ONNX_NAMESPACE::OpSchema&& op_schema);
+ 
+-  OrtMutex mutex_;
++  std::mutex mutex_;
+ 
+   OpName_Domain_Version_Schema_Map map_;
+   DomainToVersionRangeMap domain_version_range_map_;
+diff --git a/include/onnxruntime/core/platform/Barrier.h b/include/onnxruntime/core/platform/Barrier.h
+index 1148b052bd9af..bddc3ba8903f6 100644
+--- a/include/onnxruntime/core/platform/Barrier.h
++++ b/include/onnxruntime/core/platform/Barrier.h
+@@ -10,9 +10,9 @@
+ #include <assert.h>
+ 
+ #include "core/common/spin_pause.h"
+-#include "core/platform/ort_mutex.h"
+ 
+ #include <mutex>
++#include <condition_variable>
+ #include <atomic>
+ 
+ namespace onnxruntime {
+@@ -40,7 +40,7 @@ class Barrier {
+       assert(((v + delta) & ~1) != 0);
+       return;  // either count has not dropped to 0, or waiter is not waiting
+     }
+-    std::unique_lock<OrtMutex> l(mu_);
++    std::unique_lock<std::mutex> l(mu_);
+     assert(!notified_);
+     notified_ = true;
+     cv_.notify_all();
+@@ -55,7 +55,7 @@ class Barrier {
+       unsigned int v = state_.fetch_or(1, std::memory_order_acq_rel);
+       if ((v >> 1) == 0)
+         return;
+-      std::unique_lock<OrtMutex> l(mu_);
++      std::unique_lock<std::mutex> l(mu_);
+       while (!notified_) {
+         cv_.wait(l);
+       }
+@@ -63,8 +63,8 @@ class Barrier {
+   }
+ 
+  private:
+-  OrtMutex mu_;
+-  OrtCondVar cv_;
++  std::mutex mu_;
++  std::condition_variable cv_;
+   std::atomic<unsigned int> state_;  // low bit is waiter flag
+   bool notified_;
+   const bool spin_;
+diff --git a/include/onnxruntime/core/platform/EigenNonBlockingThreadPool.h b/include/onnxruntime/core/platform/EigenNonBlockingThreadPool.h
+index d4411a6d72356..27b14f008a8ba 100644
+--- a/include/onnxruntime/core/platform/EigenNonBlockingThreadPool.h
++++ b/include/onnxruntime/core/platform/EigenNonBlockingThreadPool.h
+@@ -50,7 +50,6 @@
+ #include "core/common/denormal.h"
+ #include "core/common/inlined_containers_fwd.h"
+ #include "core/common/spin_pause.h"
+-#include "core/platform/ort_mutex.h"
+ #include "core/platform/ort_spin_lock.h"
+ #include "core/platform/Barrier.h"
+ 
+@@ -460,7 +459,7 @@ class RunQueue {
+ #ifdef USE_LOCK_FREE_QUEUE
+     std::lock_guard<OrtSpinLock> mtx(spin_lock_);
+ #else
+-    std::lock_guard<OrtMutex> lock(mutex_);
++    std::lock_guard<std::mutex> lock(mutex_);
+ #endif
+     unsigned back = back_.load(std::memory_order_relaxed);
+     Elem& e = array_[(back - 1) & kMask];
+@@ -484,7 +483,7 @@ class RunQueue {
+ #ifdef USE_LOCK_FREE_QUEUE
+     std::lock_guard<OrtSpinLock> mtx(spin_lock_);
+ #else
+-    std::lock_guard<OrtMutex> lock(mutex_);
++    std::lock_guard<std::mutex> lock(mutex_);
+ #endif
+     unsigned back = back_.load(std::memory_order_relaxed);
+     w_idx = (back - 1) & kMask;
+@@ -509,7 +508,7 @@ class RunQueue {
+ #ifdef USE_LOCK_FREE_QUEUE
+     std::lock_guard<OrtSpinLock> mtx(spin_lock_);
+ #else
+-    std::lock_guard<OrtMutex> lock(mutex_);
++    std::lock_guard<std::mutex> lock(mutex_);
+ #endif
+     unsigned back;
+     Elem* e;
+@@ -555,7 +554,7 @@ class RunQueue {
+ #ifdef USE_LOCK_FREE_QUEUE
+     std::lock_guard<OrtSpinLock> mtx(spin_lock_);
+ #else
+-    std::lock_guard<OrtMutex> lock(mutex_);
++    std::lock_guard<std::mutex> lock(mutex_);
+ #endif
+     Elem& e = array_[w_idx];
+     ElemState s = e.state.load(std::memory_order_relaxed);
+@@ -631,7 +630,7 @@ class RunQueue {
+ #ifdef USE_LOCK_FREE_QUEUE
+   OrtSpinLock spin_lock_;
+ #else
+-  OrtMutex mutex_;
++  std::mutex mutex_;
+ #endif
+ 
+   // Low log(kSize) + 1 bits in front_ and back_ contain rolling index of
+@@ -1440,7 +1439,7 @@ class ThreadPoolTempl : public onnxruntime::concurrency::ExtendedThreadPoolInter
+       ThreadStatus seen = GetStatus();
+       if (seen == ThreadStatus::Blocking ||
+           seen == ThreadStatus::Blocked) {
+-        std::unique_lock<OrtMutex> lk(mutex);
++        std::unique_lock<std::mutex> lk(mutex);
+         // Blocking state exists only transiently during the SetBlock() method
+         // while holding the lock.  We may observe it at the start of this
+         // function, but after acquiring the lock then the target thread
+@@ -1470,7 +1469,7 @@ class ThreadPoolTempl : public onnxruntime::concurrency::ExtendedThreadPoolInter
+ 
+     void SetBlocked(std::function<bool()> should_block,
+                     std::function<void()> post_block) {
+-      std::unique_lock<OrtMutex> lk(mutex);
++      std::unique_lock<std::mutex> lk(mutex);
+       assert(GetStatus() == ThreadStatus::Spinning);
+       status.store(ThreadStatus::Blocking, std::memory_order_relaxed);
+       if (should_block()) {
+@@ -1485,8 +1484,8 @@ class ThreadPoolTempl : public onnxruntime::concurrency::ExtendedThreadPoolInter
+ 
+    private:
+     std::atomic<ThreadStatus> status{ThreadStatus::Spinning};
+-    OrtMutex mutex;
+-    OrtCondVar cv;
++    std::mutex mutex;
++    std::condition_variable cv;
+   };
+ 
+   Environment& env_;
+diff --git a/include/onnxruntime/core/platform/ort_mutex.h b/include/onnxruntime/core/platform/ort_mutex.h
+deleted file mode 100644
+index e24665f51423d..0000000000000
+--- a/include/onnxruntime/core/platform/ort_mutex.h
++++ /dev/null
+@@ -1,189 +0,0 @@
+-// Copyright (c) Microsoft Corporation. All rights reserved.
+-// Licensed under the MIT License.
+-
+-#pragma once
+-#ifdef _WIN32
+-#include <Windows.h>
+-#include <mutex>
+-namespace onnxruntime {
+-// Q: Why OrtMutex is better than std::mutex
+-// A: OrtMutex supports static initialization but std::mutex doesn't. Static initialization helps us prevent the "static
+-// initialization order problem".
+-
+-// Q: Why std::mutex can't make it?
+-// A: VC runtime has to support Windows XP at ABI level. But we don't have such requirement.
+-
+-// Q: Is OrtMutex faster than std::mutex?
+-// A: Sure
+-
+-class OrtMutex {
+- private:
+-  SRWLOCK data_ = SRWLOCK_INIT;
+-
+- public:
+-  constexpr OrtMutex() = default;
+-  // SRW locks do not need to be explicitly destroyed.
+-  ~OrtMutex() = default;
+-  OrtMutex(const OrtMutex&) = delete;
+-  OrtMutex& operator=(const OrtMutex&) = delete;
+-  void lock() { AcquireSRWLockExclusive(native_handle()); }
+-  bool try_lock() noexcept { return TryAcquireSRWLockExclusive(native_handle()) == TRUE; }
+-  void unlock() noexcept { ReleaseSRWLockExclusive(native_handle()); }
+-  using native_handle_type = SRWLOCK*;
+-
+-  __forceinline native_handle_type native_handle() { return &data_; }
+-};
+-
+-class OrtCondVar {
+-  CONDITION_VARIABLE native_cv_object = CONDITION_VARIABLE_INIT;
+-
+- public:
+-  constexpr OrtCondVar() noexcept = default;
+-  ~OrtCondVar() = default;
+-
+-  OrtCondVar(const OrtCondVar&) = delete;
+-  OrtCondVar& operator=(const OrtCondVar&) = delete;
+-
+-  void notify_one() noexcept { WakeConditionVariable(&native_cv_object); }
+-  void notify_all() noexcept { WakeAllConditionVariable(&native_cv_object); }
+-
+-  void wait(std::unique_lock<OrtMutex>& lk) {
+-    if (SleepConditionVariableSRW(&native_cv_object, lk.mutex()->native_handle(), INFINITE, 0) != TRUE) {
+-      std::terminate();
+-    }
+-  }
+-  template <class _Predicate>
+-  void wait(std::unique_lock<OrtMutex>& __lk, _Predicate __pred);
+-
+-  /**
+-   * returns cv_status::timeout if the wait terminates when Rel_time has elapsed. Otherwise, the method returns
+-   * cv_status::no_timeout.
+-   * @param cond_mutex A unique_lock<OrtMutex> object.
+-   * @param rel_time A chrono::duration object that specifies the amount of time before the thread wakes up.
+-   * @return returns cv_status::timeout if the wait terminates when Rel_time has elapsed. Otherwise, the method returns
+-   * cv_status::no_timeout
+-   */
+-  template <class Rep, class Period>
+-  std::cv_status wait_for(std::unique_lock<OrtMutex>& cond_mutex, const std::chrono::duration<Rep, Period>& rel_time);
+-  using native_handle_type = CONDITION_VARIABLE*;
+-
+-  native_handle_type native_handle() { return &native_cv_object; }
+-
+- private:
+-  void timed_wait_impl(std::unique_lock<OrtMutex>& __lk,
+-                       std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds>);
+-};
+-
+-template <class _Predicate>
+-void OrtCondVar::wait(std::unique_lock<OrtMutex>& __lk, _Predicate __pred) {
+-  while (!__pred()) wait(__lk);
+-}
+-
+-template <class Rep, class Period>
+-std::cv_status OrtCondVar::wait_for(std::unique_lock<OrtMutex>& cond_mutex,
+-                                    const std::chrono::duration<Rep, Period>& rel_time) {
+-  // TODO: is it possible to use nsync_from_time_point_ ?
+-  using namespace std::chrono;
+-  if (rel_time <= duration<Rep, Period>::zero())
+-    return std::cv_status::timeout;
+-  using SystemTimePointFloat = time_point<system_clock, duration<long double, std::nano> >;
+-  using SystemTimePoint = time_point<system_clock, nanoseconds>;
+-  SystemTimePointFloat max_time = SystemTimePoint::max();
+-  steady_clock::time_point steady_now = steady_clock::now();
+-  system_clock::time_point system_now = system_clock::now();
+-  if (max_time - rel_time > system_now) {
+-    nanoseconds remain = duration_cast<nanoseconds>(rel_time);
+-    if (remain < rel_time)
+-      ++remain;
+-    timed_wait_impl(cond_mutex, system_now + remain);
+-  } else
+-    timed_wait_impl(cond_mutex, SystemTimePoint::max());
+-  return steady_clock::now() - steady_now < rel_time ? std::cv_status::no_timeout : std::cv_status::timeout;
+-}
+-}  // namespace onnxruntime
+-#else
+-#include "nsync.h"
+-#include <mutex>               //for unique_lock
+-#include <condition_variable>  //for cv_status
+-namespace onnxruntime {
+-
+-class OrtMutex {
+-  nsync::nsync_mu data_ = NSYNC_MU_INIT;
+-
+- public:
+-  constexpr OrtMutex() = default;
+-  ~OrtMutex() = default;
+-  OrtMutex(const OrtMutex&) = delete;
+-  OrtMutex& operator=(const OrtMutex&) = delete;
+-
+-  void lock() { nsync::nsync_mu_lock(&data_); }
+-  bool try_lock() noexcept { return nsync::nsync_mu_trylock(&data_) == 0; }
+-  void unlock() noexcept { nsync::nsync_mu_unlock(&data_); }
+-
+-  using native_handle_type = nsync::nsync_mu*;
+-  native_handle_type native_handle() { return &data_; }
+-};
+-
+-class OrtCondVar {
+-  nsync::nsync_cv native_cv_object = NSYNC_CV_INIT;
+-
+- public:
+-  constexpr OrtCondVar() noexcept = default;
+-
+-  ~OrtCondVar() = default;
+-  OrtCondVar(const OrtCondVar&) = delete;
+-  OrtCondVar& operator=(const OrtCondVar&) = delete;
+-
+-  void notify_one() noexcept { nsync::nsync_cv_signal(&native_cv_object); }
+-  void notify_all() noexcept { nsync::nsync_cv_broadcast(&native_cv_object); }
+-
+-  void wait(std::unique_lock<OrtMutex>& lk);
+-  template <class _Predicate>
+-  void wait(std::unique_lock<OrtMutex>& __lk, _Predicate __pred);
+-
+-  /**
+-   * returns cv_status::timeout if the wait terminates when Rel_time has elapsed. Otherwise, the method returns
+-   * cv_status::no_timeout.
+-   * @param cond_mutex A unique_lock<OrtMutex> object.
+-   * @param rel_time A chrono::duration object that specifies the amount of time before the thread wakes up.
+-   * @return returns cv_status::timeout if the wait terminates when Rel_time has elapsed. Otherwise, the method returns
+-   * cv_status::no_timeout
+-   */
+-  template <class Rep, class Period>
+-  std::cv_status wait_for(std::unique_lock<OrtMutex>& cond_mutex, const std::chrono::duration<Rep, Period>& rel_time);
+-  using native_handle_type = nsync::nsync_cv*;
+-  native_handle_type native_handle() { return &native_cv_object; }
+-
+- private:
+-  void timed_wait_impl(std::unique_lock<OrtMutex>& __lk,
+-                       std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds>);
+-};
+-
+-template <class _Predicate>
+-void OrtCondVar::wait(std::unique_lock<OrtMutex>& __lk, _Predicate __pred) {
+-  while (!__pred()) wait(__lk);
+-}
+-
+-template <class Rep, class Period>
+-std::cv_status OrtCondVar::wait_for(std::unique_lock<OrtMutex>& cond_mutex,
+-                                    const std::chrono::duration<Rep, Period>& rel_time) {
+-  // TODO: is it possible to use nsync_from_time_point_ ?
+-  using namespace std::chrono;
+-  if (rel_time <= duration<Rep, Period>::zero())
+-    return std::cv_status::timeout;
+-  using SystemTimePointFloat = time_point<system_clock, duration<long double, std::nano> >;
+-  using SystemTimePoint = time_point<system_clock, nanoseconds>;
+-  SystemTimePointFloat max_time = SystemTimePoint::max();
+-  steady_clock::time_point steady_now = steady_clock::now();
+-  system_clock::time_point system_now = system_clock::now();
+-  if (max_time - rel_time > system_now) {
+-    nanoseconds remain = duration_cast<nanoseconds>(rel_time);
+-    if (remain < rel_time)
+-      ++remain;
+-    timed_wait_impl(cond_mutex, system_now + remain);
+-  } else
+-    timed_wait_impl(cond_mutex, SystemTimePoint::max());
+-  return steady_clock::now() - steady_now < rel_time ? std::cv_status::no_timeout : std::cv_status::timeout;
+-}
+-};  // namespace onnxruntime
+-#endif
+diff --git a/onnxruntime/contrib_ops/cuda/fused_conv.cc b/onnxruntime/contrib_ops/cuda/fused_conv.cc
+index 279df73ee3d45..0554cc34933f1 100644
+--- a/onnxruntime/contrib_ops/cuda/fused_conv.cc
++++ b/onnxruntime/contrib_ops/cuda/fused_conv.cc
+@@ -348,7 +348,7 @@ class FusedConv : public onnxruntime::cuda::CudaKernel {
+   }
+ 
+   Status ComputeInternal(OpKernelContext* context) const override {
+-    std::lock_guard<OrtMutex> lock(s_.mutex);
++    std::lock_guard<std::mutex> lock(s_.mutex);
+     auto cudnnHandle = this->GetCudnnHandle(context);
+     ORT_RETURN_IF_ERROR(UpdateState(context, true));
+     if (s_.Y->Shape().Size() == 0) {
+diff --git a/onnxruntime/contrib_ops/rocm/fused_conv.cc b/onnxruntime/contrib_ops/rocm/fused_conv.cc
+index 63804f79a32fb..4f3be98d97f80 100644
+--- a/onnxruntime/contrib_ops/rocm/fused_conv.cc
++++ b/onnxruntime/contrib_ops/rocm/fused_conv.cc
+@@ -144,7 +144,7 @@ class FusedConv : public onnxruntime::rocm::Conv<T, false> {
+   }
+ 
+   Status ComputeInternal(OpKernelContext* context) const override {
+-    std::lock_guard<OrtMutex> lock(Base::s_.mutex);
++    std::lock_guard<std::mutex> lock(Base::s_.mutex);
+ 
+     ORT_RETURN_IF_ERROR(Base::UpdateState(context, true));
+     if (Base::s_.Y->Shape().Size() == 0) {
+@@ -342,7 +342,7 @@ class FusedConv : public onnxruntime::rocm::Conv<T, false> {
+   };
+ 
+   struct FusionPlanCache {
+-    mutable OrtMutex mutex;
++    mutable std::mutex mutex;
+     using HashKey = uint32_t;
+     std::unordered_map<HashKey, FusionPlanCacheItem> cache_directory_;
+ 
+@@ -351,7 +351,7 @@ class FusedConv : public onnxruntime::rocm::Conv<T, false> {
+ 
+     FusionPlanCacheItem& FindOrCreateFusionPlanCache(HashKey key,
+                                                      std::function<Status(FusedConvFusionData& fusion)> factory) {
+-      std::lock_guard<OrtMutex> lock(mutex);
++      std::lock_guard<std::mutex> lock(mutex);
+       auto iter = cache_directory_.find(key);
+       if (iter == cache_directory_.end()) {
+         cache_directory_[key].fusion = std::make_unique<FusedConvFusionData>();
+diff --git a/onnxruntime/core/common/logging/logging.cc b/onnxruntime/core/common/logging/logging.cc
+index a086c90ea4b14..a79e7300cffce 100644
+--- a/onnxruntime/core/common/logging/logging.cc
++++ b/onnxruntime/core/common/logging/logging.cc
+@@ -64,13 +64,13 @@ LoggingManager* LoggingManager::GetDefaultInstance() {
+ #pragma warning(disable : 26426)
+ #endif
+ 
+-static OrtMutex& DefaultLoggerMutex() noexcept {
+-  static OrtMutex mutex;
++static std::mutex& DefaultLoggerMutex() noexcept {
++  static std::mutex mutex;
+   return mutex;
+ }
+ 
+ Logger* LoggingManager::s_default_logger_ = nullptr;
+-OrtMutex sink_mutex_;
++std::mutex sink_mutex_;
+ 
+ #ifdef _MSC_VER
+ #pragma warning(pop)
+@@ -107,7 +107,7 @@ LoggingManager::LoggingManager(std::unique_ptr<ISink> sink, Severity default_min
+ 
+     // lock mutex to create instance, and enable logging
+     // this matches the mutex usage in Shutdown
+-    std::lock_guard<OrtMutex> guard(DefaultLoggerMutex());
++    std::lock_guard<std::mutex> guard(DefaultLoggerMutex());
+ 
+     if (DefaultLoggerManagerInstance().load() != nullptr) {
+       ORT_THROW("Only one instance of LoggingManager created with InstanceType::Default can exist at any point in time.");
+@@ -127,7 +127,7 @@ LoggingManager::LoggingManager(std::unique_ptr<ISink> sink, Severity default_min
+ LoggingManager::~LoggingManager() {
+   if (owns_default_logger_) {
+     // lock mutex to reset DefaultLoggerManagerInstance() and free default logger from this instance.
+-    std::lock_guard<OrtMutex> guard(DefaultLoggerMutex());
++    std::lock_guard<std::mutex> guard(DefaultLoggerMutex());
+ #if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
+     DefaultLoggerManagerInstance().store(nullptr, std::memory_order_release);
+ #else
+@@ -283,7 +283,7 @@ Severity OverrideLevelWithEtw(Severity original_severity) {
+ 
+ bool LoggingManager::AddSinkOfType(SinkType sink_type, std::function<std::unique_ptr<ISink>()> sinkFactory,
+                                    logging::Severity severity) {
+-  std::lock_guard<OrtMutex> guard(sink_mutex_);
++  std::lock_guard<std::mutex> guard(sink_mutex_);
+   if (sink_->GetType() != SinkType::CompositeSink) {
+     // Current sink is not a composite, create a new composite sink and add the current sink to it
+     auto new_composite = std::make_unique<CompositeSink>();
+@@ -305,7 +305,7 @@ bool LoggingManager::AddSinkOfType(SinkType sink_type, std::function<std::unique
+ }
+ 
+ void LoggingManager::RemoveSink(SinkType sink_type) {
+-  std::lock_guard<OrtMutex> guard(sink_mutex_);
++  std::lock_guard<std::mutex> guard(sink_mutex_);
+ 
+   if (sink_->GetType() == SinkType::CompositeSink) {
+     auto composite_sink = static_cast<CompositeSink*>(sink_.get());
+diff --git a/onnxruntime/core/common/profiler.cc b/onnxruntime/core/common/profiler.cc
+index 71bca6ef3b582..8562e5524af74 100644
+--- a/onnxruntime/core/common/profiler.cc
++++ b/onnxruntime/core/common/profiler.cc
+@@ -85,7 +85,7 @@ void Profiler::EndTimeAndRecordEvent(EventCategory category,
+     custom_logger_->SendProfileEvent(event);
+   } else {
+     // TODO: sync_gpu if needed.
+-    std::lock_guard<OrtMutex> lock(mutex_);
++    std::lock_guard<std::mutex> lock(mutex_);
+     if (events_.size() < max_num_events_) {
+       events_.emplace_back(std::move(event));
+     } else {
+@@ -115,7 +115,7 @@ std::string Profiler::EndProfiling() {
+     LOGS(*session_logger_, INFO) << "Writing profiler data to file " << profile_stream_file_;
+   }
+ 
+-  std::lock_guard<OrtMutex> lock(mutex_);
++  std::lock_guard<std::mutex> lock(mutex_);
+   profile_stream_ << "[\n";
+ 
+   for (const auto& ep_profiler : ep_profilers_) {
+diff --git a/onnxruntime/core/common/profiler.h b/onnxruntime/core/common/profiler.h
+index a0bca0007b245..0103d8abb151f 100644
+--- a/onnxruntime/core/common/profiler.h
++++ b/onnxruntime/core/common/profiler.h
+@@ -11,7 +11,7 @@
+ 
+ #include "core/common/profiler_common.h"
+ #include "core/common/logging/logging.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ 
+ namespace onnxruntime {
+ 
+@@ -130,7 +130,7 @@ class Profiler {
+   static std::atomic<size_t> global_max_num_events_;
+ 
+   // Mutex controlling access to profiler data
+-  OrtMutex mutex_;
++  std::mutex mutex_;
+   bool enabled_{false};
+ #if defined(__wasm__)
+   /*
+diff --git a/onnxruntime/core/common/threadpool.cc b/onnxruntime/core/common/threadpool.cc
+index 7b62de799b6fc..b192688373851 100644
+--- a/onnxruntime/core/common/threadpool.cc
++++ b/onnxruntime/core/common/threadpool.cc
+@@ -21,9 +21,10 @@ limitations under the License.
+ #include "core/common/cpuid_info.h"
+ #include "core/common/eigen_common_wrapper.h"
+ #include "core/platform/EigenNonBlockingThreadPool.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #if !defined(ORT_MINIMAL_BUILD)
+ #ifdef _WIN32
++#include <Windows.h>
+ #include "processthreadsapi.h"
+ #include <codecvt>
+ #include <locale>
+diff --git a/onnxruntime/core/framework/bfc_arena.cc b/onnxruntime/core/framework/bfc_arena.cc
+index 13f9656ae0595..6788b4af3b982 100644
+--- a/onnxruntime/core/framework/bfc_arena.cc
++++ b/onnxruntime/core/framework/bfc_arena.cc
+@@ -276,7 +276,7 @@ void* BFCArena::Reserve(size_t size) {
+   if (size == 0)
+     return nullptr;
+ 
+-  std::lock_guard<OrtMutex> lock(lock_);
++  std::lock_guard<std::mutex> lock(lock_);
+ 
+   LOGS_DEFAULT(INFO) << "Reserving memory in BFCArena for " << device_allocator_->Info().name << " size: " << size;
+ 
+@@ -293,7 +293,7 @@ void* BFCArena::Reserve(size_t size) {
+ }
+ 
+ size_t BFCArena::RequestedSize(const void* ptr) {
+-  std::lock_guard<OrtMutex> lock(lock_);
++  std::lock_guard<std::mutex> lock(lock_);
+   BFCArena::ChunkHandle h = region_manager_.get_handle(ptr);
+   ORT_ENFORCE(h != kInvalidChunkHandle);
+   BFCArena::Chunk* c = ChunkFromHandle(h);
+@@ -301,7 +301,7 @@ size_t BFCArena::RequestedSize(const void* ptr) {
+ }
+ 
+ size_t BFCArena::AllocatedSize(const void* ptr) {
+-  std::lock_guard<OrtMutex> lock(lock_);
++  std::lock_guard<std::mutex> lock(lock_);
+   BFCArena::ChunkHandle h = region_manager_.get_handle(ptr);
+   ORT_ENFORCE(h != kInvalidChunkHandle);
+   BFCArena::Chunk* c = ChunkFromHandle(h);
+@@ -325,7 +325,7 @@ void* BFCArena::AllocateRawInternal(size_t num_bytes,
+   // The BFC allocator tries to find the best fit first.
+   BinNum bin_num = BinNumForSize(rounded_bytes);
+ 
+-  std::lock_guard<OrtMutex> lock(lock_);
++  std::lock_guard<std::mutex> lock(lock_);
+   // search for a valid chunk
+   auto* chunk = FindChunkPtr(bin_num,
+                              rounded_bytes,
+@@ -377,7 +377,7 @@ void* BFCArena::AllocateRawInternal(size_t num_bytes,
+ }
+ 
+ void BFCArena::GetStats(AllocatorStats* stats) {
+-  std::lock_guard<OrtMutex> lock(lock_);
++  std::lock_guard<std::mutex> lock(lock_);
+   *stats = stats_;
+ }
+ 
+@@ -496,7 +496,7 @@ void BFCArena::Free(void* p) {
+   if (p == nullptr) {
+     return;
+   }
+-  std::lock_guard<OrtMutex> lock(lock_);
++  std::lock_guard<std::mutex> lock(lock_);
+   auto it = reserved_chunks_.find(p);
+   if (it != reserved_chunks_.end()) {
+     device_allocator_->Free(it->first);
+@@ -509,7 +509,7 @@ void BFCArena::Free(void* p) {
+ }
+ 
+ Status BFCArena::Shrink() {
+-  std::lock_guard<OrtMutex> lock(lock_);
++  std::lock_guard<std::mutex> lock(lock_);
+   auto num_regions = region_manager_.regions().size();
+   std::vector<void*> region_ptrs;
+   std::vector<size_t> region_sizes;
+@@ -807,7 +807,7 @@ void BFCArena::DumpMemoryLog(size_t num_bytes) {
+ }
+ #ifdef ORT_ENABLE_STREAM
+ void BFCArena::ResetChunkOnTargetStream(Stream* target_stream, bool coalesce_flag) {
+-  std::lock_guard<OrtMutex> lock(lock_);
++  std::lock_guard<std::mutex> lock(lock_);
+ 
+   for (const auto& region : region_manager_.regions()) {
+     ChunkHandle region_begin_chunk = region_manager_.get_handle(region.ptr());
+diff --git a/onnxruntime/core/framework/bfc_arena.h b/onnxruntime/core/framework/bfc_arena.h
+index 5e4cd9f62f11b..8081738f2a5dc 100644
+--- a/onnxruntime/core/framework/bfc_arena.h
++++ b/onnxruntime/core/framework/bfc_arena.h
+@@ -27,7 +27,7 @@ limitations under the License.
+ #include "core/common/logging/severity.h"
+ #include "core/common/safeint.h"
+ 
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #include "core/framework/arena_extend_strategy.h"
+ #include "core/framework/allocator.h"
+ 
+@@ -489,7 +489,7 @@ class BFCArena : public IAllocator {
+ 
+   std::unique_ptr<IAllocator> device_allocator_;
+ 
+-  mutable OrtMutex lock_;
++  mutable std::mutex lock_;
+ 
+   RegionManager region_manager_;
+   std::vector<Chunk> chunks_;
+diff --git a/onnxruntime/core/framework/execution_providers.h b/onnxruntime/core/framework/execution_providers.h
+index 43fe92edc9dfe..29cf79ec385d8 100644
+--- a/onnxruntime/core/framework/execution_providers.h
++++ b/onnxruntime/core/framework/execution_providers.h
+@@ -12,6 +12,7 @@
+ #include "core/graph/graph_viewer.h"
+ #include "core/common/logging/logging.h"
+ #ifdef _WIN32
++#include <Windows.h>
+ #include <winmeta.h>
+ #include <evntrace.h>
+ #include "core/platform/tracing.h"
+diff --git a/onnxruntime/core/framework/kernel_registry_manager.h b/onnxruntime/core/framework/kernel_registry_manager.h
+index 201fda6d978b6..1da73208cb536 100644
+--- a/onnxruntime/core/framework/kernel_registry_manager.h
++++ b/onnxruntime/core/framework/kernel_registry_manager.h
+@@ -12,7 +12,7 @@
+ #include "core/common/status.h"
+ #include "core/framework/kernel_type_str_resolver.h"
+ #include "core/graph/graph_viewer.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ 
+ namespace onnxruntime {
+ struct KernelCreateInfo;
+diff --git a/onnxruntime/core/framework/kernel_type_str_resolver.h b/onnxruntime/core/framework/kernel_type_str_resolver.h
+index 587be491b360a..a642649eca341 100644
+--- a/onnxruntime/core/framework/kernel_type_str_resolver.h
++++ b/onnxruntime/core/framework/kernel_type_str_resolver.h
+@@ -18,7 +18,7 @@
+ #include "core/common/status.h"
+ #include "core/graph/op_identifier.h"
+ #include "core/graph/graph.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ 
+ namespace onnxruntime {
+ 
+@@ -129,7 +129,7 @@ class OpSchemaKernelTypeStrResolver final : public IKernelTypeStrResolver {
+   // used as a cache when resolving
+   // since the cache may be modified with a const instance, ensure that access to the cache is thread-safe
+   mutable KernelTypeStrResolver resolver_;
+-  mutable OrtMutex resolver_mutex_;
++  mutable std::mutex resolver_mutex_;
+ };
+ 
+ #endif  // !defined(ORT_MINIMAL_BUILD)
+diff --git a/onnxruntime/core/framework/mem_pattern_planner.h b/onnxruntime/core/framework/mem_pattern_planner.h
+index f4db5d9f1c75f..e4353ec22db92 100644
+--- a/onnxruntime/core/framework/mem_pattern_planner.h
++++ b/onnxruntime/core/framework/mem_pattern_planner.h
+@@ -20,7 +20,7 @@ limitations under the License.
+ #include "core/common/safeint.h"
+ #include "core/framework/mem_pattern.h"
+ #include "core/framework/allocation_planner.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ 
+ namespace onnxruntime {
+ // MemPatternPlanner is used to trace allocation/free steps
+@@ -68,7 +68,7 @@ class MemPatternPlanner {
+   void TraceAllocation(int ml_value_idx, const AllocPlanPerValue::ProgramCounter& counter, size_t size) {
+     ORT_ENFORCE(using_counters_);
+ 
+-    std::lock_guard<OrtMutex> lock(lock_);
++    std::lock_guard<std::mutex> lock(lock_);
+ 
+     if (size == 0) {
+       allocs_.emplace_back(ml_value_idx, MemoryBlock(0, 0));
+@@ -133,7 +133,7 @@ class MemPatternPlanner {
+   void TraceAllocation(int ml_value_idx, size_t size) {
+     ORT_ENFORCE(!using_counters_);
+ 
+-    std::lock_guard<OrtMutex> lock(lock_);
++    std::lock_guard<std::mutex> lock(lock_);
+ 
+     if (size == 0) {
+       allocs_.emplace_back(ml_value_idx, MemoryBlock(0, 0));
+@@ -190,7 +190,7 @@ class MemPatternPlanner {
+   }
+ 
+   void TraceFree(int ml_value_index) {
+-    std::lock_guard<OrtMutex> lock(lock_);
++    std::lock_guard<std::mutex> lock(lock_);
+ 
+     for (auto it = blocks_.begin(); it != blocks_.end(); it++) {
+       if (allocs_[*it].index_ == ml_value_index) {
+@@ -201,7 +201,7 @@ class MemPatternPlanner {
+   }
+ 
+   MemoryPattern GenerateMemPattern() const {
+-    std::lock_guard<OrtMutex> lock(lock_);
++    std::lock_guard<std::mutex> lock(lock_);
+ 
+ #ifdef ENABLE_TRAINING
+     if (using_counters_) {
+@@ -261,7 +261,7 @@ class MemPatternPlanner {
+   std::list<int> blocks_;
+   SafeInt<size_t> buffer_size_{0};
+   bool using_counters_;
+-  mutable OrtMutex lock_;
++  mutable std::mutex lock_;
+ };
+ 
+ }  // namespace onnxruntime
+diff --git a/onnxruntime/core/framework/model_metadef_id_generator.cc b/onnxruntime/core/framework/model_metadef_id_generator.cc
+index 8b1d1f4f304c9..4a35052d159a0 100644
+--- a/onnxruntime/core/framework/model_metadef_id_generator.cc
++++ b/onnxruntime/core/framework/model_metadef_id_generator.cc
+@@ -2,7 +2,7 @@
+ // Licensed under the MIT License.
+ #include <unordered_map>
+ #include "model_metadef_id_generator.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #include "core/graph/graph_viewer.h"
+ #include "core/framework/murmurhash3.h"
+ 
+@@ -11,8 +11,8 @@ int ModelMetadefIdGenerator::GenerateId(const onnxruntime::GraphViewer& graph_vi
+                                         HashValue& model_hash) const {
+   // if the EP is shared across multiple sessions there's a very small potential for concurrency issues.
+   // use a lock when generating an id to be paranoid
+-  static OrtMutex mutex;
+-  std::lock_guard<OrtMutex> lock(mutex);
++  static std::mutex mutex;
++  std::lock_guard<std::mutex> lock(mutex);
+   model_hash = 0;
+ 
+   // find the top level graph
+diff --git a/onnxruntime/core/framework/prepacked_weights_container.h b/onnxruntime/core/framework/prepacked_weights_container.h
+index 7fe317b6c4317..37fc01c05f2ae 100644
+--- a/onnxruntime/core/framework/prepacked_weights_container.h
++++ b/onnxruntime/core/framework/prepacked_weights_container.h
+@@ -11,7 +11,7 @@
+ #include "core/framework/buffer_deleter.h"
+ 
+ #include "core/framework/allocator.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #include "prepacked_weights.h"
+ 
+ namespace onnxruntime {
+@@ -53,7 +53,7 @@ class PrepackedWeightsContainer final {
+   // PrePack() methods and does the read/write into the pre-packed weights' container.
+   // We only want to invoke PrePack() on a kernel that doesn't have a cached version
+   // of its pre-packed weight.
+-  OrtMutex mutex_;
++  std::mutex mutex_;
+ 
+   // Define allocators ahead of the container containing tensors because the allocators
+   // needs to destructed after the container containing the pre-packed cached tensors
+diff --git a/onnxruntime/core/framework/random_generator.h b/onnxruntime/core/framework/random_generator.h
+index 39f31b2f9af8a..b0aa3df09ca62 100644
+--- a/onnxruntime/core/framework/random_generator.h
++++ b/onnxruntime/core/framework/random_generator.h
+@@ -7,7 +7,7 @@
+ #include <stdint.h>
+ #include <utility>
+ 
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ 
+ namespace onnxruntime {
+ 
+@@ -57,7 +57,7 @@ class PhiloxGenerator {
+    * Resets the seed and offset.
+    */
+   void SetSeed(uint64_t seed) {
+-    std::lock_guard<OrtMutex> lock(mutex_);
++    std::lock_guard<std::mutex> lock(mutex_);
+     seed_ = seed;
+     offset_ = 0;
+   }
+@@ -66,7 +66,7 @@ class PhiloxGenerator {
+    * Gets the seed and offset pair, incrementing the offset by the specified count.
+    */
+   std::pair<uint64_t, uint64_t> NextPhiloxSeeds(uint64_t count) {
+-    std::lock_guard<OrtMutex> lock(mutex_);
++    std::lock_guard<std::mutex> lock(mutex_);
+     auto seeds = std::make_pair(seed_, offset_);
+     offset_ += count;
+     return seeds;
+@@ -79,7 +79,7 @@ class PhiloxGenerator {
+   static PhiloxGenerator& Default();
+ 
+  private:
+-  OrtMutex mutex_;
++  std::mutex mutex_;
+   uint64_t seed_;
+   uint64_t offset_;
+ };
+diff --git a/onnxruntime/core/framework/session_state.cc b/onnxruntime/core/framework/session_state.cc
+index 4df0370ac719e..0d0b22ff61e01 100644
+--- a/onnxruntime/core/framework/session_state.cc
++++ b/onnxruntime/core/framework/session_state.cc
+@@ -5,7 +5,7 @@
+ 
+ #include <sstream>
+ 
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #include "core/common/logging/logging.h"
+ #include "core/common/safeint.h"
+ #include "core/flatbuffers/schema/ort.fbs.h"
+@@ -518,7 +518,7 @@ Status SessionState::PrepackConstantInitializedTensors(InlinedHashMap<std::strin
+   if (should_cache_prepacked_weights_for_shared_initializers) {
+     // serialize calls to the method that looks up the container, calls UseCachedPrePackedWeight/PrePack
+     // and writes pre-packed weights to the container
+-    std::lock_guard<onnxruntime::OrtMutex> l(prepacked_weights_container_->mutex_);
++    std::lock_guard<std::mutex> l(prepacked_weights_container_->mutex_);
+     return prepacked_constant_weights(true);
+   } else {
+     return prepacked_constant_weights(false);
+@@ -775,7 +775,7 @@ const MemoryPatternGroup* SessionState::GetMemoryPatternGroup(
+     const InlinedHashMap<int, TensorShape>*& out_inferred_shapes) const {
+   out_inferred_shapes = nullptr;
+   int64_t key = CalculateMemoryPatternsKey(tensor_inputs);
+-  std::lock_guard<OrtMutex> lock(mem_patterns_lock_);
++  std::lock_guard<std::mutex> lock(mem_patterns_lock_);
+   auto it = mem_patterns_.find(key);
+   if (it == mem_patterns_.end()) {
+ #ifdef ENABLE_TRAINING
+@@ -851,7 +851,7 @@ Status SessionState::UpdateMemoryPatternGroupCache(gsl::span<const OrtValue> ten
+                                                    MemoryPatternGroup mem_patterns) const {
+   int64_t key = CalculateMemoryPatternsKey(tensor_inputs);
+ 
+-  std::lock_guard<OrtMutex> lock(mem_patterns_lock_);
++  std::lock_guard<std::mutex> lock(mem_patterns_lock_);
+   // Do not update if present, as the pointer to the existing one is cached
+   mem_patterns_.emplace(key, std::move(mem_patterns));
+   return Status::OK();
+@@ -1588,7 +1588,7 @@ static void BindToDeviceStream(const SequentialExecutionPlan& execution_plan,
+ 
+ std::unique_ptr<DeviceStreamCollection> SessionState::AcquireDeviceStreamCollection() const {
+   if (has_device_stream_enabled_ep_) {
+-    std::lock_guard<onnxruntime::OrtMutex> lock(device_stream_pool_mutex_);
++    std::lock_guard<std::mutex> lock(device_stream_pool_mutex_);
+     if (!device_stream_pool_.empty()) {
+       auto device_stream = std::move(device_stream_pool_.back());
+       device_stream_pool_.pop_back();
+@@ -1607,7 +1607,7 @@ std::unique_ptr<DeviceStreamCollection> SessionState::AcquireDeviceStreamCollect
+ void SessionState::RecycleDeviceStreamCollection(std::unique_ptr<DeviceStreamCollection> device_stream_collection) const {
+   // if no need to reuse the device stream, don't perform the recycle
+   if (has_device_stream_enabled_ep_) {
+-    std::lock_guard<onnxruntime::OrtMutex> lock(device_stream_pool_mutex_);
++    std::lock_guard<std::mutex> lock(device_stream_pool_mutex_);
+     device_stream_pool_.push_back(std::move(device_stream_collection));
+   } else {
+     device_stream_collection.reset(nullptr);
+diff --git a/onnxruntime/core/framework/session_state.h b/onnxruntime/core/framework/session_state.h
+index 5b7f6dc5cb867..e1674ba4b690b 100644
+--- a/onnxruntime/core/framework/session_state.h
++++ b/onnxruntime/core/framework/session_state.h
+@@ -35,7 +35,7 @@
+ #include "core/framework/ort_value_name_idx_map.h"
+ #include "core/graph/graph_viewer.h"
+ #include "core/graph/onnx_protobuf.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #include "core/platform/path_lib.h"
+ #include "core/platform/threadpool.h"
+ #if !defined(ORT_MINIMAL_BUILD) && defined(ORT_MEMORY_PROFILE)
+@@ -494,7 +494,7 @@ class SessionState {
+   bool enable_mem_pattern_;
+ 
+   // lock for the mem_patterns_
+-  mutable OrtMutex mem_patterns_lock_;
++  mutable std::mutex mem_patterns_lock_;
+   // cache for the generated mem_patterns. key is calculated based on input shapes.
+   // must be a node based container as a pointer is cached.
+   mutable NodeHashMap<int64_t, MemoryPatternGroup> mem_patterns_;
+@@ -568,7 +568,7 @@ class SessionState {
+   std::unique_ptr<IStreamCommandHandleRegistry> stream_handles_registry_;
+ 
+   // lock for the device stream pool
+-  mutable OrtMutex device_stream_pool_mutex_;
++  mutable std::mutex device_stream_pool_mutex_;
+   mutable std::vector<std::unique_ptr<DeviceStreamCollection>> device_stream_pool_;
+   // flag to indicate whether current session using any EP that create device stream dynamically.
+   bool has_device_stream_enabled_ep_ = false;
+diff --git a/onnxruntime/core/framework/tuning_context.h b/onnxruntime/core/framework/tuning_context.h
+index 304fffa4ab7ca..96657d482d3a8 100644
+--- a/onnxruntime/core/framework/tuning_context.h
++++ b/onnxruntime/core/framework/tuning_context.h
+@@ -7,7 +7,7 @@
+ #include <unordered_map>
+ 
+ #include "core/common/common.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #include "core/framework/allocator.h"
+ #include "core/framework/tuning_results.h"
+ 
+@@ -77,7 +77,7 @@ class TuningResultsManager {
+   void Clear();
+ 
+  private:
+-  mutable OrtMutex lock_;
++  mutable std::mutex lock_;
+   std::unordered_map<std::string, KernelMap> results_;
+ };
+ 
+diff --git a/onnxruntime/core/graph/schema_registry.cc b/onnxruntime/core/graph/schema_registry.cc
+index a7d94f4571d96..496825f00d452 100644
+--- a/onnxruntime/core/graph/schema_registry.cc
++++ b/onnxruntime/core/graph/schema_registry.cc
+@@ -10,7 +10,7 @@ common::Status OnnxRuntimeOpSchemaRegistry::SetBaselineAndOpsetVersionForDomain(
+     const std::string& domain,
+     int baseline_opset_version,
+     int opset_version) {
+-  std::lock_guard<OrtMutex> lock(mutex_);
++  std::lock_guard<std::mutex> lock(mutex_);
+ 
+   auto it = domain_version_range_map_.find(domain);
+   if (domain_version_range_map_.end() != it) {
+diff --git a/onnxruntime/core/platform/posix/ort_mutex.cc b/onnxruntime/core/platform/posix/ort_mutex.cc
+deleted file mode 100644
+index e124ce168085f..0000000000000
+--- a/onnxruntime/core/platform/posix/ort_mutex.cc
++++ /dev/null
+@@ -1,42 +0,0 @@
+-// Copyright (c) Microsoft Corporation. All rights reserved.
+-// Licensed under the MIT License.
+-
+-#include "core/common/common.h"
+-#include "core/platform/ort_mutex.h"
+-#include <assert.h>
+-#include <stdexcept>
+-#include <sstream>
+-
+-namespace onnxruntime {
+-void OrtCondVar::timed_wait_impl(std::unique_lock<OrtMutex>& lk,
+-                                 std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds> tp) {
+-  using namespace std::chrono;
+-#ifndef NDEBUG
+-  if (!lk.owns_lock())
+-    ORT_THROW("condition_variable::timed wait: mutex not locked");
+-#endif
+-  nanoseconds d = tp.time_since_epoch();
+-  timespec abs_deadline;
+-  seconds s = duration_cast<seconds>(d);
+-  using ts_sec = decltype(abs_deadline.tv_sec);
+-  constexpr ts_sec ts_sec_max = std::numeric_limits<ts_sec>::max();
+-  if (s.count() < ts_sec_max) {
+-    abs_deadline.tv_sec = static_cast<ts_sec>(s.count());
+-    abs_deadline.tv_nsec = static_cast<decltype(abs_deadline.tv_nsec)>((d - s).count());
+-  } else {
+-    abs_deadline.tv_sec = ts_sec_max;
+-    abs_deadline.tv_nsec = 999999999;
+-  }
+-  nsync::nsync_cv_wait_with_deadline(&native_cv_object, lk.mutex()->native_handle(), abs_deadline, nullptr);
+-}
+-
+-void OrtCondVar::wait(std::unique_lock<OrtMutex>& lk) {
+-#ifndef NDEBUG
+-  if (!lk.owns_lock()) {
+-    ORT_THROW("OrtCondVar wait failed: mutex not locked");
+-  }
+-#endif
+-  nsync::nsync_cv_wait(&native_cv_object, lk.mutex()->native_handle());
+-}
+-
+-}  // namespace onnxruntime
+\ No newline at end of file
+diff --git a/onnxruntime/core/platform/windows/logging/etw_sink.cc b/onnxruntime/core/platform/windows/logging/etw_sink.cc
+index 889bc6fcf86df..bf73a538ea42f 100644
+--- a/onnxruntime/core/platform/windows/logging/etw_sink.cc
++++ b/onnxruntime/core/platform/windows/logging/etw_sink.cc
+@@ -65,12 +65,12 @@ EtwRegistrationManager& EtwRegistrationManager::Instance() {
+ }
+ 
+ bool EtwRegistrationManager::IsEnabled() const {
+-  std::lock_guard<OrtMutex> lock(provider_change_mutex_);
++  std::lock_guard<std::mutex> lock(provider_change_mutex_);
+   return is_enabled_;
+ }
+ 
+ UCHAR EtwRegistrationManager::Level() const {
+-  std::lock_guard<OrtMutex> lock(provider_change_mutex_);
++  std::lock_guard<std::mutex> lock(provider_change_mutex_);
+   return level_;
+ }
+ 
+@@ -94,7 +94,7 @@ Severity EtwRegistrationManager::MapLevelToSeverity() {
+ }
+ 
+ ULONGLONG EtwRegistrationManager::Keyword() const {
+-  std::lock_guard<OrtMutex> lock(provider_change_mutex_);
++  std::lock_guard<std::mutex> lock(provider_change_mutex_);
+   return keyword_;
+ }
+ 
+@@ -103,12 +103,12 @@ HRESULT EtwRegistrationManager::Status() const {
+ }
+ 
+ void EtwRegistrationManager::RegisterInternalCallback(const EtwInternalCallback& callback) {
+-  std::lock_guard<OrtMutex> lock(callbacks_mutex_);
++  std::lock_guard<std::mutex> lock(callbacks_mutex_);
+   callbacks_.push_back(&callback);
+ }
+ 
+ void EtwRegistrationManager::UnregisterInternalCallback(const EtwInternalCallback& callback) {
+-  std::lock_guard<OrtMutex> lock(callbacks_mutex_);
++  std::lock_guard<std::mutex> lock(callbacks_mutex_);
+   auto new_end = std::remove_if(callbacks_.begin(), callbacks_.end(),
+                                 [&callback](const EtwInternalCallback* ptr) {
+                                   return ptr == &callback;
+@@ -126,7 +126,7 @@ void NTAPI EtwRegistrationManager::ORT_TL_EtwEnableCallback(
+     _In_opt_ PVOID CallbackContext) {
+   auto& manager = EtwRegistrationManager::Instance();
+   {
+-    std::lock_guard<OrtMutex> lock(manager.provider_change_mutex_);
++    std::lock_guard<std::mutex> lock(manager.provider_change_mutex_);
+     manager.is_enabled_ = (IsEnabled != 0);
+     manager.level_ = Level;
+     manager.keyword_ = MatchAnyKeyword;
+@@ -135,11 +135,11 @@ void NTAPI EtwRegistrationManager::ORT_TL_EtwEnableCallback(
+ }
+ 
+ EtwRegistrationManager::~EtwRegistrationManager() {
+-  std::lock_guard<OrtMutex> lock(callbacks_mutex_);
++  std::lock_guard<std::mutex> lock(callbacks_mutex_);
+   callbacks_.clear();
+   if (initialization_status_ == InitializationStatus::Initialized ||
+       initialization_status_ == InitializationStatus::Initializing) {
+-    std::lock_guard<OrtMutex> init_lock(init_mutex_);
++    std::lock_guard<std::mutex> init_lock(init_mutex_);
+     assert(initialization_status_ != InitializationStatus::Initializing);
+     if (initialization_status_ == InitializationStatus::Initialized) {
+       ::TraceLoggingUnregister(etw_provider_handle);
+@@ -153,7 +153,7 @@ EtwRegistrationManager::EtwRegistrationManager() {
+ 
+ void EtwRegistrationManager::LazyInitialize() {
+   if (initialization_status_ == InitializationStatus::NotInitialized) {
+-    std::lock_guard<OrtMutex> lock(init_mutex_);
++    std::lock_guard<std::mutex> lock(init_mutex_);
+     if (initialization_status_ == InitializationStatus::NotInitialized) {  // Double-check locking pattern
+       initialization_status_ = InitializationStatus::Initializing;
+       etw_status_ = ::TraceLoggingRegisterEx(etw_provider_handle, ORT_TL_EtwEnableCallback, nullptr);
+@@ -174,7 +174,7 @@ void EtwRegistrationManager::InvokeCallbacks(LPCGUID SourceId, ULONG IsEnabled,
+     return;
+   }
+ 
+-  std::lock_guard<OrtMutex> lock(callbacks_mutex_);
++  std::lock_guard<std::mutex> lock(callbacks_mutex_);
+   for (const auto& callback : callbacks_) {
+     (*callback)(SourceId, IsEnabled, Level, MatchAnyKeyword, MatchAllKeyword, FilterData, CallbackContext);
+   }
+diff --git a/onnxruntime/core/platform/windows/logging/etw_sink.h b/onnxruntime/core/platform/windows/logging/etw_sink.h
+index d6c9ea27b2955..2a798a28f13de 100644
+--- a/onnxruntime/core/platform/windows/logging/etw_sink.h
++++ b/onnxruntime/core/platform/windows/logging/etw_sink.h
+@@ -24,7 +24,7 @@
+ 
+ #include "core/common/logging/capture.h"
+ #include "core/common/logging/isink.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ 
+ namespace onnxruntime {
+ namespace logging {
+@@ -98,9 +98,9 @@ class EtwRegistrationManager {
+       _In_opt_ PVOID CallbackContext);
+ 
+   std::vector<const EtwInternalCallback*> callbacks_;
+-  OrtMutex callbacks_mutex_;
+-  mutable OrtMutex provider_change_mutex_;
+-  OrtMutex init_mutex_;
++  std::mutex callbacks_mutex_;
++  mutable std::mutex provider_change_mutex_;
++  std::mutex init_mutex_;
+   InitializationStatus initialization_status_ = InitializationStatus::NotInitialized;
+   bool is_enabled_;
+   UCHAR level_;
+diff --git a/onnxruntime/core/platform/windows/telemetry.cc b/onnxruntime/core/platform/windows/telemetry.cc
+index 86067d377205b..47789af9d5a47 100644
+--- a/onnxruntime/core/platform/windows/telemetry.cc
++++ b/onnxruntime/core/platform/windows/telemetry.cc
+@@ -2,7 +2,7 @@
+ // Licensed under the MIT License.
+ 
+ #include "core/platform/windows/telemetry.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #include "core/common/logging/logging.h"
+ #include "onnxruntime_config.h"
+ 
+@@ -57,18 +57,18 @@ TRACELOGGING_DEFINE_PROVIDER(telemetry_provider_handle, "Microsoft.ML.ONNXRuntim
+ #pragma warning(pop)
+ #endif
+ 
+-OrtMutex WindowsTelemetry::mutex_;
+-OrtMutex WindowsTelemetry::provider_change_mutex_;
++std::mutex WindowsTelemetry::mutex_;
++std::mutex WindowsTelemetry::provider_change_mutex_;
+ uint32_t WindowsTelemetry::global_register_count_ = 0;
+ bool WindowsTelemetry::enabled_ = true;
+ uint32_t WindowsTelemetry::projection_ = 0;
+ UCHAR WindowsTelemetry::level_ = 0;
+ UINT64 WindowsTelemetry::keyword_ = 0;
+ std::vector<const WindowsTelemetry::EtwInternalCallback*> WindowsTelemetry::callbacks_;
+-OrtMutex WindowsTelemetry::callbacks_mutex_;
++std::mutex WindowsTelemetry::callbacks_mutex_;
+ 
+ WindowsTelemetry::WindowsTelemetry() {
+-  std::lock_guard<OrtMutex> lock(mutex_);
++  std::lock_guard<std::mutex> lock(mutex_);
+   if (global_register_count_ == 0) {
+     // TraceLoggingRegister is fancy in that you can only register once GLOBALLY for the whole process
+     HRESULT hr = TraceLoggingRegisterEx(telemetry_provider_handle, ORT_TL_EtwEnableCallback, nullptr);
+@@ -79,7 +79,7 @@ WindowsTelemetry::WindowsTelemetry() {
+ }
+ 
+ WindowsTelemetry::~WindowsTelemetry() {
+-  std::lock_guard<OrtMutex> lock(mutex_);
++  std::lock_guard<std::mutex> lock(mutex_);
+   if (global_register_count_ > 0) {
+     global_register_count_ -= 1;
+     if (global_register_count_ == 0) {
+@@ -87,22 +87,22 @@ WindowsTelemetry::~WindowsTelemetry() {
+     }
+   }
+ 
+-  std::lock_guard<OrtMutex> lock_callbacks(callbacks_mutex_);
++  std::lock_guard<std::mutex> lock_callbacks(callbacks_mutex_);
+   callbacks_.clear();
+ }
+ 
+ bool WindowsTelemetry::IsEnabled() const {
+-  std::lock_guard<OrtMutex> lock(provider_change_mutex_);
++  std::lock_guard<std::mutex> lock(provider_change_mutex_);
+   return enabled_;
+ }
+ 
+ UCHAR WindowsTelemetry::Level() const {
+-  std::lock_guard<OrtMutex> lock(provider_change_mutex_);
++  std::lock_guard<std::mutex> lock(provider_change_mutex_);
+   return level_;
+ }
+ 
+ UINT64 WindowsTelemetry::Keyword() const {
+-  std::lock_guard<OrtMutex> lock(provider_change_mutex_);
++  std::lock_guard<std::mutex> lock(provider_change_mutex_);
+   return keyword_;
+ }
+ 
+@@ -111,12 +111,12 @@ UINT64 WindowsTelemetry::Keyword() const {
+ // }
+ 
+ void WindowsTelemetry::RegisterInternalCallback(const EtwInternalCallback& callback) {
+-  std::lock_guard<OrtMutex> lock_callbacks(callbacks_mutex_);
++  std::lock_guard<std::mutex> lock_callbacks(callbacks_mutex_);
+   callbacks_.push_back(&callback);
+ }
+ 
+ void WindowsTelemetry::UnregisterInternalCallback(const EtwInternalCallback& callback) {
+-  std::lock_guard<OrtMutex> lock_callbacks(callbacks_mutex_);
++  std::lock_guard<std::mutex> lock_callbacks(callbacks_mutex_);
+   auto new_end = std::remove_if(callbacks_.begin(), callbacks_.end(),
+                                 [&callback](const EtwInternalCallback* ptr) {
+                                   return ptr == &callback;
+@@ -132,7 +132,7 @@ void NTAPI WindowsTelemetry::ORT_TL_EtwEnableCallback(
+     _In_ ULONGLONG MatchAllKeyword,
+     _In_opt_ PEVENT_FILTER_DESCRIPTOR FilterData,
+     _In_opt_ PVOID CallbackContext) {
+-  std::lock_guard<OrtMutex> lock(provider_change_mutex_);
++  std::lock_guard<std::mutex> lock(provider_change_mutex_);
+   enabled_ = (IsEnabled != 0);
+   level_ = Level;
+   keyword_ = MatchAnyKeyword;
+@@ -143,7 +143,7 @@ void NTAPI WindowsTelemetry::ORT_TL_EtwEnableCallback(
+ void WindowsTelemetry::InvokeCallbacks(LPCGUID SourceId, ULONG IsEnabled, UCHAR Level, ULONGLONG MatchAnyKeyword,
+                                        ULONGLONG MatchAllKeyword, PEVENT_FILTER_DESCRIPTOR FilterData,
+                                        PVOID CallbackContext) {
+-  std::lock_guard<OrtMutex> lock_callbacks(callbacks_mutex_);
++  std::lock_guard<std::mutex> lock_callbacks(callbacks_mutex_);
+   for (const auto& callback : callbacks_) {
+     (*callback)(SourceId, IsEnabled, Level, MatchAnyKeyword, MatchAllKeyword, FilterData, CallbackContext);
+   }
+diff --git a/onnxruntime/core/platform/windows/telemetry.h b/onnxruntime/core/platform/windows/telemetry.h
+index ed80f13e633ac..b23a60a44b5f0 100644
+--- a/onnxruntime/core/platform/windows/telemetry.h
++++ b/onnxruntime/core/platform/windows/telemetry.h
+@@ -8,7 +8,7 @@
+ #include "core/platform/telemetry.h"
+ #include <Windows.h>
+ #include <TraceLoggingProvider.h>
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #include "core/platform/windows/TraceLoggingConfig.h"
+ 
+ namespace onnxruntime {
+@@ -69,14 +69,14 @@ class WindowsTelemetry : public Telemetry {
+   static void UnregisterInternalCallback(const EtwInternalCallback& callback);
+ 
+  private:
+-  static OrtMutex mutex_;
++  static std::mutex mutex_;
+   static uint32_t global_register_count_;
+   static bool enabled_;
+   static uint32_t projection_;
+ 
+   static std::vector<const EtwInternalCallback*> callbacks_;
+-  static OrtMutex callbacks_mutex_;
+-  static OrtMutex provider_change_mutex_;
++  static std::mutex callbacks_mutex_;
++  static std::mutex provider_change_mutex_;
+   static UCHAR level_;
+   static ULONGLONG keyword_;
+ 
+diff --git a/onnxruntime/core/providers/cann/cann_allocator.h b/onnxruntime/core/providers/cann/cann_allocator.h
+index 15fa7b177904a..1022374b51d9f 100644
+--- a/onnxruntime/core/providers/cann/cann_allocator.h
++++ b/onnxruntime/core/providers/cann/cann_allocator.h
+@@ -6,7 +6,7 @@
+ 
+ #include "core/common/inlined_containers.h"
+ #include "core/framework/allocator.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ 
+ namespace onnxruntime {
+ 
+diff --git a/onnxruntime/core/providers/cann/cann_execution_provider.cc b/onnxruntime/core/providers/cann/cann_execution_provider.cc
+index 9a242919665bb..a799ed743ef52 100644
+--- a/onnxruntime/core/providers/cann/cann_execution_provider.cc
++++ b/onnxruntime/core/providers/cann/cann_execution_provider.cc
+@@ -28,7 +28,7 @@ using onnxruntime::common::Status;
+ namespace onnxruntime {
+ 
+ // Models can only be parsed and built serially in the same process
+-OrtMutex g_mutex;
++std::mutex g_mutex;
+ 
+ class Memcpy final : public OpKernel {
+  public:
+@@ -1389,7 +1389,7 @@ Status CANNExecutionProvider::Compile(const std::vector<FusedNodeAndGraph>& fuse
+       if (modelIDs_.find(filename) != modelIDs_.end()) {
+         modelID = modelIDs_[filename];
+       } else {
+-        std::lock_guard<OrtMutex> lock(g_mutex);
++        std::lock_guard<std::mutex> lock(g_mutex);
+ 
+         if (cann::FileExist(filename_with_suffix)) {
+           CANN_RETURN_IF_ERROR(aclmdlLoadFromFile(filename_with_suffix.c_str(), &modelID));
+diff --git a/onnxruntime/core/providers/cann/cann_execution_provider.h b/onnxruntime/core/providers/cann/cann_execution_provider.h
+index d83bd88d6958f..7debfa72778fd 100644
+--- a/onnxruntime/core/providers/cann/cann_execution_provider.h
++++ b/onnxruntime/core/providers/cann/cann_execution_provider.h
+@@ -12,7 +12,7 @@
+ #include "core/providers/shared_library/provider_api.h"
+ #include "core/framework/arena_extend_strategy.h"
+ #include "core/framework/execution_provider.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #include "core/providers/cann/cann_execution_provider_info.h"
+ #include "core/providers/cann/cann_inc.h"
+ #include "core/providers/cann/cann_utils.h"
+diff --git a/onnxruntime/core/providers/cann/cann_kernel.h b/onnxruntime/core/providers/cann/cann_kernel.h
+index 90180144202a7..5effbb4f56043 100644
+--- a/onnxruntime/core/providers/cann/cann_kernel.h
++++ b/onnxruntime/core/providers/cann/cann_kernel.h
+@@ -4,7 +4,7 @@
+ 
+ #pragma once
+ 
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #include "core/providers/cann/cann_inc.h"
+ #include "core/providers/cann/cann_call.h"
+ #include "core/providers/cann/cann_execution_provider.h"
+diff --git a/onnxruntime/core/providers/coreml/coreml_execution_provider.cc b/onnxruntime/core/providers/coreml/coreml_execution_provider.cc
+index b7d9211e0a9c2..f7afbb2f98bd8 100644
+--- a/onnxruntime/core/providers/coreml/coreml_execution_provider.cc
++++ b/onnxruntime/core/providers/coreml/coreml_execution_provider.cc
+@@ -218,7 +218,7 @@ common::Status CoreMLExecutionProvider::Compile(const std::vector<FusedNodeAndGr
+       // performed, to block other threads to perform Predict on the same model
+       // TODO, investigate concurrent runs for different executions from the same model
+       {
+-        std::unique_lock<OrtMutex> lock(model->GetMutex());
++        std::unique_lock<std::mutex> lock(model->GetMutex());
+         std::unordered_map<std::string, coreml::OnnxTensorInfo> outputs;
+         outputs.reserve(model_outputs.size());
+ 
+diff --git a/onnxruntime/core/providers/coreml/model/model.h b/onnxruntime/core/providers/coreml/model/model.h
+index 75b9aaf2185c9..7fdd6b25bc7db 100644
+--- a/onnxruntime/core/providers/coreml/model/model.h
++++ b/onnxruntime/core/providers/coreml/model/model.h
+@@ -11,7 +11,7 @@
+ #include <gsl/gsl>
+ #include "core/common/logging/logging.h"
+ #include "core/common/status.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ 
+ #if defined(__OBJC__)
+ @class MLMultiArray;
+@@ -73,7 +73,7 @@ class Model {
+   }
+ 
+   // Mutex for exclusive lock to this model object
+-  OrtMutex& GetMutex() { return mutex_; }
++  std::mutex& GetMutex() { return mutex_; }
+ 
+   // Input and output names in the ORT fused node's order.
+   // Names may have been adjusted from the originals due to CoreML naming rules.
+@@ -101,7 +101,7 @@ class Model {
+   std::unordered_set<std::string> scalar_outputs_;
+   std::unordered_set<std::string> int64_outputs_;
+ 
+-  OrtMutex mutex_;
++  std::mutex mutex_;
+ };
+ 
+ }  // namespace coreml
+diff --git a/onnxruntime/core/providers/cpu/generator/random.cc b/onnxruntime/core/providers/cpu/generator/random.cc
+index dfa27f1f44d5a..091b01b81b5b1 100644
+--- a/onnxruntime/core/providers/cpu/generator/random.cc
++++ b/onnxruntime/core/providers/cpu/generator/random.cc
+@@ -138,7 +138,7 @@ static TensorProto::DataType InferDataType(const Tensor& tensor);
+ Status RandomNormal::Compute(OpKernelContext* ctx) const {
+   Tensor& Y = *ctx->Output(0, shape_);
+ 
+-  std::lock_guard<onnxruntime::OrtMutex> l(generator_mutex_);
++  std::lock_guard<std::mutex> l(generator_mutex_);
+   auto status = RandomNormalCompute(mean_, scale_, generator_, dtype_, Y);
+ 
+   return status;
+@@ -147,7 +147,7 @@ Status RandomNormal::Compute(OpKernelContext* ctx) const {
+ Status RandomUniform::Compute(OpKernelContext* ctx) const {
+   Tensor& Y = *ctx->Output(0, shape_);
+ 
+-  std::lock_guard<onnxruntime::OrtMutex> l(generator_mutex_);
++  std::lock_guard<std::mutex> l(generator_mutex_);
+   auto status = RandomUniformCompute(low_, high_, generator_, dtype_, Y);
+ 
+   return status;
+@@ -169,7 +169,7 @@ Status RandomNormalLike::Compute(OpKernelContext* ctx) const {
+                            "Could not infer data type from input tensor with data type ",
+                            X.DataType());
+ 
+-  std::lock_guard<onnxruntime::OrtMutex> l(generator_mutex_);
++  std::lock_guard<std::mutex> l(generator_mutex_);
+   status = RandomNormalCompute(mean_, scale_, generator_, dtype, *Y);
+ 
+   return status;
+@@ -190,7 +190,7 @@ Status RandomUniformLike::Compute(OpKernelContext* ctx) const {
+     return ORT_MAKE_STATUS(ONNXRUNTIME, FAIL,
+                            "Could not infer data type from input tensor with data type ",
+                            X.DataType());
+-  std::lock_guard<onnxruntime::OrtMutex> l(generator_mutex_);
++  std::lock_guard<std::mutex> l(generator_mutex_);
+   status = RandomUniformCompute(low_, high_, generator_, dtype, *Y);
+ 
+   return status;
+@@ -310,7 +310,7 @@ Status Multinomial::Compute(OpKernelContext* ctx) const {
+   Tensor* Y = ctx->Output(0, {batch_size, num_samples_});
+ 
+   Status status = Status::OK();
+-  std::lock_guard<onnxruntime::OrtMutex> l(generator_mutex_);
++  std::lock_guard<std::mutex> l(generator_mutex_);
+   switch (output_dtype_) {
+     case TensorProto::INT32: {
+       status = MultinomialCompute<int32_t>(ctx, X, batch_size, num_classes, num_samples_, generator_, *Y);
+diff --git a/onnxruntime/core/providers/cpu/generator/random.h b/onnxruntime/core/providers/cpu/generator/random.h
+index 8a0390fe7af8c..1cfb276052f85 100644
+--- a/onnxruntime/core/providers/cpu/generator/random.h
++++ b/onnxruntime/core/providers/cpu/generator/random.h
+@@ -9,7 +9,7 @@
+ #include "core/common/common.h"
+ #include "core/framework/op_kernel.h"
+ #include "core/framework/random_seed.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ 
+ namespace onnxruntime {
+ 
+@@ -58,7 +58,7 @@ class RandomNormal final : public OpKernel {
+   // use generator_mutex_ to ensure Compute() can be called concurrently.
+   // this is to ensure that a model with random generators is deterministic and still can be executed in parallel.
+   mutable std::default_random_engine generator_;
+-  mutable onnxruntime::OrtMutex generator_mutex_;
++  mutable std::mutex generator_mutex_;
+   ONNX_NAMESPACE::TensorProto::DataType dtype_;
+   TensorShape shape_;
+ };
+@@ -94,7 +94,7 @@ class RandomNormalLike final : public OpKernel {
+ 
+   // see comments for generator_ and generator_mutex_ in RandomNormal class.
+   mutable std::default_random_engine generator_;
+-  mutable onnxruntime::OrtMutex generator_mutex_;
++  mutable std::mutex generator_mutex_;
+   ONNX_NAMESPACE::TensorProto::DataType dtype_ = ONNX_NAMESPACE::TensorProto::DataType::TensorProto_DataType_UNDEFINED;  // optional and may be inferred
+ };
+ 
+@@ -132,7 +132,7 @@ class RandomUniform final : public OpKernel {
+ 
+   // see comments for generator_ and generator_mutex_ in RandomNormal class.
+   mutable std::default_random_engine generator_;
+-  mutable onnxruntime::OrtMutex generator_mutex_;
++  mutable std::mutex generator_mutex_;
+   ONNX_NAMESPACE::TensorProto::DataType dtype_;
+   TensorShape shape_;
+ };
+@@ -167,7 +167,7 @@ class RandomUniformLike final : public OpKernel {
+ 
+   // see comments for generator_ and generator_mutex_ in RandomNormal class.
+   mutable std::default_random_engine generator_;
+-  mutable onnxruntime::OrtMutex generator_mutex_;
++  mutable std::mutex generator_mutex_;
+   ONNX_NAMESPACE::TensorProto::DataType dtype_ = ONNX_NAMESPACE::TensorProto::DataType::TensorProto_DataType_UNDEFINED;  // optional and may be inferred
+ };
+ 
+@@ -201,7 +201,7 @@ class Multinomial final : public OpKernel {
+ 
+   // see comments for generator_ and generator_mutex_ in RandomNormal class.
+   mutable std::default_random_engine generator_;
+-  mutable onnxruntime::OrtMutex generator_mutex_;
++  mutable std::mutex generator_mutex_;
+   ONNX_NAMESPACE::TensorProto::DataType output_dtype_;
+ };
+ }  // namespace onnxruntime
+diff --git a/onnxruntime/core/providers/cpu/ml/tree_ensemble_common.h b/onnxruntime/core/providers/cpu/ml/tree_ensemble_common.h
+index df27f888bb0af..94f79518ae8da 100644
+--- a/onnxruntime/core/providers/cpu/ml/tree_ensemble_common.h
++++ b/onnxruntime/core/providers/cpu/ml/tree_ensemble_common.h
+@@ -4,7 +4,7 @@
+ #pragma once
+ 
+ #include "tree_ensemble_aggregator.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #include "core/platform/threadpool.h"
+ #include "tree_ensemble_helper.h"
+ 
+diff --git a/onnxruntime/core/providers/cpu/text/string_normalizer.cc b/onnxruntime/core/providers/cpu/text/string_normalizer.cc
+index 32de3105d627d..9bc671f68f19a 100644
+--- a/onnxruntime/core/providers/cpu/text/string_normalizer.cc
++++ b/onnxruntime/core/providers/cpu/text/string_normalizer.cc
+@@ -8,6 +8,7 @@
+ #include "onnxruntime_config.h"
+ 
+ #ifdef _MSC_VER
++#include <Windows.h>
+ #include <locale.h>
+ #endif  // _MSC_VER
+ 
+diff --git a/onnxruntime/core/providers/cuda/cuda_allocator.cc b/onnxruntime/core/providers/cuda/cuda_allocator.cc
+index 2189af8e0ee2d..8c96d8f57a0ba 100644
+--- a/onnxruntime/core/providers/cuda/cuda_allocator.cc
++++ b/onnxruntime/core/providers/cuda/cuda_allocator.cc
+@@ -69,7 +69,7 @@ void* CUDAExternalAllocator::Alloc(size_t size) {
+ 
+ void CUDAExternalAllocator::Free(void* p) {
+   free_(p);
+-  std::lock_guard<OrtMutex> lock(lock_);
++  std::lock_guard<std::mutex> lock(lock_);
+   auto it = reserved_.find(p);
+   if (it != reserved_.end()) {
+     reserved_.erase(it);
+@@ -80,7 +80,7 @@ void CUDAExternalAllocator::Free(void* p) {
+ void* CUDAExternalAllocator::Reserve(size_t size) {
+   void* p = Alloc(size);
+   if (!p) return nullptr;
+-  std::lock_guard<OrtMutex> lock(lock_);
++  std::lock_guard<std::mutex> lock(lock_);
+   ORT_ENFORCE(reserved_.find(p) == reserved_.end());
+   reserved_.insert(p);
+   return p;
+diff --git a/onnxruntime/core/providers/cuda/cuda_allocator.h b/onnxruntime/core/providers/cuda/cuda_allocator.h
+index 86d0d8007bbd8..2d94e2b1cda89 100644
+--- a/onnxruntime/core/providers/cuda/cuda_allocator.h
++++ b/onnxruntime/core/providers/cuda/cuda_allocator.h
+@@ -5,7 +5,7 @@
+ 
+ #include "core/common/inlined_containers.h"
+ #include "core/framework/allocator.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ 
+ namespace onnxruntime {
+ 
+@@ -42,7 +42,7 @@ class CUDAExternalAllocator : public CUDAAllocator {
+   void* Reserve(size_t size) override;
+ 
+  private:
+-  mutable OrtMutex lock_;
++  mutable std::mutex lock_;
+   ExternalAlloc alloc_;
+   ExternalFree free_;
+   ExternalEmptyCache empty_cache_;
+diff --git a/onnxruntime/core/providers/cuda/cuda_execution_provider.cc b/onnxruntime/core/providers/cuda/cuda_execution_provider.cc
+index 82b29c7b0562e..d3f01c1f7adc1 100644
+--- a/onnxruntime/core/providers/cuda/cuda_execution_provider.cc
++++ b/onnxruntime/core/providers/cuda/cuda_execution_provider.cc
+@@ -324,7 +324,7 @@ DataLayout CUDAExecutionProvider::GetPreferredLayout() const {
+ CUDAExecutionProvider::~CUDAExecutionProvider() {
+   // clean up thread local context caches
+   {
+-    std::lock_guard<OrtMutex> lock(context_state_.mutex);
++    std::lock_guard<std::mutex> lock(context_state_.mutex);
+     for (const auto& cache_weak : context_state_.caches_to_update_on_destruction) {
+       const auto cache = cache_weak.lock();
+       if (!cache) continue;
+@@ -369,7 +369,7 @@ CUDAExecutionProvider::PerThreadContext& CUDAExecutionProvider::GetPerThreadCont
+   // get context and update cache
+   std::shared_ptr<PerThreadContext> context;
+   {
+-    std::lock_guard<OrtMutex> lock(context_state_.mutex);
++    std::lock_guard<std::mutex> lock(context_state_.mutex);
+ 
+     // get or create a context
+     if (context_state_.retired_context_pool.empty()) {
+@@ -406,7 +406,7 @@ void CUDAExecutionProvider::ReleasePerThreadContext() const {
+   ORT_ENFORCE(cached_context);
+ 
+   {
+-    std::lock_guard<OrtMutex> lock(context_state_.mutex);
++    std::lock_guard<std::mutex> lock(context_state_.mutex);
+     context_state_.active_contexts.erase(cached_context);
+     context_state_.retired_context_pool.push_back(cached_context);
+   }
+diff --git a/onnxruntime/core/providers/cuda/cuda_execution_provider.h b/onnxruntime/core/providers/cuda/cuda_execution_provider.h
+index c5736733beb1d..bd2be2eac2181 100644
+--- a/onnxruntime/core/providers/cuda/cuda_execution_provider.h
++++ b/onnxruntime/core/providers/cuda/cuda_execution_provider.h
+@@ -9,7 +9,7 @@
+ 
+ #include "core/framework/arena_extend_strategy.h"
+ #include "core/framework/execution_provider.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #include "core/providers/cuda/cuda_execution_provider_info.h"
+ #include "core/providers/cuda/cuda_graph.h"
+ #include "core/providers/cuda/cuda_pch.h"
+@@ -251,7 +251,7 @@ class CUDAExecutionProvider : public IExecutionProvider {
+     std::set<std::weak_ptr<PerThreadContextMap>, std::owner_less<std::weak_ptr<PerThreadContextMap>>>
+         caches_to_update_on_destruction;
+     // synchronizes access to PerThreadContextState members
+-    OrtMutex mutex;
++    std::mutex mutex;
+   };
+ 
+   // The execution provider maintains the PerThreadContexts in this structure.
+diff --git a/onnxruntime/core/providers/cuda/cuda_graph.h b/onnxruntime/core/providers/cuda/cuda_graph.h
+index dd03db94b631c..064b526e604bc 100644
+--- a/onnxruntime/core/providers/cuda/cuda_graph.h
++++ b/onnxruntime/core/providers/cuda/cuda_graph.h
+@@ -6,7 +6,7 @@
+ #include <unordered_map>
+ 
+ #include "core/common/common.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #include "core/providers/cuda/cuda_pch.h"
+ 
+ namespace onnxruntime {
+diff --git a/onnxruntime/core/providers/cuda/cuda_kernel.h b/onnxruntime/core/providers/cuda/cuda_kernel.h
+index 9d37a9775872f..054dd9f9da9f3 100644
+--- a/onnxruntime/core/providers/cuda/cuda_kernel.h
++++ b/onnxruntime/core/providers/cuda/cuda_kernel.h
+@@ -6,7 +6,7 @@
+ #include "core/providers/cuda/cuda_common.h"
+ #include "core/providers/cuda/cuda_execution_provider.h"
+ #include "core/providers/cuda/cuda_fwd.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #include "core/providers/cuda/cuda_stream_handle.h"
+ 
+ namespace onnxruntime {
+diff --git a/onnxruntime/core/providers/cuda/nn/conv.cc b/onnxruntime/core/providers/cuda/nn/conv.cc
+index cc76198dc3ae9..3129f519da2e5 100644
+--- a/onnxruntime/core/providers/cuda/nn/conv.cc
++++ b/onnxruntime/core/providers/cuda/nn/conv.cc
+@@ -457,7 +457,7 @@ Status Conv<T, Layout>::UpdateState(OpKernelContext* context, bool bias_expected
+ 
+ template <typename T, bool Layout>
+ Status Conv<T, Layout>::ComputeInternal(OpKernelContext* context) const {
+-  std::lock_guard<OrtMutex> lock(s_.mutex);
++  std::lock_guard<std::mutex> lock(s_.mutex);
+   ORT_RETURN_IF_ERROR(UpdateState(context));
+   if (s_.Y->Shape().Size() == 0) {
+     return Status::OK();
+diff --git a/onnxruntime/core/providers/cuda/nn/conv.h b/onnxruntime/core/providers/cuda/nn/conv.h
+index 484d66081018b..e4047a6af272e 100644
+--- a/onnxruntime/core/providers/cuda/nn/conv.h
++++ b/onnxruntime/core/providers/cuda/nn/conv.h
+@@ -13,7 +13,7 @@
+ #include <cudnn_frontend.h>
+ #endif
+ 
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #include "core/providers/cuda/cuda_kernel.h"
+ #include "core/providers/cuda/cudnn_common.h"
+ #include "core/providers/cpu/nn/conv_attributes.h"
+@@ -190,7 +190,7 @@ struct CudnnConvState {
+   TensorShapeVector slice_axes;
+ 
+   // note that conv objects are shared between execution frames, and a lock is needed to avoid multi-thread racing
+-  OrtMutex mutex;
++  std::mutex mutex;
+   IAllocatorUniquePtr<void> memory_for_cudnn_conv_results;
+ 
+   ~CudnnConvState() {
+diff --git a/onnxruntime/core/providers/cuda/nn/conv_8.h b/onnxruntime/core/providers/cuda/nn/conv_8.h
+index 10239d09041fe..bcee1bcb7e231 100644
+--- a/onnxruntime/core/providers/cuda/nn/conv_8.h
++++ b/onnxruntime/core/providers/cuda/nn/conv_8.h
+@@ -387,7 +387,7 @@ Status Conv<T, NHWC>::UpdateState(OpKernelContext* context, bool bias_expected)
+ 
+ template <typename T, bool NHWC>
+ Status Conv<T, NHWC>::ComputeInternal(OpKernelContext* context) const {
+-  std::lock_guard<OrtMutex> lock(s_.mutex);
++  std::lock_guard<std::mutex> lock(s_.mutex);
+   ORT_RETURN_IF_ERROR(UpdateState(context));
+   if (s_.Y->Shape().Size() == 0) {
+     return Status::OK();
+diff --git a/onnxruntime/core/providers/cuda/nn/conv_transpose.cc b/onnxruntime/core/providers/cuda/nn/conv_transpose.cc
+index d4876e1714861..2972ae999adc4 100644
+--- a/onnxruntime/core/providers/cuda/nn/conv_transpose.cc
++++ b/onnxruntime/core/providers/cuda/nn/conv_transpose.cc
+@@ -450,7 +450,7 @@ Status ConvTranspose<T, Layout>::UpdateState(OpKernelContext* context, bool dyna
+ 
+ template <typename T, bool Layout>
+ Status ConvTranspose<T, Layout>::DoConvTranspose(OpKernelContext* context, bool dynamic_padding) const {
+-  std::lock_guard<OrtMutex> lock(s_.mutex);
++  std::lock_guard<std::mutex> lock(s_.mutex);
+   ORT_RETURN_IF_ERROR(UpdateState(context, dynamic_padding));
+   if (s_.Y->Shape().Size() == 0) {
+     return Status::OK();
+diff --git a/onnxruntime/core/providers/cuda/nn/conv_transpose_8.h b/onnxruntime/core/providers/cuda/nn/conv_transpose_8.h
+index b46d41b887e41..aa1fe26ac97db 100644
+--- a/onnxruntime/core/providers/cuda/nn/conv_transpose_8.h
++++ b/onnxruntime/core/providers/cuda/nn/conv_transpose_8.h
+@@ -87,7 +87,7 @@ Status ConvTranspose<T, NHWC>::DoConvTranspose(OpKernelContext* context, bool dy
+   }
+ 
+   {
+-    std::lock_guard<OrtMutex> lock(s_.mutex);
++    std::lock_guard<std::mutex> lock(s_.mutex);
+     // CUDNN_CONFIG_RETURN_IF_ERROR(cudnnSetStream(CudnnHandle(), Stream(context)));
+     // TODO: add a global cache if need to handle cases for multiple frames running simultaneously with
+     //  different batch_size
+diff --git a/onnxruntime/core/providers/cuda/nvtx_profile_context.h b/onnxruntime/core/providers/cuda/nvtx_profile_context.h
+index e2e3be07bd474..eb28f86becd20 100644
+--- a/onnxruntime/core/providers/cuda/nvtx_profile_context.h
++++ b/onnxruntime/core/providers/cuda/nvtx_profile_context.h
+@@ -7,7 +7,7 @@
+ #include <string>
+ #include <unordered_map>
+ 
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ 
+ #ifdef ENABLE_NVTX_PROFILE
+ 
+@@ -25,14 +25,14 @@ class Context {
+   // Return tag for the specified thread.
+   // If the thread's tag doesn't exist, this function returns an empty string.
+   std::string GetThreadTagOrDefault(const std::thread::id& thread_id) {
+-    const std::lock_guard<OrtMutex> lock(mtx_);
++    const std::lock_guard<std::mutex> lock(mtx_);
+     return thread_tag_[thread_id];
+   }
+ 
+   // Set tag for the specified thread.
+   void SetThreadTag(
+       const std::thread::id& thread_id, const std::string& tag) {
+-    const std::lock_guard<OrtMutex> lock(mtx_);
++    const std::lock_guard<std::mutex> lock(mtx_);
+     thread_tag_[thread_id] = tag;
+   }
+ 
+@@ -44,7 +44,7 @@ class Context {
+ 
+   // map from thread's id to its human-readable tag.
+   std::unordered_map<std::thread::id, std::string> thread_tag_;
+-  OrtMutex mtx_;
++  std::mutex mtx_;
+ };
+ 
+ }  // namespace profile
+diff --git a/onnxruntime/core/providers/cuda/tensor/nonzero_impl.cu b/onnxruntime/core/providers/cuda/tensor/nonzero_impl.cu
+index 0dcc188d039a9..ce5a1ebf3faa5 100644
+--- a/onnxruntime/core/providers/cuda/tensor/nonzero_impl.cu
++++ b/onnxruntime/core/providers/cuda/tensor/nonzero_impl.cu
+@@ -2,7 +2,7 @@
+ // Licensed under the MIT License.
+ 
+ #include "nonzero_impl.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #include "core/providers/cuda/shared_inc/cuda_call.h"
+ #include "core/providers/cuda/cu_inc/common.cuh"
+ #include <cub/cub.cuh>
+diff --git a/onnxruntime/core/providers/dnnl/dnnl_execution_provider.cc b/onnxruntime/core/providers/dnnl/dnnl_execution_provider.cc
+index ffda84921a3ee..c96f9cc1ff400 100644
+--- a/onnxruntime/core/providers/dnnl/dnnl_execution_provider.cc
++++ b/onnxruntime/core/providers/dnnl/dnnl_execution_provider.cc
+@@ -12,7 +12,7 @@
+ #include <omp.h>
+ #endif  // defined(DNNL_OPENMP)
+ 
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #include "core/providers/shared_library/provider_api.h"
+ #include "core/providers/dnnl/dnnl_execution_provider.h"
+ 
+@@ -356,7 +356,7 @@ Status DnnlExecutionProvider::Compile(const std::vector<FusedNodeAndGraph>& fuse
+ 
+       // lock each subgraph_primitive as multiple threads have shared memories
+       {
+-        std::unique_lock<OrtMutex> lock(subgraph_primitive->GetMutex());
++        std::unique_lock<std::mutex> lock(subgraph_primitive->GetMutex());
+         subgraph_primitive->Compile(inputs);
+         std::unordered_map<std::string, ort_dnnl::OnnxTensorData> outputs;
+         outputs.reserve(subgraph_num_outputs);
+diff --git a/onnxruntime/core/providers/dnnl/subgraph/dnnl_subgraph_primitive.h b/onnxruntime/core/providers/dnnl/subgraph/dnnl_subgraph_primitive.h
+index a7e49b54d4507..3bd12f1cf6f7e 100644
+--- a/onnxruntime/core/providers/dnnl/subgraph/dnnl_subgraph_primitive.h
++++ b/onnxruntime/core/providers/dnnl/subgraph/dnnl_subgraph_primitive.h
+@@ -4,7 +4,7 @@
+ #pragma once
+ #include "dnnl_subgraph.h"
+ #include "dnnl.hpp"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ 
+ namespace onnxruntime {
+ namespace ort_dnnl {
+@@ -69,7 +69,7 @@ class DnnlSubgraphPrimitive {
+   // If the input being a scalar affects the operator this function can be used to determine if the
+   // original input from ORT was a scalar.
+   bool IsScalar(const DnnlTensor& tensor);
+-  OrtMutex& GetMutex() { return mutex_; }
++  std::mutex& GetMutex() { return mutex_; }
+ 
+   // GetMemory in OrtFormat if the memory is not in the OrtFormat this will reorder the memory.
+   // All memory will be moved to the dnnl_engine even if it is already in OrtFormat.
+@@ -125,7 +125,7 @@ class DnnlSubgraphPrimitive {
+   dnnl::engine cpu_engine_;
+   dnnl::engine gpu_engine_;
+ 
+-  OrtMutex mutex_;
++  std::mutex mutex_;
+ 
+   // for memory debug purpose
+   std::vector<std::pair<int, int>> items_to_print_;
+diff --git a/onnxruntime/core/providers/migraphx/migraphx_allocator.cc b/onnxruntime/core/providers/migraphx/migraphx_allocator.cc
+index c9db31e8744a7..3d9ae2bf7e6ff 100644
+--- a/onnxruntime/core/providers/migraphx/migraphx_allocator.cc
++++ b/onnxruntime/core/providers/migraphx/migraphx_allocator.cc
+@@ -51,7 +51,7 @@ void* MIGraphXExternalAllocator::Alloc(size_t size) {
+ 
+ void MIGraphXExternalAllocator::Free(void* p) {
+   free_(p);
+-  std::lock_guard<OrtMutex> lock(lock_);
++  std::lock_guard<std::mutex> lock(lock_);
+   auto it = reserved_.find(p);
+   if (it != reserved_.end()) {
+     reserved_.erase(it);
+@@ -62,7 +62,7 @@ void MIGraphXExternalAllocator::Free(void* p) {
+ void* MIGraphXExternalAllocator::Reserve(size_t size) {
+   void* p = Alloc(size);
+   if (!p) return nullptr;
+-  std::lock_guard<OrtMutex> lock(lock_);
++  std::lock_guard<std::mutex> lock(lock_);
+   ORT_ENFORCE(reserved_.find(p) == reserved_.end());
+   reserved_.insert(p);
+   return p;
+diff --git a/onnxruntime/core/providers/migraphx/migraphx_allocator.h b/onnxruntime/core/providers/migraphx/migraphx_allocator.h
+index 64da844e8c714..c8c935eba44ab 100644
+--- a/onnxruntime/core/providers/migraphx/migraphx_allocator.h
++++ b/onnxruntime/core/providers/migraphx/migraphx_allocator.h
+@@ -5,7 +5,7 @@
+ 
+ #include <unordered_set>
+ #include "core/framework/allocator.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ 
+ namespace onnxruntime {
+ 
+@@ -42,7 +42,7 @@ class MIGraphXExternalAllocator : public MIGraphXAllocator {
+   void* Reserve(size_t size) override;
+ 
+  private:
+-  mutable OrtMutex lock_;
++  mutable std::mutex lock_;
+   ExternalAlloc alloc_;
+   ExternalFree free_;
+   ExternalEmptyCache empty_cache_;
+diff --git a/onnxruntime/core/providers/migraphx/migraphx_execution_provider.cc b/onnxruntime/core/providers/migraphx/migraphx_execution_provider.cc
+index 6fc729a537bc5..3a88ca7598943 100644
+--- a/onnxruntime/core/providers/migraphx/migraphx_execution_provider.cc
++++ b/onnxruntime/core/providers/migraphx/migraphx_execution_provider.cc
+@@ -1425,7 +1425,7 @@ Status MIGraphXExecutionProvider::Compile(const std::vector<FusedNodeAndGraph>&
+ 
+       {
+         // lock to avoid race condition
+-        std::lock_guard<OrtMutex> lock(*(mgx_state->mgx_mu_ptr));
++        std::lock_guard<std::mutex> lock(*(mgx_state->mgx_mu_ptr));
+ 
+         void* rocm_stream;
+         Ort::ThrowOnError(api->KernelContext_GetGPUComputeStream(context, &rocm_stream));
+diff --git a/onnxruntime/core/providers/migraphx/migraphx_execution_provider.h b/onnxruntime/core/providers/migraphx/migraphx_execution_provider.h
+index 21679d1f6f151..91b6a4741b55e 100644
+--- a/onnxruntime/core/providers/migraphx/migraphx_execution_provider.h
++++ b/onnxruntime/core/providers/migraphx/migraphx_execution_provider.h
+@@ -5,7 +5,7 @@
+ 
+ #include "core/framework/arena_extend_strategy.h"
+ #include "core/framework/execution_provider.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #include "core/providers/migraphx/migraphx_execution_provider_info.h"
+ #include "core/providers/migraphx/migraphx_inc.h"
+ 
+@@ -40,7 +40,7 @@ struct MIGraphXFuncState {
+   migraphx::onnx_options options;
+   migraphx::target t{};
+   std::unordered_map<std::string, std::size_t> input_name_indexes;
+-  OrtMutex* mgx_mu_ptr = nullptr;
++  std::mutex* mgx_mu_ptr = nullptr;
+   bool no_input_shape = false;
+   bool fp16_enable = false;
+   bool int8_enable = false;
+@@ -101,7 +101,7 @@ class MIGraphXExecutionProvider : public IExecutionProvider {
+   std::string load_compiled_path_;
+   bool dump_model_ops_ = false;
+   migraphx::target t_;
+-  OrtMutex mgx_mu_;
++  std::mutex mgx_mu_;
+   hipStream_t stream_ = nullptr;
+   bool exhaustive_tune_ = false;
+   mutable std::filesystem::path model_path_;
+diff --git a/onnxruntime/core/providers/nnapi/nnapi_builtin/model.h b/onnxruntime/core/providers/nnapi/nnapi_builtin/model.h
+index 3ff28d52e470f..643209fbe72b0 100644
+--- a/onnxruntime/core/providers/nnapi/nnapi_builtin/model.h
++++ b/onnxruntime/core/providers/nnapi/nnapi_builtin/model.h
+@@ -6,7 +6,7 @@
+ #include <unordered_set>
+ 
+ #include "builders/shaper.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #include "nnapi_lib/NeuralNetworksWrapper.h"
+ 
+ struct NnApi;
+@@ -98,7 +98,7 @@ class Model {
+   void SetDynamicOutputBufferSize(size_t size) { dynamic_output_buffer_size_ = size; }
+ 
+   // Mutex for exclusive lock to this model object
+-  OrtMutex& GetMutex() { return mutex_; }
++  std::mutex& GetMutex() { return mutex_; }
+ 
+   // If the given output is a scalar output
+   // Since NNAPI does not support tensor with empty shape (scalar), we use {1} tensor for scalar in NNAPI
+@@ -130,7 +130,7 @@ class Model {
+   // This is map is to lookup the nnapi output from the onnx output
+   std::unordered_map<std::string, std::string> onnx_to_nnapi_output_map_;
+ 
+-  OrtMutex mutex_;
++  std::mutex mutex_;
+ 
+   void AddInput(const std::string& name, const android::nn::wrapper::OperandType& operand_type);
+ 
+diff --git a/onnxruntime/core/providers/nnapi/nnapi_builtin/nnapi_execution_provider.cc b/onnxruntime/core/providers/nnapi/nnapi_builtin/nnapi_execution_provider.cc
+index 4d2888222ff0f..fca52396a190c 100644
+--- a/onnxruntime/core/providers/nnapi/nnapi_builtin/nnapi_execution_provider.cc
++++ b/onnxruntime/core/providers/nnapi/nnapi_builtin/nnapi_execution_provider.cc
+@@ -380,7 +380,7 @@ common::Status NnapiExecutionProvider::Compile(const std::vector<FusedNodeAndGra
+       // TODO, investigate concurrent runs for different executions from the same model
+       {
+         std::unique_ptr<nnapi::Execution> execution;
+-        std::unique_lock<OrtMutex> lock(model->GetMutex());
++        std::unique_lock<std::mutex> lock(model->GetMutex());
+         ORT_RETURN_IF_ERROR(model->PrepareForExecution(execution));
+ 
+         ORT_RETURN_IF_ERROR(execution->SetInputBuffers(inputs));
+diff --git a/onnxruntime/core/providers/qnn/builder/qnn_model.cc b/onnxruntime/core/providers/qnn/builder/qnn_model.cc
+index b09ff51b666c7..dc797fef2d42a 100644
+--- a/onnxruntime/core/providers/qnn/builder/qnn_model.cc
++++ b/onnxruntime/core/providers/qnn/builder/qnn_model.cc
+@@ -247,7 +247,7 @@ Status QnnModel::ExecuteGraph(const Ort::KernelContext& context, const logging::
+   {
+     // Acquire mutex before calling graphExecute and profiling APIs to support calling session.Run()
+     // from multiple threads.
+-    std::lock_guard<OrtMutex> lock(graph_exec_mutex_);
++    std::lock_guard<std::mutex> lock(graph_exec_mutex_);
+     execute_status = qnn_interface.graphExecute(graph_info_->Graph(),
+                                                 qnn_inputs.data(),
+                                                 static_cast<uint32_t>(qnn_inputs.size()),
+diff --git a/onnxruntime/core/providers/qnn/builder/qnn_model.h b/onnxruntime/core/providers/qnn/builder/qnn_model.h
+index d9682cc3b3222..2e0935391ca78 100644
+--- a/onnxruntime/core/providers/qnn/builder/qnn_model.h
++++ b/onnxruntime/core/providers/qnn/builder/qnn_model.h
+@@ -8,7 +8,7 @@
+ #include "core/common/status.h"
+ #include "core/framework/node_unit.h"
+ #include "core/graph/graph_viewer.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #include "core/providers/qnn/builder/qnn_def.h"
+ #include "core/providers/qnn/builder/qnn_model_wrapper.h"
+ #include "core/providers/qnn/builder/qnn_backend_manager.h"
+@@ -143,7 +143,7 @@ class QnnModel {
+   QnnBackendType qnn_backend_type_ = QnnBackendType::CPU;
+ 
+   // Mutex acquired during graph execution to support multi-threaded inference of a single session.
+-  OrtMutex graph_exec_mutex_;
++  std::mutex graph_exec_mutex_;
+ };
+ 
+ }  // namespace qnn
+diff --git a/onnxruntime/core/providers/qnn/qnn_execution_provider.cc b/onnxruntime/core/providers/qnn/qnn_execution_provider.cc
+index 4cd5d403e95b8..becb9a728b1e3 100644
+--- a/onnxruntime/core/providers/qnn/qnn_execution_provider.cc
++++ b/onnxruntime/core/providers/qnn/qnn_execution_provider.cc
+@@ -36,8 +36,8 @@ constexpr const char* QNN = "QNN";
+ static std::unique_ptr<std::vector<std::function<void()>>> s_run_on_unload_;
+ 
+ void RunOnUnload(std::function<void()> function) {
+-  static OrtMutex mutex;
+-  std::lock_guard<OrtMutex> guard(mutex);
++  static std::mutex mutex;
++  std::lock_guard<std::mutex> guard(mutex);
+   if (!s_run_on_unload_) {
+     s_run_on_unload_ = std::make_unique<std::vector<std::function<void()>>>();
+   }
+@@ -444,7 +444,7 @@ QNNExecutionProvider::QNNExecutionProvider(const ProviderOptions& provider_optio
+ 
+ QNNExecutionProvider::~QNNExecutionProvider() {
+   // clean up thread local context caches
+-  std::lock_guard<OrtMutex> lock(context_state_.mutex);
++  std::lock_guard<std::mutex> lock(context_state_.mutex);
+   for (const auto& cache_weak : context_state_.caches_to_update_on_destruction) {
+     const auto cache = cache_weak.lock();
+     if (!cache) continue;
+@@ -1050,7 +1050,7 @@ QNNExecutionProvider::PerThreadContext& QNNExecutionProvider::GetPerThreadContex
+   // get context and update cache
+   std::shared_ptr<PerThreadContext> context;
+   {
+-    std::lock_guard<OrtMutex> lock(context_state_.mutex);
++    std::lock_guard<std::mutex> lock(context_state_.mutex);
+ 
+     // get or create a context
+     if (context_state_.retired_context_pool.empty()) {
+@@ -1084,7 +1084,7 @@ void QNNExecutionProvider::ReleasePerThreadContext() const {
+   ORT_ENFORCE(cached_context);
+ 
+   {
+-    std::lock_guard<OrtMutex> lock(context_state_.mutex);
++    std::lock_guard<std::mutex> lock(context_state_.mutex);
+     context_state_.active_contexts.erase(cached_context);
+     context_state_.retired_context_pool.push_back(cached_context);
+   }
+diff --git a/onnxruntime/core/providers/qnn/qnn_execution_provider.h b/onnxruntime/core/providers/qnn/qnn_execution_provider.h
+index 246ab1d5a6608..30e2fd53e9613 100644
+--- a/onnxruntime/core/providers/qnn/qnn_execution_provider.h
++++ b/onnxruntime/core/providers/qnn/qnn_execution_provider.h
+@@ -31,7 +31,7 @@ class SharedContext {
+   }
+ 
+   bool HasSharedQnnModels() {
+-    const std::lock_guard<OrtMutex> lock(mtx_);
++    const std::lock_guard<std::mutex> lock(mtx_);
+     return !shared_qnn_models_.empty();
+   }
+ 
+@@ -42,7 +42,7 @@ class SharedContext {
+   }
+ 
+   std::unique_ptr<qnn::QnnModel> GetSharedQnnModel(const std::string& model_name) {
+-    const std::lock_guard<OrtMutex> lock(mtx_);
++    const std::lock_guard<std::mutex> lock(mtx_);
+     auto it = find_if(shared_qnn_models_.begin(), shared_qnn_models_.end(),
+                       [&model_name](const std::unique_ptr<qnn::QnnModel>& qnn_model) { return qnn_model->Name() == model_name; });
+     if (it == shared_qnn_models_.end()) {
+@@ -55,7 +55,7 @@ class SharedContext {
+ 
+   bool SetSharedQnnModel(std::vector<std::unique_ptr<qnn::QnnModel>>&& shared_qnn_models,
+                          std::string& duplicate_graph_names) {
+-    const std::lock_guard<OrtMutex> lock(mtx_);
++    const std::lock_guard<std::mutex> lock(mtx_);
+     bool graph_exist = false;
+     for (auto& shared_qnn_model : shared_qnn_models) {
+       auto& model_name = shared_qnn_model->Name();
+@@ -81,7 +81,7 @@ class SharedContext {
+   std::vector<std::unique_ptr<qnn::QnnModel>> shared_qnn_models_;
+   // Producer sessions can be in parallel
+   // Consumer sessions have to be after producer sessions initialized
+-  OrtMutex mtx_;
++  std::mutex mtx_;
+ };
+ 
+ // Logical device representation.
+@@ -202,7 +202,7 @@ class QNNExecutionProvider : public IExecutionProvider {
+     std::set<std::weak_ptr<PerThreadContextMap>, std::owner_less<std::weak_ptr<PerThreadContextMap>>>
+         caches_to_update_on_destruction;
+     // synchronizes access to PerThreadContextState members
+-    OrtMutex mutex;
++    std::mutex mutex;
+   };
+ 
+   // The execution provider maintains the PerThreadContexts in this structure.
+diff --git a/onnxruntime/core/providers/rocm/nn/conv.cc b/onnxruntime/core/providers/rocm/nn/conv.cc
+index d7f47d07a8fec..f99885634b6c7 100644
+--- a/onnxruntime/core/providers/rocm/nn/conv.cc
++++ b/onnxruntime/core/providers/rocm/nn/conv.cc
+@@ -324,7 +324,7 @@ Status Conv<T, NHWC>::UpdateState(OpKernelContext* context, bool bias_expected)
+ 
+ template <typename T, bool NHWC>
+ Status Conv<T, NHWC>::ComputeInternal(OpKernelContext* context) const {
+-  std::lock_guard<OrtMutex> lock(s_.mutex);
++  std::lock_guard<std::mutex> lock(s_.mutex);
+   ORT_RETURN_IF_ERROR(UpdateState(context));
+   if (s_.Y->Shape().Size() == 0) {
+     return Status::OK();
+diff --git a/onnxruntime/core/providers/rocm/nn/conv.h b/onnxruntime/core/providers/rocm/nn/conv.h
+index bc9846203e57d..e6ebb5a380d3f 100644
+--- a/onnxruntime/core/providers/rocm/nn/conv.h
++++ b/onnxruntime/core/providers/rocm/nn/conv.h
+@@ -3,7 +3,7 @@
+ 
+ #pragma once
+ 
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #include "core/providers/rocm/rocm_kernel.h"
+ #include "core/providers/rocm/miopen_common.h"
+ #include "core/providers/cpu/nn/conv_attributes.h"
+@@ -158,7 +158,7 @@ struct MiopenConvState {
+   TensorShapeVector slice_axes;
+ 
+   // note that conv objects are shared between execution frames, and a lock is needed to avoid multi-thread racing
+-  OrtMutex mutex;
++  std::mutex mutex;
+   IAllocatorUniquePtr<void> memory_for_miopen_conv_results;
+ 
+   ~MiopenConvState() {
+diff --git a/onnxruntime/core/providers/rocm/nn/conv_transpose.cc b/onnxruntime/core/providers/rocm/nn/conv_transpose.cc
+index 7447113fdf847..a6848e90b406d 100644
+--- a/onnxruntime/core/providers/rocm/nn/conv_transpose.cc
++++ b/onnxruntime/core/providers/rocm/nn/conv_transpose.cc
+@@ -66,7 +66,7 @@ Status ConvTranspose<T, NHWC>::DoConvTranspose(OpKernelContext* context, bool dy
+   }
+ 
+   {
+-    std::lock_guard<OrtMutex> lock(s_.mutex);
++    std::lock_guard<std::mutex> lock(s_.mutex);
+     // TODO: add a global cache if need to handle cases for multiple frames running simultaneously with different batch_size
+     bool input_dims_changed = (s_.last_x_dims.AsShapeVector() != x_dims);
+     bool w_dims_changed = (s_.last_w_dims.AsShapeVector() != w_dims);
+diff --git a/onnxruntime/core/providers/rocm/rocm_allocator.cc b/onnxruntime/core/providers/rocm/rocm_allocator.cc
+index 4a11b158c2cce..27861a567a7f4 100644
+--- a/onnxruntime/core/providers/rocm/rocm_allocator.cc
++++ b/onnxruntime/core/providers/rocm/rocm_allocator.cc
+@@ -69,7 +69,7 @@ void* ROCMExternalAllocator::Alloc(size_t size) {
+ 
+ void ROCMExternalAllocator::Free(void* p) {
+   free_(p);
+-  std::lock_guard<OrtMutex> lock(lock_);
++  std::lock_guard<std::mutex> lock(lock_);
+   auto it = reserved_.find(p);
+   if (it != reserved_.end()) {
+     reserved_.erase(it);
+@@ -80,7 +80,7 @@ void ROCMExternalAllocator::Free(void* p) {
+ void* ROCMExternalAllocator::Reserve(size_t size) {
+   void* p = Alloc(size);
+   if (!p) return nullptr;
+-  std::lock_guard<OrtMutex> lock(lock_);
++  std::lock_guard<std::mutex> lock(lock_);
+   ORT_ENFORCE(reserved_.find(p) == reserved_.end());
+   reserved_.insert(p);
+   return p;
+diff --git a/onnxruntime/core/providers/rocm/rocm_allocator.h b/onnxruntime/core/providers/rocm/rocm_allocator.h
+index 04de09ab9c00b..ef13fc2e25cda 100644
+--- a/onnxruntime/core/providers/rocm/rocm_allocator.h
++++ b/onnxruntime/core/providers/rocm/rocm_allocator.h
+@@ -5,7 +5,7 @@
+ 
+ #include "core/common/inlined_containers.h"
+ #include "core/framework/allocator.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ 
+ namespace onnxruntime {
+ 
+@@ -42,7 +42,7 @@ class ROCMExternalAllocator : public ROCMAllocator {
+   void* Reserve(size_t size) override;
+ 
+  private:
+-  mutable OrtMutex lock_;
++  mutable std::mutex lock_;
+   ExternalAlloc alloc_;
+   ExternalFree free_;
+   ExternalEmptyCache empty_cache_;
+diff --git a/onnxruntime/core/providers/rocm/rocm_execution_provider.cc b/onnxruntime/core/providers/rocm/rocm_execution_provider.cc
+index f36b5e01dbbd3..02a21c033e988 100644
+--- a/onnxruntime/core/providers/rocm/rocm_execution_provider.cc
++++ b/onnxruntime/core/providers/rocm/rocm_execution_provider.cc
+@@ -302,7 +302,7 @@ ROCMExecutionProvider::ROCMExecutionProvider(const ROCMExecutionProviderInfo& in
+ ROCMExecutionProvider::~ROCMExecutionProvider() {
+   // clean up thread local context caches
+   {
+-    std::lock_guard<OrtMutex> lock(context_state_.mutex);
++    std::lock_guard<std::mutex> lock(context_state_.mutex);
+     for (const auto& cache_weak : context_state_.caches_to_update_on_destruction) {
+       const auto cache = cache_weak.lock();
+       if (!cache) continue;
+@@ -337,7 +337,7 @@ ROCMExecutionProvider::PerThreadContext& ROCMExecutionProvider::GetPerThreadCont
+   // get context and update cache
+   std::shared_ptr<PerThreadContext> context;
+   {
+-    std::lock_guard<OrtMutex> lock(context_state_.mutex);
++    std::lock_guard<std::mutex> lock(context_state_.mutex);
+ 
+     // get or create a context
+     if (context_state_.retired_context_pool.empty()) {
+@@ -370,7 +370,7 @@ void ROCMExecutionProvider::ReleasePerThreadContext() const {
+   ORT_ENFORCE(cached_context);
+ 
+   {
+-    std::lock_guard<OrtMutex> lock(context_state_.mutex);
++    std::lock_guard<std::mutex> lock(context_state_.mutex);
+     context_state_.active_contexts.erase(cached_context);
+     context_state_.retired_context_pool.push_back(cached_context);
+   }
+diff --git a/onnxruntime/core/providers/rocm/rocm_execution_provider.h b/onnxruntime/core/providers/rocm/rocm_execution_provider.h
+index 3caff88fe9b30..be467869248ea 100644
+--- a/onnxruntime/core/providers/rocm/rocm_execution_provider.h
++++ b/onnxruntime/core/providers/rocm/rocm_execution_provider.h
+@@ -8,7 +8,7 @@
+ 
+ #include "core/framework/arena_extend_strategy.h"
+ #include "core/framework/execution_provider.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #include "core/providers/rocm/rocm_execution_provider_info.h"
+ #include "core/providers/rocm/rocm_graph.h"
+ #include "core/providers/rocm/rocm_pch.h"
+@@ -205,7 +205,7 @@ class ROCMExecutionProvider : public IExecutionProvider {
+     std::set<std::weak_ptr<PerThreadContextMap>, std::owner_less<std::weak_ptr<PerThreadContextMap>>>
+         caches_to_update_on_destruction;
+     // synchronizes access to PerThreadContextState members
+-    OrtMutex mutex;
++    std::mutex mutex;
+   };
+ 
+   // The execution provider maintains the PerThreadContexts in this structure.
+diff --git a/onnxruntime/core/providers/tensorrt/tensorrt_execution_provider.cc b/onnxruntime/core/providers/tensorrt/tensorrt_execution_provider.cc
+index 97d88786e4bcd..4da40823ba4e9 100644
+--- a/onnxruntime/core/providers/tensorrt/tensorrt_execution_provider.cc
++++ b/onnxruntime/core/providers/tensorrt/tensorrt_execution_provider.cc
+@@ -452,9 +452,9 @@ TensorrtLogger& GetTensorrtLogger(bool verbose_log) {
+   return trt_logger;
+ }
+ 
+-std::unique_lock<OrtMutex> TensorrtExecutionProvider::GetApiLock() const {
+-  static OrtMutex singleton;
+-  return std::unique_lock<OrtMutex>(singleton);
++std::unique_lock<std::mutex> TensorrtExecutionProvider::GetApiLock() const {
++  static std::mutex singleton;
++  return std::unique_lock<std::mutex>(singleton);
+ }
+ 
+ /*
+@@ -1236,7 +1236,7 @@ void TensorrtExecutionProvider::ReleasePerThreadContext() const {
+   ORT_ENFORCE(cached_context);
+ 
+   {
+-    std::lock_guard<OrtMutex> lock(context_state_.mutex);
++    std::lock_guard<std::mutex> lock(context_state_.mutex);
+     context_state_.active_contexts.erase(cached_context);
+     context_state_.retired_context_pool.push_back(cached_context);
+   }
+@@ -1258,7 +1258,7 @@ TensorrtExecutionProvider::PerThreadContext& TensorrtExecutionProvider::GetPerTh
+   // get context and update cache
+   std::shared_ptr<PerThreadContext> context;
+   {
+-    std::lock_guard<OrtMutex> lock(context_state_.mutex);
++    std::lock_guard<std::mutex> lock(context_state_.mutex);
+ 
+     // get or create a context
+     if (context_state_.retired_context_pool.empty()) {
+@@ -1768,7 +1768,7 @@ TensorrtExecutionProvider::TensorrtExecutionProvider(const TensorrtExecutionProv
+ TensorrtExecutionProvider::~TensorrtExecutionProvider() {
+   // clean up thread local context caches
+   {
+-    std::lock_guard<OrtMutex> lock(context_state_.mutex);
++    std::lock_guard<std::mutex> lock(context_state_.mutex);
+     for (const auto& cache_weak : context_state_.caches_to_update_on_destruction) {
+       const auto cache = cache_weak.lock();
+       if (!cache) continue;
+@@ -3430,7 +3430,7 @@ Status TensorrtExecutionProvider::CreateNodeComputeInfoFromGraph(const GraphView
+     // The whole compute_function should be considered the critical section where multiple threads may update kernel function state, access one builder, create/serialize/save engine,
+     // save profile and serialize/save timing cache. Therefore, those operations should be synchronized across different threads when ORT is using multithreading.
+     // More details here, https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index.html#threading
+-    std::lock_guard<OrtMutex> lock(*(trt_state->tensorrt_mu_ptr));
++    std::lock_guard<std::mutex> lock(*(trt_state->tensorrt_mu_ptr));
+     const std::unordered_map<std::string, size_t>& input_indexes = (trt_state->input_info)[0];
+     const std::unordered_map<std::string, size_t>& output_indexes = (trt_state->output_info)[0];
+     const std::unordered_map<std::string, size_t>& output_types = (trt_state->output_info)[1];
+@@ -4099,7 +4099,7 @@ Status TensorrtExecutionProvider::CreateNodeComputeInfoFromPrecompiledEngine(con
+ 
+     // The whole compute_function should be considered the critical section.
+     // More details here, https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index.html#threading
+-    std::lock_guard<OrtMutex> lock(*(trt_state->tensorrt_mu_ptr));
++    std::lock_guard<std::mutex> lock(*(trt_state->tensorrt_mu_ptr));
+ 
+     const std::unordered_map<std::string, size_t>& input_indexes = (trt_state->input_info)[0];
+     const std::unordered_map<std::string, size_t>& output_indexes = (trt_state->output_info)[0];
+diff --git a/onnxruntime/core/providers/tensorrt/tensorrt_execution_provider.h b/onnxruntime/core/providers/tensorrt/tensorrt_execution_provider.h
+index 97c9367b0bb61..c057d48de4070 100644
+--- a/onnxruntime/core/providers/tensorrt/tensorrt_execution_provider.h
++++ b/onnxruntime/core/providers/tensorrt/tensorrt_execution_provider.h
+@@ -12,7 +12,7 @@ typedef void* cudnnStatus_t;
+ #endif
+ #include "core/providers/tensorrt/nv_includes.h"
+ 
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #include "core/providers/cuda/cuda_graph.h"
+ #include "tensorrt_execution_provider_info.h"
+ 
+@@ -169,7 +169,7 @@ struct TensorrtFuncState {
+   std::vector<std::unordered_map<std::string, size_t>> input_info;
+   std::vector<std::unordered_map<std::string, size_t>> output_info;
+   std::unordered_map<std::string, std::unordered_map<size_t, std::vector<std::vector<int64_t>>>> input_shape_ranges;
+-  OrtMutex* tensorrt_mu_ptr = nullptr;
++  std::mutex* tensorrt_mu_ptr = nullptr;
+   bool fp16_enable = false;
+   bool int8_enable = false;
+   bool int8_calibration_cache_available = false;
+@@ -214,7 +214,7 @@ struct TensorrtShortFuncState {
+   std::vector<std::unordered_map<std::string, size_t>> output_info;
+   bool context_memory_sharing_enable = false;
+   size_t* max_context_mem_size_ptr = nullptr;
+-  OrtMutex* tensorrt_mu_ptr = nullptr;
++  std::mutex* tensorrt_mu_ptr = nullptr;
+ };
+ 
+ // Holds important information for building valid ORT graph.
+@@ -312,7 +312,7 @@ class TensorrtExecutionProvider : public IExecutionProvider {
+   std::string tactic_sources_;
+   std::string global_cache_path_, cache_path_, engine_decryption_lib_path_;
+   std::unique_ptr<nvinfer1::IRuntime> runtime_ = nullptr;
+-  OrtMutex tensorrt_mu_;
++  std::mutex tensorrt_mu_;
+   int device_id_;
+   std::string compute_capability_;
+   bool context_memory_sharing_enable_ = false;
+@@ -476,7 +476,7 @@ class TensorrtExecutionProvider : public IExecutionProvider {
+     std::set<std::weak_ptr<PerThreadContextMap>, std::owner_less<std::weak_ptr<PerThreadContextMap>>>
+         caches_to_update_on_destruction;
+     // synchronizes access to PerThreadContextState members
+-    OrtMutex mutex;
++    std::mutex mutex;
+   };
+ 
+   // The execution provider maintains the PerThreadContexts in this structure.
+@@ -509,7 +509,7 @@ class TensorrtExecutionProvider : public IExecutionProvider {
+   Every api call not in the thread-safe operations(https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index.html#threading)
+   should be protected by a lock when invoked by multiple threads concurrently.
+   */
+-  std::unique_lock<OrtMutex> GetApiLock() const;
++  std::unique_lock<std::mutex> GetApiLock() const;
+ 
+   /**Check the graph is the subgraph of control flow op*/
+   bool IsSubGraphOfControlFlowOp(const GraphViewer& graph) const;
+diff --git a/onnxruntime/core/providers/tensorrt/tensorrt_execution_provider_custom_ops.cc b/onnxruntime/core/providers/tensorrt/tensorrt_execution_provider_custom_ops.cc
+index a4d2d6c9d65f3..e93d3565fe33d 100644
+--- a/onnxruntime/core/providers/tensorrt/tensorrt_execution_provider_custom_ops.cc
++++ b/onnxruntime/core/providers/tensorrt/tensorrt_execution_provider_custom_ops.cc
+@@ -28,8 +28,8 @@ extern TensorrtLogger& GetTensorrtLogger(bool verbose);
+ common::Status CreateTensorRTCustomOpDomainList(std::vector<OrtCustomOpDomain*>& domain_list, const std::string extra_plugin_lib_paths) {
+   static std::unique_ptr<OrtCustomOpDomain> custom_op_domain = std::make_unique<OrtCustomOpDomain>();
+   static std::vector<std::unique_ptr<TensorRTCustomOp>> created_custom_op_list;
+-  static OrtMutex mutex;
+-  std::lock_guard<OrtMutex> lock(mutex);
++  static std::mutex mutex;
++  std::lock_guard<std::mutex> lock(mutex);
+   if (custom_op_domain->domain_ != "" && custom_op_domain->custom_ops_.size() > 0) {
+     domain_list.push_back(custom_op_domain.get());
+     return Status::OK();
+diff --git a/onnxruntime/core/providers/tvm/tvm_execution_provider.h b/onnxruntime/core/providers/tvm/tvm_execution_provider.h
+index e216570c2bebc..baa46c593fa07 100644
+--- a/onnxruntime/core/providers/tvm/tvm_execution_provider.h
++++ b/onnxruntime/core/providers/tvm/tvm_execution_provider.h
+@@ -11,7 +11,7 @@
+ 
+ #include "core/common/logging/logging.h"
+ #include "core/framework/execution_provider.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ 
+ #include "tvm_compiler.h"
+ #include "tvm_runner.h"
+diff --git a/onnxruntime/core/providers/tvm/tvm_so_execution_provider.h b/onnxruntime/core/providers/tvm/tvm_so_execution_provider.h
+index e155aca6e01f0..d3840f46b5b55 100644
+--- a/onnxruntime/core/providers/tvm/tvm_so_execution_provider.h
++++ b/onnxruntime/core/providers/tvm/tvm_so_execution_provider.h
+@@ -11,7 +11,7 @@
+ 
+ #include "core/common/logging/logging.h"
+ #include "core/framework/execution_provider.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ 
+ #include "tvm_compiler.h"  // NOLINT(build/include_subdir)
+ #include "tvm_runner.h"    // NOLINT(build/include_subdir)
+diff --git a/onnxruntime/core/providers/vitisai/imp/global_api.cc b/onnxruntime/core/providers/vitisai/imp/global_api.cc
+index 41885721e7b9a..8f4882bf9333a 100644
+--- a/onnxruntime/core/providers/vitisai/imp/global_api.cc
++++ b/onnxruntime/core/providers/vitisai/imp/global_api.cc
+@@ -7,7 +7,9 @@
+ #include <iostream>
+ #include <codecvt>
+ #include <fstream>
+-
++#ifdef _WIN32
++#include <Windows.h>
++#endif
+ #include "./vai_assert.h"
+ 
+ #include "core/common/exceptions.h"
+diff --git a/onnxruntime/core/providers/vsinpu/vsinpu_execution_provider.cc b/onnxruntime/core/providers/vsinpu/vsinpu_execution_provider.cc
+index 466fe1f82461c..669c702544de8 100644
+--- a/onnxruntime/core/providers/vsinpu/vsinpu_execution_provider.cc
++++ b/onnxruntime/core/providers/vsinpu/vsinpu_execution_provider.cc
+@@ -258,7 +258,7 @@ Status VSINPUExecutionProvider::Compile(const std::vector<FusedNodeAndGraph>& fu
+     compute_info.compute_func =
+         [graph_ep, this](FunctionState /*state*/, const OrtApi* /* api */,
+                          OrtKernelContext* context) {
+-          std::lock_guard<OrtMutex> lock(this->GetMutex());
++          std::lock_guard<std::mutex> lock(this->GetMutex());
+           Status res = ComputeStateFunc(graph_ep.get(), context);
+           return res;
+         };
+diff --git a/onnxruntime/core/providers/vsinpu/vsinpu_execution_provider.h b/onnxruntime/core/providers/vsinpu/vsinpu_execution_provider.h
+index 44318c332fdd0..c2605eb65faee 100644
+--- a/onnxruntime/core/providers/vsinpu/vsinpu_execution_provider.h
++++ b/onnxruntime/core/providers/vsinpu/vsinpu_execution_provider.h
+@@ -43,11 +43,11 @@ class VSINPUExecutionProvider : public IExecutionProvider {
+   std::shared_ptr<KernelRegistry> GetKernelRegistry() const override;
+   Status Compile(const std::vector<FusedNodeAndGraph>& fused_nodes_and_graphs,
+                  std::vector<NodeComputeInfo>& node_compute_funcs) override;
+-  OrtMutex& GetMutex() { return mutex_; }
++  std::mutex& GetMutex() { return mutex_; }
+ 
+  private:
+   int device_id_;
+-  OrtMutex mutex_;
++  std::mutex mutex_;
+ };
+ 
+ }  // namespace onnxruntime
+diff --git a/onnxruntime/core/providers/webnn/builders/model.h b/onnxruntime/core/providers/webnn/builders/model.h
+index c554dcb6f6877..b8ab6677636db 100644
+--- a/onnxruntime/core/providers/webnn/builders/model.h
++++ b/onnxruntime/core/providers/webnn/builders/model.h
+@@ -6,7 +6,7 @@
+ 
+ #include "core/common/inlined_containers.h"
+ #include "core/common/status.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ 
+ #include <emscripten.h>
+ #include <emscripten/val.h>
+@@ -35,7 +35,7 @@ class Model {
+                                       const InlinedHashMap<std::string, OnnxTensorData>& outputs);
+ 
+   // Mutex for exclusive lock to this model object.
+-  OrtMutex& GetMutex() { return mutex_; }
++  std::mutex& GetMutex() { return mutex_; }
+ 
+   // Input and output names in the onnx model's order.
+   const std::vector<std::string>& GetInputs() const { return inputs_; }
+@@ -77,7 +77,7 @@ class Model {
+   InlinedHashMap<std::string, size_t> input_map_;
+   InlinedHashMap<std::string, size_t> output_map_;
+ 
+-  OrtMutex mutex_;
++  std::mutex mutex_;
+ 
+   bool use_dispatch_;
+ 
+diff --git a/onnxruntime/core/providers/webnn/webnn_execution_provider.cc b/onnxruntime/core/providers/webnn/webnn_execution_provider.cc
+index 2258d1ac1cd8f..1a337e185b497 100644
+--- a/onnxruntime/core/providers/webnn/webnn_execution_provider.cc
++++ b/onnxruntime/core/providers/webnn/webnn_execution_provider.cc
+@@ -291,7 +291,7 @@ common::Status WebNNExecutionProvider::Compile(const std::vector<FusedNodeAndGra
+       // performed, to block other threads to perform Predict on the same model.
+       // TODO, investigate concurrent runs for different executions from the same model.
+       {
+-        std::unique_lock<OrtMutex> lock(model->GetMutex());
++        std::unique_lock<std::mutex> lock(model->GetMutex());
+         InlinedHashMap<std::string, webnn::OnnxTensorData> outputs;
+         outputs.reserve(model_outputs.size());
+         for (size_t i = 0; i < model_outputs.size(); i++) {
+diff --git a/onnxruntime/core/session/inference_session.cc b/onnxruntime/core/session/inference_session.cc
+index 023cbcbe88d1c..f5f12c206ebad 100644
+--- a/onnxruntime/core/session/inference_session.cc
++++ b/onnxruntime/core/session/inference_session.cc
+@@ -249,7 +249,7 @@ Status GetMinimalBuildOptimizationHandling(
+ std::atomic<uint32_t> InferenceSession::global_session_id_{1};
+ std::map<uint32_t, InferenceSession*> InferenceSession::active_sessions_;
+ #ifdef _WIN32
+-OrtMutex InferenceSession::active_sessions_mutex_;  // Protects access to active_sessions_
++std::mutex InferenceSession::active_sessions_mutex_;  // Protects access to active_sessions_
+ onnxruntime::WindowsTelemetry::EtwInternalCallback InferenceSession::callback_ML_ORT_provider_;
+ #endif
+ 
+@@ -371,7 +371,7 @@ void InferenceSession::ConstructorCommon(const SessionOptions& session_options,
+   session_id_ = global_session_id_.fetch_add(1);
+ 
+ #ifdef _WIN32
+-  std::lock_guard<OrtMutex> lock(active_sessions_mutex_);
++  std::lock_guard<std::mutex> lock(active_sessions_mutex_);
+   active_sessions_[global_session_id_++] = this;
+ 
+   // Register callback for ETW capture state (rundown) for Microsoft.ML.ONNXRuntime provider
+@@ -725,7 +725,7 @@ InferenceSession::~InferenceSession() {
+ 
+   // Unregister the session and ETW callbacks
+ #ifdef _WIN32
+-  std::lock_guard<OrtMutex> lock(active_sessions_mutex_);
++  std::lock_guard<std::mutex> lock(active_sessions_mutex_);
+   WindowsTelemetry::UnregisterInternalCallback(callback_ML_ORT_provider_);
+   logging::EtwRegistrationManager::Instance().UnregisterInternalCallback(callback_ETWSink_provider_);
+ #endif
+@@ -745,7 +745,7 @@ common::Status InferenceSession::RegisterExecutionProvider(const std::shared_ptr
+     return Status(common::ONNXRUNTIME, common::FAIL, "Received nullptr for exec provider");
+   }
+ 
+-  std::lock_guard<onnxruntime::OrtMutex> l(session_mutex_);
++  std::lock_guard<std::mutex> l(session_mutex_);
+ 
+   if (is_inited_) {
+     // adding an EP is pointless as the graph as already been partitioned so no nodes will be assigned to
+@@ -876,7 +876,7 @@ common::Status InferenceSession::RegisterGraphTransformer(
+     return Status(common::ONNXRUNTIME, common::FAIL, "Received nullptr for graph transformer");
+   }
+ 
+-  std::lock_guard<onnxruntime::OrtMutex> l(session_mutex_);
++  std::lock_guard<std::mutex> l(session_mutex_);
+ 
+   if (is_inited_) {
+     // adding a transformer now is pointless as the graph as already been transformed
+@@ -940,7 +940,7 @@ common::Status InferenceSession::LoadWithLoader(std::function<common::Status(std
+     tp = session_profiler_.Start();
+   }
+   ORT_TRY {
+-    std::lock_guard<onnxruntime::OrtMutex> l(session_mutex_);
++    std::lock_guard<std::mutex> l(session_mutex_);
+     if (is_model_loaded_) {  // already loaded
+       LOGS(*session_logger_, ERROR) << "This session already contains a loaded model.";
+       return common::Status(common::ONNXRUNTIME, common::MODEL_LOADED, "This session already contains a loaded model.");
+@@ -1396,7 +1396,7 @@ Status InferenceSession::LoadOrtModel(const void* model_data, int model_data_len
+ }
+ 
+ Status InferenceSession::LoadOrtModelWithLoader(std::function<Status()> load_ort_format_model_bytes) {
+-  std::lock_guard<onnxruntime::OrtMutex> l(session_mutex_);
++  std::lock_guard<std::mutex> l(session_mutex_);
+ 
+   if (is_model_loaded_) {  // already loaded
+     Status status(common::ONNXRUNTIME, common::MODEL_LOADED, "This session already contains a loaded model.");
+@@ -1520,7 +1520,7 @@ Status InferenceSession::LoadOrtModelWithLoader(std::function<Status()> load_ort
+ }
+ 
+ bool InferenceSession::IsInitialized() const {
+-  std::lock_guard<onnxruntime::OrtMutex> l(session_mutex_);
++  std::lock_guard<std::mutex> l(session_mutex_);
+   return is_inited_;
+ }
+ 
+@@ -1673,7 +1673,7 @@ common::Status InferenceSession::Initialize() {
+     bool have_cpu_ep = false;
+ 
+     {
+-      std::lock_guard<onnxruntime::OrtMutex> initial_guard(session_mutex_);
++      std::lock_guard<std::mutex> initial_guard(session_mutex_);
+ 
+       if (!is_model_loaded_) {
+         LOGS(*session_logger_, ERROR) << "Model was not loaded";
+@@ -1711,7 +1711,7 @@ common::Status InferenceSession::Initialize() {
+     }
+ 
+     // re-acquire mutex
+-    std::lock_guard<onnxruntime::OrtMutex> l(session_mutex_);
++    std::lock_guard<std::mutex> l(session_mutex_);
+ 
+ #if !defined(DISABLE_EXTERNAL_INITIALIZERS) && !defined(ORT_MINIMAL_BUILD)
+     if (!session_options_.external_initializers.empty()) {
+@@ -2584,7 +2584,7 @@ Status InferenceSession::Run(const RunOptions& run_options,
+       std::unique_ptr<logging::Logger> owned_run_logger;
+       const auto& run_logger = CreateLoggerForRun(run_options, owned_run_logger);
+ 
+-      std::optional<std::lock_guard<OrtMutex>> sequential_run_lock;
++      std::optional<std::lock_guard<std::mutex>> sequential_run_lock;
+       if (is_concurrent_run_supported_ == false) {
+         sequential_run_lock.emplace(session_mutex_);
+       }
+@@ -2837,7 +2837,7 @@ common::Status InferenceSession::Run(const RunOptions& run_options, const NameML
+ 
+ std::pair<common::Status, const ModelMetadata*> InferenceSession::GetModelMetadata() const {
+   {
+-    std::lock_guard<onnxruntime::OrtMutex> l(session_mutex_);
++    std::lock_guard<std::mutex> l(session_mutex_);
+     if (!is_model_loaded_) {
+       LOGS(*session_logger_, ERROR) << "Model was not loaded";
+       return std::make_pair(common::Status(common::ONNXRUNTIME, common::FAIL, "Model was not loaded."), nullptr);
+@@ -2849,7 +2849,7 @@ std::pair<common::Status, const ModelMetadata*> InferenceSession::GetModelMetada
+ 
+ std::pair<common::Status, const InputDefList*> InferenceSession::GetModelInputs() const {
+   {
+-    std::lock_guard<onnxruntime::OrtMutex> l(session_mutex_);
++    std::lock_guard<std::mutex> l(session_mutex_);
+     if (!is_model_loaded_) {
+       LOGS(*session_logger_, ERROR) << "Model was not loaded";
+       return std::make_pair(common::Status(common::ONNXRUNTIME, common::FAIL, "Model was not loaded."), nullptr);
+@@ -2862,7 +2862,7 @@ std::pair<common::Status, const InputDefList*> InferenceSession::GetModelInputs(
+ 
+ std::pair<common::Status, const InputDefList*> InferenceSession::GetOverridableInitializers() const {
+   {
+-    std::lock_guard<onnxruntime::OrtMutex> l(session_mutex_);
++    std::lock_guard<std::mutex> l(session_mutex_);
+     if (!is_model_loaded_) {
+       LOGS(*session_logger_, ERROR) << "Model was not loaded";
+       return std::make_pair(common::Status(common::ONNXRUNTIME, common::FAIL, "Model was not loaded."), nullptr);
+@@ -2875,7 +2875,7 @@ std::pair<common::Status, const InputDefList*> InferenceSession::GetOverridableI
+ 
+ std::pair<common::Status, const OutputDefList*> InferenceSession::GetModelOutputs() const {
+   {
+-    std::lock_guard<onnxruntime::OrtMutex> l(session_mutex_);
++    std::lock_guard<std::mutex> l(session_mutex_);
+     if (!is_model_loaded_) {
+       LOGS(*session_logger_, ERROR) << "Model was not loaded";
+       return std::make_pair(common::Status(common::ONNXRUNTIME, common::FAIL, "Model was not loaded."), nullptr);
+@@ -2887,7 +2887,7 @@ std::pair<common::Status, const OutputDefList*> InferenceSession::GetModelOutput
+ 
+ common::Status InferenceSession::NewIOBinding(std::unique_ptr<IOBinding>* io_binding) {
+   {
+-    std::lock_guard<onnxruntime::OrtMutex> l(session_mutex_);
++    std::lock_guard<std::mutex> l(session_mutex_);
+     if (!is_inited_) {
+       LOGS(*session_logger_, ERROR) << "Session was not initialized";
+       return common::Status(common::ONNXRUNTIME, common::FAIL, "Session not initialized.");
+@@ -3271,7 +3271,7 @@ IOBinding* SessionIOBinding::Get() {
+ void InferenceSession::LogAllSessions() {
+   const Env& env = Env::Default();
+ 
+-  std::lock_guard<OrtMutex> lock(active_sessions_mutex_);
++  std::lock_guard<std::mutex> lock(active_sessions_mutex_);
+   for (const auto& session_pair : active_sessions_) {
+     InferenceSession* session = session_pair.second;
+ 
+diff --git a/onnxruntime/core/session/inference_session.h b/onnxruntime/core/session/inference_session.h
+index 322c1917b9eaf..424248da793f1 100644
+--- a/onnxruntime/core/session/inference_session.h
++++ b/onnxruntime/core/session/inference_session.h
+@@ -29,7 +29,7 @@
+ #include "core/optimizer/graph_transformer_level.h"
+ #include "core/optimizer/graph_transformer_mgr.h"
+ #include "core/optimizer/insert_cast_transformer.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #ifdef ENABLE_LANGUAGE_INTEROP_OPS
+ #include "core/language_interop_ops/language_interop_ops.h"
+ #endif
+@@ -129,7 +129,7 @@ class InferenceSession {
+   using InputOutputDefMetaMap = InlinedHashMap<std::string_view, InputOutputDefMetaData>;
+   static std::map<uint32_t, InferenceSession*> active_sessions_;
+ #ifdef _WIN32
+-  static OrtMutex active_sessions_mutex_;  // Protects access to active_sessions_
++  static std::mutex active_sessions_mutex_;  // Protects access to active_sessions_
+   static onnxruntime::WindowsTelemetry::EtwInternalCallback callback_ML_ORT_provider_;
+   onnxruntime::logging::EtwRegistrationManager::EtwInternalCallback callback_ETWSink_provider_;
+ #endif
+@@ -799,10 +799,10 @@ class InferenceSession {
+   // Number of concurrently running executors
+   std::atomic<int> current_num_runs_ = 0;
+ 
+-  mutable onnxruntime::OrtMutex session_mutex_;  // to ensure only one thread can invoke Load/Initialize
+-  bool is_model_loaded_ = false;                 // GUARDED_BY(session_mutex_)
+-  bool is_inited_ = false;                       // GUARDED_BY(session_mutex_)
+-  bool is_concurrent_run_supported_ = true;      // Graph execution in Run is GUARDED_BY(session_mutex_) if false
++  mutable std::mutex session_mutex_;         // to ensure only one thread can invoke Load/Initialize
++  bool is_model_loaded_ = false;             // GUARDED_BY(session_mutex_)
++  bool is_inited_ = false;                   // GUARDED_BY(session_mutex_)
++  bool is_concurrent_run_supported_ = true;  // Graph execution in Run is GUARDED_BY(session_mutex_) if false
+ 
+ #ifdef ENABLE_LANGUAGE_INTEROP_OPS
+   InterOpDomains interop_domains_;
+diff --git a/onnxruntime/core/session/onnxruntime_c_api.cc b/onnxruntime/core/session/onnxruntime_c_api.cc
+index 8280270a768f0..109445c877786 100644
+--- a/onnxruntime/core/session/onnxruntime_c_api.cc
++++ b/onnxruntime/core/session/onnxruntime_c_api.cc
+@@ -36,7 +36,7 @@
+ #include "core/framework/data_types.h"
+ #include "abi_session_options_impl.h"
+ #include "core/framework/TensorSeq.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #include "core/common/string_helper.h"
+ 
+ #include "core/session/lora_adapters.h"
+diff --git a/onnxruntime/core/session/ort_env.cc b/onnxruntime/core/session/ort_env.cc
+index 3c178fd1e91d3..ef84875df18a3 100644
+--- a/onnxruntime/core/session/ort_env.cc
++++ b/onnxruntime/core/session/ort_env.cc
+@@ -19,7 +19,7 @@ using namespace onnxruntime::logging;
+ 
+ std::unique_ptr<OrtEnv> OrtEnv::p_instance_;
+ int OrtEnv::ref_count_ = 0;
+-onnxruntime::OrtMutex OrtEnv::m_;
++std::mutex OrtEnv::m_;
+ 
+ OrtEnv::OrtEnv(std::unique_ptr<onnxruntime::Environment> value1)
+     : value_(std::move(value1)) {
+@@ -35,7 +35,7 @@ OrtEnv::~OrtEnv() {
+ OrtEnv* OrtEnv::GetInstance(const OrtEnv::LoggingManagerConstructionInfo& lm_info,
+                             onnxruntime::common::Status& status,
+                             const OrtThreadingOptions* tp_options) {
+-  std::lock_guard<onnxruntime::OrtMutex> lock(m_);
++  std::lock_guard<std::mutex> lock(m_);
+   if (!p_instance_) {
+     std::unique_ptr<LoggingManager> lmgr;
+     std::string name = lm_info.logid;
+@@ -76,7 +76,7 @@ void OrtEnv::Release(OrtEnv* env_ptr) {
+   if (!env_ptr) {
+     return;
+   }
+-  std::lock_guard<onnxruntime::OrtMutex> lock(m_);
++  std::lock_guard<std::mutex> lock(m_);
+   ORT_ENFORCE(env_ptr == p_instance_.get());  // sanity check
+   --ref_count_;
+   if (ref_count_ == 0) {
+diff --git a/onnxruntime/core/session/ort_env.h b/onnxruntime/core/session/ort_env.h
+index 444134d0612e9..64e0020f2930d 100644
+--- a/onnxruntime/core/session/ort_env.h
++++ b/onnxruntime/core/session/ort_env.h
+@@ -5,7 +5,7 @@
+ #include <atomic>
+ #include <string>
+ #include "core/session/onnxruntime_c_api.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #include "core/common/status.h"
+ #include "core/common/logging/logging.h"
+ #include "core/framework/allocator.h"
+@@ -67,7 +67,7 @@ struct OrtEnv {
+ 
+  private:
+   static std::unique_ptr<OrtEnv> p_instance_;
+-  static onnxruntime::OrtMutex m_;
++  static std::mutex m_;
+   static int ref_count_;
+ 
+   std::unique_ptr<onnxruntime::Environment> value_;
+diff --git a/onnxruntime/test/onnx/TestCase.cc b/onnxruntime/test/onnx/TestCase.cc
+index 45aaca1ceae56..e59716da7526a 100644
+--- a/onnxruntime/test/onnx/TestCase.cc
++++ b/onnxruntime/test/onnx/TestCase.cc
+@@ -25,7 +25,7 @@
+ #include "core/common/logging/logging.h"
+ #include "core/common/common.h"
+ #include "core/platform/env.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #include "core/platform/path_lib.h"
+ #include "core/session/onnxruntime_cxx_api.h"
+ #include "core/framework/allocator.h"
+@@ -288,12 +288,12 @@ class OnnxTestCase : public ITestCase {
+  private:
+   std::string test_case_name_;
+   mutable std::vector<std::string> debuginfo_strings_;
+-  mutable onnxruntime::OrtMutex m_;
++  mutable std::mutex m_;
+ 
+   std::vector<std::filesystem::path> test_data_dirs_;
+ 
+   std::string GetDatasetDebugInfoString(size_t dataset_id) const override {
+-    std::lock_guard<OrtMutex> l(m_);
++    std::lock_guard<std::mutex> l(m_);
+     if (dataset_id < debuginfo_strings_.size()) {
+       return debuginfo_strings_[dataset_id];
+     }
+@@ -488,7 +488,7 @@ void OnnxTestCase::LoadTestData(size_t id, onnxruntime::test::HeapBuffer& b,
+   if (st.IsOK()) {  // has an all-in-one input file
+     std::ostringstream oss;
+     {
+-      std::lock_guard<OrtMutex> l(m_);
++      std::lock_guard<std::mutex> l(m_);
+       oss << debuginfo_strings_[id];
+     }
+     ORT_TRY {
+@@ -503,7 +503,7 @@ void OnnxTestCase::LoadTestData(size_t id, onnxruntime::test::HeapBuffer& b,
+     }
+ 
+     {
+-      std::lock_guard<OrtMutex> l(m_);
++      std::lock_guard<std::mutex> l(m_);
+       debuginfo_strings_[id] = oss.str();
+     }
+     return;
+diff --git a/onnxruntime/test/onnx/TestResultStat.h b/onnxruntime/test/onnx/TestResultStat.h
+index 5bfc04c3cd577..0804b1d7a4139 100644
+--- a/onnxruntime/test/onnx/TestResultStat.h
++++ b/onnxruntime/test/onnx/TestResultStat.h
+@@ -7,7 +7,7 @@
+ #include <unordered_set>
+ #include <string>
+ #include <atomic>
+-#include <core/platform/ort_mutex.h>
++#include <mutex>
+ #include <cstring>
+ #include <set>
+ 
+@@ -26,22 +26,22 @@ class TestResultStat {
+   TestResultStat() : succeeded(0), not_implemented(0), load_model_failed(0), throwed_exception(0), result_differs(0), skipped(0), invalid_graph(0) {}
+ 
+   void AddNotImplementedKernels(const std::string& s) {
+-    std::lock_guard<onnxruntime::OrtMutex> l(m_);
++    std::lock_guard<std::mutex> l(m_);
+     not_implemented_kernels.insert(s);
+   }
+ 
+   void AddFailedKernels(const std::string& s) {
+-    std::lock_guard<onnxruntime::OrtMutex> l(m_);
++    std::lock_guard<std::mutex> l(m_);
+     failed_kernels.insert(s);
+   }
+ 
+   void AddFailedTest(const std::pair<std::string, std::string>& p) {
+-    std::lock_guard<onnxruntime::OrtMutex> l(m_);
++    std::lock_guard<std::mutex> l(m_);
+     failed_test_cases.insert(p);
+   }
+ 
+   const std::set<std::pair<std::string, std::string>>& GetFailedTest() const {
+-    std::lock_guard<onnxruntime::OrtMutex> l(m_);
++    std::lock_guard<std::mutex> l(m_);
+     return failed_test_cases;
+   }
+ 
+@@ -74,7 +74,7 @@ class TestResultStat {
+   }
+ 
+  private:
+-  mutable onnxruntime::OrtMutex m_;
++  mutable std::mutex m_;
+   std::unordered_set<std::string> not_implemented_kernels;
+   std::unordered_set<std::string> failed_kernels;
+   std::set<std::pair<std::string, std::string>> failed_test_cases;  // pairs of test name and version
+diff --git a/onnxruntime/test/onnx/onnxruntime_event.h b/onnxruntime/test/onnx/onnxruntime_event.h
+index b830a9f888edb..a7cfbccad3d8a 100644
+--- a/onnxruntime/test/onnx/onnxruntime_event.h
++++ b/onnxruntime/test/onnx/onnxruntime_event.h
+@@ -2,12 +2,12 @@
+ // Licensed under the MIT License.
+ 
+ #include <core/common/common.h>
+-#include <core/platform/ort_mutex.h>
++#include <mutex>
+ 
+ struct OnnxRuntimeEvent {
+  public:
+-  onnxruntime::OrtMutex finish_event_mutex;
+-  onnxruntime::OrtCondVar finish_event_data;
++  std::mutex finish_event_mutex;
++  std::condition_variable finish_event_data;
+   bool finished = false;
+   OnnxRuntimeEvent() = default;
+ 
+diff --git a/onnxruntime/test/perftest/performance_runner.cc b/onnxruntime/test/perftest/performance_runner.cc
+index 08d77008dc25c..faf0c34193717 100644
+--- a/onnxruntime/test/perftest/performance_runner.cc
++++ b/onnxruntime/test/perftest/performance_runner.cc
+@@ -189,8 +189,8 @@ Status PerformanceRunner::RunParallelDuration() {
+   // TODO: Make each thread enqueue a new worker.
+   auto tpool = GetDefaultThreadPool(Env::Default());
+   std::atomic<int> counter = {0};
+-  OrtMutex m;
+-  OrtCondVar cv;
++  std::mutex m;
++  std::condition_variable cv;
+ 
+   auto start = std::chrono::high_resolution_clock::now();
+   auto end = start;
+@@ -206,7 +206,7 @@ Status PerformanceRunner::RunParallelDuration() {
+         if (!status.IsOK())
+           std::cerr << status.ErrorMessage();
+         // Simplified version of Eigen::Barrier
+-        std::lock_guard<OrtMutex> lg(m);
++        std::lock_guard<std::mutex> lg(m);
+         counter--;
+         cv.notify_all();
+       });
+@@ -216,7 +216,7 @@ Status PerformanceRunner::RunParallelDuration() {
+   } while (duration_seconds.count() < performance_test_config_.run_config.duration_in_seconds);
+ 
+   // Join
+-  std::unique_lock<OrtMutex> lock(m);
++  std::unique_lock<std::mutex> lock(m);
+   cv.wait(lock, [&counter]() { return counter == 0; });
+ 
+   return Status::OK();
+@@ -228,8 +228,8 @@ Status PerformanceRunner::ForkJoinRepeat() {
+   // create a threadpool with one thread per concurrent request
+   auto tpool = std::make_unique<DefaultThreadPoolType>(run_config.concurrent_session_runs);
+   std::atomic<int> counter{0}, requests{0};
+-  OrtMutex m;
+-  OrtCondVar cv;
++  std::mutex m;
++  std::condition_variable cv;
+ 
+   // Fork
+   for (size_t i = 0; i != run_config.concurrent_session_runs; ++i) {
+@@ -242,14 +242,14 @@ Status PerformanceRunner::ForkJoinRepeat() {
+       }
+ 
+       // Simplified version of Eigen::Barrier
+-      std::lock_guard<OrtMutex> lg(m);
++      std::lock_guard<std::mutex> lg(m);
+       counter--;
+       cv.notify_all();
+     });
+   }
+ 
+   // Join
+-  std::unique_lock<OrtMutex> lock(m);
++  std::unique_lock<std::mutex> lock(m);
+   cv.wait(lock, [&counter]() { return counter == 0; });
+ 
+   return Status::OK();
+diff --git a/onnxruntime/test/perftest/performance_runner.h b/onnxruntime/test/perftest/performance_runner.h
+index cb1cb661550a7..b0a0161e7fd6c 100644
+--- a/onnxruntime/test/perftest/performance_runner.h
++++ b/onnxruntime/test/perftest/performance_runner.h
+@@ -14,7 +14,7 @@
+ #include <core/common/common.h>
+ #include <core/common/status.h>
+ #include <core/platform/env.h>
+-#include <core/platform/ort_mutex.h>
++#include <mutex>
+ #include <core/session/onnxruntime_cxx_api.h>
+ #include "test_configuration.h"
+ #include "heap_buffer.h"
+@@ -75,7 +75,7 @@ class PerformanceRunner {
+     ORT_RETURN_IF_ERROR(status);
+ 
+     if (!isWarmup) {
+-      std::lock_guard<OrtMutex> guard(results_mutex_);
++      std::lock_guard<std::mutex> guard(results_mutex_);
+       performance_result_.time_costs.emplace_back(duration_seconds.count());
+       performance_result_.total_time_cost += duration_seconds.count();
+       if (performance_test_config_.run_config.f_verbose) {
+@@ -116,7 +116,7 @@ class PerformanceRunner {
+   onnxruntime::test::HeapBuffer b_;
+   std::unique_ptr<ITestCase> test_case_;
+ 
+-  OrtMutex results_mutex_;
++  std::mutex results_mutex_;
+ };
+ }  // namespace perftest
+ }  // namespace onnxruntime
+diff --git a/onnxruntime/test/platform/threadpool_test.cc b/onnxruntime/test/platform/threadpool_test.cc
+index 9b3eac1088a47..e0e6c0603c784 100644
+--- a/onnxruntime/test/platform/threadpool_test.cc
++++ b/onnxruntime/test/platform/threadpool_test.cc
+@@ -3,7 +3,7 @@
+ 
+ #include "core/platform/threadpool.h"
+ #include "core/platform/EigenNonBlockingThreadPool.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #include "core/util/thread_utils.h"
+ #ifdef _WIN32
+ #include "test/platform/windows/env.h"
+@@ -27,7 +27,7 @@ struct TestData {
+   explicit TestData(int num) : data(num, 0) {
+   }
+   std::vector<int> data;
+-  onnxruntime::OrtMutex mutex;
++  std::mutex mutex;
+ };
+ 
+ // This unittest tests ThreadPool function by counting the number of calls to function with each index.
+@@ -38,7 +38,7 @@ std::unique_ptr<TestData> CreateTestData(int num) {
+ }
+ 
+ void IncrementElement(TestData& test_data, ptrdiff_t i) {
+-  std::lock_guard<onnxruntime::OrtMutex> lock(test_data.mutex);
++  std::lock_guard<std::mutex> lock(test_data.mutex);
+   test_data.data[i]++;
+ }
+ 
+diff --git a/orttraining/orttraining/training_ops/cuda/nn/conv_shared.cc b/orttraining/orttraining/training_ops/cuda/nn/conv_shared.cc
+index 9b30bd128b161..d4f7fbf2080ce 100644
+--- a/orttraining/orttraining/training_ops/cuda/nn/conv_shared.cc
++++ b/orttraining/orttraining/training_ops/cuda/nn/conv_shared.cc
+@@ -3,7 +3,7 @@
+ 
+ #include "orttraining/training_ops/cuda/nn/conv_shared.h"
+ 
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ #include "core/providers/common.h"
+ #include "core/providers/cuda/cuda_kernel.h"
+ 
+@@ -65,11 +65,11 @@ std::vector<T_Perf> GetValidAlgorithms(const T_Perf* perf_results, int n_algo) {
+ 
+ template <typename T_Perf>
+ struct AlgoPerfCache {
+-  mutable OrtMutex mutex;
++  mutable std::mutex mutex;
+   std::unordered_map<ConvParams, T_Perf, ConvParamsHash, ConvParamsEqual> map;
+ 
+   bool Find(const ConvParams& params, T_Perf* result) {
+-    std::lock_guard<OrtMutex> guard(mutex);
++    std::lock_guard<std::mutex> guard(mutex);
+     auto it = map.find(params);
+     if (it == map.end()) {
+       return false;
+@@ -79,7 +79,7 @@ struct AlgoPerfCache {
+   }
+ 
+   void Insert(const ConvParams& params, const T_Perf& algo_perf) {
+-    std::lock_guard<OrtMutex> guard(mutex);
++    std::lock_guard<std::mutex> guard(mutex);
+     map[params] = algo_perf;
+   }
+ };
+diff --git a/orttraining/orttraining/training_ops/rocm/nn/conv_grad.cc b/orttraining/orttraining/training_ops/rocm/nn/conv_grad.cc
+index 22fa5b6f55a5d..3b1ed29cb0240 100644
+--- a/orttraining/orttraining/training_ops/rocm/nn/conv_grad.cc
++++ b/orttraining/orttraining/training_ops/rocm/nn/conv_grad.cc
+@@ -7,7 +7,7 @@
+ 
+ #include "core/providers/common.h"
+ #include "core/providers/rocm/shared_inc/fpgeneric.h"
+-#include "core/platform/ort_mutex.h"
++#include <mutex>
+ 
+ namespace onnxruntime {
+ namespace rocm {
+@@ -96,11 +96,11 @@ struct ConvParamsEqual {
+ 
+ template <typename T_Perf>
+ struct AlgoPerfCache {
+-  mutable OrtMutex mutex;
++  mutable std::mutex mutex;
+   std::unordered_map<ConvParams, T_Perf, ConvParamsHash, ConvParamsEqual> map;
+ 
+   bool Find(const ConvParams& params, T_Perf* result) {
+-    std::lock_guard<OrtMutex> guard(mutex);
++    std::lock_guard<std::mutex> guard(mutex);
+     auto it = map.find(params);
+     if (it == map.end()) {
+       return false;
+@@ -110,7 +110,7 @@ struct AlgoPerfCache {
+   }
+ 
+   void Insert(const ConvParams& params, const T_Perf& algo_perf) {
+-    std::lock_guard<OrtMutex> guard(mutex);
++    std::lock_guard<std::mutex> guard(mutex);
+     map[params] = algo_perf;
+   }
+ };
+diff --git a/tools/ci_build/build.py b/tools/ci_build/build.py
+index 384569997b9b6..9624f9112c49f 100644
+--- a/tools/ci_build/build.py
++++ b/tools/ci_build/build.py
+@@ -1552,11 +1552,7 @@ def generate_build_tree(
+             and not args.build_wasm
+         ):
+             if is_windows():
+-                # DLL initialization errors due to old conda msvcp140.dll dll are a result of the new MSVC compiler
+-                # See https://developercommunity.visualstudio.com/t/Access-violation-with-std::mutex::lock-a/10664660#T-N10668856
+-                # Remove this definition (_DISABLE_CONSTEXPR_MUTEX_CONSTRUCTOR)
+-                # once the conda msvcp140.dll dll is updated.
+-                cflags += ["/guard:cf", "/DWIN32", "/D_WINDOWS", "/D_DISABLE_CONSTEXPR_MUTEX_CONSTRUCTOR"]
++                cflags += ["/guard:cf", "/DWIN32", "/D_WINDOWS"]
+                 if not args.use_gdk:
+                     # Target Windows 10
+                     cflags += [

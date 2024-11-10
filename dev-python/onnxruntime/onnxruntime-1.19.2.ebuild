@@ -88,7 +88,7 @@ GOOGLETEST_COMMIT_2="4c9a3bb62bf3ba1f1010bf96f9c8ed767b363774" # protobuf dep
 GOOGLETEST_COMMIT_3="e2239ee6043f73722e7aa812a459f54a28552929" # From cmake/external/flatbuffers/benchmarks/CMakeLists.txt
 GSL_PV="4.0.0" # From cmake/deps.txt
 JSON_PV="3.10.5" # From cmake/deps.txt
-JSONCPP_COMMIT="9059f5cad030ba11d37818847443a53918c327b1" # protobuf dep
+JSONCPP_COMMIT="9059f5cad030ba11d37818847443a53918c327b1" # protobuf 22.3 dep
 LIBBACKTRACE_COMMIT="08f7c7e69f8ea61a0c4151359bc8023be8e9217b" # tvm dep
 LIBPROTOBUF_MUTATOR_COMMIT="7a2ed51a6b682a83e345ff49fc4cfd7ca47550db"
 MP11_PV="1.82.0"
@@ -705,6 +705,7 @@ BDEPEND+="
 "
 _PATCHES=(
 	"${FILESDIR}/${PN}-1.19.0-use-system-composable-kernel.patch"
+	"${FILESDIR}/${PN}-1.19.2-drop-nsync.patch"
 )
 
 pkg_setup() {
@@ -735,7 +736,7 @@ src_unpack() {
 	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1}" "${S}/cmake/external/onnx/third_party/pybind11"
 	dep_prepare_mv "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_PV}" "${S}/cmake/external/onnx/third_party/abseil"
 	dep_prepare_mv "${WORKDIR}/protobuf-${PROTOBUF_PV_2}" "${S}/cmake/external/onnx/third_party/protobuf"
-
+	dep_prepare_mv "${WORKDIR}/jsoncpp-${JSONCPP_COMMIT}" "${S}/cmake/external/onnx/third_party/protobuf/third_party/jsoncpp"
 
 	dep_prepare_mv "${WORKDIR}/cpuinfo-${CPUINFO_COMMIT}" "${S}/cmake/external/pytorch_cpuinfo"
 	dep_prepare_mv "${WORKDIR}/date-${DATE_PV_1}" "${S}/cmake/external/date-1"
@@ -894,7 +895,7 @@ src_configure() {
 		-Wno-error=maybe-uninitialized
 
 	local mycmakeargs=(
-#		-DABSL_ENABLE_INSTALL=ON
+		-DABSL_ENABLE_INSTALL=ON
 		-DCMAKE_INSTALL_INCLUDEDIR="include"
 		-DFETCHCONTENT_FULLY_DISCONNECTED=ON
 		-DFETCHCONTENT_QUIET=OFF
@@ -929,7 +930,7 @@ src_configure() {
 		-Donnxruntime_BUILD_MS_EXPERIMENTAL_OPS=OFF
 		-Donnxruntime_BUILD_NODEJS=OFF
 		-Donnxruntime_BUILD_OBJC=OFF
-#		-Donnxruntime_BUILD_SHARED_LIB=ON # Breaks with error below
+		-Donnxruntime_BUILD_SHARED_LIB=ON # Breaks with error below
 
 # Fixes:
 # CMake Error: install(EXPORT "onnxruntimeTargets" ...) includes target "onnxruntime" which requires target "absl_log_internal_message" that is not in any export set.
