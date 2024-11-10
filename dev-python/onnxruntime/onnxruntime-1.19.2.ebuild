@@ -357,7 +357,7 @@ onnxruntime_USE_EXTENSIONS
 openvino-auto
 openvino-hetero
 openvino-multi
-ebuild-revision-2
+ebuild-revision-3
 "
 gen_cuda_required_use() {
 	local x
@@ -706,6 +706,7 @@ BDEPEND+="
 _PATCHES=(
 	"${FILESDIR}/${PN}-1.19.0-use-system-composable-kernel.patch"
 	"${FILESDIR}/${PN}-1.19.2-drop-nsync.patch"
+	"${FILESDIR}/${PN}-1.19.2-onnx_proto-visibility.patch"
 )
 
 pkg_setup() {
@@ -887,6 +888,8 @@ src_configure() {
 	if use system-eigen ; then
 		append-cppflags "-I/usr/include/eigen3"
 	fi
+
+	filter-flags '-Wl,--as-needed'
 
 	append-cxxflags \
 		-Wno-c++20-compat \

@@ -457,7 +457,7 @@ onnxruntime_USE_EXTENSIONS
 openvino-auto
 openvino-hetero
 openvino-multi
-ebuild-revision-2
+ebuild-revision-3
 "
 gen_cuda_required_use() {
 	local x
@@ -804,8 +804,9 @@ BDEPEND+="
 	)
 "
 _PATCHES=(
-	"${FILESDIR}/${PN}-1.19.0-use-system-composable-kernel.patch"
+	"${FILESDIR}/${PN}-1.20.0-use-system-composable-kernel.patch"
 	"${FILESDIR}/${PN}-1.20.0-drop-nsync.patch"
+	"${FILESDIR}/${PN}-1.19.2-onnx_proto-visibility.patch"
 )
 
 pkg_setup() {

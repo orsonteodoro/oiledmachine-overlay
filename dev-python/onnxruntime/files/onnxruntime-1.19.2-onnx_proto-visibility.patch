@@ -1,0 +1,13 @@
+--- a/cmake/external/onnx/CMakeLists.txt.orig	2024-11-10 15:35:01.212057708 -0800
++++ b/cmake/external/onnx/CMakeLists.txt	2024-11-10 15:34:57.292115506 -0800
+@@ -498,8 +498,8 @@ if (MSVC)
+ else()
+   # On non-Windows, hide all symbols we don't need
+   set(ONNX_API_DEFINE "-DONNX_API=__attribute__\(\(__visibility__\(\"default\"\)\)\)")
+-  set_target_properties(onnx_proto PROPERTIES CXX_VISIBILITY_PRESET hidden)
+-  set_target_properties(onnx_proto PROPERTIES VISIBILITY_INLINES_HIDDEN 1)
++  #set_target_properties(onnx_proto PROPERTIES CXX_VISIBILITY_PRESET hidden)
++  #set_target_properties(onnx_proto PROPERTIES VISIBILITY_INLINES_HIDDEN 1)
+ endif()
+ target_compile_definitions(onnx_proto PRIVATE ${ONNX_API_DEFINE})
+ 
