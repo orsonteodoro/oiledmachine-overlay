@@ -22,12 +22,18 @@ HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="metapackage"
 SLOT="1.0"
 IUSE="
-a52 av1 aac alsa cdda dash dts dv dvb dvd ffmpeg flac gme hls http jack jpeg lame
-libass libvisual midi mp3 modplug mpeg ogg openal openjpeg opus oss speex png
-pulseaudio rtmp sndio svg taglib theora v4l vaapi vcd vorbis vpx wavpack webp X x264
-x265
+a52 av1 aac alsa cdda dash dts dv dvb dvd ffmpeg flac fluidsynth gme hls http
+jack jpeg lame libass libvisual midi mp3 modplug mpeg ogg openal openjpeg opus
+oss speex png pulseaudio rtmp sndio svg taglib theora v4l vaapi vcd vorbis vpx
+wavpack wildmidi webp X x264 x265
 "
 REQUIRED_USE="
+	midi? (
+		|| (
+			fluidsynth
+			wildmidi
+		)
+	)
 	opus? (
 		ogg
 	)
@@ -104,7 +110,12 @@ RDEPEND="
 		~media-plugins/gst-plugins-libvisual-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
 	midi? (
-		~media-plugins/gst-plugins-fluidsynth-${PV}:1.0[${MULTILIB_USEDEP}]
+		fluidsynth? (
+			~media-plugins/gst-plugins-fluidsynth-${PV}:1.0[${MULTILIB_USEDEP}]
+		)
+		wildmidi? (
+			~media-plugins/gst-plugins-wildmidi-${PV}:1.0
+		)
 	)
 	modplug? (
 		~media-plugins/gst-plugins-modplug-${PV}:1.0[${MULTILIB_USEDEP}]

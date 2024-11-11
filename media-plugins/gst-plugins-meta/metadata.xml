@@ -40,6 +40,9 @@
     <flag name="flac">
       Lossless audio support
     </flag>
+    <flag name="fluidsynth">
+      Use FluidSynth for MIDI decode.
+    </flag>
     <flag name="gme">
       GME (Game Music Emulators) support
     </flag>
@@ -129,6 +132,9 @@
     </flag>
     <flag name="webp">
       WebP Image support
+    </flag>
+    <flag name="wildmidi">
+      Use WildMIDI for MIDI decode.
     </flag>
     <flag name="x264">
       Fallback CPU based h264 support.
