@@ -22,9 +22,9 @@ HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="metapackage"
 SLOT="1.0"
 IUSE="
-a52 av1 aac alsa cdda dash dts dv dvb dvd ffmpeg flac fluidsynth gme hls http
-jack jpeg lame libass libvisual midi mp3 modplug mpeg ogg openal openjpeg opus
-oss speex png pulseaudio rtmp sndio sndfile svg taglib theora v4l vaapi vcd
+a52 av1 aac alsa cdda dash dts dv dvb dvd ffmpeg flac fluidsynth gme gsm hls
+http jack jpeg lame libass libvisual midi mp3 modplug mpeg ogg openal openjpeg
+opus oss speex png pulseaudio rtmp sndio sndfile svg taglib theora v4l vaapi vcd
 vorbis vpx wavpack wildmidi webp X x264 x265
 "
 REQUIRED_USE="

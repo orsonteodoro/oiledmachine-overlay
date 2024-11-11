@@ -46,6 +46,9 @@
     <flag name="gme">
       GME (Game Music Emulators) support
     </flag>
+    <flag name="gsm">
+      GSM voice codec support
+    </flag>
     <flag name="dash">
       DASH support
     </flag>
