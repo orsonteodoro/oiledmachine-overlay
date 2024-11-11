@@ -10,12 +10,12 @@ inherit toolchain-funcs
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MY_P}"
 SRC_URI="
-https://github.com/t6/gstreamer1-plugins-sndio/archive/v${PV}.tar.gz
+https://github.com/BSDKaffee/gstreamer1-plugins-sndio/archive/refs/tags/v${PV}.tar.gz
 	-> ${MY_P}.tar.gz
 "
 
 DESCRIPTION="Sndio audio sink and source for GStreamer"
-HOMEPAGE="https://github.com/t6/gstreamer1-plugins-sndio"
+HOMEPAGE="https://github.com/BSDKaffee/gstreamer1-plugins-sndio"
 LICENSE="ISC"
 SLOT="0"
 RDEPEND="

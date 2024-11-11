@@ -40,6 +40,15 @@
     <flag name="flac">
       Lossless audio support
     </flag>
+    <flag name="gme">
+      GME (Game Music Emulators) support
+    </flag>
+    <flag name="dash">
+      DASH support
+    </flag>
+    <flag name="hls">
+      HLS support
+    </flag>
     <flag name="http">
       HTTP support
     </flag>
@@ -70,6 +79,9 @@
     <flag name="mpeg">
       Fallback CPU based MPEG2 video support
     </flag>
+    <flag name="openal">
+      OpenAL support
+    </flag>
     <flag name="openjpeg">
       JPEG2000 image support
     </flag>
@@ -77,13 +89,16 @@
       General purpose audio codec support
     </flag>
     <flag name="oss">
-      Legacy support support
+      Legacy sound driver support
     </flag>
     <flag name="png">
       PNG image support
     </flag>
     <flag name="pulseaudio">
       Pulseaudio audio system support
+    </flag>
+    <flag name="sndio">
+      Lightweight audio and MIDI server support via sndio
     </flag>
     <flag name="speex">
       Speech codec support

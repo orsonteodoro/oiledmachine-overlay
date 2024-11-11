@@ -22,9 +22,10 @@ HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="metapackage"
 SLOT="1.0"
 IUSE="
-a52 av1 aac alsa cdda dts dv dvb dvd ffmpeg flac http jack jpeg lame libass libvisual
-midi mp3 modplug mpeg ogg openjpeg opus oss speex png pulseaudio svg taglib
-theora v4l vaapi vcd vorbis vpx wavpack webp X x264 x265
+a52 av1 aac alsa cdda dash dts dv dvb dvd ffmpeg flac gme hls http jack jpeg lame
+libass libvisual midi mp3 modplug mpeg ogg openal openjpeg opus oss speex png
+pulseaudio rtmp sndio svg taglib theora v4l vaapi vcd vorbis vpx wavpack webp X x264
+x265
 "
 REQUIRED_USE="
 	opus? (
@@ -81,6 +82,12 @@ RDEPEND="
 	flac? (
 		~media-plugins/gst-plugins-flac-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
+	gme? (
+		~media-plugins/gst-plugins-gme-${PV}:1.0[${MULTILIB_USEDEP}]
+	)
+	hls? (
+		~media-plugins/gst-plugins-hls-${PV}:1.0[${MULTILIB_USEDEP}]
+	)
 	http? (
 		~media-plugins/gst-plugins-soup-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
@@ -110,6 +117,9 @@ RDEPEND="
 		~media-plugins/gst-plugins-mpeg2dec-${PV}:1.0[${MULTILIB_USEDEP}]
 		~media-plugins/gst-plugins-mpeg2enc-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
+	openal? (
+		~media-plugins/gst-plugins-openal-${PV}:1.0[${MULTILIB_USEDEP}]
+	)
 	openjpeg? (
 		~media-plugins/gst-plugins-openjpeg-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
@@ -124,6 +134,12 @@ RDEPEND="
 	)
 	pulseaudio? (
 		~media-plugins/gst-plugins-pulse-${PV}:1.0[${MULTILIB_USEDEP}]
+	)
+	rtmp? (
+		~media-plugins/gst-plugins-rtmp-${PV}:1.0[${MULTILIB_USEDEP}]
+	)
+	sndio? (
+		~media-plugins/gst-plugins-sndio-1.24.0:0[${MULTILIB_USEDEP}]
 	)
 	speex? (
 		~media-plugins/gst-plugins-speex-${PV}:1.0[${MULTILIB_USEDEP}]
