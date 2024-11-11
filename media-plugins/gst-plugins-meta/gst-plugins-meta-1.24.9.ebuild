@@ -17,14 +17,14 @@ KEYWORDS="
 ~amd64-linux ~arm64-macos ~x86-linux
 "
 
-DESCRIPTION="Meta ebuild to pull in gst plugins for apps"
+DESCRIPTION="A metapackage to pull in gst plugins for apps"
 HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="metapackage"
 SLOT="1.0"
 IUSE="
-aac a52 alsa cdda dts dv dvb dvd ffmpeg flac http jack lame libass libvisual mp3
-modplug mpeg ogg opus oss pulseaudio taglib theora v4l vaapi vcd vorbis vpx
-wavpack X x264
+a52 av1 aac alsa cdda dts dv dvb dvd ffmpeg flac http jack lame libass libvisual
+midi mp3 modplug mpeg ogg openjpeg opus oss speex png pulseaudio svg taglib
+theora v4l vaapi vcd vorbis vpx wavpack webp X x264 x265
 "
 REQUIRED_USE="
 	opus? (
@@ -42,6 +42,10 @@ RDEPEND="
 	~media-libs/gstreamer-${PV}:1.0[${MULTILIB_USEDEP}]
 	~media-libs/gst-plugins-base-${PV}:1.0[${MULTILIB_USEDEP},alsa?,ogg?,theora?,vorbis?,X?]
 	~media-libs/gst-plugins-good-${PV}:1.0[${MULTILIB_USEDEP}]
+	av1? (
+		~media-plugins/gst-plugins-aom-${PV}:1.0[${MULTILIB_USEDEP}]
+		~media-plugins/gst-plugins-rs-${PV}:1.0[${MULTILIB_USEDEP},dav1d]
+	)
 	a52? (
 		~media-plugins/gst-plugins-a52dec-${PV}:1.0[${MULTILIB_USEDEP}]
         )
@@ -92,6 +96,9 @@ RDEPEND="
 	libvisual? (
 		~media-plugins/gst-plugins-libvisual-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
+	midi? (
+		~media-plugins/gst-plugins-fluidsynth-${PV}:1.0[${MULTILIB_USEDEP}]
+	)
 	modplug? (
 		~media-plugins/gst-plugins-modplug-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
@@ -101,6 +108,10 @@ RDEPEND="
 	)
 	mpeg? (
 		~media-plugins/gst-plugins-mpeg2dec-${PV}:1.0[${MULTILIB_USEDEP}]
+		~media-plugins/gst-plugins-mpeg2enc-${PV}:1.0[${MULTILIB_USEDEP}]
+	)
+	openjpeg? (
+		~media-plugins/gst-plugins-openjpeg-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
 	opus? (
 		~media-plugins/gst-plugins-opus-${PV}:1.0[${MULTILIB_USEDEP}]
@@ -108,8 +119,17 @@ RDEPEND="
 	oss? (
 		~media-plugins/gst-plugins-oss-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
+	png? (
+		~media-plugins/gst-plugins-libpng-${PV}:1.0[${MULTILIB_USEDEP}]
+	)
 	pulseaudio? (
 		~media-plugins/gst-plugins-pulse-${PV}:1.0[${MULTILIB_USEDEP}]
+	)
+	speex? (
+		~media-plugins/gst-plugins-speex-${PV}:1.0[${MULTILIB_USEDEP}]
+	)
+	svg? (
+		~media-plugins/gst-plugins-rsvg-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
 	taglib? (
 		~media-plugins/gst-plugins-taglib-${PV}:1.0[${MULTILIB_USEDEP}]
@@ -130,7 +150,13 @@ RDEPEND="
 	wavpack? (
 		~media-plugins/gst-plugins-wavpack-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
+	webp? (
+		~media-plugins/gst-plugins-webp-${PV}:1.0[${MULTILIB_USEDEP}]
+	)
 	x264? (
 		~media-plugins/gst-plugins-x264-${PV}:1.0[${MULTILIB_USEDEP}]
+	)
+	x265? (
+		~media-plugins/gst-plugins-x265-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
 "
