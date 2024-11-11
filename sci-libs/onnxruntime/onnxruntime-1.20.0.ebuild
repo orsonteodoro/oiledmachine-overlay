@@ -457,7 +457,7 @@ onnxruntime_USE_EXTENSIONS
 openvino-auto
 openvino-hetero
 openvino-multi
-ebuild-revision-4
+ebuild-revision-3
 "
 gen_cuda_required_use() {
 	local x
@@ -1079,6 +1079,7 @@ src_configure() {
 		-Wno-error=maybe-uninitialized
 
 	local mycmakeargs=(
+		-DABSL_ENABLE_INSTALL=ON
 		-DCMAKE_INSTALL_INCLUDEDIR="include"
 		-DFETCHCONTENT_FULLY_DISCONNECTED=ON
 		-DFETCHCONTENT_QUIET=OFF
@@ -1115,7 +1116,12 @@ src_configure() {
 		-Donnxruntime_BUILD_MS_EXPERIMENTAL_OPS=OFF
 		-Donnxruntime_BUILD_NODEJS=OFF
 		-Donnxruntime_BUILD_OBJC=OFF
-		-Donnxruntime_BUILD_SHARED_LIB=OFF
+		-Donnxruntime_BUILD_SHARED_LIB=ON
+
+# Fixes:
+# CMake Error: install(EXPORT "onnxruntimeTargets" ...) includes target "onnxruntime" which requires target "absl_log_internal_message" that is not in any export set.
+# ...
+# CMake Error: install(EXPORT "onnxruntimeTargets" ...) includes target "onnxruntime" which requires target "nsync_cpp" that is not in any export set.
 
 		-Donnxruntime_BUILD_UNIT_TESTS=$(usex test)
 		-Donnxruntime_BUILD_WEBASSEMBLY_STATIC_LIB=OFF
