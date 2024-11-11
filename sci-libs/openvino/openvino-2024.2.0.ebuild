@@ -391,7 +391,7 @@ BDEPEND_LAYER_TESTS="
 		sci-libs/tensorflow-addons[${PYTHON_USEDEP}]
 	' python3_10)
 	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/onnxruntime[${PYTHON_USEDEP}]
+	sci-libs/onnxruntime[${PYTHON_USEDEP},python]
 	dev-python/packaging[${PYTHON_USEDEP}]
 	virtual/pillow[${PYTHON_USEDEP}]
 	dev-python/pytest[${PYTHON_USEDEP}]

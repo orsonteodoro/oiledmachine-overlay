@@ -211,7 +211,7 @@ IUSE+=" test"
 RDEPEND+="
 	!~dev-python/rich-12.1.0
 	>=dev-python/onnxoptimizer-0.2.5[${PYTHON_USEDEP}]
-	>=dev-python/onnxruntime-1.6.0[${PYTHON_USEDEP}]
+	>=sci-libs/onnxruntime-1.6.0[${PYTHON_USEDEP},python]
 	>=dev-python/protobuf-python-3.7.0:0/3.21[${PYTHON_USEDEP}]
 	dev-python/rich[${PYTHON_USEDEP}]
 	sci-libs/onnx[${PYTHON_USEDEP}]

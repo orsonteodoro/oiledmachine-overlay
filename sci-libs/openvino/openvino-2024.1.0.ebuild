@@ -379,7 +379,7 @@ BDEPEND_LAYER_TESTS="
 		sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
 	')
 	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/onnxruntime[${PYTHON_USEDEP}]
+	sci-libs/onnxruntime[${PYTHON_USEDEP},python]
 	dev-python/packaging[${PYTHON_USEDEP}]
 	virtual/pillow[${PYTHON_USEDEP}]
 	dev-python/pytest[${PYTHON_USEDEP}]

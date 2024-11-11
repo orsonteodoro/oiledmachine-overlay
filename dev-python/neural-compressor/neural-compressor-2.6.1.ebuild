@@ -96,7 +96,7 @@ RDEPEND+="
 		)
 		ort? (
 			>=sci-libs/onnx-1.15.0[${PYTHON_USEDEP}]
-			>=dev-python/onnxruntime-1.17.1[${PYTHON_USEDEP},extensions,training-ort]
+			>=sci-libs/onnxruntime-1.17.1[${PYTHON_USEDEP},extensions,python,training-ort]
 			dev-python/numpy[${PYTHON_USEDEP}]
 			dev-python/py-cpuinfo[${PYTHON_USEDEP}]
 			dev-python/psutil[${PYTHON_USEDEP}]
@@ -142,7 +142,7 @@ BDEPEND+="
 			>=sci-libs/intel-tensorflow-2.12.0[${PYTHON_USEDEP}]
 			>=sci-libs/intel-extension-for-pytorch-1.10[${PYTHON_USEDEP}]
 			>=sci-libs/onnx-1.15.0[${PYTHON_USEDEP}]
-			>=dev-python/onnxruntime-1.17.1[${PYTHON_USEDEP}]
+			>=sci-libs/onnxruntime-1.17.1[${PYTHON_USEDEP},python]
 			>=sci-libs/torchvision-0.17.1[${PYTHON_USEDEP}]
 			sci-libs/auto-round[${PYTHON_USEDEP}]
 			sci-libs/horovod[${PYTHON_USEDEP}]

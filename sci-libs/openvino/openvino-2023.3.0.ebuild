@@ -363,7 +363,7 @@ BDEPEND_LAYER_TESTS="
 	' python3_10)
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/pytest[${PYTHON_USEDEP}]
-	dev-python/onnxruntime[${PYTHON_USEDEP}]
+	sci-libs/onnxruntime[${PYTHON_USEDEP},python]
 	dev-python/requests[${PYTHON_USEDEP}]
 	kernel_linux? (
 		amd64? (

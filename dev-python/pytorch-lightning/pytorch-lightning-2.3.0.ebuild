@@ -308,9 +308,9 @@ PYTORCH_TEST_BDEPEND="
 			)
 		)
 		(
-			>=dev-python/onnxruntime-0.15.0[${PYTHON_USEDEP}]
+			>=sci-libs/onnxruntime-0.15.0[${PYTHON_USEDEP},python]
 			strict? (
-				<dev-python/onnxruntime-1.17.0[${PYTHON_USEDEP}]
+				<sci-libs/onnxruntime-1.17.0[${PYTHON_USEDEP},python]
 			)
 		)
 		(

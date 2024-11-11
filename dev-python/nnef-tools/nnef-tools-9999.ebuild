@@ -54,7 +54,7 @@ RDEPEND+="
 	)
 	onnx? (
 		dev-python/protobuf-python:0/3.21[${PYTHON_USEDEP}]
-		dev-python/onnxruntime[${PYTHON_USEDEP}]
+		sci-libs/onnxruntime[${PYTHON_USEDEP},python]
 		dev-python/onnx-simplifier[${PYTHON_USEDEP}]
 	)
 	tensorflow-lite? (
