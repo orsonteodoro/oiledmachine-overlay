@@ -12,6 +12,7 @@ EAPI=8
 # We only need gtk+ matching backend flags when GL is enabled
 
 GST_ORG_MODULE="gst-plugins-good"
+GST_PLUGINS_ENABLED="gtk3"
 
 inherit gstreamer-meson
 
@@ -35,5 +36,3 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 "
-
-GST_PLUGINS_ENABLED="gtk3"
