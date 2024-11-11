@@ -18,3 +18,7 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 "
+
+pkg_postinst() {
+einfo "The media-plugins/gst-plugins-onnx contains ssdobjectdetector"
+}
