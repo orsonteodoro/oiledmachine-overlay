@@ -22,7 +22,7 @@ unset -f _gst_plugins_rs_globals
 MY_PV="${PV}"
 EXPECTED_BUILD_FILES_FINGERPRINT="disable"
 GOBJECT_INTROSPECTION_PV="1.74.0"
-GST_PV="1.20.0" # Based on meson.build
+GST_PV="${MY_PV}"
 LLVM_COMPAT=( {17..16} ) # For clang-sys ; slot based on virtual/rust subslot
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MODULES=(

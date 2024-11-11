@@ -25,7 +25,7 @@ EXPECTED_BUILD_FILES_FINGERPRINT="\
 c151afa1bfa83ee21ba41fb141cc1ffc204a8f67c08cf3871e1c33474231cd69\
 "
 GOBJECT_INTROSPECTION_PV="1.74.0"
-GST_PV="1.20.0" # Based on meson.build
+GST_PV="1.25.0"
 LLVM_COMPAT=( {19..16} ) # For clang-sys ; slot based on virtual/rust subslot
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MODULES=(
