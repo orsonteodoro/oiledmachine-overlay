@@ -10,7 +10,7 @@ inherit gstreamer-meson
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
-DESCRIPTION="A QR code overlay plugin for GStreamer"
+DESCRIPTION="Overlay QR codes on an element from a buffer for GStreamer"
 RDEPEND="
 	~media-libs/gst-plugins-base-${PV}:1.0[${MULTILIB_USEDEP}]
 	dev-libs/json-glib[${MULTILIB_USEDEP}]

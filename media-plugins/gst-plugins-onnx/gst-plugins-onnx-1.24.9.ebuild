@@ -10,7 +10,7 @@ inherit flag-o-matic gstreamer-meson
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
 
-DESCRIPTION="ONNX plugin for GStreamer"
+DESCRIPTION="ONNX neural network plugin for GStreamer"
 IUSE+=" ebuild-revision-1"
 RDEPEND="
 	>=sci-libs/onnxruntime-1.16.1

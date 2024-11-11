@@ -10,7 +10,7 @@ inherit gstreamer-meson
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
-DESCRIPTION="flite plugin for GStreamer"
+DESCRIPTION="The Flite speech synthesis plugin for GStreamer"
 RDEPEND="
 	app-accessibility/flite[${MULTILIB_USEDEP}]
 	~media-libs/gst-plugins-base-${PV}:1.0[${MULTILIB_USEDEP}]
