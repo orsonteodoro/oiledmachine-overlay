@@ -22,7 +22,7 @@ HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="metapackage"
 SLOT="1.0"
 IUSE="
-a52 av1 aac alsa cdda dts dv dvb dvd ffmpeg flac http jack lame libass libvisual
+a52 av1 aac alsa cdda dts dv dvb dvd ffmpeg flac http jack jpeg lame libass libvisual
 midi mp3 modplug mpeg ogg openjpeg opus oss speex png pulseaudio svg taglib
 theora v4l vaapi vcd vorbis vpx wavpack webp X x264 x265
 "

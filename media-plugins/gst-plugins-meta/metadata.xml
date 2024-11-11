@@ -13,14 +13,113 @@
     since gstreamer plugins are all run-time dependencies.
   </longdescription>
   <use>
+    <flag name="av1">
+      Fallback CPU based AV1 video support
+    </flag>
+    <flag name="aac">
+      AAC audio support
+    </flag>
+    <flag name="cdda">
+      CD Digital Audio support
+    </flag>
+    <flag name="dts">
+      DTS decode support
+    </flag>
+    <flag name="dv">
+      Video camera support
+    </flag>
+    <flag name="dvb">
+      DVB (digital television) support
+    </flag>
+    <flag name="dvd">
+      DVD support
+    </flag>
+    <flag name="ffmpeg">
+      Decode support for ffmpeg supported formats
+    </flag>
+    <flag name="flac">
+      Lossless audio support
+    </flag>
     <flag name="http">
-      Enable http streaming via <pkg>net-libs/libsoup</pkg>
+      HTTP support
+    </flag>
+    <flag name="jack">
+      Low latency music production support
+    </flag>
+    <flag name="jpeg">
+      Fallback CPU based JPEG image support
+    </flag>
+    <flag name="lame">
+      MP3 encode support
+    </flag>
+    <flag name="libass">
+      SSA/ASS subtitle support
     </flag>
     <flag name="libvisual">
       Enable visualization effects via <pkg>media-libs/libvisual</pkg>
     </flag>
+    <flag name="midi">
+      MIDI files support
+    </flag>
+    <flag name="modplug">
+      1980s/1990s MOD/XM/IT/S3M/STM audio support
+    </flag>
+    <flag name="mp3">
+      MP3 audio decode support
+    </flag>
+    <flag name="mpeg">
+      Fallback CPU based MPEG2 video support
+    </flag>
+    <flag name="openjpeg">
+      JPEG2000 image support
+    </flag>
+    <flag name="opus">
+      General purpose audio codec support
+    </flag>
+    <flag name="oss">
+      Legacy support support
+    </flag>
+    <flag name="png">
+      PNG image support
+    </flag>
+    <flag name="pulseaudio">
+      Pulseaudio audio system support
+    </flag>
+    <flag name="speex">
+      Speech codec support
+    </flag>
+    <flag name="svg">
+      Vector images support
+    </flag>
+    <flag name="taglib">
+      Metatags support
+    </flag>
+    <flag name="v4l">
+      Webcam support
+    </flag>
+    <flag name="vaapi">
+      Hardware acceleration support for codecs, images, and image/video
+      processing.
+
+      Supports AV1, H264, H265, JPEG, MPEG2 if hardware support available.
+    </flag>
+    <flag name="vcd">
+      CDR video support
+    </flag>
     <flag name="vpx">
-      Enables vp8 codec support using libvpx, required to play some HTML5 videos
+      Fallback CPU based vp8/vp9 support.
+    </flag>
+    <flag name="wavpack">
+      Lossless audio support
+    </flag>
+    <flag name="webp">
+      WebP Image support
+    </flag>
+    <flag name="x264">
+      Fallback CPU based h264 support.
+    </flag>
+    <flag name="x265">
+      Fallback CPU based h265 support.
     </flag>
   </use>
 </pkgmetadata>
