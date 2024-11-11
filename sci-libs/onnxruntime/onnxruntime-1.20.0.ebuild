@@ -457,7 +457,7 @@ onnxruntime_USE_EXTENSIONS
 openvino-auto
 openvino-hetero
 openvino-multi
-ebuild-revision-5
+ebuild-revision-6
 "
 gen_cuda_required_use() {
 	local x
@@ -773,6 +773,7 @@ DEPEND+="
 BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-python/setuptools-68.2.2
+	dev-util/patchelf
 	$(python_gen_cond_dep '
 		dev-python/packaging[${PYTHON_USEDEP}]
 		dev-python/wheel[${PYTHON_USEDEP}]
@@ -1381,4 +1382,170 @@ src_install() {
 		rocm_mv_docs
 		rocm_fix_rpath
 	fi
+
+# Generated from
+# find /var/tmp/portage/sci-libs/onnxruntime-1.19.2/work/onnxruntime-1.19.2/cmake/_deps/ -name "*.so*" | cut -f 9- -d "/"
+	local LIBS=(
+cmake/_deps/pytorch_cpuinfo-build/libcpuinfo.so
+cmake/_deps/re2-build/libre2.so.11
+cmake/_deps/re2-build/libre2.so.11.0.0
+cmake/_deps/re2-build/libre2.so
+cmake/_deps/abseil_cpp-build/absl/types/libabsl_bad_variant_access.so.0
+cmake/_deps/abseil_cpp-build/absl/types/libabsl_bad_optional_access.so.0
+cmake/_deps/abseil_cpp-build/absl/types/libabsl_bad_optional_access.so
+cmake/_deps/abseil_cpp-build/absl/types/libabsl_bad_variant_access.so
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_sink.so
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_format.so.0
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_proto.so
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_sink.so.0
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_vlog_config_internal.so.0
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_check_op.so.0
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_check_op.so
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_log_sink_set.so.0
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_globals.so.0
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_log_sink_set.so
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_nullguard.so.0
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_vlog_config_internal.so
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_globals.so.0
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_fnmatch.so
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_format.so
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_fnmatch.so.0
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_entry.so
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_globals.so
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_globals.so
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_message.so.0
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_message.so
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_entry.so.0
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_conditions.so.0
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_proto.so.0
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_nullguard.so
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_conditions.so
+cmake/_deps/abseil_cpp-build/absl/strings/libabsl_cord_internal.so
+cmake/_deps/abseil_cpp-build/absl/strings/libabsl_cordz_handle.so
+cmake/_deps/abseil_cpp-build/absl/strings/libabsl_cord_internal.so.0
+cmake/_deps/abseil_cpp-build/absl/strings/libabsl_cord.so
+cmake/_deps/abseil_cpp-build/absl/strings/libabsl_cordz_handle.so.0
+cmake/_deps/abseil_cpp-build/absl/strings/libabsl_cord.so.0
+cmake/_deps/abseil_cpp-build/absl/strings/libabsl_string_view.so.0
+cmake/_deps/abseil_cpp-build/absl/strings/libabsl_strings.so.0
+cmake/_deps/abseil_cpp-build/absl/strings/libabsl_strings_internal.so
+cmake/_deps/abseil_cpp-build/absl/strings/libabsl_str_format_internal.so
+cmake/_deps/abseil_cpp-build/absl/strings/libabsl_string_view.so
+cmake/_deps/abseil_cpp-build/absl/strings/libabsl_cordz_functions.so.0
+cmake/_deps/abseil_cpp-build/absl/strings/libabsl_str_format_internal.so.0
+cmake/_deps/abseil_cpp-build/absl/strings/libabsl_strings.so
+cmake/_deps/abseil_cpp-build/absl/strings/libabsl_cordz_info.so
+cmake/_deps/abseil_cpp-build/absl/strings/libabsl_strings_internal.so.0
+cmake/_deps/abseil_cpp-build/absl/strings/libabsl_cordz_info.so.0
+cmake/_deps/abseil_cpp-build/absl/strings/libabsl_cordz_functions.so
+cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_marshalling.so.0
+cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_commandlineflag.so
+cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_program_name.so
+cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_commandlineflag_internal.so.0
+cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_private_handle_accessor.so
+cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_config.so
+cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_internal.so
+cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_config.so.0
+cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_marshalling.so
+cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_reflection.so.0
+cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_commandlineflag_internal.so
+cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_program_name.so.0
+cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_internal.so.0
+cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_reflection.so
+cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_private_handle_accessor.so.0
+cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_commandlineflag.so.0
+cmake/_deps/abseil_cpp-build/absl/time/libabsl_time_zone.so.0
+cmake/_deps/abseil_cpp-build/absl/time/libabsl_time.so.0
+cmake/_deps/abseil_cpp-build/absl/time/libabsl_time.so
+cmake/_deps/abseil_cpp-build/absl/time/libabsl_civil_time.so.0
+cmake/_deps/abseil_cpp-build/absl/time/libabsl_civil_time.so
+cmake/_deps/abseil_cpp-build/absl/time/libabsl_time_zone.so
+cmake/_deps/abseil_cpp-build/absl/synchronization/libabsl_synchronization.so
+cmake/_deps/abseil_cpp-build/absl/synchronization/libabsl_graphcycles_internal.so
+cmake/_deps/abseil_cpp-build/absl/synchronization/libabsl_synchronization.so.0
+cmake/_deps/abseil_cpp-build/absl/synchronization/libabsl_kernel_timeout_internal.so
+cmake/_deps/abseil_cpp-build/absl/synchronization/libabsl_kernel_timeout_internal.so.0
+cmake/_deps/abseil_cpp-build/absl/synchronization/libabsl_graphcycles_internal.so.0
+cmake/_deps/abseil_cpp-build/absl/container/libabsl_raw_hash_set.so
+cmake/_deps/abseil_cpp-build/absl/container/libabsl_hashtablez_sampler.so.0
+cmake/_deps/abseil_cpp-build/absl/container/libabsl_hashtablez_sampler.so
+cmake/_deps/abseil_cpp-build/absl/container/libabsl_raw_hash_set.so.0
+cmake/_deps/abseil_cpp-build/absl/hash/libabsl_low_level_hash.so.0
+cmake/_deps/abseil_cpp-build/absl/hash/libabsl_city.so.0
+cmake/_deps/abseil_cpp-build/absl/hash/libabsl_hash.so.0
+cmake/_deps/abseil_cpp-build/absl/hash/libabsl_hash.so
+cmake/_deps/abseil_cpp-build/absl/hash/libabsl_low_level_hash.so
+cmake/_deps/abseil_cpp-build/absl/hash/libabsl_city.so
+cmake/_deps/abseil_cpp-build/absl/base/libabsl_strerror.so.0
+cmake/_deps/abseil_cpp-build/absl/base/libabsl_spinlock_wait.so
+cmake/_deps/abseil_cpp-build/absl/base/libabsl_base.so
+cmake/_deps/abseil_cpp-build/absl/base/libabsl_throw_delegate.so
+cmake/_deps/abseil_cpp-build/absl/base/libabsl_log_severity.so.0
+cmake/_deps/abseil_cpp-build/absl/base/libabsl_malloc_internal.so
+cmake/_deps/abseil_cpp-build/absl/base/libabsl_raw_logging_internal.so.0
+cmake/_deps/abseil_cpp-build/absl/base/libabsl_strerror.so
+cmake/_deps/abseil_cpp-build/absl/base/libabsl_raw_logging_internal.so
+cmake/_deps/abseil_cpp-build/absl/base/libabsl_spinlock_wait.so.0
+cmake/_deps/abseil_cpp-build/absl/base/libabsl_throw_delegate.so.0
+cmake/_deps/abseil_cpp-build/absl/base/libabsl_log_severity.so
+cmake/_deps/abseil_cpp-build/absl/base/libabsl_malloc_internal.so.0
+cmake/_deps/abseil_cpp-build/absl/base/libabsl_base.so.0
+cmake/_deps/abseil_cpp-build/absl/numeric/libabsl_int128.so.0
+cmake/_deps/abseil_cpp-build/absl/numeric/libabsl_int128.so
+cmake/_deps/abseil_cpp-build/absl/crc/libabsl_crc_cord_state.so
+cmake/_deps/abseil_cpp-build/absl/crc/libabsl_crc_internal.so
+cmake/_deps/abseil_cpp-build/absl/crc/libabsl_crc32c.so
+cmake/_deps/abseil_cpp-build/absl/crc/libabsl_crc_internal.so.0
+cmake/_deps/abseil_cpp-build/absl/crc/libabsl_crc_cpu_detect.so.0
+cmake/_deps/abseil_cpp-build/absl/crc/libabsl_crc_cpu_detect.so
+cmake/_deps/abseil_cpp-build/absl/crc/libabsl_crc32c.so.0
+cmake/_deps/abseil_cpp-build/absl/crc/libabsl_crc_cord_state.so.0
+cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_utf8_for_code_point.so.0
+cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_demangle_rust.so
+cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_decode_rust_punycode.so.0
+cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_demangle_rust.so.0
+cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_debugging_internal.so.0
+cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_demangle_internal.so.0
+cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_stacktrace.so
+cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_examine_stack.so.0
+cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_debugging_internal.so
+cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_utf8_for_code_point.so
+cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_symbolize.so
+cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_decode_rust_punycode.so
+cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_demangle_internal.so
+cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_stacktrace.so.0
+cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_examine_stack.so
+cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_symbolize.so.0
+cmake/_deps/abseil_cpp-build/absl/profiling/libabsl_exponential_biased.so
+cmake/_deps/abseil_cpp-build/absl/profiling/libabsl_exponential_biased.so.0
+cmake/_deps/onnx-build/libonnx_proto.so
+cmake/_deps/onnx-build/libonnx.so
+cmake/_deps/protobuf-build/libprotobuf.so.32
+cmake/_deps/protobuf-build/libprotobuf-lite.so.32
+cmake/_deps/protobuf-build/libprotoc.so
+cmake/_deps/protobuf-build/libprotobuf.so
+cmake/_deps/protobuf-build/libprotoc.so.3.21.12.0
+cmake/_deps/protobuf-build/libprotobuf-lite.so
+cmake/_deps/protobuf-build/libprotobuf-lite.so.3.21.12.0
+cmake/_deps/protobuf-build/libprotoc.so.32
+cmake/_deps/protobuf-build/libprotobuf.so.3.21.12.0
+	)
+
+	cd "${S}" || die
+	keepdir "/usr/$(get_libdir)/${PN}"
+	exeinto "/usr/$(get_libdir)/${PN}"
+	local path
+	for path in ${LIBS[@]} ; do
+		if [[ -L "${path}" ]] ; then
+			cp -a "${path}" "${ED}/usr/$(get_libdir)/${PN}" || die
+		else
+			doexe "${path}"
+		fi
+	done
+
+	for path in $(find "${ED}" -type f) ; do
+		if file "${path}" | grep -q "ELF.*shared object" ; then
+			patchelf --set-rpath "/usr/$(get_libdir)/${PN}:\$ORIGIN" "${path}" || die
+		fi
+	done
 }
