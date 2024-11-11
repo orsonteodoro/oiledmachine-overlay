@@ -101,7 +101,7 @@
       Hardware acceleration support for codecs, images, and image/video
       processing.
 
-      Supports AV1, H264, H265, JPEG, MPEG2 if hardware support available.
+      Supports AV1, H264, H265, JPEG, MPEG2, VC-1, VP9 if hardware support available.
     </flag>
     <flag name="vcd">
       CDR video support
