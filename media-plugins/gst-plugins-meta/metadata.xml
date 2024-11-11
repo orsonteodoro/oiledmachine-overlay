@@ -100,6 +100,20 @@
     <flag name="pulseaudio">
       Pulseaudio audio system support
     </flag>
+    <flag name="sndfile">
+      Partial compatibility for libsndfile formats which includes
+
+      * Berkeley/IRCAM/CARL
+      * Sphere NIST format
+      * Ensoniq PARIS file format
+      * Midi Sample Dump Standard
+      * Amiga IFF / SVX8 / SV16 format
+      * VOC files
+      * Sonic Foundry's 64 bit RIFF/WAV
+      * Fasttracker 2 Extended Instrument
+      * RF64 WAV file
+
+    </flag>
     <flag name="sndio">
       Lightweight audio and MIDI server support via sndio
     </flag>

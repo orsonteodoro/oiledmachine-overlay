@@ -24,8 +24,8 @@ SLOT="1.0"
 IUSE="
 a52 av1 aac alsa cdda dash dts dv dvb dvd ffmpeg flac fluidsynth gme hls http
 jack jpeg lame libass libvisual midi mp3 modplug mpeg ogg openal openjpeg opus
-oss speex png pulseaudio rtmp sndio svg taglib theora v4l vaapi vcd vorbis vpx
-wavpack wildmidi webp X x264 x265
+oss speex png pulseaudio rtmp sndio sndfile svg taglib theora v4l vaapi vcd
+vorbis vpx wavpack wildmidi webp X x264 x265
 "
 REQUIRED_USE="
 	midi? (
@@ -148,6 +148,9 @@ RDEPEND="
 	)
 	rtmp? (
 		~media-plugins/gst-plugins-rtmp-${PV}:1.0[${MULTILIB_USEDEP}]
+	)
+	sndfile? (
+		~media-plugins/gst-plugins-sndfile-${PV}:0[${MULTILIB_USEDEP}]
 	)
 	sndio? (
 		~media-plugins/gst-plugins-sndio-1.24.0:0[${MULTILIB_USEDEP}]
