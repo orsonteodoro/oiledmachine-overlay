@@ -23,7 +23,7 @@
       CD Digital Audio support
     </flag>
     <flag name="dts">
-      DTS decode support
+      DTS video support
     </flag>
     <flag name="dv">
       Video camera support
