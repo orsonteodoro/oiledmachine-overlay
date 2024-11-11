@@ -457,7 +457,7 @@ onnxruntime_USE_EXTENSIONS
 openvino-auto
 openvino-hetero
 openvino-multi
-ebuild-revision-4
+ebuild-revision-5
 "
 gen_cuda_required_use() {
 	local x
@@ -1116,7 +1116,7 @@ src_configure() {
 		-Donnxruntime_BUILD_MS_EXPERIMENTAL_OPS=OFF
 		-Donnxruntime_BUILD_NODEJS=OFF
 		-Donnxruntime_BUILD_OBJC=OFF
-		-Donnxruntime_BUILD_SHARED_LIB=OFF
+		-Donnxruntime_BUILD_SHARED_LIB=ON
 
 		-Donnxruntime_BUILD_UNIT_TESTS=$(usex test)
 		-Donnxruntime_BUILD_WEBASSEMBLY_STATIC_LIB=OFF
