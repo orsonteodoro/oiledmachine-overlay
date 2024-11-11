@@ -5,13 +5,14 @@ EAPI=8
 
 GST_ORG_MODULE="gst-plugins-bad"
 
-inherit gstreamer-meson
+inherit flag-o-matic gstreamer-meson
 
-#KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
 
 DESCRIPTION="ONNX plugin for GStreamer"
+IUSE+=" ebuild-revision-1"
 RDEPEND="
-	>=dev-python/onnxruntime-1.16.1
+	>=sci-libs/onnxruntime-1.16.1
 	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP}]
 "
 DEPEND="
@@ -19,6 +20,8 @@ DEPEND="
 "
 
 multilib_src_configure() {
+	append-cppflags -I/usr/include/onnxruntime/core/session
+	append-libs -lonnxruntime
 	local emesonargs=(
 		-Dgpl=enabled
 	)
