@@ -10,5 +10,11 @@
     <flag name="bzip2">
       Enable bzip2 encoder/decoder plugin
     </flag>
+    <flag name="vulkan">
+      Enable Vulkan integration library and video sink plugin
+    </flag>
+    <flag name="vulkan-video">
+      Enable H264, H265 via Vulkan Video Extensions.
+    </flag>
   </use>
 </pkgmetadata>

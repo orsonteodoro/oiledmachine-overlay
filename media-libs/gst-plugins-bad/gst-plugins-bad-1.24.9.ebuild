@@ -18,7 +18,18 @@ KEYWORDS="
 DESCRIPTION="Less plugins for GStreamer"
 HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="LGPL-2"
-IUSE="X bzip2 +introspection +orc udev vaapi vnc wayland"
+IUSE="X bzip2 +introspection +orc udev vaapi vnc vulkan vulkan-video wayland"
+REQUIRED_USE="
+	vnc? (
+		X
+	)
+	vulkan? (
+		X
+	)
+	vulkan-video? (
+		vulkan
+	)
+"
 RDEPEND="
 	!media-plugins/gst-plugins-va
 	!media-plugins/gst-transcoder
@@ -45,10 +56,18 @@ RDEPEND="
 			x11-libs/libX11[${MULTILIB_USEDEP}]
 		)
 	)
+	vulkan? (
+		dev-util/vulkan-headers
+		media-libs/vulkan-loader[${MULTILIB_USEDEP},wayland?,X?]
+	)
 	wayland? (
 		>=dev-libs/wayland-1.4.0[${MULTILIB_USEDEP}]
 		>=dev-libs/wayland-protocols-1.15
 		>=x11-libs/libdrm-2.4.104[${MULTILIB_USEDEP}]
+	)
+	X? (
+		>=x11-libs/libxcb-1.10[${MULTILIB_USEDEP}]
+		x11-libs/libxkbcommon[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND="
@@ -69,17 +88,19 @@ src_prepare() {
 }
 
 multilib_src_configure() {
-	GST_PLUGINS_NOAUTO="bz2 hls ipcpipeline librfb shm va wayland"
+	GST_PLUGINS_NOAUTO="bz2 hls ipcpipeline librfb shm va vulkan wayland x11"
 	local emesonargs=(
 		$(meson_feature "bzip2" "bz2")
 		$(meson_feature "vaapi" "va")
 		$(meson_feature "vnc" "librfb")
+		$(meson_feature "vulkan")
+		$(meson_feature "vulkan-video")
 		$(meson_feature "wayland")
-		-Dshm="enabled"
 		-Dipcpipeline="enabled"
 		-Dhls="disabled"
+		-Dshm="enabled"
 		-Dudev=$(usex udev $(usex vaapi "enabled" "disabled") "disabled")
-		-Dx11=$(usex X $(usex vnc "enabled" "disabled") "disabled")
+		-Dx11=$(usex X "enabled" "disabled")
 	)
 	gstreamer_multilib_src_configure
 }
