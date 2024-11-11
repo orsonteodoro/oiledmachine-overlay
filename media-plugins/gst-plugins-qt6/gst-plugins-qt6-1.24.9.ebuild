@@ -15,7 +15,7 @@ inherit gstreamer-meson
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x86-linux"
 
-DESCRIPTION="Video sink plugin for GStreamer that renders to a GtkWidget"
+DESCRIPTION="GStreamer Qt6 support for apps built with Qt Creator"
 IUSE="egl wayland +X" # Keep default IUSE mirrored with gst-plugins-base
 REQUIRED_USE="
 	|| (
@@ -37,7 +37,7 @@ gen_qt6_rdepend() {
 					media-libs/mesa:=
 				)
 				wayland? (
-					dev-qt/qtwayland:6/${s}
+					dev-qt/qtwayland:6/${s}[qml]
 				)
 			)
 		"
