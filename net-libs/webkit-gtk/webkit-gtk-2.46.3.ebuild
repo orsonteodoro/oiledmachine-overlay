@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# FIXME:  Fix sandbox issue with g-ir-scanner segfaulting when building JavaScriptCore-4.0.gir
+
 # D12, U22, U24
 
 # -r revision notes
@@ -2211,7 +2213,7 @@ src_prepare() {
 	# Precautions
 	eapply "${FILESDIR}/extra-patches/webkit-gtk-2.39.1-jsc-disable-fast-math.patch"
 	eapply "${FILESDIR}/extra-patches/webkit-gtk-2.39.1-webcore-honor-finite-math-and-nan.patch"
-	eapply "${FILESDIR}/extra-patches/webkit-gtk-2.46.3-custom-optimization.patch"
+#	eapply "${FILESDIR}/extra-patches/webkit-gtk-2.46.3-custom-optimization.patch"
 
 ewarn
 ewarn "Try adding -Wl,--no-keep-memory to per-package LDFLAGS if out of memory (OOM)"
@@ -2303,7 +2305,7 @@ einfo "SSP is already enabled."
 	else
 	# As a precaution mitigate CE, DT, ID, DoS
 einfo "Adding SSP protection"
-		append-flags -fstack-protector
+#		append-flags -fstack-protector
 	fi
 
 	if tc-enables-fortify-source ; then
@@ -2311,7 +2313,7 @@ einfo "_FORITIFY_SOURCE is already enabled."
 	else
 	# A precaution to mitigate CE, DT, ID, DoS (CWE-121).
 einfo "Adding _FORITIFY_SOURCE=2"
-		append-flags -D_FORTIFY_SOURCE=2
+#		append-flags -D_FORTIFY_SOURCE=2
 	fi
 
 	if tc-enables-pie ; then
@@ -2319,7 +2321,7 @@ einfo "PIC is already enabled."
 	else
 	# ASLR (buffer overflow mitigation)
 einfo "Adding -fPIC"
-		append-flags -fPIC
+#		append-flags -fPIC
 	fi
 
 	# Add more swap if linker OOMs computer.
@@ -2573,6 +2575,8 @@ einfo "OSHIT_OPT_LEVEL_XXHASH: ${OSHIT_OPT_LEVEL_XXHASH}"
 			OSHIT_OPT_LEVEL_XXHASH=1
 		fi
 	fi
+
+	replace-flags "-O*" "-O2"
 
 	# See Source/cmake/WebKitFeatures.cmake
 	local pointer_size=$(tc-get-ptr-size)
