@@ -103,6 +103,10 @@
     <flag name="pulseaudio">
       Pulseaudio audio system support
     </flag>
+    <flag name="qsv">
+      Enable hardware accelerated AV1, H264, H265, JPEG, VP9 for Intel®
+      supported CPUs or GPUs.
+    </flag>
     <flag name="sndfile">
       Partial compatibility for libsndfile formats which includes
 
