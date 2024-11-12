@@ -128,7 +128,7 @@ RDEPEND="
 		dev-libs/gobject-introspection:=
 	)
 	ivorbis? (
-		media-libs/tremor[${MULTILIB_USEDEP}]
+		>=media-libs/tremor-0_pre20180316[${MULTILIB_USEDEP}]
 	)
 	ogg? (
 		>=media-libs/libogg-1.0[${MULTILIB_USEDEP}]
@@ -171,10 +171,11 @@ multilib_src_configure() {
 	filter-flags -mno-sse -mno-sse2 -mno-sse4.1 #610340
 
 	# opus: split to media-plugins/gst-plugins-opus
-	GST_PLUGINS_NOAUTO="alsa gl ogg pango theora vorbis x11 xshm xvideo"
+	GST_PLUGINS_NOAUTO="alsa gl ogg pango theora tremor vorbis x11 xshm xvideo"
 
 	local emesonargs=(
 		$(meson_feature alsa)
+		$(meson_feature ivorbis tremor)
 		$(meson_feature ogg)
 		$(meson_feature pango)
 		$(meson_feature theora)

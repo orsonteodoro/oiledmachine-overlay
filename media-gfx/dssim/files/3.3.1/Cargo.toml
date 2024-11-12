@@ -1,0 +1,66 @@
+[package]
+authors = ["Kornel <pornel@pornel.net>"]
+categories = ["multimedia::images", "command-line-utilities"]
+description = "Tool that measures structural similarity between images using a multi-scale variant of the SSIM algorithm."
+documentation = "https://docs.rs/dssim"
+homepage = "https://kornel.ski/dssim"
+include = ["README.md", "Cargo.toml", "src/*.rs", "LICENSE"]
+keywords = ["ssim", "image", "comparison", "visual", "benchmark"]
+license = "AGPL-3.0"
+name = "dssim"
+readme = "README.md"
+repository = "https://github.com/kornelski/dssim.git"
+version = "3.3.1"
+edition = "2021"
+rust-version = "1.71"
+
+[[bin]]
+doctest = false
+name = "dssim"
+path = "src/main.rs"
+
+[dependencies]
+dssim-core = { path = "./dssim-core", version = "3.2.5", default-features = false }
+imgref = "1.10.0"
+getopts = "0.2.21"
+rayon = { version = "1.8.1", optional = true }
+rgb = "0.8.37"
+lodepng = "3.10.0"
+load_image = { version = "3.1.4", features = ["lcms2-static"] }
+crossbeam-channel = "0.5.11"
+
+[features]
+default = ["threads", "dssim-core/default", "no-macos-vimage"]
+threads = ["dep:rayon", "dssim-core/threads"]
+avif = ["load_image/avif"]
+webp = ["load_image/webp"]
+webp-static = ["load_image/webp-static"]
+no-macos-vimage = ["dssim-core/no-macos-vimage"]
+
+[package.metadata.release]
+consolidate-commits = true
+consolidate-pushes = true
+tag-message = ""
+tag-name = "{{version}}"
+
+[package.metadata.docs.rs]
+targets = ["x86_64-unknown-linux-gnu"]
+rustdoc-args = ["--generate-link-to-definition"]
+
+[workspace]
+members = [
+    "dssim-core"
+]
+
+[profile.dev]
+opt-level = 1
+debug = 1
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+debug = false
+panic = "abort"
+
+[badges]
+maintenance = { status = "actively-developed" }

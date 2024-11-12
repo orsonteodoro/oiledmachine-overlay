@@ -14,7 +14,8 @@
       Enable OpenGL library and plugin via GLESv2 API (requires egl)
     </flag>
     <flag name="ivorbis">
-      Enable integer based vorbis decoder
+      Enable an integer based Vorbis decoder for devices without floating point
+      support
     </flag>
     <flag name="opengl">
       Enable OpenGL library and plugin via desktop OpenGL API
