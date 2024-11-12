@@ -14,7 +14,7 @@
   </longdescription>
   <use>
     <flag name="av1">
-      Fallback CPU based AV1 video support
+      Fallback to CPU based AV1 video support
     </flag>
     <flag name="aac">
       AAC audio support
@@ -62,7 +62,7 @@
       Low latency music production support
     </flag>
     <flag name="jpeg">
-      Fallback CPU based JPEG image support
+      Fallback to CPU based JPEG image support
     </flag>
     <flag name="lame">
       MP3 encode support
@@ -83,10 +83,10 @@
       MP3 audio decode support
     </flag>
     <flag name="mpeg">
-      Fallback CPU based MPEG2 video support
+      Fallback to CPU based MPEG2 video support
     </flag>
     <flag name="nvcodec">
-      Enable hardware accelerated AV1, H264, H265, JPEG, VP8, VP9, resize for
+      Enable hardware accelerated AV1, H.264, H.265, JPEG, VP8, VP9, resize for
       NVIDIA® GPUs.
     </flag>
     <flag name="openal">
@@ -108,7 +108,7 @@
       Pulseaudio audio system support
     </flag>
     <flag name="qsv">
-      Enable hardware accelerated AV1, H264, H265, JPEG, VP9 for Intel®
+      Enable hardware accelerated AV1, H.264, H.265, JPEG, VP9 for Intel®
       supported CPUs or GPUs.
     </flag>
     <flag name="sndfile">
@@ -144,13 +144,14 @@
       Hardware acceleration support for codecs, images, and image/video
       processing.
 
-      Supports AV1, H264, H265, JPEG, MPEG2, VC-1, VP9 if hardware support available.
+      Support AV1, H.264, H.265, JPEG, MPEG2, VC-1, VP9 if hardware support 
+      available.
     </flag>
     <flag name="vcd">
       CDR video support
     </flag>
     <flag name="vpx">
-      Fallback CPU based vp8/vp9 support.
+      Fallback to CPU based VP8/VP9 support.
     </flag>
     <flag name="wavpack">
       Lossless audio support
@@ -162,10 +163,10 @@
       Use WildMIDI for MIDI decode.
     </flag>
     <flag name="x264">
-      Fallback CPU based h264 support.
+      Fallback to CPU based H.264 support.
     </flag>
     <flag name="x265">
-      Fallback CPU based h265 support.
+      Fallback to CPU based H.265 support.
     </flag>
   </use>
 </pkgmetadata>

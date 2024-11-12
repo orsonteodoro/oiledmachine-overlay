@@ -11,24 +11,24 @@
       Enable bzip2 encoder/decoder plugin
     </flag>
     <flag name="nvcodec">
-      Enable hardware accelerated AV1, H264, H265, JPEG, VP8, VP9, resize for
+      Enable hardware accelerated AV1, H.264, H.265, JPEG, VP8, VP9, resize for
       NVIDIA® GPUs.
     </flag>
     <flag name="qsv">
-      Enable hardware accelerated AV1, H264, H265, JPEG, VP9 for Intel®
+      Enable hardware accelerated AV1, H.264, H.265, JPEG, VP9 for Intel®
       supported CPUs or GPUs.
     </flag>
     <flag name="msdk">
-      Use Media SDK for qsv support
+      Use Media SDK for QSV support
     <flag>
     <flag name="onevpl">
-      Use oneVPL for qsv support
+      Use oneVPL for QSV support
     <flag>
     <flag name="vulkan">
       Enable Vulkan integration library and video sink plugin
     </flag>
     <flag name="vulkan-video">
-      Enable H264, H265 via Vulkan Video Extensions.
+      Enable H.264, H.265 via Vulkan Video Extensions.
     </flag>
   </use>
 </pkgmetadata>
