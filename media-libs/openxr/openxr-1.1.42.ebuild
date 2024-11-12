@@ -76,28 +76,26 @@ DEPEND+="
 		x11-base/xorg-proto
 		>=x11-libs/libX11-1.7.5
 	)
+	video_cards_amdgpu? (
+		>=media-libs/mesa-${MESA_PV}[video_cards_radeonsi,vulkan]
+		>=x11-base/xorg-drivers-${XORG_SERVER_PV}[video_cards_amdgpu]
+	)
+	video_cards_intel? (
+		>=media-libs/mesa-${MESA_PV}[video_cards_intel,vulkan]
+		>=x11-base/xorg-drivers-${XORG_SERVER_PV}[video_cards_intel]
+	)
+	video_cards_nvidia? (
+		>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_VULKAN}
+	)
+	video_cards_radeonsi? (
+		>=media-libs/mesa-${MESA_PV}[video_cards_radeonsi,vulkan]
+		>=x11-base/xorg-drivers-${XORG_SERVER_PV}[video_cards_radeonsi]
+	)
 	wayland? (
 		>=dev-libs/wayland-1.20.0
 		>=dev-libs/wayland-protocols-1.25
 		dev-util/wayland-scanner
 		>=media-libs/mesa-${MESA_PV}[egl(+)]
-	)
-	|| (
-		video_cards_amdgpu? (
-			>=media-libs/mesa-${MESA_PV}[video_cards_radeonsi,vulkan]
-			>=x11-base/xorg-drivers-${XORG_SERVER_PV}[video_cards_amdgpu]
-		)
-		video_cards_intel? (
-			>=media-libs/mesa-${MESA_PV}[video_cards_intel,vulkan]
-			>=x11-base/xorg-drivers-${XORG_SERVER_PV}[video_cards_intel]
-		)
-		video_cards_nvidia? (
-			>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_VULKAN}
-		)
-		video_cards_radeonsi? (
-			>=media-libs/mesa-${MESA_PV}[video_cards_radeonsi,vulkan]
-			>=x11-base/xorg-drivers-${XORG_SERVER_PV}[video_cards_radeonsi]
-		)
 	)
 "
 RDEPEND+="
