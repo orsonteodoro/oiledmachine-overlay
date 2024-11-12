@@ -13,7 +13,7 @@ VIDEO_CARDS=(
 	video_cards_amdgpu
 	video_cards_r600
 	video_cards_radeonsi
-	video_cards_noveau
+	video_cards_nouveau
 	video_cards_nvidia
 	video_cards_intel
 )
@@ -88,7 +88,7 @@ RDEPEND="
 	)
 	vaapi? (
 		media-libs/libva:=[${MULTILIB_USEDEP},wayland?,X?]
-		media-libs/vaapi-drivers[video_cards_amdgpu?,video_cards_r600?,video_cards_radeonsi?,video_cards_intel?,video_cards_noveau?,video_cards_nvidia?]
+		media-libs/vaapi-drivers[video_cards_amdgpu?,video_cards_r600?,video_cards_radeonsi?,video_cards_intel?,video_cards_nouveau?,video_cards_nvidia?]
 		udev? (
 			dev-libs/libgudev[${MULTILIB_USEDEP}]
 		)
