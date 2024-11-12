@@ -30,7 +30,9 @@ HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="LGPL-2"
 IUSE="
 ${VIDEO_CARDS[@]}
-X bzip2 +introspection msdk nvcodec onevpl +orc qsv udev vaapi vnc vulkan vulkan-video wayland
+bzip2 +introspection msdk nvcodec onevpl +orc qsv udev vaapi vnc vulkan
+vulkan-video wayland X
+ebuild-revision-1
 "
 REQUIRED_USE="
 	qsv? (
@@ -147,7 +149,7 @@ src_prepare() {
 }
 
 multilib_src_configure() {
-	GST_PLUGINS_NOAUTO="bz2 hls ipcpipeline librfb msdk nvcodec qsv shm va vulkan wayland x11"
+	GST_PLUGINS_NOAUTO="bz2 codec2json hls ipcpipeline librfb msdk nvcodec qsv shm va vulkan wayland x11"
 	local emesonargs=(
 		$(meson_feature "bzip2" "bz2")
 		$(meson_feature "qsv")
@@ -156,8 +158,9 @@ multilib_src_configure() {
 		$(meson_feature "vulkan")
 		$(meson_feature "vulkan-video")
 		$(meson_feature "wayland")
-		-Dipcpipeline="enabled"
+		-Dcodec2json="disabled"
 		-Dhls="disabled"
+		-Dipcpipeline="enabled"
 		-Dmsdk=$(usex msdk "enabled" "disabled")
 		-Dnvcodec=$(usex nvcodec "enabled" "disabled")
 		-Dshm="enabled"
