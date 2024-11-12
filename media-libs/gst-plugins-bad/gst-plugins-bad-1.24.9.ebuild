@@ -57,7 +57,6 @@ RDEPEND="
 		)
 	)
 	vulkan? (
-		dev-util/vulkan-headers
 		media-libs/vulkan-loader[${MULTILIB_USEDEP},wayland?,X?]
 	)
 	wayland? (
@@ -72,6 +71,9 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
+	vulkan? (
+		dev-util/vulkan-headers
+	)
 "
 BDEPEND="
 	dev-util/glib-utils
