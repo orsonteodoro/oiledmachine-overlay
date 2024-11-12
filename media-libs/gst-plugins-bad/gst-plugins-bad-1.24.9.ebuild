@@ -20,8 +20,11 @@ KEYWORDS="
 DESCRIPTION="Less plugins for GStreamer"
 HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="LGPL-2"
-IUSE="X bzip2 +introspection +orc udev vaapi vnc vulkan vulkan-video wayland"
+IUSE="X bzip2 +introspection +orc qsv udev vaapi vnc vulkan vulkan-video wayland"
 REQUIRED_USE="
+	qsv? (
+		vaapi
+	)
 	vnc? (
 		X
 	)
@@ -48,9 +51,13 @@ RDEPEND="
 		>=dev-lang/orc-0.4.17[${MULTILIB_USEDEP}]
 	)
 	vaapi? (
-		media-libs/libva:=[${MULTILIB_USEDEP}]
+		media-libs/libva:=[${MULTILIB_USEDEP},wayland?,X?]
+		media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
 		udev? (
 			dev-libs/libgudev[${MULTILIB_USEDEP}]
+		)
+		qsv? (
+			media-libs/vaapi-drivers[video_cards_intel]
 		)
 	)
 	vnc? (
@@ -95,6 +102,7 @@ multilib_src_configure() {
 	GST_PLUGINS_NOAUTO="bz2 hls ipcpipeline librfb shm va vulkan wayland x11"
 	local emesonargs=(
 		$(meson_feature "bzip2" "bz2")
+		$(meson_feature "qsv")
 		$(meson_feature "vaapi" "va")
 		$(meson_feature "vnc" "librfb")
 		$(meson_feature "vulkan")
