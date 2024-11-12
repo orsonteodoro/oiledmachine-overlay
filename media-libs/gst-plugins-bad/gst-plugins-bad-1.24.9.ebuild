@@ -33,16 +33,16 @@ ${VIDEO_CARDS[@]}
 X bzip2 +introspection msdk nvcodec onevpl +orc qsv udev vaapi vnc vulkan vulkan-video wayland
 "
 REQUIRED_USE="
-	vaapi? (
-		|| (
-			${VIDEO_CARDS[@]}
-		)
-	)
 	qsv? (
 		vaapi
 		|| (
 			msdk
 			onevpl
+		)
+	)
+	vaapi? (
+		|| (
+			${VIDEO_CARDS[@]}
 		)
 	)
 	vnc? (
