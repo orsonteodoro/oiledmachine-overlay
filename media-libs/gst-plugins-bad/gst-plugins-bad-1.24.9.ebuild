@@ -3,7 +3,9 @@
 
 EAPI=8
 
-# X11 is automagic for now, upstream #709530 - only used by librfb USE=vnc plugin
+# X11 is no longer automagic which complicates vulkan configure.
+# Upstream issue #709530 - x11 is only used by librfb USE=vnc plugin.
+
 # Baseline requirement for libva is 1.6, but 1.10 gets more features
 
 GST_ORG_MODULE="gst-plugins-bad"
