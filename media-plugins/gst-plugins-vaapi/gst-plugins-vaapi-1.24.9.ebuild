@@ -30,6 +30,14 @@ EAPI=8
 GST_PLUGINS_NOAUTO="wayland"
 GST_REQ="${PV}"
 MY_PN="gstreamer-vaapi"
+VIDEO_CARDS=(
+	video_cards_amdgpu
+	video_cards_intel
+	video_cards_r600
+	video_cards_radeonsi
+	video_cards_nouveau
+	video_cards_nvidia
+)
 
 inherit gstreamer-meson
 
@@ -42,15 +50,12 @@ HOMEPAGE="https://gitlab.freedesktop.org/gstreamer/gstreamer-vaapi"
 LICENSE="LGPL-2.1+"
 RESTRICT="test"
 SLOT="1.0"
-IUSE="+drm +egl +gles2 opengl wayland +X" # Keep default enabled IUSE in sync with gst-plugins-base and libva
+# Keep default enabled IUSE in sync with gst-plugins-base and libva
+IUSE="
+${VIDEO_CARDS[@]}
++drm +egl +gles2 opengl wayland +X
+"
 REQUIRED_USE="
-	|| (
-		drm
-		gles2
-		opengl
-		wayland
-		X
-	)
 	gles2? (
 		egl
 	)
@@ -62,6 +67,16 @@ REQUIRED_USE="
 	)
 	wayland? (
 		drm
+	)
+	|| (
+		${VIDEO_CARDS[@]}
+	)
+	|| (
+		drm
+		gles2
+		opengl
+		wayland
+		X
 	)
 "
 GL_DEPS="
@@ -75,6 +90,7 @@ RDEPEND="
 	~media-libs/gst-plugins-base-${GST_REQ}:${SLOT}[${MULTILIB_USEDEP}]
 	~media-libs/gst-plugins-bad-${GST_REQ}:${SLOT}[${MULTILIB_USEDEP}]
 	>=media-libs/libva-1.10.0:=[${MULTILIB_USEDEP},drm(+)?,wayland?,X?]
+	media-libs/vaapi-drivers[video_cards_amdgpu?,video_cards_intel?,video_cards_r600?,video_cards_radeonsi?,video_cards_nouveau?,video_cards_nvidia?]
 	drm? (
 		>=virtual/libudev-208:=[${MULTILIB_USEDEP}]
 		>=x11-libs/libdrm-2.4.98[${MULTILIB_USEDEP}]

@@ -10,6 +10,10 @@
     <flag name="bzip2">
       Enable bzip2 encoder/decoder plugin
     </flag>
+    <flag name="nvcodec">
+      Enable hardware accelerated AV1, H264, H265, JPEG, VP8, VP9, resize for
+      NVIDIA® GPUs.
+    </flag>
     <flag name="qsv">
       Enable hardware accelerated AV1, H264, H265, JPEG, VP9 for Intel®
       supported CPUs or GPUs.

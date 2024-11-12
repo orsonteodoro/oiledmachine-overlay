@@ -10,6 +10,11 @@ EAPI=8
 
 GST_ORG_MODULE="gst-plugins-bad"
 VIDEO_CARDS=(
+	video_cards_amdgpu
+	video_cards_r600
+	video_cards_radeonsi
+	video_cards_noveau
+	video_cards_nvidia
 	video_cards_intel
 )
 
@@ -25,9 +30,14 @@ HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="LGPL-2"
 IUSE="
 ${VIDEO_CARDS[@]}
-X bzip2 +introspection msdk onevpl +orc qsv udev vaapi vnc vulkan vulkan-video wayland
+X bzip2 +introspection msdk nvcodec onevpl +orc qsv udev vaapi vnc vulkan vulkan-video wayland
 "
 REQUIRED_USE="
+	vaapi? (
+		|| (
+			${VIDEO_CARDS[@]}
+		)
+	)
 	qsv? (
 		vaapi
 		|| (
@@ -57,6 +67,10 @@ RDEPEND="
 	introspection? (
 		dev-libs/gobject-introspection:=
 	)
+	nvcodec? (
+		dev-util/nvidia-cuda-toolkit:=
+		x11-drivers/nvidia-drivers:=
+	)
 	orc? (
 		>=dev-lang/orc-0.4.17[${MULTILIB_USEDEP}]
 	)
@@ -74,6 +88,7 @@ RDEPEND="
 	)
 	vaapi? (
 		media-libs/libva:=[${MULTILIB_USEDEP},wayland?,X?]
+		media-libs/vaapi-drivers[video_cards_amdgpu?,video_cards_r600?,video_cards_radeonsi?,video_cards_intel?,video_cards_noveau?,video_cards_nvidia?]
 		udev? (
 			dev-libs/libgudev[${MULTILIB_USEDEP}]
 		)
@@ -117,7 +132,7 @@ src_prepare() {
 }
 
 multilib_src_configure() {
-	GST_PLUGINS_NOAUTO="bz2 hls ipcpipeline librfb qsv shm va vulkan wayland x11"
+	GST_PLUGINS_NOAUTO="bz2 hls ipcpipeline librfb msdk nvcodec qsv shm va vulkan wayland x11"
 	local emesonargs=(
 		$(meson_feature "bzip2" "bz2")
 		$(meson_feature "qsv")
@@ -128,6 +143,8 @@ multilib_src_configure() {
 		$(meson_feature "wayland")
 		-Dipcpipeline="enabled"
 		-Dhls="disabled"
+		-Dmsdk=$(usex msdk "enabled" "disabled")
+		-Dnvcodec=$(usex nvcodec "enabled" "disabled")
 		-Dshm="enabled"
 		-Dudev=$(usex udev $(usex vaapi "enabled" "disabled") "disabled")
 		-Dx11=$(usex X "enabled" "disabled")
