@@ -60,7 +60,7 @@ REQUIRED_USE="
 RDEPEND="
 	!media-plugins/gst-plugins-va
 	!media-plugins/gst-transcoder
-	>=dev-libs/glib-2.64.0[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-2.64.0:2[${MULTILIB_USEDEP}]
 	~media-libs/gstreamer-${PV}:${SLOT}[${MULTILIB_USEDEP},introspection?]
 	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP},introspection?]
 	bzip2? (
@@ -70,8 +70,9 @@ RDEPEND="
 		dev-libs/gobject-introspection:=
 	)
 	nvcodec? (
+		dev-libs/glib:2[${MULTILIB_USEDEP}]
 		dev-util/nvidia-cuda-toolkit:=
-		x11-drivers/nvidia-drivers:=
+		x11-drivers/nvidia-drivers:=[${MULTILIB_USEDEP}]
 	)
 	orc? (
 		>=dev-lang/orc-0.4.17[${MULTILIB_USEDEP}]

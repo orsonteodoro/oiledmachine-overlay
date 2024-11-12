@@ -115,7 +115,7 @@ GL_DEPS="
 # >=media-libs/graphene-1.4.0[${MULTILIB_USEDEP}]
 
 RDEPEND="
-	>=dev-libs/glib-2.64.0
+	>=dev-libs/glib-2.64.0:2[${MULTILIB_USEDEP}]
 	app-text/iso-codes
 	sys-libs/zlib[${MULTILIB_USEDEP}]
 	alsa? (
