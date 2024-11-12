@@ -3,12 +3,24 @@
 
 EAPI=7
 
+#
 # Usage note:
+#
 # The idea is that apps depend on this for optional gstreamer plugins.  Then,
 # when USE flags change, no app gets rebuilt, and all apps that can make use of
 # the new plugin automatically do.
+#
 
 # When adding deps here, make sure the keywords on the gst-plugin are valid.
+
+VIDEO_CARDS=(
+	video_cards_amdgpu
+	video_cards_r600
+	video_cards_radeonsi
+	video_cards_intel
+	video_cards_nouveau
+	video_cards_nvidia
+)
 
 inherit multilib-build
 
@@ -22,10 +34,11 @@ HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="metapackage"
 SLOT="1.0"
 IUSE="
+${VIDEO_CARDS[@]}
 a52 av1 aac alsa cdda dash dts dv dvb dvd ffmpeg flac fluidsynth gme gsm hls
-http jack jpeg lame libass libvisual midi mp3 modplug mpeg ogg openal openjpeg
-opus oss speex png pulseaudio qsv rtmp sndio sndfile svg taglib theora v4l vaapi
-vcd vorbis vpx wavpack wildmidi webp X x264 x265
+http jack jpeg lame libass libvisual midi mp3 modplug mpeg nvcodec ogg openal
+openjpeg opus oss speex png pulseaudio qsv rtmp sndio sndfile svg taglib theora
+v4l vaapi vcd vorbis vpx wavpack wildmidi webp X x264 x265
 "
 REQUIRED_USE="
 	midi? (
@@ -128,6 +141,9 @@ RDEPEND="
 		~media-plugins/gst-plugins-mpeg2dec-${PV}:1.0[${MULTILIB_USEDEP}]
 		~media-plugins/gst-plugins-mpeg2enc-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
+	nvcodec? (
+		~media-plugins/gst-plugins-bad-${PV}:1.0[${MULTILIB_USEDEP},nvcodec]
+	)
 	openal? (
 		~media-plugins/gst-plugins-openal-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
@@ -147,7 +163,7 @@ RDEPEND="
 		~media-plugins/gst-plugins-pulse-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
 	qsv? (
-		~media-plugins/gst-plugins-bad-${PV}:1.0[${MULTILIB_USEDEP},qsv]
+		~media-plugins/gst-plugins-bad-${PV}:1.0[${MULTILIB_USEDEP},qsv,video_cards_intel?]
 	)
 	rtmp? (
 		~media-plugins/gst-plugins-rtmp-${PV}:1.0[${MULTILIB_USEDEP}]
@@ -171,7 +187,8 @@ RDEPEND="
 		~media-plugins/gst-plugins-v4l2-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
 	vaapi? (
-		~media-plugins/gst-plugins-vaapi-${PV}:1.0[${MULTILIB_USEDEP}]
+		~media-plugins/gst-plugins-bad-${PV}:1.0[${MULTILIB_USEDEP},vaapi,video_cards_amdgpu?,video_cards_r600?,video_cards_radeonsi?,video_cards_intel?,video_cards_nouveau?,video_cards_nvidia?]
+		~media-plugins/gst-plugins-vaapi-${PV}:1.0[${MULTILIB_USEDEP},video_cards_amdgpu?,video_cards_r600?,video_cards_radeonsi?,video_cards_intel?,video_cards_nouveau?,video_cards_nvidia?]
 	)
 	vcd? (
 		~media-plugins/gst-plugins-mpeg2dec-${PV}:1.0[${MULTILIB_USEDEP}]

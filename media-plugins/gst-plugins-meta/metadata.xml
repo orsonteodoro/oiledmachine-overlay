@@ -85,6 +85,10 @@
     <flag name="mpeg">
       Fallback CPU based MPEG2 video support
     </flag>
+    <flag name="nvcodec">
+      Enable hardware accelerated AV1, H264, H265, JPEG, VP8, VP9, resize for
+      NVIDIA® GPUs.
+    </flag>
     <flag name="openal">
       OpenAL support
     </flag>
