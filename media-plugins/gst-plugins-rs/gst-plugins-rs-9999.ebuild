@@ -746,11 +746,93 @@ SLOT="1.0/$(ver_cut 1-2 ${MY_PV})" # 1.0 is same as media-libs/gstreamer
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${MODULES[@]}
-doc system-libsodium ebuild-revision-1
+aom doc nvcodec qsv rav1e system-libsodium vaapi vpx x264 x265
+ebuild-revision-1
+"
+WEBRTC_AV1_ENCODERS_REQUIRED_USE="
+	|| (
+		aom
+		nvcodec
+		rav1e
+	)
+"
+WEBRTC_H264_ENCODERS_REQUIRED_USE="
+	|| (
+		nvcodec
+		qsv
+		vaapi
+		x264
+	)
+"
+WEBRTC_H265_ENCODERS_REQUIRED_USE="
+	|| (
+		nvcodec
+		qsv
+		vaapi
+		x265
+	)
+"
+WEBRTC_VP8_ENCODERS_REQUIRED_USE="
+	|| (
+		vpx
+	)
+"
+WEBRTC_VP9_ENCODERS_REQUIRED_USE="
+	|| (
+		qsv
+		vpx
+	)
+"
+
+WEBRTC_AV1_DECODERS_REQUIRED_USE="
+	|| (
+		aom
+		nvcodec
+		vaapi
+	)
+"
+WEBRTC_H264_DECODERS_REQUIRED_USE="
+	|| (
+		nvcodec
+		qsv
+		vaapi
+	)
+"
+WEBRTC_H265_DECODERS_REQUIRED_USE="
+	|| (
+		nvcodec
+		qsv
+		vaapi
+	)
+"
+WEBRTC_VP8_DECODERS_REQUIRED_USE="
+	|| (
+		nvcodec
+		vpx
+	)
+"
+WEBRTC_VP9_DECODERS_REQUIRED_USE="
+	|| (
+		nvcodec
+		qsv
+		vaapi
+		vpx
+	)
 "
 REQUIRED_USE+="
 	^^ (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
+	)
+	webrtc? (
+		${WEBRTC_AV1_ENCODERS_REQUIRED_USE}
+		${WEBRTC_H264_ENCODERS_REQUIRED_USE}
+		${WEBRTC_VP8_ENCODERS_REQUIRED_USE}
+		${WEBRTC_VP9_ENCODERS_REQUIRED_USE}
+
+		${WEBRTC_AV1_DECODERS_REQUIRED_USE}
+		${WEBRTC_H264_DECODERS_REQUIRED_USE}
+		${WEBRTC_VP8_DECODERS_REQUIRED_USE}
+		${WEBRTC_VP9_DECODERS_REQUIRED_USE}
 	)
 	webrtchttp? (
 		reqwest
@@ -831,8 +913,33 @@ RDEPEND+="
 	webp? (
 		>=media-libs/libwebp-1.2.4[${MULTILIB_USEDEP}]
 	)
+	webrtc? (
+		>=media-plugins/gst-plugins-opus-${GST_PV}:1.0[${MULTILIB_USEDEP}]
+		>=media-plugins/gst-plugins-rtp-${GST_PV}:1.0[${MULTILIB_USEDEP}]
+		aom? (
+			>=media-plugins/gst-plugins-aom-${GST_PV}:1.0[${MULTILIB_USEDEP}]
+		)
+		nvcodec? (
+			>=media-plugins/gst-plugins-bad-${GST_PV}:1.0[${MULTILIB_USEDEP},nvcodec]
+		)
+		qsv? (
+			>=media-plugins/gst-plugins-bad-${GST_PV}:1.0[${MULTILIB_USEDEP},qsv]
+		)
+		rav1e? (
+			>=media-plugins/gst-plugins-rav1e-${GST_PV}:1.0[${MULTILIB_USEDEP}]
+		)
+		vaapi? (
+			>=media-plugins/gst-plugins-vaapi-${GST_PV}:1.0[${MULTILIB_USEDEP}]
+		)
+		vpx? (
+			>=media-plugins/gst-plugins-vpx-${GST_PV}:1.0[${MULTILIB_USEDEP}]
+		)
+		x264? (
+			>=media-plugins/gst-plugins-x264-${GST_PV}:1.0[${MULTILIB_USEDEP}]
+		)
+	)
 	webrtchttp? (
-		>=media-plugins/gst-plugins-webrtc-${GST_PV}[${MULTILIB_USEDEP}]
+		>=media-plugins/gst-plugins-webrtc-${GST_PV}:1.0[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND+="
