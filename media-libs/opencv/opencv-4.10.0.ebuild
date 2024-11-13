@@ -215,7 +215,7 @@ ROCM_SLOTS=(
 	"rocm_5_1"
 )
 
-inherit cuda java-pkg-opt-2 java-ant-2 cmake-multilib flag-o-matic hip-versions
+inherit cuda java-pkg-opt-2 cmake-multilib flag-o-matic hip-versions
 inherit python-r1 toolchain-funcs virtualx
 
 if [[ "${PV}" == *"9999"* ]] ; then
@@ -1379,7 +1379,6 @@ eerror "OpenVINO is not supported for ${ARCH}"
 		)
 		cmake_src_configure
 	fi
-	use java && java-ant-2_src_configure
 }
 
 multilib_src_compile() {

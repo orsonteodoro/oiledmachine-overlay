@@ -236,7 +236,7 @@ CPU_FEATURES_MAP=(
 	${X86_CPU_FEATURES[@]}
 )
 
-inherit cuda java-pkg-opt-2 java-ant-2 cmake-multilib flag-o-matic hip-versions
+inherit cuda java-pkg-opt-2 cmake-multilib flag-o-matic hip-versions
 inherit python-r1 toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64"
@@ -1195,7 +1195,6 @@ eerror "OpenVINO is not supported for ${ARCH}"
 				-DPYTHON_DEFAULT_EXECUTABLE="${EPYTHON}"
 			)
 			cmake_src_configure
-			use java && java-ant-2_src_configure
 		}
 
 		python_foreach_impl python_configure
@@ -1207,7 +1206,6 @@ eerror "OpenVINO is not supported for ${ARCH}"
 			-DPYTHON_EXECUTABLE=OFF
 		)
 		cmake_src_configure
-		use java && java-ant-2_src_configure
 	fi
 
 }
