@@ -746,7 +746,7 @@ SLOT="1.0/$(ver_cut 1-2 ${MY_PV})" # 1.0 is same as media-libs/gstreamer
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${MODULES[@]}
-aom doc nvcodec qsv rav1e system-libsodium vaapi vpx x264 x265
+aom doc nvcodec qsv rav1e system-libsodium vaapi vpx vulkan x264 x265
 ebuild-revision-1
 "
 WEBRTC_AV1_ENCODERS_REQUIRED_USE="
@@ -796,6 +796,7 @@ WEBRTC_H264_DECODERS_REQUIRED_USE="
 		nvcodec
 		qsv
 		vaapi
+		vulkan
 	)
 "
 WEBRTC_H265_DECODERS_REQUIRED_USE="
@@ -803,6 +804,7 @@ WEBRTC_H265_DECODERS_REQUIRED_USE="
 		nvcodec
 		qsv
 		vaapi
+		vulkan
 	)
 "
 WEBRTC_VP8_DECODERS_REQUIRED_USE="
