@@ -64,6 +64,9 @@
     <flag name="jpeg">
       Fallback to CPU based JPEG image support
     </flag>
+    <flag name="jpeg2k">
+      JPEG2000 image support
+    </flag>
     <flag name="lame">
       MP3 encode support
     </flag>
@@ -91,9 +94,6 @@
     </flag>
     <flag name="openal">
       OpenAL support
-    </flag>
-    <flag name="openjpeg">
-      JPEG2000 image support
     </flag>
     <flag name="opus">
       General purpose audio codec support

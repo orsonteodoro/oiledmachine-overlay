@@ -36,8 +36,8 @@ SLOT="1.0"
 IUSE="
 ${VIDEO_CARDS[@]}
 a52 av1 aac alsa cdda dash dts dv dvb dvd ffmpeg flac fluidsynth gme gsm hls
-http jack jpeg lame libass libvisual midi mp3 modplug mpeg nvcodec ogg openal
-openjpeg opus oss speex png pulseaudio qsv rtmp sndio sndfile svg taglib theora
+http jack jpeg jpeg2k lame libass libvisual midi mp3 modplug mpeg nvcodec ogg
+openal opus oss speex png pulseaudio qsv rtmp sndio sndfile svg taglib theora
 v4l vaapi vcd vorbis vpx wavpack wildmidi webp X x264 x265
 "
 REQUIRED_USE="
@@ -113,6 +113,9 @@ RDEPEND="
 	jack? (
 		~media-plugins/gst-plugins-jack-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
+	jpeg2k? (
+		~media-plugins/gst-plugins-openjpeg-${PV}:1.0[${MULTILIB_USEDEP}]
+	)
 	lame? (
 		~media-plugins/gst-plugins-lame-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
@@ -146,9 +149,6 @@ RDEPEND="
 	)
 	openal? (
 		~media-plugins/gst-plugins-openal-${PV}:1.0[${MULTILIB_USEDEP}]
-	)
-	openjpeg? (
-		~media-plugins/gst-plugins-openjpeg-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
 	opus? (
 		~media-plugins/gst-plugins-opus-${PV}:1.0[${MULTILIB_USEDEP}]
