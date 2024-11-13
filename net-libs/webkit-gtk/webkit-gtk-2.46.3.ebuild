@@ -4,6 +4,12 @@
 
 EAPI=8
 
+# With gcc-14:
+#/usr/include/bits/stdlib.h:86:3: error: "Assumed value of MB_LEN_MAX wrong"
+#   86 | # error "Assumed value of MB_LEN_MAX wrong"
+#      |   ^
+
+
 # FIXME:  Fix sandbox issue with g-ir-scanner segfaulting when building JavaScriptCore-4.0.gir
 
 # D12, U22, U24
