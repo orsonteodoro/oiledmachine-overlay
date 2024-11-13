@@ -1185,6 +1185,7 @@ _set_clang() {
 		export OBJDUMP="llvm-objdump"
 		export READELF="llvm-readelf"
 		export STRIP="llvm-strip"
+		export GCC_FLAGS=""
 		strip-unsupported-flags
 		${CC} --version || die
 	fi
@@ -1230,6 +1231,7 @@ eerror
 		export OBJDUMP="objdump"
 		export READELF="readelf"
 		export STRIP="strip"
+		export GCC_FLAGS="-fno-allow-store-data-races"
 		strip-unsupported-flags
 	fi
 }

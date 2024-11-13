@@ -19,10 +19,10 @@ diff '--color=auto' -urp webkitgtk-2.46.3.orig/Source/ThirdParty/ANGLE/CMakeList
      add_dependencies(GLESv2Framework ANGLE-webgl-headers)
  endif ()
  
-+WEBKIT_ADD_TARGET_CXX_FLAGS(ANGLE -O$ENV{OSHIT_OPT_LEVEL_ANGLE} -fno-allow-store-data-races)
++WEBKIT_ADD_TARGET_CXX_FLAGS(ANGLE -O$ENV{OSHIT_OPT_LEVEL_ANGLE} $ENV{GCC_FLAGS})
 +
 +set_source_files_properties(src/common/third_party/xxhash/xxhash.c PROPERTIES
-+    COMPILE_FLAGS "-O$ENV{OSHIT_OPT_LEVEL_XXHASH} -fno-allow-store-data-races"
++    COMPILE_FLAGS "-O$ENV{OSHIT_OPT_LEVEL_XXHASH} $ENV{GCC_FLAGS}"
 +)
 +
  if (COMPILER_IS_GCC_OR_CLANG)
@@ -35,7 +35,7 @@ diff '--color=auto' -urp webkitgtk-2.46.3.orig/Source/ThirdParty/skia/CMakeLists
  )
  
  WEBKIT_ADD_TARGET_CXX_FLAGS(Skia
-+    -O$ENV{OSHIT_OPT_LEVEL_SKIA} -fno-allow-store-data-races
++    -O$ENV{OSHIT_OPT_LEVEL_SKIA} $ENV{GCC_FLAGS}
      -ffp-contract=off
      -fstrict-aliasing
  
@@ -47,7 +47,7 @@ diff '--color=auto' -urp webkitgtk-2.46.3.orig/Source/WTF/wtf/CMakeLists.txt web
  WEBKIT_FRAMEWORK(WTF)
  
 +set_source_files_properties(SHA1.cpp PROPERTIES
-+    COMPILE_FLAGS "-O$ENV{OSHIT_OPT_LEVEL_SHA1} -fno-allow-store-data-races"
++    COMPILE_FLAGS "-O$ENV{OSHIT_OPT_LEVEL_SHA1} $ENV{GCC_FLAGS}"
 +)
 +
  if (MSVC)
