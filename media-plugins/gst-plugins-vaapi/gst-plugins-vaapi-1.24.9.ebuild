@@ -3,6 +3,9 @@
 
 EAPI=8
 
+# gst-plugins-va - newer stateless implementation
+# gst-plugins-vaapi - the older stateful implementation
+
 # FIXME: "Failed to create vaapipostproc element"
 
 # gst-vaapi configure is based around GL platform mainly, unlike gst-plugins-bad that goes by GL API mainly; for less surprises,
@@ -45,8 +48,8 @@ KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv ~x86"
 S="${WORKDIR}/${MY_PN}-${PV}"
 SRC_URI="https://gstreamer.freedesktop.org/src/${MY_PN}/${MY_PN}-${PV}.tar.xz"
 
-DESCRIPTION="Hardware accelerated video decoding through VA-API plugin for GStreamer"
-HOMEPAGE="https://gitlab.freedesktop.org/gstreamer/gstreamer-vaapi"
+DESCRIPTION="Hardware accelerated video codecs through VA-API for GStreamer"
+HOMEPAGE="https://gitlab.freedesktop.org/gstreamer/gstreamer/-/tree/main/subprojects/gstreamer-vaapi?ref_type=heads"
 LICENSE="LGPL-2.1+"
 RESTRICT="test"
 SLOT="1.0"
