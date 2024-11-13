@@ -1170,7 +1170,7 @@ eerror
 }
 
 _set_clang() {
-	if true || tc-is-clang ; then
+	if false && tc-is-clang ; then
 		local s
 		for s in ${LLVM_COMPAT[@]} ; do
 			if has_version "sys-devel/clang:${s}" ; then
@@ -1199,7 +1199,7 @@ ewarn
 }
 
 _set_gcc() {
-	if false || tc-is-gcc ; then
+	if true || tc-is-gcc ; then
 		local gcc_current_profile=$(gcc-config -c)
 		local gcc_current_profile_slot="${gcc_current_profile##*-}"
 
@@ -1243,18 +1243,18 @@ eerror
 	fi
 }
 
-
 _set_cxx() {
 	if [[ ${MERGE_TYPE} != "binary" ]] ; then
 	# See https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/DependenciesPolicy.html
 	# Based on D 12, U 22, U 24
-	# D12 - gcc 12.2
-	# U22 - gcc 11.2
-	# U24 - gcc 13.2
+	# D12 - gcc 12.2, clang 14.0
+	# U22 - gcc 11.2, clang 14.0
+	# U24 - gcc 13.2, clang 18.0
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)
 		export CPP="${CXX} -E"
-		_set_clang
+		#_set_clang # Broken when generating JavaScriptCore-4.0.gir
+		_set_gcc
 	fi
 }
 
