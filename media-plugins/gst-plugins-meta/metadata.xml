@@ -14,7 +14,7 @@
   </longdescription>
   <use>
     <flag name="av1">
-      Fallback to a CPU based AV1 video support
+      Fallback to CPU based AV1 video support
     </flag>
     <flag name="aom">
       Fallback to the slower CPU based reference AV1 codec
