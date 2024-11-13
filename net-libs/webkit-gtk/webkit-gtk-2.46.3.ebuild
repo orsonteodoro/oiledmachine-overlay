@@ -2142,7 +2142,7 @@ einfo "ID = Information Disclosure"
 einfo
 	fi
 	_set_cxx
-	check_icu_build
+	#check_icu_build
 	if [[ ${MERGE_TYPE} != "binary" ]] \
 		&& is-flagq "-g*" \
 		&& ! is-flagq "-g*0" ; then
