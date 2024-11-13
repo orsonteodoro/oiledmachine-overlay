@@ -35,12 +35,22 @@ LICENSE="metapackage"
 SLOT="1.0"
 IUSE="
 ${VIDEO_CARDS[@]}
-a52 av1 aac alsa cdda dash dts dv dvb dvd ffmpeg flac fluidsynth gme gsm hls
-http jack jpeg jpeg2k lame libass libvisual midi mp3 modplug mpeg nvcodec ogg
-openal opus oss speex png pulseaudio qsv rtmp sndio sndfile svg taglib theora
-v4l vaapi vcd vorbis vpx wavpack wildmidi webp X x264 x265
+a52 aac alsa aom av1 cdda dash dav1d dts dv dvb dvd ffmpeg flac fluidsynth gme
+gsm hls http jack jpeg jpeg2k lame libass libvisual midi mp3 modplug mpeg
+nvcodec ogg openal opus oss speex png pulseaudio qsv rav1e rtmp sndio sndfile
+svg taglib theora v4l vaapi vcd vorbis vpx wavpack wildmidi webp X x264 x265
 "
 REQUIRED_USE="
+	av1? (
+		|| (
+			aom
+			rav1e
+		)
+		|| (
+			aom
+			dav1d
+		)
+	)
 	midi? (
 		|| (
 			fluidsynth
@@ -62,21 +72,23 @@ RDEPEND="
 	~media-libs/gstreamer-${PV}:1.0[${MULTILIB_USEDEP}]
 	~media-libs/gst-plugins-base-${PV}:1.0[${MULTILIB_USEDEP},alsa?,ogg?,theora?,vorbis?,X?]
 	~media-libs/gst-plugins-good-${PV}:1.0[${MULTILIB_USEDEP}]
-	av1? (
-		~media-plugins/gst-plugins-aom-${PV}:1.0[${MULTILIB_USEDEP}]
-		~media-plugins/gst-plugins-rs-${PV}:1.0[${MULTILIB_USEDEP},dav1d]
-	)
 	a52? (
 		~media-plugins/gst-plugins-a52dec-${PV}:1.0[${MULTILIB_USEDEP}]
         )
 	aac? (
 		~media-plugins/gst-plugins-faad-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
+	aom? (
+		~media-plugins/gst-plugins-aom-${PV}:1.0[${MULTILIB_USEDEP}]
+	)
 	cdda? (
 		|| (
 			~media-plugins/gst-plugins-cdparanoia-${PV}:1.0[${MULTILIB_USEDEP}]
 			~media-plugins/gst-plugins-cdio-${PV}:1.0[${MULTILIB_USEDEP}]
 		)
+	)
+	dav1d? (
+		~media-plugins/gst-plugins-rs-${PV}:1.0[${MULTILIB_USEDEP},dav1d]
 	)
 	dts? (
 		~media-plugins/gst-plugins-dts-${PV}:1.0[${MULTILIB_USEDEP}]

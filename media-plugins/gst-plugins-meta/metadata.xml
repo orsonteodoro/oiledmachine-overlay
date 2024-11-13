@@ -14,13 +14,19 @@
   </longdescription>
   <use>
     <flag name="av1">
-      Fallback to CPU based AV1 video support
+      Fallback to a CPU based AV1 video support
+    </flag>
+    <flag name="aom">
+      Fallback to the slower CPU based reference AV1 codec
     </flag>
     <flag name="aac">
       AAC audio support
     </flag>
     <flag name="cdda">
       CD Digital Audio support
+    </flag>
+    <flag name="dav1d">
+      Fallback to an optimized CPU based AV1 decoder
     </flag>
     <flag name="dts">
       DTS video support
@@ -110,6 +116,9 @@
     <flag name="qsv">
       Enable hardware accelerated AV1, H.264, H.265, JPEG, VP9 for Intel®
       supported CPUs or GPUs.
+    </flag>
+    <flag name="rav1e">
+      Fallback to the secure CPU based AV1 encoder
     </flag>
     <flag name="sndfile">
       Partial compatibility for libsndfile formats which includes
