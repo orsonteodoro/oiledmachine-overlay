@@ -142,7 +142,7 @@ LICENSE_FINGERPRINT="\
 dcda5b12dce8c42c9a09e28f5320679d1d6bb506a0c429005046b5606a341ab2\
 2a1798763b46e4002e33d80cd416fb285494e88a8fd8413a97019c7772373a32\
 " # SHA512
-LLVM_COMPAT=( 18 17 ) # Limited based on virtual/rust
+LLVM_COMPAT=( 18 17 ) # Limited based on rust
 LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
 MITIGATION_DATE="Oct 29, 2024" # Advisory date
@@ -651,6 +651,38 @@ NON_FREE_CDEPENDS="
 		)
 	)
 "
+RUST_CDEPEND="
+	llvm_slot_17? (
+		|| (
+			=dev-lang/rust-1.77*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.75*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.75*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.74*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.73*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.77*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.75*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.75*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.74*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.73*[${MULTILIB_USEDEP}]
+		)
+	)
+	llvm_slot_18? (
+		|| (
+			=dev-lang/rust-1.81*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.80*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.79*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.78*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.81*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.80*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.79*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.78*[${MULTILIB_USEDEP}]
+		)
+	)
+	|| (
+		dev-lang/rust:=
+		dev-lang/rust-bin:=
+	)
+"
 CDEPEND="
 	${FF_ONLY_DEPEND}
 	${NON_FREE_CDEPENDS}
@@ -836,7 +868,6 @@ gen_llvm_bdepend() {
 				sys-devel/clang:${LLVM_SLOT}[${MULTILIB_USEDEP}]
 				sys-devel/lld:${LLVM_SLOT}
 				sys-devel/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}]
-				virtual/rust:0/llvm-${LLVM_SLOT}[${MULTILIB_USEDEP}]
 				pgo? (
 					=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}*[${MULTILIB_USEDEP},profile]
 					sys-libs/compiler-rt-sanitizers:=
@@ -846,9 +877,15 @@ gen_llvm_bdepend() {
 	done
 }
 GCC_BDEPEND="
-	>=virtual/rust-1.76[${MULTILIB_USEDEP}]
-	rust-simd? (
-		<virtual/rust-1.78[${MULTILIB_USEDEP}]
+	|| (
+		(
+			>=dev-lang/rust-1.76[${MULTILIB_USEDEP}]
+			dev-lang/rust:=
+		)
+		(
+			>=dev-lang/rust-bin-1.76[${MULTILIB_USEDEP}]
+			dev-lang/rust-bin:=
+		)
 	)
 "
 # The >=2.0 of mold is used for legal reasons.
@@ -857,25 +894,17 @@ BDEPEND+="
 	${GAMEPAD_BDEPEND}
 	${GCC_BDEPEND}
 	${PYTHON_DEPS}
+	${RUST_CDEPEND}
 	=net-libs/nodejs-${NODE_VERSION}*
 	>=dev-lang/perl-5.006
 	>=dev-util/cbindgen-0.26.0
 	>=dev-util/pkgconf-1.8.0[${MULTILIB_USEDEP},pkg-config(+)]
-	(
-		>=virtual/rust-${RUST_PV}[${MULTILIB_USEDEP}]
-		rust-simd? (
-			<virtual/rust-1.78[${MULTILIB_USEDEP}]
-		)
-	)
 	app-alternatives/awk
 	app-arch/unzip
 	app-arch/zip
 	app-eselect/eselect-nodejs
 	!elibc_glibc? (
-		dev-lang/rust
-		rust-simd? (
-			<dev-lang/rust-1.78
-		)
+		dev-lang/rust[${MULTILIB_USEDEP}]
 	)
 	amd64? (
 		>=dev-lang/nasm-${NASM_PV}

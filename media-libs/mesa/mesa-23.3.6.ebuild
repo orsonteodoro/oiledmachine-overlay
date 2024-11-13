@@ -272,7 +272,48 @@ BDEPEND="
 	${PYTHON_DEPS}
 	opencl? (
 		>=dev-util/bindgen-0.58.0
-		>=virtual/rust-1.62.0
+		llvm_slot_15? (
+			|| (
+				=dev-lang/rust-1.69*
+				=dev-lang/rust-1.68*
+				=dev-lang/rust-1.67*
+				=dev-lang/rust-1.66*
+				=dev-lang/rust-1.65*
+				=dev-lang/rust-bin-1.69*
+				=dev-lang/rust-bin-1.68*
+				=dev-lang/rust-bin-1.67*
+				=dev-lang/rust-bin-1.66*
+				=dev-lang/rust-bin-1.65*
+			)
+		)
+		llvm_slot_16? (
+			|| (
+				=dev-lang/rust-1.72*
+				=dev-lang/rust-1.71*
+				=dev-lang/rust-1.70*
+				=dev-lang/rust-bin-1.72*
+				=dev-lang/rust-bin-1.71*
+				=dev-lang/rust-bin-1.70*
+			)
+		)
+		llvm_slot_17? (
+			|| (
+				=dev-lang/rust-1.77*
+				=dev-lang/rust-1.75*
+				=dev-lang/rust-1.75*
+				=dev-lang/rust-1.74*
+				=dev-lang/rust-1.73*
+				=dev-lang/rust-bin-1.77*
+				=dev-lang/rust-bin-1.75*
+				=dev-lang/rust-bin-1.75*
+				=dev-lang/rust-bin-1.74*
+				=dev-lang/rust-bin-1.73*
+			)
+		)
+		|| (
+			dev-lang/rust:=
+			dev-lang/rust-bin:=
+		)
 	)
 	app-alternatives/yacc
 	app-alternatives/lex

@@ -11597,7 +11597,7 @@ einfo "Changed to ${sym}=${OT_KERNEL_KCONFIG[${sym}]} in .config"
 #
 ot-kernel_set_rust() {
 	ot-kernel_use rust || return
-	if has_version "~virtual/rust-${RUST_PV}" ; then
+	if has_version "~dev-lang/rust-${RUST_PV}" || has_version "~dev-lang/rust-bin-${RUST_PV}" ; then
 		ot-kernel_y_configopt "CONFIG_RUST"
 		ot-kernel_unset_configopt "CONFIG_MODVERSIONS"
 		ot-kernel_unset_configopt "CONFIG_GCC_PLUGINS"

@@ -73,7 +73,10 @@ RDEPEND+="
 		')
 	)
 	rust? (
-		virtual/rust
+		|| (
+			dev-lang/rust
+			dev-lang/rust-bin
+		)
 	)
 	tensorflow? (
 		=dev-python/keras-2.14*[${PYTHON_USEDEP}]

@@ -931,7 +931,10 @@ BDEPEND+="
 	${VUE_DEPEND}
 	>=dev-build/make-4.3
 	virtual/pkgconfig
-	virtual/rust
+	|| (
+		dev-lang/rust:=
+		dev-lang/rust-bin:=
+	)
 "
 
 # @FUNCTION: cargo_src_unpack

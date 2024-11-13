@@ -22,12 +22,28 @@ _CARGO_ECLASS=1
 
 # check and document RUST_DEPEND and options we need below in case conditions.
 # https://github.com/rust-lang/cargo/blob/master/CHANGELOG.md
-RUST_DEPEND="virtual/rust"
+RUST_DEPEND="
+	|| (
+		dev-lang/rust
+		dev-lang/rust-bin
+	)
+"
 
 case ${EAPI} in
 	7)
 		# 1.37 added 'cargo vendor' subcommand and net.offline config knob
-		RUST_DEPEND=">=virtual/rust-1.37.0"
+		RUST_DEPEND="
+			|| (
+				(
+					>=dev-lang/rust-1.37.0
+					dev-lang/rust:=
+				)
+				(
+					>=dev-lang/rust-bin-1.37.0
+					dev-lang/rust-bin:=
+				)
+			)
+		"
 		;;
 	8)
 		# 1.39 added --workspace
@@ -36,7 +52,18 @@ case ${EAPI} in
 		# 1.51 added split-debuginfo profile option
 		# 1.52 may need setting RUSTC_BOOTSTRAP envvar for some crates
 		# 1.53 added cargo update --offline, can be used to update vulnerable crates from pre-fetched registry without editing toml
-		RUST_DEPEND=">=virtual/rust-1.53"
+		RUST_DEPEND="
+			|| (
+				(
+					>=dev-lang/rust-1.53
+					dev-lang/rust:=
+				)
+				(
+					>=dev-lang/rust-bin-1.53
+					dev-lang/rust-bin:=
+				)
+			)
+		"
 
 		if [[ -z ${CRATES} && "${PV}" != *9999* ]]; then
 			eerror "undefined CRATES variable in non-live EAPI=8 ebuild"
@@ -113,7 +140,7 @@ ECARGO_VENDOR="${ECARGO_HOME}/gentoo"
 # be considered optional. No dependencies will be added and no phase
 # functions will be exported.
 #
-# If you enable CARGO_OPTIONAL, you have to set BDEPEND on virtual/rust
+# If you enable CARGO_OPTIONAL, you have to set BDEPEND on || ( dev-lang/rust dev-lang/rust-bin )
 # for your package and call at least cargo_gen_config manually before using
 # other src_functions of this eclass.
 # Note that cargo_gen_config is automatically called by cargo_src_unpack.

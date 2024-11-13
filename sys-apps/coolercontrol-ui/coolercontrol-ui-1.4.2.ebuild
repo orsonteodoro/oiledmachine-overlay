@@ -1134,7 +1134,16 @@ DEPEND+="
 "
 COOLERCONTROL_UI_BDEPEND="
 	>=net-libs/nodejs-18.12.0[npm]
-	>=virtual/rust-1.75
+	|| (
+		(
+			>=dev-lang/rust-1.75
+			dev-lang/rust:=
+		)
+		(
+			>=dev-lang/rust-bin-1.75
+			dev-lang/rust-bin:=
+		)
+	)
 "
 VUE_DEPEND="
 	>=net-libs/nodejs-18.12.0[npm]

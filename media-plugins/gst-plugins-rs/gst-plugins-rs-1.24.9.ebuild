@@ -23,7 +23,7 @@ MY_PV="${PV}"
 EXPECTED_BUILD_FILES_FINGERPRINT="disable"
 GOBJECT_INTROSPECTION_PV="1.74.0"
 GST_PV="${MY_PV}"
-LLVM_COMPAT=( {17..16} ) # For clang-sys ; slot based on virtual/rust subslot
+LLVM_COMPAT=( {17..16} ) # For clang-sys ; slot based on rust subslot
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MODULES=(
 	audiofx
@@ -73,17 +73,6 @@ MODULES=(
 	webrtchttp
 )
 PYTHON_COMPAT=( python3_{8..11} )
-declare -A VIRTUAL_RUST_PV_TO_LLVM_SLOT=(
-# See https://github.com/rust-lang/rust/blob/1.78.0/src/doc/rustc/src/linker-plugin-lto.md?plain=1#L203
-	["1.77"]=17 # Rust inclusion based "check commits" on CI for tag
-	["1.76"]=17
-	["1.75"]=17
-	["1.74"]=17
-	["1.73"]=17
-	["1.72"]=16
-	["1.71"]=16
-	["1.70"]=16 # Rust inclusion based on Cargo.toml
-)
 
 if [[ "${MY_PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -834,7 +823,7 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
-# Update while keeping track of versions of virtual/rust.
+# Update while keeping track of versions of rust.
 # Expanded here because the virtual system is broken for multilib.
 gen_llvm_bdepend() {
 	local s
@@ -847,18 +836,38 @@ gen_llvm_bdepend() {
 		"
 	done
 }
-gen_virtual_rust_bdepend() {
-	local virtual_rust_pv
-	for virtual_rust_pv in ${!VIRTUAL_RUST_PV_TO_LLVM_SLOT[@]} ; do
-		local llvm_slot="${VIRTUAL_RUST_PV_TO_LLVM_SLOT[${virtual_rust_pv}]}"
-		echo "
-			llvm_slot_${llvm_slot}? (
-				=virtual/rust-${virtual_rust_pv}*[${MULTILIB_USEDEP}]
-			)
-		"
-	done
-}
+RUST_BDEPEND="
+	llvm_slot_16? (
+		|| (
+			=dev-lang/rust-1.72*
+			=dev-lang/rust-1.71*
+			=dev-lang/rust-1.70*
+			=dev-lang/rust-bin-1.72*
+			=dev-lang/rust-bin-1.71*
+			=dev-lang/rust-bin-1.70*
+		)
+	)
+	llvm_slot_17? (
+		|| (
+			=dev-lang/rust-1.77*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.75*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.75*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.74*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.73*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.77*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.75*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.75*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.74*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.73*[${MULTILIB_USEDEP}]
+		)
+	)
+	|| (
+		dev-lang/rust:=
+		dev-lang/rust-bin:=
+	)
+"
 BDEPEND+="
+	${RUST_BDEPEND}
 	$(gen_llvm_bdepend)
 	>=dev-build/meson-1.1
 	>=dev-util/cargo-c-0.9.21
@@ -870,10 +879,6 @@ BDEPEND+="
 			dev-python/hotdoc[${PYTHON_USEDEP}]
 		')
 	)
-	|| (
-		$(gen_virtual_rust_bdepend)
-	)
-	virtual/rust:=
 "
 PATCHES=(
 )
@@ -907,51 +912,18 @@ ewarn
 }
 
 multilib_src_configure() {
-	local found=0
 	local llvm_slot
-	local virtual_rust_slot
-	for virtual_rust_slot in ${!VIRTUAL_RUST_PV_TO_LLVM_SLOT[@]} ; do
-		llvm_slot=${VIRTUAL_RUST_PV_TO_LLVM_SLOT[${virtual_rust_slot}]}
-		[[ -z "${llvm_slot}" ]] && continue
-		if \
-			   has_version "=virtual/rust-${virtual_rust_slot}*" \
-			&& has_version "sys-devel/clang:${llvm_slot}" \
-			&& has_version "sys-devel/llvm:${llvm_slot}" \
-		; then
-			found=1
-			break
-		fi
-	done
-	if (( ${found} == 1 )) ; then
-		LLVM_MAX_SLOT=${llvm_slot}
-		llvm_pkg_setup
-	else
-		local virtual_rust_pv=$(best_version "virtual/rust" \
-			| sed -e "s|virtual/rust-||g")
-		local virtual_rust_pv_slot=${virtual_rust_pv%.*}
-		local has_clang_slot="no"
-		local has_llvm_slot="no"
-		if has_version "sys-devel/clang:${VIRTUAL_RUST_PV_TO_LLVM_SLOT[${virtual_rust_pv_slot}]}" ; then
-			has_clang_slot="yes"
-		else
-			has_clang_slot="no"
-		fi
-		if has_version "sys-devel/llvm:${VIRTUAL_RUST_PV_TO_LLVM_SLOT[${virtual_rust_pv_slot}]}" ; then
-			has_llvm_slot="yes"
-		else
-			has_llvm_slot="no"
-		fi
-eerror
-eerror "The LLVM/clang version is not supported or the dependencies are not"
-eerror "completely installed.  Emerge clang and llvm to match subslot slot of"
-eerror "virtual/rust."
-eerror
-eerror "Current virtual/rust version:  ${virtual_rust_pv}"
-eerror "Has installed sys-devel/clang:${VIRTUAL_RUST_PV_TO_LLVM_SLOT[${virtual_rust_pv_slot}]} slot:  ${has_clang_slot}"
-eerror "Has installed sys-devel/llvm:${VIRTUAL_RUST_PV_TO_LLVM_SLOT[${virtual_rust_pv_slot}]} slot:  ${has_llvm_slot}"
-eerror
-		die
+	if use llvm_slot_19 ; then
+		llvm_slot=19
+	elif use llvm_slot_18 ; then
+		llvm_slot=18
+	elif use llvm_slot_17 ; then
+		llvm_slot=17
+	elif use llvm_slot_16 ; then
+		llvm_slot=16
 	fi
+	LLVM_MAX_SLOT=${llvm_slot}
+	llvm_pkg_setup
 einfo "LLVM SLOT:  ${LLVM_MAX_SLOT}"
 
 	export CSOUND_LIB_DIR="${ESYSROOT}/usr/$(get_libdir)"

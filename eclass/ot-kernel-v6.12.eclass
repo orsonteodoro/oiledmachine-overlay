@@ -842,12 +842,15 @@ CDEPEND+="
 			>=dev-util/pahole-1.16[${PYTHON_SINGLE_USEDEP}]
 		')
 		>=dev-util/cbindgen-0.65.1
-		~virtual/rust-${RUST_PV}
 		!clang? (
 			>=sys-devel/gcc-4.5
 		)
 		clang? (
 			$(gen_clang_llvm_pair 16 ${LLVM_MAX_SLOT})
+		)
+		|| (
+			~dev-lang/rust-${RUST_PV}
+			~dev-lang/rust-bin-${RUST_PV}
 		)
 	)
 	xz? (

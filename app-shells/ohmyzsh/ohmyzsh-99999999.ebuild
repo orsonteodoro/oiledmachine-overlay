@@ -1325,7 +1325,10 @@ RDEPEND+="
 		$(ruby_implementations_depend)
 	)
 	rust? (
-		virtual/rust
+		|| (
+			dev-lang/rust
+			dev-lang/rust-bin
+		)
 	)
 	subversion? (
 		dev-vcs/subversion

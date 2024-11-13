@@ -15,7 +15,7 @@ CPU_FLAGS_ARM=(
 	cpu_flags_arm_neon
 )
 
-LLVM_COMPAT=( 18 17 ) # Limited by virtual/rust
+LLVM_COMPAT=( 18 17 ) # Limited by rust
 
 MY_MAJOR=$(ver_cut 1)
 MY_PN="mozjs"
@@ -103,15 +103,47 @@ gen_clang_bdepend() {
 				clang? (
 					sys-devel/clang:${s}
 					sys-devel/lld:${s}
-					virtual/rust:0/llvm-${s}
-					virtual/rust:=
 				)
 			)
 		"
 	done
 
 }
+RUST_CDEPEND="
+	llvm_slot_17? (
+		|| (
+			=dev-lang/rust-1.77*
+			=dev-lang/rust-1.75*
+			=dev-lang/rust-1.75*
+			=dev-lang/rust-1.74*
+			=dev-lang/rust-1.73*
+			=dev-lang/rust-bin-1.77*
+			=dev-lang/rust-bin-1.75*
+			=dev-lang/rust-bin-1.75*
+			=dev-lang/rust-bin-1.74*
+			=dev-lang/rust-bin-1.73*
+		)
+	)
+	llvm_slot_18? (
+		|| (
+			=dev-lang/rust-1.81*
+			=dev-lang/rust-1.80*
+			=dev-lang/rust-1.79*
+			=dev-lang/rust-1.78*
+			=dev-lang/rust-bin-1.81*
+			=dev-lang/rust-bin-1.80*
+			=dev-lang/rust-bin-1.79*
+			=dev-lang/rust-bin-1.78*
+		)
+	)
+	|| (
+		dev-lang/rust:=
+		dev-lang/rust-bin:=
+	)
+
+"
 RDEPEND="
+	${RUST_CDEPEND}
 	>=dev-libs/icu-73.1
 	dev-libs/icu:=
 	>=dev-libs/nspr-4.35
@@ -125,20 +157,16 @@ DEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
+	${RUST_CDEPEND}
 	>=dev-util/cbindgen-0.26.0
 	virtual/pkgconfig
 	!clang? (
-		>=virtual/rust-0.77.1
-		rust-simd? (
-			<virtual/rust-1.78.0
+		|| (
+			dev-lang/rust:=
+			dev-lang/rust-bin:=
 		)
-		virtual/rust:=
 	)
 	!elibc_glibc? (
-		rust-simd? (
-			>=dev-lang/rust-1.66.0
-			<dev-lang/rust-1.78.0
-		)
 		dev-lang/rust:=
 	)
 	test? (
@@ -163,8 +191,40 @@ einfo "sys-devel/llvm:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT}
 			return 1
 		fi
 
-		if ! has_version -b "virtual/rust:0/llvm-${LLVM_SLOT}" ; then
-einfo "virtual/rust:0/llvm-${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+		check_rust_18() {
+			if has_version "=dev-lang/rust-1.81*" || has_version "=dev-lang/rust-bin-1.81*" ; then
+				return 0
+			elif has_version "=dev-lang/rust-1.80*" || has_version "=dev-lang/rust-bin-1.80*" ; then
+				return 0
+			elif has_version "=dev-lang/rust-1.79*" || has_version "=dev-lang/rust-bin-1.79*" ; then
+				return 0
+			elif has_version "=dev-lang/rust-1.78*" || has_version "=dev-lang/rust-bin-1.78*" ; then
+				return 0
+			fi
+			return 1
+		}
+
+		check_rust_17() {
+			if has_version "=dev-lang/rust-1.77*" || has_version "=dev-lang/rust-bin-1.77*" ; then
+				return 0
+			elif has_version "=dev-lang/rust-1.76*" || has_version "=dev-lang/rust-bin-1.76*" ; then
+				return 0
+			elif has_version "=dev-lang/rust-1.75*" || has_version "=dev-lang/rust-bin-1.75*" ; then
+				return 0
+			elif has_version "=dev-lang/rust-1.74*" || has_version "=dev-lang/rust-bin-1.74*" ; then
+				return 0
+			elif has_version "=dev-lang/rust-1.73*" || has_version "=dev-lang/rust-bin-1.73*" ; then
+				return 0
+			fi
+			return 1
+		}
+
+		if use llvm_slot_18 && check_rust_18 ; then
+			:
+		elif use llvm_slot_17 && check_rust_17 ; then
+			:
+		else
+einfo "Either dev-lang/rust or dev-lang/rust-bin is missing for ${LLVM_SLOT}! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
 			return 1
 		fi
 

@@ -295,7 +295,60 @@ BDEPEND="
 	virtual/pkgconfig
 	opencl? (
 		>=dev-util/bindgen-0.58.0
-		>=virtual/rust-1.62.0
+		llvm_slot_15? (
+			|| (
+				=dev-lang/rust-1.69*
+				=dev-lang/rust-1.68*
+				=dev-lang/rust-1.67*
+				=dev-lang/rust-1.66*
+				=dev-lang/rust-1.65*
+				=dev-lang/rust-bin-1.69*
+				=dev-lang/rust-bin-1.68*
+				=dev-lang/rust-bin-1.67*
+				=dev-lang/rust-bin-1.66*
+				=dev-lang/rust-bin-1.65*
+			)
+		)
+		llvm_slot_16? (
+			|| (
+				=dev-lang/rust-1.72*
+				=dev-lang/rust-1.71*
+				=dev-lang/rust-1.70*
+				=dev-lang/rust-bin-1.72*
+				=dev-lang/rust-bin-1.71*
+				=dev-lang/rust-bin-1.70*
+			)
+		)
+		llvm_slot_17? (
+			|| (
+				=dev-lang/rust-1.77*
+				=dev-lang/rust-1.75*
+				=dev-lang/rust-1.75*
+				=dev-lang/rust-1.74*
+				=dev-lang/rust-1.73*
+				=dev-lang/rust-bin-1.77*
+				=dev-lang/rust-bin-1.75*
+				=dev-lang/rust-bin-1.75*
+				=dev-lang/rust-bin-1.74*
+				=dev-lang/rust-bin-1.73*
+			)
+		)
+		llvm_slot_18? (
+			|| (
+				=dev-lang/rust-1.81*
+				=dev-lang/rust-1.80*
+				=dev-lang/rust-1.79*
+				=dev-lang/rust-1.78*
+				=dev-lang/rust-bin-1.81*
+				=dev-lang/rust-bin-1.80*
+				=dev-lang/rust-bin-1.79*
+				=dev-lang/rust-bin-1.78*
+			)
+		)
+		|| (
+			dev-lang/rust:=
+			dev-lang/rust-bin:=
+		)
 	)
 	video_cards_intel? (
 		$(python_gen_any_dep "
@@ -309,7 +362,16 @@ BDEPEND="
 		video_cards_nvk? (
 			>=dev-util/bindgen-0.68.1
 			>=dev-util/cbindgen-0.26.0
-			>=virtual/rust-1.74.1
+			|| (
+				(
+					>=dev-lang/rust-1.74.1
+					dev-lang/rust:=
+				)
+				(
+					>=dev-lang/rust-bin-1.74.1
+					dev-lang/rust-bin:=
+				)
+			)
 		)
 	)
 	wayland? (

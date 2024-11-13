@@ -347,6 +347,7 @@ BDEPEND="
 		>=dev-python/flake8-3.7.8[${PYTHON_USEDEP}]
 		>=dev-python/virtualenv-20.0.31[${PYTHON_USEDEP}]
 		>=dev-util/yamllint-1.17.0[${PYTHON_USEDEP}]
+		app-arch/unzip
 		test? (
 			>=dev-python/boto3-1.9.86[${PYTHON_USEDEP}]
 			>=dev-python/fsspec-2021.06.0[${PYTHON_USEDEP}]
@@ -363,11 +364,9 @@ BDEPEND="
 			)
 			dev-python/grpcio-testing:=[${PYTHON_USEDEP}]
 		)
-		>=virtual/rust-'${RUST_PV}'
-		app-arch/unzip
 		|| (
-			>=dev-lang/rust-bin-'${RUST_PV}'[rustfmt]
 			>=dev-lang/rust-'${RUST_PV}'[rustfmt]
+			>=dev-lang/rust-bin-'${RUST_PV}'[rustfmt]
 		)
 	')
 "

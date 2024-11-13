@@ -2958,10 +2958,18 @@ DEPEND+="
 "
 BDEPEND+="
 	${RUST_BINDINGS_BDEPEND}
-	>=virtual/rust-1.75
 	=net-libs/nodejs-18*[npm]
 	virtual/pkgconfig
-	virtual/rust
+	|| (
+		(
+			>=dev-lang/rust-1.75
+			dev-lang/rust:=
+		)
+		(
+			>=dev-lang/rust-bin-1.75
+			dev-lang/rust-bin:=
+		)
+	)
 "
 DOCS=( "README.md" )
 

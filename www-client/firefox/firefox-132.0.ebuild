@@ -139,7 +139,7 @@ LICENSE_FINGERPRINT="\
 896855e640d87a943eba993b0e73278a3696e8071e9dbf62ab5e0d87542ba327\
 51fff5197fcbaf233a7fa851b90bf5fb217aab4c355acd68fdda54c4ee765194\
 " # SHA512
-LLVM_COMPAT=( 18 ) # Limited based on virtual/rust
+LLVM_COMPAT=( 18 ) # Limited based on rust
 LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
 MITIGATION_DATE="Oct 29, 2024" # Advisory date
@@ -652,6 +652,24 @@ NON_FREE_CDEPENDS="
 	)
 "
 # ZLIB relaxed
+RUST_CDEPEND="
+	llvm_slot_18? (
+		|| (
+			=dev-lang/rust-1.81*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.80*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.79*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.78*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.81*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.80*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.79*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.78*[${MULTILIB_USEDEP}]
+		)
+	)
+	|| (
+		dev-lang/rust:=
+		dev-lang/rust-bin:=
+	)
+"
 CDEPEND="
 	${FF_ONLY_DEPEND}
 	${NON_FREE_CDEPENDS}
@@ -833,7 +851,6 @@ gen_llvm_bdepend() {
 				sys-devel/clang:${LLVM_SLOT}[${MULTILIB_USEDEP}]
 				sys-devel/lld:${LLVM_SLOT}
 				sys-devel/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}]
-				virtual/rust:0/llvm-${LLVM_SLOT}[${MULTILIB_USEDEP}]
 				pgo? (
 					=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}*:=[${MULTILIB_USEDEP},profile]
 				)
@@ -846,6 +863,7 @@ BDEPEND+="
 	$(gen_llvm_bdepend)
 	${GAMEPAD_BDEPEND}
 	${PYTHON_DEPS}
+	${RUST_CDEPEND}
 	=net-libs/nodejs-${NODE_VERSION}*
 	>=dev-lang/perl-5.006
 	>=dev-util/cbindgen-0.26.0
@@ -856,19 +874,9 @@ BDEPEND+="
 	app-eselect/eselect-nodejs
 	!elibc_glibc? (
 		dev-lang/rust[${MULTILIB_USEDEP}]
-		rust-simd? (
-			>=dev-lang/rust-1.66[${MULTILIB_USEDEP}]
-			<dev-lang/rust-1.78[${MULTILIB_USEDEP}]
-		)
 	)
 	amd64? (
 		>=dev-lang/nasm-${NASM_PV}
-	)
-	elibc_glibc? (
-		>=virtual/rust-${RUST_PV}[${MULTILIB_USEDEP}]
-		rust-simd? (
-			<virtual/rust-1.78[${MULTILIB_USEDEP}]
-		)
 	)
 	mold? (
 		>=sys-devel/mold-2.0

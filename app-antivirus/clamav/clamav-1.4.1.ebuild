@@ -319,7 +319,6 @@ CDEPEND="
 	)
 "
 BDEPEND="
-	>=virtual/rust-1.71.0
 	virtual/pkgconfig
 	doc? (
 		>=app-text/doxygen-1.9.1
@@ -329,6 +328,16 @@ BDEPEND="
 		$(python_gen_any_dep ">=dev-python/pytest-${PYTEST_PV}"'[${PYTHON_USEDEP}]')
 		valgrind? (
 			>=dev-debug/valgrind-3.15.0
+		)
+	)
+	|| (
+		(
+			>=dev-lang/rust-1.71.0
+			dev-lang/rust:=
+		)
+		(
+			>=dev-lang/rust-bin-1.71.0
+			dev-lang/rust-bin:=
 		)
 	)
 "

@@ -676,7 +676,7 @@ DISTRO_REQUIRE_USE="
 #
 # Generally, the availability of the system-toolchain USE flag is.
 #
-#   virtual/rust:${LLVM_OFFICIAL_SLOT} && sys-devel/clang:${LLVM_OFFICIAL_SLOT} && sys-devel/llvm:${LLVM_OFFICIAL_SLOT}.
+#  ( sys-devel/rust:${LLVM_OFFICIAL_SLOT}  || sys-devel/rust-bin:${LLVM_OFFICIAL_SLOT} ) && sys-devel/clang:${LLVM_OFFICIAL_SLOT} && sys-devel/llvm:${LLVM_OFFICIAL_SLOT}.
 #
 # The community prefers only stable versioning.
 #
@@ -1246,27 +1246,21 @@ CLANG_BDEPEND="
 		$(gen_depend_llvm)
 	)
 "
-# Upstream uses live rust.  Rust version is relaxed.
-gen_rust_bdepend() {
-	echo "
-		system-toolchain? (
-			>=dev-util/bindgen-0.68.0
-	"
-	local s
-	for s in ${LLVM_COMPAT[@]} ; do
-		echo "
-			llvm_slot_${s}? (
-				virtual/rust:llvm-${s}[${MULTILIB_USEDEP},profiler(-)]
-			)
-		"
-	done
-	echo "
+RUST_BDEPEND="
+	llvm_slot_19? (
+		|| (
+			=dev-lang/rust-1.82*
+			=dev-lang/rust-bin-1.82*
 		)
-	"
-}
+	)
+	|| (
+		dev-lang/rust:=
+		dev-lang/rust-bin:=
+	)
+"
+# Upstream uses live rust.  Rust version is relaxed.
 # Mold was relicensed as MIT in 2.0.  >=2.0 was used to avoid legal issues.
 BDEPEND+="
-	$(gen_rust_bdepend)
 	$(python_gen_any_dep '
 		dev-python/setuptools[${PYTHON_USEDEP}]
 	')
@@ -1288,6 +1282,10 @@ BDEPEND+="
 	dev-vcs/git
 	mold? (
 		>=sys-devel/mold-2.0
+	)
+	system-toolchain? (
+		${RUST_BDEPEND}
+		>=dev-util/bindgen-0.68.0
 	)
 	vaapi? (
 		media-video/libva-utils
