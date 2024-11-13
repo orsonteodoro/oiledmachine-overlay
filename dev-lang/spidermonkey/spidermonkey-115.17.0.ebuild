@@ -75,6 +75,11 @@ SRC_URI="
 
 DESCRIPTION="A JavaScript engine written in C and C++"
 HOMEPAGE="https://spidermonkey.dev https://firefox-source-docs.mozilla.org/js/index.html "
+RESTRICT="
+	!test? (
+		test
+	)
+"
 SLOT="$(ver_cut 1)"
 LICENSE="MPL-2.0"
 IUSE="
@@ -85,11 +90,11 @@ clang debug +jit lto rust-simd test
 REQUIRED_USE="
 	rust-simd? (
 		!llvm_slot_18
-	)
-"
-RESTRICT="
-	!test? (
-		test
+		|| (
+			llvm_slot_15
+			llvm_slot_16
+			llvm_slot_17
+		)
 	)
 "
 

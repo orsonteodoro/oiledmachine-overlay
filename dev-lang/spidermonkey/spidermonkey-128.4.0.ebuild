@@ -92,6 +92,7 @@ clang debug +jit lto rust-simd test
 REQUIRED_USE="
 	rust-simd? (
 		!llvm_slot_18
+		llvm_slot_17
 	)
 "
 gen_clang_bdepend() {
