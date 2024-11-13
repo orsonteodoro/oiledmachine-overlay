@@ -927,6 +927,9 @@ RDEPEND+="
 		x264? (
 			~media-plugins/gst-plugins-x264-${GST_PV}:1.0[${MULTILIB_USEDEP}]
 		)
+		x265? (
+			~media-plugins/gst-plugins-x265-${GST_PV}:1.0[${MULTILIB_USEDEP}]
+		)
 	)
 	webrtchttp? (
 		~media-plugins/gst-plugins-webrtc-${GST_PV}:1.0[${MULTILIB_USEDEP}]
