@@ -1261,7 +1261,7 @@ einfo "Checking for sufficient disk space to build ${PN} with debugging CFLAGS"
 		fi
 	fi
 	_set_cxx
-	check_icu_build
+	#check_icu_build
 
 	if ! use opengl && ! use gles2; then
 ewarn
