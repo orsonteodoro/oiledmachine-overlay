@@ -831,6 +831,7 @@ gen_depend_llvm() {
 			(
 				sys-devel/clang:${s}
 				sys-devel/llvm:${s}
+				sys-devel/lld:${s}
 				openmp? (
 					sys-libs/libomp:${s}[${MULTILIB_USEDEP}]
 				)
@@ -1186,8 +1187,14 @@ _set_clang() {
 		export READELF="llvm-readelf"
 		export STRIP="llvm-strip"
 		export GCC_FLAGS=""
+		filter-flags '-fuse-ld=*'
+		append-ldflags '-fuse-ld=lld'
 		strip-unsupported-flags
 		${CC} --version || die
+ewarn
+ewarn "If \"Assumed value of MB_LEN_MAX wrong\" error encountered, rebuild"
+ewarn "${CATEGORY}/${PN} and dev-libs/icu with GCC 12."
+ewarn
 	fi
 }
 
