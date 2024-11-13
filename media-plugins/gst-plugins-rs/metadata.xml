@@ -24,6 +24,9 @@
       Build the Rust AudioFx Plugin to apply audio effects (echo, reverb, noise
       removal, normalization)
     </flag>
+    <flag name="aws">
+      Build support for Amazon AWS
+    </flag>
     <flag name="cdg">
       Build the CD+G Plugin for parsing and rendering karakoe data
     </flag>
@@ -51,43 +54,87 @@
       Build the Rust File Plugin for filesink and filesrc
     </flag>
     <flag name="ffv1">
-      Build the FFV1 decoder
+      Build the FFV1 decoder for lossless video produced by FFmpeg
     </flag>
     <flag name="flavors">
       Build the FLV demuxer plugin
     </flag>
     <flag name="fmp4">
-      Build the fragmented MP4 plugin
+      Build a MP4/ISOBMFF/CMAF muxer to generate DASH/HLS media fragments
     </flag>
     <flag name="gif"> 
-      Build the GStreamer GIF encoder plugin
+      Build a GIF encoder plugin
+    </flag>
+    <flag name="gopbuffer"> 
+      Build a plugin to store Groups of Pictures (GOP)
     </flag>
     <flag name="gtk4">
       Build the GTK 4 plugin to render video and pictures
     </flag>
     <flag name="hlssink3">
-      Build the HLS sink plugin
+      Build the MPEG-TS HLS stream generator plugin
     </flag>
     <flag name="hsv">
-      Build the HSV (hue, saturation, value) manipulation of video elements
+      Build a plugin for HSV (hue, saturation, value) video manipulation
+    </flag>
+    <flag name="inter">
+      Build a plugin with a virtual audio/subtitle/video sink or source for
+      internal process communication
     </flag>
     <flag name="json">
-      Build the Rust JSON Plugin
+      Build the Rust JSON to ND-JSON Plugin
+    </flag>
+    <flag name="livesync">
+      Build the gap frame inserter on lag event for livestreaming plugin
     </flag>
     <flag name="lewton">
       Build the lewton Vorbis decoder plugin
     </flag>
+    <flag name="mp4">
+      Build a non-fragmented MP4 plugin
+    </flag>
+    <flag name="mpegtslive">
+      Build a plugin to playback content at the same rate and timestamps as the
+      remote provider using an existing mpeg-ts source
+    </flag>
+    <flag name="ndi">
+      Build support for NewTek NDI
+    </flag>
+    <flag name="onvif">
+      Build support for ONVIF timed metadata
+    </flag>
+    <flag name="originalbuffer">
+      Build support for saving or restoring the original buffer after machine
+      learning analysis
+    </flag>
+    <flag name="png">
+      Build the PNG encoder/decoder written in pure Rust
+    </flag>
     <flag name="rav1e">
-      Build the rav1e AV1 encoder plugin
+      Build the rav1e AV1 encoder plugin based on Rust, a memory safe language
+      (i.e. more secure)
     </flag>
     <flag name="regex">
       Build the Rust regular expression plugin
     </flag>
+    <flag name="relationmeta">
+      Build support for converting between ONVIF metadata and relation metadata
+    </flag>
+    <flag name="rtp">
+      Build support for the RTP protocol
+    </flag>
+    <flag name="rtsp">
+      Build support using a rewrite of the RTSP protocol plugin
+    </flag>
     <flag name="reqwest">
       Build the HTTP source element plugin
     </flag>
-    <flag name="rspng">
-      Build the PNG encoder/decoder written in pure Rust
+    <flag name="quinn">
+      Build support for the QUIC protocol
+    </flag>
+    <flag name="raptorq">
+      Build support for Forward Error Correction (FEC) using the RaptorQ codes
+      to protect against packet loss.
     </flag>
     <flag name="rusoto">
       Build the Amazon Web Services source and sink plugin
@@ -95,11 +142,20 @@
     <flag name="sodium">
       Build the libsodium-based file encryption and decryption
     </flag>
+    <flag name="speechmatics">
+      Build the speech to text filter
+    </flag>
     <flag name="spotify">
       Build a plugin to read content from Spotify
     </flag>
+    <flag name="streamgrouper">
+      Build a plugin to assign several streams together by group-id
+    </flag>
     <flag name="test">
       Build and run tests
+    </flag>
+    <flag name="textahead">
+      Build a plugin to display text buffers at the start of the segment
     </flag>
     <flag name="textwrap">
       Build the text hypenation wrap plugin
@@ -111,20 +167,29 @@
     <flag name="togglerecord">
       Build the toggle record plugin to stop and start multiple streams together
     </flag>
+    <flag name="tracers">
+      Build a plugin to record and measure latency, queues, pipelines, data
+    </flag>
     <flag name="tutorial">
       Build the Rust tutorial plugin
     </flag>
     <flag name="uriplaylistbin">
-      Build a playlist plugin
+      Build a gapless URI playlist plugin
     </flag>
     <flag name="videofx">
-      Build the video effects plugin
+      Build a plugin to round edges, find dominant color, compare similarity
     </flag>
     <flag name="version-helper">
       Build the build.rs helper function for GStreamer plugin metadata
     </flag>
     <flag name="webp">
       Build the WebP decoder plugin
+    </flag>
+    <flag name="webrtc">
+      Build support for WebRTC
+    </flag>
+    <flag name="webrtchttp">
+      Build a plugin that uses simple HTTP (WHIP/WHEP) elements
     </flag>
   </use>
   <upstream>
