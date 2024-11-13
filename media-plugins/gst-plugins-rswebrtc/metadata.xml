@@ -6,4 +6,45 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <use>
+    <flag name="aom">
+      Use the slower CPU based reference AV1 codec.
+    </flag>
+    <flag name="dav1d">
+      Fallback to an optimized CPU based AV1 decoder.
+    </flag>
+    <flag name="qsv">
+      Enable hardware accelerated AV1, H.264, H.265, JPEG, VP9 for Intel®
+      supported CPUs or GPUs.
+    </flag>
+    <flag name="nvcodec">
+      Enable hardware accelerated AV1, H.264, H.265, JPEG, VP8, VP9, resize for
+      NVIDIA® GPUs.
+    </flag>
+    <flag name="openh264">
+      Fallback to a CPU based H.264 codec.
+    </flag>
+    <flag name="rav1e">
+      Fallback to the secure CPU based AV1 encoder.
+    </flag>
+    <flag name="vaapi">
+      Hardware acceleration support for codecs, images, and image/video
+      processing.
+
+      Support AV1, H.264, H.265, JPEG, MPEG2, VC-1, VP9 if hardware support 
+      available.
+    </flag>
+    <flag name="vulkan">
+      Fallback to GPU or multicore based H.264, H.265 decoding support.
+    </flag>
+    <flag name="vpx">
+      Fallback to CPU based VP8/VP9 support.
+    </flag>
+    <flag name="x264">
+      Fallback to CPU based H.264 support.
+    </flag>
+    <flag name="x265">
+      Fallback to CPU based H.265 support.
+    </flag>
+  </use>
 </pkgmetadata>

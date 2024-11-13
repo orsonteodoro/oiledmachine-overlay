@@ -746,7 +746,7 @@ SLOT="1.0/$(ver_cut 1-2 ${MY_PV})" # 1.0 is same as media-libs/gstreamer
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${MODULES[@]}
-aom doc nvcodec qsv rav1e system-libsodium vaapi vpx vulkan x264 x265
+aom doc nvcodec openh264 qsv rav1e system-libsodium vaapi vpx vulkan x264 x265
 ebuild-revision-1
 "
 WEBRTC_AV1_ENCODERS_REQUIRED_USE="
@@ -760,6 +760,7 @@ WEBRTC_H264_ENCODERS_REQUIRED_USE="
 	|| (
 		nvcodec
 		qsv
+		openh264
 		vaapi
 		x264
 	)
@@ -794,6 +795,7 @@ WEBRTC_AV1_DECODERS_REQUIRED_USE="
 WEBRTC_H264_DECODERS_REQUIRED_USE="
 	|| (
 		nvcodec
+		openh264
 		qsv
 		vaapi
 		vulkan
@@ -924,6 +926,9 @@ RDEPEND+="
 		nvcodec? (
 			>=media-plugins/gst-plugins-bad-${GST_PV}:1.0[${MULTILIB_USEDEP},nvcodec]
 		)
+		openh264? (
+			>=media-plugins/gst-plugins-openh264-${GST_PV}:1.0[${MULTILIB_USEDEP}]
+		)
 		qsv? (
 			>=media-plugins/gst-plugins-bad-${GST_PV}:1.0[${MULTILIB_USEDEP},qsv]
 		)
@@ -937,7 +942,7 @@ RDEPEND+="
 			>=media-plugins/gst-plugins-vpx-${GST_PV}:1.0[${MULTILIB_USEDEP}]
 		)
 		vulkan? (
-			~media-plugins/gst-plugins-bad-${GST_PV}:1.0[${MULTILIB_USEDEP},vulkan]
+			~media-plugins/gst-plugins-bad-${GST_PV}:1.0[${MULTILIB_USEDEP},vulkan,vulkan-video]
 		)
 		x264? (
 			>=media-plugins/gst-plugins-x264-${GST_PV}:1.0[${MULTILIB_USEDEP}]

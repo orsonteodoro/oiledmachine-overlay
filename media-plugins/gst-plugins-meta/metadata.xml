@@ -101,6 +101,9 @@
     <flag name="openal">
       OpenAL support
     </flag>
+    <flag name="openh264">
+      Fallback to a CPU based H.264 codec.
+    </flag>
     <flag name="opus">
       General purpose audio codec support
     </flag>
@@ -170,6 +173,10 @@
     </flag>
     <flag name="wildmidi">
       Use WildMIDI for MIDI decode.
+    </flag>
+    <flag name="vulkan">
+      Fallback to GPU or multicore based H.264, H.265 decoding or shader filter
+      support.
     </flag>
     <flag name="x264">
       Fallback to CPU based H.264 support.

@@ -112,7 +112,7 @@
     </flag>
     <flag name="rav1e">
       Build the rav1e AV1 encoder plugin based on Rust, a memory safe language
-      (i.e. more secure)
+      (i.e. more secure) or use it as a CPU based encoder for WebRTC.
     </flag>
     <flag name="regex">
       Build the Rust regular expression plugin
@@ -190,6 +190,44 @@
     </flag>
     <flag name="webrtchttp">
       Build a plugin that uses simple HTTP (WHIP/WHEP) elements
+    </flag>
+
+    <!-- WebRTC dependencies -->
+    <flag name="aom">
+      Fallback to the slower CPU based reference AV1 codec for WebRTC.
+    </flag>
+    <flag name="dav1d">
+      Fallback to an optimized CPU based AV1 decoder for WebRTC.
+    </flag>
+    <flag name="nvcodec">
+      Enable hardware accelerated AV1, H.264, H.265, JPEG, VP8, VP9, resize for
+      NVIDIA® GPUs for WebRTC.
+    </flag>
+    <flag name="openh264">
+      Fallback to a CPU based H.264 codec for WebRTC.
+    </flag>
+    <flag name="qsv">
+      Enable hardware accelerated AV1, H.264, H.265, JPEG, VP9 for Intel®
+      supported CPUs or GPUs for WebRTC.
+    </flag>
+    <flag name="vaapi">
+      Hardware acceleration support for codecs, images, and image/video
+      processing for WebRTC.
+
+      Support AV1, H.264, H.265, JPEG, MPEG2, VC-1, VP9 if hardware support 
+      available.
+    </flag>
+    <flag name="vpx">
+      Fallback to CPU based VP8/VP9 support.
+    </flag>
+    <flag name="vulkan">
+      Fallback to GPU or multicore based H.264 or H.265 decoding for WebRTC.
+    </flag>
+    <flag name="x264">
+      Fallback to CPU based H.264 support for WebRTC.
+    </flag>
+    <flag name="x265">
+      Fallback to CPU based H.265 support for WebRTC.
     </flag>
   </use>
   <upstream>

@@ -37,8 +37,9 @@ IUSE="
 ${VIDEO_CARDS[@]}
 a52 aac alsa aom av1 cdda dash dav1d dts dv dvb dvd ffmpeg flac fluidsynth gme
 gsm hls http jack jpeg jpeg2k lame libass libvisual midi mp3 modplug mpeg
-nvcodec ogg openal opus oss speex png pulseaudio qsv rav1e rtmp sndio sndfile
-svg taglib theora v4l vaapi vcd vorbis vpx wavpack wildmidi webp X x264 x265
+nvcodec ogg openal openh264 opus oss speex png pulseaudio qsv rav1e rtmp sndio
+sndfile svg taglib theora v4l vaapi vcd vorbis vpx wavpack wildmidi webp X x264
+x265
 "
 REQUIRED_USE="
 	av1? (
@@ -162,6 +163,9 @@ RDEPEND="
 	openal? (
 		~media-plugins/gst-plugins-openal-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
+	openh264? (
+		~media-plugins/gst-plugins-openh264-${PV}:1.0[${MULTILIB_USEDEP}]
+	)
 	opus? (
 		~media-plugins/gst-plugins-opus-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
@@ -176,6 +180,9 @@ RDEPEND="
 	)
 	qsv? (
 		~media-plugins/gst-plugins-bad-${PV}:1.0[${MULTILIB_USEDEP},qsv,video_cards_intel?]
+	)
+	rav1e? (
+		~media-plugins/gst-plugins-rs-${PV}:1.0[${MULTILIB_USEDEP},rav1e]
 	)
 	rtmp? (
 		~media-plugins/gst-plugins-rtmp-${PV}:1.0[${MULTILIB_USEDEP}]
