@@ -1,0 +1,15 @@
+--- a/pyproject.toml.orig	2024-10-22 13:18:34.000000000 -0700
++++ b/pyproject.toml	2024-11-13 14:38:32.603483386 -0800
+@@ -122,12 +122,3 @@ parallel = true
+ show_missing = true
+ skip_covered = true
+ omit = ['mypy/test/*']
+-exclude_lines = [
+-  '\#\s*pragma: no cover',
+-  '^\s*raise AssertionError\b',
+-  '^\s*raise NotImplementedError\b',
+-  '^\s*return NotImplemented\b',
+-  '^\s*raise$',
+-  '^assert False\b',
+-  '''^if __name__ == ['"]__main__['"]:$''',
+-]
