@@ -921,6 +921,9 @@ RDEPEND+="
 		vpx? (
 			~media-plugins/gst-plugins-vpx-${GST_PV}:1.0[${MULTILIB_USEDEP}]
 		)
+		vulkan? (
+			~media-plugins/gst-plugins-bad-${GST_PV}:1.0[${MULTILIB_USEDEP},vulkan]
+		)
 		x264? (
 			~media-plugins/gst-plugins-x264-${GST_PV}:1.0[${MULTILIB_USEDEP}]
 		)
