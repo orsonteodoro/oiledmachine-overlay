@@ -82,7 +82,7 @@ declare -A CFLAGS_RDEPEND=(
 	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
 )
 CHECKREQS_DISK_BUILD="18G" # and even this might not be enough, bug #417307
-CLANG_PV="13"
+CLANG_PV="18"
 CMAKE_MAKEFILE_GENERATOR="ninja"
 CXX_STD="20"
 FFMPEG_COMPAT=(
@@ -101,8 +101,8 @@ ar as bg ca cs da de el en_CA en_GB eo es et eu fi fr gl gu he hi hr hu id it
 ja ka kn ko lt lv ml mr nb nl or pa pl pt pt_BR ro ru sl sr sr@latin sv ta te
 tr uk vi zh_CN
 )
-LLVM_COMPAT=( 14 )
-LLVM_MAX_SLOT="${LLVM_COMPAT[-1]}"
+LLVM_COMPAT=( 18 14 )
+LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MESA_PV="18.0.0_rc5"
 MITIGATION_DATE="Oct 31, 2024"
 MITIGATION_LAST_UPDATE=1730292540 # From `date +%s -d "2024-10-30 5:49 AM PDT"` from tag in GH for this version
@@ -1050,13 +1050,20 @@ BDEPEND+="
 		net-libs/thunder
 	)
 	|| (
+		$(gen_depend_llvm)
+	)
+	sys-devel/clang:=
+	sys-devel/llvm:=
+	openmp? (
+		sys-libs/libomp:=
+	)
+	|| (
 		>=sys-devel/gcc-13.2.0:13
 		>=sys-devel/gcc-12.2.0:12
 		>=sys-devel/gcc-11.2:11
 	)
 	sys-devel/gcc:=
 "
-#		$(gen_depend_llvm)
 #	test? (
 #		>=dev-python/pygobject-3.26.1:3[python_targets_python2_7]
 #		>=x11-themes/hicolor-icon-theme-0.17
@@ -1155,35 +1162,48 @@ eerror
 	fi
 }
 
-_set_cxx() {
-	if [[ ${MERGE_TYPE} != "binary" ]] ; then
-	# See https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/DependenciesPolicy.html
-	# Based on D 12, U 22, U 24
-	# D12 - gcc 12.2
-	# U22 - gcc 11.2
-	# U24 - gcc 13.2
-		export CC=$(tc-getCC)
-		export CXX=$(tc-getCXX)
+_set_clang() {
+	if true || tc-is-clang ; then
+		local s
+		for s in ${LLVM_COMPAT[@]} ; do
+			if has_version "sys-devel/clang:${s}" ; then
+				export CC="${CHOST}-clang-${s}"
+				export CXX="${CHOST}-clang++-${s}"
+				break
+			fi
+		done
 		export CPP="${CXX} -E"
-		if true || tc-is-gcc ; then
-			local gcc_current_profile=$(gcc-config -c)
-			local gcc_current_profile_slot="${gcc_current_profile##*-}"
+		export AR="llvm-ar"
+		export NM="llvm-nm"
+		export OBJCOPY="llvm-objcopy"
+		export OBJDUMP="llvm-objdump"
+		export READELF="llvm-readelf"
+		export STRIP="llvm-strip"
+		strip-unsupported-flags
+		${CC} --version || die
+	fi
+}
 
-			if ver_test "${gcc_current_profile_slot}" -gt "13" ; then
+_set_gcc() {
+	if false || tc-is-gcc ; then
+		local gcc_current_profile=$(gcc-config -c)
+		local gcc_current_profile_slot="${gcc_current_profile##*-}"
+
+		if ver_test "${gcc_current_profile_slot}" -gt "13" ; then
 ewarn "GCC ${gcc_current_profile_slot} is not supported upstream."
 ewarn "If problems encountered, build both dev-libs/icu and ${CATEGORY}/${PN} with either GCC 11, 12, 13."
-				export CC="${CHOST}-gcc-${gcc_current_profile_slot}"
-				export CXX="${CHOST}-g++-${gcc_current_profile_slot}"
-			elif has_version "sys-devel/gcc:13" ; then
-				export CC="${CHOST}-gcc-13"
-				export CXX="${CHOST}-g++-13"
-			elif has_version "sys-devel/gcc:12" ; then
-				export CC="${CHOST}-gcc-12"
-				export CXX="${CHOST}-g++-12"
-			elif has_version "sys-devel/gcc:11" ; then
-				export CC="${CHOST}-gcc-11"
-				export CXX="${CHOST}-g++-11"
-			else
+			export CC="${CHOST}-gcc-${gcc_current_profile_slot}"
+			export CXX="${CHOST}-g++-${gcc_current_profile_slot}"
+		elif has_version "sys-devel/gcc:13" ; then
+			export CC="${CHOST}-gcc-13"
+			export CXX="${CHOST}-g++-13"
+		elif has_version "sys-devel/gcc:12" ; then
+			export CC="${CHOST}-gcc-12"
+			export CXX="${CHOST}-g++-12"
+		elif has_version "sys-devel/gcc:11" ; then
+			export CC="${CHOST}-gcc-11"
+			export CXX="${CHOST}-g++-11"
+		else
 eerror
 eerror "GCC must be either 11, 12, 13"
 eerror
@@ -1195,11 +1215,31 @@ eerror "  emerge -C dev-libs/icu"
 eerror "  emerge -1vuDN dev-libs/icu"
 eerror "  emerge -1vO =${CATEGORY}/${PN}-${PVR}"
 eerror
-				die
-			fi
-			export CPP="${CXX} -E"
-			strip-unsupported-flags
+			die
 		fi
+		export CPP="${CXX} -E"
+		export AR="ar"
+		export NM="nm"
+		export OBJCOPY="objcopy"
+		export OBJDUMP="objdump"
+		export READELF="readelf"
+		export STRIP="strip"
+		strip-unsupported-flags
+	fi
+}
+
+
+_set_cxx() {
+	if [[ ${MERGE_TYPE} != "binary" ]] ; then
+	# See https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/DependenciesPolicy.html
+	# Based on D 12, U 22, U 24
+	# D12 - gcc 12.2
+	# U22 - gcc 11.2
+	# U24 - gcc 13.2
+		export CC=$(tc-getCC)
+		export CXX=$(tc-getCXX)
+		export CPP="${CXX} -E"
+		_set_clang
 	fi
 }
 
@@ -2213,7 +2253,7 @@ src_prepare() {
 	# Precautions
 	eapply "${FILESDIR}/extra-patches/webkit-gtk-2.39.1-jsc-disable-fast-math.patch"
 	eapply "${FILESDIR}/extra-patches/webkit-gtk-2.39.1-webcore-honor-finite-math-and-nan.patch"
-#	eapply "${FILESDIR}/extra-patches/webkit-gtk-2.46.3-custom-optimization.patch"
+	eapply "${FILESDIR}/extra-patches/webkit-gtk-2.46.3-custom-optimization.patch"
 
 ewarn
 ewarn "Try adding -Wl,--no-keep-memory to per-package LDFLAGS if out of memory (OOM)"
@@ -2305,7 +2345,7 @@ einfo "SSP is already enabled."
 	else
 	# As a precaution mitigate CE, DT, ID, DoS
 einfo "Adding SSP protection"
-#		append-flags -fstack-protector
+		append-flags -fstack-protector
 	fi
 
 	if tc-enables-fortify-source ; then
@@ -2313,7 +2353,7 @@ einfo "_FORITIFY_SOURCE is already enabled."
 	else
 	# A precaution to mitigate CE, DT, ID, DoS (CWE-121).
 einfo "Adding _FORITIFY_SOURCE=2"
-#		append-flags -D_FORTIFY_SOURCE=2
+		append-flags -D_FORTIFY_SOURCE=2
 	fi
 
 	if tc-enables-pie ; then
@@ -2321,7 +2361,7 @@ einfo "PIC is already enabled."
 	else
 	# ASLR (buffer overflow mitigation)
 einfo "Adding -fPIC"
-#		append-flags -fPIC
+		append-flags -fPIC
 	fi
 
 	# Add more swap if linker OOMs computer.
@@ -2575,8 +2615,6 @@ einfo "OSHIT_OPT_LEVEL_XXHASH: ${OSHIT_OPT_LEVEL_XXHASH}"
 			OSHIT_OPT_LEVEL_XXHASH=1
 		fi
 	fi
-
-	replace-flags "-O*" "-O2"
 
 	# See Source/cmake/WebKitFeatures.cmake
 	local pointer_size=$(tc-get-ptr-size)
