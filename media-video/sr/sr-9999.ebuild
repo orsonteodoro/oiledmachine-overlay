@@ -207,29 +207,14 @@ DEPEND+="
 		')
 	)
 "
-gen_ffmpeg_bdepend1() {
-	local s
-	for s in ${FFMPEG_SUBSLOTS} ; do
-		echo "
-			media-video/ffmpeg:0/${s}[tensorflow?]
-		"
-	done
-}
-gen_ffmpeg_bdepend2() {
-	local s
-	for s in ${FFMPEG_SUBSLOTS} ; do
-		echo "
-			media-video/ffmpeg:0/${s}[nvdec?,vaapi?,vdpau?,vpx?]
-		"
-	done
-}
 BDEPEND+="
 	!pretrained? (
 		${PYTHON_DEPS}
 		app-crypt/rhash
 		ffmpeg? (
 			|| (
-				$(gen_ffmpeg_bdepend2)
+				media-video/ffmpeg:56.58.58[nvdec?,vaapi?,vdpau?,vpx?]
+				media-video/ffmpeg:0/56.58.58[nvdec?,vaapi?,vdpau?,vpx?]
 			)
 		)
 		gstreamer? (
@@ -237,7 +222,8 @@ BDEPEND+="
 		)
 	)
 	|| (
-		$(gen_ffmpeg_bdepend1)
+		media-video/ffmpeg:56.58.58[tensorflow?]
+		media-video/ffmpeg:0/56.58.58[tensorflow?]
 	)
 	media-video/ffmpeg:=
 "
@@ -536,7 +522,9 @@ src_prepare() {
 }
 
 src_configure() {
-	:
+	if has_version "media-video/56.58.58" ; then
+		export PATH="/usr/$(get_libdir)/ffmpeg/56.58.58/bin:${PATH}"
+	fi
 }
 
 get_algs() {
@@ -572,18 +560,24 @@ train() {
 }
 
 src_compile() {
+	local prefix
+	if has_version "media-video/56.58.58" ; then
+		prefix="/usr/$(get_libdir)/ffmpeg/56.58.58"
+	else
+		prefix="/usr"
+	fi
 	use pretrained || train
-	if [[ -e "/usr/$(get_libdir)/ffmpeg/scripts/convert.py" ]] ; then
+	if [[ -e "${prefix}/$(get_libdir)/ffmpeg/scripts/convert.py" ]] ; then
 		local alg
 		for alg in $(get_algs) ; do
 			rm -f "${alg}.model"
 			[[ "${alg}" == "vespcn-mc" ]] && continue # Conversion broken
 	# The prebuilt .models are missing the FFMPEGDNNNATIVE header.
-			edo ${EPYTHON} "/usr/$(get_libdir)/ffmpeg/scripts/convert.py" "${alg}.pb"
+			edo ${EPYTHON} "${prefix}/$(get_libdir)/ffmpeg/scripts/convert.py" "${alg}.pb"
 		done
 	fi
 	if [[ -e "/usr/$(get_libdir)/ffmpeg/scripts/tf_sess_config.py" ]] ; then
-		edo ${EPYTHON} "/usr/$(get_libdir)/ffmpeg/scripts/tf_sess_config.py" | sed -e "/a serialized protobuf string/d" > "sess_config"
+		edo ${EPYTHON} "${prefix}/$(get_libdir)/ffmpeg/scripts/tf_sess_config.py" | sed -e "/a serialized protobuf string/d" > "sess_config"
 	fi
 }
 
