@@ -215,18 +215,18 @@
       processing for WebRTC.
 
       Support AV1, H.264, H.265, JPEG, MPEG2, VC-1, VP8, VP9 if hardware
-      support available with the newer stateless codec.
+      support available with the newer stateless plugin.
 
-      For the older VA-API codec, use the vaapi USE flag.
+      For the older VA-API plugin, use the vaapi USE flag.
     </flag>
     <flag name="vaapi">
       Hardware acceleration support for codecs, images, and image/video
       processing for WebRTC.
 
       Support AV1, H.264, H.265, JPEG, MPEG2, VC-1, VP9 if hardware support 
-      available with the older stateful codec.
+      available with the older stateful plugin.
 
-      For the newer VA-API codec, use the va USE flag.
+      For the newer VA-API plugin, use the va USE flag.
     </flag>
     <flag name="vpx">
       Fallback to CPU based VP8/VP9 support.
