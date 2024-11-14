@@ -65,6 +65,8 @@ src_install() {
 	docinto "licenses"
 	dodoc "LICENSE"
 	dodoc "NOTICE"
+	docinto "ReleaseNotes"
+	dodoc "ReleaseNotes/ThunderReleaseNotes_R4_interfaces.pdf"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
