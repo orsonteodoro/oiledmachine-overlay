@@ -484,16 +484,17 @@ DEFAULT_GST_PLUGINS="
 -libde265
 +mp3
 +ogg
+-openh264
 +pulseaudio
 +opus
 +speex
 +theora
 -v4l
--va
 -vaapi
 +vorbis
 +vpx
 -x264
+-x265
 "
 # alsa is disabled on D11, enabled on A/L, enabled in F/L
 # D11, A/L, F/L are currently not distributing stateless vaapi decoding.
@@ -606,10 +607,10 @@ NON_FREE_REQUIRED_USE="
 		!libwebrtc
 		!openh264
 		!thunder
-		!va
 		!vaapi
 		!webm-eme
 		!x264
+		!x265
 	)
 	proprietary-codecs-disable-nc-developer? (
 		!aac
@@ -620,10 +621,10 @@ NON_FREE_REQUIRED_USE="
 		!libwebrtc
 		!openh264
 		!thunder
-		!va
 		!vaapi
 		!webm-eme
 		!x264
+		!x265
 	)
 	proprietary-codecs-disable-nc-user? (
 		!dash
@@ -633,21 +634,21 @@ NON_FREE_REQUIRED_USE="
 		!libwebrtc
 		!openh264
 		!thunder
-		!va
 		!vaapi
 		!webm-eme
 		!x264
+		!x265
 	)
 	v4l? (
-		proprietary-codecs
-	)
-	va? (
 		proprietary-codecs
 	)
 	vaapi? (
 		proprietary-codecs
 	)
 	x264? (
+		proprietary-codecs
+	)
+	x265? (
 		proprietary-codecs
 	)
 "
@@ -662,10 +663,6 @@ _TRASH="
 
 REQUIRED_USE+="
 	${NON_FREE_REQUIRED_USE}
-	?? (
-		va
-		vaapi
-	)
 	alsa? (
 		!pulseaudio
 		gstreamer
@@ -768,22 +765,6 @@ gen_ffmpeg_g722_depends() {
 					media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,-fdk,-kvazaar,-openh264,-openssl,-vaapi,-x264,-x265,-xvid]
 				)
 			"
-	done
-	echo "
-		)
-		media-video/ffmpeg:=
-	"
-}
-
-gen_ffmpeg_vaapi_depends() {
-	echo "
-		|| (
-	"
-	local s
-	for s in ${FFMPEG_COMPAT[@]} ; do
-		echo "
-			media-video/ffmpeg:${s}[${MULTILIB_USEDEP},vaapi]
-		"
 	done
 	echo "
 		)
@@ -911,14 +892,9 @@ RDEPEND+="
 		speex? (
 			>=media-plugins/gst-plugins-speex-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
 		)
-		va? (
+		vaapi? (
 			!media-plugins/gst-plugins-vaapi
 			>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},vaapi]
-			media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
-		)
-		vaapi? (
-			$(gen_ffmpeg_vaapi_depends)
-			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},ffmpeg,vaapi]
 			media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
 		)
 		webvtt? (

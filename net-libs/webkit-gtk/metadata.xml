@@ -476,6 +476,9 @@
     <flag name="ogg">
       Support for Ogg container files.
     </flag>
+    <flag name="openh264">
+      Use openh264 as a fallback CPU based H.264 video encoder.
+    </flag>
     <flag name="opus">
       Support for encoding or decoding Opus audio and for GstWebRTC RTP audio
       streams.
@@ -492,23 +495,14 @@
     <flag name="x264">
       Use x264 as a fallback CPU based H.264 video encoder.
     </flag>
-    <flag name="va">
-      Hardware acceleration support for codecs, images, and image/video
-      processing.
-
-      Support AV1, H.264, H.265, JPEG, MPEG2, VC-1, VP8, VP9 if hardware support 
-      available with the newer stateless implementation.
-
-      For the older VA-API plugin, use the vaapi USE flag.
+    <flag name="x265">
+      Use x265 as a fallback CPU based H.265 video encoder.
     </flag>
     <flag name="vaapi">
-      Hardware acceleration support for codecs, images, and image/video
-      processing with the older stateful implementation.
+      Hardware acceleration support for codecs and images.
 
-      Support AV1, H.264, H.265, JPEG, MPEG2, VC-1, VP9 if hardware support 
-      available.
-
-      For the newer VA-API plugin, use the va USE flag.
+      Support AV1, H.264, H.265, JPEG, VP9 if hardware support available with
+      the newer stateless implementation.
     </flag>
     <flag name="vorbis">
       Support for encoding and decoding Vorbis audio.
