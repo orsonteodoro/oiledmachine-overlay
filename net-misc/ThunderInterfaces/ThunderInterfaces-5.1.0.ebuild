@@ -32,7 +32,9 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+IUSE+="
+ebuild-revision-1
+"
 RDEPEND+="
 	~net-libs/Thunder-${PV}
 	~net-misc/ThunderInterfaces-${PV}
@@ -61,7 +63,7 @@ src_configure() {
 }
 
 src_install() {
-	cmake_src_configure
+	cmake_src_install
 	docinto "licenses"
 	dodoc "LICENSE"
 	dodoc "NOTICE"
