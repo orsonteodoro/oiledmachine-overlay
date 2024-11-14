@@ -917,7 +917,7 @@ einfo
 	local _rocm_slot_glibcxx_ver="HIP_${ROCM_SLOT/./_}_GLIBCXX"
 	local rocm_slot_glibcxx_ver=${!_rocm_slot_glibcxx_ver}
 	local gcc_pv="${_GLIBCXX_VER[GLIBCXX_${rocm_slot_glibcxx_ver//./_}]}"
-	local gcc_slot="${_gcc_slot%%.*}"
+	local gcc_slot="${gcc_pv%%.*}"
 
 	# Check eselect gcc
 	if ver_test "${gcc_current_glibcxx_ver}" -gt "${rocm_slot_glibcxx_ver}" ; then
