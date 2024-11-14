@@ -70,7 +70,7 @@ VERSION_HWIDS="20210613"
 # open-iscsi-2.1.9 static build not working yet
 VERSION_ISCSI="2.1.8"
 # json-c-0.17 needs gkbuild ported to meson
-VERSION_JSON_C="0.13.1"
+VERSION_JSON_C="0.17"
 VERSION_KMOD="31"
 VERSION_LIBAIO="0.3.113"
 VERSION_LIBGCRYPT="1.10.3"
@@ -318,6 +318,7 @@ RDEPEND+="
 	app-alternatives/cpio
 	app-portage/elt-patches
 	app-portage/portage-utils
+	app-text/asciidoc
 	dev-util/gperf
 	sys-apps/sandbox
 	dev-build/autoconf
@@ -420,7 +421,6 @@ RDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${MY_P}-fix-srcdir-for-new-bcache-tools.patch"
 )
 
 src_unpack() {
@@ -481,8 +481,6 @@ src_prepare() {
 	else
 		cp "${S}/arch/ppc64/kernel-2.6"{".g5",""} || die
 	fi
-
-	use elibc_musl && eapply "${FILESDIR}/genkernel-4.3.15-mdadm-musl-fix.patch"
 }
 
 src_compile() {
