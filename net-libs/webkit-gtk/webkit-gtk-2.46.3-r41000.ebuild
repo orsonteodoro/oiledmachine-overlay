@@ -3103,11 +3103,7 @@ multilib_src_install() {
 }
 
 multilib_src_install_all() {
-	local vaapi_env
 	local hls_env
-	if ! use va && use vaapi ; then
-		vaapi_env="WEBKIT_GST_ENABLE_LEGACY_VAAPI=1"
-	fi
 
 	if use hls ; then
 		hls_env="WEBKIT_GST_ENABLE_HLS_SUPPORT=1"
@@ -3115,7 +3111,6 @@ multilib_src_install_all() {
 
 	dodir /etc/env.d
 newenvd - 50${PN}${API_VERSION} <<-EOF
-${vaapi_env}
 ${hls_env}
 EOF
 
