@@ -1,0 +1,100 @@
+# Copyright 2024 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2023 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+# TODO package:
+# memcr - https://github.com/LibertyGlobal/memcr
+PYTHON_COMPAT=( "python3_"{10..12} )
+
+inherit cmake python-single-r1
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_BRANCH="main"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
+	EGIT_REPO_URI="https://github.com/rdkcentral/Thunder.git"
+	FALLBACK_COMMIT="efe1926a0680bffc29491f1a1304f861ff2fa771" # Oct 8, 2024
+	IUSE+=" fallback-commit"
+	S="${WORKDIR}/${P}"
+	inherit git-r3
+else
+	KEYWORDS="~amd64"
+	S="${WORKDIR}/${PN}-R${PV}"
+	SRC_URI="
+https://github.com/rdkcentral/Thunder/archive/refs/tags/R${PV}.tar.gz
+	-> ${P}.tar.gz
+	"
+fi
+
+DESCRIPTION="Thunder (aka WPEFramework)"
+HOMEPAGE="
+	https://github.com/rdkcentral/Thunder
+"
+LICENSE="
+	custom
+	Apache-2.0
+	BSD
+	MIT
+	public-domain
+"
+RESTRICT="mirror test" # Untested
+SLOT="0/$(ver_cut 1-2 ${PV})"
+IUSE+=" -bcm43xx -bluetooth -bluetooth-audio -broadcast -debug -gatt -hibernate -privileged-request ssl test"
+RDEPEND+="
+	dev-libs/openssl:=
+	sys-libs/zlib
+	~net-misc/ThunderTools-${PV}[${PYTHON_SINGLE_USEDEP}]
+	bluetooth? (
+		net-wireless/bluez
+	)
+	hibernate? (
+		dev-libs/memcr
+	)
+"
+DEPEND+="
+	${RDEPEND}
+	>=dev-build/cmake-3.15
+	virtual/pkgconfig
+	test? (
+		dev-cpp/gtest
+	)
+"
+BDEPEND+="
+"
+DOCS=()
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+}
+
+src_configure() {
+	local mycmakeargs=(
+		-DBCM43XX=$(usex bcm43xx)
+		-DBLUETOOTH=$(usex bluetooth)
+		-DBLUETOOTH_GATT_SUPPORT=$(usex gatt)
+		-DBLUETOOTH_AUDIO_SUPPORT=$(usex bluetooth-audio)
+		-DBROADCAST=$(usex broadcast)
+		-DHIBERNATESUPPORT=$(usex hibernate)
+		-DLOCALTRACER=$(usex debug)
+		-DPRIVILEGEDREQUEST=$(usex privileged-request)
+		-DSECURE_SOCKET=$(usex ssl)
+		-DWARNING_REPORTING=$(usex debug)
+	)
+	cmake_src_configure
+}
+
+src_install() {
+	cmake_src_configure
+	docinto "licenses"
+	dodoc "LICENSE"
+	dodoc "NOTICE"
+}
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

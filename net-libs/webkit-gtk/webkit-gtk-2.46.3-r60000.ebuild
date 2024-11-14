@@ -970,7 +970,7 @@ RDEPEND+="
 		>=app-text/enchant-1.6.0:2[${MULTILIB_USEDEP}]
 	)
 	thunder? (
-		net-libs/thunder
+		net-libs/Thunder
 	)
 	variation-fonts? (
 		>=media-libs/fontconfig-${FONTCONFIG_PV}:1.0[${MULTILIB_USEDEP}]
@@ -1030,7 +1030,7 @@ BDEPEND+="
 		>=sys-devel/mold-2.0
 	)
 	thunder? (
-		net-libs/thunder
+		net-libs/Thunder
 	)
 	|| (
 		$(gen_depend_llvm)
