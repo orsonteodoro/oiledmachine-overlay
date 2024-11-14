@@ -574,7 +574,7 @@ REQUIRED_USE+=" "$(gen_gst_plugins_required_use)
 # of emerging web technologies.  Also found in Source/WebCore/features.json
 
 # Sorted by least restrictive top
-# proprietary-codecs                      - allow proprietary codecs
+# proprietary-codecs                      - allow proprietary codecs or customization of codec selection
 # proprietary-codecs-disable-nc-user      - disable use of proprietary codecs as a non-commercial non-developer, allowing free codecs for non-commercial non-developers
 # proprietary-codecs-disable-nc-developer - disable use of proprietary codecs as a non-commercial developer, disallowing codec developer taxed codecs
 # proprietary-codecs-disable              - disable use of proprietary codecs
