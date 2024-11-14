@@ -581,6 +581,10 @@ REQUIRED_USE+=" "$(gen_gst_plugins_required_use)
 # See https://webkit.org/status/#specification-webxr for feature quality status
 # of emerging web technologies.  Also found in Source/WebCore/features.json
 
+# proprietary-codecs                      - allow proprietary codecs
+# proprietary-codecs-disable              - disable use of proprietary codecs
+# proprietary-codecs-disable-nc-developer - disable use of proprietary codecs as a non-commercial developer
+# proprietary-codecs-disable-nc-user      - disable use of proprietary codecs as a non-commercial non-developer
 NON_FREE_REQUIRED_USE="
 	^^ (
 		proprietary-codecs
