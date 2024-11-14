@@ -997,7 +997,7 @@ _mitigate_dos_auto() {
 		gen_linux_firmware_ge 20240811
 	fi
 	if [[ "${FIRMWARE_VENDOR}" == "intel" ]] ; then
-		gen_intel_microcode_ge 20240910
+		gen_intel_microcode_ge 20241112
 	fi
 }
 
