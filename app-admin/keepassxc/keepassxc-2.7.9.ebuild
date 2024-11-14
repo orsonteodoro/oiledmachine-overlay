@@ -144,8 +144,11 @@ BDEPEND="
 	)
 	test? (
 		wayland? (
-			>=gui-libs/wlroots-0.15.1-r1[tinywl]
 			x11-misc/xkeyboard-config
+			|| (
+				>=gui-libs/wlroots-0.15.1-r1[tinywl(-)]
+				gui-wm/tinywl
+			)
 		)
 		X? (
 			${VIRTUALX_DEPEND}
