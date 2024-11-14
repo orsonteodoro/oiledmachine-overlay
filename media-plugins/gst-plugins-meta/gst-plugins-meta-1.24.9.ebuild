@@ -38,7 +38,7 @@ ${VIDEO_CARDS[@]}
 a52 aac alsa aom av1 cdda dash dav1d dts dv dvb dvd ffmpeg flac fluidsynth gme
 gsm hls http jack jpeg jpeg2k lame libass libvisual midi mp3 modplug mpeg
 nvcodec ogg openal openh264 opus oss speex png pulseaudio qsv rav1e rtmp sndio
-sndfile svg taglib theora v4l vaapi vcd vorbis vpx wavpack wildmidi webp X x264
+sndfile svg taglib theora v4l va vaapi vcd vorbis vpx wavpack wildmidi webp X x264
 x265
 "
 REQUIRED_USE="
@@ -205,8 +205,10 @@ RDEPEND="
 	v4l? (
 		~media-plugins/gst-plugins-v4l2-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
-	vaapi? (
+	va? (
 		~media-plugins/gst-plugins-bad-${PV}:1.0[${MULTILIB_USEDEP},vaapi,video_cards_amdgpu?,video_cards_r600?,video_cards_radeonsi?,video_cards_intel?,video_cards_nouveau?,video_cards_nvidia?]
+	)
+	vaapi? (
 		~media-plugins/gst-plugins-vaapi-${PV}:1.0[${MULTILIB_USEDEP},video_cards_amdgpu?,video_cards_r600?,video_cards_radeonsi?,video_cards_intel?,video_cards_nouveau?,video_cards_nvidia?]
 	)
 	vcd? (

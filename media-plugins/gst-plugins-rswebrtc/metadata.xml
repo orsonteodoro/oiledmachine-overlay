@@ -27,12 +27,23 @@
     <flag name="rav1e">
       Fallback to the secure CPU based AV1 encoder.
     </flag>
+    <flag name="va">
+      Hardware acceleration support for codecs, images, and image/video
+      processing.
+
+      Support AV1, H.264, H.265, JPEG, MPEG2, VC-1, VP8, VP9 if hardware
+      support available for the newer stateless codec.
+
+      For the older VA-API codec, use the vaapi USE flag.
+    </flag>
     <flag name="vaapi">
       Hardware acceleration support for codecs, images, and image/video
       processing.
 
       Support AV1, H.264, H.265, JPEG, MPEG2, VC-1, VP9 if hardware support 
-      available.
+      available for the older stateful codec.
+
+      For the newer VA-API codec, use the va USE flag.
     </flag>
     <flag name="vulkan">
       Fallback to GPU or multicore based H.264, H.265 decoding support.

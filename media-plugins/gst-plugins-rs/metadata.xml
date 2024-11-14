@@ -210,12 +210,23 @@
       Enable hardware accelerated AV1, H.264, H.265, JPEG, VP9 for Intel®
       supported CPUs or GPUs for WebRTC.
     </flag>
+    <flag name="va">
+      Hardware acceleration support for codecs, images, and image/video
+      processing for WebRTC.
+
+      Support AV1, H.264, H.265, JPEG, MPEG2, VC-1, VP8, VP9 if hardware
+      support available with the newer stateless codec.
+
+      For the older VA-API codec, use the vaapi USE flag.
+    </flag>
     <flag name="vaapi">
       Hardware acceleration support for codecs, images, and image/video
       processing for WebRTC.
 
       Support AV1, H.264, H.265, JPEG, MPEG2, VC-1, VP9 if hardware support 
-      available.
+      available with the older stateful codec.
+
+      For the newer VA-API codec, use the va USE flag.
     </flag>
     <flag name="vpx">
       Fallback to CPU based VP8/VP9 support.
