@@ -29,6 +29,10 @@ HOMEPAGE="
 "
 LICENSE="
 	Apache-2.0
+	BSD-2
+	BSD
+	MIT
+	ZLIB
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
