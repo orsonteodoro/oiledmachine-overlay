@@ -35,6 +35,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" -optee-aes-decryptor"
 RDEPEND+="
 	~net-libs/Thunder-${PV}
+	~net-misc/ThunderInterfaces-${PV}
 "
 DEPEND+="
 	${RDEPEND}
