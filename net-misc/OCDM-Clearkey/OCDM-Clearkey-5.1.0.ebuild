@@ -34,7 +34,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" -optee-aes-decryptor"
 RDEPEND+="
-	net-libs/Thunder
+	~net-libs/Thunder-${PV}
 "
 DEPEND+="
 	${RDEPEND}
