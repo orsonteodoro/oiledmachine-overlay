@@ -2,6 +2,10 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+# FIXME:
+# vmlinux.o .vmlinux.export.o init/version-timestamp.o --no-whole-archive --start-group --end-group
+#-ld.bfd: vmlinux.o:(.data+0xb87a8): undefined reference to `sysctl_tcp_c2tcp_enable'
+
 # @ECLASS: ot-kernel.eclass
 # @MAINTAINER:
 # Orson Teodoro <orsonteodoro@hotmail.com>
