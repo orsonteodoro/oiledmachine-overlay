@@ -40,7 +40,11 @@ LICENSE="
 "
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" -bcm43xx -bluetooth -bluetooth-audio -broadcast -debug -gatt -hibernate -privileged-request ssl test"
+IUSE+="
+-bcm43xx -bluetooth -bluetooth-audio -broadcast -debug -gatt -hibernate
+-privileged-request ssl -systemd test
+ebuild-revision-1
+"
 RDEPEND+="
 	dev-libs/openssl:=
 	sys-libs/zlib
@@ -63,6 +67,9 @@ DEPEND+="
 BDEPEND+="
 "
 DOCS=()
+PATCHES=(
+	"${FILESDIR}/${PN}-5.1.0-jsonrpc-install-path.patch"
+)
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
@@ -85,13 +92,14 @@ src_configure() {
 		-DLOCALTRACER=$(usex debug)
 		-DPRIVILEGEDREQUEST=$(usex privileged-request)
 		-DSECURE_SOCKET=$(usex ssl)
+		-DSYSTEMD_SERVICE=$(usex systemd)
 		-DWARNING_REPORTING=$(usex debug)
 	)
 	cmake_src_configure
 }
 
 src_install() {
-	cmake_src_configure
+	cmake_src_install
 	docinto "licenses"
 	dodoc "LICENSE"
 	dodoc "NOTICE"

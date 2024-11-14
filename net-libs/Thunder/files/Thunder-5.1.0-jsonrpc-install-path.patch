@@ -1,0 +1,13 @@
+--- Thunder-R5.1.0/Source/websocket/CMakeLists.txt.orig	2024-11-14 11:13:56.329796368 -0800
++++ Thunder-R5.1.0/Source/websocket/CMakeLists.txt	2024-11-14 11:20:07.604019989 -0800
+@@ -85,8 +85,8 @@ install(
+ )
+ 
+ #FIXME: check if this goes OK with bitbake
+-install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink websocket ${CMAKE_SYSROOT}${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/${NAMESPACE}/jsonrpc)")
+-install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink websocket.h ${CMAKE_SYSROOT}${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/${NAMESPACE}/websocket/jsonrpc.h)")
++install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink websocket ${CMAKE_INSTALL_INCLUDEDIR}/${NAMESPACE}/jsonrpc)")
++install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink websocket.h ${CMAKE_INSTALL_INCLUDEDIR}/${NAMESPACE}/websocket/jsonrpc.h)")
+ 
+ 
+ InstallPackageConfig(
