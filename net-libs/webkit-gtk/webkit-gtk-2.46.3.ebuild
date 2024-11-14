@@ -497,8 +497,8 @@ DEFAULT_GST_PLUGINS="
 +speex
 +theora
 -v4l
+-va
 -vaapi
--vaapi-stateless-decoding
 +vorbis
 +vpx
 -x264
@@ -614,8 +614,8 @@ NON_FREE_REQUIRED_USE="
 		!libwebrtc
 		!openh264
 		!thunder
+		!va
 		!vaapi
-		!vaapi-stateless-decoding
 		!webm-eme
 		!x264
 	)
@@ -628,8 +628,8 @@ NON_FREE_REQUIRED_USE="
 		!libwebrtc
 		!openh264
 		!thunder
+		!va
 		!vaapi
-		!vaapi-stateless-decoding
 		!webm-eme
 		!x264
 	)
@@ -641,18 +641,18 @@ NON_FREE_REQUIRED_USE="
 		!libwebrtc
 		!openh264
 		!thunder
+		!va
 		!vaapi
-		!vaapi-stateless-decoding
 		!webm-eme
 		!x264
 	)
 	v4l? (
 		proprietary-codecs
 	)
-	vaapi? (
+	va? (
 		proprietary-codecs
 	)
-	vaapi-stateless-decoding? (
+	vaapi? (
 		proprietary-codecs
 	)
 	x264? (
@@ -670,6 +670,10 @@ _TRASH="
 
 REQUIRED_USE+="
 	${NON_FREE_REQUIRED_USE}
+	?? (
+		va
+		vaapi
+	)
 	alsa? (
 		!pulseaudio
 		gstreamer
@@ -915,16 +919,15 @@ RDEPEND+="
 		speex? (
 			>=media-plugins/gst-plugins-speex-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
 		)
-		vaapi? (
-			$(gen_ffmpeg_vaapi_depends)
-			!vaapi-stateless-decoding? (
-				>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},vaapi]
-			)
-			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},ffmpeg]
+		va? (
+			!media-plugins/gst-plugins-vaapi
+			>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},vaapi]
 			media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
 		)
-		vaapi-stateless-decoding? (
-			>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},vaapi]
+		vaapi? (
+			$(gen_ffmpeg_vaapi_depends)
+			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},ffmpeg,vaapi]
+			media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
 		)
 		webvtt? (
 			>=media-plugins/gst-plugins-rs-0.6.0:1.0[${MULTILIB_USEDEP},closedcaption]

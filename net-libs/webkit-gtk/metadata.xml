@@ -492,14 +492,23 @@
     <flag name="x264">
       Use x264 as a fallback CPU based H.264 video encoder.
     </flag>
-    <flag name="vaapi-stateless-decoding">
-      Use stateless VA-API decoding only support to avoid rendering issues.
+    <flag name="va">
+      Hardware acceleration support for codecs, images, and image/video
+      processing.
+
+      Support AV1, H.264, H.265, JPEG, MPEG2, VC-1, VP8, VP9 if hardware support 
+      available with the newer stateless implementation.
+
+      For the older VA-API plugin, use the vaapi USE flag.
     </flag>
     <flag name="vaapi">
-      Use VA-API for hardware accelerated encoding if supported.
+      Hardware acceleration support for codecs, images, and image/video
+      processing with the older stateful implementation.
 
-      If USE=-vaapi-stateless-decoding, then use the legacy plugin for hardware
-      accelerated decoding.  Otherwise, use VA-API stateless decoding.
+      Support AV1, H.264, H.265, JPEG, MPEG2, VC-1, VP9 if hardware support 
+      available.
+
+      For the newer VA-API plugin, use the va USE flag.
     </flag>
     <flag name="vorbis">
       Support for encoding and decoding Vorbis audio.
