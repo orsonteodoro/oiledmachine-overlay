@@ -4,6 +4,8 @@
 
 EAPI=8
 
+NODE_VERSION="20"
+
 inherit npm
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -565,7 +567,7 @@ IUSE+="
 ebuild-revision-1
 "
 RDEPEND+="
-	net-libs/nodejs:18
+	net-libs/nodejs:18[jit]
 "
 DEPEND+="
 	${RDEPEND}
@@ -580,7 +582,6 @@ src_unpack() {
 		git-r3_fetch
 		git-r3_checkout
 	else
-		#unpack ${A}
 		npm_src_unpack
 	fi
 }
@@ -591,10 +592,13 @@ src_configure() {
 
 src_compile() {
 	npm_hydrate
+	export NODE_OPTIONS="--openssl-legacy-provider"
 	enpm run build
 }
 
 src_install() {
+	insinto "/usr/share/Thunder/Controller/UI"
+	doins -r "dist/"*
 	docinto "licenses"
 	dodoc "COPYING"
 	dodoc "LICENSE"
