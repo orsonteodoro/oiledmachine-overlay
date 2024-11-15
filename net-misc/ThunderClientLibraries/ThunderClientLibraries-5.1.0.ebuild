@@ -37,7 +37,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 bluetooth-audio-sink bluetooth-audio-source cdmi compositor-buffer
 compositor-client compositor-mesa compositor-wayland cryptography deviceinfo
-displayinfo ocdm openssl playerinfo protocols provision-proxy securityagent
+displayinfo ocdm openssl playerinfo +protocols provision-proxy securityagent
 test
 "
 REQUIRED_USE="
