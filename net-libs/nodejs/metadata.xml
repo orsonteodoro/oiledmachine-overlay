@@ -121,6 +121,9 @@ https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
     <flag name="jit">
       Enable JIT compilation for faster runtime performance.
       Disable to mitigate against JIT based vulnerabilities.
+
+      Disabling JIT will disable WebAssembly, which may be needed by some
+      packages.
     </flag>
     <flag name="man">
       It installs man pages.  It should only be enabled for the highest request

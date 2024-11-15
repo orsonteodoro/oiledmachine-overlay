@@ -306,6 +306,7 @@ ewarn "Consider adding it to the NODEJS_EXCLUDED_TRAINERS."
 ewarn
 	fi
 	uopts_setup
+	use jit || ewarn "Disabling jit will disable WebAssembly in ${CATEGORY}/${PN}"
 }
 
 src_prepare() {
