@@ -37,8 +37,8 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 bluetooth-audio-sink bluetooth-audio-source cdmi compositor-buffer-type
 compositor-client compositor-mesa compositor-wayland cryptography device-info
-display-info ocdm openssl playerinfo +protocols provision-proxy security-agent
-test
+display-info ocdm openssl player-info +protocols provision-proxy security-agent
+test virtual-input
 "
 REQUIRED_USE="
 	?? (
@@ -53,6 +53,21 @@ REQUIRED_USE="
 	)
 	openssl? (
 		cryptography
+	)
+	|| (
+		bluetooth-audio-sink
+		bluetooth-audio-source
+		cdmi
+		compositor-buffer-type
+		compositor-client
+		cryptography
+		device-info
+		display-info
+		ocdm
+		player-info
+		provision-proxy
+		security-agent
+		virtual-input
 	)
 "
 RDEPEND+="
@@ -90,7 +105,7 @@ src_configure() {
 		-DBLUETOOTHAUDIOSINK=$(usex bluetooth-audio-sink)
 		-DBLUETOOTHAUDIOSOURCE=$(usex bluetooth-audio-source)
 		-DCDMI=$(usex cdmi)
-		-DCOMPOSITORBUFFER=$(usex compositor-buffer)
+		-DCOMPOSITORBUFFER=$(usex compositor-buffer-type)
 		-DCOMPOSITORCLIENT=$(usex compositor-client)
 		-DCRYPTOGRAPHY=$(usex cryptography)
 		-DDEVICEINFO=$(usex device-info)

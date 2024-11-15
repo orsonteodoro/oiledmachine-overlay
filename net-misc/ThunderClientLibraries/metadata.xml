@@ -20,8 +20,8 @@
     <flag name="cdmi">
       Add the OpenCDM interface
     </flag>
-    <flag name="compositor-buffer">
-      Add the compositor buffer library
+    <flag name="compositor-buffer-type">
+      Add the compositor buffer type library
     </flag>
     <flag name="compositor-client">
       Add the graphics backend abstraction for external apps
@@ -40,6 +40,9 @@
     </flag>
     <flag name="display-info">
       Add the displayinfo COMRPC library
+    </flag>
+    <flag name="player-info">
+      Add the playerinfo COMRPC abstraction library
     </flag>
     <flag name="protocols">
       Add the protocols library
