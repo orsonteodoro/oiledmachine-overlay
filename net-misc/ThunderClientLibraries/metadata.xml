@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/rdkcentral/ThunderClientLibraries/issues</bugs-to>
+    <remote-id type="github">rdkcentral/ThunderClientLibraries</remote-id>
+  </upstream>
+  <use>
+    <flag name="bluetooth-audio-sink">
+      Add the bluetoothaudiosink library
+    </flag>
+    <flag name="bluetooth-audio-source">
+      Add the bluetoothaudiosource library
+    </flag>
+    <flag name="compositor-buffer">
+      Add the compositor buffer library
+    </flag>
+    <flag name="compositor-client">
+      Add the graphics backend abstraction for external apps
+    </flag>
+    <flag name="compositor-mesa">
+      Use Mesa as the compositor backend
+    </flag>
+    <flag name="compositor-wayland">
+      Use Wayland as the compositor backend
+    </flag>
+    <flag name="deviceinfo">
+      Add the deviceinfo COMRPC library
+    </flag>
+    <flag name="displayinfo">
+      Add the displayinfo COMRPC library
+    </flag>
+    <flag name="securityagent">
+      Add the securityagent library
+    </flag>
+    <flag name="protocols">
+      Add the protocols library
+    </flag>
+    <flag name="provisionproxy">
+      Add the provisionproxy library
+    </flag>
+    <flag name="cdmi">
+      Add the OpenCDM interface
+    </flag>
+    <flag name="cryptography">
+      Add the crypography library
+    </flag>
+  </use>
+</pkgmetadata>
