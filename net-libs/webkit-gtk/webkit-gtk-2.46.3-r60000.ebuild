@@ -2472,19 +2472,6 @@ ewarn
 		$(cmake_use_find_package opengl OpenGL)
 	)
 
-	# Skip ccache
-	if tc-is-clang ; then
-		local s=$(clang-major-version)
-		mycmakeargs+=(
-			-DCMAKE_GI_COMPILER="/usr/lib/llvm/${s}/bin/${CHOST}-clang-${s}"
-		)
-	else
-		local s=$(gcc-major-version)
-		mycmakeargs+=(
-			-DCMAKE_GI_COMPILER="/usr/bin/${CHOST}-gcc-${s}"
-		)
-	fi
-
 	if use debug ; then
 		mycmakeargs+=(
 			-DCMAKE_BUILD_TYPE="Debug"
