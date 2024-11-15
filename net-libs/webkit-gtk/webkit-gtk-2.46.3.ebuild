@@ -1,5 +1,5 @@
 # Copyright 2022-2023 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -1065,6 +1065,7 @@ BDEPEND+="
 _PATCHES=(
 #	"${FILESDIR}/webkit-gtk-2.43.2-CaptionUserPreferencesDisplayMode-conditional.patch"
 	"${FILESDIR}/extra-patches/webkit-gtk-2.43.2-custom-page-size.patch"
+	"${FILESDIR}/2.44.4-fix-icu76.1.patch"
 )
 
 get_gcc_ver_from_cxxabi() {
