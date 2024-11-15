@@ -47,12 +47,6 @@
     <flag name="compositor">
       Add the Compositor plugin
     </flag>
-    <flag name="compositor-mesa">
-      Use Mesa was the Compositor implementation
-    </flag>
-    <flag name="compositor-wayland">
-      Use Wayland was the Compositor implementation
-    </flag>
     <flag name="process-containers">
       Add the ProcessContainers plugin
     </flag>
@@ -115,6 +109,9 @@
     </flag>
     <flag name="firmware-control">
       Add the FirmwareControl plugin
+    </flag>
+    <flag name="gles2">
+      Use Mesa as the Compositor implementation
     </flag>
     <flag name="process-monitor">
       Add the Process Monitor plugin
@@ -220,6 +217,9 @@
     </flag>
     <flag name="watchdog">
       Add the Doggo watchdog plugin
+    </flag>
+    <flag name="wayland">
+      Use Wayland as the Compositor implementation
     </flag>
     <flag name="webpa">
       Add the WebPA plugin

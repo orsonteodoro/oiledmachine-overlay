@@ -57,10 +57,10 @@ example-out-of-process example-simple-comrpc-test example-state-controller
 example-smart-interface-type
 )
 FEATS=(
-compositor-mesa compositor-wayland dial-server-amazon-prime dial-server-netflix
-dial-server-youtube dump-on-completed portaudio power-mfr-persist-state
-rdk-audio-hal remote-control-cec +remote-control-rf4ce streamer-aamp
-streamer-cenc streamer-qam webpa-ccsp webpa-device-info webpa-generic-adapter
+dial-server-amazon-prime dial-server-netflix dial-server-youtube
+dump-on-completed gles2 portaudio power-mfr-persist-state rdk-audio-hal
+remote-control-cec +remote-control-rf4ce streamer-aamp streamer-cenc
+streamer-qam wayland webpa-ccsp webpa-device-info webpa-generic-adapter
 web-server-device-info web-server-dial-server web-server-security-agent
 )
 TESTS=(
@@ -75,8 +75,8 @@ ${TESTS[@]}
 "
 REQUIRED_USE="
 	?? (
-		compositor-mesa
-		compositor-wayland
+		gles2
+		wayland
 	)
 	avs-keyword-detection? (
 		avs
@@ -86,15 +86,9 @@ REQUIRED_USE="
 	)
 	compositor? (
 		^^ (
-			compositor-mesa
-			compositor-wayland
+			gles2
+			wayland
 		)
-	)
-	compositor-mesa? (
-		compositor
-	)
-	compositor-wayland? (
-		compositor
 	)
 	dial-server-amazon-prime? (
 		dial-server
@@ -104,6 +98,12 @@ REQUIRED_USE="
 	)
 	dial-server-youtube? (
 		dial-server
+	)
+	gles2? (
+		compositor
+	)
+	wayland? (
+		compositor
 	)
 	|| (
 		${PLUGINS[@]}
@@ -125,19 +125,14 @@ RDEPEND+="
 	compositor? (
 		~net-misc/ThunderClientLibraries-${PV}[compositor-client,virtual-input]
 	)
-	compositor-mesa? (
+	example-jsonrpc? (
+		~net-misc/ThunderClientLibraries-${PV}[security-agent]
+	)
+	gles2? (
 		media-libs/libpng
 		media-libs/mesa
 		x11-libs/libdrm
 		~net-misc/ThunderClientLibraries-${PV}[compositor-buffer-type]
-	)
-	compositor-wayland? (
-		dev-libs/wayland
-		media-libs/libpng
-		media-libs/mesa[wayland]
-	)
-	example-jsonrpc? (
-		~net-misc/ThunderClientLibraries-${PV}[security-agent]
 	)
 	spark? (
 		media-libs/freetype
@@ -164,6 +159,11 @@ RDEPEND+="
 	)
 	vault-provisioning? (
 		~net-misc/ThunderClientLibraries-${PV}[cryptography]
+	)
+	wayland? (
+		dev-libs/wayland
+		media-libs/libpng
+		media-libs/mesa[wayland]
 	)
 	webpa-generic-adapter? (
 		dev-libs/glib
@@ -286,11 +286,11 @@ src_configure() {
 		-DTEST_AUTOMATION_TOOLS=$(usex test-automation-tools)
 	)
 
-	if use compositor-mesa ; then
+	if use gles2 ; then
 		mycmakeargs+=(
 			-DPLUGIN_COMPOSITOR_IMPLEMENTATION="Mesa"
 		)
-	elif use compositor-wayland ; then
+	elif use wayland ; then
 		mycmakeargs+=(
 			-DPLUGIN_COMPOSITOR_IMPLEMENTATION="Wayland"
 		)
