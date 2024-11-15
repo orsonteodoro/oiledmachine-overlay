@@ -40,7 +40,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 PLUGINS=(
 avs avs-keyword-detection avs-smart-screen back-office bluetooth bluetooth-audio
 bluetooth-kernel-connection-control bluetooth-remote-control
-bluetooth-sdp-server cec-control cobalt commander compositor  debug dhcp-server
+bluetooth-sdp-server cec-control cobalt commander compositor debug dhcp-server
 dial-server dictionary firmware-control input-switch language-administrator
 network-control performance-monitor power process-containers process-monitor
 remote-control resource-monitor rust-bridge ssh-server snapshot spark streamer
@@ -129,7 +129,7 @@ RDEPEND+="
 		media-libs/libpng
 		media-libs/mesa
 		x11-libs/libdrm
-		~net-misc/ThunderClientLibraries-${PV}[compositorbuffer]
+		~net-misc/ThunderClientLibraries-${PV}[compositor-buffer-type]
 	)
 	compositor-wayland? (
 		dev-libs/wayland
@@ -160,7 +160,7 @@ RDEPEND+="
 		sys-apps/systemd
 	)
 	test-compositor-server? (
-		~net-misc/ThunderClientLibraries-${PV}[compositorbuffer]
+		~net-misc/ThunderClientLibraries-${PV}[compositor-buffer-type]
 	)
 	vault-provisioning? (
 		~net-misc/ThunderClientLibraries-${PV}[cryptography]
