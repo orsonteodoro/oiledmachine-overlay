@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/rdkcentral/ThunderNanoServices/issues</bugs-to>
+    <remote-id type="github">rdkcentral/ThunderNanoServices</remote-id>
+  </upstream>
+  <use>
+    <flag name="avs">
+      Add the AVS plugin
+    </flag>
+    <flag name="avs-keyword-detection">
+      Enable AVS Pryon Keyword Detection engine
+    </flag>
+    <flag name="avs-smart-screen">
+      Enable AVS SmartScreen
+    </flag>
+    <flag name="backoffice">
+      Add the BackOffice plugin
+    </flag>
+    <flag name="bluetooth-audio">
+      Add the Bluetooth Audio plugin
+    </flag>
+    <flag name="bluetooth-kernel-connection-control">
+      Enable the Bluetooth kernel connection control
+    </flag>
+    <flag name="bluetooth-remote-control">
+      Add the Bluetooth Remote Control plugin
+    </flag>
+    <flag name="bluetooth-sdp-server">
+      Add the Bluetooth SDP server plugin
+    </flag>
+    <flag name="cec-control">
+      Add the CECControl plugin
+    </flag>
+    <flag name="cobalt">
+      Add the Cobalt plugin
+    </flag>
+    <flag name="commander">
+      Add the Commander plugin
+    </flag>
+    <flag name="compositor">
+      Add the Compositor plugin
+    </flag>
+    <flag name="compositor-mesa">
+      Use Mesa was the Compositor implementation
+    </flag>
+    <flag name="compositor-wayland">
+      Use Wayland was the Compositor implementation
+    </flag>
+    <flag name="process-containers">
+      Add the ProcessContainers plugin
+    </flag>
+    <flag name="dhcp-server">
+      Add the DHCPServer plugin
+    </flag>
+    <flag name="dial-server-amazon-prime">
+      Add Amazon Prime support for the DIALServer plugin
+    </flag>
+    <flag name="dial-server-netflix">
+      Add Netflix support the DIALServer plugin
+    </flag>
+    <flag name="dial-server-youtube">
+      Add YouTube support the DIALServer plugin
+    </flag>
+    <flag name="dump-on-completed">
+      Dump a png upon buffer completion
+    </flag>
+    <flag name="example-comrpc-client">
+      Add an example to show how to hook up Thunder COMRPC
+    </flag>
+    <flag name="example-config-update-example">
+      Add an example plugin to get/set plugin config
+    </flag>
+    <flag name="example-dynamic-loading">
+      Add an example to add an interface to the running system
+    </flag>
+    <flag name="example-dynamic-loading-yang">
+      Add an example Yang plugin for dynamic loading
+    </flag>
+    <flag name="example-dynamic-loading-yin">
+      Add an example Yin plugin for dynamic loading
+    </flag>
+    <flag name="example-file-transfer">
+      Add an example plugin to show how to read from server and store to file
+    </flag>
+    <flag name="example-io-connector-test">
+      Add an example plugin to demo communication of IOConnector plugin with JSONRPC and COMRPC
+    </flag>
+    <flag name="example-jsonrpc">
+      Add an example plugin to show communication between plugin and standalone client using JSONRPC plugin
+    </flag>
+    <flag name="example-message-control-udp-client">
+      Add the example to get trace or logs from Thunder or plugins
+    </flag>
+    <flag name="example-out-of-process">
+      Add an example plugin to demo implementation of an out of process plugin
+    </flag>
+    <flag name="example-simple-comrpc-test">
+      Add an example to show a simple client to demo COMRPC communication
+    </flag>
+    <flag name="example-smart-interface-type">
+      Add an example PluginSmartInterfaceType plugin
+    </flag>
+    <flag name="example-state-controller">
+      Add an example plugin to get state changes
+    </flag>
+    <flag name="input-switch">
+      Add the InputSwitch plugin
+    </flag>
+    <flag name="firmware-control">
+      Add the FirmwareControl plugin
+    </flag>
+    <flag name="process-monitor">
+      Add the Process Monitor plugin
+    </flag>
+    <flag name="language-administrator">
+      Add the LanguageAdministrator plugin
+    </flag>
+    <flag name="network-control">
+      Add the NetworkControl plugin
+    </flag>
+    <flag name="performance-monitor">
+      Add the Performance Monitor plugin
+    </flag>
+    <flag name="power">
+      Add the Power plugin
+    </flag>
+    <flag name="power-mfr-persist-state">
+      Enable device to boot to last power state on power loss
+    </flag>
+    <flag name="process-containers">
+      Add the Process Containers plugin
+    </flag>
+    <flag name="process-monitors">
+      Add the Process Monitor plugin
+    </flag>
+    <flag name="rdk-audio-hal">
+      Link to RDK audio client
+    </flag>
+    <flag name="remote-control">
+      Add the RemoteControl plugin
+    </flag>
+    <flag name="remote-control-cec">
+      Enable CEC User Control conversion support
+    </flag>
+    <flag name="remote-control-rf4ce">
+      Enable RF4CE functionality
+    </flag>
+    <flag name="resource-monitor">
+      Add the ResourceMonitor plugin
+    </flag>
+    <flag name="rust-bridge">
+      Add the RustBridge plugin
+    </flag>
+    <flag name="ssh-server">
+      Add the SecureShellServer plugin
+    </flag>
+    <flag name="streamer">
+      Add the Streamer plugin
+    </flag>
+    <flag name="snapshot">
+      Add the Snapshot plugin
+    </flag>
+    <flag name="spark">
+      Add the SparkEngine plugin
+    </flag>
+    <flag name="subsystem-controller">
+      Add the SubsystemController plugin
+    </flag>
+    <flag name="svalbard">
+      Add the Svalbard plugin
+    </flag>
+    <flag name="system-commands">
+      Add the SystemCommands plugin
+    </flag>
+    <flag name="systemd">
+      Add the SystemdConnector plugin
+    </flag>
+    <flag name="switchboard">
+      Add the SwitchBoard plugin
+    </flag>
+    <flag name="test-automation-tools">
+      For testing, add a utility to verify Thunder functions triggered by automation tools
+    </flag>
+    <flag name="test-cec">
+      Add the CEC test apps
+    </flag>
+    <flag name="test-compositor">
+      Build the Compositor test client
+    </flag>
+    <flag name="test-compositor-client">
+      Add compositor client test app
+    </flag>
+    <flag name="test-compositor-server">
+      Add compositor server test app
+    </flag>
+    <flag name="test-controller">
+      For testing, add the TestController plugin
+    </flag>
+    <flag name="test-utility">
+      For testing, add the TestUtility plugin
+    </flag>
+    <flag name="test-store">
+      For testing, add a utility to verify behavior in PersistentStore and Dictionary plugins
+    </flag>
+    <flag name="time-sync">
+      Add the TimeSync plugin
+    </flag>
+    <flag name="vault-provisioning">
+      Add the VaultProvisioning plugin
+    </flag>
+    <flag name="volume-control">
+      Add the VolumeControl plugin
+    </flag>
+    <flag name="watchdog">
+      Add the Doggo watchdog plugin
+    </flag>
+    <flag name="webpa">
+      Add the WebPA plugin
+    </flag>
+    <flag name="webpa-ccsp">
+      Enable the WebPA CCSP client
+    </flag>
+    <flag name="webpa-device-info">
+      Enable the WebPA Device Interface Control
+    </flag>
+    <flag name="webpa-generic-adapter">
+      Enable the WebPA generic client
+    </flag>
+    <flag name="webproxy">
+      Add the WebProxy plugin
+    </flag>
+    <flag name="webserver">
+      Add the WebServer plugin
+    </flag>
+    <flag name="webserver-device-info">
+      Enable WebServer support for DeviceInfo
+    </flag>
+    <flag name="webserver-dial-server">
+      Enable WebServer support for DIALServer
+    </flag>
+    <flag name="webserver-security-agent">
+      Enable WebServer support for SecurityAgent
+    </flag>
+    <flag name="webshell">
+      Add the WebShell plugin
+    </flag>
+    <flag name="wifi-control">
+      Add the WifiControl plugin
+    </flag>
+  </use>
+</pkgmetadata>
