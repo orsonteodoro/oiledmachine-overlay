@@ -37,27 +37,41 @@ LICENSE="
 "
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+="
+PLUGINS=(
 avs avs-keyword-detection avs-smart-screen back-office bluetooth bluetooth-audio
-bluetooth-remote-control bluetooth-sdp-server cec-control cobalt commander
-compositor compositor-mesa compositor-wayland dhcp-server dial-server
-dial-server-amazon-prime dial-server-netflix dial-server-youtube dictionary
-dump-on-completed example-client-server example-comrpc-client
+bluetooth-kernel-connection-control bluetooth-remote-control
+bluetooth-sdp-server cec-control cobalt commander compositor  debug dhcp-server
+dial-server dictionary firmware-control input-switch language-administrator
+network-control performance-monitor power process-containers process-monitor
+remote-control resource-monitor rust-bridge ssh-server snapshot spark streamer
+subsystem-controller svalbard switchboard system-commands systemd
+vault-provisioning volume-control watchdog webpa web-proxy web-server web-shell
+wifi-control
+)
+EXAMPLES=(
+example-client-server example-comrpc-client
 example-config-update-example example-dynamic-loading
 example-dynamic-loading-yang example-dynamic-loading-yin example-file-transfer
 example-io-connector-test example-jsonrpc example-message-control-udp-client
 example-out-of-process example-simple-comrpc-test example-state-controller
-example-smart-interface-type firmware-control input-switch
-language-administrator network-control performance-monitor portaudio power
-power-mfr-persist-state process-containers process-monitor rdk-audio-hal
-remote-control remote-control-cec +remote-control-rf4ce resource-monitor
-rust-bridge ssh-server snapshot spark streamer streamer-aamp streamer-cenc
-streamer-qam subsystem-controller svalbard switchboard system-commands systemd
+example-smart-interface-type
+)
+FEATS=(
+compositor-mesa compositor-wayland dial-server-amazon-prime dial-server-netflix
+dial-server-youtube dump-on-completed portaudio power-mfr-persist-state
+rdk-audio-hal remote-control-cec +remote-control-rf4ce streamer-aamp
+streamer-cenc streamer-qam webpa-ccsp webpa-device-info webpa-generic-adapter
+web-server-device-info web-server-dial-server web-server-security-agent
+)
+TESTS=(
 test test-automation-tools test-cec test-compositor test-compositor-client
 test-compositor-server test-controller test-store time-sync test-utility
-vault-provisioning volume-control watchdog webpa webpa-ccsp webpa-device-info
-webpa-generic-adapter web-proxy web-server web-server-device-info
-web-server-dial-server web-server-security-agent web-shell wifi-control
+)
+IUSE+="
+${PLUGINS[@]}
+${EXAMPLES[@]}
+${FEATS[@]}
+${TESTS[@]}
 "
 REQUIRED_USE="
 	?? (
@@ -90,6 +104,9 @@ REQUIRED_USE="
 	)
 	dial-server-youtube? (
 		dial-server
+	)
+	|| (
+		${PLUGINS[@]}
 	)
 "
 RDEPEND+="
@@ -205,7 +222,7 @@ src_configure() {
 		-DPLUGIN_BLUETOOTH_KERNEL_CONNECION_CONTROL=$(usex bluetooth-kernel-connection-control)
 		-DPLUGIN_BLUETOOTHAUDIO=$(usex bluetooth-audio)
 		-DPLUGIN_BLUETOOTHREMOTECONTROL=$(usex bluetooth-remote-control)
-		-DPLUGIN_BLUETOOTHSDPSERVER=$(usex bluetooth-spd-server)
+		-DPLUGIN_BLUETOOTHSDPSERVER=$(usex bluetooth-sdp-server)
 		-DPLUGIN_CECCONTROL=$(usex cec-control)
 		-DPLUGIN_COBALT=$(usex cobalt)
 		-DPLUGIN_COMMANDER=$(usex commander)
@@ -225,7 +242,7 @@ src_configure() {
 		-DPLUGIN_FIRMWARECONTROL=$(usex firmware-control)
 		-DPLUGIN_INPUTSWITCH=$(usex input-switch)
 		-DPLUGIN_JSONRPC=$(usex example-jsonrpc)
-		-DPLUGIN_LANGUAGEADMINISTRATOR=$(usex language-adminstrator)
+		-DPLUGIN_LANGUAGEADMINISTRATOR=$(usex language-administrator)
 		-DPLUGIN_NETWORKCONTROL=$(usex network-control)
 		-DPLUGIN_OUTOFPROCESS=$(usex example-out-of-process)
 		-DPLUGIN_PERFORMANCEMONITOR=$(usex performance-monitor)
@@ -244,7 +261,7 @@ src_configure() {
 		-DPLUGIN_STATECONTROLLER=$(usex example-state-controller)
 		-DPLUGIN_STREAMER=$(usex streamer)
 		-DPLUGIN_SUBSYSTEMCONTROLLER=$(usex subsystem-controller)
-		-DPLUGIN_SVALBARD=$(usex salbard)
+		-DPLUGIN_SVALBARD=$(usex svalbard)
 		-DPLUGIN_SYSTEMDCONNECTOR=$(usex systemd)
 		-DPLUGIN_SWITCHBOARD=$(usex switchboard)
 		-DPLUGIN_SYSTEMCOMMANDS=$(usex system-commands)
