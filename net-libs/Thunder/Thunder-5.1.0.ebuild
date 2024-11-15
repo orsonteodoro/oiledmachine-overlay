@@ -5,7 +5,9 @@
 EAPI=8
 
 # TODO package:
+# dobby - https://github.com/rdkcentral/Dobby
 # memcr - https://github.com/LibertyGlobal/memcr
+
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit cmake optfeature python-single-r1
@@ -41,19 +43,51 @@ LICENSE="
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
--bcm43xx -bluetooth -bluetooth-audio -broadcast -debug -gatt -hibernate
--privileged-request ssl -systemd test
+-awc -bcm43xx -bluetooth -bluetooth-audio -broadcast -crun -debug -dobby -gatt -hibernate
+-lxc -privileged-request -process-containers -runc ssl -systemd test
 ebuild-revision-1
+"
+REQUIRED_USE="
+	process-containers? (
+		|| (
+			awc
+			crun
+			dobby
+			lxc
+			runc
+		)
+	)
 "
 RDEPEND+="
 	dev-libs/openssl:=
 	sys-libs/zlib
 	~net-misc/ThunderTools-${PV}[${PYTHON_SINGLE_USEDEP}]
+	awc? (
+		app-containers/lxc
+		app-misc/slauncher
+		dev-libs/glib
+	)
 	bluetooth? (
 		net-wireless/bluez
 	)
+	bluetooth-audio? (
+		media-libs/sbc
+	)
+	crun? (
+		app-containers/crun
+	)
+	dobby? (
+		app-containers/dobby
+		sys-apps/systemd
+	)
 	hibernate? (
 		dev-libs/memcr
+	)
+	lxc? (
+		app-containers/lxc
+	)
+	runc? (
+		app-containers/runc
 	)
 "
 DEPEND+="
@@ -91,9 +125,16 @@ src_configure() {
 		-DHIBERNATESUPPORT=$(usex hibernate)
 		-DLOCALTRACER=$(usex debug)
 		-DPRIVILEGEDREQUEST=$(usex privileged-request)
+		-DPROCESSCONTAINERS=$(usex process-containers)
+		-DPROCESSCONTAINERS_AWC=$(usex awc)
+		-DPROCESSCONTAINERS_LXC=$(usex lxc)
+		-DPROCESSCONTAINERS_RUNC=$(usex runc)
+		-DPROCESSCONTAINERS_CRUN=$(usex crun)
+		-DPROCESSCONTAINERS_DOBBY=$(usex dobby)
 		-DSECURE_SOCKET=$(usex ssl)
 		-DSYSTEMD_SERVICE=$(usex systemd)
 		-DWARNING_REPORTING=$(usex debug)
+		-DWEBSOCKET=$(usex websocket)
 	)
 	cmake_src_configure
 }
