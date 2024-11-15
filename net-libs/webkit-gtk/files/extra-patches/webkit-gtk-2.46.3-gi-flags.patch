@@ -1,0 +1,12 @@
+--- a/Source/cmake/FindGI.cmake.orig	2024-08-18 23:28:40.271245200 -0700
++++ b/Source/cmake/FindGI.cmake	2024-11-15 13:53:48.505808268 -0800
+@@ -341,7 +341,7 @@ function(GI_INTROSPECT namespace nsversi
+         DEPENDS ${gir_deps} ${gir_srcs}
+         VERBATIM
+         COMMAND_EXPAND_LISTS
+-        COMMAND ${CMAKE_COMMAND} -E env "CC=${CMAKE_C_COMPILER}" "CFLAGS=${CMAKE_C_FLAGS}"
++        COMMAND ${CMAKE_COMMAND} -E env "CC=${CMAKE_C_COMPILER}" "CXX=${CMAKE_CXX_COMPILER}" "CPP=${CMAKE_C_COMPILER} -E" "CFLAGS=${CMAKE_C_FLAGS}" "CXXFLAGS=${CMAKE_CXX_FLAGS}" "CPPFLAGS=$ENV{CPPFLAGS}" "LDFLAGS=$ENV{LDFLAGS}"
+-            "${GI_SCANNER_EXE}" --quiet --warn-all --warn-error --no-libtool
++            "${GI_SCANNER_EXE}" --warn-all --no-libtool
+             "--output=${gir_path}"
+             "--library=$<TARGET_FILE_BASE_NAME:${opt_TARGET}>"

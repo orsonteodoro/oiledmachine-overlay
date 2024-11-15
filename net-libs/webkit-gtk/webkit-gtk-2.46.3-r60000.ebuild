@@ -1055,9 +1055,10 @@ BDEPEND+="
 #		)
 #	)
 _PATCHES=(
-#	"${FILESDIR}/webkit-gtk-2.43.2-CaptionUserPreferencesDisplayMode-conditional.patch"
-	"${FILESDIR}/extra-patches/webkit-gtk-2.43.2-custom-page-size.patch"
+#	"${FILESDIR}/${PN}-2.43.2-CaptionUserPreferencesDisplayMode-conditional.patch"
+	"${FILESDIR}/extra-patches/${PN}-2.43.2-custom-page-size.patch"
 	"${FILESDIR}/2.44.4-fix-icu76.1.patch"
+	"${FILESDIR}/extra-patches/${PN}-2.46.3-gi-flags.patch"
 )
 
 get_gcc_ver_from_cxxabi() {
@@ -2470,6 +2471,19 @@ ewarn
 		$(cmake_use_find_package gles2 OpenGLES2)
 		$(cmake_use_find_package opengl OpenGL)
 	)
+
+	# Skip ccache
+	if tc-is-clang ; then
+		local s=$(clang-major-version)
+		mycmakeargs+=(
+			-DCMAKE_GI_COMPILER="/usr/lib/llvm/${s}/bin/${CHOST}-clang-${s}"
+		)
+	else
+		local s=$(gcc-major-version)
+		mycmakeargs+=(
+			-DCMAKE_GI_COMPILER="/usr/bin/${CHOST}-gcc-${s}"
+		)
+	fi
 
 	if use debug ; then
 		mycmakeargs+=(
