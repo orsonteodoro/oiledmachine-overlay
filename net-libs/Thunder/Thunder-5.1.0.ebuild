@@ -8,7 +8,7 @@ EAPI=8
 # memcr - https://github.com/LibertyGlobal/memcr
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit cmake python-single-r1
+inherit cmake optfeature python-single-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -103,6 +103,16 @@ src_install() {
 	docinto "licenses"
 	dodoc "LICENSE"
 	dodoc "NOTICE"
+}
+
+pkg_postinst() {
+	optfeature_header "Install optional packages:"
+
+	# Orphaned packages
+	optfeature "ClearKey support" "net-misc/OCDM-Clearkey"
+	optfeature "Development and test UI" "net-misc/ThunderUI"
+	optfeature "Additional WPE Plugins" "net-misc/ThunderNanoServices"
+	optfeature "Convenience library for apps to use plugins" "net-misc/ThunderClientLibraries"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
