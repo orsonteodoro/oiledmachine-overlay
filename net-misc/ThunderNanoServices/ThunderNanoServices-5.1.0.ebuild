@@ -64,6 +64,12 @@ REQUIRED_USE="
 		compositor-mesa
 		compositor-wayland
 	)
+	avs-keyword-detection? (
+		avs
+	)
+	avs-smart-screen? (
+		avs
+	)
 	compositor? (
 		^^ (
 			compositor-mesa
@@ -85,12 +91,6 @@ REQUIRED_USE="
 	dial-server-youtube? (
 		dial-server
 	)
-	avs-keyword-detection? (
-		avs
-	)
-	avs-smart-screen? (
-		avs
-	)
 "
 RDEPEND+="
 	~net-libs/Thunder-${PV}
@@ -106,12 +106,13 @@ RDEPEND+="
 		)
 	)
 	compositor? (
-		~net-misc/ThunderClientLibraries-${PV}[compositor-client]
+		~net-misc/ThunderClientLibraries-${PV}[compositor-client,virtual-input]
 	)
 	compositor-mesa? (
 		media-libs/libpng
 		media-libs/mesa
 		x11-libs/libdrm
+		~net-misc/ThunderClientLibraries-${PV}[compositorbuffer]
 	)
 	compositor-wayland? (
 		dev-libs/wayland
@@ -135,8 +136,17 @@ RDEPEND+="
 		media-libs/gstreamer:1.0
 		media-libs/gst-plugins-base:1.0
 	)
+	svalbard? (
+		~net-misc/ThunderClientLibraries-${PV}[cryptography]
+	)
 	systemd? (
 		sys-apps/systemd
+	)
+	test-compositor-server? (
+		~net-misc/ThunderClientLibraries-${PV}[compositorbuffer]
+	)
+	vault-provisioning? (
+		~net-misc/ThunderClientLibraries-${PV}[cryptography]
 	)
 	webpa-generic-adapter? (
 		dev-libs/glib
@@ -206,9 +216,9 @@ src_configure() {
 		-DPLUGIN_CONFIGUPDATEEXAMPLE=$(usex example-config-update-example)
 		-DPLUGIN_DHCPSERVER=$(usex dhcp-server)
 		-DPLUGIN_DIALSERVER=$(usex dial-server)
-		-DPLUGIN_DIALSERVER_ENABLE_YOUTUBE=$(usex dial-server-youtube)
-		-DPLUGIN_DIALSERVER_ENABLE_NETFLIX=$(usex dial-server-netflix)
 		-DPLUGIN_DIALSERVER_ENABLE_AMAZON_PRIME=$(usex dial-server-amazon-prime)
+		-DPLUGIN_DIALSERVER_ENABLE_NETFLIX=$(usex dial-server-netflix)
+		-DPLUGIN_DIALSERVER_ENABLE_YOUTUBE=$(usex dial-server-youtube)
 		-DPLUGIN_DICTIONARY=$(usex dictionary)
 		-DPLUGIN_DOGGO=$(usex watchdog)
 		-DPLUGIN_FILETRANSFER=$(usex example-file-transfer)
