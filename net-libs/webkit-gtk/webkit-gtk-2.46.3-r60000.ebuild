@@ -111,7 +111,7 @@ VULNERABILITIES_FIXED=(
 	"CVE-2024-44244;DoS;Medium"
 )
 OCDM_WV="virtual/libc" # Placeholder
-PYTHON_COMPAT=( python3_{11..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 SELECTED_LTO="" # global var not const
 SLOT_MAJOR=$(ver_cut 1 "${API_VERSION}")
 # See Source/cmake/OptionsGTK.cmake
