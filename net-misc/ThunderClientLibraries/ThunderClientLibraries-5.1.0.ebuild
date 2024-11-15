@@ -35,9 +35,9 @@ LICENSE="
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-bluetooth-audio-sink bluetooth-audio-source cdmi compositor-buffer
-compositor-client compositor-mesa compositor-wayland cryptography deviceinfo
-displayinfo ocdm openssl playerinfo +protocols provision-proxy securityagent
+bluetooth-audio-sink bluetooth-audio-source cdmi compositor-buffer-type
+compositor-client compositor-mesa compositor-wayland cryptography device-info
+display-info ocdm openssl playerinfo +protocols provision-proxy security-agent
 test
 "
 REQUIRED_USE="
@@ -89,17 +89,18 @@ src_configure() {
 	local mycmakeargs=(
 		-DBLUETOOTHAUDIOSINK=$(usex bluetooth-audio-sink)
 		-DBLUETOOTHAUDIOSOURCE=$(usex bluetooth-audio-source)
+		-DCDMI=$(usex cdmi)
 		-DCOMPOSITORBUFFER=$(usex compositor-buffer)
 		-DCOMPOSITORCLIENT=$(usex compositor-client)
-		-DDEVICEINFO=$(usex deviceinfo)
-		-DDISPLAYINFO=$(usex displayinfo)
+		-DCRYPTOGRAPHY=$(usex cryptography)
+		-DDEVICEINFO=$(usex device-info)
+		-DDISPLAYINFO=$(usex display-info)
 		-DINCLUDE_SOFTWARE_CRYPTOGRAPHY_LIBRARY=$(usex openssl)
-		-DSECURITYAGENT=$(usex securityagent)
-		-DPLAYERINFO=$(usex playerinfo)
+		-DPLAYERINFO=$(usex player-info)
 		-DPROTOCOLS=$(usex protocols)
 		-DPROVISIONPROXY=$(usex provision-proxy)
-		-DCDMI=$(usex cdmi)
-		-DCRYPTOGRAPHY=$(usex cryptography)
+		-DSECURITYAGENT=$(usex security-agent)
+		-DVIRTUALINPUT=$(usex virtual-input)
 	)
 
 	if use compositor-mesa ; then

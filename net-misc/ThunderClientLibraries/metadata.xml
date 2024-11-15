@@ -17,6 +17,9 @@
     <flag name="bluetooth-audio-source">
       Add the bluetoothaudiosource library
     </flag>
+    <flag name="cdmi">
+      Add the OpenCDM interface
+    </flag>
     <flag name="compositor-buffer">
       Add the compositor buffer library
     </flag>
@@ -29,26 +32,26 @@
     <flag name="compositor-wayland">
       Use Wayland as the compositor backend
     </flag>
-    <flag name="deviceinfo">
+    <flag name="cryptography">
+      Add the crypography library
+    </flag>
+    <flag name="device-info">
       Add the deviceinfo COMRPC library
     </flag>
-    <flag name="displayinfo">
+    <flag name="display-info">
       Add the displayinfo COMRPC library
-    </flag>
-    <flag name="securityagent">
-      Add the securityagent library
     </flag>
     <flag name="protocols">
       Add the protocols library
     </flag>
-    <flag name="provisionproxy">
+    <flag name="provision-proxy">
       Add the provisionproxy library
     </flag>
-    <flag name="cdmi">
-      Add the OpenCDM interface
+    <flag name="security-agent">
+      Add the securityagent library
     </flag>
-    <flag name="cryptography">
-      Add the crypography library
+    <flag name="virtual-input">
+      Add the virtualinput library
     </flag>
   </use>
 </pkgmetadata>

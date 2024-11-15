@@ -20,7 +20,7 @@
     <flag name="avs-smart-screen">
       Enable AVS SmartScreen
     </flag>
-    <flag name="backoffice">
+    <flag name="back-office">
       Add the BackOffice plugin
     </flag>
     <flag name="bluetooth-audio">
@@ -233,22 +233,22 @@
     <flag name="webpa-generic-adapter">
       Enable the WebPA generic client
     </flag>
-    <flag name="webproxy">
+    <flag name="web-proxy">
       Add the WebProxy plugin
     </flag>
-    <flag name="webserver">
+    <flag name="web-server">
       Add the WebServer plugin
     </flag>
-    <flag name="webserver-device-info">
+    <flag name="web-server-device-info">
       Enable WebServer support for DeviceInfo
     </flag>
-    <flag name="webserver-dial-server">
+    <flag name="web-server-dial-server">
       Enable WebServer support for DIALServer
     </flag>
-    <flag name="webserver-security-agent">
+    <flag name="web-server-security-agent">
       Enable WebServer support for SecurityAgent
     </flag>
-    <flag name="webshell">
+    <flag name="web-shell">
       Add the WebShell plugin
     </flag>
     <flag name="wifi-control">

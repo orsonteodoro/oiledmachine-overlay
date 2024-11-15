@@ -38,7 +38,7 @@ LICENSE="
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-avs avs-keyword-detection avs-smart-screen backoffice bluetooth bluetooth-audio
+avs avs-keyword-detection avs-smart-screen back-office bluetooth bluetooth-audio
 bluetooth-remote-control bluetooth-sdp-server cec-control cobalt commander
 compositor compositor-mesa compositor-wayland dhcp-server dial-server
 dial-server-amazon-prime dial-server-netflix dial-server-youtube dictionary
@@ -56,13 +56,19 @@ streamer-qam subsystem-controller svalbard switchboard system-commands systemd
 test test-automation-tools test-cec test-compositor test-compositor-client
 test-compositor-server test-controller test-store time-sync test-utility
 vault-provisioning volume-control watchdog webpa webpa-ccsp webpa-device-info
-webpa-generic-adapter webproxy webserver webserver-device-info
-webserver-dial-server webserver-security-agent webshell wifi-control
+webpa-generic-adapter web-proxy web-server web-server-device-info
+web-server-dial-server web-server-security-agent web-shell wifi-control
 "
 REQUIRED_USE="
 	?? (
 		compositor-mesa
 		compositor-wayland
+	)
+	compositor? (
+		^^ (
+			compositor-mesa
+			compositor-wayland
+		)
 	)
 	compositor-mesa? (
 		compositor
@@ -99,6 +105,9 @@ RDEPEND+="
 			media-libs/portaudio
 		)
 	)
+	compositor? (
+		~net-misc/ThunderClientLibraries-${PV}[compositor-client]
+	)
 	compositor-mesa? (
 		media-libs/libpng
 		media-libs/mesa
@@ -108,6 +117,9 @@ RDEPEND+="
 		dev-libs/wayland
 		media-libs/libpng
 		media-libs/mesa[wayland]
+	)
+	example-jsonrpc? (
+		~net-misc/ThunderClientLibraries-${PV}[security-agent]
 	)
 	spark? (
 		media-libs/freetype
@@ -134,6 +146,9 @@ RDEPEND+="
 	)
 	webpa-ccsp? (
 		dev-libs/cJSON
+	)
+	web-server-security-agent? (
+		~net-misc/ThunderClientLibraries-${PV}[security-agent]
 	)
 "
 DEPEND+="
@@ -174,7 +189,7 @@ src_configure() {
 		-DPLUGIN_AVS=$(usex avs)
 		-DPLUGIN_AVS_ENABLE_KWD=$(usex avs-keyword-detection)
 		-DPLUGIN_AVS_ENABLE_SMART_SCREEN=$(usex avs-smart-screen)
-		-DPLUGIN_BACKOFFICE=$(usex backoffice)
+		-DPLUGIN_BACKOFFICE=$(usex back-office)
 		-DPLUGIN_BLUETOOTH=$(usex bluetooth)
 		-DPLUGIN_BLUETOOTH_DEVELOPMENT=$(usex debug)
 		-DPLUGIN_BLUETOOTH_KERNEL_CONNECION_CONTROL=$(usex bluetooth-kernel-connection-control)
@@ -232,12 +247,12 @@ src_configure() {
 		-DPLUGIN_WEBPA_CCSP=$(usex webpa-ccsp)
 		-DPLUGIN_WEBPA_DEVICE_INFO=$(usex webpa-device-info)
 		-DPLUGIN_WEBPA_GENERIC_ADAPTER=$(usex webpa-generic-adapter)
-		-DPLUGIN_WEBPROXY=$(usex webproxy)
-		-DPLUGIN_WEBSERVER=$(usex webserver)
-		-DPLUGIN_WEBSHELL=$(usex webshell)
-		-DPLUGIN_WEBSERVER_PROXY_DEVICEINFO=$(usex webserver-device-info)
-		-DPLUGIN_WEBSERVER_PROXY_DIALSERVER=$(usex webserver-dial-server)
-		-DPLUGIN_WEBSERVER_SECURITYAGENT=$(usex webserver-security-agent)
+		-DPLUGIN_WEBPROXY=$(usex web-proxy)
+		-DPLUGIN_WEBSERVER=$(usex web-server)
+		-DPLUGIN_WEBSHELL=$(usex web-shell)
+		-DPLUGIN_WEBSERVER_PROXY_DEVICEINFO=$(usex web-server-device-info)
+		-DPLUGIN_WEBSERVER_PROXY_DIALSERVER=$(usex web-server-dial-server)
+		-DPLUGIN_WEBSERVER_SECURITYAGENT=$(usex web-server-security-agent)
 		-DPLUGIN_WIFICONTROL=$(usex wifi-control)
 		-DRDK_AUDIO_HAL=$(usex rdk-audio-hal)
 		-DSTORE_TEST=$(usex test-store)
@@ -251,10 +266,6 @@ src_configure() {
 	elif use compositor-wayland ; then
 		mycmakeargs+=(
 			-DPLUGIN_COMPOSITOR_IMPLEMENTATION="Wayland"
-		)
-	else
-		mycmakeargs+=(
-			-DPLUGIN_COMPOSITOR_IMPLEMENTATION="None"
 		)
 	fi
 
