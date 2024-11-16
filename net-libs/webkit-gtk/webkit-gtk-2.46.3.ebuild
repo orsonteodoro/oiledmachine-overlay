@@ -677,7 +677,6 @@ _TRASH="
 REQUIRED_USE+="
 	${NON_FREE_REQUIRED_USE}
 	alsa? (
-		!pulseaudio
 		gstreamer
 	)
 	dash? (
@@ -717,7 +716,6 @@ REQUIRED_USE+="
 		!gles2
 	)
 	pulseaudio? (
-		!alsa
 		gstreamer
 	)
 	thunder? (
@@ -852,9 +850,6 @@ RDEPEND+="
 	>=x11-libs/gtk+-3.22.0:3[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
 	sys-kernel/mitigate-id
 	virtual/jpeg:0=[${MULTILIB_USEDEP}]
-	alsa? (
-		!media-plugins/gst-plugins-pulse
-	)
 	avif? (
 		>=media-libs/libavif-0.9.0[${MULTILIB_USEDEP}]
 	)
@@ -3198,21 +3193,29 @@ ewarn
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  license-transparency, webvtt, avif
 # OILEDMACHINE-OVERLAY-META-WIP:  pgo, webrtc
 
-# OILEDMACHINE-OVERLAY-TEST:
-# with -O2, clang 15.0.7 (2.43.1, 20231203):
-#   minibrowser:  passed
-#   search engine(s):  passed
-#   video site(s):  fail (minibrowser), passed (surf)
-#     vpx (streaming):  passed
-#     vpx (on demand):  passed
-#     opus:  TBA
-#   wiki(s):  passed
-#   audio:  TBA
-#   stability:  crashy within a few minutes
-
-# with -O3 -jit* -gstreamer, gcc 12.3.1 (2.43.2, 20231207): pass
-# with -O3 -jit* +gstreamer, gcc 12.3.1 (2.43.2, 20231207): pass
-#   startup:  pass
-#   performance:  slow
-#   wiki:  pass
-#   video sites(s):  slow
+# OILEDMACHINE-OVERLAY-TEST: passed with -Oshit, clang 18.1.8 (2.46.3, 20241116):
+#
+#   -O shit build config:
+#
+#     OSHIT_OPT_LEVEL_ANGLE="fast"
+#     OSHIT_OPT_LEVEL_JSC="3"
+#     OSHIT_OPT_LEVEL_SHA1="fast"
+#     OSHIT_OPT_LEVEL_SKIA="fast"
+#     OSHIT_OPT_LEVEL_XXHASH="fast"
+#     OSHIT_OPT_LEVEL_WEBCORE="1"
+#
+#   interactive test:
+#
+#     minibrowser:  passed
+#     search engine(s):  passed
+#     video site(s):  fail (minibrowser), passed (surf)
+#       vpx (streaming):  passed
+#       vpx (on demand):  passed
+#       opus:  passed
+#       misc notes:  bad render on chat
+#     wiki(s):  passed
+#     audio:  fail
+#       streaming radio:  segfault
+#     stability:  unstable
+#   scroll: fast
+#
