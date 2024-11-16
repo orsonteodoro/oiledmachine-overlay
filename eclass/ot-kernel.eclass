@@ -529,11 +529,11 @@ VULNERABILITIES_FIXED=(
 	"CVE-2024-50152;DoS;Medium"
 
 	# Microcode
-	"CVE-2024-21853;DoS;Medium"
 	"CVE-2024-23918;PE, DoS, DT, ID;High"
 	"CVE-2024-21820;PE, DT, ID;High"
-	"CVE-2024-24968;DoS;Medium"
 	"CVE-2024-23984;ID;Medium"
+	"CVE-2024-24968;DoS;Medium"
+	"CVE-2024-21853;DoS;Medium"
 
 	# Previous week
 	"CVE-2024-50131;DoS, DT, ID;High"
