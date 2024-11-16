@@ -3073,7 +3073,7 @@ einfo "CXX:  ${CXX}"
 	multilib_foreach_abi compile_abi
 }
 
-multilib_src_test() {
+_src_test() {
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
 	cd "${BUILD_DIR}"
@@ -3083,14 +3083,21 @@ multilib_src_test() {
 	cmake_src_test
 }
 
-multilib_src_install() {
+src_test() {
+	test_abi() {
+		_src_test
+	}
+	multilib_foreach_abi test_abi
+}
+
+_src_install() {
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
 	cd "${BUILD_DIR}"
 	cmake_src_install
 
 	# Prevent crashes on PaX systems, bug #522808
-	local d="${ED}/usr/$(get_libdir)/misc/webkitgtk-${API_VERSION}"
+	local d="${ED}/usr/$(get_libdir)/misc/webkit2gtk-${API_VERSION}"
 	# usr/libexec is not multilib this is why it is changed.
 	pax-mark m "${d}/WebKitPluginProcess"
 	pax-mark m "${d}/WebKitWebProcess"
@@ -3098,7 +3105,7 @@ multilib_src_install() {
 
 	if use minibrowser ; then
 		make_desktop_entry \
-			/usr/$(get_libdir)/misc/webkitgtk-${API_VERSION}/MiniBrowser \
+			"/usr/$(get_libdir)/misc/webkit2gtk-${API_VERSION}/MiniBrowser" \
 			"MiniBrowser (${ABI}, API: ${API_VERSION})" \
 			"" \
 			"Network;WebBrowser"
@@ -3112,7 +3119,7 @@ multilib_src_install() {
 	done
 }
 
-multilib_src_install_all() {
+_src_install_all() {
 	local hls_env
 
 	if use hls ; then
@@ -3124,8 +3131,21 @@ newenvd - 50${PN}${API_VERSION} <<-EOF
 ${hls_env}
 EOF
 
+        einstalldocs
+
 	LCNR_SOURCE="${S}"
 	lcnr_install_files
+}
+
+src_install() {
+	install_abi() {
+		_src_install
+		multilib_prepare_wrappers
+		multilib_check_headers
+	}
+	multilib_foreach_abi install_abi
+	multilib_install_wrappers
+	_src_install_all
 }
 
 pkg_postinst() {
@@ -3134,7 +3154,7 @@ pkg_postinst() {
 	if use minibrowser ; then
 		create_minibrowser_symlink_abi() {
 			ln -sf \
-"${EPREFIX}/usr/$(get_abi_LIBDIR ${ABI})/misc/webkitgtk-${API_VERSION}/MiniBrowser" \
+"${EPREFIX}/usr/$(get_abi_LIBDIR ${ABI})/misc/webkit2gtk-${API_VERSION}/MiniBrowser" \
 				"${EROOT}/usr/bin/minibrowser" || die
 		}
 		multilib_foreach_abi create_minibrowser_symlink_abi
@@ -3143,8 +3163,8 @@ einfo "The symlink for the minibrowser may need to change manually to select"
 einfo "the preferred ABI and/or API version which can be 4.0, 4.1, 5.0."
 einfo "Examples,"
 einfo
-einfo "\`ln -sf /usr/lib64/misc/webkitgtk-${API_VERSION}/MiniBrowser /usr/bin/minibrowser \`"
-einfo "\`ln -sf /usr/lib/misc/webkitgtk-${API_VERSION}/MiniBrowser /usr/bin/minibrowser \`"
+einfo "\`ln -sf /usr/lib64/misc/webkit2gtk-${API_VERSION}/MiniBrowser /usr/bin/minibrowser \`"
+einfo "\`ln -sf /usr/lib/misc/webkit2gtk-${API_VERSION}/MiniBrowser /usr/bin/minibrowser \`"
 einfo
 	fi
 	check_geolocation

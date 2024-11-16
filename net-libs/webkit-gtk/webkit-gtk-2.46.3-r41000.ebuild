@@ -3061,7 +3061,7 @@ einfo "CXX:  ${CXX}"
 	multilib_foreach_abi compile_abi
 }
 
-multilib_src_test() {
+_src_test() {
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
 	cd "${BUILD_DIR}"
@@ -3071,7 +3071,14 @@ multilib_src_test() {
 	cmake_src_test
 }
 
-multilib_src_install() {
+src_test() {
+	test_abi() {
+		_src_test
+	}
+	multilib_foreach_abi test_abi
+}
+
+_src_install() {
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
 	cd "${BUILD_DIR}"
@@ -3086,7 +3093,7 @@ multilib_src_install() {
 
 	if use minibrowser ; then
 		make_desktop_entry \
-			/usr/$(get_libdir)/misc/webkit2gtk-${API_VERSION}/MiniBrowser \
+			"/usr/$(get_libdir)/misc/webkit2gtk-${API_VERSION}/MiniBrowser" \
 			"MiniBrowser (${ABI}, API: ${API_VERSION})" \
 			"" \
 			"Network;WebBrowser"
@@ -3100,7 +3107,7 @@ multilib_src_install() {
 	done
 }
 
-multilib_src_install_all() {
+_src_install_all() {
 	local hls_env
 
 	if use hls ; then
@@ -3112,8 +3119,21 @@ newenvd - 50${PN}${API_VERSION} <<-EOF
 ${hls_env}
 EOF
 
+        einstalldocs
+
 	LCNR_SOURCE="${S}"
 	lcnr_install_files
+}
+
+src_install() {
+	install_abi() {
+		_src_install
+		multilib_prepare_wrappers
+		multilib_check_headers
+	}
+	multilib_foreach_abi install_abi
+	multilib_install_wrappers
+	_src_install_all
 }
 
 pkg_postinst() {
