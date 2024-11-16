@@ -111,6 +111,7 @@ ewarn "clang after all missing symbols have been resolved."
 ewarn
 			export CC="${CHOST}-gcc"
 			export CXX="${CHOST}-g++"
+			export CPP="${CC} -E"
 			local L=(
 				CPP
 				AR

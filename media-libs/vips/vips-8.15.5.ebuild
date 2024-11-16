@@ -289,6 +289,7 @@ eerror
 
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
+	export CPP=$(tc-getCPP)
 
 	if [[ "${CXX}" =~ 'g++' ]] ; then
 		if ver_test $(gcc-version) -lt ${GCC_PV} ; then
@@ -495,6 +496,8 @@ eerror
 		fi
 		export CC="${CHOST}-clang"
 		export CXX="${CHOST}-clang++"
+		export CPP="${CC} -E"
+		strip-unsupported-flags
 		_strip_flags
 		_apply_flags
 		if use fuzz-testing ; then

@@ -45,7 +45,7 @@ VIDEO_CARDS=(
 	vmware
 )
 
-inherit linux-info llvm meson multilib-build python-any-r1 toolchain-funcs uopts
+inherit flag-o-matic linux-info llvm meson multilib-build python-any-r1 toolchain-funcs uopts
 
 LLVM_USE_DEPS="${MULTILIB_USEDEP}"
 
@@ -506,7 +506,7 @@ _src_configure_compiler() {
 		done
 		export CC="${CHOST}-clang-${llvm_slot}"
 		export CXX="${CHOST}-clang++-${llvm_slot}"
-		export CPP="${CXX} -E"
+		export CPP="${CC} -E"
 		export AR="llvm-ar"
 		export NM="llvm-nm"
 		export OBJCOPY="llvm-objcopy"

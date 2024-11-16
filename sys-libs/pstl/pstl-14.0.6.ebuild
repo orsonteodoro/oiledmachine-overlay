@@ -94,6 +94,7 @@ src_configure() {
 _configure_abi() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
+	export CPP=$(tc-getCPP)
 
 	if tc-is-clang ; then
 		if ! has_version "sys-devel/clang:${SLOT_MAJOR}" ; then
@@ -103,6 +104,7 @@ eerror
 		fi
 		export CC="${CHOST}-clang-${SLOT_MAJOR}"
 		export CXX="${CHOST}-clang++-${SLOT_MAJOR}"
+		export CPP="${CC} -E"
 		strip-unsupported-flags
 	fi
 

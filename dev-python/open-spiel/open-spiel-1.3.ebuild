@@ -10,7 +10,7 @@ DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream only tests up to 3.11
 
 # Limited by jax
-inherit distutils-r1
+inherit distutils-r1 flag-o-matic
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
@@ -107,8 +107,10 @@ BDEPEND+="
 distutils_enable_sphinx="docs"
 
 src_configure() {
-	export CC=${CHOST}-clang
-	export CXX=${CHOST}-clang++
+	export CC="${CHOST}-clang"
+	export CXX="${CHOST}-clang++"
+	export CPP="${CPP} -E"
+	strip-unsupported-flags
 	# If it is marked off, it means I don't have time to package it at this time.
 	export OPEN_SPIEL_BUILD_WITH_ACPC=OFF
 	export OPEN_SPIEL_BUILD_WITH_EIGEN=$(usex eigen "ON" "OFF")

@@ -274,6 +274,7 @@ src_compile() {
 		export PATH="${WORKDIR}/clang/bin:${PATH}"
 		export CC="clang"
 		export CXX="clang++"
+		export CPP="${CC} -E"
 		build_gn
 	fi
 	if use clang ; then

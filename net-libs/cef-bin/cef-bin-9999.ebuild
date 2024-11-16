@@ -255,6 +255,7 @@ append_all() {
 check_compiler() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
+	export CPP=$(tc-getCPP)
 einfo "CC:\t${CC}"
 einfo "CXX:\t${CXX}"
 	if ! test-flags-CXX "-std=c++${CXX_VER}" 2>/dev/null 1>/dev/null ; then

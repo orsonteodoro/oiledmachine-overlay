@@ -287,6 +287,8 @@ check_clang() {
 			found=1
 			export CC="${CHOST}-clang-${s}"
 			export CXX="${CHOST}-clang++-${s}"
+			export CPP="${CC} -E"
+			strip-unsupported-flags
 			break
 		fi
 	done
@@ -304,6 +306,7 @@ eerror
 src_configure() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
+	export CPP=$(tc-getCPP)
 	tc-is-clang && check_clang
 	export MAKEOPTS="-j1" # prevent stall
 

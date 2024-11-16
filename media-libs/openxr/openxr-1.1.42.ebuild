@@ -117,6 +117,7 @@ BDEPEND+="
 src_configure() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
+	export CPP=$(tc-getCPP)
 	mycmakeargs=(
 		-DBUILD_API_LAYERS=OFF
 		-DBUILD_CONFORMANCE_TESTS=OFF

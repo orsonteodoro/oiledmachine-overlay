@@ -237,8 +237,9 @@ eerror
 pkg_setup() {
 	use qt5 && verify_qt_consistency 5
 	use qt6 && verify_qt_consistency 6
-	export CC="$(tc-getCC)"
-	export CXX="$(tc-getCXX)"
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+	export CPP=$(tc-getCPP)
 	if ver_test $(gcc-major-version) -lt "13" ; then
 ewarn "You must switch your gcc to 13 to avoid build time error(s)."
 	fi

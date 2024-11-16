@@ -26,7 +26,7 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-inherit cmake flag-o-matic llvm.org llvm-utils python-any-r1
+inherit cmake flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
 
 DESCRIPTION="The LLVM linker (link editor)"
 HOMEPAGE="https://llvm.org/"
@@ -209,6 +209,7 @@ src_configure() {
 _src_configure_compiler() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
+	export CPP=$(tc-getCPP)
 	llvm_prepend_path "${LLVM_MAJOR}"
 	llvm-ebuilds_fix_toolchain
 }

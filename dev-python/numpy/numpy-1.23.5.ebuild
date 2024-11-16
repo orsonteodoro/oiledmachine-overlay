@@ -99,6 +99,7 @@ python_prepare_all() {
 	fi
 
 	export CC="$(tc-getCC) ${CFLAGS}"
+	export CPP="$(tc-getCPP)"
 
 	append-flags -fno-strict-aliasing
 

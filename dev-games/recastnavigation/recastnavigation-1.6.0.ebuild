@@ -64,8 +64,12 @@ BDEPEND+="
 
 pkg_setup() {
 	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+	export CPP=$(tc-getCPP)
 	if [[ -z "${CC}" ]] ; then
 		export CC="${CHOST}-gcc"
+		export CXX="${CHOST}-g++"
+		export CPP="${CC} -E"
 		strip-unsupported-flags
 	fi
 	if tc-is-gcc ; then

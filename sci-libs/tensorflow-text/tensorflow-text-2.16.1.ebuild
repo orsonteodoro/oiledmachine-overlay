@@ -193,7 +193,8 @@ pkg_setup() {
 			GCC_SLOT=${s}
 			export CC="${CHOST}-gcc-${GCC_SLOT}"
 			export CXX="${CHOST}-g++-${GCC_SLOT}"
-			export CPP="${CXX} -E"
+			export CPP="${CC} -E"
+			strip-unsupported-flags
 			break
 		fi
 	done

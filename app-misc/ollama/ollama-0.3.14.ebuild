@@ -3004,12 +3004,14 @@ src_configure() {
 	if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12.4*" ; then
 		export CC="${CHOST}-gcc-13"
 		export CXX="${CHOST}-g++-13"
+		export CPP="${CC} -E"
 		export CUDA_SLOT=12
 		export CMAKE_CUDA_ARCHITECTURES="$(get_cuda_flags)"
 		check_libstdcxx "13"
 	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11.8*" ; then
 		export CC="${CHOST}-gcc-11"
 		export CXX="${CHOST}-g++-11"
+		export CPP="${CC} -E"
 		export CUDA_SLOT=11
 		export CMAKE_CUDA_ARCHITECTURES="$(get_cuda_flags)"
 		check_libstdcxx "11"
@@ -3018,6 +3020,7 @@ src_configure() {
 		local gcc_slot="${!_gcc_slot}"
 		export CC="${CHOST}-gcc-${gcc_slot}"
 		export CXX="${CHOST}-g++-${gcc_slot}"
+		export CPP="${CC} -E"
 		export AMDGPU_TARGETS="$(get_amdgpu_flags)"
 		check_libstdcxx "${gcc_slot}"
 		local libs=(

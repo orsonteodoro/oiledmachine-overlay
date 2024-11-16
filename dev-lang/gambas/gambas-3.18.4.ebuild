@@ -368,6 +368,7 @@ declare -Ax USE_FLAG_TO_MODULE_NAME=(
 check_cxx() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
+	export CPP=$(tc-getCPP)
 	strip-unsupported-flags
 einfo
 einfo "CC:\t${CC}"
@@ -456,6 +457,7 @@ ewarn "doesn't support nested functions.  Forcing GCC..."
 ewarn
 		export CC="${CHOST}-gcc"
 		export CXX="${CHOST}-g++"
+		export CPP="${CC} -E"
 		strip-unsupported-flags
 	fi
 

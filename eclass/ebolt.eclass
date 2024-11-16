@@ -441,6 +441,8 @@ ewarn "Compiler is not supported for EBOLT."
 		if [[ -z "${CC}" ]] ; then
 			export CC="${CHOST}-gcc"
 			export CXX="${CHOST}-g++"
+			export CPP="${CC} -E"
+			strip-unsupported-flags
 		fi
 
 		local bolt_pv=$("${_UOPTS_BOLT_PATH}/llvm-bolt" --version \
@@ -853,6 +855,8 @@ ebolt_src_install() {
 		if [[ -z "${CC}" ]] ; then
 			export CC="${CHOST}-gcc"
 			export CXX="${CHOST}-g++"
+			export CPP="${CC} -E"
+			strip-unsupported-flags
 		fi
 
 		local bolt_pv=$("${_UOPTS_BOLT_PATH}/llvm-bolt" --version \

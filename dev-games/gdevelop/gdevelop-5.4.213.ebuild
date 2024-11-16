@@ -4230,6 +4230,7 @@ eerror
         export BINARYEN="${EMSDK_BINARYEN_BASE_PATH}"
 	export CC="emcc"
 	export CXX="em++"
+	export CPP="${CC} -E"
 	strip-unsupported-flags
         export CLOSURE_COMPILER="${EMSDK_CLOSURE_COMPILER}"
         export EM_BINARYEN_ROOT="${EMSDK_BINARYEN_BASE_PATH}"

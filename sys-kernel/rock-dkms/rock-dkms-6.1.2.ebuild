@@ -714,6 +714,7 @@ set_cc() {
 
 	export CC=$(echo "${raw_text}" \
 		| cut -f 1 -d " ")
+	export CPP="${CC} -E"
 einfo "CC:  ${CC}"
 	${CC} --version || die
 	strip-unsupported-flags

@@ -439,6 +439,7 @@ ewarn "Compiler is not supported for TBOLT."
 		if [[ -z "${CC}" ]] ; then
 			export CC="${CHOST}-gcc"
 			export CXX="${CHOST}-g++"
+			export CPP="${CC} -E"
 		fi
 
 		local bolt_pv=$("${_UOPTS_BOLT_PATH}/llvm-bolt" --version \
@@ -919,6 +920,7 @@ tbolt_src_install() {
 		if [[ -z "${CC}" ]] ; then
 			export CC="${CHOST}-gcc"
 			export CXX="${CHOST}-g++"
+			export CPP="${CC} -E"
 		fi
 
 		local bolt_pv=$("${_UOPTS_BOLT_PATH}/llvm-bolt" --version \

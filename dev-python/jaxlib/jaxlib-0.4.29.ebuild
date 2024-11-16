@@ -716,7 +716,8 @@ use_gcc() {
 		symlink_ver=$(gcc_symlink_ver ${s})
 		export CC="${CHOST}-gcc-${symlink_ver}"
 		export CXX="${CHOST}-g++-${symlink_ver}"
-		export CPP="${CHOST}-g++-${symlink_ver} -E"
+		export CPP="${CC} -E"
+		strip-unsupported-flags
 		if ${CC} --version 2>/dev/null 1>/dev/null ; then
 einfo "Switched to gcc:${s}"
 			found=1
@@ -788,7 +789,8 @@ einfo "FORCE_LLVM_SLOT may be specified."
 		which "${CHOST}-clang-${s}" || continue
 		export CC="${CHOST}-clang-${s}"
 		export CXX="${CHOST}-clang++-${s}"
-		export CPP="${CHOST}-clang++-${s} -E"
+		export CPP="${CC} -E"
+		strip-unsupported-flags
 		if ${CC} --version 2>/dev/null 1>/dev/null ; then
 einfo "Switched to clang:${s}"
 			found=1

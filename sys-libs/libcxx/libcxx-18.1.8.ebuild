@@ -321,6 +321,7 @@ is_cfi_supported() {
 _configure_abi() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
+	export CPP=$(tc-getCPP)
 
 	if tc-is-clang ; then
 		if ! has_version "sys-devel/clang:${PV%%.*}" ; then
@@ -330,6 +331,7 @@ eerror
 		fi
 		export CC="${CHOST}-clang-${PV%%.*}"
 		export CXX="${CHOST}-clang++-${PV%%.*}"
+		export CPP="${CC} -E"
 		strip-unsupported-flags
 	fi
 

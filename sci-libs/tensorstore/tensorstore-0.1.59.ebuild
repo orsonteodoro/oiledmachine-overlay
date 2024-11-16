@@ -234,7 +234,7 @@ einfo "PATH:\t${PATH}"
 		symlink_ver=$(gcc_symlink_ver ${s})
 		export CC="${CHOST}-gcc-${symlink_ver}"
 		export CXX="${CHOST}-g++-${symlink_ver}"
-		export CPP="${CHOST}-g++-${symlink_ver} -E"
+		export CPP="${CC} -E"
 		if ${CC} --version >/dev/null 2>&1 ; then
 einfo "Switched to gcc:${s}"
 			found=1
@@ -272,7 +272,7 @@ einfo "FORCE_LLVM_SLOT may be specified."
 		which "${CHOST}-clang-${s}" || continue
 		export CC="${CHOST}-clang-${s}"
 		export CXX="${CHOST}-clang++-${s}"
-		export CPP="${CHOST}-clang++-${s} -E"
+		export CPP="${CC} -E"
 		if ${CC} --version >/dev/null 2>&1 ; then
 einfo "Switched to clang:${s}"
 			found=1

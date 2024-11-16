@@ -276,7 +276,8 @@ ewarn
 	fi
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
-	export CPP="${CXX} -E"
+	export CPP="${CC} -E"
+	strip-unsupported-flags
 	if tc-is-gcc ; then
 		if ver_test $(gcc-major-version) -lt "${GCC_MIN_SLOT}" ; then
 eerror "CC/CXX must must be >=sys-devel/gcc-${GCC_MIN_SLOT}"

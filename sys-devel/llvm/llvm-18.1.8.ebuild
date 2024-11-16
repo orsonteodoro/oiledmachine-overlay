@@ -560,6 +560,7 @@ src_configure() {
 _src_configure_compiler() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
+	export CPP=$(tc-getCPP)
 	llvm-ebuilds_fix_toolchain
 }
 

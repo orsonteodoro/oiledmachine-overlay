@@ -538,6 +538,7 @@ _tpgo_is_profile_reusable() {
 # This shouldn't set the CC but we have to for -dumpmachine.
 			export CC=$(tc-getCC)
 			export CXX=$(tc-getCXX)
+			export CPP=$(tc-getCPP)
 		fi
 
 		if ! tc-is-gcc && ! tc-is-clang ; then
@@ -709,6 +710,7 @@ tpgo_src_install() {
 			# It should be done earlier.
 			export CC=$(tc-getCC)
 			export CXX=$(tc-getCXX)
+			export CPP=$(tc-getCPP)
 		fi
 
 		dodir "${pgo_data_suffix_dir}"

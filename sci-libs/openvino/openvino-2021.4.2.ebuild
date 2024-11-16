@@ -53,7 +53,7 @@ ONEDNN_COMMIT="60f41b3a9988ce7b1bc85c4f1ce7f9443bc91c9d"
 XBYAK_COMMIT="8d1e41b650890080fb77548372b6236bbd4079f9"
 ZLIB_COMMIT="cacf7f1d4e3d44d871b605da3b647f07d718623f"
 
-inherit cmake dep-prepare distutils-r1
+inherit cmake dep-prepare distutils-r1 flag-o-matic
 
 _gen_gh_uri() {
 	local org="${1}"
@@ -381,7 +381,7 @@ src_configure() {
 		if which "${CHOST}-gcc-${s}" ; then
 			export CC="${CHOST}-gcc-${s}"
 			export CXX="${CHOST}-g++-${s}"
-			export CPP="${CPP} -E"
+			export CPP="${CC} -E"
 			break
 		fi
 	done

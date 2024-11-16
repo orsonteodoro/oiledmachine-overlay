@@ -254,7 +254,7 @@ src_configure() {
 					_check_libstdcxx "${s}"
 					export CC="${CHOST}-gcc-${s}"
 					export CXX="${CHOST}-gcc-${s}"
-					export CPP="${CXX} -E"
+					export CPP="${CC} -E"
 					strip-unsupported-flags
 					addpredict "/proc/self/task/"
 				elif [[ "${x2}" == "hip" ]] ; then
@@ -272,7 +272,7 @@ src_configure() {
 				elif [[ "${x2}" == "sycl" ]] ; then
 					export CC="${CHOST}-clang-${s}"
 					export CXX="${CHOST}-clang++-${s}"
-					export CPP="${CXX} -E"
+					export CPP="${CC} -E"
 					strip-unsupported-flags
 					local sycl_targets="${MIXBENCH_SYCL_TARGETS:-nvptx64-nvidia-cuda}"
 					mycmakeargs+=(

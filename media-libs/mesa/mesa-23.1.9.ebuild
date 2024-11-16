@@ -45,7 +45,7 @@ VIDEO_CARDS=(
 	vmware
 )
 
-inherit linux-info llvm-r1 meson multilib-build python-any-r1 toolchain-funcs uopts
+inherit flag-o-matic linux-info llvm-r1 meson multilib-build python-any-r1 toolchain-funcs uopts
 
 LLVM_USE_DEPS="llvm_targets_AMDGPU(+),${MULTILIB_USEDEP}"
 
@@ -519,7 +519,7 @@ _src_configure_compiler() {
 		done
 		export CC="${CHOST}-clang-${llvm_slot}"
 		export CXX="${CHOST}-clang++-${llvm_slot}"
-		export CPP="${CXX} -E"
+		export CPP="${CC} -E"
 		export AR="llvm-ar"
 		export NM="llvm-nm"
 		export OBJCOPY="llvm-objcopy"

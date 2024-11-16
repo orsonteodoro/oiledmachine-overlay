@@ -19,7 +19,7 @@ CPU_X86_FLAGS=(
 	cpu_flags_x86_avx2
 )
 
-inherit distutils-r1 pypi toolchain-funcs
+inherit distutils-r1 flag-o-matic pypi toolchain-funcs
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${MY_PV}"
@@ -122,6 +122,7 @@ python_prepare_all() {
 python_configure() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
+	export CPP=$(tc-getCPP)
 	strip-flags
 	filter-flags '-m*'
 	local cpu_flags=()

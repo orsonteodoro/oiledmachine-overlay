@@ -272,8 +272,9 @@ cmsg "Upstream recommends swap be >=1x of physical memory"
 cmsg
 		cdie
 	fi
-	export CXX=$(tc-getCXX)
 	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+	export CPP=$(tc-getCPP)
 	if tc-is-gcc ; then
 		local gcc_pv=$(gcc-fullversion)
 		if ! ver_test ${gcc_pv} -ge ${GCC_PV_MIN} ; then

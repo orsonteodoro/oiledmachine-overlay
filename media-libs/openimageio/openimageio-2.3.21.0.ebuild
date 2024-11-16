@@ -364,6 +364,7 @@ pkg_setup() {
 	if use clang && [[ -z "${CC}" || -z "${CXX}" ]] ; then
 		export CC="${CHOST}-clang"
 		export CXX="${CHOST}-clang++"
+		export CPP="${CC} -E"
 		strip-unsupported-flags
 	fi
 	if test-flags-CXX -std=c++${CXX_STD_MIN} >/dev/null 2>&1 ; then
@@ -427,18 +428,22 @@ src_configure() {
 	if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" && has_version "=sys-devel/gcc-13*" ; then
 		export CC="${CHOST}-gcc-13"
 		export CXX="${CHOST}-g++-13"
+		export CPP="${CC} -E"
 		cuda_host_cc_check 13
 	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" && has_version "=sys-devel/gcc-12*" ; then
 		export CC="${CHOST}-gcc-12"
 		export CXX="${CHOST}-g++-12"
+		export CPP="${CC} -E"
 		cuda_host_cc_check 12
 	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" && has_version "=sys-devel/gcc-11*" ; then
 		export CC="${CHOST}-gcc-11"
 		export CXX="${CHOST}-g++-11"
+		export CPP="${CC} -E"
 		cuda_host_cc_check 11
 	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=sys-devel/gcc-11*" ; then
 		export CC="${CHOST}-gcc-11"
 		export CXX="${CHOST}-g++-11"
+		export CPP="${CC} -E"
 		cuda_host_cc_check 11
 	elif use cuda ; then
 eerror
@@ -449,6 +454,7 @@ eerror "CUDA 11 - install and switch via eselect gcc to either gcc 11"
 eerror
 		die
 	fi
+	strip-unsupported-flags
 
 	local cpufeature
 	local mysimd=()

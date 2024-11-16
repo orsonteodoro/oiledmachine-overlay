@@ -176,6 +176,7 @@ _src_compile_one() {
 			| cut -f 1 -d " " \
 			| cut -f 2 -d "=" \
 			| sed -e "s/[\"|']//g")
+		export CPP="${CC} -E"
 		strip-unsupported-flags
 		einfo "CC: ${CC}"
 	fi

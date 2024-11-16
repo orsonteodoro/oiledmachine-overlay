@@ -562,6 +562,8 @@ src_configure() {
 			if has_version "sys-devel/gcc:${s}" ; then
 				export CC="${CHOST}-gcc-${s}"
 				export CXX="${CHOST}-g++-${s}"
+				export CPP="${CC} -E"
+				strip-unsupported-flags
 				break
 			fi
 		done
@@ -585,6 +587,8 @@ src_configure() {
 			; then
 				export CC="${CHOST}-clang-${s}"
 				export CXX="${CHOST}-clang++-${s}"
+				export CPP="${CC} -E"
+				strip-unsupported-flags
 				break
 			fi
 		done

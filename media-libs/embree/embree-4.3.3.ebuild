@@ -238,6 +238,8 @@ pkg_setup() {
 	elif use clang ; then
 		export CC="${CHOST}-clang"
 		export CXX="${CHOST}-clang++"
+		export CPP="${CC} -E"
+		strip-unsupported-flags
 		local cc_pv=$(clang-fullversion)
 		if ver_test ${cc_pv} -lt ${MIN_CLANG_PV} ; then
 			chcxx "Clang" "${MIN_CLANG_PV}" "c++11"
@@ -249,6 +251,8 @@ pkg_setup() {
 	else
 		export CC="${CC_ALT:-${CHOST}-gcc}"
 		export CXX="${CXX_ALT:-${CHOST}-g++}"
+		export CPP="${CC} -E"
+		strip-unsupported-flags
 		if tc-is-gcc ; then
 			local cc_pv=$(gcc-fullversion)
 			if ver_test ${cc_pv} -lt ${MIN_GCC_PV} ; then

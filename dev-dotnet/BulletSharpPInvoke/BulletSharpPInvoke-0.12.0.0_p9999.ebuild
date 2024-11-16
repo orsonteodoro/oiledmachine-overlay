@@ -311,6 +311,7 @@ src_configure() {
 			if [[ "${hplatform}" == "linux" ]] ; then
 				export CC="${CHOST}-gcc"
 				export CXX="${CHOST}-g++"
+				export CPP="${CC} -E"
 				strip-unsupported-flags
 			fi
 
@@ -385,6 +386,8 @@ src_compile() {
 			if [[ "${hplatform}" == "linux" ]] ; then
 				export CC="${CHOST}-gcc"
 				export CXX="${CHOST}-g++"
+				export CPP="${CC} -E"
+				strip-unsupported-flags
 			else
 eerror
 eerror "Linux supported only for now"

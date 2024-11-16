@@ -6,7 +6,7 @@ EAPI=8
 
 PYTHON_COMPAT=( "python3_"{8..11} )
 
-inherit cmake flag-o-matic llvm llvm.org python-any-r1
+inherit cmake flag-o-matic llvm llvm.org python-any-r1 toolchain-funcs
 inherit llvm-ebuilds
 
 KEYWORDS="
@@ -187,6 +187,7 @@ src_configure() {
 _src_configure_compiler() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
+	export CPP=$(tc-getCPP)
 	llvm-ebuilds_fix_toolchain
 }
 

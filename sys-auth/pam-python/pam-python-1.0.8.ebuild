@@ -84,6 +84,8 @@ eerror "FEATURES:  ${FEATURES}"
 
 src_configure() {
 	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+	export CPP=$(tc-getCPP)
 }
 
 src_compile() {

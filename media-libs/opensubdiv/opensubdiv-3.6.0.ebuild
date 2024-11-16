@@ -140,11 +140,12 @@ src_configure() {
 	# The tc-check-openmp does not print slot information.
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
-	export CPP="${CXX} -E"
+	export CPP=$(tc-getCPP)
 	if use cuda ; then
 		export CC="${CHOST}-gcc-11"
 		export CXX="${CHOST}-gcc-11"
 		export CPP="${CXX} -E"
+		strip-unsupported-flags
 	fi
 einfo "CC:\t\t${CC}"
 einfo "CXX:\t\t${CXX}"

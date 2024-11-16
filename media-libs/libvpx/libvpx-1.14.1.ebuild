@@ -451,6 +451,7 @@ _src_configure_compiler() {
 	else
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)
+		export CPP=$(tc-getCPP)
 	fi
 }
 

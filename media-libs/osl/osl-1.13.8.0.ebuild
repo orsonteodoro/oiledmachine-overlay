@@ -322,6 +322,7 @@ src_configure() {
 
 		export CC="${CHOST}-clang-${llvm_slot}"
 		export CXX="${CHOST}-clang++-${llvm_slot}"
+		export CPP="${CC} -E"
 		strip-unsupported-flags
 
 		local lib_type

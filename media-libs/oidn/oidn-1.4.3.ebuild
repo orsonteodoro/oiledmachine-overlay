@@ -157,14 +157,17 @@ src_configure() {
 	if use gcc ; then
 		export CC="${CHOST}-gcc"
 		export CXX="${CHOST}-g++"
+		export CPP="${CC} -E"
 		# Prevent lock up
 		export MAKEOPTS="-j1"
 	elif use clang ; then
 		export CC="${CHOST}-clang"
 		export CXX="${CHOST}-clang++"
+		export CPP="${CC} -E"
 	else
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)
+		export CPP=$(tc-getCPP)
 	fi
 
 	strip-unsupported-flags

@@ -70,6 +70,7 @@ src_configure() {
 	# It is forced so we can use OpenMP without adding more flags.
 	export CC="${CHOST}-gcc"
 	export CXX="${CHOST}-g++"
+	export CXX="${CC} -E"
 	strip-unsupported-flags
 
 	strip-flags

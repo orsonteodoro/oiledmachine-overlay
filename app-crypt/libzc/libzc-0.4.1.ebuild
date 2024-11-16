@@ -76,9 +76,12 @@ _src_configure_compiler() {
 		# Force use of the performant one.
 		export CC="${CHOST}-clang"
 		export CXX="${CHOST}-clang++"
+		export CPP="${CC} -E"
+		strip-unsupported-flags
 	else
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)
+		export CPP=$(tc-getCPP)
 	fi
 }
 

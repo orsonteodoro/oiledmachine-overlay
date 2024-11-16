@@ -377,18 +377,22 @@ ewarn "media-libs/openimageio must be built with the same gcc for cuda support."
 	if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" && has_version "=sys-devel/gcc-13*" ; then
 		export CC="${CHOST}-gcc-13"
 		export CXX="${CHOST}-g++-13"
+		export CPP="${CC} -E"
 		cuda_host_cc_check 13
 	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" && has_version "=sys-devel/gcc-12*" ; then
 		export CC="${CHOST}-gcc-12"
 		export CXX="${CHOST}-g++-12"
+		export CPP="${CC} -E"
 		cuda_host_cc_check 12
 	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" && has_version "=sys-devel/gcc-11*" ; then
 		export CC="${CHOST}-gcc-11"
 		export CXX="${CHOST}-g++-11"
+		export CPP="${CC} -E"
 		cuda_host_cc_check 11
 	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=sys-devel/gcc-11*" ; then
 		export CC="${CHOST}-gcc-11"
 		export CXX="${CHOST}-g++-11"
+		export CPP="${CC} -E"
 		cuda_host_cc_check 11
 	elif use cuda ; then
 eerror
@@ -401,16 +405,19 @@ eerror
 	elif use gcc ; then
 		export CC="${CHOST}-gcc"
 		export CXX="${CHOST}-g++"
+		export CPP="${CC} -E"
 		# Prevent lock up
 		export MAKEOPTS="-j1"
 	elif use clang ; then
 		export CC="${CHOST}-clang"
 		export CXX="${CHOST}-clang++"
+		export CPP="${CC} -E"
 	elif use rocm ; then
 		rocm_set_default_clang
 	else
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)
+		export CPP=$(tc-getCPP)
 	fi
 
 	strip-unsupported-flags

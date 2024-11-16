@@ -54,6 +54,7 @@ PATCHES=(
 pkg_setup() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
+	export CPP=$(tc-getCPP)
 einfo
 einfo "CC:\t${CC}"
 einfo "CXX:\t${CXX}"

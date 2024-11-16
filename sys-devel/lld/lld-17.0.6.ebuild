@@ -24,7 +24,7 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-inherit cmake flag-o-matic llvm llvm.org python-any-r1
+inherit cmake flag-o-matic llvm llvm.org python-any-r1 toolchain-funcs
 
 KEYWORDS="
 amd64 ~arm arm64 ~loong ~ppc ~ppc64 ~riscv x86 ~arm64-macos
@@ -212,6 +212,7 @@ src_configure() {
 _src_configure_compiler() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
+	export CPP=$(tc-getCPP)
 	llvm-ebuilds_fix_toolchain
 }
 

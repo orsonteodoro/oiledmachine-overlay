@@ -612,14 +612,17 @@ _configure() {
 		fi
 		export CC="${CHOST}-gcc-${gcc_slot}"
 		export CXX="${CHOST}-g++-${gcc_slot}"
+		export CPP="${CC} -E"
 		filter-flags '-fuse-ld=bfd'
 	elif use clang ; then
 		export CC="${CHOST}-clang-${LLVM_SLOT}"
 		export CXX="${CHOST}-clang++-${LLVM_SLOT}"
+		export CPP="${CC} -E"
 		filter-flags '-fuse-ld=lld'
 	elif use hip-clang ; then
 		export CC="amdclang"
 		export CXX="amdclang++"
+		export CPP="${CC} -E"
 		filter-flags '-fuse-ld=lld'
 	fi
 	${CC} --version || die

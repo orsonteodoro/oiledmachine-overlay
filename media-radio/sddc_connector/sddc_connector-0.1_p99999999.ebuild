@@ -80,6 +80,7 @@ src_unpack() {
 src_configure() {
 	export CC="${CHOST}-gcc-11"
 	export CXX="${CHOST}-g++-11"
+	export CPP="${CC} -E"
 
 	local gcc_current_profile=$(gcc-config -c)
 	local gcc_current_profile_slot=${gcc_current_profile##*-}

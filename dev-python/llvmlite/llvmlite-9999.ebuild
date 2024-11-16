@@ -8,7 +8,7 @@ DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 LLVM_COMPAT=( 16 ) # Based on CI
 
-inherit cmake distutils-r1 llvm-r1 toolchain-funcs
+inherit cmake distutils-r1 flag-o-matic llvm-r1 toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -77,6 +77,8 @@ python_configure() {
 	if use llvm_slot_16 ; then
 		export CC="${CHOST}-clang-16"
 		export CXX="${CHOST}-clang++-16"
+		export CPP="${CC} -E"
+		strip-unsupported-flags
 	fi
 	${CC} --version || die
 }

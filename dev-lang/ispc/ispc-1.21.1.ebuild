@@ -254,9 +254,12 @@ _src_configure_compiler() {
 	if use lto || (( ${wants_llvm} == 1 )) ; then
 		export CC="${CHOST}-clang-${LLVM_SLOT}"
 		export CXX="${CHOST}-clang++-${LLVM_SLOT}"
+		export CPP="${CC} -E"
+		strip-unsupported-flags
 	else
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)
+		export CPP=$(tc-getCPP)
 	fi
 }
 

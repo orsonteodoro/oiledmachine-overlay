@@ -148,6 +148,7 @@ src_configure() { :; }
 _src_configure_compiler() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
+	export CPP=$(tc-getCPP)
 }
 
 _src_configure() {

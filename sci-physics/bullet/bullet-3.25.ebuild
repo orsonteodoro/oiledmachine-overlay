@@ -518,6 +518,7 @@ src_prepare() {
 _src_configure_compiler() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
+	export CPP=$(tc-getCPP)
 einfo "CC:\t\t${CC}"
 einfo "CXX:\t\t${CXX}"
 	${CC} --version || die

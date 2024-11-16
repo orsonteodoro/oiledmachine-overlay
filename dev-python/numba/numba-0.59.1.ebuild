@@ -11,7 +11,7 @@ DISTUTILS_EXT=1
 PYTHON_COMPAT=( "python3_"{10..12} )
 LLVM_COMPAT=( {15..14} )
 
-inherit distutils-r1 toolchain-funcs
+inherit distutils-r1 flag-o-matic toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
@@ -136,12 +136,12 @@ python_configure() {
 				break
 			fi
 		done
-		strip-unsupported-flags
 	else
 		export CC="${CHOST}-gcc"
 		export CXX="${CHOST}-g++"
 		export CPP="${CC} -E"
 	fi
+	strip-unsupported-flags
 	if use tbb ; then
 		unset NUMBA_DISABLE_TBB
 		export TBBROOT="${ESYSROOT}/usr"

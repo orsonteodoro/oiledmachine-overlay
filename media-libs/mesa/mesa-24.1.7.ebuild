@@ -588,7 +588,7 @@ _src_configure_compiler() {
 		done
 		export CC="${CHOST}-clang-${llvm_slot}"
 		export CXX="${CHOST}-clang++-${llvm_slot}"
-		export CPP="${CXX} -E"
+		export CPP="${CC} -E"
 		export AR="llvm-ar"
 		export NM="llvm-nm"
 		export OBJCOPY="llvm-objcopy"

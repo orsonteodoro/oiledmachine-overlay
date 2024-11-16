@@ -25,6 +25,8 @@ esac
 if [[ -z ${_AOCC_ECLASS} ]]; then
 _AOCC_ECLASS=1
 
+inherit flag-o-matic
+
 # @FUNCTION: _aocc_is_slot_compat
 # @DESCRIPTION:
 # Finds wanted slot in AOCC_COMPAT
@@ -149,6 +151,7 @@ eerror "ABI=${ABI} is not supported"
 		export READELF="llvm-readelf"
 		export STRIP="llvm-strip"
 		${CC} --version || die
+		strip-unsupported-flags
 	fi
 }
 

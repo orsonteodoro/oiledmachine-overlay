@@ -328,6 +328,7 @@ PATCHES=(
 pkg_setup() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
+	export CPP=$(tc-getCPP)
 	if tc-is-gcc ; then
 		if ver_test $(gcc-version) -lt ${GCC_PV} ; then
 eerror

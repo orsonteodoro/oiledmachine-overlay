@@ -1969,13 +1969,14 @@ ewarn
 	# Do checks here because of references to tc-is-clang in src_prepare.
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
-	export CPP="$(tc-getCXX) -E"
+	export CPP=$(tc-getCPP)
 
 	print_use_flags_using_clang
 	if is_using_clang && ! tc-is-clang ; then
 		export CC="clang"
 		export CXX="clang++"
-		export CPP="clang++ -E"
+		export CPP="${CC} -E"
+		strip-unsupported-flags
 	fi
 
 	if ver_test ${PV%%.*} -ne ${PATCH_VER%%-*} ; then # This line is always false, deadcode
@@ -3217,9 +3218,9 @@ einfo "PATH=${PATH} (after)"
 		fi
 
 		if tc-is-cross-compiler ; then
-			CPP="${CBUILD}-clang++-${LLVM_SLOT} -E"
+			CPP="${CBUILD}-clang-${LLVM_SLOT} -E"
 		else
-			CPP="${CHOST}-clang++-${LLVM_SLOT} -E"
+			CPP="${CHOST}-clang-${LLVM_SLOT} -E"
 		fi
 
 		export AR="llvm-ar" # Required for LTO
@@ -3290,9 +3291,9 @@ einfo "Switching to GCC"
 		fi
 
 		if tc-is-cross-compiler ; then
-			CPP="${CBUILD}-g++-${LLVM_SLOT} -E"
+			CPP="${CBUILD}-gcc-${LLVM_SLOT} -E"
 		else
-			CPP="${CHOST}-g++-${LLVM_SLOT} -E"
+			CPP="${CHOST}-gcc-${LLVM_SLOT} -E"
 		fi
 
 		export AR="ar"
@@ -3330,7 +3331,7 @@ _src_configure_compiler() {
 		export PATH="${S}/third_party/rust-toolchain/bin:${PATH}"
 		export CC="clang"
 		export CXX="clang++"
-		export CPP="${CXX} -E"
+		export CPP="${CC} -E"
 		export AR="llvm-ar"
 		export NM="llvm-nm"
 		export OBJCOPY="llvm-objcopy"

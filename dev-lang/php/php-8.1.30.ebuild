@@ -641,7 +641,7 @@ _src_configure_compiler() {
 	if use clang ; then
 		export CC="${CHOST}-clang-${LLVM_SLOT}"
 		export CXX="${CHOST}-clang++-${LLVM_SLOT}"
-		export CPP="${CXX} -E"
+		export CPP="${CC} -E"
 		export AR="llvm-ar"
 		export NM="llvm-nm"
 		export OBJCOPY="llvm-objcopy"
@@ -659,6 +659,13 @@ _src_configure_compiler() {
 		# Breaks with gcc-13 (libstdcxx)
 		export CC="${CHOST}-gcc-${GCC_SLOT}"
 		export CXX="${CHOST}-gcc-${GCC_SLOT}"
+		export CPP="${CC} -E"
+		export AR="ar"
+		export NM="nm"
+		export OBJCOPY="objcopy"
+		export OBJDUMP="objdump"
+		export READELF="readelf"
+		export STRIP="strip"
 		strip-unsupported-flags
 		append-ldflags -lgcov
 		append-flags -Wno-error=coverage-mismatch # Unbreak configure check

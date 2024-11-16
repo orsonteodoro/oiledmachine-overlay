@@ -339,6 +339,7 @@ _epgo_meets_pgo_requirements() {
 # This shouldn't set the CC but we have to for -dumpmachine.
 			export CC=$(tc-getCC)
 			export CXX=$(tc-getCXX)
+			export CPP=$(tc-getCPP)
 		fi
 
 		if ! tc-is-gcc && ! tc-is-clang ; then
@@ -469,6 +470,7 @@ epgo_src_install() {
 			# It should be done earlier.
 			export CC=$(tc-getCC)
 			export CXX=$(tc-getCXX)
+			export CPP=$(tc-getCPP)
 		fi
 
 		if tc-is-gcc ; then

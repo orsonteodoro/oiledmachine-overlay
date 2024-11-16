@@ -61,6 +61,8 @@ lua_src_compile()
 	export BUILD_DIR="${S}_${lib_type}_${ELUA}"
 	cd "${BUILD_DIR}"
 	export CC=$(tc-getCC ${ABI})
+	export CXX=$(tc-getCXX ${ABI})
+	export CPP=$(tc-getCPP ${ABI})
 	mkdir -p "shared" || die
 einfo "ELUA:\t${ELUA}"
 einfo "Building shared-lib"

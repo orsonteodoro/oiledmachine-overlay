@@ -1166,8 +1166,6 @@ _set_clang() {
 	export READELF="llvm-readelf"
 	export STRIP="llvm-strip"
 	export GCC_FLAGS=""
-	filter-flags '-fuse-ld=*'
-	append-ldflags '-fuse-ld=lld'
 	strip-unsupported-flags
 	${CC} --version || die
 ewarn
