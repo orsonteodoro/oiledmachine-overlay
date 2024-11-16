@@ -389,7 +389,7 @@
       For musl, it is mallocng.
     </flag>
     <flag name="thunder">
-      Links to a framework with pluginable CDM (content decryption module) support.
+      Links to a framework with ClearKey CDM (Content Decryption Module) support.
     </flag>
     <flag name="v4l">
       Adds and checks for proper v4l camera support.
