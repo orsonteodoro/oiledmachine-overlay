@@ -149,15 +149,15 @@ VULNERABILITIES_FIXED=(
 # Upstream severity
 	"CVE-2024-10467;CE, DoS, DT, ID;Critical"
 	"CVE-2024-10468;DoS, DT, ID;Critical"
+	"CVE-2024-10458;ZC, ID;High"
+	"CVE-2024-10460;ZC, ID;Moderate"
 	"CVE-2024-10461;DT, ID;Medium"
-	"CVE-2024-10458;ID;High"
 	"CVE-2024-10463;ID;High"
-	"CVE-2024-10460;ID;Moderate"
 	"CVE-2024-10462;DT;High"
 	"CVE-2024-10465;DT;High"
+	"CVE-2024-10459;ZC, DoS;High"
+	"CVE-2024-10466;ZC, DoS;High"
 	"CVE-2024-10464;DoS;High"
-	"CVE-2024-10459;DoS;High"
-	"CVE-2024-10466;DoS;High"
 )
 MOZ_ESR=
 MOZ_LANGS=(
@@ -167,7 +167,6 @@ gn gu-IN he hi-IN hr hsb hu hy-AM ia id is it ja ka kab kk km kn ko lij lt lv
 mk mr ms my nb-NO ne-NP nl nn-NO oc pa-IN pl pt-BR pt-PT rm ro ru sat sc sco si
 sk skr sl son sq sr sv-SE szl ta te tg th tl tr trs uk ur uz vi xh zh-CN zh-TW
 )
-
 MOZ_PV="${PV}"
 MOZ_PV_SUFFIX=
 if [[ "${PV}" =~ (_(alpha|beta|rc).*)$ ]] ; then
@@ -1354,6 +1353,9 @@ einfo "DT = Data Tampering"
 einfo "ID = Information Disclosure"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "UAF" ]] ; then
 einfo "UAF = Use After Free"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ZC" ]] ; then
+einfo "ZC = Zero Click Vulnerability"
 		fi
 einfo
 	fi
