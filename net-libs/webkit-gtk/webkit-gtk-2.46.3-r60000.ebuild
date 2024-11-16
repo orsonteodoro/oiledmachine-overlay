@@ -893,7 +893,6 @@ RDEPEND+="
 			>=media-plugins/gst-plugins-speex-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
 		)
 		vaapi? (
-			!media-plugins/gst-plugins-vaapi
 			>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},vaapi]
 			media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
 		)
