@@ -514,7 +514,7 @@ ${LANGS[@]/#/l10n_}
 ${MSE_ACODECS_IUSE}
 ${MSE_VCODECS_IUSE}
 
-aqua +avif -bmalloc -cache-partitioning dash debug +doc -eme -gamepad +gbm
+aqua +avif -bmalloc -cache-partitioning clang dash debug +doc -eme -gamepad +gbm
 +geolocation gles2 gnome-keyring +gstreamer gstwebrtc +introspection
 +javascript +jit +journald +jpegxl +libpas +lcms -libbacktrace +libhyphen
 -libwebrtc -mediarecorder -mediastream +microphone +minibrowser mold +opengl openmp
@@ -1020,6 +1020,13 @@ BDEPEND+="
 	virtual/perl-Carp
 	virtual/perl-Data-Dumper
 	virtual/perl-JSON-PP
+	clang? (
+		|| (
+			$(gen_depend_llvm)
+		)
+		sys-devel/clang:=
+		sys-devel/llvm:=
+	)
 	doc? (
 		dev-util/gi-docgen
 	)
@@ -1032,11 +1039,6 @@ BDEPEND+="
 	thunder? (
 		net-libs/Thunder
 	)
-	|| (
-		$(gen_depend_llvm)
-	)
-	sys-devel/clang:=
-	sys-devel/llvm:=
 	openmp? (
 		sys-libs/libomp:=
 	)
@@ -1148,54 +1150,51 @@ eerror
 }
 
 _set_clang() {
-	if false && tc-is-clang ; then
-		local s
-		for s in ${LLVM_COMPAT[@]} ; do
-			if has_version "sys-devel/clang:${s}" ; then
-				export CC="${CHOST}-clang-${s}"
-				export CXX="${CHOST}-clang++-${s}"
-				break
-			fi
-		done
-		export CPP="${CXX} -E"
-		export AR="llvm-ar"
-		export NM="llvm-nm"
-		export OBJCOPY="llvm-objcopy"
-		export OBJDUMP="llvm-objdump"
-		export READELF="llvm-readelf"
-		export STRIP="llvm-strip"
-		export GCC_FLAGS=""
-		filter-flags '-fuse-ld=*'
-		append-ldflags '-fuse-ld=lld'
-		strip-unsupported-flags
-		${CC} --version || die
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		if has_version "sys-devel/clang:${s}" ; then
+			export CC="${CHOST}-clang-${s}"
+			export CXX="${CHOST}-clang++-${s}"
+			break
+		fi
+	done
+	export CPP="${CC} -E"
+	export AR="llvm-ar"
+	export NM="llvm-nm"
+	export OBJCOPY="llvm-objcopy"
+	export OBJDUMP="llvm-objdump"
+	export READELF="llvm-readelf"
+	export STRIP="llvm-strip"
+	export GCC_FLAGS=""
+	filter-flags '-fuse-ld=*'
+	append-ldflags '-fuse-ld=lld'
+	strip-unsupported-flags
+	${CC} --version || die
 ewarn
 ewarn "If \"Assumed value of MB_LEN_MAX wrong\" error encountered, rebuild"
 ewarn "${CATEGORY}/${PN} and dev-libs/icu with GCC 12."
 ewarn
-	fi
 }
 
 _set_gcc() {
-	if true || tc-is-gcc ; then
-		local gcc_current_profile=$(gcc-config -c)
-		local gcc_current_profile_slot="${gcc_current_profile##*-}"
+	local gcc_current_profile=$(gcc-config -c)
+	local gcc_current_profile_slot="${gcc_current_profile##*-}"
 
-		if ver_test "${gcc_current_profile_slot}" -gt "13" ; then
+	if ver_test "${gcc_current_profile_slot}" -gt "13" ; then
 ewarn "GCC ${gcc_current_profile_slot} is not supported upstream."
 ewarn "If problems encountered, build both dev-libs/icu and ${CATEGORY}/${PN} with either GCC 11, 12, 13."
-			export CC="${CHOST}-gcc-${gcc_current_profile_slot}"
-			export CXX="${CHOST}-g++-${gcc_current_profile_slot}"
-		elif has_version "sys-devel/gcc:13" ; then
-			export CC="${CHOST}-gcc-13"
-			export CXX="${CHOST}-g++-13"
-		elif has_version "sys-devel/gcc:12" ; then
-			export CC="${CHOST}-gcc-12"
-			export CXX="${CHOST}-g++-12"
-		elif has_version "sys-devel/gcc:11" ; then
-			export CC="${CHOST}-gcc-11"
-			export CXX="${CHOST}-g++-11"
-		else
+		export CC="${CHOST}-gcc-${gcc_current_profile_slot}"
+		export CXX="${CHOST}-g++-${gcc_current_profile_slot}"
+	elif has_version "sys-devel/gcc:13" ; then
+		export CC="${CHOST}-gcc-13"
+		export CXX="${CHOST}-g++-13"
+	elif has_version "sys-devel/gcc:12" ; then
+		export CC="${CHOST}-gcc-12"
+		export CXX="${CHOST}-g++-12"
+	elif has_version "sys-devel/gcc:11" ; then
+		export CC="${CHOST}-gcc-11"
+		export CXX="${CHOST}-g++-11"
+	else
 eerror
 eerror "GCC must be either 11, 12, 13"
 eerror
@@ -1207,18 +1206,17 @@ eerror "  emerge -C dev-libs/icu"
 eerror "  emerge -1vuDN dev-libs/icu"
 eerror "  emerge -1vO =${CATEGORY}/${PN}-${PVR}"
 eerror
-			die
-		fi
-		export CPP="${CXX} -E"
-		export AR="ar"
-		export NM="nm"
-		export OBJCOPY="objcopy"
-		export OBJDUMP="objdump"
-		export READELF="readelf"
-		export STRIP="strip"
-		export GCC_FLAGS="-fno-allow-store-data-races"
-		strip-unsupported-flags
+		die
 	fi
+	export CPP="${CC} -E"
+	export AR="ar"
+	export NM="nm"
+	export OBJCOPY="objcopy"
+	export OBJDUMP="objdump"
+	export READELF="readelf"
+	export STRIP="strip"
+	export GCC_FLAGS="-fno-allow-store-data-races"
+	strip-unsupported-flags
 }
 
 _set_cxx() {
@@ -1228,11 +1226,11 @@ _set_cxx() {
 	# D12 - gcc 12.2, clang 14.0
 	# U22 - gcc 11.2, clang 14.0
 	# U24 - gcc 13.2, clang 18.0
-		export CC=$(tc-getCC)
-		export CXX=$(tc-getCXX)
-		export CPP="${CXX} -E"
-		#_set_clang # Broken when generating JavaScriptCore-4.0.gir
-		_set_gcc
+		if use clang ; then
+			_set_clang
+		else
+			_set_gcc
+		fi
 	fi
 }
 
