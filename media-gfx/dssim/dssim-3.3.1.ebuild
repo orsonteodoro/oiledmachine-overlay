@@ -189,4 +189,7 @@ src_install() {
 	insinto "/usr/$(get_libdir)/pkgconfig"
 	sed -i -e "s|/usr/local|/usr|" "dssim.pc" || die
 	doins "dssim.pc"
+	dosym \
+		"/usr/$(get_libdir)/libdssim.so" \
+		"/usr/$(get_libdir)/libdssim.so.3"
 }
