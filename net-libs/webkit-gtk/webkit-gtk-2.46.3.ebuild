@@ -3207,6 +3207,7 @@ ewarn
 #   interactive test:
 #
 #     minibrowser:  passed
+#     surf:  passed
 #     search engine(s):  passed
 #     video site(s):  fail (minibrowser), passed (surf)
 #       vpx (streaming):  passed
