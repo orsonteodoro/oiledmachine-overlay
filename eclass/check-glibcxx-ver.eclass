@@ -77,7 +77,7 @@ echo -e "# Contents of /etc/portage/env/gcc-${gcc_version}.conf:"
 echo -e
 echo -e "CC=\"gcc-${gcc_version}\""
 echo -e "CXX=\"g++-${gcc_version}\""
-echo -e "CPP=\"\${CXX} -E\""
+echo -e "CPP=\"\${CC} -E\""
 echo -e "AR=\"ar\""
 echo -e "NM=\"nm\""
 echo -e "OBJCOPY=\"objcopy\""

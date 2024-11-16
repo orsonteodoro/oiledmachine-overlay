@@ -595,7 +595,7 @@ check_optimal_compiler_for_cycles_x86() {
 		if [[ -n "${BLENDER_CC_ALT}" && -n "${BLENDER_CXX_ALT}" ]] ; then
 			export CC="${BLENDER_CC_ALT}"
 			export CXX="${BLENDER_CXX_ALT}"
-			export CPP="${CXX} -E"
+			export CPP="${CC} -E"
 		elif [[ -n "${CC}" && -n "${CXX}" ]] \
 			&& [[ ! ( "${CC}" =~ (^|"-")"gcc" ) ]] \
 			&& [[ ! ( "${CXX}" =~ (^|"-")"g++" ) ]] ; then
@@ -606,13 +606,13 @@ check_optimal_compiler_for_cycles_x86() {
 		elif has_version 'sys-devel/clang' ; then
 			export CC="${CHOST}-clang"
 			export CXX="${CHOST}-clang++"
-			export CPP="${CXX} -E"
+			export CPP="${CC} -E"
 		fi
 	else
 		if [[ ! -n "${CC}" || ! -n "${CXX}" ]] ; then
 			export CC="$(tc-getCC)"
 			export CXX="$(tc-getCXX)"
-			export CPP="${CXX} -E"
+			export CPP="${CC} -E"
 		fi
 	fi
 	strip-unsupported-flags

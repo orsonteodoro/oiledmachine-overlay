@@ -1534,7 +1534,7 @@ rocm_set_default_gcc() {
 	gcc_slot="${!_gcc_slot}"
 	export CC="${CHOST}-gcc-${gcc_slot}"
 	export CXX="${CHOST}-g++-${gcc_slot}"
-	export CPP="${CXX} -E"
+	export CPP="${CC} -E"
 	strip-unsupported-flags
 	filter-flags '-fuse-ld=*'
 	append-ldflags -fuse-ld=bfd
@@ -1548,7 +1548,7 @@ rocm_set_default_clang() {
 	llvm_slot="${!_llvm_slot}"
 	export CC="${CHOST}-clang-${llvm_slot}"
 	export CXX="${CHOST}-clang++-${llvm_slot}"
-	export CPP="${CXX} -E"
+	export CPP="${CC} -E"
 	strip-unsupported-flags
 	filter-flags '-fuse-ld=*'
 	append-ldflags -fuse-ld=lld
@@ -1563,7 +1563,7 @@ rocm_set_default_aocc() {
 	llvm_slot="${!_llvm_slot}"
 	export CC="${CHOST}-clang-${llvm_slot}"
 	export CXX="${CHOST}-clang++-${llvm_slot}"
-	export CPP="${CXX} -E"
+	export CPP="${CC} -E"
 	strip-unsupported-flags
 	filter-flags '-fuse-ld=*'
 	append-ldflags -fuse-ld=lld
@@ -1600,7 +1600,7 @@ eerror "CUDA version not supported.  Use dev-util/nvidia-cuda-toolkit must be 11
 		append-ldflags -fuse-ld=bfd
 		append-cxxflags -ccbin "${EPREFIX}/usr/${CHOST}/gcc-bin/${s}/${CHOST}-g++"
 	else
-		export CPP="${CXX} -E"
+		export CPP="${CC} -E"
 		strip-unsupported-flags
 		filter-flags '-fuse-ld=*'
 		append-ldflags -fuse-ld=lld
