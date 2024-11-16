@@ -1895,9 +1895,21 @@ einfo "${cve}:  ${vulnerability_classes} (CVSS 3.1 ${severity})"
 		done
 		IFS=$' \t\n'
 einfo
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "CE" ]] ; then
+einfo "CE = Code Execution"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "DoS" ]] ; then
 einfo "DoS = Denial of Service"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "DT" ]] ; then
 einfo "DT = Data Tampering"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ID" ]] ; then
 einfo "ID = Information Disclosure"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ZC" ]] ; then
+einfo "ZC = Zero Click Attack"
+		fi
 einfo
 	fi
 	pre_build_checks
