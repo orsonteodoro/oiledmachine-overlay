@@ -5,19 +5,18 @@
 EAPI=8
 
 # IMPORTANT:  The ${FILESDIR}/node-multiplexer-v* must be updated each time a new major version is introduced.
-# For ebuild delayed removal safety track "security release" : https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V22.md
+# For ebuild delayed removal safety track "security release" : https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V18.md
 
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
 
-# Last deps commit date:  Oct 10, 2024
+# Last deps commit date:  Nov 5, 2024
 
-ACORN_PV="8.12.1"
+ACORN_PV="8.13.0"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 TRAINER_TYPES=(
 	assert
 	async_hooks
-	blob
 	buffers
 	child_process
 	cluster
@@ -59,8 +58,8 @@ TRAINER_TYPES=(
 COREPACK_PV="0.29.4"
 LTO_TYPE="none" # Global var
 MULTIPLEXER_VER="11"
-NGHTTP2_PV="1.63.0"
-NPM_PV="10.9.2" # See https://github.com/nodejs/node/blob/v23.0.0/deps/npm/package.json
+NGHTTP2_PV="1.61.0"
+NPM_PV="10.8.2" # See https://github.com/nodejs/node/blob/v18.20.5/deps/npm/package.json
 PYTHON_COMPAT=( "python3_"{8..12} ) # See configure
 PYTHON_REQ_USE="threads(+)"
 TPGO_CONFIGURE_DONT_SET_FLAGS=1
@@ -104,6 +103,7 @@ RESTRICT="
 "
 SLOT_MAJOR="$(ver_cut 1 ${PV})"
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
+
 gen_iuse_pgo() {
 	local t
 	for t in ${TRAINER_TYPES[@]} ; do
@@ -113,11 +113,11 @@ gen_iuse_pgo() {
 
 IUSE+="
 acorn +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu +jit
-inspector +npm mold pax-kernel -pointer-compression +snapshot +ssl system-icu
-+system-ssl test
+inspector npm mold pax-kernel -pointer-compression +snapshot +ssl system-icu
++system-ssl systemtap test
 
 $(gen_iuse_pgo)
-man pgo ebuild-revision-6
+man pgo ebuild-revision-12
 "
 
 gen_required_use_pgo() {
@@ -150,13 +150,13 @@ RDEPEND+="
 	!net-libs/nodejs:0
 	>=app-arch/brotli-1.1.0
 	>=app-eselect/eselect-nodejs-20230521
-	>=dev-libs/libuv-1.48.0:=
-	>=net-dns/c-ares-1.33.1
+	>=dev-libs/libuv-1.44.2:=
+	>=net-dns/c-ares-1.29.0
 	>=net-libs/nghttp2-${NGHTTP2_PV}
 	>=sys-libs/zlib-1.3
 	sys-kernel/mitigate-id
 	system-icu? (
-		>=dev-libs/icu-75.1:=
+		>=dev-libs/icu-74.2:=
 	)
 	system-ssl? (
 		>=dev-libs/openssl-3.0.15:0=
@@ -181,6 +181,9 @@ BDEPEND+="
 			>=net-libs/nghttp2-${NGHTTP2_PV}[utils]
 		)
 	)
+	systemtap? (
+		dev-debug/systemtap
+	)
 	test? (
 		net-misc/curl
 	)
@@ -194,8 +197,8 @@ PDEPEND+="
 PATCHES=(
 	"${FILESDIR}/${PN}-12.22.5-shared_c-ares_nameser_h.patch"
 	"${FILESDIR}/${PN}-22.2.0-global-npm-config.patch"
-	"${FILESDIR}/${PN}-22.2.0-lto-update.patch"
-	"${FILESDIR}/${PN}-20.1.0-support-clang-pgo.patch"
+	"${FILESDIR}/${PN}-16.13.2-lto-update.patch"
+	"${FILESDIR}/${PN}-18.17.0-support-clang-pgo.patch"
 	"${FILESDIR}/${PN}-19.3.0-v8-oflags.patch"
 )
 
@@ -257,7 +260,7 @@ pkg_setup() {
 
 # See https://github.com/nodejs/release#release-schedule
 # See https://github.com/nodejs/release#end-of-life-releases
-#einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2024-06-01."
+einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2025-04-30."
 
 	# Prevent merge conflicts
 	if use man && (( $(_count_useflag_slots "man") > 1 ))
@@ -459,7 +462,9 @@ src_configure() { :; }
 
 __pgo_configure() {
 	if [[ "${CC}" =~ "clang" ]] ; then
+ewarn
 ewarn "PGO clang support is experimental"
+ewarn
 	fi
 	export PGO_PROFILE_DIR="${T}/pgo-${ABI}"
 	export PGO_PROFILE_PROFDATA="${PGO_PROFILE_DIR}/pgo-custom.profdata"
@@ -495,13 +500,7 @@ _src_configure() {
 		--shared-brotli
 		--shared-cares
 		--shared-libuv
-
-# Commenting out fixes:
-# ld: obj/deps/ngtcp2/nghttp3/lib/nghttp3.nghttp3_http.o: in function `nghttp3_http_parse_priority':
-# nghttp3_http.c:(.text+0x30): undefined reference to `sf_parser_init'
-# ld: nghttp3_http.c:(.text+0x42): undefined reference to `sf_parser_dict'
-		#--shared-nghttp2
-
+		--shared-nghttp2
 		--shared-zlib
 	)
 
@@ -564,9 +563,6 @@ eerror "To use mold, enable the mold USE flag."
 	if use kernel_linux && linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
 		myconf+=( --v8-enable-hugepage )
 	fi
-	if ! use pointer-compression ; then
-ewarn "Disabing USE=pointer-compression will disable the V8 Sandbox."
-	fi
 
 	local myarch
 	myarch="${ABI/amd64/x64}"
@@ -580,6 +576,7 @@ ewarn "Disabing USE=pointer-compression will disable the V8 Sandbox."
 	"${EPYTHON}" configure.py \
 		--prefix="${EPREFIX}/usr" \
 		--dest-cpu="${myarch}" \
+		$(use_with systemtap dtrace) \
 		${myconf[@]} || die
 
 	# Prevent double build on install.
@@ -758,10 +755,7 @@ src_install() {
 	local D_BASE="/${REL_D_BASE}"
 	local ED_BASE="${ED}/${REL_D_BASE}"
 
-	${EPYTHON} tools/install.py install \
-		--dest-dir "${D}" \
-		--prefix "${EPREFIX}/usr" \
-		|| die
+	${EPYTHON} tools/install.py install "${D}" "${EPREFIX}/usr" || die
 
 	mv "${ED}/usr/bin/node"{"","${SLOT_MAJOR}"} || die
 	if [[ "${PGO_PHASE}" == "PGI" ]] ; then
@@ -800,6 +794,13 @@ src_install() {
 		"${ED}/usr/share/doc/node" \
 		"${ED}/usr/share/doc/${PF}" \
 		|| die
+
+	if use systemtap ; then
+		# Move tapset to avoid conflict
+		mv "${ED}/usr/share/systemtap/tapset/node${,${SLOT_MAJOR}}.stp" || die
+	else
+		rm "${ED}/usr/share/systemtap/tapset/node.stp" || die
+	fi
 
 	# Let eselect-nodejs handle switching corepack
 	dodir "/usr/$(get_libdir)/corepack"
