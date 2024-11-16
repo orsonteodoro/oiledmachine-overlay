@@ -919,7 +919,7 @@ RDEPEND+="
 		$(python_gen_any_dep '
 			=dev-libs/gobject-introspection-1.78*[${PYTHON_SINGLE_USEDEP}]
 			=dev-libs/gobject-introspection-common-1.78*
-		' python3_{11,12})
+		')
 		dev-libs/gobject-introspection:=
 	)
 	journald? (
