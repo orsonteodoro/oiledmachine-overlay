@@ -17,9 +17,10 @@ EAPI=8
 # 128.0.6613.119 -> 128.0.6613.137
 # 129.0.6668.89 -> 129.0.6668.100
 # 129.0.6668.100 -> 130.0.6723.91
+# 130.0.6723.91 -> 131.0.6778.69
 
 # For depends see:
-# https://github.com/chromium/chromium/tree/130.0.6723.91/build/linux/sysroot_scripts/generated_package_lists				; Last update 20240501
+# https://github.com/chromium/chromium/tree/131.0.6778.69/build/linux/sysroot_scripts/generated_package_lists				; Last update 20240501
 #   alsa-lib, at-spi2-core, bluez (bluetooth), cairo, cups, curl, expat,
 #   flac [older], fontconfig [older], freetype [older], gcc, gdk-pixbuf, glib,
 #   glibc [missing check], gtk+3, gtk4, harfbuzz [older], libdrm [older], libffi, libglvnd,
@@ -28,36 +29,36 @@ EAPI=8
 #   libxkbcommon, libxml2 [older], libxrandr, libxrender, libxshmfence,
 #   libxslt [older], nspr, nss, opus [older], pango, pciutils, pipewire,
 #   libpulse, qt5, qt6, re2 [older], systemd, udev, wayland, zlib [older]
-# https://github.com/chromium/chromium/blob/130.0.6723.91/build/install-build-deps.py
+# https://github.com/chromium/chromium/blob/131.0.6778.69/build/install-build-deps.py
 
 #
 # Additional DEPENDS versioning info:
 #
-# https://github.com/chromium/chromium/blob/130.0.6723.91/third_party/dav1d/version/vcs_version.h#L2					; newer than generated_package_lists
-# https://github.com/chromium/chromium/blob/130.0.6723.91/third_party/libaom/source/config/config/aom_version.h#L19			; newer than generated_package_lists
-# https://github.com/chromium/chromium/blob/130.0.6723.91/third_party/libpng/png.h#L288						; newer than generated_package_lists
-# https://github.com/chromium/chromium/blob/130.0.6723.91/third_party/libxml/linux/config.h#L160					; older than generated_package_lists
-# https://github.com/chromium/chromium/blob/130.0.6723.91/third_party/libxslt/linux/config.h#L116					; newer than generated_package_lists
-# https://github.com/chromium/chromium/blob/130.0.6723.91/third_party/node/update_node_binaries#L18
-# https://github.com/chromium/chromium/blob/130.0.6723.91/third_party/re2/README.chromium#L4						; newer than generated_package_lists, (live) [rounded in ebuild]
-# https://github.com/chromium/chromium/blob/130.0.6723.91/third_party/zlib/zlib.h#L40
-# https://github.com/chromium/chromium/blob/130.0.6723.91/tools/rust/update_rust.py#L35						; commit
+# https://github.com/chromium/chromium/blob/131.0.6778.69/third_party/dav1d/version/vcs_version.h#L2					; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/131.0.6778.69/third_party/libaom/source/config/config/aom_version.h#L19			; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/131.0.6778.69/third_party/libpng/png.h#L288							; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/131.0.6778.69/third_party/libxml/linux/config.h#L160					; older than generated_package_lists
+# https://github.com/chromium/chromium/blob/131.0.6778.69/third_party/libxslt/linux/config.h#L116					; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/131.0.6778.69/third_party/node/update_node_binaries#L18
+# https://github.com/chromium/chromium/blob/131.0.6778.69/third_party/re2/README.chromium#L4						; newer than generated_package_lists, (live) [rounded in ebuild]
+# https://github.com/chromium/chromium/blob/131.0.6778.69/third_party/zlib/zlib.h#L40
+# https://github.com/chromium/chromium/blob/131.0.6778.69/tools/rust/update_rust.py#L35							; commit
 #   https://github.com/rust-lang/rust/blob/3cf924b934322fd7b514600a7dc84fc517515346/src/version						; live version
-# /var/tmp/portage/www-client/chromium-130.0.6723.91/work/chromium-130.0.6723.91/third_party/flac/BUILD.gn			L122	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-130.0.6723.91/work/chromium-130.0.6723.91/third_party/fontconfig/src/fontconfig/fontconfig.h L54 ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-130.0.6723.91/work/chromium-130.0.6723.91/third_party/freetype/src/CMakeLists.txt	L165	; newer than generated_package_lists *
-# /var/tmp/portage/www-client/chromium-130.0.6723.91/work/chromium-130.0.6723.91/third_party/harfbuzz-ng/src/configure.ac	L3	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-130.0.6723.91/work/chromium-130.0.6723.91/third_party/icu/source/configure		L585	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-130.0.6723.91/work/chromium-130.0.6723.91/third_party/libdrm/src/meson.build		L24	; newer than generated_package_lists *
-# /var/tmp/portage/www-client/chromium-130.0.6723.91/work/chromium-130.0.6723.91/third_party/libjpeg_turbo/jconfig.h		L7	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-130.0.6723.91/work/chromium-130.0.6723.91/third_party/libwebp/src/configure.ac		L1	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-130.0.6723.91/work/chromium-130.0.6723.91/third_party/openh264/src/meson.build		L2
-# /var/tmp/portage/www-client/chromium-130.0.6723.91/work/chromium-130.0.6723.91/third_party/opus/README.chromium		L3	; newer than generated_package_lists, live
+# /var/tmp/portage/www-client/chromium-131.0.6778.69/work/chromium-131.0.6778.69/third_party/flac/BUILD.gn			L122	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-131.0.6778.69/work/chromium-131.0.6778.69/third_party/fontconfig/src/fontconfig/fontconfig.h L54 ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-131.0.6778.69/work/chromium-131.0.6778.69/third_party/freetype/src/CMakeLists.txt	L165	; newer than generated_package_lists *
+# /var/tmp/portage/www-client/chromium-131.0.6778.69/work/chromium-131.0.6778.69/third_party/harfbuzz-ng/src/configure.ac	L3	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-131.0.6778.69/work/chromium-131.0.6778.69/third_party/icu/source/configure		L585	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-131.0.6778.69/work/chromium-131.0.6778.69/third_party/libdrm/src/meson.build		L24	; newer than generated_package_lists *
+# /var/tmp/portage/www-client/chromium-131.0.6778.69/work/chromium-131.0.6778.69/third_party/libjpeg_turbo/jconfig.h		L7	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-131.0.6778.69/work/chromium-131.0.6778.69/third_party/libwebp/src/configure.ac		L1	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-131.0.6778.69/work/chromium-131.0.6778.69/third_party/openh264/src/meson.build		L2
+# /var/tmp/portage/www-client/chromium-131.0.6778.69/work/chromium-131.0.6778.69/third_party/opus/README.chromium		L3	; newer than generated_package_lists, live
 #   https://gitlab.xiph.org/xiph/opus/-/commit/8cf872a186b96085b1bb3a547afd598354ebeb87							; see tag
-# /var/tmp/portage/www-client/chromium-130.0.6723.91/work/chromium-130.0.6723.91/third_party/zstd/README.chromium			; live version
+# /var/tmp/portage/www-client/chromium-131.0.6778.69/work/chromium-131.0.6778.69/third_party/zstd/README.chromium			; live version
 #   https://github.com/facebook/zstd/commit/0ff651dd876823b99fa5c5f53292be28381aee9b							; check if commit part of tag
 #   https://github.com/facebook/zstd/blob/0ff651dd876823b99fa5c5f53292be28381aee9b/lib/zstd.h#L107					; version
-# https://github.com/chromium/chromium/blob/130.0.6723.91/DEPS#L512									; live
+# https://github.com/chromium/chromium/blob/131.0.6778.69/DEPS#L512									; live
 #   git clone https://gn.googlesource.com/gn
 #   git checkout <commit-id>
 #   v=$(git describe HEAD --abbrev=12 | cut -f 3 -d "-")
@@ -118,7 +119,7 @@ CROMITE_PV="129.0.6668.101"
 
 # LLVM 19
 # LLVM timestamp can be obtained from \
-# https://github.com/chromium/chromium/blob/130.0.6723.91/tools/clang/scripts/update.py#L42 \
+# https://github.com/chromium/chromium/blob/131.0.6778.69/tools/clang/scripts/update.py#L42 \
 # https://github.com/llvm/llvm-project/commit/69c43468
 # Change also LLVM_OFFICIAL_SLOT
 CURRENT_PROFDATA_VERSION= # Global variable
@@ -149,21 +150,28 @@ bf40306865f31b7115feeab6d767da4b56c812d4e0bb9aa69ed4703c8a9061e0\
 886a9fc90f54fe8a500885a315e5917907953649d8cf56c157b73261b55d1814\
 "
 LLVM_COMPAT=( 20 19 ) # [inclusive, inclusive] high to low ; LLVM_OFFICIAL_SLOT+1 or LLVM_OFFICIAL_SLOT-1 major version allowed.
-LLVM_MAX_SLOT="${LLVM_COMPAT[0]}" # Max is the same slot listed in https://github.com/chromium/chromium/blob/130.0.6723.91/tools/clang/scripts/update.py#L42
+LLVM_MAX_SLOT="${LLVM_COMPAT[0]}" # Max is the same slot listed in https://github.com/chromium/chromium/blob/131.0.6778.69/tools/clang/scripts/update.py#L42
 LLVM_MIN_SLOT="${LLVM_COMPAT[-1]}" # Min is the pregenerated PGO profile needed for INSTR_PROF_INDEX_VERSION version 12 compatibility for the profdata file format.
 LLVM_OFFICIAL_SLOT="20" # Cr official slot
 LLVM_SLOT="" # Global variable
 LTO_TYPE="" # Global variable
 MESA_PV="20.3.5"
-MITIGATION_DATE="Oct 29, 2024" # Official annoucement (blog)
-MITIGATION_LAST_UPDATE=1730146800 # From `date +%s -d "2024-10-28 1:20 PM PDT"` From tag in GH
-MITIGATION_URI="https://chromereleases.googleblog.com/2024/10/stable-channel-update-for-desktop_29.html"
+MITIGATION_DATE="Nov 12, 2024" # Official annoucement (blog)
+MITIGATION_LAST_UPDATE=1731354660 # From `date +%s -d "2024-11-11 11:51 AM PST"` From tag in GH
+MITIGATION_URI="https://chromereleases.googleblog.com/2024/11/stable-channel-update-for-desktop_12.html"
 VULNERABILITIES_FIXED=(
-	"CVE-2024-10487;DoS, DT, ID;Critical"
-	"CVE-2024-10488;DoS, DT, ID;Critical"
+	"CVE-2024-11112;DoS, DT, ID;High"
+	"CVE-2024-11113;DoS, DT, ID;High"
+	"CVE-2024-11114;DoS, DT, ID;High"
+	"CVE-2024-11115;DoS, DT, ID;High"
+	"CVE-2024-11110;DT;Medium"
+	"CVE-2024-11111;DT;Medium"
+	"CVE-2024-11116;DT;Medium"
+	"CVE-2024-11117;DT;Medium"
 )
 NABIS=0 # Global variable
 NODE_VERSION=20
+PPC64_HASH="a85b64f07b489b8c6fdb13ecf79c16c56c560fc6"
 PATCHSET_PPC64="128.0.6613.84-1raptor0~deb12u1"
 PATCH_REVISION="-1"
 PATCH_VER="${PV%%\.*}${PATCH_REVISION}"
@@ -180,14 +188,14 @@ QT5_PV="5.15.2"
 QT6_PV="6.4.2"
 UNGOOGLED_CHROMIUM_PV="130.0.6723.91-1"
 USE_LTO=0 # Global variable
-# https://github.com/chromium/chromium/blob/130.0.6723.91/tools/clang/scripts/update.py#L38 \
+# https://github.com/chromium/chromium/blob/131.0.6778.69/tools/clang/scripts/update.py#L38 \
 # grep 'CLANG_REVISION = ' ${S}/tools/clang/scripts/update.py -A1 | cut -c 18- # \
 LLVM_COMMIT="69c43468"
 LLVM_N_COMMITS="3847"
 LLVM_SUB_REV="28"
 TEST_FONT="f26f29c9d3bfae588207bbc9762de8d142e58935c62a86f67332819b15203b35"
 VENDORED_CLANG_VER="llvmorg-${LLVM_OFFICIAL_SLOT}-init-${LLVM_N_COMMITS}-g${LLVM_COMMIT:0:8}-${LLVM_SUB_REV}"
-# https://github.com/chromium/chromium/blob/130.0.6723.91/tools/rust/update_rust.py#L37 \
+# https://github.com/chromium/chromium/blob/131.0.6778.69/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
 RUST_COMMIT="009e73825af0e59ad4fc603562e038b3dbd6593a"
 RUST_PV="1.81.0" # See https://github.com/rust-lang/rust/blob/009e73825af0e59ad4fc603562e038b3dbd6593a/RELEASES.md
@@ -223,21 +231,19 @@ if [[ "${PATCHSET_PPC64%%.*}" == "${PV%%.*}" ]] ; then
 else
 	KEYWORDS="~amd64 ~arm64"
 fi
+KEYWORDS=""
 SRC_URI="
 	ppc64? (
-		https://quickbuild.io/~raptor-engineering-public/+archive/ubuntu/chromium/+files/chromium_${PATCHSET_PPC64}.debian.tar.xz
-		https://deps.gentoo.zip/chromium-ppc64le-gentoo-patches-1.tar.xz
+		https://gitlab.solidsilicon.io/public-development/open-source/chromium/openpower-patches/-/archive/${PPC64_HASH}/openpower-patches-${PPC64_HASH}.tar.bz2 -> chromium-openpower-${PPC64_HASH:0:10}.tar.bz2
 	)
 	system-toolchain? (
 		https://gitlab.com/Matt.Jolly/chromium-patches/-/archive/${PATCH_VER}/chromium-patches-${PATCH_VER}.tar.bz2
 	)
 	test? (
-		https://chromium-tarballs.syd1.cdn.digitaloceanspaces.com/${P}-testdata.tar.xz
+		https://chromium-tarballs.distfiles.gentoo.org/${P}-testdata.tar.xz -> ${P}-testdata-gentoo.tar.xz
 		https://chromium-fonts.storage.googleapis.com/${TEST_FONT} -> chromium-${PV%%\.*}-testfonts.tar.gz
 	)
 "
-#		https://chromium-fonts.storage.googleapis.com/${TEST_FONT} -> chromium-${PV%%\.*}-testfonts.tar.gz
-#		https://commondatastorage.googleapis.com/chromium-browser-official/${TESTDATA_P}-testdata.tar.xz
 if is_cromite_compatible ; then
 	IUSE+="
 		cromite
@@ -530,13 +536,13 @@ RESTRICT="
 SLOT="0/stable"
 #
 # vaapi is enabled by default upstream for some arches \
-# See https://github.com/chromium/chromium/blob/130.0.6723.91/media/gpu/args.gni#L24
+# See https://github.com/chromium/chromium/blob/131.0.6778.69/media/gpu/args.gni#L24
 #
 # Using the system-ffmpeg or system-icu breaks cfi-icall or cfi-cast which is
 #   incompatible as a shared lib.
 #
 # The suid is built by default upstream but not necessarily used:  \
-#   https://github.com/chromium/chromium/blob/130.0.6723.91/sandbox/linux/BUILD.gn
+#   https://github.com/chromium/chromium/blob/131.0.6778.69/sandbox/linux/BUILD.gn
 #
 CPU_FLAGS_ARM=(
 	bti
@@ -591,24 +597,24 @@ ebuild-revision-1
 
 # What is considered a proprietary codec can be found at:
 #
-#   https://github.com/chromium/chromium/blob/130.0.6723.91/media/filters/BUILD.gn#L160
-#   https://github.com/chromium/chromium/blob/130.0.6723.91/media/media_options.gni#L38
-#   https://github.com/chromium/chromium/blob/130.0.6723.91/media/base/supported_types.cc#L203
-#   https://github.com/chromium/chromium/blob/130.0.6723.91/media/base/supported_types.cc#L284
+#   https://github.com/chromium/chromium/blob/131.0.6778.69/media/filters/BUILD.gn#L160
+#   https://github.com/chromium/chromium/blob/131.0.6778.69/media/media_options.gni#L38
+#   https://github.com/chromium/chromium/blob/131.0.6778.69/media/base/supported_types.cc#L203
+#   https://github.com/chromium/chromium/blob/131.0.6778.69/media/base/supported_types.cc#L284
 #
 # Codec upstream default:
-#   https://github.com/chromium/chromium/blob/130.0.6723.91/tools/mb/mb_config_expectations/chromium.linux.json#L89
+#   https://github.com/chromium/chromium/blob/131.0.6778.69/tools/mb/mb_config_expectations/chromium.linux.json#L89
 #
 
 #
 # For cfi-vcall, cfi-icall defaults status, see \
-#   https://github.com/chromium/chromium/blob/130.0.6723.91/build/config/sanitizers/sanitizers.gni
+#   https://github.com/chromium/chromium/blob/131.0.6778.69/build/config/sanitizers/sanitizers.gni
 # For cfi-cast default status, see \
-#   https://github.com/chromium/chromium/blob/130.0.6723.91/build/config/sanitizers/sanitizers.gni#L123
+#   https://github.com/chromium/chromium/blob/131.0.6778.69/build/config/sanitizers/sanitizers.gni#L123
 # For pgo default status, see \
-#   https://github.com/chromium/chromium/blob/130.0.6723.91/build/config/compiler/pgo/pgo.gni#L15
+#   https://github.com/chromium/chromium/blob/131.0.6778.69/build/config/compiler/pgo/pgo.gni#L15
 # For libcxx default, see \
-#   https://github.com/chromium/chromium/blob/130.0.6723.91/build/config/c++/c++.gni#L14
+#   https://github.com/chromium/chromium/blob/131.0.6778.69/build/config/c++/c++.gni#L14
 # For cdm availability see third_party/widevine/cdm/widevine.gni#L28
 #
 
@@ -1298,7 +1304,7 @@ BDEPEND+="
 # This is why LLVM13 was set as the minimum and did fix the problem.
 
 # For the current llvm for this project, see
-#   https://github.com/chromium/chromium/blob/130.0.6723.91/tools/clang/scripts/update.py#L42
+#   https://github.com/chromium/chromium/blob/131.0.6778.69/tools/clang/scripts/update.py#L42
 # Use the same clang for official USE flag because of older llvm bugs which
 #   could result in security weaknesses (explained in the llvm:12 note below).
 # Used llvm >= 12 for arm64 for the same reason in the Linux kernel CFI comment.
@@ -1439,7 +1445,7 @@ is_debug_flags() {
 pre_build_checks() {
 	# Check build requirements: bugs #471810, #541816, #914220
 	if use official ; then
-	# https://github.com/chromium/chromium/blob/130.0.6723.91/docs/linux/build_instructions.md#system-requirements
+	# https://github.com/chromium/chromium/blob/131.0.6778.69/docs/linux/build_instructions.md#system-requirements
 		CHECKREQS_DISK_BUILD="100G"
 		CHECKREQS_MEMORY="16G"
 	else
@@ -3541,7 +3547,7 @@ fi #############################################################################
 	# Debug symbols level 2 is still on when official is on even though
 	# is_debug=false.
 	#
-	# See https://github.com/chromium/chromium/blob/130.0.6723.91/build/config/compiler/compiler.gni#L276
+	# See https://github.com/chromium/chromium/blob/131.0.6778.69/build/config/compiler/compiler.gni#L276
 	#
 	# GN needs explicit config for Debug/Release as opposed to inferring it
 	# from the build directory.
@@ -3577,7 +3583,7 @@ fi #############################################################################
 
 	# libevent: https://bugs.gentoo.org/593458
 	# [B] all of gn_system_libraries set
-	# List obtained from /var/tmp/portage/www-client/chromium-130.0.6723.91/work/chromium-130.0.6723.91/build/linux/unbundle/
+	# List obtained from /var/tmp/portage/www-client/chromium-131.0.6778.69/work/chromium-131.0.6778.69/build/linux/unbundle/
 	local gn_system_libraries=(
 		$(use system-dav1d && echo "
 			dav1d
@@ -3690,8 +3696,8 @@ ewarn
 	myconf_gn+=" enable_service_discovery=true" # Required by chrome/browser/extensions/api/BUILD.gn.  mdns may be a dependency.
 	myconf_gn+=" enable_speech_service=false" # It is enabled but missing backend either local service or remote service.
 	myconf_gn+=" enable_widevine=$(usex widevine true false)"
-	myconf_gn+=" enable_openxr=false"	# https://github.com/chromium/chromium/tree/130.0.6723.91/device/vr#platform-support
-	myconf_gn+=" enable_vr=false"		# https://github.com/chromium/chromium/blob/130.0.6723.91/device/vr/buildflags/buildflags.gni#L32
+	myconf_gn+=" enable_openxr=false"	# https://github.com/chromium/chromium/tree/131.0.6778.69/device/vr#platform-support
+	myconf_gn+=" enable_vr=false"		# https://github.com/chromium/chromium/blob/131.0.6778.69/device/vr/buildflags/buildflags.gni#L32
 	myconf_gn+=" enable_websockets=true"	# requires devtools/devtools_http_handler.cc which is unconditionally added.
 	myconf_gn+=" use_minikin_hyphenation=$(usex css-hyphen true false)"
 	myconf_gn+=" use_mpris=$(usex mpris true false)"
@@ -3933,7 +3939,7 @@ ewarn "The new V8 Sandbox [for the JavaScript engine] (2024) will be automagic o
 	# Disable code formating of generated files
 	myconf_gn+=" blink_enable_generated_code_formatting=false"
 
-	# See https://github.com/chromium/chromium/blob/130.0.6723.91/media/media_options.gni#L19
+	# See https://github.com/chromium/chromium/blob/131.0.6778.69/media/media_options.gni#L19
 
 	if use bindist ; then
 	# The proprietary_codecs USE flag just forces Chromium to say that it
@@ -4482,8 +4488,8 @@ einfo "Using Mold without LTO"
 		myconf_gn+=" devtools_skip_typecheck=false"
 	fi
 
-	# See https://github.com/chromium/chromium/blob/130.0.6723.91/build/config/sanitizers/BUILD.gn#L196
-	# See https://github.com/chromium/chromium/blob/130.0.6723.91/tools/mb/mb_config.pyl#L2950
+	# See https://github.com/chromium/chromium/blob/131.0.6778.69/build/config/sanitizers/BUILD.gn#L196
+	# See https://github.com/chromium/chromium/blob/131.0.6778.69/tools/mb/mb_config.pyl#L2950
 	local is_cfi_custom=0
 	if use official ; then
 	# Forced because it is the final official settings.
@@ -4681,7 +4687,7 @@ einfo
 	fi
 
 	# See also build/config/compiler/pgo/BUILD.gn#L71 for PGO flags.
-	# See also https://github.com/chromium/chromium/blob/130.0.6723.91/docs/pgo.md
+	# See also https://github.com/chromium/chromium/blob/131.0.6778.69/docs/pgo.md
 	# profile-instr-use is clang which that file assumes but gcc doesn't have.
 	# chrome_pgo_phase:  0=NOP, 1=PGI, 2=PGO
 	if use pgo && tc-is-clang && ver_test $(clang-major-version) -ge ${PREGENERATED_PGO_PROFILE_MIN_LLVM_SLOT} ; then
@@ -4733,7 +4739,7 @@ eerror
 	fi
 
 	# I noticed that the vendored clang doesn't use ccache.  Let us explicitly use ccache if requested.
-	# See https://github.com/chromium/chromium/blob/130.0.6723.91/build/toolchain/cc_wrapper.gni#L36
+	# See https://github.com/chromium/chromium/blob/131.0.6778.69/build/toolchain/cc_wrapper.gni#L36
 	if ! use system-toolchain ; then
 		if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
 			myconf_gn+=" cc_wrapper=\"ccache\""
@@ -5171,7 +5177,7 @@ pkg_postinst() {
 	if ! use headless; then
 		if use vaapi ; then
 	# It says 3 args:
-	# https://github.com/chromium/chromium/blob/130.0.6723.91/docs/gpu/vaapi.md#vaapi-on-linux
+	# https://github.com/chromium/chromium/blob/131.0.6778.69/docs/gpu/vaapi.md#vaapi-on-linux
 einfo
 einfo "VA-API is disabled by default at runtime.  You have to enable it by"
 einfo "adding --enable-features=VaapiVideoDecoder --ignore-gpu-blocklist with"
