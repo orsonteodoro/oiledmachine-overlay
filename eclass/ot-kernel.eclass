@@ -485,7 +485,8 @@ MITIGATION_DATE="Oct 22, 2024" # Advisory date
 MITIGATION_LAST_UPDATE=1729607820 # From `date +%s -d "2024-10-22 7:37"` from matching timmestamp of release with report
 MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
-# Only high and critical noted and only those that are fixed on this release day
+# High and critical are noted and only those that are fixed on this release day
+# Medium and low are shown optionally.
 	"CVE-2024-50262;DoS, DT, ID;High"
 	"CVE-2024-50246;DoS, DT, ID;High"
 	"CVE-2024-50235;DoS, DT, ID;High"
