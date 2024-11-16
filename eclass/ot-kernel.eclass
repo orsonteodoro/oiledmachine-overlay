@@ -1360,10 +1360,10 @@ einfo "RC = Race Condition"
 einfo "OOB = Out Of Bounds"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "PE" ]] ; then
-einfo "PE = Privilege Execution"
+einfo "PE = Privilege Escalation"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ZC" ]] ; then
-einfo "ZC = Zero Click Vulnerability"
+einfo "ZC = Zero Click Attack"
 		fi
 einfo
 		local now=$(date +%s)
