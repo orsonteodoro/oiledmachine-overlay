@@ -1,14 +1,14 @@
---- a/services/passage_embeddings/public/mojom/passage_embeddings.mojom.orig	2024-09-10 11:42:20.354285500 -0700
-+++ b/services/passage_embeddings/public/mojom/passage_embeddings.mojom	2024-09-13 07:59:26.301360699 -0700
+--- a/services/passage_embeddings/public/mojom/passage_embeddings.mojom.orig	2024-11-13 17:04:11.529633300 -0800
++++ b/services/passage_embeddings/public/mojom/passage_embeddings.mojom	2024-11-16 10:34:26.318578050 -0800
 @@ -54,7 +54,7 @@ interface PassageEmbedder {
-  RequireContext=sandbox.mojom.Context.kBrowser]
+     RequireContext=sandbox.mojom.Context.kBrowser]
  interface PassageEmbeddingsService {
    // Load the given models for generating embeddings.
 -  [AllowedContext=sandbox.mojom.Context.kBrowser]
 +  [EnableIf=build_with_tflite_lib, AllowedContext=sandbox.mojom.Context.kBrowser]
-   LoadModels(
-       PassageEmbeddingsLoadModelsParams params,
-       pending_receiver<PassageEmbedder> model) => (bool success);
+   LoadModels(PassageEmbeddingsLoadModelsParams params,
+              pending_receiver<PassageEmbedder> model) => (bool success);
+ };
 --- a/services/passage_embeddings/passage_embeddings_service.cc.orig	2024-09-10 11:42:20.354285500 -0700
 +++ b/services/passage_embeddings/passage_embeddings_service.cc	2024-09-13 08:01:38.507194353 -0700
 @@ -6,7 +6,9 @@

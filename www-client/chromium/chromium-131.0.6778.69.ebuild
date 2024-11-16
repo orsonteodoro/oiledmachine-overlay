@@ -67,13 +67,13 @@ EAPI=8
 CFI_CAST=0 # Global variable
 CFI_ICALL=0 # Global variable
 CFI_VCALL=0 # Global variable
-CHROMIUM_EBUILD_MAINTAINER=0 # See also GEN_ABOUT_CREDITS
+CHROMIUM_EBUILD_MAINTAINER=1 # See also GEN_ABOUT_CREDITS
 
 #
 # Set to 1 below to generate an about_credits.html including bundled internal
 # dependencies.
 #
-GEN_ABOUT_CREDITS=0
+GEN_ABOUT_CREDITS=1
 #
 
 # One of the major sources of lag comes from dependencies
@@ -100,8 +100,8 @@ hu id it ja kn ko lt lv ml mr ms nb nl pl pt-BR pt-PT ro ru sk sl sr sv sw ta
 te th tr uk ur vi zh-CN zh-TW
 "
 
-CROMITE_COMMIT="5a4953031c9c9322dda2d3bba3ef23d33c753005" # Based on most recent either tools/under-control/src/RELEASE or build/RELEASE
-CROMITE_PV="129.0.6668.101"
+CROMITE_COMMIT="19cd8e5aac882df3eb12646b1a028608dfa7e117" # Based on most recent either tools/under-control/src/RELEASE or build/RELEASE
+CROMITE_PV="131.0.6778.70"
 
 # About PGO version compatibility
 #
@@ -139,7 +139,7 @@ FFMPEG_SLOT="0/59.61.61" # Same as ffmpeg 7.0 ; 0/libavutil_sover_maj.libavcodec
 GCC_COMPAT=( {14..10} )
 GCC_PV="10.2.1" # Minimum
 GCC_SLOT="" # Global variable
-GN_PV="0.2198"
+GN_PV="0.22"
 GN_COMMIT="20806f79c6b4ba295274e3a589d85db41a02fdaa"
 GTK3_PV="3.24.24"
 GTK4_PV="4.8.3"
@@ -186,7 +186,7 @@ PYTHON_COMPAT=( "python3_"{9..13} )
 PYTHON_REQ_USE="xml(+)"
 QT5_PV="5.15.2"
 QT6_PV="6.4.2"
-UNGOOGLED_CHROMIUM_PV="130.0.6723.91-1"
+UNGOOGLED_CHROMIUM_PV="131.0.6778.69-1"
 USE_LTO=0 # Global variable
 # https://github.com/chromium/chromium/blob/131.0.6778.69/tools/clang/scripts/update.py#L38 \
 # grep 'CLANG_REVISION = ' ${S}/tools/clang/scripts/update.py -A1 | cut -c 18- # \
@@ -901,6 +901,15 @@ if [[ "${UNGOOGLED_CHROMIUM_PV%-*}" == "${PV}" ]] ; then
 		)
 		official? (
 			!ungoogled-chromium
+		)
+	"
+fi
+
+if [[ "${UNGOOGLED_CHROMIUM_PV%-*}" == "${PV}" ]] && is_cromite_compatible ; then
+	REQUIRED_USE+="
+		?? (
+			cromite
+			ungoogled-chromium
 		)
 	"
 fi
@@ -1859,7 +1868,7 @@ ewarn "Expected file count:  ${tc_count_expected}"
 ewarn
 	fi
 
-	local sources_count_expected=738491
+	local sources_count_expected=741731
 	local sources_count_actual=$(find "/usr/share/chromium/sources" -type f | wc -l)
 	if (( ${sources_count_actual} != ${sources_count_expected} )) ; then
 ewarn
@@ -1870,7 +1879,6 @@ ewarn "Actual file count:  ${sources_count_actual}"
 ewarn "Expected file count:  ${sources_count_expected}"
 ewarn
 	fi
-
 
 	dhms_start
 einfo "Release channel:  ${SLOT#*/}"
@@ -2204,7 +2212,6 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	PATCHES+=(
 		"${FILESDIR}/extra-patches/${PN}-123.0.6312.58-zlib-selective-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-129.0.6668.70-qt6-split.patch"
-		"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-include-historgram-functions.patch"
 		"${FILESDIR}/extra-patches/${PN}-129.0.6668.58-disable-speech.patch"
 	)
 
@@ -2266,11 +2273,11 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 
 		if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
 			PATCHES+=(
-				"${FILESDIR}/extra-patches/${PN}-129.0.6668.70-disable-tflite-ungoogled-chromium.patch"
+				"${FILESDIR}/extra-patches/${PN}-131.0.6778.69-disable-tflite-ungoogled-chromium.patch"
 			)
 		else
 			PATCHES+=(
-				"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-tflite.patch"
+				"${FILESDIR}/extra-patches/${PN}-131.0.6778.69-disable-tflite.patch"
 			)
 		fi
 
