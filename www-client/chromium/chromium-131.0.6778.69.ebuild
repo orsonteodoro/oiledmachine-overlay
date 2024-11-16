@@ -67,13 +67,13 @@ EAPI=8
 CFI_CAST=0 # Global variable
 CFI_ICALL=0 # Global variable
 CFI_VCALL=0 # Global variable
-CHROMIUM_EBUILD_MAINTAINER=1 # See also GEN_ABOUT_CREDITS
+CHROMIUM_EBUILD_MAINTAINER=0 # See also GEN_ABOUT_CREDITS
 
 #
 # Set to 1 below to generate an about_credits.html including bundled internal
 # dependencies.
 #
-GEN_ABOUT_CREDITS=1
+GEN_ABOUT_CREDITS=0
 #
 
 # One of the major sources of lag comes from dependencies
@@ -146,8 +146,8 @@ GTK4_PV="4.8.3"
 LIBVA_PV="2.17.0"
 # SHA512 about_credits.html fingerprint: \
 LICENSE_FINGERPRINT="\
-bf40306865f31b7115feeab6d767da4b56c812d4e0bb9aa69ed4703c8a9061e0\
-886a9fc90f54fe8a500885a315e5917907953649d8cf56c157b73261b55d1814\
+ef3da89b70818be764547428bdffc233f222d739400529e6e76d8123d67e8c2c\
+8903a30587f81f5a169e9d7319a7dc0a68d01c562cff753d681dc31e973b3e59\
 "
 LLVM_COMPAT=( 20 19 ) # [inclusive, inclusive] high to low ; LLVM_OFFICIAL_SLOT+1 or LLVM_OFFICIAL_SLOT-1 major version allowed.
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}" # Max is the same slot listed in https://github.com/chromium/chromium/blob/131.0.6778.69/tools/clang/scripts/update.py#L42
@@ -233,7 +233,6 @@ if [[ "${PATCHSET_PPC64%%.*}" == "${PV%%.*}" ]] ; then
 else
 	KEYWORDS="~amd64 ~arm64"
 fi
-KEYWORDS=""
 SRC_URI="
 	ppc64? (
 		https://gitlab.solidsilicon.io/public-development/open-source/chromium/openpower-patches/-/archive/${PPC64_HASH}/openpower-patches-${PPC64_HASH}.tar.bz2
