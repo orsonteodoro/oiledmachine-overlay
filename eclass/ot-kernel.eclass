@@ -15191,10 +15191,10 @@ ewarn "The mitigation fix may sometimes only be available in one of the rows abo
 ewarn
 ewarn "Requirements to mitigate:"
 ewarn
-ewarn "  (1) AMD CPUs:    USE=\"linux-firmware\" for data center CPUs"
-ewarn "                   A BIOS firmware update is required for non data center CPUs"
+ewarn "  (1) AMD CPUs:    For data center CPUs, USE=\"linux-firmware\""
+ewarn "                   For non data center CPUs, a BIOS firmware update is required"
 ewarn "      Intel CPUs:  USE=\"intel-microcode\""
-ewarn "                   A BIOS firmware update may be required."
+ewarn "                   A BIOS firmware update may still be required."
 ewarn "  (2) For config assist mode, set OT_KERNEL_CPU_MICROCODE=1"
 ewarn "      For config custom mode, see"
 ewarn "      https://wiki.gentoo.org/wiki/AMD_microcode"
