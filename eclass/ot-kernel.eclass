@@ -550,6 +550,7 @@ VULNERABILITIES_FIXED=(
 	"CVE-2024-50128;DoS, ID;High"
 	"CVE-2024-50123;DoS, ID;High"
 	"CVE-2024-50115;DoS, ID;High"
+	"CVE-2024-50083;ZC, DoS;High"
 	"CVE-2024-50110;ID;Medium"
 )
 
@@ -1360,6 +1361,9 @@ einfo "OOB = Out Of Bounds"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "PE" ]] ; then
 einfo "PE = Privilege Execution"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ZC" ]] ; then
+einfo "ZC = Zero Click Vulnerability"
 		fi
 einfo
 		local now=$(date +%s)
