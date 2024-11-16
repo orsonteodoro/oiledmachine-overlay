@@ -392,7 +392,7 @@
       Links to a framework with ClearKey CDM (Content Decryption Module) support.
     </flag>
     <flag name="v4l">
-      Adds and checks for proper v4l camera support.
+      Adds and checks for proper Video4Linux2 camera support.
     </flag>
     <flag name="variation-fonts">
       Check dependencies for variation font support.
@@ -459,7 +459,7 @@
       Recommended as the fallback for AV1 decoding.
     </flag>
     <flag name="flac">
-      Support for decoding FLAC audio.
+      Support for decoding lossless FLAC audio.
     </flag>
     <flag name="g722">
       Support for G722 encoding for GstWebRTC audio streams.
@@ -477,7 +477,7 @@
       Support for Ogg container files.
     </flag>
     <flag name="openh264">
-      Use openh264 as a fallback CPU based H.264 video encoder.
+      Use openh264 as a CPU fallback based H.264 video encoder.
     </flag>
     <flag name="opus">
       Support for encoding or decoding Opus audio and for GstWebRTC RTP audio
@@ -493,10 +493,10 @@
       Support for decoding Theora video.
     </flag>
     <flag name="x264">
-      Use x264 as a fallback CPU based H.264 video encoder.
+      Use x264 as a CPU fallback based H.264 video encoder.
     </flag>
     <flag name="x265">
-      Use x265 as a fallback CPU based H.265 video encoder.
+      Use x265 as a CPU fallback based H.265 video encoder.
     </flag>
     <flag name="vaapi">
       Hardware acceleration support for codecs and images.
@@ -508,7 +508,7 @@
       Support for encoding and decoding Vorbis audio.
     </flag>
     <flag name="vpx">
-      Use vpx as a fallback CPU based VP8/9 video encoder or decoder.
+      Use libvpx as a CPU fallback based VP8/9 video encoder or decoder.
     </flag>
   </use>
   <slots>
