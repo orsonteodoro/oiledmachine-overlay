@@ -103,3 +103,6 @@ sys-apps/firejail -suid
 
 # Required for linking torch_shm_manager
 sci-libs/caffe2 -openmp
+
+# Download time issues
+net-libs/webkit-gtk libwebrtc
