@@ -224,7 +224,9 @@ eerror
 	use java && java-pkg_ensure-vm-version-eq "${JAVA_SLOT}"
 	python-single-r1_pkg_setup
 	llvm_pkg_setup
+	export CC="${CHOST}-clang-${LLVM_SLOT}"
 	export CXX="${CHOST}-clang++-${LLVM_SLOT}"
+	export CPP="${CC} -E"
 	strip-unsupported-flags
 einfo "CXX:\t${CXX}"
 }

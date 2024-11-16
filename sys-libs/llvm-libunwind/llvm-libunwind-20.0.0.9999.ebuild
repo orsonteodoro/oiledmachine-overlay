@@ -99,9 +99,10 @@ multilib_src_configure() {
 	# also separately bug #863917
 	filter-lto
 
-	if use clang; then
-		local -x CC="${CHOST}-clang"
-		local -x CXX="${CHOST}-clang++"
+	if use clang ; then
+		export CC="${CHOST}-clang"
+		export CXX="${CHOST}-clang++"
+		export CPP="${CC} -E"
 		strip-unsupported-flags
 	fi
 

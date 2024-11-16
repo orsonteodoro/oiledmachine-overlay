@@ -917,6 +917,7 @@ gen_rtmp_services() {
 src_configure() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
+	export CPP=$(tc-getCPP)
 einfo
 einfo "CC:\t${CC}"
 einfo "CXX:\t${CXX}"
