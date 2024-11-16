@@ -8,12 +8,11 @@ inherit dhms
 
 KEYWORDS="~amd64 ~arm64 ~ppc64"
 S="${WORKDIR}"
-# The URI for 130.0.6723.91 came from the distro chromium ebuild.
+# The URI for 131.0.6778.69 came from the distro chromium ebuild.
 # I don't personally like when the distro passes out tarballs.
 SRC_URI="
-	https://chromium-tarballs.syd1.cdn.digitaloceanspaces.com/chromium-${PV}.tar.xz
+	https://chromium-tarballs.distfiles.gentoo.org/chromium-${PV}.tar.xz
 "
-#	https://commondatastorage.googleapis.com/chromium-browser-official/chromium-${PV}.tar.xz
 
 DESCRIPTION="Chromium sources"
 HOMEPAGE="https://www.chromium.org/"
@@ -268,26 +267,6 @@ BDEPEND+="
 DOCS=( )
 
 pkg_setup() {
-ewarn
-ewarn "Distro message:"
-ewarn
-ewarn "  This uses a gentoo-created tarball due to Google CI Failures."
-ewarn "  Use 132 as a base for new official tarballs."
-ewarn
-ewarn
-ewarn "Ebuild developer message:"
-ewarn
-ewarn "The domain chromium-tarballs.syd1.cdn.digitaloceanspaces.com is doubious and not an official domain."
-ewarn "The URI in question is https://chromium-tarballs.syd1.cdn.digitaloceanspaces.com/chromium-${PV}.tar.xz"
-ewarn "The URI was obtained from https://gitweb.gentoo.org/repo/gentoo.git/tree/www-client/chromium/chromium-130.0.6723.91.ebuild#n37"
-ewarn "The URI was accepted and displayed by the distro."
-ewarn
-ewarn "Options"
-ewarn
-ewarn "(1) Press Control C to cancel and wait for the official URI on the next release cycle."
-ewarn "(2) Wait 60 seconds to continue to allow to download and merge."
-ewarn
-	sleep 60
 	dhms_start
 }
 
