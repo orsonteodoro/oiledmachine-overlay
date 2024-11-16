@@ -27,7 +27,7 @@ unset -f _llvm_set_globals
 GCC_SLOT=14
 PYTHON_COMPAT=( "python3_"{10..13} )
 
-inherit cmake-multilib llvm.org llvm-utils python-any-r1 toolchain-funcs
+inherit cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
 
 LLVM_MAX_SLOT=${LLVM_MAJOR}
 

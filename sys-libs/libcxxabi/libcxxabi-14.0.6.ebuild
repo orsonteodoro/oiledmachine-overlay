@@ -6,7 +6,7 @@ EAPI=8
 
 PYTHON_COMPAT=( "python3_"{9..11} )
 
-inherit cmake-multilib llvm llvm.org python-any-r1 toolchain-funcs
+inherit cmake-multilib flag-o-matic llvm llvm.org python-any-r1 toolchain-funcs
 
 # llvm-6 for new lit options
 LLVM_MAX_SLOT=${LLVM_MAJOR}
