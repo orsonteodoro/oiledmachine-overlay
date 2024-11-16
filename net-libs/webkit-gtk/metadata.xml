@@ -185,6 +185,7 @@
 
   -->
   <upstream>
+    <changelog>https://github.com/WebKit/WebKit/blob/main/Source/WebKit/gtk/NEWS</changelog>
     <remote-id type="cpe">cpe:/a:webkitgtk:webkitgtk</remote-id>
   </upstream>
   <use>
