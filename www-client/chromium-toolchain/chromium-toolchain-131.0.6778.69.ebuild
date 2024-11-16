@@ -6,19 +6,24 @@ EAPI=8
 
 inherit dhms
 
-# https://github.com/chromium/chromium/blob/130.0.6723.91/tools/clang/scripts/update.py#L38 \
+# https://github.com/chromium/chromium/blob/131.0.6778.69/DEPS#L512
 # grep 'CLANG_REVISION = ' ${S}/tools/clang/scripts/update.py -A1 | cut -c 18- # \
-GN_PV="0.2198"
+#   git clone https://gn.googlesource.com/gn
+#   git checkout <commit-id>
+#   v=$(git describe HEAD --abbrev=12 | cut -f 3 -d "-")
+#   python -c "print(${v}/10000)" or echo "0.${v}"
+GN_PV="0.22"
 GN_COMMIT="20806f79c6b4ba295274e3a589d85db41a02fdaa"
-LLVM_COMMIT="69c43468"
-LLVM_N_COMMITS="3847"
+# https://github.com/chromium/chromium/blob/131.0.6778.69/tools/clang/scripts/update.py#L38 \
+LLVM_COMMIT="3dbd929e"
+LLVM_N_COMMITS="6794"
 LLVM_OFFICIAL_SLOT="20" # Cr official slot
-LLVM_SUB_REV="28"
-# https://github.com/chromium/chromium/blob/130.0.6723.91/tools/rust/update_rust.py#L37 \
+LLVM_SUB_REV="1"
+# https://github.com/chromium/chromium/blob/131.0.6778.69/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
-RUST_COMMIT="009e73825af0e59ad4fc603562e038b3dbd6593a"
+RUST_COMMIT="f5cd2c5888011d4d80311e5b771c6da507d860dd"
 RUST_SUB_REV="2"
-RUST_PV="1.81.0" # See https://github.com/rust-lang/rust/blob/009e73825af0e59ad4fc603562e038b3dbd6593a/RELEASES.md
+RUST_PV="1.81.0" # See https://github.com/rust-lang/rust/blob/f5cd2c5888011d4d80311e5b771c6da507d860dd/RELEASES.md
 VENDORED_CLANG_VER="llvmorg-${LLVM_OFFICIAL_SLOT}-init-${LLVM_N_COMMITS}-g${LLVM_COMMIT:0:8}-${LLVM_SUB_REV}"
 VENDORED_RUST_VER="${RUST_COMMIT}-${RUST_SUB_REV}"
 
@@ -39,7 +44,7 @@ SRC_URI="
 	)
 	rust? (
 		amd64? (
-			https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/rust-toolchain-${VENDORED_RUST_VER}-${VENDORED_CLANG_VER%???}.tar.xz
+			https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/rust-toolchain-${VENDORED_RUST_VER}-${VENDORED_CLANG_VER%??}.tar.xz
 				-> chromium-${PV%%\.*}-${RUST_COMMIT:0:7}-${RUST_SUB_REV}-rust-linux-x64.tar.xz
 		)
 	)

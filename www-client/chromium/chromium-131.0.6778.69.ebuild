@@ -190,16 +190,18 @@ UNGOOGLED_CHROMIUM_PV="130.0.6723.91-1"
 USE_LTO=0 # Global variable
 # https://github.com/chromium/chromium/blob/131.0.6778.69/tools/clang/scripts/update.py#L38 \
 # grep 'CLANG_REVISION = ' ${S}/tools/clang/scripts/update.py -A1 | cut -c 18- # \
-LLVM_COMMIT="69c43468"
-LLVM_N_COMMITS="3847"
-LLVM_SUB_REV="28"
+LLVM_COMMIT="3dbd929e"
+LLVM_N_COMMITS="6794"
+LLVM_OFFICIAL_SLOT="20" # Cr official slot
+LLVM_SUB_REV="1"
 TEST_FONT="f26f29c9d3bfae588207bbc9762de8d142e58935c62a86f67332819b15203b35"
 VENDORED_CLANG_VER="llvmorg-${LLVM_OFFICIAL_SLOT}-init-${LLVM_N_COMMITS}-g${LLVM_COMMIT:0:8}-${LLVM_SUB_REV}"
 # https://github.com/chromium/chromium/blob/131.0.6778.69/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
-RUST_COMMIT="009e73825af0e59ad4fc603562e038b3dbd6593a"
-RUST_PV="1.81.0" # See https://github.com/rust-lang/rust/blob/009e73825af0e59ad4fc603562e038b3dbd6593a/RELEASES.md
+RUST_COMMIT="f5cd2c5888011d4d80311e5b771c6da507d860dd"
+RUST_NEEDS_LLVM="yes please"
 RUST_SUB_REV="2"
+RUST_PV="1.81.0" # See https://github.com/rust-lang/rust/blob/f5cd2c5888011d4d80311e5b771c6da507d860dd/RELEASES.md
 RUSTC_VER="" # Global variable
 SHADOW_CALL_STACK=0 # Global variable
 S_CROMITE="${WORKDIR}/cromite-${CROMITE_COMMIT}"
@@ -211,7 +213,7 @@ ZLIB_PV="1.3"
 inherit cflags-depends check-linker check-reqs chromium-2 dhms desktop edo
 inherit flag-o-matic flag-o-matic-om linux-info lcnr llvm multilib-minimal
 inherit multiprocessing ninja-utils pax-utils python-any-r1 qmake-utils
-inherit readme.gentoo-r1 systemd toolchain-funcs xdg-utils
+inherit readme.gentoo-r1 rust systemd toolchain-funcs xdg-utils
 
 is_cromite_compatible() {
 	local c4_min=$(ver_cut 4 ${PV})
@@ -234,14 +236,17 @@ fi
 KEYWORDS=""
 SRC_URI="
 	ppc64? (
-		https://gitlab.solidsilicon.io/public-development/open-source/chromium/openpower-patches/-/archive/${PPC64_HASH}/openpower-patches-${PPC64_HASH}.tar.bz2 -> chromium-openpower-${PPC64_HASH:0:10}.tar.bz2
+		https://gitlab.solidsilicon.io/public-development/open-source/chromium/openpower-patches/-/archive/${PPC64_HASH}/openpower-patches-${PPC64_HASH}.tar.bz2
+			-> chromium-openpower-${PPC64_HASH:0:10}.tar.bz2
 	)
 	system-toolchain? (
 		https://gitlab.com/Matt.Jolly/chromium-patches/-/archive/${PATCH_VER}/chromium-patches-${PATCH_VER}.tar.bz2
 	)
 	test? (
-		https://chromium-tarballs.distfiles.gentoo.org/${P}-testdata.tar.xz -> ${P}-testdata-gentoo.tar.xz
-		https://chromium-fonts.storage.googleapis.com/${TEST_FONT} -> chromium-${PV%%\.*}-testfonts.tar.gz
+		https://chromium-tarballs.distfiles.gentoo.org/${P}-testdata.tar.xz
+			-> ${P}-testdata-gentoo.tar.xz
+		https://chromium-fonts.storage.googleapis.com/${TEST_FONT}
+			-> chromium-${PV%%\.*}-testfonts.tar.gz
 	)
 "
 if is_cromite_compatible ; then
@@ -1766,23 +1771,6 @@ eerror
 	fi
 }
 
-# We need the rust version in src_configure and pkg_setup
-chromium_extract_rust_version() {
-	[[ "${MERGE_TYPE}" == "binary" ]] && return
-	local rustc_version=(
-		$(eselect --brief rust show 2>/dev/null)
-	)
-	rustc_version="${rustc_version[0]#rust-bin-}"
-	rustc_version="${rustc_version#rust-}"
-
-	if [[ -z "${rustc_version}" ]] ; then
-eerror "Failed to determine the rust version.  Check the 'eselect rust' output."
-		die
-	fi
-
-	echo "${rustc_version}"
-}
-
 check_security_expire() {
 	local safe_period
 	local now=$(date +%s)
@@ -2114,10 +2102,11 @@ src_unpack() {
 		# A new testdata tarball is available for each release; but testfonts tend to remain stable
 		# for the duration of a release.
 		# This unpacks directly into/over ${WORKDIR}/${P} so we can just use `unpack`.
-		unpack "${P}-testdata.tar.xz"
+		unpack "${P}-testdata-gentoo.tar.xz"
 		# This just contains a bunch of font files that need to be unpacked (or moved) to the correct location.
 		local testfonts_dir="${WORKDIR}/${P}/third_party/test_fonts"
-		tar xf "${DISTDIR}/${P%%\.*}-testfonts.tar.gz" -C "${testfonts_dir}" || die "Failed to unpack testfonts"
+		local testfonts_tar="${DISTDIR}/chromium-testfonts-${TEST_FONT:0:10}.tar.gz"
+		tar xf "${testfonts_tar}" -C "${testfonts_dir}" || die "Failed to unpack testfonts"
 	fi
 }
 
@@ -2143,8 +2132,10 @@ einfo "Applying the distro patchset ..."
 		"${FILESDIR}/chromium-cross-compile.patch"
 		$(use system-zlib && echo "${FILESDIR}/chromium-109-system-zlib.patch")
 		"${FILESDIR}/chromium-111-InkDropHost-crash.patch"
-		"${FILESDIR}/chromium-126-oauth2-client-switches.patch"
 		"${FILESDIR}/chromium-127-bindgen-custom-toolchain.patch"
+		"${FILESDIR}/chromium-131-unbundle-icu-target.patch"
+		"${FILESDIR}/chromium-131-oauth2-client-switches.patch"
+		"${FILESDIR}/chromium-131-const-atomicstring-conversion.patch"
 	)
 
 	if use system-toolchain ; then
@@ -2152,7 +2143,7 @@ einfo "Applying the distro patchset ..."
 	# The patchset is really only required if we're using the
 	# system-toolchain.
 		PATCHES+=(
-			"${WORKDIR}/chromium-patches-${PATCH_V}"
+			"${WORKDIR}/chromium-patches-${PATCH_VER}"
 		)
 
 		# We can't use the bundled compiler builtins with the system toolchain
@@ -2169,21 +2160,21 @@ einfo "Applying the distro patchset ..."
 	fi
 
 
-        if use ppc64 ; then
-		local paths=(
+
+	if use ppc64 ; then
+		IFS=$'\n'
+		local rows=(
 			$(grep -v "^#" "${WORKDIR}/debian/patches/series" \
 				| grep "^ppc64le" \
 				|| die)
 		)
-
 		local p
-		for p in ${paths[@]} ; do
-			if [[ ! ${p} =~ "fix-breakpad-compile.patch" ]]; then
-				PATCHES+=(
-					"${WORKDIR}/debian/patches/${p}"
-				)
+		for p in ${rows[@]} ; do
+			if [[ ! "${p}" =~ "fix-breakpad-compile.patch" ]] ; then
+				eapply "${WORKDIR}/debian/patches/${p}"
 			fi
 		done
+		IFS=$' \r\n'
 		PATCHES+=(
 			"${WORKDIR}/ppc64le"
 			"${WORKDIR}/debian/patches/fixes/rust-clanglib.patch"
@@ -2725,9 +2716,9 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		third_party/devtools-frontend/src/front_end/third_party/diff
 		third_party/devtools-frontend/src/front_end/third_party/i18n
 		third_party/devtools-frontend/src/front_end/third_party/intl-messageformat
+		third_party/devtools-frontend/src/front_end/third_party/json5
 		third_party/devtools-frontend/src/front_end/third_party/lighthouse
 		third_party/devtools-frontend/src/front_end/third_party/lit
-		third_party/devtools-frontend/src/front_end/third_party/lodash-isequal
 		third_party/devtools-frontend/src/front_end/third_party/marked
 		third_party/devtools-frontend/src/front_end/third_party/puppeteer
 		third_party/devtools-frontend/src/front_end/third_party/puppeteer/package/lib/esm/third_party/mitt
@@ -2759,6 +2750,17 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		third_party/highway
 		third_party/hunspell
 		third_party/iccjpeg
+		third_party/ink_stroke_modeler/src/ink_stroke_modeler
+		third_party/ink_stroke_modeler/src/ink_stroke_modeler/internal
+		third_party/ink/src/ink/brush
+		third_party/ink/src/ink/color
+		third_party/ink/src/ink/geometry
+		third_party/ink/src/ink/rendering
+		third_party/ink/src/ink/rendering/skia/common_internal
+		third_party/ink/src/ink/rendering/skia/native
+		third_party/ink/src/ink/rendering/skia/native/internal
+		third_party/ink/src/ink/strokes
+		third_party/ink/src/ink/types
 		third_party/inspector_protocol
 		third_party/ipcz
 		third_party/jinja2
@@ -2862,8 +2864,10 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		third_party/tflite/src/third_party/eigen3
 		third_party/tflite/src/third_party/fft2d
 		third_party/tflite/src/third_party/xla/third_party/tsl
-		third_party/tflite/src/third_party/xla/xla/tsl/util
 		third_party/tflite/src/third_party/xla/xla/tsl/framework
+		third_party/tflite/src/third_party/xla/xla/tsl/lib/random
+		third_party/tflite/src/third_party/xla/xla/tsl/protobuf
+		third_party/tflite/src/third_party/xla/xla/tsl/util
 		third_party/ukey2
 		third_party/unrar
 		third_party/utf
@@ -3470,52 +3474,13 @@ einfo "Using the system toolchain"
 		llvm_fix_tool_path LLVM_CONFIG
 	fi
 
-	# RUSTC_VER is used in src_configure, so may as well avoid calling it
-	# again.
-	export RUSTC_VER=$(chromium_extract_rust_version)
-	if ver_test "${RUSTC_VER}" -lt "${RUST_PV}"; then
-eerror
-eerror "The selected Rust version is too old."
-eerror
-eerror "Rust >=${RUST_MIN_VER} is required to build Chromium.  The currently"
-eerror "selected version is ${RUSTC_VER}.  Please run \`eselect rust\` and"
-eerror "select an appropriate Rust."
-eerror
-		die
-	else
-einfo "Using Rust ${RUSTC_VER} to build"
-	fi
+	rust_pkg_setup
+	einfo "Using Rust slot ${RUST_SLOT}, ${RUST_TYPE} to build"
 
 	# I hate doing this but upstream Rust have yet to come up with a better
 	# solution for us poor packagers. Required for Split LTO units, which
 	# are required for CFI.
 	export RUSTC_BOOTSTRAP=1
-
-	# Chromium requires the Rust profiler library while setting up its build
-	# environment.
-	#
-	# Since a standard Rust comes with the profiler, instead of patching it
-	# out (build/rust/std/BUILD.gn#L103)
-	#
-	# We'll just do a sanity check on the selected slot.
-	#
-	# The -bin always contains profiler support, so we only need to check
-	# for the non-bin version.
-	if [[ "$(eselect --brief rust show 2>/dev/null)" != *"bin"* ]]; then
-		local rust_lib_path="${EPREFIX}$(rustc --print target-libdir)"
-		local profiler_lib=$(find "${rust_lib_path}" -name "libprofiler_builtins-*.rlib" -print -quit)
-		if [[ -z "${profiler_lib}" ]]; then
-eerror
-eerror "Rust ${RUSTC_VER} is missing the profiler library."
-eerror
-eerror "The ebuild dependency resolution should have ensured that a Rust with"
-eerror "the profiler was installed."
-eerror
-eerror "Please \`eselect\` a Rust slot that has the profiler."
-eerror
-			die
-		fi
-	fi
 
 	# bindgen settings
 	# From 127, to make bindgen work, we need to provide a location for libclang.
@@ -3523,23 +3488,15 @@ eerror
 	# rust_bindgen_root = directory with `bin/bindgen` beneath it.
 	myconf_gn+=" rust_bindgen_root=\"${EPREFIX}/usr/\""
 
-	# from get_llvm_prefix
-	local prefix=${ESYSROOT}
-	[[ ${1} == -b ]] && prefix=${BROOT}
-	myconf_gn+=" bindgen_libclang_path=\"${prefix}/usr/lib/llvm/${LLVM_SLOT}/$(get_libdir)\""
+	myconf_gn+=" bindgen_libclang_path=\"$(get_llvm_prefix)/$(get_libdir)\""
 	# We don't need to set 'clang_base_bath' for anything in our build
 	# and it defaults to the google toolchain location. Instead provide a location
 	# to where system clang lives sot that bindgen can find system headers (e.g. stddef.h)
 	myconf_gn+=" clang_base_path=\"${EPREFIX}/usr/lib/clang/${LLVM_SLOT}/\""
 
-	# We need to provide this to GN in both the path to rust _and_ the version
-	if [[ "$(eselect --brief rust show 2>/dev/null)" == *"bin"* ]]; then
-		myconf_gn+=" rust_sysroot_absolute=\"${EPREFIX}/opt/rust-bin-${RUSTC_VER}/\""
-	else
-		myconf_gn+=" rust_sysroot_absolute=\"${EPREFIX}/usr/lib/rust/${RUSTC_VER}/\""
-	fi
+	myconf_gn+=" rust_sysroot_absolute=\"$(get_rust_prefix)\""
+	myconf_gn+=" rustc_version=\"${RUST_SLOT}\""
 
-	myconf_gn+=" rustc_version=\"${RUSTC_VER}\""
 else
 einfo "Using the bundled toolchain"
 fi #############################################################################
@@ -3679,6 +3636,13 @@ ewarn
 	if is_generating_credits ; then
 		myconf_gn+=" generate_about_credits=true"
 	fi
+
+	# TODO 131: The above call clobbers `enable_freetype = true` in the freetype gni file
+	# drop the last line, then append the freetype line and a new curly brace to end the block
+	local freetype_gni="build/config/freetype/freetype.gni"
+	sed -i -e '$d' "${freetype_gni}" || die
+	echo "  enable_freetype = true" >> "${freetype_gni}" || die
+	echo "}" >> "${freetype_gni}" || die
 
 	# See dependency logic in third_party/BUILD.gn
 	myconf_gn+=" use_system_harfbuzz=$(usex system-harfbuzz true false)"
@@ -4315,6 +4279,11 @@ einfo "Configuring bundled ffmpeg..."
 
 	# Don't need nocompile checks and GN crashes with our config
 	myconf_gn+=" enable_nocompile_tests=false"
+
+	# 131 began laying the groundwork for replacing freetype with
+	# "Rust-based Fontations set of libraries plus Skia path rendering"
+	# We now need to opt-in
+	myconf_gn+=" enable_freetype=true"
 
 	# Enable ozone wayland and/or headless support
 	myconf_gn+=" use_ozone=true"
@@ -5144,6 +5113,34 @@ src_test() {
 		StringPieceTest.OutOfBoundsDeath
 		ThreadPoolEnvironmentConfig.CanUseBackgroundPriorityForWorker
 		ValuesUtilTest.FilePath
+		# Gentoo-specific
+		AlternateTestParams/PartitionAllocDeathTest.RepeatedAllocReturnNullDirect/0
+		AlternateTestParams/PartitionAllocDeathTest.RepeatedAllocReturnNullDirect/1
+		AlternateTestParams/PartitionAllocDeathTest.RepeatedAllocReturnNullDirect/2
+		AlternateTestParams/PartitionAllocDeathTest.RepeatedAllocReturnNullDirect/3
+		AlternateTestParams/PartitionAllocDeathTest.RepeatedReallocReturnNullDirect/0
+		AlternateTestParams/PartitionAllocDeathTest.RepeatedReallocReturnNullDirect/1
+		AlternateTestParams/PartitionAllocDeathTest.RepeatedReallocReturnNullDirect/2
+		AlternateTestParams/PartitionAllocDeathTest.RepeatedReallocReturnNullDirect/3
+		CharacterEncodingTest.GetCanonicalEncodingNameByAliasName
+		CheckExitCodeAfterSignalHandlerDeathTest.CheckSIGFPE
+		CheckExitCodeAfterSignalHandlerDeathTest.CheckSIGILL
+		CheckExitCodeAfterSignalHandlerDeathTest.CheckSIGSEGV
+		CheckExitCodeAfterSignalHandlerDeathTest.CheckSIGSEGVNonCanonicalAddress
+		FilePathTest.FromUTF8Unsafe_And_AsUTF8Unsafe
+		FileTest.GetInfoForCreationTime
+		ICUStringConversionsTest.ConvertToUtf8AndNormalize
+		NumberFormattingTest.FormatPercent
+		PathServiceTest.CheckedGetFailure
+		PlatformThreadTest.CanChangeThreadType
+		StackCanary.ChangingStackCanaryCrashesOnReturn
+		StackTraceDeathTest.StackDumpSignalHandlerIsMallocFree
+		SysStrings.SysNativeMBAndWide
+		SysStrings.SysNativeMBToWide
+		SysStrings.SysWideToNativeMB
+		TestLauncherTools.TruncateSnippetFocusedMatchesFatalMessagesTest
+		ToolsSanityTest.BadVirtualCallNull
+		ToolsSanityTest.BadVirtualCallWrongType
 	)
 	local test_filter="-$(IFS=:; printf '%s' "${skip_tests[*]}")"
 	# test-launcher-bot-mode enables parallelism and plain output.
