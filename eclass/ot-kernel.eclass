@@ -15204,22 +15204,20 @@ ewarn "  (5) Build/update initramfs"
 ewarn "  (6) Reboot into new kernels"
 ewarn
 ewarn
-ewarn "Vulnerabily classes:"
+ewarn "Vulnerability classes:"
 ewarn
 ewarn "CE - Code Execution"
 ewarn "DoS - Denial of Service"
 ewarn "ID - Information Disclosure"
 ewarn "DT - Data Dampering"
-ewarn "DoS + ID + DT = high vulnerability"
-ewarn "DoS = medium vulnerability"
+ewarn "PE - Privilege Escalation"
 ewarn
 ewarn "Recent vulnerabilities:"
 ewarn
-ewarn "use-after-free (UAF) - DoS, ID, DT	# observed in the previous point release, fixed in this release"
-ewarn "null pointer dereference (NPD) - DoS	# observed in the previous point release, fixed in this release"
+ewarn "Use After Free (UAF) - DoS, ID, DT	# observed in the previous point release, fixed in this release"
+ewarn "Null Pointer Dereference (NPD) - DoS	# observed in the previous point release, fixed in this release"
 ewarn "Sinkclose - CE, DoS, ID, DT		# this year to 2000s era, requires BIOS firmware update"
-ewarn "CVE-2024-24968 - DoS			# this year, requires microcode update"
-ewarn "CVE-2024-23984 - ID			# this year, requires microcode update"
+ewarn "CVE-2024-23918 - PE, DoS, DT, ID		# this year, requires microcode update"
 ewarn
 }
 
