@@ -15210,7 +15210,7 @@ ewarn
 ewarn "CE - Code Execution"
 ewarn "DoS - Denial of Service"
 ewarn "ID - Information Disclosure"
-ewarn "DT - Data Dampering"
+ewarn "DT - Data Tampering"
 ewarn "PE - Privilege Escalation"
 ewarn
 ewarn "Recent vulnerabilities:"
