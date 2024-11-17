@@ -3403,14 +3403,16 @@ src_compile() {
 	export GOFLAGS="'-ldflags=-w -s \"-X=github.com/${PN}/${PN}/version.Version=${VERSION}\"'"
 
 	if [[ "${PV}" =~ "9999" ]] ; then
-		generate_deps
-		build_binary
+		:
+		#generate_deps
+		#build_binary
 	else
 		export GOPATH="${WORKDIR}/go-mod"
 		export GO111MODULE=on
 		pushd "${WORKDIR}/${P}" >/dev/null 2>&1 || die
-			generate_deps
-			build_binary
+			:
+			#generate_deps
+			#build_binary
 		popd >/dev/null 2>&1 || die
 	fi
 	build_new_runner
@@ -3445,7 +3447,7 @@ install_cpu_runner() {
 
 	exeinto "/usr/$(get_libdir)/${PN}/${name}"
 	pushd "${runner_path1}" >/dev/null 2>&1 || die
-		doexe "libggml.so" "libllama.so"
+#		doexe "libggml.so" "libllama.so"
 		doexe "ollama_llama_server"
 	popd >/dev/null 2>&1 || die
 }
@@ -3470,19 +3472,19 @@ install_gpu_runner() {
 
 	exeinto "/usr/$(get_libdir)/${PN}/${name}"
 	pushd "${runner_path1}" >/dev/null 2>&1 || die
-		doexe "libggml.so" "libllama.so"
+#		doexe "libggml.so" "libllama.so"
 		doexe "ollama_llama_server"
 	popd >/dev/null 2>&1 || die
 
-	pushd "${runner_path2}" >/dev/null 2>&1 || die
-		if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
-			doexe "libggml_cuda_v12.so"
-		elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
-			doexe "libggml_cuda_v11.so"
-		elif use rocm ; then
-			doexe "libggml_rocm.so"
-		fi
-	popd >/dev/null 2>&1 || die
+#	pushd "${runner_path2}" >/dev/null 2>&1 || die
+#		if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
+#			doexe "libggml_cuda_v12.so"
+#		elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
+#			doexe "libggml_cuda_v11.so"
+#		elif use rocm ; then
+#			doexe "libggml_rocm.so"
+#		fi
+#	popd >/dev/null 2>&1 || die
 }
 
 src_install() {
