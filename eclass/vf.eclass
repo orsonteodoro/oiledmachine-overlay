@@ -88,7 +88,7 @@ einfo "PE = Privilege Escalation"
 einfo "RC = Race Condition"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "SCI" ]] ; then
-einfo "SCI = Shellcode Command Injection"
+einfo "SCI = Shell Command Injection"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ToCToU" ]] ; then
 einfo "ToCToU = Time of Check Time of Use Race Condition"
