@@ -29,8 +29,8 @@ _VULNERABILITIES_FIXED_ECLASS=1
 #	"CVE-2024-50083;ZC, DoS;High"
 # )
 #
-# The CVE-xxxx-xxxxx can be replace with a custom identifier such
-# as a 7 digit hash, GLSA, etc.
+# The CVE-xxxx-xxxxx can be replaced with a custom identifier such
+# as a 7 digit git hash, GLSA, etc.
 #
 
 # @FUNCTION: vf_show
