@@ -232,10 +232,7 @@
       Enable GLESv2 support.
     </flag>
     <flag name="gstreamer">
-      Enables gstreamer support for video and audio playback.
-
-      Using this flag allows access to VA-API hardware encoding or decoding if
-      supported by the GPU.
+      Enables support for video and audio playback.
     </flag>
     <flag name="gstwebrtc">
       Uses GstWebRTC as the backend for WebRTC.  Disabled by default through
