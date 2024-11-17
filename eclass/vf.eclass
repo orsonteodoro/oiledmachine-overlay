@@ -39,13 +39,14 @@ _VULNERABILITIES_FIXED_ECLASS=1
 vf_show() {
 	if [[ -n "${MITIGATION_URI}" ]] ; then
 einfo "Patched vulnerabilities:"
+		SEVERITY_LABEL=${SEVERITY_LABEL:-"CVSS 3.1"} # Can be CVSS 4.0 or a custom severity label
 		IFS=$'\n'
 		local x
 		for x in ${VULNERABILITIES_FIXED[@]} ; do
 			local cve=$(echo "${x}" | cut -f 1 -d ";")
 			local vulnerability_classes=$(echo "${x}" | cut -f 2 -d ";")
 			local severity=$(echo "${x}" | cut -f 3 -d ";")
-einfo "${cve}:  ${vulnerability_classes} (CVSS 3.1 ${severity})"
+einfo "${cve}:  ${vulnerability_classes} (${SEVERITY_LABEL} ${severity})"
 		done
 		IFS=$' \t\n'
 einfo
