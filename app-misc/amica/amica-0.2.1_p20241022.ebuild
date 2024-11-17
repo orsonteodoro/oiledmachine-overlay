@@ -2786,7 +2786,7 @@ https://github.com/semperai/amica/archive/${EGIT_COMMIT}.tar.gz
 	-> ${TARBALL}
 	"
 	S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
-	S_ORIG="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+	S_PROJECT="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 else
 	TARBALL="${P}.tar.gz"
 	SRC_URI="
@@ -2794,7 +2794,7 @@ https://github.com/semperai/amica/archive/refs/tags/app-v${PV}.tar.gz
 	-> ${TARBALL}
 	"
 	S="${WORKDIR}/${PN}-app-v${PV}"
-	S_ORIG="${WORKDIR}/${PN}-app-v${PV}"
+	S_PROJECT="${WORKDIR}/${PN}-app-v${PV}"
 fi
 
 DESCRIPTION="Amica is an open source interface for interactive communication with 3D characters with voice synthesis and speech recognition."
@@ -3090,18 +3090,18 @@ src_unpack() {
 	unpack "${TARBALL}"
 einfo "Unpacking npm packages"
 	if [[ "${PV}" =~ "_p" ]] ; then
-		S="${S_ORIG}/" \
+		S="${S_PROJECT}/" \
 		npm_src_unpack
 	else
-		S="${S_ORIG}/" \
+		S="${S_PROJECT}/" \
 		npm_src_unpack
 	fi
 einfo "Unpacking cargo packages"
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
-		S="${S_ORIG}/src-tauri" \
+		S="${S_PROJECT}/src-tauri" \
 		_lockfile_gen_unpack
 	else
-		S="${S_ORIG}/src-tauri" \
+		S="${S_PROJECT}/src-tauri" \
 		_production_unpack
 	fi
 }
@@ -3120,8 +3120,8 @@ src_compile() {
 }
 
 src_install() {
-#	pushd "${S_ORIG}/src-tauri" >/dev/null 2>&1 || die
-#		S="${S_ORIG}/src-tauri" \
+#	pushd "${S_PROJECT}/src-tauri" >/dev/null 2>&1 || die
+#		S="${S_PROJECT}/src-tauri" \
 #		cargo_src_install
 #	popd >/dev/null 2>&1 || die
 #	rm -rf "${ED}/usr/bin/app" || die
@@ -3145,7 +3145,7 @@ src_install() {
 	LCNR_TAG="third_party_cargo"
 	lcnr_install_files
 
-	LCNR_SOURCE="${S_ORIG}/node_modules"
+	LCNR_SOURCE="${S_PROJECT}/node_modules"
 	LCNR_TAG="third_party_npm"
 	lcnr_install_files
 }
