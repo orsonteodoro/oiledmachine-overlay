@@ -60,8 +60,8 @@ einfo
 	#
 	# The complex cases that are undecided, or that fit more than one
 	# vulnerability class, or unable to be classified should deserve
-	# a conditional, but trivial vulnerabilities should only use either
-	# DoS, DT, ID.
+	# a conditional, but trivial vulnerabilities should only use one
+	# or more DoS, DT, ID.
 	#
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "CE" ]] ; then
 einfo "CE = Code Execution"
