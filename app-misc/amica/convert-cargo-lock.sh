@@ -5,9 +5,9 @@
 
 CATEGORY="app-misc"
 PN="amica"
-MY_PN="amica-app"
+MY_PN="amica" # amica-app for stable, amica for unstable
 PV="${1}"
-MY_PV="${1}"
+MY_PV="${2}" # Prefix with v if stable
 
 # - has ambiguous means
 declare -A CARGO_PATHS=(
@@ -28,7 +28,7 @@ main() {
 		--quiet \
 		--prefix=${PN}-config \
 		--suffix-format=%02d.txt  \
-		/var/tmp/portage/${CATEGORY}/${PN}-${PV}/work/${MY_PN}-v${MY_PV}/src-tauri/Cargo.lock \
+		/var/tmp/portage/${CATEGORY}/${PN}-${PV}/work/${MY_PN}-${MY_PV}/src-tauri/Cargo.lock \
 		/^$/ \
 		{*}
 

@@ -389,6 +389,7 @@ x11-2.21.0
 x11-dl-2.21.0
 xattr-1.1.3
 "
+EGIT_COMMIT="cf39b01ce92c6fa02dba4ab245e8e97311edd969"
 NODE_VERSION=20
 NODE_ENV="development"
 WEBKIT_GTK_STABLE=(
@@ -546,8 +547,8 @@ https://registry.npmjs.org/globals/-/globals-11.12.0.tgz -> npmpkg-globals-11.12
 https://registry.npmjs.org/@babel/types/-/types-7.23.0.tgz -> npmpkg-@babel-types-7.23.0.tgz
 https://registry.npmjs.org/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz -> npmpkg-@bcoe-v8-coverage-0.2.3.tgz
 https://registry.npmjs.org/@charcoal-ui/foundation/-/foundation-2.10.0.tgz -> npmpkg-@charcoal-ui-foundation-2.10.0.tgz
-https://registry.npmjs.org/@charcoal-ui/icon-files/-/icon-files-2.6.0.tgz -> npmpkg-@charcoal-ui-icon-files-2.6.0.tgz
-https://registry.npmjs.org/@charcoal-ui/icons/-/icons-2.6.0.tgz -> npmpkg-@charcoal-ui-icons-2.6.0.tgz
+https://registry.npmjs.org/@charcoal-ui/icon-files/-/icon-files-2.10.0.tgz -> npmpkg-@charcoal-ui-icon-files-2.10.0.tgz
+https://registry.npmjs.org/@charcoal-ui/icons/-/icons-2.10.0.tgz -> npmpkg-@charcoal-ui-icons-2.10.0.tgz
 https://registry.npmjs.org/@charcoal-ui/theme/-/theme-2.10.0.tgz -> npmpkg-@charcoal-ui-theme-2.10.0.tgz
 https://registry.npmjs.org/@charcoal-ui/utils/-/utils-2.10.0.tgz -> npmpkg-@charcoal-ui-utils-2.10.0.tgz
 https://registry.npmjs.org/@cspotcode/source-map-support/-/source-map-support-0.8.1.tgz -> npmpkg-@cspotcode-source-map-support-0.8.1.tgz
@@ -684,9 +685,11 @@ https://registry.npmjs.org/@supabase/supabase-js/-/supabase-js-2.39.0.tgz -> npm
 https://registry.npmjs.org/@surma/rollup-plugin-off-main-thread/-/rollup-plugin-off-main-thread-2.2.3.tgz -> npmpkg-@surma-rollup-plugin-off-main-thread-2.2.3.tgz
 https://registry.npmjs.org/json5/-/json5-2.2.3.tgz -> npmpkg-json5-2.2.3.tgz
 https://registry.npmjs.org/@swc/helpers/-/helpers-0.5.2.tgz -> npmpkg-@swc-helpers-0.5.2.tgz
+https://registry.npmjs.org/@tabler/icons/-/icons-3.11.0.tgz -> npmpkg-@tabler-icons-3.11.0.tgz
+https://registry.npmjs.org/@tabler/icons-react/-/icons-react-3.11.0.tgz -> npmpkg-@tabler-icons-react-3.11.0.tgz
 https://registry.npmjs.org/@tailwindcss/forms/-/forms-0.5.6.tgz -> npmpkg-@tailwindcss-forms-0.5.6.tgz
 https://registry.npmjs.org/@tailwindcss/line-clamp/-/line-clamp-0.4.4.tgz -> npmpkg-@tailwindcss-line-clamp-0.4.4.tgz
-https://registry.npmjs.org/@tauri-apps/api/-/api-1.5.2.tgz -> npmpkg-@tauri-apps-api-1.5.2.tgz
+https://registry.npmjs.org/@tauri-apps/api/-/api-1.5.3.tgz -> npmpkg-@tauri-apps-api-1.5.3.tgz
 https://registry.npmjs.org/@tauri-apps/cli/-/cli-1.5.8.tgz -> npmpkg-@tauri-apps-cli-1.5.8.tgz
 https://registry.npmjs.org/@tauri-apps/cli-darwin-arm64/-/cli-darwin-arm64-1.5.8.tgz -> npmpkg-@tauri-apps-cli-darwin-arm64-1.5.8.tgz
 https://registry.npmjs.org/@tauri-apps/cli-darwin-x64/-/cli-darwin-x64-1.5.8.tgz -> npmpkg-@tauri-apps-cli-darwin-x64-1.5.8.tgz
@@ -717,6 +720,7 @@ https://registry.npmjs.org/@types/dom-speech-recognition/-/dom-speech-recognitio
 https://registry.npmjs.org/@types/eslint/-/eslint-8.44.6.tgz -> npmpkg-@types-eslint-8.44.6.tgz
 https://registry.npmjs.org/@types/eslint-scope/-/eslint-scope-3.7.6.tgz -> npmpkg-@types-eslint-scope-3.7.6.tgz
 https://registry.npmjs.org/@types/estree/-/estree-1.0.4.tgz -> npmpkg-@types-estree-1.0.4.tgz
+https://registry.npmjs.org/@types/file-saver/-/file-saver-2.0.7.tgz -> npmpkg-@types-file-saver-2.0.7.tgz
 https://registry.npmjs.org/@types/glob/-/glob-7.2.0.tgz -> npmpkg-@types-glob-7.2.0.tgz
 https://registry.npmjs.org/@types/graceful-fs/-/graceful-fs-4.1.9.tgz -> npmpkg-@types-graceful-fs-4.1.9.tgz
 https://registry.npmjs.org/@types/istanbul-lib-coverage/-/istanbul-lib-coverage-2.0.6.tgz -> npmpkg-@types-istanbul-lib-coverage-2.0.6.tgz
@@ -916,6 +920,8 @@ https://registry.npmjs.org/rimraf/-/rimraf-2.7.1.tgz -> npmpkg-rimraf-2.7.1.tgz
 https://registry.npmjs.org/delayed-stream/-/delayed-stream-1.0.0.tgz -> npmpkg-delayed-stream-1.0.0.tgz
 https://registry.npmjs.org/detect-libc/-/detect-libc-2.0.2.tgz -> npmpkg-detect-libc-2.0.2.tgz
 https://registry.npmjs.org/detect-newline/-/detect-newline-3.1.0.tgz -> npmpkg-detect-newline-3.1.0.tgz
+https://registry.npmjs.org/dexie/-/dexie-4.0.4.tgz -> npmpkg-dexie-4.0.4.tgz
+https://registry.npmjs.org/dexie-react-hooks/-/dexie-react-hooks-1.1.7.tgz -> npmpkg-dexie-react-hooks-1.1.7.tgz
 https://registry.npmjs.org/didyoumean/-/didyoumean-1.2.2.tgz -> npmpkg-didyoumean-1.2.2.tgz
 https://registry.npmjs.org/diff/-/diff-4.0.2.tgz -> npmpkg-diff-4.0.2.tgz
 https://registry.npmjs.org/diff-sequences/-/diff-sequences-29.6.3.tgz -> npmpkg-diff-sequences-29.6.3.tgz
@@ -1000,6 +1006,7 @@ https://registry.npmjs.org/fastq/-/fastq-1.15.0.tgz -> npmpkg-fastq-1.15.0.tgz
 https://registry.npmjs.org/fb-watchman/-/fb-watchman-2.0.2.tgz -> npmpkg-fb-watchman-2.0.2.tgz
 https://registry.npmjs.org/fflate/-/fflate-0.6.10.tgz -> npmpkg-fflate-0.6.10.tgz
 https://registry.npmjs.org/file-entry-cache/-/file-entry-cache-6.0.1.tgz -> npmpkg-file-entry-cache-6.0.1.tgz
+https://registry.npmjs.org/file-saver/-/file-saver-2.0.5.tgz -> npmpkg-file-saver-2.0.5.tgz
 https://registry.npmjs.org/filelist/-/filelist-1.0.4.tgz -> npmpkg-filelist-1.0.4.tgz
 https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.0.1.tgz -> npmpkg-brace-expansion-2.0.1.tgz
 https://registry.npmjs.org/minimatch/-/minimatch-5.1.6.tgz -> npmpkg-minimatch-5.1.6.tgz
@@ -1721,8 +1728,8 @@ https://registry.npmjs.org/globals/-/globals-11.12.0.tgz -> npmpkg-globals-11.12
 https://registry.npmjs.org/@babel/types/-/types-7.23.0.tgz -> npmpkg-@babel-types-7.23.0.tgz
 https://registry.npmjs.org/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz -> npmpkg-@bcoe-v8-coverage-0.2.3.tgz
 https://registry.npmjs.org/@charcoal-ui/foundation/-/foundation-2.10.0.tgz -> npmpkg-@charcoal-ui-foundation-2.10.0.tgz
-https://registry.npmjs.org/@charcoal-ui/icon-files/-/icon-files-2.6.0.tgz -> npmpkg-@charcoal-ui-icon-files-2.6.0.tgz
-https://registry.npmjs.org/@charcoal-ui/icons/-/icons-2.6.0.tgz -> npmpkg-@charcoal-ui-icons-2.6.0.tgz
+https://registry.npmjs.org/@charcoal-ui/icon-files/-/icon-files-2.10.0.tgz -> npmpkg-@charcoal-ui-icon-files-2.10.0.tgz
+https://registry.npmjs.org/@charcoal-ui/icons/-/icons-2.10.0.tgz -> npmpkg-@charcoal-ui-icons-2.10.0.tgz
 https://registry.npmjs.org/@charcoal-ui/theme/-/theme-2.10.0.tgz -> npmpkg-@charcoal-ui-theme-2.10.0.tgz
 https://registry.npmjs.org/@charcoal-ui/utils/-/utils-2.10.0.tgz -> npmpkg-@charcoal-ui-utils-2.10.0.tgz
 https://registry.npmjs.org/@cspotcode/source-map-support/-/source-map-support-0.8.1.tgz -> npmpkg-@cspotcode-source-map-support-0.8.1.tgz
@@ -1859,9 +1866,11 @@ https://registry.npmjs.org/@supabase/supabase-js/-/supabase-js-2.39.0.tgz -> npm
 https://registry.npmjs.org/@surma/rollup-plugin-off-main-thread/-/rollup-plugin-off-main-thread-2.2.3.tgz -> npmpkg-@surma-rollup-plugin-off-main-thread-2.2.3.tgz
 https://registry.npmjs.org/json5/-/json5-2.2.3.tgz -> npmpkg-json5-2.2.3.tgz
 https://registry.npmjs.org/@swc/helpers/-/helpers-0.5.2.tgz -> npmpkg-@swc-helpers-0.5.2.tgz
+https://registry.npmjs.org/@tabler/icons/-/icons-3.11.0.tgz -> npmpkg-@tabler-icons-3.11.0.tgz
+https://registry.npmjs.org/@tabler/icons-react/-/icons-react-3.11.0.tgz -> npmpkg-@tabler-icons-react-3.11.0.tgz
 https://registry.npmjs.org/@tailwindcss/forms/-/forms-0.5.6.tgz -> npmpkg-@tailwindcss-forms-0.5.6.tgz
 https://registry.npmjs.org/@tailwindcss/line-clamp/-/line-clamp-0.4.4.tgz -> npmpkg-@tailwindcss-line-clamp-0.4.4.tgz
-https://registry.npmjs.org/@tauri-apps/api/-/api-1.5.2.tgz -> npmpkg-@tauri-apps-api-1.5.2.tgz
+https://registry.npmjs.org/@tauri-apps/api/-/api-1.5.3.tgz -> npmpkg-@tauri-apps-api-1.5.3.tgz
 https://registry.npmjs.org/@tauri-apps/cli/-/cli-1.5.8.tgz -> npmpkg-@tauri-apps-cli-1.5.8.tgz
 https://registry.npmjs.org/@tauri-apps/cli-darwin-arm64/-/cli-darwin-arm64-1.5.8.tgz -> npmpkg-@tauri-apps-cli-darwin-arm64-1.5.8.tgz
 https://registry.npmjs.org/@tauri-apps/cli-darwin-x64/-/cli-darwin-x64-1.5.8.tgz -> npmpkg-@tauri-apps-cli-darwin-x64-1.5.8.tgz
@@ -1892,6 +1901,7 @@ https://registry.npmjs.org/@types/dom-speech-recognition/-/dom-speech-recognitio
 https://registry.npmjs.org/@types/eslint/-/eslint-8.44.6.tgz -> npmpkg-@types-eslint-8.44.6.tgz
 https://registry.npmjs.org/@types/eslint-scope/-/eslint-scope-3.7.6.tgz -> npmpkg-@types-eslint-scope-3.7.6.tgz
 https://registry.npmjs.org/@types/estree/-/estree-1.0.4.tgz -> npmpkg-@types-estree-1.0.4.tgz
+https://registry.npmjs.org/@types/file-saver/-/file-saver-2.0.7.tgz -> npmpkg-@types-file-saver-2.0.7.tgz
 https://registry.npmjs.org/@types/glob/-/glob-7.2.0.tgz -> npmpkg-@types-glob-7.2.0.tgz
 https://registry.npmjs.org/@types/graceful-fs/-/graceful-fs-4.1.9.tgz -> npmpkg-@types-graceful-fs-4.1.9.tgz
 https://registry.npmjs.org/@types/istanbul-lib-coverage/-/istanbul-lib-coverage-2.0.6.tgz -> npmpkg-@types-istanbul-lib-coverage-2.0.6.tgz
@@ -2091,6 +2101,8 @@ https://registry.npmjs.org/rimraf/-/rimraf-2.7.1.tgz -> npmpkg-rimraf-2.7.1.tgz
 https://registry.npmjs.org/delayed-stream/-/delayed-stream-1.0.0.tgz -> npmpkg-delayed-stream-1.0.0.tgz
 https://registry.npmjs.org/detect-libc/-/detect-libc-2.0.2.tgz -> npmpkg-detect-libc-2.0.2.tgz
 https://registry.npmjs.org/detect-newline/-/detect-newline-3.1.0.tgz -> npmpkg-detect-newline-3.1.0.tgz
+https://registry.npmjs.org/dexie/-/dexie-4.0.4.tgz -> npmpkg-dexie-4.0.4.tgz
+https://registry.npmjs.org/dexie-react-hooks/-/dexie-react-hooks-1.1.7.tgz -> npmpkg-dexie-react-hooks-1.1.7.tgz
 https://registry.npmjs.org/didyoumean/-/didyoumean-1.2.2.tgz -> npmpkg-didyoumean-1.2.2.tgz
 https://registry.npmjs.org/diff/-/diff-4.0.2.tgz -> npmpkg-diff-4.0.2.tgz
 https://registry.npmjs.org/diff-sequences/-/diff-sequences-29.6.3.tgz -> npmpkg-diff-sequences-29.6.3.tgz
@@ -2175,6 +2187,7 @@ https://registry.npmjs.org/fastq/-/fastq-1.15.0.tgz -> npmpkg-fastq-1.15.0.tgz
 https://registry.npmjs.org/fb-watchman/-/fb-watchman-2.0.2.tgz -> npmpkg-fb-watchman-2.0.2.tgz
 https://registry.npmjs.org/fflate/-/fflate-0.6.10.tgz -> npmpkg-fflate-0.6.10.tgz
 https://registry.npmjs.org/file-entry-cache/-/file-entry-cache-6.0.1.tgz -> npmpkg-file-entry-cache-6.0.1.tgz
+https://registry.npmjs.org/file-saver/-/file-saver-2.0.5.tgz -> npmpkg-file-saver-2.0.5.tgz
 https://registry.npmjs.org/filelist/-/filelist-1.0.4.tgz -> npmpkg-filelist-1.0.4.tgz
 https://registry.npmjs.org/brace-expansion/-/brace-expansion-2.0.1.tgz -> npmpkg-brace-expansion-2.0.1.tgz
 https://registry.npmjs.org/minimatch/-/minimatch-5.1.6.tgz -> npmpkg-minimatch-5.1.6.tgz
@@ -2761,13 +2774,28 @@ https://registry.npmjs.org/yocto-queue/-/yocto-queue-0.1.0.tgz -> npmpkg-yocto-q
 "
 # UPDATER_END_NPM_EXTERNAL_URIS
 #KEYWORDS="~amd64 ~arm64" # Ollama support broken
-S="${WORKDIR}/${PN}-app-v${PV}"
 SRC_URI="
 $(cargo_crate_uris ${CRATES})
 ${NPM_EXTERNAL_URIS}
-https://github.com/semperai/amica/archive/refs/tags/app-v${PV}.tar.gz
-	-> ${P}.tar.gz
 "
+
+if [[ "${PV}" =~ "_p" ]] ; then
+	TARBALL="${PN}-${EGIT_COMMIT:0:7}.tar.gz"
+	SRC_URI="
+https://github.com/semperai/amica/archive/${EGIT_COMMIT}.tar.gz
+	-> ${TARBALL}
+	"
+	S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+	S_ORIG="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+else
+	TARBALL="${P}.tar.gz"
+	SRC_URI="
+https://github.com/semperai/amica/archive/refs/tags/app-v${PV}.tar.gz
+	-> ${TARBALL}
+	"
+	S="${WORKDIR}/${PN}-app-v${PV}"
+	S_ORIG="${WORKDIR}/${PN}-app-v${PV}"
+fi
 
 DESCRIPTION="Amica is an open source interface for interactive communication with 3D characters with voice synthesis and speech recognition."
 HOMEPAGE="
@@ -3011,7 +3039,7 @@ _cargo_src_unpack() {
 	mkdir -p "${S}" || die
 
 	cp -a \
-		"${FILESDIR}/${PV}/Cargo."{"lock","toml"} \
+		"${FILESDIR}/${MY_PV}/Cargo."{"lock","toml"} \
 		"${S}" \
 		|| die
 
@@ -3047,11 +3075,11 @@ _cargo_src_unpack() {
 }
 
 _production_unpack() {
-	if [[ -e "${FILESDIR}/${PV}/Cargo.lock" ]] ; then
+	if [[ -e "${FILESDIR}/${MY_PV}/Cargo.lock" ]] ; then
 einfo "Adding Cargo.lock"
 		cp -a \
-			"${FILESDIR}/${PV}/Cargo.toml" \
-			"${FILESDIR}/${PV}/Cargo.lock" \
+			"${FILESDIR}/${MY_PV}/Cargo.toml" \
+			"${FILESDIR}/${MY_PV}/Cargo.lock" \
 			"${S}" \
 			|| die
 	fi
@@ -3059,16 +3087,22 @@ einfo "Adding Cargo.lock"
 }
 
 src_unpack() {
-	unpack ${P}.tar.gz
+	unpack "${TARBALL}"
+	die
 einfo "Unpacking npm packages"
-	S="${WORKDIR}/${PN}-app-v${PV}/" \
-	npm_src_unpack
+	if [[ "${PV}" =~ "_p" ]] ; then
+		S="${S_ORIG}/" \
+		npm_src_unpack
+	else
+		S="${S_ORIG}/" \
+		npm_src_unpack
+	fi
 einfo "Unpacking cargo packages"
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
-		S="${WORKDIR}/${PN}-app-v${PV}/src-tauri" \
+		S="${S_ORIG}/src-tauri" \
 		_lockfile_gen_unpack
 	else
-		S="${WORKDIR}/${PN}-app-v${PV}/src-tauri" \
+		S="${S_ORIG}/src-tauri" \
 		_production_unpack
 	fi
 }
@@ -3087,8 +3121,8 @@ src_compile() {
 }
 
 src_install() {
-#	pushd "${WORKDIR}/${PN}-app-v${PV}/src-tauri" >/dev/null 2>&1 || die
-#		S="${WORKDIR}/${PN}-app-v${PV}/src-tauri" \
+#	pushd "${S_ORIG}/src-tauri" >/dev/null 2>&1 || die
+#		S="${S_ORIG}/src-tauri" \
 #		cargo_src_install
 #	popd >/dev/null 2>&1 || die
 #	rm -rf "${ED}/usr/bin/app" || die
@@ -3112,7 +3146,7 @@ src_install() {
 	LCNR_TAG="third_party_cargo"
 	lcnr_install_files
 
-	LCNR_SOURCE="${WORKDIR}/${PN}-app-v${PV}/node_modules"
+	LCNR_SOURCE="${S_ORIG}/node_modules"
 	LCNR_TAG="third_party_npm"
 	lcnr_install_files
 }
