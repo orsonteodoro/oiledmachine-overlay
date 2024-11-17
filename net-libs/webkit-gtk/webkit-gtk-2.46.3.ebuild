@@ -4,14 +4,6 @@
 
 EAPI=8
 
-# With gcc-14:
-#/usr/include/bits/stdlib.h:86:3: error: "Assumed value of MB_LEN_MAX wrong"
-#   86 | # error "Assumed value of MB_LEN_MAX wrong"
-#      |   ^
-
-
-# FIXME:  Fix sandbox issue with g-ir-scanner segfaulting when building JavaScriptCore-4.0.gir
-
 # D12, U22, U24
 
 # -r revision notes
@@ -3205,7 +3197,7 @@ ewarn
 
 # OILEDMACHINE-OVERLAY-TEST: passed with -Oshit, clang 18.1.8 (2.46.3, 20241116):
 #
-#   -O shit build config:
+#   CFLAGS=-Oshit build config:
 #
 #     OSHIT_OPT_LEVEL_ANGLE="fast"
 #     OSHIT_OPT_LEVEL_JSC="3"
