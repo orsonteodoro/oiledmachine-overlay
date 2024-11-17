@@ -2781,7 +2781,7 @@ ${NPM_EXTERNAL_URIS}
 
 if [[ "${PV}" =~ "_p" ]] ; then
 	TARBALL="${PN}-${EGIT_COMMIT:0:7}.tar.gz"
-	SRC_URI="
+	SRC_URI+="
 https://github.com/semperai/amica/archive/${EGIT_COMMIT}.tar.gz
 	-> ${TARBALL}
 	"
@@ -2789,13 +2789,14 @@ https://github.com/semperai/amica/archive/${EGIT_COMMIT}.tar.gz
 	S_PROJECT="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 else
 	TARBALL="${P}.tar.gz"
-	SRC_URI="
+	SRC_URI+="
 https://github.com/semperai/amica/archive/refs/tags/app-v${PV}.tar.gz
 	-> ${TARBALL}
 	"
 	S="${WORKDIR}/${PN}-app-v${PV}"
 	S_PROJECT="${WORKDIR}/${PN}-app-v${PV}"
 fi
+NPM_TARBALL="${TARBALL}"
 
 DESCRIPTION="Amica is an open source interface for interactive communication with 3D characters with voice synthesis and speech recognition."
 HOMEPAGE="
