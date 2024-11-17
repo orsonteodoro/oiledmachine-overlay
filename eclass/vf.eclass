@@ -3,7 +3,7 @@
 # @ECLASS: vf.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 7 8
-# @BLURB: Report latest Vulnerability Fixes (VF)
+# @BLURB: Report the latest Vulnerability Fixes (VF)
 # @DESCRIPTION:
 # This eclass is used to report vulnerabilities fixed to encourage to update
 # vulnerable software, to educate about vulnerabilities, to encourage to
