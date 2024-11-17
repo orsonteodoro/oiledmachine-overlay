@@ -476,7 +476,7 @@ DEFAULT_GST_PLUGINS="
 +a52
 -aac
 +alsa
--aom
++aom
 +dav1d
 +flac
 +g722
