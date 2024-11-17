@@ -489,7 +489,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     </flag>
     <flag name="proprietary-codecs">
       Allows non-free patent-encumbered codecs or network protocols but allows
-      to select or reject these packages/implementations.
+      to select or reject specific codec implementations.
     </flag>
     <flag name="proprietary-codecs-disable">
       Disables all codecs that are non-free.
