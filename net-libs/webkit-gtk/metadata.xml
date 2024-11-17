@@ -432,8 +432,7 @@
     <flag name="vaapi">
       Hardware acceleration support for codecs and images.
 
-      Support AV1, H.264, H.265, JPEG, VP9 if hardware support available with
-      the newer stateless implementation.
+      Full or partial support for AV1, H.264, H.265, JPEG, VP9.
     </flag>
     <flag name="vorbis">
       Support for encoding and decoding Vorbis audio.
