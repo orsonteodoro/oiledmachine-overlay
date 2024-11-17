@@ -3040,7 +3040,7 @@ _cargo_src_unpack() {
 	mkdir -p "${S}" || die
 
 	cp -a \
-		"${FILESDIR}/${MY_PV}/Cargo."{"lock","toml"} \
+		"${FILESDIR}/${PV}/Cargo."{"lock","toml"} \
 		"${S}" \
 		|| die
 
@@ -3076,11 +3076,11 @@ _cargo_src_unpack() {
 }
 
 _production_unpack() {
-	if [[ -e "${FILESDIR}/${MY_PV}/Cargo.lock" ]] ; then
+	if [[ -e "${FILESDIR}/${PV}/Cargo.lock" ]] ; then
 einfo "Adding Cargo.lock"
 		cp -a \
-			"${FILESDIR}/${MY_PV}/Cargo.toml" \
-			"${FILESDIR}/${MY_PV}/Cargo.lock" \
+			"${FILESDIR}/${PV}/Cargo.toml" \
+			"${FILESDIR}/${PV}/Cargo.lock" \
 			"${S}" \
 			|| die
 	fi
