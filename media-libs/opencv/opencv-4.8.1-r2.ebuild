@@ -290,7 +290,7 @@ contribovis contribsfm contribxfeatures2d -cuda -cudnn debug dnnsamples +eigen
 +openexr -opengl -openmp +opencvapps +openh264 openvino -openvx +png +python
 +quirc -qt5 -qt6 rocm -spng -system-flatbuffers tesseract -testprograms -tbb
 +tiff +vaapi +v4l +vpx +vtk -wayland +webp -xine video_cards_intel
-ebuild-revision-7
+ebuild-revision-8
 "
 # OpenGL needs gtk or Qt installed to activate, otherwise build system
 # will silently disable it without the user knowing, which defeats the
@@ -1179,9 +1179,9 @@ eerror "OpenVINO is not supported for ${ARCH}"
 
 	# CI tested versions
 	if use ffmpeg && has_version "media-video/ffmpeg:58.60.60" ; then # 6.1.x
-		export PKG_CONFIG_PATH="/usr/$(get_libdir)/ffmpeg/58.60.60/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+		export PKG_CONFIG_PATH="/usr/lib/ffmpeg/58.60.60/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
 	elif use ffmpeg && has_version "media-video/ffmpeg:56.58.58" ; then # 4.x
-		export PKG_CONFIG_PATH="/usr/$(get_libdir)/ffmpeg/56.58.58/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+		export PKG_CONFIG_PATH="/usr/lib/ffmpeg/56.58.58/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
 	fi
 
 	if multilib_is_native_abi && use python ; then
@@ -1260,10 +1260,10 @@ einfo "Fixing rpath for ${path}"
 				:
 			elif has_version "media-video/ffmpeg:58.60.60" ; then # 6.1.x
 einfo "Fixing rpath for ${x}"
-				patchelf --add-rpath "/usr/$(get_libdir)/ffmpeg/58.60.60/$(get_libdir)" "${x}" || die
+				patchelf --add-rpath "/usr/lib/ffmpeg/58.60.60/$(get_libdir)" "${x}" || die
 			elif has_version "media-video/ffmpeg:56.58.58" ; then # 4.x
 einfo "Fixing rpath for ${x}"
-				patchelf --add-rpath "/usr/$(get_libdir)/ffmpeg/56.58.58/$(get_libdir)" "${x}" || die
+				patchelf --add-rpath "/usr/lib/ffmpeg/56.58.58/$(get_libdir)" "${x}" || die
 			fi
 		done
 	fi

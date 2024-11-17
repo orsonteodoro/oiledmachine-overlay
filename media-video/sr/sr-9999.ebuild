@@ -134,7 +134,7 @@ ${ALGS[@]}
 ${FORMATS[@]}
 div2k fallback-commit ffmpeg gstreamer harmonic -hvrr nvdec +pretrained
 quick-test vaapi vdpau vpx
-ebuild-revision-1
+ebuild-revision-2
 "
 # See formats see, https://ffmpeg.org/ffmpeg-filters.html#sr-1
 # We use the tensorflow .pb because it is multicore.
@@ -567,17 +567,17 @@ src_compile() {
 		prefix="/usr"
 	fi
 	use pretrained || train
-	if [[ -e "${prefix}/$(get_libdir)/ffmpeg/scripts/convert.py" ]] ; then
+	if [[ -e "${prefix}/lib/ffmpeg/scripts/convert.py" ]] ; then
 		local alg
 		for alg in $(get_algs) ; do
 			rm -f "${alg}.model"
 			[[ "${alg}" == "vespcn-mc" ]] && continue # Conversion broken
 	# The prebuilt .models are missing the FFMPEGDNNNATIVE header.
-			edo ${EPYTHON} "${prefix}/$(get_libdir)/ffmpeg/scripts/convert.py" "${alg}.pb"
+			edo ${EPYTHON} "${prefix}/lib/ffmpeg/scripts/convert.py" "${alg}.pb"
 		done
 	fi
 	if [[ -e "/usr/$(get_libdir)/ffmpeg/scripts/tf_sess_config.py" ]] ; then
-		edo ${EPYTHON} "${prefix}/$(get_libdir)/ffmpeg/scripts/tf_sess_config.py" | sed -e "/a serialized protobuf string/d" > "sess_config"
+		edo ${EPYTHON} "${prefix}/lib/ffmpeg/scripts/tf_sess_config.py" | sed -e "/a serialized protobuf string/d" > "sess_config"
 	fi
 }
 

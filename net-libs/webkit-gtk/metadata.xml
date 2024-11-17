@@ -299,12 +299,12 @@
     <flag name="proprietary-codecs-disable">
       Disables all codecs that are non-free.
     </flag>
-    <flag name="proprietary-codecs-disable-nc-developer">
+    <flag name="proprietary-codecs-disable-codec-developer">
       Disables all non-free codecs for codec developers.
 
       Codecs that require developer fees for codec developers will be disabled.
     </flag>
-    <flag name="proprietary-codecs-disable-nc-user">
+    <flag name="proprietary-codecs-disable-end-user">
       Disable all non-free codecs for non-developer users.
 
       Codecs that are free for non codec developers will be allowed.

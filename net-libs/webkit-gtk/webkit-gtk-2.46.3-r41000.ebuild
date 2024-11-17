@@ -519,7 +519,7 @@ aqua +avif -bmalloc -cache-partitioning clang dash debug +doc -eme -gamepad +gbm
 +javascript +jit +journald +jpegxl +libpas +lcms -libbacktrace +libhyphen
 -libwebrtc -mediarecorder -mediastream +microphone +minibrowser mold +opengl openmp
 proprietary-codecs proprietary-codecs-disable
-proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
+proprietary-codecs-disable-codec-developer proprietary-codecs-disable-end-user
 -seccomp speech-synthesis -spell -system-malloc test thunder
 +variation-fonts wayland +webassembly -webdriver +webgl webm-eme
 -webrtc webvtt -webxr +woff2 +X
@@ -575,20 +575,20 @@ REQUIRED_USE+=" "$(gen_gst_plugins_required_use)
 
 # Sorted by least restrictive top
 # proprietary-codecs                      - allow proprietary codecs or customization of codec selection
-# proprietary-codecs-disable-nc-user      - disable use of proprietary codecs as a non-commercial non-developer, allowing free codecs for non-commercial non-developers
-# proprietary-codecs-disable-nc-developer - disable use of proprietary codecs as a non-commercial developer, disallowing codec developer taxed codecs
+# proprietary-codecs-disable-end-user      - disable use of proprietary codecs as a non-commercial non-developer, allowing free codecs for non-commercial non-developers
+# proprietary-codecs-disable-codec-developer - disable use of proprietary codecs as a non-commercial developer, disallowing codec developer taxed codecs
 # proprietary-codecs-disable              - disable use of proprietary codecs
 NON_FREE_REQUIRED_USE="
 	^^ (
 		proprietary-codecs
 		proprietary-codecs-disable
-		proprietary-codecs-disable-nc-developer
-		proprietary-codecs-disable-nc-user
+		proprietary-codecs-disable-codec-developer
+		proprietary-codecs-disable-end-user
 	)
 	aac? (
 		|| (
 			proprietary-codecs
-			proprietary-codecs-disable-nc-user
+			proprietary-codecs-disable-end-user
 		)
 	)
 	dash? (
@@ -617,7 +617,7 @@ NON_FREE_REQUIRED_USE="
 		!x264
 		!x265
 	)
-	proprietary-codecs-disable-nc-developer? (
+	proprietary-codecs-disable-codec-developer? (
 		!aac
 		!dash
 		!eme
@@ -631,7 +631,7 @@ NON_FREE_REQUIRED_USE="
 		!x264
 		!x265
 	)
-	proprietary-codecs-disable-nc-user? (
+	proprietary-codecs-disable-end-user? (
 		!dash
 		!eme
 		!hls
@@ -944,12 +944,12 @@ RDEPEND+="
 		!media-plugins/gst-plugins-faac
 		!media-plugins/gst-plugins-faad
 	)
-	proprietary-codecs-disable-nc-developer? (
+	proprietary-codecs-disable-codec-developer? (
 		${RDEPEND_PROPRIETARY_CODECS_DISABLE}
 		!media-plugins/gst-plugins-faac
 		!media-plugins/gst-plugins-faad
 	)
-	proprietary-codecs-disable-nc-user? (
+	proprietary-codecs-disable-end-user? (
 		${RDEPEND_PROPRIETARY_CODECS_DISABLE}
 	)
 	seccomp? (
@@ -1277,8 +1277,8 @@ ewarn
 # It may use runtime codec detection for both gst-ffmpeg and in webkit-gtk.
 verify_codecs() {
 	if use proprietary-codecs-disable \
-		|| use proprietary-codecs-disable-nc-developer \
-		|| use proprietary-codecs-disable-nc-user \
+		|| use proprietary-codecs-disable-codec-developer \
+		|| use proprietary-codecs-disable-end-user \
 	; then
 		:
 	else
@@ -1295,7 +1295,7 @@ verify_codecs() {
 		"xvid"
 	)
 	if use proprietary-codecs-disable \
-		|| use proprietary-codecs-disable-nc-developer ; then
+		|| use proprietary-codecs-disable-codec-developer ; then
 		use_flags+=(
 			"aac"
 		)

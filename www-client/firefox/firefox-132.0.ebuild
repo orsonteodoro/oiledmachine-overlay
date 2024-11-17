@@ -422,8 +422,8 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 alsa cpu_flags_arm_neon cups +dbus debug eme-free +ffvpx firejail +hardened
 -hwaccel jack +jemalloc +jit libcanberra libnotify libproxy
 libsecret mold +openh264 +pgo +pulseaudio proprietary-codecs
-proprietary-codecs-disable proprietary-codecs-disable-nc-developer
-proprietary-codecs-disable-nc-user rust-simd selinux sndio speech +system-av1
+proprietary-codecs-disable proprietary-codecs-disable-codec-developer
+proprietary-codecs-disable-end-user rust-simd selinux sndio speech +system-av1
 +system-ffmpeg +system-harfbuzz +system-icu +system-jpeg +system-libevent
 +system-libvpx system-png +system-webp systemd -telemetry +vaapi -valgrind
 +wayland +webrtc wifi webspeech
@@ -441,13 +441,13 @@ NON_FREE_REQUIRED_USE="
 	^^ (
 		proprietary-codecs
 		proprietary-codecs-disable
-		proprietary-codecs-disable-nc-developer
-		proprietary-codecs-disable-nc-user
+		proprietary-codecs-disable-codec-developer
+		proprietary-codecs-disable-end-user
 	)
 	aac? (
 		|| (
 			proprietary-codecs
-			proprietary-codecs-disable-nc-user
+			proprietary-codecs-disable-end-user
 		)
 	)
 	h264? (
@@ -461,11 +461,11 @@ NON_FREE_REQUIRED_USE="
 		!openh264
 		eme-free
 	)
-	proprietary-codecs-disable-nc-developer? (
+	proprietary-codecs-disable-codec-developer? (
 		!openh264
 		eme-free
 	)
-	proprietary-codecs-disable-nc-user? (
+	proprietary-codecs-disable-end-user? (
 		!openh264
 		eme-free
 	)
@@ -588,10 +588,10 @@ gen_ffmpeg_cdepend2() {
 		echo "
 			(
 				!<dev-libs/openssl-3
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable-nc-developer,vaapi?,vpx?,-x264,-x265,-xvid]
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable-codec-developer,vaapi?,vpx?,-x264,-x265,-xvid]
 			)
 			(
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable-nc-developer,vaapi?,vpx?,-x264,-x265,-xvid]
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable-codec-developer,vaapi?,vpx?,-x264,-x265,-xvid]
 			)
 		"
 	done
@@ -603,10 +603,10 @@ gen_ffmpeg_cdepend3() {
 		echo "
 			(
 				!<dev-libs/openssl-3
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable-nc-user,vaapi?,vpx?,-x264,-x265,-xvid]
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable-end-user,vaapi?,vpx?,-x264,-x265,-xvid]
 			)
 			(
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable-nc-user,vaapi?,vpx?,-x264,-x265,-xvid]
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable-end-user,vaapi?,vpx?,-x264,-x265,-xvid]
 			)
 		"
 	done
@@ -633,7 +633,7 @@ NON_FREE_CDEPENDS="
 			)
 		)
 	)
-	proprietary-codecs-disable-nc-developer? (
+	proprietary-codecs-disable-codec-developer? (
 		media-libs/mesa[${MULTILIB_USEDEP},-proprietary-codecs]
 		system-ffmpeg? (
 			|| (
@@ -641,7 +641,7 @@ NON_FREE_CDEPENDS="
 			)
 		)
 	)
-	proprietary-codecs-disable-nc-user? (
+	proprietary-codecs-disable-end-user? (
 		media-libs/mesa[${MULTILIB_USEDEP},-proprietary-codecs]
 		system-ffmpeg? (
 			|| (
@@ -1161,8 +1161,8 @@ eerror
 
 verify_codecs() {
 	if use proprietary-codecs-disable \
-		|| use proprietary-codecs-disable-nc-developer \
-		|| use proprietary-codecs-disable-nc-user \
+		|| use proprietary-codecs-disable-codec-developer \
+		|| use proprietary-codecs-disable-end-user \
 	; then
 		:
 	else
@@ -3222,11 +3222,11 @@ ewarn
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi, license-completness, license-transparency
 # OILEDMACHINE-OVERLAY-TEST:  PASS (INTERACTIVE) 113.0.1 (May 15, 2023)
 # USE="X dav1d dbus eme-free jemalloc jumbo-build libcanberra opus
-# proprietary-codecs-disable-nc-user pulseaudio speech system-ffmpeg vaapi vpx
+# proprietary-codecs-disable-end-user pulseaudio speech system-ffmpeg vaapi vpx
 # wayland webspeech -aac -alsa -cups (-debug) -ebolt -ffvpx -geckodriver
 # -gmp-autoupdate -h264 -hardened -hwaccel -jack -libproxy -libsecret -mold
 # -openh264 -pgo -proprietary-codecs -proprietary-codecs-disable
-# -proprietary-codecs-disable-nc-developer -screencast (-selinux) -sndio
+# -proprietary-codecs-disable-codec-developer -screencast (-selinux) -sndio
 # -system-av1 -system-harfbuzz -system-icu -system-jpeg -system-libevent
 # -system-libvpx -system-png (-system-python-libs) -system-webp (-telemetry)
 # -webrtc -wifi"

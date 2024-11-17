@@ -486,7 +486,7 @@ ${TRAINERS[@]}
 alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm
 jack-audio-connection-kit jack2 liblensfun mold opencl-icd-loader openvino oss
 pgo +pic pipewire proprietary-codecs proprietary-codecs-disable
-proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
+proprietary-codecs-disable-codec-developer proprietary-codecs-disable-end-user
 +re-codecs sndio sr static-libs tensorflow test v4l wayland
 
 ebuild-revision-19
@@ -871,8 +871,8 @@ REQUIRED_USE+="
 		!trainer-av-streaming
 	)
 	!proprietary-codecs-disable? (
-		!proprietary-codecs-disable-nc-user? (
-			!proprietary-codecs-disable-nc-user? (
+		!proprietary-codecs-disable-end-user? (
+			!proprietary-codecs-disable-end-user? (
 				re-codecs
 			)
 		)
@@ -880,8 +880,8 @@ REQUIRED_USE+="
 	^^ (
 		proprietary-codecs
 		proprietary-codecs-disable
-		proprietary-codecs-disable-nc-developer
-		proprietary-codecs-disable-nc-user
+		proprietary-codecs-disable-codec-developer
+		proprietary-codecs-disable-end-user
 	)
 	cuda? (
 		|| (
@@ -963,7 +963,7 @@ REQUIRED_USE+="
 			apache2_0
 		)
 	)
-	proprietary-codecs-disable-nc-developer? (
+	proprietary-codecs-disable-codec-developer? (
 		!amr
 		!fdk
 		!kvazaar
@@ -975,7 +975,7 @@ REQUIRED_USE+="
 			apache2_0
 		)
 	)
-	proprietary-codecs-disable-nc-user? (
+	proprietary-codecs-disable-end-user? (
 		!amr
 		!kvazaar
 		!openh264
@@ -2194,11 +2194,11 @@ eerror
 		myconf+=(
 			--non-free-patented-codecs=deny
 		)
-	elif use proprietary-codecs-disable-nc-user ; then
+	elif use proprietary-codecs-disable-end-user ; then
 		myconf+=(
 			--non-free-patented-codecs=user
 		)
-	elif use proprietary-codecs-disable-nc-developer ; then
+	elif use proprietary-codecs-disable-codec-developer ; then
 		myconf+=(
 			--non-free-patented-codecs=codec-developer
 		)
@@ -2406,7 +2406,7 @@ einfo
 	if [[ "${SLOT%/*}" == "0" ]] ; then
 		local root="${EPREFIX}/usr"
 	else
-		local root="${EPREFIX}/usr/$(get_libdir)/ffmpeg/${FFMPEG_SUBSLOT}"
+		local root="${EPREFIX}/usr/lib/ffmpeg/${FFMPEG_SUBSLOT}"
 	fi
 
 	myconf+=(
@@ -4278,7 +4278,7 @@ _install() {
 	if [[ "${SLOT%/*}" == "0" ]] ; then
 		local prefix="usr"
 	else
-		local prefix="usr/$(get_libdir)/ffmpeg/${FFMPEG_SUBSLOT}"
+		local prefix="usr/lib/ffmpeg/${FFMPEG_SUBSLOT}"
 	fi
 
 	# Prevent clobbering so that we can pgo optimize external codecs in different ABIs
@@ -4372,7 +4372,7 @@ src_install() {
 		if [[ "${SLOT%/*}" == "0" ]] ; then
 			local prefix="usr"
 		else
-			local prefix="usr/$(get_libdir)/ffmpeg/${FFMPEG_SUBSLOT}"
+			local prefix="usr/lib/ffmpeg/${FFMPEG_SUBSLOT}"
 		fi
 
 		cd "${S}/tools/python" || die

@@ -565,18 +565,21 @@ IUSE_LIBCXX=(
 )
 # CFI Basic (.a) mode requires all third party modules built as static.
 
-# Option defaults based on build files.
+# Option defaults based on patent status
 IUSE_CODECS=(
 	+dav1d
 	+libaom
-	+openh264
+	-openh264
 	+opus
-	+vaapi-hevc
+	-vaapi-hevc
 	+vorbis
 	+vpx
 )
 
-# Option defaults based on build files.
+# Upstream uses official ON
+# Upstream uses proprietary codecs ON
+
+# Most option defaults are based on build files.
 IUSE+="
 ${CPU_FLAGS_ARM[@]/#/cpu_flags_arm_}
 ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
@@ -586,9 +589,9 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 +accessibility bindist bluetooth +bundled-libcxx +cfi -cet +cups
 +css-hyphen -debug +drumbrake +encode +extensions ffmpeg-chromium firejail
 -gtk4 -hangouts -headless +hidpi +jit +js-type-check +kerberos +mdns +ml mold
-+mpris +official +partitionalloc pax-kernel +pdf pic +pgo +plugins +pointer-compression
-+pre-check-vaapi +proprietary-codecs proprietary-codecs-disable
-proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
++mpris -official +partitionalloc pax-kernel +pdf pic +pgo +plugins +pointer-compression
++pre-check-vaapi proprietary-codecs proprietary-codecs-disable
+proprietary-codecs-disable-codec-developer proprietary-codecs-disable-end-user
 +pulseaudio +reporting-api qt5 qt6 +screencast selinux
 -system-dav1d +system-ffmpeg -system-flac -system-fontconfig
 -system-freetype -system-harfbuzz -system-icu -system-libaom -system-libdrm
@@ -636,8 +639,8 @@ DISABLED_NON_FREE_USE_FLAGS="
 	^^ (
 		proprietary-codecs
 		proprietary-codecs-disable
-		proprietary-codecs-disable-nc-developer
-		proprietary-codecs-disable-nc-user
+		proprietary-codecs-disable-codec-developer
+		proprietary-codecs-disable-end-user
 	)
 	openh264? (
 		proprietary-codecs
@@ -648,13 +651,13 @@ DISABLED_NON_FREE_USE_FLAGS="
 		!widevine
 		system-ffmpeg
 	)
-	proprietary-codecs-disable-nc-developer? (
+	proprietary-codecs-disable-codec-developer? (
 		!openh264
 		!vaapi-hevc
 		!widevine
 		system-ffmpeg
 	)
-	proprietary-codecs-disable-nc-user? (
+	proprietary-codecs-disable-end-user? (
 		!openh264
 		!vaapi-hevc
 		!widevine
@@ -1173,11 +1176,11 @@ COMMON_DEPEND="
 		proprietary-codecs-disable? (
 			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
 		)
-		proprietary-codecs-disable-nc-developer? (
-			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable-nc-developer,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
+		proprietary-codecs-disable-codec-developer? (
+			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable-codec-developer,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
 		)
-		proprietary-codecs-disable-nc-user? (
-			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable-nc-user,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
+		proprietary-codecs-disable-end-user? (
+			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable-end-user,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
 		)
 		|| (
 			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-samba]
@@ -3953,7 +3956,7 @@ ewarn "The new V8 Sandbox [for the JavaScript engine] (2024) will be automagic o
 	# The internal/vendored ffmpeg enables non-free codecs.
 		local _media_use_ffmpeg="true"
 		if \
-			   use proprietary-codecs-disable-nc-developer \
+			   use proprietary-codecs-disable-codec-developer \
 			|| use proprietary-codecs-disable ; then
 			_media_use_ffmpeg="false"
 		fi
@@ -5320,7 +5323,7 @@ ewarn
 # -bluetooth -branch-protection -cfi -cups (-debug) -encode -ffmpeg-chromium
 # -gtk4 -hangouts (-headless) -js-type-check -kerberos -libaom -official
 # -pax-kernel -pic -pre-check-vaapi -proprietary-codecs-disable
-# -proprietary-codecs-disable-nc-developer -proprietary-codecs-disable-nc-user
+# -proprietary-codecs-disable-codec-developer -proprietary-codecs-disable-end-user
 # (-qt5) -screencast (-selinux) -system-dav1d -system-ffmpeg -system-flac
 # -system-fontconfig -system-freetype -system-harfbuzz -system-icu
 # -system-libaom -system-libdrm -system-libjpeg-turbo -system-libpng
@@ -5358,7 +5361,7 @@ ewarn
 # (-component-build) -cups (-debug) -ebolt -encode -epgo -gtk4 -hangouts
 # (-headless) -js-type-check -kerberos -libaom -official -pax-kernel
 # -pre-check-vaapi -proprietary-codecs-disable
-# -proprietary-codecs-disable-nc-developer -proprietary-codecs-disable-nc-user
+# -proprietary-codecs-disable-codec-developer -proprietary-codecs-disable-end-user
 # -qt5 (-qt6) -r1 -screencast (-selinux) (-suid) -system-dav1d -system-ffmpeg
 # -system-flac -system-fontconfig -system-freetype -system-harfbuzz -system-icu
 # -system-libaom -system-libdrm -system-libjpeg-turbo -system-libpng
@@ -5399,7 +5402,7 @@ ewarn
 # -ffmpeg-chromium -firejail -gtk4 -hangouts (-headless) -hidpi -jit
 # -js-type-check -kerberos -libaom -mdns -ml -mpris -official -partitionalloc
 # -pax-kernel -pgo -pic -pre-check-vaapi -proprietary-codecs-disable
-# -proprietary-codecs-disable-nc-developer -proprietary-codecs-disable-nc-user
+# -proprietary-codecs-disable-codec-developer -proprietary-codecs-disable-end-user
 # (-qt5) -reporting-api -screencast (-selinux) -spelling-service -system-dav1d
 # -system-ffmpeg -system-flac -system-fontconfig -system-freetype
 # -system-harfbuzz -system-icu -system-libaom -system-libdrm

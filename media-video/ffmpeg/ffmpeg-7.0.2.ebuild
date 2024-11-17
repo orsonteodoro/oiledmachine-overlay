@@ -2589,7 +2589,7 @@ einfo
 	if [[ "${SLOT%/*}" == "0" ]] ; then
 		local root="${EPREFIX}/usr"
 	else
-		local root="${EPREFIX}/usr/$(get_libdir)/ffmpeg/${FFMPEG_SUBSLOT}"
+		local root="${EPREFIX}/usr/lib/ffmpeg/${FFMPEG_SUBSLOT}"
 	fi
 
 	myconf+=(
@@ -4441,7 +4441,7 @@ _install() {
 	if [[ "${SLOT%/*}" == "0" ]] ; then
 		local prefix="usr"
 	else
-		local prefix="usr/$(get_libdir)/ffmpeg/${FFMPEG_SUBSLOT}"
+		local prefix="usr/lib/ffmpeg/${FFMPEG_SUBSLOT}"
 	fi
 
 	# Prevent clobbering so that we can pgo optimize external codecs in different ABIs
@@ -4523,7 +4523,7 @@ src_install() {
 		if [[ "${SLOT%/*}" == "0" ]] ; then
 			local prefix="usr"
 		else
-			local prefix="usr/$(get_libdir)/ffmpeg/${FFMPEG_SUBSLOT}"
+			local prefix="usr/lib/ffmpeg/${FFMPEG_SUBSLOT}"
 		fi
 
 		cd "${S}/tools/python" || die
