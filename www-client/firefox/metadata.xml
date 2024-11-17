@@ -150,7 +150,7 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
   <flag name="proprietary-codecs-disable-nc-developer">
     Disables all non-free codecs for codec developers.
 
-    Codecs that require developer fees for code developers will be disabled.
+    Codecs that require developer fees for codec developers will be disabled.
   </flag>
   <flag name="proprietary-codecs-disable-nc-user">
     Disable all non-free codecs for non-developer users.
