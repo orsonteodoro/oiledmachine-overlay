@@ -55,7 +55,7 @@ einfo
 	# Most rows just need DoS, DT, ID.
 	#
 	# The remaining are to be used as a fallback when it is not clear that
-	# it is a DoS, DT, ID as CVE is still being analyzed.
+	# it is a DoS, DT, ID as the CVSS is still being evaluated.
 	#
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "CE" ]] ; then
 einfo "CE = Code Execution"
