@@ -571,8 +571,8 @@ fi
 ZEN_MUQSS_BASE_URI="https://github.com/torvalds/linux/commit/"
 ZEN_SAUCE_BASE_URI="https://github.com/torvalds/linux/commit/"
 
-inherit check-reqs cve-report dhms flag-o-matic multiprocessing python-r1 ot-kernel-kutils ot-kernel-pkgflags
-inherit security-scan toolchain-funcs
+inherit check-reqs dhms flag-o-matic multiprocessing python-r1 ot-kernel-kutils ot-kernel-pkgflags
+inherit security-scan toolchain-funcs vf
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
@@ -1324,7 +1324,7 @@ ewarn
 einfo "Security announcement date:  ${MITIGATION_DATE}"
 einfo "Security vulnerabilities fixed:  ${MITIGATION_URI}"
 	fi
-	cve_report
+	vf_show
 	if [[ -n "${MITIGATION_URI}" ]] ; then
 		local now=$(date +%s)
 		local dhms_passed=$(dhms_get ${MITIGATION_LAST_UPDATE} ${now})
