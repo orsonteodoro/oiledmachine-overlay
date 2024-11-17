@@ -49,7 +49,6 @@ einfo "Patched vulnerabilities:"
 einfo "${id}:  ${vulnerability_classes} (${SEVERITY_LABEL} ${severity})"
 		done
 		IFS=$' \t\n'
-einfo
 	#
 	# Glossary
 	#
@@ -64,6 +63,7 @@ einfo
 	# a conditional, but trivial vulnerabilities should only use one
 	# or more DoS, DT, ID.
 	#
+einfo
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "CE" ]] ; then
 einfo "CE = Code Execution"
 		fi
