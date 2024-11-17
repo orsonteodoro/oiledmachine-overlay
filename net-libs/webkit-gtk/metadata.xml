@@ -305,7 +305,7 @@
       Codecs that require developer fees for codec developers will be disabled.
     </flag>
     <flag name="proprietary-codecs-disable-end-user">
-      Disable all non-free codecs for non-developer users.
+      Disable all non-free codecs for end users.
 
       Codecs that are free for non codec developers will be allowed.
     </flag>
