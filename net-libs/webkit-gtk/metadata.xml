@@ -402,7 +402,7 @@
       Fallback support for the CPU based H.265 video decoder using libde265.
     </flag>
     <flag name="mp3">
-      Support for decoding MP1/2/3 audio.
+      Support for decoding MP1, MP2, MP3 audio.
     </flag>
     <flag name="ogg">
       Support for Ogg container files.
