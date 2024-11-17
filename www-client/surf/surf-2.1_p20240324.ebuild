@@ -456,7 +456,7 @@ eerror
 	use v4l && my_cppflags+=" -DUSE_CAMERA"
 
 	sed -i -e "s|CPPFLAGS =|CPPFLAGS = ${my_cppflags}|g" \
-		config.mk || die
+		"config.mk" || die
 
 	tc-export CC PKG_CONFIG
 
@@ -484,24 +484,26 @@ eerror
 
 	eapply "${FILESDIR}/surf-2.1_p20240324-gtk4.patch"
 
+	sed -i -e "/use-system-appearance-for-scrollbars/d" "surf.c" || die
+
 	if has_version "net-libs/webkit-gtk:6" && use gtk4 ; then
 einfo "Switching to webkit-gtk:6"
-		sed -i -e "s|webkit2gtk-4.0|webkitgtk-6.0|g" config.mk || die
-		sed -i -e "s|webkit2gtk-web-extension-4.0|webkitgtk-web-extension-6.0|g" config.mk || die
-		sed -i -e 's|gtk[+]-3.0|gtk4|g' config.mk || die
-		sed -i -e 's|gcr-3|gcr-4|g' config.mk || die
+		sed -i -e "s|webkit2gtk-4.0|webkitgtk-6.0|g" "config.mk" || die
+		sed -i -e "s|webkit2gtk-web-extension-4.0|webkitgtk-web-extension-6.0|g" "config.mk" || die
+		sed -i -e 's|gtk[+]-3.0|gtk4|g' "config.mk" || die
+		sed -i -e 's|gcr-3|gcr-4|g' "config.mk" || die
 		append-cflags -DWEBKIT_API_VERSION=0600
 	elif has_version "net-libs/webkit-gtk:5" && use gtk4 ; then
 einfo "Switching to webkit-gtk:5"
-		sed -i -e "s|webkit2gtk-4.0|webkit2gtk-5.0|g" config.mk || die
-		sed -i -e "s|webkit2gtk-web-extension-4.0|webkit2gtk-web-extension-5.0|g" config.mk || die
-		sed -i -e 's|gtk[+]-3.0|gtk4|g' config.mk || die
-		sed -i -e 's|gcr-3|gcr-4|g' config.mk || die
+		sed -i -e "s|webkit2gtk-4.0|webkit2gtk-5.0|g" "config.mk" || die
+		sed -i -e "s|webkit2gtk-web-extension-4.0|webkit2gtk-web-extension-5.0|g" "config.mk" || die
+		sed -i -e 's|gtk[+]-3.0|gtk4|g' "config.mk" || die
+		sed -i -e 's|gcr-3|gcr-4|g' "config.mk" || die
 		append-cflags -DWEBKIT_API_VERSION=0500
 	elif has_version "net-libs/webkit-gtk:4.1" && use gtk3 ; then
 einfo "Switching to webkit-gtk:4.1"
-		sed -i -e "s|webkit2gtk-4.0|webkit2gtk-4.1|g" config.mk || die
-		sed -i -e "s|webkit2gtk-web-extension-4.0|webkit2gtk-web-extension-4.1|g" config.mk || die
+		sed -i -e "s|webkit2gtk-4.0|webkit2gtk-4.1|g" "config.mk" || die
+		sed -i -e "s|webkit2gtk-web-extension-4.0|webkit2gtk-web-extension-4.1|g" "config.mk" || die
 		append-cflags -DWEBKIT_API_VERSION=0401
 	else
 		append-cflags -DWEBKIT_API_VERSION=0400
@@ -520,7 +522,7 @@ einfo "Switching to webkit-gtk:4.1"
 		sed -i -e "s|\
 LIBPREFIX = \$(PREFIX)/lib|\
 LIBPREFIX = \$(PREFIX)/$(get_libdir)|g" \
-			config.mk || die
+			"config.mk" || die
 	}
 
 	multilib_foreach_abi prepare_abi
