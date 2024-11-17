@@ -8,7 +8,7 @@ EAPI=8
 # See https://gstreamer.freedesktop.org/security/
 # gstreamer-1.22.x requires 2.62, but 2.64 is strongly recommended
 
-inherit gstreamer-meson
+inherit gstreamer-meson vf
 
 MITIGATION_DATE="Oct 29, 2024" # Advisory date
 MITIGATION_URI="https://gstreamer.freedesktop.org/security/"
@@ -57,26 +57,8 @@ pkg_setup() {
 	if [[ -n "${MITIGATION_URI}" ]] ; then
 einfo "Security announcement date:  ${MITIGATION_DATE}"
 einfo "Security vulnerabilities fixed:  ${MITIGATION_URI}"
-einfo "Patched vulnerabilities:"
-		IFS=$'\n'
-		local x
-		for x in ${VULNERABILITIES_FIXED[@]} ; do
-			local cve=$(echo "${x}" | cut -f 1 -d ";")
-			local vulnerability_classes=$(echo "${x}" | cut -f 2 -d ";")
-			local severity=$(echo "${x}" | cut -f 3 -d ";")
-einfo "${cve}:  ${vulnerability_classes} (CVSS 3.1 ${severity})"
-		done
-		IFS=$' \t\n'
-einfo
-einfo "CE = Code Execution"
-einfo "DoS = Denial of Service"
-einfo "DT = Data Tampering"
-einfo "ID = Information Disclosure"
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "UAF" ]] ; then
-einfo "UAF = Use After Free"
-		fi
-einfo
 	fi
+	vf_show
 }
 
 multilib_src_configure() {

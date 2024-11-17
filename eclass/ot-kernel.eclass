@@ -571,7 +571,7 @@ fi
 ZEN_MUQSS_BASE_URI="https://github.com/torvalds/linux/commit/"
 ZEN_SAUCE_BASE_URI="https://github.com/torvalds/linux/commit/"
 
-inherit check-reqs dhms flag-o-matic multiprocessing python-r1 ot-kernel-kutils ot-kernel-pkgflags
+inherit check-reqs cve-report dhms flag-o-matic multiprocessing python-r1 ot-kernel-kutils ot-kernel-pkgflags
 inherit security-scan toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -1323,50 +1323,9 @@ ewarn
 	if [[ -n "${MITIGATION_URI}" ]] ; then
 einfo "Security announcement date:  ${MITIGATION_DATE}"
 einfo "Security vulnerabilities fixed:  ${MITIGATION_URI}"
-einfo "Patched vulnerabilities:"
-		IFS=$'\n'
-		local x
-		for x in ${VULNERABILITIES_FIXED[@]} ; do
-			local cve=$(echo "${x}" | cut -f 1 -d ";")
-			local vulnerability_classes=$(echo "${x}" | cut -f 2 -d ";")
-			local severity=$(echo "${x}" | cut -f 3 -d ";")
-einfo "${cve}:  ${vulnerability_classes} (CVSS 3.1 ${severity})"
-		done
-		IFS=$' \t\n'
-einfo
-
-	# Glossary
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "CE" ]] ; then
-einfo "CE = Code Execution"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "DoS" ]] ; then
-einfo "DoS = Denial of Service"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "DT" ]] ; then
-einfo "DT = Data Tampering"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ID" ]] ; then
-einfo "ID = Information Disclosure"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "UAF" ]] ; then
-einfo "UAF = Use After Free"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "NPD" ]] ; then
-einfo "NPD = Null Pointer Dereference"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "RC" ]] ; then
-einfo "RC = Race Condition"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "OOB" ]] ; then
-einfo "OOB = Out Of Bounds"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "PE" ]] ; then
-einfo "PE = Privilege Escalation"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ZC" ]] ; then
-einfo "ZC = Zero Click Attack"
-		fi
-einfo
+	fi
+	cve_report
+	if [[ -n "${MITIGATION_URI}" ]] ; then
 		local now=$(date +%s)
 		local dhms_passed=$(dhms_get ${MITIGATION_LAST_UPDATE} ${now})
 einfo "Time since the last security update:  ${dhms_passed}"

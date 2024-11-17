@@ -213,7 +213,7 @@ ZLIB_PV="1.3"
 inherit cflags-depends check-linker check-reqs chromium-2 dhms desktop edo
 inherit flag-o-matic flag-o-matic-om linux-info lcnr llvm multilib-minimal
 inherit multiprocessing ninja-utils pax-utils python-any-r1 qmake-utils
-inherit readme.gentoo-r1 rust systemd toolchain-funcs xdg-utils
+inherit readme.gentoo-r1 rust systemd toolchain-funcs vf xdg-utils
 
 is_cromite_compatible() {
 	local c4_min=$(ver_cut 4 ${PV})
@@ -1887,34 +1887,8 @@ einfo "Release channel:  ${SLOT#*/}"
 	if [[ -n "${MITIGATION_URI}" ]] ; then
 einfo "Security announcement date:  ${MITIGATION_DATE}"
 einfo "Security fixes applied:  ${MITIGATION_URI}"
-einfo "Patched vulnerabilities:"
-		IFS=$'\n'
-		local x
-		for x in ${VULNERABILITIES_FIXED[@]} ; do
-			local cve=$(echo "${x}" | cut -f 1 -d ";")
-			local vulnerability_classes=$(echo "${x}" | cut -f 2 -d ";")
-			local severity=$(echo "${x}" | cut -f 3 -d ";")
-einfo "${cve}:  ${vulnerability_classes} (CVSS 3.1 ${severity})"
-		done
-		IFS=$' \t\n'
-einfo
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "CE" ]] ; then
-einfo "CE = Code Execution"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "DoS" ]] ; then
-einfo "DoS = Denial of Service"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "DT" ]] ; then
-einfo "DT = Data Tampering"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ID" ]] ; then
-einfo "ID = Information Disclosure"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ZC" ]] ; then
-einfo "ZC = Zero Click Attack"
-		fi
-einfo
 	fi
+	vf_show
 	pre_build_checks
 
 	if is-flagq '-Oshit' && ! use official ; then

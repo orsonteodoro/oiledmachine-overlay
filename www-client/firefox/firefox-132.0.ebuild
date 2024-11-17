@@ -206,7 +206,7 @@ VIRTUALX_REQUIRED="pgo"
 inherit autotools cflags-depends check-linker check-reqs desktop dhms flag-o-matic
 inherit gnome2-utils lcnr linux-info llvm multilib-minimal multiprocessing
 inherit pax-utils python-any-r1 readme.gentoo-r1 rust-toolchain toolchain-funcs
-inherit virtualx xdg
+inherit virtualx vf xdg
 
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86"
 S="${WORKDIR}/${PN}-${PV%_*}"
@@ -1336,37 +1336,8 @@ einfo "Release type:  rapid"
 	if [[ -n "${MITIGATION_URI}" ]] ; then
 einfo "Security announcement date:  ${MITIGATION_DATE}"
 einfo "Security vulnerabilities fixed:  ${MITIGATION_URI}"
-einfo "Patched vulnerabilities:"
-		IFS=$'\n'
-		local x
-		for x in ${VULNERABILITIES_FIXED[@]} ; do
-			local cve=$(echo "${x}" | cut -f 1 -d ";")
-			local vulnerability_classes=$(echo "${x}" | cut -f 2 -d ";")
-			local severity=$(echo "${x}" | cut -f 3 -d ";")
-einfo "${cve}:  ${vulnerability_classes} (CVSS 3.1 ${severity})"
-		done
-		IFS=$' \t\n'
-einfo
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "CE" ]] ; then
-einfo "CE = Code Execution"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "DoS" ]] ; then
-einfo "DoS = Denial of Service"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "DT" ]] ; then
-einfo "DT = Data Tampering"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ID" ]] ; then
-einfo "ID = Information Disclosure"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "UAF" ]] ; then
-einfo "UAF = Use After Free"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ZC" ]] ; then
-einfo "ZC = Zero Click Attack"
-		fi
-einfo
 	fi
+	vf_show
 	if [[ "${MERGE_TYPE}" != "binary" ]] ; then
 		if use pgo ; then
 			if ! has userpriv ${FEATURES} ; then

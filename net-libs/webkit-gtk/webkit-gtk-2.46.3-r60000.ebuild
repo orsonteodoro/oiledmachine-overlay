@@ -127,7 +127,7 @@ WK_PAGE_SIZE=64 # global var not const
 
 inherit cflags-depends check-linker check-reqs cmake desktop dhms flag-o-matic
 inherit git-r3 gnome2 lcnr linux-info llvm multilib-minimal multiprocessing
-inherit pax-utils python-any-r1 ruby-single toolchain-funcs
+inherit pax-utils python-any-r1 ruby-single toolchain-funcs vf
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~s390 ~sparc ~riscv ~x86"
 #
@@ -2108,34 +2108,8 @@ einfo "This is the stable branch."
 	if [[ -n "${MITIGATION_URI}" ]] ; then
 einfo "Security advisory date:  ${MITIGATION_DATE}"
 einfo "Latest security advisory:  ${MITIGATION_URI}"
-einfo "Patched vulnerabilities:"
-		IFS=$'\n'
-		local x
-		for x in ${VULNERABILITIES_FIXED[@]} ; do
-			local cve=$(echo "${x}" | cut -f 1 -d ";")
-			local vulnerability_classes=$(echo "${x}" | cut -f 2 -d ";")
-			local severity=$(echo "${x}" | cut -f 3 -d ";")
-einfo "${cve}:  ${vulnerability_classes} (CVSS 3.1 ${severity})"
-		done
-		IFS=$' \t\n'
-einfo
-	if [[ "${VULNERABILITIES_FIXED[@]}" =~ "CE" ]] ; then
-einfo "CE = Code Execution"
 	fi
-	if [[ "${VULNERABILITIES_FIXED[@]}" =~ "DoS" ]] ; then
-einfo "DoS = Denial of Service"
-	fi
-	if [[ "${VULNERABILITIES_FIXED[@]}" =~ "DT" ]] ; then
-einfo "DT = Data Tampering"
-	fi
-	if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ID" ]] ; then
-einfo "ID = Information Disclosure"
-	fi
-	if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ZC" ]] ; then
-einfo "ZC = Zero Click Attack"
-	fi
-einfo
-	fi
+	vf_show
 	_set_cxx
 	#check_icu_build
 	if [[ ${MERGE_TYPE} != "binary" ]] \
