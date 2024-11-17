@@ -90,6 +90,9 @@ einfo "RC = Race Condition"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "SCI" ]] ; then
 einfo "SCI = Shellcode Command Injection"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ToCToU" ]] ; then
+einfo "ToCToU = Time of Check Time of Use Race Condition"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "UAF" ]] ; then
 einfo "UAF = Use After Free"
 		fi
