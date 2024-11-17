@@ -3227,6 +3227,6 @@ ewarn
 #     wiki(s):  passed
 #     audio:  fail
 #       streaming radio:  segfault
+#     scroll: fast, random slowdown
 #     stability:  unstable
-#   scroll: fast
 #
