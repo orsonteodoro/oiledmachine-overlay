@@ -2910,11 +2910,17 @@ src_prepare() {
 	# Generated from below one liner ran in the same folder as this file:
 	# grep -F -r -e "+++" | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
 		PATCH_PATHS=(
+			"${S}/cmd/cmd.go"
+			"${S}/discover/amd_linux.go"
+			"${S}/discover/gpu_linux.go"
 			"${S}/gpu/amd_linux.go"
 			"${S}/gpu/gpu_linux.go"
 			"${S}/llama/Makefile"
 			"${S}/llama/llama.go"
+			"${S}/llama/make/Makefile.cuda_v11"
+			"${S}/llama/make/Makefile.cuda_v12"
 			"${S}/llama/make/Makefile.rocm"
+			"${S}/llama/make/common-defs.make"
 			"${S}/llama/make/cuda.make"
 			"${S}/llama/sync.sh"
 			"${S}/llm/generate/gen_common.sh"
