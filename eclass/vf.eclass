@@ -55,8 +55,9 @@ einfo
 	#
 	# Most rows just need DoS, DT, ID.
 	#
-	# The remaining are to be used as a fallback when it is not clear that
-	# it is a DoS, DT, ID as the CVSS is still being evaluated.
+	# The remaining are to be used as a fallback or temporary
+	# placeholder when it is not clear that it is a DoS, DT, ID as
+	# the CVSS is still being evaluated.
 	#
 	# The complex cases that are undecided, or that fit more than one
 	# vulnerability class, or unable to be classified should deserve
