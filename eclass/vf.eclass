@@ -58,6 +58,11 @@ einfo
 	# The remaining are to be used as a fallback when it is not clear that
 	# it is a DoS, DT, ID as the CVSS is still being evaluated.
 	#
+	# The complex cases that are undecided, or that fit more than one
+	# vulnerability class, or unable to be classified should deserve
+	# a conditional, but trivial vulnerabilities should only use either
+	# DoS, DT, ID.
+	#
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "CE" ]] ; then
 einfo "CE = Code Execution"
 		fi
@@ -69,12 +74,6 @@ einfo "DT = Data Tampering"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ID" ]] ; then
 einfo "ID = Information Disclosure"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "IOOR" ]] ; then
-einfo "IOOR = Index Out Of Range"
-		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ML" ]] ; then
-einfo "ML = Memory Leak"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "NPD" ]] ; then
 einfo "NPD = Null Pointer Dereference"
