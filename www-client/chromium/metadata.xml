@@ -488,89 +488,21 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       disable these checks because they can expose bugs.
     </flag>
     <flag name="proprietary-codecs">
-      Enables use of non-free patent-encumbered audio, formats, video formats,
-      and network protocols.  Upstream build files associate AAC, H264, and
-      others as proprietary.
+      Allows non-free patent-encumbered codecs or network protocols but allows
+      to select or reject these packages/implementations.
     </flag>
     <flag name="proprietary-codecs-disable">
-      (USE FLAG IN DEVELOPMENT)
-
-      If enabled, it will disable codecs or network protocols with a patent
-      status that is not free in this ebuild fork.
-
-      With this flag enabled, this may break dependencies that assume previous
-      unpatched behavior.
-
-      In general a codec is allowed to be built into disabled proprietary-codecs
-      build if the patent status is one of the following:
-
-        (1) Expired patent, typically 20 years.  (e.g. MP3)
-        (2) Similar perpetual royalty-free freedoms like the
-            Grant of Patent License in the Apache 2.0. (e.g. libvpx, libaom)
-
-      AND
-
-        The code is free with a widely used compatible open source license.
-
-      AND CONDITIONALLY
-
-        The codec may allowed in this ebuild fork if it doesn't require a
-        non-free developer license in a case-by-case basis.
-
+      Disables all codecs that are non-free.
     </flag>
     <flag name="proprietary-codecs-disable-nc-developer">
-      (USE FLAG IN DEVELOPMENT)
+      Disables all non-free codecs for codec developers.
 
-      If enabled, it will disable codecs or network protocols with a patent
-      status that is not free in this ebuild fork for codec developers for
-      non-commericial use.
-
-      With this flag enabled, this may break dependencies that assume previous
-      unpatched behavior.
-
-      In general a codec is allowed to be built into disabled proprietary-codecs
-      build if the patent status is one of the following:
-
-        (1) Expired patent, typically 20 years.  (e.g. MP3)
-        (2) Similar perpetual royalty-free freedoms like the
-            Grant of Patent License in the Apache 2.0. (e.g. libvpx, libaom)
-
-      AND
-
-        The code is free with a widely used compatible open source license.
-
-      AND CONDITIONALLY
-
-        The codec may allowed in this ebuild fork if it doesn't require a
-        non-free developer license in a case-by-case basis.
-
+      Codecs that require developer fees for code developers will be disabled.
     </flag>
     <flag name="proprietary-codecs-disable-nc-user">
-      (USE FLAG IN DEVELOPMENT)
+      Disable all non-free codecs for non-developer users.
 
-      If enabled, it will disable codecs or network protocols with a patent
-      status that is not free in this ebuild fork for non codec developers
-      for non-commercial use.
-
-      With this flag enabled, this may break dependencies that assume previous
-      unpatched behavior.
-
-      In general a codec is allowed to be built into disabled proprietary-codecs
-      build if the patent status is one of the following:
-
-        (1) Expired patent, typically 20 years.  (e.g. MP3)
-        (2) Similar perpetual royalty-free freedoms like the
-            Grant of Patent License in the Apache 2.0. (e.g. libvpx, libaom)
-
-      AND
-
-        The code is free with a widely used compatible open source license.
-
-      AND CONDITIONALLY
-
-        The codec may allowed in this ebuild fork if it doesn't require a
-        non-free developer license in a case-by-case basis.
-
+      Codecs that are free for non codec developers will be allowed.
     </flag>
     <flag name="qt5">
       Enable qt5 support
