@@ -4,15 +4,17 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..11} )
+AUTOOPEN_FN="surf-0.3-autoopen.diff"
+LINK_HINTS_FN="surf-9999-link-hints.diff"
+PYTHON_COMPAT=( "python3_"{8..11} )
+SEARCHENGINES_FN="surf-git-20170323-webkit2-searchengines.diff"
+
 inherit flag-o-matic git-r3 multilib-minimal python-r1 toolchain-funcs
 
 EGIT_BRANCH="surf-webkit2"
 EGIT_COMMIT="761ea9e4c6c4d8aba4a4d39da9c9b4db8ac471b1" # 2021-05-20 22:16
 EGIT_REPO_URI="https://git.suckless.org/surf"
-AUTOOPEN_FN="surf-0.3-autoopen.diff"
-LINK_HINTS_FN="surf-9999-link-hints.diff"
-SEARCHENGINES_FN="surf-git-20170323-webkit2-searchengines.diff"
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86" # Same as webkit-gtk
 SRC_URI="
 	mod_autoopen? (
 		${AUTOOPEN_FN}
@@ -57,7 +59,6 @@ LICENSE="
 		all-rights-reserved
 	)
 "
-KEYWORDS="~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86" # Same as webkit-gtk
 SLOT="0"
 IUSE+="
 ${EXTERNAL_IUSE}

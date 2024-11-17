@@ -12,7 +12,7 @@ SEARCHENGINES_FN="surf-git-20170323-webkit2-searchengines.diff"
 inherit flag-o-matic git-r3 multilib-minimal python-r1 toolchain-funcs
 
 EGIT_BRANCH="surf-webkit2"
-EGIT_COMMIT="30f5464eb11b96f740b124816cbcfa55f125cf53" # 2023-11-18 11:40
+EGIT_COMMIT="9ef79bf7106496c736ba613c51d2fd5af9d873a8" # 2023-03-24
 EGIT_REPO_URI="https://git.suckless.org/surf"
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86" # Same as webkit-gtk
 SRC_URI="
@@ -279,6 +279,8 @@ src_prepare() {
 	grep -q -e "VERSION = $(ver_cut 1-2 ${PV})" "config.mk" || die "Bump version"
 
 	if use savedconfig ; then
+ewarn "References to FrameFlatting has been removed from config.h."
+ewarn "References to Java has been removed from config.h."
 		check_savedconfig_path
 	else
 einfo
@@ -480,7 +482,7 @@ eerror
 	sed -E -i -e "s|\[ZoomLevel\]           =       \{ \{ .f = [.0-9]+ \},   \},|\[ZoomLevel\]           =       { { .f = ${SURF_ZOOM_LEVEL} },   },|g" "config.def.h" || die
 	sed -E -i -e "s|\[ZoomLevel\]           =       \{ \{ .f = [.0-9]+ \},   \},|\[ZoomLevel\]           =       { { .f = ${SURF_ZOOM_LEVEL} },   },|g" "${config_file}" || die
 
-	eapply "${FILESDIR}/surf-2.1_p20231118-gtk4.patch"
+	eapply "${FILESDIR}/surf-2.1_p20240324-gtk4.patch"
 
 	if has_version "net-libs/webkit-gtk:6" && use gtk4 ; then
 einfo "Switching to webkit-gtk:6"
