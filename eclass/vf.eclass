@@ -85,6 +85,9 @@ einfo "ID = Information Disclosure"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "IP" ]] ; then
 einfo "IP = Improper Permissions"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "MC" ]] ; then
+einfo "MC = Memory Corruption"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "NPD" ]] ; then
 einfo "NPD = Null Pointer Dereference"
 		fi
@@ -93,6 +96,9 @@ einfo "OOB = Out Of Bounds Access"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "PE" ]] ; then
 einfo "PE = Privilege Escalation"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "PI" ]] ; then
+einfo "PI = Prompt Injection"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "PP" ]] ; then
 einfo "PP = Prototype Pollution"
