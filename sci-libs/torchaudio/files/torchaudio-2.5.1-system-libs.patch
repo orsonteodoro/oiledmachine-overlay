@@ -1,0 +1,63 @@
+diff '--color=auto' -urp audio-2.5.1.orig/third_party/ffmpeg/single/CMakeLists.txt audio-2.5.1/third_party/ffmpeg/single/CMakeLists.txt
+--- audio-2.5.1.orig/third_party/ffmpeg/single/CMakeLists.txt	2024-10-23 05:01:45.000000000 -0700
++++ audio-2.5.1/third_party/ffmpeg/single/CMakeLists.txt	2024-11-18 12:22:24.197238657 -0800
+@@ -7,7 +7,7 @@ if (NOT DEFINED ENV{FFMPEG_ROOT})
+ endif()
+ 
+ set(_root $ENV{FFMPEG_ROOT})
+-set(lib_dirs "${_root}/lib" "${_root}/bin")
++set(lib_dirs "${_root}/lib64" "${_root}/bin")
+ set(include_dir "${_root}/include")
+ 
+ add_library(ffmpeg INTERFACE)
+diff '--color=auto' -urp audio-2.5.1.orig/third_party/sox/CMakeLists.txt audio-2.5.1/third_party/sox/CMakeLists.txt
+--- audio-2.5.1.orig/third_party/sox/CMakeLists.txt	2024-10-23 05:01:45.000000000 -0700
++++ audio-2.5.1/third_party/sox/CMakeLists.txt	2024-11-18 12:27:22.087137411 -0800
+@@ -1,21 +1,30 @@
+ include(FetchContent)
+ 
+-FetchContent_Declare(
+-  sox_src
+-  URL https://downloads.sourceforge.net/project/sox/sox/14.4.2/sox-14.4.2.tar.bz2
+-  URL_HASH SHA256=81a6956d4330e75b5827316e44ae381e6f1e8928003c6aa45896da9041ea149c
+-  PATCH_COMMAND ""
+-  CONFIGURE_COMMAND ""
+-  BUILD_COMMAND ""
+-  )
+-# FetchContent_MakeAvailable will parse the downloaded content and setup the targets.
+-# We want to only download and not build, so we run Populate manually.
+-if(NOT sox_src_POPULATED)
+-  FetchContent_Populate(sox_src)
++if($ENV{USE_SYSTEM_SOX} EQUAL 1)
++else()
++  option(USE_SYSTEM_SOX "Use system sox?" OFF)
+ endif()
++if(USE_SYSTEM_SOX EQUAL 1 OR $ENV{USE_SYSTEM_SOX} EQUAL 1)
++  add_library(sox SHARED IMPORTED)
++  set_target_properties( sox PROPERTIES IMPORTED_LOCATION /usr/lib64/libsox.so )
++else()
++  FetchContent_Declare(
++    sox_src
++    URL https://downloads.sourceforge.net/project/sox/sox/14.4.2/sox-14.4.2.tar.bz2
++    URL_HASH SHA256=81a6956d4330e75b5827316e44ae381e6f1e8928003c6aa45896da9041ea149c
++    PATCH_COMMAND ""
++    CONFIGURE_COMMAND ""
++    BUILD_COMMAND ""
++    )
++  # FetchContent_MakeAvailable will parse the downloaded content and setup the targets.
++  # We want to only download and not build, so we run Populate manually.
++  if(NOT sox_src_POPULATED)
++    FetchContent_Populate(sox_src)
++  endif()
+ 
+-add_library(sox SHARED stub.c)
+-if(APPLE)
+-  set_target_properties(sox PROPERTIES SUFFIX .dylib)
+-endif(APPLE)
+-target_include_directories(sox PUBLIC ${sox_src_SOURCE_DIR}/src)
++  add_library(sox SHARED stub.c)
++  if(APPLE)
++    set_target_properties(sox PROPERTIES SUFFIX .dylib)
++  endif(APPLE)
++  target_include_directories(sox PUBLIC ${sox_src_SOURCE_DIR}/src)
++endif()
