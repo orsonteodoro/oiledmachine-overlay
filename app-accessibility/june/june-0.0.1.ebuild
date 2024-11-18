@@ -37,7 +37,7 @@ RDEPEND+="
 		>=dev-python/colorama-0.4.6[${PYTHON_USEDEP}]
 		>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
 		>=dev-python/ollama-0.2.1[${PYTHON_USEDEP}]
-		>=dev-python/PyAudio-0.2.14[${PYTHON_USEDEP}]
+		>=dev-python/pyaudio-0.2.14[${PYTHON_USEDEP}]
 		>=dev-python/pydantic-settings-2.3.1[${PYTHON_USEDEP}]
 		>=dev-python/pygame-2.5.2[${PYTHON_USEDEP}]
 	')
