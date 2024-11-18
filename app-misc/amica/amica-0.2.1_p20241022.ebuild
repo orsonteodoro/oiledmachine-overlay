@@ -2908,8 +2908,10 @@ LICENSE="
 "
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" coqui debug ollama tray voice-recognition wayland whisper-cpp X"
+SLOT="0"
+IUSE+="
+coqui debug ollama tray voice-recognition wayland whisper-cpp X
+"
 REQUIRED_USE="
 	voice-recognition
 	whisper-cpp? (
@@ -3161,3 +3163,4 @@ pkg_postinst() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  Failed (0.2.1_p20241022, 20241117)
