@@ -67,6 +67,12 @@ einfo
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "CE" ]] ; then
 einfo "CE = Code Execution"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "CI" ]] ; then
+einfo "CI = Shell Command Injection"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "CSRF" ]] ; then
+einfo "CSSF = Cross Site Request Forgery"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "DoS" ]] ; then
 einfo "DoS = Denial of Service"
 		fi
@@ -75,6 +81,9 @@ einfo "DT = Data Tampering"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ID" ]] ; then
 einfo "ID = Information Disclosure"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "IP" ]] ; then
+einfo "IP = Improper Permissions"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "NPD" ]] ; then
 einfo "NPD = Null Pointer Dereference"
@@ -85,11 +94,14 @@ einfo "OOB = Out Of Bounds Access"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "PE" ]] ; then
 einfo "PE = Privilege Escalation"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "PP" ]] ; then
+einfo "PP = Prototype Pollution"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "RC" ]] ; then
 einfo "RC = Race Condition"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "SCI" ]] ; then
-einfo "SCI = Shell Command Injection"
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "TC" ]] ; then
+einfo "TC = Type Confusion"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ToCToU" ]] ; then
 einfo "ToCToU = Time of Check Time of Use Race Condition"
