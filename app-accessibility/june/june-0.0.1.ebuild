@@ -35,13 +35,13 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/click-8.1.7[${PYTHON_USEDEP}]
 		>=dev-python/colorama-0.4.6[${PYTHON_USEDEP}]
-		>=dev-python/coqui-tts-0.24.1[${PYTHON_USEDEP}]
 		>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
 		>=dev-python/ollama-0.2.1[${PYTHON_USEDEP}]
 		>=dev-python/PyAudio-0.2.14[${PYTHON_USEDEP}]
 		>=dev-python/pydantic-settings-2.3.1[${PYTHON_USEDEP}]
 		>=dev-python/pygame-2.5.2[${PYTHON_USEDEP}]
 	')
+	>=dev-python/coqui-tts-0.24.1[${PYTHON_SINGLE_USEDEP}]
 	>=sci-libs/pytorch-2.3.1[${PYTHON_SINGLE_USEDEP}]
 	>=sci-libs/torchaudio-2.3.1[${PYTHON_SINGLE_USEDEP}]
 	>=sci-libs/transformers-4.40.2[${PYTHON_SINGLE_USEDEP}]
