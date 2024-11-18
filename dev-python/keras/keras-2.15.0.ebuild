@@ -55,7 +55,7 @@ RDEPEND="
 	dev-python/h5py[${PYTHON_USEDEP}]
 	dev-python/pandas[${PYTHON_USEDEP}]
 	virtual/pillow[${PYTHON_USEDEP}]
-	dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
+	dev-python/protobuf:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 	dev-python/pydot[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 "

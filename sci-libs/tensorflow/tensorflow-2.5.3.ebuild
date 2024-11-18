@@ -585,13 +585,13 @@ RDEPEND="
 			<dev-python/numpy-2[${PYTHON_USEDEP}]
 		)
 		(
-			!~dev-python/protobuf-python-4.21.0[${PYTHON_USEDEP}]
-			!~dev-python/protobuf-python-4.21.1[${PYTHON_USEDEP}]
-			!~dev-python/protobuf-python-4.21.2[${PYTHON_USEDEP}]
-			!~dev-python/protobuf-python-4.21.3[${PYTHON_USEDEP}]
-			!~dev-python/protobuf-python-4.21.4[${PYTHON_USEDEP}]
-			!~dev-python/protobuf-python-4.21.5[${PYTHON_USEDEP}]
-			dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
+			!~dev-python/protobuf-4.21.0[${PYTHON_USEDEP}]
+			!~dev-python/protobuf-4.21.1[${PYTHON_USEDEP}]
+			!~dev-python/protobuf-4.21.2[${PYTHON_USEDEP}]
+			!~dev-python/protobuf-4.21.3[${PYTHON_USEDEP}]
+			!~dev-python/protobuf-4.21.4[${PYTHON_USEDEP}]
+			!~dev-python/protobuf-4.21.5[${PYTHON_USEDEP}]
+			dev-python/protobuf:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 		)
 		(
 			>=dev-python/wrapt-1.11.1[${PYTHON_USEDEP}]

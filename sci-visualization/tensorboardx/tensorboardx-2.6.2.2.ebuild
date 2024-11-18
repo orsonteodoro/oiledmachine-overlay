@@ -40,7 +40,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
 RDEPEND+="
-	>=dev-python/protobuf-python-3.20:0/3.21[${PYTHON_USEDEP}]
+	>=dev-python/protobuf-3.20:0/3.21[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/packaging[${PYTHON_USEDEP}]
 "
@@ -60,7 +60,7 @@ BDEPEND+="
 			sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
 		')
 		>=dev-python/imageio-2.27[${PYTHON_USEDEP}]
-		>=dev-python/protobuf-python-4.22.3[${PYTHON_USEDEP}]
+		>=dev-python/protobuf-4.22.3[${PYTHON_USEDEP}]
 		dev-python/boto3[${PYTHON_USEDEP}]
 		dev-python/flake8[${PYTHON_USEDEP}]
 		dev-python/numpy[${PYTHON_USEDEP}]

@@ -43,7 +43,7 @@ IUSE+=" "
 RDEPEND+="
 	>=dev-python/absl-py-0.4[${PYTHON_USEDEP}]
 	>=dev-python/gviz-api-1.9.0[${PYTHON_USEDEP}]
-	>=dev-python/protobuf-python-3.19.6:0/3.21[${PYTHON_USEDEP}]
+	>=dev-python/protobuf-3.19.6:0/3.21[${PYTHON_USEDEP}]
 	>=dev-python/six-1.10.0[${PYTHON_USEDEP}]
 	>=dev-python/werkzeug-0.11.15[${PYTHON_USEDEP}]
 "

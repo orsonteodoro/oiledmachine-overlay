@@ -75,8 +75,8 @@ RDEPEND+="
 	)
 	training? (
 		(
-			>=dev-python/protobuf-python-3.20.3[${PYTHON_USEDEP}]
-			<dev-python/protobuf-python-4[${PYTHON_USEDEP}]
+			>=dev-python/protobuf-3.20.3[${PYTHON_USEDEP}]
+			<dev-python/protobuf-4[${PYTHON_USEDEP}]
 		)
 		>=dev-python/accelerate-0.29.3[${PYTHON_USEDEP}]
 		>=dev-python/peft-0.6.0[${PYTHON_USEDEP}]

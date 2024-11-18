@@ -32,7 +32,7 @@ IUSE+=" ebuild-revision-1"
 # See https://github.com/grpc/grpc/tree/v1.60.2/third_party
 RDEPEND="
 	>=dev-python/cython-0.29.35:0[${PYTHON_USEDEP}]
-	dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
+	dev-python/protobuf:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 	~dev-python/grpcio-${PV}[${PYTHON_USEDEP}]
 "
 DEPEND="

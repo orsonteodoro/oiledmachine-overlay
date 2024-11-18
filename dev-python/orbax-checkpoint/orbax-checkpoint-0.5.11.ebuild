@@ -52,7 +52,7 @@ CHECKPOINT_RDEPEND="
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/nest-asyncio[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/protobuf-python:0/${PROTOBUF_PV%.*}[${PYTHON_USEDEP}]
+	dev-python/protobuf:0/${PROTOBUF_PV%.*}[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	dev-python/typing-extensions[${PYTHON_USEDEP}]
 	dev-python/jaxlib[${PYTHON_USEDEP}]

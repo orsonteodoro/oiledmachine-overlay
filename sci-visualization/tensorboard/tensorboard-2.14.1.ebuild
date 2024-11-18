@@ -45,7 +45,7 @@ REQUIRED_USE="
 # See https://github.com/tensorflow/tensorboard/blob/2.13.0/tensorboard/pip_package/requirements.txt
 # Not used:
 #	>=dev-python/scipy-1.4.1[${PYTHON_USEDEP}]
-# Requirements for dev-python/protobuf-python modified by this ebuild to avoid multi instance single slot issue.
+# Requirements for dev-python/protobuf modified by this ebuild to avoid multi instance single slot issue.
 
 gen_llvm_bdepend() {
 	for s in ${LLVM_COMPAT[@]} ; do
@@ -81,7 +81,7 @@ RDEPEND="
 		>=dev-python/werkzeug-1.0.1[${PYTHON_USEDEP}]
 		dev-python/bleach[${PYTHON_USEDEP}]
 		dev-python/html5lib[${PYTHON_USEDEP}]
-		dev-python/protobuf-python:'${PROTOBUF_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/protobuf:'${PROTOBUF_SLOT}'[${PYTHON_USEDEP}]
 		dev-python/six[${PYTHON_USEDEP}]
 
 		|| (

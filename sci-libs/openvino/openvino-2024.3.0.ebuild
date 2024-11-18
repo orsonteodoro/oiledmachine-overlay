@@ -272,7 +272,7 @@ BDEPEND_TEST_CONSTRAINTS="
 	>=dev-python/jinja-2.11.2[${PYTHON_USEDEP}]
 	>=dev-python/paddlepaddle-2.6.0[${PYTHON_USEDEP}]
 	>=dev-python/pandas-1.3.5[${PYTHON_USEDEP}]
-	>=dev-python/protobuf-python-3.18.1:0/3.21[${PYTHON_USEDEP}]
+	>=dev-python/protobuf-3.18.1:0/3.21[${PYTHON_USEDEP}]
 	>=dev-python/py-1.9.0[${PYTHON_USEDEP}]
 	>=dev-python/pymongo-3.12.0[${PYTHON_USEDEP}]
 	>=dev-python/pytest-dependency-0.5.1[${PYTHON_USEDEP}]
@@ -371,7 +371,7 @@ BDEPEND_MODEL_HUB_TESTS_PYTORCH="
 	dev-python/optimum[${PYTHON_USEDEP}]
 	dev-python/packaging[${PYTHON_USEDEP}]
 	dev-python/pandas[${PYTHON_USEDEP}]
-	dev-python/protobuf-python[${PYTHON_USEDEP}]
+	dev-python/protobuf[${PYTHON_USEDEP}]
 	dev-python/pyctcdecode[${PYTHON_USEDEP}]
 	dev-python/pytest[${PYTHON_USEDEP}]
 	dev-python/pytest-html[${PYTHON_USEDEP}]
@@ -449,7 +449,7 @@ BDEPEND_MEMORY_TESTS="
 BDEPEND_CONDITIONAL_COMPILATION="
 	${BDEPEND_TEST_CONSTRAINTS}
 	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/protobuf-python[${PYTHON_USEDEP}]
+	dev-python/protobuf[${PYTHON_USEDEP}]
 	dev-python/py[${PYTHON_USEDEP}]
 	dev-python/pytest[${PYTHON_USEDEP}]
 	dev-python/pytest-dependency[${PYTHON_USEDEP}]

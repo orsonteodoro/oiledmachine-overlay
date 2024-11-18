@@ -47,13 +47,13 @@ RDEPEND+="
 	dev-python/typing[${PYTHON_USEDEP}]
 	dev-python/nnef-parser[${PYTHON_USEDEP}]
 	caffe? (
-		dev-python/protobuf-python:0/3.21[${PYTHON_USEDEP}]
+		dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
 		$(python_gen_any_dep '
 			sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
 		')
 	)
 	onnx? (
-		dev-python/protobuf-python:0/3.21[${PYTHON_USEDEP}]
+		dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
 		sci-libs/onnxruntime[${PYTHON_USEDEP},python]
 		dev-python/onnx-simplifier[${PYTHON_USEDEP}]
 	)

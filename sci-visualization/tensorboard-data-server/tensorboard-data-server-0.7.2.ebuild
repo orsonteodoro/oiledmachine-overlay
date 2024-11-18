@@ -306,7 +306,7 @@ RDEPEND="
 		>=dev-python/werkzeug-1.0.1[${PYTHON_USEDEP}]
 		>=sci-visualization/tensorboard-plugin-wit-1.6.0[${PYTHON_USEDEP}]
 		>dev-python/six-1.9[${PYTHON_USEDEP}]
-		dev-python/protobuf-python:'${PROTOBUF_SLOT}'[${PYTHON_USEDEP}]
+		dev-python/protobuf:'${PROTOBUF_SLOT}'[${PYTHON_USEDEP}]
 
 		|| (
 			(

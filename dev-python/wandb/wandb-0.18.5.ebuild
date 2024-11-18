@@ -55,7 +55,7 @@ RDEPEND+="
 	>=dev-python/psutil-5.0.0[${PYTHON_USEDEP}]
 	>=dev-python/sentry-sdk-2.0.0[${PYTHON_USEDEP}]
 	>=dev-python/docker-pycreds-0.4.0[${PYTHON_USEDEP}]
-	>=dev-python/protobuf-python-3.19.0[${PYTHON_USEDEP}]
+	>=dev-python/protobuf-3.19.0[${PYTHON_USEDEP}]
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	dev-python/setproctitle[${PYTHON_USEDEP}]

@@ -107,7 +107,7 @@ www-misc/rainbowstream
 # Too early.  Avoid multiple instances single slot issues.
 #>=dev-libs/protobuf-22
 #>=dev-cpp/abseil-cpp-20230125
-#>=dev-python/protobuf-python-4.22
+#>=dev-python/protobuf-4.22
 #>=net-libs/grpc-1.53
 #>=dev-python/grpcio-1.53
 #>=dev-python/grpcio-testing-1.53

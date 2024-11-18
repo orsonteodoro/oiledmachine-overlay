@@ -35,7 +35,7 @@ RDEPEND+="
 	>=dev-libs/re2-0.2022.04.01:=
 	>=net-dns/c-ares-1.19.1:=
 	>=sys-libs/zlib-1.2.13:=
-	dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
+	dev-python/protobuf:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}

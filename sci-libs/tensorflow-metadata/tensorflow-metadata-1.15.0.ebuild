@@ -74,7 +74,7 @@ BDEPEND+="
 		>=dev-python/googleapis-common-protos-1.52.0[${PYTHON_USEDEP}]
 		<dev-python/googleapis-common-protos-2[${PYTHON_USEDEP}]
 	)
-	>=dev-python/protobuf-python-3.20.3:0/3.21[${PYTHON_USEDEP}]
+	>=dev-python/protobuf-3.20.3:0/3.21[${PYTHON_USEDEP}]
 	>=dev-build/bazel-6.1.0:${BAZEL_SLOT}
 	dev-python/setuptools[${PYTHON_USEDEP}]
 "

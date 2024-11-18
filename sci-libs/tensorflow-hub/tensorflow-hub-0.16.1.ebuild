@@ -61,7 +61,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
 RDEPEND+="
 	>=dev-python/numpy-1.12.0[${PYTHON_USEDEP}]
-	>=dev-python/protobuf-python-3.19.6[${PYTHON_USEDEP}]
+	>=dev-python/protobuf-3.19.6[${PYTHON_USEDEP}]
 	>=sci-libs/tf-keras-2.14.1[${PYTHON_USEDEP}]
 	>=sci-libs/tensorflow-${TENSORFLOW_PV}
 "

@@ -36,7 +36,7 @@ RDEPEND+="
 	>=dev-python/six-1.16[${PYTHON_USEDEP}]
 	>=net-dns/c-ares-1.17.2:=
 	>=sys-libs/zlib-1.2.13:=
-	dev-python/protobuf-python:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
+	dev-python/protobuf:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
