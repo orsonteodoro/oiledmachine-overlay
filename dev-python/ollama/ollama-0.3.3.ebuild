@@ -19,7 +19,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 else
 	KEYWORDS="~amd64"
-	S="${WORKDIR}/${PN}-${PV}"
+	S="${WORKDIR}/${PN}-python-${PV}"
 	SRC_URI="
 https://github.com/ollama/ollama-python/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -82,4 +82,4 @@ src_install() {
 	dodoc "LICENSE"
 }
 
-# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
