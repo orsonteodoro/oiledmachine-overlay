@@ -1,0 +1,56 @@
+[For the original copy, see https://huggingface.co/Nexusflow/Athene-V2-Chat/blob/main/Nexusflow_Research_License_.pdf]
+
+Nexusflow.ai License Terms for Personal Use
+Release Date: 08/19/2024
+
+"Agreement" means these terms and conditions for use, reproduction, distribution and modification of the Nexusflow Materials set forth herein.
+
+"Documentation" means the specifications, manuals and documentation accompanying Nexusflow Models distributed by Nexusflow.
+
+"Licensee" or "you" means you, or your employer or any other person or entity (if you are entering into this Agreement on such person or entity's behalf), of the age required under applicable laws, rules or regulations to provide legal consent and that has legal authority to bind your employer or such other person or entity if you are entering in this Agreement on their behalf.
+
+"Nexusflow Models" means the large language models and software and algorithms, including machine-learning model code, trained model weights, inference-enabling code, training-enabling code, fine-tuning enabling code and other elements of the foregoing made available by Nexusflow.
+
+"Nexusflow Materials" means, collectively, Nexusflow Models and Documentation (and any portion thereof) made available under this Agreement.
+
+"Nexusflow" or "we" means Nexusflow.ai Inc.
+
+"Personal" means any use of the Nexusflow Materials that is (i) solely for personal, non-profit, research, non-production, and non-commercial purposes and (ii) not directly or indirectly connected to any commercial activities, business operations, or employment responsibilities. For illustration purposes, Personal use of a Nexusflow does not include any usage by individuals employed in companies in the context of their daily tasks, any activity that is intended to generate revenue, or that is performed on behalf of a commercial entity.
+
+By using or distributing any portion or element of the Nexusflow Materials, you agree to be bound by this Agreement.
+
+1. License.
+   a. Subject to all terms and conditions hereof and your compliance therewith, you are granted a non-exclusive, worldwide, non-transferable and royalty-free limited license under Nexusflow's intellectual property or other rights owned by Nexusflow embodied in the Nexusflow Materials to use, reproduce, distribute, and copy, and as it pertains to the Nexusflow Models only, create derivative works of, and make modifications to, the Nexusflow Materials for Personal uses only.
+   
+   b. If you need a license that permits other than Personal use, please contact Nexusflow at info@nexusflow.ai. Nexusflow reserves the right to grant or not grant such licenses in its sole discretion.
+   
+   c. Subject to the limited license under Section 1.a.:
+      i. If you distribute or make the Nexusflow Materials (or any derivative works thereof), available to a third party, you shall provide a copy of this Agreement to such third party and such party shall be bound by the terms of this Agreement;
+      
+      ii. You must retain in all copies of the Nexusflow Materials that you distribute the following attribution notice within a "Notice" text file distributed as a part of such copies: "Nexusflow Models are licensed under the Nexusflow.ai License Terms for Personal Use, Copyright © Nexusflow.ai Inc. All Rights Reserved.";
+      
+      iii. You shall not supply the Nexusflow Materials in the course of a commercial activity, whether in return for payment or free of charge, in any medium or form, including but not limited to through a hosted or managed service (e.g. SaaS, cloud instances, etc.), or behind a software layer;
+      
+      iv. Your use of the Nexusflow Materials must comply with applicable laws and regulations (including trade compliance laws and regulations) and adhere to any additional terms or policies that Nexusflow makes available to you, which are hereby incorporated by reference into this Agreement; and
+      
+      v. You will not use the Nexusflow Materials or any output or results of the Nexusflow Materials to improve any model (excluding Nexusflow Models or derivative works thereof).
+
+2. Disclaimer of Warranty.
+   UNLESS REQUIRED BY APPLICABLE LAW, THE NEXUSFLOW MATERIALS AND ANY OUTPUT AND RESULTS THEREFROM ARE PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING, WITHOUT LIMITATION, ANY WARRANTIES OF TITLE, NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. YOU ARE SOLELY RESPONSIBLE FOR DETERMINING THE APPROPRIATENESS OF USING OR REDISTRIBUTING THE NEXUSFLOW MATERIALS AND ASSUME ANY RISKS ASSOCIATED WITH YOUR USE OF THE NEXUSFLOW MATERIALS AND ANY OUTPUT AND RESULTS.
+
+3. Limitation of Liability.
+   IN NO EVENT WILL NEXUSFLOW, ITS LICENSORS OR AFFILIATES BE LIABLE UNDER ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, TORT, NEGLIGENCE, PRODUCTS LIABILITY, OR OTHERWISE, ARISING OUT OF THIS AGREEMENT, FOR ANY LOST PROFITS OR ANY INDIRECT, SPECIAL, CONSEQUENTIAL, INCIDENTAL, EXEMPLARY OR PUNITIVE DAMAGES, EVEN IF NEXUSFLOW OR ITS AFFILIATES HAVE BEEN ADVISED OF THE POSSIBILITY OF ANY OF THE FOREGOING.
+
+4. Intellectual Property.
+   a. No trademark licenses are granted under this Agreement, and in connection with the Nexusflow Materials, neither Nexusflow nor Licensee may use any name or mark owned by or associated with the other or any of its affiliates, except as required for reasonable and customary use in describing and the Nexusflow Materials.
+   
+   b. You will indemnify and hold harmless Nexusflow from and against any claim by any third party arising out of or related to your use of the Nexusflow Materials.
+
+5. Term and Termination.
+   The term of this Agreement will commence upon your acceptance of this Agreement or access to the Nexusflow Materials and will continue in full force and effect until terminated in accordance with the terms and conditions herein. Nexusflow may terminate this Agreement if you are in breach of any term or condition of this Agreement. Upon termination of this Agreement, you shall delete and cease use of the Nexusflow Materials. Sections 1.c, 2, 3, 4, 5 (the last sentence) and 6 shall survive the termination of this Agreement.
+
+6. Governing Law and Jurisdiction.
+   This Agreement will be governed and construed under the laws of the State of California without regard to choice of law principles, and the UN Convention on Contracts for the International Sale of Goods does not apply to this Agreement. The courts of California shall have exclusive jurisdiction of any dispute arising out of this Agreement.
+
+7. Attribution.
+   This model is derived from Qwen as offered by Qwen Teams from Alibaba. You agree that your use of the Nexusflow Materials (defined below) shall be subject to the applicable terms and conditions of the Qwen Community License Agreement, available below and at https://huggingface.co/Qwen/Qwen2.5-72B-Instruct/blob/main/LICENSE

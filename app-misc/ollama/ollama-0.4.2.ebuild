@@ -78,8 +78,9 @@ ALIENTELLIGENCE-sarah
 ALIENTELLIGENCE-sarahv2
 ALIENTELLIGENCE-whiterabbit
 ALIENTELLIGENCE-whiterabbitv2 all-minilm
-Artalius-lixi aya bakllava
+Artalius-lixi aya aya-expanse bakllava
 artifish-mlewd-v2.4
+athene-v2
 benevolentjoker-belial benevolentjoker-bethanygpt benevolentjoker-nsfwmonika
 benevolentjoker-nsfwvanessa benevolentjoker-satan bespoke-minicheck bge-large
 bge-m3 canadiangamer-neena canadiangamer-priya
@@ -96,6 +97,7 @@ fixt-home-3b-v3
 fixt-home-3b-v2
 goliath granite-code
 granite3-dense
+granite3-guardian
 granite3-moe
 hemanth-chessplayer
 hermes3
@@ -105,7 +107,7 @@ jimscard-whiterabbit-neo
 joefamous-grok-1
 leeplenty-lumimaid-v0.2
 llama-guard3 llama-pro llama2 llama2-chinese llama2-uncensored llama3
-llama3-chatqa llama3-gradient llama3-groq-tool-use llama3.1 llama3.2 llava
+llama3-chatqa llama3-gradient llama3-groq-tool-use llama3.1 llama3.2 llama3.2-vision llava
 llava-llama3 llava-phi3 magicoder mannix-replete-adapted-llama3-8b
 mannix-llamax3-8b-alpaca
 mannix-smaug-qwen2-72b
@@ -1787,7 +1789,14 @@ LLM_LICENSES="
 	ollama_llms_artifish-mlewd-v2.4? (
 		CC-BY-NC-4.0
 	)
+	ollama_llms_athene-v2? (
+		Nexusflow.ai-License-Terms-for-Personal-Use
+	)
 	ollama_llms_aya? (
+		CC-BY-NC-4.0
+		C4AI-Acceptable-Use-Policy
+	)
+	ollama_llms_aya-expanse? (
 		CC-BY-NC-4.0
 		C4AI-Acceptable-Use-Policy
 	)
@@ -1962,6 +1971,9 @@ LLM_LICENSES="
 	ollama_llms_granite3-dense? (
 		Apache-2.0
 	)
+	ollama_llms_granite3-guardian? (
+		Apache-2.0
+	)
 	ollama_llms_granite3-moe? (
 		Apache-2.0
 	)
@@ -2031,6 +2043,10 @@ LLM_LICENSES="
 		llama3_1-USE_POLICY.md
 	)
 	ollama_llms_llama3.2? (
+		llama3_2-LICENSE
+		llama3_2-USE_POLICY.md
+	)
+	ollama_llms_llama3.2-vision? (
 		llama3_2-LICENSE
 		llama3_2-USE_POLICY.md
 	)

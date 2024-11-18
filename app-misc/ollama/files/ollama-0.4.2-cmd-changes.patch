@@ -1,6 +1,6 @@
 diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
 --- ollama-0.4.2.orig/cmd/cmd.go	2024-11-15 11:52:25.000000000 -0800
-+++ ollama-0.4.2/cmd/cmd.go	2024-11-16 21:09:54.377453997 -0800
++++ ollama-0.4.2/cmd/cmd.go	2024-11-18 08:23:15.991855389 -0800
 @@ -17,10 +17,12 @@ import (
  	"net"
  	"net/http"
@@ -14,7 +14,7 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
  	"strconv"
  	"strings"
  	"sync/atomic"
-@@ -72,6 +74,2006 @@ func getModelfileName(cmd *cobra.Command
+@@ -72,6 +74,2036 @@ func getModelfileName(cmd *cobra.Command
  	return absName, nil
  }
  
@@ -55,6 +55,7 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
 +	"all-minilm:33m-l12-v2-fp16": "67MB",
 +	"Artalius/lixi": "2.0GB",
 +	"artifish/mlewd-v2.4": "7.9GB",
++	"athene-v2": "72GB",
 +	"aya:8b": "4.8GB",
 +	"aya:35b": "20GB",
 +	"aya:8b-23": "4.8GB",
@@ -63,6 +64,14 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
 +	"aya:8b-23-q8_0": "8.5GB",
 +	"aya:35b-23-q6_K": "29GB",
 +	"aya:35b-23-q8_0": "37GB",
++	"aya-expanse:8b" "5.1GB",
++	"aya-expanse:32b" "20GB",
++	"aya-expanse:8b-fp16" "16GB",
++	"aya-expanse:32b-fp16" "65GB",
++	"aya-expanse:8b-q6_K" "6.6GB",
++	"aya-expanse:8b-q8_0" "8.5GB",
++	"aya-expanse:32b-q6_K" "27GB",
++	"aya-expanse:32b-q8_0" "34GB",
 +	"bakllava:7b": "4.7GB",
 +	"bakllava:7b-v1-q6_K": "6.6GB",
 +	"bakllava:7b-v1-q8_0": "8.3GB",
@@ -460,6 +469,13 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
 +	"granite3-dense:8b-instruct-q8_0": "8.7GB",
 +	"granite3-dense:2b-instruct-fp16": "5.3GB",
 +	"granite3-dense:8b-instruct-fp16": "16GB",
++	"granite3-guardian:2b": "2.7GB",
++	"granite3-guardian:8b": "5.8GB",
++	"granite3-guardian:2b-q8_0": "2.7GB",
++	"granite3-guardian:2b-fp16": "5.1GB",
++	"granite3-guardian:8b-q6_K": "6.7GB",
++	"granite3-guardian:8b-q8_0": "8.7GB",
++	"granite3-guardian:8b-fp16": "16GB",
 +	"granite3-moe:1b": "822MB",
 +	"granite3-moe:3b": "2.1GB",
 +	"granite3-moe:1b-instruct-q8_0": "1.4GB",
@@ -624,6 +640,12 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
 +	"llama3.1:70b-text-fp16": "141GB",
 +	"llama3.1:405b-instruct-fp16": "812GB",
 +	"llama3.1:405b-text-fp16": "812GB",
++	"llama3.2-vision:11b":  "7.9GB",
++	"llama3.2-vision:90b":  "55GB",
++	"llama3.2-vision:11b-instruct-q8_0":  "12GB",
++	"llama3.2-vision:11b-instruct-fp16":  "21GB",
++	"llama3.2-vision:90b-instruct-q8_0":  "95GB",
++	"llama3.2-vision:90b-instruct-fp16":  "177GB",
 +	"llama3.2:3b": "2.0GB",
 +	"llama3.2:1b": "1.3GB",
 +	"llama3.2:1b-instruct-q5_1": "953MB",
@@ -1640,7 +1662,9 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
 +	"all-minilm": 1,
 +	"Artalius/lixi": 1,
 +	"artifish/mlewd-v2.4": 1,
++	"athene-v2": 1,
 +	"aya": 1,
++	"aya-expanse": 1,
 +	"bakllava": 1,
 +	"bespoke-minicheck": 1,
 +	"bge-large": 1,
@@ -1689,6 +1713,7 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
 +	"goliath": 1,
 +	"granite-code": 1,
 +	"granite3-dense": 1,
++	"granite3-guardian": 1,
 +	"granite3-moe": 1,
 +	"hemanth/chessplayer": 1,
 +	"hermes3": 1,
@@ -1709,6 +1734,7 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
 +	"llama3-groq-tool-use": 1,
 +	"llama3.1": 1,
 +	"llama3.2": 1,
++	"llama3.2-vision": 1,
 +	"llava": 1,
 +	"llava-llama3": 1,
 +	"llava-phi3": 1,
@@ -1836,7 +1862,9 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
 +	"all-minilm": "embedding",
 +	"Artalius/lixi": "writer developer companion code-optimization fun-facts idea-generator wordsmith cloud-developer coding coding-assistant computer-science anime manga erotica nsfw japanese-alignment japanese-pop-culture uncensored gamer gamer-girl ai-girlfriend girlfriend funny",
 +	"artifish/mlewd-v2.4": "nsfw adult-content",
++	"athene-v2": "coding code-completion log-extraction",
 +	"aya": "multilingual arabic chinese czech dutch english french german greek hebrew hindi indonesian italian japanese korean persian polish portuguese romanian russian spanish turkish ukrainian vietnamese",
++	"aya-expanse": "text-generator tool-use qa multilingual arabic chinese-simplified chinese-traditional czech dutch english french german greek hebrew hebrew hindi indonesian italian japanese korean persian polish portuguese romanian russian spanish turkish ukrainian vietnamese",
 +	"bakllava": "image-deconstruction image-describe image-to-text image-summary",
 +	"benevolentjoker/bethanygpt": "nsfw adult-content multiple-personalities",
 +	"benevolentjoker/belial": "devil fiction dark-personality",
@@ -1886,6 +1914,7 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
 +	"goliath": "detailed-response roleplay detailed-roleplay",
 +	"granite-code": "coding code-generation fixing-bugs documentation assistant fine-tunable",
 +	"granite3-dense": "summaries text-classification text-extraction qa rag code-related function-calling tool-use code-generation translation bug-fixing multilingual english german french japanese portuguese arabic czech italian korean dutch chinese simplified-chinese",
++	"granite3-guardian": "security jailbreak-detection content-moderation guardrails nsfw-detection rag"
 +	"granite3-moe": "low-latency summaries text-classification text-extraction qa rag code-related function-calling multilanguage english german french japanese portuguese arabic czech italian korean dutch chinese simplified-chinese",
 +	"hemanth/chessplayer": "chess chess-player white-player ai-moves-first",
 +	"hermes3": "roleplaying abstract-reasoning common-sense function-calling structured-output assistant code-generation",
@@ -1908,7 +1937,8 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
 +	"llama3-gradient": "assistant",
 +	"llama3-groq-tool-use": "function-calling tool-use",
 +	"llama3.1": "multilingual chat translation summaries coding coding-assistant general-knowledge",
-+	"llama3.2": "multilingual chat instruction-following summaries",
++	"llama3.2": "multilingual chat instruction-following summaries english german french italian portuguese hindi spanish thai",
++	"llama3.2-vision": "multilingual chat instruction-following summaries vision ocr optical-character-recognition english english-only-vision german french italian portuguese hindi spanish thai",
 +	"llava": "ocr optical-character-recognition image-to-text chat chatbot",
 +	"llava-llama3": "image-to-text",
 +	"llava-phi3": "image-to-text",
@@ -2021,7 +2051,7 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
  func CreateHandler(cmd *cobra.Command, args []string) error {
  	p := progress.NewProgress(os.Stderr)
  	defer p.Stop()
-@@ -416,6 +2418,25 @@ func StopHandler(cmd *cobra.Command, arg
+@@ -416,6 +2448,25 @@ func StopHandler(cmd *cobra.Command, arg
  func RunHandler(cmd *cobra.Command, args []string) error {
  	interactive := true
  
@@ -2047,7 +2077,7 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
  	opts := runOptions{
  		Model:    args[0],
  		WordWrap: os.Getenv("TERM") == "xterm-256color",
-@@ -745,9 +2766,11 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -745,9 +2796,11 @@ func ShowHandler(cmd *cobra.Command, arg
  	modelfile, errModelfile := cmd.Flags().GetBool("modelfile")
  	parameters, errParams := cmd.Flags().GetBool("parameters")
  	system, errSystem := cmd.Flags().GetBool("system")
@@ -2060,7 +2090,7 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
  		if boolErr != nil {
  			return errors.New("error retrieving flags")
  		}
-@@ -776,13 +2799,269 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -776,13 +2829,273 @@ func ShowHandler(cmd *cobra.Command, arg
  		showType = "system"
  	}
  
@@ -2106,7 +2136,9 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
 +		"all-minilm": "Apache-2.0",
 +		"Artalius/lixi": "LLAMA 3.2 COMMUNITY LICENSE AGREEMENT, Llama 3.2 Acceptable Use Policy",
 +		"artifish/mlewd-v2.4": "CC-BY-NC-4.0",
++		"athene-v2": "Nexusflow.ai License Terms for Personal Use",
 +		"aya": "CC-BY-NC-4.0, Cohere For AI Acceptable Use Policy",
++		"aya-expanse": "CC-BY-NC-4.0, Cohere For AI Acceptable Use Policy",
 +		"bakllava": "Apache-2.0",
 +		"bespoke-minicheck": "CC-BY-NC-4.0",
 +		"bge-large": "MIT",
@@ -2158,6 +2190,7 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
 +		"goliath": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"granite-code": "Apache-2.0",
 +		"granite3-dense": "Apache-2.0",
++		"granite3-guardian": "Apache-2.0",
 +		"granite3-moe": "Apache-2.0",
 +		"hemanth/chessplayer": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"hermes3": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy",
@@ -2178,6 +2211,7 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
 +		"llama3-groq-tool-use": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy",
 +		"llama3.1": "LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy",
 +		"llama3.2": "LLAMA 3.2 COMMUNITY LICENSE AGREEMENT, Llama 3.2 Acceptable Use Policy",
++		"llama3.2-vision": "LLAMA 3.2 COMMUNITY LICENSE AGREEMENT, Llama 3.2 Acceptable Use Policy",
 +		"llava": "Apache-2.0",
 +		"llava-llama3": "",
 +		"llava-phi3": "",
@@ -2331,7 +2365,7 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
  	}
  
  	req := api.ShowRequest{Name: args[0]}
-@@ -961,6 +3240,138 @@ func PullHandler(cmd *cobra.Command, arg
+@@ -961,6 +3274,138 @@ func PullHandler(cmd *cobra.Command, arg
  	return nil
  }
  
@@ -2470,7 +2504,7 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
  type generateContextKey string
  
  type runOptions struct {
-@@ -1366,6 +3777,8 @@ func NewCLI() *cobra.Command {
+@@ -1366,6 +3811,8 @@ func NewCLI() *cobra.Command {
  	showCmd.Flags().Bool("parameters", false, "Show parameters of a model")
  	showCmd.Flags().Bool("template", false, "Show template of a model")
  	showCmd.Flags().Bool("system", false, "Show system message of a model")
@@ -2479,7 +2513,7 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
  
  	runCmd := &cobra.Command{
  		Use:     "run MODEL [PROMPT]",
-@@ -1448,6 +3861,30 @@ func NewCLI() *cobra.Command {
+@@ -1448,6 +3895,30 @@ func NewCLI() *cobra.Command {
  		RunE:    DeleteHandler,
  	}
  
@@ -2510,7 +2544,7 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
  	envVars := envconfig.AsMap()
  
  	envs := []envconfig.EnvVar{envVars["OLLAMA_HOST"]}
-@@ -1464,6 +3901,9 @@ func NewCLI() *cobra.Command {
+@@ -1464,6 +3935,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		serveCmd,
@@ -2520,7 +2554,7 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
  	} {
  		switch cmd {
  		case runCmd:
-@@ -1503,6 +3943,9 @@ func NewCLI() *cobra.Command {
+@@ -1503,6 +3977,9 @@ func NewCLI() *cobra.Command {
  		psCmd,
  		copyCmd,
  		deleteCmd,
@@ -2530,5 +2564,3 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
  	)
  
  	return rootCmd
-Only in ollama-0.4.2/cmd: cmd.go.orig
-Only in ollama-0.4.2/cmd: cmd.go.rej
