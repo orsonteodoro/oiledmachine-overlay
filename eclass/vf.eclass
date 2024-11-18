@@ -71,7 +71,7 @@ einfo "CE = Code Execution"
 einfo "CI = Shell Command Injection"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "CSRF" ]] ; then
-einfo "CSSF = Cross Site Request Forgery"
+einfo "CSRF = Cross Site Request Forgery"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "DoS" ]] ; then
 einfo "DoS = Denial of Service"
