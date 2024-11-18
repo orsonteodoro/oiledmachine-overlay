@@ -2773,11 +2773,15 @@ https://registry.npmjs.org/yn/-/yn-3.1.1.tgz -> npmpkg-yn-3.1.1.tgz
 https://registry.npmjs.org/yocto-queue/-/yocto-queue-0.1.0.tgz -> npmpkg-yocto-queue-0.1.0.tgz
 "
 # UPDATER_END_NPM_EXTERNAL_URIS
-#KEYWORDS="~amd64 ~arm64" # Ollama support broken
+KEYWORDS="~amd64 ~arm64"
 SRC_URI="
 $(cargo_crate_uris ${CRATES})
 ${NPM_EXTERNAL_URIS}
+https://github.com/semperai/amica/commit/da5a3908fa5055cbb4651c21562038ebf308ac48.patch
+	-> ${PN}-commit-da5a390.patch
 "
+# Fix ollamaChat by implementing new Ollama chat API.
+#   Reverting, broken
 
 if [[ "${PV}" =~ "_p" ]] ; then
 	TARBALL="${PN}-${EGIT_COMMIT:0:7}.tar.gz"
@@ -2911,6 +2915,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 coqui debug ollama tray voice-recognition wayland whisper-cpp X
+ebuild-revision-1
 "
 REQUIRED_USE="
 	voice-recognition
@@ -3112,6 +3117,7 @@ einfo "Unpacking cargo packages"
 src_prepare() {
 	default
 	eapply "${FILESDIR}/${PN}-0.2.1_p20241022-debug.patch"
+	eapply -R "${DISTDIR}/${PN}-commit-da5a390.patch"
 }
 
 src_configure() {
@@ -3163,4 +3169,5 @@ pkg_postinst() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  Failed (0.2.1_p20241022, 20241117)
+# OILEDMACHINE-OVERLAY-TEST:  Passed (0.2.1_p20241022, 20241117)
+# ollama support - passed (with smollm:135m)

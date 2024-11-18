@@ -2760,14 +2760,18 @@ https://registry.npmjs.org/yn/-/yn-3.1.1.tgz -> npmpkg-yn-3.1.1.tgz
 https://registry.npmjs.org/yocto-queue/-/yocto-queue-0.1.0.tgz -> npmpkg-yocto-queue-0.1.0.tgz
 "
 # UPDATER_END_NPM_EXTERNAL_URIS
-#KEYWORDS="~amd64 ~arm64" # Ollama support broken
+KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${PN}-app-v${PV}"
 SRC_URI="
 $(cargo_crate_uris ${CRATES})
 ${NPM_EXTERNAL_URIS}
 https://github.com/semperai/amica/archive/refs/tags/app-v${PV}.tar.gz
 	-> ${P}.tar.gz
+https://github.com/semperai/amica/commit/da5a3908fa5055cbb4651c21562038ebf308ac48.patch
+	-> ${PN}-commit-da5a390.patch
 "
+# Fix ollamaChat by implementing new Ollama chat API.
+#   Reverting, broken
 
 DESCRIPTION="Amica is an open source interface for interactive communication with 3D characters with voice synthesis and speech recognition."
 HOMEPAGE="
@@ -2882,6 +2886,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 coqui debug ollama tray voice-recognition wayland whisper-cpp X
+ebuild-revision-1
 "
 REQUIRED_USE="
 	voice-recognition
@@ -3075,6 +3080,11 @@ einfo "Unpacking cargo packages"
 	fi
 }
 
+src_prepare() {
+	default
+	eapply -R "${DISTDIR}/${PN}-commit-da5a390.patch"
+}
+
 src_configure() {
 	cargo_src_configure
 }
@@ -3124,4 +3134,4 @@ pkg_postinst() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  Failed (0.2.1, 20241117)
+# OILEDMACHINE-OVERLAY-TEST:  Needs retest (0.2.1, 20241117)

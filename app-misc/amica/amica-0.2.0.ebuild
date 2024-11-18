@@ -3127,3 +3127,4 @@ pkg_postinst() {
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-TEST:  Passed (0.2.0, 20241117)
+# ollama support - passed (with smollm:135m)
