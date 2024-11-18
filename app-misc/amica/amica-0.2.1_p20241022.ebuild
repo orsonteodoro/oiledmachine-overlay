@@ -405,7 +405,7 @@ WEBKIT_GTK_STABLE=(
 	"2.28"
 )
 
-inherit cargo desktop lcnr npm
+inherit cargo desktop lcnr npm xdg
 
 # UPDATER_START_NPM_EXTERNAL_URIS
 NPM_EXTERNAL_URIS="
