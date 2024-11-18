@@ -4340,12 +4340,12 @@ einfo "Installing for Chromium"
 		local x
 		for x in $(ls "${ED}/${prefix}/$(get_libdir)/"*".so"* ) ; do
 			[[ -L "${x}" ]] && continue
-einfo "Adding /${prefix} to rpath for ${x}"
+einfo "Adding /${prefix}/$(get_libdir) to rpath for ${x}"
 			patchelf --add-rpath "/${prefix}/$(get_libdir)" "${x}" || die
 		done
 		for x in $(ls "${ED}/${prefix}/bin/"*) ; do
 			[[ -L "${x}" ]] && continue
-einfo "Adding /${prefix} to rpath for ${x}"
+einfo "Adding /${prefix}/$(get_libdir) to rpath for ${x}"
 			patchelf --add-rpath "/${prefix}/$(get_libdir)" "${x}" || die
 		done
 	fi
