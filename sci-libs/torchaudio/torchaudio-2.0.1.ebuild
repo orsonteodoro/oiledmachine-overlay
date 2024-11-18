@@ -22,7 +22,7 @@ https://github.com/flashlight/text/archive/${FLASHLIGHT_TEXT_COMMIT}.tar.gz
 https://github.com/kaldi-asr/kaldi/archive/${KALDI_COMMIT}.tar.gz
 	-> kaldi-${KALDI_COMMIT:0:7}.tar.gz
 https://github.com/kpu/kenlm/archive/${KENLM_COMMIT}.tar.gz
-	-> kenlm-${KALDI_COMMIT:0:7}.tar.gz
+	-> kenlm-${KENLM_COMMIT:0:7}.tar.gz
 https://github.com/pytorch/audio/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "

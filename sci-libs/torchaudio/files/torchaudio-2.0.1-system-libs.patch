@@ -1,6 +1,6 @@
 diff '--color=auto' -urp audio-2.0.1.orig/third_party/bzip2/CMakeLists.txt audio-2.0.1/third_party/bzip2/CMakeLists.txt
 --- audio-2.0.1.orig/third_party/bzip2/CMakeLists.txt	2023-03-15 11:02:00.000000000 -0700
-+++ audio-2.0.1/third_party/bzip2/CMakeLists.txt	2024-11-18 13:40:41.955901680 -0800
++++ audio-2.0.1/third_party/bzip2/CMakeLists.txt	2024-11-18 15:13:28.032606512 -0800
 @@ -1,59 +1,70 @@
  include(ExternalProject)
  
@@ -9,7 +9,7 @@ diff '--color=auto' -urp audio-2.0.1.orig/third_party/bzip2/CMakeLists.txt audio
 +if($ENV{USE_SYSTEM_BZIP2} EQUAL 1)
 +else()
 +  option(USE_SYSTEM_BZIP2 "Use system bzip2?" OFF)
-+endif
++endif()
  
 -if (MSVC)
 -  set(
@@ -35,7 +35,7 @@ diff '--color=auto' -urp audio-2.0.1.orig/third_party/bzip2/CMakeLists.txt audio
 -    LOG_MERGED_STDOUTERR ON
 -    LOG_OUTPUT_ON_FAILURE ON
 -  )
-+if(USE_SYSTEM_BZIP2 EQUAL 1 OR $ENV{USE_SYSTEM_BZLIP2} EQUAL 1)
++if(USE_SYSTEM_BZIP2 EQUAL 1 OR $ENV{USE_SYSTEM_BZIP2} EQUAL 1)
 +  add_library(bzip2 SHARED IMPORTED)
 +  set_target_properties( bzip2 PROPERTIES IMPORTED_LOCATION /usr/lib64/libbz2.so )
  else()
@@ -128,7 +128,7 @@ diff '--color=auto' -urp audio-2.0.1.orig/third_party/bzip2/CMakeLists.txt audio
 +endif()
 diff '--color=auto' -urp audio-2.0.1.orig/third_party/lzma/CMakeLists.txt audio-2.0.1/third_party/lzma/CMakeLists.txt
 --- audio-2.0.1.orig/third_party/lzma/CMakeLists.txt	2023-03-15 11:02:00.000000000 -0700
-+++ audio-2.0.1/third_party/lzma/CMakeLists.txt	2024-11-18 13:37:10.281406217 -0800
++++ audio-2.0.1/third_party/lzma/CMakeLists.txt	2024-11-18 15:13:28.032606512 -0800
 @@ -1,45 +1,56 @@
  include(ExternalProject)
  
@@ -152,11 +152,11 @@ diff '--color=auto' -urp audio-2.0.1.orig/third_party/lzma/CMakeLists.txt audio-
 +if($ENV{USE_SYSTEM_LZMA} EQUAL 1)
 +else()
 +  option(USE_SYSTEM_LZMA "Use system lzma?" OFF)
-+endif
++endif()
 +
 +if(USE_SYSTEM_LZMA EQUAL 1 OR $ENV{USE_SYSTEM_LZMA} EQUAL 1)
 +  add_library(lzma SHARED IMPORTED)
-+  set_target_properties( lazma PROPERTIES IMPORTED_LOCATION /usr/lib64/liblzma.so )
++  set_target_properties( lzma PROPERTIES IMPORTED_LOCATION /usr/lib64/liblzma.so )
 +else()
 +
 +  set(INSTALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../install)
@@ -229,7 +229,7 @@ diff '--color=auto' -urp audio-2.0.1.orig/third_party/lzma/CMakeLists.txt audio-
 +endif()
 diff '--color=auto' -urp audio-2.0.1.orig/third_party/sox/CMakeLists.txt audio-2.0.1/third_party/sox/CMakeLists.txt
 --- audio-2.0.1.orig/third_party/sox/CMakeLists.txt	2023-03-15 11:02:00.000000000 -0700
-+++ audio-2.0.1/third_party/sox/CMakeLists.txt	2024-11-18 13:40:40.547911682 -0800
++++ audio-2.0.1/third_party/sox/CMakeLists.txt	2024-11-18 15:13:28.032606512 -0800
 @@ -1,212 +1,222 @@
  find_package(PkgConfig REQUIRED)
  
@@ -237,7 +237,7 @@ diff '--color=auto' -urp audio-2.0.1.orig/third_party/sox/CMakeLists.txt audio-2
 +if($ENV{USE_SYSTEM_SOX} EQUAL 1)
 +else()
 +  option(USE_SYSTEM_SOX "Use system sox?" OFF)
-+endif
++endif()
 +
 +if(USE_SYSTEM_SOX EQUAL 1 OR $ENV{USE_SYSTEM_SOX} EQUAL 1)
 +  add_library(libsox SHARED IMPORTED)
@@ -662,21 +662,15 @@ diff '--color=auto' -urp audio-2.0.1.orig/third_party/sox/CMakeLists.txt audio-2
 +  target_include_directories(libsox INTERFACE ${INSTALL_DIR}/include)
 +  target_link_libraries(libsox INTERFACE ${SOX_LIBRARIES})
 +endif()
-Only in audio-2.0.1/third_party/sox: CMakeLists.txt.orig
-Only in audio-2.0.1/third_party/sox: CMakeLists.txt.rej
 diff '--color=auto' -urp audio-2.0.1.orig/third_party/zlib/CMakeLists.txt audio-2.0.1/third_party/zlib/CMakeLists.txt
 --- audio-2.0.1.orig/third_party/zlib/CMakeLists.txt	2023-03-15 11:02:00.000000000 -0700
-+++ audio-2.0.1/third_party/zlib/CMakeLists.txt	2024-11-18 13:40:42.899894975 -0800
-@@ -1,68 +1,79 @@
++++ audio-2.0.1/third_party/zlib/CMakeLists.txt	2024-11-18 15:16:33.963442914 -0800
+@@ -1,68 +1,80 @@
  include(ExternalProject)
  
 -set(INSTALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../install)
 -set(ARCHIVE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../archives)
-+if($ENV{USE_SYSTEM_ZLIB} EQUAL 1)
-+else()
-+  option(USE_SYSTEM_ZLIB "Use system lzma?" OFF)
-+endif
- 
+-
 -if (MSVC)
 -  set(
 -    ZLIB_LIBRARIES
@@ -701,9 +695,7 @@ diff '--color=auto' -urp audio-2.0.1.orig/third_party/zlib/CMakeLists.txt audio-
 -    LOG_MERGED_STDOUTERR ON
 -    LOG_OUTPUT_ON_FAILURE ON
 -  )
-+if(USE_SYSTEM_ZLIB EQUAL 1 OR $ENV{USE_SYSTEM_ZLIB} EQUAL 1)
-+  add_library(zlib SHARED IMPORTED)
-+  set_target_properties( zlib PROPERTIES IMPORTED_LOCATION /usr/lib64/libz.so )
++if($ENV{USE_SYSTEM_ZLIB} EQUAL 1)
  else()
 -  # To pass custom environment variables to ExternalProject_Add command,
 -  # we need to do `${CMAKE_COMMAND} -E env ${envs} <COMMANAD>`.
@@ -737,12 +729,18 @@ diff '--color=auto' -urp audio-2.0.1.orig/third_party/zlib/CMakeLists.txt audio-
 -    LOG_MERGED_STDOUTERR ON
 -    LOG_OUTPUT_ON_FAILURE ON
 -  )
--endif()
++  option(USE_SYSTEM_ZLIB "Use system lzma?" OFF)
+ endif()
  
 -add_library(zlib INTERFACE)
 -add_dependencies(zlib zlib-)
 -target_include_directories(zlib INTERFACE ${INSTALL_DIR}/include)
 -target_link_libraries(zlib INTERFACE ${ZLIB_LIBRARIES})
++if(USE_SYSTEM_ZLIB EQUAL 1 OR $ENV{USE_SYSTEM_ZLIB} EQUAL 1)
++  add_library(zlib SHARED IMPORTED)
++  set_target_properties( zlib PROPERTIES IMPORTED_LOCATION /usr/lib64/libz.so )
++else()
++
 +  set(INSTALL_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../install)
 +  set(ARCHIVE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../archives)
 +
@@ -787,6 +785,7 @@ diff '--color=auto' -urp audio-2.0.1.orig/third_party/zlib/CMakeLists.txt audio-
 +      ${INSTALL_DIR}/lib/libz.a
 +    )
 +
++    message(STATUS "DEBUG PATH 2")
 +    ExternalProject_Add(zlib-
 +      PREFIX ${CMAKE_CURRENT_BINARY_DIR}
 +      DOWNLOAD_DIR ${ARCHIVE_DIR}
