@@ -3107,6 +3107,11 @@ einfo "Unpacking cargo packages"
 	fi
 }
 
+src_prepare() {
+	default
+	eapply "${FILESDIR}/${PN}-0.2.1_p20241022-debug.patch"
+}
+
 src_configure() {
 	cargo_src_configure
 }
