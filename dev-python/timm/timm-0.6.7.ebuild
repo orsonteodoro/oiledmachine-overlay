@@ -33,7 +33,7 @@ RDEPEND+="
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 		modelindex? (
 			>=dev-python/model-index-0.1.10[${PYTHON_USEDEP}]
-			>=dev-python/jinja-2.11.3[${PYTHON_USEDEP}]
+			>=dev-python/jinja2-2.11.3[${PYTHON_USEDEP}]
 		)
 	')
 	>=sci-libs/pytorch-1.4.0[${PYTHON_SINGLE_USEDEP}]

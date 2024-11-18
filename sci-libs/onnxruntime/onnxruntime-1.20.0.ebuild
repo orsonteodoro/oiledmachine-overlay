@@ -790,7 +790,7 @@ BDEPEND+="
 			>=dev-python/parameterized-0.8.1[${PYTHON_USEDEP}]
 			>=dev-python/black-24.2.0[${PYTHON_USEDEP}]
 			>=dev-python/isort-5.13.2[${PYTHON_USEDEP}]
-			dev-python/jinja[${PYTHON_USEDEP}]
+			dev-python/jinja2[${PYTHON_USEDEP}]
 			dev-python/mypy[${PYTHON_USEDEP}]
 			dev-python/pandas[${PYTHON_USEDEP}]
 			dev-python/pytest[${PYTHON_USEDEP}]

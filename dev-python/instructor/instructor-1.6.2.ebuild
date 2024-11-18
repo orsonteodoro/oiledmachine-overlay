@@ -78,7 +78,7 @@ RDEPEND+="
 	>=dev-python/tenacity-9.0.0[${PYTHON_USEDEP}]
 	>=dev-python/pydantic-core-2.18.0[${PYTHON_USEDEP}]
 	>=dev-python/jiter-0.5.0[${PYTHON_USEDEP}]
-	>=dev-python/jinja-3.1.4[${PYTHON_USEDEP}]
+	>=dev-python/jinja2-3.1.4[${PYTHON_USEDEP}]
 	anthropic? (
 		>=dev-python/anthropic-0.34.0[${PYTHON_USEDEP}]
 	)

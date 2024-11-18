@@ -248,11 +248,11 @@ DOCS_BDEPEND="
 			)
 		)
 		!strict? (
-			dev-python/jinja[${PYTHON_USEDEP}]
+			dev-python/jinja2[${PYTHON_USEDEP}]
 			dev-python/nbconvert[${PYTHON_USEDEP}]
 		)
 		strict? (
-			<dev-python/jinja-3.2.0[${PYTHON_USEDEP}]
+			<dev-python/jinja2-3.2.0[${PYTHON_USEDEP}]
 			<dev-python/nbconvert-7.14[${PYTHON_USEDEP}]
 		)
 		>=dev-python/sphinx-autodoc-typehints-1.16[${PYTHON_USEDEP}]

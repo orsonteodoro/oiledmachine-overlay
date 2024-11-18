@@ -64,11 +64,11 @@ BDEPEND="
 		dev-python/wheel[${PYTHON_USEDEP}]
 	' python3_12)
 	doc? (
-		>=dev-python/jinja-3.0.3[${PYTHON_USEDEP}]
+		>=dev-python/jinja2-3.0.3[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-7.2.6[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-issues-3.0.1[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-tabs-3.4.4[${PYTHON_USEDEP}]
-		>=dev-python/jinja-3.1.3[${PYTHON_USEDEP}]
+		>=dev-python/jinja2-3.1.3[${PYTHON_USEDEP}]
 		>=dev-python/jupyter-1.0.0[${PYTHON_USEDEP}]
 		>=dev-python/alabaster-0.7.16[${PYTHON_USEDEP}]
 		>=dev-python/anyio-4.2.0[${PYTHON_USEDEP}]
@@ -212,7 +212,7 @@ PATCHES=(
 
 distutils_enable_sphinx \
 	"docs" \
-	"dev-python/jinja" \
+	"dev-python/jinja2" \
 	"dev-python/sphinx-issues" \
 	"dev-python/sphinx-tabs"
 

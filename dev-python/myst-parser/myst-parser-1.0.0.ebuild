@@ -55,7 +55,7 @@ RDEPEND+="
 		>=dev-python/sphinx-5[${PYTHON_USEDEP}]
 		<dev-python/sphinx-7[${PYTHON_USEDEP}]
 	)
-	>=dev-python/jinja-2[${PYTHON_USEDEP}]
+	>=dev-python/jinja2-2[${PYTHON_USEDEP}]
 	>=dev-python/mdit-py-plugins-0.3.4[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 

@@ -206,7 +206,7 @@ DEPEND+="
 "
 BDEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/jinja-2[${PYTHON_USEDEP}]
+		>=dev-python/jinja2-2[${PYTHON_USEDEP}]
 	')
 	>=dev-build/cmake-3.17.5
 	>=sys-devel/bison-2.4.1

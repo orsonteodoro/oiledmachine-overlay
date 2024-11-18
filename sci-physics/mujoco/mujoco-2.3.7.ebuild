@@ -156,7 +156,7 @@ BDEPEND+="
 	>=dev-build/cmake-3.16
 	doc? (
 		>=dev-python/furo-2022.9.29[${PYTHON_USEDEP}]
-		>=dev-python/jinja-2.11.3[${PYTHON_USEDEP}]
+		>=dev-python/jinja2-2.11.3[${PYTHON_USEDEP}]
 		>=dev-python/jq-1.4.1[${PYTHON_USEDEP}]
 		>=dev-python/markupsafe-2.0.1[${PYTHON_USEDEP}]
 		>=dev-python/nbsphinx-0.9.1[${PYTHON_USEDEP}]

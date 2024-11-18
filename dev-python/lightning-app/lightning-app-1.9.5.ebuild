@@ -102,7 +102,7 @@ APP_BASE_RDEPEND="
 			dev-python/click[${PYTHON_USEDEP}]
 			dev-python/dateutils[${PYTHON_USEDEP}]
 			dev-python/fastapi[${PYTHON_USEDEP}]
-			dev-python/jinja[${PYTHON_USEDEP}]
+			dev-python/jinja2[${PYTHON_USEDEP}]
 			dev-python/psutil[${PYTHON_USEDEP}]
 			dev-python/pydantic[${PYTHON_USEDEP}]
 			dev-python/pyyaml[${PYTHON_USEDEP}]
@@ -118,7 +118,7 @@ APP_BASE_RDEPEND="
 			<dev-python/click-8.1.4[${PYTHON_USEDEP}]
 			<dev-python/dateutils-0.6.13[${PYTHON_USEDEP}]
 			<dev-python/fastapi-0.89.0[${PYTHON_USEDEP}]
-			<dev-python/jinja-3.1.3[${PYTHON_USEDEP}]
+			<dev-python/jinja2-3.1.3[${PYTHON_USEDEP}]
 			<dev-python/psutil-5.9.5[${PYTHON_USEDEP}]
 			<dev-python/pydantic-1.10.5[${PYTHON_USEDEP}]
 			<dev-python/pyyaml-6.0.2[${PYTHON_USEDEP}]
@@ -213,9 +213,9 @@ DOCS_BDEPEND="
 			)
 		)
 		(
-			>=dev-python/jinja-3.0.0[${PYTHON_USEDEP}]
+			>=dev-python/jinja2-3.0.0[${PYTHON_USEDEP}]
 			strict? (
-				<dev-python/jinja-3.2.0[${PYTHON_USEDEP}]
+				<dev-python/jinja2-3.2.0[${PYTHON_USEDEP}]
 			)
 		)
 		(

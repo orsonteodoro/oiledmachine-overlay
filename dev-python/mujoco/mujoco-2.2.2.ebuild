@@ -152,7 +152,7 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-build/cmake-3.15
 	doc? (
-		>=dev-python/jinja-2.11.3[${PYTHON_USEDEP}]
+		>=dev-python/jinja2-2.11.3[${PYTHON_USEDEP}]
 		>=dev-python/jq-1.2.2[${PYTHON_USEDEP}]
 		>=dev-python/markupsafe-2.0.1[${PYTHON_USEDEP}]
 		>=dev-python/nbsphinx-0.8.0[${PYTHON_USEDEP}]

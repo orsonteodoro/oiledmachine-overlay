@@ -55,7 +55,7 @@ BDEPEND="
 		dev-python/wheel[${PYTHON_USEDEP}]
 	' python3_{10..11})
 	doc? (
-		>=dev-python/jinja-3.0.3[${PYTHON_USEDEP}]
+		>=dev-python/jinja2-3.0.3[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-4.5.0[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-issues-3.0.1[${PYTHON_USEDEP}]
 	)

@@ -42,7 +42,7 @@ BDEPEND+="
 	dev-python/hatchling[${PYTHON_USEDEP}]
 	dev-python/typing-extensions[${PYTHON_USEDEP}]
 	doc? (
-		>=dev-python/jinja-3.0.3[${PYTHON_USEDEP}]
+		>=dev-python/jinja2-3.0.3[${PYTHON_USEDEP}]
 		>=dev-python/mkdocs-1.3.0[${PYTHON_USEDEP}]
 		>=dev-python/mkdocs-material-7.3.6[${PYTHON_USEDEP}]
 		>=dev-python/mkdocs_include_exclude_files-0.0.1[${PYTHON_USEDEP}]

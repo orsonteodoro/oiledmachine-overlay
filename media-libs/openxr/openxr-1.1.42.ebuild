@@ -103,7 +103,7 @@ RDEPEND+="
 "
 BDEPEND+="
 	$(python_gen_any_dep '
-		>=dev-python/jinja-3.0.3[${PYTHON_USEDEP}]
+		>=dev-python/jinja2-3.0.3[${PYTHON_USEDEP}]
 	')
 	${PYTHON_DEPS}
 	>=dev-build/cmake-3.22.1

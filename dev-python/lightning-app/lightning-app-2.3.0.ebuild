@@ -119,7 +119,7 @@ APP_BASE_RDEPEND="
 		!strict? (
 			dev-python/click[${PYTHON_USEDEP}]
 			dev-python/dateutils[${PYTHON_USEDEP}]
-			dev-python/jinja[${PYTHON_USEDEP}]
+			dev-python/jinja2[${PYTHON_USEDEP}]
 			dev-python/psutil[${PYTHON_USEDEP}]
 			dev-python/pyyaml[${PYTHON_USEDEP}]
 			dev-python/requests[${PYTHON_USEDEP}]
@@ -131,7 +131,7 @@ APP_BASE_RDEPEND="
 		strict? (
 			<dev-python/click-8.2[${PYTHON_USEDEP}]
 			<dev-python/dateutils-0.8.0[${PYTHON_USEDEP}]
-			<dev-python/jinja-3.2.0[${PYTHON_USEDEP}]
+			<dev-python/jinja2-3.2.0[${PYTHON_USEDEP}]
 			<dev-python/psutil-5.9.6[${PYTHON_USEDEP}]
 			<dev-python/pyyaml-6.0.2[${PYTHON_USEDEP}]
 			<dev-python/requests-2.32.0[${PYTHON_USEDEP}]
@@ -258,11 +258,11 @@ DOCS_BDEPEND="
 			)
 		)
 		!strict? (
-			dev-python/jinja[${PYTHON_USEDEP}]
+			dev-python/jinja2[${PYTHON_USEDEP}]
 			dev-python/nbconvert[${PYTHON_USEDEP}]
 		)
 		strict? (
-			<dev-python/jinja-3.2.0[${PYTHON_USEDEP}]
+			<dev-python/jinja2-3.2.0[${PYTHON_USEDEP}]
 			<dev-python/nbconvert-7.14[${PYTHON_USEDEP}]
 		)
 		>=dev-python/sphinx-autodoc-typehints-1.16[${PYTHON_USEDEP}]

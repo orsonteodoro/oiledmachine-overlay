@@ -185,9 +185,9 @@ DOCS_BDEPEND="
 			)
 		)
 		(
-			>=dev-python/jinja-3.0.0[${PYTHON_USEDEP}]
+			>=dev-python/jinja2-3.0.0[${PYTHON_USEDEP}]
 			strict? (
-				<dev-python/jinja-3.2.0[${PYTHON_USEDEP}]
+				<dev-python/jinja2-3.2.0[${PYTHON_USEDEP}]
 			)
 		)
 		(

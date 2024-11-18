@@ -81,7 +81,7 @@ RDEPEND+="
 		>=dev-python/accelerate-0.29.3[${PYTHON_USEDEP}]
 		>=dev-python/peft-0.6.0[${PYTHON_USEDEP}]
 		dev-python/datasets[${PYTHON_USEDEP}]
-		dev-python/jinja[${PYTHON_USEDEP}]
+		dev-python/jinja2[${PYTHON_USEDEP}]
 		sci-visualization/tensorboard[${PYTHON_USEDEP}]
 	)
 	pytorch? (
@@ -124,7 +124,7 @@ BDEPEND+="
 		>=dev-python/transformers-4.25.1[${PYTHON_USEDEP}]
 		>=sci-libs/safetensors-0.3.1[${PYTHON_USEDEP}]
 		dev-python/datasets[${PYTHON_USEDEP}]
-		dev-python/jinja[${PYTHON_USEDEP}]
+		dev-python/jinja2[${PYTHON_USEDEP}]
 		dev-python/librosa[${PYTHON_USEDEP}]
 		dev-python/parameterized[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]

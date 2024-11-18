@@ -160,7 +160,7 @@ DEPEND+="
 BDEPEND_STRESS_TESTS="
 	<dev-python/h5py-3.0.0[${PYTHON_USEDEP}]
 	dev-python/pymongo[${PYTHON_USEDEP}]
-	dev-python/jinja[${PYTHON_USEDEP}]
+	dev-python/jinja2[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 "
 # tests/time_tests/scripts/requirements.txt \
@@ -247,7 +247,7 @@ BDEPEND+="
 		dev-python/docutils[${PYTHON_USEDEP}]
 		dev-python/idna[${PYTHON_USEDEP}]
 		dev-python/imagesize[${PYTHON_USEDEP}]
-		dev-python/jinja[${PYTHON_USEDEP}]
+		dev-python/jinja2[${PYTHON_USEDEP}]
 		dev-python/lxml[${PYTHON_USEDEP}]
 		dev-python/markupsafe[${PYTHON_USEDEP}]
 		dev-python/mistune[${PYTHON_USEDEP}]
