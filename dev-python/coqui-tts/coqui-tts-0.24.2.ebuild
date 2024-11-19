@@ -18,6 +18,7 @@ EAPI=8
 
 MY_PN="coqui-ai-TTS"
 
+DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
@@ -50,6 +51,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${LANGS[@]/#/l10n_}
 dev doc notebooks server
+ebuild-revision-1
 "
 RDEPEND+="
 	>=sci-libs/transformers-4.42.0[${PYTHON_SINGLE_USEDEP}]
@@ -136,6 +138,6 @@ BDEPEND+="
 	' python3_{10..11})
 	>=dev-vcs/pre-commit-3[${PYTHON_SINGLE_USEDEP}]
 "
-DOCS=( "CHANGELOG" "README.md" )
+DOCS=( "README.md" )
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
