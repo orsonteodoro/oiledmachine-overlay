@@ -34,7 +34,7 @@ SLOT="0"
 IUSE=""
 # https://github.com/tensorflow/tensorflow/blob/v2.12.0/.bazelversion
 RDEPEND="
-	=dev-python/keras-${TF_PV}*[${PYTHON_USEDEP}]
+	=dev-python/tf-keras-${TF_PV}*[${PYTHON_USEDEP}]
 	=sci-libs/tensorflow-${TF_PV}*[${PYTHON_USEDEP},python]
 "
 DEPEND="

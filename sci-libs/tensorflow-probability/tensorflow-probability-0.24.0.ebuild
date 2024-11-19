@@ -26,7 +26,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 		)
 		tensorflow? (
 			=sci-libs/tensorflow-9999[${PYTHON_USEDEP}]
-			=dev-python/keras-9999[${PYTHON_USEDEP}]
+			=dev-python/tf-keras-9999[${PYTHON_USEDEP}]
 		)
 		tfds? (
 			=sci-misc/tensorflow-datasets-9999[${PYTHON_USEDEP}]
@@ -46,7 +46,7 @@ https://github.com/tensorflow/probability/archive/refs/tags/v${PV}.tar.gz
 		)
 		tensorflow? (
 			>=sci-libs/tensorflow-2.16[${PYTHON_USEDEP}]
-			>=dev-python/keras-2.16[${PYTHON_USEDEP}]
+			>=dev-python/tf-keras-2.16[${PYTHON_USEDEP}]
 		)
 		tfds? (
 			>=sci-misc/tensorflow-datasets-2.2.0[${PYTHON_USEDEP}]

@@ -60,8 +60,8 @@ BDEPEND+="
 		>=dev-python/pytest-asyncio-0.23.2[${PYTHON_USEDEP}]
 		>=dev-python/pytest-cov-4.1[${PYTHON_USEDEP}]
 		>=dev-python/pytest-httpserver-1.0.8[${PYTHON_USEDEP}]
-		>=dev-python/pillow-10.2.0[${PYTHON_USEDEP}]
 		>=dev-util/ruff-0.1.8[${PYTHON_USEDEP}]
+		>=virtual/pillow-10.2.0[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "README.md" )

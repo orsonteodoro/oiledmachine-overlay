@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# TODO: undo keras3 changes
+
 # FIXME:
 #  File "/var/tmp/portage/media-video/sr-9999/work/sr-9999/models/model_espcn.py", line 32, in load_model
 #    net = tf.layers.conv2d(lr_batch, 64, 5, activation=tf.nn.tanh, padding='valid', name='conv1',
@@ -178,7 +180,7 @@ if [[ "${MAINTAINER_MODE}" == "1" ]] ; then
 			(
 				>=sci-libs/tensorflow-2[${PYTHON_USEDEP},python]
 			)
-			dev-python/keras[${PYTHON_USEDEP}]
+			dev-python/tf-keras[${PYTHON_USEDEP}]
 		')
 	"
 else
@@ -188,7 +190,7 @@ else
 				>=sci-libs/tensorflow-2[${PYTHON_USEDEP},python]
 				<sci-libs/tensorflow-2.16[${PYTHON_USEDEP},python]
 			)
-			<dev-python/keras-3[${PYTHON_USEDEP}]
+			<dev-python/tf-keras-3[${PYTHON_USEDEP}]
 		')
 	"
 fi

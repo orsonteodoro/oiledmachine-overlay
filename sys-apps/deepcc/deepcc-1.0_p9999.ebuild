@@ -41,6 +41,7 @@ IUSE+=" build-models evaluate kernel-patch polkit +sudo ebuild-revision-3"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
+# Keras is not an upstream requirement but used to replace deprecated functions/methods
 RDEPEND+="
 	${PYTHON_DEPS}
 	|| (

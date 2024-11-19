@@ -40,10 +40,10 @@ BDEPEND+="
 	test? (
 		dev-python/keras[${PYTHON_USEDEP}]
 		dev-python/pandas[${PYTHON_USEDEP}]
-		virtual/pillow[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-xdist[${PYTHON_USEDEP}]
 		dev-python/pytest-cov[${PYTHON_USEDEP}]
 		dev-python/tensorflow[${PYTHON_USEDEP}]
+		virtual/pillow[${PYTHON_USEDEP}]
 	)
 "

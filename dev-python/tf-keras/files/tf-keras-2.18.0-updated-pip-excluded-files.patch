@@ -1,0 +1,12 @@
+--- ./tf_keras/tools/pip_package/create_pip_helper.py.orig	2024-09-24 14:21:20.000000000 -0700
++++ ./tf_keras/tools/pip_package/create_pip_helper.py	2024-11-19 08:41:01.058152745 -0800
+@@ -31,6 +31,9 @@ PIP_EXCLUDED_FILES = frozenset(
+         "tf_keras/saving/legacy/saved_model/create_test_saved_model.py",
+         "tf_keras/tools/pip_package/setup.py",
+         "tf_keras/tools/pip_package/create_pip_helper.py",
++        "tf_keras/layers/experimental/__init__.py",
++        "tf_keras/layers/experimental/dynamic_lookup.py",
++        "tf_keras/layers/experimental/dynamic_embedding.py",
+     ]
+ )
+ 
