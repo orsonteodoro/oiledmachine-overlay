@@ -1,0 +1,44 @@
+diff '--color=auto' -urp anyio-4.6.2.post1.orig/pyproject.toml anyio-4.6.2.post1/pyproject.toml
+--- anyio-4.6.2.post1.orig/pyproject.toml	2024-10-14 07:30:55.000000000 -0700
++++ anyio-4.6.2.post1/pyproject.toml	2024-11-18 19:24:38.717457938 -0800
+@@ -52,10 +52,7 @@ test = [
+     "pytest-mock >= 3.6.1",
+     "trustme",
+     "truststore >= 0.9.1; python_version >= '3.10'",
+-    """\
+-    uvloop >= 0.21.0b1; platform_python_implementation == 'CPython' \
+-    and platform_system != 'Windows'\
+-    """
++    "uvloop >= 0.21.0",
+ ]
+ doc = [
+     "packaging",
+@@ -132,23 +129,23 @@ skip_missing_interpreters = true
+ [tool.tox.env_run_base]
+ depends = ["pre-commit"]
+ package = "editable"
+-commands = [["coverage", "run", "-m", "pytest", { replace = "posargs", extend = true }]]
++commands = [["coverage", "run", "-m", "pytest", { replace = "posargs" } ]]
+ extras = ["test"]
+ 
+ [tool.tox.env.pypy3]
+-commands = [["pytest", { replace = "posargs", extend = true }]]
++commands = [["pytest", { replace = "posargs" } ]]
+ 
+ [tool.tox.env.pre-commit]
+-commands = [["pre-commit", "run", "--all-files"]]
++commands = [["pre-commit", "run", "--all-files"]]
+ depends = []
+ allowlist_externals = ["pre-commit"]
+ package = "skip"
+ 
+ [tool.tox.env.pyright]
+ deps = ["pyright"]
+-commands = [["pyright", "--verifytypes", "anyio"]]
++commands = [["pyright", "--verifytypes", "anyio"]]
+ 
+ [tool.tox.env.docs]
+ depends = []
+ extras = ["doc"]
+-commands = [["sphinx-build", "-W", "docs", "build/sphinx"]]
++commands = [["sphinx-build", "-W", "docs", "build/sphinx"]]
