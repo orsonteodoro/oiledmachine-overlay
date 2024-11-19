@@ -1,6 +1,6 @@
 diff '--color=auto' -urp audio-2.0.1.orig/third_party/bzip2/CMakeLists.txt audio-2.0.1/third_party/bzip2/CMakeLists.txt
 --- audio-2.0.1.orig/third_party/bzip2/CMakeLists.txt	2023-03-15 11:02:00.000000000 -0700
-+++ audio-2.0.1/third_party/bzip2/CMakeLists.txt	2024-11-18 15:13:28.032606512 -0800
++++ audio-2.0.1/third_party/bzip2/CMakeLists.txt	2024-11-18 15:59:06.835208847 -0800
 @@ -1,59 +1,70 @@
  include(ExternalProject)
  
@@ -126,9 +126,35 @@ diff '--color=auto' -urp audio-2.0.1.orig/third_party/bzip2/CMakeLists.txt audio
 +  target_include_directories(bzip2 INTERFACE ${INSTALL_DIR}/include)
 +  target_link_libraries(bzip2 INTERFACE ${BZIP_LIBRARIES})
 +endif()
+diff '--color=auto' -urp audio-2.0.1.orig/third_party/kenlm/CMakeLists.txt audio-2.0.1/third_party/kenlm/CMakeLists.txt
+--- audio-2.0.1.orig/third_party/kenlm/CMakeLists.txt	2023-03-15 11:02:00.000000000 -0700
++++ audio-2.0.1/third_party/kenlm/CMakeLists.txt	2024-11-18 15:59:06.835208847 -0800
+@@ -61,10 +61,20 @@ target_include_directories(
+ 
+ set(
+   kenlm_deps
+-  zlib
+-  bzip2
+   )
+ 
++if(USE_SYSTEM_ZLIB EQUAL 1 OR $ENV{USE_SYSTEM_ZLIB} EQUAL 1)
++  list(APPEND kenlm_deps z)
++else()
++  list(APPEND kenlm_deps zlib)
++endif()
++
++if(USE_SYSTEM_BZIP2 EQUAL 1 OR $ENV{USE_SYSTEM_BZIP2} EQUAL 1)
++  list(APPEND kenlm_deps bz2)
++else()
++  list(APPEND kenlm_deps bzip2)
++endif()
++
+ set(
+   kenlm_compiler_definitions
+   KENLM_MAX_ORDER=6
 diff '--color=auto' -urp audio-2.0.1.orig/third_party/lzma/CMakeLists.txt audio-2.0.1/third_party/lzma/CMakeLists.txt
 --- audio-2.0.1.orig/third_party/lzma/CMakeLists.txt	2023-03-15 11:02:00.000000000 -0700
-+++ audio-2.0.1/third_party/lzma/CMakeLists.txt	2024-11-18 15:13:28.032606512 -0800
++++ audio-2.0.1/third_party/lzma/CMakeLists.txt	2024-11-18 15:59:06.835208847 -0800
 @@ -1,45 +1,56 @@
  include(ExternalProject)
  
@@ -229,7 +255,7 @@ diff '--color=auto' -urp audio-2.0.1.orig/third_party/lzma/CMakeLists.txt audio-
 +endif()
 diff '--color=auto' -urp audio-2.0.1.orig/third_party/sox/CMakeLists.txt audio-2.0.1/third_party/sox/CMakeLists.txt
 --- audio-2.0.1.orig/third_party/sox/CMakeLists.txt	2023-03-15 11:02:00.000000000 -0700
-+++ audio-2.0.1/third_party/sox/CMakeLists.txt	2024-11-18 15:13:28.032606512 -0800
++++ audio-2.0.1/third_party/sox/CMakeLists.txt	2024-11-18 15:59:06.835208847 -0800
 @@ -1,212 +1,222 @@
  find_package(PkgConfig REQUIRED)
  
@@ -664,7 +690,7 @@ diff '--color=auto' -urp audio-2.0.1.orig/third_party/sox/CMakeLists.txt audio-2
 +endif()
 diff '--color=auto' -urp audio-2.0.1.orig/third_party/zlib/CMakeLists.txt audio-2.0.1/third_party/zlib/CMakeLists.txt
 --- audio-2.0.1.orig/third_party/zlib/CMakeLists.txt	2023-03-15 11:02:00.000000000 -0700
-+++ audio-2.0.1/third_party/zlib/CMakeLists.txt	2024-11-18 15:16:33.963442914 -0800
++++ audio-2.0.1/third_party/zlib/CMakeLists.txt	2024-11-18 15:59:06.835208847 -0800
 @@ -1,68 +1,80 @@
  include(ExternalProject)
  
@@ -809,3 +835,24 @@ diff '--color=auto' -urp audio-2.0.1.orig/third_party/zlib/CMakeLists.txt audio-
 +  target_include_directories(zlib INTERFACE ${INSTALL_DIR}/include)
 +  target_link_libraries(zlib INTERFACE ${ZLIB_LIBRARIES})
 +endif()
+diff '--color=auto' -urp audio-2.0.1.orig/torchaudio/csrc/sox/CMakeLists.txt audio-2.0.1/torchaudio/csrc/sox/CMakeLists.txt
+--- audio-2.0.1.orig/torchaudio/csrc/sox/CMakeLists.txt	2023-03-15 11:02:00.000000000 -0700
++++ audio-2.0.1/torchaudio/csrc/sox/CMakeLists.txt	2024-11-18 16:01:43.038202726 -0800
+@@ -6,11 +6,16 @@ set(
+   effects_chain.cpp
+   types.cpp
+   )
++if(USE_SYSTEM_SOX EQUAL 1 OR $ENV{USE_SYSTEM_SOX} EQUAL 1)
++  set(LIBSOX_LIB sox)
++else()
++  set(LIBSOX_LIB libsox)
++endif()
+ torchaudio_library(
+   libtorchaudio_sox
+   "${sources}"
+   ""
+-  "torch;libsox"
++  "torch;${LIBSOX_LIB}"
+   ""
+   )
+ 
