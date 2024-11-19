@@ -21,17 +21,24 @@ HOMEPAGE="
 RESTRICT="test" # Untested
 LICENSE="MIT"
 SLOT="0"
+IUSE+=" doc test"
 RDEPEND="
 	$(python_gen_cond_dep '
-		>=dev-python/exceptiongroup-1.2.0[${PYTHON_USEDEP}]
+		>=dev-python/exceptiongroup-1.0.2[${PYTHON_USEDEP}]
 		>=dev-python/typing-extensions-4.1[${PYTHON_USEDEP}]
 	' 3.10)
 	>=dev-python/idna-2.8[${PYTHON_USEDEP}]
 	>=dev-python/sniffio-1.1[${PYTHON_USEDEP}]
-	>=dev-python/truststore-0.9.1[${PYTHON_USEDEP}]
 "
 BDEPEND="
+	>=dev-python/setuptools-64[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-scm-6.4[${PYTHON_USEDEP}]
+	doc? (
+		>=dev-python/sphinx-7.4[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-autodoc-typehints-1.2.0[${PYTHON_USEDEP}]
+		dev-python/packaging[${PYTHON_USEDEP}]
+		dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}]
+	)
 	test? (
 		$(python_gen_cond_dep '
 			>=dev-python/trio-0.26.1[${PYTHON_USEDEP}]
@@ -40,6 +47,7 @@ BDEPEND="
 		>=dev-python/hypothesis-4.0[${PYTHON_USEDEP}]
 		>=dev-python/psutil-5.9[${PYTHON_USEDEP}]
 		>=dev-python/pytest-mock-3.6.1[${PYTHON_USEDEP}]
+		>=dev-python/truststore-0.9.1[${PYTHON_USEDEP}]
 		dev-python/trustme[${PYTHON_USEDEP}]
 		amd64? (
 			$(python_gen_cond_dep '
