@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# The last release was 4 years ago, so live is used.
+
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
@@ -23,8 +25,6 @@ else
 	SRC_URI="
 https://github.com/uiri/toml/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
-https://github.com/uiri/toml/pull/434/commits/a377ef72cd5df001debaca7f7421552bc4eabe21.patch
-	-> toml-a377ef7.patch
 	"
 fi
 
@@ -56,6 +56,8 @@ BDEPEND+="
 	)
 "
 DOCS=( "README.rst" )
+PATCHES=(
+)
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
