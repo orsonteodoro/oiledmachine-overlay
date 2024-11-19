@@ -10,7 +10,7 @@ PYTHON_COMPAT=( "python3_"{10..12} )
 inherit distutils-r1 pypi
 
 KEYWORDS="~amd64"
-S="${WORKDIR}/${PN}-${PV}"
+S="${WORKDIR}/${PN/-/_}-${PV}"
 SRC_URI="
 https://github.com/georgkrause/language_data/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
