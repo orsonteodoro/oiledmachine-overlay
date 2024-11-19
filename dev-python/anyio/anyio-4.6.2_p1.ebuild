@@ -11,7 +11,7 @@ PYTHON_COMPAT=( "pypy3" "python3_"{10..13} )
 
 inherit distutils-r1 pypi
 
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
+KEYWORDS="~amd64 ~arm64 ~arm64-macos"
 
 DESCRIPTION="Compatibility layer for multiple asynchronous event loop implementations"
 HOMEPAGE="
@@ -22,25 +22,25 @@ RESTRICT="test" # Untested
 LICENSE="MIT"
 SLOT="0"
 RDEPEND="
-	>=dev-python/idna-2.8[${PYTHON_USEDEP}]
-	>=dev-python/sniffio-1.1[${PYTHON_USEDEP}]
-	>=dev-python/truststore-0.9.1[${PYTHON_USEDEP}]
 	$(python_gen_cond_dep '
 		>=dev-python/exceptiongroup-1.2.0[${PYTHON_USEDEP}]
 		>=dev-python/typing-extensions-4.1[${PYTHON_USEDEP}]
 	' 3.10)
+	>=dev-python/idna-2.8[${PYTHON_USEDEP}]
+	>=dev-python/sniffio-1.1[${PYTHON_USEDEP}]
+	>=dev-python/truststore-0.9.1[${PYTHON_USEDEP}]
 "
 BDEPEND="
 	>=dev-python/setuptools-scm-6.4[${PYTHON_USEDEP}]
 	test? (
+		$(python_gen_cond_dep '
+			>=dev-python/trio-0.26.1[${PYTHON_USEDEP}]
+		' 3.{10..13})
 		>=dev-python/exceptiongroup-1.2.0[${PYTHON_USEDEP}]
 		>=dev-python/hypothesis-4.0[${PYTHON_USEDEP}]
 		>=dev-python/psutil-5.9[${PYTHON_USEDEP}]
 		>=dev-python/pytest-mock-3.6.1[${PYTHON_USEDEP}]
 		dev-python/trustme[${PYTHON_USEDEP}]
-		$(python_gen_cond_dep '
-			>=dev-python/trio-0.26.1[${PYTHON_USEDEP}]
-		' 3.{10..13})
 		amd64? (
 			$(python_gen_cond_dep '
 				>=dev-python/uvloop-0.21.0_beta1[${PYTHON_USEDEP}]
