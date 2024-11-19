@@ -7,6 +7,7 @@ EAPI=8
 FLASHLIGHT_TEXT_COMMIT="98028c7da83d66c2aba6f5f8708c063d266ca5a4"
 KALDI_COMMIT="3eea37dd09b55064e6362216f7e9a60641f29f09"
 KENLM_COMMIT="5cea457db26950a73d638425c183b368c06ed7c6"
+DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 MY_PN="audio"
@@ -38,7 +39,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-ebuild-revision-1
+ebuild-revision-2
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
