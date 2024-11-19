@@ -13,7 +13,7 @@ PYTHON_COMPAT=( "python3_"{10..12} )
 inherit distutils-r1 pypi
 
 KEYWORDS="~amd64 ~arm64"
-S="${WORKDIR}/${PN}-${PV}"
+S="${WORKDIR}/${PN}-release-v${PV}"
 SRC_URI="
 https://github.com/explosion/thinc/archive/refs/tags/release-v${PV}.tar.gz
 	-> ${P}.tar.gz
