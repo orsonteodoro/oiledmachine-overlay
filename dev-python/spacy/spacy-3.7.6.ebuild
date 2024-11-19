@@ -60,6 +60,7 @@ RDEPEND+="
 	>=dev-python/requests-2.13.0[${PYTHON_USEDEP}]
 	>=dev-python/srsly-2.4.3[${PYTHON_USEDEP}]
 	>=dev-python/thinc-8.2.2[${PYTHON_USEDEP}]
+	=dev-python/thinc-8*[${PYTHON_USEDEP}]
 	>=dev-python/tqdm-4.38.0[${PYTHON_USEDEP}]
 	>=dev-python/typer-0.3.0[${PYTHON_USEDEP}]
 	>=dev-python/wasabi-0.9.1[${PYTHON_USEDEP}]
