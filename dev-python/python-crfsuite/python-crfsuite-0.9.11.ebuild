@@ -4,6 +4,7 @@
 
 EAPI=8
 
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} ) # upstream listed up to 3.10
 CRFSUITE_COMMIT="dc5b6c7b726de90ca63cbf269e6476e18f1dd0d9"
@@ -32,7 +33,10 @@ LICENSE="
 "
 RESTRICT="mirror test" # untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" dev doc test"
+IUSE+="
+dev doc test
+ebuild-revision-1
+"
 RDEPEND+="
 "
 DEPEND+="
