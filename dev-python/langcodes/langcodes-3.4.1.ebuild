@@ -47,4 +47,14 @@ BDEPEND+="
 "
 DOCS=( "README.md" )
 
+python_configure() {
+	git init || die
+	touch dummy || die
+	git config user.email "name@example.com" || die
+	git config user.name "John Doe" || die
+	git add dummy || die
+	git commit -m "Dummy" || die
+	git tag v${PV} || die
+}
+
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
