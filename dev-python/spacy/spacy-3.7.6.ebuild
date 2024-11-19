@@ -55,6 +55,7 @@ RDEPEND+="
 	>=dev-python/murmurhash-0.28.0[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.19.0[${PYTHON_USEDEP}]
 	>=dev-python/preshed-3.0.2[${PYTHON_USEDEP}]
+	=dev-python/preshed-3*[${PYTHON_USEDEP}]
 	>=dev-python/pydantic-1.7.4[${PYTHON_USEDEP}]
 	>=dev-python/requests-2.13.0[${PYTHON_USEDEP}]
 	>=dev-python/srsly-2.4.3[${PYTHON_USEDEP}]
