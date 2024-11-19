@@ -6,6 +6,23 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  Environment variables:
+
+    JUNE_DEFAULT_MODEL - Sets the default Ollama model.
+    Default:  llama3.1:8b-instruct-q4_0
+
+  Wrapper environment variables
+
+    MODEL - Sets the LLM model overriding the default.
+
+    OLLAMA_HOST - Sets the URI to the Ollama server.
+    Default:  http://localhost:11434
+
+  -->
   <upstream>
     <bugs-to>https://github.com/mezbaul-h/june/issues</bugs-to>
     <changelog>https://github.com/mezbaul-h/june/blob/main/CHANGELOG</changelog>

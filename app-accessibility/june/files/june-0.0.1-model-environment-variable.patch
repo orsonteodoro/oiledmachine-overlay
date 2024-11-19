@@ -1,0 +1,19 @@
+diff '--color=auto' -urp june-0.0.1.orig/june_va/settings.py june-0.0.1/june_va/settings.py
+--- june-0.0.1.orig/june_va/settings.py	2024-07-30 04:46:03.000000000 -0700
++++ june-0.0.1/june_va/settings.py	2024-11-19 01:05:24.849569682 -0800
+@@ -26,13 +26,14 @@ class Settings(BaseSettings):
+ 
+     HF_TOKEN: str = ""
+     TORCH_DEVICE: str = "cuda" if cuda.is_available() else "cpu"
++    MODEL:  str = "llama3.1:8b-instruct-q4_0"
+ 
+ 
+ settings = Settings()
+ 
+ 
+ default_config = {
+-    "llm": {"disable_chat_history": False, "model": "llama3.1:8b-instruct-q4_0"},
++    "llm": {"disable_chat_history": False, "model": settings.MODEL},
+     "stt": {
+         "device": settings.TORCH_DEVICE,
+         "generation_args": {"batch_size": 8},

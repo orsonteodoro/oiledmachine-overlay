@@ -25,7 +25,10 @@ LICENSE="
 "
 RESTRICT="mirror test" # untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" dev test"
+IUSE+="
+dev test
+ebuild-revision-1
+"
 REQUIRED_USE="
 	test? (
 		dev
@@ -66,5 +69,33 @@ BDEPEND+="
 	')
 "
 DOCS=( "README.md" )
+PATCHES=(
+	"${FILESDIR}/${PN}-0.0.1-model-environment-variable.patch"
+)
+
+src_configure() {
+	local june_default_model=${JUNE_DEFAULT_MODEL:-"llama3.1:8b-instruct-q4_0"}
+einfo "JUNE_DEFAULT_MODEL:  ${june_default_model}"
+	sed -i -e "s|llama3.1:8b-instruct-q4_0|${june_default_model}|g" "june_va/settings.py" || die
+}
+
+src_compile() {
+	:
+}
+
+src_install() {
+	python_moduleinto "june_va"
+	python_domodule "june_va/"*
+	dodir "/usr/bin"
+cat <<EOF > "${ED}/usr/bin/june"
+#!/bin/bash
+export OLLAMA_HOST=\${OLLAMA_HOST:-"http://localhost:11434"}
+${EPYTHON} -m june_va \$@
+EOF
+	fperms 0755 "/usr/bin/june"
+	fowners "root:root" "/usr/bin/june"
+	docinto "licenses"
+	dodoc "LICENSE"
+}
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
