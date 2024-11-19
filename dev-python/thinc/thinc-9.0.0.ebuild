@@ -70,6 +70,7 @@ DEPEND+="
 "
 BDEPEND+="
 	>=dev-python/cython-0.25[${PYTHON_USEDEP}]
+	<dev-python/cython-3[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.15.0[${PYTHON_USEDEP}]
 	>=dev-python/cymem-2.0.2[${PYTHON_USEDEP}]
 	>=dev-python/preshed-3.0.2[${PYTHON_USEDEP}]
@@ -77,5 +78,24 @@ BDEPEND+="
 	>=dev-python/blis-0.7.8[${PYTHON_USEDEP}]
 "
 DOCS=( "README.md" )
+
+python_configure() {
+	local actual_cython_pv=$(cython --version 2>&1 \
+		| cut -f 3 -d " " \
+		| sed -e "s|a|_alpha|g" \
+		| sed -e "s|b|_beta|g" \
+		| sed -e "s|rc|_rc|g")
+	local expected_cython_pv="3"
+	local required_cython_major=$(ver_cut 1 ${expected_cython_pv})
+	if ver_test ${actual_cython_pv} -gt ${required_cython_major} ; then
+eerror
+eerror "Switch cython to < ${expected_cython_pv} via eselect-cython"
+eerror
+eerror "Actual cython version:\t${actual_cython_pv}"
+eerror "Expected cython version\t${expected_cython_pv}"
+eerror
+		die
+	fi
+}
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
