@@ -7,14 +7,26 @@ EAPI=8
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit distutils-r1 pypi
+inherit distutils-r1
 
-KEYWORDS="~amd64"
-S="${WORKDIR}/${PN}-${PV}"
-SRC_URI="
+if [[ "${PV}" =~ "9999" ]] ; then
+	FALLBACK_COMMIT="65bab7582ce14c55cdeec2244c65ea23039c9e6f"
+	EGIT_BRANCH="master"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
+	EGIT_REPO_URI="https://github.com/uiri/toml.git"
+	IUSE+=" fallback-commit"
+	inherit git-r3
+else
+	KEYWORDS="~amd64"
+	S="${WORKDIR}/${PN}-${PV}"
+	inherit pypi
+	SRC_URI="
 https://github.com/uiri/toml/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
-"
+https://github.com/uiri/toml/pull/434/commits/a377ef72cd5df001debaca7f7421552bc4eabe21.patch
+	-> toml-a377ef7.patch
+	"
+fi
 
 DESCRIPTION="Python lib for TOML"
 HOMEPAGE="
@@ -26,7 +38,9 @@ LICENSE="
 "
 RESTRICT="mirror test" # untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" test"
+IUSE+="
+test
+"
 RDEPEND+="
 "
 DEPEND+="
@@ -42,3 +56,13 @@ BDEPEND+="
 	)
 "
 DOCS=( "README.rst" )
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+	fi
+}
