@@ -18,12 +18,12 @@ diff '--color=auto' -urp anyio-4.6.2.post1.orig/pyproject.toml anyio-4.6.2.post1
  depends = ["pre-commit"]
  package = "editable"
 -commands = [["coverage", "run", "-m", "pytest", { replace = "posargs", extend = true }]]
-+commands = [["coverage", "run", "-m", "pytest", { replace = "posargs" } ]]
++commands = [["coverage", "run", "-m", "pytest" ]]
  extras = ["test"]
  
  [tool.tox.env.pypy3]
 -commands = [["pytest", { replace = "posargs", extend = true }]]
-+commands = [["pytest", { replace = "posargs" } ]]
++commands = [["pytest" ]]
  
  [tool.tox.env.pre-commit]
 -commands = [["pre-commit", "run", "--all-files"]]
