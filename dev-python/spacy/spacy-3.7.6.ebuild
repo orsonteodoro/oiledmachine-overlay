@@ -14,6 +14,7 @@ EAPI=8
 # pythainlp
 
 MY_PN="spaCy-release"
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 LANGS=(
 	"ja"
