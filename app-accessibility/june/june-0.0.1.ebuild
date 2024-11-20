@@ -26,12 +26,17 @@ LICENSE="
 RESTRICT="mirror test" # untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-dev test
+alsa dev jack oss test
 ebuild-revision-1
 "
 REQUIRED_USE="
 	test? (
 		dev
+	)
+	|| (
+		alsa
+		jack
+		oss
 	)
 "
 RDEPEND+="
@@ -48,6 +53,7 @@ RDEPEND+="
 	>=sci-libs/pytorch-2.3.1[${PYTHON_SINGLE_USEDEP}]
 	>=sci-libs/torchaudio-2.3.1[${PYTHON_SINGLE_USEDEP}]
 	>=sci-libs/transformers-4.40.2[${PYTHON_SINGLE_USEDEP}]
+	media-libs/portaudio[alsa?,jack?,oss?]
 	app-misc/ollama
 "
 DEPEND+="
