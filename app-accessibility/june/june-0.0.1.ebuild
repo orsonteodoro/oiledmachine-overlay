@@ -104,4 +104,13 @@ EOF
 	dodoc "LICENSE"
 }
 
+pkg_postinst() {
+ewarn
+ewarn "The default mic needs to be set or a \"Input overflowed\" error may appear.  For ALSA see"
+ewarn
+ewarn "  https://wiki.archlinux.org/title/Advanced_Linux_Sound_Architecture/Troubleshooting#Setting_the_default_microphone/capture_device"
+ewarn "  https://wiki.gentoo.org/wiki/ALSA#Test_microphone"
+ewarn
+}
+
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
