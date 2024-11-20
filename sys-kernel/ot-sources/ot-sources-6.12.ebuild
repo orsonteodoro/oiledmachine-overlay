@@ -5,7 +5,7 @@ EAPI=8
 
 GENPATCHES_FALLBACK_COMMIT="048b8bf91f9c66c86e37d33b654cc9a92b087322" # 2024-10-21 09:33:31 -0400
 LINUX_SOURCES_FALLBACK_COMMIT="	f66d6acccbc08b4146f4c2cf9445241f70f5517d" # 2024-11-17 09:35:51 -0800
-RC_PV="rc7" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
+RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
 # https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.12
@@ -13,7 +13,7 @@ RC_PV="rc7" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux
 
 CLEAR_LINUX_PATCHES_VER="6.10.2-1454"
 EBUILD_REV="ebuild-revision-6"
-GENPATCHES_VER="live" # can be live only when 9999
+GENPATCHES_VER="1" # can be live only when 9999
 PATCH_PROJC_VER="6.12-r0"
 PATCH_RT_VER="6.12-rc4-rt6"
 
