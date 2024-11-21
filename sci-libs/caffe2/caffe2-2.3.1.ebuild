@@ -1234,9 +1234,13 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		if use amd64 && ( use cpu_flags_x86_amx || use cpu_flags_x86_avx2 || use cpu_flags_x86_avx512 || use cpu_flags_x86_sse4_1 ) ; then
 			mycmakeargs+=(
 				-DUSE_MKLDNN=$(usex onednn)
-				-DMKLDNN_INCLUDE_DIR="${ESYSROOT}/usr/include/oneapi/dnnl"
-				-DMKLDNN_LIBRARIES="dnnl"
 			)
+			if use system-libs ; then
+				mycmakeargs+=(
+					-DMKLDNN_INCLUDE_DIR="${ESYSROOT}/usr/include/oneapi/dnnl"
+					-DMKLDNN_LIBRARIES="dnnl"
+				)
+			fi
 		elif use arm64 ; then
 			mycmakeargs+=(
 				-DUSE_MKLDNN=OFF # Missing ComputeLibrary
