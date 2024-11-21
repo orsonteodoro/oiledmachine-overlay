@@ -625,6 +625,20 @@ REQUIRED_USE="
 			cpu_flags_x86_sse4_1
 		)
 	)
+	qnnpack? (
+		amd64? (
+			cpu_flags_x86_sse2
+		)
+		arm? (
+			cpu_flags_arm_neon
+		)
+		arm64? (
+			cpu_flags_arm_neon
+		)
+		x86? (
+			cpu_flags_x86_sse2
+		)
+	)
 	rccl? (
 		distributed
 	)
