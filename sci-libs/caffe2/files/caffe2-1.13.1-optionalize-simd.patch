@@ -1,5 +1,29 @@
---- a/cmake/Codegen.cmake.orig	2024-11-20 18:59:08.059153999 -0800
-+++ b/cmake/Codegen.cmake	2024-11-20 18:59:51.626868690 -0800
+diff '--color=auto' -urp pytorch-1.13.1.orig/caffe2/perfkernels/CMakeLists.txt pytorch-1.13.1/caffe2/perfkernels/CMakeLists.txt
+--- pytorch-1.13.1.orig/caffe2/perfkernels/CMakeLists.txt	2022-12-08 10:13:26.000000000 -0800
++++ pytorch-1.13.1/caffe2/perfkernels/CMakeLists.txt	2024-11-20 22:31:53.373513702 -0800
+@@ -21,7 +21,9 @@ set(Caffe2_CPU_SRCS ${Caffe2_CPU_SRCS} $
+ 
+ # We will only build the perf kernel files if the compiler supports avx2
+ # extensions.
+-if(CXX_AVX2_FOUND)
++option(USE_AVX2 "Use avx2?" ON)
++option(USE_AVX512 "Use avx512?" ON)
++if(CXX_AVX2_FOUND AND USE_AVX2)
+   add_library(Caffe2_perfkernels_avx STATIC ${avx_srcs})
+   add_library(Caffe2_perfkernels_avx2 STATIC ${avx2_srcs})
+   add_dependencies(Caffe2_perfkernels_avx Caffe2_PROTO)
+@@ -60,7 +62,7 @@ if(CXX_AVX2_FOUND)
+        Caffe2_DEPENDENCY_WHOLE_LINK_LIBS
+        "Caffe2_perfkernels_avx2_interface")
+ 
+-  if(CAFFE2_COMPILER_SUPPORTS_AVX512_EXTENSIONS)
++  if(CAFFE2_COMPILER_SUPPORTS_AVX512_EXTENSIONS AND USE_AVX512)
+     add_library(Caffe2_perfkernels_avx512 STATIC ${avx512_srcs})
+     add_dependencies(Caffe2_perfkernels_avx512 Caffe2_PROTO)
+     target_link_libraries(Caffe2_perfkernels_avx512 PRIVATE c10)
+diff '--color=auto' -urp pytorch-1.13.1.orig/cmake/Codegen.cmake pytorch-1.13.1/cmake/Codegen.cmake
+--- pytorch-1.13.1.orig/cmake/Codegen.cmake	2024-11-20 22:28:41.018764734 -0800
++++ pytorch-1.13.1/cmake/Codegen.cmake	2024-11-20 22:29:50.606312078 -0800
 @@ -9,6 +9,11 @@
  # Helper functions
  ################################################################################
@@ -70,8 +94,33 @@
      SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DHAVE_ZVECTOR_CPU_DEFINITION")
      LIST(APPEND CPU_CAPABILITY_NAMES "ZVECTOR")
      LIST(APPEND CPU_CAPABILITY_FLAGS "${OPT_FLAG}  ${CXX_ZVECTOR_FLAGS}")
---- a/cmake/MiscCheck.cmake.orig	2022-12-08 10:13:26.000000000 -0800
-+++ b/cmake/MiscCheck.cmake	2024-11-20 19:00:14.946715969 -0800
+diff '--color=auto' -urp pytorch-1.13.1.orig/cmake/Dependencies.cmake pytorch-1.13.1/cmake/Dependencies.cmake
+--- pytorch-1.13.1.orig/cmake/Dependencies.cmake	2024-11-20 22:28:41.018764734 -0800
++++ pytorch-1.13.1/cmake/Dependencies.cmake	2024-11-20 22:34:57.420317279 -0800
+@@ -791,12 +791,19 @@ endif()
+ 
+ # ---[ FBGEMM
+ option(USE_SYSTEM_FBGEMM "Use system fbgemm" OFF)
++option(USE_AVX512 "Use avx512?" ON)
+ if(USE_FBGEMM AND NOT USE_SYSTEM_FBGEMM)
+   set(CAFFE2_THIRD_PARTY_ROOT "${PROJECT_SOURCE_DIR}/third_party")
+   if(NOT DEFINED FBGEMM_SOURCE_DIR)
+     set(FBGEMM_SOURCE_DIR "${CAFFE2_THIRD_PARTY_ROOT}/fbgemm" CACHE STRING "FBGEMM source directory")
+   endif()
+-  if(NOT CAFFE2_COMPILER_SUPPORTS_AVX512_EXTENSIONS)
++  if(NOT USE_AVX512 AND FALSE)
++    message(WARNING
++      "A compiler with AVX512 support is required for FBGEMM. "
++      "Not compiling with FBGEMM. "
++      "Turn this warning off by USE_FBGEMM=OFF.")
++    set(USE_FBGEMM OFF)
++  elseif(NOT CAFFE2_COMPILER_SUPPORTS_AVX512_EXTENSIONS)
+     message(WARNING
+       "A compiler with AVX512 support is required for FBGEMM. "
+       "Not compiling with FBGEMM. "
+diff '--color=auto' -urp pytorch-1.13.1.orig/cmake/MiscCheck.cmake pytorch-1.13.1/cmake/MiscCheck.cmake
+--- pytorch-1.13.1.orig/cmake/MiscCheck.cmake	2022-12-08 10:13:26.000000000 -0800
++++ pytorch-1.13.1/cmake/MiscCheck.cmake	2024-11-20 22:29:50.606312078 -0800
 @@ -10,6 +10,8 @@ include(CheckCXXSourceCompiles)
  include(CheckCXXCompilerFlag)
  include(CMakePushCheckState)
@@ -90,15 +139,3 @@
      message(STATUS "Current compiler supports avx2 extension. Will build perfkernels.")
      # Also see CMakeLists.txt under caffe2/perfkernels.
      set(CAFFE2_PERF_WITH_AVX 1)
---- a/caffe2/perfkernels/CMakeLists.txt.orig	2022-12-08 10:13:26.000000000 -0800
-+++ b/caffe2/perfkernels/CMakeLists.txt	2024-11-20 19:27:43.572045322 -0800
-@@ -21,7 +21,8 @@ set(Caffe2_CPU_SRCS ${Caffe2_CPU_SRCS} $
- 
- # We will only build the perf kernel files if the compiler supports avx2
- # extensions.
--if(CXX_AVX2_FOUND)
-+option(USE_AVX2 "Use avx2?" ON)
-+if(CXX_AVX2_FOUND AND USE_AVX2)
-   add_library(Caffe2_perfkernels_avx STATIC ${avx_srcs})
-   add_library(Caffe2_perfkernels_avx2 STATIC ${avx2_srcs})
-   add_dependencies(Caffe2_perfkernels_avx Caffe2_PROTO)
