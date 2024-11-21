@@ -104,7 +104,6 @@ CPU_FLAGS_X86=(
 	cpu_flags_x86_amx
 	cpu_flags_x86_avx
 	cpu_flags_x86_avx2
-	cpu_flags_x86_avx512
 	cpu_flags_x86_avx512bw
 	cpu_flags_x86_avx512dq
 	cpu_flags_x86_avx512f
@@ -503,6 +502,12 @@ gen_rocm_required_use() {
 		"
 	done
 }
+REQUIRED_USE_AVX512="
+	cpu_flags_x86_avx512bw
+	cpu_flags_x86_avx512dq
+	cpu_flags_x86_avx512f
+	cpu_flags_x86_avx512vl
+"
 REQUIRED_USE="
 	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
@@ -521,7 +526,7 @@ REQUIRED_USE="
 		cpu_flags_arm_neon
 	)
 	cpu_flags_x86_amx? (
-		cpu_flags_x86_avx512
+		${REQUIRED_USE_AVX512}
 	)
 	cpu_flags_x86_avx? (
 		cpu_flags_x86_sse4_1
@@ -531,25 +536,28 @@ REQUIRED_USE="
 		cpu_flags_x86_f16c
 		cpu_flags_x86_fma
 	)
-	cpu_flags_x86_avx512? (
-		cpu_flags_x86_avx512bw
-		cpu_flags_x86_avx512dq
-		cpu_flags_x86_avx512f
-		cpu_flags_x86_avx512vl
+	cpu_flags_x86_avx512bw? (
+		${REQUIRED_USE_AVX512}
+	)
+	cpu_flags_x86_avx512dq? (
+		${REQUIRED_USE_AVX512}
 	)
 	cpu_flags_x86_avx512f? (
 		cpu_flags_x86_avx2
 	)
 	cpu_flags_x86_avx512vbmi? (
-		cpu_flags_x86_avx512
+		${REQUIRED_USE_AVX512}
 		xnnpack
 	)
+	cpu_flags_x86_avx512vl? (
+		${REQUIRED_USE_AVX512}
+	)
 	cpu_flags_x86_avx512vnni? (
-		cpu_flags_x86_avx512
+		${REQUIRED_USE_AVX512}
 		xnnpack
 	)
 	cpu_flags_x86_gfni? (
-		cpu_flags_x86_avx512
+		${REQUIRED_USE_AVX512}
 		xnnpack
 	)
 	cpu_flags_x86_sse4_1? (
@@ -571,8 +579,10 @@ REQUIRED_USE="
 	)
 	fbgemm? (
 		|| (
+			(
+				${REQUIRED_USE_AVX512}
+			)
 			cpu_flags_x86_avx2
-			cpu_flags_x86_avx512
 		)
 		rocm? (
 			cpu_flags_x86_avx2
@@ -607,9 +617,11 @@ REQUIRED_USE="
 	)
 	onednn? (
 		|| (
+			(
+				${REQUIRED_USE_AVX512}
+			)
 			cpu_flags_x86_amx
 			cpu_flags_x86_avx2
-			cpu_flags_x86_avx512
 			cpu_flags_x86_sse4_1
 		)
 	)
@@ -1137,6 +1149,32 @@ ewarn "Disabling either fbgemm or onednn may cause a performance penalty on ARCH
 ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 	fi
 
+	usex_avx512() {
+		if \
+			   use cpu_flags_x86_avx512bw \
+			&& use cpu_flags_x86_avx512dq \
+			&& use cpu_flags_x86_avx512f \
+			&& use cpu_flags_x86_avx512vl \
+		; then
+			echo "ON"
+		else
+			echo "OFF"
+		fi
+	}
+
+	use_avx512() {
+		if \
+			   use cpu_flags_x86_avx512bw \
+			&& use cpu_flags_x86_avx512dq \
+			&& use cpu_flags_x86_avx512f \
+			&& use cpu_flags_x86_avx512vl \
+		; then
+			return 0
+		else
+			return 1
+		fi
+	}
+
 	local mycmakeargs=(
 		-DBUILD_CUSTOM_PROTOBUF=$(usex system-libs OFF ON)
 		-DBUILD_SHARED_LIBS=ON
@@ -1162,7 +1200,7 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		-DSLEEF_DISABLE_VXE2=$(usex !cpu_flags_s390_vxe2)
 		-DTORCH_INSTALL_LIB_DIR="${EPREFIX}/usr/$(get_libdir)"
 		-DUSE_AVX2=$(usex cpu_flags_x86_avx2)
-		-DUSE_AVX512=$(usex cpu_flags_x86_avx512)
+		-DUSE_AVX512=$(usex_avx512)
 		-DUSE_CCACHE=OFF
 		-DUSE_CUDA=$(usex cuda)
 		-DUSE_DISTRIBUTED=$(usex distributed)
@@ -1217,7 +1255,7 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 	)
 
 	if use onednn ; then
-		if use amd64 && ( use cpu_flags_x86_amx || use cpu_flags_x86_avx2 || use cpu_flags_x86_avx512 || use cpu_flags_x86_sse4_1 ) ; then
+		if use amd64 && ( use cpu_flags_x86_amx || use cpu_flags_x86_avx2 || use_avx512 || use cpu_flags_x86_sse4_1 ) ; then
 			mycmakeargs+=(
 				-DUSE_MKLDNN=$(usex onednn)
 			)
@@ -1255,7 +1293,7 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		if use cpu_flags_x86_avx2 ; then
 			flags="${flags};AVX2"
 		fi
-		if use cpu_flags_x86_avx512 ; then
+		if use_avx512 ; then
 			flags="${flags};AVX512"
 		fi
 		if use cpu_flags_x86_amx ; then
