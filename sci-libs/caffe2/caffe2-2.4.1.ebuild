@@ -107,7 +107,6 @@ CPU_FLAGS_X86=(
 	cpu_flags_x86_avx512f
 	cpu_flags_x86_fma4
 	cpu_flags_x86_sse2
-	cpu_flags_x86_sse4
 	cpu_flags_x86_sse4_1
 )
 CPUINFO_COMMIT_1="d6860c477c99f1fce9e28eb206891af3c0e1a1d7"
@@ -1087,7 +1086,7 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		-DSLEEF_DISABLE_RVVM1=$(usex !cpu_flags_riscv_rvvm1)
 		-DSLEEF_DISABLE_RVVM2=$(usex !cpu_flags_riscv_rvvm2)
 		-DSLEEF_DISABLE_SSE2=$(usex !cpu_flags_x86_sse2)
-		-DSLEEF_DISABLE_SSE4=$(usex !cpu_flags_x86_sse4)
+		-DSLEEF_DISABLE_SSE4=$(usex !cpu_flags_x86_sse4_1)
 		-DSLEEF_DISABLE_SVE=$(usex !cpu_flags_arm_sve)
 		-DSLEEF_DISABLE_VSX=$(usex !cpu_flags_ppc_vsx)
 		-DSLEEF_DISABLE_VSX3=$(usex !cpu_flags_ppc_vsx3)
