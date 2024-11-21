@@ -1220,6 +1220,7 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 	}
 
 	local mycmakeargs=(
+		-DASMJIT_NO_JIT=$(usex !jit)
 		-DBUILD_CUSTOM_PROTOBUF=$(usex system-libs OFF ON)
 		-DBUILD_SHARED_LIBS=ON
 		-DCMAKE_INSTALL_PREFIXED_DATAROOTDIR="lib/${PN}/share"
@@ -1227,6 +1228,7 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		-DCMAKE_INSTALL_PREFIXED_LIBDIR="lib/${PN}/$(get_libdir)"
 		-DCMAKE_INSTALL_PREFIXED_BINDIR="lib/${PN}/bin"
 		-DLIBSHM_INSTALL_LIB_SUBDIR="${EPREFIX}/usr/$(get_libdir)"
+		-DONEDNN_EXPERIMENTAL_GRAPH_COMPILER_BACKEND=$(usex jit)
 		-DPYBIND11_PYTHON_VERSION="${EPYTHON#python}"
 		-DPYTHON_EXECUTABLE="${PYTHON}"
 		-DSLEEF_DISABLE_AVX=$(usex !cpu_flags_x86_avx)
