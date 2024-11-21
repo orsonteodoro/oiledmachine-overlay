@@ -768,3 +768,15 @@ diff '--color=auto' -urp pytorch-2.5.1.orig/third_party/tensorpipe/third_party/p
    # GNUInstallDirs "DATADIR" wrong here; CMake search path wants "share".
    set(PYBIND11_CMAKECONFIG_INSTALL_DIR "share/cmake/${PROJECT_NAME}" CACHE STRING "install path for pybind11Config.cmake")
  
+--- a/caffe2/perfkernels/CMakeLists.txt.orig	2024-11-20 19:18:50.631480710 -0800
++++ b/caffe2/perfkernels/CMakeLists.txt	2024-11-20 19:24:34.877262359 -0800
+@@ -19,7 +19,8 @@ set(Caffe2_CPU_SRCS ${Caffe2_CPU_SRCS} $
+ 
+ # We will only build the perf kernel files if the compiler supports avx2
+ # extensions.
+-if(CXX_AVX2_FOUND)
++option(USE_AVX2 "Use avx2?" ON)
++if(CXX_AVX2_FOUND AND USE_AVX2)
+   add_library(Caffe2_perfkernels_avx2 STATIC ${avx2_srcs})
+   target_link_libraries(Caffe2_perfkernels_avx2 PRIVATE c10)
+ 

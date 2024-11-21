@@ -90,3 +90,15 @@
      message(STATUS "Current compiler supports avx2 extension. Will build perfkernels.")
      # Also see CMakeLists.txt under caffe2/perfkernels.
      set(CAFFE2_PERF_WITH_AVX 1)
+--- a/caffe2/perfkernels/CMakeLists.txt.orig	2022-12-08 10:13:26.000000000 -0800
++++ b/caffe2/perfkernels/CMakeLists.txt	2024-11-20 19:27:43.572045322 -0800
+@@ -21,7 +21,8 @@ set(Caffe2_CPU_SRCS ${Caffe2_CPU_SRCS} $
+ 
+ # We will only build the perf kernel files if the compiler supports avx2
+ # extensions.
+-if(CXX_AVX2_FOUND)
++option(USE_AVX2 "Use avx2?" ON)
++if(CXX_AVX2_FOUND AND USE_AVX2)
+   add_library(Caffe2_perfkernels_avx STATIC ${avx_srcs})
+   add_library(Caffe2_perfkernels_avx2 STATIC ${avx2_srcs})
+   add_dependencies(Caffe2_perfkernels_avx Caffe2_PROTO)
