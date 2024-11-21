@@ -84,6 +84,7 @@ CPU_FLAGS_RISCV=(
 CPU_FLAGS_S390=(
 	cpu_flags_s390_vxe
 	cpu_flags_s390_vxe2
+	cpu_flags_s390_zvector
 )
 CPU_FLAGS_X86=(
 	cpu_flags_x86_amx
@@ -775,6 +776,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.12.0-glog-0.6.0.patch"
 	"${FILESDIR}/${PN}-1.12.0-clang.patch"
 	"${FILESDIR}/${PN}-1.13.1-prefixed-install.patch"
+	"${FILESDIR}/${PN}-1.13.1-optionalize-simd.patch"
 )
 
 warn_untested_gpu() {
@@ -1078,6 +1080,11 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		-DCMAKE_INSTALL_PREFIXED_INCLUDEDIR="lib/${PN}/include"
 		-DCMAKE_INSTALL_PREFIXED_LIBDIR="lib/${PN}/$(get_libdir)"
 		-DCMAKE_INSTALL_PREFIXED_BINDIR="lib/${PN}/bin"
+
+		-DUSE_AVX2=$(usex cpu_flags_x86_avx2)
+		-DUSE_AVX512=$(usex cpu_flags_x86_avx512)
+		-DUSE_VSX=$(usex cpu_flags_ppc_vsx)
+		-DUSE_ZVECTOR=$(usex cpu_flags_s390_zvector)
 	)
 
 	if use onednn ; then
