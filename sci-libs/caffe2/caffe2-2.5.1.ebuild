@@ -97,6 +97,7 @@ CPU_FLAGS_PPC=(
 )
 CPU_FLAGS_RISCV=(
 	cpu_flags_riscv_rvv
+	cpu_flags_riscv_rvv_fp16
 )
 CPU_FLAGS_S390=(
 	cpu_flags_s390_vxe
@@ -1290,6 +1291,7 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		-DXNNPACK_ENABLE_AVXVNNI=$(usex cpu_flags_x86_avx512vnni)
 		-DXNNPACK_ENABLE_JIT=$(usex jit)
 		-DXNNPACK_ENABLE_RISCV_VECTOR=$(usex cpu_flags_riscv_rvv)
+		-DXNNPACK_ENABLE_RISCV_FP16_VECTOR=$(usex cpu_flags_riscv_rvv_fp16)
 		-DXNNPACK_ENABLE_VSX=$(usex cpu_flags_ppc_vsx)
 		-Wno-dev
 	)
