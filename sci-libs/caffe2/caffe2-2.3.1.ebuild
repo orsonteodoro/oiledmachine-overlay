@@ -82,6 +82,7 @@ CPU_FLAGS_ARM=(
 	cpu_flags_arm_bf16
 	cpu_flags_arm_dotprod
 	cpu_flags_arm_fp16
+	cpu_flags_arm_i8mm
 	cpu_flags_arm_neon
 	cpu_flags_arm_sve
 )
@@ -1298,6 +1299,7 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		-DXNNPACK_ENABLE_ARM_BF16_VECTOR=$(usex cpu_flags_arm_bf16)
 		-DXNNPACK_ENABLE_ARM_DOTPROD=$(usex cpu_flags_arm_dotprod)
 		-DXNNPACK_ENABLE_ARM_FP16_VECTOR=$(usex cpu_flags_arm_fp16)
+		-DXNNPACK_ENABLE_ARM_I8MM=$(usex cpu_flags_arm_i8mm)
 		-DXNNPACK_ENABLE_ASSEMBLY=$(use_arm_fp16_dotprod)
 		-DXNNPACK_ENABLE_AVX512AMX=$(usex cpu_flags_x86_amx)
 		-DXNNPACK_ENABLE_AVXVNNI=$(usex cpu_flags_x86_avx512vnni)
