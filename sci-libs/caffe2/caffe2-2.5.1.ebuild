@@ -4,13 +4,16 @@
 
 EAPI=8
 
+# This package is a misnomer.  This is the non-python portions of pytorch.
+
+# TODO package:
+# ComputeLibrary
+
 # TODO SRC_URI:
 #   opentelemetry-cpp deps need to be added to SRC_URI
 
 # TODO patch:
 #   Make cmake/External/aotriton.cmake use unpacked folder.
-
-# This package is a misnomer.  This is the non-python portions of pytorch.
 
 # For requirements, see
 # https://github.com/pytorch/pytorch/blob/v2.5.1/RELEASE.md?plain=1#L49
@@ -80,6 +83,32 @@ BENCHMARK_COMMIT_5="d572f4777349d43653b21d6c2fc63020ab326db2"
 CIVETWEB_COMMIT="eefb26f82b233268fc98577d265352720d477ba4"
 CPP_HTTPLIB_COMMIT="3b6597bba913d51161383657829b7e644e59c006"
 CPR_COMMIT="871ed52d350214a034f6ef8a3b8f51c5ce1bd400" # dynolog dep
+CPU_FLAGS_ARM=(
+	cpu_flags_arm_sve
+)
+CPU_FLAGS_PPC=(
+	cpu_flags_ppc_vsx
+	cpu_flags_ppc_vsx3
+)
+CPU_FLAGS_RISCV=(
+	cpu_flags_riscv_rvvm1
+	cpu_flags_riscv_rvvm2
+)
+CPU_FLAGS_S390=(
+	cpu_flags_s390_vxe
+	cpu_flags_s390_vxe2
+)
+CPU_FLAGS_X86=(
+	cpu_flags_x86_amx
+	cpu_flags_x86_avx
+	cpu_flags_x86_avx2
+	cpu_flags_x86_avx512
+	cpu_flags_x86_avx512f
+	cpu_flags_x86_fma4
+	cpu_flags_x86_sse2
+	cpu_flags_x86_sse4
+	cpu_flags_x86_sse4_1
+)
 CPUINFO_COMMIT_1="094fc30b9256f54dad5ad23bcbfb5de74781422f"
 CPUINFO_COMMIT_2="ed8b86a253800bafdb7b25c5c399f91bff9cb1f3" # fbgemm dep
 # CUDA 12 not supported yet: https://github.com/pytorch/pytorch/issues/91122
@@ -430,6 +459,11 @@ RESTRICT="test"
 SLOT="0"
 # cuda and rocm are enabled by default upstream.
 IUSE="
+${CPU_FLAGS_ARM[@]}
+${CPU_FLAGS_PPC[@]}
+${CPU_FLAGS_RISCV[@]}
+${CPU_FLAGS_S390[@]}
+${CPU_FLAGS_X86[@]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE}
@@ -514,6 +548,14 @@ REQUIRED_USE="
 	)
 	nccl? (
 		distributed
+	)
+	onednn? (
+		|| (
+			cpu_flags_x86_amx
+			cpu_flags_x86_avx2
+			cpu_flags_x86_avx512
+			cpu_flags_x86_sse4_1
+		)
 	)
 	rccl? (
 		distributed
@@ -1042,6 +1084,20 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		-DBUILD_SHARED_LIBS=ON
 		-DLIBSHM_INSTALL_LIB_SUBDIR="${EPREFIX}/usr/$(get_libdir)"
 		-DPYTHON_EXECUTABLE="${PYTHON}"
+		-DSLEEF_DISABLE_AVX=$(usex !cpu_flags_x86_avx)
+		-DSLEEF_DISABLE_AVX2=$(usex !cpu_flags_x86_avx2)
+		-DSLEEF_DISABLE_AVX512F=$(usex !cpu_flags_x86_avx512f)
+		-DSLEEF_DISABLE_FMA4=$(usex !cpu_flags_x86_fma4)
+		-DSLEEF_DISABLE_OPENMP=$(usex !openmp)
+		-DSLEEF_DISABLE_RVVM1=$(usex !cpu_flags_riscv_rvvm1)
+		-DSLEEF_DISABLE_RVVM2=$(usex !cpu_flags_riscv_rvvm2)
+		-DSLEEF_DISABLE_SSE2=$(usex !cpu_flags_x86_sse2)
+		-DSLEEF_DISABLE_SSE4=$(usex !cpu_flags_x86_sse4)
+		-DSLEEF_DISABLE_SVE=$(usex !cpu_flags_arm_sve)
+		-DSLEEF_DISABLE_VSX=$(usex !cpu_flags_ppc_vsx)
+		-DSLEEF_DISABLE_VSX3=$(usex !cpu_flags_ppc_vsx3)
+		-DSLEEF_DISABLE_VXE=$(usex !cpu_flags_s390_vxe)
+		-DSLEEF_DISABLE_VXE2=$(usex !cpu_flags_s390_vxe2)
 		-DTORCH_INSTALL_LIB_DIR="${EPREFIX}/usr/$(get_libdir)"
 		-DUSE_CCACHE=OFF
 		-DUSE_CUDA=$(usex cuda)
@@ -1100,21 +1156,51 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 	)
 
 	if use onednn ; then
-		if use amd64 || use arm64 ; then
+		if use amd64 && ( use cpu_flags_x86_amx || use cpu_flags_x86_avx2 || use cpu_flags_x86_avx512 || use cpu_flags_x86_sse4_1 ) ; then
 			mycmakeargs+=(
 				-DUSE_MKLDNN=$(usex onednn)
+				-DMKLDNN_INCLUDE_DIR="${ESYSROOT}/usr/include/oneapi/dnnl"
+				-DMKLDNN_LIBRARIES="dnnl"
+			)
+		elif use arm64 ; then
+			mycmakeargs+=(
+				-DUSE_MKLDNN=OFF # Missing ComputeLibrary
 			)
 		else
 			mycmakeargs+=(
 				-DUSE_MKLDNN=OFF
 			)
 		fi
+	else
+		mycmakeargs+=(
+			-DUSE_MKLDNN=OFF
+		)
 	fi
 
 	if use mkl ; then
 		mycmakeargs+=(
 			-DBLAS="MKL"
 		)
+
+		local flags
+		flags=""
+		if use cpu_flags_x86_sse4_1 ; then
+			flags="${flags};SSE41"
+		fi
+		if use cpu_flags_x86_avx2 ; then
+			flags="${flags};AVX2"
+		fi
+		if use cpu_flags_x86_avx512 ; then
+			flags="${flags};AVX512"
+		fi
+		if use cpu_flags_x86_amx ; then
+			flags="${flags};AMX"
+		fi
+		mycmakeargs+=(
+			-DDNNL_ENABLE_PRIMITIVE_CPU_ISA="${flags:1}"
+			-DONEDNN_ENABLE_GEMM_KERNELS_ISA="${flags:1}"
+		)
+
 	elif use openblas ; then
 		mycmakeargs+=(
 			-DBLAS="OpenBLAS"
@@ -1186,15 +1272,6 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 	else
 		mycmakeargs+=(
 			-DUSE_RCCL=OFF
-		)
-	fi
-
-	if use onednn ; then
-		mycmakeargs+=(
-			-DUSE_MKLDNN=ON
-			-DMKLDNN_FOUND=ON
-			-DMKLDNN_LIBRARIES=dnnl
-			-DMKLDNN_INCLUDE_DIR="${ESYSROOT}/usr/include/oneapi/dnnl"
 		)
 	fi
 
