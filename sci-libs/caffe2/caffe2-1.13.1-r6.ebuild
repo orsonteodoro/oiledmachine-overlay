@@ -443,6 +443,11 @@ REQUIRED_USE="
 			tensorpipe
 		)
 	)
+	fbgemm? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512
+		openmp
+	)
 	ffmpeg? (
 		opencv
 	)

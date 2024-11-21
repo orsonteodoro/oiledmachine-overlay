@@ -838,6 +838,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.4.0-aotriton-offline-install.patch"
 	"${FILESDIR}/${PN}-2.4.1-prefixed-install.patch"
 	"${FILESDIR}/${PN}-2.5.1-optionalize-simd.patch"
+	"${FILESDIR}/${PN}-2.5.1-optionalize-simd-for-fbgemm.patch"
 )
 
 warn_untested_gpu() {

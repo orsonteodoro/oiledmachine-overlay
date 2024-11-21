@@ -853,6 +853,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.3.0-fix-gcc-clang-abi-compat.patch"
 	"${FILESDIR}/${PN}-2.3.1-prefixed-install.patch"
 	"${FILESDIR}/${PN}-2.5.1-optionalize-simd.patch"
+	"${FILESDIR}/${PN}-2.5.1-optionalize-simd-for-fbgemm.patch"
 )
 
 warn_untested_gpu() {
