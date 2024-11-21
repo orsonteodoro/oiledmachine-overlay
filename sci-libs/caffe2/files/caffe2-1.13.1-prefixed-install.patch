@@ -209,9 +209,9 @@ diff '--color=auto' -urp pytorch-1.13.1.orig/third_party/ideep/mkl-dnn/src/CMake
      )
  
  configure_package_config_file(../dnnlgraphConfig.cmake.in
-diff '--color=auto' -urp pytorch-1.13.1.orig/third_party/kineto/third_party/fmt/CMakeLists.txt pytorch-1.13.1/third_party/kineto/third_party/fmt/CMakeLists.txt
---- pytorch-1.13.1.orig/third_party/kineto/third_party/fmt/CMakeLists.txt	2022-06-19 08:25:58.000000000 -0700
-+++ pytorch-1.13.1/third_party/kineto/third_party/fmt/CMakeLists.txt	2024-11-07 20:33:46.787167900 -0800
+diff '--color=auto' -urp pytorch-1.13.1.orig/third_party/kineto/libkineto/third_party/fmt/CMakeLists.txt pytorch-1.13.1/third_party/kineto/libkineto/third_party/fmt/CMakeLists.txt
+--- pytorch-1.13.1.orig/third_party/kineto/libkineto/third_party/fmt/CMakeLists.txt	2022-06-19 08:25:58.000000000 -0700
++++ pytorch-1.13.1/third_party/kineto/libkineto/third_party/fmt/CMakeLists.txt	2024-11-07 20:33:46.787167900 -0800
 @@ -65,7 +65,7 @@ endif ()
  
  project(FMT CXX)
@@ -253,7 +253,7 @@ diff '--color=auto' -urp pytorch-1.13.1.orig/third_party/kineto/third_party/fmt/
  
    # Use a namespace because CMake provides better diagnostics for namespaced
    # imported targets.
-Only in pytorch-1.13.1/third_party/kineto/third_party/fmt: CMakeLists.txt.orig
+Only in pytorch-1.13.1/third_party/kineto/libkineto/third_party/fmt: CMakeLists.txt.orig
 diff '--color=auto' -urp pytorch-1.13.1.orig/third_party/onnx/third_party/pybind11/CMakeLists.txt pytorch-1.13.1/third_party/onnx/third_party/pybind11/CMakeLists.txt
 --- pytorch-1.13.1.orig/third_party/onnx/third_party/pybind11/CMakeLists.txt	2022-02-02 14:34:15.000000000 -0800
 +++ pytorch-1.13.1/third_party/onnx/third_party/pybind11/CMakeLists.txt	2024-11-07 20:33:46.787167900 -0800

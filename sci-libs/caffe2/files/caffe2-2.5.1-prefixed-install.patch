@@ -307,9 +307,9 @@ diff '--color=auto' -urp pytorch-2.5.1.orig/third_party/ideep/mkl-dnn/src/graph/
 +        ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIXED_LIBDIR})
  endif()
  
-diff '--color=auto' -urp pytorch-2.5.1.orig/third_party/kineto/third_party/fmt/CMakeLists.txt pytorch-2.5.1/third_party/kineto/third_party/fmt/CMakeLists.txt
---- pytorch-2.5.1.orig/third_party/kineto/third_party/fmt/CMakeLists.txt	2024-07-01 06:02:59.000000000 -0700
-+++ pytorch-2.5.1/third_party/kineto/third_party/fmt/CMakeLists.txt	2024-11-07 17:17:00.890307683 -0800
+diff '--color=auto' -urp pytorch-2.5.1.orig/third_party/kineto/libkineto/third_party/fmt/CMakeLists.txt pytorch-2.5.1/third_party/kineto/libkineto/third_party/fmt/CMakeLists.txt
+--- pytorch-2.5.1.orig/third_party/kineto/libkineto/third_party/fmt/CMakeLists.txt	2024-07-01 06:02:59.000000000 -0700
++++ pytorch-2.5.1/third_party/kineto/libkineto/third_party/fmt/CMakeLists.txt	2024-11-07 17:17:00.890307683 -0800
 @@ -420,7 +420,7 @@ if (FMT_INSTALL)
            LIBRARY DESTINATION ${FMT_LIB_DIR}
            ARCHIVE DESTINATION ${FMT_LIB_DIR}

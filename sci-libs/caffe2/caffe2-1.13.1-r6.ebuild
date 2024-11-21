@@ -434,6 +434,9 @@ REQUIRED_USE_AVX512="
 	cpu_flags_x86_avx512vl
 "
 REQUIRED_USE="
+	!jit? (
+		kineto
+	)
 	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
 	${PYTHON_REQUIRED_USE}
@@ -948,8 +951,8 @@ src_prepare() {
 		dep_prepare_mv "${WORKDIR}/json-${NLOHMANN_COMMIT_1}" "${S}/third_party/nlohmann"
 
 		dep_prepare_mv "${WORKDIR}/kineto-${KINETO_COMMIT}" "${S}/third_party/kineto"
-		dep_prepare_cp "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_3}" "${S}/third_party/kineto/third_party/googletest"
-		dep_prepare_mv "${WORKDIR}/fmt-${FMT_COMMIT_2}" "${S}/third_party/kineto/third_party/fmt"
+		dep_prepare_cp "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_3}" "${S}/third_party/kineto/libkineto/third_party/googletest"
+		dep_prepare_mv "${WORKDIR}/fmt-${FMT_COMMIT_2}" "${S}/third_party/kineto/libkineto/third_party/fmt"
 
 		dep_prepare_mv "${WORKDIR}/NNPACK-${NNPACK_COMMIT}" "${S}/third_party/NNPACK"
 

@@ -300,9 +300,9 @@ diff '--color=auto' -urp pytorch-2.3.1.orig/third_party/ideep/mkl-dnn/src/graph/
  endif()
  
 Only in pytorch-2.3.1/third_party/ideep/mkl-dnn/src/graph/backend/graph_compiler/core/src/runtime: CMakeLists.txt.orig
-diff '--color=auto' -urp pytorch-2.3.1.orig/third_party/kineto/third_party/fmt/CMakeLists.txt pytorch-2.3.1/third_party/kineto/third_party/fmt/CMakeLists.txt
---- pytorch-2.3.1.orig/third_party/kineto/third_party/fmt/CMakeLists.txt	2023-10-15 08:23:36.000000000 -0700
-+++ pytorch-2.3.1/third_party/kineto/third_party/fmt/CMakeLists.txt	2024-11-07 19:40:18.357942966 -0800
+diff '--color=auto' -urp pytorch-2.3.1.orig/third_party/kineto/libkineto/third_party/fmt/CMakeLists.txt pytorch-2.3.1/third_party/kineto/libkineto/third_party/fmt/CMakeLists.txt
+--- pytorch-2.3.1.orig/third_party/kineto/libkineto/third_party/fmt/CMakeLists.txt	2023-10-15 08:23:36.000000000 -0700
++++ pytorch-2.3.1/third_party/kineto/libkineto/third_party/fmt/CMakeLists.txt	2024-11-07 19:40:18.357942966 -0800
 @@ -136,7 +136,7 @@ endif ()
  
  project(FMT CXX)

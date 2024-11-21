@@ -51,9 +51,9 @@ diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/kineto/libkineto/sample_
    -lpthread \
    -lcuda \
    -lcudart \
-diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/kineto/third_party/dynolog/third_party/DCGM/cmake/FindCuda.cmake pytorch-2.4.0/third_party/kineto/third_party/dynolog/third_party/DCGM/cmake/FindCuda.cmake
---- pytorch-2.4.0.orig/third_party/kineto/third_party/dynolog/third_party/DCGM/cmake/FindCuda.cmake	2022-03-07 15:21:14.000000000 -0800
-+++ pytorch-2.4.0/third_party/kineto/third_party/dynolog/third_party/DCGM/cmake/FindCuda.cmake	2024-08-10 23:30:04.912248744 -0700
+diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/cmake/FindCuda.cmake pytorch-2.4.0/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/cmake/FindCuda.cmake
+--- pytorch-2.4.0.orig/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/cmake/FindCuda.cmake	2022-03-07 15:21:14.000000000 -0800
++++ pytorch-2.4.0/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/cmake/FindCuda.cmake	2024-08-10 23:30:04.912248744 -0700
 @@ -1,8 +1,8 @@
  include(utils)
  
@@ -66,18 +66,18 @@ diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/kineto/third_party/dynol
  
  macro (load_cuda cuda_version)
      foreach (prefix ${Cuda${cuda_version}_prefix})
-diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/kineto/third_party/dynolog/third_party/DCGM/dcgmproftester/buildptx.sh pytorch-2.4.0/third_party/kineto/third_party/dynolog/third_party/DCGM/dcgmproftester/buildptx.sh
---- pytorch-2.4.0.orig/third_party/kineto/third_party/dynolog/third_party/DCGM/dcgmproftester/buildptx.sh	2022-03-07 15:21:14.000000000 -0800
-+++ pytorch-2.4.0/third_party/kineto/third_party/dynolog/third_party/DCGM/dcgmproftester/buildptx.sh	2024-08-10 23:30:25.903903259 -0700
+diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/dcgmproftester/buildptx.sh pytorch-2.4.0/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/dcgmproftester/buildptx.sh
+--- pytorch-2.4.0.orig/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/dcgmproftester/buildptx.sh	2022-03-07 15:21:14.000000000 -0800
++++ pytorch-2.4.0/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/dcgmproftester/buildptx.sh	2024-08-10 23:30:25.903903259 -0700
 @@ -14,4 +14,4 @@
  # See the License for the specific language governing permissions and
  # limitations under the License.
  
 -/usr/local/cuda/bin/nvcc -ptx -m64 -o DcgmProfTesterKernels.ptx DcgmProfTesterKernels.cu || die "Failed to compile DcgmProfTesterKernels.cu"
 +/opt/cuda/bin/nvcc -ptx -m64 -o DcgmProfTesterKernels.ptx DcgmProfTesterKernels.cu || die "Failed to compile DcgmProfTesterKernels.cu"
-diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/kineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/diagnostic/build_ptx_string.sh pytorch-2.4.0/third_party/kineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/diagnostic/build_ptx_string.sh
---- pytorch-2.4.0.orig/third_party/kineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/diagnostic/build_ptx_string.sh	2022-03-07 15:21:14.000000000 -0800
-+++ pytorch-2.4.0/third_party/kineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/diagnostic/build_ptx_string.sh	2024-08-10 23:30:20.835986669 -0700
+diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/diagnostic/build_ptx_string.sh pytorch-2.4.0/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/diagnostic/build_ptx_string.sh
+--- pytorch-2.4.0.orig/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/diagnostic/build_ptx_string.sh	2022-03-07 15:21:14.000000000 -0800
++++ pytorch-2.4.0/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/diagnostic/build_ptx_string.sh	2024-08-10 23:30:20.835986669 -0700
 @@ -20,6 +20,6 @@
  #
  # sm_30 is used here for Kepler or newer
@@ -86,9 +86,9 @@ diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/kineto/third_party/dynol
 +/opt/cuda/bin/nvcc -arch=sm_30 -ptx -keep compare.cu
  bin2c compare.ptx --padd 0 --name gpuburn_ptx_string > gpuburn_ptx_string.h
  python find_ptx_symbols.py compare.ptx gpuburn_ptx_string.h
-diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/kineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/software/Software.cpp pytorch-2.4.0/third_party/kineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/software/Software.cpp
---- pytorch-2.4.0.orig/third_party/kineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/software/Software.cpp	2022-03-07 15:21:14.000000000 -0800
-+++ pytorch-2.4.0/third_party/kineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/software/Software.cpp	2024-08-10 23:30:14.356093317 -0700
+diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/software/Software.cpp pytorch-2.4.0/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/software/Software.cpp
+--- pytorch-2.4.0.orig/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/software/Software.cpp	2022-03-07 15:21:14.000000000 -0800
++++ pytorch-2.4.0/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/nvvs/plugin_src/software/Software.cpp	2024-08-10 23:30:14.356093317 -0700
 @@ -245,7 +245,7 @@ bool Software::checkLibraries(libraryChe
      if (checkLib == CHECK_CUDATK && fail == true)
      {
@@ -98,9 +98,9 @@ diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/kineto/third_party/dynol
          AddInfo("Some tests will not run.");
      }
      if (checkLib == CHECK_CUDA && fail == true)
-diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/kineto/third_party/dynolog/third_party/DCGM/sdk/nvidia/nvml/CMakeLists.txt pytorch-2.4.0/third_party/kineto/third_party/dynolog/third_party/DCGM/sdk/nvidia/nvml/CMakeLists.txt
---- pytorch-2.4.0.orig/third_party/kineto/third_party/dynolog/third_party/DCGM/sdk/nvidia/nvml/CMakeLists.txt	2024-08-10 23:17:48.000366609 -0700
-+++ pytorch-2.4.0/third_party/kineto/third_party/dynolog/third_party/DCGM/sdk/nvidia/nvml/CMakeLists.txt	2024-08-10 23:30:38.719692326 -0700
+diff '--color=auto' -urp pytorch-2.4.0.orig/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/sdk/nvidia/nvml/CMakeLists.txt pytorch-2.4.0/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/sdk/nvidia/nvml/CMakeLists.txt
+--- pytorch-2.4.0.orig/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/sdk/nvidia/nvml/CMakeLists.txt	2024-08-10 23:17:48.000366609 -0700
++++ pytorch-2.4.0/third_party/kineto/libkineto/third_party/dynolog/third_party/DCGM/sdk/nvidia/nvml/CMakeLists.txt	2024-08-10 23:30:38.719692326 -0700
 @@ -32,8 +32,8 @@ target_include_directories(sdk_nvml_inte
  #)
  #target_include_directories(sdk_nvml_interface SYSTEM INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/nvsmi/stats)

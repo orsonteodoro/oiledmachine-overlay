@@ -213,9 +213,9 @@ diff '--color=auto' -urp pytorch-2.0.1.orig/third_party/ideep/mkl-dnn/src/CMakeL
  configure_package_config_file(../dnnlgraphConfig.cmake.in
 Only in pytorch-2.0.1/third_party/ideep/mkl-dnn/src: CMakeLists.txt.orig
 Only in pytorch-2.0.1/third_party/ideep/mkl-dnn/src: CMakeLists.txt.rej
-diff '--color=auto' -urp pytorch-2.0.1.orig/third_party/kineto/third_party/fmt/CMakeLists.txt pytorch-2.0.1/third_party/kineto/third_party/fmt/CMakeLists.txt
---- pytorch-2.0.1.orig/third_party/kineto/third_party/fmt/CMakeLists.txt	2023-01-27 12:29:57.000000000 -0800
-+++ pytorch-2.0.1/third_party/kineto/third_party/fmt/CMakeLists.txt	2024-11-07 20:22:53.973217384 -0800
+diff '--color=auto' -urp pytorch-2.0.1.orig/third_party/kineto/libkineto/third_party/fmt/CMakeLists.txt pytorch-2.0.1/third_party/kineto/libkineto/third_party/fmt/CMakeLists.txt
+--- pytorch-2.0.1.orig/third_party/kineto/libkineto/third_party/fmt/CMakeLists.txt	2023-01-27 12:29:57.000000000 -0800
++++ pytorch-2.0.1/third_party/kineto/libkineto/third_party/fmt/CMakeLists.txt	2024-11-07 20:22:53.973217384 -0800
 @@ -65,7 +65,7 @@ endif ()
  
  project(FMT CXX)
@@ -257,8 +257,8 @@ diff '--color=auto' -urp pytorch-2.0.1.orig/third_party/kineto/third_party/fmt/C
  
    # Use a namespace because CMake provides better diagnostics for namespaced
    # imported targets.
-Only in pytorch-2.0.1/third_party/kineto/third_party/fmt: CMakeLists.txt.orig
-Only in pytorch-2.0.1/third_party/kineto/third_party/fmt: CMakeLists.txt.rej
+Only in pytorch-2.0.1/third_party/kineto/libkineto/third_party/fmt: CMakeLists.txt.orig
+Only in pytorch-2.0.1/third_party/kineto/libkineto/third_party/fmt: CMakeLists.txt.rej
 diff '--color=auto' -urp pytorch-2.0.1.orig/third_party/onnx/third_party/pybind11/CMakeLists.txt pytorch-2.0.1/third_party/onnx/third_party/pybind11/CMakeLists.txt
 --- pytorch-2.0.1.orig/third_party/onnx/third_party/pybind11/CMakeLists.txt	2022-03-30 20:12:13.000000000 -0700
 +++ pytorch-2.0.1/third_party/onnx/third_party/pybind11/CMakeLists.txt	2024-11-07 20:19:33.100377266 -0800

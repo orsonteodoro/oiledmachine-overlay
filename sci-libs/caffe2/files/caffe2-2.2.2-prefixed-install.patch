@@ -246,9 +246,9 @@ diff '--color=auto' -urp pytorch-2.2.2.orig/third_party/ideep/mkl-dnn/src/graph/
 +        ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIXED_LIBDIR})
  endif()
  
-diff '--color=auto' -urp pytorch-2.2.2.orig/third_party/kineto/third_party/fmt/CMakeLists.txt pytorch-2.2.2/third_party/kineto/third_party/fmt/CMakeLists.txt
---- pytorch-2.2.2.orig/third_party/kineto/third_party/fmt/CMakeLists.txt	2023-10-15 08:23:36.000000000 -0700
-+++ pytorch-2.2.2/third_party/kineto/third_party/fmt/CMakeLists.txt	2024-11-07 19:54:23.124294351 -0800
+diff '--color=auto' -urp pytorch-2.2.2.orig/third_party/kineto/libkineto/third_party/fmt/CMakeLists.txt pytorch-2.2.2/third_party/kineto/libkineto/third_party/fmt/CMakeLists.txt
+--- pytorch-2.2.2.orig/third_party/kineto/libkineto/third_party/fmt/CMakeLists.txt	2023-10-15 08:23:36.000000000 -0700
++++ pytorch-2.2.2/third_party/kineto/libkineto/third_party/fmt/CMakeLists.txt	2024-11-07 19:54:23.124294351 -0800
 @@ -136,7 +136,7 @@ endif ()
  
  project(FMT CXX)
