@@ -1083,6 +1083,10 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 	local mycmakeargs=(
 		-DBUILD_CUSTOM_PROTOBUF=$(usex system-libs OFF ON)
 		-DBUILD_SHARED_LIBS=ON
+		-DCMAKE_INSTALL_PREFIXED_DATAROOTDIR="lib/${PN}/share"
+		-DCMAKE_INSTALL_PREFIXED_INCLUDEDIR="lib/${PN}/include"
+		-DCMAKE_INSTALL_PREFIXED_LIBDIR="lib/${PN}/$(get_libdir)"
+		-DCMAKE_INSTALL_PREFIXED_BINDIR="lib/${PN}/bin"
 		-DLIBSHM_INSTALL_LIB_SUBDIR="${EPREFIX}/usr/$(get_libdir)"
 		-DPYBIND11_PYTHON_VERSION="${EPYTHON#python}"
 		-DPYTHON_EXECUTABLE="${PYTHON}"
@@ -1101,6 +1105,8 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		-DSLEEF_DISABLE_VXE=$(usex !cpu_flags_s390_vxe)
 		-DSLEEF_DISABLE_VXE2=$(usex !cpu_flags_s390_vxe2)
 		-DTORCH_INSTALL_LIB_DIR="${EPREFIX}/usr/$(get_libdir)"
+		-DUSE_AVX2=$(usex cpu_flags_x86_avx2)
+		-DUSE_AVX512=$(usex cpu_flags_x86_avx512)
 		-DUSE_CCACHE=OFF
 		-DUSE_CUDA=$(usex cuda)
 		-DUSE_DISTRIBUTED=$(usex distributed)
@@ -1149,18 +1155,10 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		-DUSE_SYSTEM_XNNPACK=$(usex system-libs)
 		-DUSE_UCC=OFF
 		-DUSE_VALGRIND=OFF
-		-DUSE_XNNPACK=$(usex xnnpack)
-		-Wno-dev
-
-		-DCMAKE_INSTALL_PREFIXED_DATAROOTDIR="lib/${PN}/share"
-		-DCMAKE_INSTALL_PREFIXED_INCLUDEDIR="lib/${PN}/include"
-		-DCMAKE_INSTALL_PREFIXED_LIBDIR="lib/${PN}/$(get_libdir)"
-		-DCMAKE_INSTALL_PREFIXED_BINDIR="lib/${PN}/bin"
-
-		-DUSE_AVX2=$(usex cpu_flags_x86_avx2)
-		-DUSE_AVX512=$(usex cpu_flags_x86_avx512)
 		-DUSE_VSX=$(usex cpu_flags_ppc_vsx)
+		-DUSE_XNNPACK=$(usex xnnpack)
 		-DUSE_ZVECTOR=$(usex cpu_flags_s390_zvector)
+		-Wno-dev
 	)
 
 	if use onednn ; then
