@@ -570,6 +570,9 @@ REQUIRED_USE="
 			cpu_flags_x86_avx2
 			cpu_flags_x86_avx512
 		)
+		rocm? (
+			cpu_flags_x86_avx2
+		)
 	)
 	ffmpeg? (
 		opencv
