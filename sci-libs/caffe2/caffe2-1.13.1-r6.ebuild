@@ -71,6 +71,8 @@ BENCHMARK_COMMIT_3="0d98dba29d66e93259db7daa53a9327df767a415" # onnx dep
 BENCHMARK_COMMIT_4="e776aa0275e293707b6a0901e0e8d8a8a3679508" # onnx-tensorrt/third_party/onnx dep
 CLANG_CINDEX_PYTHON3_COMMIT="6a00cbc4a9b8e68b71caf7f774b3f9c753ae84d5" # onnx-tensorrt/third_party/onnx/third_party/pybind11 dep
 CPU_FLAGS_ARM=(
+	cpu_flags_arm_dotprod
+	cpu_flags_arm_fp16
 	cpu_flags_arm_neon
 	cpu_flags_arm_sve
 )
@@ -401,7 +403,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE}
 ${ROCM_SLOTS2[@]}
-cuda +distributed +eigen +fbgemm -ffmpeg +flash-attention +gloo +kineto +magma
+cuda +distributed +eigen +fbgemm -ffmpeg +flash-attention +gloo -jit +kineto +magma
 -mkl +mpi +nccl +nnpack +numpy +onednn -openblas -opencl -opencv +openmp +rccl rocm
 roctracer -ssl system-libs +tensorpipe +qnnpack test +xnnpack
 ebuild-revision-8
@@ -548,6 +550,12 @@ REQUIRED_USE="
 	)
 	tensorpipe? (
 		distributed
+	)
+	xnnpack? (
+		arm64? (
+			cpu_flags_arm_dotprod
+			cpu_flags_arm_fp16
+		)
 	)
 "
 gen_rocm_depends() {
@@ -761,7 +769,7 @@ RDEPEND="
 		>=dev-libs/libfmt-7.0.3
 		>=dev-libs/protobuf-3.13.1:0/3.21
 		>=dev-libs/pthreadpool-2021.04.13
-		>=dev-libs/sleef-3.6.0
+		>=dev-libs/sleef-3.6.0[cpu_flags_x86_avx?,cpu_flags_x86_avx2?,cpu_flags_x86_avx512f?,cpu_flags_x86_fma4?,cpu_flags_x86_sse2?,cpu_flags_x86_sse4_1?]
 		>=sci-libs/foxi-2021.05.26
 		>=sci-libs/onnx-1.12.0
 		cuda? (
@@ -789,7 +797,12 @@ RDEPEND="
 			>=sci-libs/tensorpipe-2021.12.27[cuda?]
 		)
 		xnnpack? (
-			>=sci-libs/XNNPACK-2022.02.16
+			>=sci-libs/XNNPACK-2022.02.16[jit?,memopt,sparse]
+			cpu_flags_arm_dotprod? (
+				cpu_flags_arm_fp16? (
+					>=sci-libs/XNNPACK-2022.02.16[assembly]
+				)
+			)
 		)
 	)
 "
@@ -1085,6 +1098,14 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		fi
 	}
 
+	use_arm_fp16_dotprod() {
+		if ( use arm || use arm64 ) && use cpu_flags_arm_dotprod && use cpu_flags_arm_fp16 ; then
+			echo "ON"
+		else
+			echo "OFF"
+		fi
+	}
+
 	local mycmakeargs=(
 		-DBUILD_CUSTOM_PROTOBUF=$(usex system-libs OFF ON)
 		-DBUILD_SHARED_LIBS=ON
@@ -1165,6 +1186,8 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		-DUSE_VSX=$(usex cpu_flags_ppc_vsx)
 		-DUSE_XNNPACK=$(usex xnnpack)
 		-DUSE_ZVECTOR=$(usex cpu_flags_s390_zvector)
+		-DXNNPACK_ENABLE_ASSEMBLY=$(use_arm_fp16_dotprod)
+		-DXNNPACK_ENABLE_JIT=$(usex jit)
 		-Wno-dev
 	)
 

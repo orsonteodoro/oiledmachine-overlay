@@ -93,6 +93,9 @@ CUDA_TARGETS_COMPAT=(
 DCGM_COMMIT="ffde4e54bc7249a6039a5e6b45b395141e1217f9" # dynolog dep
 CPR_COMMIT="871ed52d350214a034f6ef8a3b8f51c5ce1bd400" # dynolog dep
 CPU_FLAGS_ARM=(
+	cpu_flags_arm_bf16
+	cpu_flags_arm_dotprod
+	cpu_flags_arm_fp16
 	cpu_flags_arm_neon
 	cpu_flags_arm_sve
 )
@@ -446,7 +449,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE}
 ${ROCM_SLOTS2[@]}
-cuda +distributed +eigen +fbgemm -ffmpeg +flash-attention +gloo +kineto +magma
+cuda +distributed +eigen +fbgemm -ffmpeg +flash-attention +gloo -jit +kineto +magma
 -mimalloc -mkl +nccl +mpi +nnpack +numpy +onednn -openblas -opencl -opencv +openmp
 +rccl rocm roctracer -ssl system-libs +tensorpipe +qnnpack test +xnnpack
 ebuild-revision-8
@@ -794,7 +797,7 @@ RDEPEND="
 		>=dev-libs/libfmt-10.1.0
 		>=dev-libs/protobuf-3.13.1:0/3.21
 		>=dev-libs/pthreadpool-2021.04.13
-		>=dev-libs/sleef-3.6.0
+		>=dev-libs/sleef-3.6.0[cpu_flags_x86_avx?,cpu_flags_x86_avx2?,cpu_flags_x86_avx512f?,cpu_flags_x86_fma4?,cpu_flags_x86_sse2?,cpu_flags_x86_sse4_1?]
 		>=sci-libs/foxi-2021.05.26
 		>=sci-libs/onnx-1.14.1
 		cuda? (
@@ -822,7 +825,12 @@ RDEPEND="
 			>=sci-libs/tensorpipe-2021.12.27[cuda?]
 		)
 		xnnpack? (
-			>=sci-libs/XNNPACK-2022.12.21
+			>=sci-libs/XNNPACK-2022.12.21[jit?,memopt,sparse]
+			cpu_flags_arm_dotprod? (
+				cpu_flags_arm_fp16? (
+					>=sci-libs/XNNPACK-2022.12.21[assembly]
+				)
+			)
 		)
 	)
 "
@@ -1130,6 +1138,14 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		fi
 	}
 
+	use_arm_fp16_dotprod() {
+		if ( use arm || use arm64 ) && use cpu_flags_arm_dotprod && use cpu_flags_arm_fp16 ; then
+			echo "ON"
+		else
+			echo "OFF"
+		fi
+	}
+
 	local mycmakeargs=(
 		-DBUILD_CUSTOM_PROTOBUF=$(usex system-libs OFF ON)
 		-DBUILD_SHARED_LIBS=ON
@@ -1208,6 +1224,12 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		-DUSE_VSX=$(usex cpu_flags_ppc_vsx)
 		-DUSE_XNNPACK=$(usex xnnpack)
 		-DUSE_ZVECTOR=$(usex cpu_flags_s390_zvector)
+		-DXNNPACK_ENABLE_ARM_FP16_SCALAR=$(usex cpu_flags_arm_fp16)
+		-DXNNPACK_ENABLE_ARM_FP16_VECTOR=$(usex cpu_flags_arm_fp16)
+		-DXNNPACK_ENABLE_ARM_BF16_VECTOR=$(usex cpu_flags_arm_bf16)
+		-DXNNPACK_ENABLE_ARM_DOTPROD=$(usex cpu_flags_arm_dotprod)
+		-DXNNPACK_ENABLE_ASSEMBLY=$(use_arm_fp16_dotprod)
+		-DXNNPACK_ENABLE_JIT=$(usex jit)
 		-Wno-dev
 	)
 
