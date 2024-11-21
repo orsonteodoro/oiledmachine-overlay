@@ -72,6 +72,7 @@ BENCHMARK_COMMIT_4="e776aa0275e293707b6a0901e0e8d8a8a3679508" # onnx-tensorrt/th
 CLANG_CINDEX_PYTHON3_COMMIT="6a00cbc4a9b8e68b71caf7f774b3f9c753ae84d5" # onnx-tensorrt/third_party/onnx/third_party/pybind11 dep
 CPR_COMMIT="871ed52d350214a034f6ef8a3b8f51c5ce1bd400" # dynolog dep
 CPU_FLAGS_ARM=(
+	cpu_flags_arm_neon
 	cpu_flags_arm_sve
 )
 CPU_FLAGS_PPC=(
@@ -92,7 +93,13 @@ CPU_FLAGS_X86=(
 	cpu_flags_x86_avx
 	cpu_flags_x86_avx2
 	cpu_flags_x86_avx512
+	cpu_flags_x86_avx512bw
+	cpu_flags_x86_avx512dq
 	cpu_flags_x86_avx512f
+	cpu_flags_x86_avx512vl
+	cpu_flags_x86_avx512vbmi
+	cpu_flags_x86_f16c
+	cpu_flags_x86_fma
 	cpu_flags_x86_fma4
 	cpu_flags_x86_sse2
 	cpu_flags_x86_sse4_1
@@ -467,6 +474,33 @@ REQUIRED_USE="
 	?? (
 		cuda
 		rocm
+	)
+	arm? (
+		cpu_flags_arm_neon
+	)
+	cpu_flags_x86_avx? (
+		cpu_flags_x86_sse4_1
+	)
+	cpu_flags_x86_avx2? (
+		cpu_flags_x86_avx
+		cpu_flags_x86_f16c
+		cpu_flags_x86_fma
+	)
+	cpu_flags_x86_avx512? (
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avx512f? (
+		cpu_flags_x86_avx2
+	)
+	cpu_flags_x86_avx512vbmi? (
+		cpu_flags_x86_avx512
+		xnnpack
+	)
+	cpu_flags_x86_sse4_1? (
+		cpu_flags_x86_sse2
 	)
 	cuda? (
 		|| (

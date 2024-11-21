@@ -93,6 +93,7 @@ CUDA_TARGETS_COMPAT=(
 DCGM_COMMIT="ffde4e54bc7249a6039a5e6b45b395141e1217f9" # dynolog dep
 CPR_COMMIT="871ed52d350214a034f6ef8a3b8f51c5ce1bd400" # dynolog dep
 CPU_FLAGS_ARM=(
+	cpu_flags_arm_neon
 	cpu_flags_arm_sve
 )
 CPU_FLAGS_PPC=(
@@ -113,7 +114,13 @@ CPU_FLAGS_X86=(
 	cpu_flags_x86_avx
 	cpu_flags_x86_avx2
 	cpu_flags_x86_avx512
+	cpu_flags_x86_avx512bw
+	cpu_flags_x86_avx512dq
 	cpu_flags_x86_avx512f
+	cpu_flags_x86_avx512vl
+	cpu_flags_x86_avx512vbmi
+	cpu_flags_x86_f16c
+	cpu_flags_x86_fma
 	cpu_flags_x86_fma4
 	cpu_flags_x86_sse2
 	cpu_flags_x86_sse4_1
@@ -472,6 +479,33 @@ REQUIRED_USE="
 	?? (
 		cuda
 		rocm
+	)
+	arm? (
+		cpu_flags_arm_neon
+	)
+	cpu_flags_x86_avx? (
+		cpu_flags_x86_sse4_1
+	)
+	cpu_flags_x86_avx2? (
+		cpu_flags_x86_avx
+		cpu_flags_x86_f16c
+		cpu_flags_x86_fma
+	)
+	cpu_flags_x86_avx512? (
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avx512f? (
+		cpu_flags_x86_avx2
+	)
+	cpu_flags_x86_avx512vbmi? (
+		cpu_flags_x86_avx512
+		xnnpack
+	)
+	cpu_flags_x86_sse4_1? (
+		cpu_flags_x86_sse2
 	)
 	cuda? (
 		|| (
