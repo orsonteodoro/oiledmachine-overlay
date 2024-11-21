@@ -1148,6 +1148,7 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 	local mycmakeargs=(
 		-DASMJIT_NO_JIT=$(usex !jit)
 		-DBUILD_CUSTOM_PROTOBUF=$(usex system-libs OFF ON)
+		-DBUILD_LITE_INTERPRETER=$(usex !jit)
 		-DBUILD_SHARED_LIBS=ON
 		-DCMAKE_INSTALL_PREFIXED_DATAROOTDIR="lib/${PN}/share"
 		-DCMAKE_INSTALL_PREFIXED_INCLUDEDIR="lib/${PN}/include"
