@@ -140,12 +140,12 @@ ewarn
 ewarn "The selected LAPACK should match the vendor so that STT (speech-to-text"
 ewarn "performance) has an acceptable conversion time."
 ewarn
-ewarn "sci-libs/mkl - For Intel CPUs/GPUs"
+ewarn "sci-libs/mkl - For Intel® CPUs/GPUs"
 ewarn "sci-libs/openblas - For non-Intel CPUs"
 ewarn
 	if cat "/proc/cpuinfo" | grep -q "GenuineIntel" ; then
 		if ! eselect lapack show | grep -q "mkl" ; then
-ewarn "Run \`eselect lapack set mkl\` to optimize for Intel CPUs/GPUs."
+ewarn "Run \`eselect lapack set mkl\` to optimize for Intel® CPUs/GPUs."
 		fi
 	elif cat "/proc/cpuinfo" | grep -q "AuthenticAMD" ; then
 		if ! eselect lapack show | grep -q "openblas" ; then
