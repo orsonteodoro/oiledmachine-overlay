@@ -3062,6 +3062,8 @@ src_configure() {
 	# For proper _FORTIFY_SOURCE
 	replace-flags '-O0' '-O1'
 
+	append-flags -fno-finite-math-only
+
 	# Use similar hardening flags like TF for community generated LLMs.
 	# These are used as a precaution to mitigate CE, DT, ID, DoS (CWE-121).
 	# CE = Code Execution
@@ -3296,11 +3298,6 @@ einfo "PIE is already enabled."
 	fi
 
 	strip-unsupported-flags
-
-	if is-flagq '-Ofast' ; then
-		filter-flags -fno-finite-math-only
-		append-flags -fno-finite-math-only
-	fi
 }
 
 generate_deps() {
@@ -3321,6 +3318,7 @@ build_binary() {
 	local args=(
 		-p $(get_makeopts_jobs)
 		-x
+		-v
 	)
 	if ! tc-enables-pie ; then
 		args+=(
@@ -3354,6 +3352,7 @@ build_new_runner() {
 	local args=(
 		-p $(get_makeopts_jobs)
 		-x
+		-v
 	)
 	if ! tc-enables-pie ; then
 		args+=(
