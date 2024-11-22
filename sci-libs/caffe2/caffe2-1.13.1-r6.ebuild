@@ -199,7 +199,7 @@ XNNPACK_COMMIT="ae108ef49aa5623b896fc93d4298c49d1750d9ba"
 ZSTD_COMMIT="aec56a52fbab207fc639a1937d1e708a282edca8"
 
 
-inherit cmake cuda dep-prepare dhms flag-o-matic llvm rocm python-single-r1
+inherit cmake cuda dep-prepare dhms flag-o-matic llvm rocm python-single-r1 toolchain-funcs
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MYP}"
@@ -402,7 +402,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE}
 ${ROCM_SLOTS2[@]}
-cuda +distributed +eigen +fbgemm -ffmpeg +flash-attention +gloo -jit +kineto +magma
+clang cuda +distributed +eigen +fbgemm -ffmpeg +flash-attention +gloo -jit +kineto +magma
 -mkl +mpi +nccl +nnpack +numpy +onednn -openblas -opencl -opencv +openmp +rccl rocm
 roctracer -ssl system-libs +tensorpipe +qnnpack test +xnnpack
 ebuild-revision-8
@@ -433,9 +433,14 @@ REQUIRED_USE_AVX512="
 	cpu_flags_x86_avx512f
 	cpu_flags_x86_avx512vl
 "
+# For libtorch_python.so: undefined symbol: _ZTIN5torch2nn6ModuleE see issue #60341
 REQUIRED_USE="
 	!jit? (
+		clang
 		kineto
+		|| (
+			${LLVM_COMPAT[@]/#/llvm_slot_}
+		)
 	)
 	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
@@ -832,8 +837,23 @@ DEPEND="
 		)
 	)
 "
+gen_clang() {
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${s}? (
+				sys-devel/llvm:${s}
+				sys-devel/clang:${s}
+				sys-devel/lld:${s}
+			)
+		"
+	done
+}
 BDEPEND="
 	>=dev-build/cmake-3.18.0
+	clang? (
+		$(gen_clang)
+	)
 	system-libs? (
 		test? (
 			>=dev-cpp/benchmark-1.6.1
@@ -885,6 +905,12 @@ ewarn
 		for s in ${LLVM_COMPAT[@]} ; do
 			if use "llvm_slot_${s}" ; then
 				LLVM_MAX_SLOT="${s}"
+				if use clang ; then
+					export CC="${CHOST}-clang-${s}"
+					export CXX="${CHOST}-clang++-${s}"
+					append-ldflags -fuse-ld=lld
+					strip-unsupported-flags
+				fi
 				break
 			fi
 		done

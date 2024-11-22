@@ -225,7 +225,7 @@ TRITON_SHARED_COMMIT="450e6be65f99a0b15fd130892594b85e0897574c" # aotriton/third
 VULKANMEMORYALLOCATOR_COMMIT="a6bfc237255a6bac1513f7c1ebde6d8aed6b5191"
 XNNPACK_COMMIT="fcbf55af6cf28a4627bcd1f703ab7ad843f0f3a2"
 
-inherit cmake cuda dep-prepare dhms flag-o-matic llvm rocm python-single-r1
+inherit cmake cuda dep-prepare dhms flag-o-matic llvm rocm python-single-r1 toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${MYP}"
@@ -477,7 +477,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE}
 ${ROCM_SLOTS2[@]}
-cuda +distributed +eigen +fbgemm +flash-attention +gloo -jit +kineto +magma -mimalloc
+clang cuda +distributed +eigen +fbgemm +flash-attention +gloo -jit +kineto +magma -mimalloc
 -mkl +mpi +nccl +nnpack +numpy +onednn openblas -opencl +openmp +tensorpipe
 +qnnpack +rccl rocm roctracer -ssl system-libs test +xnnpack
 ebuild-revision-8
@@ -508,9 +508,14 @@ REQUIRED_USE_AVX512="
 	cpu_flags_x86_avx512f
 	cpu_flags_x86_avx512vl
 "
+# For libtorch_python.so: undefined symbol: _ZTIN5torch2nn6ModuleE see issue #60341
 REQUIRED_USE="
 	!jit? (
+		clang
 		kineto
+		|| (
+			${LLVM_COMPAT[@]/#/llvm_slot_}
+		)
 	)
 	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
@@ -910,8 +915,23 @@ DEPEND="
 		)
 	)
 "
+gen_clang() {
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${s}? (
+				sys-devel/llvm:${s}
+				sys-devel/clang:${s}
+				sys-devel/lld:${s}
+			)
+		"
+	done
+}
 BDEPEND="
 	>=dev-build/cmake-3.21.0
+	clang? (
+		$(gen_clang)
+	)
 	system-libs? (
 		test? (
 			>=dev-cpp/benchmark-1.6.1
@@ -962,6 +982,12 @@ pkg_setup() {
 		for s in ${LLVM_COMPAT[@]} ; do
 			if use "llvm_slot_${s}" ; then
 				LLVM_MAX_SLOT="${s}"
+				if use clang ; then
+					export CC="${CHOST}-clang-${s}"
+					export CXX="${CHOST}-clang++-${s}"
+					append-ldflags -fuse-ld=lld
+					strip-unsupported-flags
+				fi
 				break
 			fi
 		done
