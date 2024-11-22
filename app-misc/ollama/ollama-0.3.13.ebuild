@@ -3062,6 +3062,7 @@ src_configure() {
 	# For proper _FORTIFY_SOURCE
 	replace-flags '-O0' '-O1'
 
+	# For -Ofast, -ffast-math
 	append-flags -fno-finite-math-only
 
 	# Use similar hardening flags like TF for community generated LLMs.
