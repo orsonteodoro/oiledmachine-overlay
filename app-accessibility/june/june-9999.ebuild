@@ -137,7 +137,7 @@ ewarn "  https://wiki.gentoo.org/wiki/ALSA#Test_microphone"
 ewarn
 
 # There is a bug where it takes 22 min to do conversion of "what is the speed of light".
-ewarn "The selected LAPACK should match the vendor so that SST (speech-to-text"
+ewarn "The selected LAPACK should match the vendor so that STT (speech-to-text"
 ewarn "performance) has an acceptable conversion time."
 ewarn
 ewarn "sci-libs/mkl - For Intel CPUs/GPUs"
