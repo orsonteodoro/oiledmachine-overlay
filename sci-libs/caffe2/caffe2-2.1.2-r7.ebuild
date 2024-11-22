@@ -875,12 +875,19 @@ gen_clang() {
 				sys-devel/llvm:${s}
 				sys-devel/clang:${s}
 				sys-devel/lld:${s}
+				openmp? (
+					sys-devel/clang-runtime:${s}[openmp]
+					=sys-libs/libomp-${s}*
+				)
 			)
 		"
 	done
 }
 BDEPEND="
 	>=dev-build/cmake-3.21.0
+	!clang? (
+		sys-devel/gcc[openmp?]
+	)
 	clang? (
 		$(gen_clang)
 	)
