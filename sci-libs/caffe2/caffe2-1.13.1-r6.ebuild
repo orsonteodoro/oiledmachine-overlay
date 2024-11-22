@@ -437,10 +437,6 @@ REQUIRED_USE_AVX512="
 # clang breaks with python 3.10
 REQUIRED_USE="
 	!clang
-	!jit? (
-		clang
-		kineto
-	)
 	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
 	${PYTHON_REQUIRED_USE}
