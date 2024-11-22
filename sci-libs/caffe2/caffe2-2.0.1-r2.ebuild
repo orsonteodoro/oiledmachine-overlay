@@ -475,7 +475,9 @@ REQUIRED_USE_AVX512="
 	cpu_flags_x86_avx512vl
 "
 # For libtorch_python.so: undefined symbol: _ZTIN5torch2nn6ModuleE see issue #60341
+# clang breaks with python 3.10
 REQUIRED_USE="
+	!clang
 	!jit? (
 		clang
 		kineto
@@ -1097,6 +1099,10 @@ src_prepare() {
 	if use rocm ; then
 		rocm_src_prepare
 	fi
+
+	if ! use jit ; then
+		sed -i -e "/libtorch_edge_profiler_sources/d" "caffe2/CMakeLists.txt" || die
+	fi
 }
 
 gen_cuda_arch_list() {
@@ -1189,7 +1195,7 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 	local mycmakeargs=(
 		-DASMJIT_NO_JIT=$(usex !jit)
 		-DBUILD_CUSTOM_PROTOBUF=$(usex system-libs OFF ON)
-		-DBUILD_LITE_INTERPRETER=$(usex !jit)
+		-DBUILD_LITE_INTERPRETER=OFF
 		-DBUILD_SHARED_LIBS=ON
 		-DCMAKE_INSTALL_PREFIXED_DATAROOTDIR="lib/${PN}/share"
 		-DCMAKE_INSTALL_PREFIXED_INCLUDEDIR="lib/${PN}/include"
@@ -1274,6 +1280,8 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		-DXNNPACK_ENABLE_ASSEMBLY=$(use_arm_fp16_dotprod)
 		-DXNNPACK_ENABLE_JIT=$(usex jit)
 		-Wno-dev
+
+		-DINTERN_DISABLE_MOBILE_INTERP=OFF
 	)
 
 	if use onednn ; then
@@ -1418,6 +1426,10 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 
 			-DOpenMP_libomp_LIBRARY="${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/$(get_libdir)/libomp.so"
 		)
+	fi
+
+	if ! use kineto ; then
+		append-cppflags -DNO_PROFILING
 	fi
 
 	cmake_src_configure
