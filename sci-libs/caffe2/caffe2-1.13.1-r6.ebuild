@@ -594,6 +594,9 @@ gen_rocm_depends() {
 				magma? (
 					=sci-libs/magma-2.6*:${s}$(get_rocm_usedep MAGMA_2_6)
 				)
+				openmp? (
+					~dev-libs/llvm-roc-libomp-${pv}:${s}$(get_rocm_usedep LLVM_ROC_LIBOMP)
+				)
 				rccl? (
 					~dev-libs/rccl-${pv}:${s}$(get_rocm_usedep RCCL)
 				)
@@ -1368,6 +1371,29 @@ eerror "Install >=dev-cpp/eigen-3.4.0 or uninstall sci-libs/mkl"
 			-DUSE_RCCL=OFF
 		)
 	fi
+
+	if use rocm ; then
+		mycmakeargs+=(
+			-DOpenMP_C_FLAGS="-I${ESYSROOT}/opt/rocm-${ROCM_VERSION}/llvm/include -fopenmp=libomp"
+			-DOpenMP_C_LIB_NAMES="libomp"
+
+			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}/opt/rocm-${ROCM_VERSION}/llvm/include -fopenmp=libomp"
+			-DOpenMP_CXX_LIB_NAMES="libomp"
+
+			-DOpenMP_libomp_LIBRARY="${ESYSROOT}/opt/rocm-${ROCM_VERSION}/lib/libomp.so"
+		)
+	elif use clang ; then
+		mycmakeargs+=(
+			-DOpenMP_C_FLAGS="-I${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/include -fopenmp=libomp"
+			-DOpenMP_C_LIB_NAMES="libomp"
+
+			-DOpenMP_CXX_FLAGS="-I${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/include -fopenmp=libomp"
+			-DOpenMP_CXX_LIB_NAMES="libomp"
+
+			-DOpenMP_libomp_LIBRARY="${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/$(get_libdir)/libomp.so"
+		)
+	fi
+
 	cmake_src_configure
 }
 
