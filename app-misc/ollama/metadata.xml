@@ -47,7 +47,7 @@
       (EXPERIMENTAL)
     </flag>
     <flag name="mkl">
-      Support CPU optimized linear math via oneMKL.
+      Support CPU optimized linear math via oneMKL for Intel® CPUs/GPUs.
     </flag>
     <flag name="openblas">
       Support CPU optimized linear math via OpenBLAS.
