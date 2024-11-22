@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild originators -->
+    <email>cyber+gentoo@sysrq.in</email>
+    <name>Anna</name>
+  </maintainer>
+  <stabilize-allarches/>
+  <!--
+
+    oiledmachine-overlay notes:
+
+    Ebuild fork for python 3.10 compatibility.
+    Keep in sync with guru overlay
+
+  -->
+  <upstream>
+    <remote-id type="pypi">pydantic-settings</remote-id>
+    <remote-id type="github">pydantic/pydantic-settings</remote-id>
+    <doc>https://docs.pydantic.dev/dev/concepts/pydantic_settings/</doc>
+  </upstream>
+</pkgmetadata>
