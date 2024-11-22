@@ -3296,6 +3296,11 @@ einfo "PIE is already enabled."
 	fi
 
 	strip-unsupported-flags
+
+	if is-flagq '-Ofast' ; then
+		filter-flags -fno-finite-math-only
+		append-flags -fno-finite-math-only
+	fi
 }
 
 generate_deps() {
