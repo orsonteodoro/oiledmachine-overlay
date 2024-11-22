@@ -1,6 +1,6 @@
-diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
---- ollama-0.4.2.orig/cmd/cmd.go	2024-11-15 11:52:25.000000000 -0800
-+++ ollama-0.4.2/cmd/cmd.go	2024-11-18 08:23:15.991855389 -0800
+diff '--color=auto' -urp ollama-0.4.3.orig/cmd/cmd.go ollama-0.4.3/cmd/cmd.go
+--- ollama-0.4.3.orig/cmd/cmd.go	2024-11-21 08:28:04.000000000 -0800
++++ ollama-0.4.3/cmd/cmd.go	2024-11-22 06:25:57.660659866 -0800
 @@ -17,10 +17,12 @@ import (
  	"net"
  	"net/http"
@@ -14,7 +14,7 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
  	"strconv"
  	"strings"
  	"sync/atomic"
-@@ -72,6 +74,2036 @@ func getModelfileName(cmd *cobra.Command
+@@ -72,6 +74,2047 @@ func getModelfileName(cmd *cobra.Command
  	return absName, nil
  }
  
@@ -763,10 +763,13 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
 +	"mistral:7b-instruct-v0.3-fp16": "14GB",
 +	"mistral:7b-text-fp16": "14GB",
 +	"mistral:7b-text-v0.2-fp16": "14GB",
-+	"mistral-large:123b": "69GB",
++	"mistral-large:123b": "73GB",
 +	"mistral-large:123b-instruct-2407-q6_K": "101GB",
 +	"mistral-large:123b-instruct-2407-q8_0": "130GB",
 +	"mistral-large:123b-instruct-2407-fp16": "245GB",
++	"mistral-large:123b-instruct-2411-q6_K": "101GB",
++	"mistral-large:123b-instruct-2411-q8_0": "130GB",
++	"mistral-large:123b-instruct-2411-fp16": "245GB",
 +	"mistral-nemo:12b": "7.1GB",
 +	"mistral-nemo:12b-instruct-2407-q8_0": "13GB",
 +	"mistral-nemo:12b-instruct-2407-fp16": "25GB",
@@ -1428,6 +1431,12 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
 +	"tinyllama:1.1b-chat-v1-q5_K_M": "783MB",
 +	"tinyllama:1.1b-chat-v1-q6_K": "904MB",
 +	"tinyllama:1.1b-chat-v1-q8_0": "1.2GB",
++	"tulu:8b": "4.9GB",
++	"tulu:70b": "43GB",
++	"tulu:70b-q8_0": "75GB",
++	"tulu:70b-fp16": "141GB",
++	"tulu:8b-q8_0": "8.5GB",
++	"tulu:8b-fp16": "16GB",
 +	"vicuna:7b": "3.8GB",
 +	"vicuna:13b": "7.4GB",
 +	"vicuna:33b": "18GB",
@@ -1823,6 +1832,7 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
 +	"themanofrod/travel-agent": 1,
 +	"tinydolphin": 1,
 +	"tinyllama": 1,
++	"tulu": 1,
 +	"vicuna": 1,
 +	"wizard-math": 1,
 +	"wizard-vicuna": 1,
@@ -2026,6 +2036,7 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
 +	"starcoder": "coding code-generation",
 +	"starcoder2": "coding code-generation",
 +	"starling-lm": "chat chatbot roleplay writing humanities stem science technology engineering math reasoning structured-data-generation",
++	"tulu": "instruction-following math-word-problems code-generation coding",
 +	"themanofrod/travel-agent": "camping travel travel-guide outdoors",
 +	"tinydolphin": "low-memory-footprint text-generation letter-writing poems",
 +	"tinyllama": "game-dialog-generator low-memory-footprint",
@@ -2051,7 +2062,7 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
  func CreateHandler(cmd *cobra.Command, args []string) error {
  	p := progress.NewProgress(os.Stderr)
  	defer p.Stop()
-@@ -416,6 +2448,25 @@ func StopHandler(cmd *cobra.Command, arg
+@@ -416,6 +2459,25 @@ func StopHandler(cmd *cobra.Command, arg
  func RunHandler(cmd *cobra.Command, args []string) error {
  	interactive := true
  
@@ -2077,7 +2088,7 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
  	opts := runOptions{
  		Model:    args[0],
  		WordWrap: os.Getenv("TERM") == "xterm-256color",
-@@ -745,9 +2796,11 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -745,9 +2807,11 @@ func ShowHandler(cmd *cobra.Command, arg
  	modelfile, errModelfile := cmd.Flags().GetBool("modelfile")
  	parameters, errParams := cmd.Flags().GetBool("parameters")
  	system, errSystem := cmd.Flags().GetBool("system")
@@ -2090,7 +2101,7 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
  		if boolErr != nil {
  			return errors.New("error retrieving flags")
  		}
-@@ -776,13 +2829,273 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -776,13 +2840,274 @@ func ShowHandler(cmd *cobra.Command, arg
  		showType = "system"
  	}
  
@@ -2306,6 +2317,7 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
 +		"themanofrod/travel-agent": "Gemma Terms of Use 20240221, Gemma Prohibited Use Policy 20240221",
 +		"tinydolphin": "Apache-2.0",
 +		"tinyllama": "Apache-2.0",
++		"tulu": "LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy",
 +		"vicuna": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"wizard-math": "MICROSOFT RESEARCH LICENSE TERMS",
 +		"wizard-vicuna": "",
@@ -2365,7 +2377,7 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
  	}
  
  	req := api.ShowRequest{Name: args[0]}
-@@ -961,6 +3274,138 @@ func PullHandler(cmd *cobra.Command, arg
+@@ -961,6 +3286,138 @@ func PullHandler(cmd *cobra.Command, arg
  	return nil
  }
  
@@ -2504,7 +2516,7 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
  type generateContextKey string
  
  type runOptions struct {
-@@ -1366,6 +3811,8 @@ func NewCLI() *cobra.Command {
+@@ -1366,6 +3823,8 @@ func NewCLI() *cobra.Command {
  	showCmd.Flags().Bool("parameters", false, "Show parameters of a model")
  	showCmd.Flags().Bool("template", false, "Show template of a model")
  	showCmd.Flags().Bool("system", false, "Show system message of a model")
@@ -2513,7 +2525,7 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
  
  	runCmd := &cobra.Command{
  		Use:     "run MODEL [PROMPT]",
-@@ -1448,6 +3895,30 @@ func NewCLI() *cobra.Command {
+@@ -1448,6 +3907,30 @@ func NewCLI() *cobra.Command {
  		RunE:    DeleteHandler,
  	}
  
@@ -2544,7 +2556,7 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
  	envVars := envconfig.AsMap()
  
  	envs := []envconfig.EnvVar{envVars["OLLAMA_HOST"]}
-@@ -1464,6 +3935,9 @@ func NewCLI() *cobra.Command {
+@@ -1464,6 +3947,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		serveCmd,
@@ -2554,7 +2566,7 @@ diff '--color=auto' -urp ollama-0.4.2.orig/cmd/cmd.go ollama-0.4.2/cmd/cmd.go
  	} {
  		switch cmd {
  		case runCmd:
-@@ -1503,6 +3977,9 @@ func NewCLI() *cobra.Command {
+@@ -1503,6 +3989,9 @@ func NewCLI() *cobra.Command {
  		psCmd,
  		copyCmd,
  		deleteCmd,

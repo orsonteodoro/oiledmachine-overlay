@@ -134,7 +134,7 @@ sparksammy-samantha sparksammy-samantha-3.1 sparksammy-samantha-eggplant
 sparksammy-samantha-v3-uncensored sparksammy-tinysam-goog
 sparksammy-tinysam-msft sqlcoder stable-beluga stable-code stablelm-zephyr
 stablelm2 starcoder starcoder2 starling-lm themanofrod-travel-agent
-tinydolphin tinyllama vicuna
+tinydolphin tinyllama tulu vicuna
 wizard-math wizard-vicuna wizard-vicuna-uncensored wizardcoder wizardlm
 wizardlm-uncensored wizardlm2 xwinlm yarn-llama2 yarn-mistral yi yi-coder
 zephyr
@@ -2341,6 +2341,10 @@ LLM_LICENSES="
 	ollama_llms_tinyllama? (
 		Apache-2.0
 	)
+	ollama_llms_tulu? (
+		llama3_1-LICENSE
+		llama3_1-USE_POLICY.md
+	)
 	ollama_llms_vicuna? (
 		llama2-LICENSE
 		llama2-USE_POLICY.md
@@ -2786,7 +2790,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.3.13-rename-CUDA_ARCHITECTURES.patch"
 	"${FILESDIR}/${PN}-0.4.2-fix-os-arch-pair.patch"
 	"${FILESDIR}/${PN}-0.4.2-gpu-libs-path.patch"
-	"${FILESDIR}/${PN}-0.4.2-cmd-changes.patch"
+	"${FILESDIR}/${PN}-0.4.3-cmd-changes.patch"
 )
 
 pkg_pretend() {
