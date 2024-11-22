@@ -159,3 +159,7 @@ ewarn "Run \`eselect lapack set openblas\` to optimize for ${ARCH}."
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  Fail (20241122)
+# SST - passed
+# TTS - fail before entering routine or no sound
+# Multiple queries - fail stall.  only one prompt processed.
