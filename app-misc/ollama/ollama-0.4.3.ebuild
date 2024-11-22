@@ -2960,6 +2960,11 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 			"${WORKDIR}/go-mod/github.com/dgryski/trifles@"*"/matcher/main.go" \
 			|| die
 	fi
+
+	sed -i \
+		-e "s|-O2||g" \
+		"llama/llama.go" \
+		|| die
 }
 
 check_toolchain() {
