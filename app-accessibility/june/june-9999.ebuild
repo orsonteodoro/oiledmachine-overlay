@@ -65,7 +65,7 @@ REQUIRED_USE="
 	)
 "
 # pyaudio+portaudio - microphone
-# pygame+libsdl2 - output
+# pygame+libsdl2 - audio output
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/click-8.1.7[${PYTHON_USEDEP}]
