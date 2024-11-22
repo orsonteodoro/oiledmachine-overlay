@@ -28,4 +28,27 @@
     <changelog>https://github.com/mezbaul-h/june/blob/main/CHANGELOG</changelog>
     <remote-id type="github">mezbaul-h/june</remote-id>
   </upstream>
+  <use>
+    <flag name="alsa">
+      Use ALSA for audio output and/or microphone.
+    </flag>
+    <flag name="sndio">
+      Use sndio for audio output.
+    </flag>
+    <flag name="nas">
+      Use NAS for audio output.
+    </flag>
+    <flag name="jack">
+      Use JACK for audio output and/or microphone.
+    </flag>
+    <flag name="oss">
+      Use OSS for audio output and/or microphone.
+    </flag>
+    <flag name="pipewire">
+      Use PulseAudio for audio output.
+    </flag>
+    <flag name="pulseaudio">
+      Use PulseAudio for audio output and/or microphone.
+    </flag>
+  </use>
 </pkgmetadata>

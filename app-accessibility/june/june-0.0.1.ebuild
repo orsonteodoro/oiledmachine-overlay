@@ -36,17 +36,32 @@ LICENSE="
 RESTRICT="mirror test" # untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-alsa dev jack oss test
+alsa dev jack nas oss pipewire pulseaudio sndio test
 ebuild-revision-1
 "
-REQUIRED_USE="
-	test? (
-		dev
+AUDIO_OUTPUT_REQUIRED_USE="
+	|| (
+		alsa
+		jack
+		nas
+		pipewire
+		pulseaudio
+		oss
+		sndio
 	)
+"
+MIC_REQUIRED_USE="
 	|| (
 		alsa
 		jack
 		oss
+	)
+"
+REQUIRED_USE="
+	${AUDIO_OUTPUT_REQUIRED_USE}
+	${MIC_REQUIRED_USE}
+	test? (
+		dev
 	)
 "
 RDEPEND+="
@@ -63,8 +78,10 @@ RDEPEND+="
 	>=sci-libs/pytorch-2.3.1[${PYTHON_SINGLE_USEDEP}]
 	>=sci-libs/torchaudio-2.3.1[${PYTHON_SINGLE_USEDEP}]
 	>=sci-libs/transformers-4.40.2[${PYTHON_SINGLE_USEDEP}]
-	media-libs/portaudio[alsa?,jack?,oss?]
 	app-misc/ollama
+	media-libs/portaudio[alsa?,jack?,oss?]
+	media-libs/sdl2-mixer[wav]
+	media-libs/libsdl2[alsa?,jack?,nas?,oss?,pulseaudio?,sound,threads]
 	|| (
 		sci-libs/mkl
 		sci-libs/openblas[eselect-ldso,openmp]
