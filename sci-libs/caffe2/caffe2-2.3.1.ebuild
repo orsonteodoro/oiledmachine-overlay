@@ -516,9 +516,6 @@ REQUIRED_USE="
 	!jit? (
 		clang
 		kineto
-		|| (
-			${LLVM_COMPAT[@]/#/llvm_slot_}
-		)
 	)
 	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
@@ -532,6 +529,11 @@ REQUIRED_USE="
 	)
 	amdgpu_targets_gfx942? (
 		rocm_6_0
+	)
+	clang? (
+		|| (
+			${LLVM_COMPAT[@]/#/llvm_slot_}
+		)
 	)
 	cpu_flags_x86_amx? (
 		${REQUIRED_USE_AVX512}
