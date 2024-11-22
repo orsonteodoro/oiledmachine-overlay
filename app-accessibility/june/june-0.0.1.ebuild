@@ -53,7 +53,7 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/click-8.1.7[${PYTHON_USEDEP}]
 		>=dev-python/colorama-0.4.6[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
+		>=dev-python/numpy-1.26.4[${PYTHON_USEDEP},lapack]
 		>=dev-python/ollama-0.2.1[${PYTHON_USEDEP}]
 		>=dev-python/pyaudio-0.2.14[${PYTHON_USEDEP}]
 		>=dev-python/pydantic-settings-2.3.1[${PYTHON_USEDEP}]
@@ -65,6 +65,10 @@ RDEPEND+="
 	>=sci-libs/transformers-4.40.2[${PYTHON_SINGLE_USEDEP}]
 	media-libs/portaudio[alsa?,jack?,oss?]
 	app-misc/ollama
+	|| (
+		sci-libs/mkl
+		sci-libs/openblas[eselect-ldso,openmp]
+	)
 "
 DEPEND+="
 
@@ -131,6 +135,27 @@ ewarn
 ewarn "  https://wiki.archlinux.org/title/Advanced_Linux_Sound_Architecture/Troubleshooting#Setting_the_default_microphone/capture_device"
 ewarn "  https://wiki.gentoo.org/wiki/ALSA#Test_microphone"
 ewarn
+
+# There is a bug where it takes 22 min to do conversion.
+ewarn "The selected LAPACK should match the vendor so that SST (speech-to-text"
+ewarn "performance) is in acceptable conversion time."
+ewarn
+ewarn "sci-libs/mkl - For Intel CPUs/GPUs"
+ewarn "sci-libs/openblas - For non-Intel CPUs"
+ewarn
+	if cat "/proc/cpuinfo" | grep -q "GenuineIntel" ; then
+		if ! eselect lapack show | grep -q "mkl" ; then
+ewarn "Run \`eselect lapack set mkl\` to optimize for Intel CPUs/GPUs."
+		fi
+	elif cat "/proc/cpuinfo" | grep -q "AuthenticAMD" ; then
+		if ! eselect lapack show | grep -q "openblas" ; then
+ewarn "Run \`eselect lapack set openblas\` to optimize for AMD CPUs."
+		fi
+	else
+		if ! eselect lapack show | grep -q "openblas" ; then
+ewarn "Run \`eselect lapack set openblas\` to optimize for ${ARCH}."
+		fi
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
