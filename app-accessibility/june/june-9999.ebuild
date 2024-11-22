@@ -13,7 +13,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/mezbaul-h/june.git"
-	FALLBACK_COMMIT="1e70efd3305479572148cb0bcb8e5e6c15359fa8" # Jul 30, 2024
+	FALLBACK_COMMIT="cecf18673b430ffaf94398cc1a26bad92e19bb94" # Aug 12, 2024
 	IUSE=" fallback-commit"
 	inherit git-r3
 else
