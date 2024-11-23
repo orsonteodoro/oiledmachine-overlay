@@ -140,6 +140,15 @@ BDEPEND+="
 "
 DOCS=( "README.md" )
 
+pkg_postinst() {
+einfo
+einfo "You may need to download the default models first.  It can be with the"
+einfo "following command:"
+einfo
+einfo "Do \`tts --text \"Text for TTS\" --pipe_out  | aplay\`"
+einfo
+}
+
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (0.24.2, 20241122)
 # Command line text to wavfile - passed
