@@ -948,6 +948,32 @@ BDEPEND="
 		|| (
 			$(gen_gcc_bdepend)
 		)
+		cpu_flags_arm_bf16? (
+			>=sys-devel/gcc-10.1
+			>=sys-devel/binutils-2.34
+		)
+		cpu_flags_arm_dotprod? (
+			>=sys-devel/gcc-8.1
+			>=sys-devel/binutils-2.29
+		)
+		cpu_flags_arm_fp16? (
+			>=sys-devel/gcc-7.1
+			>=sys-devel/binutils-2.26
+		)
+		cpu_flags_arm_i8mm? (
+			>=sys-devel/gcc-10.1
+			>=sys-devel/binutils-2.34
+		)
+		cpu_flags_arm_neon? (
+			>=sys-devel/gcc-4.8
+		)
+		cpu_flags_arm_sve? (
+			>=sys-devel/gcc-8.1
+			>=sys-devel/binutils-2.28
+		)
+		cpu_flags_s390_zvector? (
+			>=sys-devel/gcc-5.2
+		)
 		cpu_flags_x86_amx? (
 			>=sys-devel/gcc-11.1
 			>=sys-devel/binutils-2.36
@@ -1045,7 +1071,9 @@ pkg_setup() {
 					min_slot=12
 				elif use cpu_flags_x86_amx ; then
 					min_slot=11
-				elif use cpu_flags_x86_gfni ; then
+				elif use cpu_flags_arm_bf16 || use cpu_flags_arm_i8mm ; then
+					min_slot=10
+				elif use cpu_flags_arm_dotprod || use cpu_flags_x86_gfni || use cpu_flags_arm_sve ; then
 					min_slot=8
 				else
 					min_slot=${GCC_SLOTS[-1]}
