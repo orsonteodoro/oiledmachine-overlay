@@ -3121,7 +3121,7 @@ src_install() {
 	dodir "/usr/bin"
 cat <<EOF > "${ED}/usr/bin/amica"
 #!/bin/bash
-"/usr/lib/${PN}" $@
+"/usr/lib/${PN}/${PN}" \$@
 EOF
 	fperms 0755 "/usr/bin/amica"
 	fowners "root:root" "/usr/bin/amica"
