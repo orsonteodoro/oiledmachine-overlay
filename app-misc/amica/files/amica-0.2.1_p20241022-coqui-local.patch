@@ -1,5 +1,5 @@
---- ./src/features/coquiLocal/coquiLocal.ts.orig	2024-10-22 16:44:38.000000000 -0700
-+++ ./src/features/coquiLocal/coquiLocal.ts	2024-11-23 02:38:24.559793753 -0800
+--- a/src/features/coquiLocal/coquiLocal.ts.orig	2024-10-22 16:44:38.000000000 -0700
++++ b/src/features/coquiLocal/coquiLocal.ts	2024-11-23 03:56:27.565980731 -0800
 @@ -14,11 +14,11 @@ export async function coquiLocal(
        method: 'POST',
        headers: {
@@ -14,19 +14,27 @@
      return { audio: data };
  
    } catch (error) {
-@@ -36,7 +36,7 @@ export async function coquiLocalVoiceIdL
+@@ -36,14 +36,20 @@ export async function coquiLocalVoiceIdL
        headers: {
          'Accept': "application/text",
        }
 -    })
 +    });
      const html = await response.text();
-     const selectedValues = html.match(/value="([^"]+)" SELECTED/g)?.map((match) => match.split('"')[1]) || [];
+-    const selectedValues = html.match(/value="([^"]+)" SELECTED/g)?.map((match) => match.split('"')[1]) || [];
++    const values = html.match(/value="([^"]+)" SELECTED/g);
++    let selectedValues:string[] = [];
++    if (values !== null) {
++      for (const value of values) {
++        selectedValues.push(value.split('"')[1]);
++      }
++    }
  
-@@ -47,4 +47,4 @@ export async function coquiLocalVoiceIdL
+-    return { list : selectedValues};
++    return { list : selectedValues };
+ 
+   } catch (error) {
+ 
      console.error('Error in coquiLocalVoiceIdList:', error);
      throw error;
    }
--}
-\ No newline at end of file
-+}
