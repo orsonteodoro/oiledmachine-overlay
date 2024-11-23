@@ -958,7 +958,6 @@ pkg_setup() {
 					export CC="${CHOST}-clang-${s}"
 					export CXX="${CHOST}-clang++-${s}"
 					append-ldflags -fuse-ld=lld
-					strip-unsupported-flags
 				fi
 				break
 			fi
@@ -986,8 +985,9 @@ pkg_setup() {
 					fi
 				done
 			fi
-			strip-unsupported-flags
 		fi
+		export CPP="${CC} -E"
+		strip-unsupported-flags
 	fi
 
 	if use rocm ; then
