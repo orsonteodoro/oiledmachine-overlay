@@ -87,8 +87,8 @@ CPU_FLAGS_RISCV=(
 	cpu_flags_riscv_rvv
 )
 CPU_FLAGS_S390=(
-	cpu_flags_s390_vxe
-	cpu_flags_s390_vxe2
+	cpu_flags_s390_vxe_z14
+	cpu_flags_s390_vxe_z15
 	cpu_flags_s390_zvector
 )
 CPU_FLAGS_X86=(
@@ -919,6 +919,12 @@ BDEPEND="
 			>=sys-devel/gcc-8.1
 			>=sys-devel/binutils-2.28
 		)
+		cpu_flags_s390_vxe_z14? (
+			>=sys-devel/gcc-9.1
+		)
+		cpu_flags_s390_vxe_z15? (
+			>=sys-devel/gcc-9.3
+		)
 		cpu_flags_s390_zvector? (
 			>=sys-devel/gcc-5.2
 		)
@@ -1003,6 +1009,8 @@ pkg_setup() {
 					min_slot=12
 				elif use cpu_flags_x86_amx ; then
 					min_slot=11
+				elif use cpu_flags_s390_vxe_z14 || use cpu_flags_s390_vxe_z15 ; then
+					min_slot=9
 				elif use cpu_flags_arm_dotprod || use cpu_flags_arm_sve ; then
 					min_slot=8
 				else
@@ -1286,8 +1294,8 @@ ewarn "Disabling qnnpack may cause a performance penalty on ARCH=arm64."
 		-DSLEEF_DISABLE_SVE=$(usex !cpu_flags_arm_sve)
 		-DSLEEF_DISABLE_VSX=$(usex !cpu_flags_ppc_vsx)
 		-DSLEEF_DISABLE_VSX3=$(usex !cpu_flags_ppc_vsx3)
-		-DSLEEF_DISABLE_VXE=$(usex !cpu_flags_s390_vxe)
-		-DSLEEF_DISABLE_VXE2=$(usex !cpu_flags_s390_vxe2)
+		-DSLEEF_DISABLE_VXE=$(usex !cpu_flags_s390_vxe_z14)
+		-DSLEEF_DISABLE_VXE2=$(usex !cpu_flags_s390_vxe_z15)
 		-DTORCH_INSTALL_LIB_DIR="${EPREFIX}/usr/$(get_libdir)"
 		-DUSE_AVX2=$(usex cpu_flags_x86_avx2)
 		-DUSE_AVX512=$(usex_avx512)
