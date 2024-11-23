@@ -175,10 +175,17 @@ ewarn "Run \`eselect lapack set openblas\` to optimize for AMD CPUs."
 ewarn "Run \`eselect lapack set openblas\` to optimize for ${ARCH}."
 		fi
 	fi
+
+einfo
+einfo "You may need to download the default models first for TTS"
+einfo "(text-to-speech) support.  It can be with the following command:"
+einfo
+einfo "Do \`tts --text \"Text for TTS\" --pipe_out  | aplay\`"
+einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  Fail (20241122)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (cecf186, 20241122)
 # SST - passed
-# TTS - fail before entering routine or no sound
-# Multiple queries - fail stall.  only one prompt processed.
+# TTS - passed
+# Multiple queries - passed

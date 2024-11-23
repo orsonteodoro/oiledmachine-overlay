@@ -175,6 +175,13 @@ ewarn "Run \`eselect lapack set openblas\` to optimize for AMD CPUs."
 ewarn "Run \`eselect lapack set openblas\` to optimize for ${ARCH}."
 		fi
 	fi
+
+einfo
+einfo "You may need to download the default models first for TTS"
+einfo "(text-to-speech) support.  It can be with the following command:"
+einfo
+einfo "Do \`tts --text \"Text for TTS\" --pipe_out  | aplay\`"
+einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
