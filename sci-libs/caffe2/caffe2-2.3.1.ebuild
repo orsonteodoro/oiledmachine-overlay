@@ -1050,7 +1050,11 @@ pkg_setup() {
 			else
 				local s
 				for s in ${GCC_SLOTS[@]} ; do
-					if has_version "=sys-devel/gcc-${s}*" ; then
+					if use openmp && has_version "=sys-devel/gcc-${s}*[openmp]" ; then
+						export CC="${CHOST}-gcc-${s}"
+						export CXX="${CHOST}-g++-${s}"
+						break
+					elif has_version "=sys-devel/gcc-${s}*" ; then
 						export CC="${CHOST}-gcc-${s}"
 						export CXX="${CHOST}-g++-${s}"
 						break
