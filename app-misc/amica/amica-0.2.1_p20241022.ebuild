@@ -3176,7 +3176,7 @@ src_install() {
 cat <<EOF > "${ED}/usr/bin/amica"
 #!/bin/bash
 USE_COQUI=\${USE_COQUI:-${USE_COQUI}}
-if [[ "\${USE_COQUI}" == "1" ]] ]] ; then
+if [[ "\${USE_COQUI}" == "1" ]] ; then
 	if ! ps aux | grep -q "TTS/server/server.py" ; then
 "${EPYTHON}" "/usr/lib/${EPYTHON}/site-packages/TTS/server/server.py" --model_name "tts_models/en/vctk/vits" &
 	fi
