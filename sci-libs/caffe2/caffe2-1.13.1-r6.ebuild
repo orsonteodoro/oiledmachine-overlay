@@ -960,7 +960,7 @@ ewarn
 
 				local gcc_slots=( $(seq ${GCC_SLOTS[0]} -1 ${min_slot}) )
 				local s
-				for s in ${GCC_SLOTS[@]} ; do
+				for s in ${gcc_slots[@]} ; do
 					if use openmp && has_version "=sys-devel/gcc-${s}*[openmp]" ; then
 						export CC="${CHOST}-gcc-${s}"
 						export CXX="${CHOST}-g++-${s}"
