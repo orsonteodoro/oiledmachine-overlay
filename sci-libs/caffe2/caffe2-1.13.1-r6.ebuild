@@ -952,9 +952,7 @@ ewarn
 			else
 				local min_slot
 
-				if use cpu_flags_x86_avx512vbmi ; then
-					min_slot=12
-				elif use cpu_flags_x86_amx ; then
+				if use cpu_flags_x86_amx ; then
 					min_slot=11
 				else
 					min_slot=${GCC_SLOTS[-1]}
