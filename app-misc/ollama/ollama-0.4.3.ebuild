@@ -3619,7 +3619,7 @@ ewarn "The chroot and sandbox mitigation edits has not been implemented for syst
 	optfeature "GTK4 GUI frontend" "app-misc/alpaca"
 	optfeature "Tauri GUI frontend with speech synthesis and speech recognition" "app-misc/amica"
 	#optfeature "Piped AI command line execution" "app-shells/loz"
-	optfeature "AI text-to-speech and speech-to-text" "app-accessibility/june"
+	optfeature "AI text-to-speech and speech-to-text" "app-misc/june"
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.3.13, 20241020)
