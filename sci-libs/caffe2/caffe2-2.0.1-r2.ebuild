@@ -70,6 +70,7 @@ BENCHMARK_COMMIT_2="5b7683f49e1e9223cf9927b24f6fd3d6bd82e3f8" # protobuf dep
 BENCHMARK_COMMIT_3="0d98dba29d66e93259db7daa53a9327df767a415" # onnx dep
 BENCHMARK_COMMIT_4="e776aa0275e293707b6a0901e0e8d8a8a3679508" # onnx-tensorrt/third_party/onnx dep
 CLANG_CINDEX_PYTHON3_COMMIT="6a00cbc4a9b8e68b71caf7f774b3f9c753ae84d5" # onnx-tensorrt/third_party/onnx/third_party/pybind11 dep
+GCC_SLOTS=( {15..11} )
 CPR_COMMIT="871ed52d350214a034f6ef8a3b8f51c5ce1bd400" # dynolog dep
 CPU_FLAGS_ARM=(
 	cpu_flags_arm_bf16
@@ -889,10 +890,24 @@ gen_clang() {
 		"
 	done
 }
+gen_gcc_bdepend() {
+	local s
+	for s in ${GCC_SLOTS[@]} ; do
+		echo "
+			=sys-devel/gcc-${s}*[openmp?]
+		"
+	done
+}
 BDEPEND="
 	>=dev-build/cmake-3.21.0
 	!clang? (
-		sys-devel/gcc[openmp?]
+		|| (
+			$(gen_gcc_bdepend)
+		)
+		cpu_flags_x86_avx512vbmi? (
+			>=sys-devel/gcc-12.1
+			>=sys-devel/binutils-2.32
+		)
 	)
 	clang? (
 		$(gen_clang)
@@ -953,6 +968,29 @@ pkg_setup() {
 			fi
 		done
 		llvm_pkg_setup
+
+		if ! use clang ; then
+			if has_version "=dev-util/nvidia-cuda-toolkit-11.8*" ; then
+				export CC="${CHOST}-gcc-11"
+				export CXX="${CHOST}-g++-11"
+			elif has_version "=dev-util/nvidia-cuda-toolkit-11.7*" ; then
+				export CC="${CHOST}-gcc-11"
+				export CXX="${CHOST}-g++-11"
+			elif has_version "=dev-util/nvidia-cuda-toolkit-11.6*" ; then
+				export CC="${CHOST}-gcc-11"
+				export CXX="${CHOST}-g++-11"
+			else
+				local s
+				for s in ${GCC_SLOTS[@]} ; do
+					if has_version "=sys-devel/gcc-${s}*" ; then
+						export CC="${CHOST}-gcc-${s}"
+						export CXX="${CHOST}-g++-${s}"
+						break
+					fi
+				done
+			fi
+			strip-unsupported-flags
+		fi
 	fi
 
 	if use rocm ; then

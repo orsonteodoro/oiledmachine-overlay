@@ -81,6 +81,7 @@ BENCHMARK_COMMIT_2="5b7683f49e1e9223cf9927b24f6fd3d6bd82e3f8" # protobuf dep
 BENCHMARK_COMMIT_3="2dd015dfef425c866d9a43f2c67d8b52d709acb6" # onnx dep
 BENCHMARK_COMMIT_5="d572f4777349d43653b21d6c2fc63020ab326db2"
 CIVETWEB_COMMIT="eefb26f82b233268fc98577d265352720d477ba4"
+GCC_SLOTS=( {15..11} )
 CPP_HTTPLIB_COMMIT="3b6597bba913d51161383657829b7e644e59c006"
 CPR_COMMIT="871ed52d350214a034f6ef8a3b8f51c5ce1bd400" # dynolog dep
 CPU_FLAGS_ARM=(
@@ -377,12 +378,6 @@ https://gitlab.com/libeigen/eigen/-/archive/${EIGEN_COMMIT}/eigen-${EIGEN_COMMIT
 	-> eigen-${EIGEN_COMMIT:0:7}.tar.gz
 https://github.com/yhirose/cpp-httplib/archive/${CPP_HTTPLIB_COMMIT}.tar.gz
 	-> cpp-httplib-${CPP_HTTPLIB_COMMIT:0:7}.tar.gz
-
-
-
-
-
-
 	)
 "
 
@@ -934,10 +929,36 @@ gen_clang() {
 		"
 	done
 }
+gen_gcc_bdepend() {
+	local s
+	for s in ${GCC_SLOTS[@]} ; do
+		echo "
+			=sys-devel/gcc-${s}*[openmp?]
+		"
+	done
+}
 BDEPEND="
 	>=dev-build/cmake-3.21.0
 	!clang? (
-		sys-devel/gcc[openmp?]
+		|| (
+			$(gen_gcc_bdepend)
+		)
+		cpu_flags_x86_amx? (
+			>=sys-devel/gcc-11.1
+			>=sys-devel/binutils-2.36
+		)
+		cpu_flags_x86_avx512vbmi? (
+			>=sys-devel/gcc-12.1
+			>=sys-devel/binutils-2.32
+		)
+		cpu_flags_x86_avx512vnni? (
+			>=sys-devel/gcc-12.4
+			>=sys-devel/binutils-2.36
+		)
+		cpu_flags_x86_gfni? (
+			>=sys-devel/gcc-8.1
+			>=sys-devel/binutils-2.30
+		)
 	)
 	clang? (
 		$(gen_clang)
@@ -1002,6 +1023,29 @@ pkg_setup() {
 			fi
 		done
 		llvm_pkg_setup
+
+		if ! use clang ; then
+			if has_version "=dev-util/nvidia-cuda-toolkit-12.4*" ; then
+				export CC="${CHOST}-gcc-13"
+				export CXX="${CHOST}-g++-13"
+			elif has_version "=dev-util/nvidia-cuda-toolkit-12.1*" ; then
+				export CC="${CHOST}-gcc-12"
+				export CXX="${CHOST}-g++-12"
+			elif has_version "=dev-util/nvidia-cuda-toolkit-11.8*" ; then
+				export CC="${CHOST}-gcc-11"
+				export CXX="${CHOST}-g++-11"
+			else
+				local s
+				for s in ${GCC_SLOTS[@]} ; do
+					if has_version "=sys-devel/gcc-${s}*" ; then
+						export CC="${CHOST}-gcc-${s}"
+						export CXX="${CHOST}-g++-${s}"
+						break
+					fi
+				done
+			fi
+			strip-unsupported-flags
+		fi
 	fi
 
 	if use rocm ; then
