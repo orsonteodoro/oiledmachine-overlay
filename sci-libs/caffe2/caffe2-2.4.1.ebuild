@@ -81,7 +81,7 @@ BENCHMARK_COMMIT_2="5b7683f49e1e9223cf9927b24f6fd3d6bd82e3f8" # protobuf dep
 BENCHMARK_COMMIT_3="2dd015dfef425c866d9a43f2c67d8b52d709acb6" # onnx dep
 BENCHMARK_COMMIT_5="d572f4777349d43653b21d6c2fc63020ab326db2"
 CIVETWEB_COMMIT="eefb26f82b233268fc98577d265352720d477ba4"
-GCC_SLOTS=( {15..11} )
+GCC_SLOTS=( {15..9} ) # Upstream uses 11 or 9
 CPP_HTTPLIB_COMMIT="3b6597bba913d51161383657829b7e644e59c006"
 CPR_COMMIT="871ed52d350214a034f6ef8a3b8f51c5ce1bd400" # dynolog dep
 CPU_FLAGS_ARM=(
@@ -1034,6 +1034,19 @@ pkg_setup() {
 				export CC="${CHOST}-gcc-11"
 				export CXX="${CHOST}-g++-11"
 			else
+				local min_slot
+
+				if use cpu_flags_x86_avx512vbmi || use cpu_flags_x86_avx512vnni ; then
+					min_slot=12
+				elif use cpu_flags_x86_amx ; then
+					min_slot=11
+				elif use cpu_flags_x86_gfni ; then
+					min_slot=8
+				else
+					min_slot=${GCC_SLOTS[-1]}
+				fi
+
+				local gcc_slots=( $(seq ${GCC_SLOTS[0]} -1 ${min_slot}) )
 				local s
 				for s in ${GCC_SLOTS[@]} ; do
 					if use openmp && has_version "=sys-devel/gcc-${s}*[openmp]" ; then
