@@ -1,0 +1,11 @@
+--- a/src/features/coquiLocal/coquiLocal.ts.orig	2024-10-22 16:44:38.000000000 -0700
++++ b/src/features/coquiLocal/coquiLocal.ts	2024-11-22 19:01:24.211571060 -0800
+@@ -14,7 +14,7 @@ export async function coquiLocal(
+       method: 'POST',
+       headers: {
+         'text': message,
+-        'speaker-id': config("coquiLocal_voiceid"),
++        'speaker_id': config("coquiLocal_voiceid"),
+       }
+     });
+ 

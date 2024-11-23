@@ -2883,7 +2883,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0"
 IUSE+="
-coqui debug ollama tray voice-recognition wayland whisper-cpp X
+debug ollama tray voice-recognition wayland whisper-cpp X
 "
 REQUIRED_USE="
 	voice-recognition
@@ -2949,9 +2949,6 @@ RUST_BINDINGS_BDEPEND="
 RDEPEND+="
 	$(gen_webkit_depend)
 	${RUST_BINDINGS_DEPEND}
-	coqui? (
-		dev-python/coqui-tts
-	)
 	ollama? (
 		app-misc/ollama
 	)
@@ -3097,10 +3094,11 @@ src_install() {
 #	popd >/dev/null 2>&1 || die
 #	rm -rf "${ED}/usr/bin/app" || die
 
+	exeinto "/usr/lib/${PN}"
 	if use debug ; then
-		dobin "src-tauri/target/debug/${PN}"
+		doexe "src-tauri/target/debug/${PN}"
 	else
-		dobin "src-tauri/target/release/${PN}"
+		doexe "src-tauri/target/release/${PN}"
 	fi
 
 	newicon -s 48 "app-icon.png" "${PN}.png"
@@ -3119,6 +3117,14 @@ src_install() {
 	LCNR_SOURCE="${WORKDIR}/${PN}-app-v${PV}/node_modules"
 	LCNR_TAG="third_party_npm"
 	lcnr_install_files
+
+	dodir "/usr/bin"
+cat <<EOF > "${ED}/usr/bin/amica"
+#!/bin/bash
+"/usr/lib/${PN}" $@
+EOF
+	fperms 0755 "/usr/bin/amica"
+	fowners "root:root" "/usr/bin/amica"
 }
 
 pkg_postinst() {
