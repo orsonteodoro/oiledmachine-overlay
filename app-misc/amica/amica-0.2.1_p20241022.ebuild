@@ -3181,7 +3181,7 @@ if [[ "\${USE_COQUI}" == "1" ]] ; then
 "${EPYTHON}" "/usr/lib/${EPYTHON}/site-packages/TTS/server/server.py" --model_name "tts_models/en/vctk/vits" &
 	fi
 fi
-"/usr/lib/${PN}" $@
+"/usr/lib/${PN}/${PN}" \$@
 EOF
 	fperms 0755 "/usr/bin/amica"
 	fowners "root:root" "/usr/bin/amica"
