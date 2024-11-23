@@ -392,6 +392,7 @@ xattr-1.1.3
 EGIT_COMMIT="cf39b01ce92c6fa02dba4ab245e8e97311edd969"
 NODE_VERSION=20
 NODE_ENV="development"
+PYTHON_COMPAT=( "python3_"{10..12} )
 WEBKIT_GTK_STABLE=(
 	"2.46"
 	"2.44"
@@ -405,7 +406,7 @@ WEBKIT_GTK_STABLE=(
 	"2.28"
 )
 
-inherit cargo desktop lcnr npm xdg
+inherit cargo desktop lcnr npm python-single-r1 xdg
 
 # UPDATER_START_NPM_EXTERNAL_URIS
 NPM_EXTERNAL_URIS="
@@ -2982,7 +2983,9 @@ RDEPEND+="
 	$(gen_webkit_depend)
 	${RUST_BINDINGS_DEPEND}
 	coqui? (
-		dev-python/coqui-tts
+		$(python_gen_cond_dep '
+			dev-python/coqui-tts[${PYTHON_USEDEP}]
+		')
 		sys-process/procps
 	)
 	ollama? (
@@ -3027,6 +3030,7 @@ pkg_setup() {
 	npm_pkg_setup
 	export NEXT_TELEMETRY_DISABLED=1
 	check_sandbox
+	python_setup
 }
 
 _lockfile_gen_unpack() {
@@ -3174,7 +3178,7 @@ cat <<EOF > "${ED}/usr/bin/amica"
 USE_COQUI=\${USE_COQUI:-${USE_COQUI}}
 if [[ "\${USE_COQUI}" == "1" ]] ]] ; then
 	if ! ps aux | grep -q "TTS/server/server.py" ; then
-"${EPYTHON}" "/usr/lib/${EPYTHON}/site-packages/TTS/server/server.py" --model_name "tts_models/en/vctk/vits"
+"${EPYTHON}" "/usr/lib/${EPYTHON}/site-packages/TTS/server/server.py" --model_name "tts_models/en/vctk/vits" &
 	fi
 fi
 "/usr/lib/${PN}" $@
