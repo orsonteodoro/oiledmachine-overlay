@@ -180,6 +180,21 @@ LLVM_COMPAT=(
 	18 17 # ROCm slots
 	15 12 10 9 # Upstream build.sh, pull.yml
 )
+LLVM_COMPAT_ARM_BF16=(
+	18 17
+	15 12
+)
+LLVM_COMPAT_RISCV_RVV=(
+	18
+)
+LLVM_COMPAT_S390_Z15=(
+	18 17
+	15 12 10
+)
+LLVM_COMPAT_X86_AMX=(
+	18 17
+	15 12
+)
 MIMALLOC_COMMIT="b66e3214d8a104669c2ec05ae91ebc26a8f5ab78"
 MKL_DNN_COMMIT="66f0cb9eb66affd2da3bf5f8d897376f04aae6af"
 MYPN="pytorch"
@@ -531,6 +546,41 @@ REQUIRED_USE="
 	clang? (
 		|| (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
+		)
+		cpu_flags_arm_bf16? (
+			|| (
+				${LLVM_COMPAT_ARM_BF16[@]/#/llvm_slot_}
+			)
+		)
+		cpu_flags_arm_dotprod? (
+			|| (
+				${LLVM_COMPAT[@]/#/llvm_slot_}
+			)
+		)
+		cpu_flags_riscv_rvv? (
+			|| (
+				${LLVM_COMPAT_RISCV_RVV[@]/#/llvm_slot_}
+			)
+		)
+		cpu_flags_s390_vxe_z15? (
+			|| (
+				${LLVM_COMPAT_S390_Z15[@]/#/llvm_slot_}
+			)
+		)
+		cpu_flags_x86_amx? (
+			|| (
+				${LLVM_COMPAT_X86_AMX[@]/#/llvm_slot_}
+			)
+		)
+		cpu_flags_x86_gfni? (
+			|| (
+				${LLVM_COMPAT[@]/#/llvm_slot_}
+			)
+		)
+		cpu_flags_x86_avx512vbmi? (
+			|| (
+				${LLVM_COMPAT[@]/#/llvm_slot_}
+			)
 		)
 	)
 	cpu_flags_x86_amx? (
@@ -971,6 +1021,14 @@ BDEPEND="
 			>=sys-devel/gcc-8.1
 			>=sys-devel/binutils-2.28
 		)
+		cpu_flags_riscv_rvv? (
+			>=sys-devel/gcc-14.1
+			>=sys-devel/binutils-2.38
+		)
+		cpu_flags_riscv_rvv_fp16? (
+			>=sys-devel/gcc-14.1
+			>=sys-devel/binutils-2.42
+		)
 		cpu_flags_s390_vxe_z14? (
 			>=sys-devel/gcc-9.1
 		)
@@ -1089,7 +1147,9 @@ pkg_setup() {
 			else
 				local min_slot
 
-				if use cpu_flags_x86_avx512vbmi || use cpu_flags_x86_avx512vnni ; then
+				if use cpu_flags_riscv_rvv || use cpu_flags_riscv_rvv_fp16 ; then
+					min_slot=14
+				elif use cpu_flags_x86_avx512vbmi || use cpu_flags_x86_avx512vnni ; then
 					min_slot=12
 				elif use cpu_flags_x86_amx ; then
 					min_slot=11
