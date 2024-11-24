@@ -984,9 +984,25 @@ BDEPEND="
 			>=sys-devel/gcc-11.1
 			>=sys-devel/binutils-2.36
 		)
+		cpu_flags_x86_avx512bw? (
+			>=sys-devel/gcc-5.1
+			>=sys-devel/binutils-2.25
+		)
+		cpu_flags_x86_avx512dq? (
+			>=sys-devel/gcc-5.1
+			>=sys-devel/binutils-2.25
+		)
+		cpu_flags_x86_avx512f? (
+			>=sys-devel/gcc-4.9
+			>=sys-devel/binutils-2.24
+		)
 		cpu_flags_x86_avx512vbmi? (
 			>=sys-devel/gcc-12.1
 			>=sys-devel/binutils-2.32
+		)
+		cpu_flags_x86_avx512vl? (
+			>=sys-devel/gcc-5.1
+			>=sys-devel/binutils-2.25
 		)
 		cpu_flags_x86_avx512vnni? (
 			>=sys-devel/gcc-12.4
