@@ -93,10 +93,15 @@ RDEPEND+="
 		)
 		${RUST_BINDINGS_DEPEND}
 		|| (
-			=dev-lang/rust-bin-1.82*
-			=dev-lang/rust-1.82*
+			(
+				=dev-lang/rust-bin-1.82*
+				dev-lang/rust-bin:=
+			)
+			(
+				=dev-lang/rust-1.82*
+				dev-lang/rust:=
+			)
 		)
-		dev-lang/rust:=
 	)
 "
 DEPEND+="
