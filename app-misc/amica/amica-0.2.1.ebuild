@@ -2950,7 +2950,6 @@ RUST_BINDINGS_BDEPEND="
 	virtual/pkgconfig
 "
 RDEPEND+="
-	$(gen_webkit_depend)
 	${RUST_BINDINGS_DEPEND}
 	ollama? (
 		app-misc/ollama

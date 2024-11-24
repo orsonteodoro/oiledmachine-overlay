@@ -107,8 +107,8 @@ eerror
 	fi
 einfo "Hydrating pnpm..."
 	corepack hydrate "${ESYSROOT}/usr/share/pnpm/pnpm-${pnpm_slot}.tgz" || die
-	local pnpm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/pnpm/"*))
-	export PATH=".:${HOME}/.cache/node/corepack/pnpm/${pnpm_pv}/bin:${PATH}"
+	local pnpm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/v1/pnpm/"*))
+	export PATH=".:${HOME}/.cache/node/corepack/v1/pnpm/${pnpm_pv}/bin:${PATH}"
 	pnpm_network_settings
 }
 

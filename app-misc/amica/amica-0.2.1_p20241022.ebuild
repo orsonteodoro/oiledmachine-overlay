@@ -2980,7 +2980,6 @@ RUST_BINDINGS_BDEPEND="
 	virtual/pkgconfig
 "
 RDEPEND+="
-	$(gen_webkit_depend)
 	${RUST_BINDINGS_DEPEND}
 	coqui? (
 		$(python_gen_cond_dep '
