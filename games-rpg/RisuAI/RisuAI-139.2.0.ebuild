@@ -1510,6 +1510,7 @@ LICENSE="GPL-3"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 ollama tray wayland X
+ebuild-revision-1
 "
 REQUIRED_USE="
 	|| (
@@ -1762,7 +1763,7 @@ src_compile() {
 
 src_install() {
 	local chost=$(get_rustc_target)
-	exeinto "/usr/bin/${PN}"
+	exeinto "/usr/bin"
 	doexe "src-tauri/target/${chost}/release/${PN}"
 
 	newicon -s 48 "resources/icon-only.png" "${PN}.png"
