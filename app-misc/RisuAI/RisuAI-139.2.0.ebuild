@@ -1551,6 +1551,7 @@ RUST_BINDINGS_DEPEND="
 	|| (
 		$(gen_webkit_depend)
 	)
+	net-libs/webkit-gtk:=
 "
 RUST_BINDINGS_BDEPEND="
 	virtual/pkgconfig
@@ -1569,6 +1570,7 @@ TAURI_RDEPEND="
 	)
 "
 RDEPEND+="
+	${TAURI_RDEPEND}
 	ollama? (
 		app-misc/ollama
 	)
@@ -1577,6 +1579,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	${RUST_BINDINGS_BDEPEND}
 	net-libs/nodejs:${NODE_VERSION}
 	sys-apps/npm
 "
