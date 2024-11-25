@@ -1796,6 +1796,7 @@ src_install() {
 pkg_postinst() {
 	xdg_pkg_postinst
 	if use ollama ; then
+# Issue #587
 einfo
 einfo "The Ollama settings must be manually changed."
 einfo "The default URI is http://localhost:11434"
