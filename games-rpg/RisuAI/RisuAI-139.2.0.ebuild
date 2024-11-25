@@ -1763,11 +1763,7 @@ src_compile() {
 src_install() {
 	local chost=$(get_rustc_target)
 	exeinto "/usr/lib/${PN}"
-	if use debug ; then
-		doexe "src-tauri/target/${chost}/debug/${PN}"
-	else
-		doexe "src-tauri/target/${chost}/release/${PN}"
-	fi
+	doexe "src-tauri/target/${chost}/release/${PN}"
 
 	newicon -s 48 "resources/icon-only.png" "${PN}.png"
 	make_desktop_entry \
