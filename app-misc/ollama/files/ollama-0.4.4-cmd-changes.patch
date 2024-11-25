@@ -1,20 +1,18 @@
-diff '--color=auto' -urp ollama-0.4.3.orig/cmd/cmd.go ollama-0.4.3/cmd/cmd.go
---- ollama-0.4.3.orig/cmd/cmd.go	2024-11-21 08:28:04.000000000 -0800
-+++ ollama-0.4.3/cmd/cmd.go	2024-11-22 06:25:57.660659866 -0800
-@@ -17,10 +17,12 @@ import (
+--- a/cmd/cmd.go.orig	2024-11-22 16:14:51.000000000 -0800
++++ b/cmd/cmd.go	2024-11-25 11:26:48.741318441 -0800
+@@ -17,9 +17,11 @@ import (
  	"net"
  	"net/http"
  	"os"
 +	"os/exec" // oteodoro:  added line
  	"os/signal"
  	"path/filepath"
- 	"regexp"
  	"runtime"
 +	"sort" // oteodoro:  added line
  	"strconv"
  	"strings"
  	"sync/atomic"
-@@ -72,6 +74,2047 @@ func getModelfileName(cmd *cobra.Command
+@@ -68,6 +70,2052 @@ func getModelfileName(cmd *cobra.Command
  	return absName, nil
  }
  
@@ -719,6 +717,9 @@ diff '--color=auto' -urp ollama-0.4.3.orig/cmd/cmd.go ollama-0.4.3/cmd/cmd.go
 +	"mannix/smaug-qwen2-72b:q5_1": "55GB",
 +	"mannix/smaug-qwen2-72b:q6_K": "64GB",
 +	"mannix/smaug-qwen2-72b:q8_0": "77GB",
++	"marco-o1:7b": "4.7GB",
++	"marco-o1:7b-fp16": "15GB",
++	"marco-o1:7b-q8_0": "8.1",
 +	"mathstral:7b": "4.1GB",
 +	"mathstral:7b-v0.1-q8_0": "7.7GB",
 +	"mathstral:7b-v0.1-fp16": "14GB",
@@ -1431,12 +1432,12 @@ diff '--color=auto' -urp ollama-0.4.3.orig/cmd/cmd.go ollama-0.4.3/cmd/cmd.go
 +	"tinyllama:1.1b-chat-v1-q5_K_M": "783MB",
 +	"tinyllama:1.1b-chat-v1-q6_K": "904MB",
 +	"tinyllama:1.1b-chat-v1-q8_0": "1.2GB",
-+	"tulu:8b": "4.9GB",
-+	"tulu:70b": "43GB",
-+	"tulu:70b-q8_0": "75GB",
-+	"tulu:70b-fp16": "141GB",
-+	"tulu:8b-q8_0": "8.5GB",
-+	"tulu:8b-fp16": "16GB",
++	"tulu3:8b": "4.9GB",
++	"tulu3:70b": "43GB",
++	"tulu3:70b-q8_0": "75GB",
++	"tulu3:70b-fp16": "141GB",
++	"tulu3:8b-q8_0": "8.5GB",
++	"tulu3:8b-fp16": "16GB",
 +	"vicuna:7b": "3.8GB",
 +	"vicuna:13b": "7.4GB",
 +	"vicuna:33b": "18GB",
@@ -1755,6 +1756,7 @@ diff '--color=auto' -urp ollama-0.4.3.orig/cmd/cmd.go ollama-0.4.3/cmd/cmd.go
 +	"mannix/replete-adapted-llama3-8b": 1,
 +	"mannix/replete-coder-llama3-8b": 1,
 +	"mannix/smaug-qwen2-72b": 1,
++	"marco-o1": 1,
 +	"mathstral": 1,
 +	"meditron": 1,
 +	"medllama2": 1,
@@ -1832,7 +1834,7 @@ diff '--color=auto' -urp ollama-0.4.3.orig/cmd/cmd.go ollama-0.4.3/cmd/cmd.go
 +	"themanofrod/travel-agent": 1,
 +	"tinydolphin": 1,
 +	"tinyllama": 1,
-+	"tulu": 1,
++	"tulu3": 1,
 +	"vicuna": 1,
 +	"wizard-math": 1,
 +	"wizard-vicuna": 1,
@@ -1960,6 +1962,7 @@ diff '--color=auto' -urp ollama-0.4.3.orig/cmd/cmd.go ollama-0.4.3/cmd/cmd.go
 +	"mannix/llamax3-8b-alpaca": "multilingual intruction-following akrikaans amharic arabic armenian assamese asturian azerbaijani belarusian bengali bosnian bulgarian burmese catalan cebuano chinese simplified-chinese traditional-chinese croatian czech danish dutch english estonian filipino finnish french fulah galician ganda georgian german greek gujarati hausa hebrew hindi hungarian icelandic igbo indonesian irish italian japanese javanese kabuverdianu kamba kannada kazakh khmer korean kyrgyz lao latvian lingala lithuanian luo luxembourgish macedonian malay malayalam maltese maori marathi mongolian nepali northern sotho norwegian nyanja occitan oriya oromo pashto persian polish portuguese punjabi romanian russian serbian shona sindhi slovak slovenian somali sorani kurdish spanish swahili swedish tajik tamil telugu thai turkish ukrainian umbundu urdu uzbek vietnamese welsh wolof xhosa yoruba zulu",
 +	"mannix/replete-adapted-llama3-8b": "coding multilanguage-comment-translation function-calling uncensored open-source-data advanced-math secure-coding coding-vulnerability-prevention low-end-hardware",
 +	"mannix/replete-coder-llama3-8b": "coding multilanguage-comment-translation function-calling uncensored open-source-data advanced-math secure-coding coding-vulnerability-prevention",
++	"marco-o1": "open-ended-resolution open-ended-problem-solving chain-of-thought math-word-problems stem-standard-answers math physics coding",
 +	"mathstral": "math-word-problems",
 +	"meditron": "medical diseases health-information medical-exam qa",
 +	"medllama2": "medical qa",
@@ -2036,7 +2039,7 @@ diff '--color=auto' -urp ollama-0.4.3.orig/cmd/cmd.go ollama-0.4.3/cmd/cmd.go
 +	"starcoder": "coding code-generation",
 +	"starcoder2": "coding code-generation",
 +	"starling-lm": "chat chatbot roleplay writing humanities stem science technology engineering math reasoning structured-data-generation",
-+	"tulu": "instruction-following math-word-problems code-generation coding",
++	"tulu3": "instruction-following math-word-problems code-generation coding",
 +	"themanofrod/travel-agent": "camping travel travel-guide outdoors",
 +	"tinydolphin": "low-memory-footprint text-generation letter-writing poems",
 +	"tinyllama": "game-dialog-generator low-memory-footprint",
@@ -2062,7 +2065,7 @@ diff '--color=auto' -urp ollama-0.4.3.orig/cmd/cmd.go ollama-0.4.3/cmd/cmd.go
  func CreateHandler(cmd *cobra.Command, args []string) error {
  	p := progress.NewProgress(os.Stderr)
  	defer p.Stop()
-@@ -416,6 +2459,25 @@ func StopHandler(cmd *cobra.Command, arg
+@@ -412,6 +2460,25 @@ func StopHandler(cmd *cobra.Command, arg
  func RunHandler(cmd *cobra.Command, args []string) error {
  	interactive := true
  
@@ -2088,7 +2091,7 @@ diff '--color=auto' -urp ollama-0.4.3.orig/cmd/cmd.go ollama-0.4.3/cmd/cmd.go
  	opts := runOptions{
  		Model:    args[0],
  		WordWrap: os.Getenv("TERM") == "xterm-256color",
-@@ -745,9 +2807,11 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -696,9 +2763,11 @@ func ShowHandler(cmd *cobra.Command, arg
  	modelfile, errModelfile := cmd.Flags().GetBool("modelfile")
  	parameters, errParams := cmd.Flags().GetBool("parameters")
  	system, errSystem := cmd.Flags().GetBool("system")
@@ -2101,7 +2104,7 @@ diff '--color=auto' -urp ollama-0.4.3.orig/cmd/cmd.go ollama-0.4.3/cmd/cmd.go
  		if boolErr != nil {
  			return errors.New("error retrieving flags")
  		}
-@@ -776,13 +2840,274 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -727,13 +2796,275 @@ func ShowHandler(cmd *cobra.Command, arg
  		showType = "system"
  	}
  
@@ -2231,6 +2234,7 @@ diff '--color=auto' -urp ollama-0.4.3.orig/cmd/cmd.go ollama-0.4.3/cmd/cmd.go
 +		"mannix/smaug-qwen2-72b": "Tongyi Qianwen LICENSE AGREEMENT",
 +		"mannix/replete-adapted-llama3-8b": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy",
 +		"mannix/replete-coder-llama3-8b": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy",
++		"marco-o1": "Apache-2.0",
 +		"mathstral": "Apache-2.0",
 +		"meditron": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"medllama2": "MIT",
@@ -2317,7 +2321,7 @@ diff '--color=auto' -urp ollama-0.4.3.orig/cmd/cmd.go ollama-0.4.3/cmd/cmd.go
 +		"themanofrod/travel-agent": "Gemma Terms of Use 20240221, Gemma Prohibited Use Policy 20240221",
 +		"tinydolphin": "Apache-2.0",
 +		"tinyllama": "Apache-2.0",
-+		"tulu": "LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy",
++		"tulu3": "LLAMA 3.1 COMMUNITY LICENSE AGREEMENT, Llama 3.1 Acceptable Use Policy",
 +		"vicuna": "LLAMA 2 COMMUNITY LICENSE AGREEMENT, Llama 2 Acceptable Use Policy",
 +		"wizard-math": "MICROSOFT RESEARCH LICENSE TERMS",
 +		"wizard-vicuna": "",
@@ -2377,7 +2381,7 @@ diff '--color=auto' -urp ollama-0.4.3.orig/cmd/cmd.go ollama-0.4.3/cmd/cmd.go
  	}
  
  	req := api.ShowRequest{Name: args[0]}
-@@ -961,6 +3286,138 @@ func PullHandler(cmd *cobra.Command, arg
+@@ -912,6 +3243,138 @@ func PullHandler(cmd *cobra.Command, arg
  	return nil
  }
  
@@ -2516,7 +2520,7 @@ diff '--color=auto' -urp ollama-0.4.3.orig/cmd/cmd.go ollama-0.4.3/cmd/cmd.go
  type generateContextKey string
  
  type runOptions struct {
-@@ -1366,6 +3823,8 @@ func NewCLI() *cobra.Command {
+@@ -1317,6 +3780,8 @@ func NewCLI() *cobra.Command {
  	showCmd.Flags().Bool("parameters", false, "Show parameters of a model")
  	showCmd.Flags().Bool("template", false, "Show template of a model")
  	showCmd.Flags().Bool("system", false, "Show system message of a model")
@@ -2525,7 +2529,7 @@ diff '--color=auto' -urp ollama-0.4.3.orig/cmd/cmd.go ollama-0.4.3/cmd/cmd.go
  
  	runCmd := &cobra.Command{
  		Use:     "run MODEL [PROMPT]",
-@@ -1448,6 +3907,30 @@ func NewCLI() *cobra.Command {
+@@ -1399,6 +3864,30 @@ func NewCLI() *cobra.Command {
  		RunE:    DeleteHandler,
  	}
  
@@ -2556,7 +2560,7 @@ diff '--color=auto' -urp ollama-0.4.3.orig/cmd/cmd.go ollama-0.4.3/cmd/cmd.go
  	envVars := envconfig.AsMap()
  
  	envs := []envconfig.EnvVar{envVars["OLLAMA_HOST"]}
-@@ -1464,6 +3947,9 @@ func NewCLI() *cobra.Command {
+@@ -1415,6 +3904,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		serveCmd,
@@ -2566,7 +2570,7 @@ diff '--color=auto' -urp ollama-0.4.3.orig/cmd/cmd.go ollama-0.4.3/cmd/cmd.go
  	} {
  		switch cmd {
  		case runCmd:
-@@ -1503,6 +3989,9 @@ func NewCLI() *cobra.Command {
+@@ -1454,6 +3946,9 @@ func NewCLI() *cobra.Command {
  		psCmd,
  		copyCmd,
  		deleteCmd,
