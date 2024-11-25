@@ -1962,7 +1962,7 @@
 +	"mannix/llamax3-8b-alpaca": "multilingual intruction-following akrikaans amharic arabic armenian assamese asturian azerbaijani belarusian bengali bosnian bulgarian burmese catalan cebuano chinese simplified-chinese traditional-chinese croatian czech danish dutch english estonian filipino finnish french fulah galician ganda georgian german greek gujarati hausa hebrew hindi hungarian icelandic igbo indonesian irish italian japanese javanese kabuverdianu kamba kannada kazakh khmer korean kyrgyz lao latvian lingala lithuanian luo luxembourgish macedonian malay malayalam maltese maori marathi mongolian nepali northern sotho norwegian nyanja occitan oriya oromo pashto persian polish portuguese punjabi romanian russian serbian shona sindhi slovak slovenian somali sorani kurdish spanish swahili swedish tajik tamil telugu thai turkish ukrainian umbundu urdu uzbek vietnamese welsh wolof xhosa yoruba zulu",
 +	"mannix/replete-adapted-llama3-8b": "coding multilanguage-comment-translation function-calling uncensored open-source-data advanced-math secure-coding coding-vulnerability-prevention low-end-hardware",
 +	"mannix/replete-coder-llama3-8b": "coding multilanguage-comment-translation function-calling uncensored open-source-data advanced-math secure-coding coding-vulnerability-prevention",
-+	"marco-o1": "open-ended-resolution open-ended-problem-solving chain-of-thought math-word-problems stem-standard-answers math physics coding",
++	"marco-o1": "open-ended-resolution open-ended-problem-solving chain-of-thought math-word-problems salesperson stem-standard-answers math physics coding",
 +	"mathstral": "math-word-problems",
 +	"meditron": "medical diseases health-information medical-exam qa",
 +	"medllama2": "medical qa",
