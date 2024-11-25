@@ -646,7 +646,7 @@ zvariant_utils-2.1.0
 zvariant_utils-3.0.2
 "
 
-inherit cargo edo electron-app lcnr npm
+inherit cargo edo electron-app lcnr npm xdg
 
 # UPDATER_START_NPM_EXTERNAL_URIS
 NPM_EXTERNAL_URIS="
@@ -1506,7 +1506,10 @@ https://github.com/kwaroran/RisuAI/archive/refs/tags/v${PV}.tar.gz
 "
 
 DESCRIPTION="Make your own story. User-friendly software for LLM roleplaying"
-LICENSE="GPL-3"
+LICENSE="
+	GPL-3
+	RisuAI-Terms-of-Service
+"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 ollama tray wayland X
@@ -1788,6 +1791,18 @@ src_install() {
 
 	fperms 0755 "/usr/bin/${PN}"
 	fowners "root:root" "/usr/bin/${PN}"
+}
+
+pkg_postinst() {
+	xdg_pkg_postinst
+	if use ollama ; then
+einfo
+einfo "The Ollama settings must be manually changed."
+einfo "The default URI is http://localhost:11434"
+ewarn
+ewarn "Currently, Ollama support is broken."
+ewarn
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
