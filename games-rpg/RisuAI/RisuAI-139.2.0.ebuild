@@ -1495,7 +1495,7 @@ https://registry.npmjs.org/zimmerframe/-/zimmerframe-1.1.2.tgz -> npmpkg-zimmerf
 "
 # UPDATER_END_NPM_EXTERNAL_URIS
 
-#KEYWORDS="~amd64" # Build broken, install untested
+KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
 S_PROJECT="${WORKDIR}/${P}"
 SRC_URI="
@@ -1662,7 +1662,6 @@ eerror "Switch rust to ${rust_pv%.*} via \`eselect rust\`"
 		die
 	fi
 	unpack ${A}
-	die
 	npm_src_unpack
 
 einfo "Unpacking cargo packages"
@@ -1685,39 +1684,110 @@ src_configure() {
 	sed -i -e "s|pnpm|npm run|g" "src-tauri/tauri.conf.json" || die
 }
 
+get_rustc_target() {
+	if [[ "${ABI}" == "amd64" ]] && use elibc_musl ; then
+		echo "x86_64-unknown-linux-musl"
+	elif [[ "${ABI}" == "amd64" ]] ; then
+		echo "x86_64-unknown-linux-gnu"
+	elif [[ "${ABI}" == "arm64" ]] && use elibc_musl ; then
+		echo "aarch64-unknown-linux-musl"
+	elif [[ "${ABI}" == "arm64" ]] ; then
+		echo "aarch64-unknown-linux-gnu"
+	elif [[ "${CHOST}" =~ "armv7a".*"hf" ]] && use elibc_musl ; then
+		echo "armv7-unknown-linux-musleabihf"
+	elif [[ "${CHOST}" =~ "armv7a".*"hf" ]] ; then
+		echo "armv7-unknown-linux-gnueabihf"
+	elif [[ "${CHOST}" =~ "armv7a" ]] && use elibc_musl ; then
+		echo "armv7-unknown-linux-musleabi"
+	elif [[ "${CHOST}" =~ "armv7a" ]] ; then
+		echo "armv7-unknown-linux-gnueabi"
+	elif [[ "${ARCH}" == "arm" && "${CHOST}" =~ "arm-" ]] && use elibc_musl ; then
+		echo "arm-unknown-linux-musleabi"
+	elif [[ "${ARCH}" == "arm" && "${CHOST}" =~ "arm-" ]] ; then
+		echo "arm-unknown-linux-gnueabi"
+	# Missing mips64el n32
+	elif [[ "${ARCH}" == "mips" && "${CHOST}" =~ "mips64el" && "${ABI}" == "n64" ]] && use elibc_musl ; then
+		echo "mips64el-unknown-linux-muslabi64"
+	elif [[ "${ARCH}" == "mips" && "${CHOST}" =~ "mips64el" && "${ABI}" == "n64" ]] ; then
+		echo "mips64el-unknown-linux-gnuabi64"
+	elif [[ "${ARCH}" == "mips" && "${CHOST}" =~ "mips64el" && "${ABI}" == "o32" ]] && use elibc_musl ; then
+		echo "mipsel-unknown-linux-musl"
+	elif [[ "${ARCH}" == "mips" && "${CHOST}" =~ "mips64el" && "${ABI}" == "o32" ]] ; then
+		echo "mipsel-unknown-linux-gnu"
+	elif [[ "${ARCH}" == "loong" && "${ABI}" == "lp64d" ]] ; then
+		echo "loongarch64-unknown-linux-gnu"
+	elif [[ "${ABI}" == "ppc64" ]] && use elibc_musl ; then
+		echo "powerpc64-unknown-linux-musl"
+	elif [[ "${ABI}" == "ppc64" ]] ; then
+		echo "powerpc64-unknown-linux-gnu"
+	elif [[ "${ABI}" == "ppc64" && "${CHOST}" =~ "powerpc64le" ]] && use elibc_musl ; then
+		echo "powerpc64le-unknown-linux-musl"
+	elif [[ "${ABI}" == "ppc64" && "${CHOST}" =~ "powerpc64le" ]] ; then
+		echo "powerpc64le-unknown-linux-gnu"
+	elif [[ "${ABI}" == "ppc" ]] && use elibc_musl ; then
+		echo "powerpc-unknown-linux-musl"
+	elif [[ "${ABI}" == "ppc" ]] ; then
+		echo "powerpc-unknown-linux-gnu"
+	# Missing riscv lp64d, ilp32d, ilp32
+	elif [[ "${ARCH}" == "riscv" && "${ABI}" == "lp64" ]] && use elibc_musl ; then
+		echo "riscv64gc-unknown-linux-musl"
+	elif [[ "${ARCH}" == "riscv" && "${ABI}" == "lp64" ]] ; then
+		echo "riscv64gc-unknown-linux-gnu"
+	elif [[ "${ABI}" == "s390x" ]] && use elibc_musl ; then
+		echo "s390x-unknown-linux-musl"
+	elif [[ "${ABI}" == "s390x" ]] ; then
+		echo "s390x-unknown-linux-gnu"
+	elif [[ "${ABI}" == "sparc32" ]] ; then
+		echo "sparc-unknown-linux-gnu"
+	elif [[ "${ABI}" == "sparc64" ]] ; then
+		echo "sparc64-unknown-linux-gnu"
+	elif [[ "${ABI}" == "x86" ]] && use elibc_musl ; then
+		echo "i686-unknown-linux-musl"
+	elif [[ "${ABI}" == "x86" ]] ; then
+		echo "i686-unknown-linux-gnu"
+	else
+eerror "Unsupported ARCH=${ARCH} ABI=${ABI}"
+		die
+	fi
+}
+
 src_compile() {
 	npm_hydrate
 	enpm --version
 #	enpm install -D "vite@${VITE_PV}" ${NPM_INSTALL_ARGS}
 	enpm run build
-	enpm run tauri build -- --target x86_64-unknown-linux-gnu
+	local chost=$(get_rustc_target)
+	enpm run tauri build -- --target "${chost}"
 }
 
 src_install() {
+	local chost=$(get_rustc_target)
 	exeinto "/usr/lib/${PN}"
 	if use debug ; then
-		doexe "src-tauri/target/debug/${PN}"
+		doexe "src-tauri/target/${chost}/debug/${PN}"
 	else
-		doexe "src-tauri/target/release/${PN}"
+		doexe "src-tauri/target/${chost}/release/${PN}"
 	fi
 
-	newicon -s 48 "app-icon.png" "${PN}.png"
+	newicon -s 48 "resources/icon-only.png" "${PN}.png"
 	make_desktop_entry \
 		"/usr/bin/${PN}" \
 		"${PN^}" \
 		"${PN}.png" \
-		"Utility;"
+		"Game;RolePlaying"
 	docinto "licenses"
 	dodoc "LICENSE"
 
-#	LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
-#	LCNR_TAG="third_party_cargo"
-#	lcnr_install_files
+	LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
+	LCNR_TAG="third_party_cargo"
+	lcnr_install_files
 
-#	LCNR_SOURCE="${S_PROJECT}/node_modules"
-#	LCNR_TAG="third_party_npm"
-#	lcnr_install_files
+	LCNR_SOURCE="${S_PROJECT}/node_modules"
+	LCNR_TAG="third_party_npm"
+	lcnr_install_files
 
+	insinto "/usr/lib/${PN}"
+	doins -r "src-tauri/target/${chost}/release/src-python"
 
 	dodir "/usr/bin"
 cat <<EOF > "${ED}/usr/bin/${PN}" || die
