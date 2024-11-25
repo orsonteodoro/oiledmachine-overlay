@@ -53,10 +53,6 @@
       Install official models.
     </flag>
     <flag name="rocm">
-      Enable upstream hardened settings _FORTIFY_SOURCE, -fstack-protector,
-      Full RELRO.
-    </flag>
-    <flag name="rocm">
       Enable support for AMD GPUs
     </flag>
     <flag name="system-flatbuffers">
