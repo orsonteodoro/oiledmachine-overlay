@@ -719,7 +719,7 @@
 +	"mannix/smaug-qwen2-72b:q8_0": "77GB",
 +	"marco-o1:7b": "4.7GB",
 +	"marco-o1:7b-fp16": "15GB",
-+	"marco-o1:7b-q8_0": "8.1",
++	"marco-o1:7b-q8_0": "8.1GB",
 +	"mathstral:7b": "4.1GB",
 +	"mathstral:7b-v0.1-q8_0": "7.7GB",
 +	"mathstral:7b-v0.1-fp16": "14GB",
