@@ -1668,6 +1668,11 @@ rocm_verify_glibcxx() {
 		['GLIBCXX_3_1']="3.1.1"
 	)
 
+	if [[ -z "${ROCM_PATH}" ]] ; then
+eerror "QA:  Call rocm_pkg_setup() before calling rocm_verify_glibcxx()"
+		die
+	fi
+
 einfo "Verifying libstdc++ version symbol compatibility for ROCm ${ROCM_VERSION}"
 	local glibcxx_ver="${1}" # maximum
 	shift

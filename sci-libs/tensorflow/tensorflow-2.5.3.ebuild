@@ -5,11 +5,10 @@
 EAPI=8
 
 # TODO:
-# Complete SRC_URI downgrade
 # Enable KEYWORDS
 # Check/fix PATCHES
-
-# TODO update dependencies
+# Make protobuf internal dependency
+# Finish *DEPENDs update
 
 # Build/install only progress for 2.5.3:
 # CPU - ?
@@ -27,13 +26,13 @@ DEP_VER="$(ver_cut 1-2)"
 DEP_VER_MAX="${DEP_VER%%.*}.$(( $(ver_cut 2 ${DEP_VER}) + 1 ))"
 
 AMDGPU_TARGETS_COMPAT=(
-# See https://github.com/ROCm/tensorflow-upstream/blob/v2.5.3/tensorflow/tools/ci_build/Dockerfile.rocm
+# See https://github.com/ROCm/tensorflow-upstream/blob/v2.5.3/tensorflow/tools/ci_build/Dockerfile.rocm#L81
 	gfx803
 	gfx900
 	gfx906
 	gfx908
 )
-BAZEL_PV="3.7.2"
+BAZEL_PV="6.1.0"
 DISTUTILS_OPTIONAL=1
 CHECKREQS_DISK_BUILD="19G"
 CHECKREQS_DISK_USR="5G"
@@ -72,7 +71,9 @@ declare -A LLD_SLOT=(
 )
 
 # See "deps versioning" section above for details.
-LLVM_COMPAT=( {16..15} 12 ) # See https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/tools/toolchains/remote_config/configs.bzl
+# See
+# https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/gpus/rocm_configure.bzl#L200
+LLVM_COMPAT=( {16..15} 12 )
 PYTHON_COMPAT=( "python3_"{10..11} )
 # Limited by jax/flax
 # PYTHON_COMPAT limited by gast-4.0[python_targets_python3_9]
@@ -108,7 +109,7 @@ inherit rocm toolchain-funcs
 # https://github.com/tensorflow/runtime/blob/769f5cc9b8732933140b09e8808d13614182b496/third_party/rules_cuda/cuda/dependencies.bzl#L41	# cc_rules
 # https://github.com/tensorflow/runtime/blob/769f5cc9b8732933140b09e8808d13614182b496/third_party/rules_cuda/cuda/dependencies.bzl#L66	# platforms
 # https://github.com/tensorflow/tensorflow/blob/v2.5.3/.bazelversion
-# https://github.com/tensorflow/tensorflow/blob/v2.5.3/configure.py#L33							# cuda version
+# https://github.com/tensorflow/tensorflow/blob/v2.5.3/configure.py#L33								# cuda version
 # https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/lite/tools/cmake/modules/eigen.cmake
 # https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/tools/ci_build/Dockerfile.rbe.rocm-ubuntu18.04-manylinux2010-multipython#L19 # rocm version min
 # https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/tools/ci_build/Dockerfile.rbe.rocm-ubuntu20.04-manylinux2014-multipython#L20 # rocm version max
@@ -119,7 +120,7 @@ inherit rocm toolchain-funcs
 # https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/tools/pip_package/setup.py#L84				# python deps versions
 # https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/tools/tf_sig_build_dockerfiles/devel.requirements.txt	# python deps versions ; pinned ; depends on requirements_common.txt
 # https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/tools/toolchains/archives.bzl
-# https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/tools/toolchains/remote_config/containers.bzl		# containers for testing
+# https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/tools/toolchains/remote_config/containers.bzl			# containers for testing
 # https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/tools/toolchains/remote_config/configs.bzl#L318		# tested llvm
 
 # commits/versions for
@@ -134,7 +135,7 @@ inherit rocm toolchain-funcs
 # https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/absl/workspace.bzl			# abseil-cpp ; provides commit
 # https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/flatbuffers/workspace.bzl		# See also https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/lite/schema/schema_generated.h
 # https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/gemmlowp/workspace.bzl
-# https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/gpus/rocm_configure.bzl#L191        # llvms supported for rocm
+# https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/gpus/rocm_configure.bzl#L191         # llvms supported for rocm
 # https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/hwloc/workspace.bzl
 # https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/icu/workspace.bzl
 # https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/jpeg/workspace.bzl
@@ -143,8 +144,8 @@ inherit rocm toolchain-funcs
 # https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/llvm_openmp/openmp.bzl
 # https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/pasta/workspace.bzl
 # https://github.com/grpc/grpc/blob/b54a5b338637f92bfcf4b0bc05e0f57a5fd8fadd/CMakeLists.txt
-# https://github.com/tensorflow/tensorflow/blob/v2.15.1/ci/official/requirements_updater/requirements.in
-#   For dill, jax, keras, lit, packaging, portpicker, requests, scipy, setuptools, tblib, tensorboard, tensorboard-estimator
+# https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/tools/pip_package/setup.py#L84
+#   For dill, jax (missing), keras, lit (missing), packaging (missing), portpicker, requests (missing), scipy, setuptools (missing), tblib, tensorboard, tensorboard-estimator
 
 # distfiles that bazel uses for the workspace, will be copied to basel-distdir
 # pkgcheck complains but do NOT change the .zip to .tar.gz, bazel requires the exact tarball (basename and sha256).
@@ -159,30 +160,29 @@ BAZEL_SKYLIB_PV="1.0.3"		# From https://github.com/tensorflow/tensorflow/blob/v2
 CUB_PV="1.9.9"			# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace2.bzl
 FLATBUFFERS_PV="1.12.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/flatbuffers/workspace.bzl
 GRPC_PV="1.53.0"		# Based on the oldest grpc supporting abseil 20230125 *recheck
-GRPCIO_PV="1.24.3"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/tools/pip_package/setup.py#L84 *recheck
+GRPCIO_PV="1.34.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/tools/pip_package/setup.py#L84 *recheck
 GRPCIO_PV_MAX="1.53"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/tools/pip_package/setup.py#L84 ; < (Exclusive) ; Upstream is wrong *recheck
 NCCL_PV="2.8.3-1"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace2.bzl
 ONEDNN_PV="0.21.3"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace2.bzl
 OOURA_FFT_PV="1.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace2.bzl
 OPENMP_PV="10.0.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace2.bzl
-PLATFORMS_PV="0.0.6"		# From https://github.com/tensorflow/runtime/blob/769f5cc9b8732933140b09e8808d13614182b496/third_party/rules_cuda/cuda/dependencies.bzl#L66 with EGIT_COMMIT_TF_RUNTIME *recheck
+#PLATFORMS_PV="0.0.6"		# From https://github.com/tensorflow/runtime/blob/769f5cc9b8732933140b09e8808d13614182b496/third_party/rules_cuda/cuda/dependencies.bzl#L66 with EGIT_COMMIT_TF_RUNTIME *recheck
 PROTOBUF_PV="3.9.2"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace2.bzl
 PROTOBUF_SLOT="0/${PROTOBUF_PV%.*}"
 RULES_ANDROID_PV="0.1.1"	# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace2.bzl
-RULES_FOREIGN_CC_PV="0.7.1"	# From https://github.com/google/benchmark/blob/f7547e29ccaed7b64ef4f7495ecfff1c9f6f3d03/bazel/benchmark_deps.bzl#L22 with EGIT_COMMIT_BENCHMARK *recheck
-RULES_JVM_PV="4.3"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace3.bzl *recheck
-RULES_PKG_PV="0.7.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace3.bzl *recheck
+#RULES_FOREIGN_CC_PV="0.7.1"	# From https://github.com/google/benchmark/blob/f7547e29ccaed7b64ef4f7495ecfff1c9f6f3d03/bazel/benchmark_deps.bzl#L22 with EGIT_COMMIT_BENCHMARK *recheck
+#RULES_JVM_PV="4.3"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace3.bzl *recheck/missing
+#RULES_PKG_PV="0.7.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace3.bzl *recheck/missing
 RULES_PYTHON_PV="0.1.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/WORKSPACE#L19 *recheck
-RULES_SWIFT_PV="1.0.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace2.bzl
 SNAPPY_PV="1.1.8"
 # RULES_DOCKER dumped?
-TRITON_TAG="cl546794996"	# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/triton/workspace.bzl#L8 *recheck
+#TRITON_TAG="cl546794996"	# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/triton/workspace.bzl#L8 *recheck/missing
 
 EGIT_COMMIT_ABSEIL_CPP="6f9d96a1f41439ac172ee2ef7ccd8edf0e5d068c"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/absl/workspace.bzl
 EGIT_COMMIT_APPLE_SUPPORT="501b4afb27745c4813a88ffa28acd901408014e4"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace2.bzl
 EGIT_COMMIT_ARM_NEON_2_X86_SSE="1200fe90bb174a6224a525ee60148671a786a71f"	# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace2.bzl
-EGIT_COMMIT_BENCHMARK="f7547e29ccaed7b64ef4f7495ecfff1c9f6f3d03"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/benchmark/workspace.bzl *recheck
-EGIT_COMMIT_BAZEL_TOOLCHAINS="8c717f8258cd5f6c7a45b97d974292755852b658"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace1.bzl *recheck
+#EGIT_COMMIT_BENCHMARK="f7547e29ccaed7b64ef4f7495ecfff1c9f6f3d03"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/benchmark/workspace.bzl *recheck/missing
+#EGIT_COMMIT_BAZEL_TOOLCHAINS="8c717f8258cd5f6c7a45b97d974292755852b658"	# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace1.bzl *recheck/missing
 EGIT_COMMIT_CPUINFO="5916273f79a21551890fd3d56fc5375a78d1598d"			# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/cpuinfo/workspace.bzl
 EGIT_COMMIT_CUDNN_FRONTEND="360d6e7164dfb7c802493fd1c0464f0d815b852a"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace2.bzl
 EGIT_COMMIT_DLPACK="3efc489b55385936531a06ff83425b719387ec63"			# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/dlpack/workspace.bzl
@@ -195,46 +195,55 @@ EGIT_COMMIT_KISSFFT="36dbc057604f00aacfc0288ddad57e3b21cfc1b8"			# From https://
 EGIT_COMMIT_HIGHWAYHASH="fd3d9af80465e4383162e4a7c5e2f406e82dd968"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/highwayhash/workspace.bzl
 EGIT_COMMIT_LIBEIGEN="f612df273689a19d25b45ca4f8269463207c4fee"			# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/eigen3/workspace.bzl
 EGIT_COMMIT_LLVM="1f6a57c1a0fad922e04a2b1f414b092d4b0cd8b0"			# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/llvm/workspace.bzl
-EGIT_COMMIT_ML_DTYPES="5b9fc9ad978757654843f4a8d899715dbea30e88"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/py/ml_dtypes/workspace.bzl#L10 *recheck
+#EGIT_COMMIT_ML_DTYPES="5b9fc9ad978757654843f4a8d899715dbea30e88"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/py/ml_dtypes/workspace.bzl#L10 *recheck/missing
 EGIT_COMMIT_PTHREADPOOL="b8374f80e42010941bda6c85b0e3f1a1bd77a1e0"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace2.bzl
-EGIT_COMMIT_PYBIND11_ABSEIL="2c4932ed6f6204f1656e245838f4f5eae69d2e29"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/pybind11_abseil/workspace.bzl *recheck
-EGIT_COMMIT_PYBIND11_BAZEL="72cbbf1fbc830e487e3012862b7b720001b70672"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/pybind11_bazel/workspace.bzl *recheck
-EGIT_COMMIT_PYBIND11_PROTOBUF="80f3440cd8fee124e077e2e47a8a17b78b451363"	# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace2.bzl#L875 *recheck
+#EGIT_COMMIT_PYBIND11_ABSEIL="2c4932ed6f6204f1656e245838f4f5eae69d2e29"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/pybind11_abseil/workspace.bzl *recheck/missing
+#EGIT_COMMIT_PYBIND11_BAZEL="72cbbf1fbc830e487e3012862b7b720001b70672"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/pybind11_bazel/workspace.bzl *recheck/missing
+#EGIT_COMMIT_PYBIND11_PROTOBUF="80f3440cd8fee124e077e2e47a8a17b78b451363"	# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace2.bzl#L875 *recheck
 EGIT_COMMIT_RE2="506cfa4bffd060c06ec338ce50ea3468daa6c814"			# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace2.bzl ; Round up to the first day of cur_month + 1
 EGIT_COMMIT_RULES_APPLE="5131f3d46794bf227d296c82f30c2499c9de3c5b"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace2.bzl
 EGIT_COMMIT_RULES_CC="081771d4a0e9d7d3aa0eed2ef389fa4700dfb23e"			# From https://github.com/tensorflow/runtime/blob/769f5cc9b8732933140b09e8808d13614182b496/third_party/rules_cuda/cuda/dependencies.bzl#L41  ## needs review *recheck
 EGIT_COMMIT_RULES_CLOSURE="308b05b2419edb5c8ee0471b67a40403df940149"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace3.bzl
 EGIT_COMMIT_RULES_JAVA="7cf3cefd652008d0a64a419c34c13bdca6c8f178"		# From https://github.com/bazelbuild/bazel/blob/6.1.2/distdir_deps.bzl#L69 *recheck
-EGIT_COMMIT_RULES_PROTO="11bf7c25e666dd7ddacbcd4d4c4a9de7a25175f8"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace0.bzl *recheck
-EGIT_COMMIT_RULES_SWIFT="3eeeb53cebda55b349d64c9fc144e18c5f7c0eb8"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace2.bzl *recheck
+#EGIT_COMMIT_RULES_PROTO="11bf7c25e666dd7ddacbcd4d4c4a9de7a25175f8"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace0.bzl *recheck/missing
+EGIT_COMMIT_RULES_SWIFT="3eeeb53cebda55b349d64c9fc144e18c5f7c0eb8"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace2.bzl
 EGIT_COMMIT_RUY="54774a7a2cf85963777289193629d4bd42de4a59"			# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/ruy/workspace.bzl
 EGIT_COMMIT_SOBOL_DATA="835a7d7b1ee3bc83e575e302a985c66ec4b65249"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/sobol_data/workspace.bzl
-EGIT_COMMIT_STABLEHLO="9ae6c373a6e2941ff84a8831bb3724728cb2b49a"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/stablehlo/workspace.bzl *recheck
-EGIT_COMMIT_TF_RUNTIME="769f5cc9b8732933140b09e8808d13614182b496"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/tf_runtime/workspace.bzl *recheck
+#EGIT_COMMIT_STABLEHLO="9ae6c373a6e2941ff84a8831bb3724728cb2b49a"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/stablehlo/workspace.bzl *recheck/missing
+#EGIT_COMMIT_TF_RUNTIME="769f5cc9b8732933140b09e8808d13614182b496"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/third_party/tf_runtime/workspace.bzl *recheck/missing
 EGIT_COMMIT_XNNPACK="fb8d1f1b2bb2e32c141564528a39748c4631b453"			# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace2.bzl
 
 # WARN: DO NOT HARDWRAP
 #https://github.com/abseil/abseil-py/archive/refs/tags/v${ABSEIL_PY_PV}.tar.gz -> abseil-py-${ABSEIL_PY_PV}.tar.gz
 #https://github.com/bazelbuild/rules_apple/releases/archive/${EGIT_COMMIT_RULES_APPLE}.tar.gz -> bazelbuild-rules_apple-${EGIT_COMMIT_RULES_APPLE}.tar.gz
+#https://github.com/pybind/pybind11_protobuf/archive/${EGIT_COMMIT_PYBIND11_PROTOBUF}.zip -> pybind11_protobuf-${EGIT_COMMIT_PYBIND11_PROTOBUF}.zip
+#https://github.com/bazelbuild/rules_jvm_external/archive/${RULES_JVM_PV}.zip -> rules_jvm-${RULES_JVM_PV}.zip
+#https://github.com/bazelbuild/rules_pkg/releases/download/${RULES_PKG_PV}/rules_pkg-${RULES_PKG_PV}.tar.gz -> bazelbuild-rules_pkg-${RULES_PKG_PV}.tar.gz
+#https://github.com/google/benchmark/archive/${EGIT_COMMIT_BENCHMARK}.tar.gz -> benchmark-${EGIT_COMMIT_FARMHASH}.tar.gz
+#https://github.com/bazelbuild/rules_foreign_cc/archive/${RULES_FOREIGN_CC_PV}.tar.gz -> rules_foreign_cc-${RULES_FOREIGN_CC_PV}.tar.gz
+#https://github.com/tensorflow/runtime/archive/${EGIT_COMMIT_TF_RUNTIME}.tar.gz -> tensorflow-runtime-${EGIT_COMMIT_TF_RUNTIME}.tar.gz
+#https://github.com/openxla/stablehlo/archive/${EGIT_COMMIT_STABLEHLO}.zip -> openxla-stablehlo-${EGIT_COMMIT_STABLEHLO}.zip
+#https://github.com/bazelbuild/platforms/releases/download/${PLATFORMS_PV}/platforms-${PLATFORMS_PV}.tar.gz -> bazelbuild-platforms-${PLATFORMS_PV}.tar.gz
+#https://github.com/bazelbuild/bazel-toolchains/archive/${EGIT_COMMIT_BAZEL_TOOLCHAINS}.tar.gz -> bazel-toolchains-${EGIT_COMMIT_BAZEL_TOOLCHAINS}.tar.gz
+#https://storage.googleapis.com/mirror.tensorflow.org/github.com/jax-ml/ml_dtypes/archive/${EGIT_COMMIT_ML_DTYPES}/ml_dtypes-${EGIT_COMMIT_ML_DTYPES}.tar.gz -> ml_dtypes-${EGIT_COMMIT_ML_DTYPES}.tar.gz
+#https://github.com/pybind/pybind11_abseil/archive/${EGIT_COMMIT_PYBIND11_ABSEIL}.tar.gz -> pybind11_abseil-${EGIT_COMMIT_PYBIND11_ABSEIL}.tar.gz
+#https://github.com/pybind/pybind11_bazel/archive/${EGIT_COMMIT_PYBIND11_BAZEL}.tar.gz -> pybind11_bazel-${EGIT_COMMIT_PYBIND11_BAZEL}.tar.gz
+#https://github.com/bazelbuild/rules_proto/archive/${EGIT_COMMIT_RULES_PROTO}.tar.gz -> bazelbuild-rules_proto-${EGIT_COMMIT_RULES_PROTO}.tar.gz
+#	xla? (
+#https://github.com/openxla/triton/archive/${TRITON_TAG}.tar.gz -> trition-${TRITON_TAG}.tar.gz
+#	)
 bazel_external_uris="
 	${bazel_external_uris_unknown}
 https://github.com/abseil/abseil-cpp/archive/${EGIT_COMMIT_ABSEIL_CPP}.tar.gz -> abseil-cpp-${EGIT_COMMIT_ABSEIL_CPP}.tar.gz
 https://github.com/bazelbuild/apple_support/archive/${EGIT_COMMIT_APPLE_SUPPORT}.tar.gz -> bazelbuild-apple_support-${EGIT_COMMIT_APPLE_SUPPORT}.tar.gz
 https://github.com/bazelbuild/bazel-skylib/releases/download/${BAZEL_SKYLIB_PV}/bazel-skylib-${BAZEL_SKYLIB_PV}.tar.gz
-https://github.com/bazelbuild/bazel-toolchains/archive/${EGIT_COMMIT_BAZEL_TOOLCHAINS}.tar.gz -> bazel-toolchains-${EGIT_COMMIT_BAZEL_TOOLCHAINS}.tar.gz
-https://github.com/bazelbuild/platforms/releases/download/${PLATFORMS_PV}/platforms-${PLATFORMS_PV}.tar.gz -> bazelbuild-platforms-${PLATFORMS_PV}.tar.gz
 https://github.com/bazelbuild/rules_android/archive/v${RULES_ANDROID_PV}.zip -> bazelbuild-rules_android-v${RULES_ANDROID_PV}.zip
 https://github.com/bazelbuild/rules_cc/archive/${EGIT_COMMIT_RULES_CC}.tar.gz -> bazelbuild-rules_cc-${EGIT_COMMIT_RULES_CC}.tar.gz
 https://github.com/bazelbuild/rules_closure/archive/${EGIT_COMMIT_RULES_CLOSURE}.tar.gz -> bazelbuild-rules_closure-${EGIT_COMMIT_RULES_CLOSURE}.tar.gz
-https://github.com/bazelbuild/rules_foreign_cc/archive/${RULES_FOREIGN_CC_PV}.tar.gz -> rules_foreign_cc-${RULES_FOREIGN_CC_PV}.tar.gz
 https://github.com/bazelbuild/rules_java/archive/${EGIT_COMMIT_RULES_JAVA}.zip -> ${EGIT_COMMIT_RULES_JAVA}.zip
-https://github.com/bazelbuild/rules_jvm_external/archive/${RULES_JVM_PV}.zip -> rules_jvm-${RULES_JVM_PV}.zip
-https://github.com/bazelbuild/rules_pkg/releases/download/${RULES_PKG_PV}/rules_pkg-${RULES_PKG_PV}.tar.gz -> bazelbuild-rules_pkg-${RULES_PKG_PV}.tar.gz
-https://github.com/bazelbuild/rules_proto/archive/${EGIT_COMMIT_RULES_PROTO}.tar.gz -> bazelbuild-rules_proto-${EGIT_COMMIT_RULES_PROTO}.tar.gz
 https://github.com/bazelbuild/rules_python/releases/download/${RULES_PYTHON_PV}/rules_python-${RULES_PYTHON_PV}.tar.gz -> bazelbuild-rules_python-${RULES_PYTHON_PV}.tar.gz
 https://github.com/bazelbuild/rules_swift/archive/${EGIT_COMMIT_RULES_SWIFT}.tar.gz -> bazelbuild-rules_swift-${EGIT_COMMIT_RULES_SWIFT}.tar.gz
 https://github.com/dmlc/dlpack/archive/${EGIT_COMMIT_DLPACK}.tar.gz -> dlpack-${EGIT_COMMIT_DLPACK}.tar.gz
-https://github.com/google/benchmark/archive/${EGIT_COMMIT_BENCHMARK}.tar.gz -> benchmark-${EGIT_COMMIT_FARMHASH}.tar.gz
 https://github.com/google/farmhash/archive/${EGIT_COMMIT_FARMHASH}.tar.gz -> farmhash-${EGIT_COMMIT_FARMHASH}.tar.gz
 https://github.com/google/gemmlowp/archive/${EGIT_COMMIT_GEMMLOWP}.zip -> gemmlowp-${EGIT_COMMIT_GEMMLOWP}.zip
 https://github.com/google/highwayhash/archive/${EGIT_COMMIT_HIGHWAYHASH}.tar.gz -> highwayhash-${EGIT_COMMIT_HIGHWAYHASH}.tar.gz
@@ -246,13 +255,8 @@ https://github.com/llvm/llvm-project/archive/${EGIT_COMMIT_LLVM}.tar.gz -> llvm-
 https://github.com/llvm/llvm-project/releases/download/llvmorg-${OPENMP_PV}/openmp-${OPENMP_PV}.src.tar.xz -> llvmorg-${OPENMP_PV}-openmp-${OPENMP_PV}.src.tar.xz
 https://github.com/mborgerding/kissfft/archive/${EGIT_COMMIT_KISSFFT}.tar.gz -> kissfft-${EGIT_COMMIT_KISSFFT}.tar.gz
 https://github.com/oneapi-src/oneDNN/archive/refs/tags/v${ONEDNN_PV}.tar.gz -> oneDNN-v${ONEDNN_PV}.tar.gz
-https://github.com/openxla/stablehlo/archive/${EGIT_COMMIT_STABLEHLO}.zip -> openxla-stablehlo-${EGIT_COMMIT_STABLEHLO}.zip
 https://github.com/petewarden/OouraFFT/archive/v${OOURA_FFT_PV}.tar.gz -> OouraFFT-v${OOURA_FFT_PV}.tar.gz
-https://github.com/pybind/pybind11_abseil/archive/${EGIT_COMMIT_PYBIND11_ABSEIL}.tar.gz -> pybind11_abseil-${EGIT_COMMIT_PYBIND11_ABSEIL}.tar.gz
-https://github.com/pybind/pybind11_bazel/archive/${EGIT_COMMIT_PYBIND11_BAZEL}.tar.gz -> pybind11_bazel-${EGIT_COMMIT_PYBIND11_BAZEL}.tar.gz
-https://github.com/pybind/pybind11_protobuf/archive/${EGIT_COMMIT_PYBIND11_PROTOBUF}.zip -> pybind11_protobuf-${EGIT_COMMIT_PYBIND11_PROTOBUF}.zip
 https://github.com/pytorch/cpuinfo/archive/${EGIT_COMMIT_CPUINFO}.zip -> pytorch-cpuinfo-${EGIT_COMMIT_CPUINFO}.zip
-https://github.com/tensorflow/runtime/archive/${EGIT_COMMIT_TF_RUNTIME}.tar.gz -> tensorflow-runtime-${EGIT_COMMIT_TF_RUNTIME}.tar.gz
 https://github.com/google/flatbuffers/archive/v${FLATBUFFERS_PV}.tar.gz -> flatbuffers-v${FLATBUFFERS_PV}.tar.gz
 https://github.com/google/XNNPACK/archive/${EGIT_COMMIT_XNNPACK}.zip -> XNNPACK-${EGIT_COMMIT_XNNPACK}.zip
 https://github.com/Maratyszcza/pthreadpool/archive/${EGIT_COMMIT_PTHREADPOOL}.zip -> pthreadpool-${EGIT_COMMIT_PTHREADPOOL}.zip
@@ -260,7 +264,6 @@ https://github.com/Maratyszcza/FP16/archive/${EGIT_COMMIT_FP16}.zip -> FP16-${EG
 https://github.com/Maratyszcza/FXdiv/archive/${EGIT_COMMIT_FXDIV}.zip -> FXdiv-${EGIT_COMMIT_FXDIV}.zip
 https://gitlab.com/libeigen/eigen/-/archive/${EGIT_COMMIT_LIBEIGEN}/eigen-${EGIT_COMMIT_LIBEIGEN}.tar.gz -> eigen-${EGIT_COMMIT_LIBEIGEN}.tar.gz
 https://storage.googleapis.com/mirror.tensorflow.org/github.com/google/snappy/archive/${SNAPPY_PV}.tar.gz -> snappy-${SNAPPY_PV}.tar.gz
-https://storage.googleapis.com/mirror.tensorflow.org/github.com/jax-ml/ml_dtypes/archive/${EGIT_COMMIT_ML_DTYPES}/ml_dtypes-${EGIT_COMMIT_ML_DTYPES}.tar.gz -> ml_dtypes-${EGIT_COMMIT_ML_DTYPES}.tar.gz
 https://storage.googleapis.com/mirror.tensorflow.org/github.com/protocolbuffers/protobuf/archive/v${PROTOBUF_PV}.zip -> protobuf-${PROTOBUF_PV}.zip
 	cuda? (
 https://github.com/NVIDIA/cudnn-frontend/archive/${EGIT_COMMIT_CUDNN_FRONTEND}.zip -> cudnn-frontend-${EGIT_COMMIT_CUDNN_FRONTEND}.zip
@@ -271,12 +274,9 @@ https://github.com/nvidia/nccl/archive/v${NCCL_PV}.tar.gz -> nvidia-nccl-v${NCCL
 https://github.com/intel/ARM_NEON_2_x86_SSE/archive/${EGIT_COMMIT_ARM_NEON_2_X86_SSE}.tar.gz -> ARM_NEON_2_x86_SSE-${EGIT_COMMIT_ARM_NEON_2_X86_SSE}.tar.gz
 https://storage.googleapis.com/mirror.tensorflow.org/docs.python.org/2.7/_sources/license.rst.txt -> tensorflow-1.15.0-python-license.rst.txt
 	)
-	xla? (
-https://github.com/openxla/triton/archive/${TRITON_TAG}.tar.gz -> trition-${TRITON_TAG}.tar.gz
-	)
 "
 
-#KEYWORDS="~amd64 ~arm64" # Downgraded SRC_URI links is not complete.
+#KEYWORDS="~amd64 ~arm64" # Needs patch test
 SRC_URI="
 ${bazel_external_uris}
 https://github.com/${PN}/${PN}/archive/v${MY_PV}.tar.gz -> ${P}.tar.gz
@@ -396,7 +396,7 @@ ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${HIP_SLOTS2[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-alt-ssl -big-endian clang cuda +hardened models -mpi +python rocm
+alt-ssl -big-endian clang cuda models -mpi +python rocm
 system-flatbuffers test +xla
 ebuild-revision-2
 "
@@ -543,7 +543,7 @@ RDEPEND_GRPCIO_LITTLE_ENDIAN_PROTOBUF_3_21="
 # Missing extension package for TF_ENABLE_ONEDNN_OPTS=1
 # The grpcio slots below are limited by protobuf:0/32.
 # TODO package
-# dev-python/portpicker
+# >=dev-python/portpicker-1.3.1
 #
 # google-cloud-cpp acceptable range: [2.9.0-2.10.1] based on same major
 # abseil-cpp version and same major-minor of protobuf without multiple
@@ -552,18 +552,18 @@ RDEPEND_GRPCIO_LITTLE_ENDIAN_PROTOBUF_3_21="
 RDEPEND="
 	${RDEPEND_PROTOBUF_3_21}
 	>=dev-cpp/abseil-cpp-20230125.2:0/20230125
-	>=dev-db/sqlite-3.40.1
-	>=dev-libs/double-conversion-3.2.0
+	>=dev-db/sqlite-3.34.1
+	>=dev-libs/double-conversion-3.0.0
 	>=dev-libs/icu-69.1:=
-	>=dev-libs/jsoncpp-1.9.5:=
-	>=dev-libs/nsync-1.25.0
+	>=dev-libs/jsoncpp-1.9.4:=
+	>=dev-libs/nsync-1.22.0
 	>=dev-libs/re2-0.2023.06.01:0/11
 	>=media-libs/giflib-5.2.1
 	>=media-libs/libjpeg-turbo-2.1.4
-	>=media-libs/libpng-1.6.39:0
-	>=net-misc/curl-8.4.0
+	>=media-libs/libpng-1.6.37:0
+	>=net-misc/curl-7.78.0
 	>=sys-apps/hwloc-2.7.1:=
-	>=sys-libs/zlib-1.2.13
+	>=sys-libs/zlib-1.2.11
 	dev-libs/protobuf:${PROTOBUF_SLOT}
 	!alt-ssl? (
 		>=dev-libs/openssl-3:0=
@@ -581,7 +581,7 @@ RDEPEND="
 		')
 		${PYTHON_DEPS}
 		(
-			>=dev-python/numpy-1.23.5[${PYTHON_USEDEP}]
+			>=dev-python/numpy-1.19.2[${PYTHON_USEDEP}]
 			<dev-python/numpy-2[${PYTHON_USEDEP}]
 		)
 		(
@@ -594,28 +594,28 @@ RDEPEND="
 			dev-python/protobuf:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 		)
 		(
-			>=dev-python/wrapt-1.11.1[${PYTHON_USEDEP}]
+			>=dev-python/wrapt-1.12.1[${PYTHON_USEDEP}]
 			<dev-python/wrapt-1.15[${PYTHON_USEDEP}]
 		)
-		>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
-		>=dev-python/astunparse-1.6.0[${PYTHON_USEDEP}]
+		>=dev-python/absl-py-0.10.0[${PYTHON_USEDEP}]
+		>=dev-python/astunparse-1.6.3[${PYTHON_USEDEP}]
 		>=dev-python/clang-python-13.0.0[${PYTHON_USEDEP}]
 		>=dev-python/flatbuffers-${FLATBUFFERS_PV}[${PYTHON_USEDEP}]
-		>=dev-python/gast-0.5.3[${PYTHON_USEDEP}]
-		>=dev-python/google-pasta-0.1.1[${PYTHON_USEDEP}]
-		>=dev-python/h5py-2.9.0[${PYTHON_USEDEP}]
+		>=dev-python/gast-0.4.0[${PYTHON_USEDEP}]
+		>=dev-python/google-pasta-0.2.0[${PYTHON_USEDEP}]
+		>=dev-python/h5py-3.1.0[${PYTHON_USEDEP}]
 
-		>=dev-python/opt-einsum-2.3.2[${PYTHON_USEDEP}]
+		>=dev-python/opt-einsum-3.3.0[${PYTHON_USEDEP}]
 		!big-endian? (
 			${RDEPEND_GRPCIO_LITTLE_ENDIAN_PROTOBUF_3_21}
 		)
-		>=dev-python/six-1.12.0[${PYTHON_USEDEP}]
+		>=dev-python/six-1.15.0[${PYTHON_USEDEP}]
 		>=dev-python/termcolor-1.1.0[${PYTHON_USEDEP}]
-		>=dev-python/typing-extensions-3.6.6[${PYTHON_USEDEP}]
+		>=dev-python/typing-extensions-3.7.4[${PYTHON_USEDEP}]
 
 		>=dev-python/astor-0.7.1[${PYTHON_USEDEP}]
 		>=dev-python/dill-0.3.6[${PYTHON_USEDEP}]
-		>=dev-python/pybind11-2.10.4[${PYTHON_USEDEP}]
+		>=dev-python/pybind11-2.6.0[${PYTHON_USEDEP}]
 		>=dev-python/tblib-1.7.0[${PYTHON_USEDEP}]
 		system-flatbuffers? (
 			~dev-libs/flatbuffers-${FLATBUFFERS_PV}
@@ -649,7 +649,7 @@ PDEPEND="
 		$(python_gen_cond_dep '
 			=sci-libs/tensorflow-io-0.35.0[${PYTHON_USEDEP},tensorflow-io-gcs-filesystem]
 		' python3_{10,11})
-		=dev-python/keras-${DEP_VER}*[${PYTHON_USEDEP}]
+		>=dev-python/keras-2.5[${PYTHON_USEDEP}]
 		=sci-libs/tensorflow-estimator-${DEP_VER}*[${PYTHON_USEDEP}]
 	)
 "
@@ -722,13 +722,13 @@ BDEPEND="
 		!big-endian? (
 			${RDEPEND_GRPCIO_LITTLE_ENDIAN_PROTOBUF_3_21}
 		)
-		>=dev-python/cython-3.0.0_alpha11[${PYTHON_USEDEP}]
+		>=dev-python/cython-0.29.21[${PYTHON_USEDEP}]
 		>=dev-python/packaging-23.1[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.31.0[${PYTHON_USEDEP}]
 		>=dev-python/setuptools-67.6.1[${PYTHON_USEDEP}]
 		test? (
 			>=dev-python/lit-16.0.5_p0[${PYTHON_USEDEP}]
-			>=dev-python/scipy-1.10.1[${PYTHON_USEDEP}]
+			>=dev-python/scipy-1.5.2[${PYTHON_USEDEP}]
 			dev-python/mock[${PYTHON_USEDEP}]
 		)
 	)
@@ -748,20 +748,19 @@ BDEPEND="
 "
 DOCS=( "AUTHORS" "README.md" "RELEASE.md" )
 PATCHES=(
-	"${FILESDIR}/2.14.1/tensorflow-2.14.1-0001-WORKSPACE-add-rules-docker-http_archive-bazel-toolch.patch"
-	"${FILESDIR}/2.14.1/tensorflow-2.14.1-0002-systemlib-Latest-absl-LTS-has-split-cord-libs.patch"
-	"${FILESDIR}/2.14.1/tensorflow-2.14.1-0003-mkl_dnn-Must-link-against-libm-for-round-and-log2.patch"
-	"${FILESDIR}/2.14.1/tensorflow-2.14.1-0004-tensorflow_cc-Add-systemlib-nsync-linkopts.patch"
-	"${FILESDIR}/2.14.1/tensorflow-2.14.1-0005-systemlib-Updates-for-Abseil-20220623-LTS.patch"
-	"${FILESDIR}/2.14.1/tensorflow-2.14.1-0006-systemlib-Update-targets-for-absl_py.patch"
-	"${FILESDIR}/2.14.1/tensorflow-2.14.1-0007-systemlib-Add-well_known_types_py_pb2-target.patch"
-	"${FILESDIR}/2.14.1/tensorflow-2.14.1-0008-Relax-setup.py-version-requirements.patch"
-	"${FILESDIR}/2.14.1/tensorflow-2.14.1-0009-systemlib-update-targets-for-absl.patch"
-	"${FILESDIR}/2.14.1/tensorflow-2.14.1-0010-systemlib-fix-missing-osx-in-pybind11.patch"
-	"${FILESDIR}/2.14.1/tensorflow-2.14.1-0011-systemlib-fix-missing-LICENSE-in-flatbuffers.patch"
-	"${FILESDIR}/2.14.1/tensorflow-2.14.1-0012-build-use-non-hermetic-python.patch"
-	"${FILESDIR}/2.14.1/tensorflow-2.14.1-0013-installation-remove-cp_local_config_python.patch"
-	"${FILESDIR}/2.14.1/tensorflow-2.14.1-0014-Fixing-build-issue-with-Clang-16.patch"
+	"${FILESDIR}/2.5.3/tensorflow-2.5.3-0001-WORKSPACE-add-rules-docker-http_archive-bazel-toolch.patch"
+	"${FILESDIR}/2.5.3/tensorflow-2.5.3-0003-mkl_dnn-Must-link-against-libm-for-round-and-log2.patch"
+	"${FILESDIR}/2.5.3/tensorflow-2.5.3-0004-tensorflow_cc-Add-systemlib-nsync-linkopts.patch"
+#	"${FILESDIR}/2.5.3/tensorflow-2.14.1-0005-systemlib-Updates-for-Abseil-20220623-LTS.patch"
+	"${FILESDIR}/2.5.3/tensorflow-2.5.3-0006-systemlib-Update-targets-for-absl_py.patch"
+	"${FILESDIR}/2.5.3/tensorflow-2.14.1-0007-systemlib-Add-well_known_types_py_pb2-target.patch"
+	"${FILESDIR}/2.5.3/tensorflow-2.5.3-0008-Relax-setup.py-version-requirements.patch"
+	"A${FILESDIR}/2.5.3/tensorflow-2.14.1-0009-systemlib-update-targets-for-absl.patch"
+	"${FILESDIR}/2.5.3/tensorflow-2.14.1-0010-systemlib-fix-missing-osx-in-pybind11.patch"
+	"${FILESDIR}/2.5.3/tensorflow-2.14.1-0011-systemlib-fix-missing-LICENSE-in-flatbuffers.patch"
+	"${FILESDIR}/2.5.3/tensorflow-2.14.1-0012-build-use-non-hermetic-python.patch"
+	"${FILESDIR}/2.5.3/tensorflow-2.14.1-0013-installation-remove-cp_local_config_python.patch"
+	"${FILESDIR}/2.5.3/tensorflow-2.14.1-0014-Fixing-build-issue-with-Clang-16.patch"
 )
 ROCM_PATCHES=(
 	"0050-fix-rocm-build-scripts.patch"
@@ -976,7 +975,6 @@ eerror
 
 pkg_setup() {
 	dhms_start
-die "Ebuild still in development"
 use rocm && ewarn "The rocm USE flag is currently broken"
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCC)
@@ -1001,22 +999,6 @@ ewarn "ROCm support is a Work In Progress (WIP)"
 		local _gcc_slot="HIP_${ROCM_SLOT/./_}_GCC_SLOT"
 		local gcc_slot="${!_gcc_slot}"
 		check_libstdcxx ${gcc_slot}
-
-		local libs=(
-			"amd_comgr:dev-libs/rocm-comgr"
-			"amdhip64:dev-util/hip"
-			"hipblas:sci-libs/hipBLAS"
-			"hsa-runtime64:dev-libs/rocr-runtime"
-			"rocblas:sci-libs/rocBLAS"
-			"rocm_smi64:dev-util/rocm-smi"
-			"rocsolver:sci-libs/rocSOLVER"
-			"roctracer64:dev-util/roctracer"
-		)
-		local glibcxx_ver="HIP_${ROCM_SLOT/./_}_GLIBCXX"
-	# Avoid missing versioned symbols
-	# # ld: /opt/rocm-6.1.2/lib/librocblas.so: undefined reference to `std::ios_base_library_init()@GLIBCXX_3.4.32'
-		rocm_verify_glibcxx "${!glibcxx_ver}" ${libs[@]}
-
 	elif tc-is-clang || use clang ; then
 		use_gcc
 		use_clang
@@ -1038,6 +1020,22 @@ einfo
 
 	if use rocm ; then
 		rocm_pkg_setup
+
+		local libs=(
+			"amd_comgr:dev-libs/rocm-comgr"
+			"amdhip64:dev-util/hip"
+			"hipblas:sci-libs/hipBLAS"
+			"hsa-runtime64:dev-libs/rocr-runtime"
+			"rocblas:sci-libs/rocBLAS"
+			"rocm_smi64:dev-util/rocm-smi"
+			"rocsolver:sci-libs/rocSOLVER"
+			"roctracer64:dev-util/roctracer"
+		)
+		local glibcxx_ver="HIP_${ROCM_SLOT/./_}_GLIBCXX"
+	# Avoid missing versioned symbols
+	# # ld: /opt/rocm-6.1.2/lib/librocblas.so: undefined reference to `std::ios_base_library_init()@GLIBCXX_3.4.32'
+		rocm_verify_glibcxx "${!glibcxx_ver}" ${libs[@]}
+
 	#else
 	#	llvm_pkg_setup called in use_clang
 	fi
@@ -1302,29 +1300,6 @@ ewarn
 
 	allow_lto
 
-	if ! use hardened ; then
-	# It has to be done this way, because the tarballs are not unpacked at
-	# this point.
-
-	# SSP buffer overflow protection
-	# -fstack-protector-all is <7% penalty
-		append-flags -fno-stack-protector
-		BUILD_CFLAGS+=" -fno-stack-protector"
-		BUILD_CXXFLAGS+=" -fno-stack-protector"
-
-	# FORTIFY_SOURCE is buffer overflow checks for string/*alloc functions
-	# -FORTIFY_SOURCE=2 is <1% penalty
-#		append-cppflags -D_FORTIFY_SOURCE=0
-#		BUILD_CPPFLAGS+=" -D_FORTIFY_SOURCE=0"
-
-	# Full RELRO is GOT protection
-	# Full RELRO is <1% penalty ; <1 ms difference
-		append-ldflags -Wl,-z,norelro
-		append-ldflags -Wl,-z,lazy
-		BUILD_LDFLAGS+=" -Wl,-z,norelro"
-		BUILD_LDFLAGS+=" -Wl,-z,lazy"
-	fi
-
 	bazel_setup_bazelrc # Save CFLAGS
 
 	# Relax version checks in setup.py
@@ -1334,12 +1309,6 @@ ewarn
 	hprefixify -w /host_compiler_prefix/ third_party/gpus/cuda_configure.bzl
 
 	gen_gcc_ar
-
-	if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
-		sed -i -e "s|LLVM_CCACHE_BUILD OFF|LLVM_CCACHE_BUILD ON|g" \
-			"${S}/tensorflow/compiler/xla/mlir_hlo/CMakeLists.txt" \
-			|| die
-	fi
 
 	default
 

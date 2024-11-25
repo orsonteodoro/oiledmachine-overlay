@@ -4,6 +4,9 @@
 
 EAPI=8
 
+# TODO:
+# Make protobuf internal dependency
+
 # Build/install only progress for 2.16.1:
 # CPU - pass
 # GPU (rocm) - testing/in-development
@@ -92,7 +95,10 @@ declare -A LLD_SLOT=(
 )
 
 # See "deps versioning" section above for details.
-LLVM_COMPAT=( {17..15} ) # See https://github.com/tensorflow/tensorflow/blob/v2.16.1/tensorflow/tools/toolchains/remote_config/configs.bzl
+# See
+# https://github.com/tensorflow/tensorflow/blob/v2.16.1/tensorflow/tools/toolchains/remote_config/configs.bzl
+# https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/gpus/rocm_configure.bzl#L210
+LLVM_COMPAT=( {17..15} )
 PYTHON_COMPAT=( "python3_"{10..12} )
 # Limited by jax/flax
 # PYTHON_COMPAT limited by gast-4.0[python_targets_python3_9]
@@ -427,7 +433,7 @@ ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${HIP_SLOTS2[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-alt-ssl -big-endian +clang cuda +hardened models -mpi +python rocm
+alt-ssl -big-endian +clang cuda models -mpi +python rocm
 system-flatbuffers test +xla
 ebuild-revision-2
 "
@@ -451,11 +457,9 @@ gen_required_use_rocm_targets() {
 		"
 	done
 }
-# hardened is required to unbreak brotli build
 REQUIRED_USE="
 	$(gen_required_use_cuda_targets)
 	$(gen_required_use_rocm_targets)
-	hardened
 	?? (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
@@ -687,7 +691,7 @@ RDEPEND="
 		>=dev-python/h5py-3.10.0[${PYTHON_USEDEP}]
 		>=dev-python/ml-dtypes-0.3.1[${PYTHON_USEDEP}]
 
-		>=dev-python/opt-einsum-2.3.2[${PYTHON_USEDEP}]
+		>=dev-python/opt-einsum-3.3.0[${PYTHON_USEDEP}]
 		!big-endian? (
 			${RDEPEND_GRPCIO_LITTLE_ENDIAN_PROTOBUF_3_21}
 		)
@@ -851,7 +855,8 @@ PATCHES=(
 	"${FILESDIR}/2.16.1/tensorflow-2.15.0-0005-systemlib-Updates-for-Abseil-20220623-LTS.patch"
 	"${FILESDIR}/2.16.1/tensorflow-2.15.0-0006-systemlib-Update-targets-for-absl_py.patch"
 	"${FILESDIR}/2.16.1/tensorflow-2.15.0-0007-systemlib-Add-well_known_types_py_pb2-target.patch"
-	"${FILESDIR}/2.16.1/tensorflow-2.16.1-0008-Relax-setup.py-version-requirements.patch"
+	"y
+${FILESDIR}/2.16.1/tensorflow-2.16.1-0008-Relax-setup.py-version-requirements.patch"
 	"${FILESDIR}/2.16.1/tensorflow-2.15.0-0009-systemlib-update-targets-for-absl.patch"
 	"${FILESDIR}/2.16.1/tensorflow-2.15.0-0010-systemlib-fix-missing-osx-in-pybind11.patch"
 	"${FILESDIR}/2.16.1/tensorflow-2.15.0-0011-systemlib-fix-missing-LICENSE-in-flatbuffers.patch"
@@ -1141,22 +1146,6 @@ ewarn "ROCm support is a Work In Progress (WIP)"
 		local _gcc_slot="HIP_${ROCM_SLOT/./_}_GCC_SLOT"
 		local gcc_slot="${!_gcc_slot}"
 		check_libstdcxx ${gcc_slot}
-
-		local libs=(
-			"amd_comgr:dev-libs/rocm-comgr"
-			"amdhip64:dev-util/hip"
-			"hipblas:sci-libs/hipBLAS"
-			"hsa-runtime64:dev-libs/rocr-runtime"
-			"rocblas:sci-libs/rocBLAS"
-			"rocm_smi64:dev-util/rocm-smi"
-			"rocsolver:sci-libs/rocSOLVER"
-			"roctracer64:dev-util/roctracer"
-		)
-		local glibcxx_ver="HIP_${ROCM_SLOT/./_}_GLIBCXX"
-	# Avoid missing versioned symbols
-	# # ld: /opt/rocm-6.1.2/lib/librocblas.so: undefined reference to `std::ios_base_library_init()@GLIBCXX_3.4.32'
-		rocm_verify_glibcxx "${!glibcxx_ver}" ${libs[@]}
-
 	elif tc-is-clang || use clang ; then
 		use_gcc
 		use_clang
@@ -1177,7 +1166,24 @@ einfo
 	fi
 
 	if use rocm ; then
+einfo "QA:  Calling rocm_pkg_setup()"
 		rocm_pkg_setup
+
+		local libs=(
+			"amd_comgr:dev-libs/rocm-comgr"
+			"amdhip64:dev-util/hip"
+			"hipblas:sci-libs/hipBLAS"
+			"hsa-runtime64:dev-libs/rocr-runtime"
+			"rocblas:sci-libs/rocBLAS"
+			"rocm_smi64:dev-util/rocm-smi"
+			"rocsolver:sci-libs/rocSOLVER"
+			"roctracer64:dev-util/roctracer"
+		)
+		local glibcxx_ver="HIP_${ROCM_SLOT/./_}_GLIBCXX"
+	# Avoid missing versioned symbols
+	# # ld: /opt/rocm-6.1.2/lib/librocblas.so: undefined reference to `std::ios_base_library_init()@GLIBCXX_3.4.32'
+		rocm_verify_glibcxx "${!glibcxx_ver}" ${libs[@]}
+
 	#else
 	#	llvm_pkg_setup called in use_clang
 	fi
@@ -1455,29 +1461,6 @@ ewarn
 	replace-flags '-O*' '-O2' # Prevent possible runtime breakage with llvm parts.
 
 	allow_lto
-
-	if ! use hardened ; then
-	# It has to be done this way, because the tarballs are not unpacked at
-	# this point.
-
-	# SSP buffer overflow protection
-	# -fstack-protector-all is <7% penalty
-		append-flags -fno-stack-protector
-		BUILD_CFLAGS+=" -fno-stack-protector"
-		BUILD_CXXFLAGS+=" -fno-stack-protector"
-
-	# FORTIFY_SOURCE is buffer overflow checks for string/*alloc functions
-	# -FORTIFY_SOURCE=2 is <1% penalty
-#		append-cppflags -D_FORTIFY_SOURCE=0
-#		BUILD_CPPFLAGS+=" -D_FORTIFY_SOURCE=0"
-
-	# Full RELRO is GOT protection
-	# Full RELRO is <1% penalty ; <1 ms difference
-		append-ldflags -Wl,-z,norelro
-		append-ldflags -Wl,-z,lazy
-		BUILD_LDFLAGS+=" -Wl,-z,norelro"
-		BUILD_LDFLAGS+=" -Wl,-z,lazy"
-	fi
 
 	bazel_setup_bazelrc # Save CFLAGS
 
