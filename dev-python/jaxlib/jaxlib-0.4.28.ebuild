@@ -205,7 +205,7 @@ ${ROCM_IUSE}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${CPU_FLAGS_X86_64[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-clang cpu cuda debug +hardened rocm rocm_6_0
+clang cpu cuda debug rocm rocm_6_0
 ebuild-revision-2
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
@@ -802,29 +802,6 @@ prepare_jaxlib() {
 	# Make _FORTIFY_SOURCE work.
 	# Prevent warning as error
 	replace-flags '-O*' '-O2' # Prevent possible runtime breakage with llvm parts.
-
-	if ! use hardened ; then
-	# At this point the bazel tarballs have not been unpack.
-
-	# SSP buffer overflow protection
-	# -fstack-protector-all is <7% penalty
-		append-flags -fno-stack-protector
-		BUILD_CFLAGS+=" -fno-stack-protector"
-		BUILD_CXXFLAGS+=" -fno-stack-protector"
-
-# Required since -Werror is appended by build script
-	# FORTIFY_SOURCE is buffer overflow checks for string/*alloc functions
-	# -FORTIFY_SOURCE=2 is <1% penalty
-#		append-cppflags -D_FORTIFY_SOURCE=0
-#		BUILD_CPPFLAGS+=" -D_FORTIFY_SOURCE=0"
-
-	# Full RELRO is GOT protection
-	# Full RELRO is <1% penalty ; <1 ms difference
-		append-ldflags -Wl,-z,norelro
-		append-ldflags -Wl,-z,lazy
-		BUILD_LDFLAGS+=" -Wl,-z,norelro"
-		BUILD_LDFLAGS+=" -Wl,-z,lazy"
-	fi
 }
 
 gen_gcc_ar(){
