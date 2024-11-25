@@ -1762,7 +1762,7 @@ src_compile() {
 
 src_install() {
 	local chost=$(get_rustc_target)
-	exeinto "/usr/lib/${PN}"
+	exeinto "/usr/bin/${PN}"
 	doexe "src-tauri/target/${chost}/release/${PN}"
 
 	newicon -s 48 "resources/icon-only.png" "${PN}.png"
@@ -1785,11 +1785,6 @@ src_install() {
 	insinto "/usr/lib/${PN}"
 	doins -r "src-tauri/target/${chost}/release/src-python"
 
-	dodir "/usr/bin"
-cat <<EOF > "${ED}/usr/bin/${PN}" || die
-#!/bin/bash
-"/usr/lib/${PN}/${PN}" \$@
-EOF
 	fperms 0755 "/usr/bin/${PN}"
 	fowners "root:root" "/usr/bin/${PN}"
 }
