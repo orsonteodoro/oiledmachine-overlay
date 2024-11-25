@@ -1495,7 +1495,7 @@ https://registry.npmjs.org/zimmerframe/-/zimmerframe-1.1.2.tgz -> npmpkg-zimmerf
 "
 # UPDATER_END_NPM_EXTERNAL_URIS
 
-KEYWORDS="~amd64"
+#KEYWORDS="~amd64" # Disabled until Ollama is correctly supported or a free alternative is available.
 S="${WORKDIR}/${P}"
 S_PROJECT="${WORKDIR}/${P}"
 SRC_URI="
