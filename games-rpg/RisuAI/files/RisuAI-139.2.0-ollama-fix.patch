@@ -1,0 +1,15 @@
+--- a/src/ts/process/request.ts.orig	2024-11-22 04:54:24.000000000 -0800
++++ b/src/ts/process/request.ts	2024-11-25 16:03:12.249575971 -0800
+@@ -1679,9 +1679,11 @@ export async function requestChatDataMai
+ 
+             const readableStream = new ReadableStream<StreamResponseChunk>({
+                 async start(controller){
++                    let text = '';
+                     for await(const chunk of response){
++                        text += chunk.message.content;
+                         controller.enqueue({
+-                            "0": chunk.message.content
++                            "0": text
+                         })
+                     }
+                     controller.close()

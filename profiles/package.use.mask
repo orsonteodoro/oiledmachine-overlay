@@ -106,6 +106,3 @@ sci-libs/caffe2 -openmp
 
 # Download time issues
 net-libs/webkit-gtk libwebrtc
-
-# Broken feature
-games-rpg/RisuAI ollama

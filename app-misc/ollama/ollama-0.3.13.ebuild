@@ -3655,7 +3655,7 @@ ewarn "The chroot and sandbox mitigation edits has not been implemented for syst
 	optfeature "Tauri GUI frontend with speech synthesis and speech recognition" "app-misc/amica"
 	#optfeature "Piped AI command line execution" "app-shells/loz"
 	optfeature "AI text-to-speech and speech-to-text" "app-misc/june"
-	#optfeature "LLM roleplay" "games-rpg/RisuAI"
+	optfeature "LLM roleplay" "games-rpg/RisuAI"
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.3.13, 20241020)
