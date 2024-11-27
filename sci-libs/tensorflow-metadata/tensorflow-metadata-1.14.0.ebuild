@@ -48,7 +48,7 @@ https://github.com/tensorflow/metadata/archive/refs/tags/v${PV}.tar.gz
 fi
 S="${WORKDIR}/${MY_PN}-${PV}"
 
-DESCRIPTION=""
+DESCRIPTION="Utilities for passing TensorFlow-related metadata between tools"
 HOMEPAGE="
 	https://github.com/tensorflow/metadata
 	https://pypi.org/project/tensorflow-metadata
