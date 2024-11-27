@@ -38,7 +38,7 @@ https://github.com/idiap/coqui-ai-TTS/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="MPL-2.0"
+DESCRIPTION="🐸💬 - a deep learning toolkit for Text-to-Speech, battle-tested in research and production"
 HOMEPAGE="
 	https://github.com/idiap/coqui-ai-TTS
 	https://pypi.org/project/coqui-tts
