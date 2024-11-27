@@ -9,6 +9,7 @@ EAPI=8
 # 128.2.0 -> 128.3.0
 # 128.3.0 -> 128.3.1
 # 128.3.1 -> 128.4.0
+# 128.4.1 -> 128.5.0
 
 # SECURITY:  If this gets bumped, then dev-lang/spidermonkey should be bumped too with the same ESR version.
 
@@ -133,7 +134,7 @@ FFMPEG_COMPAT=(
 	"0/51.53.53" # 0.10
 	"0/50.53.53" # 0.8
 )
-FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-04.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-06.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 GTK3_PV="3.14.5"
@@ -145,22 +146,20 @@ dcda5b12dce8c42c9a09e28f5320679d1d6bb506a0c429005046b5606a341ab2\
 LLVM_COMPAT=( 18 17 ) # Limited based on rust
 LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
-MITIGATION_DATE="Oct 29, 2024" # Advisory date
-MITIGATION_LAST_UPDATE=1730147160 # From `date +%s -d "2024-10-28 13:26"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-56/"
+MITIGATION_DATE="Nov 26, 2024" # Advisory date
+MITIGATION_LAST_UPDATE=1732571280 # From `date +%s -d "2024-11-25 13:48"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-64/"
 VULNERABILITIES_FIXED=(
-# Upstream severity
-	"CVE-2024-10467;CE, DoS, DT, ID;Critical"
-	"CVE-2024-10468;DoS, DT, ID;Critical"
-	"CVE-2024-10458;ZC, ID;High"
-	"CVE-2024-10460;ZC, ID;Moderate"
-	"CVE-2024-10461;DT, ID;Medium"
-	"CVE-2024-10463;ID;High"
-	"CVE-2024-10462;DT;High"
-	"CVE-2024-10465;DT;High"
-	"CVE-2024-10459;ZC, DoS;High"
-	"CVE-2024-10466;ZC, DoS;High"
-	"CVE-2024-10464;DoS;High"
+	"CVE-2024-11691;;High"
+	"CVE-2024-11692;;Moderate"
+	"CVE-2024-11693;;Moderate"
+	"CVE-2024-11694;;Moderate"
+	"CVE-2024-11695;;Moderate"
+	"CVE-2024-11696;;Moderate"
+	"CVE-2024-11697;;Low"
+	"CVE-2024-11704;;Low"
+	"CVE-2024-11698;;Low"
+	"CVE-2024-11699;;High"
 )
 MOZ_ESR="yes"
 MOZ_LANGS=(
@@ -183,10 +182,15 @@ fi
 if [[ -n "${MOZ_ESR}" ]] ; then
 	# ESR releases have slightly different version numbers
 	MOZ_PV="${MOZ_PV}esr"
-	HOMEPAGE="https://www.mozilla.com/firefox https://www.mozilla.org/firefox/enterprise/"
+	HOMEPAGE="
+		https://www.mozilla.org/firefox
+		https://www.mozilla.org/firefox/enterprise/
+	"
 	SLOT="esr"
 else
-	HOMEPAGE="https://www.mozilla.com/firefox"
+	HOMEPAGE="
+		https://www.mozilla.org/firefox
+	"
 	SLOT="rapid"
 fi
 MOZ_PN="${PN%-bin}"
@@ -200,15 +204,20 @@ NODE_VERSION=18
 OFLAG="" # Global variable
 PYTHON_COMPAT=( python3_{10..11} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
+RUST_NEEDS_LLVM=1
 RUST_PV="1.73" # Min required for llvm 17
 SPEECH_DISPATCHER_PV="0.11.4-r1"
 WANT_AUTOCONF="2.1"
 XKBCOMMON_PV="0.4.1"
 VIRTUALX_REQUIRED="manual"
+# Information about the bundled wasm toolchain from
+# https://github.com/WebAssembly/wasi-sdk/
+WASI_SDK_VER="24.0"
+WASI_SDK_LLVM_VER="18"
 
 inherit autotools cflags-depends check-linker check-reqs desktop dhms flag-o-matic
 inherit gnome2-utils lcnr linux-info llvm multilib-minimal multiprocessing
-inherit pax-utils python-any-r1 readme.gentoo-r1 rust-toolchain toolchain-funcs
+inherit pax-utils python-any-r1 readme.gentoo-r1 rust toolchain-funcs
 inherit virtualx vf xdg
 
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86"
@@ -227,6 +236,10 @@ PATCH_URIS=(
 SRC_URI="
 	${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}.source.tar.xz
 	${PATCH_URIS[@]}
+	wasm? (
+		amd64? ( https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SDK_VER/.*/}/wasi-sdk-${WASI_SDK_VER}-x86_64-linux.tar.gz )
+		arm64? ( https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SDK_VER/.*/}/wasi-sdk-${WASI_SDK_VER}-arm64-linux.tar.gz )
+	)
 "
 
 DESCRIPTION="Firefox Web Browser"
@@ -434,7 +447,7 @@ webspeech +X
 
 # Firefox-only IUSE
 IUSE+="
-+gmp-autoupdate screencast
++gmp-autoupdate gnome-shell screencast wasm
 "
 
 # The wayland flag actually allows vaapi, but upstream lazy to make it
@@ -731,9 +744,11 @@ CDEPEND="
 		media-libs/libaom:=
 	)
 	system-harfbuzz? (
-		>=media-gfx/graphite2-1.3.14[${MULTILIB_USEDEP}]
 		>=media-libs/harfbuzz-8.5.0:0[${MULTILIB_USEDEP}]
 		media-libs/harfbuzz:=
+		!wasm? (
+			>=media-gfx/graphite2-1.3.14[${MULTILIB_USEDEP}]
+		)
 	)
 	system-icu? (
 		>=dev-libs/icu-73.1[${MULTILIB_USEDEP}]
@@ -874,6 +889,9 @@ gen_llvm_bdepend() {
 					sys-libs/compiler-rt-sanitizers:=
 				)
 			)
+			wasm? (
+				sys-devel/lld:${LLVM_SLOT}
+			)
 		"
 	done
 }
@@ -960,21 +978,30 @@ fi
 
 llvm_check_deps() {
 	if ! has_version -b "sys-devel/clang:${LLVM_SLOT}" ; then
-einfo "sys-devel/clang:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+ewarn
+ewarn "sys-devel/clang:${LLVM_SLOT} is missing!"
+ewarn "Cannot use LLVM slot ${LLVM_SLOT} ..."
+ewarn
 		return 1
 	fi
 
-	if tc-is-clang && ! tc-ld-is-mold ; then
+	if use clang && ! tc-ld-is-mold ; then
 		if ! has_version -b "sys-devel/lld:${LLVM_SLOT}" ; then
-einfo "sys-devel/lld:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+ewarn
+ewarn "sys-devel/lld:${LLVM_SLOT} is missing!"
+ewarn "Cannot use LLVM slot ${LLVM_SLOT} ..."
+ewarn
 			return 1
 		fi
+	fi
 
-		if use pgo ; then
-			if ! has_version -b "=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}*" ; then
-einfo "=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}* is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
-				return 1
-			fi
+	if use pgo ; then
+		if ! has_version -b "=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}*[profile]" ; then
+ewarn
+ewarn "=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}*[profile] is missing!"
+ewarn "Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+ewarn
+			return 1
 		fi
 	fi
 
@@ -1466,31 +1493,9 @@ eerror "Failed to read used LLVM version from rustc!"
 eerror
 				die
 			fi
-
-			if ver_test "${lld_pv}" -lt "${llvm_rust_pv}" ; then
-eerror
-eerror "Rust is using LLVM version ${llvm_rust_pv} but ld.lld version"
-eerror "belongs to LLVM version ${lld_pv}."
-eerror
-eerror "You will be unable to link ${CATEGORY}/${PN}. To proceed you have the"
-eerror "following options:"
-eerror
-eerror "  - Manually switch rust version using 'eselect rust' to match used"
-eerror "    LLVM version"
-eerror "  - Switch to dev-lang/rust[system-llvm] which will guarantee the"
-eerror "    matching version"
-eerror "  - Build ${CATEGORY}/${PN} without USE=lto"
-eerror "  - Rebuild lld with llvm that was used to build rust (may need to"
-eerror "    rebuild the whole llvm/clang/lld/rust chain depending on your"
-eerror "    @world updates)"
-eerror
-eerror "LLVM version used by Rust (${llvm_rust_pv}) does not match with"
-eerror "ld.lld version (${lld_pv})!"
-eerror
-				die
-			fi
 		fi
 
+		rust_pkg_setup
 		python-any-r1_pkg_setup
 
 	# Avoid PGO profiling problems due to enviroment leakage
@@ -1782,13 +1787,37 @@ ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
 			export RUST_TARGET="aarch64-unknown-linux-musl"
 		elif use ppc64 ; then
 			export RUST_TARGET="powerpc64le-unknown-linux-musl"
+		elif use riscv ; then
+			# We can pretty safely rule out any 32-bit riscvs, but 64-bit riscvs also have tons of
+			# different ABIs available. riscv64gc-unknown-linux-musl seems to be the best working
+			# guess right now though.
+ewarn "riscv detected, forcing a riscv64 target for now."
+			export RUST_TARGET="riscv64gc-unknown-linux-musl"
 		else
 eerror
-eerror "Unknown musl chost, please post your rustc -vV along with"
-eerror "\`emerge --info\` on Gentoo's bug #915651"
+eerror "Unknown musl chost, please post a new bug with your rustc -vV along"
+eerror "with emerge --info"
 eerror
 			die
 		fi
+	fi
+
+	# Pre-built wasm path manipulation.
+	if use wasm ; then
+		if use amd64 ; then
+			export wasi_arch="x86_64"
+		elif use arm64 ; then
+			export wasi_arch="arm64"
+		else
+			die "wasm enabled on unknown/unsupported arch!"
+		fi
+
+		sed -i \
+			-e "s:%%PORTAGE_WORKDIR%%:${WORKDIR}:" \
+			-e "s:%%WASI_ARCH%%:${wasi_arch}:" \
+			-e "s:%%WASI_SDK_VER%%:${WASI_SDK_VER}:" \
+			-e "s:%%WASI_SDK_LLVM_VER%%:${WASI_SDK_LLVM_VER}:" \
+			toolkit/moz.configure || die "Failed to update wasi-related paths."
 	fi
 
 	# Make LTO respect MAKEOPTS
@@ -2234,7 +2263,6 @@ einfo
 		--prefix="${EPREFIX}/usr" \
 		--target="${CHOST}" \
 		--without-ccache \
-		--without-wasm-sandboxed-libraries \
 		--with-intl-api \
 		\
 		--with-system-nspr \
@@ -2368,7 +2396,6 @@ einfo "Building without Mozilla API key ..."
 	#	| uniq
 	mozconfig_use_with system-av1
 	mozconfig_use_with system-harfbuzz
-	mozconfig_use_with system-harfbuzz system-graphite2
 	mozconfig_use_with system-icu
 	mozconfig_use_with system-jpeg
 	mozconfig_use_with system-libevent
@@ -2431,11 +2458,14 @@ einfo "Building without Mozilla API key ..."
 			--enable-default-toolkit="cairo-gtk3-x11-only"
 	fi
 
-	# LTO is handled via configure.
-	# -Werror=lto-type-mismatch -Werror=odr are going to fail with GCC,
-	# bmo#1516758, bgo#942288
-	filter-lto
-	filter-flags -Werror=lto-type-mismatch -Werror=odr
+	# wasm
+	# Since graphite2 is one of the sandboxed libraries, system-graphite2 obviously can't work with +wasm.
+	if use wasm ; then
+		mozconfig_add_options_ac '+wasm' --with-wasi-sysroot="${WORKDIR}/wasi-sdk-${WASI_SDK_VER}-${wasi_arch}-linux/share/wasi-sysroot/"
+	else
+		mozconfig_add_options_ac 'no wasm-sandbox' --without-wasm-sandboxed-libraries
+		mozconfig_use_with system-harfbuzz system-graphite2
+	fi
 
 	if ! use mold && is-flagq '-fuse-ld=mold' ; then
 eerror
@@ -2485,15 +2515,6 @@ einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 				"linker is set to bfd" \
 				--enable-linker="bfd"
 		fi
-
-		if use pgo ; then
-			mozconfig_add_options_ac '+pgo' MOZ_PGO=1
-
-			if tc-is-clang ; then
-	# Used in build/pgo/profileserver.py
-				export LLVM_PROFDATA="llvm-profdata"
-			fi
-		fi
 	else
 		if tc-is-clang && is-flagq '-fuse-ld=mold' || use mold ; then
 			filter-flags '-flto*'
@@ -2513,11 +2534,28 @@ einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 		fi
 	fi
 
+	if [[ "${LTO_TYPE}" =~ ("bfdlto"|"moldlto"|"thinlto") ]]
+	then
+		# -Werror=lto-type-mismatch -Werror=odr are going to fail with GCC,
+		# bmo#1516758, bgo#942288
+		filter-flags -Werror=lto-type-mismatch -Werror=odr
+	fi
+
 	# Linker flags are set from above.
 	filter-flags '-fuse-ld=*'
 
 	# Filter ldflags after linker switch
 	strip-unsupported-flags
+
+	# PGO was moved outside lto block to allow building pgo without lto.
+	if use pgo ; then
+		mozconfig_add_options_ac '+pgo' MOZ_PGO=1
+
+		if use clang ; then
+			# Used in build/pgo/profileserver.py
+			export LLVM_PROFDATA="llvm-profdata"
+		fi
+	fi
 
 	# Default upstream Oflag is -O0 in script, but -bin's default is -O3,
 	# but dav1d's FPS + image quality is only acceptable at >= -O2.
@@ -3042,16 +3080,31 @@ EOF
 
 	rm "${WORKDIR}/${PN}.desktop-template" || die
 
-	# Install search provider for Gnome
-	insinto "/usr/share/gnome-shell/search-providers/"
-	doins "browser/components/shell/search-provider-files/org.mozilla.firefox.search-provider.ini"
+	if use gnome-shell ; then
+		# Install search provider for Gnome
+		insinto /usr/share/gnome-shell/search-providers/
+		doins browser/components/shell/search-provider-files/org.mozilla.firefox.search-provider.ini
 
-	insinto "/usr/share/dbus-1/services/"
-	doins "browser/components/shell/search-provider-files/org.mozilla.firefox.SearchProvider.service"
+		insinto /usr/share/dbus-1/services/
+		doins browser/components/shell/search-provider-files/org.mozilla.firefox.SearchProvider.service
 
-	sed -e "s/firefox.desktop/${desktop_filename}/g" \
-		-i "${ED}/usr/share/gnome-shell/search-providers/org.mozilla.firefox.search-provider.ini" ||
-			die "Failed to sed org.mozilla.firefox.search-provider.ini file."
+		# Toggle between rapid and esr desktop file names
+		sed \
+			-e "s/firefox.desktop/${desktop_filename}/g" \
+			-i "${ED}/usr/share/gnome-shell/search-providers/org.mozilla.firefox.search-provider.ini" \
+			|| die "Failed to sed org.mozilla.firefox.search-provider.ini file."
+
+		# Make the dbus service aware of a previous session, bgo#939196
+		sed \
+			-e "s/Exec=\/usr\/bin\/firefox/Exec=\/usr\/$(get_libdir)\/firefox\/firefox --dbus-service \/usr\/bin\/firefox/g" \
+			-i "${ED}/usr/share/dbus-1/services/org.mozilla.firefox.SearchProvider.service" \
+			|| die "Failed to sed org.mozilla.firefox.SearchProvider.service dbus file"
+
+# Update prefs to enable Gnome search provider
+cat >>"${GENTOO_PREFS}" <<-EOF || die "failed to enable gnome-search-provider via prefs"
+pref("browser.gnome-search-provider.enabled", true);
+EOF
+	fi
 
 	# Install wrapper script
 	[[ -f "${ED}/usr/bin/${PN}" ]] && rm "${ED}/usr/bin/${PN}"

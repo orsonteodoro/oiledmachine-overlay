@@ -9,6 +9,7 @@ EAPI=8
 # 130.0 -> 131.0
 # 131.0 -> 131.0.2
 # 131.0.3 -> 132.0
+# 132.0.3 -> 133.0
 
 # Originally based on the firefox-89.0.ebuild from the gentoo-overlay,
 # with update sync updated to this version of the ebuild.
@@ -142,22 +143,27 @@ LICENSE_FINGERPRINT="\
 LLVM_COMPAT=( 18 ) # Limited based on rust
 LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
-MITIGATION_DATE="Oct 29, 2024" # Advisory date
-MITIGATION_LAST_UPDATE=1730147280 # From `date +%s -d "2024-10-28 13:28"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-55/"
+MITIGATION_DATE="Nov 26, 2024" # Advisory date
+MITIGATION_LAST_UPDATE=1732571400 # From `date +%s -d "2024-11-25 13:50"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-63/"
 VULNERABILITIES_FIXED=(
-# Upstream severity
-	"CVE-2024-10467;CE, DoS, DT, ID;Critical"
-	"CVE-2024-10468;DoS, DT, ID;Critical"
-	"CVE-2024-10458;ZC, ID;High"
-	"CVE-2024-10460;ZC, ID;Moderate"
-	"CVE-2024-10461;DT, ID;Medium"
-	"CVE-2024-10463;ID;High"
-	"CVE-2024-10462;DT;High"
-	"CVE-2024-10465;DT;High"
-	"CVE-2024-10459;ZC, DoS;High"
-	"CVE-2024-10466;ZC, DoS;High"
-	"CVE-2024-10464;DoS;High"
+	"CVE-2024-11691;;High"
+	"CVE-2024-11700;;High"
+	"CVE-2024-11692;;Moderate"
+	"CVE-2024-11701;;Moderate"
+	"CVE-2024-11702;;Moderate"
+	"CVE-2024-11693;;Moderate"
+	"CVE-2024-11694;;Moderate"
+	"CVE-2024-11695;;Moderate"
+	"CVE-2024-11703;;Moderate"
+	"CVE-2024-11696;;Moderate"
+	"CVE-2024-11697;;Low"
+	"CVE-2024-11704;;Low"
+	"CVE-2024-11698;;Low"
+	"CVE-2024-11705;;Low"
+	"CVE-2024-11706;;Low"
+	"CVE-2024-11708;;Low"
+	"CVE-2024-11699;;High"
 )
 MOZ_ESR=
 MOZ_LANGS=(
@@ -180,10 +186,15 @@ fi
 if [[ -n "${MOZ_ESR}" ]] ; then
 	# ESR releases have slightly different version numbers
 	MOZ_PV="${MOZ_PV}esr"
-	HOMEPAGE="https://www.mozilla.com/firefox https://www.mozilla.org/firefox/enterprise/"
+	HOMEPAGE="
+		https://www.mozilla.org/firefox
+		https://www.mozilla.org/firefox/enterprise/
+	"
 	SLOT="esr"
 else
-	HOMEPAGE="https://www.mozilla.com/firefox"
+	HOMEPAGE="
+		https://www.mozilla.org/firefox
+	"
 	SLOT="rapid"
 fi
 MOZ_PN="${PN%-bin}"
@@ -198,14 +209,19 @@ OFLAG="" # Global variable
 PYTHON_COMPAT=( python3_{10..11} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
 RUST_PV="1.79.0" # Min required for llvm 18
+RUST_NEEDS_LLVM=1
 SPEECH_DISPATCHER_PV="0.11.4-r1"
-WANT_AUTOCONF="2.1"
+WANT_AUTOCONF="2.71"
 XKBCOMMON_PV="0.4.1"
 VIRTUALX_REQUIRED="pgo"
+# Information about the bundled wasm toolchain from
+# https://github.com/WebAssembly/wasi-sdk/
+WASI_SDK_VER="24.0"
+WASI_SDK_LLVM_VER="18"
 
 inherit autotools cflags-depends check-linker check-reqs desktop dhms flag-o-matic
 inherit gnome2-utils lcnr linux-info llvm multilib-minimal multiprocessing
-inherit pax-utils python-any-r1 readme.gentoo-r1 rust-toolchain toolchain-funcs
+inherit pax-utils python-any-r1 readme.gentoo-r1 rust toolchain-funcs
 inherit virtualx vf xdg
 
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86"
@@ -222,6 +238,14 @@ PATCH_URIS=(
 SRC_URI="
 	${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}.source.tar.xz
 	${PATCH_URIS[@]}
+	wasm? (
+		amd64? (
+			https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SDK_VER/.*/}/wasi-sdk-${WASI_SDK_VER}-x86_64-linux.tar.gz
+		)
+		arm64? (
+			https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SDK_VER/.*/}/wasi-sdk-${WASI_SDK_VER}-arm64-linux.tar.gz
+		)
+	)
 "
 
 DESCRIPTION="Firefox Web Browser"
@@ -432,7 +456,7 @@ proprietary-codecs-disable-end-user rust-simd selinux sndio speech +system-av1
 
 # Firefox-only IUSE
 IUSE+="
-+gmp-autoupdate screencast +X
++gmp-autoupdate gnome-shell screencast +X wasm
 "
 
 # The wayland flag actually allows vaapi, but upstream lazy to make it
@@ -674,7 +698,7 @@ CDEPEND="
 	${NON_FREE_CDEPENDS}
 	>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.42:2[${MULTILIB_USEDEP}]
-	>=dev-libs/nss-3.105[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.106[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.35[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.7.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.13.2[${MULTILIB_USEDEP}]
@@ -713,8 +737,10 @@ CDEPEND="
 		>=media-libs/libaom-1.0.0:=[${MULTILIB_USEDEP}]
 	)
 	system-harfbuzz? (
-		>=media-gfx/graphite2-1.3.14[${MULTILIB_USEDEP}]
 		>=media-libs/harfbuzz-9.0.0:0=[${MULTILIB_USEDEP}]
+		!wasm? (
+			>=media-gfx/graphite2-1.3.14[${MULTILIB_USEDEP}]
+		)
 	)
 	system-icu? (
 		>=dev-libs/icu-73.1:=[${MULTILIB_USEDEP}]
@@ -854,6 +880,9 @@ gen_llvm_bdepend() {
 					=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}*:=[${MULTILIB_USEDEP},profile]
 				)
 			)
+			wasm? (
+				sys-devel/lld:${LLVM_SLOT}
+			)
 		"
 	done
 }
@@ -919,26 +948,34 @@ fi
 
 llvm_check_deps() {
 	if ! has_version -b "sys-devel/clang:${LLVM_SLOT}" ; then
-einfo "sys-devel/clang:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+ewarn
+ewarn "sys-devel/clang:${LLVM_SLOT} is missing!"
+ewarn "Cannot use LLVM slot ${LLVM_SLOT} ..."
+ewarn
 		return 1
 	fi
 
-	if tc-is-clang ; then
+	if use clang && ! tc-ld-is-mold ; then
 		if ! has_version -b "sys-devel/lld:${LLVM_SLOT}" ; then
-einfo "sys-devel/lld:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+ewarn
+ewarn "sys-devel/lld:${LLVM_SLOT} is missing!"
+ewarn "Cannot use LLVM slot ${LLVM_SLOT} ..."
+ewarn
 			return 1
-		fi
-
-		if use pgo ; then
-			if ! has_version -b "=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}*" ; then
-einfo "=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}* is missing! Cannot" >&2
-einfo "use LLVM slot ${LLVM_SLOT} ..." >&2
-				return 1
-			fi
 		fi
 	fi
 
-einfo "Using LLVM slot ${LLVM_SLOT} to build" >&2
+	if use pgo ; then
+		if ! has_version -b "=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}*[profile]" ; then
+ewarn
+ewarn "=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}*[profile] is missing!"
+ewarn "Cannot use LLVM slot ${LLVM_SLOT} ..."
+ewarn
+			return 1
+		fi
+	fi
+
+einfo "Using LLVM slot ${LLVM_SLOT} to build"
 }
 
 mozilla_set_globals() {
@@ -1149,10 +1186,12 @@ eerror
 		fi
 
 	# Ensure we have enough disk space to compile
-		if use pgo || is-flagq '-flto*' || use debug ; then
-			CHECKREQS_DISK_BUILD="13500M"
+		if use pgo || use debug ; then
+			CHECKREQS_DISK_BUILD="14300M"
+		elif is-flagq '-flto*' ; then
+			CHECKREQS_DISK_BUILD="10600M"
 		else
-			CHECKREQS_DISK_BUILD="6600M"
+			CHECKREQS_DISK_BUILD="6800M"
 		fi
 
 		check-reqs_pkg_pretend
@@ -1346,10 +1385,12 @@ ewarn "Building ${PN} with USE=pgo and FEATURES=-userpriv is not supported!"
 		fi
 
 	# Ensure we have enough disk space to compile
-		if use pgo || is-flagq '-flto*' || use debug ; then
-			CHECKREQS_DISK_BUILD="13500M"
+		if use pgo || use debug ; then
+			CHECKREQS_DISK_BUILD="14300M"
+		elif is-flagq '-flto*' ; then
+			CHECKREQS_DISK_BUILD="10600M"
 		else
-			CHECKREQS_DISK_BUILD="6400M"
+			CHECKREQS_DISK_BUILD="6800M"
 		fi
 
 		check-reqs_pkg_setup
@@ -1390,31 +1431,9 @@ eerror "Failed to read used LLVM version from rustc!"
 eerror
 				die
 			fi
-
-			if ver_test "${lld_pv}" -lt "${llvm_rust_pv}" ; then
-eerror
-eerror "Rust is using LLVM version ${llvm_rust_pv} but ld.lld version"
-eerror "belongs to LLVM version ${lld_pv}."
-eerror
-eerror "You will be unable to link ${CATEGORY}/${PN}. To proceed you have the"
-eerror "following options:"
-eerror
-eerror "  - Manually switch rust version using 'eselect rust' to match used"
-eerror "    LLVM version"
-eerror "  - Switch to dev-lang/rust[system-llvm] which will guarantee the"
-eerror "    matching version"
-eerror "  - Build ${CATEGORY}/${PN} without USE=lto"
-eerror "  - Rebuild lld with llvm that was used to build rust (may need to"
-eerror "    rebuild the whole llvm/clang/lld/rust chain depending on your"
-eerror "    @world updates)"
-eerror
-eerror "LLVM version used by Rust (${llvm_rust_pv}) does not match with"
-eerror "ld.lld version (${lld_pv})!"
-eerror
-				die
-			fi
 		fi
 
+		rust_pkg_setup
 		python-any-r1_pkg_setup
 
 	# Avoid PGO profiling problems due to enviroment leakage
@@ -1710,9 +1729,37 @@ ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
 			export RUST_TARGET="aarch64-unknown-linux-musl"
 		elif use ppc64 ; then
 			export RUST_TARGET="powerpc64le-unknown-linux-musl"
+		elif use riscv ; then
+			# We can pretty safely rule out any 32-bit riscvs, but 64-bit riscvs also have tons of
+			# different ABIs available. riscv64gc-unknown-linux-musl seems to be the best working
+			# guess right now though.
+ewarn "riscv detected, forcing a riscv64 target for now."
+			export RUST_TARGET="riscv64gc-unknown-linux-musl"
 		else
-			die "Unknown musl chost, please post your rustc -vV along with emerge --info on Gentoo's bug #915651"
+eerror
+eerror "Unknown musl chost, please post a new bug with your rustc -vV along"
+eerror "with emerge --info"
+eerror
+			die
 		fi
+	fi
+
+	# Pre-built wasm path manipulation.
+	if use wasm ; then
+		if use amd64 ; then
+			export wasi_arch="x86_64"
+		elif use arm64 ; then
+			export wasi_arch="arm64"
+		else
+			die "wasm enabled on unknown/unsupported arch!"
+		fi
+
+		sed -i \
+			-e "s:%%PORTAGE_WORKDIR%%:${WORKDIR}:" \
+			-e "s:%%WASI_ARCH%%:${wasi_arch}:" \
+			-e "s:%%WASI_SDK_VER%%:${WASI_SDK_VER}:" \
+			-e "s:%%WASI_SDK_LLVM_VER%%:${WASI_SDK_LLVM_VER}:" \
+			toolkit/moz.configure || die "Failed to update wasi-related paths."
 	fi
 
 	# Make LTO respect MAKEOPTS
@@ -1723,8 +1770,7 @@ ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
 		"${S}/build/moz.configure/lto-pgo.configure" \
 		"${S}/intl/icu_sources_data.py" \
 		"${S}/python/mozbuild/mozbuild/base.py" \
-		"${S}/third_party/libwebrtc/build/toolchain/get_cpu_count.py" \
-		"${S}/third_party/libwebrtc/build/toolchain/get_concurrent_links.py" \
+		"${S}/third_party/chromium/build/toolchain/get_cpu_count.py" \
 		"${S}/third_party/python/gyp/pylib/gyp/input.py" \
 		"${S}/python/mozbuild/mozbuild/code_analysis/mach_commands.py" \
 		|| die "Failed sedding multiprocessing.cpu_count"
@@ -2153,7 +2199,6 @@ einfo
 		--prefix="${EPREFIX}/usr" \
 		--target="${CHOST}" \
 		--without-ccache \
-		--without-wasm-sandboxed-libraries \
 		--with-intl-api \
 		--with-system-nspr \
 		--with-system-nss \
@@ -2287,7 +2332,6 @@ einfo "Building without Mozilla API key ..."
 	#	| uniq
 	mozconfig_use_with system-av1
 	mozconfig_use_with system-harfbuzz
-	mozconfig_use_with system-harfbuzz system-graphite2
 	mozconfig_use_with system-icu
 	mozconfig_use_with system-jpeg
 	mozconfig_use_with system-libevent
@@ -2352,11 +2396,14 @@ einfo "Building without Mozilla API key ..."
 			--enable-default-toolkit="cairo-gtk3"
 	fi
 
-	# LTO is handled via configure
-	# -Werror=lto-type-mismatch -Werror=odr are going to fail with GCC,
-	# bmo#1516758, bgo#942288
-	filter-lto
-	filter-flags -Werror=lto-type-mismatch -Werror=odr
+	# wasm
+	# Since graphite2 is one of the sandboxed libraries, system-graphite2 obviously can't work with +wasm.
+	if use wasm ; then
+		mozconfig_add_options_ac '+wasm' --with-wasi-sysroot="${WORKDIR}/wasi-sdk-${WASI_SDK_VER}-${wasi_arch}-linux/share/wasi-sysroot/"
+	else
+		mozconfig_add_options_ac 'no wasm-sandbox' --without-wasm-sandboxed-libraries
+		mozconfig_use_with system-harfbuzz system-graphite2
+	fi
 
 	if ! use mold && is-flagq '-fuse-ld=mold' ; then
 eerror
@@ -2405,15 +2452,6 @@ einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 				"linker is set to bfd" \
 				--enable-linker="bfd"
 		fi
-
-		if use pgo ; then
-			mozconfig_add_options_ac '+pgo' MOZ_PGO=1
-
-			if tc-is-clang ; then
-	# Used in build/pgo/profileserver.py
-				export LLVM_PROFDATA="llvm-profdata"
-			fi
-		fi
 	else
 		if tc-is-clang && is-flagq '-fuse-ld=mold' || use mold ; then
 			filter-flags '-flto*'
@@ -2433,6 +2471,13 @@ einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 		fi
 	fi
 
+	if [[ "${LTO_TYPE}" =~ ("bfdlto"|"moldlto"|"thinlto") ]]
+	then
+		# -Werror=lto-type-mismatch -Werror=odr are going to fail with GCC,
+		# bmo#1516758, bgo#942288
+		filter-flags -Werror=lto-type-mismatch -Werror=odr
+	fi
+
 	# Set above
 	filter-flags '-fuse-ld=*'
 
@@ -2441,6 +2486,16 @@ einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 
 	# Filter ldflags after linker switch
 	strip-unsupported-flags
+
+	# PGO was moved outside lto block to allow building pgo without lto.
+	if use pgo ; then
+		mozconfig_add_options_ac '+pgo' MOZ_PGO=1
+
+		if use clang ; then
+			# Used in build/pgo/profileserver.py
+			export LLVM_PROFDATA="llvm-profdata"
+		fi
+	fi
 
 	# Default upstream Oflag is -O0 in script, but -bin's default is -O3,
 	# but dav1d's FPS + image quality is only acceptable at >= -O2.
