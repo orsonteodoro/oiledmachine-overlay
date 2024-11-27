@@ -18,7 +18,7 @@ https://github.com/psf/pyperf/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION=""
+DESCRIPTION="Toolkit to run Python benchmarks"
 HOMEPAGE="
 http://pyperf.readthedocs.io/
 https://github.com/psf/pyperf
