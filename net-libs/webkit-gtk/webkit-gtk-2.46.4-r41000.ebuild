@@ -8,7 +8,7 @@ EAPI=8
 
 # -r revision notes
 # -rabcde
-# ab = WEBKITGTK_API_VERSION version (4.0)
+# ab = WEBKITGTK_API_VERSION version (4.1)
 # c = reserved
 # de = ebuild revision
 
@@ -71,7 +71,7 @@ EAPI=8
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 
-API_VERSION="4.0"
+API_VERSION="4.1"
 CAIRO_PV="1.16.0"
 # One of the major sources of lag comes from dependencies
 # These are strict to match performance to competition or normal builds.
@@ -106,9 +106,8 @@ MITIGATION_DATE="Oct 31, 2024"
 MITIGATION_LAST_UPDATE=1730292540 # From `date +%s -d "2024-10-30 5:49 AM PDT"` from tag in GH for this version
 MITIGATION_URI="https://webkitgtk.org/security/WSA-2024-0006.html" # Shown if minor version matches in report.
 VULNERABILITIES_FIXED=(
-	"CVE-2024-44296;ID, DT;Medium"
-	"CVE-2024-44185;DoS;Medium"
-	"CVE-2024-44244;DoS;Medium"
+	"CVE-2024-44308;DoS, DT, ID;High"
+	"CVE-2024-44309;XSS;N/A"
 )
 OCDM_WV="virtual/libc" # Placeholder
 PYTHON_COMPAT=( "python3_"{10..12} )
@@ -117,10 +116,10 @@ SLOT_MAJOR=$(ver_cut 1 "${API_VERSION}")
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SO_VERSION = C - A
-# WEBKITGTK_API_VERSION is 4.0
-SO_CURRENT="108"
+# WEBKITGTK_API_VERSION is 4.1
+SO_CURRENT="16"
 #SO_REVISION=""
-SO_AGE="71"
+SO_AGE="16"
 SO_VERSION=$(( ${SO_CURRENT} - ${SO_AGE} ))
 USE_RUBY=" ruby31 ruby32 ruby33"
 WK_PAGE_SIZE=64 # global var not const
@@ -147,7 +146,7 @@ SRC_URI="
 "
 S="${WORKDIR}/webkitgtk-${PV}"
 
-DESCRIPTION="Open source web browser engine (GTK+3 with HTTP/1.1 support)"
+DESCRIPTION="Open source web browser engine (GTK+3 with HTTP/2 support)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE_DROMAEO="
 	(
@@ -424,7 +423,7 @@ LICENSE="
 # distributes these browsers with unicode licensed data without
 # restrictions.
 RESTRICT="test"
-SLOT="${API_VERSION%.*}/${SO_VERSION}"
+SLOT="${API_VERSION}/${SO_VERSION}"
 # SLOT=6/4    GTK4 SOUP3
 # SLOT=4.1/0  GTK3 SOUP3
 # SLOT=4/37   GTK3 SOUP2
@@ -832,7 +831,7 @@ RDEPEND+="
 	>=media-libs/libepoxy-1.5.4[${MULTILIB_USEDEP}]
 	>=media-libs/libpng-1.6.34:0=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
-	>=net-libs/libsoup-2.54.0:2.4[${MULTILIB_USEDEP},introspection?]
+	>=net-libs/libsoup-2.99.9:3.0[${MULTILIB_USEDEP},introspection?]
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP},X?]
 	>=x11-libs/gtk+-3.22.0:3[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
@@ -2431,7 +2430,7 @@ ewarn
 		-DUSE_LIBBACKTRACE=$(usex libbacktrace)
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENMP=$(usex openmp)
-		-DUSE_SOUP2=ON
+		-DUSE_SOUP2=OFF
 		-DUSE_SYSTEM_MALLOC=$(usex system-malloc)
 		-DUSE_WOFF2=$(usex woff2)
 		$(cmake_use_find_package gles2 OpenGLES2)
@@ -3000,13 +2999,6 @@ eerror
 		mycmakeargs+=( -DFORCE_32BIT=ON )
 	fi
 
-	# Anything less than -O2 may break rendering.
-	# GCC -O1:  pas_generic_large_free_heap.h:140:1: error: inlining failed in call to 'always_inline'
-	# Clang -Os:  slower than expected rendering.
-	# Forced >= -O3 to be about same relative performance to other browser engines.
-	# -O2 feels like C- grade relative other browser engines.
-
-
 	filter-flags '-ffast-math'
 
 	if is-flagq "-Ofast" ; then
@@ -3164,31 +3156,3 @@ ewarn
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  license-transparency, webvtt, avif
 # OILEDMACHINE-OVERLAY-META-WIP:  pgo, webrtc
-
-# OILEDMACHINE-OVERLAY-TEST: passed with -Oshit, clang 18.1.8 (2.46.3, 20241116):
-#
-#   CFLAGS=-Oshit build config:
-#
-#     OSHIT_OPT_LEVEL_ANGLE="fast"
-#     OSHIT_OPT_LEVEL_JSC="3"
-#     OSHIT_OPT_LEVEL_SHA1="fast"
-#     OSHIT_OPT_LEVEL_SKIA="fast"
-#     OSHIT_OPT_LEVEL_XXHASH="fast"
-#     OSHIT_OPT_LEVEL_WEBCORE="1"
-#
-#   interactive test:
-#
-#     minibrowser:  passed
-#     surf:  passed
-#     search engine(s):  passed
-#     video site(s):  fail (minibrowser), passed (surf)
-#       vpx (streaming):  passed
-#       vpx (on demand):  passed
-#       opus:  passed
-#       misc notes:  bad render on chat
-#     wiki(s):  passed
-#     audio:  fail
-#       streaming radio:  segfault
-#     scroll: fast, random slowdown
-#     stability:  unstable
-#

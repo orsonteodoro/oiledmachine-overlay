@@ -8,7 +8,7 @@ EAPI=8
 
 # -r revision notes
 # -rabcde
-# ab = WEBKITGTK_API_VERSION version (4.1)
+# ab = WEBKITGTK_API_VERSION version (6.0)
 # c = reserved
 # de = ebuild revision
 
@@ -71,7 +71,7 @@ EAPI=8
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 
-API_VERSION="4.1"
+API_VERSION="6.0"
 CAIRO_PV="1.16.0"
 # One of the major sources of lag comes from dependencies
 # These are strict to match performance to competition or normal builds.
@@ -91,7 +91,7 @@ FFMPEG_COMPAT=(
 FONTCONFIG_PV="2.13.0"
 FREETYPE_PV="2.9.0"
 GCC_PV="11.2.0"
-GLIB_PV="2.56.4"
+GLIB_PV="2.70.0"
 GSTREAMER_PV="1.20.0" # Upstream min is 1.16.2, but distro only offers 1.20
 HARFBUZZ_PV="1.4.2"
 LANGS=(
@@ -106,9 +106,8 @@ MITIGATION_DATE="Oct 31, 2024"
 MITIGATION_LAST_UPDATE=1730292540 # From `date +%s -d "2024-10-30 5:49 AM PDT"` from tag in GH for this version
 MITIGATION_URI="https://webkitgtk.org/security/WSA-2024-0006.html" # Shown if minor version matches in report.
 VULNERABILITIES_FIXED=(
-	"CVE-2024-44296;ID, DT;Medium"
-	"CVE-2024-44185;DoS;Medium"
-	"CVE-2024-44244;DoS;Medium"
+	"CVE-2024-44308;DoS, DT, ID;High"
+	"CVE-2024-44309;XSS;N/A"
 )
 OCDM_WV="virtual/libc" # Placeholder
 PYTHON_COMPAT=( "python3_"{10..12} )
@@ -117,10 +116,10 @@ SLOT_MAJOR=$(ver_cut 1 "${API_VERSION}")
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SO_VERSION = C - A
-# WEBKITGTK_API_VERSION is 4.1
-SO_CURRENT="16"
+# WEBKITGTK_API_VERSION is 6.0
+SO_CURRENT="14"
 #SO_REVISION=""
-SO_AGE="16"
+SO_AGE="10"
 SO_VERSION=$(( ${SO_CURRENT} - ${SO_AGE} ))
 USE_RUBY=" ruby31 ruby32 ruby33"
 WK_PAGE_SIZE=64 # global var not const
@@ -147,7 +146,7 @@ SRC_URI="
 "
 S="${WORKDIR}/webkitgtk-${PV}"
 
-DESCRIPTION="Open source web browser engine (GTK+3 with HTTP/2 support)"
+DESCRIPTION="Open source web browser engine (GTK 4 with HTTP/2 support)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE_DROMAEO="
 	(
@@ -424,7 +423,7 @@ LICENSE="
 # distributes these browsers with unicode licensed data without
 # restrictions.
 RESTRICT="test"
-SLOT="${API_VERSION}/${SO_VERSION}"
+SLOT="${API_VERSION%.*}/${SO_VERSION}"
 # SLOT=6/4    GTK4 SOUP3
 # SLOT=4.1/0  GTK3 SOUP3
 # SLOT=4/37   GTK3 SOUP2
@@ -825,6 +824,7 @@ RDEPEND+="
 	>=dev-libs/libtasn1-4.13:=[${MULTILIB_USEDEP}]
 	>=dev-libs/libxml2-2.8.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/libxslt-1.1.7[${MULTILIB_USEDEP}]
+	>=gui-libs/gtk-4.4.0:4[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
 	>=media-libs/fontconfig-${FONTCONFIG_PV}:1.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-${FREETYPE_PV}:2[${MULTILIB_USEDEP}]
 	>=media-libs/harfbuzz-${HARFBUZZ_PV}:=[${MULTILIB_USEDEP},icu(+)]
@@ -835,7 +835,6 @@ RDEPEND+="
 	>=net-libs/libsoup-2.99.9:3.0[${MULTILIB_USEDEP},introspection?]
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP},X?]
-	>=x11-libs/gtk+-3.22.0:3[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
 	sys-kernel/mitigate-id
 	virtual/jpeg:0=[${MULTILIB_USEDEP}]
 	avif? (
@@ -1919,6 +1918,7 @@ ewarn "Chosen page size:  ${page_size}"
 ewarn
 	fi
 
+
 	if ! tc-is-cross-compiler && [[ "${page_size}" == "kconfig" ]] ; then
 		# Use the exact page size
 		page_size=$(_get_actual_page_size)
@@ -2099,6 +2099,10 @@ einfo "Detected -Oshit"
 		export OSHIT=0
 	fi
 	dhms_start
+ewarn
+ewarn "GTK 4 is default OFF upstream, but forced ON this ebuild."
+ewarn "It is currently not recommended due to rendering bug(s)."
+ewarn
 einfo "This is the stable branch."
 	if [[ -n "${MITIGATION_URI}" ]] ; then
 einfo "Security advisory date:  ${MITIGATION_DATE}"
@@ -2423,7 +2427,7 @@ ewarn
 		-DUSE_GBM=$(usex gbm)
 		-DUSE_GSTREAMER_TRANSCODER=$(usex mediarecorder)
 		-DUSE_GSTREAMER_WEBRTC=$(usex gstwebrtc)
-		-DUSE_GTK4=OFF
+		-DUSE_GTK4=ON
 		-DUSE_JPEGXL=$(usex jpegxl)
 		-DUSE_LIBDRM=$(usex gbm)
 		-DUSE_LIBHYPHEN=$(usex libhyphen)
@@ -2999,6 +3003,13 @@ eerror
 	if [[ "${ABI}" == "x86" ]] ; then
 		mycmakeargs+=( -DFORCE_32BIT=ON )
 	fi
+
+	# Anything less than -O2 may break rendering.
+	# GCC -O1:  pas_generic_large_free_heap.h:140:1: error: inlining failed in call to 'always_inline'
+	# Clang -Os:  slower than expected rendering.
+	# Forced >= -O3 to be about same relative performance to other browser engines.
+	# -O2 feels like C- grade relative other browser engines.
+
 
 	filter-flags '-ffast-math'
 

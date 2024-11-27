@@ -115,6 +115,9 @@ einfo "ToCToU = Time of Check Time of Use Race Condition"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "UAF" ]] ; then
 einfo "UAF = Use After Free"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "XSS" ]] ; then
+einfo "XSS = Cross Site Scripting Attack"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ZC" ]] ; then
 einfo "ZC = Zero Click Attack"
 		fi
