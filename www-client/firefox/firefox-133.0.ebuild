@@ -146,6 +146,7 @@ MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
 MITIGATION_DATE="Nov 26, 2024" # Advisory date
 MITIGATION_LAST_UPDATE=1732571400 # From `date +%s -d "2024-11-25 13:50"` from ftp date matching version in report
 MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-63/"
+SEVERITY_LABEL="Upstream's severity rating"
 VULNERABILITIES_FIXED=(
 	"CVE-2024-11691;;High"
 	"CVE-2024-11700;;High"
