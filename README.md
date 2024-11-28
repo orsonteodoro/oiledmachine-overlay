@@ -1469,7 +1469,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sys-libs/llvm-roc-libomp | The ROCm™ fork of LLVM's libomp |
 | sys-libs/pstl | Parallel STL is an implementation of the C++ standard library algorithms with support for execution policies |
 | sys-libs/zlib | Standard (de)compression library |
-| sys-power/cpupower-gui | This program is designed to allow you to change the frequency limits of your cpu and its governor. The application is similar in functionality to cpupower. |
+| sys-power/cpupower-gui | This program is designed to allow you to change the frequency limits of your cpu and its governor similar to cpupower. |
 | sys-process/nvtop | GPU & Accelerator process monitoring |
 | sys-process/psdoom-ng | A First Person Shooter (FPS) process killer |
 | virtual/blender-lts | Virtual for Blender LTS |

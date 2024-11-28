@@ -9,8 +9,7 @@ PYTHON_COMPAT=( python3_{8..11} )
 inherit meson python-r1 xdg-utils
 
 DESCRIPTION="This program is designed to allow you to change the frequency \
-limits of your cpu and its governor. The application is similar in \
-functionality to cpupower."
+limits of your cpu and its governor similar to cpupower."
 HOMEPAGE="https://github.com/vagnum08/cpupower-gui"
 LICENSE="GPL-3+"
 KEYWORDS="~amd64 ~x86"
