@@ -15,7 +15,7 @@ https://github.com/GrapheneOS/hardened_malloc/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="Hardened allocator designed for modern systems."
+DESCRIPTION="A hardened allocator designed for modern systems"
 HOMEPAGE="
 https://github.com/GrapheneOS/hardened_malloc
 "

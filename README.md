@@ -791,7 +791,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-libs/crc32c | CRC32C implementation with support for CPU-specific acceleration instructions |
 | dev-libs/double-conversion | Binary-decimal and decimal-binary conversion routines for IEEE doubles |
 | dev-libs/gdrcopy | A fast GPU memory copy library based on NVIDIA GPUDirect RDMA technology |
-| dev-libs/hardened_malloc | Hardened allocator designed for modern systems. |
+| dev-libs/hardened_malloc | A hardened allocator designed for modern systems |
 | dev-libs/hip-cpu | An implementation of HIP that works on CPUs, across OSes. |
 | dev-libs/hipother | Other HIP backend compatibility |
 | dev-libs/hsa-amd-aqlprofile | AQLPROFILE library for AMD HSA runtime API extension support |
