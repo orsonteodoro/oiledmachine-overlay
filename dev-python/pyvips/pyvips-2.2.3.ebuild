@@ -16,7 +16,7 @@ https://github.com/libvips/pyvips/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="python binding for libvips using cffi"
+DESCRIPTION="Python bindings for libvips"
 HOMEPAGE="https://github.com/libvips/pyvips"
 LICENSE="MIT"
 RESTRICT="mirror"

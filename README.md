@@ -1019,7 +1019,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/pytorch-lightning | PyTorch Lightning is the lightweight PyTorch wrapper for ML researchers. Scale your models. Write less boilerplate. |
 | dev-python/pytube | Python tools for downloading YouTube Videos |
 | dev-python/pyv4l2 | Simple v4l2 lib for python3 |
-| dev-python/pyvips | python binding for libvips using cffi |
+| dev-python/pyvips | Python bindings for libvips |
 | dev-python/rlax | A library of reinforcement learning building blocks in JAX. |
 | dev-python/rlcard | Reinforcement Learning / AI Bots in Card (Poker) Games - Blackjack, Leduc, Texas, DouDizhu, Mahjong, UNO. |
 | dev-python/runs | Run a block of text as a subprocess |
