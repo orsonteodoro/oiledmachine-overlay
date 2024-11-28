@@ -123,7 +123,7 @@ nous-hermes2-mixtral nqduc-gemsura nqduc-mixsura nqduc-mixsura-sft nuextract
 open-orca-platypus2 openchat openhermes orca-mini
 orca2 paraphrase-multilingual partai-dorna-llama3 phi phi3 phi3.5
 phind-codellama qwen qwen2
-qwen2-math qwen2.5 qwen2.5-coder reader-lm reefer-her2 reefer-minimonica reefer-monica
+qwen2-math qwen2.5 qwen2.5-coder qwq reader-lm reefer-her2 reefer-minimonica reefer-monica
 reflection
 rfc-whiterabbitneo
 rouge-replete-coder-qwen2-1.5b
@@ -187,7 +187,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/ollama/ollama.git"
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
-	FALLBACK_COMMIT="c3d321d405df2076768de49cf999a3542224eabd" # Oct 12, 2024
+	FALLBACK_COMMIT="ce7455a8e1045ae12c5eaa9dc5bb5bdc84a098dc" # Nov 27, 2024
 	IUSE+=" fallback-commit"
 	inherit git-r3
 else
@@ -2234,6 +2234,9 @@ LLM_LICENSES="
 	ollama_llms_qwen2.5-coder? (
 		Apache-2.0
 	)
+	ollama_llms_qwq? (
+		Apache-2.0
+	)
 	ollama_llms_reader-lm? (
 		CC-BY-NC-4.0
 	)
@@ -2795,7 +2798,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.3.13-rename-CUDA_ARCHITECTURES.patch"
 	"${FILESDIR}/${PN}-0.4.2-fix-os-arch-pair.patch"
 	"${FILESDIR}/${PN}-0.4.2-gpu-libs-path.patch"
-	"${FILESDIR}/${PN}-0.4.4-cmd-changes.patch"
+	"${FILESDIR}/${PN}-0.4.6-cmd-changes.patch"
 )
 
 pkg_pretend() {
