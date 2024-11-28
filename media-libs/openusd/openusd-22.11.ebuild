@@ -25,7 +25,7 @@ https://github.com/PixarAnimationStudios/USD/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="Universal Scene Description"
+DESCRIPTION="Universal Scene Description for graphics app interexchange"
 HOMEPAGE="http://www.openusd.org"
 LICENSE="
 	(
