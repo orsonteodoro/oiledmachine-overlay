@@ -22,7 +22,7 @@ else
 	SRC_URI="FIXME"
 fi
 
-DESCRIPTION="Simple v4l2 lib for python3"
+DESCRIPTION="A simple Video4Linux2 (v4l2) lib for Python"
 HOMEPAGE="https://github.com/duanhongyi/pyv4l2"
 LICENSE="
 	BSD
