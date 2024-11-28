@@ -1113,10 +1113,10 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-libs/embree | Collection of high-performance ray tracing kernels |
 | media-libs/flac | free lossless audio encoder and decoder |
 | media-libs/glui | GLUI User Interface Library |
-| media-libs/gst-plugins-bad | Less plugins for GStreamer |
-| media-libs/gst-plugins-base | Basepack of plugins for GStreamer |
-| media-libs/gst-plugins-good | Basepack of plugins for GStreamer |
-| media-libs/gst-plugins-ugly | Basepack of plugins for GStreamer |
+| media-libs/gst-plugins-bad | A set of bad plugins that fall short of code quality or support needs of GStreamer |
+| media-libs/gst-plugins-base | A based set of plugins meeting code quality and support needs for GStreamer |
+| media-libs/gst-plugins-good | A set of good plugins that meet licensing, code quality, and support needs of GStreamer |
+| media-libs/gst-plugins-ugly | A set of ugly plugins that may have patent or licensing issues for GStreamer and distributors |
 | media-libs/gst-rtsp-server | A GStreamer based RTSP server |
 | media-libs/gstreamer | Open source multimedia framework |
 | media-libs/libaom | Alliance for Open Media AV1 Codec SDK |

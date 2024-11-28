@@ -25,7 +25,7 @@ KEYWORDS="
 ~amd64-linux ~arm64-macos ~x86-linux
 "
 
-DESCRIPTION="Less plugins for GStreamer"
+DESCRIPTION="A set of bad plugins that fall short of code quality or support needs of GStreamer"
 HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="LGPL-2"
 IUSE="

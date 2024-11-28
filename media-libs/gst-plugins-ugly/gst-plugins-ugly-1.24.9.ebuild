@@ -13,7 +13,7 @@ inherit gstreamer-meson
 #~amd64-linux ~arm64-macos ~x86-linux
 #"
 
-DESCRIPTION="Basepack of plugins for GStreamer"
+DESCRIPTION="A set of ugly plugins that may have patent or licensing issues for GStreamer and distributors"
 HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="LGPL-2+" # Some split plugins are LGPL but combining with a GPL library.
 RDEPEND="
