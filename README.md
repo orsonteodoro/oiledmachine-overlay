@@ -979,7 +979,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/orbax | Orbax is a library providing common utilities for JAX users. |
 | dev-python/orbax-checkpoint | Orbax Checkpoint |
 | dev-python/pathlib-abc | Python base classes for rich path objects |
-| dev-python/pathy | simple, flexible, offline capable, cloud storage with a Python path-like interface |
+| dev-python/pathy | A simple, flexible, offline capable, cloud storage with a Python path-like interface |
 | dev-python/patiencediff | Patiencediff implementation |
 | dev-python/pep8-naming | Naming Convention checker for Python |
 | dev-python/pettingzoo | A standard API for multi-agent reinforcement learning environments, with popular reference environments and related utilities |

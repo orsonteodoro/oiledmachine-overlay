@@ -22,7 +22,7 @@ https://github.com/justindujardin/pathy/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="simple, flexible, offline capable, cloud storage with a Python path-like interface"
+DESCRIPTION="A simple, flexible, offline capable, cloud storage with a Python path-like interface"
 HOMEPAGE="
 	https://github.com/justindujardin/pathy
 	https://pypi.org/project/pathy
