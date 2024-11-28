@@ -1380,7 +1380,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sci-libs/rocRAND | Generate pseudo-random and quasi-random numbers |
 | sci-libs/rocSOLVER | Implementation of a subset of LAPACK functionality on the ROCm platform |
 | sci-libs/rocSPARSE | Basic Linear Algebra Subroutines for sparse computation |
-| sci-libs/rocThrust | HIP back-end for the parallel algorithm library Thrust |
+| sci-libs/rocThrust | ROCm Thrust is used to run the ported Thrust parallel library on AMD GPUs |
 | sci-libs/rocWMMA | AMD's C++ library for accelerating mixed-precision matrix multiply-accumulate (MMA) operations leveraging AMD GPU hardware |
 | sci-libs/rpp | AMD ROCm Performance Primitives (RPP) library is a comprehensive high-performance computer vision library for AMD processors with HIP/OpenCL/CPU back-ends. |
 | sci-libs/tensorflow | Computation framework using data flow graphs for scalable machine learning |

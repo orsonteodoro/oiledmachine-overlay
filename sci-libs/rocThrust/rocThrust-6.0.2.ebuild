@@ -36,7 +36,7 @@ https://github.com/NVIDIA/libcudacxx/archive/${LIBCUDACXX_COMMIT}.tar.gz
 	-> libcudacxx-${LIBCUDACXX_COMMIT:0:7}.tar.gz
 "
 
-DESCRIPTION="HIP back-end for the parallel algorithm library Thrust"
+DESCRIPTION="ROCm Thrust is used to run the ported Thrust parallel library on AMD GPUs"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocThrust"
 LICENSE="
 	(
