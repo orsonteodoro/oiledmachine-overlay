@@ -955,7 +955,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/ml-dtypes | A stand-alone implementation of several NumPy dtype extensions used in machine learning. |
 | dev-python/model-index | Create a source of truth for ML model results and browse it on Papers with Code |
 | dev-python/moviepy | Video editing with Python |
-| dev-python/mujoco | MuJoCo (Multi-Joint dynamics with Contact) is a general purpose physics simulator. |
+| dev-python/mujoco | Python bindings for MuJoCo (Multi-Joint dynamics with Contact), a general purpose physics simulator. |
 | dev-python/multi-agent-ale-py | A fork of the the Arcade Learning Environment (ALE) platform for AI research with multiplayer support |
 | dev-python/murmurhash | 💥 Cython bindings for MurmurHash2 |
 | dev-python/mypy | Optional static typing for Python |
@@ -1401,7 +1401,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sci-misc/tensorflow-datasets | TFDS is a collection of datasets ready to use with TensorFlow, Jax, ... |
 | sci-misc/tf-models-official | Models and examples built with TensorFlow |
 | sci-physics/bullet | Continuous Collision Detection and Physics Library |
-| sci-physics/mujoco | Multi-Joint dynamics with Contact. A general purpose physics simulator. |
+| sci-physics/mujoco | MuJoCo (Multi-Joint dynamics with Contact) is a general purpose physics simulator. |
 | sci-visualization/tensorboard | TensorFlow's Visualization Toolkit |
 | sci-visualization/tensorboard-data-server | Fast data loading for TensorBoard |
 | sci-visualization/tensorboard-plugin-profile | Clean up the public namespace of your package! |
