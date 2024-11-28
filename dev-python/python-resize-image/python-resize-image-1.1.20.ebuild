@@ -22,7 +22,7 @@ https://github.com/VingtCinq/python-resize-image/raw/${ASSET_COMMIT}/tests/test-
 	)
 "
 
-DESCRIPTION="A Small python package to easily resize images"
+DESCRIPTION="A small Python package to easily resize images"
 HOMEPAGE="https://github.com/VingtCinq/python-resize-image"
 LICENSE="MIT"
 RESTRICT="mirror"

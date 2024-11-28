@@ -1013,7 +1013,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/python-crfsuite | Create, fill a temporary directory |
 | dev-python/python-decouple | Strict separation of config from code. |
 | dev-python/python-plexapi | Python bindings for the Plex API. |
-| dev-python/python-resize-image | A Small python package to easily resize images |
+| dev-python/python-resize-image | A small Python package to easily resize images |
 | dev-python/python-soxr | Fast and high quality sample-rate conversion library for Python |
 | dev-python/python-uinput | Pythonic API to Linux uinput module |
 | dev-python/pytorch-lightning | PyTorch Lightning is the lightweight PyTorch wrapper for ML researchers. Scale your models. Write less boilerplate. |
