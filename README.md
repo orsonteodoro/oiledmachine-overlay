@@ -676,7 +676,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | app-benchmarks/transferbench | TransferBench is a utility capable of benchmarking simultaneous copies between user-specified devices (CPUs/GPUs) |
 | app-crypt/gcr | Libraries for cryptographic UIs and accessing PKCS#11 modules |
 | app-crypt/hashcat | The World's fastest and most advanced password recovery utility |
-| app-crypt/hashtopolis | Hashtopolis - A Hashcat wrapper for distributed password recovery |
+| app-crypt/hashtopolis | Hashtopolis is a Hashcat wrapper for distributed password recovery |
 | app-crypt/hashtopolis-python-agent | The official Python agent for using the distributed hashcracker Hashtopolis |
 | app-crypt/libzc | Tool and library for cracking legacy zip files. |
 | app-crypt/webhashcat | Hashcat web interface |

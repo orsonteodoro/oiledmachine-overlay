@@ -1263,7 +1263,7 @@ https://github.com/hashtopolis/web-ui/archive/refs/tags/v${HASTOPOLIS_WEBUI_PV}.
 	S_WEBUI="${WORKDIR}/web-ui-${HASTOPOLIS_WEBUI_PV}"
 fi
 
-DESCRIPTION="Hashtopolis - A Hashcat wrapper for distributed password recovery"
+DESCRIPTION="Hashtopolis is a Hashcat wrapper for distributed password recovery"
 HOMEPAGE="https://github.com/hashtopolis/server"
 WEB_UI_NODE_MODULES_LICENSES="
 	(
