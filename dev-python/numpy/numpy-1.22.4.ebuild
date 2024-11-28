@@ -14,7 +14,7 @@ inherit distutils-r1 flag-o-matic fortran-2 toolchain-funcs
 DOC_PV="${PV}"
 # For when docs aren't ready yet, set to last version
 #DOC_PV=1.23.0
-DESCRIPTION="Fast array and numerical python library"
+DESCRIPTION="Fast array and numerical Python library"
 HOMEPAGE="
 	https://numpy.org/
 	https://github.com/numpy/numpy/

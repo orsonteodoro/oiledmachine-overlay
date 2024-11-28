@@ -16,7 +16,7 @@ else
 fi
 S="${WORKDIR}/${P}"
 
-DESCRIPTION="C++ functions matching the interface and behavior of python string \
+DESCRIPTION="C++ functions matching the interface and behavior of Python string \
 methods"
 HOMEPAGE="https://github.com/imageworks/pystring"
 LICENSE="BSD"

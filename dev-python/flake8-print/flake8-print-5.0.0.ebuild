@@ -16,7 +16,7 @@ https://github.com/JBKahn/flake8-print/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="Check for Print statements in python files."
+DESCRIPTION="Check for print statements in Python files"
 HOMEPAGE="https://github.com/JBKahn/flake8-print"
 LICENSE="
 	MIT

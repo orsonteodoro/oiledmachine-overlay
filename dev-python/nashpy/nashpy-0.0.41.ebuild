@@ -30,7 +30,7 @@ https://github.com/drvinceknight/Nashpy/archive/refs/tags/v${PV}.tar.gz
 	"
 fi
 
-DESCRIPTION="A python library for 2 player games."
+DESCRIPTION="A Python library for 2 player games"
 HOMEPAGE="
 	https://github.com/drvinceknight/Nashpy
 	https://pypi.org/project/nashpy

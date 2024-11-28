@@ -712,7 +712,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-cpp/blaze | A high performance C++ math library |
 | dev-cpp/frugally-deep | Header-only library for using Keras (TensorFlow) models in C++. |
 | dev-cpp/nlohmann_json | JSON for Modern C++ |
-| dev-cpp/pystring | C++ functions matching the interface and behavior of python string methods |
+| dev-cpp/pystring | C++ functions matching the interface and behavior of Python string methods |
 | dev-cpp/selfrando | Function order shuffling to defend against ROP and other types of code reuse |
 | dev-cpp/tbb:2 | Threading Building Blocks (TBB) |
 | dev-cpp/tbb:0 | oneAPI Threading Building Blocks (oneTBB) |
@@ -898,14 +898,14 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/editor | A Python library to open the default text editor |
 | dev-python/elevate | A Python library for requesting root privileges |
 | dev-python/encodec | State-of-the-art deep learning based audio codec supporting both mono 24 kHz audio and stereo 48 kHz audio. |
-| dev-python/etils | Collection of eclectic utils for python. |
+| dev-python/etils | Collection of eclectic utils for Python |
 | dev-python/exhale | Automatic C++ library api documentation generation: breathe doxygen in and exhale it out |
 | dev-python/fastbencode | Fast implementation of bencode |
 | dev-python/flake8-colors | ANSI colors highlight for Flake8 |
 | dev-python/flake8-docstrings | Integration of pydocstyle and flake8 for combined linting and reporting |
 | dev-python/flake8-future-import | Flake8 extension to check imports |
 | dev-python/flake8-import-order | Flake8 plugin that checks import order against various Python Style Guides |
-| dev-python/flake8-print | Check for Print statements in python files. |
+| dev-python/flake8-print | Check for print statements in Python files |
 | dev-python/flash-attn | Fast and memory-efficient exact attention |
 | dev-python/flax | Flax is a neural network library for JAX that is designed for flexibility. |
 | dev-python/gin-config | Gin-Config: A lightweight configuration library for Python |
@@ -932,7 +932,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/js8py | Python module for parsing messages from the 'js8' command line decoder |
 | dev-python/jumpy | On-the-fly conversions between Jax and NumPy tensors |
 | dev-python/kaggle | The Official Kaggle API |
-| dev-python/kaldi-io | Python functions for reading kaldi data formats. Useful for rapid prototyping with python. |
+| dev-python/kaldi-io | Python functions for reading kaldi data formats which is useful for rapid prototyping |
 | dev-python/keras | Deep Learning for humans |
 | dev-python/keras-applications | Keras deep learning library reference implementations of deep learning models |
 | dev-python/keras-preprocessing | Easy data preprocessing and data augmentation for deep learning models |
@@ -949,7 +949,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/llvmlite | A lightweight wrapper around basic LLVM functionality |
 | dev-python/marisa-trie | Static memory-efficient Trie-like structures for Python |
 | dev-python/merge3 | Python implementation of 3-way merge |
-| dev-python/mizani | A scales package for python |
+| dev-python/mizani | A scales package for Python |
 | dev-python/ml-collections | ML Collections is a library of Python Collections designed for ML use cases. |
 | dev-python/ml-datasets | Create, fill a temporary directory |
 | dev-python/ml-dtypes | A stand-alone implementation of several NumPy dtype extensions used in machine learning. |
@@ -961,14 +961,14 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/mypy | Optional static typing for Python |
 | dev-python/myst-parser | An extended commonmark compliant parser, with bridges to docutils/sphinx |
 | dev-python/namex | Clean up the public namespace of your package! |
-| dev-python/nashpy | A python library for 2 player games. |
+| dev-python/nashpy | A Python library for 2 player games |
 | dev-python/neural-compressor | State of the art low-bit LLM quantization (INT8/FP8/INT4/FP4/NF4) & sparsity; leading model compression techniques on TensorFlow, PyTorch, and ONNX Runtime |
 | dev-python/nnef-parser | The NNEF parser |
 | dev-python/nnef-tools | NNEF Tools |
 | dev-python/nose_xunitmp | A nosetest xunit plugin with multiprocessor support |
 | dev-python/num2words | Modules to convert numbers to words. |
 | dev-python/numba | NumPy aware dynamic Python compiler using LLVM |
-| dev-python/numpy | Fast array and numerical python library |
+| dev-python/numpy | Fast array and numerical Python library |
 | dev-python/ollama | Ollama Python library |
 | dev-python/onnx-simplifier | Simplify your ONNX model |
 | dev-python/onnxoptimizer | A C++ library for performing arbitrary optimizations on ONNX models |
@@ -995,7 +995,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/py-stackexchange | A Python binding for the StackExchange API |
 | dev-python/py3c | A Python 2/3 compatibility layer for C extensions |
 | dev-python/pyaudio | Python bindings for PortAudio |
-| dev-python/pyclibrary | C parser and ctypes automation for python |
+| dev-python/pyclibrary | C parser and ctypes automation for Python |
 | dev-python/pycsdr | Python bindings for the csdr library |
 | dev-python/pydantic-settings | Settings management using Pydantic |
 | dev-python/pydigiham | Python bindings for the digiham library |
@@ -1478,7 +1478,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | virtual/linux-sources | Virtual for Linux kernel sources |
 | virtual/ot-sources-lts | Virtual for the ot-sources LTS ebuilds for |
 | virtual/ot-sources-stable | Virtual for the ot-sources stable ebuilds |
-| virtual/pillow | Virtual for python pillow packages |
+| virtual/pillow | Virtual for Python Pillow packages |
 | virtual/tmpfiles | Virtual to select between different tmpfiles.d handlers |
 | www-apps/xpra-html5 | HTML5 client for Xpra |
 | www-client/chromium | The open-source version of the Chrome web browser |

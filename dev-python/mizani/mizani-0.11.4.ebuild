@@ -31,7 +31,7 @@ https://github.com/has2k1/mizani/archive/refs/tags/v${PV}.tar.gz
 	"
 fi
 
-DESCRIPTION="A scales package for python"
+DESCRIPTION="A scales package for Python"
 HOMEPAGE="
 	https://github.com/has2k1/mizani
 	https://pypi.org/project/mizani

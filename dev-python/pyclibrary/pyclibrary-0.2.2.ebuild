@@ -25,7 +25,7 @@ https://github.com/MatthieuDartiailh/pyclibrary/archive/refs/tags/${PV}.tar.gz
 fi
 S="${WORKDIR}/${PN}-${PV}"
 
-DESCRIPTION="C parser and ctypes automation for python"
+DESCRIPTION="C parser and ctypes automation for Python"
 HOMEPAGE="https://github.com/MatthieuDartiailh/pyclibrary"
 LICENSE="
 	MIT

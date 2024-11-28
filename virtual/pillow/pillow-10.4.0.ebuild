@@ -7,7 +7,7 @@ PYTHON_COMPAT=( "python3_"{10..12} "pypy3" )
 
 inherit python-r1
 
-DESCRIPTION="Virtual for python pillow packages"
+DESCRIPTION="Virtual for Python Pillow packages"
 LICENSE="metapackage"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~x86"

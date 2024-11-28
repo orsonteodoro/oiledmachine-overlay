@@ -11,7 +11,7 @@ PYTHON_REQ_USE="threads(+)"
 
 inherit distutils-r1 flag-o-matic fortran-2 pypi
 
-DESCRIPTION="Fast array and numerical python library"
+DESCRIPTION="Fast array and numerical Python library"
 HOMEPAGE="
 	https://numpy.org/
 	https://github.com/numpy/numpy/

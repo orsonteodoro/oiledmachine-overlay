@@ -17,7 +17,7 @@ https://github.com/KarelVesely84/kaldi-io-for-python/archive/refs/tags/v${PV}.ta
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="Python functions for reading kaldi data formats. Useful for rapid prototyping with python."
+DESCRIPTION="Python functions for reading kaldi data formats which is useful for rapid prototyping"
 HOMEPAGE="
 	https://github.com/KarelVesely84/kaldi-io-for-python
 	https://pypi.org/project/kaldi-io

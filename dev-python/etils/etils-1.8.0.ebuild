@@ -25,7 +25,7 @@ https://github.com/google/etils/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="Collection of eclectic utils for python."
+DESCRIPTION="Collection of eclectic utils for Python"
 HOMEPAGE="
 https://github.com/google/etils
 https://pypi.org/project/etils/
