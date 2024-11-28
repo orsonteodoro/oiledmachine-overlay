@@ -7,7 +7,7 @@ MY_PV="${PV}"
 
 inherit font
 
-DESCRIPTION="Minimal config to get colored Noto emojis working on Gentoo."
+DESCRIPTION="A minimal config for using Noto colored emojis"
 LICENSE="CC-PD"
 KEYWORDS="~amd64"
 IUSE="

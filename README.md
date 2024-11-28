@@ -1097,7 +1097,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | gui-apps/windowpet | Pet overlay app built with tauri and react that lets you have adorable companion such as pets, anime characters on your screen. |
 | gui-libs/libdecor | A client-side decorations library for Wayland clients |
 | media-fonts/noto-color-emoji-bin | A prebuilt font for colored emojis |
-| media-fonts/noto-color-emoji-config | Minimal config to get colored Noto emojis working on Gentoo. |
+| media-fonts/noto-color-emoji-config | A minimal config for using Noto colored emojis |
 | media-gfx/alembic | Alembic is an open framework for storing and sharing scene data that includes a C++ library, a file format, and client plugins and applications. |
 | media-gfx/blockbench | Blockbench is a boxy 3D model editor |
 | media-gfx/dssim | Image similarity comparison simulating human perception |
