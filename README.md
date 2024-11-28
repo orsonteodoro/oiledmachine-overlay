@@ -1099,7 +1099,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-fonts/noto-color-emoji-bin | A prebuilt font for colored emojis |
 | media-fonts/noto-color-emoji-config | Minimal config to get colored Noto emojis working on Gentoo. |
 | media-gfx/alembic | Alembic is an open framework for storing and sharing scene data that includes a C++ library, a file format, and client plugins and applications. |
-| media-gfx/blockbench | Blockbench - A boxy 3D model editor |
+| media-gfx/blockbench | Blockbench is a boxy 3D model editor |
 | media-gfx/dssim | Image similarity comparison simulating human perception |
 | media-gfx/material-maker | A procedural textures authoring and 3D model painting tool based on the Godot game engine |
 | media-gfx/nanovdb | A lightweight GPU friendly version of VDB initially targeting rendering applications. |

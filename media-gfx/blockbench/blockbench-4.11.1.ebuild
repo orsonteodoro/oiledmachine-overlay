@@ -722,7 +722,7 @@ https://github.com/JannisX11/blockbench/archive/v${PV}.tar.gz
 	-> ${PN}-${PV}.tar.gz
 "
 
-DESCRIPTION="Blockbench - A boxy 3D model editor"
+DESCRIPTION="Blockbench is a boxy 3D model editor"
 HOMEPAGE="https://www.blockbench.net"
 THIRD_PARTY_LICENSES="
 	(
