@@ -13,7 +13,7 @@ https://github.com/${GRPC_PN}/${GRPC_PN}/archive/v${MY_PV}.tar.gz
 	-> ${GRPC_P}.tar.gz
 "
 
-DESCRIPTION="High-performance RPC framework (PHP libraries)"
+DESCRIPTION="PHP libraries for the high performance gRPC framework"
 HOMEPAGE="https://grpc.io"
 LICENSE="Apache-2.0"
 RESTRICT="mirror"

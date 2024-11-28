@@ -842,7 +842,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-perl/Test-Vars | Detects unused variables in perl modules |
 | dev-perl/Test2-Tools-URL | Compare a URL in your Test2 test |
 | dev-perl/URI-git | URI handler for git scheme |
-| dev-php/grpc | High-performance RPC framework (PHP libraries) |
+| dev-php/grpc | PHP libraries for the high performance gRPC framework |
 | dev-php/libcaca | A library that creates colored ASCII-art graphics |
 | dev-python/Farama-Notifications | Gymnasium Notices |
 | dev-python/Flask-HTTPAuth | Simple extension that provides Basic, Digest and Token HTTP authentication for Flask routes |
