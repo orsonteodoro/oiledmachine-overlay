@@ -23,7 +23,7 @@ KEYWORDS="~amd64"
 S="${WORKDIR}"
 SRC_URI="${D_FN}"
 
-DESCRIPTION="Radeon ProRender for Blender Material Library for Linux"
+DESCRIPTION="The Radeon™ ProRender for Blender Material Library"
 HOMEPAGE="https://www.amd.com/en/technologies/radeon-prorender-blender"
 LICENSE="
 	AMD-RADEON-PRORENDER-BLENDER-EULA

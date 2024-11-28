@@ -1150,7 +1150,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-libs/vips | VIPS Image Processing Library |
 | media-libs/woff2 | Encode/decode WOFF2 font format |
 | media-plugins/RadeonProRenderBlenderAddon | A Blender rendering plug-in for accurate ray-tracing to produce images and animations of scenes and providing real-time interactive rendering and continuous adjustment of effects. |
-| media-plugins/RadeonProRenderMaterialLibrary | Radeon ProRender for Blender Material Library for Linux |
+| media-plugins/RadeonProRenderMaterialLibrary | The Radeon™ ProRender for Blender Material Library |
 | media-plugins/filmic-blender | Film Emulsion-Like Camera Rendering Transforms for Blender |
 | media-plugins/gst-plugins-a52dec | ATSC A/52 audio decoder plugin for GStreamer |
 | media-plugins/gst-plugins-adaptivedemux2 | Adaptive demuxer plugins for GStreamer |
