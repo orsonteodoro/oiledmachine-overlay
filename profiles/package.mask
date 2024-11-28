@@ -138,3 +138,13 @@ dev-db/mariadb
 # Block numpy-2 dependent packages to keep tensorflow/keras that require numpy 1.x
 >=dev-python/spacy-3.8
 >=dev-python/blis-1.0.1
+
+# Upstream claims patent or license status issues in some
+media-libs/gst-plugins-ugly
+media-plugins/gst-plugins-a52dec
+media-plugins/gst-plugins-sidplay
+media-plugins/gst-plugins-dvdread
+media-plugins/gst-plugins-mpeg2dec
+media-plugins/gst-plugins-x264
+media-plugins/gst-plugins-amr
+media-plugins/gst-plugins-cdio

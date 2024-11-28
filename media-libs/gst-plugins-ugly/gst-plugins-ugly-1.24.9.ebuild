@@ -7,10 +7,11 @@ GST_ORG_MODULE="gst-plugins-ugly"
 
 inherit gstreamer-meson
 
-KEYWORDS="
-~alpha ~amd64 ~arm ~arm64 ~hppa ~m68k ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86
-~amd64-linux ~arm64-macos ~x86-linux
-"
+# Prohibit based on license or patent status
+#KEYWORDS="
+#~alpha ~amd64 ~arm ~arm64 ~hppa ~m68k ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86
+#~amd64-linux ~arm64-macos ~x86-linux
+#"
 
 DESCRIPTION="Basepack of plugins for GStreamer"
 HOMEPAGE="https://gstreamer.freedesktop.org/"

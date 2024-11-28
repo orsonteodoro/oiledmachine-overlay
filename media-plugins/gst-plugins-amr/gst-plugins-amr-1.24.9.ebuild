@@ -9,7 +9,7 @@ GST_PLUGINS_ENABLED="amrnb amrwbdec"
 
 inherit gstreamer-meson
 
-KEYWORDS="~amd64 ~arm64 ~x86"
+#KEYWORDS="~amd64 ~arm64 ~x86"
 
 DESCRIPTION="AMRNB encoder/decoder and AMRWB decoder plugin for GStreamer"
 HOMEPAGE="https://gstreamer.freedesktop.org/"

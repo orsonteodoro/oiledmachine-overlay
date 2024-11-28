@@ -7,7 +7,7 @@ GST_ORG_MODULE="gst-plugins-ugly"
 
 inherit gstreamer-meson
 
-KEYWORDS="~alpha ~amd64 ~arm64 ~ppc ~ppc64 ~sparc ~x86"
+#KEYWORDS="~alpha ~amd64 ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="Sid decoder plugin for GStreamer"
 RDEPEND="
