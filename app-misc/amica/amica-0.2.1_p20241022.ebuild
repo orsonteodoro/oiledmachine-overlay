@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# FIXME: Fix ollama /api/chat support
+
 NPM_AUDIT_FIX=0 # Lockfiles are the same as upstream because I'm still fixing the missing microphone dialog permissions prompt window
 
 CRATES="
@@ -2774,7 +2776,7 @@ https://registry.npmjs.org/yn/-/yn-3.1.1.tgz -> npmpkg-yn-3.1.1.tgz
 https://registry.npmjs.org/yocto-queue/-/yocto-queue-0.1.0.tgz -> npmpkg-yocto-queue-0.1.0.tgz
 "
 # UPDATER_END_NPM_EXTERNAL_URIS
-KEYWORDS="~amd64 ~arm64"
+#KEYWORDS="~amd64 ~arm64"
 SRC_URI="
 $(cargo_crate_uris ${CRATES})
 ${NPM_EXTERNAL_URIS}
@@ -3100,6 +3102,7 @@ einfo "Adding Cargo.lock"
 
 src_unpack() {
 	unpack "${TARBALL}"
+#die # omt
 einfo "Unpacking npm packages"
 	if [[ "${PV}" =~ "_p" ]] ; then
 		S="${S_PROJECT}/" \
@@ -3121,11 +3124,17 @@ einfo "Unpacking cargo packages"
 src_prepare() {
 	default
 	eapply "${FILESDIR}/${PN}-0.2.1_p20241022-debug.patch"
-	eapply -R "${DISTDIR}/${PN}-commit-da5a390.patch"
-	eapply "${FILESDIR}/${PN}-0.2.1_p20241022-coqui-local.patch"
+	eapply "${FILESDIR}/${PN}-0.2.1_p20241022-ollama.patch"
+#	eapply -R "${DISTDIR}/${PN}-commit-da5a390.patch"
+#	eapply "${FILESDIR}/${PN}-0.2.1_p20241022-coqui-local.patch"
 }
 
 src_configure() {
+	sed \
+		-i \
+		-e "s|\"targets\": \"all\"|\"targets\": \"deb\"|g" \
+		"${S}/src-tauri/tauri.conf.json" \
+		|| die
 	cargo_src_configure
 }
 
@@ -3161,6 +3170,7 @@ src_install() {
 	docinto "licenses"
 	dodoc "LICENSE"
 
+if false ; then
 	LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
 	LCNR_TAG="third_party_cargo"
 	lcnr_install_files
@@ -3168,6 +3178,7 @@ src_install() {
 	LCNR_SOURCE="${S_PROJECT}/node_modules"
 	LCNR_TAG="third_party_npm"
 	lcnr_install_files
+fi
 
 	USE_COQUI=$(usex coqui "1" "0")
 

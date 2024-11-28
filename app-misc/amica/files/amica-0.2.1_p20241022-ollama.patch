@@ -1,0 +1,64 @@
+--- a/src/features/chat/ollamaChat.ts.orig	2024-10-22 16:44:38.000000000 -0700
++++ b/src/features/chat/ollamaChat.ts	2024-11-27 13:04:19.676769642 -0800
+@@ -24,26 +24,46 @@ export async function getOllamaChatRespo
+     async start(controller: ReadableStreamDefaultController) {
+       const decoder = new TextDecoder("utf-8");
+       try {
+-        // Ollama sends chunks of multiple complete JSON objects separated by newlines
++        // Ollama sends chunks of multiple complete JSON objects separated by newlines.
++        // Sometimes the response is chunked, so we need to combine the chunks.
++        let combined = "";
+         while (true) {
+           const { done, value } = await reader.read();
+           if (done) break;
+-          const data = decoder.decode(value);
+-          const jsonResponses = data
+-            .trim() // Ollama sends an empty line after the final JSON message...
+-            .split("\n")
+-            //.filter((val) => !!val) 
++          const data = decoder.decode(value, { stream: true });
++          const chunks = data
++            .split("data:")
++            .filter((val) => !!val && val.trim() !== "[DONE]");
+ 
+-          for (const jsonResponse of jsonResponses) {
+-            try {
+-              const json = JSON.parse(jsonResponse);
+-              const messagePiece = json.message.content;
+-              if (!!messagePiece) {
+-                controller.enqueue(messagePiece);
+-              }
+-            } catch (error) {
+-              console.error(error);
++          for (const chunk of chunks) {
++            // skip comments
++            if (chunk.length > 0 && chunk[0] === ":") {
++              continue;
+             }
++            combined += chunk;
++          }
++
++          try {
++            if (combined.indexOf('\n') >= 0) {
++              let obj = combined.slice(0, combined.indexOf('\n'));
++              const json = JSON.parse(obj);
++            } else {
++              continue;
++            }
++          } catch (error) {
++            continue;
++          }
++
++          try {
++            let obj = combined.slice(0, combined.indexOf('\n'));
++            const json = JSON.parse(obj);
++            combined = combined.slice(combined.indexOf('\n') + 1);
++            const messagePiece = json.message.content;
++            if (!!messagePiece) {
++              controller.enqueue(messagePiece);
++            }
++          } catch (error) {
++            console.error(error);
+           }
+         }
+       } catch (error) {
