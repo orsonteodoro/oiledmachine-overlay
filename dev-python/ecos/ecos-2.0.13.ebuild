@@ -33,7 +33,7 @@ https://github.com/embotech/ecos/archive/${ECOS_COMMIT}.tar.gz
 	"
 fi
 
-DESCRIPTION="Python interface for ECOS"
+DESCRIPTION="A Python interface for the Embedded Conic Solver (ECOS)"
 HOMEPAGE="
 	https://github.com/embotech/ecos-python
 	https://pypi.org/project/ecos
