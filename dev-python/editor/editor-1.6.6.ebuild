@@ -26,7 +26,7 @@ https://github.com/rec/editor/archive/refs/tags/v${PV}.tar.gz
 	"
 fi
 
-DESCRIPTION="Open the default text editor"
+DESCRIPTION="A Python library to open the default text editor"
 HOMEPAGE="
 	https://github.com/rec/editor
 	https://pypi.org/project/editor
