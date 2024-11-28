@@ -149,18 +149,18 @@ MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
 MITIGATION_DATE="Nov 26, 2024" # Advisory date
 MITIGATION_LAST_UPDATE=1732571280 # From `date +%s -d "2024-11-25 13:48"` from ftp date matching version in report
 MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-64/"
-SEVERITY_LABEL="Upstream's severity rating:"
+SEVERITY_LABEL="Severity:"
 VULNERABILITIES_FIXED=(
-	"CVE-2024-11691;;High"
-	"CVE-2024-11692;;Moderate"
-	"CVE-2024-11693;;Moderate"
-	"CVE-2024-11694;;Moderate"
-	"CVE-2024-11695;;Moderate"
+	"CVE-2024-11693;ZC, DoS, DT, ID;Critical"
+	"CVE-2024-11704;ZC, DoS, DT, ID;Critical"
+	"CVE-2024-11698;ZC, DoS, DT, ID;Critical"
+	"CVE-2024-11691;DoS, DT, ID;High"
+	"CVE-2024-11697;DoS, DT, ID;High"
+	"CVE-2024-11699;DoS, DT, ID;High"
+	"CVE-2024-11694;DT, ID;Medium"
+	"CVE-2024-11695;DT, ID;Medium"
+	"CVE-2024-11692;DT;Medium"
 	"CVE-2024-11696;;Moderate"
-	"CVE-2024-11697;;Low"
-	"CVE-2024-11704;;Low"
-	"CVE-2024-11698;;Low"
-	"CVE-2024-11699;;High"
 )
 MOZ_ESR="yes"
 MOZ_LANGS=(
