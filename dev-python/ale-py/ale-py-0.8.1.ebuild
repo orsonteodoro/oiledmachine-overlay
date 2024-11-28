@@ -22,7 +22,7 @@ https://github.com/mgbellemare/Arcade-Learning-Environment/archive/refs/tags/v${
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="The Arcade Learning Environment (ALE) -- a platform for AI research."
+DESCRIPTION="The Arcade Learning Environment (ALE) is a platform for AI research"
 HOMEPAGE="
 https://github.com/mgbellemare/Arcade-Learning-Environment
 "
