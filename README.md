@@ -1338,9 +1338,9 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | net-libs/librist | Reliable Internet Streaming Transport |
 | net-libs/nghttp2 | HTTP/2 C Library |
 | net-libs/nodejs | A JavaScript runtime built on the V8 JavaScript engine |
-| net-libs/webkit-gtk | Open source web browser engine (GTK 4 with HTTP/2 support) |
-| net-libs/webkit-gtk | Open source web browser engine (GTK+3 with HTTP/1.1 support) |
-| net-libs/webkit-gtk | Open source web browser engine (GTK+3 with HTTP/2 support) |
+| net-libs/webkit-gtk:6 | Open source web browser engine (GTK 4 with HTTP/2 support) |
+| net-libs/webkit-gtk:4 | Open source web browser engine (GTK+3 with HTTP/1.1 support) |
+| net-libs/webkit-gtk:4.1 | Open source web browser engine (GTK+3 with HTTP/2 support) |
 | net-misc/OCDM-Clearkey | ClearKey OpenCDM(i) plugin |
 | net-misc/ThunderClientLibraries | Thunder supporting libraries |
 | net-misc/ThunderInterfaces | Thunder interface definitions |
