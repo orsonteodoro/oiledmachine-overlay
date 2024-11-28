@@ -73,7 +73,7 @@ https://github.com/NVIDIA/cutlass/archive/${CUTLASS_COMMIT}.tar.gz
 	"
 fi
 
-DESCRIPTION="Intel(R) Open Image Denoise library"
+DESCRIPTION="Intel® Open Image Denoise library"
 HOMEPAGE="http://www.openimagedenoise.org/"
 LICENSE="
 	Apache-2.0

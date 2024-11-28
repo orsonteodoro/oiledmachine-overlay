@@ -1133,7 +1133,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-libs/materialx | MaterialX is an open standard for the exchange of rich material and look-development content across applications and renderers. |
 | media-libs/mesa | OpenGL-like graphic library for Linux |
 | media-libs/mojoshader | Use Direct3D shaders with other 3D rendering APIs. |
-| media-libs/oidn | Intel(R) Open Image Denoise library |
+| media-libs/oidn | Intel® Open Image Denoise library |
 | media-libs/opencolorio | A color management framework for visual effects and animation |
 | media-libs/opencv | A collection of algorithms and sample code for various computer vision problems |
 | media-libs/openimageio | A library for reading and writing images |
