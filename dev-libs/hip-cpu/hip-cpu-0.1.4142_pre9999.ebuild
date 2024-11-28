@@ -13,7 +13,7 @@ if [[ ${PV} == *9999 ]] ; then
 	inherit git-r3
 fi
 
-DESCRIPTION="An implementation of HIP that works on CPUs, across OSes."
+DESCRIPTION="An implementation of HIP that works on CPUs"
 HOMEPAGE="https://github.com/ROCm-Developer-Tools/HIP-CPU"
 LICENSE="
 	Boost-1.0
