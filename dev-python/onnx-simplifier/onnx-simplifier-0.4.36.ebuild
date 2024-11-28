@@ -136,7 +136,7 @@ https://github.com/tensorflow/tensorboard/archive/${TENSORBOARD_COMMIT}.tar.gz
 	"
 fi
 
-DESCRIPTION="Simplify your onnx model"
+DESCRIPTION="Simplify your ONNX model"
 HOMEPAGE="
 	https://github.com/daquexian/onnx-simplifier
 "

@@ -970,7 +970,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/numba | NumPy aware dynamic Python compiler using LLVM |
 | dev-python/numpy | Fast array and numerical python library |
 | dev-python/ollama | Ollama Python library |
-| dev-python/onnx-simplifier | Simplify your onnx model |
+| dev-python/onnx-simplifier | Simplify your ONNX model |
 | dev-python/onnxoptimizer | A C++ library for performing arbitrary optimizations on ONNX models |
 | dev-python/open-spiel | OpenSpiel is a collection of environments and algorithms for research in general reinforcement learning and search/planning in games. |
 | dev-python/openai | The official Python library for the OpenAI API |
