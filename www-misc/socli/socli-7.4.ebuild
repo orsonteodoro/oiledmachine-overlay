@@ -15,8 +15,7 @@ https://github.com/gautamkrishnar/socli/archive/refs/tags/${PV}.tar.gz
 "
 S="${WORKDIR}/${PN}-${PV}"
 
-DESCRIPTION="Stack overflow command line client. Search and browse stack \
-overflow without leaving the terminal"
+DESCRIPTION="A search and browse Stack Overflow command line terminal client"
 HOMEPAGE="https://github.com/gautamkrishnar/socli"
 LICENSE="BSD"
 KEYWORDS="~amd64"
