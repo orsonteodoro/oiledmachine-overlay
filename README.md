@@ -911,7 +911,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/gin-config | Gin-Config: A lightweight configuration library for Python |
 | dev-python/gitdb | IO of git-style object databases |
 | dev-python/google | Python bindings to the Google search engine. |
-| dev-python/google-auth | Google Authentication Library |
+| dev-python/google-auth | The Google Auth library simplifies server-to-server authentication to Google APIs |
 | dev-python/google-auth-oauthlib | oauthlib integration for the Google Auth library |
 | dev-python/grpcio | Python libraries for the high performance gRPC framework |
 | dev-python/grpcio-testing | Testing utilities for gRPC Python |

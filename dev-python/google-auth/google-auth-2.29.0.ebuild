@@ -29,7 +29,7 @@ inherit distutils-r1 pypi
 
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 
-DESCRIPTION="Google Authentication Library"
+DESCRIPTION="The Google Auth library simplifies server-to-server authentication to Google APIs"
 HOMEPAGE="
 	https://github.com/googleapis/google-auth-library-python/
 	https://pypi.org/project/google-auth/
