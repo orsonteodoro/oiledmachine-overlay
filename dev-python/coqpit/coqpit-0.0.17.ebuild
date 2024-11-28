@@ -16,7 +16,7 @@ https://github.com/coqui-ai/coqpit/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="Simple but maybe too simple config management through python data classes. We use it for machine learning."
+DESCRIPTION="A simple but maybe too simple config management through Python data classes used for machine learning"
 HOMEPAGE="
 	https://github.com/coqui-ai/coqpit
 	https://pypi.org/project/coqpit

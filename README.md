@@ -872,7 +872,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/confection | 🍬 Confection: the sweetest config system for Python |
 | dev-python/contextlib2 | contextlib2 is a backport of the standard library's contextlib module to earlier Python versions. |
 | dev-python/controlnet-aux | Auxillary models for controlnet |
-| dev-python/coqpit | Simple but maybe too simple config management through python data classes. We use it for machine learning. |
+| dev-python/coqpit | A simple but maybe too simple config management through Python data classes used for machine learning |
 | dev-python/coqui-tts | 🐸💬 - a deep learning toolkit for Text-to-Speech, battle-tested in research and production |
 | dev-python/coqui-tts-trainer | Create, fill a temporary directory |
 | dev-python/cuda-python | Python bindings for CUDA |
