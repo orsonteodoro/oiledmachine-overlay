@@ -21,7 +21,7 @@ https://github.com/intel/${PN}/archive/${MY_PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="High level abstract threading library"
+DESCRIPTION="Threading Building Blocks (TBB)"
 HOMEPAGE="https://www.threadingbuildingblocks.org"
 LICENSE="Apache-2.0"
 RESTRICT="mirror"

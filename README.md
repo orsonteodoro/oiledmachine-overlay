@@ -714,8 +714,8 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-cpp/nlohmann_json | JSON for Modern C++ |
 | dev-cpp/pystring | C++ functions matching the interface and behavior of python string methods |
 | dev-cpp/selfrando | Function order shuffling to defend against ROP and other types of code reuse |
-| dev-cpp/tbb | High level abstract threading library |
-| dev-cpp/tbb | oneAPI Threading Building Blocks (oneTBB) |
+| dev-cpp/tbb:2 | Threading Building Blocks (TBB) |
+| dev-cpp/tbb:0 | oneAPI Threading Building Blocks (oneTBB) |
 | dev-db/mariadb | An enhanced, drop-in replacement for MySQL |
 | dev-db/mysql | A fast, multi-threaded, multi-user SQL database server |
 | dev-db/nanodbc | A small C++ wrapper for the native C ODBC API |
