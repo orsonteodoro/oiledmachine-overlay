@@ -7,7 +7,7 @@ EAPI=8
 
 inherit multilib-build toolchain-funcs
 
-DESCRIPTION="Meta-ebuild for clang runtime libraries"
+DESCRIPTION="A meta-ebuild for the Clang runtime libraries"
 HOMEPAGE="https://clang.llvm.org/"
 LICENSE="metapackage"
 SLOT="${PV%%.*}"

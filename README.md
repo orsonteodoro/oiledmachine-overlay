@@ -1435,7 +1435,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sys-devel/clang | C language family frontend for LLVM |
 | sys-devel/clang-common | Common files shared between multiple slots of clang |
 | sys-devel/clang-ocl | OpenCL compilation with the Clang compiler |
-| sys-devel/clang-runtime | Meta-ebuild for clang runtime libraries |
+| sys-devel/clang-runtime | A meta-ebuild for the Clang runtime libraries |
 | sys-devel/clang-toolchain-symlinks | Symlinks to use Clang on a GCC-free system |
 | sys-devel/lld | The LLVM linker (link editor) |
 | sys-devel/lld-toolchain-symlinks | Symlinks to use LLD on a binutils-free system |

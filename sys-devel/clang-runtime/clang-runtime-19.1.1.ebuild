@@ -12,7 +12,7 @@ KEYWORDS="
 ~arm64-macos ~ppc-macos ~x64-macos
 "
 
-DESCRIPTION="Meta-ebuild for clang runtime libraries"
+DESCRIPTION="A meta-ebuild for the Clang runtime libraries"
 HOMEPAGE="https://clang.llvm.org/"
 LICENSE="metapackage"
 SLOT="${PV%%.*}"
