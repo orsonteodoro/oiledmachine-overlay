@@ -106,7 +106,7 @@ https://github.com/pytorch/${PN}/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="Tensors and Dynamic neural networks in Python"
+DESCRIPTION="Tensors and dynamic neural networks in Python"
 HOMEPAGE="https://pytorch.org/"
 LICENSE="BSD"
 RESTRICT="test"
