@@ -26,7 +26,7 @@ https://github.com/google/CommonLoopUtils/archive/refs/tags/v${PV}.tar.gz
 	"
 fi
 
-DESCRIPTION="Set of libraries for ML training loops in JAX."
+DESCRIPTION="A set of libraries for training loops with Machine Learning (ML) in JAX"
 HOMEPAGE="
 	https://github.com/google/CommonLoopUtils
 	https://pypi.org/project/clu

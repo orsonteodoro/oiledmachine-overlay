@@ -867,7 +867,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/celshast | A Sphinx documentation theme based on the Furo template |
 | dev-python/chex | Chex is a library of utilities for helping to write reliable JAX code. |
 | dev-python/cloudpathlib | Python pathlib-style classes for cloud storage services |
-| dev-python/clu | Set of libraries for ML training loops in JAX. |
+| dev-python/clu | A set of libraries for training loops with Machine Learning (ML) in JAX |
 | dev-python/colorlover | Color scales in Python for humans |
 | dev-python/confection | 🍬 Confection: the sweetest config system for Python |
 | dev-python/contextlib2 | contextlib2 is a backport of the standard library's contextlib module to earlier Python versions. |
