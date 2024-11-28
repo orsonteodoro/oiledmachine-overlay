@@ -689,7 +689,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | app-eselect/eselect-typescript | Manages the /usr/bin/tsc /usr/bin/tsserver symlinks |
 | app-misc/alpaca | An Ollama client made with GTK4 and Adwaita |
 | app-misc/amica | Amica is a customizable friendly interactive AI with 3D characters, voice synthesis, speech recognition, emotion engine |
-| app-misc/june | Local voice chatbot for engaging conversations, powered by Ollama, Hugging Face Transformers, and Coqui TTS Toolkit |
+| app-misc/june | Local voice AI chatbot for engaging conversations, powered by Ollama, Hugging Face Transformers, and Coqui TTS Toolkit |
 | app-misc/liquidctl | Cross-platform tool and drivers for liquid coolers and other devices |
 | app-misc/llocal | Aiming to provide a seamless and privacy driven AI chatting experience with open-sourced technologies |
 | app-misc/ollama | Get up and running with Llama 3, Mistral, Gemma, and other local large language models (LLMs). |

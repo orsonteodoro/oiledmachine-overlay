@@ -26,7 +26,7 @@ https://github.com/mezbaul-h/june/archive/refs/tags/v${PV}.tar.gz
 	inherit pypi
 fi
 
-DESCRIPTION="Local voice chatbot for engaging conversations, powered by Ollama, Hugging Face Transformers, and Coqui TTS Toolkit"
+DESCRIPTION="Local voice AI chatbot for engaging conversations, powered by Ollama, Hugging Face Transformers, and Coqui TTS Toolkit"
 HOMEPAGE="
 	https://github.com/mezbaul-h/june
 "
