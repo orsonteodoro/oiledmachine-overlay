@@ -20,7 +20,7 @@ else
 fi
 S="${WORKDIR}/${MY_P}"
 
-DESCRIPTION="Official python agent for using the distributed hashcracker Hashtopolis"
+DESCRIPTION="The official Python agent for using the distributed hashcracker Hashtopolis"
 HOMEPAGE="https://github.com/hashtopolis/agent-python"
 LICENSE="GPL-3"
 SLOT="0"
