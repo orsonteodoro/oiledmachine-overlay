@@ -1114,9 +1114,9 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-libs/flac | free lossless audio encoder and decoder |
 | media-libs/glui | GLUI User Interface Library |
 | media-libs/gst-plugins-bad | Less plugins for GStreamer |
-| media-libs/gst-plugins-base | Basepack of plugins for gstreamer |
+| media-libs/gst-plugins-base | Basepack of plugins for GStreamer |
 | media-libs/gst-plugins-good | Basepack of plugins for GStreamer |
-| media-libs/gst-plugins-ugly | Basepack of plugins for gstreamer |
+| media-libs/gst-plugins-ugly | Basepack of plugins for GStreamer |
 | media-libs/gst-rtsp-server | A GStreamer based RTSP server |
 | media-libs/gstreamer | Open source multimedia framework |
 | media-libs/libaom | Alliance for Open Media AV1 Codec SDK |

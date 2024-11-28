@@ -43,7 +43,7 @@ KEYWORDS="
 ~amd64-linux ~arm64-macos ~x86-linux
 "
 
-DESCRIPTION="Basepack of plugins for gstreamer"
+DESCRIPTION="Basepack of plugins for GStreamer"
 HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="GPL-2+ LGPL-2+"
 IUSE="
