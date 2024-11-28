@@ -11,7 +11,7 @@ inherit gstreamer-meson
 
 KEYWORDS="~amd64 ~arm64 ~x86"
 
-DESCRIPTION="A GStreamer based RTSP server"
+DESCRIPTION="A GStreamer based RTSP server library"
 HOMEPAGE="https://gstreamer.freedesktop.org/modules/gst-rtsp-server.html"
 LICENSE="LGPL-2+"
 IUSE="examples +introspection static-libs"

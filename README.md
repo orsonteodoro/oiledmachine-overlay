@@ -1117,7 +1117,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-libs/gst-plugins-base | A based set of plugins meeting code quality and support needs of GStreamer |
 | media-libs/gst-plugins-good | A set of good plugins that meet licensing, code quality, and support needs of GStreamer |
 | media-libs/gst-plugins-ugly | A set of ugly plugins that may have patent or licensing issues for GStreamer and distributors |
-| media-libs/gst-rtsp-server | A GStreamer based RTSP server |
+| media-libs/gst-rtsp-server | A GStreamer based RTSP server library |
 | media-libs/gstreamer | Open source multimedia framework |
 | media-libs/libaom | Alliance for Open Media AV1 Codec SDK |
 | media-libs/libcaca | A library that creates colored ASCII-art graphics |
