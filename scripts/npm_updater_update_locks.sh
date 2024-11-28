@@ -73,11 +73,13 @@ echo "Fail lockfile for =${CATEGORY}/${PN}-${pv} (1)"
 			local dest="${NPM_UPDATER_PKG_FOLDER}/files/${pv%-*}"
 			mkdir -p "${dest}"
 			if [[ -d "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/lockfile-image" ]] ; then
+echo "DEBUG:  Case 1"
 				cp -aT "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/lockfile-image" "${dest}"
 				grep -r -e "resolved" "${dest}" \
 					| cut -f 4 -d '"' \
 					> npm-uris.txt
 			elif [[ -n "${NPM_UPDATER_PROJECT_ROOT}" ]] ; then
+echo "DEBUG:  Case 2"
 				local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/${NPM_UPDATER_PROJECT_ROOT}/package.json")
 				cp -a "${path}" "${dest}"
 				local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/${NPM_UPDATER_PROJECT_ROOT}/package-lock.json")
@@ -90,6 +92,7 @@ echo "Fail lockfile for =${CATEGORY}/${PN}-${pv} (2a)"
 					| cut -f 4 -d '"' \
 					> npm-uris.txt
 			else
+echo "DEBUG:  Case 3"
 				local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/"*"/package.json")
 				cp -a "${path}" "${dest}"
 				local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/"*"/package-lock.json")
