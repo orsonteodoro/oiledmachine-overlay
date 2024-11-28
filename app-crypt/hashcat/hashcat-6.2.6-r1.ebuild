@@ -77,7 +77,7 @@ else
 	SRC_URI="https://github.com/hashcat/hashcat/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 fi
 
-DESCRIPTION="World's fastest and most advanced password recovery utility"
+DESCRIPTION="The World's fastest and most advanced password recovery utility"
 HOMEPAGE="https://github.com/hashcat/hashcat"
 LICENSE="MIT"
 RESTRICT="test"
