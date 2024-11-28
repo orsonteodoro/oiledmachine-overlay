@@ -4,9 +4,9 @@
 
 EAPI=8
 
-# U22
+# U24
 
-PYTHON_COMPAT=( "python3_10" )
+PYTHON_COMPAT=( "python3_"{10..12} ) # U24 uses 3.12
 
 inherit linux-info meson python-r1 security-scan
 
@@ -32,30 +32,33 @@ REQUIRED_USE="
 		systemd
 	)
 "
-GCC_PV="11.4.0"
+GCC_PV="13.2.0"
 RDEPEND+="
 	${PYTHON_DEPS}
-	>=media-libs/opencv-4.8.1[gtk3,v4l]
-	>=sys-apps/kmod-29[tools]
+	>=dev-cpp/argparse-3.1.0
+	>=dev-cpp/yaml-cpp-0.8.0
+	>=dev-libs/spdlog-1.12.0
+	>=media-libs/opencv-4.10.0[gtk3,v4l]
+	>=sys-apps/kmod-31[tools]
 	>=sys-devel/gcc-${GCC_PV}
-	>=sys-libs/glibc-2.35
-	>=x11-libs/gtk+-3.24.33:3
+	>=sys-libs/glibc-2.39
+	>=x11-libs/gtk+-3.24.41:3
 	virtual/udev
 	openrc? (
 		sys-apps/openrc
 	)
 	systemd? (
-		>=sys-apps/systemd-249.11
+		>=sys-apps/systemd-255.4
 	)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-build/cmake-3.22.1
-	>=dev-build/meson-1.0.0
-	>=dev-build/ninja-1.10.1
-	>=net-misc/curl-7.81.0
+	>=dev-build/cmake-3.28.3
+	>=dev-build/meson-1.3.2
+	>=dev-build/ninja-1.11.1
+	>=net-misc/curl-8.5.0
 	>=sys-devel/gcc-${GCC_PV}
 	virtual/pkgconfig
 "
