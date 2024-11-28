@@ -7,7 +7,7 @@ EAPI=8
 DIST_AUTHOR="TOBYINK"
 inherit perl-module
 
-DESCRIPTION="return a pair only if they are both defined"
+DESCRIPTION="Return a pair only if they are both defined"
 HOMEPAGE="
 https://metacpan.org/release/PerlX-Maybe
 https://github.com/tobyink/p5-perlx-maybe

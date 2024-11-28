@@ -9,7 +9,7 @@ DIST_VERSION="0.011"
 DIST_EXAMPLES=("examples/*")
 inherit perl-module
 
-DESCRIPTION="munge your 'has' (works with Moo, Moose and Mouse)"
+DESCRIPTION="Munge your 'has' (works with Moo, Moose and Mouse)"
 HOMEPAGE="
 https://metacpan.org/release/MooseX-MungeHas
 https://github.com/tobyink/p5-moosex-mungehas
