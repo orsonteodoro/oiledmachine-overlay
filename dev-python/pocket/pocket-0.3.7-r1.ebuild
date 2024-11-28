@@ -24,7 +24,7 @@ https://github.com/tapanpandita/pocket/archive/v${PV}.tar.gz
 fi
 S="${WORKDIR}/${P}"
 
-DESCRIPTION="A python wrapper for the pocket api"
+DESCRIPTION="A Python wrapper for the Pocket API"
 HOMEPAGE="https://github.com/tapanpandita/pocket/"
 LICENSE="BSD"
 RESTRICT="mirror"
