@@ -956,7 +956,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/model-index | Create a source of truth for ML model results and browse it on Papers with Code |
 | dev-python/moviepy | Video editing with Python |
 | dev-python/mujoco | Multi-Joint dynamics with Contact. A general purpose physics simulator. |
-| dev-python/multi-agent-ale-py | The Arcade Learning Environment (ALE) is a platform for AI research |
+| dev-python/multi-agent-ale-py | A fork of the the Arcade Learning Environment (ALE) platform for AI research with multiplayer support |
 | dev-python/murmurhash | 💥 Cython bindings for MurmurHash2 |
 | dev-python/mypy | Optional static typing for Python |
 | dev-python/myst-parser | An extended commonmark compliant parser, with bridges to docutils/sphinx |
