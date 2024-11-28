@@ -35,11 +35,11 @@ Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
 +        flags_broken = self._context.config.substs.get("MOZ_DISABLE_BROKEN_FLAGS")
 +        if not flags_prev:
 +            pass
-+        else
++        else:
 +            optimize_flags = flags_prev
 +        if not flags_broken:
 +            pass
-+        else
++        else:
 +            optimize_flags += flags_broken
 +        return optimize_flags
  

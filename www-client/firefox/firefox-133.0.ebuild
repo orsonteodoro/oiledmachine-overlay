@@ -117,7 +117,7 @@ declare -A CFLAGS_RDEPEND=(
 	["media-libs/dav1d"]=">=;-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
 	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
 )
-EBUILD_MAINTAINER_MODE=0
+EBUILD_MAINTAINER_MODE=1
 FFMPEG_COMPAT=(
 	"0/59.61.61" # 7.0
 	"0/58.60.60" # 6.0
@@ -956,7 +956,7 @@ ewarn
 		return 1
 	fi
 
-	if use clang && ! tc-ld-is-mold ; then
+	if tc-is-clang && ! tc-ld-is-mold ; then
 		if ! has_version -b "sys-devel/lld:${LLVM_SLOT}" ; then
 ewarn
 ewarn "sys-devel/lld:${LLVM_SLOT} is missing!"
@@ -2492,7 +2492,7 @@ einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 	if use pgo ; then
 		mozconfig_add_options_ac '+pgo' MOZ_PGO=1
 
-		if use clang ; then
+		if tc-is-clang ; then
 			# Used in build/pgo/profileserver.py
 			export LLVM_PROFDATA="llvm-profdata"
 		fi
@@ -2511,7 +2511,7 @@ einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 			--disable-real-time-tracing
 
 		if is-flag '-g*' ; then
-			if use clang ; then
+			if tc-is-clang ; then
 				mozconfig_add_options_ac 'from CFLAGS' --enable-debug-symbols=$(get-flag '-g*')
 			else
 				mozconfig_add_options_ac 'from CFLAGS' --enable-debug-symbols
