@@ -977,7 +977,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/optax | Optax is a gradient processing and optimization library for JAX. |
 | dev-python/optree | tree is a library for working with nested data structures |
 | dev-python/orbax | Orbax is a library providing common utilities for JAX users. |
-| dev-python/orbax-checkpoint | Orbax Checkpoint |
+| dev-python/orbax-checkpoint | A checkpointing library for Orbax |
 | dev-python/pathlib-abc | Python base classes for rich path objects |
 | dev-python/pathy | A simple, flexible, offline capable, cloud storage with a Python path-like interface |
 | dev-python/patiencediff | A Patience Diff implementation in Python |

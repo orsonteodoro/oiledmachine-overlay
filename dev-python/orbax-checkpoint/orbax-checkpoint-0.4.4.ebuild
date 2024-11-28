@@ -29,7 +29,7 @@ else
 	inherit pypi
 fi
 
-DESCRIPTION="Orbax Checkpoint"
+DESCRIPTION="A checkpointing library for Orbax"
 HOMEPAGE="
 https://github.com/google/orbax/tree/main/checkpoint
 https://pypi.org/project/orbax-checkpoint
