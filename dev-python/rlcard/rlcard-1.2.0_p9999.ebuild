@@ -25,7 +25,7 @@ https://github.com/datamllab/rlcard/archive/refs/tags/${PV}.tar.gz
 fi
 S="${WORKDIR}/${P}"
 
-DESCRIPTION="Reinforcement Learning / AI Bots in Card (Poker) Games - Blackjack, Leduc, Texas, DouDizhu, Mahjong, UNO."
+DESCRIPTION="Reinforcement Learning or AI bots for card games like Blackjack, Leduc, Texas, DouDizhu, Mahjong, UNO"
 HOMEPAGE="
 	http://www.rlcard.org/
 	https://github.com/datamllab/rlcard

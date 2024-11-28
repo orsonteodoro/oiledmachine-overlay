@@ -1021,7 +1021,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/pyv4l2 | A simple Video4Linux2 (v4l2) library for Python |
 | dev-python/pyvips | Python bindings for libvips |
 | dev-python/rlax | A library of reinforcement learning building blocks in JAX. |
-| dev-python/rlcard | Reinforcement Learning / AI Bots in Card (Poker) Games - Blackjack, Leduc, Texas, DouDizhu, Mahjong, UNO. |
+| dev-python/rlcard | Reinforcement Learning or AI bots for card games like Blackjack, Leduc, Texas, DouDizhu, Mahjong, UNO |
 | dev-python/runs | Run a block of text as a subprocess |
 | dev-python/scipy | Scientific algorithms library for Python |
 | dev-python/sentencepiece | Unsupervised text tokenizer for neural network based text generation |
