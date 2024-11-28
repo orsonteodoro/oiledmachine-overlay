@@ -1149,7 +1149,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-libs/vaapi-drivers | A metapackage for libva drivers |
 | media-libs/vips | VIPS Image Processing Library |
 | media-libs/woff2 | Encode/decode WOFF2 font format |
-| media-plugins/RadeonProRenderBlenderAddon | This hardware-agnostic rendering plug-in for Blender uses accurate ray-tracing technology to produce images and animations of your scenes, and provides real-time interactive rendering and continuous adjustment of effects. |
+| media-plugins/RadeonProRenderBlenderAddon | A Blender rendering plug-in for accurate ray-tracing to produce images and animations of your scenes, providing real-time interactive rendering and continuous adjustment of effects. |
 | media-plugins/RadeonProRenderMaterialLibrary | Radeon ProRender for Blender Material Library for Linux |
 | media-plugins/filmic-blender | Film Emulsion-Like Camera Rendering Transforms for Blender |
 | media-plugins/gst-plugins-a52dec | ATSC A/52 audio decoder plugin for GStreamer |
