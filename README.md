@@ -1025,7 +1025,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/runs | Run a block of text as a subprocess |
 | dev-python/scipy | Scientific algorithms library for Python |
 | dev-python/sentencepiece | Unsupervised text tokenizer for Neural Network-based text generation. |
-| dev-python/setuptools-gettext | setuptools plugin for building mo files |
+| dev-python/setuptools-gettext | A setuptools plugin for building mo files |
 | dev-python/setuptools-git-versioning | Use git repo data (latest tag, current commit hash, etc) for building a version number according PEP-440 |
 | dev-python/shimmy | An API conversion tool for popular external reinforcement learning environments |
 | dev-python/simple-parsing | A small utility for simplifying and cleaning up argument parsing scripts. |
