@@ -799,7 +799,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-libs/icu | International Components for Unicode |
 | dev-libs/jemalloc | Jemalloc is a general-purpose scalable concurrent allocator |
 | dev-libs/jemalloc-usd | Jemalloc is a general-purpose scalable concurrent allocator |
-| dev-libs/leveldb | a fast key-value storage library written at Google |
+| dev-libs/leveldb | A fast key-value storage library |
 | dev-libs/libappimage | Implements functionality for dealing with AppImage files |
 | dev-libs/libdatachannel | C/C++ WebRTC network library featuring Data Channels, Media Transport, and WebSockets |
 | dev-libs/libfmt | Small, safe and fast formatting library |

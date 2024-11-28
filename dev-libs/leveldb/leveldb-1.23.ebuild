@@ -7,7 +7,7 @@ inherit cmake multilib-minimal toolchain-funcs
 
 SRC_URI="https://github.com/google/leveldb/archive/refs/tags/${PV}.tar.gz -> ${P}.tar.gz"
 
-DESCRIPTION="a fast key-value storage library written at Google"
+DESCRIPTION="A fast key-value storage library"
 HOMEPAGE="http://leveldb.org/ https://github.com/google/leveldb"
 LICENSE="BSD"
 KEYWORDS="~amd64 ~arm64"
