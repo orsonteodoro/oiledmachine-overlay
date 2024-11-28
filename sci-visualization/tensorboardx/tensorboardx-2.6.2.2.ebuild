@@ -28,7 +28,7 @@ https://github.com/lanpa/tensorboardX/archive/refs/tags/v${PV}.tar.gz
 	"
 fi
 
-DESCRIPTION="TensorBoardX lets you watch Tensors Flow without Tensorflow"
+DESCRIPTION="TensorBoardX lets you watch tensors flow without TensorFlow"
 HOMEPAGE="
 	https://github.com/lanpa/tensorboardX
 	https://pypi.org/project/tensorboardX

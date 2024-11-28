@@ -1406,7 +1406,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sci-visualization/tensorboard-data-server | Fast data loading for TensorBoard |
 | sci-visualization/tensorboard-plugin-profile | Clean up the public namespace of your package! |
 | sci-visualization/tensorboard-plugin-wit | What-If Tool TensorBoard plugin |
-| sci-visualization/tensorboardx | TensorBoardX lets you watch Tensors Flow without Tensorflow |
+| sci-visualization/tensorboardx | TensorBoardX lets you watch tensors flow without TensorFlow |
 | sys-apps/c2tcp | C2TCP: A Flexible Cellular TCP to Meet Stringent Delay Requirements. |
 | sys-apps/cellular-traces-nyc | Cellular Traces Collected in New York City for different scenarios |
 | sys-apps/cellular-traces-y2018 | Cellular Traces Collected in New York City for different scenarios |
