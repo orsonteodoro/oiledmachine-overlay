@@ -835,7 +835,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-perl/Alien-caca | Alien package for the Colored ASCII Art library |
 | dev-perl/FFI-Platypus | Write Perl bindings to non-Perl libraries with FFI. No XS required. |
 | dev-perl/Mojo-DOM58 | Minimalistic HTML/XML DOM parser with CSS selectors |
-| dev-perl/MooseX-MungeHas | munge your |
+| dev-perl/MooseX-MungeHas | munge your 'has' (works with Moo, Moose and Mouse) |
 | dev-perl/PerlX-Maybe | return a pair only if they are both defined |
 | dev-perl/PerlX-Maybe-XS | XS backend for PerlX::Maybe |
 | dev-perl/Term-Caca | A perl interface for libcaca (Colour AsCii Art library) |
