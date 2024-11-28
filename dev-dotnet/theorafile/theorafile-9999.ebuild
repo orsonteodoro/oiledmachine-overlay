@@ -7,7 +7,7 @@ MY_PV="$(ver_cut 1-3 ${PV})"
 
 inherit dotnet git-r3 multilib-minimal
 
-DESCRIPTION="Theorafile - Ogg Theora Video Decoder Library"
+DESCRIPTION="An Ogg Theora Video Decoder Library"
 HOMEPAGE="https://github.com/FNA-XNA/Theorafile"
 LICENSE="ZLIB"
 KEYWORDS="~amd64 ~arm64 ~arm64-macos"
