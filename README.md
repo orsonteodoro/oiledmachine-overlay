@@ -1389,7 +1389,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sci-libs/tensorflow-io | Dataset, streaming, and file system extensions maintained by TensorFlow SIG-IO |
 | sci-libs/tensorflow-metadata | Utilities for passing TensorFlow-related metadata between tools |
 | sci-libs/tensorflow-probability | Probabilistic reasoning and statistical analysis in TensorFlow |
-| sci-libs/tensorflow-text | Text processing in Tensorflow |
+| sci-libs/tensorflow-text | Text processing in TensorFlow |
 | sci-libs/tensorstore | Library for reading and writing large multi-dimensional arrays |
 | sci-libs/tf-slim | TensorFlow-Slim: A lightweight library for defining, training and evaluating complex models in TensorFlow |
 | sci-libs/torchaudio | Data manipulation and transformation for audio signal processing, powered by PyTorch |

@@ -120,7 +120,7 @@ https://github.com/tensorflow/text/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="Text processing in Tensorflow"
+DESCRIPTION="Text processing in TensorFlow"
 HOMEPAGE="
 	https://github.com/tensorflow/text
 	https://pypi.org/project/tensorflow-text/
