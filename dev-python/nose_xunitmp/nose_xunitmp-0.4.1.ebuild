@@ -27,7 +27,7 @@ https://github.com/Ignas/nose_xunitmp/archive/${EGIT_COMMIT}.tar.gz
 	"
 fi
 
-DESCRIPTION="nosetest xunit plugin multiprocessor support"
+DESCRIPTION="A nosetest xunit plugin with multiprocessor support"
 HOMEPAGE="
 	https://github.com/Ignas/nose_xunitmp
 	https://pypi.org/nose_xunitmp

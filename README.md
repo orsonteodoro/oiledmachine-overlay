@@ -965,7 +965,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/neural-compressor | State of the art low-bit LLM quantization (INT8/FP8/INT4/FP4/NF4) & sparsity; leading model compression techniques on TensorFlow, PyTorch, and ONNX Runtime |
 | dev-python/nnef-parser | The NNEF parser |
 | dev-python/nnef-tools | NNEF Tools |
-| dev-python/nose_xunitmp | nosetest xunit plugin multiprocessor support |
+| dev-python/nose_xunitmp | A nosetest xunit plugin with multiprocessor support |
 | dev-python/num2words | Modules to convert numbers to words. |
 | dev-python/numba | NumPy aware dynamic Python compiler using LLVM |
 | dev-python/numpy | Fast array and numerical python library |
