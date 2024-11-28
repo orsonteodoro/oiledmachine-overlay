@@ -810,7 +810,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-libs/nccl-rdma-sharp-plugins | RDMA and SHARP plugins for nccl library |
 | dev-libs/nxjson | Very small JSON parser written in C. |
 | dev-libs/protobuf | An extensible mechanism for serializing structured data |
-| dev-libs/pugixml | |
+| dev-libs/pugixml | Light-weight, simple, and fast XML parser for C++ with XPath support |
 | dev-libs/rapidjson | A fast JSON parser/generator for C++ with both SAX/DOM style API |
 | dev-libs/rccl | ROCm Communication Collectives Library (RCCL) |
 | dev-libs/rccl-rdma-sharp-plugins | rccl-rdma-sharp plugin enables RDMA and Switch based collectives (SHARP) with AMD's RCCL library |

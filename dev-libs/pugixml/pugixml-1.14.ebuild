@@ -8,8 +8,7 @@ inherit cmake-multilib
 SRC_URI="https://github.com/zeux/${PN}/releases/download/v${PV}/${P}.tar.gz"
 S="${WORKDIR}/${PN}-$(ver_cut 1-2 ${PV})"
 
-DESCRIPTION=\
-"Light-weight, simple, and fast XML parser for C++ with XPath support"
+DESCRIPTION="Light-weight, simple, and fast XML parser for C++ with XPath support"
 HOMEPAGE="
 	https://pugixml.org/
 	https://github.com/zeux/pugixml/
