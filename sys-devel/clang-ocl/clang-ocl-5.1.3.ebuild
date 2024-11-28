@@ -25,7 +25,7 @@ https://github.com/ROCm/clang-ocl/archive/refs/tags/rocm-${PV}.tar.gz
 	"
 fi
 
-DESCRIPTION="OpenCL compilation with clang compiler."
+DESCRIPTION="OpenCL compilation with the Clang compiler"
 HOMEPAGE="https://github.com/ROCm/clang-ocl"
 LICENSE="
 	(
