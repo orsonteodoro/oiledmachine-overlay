@@ -8,7 +8,7 @@ EAPI=8
 
 inherit font
 
-DESCRIPTION="NotoColorEmoji is colored emojis"
+DESCRIPTION="A prebuilt font for colored emojis"
 HOMEPAGE="https://www.google.com/get/noto/#emoji-qaae-color"
 LICENSE="OFL-1.1"
 KEYWORDS="~amd64"
