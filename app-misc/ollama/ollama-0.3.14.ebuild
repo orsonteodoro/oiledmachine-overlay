@@ -1702,7 +1702,7 @@ https://github.com/nomic-ai/kompute/archive/${KOMPUTE_COMMIT}.tar.gz
 	"
 fi
 
-DESCRIPTION="Get up and running with Llama 3, Mistral, Gemma, and other local large language models (LLMs)."
+DESCRIPTION="Get up and running with Llama 3, Mistral, Gemma, and other local large language models (LLMs) synonymous with AI chatbots or AI assistants."
 HOMEPAGE="https://ollama.com"
 # If the LLM is marked all-rights-reserved, it is a placeholder until it is
 # resolved by the model gallery or on discovery.

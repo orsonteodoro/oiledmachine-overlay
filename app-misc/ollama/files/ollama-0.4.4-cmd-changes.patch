@@ -1,12 +1,13 @@
 --- a/cmd/cmd.go.orig	2024-11-22 16:14:51.000000000 -0800
 +++ b/cmd/cmd.go	2024-11-25 11:26:48.741318441 -0800
-@@ -17,9 +17,11 @@ import (
+@@ -17,9 +17,12 @@ import (
  	"net"
  	"net/http"
  	"os"
 +	"os/exec" // oteodoro:  added line
  	"os/signal"
  	"path/filepath"
++	"regexp" // oteodoro:  added line
  	"runtime"
 +	"sort" // oteodoro:  added line
  	"strconv"
