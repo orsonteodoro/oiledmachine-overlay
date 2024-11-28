@@ -1488,7 +1488,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | www-client/surf | a simple web browser based on WebKit/GTK+ |
 | www-misc/ddgr | DuckDuckGo from the terminal |
 | www-misc/mahimahi | Web performance measurement toolkit |
-| www-misc/socli | Stack overflow command line client. Search and browse stack overflow without leaving the terminal |
+| www-misc/socli | A search and browse Stack Overflow command line terminal client |
 | www-servers/civetweb | CivetWeb is an embedded C++ web server |
 | x11-libs/cairo | A vector graphics library with cross-device output support |
 | x11-libs/startup-notification | Application startup notification and feedback library |
