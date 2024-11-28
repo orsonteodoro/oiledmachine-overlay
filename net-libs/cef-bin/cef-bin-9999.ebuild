@@ -48,7 +48,7 @@ inherit chromium-2 cmake flag-o-matic linux-info virtualx
 KEYWORDS="~arm ~arm64 ~amd64"
 S="${WORKDIR}" # Dummy
 
-DESCRIPTION="Chromium Embedded Framework (CEF). A simple framework for \
+DESCRIPTION="Chromium Embedded Framework (CEF) is a simple framework for \
 embedding Chromium-based browsers in other applications."
 LICENSE="
 	BSD

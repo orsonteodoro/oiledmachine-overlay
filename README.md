@@ -1331,7 +1331,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | net-im/caprine | Elegant Facebook Messenger desktop app |
 | net-im/chatterino | Chat client for https://twitch.tv |
 | net-libs/Thunder | Thunder (aka WPEFramework) |
-| net-libs/cef-bin | Chromium Embedded Framework (CEF). A simple framework for embedding Chromium-based browsers in other applications. |
+| net-libs/cef-bin | Chromium Embedded Framework (CEF) is a simple framework for embedding Chromium-based browsers in other applications. |
 | net-libs/google-cloud-cpp | Google Cloud Client Library for C++ |
 | net-libs/grpc | Modern open source high performance RPC framework |
 | net-libs/libavtp | Open source implementation of Audio Video Transport Protocol (AVTP) specified in IEEE 1722-2016 spec. |
