@@ -1387,7 +1387,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sci-libs/tensorflow-estimator | A high-level TensorFlow API that greatly simplifies machine learning programming |
 | sci-libs/tensorflow-hub | Clean up the public namespace of your package! |
 | sci-libs/tensorflow-io | Dataset, streaming, and file system extensions maintained by TensorFlow SIG-IO |
-| sci-libs/tensorflow-metadata | Utilities for passing TensorFlow-related metadata between tools |
+| sci-libs/tensorflow-metadata | Utilities for passing TensorFlow related metadata between tools |
 | sci-libs/tensorflow-probability | Probabilistic reasoning and statistical analysis in TensorFlow |
 | sci-libs/tensorflow-text | Text processing in TensorFlow |
 | sci-libs/tensorstore | Library for reading and writing large multi-dimensional arrays |
