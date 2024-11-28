@@ -87,7 +87,7 @@ https://github.com/USCiLab/cereal/archive/${EGIT_CEREALLIB_COMMIT}.tar.gz
 	-> cereal_lib-${EGIT_CEREALLIB_COMMIT}.tar.gz
 "
 
-DESCRIPTION="Multi-Joint dynamics with Contact. A general purpose physics \
+DESCRIPTION="MuJoCo (Multi-Joint dynamics with Contact) is a general purpose physics \
 simulator."
 HOMEPAGE="
 https://mujoco.org/

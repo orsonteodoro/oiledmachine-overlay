@@ -75,7 +75,7 @@ https://github.com/tinyobjloader/tinyobjloader/archive/${EGIT_TINYOBJLOADER_COMM
 	-> tinyobjloader-${EGIT_TINYOBJLOADER_COMMIT}.tar.gz
 "
 
-DESCRIPTION="Multi-Joint dynamics with Contact. A general purpose physics \
+DESCRIPTION="MuJoCo (Multi-Joint dynamics with Contact) is a general purpose physics \
 simulator."
 HOMEPAGE="
 https://mujoco.org/
