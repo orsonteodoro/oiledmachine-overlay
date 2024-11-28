@@ -10,7 +10,7 @@ inherit distutils-r1
 KEYWORDS="~amd64 ~x86"
 SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
 
-DESCRIPTION="color scales in python for humans"
+DESCRIPTION="Color scales in Python for humans"
 HOMEPAGE="https://github.com/plotly/colorlover"
 LICENSE="MIT"
 SLOT="0"
