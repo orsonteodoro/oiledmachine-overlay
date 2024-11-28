@@ -120,7 +120,7 @@ declare -A CFLAGS_RDEPEND=(
 )
 DBUS_PV="0.60"
 DBUS_GLIB_PV="0.60"
-EBUILD_MAINTAINER_MODE=1
+EBUILD_MAINTAINER_MODE=0
 FFMPEG_COMPAT=(
 	"0/59.61.61" # 7.0
 	"0/58.60.60" # 6.0
@@ -1652,6 +1652,7 @@ eerror "  \`cp -a ${S}/toolkit/content/license.html ${MY_OVERLAY_DIR}/licenses/$
 eerror
 			die
 		fi
+einfo "License file and fingerprint is up to date."
 	else
 	# For users
 		if [[ "${actual_fp}" != "${LICENSE_FINGERPRINT}" ]] ; then

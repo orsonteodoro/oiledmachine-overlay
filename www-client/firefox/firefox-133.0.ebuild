@@ -117,7 +117,7 @@ declare -A CFLAGS_RDEPEND=(
 	["media-libs/dav1d"]=">=;-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
 	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
 )
-EBUILD_MAINTAINER_MODE=1
+EBUILD_MAINTAINER_MODE=0
 FFMPEG_COMPAT=(
 	"0/59.61.61" # 7.0
 	"0/58.60.60" # 6.0
@@ -1590,6 +1590,7 @@ eerror "  \`cp -a ${S}/toolkit/content/license.html ${MY_OVERLAY_DIR}/licenses/$
 eerror
 			die
 		fi
+einfo "License file and fingerprint is up to date."
 	else
 	# For users
 		if [[ "${actual_fp}" != "${LICENSE_FINGERPRINT}" ]] ; then
