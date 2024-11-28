@@ -36,7 +36,7 @@ else
 fi
 S="${WORKDIR}/${PARENT_P}/python"
 
-DESCRIPTION="Google's Protocol Buffers - Python bindings"
+DESCRIPTION="Python bindings for Google's Protocol Buffers"
 HOMEPAGE="
 	https://developers.google.com/protocol-buffers/
 	https://pypi.org/project/protobuf/

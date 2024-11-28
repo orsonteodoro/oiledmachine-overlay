@@ -991,7 +991,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/preshed | 💥 Cython hash tables that assume keys are pre-hashed |
 | dev-python/pretrainedmodels | Pretrained ConvNets for pytorch: NASNet, ResNeXt, ResNet, InceptionV4, InceptionResnetV2, Xception, DPN, etc. |
 | dev-python/proglog | Logs and progress bars manager for Python |
-| dev-python/protobuf | Google's Protocol Buffers - Python bindings |
+| dev-python/protobuf | Python bindings for Google's Protocol Buffers |
 | dev-python/py-stackexchange | A Python binding for the StackExchange API |
 | dev-python/py3c | A Python 2/3 compatibility layer for C extensions |
 | dev-python/pyaudio | Python bindings for PortAudio |
