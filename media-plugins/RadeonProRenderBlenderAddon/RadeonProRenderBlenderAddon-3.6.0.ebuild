@@ -199,7 +199,7 @@ https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderSDKKernels/archive/${
 "
 
 DESCRIPTION="A Blender rendering plug-in for accurate ray-tracing to produce \
-images and animations of your scenes, providing real-time interactive \
+images and animations of scenes and providing real-time interactive \
 rendering and continuous adjustment of effects."
 HOMEPAGE="https://www.amd.com/en/technologies/radeon-prorender-blender"
 # The default license is Apache-2.0, the rest are third party.
