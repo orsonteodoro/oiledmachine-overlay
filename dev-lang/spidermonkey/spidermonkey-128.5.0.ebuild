@@ -10,6 +10,7 @@ EAPI="8"
 # 128.1.0 -> 128.2.0
 # 128.2.0 -> 128.3.0
 # 128.3.1 -> 128.4.0
+# 128.4.0 -> 128.5.0
 
 CPU_FLAGS_ARM=(
 	cpu_flags_arm_neon
@@ -22,9 +23,9 @@ MY_PN="mozjs"
 MY_PV="${PV/_pre*}"
 
 # MITIGATION_LAST_UPDATE is the same as firefox esr ebuild
-MITIGATION_DATE="Oct 29, 2024" # Advisory date
-MITIGATION_LAST_UPDATE=1730147160 # From `date +%s -d "2024-10-28 13:26"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-56/"
+MITIGATION_DATE="Nov 26, 2024" # Advisory date
+MITIGATION_LAST_UPDATE=1732571280 # From `date +%s -d "2024-11-25 13:48"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-64/"
 MOZ_ESR="yes"
 MOZ_PN="firefox"
 MOZ_PV="${PV}"
@@ -49,7 +50,7 @@ if [[ "${PV}" == *"_rc"* ]] ; then
 fi
 
 # Patch version
-FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-04.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-06.tar.xz"
 #SPIDERMONKEY_PATCHSET="spidermonkey-${PV%%.*}-patches-01.tar.xz"
 SPIDERMONKEY_PATCHSET="spidermonkey-128-patches-02.tar.xz"
 PATCH_URIS=(
@@ -60,9 +61,13 @@ PATCH_URIS=(
 PYTHON_COMPAT=( "python3_"{10..11} )
 PYTHON_REQ_USE="ncurses,ssl,xml(+)"
 
+RUST_MIN_VER="1.76" # Corresponds to llvm 17
+RUST_NEEDS_LLVM=1
+RUST_PV="${RUST_MIN_VER}"
+
 WANT_AUTOCONF="2.1"
 
-inherit autotools check-reqs dhms flag-o-matic llvm-r1 multiprocessing prefix python-any-r1 toolchain-funcs
+inherit autotools check-reqs dhms flag-o-matic llvm-r1 multiprocessing prefix python-any-r1 rust toolchain-funcs
 
 KEYWORDS="~amd64 ~arm ~arm64 ~riscv ~x86"
 S="${WORKDIR}/firefox-${PV%_*}"
@@ -114,7 +119,7 @@ RUST_CDEPEND="
 	llvm_slot_17? (
 		|| (
 			=dev-lang/rust-1.77*
-			=dev-lang/rust-1.75*
+			=dev-lang/rust-1.76*
 			=dev-lang/rust-1.75*
 			=dev-lang/rust-1.74*
 			=dev-lang/rust-1.73*
@@ -344,8 +349,9 @@ pkg_setup() {
 		check-reqs_pkg_setup
 
 		llvm-r1_pkg_setup
+		rust_pkg_setup
 
-		if use clang && use lto && tc-ld-is-lld ; then
+		if false && use clang && use lto && tc-ld-is-lld ; then
 			local version_lld=$(ld.lld --version 2>/dev/null \
 				| awk '{ print $2 }')
 			if [[ -n "${version_lld}" ]] ; then
@@ -367,7 +373,7 @@ eerror "Failed to read used LLVM version from rustc!"
 				die
 			fi
 
-			if ver_test "${version_lld}" -ne "${version_llvm_rust}" ; then
+			if false && ver_test "${version_lld}" -ne "${version_llvm_rust}" ; then
 eerror
 eerror "Rust is using LLVM version ${version_llvm_rust} but ld.lld version"
 eerror "belongs to LLVM version ${version_lld}."
@@ -622,7 +628,6 @@ eerror "JIT must be turned on"
 	mozconfig_add_options_ac 'Gentoo default' \
 		--host="${CBUILD:-${CHOST}}" \
 		--target="${CHOST}" \
-		--disable-ctype \
 		--disable-jemalloc \
 		--disable-smoosh \
 		--disable-strip \
@@ -646,11 +651,9 @@ eerror "JIT must be turned on"
 	if use debug ; then
 		mozconfig_add_options_ac '+debug' --disable-optimize
 		mozconfig_add_options_ac '+debug' --enable-debug-symbols
-		mozconfig_add_options_ac '+debug' --enable-real-time-tracing
 	else
 		mozconfig_add_options_ac '-debug' --enable-optimize
 		mozconfig_add_options_ac '-debug' --disable-debug-symbols
-		mozconfig_add_options_ac '-debug' --disable-real-time-tracing
 	fi
 
 	if use rust-simd ; then

@@ -16,7 +16,7 @@ SPIDERMONKEY_PATCHSET="spidermonkey-115-patches-02.tar.xz"
 LLVM_MAX_SLOT=18
 LLVM_COMPAT=( {18..15} ) # Limited by rust
 
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..11} )
 PYTHON_REQ_USE="ncurses,ssl,xml(+)"
 
 MY_PN="mozjs"
@@ -25,9 +25,9 @@ MY_PV="${PV/_pre*}" # Handle Gentoo pre-releases
 MY_MAJOR=$(ver_cut 1)
 
 # MITIGATION_LAST_UPDATE is the same as firefox esr ebuild
-MITIGATION_DATE="Oct 29, 2024" # Advisory date
-MITIGATION_LAST_UPDATE=1730147160 # From `date +%s -d "2024-10-28 13:26"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-57/"
+MITIGATION_DATE="Nov 26, 2024" # Advisory date
+MITIGATION_LAST_UPDATE=1732572180 # From `date +%s -d "2024-11-25 14:03"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-65/"
 MOZ_ESR="yes"
 
 MOZ_PV=${PV}
@@ -62,11 +62,15 @@ PATCH_URIS=(
 	https://dev.gentoo.org/~juippis/mozilla/patchsets/${SPIDERMONKEY_PATCHSET}
 )
 
+RUST_MIN_VER="1.65" # Corresponds to llvm 15
+RUST_NEEDS_LLVM=1
+RUST_PV="${RUST_MIN_VER}"
+
 WANT_AUTOCONF="2.1"
 
-inherit autotools check-reqs dhms flag-o-matic llvm multiprocessing prefix python-any-r1 toolchain-funcs
+inherit autotools check-reqs dhms flag-o-matic llvm multiprocessing prefix python-any-r1 rust toolchain-funcs
 
-KEYWORDS="amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~sparc x86"
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
 S="${WORKDIR}/firefox-${MY_PV}/js/src"
 SRC_URI="
 	${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}.source.tar.xz
@@ -141,7 +145,7 @@ RUST_CDEPEND="
 	llvm_slot_17? (
 		|| (
 			=dev-lang/rust-1.77*
-			=dev-lang/rust-1.75*
+			=dev-lang/rust-1.76*
 			=dev-lang/rust-1.75*
 			=dev-lang/rust-1.74*
 			=dev-lang/rust-1.73*
@@ -354,8 +358,9 @@ pkg_setup() {
 		check-reqs_pkg_setup
 
 		llvm_pkg_setup
+		rust_pkg_setup
 
-		if use clang && use lto && tc-ld-is-lld ; then
+		if false && use clang && use lto && tc-ld-is-lld ; then
 			local version_lld=$(ld.lld --version 2>/dev/null | awk '{ print $2 }')
 			[[ -n ${version_lld} ]] && version_lld=$(ver_cut 1 "${version_lld}")
 			[[ -z ${version_lld} ]] && die "Failed to read ld.lld version!"
@@ -364,7 +369,7 @@ pkg_setup() {
 			[[ -n ${version_llvm_rust} ]] && version_llvm_rust=$(ver_cut 1 "${version_llvm_rust}")
 			[[ -z ${version_llvm_rust} ]] && die "Failed to read used LLVM version from rustc!"
 
-			if ver_test "${version_lld}" -ne "${version_llvm_rust}" ; then
+			if false && ver_test "${version_lld}" -ne "${version_llvm_rust}" ; then
 eerror "Rust is using LLVM version ${version_llvm_rust} but ld.lld version belongs to LLVM version ${version_lld}."
 eerror "You will be unable to link ${CATEGORY}/${PN}. To proceed you have the following options:"
 eerror "  - Manually switch rust version using 'eselect rust' to match used LLVM version"
