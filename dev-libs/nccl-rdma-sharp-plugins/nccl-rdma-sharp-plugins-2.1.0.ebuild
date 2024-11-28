@@ -12,7 +12,7 @@ https://github.com/Mellanox/nccl-rdma-sharp-plugins/archive/refs/tags/v${PV}.tar
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="RDMA and SHARP plugins for nccl library"
+DESCRIPTION="RDMA and SHARP plugins for the NCCL library"
 HOMEPAGE="https://github.com/Mellanox/nccl-rdma-sharp-plugins"
 LICENSE="
 	BSD
