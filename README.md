@@ -963,8 +963,8 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/namex | Clean up the public namespace of your package! |
 | dev-python/nashpy | A Python library for 2 player games |
 | dev-python/neural-compressor | State of the art low-bit LLM quantization (INT8/FP8/INT4/FP4/NF4) & sparsity; leading model compression techniques on TensorFlow, PyTorch, and ONNX Runtime |
-| dev-python/nnef-parser | The NNEF parser |
-| dev-python/nnef-tools | NNEF Tools |
+| dev-python/nnef-parser | A parser to add support for neural network NNEF files |
+| dev-python/nnef-tools | Convert neural networks models to NNEF format |
 | dev-python/nose_xunitmp | A nosetest xunit plugin with multiprocessor support |
 | dev-python/num2words | Modules to convert numbers to words. |
 | dev-python/numba | NumPy aware dynamic Python compiler using LLVM |

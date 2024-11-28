@@ -24,7 +24,7 @@ https://github.com/KhronosGroup/NNEF-Tools/archive/refs/tags/nnef-v${PV}.tar.gz
 	"
 fi
 
-DESCRIPTION="NNEF Tools"
+DESCRIPTION="Convert neural networks models to NNEF format"
 HOMEPAGE="https://github.com/KhronosGroup/NNEF-Tools/tree/main/nnef_tools-pyproject"
 LICENSE="
 	Apache-2.0
