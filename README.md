@@ -841,7 +841,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-perl/Term-Caca | A perl interface for libcaca (Colour AsCii Art library) |
 | dev-perl/Test-Vars | Detects unused variables in perl modules |
 | dev-perl/Test2-Tools-URL | Compare a URL in your Test2 test |
-| dev-perl/URI-git | git URI scheme |
+| dev-perl/URI-git | URI handler for git scheme |
 | dev-php/grpc | High-performance RPC framework (PHP libraries) |
 | dev-php/libcaca | A library that creates colored ASCII-art graphics |
 | dev-python/Farama-Notifications | Gymnasium Notices |

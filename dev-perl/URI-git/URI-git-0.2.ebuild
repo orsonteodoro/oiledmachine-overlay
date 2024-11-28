@@ -8,7 +8,7 @@ DIST_AUTHOR="MIYAGAWA"
 DIST_VERSION="0.02"
 inherit perl-module
 
-DESCRIPTION="git URI scheme"
+DESCRIPTION="URI handler for git scheme"
 HOMEPAGE="
 https://github.com/miyagawa/uri-git
 "
