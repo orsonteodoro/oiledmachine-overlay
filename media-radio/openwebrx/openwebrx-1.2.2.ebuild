@@ -63,7 +63,7 @@ https://github.com/jketterl/openwebrx/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="Open source, multi-user SDR receiver software with a web interface"
+DESCRIPTION="A multi-user SDR receiver software with a web interface"
 HOMEPAGE="https://www.openwebrx.de/"
 LICENSE="AGPL-3"
 RESTRICT="mirror"
