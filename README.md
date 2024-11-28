@@ -1083,7 +1083,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-util/rocm-validation-suite | The ROCm Validation Suite is a system administrator’s and cluster manager's tool for detecting and troubleshooting common problems affecting AMD GPU(s) running in a high-performance computing environment. |
 | dev-util/rocm_bandwidth_test | Bandwidth test for ROCm |
 | dev-util/rocminfo | ROCm Application for Reporting System Info |
-| dev-util/rocprofiler | Callback/Activity Library for Performance tracing AMD GPU's |
+| dev-util/rocprofiler | The ROC profiler library for profiling with perf-counters and derived metrics |
 | dev-util/roctracer | Callback/Activity Library for Performance tracing AMD GPU's |
 | dev-util/synp | Convert yarn.lock to package-lock.json and vice versa |
 | dev-util/theia | Eclipse Theia is a cloud & desktop IDE framework implemented in TypeScript. |

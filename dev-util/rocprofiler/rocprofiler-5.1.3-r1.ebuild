@@ -29,7 +29,7 @@ https://github.com/ROCm-Developer-Tools/${PN}/archive/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="Callback/Activity Library for Performance tracing AMD GPU's"
+DESCRIPTION="The ROC profiler library for profiling with perf-counters and derived metrics"
 HOMEPAGE="https://github.com/ROCm/rocprofiler"
 LICENSE="
 	(
