@@ -1,0 +1,14 @@
+diff '--color=auto' -urp pytorch-2.5.1.orig/torch/__init__.py pytorch-2.5.1/torch/__init__.py
+--- pytorch-2.5.1.orig/torch/__init__.py	2024-11-09 02:31:36.673785116 -0800
++++ pytorch-2.5.1/torch/__init__.py	2024-11-09 02:33:32.167929094 -0800
+@@ -1951,7 +1951,7 @@ def _manager_path():
+     return path.encode("utf-8")
+ 
+ 
+-_C._initExtension(_manager_path())
++_C._initExtension(b"/usr/bin/torch_shm_manager")
+ 
+ del _manager_path
+ 
+Only in pytorch-2.5.1/torch: __init__.py.orig
+Only in pytorch-2.5.1/torch: __init__.py.rej

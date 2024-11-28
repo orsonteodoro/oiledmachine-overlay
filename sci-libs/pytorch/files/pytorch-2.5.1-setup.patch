@@ -1,0 +1,13 @@
+diff '--color=auto' -urp pytorch-2.5.1.orig/setup.py pytorch-2.5.1/setup.py
+--- pytorch-2.5.1.orig/setup.py	2024-11-09 02:35:08.438382973 -0800
++++ pytorch-2.5.1/setup.py	2024-11-09 02:35:57.777591016 -0800
+@@ -238,6 +238,7 @@ import setuptools.command.install
+ import setuptools.command.sdist
+ from setuptools import Extension, find_packages, setup
+ from setuptools.dist import Distribution
++sys.path[:0] = os.getcwd()
+ from tools.build_pytorch_libs import build_caffe2
+ from tools.generate_torch_version import get_torch_version
+ from tools.setup_helpers.cmake import CMake
+Only in pytorch-2.5.1: setup.py.orig
+Only in pytorch-2.5.1: setup.py.rej
