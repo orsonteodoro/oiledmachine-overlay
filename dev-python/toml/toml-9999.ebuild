@@ -28,7 +28,7 @@ https://github.com/uiri/toml/archive/refs/tags/${PV}.tar.gz
 	"
 fi
 
-DESCRIPTION="Python lib for TOML"
+DESCRIPTION="A Python library for TOML"
 HOMEPAGE="
 	https://github.com/uiri/toml
 	https://pypi.org/project/toml

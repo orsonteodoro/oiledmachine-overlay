@@ -1039,7 +1039,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/tf-keras | The TensorFlow-specific implementation of the Keras API |
 | dev-python/thinc | 🔮 A refreshing functional take on deep learning, compatible with your favorite libraries |
 | dev-python/timm | PyTorch Image Models |
-| dev-python/toml | Python lib for TOML |
+| dev-python/toml | A Python library for TOML |
 | dev-python/trfl | trfl is a library of building blocks for reinforcement learning algorithms. |
 | dev-python/triton | Development repository for the Triton language and compiler |
 | dev-python/triton | The Triton language and compiler |
