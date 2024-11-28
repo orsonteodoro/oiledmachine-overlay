@@ -1445,7 +1445,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sys-devel/llvm-roc-alt | AOCC for ROCm™ |
 | sys-devel/llvm-roc-alt-symlinks | llvm-roc-alt symlinks |
 | sys-devel/llvm-roc-symlinks | llvm-roc symlinks |
-| sys-devel/llvm-toolchain-symlinks | Symlinks to use LLVM on binutils-free system |
+| sys-devel/llvm-toolchain-symlinks | Symlinks to use LLVM on a binutils-free system |
 | sys-devel/llvmgold | LLVMgold plugin symlink for autoloading |
 | sys-devel/mlir | Multi Level Intermediate Representation for LLVM |
 | sys-devel/mold | A Modern Linker |

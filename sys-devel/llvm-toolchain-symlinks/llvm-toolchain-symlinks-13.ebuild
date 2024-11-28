@@ -12,7 +12,7 @@ KEYWORDS="
 ~x64-macos
 "
 
-DESCRIPTION="Symlinks to use LLVM on binutils-free system"
+DESCRIPTION="Symlinks to use LLVM on a binutils-free system"
 HOMEPAGE="https://wiki.gentoo.org/wiki/Project:LLVM"
 LICENSE="public-domain"
 SLOT="${PV}"
