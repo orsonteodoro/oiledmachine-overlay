@@ -1153,7 +1153,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-plugins/RadeonProRenderMaterialLibrary | Radeon ProRender for Blender Material Library for Linux |
 | media-plugins/filmic-blender | Film Emulsion-Like Camera Rendering Transforms for Blender |
 | media-plugins/gst-plugins-a52dec | ATSC A/52 audio decoder plugin for GStreamer |
-| media-plugins/gst-plugins-adaptivedemux2 | Adaptive demuxer plugins for Gstreamer |
+| media-plugins/gst-plugins-adaptivedemux2 | Adaptive demuxer plugins for GStreamer |
 | media-plugins/gst-plugins-aes | AES encryption/decryption plugin for GStreamer |
 | media-plugins/gst-plugins-amr | AMRNB encoder/decoder and AMRWB decoder plugin for GStreamer |
 | media-plugins/gst-plugins-analyticsoverlay | The analyticsoverlay plugin can highlight and assign AI categorized labels to detected objects for GStreamer |
