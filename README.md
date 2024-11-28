@@ -1420,7 +1420,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sys-apps/firejail | Security sandbox for any type of processes |
 | sys-apps/lact | Linux AMDGPU Controller |
 | sys-apps/npm | The package manager for JavaScript |
-| sys-apps/oomd | oomd is a userspace Out-Of-Memory (OOM) killer |
+| sys-apps/oomd | A userspace Out-Of-Memory (OOM) killer |
 | sys-apps/orca | Orca: Towards Mastering Congestion Control In the Internet |
 | sys-apps/pnpm | Fast, disk space efficient package manager |
 | sys-apps/yarn | Fast, reliable, and secure dependency management. |

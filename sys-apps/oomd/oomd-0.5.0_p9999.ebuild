@@ -9,7 +9,7 @@ EGIT_REPO_URI="https://github.com/facebookincubator/oomd.git"
 
 inherit git-r3 linux-info meson toolchain-funcs
 
-DESCRIPTION="oomd is a userspace Out-Of-Memory (OOM) killer"
+DESCRIPTION="A userspace Out-Of-Memory (OOM) killer"
 LICENSE="
 	GPL-2
 	test? ( all-rights-reserved )
