@@ -1292,7 +1292,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-plugins/gst-plugins-ttml | TTML subtitles support for GStreamer |
 | media-plugins/gst-plugins-twolame | MPEG2 encoder plugin for GStreamer |
 | media-plugins/gst-plugins-uriplaylistbin | A redirect ebuild for gst-plugins-uriplaylistbin |
-| media-plugins/gst-plugins-uvch264 | UVC compliant H264 encoding cameras plugin for GStreamer |
+| media-plugins/gst-plugins-uvch264 | UVC compliant H.264 encoding cameras plugin for GStreamer |
 | media-plugins/gst-plugins-v4l2 | V4L2 source/sink plugin for GStreamer |
 | media-plugins/gst-plugins-vaapi | Hardware accelerated video codecs through VA-API for GStreamer |
 | media-plugins/gst-plugins-voaacenc | AAC encoder plugin for GStreamer |

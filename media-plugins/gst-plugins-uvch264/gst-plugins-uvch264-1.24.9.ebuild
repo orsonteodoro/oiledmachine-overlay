@@ -9,7 +9,7 @@ inherit gstreamer-meson
 
 KEYWORDS="~amd64 ~arm64 ~x86"
 
-DESCRIPTION="UVC compliant H264 encoding cameras plugin for GStreamer"
+DESCRIPTION="UVC compliant H.264 encoding cameras plugin for GStreamer"
 RDEPEND="
 	dev-libs/libgudev:=[${MULTILIB_USEDEP}]
 	virtual/libusb:1[${MULTILIB_USEDEP}]
