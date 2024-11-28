@@ -203,10 +203,11 @@ NABIS=0 # Global variable
 NASM_PV="2.14.02"
 NODE_VERSION=18
 OFLAG="" # Global variable
-PYTHON_COMPAT=( python3_{10..11} )
+PYTHON_COMPAT=( "python3_"{10..11} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
+RUST_MIN_VER="1.76" # Corresponds to llvm 17
 RUST_NEEDS_LLVM=1
-RUST_PV="1.73" # Min required for llvm 17
+RUST_PV="${RUST_MIN_VER}"
 SPEECH_DISPATCHER_PV="0.11.4-r1"
 WANT_AUTOCONF="2.1"
 XKBCOMMON_PV="0.4.1"
@@ -238,8 +239,12 @@ SRC_URI="
 	${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}.source.tar.xz
 	${PATCH_URIS[@]}
 	wasm? (
-		amd64? ( https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SDK_VER/.*/}/wasi-sdk-${WASI_SDK_VER}-x86_64-linux.tar.gz )
-		arm64? ( https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SDK_VER/.*/}/wasi-sdk-${WASI_SDK_VER}-arm64-linux.tar.gz )
+		amd64? (
+			https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SDK_VER/.*/}/wasi-sdk-${WASI_SDK_VER}-x86_64-linux.tar.gz
+		)
+		arm64? (
+			https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SDK_VER/.*/}/wasi-sdk-${WASI_SDK_VER}-arm64-linux.tar.gz
+		)
 	)
 "
 
@@ -670,7 +675,7 @@ RUST_CDEPEND="
 	llvm_slot_17? (
 		|| (
 			=dev-lang/rust-1.77*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.75*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.76*[${MULTILIB_USEDEP}]
 			=dev-lang/rust-1.75*[${MULTILIB_USEDEP}]
 			=dev-lang/rust-1.74*[${MULTILIB_USEDEP}]
 			=dev-lang/rust-1.73*[${MULTILIB_USEDEP}]
