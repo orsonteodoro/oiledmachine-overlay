@@ -55,7 +55,7 @@ https://github.com/openucx/xucg/archive/${UCG_COMMIT}.tar.gz
 	-> xucg-${UCG_COMMIT:0:7}.tar.gz
 "
 
-DESCRIPTION="Unified Communication X"
+DESCRIPTION="Unified Communication X is a network High Performance Computing (HPC) framework"
 HOMEPAGE="https://openucx.org"
 LICENSE="BSD"
 SLOT="0"

@@ -1428,7 +1428,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sys-cluster/knem | High-Performance Intra-Node MPI Communication |
 | sys-cluster/openmpi | A high-performance message passing library (MPI) |
 | sys-cluster/rdc | The ROCm™ Data Center Tool simplifies the administration and addresses key infrastructure challenges in AMD GPUs in cluster and datacenter environments. |
-| sys-cluster/ucx | Unified Communication X |
+| sys-cluster/ucx | Unified Communication X is a network High Performance Computing (HPC) framework |
 | sys-cluster/xpmem | XPMEM is a Linux kernel module that enables a process to map the memory of another process into its virtual address space. |
 | sys-devel/DPC++ | oneAPI Data Parallel C++ compiler |
 | sys-devel/aocc | The AOCC compiler system |
