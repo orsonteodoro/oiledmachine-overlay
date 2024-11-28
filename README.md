@@ -853,7 +853,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/aafigure | ASCII art to image converter |
 | dev-python/aioquic | QUIC and HTTP/3 implementation in Python |
 | dev-python/ale-py | The Arcade Learning Environment (ALE) is a platform for AI research |
-| dev-python/anyio | Compatibility layer for multiple asynchronous event loop implementations |
+| dev-python/anyio | A compatibility layer for multiple asynchronous event loop implementations |
 | dev-python/array-record | A file format that achieves a new frontier of IO efficiency |
 | dev-python/astunparse | Astun parser for python |
 | dev-python/autorom | A tool to automate installing Atari ROMs for the Arcade Learning Environment |

@@ -13,7 +13,7 @@ inherit distutils-r1 pypi
 
 KEYWORDS="~amd64 ~arm64 ~arm64-macos"
 
-DESCRIPTION="Compatibility layer for multiple asynchronous event loop implementations"
+DESCRIPTION="A compatibility layer for multiple asynchronous event loop implementations"
 HOMEPAGE="
 	https://github.com/agronholm/anyio/
 	https://pypi.org/project/anyio/
