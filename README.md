@@ -1137,7 +1137,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-libs/opencolorio | A color management framework for visual effects and animation |
 | media-libs/opencv | A collection of algorithms and sample code for various computer vision problems |
 | media-libs/openimageio | A library for reading and writing images |
-| media-libs/openpgl | Generated headers and sources for OpenXR loader. |
+| media-libs/openpgl | Implements a set of representations and training algorithms needed to integrate path guiding into a renderer |
 | media-libs/opensubdiv | An Open-Source subdivision surface library |
 | media-libs/openusd | Universal Scene Description |
 | media-libs/openxr | Generated headers and sources for OpenXR loader. |

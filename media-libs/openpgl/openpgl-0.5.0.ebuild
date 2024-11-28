@@ -32,7 +32,7 @@ https://github.com/OpenPathGuidingLibrary/openpgl/archive/refs/tags/v${PV/_/-}.t
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="Generated headers and sources for OpenXR loader."
+DESCRIPTION="Implements a set of representations and training algorithms needed to integrate path guiding into a renderer"
 LICENSE="
 	Apache-2.0
 	BSD
