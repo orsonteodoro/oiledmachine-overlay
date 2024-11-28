@@ -16,7 +16,7 @@ https://github.com/barneygale/elevate/archive/${EGIT_COMMIT}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="Python library for requesting root privileges"
+DESCRIPTION="A Python library for requesting root privileges"
 HOMEPAGE="https://github.com/barneygale/elevate"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2 ${PV})"

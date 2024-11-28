@@ -896,7 +896,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/dopamine-rl | Dopamine is a research framework for fast prototyping of reinforcement learning algorithms. |
 | dev-python/ecos | Python interface for ECOS |
 | dev-python/editor | A Python library to open the default text editor |
-| dev-python/elevate | Python library for requesting root privileges |
+| dev-python/elevate | A Python library for requesting root privileges |
 | dev-python/encodec | State-of-the-art deep learning based audio codec supporting both mono 24 kHz audio and stereo 48 kHz audio. |
 | dev-python/etils | Collection of eclectic utils for python. |
 | dev-python/exhale | Automatic C++ library api documentation generation: breathe doxygen in and exhale it out |
