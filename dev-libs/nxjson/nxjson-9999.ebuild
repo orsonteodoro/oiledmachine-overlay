@@ -23,7 +23,7 @@ else
 	SRC_URI="FIXME"
 fi
 
-DESCRIPTION="Very small JSON parser written in C."
+DESCRIPTION="A very small JSON parser written in C"
 LICENSE="LGPL-3+"
 HOMEPAGE="https://github.com/yarosla/nxjson"
 SLOT="0/${EXPECTED_FINGERPRINT:0:7}"

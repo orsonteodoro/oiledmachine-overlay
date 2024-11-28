@@ -808,7 +808,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-libs/miniz | A lossless, high performance data compression library |
 | dev-libs/nccl | Optimized primitives for collective multi-GPU communication |
 | dev-libs/nccl-rdma-sharp-plugins | RDMA and SHARP plugins for nccl library |
-| dev-libs/nxjson | Very small JSON parser written in C. |
+| dev-libs/nxjson | A very small JSON parser written in C |
 | dev-libs/protobuf | An extensible mechanism for serializing structured data |
 | dev-libs/pugixml | Light-weight, simple, and fast XML parser for C++ with XPath support |
 | dev-libs/rapidjson | A fast JSON parser/generator for C++ with both SAX/DOM style API |
