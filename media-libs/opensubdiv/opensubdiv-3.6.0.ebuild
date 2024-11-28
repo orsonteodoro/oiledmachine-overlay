@@ -24,7 +24,7 @@ https://github.com/PixarAnimationStudios/OpenSubdiv/archive/v${MY_PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="An Open-Source subdivision surface library"
+DESCRIPTION="A subdivision surface library"
 HOMEPAGE="https://graphics.pixar.com/opensubdiv/docs/intro.html"
 # Modfied Apache-2.0 license, where section 6 has been replaced.
 # See for example CMakeLists.txt for details.
