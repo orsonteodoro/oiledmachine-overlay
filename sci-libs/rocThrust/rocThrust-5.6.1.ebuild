@@ -30,7 +30,7 @@ https://github.com/NVlabs/cub/archive/${CUB_COMMIT}.tar.gz
 	-> cub-${CUB_COMMIT:0:7}.tar.gz
 "
 
-DESCRIPTION="ROCm Thrust is used to run the ported Thrust parallel library on AMD GPUs"
+DESCRIPTION="A ported Thrust parallel library for AMD GPUs"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocThrust"
 LICENSE="
 	(
