@@ -28,7 +28,7 @@ https://github.com/Cadene/pretrained-models.pytorch/archive/${EGIT_COMMIT}.tar.g
 	"
 fi
 
-DESCRIPTION="Pretrained ConvNets for pytorch: NASNet, ResNeXt, ResNet, InceptionV4, InceptionResnetV2, Xception, DPN, etc."
+DESCRIPTION="Pretrained Convolutional Neural Networks for PyTorch:  NASNet, ResNeXt, ResNet, InceptionV4, InceptionResnetV2, Xception, DPN, etc."
 HOMEPAGE="
 	https://github.com/Cadene/pretrained-models.pytorch
 "

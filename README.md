@@ -989,7 +989,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/pocket | A Python wrapper for the Pocket API |
 | dev-python/portpicker | A module to find available network ports for testing. |
 | dev-python/preshed | 💥 Cython hash tables that assume keys are pre-hashed |
-| dev-python/pretrainedmodels | Pretrained ConvNets for pytorch: NASNet, ResNeXt, ResNet, InceptionV4, InceptionResnetV2, Xception, DPN, etc. |
+| dev-python/pretrainedmodels | Pretrained Convolutional Neural Networks for PyTorch:  NASNet, ResNeXt, ResNet, InceptionV4, InceptionResnetV2, Xception, DPN, etc. |
 | dev-python/proglog | Logs and progress bars manager for Python |
 | dev-python/protobuf | Python bindings for Google's Protocol Buffers |
 | dev-python/py-stackexchange | A Python binding for the StackExchange API |
