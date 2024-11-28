@@ -13,7 +13,7 @@ KEYWORDS="~amd64 ~ppc ~x86"
 S="${WORKDIR}/${MY_PN}"
 SRC_URI="http://lua.sqlite.org/index.cgi/zip/${MY_PN}.zip"
 
-DESCRIPTION="LuaSQLite3"
+DESCRIPTION="LuaSQLite 3 is a thin wrapper around the public domain SQLite3 database engine"
 HOMEPAGE="http://lua.sqlite.org"
 LICENSE="all-rights-reserved MIT"
 # The vanilla MIT license template does not include all rights reserved.

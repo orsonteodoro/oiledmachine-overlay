@@ -827,7 +827,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-libs/unittest++ | A lightweight unit testing framework for C++ |
 | dev-libs/utf8_range | Fast UTF-8 validation with Range algorithm (NEON+SSE4+AVX2) |
 | dev-lua/luafilesystem | File System Library for the Lua Programming Language |
-| dev-lua/luasqlite3 | LuaSQLite3 |
+| dev-lua/luasqlite3 | LuaSQLite 3 is a thin wrapper around the public domain SQLite3 database engine |
 | dev-lua/luaxml | A minimal set of XML processing funcs & simple XML<->Tables mapping |
 | dev-nodejs/acorn | A small, fast, JavaScript-based JavaScript parser Resources |
 | dev-perl/Alien-Build-Git | Alien::Build tools for interacting with git |
