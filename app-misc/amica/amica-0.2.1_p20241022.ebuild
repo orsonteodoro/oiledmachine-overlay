@@ -2805,7 +2805,7 @@ https://github.com/semperai/amica/archive/refs/tags/app-v${PV}.tar.gz
 fi
 NPM_TARBALL="${TARBALL}"
 
-DESCRIPTION="Amica is an open source interface for interactive communication with 3D characters with voice synthesis and speech recognition."
+DESCRIPTION="Amica is a customizable friendly interactive AI with 3D characters, voice synthesis, speech recognition, emotion engine"
 HOMEPAGE="
 	https://heyamica.com/
 	https://github.com/semperai/amica

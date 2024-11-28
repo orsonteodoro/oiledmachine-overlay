@@ -2773,7 +2773,7 @@ https://github.com/semperai/amica/commit/da5a3908fa5055cbb4651c21562038ebf308ac4
 # Fix ollamaChat by implementing new Ollama chat API.
 #   Reverting, broken
 
-DESCRIPTION="Amica is an open source interface for interactive communication with 3D characters with voice synthesis and speech recognition."
+DESCRIPTION="Amica is a customizable friendly interactive AI with 3D characters, voice synthesis, speech recognition, emotion engine"
 HOMEPAGE="
 	https://heyamica.com/
 	https://github.com/semperai/amica
