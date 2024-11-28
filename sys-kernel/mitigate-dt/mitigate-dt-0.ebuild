@@ -261,7 +261,7 @@ inherit mitigate-dt toolchain-funcs
 
 S="${WORKDIR}"
 
-DESCRIPTION="Enforce Denial of Service mitigations"
+DESCRIPTION="Enforce Data Tampering mitigations"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 VIDEO_CARDS=(

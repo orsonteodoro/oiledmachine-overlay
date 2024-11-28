@@ -1454,7 +1454,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sys-kernel/genkernel | Gentoo automatic kernel building scripts |
 | sys-kernel/gostcrypt-linux-crypto | GOST algorithms implementation for Linux Crypto subsystem |
 | sys-kernel/mitigate-dos | Enforce Denial of Service mitigations |
-| sys-kernel/mitigate-dt | Enforce Denial of Service mitigations |
+| sys-kernel/mitigate-dt | Enforce Data Tampering mitigations |
 | sys-kernel/mitigate-id | Enforce Information Disclosure mitigations |
 | sys-kernel/pcc | Performance-oriented Congestion Control |
 | sys-kernel/rock-dkms | ROCk DKMS kernel module |
