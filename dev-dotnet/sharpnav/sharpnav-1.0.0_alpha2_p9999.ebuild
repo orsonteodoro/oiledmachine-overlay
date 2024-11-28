@@ -6,7 +6,7 @@ EAPI=7
 
 inherit git-r3 lcnr
 
-DESCRIPTION="SharpNav is advanced pathfinding for C#"
+DESCRIPTION="SharpNav is an advanced pathfinding library for C#"
 HOMEPAGE="http://sharpnav.com"
 LICENSE="MIT"
 KEYWORDS="~amd64"
