@@ -17,7 +17,7 @@ https://github.com/Jeffser/Alpaca/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="An Ollama client made with GTK4 and Adwaita"
+DESCRIPTION="An Ollama AI client made with GTK4 and Adwaita"
 HOMEPAGE="
 	https://jeffser.com/alpaca
 	https://github.com/Jeffser/Alpaca
