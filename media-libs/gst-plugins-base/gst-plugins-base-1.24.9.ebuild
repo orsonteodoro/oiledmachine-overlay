@@ -43,7 +43,7 @@ KEYWORDS="
 ~amd64-linux ~arm64-macos ~x86-linux
 "
 
-DESCRIPTION="A based set of plugins meeting code quality and support needs for GStreamer"
+DESCRIPTION="A based set of plugins meeting code quality and support needs of GStreamer"
 HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="GPL-2+ LGPL-2+"
 IUSE="
