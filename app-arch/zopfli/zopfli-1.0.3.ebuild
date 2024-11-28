@@ -21,7 +21,7 @@ SRC_URI="
 	)
 "
 
-DESCRIPTION="Very good, but slow, deflate or zlib compression"
+DESCRIPTION="A very good, but slow, deflate or zlib compression"
 HOMEPAGE="https://github.com/google/zopfli/"
 LICENSE="
 	Apache-2.0

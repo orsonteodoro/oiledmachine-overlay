@@ -670,7 +670,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | app-arch/static-tools-squashfs-tools | squashfuse for static-tools |
 | app-arch/static-tools-squashfuse | squashfuse for static-tools |
 | app-arch/static-tools-zsyncmake | zsyncmake for static-tools |
-| app-arch/zopfli | Very good, but slow, deflate or zlib compression |
+| app-arch/zopfli | A very good, but slow, deflate or zlib compression |
 | app-benchmarks/mixbench | A GPU benchmark tool for evaluating GPUs and CPUs on mixed operational intensity kernels (CUDA, OpenCL, HIP, SYCL, OpenMP) |
 | app-benchmarks/opencl-benchmark | A small OpenCL benchmark program to measure peak GPU/CPU performance. |
 | app-benchmarks/transferbench | TransferBench is a utility capable of benchmarking simultaneous copies between user-specified devices (CPUs/GPUs) |
