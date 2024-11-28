@@ -12,8 +12,8 @@ https://gitlab.com/gambas/gambas/-/archive/${PV}/gambas-${PV}.tar.bz2
 "
 
 DESCRIPTION="Gambas is a free development environment and a full powerful \
-development platform based on a Basic interpreter with object extensionsand form \
-designer."
+development platform based on a Basic interpreter with object extensions and \
+form designer."
 HOMEPAGE="http://gambas.sourceforge.net/en/main.html"
 LICENSE="GPL-2"
 RESTRICT="mirror"

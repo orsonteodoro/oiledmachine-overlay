@@ -771,7 +771,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-go/protoc-gen-go-grpc | This tool generates Go language bindings of services in protobuf definition files for gRPC |
 | dev-java/grpc-java | High-performance RPC framework (Java libraries) |
 | dev-lang/classic-flang | Flang is a Fortran language front-end designed for integration with LLVM. |
-| dev-lang/gambas | Gambas is a free development environment and a full powerful development platform based on a Basic interpreter with object extensionsand form designer. |
+| dev-lang/gambas | Gambas is a free development environment and a full powerful development platform based on a Basic interpreter with object extensions and form designer. |
 | dev-lang/ispc | Intel® SPMD Program Compiler |
 | dev-lang/llvm-flang | LLVM Flang is a continuation of F18 to replace Classic Flang |
 | dev-lang/lua | A powerful light-weight programming language designed for extending applications |
