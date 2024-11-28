@@ -692,7 +692,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | app-misc/june | Local voice chatbot for engaging conversations, powered by Ollama, Hugging Face Transformers, and Coqui TTS Toolkit |
 | app-misc/liquidctl | Cross-platform tool and drivers for liquid coolers and other devices |
 | app-misc/llocal | Aiming to provide a seamless and privacy driven chatting experience with open-sourced technologies |
-| app-misc/ollama | Get up and running with Llama 3, Mistral, Gemma, and other language models. |
+| app-misc/ollama | Get up and running with Llama 3, Mistral, Gemma, and other local large language models (LLMs). |
 | app-misc/ssl-cert-snakeoil | A self-signed certificate required by some *.deb packages or projects |
 | app-shells/emoji-cli | Emoji completion on the command line |
 | app-shells/emojify | Emoji on the command line |
