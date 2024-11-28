@@ -21,7 +21,7 @@ https://github.com/ROCm-Developer-Tools/ROCgdb/archive/rocm-${PV}.tar.gz
 	"
 fi
 
-DESCRIPTION=""
+DESCRIPTION="Heterogeneous debugging for x86 and AMDGPU on ROCm™ software"
 HOMEPAGE="
 https://rocm.docs.amd.com/projects/ROCgdb/en/latest/
 https://github.com/ROCm-Developer-Tools/ROCgdb
