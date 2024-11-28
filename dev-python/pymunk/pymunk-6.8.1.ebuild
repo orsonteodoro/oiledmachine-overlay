@@ -29,8 +29,7 @@ https://github.com/viblo/Chipmunk2D/archive/${CHIPMUNK2D_COMMIT}.tar.gz
 fi
 S="${WORKDIR}/${P}"
 
-DESCRIPTION="Pymunk is a easy-to-use Pythonic 2d physics library that can be \
-used whenever you need 2d rigid body physics from Python"
+DESCRIPTION="A Pythonic 2D rigid body physics library"
 HOMEPAGE="
 http://www.pymunk.org/
 https://github.com/viblo/pymunk
