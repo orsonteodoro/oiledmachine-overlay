@@ -33,7 +33,7 @@ https://github.com/Farama-Foundation/Multi-Agent-ALE/archive/refs/tags/v${PV}.ta
 fi
 S="${WORKDIR}/${MY_PN}-${PV}"
 
-DESCRIPTION="The Arcade Learning Environment (ALE) -- a platform for AI research."
+DESCRIPTION="The Arcade Learning Environment (ALE) is a platform for AI research"
 HOMEPAGE="https://github.com/Farama-Foundation/Multi-Agent-ALE"
 LICENSE="
 	GPL-2
