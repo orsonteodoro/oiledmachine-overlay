@@ -1494,7 +1494,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | x11-libs/startup-notification | Application startup notification and feedback library |
 | x11-misc/aprs-symbols | aprs.fi APRS symbol set, high-resolution, vector |
 | x11-misc/sddm | Simple Desktop Display Manager |
-| x11-misc/xsnow | let it snow on your desktop and windows |
+| x11-misc/xsnow | Let it snow on your desktop and windows |
 | x11-themes/paper-icon-theme | Paper Icon Theme |
 | x11-wm/dwm | A dynamic window manager for X11 |
 | x11-wm/xpra | X Persistent Remote Apps (xpra) and Partitioning WM (parti) based on wimpiggy |
