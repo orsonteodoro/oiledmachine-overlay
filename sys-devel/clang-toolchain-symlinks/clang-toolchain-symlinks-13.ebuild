@@ -11,7 +11,7 @@ KEYWORDS="
 ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x64-macos
 "
 
-DESCRIPTION="Symlinks to use Clang on GCC-free system"
+DESCRIPTION="Symlinks to use Clang on a GCC-free system"
 HOMEPAGE="https://wiki.gentoo.org/wiki/Project:LLVM"
 LICENSE="public-domain"
 SLOT="${PV}"

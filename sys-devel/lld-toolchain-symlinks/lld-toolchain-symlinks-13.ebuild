@@ -9,7 +9,7 @@ SRC_URI=""
 S="${WORKDIR}"
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~x86"
 
-DESCRIPTION="Symlinks to use LLD on binutils-free system"
+DESCRIPTION="Symlinks to use LLD on a binutils-free system"
 HOMEPAGE="https://wiki.gentoo.org/wiki/Project:LLVM"
 LICENSE="public-domain"
 SLOT="${PV}"
