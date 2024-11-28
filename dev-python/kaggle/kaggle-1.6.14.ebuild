@@ -20,7 +20,7 @@ https://github.com/Kaggle/kaggle-api/archive/${EGIT_COMMIT}.tar.gz
 "
 #mirror://pypi/${PN:0:1}/${PN}/${PN}-${PV}.tar.gz
 
-DESCRIPTION="Official Kaggle API"
+DESCRIPTION="The Official Kaggle API"
 HOMEPAGE="https://github.com/Kaggle/kaggle-api"
 LICENSE="
 	Apache-2.0
