@@ -16,7 +16,7 @@ https://github.com/SFML/CSFML/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="Official binding of SFML for C"
+DESCRIPTION="The official binding of SFML for C"
 HOMEPAGE="https://www.sfml-dev.org/ https://github.com/SFML/CSFML/"
 LICENSE="ZLIB"
 SLOT="0/$(ver_cut 1-2 ${PV})"

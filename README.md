@@ -1109,7 +1109,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-libs/HIPRT | HIP RT is a ray tracing library in HIP |
 | media-libs/alure | The OpenAL Utility Toolkit |
 | media-libs/assimp | Importer library to import assets from 3D files |
-| media-libs/csfml | Official binding of SFML for C |
+| media-libs/csfml | The official binding of SFML for C |
 | media-libs/embree | Collection of high-performance ray tracing kernels |
 | media-libs/flac | free lossless audio encoder and decoder |
 | media-libs/glui | GLUI User Interface Library |
