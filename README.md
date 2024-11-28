@@ -819,7 +819,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-perl/Alien-Build-Git | Alien::Build tools for interacting with git |
 | dev-perl/Alien-FFI | Build and make available libffi |
 | dev-perl/Alien-caca | Alien package for the Colored ASCII Art library |
-| dev-perl/FFI-Platypus |  |
+| dev-perl/FFI-Platypus | Write Perl bindings to non-Perl libraries with FFI. No XS required. |
 | dev-perl/Mojo-DOM58 | Minimalistic HTML/XML DOM parser with CSS selectors |
 | dev-perl/MooseX-MungeHas | munge your   |
 | dev-perl/PerlX-Maybe | return a pair only if they are both defined |
@@ -859,7 +859,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/contextlib2 | contextlib2 is a backport of the standard library's contextlib module to earlier Python versions. |
 | dev-python/controlnet-aux | Auxillary models for controlnet |
 | dev-python/coqpit | Simple but maybe too simple config management through python data classes. We use it for machine learning. |
-| dev-python/coqui-tts | MPL-2.0 |
+| dev-python/coqui-tts | 🐸💬 - a deep learning toolkit for Text-to-Speech, battle-tested in research and production |
 | dev-python/coqui-tts-trainer | Create, fill a temporary directory |
 | dev-python/cuda-python | Python bindings for CUDA |
 | dev-python/cymem | 💥 Cython memory pool for RAII-style memory management |
@@ -990,7 +990,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/pylsqpack | Python bindings for ls-qpack |
 | dev-python/pymunk | Pymunk is a easy-to-use pythonic 2d physics library that can be   |
 | dev-python/pynvml | Python Bindings for the NVIDIA Management Library |
-| dev-python/pyperf |  |
+| dev-python/pyperf | Toolkit to run Python benchmarks |
 | dev-python/pyreadline3 | Windows implementation of the GNU readline library Resources |
 | dev-python/pysbd | 🐍💯pySBD (Python Sentence Boundary Disambiguation) is a rule-based sentence boundary detection that works out-of-the-box. |
 | dev-python/pytest-markdown-docs | Run pytest on markdown code fence blocks |
@@ -1042,7 +1042,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-ruby/libcaca | A library that creates colored ASCII-art graphics |
 | dev-util/DOCA-Host | DOCA-Host |
 | dev-util/HIPIFY | HIPIFY: Convert CUDA to Portable C++ Code |
-| dev-util/ROCgdb |  |
+| dev-util/ROCgdb | Heterogeneous debugging for x86 and AMDGPU on ROCm™ software |
 | dev-util/Tensile | Stretching GPU performance for GEMMs and tensor contractions |
 | dev-util/amd-smi | ROCm Application for Reporting System Info |
 | dev-util/android-ndk | The Android Native Development Kit |
@@ -1373,9 +1373,9 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sci-libs/tensorflow-estimator | A high-level TensorFlow API that greatly simplifies machine learning programming |
 | sci-libs/tensorflow-hub | Clean up the public namespace of your package! |
 | sci-libs/tensorflow-io | Dataset, streaming, and file system extensions maintained by   |
-| sci-libs/tensorflow-metadata |  |
+| sci-libs/tensorflow-metadata | Utilities for passing TensorFlow-related metadata between tools |
 | sci-libs/tensorflow-probability | Probabilistic reasoning and statistical analysis in TensorFlow |
-| sci-libs/tensorflow-text |  |
+| sci-libs/tensorflow-text | Text processing in Tensorflow |
 | sci-libs/tensorstore | Library for reading and writing large multi-dimensional arrays |
 | sci-libs/tf-slim | TensorFlow-Slim: A lightweight library for defining, training and   |
 | sci-libs/torchaudio | Data manipulation and transformation for audio signal processing, powered by PyTorch |
@@ -1444,7 +1444,6 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sys-kernel/mitigate-id | Enforce Information Disclosure mitigations |
 | sys-kernel/pcc | Performance-oriented Congestion Control |
 | sys-kernel/rock-dkms | ROCk DKMS kernel module |
-| sys-kernel/rock-dkms.bak | ROCk DKMS kernel module |
 | sys-libs/compiler-rt | Compiler runtime library for clang (built-in part) |
 | sys-libs/compiler-rt-sanitizers | Compiler runtime libraries for clang (sanitizers & xray) |
 | sys-libs/libbacktrace | C library that may be linked into a C/C++ program to produce symbolic backtraces |
@@ -1457,7 +1456,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sys-libs/zlib | Standard (de)compression library |
 | sys-power/cpupower-gui | This program is designed to allow you to change the frequency   |
 | sys-process/nvtop | GPU & Accelerator process monitoring |
-| sys-process/psdoom-ng | psdoom-ng |
+| sys-process/psdoom-ng | A First Person Shooter (FPS) process killer |
 | virtual/blender-lts | Virtual for Blender LTS |
 | virtual/blender-stable | Virtual for Blender stable |
 | virtual/kfd | Virtual for the amdgpu DRM (Direct Rendering Manager) kernel module |
