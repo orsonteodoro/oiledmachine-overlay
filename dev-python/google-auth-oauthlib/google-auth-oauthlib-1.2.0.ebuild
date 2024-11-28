@@ -21,7 +21,7 @@ https://github.com/googleapis/google-auth-library-python-oauthlib/archive/v${PV}
 "
 S="${WORKDIR}/${MY_P}"
 
-DESCRIPTION="Google Authentication Library"
+DESCRIPTION="oauthlib integration for the Google Auth library"
 HOMEPAGE="
 	https://github.com/googleapis/google-auth-library-python-oauthlib/
 	https://pypi.org/project/google-auth-oauthlib/

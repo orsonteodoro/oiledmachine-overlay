@@ -912,7 +912,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/gitdb | IO of git-style object databases |
 | dev-python/google | Python bindings to the Google search engine. |
 | dev-python/google-auth | Google Authentication Library |
-| dev-python/google-auth-oauthlib | Google Authentication Library |
+| dev-python/google-auth-oauthlib | oauthlib integration for the Google Auth library |
 | dev-python/grpcio | High-performance RPC framework (python libraries) |
 | dev-python/grpcio-testing | Testing utilities for gRPC Python |
 | dev-python/grpcio-tools | Protobuf code generator for gRPC |
