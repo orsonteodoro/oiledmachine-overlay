@@ -939,7 +939,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/labmaze | A standalone release of DeepMind Lab's maze generator with Python bindings. |
 | dev-python/langcodes | A Python library for working with and comparing language codes. |
 | dev-python/language-data | Create, fill a temporary directory |
-| dev-python/librosa | A python package for music and audio analysis. |
+| dev-python/librosa | A Python package for music and audio analysis |
 | dev-python/lightning | The Deep Learning framework to train, deploy, and ship AI products Lightning fast. |
 | dev-python/lightning-api-access | Lightning Frontend Showing how a given API can be accessed |
 | dev-python/lightning-app | Use Lightning Apps to build everything from production-ready, multi-cloud ML systems to simple research demos. |

@@ -41,7 +41,7 @@ https://github.com/librosa/librosa-test-data/archive/${TEST_DATA_COMMIT}.tar.gz
 	"
 fi
 
-DESCRIPTION="A python package for music and audio analysis."
+DESCRIPTION="A Python package for music and audio analysis"
 HOMEPAGE="https://github.com/librosa/librosa"
 LICENSE="ISC"
 SLOT="0/$(ver_cut 1-2 ${PV})"
