@@ -6,7 +6,7 @@
 EAPI=8
 inherit autotools
 
-DESCRIPTION="psdoom-ng"
+DESCRIPTION="A First Person Shooter (FPS) process killer"
 HOMEPAGE="https://github.com/orsonteodoro/psdoom-ng"
 LICENSE="GPL-2"
 SLOT="0"
