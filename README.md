@@ -1185,7 +1185,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-plugins/gst-plugins-faac | AAC audio encoder plugin for GStreamer |
 | media-plugins/gst-plugins-faad | AAC audio decoder plugin |
 | media-plugins/gst-plugins-fallbackswitch | A redirect ebuild for gst-plugins-fallbackswitch |
-| media-plugins/gst-plugins-fdkaac | Fraunhofer AAC audio codec for GStreamer |
+| media-plugins/gst-plugins-fdkaac | Fraunhofer AAC audio codec plugin for GStreamer |
 | media-plugins/gst-plugins-ffv1 | A redirect ebuild for gst-plugins-ffv1 |
 | media-plugins/gst-plugins-flac | FLAC encoder/decoder/tagger plugin for GStreamer |
 | media-plugins/gst-plugins-flite | The Flite speech synthesis plugin for GStreamer |

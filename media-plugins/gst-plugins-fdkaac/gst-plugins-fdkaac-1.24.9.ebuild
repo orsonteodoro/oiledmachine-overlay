@@ -10,7 +10,7 @@ inherit gstreamer-meson
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
-DESCRIPTION="Fraunhofer AAC audio codec for GStreamer"
+DESCRIPTION="Fraunhofer AAC audio codec plugin for GStreamer"
 RDEPEND="
 	media-libs/fdk-aac[${MULTILIB_USEDEP}]
 	~media-libs/gst-plugins-base-${PV}:1.0[${MULTILIB_USEDEP}]
