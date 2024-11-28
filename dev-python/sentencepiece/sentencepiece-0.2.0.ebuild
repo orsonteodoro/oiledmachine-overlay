@@ -25,7 +25,7 @@ https://github.com/google/sentencepiece/archive/refs/tags/v${PV}.tar.gz
 fi
 S="${WORKDIR}/${PN}-${PV}"
 
-DESCRIPTION="Unsupervised text tokenizer for Neural Network-based text generation."
+DESCRIPTION="Unsupervised text tokenizer for neural network based text generation"
 HOMEPAGE="https://github.com/google/sentencepiece"
 LICENSE="
 	Apache-2.0
