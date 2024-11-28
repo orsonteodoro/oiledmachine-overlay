@@ -962,7 +962,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/myst-parser | An extended commonmark compliant parser, with bridges to docutils/sphinx |
 | dev-python/namex | Clean up the public namespace of your package! |
 | dev-python/nashpy | A python library for 2 player games. |
-| dev-python/neural-compressor | SOTA low-bit LLM quantization (INT8/FP8/INT4/FP4/NF4) & sparsity; leading model compression techniques on TensorFlow, PyTorch, and ONNX Runtime |
+| dev-python/neural-compressor | State of the art low-bit LLM quantization (INT8/FP8/INT4/FP4/NF4) & sparsity; leading model compression techniques on TensorFlow, PyTorch, and ONNX Runtime |
 | dev-python/nnef-parser | The NNEF parser |
 | dev-python/nnef-tools | NNEF Tools |
 | dev-python/nose_xunitmp | nosetest xunit plugin multiprocessor support |

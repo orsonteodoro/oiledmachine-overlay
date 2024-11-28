@@ -38,8 +38,8 @@ https://github.com/intel/neural-compressor/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="SOTA low-bit LLM quantization (INT8/FP8/INT4/FP4/NF4) & sparsity; \
-leading model compression techniques on TensorFlow, PyTorch, and ONNX Runtime "
+DESCRIPTION="State of the art low-bit LLM quantization (INT8/FP8/INT4/FP4/NF4) & sparsity; \
+leading model compression techniques on TensorFlow, PyTorch, and ONNX Runtime"
 HOMEPAGE="
 https://intel.github.io/neural-compressor/
 https://github.com/intel/neural-compressor
