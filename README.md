@@ -1002,7 +1002,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/pyfiglet | An implementation of figlet written in Python |
 | dev-python/pyglfw | Python bindings for GLFW |
 | dev-python/pylsqpack | Python bindings for ls-qpack |
-| dev-python/pymunk | Pymunk is a easy-to-use pythonic 2d physics library that can be used whenever you need 2d rigid body physics from Python |
+| dev-python/pymunk | Pymunk is a easy-to-use Pythonic 2d physics library that can be used whenever you need 2d rigid body physics from Python |
 | dev-python/pynvml | Python Bindings for the NVIDIA Management Library |
 | dev-python/pyperf | Toolkit to run Python benchmarks |
 | dev-python/pyreadline3 | Windows implementation of the GNU readline library Resources |
