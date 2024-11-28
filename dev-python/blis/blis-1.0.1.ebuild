@@ -20,7 +20,7 @@ https://github.com/explosion/blis/archive/${BLIS_COMMIT}.tar.gz
 	-> blis-${BLIS_COMMIT:0:7}.tar.gz
 "
 
-DESCRIPTION="💥 Fast matrix-multiplication as a self-contained Python library – no system dependencies!"
+DESCRIPTION="A self-contained 💥 fast matrix-multiplication Python library without system dependencies!"
 HOMEPAGE="
 	https://github.com/explosion/blis
 	https://pypi.org/project/blis

@@ -859,7 +859,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/autorom | A tool to automate installing Atari ROMs for the Arcade Learning Environment |
 | dev-python/autorom-accept-rom-license | AutoROM ROMs |
 | dev-python/barectf | Generator of ANSI C tracers which output CTF data streams |
-| dev-python/blis | 💥 Fast matrix-multiplication as a self-contained Python library – no system dependencies! |
+| dev-python/blis | A self-contained 💥 fast matrix-multiplication Python library without system dependencies! |
 | dev-python/box2d-py | A repackaged version of pybox2d |
 | dev-python/bsuite | bsuite is a collection of carefully-designed experiments that investigate core capabilities of a reinforcement learning (RL) agent |
 | dev-python/cachetools | Extensible memoizing collections and decorators |
