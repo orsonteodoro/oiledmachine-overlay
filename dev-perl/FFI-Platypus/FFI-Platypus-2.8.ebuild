@@ -8,7 +8,7 @@ DIST_VERSION="2.08"
 DIST_EXAMPLES=("examples/*")
 inherit perl-module
 
-DESCRIPTION=""
+DESCRIPTION="Write Perl bindings to non-Perl libraries with FFI. No XS required."
 HOMEPAGE="
 https://pl.atypus.org
 https://github.com/PerlFFI/FFI-Platypus
