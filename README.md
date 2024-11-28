@@ -699,7 +699,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | app-shells/loz | Loz is a command-line tool that enables your preferred LLM to execute system commands and utilize Unix pipes, integrating AI capabilities with other Unix tools. |
 | app-shells/ohmyzsh | A delightful community-driven framework for managing your zsh configuration that includes optional plugins and themes. |
 | app-shells/percol | Adds flavor of interactive filtering to the traditional pipe concept of shell |
-| app-shells/shell-gpt | A command-line productivity tool powered by OpenAI's GPT models. |
+| app-shells/shell-gpt | An AI command-line productivity tool powered by OpenAI's GPT models or Ollama local LLMs. |
 | app-text/aspell | Free and Open Source spell checker designed to replace Ispell |
 | app-text/enchant | Generic spell checking library |
 | app-text/hunspell | Spell checker, morphological analyzer library and command-line tool |

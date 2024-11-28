@@ -14,7 +14,7 @@ https://github.com/TheR1D/shell_gpt/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="A command-line productivity tool powered by OpenAI's GPT models."
+DESCRIPTION="An AI command-line productivity tool powered by OpenAI's GPT models or Ollama local LLMs."
 HOMEPAGE="https://github.com/TheR1D/shell_gpt"
 LICENSE="MIT"
 RESTRICT="test" # untested
