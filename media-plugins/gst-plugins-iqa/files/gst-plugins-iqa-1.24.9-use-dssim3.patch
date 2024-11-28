@@ -1,0 +1,107 @@
+Subject:  Use dssim 3.x C++ API
+Patch author:  Orson Teodoro
+Patch status:  Testing
+diff '--color=auto' -urp gst-plugins-bad-1.24.9.orig/ext/iqa/iqa.c gst-plugins-bad-1.24.9/ext/iqa/iqa.c
+--- gst-plugins-bad-1.24.9.orig/ext/iqa/iqa.c	2024-10-30 13:33:30.000000000 -0700
++++ gst-plugins-bad-1.24.9/ext/iqa/iqa.c	2024-11-12 13:34:02.691532591 -0800
+@@ -195,19 +195,13 @@ static gboolean
+ do_dssim (GstIqa * self, GstVideoFrame * ref, GstVideoFrame * cmp,
+     GstBuffer * outbuf, GstStructure * msg_structure, gchar * padname)
+ {
+-  dssim_attr *attr;
+-  gint y;
+-  unsigned char **ptrs, **ptrs2;
++  struct Dssim *d;
+   GstMapInfo ref_info;
+   GstMapInfo cmp_info;
+   GstMapInfo out_info;
+-  dssim_image *ref_image;
+-  dssim_image *cmp_image;
++  DssimImage *ref_image;
++  DssimImage *cmp_image;
+   double dssim;
+-  dssim_ssim_map map_meta;
+-  float *map;
+-  gint i;
+-  dssim_rgba *out;
+   GstStructure *dssim_structure;
+   gboolean ret = TRUE;
+ 
+@@ -230,36 +224,20 @@ do_dssim (GstIqa * self, GstVideoFrame *
+   gst_structure_get (msg_structure, "dssim", GST_TYPE_STRUCTURE,
+       &dssim_structure, NULL);
+ 
+-  attr = dssim_create_attr ();
+-  dssim_set_save_ssim_maps (attr, 1, 1);
++  d = dssim_new();
+ 
+   gst_buffer_map (ref->buffer, &ref_info, GST_MAP_READ);
+   gst_buffer_map (cmp->buffer, &cmp_info, GST_MAP_READ);
+   gst_buffer_map (outbuf, &out_info, GST_MAP_WRITE);
+-  out = (dssim_rgba *) out_info.data;
+-
+-  ptrs = g_malloc (sizeof (char **) * ref->info.height);
+-
+-  for (y = 0; y < ref->info.height; y++) {
+-    ptrs[y] = ref_info.data + (ref->info.width * 4 * y);
+-  }
+ 
+   ref_image =
+-      dssim_create_image (attr, ptrs, DSSIM_RGBA, ref->info.width,
+-      ref->info.height, 0.45455);
+-
+-  ptrs2 = g_malloc (sizeof (char **) * cmp->info.height);
+-
+-  for (y = 0; y < cmp->info.height; y++) {
+-    ptrs2[y] = cmp_info.data + (cmp->info.width * 4 * y);
+-  }
++      dssim_create_image_rgba (d, ref_info.data, ref->info.width,
++      ref->info.height);
+ 
+   cmp_image =
+-      dssim_create_image (attr, ptrs2, DSSIM_RGBA, cmp->info.width,
+-      cmp->info.height, 0.45455);
+-  dssim = dssim_compare (attr, ref_image, cmp_image);
+-
+-  map_meta = dssim_pop_ssim_map (attr, 0, 0);
++      dssim_create_image_rgba (d, cmp_info.data, cmp->info.width,
++      cmp->info.height);
++  dssim = dssim_compare (d, ref_image, cmp_image);
+ 
+   /* Comparing floats... should not be a big deal anyway */
+   if (self->ssim_threshold > 0 && dssim > self->ssim_threshold) {
+@@ -282,15 +260,6 @@ do_dssim (GstIqa * self, GstVideoFrame *
+   }
+ 
+   if (dssim > self->max_dssim) {
+-    map = map_meta.data;
+-
+-    for (i = 0; i < map_meta.width * map_meta.height; i++) {
+-      const float max = 1.0 - map[i];
+-      const float maxsq = max * max;
+-      out[i] = (dssim_rgba) {
+-      .r = to_byte (max * 3.0),.g = to_byte (maxsq * 6.0),.b =
+-            to_byte (max / ((1.0 - map_meta.dssim) * 4.0)),.a = 255,};
+-    }
+     self->max_dssim = dssim;
+   }
+ 
+@@ -304,15 +273,12 @@ cleanup_return:
+ 
+   gst_structure_free (dssim_structure);
+ 
+-  free (map_meta.data);
+-  g_free (ptrs);
+-  g_free (ptrs2);
+   gst_buffer_unmap (ref->buffer, &ref_info);
+   gst_buffer_unmap (cmp->buffer, &cmp_info);
+   gst_buffer_unmap (outbuf, &out_info);
+-  dssim_dealloc_image (ref_image);
+-  dssim_dealloc_image (cmp_image);
+-  dssim_dealloc_attr (attr);
++  dssim_free_image (ref_image);
++  dssim_free_image (cmp_image);
++  dssim_free(d);
+ 
+   return ret;
+ }
