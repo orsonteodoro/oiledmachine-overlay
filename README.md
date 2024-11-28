@@ -744,7 +744,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-dotnet/fsharp-mono-bin | The F# compiler, F# core library, and F# editor tools |
 | dev-dotnet/gtk-sharp | GTK bindings for Mono |
 | dev-dotnet/gtk-sharp | Gtk# is a Mono/.NET binding to the cross platform Gtk+ GUI toolkit and the foundation of most GUI apps built with Mono |
-| dev-dotnet/libfreenect | Drivers and libraries for the Xbox Kinect device on Windows, Linux, and OS X |
+| dev-dotnet/libfreenect | Drivers and libraries for the Xbox Kinect |
 | dev-dotnet/mono-msbuild-bin | MSBuild is the build platform for .NET and VS. |
 | dev-dotnet/monodevelop-bin | MonoDevelop is a cross platform .NET IDE |
 | dev-dotnet/monodevelop-database-bin | Database Addin for MonoDevelop |
