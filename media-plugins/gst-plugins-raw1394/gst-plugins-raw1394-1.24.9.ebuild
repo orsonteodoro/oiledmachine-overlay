@@ -9,7 +9,7 @@ GST_PLUGINS_ENABLED="dv1394"
 
 inherit gstreamer-meson
 
-DESCRIPTION="Fiwewire DV/HDV capture plugin for GStreamer"
+DESCRIPTION="A FireWire DV/HDV capture plugin for GStreamer"
 KEYWORDS="~amd64 ~arm64 ~ppc ~ppc64 ~x86"
 RDEPEND="
 	>=media-libs/libiec61883-1.0.0[${MULTILIB_USEDEP}]

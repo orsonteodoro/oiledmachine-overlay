@@ -1246,7 +1246,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-plugins/gst-plugins-qt6 | A Qt6 video sink plugin for GStreamer |
 | media-plugins/gst-plugins-raptorq | A redirect ebuild for gst-plugins-raptorq |
 | media-plugins/gst-plugins-rav1e | A redirect ebuild for gst-plugins-rav1e |
-| media-plugins/gst-plugins-raw1394 | Fiwewire DV/HDV capture plugin for GStreamer |
+| media-plugins/gst-plugins-raw1394 | A FireWire DV/HDV capture plugin for GStreamer |
 | media-plugins/gst-plugins-regex | A redirect ebuild for gst-plugins-regex |
 | media-plugins/gst-plugins-reqwest | A redirect ebuild for gst-plugins-reqwest |
 | media-plugins/gst-plugins-resindvd | DVD playback support plugin for GStreamer |
