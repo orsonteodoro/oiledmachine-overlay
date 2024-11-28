@@ -8,7 +8,7 @@ inherit flag-o-matic java-pkg-2
 
 # GEN_EBUILD=1 # For generating download links and unpacking lists.
 
-DESCRIPTION="High-performance RPC framework (Java libraries)"
+DESCRIPTION="Java libraries for the high performance gRPC framework"
 HOMEPAGE="https://grpc.io"
 THIRD_PARTY_LICENSES="
 	custom
