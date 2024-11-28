@@ -1018,7 +1018,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/python-uinput | Pythonic API to Linux uinput module |
 | dev-python/pytorch-lightning | PyTorch Lightning is the lightweight PyTorch wrapper for ML researchers. Scale your models. Write less boilerplate. |
 | dev-python/pytube | Python tools for downloading YouTube Videos |
-| dev-python/pyv4l2 | A simple Video4Linux2 (v4l2) lib for Python |
+| dev-python/pyv4l2 | A simple Video4Linux2 (v4l2) library for Python |
 | dev-python/pyvips | Python bindings for libvips |
 | dev-python/rlax | A library of reinforcement learning building blocks in JAX. |
 | dev-python/rlcard | Reinforcement Learning / AI Bots in Card (Poker) Games - Blackjack, Leduc, Texas, DouDizhu, Mahjong, UNO. |
