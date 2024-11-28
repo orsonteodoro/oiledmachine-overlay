@@ -5,7 +5,7 @@
 # This ebuild will assist in updating blender to the latest LTS automatically.
 
 EAPI=8
-DESCRIPTION="Virtual for Blender LTS"
+DESCRIPTION="Virtual for Blender® LTS"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
 RDEPEND="~media-gfx/blender-${PV}"

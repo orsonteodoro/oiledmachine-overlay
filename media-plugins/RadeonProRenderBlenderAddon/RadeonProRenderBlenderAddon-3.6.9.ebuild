@@ -198,7 +198,7 @@ https://github.com/GPUOpen-LibrariesAndSDKs/RadeonProRenderSDKKernels/archive/${
 	-> ${HIPBIN_DF}
 "
 
-DESCRIPTION="A Blender rendering plug-in for accurate ray-tracing to produce \
+DESCRIPTION="A Blender® rendering plug-in for accurate ray-tracing to produce \
 images and animations of scenes and providing real-time interactive \
 rendering and continuous adjustment of effects."
 HOMEPAGE="https://www.amd.com/en/technologies/radeon-prorender-blender"

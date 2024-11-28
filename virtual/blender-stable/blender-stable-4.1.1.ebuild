@@ -5,7 +5,7 @@
 # This ebuild will assist in updating blender to the latest stable automatically.
 
 EAPI=8
-DESCRIPTION="Virtual for Blender stable"
+DESCRIPTION="Virtual for Blender® stable"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
 RDEPEND="~media-gfx/blender-${PV}"

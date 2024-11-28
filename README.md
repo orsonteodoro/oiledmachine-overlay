@@ -1149,9 +1149,9 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-libs/vaapi-drivers | A metapackage for libva drivers |
 | media-libs/vips | VIPS Image Processing Library |
 | media-libs/woff2 | Encode/decode WOFF2 font format |
-| media-plugins/RadeonProRenderBlenderAddon | A Blender rendering plug-in for accurate ray-tracing to produce images and animations of scenes and providing real-time interactive rendering and continuous adjustment of effects. |
-| media-plugins/RadeonProRenderMaterialLibrary | The Radeon™ ProRender for Blender Material Library |
-| media-plugins/filmic-blender | Film Emulsion-Like Camera Rendering Transforms for Blender |
+| media-plugins/RadeonProRenderBlenderAddon | A Blender® rendering plug-in for accurate ray-tracing to produce images and animations of scenes and providing real-time interactive rendering and continuous adjustment of effects. |
+| media-plugins/RadeonProRenderMaterialLibrary | The Radeon™ ProRender for Blender® Material Library |
+| media-plugins/filmic-blender | Film Emulsion-Like Camera Rendering Transforms for Blender® |
 | media-plugins/gst-plugins-a52dec | ATSC A/52 audio decoder plugin for GStreamer |
 | media-plugins/gst-plugins-adaptivedemux2 | Adaptive demuxer plugins for GStreamer |
 | media-plugins/gst-plugins-aes | AES encryption/decryption plugin for GStreamer |
@@ -1472,8 +1472,8 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sys-power/cpupower-gui | This program is designed to allow you to change the frequency limits of your cpu and its governor similar to cpupower. |
 | sys-process/nvtop | GPU & Accelerator process monitoring |
 | sys-process/psdoom-ng | A First Person Shooter (FPS) process killer |
-| virtual/blender-lts | Virtual for Blender LTS |
-| virtual/blender-stable | Virtual for Blender stable |
+| virtual/blender-lts | Virtual for Blender® LTS |
+| virtual/blender-stable | Virtual for Blender® stable |
 | virtual/kfd | Virtual for the amdgpu DRM (Direct Rendering Manager) kernel module |
 | virtual/linux-sources | Virtual for Linux kernel sources |
 | virtual/ot-sources-lts | Virtual for the ot-sources LTS ebuilds for |

@@ -18,7 +18,7 @@ else
 fi
 S="${WORKDIR}/${P}"
 
-DESCRIPTION="Film Emulsion-Like Camera Rendering Transforms for Blender"
+DESCRIPTION="Film Emulsion-Like Camera Rendering Transforms for Blender®"
 HOMEPAGE="https://sobotka.github.io/filmic-blender/"
 # No license on new files discovered or old files if any and no default licenses.
 # For commentary from the author about licensing numbers, see:
