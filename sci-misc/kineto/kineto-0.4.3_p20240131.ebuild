@@ -14,7 +14,7 @@ https://github.com/pytorch/${PN}/archive/${CommitId}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="part of the PyTorch Profiler"
+DESCRIPTION="A CPU+GPU Profiling library that provides access to timeline traces and hardware performance counters"
 HOMEPAGE="https://github.com/pytorch/kineto"
 LICENSE="BSD"
 RESTRICT="

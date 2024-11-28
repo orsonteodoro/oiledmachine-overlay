@@ -1396,7 +1396,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sci-libs/torchmetrics | PyTorch native Metrics |
 | sci-libs/torchvision | Datasets, transforms and models to specific to computer vision |
 | sci-libs/transformers | State-of-the-art Machine Learning for JAX, PyTorch and TensorFlow |
-| sci-misc/kineto | part of the PyTorch Profiler |
+| sci-misc/kineto | A CPU+GPU Profiling library that provides access to timeline traces and hardware performance counters |
 | sci-misc/nnef-models | The NNEF model zoo |
 | sci-misc/tensorflow-datasets | TFDS is a collection of datasets ready to use with TensorFlow, Jax, ... |
 | sci-misc/tf-models-official | Models and examples built with TensorFlow |
