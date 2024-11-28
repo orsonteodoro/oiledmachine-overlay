@@ -1317,7 +1317,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-radio/hpsdrconnector | An OpenWebRX connector for HPSDR radios |
 | media-radio/m17-cxx-demod | M17 Demodulator in C++ |
 | media-radio/openwebrx | Open source, multi-user SDR receiver software with a web interface |
-| media-radio/owrx_connector | Direct conection layer for openwebrx |
+| media-radio/owrx_connector | Direct conection layer for OpenWebRX |
 | media-radio/runds_connector | OpenWebRX connector implementation for R&S EB200 or Ammos protocol based receivers |
 | media-radio/sddc_connector | Implementation of an OpenWebRX connector for BBRF103 / RX666 / RX888 devices based on llibsddc |
 | media-sound/puddletag | Audio tag editor |
