@@ -10,7 +10,7 @@ inherit gstreamer-meson
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
-DESCRIPTION="The analyticsoverlay plugin can highlight and label detected objects for GStreamer"
+DESCRIPTION="The analyticsoverlay plugin can highlight and assign AI categoried labels to detected objects for GStreamer"
 RDEPEND="
 	>=x11-libs/cairo-1.22.0[${MULTILIB_USEDEP}]
 	~media-libs/gst-plugins-base-${PV}:1.0[${MULTILIB_USEDEP}]
