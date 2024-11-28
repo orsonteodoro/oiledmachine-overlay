@@ -1150,7 +1150,7 @@ https://github.com/kartikm7/llocal/archive/refs/tags/v${MY_PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="Aiming to provide a seamless and privacy driven chatting experience with open-sourced technologies"
+DESCRIPTION="Aiming to provide a seamless and privacy driven AI chatting experience with open-sourced technologies"
 HOMEPAGE="
 	https://www.llocal.in/
 	https://github.com/kartikm7/llocal
