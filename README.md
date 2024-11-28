@@ -1104,7 +1104,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-gfx/material-maker | A procedural textures authoring and 3D model painting tool based on the Godot game engine |
 | media-gfx/nanovdb | A lightweight GPU friendly version of VDB initially targeting rendering applications. |
 | media-gfx/openvdb | Library for the efficient manipulation of volumetric data |
-| media-gfx/upscayl | Upscayl is a Free and Open Source AI Image Upscaler |
+| media-gfx/upscayl | Upscayl is an AI based image upscaler |
 | media-gfx/upscayl-custom-models | Extra custom models for Upscayl. |
 | media-libs/HIPRT | HIP RT is a ray tracing library in HIP |
 | media-libs/alure | The OpenAL Utility Toolkit |

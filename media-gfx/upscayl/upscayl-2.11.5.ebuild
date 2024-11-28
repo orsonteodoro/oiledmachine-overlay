@@ -778,7 +778,7 @@ https://github.com/upscayl/upscayl/archive/refs/tags/v${PV}.tar.gz
 	"
 fi
 
-DESCRIPTION="Upscayl is a Free and Open Source AI Image Upscaler"
+DESCRIPTION="Upscayl is an AI based image upscaler"
 HOMEPAGE="https://upscayl.github.io/"
 # Same sha1sum hash for electron-28.2.10-chromium.html and electron-28.3.2-chromium.html
 THIRD_PARTY_LICENSES="
