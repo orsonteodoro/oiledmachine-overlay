@@ -226,7 +226,7 @@ gen_license_models_tensorflow() {
 }
 
 
-DESCRIPTION="The NNEF model zoo"
+DESCRIPTION="A collection of neural network NNEF models for image recognition and classification"
 HOMEPAGE="
 https://github.com/KhronosGroup/NNEF-Tools/tree/main/models
 "

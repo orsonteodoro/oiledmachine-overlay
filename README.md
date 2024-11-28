@@ -1397,7 +1397,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sci-libs/torchvision | Datasets, transforms and models to specific to computer vision |
 | sci-libs/transformers | State-of-the-art Machine Learning for JAX, PyTorch and TensorFlow |
 | sci-misc/kineto | A CPU+GPU Profiling library that provides access to timeline traces and hardware performance counters |
-| sci-misc/nnef-models | The NNEF model zoo |
+| sci-misc/nnef-models | A collection of neural network NNEF models for image recognition and classification |
 | sci-misc/tensorflow-datasets | TFDS is a collection of datasets ready to use with TensorFlow, Jax, ... |
 | sci-misc/tf-models-official | Models and examples built with TensorFlow |
 | sci-physics/bullet | Continuous Collision Detection and Physics Library |
