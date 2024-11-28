@@ -15,7 +15,7 @@ https://github.com/puddletag/puddletag/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="Audio tag editor"
+DESCRIPTION="An audio tag editor"
 HOMEPAGE="http://docs.puddletag.net/"
 LICENSE="
 	BSD

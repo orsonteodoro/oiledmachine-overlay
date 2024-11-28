@@ -1320,7 +1320,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-radio/owrx_connector | Direct conection layer for OpenWebRX |
 | media-radio/runds_connector | OpenWebRX connector implementation for R&S EB200 or Ammos protocol based receivers |
 | media-radio/sddc_connector | Implementation of an OpenWebRX connector for BBRF103 / RX666 / RX888 devices based on llibsddc |
-| media-sound/puddletag | Audio tag editor |
+| media-sound/puddletag | An audio tag editor |
 | media-sound/spotify | A social music platform |
 | media-sound/w3crapcli-lastfm | w3crapcli/last.fm provides a command line interface for the last.fm web service |
 | media-video/ffmpeg | Complete solution to record/convert/stream audio and video. Includes libavcodec |
