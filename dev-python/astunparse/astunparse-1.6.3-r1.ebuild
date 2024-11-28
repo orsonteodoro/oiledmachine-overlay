@@ -10,7 +10,7 @@ inherit distutils-r1 pypi
 
 KEYWORDS="~amd64"
 
-DESCRIPTION="Astun parser for python"
+DESCRIPTION="An Abstract Syntax Tree (AST) unparser for Python"
 HOMEPAGE="
 	https://github.com/simonpercivall/astunparse/
 	https://pypi.org/project/astunparse/

@@ -855,7 +855,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/ale-py | The Arcade Learning Environment (ALE) is a platform for AI research |
 | dev-python/anyio | A compatibility layer for multiple asynchronous event loop implementations |
 | dev-python/array-record | A file format that achieves a new frontier of IO efficiency |
-| dev-python/astunparse | Astun parser for python |
+| dev-python/astunparse | An Abstract Syntax Tree (AST) unparser for Python |
 | dev-python/autorom | A tool to automate installing Atari ROMs for the Arcade Learning Environment |
 | dev-python/autorom-accept-rom-license | AutoROM ROMs |
 | dev-python/barectf | Generator of ANSI C tracers which output CTF data streams |
