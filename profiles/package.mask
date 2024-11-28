@@ -139,6 +139,9 @@ dev-db/mariadb
 >=dev-python/spacy-3.8
 >=dev-python/blis-1.0.1
 
+# Prohibit non-free
+dev-python/autorom-accept-rom-license
+
 # Upstream claims patent or license status issues in some
 media-libs/gst-plugins-ugly
 media-plugins/gst-plugins-a52dec

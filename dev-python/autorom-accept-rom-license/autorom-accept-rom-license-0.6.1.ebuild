@@ -126,7 +126,7 @@ zaxxon.bin
 
 inherit distutils-r1
 
-KEYWORDS="~amd64"
+#KEYWORDS="~amd64"
 S="${WORKDIR}/AutoROM-${PV}/packages/AutoROM.accept-rom-license"
 SRC_URI="
 https://github.com/Farama-Foundation/AutoROM/archive/refs/tags/v${PV}.tar.gz
