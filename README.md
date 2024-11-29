@@ -1492,7 +1492,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | www-servers/civetweb | CivetWeb is an embedded C++ web server |
 | x11-libs/cairo | A vector graphics library with cross-device output support |
 | x11-libs/startup-notification | Application startup notification and feedback library |
-| x11-misc/aprs-symbols | aprs.fi APRS symbol set, high-resolution, vector |
+| x11-misc/aprs-symbols | An Automatic Packet Reporting System (APRS) symbol set for amateur radio maps |
 | x11-misc/sddm | Simple Desktop Display Manager |
 | x11-misc/xsnow | Let it snow on your desktop and windows |
 | x11-themes/paper-icon-theme | Paper Icon Theme |

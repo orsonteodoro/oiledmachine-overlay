@@ -11,13 +11,13 @@ https://github.com/hessu/aprs-symbols/archive/${EGIT_COMMIT}.tar.gz
 "
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 
-DESCRIPTION="aprs.fi APRS symbol set, high-resolution, vector"
+DESCRIPTION="An Automatic Packet Reporting System (APRS) symbol set for amateur radio maps"
 HOMEPAGE="https://github.com/hessu/aprs-symbols"
 LICENSE="all-rights-reserved CC-BY-SA-2.0"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RESTRICT="mirror"
-DOCS=( COPYRIGHT.md README.md )
+DOCS=( "COPYRIGHT.md" "README.md" )
 
 src_install() {
 	insinto "/usr/share/aprs-symbols"
