@@ -1411,7 +1411,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sys-apps/cellular-traces-nyc | Cellular Traces Collected in New York City for different scenarios |
 | sys-apps/cellular-traces-y2018 | Cellular Traces Collected in New York City for different scenarios |
 | sys-apps/coolercontrol | Cooling device control for Linux |
-| sys-apps/coolercontrol-liqctld | liqctld is a daemon for interacting with liquidctl on a system level |
+| sys-apps/coolercontrol-liqctld | A daemon for interacting with liquidctl |
 | sys-apps/coolercontrol-ui | A new user interface for CoolerControl using Tauri, GTK 3, Rust, Vue 3, WebKitGTK |
 | sys-apps/coolercontrold | The main daemon containing the core logic for interfacing with devices |
 | sys-apps/deepcc | DeepCC: A Deep Reinforcement Learning Plug-in to Boost the performance of your TCP scheme in Cellular Networks! |

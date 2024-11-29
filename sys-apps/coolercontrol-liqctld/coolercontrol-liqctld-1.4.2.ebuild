@@ -17,7 +17,7 @@ SRC_URI="
 https://gitlab.com/coolercontrol/coolercontrol/-/archive/${PV}/coolercontrol-${PV}.tar.bz2
 "
 
-DESCRIPTION="liqctld is a daemon for interacting with liquidctl on a system level"
+DESCRIPTION="A daemon for interacting with liquidctl"
 HOMEPAGE="
 https://gitlab.com/coolercontrol/coolercontrol
 https://gitlab.com/coolercontrol/coolercontrol/-/tree/main/coolercontrol-liqctld
