@@ -874,7 +874,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/controlnet-aux | Auxillary models for controlnet |
 | dev-python/coqpit | A simple but maybe too simple config management through Python data classes used for machine learning |
 | dev-python/coqui-tts | 🐸💬 - a deep learning toolkit for Text-to-Speech, battle-tested in research and production |
-| dev-python/coqui-tts-trainer | Create, fill a temporary directory |
+| dev-python/coqui-tts-trainer | 🐸 - A general purpose model trainer, as flexible as it gets |
 | dev-python/cuda-python | Python bindings for CUDA |
 | dev-python/cymem | 💥 Cython memory pool for RAII-style memory management |
 | dev-python/cython | A Python to C compiler |
@@ -938,7 +938,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/keras-preprocessing | Easy data preprocessing and data augmentation for deep learning models |
 | dev-python/labmaze | A standalone release of DeepMind Lab's maze generator with Python bindings. |
 | dev-python/langcodes | A Python library for working with and comparing language codes. |
-| dev-python/language-data | Create, fill a temporary directory |
+| dev-python/language-data | An optional supplement to \`langcodes\` that stores names and statistics of languages |
 | dev-python/librosa | A Python package for music and audio analysis |
 | dev-python/lightning | The Deep Learning framework to train, deploy, and ship AI products Lightning fast. |
 | dev-python/lightning-api-access | Lightning Frontend Showing how a given API can be accessed |
@@ -951,7 +951,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/merge3 | Python implementation of 3-way merge |
 | dev-python/mizani | A scales package for Python |
 | dev-python/ml-collections | ML Collections is a library of Python Collections designed for ML use cases. |
-| dev-python/ml-datasets | Create, fill a temporary directory |
+| dev-python/ml-datasets | 🌊 Machine learning dataset loaders for testing and example scripts |
 | dev-python/ml-dtypes | A stand-alone implementation of several NumPy dtype extensions used in machine learning. |
 | dev-python/model-index | Create a source of truth for ML model results and browse it on Papers with Code |
 | dev-python/moviepy | Video editing with Python |
@@ -1010,7 +1010,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/pytest-markdown-docs | Run pytest on markdown code fence blocks |
 | dev-python/pytest-raises | An implementation of pytest.raises as a pytest.mark fixture |
 | dev-python/python-chess | A chess library for Python, with move generation and validation, PGN parsing and writing, Polyglot opening book reading, Gaviota tablebase probing, Syzygy tablebase probing, and UCI/XBoard engine communication |
-| dev-python/python-crfsuite | Create, fill a temporary directory |
+| dev-python/python-crfsuite | A Python binding for CRFsuite |
 | dev-python/python-decouple | Strict separation of config from code. |
 | dev-python/python-plexapi | Python bindings for the Plex API. |
 | dev-python/python-resize-image | A small Python package to easily resize images |

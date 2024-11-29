@@ -16,7 +16,7 @@ https://github.com/georgkrause/language_data/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="Create, fill a temporary directory"
+DESCRIPTION="An optional supplement to \`langcodes\` that stores names and statistics of languages"
 HOMEPAGE="
 	https://github.com/georgkrause/language_data
 	https://pypi.org/project/language_data

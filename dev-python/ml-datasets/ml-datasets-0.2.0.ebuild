@@ -16,7 +16,7 @@ https://github.com/explosion/ml-datasets/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="Create, fill a temporary directory"
+DESCRIPTION="🌊 Machine learning dataset loaders for testing and example scripts"
 HOMEPAGE="
 	https://github.com/explosion/ml-datasets
 	https://pypi.org/project/ml-datasets

@@ -17,7 +17,7 @@ https://github.com/idiap/coqui-ai-Trainer/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="Create, fill a temporary directory"
+DESCRIPTION="🐸 - A general purpose model trainer, as flexible as it gets"
 HOMEPAGE="
 	https://github.com/idiap/coqui-ai-Trainer
 	https://pypi.org/project/coqui-tts-trainer

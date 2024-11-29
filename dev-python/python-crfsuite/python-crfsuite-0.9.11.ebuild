@@ -23,7 +23,7 @@ https://github.com/chokkan/liblbfgs/archive/${LIBLBFGS_COMMIT}.tar.gz
 	-> liblbfgs-${LIBLBFGS_COMMIT:0:7}.tar.gz
 "
 
-DESCRIPTION="Create, fill a temporary directory"
+DESCRIPTION="A Python binding for CRFsuite"
 HOMEPAGE="
 	https://github.com/scrapinghub/python-crfsuite
 	https://pypi.org/project/python-crfsuite
