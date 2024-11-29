@@ -1,25 +1,63 @@
---- a/src/features/chat/ollamaChat.ts.orig	2024-10-22 16:44:38.000000000 -0700
-+++ b/src/features/chat/ollamaChat.ts	2024-11-27 13:04:19.676769642 -0800
-@@ -24,26 +24,46 @@ export async function getOllamaChatRespo
+diff '--color=auto' -urp amica-cf39b01ce92c6fa02dba4ab245e8e97311edd969.orig/src/features/chat/ollamaChat.ts amica-cf39b01ce92c6fa02dba4ab245e8e97311edd969/src/features/chat/ollamaChat.ts
+--- amica-cf39b01ce92c6fa02dba4ab245e8e97311edd969.orig/src/features/chat/ollamaChat.ts	2024-10-22 16:44:38.000000000 -0700
++++ amica-cf39b01ce92c6fa02dba4ab245e8e97311edd969/src/features/chat/ollamaChat.ts	2024-11-28 19:36:27.781441093 -0800
+@@ -23,27 +23,63 @@ export async function getOllamaChatRespo
+   const stream = new ReadableStream({
      async start(controller: ReadableStreamDefaultController) {
        const decoder = new TextDecoder("utf-8");
++      let tries : number = 0;
        try {
 -        // Ollama sends chunks of multiple complete JSON objects separated by newlines
 +        // Ollama sends chunks of multiple complete JSON objects separated by newlines.
 +        // Sometimes the response is chunked, so we need to combine the chunks.
 +        let combined = "";
          while (true) {
++          if (tries >= 10) {
++            console.log("getOllamaChatResponseStream():  tries exceeded 10");
++            break;
++          }
            const { done, value } = await reader.read();
-           if (done) break;
+-          if (done) break;
 -          const data = decoder.decode(value);
 -          const jsonResponses = data
 -            .trim() // Ollama sends an empty line after the final JSON message...
 -            .split("\n")
 -            //.filter((val) => !!val) 
-+          const data = decoder.decode(value, { stream: true });
-+          const chunks = data
-+            .split("data:")
-+            .filter((val) => !!val && val.trim() !== "[DONE]");
++          let data : string;
++          try {
++            data = decoder.decode(value, { stream: true });
++          } catch (error) {
++            tries++;
++            console.log("getOllamaChatResponseStream(): decode fatal error");
++            continue;
++          }
++          combined += data;
++
++          try {
++            if (combined.indexOf('}\n') >= 0) {
++              ;
++            } else {
++              //console.log("getOllamaChatResponseStream(): missing new line.  retrying");
++              continue;
++            }
++          } catch (error) {
++            //console.log("getOllamaChatResponseStream(): detected json error 1.  retrying");
++            continue;
++          }
++
++          try {
++            const obj : string = combined.slice(0, combined.indexOf('}\n') + 2);
++            const json = JSON.parse(obj);
++            if (typeof json.done === 'string' && json.done == 'true') {
++              //console.log("json.done=true [string]");
++              break;
++            } else if (typeof json.done === 'boolean' && json.done == true) {
++              //console.log("json.done=true [bool]");
++              break;
++            }
++          } catch (error) {
++            //console.error("getOllamaChatResponseStream(): parse error");
++          }
  
 -          for (const jsonResponse of jsonResponses) {
 -            try {
@@ -30,33 +68,14 @@
 -              }
 -            } catch (error) {
 -              console.error(error);
-+          for (const chunk of chunks) {
-+            // skip comments
-+            if (chunk.length > 0 && chunk[0] === ":") {
-+              continue;
-             }
-+            combined += chunk;
-+          }
-+
 +          try {
-+            if (combined.indexOf('\n') >= 0) {
-+              let obj = combined.slice(0, combined.indexOf('\n'));
-+              const json = JSON.parse(obj);
-+            } else {
-+              continue;
-+            }
-+          } catch (error) {
-+            continue;
-+          }
-+
-+          try {
-+            let obj = combined.slice(0, combined.indexOf('\n'));
++            const obj : string = combined.slice(0, combined.indexOf('}\n') + 2);
 +            const json = JSON.parse(obj);
-+            combined = combined.slice(combined.indexOf('\n') + 1);
++            combined = combined.slice(combined.indexOf('}\n') + 2);
 +            const messagePiece = json.message.content;
 +            if (!!messagePiece) {
 +              controller.enqueue(messagePiece);
-+            }
+             }
 +          } catch (error) {
 +            console.error(error);
            }

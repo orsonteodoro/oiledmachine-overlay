@@ -3092,6 +3092,7 @@ src_compile() {
 	else
 		enpm run tauri build
 	fi
+	grep -e "FetchError:" "${T}/build.log" && die
 }
 
 src_install() {
