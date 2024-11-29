@@ -18,7 +18,7 @@ https://github.com/breezy-team/setuptools-gettext/archive/refs/tags/v${PV}.tar.g
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="A setuptools plugin for building mo files"
+DESCRIPTION="A setuptools plugin for building multilingual MO files"
 HOMEPAGE="https://github.com/breezy-team/setuptools-gettext"
 LICENSE="
 	GPL-2+
