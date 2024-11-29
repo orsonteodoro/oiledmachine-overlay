@@ -27,7 +27,7 @@ SRC_URI="
 	)
 "
 
-DESCRIPTION="a simple web browser based on WebKit/GTK+"
+DESCRIPTION="A simple web browser based on WebKitGTK"
 HOMEPAGE="https://surf.suckless.org/"
 LICENSE="
 	MIT

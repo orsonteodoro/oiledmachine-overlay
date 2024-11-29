@@ -1485,7 +1485,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | www-client/chromium-sources | Chromium sources |
 | www-client/chromium-toolchain | The Chromium toolchain (Clang + Rust + gn) |
 | www-client/firefox | Firefox Web Browser |
-| www-client/surf | a simple web browser based on WebKit/GTK+ |
+| www-client/surf | A simple web browser based on WebKitGTK |
 | www-misc/ddgr | DuckDuckGo from the terminal |
 | www-misc/mahimahi | Web performance measurement toolkit |
 | www-misc/socli | A search and browse Stack Overflow command line terminal client |
