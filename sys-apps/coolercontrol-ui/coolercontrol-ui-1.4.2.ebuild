@@ -1009,7 +1009,7 @@ ${NPM_EXTERNAL_URIS}
 https://gitlab.com/coolercontrol/coolercontrol/-/archive/${PV}/coolercontrol-${PV}.tar.bz2
 "
 
-DESCRIPTION="coolercontrol-ui is the new UI for coolercontrol using Tauri, GTK 3, Rust, Vue 3, webkit2gtk"
+DESCRIPTION="A new user interface for CoolerControl using Tauri, GTK 3, Rust, Vue 3, WebKitGTK"
 HOMEPAGE="
 https://gitlab.com/coolercontrol/coolercontrol
 https://gitlab.com/coolercontrol/coolercontrol/-/tree/main/coolercontrol-ui

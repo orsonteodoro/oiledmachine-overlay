@@ -830,7 +830,7 @@ ${NPM_EXTERNAL_URIS}
 https://gitlab.com/coolercontrol/coolercontrol/-/archive/${PV}/coolercontrol-${PV}.tar.bz2
 "
 
-DESCRIPTION="coolercontrold is the main daemon containing the core logic for interfacing with devices"
+DESCRIPTION="The main daemon containing the core logic for interfacing with devices"
 HOMEPAGE="
 https://gitlab.com/coolercontrol/coolercontrol
 https://gitlab.com/coolercontrol/coolercontrol/-/tree/main/coolercontrold
