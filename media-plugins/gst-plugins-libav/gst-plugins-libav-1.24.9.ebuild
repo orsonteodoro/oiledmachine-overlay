@@ -17,7 +17,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~x86"
 S="${WORKDIR}/${MY_P}"
 SRC_URI="https://gstreamer.freedesktop.org/src/${MY_PN}/${MY_P}.tar.xz"
 
-DESCRIPTION="FFmpeg based gstreamer plugin"
+DESCRIPTION="A FFmpeg based GStreamer plugin"
 HOMEPAGE="https://gstreamer.freedesktop.org/modules/gst-libav.html"
 LICENSE="LGPL-2+"
 SLOT="1.0"

@@ -9,7 +9,7 @@ inherit gstreamer-meson
 
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 
-DESCRIPTION="bs2b elements for Gstreamer"
+DESCRIPTION="bs2b elements for GStreamer"
 RDEPEND="
 	>=media-libs/libbs2b-3.1.0[${MULTILIB_USEDEP}]
 "

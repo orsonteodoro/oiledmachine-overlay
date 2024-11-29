@@ -9,7 +9,7 @@ inherit gstreamer-meson
 
 KEYWORDS="~amd64 ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~x86"
 
-DESCRIPTION="DTS audio decoder plugin for Gstreamer"
+DESCRIPTION="DTS audio decoder plugin for GStreamer"
 IUSE="+orc"
 RDEPEND="
 	media-libs/libdca[${MULTILIB_USEDEP}]

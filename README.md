@@ -1162,7 +1162,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-plugins/gst-plugins-avtp | Audio/Video Transport Protocol (AVTP) plugin for GStreamer |
 | media-plugins/gst-plugins-aws | A redirect ebuild for gst-plugins-aws |
 | media-plugins/gst-plugins-bluez | AVDTP source/sink and A2DP sink plugin for GStreamer |
-| media-plugins/gst-plugins-bs2b | bs2b elements for Gstreamer |
+| media-plugins/gst-plugins-bs2b | bs2b elements for GStreamer |
 | media-plugins/gst-plugins-cairo | Video overlay plugin based on cairo for GStreamer |
 | media-plugins/gst-plugins-cdg | A redirect ebuild for gst-plugins-cdg |
 | media-plugins/gst-plugins-cdio | CD Audio Source (cdda) plugin for GStreamer |
@@ -1178,7 +1178,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-plugins/gst-plugins-dav1d | A redirect ebuild for gst-plugins-dav1d |
 | media-plugins/gst-plugins-dc1394 | libdc1394 IIDC camera source plugin for GStreamer |
 | media-plugins/gst-plugins-dtls | DTLS encoder/decoder with SRTP support plugin for GStreamer |
-| media-plugins/gst-plugins-dts | DTS audio decoder plugin for Gstreamer |
+| media-plugins/gst-plugins-dts | DTS audio decoder plugin for GStreamer |
 | media-plugins/gst-plugins-dv | DV demuxer and decoder plugin for GStreamer |
 | media-plugins/gst-plugins-dvb | DVB device capture plugin for GStreamer |
 | media-plugins/gst-plugins-dvdread | DVD read plugin for GStreamer |
@@ -1206,18 +1206,18 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-plugins/gst-plugins-jack | JACK audio server source/sink plugin for GStreamer |
 | media-plugins/gst-plugins-jpeg | JPEG image encoder/decoder plugin for GStreamer |
 | media-plugins/gst-plugins-json | A redirect ebuild for gst-plugins-json |
-| media-plugins/gst-plugins-ladspa | Ladspa elements for Gstreamer |
+| media-plugins/gst-plugins-ladspa | Ladspa elements for GStreamer |
 | media-plugins/gst-plugins-lame | MP3 encoder plugin for GStreamer |
 | media-plugins/gst-plugins-lc3 | LC3 (Bluetooth) LE audio codec plugin for GStreamer |
 | media-plugins/gst-plugins-ldac | LDAC plugin for GStreamer |
 | media-plugins/gst-plugins-lewton | A redirect ebuild for gst-plugins-lewton |
-| media-plugins/gst-plugins-libav | FFmpeg based gstreamer plugin |
+| media-plugins/gst-plugins-libav | A FFmpeg based GStreamer plugin |
 | media-plugins/gst-plugins-libde265 | H.265 decoder plugin for GStreamer |
 | media-plugins/gst-plugins-libnice | GStreamer plugin for ICE (RFC 5245) support |
 | media-plugins/gst-plugins-libpng | PNG image encoder/decoder plugin for GStreamer |
 | media-plugins/gst-plugins-libvisual | Visualization elements for GStreamer |
 | media-plugins/gst-plugins-livesync | A redirect ebuild for gst-plugins-livesync |
-| media-plugins/gst-plugins-lv2 | Lv2 elements for Gstreamer |
+| media-plugins/gst-plugins-lv2 | LV2 elements for Gstreamer |
 | media-plugins/gst-plugins-mdns | A device provider plugin and RTSP server discovery for GStreamer |
 | media-plugins/gst-plugins-meta | A metapackage to pull in gst plugins for apps |
 | media-plugins/gst-plugins-modplug | MOD audio decoder plugin for GStreamer |

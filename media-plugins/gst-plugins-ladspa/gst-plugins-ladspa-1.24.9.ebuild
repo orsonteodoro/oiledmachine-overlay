@@ -9,7 +9,7 @@ inherit gstreamer-meson
 
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 
-DESCRIPTION="Ladspa elements for Gstreamer"
+DESCRIPTION="Ladspa elements for GStreamer"
 RDEPEND="
 	media-libs/ladspa-sdk[${MULTILIB_USEDEP}]
 	media-libs/liblrdf[${MULTILIB_USEDEP}]
