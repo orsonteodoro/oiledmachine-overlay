@@ -9,10 +9,10 @@ MY_PN="${PN^}"
 export NPM_INSTALL_PATH="/opt/${PN}"
 #ELECTRON_APP_APPIMAGE="1"
 ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${MY_PN}_${PV}.AppImage"
-ELECTRON_APP_ELECTRON_PV="31.7.5"
+ELECTRON_APP_ELECTRON_PV="34.0.0-beta.7" # Cr 132.0.6834.15, node 20.18.1
 ELECTRON_APP_MODE="npm"
 NODE_ENV="development"
-NODE_VERSION=20 # This corresponds to 31.4.0 in releases.json.
+NODE_VERSION=20 # This corresponds to the node major version in releases.json.
 # See https://releases.electronjs.org/releases.json
 
 inherit desktop electron-app lcnr npm
@@ -168,7 +168,7 @@ https://registry.npmjs.org/@types/jquery/-/jquery-3.5.32.tgz -> npmpkg-@types-jq
 https://registry.npmjs.org/@types/json-schema/-/json-schema-7.0.15.tgz -> npmpkg-@types-json-schema-7.0.15.tgz
 https://registry.npmjs.org/@types/keyv/-/keyv-3.1.4.tgz -> npmpkg-@types-keyv-3.1.4.tgz
 https://registry.npmjs.org/@types/ms/-/ms-0.7.34.tgz -> npmpkg-@types-ms-0.7.34.tgz
-https://registry.npmjs.org/@types/node/-/node-20.17.8.tgz -> npmpkg-@types-node-20.17.8.tgz
+https://registry.npmjs.org/@types/node/-/node-20.17.9.tgz -> npmpkg-@types-node-20.17.9.tgz
 https://registry.npmjs.org/@types/plist/-/plist-3.0.5.tgz -> npmpkg-@types-plist-3.0.5.tgz
 https://registry.npmjs.org/@types/prismjs/-/prismjs-1.26.5.tgz -> npmpkg-@types-prismjs-1.26.5.tgz
 https://registry.npmjs.org/@types/resolve/-/resolve-1.17.1.tgz -> npmpkg-@types-resolve-1.17.1.tgz
@@ -304,7 +304,7 @@ https://registry.npmjs.org/minimatch/-/minimatch-3.1.2.tgz -> npmpkg-minimatch-3
 https://registry.npmjs.org/dmg-builder/-/dmg-builder-24.13.3.tgz -> npmpkg-dmg-builder-24.13.3.tgz
 https://registry.npmjs.org/fs-extra/-/fs-extra-10.1.0.tgz -> npmpkg-fs-extra-10.1.0.tgz
 https://registry.npmjs.org/dmg-license/-/dmg-license-1.0.11.tgz -> npmpkg-dmg-license-1.0.11.tgz
-https://registry.npmjs.org/dompurify/-/dompurify-3.2.1.tgz -> npmpkg-dompurify-3.2.1.tgz
+https://registry.npmjs.org/dompurify/-/dompurify-3.2.2.tgz -> npmpkg-dompurify-3.2.2.tgz
 https://registry.npmjs.org/dotenv/-/dotenv-9.0.2.tgz -> npmpkg-dotenv-9.0.2.tgz
 https://registry.npmjs.org/dotenv-expand/-/dotenv-expand-5.1.0.tgz -> npmpkg-dotenv-expand-5.1.0.tgz
 https://registry.npmjs.org/eastasianwidth/-/eastasianwidth-0.2.0.tgz -> npmpkg-eastasianwidth-0.2.0.tgz
@@ -317,7 +317,7 @@ https://registry.npmjs.org/fs-extra/-/fs-extra-10.1.0.tgz -> npmpkg-fs-extra-10.
 https://registry.npmjs.org/electron-color-picker/-/electron-color-picker-0.2.0.tgz -> npmpkg-electron-color-picker-0.2.0.tgz
 https://registry.npmjs.org/electron-publish/-/electron-publish-24.13.1.tgz -> npmpkg-electron-publish-24.13.1.tgz
 https://registry.npmjs.org/fs-extra/-/fs-extra-10.1.0.tgz -> npmpkg-fs-extra-10.1.0.tgz
-https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.5.66.tgz -> npmpkg-electron-to-chromium-1.5.66.tgz
+https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.5.67.tgz -> npmpkg-electron-to-chromium-1.5.67.tgz
 https://registry.npmjs.org/electron-updater/-/electron-updater-6.3.9.tgz -> npmpkg-electron-updater-6.3.9.tgz
 https://registry.npmjs.org/builder-util-runtime/-/builder-util-runtime-9.2.10.tgz -> npmpkg-builder-util-runtime-9.2.10.tgz
 https://registry.npmjs.org/fs-extra/-/fs-extra-10.1.0.tgz -> npmpkg-fs-extra-10.1.0.tgz
@@ -382,7 +382,7 @@ https://registry.npmjs.org/global-agent/-/global-agent-3.0.0.tgz -> npmpkg-globa
 https://registry.npmjs.org/semver/-/semver-7.6.3.tgz -> npmpkg-semver-7.6.3.tgz
 https://registry.npmjs.org/globals/-/globals-11.12.0.tgz -> npmpkg-globals-11.12.0.tgz
 https://registry.npmjs.org/globalthis/-/globalthis-1.0.4.tgz -> npmpkg-globalthis-1.0.4.tgz
-https://registry.npmjs.org/gopd/-/gopd-1.0.1.tgz -> npmpkg-gopd-1.0.1.tgz
+https://registry.npmjs.org/gopd/-/gopd-1.1.0.tgz -> npmpkg-gopd-1.1.0.tgz
 https://registry.npmjs.org/got/-/got-11.8.6.tgz -> npmpkg-got-11.8.6.tgz
 https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.11.tgz -> npmpkg-graceful-fs-4.2.11.tgz
 https://registry.npmjs.org/has-bigints/-/has-bigints-1.0.2.tgz -> npmpkg-has-bigints-1.0.2.tgz
@@ -424,7 +424,7 @@ https://registry.npmjs.org/is-negative-zero/-/is-negative-zero-2.0.3.tgz -> npmp
 https://registry.npmjs.org/is-number-object/-/is-number-object-1.0.7.tgz -> npmpkg-is-number-object-1.0.7.tgz
 https://registry.npmjs.org/is-obj/-/is-obj-1.0.1.tgz -> npmpkg-is-obj-1.0.1.tgz
 https://registry.npmjs.org/is-plain-object/-/is-plain-object-2.0.4.tgz -> npmpkg-is-plain-object-2.0.4.tgz
-https://registry.npmjs.org/is-regex/-/is-regex-1.1.4.tgz -> npmpkg-is-regex-1.1.4.tgz
+https://registry.npmjs.org/is-regex/-/is-regex-1.2.0.tgz -> npmpkg-is-regex-1.2.0.tgz
 https://registry.npmjs.org/is-regexp/-/is-regexp-1.0.0.tgz -> npmpkg-is-regexp-1.0.0.tgz
 https://registry.npmjs.org/is-set/-/is-set-2.0.3.tgz -> npmpkg-is-set-2.0.3.tgz
 https://registry.npmjs.org/is-shared-array-buffer/-/is-shared-array-buffer-1.0.3.tgz -> npmpkg-is-shared-array-buffer-1.0.3.tgz
@@ -721,7 +721,7 @@ LICENSE="
 	(
 		${ELECTRON_APP_LICENSES}
 		Artistic-2
-		electron-31.7.5-chromium.html
+		electron-34.0.0-beta.7-chromium.html
 	)
 	GPL-3+
 "
