@@ -3102,6 +3102,7 @@ einfo "Adding Cargo.lock"
 
 src_unpack() {
 	unpack "${TARBALL}"
+#die # debug / fixme
 einfo "Unpacking npm packages"
 	if [[ "${PV}" =~ "_p" ]] ; then
 		S="${S_PROJECT}/" \

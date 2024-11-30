@@ -1,40 +1,134 @@
---- a/src/features/coquiLocal/coquiLocal.ts.orig	2024-10-22 16:44:38.000000000 -0700
-+++ b/src/features/coquiLocal/coquiLocal.ts	2024-11-23 03:56:27.565980731 -0800
-@@ -14,11 +14,11 @@ export async function coquiLocal(
+diff '--color=auto' -urp amica-cf39b01ce92c6fa02dba4ab245e8e97311edd969.orig/src/features/coquiLocal/coquiLocal.ts amica-cf39b01ce92c6fa02dba4ab245e8e97311edd969/src/features/coquiLocal/coquiLocal.ts
+--- amica-cf39b01ce92c6fa02dba4ab245e8e97311edd969.orig/src/features/coquiLocal/coquiLocal.ts	2024-10-22 16:44:38.000000000 -0700
++++ amica-cf39b01ce92c6fa02dba4ab245e8e97311edd969/src/features/coquiLocal/coquiLocal.ts	2024-11-29 16:56:51.012063801 -0800
+@@ -9,42 +9,112 @@ export async function coquiLocal(
+     throw new Error("Invalid CoquiLocal TTS Voice Id");
+   }
+ 
++  let res : any;
+   try {
+-    const res = await fetch(`${config("coquiLocal_url")}/api/tts`, {
++    res = await fetch(`${config("coquiLocal_url")}/api/tts`, {
        method: 'POST',
        headers: {
-         'text': message,
+-        'text': message,
 -        'speaker-id': config("coquiLocal_voiceid"),
-+        'speaker_id': config("coquiLocal_voiceid"),
-       }
+-      }
++        "Content-Type": "application/x-www-form-urlencoded",
++      },
++      body: "text=" + encodeURIComponent(message) + "&speaker_id=" + config("coquiLocal_voiceid"),
++      mode: "no-cors",
      });
++  } catch (error) {
++    if (error instanceof Error) {
++      console.error('Error in coquiLocal - fetch, error.message:', error.message);
++    } else {
++      console.error('Error in coquiLocal - fetch:', error);
++    }
++    throw error;
++  }
  
 -    const data = await res.arrayBuffer()
-+    const data = await res.arrayBuffer();
-     return { audio: data };
- 
+-    return { audio: data };
+-
++  let data : any;
++  try {
++    data = (await res.arrayBuffer()) as any;
    } catch (error) {
-@@ -36,14 +36,20 @@ export async function coquiLocalVoiceIdL
++    if (error instanceof Error) {
++      console.error('Error in coquiLocal - res.arrayBuffer, error.message:', error.message);
++    } else {
++      console.error('Error in coquiLocal - res.arrayBuffer:', error);
++    }
++    throw error;
++  }
+ 
+-    console.error('Error in coquiLocal:', error);
++  try {
++    return { audio: data };
++  } catch (error) {
++    if (error instanceof Error) {
++      console.error('Error in coquiLocal - return audio.data, error.message:', error.message);
++    } else {
++      console.error('Error in coquiLocal - return audio.data:', error);
++    }
+     throw error;
+   }
+ }
+ 
+ export async function coquiLocalVoiceIdList(
+ ) {
++  let response : any;
+   try {
+-    const response = await fetch(`${config("coquiLocal_url")}/`, {
++    response = await fetch(`${config("coquiLocal_url")}/`, {
+       method: 'GET',
        headers: {
-         'Accept': "application/text",
-       }
+-        'Accept': "application/text",
+-      }
 -    })
-+    });
-     const html = await response.text();
+-    const html = await response.text();
 -    const selectedValues = html.match(/value="([^"]+)" SELECTED/g)?.map((match) => match.split('"')[1]) || [];
-+    const values = html.match(/value="([^"]+)" SELECTED/g);
++        "Accept": "application/text",
++      },
++      mode: "no-cors",
++    });
++  } catch (error) {
++    if (error instanceof Error) {
++      console.error('Error in coquiLocalVoiceIdList - fetch, error.message:', error.message);
++    } else {
++      console.error('Error in coquiLocalVoiceIdList - fetch:', error);
++    }
++    throw error;
++  }
+ 
+-    return { list : selectedValues};
++  let html : string;
++  let values : RegExpMatchArray | null;
++  try {
++    html = await response.text();
++  } catch (error) {
++    if (error instanceof Error) {
++      console.error('Error in coquiLocalVoiceIdList - response.text, error.message:', error.message);
++    } else {
++      console.error('Error in coquiLocalVoiceIdList - response.text:', error);
++    }
++    throw error;
++  }
+ 
++  try {
++    values = html.match(/value="([^"]+)" SELECTED/g);
+   } catch (error) {
++    if (error instanceof Error) {
++      console.error('Error in coquiLocalVoiceIdList - html.match, error.message:', error.message);
++    } else {
++      console.error('Error in coquiLocalVoiceIdList - html.match:', error);
++    }
++    throw error;
++  }
+ 
+-    console.error('Error in coquiLocalVoiceIdList:', error);
++  try {
++    console.log("Values: "+values);
 +    let selectedValues:string[] = [];
 +    if (values !== null) {
 +      for (const value of values) {
-+        selectedValues.push(value.split('"')[1]);
++        console.log("Value: "+value);
++        let parts = value.split('"');
++        if (parts.length >= 2) {
++          selectedValues.push(parts[1]);
++        }
 +      }
 +    }
- 
--    return { list : selectedValues};
 +    return { list : selectedValues };
- 
-   } catch (error) {
- 
-     console.error('Error in coquiLocalVoiceIdList:', error);
++  } catch (error) {
++    if (error instanceof Error) {
++      console.error('Error in coquiLocalVoiceIdList - list processing, error.message:', error.message);
++    } else {
++      console.error('Error in coquiLocalVoiceIdList - list processing:', error);
++    }
      throw error;
    }
+-}
+\ No newline at end of file
++}
