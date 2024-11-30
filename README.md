@@ -1165,8 +1165,8 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-plugins/gst-plugins-bs2b | bs2b elements for GStreamer |
 | media-plugins/gst-plugins-cairo | Video overlay plugin based on cairo for GStreamer |
 | media-plugins/gst-plugins-cdg | A redirect ebuild for gst-plugins-cdg |
-| media-plugins/gst-plugins-cdio | CD Audio Source (cdda) plugin for GStreamer |
-| media-plugins/gst-plugins-cdparanoia | CD Audio Source (cdda) plugin for GStreamer |
+| media-plugins/gst-plugins-cdio | A libcdio based CD Digital Audio (CDDA) source plugin for GStreamer |
+| media-plugins/gst-plugins-cdparanoia | A cdparanoia based CD Digital Audio (CDDA) source plugin for GStreamer |
 | media-plugins/gst-plugins-chromaprint | Calculate Chromaprint fingerprint from audio files for GStreamer |
 | media-plugins/gst-plugins-claxon | A redirect ebuild for gst-plugins-claxon |
 | media-plugins/gst-plugins-closedcaption | A closed caption plugin for GStreamer |

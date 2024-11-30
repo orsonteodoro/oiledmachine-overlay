@@ -9,7 +9,7 @@ inherit gstreamer-meson
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc x86"
 
-DESCRIPTION="CD Audio Source (cdda) plugin for GStreamer"
+DESCRIPTION="A cdparnoia based CD Digital Audio (CDDA) source plugin for GStreamer"
 RDEPEND="
 	>=media-sound/cdparanoia-3.10.2[${MULTILIB_USEDEP}]
 "
