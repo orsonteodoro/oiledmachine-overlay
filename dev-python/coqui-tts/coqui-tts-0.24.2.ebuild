@@ -51,7 +51,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${LANGS[@]/#/l10n_}
 -cors dev doc notebooks server
-ebuild-revision-1
+ebuild-revision-2
 "
 RDEPEND+="
 	>=sci-libs/transformers-4.42.0[${PYTHON_SINGLE_USEDEP}]
@@ -75,6 +75,9 @@ RDEPEND+="
 		>=dev-python/soundfile-0.12.0[${PYTHON_USEDEP}]
 		>=dev-python/spacy-3[${PYTHON_USEDEP}]
 		>=dev-python/tqdm-4.64.1[${PYTHON_USEDEP}]
+		cors? (
+			dev-python/flask-cors[${PYTHON_USEDEP}]
+		)
 		l10n_bn? (
 			>=dev-python/bangla-0.0.2[${PYTHON_USEDEP}]
 			>=dev-python/bnnumerizer-0.0.2[${PYTHON_USEDEP}]
