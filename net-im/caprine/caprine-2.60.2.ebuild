@@ -26,8 +26,6 @@ NODE_ENV="development"
 
 inherit desktop electron-app lcnr npm
 
-# Initially generated from:
-#   grep "resolved" /var/tmp/portage/net-im/caprine-2.60.1/work/caprine-2.60.1/package-lock.json | cut -f 4 -d '"' | cut -f 1 -d "#" | sort | uniq
 # UPDATER_START_NPM_EXTERNAL_URIS
 NPM_EXTERNAL_URIS="
 https://registry.npmjs.org/@babel/code-frame/-/code-frame-7.26.2.tgz -> npmpkg-@babel-code-frame-7.26.2.tgz
