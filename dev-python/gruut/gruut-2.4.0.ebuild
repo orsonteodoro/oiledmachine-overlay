@@ -59,7 +59,7 @@ REQUIRED_USE="
 	l10n_en
 "
 RDEPEND+="
-	>=dev-python/Babel-2.8.0[${PYTHON_USEDEP}]
+	>=dev-python/babel-2.8.0[${PYTHON_USEDEP}]
 	>=dev-python/dateparser-1.1.1[${PYTHON_USEDEP}]
 	>=dev-python/gruut-ipa-0.12.0[${PYTHON_USEDEP}]
 	>=dev-python/jsonlines-1.2.0[${PYTHON_USEDEP}]

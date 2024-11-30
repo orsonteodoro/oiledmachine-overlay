@@ -240,7 +240,7 @@ BDEPEND+="
 	)
 	doc? (
 		dev-python/alabaster[${PYTHON_USEDEP}]
-		dev-python/Babel[${PYTHON_USEDEP}]
+		dev-python/babel[${PYTHON_USEDEP}]
 		dev-python/beautifulsoup4[${PYTHON_USEDEP}]
 		dev-python/certifi[${PYTHON_USEDEP}]
 		dev-python/charset-normalizer[${PYTHON_USEDEP}]
