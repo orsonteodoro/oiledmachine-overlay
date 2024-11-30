@@ -50,7 +50,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${LANGS[@]/#/l10n_}
-dev doc notebooks server
+-cors dev doc notebooks server
 ebuild-revision-1
 "
 RDEPEND+="
@@ -139,6 +139,13 @@ BDEPEND+="
 	>=dev-vcs/pre-commit-3[${PYTHON_SINGLE_USEDEP}]
 "
 DOCS=( "README.md" )
+
+python_prepare_all() {
+	if use cors ; then
+		eapply "${FILESDIR}/${PN}-0.24.2-cors.patch"
+	fi
+	distutils-r1_python_prepare_all
+}
 
 pkg_postinst() {
 einfo

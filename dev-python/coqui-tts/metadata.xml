@@ -12,4 +12,9 @@
     <remote-id type="github">idiap/coqui-ai-TTS</remote-id>
     <remote-id type="pypi">coqui-tts</remote-id>
   </upstream>
+  <use>
+    <flag name="cors">
+      Add support for Cross-Origin Resource Sharing (CORS) for the Coqui server
+    </flag>
+  </use>
 </pkgmetadata>
