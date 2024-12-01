@@ -3315,6 +3315,10 @@ einfo "PIE is already enabled."
 	fi
 
 	strip-unsupported-flags
+
+	local max_retries=${OLLAMA_MAX_RETRIES:-6}
+	sed -i -e "s|maxRetries = 6|maxRetries = ${max_retries}|g" "server/download.go" || die
+	einfo "OLLAMA_MAX_RETRIES:  ${OLLAMA_MAX_RETRIES}"
 }
 
 build_new_runner() {

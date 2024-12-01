@@ -11,6 +11,12 @@
 
   Ebuild obtained from guru.
 
+
+  Ebuild build time environment variables
+
+  OLLAMA_MAX_RETRIES - The number of times to retry downloading models.
+  Default: 6
+
   -->
   <upstream>
     <remote-id type="github">ollama/ollama</remote-id>
