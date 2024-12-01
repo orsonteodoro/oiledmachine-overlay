@@ -2438,7 +2438,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji lapack mkl openblas openrc rocm sandbox systemd
-unrestrict video_cards_intel ebuild-revision-18
+unrestrict video_cards_intel ebuild-revision-19
 
 "
 gen_rocm_required_use() {
@@ -3081,7 +3081,7 @@ src_configure() {
 	# Buffer overflow mitigation
 einfo "-D_FORTIFY_SOURCE is already enabled."
 	else
-		: # append-flags -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1
+		append-flags -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1
 	fi
 
 	if tc-enables-ssp ; then
@@ -3089,7 +3089,7 @@ einfo "-fstack-protector* is already enabled."
 	else
 	# As a precaution mitigate CE, DT, ID, DoS
 	# Stack based buffer overflow protection
-		: # append-flags -fstack-protector
+		append-flags -fstack-protector
 	fi
 
 	if tc-enables-pie ; then
