@@ -1,0 +1,67 @@
+{
+  "name": "@theia/cli",
+  "version": "1.56.0",
+  "description": "Theia CLI.",
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "EPL-2.0 OR GPL-2.0-only WITH Classpath-exception-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eclipse-theia/theia.git"
+  },
+  "bugs": {
+    "url": "https://github.com/eclipse-theia/theia/issues"
+  },
+  "homepage": "https://github.com/eclipse-theia/theia",
+  "files": [
+    "bin",
+    "lib",
+    "src",
+    "patches"
+  ],
+  "bin": {
+    "theia": "./bin/theia",
+    "theia-patch": "./bin/theia-patch.js"
+  },
+  "scripts": {
+    "prepare": "tsc -b",
+    "lint": "theiaext lint",
+    "build": "theiaext build",
+    "watch": "theiaext watch",
+    "clean": "theiaext clean"
+  },
+  "dependencies": {
+    "@theia/application-manager": "1.56.0",
+    "@theia/application-package": "1.56.0",
+    "@theia/ffmpeg": "1.56.0",
+    "@theia/localization-manager": "1.56.0",
+    "@theia/ovsx-client": "1.56.0",
+    "@theia/request": "1.56.0",
+    "@types/chai": "^4.2.7",
+    "@types/mocha": "^10.0.0",
+    "@types/node-fetch": "^2.5.7",
+    "chai": "^4.3.10",
+    "chalk": "4.0.0",
+    "decompress": "^4.2.1",
+    "escape-string-regexp": "4.0.0",
+    "glob": "^8.0.3",
+    "http-server": "^14.1.1",
+    "limiter": "^2.1.0",
+    "log-update": "^4.0.0",
+    "mocha": "^10.1.0",
+    "patch-package": "^8.0.0",
+    "puppeteer": "23.1.0",
+    "puppeteer-core": "23.1.0",
+    "puppeteer-to-istanbul": "1.4.0",
+    "temp": "^0.9.1",
+    "tslib": "^2.6.2",
+    "yargs": "^15.3.1"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.7",
+    "@types/mocha": "^10.0.0",
+    "@types/node-fetch": "^2.5.7",
+    "@types/proxy-from-env": "^1.0.1"
+  }
+}
