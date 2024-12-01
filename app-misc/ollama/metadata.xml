@@ -18,7 +18,8 @@
   Default: 6
 
   OLLAMA_NUM_DOWNLOAD_PARTS - The number of download parts to split the model.
-  It requires N * MB bandwidth.
+  It requires N * MB bandwidth.  If set too high, it will be too greedy and
+  unfair for other network apps.  It will cause download restarts if too high.
   Upstream default: 16
   Ebuild default: 1
 
