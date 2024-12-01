@@ -45,6 +45,8 @@ NPM_INSTALL_ARGS=(
 PYTHON_COMPAT=( "python3_11" ) # Upstream uses python 3.11, but node-gyp 10 requests py3.12.
 YARN_ELECTRON_OFFLINE=1
 YARN_EXE_LIST="
+/usr/bin/theia
+/opt/theia/chrome-sandbox
 /opt/theia/electron
 /opt/theia/libGLESv2.so
 /opt/theia/libvk_swiftshader.so
@@ -154,7 +156,7 @@ declare -A THEIA_PLUGINS=(
 ["theia_plugin_vscode_theme-solarized-dark"]="vscode.theme-solarized-dark"
 )
 
-inherit desktop edo electron-app python-single-r1 yarn
+inherit desktop edo electron-app python-single-r1 yarn xdg
 
 KEYWORDS="~amd64"
 SLOT="0/monthly"
@@ -2871,7 +2873,15 @@ src_install() {
 	fi
 }
 
+pkg_postinst() {
+	xdg_pkg_postinst
+	if use ollama ; then
+einfo "The default models listed for Ollama support are llama3 and gemma2"
+	fi
+}
+
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.37.1 (20230525)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.50.1 (20240620)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.56.0 (20241201)
 # launch-test:  passed
