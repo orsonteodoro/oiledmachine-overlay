@@ -25,7 +25,7 @@ https://github.com/KhronosGroup/NNEF-Tools/archive/refs/tags/nnef-v${PV}.tar.gz
 	"
 fi
 
-DESCRIPTION="The NNEF parser"
+DESCRIPTION="A parser to add support for neural network NNEF files"
 HOMEPAGE="https://github.com/KhronosGroup/NNEF-Tools/tree/main/nnef-pyproject"
 LICENSE="
 	Apache-2.0
