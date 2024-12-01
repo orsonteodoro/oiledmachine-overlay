@@ -2438,7 +2438,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji lapack mkl openblas openrc rocm sandbox systemd
-unrestrict video_cards_intel ebuild-revision-19
+unrestrict video_cards_intel ebuild-revision-20
 
 "
 gen_rocm_required_use() {
@@ -3119,6 +3119,9 @@ einfo "PIE is already enabled."
 # ld: /opt/rocm-6.1.2/lib/libamdhip64.so: undefined reference to `hsa_status_string'
 		filter-flags "-Wl,--as-needed"
 	fi
+
+	# Fixes --version needed by loz
+	append-ldflags -X github.com/jmorganca/ollama/version.Version=${PV}
 
 	export CGO_CFLAGS="${CFLAGS}"
 	export CGO_CXXFLAGS="${CXXFLAGS}"
