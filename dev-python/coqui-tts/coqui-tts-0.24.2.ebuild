@@ -51,7 +51,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${LANGS[@]/#/l10n_}
 -cors dev doc notebooks server
-ebuild-revision-3
+ebuild-revision-4
 "
 RDEPEND+="
 	>=sci-libs/transformers-4.42.0[${PYTHON_SINGLE_USEDEP}]
