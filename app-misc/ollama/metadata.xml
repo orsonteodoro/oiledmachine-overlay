@@ -21,6 +21,19 @@
   Upstream default: 16
   Ebuild default: 1
 
+
+  Example
+
+  Contents of /etc/portage/env/ollama.conf
+
+  OLLAMA_MAX_RETRIES=7
+  OLLAMA_NUM_DOWNLOAD_PARTS=2
+
+
+  Contents of /etc/portage/package.env
+
+  app-misc/ollama ollama.conf
+
   -->
   <upstream>
     <remote-id type="github">ollama/ollama</remote-id>
