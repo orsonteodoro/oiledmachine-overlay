@@ -3302,11 +3302,11 @@ einfo "PIE is already enabled."
 
 	local max_retries=${OLLAMA_MAX_RETRIES:-6}
 	sed -i -e "s|maxRetries = 6|maxRetries = ${max_retries}|g" "server/download.go" || die
-einfo "OLLAMA_MAX_RETRIES:  ${OLLAMA_MAX_RETRIES}"
+einfo "OLLAMA_MAX_RETRIES:  ${max_retries}"
 
 	local num_download_parts=${OLLAMA_NUM_DOWNLOAD_PARTS:-1}
 	sed -i -e "s|numDownloadParts          = 16|numDownloadParts          = ${num_download_parts}|g" "server/download.go" || die
-einfo "OLLAMA_NUM_DOWNLOAD_PARTS:  ${OLLAMA_NUM_DOWNLOAD_PARTS}"
+einfo "OLLAMA_NUM_DOWNLOAD_PARTS:  ${num_download_parts}"
 }
 
 generate_deps() {
