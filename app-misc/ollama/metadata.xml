@@ -17,7 +17,8 @@
   OLLAMA_MAX_RETRIES - The number of times to retry downloading models.
   Default: 6
 
-  OLLAMA_NUM_DOWNLOAD_PARTS - The number of download parts.
+  OLLAMA_NUM_DOWNLOAD_PARTS - The number of download parts to split the model.
+  It requires N * MB bandwidth.
   Upstream default: 16
   Ebuild default: 1
 
