@@ -1175,7 +1175,7 @@ electron-app_cp_electron() {
 	mkdir -p "${ELECTRON_CACHE}" || die
 	local fn="electron-v${ELECTRON_APP_ELECTRON_PV}-$(electron-app_get_electron_platarch).zip"
 	export ELECTRON_CUSTOM_FILENAME="${fn}"
-	export ELECTRON_CUSTOM_DIR="${ELECTRON_APP_ELECTRON_PV}"
+	export ELECTRON_CUSTOM_DIR=${ELECTRON_CUSTOM_DIR:-"${ELECTRON_APP_ELECTRON_PV}"}
 	cp -a \
 		"${DISTDIR}/${fn}" \
 		"${ELECTRON_CACHE}/${fn}" \
