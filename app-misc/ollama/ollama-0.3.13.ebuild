@@ -3081,7 +3081,7 @@ src_configure() {
 	# Buffer overflow mitigation
 einfo "-D_FORTIFY_SOURCE is already enabled."
 	else
-		append-flags -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1
+		: # append-flags -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1
 	fi
 
 	if tc-enables-ssp ; then
@@ -3089,7 +3089,7 @@ einfo "-fstack-protector* is already enabled."
 	else
 	# As a precaution mitigate CE, DT, ID, DoS
 	# Stack based buffer overflow protection
-		append-flags -fstack-protector
+		: # append-flags -fstack-protector
 	fi
 
 	if tc-enables-pie ; then
