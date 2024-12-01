@@ -2876,7 +2876,7 @@ src_install() {
 pkg_postinst() {
 	xdg_pkg_postinst
 	if use ollama ; then
-einfo "The default models listed for Ollama support are llama3 and gemma2"
+einfo "The default models listed for Ollama support are llama3 and gemma2."
 	fi
 }
 
