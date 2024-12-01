@@ -2438,7 +2438,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji lapack mkl openblas openrc rocm sandbox systemd
-unrestrict video_cards_intel ebuild-revision-17
+unrestrict video_cards_intel ebuild-revision-18
 
 "
 gen_rocm_required_use() {
@@ -3302,7 +3302,11 @@ einfo "PIE is already enabled."
 
 	local max_retries=${OLLAMA_MAX_RETRIES:-6}
 	sed -i -e "s|maxRetries = 6|maxRetries = ${max_retries}|g" "server/download.go" || die
-	einfo "OLLAMA_MAX_RETRIES:  ${OLLAMA_MAX_RETRIES}"
+einfo "OLLAMA_MAX_RETRIES:  ${OLLAMA_MAX_RETRIES}"
+
+	local num_download_parts=${OLLAMA_NUM_DOWNLOAD_PARTS:-1}
+	sed -i -e "s|numDownloadParts          = 16|numDownloadParts          = ${num_download_parts}|g" "server/download.go" || die
+einfo "OLLAMA_NUM_DOWNLOAD_PARTS:  ${OLLAMA_NUM_DOWNLOAD_PARTS}"
 }
 
 generate_deps() {

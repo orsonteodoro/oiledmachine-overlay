@@ -17,6 +17,10 @@
   OLLAMA_MAX_RETRIES - The number of times to retry downloading models.
   Default: 6
 
+  OLLAMA_NUM_DOWNLOAD_PARTS - The number of download parts.
+  Upstream default: 16
+  Ebuild default: 1
+
   -->
   <upstream>
     <remote-id type="github">ollama/ollama</remote-id>
