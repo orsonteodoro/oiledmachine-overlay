@@ -6,32 +6,12 @@ EAPI=8
 
 # Upstream uses U22
 
-# typescript 5.3.3 = @types/node 20.8.9
-
-AT_TYPES_NODE_PV="22.7.5"
-# See https://releases.electronjs.org/releases.json
-
-# The current strategy to bump to 32.
-# 1. Keep original electron-rebuild.
-# 2. Bump node-abi to 3.68.0 with sed edits to force references to it
-# 3. Bump nan to 2.22.0
-# 4. Keep NODE_VERSION=18
-#
-# Current errors:
-# .electron-gyp/32.2.0/include/node/v8config.h:13:2: error: #error "C++20 or later required."
-# nan.h:700:39: error: 'class v8::Isolate' has no member named 'IdleNotificationDeadline'
-# nan.h:2560:8: error: 'class v8::ObjectTemplate' has no member named 'SetAccessor'
-
 # ELECTRON_APP_ELECTRON_PV is limited by nan
-#ELECTRON_APP_ELECTRON_PV="33.0.0-beta.10" # Cr 130.0.6723.31, node 20.18.0.
-#ELECTRON_APP_ELECTRON_PV="32.2.0" # Cr 128.0.6613.178, node 20.18.0.  Temporary used for debugging current problem.
-ELECTRON_APP_ELECTRON_PV="30.3.1" # Cr 124.0.6367.243, node 20.15.1.  Original
+ELECTRON_APP_ELECTRON_PV="30.1.2" # Cr 124.0.6367.243, node 20.14.0.  Original
 
 #ELECTRON_APP_LOCKFILE_EXACT_VERSIONS_ONLY="1"
 ELECTRON_APP_MODE="yarn"
 ELECTRON_APP_REACT_PV="18.2.0"
-NAN_PV="2.22.0" # 2.22.0 is needed for Electron 32 support
-NODE_ABI_PV="3.68.0"
 NODE_GYP_PV="10.2.0" # Same as CI
 NODE_ENV="development"
 NODE_VERSION=18 # Upstream uses in CI 16-20 but 18 is used in release.  Limited by openai-node
@@ -2404,245 +2384,6 @@ einfo "Updating lockfile from _yarn_src_unpack_update_ebuild_custom()"
 	export PATH="${HOME}/.cache/node/corepack/v1/npm/9.8.0/bin:${PATH}" # For npx
 	edo npx --version
 	cd "${S}" || die
-	#rm -f package-lock.json
-	#rm -f yarn.lock
-
-if false ; then
-
-	patch_edits() {
-		sed -i -e "s|\"ajv\": \"^6.5.3\"|\"ajv\": \"^6.12.3\"|g" "packages/core/package.json" || die
-		sed -i -e "s|\"ajv\": \"^6.5.3\"|\"ajv\": \"^6.12.3\"|g" "packages/toolbar/package.json" || die
-
-		sed -i -e "/^axios@^1.0.0, axios@^1.6.2:/,/^$/d" "yarn.lock" || die
-		sed -i -e "s|axios \"^1.0.0\"|axios \"^1.7.4\"|g" "yarn.lock" || die
-		sed -i -e "s|axios \"^1.6.2\"|axios \"^1.7.4\"|g" "yarn.lock" || die
-
-		sed -i -e "s|\"body-parser\": \"^1.17.2\"|\"body-parser\": \"^1.20.3\"|g" "packages/core/package.json" || die
-		sed -i -e "s|\"body-parser\": \"^1.18.3\"|\"body-parser\": \"^1.20.3\"|g" "packages/filesystem/package.json" || die
-
-		sed -i -e "/^braces@^3.0.2, braces@~3.0.2:/,/^$/d" "yarn.lock" || die
-		sed -i -e "s|braces \"^3.0.2\"|braces \"^3.0.3\"|g" "yarn.lock" || die
-		sed -i -e "s|braces \"~3.0.2\"|braces \"^3.0.3\"|g" "yarn.lock" || die
-
-		sed -i -e "/^cookie@~0.4.1:/,/^$/d" "yarn.lock" || die
-		sed -i -e "s|cookie \"~0.4.1\"|cookie \"^0.7.0\"|g" "yarn.lock" || die
-		sed -i -e "s|\"cookie\": \"^0.4.0\"|\"cookie\": \"^0.7.0\"|g" "packages/core/package.json" || die
-
-		sed -i -e "s|\"dompurify\": \"^2.2.9\"|\"dompurify\": \"^2.5.4\"|g" "packages/core/package.json" || die
-
-		sed -i -e "/^ejs@^3.1.7:/,/^$/d" "yarn.lock" || die
-		sed -i -e "s|ejs \"^3.1.7\"|ejs \"^3.1.10\"|g" "yarn.lock" || die
-
-	# Replace vulernable Cr 124 with recent Cr 130 to mitigate.
-#		sed -i -e "s|\"electron\": \"^30.1.2\"|\"electron\": \"${ELECTRON_APP_ELECTRON_PV}\"|g" "packages/electron/package.json" || die
-#		sed -i -e "s|\"electron\": \"^30.1.2\"|\"electron\": \"${ELECTRON_APP_ELECTRON_PV}\"|g" "examples/electron/package.json" || die
-
-		sed -i -e "/^follow-redirects@^1.0.0, follow-redirects@^1.15.4:/,/^$/d" "yarn.lock" || die
-		sed -i -e "s|follow-redirects \"^1.0.0\"|follow-redirects \"^1.15.6\"|g" "yarn.lock" || die
-		sed -i -e "s|follow-redirects \"^1.15.4\"|follow-redirects \"^1.15.6\"|g" "yarn.lock" || die
-
-	# Not listed in lockfile but mentioned by GH security scan.
-	# semver 5.x added by
-	#	@theia/core -> keytar [EOL] -> prebuild-install -> node-abi				# keytar pruning requires modding
-	#	@theia/core -> drivelist -> prebuild-install -> node-abi				# drivelist prning requires modding
-	#	@theia/application-manager -> less -> make-dir						# vulnerable
-	#	@theia/monorepo -> @typescript-eslint/eslint-plugin-tslint -> tslint			# pruned
-	#	@theia/monorepo -> @vscode/vsce -> parse-semver						# can be pruned
-
-		sed -i -e "/^micromatch@^4.0.2, micromatch@^4.0.4:/,/^$/d" "yarn.lock" || die
-		sed -i -e "s|micromatch \"^4.0.2\"|micromatch \"^4.0.8\"|g" "yarn.lock" || die
-		sed -i -e "s|micromatch \"^4.0.4\"|micromatch \"^4.0.8\"|g" "yarn.lock" || die
-
-#		sed -i -e "s|\"[*][*]/nan\": \"2.20.0\"|\"**/nan\": \"${NAN_PV}\"|g" "package.json" || die
-#		sed -i -e "s|\"[*][*]/@types/node\": \"18\"|\"[*][*]/@types/node\": \"${NODE_VERSION}\"|g" "package.json" || die
-
-#		sed -i -e "/^node-abi@[*], node-abi@^3.0.0, node-abi@^3.3.0:/,/^$/d" "yarn.lock" || die
-#		sed -i -e "/^node-abi@^2.21.0, node-abi@^2.7.0:/,/^$/d" "yarn.lock" || die
-#		sed -i -e "s|^node-abi@^${NODE_ABI_PV}:|node-abi@*, node-abi@^2.21.0, node-abi@^2.7.0, node-abi@^3.0.0, node-abi@^3.3.0, node-abi@^${NODE_ABI_PV}:|" "yarn.lock" || die
-
-#		sed -i -e "s|node-abi \"^2.7.0\"|node-abi \"^${NODE_ABI_PV}\"|g" "yarn.lock" || die
-#		sed -i -e "s|node-abi \"^2.21.0\"|node-abi \"^${NODE_ABI_PV}\"|g" "yarn.lock" || die
-#		sed -i -e "s|node-abi \"^3.3.0\"|node-abi \"^${NODE_ABI_PV}\"|g" "yarn.lock" || die
-
-		sed -i -e "/^path-to-regexp@0.1.10:/,/^$/d" "yarn.lock" || die
-		sed -i -e "/^path-to-regexp@^6.2.1:/,/^$/d" "yarn.lock" || die
-		sed -i -e "s|path-to-regexp \"0.1.10\"|path-to-regexp \"^6.3.0\"|g" "yarn.lock" || die
-		sed -i -e "s|path-to-regexp \"^6.2.1\"|path-to-regexp \"^6.3.0\"|g" "yarn.lock" || die
-
-		sed -i -e "/^tar@6.1.11:/,/^$/d" "yarn.lock" || die
-		sed -i -e "/^tar@^6.0.5, tar@^6.1.11, tar@^6.1.2:/,/^$/d" "yarn.lock" || die
-		sed -i -e "s|tar \"6.1.11\"|tar \"^6.2.1\"|g" "yarn.lock" || die
-		sed -i -e "s|tar \"^6.0.5\"|tar \"^6.2.1\"|g" "yarn.lock" || die
-		sed -i -e "s|tar \"^6.1.11\"|tar \"^6.2.1\"|g" "yarn.lock" || die
-		sed -i -e "s|tar \"^6.1.2\"|tar \"^6.2.1\"|g" "yarn.lock" || die
-
-		sed -i -e "s|\"webpack\": \"^5.76.0\"|\"webpack\": \"^5.94.0\"|g" "dev-packages/application-manager/package.json" || die
-		sed -i -e "s|\"webpack\": \"^5.76.0\"|\"webpack\": \"^5.94.0\"|g" "dev-packages/native-webpack-plugin/package.json" || die
-
-		sed -i -e "/^ws@8.11.0, ws@~8.11.0:/,/^$/d" "yarn.lock" || die
-		sed -i -e "s|ws \"8.11.0\"|ws \"^8.17.1\"|g" "yarn.lock" || die
-		sed -i -e "s|ws \"~8.11.0\"|ws \"^8.17.1\"|g" "yarn.lock" || die
-		sed -i -e "s|\"ws\": \"^8.17.1\"|\"ws\": \"^8.17.1\"|g" "packages/core/package.json" || die
-	}
-
-	local pkgs
-
-einfo "Add/update toolchain"
-	pkgs=(
-		"node-gyp"
-	)
-	eyarn remove ${pkgs[@]} -W
-
-	pkgs=(
-		"node-gyp@^${NODE_GYP_PV}"
-#		"node-abi@^${NODE_ABI_PV}"								# A dependency of electron-rebuild.  The abi field in abi_registry.json must be >= the major version of Electron.
-		"ts-clean"										# For download:plugins
-	)
-	eyarn add ${pkgs[@]} -D -W
-
-	patch_edits
-
-# Need to check if tslint package is *backdoored* or introduces a vulnerability
-einfo "Pruning vulnerable packages"
-
-	pkgs=(
-		"keytar"										# Adds semver 5.x, EOL
-	)
-#	eyarn workspace "@theia/core" remove ${pkgs[@]}
-
-	pkgs=(
-		# See https://en.wikipedia.org/wiki/Palantir_Technologies#WikiLeaks_proposals_(2010)
-		"tslint"										# Adds semver 5.x
-		"@typescript-eslint/eslint-plugin-tslint"						# Adds tslint
-
-#		"@vscode/vsce"										# Adds semver 5.x
-	)
-	eyarn remove ${pkgs[@]} -W
-
-	# This should be pruned
-	pkgs=(
-		"@theia/ffmpeg"
-	)
-#	eyarn workspace "@theia/application-manager" remove ${pkgs[@]} -W
-#	eyarn workspace "@theia/cli" remove ${pkgs[@]} -W
-
-einfo "Updating dependencies"
-	# ID = Information Disclosure
-	# DoS = Denial of Service
-	# DT = Data Tampering
-
-	pkgs=(
-		# @theia/core:
-		"dompurify@^2.5.4"				# CVE-2024-45801 # DoS, DT, ID
-		"express@^4.20.0"				# CVE-2024-43796 # DT, ID
-								# CVE-2024-29041 # DT, ID
-		"body-parser@^1.20.3"				# CVE-2024-45590 # DoS
-		"cookie@^0.7.0"					# CVE-2024-47764 # DT
-		"ajv@^6.12.3"					# CVE-2020-15366 # DoS, DT, ID
-		"ws@^8.17.1"					# CVE-2024-37890 # DoS			@theia/core -> socket.io -> engine.io -> ws
-		"semver@^5.7.2"					# CVE-2022-25883 # DoS
-
-		# @theia/core -> express:
-		"path-to-regexp@^6.3.0"				# CVE-2024-45296 # DoS
-		"serve-static@^1.16.0"				# CVE-2024-43800 # DT, ID
-		"send@^0.19.0"					# CVE-2024-43799 # DT, ID
-	)
-	eyarn workspace "@theia/core" upgrade ${pkgs[@]}
-
-	pkgs=(
-		"body-parser@^1.20.3"
-	)
-	eyarn workspace "@theia/filesystem" upgrade ${pkgs[@]}
-
-	pkgs=(
-		"ajv@^6.12.3"
-	)
-	eyarn workspace "@theia/toolbar" upgrade ${pkgs[@]}
-
-	pkgs=(
-		"electron-rebuild"                              # EOL
-	)
-#	eyarn workspace "@theia/application-manager" remove ${pkgs[@]}
-
-	pkgs=(
-	# Force 3.6.2 to prefer node-gyp over @electron/node-gyp
-		"@electron/rebuild@3.6.2"			# For Electron beta.  Breaks rebuild.
-	)
-#	eyarn workspace "@theia/application-manager" add ${pkgs[@]}
-
-	pkgs=(
-		"axios@^1.7.4"					# CVE-2024-39338 # ID			# @theia/application-package -> nano
-		"follow-redirects@^1.15.6"			# CVE-2024-28849 # ID                   # nano -> axios -> follow-redirects
-	)
-	eyarn workspace "@theia/application-package" upgrade ${pkgs[@]}
-
-	pkgs=(
-		# @theia/application-manager
-		"webpack@^5.94.0"				# CVE-2024-43788 # DoS, DT, ID		# @theia/application-manager
-		"follow-redirects@^1.15.6"			# CVE-2024-28849 # ID			# @theia/application-manager -> http-server
-		"braces@^3.0.3"					# CVE-2024-4068  # DoS			# @theia/application-manager -> copy-webpack-plugin -> fast-glob -> micromatch
-		"micromatch@^4.0.8"				# CVE-2024-4067  # DoS
-		"semver@^5.7.2"					# CVE-2022-25883 # DoS
-	)
-	eyarn workspace "@theia/application-manager" upgrade ${pkgs[@]}
-
-	pkgs=(
-		"webpack@^5.94.0"				# CVE-2024-43788 # DoS, DT, ID		# @theia/native-webpack-plugin
-	)
-	eyarn workspace "@theia/native-webpack-plugin" upgrade ${pkgs[@]}
-
-	pkgs=(
-		"follow-redirects@^1.15.6"			# CVE-2024-28849 # ID                   # @theia/cli -> http-server
-		"braces@^3.0.3"					# CVE-2024-4068  # DoS			# @theia/cli -> chokidar -> mocha
-	)
-	eyarn workspace "@theia/cli" upgrade ${pkgs[@]}
-
-	pkgs=(
-#		"electron@${ELECTRON_APP_ELECTRON_PV}"							# Pinned for license file consistency
-		"got@^11.8.5"					# CVE-2022-33987 # DT			# @theia/example-electron -> electron -> @electron/get
-	)
-	eyarn workspace "@theia/example-electron" upgrade ${pkgs[@]} #-D
-
-	pkgs=(
-#		"electron@${ELECTRON_APP_ELECTRON_PV}"							# Pinned for license file consistency
-	)
-#	eyarn workspace "@theia/electron" upgrade ${pkgs[@]} #-P
-
-	pkgs=(
-		"nan@${NAN_PV}"
-	)
-	#eyarn add ${pkgs[@]} -W # -D
-
-	pkgs=(
-		# @theia/monorepo
-		# TODO: bump parent packages
-		"http-cache-semantics@^4.1.1"			# CVE-2022-25881 # DoS			# @theia/monorepo -> node-gyp -> make-fetch-happen
-		"hosted-git-info@^2.8.9"			# CVE-2021-23362 # DoS			# @theia/monorepo -> @vscode/vsce
-		"tough-cookie@^4.1.3"				# CVE-2023-26136 # DoS, DT		# @theia/monorepo -> jsdom
-		"semver@^5.7.2"					# CVE-2022-25883 # DoS
-		"axios@^1.7.4"					# CVE-2024-39338 # ID			# @theia/monorepo -> lerna -> @lerna/create -> nx
-		"chownr@^1.1.0"					# CVE-2017-18869 # DT			# @theia/monorepo -> lerna
-		"yargs-parser@^13.1.2"				# CVE-2020-7608  # DoS, DT, ID		# @theia/monorepo -> lerna
-		"ssri@^6.0.2"					# CVE-2021-27290 # DoS			# @theia/monorepo -> lerna
-		"ejs@^3.1.10"					# CVE-2024-33883 # DoS			# @theia/monorepo -> lerna -> @lerna/create -> @nx/devkit
-		"tar@^6.2.1"					# CVE-2021-37713 # DT, ID		# @theia/monorepo -> lerna
-								# CVE-2021-32804 # DT, ID
-								# CVE-2024-28863 # DoS
-		"path-to-regexp@^6.3.0"				# CVE-2024-45296 # DoS			# @theia/monorepo -> sinon -> nise
-		"ws@^8.17.1"					# CVE-2024-37890 # DoS			# @theia/monorepo -> jsdom
-		"follow-redirects@^1.15.6"			# CVE-2024-28849 # ID                   # @theia/monorepo -> lerna -> @lerna/create -> nx -> axios -> follow-redirects
-
-		"@types/node@${NODE_VERSION}"
-	)
-	eyarn upgrade ${pkgs[@]} #-D -W
-
-	patch_edits
-
-	eyarn dedupe
-
-	# Running `yarn dedupe` will undo patch_edits.
-	patch_edits
-fi
 
 einfo "Generating yarn.lock"
 	eyarn install
@@ -2876,7 +2617,12 @@ src_install() {
 pkg_postinst() {
 	xdg_pkg_postinst
 	if use ollama ; then
+einfo
 einfo "The default models listed for Ollama support are llama3 and gemma2."
+einfo
+einfo "To set up the models per agent, see https://theia-ide.org/docs/user_ai/#ollama"
+einfo "To access the chat, View > Chat Experimental"
+einfo
 	fi
 }
 
@@ -2885,3 +2631,5 @@ einfo "The default models listed for Ollama support are llama3 and gemma2."
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.50.1 (20240620)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.56.0 (20241201)
 # launch-test:  passed
+# ai-assistant (ollama with yi-coder:1.5b orchestrator agent):  passed
+# Run hello world for python:  fail
