@@ -384,12 +384,23 @@ LICENSE="
 # CC-BY-4.0 custom MIT Unicode-DFS-2016 W3C-Community-Final-Specification-Agreement W3C-Software-and-Document-Notice-and-License - ./node_modules/typescript/ThirdPartyNoticeText.txt
 HOMEPAGE="https://github.com/joone/loz"
 SLOT="0"
-IUSE="ollama"
+IUSE="codellama llama2 ollama"
 REQUIRED_USE="
+	ollama? (
+		|| (
+			codellama
+			llama2
+		)
+	)
 "
 RDEPEND="
 	ollama? (
-		app-misc/ollama
+		codellama? (
+			app-misc/ollama[ollama_llms_codellama]
+		)
+		llama2? (
+			app-misc/ollama[ollama_llms_llama2]
+		)
 	)
 "
 RESTRICT="mirror"
@@ -406,11 +417,19 @@ src_unpack() {
 
 pkg_postinst() {
 	if use ollama ; then
-einfo "Upstream officially supports llama2 and codellama."
-einfo "You need one one of the above to reproduce clean output."
-einfo "You can change the values of ollama.model and model in \"~/.loz/config.json\" for a custom model."
+		if use codellama ; then
+einfo "You still need to download the model, run \`ollama run codellama\` to install."
+		fi
+		if use llama2 ; then
+einfo "You still need to download the model, run \`ollama run llama\` to install."
+		fi
+einfo
+einfo "You can change the values of ollama.model and model in"
+einfo "\"~/.loz/config.json\" to either llama2 or codellama."
+einfo
 	fi
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  TESTING (0.3.1_p20240322, 20241201)
 # ls | loz "all rows uppercase" (with yi-coder:1.5b) - failed (produces junk on the top of output and bottom)
+# ls | loz "all rows uppercase" (with llama3.2:1b-text-q5_1) - failed (the model variant is poor quality)
