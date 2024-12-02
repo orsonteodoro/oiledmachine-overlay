@@ -3121,7 +3121,7 @@ einfo "PIE is already enabled."
 	fi
 
 	# Fixes --version needed by loz
-	append-ldflags -X github.com/jmorganca/ollama/version.Version=${PV}
+	export VERSION="${PV}"
 
 	export CGO_CFLAGS="${CFLAGS}"
 	export CGO_CXXFLAGS="${CXXFLAGS}"
