@@ -182,7 +182,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/ollama/ollama.git"
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
-	FALLBACK_COMMIT="ce7455a8e1045ae12c5eaa9dc5bb5bdc84a098dc" # Nov 27, 2024
+	FALLBACK_COMMIT="5f8051180e3b9aeafc153f6b5056e7358a939c88" # Nov 29, 2024
 	IUSE+=" fallback-commit"
 	inherit git-r3
 else
