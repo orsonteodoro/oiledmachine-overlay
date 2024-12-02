@@ -415,6 +415,30 @@ src_unpack() {
 	npm_src_unpack
 }
 
+configure_ollama_support() {
+	local name
+# Sort by security benchmark score.
+	if use llama2 ; then
+		name="llama2"
+	elif use codellama ; then
+		name="codellama"
+	else
+		name="llama2"
+	fi
+	sed \
+		-i \
+		-e "s|DEFAULT_OLLAMA_MODEL = \"llama2\"|DEFAULT_OLLAMA_MODEL = \"${name}\"|g" \
+		"src/config/index.ts" \
+		|| die
+}
+
+src_prepare() {
+	default
+	if use ollama ; then
+		configure_ollama_support
+	fi
+}
+
 pkg_postinst() {
 	if use ollama ; then
 		if use codellama ; then
