@@ -26,7 +26,7 @@ main() {
 	# LD_PRELOAD breaks with bwrap.  Verified via /proc/<pid>/maps
 	if [[ "${OLLAMA_MALLOC_PROVIDER}" == "mimalloc-secure" ]] ; then
 		export LD_PRELOAD="/usr/lib64/libmimalloc-secure.so.2"
-	elif [[ "${OLLAMA_MALLOC_PROVIDER}" == "mimalloc-secure" ]] ; then
+	elif [[ "${OLLAMA_MALLOC_PROVIDER}" == "mimalloc" ]] ; then
 		export LD_PRELOAD="/usr/lib64/libmimalloc.so.2"
 	elif [[ "${OLLAMA_MALLOC_PROVIDER}" == "hardened_malloc" ]] ; then
 		export LD_PRELOAD="/usr/lib64/libhardened_malloc.so"
