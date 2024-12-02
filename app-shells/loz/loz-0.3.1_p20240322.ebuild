@@ -407,6 +407,7 @@ src_unpack() {
 pkg_postinst() {
 	if use ollama ; then
 einfo "Upstream officially supports llama2 and codellama."
+einfo "You need one one of the above to reproduce clean output."
 einfo "You can change the values of ollama.model and model in \"~/.loz/config.json\" for a custom model."
 	fi
 }
