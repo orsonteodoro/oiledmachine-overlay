@@ -389,7 +389,7 @@ REQUIRED_USE="
 "
 RDEPEND="
 	ollama? (
-		app-misc/ollama[ollama_llms_llama2,ollama_llms_codellama]
+		app-misc/ollama
 	)
 "
 RESTRICT="mirror"
@@ -406,6 +406,7 @@ src_unpack() {
 
 pkg_postinst() {
 	if use ollama ; then
-ewarn "You need to add llama2 and codellama models for ollama."
+einfo "Upstream officially supports llama2 and codellama."
+einfo "You can change the values of ollama.model and model in \"~/.loz/config.json\" for a custom model."
 	fi
 }
