@@ -445,7 +445,7 @@ pkg_postinst() {
 einfo "You still need to download the model, run \`ollama run codellama\` to install."
 		fi
 		if use llama2 ; then
-einfo "You still need to download the model, run \`ollama run llama\` to install."
+einfo "You still need to download the model, run \`ollama run llama2\` to install."
 		fi
 einfo
 einfo "You can change the values of ollama.model and model in"
