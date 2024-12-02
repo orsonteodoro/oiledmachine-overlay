@@ -2467,7 +2467,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji lapack mkl openblas openrc rocm sandbox systemd
-unrestrict video_cards_intel ebuild-revision-20
+unrestrict video_cards_intel ebuild-revision-21
 
 "
 gen_rocm_required_use() {
@@ -3326,6 +3326,14 @@ einfo "OLLAMA_MAX_RETRIES:  ${max_retries}"
 	local num_download_parts=${OLLAMA_NUM_DOWNLOAD_PARTS:-1}
 	sed -i -e "s|numDownloadParts          = 16|numDownloadParts          = ${num_download_parts}|g" "server/download.go" || die
 einfo "OLLAMA_NUM_DOWNLOAD_PARTS:  ${num_download_parts}"
+
+	local min_download_part_size=${OLLAMA_MIN_DOWNLOAD_PART_SIZE:-1}
+	sed -i -e "s|minDownloadPartSize int64 = 100|minDownloadPartSize int64 = ${min_download_part_size}|g" "server/download.go" || die
+einfo "OLLAMA_MIN_DOWNLOAD_PART_SIZE:  ${min_download_part_size}"
+
+	local max_download_part_size=${OLLAMA_MAX_DOWNLOAD_PART_SIZE:-2}
+	sed -i -e "s|maxDownloadPartSize int64 = 1000|maxDownloadPartSize int64 = ${max_download_part_size}|g" "server/download.go" || die
+einfo "OLLAMA_MAX_DOWNLOAD_PART_SIZE:  ${max_download_part_size}"
 }
 
 build_new_runner() {
