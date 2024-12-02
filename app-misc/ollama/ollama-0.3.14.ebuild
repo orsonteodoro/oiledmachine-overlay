@@ -3690,6 +3690,7 @@ einfo "       256 GB RAM >= 128 B parameters"
 einfo "       512 GB RAM >= 256 B parameters"
 einfo "         1 TB RAM >= 512 B parameters"
 einfo
+einfo "Tip:  If the words per minute is too slow, use a smaller model."
 einfo
 	if use systemd ; then
 ewarn "The chroot and sandbox mitigation edits has not been implemented for systemd init script."
