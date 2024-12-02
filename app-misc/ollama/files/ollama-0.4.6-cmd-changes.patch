@@ -2015,7 +2015,7 @@ diff '--color=auto' -urp ollama-0.4.6.orig/cmd/cmd.go ollama-0.4.6/cmd/cmd.go
 +	"qwen2-math": "china-alignment china-bias math-word-problems stem science technology engineering mathematics",
 +	"qwen2.5": "china-alignment china-bias multilingual chat roleplay coding parsing json math instruction-following chinese english french spanish portuguese german italian russian japanese korean vietnamese thai arabic",
 +	"qwen2.5-coder": "china-alignment china-bias coding code-generation documentation fixing-bugs",
-+	"qwq": "math-word-problems reasoning",
++	"qwq": "math-word-problems reasoning graduate-level-reasoning graduate-level-stem biology physics chemistry",
 +	"reader-lm": "html-to-markdown",
 +	"reefer/her2": "erotica assistant adult-content ai-girlfriend girlfriend chat",
 +	"reefer/minimonica": "erotica assistant adult-content ai-girlfriend girlfriend chat",
