@@ -3690,7 +3690,7 @@ einfo "       256 GB RAM >=  64 B parameters"
 einfo "       512 GB RAM >= 128 B parameters"
 einfo "         1 TB RAM >= 256 B parameters"
 einfo
-einfo "Tip:  If the words per minute is too slow, use a smaller model."
+einfo "Tip:  If the words per minute is slower than 130, use a smaller model.  Using a slow model may affect text-to-speech."
 einfo "Tip:  If the cold start time is more than 20 seconds, use a smaller model."
 einfo
 	if use systemd ; then
