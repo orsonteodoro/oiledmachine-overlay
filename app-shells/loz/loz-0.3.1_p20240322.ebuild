@@ -411,3 +411,6 @@ einfo "You need one one of the above to reproduce clean output."
 einfo "You can change the values of ollama.model and model in \"~/.loz/config.json\" for a custom model."
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  TESTING (0.3.1_p20240322, 20241201)
+# ls | loz "all rows uppercase" (with yi-coder:1.5b) - failed (produces junk on the top of output and bottom)
