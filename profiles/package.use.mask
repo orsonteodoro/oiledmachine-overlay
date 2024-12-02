@@ -106,3 +106,6 @@ sci-libs/caffe2 -openmp
 
 # Download time issues
 net-libs/webkit-gtk libwebrtc
+
+# Debugging inference performance issue
+app-misc/ollama mimalloc-secure hardened_malloc sandbox chroot

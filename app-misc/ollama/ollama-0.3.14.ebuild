@@ -3081,7 +3081,7 @@ src_configure() {
 	# Buffer overflow mitigation
 einfo "-D_FORTIFY_SOURCE is already enabled."
 	else
-		append-flags -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1
+		: #append-flags -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1
 	fi
 
 	if tc-enables-ssp ; then
@@ -3089,7 +3089,7 @@ einfo "-fstack-protector* is already enabled."
 	else
 	# As a precaution mitigate CE, DT, ID, DoS
 	# Stack based buffer overflow protection
-		append-flags -fstack-protector
+		: #append-flags -fstack-protector
 	fi
 
 	if tc-enables-pie ; then
@@ -3656,12 +3656,24 @@ einfo "found at:"
 einfo
 einfo "  https://ollama.com/library"
 einfo
-einfo "Tip:  Use LLM models that only fit your RAM."
+einfo "Tip:  Use LLM models that are 2 orders of magnitude lighter for optimal"
+einfo "inference latency, optimal load latency, and minimal thrashing."
 einfo
-einfo "   ~1 B parameters =   1 GiB RAM required"
-einfo "   ~4 B parameters =   4 GiB RAM required"
-einfo "   ~8 B parameters =   8 GiB RAM required"
-einfo "   ~X B parameters =   X GiB RAM required"
+einfo "    O(100) MB RAM  =    O(1) MB model"
+einfo "      O(1) GB RAM  =   O(10) MB model"
+einfo "     O(10) GB RAM  =  O(100) MB model"
+einfo "    O(100) GB RAM  =    O(1) GB model"
+einfo "      O(1) TB RAM  =   O(10) GB model"
+einfo
+einfo "Tip:  Use LLM models that are 1 orders of magnitude lighter for programs"
+einfo "that have a particular model as a hard requirement and lack of"
+einfo "availability of a smaller parameter choice."
+einfo
+einfo "    O(100) MB RAM  =   O(10) MB model"
+einfo "      O(1) GB RAM  =  O(100) MB model"
+einfo "     O(10) GB RAM  =    O(1) GB model"
+einfo "    O(100) GB RAM  =   O(10) GB model"
+einfo "      O(1) TB RAM  =  O(100) GB model"
 einfo
 	if use systemd ; then
 ewarn "The chroot and sandbox mitigation edits has not been implemented for systemd init script."
