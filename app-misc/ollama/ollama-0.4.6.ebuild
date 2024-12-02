@@ -3629,6 +3629,7 @@ einfo "found at:"
 einfo
 einfo "  https://ollama.com/library"
 einfo
+einfo
 einfo "Tip:  Use LLM models that are 2 orders of magnitude lighter for optimal"
 einfo "inference latency, optimal load latency, and minimal thrashing."
 einfo
@@ -3638,15 +3639,29 @@ einfo "     O(10) GB RAM  =  O(100) MB model"
 einfo "    O(100) GB RAM  =    O(1) GB model"
 einfo "      O(1) TB RAM  =   O(10) GB model"
 einfo
-einfo "Tip:  Use LLM models that are 1 orders of magnitude lighter for programs"
-einfo "that have a particular model as a hard requirement and lack of"
-einfo "availability of a smaller parameter choice."
+einfo
+einfo "Tip:  Use LLM models that are 1 orders of magnitude lighter or N/2"
+einfo "parameters for programs that have a particular model as a hard"
+einfo "requirement and lack of availability of a smaller parameter choice."
 einfo
 einfo "    O(100) MB RAM  =   O(10) MB model"
 einfo "      O(1) GB RAM  =  O(100) MB model"
 einfo "     O(10) GB RAM  =    O(1) GB model"
 einfo "    O(100) GB RAM  =   O(10) GB model"
 einfo "      O(1) TB RAM  =  O(100) GB model"
+einfo
+einfo "                  or"
+einfo
+einfo "         1 GB RAM >= 500 M parameters"
+einfo "         4 GB RAM >=   2 B parameters"
+einfo "         8 GB RAM >=   4 B parameters"
+einfo "        16 GB RAM >=   8 B parameters"
+einfo "        32 GB RAM >=  16 B parameters"
+einfo "       128 GB RAM >=  64 B parameters"
+einfo "       256 GB RAM >= 128 B parameters"
+einfo "       512 GB RAM >= 256 B parameters"
+einfo "         1 TB RAM >= 512 B parameters"
+einfo
 einfo
 	if use systemd ; then
 ewarn "The chroot and sandbox mitigation edits has not been implemented for systemd init script."
