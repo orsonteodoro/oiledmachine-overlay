@@ -24,11 +24,13 @@
   Ebuild default: 1
 
   OLLAMA_MIN_DOWNLOAD_PART_SIZE - The size of a small download part in MB.
+  It must have no fractional part.
   Upstream default: 100
   Ebuild default: 1
 
   OLLAMA_MAX_DOWNLOAD_PART_SIZE - The size of a large download part in MB.
   If too large, it may a huge rewind to the start of that part.
+  It must have no fractional part.
   Upstream default: 1000
   Ebuild default: 2
 
@@ -38,8 +40,8 @@
 
   OLLAMA_MAX_RETRIES=7
   OLLAMA_NUM_DOWNLOAD_PARTS=2
-  OLLAMA_MIN_DOWNLOAD_PART_SIZE=100
-  OLLAMA_MAX_DOWNLOAD_PART_SIZE=1000
+  OLLAMA_MIN_DOWNLOAD_PART_SIZE=1
+  OLLAMA_MAX_DOWNLOAD_PART_SIZE=5
 
 
   Contents of /etc/portage/package.env
