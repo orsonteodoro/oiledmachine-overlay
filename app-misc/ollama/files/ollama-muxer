@@ -7,9 +7,6 @@
 ARGS=( ${@} )
 OLLAMA_BACKEND=${OLLAMA_BACKEND:-"@OLLAMA_BACKEND@"}
 
-# CWE-122 mitigation, CE, DoS, DT, ID
-OLLAMA_MALLOC_PROVIDER=${OLLAMA_MALLOC_PROVIDER:-"@OLLAMA_MALLOC_PROVIDER@"}
-
 # CWE-653 mitigation
 OLLAMA_SANDBOX_PROVIDER=${OLLAMA_SANDBOX_PROVIDER:-"@OLLAMA_SANDBOX_PROVIDER@"}
 
@@ -23,15 +20,6 @@ declare -A backends=(
 )
 
 main() {
-	# LD_PRELOAD breaks with bwrap.  Verified via /proc/<pid>/maps
-	if [[ "${OLLAMA_MALLOC_PROVIDER}" == "mimalloc-secure" ]] ; then
-		export LD_PRELOAD="/usr/lib64/libmimalloc-secure.so.2"
-	elif [[ "${OLLAMA_MALLOC_PROVIDER}" == "mimalloc" ]] ; then
-		export LD_PRELOAD="/usr/lib64/libmimalloc.so.2"
-	elif [[ "${OLLAMA_MALLOC_PROVIDER}" == "hardened_malloc" ]] ; then
-		export LD_PRELOAD="/usr/lib64/libhardened_malloc.so"
-	fi
-
 	if [[ "${OLLAMA_BACKEND}" == "rocm" ]] ; then
 		export LD_LIBRARY_PATH="/opt/rocm-@ROCM_VERSION@/lib:${LD_LIBRARY_PATH}"
 	elif [[ "${OLLAMA_BACKEND}" == "cuda" ]] ; then

@@ -15,8 +15,6 @@ log="/var/log/ollama/ollama.log"
 # DoS = Denial of Service
 # DT = Data Tampering
 
-# CWE-122 mitigation with hardened malloc, CE, DoS, DT, ID
-
 # CWE-653 mitigation
 OLLAMA_CHROOT=${OLLAMA_CHROOT:-@OLLAMA_CHROOT@}
 

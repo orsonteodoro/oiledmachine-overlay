@@ -140,11 +140,6 @@ zephyr
 LLVM_COMPAT=( 17 )
 GEN_EBUILD=0
 EGO_PN="github.com/ollama/ollama"
-HARDENED_ALLOCATORS=(
-	"hardened_malloc"
-	"mimalloc"
-	"mimalloc-secure"
-)
 LLAMA_CPP_COMMIT="3f1ae2e32cde00c39b96be6d01c2997c29bae555"
 KOMPUTE_COMMIT="4565194ed7c32d1d2efa32ceab4d3c6cae006306"
 LLAMA_CPP_UPDATE=0
@@ -2432,7 +2427,6 @@ SLOT="0"
 IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${CPU_FLAGS_X86[@]}
-${HARDENED_ALLOCATORS[@]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
@@ -2475,9 +2469,6 @@ gen_rocm_required_use() {
 REQUIRED_USE="
 	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
-	?? (
-		${HARDENED_ALLOCATORS[@]}
-	)
 	?? (
 		${ROCM_IUSE[@]}
 	)
@@ -2617,15 +2608,6 @@ RDEPEND="
 	)
 	lapack? (
 		sci-libs/lapack:=
-	)
-	hardened_malloc? (
-		dev-libs/hardened_malloc
-	)
-	mimalloc? (
-		dev-libs/mimalloc
-	)
-	mimalloc-secure? (
-		dev-libs/mimalloc[hardened]
 	)
 	mkl? (
 		sci-libs/mkl:=
@@ -3556,7 +3538,6 @@ src_install() {
 		backend="cpu"
 	fi
 
-	# The wrapper can be modified later to confine ollama with firejail or use mimalloc.
 	sed -i -e "s|@OLLAMA_BACKEND@|${backend}|g" \
 		"${T}/${PN}-muxer" \
 		|| die
@@ -3572,15 +3553,6 @@ src_install() {
 	#
 	install_cpu_runner
 	install_gpu_runner
-
-	local malloc
-	if use mimalloc ; then
-		malloc="mimalloc"
-	elif use mimalloc-secure ; then
-		malloc="mimalloc-secure"
-	elif use hardened_malloc ; then
-		malloc="hardened_malloc"
-	fi
 
 	local chroot=$(usex chroot "1" "0")
 	local sandbox=$(usex sandbox "sandbox" "")

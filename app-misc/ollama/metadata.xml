@@ -66,22 +66,8 @@
     <flag name="emoji">
       Support emojis.
     </flag>
-    <flag name="hardened_malloc">
-      Use a hardened allocator to mitigate against heap based buffer overflow
-      (CE, DoS, DT, ID).
-      (EXPERIMENTAL)
-    </flag>
     <flag name="lapack">
       Support CPU optimized linear math via the older LAPACK.
-    </flag>
-    <flag name="mimalloc">
-      Use a performance heap allocator.
-      (EXPERIMENTAL)
-    </flag>
-    <flag name="mimalloc-secure">
-      Use the hardened allocator to mitigate against heap based buffer overflow
-      (CE, DoS, DT, ID).
-      (EXPERIMENTAL)
     </flag>
     <flag name="mkl">
       Support CPU optimized linear math via oneMKL for Intel® CPUs/GPUs.
