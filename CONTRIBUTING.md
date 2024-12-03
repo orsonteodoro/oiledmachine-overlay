@@ -23,6 +23,7 @@
    - Information Disclosure (ID)
    - Code execution (CE, DoS, DT, ID)
      - C/C++ apps/libs that process user generated content.
+
        These should be hardened with a minimum of `-fhardened` or all of the set
        below:
 
@@ -37,7 +38,9 @@
        against a CE based Zero Click Attack.
 
      - C/C++ daemons or SUID programs.
+
        These should be hardened with `-fstack-clash-protection`.
+
    - Improper permissions (DT, ID)
    - Critical/high severity (DoS, DT, ID)
    - Telemetry (ID).  It should always be disabled.
