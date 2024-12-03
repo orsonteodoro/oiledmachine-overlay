@@ -32,10 +32,11 @@ LICENSE="
 	NCSA-AMD
 "
 # The distro's MIT license template does not contain All Rights Reserved.
+RESTRICT="strip" # Fix issue with finding symbols
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 	debug
-	ebuild-revision-12
+	ebuild-revision-13
 "
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
