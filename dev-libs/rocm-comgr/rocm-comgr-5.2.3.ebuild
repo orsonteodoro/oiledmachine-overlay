@@ -30,9 +30,15 @@ LICENSE="
 "
 # BSD - lib/comgr/LICENSE.txt
 # UoI-NCSA - lib/comgr/test/source2.hip
-RESTRICT="strip" # Prevent missing symbols
+# strip - Prevent missing symbols
+RESTRICT="
+	strip
+	!test? (
+		test
+	)
+"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-12"
+IUSE="test ebuild-revision-15"
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
 	!dev-libs/rocm-comgr:0
@@ -40,11 +46,6 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
-"
-RESTRICT="
-	!test? (
-		test
-	)
 "
 BDEPEND="
 	${ROCM_CLANG_DEPEND}

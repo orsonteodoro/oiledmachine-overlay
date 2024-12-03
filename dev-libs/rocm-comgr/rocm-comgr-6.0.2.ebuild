@@ -37,9 +37,15 @@ LICENSE="
 # all-rights-reserved MIT - lib/comgr/test/source/square.hip
 # UoI-NCSA - lib/comgr/test/disasm_options_test.c
 # The distro's MIT license template does not contain all rights reserved.
-RESTRICT="strip" # Prevent missing symbols
+# strip - Prevent missing symbols
+RESTRICT="
+	strip
+	!test? (
+		test
+	)
+"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-12"
+IUSE="test ebuild-revision-15"
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
 	!dev-libs/rocm-comgr:0
@@ -47,11 +53,6 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
-"
-RESTRICT="
-	!test? (
-		test
-	)
 "
 BDEPEND="
 	${ROCM_CLANG_DEPEND}
