@@ -41,7 +41,7 @@
 ```
 4. Baseline performance boost
    - Ebuilds with more than half performance drop should be -Oflag boosted one level or until the drop disappears.
-   - Ebuilds that take too long to process a task should be max -Oflag level without bugging and DoSing.
+   - Ebuilds that take too long to process a task should be max -Oflag level without bugging and without DoSing.
 5. New ebuilds related to
    - Game development (for programmers, for artists, for producers, for musicians)
    - Game libraries
