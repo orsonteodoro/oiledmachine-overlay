@@ -37,9 +37,10 @@
        These hardening flags need to also be verified.  This is to mitigate
        against a CE based Zero Click Attack.
 
-     - C/C++ daemons or SUID programs.
+     - C/C++ daemons or SUID programs.  These should add:
 
-       These should be hardened with `-fstack-clash-protection`.
+       -  The set above if it accepts user generated content.
+       - `-fstack-clash-protection`.
 
    - Improper permissions (DT, ID)
    - Critical/high severity (DoS, DT, ID)
