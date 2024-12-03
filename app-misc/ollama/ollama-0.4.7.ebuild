@@ -3079,7 +3079,7 @@ src_configure() {
 	# Buffer overflow mitigation
 einfo "-D_FORTIFY_SOURCE is already enabled."
 	else
-		: #append-flags -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1
+		: #append-flags -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2
 	fi
 
 	if tc-enables-ssp ; then
