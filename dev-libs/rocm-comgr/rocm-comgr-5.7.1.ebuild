@@ -86,12 +86,10 @@ src_configure() {
 		-DLLVM_DIR="${ESYSROOT}${EROCM_LLVM_PATH}"
 		-DLLVM_LINK_LLVM_DYLIB=OFF
 	)
-	export STRIP="/bin/true"
 	rocm_src_configure
 }
 
 src_install() {
-	export STRIP="/bin/true"
 	cmake_src_install
 	rocm_mv_docs
 }
