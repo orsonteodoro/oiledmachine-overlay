@@ -39,9 +39,9 @@
  *  Note: Bugs should be filed for the respective maintainers
  *  of the package in question and not hardened@gentoo.org.
 ```
-  - To mitigate against code execution (CE), C/C++ apps/libs that process user
-    generated content should be hardened with a minimum of `-fhardened` or all
-    of the set below
+  - Missing code execution (CE) in C/C++ apps/libs that process user
+    generated content.  These should be hardened with a minimum of `-fhardened`
+    or all of the set below
 
     - `-fstack-protector`
     - `-D_FORTIFY_SOURCE=2` with `-O1` or above
@@ -53,8 +53,8 @@
     These hardening flags need to also be verified.  This is to mitigate
     against a CE based Zero Click Attack.
 
-  - To mitigate against code execution (CE), C/C++ daemons or SUID programs
-    should be hardened with `-fstack-clash-protection`.
+  - Missing code execution (CE) mitigations in C/C++ daemons or SUID programs.
+    These should be hardened with `-fstack-clash-protection`.
 4. Baseline performance boost
    - Ebuilds with more than half performance drop should be -Oflag boosted one level or until the drop disappears.
    - Ebuilds that take too long to process a task should be max -Oflag level without bugging and without DoSing.
