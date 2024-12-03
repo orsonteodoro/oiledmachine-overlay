@@ -22,6 +22,22 @@
    - Data Tampering (DT)
    - Information Disclosure (ID)
    - Code execution (CE, DoS, DT, ID)
+     - C/C++ apps/libs that process user generated content.
+       These should be hardened with a minimum of `-fhardened` or all of the set
+       below:
+
+       - `-fstack-protector`
+       - `-D_FORTIFY_SOURCE=2` with `-O1` or above
+       - `-fPIC`
+       - `-fPIE` `-pie`
+       - `-Wl,-z,noexecstack`
+       - `-Wl,-z,relro -Wl,-z,now`
+
+       These hardening flags need to also be verified.  This is to mitigate
+       against a CE based Zero Click Attack.
+
+     - C/C++ daemons or SUID programs.
+       These should be hardened with `-fstack-clash-protection`.
    - Improper permissions (DT, ID)
    - Critical/high severity (DoS, DT, ID)
    - Telemetry (ID).  It should always be disabled.
@@ -39,22 +55,6 @@
  *  Note: Bugs should be filed for the respective maintainers
  *  of the package in question and not hardened@gentoo.org.
 ```
-  - Missing code execution (CE) in C/C++ apps/libs that process user
-    generated content.  These should be hardened with a minimum of `-fhardened`
-    or all of the set below
-
-    - `-fstack-protector`
-    - `-D_FORTIFY_SOURCE=2` with `-O1` or above
-    - `-fPIC`
-    - `-fPIE` `-pie`
-    - `-Wl,-z,noexecstack`
-    - `-Wl,-z,relro -Wl,-z,now`
-
-    These hardening flags need to also be verified.  This is to mitigate
-    against a CE based Zero Click Attack.
-
-  - Missing code execution (CE) mitigations in C/C++ daemons or SUID programs.
-    These should be hardened with `-fstack-clash-protection`.
 4. Baseline performance boost
    - Ebuilds with more than half performance drop should be -Oflag boosted one level or until the drop disappears.
    - Ebuilds that take too long to process a task should be max -Oflag level without bugging and without DoSing.
