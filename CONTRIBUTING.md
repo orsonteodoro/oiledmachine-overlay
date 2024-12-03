@@ -24,7 +24,7 @@
    - Code execution (CE, DoS, DT, ID)
    - Improper permissions (DT, ID)
    - Critical/high severity (DoS, DT, ID)
-   - Telemetry (ID).
+   - Telemetry (ID).  It should always be disabled.
    - Security QA notices
 ```
  * QA Notice: The following files contain writable and executable sections
