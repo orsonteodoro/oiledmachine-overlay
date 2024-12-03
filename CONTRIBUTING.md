@@ -3,8 +3,46 @@
 ### Submissions that are considered for acceptance
 
 1. Enhancements and optimization (PGO, BOLT, algorithms, ...)
-2. Fixes and completeness
-3. New ebuilds related to
+2. Bug fixes
+   - Compile time bugs
+   - Post compile bugs
+   - Missing symbols bugs
+   - RPATH bugs (dynamic linking to the wrong slotted library)
+3. Vulnerability fixes for...
+   - Denial of Service (DoS)
+     - Crashes (DoS)
+     - Memory leaks (DoS)
+     - Null pointer dereference (DoS)
+     - Out of bound access (DoS)
+     - Index out of range (DoS)
+   - Optimization flags that cause DoS should be removed or downgraded
+     explicitly. (e.g -O3, -Ofast, -ffast-math, ...)
+     - Use `filter-flags` to prevent DoS.
+     - Use `replace-flags '-O3' '-O2'` to prevent DoS.
+   - Data Tampering (DT)
+   - Information Disclosure (ID)
+   - Code execution (CE, DoS, DT, ID)
+   - Improper permissions (DT, ID)
+   - Critical/high severity (DoS, DT, ID)
+   - Telemetry (ID).
+   - Security QA notices
+'''
+ * QA Notice: The following files contain writable and executable sections
+ *  Files with such sections will not work properly (or at all!) on some
+ *  architectures/operating systems.  A bug should be filed at
+ *  https://bugs.gentoo.org/ to make sure the issue is fixed.
+ *  For more information, see:
+ *
+ *    https://wiki.gentoo.org/wiki/Hardened/GNU_stack_quickstart
+ *
+ *  Please include the following list of files in your report:
+ *  Note: Bugs should be filed for the respective maintainers
+ *  of the package in question and not hardened@gentoo.org.
+'''
+4. Baseline performance boost
+   - Ebuilds with more than half performance drop should be -Oflag boosted one level or until the drop disappears.
+   - Ebuilds that take too long to processs should be max level without bugging.
+5. New ebuilds related to
    - Game development (for programmers, for artists, for producers, for musicians)
    - Game libraries
    - Porting games outside of Linux
@@ -15,9 +53,10 @@
    - Emoji related
    - Security
    - AI (Artificial Intelligence)
-4. Version bumps
-5. Porting to different hardware
-6. Automated scripts to speed up updating or bumping of ebuilds
+   - ML (Machine Learning)
+6. Version bumps
+7. Porting to different hardware
+8. Automated scripts to speed up updating or bumping of ebuilds
 
 When you submit an ebuild on this overlay exclusively, they will not be
 disseminated or searchable in the overlay search engine.  Consider uploading
@@ -106,7 +145,13 @@ based on an outdated style guide.
     - Technicalities (unavailable ebuilds, distro restrictions, ISP throttling/quotas)
 
 * Coding style:
+  - The ebuilds currently use the super symmetry style.
+  - Context above and below are symmetrical and similar style.
+  - Whitespace above and below the current context is symmetrical.
+  - All ebuilds must follow the same style guideline.
+  - The ebuilds style is similar to Python.
   - The ebuilds contents must be mostly symmetric/even like code style.
+  - The metadata.xml is symmetrical, blocky, and 80 character, single spaced.
   - Function definitions should be K&R style.
   - The ~90% of the code must be within 80 characters boundary.
     - Long strings need to be hard wrapped.
