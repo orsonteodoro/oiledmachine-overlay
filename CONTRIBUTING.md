@@ -55,8 +55,7 @@
    - AI (Artificial Intelligence)
    - ML (Machine Learning)
 6. Version bumps
-7. Porting to different hardware
-8. Automated scripts to speed up updating or bumping of ebuilds
+7. KEYWORDS corrections to match upstream CI or supported CPU microarches in build files.
 
 When you submit an ebuild on this overlay exclusively, they will not be
 disseminated or searchable in the overlay search engine.  Consider uploading
