@@ -98,12 +98,13 @@ LICENSE="
 # ISC - llvm-project-rocm-5.7.0/lldb/third_party/Python/module/pexpect-4.6/LICENSE
 # MIT - llvm-project-rocm-5.7.0/polly/lib/External/isl/LICENSE
 # rc, BSD - llvm-project-rocm-5.7.0/llvm/lib/Support/COPYRIGHT.regex
+RESTRICT="strip" # Prevent missing symbols
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 -bolt -mlir profile +runtime
-ebuild-revision-21
+ebuild-revision-22
 "
 REQUIRED_USE="
 	cfi? (

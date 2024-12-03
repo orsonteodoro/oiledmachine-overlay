@@ -83,12 +83,13 @@ LICENSE="
 # NCSA-AMD - rocm-6.1.2/amd/device-libs/ockl/inc/hsa.h
 # rc, BSD - llvm-project-rocm-5.7.0/llvm/lib/Support/COPYRIGHT.regex
 # SunPro - rocm-6.1.2/amd/device-libs/ocml/src/erfcF.cl
+RESTRICT="strip" # Prevent missing symbols
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 bolt -mlir profile +runtime
-ebuild-revision-21
+ebuild-revision-22
 "
 REQUIRED_USE="
 	cfi? (
