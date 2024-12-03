@@ -47,10 +47,12 @@
     - `-fPIE` `-pie`
     - `-Wl,-z,noexecstack`
     - `-Wl,-z,relro -Wl,-z,now`
+
     These hardening flags need to also be verified.  This is to mitigate
     against a CE based Zero Click Attack.
+
   - To mitigate against code execution (CE), C/C++ daemons or SUID programs
-    should be hardened with '-fstack-clash-protection'.
+    should be hardened with `-fstack-clash-protection`.
 4. Baseline performance boost
    - Ebuilds with more than half performance drop should be -Oflag boosted one level or until the drop disappears.
    - Ebuilds that take too long to process a task should be max -Oflag level without bugging and without DoSing.
