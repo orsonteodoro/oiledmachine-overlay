@@ -35,6 +35,7 @@ LICENSE="
 # BSD - lib/comgr/LICENSE.txt
 # UoI-NCSA BSD MIT - lib/comgr/NOTICES.txt
 # UoI-NCSA - lib/comgr/include/amd_comgr.h.in
+RESTRICT="strip" # Prevent missing symbols
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="ebuild-revision-12"
 RDEPEND="

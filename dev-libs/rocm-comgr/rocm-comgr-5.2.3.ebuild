@@ -30,6 +30,7 @@ LICENSE="
 "
 # BSD - lib/comgr/LICENSE.txt
 # UoI-NCSA - lib/comgr/test/source2.hip
+RESTRICT="strip" # Prevent missing symbols
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="test ebuild-revision-12"
 RDEPEND="

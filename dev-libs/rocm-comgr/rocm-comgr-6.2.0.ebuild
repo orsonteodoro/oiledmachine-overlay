@@ -79,6 +79,7 @@ LICENSE="
 # NCSA-AMD - amd/device-libs/ockl/inc/hsa.h
 # UoI-NCSA - amd/device-libs/LICENSE.TXT
 # The distro's MIT license template does not contain all rights reserved.
+RESTRICT="strip" # Prevent missing symbols
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="test ebuild-revision-12"
 RDEPEND="

@@ -37,6 +37,7 @@ LICENSE="
 # all-rights-reserved MIT - lib/comgr/test/source/square.hip
 # UoI-NCSA - lib/comgr/test/disasm_options_test.c
 # The distro's MIT license template does not contain all rights reserved.
+RESTRICT="strip" # Prevent missing symbols
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="test ebuild-revision-12"
 RDEPEND="
