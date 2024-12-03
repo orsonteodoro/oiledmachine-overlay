@@ -4,13 +4,14 @@
 
 EAPI=8
 
-# D10, U22.04
+# CI: U24
+# Min supported:  U16, D11
 
 MY_PV="$(ver_cut 1-4)"
 
 unset DISTUTILS_USE_PEP517
 DISTUTILS_EXT=1
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_10" "python3_12" )
 
 inherit cuda distutils-r1 flag-o-matic linux-info prefix tmpfiles udev
 inherit user-info xdg
@@ -63,13 +64,13 @@ IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${GSTREAMER_IUSE}
 
-aes appindicator +audio +avahi avif brotli +client +clipboard cpu-percent
+aes appindicator +audio +avahi avif brotli cityhash +client +clipboard cpu-percent
 +csc_cython csc_libyuv cuda +cuda_rebuild +cups cups-forwarding +cython
 -cythonize-more +dbus +doc -drm evdi firejail gnome-shell +gtk3 gssapi
 html5-client html5_gzip html5_brotli +http ibus jpeg kerberos +keyboard-layout
 keycloak ldap ldap3 +lz4 lzo +mdns mysql +netdev +notifications -nvdec nvenc nvfbc
 nvjpeg +opengl +openh264 openrc osmesa +pam pinentry png proc +proxy pyinotify
-qrencode +quic -rencode +rencodeplus +rfb sd_listen selinux +server +socks
+qrencode +quic -qt6 -rencode +rencodeplus +rfb sd_listen selinux +server +socks
 sound-forwarding spng sqlite +ssh sshpass +ssl systemd +tcp-wrappers test tiff
 u2f -uinput +v4l2 vaapi vpx vsock -wayland +webcam webcam-forwarding webp
 +websockets +X x264 +xdg +xinput yaml zeroconf zlib
@@ -506,6 +507,9 @@ RDEPEND+="
 	qrencode? (
 		media-gfx/qrencode[${PYTHON_USEDEP}]
 	)
+	qt6? (
+		dev-python/pyqt6[${PYTHON_USEDEP}]
+	)
 	quic? (
 		dev-python/aioquic[${PYTHON_USEDEP}]
 	)
@@ -827,6 +831,7 @@ eerror
 		$(use_with nvenc cuda_kernels)
 		$(use_with nvjpeg nvjpeg_decoder)
 		$(use_with nvjpeg nvjpeg_encoder)
+		$(use_with cityhash)
 		$(use_with csc_cython)
 		$(use_with csc_libyuv)
 		$(use_with cuda_rebuild)
@@ -847,6 +852,7 @@ eerror
 		$(use_with proc)
 		$(use_with proxy)
 		$(use_with qrencode)
+		$(use_with qt6 qt6_client)
 		$(use_with rfb)
 		$(use_with rencodeplus)
 		$(use_with server)

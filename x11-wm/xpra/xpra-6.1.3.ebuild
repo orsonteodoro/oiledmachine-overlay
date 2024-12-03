@@ -285,6 +285,22 @@ PILLOW_DEPEND="
 	virtual/pillow[${PYTHON_USEDEP},jpeg?,tiff?,webp?,zlib?]
 "
 
+PYOPENGL_VER=(
+	"3.1.7"
+)
+
+gen_opengl_rdepend() {
+	local s
+	for s in ${PYOPENGL_VER[@]} ; do
+		echo "
+			(
+				~dev-python/pyopengl-${s}[${PYTHON_USEDEP}]
+				~dev-python/pyopengl-accelerate-${s}[${PYTHON_USEDEP}]
+			)
+		"
+	done
+}
+
 # The media-video/nvidia-video-codec-sdk is a placeholder.  You need to package
 # it yourself locally.  See also
 # https://github.com/Xpra-org/xpra/blob/v6.0/docs/Usage/NVENC.md?plain=1
@@ -454,7 +470,9 @@ RDEPEND+="
 	opengl? (
 		x11-base/xorg-drivers[video_cards_dummy]
 		client? (
-			>=dev-python/pyopengl-accelerate-3.1.5[${PYTHON_USEDEP}]
+			|| (
+				$(gen_opengl_rdepend)
+			)
 		)
 		server? (
 			media-libs/mesa[osmesa?]
