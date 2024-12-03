@@ -26,7 +26,7 @@
    - Critical/high severity (DoS, DT, ID)
    - Telemetry (ID).
    - Security QA notices
-'''
+```
  * QA Notice: The following files contain writable and executable sections
  *  Files with such sections will not work properly (or at all!) on some
  *  architectures/operating systems.  A bug should be filed at
@@ -38,7 +38,7 @@
  *  Please include the following list of files in your report:
  *  Note: Bugs should be filed for the respective maintainers
  *  of the package in question and not hardened@gentoo.org.
-'''
+```
 4. Baseline performance boost
    - Ebuilds with more than half performance drop should be -Oflag boosted one level or until the drop disappears.
    - Ebuilds that take too long to processs should be max level without bugging.
