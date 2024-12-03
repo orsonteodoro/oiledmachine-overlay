@@ -40,7 +40,9 @@
  *  of the package in question and not hardened@gentoo.org.
 ```
   - To mitigate against code execution (CE), C/C++ apps/libs that process user
-    generated content should be hardened with a minimum of `-fhardened` or
+    generated content should be hardened with a minimum of `-fhardened` or all
+    of the set below
+
     - `-fstack-protector`
     - `-D_FORTIFY_SOURCE=2` with `-O1` or above
     - `-fPIC`
