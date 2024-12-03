@@ -473,6 +473,8 @@ RDEPEND+="
 			|| (
 				$(gen_opengl_rdepend)
 			)
+			dev-python/pyopengl:=
+			dev-python/pyopengl-accelerate:=
 		)
 		server? (
 			media-libs/mesa[osmesa?]
