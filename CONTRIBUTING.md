@@ -55,7 +55,7 @@
    - AI (Artificial Intelligence)
    - ML (Machine Learning)
 6. Version bumps
-7. KEYWORDS corrections to match upstream CI or supported CPU microarches in build files.
+7. KEYWORDS corrections to match upstream CI images or supported CPU microarches in build files.
 
 When you submit an ebuild on this overlay exclusively, they will not be
 disseminated or searchable in the overlay search engine.  Consider uploading
