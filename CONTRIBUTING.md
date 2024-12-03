@@ -40,7 +40,7 @@
      - C/C++ daemons or SUID programs.  These should add:
 
        -  The set above if it accepts user generated content.
-       - `-fstack-clash-protection`.
+       - `-fstack-clash-protection`
 
    - Improper permissions (DT, ID)
    - Critical/high severity (DoS, DT, ID)
