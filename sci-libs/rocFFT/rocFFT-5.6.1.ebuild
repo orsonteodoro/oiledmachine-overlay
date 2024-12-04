@@ -243,6 +243,13 @@ src_configure() {
 		)
 	fi
 	rocm_set_default_hipcc
+
+	# Fixes
+	# error: undefined reference due to --no-allow-shlib-undefined: numa_sched_setaffinity
+	# error: undefined reference due to --no-allow-shlib-undefined: hsa_amd_signal_value_pointer
+	# error: undefined reference due to --no-allow-shlib-undefined: amd_comgr_do_action
+	append-ldflags -lnuma -lhsa-runtime64 -lamd_comgr
+
 	rocm_src_configure
 }
 

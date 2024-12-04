@@ -213,6 +213,8 @@ src_configure() {
 # local memory (23068672) exceeds limit (65536) in function '_Z17transpose_kernel2I15HIP_vector_typeIfLj2EE6planarIS1_E11interleavedIS1_ELm64ELm16ELb1ELi0ELi1ELb0ELb0ELb0EL12CallbackType1EEvT0_T1_PKT_PmSC_SC_PvSD_jSD_SD_'
 	replace-flags '-O0' '-O1'
 
+#	append-libs -lamd_comgr -lhiprtc
+
 	local mycmakeargs=(
 		-DBUILD_CLIENTS_RIDER=$(usex benchmark ON OFF)
 		-DBUILD_CLIENTS_SELFTEST=$(usex test ON OFF)
@@ -249,7 +251,13 @@ src_configure() {
 	rocm_set_default_hipcc
 
 	# Breaks with lld and bfd
-	append-flags -fuse-ld=gold
+	filter-flags '-fuse-ld=gold'
+
+	# Fixes
+	# error: undefined reference due to --no-allow-shlib-undefined: numa_sched_setaffinity
+	# error: undefined reference due to --no-allow-shlib-undefined: hsa_amd_signal_value_pointer
+	# error: undefined reference due to --no-allow-shlib-undefined: amd_comgr_do_action
+	append-ldflags -lnuma -lhsa-runtime64 -lamd_comgr
 
 	rocm_src_configure
 }
