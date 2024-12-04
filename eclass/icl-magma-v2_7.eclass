@@ -105,7 +105,7 @@ if [[ "${MAGMA_CUDA}" == "1" ]] ; then
 			sys-devel/gcc:13
 		)
 	"
-_	IUSE+="
+	IUSE+="
 		${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		altas cuda
 	"
