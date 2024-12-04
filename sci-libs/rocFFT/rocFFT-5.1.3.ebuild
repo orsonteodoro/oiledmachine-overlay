@@ -46,7 +46,7 @@ RESTRICT="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda perfscripts +rocm test ebuild-revision-10
+benchmark cuda perfscripts +rocm test ebuild-revision-11
 "
 gen_cuda_required_use() {
 	local x
@@ -223,6 +223,7 @@ src_configure() {
 	# error: undefined reference due to --no-allow-shlib-undefined: numa_sched_setaffinity
 	# error: undefined reference due to --no-allow-shlib-undefined: hsa_amd_signal_value_pointer
 	# error: undefined reference due to --no-allow-shlib-undefined: amd_comgr_do_action
+	# >>> referenced by /opt/rocm-5.7.1/lib/libhiprtc.so
 	append-ldflags -lnuma -lhsa-runtime64 -lamd_comgr
 
 	rocm_src_configure
@@ -264,3 +265,4 @@ src_install() {
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
+
