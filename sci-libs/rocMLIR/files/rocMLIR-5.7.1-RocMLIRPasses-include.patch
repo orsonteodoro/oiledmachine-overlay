@@ -1,0 +1,11 @@
+--- a/mlir/include/mlir/Conversion/TosaToRock/TosaToRock.h.orig	2023-06-08 17:18:16.000000000 -0700
++++ b/mlir/include/mlir/Conversion/TosaToRock/TosaToRock.h	2024-12-05 07:05:15.330191640 -0800
+@@ -18,7 +18,7 @@
+ 
+ namespace mlir {
+ #define GEN_PASS_DECL_TOSATOROCKPASS
+-#include "mlir/Conversion/RocMLIRPasses.h.inc"
++#include "mlir/Conversion/RocMLIRPasses.h"
+ 
+ namespace tosa {
+ 
