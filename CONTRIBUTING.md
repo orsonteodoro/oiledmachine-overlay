@@ -46,7 +46,7 @@
    - Critical/high severity (DoS, DT, ID)
    - Telemetry (ID).  It should always be disabled.
    - Security QA notices
-     - Exhibit A:  .o files generated from .S assembler files without GNU stack note (.note.GNU-stack)
+     - Exhibit A:  .o object files generated from .S assembler files without a GNU stack note (.note.GNU-stack)
 
 ```
  * QA Notice: The following files contain writable and executable sections
