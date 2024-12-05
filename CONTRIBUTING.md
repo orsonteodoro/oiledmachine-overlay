@@ -84,7 +84,7 @@
    - Add `-Wl,-z,noexecstack` to LDFLAGS in ebuild or through modding the build files
    - Add the [code template](https://wiki.gentoo.org/wiki/Hardened/GNU_stack_quickstart#Patching)
      to .S assembly files associated with the .o files having the RWX column from scanelf and
-     converting the fix to a patch file.
+     converting the fixes to a patch file.
 
    For .c source code files, consider converting [GNU C Nested Functions](https://gcc.gnu.org/onlinedocs/gcc/Nested-Functions.html)
    to remove executable stack pages of insignificant code to improve least privileges.
