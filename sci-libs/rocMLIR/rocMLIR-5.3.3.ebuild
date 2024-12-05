@@ -8,6 +8,7 @@ EAPI=8
 #     ssize_t written = ::write(2, MessageStr.data(), MessageStr.size());
 #                       ~~^
 
+CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_SLOT=15
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"

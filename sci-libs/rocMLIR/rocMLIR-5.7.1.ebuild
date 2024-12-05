@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CMAKE_MAKEFILE_GENERATOR="ninja"
+CMAKE_MAKEFILE_GENERATOR="emake" # ninja is not deterministic.  Breaks with MAKEOPTS=-j1
 LLVM_SLOT=17
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -94,7 +94,6 @@ RESTRICT="test"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.5.0-fix-so-suffix.patch"
 	"${FILESDIR}/${PN}-5.6.0-hardcoded-paths.patch"
-	"${FILESDIR}/${PN}-5.7.1-RocMLIRPasses-include.patch"
 )
 
 ccmake() {

@@ -12,7 +12,7 @@ EAPI=8
 #                                                   ^
 # 1 error generated.
 
-CMAKE_MAKEFILE_GENERATOR="ninja"
+CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_SLOT=16
 PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
