@@ -62,34 +62,34 @@
  *  of the package in question and not hardened@gentoo.org.
 ```
 
-     The message says to communicate with the distro, instead you should send
-     an issue request on the oiledmachine-overlay GitHub project page for
-     packages obtained from this repo.
+   The message says to communicate with the distro, instead you should send
+   an issue request on the oiledmachine-overlay GitHub project page for
+   packages obtained from this repo.
 
-     Security analysis:
+   Security analysis:
 
-     - The priciple of least privileges is violated.
-     - Code Execution (CE) may occur since execution is default ON
+   - The priciple of least privileges is violated.
+   - Code Execution (CE) may occur since execution is default ON
 
-     _Do not apply_ the .S assembly file fixes, when the file contains
+   _Do not apply_ the .S assembly file fixes, when the file contains
 
-     - JIT
-     - Trampolines
-     - Runtime code generator
-     - A function with [GNU C nested function](https://gcc.gnu.org/onlinedocs/gcc/Nested-Functions.html) used and converted to assembly
+   - JIT
+   - Trampolines
+   - Runtime code generator
+   - A function with [GNU C nested function](https://gcc.gnu.org/onlinedocs/gcc/Nested-Functions.html) used and converted to assembly
 
-     _Do apply_ one of the following fixes below if .S assembly file does not contain one of the items above
+   _Do apply_ one of the following fixes below if .S assembly file does not contain one of the items above
 
-     - Add `-Wa,--noexecstack` to C{,XX}FLAGS in ebuild or through modding the build files
-     - Add `-Wl,-z,noexecstack` to LDFLAGS in ebuild or through modding the build files
-     - Add the [code template](https://wiki.gentoo.org/wiki/Hardened/GNU_stack_quickstart#Patching)
-       to .S assembly files associated with the .o files having the RWX column from scanelf and
-       converting the fix to a patch file.
+   - Add `-Wa,--noexecstack` to C{,XX}FLAGS in ebuild or through modding the build files
+   - Add `-Wl,-z,noexecstack` to LDFLAGS in ebuild or through modding the build files
+   - Add the [code template](https://wiki.gentoo.org/wiki/Hardened/GNU_stack_quickstart#Patching)
+     to .S assembly files associated with the .o files having the RWX column from scanelf and
+     converting the fix to a patch file.
 
-     For .c source code files, consider converting [GNU C Nested Functions](https://gcc.gnu.org/onlinedocs/gcc/Nested-Functions.html)
-     to remove executable stack pages of insignificant code to improve least privileges.
+   For .c source code files, consider converting [GNU C Nested Functions](https://gcc.gnu.org/onlinedocs/gcc/Nested-Functions.html)
+   to remove executable stack pages of insignificant code to improve least privileges.
 
-     Verify the program runtime behavior after applying the fix.
+   Verify the program runtime behavior after applying the fix.
 
 4. Baseline performance boost
    - Ebuilds with more than half performance drop during runtime should be -Oflag boosted one level or until the drop disappears.
