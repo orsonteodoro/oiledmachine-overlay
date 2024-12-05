@@ -4,14 +4,16 @@
 
 EAPI=8
 
+MY_PV="chromium-${PV}"
+
 inherit dhms
 
 KEYWORDS="~amd64 ~arm64 ~ppc64"
 S="${WORKDIR}"
-# The URI for 131.0.6778.69 came from the distro chromium ebuild.
+# The URI for 131.0.6778.108 came from the distro chromium ebuild.
 # I don't personally like when the distro passes out tarballs.
 SRC_URI="
-	https://chromium-tarballs.distfiles.gentoo.org/chromium-${PV}.tar.xz
+	https://chromium-tarballs.distfiles.gentoo.org/${MY_PV}-linux.tar.xz
 "
 
 DESCRIPTION="Chromium sources"
