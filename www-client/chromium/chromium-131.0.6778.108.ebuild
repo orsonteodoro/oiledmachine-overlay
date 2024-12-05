@@ -2322,7 +2322,8 @@ einfo "Removing ${x} from cromite"
 		sed -i \
 			-e "/blink_symbol_level/d" \
 			-e "/dcheck_always_on/d" \
-			-e "/is_debug/d" \
+			-e "/is_debug=false/d" \
+			-e "/is_debug = true/d" \
 			-e "/symbol_level/d" \
 			"${S_CROMITE}/build/cromite.gn_args" \
 			|| die
@@ -2985,8 +2986,8 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 
 	if has cromite ${IUSE_EFFECTIVE} && use cromite ; then
 		keeplibs+=(
-			cromite_flags/third_party
-			third_party/chromite
+			"cromite_flags/third_party"
+	#		"third_party/chromite"
 		)
 	fi
 
