@@ -100,8 +100,8 @@ hu id it ja kn ko lt lv ml mr ms nb nl pl pt-BR pt-PT ro ru sk sl sr sv sw ta
 te th tr uk ur vi zh-CN zh-TW
 "
 
-CROMITE_COMMIT="19cd8e5aac882df3eb12646b1a028608dfa7e117" # Based on most recent either tools/under-control/src/RELEASE or build/RELEASE
-CROMITE_PV="131.0.6778.70"
+CROMITE_COMMIT="32fa8435523f71f1d2b6ac2facdea91e874c6904" # Based on most recent either tools/under-control/src/RELEASE or build/RELEASE
+CROMITE_PV="131.0.6778.109"
 
 # About PGO version compatibility
 #
@@ -179,7 +179,7 @@ PYTHON_COMPAT=( "python3_"{9..13} )
 PYTHON_REQ_USE="xml(+)"
 QT5_PV="5.15.2"
 QT6_PV="6.4.2"
-UNGOOGLED_CHROMIUM_PV="131.0.6778.69-1"
+UNGOOGLED_CHROMIUM_PV="131.0.6778.85-1"
 USE_LTO=0 # Global variable
 # https://github.com/chromium/chromium/blob/131.0.6778.69/tools/clang/scripts/update.py#L38 \
 # grep 'CLANG_REVISION = ' ${S}/tools/clang/scripts/update.py -A1 | cut -c 18- # \
