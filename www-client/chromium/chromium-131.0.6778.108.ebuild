@@ -156,18 +156,11 @@ LLVM_OFFICIAL_SLOT="20" # Cr official slot
 LLVM_SLOT="" # Global variable
 LTO_TYPE="" # Global variable
 MESA_PV="20.3.5"
-MITIGATION_DATE="Nov 12, 2024" # Official annoucement (blog)
-MITIGATION_LAST_UPDATE=1731354660 # From `date +%s -d "2024-11-11 11:51 AM PST"` From tag in GH
-MITIGATION_URI="https://chromereleases.googleblog.com/2024/11/stable-channel-update-for-desktop_12.html"
+MITIGATION_DATE="Dec 3, 2024" # Official annoucement (blog)
+MITIGATION_LAST_UPDATE=1733177700 # From `date +%s -d "2024-12-2 2:15 PM PST"` From tag in GH
+MITIGATION_URI="https://chromereleases.googleblog.com/2024/12/stable-channel-update-for-desktop.html"
 VULNERABILITIES_FIXED=(
-	"CVE-2024-11112;DoS, DT, ID;High"
-	"CVE-2024-11113;DoS, DT, ID;High"
-	"CVE-2024-11114;DoS, DT, ID;High"
-	"CVE-2024-11115;DoS, DT, ID;High"
-	"CVE-2024-11110;DT;Medium"
-	"CVE-2024-11111;DT;Medium"
-	"CVE-2024-11116;DT;Medium"
-	"CVE-2024-11117;DT;Medium"
+	"CVE-2024-12053;DoS, DT, ID;High"
 )
 NABIS=0 # Global variable
 NODE_VERSION=20
