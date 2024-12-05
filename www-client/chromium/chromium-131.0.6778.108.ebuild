@@ -242,8 +242,7 @@ SRC_URI="
 		https://gitlab.com/Matt.Jolly/chromium-patches/-/archive/${PATCH_VER}/chromium-patches-${PATCH_VER}.tar.bz2
 	)
 	test? (
-		https://chromium-tarballs.distfiles.gentoo.org/${P}-testdata.tar.xz
-			-> ${P}-testdata-gentoo.tar.xz
+		https://chromium-tarballs.distfiles.gentoo.org/${P}-linux-testdata.tar.xz
 		https://chromium-fonts.storage.googleapis.com/${TEST_FONT}
 			-> chromium-${PV%%\.*}-testfonts.tar.gz
 	)
@@ -2083,8 +2082,7 @@ src_unpack() {
 	fi
 
 	if use ppc64 ; then
-		unpack "chromium_${PATCHSET_PPC64}.debian.tar.xz"
-		unpack "chromium-ppc64le-gentoo-patches-1.tar.xz"
+		unpack "chromium-openpower-${PPC64_HASH:0:10}.tar.bz2"
 	fi
 
 	if has cromite ${IUSE_EFFECTIVE} && use cromite ; then
@@ -2099,7 +2097,7 @@ src_unpack() {
 		# A new testdata tarball is available for each release; but testfonts tend to remain stable
 		# for the duration of a release.
 		# This unpacks directly into/over ${WORKDIR}/${P} so we can just use `unpack`.
-		unpack "${P}-testdata-gentoo.tar.xz"
+		unpack "${P}-linux-testdata.tar.xz"
 		# This just contains a bunch of font files that need to be unpacked (or moved) to the correct location.
 		local testfonts_dir="${WORKDIR}/${P}/third_party/test_fonts"
 		local testfonts_tar="${DISTDIR}/chromium-testfonts-${TEST_FONT:0:10}.tar.gz"
@@ -3466,7 +3464,7 @@ einfo "Using the system toolchain"
 
 	# Set LLVM_CONFIG to help Meson (bug #907965) but only do it
 	# for empty ESYSROOT (as a proxy for "are we cross-compiling?").
-	if [[ -z ${ESYSROOT} ]] ; then
+	if [[ -z "${ESYSROOT}" ]] ; then
 		llvm_fix_tool_path LLVM_CONFIG
 	fi
 
