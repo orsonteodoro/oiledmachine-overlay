@@ -154,40 +154,25 @@
 		    TRESOR (x86-64) [5]			E
 		    zen-sauce				N
 
-    6.9 (Stable)					A
-		    -rt	(RT_PREEMPT)			A
-		    Clang PGO				E
-		    Clear Linux patchset		A
-		    genpatches				A
-		    kernel_compiler_patch		D
-		    Nest				E
-		    Project C				A
-		    TCP BBR v2 [5]			E
-		    TCP BBR v3 [5]			E
-		    TRESOR (AES-NI) [5]			E
-		    TRESOR (x86) [5]			E
-		    TRESOR (x86-64) [5]			E
-		    zen-sauce				A
-
-    6.10 (Stable)					A
+    6.11 (Stable)					A
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				D
-		    Clear Linux patchset		A (point releases only, not live)
+		    Clear Linux patchset		N
 		    genpatches				A
-		    kernel_compiler_patch		D
+		    kernel_compiler_patch		A
 		    Nest				D
-		    Project C				D
+		    Project C				N
 		    TCP BBR v2 [5]			D
 		    TCP BBR v3 [5]			D
 		    TRESOR (AES-NI) [5]			D
 		    TRESOR (x86) [5]			D
 		    TRESOR (x86-64) [5]			D
-		    zen-sauce				A
+		    zen-sauce				N
 
-    6.11 (Mainline / Live / Master)			A
+    6.12 (Stable)					A
 		    -rt	(RT_PREEMPT)			A
 		    Clang PGO				D
-		    Clear Linux patchset		D (point releases only, not live)
+		    Clear Linux patchset		A (point releases only, not live)
 		    genpatches				A
 		    kernel_compiler_patch		A
 		    Nest				D
@@ -198,6 +183,21 @@
 		    TRESOR (x86) [5]			D
 		    TRESOR (x86-64) [5]			D
 		    zen-sauce				A
+
+    6.13 (Mainline / Live / Master)			A
+		    -rt	(RT_PREEMPT)			D
+		    Clang PGO				D
+		    Clear Linux patchset		D (point releases only, not live)
+		    genpatches				D
+		    kernel_compiler_patch		D
+		    Nest				D
+		    Project C				D
+		    TCP BBR v2 [5]			D
+		    TCP BBR v3 [5]			D
+		    TRESOR (AES-NI) [5]			D
+		    TRESOR (x86) [5]			D
+		    TRESOR (x86-64) [5]			D
+		    zen-sauce				D
 
     [1] Kernel LTS provides security updates and bugfixes, but doesn't extend to
         third party patchsets
@@ -1091,8 +1091,9 @@ OT_KERNEL_WORK_PROFILE="http-server-busy"
       5.15: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
       6.1: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
       6.6: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
-      6.10: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
-      6.11: cfs, cfs-throughput, cfs-interactive, cfs-autogroup
+      6.11: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
+      6.12: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
+      6.13: cfs, cfs-throughput, cfs-interactive, cfs-autogroup
 
       The reason why for this flexibility is to allow for multiple
       configurations that are not mutual exclusive, meaning you can use the rt
@@ -4281,17 +4282,13 @@ unset OT_KERNEL_PRIVATE_KEY
 
       https://github.com/torvalds/linux/compare/v6.6...zen-kernel:6.6/zen-sauce
 
-    For 6.9, see:
-
-      https://github.com/torvalds/linux/compare/v6.9...zen-kernel:6.9/zen-sauce
-
-    For 6.10, see:
-
-      https://github.com/torvalds/linux/compare/v6.10...zen-kernel:6.10/zen-sauce
-
     For 6.11, see:
 
       https://github.com/torvalds/linux/compare/v6.11...zen-kernel:6.11/zen-sauce
+
+    For 6.12, see:
+
+      https://github.com/torvalds/linux/compare/v6.12...zen-kernel:6.12/zen-sauce
 
     Use the zen-sauce USE flags instead of passing their Zen commit IDs
     equivalents.
