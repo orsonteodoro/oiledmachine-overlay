@@ -46,6 +46,8 @@
    - Critical/high severity (DoS, DT, ID)
    - Telemetry (ID).  It should always be disabled.
    - Security QA notices
+     - Exhibit A:  .o files generated from .S assembler files without GNU stack note (.note.GNU-stack)
+
 ```
  * QA Notice: The following files contain writable and executable sections
  *  Files with such sections will not work properly (or at all!) on some
@@ -59,6 +61,36 @@
  *  Note: Bugs should be filed for the respective maintainers
  *  of the package in question and not hardened@gentoo.org.
 ```
+
+       The message says to communicate with the distro, instead you should send
+       an issue request on the oiledmachine-overlay GitHub project page for
+       packages obtained from this repo.
+
+       Security analysis:
+
+       - The priciple of least privileges is violated.
+       - Code Execution (CE) may occur since execution is default ON
+
+       _Do not apply_ the .S assembly file fixes, when the file contains
+
+       - JIT
+       - Trampolines
+       - Runtime code generator
+       - A function with [GNU C nested function](https://gcc.gnu.org/onlinedocs/gcc/Nested-Functions.html) used and converted to assembly
+
+       _Do apply_ one of the following fixes below if .S assembly file does not contain one of the items above
+
+       - Add `-Wa,--noexecstack` to C{,XX}FLAGS in ebuild or through modding the build files
+       - Add `-Wl,-z,noexecstack` to LDFLAGS in ebuild or through modding the build files
+       - Add the [code template](https://wiki.gentoo.org/wiki/Hardened/GNU_stack_quickstart#Patching)
+         to .S assembly files associated with the .o files having the RWX column from scanelf and
+         converting the fix to a patch file.
+
+       For .c source code files, consider converting [GNU C Nested Functions](https://gcc.gnu.org/onlinedocs/gcc/Nested-Functions.html)
+       to remove executable stack pages of insignificant code to improve least privileges.
+
+       Verify the program runtime behavior after applying the fix.
+
 4. Baseline performance boost
    - Ebuilds with more than half performance drop during runtime should be -Oflag boosted one level or until the drop disappears.
    - Ebuilds that take too long to process a task during runtime should be max -Oflag level without bugging and without DoSing.
