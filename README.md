@@ -1217,7 +1217,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-plugins/gst-plugins-libpng | PNG image encoder/decoder plugin for GStreamer |
 | media-plugins/gst-plugins-libvisual | Visualization elements for GStreamer |
 | media-plugins/gst-plugins-livesync | A redirect ebuild for gst-plugins-livesync |
-| media-plugins/gst-plugins-lv2 | LV2 elements for Gstreamer |
+| media-plugins/gst-plugins-lv2 | LV2 elements for GStreamer |
 | media-plugins/gst-plugins-mdns | A device provider plugin and RTSP server discovery for GStreamer |
 | media-plugins/gst-plugins-meta | A metapackage to pull in gst plugins for apps |
 | media-plugins/gst-plugins-modplug | MOD audio decoder plugin for GStreamer |
