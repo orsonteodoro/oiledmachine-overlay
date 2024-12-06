@@ -68,7 +68,7 @@
 
    Security analysis:
 
-   - The priciple of least privileges is violated.
+   - The principle of least privileges is violated.
    - Code Execution (CE) may occur since execution is default ON
 
    _Do not apply_ the .S assembly file fixes, when the file contains
