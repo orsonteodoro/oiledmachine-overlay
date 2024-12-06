@@ -64,7 +64,7 @@ diff '--color=auto' -urp rocPRIM-rocm-5.5.1.orig/cmake/Dependencies.cmake rocPRI
    find_package(ROCM CONFIG REQUIRED NO_DEFAULT_PATH HINTS "${rocm-cmake_SOURCE_DIR}")
  else()
 -  find_package(ROCM 0.7.3 CONFIG REQUIRED PATHS /opt/rocm)
-+  find_package(ROCM 0.7.3 CONFIG REQUIRED PATHS /opt/rocm-@ROCM_VERSION@))
++  find_package(ROCM 0.7.3 CONFIG REQUIRED PATHS /opt/rocm-@ROCM_VERSION@)
  endif()
  
  # Restore user global state
