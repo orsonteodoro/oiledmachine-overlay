@@ -144,6 +144,21 @@ src_configure() {
 	addpredict "/dev/kfd"
 	rocm_set_default_hipcc
 
+	if use rocm ; then
+		append-ldflags \
+			-Wl,-L"/opt/rocm-${ROCM_VERSION}/llvm/$(rocm_get_libdir)" \
+			-Wl,-lLLVMSupport
+		if has_version "dev-util/hip:${ROCM_SLOT}[rocm]" ; then
+			append-ldflags -Wl,-lhsa-runtime64
+		fi
+		if has_version "dev-util/hip:${ROCM_SLOT}[lc]" ; then
+			append-ldflags -Wl,-lamd_comgr
+		fi
+		if has_version "dev-util/hip:${ROCM_SLOT}[numa]" ; then
+			append-ldflags -Wl,-lnuma
+		fi
+	fi
+
 	export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++"
 	export TENSILE_ROCM_OFFLOAD_BUNDLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang-offload-bundler"
 
