@@ -44,6 +44,14 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1101
 	gfx1102
 )
+SVE_ARCHES=(
+	armv8.2-a
+	armv8.3-a
+	armv8.4-a
+	armv8.5-a
+	armv8.6-a
+	armv9-a
+)
 CPU_FLAGS_ARM=(
 	cpu_flags_arm_sve
 )
@@ -3315,8 +3323,23 @@ einfo "PIE is already enabled."
 		cpu_args+=( -DGGML_AVX512_BF16=on )
 	fi
 
-	if use cpu_flags_arm_sve && [[ "${CFLAGS}" =~ "-march=armv8.6-a" ]] ; then
-		cpu_args+=( -DGGML_SVE=on )
+	if use cpu_flags_arm_sve ; then
+		local found=0
+		for a in ${SVE_ARCHES[@]} ; do
+			if [[ "${CFLAGS}" =~ "-march=${a}" ]] ; then
+				sed -i \
+					-e "s|armv8.6-a|${a}|g" \
+					"llm/llama.cpp/ggml/src/CMakeLists.txt" \
+					|| die
+				cpu_args+=( -DGGML_SVE=on )
+				found=1
+				break
+			fi
+		done
+		if (( ${found} == 1 )) ; then
+eerror "You need to set -march= to one of ${SVE_ARCHES[@]}"
+			die
+		fi
 	fi
 
 	if [[ -n "${cpu_args[@]}" ]] ; then
@@ -3479,7 +3502,7 @@ build_new_runner() {
 
 	if use cpu_flags_x86_avx2 && use cuda ; then
 		args+=(
-			-tags avx2,cuda,${cuda_impl}
+			-tags avx,avx2,cuda,${cuda_impl}
 		)
 	elif use cpu_flags_x86_avx && use cuda ; then
 		args+=(
@@ -3491,7 +3514,7 @@ build_new_runner() {
 		)
 	elif use cpu_flags_x86_avx2 && use rocm ; then
 		args+=(
-			-tags avx2,rocm
+			-tags avx,avx2,rocm
 		)
 	elif use cpu_flags_x86_avx && use rocm ; then
 		args+=(

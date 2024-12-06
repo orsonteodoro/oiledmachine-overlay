@@ -44,6 +44,17 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1101
 	gfx1102
 )
+SVE_ARCHES=(
+	armv8.2-a
+	armv8.3-a
+	armv8.4-a
+	armv8.5-a
+	armv8.6-a
+	armv9-a
+)
+CPU_FLAGS_ARM=(
+	cpu_flags_arm_sve
+)
 CPU_FLAGS_X86=(
 	cpu_flags_x86_f16c
 	cpu_flags_x86_fma
@@ -2457,6 +2468,7 @@ SLOT="0"
 
 IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
+${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLMS[@]/#/ollama_llms_}
@@ -2987,6 +2999,14 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 		"llama/make/Makefile.rocm" \
 		|| die
 
+	if [[ "${CFLAGS}" =~ "-march=armv8.6-a" ]] ; then
+		
+		sed -i \
+			-e "s|armv8.6-a||g" \
+			"llama/llama.go" \
+			|| die
+	fi
+
 	if ! use cpu_flags_x86_f16c ; then
 		sed -i \
 			-e "s|-mf16c||g" \
@@ -3313,6 +3333,24 @@ einfo "PIE is already enabled."
 		export OLLAMA_FAST_BUILD=1
 	fi
 
+	if use cpu_flags_arm_sve ; then
+		local found=0
+		for a in ${SVE_ARCHES[@]} ; do
+			if [[ "${CFLAGS}" =~ "-march=${a}" ]] ; then
+				sed -i \
+					-e "s|armv8.6-a|${a}|g" \
+					"llama/llama.go" \
+					|| die
+				found=1
+				break
+			fi
+		done
+		if (( ${found} == 1 )) ; then
+eerror "You need to set -march= to one of ${SVE_ARCHES[@]}"
+			die
+		fi
+	fi
+
 	check_toolchain
 
 	if use blis ; then
@@ -3430,9 +3468,13 @@ build_new_runner() {
 		edo go env -w "CGO_CXXFLAGS_ALLOW=${cpu_flags_args}"
 	fi
 
-	if use cpu_flags_x86_avx2 && use cuda ; then
+	if use cpu_flags_arm_sve ; then
 		args+=(
-			-tags avx2,cuda,${cuda_impl}
+			-tags sve
+		)
+	elif use cpu_flags_x86_avx2 && use cuda ; then
+		args+=(
+			-tags avx,avx2,cuda,${cuda_impl}
 		)
 	elif use cpu_flags_x86_avx && use cuda ; then
 		args+=(
@@ -3444,7 +3486,7 @@ build_new_runner() {
 		)
 	elif use cpu_flags_x86_avx2 && use rocm ; then
 		args+=(
-			-tags avx2,rocm
+			-tags avx,avx2,rocm
 		)
 	elif use cpu_flags_x86_avx && use rocm ; then
 		args+=(
