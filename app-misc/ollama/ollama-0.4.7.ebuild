@@ -3592,6 +3592,7 @@ src_install() {
 	install_gpu_runner
 
 	local chroot=$(usex chroot "1" "0")
+	local flash_attention=$(usex flash "1" "0")
 	local sandbox=$(usex sandbox "sandbox" "")
 
 	if use openrc ; then
@@ -3605,6 +3606,7 @@ src_install() {
 		sed -i \
 			-e "s|@OLLAMA_BACKEND@|${backend}|g" \
 			-e "s|@OLLAMA_CHROOT@|${chroot}|g" \
+			-e "s|@OLLAMA_FLASH_ATTENTION@|${flash_attention}|g" \
 			-e "s|@OLLAMA_SANDBOX_PROVIDER@|${sandbox}|g" \
 			"${ED}/etc/init.d/${PN}" \
 			|| die
@@ -3617,6 +3619,10 @@ src_install() {
 				"${ED}/usr/bin/${PN}" \
 				|| die
 		fi
+		sed -i \
+			-e "s|@OLLAMA_FLASH_ATTENTION@|${flash_attention}|g" \
+			"${ED}/usr/lib/systemd/system/${PN}.service" \
+			|| die
 	fi
 
 	sed -i \
