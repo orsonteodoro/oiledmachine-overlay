@@ -62,7 +62,7 @@
  *  of the package in question and not hardened@gentoo.org.
 ```
 
-   The message says to communicate with the distro, instead you should send
+   The message says to communicate with the distro.  Instead, you should send
    an issue request on the oiledmachine-overlay GitHub project page for
    packages obtained from this repo.
 
