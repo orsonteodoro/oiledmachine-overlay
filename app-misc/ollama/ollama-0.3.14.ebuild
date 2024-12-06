@@ -2451,7 +2451,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm sandbox systemd
-unrestrict video_cards_intel ebuild-revision-23
+unrestrict video_cards_intel ebuild-revision-24
 
 "
 gen_rocm_required_use() {
@@ -2996,13 +2996,13 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 
 	olast=$(get_olast 2)
 	sed -i \
-		-e "s|-O2|${olast}|g" \
+		-e "s|-O2|-O${olast}|g" \
 		"llama/llama.go" \
 		|| die
 
 	olast=$(get_olast 3)
 	sed -i \
-		-e "s|-O3|${olast}|g" \
+		-e "s|-O3|-O${olast}|g" \
 		"llm/llama.cpp/Makefile" \
 		|| die
 }
@@ -3147,10 +3147,10 @@ einfo "PIE is already enabled."
 
 	strip-unsupported-flags
 
-	if use debug ; then
+#	if use debug ; then
 	# Increase build verbosity
 		append-flags -g
-	fi
+#	fi
 
 	if use rocm ; then
 	# Fixes
