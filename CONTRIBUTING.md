@@ -202,7 +202,7 @@ based on an outdated style guide.
   - All ebuilds must follow the same style guideline.
   - The ebuilds style is similar to Python.
   - The ebuilds contents must be mostly symmetric/even like code style.
-  - The metadata.xml is symmetrical, blocky, and 80 character, single spaced, sorted.
+  - The metadata.xml is symmetrical, blocky, 80 characters, single spaced, sorted.
   - Function definitions should be K&R style.
   - The ~90% of the code must be within 80 characters boundary.
     - Long strings need to be hard wrapped.
