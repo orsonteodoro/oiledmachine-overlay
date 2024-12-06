@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild from oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
   <maintainer type="person" proxied="yes">
+    <!-- Ebuild originator -->
     <email>zdanevich.vitaly@ya.ru</email>
     <name>Vitaly Zdanevich</name>
   </maintainer>
