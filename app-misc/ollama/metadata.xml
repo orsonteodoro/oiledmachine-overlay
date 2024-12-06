@@ -67,7 +67,9 @@
       Support emojis.
     </flag>
     <flag name="flash">
-      Use Flash Attention optimization and support less common quantizations
+      Use the Flash Attention optimization to reduce memory use and speed up
+      inference instead of using standard attention.  Also, support less common
+      quantizations.
     </flag>
     <flag name="lapack">
       Support CPU optimized linear math via the older LAPACK.
