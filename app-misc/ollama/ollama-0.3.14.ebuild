@@ -2634,7 +2634,7 @@ gen_rocm_rdepend() {
 				~dev-libs/rocm-comgr-${ROCM_VERSIONS[${s1}]}:${s}
 				~dev-libs/rocm-opencl-runtime-${ROCM_VERSIONS[${s1}]}:${s}
 				~dev-libs/rocr-runtime-${ROCM_VERSIONS[${s1}]}:${s}
-				~dev-util/hip-${ROCM_VERSIONS[${s1}]}:${s}[rocm]
+				~dev-util/hip-${ROCM_VERSIONS[${s1}]}:${s}[lc,rocm]
 				~sci-libs/hipBLAS-${ROCM_VERSIONS[${s1}]}:${s}[rocm]
 				~sci-libs/rocBLAS-${ROCM_VERSIONS[${s1}]}:${s}$(get_rocm_usedep ROCBLAS)
 				~sci-libs/rocSPARSE-${ROCM_VERSIONS[${s1}]}:${s}$(get_rocm_usedep ROCSPARSE)
