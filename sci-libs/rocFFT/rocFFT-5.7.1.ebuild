@@ -255,7 +255,15 @@ src_configure() {
 	# error: undefined reference due to --no-allow-shlib-undefined: hsa_amd_signal_value_pointer
 	# error: undefined reference due to --no-allow-shlib-undefined: amd_comgr_do_action
 	# >>> referenced by /opt/rocm-5.7.1/lib/libhiprtc.so
-	append-ldflags -lnuma -lhsa-runtime64 -lamd_comgr
+	if has_version "dev-util/hip:${ROCM_SLOT}[numa]" ; then
+		append-ldflags -lnuma
+	fi
+	if has_version "dev-util/hip:${ROCM_SLOT}[rocm]" ; then
+		append-ldflags -lhsa-runtime64
+	fi
+	if has_version "dev-util/hip:${ROCM_SLOT}[lc]" ; then
+		append-ldflags -lamd_comgr
+	fi
 
 	rocm_src_configure
 }
