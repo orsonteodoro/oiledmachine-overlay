@@ -152,9 +152,9 @@ src_configure() {
 				-Wl,-lhsa-runtime64 \
 				-Wl,-lamd_comgr
 		fi
-		if has_version "dev-util/hip:${ROCM_SLOT}[numa]" ; then
-			append-ldflags -Wl,-lnuma
-		fi
+	fi
+	if has_version "dev-util/hip:${ROCM_SLOT}[numa]" ; then
+		append-ldflags -Wl,-lnuma
 	fi
 
 	export TENSILE_ROCM_ASSEMBLER_PATH="${ESYSROOT}${EROCM_LLVM_PATH}/bin/clang++"
