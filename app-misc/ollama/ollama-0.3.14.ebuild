@@ -2450,7 +2450,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
-blis chroot cuda debug emoji +flash lapack mkl openblas openrc rocm sandbox systemd
+blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm sandbox systemd
 unrestrict video_cards_intel ebuild-revision-22
 
 "
@@ -2537,6 +2537,12 @@ REQUIRED_USE="
 	cuda? (
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
+		)
+	)
+	flash? (
+		|| (
+			cuda
+			rocm
 		)
 	)
 	rocm? (
