@@ -314,6 +314,8 @@ src_configure() {
 	# lld: error: undefined hidden symbol: free
 	replace-flags '-O0' '-O1'
 
+	append-ldflags -lnuma
+
 	rocm_set_default_clang
 	rocm_src_configure
 }

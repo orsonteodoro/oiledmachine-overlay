@@ -316,6 +316,11 @@ src_configure() {
 	# lld: error: undefined hidden symbol: free
 	replace-flags '-O0' '-O1'
 
+	# Fixes
+	# error: undefined reference due to --no-allow-shlib-undefined: numa_node_to_cpus
+	# >>> referenced by /opt/rocm-5.7.1/lib/libamdhip64.so.5.7.1
+	append-ldflags -lnuma
+
 	rocm_set_default_clang
 	rocm_src_configure
 }
