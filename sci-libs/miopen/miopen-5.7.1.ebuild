@@ -143,6 +143,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.7.1-bunzip2-path.patch"
 	"${FILESDIR}/${PN}-5.6.1-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-4.5.2-fix-clang++-detection.patch"
+	"${FILESDIR}/${PN}-5.7.1-filesystem_error.patch"
 )
 
 warn_untested_gpu() {
