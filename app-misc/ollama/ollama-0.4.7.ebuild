@@ -2628,7 +2628,7 @@ gen_rocm_bdepend() {
 		local gcc_slot="HIP_${s1}_GCC_SLOT"
 		echo "
 			rocm_${s/./_}? (
-				~dev-util/hip-${ROCM_VERSIONS[${s1}]}:${s}[rocm]
+				~dev-util/hip-${ROCM_VERSIONS[${s1}]}:${s}[lc,rocm]
 				~sys-devel/llvm-roc-${ROCM_VERSIONS[${s1}]}:${s}[llvm_targets_AMDGPU,llvm_targets_X86]
 			)
 		"
