@@ -44,11 +44,21 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1101
 	gfx1102
 )
+CPU_FLAGS_ARM=(
+	cpu_flags_arm_sve
+)
 CPU_FLAGS_X86=(
 	cpu_flags_x86_f16c
 	cpu_flags_x86_fma
 	cpu_flags_x86_avx
 	cpu_flags_x86_avx2
+	cpu_flags_x86_avx512bf16
+	cpu_flags_x86_avx512bw
+	cpu_flags_x86_avx512f
+	cpu_flags_x86_avx512vbmi
+	cpu_flags_x86_avx512vnni
+	cpu_flags_x86_sse
+	cpu_flags_x86_sse2
 )
 CUDA_TARGETS_COMPAT=(
 	sm_50
@@ -2426,12 +2436,13 @@ SLOT="0"
 
 IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
+${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
-blis chroot cuda debug emoji lapack mkl openblas openrc rocm sandbox systemd
+blis chroot cuda debug emoji +flash lapack mkl openblas openrc rocm sandbox systemd
 unrestrict video_cards_intel ebuild-revision-22
 
 "
@@ -2491,18 +2502,36 @@ REQUIRED_USE="
 	chroot? (
 		openrc
 	)
+	cpu_flags_x86_avx? (
+		cpu_flags_x86_sse2
+	)
 	cpu_flags_x86_avx2? (
+		cpu_flags_x86_avx
 		cpu_flags_x86_fma
 		cpu_flags_x86_f16c
 	)
+	cpu_flags_x86_avx512bw? (
+		cpu_flags_x86_avx512f
+	)
+	cpu_flags_x86_avx512vbmi? (
+		cpu_flags_x86_avx512bw
+	)
+	cpu_flags_x86_avx512vnni? (
+		cpu_flags_x86_avx512bw
+	)
+	cpu_flags_x86_avx512bf16? (
+		cpu_flags_x86_avx512vnni
+		cpu_flags_x86_avx512bw
+	)
+	cpu_flags_x86_sse2? (
+		cpu_flags_x86_sse
+	)
 	cuda? (
-		cpu_flags_x86_avx
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
 	)
 	rocm? (
-		cpu_flags_x86_avx
 		|| (
 			${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 		)
@@ -2882,6 +2911,20 @@ ewarn "The ${PN} ebuild is under development and does not work."
 	fi
 }
 
+get_olast() {
+	local default_level="${1}"
+	local olast=$(echo "${CFLAGS}" \
+		| grep -o -E -e "-O(0|1|z|s|2|3|4|fast)" \
+		| tr " " "\n" \
+		| tail -n 1)
+	if [[ -n "${olast}" ]] ; then
+		echo "${olast}"
+	else
+		# Upstream default
+		echo "-O${default_level}"
+	fi
+}
+
 src_prepare() {
 	default
 	sed -i -e "s|// import \"gorgonia.org/tensor\"||g" "${S_GO}/github.com/pdevine/tensor@"*"/tensor.go" || die
@@ -2935,9 +2978,18 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 			|| die
 	fi
 
+	local olast
+
+	olast=$(get_olast 2)
 	sed -i \
-		-e "s|-O2||g" \
+		-e "s|-O2|${olast}|g" \
 		"llama/llama.go" \
+		|| die
+
+	olast=$(get_olast 3)
+	sed -i \
+		-e "s|-O3|${olast}|g" \
+		"llm/llama.cpp/Makefile" \
 		|| die
 }
 
@@ -3105,6 +3157,15 @@ einfo "PIE is already enabled."
 	# Fixes --version needed by loz
 	export VERSION="${PV}"
 
+	# For sgemm.cpp, ggml.c
+	if use cpu_flags_x86_sse ; then
+		append-flags -msse
+	fi
+
+	if use cpu_flags_x86_sse2 ; then
+		append-flags -msse2
+	fi
+
 	export CGO_CFLAGS="${CFLAGS}"
 	export CGO_CXXFLAGS="${CXXFLAGS}"
 	export CGO_CPPFLAGS="${CPPFLAGS}"
@@ -3221,10 +3282,47 @@ einfo "PIE is already enabled."
 		[[ "${ARCH}" == "amd64" && "${ABI}" == "amd64" ]] || die "ARCH=${ARCH} ABI=${ABI} not supported for USE=video_cards_intel"
 	fi
 
-	if [[ -n "${OLLAMA_CUSTOM_CPU_DEFS}" ]] ; then
+	if use flash ; then
+		export OLLAMA_FAST_BUILD=1
+	fi
+
+	local cpu_args=()
+	if is-flagq '-march=native' ; then
+		cpu_args+=( -DGGML_NATIVE=on )
+	fi
+	if use cpu_flags_x86_avx ; then
+		cpu_args+=( -DGGML_AVX=on )
+	fi
+	if use cpu_flags_x86_avx2 ; then
+		cpu_args+=( -DGGML_AVX2=on )
+	fi
+	if use cpu_flags_x86_avx512bw ; then
+		cpu_args+=( -DGGML_AVX512=on )
+	fi
+	if use cpu_flags_x86_fma ; then
+		cpu_args+=( -DGGML_FMA=on )
+	fi
+	if use cpu_flags_x86_f16c ; then
+		cpu_args+=( -DGGML_F16C=on )
+	fi
+	if use cpu_flags_x86_avx512vbmi ; then
+		cpu_args+=( -DGGML_AVX512_VBMI=on )
+	fi
+	if use cpu_flags_x86_avx512vnni ; then
+		cpu_args+=( -DGGML_AVX512_VNNI=on )
+	fi
+	if use cpu_flags_x86_avx512bf16 ; then
+		cpu_args+=( -DGGML_AVX512_BF16=on )
+	fi
+
+	if use cpu_flags_arm_sve && [[ "${CFLAGS}" =~ "-march=armv8.6-a" ]] ; then
+		cpu_args+=( -DGGML_SVE=on )
+	fi
+
+	if [[ -n "${cpu_args[@]}" ]] ; then
 	# These may allow for AVX512 and later but causes a performance regression.
 	# See https://github.com/ollama/ollama/blob/v0.3.13/llm/generate/gen_linux.sh#L77
-		export OLLAMA_CUSTOM_CPU_DEFS
+		export OLLAMA_CUSTOM_CPU_DEFS="${cpu_args[@]}"
 	elif use cpu_flags_x86_avx2 ; then
 		export OLLAMA_CPU_TARGET="cpu_avx2"
 	elif use cpu_flags_x86_avx ; then
@@ -3455,7 +3553,10 @@ install_cpu_runner() {
 	local runner_path2="${S}/dist/linux-$(get_arch)/lib/ollama"
 
 	local name
-	if use cpu_flags_x86_avx2 ; then
+	if [[ -n "${OLLAMA_CUSTOM_CPU_DEFS}" ]] ; then
+		runner_path1="${S}/dist/linux-$(get_arch)/lib/ollama/runners/cpu"
+		name="cpu"
+	elif use cpu_flags_x86_avx2 ; then
 		runner_path1="${S}/dist/linux-$(get_arch)/lib/ollama/runners/cpu_avx2"
 		name="cpu_avx2"
 	elif use cpu_flags_x86_avx ; then

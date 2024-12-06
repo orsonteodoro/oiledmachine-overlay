@@ -49,6 +49,8 @@ CPU_FLAGS_X86=(
 	cpu_flags_x86_fma
 	cpu_flags_x86_avx
 	cpu_flags_x86_avx2
+	cpu_flags_x86_sse
+	cpu_flags_x86_sse2
 )
 CUDA_TARGETS_COMPAT=(
 	sm_50
@@ -2460,7 +2462,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
-blis chroot cuda debug emoji lapack mkl openblas openrc rocm sandbox systemd
+blis chroot cuda debug emoji +flash lapack mkl openblas openrc rocm sandbox systemd
 unrestrict video_cards_intel ebuild-revision-22
 
 "
@@ -2520,18 +2522,23 @@ REQUIRED_USE="
 	chroot? (
 		openrc
 	)
+	cpu_flags_x86_avx? (
+		cpu_flags_x86_sse2
+	)
 	cpu_flags_x86_avx2? (
+		cpu_flags_x86_avx
 		cpu_flags_x86_fma
 		cpu_flags_x86_f16c
 	)
+	cpu_flags_x86_sse2? (
+		cpu_flags_x86_sse
+	)
 	cuda? (
-		cpu_flags_x86_avx
 		|| (
 			${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 		)
 	)
 	rocm? (
-		cpu_flags_x86_avx
 		|| (
 			${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 		)
@@ -2898,6 +2905,20 @@ ewarn "The ${PN} ebuild is under development and does not work."
 	fi
 }
 
+get_olast() {
+	local default_level="${1}"
+	local olast=$(echo "${CFLAGS}" \
+		| grep -o -E -e "-O(0|1|z|s|2|3|4|fast)" \
+		| tr " " "\n" \
+		| tail -n 1)
+	if [[ -n "${olast}" ]] ; then
+		echo "${olast}"
+	else
+		# Upstream default
+		echo "-O${default_level}"
+	fi
+}
+
 src_prepare() {
 	default
 	sed -i -e "s|// import \"gorgonia.org/tensor\"||g" "${S_GO}/github.com/pdevine/tensor@"*"/tensor.go" || die
@@ -2951,10 +2972,44 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 			|| die
 	fi
 
+	local olast
+
+	olast=$(get_olast 2)
 	sed -i \
-		-e "s|-O2||g" \
+		-e "s|-O2|${olast}|g" \
 		"llama/llama.go" \
 		|| die
+
+	olast=$(get_olast 3)
+	sed -i \
+		-e "s|-O3|${olast}|g" \
+		"llama/make/cuda.make" \
+		"llama/make/Makefile.rocm" \
+		|| die
+
+	if ! use cpu_flags_x86_f16c ; then
+		sed -i \
+			-e "s|-mf16c||g" \
+			"llama/make/Makefile.rocm" \
+			|| die
+	fi
+
+	if ! use cpu_flags_x86_fma ; then
+		sed -i \
+			-e "s|-mfma||g" \
+			"llama/make/Makefile.rocm" \
+			|| die
+	fi
+
+	if ! use cpu_flags_x86_avx ; then
+		if use amd64 || use x86 ; then
+			export GPU_RUNNER_CPU_FLAGS="no-avx"
+		fi
+		sed -i \
+			-e "s|-mfma||g" \
+			"llama/make/Makefile.rocm" \
+			|| die
+	fi
 }
 
 check_toolchain() {
@@ -3121,6 +3176,15 @@ einfo "PIE is already enabled."
 	# Fixes --version needed by loz
 	export VERSION="${PV}"
 
+	# For sgemm.cpp, ggml.c
+	if use cpu_flags_x86_sse ; then
+		append-flags -msse
+	fi
+
+	if use cpu_flags_x86_sse2 ; then
+		append-flags -msse2
+	fi
+
 	export CGO_CFLAGS="${CFLAGS}"
 	export CGO_CXXFLAGS="${CXXFLAGS}"
 	export CGO_CPPFLAGS="${CPPFLAGS}"
@@ -3214,8 +3278,16 @@ einfo "PIE is already enabled."
 	done
 
 
-
-	local jobs=$(get_makeopts_jobs)
+	# MAKEOPTS breaks ROCm build during cp -af
+	# make[1]: *** [make/gpu.make:102: <REDACTED>] Error 1
+	local jobs
+	if use rocm || use cuda ; then
+		export MAKEOPTS="-j1"
+		jobs=1
+	else
+		# CPU only
+		jobs=$(get_makeopts_jobs)
+	fi
 	sed -i -e "s|make -j 8|make -j ${jobs}|g" "llama/llama.go" || die
 
 	if ! use cuda ; then
@@ -3237,16 +3309,8 @@ einfo "PIE is already enabled."
 		[[ "${ARCH}" == "amd64" && "${ABI}" == "amd64" ]] || die "ARCH=${ARCH} ABI=${ABI} not supported for USE=video_cards_intel"
 	fi
 
-	if [[ -n "${OLLAMA_CUSTOM_CPU_DEFS}" ]] ; then
-	# These may allow for AVX512 and later but causes a performance regression.
-	# See https://github.com/ollama/ollama/blob/v0.3.14/llm/generate/gen_linux.sh#L77
-		export OLLAMA_CUSTOM_CPU_DEFS
-	elif use cpu_flags_x86_avx2 ; then
-		export OLLAMA_CPU_TARGET="cpu_avx2"
-	elif use cpu_flags_x86_avx ; then
-		export OLLAMA_CPU_TARGET="cpu_avx"
-	else
-		export OLLAMA_CPU_TARGET="cpu" # Generic
+	if use flash ; then
+		export OLLAMA_FAST_BUILD=1
 	fi
 
 	check_toolchain
