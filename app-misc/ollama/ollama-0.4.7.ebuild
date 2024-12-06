@@ -2475,7 +2475,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm sandbox systemd
-unrestrict video_cards_intel ebuild-revision-24
+unrestrict video_cards_intel ebuild-revision-25
 
 "
 gen_rocm_required_use() {
@@ -2933,7 +2933,7 @@ get_olast() {
 		echo "${olast}"
 	else
 		# Upstream default
-		echo "-O${default_level}"
+		echo "${default_level}"
 	fi
 }
 
