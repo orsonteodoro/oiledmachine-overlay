@@ -319,7 +319,9 @@ src_configure() {
 	# Fixes
 	# error: undefined reference due to --no-allow-shlib-undefined: numa_node_to_cpus
 	# >>> referenced by /opt/rocm-5.7.1/lib/libamdhip64.so.5.7.1
-	append-ldflags -lnuma
+	if has_version "dev-util/hip:${ROCM_SLOT}[numa]" ; then
+		append-ldflags -lnuma
+	fi
 
 	rocm_set_default_clang
 	rocm_src_configure
