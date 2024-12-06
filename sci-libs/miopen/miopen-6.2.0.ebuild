@@ -140,6 +140,7 @@ PATCHES=(
 #	"${FILESDIR}/${PN}-5.1.3-avoid-metadata-error-for-vanilla-clang.patch" # Fixed in pr #1830
 	"${FILESDIR}/${PN}-6.1.2-bzcat-path.patch"
 	"${FILESDIR}/${PN}-6.2.0-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-6.2.0-filesystem_error.patch"
 )
 
 warn_untested_gpu() {

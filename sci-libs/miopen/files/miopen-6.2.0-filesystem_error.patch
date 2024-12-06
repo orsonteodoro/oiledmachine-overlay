@@ -1,0 +1,10 @@
+--- a/src/lock_file.cpp.orig	2024-07-17 15:13:32.000000000 -0700
++++ b/src/lock_file.cpp	2024-12-05 16:43:06.596020279 -0800
+@@ -29,6 +29,7 @@
+ #include <miopen/logger.hpp>
+ #include <miopen/md5.hpp>
+ #include <miopen/stringutils.hpp>
++#include <boost/filesystem/exception.hpp>
+ 
+ namespace miopen {
+ 
