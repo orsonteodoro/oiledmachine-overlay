@@ -3,12 +3,13 @@
 ### Submissions that are considered for acceptance
 
 1. Enhancements and optimization (PGO, BOLT, algorithms, ...)
-2. Bug fixes
+2. Bug fixes for
    - Compile time bugs
    - Post compile bugs
    - Missing symbols bugs
    - RPATH bugs (dynamic linking to the wrong slotted library)
-3. Vulnerability fixes for...
+   - Illegal Instruction errors for older hardware (requiring changes to USE cpu_flags_, build config, or build files)
+3. Vulnerability fixes for
    - Denial of Service (DoS)
      - Crashes (DoS)
      - Memory leaks (DoS)
@@ -339,37 +340,53 @@ main
   - -Ofast or -ffast-math can be used in artistic packages but not in financial and
     not in life-support packages.  It should be filtered out in those contexts.
 
-* Auto bumping:
+* Auto bumping packages:
+  - If a package is known has multiple critical vulnerabilities in a month, keep
+    only one ebuild per LTS or stable.  The stable is preferred because only
+    stable gets security advisories or reviewed.  Discard the vulnerable
+    critical ASAP or put a hard mask on the version.  These should be checked
+    weekly.
+  - If a package is known to be safe, you may keep 2 or more ebuilds.  2 minor
+    versions is recommended.  (e.g. 3.14.5 and 3.15.2 would be kept.
+    If multiple minor version 3.14.5, 3.15.4; only keep 3.14.5.)  These safe
+    packages could be checked by conveience.
+
+* Auto bumping dependencies:
   - (See also the general principles section above.)
-  - You are prohibited from autobump between different minor versions.  In a
-    simple semver example, 1.2.3 corresponds to major.minor.patch.  It is better
-    to manually bump by updating *DEPENDs and testing the package, then let it
-    autobump for only patch fixes.
-  - You may not autobump PYTHON_COMPAT to untested versions unless upstream
-    states general versioning (e.g. python3) or the package historically works
-    with any version.
-  - You are prohibited to autobumping PYTHON_COMPAT to the newest untested
-    versions if upstream is active.
-  - You are allowed to autobump PYTHON_COMPAT if upstream activity is inactive
-    and those versions specified are EOL but the package is tested to work on
-    oldest active stable Python ebuild with the test suite (preferred) or
-    tested to work by experience.  This means if upstream states that only
-    Python 3.9 is supported in setup.py but 3.9 is not available, you may bump
-    it to only 3.10 or tested working versions.
-  - You may autobump if those versions have passed the test suite for that
-    version with proof documented in the foot of the ebuild or documented near
-    PYTHON_COMPAT.  Otherwise, the bump will be reverted to known working
-    versions for *DEPENDs.
-  - If the package does not work, remove the autobump from *DEPENDs or
-    PYTHON_COMPAT or limit the maximum supported version.
-  - The package should always work bugfree after auto bumping or disable
-    auto bumping.
-  - Autobumping without testing is assumed undeterministic or possibly random
-    fail.
-  - It is recommend to provide autobump support for the ebuild-package.
-    See https://github.com/orsonteodoro/oiledmachine-overlay/tree/master/scripts#autobump-patch-versions
-  - Revision or autobumping should still be patch tested with
-    `ebuild ... prepare` for correctness.
+  - You are prohibited to autobump untested PYTHON_COMPAT versions.  It is
+      problematic if the Python package is a C bindings package or a child
+      package contains a version sensitive package (e.g. abseil).
+    - Exceptions:  Unmaintained package may be bumped to oldest Python version
+      supported by distro.  (Example:  Only 3.9 listed in setup.py but distro
+      supports 3.10, you may bump to 3.10).  If it doesn't work, then delete
+      the ebuild and disable the USE flags that pull it.
+    - Exceptions:  If python3 is only listed in setup.py, you may autobump
+      but only to Python versions that are not hard masked.
+    - Exceptions:  You tested it on your machine, you may autobump and/or
+      enable KEYWORDS for that microarchitecture/port, but you must leave a note
+      that it was tested for that Python x.yy version and/or KEYWORDS.
+  - You are prohibited to autobump untested LLVM_COMPAT versions.
+    - This is to prevent multiple LLVM load bug.
+    - Compatibility is + or - 1 major version.
+  - You are prohibited to autobump untested NODE_VERSION.
+    - node is version sensitive between major versions.
+  - You are prohibited to autobump major versions of UI toolkits which are known
+    to break.  (eg. from Qt5 to Qt6; from gtk3 to gtk4)
+  - Other package sensitive versions should not be eager autobumped to untested
+    versions.
+  - Use the CI tested versions first.
+  - If you tested on your machine, you may bump but you must leave a note.
+  - If you do not leave note, I assume it is untested and revert back to the
+    CI tested versions for dependencies and KEYWORDS.
+  - Do not autobump the dependencies in *DEPENDs if the build files and CI
+    indicate testing for older CI images.
+  - The general guideline is the oldest CI image listed is the fallback for
+    Depends.  If multiple listed images or versions, then the version range
+    should be constrained for version sensitive *DEPENDs.  For example the CI
+    files list U22, U24, D13 as supported.  U24 lists 3.12 for Python3.  U22
+    lists 3.10 for Python3.  D13 lists 3.12.  PYTHON_COMPAT should list
+    python3_12 and python 3.10.
+
 
 * Versioning:
   - If a project has git tags, you may use use `9999`, `<PV>_p9999`,
