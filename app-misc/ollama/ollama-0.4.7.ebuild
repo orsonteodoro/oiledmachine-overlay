@@ -2767,6 +2767,7 @@ BDEPEND="
 	app-arch/pigz
 	app-shells/bash
 	dev-build/make
+	dev-util/patchelf
 	dev-vcs/git
 	virtual/pkgconfig
 	|| (
@@ -3811,6 +3812,9 @@ install_cpu_runner() {
 	pushd "${runner_path1}" >/dev/null 2>&1 || die
 		doexe "ollama_llama_server"
 	popd >/dev/null 2>&1 || die
+	patchelf \
+		--add-rpath '$ORIGIN' \
+		"${ED}/usr/$(get_libdir)/${PN}/${name}/ollama_llama_server"
 }
 
 install_gpu_runner() {
@@ -3836,6 +3840,19 @@ install_gpu_runner() {
 	pushd "${runner_path1}" >/dev/null 2>&1 || die
 		doexe "ollama_llama_server"
 	popd >/dev/null 2>&1 || die
+
+	if use cuda ; then
+		patchelf \
+			--add-rpath "/opt/cuda/$(get_libdir)" \
+			"${ED}/usr/$(get_libdir)/${PN}/${name}/ollama_llama_server"
+	elif use rocm ; then
+		patchelf \
+			--add-rpath "/opt/rocm-${ROCM_VERSION}/lib" \
+			"${ED}/usr/$(get_libdir)/${PN}/${name}/ollama_llama_server"
+	fi
+	patchelf \
+		--add-rpath '$ORIGIN' \
+		"${ED}/usr/$(get_libdir)/${PN}/${name}/ollama_llama_server"
 }
 
 src_install() {
