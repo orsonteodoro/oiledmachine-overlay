@@ -3880,18 +3880,10 @@ src_install() {
 
 	if use cuda ; then
 		patchelf \
-			--add-rpath '$ORIGIN' \
-			"${ED}/usr/$(get_libdir)/${PN}/${PN}" \
-			|| die
-		patchelf \
 			--add-rpath "/opt/cuda/$(get_libdir)" \
 			"${ED}/usr/$(get_libdir)/${PN}/${PN}" \
 			|| die
 	elif use rocm ; then
-		patchelf \
-			--add-rpath '$ORIGIN' \
-			"${ED}/usr/$(get_libdir)/${PN}/${PN}" \
-			|| die
 		patchelf \
 			--add-rpath "/opt/rocm-${ROCM_VERSION}/lib" \
 			"${ED}/usr/$(get_libdir)/${PN}/${PN}" \
