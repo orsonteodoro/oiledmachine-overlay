@@ -51,6 +51,10 @@ SVE_ARCHES=(
 	armv8.5-a
 	armv8.6-a
 	armv9-a
+	armv9.1-a
+	armv9.2-a
+	armv9.3-a
+	armv9.4-a
 )
 CPU_FLAGS_ARM=(
 	cpu_flags_arm_sve
@@ -3154,10 +3158,10 @@ einfo "PIE is already enabled."
 
 	strip-unsupported-flags
 
-	if use debug ; then
+#	if use debug ; then
 	# Increase build verbosity
 		append-flags -g
-	fi
+#	fi
 
 	if use rocm ; then
 	# Fixes
