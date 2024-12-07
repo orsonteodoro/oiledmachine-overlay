@@ -67,6 +67,17 @@ CPU_FLAGS_X86=(
 	cpu_flags_x86_sse
 	cpu_flags_x86_sse2
 )
+CUDA_FATTN_COMPAT=(
+	sm_60
+	sm_61
+	sm_70
+	sm_75
+	sm_80
+	sm_86
+	sm_89
+	sm_90
+	sm_90a
+)
 CUDA_TARGETS_COMPAT=(
 	sm_50
 	sm_52
@@ -2557,7 +2568,11 @@ REQUIRED_USE="
 	flash? (
 		|| (
 			cuda
-			rocm
+		)
+		cuda? (
+			|| (
+				${CUDA_FATTN_COMPAT[@]/#/cuda_targets_}
+			)
 		)
 	)
 	rocm? (
