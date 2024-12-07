@@ -83,6 +83,10 @@
     <flag name="mkl">
       Support CPU optimized linear math via oneMKL for Intel® CPUs/GPUs.
     </flag>
+    <flag name="native">
+      Autodetect CPU instruction sets during build time for vendored llama.cpp
+      used for inference for the old runner.
+    </flag>
     <flag name="openblas">
       Support CPU optimized linear math via OpenBLAS.
     </flag>
