@@ -2486,7 +2486,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl native openblas openrc rocm
-sandbox systemd unrestrict video_cards_intel ebuild-revision-31
+sandbox systemd unrestrict video_cards_intel ebuild-revision-32
 "
 gen_rocm_required_use() {
 	local s
@@ -3920,13 +3920,28 @@ src_install() {
 	doexe "${PN}"
 
 	if use cuda ; then
+		local name=""
+		if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
+			name="cuda_v12"
+		elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
+			name="cuda_v11"
+		fi
 		patchelf \
 			--add-rpath "/opt/cuda/$(get_libdir)" \
 			"${ED}/usr/$(get_libdir)/${PN}/${PN}" \
 			|| die
+		patchelf \
+			--add-rpath "/usr/$(get_libdir)/${PN}/${name}" \
+			"${ED}/usr/$(get_libdir)/${PN}/${PN}" \
+			|| die
 	elif use rocm ; then
+		local name="rocm"
 		patchelf \
 			--add-rpath "/opt/rocm-${ROCM_VERSION}/lib" \
+			"${ED}/usr/$(get_libdir)/${PN}/${PN}" \
+			|| die
+		patchelf \
+			--add-rpath "/usr/$(get_libdir)/${PN}/${name}" \
 			"${ED}/usr/$(get_libdir)/${PN}/${PN}" \
 			|| die
 	fi
