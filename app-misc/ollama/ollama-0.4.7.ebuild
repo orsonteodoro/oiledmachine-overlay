@@ -2475,7 +2475,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm sandbox systemd
-unrestrict video_cards_intel ebuild-revision-26
+unrestrict video_cards_intel ebuild-revision-27
 
 "
 gen_rocm_required_use() {
@@ -3210,10 +3210,20 @@ einfo "PIE is already enabled."
 		append-flags -msse2
 	fi
 
+	local olast=$(get_olast)
+	replace-flags "-O*" "${olast}"
+
+	# Allow custom -Oflag
+	export CMAKE_BUILD_TYPE=" "
+
 	export CGO_CFLAGS="${CFLAGS}"
 	export CGO_CXXFLAGS="${CXXFLAGS}"
 	export CGO_CPPFLAGS="${CPPFLAGS}"
 	export CGO_LDFLAGS="${LDFLAGS}"
+einfo "CFLAGS: ${CFLAGS}"
+einfo "CXXFLAGS: ${CXXFLAGS}"
+einfo "CPPLAGS: ${CPPFLAGS}"
+einfo "LDFLAGS: ${LDFLAGS}"
 
 	if use unrestrict ; then
 		sed -i -e "s|@UNRESTRICT@|1|g" "cmd/cmd.go" || die
