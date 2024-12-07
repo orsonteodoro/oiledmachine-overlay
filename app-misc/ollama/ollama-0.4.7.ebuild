@@ -3529,10 +3529,6 @@ einfo "LDFLAGS: ${LDFLAGS}"
 		gpu_args+=( avx512f )
 	fi
 
-	if use cpu_flags_x86_avx512bw ; then
-		gpu_args+=( avx512bw )
-	fi
-
 	if use cpu_flags_x86_fma ; then
 		gpu_args+=( fma )
 	fi
