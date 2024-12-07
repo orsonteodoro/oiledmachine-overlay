@@ -3653,8 +3653,61 @@ build_binary() {
 	edo go build ${args[@]} .
 }
 
-build_new_runner() {
+build_new_runner_cpu() {
 	# The documentation is sloppy.
+
+	emake -C llama
+
+	# See also
+	# https://github.com/ollama/ollama/blob/v0.3.13/llama/llama.go
+	local args=(
+		-p $(get_makeopts_jobs)
+		-x
+		-v
+	)
+	if ! tc-enables-pie ; then
+		args+=(
+	# ASLR (buffer overflow mitigation)
+			-buildmode=pie
+		)
+	fi
+
+	local cpu_flags_args=""
+
+	if use cpu_flags_x86_f16c ; then
+		cpu_flag_args+="|-mf16c"
+	fi
+
+	if use cpu_flags_x86_fma ; then
+		cpu_flag_args+="|-mfma"
+	fi
+
+	if use cpu_flags_x86_f16c || use cpu_flags_x86_fma ; then
+		cpu_flag_args="${cpu_flag_args:1}"
+		edo go env -w "CGO_CFLAGS_ALLOW=${cpu_flag_args}"
+		edo go env -w "CGO_CXXFLAGS_ALLOW=${cpu_flags_args}"
+	fi
+
+	if use cpu_flags_x86_avx2 ; then
+		args+=(
+			-tags avx,avx2
+		)
+	elif use cpu_flags_x86_avx ; then
+		args+=(
+			-tags avx
+		)
+	fi
+	edo go build ${args[@]} .
+}
+
+build_new_runner_gpu() {
+	# The documentation is sloppy.
+
+	if use cuda || use rocm ; then
+		:
+	else
+		return
+	fi
 
 	local cuda_impl=""
 	if use cuda ; then
@@ -3667,8 +3720,6 @@ build_new_runner() {
 		fi
 	elif use rocm ; then
 		emake -C llama rocm
-	else
-		emake -C llama
 	fi
 
 	# See also
@@ -3725,14 +3776,6 @@ build_new_runner() {
 		args+=(
 			-tags rocm
 		)
-	elif use cpu_flags_x86_avx2 ; then
-		args+=(
-			-tags avx,avx2
-		)
-	elif use cpu_flags_x86_avx ; then
-		args+=(
-			-tags avx
-		)
 	fi
 	edo go build ${args[@]} .
 }
@@ -3758,7 +3801,8 @@ src_compile() {
 			build_binary
 		popd >/dev/null 2>&1 || die
 	fi
-	build_new_runner
+	build_new_runner_cpu
+	build_new_runner_gpu
 }
 
 get_arch() {
@@ -3791,6 +3835,8 @@ install_cpu_runner() {
 		name="cpu"
 	fi
 
+	[[ -e "${runner_path1}" ]] || return
+
 	exeinto "/usr/$(get_libdir)/${PN}/${name}"
 	pushd "${runner_path1}" >/dev/null 2>&1 || die
 		doexe "libggml.so" "libllama.so"
@@ -3815,6 +3861,7 @@ install_gpu_runner() {
 	fi
 
 	[[ -z "${name}" ]] && return
+	[[ -e "${runner_path1}" ]] || return
 
 	exeinto "/usr/$(get_libdir)/${PN}/${name}"
 	pushd "${runner_path1}" >/dev/null 2>&1 || die

@@ -25,9 +25,9 @@ EAPI=8
 # U20
 # For depends see
 # https://github.com/ollama/ollama/blob/main/docs/development.md
-# ROCm:  https://github.com/ollama/ollama/blob/v0.3.14/.github/workflows/test.yaml
-# CUDA:  https://github.com/ollama/ollama/blob/v0.3.14/.github/workflows/release.yaml#L194
-# Hardware support:  https://github.com/ollama/ollama/blob/v0.3.14/docs/gpu.md
+# ROCm:  https://github.com/ollama/ollama/blob/v0.4.7/.github/workflows/test.yaml
+# CUDA:  https://github.com/ollama/ollama/blob/v0.4.7/.github/workflows/release.yaml#L194
+# Hardware support:  https://github.com/ollama/ollama/blob/v0.4.7/docs/gpu.md
 AMDGPU_TARGETS_COMPAT=(
 	gfx900
 	gfx906_xnack_minus
@@ -3624,26 +3624,13 @@ einfo "OLLAMA_MIN_DOWNLOAD_PART_SIZE:  ${min_download_part_size}"
 einfo "OLLAMA_MAX_DOWNLOAD_PART_SIZE:  ${max_download_part_size}"
 }
 
-build_new_runner() {
+build_new_runner_cpu() {
 	# The documentation is sloppy.
 
-	local cuda_impl=""
-	if use cuda ; then
-		if has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
-			emake -C llama cuda_v12
-			cuda_impl="cuda_v12"
-		elif has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
-			emake -C llama cuda_v11
-			cuda_impl="cuda_v11"
-		fi
-	elif use rocm ; then
-		emake -C llama rocm
-	else
-		emake -C llama
-	fi
+	emake -C llama
 
 	# See also
-	# https://github.com/ollama/ollama/blob/v0.3.14/llama/llama.go
+	# https://github.com/ollama/ollama/blob/v0.4.7/llama/llama.go
 	local args=(
 		-p $(get_makeopts_jobs)
 		-x
@@ -3676,7 +3663,71 @@ build_new_runner() {
 		args+=(
 			-tags sve
 		)
-	elif use cpu_flags_x86_avx2 && use cuda ; then
+	elif use cpu_flags_x86_avx2 ; then
+		args+=(
+			-tags avx,avx2
+		)
+	elif use cpu_flags_x86_avx ; then
+		args+=(
+			-tags avx
+		)
+	fi
+	edo go build ${args[@]} .
+}
+
+build_new_runner_gpu() {
+	# The documentation is sloppy.
+
+	if use cuda || use rocm ; then
+		:
+	else
+		return
+	fi
+
+	local cuda_impl=""
+	if use cuda ; then
+		if has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
+			emake -C llama cuda_v12
+			cuda_impl="cuda_v12"
+		elif has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
+			emake -C llama cuda_v11
+			cuda_impl="cuda_v11"
+		fi
+	elif use rocm ; then
+		emake -C llama rocm
+	fi
+
+	# See also
+	# https://github.com/ollama/ollama/blob/v0.4.7/llama/llama.go
+	local args=(
+		-p $(get_makeopts_jobs)
+		-x
+		-v
+	)
+	if ! tc-enables-pie ; then
+		args+=(
+	# ASLR (buffer overflow mitigation)
+			-buildmode=pie
+		)
+	fi
+
+	local cpu_flags_args=""
+
+	if use cpu_flags_x86_f16c ; then
+		cpu_flag_args+="|-mf16c"
+	fi
+
+	if use cpu_flags_x86_fma ; then
+		cpu_flag_args+="|-mfma"
+	fi
+
+	if use cpu_flags_x86_f16c || use cpu_flags_x86_fma ; then
+		cpu_flag_args="${cpu_flag_args:1}"
+		edo go env -w "CGO_CFLAGS_ALLOW=${cpu_flag_args}"
+		edo go env -w "CGO_CXXFLAGS_ALLOW=${cpu_flags_args}"
+	fi
+
+	if use cpu_flags_x86_avx2 && use cuda ; then
 		args+=(
 			-tags avx,avx2,cuda,${cuda_impl}
 		)
@@ -3699,14 +3750,6 @@ build_new_runner() {
 	elif use rocm ; then
 		args+=(
 			-tags rocm
-		)
-	elif use cpu_flags_x86_avx2 ; then
-		args+=(
-			-tags avx,avx2
-		)
-	elif use cpu_flags_x86_avx ; then
-		args+=(
-			-tags avx
 		)
 	fi
 	edo go build ${args[@]} .
@@ -3731,7 +3774,8 @@ src_compile() {
 			:
 		popd >/dev/null 2>&1 || die
 	fi
-	build_new_runner
+	build_new_runner_cpu
+	build_new_runner_gpu
 }
 
 get_arch() {
@@ -3761,6 +3805,8 @@ install_cpu_runner() {
 		name="cpu"
 	fi
 
+	[[ -e "${runner_path1}" ]] || return
+
 	exeinto "/usr/$(get_libdir)/${PN}/${name}"
 	pushd "${runner_path1}" >/dev/null 2>&1 || die
 		doexe "ollama_llama_server"
@@ -3784,6 +3830,7 @@ install_gpu_runner() {
 	fi
 
 	[[ -z "${name}" ]] && return
+	[[ -e "${runner_path1}" ]] || return
 
 	exeinto "/usr/$(get_libdir)/${PN}/${name}"
 	pushd "${runner_path1}" >/dev/null 2>&1 || die
