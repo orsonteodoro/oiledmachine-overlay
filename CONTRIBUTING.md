@@ -342,14 +342,14 @@ main
 
 * Auto bumping packages:
   - If a package is known has multiple critical vulnerabilities in a month, keep
-    only one ebuild per LTS or stable.  The stable is preferred because only
-    stable gets security advisories or reviewed.  Discard the vulnerable
-    critical ASAP or put a hard mask on the version.  These should be checked
-    weekly.
+    only one ebuild per LTS or stable.  The stable is preferred over the dev
+    because only stable and lts versions gets security advisories or reviewed.
+    Discard the vulnerable critical ASAP or put a hard mask on the version.
+    These should be checked weekly.
   - If a package is known to be safe, you may keep 2 or more ebuilds.  2 minor
     versions is recommended.  (e.g. 3.14.5 and 3.15.2 would be kept.
-    If multiple minor version 3.14.5, 3.15.4; only keep 3.14.5.)  These safe
-    packages could be checked by conveience.
+    If multiple patch versions 3.14.5, 3.14.4; only keep 3.14.5.)  These safe
+    packages could be checked on a convenient schedule.
 
 * Auto bumping dependencies:
   - (See also the general principles section above.)
