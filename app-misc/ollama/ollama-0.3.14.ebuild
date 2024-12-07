@@ -2486,7 +2486,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl native openblas openrc rocm
-sandbox systemd unrestrict video_cards_intel ebuild-revision-29
+sandbox systemd unrestrict video_cards_intel ebuild-revision-31
 "
 gen_rocm_required_use() {
 	local s
@@ -3205,10 +3205,10 @@ einfo "PIE is already enabled."
 
 	strip-unsupported-flags
 
-	if use debug ; then
+#	if use debug ; then
 	# Increase build verbosity
 		append-flags -g
-	fi
+#	fi
 
 	if use rocm ; then
 	# Fixes
@@ -3883,23 +3883,61 @@ install_gpu_runner() {
 		fi
 	popd >/dev/null 2>&1 || die
 
+	local list=(
+		"libggml.so"
+		"libggml_${name}.so"
+		"libllama.so"
+		"ollama_llama_server"
+	)
+	local n
 	if use cuda ; then
-		patchelf \
-			--add-rpath "/opt/cuda/$(get_libdir)" \
-			"${ED}/usr/$(get_libdir)/${PN}/${name}/ollama_llama_server"
+		for n in ${list[@]} ; do
+			patchelf \
+				--add-rpath '$ORIGIN' \
+				"${ED}/usr/$(get_libdir)/${PN}/${name}/${n}" \
+				|| die
+			patchelf \
+				--add-rpath "/opt/cuda/$(get_libdir)" \
+				"${ED}/usr/$(get_libdir)/${PN}/${name}/${n}" \
+				|| die
+		done
 	elif use rocm ; then
-		patchelf \
-			--add-rpath "/opt/rocm-${ROCM_VERSION}/lib" \
-			"${ED}/usr/$(get_libdir)/${PN}/${name}/ollama_llama_server"
+		for n in ${list[@]} ; do
+			patchelf \
+				--add-rpath '$ORIGIN' \
+				"${ED}/usr/$(get_libdir)/${PN}/${name}/${n}" \
+				|| die
+			patchelf \
+				--add-rpath "/opt/rocm-${ROCM_VERSION}/lib" \
+				"${ED}/usr/$(get_libdir)/${PN}/${name}/${n}" \
+				|| die
+		done
 	fi
-	patchelf \
-		--add-rpath '$ORIGIN' \
-		"${ED}/usr/$(get_libdir)/${PN}/${name}/ollama_llama_server"
 }
 
 src_install() {
 	exeinto "/usr/$(get_libdir)/${PN}"
 	doexe "${PN}"
+
+	if use cuda ; then
+		patchelf \
+			--add-rpath '$ORIGIN' \
+			"${ED}/usr/$(get_libdir)/${PN}/${PN}" \
+			|| die
+		patchelf \
+			--add-rpath "/opt/cuda/$(get_libdir)" \
+			"${ED}/usr/$(get_libdir)/${PN}/${PN}" \
+			|| die
+	elif use rocm ; then
+		patchelf \
+			--add-rpath '$ORIGIN' \
+			"${ED}/usr/$(get_libdir)/${PN}/${PN}" \
+			|| die
+		patchelf \
+			--add-rpath "/opt/rocm-${ROCM_VERSION}/lib" \
+			"${ED}/usr/$(get_libdir)/${PN}/${PN}" \
+			|| die
+	fi
 
 	cat "${FILESDIR}/${PN}-muxer" > "${T}/${PN}-muxer"
 
