@@ -310,7 +310,6 @@ src_prepare() {
 		"${WORKDIR}/clr-rocm-6.2.0/CMakeLists.txt"
 		"${WORKDIR}/clr-rocm-6.2.0/hipamd/CMakeLists.txt"
 		"${WORKDIR}/clr-rocm-6.2.0/hipamd/src/CMakeLists.txt"
-		"${WORKDIR}/clr-rocm-6.2.0/hipamd/src/hiprtc/CMakeLists.txt"
 		"${WORKDIR}/clr-rocm-6.2.0/opencl/CMakeLists.txt"
 		"${WORKDIR}/clr-rocm-6.2.0/opencl/cmake/FindAMD_ICD.cmake"
 		"${WORKDIR}/clr-rocm-6.2.0/rocclr/cmake/ROCclrHSA.cmake"
