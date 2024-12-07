@@ -44,6 +44,19 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1101
 	gfx1102
 )
+I8MM_ARCHES=(
+	armv8.2-a
+	armv8.3-a
+	armv8.4-a
+	armv8.5-a
+	armv8.6-a
+	armv9-a
+	armv9.1-a
+	armv9.2-a
+	armv9.3-a
+	armv9.4-a
+	armv8-r
+)
 SVE_ARCHES=(
 	armv8.2-a
 	armv8.3-a
@@ -57,6 +70,7 @@ SVE_ARCHES=(
 	armv9.4-a
 )
 CPU_FLAGS_ARM=(
+	cpu_flags_arm_i8mm
 	cpu_flags_arm_sve
 )
 CPU_FLAGS_X86=(
@@ -3295,6 +3309,50 @@ einfo "PIE is already enabled."
 		append-flags -mavx512vnni
 	fi
 
+	local arm_ext=""
+	if use cpu_flags_arm_i8mm ; then
+		local found=0
+		for a in ${I8MM_ARCHES[@]} ; do
+			if [[ "${CFLAGS}" =~ "-march=${a}" ]] ; then
+				arm_ext+="+i8mm"
+				found=1
+				break
+			fi
+		done
+		if (( ${found} == 1 )) ; then
+eerror "You need to set -march= to one of ${I8MM_ARCHES[@]}"
+			die
+		fi
+	fi
+
+	if use cpu_flags_arm_sve ; then
+		local found=0
+		for a in ${SVE_ARCHES[@]} ; do
+			if [[ "${CFLAGS}" =~ "-march=${a}" ]] ; then
+				arm_ext+="+sve"
+				found=1
+				break
+			fi
+		done
+		if (( ${found} == 1 )) ; then
+eerror "You need to set -march= to one of ${SVE_ARCHES[@]}"
+			die
+		fi
+	fi
+
+	if [[ -n "${arm_ext}" ]] && ( use cpu_flags_arm_i8mm || use cpu_flags_arm_sve ) ; then
+		for a in ${I8MM_ARCHES[@]} ; do
+			if [[ "${CFLAGS}" =~ "-march=${a}" ]] ; then
+				sed -i \
+					-e "s|armv8.6-a+sve|${a}${arm_ext}|g" \
+					"llama/llama.go" \
+					|| die
+				replace-flags "-march=${a}*" "-march=${a}${arm_ext}"
+				break
+			fi
+		done
+	fi
+
 	local olast=$(get_olast)
 	replace-flags "-O*" "${olast}"
 
@@ -3493,24 +3551,6 @@ einfo "LDFLAGS: ${LDFLAGS}"
 
 	if use cpu_flags_x86_avx512bf16 ; then
 		gpu_args+=( avx512bf16 )
-	fi
-
-	if use cpu_flags_arm_sve ; then
-		local found=0
-		for a in ${SVE_ARCHES[@]} ; do
-			if [[ "${CFLAGS}" =~ "-march=${a}" ]] ; then
-				sed -i \
-					-e "s|armv8.6-a|${a}|g" \
-					"llama/llama.go" \
-					|| die
-				found=1
-				break
-			fi
-		done
-		if (( ${found} == 1 )) ; then
-eerror "You need to set -march= to one of ${SVE_ARCHES[@]}"
-			die
-		fi
 	fi
 
 	if [[ -n "${gpu_args[@]}" ]] ; then
