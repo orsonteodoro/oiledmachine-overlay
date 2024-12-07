@@ -3814,7 +3814,8 @@ install_cpu_runner() {
 	popd >/dev/null 2>&1 || die
 	patchelf \
 		--add-rpath '$ORIGIN' \
-		"${ED}/usr/$(get_libdir)/${PN}/${name}/ollama_llama_server"
+		"${ED}/usr/$(get_libdir)/${PN}/${name}/ollama_llama_server" \
+		|| die
 }
 
 install_gpu_runner() {
