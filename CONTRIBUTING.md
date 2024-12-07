@@ -381,11 +381,11 @@ main
   - Do not autobump the dependencies in *DEPENDs if the build files and CI
     indicate testing for older CI images.
   - The general guideline is the oldest CI image listed is the fallback for
-    Depends.  If multiple listed images or versions, then the version range
+    *DEPENDs.  If multiple listed images or versions, then the version range
     should be constrained for version sensitive *DEPENDs.  For example the CI
     files list U22, U24, D13 as supported.  U24 lists 3.12 for Python3.  U22
     lists 3.10 for Python3.  D13 lists 3.12.  PYTHON_COMPAT should list
-    python3_12 and python 3.10.
+    python3_12 and python3_10.
 
 
 * Versioning:
