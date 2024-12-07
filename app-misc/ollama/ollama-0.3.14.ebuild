@@ -66,11 +66,17 @@ CPU_FLAGS_X86=(
 	cpu_flags_x86_avx2
 	cpu_flags_x86_avx512bf16
 	cpu_flags_x86_avx512bw
+	cpu_flags_x86_avx512dq
 	cpu_flags_x86_avx512f
 	cpu_flags_x86_avx512vbmi
+	cpu_flags_x86_avx512vl
 	cpu_flags_x86_avx512vnni
+	cpu_flags_x86_avxvnni
+	cpu_flags_x86_avxvnniint8
 	cpu_flags_x86_sse
 	cpu_flags_x86_sse2
+	cpu_flags_x86_sse3
+	cpu_flags_x86_ssse3
 )
 CUDA_FATTN_TARGETS_COMPAT=(
 	sm_60
@@ -2466,7 +2472,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm sandbox systemd
-unrestrict video_cards_intel ebuild-revision-28
+unrestrict video_cards_intel ebuild-revision-29
 
 "
 gen_rocm_required_use() {
@@ -2536,18 +2542,30 @@ REQUIRED_USE="
 	cpu_flags_x86_avx512bw? (
 		cpu_flags_x86_avx512f
 	)
+	cpu_flags_x86_avx512dq? (
+		cpu_flags_x86_avx512f
+	)
 	cpu_flags_x86_avx512vbmi? (
 		cpu_flags_x86_avx512bw
 	)
+	cpu_flags_x86_avx512vl? (
+		cpu_flags_x86_avx512f
+	)
 	cpu_flags_x86_avx512vnni? (
-		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512vl
 	)
 	cpu_flags_x86_avx512bf16? (
-		cpu_flags_x86_avx512vnni
 		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512vnni
 	)
 	cpu_flags_x86_sse2? (
 		cpu_flags_x86_sse
+	)
+	cpu_flags_x86_sse3? (
+		cpu_flags_x86_sse2
+	)
+	cpu_flags_x86_ssse3? (
+		cpu_flags_x86_sse3
 	)
 	cuda? (
 		|| (
@@ -3173,10 +3191,10 @@ einfo "PIE is already enabled."
 
 	strip-unsupported-flags
 
-#	if use debug ; then
+	if use debug ; then
 	# Increase build verbosity
 		append-flags -g
-#	fi
+	fi
 
 	if use rocm ; then
 	# Fixes
@@ -3204,6 +3222,58 @@ einfo "PIE is already enabled."
 
 	if use cpu_flags_x86_sse2 ; then
 		append-flags -msse2
+	fi
+
+	if use cpu_flags_x86_sse3 ; then
+		append-flags -msse3
+	fi
+
+	if use cpu_flags_x86_ssse3 ; then
+		append-flags -mssse3
+	fi
+
+	if use cpu_flags_x86_f16c ; then
+		append-flags -mf16c
+	fi
+
+	if use cpu_flags_x86_fma ; then
+		append-flags -mfma
+	fi
+
+	if use cpu_flags_x86_avxvnni ; then
+		append-flags -mavxvnni
+	fi
+
+	if use cpu_flags_x86_avxvnniint8 ; then
+		append-flags -mavxvnniint8
+	fi
+
+	if use cpu_flags_x86_avx512f ; then
+		append-flags -mavx512f
+	fi
+
+	if use cpu_flags_x86_avx512bw ; then
+		append-flags -mavx512bw
+	fi
+
+	if use cpu_flags_x86_avx512dq ; then
+		append-flags -mavx512dq
+	fi
+
+	if use cpu_flags_x86_avx512vl ; then
+		append-flags -mavx512vl
+	fi
+
+	if use cpu_flags_x86_avx512bf16 ; then
+		append-flags -mavx512bf16
+	fi
+
+	if use cpu_flags_x86_avx512vbmi ; then
+		append-flags -mavx512vbmi
+	fi
+
+	if use cpu_flags_x86_avx512vnni ; then
+		append-flags -mavx512vnni
 	fi
 
 	local olast=$(get_olast)
@@ -3341,37 +3411,70 @@ einfo "LDFLAGS: ${LDFLAGS}"
 	if is-flagq '-march=native' ; then
 		cpu_args+=( -DGGML_NATIVE=on )
 	fi
+
+	if use cpu_flags_x86_sse ; then
+		gpu_args+=( sse )
+	fi
+
+	if use cpu_flags_x86_sse2 ; then
+		gpu_args+=( sse2 )
+	fi
+
+	if use cpu_flags_x86_sse3 ; then
+		gpu_args+=( sse3 )
+	fi
+
+	if use cpu_flags_x86_ssse3 ; then
+		gpu_args+=( ssse3 )
+	fi
+
 	if use cpu_flags_x86_avx ; then
 		cpu_args+=( -DGGML_AVX=on )
 		gpu_args+=( avx )
 	fi
+
 	if use cpu_flags_x86_avx2 ; then
 		cpu_args+=( -DGGML_AVX2=on )
 		gpu_args+=( avx2 )
 	fi
+
+	if use cpu_flags_x86_avxvnni ; then
+		gpu_args+=( avxvnni )
+	fi
+
+	if use cpu_flags_x86_avxvnniint8 ; then
+		gpu_args+=( avxvnniint8 )
+	fi
+
 	if use cpu_flags_x86_avx512f ; then
 		gpu_args+=( avx512f )
 	fi
+
 	if use cpu_flags_x86_avx512bw ; then
 		cpu_args+=( -DGGML_AVX512=on )
 		gpu_args+=( avx512bw )
 	fi
+
 	if use cpu_flags_x86_fma ; then
 		cpu_args+=( -DGGML_FMA=on )
 		gpu_args+=( fma )
 	fi
+
 	if use cpu_flags_x86_f16c ; then
 		cpu_args+=( -DGGML_F16C=on )
 		gpu_args+=( f16c )
 	fi
+
 	if use cpu_flags_x86_avx512vbmi ; then
 		cpu_args+=( -DGGML_AVX512_VBMI=on )
 		gpu_args+=( avx512vbmi )
 	fi
+
 	if use cpu_flags_x86_avx512vnni ; then
 		cpu_args+=( -DGGML_AVX512_VNNI=on )
 		gpu_args+=( avx512vnni )
 	fi
+
 	if use cpu_flags_x86_avx512bf16 ; then
 		cpu_args+=( -DGGML_AVX512_BF16=on )
 		gpu_args+=( avx512bf16 )
