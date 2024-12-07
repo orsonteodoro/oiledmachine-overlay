@@ -67,7 +67,7 @@ CPU_FLAGS_X86=(
 	cpu_flags_x86_sse
 	cpu_flags_x86_sse2
 )
-CUDA_FATTN_COMPAT=(
+CUDA_FATTN_TARGETS_COMPAT=(
 	sm_60
 	sm_61
 	sm_70
@@ -2571,7 +2571,7 @@ REQUIRED_USE="
 		)
 		cuda? (
 			|| (
-				${CUDA_FATTN_COMPAT[@]/#/cuda_targets_}
+				${CUDA_FATTN_TARGETS_COMPAT[@]/#/cuda_targets_}
 			)
 		)
 	)
