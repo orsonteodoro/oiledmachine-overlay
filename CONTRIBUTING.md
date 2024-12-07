@@ -356,10 +356,10 @@ main
   - You are prohibited to autobump untested PYTHON_COMPAT versions.  It is
       problematic if the Python package is a C bindings package or a child
       package contains a version sensitive package (e.g. abseil).
-    - Exceptions:  Unmaintained package may be bumped to oldest Python version
-      supported by distro.  (Example:  Only 3.9 listed in setup.py but distro
-      supports 3.10, you may bump to 3.10).  If it doesn't work, then delete
-      the ebuild and disable the USE flags that pull it.
+    - Exceptions:  An unmaintained package may be bumped to the oldest Python
+      version supported by the distro.  (Example:  Only 3.9 listed in setup.py
+      but distro supports 3.10, you may bump to 3.10).  If it doesn't work, then
+      delete the ebuild and disable the USE flags that pull it.
     - Exceptions:  If python3 is only listed in setup.py, you may autobump
       but only to Python versions that are not hard masked.
     - Exceptions:  You tested it on your machine, you may autobump and/or
