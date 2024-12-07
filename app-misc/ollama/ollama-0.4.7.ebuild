@@ -2479,7 +2479,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm sandbox systemd
-unrestrict video_cards_intel ebuild-revision-27
+unrestrict video_cards_intel ebuild-revision-28
 
 "
 gen_rocm_required_use() {

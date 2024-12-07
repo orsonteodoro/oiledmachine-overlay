@@ -2455,7 +2455,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm sandbox systemd
-unrestrict video_cards_intel ebuild-revision-27
+unrestrict video_cards_intel ebuild-revision-28
 
 "
 gen_rocm_required_use() {
@@ -3158,10 +3158,10 @@ einfo "PIE is already enabled."
 
 	strip-unsupported-flags
 
-#	if use debug ; then
+	if use debug ; then
 	# Increase build verbosity
 		append-flags -g
-#	fi
+	fi
 
 	if use rocm ; then
 	# Fixes
@@ -3322,32 +3322,44 @@ einfo "LDFLAGS: ${LDFLAGS}"
 	fi
 
 	local cpu_args=()
+	local gpu_args=()
 	if is-flagq '-march=native' ; then
 		cpu_args+=( -DGGML_NATIVE=on )
 	fi
 	if use cpu_flags_x86_avx ; then
 		cpu_args+=( -DGGML_AVX=on )
+		gpu_args+=( avx )
 	fi
 	if use cpu_flags_x86_avx2 ; then
 		cpu_args+=( -DGGML_AVX2=on )
+		gpu_args+=( avx2 )
+	fi
+	if use cpu_flags_x86_avx512f ; then
+		gpu_args+=( avx512f )
 	fi
 	if use cpu_flags_x86_avx512bw ; then
 		cpu_args+=( -DGGML_AVX512=on )
+		gpu_args+=( avx512bw )
 	fi
 	if use cpu_flags_x86_fma ; then
 		cpu_args+=( -DGGML_FMA=on )
+		gpu_args+=( fma )
 	fi
 	if use cpu_flags_x86_f16c ; then
 		cpu_args+=( -DGGML_F16C=on )
+		gpu_args+=( f16c )
 	fi
 	if use cpu_flags_x86_avx512vbmi ; then
 		cpu_args+=( -DGGML_AVX512_VBMI=on )
+		gpu_args+=( avx512vbmi )
 	fi
 	if use cpu_flags_x86_avx512vnni ; then
 		cpu_args+=( -DGGML_AVX512_VNNI=on )
+		gpu_args+=( avx512vnni )
 	fi
 	if use cpu_flags_x86_avx512bf16 ; then
 		cpu_args+=( -DGGML_AVX512_BF16=on )
+		gpu_args+=( avx512bf16 )
 	fi
 
 	if use cpu_flags_arm_sve ; then
@@ -3367,6 +3379,12 @@ einfo "LDFLAGS: ${LDFLAGS}"
 eerror "You need to set -march= to one of ${SVE_ARCHES[@]}"
 			die
 		fi
+	fi
+
+	if [[ -n "${gpu_args[@]}" ]] ; then
+		export GPU_RUNNER_CPU_FLAGS="${gpu_args[@]}"
+	else
+		export GPU_RUNNER_CPU_FLAGS="no-avx"
 	fi
 
 	if [[ -n "${cpu_args[@]}" ]] ; then
