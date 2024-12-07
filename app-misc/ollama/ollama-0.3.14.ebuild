@@ -3205,10 +3205,10 @@ einfo "PIE is already enabled."
 
 	strip-unsupported-flags
 
-#	if use debug ; then
+	if use debug ; then
 	# Increase build verbosity
 		append-flags -g
-#	fi
+	fi
 
 	if use rocm ; then
 	# Fixes
