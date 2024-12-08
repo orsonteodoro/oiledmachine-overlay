@@ -350,7 +350,8 @@ main
   - If a package is known to be safe, you may keep 2 or more ebuilds.  2 minor
     versions is recommended.  (e.g. 3.14.5 and 3.15.2 would be kept.
     If multiple patch versions 3.14.5, 3.14.4; only keep 3.14.5.)  These safe
-    packages could be checked on a convenient schedule.
+    packages could be checked on a convenient schedule.  Patch versions that
+    have high/criticial vulnerabilites should still be pruned or patch fixed.
 
 * Auto bumping dependencies:
   - (See also the general principles section above.)
