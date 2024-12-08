@@ -2699,6 +2699,7 @@ gen_rocm_rdepend() {
 				~dev-util/hip-${ROCM_VERSIONS[${s1}]}:${s}[lc,rocm]
 				~sci-libs/hipBLAS-${ROCM_VERSIONS[${s1}]}:${s}[rocm]
 				~sci-libs/rocBLAS-${ROCM_VERSIONS[${s1}]}:${s}$(get_rocm_usedep ROCBLAS)
+				~sci-libs/rocBLAS-${ROCM_VERSIONS[${s1}]}:${s}[cpu_flags_x86_f16c=]
 				~sci-libs/rocSPARSE-${ROCM_VERSIONS[${s1}]}:${s}$(get_rocm_usedep ROCSPARSE)
 				~sci-libs/rocSOLVER-${ROCM_VERSIONS[${s1}]}:${s}$(get_rocm_usedep ROCSOLVER)
 				~sys-devel/llvm-roc-${ROCM_VERSIONS[${s1}]}:${s}[llvm_targets_AMDGPU,llvm_targets_X86]
