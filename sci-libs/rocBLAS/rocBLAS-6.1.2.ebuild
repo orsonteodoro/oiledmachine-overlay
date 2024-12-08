@@ -207,8 +207,6 @@ src_configure() {
 	# undefined reference to `rocblas_status_ rocblas_internal_check_numerics_matrix_template
 	replace-flags '-O0' '-O1'
 
-	append-flags -mno-f16c
-
 	export PATH="${ESYSROOT}/${EROCM_PATH}/lib/python-exec/${EPYTHON}:${ESYSROOT}/${EROCM_PATH}/bin:${PATH}"
 	export PYTHONPATH="${ESYSROOT}/${EROCM_PATH}/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
 
