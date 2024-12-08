@@ -3064,6 +3064,12 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 		-e "s|-DCMAKE_BUILD_TYPE=Release||g" \
 		"llm/generate/gen_common.sh" \
 		|| die
+
+	# Allow to use GPU without AVX.
+	sed -i \
+		-e "s|GPURunnerCPUCapability = CPUCapabilityAVX|GPURunnerCPUCapability = CPUCapabilityNone|" \
+		"discover/types.go" \
+		|| die
 }
 
 check_toolchain() {

@@ -3088,6 +3088,12 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 			"llama/make/Makefile.rocm" \
 			|| die
 	fi
+
+	# Allow to use GPU without AVX.
+	sed -i \
+		-e "s|GPURunnerCPUCapability = CPUCapabilityAVX|GPURunnerCPUCapability = CPUCapabilityNone|" \
+		"discover/types.go" \
+		|| die
 }
 
 check_toolchain() {
