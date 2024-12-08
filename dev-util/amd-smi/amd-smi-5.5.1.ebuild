@@ -49,11 +49,11 @@ REQUIRED_USE+="
 RDEPEND="
 	${PYTHON_DEPS}
 	|| (
-		virtual/kfd:5.7
+		virtual/kfd-ub:5.7
 		virtual/kfd:5.6
 		virtual/kfd:5.5
 		virtual/kfd:5.4
-		virtual/kfd:5.3
+		virtual/kfd-lb:5.3
 	)
 "
 DEPEND="

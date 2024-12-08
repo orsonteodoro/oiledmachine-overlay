@@ -33,9 +33,9 @@ RDEPEND="
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 	sys-apps/pciutils
 	|| (
-		virtual/kfd:6.2
+		virtual/kfd-ub:6.2
 		virtual/kfd:6.1
-		virtual/kfd:6.0
+		virtual/kfd-lb:6.0
 	)
 "
 DEPEND="

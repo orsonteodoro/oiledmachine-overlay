@@ -122,11 +122,11 @@ RDEPEND="
 	)
 	kernel-driver? (
 		|| (
-			virtual/kfd:5.5
+			virtual/kfd-ub:5.5
 			virtual/kfd:5.4
 			virtual/kfd:5.3
 			virtual/kfd:5.2
-			virtual/kfd:5.1
+			virtual/kfd-lb:5.1
 		)
 	)
 	math? (

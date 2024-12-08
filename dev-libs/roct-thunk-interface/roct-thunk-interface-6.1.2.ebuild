@@ -48,10 +48,10 @@ RDEPEND="
 	>=sys-apps/pciutils-3.9.0
 	>=sys-process/numactl-2.0.16
 	|| (
-		virtual/kfd:6.2
+		virtual/kfd-ub:6.2
 		virtual/kfd:6.1
 		virtual/kfd:6.0
-		virtual/kfd:5.7
+		virtual/kfd-lb:5.7
 	)
 "
 DEPEND="

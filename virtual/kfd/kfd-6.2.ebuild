@@ -48,7 +48,7 @@ ROCM_SLOT="${ROCM_VERSION%.*}"
 # https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/refs/
 #
 
-DESCRIPTION="Virtual for the amdgpu DRM (Direct Rendering Manager) kernel module"
+DESCRIPTION="The Kernel Fusion Driver (KFD)"
 #KEYWORDS="~amd64 ~x86" # Work In Progress (WIP)
 IUSE="custom-kernel kernel rock-dkms strict-pairing ebuild-revision-4"
 REQUIRED_USE="

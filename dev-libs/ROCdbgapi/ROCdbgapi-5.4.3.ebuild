@@ -35,11 +35,11 @@ RDEPEND="
 	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 	|| (
-		virtual/kfd:5.6
+		virtual/kfd-ub:5.6
 		virtual/kfd:5.5
 		virtual/kfd:5.4
 		virtual/kfd:5.3
-		virtual/kfd:5.2
+		virtual/kfd-lb:5.2
 	)
 "
 DEPEND="

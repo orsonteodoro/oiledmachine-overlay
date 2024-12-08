@@ -150,13 +150,16 @@ src_configure() {
 			-Wl,-L"/opt/rocm-${ROCM_VERSION}/llvm/$(rocm_get_libdir)" \
 			-Wl,-lLLVMSupport
 		if has_version "dev-util/hip:${ROCM_SLOT}[rocm]" ; then
+			append-flags -Wl,-lhsa-runtime64
 			append-ldflags -Wl,-lhsa-runtime64
 		fi
 		if has_version "dev-util/hip:${ROCM_SLOT}[lc]" ; then
+			append-flags -Wl,-lamd_comgr
 			append-ldflags -Wl,-lamd_comgr
 		fi
 	fi
 	if has_version "dev-util/hip:${ROCM_SLOT}[numa]" ; then
+		append-flags -Wl,-lnuma
 		append-ldflags -Wl,-lnuma
 	fi
 
