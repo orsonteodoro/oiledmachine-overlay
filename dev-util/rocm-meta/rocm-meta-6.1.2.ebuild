@@ -77,6 +77,9 @@ REQUIRED_USE="
 	support-libs? (
 		kernel-driver
 	)
+	tools-deploy? (
+		kernel-driver
+	)
 	tools-dev? (
 		kernel-driver
 		support-libs

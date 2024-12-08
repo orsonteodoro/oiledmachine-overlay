@@ -33,6 +33,9 @@ IUSE+=" ebuild-revision-5"
 RDEPEND="
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 	sys-apps/pciutils
+	|| (
+		virtual/kfd:4.1
+	)
 "
 DEPEND="
 	${RDEPEND}

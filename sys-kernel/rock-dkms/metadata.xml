@@ -77,6 +77,12 @@
     user_partt_mode           | Yes in 5.7.0+      | Yes in 6.5+, but not in earlier versions
     timeout_fatal_disable     | Yes in 4.2.0+      | Yes in 5.13+, but not in earlier versions
     timeout_period            | Yes in 4.2.0+      | Yes in 5.13+, but not in earlier versions
+
+
+    sysfs differences
+
+    Path                             | ROCK-Kernel-Driver | Vanilla kernel
+    /sys/module/amdgpu/version[7][8] | Yes                | No
     
     Footnotes:
 
@@ -89,6 +95,8 @@
     [4] amdgpu_drv.c contains the AMDGPU_VERSION in ROCK-Kernel-Driver but not vanilla kernel.
     [5] Removed in 5.3.0 and later
     [6] For this distro only
+    [7] Set via MODULE_VERSION in drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+    [8] It may break programs if missing.
 
 
     Environment variables
