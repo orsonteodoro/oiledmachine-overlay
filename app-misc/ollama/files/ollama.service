@@ -8,6 +8,7 @@ Group=ollama
 ExecStart=/usr/bin/ollama serve
 Restart=always
 RestartSec=3
+Environment="LD_LIBRARY_PATH=@LD_LIBRARY_PATH@"
 Environment="OLLAMA_FLASH_ATTENTION=@OLLAMA_FLASH_ATTENTION@"
 Environment="PATH=$PATH"
 #

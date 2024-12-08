@@ -201,7 +201,7 @@ GEN_EBUILD=0
 EGO_PN="github.com/ollama/ollama"
 LLAMA_CPP_UPDATE=0
 ROCM_SLOTS=(
-	"5.7"
+	# Limited by libhipblas.so.2 hardcoded SOVERSION
 	"6.0"
 	"6.1"
 )
@@ -3886,6 +3886,7 @@ src_install() {
 	exeinto "/usr/$(get_libdir)/${PN}"
 	doexe "${PN}"
 
+	local ld_library_path=""
 	if use cuda ; then
 		local name=""
 		if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
@@ -3901,6 +3902,7 @@ src_install() {
 			--add-rpath "/usr/$(get_libdir)/${PN}/${name}" \
 			"${ED}/usr/$(get_libdir)/${PN}/${PN}" \
 			|| die
+		ld_library_path+="/opt/cuda/$(get_libdir):/usr/$(get_libdir)"
 	elif use rocm ; then
 		local name="rocm"
 		patchelf \
@@ -3911,6 +3913,9 @@ src_install() {
 			--add-rpath "/usr/$(get_libdir)/${PN}/${name}" \
 			"${ED}/usr/$(get_libdir)/${PN}/${PN}" \
 			|| die
+	elif use video_cards_intel ; then
+	# TODO:  Update path for libze_intel_gpu.so
+		ld_library_path+=""
 	fi
 
 	cat "${FILESDIR}/${PN}-muxer" > "${T}/${PN}-muxer"
@@ -3972,6 +3977,7 @@ src_install() {
 			-e "s|@OLLAMA_CHROOT@|${chroot}|g" \
 			-e "s|@OLLAMA_FLASH_ATTENTION@|${flash_attention}|g" \
 			-e "s|@OLLAMA_SANDBOX_PROVIDER@|${sandbox}|g" \
+			-e "s|@LD_LIBRARY_PATH@|${ld_library_path}|g" \
 			"${ED}/etc/init.d/${PN}" \
 			|| die
 	fi
@@ -3985,6 +3991,7 @@ src_install() {
 		fi
 		sed -i \
 			-e "s|@OLLAMA_FLASH_ATTENTION@|${flash_attention}|g" \
+			-e "s|@LD_LIBRARY_PATH@|${ld_library_path}|g" \
 			"${ED}/usr/lib/systemd/system/${PN}.service" \
 			|| die
 	fi

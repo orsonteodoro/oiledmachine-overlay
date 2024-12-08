@@ -294,6 +294,7 @@ start() {
 	args+=(
 #		-e OLLAMA_UID=${uid}
 #		-e OLLAMA_GID=${gid}
+		-e LD_LIBRARY_PATH="@LD_LIBRARY_PATH@"
 	)
 
 	if [[ "${OLLAMA_SANDBOX_PROVIDER}" == "sandbox" ]] ; then
