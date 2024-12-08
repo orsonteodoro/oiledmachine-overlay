@@ -44,6 +44,9 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1101
 	gfx1102
 )
+CPU_FLAGS_X86=(
+	cpu_flags_x86_f16c
+)
 CMAKE_MAKEFILE_GENERATOR="emake"
 DOCS_BUILDER="doxygen"
 DOCS_DIR="docs"
@@ -81,7 +84,8 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-benchmark cuda +rocm test ebuild-revision-20
+${CPU_FLAGS_X86[@]}
+benchmark cuda +rocm test ebuild-revision-21
 "
 gen_rocm_required_use() {
 	local x
@@ -185,6 +189,14 @@ src_prepare() {
 		"${S}/toolchain-linux.cmake"
 	)
 	rocm_src_prepare
+	if ! use cpu_flags_x86_f16c ; then
+	# Issue 1422
+	# Breaks Ollama for CPUs without AVX
+		sed -i \
+			-e "s|-mf16c|-mno-f16c|g" \
+			$(find "${S}" -name "CMakeLists.txt") \
+			|| die
+	fi
 }
 
 src_configure() {
