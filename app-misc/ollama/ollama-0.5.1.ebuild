@@ -2525,7 +2525,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
-sandbox systemd unrestrict video_cards_intel ebuild-revision-32
+sandbox systemd unrestrict video_cards_intel ebuild-revision-33
 "
 gen_rocm_required_use() {
 	local s
@@ -3858,13 +3858,11 @@ install_gpu_runner() {
 	exeinto "/usr/$(get_libdir)/${PN}/${name}"
 	pushd "${runner_path1}" >/dev/null 2>&1 || die
 		doexe "ollama_llama_server"
+		doexe "libggml_${name}.so"
 	popd >/dev/null 2>&1 || die
 
-	# TODO:  Fix dangling reference to libggml.so
 	local list=(
-#		"libggml.so"
-#		"libggml_${name}.so"
-#		"libllama.so"
+		"libggml_${name}.so"
 		"ollama_llama_server"
 	)
 	local n
