@@ -25,9 +25,9 @@ EAPI=8
 # U20
 # For depends see
 # https://github.com/ollama/ollama/blob/main/docs/development.md
-# ROCm:  https://github.com/ollama/ollama/blob/v0.4.7/.github/workflows/test.yaml
-# CUDA:  https://github.com/ollama/ollama/blob/v0.4.7/.github/workflows/release.yaml#L194
-# Hardware support:  https://github.com/ollama/ollama/blob/v0.4.7/docs/gpu.md
+# ROCm:  https://github.com/ollama/ollama/blob/v0.5.1/.github/workflows/test.yaml
+# CUDA:  https://github.com/ollama/ollama/blob/v0.5.1/.github/workflows/release.yaml#L194
+# Hardware support:  https://github.com/ollama/ollama/blob/v0.5.1/docs/gpu.md
 AMDGPU_TARGETS_COMPAT=(
 	gfx900
 	gfx906_xnack_minus
@@ -3649,7 +3649,7 @@ build_new_runner_cpu() {
 	emake -C llama
 
 	# See also
-	# https://github.com/ollama/ollama/blob/v0.4.7/llama/llama.go
+	# https://github.com/ollama/ollama/blob/v0.5.1/llama/llama.go
 	local args=(
 		-p $(get_makeopts_jobs)
 		-x
@@ -3717,7 +3717,7 @@ build_new_runner_gpu() {
 	fi
 
 	# See also
-	# https://github.com/ollama/ollama/blob/v0.4.7/llama/llama.go
+	# https://github.com/ollama/ollama/blob/v0.5.1/llama/llama.go
 	local args=(
 		-p $(get_makeopts_jobs)
 		-x
