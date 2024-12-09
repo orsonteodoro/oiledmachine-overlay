@@ -1988,10 +1988,10 @@ diff '--color=auto' -urp ollama-0.5.1.orig/cmd/cmd.go ollama-0.5.1/cmd/cmd.go
 +	"gemma": "text-generation qa summaries common-sense programming-tutor answering-questions",
 +	"gemma2": "chat content-generation summaries grammar-correction language-tutor trivia multilingual",
 +	"glm4": "math-word-problems coding multilingual",
-+	"glm4:9b-chat-q5_1": "math-word-problems coding chat function-calling comprehensive-response multilingual"
-+	"glm4:9b-chat-q6_K": "math-word-problems coding chat function-calling comprehensive-response multilingual"
-+	"glm4:9b-chat-q8_0": "math-word-problems coding chat function-calling comprehensive-response multilingual"
-+	"glm4:9b-chat-fp16": "math-word-problems coding chat function-calling comprehensive-response multilingual"
++	"glm4:9b-chat-q5_1": "math-word-problems coding chat function-calling comprehensive-response multilingual",
++	"glm4:9b-chat-q6_K": "math-word-problems coding chat function-calling comprehensive-response multilingual",
++	"glm4:9b-chat-q8_0": "math-word-problems coding chat function-calling comprehensive-response multilingual",
++	"glm4:9b-chat-fp16": "math-word-problems coding chat function-calling comprehensive-response multilingual",
 +	"magicoder": "coding code-generation open-source-coding",
 +	"mannix/llamax3-8b-alpaca": "multilingual intruction-following akrikaans amharic arabic armenian assamese asturian azerbaijani belarusian bengali bosnian bulgarian burmese catalan cebuano chinese simplified-chinese traditional-chinese croatian czech danish dutch english estonian filipino finnish french fulah galician ganda georgian german greek gujarati hausa hebrew hindi hungarian icelandic igbo indonesian irish italian japanese javanese kabuverdianu kamba kannada kazakh khmer korean kyrgyz lao latvian lingala lithuanian luo luxembourgish macedonian malay malayalam maltese maori marathi mongolian nepali northern sotho norwegian nyanja occitan oriya oromo pashto persian polish portuguese punjabi romanian russian serbian shona sindhi slovak slovenian somali sorani kurdish spanish swahili swedish tajik tamil telugu thai turkish ukrainian umbundu urdu uzbek vietnamese welsh wolof xhosa yoruba zulu",
 +	"mannix/replete-adapted-llama3-8b": "coding multilanguage-comment-translation function-calling uncensored open-source-data advanced-math secure-coding coding-vulnerability-prevention low-end-hardware",
