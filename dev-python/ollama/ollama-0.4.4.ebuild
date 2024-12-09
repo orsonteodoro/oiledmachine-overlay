@@ -13,7 +13,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/ollama/ollama-python.git"
-	FALLBACK_COMMIT="89e8b74f1ea6b1af8a9df2e00e120a2a7e430311" # Aug 30, 2024
+	FALLBACK_COMMIT="1066246ab5d9860e4732632b5ac802e32ba533e7" # Dec 7, 2024
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
@@ -40,7 +40,6 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev"
 RDEPEND+="
 	>=dev-lang/python-3.8
-	>=dev-python/httpx-0.27.2[${PYTHON_USEDEP}]
 	>=dev-python/anyio-4.5.2[${PYTHON_USEDEP}]
 	>=dev-python/certifi-2024.8.30[${PYTHON_USEDEP}]
 	>=dev-python/exceptiongroup-1.2.2[${PYTHON_USEDEP}]
@@ -48,7 +47,7 @@ RDEPEND+="
 	>=dev-python/httpcore-1.0.6[${PYTHON_USEDEP}]
 	>=dev-python/httpx-0.27.2[${PYTHON_USEDEP}]
 	>=dev-python/idna-3.10[${PYTHON_USEDEP}]
-	>=dev-python/pydantic-2.23.4[${PYTHON_USEDEP}]
+	>=dev-python/pydantic-2.9.2[${PYTHON_USEDEP}]
 	>=dev-python/sniffio-1.3.1[${PYTHON_USEDEP}]
 	>=dev-python/typing-extensions-4.12.2[${PYTHON_USEDEP}]
 "
@@ -57,12 +56,12 @@ DEPEND+="
 "
 BDEPEND+="
 	dev? (
-		>=dev-python/pytest-7.4.3[${PYTHON_USEDEP}]
-		>=dev-python/pytest-asyncio-0.23.2[${PYTHON_USEDEP}]
-		>=dev-python/pytest-cov-4.1[${PYTHON_USEDEP}]
-		>=dev-python/pytest-httpserver-1.0.8[${PYTHON_USEDEP}]
-		>=dev-util/ruff-0.1.8[${PYTHON_USEDEP}]
-		>=virtual/pillow-10.2.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-8.3.4[${PYTHON_USEDEP}]
+		>=dev-python/pytest-asyncio-0.24.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-cov-5.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-httpserver-1.1.0[${PYTHON_USEDEP}]
+		>=dev-util/ruff-0.7.4[${PYTHON_USEDEP}]
+		>=virtual/pillow-10.4.0[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "README.md" )

@@ -40,7 +40,6 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev"
 RDEPEND+="
 	>=dev-lang/python-3.8
-	>=dev-python/httpx-0.27.0[${PYTHON_USEDEP}]
 	>=dev-python/anyio-4.3.0[${PYTHON_USEDEP}]
 	>=dev-python/certifi-2024.2.2[${PYTHON_USEDEP}]
 	>=dev-python/exceptiongroup-1.2.0[${PYTHON_USEDEP}]
@@ -56,12 +55,12 @@ DEPEND+="
 "
 BDEPEND+="
 	dev? (
-		>=dev-python/pytest-7.4.3[${PYTHON_USEDEP}]
-		>=dev-python/pytest-asyncio-0.23.2[${PYTHON_USEDEP}]
-		>=dev-python/pytest-cov-4.1[${PYTHON_USEDEP}]
-		>=dev-python/pytest-httpserver-1.0.8[${PYTHON_USEDEP}]
-		>=dev-util/ruff-0.1.8[${PYTHON_USEDEP}]
-		>=virtual/pillow-10.2.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-8.3.2[${PYTHON_USEDEP}]
+		>=dev-python/pytest-asyncio-0.24.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-cov-5.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-httpserver-1.1.0[${PYTHON_USEDEP}]
+		>=dev-util/ruff-0.6.3[${PYTHON_USEDEP}]
+		>=virtual/pillow-10.4.0[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "README.md" )
