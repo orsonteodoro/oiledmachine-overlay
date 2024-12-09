@@ -3971,6 +3971,7 @@ src_install() {
 	local chroot=$(usex chroot "1" "0")
 	local flash_attention=$(usex flash "1" "0")
 	local sandbox=$(usex sandbox "sandbox" "")
+	local kv_cache_type=${OLLAMA_KV_CACHE_TYPE:-"f16"}
 
 	if use openrc ; then
 		doinitd "${FILESDIR}/${PN}"
@@ -3984,6 +3985,7 @@ src_install() {
 			-e "s|@OLLAMA_BACKEND@|${backend}|g" \
 			-e "s|@OLLAMA_CHROOT@|${chroot}|g" \
 			-e "s|@OLLAMA_FLASH_ATTENTION@|${flash_attention}|g" \
+			-e "s|@OLLAMA_KV_CACHE_TYPE@|${kv_cache_type}|g" \
 			-e "s|@OLLAMA_SANDBOX_PROVIDER@|${sandbox}|g" \
 			-e "s|@LD_LIBRARY_PATH@|${ld_library_path}|g" \
 			"${ED}/etc/init.d/${PN}" \
@@ -3999,6 +4001,7 @@ src_install() {
 		fi
 		sed -i \
 			-e "s|@OLLAMA_FLASH_ATTENTION@|${flash_attention}|g" \
+			-e "s|@OLLAMA_KV_CACHE_TYPE@|${kv_cache_type}|g" \
 			-e "s|@LD_LIBRARY_PATH@|${ld_library_path}|g" \
 			"${ED}/usr/lib/systemd/system/${PN}.service" \
 			|| die

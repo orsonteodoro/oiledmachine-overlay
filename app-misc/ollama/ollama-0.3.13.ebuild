@@ -4022,6 +4022,10 @@ src_install() {
 			-e "s|@LD_LIBRARY_PATH@|${ld_library_path}|g" \
 			"${ED}/etc/init.d/${PN}" \
 			|| die
+		sed -i \
+			-e "/OLLAMA_KV_CACHE_TYPE/d" \
+			"${ED}/etc/init.d/${PN}" \
+			|| die
 	fi
 	if use systemd ; then
 		insinto "/usr/lib/systemd/system"
@@ -4034,6 +4038,10 @@ src_install() {
 		sed -i \
 			-e "s|@OLLAMA_FLASH_ATTENTION@|${flash_attention}|g" \
 			-e "s|@LD_LIBRARY_PATH@|${ld_library_path}|g" \
+			"${ED}/usr/lib/systemd/system/${PN}.service" \
+			|| die
+		sed -i \
+			-e "/OLLAMA_KV_CACHE_TYPE/d" \
 			"${ED}/usr/lib/systemd/system/${PN}.service" \
 			|| die
 	fi
