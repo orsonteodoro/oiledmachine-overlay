@@ -3964,8 +3964,8 @@ src_install() {
 	#
 	# We build/install two backends for scenarios
 	#
-	# * Gaming with GPU with LLM search with CPU.
-	# * Live streaming GPU encoding with LLM search with CPU.
+	# * Gaming with GPU with LLM search with CPU runner.
+	# * Live streaming GPU encoding with LLM search with CPU runner.
 	#
 	install_cpu_runner
 	install_gpu_runner
