@@ -15,7 +15,7 @@ CLEAR_LINUX_PATCHES_VER="6.10.2-1454"
 EBUILD_REV="ebuild-revision-6"
 GENPATCHES_VER="live" # can be live only when 9999
 PATCH_PROJC_VER="6.12-r0"
-PATCH_RT_VER="6.12-rc4-rt6"
+PATCH_RT_VER="6.13-rc1-rt1"
 
 inherit ot-kernel-v6.13
 
