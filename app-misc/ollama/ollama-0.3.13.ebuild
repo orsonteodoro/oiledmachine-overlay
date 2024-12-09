@@ -3955,8 +3955,7 @@ src_install() {
 			"${ED}/usr/$(get_libdir)/${PN}/${PN}" \
 			|| die
 	elif use video_cards_intel ; then
-	# TODO:  Update path for libze_intel_gpu.so
-		ld_library_path+=""
+		ld_library_path+="/usr/$(get_libdir)"
 	fi
 
 	cat "${FILESDIR}/${PN}-muxer" > "${T}/${PN}-muxer"
