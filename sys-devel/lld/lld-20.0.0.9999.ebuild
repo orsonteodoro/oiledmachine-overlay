@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# Last update:  2024-07-23
+# Last update:  2024-11-20
 
 PYTHON_COMPAT=( "python3_"{10..13} )
 
@@ -216,9 +216,6 @@ _src_configure_compiler() {
 
 _src_configure() {
 	llvm_prepend_path "${LLVM_MAJOR}"
-
-	# ODR violations (https://github.com/llvm/llvm-project/issues/83529, bug #922353)
-	filter-lto
 
 	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"

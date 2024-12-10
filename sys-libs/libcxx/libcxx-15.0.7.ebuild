@@ -7,7 +7,7 @@ EAPI=8
 CMAKE_ECLASS="cmake"
 LLVM_COMPONENTS=(
 	"runtimes"
-	"libcxx"{,"abi"}
+	"libcxx"{"","abi"}
 	"llvm/"{"cmake","utils/llvm-lit"}
 	"cmake"
 )

@@ -3,7 +3,7 @@
 
 EAPI=8
 
-# Last update:  2024-07-23
+# Last update:  2024-12-07
 
 inherit multilib-build toolchain-funcs
 
@@ -11,7 +11,7 @@ DESCRIPTION="A meta-ebuild for the Clang runtime libraries"
 HOMEPAGE="https://clang.llvm.org/"
 LICENSE="metapackage"
 SLOT="${PV%%.*}"
-IUSE="+compiler-rt libcxx openmp pstl +sanitize"
+IUSE="+compiler-rt libcxx offload openmp pstl +sanitize"
 REQUIRED_USE="
 	sanitize? (
 		compiler-rt
@@ -29,6 +29,9 @@ RDEPEND="
 	)
 	openmp? (
 		sys-libs/libomp:${PV%%.*}[${MULTILIB_USEDEP}]
+		offload? (
+			>=sys-libs/llvm-offload-${PV}
+		)
 	)
 	pstl? (
 		sys-libs/pstl:${PV%%.*}

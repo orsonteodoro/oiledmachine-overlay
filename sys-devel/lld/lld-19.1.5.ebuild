@@ -30,6 +30,7 @@ inherit cmake flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
 
 KEYWORDS="
 ~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~arm64-macos
+~x64-macos
 "
 
 DESCRIPTION="The LLVM linker (link editor)"
@@ -220,9 +221,6 @@ _src_configure_compiler() {
 
 _src_configure() {
 	llvm_prepend_path "${LLVM_MAJOR}"
-
-	# ODR violations (https://github.com/llvm/llvm-project/issues/83529, bug #922353)
-	filter-lto
 
 	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"

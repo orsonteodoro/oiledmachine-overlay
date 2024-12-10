@@ -44,8 +44,13 @@ LICENSE="
 "
 SLOT="${LLVM_MAJOR}"
 IUSE+="
-+abi_x86_32 abi_x86_64 +clang +debug test
++abi_x86_32 abi_x86_64 +atomic-builtins +clang +debug test
 ${LLVM_EBUILDS_LLVM19_REVISION}
+"
+REQUIRED_USE="
+	atomic-builtins? (
+		clang
+	)
 "
 DEPEND="
 	sys-devel/llvm:${LLVM_MAJOR}
@@ -148,6 +153,7 @@ src_configure() {
 	local mycmakeargs=(
 		-DCOMPILER_RT_INSTALL_PATH="${EPREFIX}/usr/lib/clang/${LLVM_MAJOR}"
 
+		-DCOMPILER_RT_EXCLUDE_ATOMIC_BUILTIN=$(usex !atomic-builtins)
 		-DCOMPILER_RT_INCLUDE_TESTS=$(usex test)
 		-DCOMPILER_RT_BUILD_CTX_PROFILE=OFF
 		-DCOMPILER_RT_BUILD_LIBFUZZER=OFF

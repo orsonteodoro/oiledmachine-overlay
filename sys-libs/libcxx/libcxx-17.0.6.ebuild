@@ -25,7 +25,7 @@ unset -f _llvm_set_globals
 CMAKE_ECLASS="cmake"
 LLVM_COMPONENTS=(
 	"runtimes"
-	"libcxx"{,"abi"}
+	"libcxx"{"","abi"}
 	"llvm/"{"cmake","utils/llvm-lit"}
 	"cmake"
 )

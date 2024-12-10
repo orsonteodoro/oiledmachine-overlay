@@ -349,7 +349,7 @@ pkg_pretend() {
 pkg_setup() {
 	if use scudo ; then
 		linux-info_pkg_setup
-# See https://llvm.org/docs/ScudoHardenedAllocator.html#randomness
+	# See https://llvm.org/docs/ScudoHardenedAllocator.html#randomness
 		CONFIG_CHECK="
 			~RELOCATABLE
 			~RANDOMIZE_BASE

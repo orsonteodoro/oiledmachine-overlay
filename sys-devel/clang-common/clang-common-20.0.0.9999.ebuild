@@ -3,7 +3,7 @@
 
 EAPI=8
 
-# Last update:  2024-09-22
+# Last update:  2024-10-18
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
@@ -314,10 +314,6 @@ src_install() {
 		cat >> "${ED}/etc/clang/gentoo-common.cfg" <<-EOF || die
 			# Gentoo Prefix on Darwin
 			-Wl,-search_paths_first
-			-Wl,-rpath,"${EPREFIX}/usr/lib"
-			-L "${EPREFIX}/usr/lib"
-			-isystem "${EPREFIX}/usr/include"
-			-isysroot "${EPREFIX}/MacOSX.sdk"
 		EOF
 		if use bootstrap-prefix ; then
 			# bootstrap-prefix is only set during stage2 of bootstrapping
@@ -326,8 +322,18 @@ src_install() {
 			# EPREFIX.
 			cat >> "${ED}/etc/clang/gentoo-common.cfg" <<-EOF || die
 				-Wl,-rpath,"${EPREFIX}/../usr/lib"
+				-Wl,-L,${EPREFIX}/../usr/lib
+				-isystem ${EPREFIX}/../usr/include
 			EOF
 		fi
+		# Using -Wl,-L instead of -L to trick compiler driver to put it
+		# after -isysroot's internal -L
+		cat >> "${ED}/etc/clang/gentoo-common.cfg" <<-EOF || die
+			-Wl,-rpath,${EPREFIX}/usr/lib
+			-Wl,-L,${EPREFIX}/usr/lib
+			-isystem ${EPREFIX}/usr/include
+			-isysroot ${EPREFIX}/MacOSX.sdk
+		EOF
 	fi
 }
 

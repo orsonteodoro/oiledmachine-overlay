@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# Last update:  2024-09-30
+# Last update:  2024-11-07
 
 PYTHON_COMPAT=( "python3_"{10..13} )
 
@@ -526,6 +526,7 @@ get_distribution_components() {
 			clang-refactor
 			clang-repl
 			clang-scan-deps
+			clang-sycl-linker
 			diagtool
 			hmaptool
 			nvptx-arch

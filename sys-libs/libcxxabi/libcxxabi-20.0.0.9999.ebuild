@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# Last update:	2024-07-23
+# Last update:	2024-10-23
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
@@ -82,6 +82,7 @@ LLVM_COMPONENTS=(
 	"cmake"
 )
 LLVM_TEST_COMPONENTS=(
+	"libc"
 	"llvm/utils/llvm-lit"
 )
 llvm.org_set_globals
@@ -334,7 +335,6 @@ einfo
 		# This is broken with standalone builds, and also meaningless
 		-DLIBCXXABI_USE_LLVM_UNWINDER=OFF
 
-		-DLIBCXX_LIBDIR_SUFFIX=
 		#
 		#
 		-DLIBCXX_CXX_ABI=libcxxabi

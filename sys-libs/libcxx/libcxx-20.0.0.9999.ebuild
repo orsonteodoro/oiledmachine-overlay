@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# Last update:  2024-09-10
+# Last update:  2024-10-23
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
@@ -28,7 +28,8 @@ GCC_SLOT=14
 CMAKE_ECLASS="cmake"
 LLVM_COMPONENTS=(
 	"runtimes"
-	"libcxx"{,"abi"}
+	"libcxx"{"","abi"}
+	"libc"
 	"llvm/"{"cmake","utils/llvm-lit"}
 	"cmake"
 )

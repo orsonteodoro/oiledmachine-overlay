@@ -16,8 +16,8 @@ esac
 
 # For deterministic builds and working patches.
 # Commits with green checkmarks used.
-# The llvm 19 should be newer (>= Apr 25, 2024 [76ea5fe]) for chromium 126.
-LLVM_EBUILDS_LLVM20_FALLBACK_COMMIT="7de492f90dd733859f5f0dd582860ccc5899dc22" # Oct 2, 2024 (51 / 51 green checkmarks)
+# The llvm 20.0.0git should be newer (>= Sep 24, 2024 [3dbd929e]) for chromium 131.0.6778.69 with 94/96 green checkmarks.
+LLVM_EBUILDS_LLVM20_FALLBACK_COMMIT="1df28554bd6264d44aa2ce12e5a2fc29f61bb027" # Dec 6, 2024 (63 / 63 green checkmarks)
 LLVM_EBUILDS_LLVM19_FALLBACK_COMMIT="5b4000dc58572d08754f0b2199c2046871ec8507" # Jun 26, 2024 (72 / 72 green checkmarks)
 LLVM_EBUILDS_LLVM18_FALLBACK_COMMIT="2b033a32ea1b45c773158f67b48623ceffbb153d" # Feb 14, 2024 (42 / 43 green checkmarks)
 LLVM_EBUILDS_LLVM19_BRANCH="main"

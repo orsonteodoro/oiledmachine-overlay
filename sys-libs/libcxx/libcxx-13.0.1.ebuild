@@ -6,7 +6,7 @@ EAPI=8
 
 CMAKE_ECLASS="cmake"
 LLVM_COMPONENTS=(
-	"libcxx"{,"abi"}
+	"libcxx"{"","abi"}
 	"llvm/"{"cmake","utils/llvm-lit"}
 )
 LLVM_MAX_SLOT=${PV%%.*}

@@ -3,7 +3,7 @@
 
 EAPI=8
 
-# Last update:  2024-07-23
+# Last update:  2024-10-23
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
@@ -77,6 +77,7 @@ LLVM_COMPONENTS=(
 	"cmake"
 )
 LLVM_TEST_COMPONENTS=(
+	"libc"
 	"libcxxabi"
 	"llvm/utils/llvm-lit"
 )
