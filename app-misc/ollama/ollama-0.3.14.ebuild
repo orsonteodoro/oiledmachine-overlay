@@ -4072,20 +4072,20 @@ einfo
 einfo "Quick guide:"
 einfo
 	if use openrc ; then
-einfo "  rc-service ${PN} start			# Start server"
+printf " \e[32m*\e[0m  %-40s%-40s" "rc-service ${PN} start"		"# Start server"
 	elif use systemd ; then
-einfo "  systemctl start ${PN}			# Start server"
+printf " \e[32m*\e[0m  %-40s%-40s" "systemctl start ${PN}"		"# Start server"
 	else
-einfo "  ${PN} serve				# Start server, note you are reponsible for adding it to your init system."
+printf " \e[32m*\e[0m  %-40s%-40s" "${PN} serve"			"# Start server, note you are reponsible for adding it to your init system."
 	fi
-einfo "  ${PN} avail				# Lists whitelisted models available to download"
-einfo "  ${PN} run llama3:70b			# Downloads, load, and chat to a llama3 Large Language Model (LLM) with 70 billion parameters"
-einfo "  ${PN} show llama3 --tags		# Shows descriptive tags, capabilities, personality of the llama3 model"
-einfo "  ${PN} show llama3 --website		# Shows the ${PN} website entry for the llama3 model"
-einfo "  ${PN} show llama3 --licence		# Shows the model license of the llama3 model"
-einfo "  ${PN} find-size 500MB			# Shows the models to download that are 500MB or less"
-einfo "  ${PN} find-size 4GB			# Shows the models to download that are 4GB or less"
-einfo "  ${PN} find-size 4GB | grep orca	# Shows orca models less than or equal to 4GB"
+printf " \e[32m*\e[0m  %-40s%-40s" "${PN} avail"			"# Lists whitelisted models available to download"
+printf " \e[32m*\e[0m  %-40s%-40s" "${PN} run llama3:70b"		"# Downloads, load, and chat to a llama3 Large Language Model (LLM) with 70 billion parameters"
+printf " \e[32m*\e[0m  %-40s%-40s" "${PN} show llama3 --tags"		"# Shows descriptive tags, capabilities, personality of the llama3 model"
+printf " \e[32m*\e[0m  %-40s%-40s" "${PN} show llama3 --website"	"# Shows the ${PN} website entry for the llama3 model"
+printf " \e[32m*\e[0m  %-40s%-40s" "${PN} show llama3 --licence"	"# Shows the model license of the llama3 model"
+printf " \e[32m*\e[0m  %-40s%-40s" "${PN} find-size 500MB"		"# Shows the models to download that are 500MB or less"
+printf " \e[32m*\e[0m  %-40s%-40s" "${PN} find-size 4GB"		"# Shows the models to download that are 4GB or less"
+printf " \e[32m*\e[0m  %-40s%-40s" "${PN} find-size 4GB | grep orca"	"# Shows orca models less than or equal to 4GB"
 einfo
 einfo "You still need to download a pregenerated model.  The full list can be"
 einfo "found at:"
