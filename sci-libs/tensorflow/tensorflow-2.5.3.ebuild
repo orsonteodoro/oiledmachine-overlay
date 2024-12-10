@@ -755,7 +755,7 @@ PATCHES=(
 	"${FILESDIR}/2.5.3/tensorflow-2.5.3-0006-systemlib-Update-targets-for-absl_py.patch"
 	"${FILESDIR}/2.5.3/tensorflow-2.14.1-0007-systemlib-Add-well_known_types_py_pb2-target.patch"
 	"${FILESDIR}/2.5.3/tensorflow-2.5.3-0008-Relax-setup.py-version-requirements.patch"
-	"A${FILESDIR}/2.5.3/tensorflow-2.14.1-0009-systemlib-update-targets-for-absl.patch"
+	"${FILESDIR}/2.5.3/tensorflow-2.14.1-0009-systemlib-update-targets-for-absl.patch"
 	"${FILESDIR}/2.5.3/tensorflow-2.14.1-0010-systemlib-fix-missing-osx-in-pybind11.patch"
 	"${FILESDIR}/2.5.3/tensorflow-2.14.1-0011-systemlib-fix-missing-LICENSE-in-flatbuffers.patch"
 	"${FILESDIR}/2.5.3/tensorflow-2.14.1-0012-build-use-non-hermetic-python.patch"

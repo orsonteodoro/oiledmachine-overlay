@@ -855,8 +855,7 @@ PATCHES=(
 	"${FILESDIR}/2.16.1/tensorflow-2.15.0-0005-systemlib-Updates-for-Abseil-20220623-LTS.patch"
 	"${FILESDIR}/2.16.1/tensorflow-2.15.0-0006-systemlib-Update-targets-for-absl_py.patch"
 	"${FILESDIR}/2.16.1/tensorflow-2.15.0-0007-systemlib-Add-well_known_types_py_pb2-target.patch"
-	"y
-${FILESDIR}/2.16.1/tensorflow-2.16.1-0008-Relax-setup.py-version-requirements.patch"
+	"${FILESDIR}/2.16.1/tensorflow-2.16.1-0008-Relax-setup.py-version-requirements.patch"
 	"${FILESDIR}/2.16.1/tensorflow-2.15.0-0009-systemlib-update-targets-for-absl.patch"
 	"${FILESDIR}/2.16.1/tensorflow-2.15.0-0010-systemlib-fix-missing-osx-in-pybind11.patch"
 	"${FILESDIR}/2.16.1/tensorflow-2.15.0-0011-systemlib-fix-missing-LICENSE-in-flatbuffers.patch"
