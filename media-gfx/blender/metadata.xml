@@ -35,8 +35,8 @@
     4.2.x         - LTS (Long Term Support) to Jul 2026
     4.3.x         - Stable
 
-    EOL (End of Life) versions are available on the overlay temporarily for 3rd
-    party plugins.  Use EOL versions at your own risk.
+    EOL (End of Life) versions are available on the overlay temporarily for
+    third party plugins.  Use EOL versions at your own risk.
 
     Information about Cycles network rendering can be found at:
     https://wiki.blender.org/wiki/Source/Render/Cycles/Network_Render
