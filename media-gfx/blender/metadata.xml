@@ -333,6 +333,11 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
     <flag name="usd">
       Allows to export certain types of selected visible meshes to USD format.
     </flag>
+    <flag name="uv-slim">
+      Use the SLIM (Scalable Locally Injective Mappings) algorithm to minimize
+      mesh map distortions and removal of inverted mesh elements to improve
+      quality.
+    </flag>
     <flag name="webm">
       Adds support for WebM preset with dependency checks.
     </flag>
