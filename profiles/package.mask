@@ -115,6 +115,10 @@ www-misc/rainbowstream
 
 # End of Life (EOL)
 <net-libs/nodejs-15
+=media-gfx/blender-4.1*
+=media-gfx/blender-3.3*
+=virtual/blender-lts-3.3*
+=virtual/blender-stable-4.1*
 
 # Security precautions with debug or beta builds.
 ~media-sound/spotify-1.2.13.661
