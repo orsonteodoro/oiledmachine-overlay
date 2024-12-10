@@ -7,6 +7,8 @@ EAPI=8
 RELEASE_TYPE="release"
 VARIANT="stable"
 
+KEYWORDS=" " # Removed KEYWORDS, EOL
+
 inherit blender-v4.1
 
 # For current version, see

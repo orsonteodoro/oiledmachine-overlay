@@ -8,6 +8,8 @@ EOL_DATE="Sep 2024"
 RELEASE_TYPE="lts"
 VARIANT="stable"
 
+KEYWORDS=" " # Removed KEYWORDS, EOL
+
 inherit blender-v3.3
 
 # For current version, see

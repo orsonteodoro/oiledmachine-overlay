@@ -6,7 +6,7 @@
 
 EAPI=8
 DESCRIPTION="Virtual for Blender® LTS"
-KEYWORDS="~amd64 ~x86"
+#KEYWORDS="~amd64 ~x86"
 IUSE=""
 RDEPEND="~media-gfx/blender-${PV}"
 REQUIRED_USE=""
