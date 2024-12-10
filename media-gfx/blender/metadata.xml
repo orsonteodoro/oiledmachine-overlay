@@ -336,7 +336,8 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
     <flag name="uv-slim">
       Use the SLIM (Scalable Locally Injective Mappings) algorithm to minimize
       mesh map distortions and removal of inverted mesh elements to improve
-      quality.
+      quality, accessible via the "Minimum Strech" or "Live Unwrap" feature
+      options.
     </flag>
     <flag name="webm">
       Adds support for WebM preset with dependency checks.
