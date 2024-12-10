@@ -22,19 +22,19 @@
 # No need to look past those dates.
 
 # Last change was Feb 23, 2023 for:
-# https://github.com/blender/blender/blob/v3.6.13/build_files/build_environment/install_linux_packages.py
+# https://github.com/blender/blender/blob/v3.6.18/build_files/build_environment/install_linux_packages.py
 
 # Last change was May 15, 2023 for:
-# https://github.com/blender/blender/blob/v3.6.13/build_files/cmake/config/blender_release.cmake
+# https://github.com/blender/blender/blob/v3.6.18/build_files/cmake/config/blender_release.cmake
 # used for REQUIRED_USE section.
 
 # Last change was Mar 12, 2024 for:
-# https://github.com/blender/blender/blob/v3.6.13/build_files/build_environment/cmake/versions.cmake
+# https://github.com/blender/blender/blob/v3.6.18/build_files/build_environment/cmake/versions.cmake
 # used for *DEPENDs.
 
-# HIP:  https://github.com/blender/blender/blob/v3.6.13/intern/cycles/cmake/external_libs.cmake#L47
+# HIP:  https://github.com/blender/blender/blob/v3.6.18/intern/cycles/cmake/external_libs.cmake#L47
 
-# GPU lib versions:  https://github.com/blender/blender/blob/v3.6.13/build_files/config/pipeline_config.yaml
+# GPU lib versions:  https://github.com/blender/blender/blob/v3.6.18/build_files/config/pipeline_config.yaml
 
 # dependency version requirements see
 # build_files/build_environment/cmake/versions.cmake
@@ -67,7 +67,7 @@ CPU_FLAGS_3_3=(
 CXXABI_VER=17 # Linux builds should be gnu11, but in Win builds it is c++17
 
 # For max and min package versions see link below. \
-# https://github.com/blender/blender/blob/v3.6.13/build_files/build_environment/install_linux_packages.py
+# https://github.com/blender/blender/blob/v3.6.18/build_files/build_environment/install_linux_packages.py
 FFMPEG_IUSE+="
 	+aom +jpeg2k +mp3 +opus +theora +vorbis +vpx webm +webp +x264 +xvid
 "
@@ -86,7 +86,7 @@ OPENVDB_ABIS=(
 )
 
 # For the max exclusive Python supported (and others), see \
-# https://github.com/blender/blender/blob/v3.6.13/build_files/build_environment/install_linux_packages.py#L693 \
+# https://github.com/blender/blender/blob/v3.6.18/build_files/build_environment/install_linux_packages.py#L693 \
 PYTHON_COMPAT=( "python3_"{10,11} ) # <= 3.11.
 
 BOOST_PV="1.80"
@@ -135,7 +135,7 @@ OPTIX_RAYTRACE_TARGETS=(
 )
 
 AMDGPU_TARGETS_COMPAT=(
-# https://github.com/blender/blender/blob/v3.6.14/CMakeLists.txt#L533
+# https://github.com/blender/blender/blob/v3.6.18/CMakeLists.txt#L533
 	gfx900
 	gfx902
 	gfx90c
@@ -282,8 +282,8 @@ LICENSE+="
 	)
 
 "
-# ( all-rights-reserved Apache-2.0 ) - blender-3.6.14/extern/mantaflow/LICENSE
-# ( all-rights-reserved MIT ) - blender-3.6.14/extern/vulkan_memory_allocator/LICENSE.txt
+# ( all-rights-reserved Apache-2.0 ) - blender-3.6.18/extern/mantaflow/LICENSE
+# ( all-rights-reserved MIT ) - blender-3.6.18/extern/vulkan_memory_allocator/LICENSE.txt
 # ( all-rights-reserved Apache-2.0 )
 #   ( all-rights-reserved MIT )
 #   ( all-rights-reserved || ( BSD GPL-2 ) )
@@ -304,28 +304,28 @@ LICENSE+="
 #   public-domain
 #   UoI-NCSA
 #   ZLIB
-#   - blender-3.6.14/release/license/THIRD-PARTY-LICENSES.txt
+#   - blender-3.6.18/release/license/THIRD-PARTY-LICENSES.txt
 
-# Apache-2.0 - blender-3.6.14/intern/cycles/doc/license/Apache2-license.txt
-# Apache-2.0 - blender-3.6.14/extern/cuew/LICENSE
-# Apache-2.0 BSD MIT ZLIB - blender-3.6.14/intern/cycles/doc/license/SPDX-license-identifiers.txt
-# Apache-2.0 BSD-2 BSD GPL-2.0+ GPL-3.0+ LGPL-2.1+ MIT ZLIB - blender-3.6.14/doc/license/SPDX-license-identifiers.txt
-# BL - blender-3.6.14/doc/license/BL-license.txt
-# Boost-1.0 - blender-3.6.14/extern/quadriflow/3rd/lemon-1.3.1/LICENSE
-# BSD - blender-3.6.14/intern/cycles/doc/license/BSD-3-Clause-license.txt
-# BSD-2 - blender-3.6.14/doc/license/BSD-2-Clause-license.txt
-# BSD custom - blender-3.6.14/extern/quadriflow/LICENSE.txt
+# Apache-2.0 - blender-3.6.18/intern/cycles/doc/license/Apache2-license.txt
+# Apache-2.0 - blender-3.6.18/extern/cuew/LICENSE
+# Apache-2.0 BSD MIT ZLIB - blender-3.6.18/intern/cycles/doc/license/SPDX-license-identifiers.txt
+# Apache-2.0 BSD-2 BSD GPL-2.0+ GPL-3.0+ LGPL-2.1+ MIT ZLIB - blender-3.6.18/doc/license/SPDX-license-identifiers.txt
+# BL - blender-3.6.18/doc/license/BL-license.txt
+# Boost-1.0 - blender-3.6.18/extern/quadriflow/3rd/lemon-1.3.1/LICENSE
+# BSD - blender-3.6.18/intern/cycles/doc/license/BSD-3-Clause-license.txt
+# BSD-2 - blender-3.6.18/doc/license/BSD-2-Clause-license.txt
+# BSD custom - blender-3.6.18/extern/quadriflow/LICENSE.txt
 # CC-BY-4.0 - The splash screen chosen license can be found in https://www.blender.org/download/demo-files/ )
-# CC0-1.0 - blender-3.6.14/release/datafiles/studiolights/world/license.txt
-# custom MIT - blender-3.6.14/extern/fmtlib/LICENSE.rst
-# GPL-2 - blender-3.6.14/release/license/GPL-license.txt
-# GPL-2+ - blender-3.6.14/tools/check_source/check_licenses.py
-# GPL-3 - blender-3.6.14/doc/license/GPL3-license.txt
-# LGPL-2.1 - blender-3.6.14/doc/license/LGPL2.1-license.txt
-# MIT - blender-3.6.14/intern/cycles/doc/license/MIT-license.txt
-# ZLIB - blender-3.6.14/intern/cycles/doc/license/Zlib-license.txt
-# ZLIB - blender-3.6.14/doc/license/Zlib-license.txt
-# || ( CC0-1.0 MIT ) - blender-3.6.14/release/datafiles/studiolights/matcap/license.txt
+# CC0-1.0 - blender-3.6.18/release/datafiles/studiolights/world/license.txt
+# custom MIT - blender-3.6.18/extern/fmtlib/LICENSE.rst
+# GPL-2 - blender-3.6.18/release/license/GPL-license.txt
+# GPL-2+ - blender-3.6.18/tools/check_source/check_licenses.py
+# GPL-3 - blender-3.6.18/doc/license/GPL3-license.txt
+# LGPL-2.1 - blender-3.6.18/doc/license/LGPL2.1-license.txt
+# MIT - blender-3.6.18/intern/cycles/doc/license/MIT-license.txt
+# ZLIB - blender-3.6.18/intern/cycles/doc/license/Zlib-license.txt
+# ZLIB - blender-3.6.18/doc/license/Zlib-license.txt
+# || ( CC0-1.0 MIT ) - blender-3.6.18/release/datafiles/studiolights/matcap/license.txt
 # The distro's Apache-2.0 license template does not contain all rights reserved.
 # The distro's GPL-2 license template does not contain all rights reserved.
 # The distro's MIT license template does not contain all rights reserved.
@@ -1334,7 +1334,7 @@ ewarn
 			export ROCM_SLOT="5.3"
 			export ROCM_VERSION="${HIP_5_3_VERSION}"
 		else
-# See https://github.com/blender/blender/blob/v3.6.14/build_files/config/pipeline_config.yaml
+# See https://github.com/blender/blender/blob/v3.6.18/build_files/config/pipeline_config.yaml
 eerror
 eerror "Only rocm_5_3 supported."
 eerror
@@ -1693,7 +1693,7 @@ eerror
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v3.6.13/build_files/cmake/config
+# https://github.com/blender/blender/tree/v3.6.18/build_files/cmake/config
 	if [[ "${impl}" == "build_creator" \
 		|| "${impl}" == "build_headless" ]] ; then
 		mycmakeargs+=(
