@@ -7,7 +7,7 @@
 # @SUPPORTED_EAPIS: 7 8
 # @BLURB: blender implementation
 # @DESCRIPTION:
-# The blender-v3.6.eclass helps reduce code duplication across ebuilds
+# The blender-v4.1.eclass helps reduce code duplication across ebuilds
 # using the same major.minor version.
 
 # FIXME:  alembic requires imath

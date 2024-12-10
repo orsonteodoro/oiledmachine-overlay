@@ -2,12 +2,12 @@
 # Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# @ECLASS: blender-v4.2.eclass
+# @ECLASS: blender-v4.3.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
 # @SUPPORTED_EAPIS: 7 8
 # @BLURB: blender implementation
 # @DESCRIPTION:
-# The blender-v4.2.eclass helps reduce code duplication across ebuilds
+# The blender-v4.3.eclass helps reduce code duplication across ebuilds
 # using the same major.minor version.
 
 # FIXME:  alembic requires imath
@@ -19,25 +19,25 @@
 # the multiple LLVM bug.
 
 # For versioning see:
-# https://github.com/blender/blender/blob/v4.2.4/source/blender/blenkernel/BKE_blender_version.h
+# https://github.com/blender/blender/blob/v4.3.1/source/blender/blenkernel/BKE_blender_version.h
 
 # Keep dates and links updated to speed up releases and decrease maintenance time cost.
 # No need to look past those dates.
 
-# Last change was May 31, 2024 for:
-# https://github.com/blender/blender/blob/v4.2.4/build_files/build_environment/install_linux_packages.py
+# Last change was Nov 3, 2024 for:
+# https://github.com/blender/blender/blob/v4.3.1/build_files/build_environment/install_linux_packages.py
 
-# Last change was Mar 6, 2024 for:
-# https://github.com/blender/blender/blob/v4.2.4/build_files/cmake/config/blender_release.cmake
+# Last change was Sep 24, 2024 for:
+# https://github.com/blender/blender/blob/v4.3.1/build_files/cmake/config/blender_release.cmake
 # used for REQUIRED_USE section.
 
 # Last change was Oct 18, 2024 for:
-# https://github.com/blender/blender/blob/v4.2.4/build_files/build_environment/cmake/versions.cmake
+# https://github.com/blender/blender/blob/v4.3.1/build_files/build_environment/cmake/versions.cmake
 # used for *DEPENDs.
 
-# HIP:  https://github.com/blender/blender/blob/v4.2.4/intern/cycles/cmake/external_libs.cmake#L47
+# HIP:  https://github.com/blender/blender/blob/v4.3.1/intern/cycles/cmake/external_libs.cmake#L47
 
-# GPU lib versions:  https://github.com/blender/blender/blob/v4.2.4/build_files/config/pipeline_config.yaml
+# GPU lib versions:  https://github.com/blender/blender/blob/v4.3.1/build_files/config/pipeline_config.yaml
 
 # dependency version requirements see
 # build_files/build_environment/cmake/versions.cmake
@@ -71,7 +71,7 @@ CPU_FLAGS_3_3=(
 CXXABI_VER=17 # Linux builds should be gnu11, but in Win builds it is c++17
 
 # For max and min package versions see link below. \
-# https://github.com/blender/blender/blob/v4.2.4/build_files/build_environment/install_linux_packages.py
+# https://github.com/blender/blender/blob/v4.3.1/build_files/build_environment/install_linux_packages.py
 FFMPEG_IUSE+="
 	+aom +jpeg2k +mp3 +opus +theora +vorbis +vpx webm +webp +x264 +x265 +xvid
 "
@@ -90,7 +90,7 @@ OPENVDB_ABIS=(
 )
 
 # For the max exclusive Python supported (and others), see \
-# https://github.com/blender/blender/blob/v4.2.4/build_files/build_environment/install_linux_packages.py#L693 \
+# https://github.com/blender/blender/blob/v4.3.1/build_files/build_environment/install_linux_packages.py#L693 \
 PYTHON_COMPAT=( "python3_"{11,12} ) # <= 3.12.
 
 BOOST_PV="1.82"
@@ -131,7 +131,7 @@ OPTIX_RAYTRACE_TARGETS=(
 )
 
 AMDGPU_TARGETS_COMPAT=(
-# https://github.com/blender/blender/blob/v4.2.4/CMakeLists.txt#L699
+# https://github.com/blender/blender/blob/v4.3.1/CMakeLists.txt#L699
 	gfx900
 	gfx902
 	gfx90c
@@ -185,8 +185,8 @@ ${ROCM_SLOTS[@]}
 -debug -dbus doc +draco +elbeem +embree +ffmpeg +fftw flac +gmp -hiprt +hydra
 +jack +jemalloc +jpeg2k -llvm -man +materialx +nanovdb +ndof +nls +nvcc +openal
 +opencl +openexr +openimagedenoise +openimageio +openmp +opensubdiv +openvdb
-+openxr -optix +osl +pdf +potrace +pulseaudio release -rocm +sdl +sndfile sycl
-+tbb test +tiff +usd -valgrind +wayland
++openxr -optix +osl +pdf +potrace +pulseaudio release -rocm -sdl +sndfile sycl
++tbb test +tiff +usd +uv-slim -valgrind +wayland
 ebuild-revision-3
 "
 # hip is default ON upstream.
@@ -283,7 +283,7 @@ LICENSE+="
 	)
 
 "
-# ( all-rights-reserved Apache-2.0 ) - blender-4.2.4/extern/mantaflow/LICENSE
+# ( all-rights-reserved Apache-2.0 ) - blender-4.3.1/extern/mantaflow/LICENSE
 # ( all-rights-reserved Apache-2.0 )
 #   ( all-rights-reserved MIT )
 #   ( all-rights-reserved || ( BSD GPL-2 ) )
@@ -304,28 +304,28 @@ LICENSE+="
 #   public-domain
 #   UoI-NCSA
 #   ZLIB
-#   - blender-4.2.4/release/license/THIRD-PARTY-LICENSES.txt
-# all-rights-reserved MIT - blender-4.2.4/extern/vulkan_memory_allocator/LICENSE.txt
-# Apache-2.0 - blender-4.2.4/intern/cycles/doc/license/Apache2-license.txt
-# Apache-2.0 - blender-4.2.4/extern/cuew/LICENSE
-# Apache-2.0 BSD BSD-2 GPL-2.0+ GPL-3.0+ LGPL-2.1+ MIT MPL-2.0 ZLIB - blender-4.2.4/doc/license/SPDX-license-identifiers.txt
-# Apache-2.0 BSD MIT ZLIB - blender-4.2.4/intern/cycles/doc/license/SPDX-license-identifiers.txt
-# BL - blender-4.2.4/doc/license/BL-license.txt
-# Boost-1.0 - blender-4.2.4/extern/quadriflow/3rd/lemon-1.3.1/LICENSE
-# BSD - blender-4.2.4/intern/cycles/doc/license/BSD-3-Clause-license.txt
-# BSD-2.0 - blender-4.2.4/extern/xxhash/LICENSE
-# BSD custom - blender-4.2.4/extern/quadriflow/LICENSE.txt
+#   - blender-4.3.1/release/license/THIRD-PARTY-LICENSES.txt
+# all-rights-reserved MIT - blender-4.3.1/extern/vulkan_memory_allocator/LICENSE.txt
+# Apache-2.0 - blender-4.3.1/intern/cycles/doc/license/Apache2-license.txt
+# Apache-2.0 - blender-4.3.1/extern/cuew/LICENSE
+# Apache-2.0 BSD BSD-2 GPL-2.0+ GPL-3.0+ LGPL-2.1+ MIT MPL-2.0 ZLIB - blender-4.3.1/doc/license/SPDX-license-identifiers.txt
+# Apache-2.0 BSD MIT ZLIB - blender-4.3.1/intern/cycles/doc/license/SPDX-license-identifiers.txt
+# BL - blender-4.3.1/doc/license/BL-license.txt
+# Boost-1.0 - blender-4.3.1/extern/quadriflow/3rd/lemon-1.3.1/LICENSE
+# BSD - blender-4.3.1/intern/cycles/doc/license/BSD-3-Clause-license.txt
+# BSD-2.0 - blender-4.3.1/extern/xxhash/LICENSE
+# BSD custom - blender-4.3.1/extern/quadriflow/LICENSE.txt
 # CC-BY-4.0 - The splash screen chosen license is found in https://www.blender.org/download/demo-files/ )
-# CC0-1.0 - blender-4.2.4/release/datafiles/studiolights/world/license.txt
-# custom MIT - blender-4.2.4/extern/fmtlib/LICENSE.rst
-# GPL-2+ - blender-4.2.4/tools/check_source/check_licenses.py
-# GPL-2.0 - blender-4.2.4/release/license/GPL-license.txt
-# GPL-3.0 - blender-4.2.4/doc/license/GPL3-license.txt
-# LGPL-2.1 - ./blender-4.2.4/doc/license/LGPL2.1-license.txt
-# MIT - blender-4.2.4/intern/cycles/doc/license/MIT-license.txt
-# ZLIB - blender-4.2.4/intern/cycles/doc/license/Zlib-license.txt
-# ZLIB - blender-4.2.4/doc/license/Zlib-license.txt
-# || ( CC0-1.0 public-domain ) - blender-4.2.4/release/datafiles/studiolights/matcap/license.txt
+# CC0-1.0 - blender-4.3.1/release/datafiles/studiolights/world/license.txt
+# custom MIT - blender-4.3.1/extern/fmtlib/LICENSE.rst
+# GPL-2+ - blender-4.3.1/tools/check_source/check_licenses.py
+# GPL-2.0 - blender-4.3.1/release/license/GPL-license.txt
+# GPL-3.0 - blender-4.3.1/doc/license/GPL3-license.txt
+# LGPL-2.1 - ./blender-4.3.1/doc/license/LGPL2.1-license.txt
+# MIT - blender-4.3.1/intern/cycles/doc/license/MIT-license.txt
+# ZLIB - blender-4.3.1/intern/cycles/doc/license/Zlib-license.txt
+# ZLIB - blender-4.3.1/doc/license/Zlib-license.txt
+# || ( CC0-1.0 public-domain ) - blender-4.3.1/release/datafiles/studiolights/matcap/license.txt
 # The distro's Apache-2.0 license template does not contain all rights reserved.
 # The distro's GPL-2 license template does not contain all rights reserved.
 # The distro's MIT license template does not contain all rights reserved.
@@ -505,11 +505,11 @@ REQUIRED_USE+="
 		osl
 		pdf
 		potrace
-		sdl
 		sndfile
 		tbb
 		tiff
 		usd
+		uv-slim
 		webp
 		cuda? (
 			nvcc
@@ -682,7 +682,7 @@ RDEPEND+="
 	${CODECS}
 	${PYTHON_DEPS}
 	>=dev-cpp/pystring-1.1.3
-	>=dev-lang/python-3.11.7
+	>=dev-lang/python-3.11.9
 	>=dev-libs/fribidi-1.0.12
 	>=media-libs/freetype-${FREETYPE_PV}
 	>=media-libs/libpng-1.6.37:0=
@@ -1149,7 +1149,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-4.1.0-openusd-21.11-python.patch"
 #	"${FILESDIR}/${PN}-3.0.0-openusd-21-ConnectToSource.patch"
 #	"${FILESDIR}/${PN}-3.0.0-openusd-21.11-lightapi.patch"
-	"${FILESDIR}/${PN}-2.93.7-build-draco.patch"
+	"${FILESDIR}/${PN}-4.3.1-build-draco.patch"
 #	"${FILESDIR}/${PN}-3.0.0-intern-ghost-fix-typo-in-finding-XF86VMODE.patch"
 	"${FILESDIR}/${PN}-3.0.0-boost_python.patch"
 #	"${FILESDIR}/${PN}-3.0.0-oiio-util.patch"
@@ -1259,7 +1259,7 @@ ewarn
 			export ROCM_SLOT="5.7"
 			export ROCM_VERSION="${HIP_5_7_VERSION}"
 		else
-# See https://github.com/blender/blender/blob/v4.2.4/build_files/config/pipeline_config.yaml
+# See https://github.com/blender/blender/blob/v4.3.1/build_files/config/pipeline_config.yaml
 eerror
 eerror "Only rocm_5_7 supported."
 eerror
@@ -1318,9 +1318,9 @@ einfo "Applying hiprt_patchset"
 }
 
 _src_prepare_patches() {
-	apply_hiprt_2_3_patchset
+	#apply_hiprt_2_3_patchset
 	eapply "${FILESDIR}/blender-3.2.2-findtbb2.patch"
-	eapply "${FILESDIR}/blender-4.2.4-parent-datafiles-dir-change.patch"
+	eapply "${FILESDIR}/blender-4.3.1-parent-datafiles-dir-change.patch"
 	if \
 		( \
 			has_version "<dev-cpp/tbb-2021:0" \
@@ -1469,6 +1469,7 @@ eerror
 		-DWITH_PULSEAUDIO=$(usex pulseaudio)
 		-DWITH_PYTHON_INSTALL=OFF
 		-DWITH_PYTHON_INSTALL_NUMPY=OFF
+		-DWITH_UV_SLIM=$(usex uv-slim)
 		-DWITH_USD=$(usex usd)
 		-DWITH_TBB=$(usex tbb)
 		-DWITH_XR_OPENXR=$(usex openxr)
@@ -1616,7 +1617,7 @@ eerror
 	fi
 
 # For details see,
-# https://github.com/blender/blender/tree/v4.2.4/build_files/cmake/config
+# https://github.com/blender/blender/tree/v4.3.1/build_files/cmake/config
 	if [[ "${impl}" == "build_creator" \
 		|| "${impl}" == "build_headless" ]] ; then
 		mycmakeargs+=(

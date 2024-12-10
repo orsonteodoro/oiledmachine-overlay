@@ -18,6 +18,7 @@ esac
 LTS_VERSIONS=(
 	"3.3"
 	"3.6"
+	"4.2"
 )
 IMPLS=(
 	"build_creator"
