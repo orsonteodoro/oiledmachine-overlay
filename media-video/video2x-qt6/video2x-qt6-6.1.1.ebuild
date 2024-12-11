@@ -95,15 +95,15 @@ RDEPEND+="
 	>=media-libs/vulkan-loader-1.3.275.0
 	dev-qt/qttools:6[linguist]
 	dev-qt/qttools:=
-	dev-qt/qtbase:6[widgets,wayland?,X?]
+	dev-qt/qtbase:6[gui,widgets,wayland?,X?]
 	dev-qt/qtbase:=
 	media-libs/libplacebo[glslang,vulkan]
 	system-ncnn? (
 		>=dev-libs/ncnn-20240924[openmp,vulkan]
 	)
 	|| (
-		media-video/ffmpeg:58.60.60[libplacebo]
-		media-video/ffmpeg:0/58.60.60[libplacebo]
+		media-video/ffmpeg:58.60.60[libplacebo,x264]
+		media-video/ffmpeg:0/58.60.60[libplacebo,x264]
 	)
 	media-video/ffmpeg:=
 "
