@@ -31,7 +31,7 @@ KEYWORDS+=" ~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~risc
 S="${WORKDIR}/${MY_PN}-${PV}"
 SRC_URI="https://github.com/jemalloc/jemalloc/releases/download/${PV}/${MY_PN}-${PV}.tar.bz2"
 
-DESCRIPTION="Jemalloc is a general-purpose scalable concurrent allocator"
+DESCRIPTION="USD support for Jemalloc, a general-purpose scalable concurrent allocator"
 HOMEPAGE="http://jemalloc.net/ https://github.com/jemalloc/jemalloc"
 LICENSE="
 	BSD-2

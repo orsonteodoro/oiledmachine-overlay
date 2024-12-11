@@ -797,8 +797,8 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-libs/hsa-amd-aqlprofile | AQLPROFILE library for AMD HSA runtime API extension support |
 | dev-libs/hyphen | ALTLinux hyphenation library |
 | dev-libs/icu | International Components for Unicode |
-| dev-libs/jemalloc | Jemalloc is a general-purpose scalable concurrent allocator |
-| dev-libs/jemalloc-usd | Jemalloc is a general-purpose scalable concurrent allocator |
+| dev-libs/jemalloc | A general-purpose scalable concurrent allocator |
+| dev-libs/jemalloc-usd | USD support for Jemalloc, a general-purpose scalable concurrent allocator |
 | dev-libs/leveldb | A fast key-value storage library |
 | dev-libs/libappimage | Implements functionality for dealing with AppImage files |
 | dev-libs/libdatachannel | C/C++ WebRTC network library featuring Data Channels, Media Transport, and WebSockets |
