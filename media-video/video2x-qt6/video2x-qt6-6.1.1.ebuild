@@ -161,7 +161,6 @@ src_unpack() {
 }
 
 src_configure() {
-	export MAKEOPTS="-j1"
 	# Force GCC to simplify openmp
 	export CC="${CHOST}-gcc"
 	export CXX="${CHOST}-g++"
