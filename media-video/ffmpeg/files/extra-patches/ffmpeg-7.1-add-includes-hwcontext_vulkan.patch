@@ -1,0 +1,11 @@
+diff '--color=auto' -urp ffmpeg-7.1.orig/fftools/ffplay_renderer.c ffmpeg-7.1/fftools/ffplay_renderer.c
+--- ffmpeg-7.1.orig/fftools/ffplay_renderer.c	2024-09-29 16:31:47.000000000 -0700
++++ ffmpeg-7.1/fftools/ffplay_renderer.c	2024-12-11 07:27:47.167649670 -0800
+@@ -25,6 +25,7 @@
+ #if (SDL_VERSION_ATLEAST(2, 0, 6) && CONFIG_LIBPLACEBO)
+ /* Get PL_API_VER */
+ #include <libplacebo/config.h>
++#include <libavutil/hwcontext_vulkan.h>
+ #define HAVE_VULKAN_RENDERER (PL_API_VER >= 278)
+ #else
+ #define HAVE_VULKAN_RENDERER 0

@@ -1291,7 +1291,7 @@ RDEPEND+="
 		media-libs/lensfun
 	)
 	libplacebo? (
-		>=media-libs/libplacebo-4.192.0[$MULTILIB_USEDEP]
+		>=media-libs/libplacebo-4.192.0[$MULTILIB_USEDEP,vulkan]
 	)
 	libquirc? (
 		media-libs/quirc[${MULTILIB_USEDEP}]
@@ -1525,6 +1525,7 @@ PATCHES=(
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-allow-7regs.patch"			# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-configure-non-free-options.patch"	# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-4.4.4-no-m32-or-m64-for-nvcc.patch"
+	"${FILESDIR}/extra-patches/${PN}-7.1-add-includes-hwcontext_vulkan.patch"
 )
 
 get_av_device_ids() {
