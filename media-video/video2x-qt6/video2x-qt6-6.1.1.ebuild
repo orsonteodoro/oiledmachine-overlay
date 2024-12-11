@@ -169,7 +169,7 @@ einfo "Generating tag start for ${path}"
 		git init || die
 		git config user.email "name@example.com" || die
 		git config user.name "John Doe" || die
-		git add * || die
+		git add -f * || die
 		git commit -m "Dummy" || die
 		git tag ${tag_name} || die
 	popd >/dev/null 2>&1 || die
