@@ -15,7 +15,7 @@ https://github.com/jketterl/owrx_connector/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="Direct conection layer for OpenWebRX"
+DESCRIPTION="A direct connection layer for OpenWebRX"
 HOMEPAGE="https://github.com/jketterl/owrx_connector"
 LICENSE="
 	LGPL-3+
