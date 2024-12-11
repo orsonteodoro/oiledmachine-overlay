@@ -8,6 +8,7 @@ EAPI=8
 
 GLSLANG_COMMIT_1="4afd69177258d0636f78d2c4efb823ab6382a187"
 GLSLANG_COMMIT_2="4420f9b33ba44928d5c82d9eae0c3bb4d5674c05"
+CMAKE_MAKEFILE_GENERATOR="emake"
 LIBREALESRGAN_NCNN_VULKAN="790b1468acfcbfe6476febee9210cad7ba72e3f7"
 NCNN_COMMIT_1="6125c9f47cd14b589de0521350668cf9d3d37e3c"
 NCNN_COMMIT_2="9b5f6a39b4a4962accaad58caa771487f61f732a"
@@ -119,6 +120,21 @@ BDEPEND+="
 #	[${PYTHON_USEDEP}]
 DOCS=( "README.md" )
 
+gen_git_tag() {
+	local path="${1}"
+	local tag_name="${2}"
+einfo "Generating tag start for ${path}"
+	pushd "${path}" >/dev/null 2>&1 || die
+		git init || die
+		git config user.email "name@example.com" || die
+		git config user.name "John Doe" || die
+		git add * || die
+		git commit -m "Dummy" || die
+		git tag ${tag_name} || die
+	popd >/dev/null 2>&1 || die
+einfo "Generating tag done"
+}
+
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
@@ -128,18 +144,24 @@ src_unpack() {
 		unpack ${A}
 		dep_prepare_mv "${WORKDIR}/video2x-${VIDEO2K_COMMIT}" "${S}/third_party/video2x"
 
-		dep_prepare_mv "${WORKDIR}/librealesrgan-ncnn-vulkan-${LIBREALESRGAN_NCNN_VULKAN}" "${S}/third_party/video2x/third_party/librealesrgan-ncnn-vulkan"
-		dep_prepare_mv "${WORKDIR}/ncnn-${NCNN_COMMIT_1}" "${S}/third_party/video2x/third_party/librealesrgan-ncnn-vulkan/src/ncnn"
-		dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT_1}" "${S}/third_party/video2x/third_party/librealesrgan-ncnn-vulkan/src/ncnn/glslang"
-		dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1}" "${S}/third_party/video2x/third_party/librealesrgan-ncnn-vulkan/python/pybind11"
+		dep_prepare_mv "${WORKDIR}/librealesrgan-ncnn-vulkan-${LIBREALESRGAN_NCNN_VULKAN}" "${S}/third_party/video2x/third_party/libreal_esrgan_ncnn_vulkan"
+		dep_prepare_mv "${WORKDIR}/ncnn-${NCNN_COMMIT_1}" "${S}/third_party/video2x/third_party/libreal_esrgan_ncnn_vulkan/src/ncnn"
+		dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT_1}" "${S}/third_party/video2x/third_party/libreal_esrgan_ncnn_vulkan/src/ncnn/glslang"
+		dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1}" "${S}/third_party/video2x/third_party/libreal_esrgan_ncnn_vulkan/src/scnn/python/pybind11"
 
 		dep_prepare_mv "${WORKDIR}/ncnn-${NCNN_COMMIT_2}" "${S}/third_party/video2x/third_party/ncnn"
-		dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT_2}" "${S}/third_party/video2x/third_party/ncnn/src/ncnn/glslang"
+		dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT_2}" "${S}/third_party/video2x/third_party/ncnn/glslang"
 		dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT_2}" "${S}/third_party/video2x/third_party/ncnn/python/pybind11"
+
+		gen_git_tag "${S}" "${PV}"
+		gen_git_tag "${S}/third_party/video2x" "6.0.0-beta.1" # placeholder
+		gen_git_tag "${S}/third_party/video2x/third_party/libreal_esrgan_ncnn_vulkan/src/ncnn" "20220421"
+		gen_git_tag "${S}/third_party/video2x/third_party/ncnn" "20240924"
 	fi
 }
 
 src_configure() {
+	export MAKEOPTS="-j1"
 	# Force GCC to simplify openmp
 	export CC="${CHOST}-gcc"
 	export CXX="${CHOST}-g++"
