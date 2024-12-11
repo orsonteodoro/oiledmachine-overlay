@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/k4yt3x/video2x-qt6/issues</bugs-to>
+    <remote-id type="github">k4yt3x/video2x-qt6</remote-id>
+  </upstream>
+</pkgmetadata>
