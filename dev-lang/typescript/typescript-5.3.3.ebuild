@@ -16,8 +16,8 @@ NPM_EXE_LIST="
 "
 inherit npm
 
-DESCRIPTION="TypeScript is a superset of JavaScript that compiles to clean \
-JavaScript output"
+DESCRIPTION="TypeScript is a statically typed superset of JavaScript that \
+compiles to clean JavaScript output"
 HOMEPAGE="
 https://www.typescriptlang.org/
 https://github.com/microsoft/TypeScript

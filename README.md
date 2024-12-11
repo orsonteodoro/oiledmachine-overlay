@@ -781,7 +781,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-lang/python-exec | Python script wrapper |
 | dev-lang/rocm-flang | ROCm's fork of Classic Flang with GPU offload support |
 | dev-lang/spidermonkey | A JavaScript engine written in C and C++ |
-| dev-lang/typescript | TypeScript is a superset of JavaScript that compiles to clean JavaScript output |
+| dev-lang/typescript | TypeScript is a statically typed superset of JavaScript that compiles to clean JavaScript output |
 | dev-libs/Orochi | Orochi is a library loading HIP and CUDA APIs dynamically, allowing the user to switch APIs at runtime |
 | dev-libs/ROCdbgapi | AMD Debugger API |
 | dev-libs/amdgpu-pro-opencl-legacy | Legacy OpenCL support for AMDGPU-PRO drivers |
