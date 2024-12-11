@@ -960,18 +960,23 @@ REQUIRED_USE+="
 		cuda
 		cuda-nvcc
 	)
-	gnutls? (
-		!openssl
-	)
-	libv4l? (
-		v4l
-	)
 	fftools_cws2fws? (
 		zlib
 	)
 	glslang? (
 		!shaderc
 		vulkan
+	)
+	gnutls? (
+		!openssl
+	)
+	libplacebo? (
+		sdl? (
+			vulkan
+		)
+	)
+	libv4l? (
+		v4l
 	)
 	shaderc? (
 		!glslang
@@ -1286,12 +1291,7 @@ RDEPEND+="
 		media-libs/lensfun
 	)
 	libplacebo? (
-		!sdl? (
-			>=media-libs/libplacebo-4.192.0[$MULTILIB_USEDEP]
-		)
-		sdl? (
-			>=media-libs/libplacebo-4.192.0[$MULTILIB_USEDEP,vulkan]
-		)
+		>=media-libs/libplacebo-4.192.0[$MULTILIB_USEDEP,vulkan?]
 	)
 	libquirc? (
 		media-libs/quirc[${MULTILIB_USEDEP}]

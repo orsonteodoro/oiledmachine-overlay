@@ -910,6 +910,9 @@ REQUIRED_USE+="
 		cuda
 		cuda-nvcc
 	)
+	fftools_cws2fws? (
+		zlib
+	)
 	glslang? (
 		vulkan
 	)
@@ -918,12 +921,6 @@ REQUIRED_USE+="
 	)
 	libv4l? (
 		v4l
-	)
-	fftools_cws2fws? (
-		zlib
-	)
-	glslang? (
-		vulkan
 	)
 	nvdec? (
 		cuda

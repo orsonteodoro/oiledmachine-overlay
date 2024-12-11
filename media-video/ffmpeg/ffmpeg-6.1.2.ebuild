@@ -942,18 +942,18 @@ REQUIRED_USE+="
 		cuda
 		cuda-nvcc
 	)
-	gnutls? (
-		!openssl
-	)
-	libv4l? (
-		v4l
-	)
 	fftools_cws2fws? (
 		zlib
 	)
 	glslang? (
 		!shaderc
 		vulkan
+	)
+	gnutls? (
+		!openssl
+	)
+	libv4l? (
+		v4l
 	)
 	shaderc? (
 		!glslang
