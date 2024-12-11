@@ -52,7 +52,7 @@ https://github.com/Tencent/ncnn/archive/${NCNN_COMMIT_1}.tar.gz
 	"
 fi
 
-DESCRIPTION="A GUI for Video2X written in Python with Qt 6"
+DESCRIPTION="An AI video upscaler with a Qt6 GUI"
 HOMEPAGE="
 	https://github.com/k4yt3x/video2x-qt6
 "
