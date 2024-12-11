@@ -23,7 +23,7 @@ else
 	"
 fi
 
-DESCRIPTION="Implementation of an OpenWebRX connector for BBRF103 / RX666 / RX888 devices based on llibsddc"
+DESCRIPTION="Implementation of an OpenWebRX connector for BBRF103 / RX666 / RX888 devices based on libsddc"
 HOMEPAGE="https://github.com/jketterl/sddc_connector"
 LICENSE="GPL-3"
 # KEYWORDS="~amd64" # Not tagged or live snapshot

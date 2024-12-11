@@ -1319,7 +1319,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-radio/openwebrx | A multi-user Software Defined Radio (SDR) receiver software with a web interface |
 | media-radio/owrx_connector | A direct connection layer for OpenWebRX |
 | media-radio/runds_connector | OpenWebRX connector implementation for R&S EB200 or Ammos protocol based receivers |
-| media-radio/sddc_connector | Implementation of an OpenWebRX connector for BBRF103 / RX666 / RX888 devices based on llibsddc |
+| media-radio/sddc_connector | Implementation of an OpenWebRX connector for BBRF103 / RX666 / RX888 devices based on libsddc |
 | media-sound/puddletag | An audio tag editor |
 | media-sound/spotify | A social music platform |
 | media-sound/w3crapcli-lastfm | w3crapcli/last.fm provides a command line interface for the last.fm web service |
