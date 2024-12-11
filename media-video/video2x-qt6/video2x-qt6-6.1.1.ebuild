@@ -97,6 +97,7 @@ RDEPEND+="
 	dev-qt/qttools:=
 	dev-qt/qtbase:6[widgets,wayland?,X?]
 	dev-qt/qtbase:=
+	media-libs/libplacebo[glslang,vulkan]
 	system-ncnn? (
 		>=dev-libs/ncnn-20240924[openmp,vulkan]
 	)
