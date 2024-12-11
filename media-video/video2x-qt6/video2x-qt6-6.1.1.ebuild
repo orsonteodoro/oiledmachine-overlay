@@ -91,6 +91,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
+	>=dev-libs/spdlog-1.12.0
 	>=media-libs/vulkan-loader-1.3.275.0
 	dev-qt/qttools:6[linguist]
 	dev-qt/qttools:=
@@ -100,8 +101,8 @@ RDEPEND+="
 		>=dev-libs/ncnn-20240924[openmp,vulkan]
 	)
 	|| (
-		media-video/ffmpeg:58.60.60
-		media-video/ffmpeg:0/58.60.60
+		media-video/ffmpeg:58.60.60[libplacebo]
+		media-video/ffmpeg:0/58.60.60[libplacebo]
 	)
 	media-video/ffmpeg:=
 "
