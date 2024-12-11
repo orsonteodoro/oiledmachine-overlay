@@ -80,7 +80,7 @@ https://github.com/USCiLab/cereal/archive/${EGIT_CEREALLIB_COMMIT}.tar.gz
 	-> cereal_lib-${EGIT_CEREALLIB_COMMIT}.tar.gz
 "
 
-DESCRIPTION="Python Bindings for MuJoCo (Multi-Joint dynamics with Contact), \
+DESCRIPTION="Python bindings for MuJoCo (Multi-Joint dynamics with Contact), \
 a general purpose physics simulator."
 HOMEPAGE="
 https://mujoco.org/

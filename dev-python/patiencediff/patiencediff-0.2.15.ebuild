@@ -18,7 +18,7 @@ https://github.com/breezy-team/patiencediff/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="The Patience Diff implementation in Python"
+DESCRIPTION="A Patience Diff implementation in Python"
 HOMEPAGE="https://github.com/breezy-team/patiencediff"
 LICENSE="GPL-2+"
 RESTRICT="mirror"

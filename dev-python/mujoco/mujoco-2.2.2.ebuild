@@ -68,7 +68,7 @@ https://github.com/tinyobjloader/tinyobjloader/archive/${EGIT_TINYOBJLOADER_COMM
 	-> tinyobjloader-${EGIT_TINYOBJLOADER_COMMIT}.tar.gz
 "
 
-DESCRIPTION="Python Bindings for MuJoCo (Multi-Joint dynamics with Contact), \
+DESCRIPTION="Python bindings for MuJoCo (Multi-Joint dynamics with Contact), \
 a general purpose physics simulator."
 HOMEPAGE="
 https://mujoco.org/

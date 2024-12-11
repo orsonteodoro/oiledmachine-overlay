@@ -1328,6 +1328,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-video/linux-enable-ir-emitter | Provides support for infrared cameras that are not directly enabled out-of-the box. |
 | media-video/obs-studio | Software for live streaming and screen recording |
 | media-video/sr | Image and video super resolution |
+| media-video/video2x-qt6 | An AI video upscaler with a graphical user friendly Qt6 frontend |
 | net-im/caprine | Elegant Facebook Messenger desktop app |
 | net-im/chatterino | Chat client for https://twitch.tv |
 | net-libs/Thunder | Thunder (aka WPEFramework) |
@@ -1474,7 +1475,9 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sys-process/psdoom-ng | A First Person Shooter (FPS) process killer |
 | virtual/blender-lts | Virtual for Blender® LTS |
 | virtual/blender-stable | Virtual for Blender® stable |
-| virtual/kfd | Virtual for the amdgpu DRM (Direct Rendering Manager) kernel module |
+| virtual/kfd | The Kernel Fusion Driver (KFD) |
+| virtual/kfd-lb | KFD (Kernel Fusion Driver) with version limited lower boundary |
+| virtual/kfd-ub | KFD (Kernel Fusion Driver) with version limited upper boundary |
 | virtual/linux-sources | Virtual for Linux kernel sources |
 | virtual/ot-sources-lts | Virtual for the ot-sources LTS ebuilds for |
 | virtual/ot-sources-stable | Virtual for the ot-sources stable ebuilds |

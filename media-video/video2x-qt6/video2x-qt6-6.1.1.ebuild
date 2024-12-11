@@ -52,7 +52,7 @@ https://github.com/Tencent/ncnn/archive/${NCNN_COMMIT_1}.tar.gz
 	"
 fi
 
-DESCRIPTION="An AI video upscaler with a Qt6 GUI"
+DESCRIPTION="An AI video upscaler with a graphical user friendly Qt6 frontend"
 HOMEPAGE="
 	https://github.com/k4yt3x/video2x-qt6
 "
