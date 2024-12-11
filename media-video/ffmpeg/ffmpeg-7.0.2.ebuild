@@ -1286,7 +1286,12 @@ RDEPEND+="
 		media-libs/lensfun
 	)
 	libplacebo? (
-		>=media-libs/libplacebo-4.192.0[$MULTILIB_USEDEP,vulkan]
+		!sdl? (
+			>=media-libs/libplacebo-4.192.0[$MULTILIB_USEDEP]
+		)
+		sdl? (
+			>=media-libs/libplacebo-4.192.0[$MULTILIB_USEDEP,vulkan]
+		)
 	)
 	libquirc? (
 		media-libs/quirc[${MULTILIB_USEDEP}]
