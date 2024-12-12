@@ -21,7 +21,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-#	KEYWORDS="~amd64"
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/${PN}-${PV}"
 	SRC_URI="
 https://github.com/k4yt3x/video2x-qt6/archive/refs/tags/${PV}.tar.gz
@@ -76,6 +76,9 @@ BDEPEND+="
 "
 #	[${PYTHON_USEDEP}]
 DOCS=( "README.md" )
+PATCHES=(
+	"${FILESDIR}/${PN}-6.2.0-system-video2x.patch"
+)
 
 gen_git_tag() {
 	local path="${1}"
@@ -103,10 +106,7 @@ src_unpack() {
 }
 
 src_prepare() {
-	sed -i \
-		-e "s|NOT WIN32|FALSE|g" \
-		"CMakeLists.txt" \
-		|| die
+	cmake_src_prepare
 	if use stable-deps ; then
 		sed -i \
 			-e "1i #define _strdup strdup" \
@@ -116,30 +116,6 @@ src_prepare() {
 			-e "s|libplacebo_config|libplaceboConfig|g" \
 			"src/taskconfigdialog.cpp" \
 			|| die
-	else
-		sed -i \
-			-e "s|libvideo2x/libvideo2x.h|libvideo2x.h|g" \
-			"src/mainwindow.h" \
-			"src/mainwindow.cpp" \
-			"src/videoprocessingworker.h" \
-			|| die
-		sed -i \
-			-e "s|libvideo2x/version.h|version.h|g" \
-			"src/mainwindow.cpp" \
-			|| die
-	fi
-	cmake_src_prepare
-
-	if ! use stable-deps ; then
-	mkdir -p "${S}_build/libvideo2x_install/include" || die
-cat <<EOF >"${S}_build/libvideo2x_install/include/version.h" || die
-#ifndef VERSION_H
-#define VERSION_H
-
-#define LIBVIDEO2X_VERSION_STRING "${PV}"
-
-#endif  // VERSION_H
-EOF
 	fi
 }
 
@@ -212,6 +188,7 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 	fi
 
 	local mycmakeargs=(
+		-DUSE_SYSTEM_VIDEO2X=ON
 	)
 	cmake_src_configure
 }

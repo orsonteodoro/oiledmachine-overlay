@@ -221,6 +221,7 @@ ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
 system-ncnn system-spdlog
+ebuild-revision-1
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -735,4 +736,17 @@ src_install() {
 		-e "s|/lib/|/$(get_libdir)/|g" \
 		"${ED}/usr/$(get_libdir)/video2x/$(get_libdir)/cmake/realesrgan/realesrganTargets-relwithdebinfo.cmake" \
 		|| die
+	dodir "/usr/include/libvideo2x"
+	mv \
+		"${ED}/usr/include/libvideo2x.h" \
+		"${ED}/usr/include/libvideo2x" \
+		|| die
+cat <<EOF >"${ED}/usr/include/libvideo2x/version.h" || die
+#ifndef VERSION_H
+#define VERSION_H
+
+#define LIBVIDEO2X_VERSION_STRING "${PV}"
+
+#endif  // VERSION_H
+EOF
 }
