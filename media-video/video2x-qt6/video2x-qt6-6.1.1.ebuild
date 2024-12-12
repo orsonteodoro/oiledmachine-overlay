@@ -475,6 +475,17 @@ src_unpack() {
 	fi
 }
 
+src_prepare() {
+	default
+	if use stable-deps ; then
+		sed -i \
+			-e "s|showLogsCheckBox|debugShowLogsCheckBox|g" \
+			-e "1i #define strdup _strdup" \
+			"src/mainwindow.cpp" \
+			|| die
+	fi
+}
+
 src_configure() {
 	# Force GCC to simplify openmp
 	export CC="${CHOST}-gcc"
