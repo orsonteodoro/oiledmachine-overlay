@@ -212,7 +212,7 @@ LICENSE="
 # BSD - pybind11
 # MIT - librealesrgan-ncnn-vulkan
 RESTRICT="mirror"
-SLOT="0/unstable"
+SLOT="0/qt6"
 IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_LOONG[@]}
