@@ -476,7 +476,6 @@ src_unpack() {
 }
 
 src_prepare() {
-	default
 	if use stable-deps ; then
 		sed -i \
 			-e "s|showLogsCheckBox|debugShowLogsCheckBox|g" \
@@ -484,6 +483,7 @@ src_prepare() {
 			"src/mainwindow.cpp" \
 			|| die
 	fi
+	cmake_src_prepare
 }
 
 src_configure() {
