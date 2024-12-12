@@ -390,25 +390,25 @@ einfo "Generating tag done"
 }
 
 unpack_deps() {
-	dep_prepare_mv "${WORKDIR}/video2x-${VIDEO2K_COMMIT}" "${S}/third_party/video2x"
+	dep_prepare_mv "${WORKDIR}/video2x-${VIDEO2K_COMMIT}" "${S}"
 
-	dep_prepare_mv "${WORKDIR}/boost_${BOOST_PV//./_}" "${S}/third_party/video2x/third_party/boost"
+	dep_prepare_mv "${WORKDIR}/boost_${BOOST_PV//./_}" "${S}/third_party/boost"
 
-	dep_prepare_mv "${WORKDIR}/librealesrgan-ncnn-vulkan-${LIBREALESRGAN_NCNN_VULKAN}" "${S}/third_party/video2x/third_party/librealesrgan_ncnn_vulkan"
-	dep_prepare_mv "${WORKDIR}/ncnn-${NCNN_COMMIT_1}" "${S}/third_party/video2x/third_party/librealesrgan_ncnn_vulkan/src/ncnn"
-	dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT_1}" "${S}/third_party/video2x/third_party/librealesrgan_ncnn_vulkan/src/ncnn/glslang"
-	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1}" "${S}/third_party/video2x/third_party/librealesrgan_ncnn_vulkan/src/scnn/python/pybind11"
+	dep_prepare_mv "${WORKDIR}/librealesrgan-ncnn-vulkan-${LIBREALESRGAN_NCNN_VULKAN}" "${S}/third_party/librealesrgan_ncnn_vulkan"
+	dep_prepare_mv "${WORKDIR}/ncnn-${NCNN_COMMIT_1}" "${S}/third_party/librealesrgan_ncnn_vulkan/src/ncnn"
+	dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT_1}" "${S}/third_party/librealesrgan_ncnn_vulkan/src/ncnn/glslang"
+	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1}" "${S}/third_party/librealesrgan_ncnn_vulkan/src/scnn/python/pybind11"
 
-	dep_prepare_mv "${WORKDIR}/ncnn-${NCNN_COMMIT_2}" "${S}/third_party/video2x/third_party/ncnn"
-	dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT_2}" "${S}/third_party/video2x/third_party/ncnn/glslang"
-	dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT_2}" "${S}/third_party/video2x/third_party/ncnn/python/pybind11"
+	dep_prepare_mv "${WORKDIR}/ncnn-${NCNN_COMMIT_2}" "${S}/third_party/ncnn"
+	dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT_2}" "${S}/third_party/ncnn/glslang"
+	dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT_2}" "${S}/third_party/ncnn/python/pybind11"
 
-	dep_prepare_mv "${WORKDIR}/librife-ncnn-vulkan-${LIBRIFE_NCNN_VULKAN_COMMIT}" "${S}/third_party/video2x/third_party/librife_ncnn_vulkan"
-	dep_prepare_mv "${WORKDIR}/ncnn-${NCNN_COMMIT_3}" "${S}/third_party/video2x/third_party/librife_ncnn_vulkan/src/ncnn"
-	dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT_3}" "${S}/third_party/video2x/third_party/librife_ncnn_vulkan/src/ncnn/glslang"
-	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1}" "${S}/third_party/video2x/third_party/librife_ncnn_vulkan/src/ncnn/python/pybind11"
+	dep_prepare_mv "${WORKDIR}/librife-ncnn-vulkan-${LIBRIFE_NCNN_VULKAN_COMMIT}" "${S}/third_party/librife_ncnn_vulkan"
+	dep_prepare_mv "${WORKDIR}/ncnn-${NCNN_COMMIT_3}" "${S}/third_party/librife_ncnn_vulkan/src/ncnn"
+	dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT_3}" "${S}/third_party/librife_ncnn_vulkan/src/ncnn/glslang"
+	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1}" "${S}/third_party/librife_ncnn_vulkan/src/ncnn/python/pybind11"
 
-	dep_prepare_mv "${WORKDIR}/spdlog-${SPDLOG_COMMIT}" "${S}/third_party/video2x/third_party/spdlog"
+	dep_prepare_mv "${WORKDIR}/spdlog-${SPDLOG_COMMIT}" "${S}/third_party/spdlog"
 
 	gen_git_tag "${S}" "${PV}"
 }
@@ -427,31 +427,6 @@ src_unpack() {
 }
 
 src_prepare() {
-	sed -i \
-		-e "s|NOT WIN32|FALSE|g" \
-		"CMakeLists.txt" \
-		|| die
-	if use stable-deps ; then
-		sed -i \
-			-e "1i #define _strdup strdup" \
-			"src/mainwindow.cpp" \
-			|| die
-		sed -i \
-			-e "s|libplacebo_config|libplaceboConfig|g" \
-			"src/taskconfigdialog.cpp" \
-			|| die
-	else
-		sed -i \
-			-e "s|libvideo2x/libvideo2x.h|libvideo2x.h|g" \
-			"src/mainwindow.h" \
-			"src/mainwindow.cpp" \
-			"src/videoprocessingworker.h" \
-			|| die
-		sed -i \
-			-e "s|libvideo2x/version.h|version.h|g" \
-			"src/mainwindow.cpp" \
-			|| die
-	fi
 	cmake_src_prepare
 }
 
