@@ -43,6 +43,7 @@ IUSE+="
 -stable-deps wayland X
 "
 REQUIRED_USE="
+	${PYTHON_REQUIRED_USE}
 	|| (
 		wayland
 		X
@@ -56,10 +57,10 @@ RDEPEND+="
 	dev-qt/qtbase:6[gui,widgets,wayland?,X?]
 	dev-qt/qtbase:=
 	!stable-deps? (
-		~media-video/video2x-6_pre20241005:0/unstable
+		~media-video/video2x-6_pre20241005:0/unstable[${PYTHON_SINGLE_USEDEP}]
 	)
 	stable-deps? (
-		~media-video/video2x-6.2.0:0/stable
+		~media-video/video2x-6.2.0:0/stable[${PYTHON_SINGLE_USEDEP}]
 	)
 	media-video/video2x:=
 "
