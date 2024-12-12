@@ -50,7 +50,6 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
-	!media-video/video2x
 	>=media-libs/vulkan-loader-1.3.275.0
 	dev-qt/qttools:6[linguist]
 	dev-qt/qttools:=

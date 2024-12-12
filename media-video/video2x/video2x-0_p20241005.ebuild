@@ -331,7 +331,6 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
-	!media-video/video2x
 	>=media-libs/vulkan-loader-1.3.275.0
 	media-libs/libplacebo[glslang,vulkan]
 	system-ncnn? (
