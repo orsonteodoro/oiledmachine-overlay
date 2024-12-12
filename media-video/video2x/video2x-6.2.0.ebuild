@@ -196,7 +196,7 @@ https://github.com/gabime/spdlog/archive/${SPDLOG_COMMIT}.tar.gz
 	"
 fi
 
-DESCRIPTION="An AI video upscaler with a graphical user friendly Qt6 frontend"
+DESCRIPTION="A machine learning-based video super resolution and frame interpolation framework"
 HOMEPAGE="
 	https://github.com/k4yt3x/video2x-qt6
 "

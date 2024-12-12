@@ -1328,6 +1328,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-video/linux-enable-ir-emitter | Provides support for infrared cameras that are not directly enabled out-of-the box. |
 | media-video/obs-studio | Software for live streaming and screen recording |
 | media-video/sr | Image and video super resolution |
+| media-video/video2x | A machine learning-based video super resolution and frame interpolation framework |
 | media-video/video2x-qt6 | An AI video upscaler with a graphical user friendly Qt6 frontend |
 | net-im/caprine | Elegant Facebook Messenger desktop app |
 | net-im/chatterino | Chat client for https://twitch.tv |

@@ -182,7 +182,7 @@ https://github.com/Tencent/ncnn/archive/${NCNN_COMMIT_2}.tar.gz
 	"
 fi
 
-DESCRIPTION="An AI video upscaler with a graphical user friendly Qt6 frontend"
+DESCRIPTION="A machine learning-based video super resolution and frame interpolation framework"
 HOMEPAGE="
 	https://github.com/k4yt3x/video2x-qt6
 "
