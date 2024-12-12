@@ -8,7 +8,7 @@ EAPI=8
 
 CMAKE_MAKEFILE_GENERATOR="emake"
 
-# Unstable
+# Unstable (Same as git reference in video2x-qt6 project)
 GLSLANG_COMMIT_1="4afd69177258d0636f78d2c4efb823ab6382a187" # Feb 9, 2021
 GLSLANG_COMMIT_2="4420f9b33ba44928d5c82d9eae0c3bb4d5674c05" # Jul 26, 2023
 LIBREALESRGAN_NCNN_VULKAN="790b1468acfcbfe6476febee9210cad7ba72e3f7"
@@ -155,7 +155,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/k4yt3x/video2x.git"
-	FALLBACK_COMMIT="56afd0e6292d89f7821a44bc6d7ea4841566cc56" # Oct 5, 2024
+	FALLBACK_COMMIT="${VIDEO2K_COMMIT}"
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
@@ -212,7 +212,7 @@ LICENSE="
 # BSD - pybind11
 # MIT - librealesrgan-ncnn-vulkan
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/unstable"
 IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_LOONG[@]}
@@ -220,7 +220,7 @@ ${CPU_FLAGS_MIPS[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
-system-ncnn system-spdlog wayland X
+system-ncnn system-spdlog
 "
 REQUIRED_USE="
 	cpu_flags_arm_bf16? (
@@ -327,18 +327,10 @@ REQUIRED_USE="
 	cpu_flags_x86_xop? (
 		cpu_flags_x86_avx
 	)
-	|| (
-		wayland
-		X
-	)
 "
 RDEPEND+="
 	!media-video/video2x
 	>=media-libs/vulkan-loader-1.3.275.0
-	dev-qt/qttools:6[linguist]
-	dev-qt/qttools:=
-	dev-qt/qtbase:6[gui,widgets,wayland?,X?]
-	dev-qt/qtbase:=
 	media-libs/libplacebo[glslang,vulkan]
 	system-ncnn? (
 		>=dev-libs/ncnn-20240924[openmp,vulkan]

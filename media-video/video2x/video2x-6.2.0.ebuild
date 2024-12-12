@@ -160,7 +160,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/k4yt3x/video2x.git"
-	FALLBACK_COMMIT="a6dfdc734328fda0f25b923e75f91fafc60d88ef" # Dec 11, 2024
+	FALLBACK_COMMIT="${VIDEO2K_COMMIT}"
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
@@ -226,7 +226,7 @@ LICENSE="
 # BSD - pybind11
 # MIT - librealesrgan-ncnn-vulkan
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/stable"
 IUSE+="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_LOONG[@]}
@@ -234,7 +234,7 @@ ${CPU_FLAGS_MIPS[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
-system-boost system-ncnn system-spdlog wayland X
+system-boost system-ncnn system-spdlog
 "
 REQUIRED_USE="
 	cpu_flags_arm_bf16? (
@@ -341,18 +341,10 @@ REQUIRED_USE="
 	cpu_flags_x86_xop? (
 		cpu_flags_x86_avx
 	)
-	|| (
-		wayland
-		X
-	)
 "
 RDEPEND+="
 	!media-video/video2x
 	>=media-libs/vulkan-loader-1.3.275.0
-	dev-qt/qttools:6[linguist]
-	dev-qt/qttools:=
-	dev-qt/qtbase:6[gui,widgets,wayland?,X?]
-	dev-qt/qtbase:=
 	media-libs/libplacebo[glslang,vulkan]
 	system-boost? (
 		>=dev-libs/boost-${BOOST_PV}
