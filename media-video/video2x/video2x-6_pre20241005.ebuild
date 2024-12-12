@@ -223,6 +223,7 @@ ${CPU_FLAGS_X86[@]}
 system-ncnn system-spdlog
 "
 REQUIRED_USE="
+	${PYTHON_REQUIRED_USE}
 	cpu_flags_arm_bf16? (
 		cpu_flags_arm_dotprod
 		cpu_flags_arm_fp16fml
