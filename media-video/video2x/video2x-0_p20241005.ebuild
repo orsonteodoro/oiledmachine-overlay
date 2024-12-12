@@ -357,6 +357,9 @@ BDEPEND+="
 "
 #	[${PYTHON_USEDEP}]
 DOCS=( "README.md" )
+PATCHES=(
+	"${FILESDIR}/${PN}-0_p20241005-install-paths.patch"
+)
 
 gen_git_tag() {
 	local path="${1}"
@@ -470,8 +473,6 @@ src_configure() {
 	strip-unsupported-flags
 
 	check_cxxabi
-
-	export MAKEOPTS="-j1"
 
 	append-flags -I"${S}_build/libvideo2x_install/include"
 
@@ -720,4 +721,18 @@ src_install() {
 	docinto "licenses"
 	dodoc "LICENSE"
 	cmake_src_install
+	rm -rf "${ED}/var" || die
+	dodir "/usr/$(get_libdir)/${PN}"
+	mv \
+		"${S}_build/realesrgan_install/include" \
+		"${ED}/usr/$(get_libdir)/${PN}/include" \
+		|| die
+	mv \
+		"${S}_build/realesrgan_install/lib" \
+		"${ED}/usr/$(get_libdir)/${PN}/$(get_libdir)" \
+		|| die
+	sed -i \
+		-e "s|/lib/|/$(get_libdir)/|g" \
+		"${ED}/usr/$(get_libdir)/video2x/$(get_libdir)/cmake/realesrgan/realesrganTargets-relwithdebinfo.cmake" \
+		|| die
 }

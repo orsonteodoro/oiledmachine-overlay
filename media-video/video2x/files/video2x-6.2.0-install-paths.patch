@@ -1,0 +1,14 @@
+--- video2x-6.2.0.orig/CMakeLists.txt	2024-12-11 16:00:00.000000000 -0800
++++ video2x-6.2.0/CMakeLists.txt	2024-12-12 12:58:18.059057323 -0800
+@@ -355,9 +355,9 @@ if(WIN32)
+     set(LIB_DESTINATION_DEFAULT ".")
+     set(MODEL_DESTINATION_DEFAULT ".")
+ else()
+-    set(BIN_DESTINATION_DEFAULT "bin")
++    set(BIN_DESTINATION_DEFAULT "${CMAKE_INSTALL_BINDIR}")
+     set(INCLUDE_DESTINATION_DEFAULT "include/libvideo2x")
+-    set(LIB_DESTINATION_DEFAULT "lib")
++    set(LIB_DESTINATION_DEFAULT "${CMAKE_INSTALL_LIBDIR}")
+     set(MODEL_DESTINATION_DEFAULT "share/video2x")
+ endif()
+ 

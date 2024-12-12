@@ -374,6 +374,9 @@ BDEPEND+="
 "
 #	[${PYTHON_USEDEP}]
 DOCS=( "README.md" )
+PATCHES=(
+	"${FILESDIR}/${PN}-6.2.0-install-paths.patch"
+)
 
 gen_git_tag() {
 	local path="${1}"
@@ -484,8 +487,6 @@ src_configure() {
 	strip-unsupported-flags
 
 	check_cxxabi
-
-	export MAKEOPTS="-j1"
 
 	append-flags -DSPDLOG_NO_EXCEPTIONS
 	append-flags -I"${S}_build/libvideo2x_install/include"

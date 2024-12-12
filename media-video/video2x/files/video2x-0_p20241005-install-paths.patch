@@ -1,0 +1,29 @@
+diff '--color=auto' -urp video2x-56afd0e6292d89f7821a44bc6d7ea4841566cc56.orig/CMakeLists.txt video2x-56afd0e6292d89f7821a44bc6d7ea4841566cc56/CMakeLists.txt
+--- video2x-56afd0e6292d89f7821a44bc6d7ea4841566cc56.orig/CMakeLists.txt	2024-10-05 17:00:00.000000000 -0700
++++ video2x-56afd0e6292d89f7821a44bc6d7ea4841566cc56/CMakeLists.txt	2024-12-12 13:22:06.753867687 -0800
+@@ -308,12 +308,12 @@ if(WIN32)
+ else()
+     # Install the shared library to the appropriate directory
+     install(TARGETS libvideo2x
+-        LIBRARY DESTINATION lib
+-        ARCHIVE DESTINATION lib
+-        RUNTIME DESTINATION bin
++        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
++        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+     )
+     # Install external dependencies
+-    install(FILES ${REALESRGAN_LIB} DESTINATION lib
++    install(FILES ${REALESRGAN_LIB} DESTINATION ${CMAKE_INSTALL_LIBDIR}
+         PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                     GROUP_READ GROUP_EXECUTE
+                     WORLD_READ WORLD_EXECUTE
+@@ -324,7 +324,7 @@ else()
+ 
+     # Install the executable
+     if(BUILD_VIDEO2X)
+-        install(TARGETS video2x RUNTIME DESTINATION bin)
++        install(TARGETS video2x RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+     endif()
+ endif()
+ 
