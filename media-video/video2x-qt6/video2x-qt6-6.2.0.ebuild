@@ -9,27 +9,29 @@ EAPI=8
 CMAKE_MAKEFILE_GENERATOR="emake"
 
 # Stable
-BOOST_PV_STABLE="1.86.0"
-GLSLANG_COMMIT_1_STABLE="4afd69177258d0636f78d2c4efb823ab6382a187"
-GLSLANG_COMMIT_2_STABLE="4420f9b33ba44928d5c82d9eae0c3bb4d5674c05"
-LIBREALESRGAN_NCNN_VULKAN_STABLE="cd68df6f98f036fcc9e7d63597ea6faa427c2d2d"
-NCNN_COMMIT_1_STABLE="6125c9f47cd14b589de0521350668cf9d3d37e3c"
-NCNN_COMMIT_2_STABLE="9b5f6a39b4a4962accaad58caa771487f61f732a"
-OPENCV_COMMIT_STABLE="71d3237a093b60a27601c20e9ee6c3e52154e8b1"
-PYBIND11_COMMIT_1_STABLE="70a58c577eaf067748c2ec31bfd0b0a614cffba6"
-PYBIND11_COMMIT_2_STABLE="3e9dfa2866941655c56877882565e7577de6fc7b"
-SPDLOG_COMMIT_STABLE="e593f6695c6065e6b345fe2862f04a519ed484e0"
-VIDEO2K_COMMIT_STABLE="0d6a6abce20c5488280e98a54fc1ac25855e1ca3"
+BOOST_PV_STABLE="1.86.0" # Aug 7, 2024
+GLSLANG_COMMIT_1_STABLE="4afd69177258d0636f78d2c4efb823ab6382a187" # Feb 9, 2021
+GLSLANG_COMMIT_2_STABLE="4420f9b33ba44928d5c82d9eae0c3bb4d5674c05" # Jul 26, 2023
+GLSLANG_COMMIT_3_STABLE="86ff4bca1ddc7e2262f119c16e7228d0efb67610" # May 20, 2024
+LIBREALESRGAN_NCNN_VULKAN_STABLE="cd68df6f98f036fcc9e7d63597ea6faa427c2d2d" # Oct 28, 2024
+LIBRIFE_NCNN_VULKAN_COMMIT_STABLE="f2edda49a5fd817a7137509e54e70d2e30d9b684" # Oct 28, 2024
+NCNN_COMMIT_1_STABLE="6125c9f47cd14b589de0521350668cf9d3d37e3c" # Apr 21, 2022
+NCNN_COMMIT_2_STABLE="9b5f6a39b4a4962accaad58caa771487f61f732a" # Sep 24, 2024
+NCNN_COMMIT_3_STABLE="b4ba207c18d3103d6df890c0e3a97b469b196b26" # Jul 28, 2022
+PYBIND11_COMMIT_1_STABLE="70a58c577eaf067748c2ec31bfd0b0a614cffba6" # Nov 22, 2021
+PYBIND11_COMMIT_2_STABLE="3e9dfa2866941655c56877882565e7577de6fc7b" # Mar 27, 2024
+SPDLOG_COMMIT_STABLE="e593f6695c6065e6b345fe2862f04a519ed484e0" # Sep 23, 2024
+VIDEO2K_COMMIT_STABLE="a6dfdc734328fda0f25b923e75f91fafc60d88ef" # Dec 11, 2024, 6.2.0
 
 # Unstable
-GLSLANG_COMMIT_1_UNSTABLE="4afd69177258d0636f78d2c4efb823ab6382a187"
-GLSLANG_COMMIT_2_UNSTABLE="4420f9b33ba44928d5c82d9eae0c3bb4d5674c05"
+GLSLANG_COMMIT_1_UNSTABLE="4afd69177258d0636f78d2c4efb823ab6382a187" # Feb 9, 2021
+GLSLANG_COMMIT_2_UNSTABLE="4420f9b33ba44928d5c82d9eae0c3bb4d5674c05" # Jul 26, 2023
 LIBREALESRGAN_NCNN_VULKAN_UNSTABLE="790b1468acfcbfe6476febee9210cad7ba72e3f7"
-NCNN_COMMIT_1_UNSTABLE="6125c9f47cd14b589de0521350668cf9d3d37e3c"
-NCNN_COMMIT_2_UNSTABLE="9b5f6a39b4a4962accaad58caa771487f61f732a"
-PYBIND11_COMMIT_1_UNSTABLE="70a58c577eaf067748c2ec31bfd0b0a614cffba6"
-PYBIND11_COMMIT_2_UNSTABLE="3e9dfa2866941655c56877882565e7577de6fc7b"
-VIDEO2K_COMMIT_UNSTABLE="56afd0e6292d89f7821a44bc6d7ea4841566cc56"
+NCNN_COMMIT_1_UNSTABLE="6125c9f47cd14b589de0521350668cf9d3d37e3c" # Apr 21, 2022
+NCNN_COMMIT_2_UNSTABLE="9b5f6a39b4a4962accaad58caa771487f61f732a" # Sep 24, 2024
+PYBIND11_COMMIT_1_UNSTABLE="70a58c577eaf067748c2ec31bfd0b0a614cffba6" # Nov 22, 2021
+PYBIND11_COMMIT_2_UNSTABLE="3e9dfa2866941655c56877882565e7577de6fc7b" # Mar 27, 2024
+VIDEO2K_COMMIT_UNSTABLE="56afd0e6292d89f7821a44bc6d7ea4841566cc56" # Oct 6, 2024
 
 BF16_ARCHES=(
 	armv8.4-a
@@ -182,24 +184,29 @@ https://github.com/k4yt3x/video2x-qt6/archive/refs/tags/${PV}.tar.gz
 https://archives.boost.io/release/${BOOST_PV_STABLE}/source/boost_${BOOST_PV_STABLE//./_}.tar.bz2
 https://github.com/k4yt3x/librealesrgan-ncnn-vulkan/archive/${LIBREALESRGAN_NCNN_VULKAN_STABLE}.tar.gz
 	-> librealesrgan-ncnn-vulkan-${LIBREALESRGAN_NCNN_VULKAN_STABLE:0:7}.tar.gz
+https://github.com/k4yt3x/librife-ncnn-vulkan/archive/${LIBRIFE_NCNN_VULKAN_COMMIT_STABLE}.tar.gz
+	-> librife-ncnn-vulkan-${LIBRIFE_NCNN_VULKAN_COMMIT_STABLE:0:7}.tar.gz
 https://github.com/k4yt3x/video2x/archive/${VIDEO2K_COMMIT_STABLE}.tar.gz
 	-> video2x-${VIDEO2K_COMMIT_STABLE:0:7}.tar.gz
 https://github.com/KhronosGroup/glslang/archive/${GLSLANG_COMMIT_1_STABLE}.tar.gz
 	-> glslang-${GLSLANG_COMMIT_1_STABLE:0:7}.tar.gz
 https://github.com/KhronosGroup/glslang/archive/${GLSLANG_COMMIT_2_STABLE}.tar.gz
 	-> glslang-${GLSLANG_COMMIT_2_STABLE:0:7}.tar.gz
+https://github.com/KhronosGroup/glslang/archive/${GLSLANG_COMMIT_3_STABLE}.tar.gz
+	-> glslang-${GLSLANG_COMMIT_3_STABLE:0:7}.tar.gz
 https://github.com/pybind/pybind11/archive/${PYBIND11_COMMIT_1_STABLE}.tar.gz
 	-> pybind11-${PYBIND11_COMMIT_1_STABLE:0:7}.tar.gz
 https://github.com/pybind/pybind11/archive/${PYBIND11_COMMIT_2_STABLE}.tar.gz
 	-> pybind11-${PYBIND11_COMMIT_2_STABLE:0:7}.tar.gz
-https://github.com/Tencent/ncnn/archive/${NCNN_COMMIT_2_STABLE}.tar.gz
-	-> ncnn-${NCNN_COMMIT_2_STABLE:0:7}.tar.gz
 https://github.com/Tencent/ncnn/archive/${NCNN_COMMIT_1_STABLE}.tar.gz
 	-> ncnn-${NCNN_COMMIT_1_STABLE:0:7}.tar.gz
-https://github.com/opencv/opencv/archive/${OPENCV_COMMIT_STABLE}.tar.gz
-	-> opencv-${OPENCV_COMMIT_STABLE:0:7}.tar.gz
+https://github.com/Tencent/ncnn/archive/${NCNN_COMMIT_2_STABLE}.tar.gz
+	-> ncnn-${NCNN_COMMIT_2_STABLE:0:7}.tar.gz
+https://github.com/Tencent/ncnn/archive/${NCNN_COMMIT_3_STABLE}.tar.gz
+	-> ncnn-${NCNN_COMMIT_3_STABLE:0:7}.tar.gz
 https://github.com/gabime/spdlog/archive/${SPDLOG_COMMIT_STABLE}.tar.gz
 	-> spdlog-${SPDLOG_COMMIT_STABLE:0:7}.tar.gz
+
 	)
 	!stable-deps? (
 https://github.com/k4yt3x/librealesrgan-ncnn-vulkan/archive/${LIBREALESRGAN_NCNN_VULKAN_UNSTABLE}.tar.gz
@@ -214,10 +221,10 @@ https://github.com/pybind/pybind11/archive/${PYBIND11_COMMIT_1_UNSTABLE}.tar.gz
 	-> pybind11-${PYBIND11_COMMIT_1_UNSTABLE:0:7}.tar.gz
 https://github.com/pybind/pybind11/archive/${PYBIND11_COMMIT_2_UNSTABLE}.tar.gz
 	-> pybind11-${PYBIND11_COMMIT_2_UNSTABLE:0:7}.tar.gz
-https://github.com/Tencent/ncnn/archive/${NCNN_COMMIT_2_UNSTABLE}.tar.gz
-	-> ncnn-${NCNN_COMMIT_2_UNSTABLE:0:7}.tar.gz
 https://github.com/Tencent/ncnn/archive/${NCNN_COMMIT_1_UNSTABLE}.tar.gz
 	-> ncnn-${NCNN_COMMIT_1_UNSTABLE:0:7}.tar.gz
+https://github.com/Tencent/ncnn/archive/${NCNN_COMMIT_2_UNSTABLE}.tar.gz
+	-> ncnn-${NCNN_COMMIT_2_UNSTABLE:0:7}.tar.gz
 	)
 	"
 fi
@@ -260,7 +267,7 @@ ${CPU_FLAGS_MIPS[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
--stable-deps -system-ncnn wayland X
+-stable-deps system-boost system-ncnn system-spdlog wayland X
 "
 REQUIRED_USE="
 	cpu_flags_arm_bf16? (
@@ -374,15 +381,20 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	!media-video/video2x
-	>=dev-libs/spdlog-1.12.0
 	>=media-libs/vulkan-loader-1.3.275.0
 	dev-qt/qttools:6[linguist]
 	dev-qt/qttools:=
 	dev-qt/qtbase:6[gui,widgets,wayland?,X?]
 	dev-qt/qtbase:=
 	media-libs/libplacebo[glslang,vulkan]
+	system-boost? (
+		>=dev-libs/boost-${BOOST_PV_STABLE}
+	)
 	system-ncnn? (
 		>=dev-libs/ncnn-20240924[openmp,vulkan]
+	)
+	system-spdlog? (
+		>=dev-libs/spdlog-1.12.0
 	)
 	|| (
 		media-video/ffmpeg:58.60.60[libplacebo,vulkan,x264]
@@ -425,13 +437,16 @@ unpack_stable_deps() {
 	dep_prepare_mv "${WORKDIR}/librealesrgan-ncnn-vulkan-${LIBREALESRGAN_NCNN_VULKAN_STABLE}" "${S}/third_party/video2x/third_party/librealesrgan_ncnn_vulkan"
 	dep_prepare_mv "${WORKDIR}/ncnn-${NCNN_COMMIT_1_STABLE}" "${S}/third_party/video2x/third_party/librealesrgan_ncnn_vulkan/src/ncnn"
 	dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT_1_STABLE}" "${S}/third_party/video2x/third_party/librealesrgan_ncnn_vulkan/src/ncnn/glslang"
-	dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1_STABLE}" "${S}/third_party/video2x/third_party/librealesrgan_ncnn_vulkan/src/scnn/python/pybind11"
+	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1_STABLE}" "${S}/third_party/video2x/third_party/librealesrgan_ncnn_vulkan/src/scnn/python/pybind11"
 
 	dep_prepare_mv "${WORKDIR}/ncnn-${NCNN_COMMIT_2_STABLE}" "${S}/third_party/video2x/third_party/ncnn"
 	dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT_2_STABLE}" "${S}/third_party/video2x/third_party/ncnn/glslang"
 	dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT_2_STABLE}" "${S}/third_party/video2x/third_party/ncnn/python/pybind11"
 
-	dep_prepare_mv "${WORKDIR}/opencv-${OPENCV_COMMIT_STABLE}" "${S}/third_party/video2x/third_party/opencv"
+	dep_prepare_mv "${WORKDIR}/librife-ncnn-vulkan-${LIBRIFE_NCNN_VULKAN_COMMIT_STABLE}" "${S}/third_party/video2x/third_party/librife_ncnn_vulkan"
+	dep_prepare_mv "${WORKDIR}/ncnn-${NCNN_COMMIT_3_STABLE}" "${S}/third_party/video2x/third_party/librife_ncnn_vulkan/src/ncnn"
+	dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT_3_STABLE}" "${S}/third_party/video2x/third_party/librife_ncnn_vulkan/src/ncnn/glslang"
+	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1_STABLE}" "${S}/third_party/video2x/third_party/librife_ncnn_vulkan/src/ncnn/python/pybind11"
 
 	dep_prepare_mv "${WORKDIR}/spdlog-${SPDLOG_COMMIT_STABLE}" "${S}/third_party/video2x/third_party/spdlog"
 
@@ -468,8 +483,10 @@ src_unpack() {
 		unpack ${A}
 
 		if use stable-deps ; then
+	einfo "Using stable deps"
 			unpack_stable_deps
 		else
+	einfo "Using unstable deps"
 			unpack_unstable_deps
 		fi
 	fi
@@ -478,9 +495,12 @@ src_unpack() {
 src_prepare() {
 	if use stable-deps ; then
 		sed -i \
-			-e "s|showLogsCheckBox|debugShowLogsCheckBox|g" \
 			-e "1i #define _strdup strdup" \
 			"src/mainwindow.cpp" \
+			|| die
+		sed -i \
+			-e "s|libplacebo_config|libplaceboConfig|g" \
+			"src/taskconfigdialog.cpp" \
 			|| die
 	else
 		sed -i \
@@ -489,8 +509,24 @@ src_prepare() {
 			"src/mainwindow.cpp" \
 			"src/videoprocessingworker.h" \
 			|| die
+		sed -i \
+			-e "s|libvideo2x/version.h|version.h|g" \
+			"src/mainwindow.cpp" \
+			|| die
 	fi
 	cmake_src_prepare
+
+	if ! use stable-deps ; then
+	mkdir -p "${S}_build/libvideo2x_install/include" || die
+cat <<EOF >"${S}_build/libvideo2x_install/include/version.h" || die
+#ifndef VERSION_H
+#define VERSION_H
+
+#define LIBVIDEO2X_VERSION_STRING "${PV}"
+
+#endif  // VERSION_H
+EOF
+	fi
 }
 
 check_cxxabi() {
@@ -547,6 +583,8 @@ src_configure() {
 
 	check_cxxabi
 
+	export MAKEOPTS="-j1"
+
 	if use stable-deps ; then
 		append-flags -DSPDLOG_NO_EXCEPTIONS
 	fi
@@ -560,7 +598,9 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 	fi
 
 	local mycmakeargs=(
+		-DUSE_SYSTEM_BOOST=$(usex system-boost)
 		-DUSE_SYSTEM_NCNN=$(usex system-ncnn)
+		-DUSE_SYSTEM_SPDLOG=$(usex system-spdlog)
 		-DNCNN_AVX=$(usex cpu_flags_x86_avx)
 		-DNCNN_AVX2=$(usex cpu_flags_x86_avx2)
 		-DNCNN_AVXNECONVERT=$(usex cpu_flags_x86_avxneconvert)
