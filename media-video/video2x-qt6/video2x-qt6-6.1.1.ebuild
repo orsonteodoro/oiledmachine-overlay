@@ -436,9 +436,9 @@ unpack_stable_deps() {
 	dep_prepare_mv "${WORKDIR}/spdlog-${SPDLOG_COMMIT_STABLE}" "${S}/third_party/video2x/third_party/spdlog"
 
 	gen_git_tag "${S}" "${PV}"
-	gen_git_tag "${S}/third_party/video2x" "${PV}"
-	gen_git_tag "${S}/third_party/video2x/third_party/librealesrgan_ncnn_vulkan/src/ncnn" "20241028"
-	gen_git_tag "${S}/third_party/video2x/third_party/ncnn" "20240924"
+#	gen_git_tag "${S}/third_party/video2x" "${PV}"
+#	gen_git_tag "${S}/third_party/video2x/third_party/librealesrgan_ncnn_vulkan/src/ncnn" "20241028"
+#	gen_git_tag "${S}/third_party/video2x/third_party/ncnn" "20240924"
 }
 
 unpack_unstable_deps() {
@@ -453,11 +453,10 @@ unpack_unstable_deps() {
 	dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT_2_UNSTABLE}" "${S}/third_party/video2x/third_party/ncnn/glslang"
 	dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT_2_UNSTABLE}" "${S}/third_party/video2x/third_party/ncnn/python/pybind11"
 
-
 	gen_git_tag "${S}" "${PV}"
-	gen_git_tag "${S}/third_party/video2x" "6.0.0-beta.1" # placeholder
-	gen_git_tag "${S}/third_party/video2x/third_party/libreal_esrgan_ncnn_vulkan/src/ncnn" "20220421"
-	gen_git_tag "${S}/third_party/video2x/third_party/ncnn" "20240924"
+#	gen_git_tag "${S}/third_party/video2x" "6.0.0-beta.1" # placeholder
+#	gen_git_tag "${S}/third_party/video2x/third_party/libreal_esrgan_ncnn_vulkan/src/ncnn" "20220421"
+#	gen_git_tag "${S}/third_party/video2x/third_party/ncnn" "20240924"
 }
 
 src_unpack() {
@@ -482,6 +481,12 @@ src_configure() {
 	export CXX="${CHOST}-g++"
 	export CPP="${CHOST}-gcc -E"
 	strip-unsupported-flags
+
+	export MAKEOPTS="-j1"
+
+	if use stable-deps ; then
+		append-flags -DSPDLOG_NO_EXCEPTIONS
+	fi
 
 	if has_version "media-video/ffmpeg:58.60.60" ; then
 einfo "Using media-video/ffmpeg:58.60.60"
