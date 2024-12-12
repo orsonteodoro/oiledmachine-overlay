@@ -533,11 +533,11 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 		fi
 	done
 	if (( ${found} == 1 )) ; then
-		mycmakeargs=(
+		mycmakeargs+=(
 			-DNCNN_ARM82=ON
 		)
 	else
-		mycmakeargs=(
+		mycmakeargs+=(
 			-DNCNN_ARM82=OFF
 		)
 	fi
@@ -552,11 +552,11 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 		fi
 	done
 	if (( ${found} == 1 )) ; then
-		mycmakeargs=(
+		mycmakeargs+=(
 			-DNCNN_ARM84BF16=ON
 		)
 	else
-		mycmakeargs=(
+		mycmakeargs+=(
 			-DNCNN_ARM84BF16=OFF
 		)
 	fi
@@ -571,11 +571,11 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 		fi
 	done
 	if (( ${found} == 1 )) ; then
-		mycmakeargs=(
+		mycmakeargs+=(
 			-DNCNN_ARM82DOT=ON
 		)
 	else
-		mycmakeargs=(
+		mycmakeargs+=(
 			-DNCNN_ARM82DOT=OFF
 		)
 	fi
@@ -590,11 +590,11 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 		fi
 	done
 	if (( ${found} == 1 )) ; then
-		mycmakeargs=(
+		mycmakeargs+=(
 			-DNCNN_ARM82FP16FML=ON
 		)
 	else
-		mycmakeargs=(
+		mycmakeargs+=(
 			-DNCNN_ARM82FP16FML=OFF
 		)
 	fi
@@ -609,11 +609,11 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 		fi
 	done
 	if (( ${found} == 1 )) ; then
-		mycmakeargs=(
+		mycmakeargs+=(
 			-DNCNN_ARM84I8MM=ON
 		)
 	else
-		mycmakeargs=(
+		mycmakeargs+=(
 			-DNCNN_ARM84I8MM=OFF
 		)
 	fi
@@ -629,11 +629,11 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 		fi
 	done
 	if (( ${found} == 1 )) ; then
-		mycmakeargs=(
+		mycmakeargs+=(
 			-DNCNN_ARM86SVE=ON
 		)
 	else
-		mycmakeargs=(
+		mycmakeargs+=(
 			-DNCNN_ARM86SVE=OFF
 		)
 	fi
@@ -648,11 +648,11 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 		fi
 	done
 	if (( ${found} == 1 )) ; then
-		mycmakeargs=(
+		mycmakeargs+=(
 			-DNCNN_ARM86SVE2=ON
 		)
 	else
-		mycmakeargs=(
+		mycmakeargs+=(
 			-DNCNN_ARM86SVE2=OFF
 		)
 	fi
@@ -667,11 +667,11 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 		fi
 	done
 	if (( ${found} == 1 )) ; then
-		mycmakeargs=(
+		mycmakeargs+=(
 			-DNCNN_ARM86SVEBF16=ON
 		)
 	else
-		mycmakeargs=(
+		mycmakeargs+=(
 			-DNCNN_ARM86SVEBF16=OFF
 		)
 	fi
@@ -686,11 +686,11 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 		fi
 	done
 	if (( ${found} == 1 )) ; then
-		mycmakeargs=(
+		mycmakeargs+=(
 			-DNCNN_ARM86SVEI8MM=ON
 		)
 	else
-		mycmakeargs=(
+		mycmakeargs+=(
 			-DNCNN_ARM86SVEI8MM=OFF
 		)
 	fi
@@ -705,11 +705,11 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 		fi
 	done
 	if (( ${found} == 1 )) ; then
-		mycmakeargs=(
+		mycmakeargs+=(
 			-DNCNN_ARM86SVEF32MM=ON
 		)
 	else
-		mycmakeargs=(
+		mycmakeargs+=(
 			-DNCNN_ARM86SVEF32MM=OFF
 		)
 	fi
