@@ -162,7 +162,7 @@ CPU_FLAGS_X86=(
 
 PYTHON_COMPAT=( "python3_12" )
 
-inherit cmake dep-prepare flag-o-matic python-single-r1
+inherit cmake dep-prepare flag-o-matic python-single-r1 toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -479,11 +479,63 @@ src_prepare() {
 	if use stable-deps ; then
 		sed -i \
 			-e "s|showLogsCheckBox|debugShowLogsCheckBox|g" \
-			-e "1i #define strdup _strdup" \
+			-e "1i #define _strdup strdup" \
 			"src/mainwindow.cpp" \
+			|| die
+	else
+		sed -i \
+			-e "s|libvideo2x/libvideo2x.h|libvideo2x.h|g" \
+			"src/mainwindow.h" \
+			"src/mainwindow.cpp" \
+			"src/videoprocessingworker.h" \
 			|| die
 	fi
 	cmake_src_prepare
+}
+
+check_cxxabi() {
+	local gcc_current_profile=$(gcc-config -c)
+	local gcc_current_profile_slot=${gcc_current_profile##*-}
+	local libstdcxx_cxxabi_ver=$(strings "/usr/lib/gcc/${CHOST}/${gcc_current_profile_slot}/libstdc++.so" \
+		| grep CXXABI \
+		| sort -V \
+		| grep -E -e "CXXABI_[0-9]+" \
+		| tail -n 1 \
+		| cut -f 2 -d "_")
+	local libstdcxx_glibcxx_ver=$(strings "/usr/lib/gcc/${CHOST}/${gcc_current_profile_slot}/libstdc++.so" \
+		| grep GLIBCXX \
+		| sort -V \
+		| grep -E -e "GLIBCXX_[0-9]+" \
+		| tail -n 1 \
+		| cut -f 2 -d "_")
+	local qt6core_cxxabi_ver=$(strings "/usr/lib64/libQt6Core.so" \
+		| grep CXXABI \
+		| sort -V \
+		| grep -E -e "CXXABI_[0-9]+" \
+		| tail -n 1 \
+		| cut -f 2 -d "_")
+	local qt6core_glibcxx_ver=$(strings "/usr/lib64/libQt6Core.so" \
+		| grep GLIBCXX \
+		| sort -V \
+		| grep -E -e "GLIBCXX_[0-9]+" \
+		| tail -n 1 \
+		| cut -f 2 -d "_")
+	if ver_test ${libstdcxx_cxxabi_ver} -lt ${qt6core_cxxabi_ver} ; then
+eerror
+eerror "Detected CXXABI missing symbol."
+eerror
+eerror "Ensure that the qt6core was build with the same gcc version as the"
+eerror "currently selected compiler."
+eerror
+eerror "libstdcxx CXXABI  - ${libstdcxx_cxxabi_ver} (GCC slot ${gcc_current_profile_slot})"
+eerror "libstdcxx GLIBCXX - ${libstdcxx_glibcxx_ver} (GCC slot ${gcc_current_profile_slot})"
+eerror "qt6core CXXABI    - ${qt6core_cxxabi_ver}"
+eerror "qt6core GLIBCXX   - ${qt6core_glibcxx_ver}"
+eerror
+eerror "See https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html for details"
+eerror
+		die
+	fi
 }
 
 src_configure() {
@@ -493,10 +545,12 @@ src_configure() {
 	export CPP="${CHOST}-gcc -E"
 	strip-unsupported-flags
 
+	check_cxxabi
+
 	if use stable-deps ; then
 		append-flags -DSPDLOG_NO_EXCEPTIONS
-		append-flags -I"${S}_build/libvideo2x_install/include"
 	fi
+	append-flags -I"${S}_build/libvideo2x_install/include"
 
 	if has_version "media-video/ffmpeg:58.60.60" ; then
 einfo "Using media-video/ffmpeg:58.60.60"
