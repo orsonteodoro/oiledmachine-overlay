@@ -496,6 +496,9 @@ src_configure() {
 
 	append-flags -DSPDLOG_NO_EXCEPTIONS
 	append-flags -I"${S}_build/libvideo2x_install/include"
+	if ! use system-boost ; then
+		append-flags -I"${S}/third_party/boost"
+	fi
 
 	if has_version "media-video/ffmpeg:58.60.60" ; then
 einfo "Using media-video/ffmpeg:58.60.60"
@@ -744,4 +747,31 @@ src_install() {
 	docinto "licenses"
 	dodoc "LICENSE"
 	cmake_src_install
+	dodir "/usr/$(get_libdir)/${PN}/include"
+	dodir "/usr/$(get_libdir)/${PN}/$(get_libdir)"
+	cp -aT \
+		"${S}_build/realesrgan_install/include" \
+		"${ED}/usr/$(get_libdir)/${PN}/include" \
+		|| die
+	cp -aT \
+		"${S}_build/realesrgan_install/lib" \
+		"${ED}/usr/$(get_libdir)/${PN}/$(get_libdir)" \
+		|| die
+	sed -i \
+		-e "s|/lib/|/$(get_libdir)/|g" \
+		"${ED}/usr/$(get_libdir)/video2x/$(get_libdir)/cmake/realesrgan/realesrganTargets-relwithdebinfo.cmake" \
+		|| die
+	cp -aT \
+		"${S}_build/rife_install/include" \
+		"${ED}/usr/$(get_libdir)/${PN}/include" \
+		|| die
+	cp -aT \
+		"${S}_build/rife_install/lib" \
+		"${ED}/usr/$(get_libdir)/${PN}/$(get_libdir)" \
+		|| die
+	sed -i \
+		-e "s|/lib/|/$(get_libdir)/|g" \
+		"${ED}/usr/$(get_libdir)/video2x/$(get_libdir)/cmake/rife/rifeTargets-relwithdebinfo.cmake" \
+		|| die
+	rm -rf "${ED}/var" || die
 }

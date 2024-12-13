@@ -722,13 +722,13 @@ src_install() {
 	docinto "licenses"
 	dodoc "LICENSE"
 	cmake_src_install
-	rm -rf "${ED}/var" || die
-	dodir "/usr/$(get_libdir)/${PN}"
-	mv \
+	dodir "/usr/$(get_libdir)/${PN}/include"
+	dodir "/usr/$(get_libdir)/${PN}/$(get_libdir)"
+	cp -aT \
 		"${S}_build/realesrgan_install/include" \
 		"${ED}/usr/$(get_libdir)/${PN}/include" \
 		|| die
-	mv \
+	cp -aT \
 		"${S}_build/realesrgan_install/lib" \
 		"${ED}/usr/$(get_libdir)/${PN}/$(get_libdir)" \
 		|| die
@@ -749,4 +749,5 @@ cat <<EOF >"${ED}/usr/include/libvideo2x/version.h" || die
 
 #endif  // VERSION_H
 EOF
+	rm -rf "${ED}/var" || die
 }
