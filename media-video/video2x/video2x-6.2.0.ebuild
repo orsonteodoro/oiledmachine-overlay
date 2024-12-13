@@ -198,7 +198,7 @@ https://github.com/gabime/spdlog/archive/${SPDLOG_COMMIT}.tar.gz
 	"
 fi
 
-DESCRIPTION="A machine learning-based video super resolution and frame interpolation framework"
+DESCRIPTION="A machine learning based video super resolution and frame interpolation framework"
 HOMEPAGE="
 	https://github.com/k4yt3x/video2x-qt6
 "
