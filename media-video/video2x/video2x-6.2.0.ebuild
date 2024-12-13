@@ -373,7 +373,6 @@ BDEPEND+="
 	sys-devel/gcc[openmp]
 	virtual/pkgconfig
 "
-#	[${PYTHON_USEDEP}]
 DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-6.2.0-install-paths.patch"

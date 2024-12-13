@@ -355,7 +355,6 @@ BDEPEND+="
 	sys-devel/gcc[openmp]
 	virtual/pkgconfig
 "
-#	[${PYTHON_USEDEP}]
 DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-0_p20241005-install-paths.patch"
