@@ -10,6 +10,11 @@
     <bugs-to>https://github.com/k4yt3x/video2x/issues</bugs-to>
     <remote-id type="github">k4yt3x/video2x</remote-id>
   </upstream>
+  <use>
+    <flag name="cli">
+      Build the command line executable.
+    </flag>
+  </use>
   <slots>
     <slot name="0">
       Monoslotted

@@ -217,6 +217,7 @@ LICENSE="
 		MIT
 	)
 	AGPL-3
+	Boost-1.0
 	BSD
 	ISC
 	MIT
@@ -224,9 +225,12 @@ LICENSE="
 # ISC video2x-qt6
 # AGPL-3 - video2x
 # Apache-2.0 BSD BSD-2 custom GPL-3-with-special-bison-exception MIT - glslang
+# Boost-1.0 - boost
 # BSD BSD-2 ZLIB - ncnn
 # BSD - pybind11
 # MIT - librealesrgan-ncnn-vulkan
+# MIT - librife-ncnn-vulkan
+# MIT - spdlog
 RESTRICT="mirror"
 SLOT="0/stable"
 IUSE+="
