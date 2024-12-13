@@ -860,6 +860,7 @@ LICENSE_REQUIRED_USE="
 # GPL_REQUIRED_USE moved to LICENSE_REQUIRED_USE
 # FIXME: fix missing symbols with -re-codecs
 REQUIRED_USE+="
+	!libplacebo
 	${CPU_REQUIRED_USE}
 	!gpl? (
 		${LICENSE_REQUIRED_USE}
