@@ -1327,7 +1327,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-video/gspca_ep800 | Kernel Modules for Endpoints EP800/SE402/SE401* |
 | media-video/linux-enable-ir-emitter | Provides support for infrared cameras that are not directly enabled out-of-the box. |
 | media-video/obs-studio | Software for live streaming and screen recording |
-| media-video/sr | Image and video super resolution |
+| media-video/sr | Image and video super resolution models |
 | media-video/video2x | A machine learning-based video super resolution and frame interpolation framework |
 | media-video/video2x-qt6 | An AI video upscaler with a graphical user friendly Qt6 frontend |
 | net-im/caprine | Elegant Facebook Messenger desktop app |

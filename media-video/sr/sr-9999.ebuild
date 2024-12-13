@@ -90,7 +90,7 @@ https://github.com/HighVoltageRocknRoll/sr/files/6957728/dnn_models.tar.gz
 "
 # dnn_models.tar.gz:  sha256 ac3e1b20bb942a3156042a07b7e68ed2aec66f49d92b48f5a4dfbf6cb5283417
 
-DESCRIPTION="Image and video super resolution"
+DESCRIPTION="Image and video super resolution models"
 HOMEPAGE="https://github.com/HighVoltageRocknRoll/sr"
 LICENSE="
 	MIT
