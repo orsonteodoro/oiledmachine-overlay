@@ -10,12 +10,10 @@ inherit dhms
 
 KEYWORDS="~amd64 ~arm64 ~ppc64"
 S="${WORKDIR}"
-# The URI for 131.0.6778.108 came from the distro chromium ebuild.
-# I don't personally like when the distro passes out tarballs.
 # https://gsdview.appspot.com/chromium-browser-official/?marker=chromium-131.0.6778.0.tar.x%40
 # https://commondatastorage.googleapis.com/chromium-browser-official/chromium-131.0.6778.108.tar.xz
 SRC_URI="
-	https://chromium-tarballs.distfiles.gentoo.org/${MY_PV}-linux.tar.xz
+	https://gsdview.appspot.com/chromium-browser-official/chromium-${PV}.tar.xz
 "
 
 DESCRIPTION="Chromium sources"
