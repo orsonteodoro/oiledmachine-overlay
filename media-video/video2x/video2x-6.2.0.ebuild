@@ -165,12 +165,12 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-#	KEYWORDS="~amd64"
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/${PN}-${PV}"
 	SRC_URI="
 https://raw.githubusercontent.com/boostorg/boost/refs/tags/boost-1.86.0/CMakeLists.txt
 	-> boost-${BOOST_PV}-CMakeLists.txt
-https://boostorg.jfrog.io/artifactory/main/release/${BOOST_PV}/source/boost_${BOOST_PV//./_}.tar.bz2
+https://archives.boost.io/release/${BOOST_PV}/source/boost_${BOOST_PV//./_}.tar.bz2
 https://github.com/k4yt3x/librealesrgan-ncnn-vulkan/archive/${LIBREALESRGAN_NCNN_VULKAN}.tar.gz
 	-> librealesrgan-ncnn-vulkan-${LIBREALESRGAN_NCNN_VULKAN:0:7}.tar.gz
 https://github.com/k4yt3x/librife-ncnn-vulkan/archive/${LIBRIFE_NCNN_VULKAN_COMMIT}.tar.gz
@@ -236,7 +236,7 @@ ${CPU_FLAGS_MIPS[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
-system-boost system-ncnn system-spdlog
+cli system-boost system-ncnn system-spdlog
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -508,7 +508,7 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 
 	local mycmakeargs=(
 		-DBUILD_SHARED_LIBS=ON
-		-DBUILD_VIDEO2X_CLI=ON
+		-DBUILD_VIDEO2X_CLI=$(usex cli)
 		-DCMAKE_MODULE_PATH="${S}/third_party/boost"
 		-DUSE_SYSTEM_BOOST=$(usex system-boost)
 		-DUSE_SYSTEM_NCNN=$(usex system-ncnn)

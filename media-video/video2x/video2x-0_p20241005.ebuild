@@ -160,7 +160,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-#	KEYWORDS="~amd64"
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/${PN}-${PV}"
 	SRC_URI="
 https://github.com/k4yt3x/librealesrgan-ncnn-vulkan/archive/${LIBREALESRGAN_NCNN_VULKAN}.tar.gz
@@ -220,7 +220,7 @@ ${CPU_FLAGS_MIPS[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
-system-ncnn system-spdlog
+cli system-ncnn system-spdlog
 ebuild-revision-1
 "
 REQUIRED_USE="
@@ -485,7 +485,7 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 
 	local mycmakeargs=(
 		-DBUILD_SHARED_LIBS=ON
-		-DBUILD_VIDEO2X_CLI=ON
+		-DBUILD_VIDEO2X_CLI=$(usex cli)
 		-DUSE_SYSTEM_NCNN=$(usex system-ncnn)
 		-DUSE_SYSTEM_SPDLOG=$(usex system-spdlog)
 		-DNCNN_AVX=$(usex cpu_flags_x86_avx)
