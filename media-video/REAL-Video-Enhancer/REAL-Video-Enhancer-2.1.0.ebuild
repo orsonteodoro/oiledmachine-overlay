@@ -125,22 +125,6 @@ TENSORRT_DEPEND="
 	')
 "
 RDEPEND+="
-	cuda? (
-		${COMMON_DEPEND}
-		${CUDA_DEPEND}
-	)
-	rocm? (
-		${COMMON_DEPEND}
-		${ROCM_DEPEND}
-	)
-	tensorrt? (
-		${COMMON_DEPEND}
-		${TENSORRT_DEPEND}
-	)
-	vulkan? (
-		${COMMON_DEPEND}
-		${NCNN_DEPEND}
-	)
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
 		>=dev-python/cx-Freeze-7.0.0[${PYTHON_USEDEP}]
@@ -157,6 +141,22 @@ RDEPEND+="
 		dev-python/validators[${PYTHON_USEDEP}]
 		net-misc/yt-dlp[${PYTHON_USEDEP}]
 	')
+	cuda? (
+		${COMMON_DEPEND}
+		${CUDA_DEPEND}
+	)
+	rocm? (
+		${COMMON_DEPEND}
+		${ROCM_DEPEND}
+	)
+	tensorrt? (
+		${COMMON_DEPEND}
+		${TENSORRT_DEPEND}
+	)
+	vulkan? (
+		${COMMON_DEPEND}
+		${NCNN_DEPEND}
+	)
 "
 DEPEND+="
 	${RDEPEND}
