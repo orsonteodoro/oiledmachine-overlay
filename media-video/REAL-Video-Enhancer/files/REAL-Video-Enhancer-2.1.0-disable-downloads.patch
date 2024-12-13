@@ -1,0 +1,58 @@
+diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.0.orig/build.py REAL-Video-Enhancer-RVE-2.1.0/build.py
+--- REAL-Video-Enhancer-RVE-2.1.0.orig/build.py	2024-11-10 15:12:51.000000000 -0800
++++ REAL-Video-Enhancer-RVE-2.1.0/build.py	2024-12-13 10:11:52.978185158 -0800
+@@ -127,10 +127,10 @@ python_version = (
+ )
+ if len(sys.argv) > 1:
+     if sys.argv[1] == "--create_venv" or sys.argv[1] == "--build_exe":
+-        install_pip()
++        #install_pip()
+         create_venv(python_version=python_version)
+-        install_pip_in_venv()
+-        install_requirements_in_venv()
++        #install_pip_in_venv()
++        #install_requirements_in_venv()
+ build_gui()
+ build_resources()
+ if len(sys.argv) > 1:
+diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.0.orig/src/DownloadDeps.py REAL-Video-Enhancer-RVE-2.1.0/src/DownloadDeps.py
+--- REAL-Video-Enhancer-RVE-2.1.0.orig/src/DownloadDeps.py	2024-11-10 15:12:51.000000000 -0800
++++ REAL-Video-Enhancer-RVE-2.1.0/src/DownloadDeps.py	2024-12-13 10:09:27.047862427 -0800
+@@ -18,6 +18,7 @@ from .ui.QTcustom import (
+     RegularQTPopup,
+ )
+ import os
++import sys
+ from platform import machine
+ import subprocess
+ 
+@@ -300,5 +301,6 @@ class DownloadDependencies:
+ 
+ 
+ if __name__ == "__main__":
++    sys.exit(0)
+     downloadDependencies = DownloadDependencies()
+     downloadDependencies.downloadPython()
+diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.0.orig/src/ModelHandler.py REAL-Video-Enhancer-RVE-2.1.0/src/ModelHandler.py
+--- REAL-Video-Enhancer-RVE-2.1.0.orig/src/ModelHandler.py	2024-11-10 15:12:51.000000000 -0800
++++ REAL-Video-Enhancer-RVE-2.1.0/src/ModelHandler.py	2024-12-13 10:09:27.047862427 -0800
+@@ -319,6 +319,7 @@ totalModels = (
+ 
+ 
+ def downloadModelsBasedOnInstalledBackend(installed_backends: list):
++    return
+     if NetworkCheckPopup():
+         for backend in installed_backends:
+             match backend:
+diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.0.orig/src/ui/ProcessTab.py REAL-Video-Enhancer-RVE-2.1.0/src/ui/ProcessTab.py
+--- REAL-Video-Enhancer-RVE-2.1.0.orig/src/ui/ProcessTab.py	2024-11-10 15:12:51.000000000 -0800
++++ REAL-Video-Enhancer-RVE-2.1.0/src/ui/ProcessTab.py	2024-12-13 10:09:27.047862427 -0800
+@@ -246,7 +246,7 @@ class ProcessTab:
+             self.discordRPC.start_discordRPC(
+                 method, os.path.basename(self.inputFile), backend
+             )
+-        if self.modelArch != "custom":  # custom models are not downloaded
++        if False and self.modelArch != "custom":  # custom models are not downloaded
+             DownloadModel(
+                 modelFile=self.modelFile,
+                 downloadModelFile=self.downloadFile,
