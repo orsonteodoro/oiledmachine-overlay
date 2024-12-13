@@ -12,16 +12,20 @@
   </upstream>
   <use>
     <flag name="cuda">
-      Support NVIDIA® GPUs for the CUDA® backend
+      Support NVIDIA® GPUs for the CUDA® backend.  
+      Recommended for Pascal or later models.
     </flag>
     <flag name="rocm">
-      Support AMD GPUs for the ROCm™ backend
+      Support AMD GPUs for the ROCm™ backend.
+      Recommended for GCN 5 or later.
     </flag>
     <flag name="tensorrt">
-      Support NVIDIA® GPUs for the TensorRT™ backend
+      Support NVIDIA® GPUs for the TensorRT™ backend.
+      Recommended for Turing, Ampere, or later models.
     </flag>
     <flag name="vulkan">
-      Support CPUs or GPUs with the Vulkan® 1.3 backend
+      Support CPUs or GPUs with the Vulkan® 1.3 backend.
+      Recommened for Intel® GPUs or older GPU models for different vendors.
     </flag>
   </use>
 </pkgmetadata>
