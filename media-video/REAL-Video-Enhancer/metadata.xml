@@ -21,7 +21,7 @@
       Support NVIDIA® GPUs for the TensorRT™ backend
     </flag>
     <flag name="vulkan">
-      Support CPUs or GPUs with Vulkan® 1.3
+      Support CPUs or GPUs with the Vulkan® 1.3 backend
     </flag>
   </use>
 </pkgmetadata>
