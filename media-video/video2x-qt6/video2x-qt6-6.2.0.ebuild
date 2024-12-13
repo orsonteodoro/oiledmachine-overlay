@@ -100,12 +100,10 @@ src_unpack() {
 
 src_prepare() {
 	cmake_src_prepare
-	if use stable-deps ; then
-		sed -i \
-			-e "1i #define _strdup strdup" \
-			"src/mainwindow.cpp" \
-			|| die
-	fi
+	sed -i \
+		-e "1i #define _strdup strdup" \
+		"src/mainwindow.cpp" \
+		|| die
 	sed -i \
 		-e "s|libplacebo_config|libplaceboConfig|g" \
 		"src/taskconfigdialog.cpp" \
@@ -166,9 +164,7 @@ src_configure() {
 
 	check_cxxabi
 
-	if use stable-deps ; then
-		append-flags -DSPDLOG_NO_EXCEPTIONS
-	fi
+	append-flags -DSPDLOG_NO_EXCEPTIONS
 	append-flags -I"${S}_build/libvideo2x_install/include"
 
 	if has_version "media-video/ffmpeg:58.60.60" ; then
