@@ -5,7 +5,6 @@
 EAPI=8
 
 # TODO package:
-# cx-Freeze
 # pytorch-triton-rocm
 # rife-ncnn-vulkan-python-tntwise
 # scenedetect
