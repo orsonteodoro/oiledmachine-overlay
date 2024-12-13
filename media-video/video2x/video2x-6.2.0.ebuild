@@ -10,8 +10,6 @@ CMAKE_MAKEFILE_GENERATOR="emake"
 
 # Stable
 BOOST_PV="1.86.0" # Aug 7, 2024
-BOOST_COMMIT="65c1319bb92fe7a9a4abd588eff5818d9c2bccf9"
-BOOST_PROGRAM_OPTIONS_COMMIT="27f927694547277f845ae855e80b96be252f826c"
 GLSLANG_COMMIT_1="4afd69177258d0636f78d2c4efb823ab6382a187" # Feb 9, 2021
 GLSLANG_COMMIT_2="4420f9b33ba44928d5c82d9eae0c3bb4d5674c05" # Jul 26, 2023
 GLSLANG_COMMIT_3="86ff4bca1ddc7e2262f119c16e7228d0efb67610" # May 20, 2024
@@ -167,12 +165,6 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-TRASH="
-https://github.com/boostorg/boost/archive/${BOOST_COMMIT}.tar.gz
-	-> boost-${BOOST_COMMIT:0:7}.tar.gz
-https://github.com/boostorg/program_options/archive/${BOOST_PROGRAM_OPTIONS_COMMIT}.tar.gz
-	-> boost_program_options-${BOOST_PROGRAM_OPTIONS_COMMIT:0:7}.tar.gz
-"
 #	KEYWORDS="~amd64"
 	S="${WORKDIR}/${PN}-${PV}"
 	SRC_URI="
@@ -385,6 +377,7 @@ BDEPEND+="
 DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-6.2.0-install-paths.patch"
+	"${FILESDIR}/${PN}-6.2.0-ncnn-simd-options.patch"
 )
 
 gen_git_tag() {

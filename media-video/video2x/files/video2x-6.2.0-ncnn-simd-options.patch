@@ -1,0 +1,131 @@
+diff '--color=auto' -urp video2x-a6dfdc734328fda0f25b923e75f91fafc60d88ef.orig/CMakeLists.txt video2x-a6dfdc734328fda0f25b923e75f91fafc60d88ef/CMakeLists.txt
+--- video2x-a6dfdc734328fda0f25b923e75f91fafc60d88ef.orig/CMakeLists.txt	2024-12-11 16:00:00.000000000 -0800
++++ video2x-a6dfdc734328fda0f25b923e75f91fafc60d88ef/CMakeLists.txt	2024-12-12 18:40:08.288839591 -0800
+@@ -122,6 +122,43 @@ else()
+     option(NCNN_DISABLE_RTTI "" ON)
+     option(NCNN_DISABLE_EXCEPTION "" ON)
+     option(NCNN_BUILD_SHARED_LIBS "" OFF)
++
++    option(NCNN_AVX "" ON)
++    option(NCNN_AVX2 "" ON)
++    option(NCNN_AVXNECONVERT "" ON)
++    option(NCNN_AVXVNNI "" ON)
++    option(NCNN_AVXVNNIINT8 "" ON)
++    option(NCNN_AVXVNNIINT16 "" ON)
++    option(NCNN_AVX512BF16 "" ON)
++    option(NCNN_AVX512FP16 "" ON)
++    option(NCNN_AVX512VNNI "" ON)
++    option(NCNN_F16C "" ON)
++    option(NCNN_FMA "" ON)
++    option(NCNN_LASX "" ON)
++    option(NCNN_LSX "" ON)
++    option(NCNN_MMI "" ON)
++    option(NCNN_MSA "" ON)
++    option(NCNN_RVV "" ON)
++    option(NCNN_SSE2 "" ON)
++    option(NCNN_VFPV4 "" ON)
++    option(NCNN_VSX_SSE2 "" ON)
++    option(NCNN_VSX_SSE41 "" ON)
++    option(NCNN_XOP "" ON)
++    option(NCNN_XTHEADVECTOR "" ON)
++    option(NCNN_ZFH "" ON)
++    option(NCNN_ZVFH "" ON)
++    option(NCNN_AVX512 "" ON)
++    option(NCNN_ARM82 "" ON)
++    option(NCNN_ARM84BF16 "" ON)
++    option(NCNN_ARM82DOT "" ON)
++    option(NCNN_ARM82FP16FML "" ON)
++    option(NCNN_ARM84I8MM "" ON)
++    option(NCNN_ARM86SVE "" ON)
++    option(NCNN_ARM86SVE2 "" ON)
++    option(NCNN_ARM86SVEBF16 "" ON)
++    option(NCNN_ARM86SVEI8MM "" ON)
++    option(NCNN_ARM86SVEF32MM "" ON)
++
+     option(SKIP_GLSLANG_INSTALL "" ON)
+ 
+     option(WITH_LAYER_absval "" OFF)
+@@ -249,6 +286,41 @@ ExternalProject_Add(
+         -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/realesrgan_install
+         -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+         -DUSE_SYSTEM_NCNN=${USE_SYSTEM_NCNN}
++        -DNCNN_AVX=${NCNN_AVX}
++        -DNCNN_AVX2=${NCNN_AVX2}
++        -DNCNN_AVXNECONVERT=${NCNN_AVXNECONVERT}
++        -DNCNN_AVXVNNI=${NCNN_AVXVNNI}
++        -DNCNN_AVXVNNIINT8=${NCNN_AVXVNNIINT8}
++        -DNCNN_AVXVNNIINT16=${NCNN_AVXVNNIINT16}
++        -DNCNN_AVX512BF16=${NCNN_AVX512BF16}
++        -DNCNN_AVX512FP16=${NCNN_AVX512FP16}
++        -DNCNN_AVX512VNNI=${NCNN_AVX512VNNI}
++        -DNCNN_F16C=${NCNN_F16C}
++        -DNCNN_FMA=${NCNN_FMA}
++        -DNCNN_LASX=${NCNN_LASX}
++        -DNCNN_LSX=${NCNN_LSX}
++        -DNCNN_MMI=${NCNN_MMI}
++        -DNCNN_MSA=${NCNN_MSA}
++        -DNCNN_RVV=${NCNN_RVV}
++        -DNCNN_SSE2=${NCNN_SSE2}
++        -DNCNN_VFPV4=${NCNN_VFPV4}
++        -DNCNN_VSX_SSE2=${NCNN_VSX_SSE2}
++        -DNCNN_VSX_SSE41=${NCNN_VSX_SSE41}
++        -DNCNN_XOP=${NCNN_XOP}
++        -DNCNN_XTHEADVECTOR=${NCNN_XTHEADVECTOR}
++        -DNCNN_ZFH=${NCNN_ZFH}
++        -DNCNN_ZVFH=${NCNN_ZVFH}
++        -DNCNN_AVX512=${NCNN_AVX512}
++        -DNCNN_ARM82=${NCNN_ARM82}
++        -DNCNN_ARM84BF16=${NCNN_ARM84BF16}
++        -DNCNN_ARM82DOT=${NCNN_ARM82DOT}
++        -DNCNN_ARM82FP16FML=${NCNN_ARM82FP16FML}
++        -DNCNN_ARM84I8MM=${NCNN_ARM84I8MM}
++        -DNCNN_ARM86SVE=${NCNN_ARM86SVE}
++        -DNCNN_ARM86SVE2=${NCNN_ARM86SVE2}
++        -DNCNN_ARM86SVEBF16=${NCNN_ARM86SVEBF16}
++        -DNCNN_ARM86SVEI8MM=${NCNN_ARM86SVEI8MM}
++        -DNCNN_ARM86SVEF32MM=${NCNN_ARM86SVEF32MM}
+     BUILD_ALWAYS ON
+     INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install --config ${CMAKE_BUILD_TYPE}
+ )
+@@ -262,6 +334,41 @@ ExternalProject_Add(
+         -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/rife_install
+         -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+         -DUSE_SYSTEM_NCNN=${USE_SYSTEM_NCNN}
++        -DNCNN_AVX=${NCNN_AVX}
++        -DNCNN_AVX2=${NCNN_AVX2}
++        -DNCNN_AVXNECONVERT=${NCNN_AVXNECONVERT}
++        -DNCNN_AVXVNNI=${NCNN_AVXVNNI}
++        -DNCNN_AVXVNNIINT8=${NCNN_AVXVNNIINT8}
++        -DNCNN_AVXVNNIINT16=${NCNN_AVXVNNIINT16}
++        -DNCNN_AVX512BF16=${NCNN_AVX512BF16}
++        -DNCNN_AVX512FP16=${NCNN_AVX512FP16}
++        -DNCNN_AVX512VNNI=${NCNN_AVX512VNNI}
++        -DNCNN_F16C=${NCNN_F16C}
++        -DNCNN_FMA=${NCNN_FMA}
++        -DNCNN_LASX=${NCNN_LASX}
++        -DNCNN_LSX=${NCNN_LSX}
++        -DNCNN_MMI=${NCNN_MMI}
++        -DNCNN_MSA=${NCNN_MSA}
++        -DNCNN_RVV=${NCNN_RVV}
++        -DNCNN_SSE2=${NCNN_SSE2}
++        -DNCNN_VFPV4=${NCNN_VFPV4}
++        -DNCNN_VSX_SSE2=${NCNN_VSX_SSE2}
++        -DNCNN_VSX_SSE41=${NCNN_VSX_SSE41}
++        -DNCNN_XOP=${NCNN_XOP}
++        -DNCNN_XTHEADVECTOR=${NCNN_XTHEADVECTOR}
++        -DNCNN_ZFH=${NCNN_ZFH}
++        -DNCNN_ZVFH=${NCNN_ZVFH}
++        -DNCNN_AVX512=${NCNN_AVX512}
++        -DNCNN_ARM82=${NCNN_ARM82}
++        -DNCNN_ARM84BF16=${NCNN_ARM84BF16}
++        -DNCNN_ARM82DOT=${NCNN_ARM82DOT}
++        -DNCNN_ARM82FP16FML=${NCNN_ARM82FP16FML}
++        -DNCNN_ARM84I8MM=${NCNN_ARM84I8MM}
++        -DNCNN_ARM86SVE=${NCNN_ARM86SVE}
++        -DNCNN_ARM86SVE2=${NCNN_ARM86SVE2}
++        -DNCNN_ARM86SVEBF16=${NCNN_ARM86SVEBF16}
++        -DNCNN_ARM86SVEI8MM=${NCNN_ARM86SVEI8MM}
++        -DNCNN_ARM86SVEF32MM=${NCNN_ARM86SVEF32MM}
+     BUILD_ALWAYS ON
+     INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install --config ${CMAKE_BUILD_TYPE}
+ )

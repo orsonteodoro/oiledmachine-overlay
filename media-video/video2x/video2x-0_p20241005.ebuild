@@ -359,6 +359,7 @@ BDEPEND+="
 DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-0_p20241005-install-paths.patch"
+	"${FILESDIR}/${PN}-0_p20241005-ncnn-simd-options.patch"
 )
 
 gen_git_tag() {
