@@ -241,6 +241,7 @@ ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
 cli system-boost system-ncnn system-spdlog
+ebuild-revision-1
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -373,6 +374,7 @@ DEPEND+="
 "
 BDEPEND+="
 	>=dev-build/cmake-3.14
+	dev-util/patchelf
 	dev-vcs/git
 	sys-devel/gcc[openmp]
 	virtual/pkgconfig
@@ -391,7 +393,9 @@ einfo "Generating tag start for ${path}"
 		git init || die
 		git config user.email "name@example.com" || die
 		git config user.name "John Doe" || die
-		git add -f * || die
+		touch dummy || die
+		git add dummy || die
+		#git add -f * || die
 		git commit -m "Dummy" || die
 		git tag ${tag_name} || die
 	popd >/dev/null 2>&1 || die
@@ -432,6 +436,10 @@ src_unpack() {
 		git-r3_fetch
 		git-r3_checkout
 	else
+# Debug
+#		unpack "video2x-${VIDEO2K_COMMIT:0:7}.tar.gz"
+#		die
+
 		unpack ${A}
 
 	einfo "Using stable deps"
@@ -503,14 +511,26 @@ src_configure() {
 		append-flags -I"${S}/third_party/boost"
 	fi
 
+	local mycmakeargs=(
+	)
+
 	if has_version "media-video/ffmpeg:58.60.60" ; then
 einfo "Using media-video/ffmpeg:58.60.60"
-		PKG_CONFIG_PATH="/usr/lib/ffmpeg/58.60.60/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+		export PKG_CONFIG_PATH="/usr/lib/ffmpeg/58.60.60/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+		mycmakeargs+=(
+			-DFFMPEG_USE_SLOTTED=ON
+			-DFFMPEG_SLOTTED_PATH="/usr/lib/ffmpeg/58.60.60"
+		)
 	else
 einfo "Using media-video/ffmpeg:0/58.60.60"
+		export FFMPEG_LIBDIR=""
+		mycmakeargs+=(
+			-DFFMPEG_USE_SLOTTED=OFF
+		)
 	fi
 
-	local mycmakeargs=(
+	mycmakeargs+=(
+		-DCMAKE_PREFIX_PATH="/usr/lib/ffmpeg/58.60.60"
 		-DBUILD_SHARED_LIBS=ON
 		-DBUILD_VIDEO2X_CLI=$(usex cli)
 		-DCMAKE_MODULE_PATH="${S}/third_party/boost"
@@ -777,6 +797,12 @@ src_install() {
 		"${ED}/usr/$(get_libdir)/video2x/$(get_libdir)/cmake/rife/rifeTargets-relwithdebinfo.cmake" \
 		|| die
 	rm -rf "${ED}/var" || die
+	if has_version "media-video/ffmpeg:58.60.60" ; then
+		patchelf \
+			--add-rpath "/usr/lib/ffmpeg/58.60.60/$(get_libdir)" \
+			"${ED}/usr/lib64/libvideo2x.so" \
+			|| die
+	fi
 }
 
 pkg_postinst() {

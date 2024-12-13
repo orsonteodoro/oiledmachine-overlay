@@ -1,6 +1,38 @@
---- video2x-6.2.0.orig/CMakeLists.txt	2024-12-11 16:00:00.000000000 -0800
-+++ video2x-6.2.0/CMakeLists.txt	2024-12-12 12:58:18.059057323 -0800
-@@ -355,9 +355,9 @@ if(WIN32)
+diff '--color=auto' -urp video2x-a6dfdc734328fda0f25b923e75f91fafc60d88ef.orig/CMakeLists.txt video2x-a6dfdc734328fda0f25b923e75f91fafc60d88ef/CMakeLists.txt
+--- video2x-a6dfdc734328fda0f25b923e75f91fafc60d88ef.orig/CMakeLists.txt	2024-12-11 16:00:00.000000000 -0800
++++ video2x-a6dfdc734328fda0f25b923e75f91fafc60d88ef/CMakeLists.txt	2024-12-13 17:40:40.860760706 -0800
+@@ -106,6 +106,8 @@ else()
+     endforeach()
+     list(APPEND ALL_LIBRARIES ${FFMPEG_LIB})
+ endif() # WIN32
++option(FFMPEG_USE_SLOTTED "Use slotted FFmpeg" ON)
++message(STATUS "FFMPEG_USE_SLOTTED = ${FFMPEG_USE_SLOTTED}")
+ 
+ # Find ncnn package
+ if(USE_SYSTEM_NCNN)
+@@ -279,6 +280,10 @@ if(WIN32)
+ else()
+     set_target_properties(libvideo2x PROPERTIES OUTPUT_NAME video2x)
+ endif()
++if (FFMPEG_USE_SLOTTED)
++    target_include_directories(libvideo2x PUBLIC "${FFMPEG_SLOTTED_PATH}/include")
++    target_link_directories(libvideo2x PUBLIC "${FFMPEG_SLOTTED_PATH}/${CMAKE_INSTALL_LIBDIR}")
++endif()
+ 
+ # Ensure that the shared library is built after the external projects
+ add_dependencies(libvideo2x realesrgan rife)
+@@ -326,6 +331,10 @@ if(BUILD_VIDEO2X_CLI)
+     file(GLOB VIDEO2X_SOURCES tools/video2x/src/*.cpp)
+     add_executable(video2x ${VIDEO2X_SOURCES})
+     set_target_properties(video2x PROPERTIES OUTPUT_NAME video2x)
++    if (FFMPEG_USE_SLOTTED)
++        target_include_directories(video2x PUBLIC "${FFMPEG_SLOTTED_PATH}/include")
++        target_link_directories(video2x PUBLIC "${FFMPEG_SLOTTED_PATH}/${CMAKE_INSTALL_LIBDIR}")
++    endif()
+ 
+     # Include directories for the executable
+     target_include_directories(video2x PRIVATE
+@@ -355,9 +364,9 @@ if(WIN32)
      set(LIB_DESTINATION_DEFAULT ".")
      set(MODEL_DESTINATION_DEFAULT ".")
  else()
