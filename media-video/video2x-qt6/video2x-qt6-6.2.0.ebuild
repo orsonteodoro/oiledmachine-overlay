@@ -111,11 +111,11 @@ src_prepare() {
 			-e "1i #define _strdup strdup" \
 			"src/mainwindow.cpp" \
 			|| die
-		sed -i \
-			-e "s|libplacebo_config|libplaceboConfig|g" \
-			"src/taskconfigdialog.cpp" \
-			|| die
 	fi
+	sed -i \
+		-e "s|libplacebo_config|libplaceboConfig|g" \
+		"src/taskconfigdialog.cpp" \
+		|| die
 }
 
 check_cxxabi() {
