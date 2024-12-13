@@ -101,8 +101,8 @@ hu id it ja kn ko lt lv ml mr ms nb nl pl pt-BR pt-PT ro ru sk sl sr sv sw ta
 te th tr uk ur vi zh-CN zh-TW
 "
 
-CROMITE_COMMIT="32fa8435523f71f1d2b6ac2facdea91e874c6904" # Based on most recent either tools/under-control/src/RELEASE or build/RELEASE
-CROMITE_PV="131.0.6778.109"
+CROMITE_COMMIT="625c295dad7acb16d8f756582e95468b50f1d9f6" # Based on most recent either tools/under-control/src/RELEASE or build/RELEASE
+CROMITE_PV="131.0.6778.140"
 
 # About PGO version compatibility
 #
@@ -181,7 +181,7 @@ PYTHON_COMPAT=( "python3_"{9..13} )
 PYTHON_REQ_USE="xml(+)"
 QT5_PV="5.15.2"
 QT6_PV="6.4.2"
-UNGOOGLED_CHROMIUM_PV="131.0.6778.85-1"
+UNGOOGLED_CHROMIUM_PV="131.0.6778.139-1"
 USE_LTO=0 # Global variable
 # https://github.com/chromium/chromium/blob/131.0.6778.139/tools/clang/scripts/update.py#L38 \
 # grep 'CLANG_REVISION = ' ${S}/tools/clang/scripts/update.py -A1 | cut -c 18- # \
@@ -849,8 +849,8 @@ REQUIRED_USE+="
 	)
 "
 if is_cromite_compatible ; then
-	# USE=pgo is default ON in Chromite but dropped for user choice.
-	# USE=official is default ON in Chromite, but this ebuild reserves it
+	# USE=pgo is default ON in Cromite but dropped for user choice.
+	# USE=official is default ON in Cromite, but this ebuild reserves it
 	# for authentic Chromium.
 	#
 	# The rest are the same defaults as the patchset.
@@ -2430,7 +2430,7 @@ einfo "Removing ${x} from ungoogled-chromium"
 	popd >/dev/null 2>&1 || die
 }
 
-prepare_chromite_with_ungoogled_chromium() {
+prepare_cromite_with_ungoogled_chromium() {
 	# Fix hunk collisions.
 	filterdiff \
 		-x '*/chrome/browser/ui/browser_commands.cc' \
@@ -2464,7 +2464,7 @@ prepare_chromite_with_ungoogled_chromium() {
 	# can get a hunk dependency within the same patch which it doesn't
 	# handle well.
 	local rows=(
-#		chromite_patch;ungoogle_chromium_patch
+#		cromite_patch;ungoogle_chromium_patch
 		"autofill-miscellaneous.patch;0003-disable-autofill-download-manager.patch"
 		"ungoogled-chromium-no-special-hosts-domains.patch;disable-google-host-detection.patch"
 		"ungoogled-chromium-Disable-untraceable-URLs.patch;all-add-trk-prefixes-to-possibly-evil-connections.patch"
@@ -2552,7 +2552,7 @@ einfo "Preferring Cromite over ungoogled-chromium"
 			local x="${ungoogle_chromium_patch}"
 			sed -i -e "/${x}/d" "${S_UNGOOGLED_CHROMIUM}/patches/series" || die
 		elif is_user_choice_ungoogled_chromium ; then
-			local x="${chromite_patch}"
+			local x="${cromite_patch}"
 			if [[ -e "build/cromite_patches_list_new.txt" ]] ; then
 				sed -i -e "/${x}/d" "${S_CROMITE}/build/cromite_patches_list_new.txt" || die
 			else
@@ -2564,7 +2564,7 @@ eerror "Invalid choice.  You must choose on of the patches on the right to resol
 eerror
 eerror "Valid values:"
 eerror
-eerror "         Chromite patch:  ${chromite_patch}"
+eerror "         Cromite patch:  ${cromite_patch}"
 eerror "ungoogle-chromium patch:  ${ungoogle_chromium_patch}"
 eerror
 			die
@@ -2583,7 +2583,7 @@ src_prepare() {
 
 
 	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium && has cromite ${IUSE_EFFECTIVE} && use cromite ; then
-		prepare_chromite_with_ungoogled_chromium
+		prepare_cromite_with_ungoogled_chromium
 	fi
 
 	if has cromite ${IUSE_EFFECTIVE} && use cromite ; then
@@ -2990,7 +2990,7 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 	if has cromite ${IUSE_EFFECTIVE} && use cromite ; then
 		keeplibs+=(
 			"cromite_flags/third_party"
-	#		"third_party/chromite"
+			"third_party/cromite"
 		)
 	fi
 
