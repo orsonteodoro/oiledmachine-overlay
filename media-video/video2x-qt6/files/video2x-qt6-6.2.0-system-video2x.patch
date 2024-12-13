@@ -1,17 +1,19 @@
 diff '--color=auto' -urp video2x-qt6-6.2.0.orig/CMakeLists.txt video2x-qt6-6.2.0/CMakeLists.txt
 --- video2x-qt6-6.2.0.orig/CMakeLists.txt	2024-12-11 21:22:54.000000000 -0800
-+++ video2x-qt6-6.2.0/CMakeLists.txt	2024-12-12 14:34:17.454974115 -0800
-@@ -64,7 +64,8 @@ list(REMOVE_DUPLICATES ALL_LIBRARIES)
++++ video2x-qt6-6.2.0/CMakeLists.txt	2024-12-13 06:39:41.328405623 -0800
+@@ -64,7 +64,10 @@ list(REMOVE_DUPLICATES ALL_LIBRARIES)
  # Include ExternalProject module
  include(ExternalProject)
  
 -if(NOT WIN32)
 +option(USE_SYSTEM_VIDEO2X "Use system video2x" ON)
-+if(NOT WIN32 AND NOT USE_SYSTEM_VIDEO2X)
++if(USE_SYSTEM_VIDEO2X)
++    list(APPEND ALL_LIBRARIES video2x)
++elseif(NOT WIN32 AND NOT USE_SYSTEM_VIDEO2X)
      # Add libreal-esrgan-ncnn-vulkan as an external project
      ExternalProject_Add(
          libvideo2x
-@@ -132,8 +133,12 @@ include_directories(
+@@ -132,8 +135,12 @@ include_directories(
  if(WIN32)
      set(LIBVIDEO2X_LIB ${CMAKE_BINARY_DIR}/libvideo2x_install/lib/libvideo2x.lib)
  else()

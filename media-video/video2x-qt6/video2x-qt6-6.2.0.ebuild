@@ -73,7 +73,6 @@ BDEPEND+="
 	sys-devel/gcc[openmp]
 	virtual/pkgconfig
 "
-#	[${PYTHON_USEDEP}]
 DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-6.2.0-system-video2x.patch"
@@ -171,8 +170,6 @@ src_configure() {
 	strip-unsupported-flags
 
 	check_cxxabi
-
-	export MAKEOPTS="-j1"
 
 	if use stable-deps ; then
 		append-flags -DSPDLOG_NO_EXCEPTIONS
