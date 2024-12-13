@@ -10,6 +10,8 @@ CMAKE_MAKEFILE_GENERATOR="emake"
 
 # Stable
 BOOST_PV="1.86.0" # Aug 7, 2024
+BOOST_COMMIT="65c1319bb92fe7a9a4abd588eff5818d9c2bccf9"
+BOOST_PROGRAM_OPTIONS_COMMIT="27f927694547277f845ae855e80b96be252f826c"
 GLSLANG_COMMIT_1="4afd69177258d0636f78d2c4efb823ab6382a187" # Feb 9, 2021
 GLSLANG_COMMIT_2="4420f9b33ba44928d5c82d9eae0c3bb4d5674c05" # Jul 26, 2023
 GLSLANG_COMMIT_3="86ff4bca1ddc7e2262f119c16e7228d0efb67610" # May 20, 2024
@@ -165,10 +167,18 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
+TRASH="
+https://github.com/boostorg/boost/archive/${BOOST_COMMIT}.tar.gz
+	-> boost-${BOOST_COMMIT:0:7}.tar.gz
+https://github.com/boostorg/program_options/archive/${BOOST_PROGRAM_OPTIONS_COMMIT}.tar.gz
+	-> boost_program_options-${BOOST_PROGRAM_OPTIONS_COMMIT:0:7}.tar.gz
+"
 #	KEYWORDS="~amd64"
 	S="${WORKDIR}/${PN}-${PV}"
 	SRC_URI="
-https://archives.boost.io/release/${BOOST_PV}/source/boost_${BOOST_PV//./_}.tar.bz2
+https://raw.githubusercontent.com/boostorg/boost/refs/tags/boost-1.86.0/CMakeLists.txt
+	-> boost-${BOOST_PV}-CMakeLists.txt
+https://boostorg.jfrog.io/artifactory/main/release/${BOOST_PV}/source/boost_${BOOST_PV//./_}.tar.bz2
 https://github.com/k4yt3x/librealesrgan-ncnn-vulkan/archive/${LIBREALESRGAN_NCNN_VULKAN}.tar.gz
 	-> librealesrgan-ncnn-vulkan-${LIBREALESRGAN_NCNN_VULKAN:0:7}.tar.gz
 https://github.com/k4yt3x/librife-ncnn-vulkan/archive/${LIBRIFE_NCNN_VULKAN_COMMIT}.tar.gz
@@ -395,7 +405,10 @@ einfo "Generating tag done"
 unpack_deps() {
 	dep_prepare_mv "${WORKDIR}/video2x-${VIDEO2K_COMMIT}" "${S}"
 
+#	dep_prepare_mv "${WORKDIR}/boost-${BOOST_COMMIT}" "${S}/third_party/boost"
+#	dep_prepare_mv "${WORKDIR}/program_options-${BOOST_PROGRAM_OPTIONS_COMMIT}" "${S}/third_party/boost/libs/program_options"
 	dep_prepare_mv "${WORKDIR}/boost_${BOOST_PV//./_}" "${S}/third_party/boost"
+	cat "${DISTDIR}/boost-${BOOST_PV}-CMakeLists.txt" > "${S}/third_party/boost/CMakeLists.txt" || die
 
 	dep_prepare_mv "${WORKDIR}/librealesrgan-ncnn-vulkan-${LIBREALESRGAN_NCNN_VULKAN}" "${S}/third_party/librealesrgan_ncnn_vulkan"
 	dep_prepare_mv "${WORKDIR}/ncnn-${NCNN_COMMIT_1}" "${S}/third_party/librealesrgan_ncnn_vulkan/src/ncnn"
@@ -412,6 +425,7 @@ unpack_deps() {
 	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1}" "${S}/third_party/librife_ncnn_vulkan/src/ncnn/python/pybind11"
 
 	dep_prepare_mv "${WORKDIR}/spdlog-${SPDLOG_COMMIT}" "${S}/third_party/spdlog"
+
 
 	gen_git_tag "${S}" "${PV}"
 }
@@ -500,6 +514,7 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 	local mycmakeargs=(
 		-DBUILD_SHARED_LIBS=ON
 		-DBUILD_VIDEO2X_CLI=ON
+		-DCMAKE_MODULE_PATH="${S}/third_party/boost"
 		-DUSE_SYSTEM_BOOST=$(usex system-boost)
 		-DUSE_SYSTEM_NCNN=$(usex system-ncnn)
 		-DUSE_SYSTEM_SPDLOG=$(usex system-spdlog)
