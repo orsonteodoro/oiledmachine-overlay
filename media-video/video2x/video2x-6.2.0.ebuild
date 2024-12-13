@@ -154,7 +154,7 @@ CPU_FLAGS_X86=(
 
 PYTHON_COMPAT=( "python3_12" )
 
-inherit cmake dep-prepare flag-o-matic python-single-r1 toolchain-funcs
+inherit cmake dep-prepare flag-o-matic optfeature python-single-r1 toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -777,4 +777,9 @@ src_install() {
 		"${ED}/usr/$(get_libdir)/video2x/$(get_libdir)/cmake/rife/rifeTargets-relwithdebinfo.cmake" \
 		|| die
 	rm -rf "${ED}/var" || die
+}
+
+pkg_postinst() {
+	optfeature_header "Install optional packages:"
+	optfeature "Qt6 GUI frontend" "media-video/video2x-qt6"
 }
