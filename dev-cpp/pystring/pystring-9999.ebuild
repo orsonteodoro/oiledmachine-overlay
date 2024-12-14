@@ -27,7 +27,7 @@ IUSE+=" custom-cflags doc test"
 RDEPEND+="
 	|| (
 		sys-devel/gcc[cxx]
-		sys-libs/libcxx
+		llvm-runtimes/libcxx
 	)
 "
 DEPEND+="
