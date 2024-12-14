@@ -192,7 +192,7 @@ DEPEND+="
 	jit? (
 		|| (
 			sys-devel/gcc
-			sys-devel/clang
+			llvm-core/clang
 			dev-lang/tcc
 		)
 	)
