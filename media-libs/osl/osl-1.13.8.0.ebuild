@@ -132,7 +132,7 @@ gen_opx_llvm_rdepend() {
 		echo "
 			llvm_slot_${s}? (
 				llvm-core/clang:${s}[${MULTILIB_USEDEP},llvm_targets_NVPTX]
-				sys-devel/lld:${s}
+				llvm-core/lld:${s}
 				llvm-core/llvm:${s}[${MULTILIB_USEDEP},llvm_targets_NVPTX]
 			)
 		"
@@ -145,7 +145,7 @@ gen_llvm_bdepend() {
 		echo "
 			llvm_slot_${s}? (
 				llvm-core/clang:${s}[${MULTILIB_USEDEP}]
-				sys-devel/lld:${s}
+				llvm-core/lld:${s}
 				llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
 			)
 		"
