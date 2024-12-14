@@ -171,7 +171,7 @@ gen_clang_depends() {
 			llvm_slot_${s}? (
 				=sys-devel/clang-runtime-${s}*
 				sys-devel/clang:${s}
-				sys-devel/llvm:${s}
+				llvm-core/llvm:${s}
 				sys-devel/lld:${s}
 			)
 		"
@@ -236,21 +236,21 @@ BDEPEND+="
 	)
 	rocm? (
 		rocm_5_5? (
-			~sys-devel/llvm-roc-${HIP_5_5_VERSION}:5.5
+			~llvm-core/llvm-roc-${HIP_5_5_VERSION}:5.5
 		)
 		rocm_5_6? (
-			~sys-devel/llvm-roc-${HIP_5_6_VERSION}:5.6
+			~llvm-core/llvm-roc-${HIP_5_6_VERSION}:5.6
 		)
 		rocm_5_7? (
-			~sys-devel/llvm-roc-${HIP_5_7_VERSION}:5.7
+			~llvm-core/llvm-roc-${HIP_5_7_VERSION}:5.7
 		)
 		rocm_6_0? (
-			~sys-devel/llvm-roc-${HIP_6_0_VERSION}:6.0
+			~llvm-core/llvm-roc-${HIP_6_0_VERSION}:6.0
 		)
 		rocm_6_1? (
-			~sys-devel/llvm-roc-${HIP_6_1_VERSION}:6.1
+			~llvm-core/llvm-roc-${HIP_6_1_VERSION}:6.1
 		)
-		sys-devel/llvm-roc:=
+		llvm-core/llvm-roc:=
 		$(gen_hip_depends)
 		>=dev-build/cmake-3.21
 	)
