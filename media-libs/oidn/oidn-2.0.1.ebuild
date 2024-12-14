@@ -154,7 +154,7 @@ gen_clang_depends() {
 			llvm_slot_${s}? (
 				=sys-devel/clang-runtime-${s}*
 				sys-devel/clang:${s}
-				sys-devel/llvm:${s}
+				llvm-core/llvm:${s}
 				sys-devel/lld:${s}
 			)
 		"
@@ -188,12 +188,12 @@ RDEPEND+="
 	)
 	rocm? (
 		rocm_5_5? (
-			~sys-devel/llvm-roc-${HIP_5_5_VERSION}:5.5
+			~llvm-core/llvm-roc-${HIP_5_5_VERSION}:5.5
 		)
 		rocm_5_6? (
-			~sys-devel/llvm-roc-${HIP_5_6_VERSION}:5.6
+			~llvm-core/llvm-roc-${HIP_5_6_VERSION}:5.6
 		)
-		sys-devel/llvm-roc:=
+		llvm-core/llvm-roc:=
 		$(gen_hip_depends)
 		dev-util/hip:=[rocm]
 	)
