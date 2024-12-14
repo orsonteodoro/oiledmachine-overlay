@@ -960,7 +960,7 @@ gen_clang() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				sys-devel/llvm:${s}
+				llvm-core/llvm:${s}
 				sys-devel/clang:${s}
 				sys-devel/lld:${s}
 				openmp? (
