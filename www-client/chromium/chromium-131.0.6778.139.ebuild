@@ -939,7 +939,7 @@ gen_depend_llvm() {
 			sys-libs/compiler-rt:=
 			=llvm-core/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 			llvm-core/clang:${s}[${MULTILIB_USEDEP}]
-			sys-devel/lld:${s}
+			llvm-core/lld:${s}
 			llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
 			pgo? (
 				=sys-libs/compiler-rt-sanitizers-${s}*[${MULTILIB_USEDEP},profile]
@@ -3224,7 +3224,7 @@ einfo "PATH=${PATH} (after)"
 			if \
 				   has_version "=llvm-core/llvm-${LLVM_SLOT}.0.9999[-fallback-commit]" \
 				|| has_version "=llvm-core/clang-${LLVM_SLOT}.0.9999[-fallback-commit]" \
-				|| has_version "=sys-devel/lld-${LLVM_SLOT}.0.9999[-fallback-commit]" \
+				|| has_version "=llvm-core/lld-${LLVM_SLOT}.0.9999[-fallback-commit]" \
 				|| has_version "=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}.0.9999[-fallback-commit]" \
 				|| has_version "=sys-libs/compiler-rt-${LLVM_SLOT}.0.9999[-fallback-commit]" \
 				|| has_version "=llvm-core/clang-runtime-${LLVM_SLOT}.0.9999[-fallback-commit]" \
@@ -3234,7 +3234,7 @@ eerror "The fallback-commit USE flag is required."
 eerror
 eerror "emerge =llvm-core/llvm-${LLVM_SLOT}.0.0.9999[fallback-commit] \\"
 eerror "       =llvm-core/clang-${LLVM_SLOT}.0.0.9999 \\"
-eerror "       =sys-devel/lld-${LLVM_SLOT}.0.0.9999 \\"
+eerror "       =llvm-core/lld-${LLVM_SLOT}.0.0.9999 \\"
 eerror "       =sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}.0.0.9999 \\"
 eerror "       =sys-libs/compiler-rt-${LLVM_SLOT}.0.0.9999 \\"
 eerror "       =llvm-core/clang-runtime-${LLVM_SLOT}.0.0.9999"
