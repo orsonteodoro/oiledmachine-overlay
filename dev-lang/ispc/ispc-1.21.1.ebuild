@@ -264,7 +264,7 @@ _src_configure_compiler() {
 }
 
 _src_configure() {
-	if ! has_version "sys-devel/llvm:${LLVM_SLOT}=[dump(+)]" ; then
+	if ! has_version "llvm-core/llvm:${LLVM_SLOT}=[dump(+)]" ; then
 		append-cppflags -DNDEBUG
 	fi
 	unset LD
