@@ -212,7 +212,7 @@ BDEPEND+="
 	)
 	|| (
 		>=sys-devel/gcc-${GCC_PV}
-		>=sys-devel/clang-${CLANG_PV}
+		>=llvm-core/clang-${CLANG_PV}
 	)
 "
 PATCHES=(
