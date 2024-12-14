@@ -2218,7 +2218,7 @@ eerror
 	fi
 
 	strip-flag-value "cfi-icall"
-	if tc-is-clang && has_version "sys-libs/compiler-rt-sanitizer[cfi]" ; then
+	if tc-is-clang && has_version "llvm-runtimes/compiler-rt-sanitizer[cfi]" ; then
 		append_all -fno-sanitize=cfi-icall # Prevent illegal instruction with ffprobe
 	fi
 
