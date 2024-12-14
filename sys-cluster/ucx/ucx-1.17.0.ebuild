@@ -401,7 +401,7 @@ gen_clang_bdepend() {
 			llvm-core/llvm:${s}
 			llvm-core/lld:${s}
 			openmp? (
-				sys-libs/libomp:${s}
+				llvm-runtimes/openmp:${s}
 			)
 		"
 	done
