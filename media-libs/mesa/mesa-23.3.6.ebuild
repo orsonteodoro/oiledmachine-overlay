@@ -226,7 +226,7 @@ gen_llvm_depstr() {
 				)
 				opencl? (
 					dev-util/spirv-llvm-translator:${s}
-					sys-devel/clang:${s}[${LLVM_USE_DEPS}]
+					llvm-core/clang:${s}[${LLVM_USE_DEPS}]
 				)
 			)
 		"
@@ -238,7 +238,7 @@ LLVM_DEPSTR="
 		llvm-core/llvm:=[${LLVM_USE_DEPS}]
 	)
 	opencl? (
-		sys-devel/clang:=[${LLVM_USE_DEPS}]
+		llvm-core/clang:=[${LLVM_USE_DEPS}]
 	)
 "
 RDEPEND="
@@ -346,7 +346,7 @@ QA_WX_LOAD="
 
 llvm_check_deps() {
 	if use opencl ; then
-		has_version "sys-devel/clang:${LLVM_SLOT}[${LLVM_USE_DEPS}]" || return 1
+		has_version "llvm-core/clang:${LLVM_SLOT}[${LLVM_USE_DEPS}]" || return 1
 		has_version "dev-util/spirv-llvm-translator:${LLVM_SLOT}" || return 1
 	fi
 	has_version "llvm-core/llvm:${LLVM_SLOT}[${LLVM_USE_DEPS}]"
