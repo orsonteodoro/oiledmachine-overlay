@@ -64,9 +64,9 @@ PATCHES=(
 pkg_setup() {
 	if ! use test ; then
 		:
-	elif has_version "=dev-util/nvidia-cuda-toolkit-11.7*" && has_version "=sys-devel/clang-14*" && has_version "=sys-devel/llvm-14*" ; then
+	elif has_version "=dev-util/nvidia-cuda-toolkit-11.7*" && has_version "=sys-devel/clang-14*" && has_version "=llvm-core/llvm-14*" ; then
 		LLVM_SLOT=14
-	elif has_version "=dev-util/nvidia-cuda-toolkit-11.5*" && has_version "=sys-devel/clang-13*" && has_version "=sys-devel/llvm-13*" ; then
+	elif has_version "=dev-util/nvidia-cuda-toolkit-11.5*" && has_version "=sys-devel/clang-13*" && has_version "=llvm-core/llvm-13*" ; then
 		LLVM_SLOT=13
 	fi
 	rocm_pkg_setup
