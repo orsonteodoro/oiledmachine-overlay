@@ -976,7 +976,7 @@ gen_clang() {
 			llvm_slot_${s}? (
 				llvm-core/llvm:${s}
 				llvm-core/clang:${s}
-				sys-devel/lld:${s}
+				llvm-core/lld:${s}
 				openmp? (
 					llvm-core/clang-runtime:${s}[openmp]
 					=sys-libs/libomp-${s}*
