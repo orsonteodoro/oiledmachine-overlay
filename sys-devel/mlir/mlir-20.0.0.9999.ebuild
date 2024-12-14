@@ -45,14 +45,14 @@ ${LLVM_EBUILDS_LLVM20_REVISION}
 REQUIRED_USE="
 "
 RDEPEND="
-	sys-devel/clang:${SLOT}
+	llvm-core/clang:${SLOT}
 	llvm-core/llvm:${SLOT}
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	sys-devel/clang:${SLOT}
+	llvm-core/clang:${SLOT}
 	llvm-core/llvm:${SLOT}
 "
 RESTRICT="
