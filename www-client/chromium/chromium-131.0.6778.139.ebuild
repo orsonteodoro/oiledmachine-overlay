@@ -931,24 +931,24 @@ gen_depend_llvm() {
 		t="
 			!official? (
 				cfi? (
-					=sys-libs/compiler-rt-sanitizers-${s}*[${MULTILIB_USEDEP},cfi]
-					sys-libs/compiler-rt-sanitizers:=
+					=llvm-runtimes/compiler-rt-sanitizers-${s}*[${MULTILIB_USEDEP},cfi]
+					llvm-runtimes/compiler-rt-sanitizers:=
 				)
 			)
-			=sys-libs/compiler-rt-${s}*
-			sys-libs/compiler-rt:=
+			=llvm-runtimes/compiler-rt-${s}*
+			llvm-runtimes/compiler-rt:=
 			=llvm-core/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 			llvm-core/clang:${s}[${MULTILIB_USEDEP}]
 			llvm-core/lld:${s}
 			llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
 			pgo? (
-				=sys-libs/compiler-rt-sanitizers-${s}*[${MULTILIB_USEDEP},profile]
-				sys-libs/compiler-rt-sanitizers:=
+				=llvm-runtimes/compiler-rt-sanitizers-${s}*[${MULTILIB_USEDEP},profile]
+				llvm-runtimes/compiler-rt-sanitizers:=
 			)
 			official? (
 				amd64? (
-					=sys-libs/compiler-rt-sanitizers-${s}*[${MULTILIB_USEDEP},cfi,profile]
-					sys-libs/compiler-rt-sanitizers:=
+					=llvm-runtimes/compiler-rt-sanitizers-${s}*[${MULTILIB_USEDEP},cfi,profile]
+					llvm-runtimes/compiler-rt-sanitizers:=
 				)
 			)
 		"
@@ -3225,8 +3225,8 @@ einfo "PATH=${PATH} (after)"
 				   has_version "=llvm-core/llvm-${LLVM_SLOT}.0.9999[-fallback-commit]" \
 				|| has_version "=llvm-core/clang-${LLVM_SLOT}.0.9999[-fallback-commit]" \
 				|| has_version "=llvm-core/lld-${LLVM_SLOT}.0.9999[-fallback-commit]" \
-				|| has_version "=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}.0.9999[-fallback-commit]" \
-				|| has_version "=sys-libs/compiler-rt-${LLVM_SLOT}.0.9999[-fallback-commit]" \
+				|| has_version "=llvm-runtimes/compiler-rt-sanitizers-${LLVM_SLOT}.0.9999[-fallback-commit]" \
+				|| has_version "=llvm-runtimes/compiler-rt-${LLVM_SLOT}.0.9999[-fallback-commit]" \
 				|| has_version "=llvm-core/clang-runtime-${LLVM_SLOT}.0.9999[-fallback-commit]" \
 			; then
 eerror
@@ -3235,8 +3235,8 @@ eerror
 eerror "emerge =llvm-core/llvm-${LLVM_SLOT}.0.0.9999[fallback-commit] \\"
 eerror "       =llvm-core/clang-${LLVM_SLOT}.0.0.9999 \\"
 eerror "       =llvm-core/lld-${LLVM_SLOT}.0.0.9999 \\"
-eerror "       =sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}.0.0.9999 \\"
-eerror "       =sys-libs/compiler-rt-${LLVM_SLOT}.0.0.9999 \\"
+eerror "       =llvm-runtimes/compiler-rt-sanitizers-${LLVM_SLOT}.0.0.9999 \\"
+eerror "       =llvm-runtimes/compiler-rt-${LLVM_SLOT}.0.0.9999 \\"
 eerror "       =llvm-core/clang-runtime-${LLVM_SLOT}.0.0.9999"
 eerror
 				die
