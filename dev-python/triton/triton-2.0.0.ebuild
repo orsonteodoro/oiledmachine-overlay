@@ -107,35 +107,35 @@ gen_llvm_rdepend() {
 			llvm_slot_${u}? (
 				amd64? (
 					llvm-core/llvm:${u}[llvm_targets_X86,llvm_targets_NVPTX?]
-					sys-devel/mlir:${u}[llvm_targets_X86,llvm_targets_NVPTX?]
+					llvm-core/mlir:${u}[llvm_targets_X86,llvm_targets_NVPTX?]
 				)
 				arm? (
 					llvm-core/llvm:${u}[llvm_targets_ARM]
-					sys-devel/mlir:${u}[llvm_targets_ARM]
+					llvm-core/mlir:${u}[llvm_targets_ARM]
 				)
 				arm64? (
 					llvm-core/llvm:${u}[llvm_targets_AArch64]
-					sys-devel/mlir:${u}[llvm_targets_AArch64]
+					llvm-core/mlir:${u}[llvm_targets_AArch64]
 				)
 				mips? (
 					llvm-core/llvm:${u}[llvm_targets_Mips]
-					sys-devel/mlir:${u}[llvm_targets_Mips]
+					llvm-core/mlir:${u}[llvm_targets_Mips]
 				)
 				ppc? (
 					llvm-core/llvm:${u}[llvm_targets_PowerPC]
-					sys-devel/mlir:${u}[llvm_targets_PowerPC]
+					llvm-core/mlir:${u}[llvm_targets_PowerPC]
 				)
 				ppc64? (
 					llvm-core/llvm:${u}[llvm_targets_PowerPC]
-					sys-devel/mlir:${u}[llvm_targets_PowerPC]
+					llvm-core/mlir:${u}[llvm_targets_PowerPC]
 				)
 				sparc? (
 					llvm-core/llvm:${u}[llvm_targets_Sparc]
-					sys-devel/mlir:${u}[llvm_targets_Sparc]
+					llvm-core/mlir:${u}[llvm_targets_Sparc]
 				)
 				x86? (
 					llvm-core/llvm:${u}[llvm_targets_X86,llvm_targets_NVPTX?]
-					sys-devel/mlir:${u}[llvm_targets_X86,llvm_targets_NVPTX?]
+					llvm-core/mlir:${u}[llvm_targets_X86,llvm_targets_NVPTX?]
 				)
 			)
 		"
@@ -248,7 +248,7 @@ einfo "Called python_configure"
 	elif use rocm_5_1 && has_version "~sys-devel/llvm-roc-5.1.3" ; then
 		llvm_root_dir="/opt/rocm-5.1.3/llvm" # LLVM 14.0.0git
 		export ROCM_VERSION="5.1.3"
-	elif use llvm_slot_14 && has_version "llvm-core/llvm:14" && has_version "sys-devel/mlir:14"; then
+	elif use llvm_slot_14 && has_version "llvm-core/llvm:14" && has_version "llvm-core/mlir:14"; then
 		llvm_root_dir="/usr/lib/llvm/14"
 		dynlib=1
 	else

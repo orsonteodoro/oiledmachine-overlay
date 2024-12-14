@@ -46,7 +46,7 @@ RDEPEND="
 	llvm-runtimes/openmp:${LLVM_MAJOR}[offload?]
 	llvm-core/clang:${LLVM_MAJOR}
 	llvm-core/llvm:${LLVM_MAJOR}
-	sys-devel/mlir:${LLVM_MAJOR}
+	llvm-core/mlir:${LLVM_MAJOR}
 "
 DEPEND="
 	${RDEPEND}

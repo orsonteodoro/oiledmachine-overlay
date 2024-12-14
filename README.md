@@ -1109,6 +1109,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | llvm-core/llvm-common | Common files shared between multiple slots of LLVM |
 | llvm-core/llvm-toolchain-symlinks | Symlinks to use LLVM on a binutils-free system |
 | llvm-core/llvmgold | LLVMgold plugin symlink for autoloading |
+| llvm-core/mlir | Multi Level Intermediate Representation for LLVM |
 | llvm-runtimes/compiler-rt | Compiler runtime library for clang (built-in part) |
 | llvm-runtimes/compiler-rt-sanitizers | Compiler runtime libraries for clang (sanitizers & xray) |
 | llvm-runtimes/libcxx | New implementation of the C++ standard library, targeting C++11 |
@@ -1459,7 +1460,6 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sys-devel/llvm-roc-alt | AOCC for ROCm™ |
 | sys-devel/llvm-roc-alt-symlinks | llvm-roc-alt symlinks |
 | sys-devel/llvm-roc-symlinks | llvm-roc symlinks |
-| sys-devel/mlir | Multi Level Intermediate Representation for LLVM |
 | sys-devel/mold | A Modern Linker |
 | sys-firmware/amdgpu-dkms-firmware | Firmware blobs used by the amdgpu kernel driver |
 | sys-fs/ecryptfs-utils | eCryptfs userspace utilities |
