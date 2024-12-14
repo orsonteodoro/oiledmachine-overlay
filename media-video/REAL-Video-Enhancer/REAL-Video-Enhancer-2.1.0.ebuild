@@ -7,7 +7,6 @@ EAPI=8
 # TODO package:
 # pytorch-triton-rocm
 # rife-ncnn-vulkan-python-tntwise
-# scenedetect
 # tensorrt
 # tensorrt_cu12
 # tensorrt-cu12_libs
@@ -254,5 +253,7 @@ src_prepare() {
 src_compile() {
 	${EPYTHON} build.py --build_exe
 }
+
+# TODO install models and/or backend to destination
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
