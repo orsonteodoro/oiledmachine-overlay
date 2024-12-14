@@ -210,7 +210,7 @@ gen_cdepend_lto_llvm() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				sys-devel/clang:${s}
+				llvm-core/clang:${s}
 				sys-devel/lld:${s}
 				llvm-core/llvm:${s}
 			)
@@ -224,9 +224,9 @@ gen_clang_sanitizer() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				=sys-devel/clang-runtime-${s}[compiler-rt,sanitize]
+				=llvm-core/clang-runtime-${s}[compiler-rt,sanitize]
 				=sys-libs/compiler-rt-sanitizers-${s}*:=[${san_type}]
-				sys-devel/clang:${s}
+				llvm-core/clang:${s}
 				llvm-core/llvm:${s}
 			)
 		"
@@ -275,7 +275,7 @@ CDEPEND+="
 CDEPEND_CLANG="
 	clang? (
 		!lto? (
-			sys-devel/clang
+			llvm-core/clang
 		)
 		lto? (
 			$(gen_cdepend_lto_llvm)
@@ -447,7 +447,7 @@ ewarn "The gdscript USE flag is untested."
 		LLVM_MAX_SLOT="not_found"
 		local s
 		for s in ${LLVM_COMPAT[@]} ; do
-			if has_version "sys-devel/clang:${s}" \
+			if has_version "llvm-core/clang:${s}" \
 				&& has_version "llvm-core/llvm:${s}" ; then
 				LLVM_MAX_SLOT=${s}
 				break
@@ -455,7 +455,7 @@ ewarn "The gdscript USE flag is untested."
 		done
 		if [[ "${LLVM_MAX_SLOT}" == "not_found" ]] ; then
 eerror
-eerror "Both sys-devel/clang:\${SLOT} and llvm-core/llvm:\${SLOT} must have the"
+eerror "Both llvm-core/clang:\${SLOT} and llvm-core/llvm:\${SLOT} must have the"
 eerror "same slot."
 eerror
 			die
