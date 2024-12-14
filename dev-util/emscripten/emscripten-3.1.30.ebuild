@@ -184,7 +184,7 @@ RDEPEND+="
 	dev-util/binaryen:${BINARYEN_SLOT}
 	>=net-libs/nodejs-10.19
 	(
-		>=sys-devel/clang-${LLVM_SLOT}:${LLVM_SLOT}=[llvm_targets_WebAssembly]
+		>=llvm-core/clang-${LLVM_SLOT}:${LLVM_SLOT}=[llvm_targets_WebAssembly]
 		>=sys-devel/lld-${LLVM_SLOT}:${LLVM_SLOT}
 		>=llvm-core/llvm-${LLVM_SLOT}:${LLVM_SLOT}=[llvm_targets_WebAssembly]
 	)
