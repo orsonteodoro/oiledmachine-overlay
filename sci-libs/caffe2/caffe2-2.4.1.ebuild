@@ -961,10 +961,10 @@ gen_clang() {
 		echo "
 			llvm_slot_${s}? (
 				llvm-core/llvm:${s}
-				sys-devel/clang:${s}
+				llvm-core/clang:${s}
 				sys-devel/lld:${s}
 				openmp? (
-					sys-devel/clang-runtime:${s}[openmp]
+					llvm-core/clang-runtime:${s}[openmp]
 					=sys-libs/libomp-${s}*
 				)
 			)
