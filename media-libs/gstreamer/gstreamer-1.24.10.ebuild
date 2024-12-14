@@ -10,10 +10,38 @@ EAPI=8
 
 inherit gstreamer-meson vf
 
-MITIGATION_DATE="Oct 29, 2024" # Advisory date
+MITIGATION_DATE="Dec 3, 2024" # Advisory date
 MITIGATION_URI="https://gstreamer.freedesktop.org/security/"
 VULNERABILITIES_FIXED=(
-	"CVE-2024-44331;DoS;High"
+	"CVE-2024-47538;DoS, DT, ID;High"
+	"CVE-2024-47615;DoS, DT, ID;High"
+	"CVE-2024-47613;DoS, DT, ID;High"
+	"CVE-2024-47607;DoS, DT, ID;High"
+	"CVE-2024-47540;DoS, DT, ID;High"
+	"CVE-2024-47606;DoS, DT, ID;High"
+	"CVE-2024-47539;DoS, DT, ID;High"
+	"CVE-2024-47537;DoS, DT, ID;High"
+	"CVE-2024-47834;DoS, ID;Medium"
+	"CVE-2024-47774;DoS, DT;Medium"
+	"CVE-2024-47778;DoS, DT;Medium"
+	"CVE-2024-47777;DoS, DT;Medium"
+	"CVE-2024-47776;DoS, DT;Medium"
+	"CVE-2024-47775;DoS, DT;Medium"
+	"CVE-2024-47600;DoS, DT;Medium"
+	"CVE-2024-47596;DoS, DT;Medium"
+	"CVE-2024-47597;DoS, DT;Medium"
+	"CVE-2024-47543;DoS, DT;Medium"
+	"CVE-2024-47598;DoS, DT;Medium"
+	"CVE-2024-47835;DoS;Medium"
+	"CVE-2024-47541;DoS;Medium"
+	"CVE-2024-47603;DoS;Medium"
+	"CVE-2024-47601;DoS;Medium"
+	"CVE-2024-47602;DoS;Medium"
+	"CVE-2024-47599;DoS;Medium"
+	"CVE-2024-47546;DoS;Medium"
+	"CVE-2024-47544;DoS;Medium"
+	"CVE-2024-47545;DoS;Medium"
+	"CVE-2024-47542;DoS;Medium"
 )
 # DoS = Denial of Service
 # DT = Data Tampering
