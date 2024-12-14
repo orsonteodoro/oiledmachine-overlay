@@ -188,7 +188,7 @@ src_prepare() {
 		backends+=",tensorrt"
 	fi
 	if use vulkan ; then
-		backends+=",vulkan"
+		backends+=",ncnn"
 	fi
 
 	sed -i -e "s|@BACKENDS_LIST@|[${backends:1}]|g" \
