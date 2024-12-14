@@ -164,7 +164,7 @@ REQUIRED_USE="
 "
 RDEPEND="
 	~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
-	~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}[${LLVM_TARGETS_USEDEP}]
+	~llvm-core/llvm-roc-${PV}:${ROCM_SLOT}[${LLVM_TARGETS_USEDEP}]
 	cuda_targets_sm_35? (
 		=dev-util/nvidia-cuda-toolkit-11*:=
 	)
@@ -254,7 +254,7 @@ BDEPEND="
 	)
 	|| (
 		sys-devel/lld:${LLVM_SLOT}
-		~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}[${LLVM_TARGETS_USEDEP}]
+		~llvm-core/llvm-roc-${PV}:${ROCM_SLOT}[${LLVM_TARGETS_USEDEP}]
 	)
 "
 PATCHES=(
