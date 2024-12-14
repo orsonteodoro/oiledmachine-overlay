@@ -327,7 +327,7 @@ gen_llvm_bdepend() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			(
-				sys-devel/clang:${s}
+				llvm-core/clang:${s}
 				llvm-core/llvm:${s}
 				sys-devel/lld:${s}
 			)
@@ -344,7 +344,7 @@ BDEPEND="
 		)
 	)
 	cfi? (
-		>=sys-devel/clang-3.7
+		>=llvm-core/clang-3.7
 		sys-devel/lld
 		|| (
 			$(gen_llvm_bdepend)
@@ -360,7 +360,7 @@ BDEPEND="
 	)
 	|| (
 		>=sys-devel/gcc-7.1.0[cxx]
-		>=sys-devel/clang-5
+		>=llvm-core/clang-5
 	)
 "
 PATCHES=(
@@ -403,7 +403,7 @@ eerror "Switch to >=sys-devel/gcc-8.1"
 		fi
 	elif tc-is-clang ; then
 		if ver_test $(clang-version) -lt "5.0" ; then
-eerror "Switch to >=sys-devel/clang-5.0"
+eerror "Switch to >=llvm-core/clang-5.0"
 			die
 		fi
 	fi
@@ -436,7 +436,7 @@ eerror "Switch to >=sys-devel/clang-5.0"
 			local s
 			for s in ${LLVM_COMPAT[@]} ; do
 				if \
-					   has_version "sys-devel/clang:${s}" \
+					   has_version "llvm-core/clang:${s}" \
 					&& has_version "sys-devel/lld:${s}" \
 					&& has_version "llvm-core/llvm:${s}" \
 				; then
@@ -542,7 +542,7 @@ src_configure() {
 				fi
 			fi
 			if \
-				   has_version "sys-devel/clang:${s}" \
+				   has_version "llvm-core/clang:${s}" \
 				&& has_version "sys-devel/lld:${s}" \
 				&& has_version "llvm-core/llvm:${s}" \
 			; then
