@@ -806,7 +806,7 @@ gen_depend_llvm() {
 			(
 				llvm-core/clang:${s}
 				llvm-core/llvm:${s}
-				sys-devel/lld:${s}
+				llvm-core/lld:${s}
 				openmp? (
 					sys-libs/libomp:${s}[${MULTILIB_USEDEP}]
 				)
