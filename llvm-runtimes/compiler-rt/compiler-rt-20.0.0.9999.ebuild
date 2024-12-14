@@ -48,7 +48,7 @@ REQUIRED_USE="
 	)
 "
 DEPEND="
-	sys-devel/llvm:${LLVM_MAJOR}
+	llvm-core/llvm:${LLVM_MAJOR}
 "
 BDEPEND="
 	>=dev-build/cmake-3.16
