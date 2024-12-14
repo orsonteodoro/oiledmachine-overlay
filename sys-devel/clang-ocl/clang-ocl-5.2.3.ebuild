@@ -37,7 +37,7 @@ LICENSE="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE+=" ebuild-revision-0"
 RDEPEND="
-	~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
+	~llvm-core/llvm-roc-${PV}:${ROCM_SLOT}
 	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
 "
 DEPEND="
