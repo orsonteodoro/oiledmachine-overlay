@@ -192,7 +192,7 @@ gen_llvm_bdepend()
 		echo "
 			llvm_slot_${s}? (
 				llvm-core/clang:${s}[${MULTILIB_USEDEP}]
-				sys-devel/lld:${s}
+				llvm-core/lld:${s}
 				llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
 				sys-libs/libomp:${s}[${MULTILIB_USEDEP}]
 			)
@@ -210,7 +210,7 @@ gen_llvm_test_bdepend()
 					=llvm-core/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt]
 				)
 				llvm-core/clang:${s}[${MULTILIB_USEDEP}]
-				sys-devel/lld:${s}
+				llvm-core/lld:${s}
 				llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
 				sys-libs/libomp:${s}[${MULTILIB_USEDEP}]
 				fuzz-testing? (
