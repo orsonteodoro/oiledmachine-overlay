@@ -34,7 +34,7 @@ IUSE="
 "
 RDEPEND="
 	openmp? (
-		sys-libs/libomp:${LLVM_MAJOR}
+		llvm-runtimes/openmp:${LLVM_MAJOR}
 	)
 	tbb? (
 		dev-cpp/tbb
