@@ -180,6 +180,20 @@ src_unpack() {
 
 src_prepare() {
 	default
+	local backends=""
+	if use cuda || use rocm ; then
+		backends+=",pytorch"
+	fi
+	if use tensorrt ; then
+		backends+=",tensorrt"
+	fi
+	if use vulkan ; then
+		backends+=",vulkan"
+	fi
+
+	sed -i -e "s|@BACKENDS_LIST@|[${backends:1}]|g" \
+		"REAL-Video-Enhancer.py" \
+		|| die
 }
 
 src_compile() {
