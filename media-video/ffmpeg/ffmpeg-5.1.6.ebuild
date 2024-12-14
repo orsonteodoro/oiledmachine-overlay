@@ -1424,6 +1424,7 @@ PATCHES=(
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-configure-non-free-options.patch"	# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-4.4.4-no-m32-or-m64-for-nvcc.patch"
 	"${FILESDIR}/extra-patches/${PN}-6.0.1-convert_from_tensorflow-tensorflow2-compat.patch"
+	"${FILESDIR}/extra-patches/${PN}-5.1.6-glslang-fix-configure-test.patch"
 )
 
 build_separate_libffmpeg() {
