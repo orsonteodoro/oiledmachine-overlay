@@ -1237,6 +1237,7 @@ RDEPEND+="
 	)
 	glslang? (
 		dev-util/glslang:=[${MULTILIB_USEDEP}]
+		dev-util/spirv-tools:=[${MULTILIB_USEDEP}]
 	)
 	gme? (
 		>=media-libs/game-music-emu-0.6.0[${MULTILIB_USEDEP}]
