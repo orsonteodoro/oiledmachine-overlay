@@ -289,11 +289,11 @@ RDEPEND="
 	rocm? (
 		rocm_4_3? (
 			=dev-util/hip-4.3*:=
-			=sys-devel/llvm-roc-4.3*
+			=llvm-core/llvm-roc-4.3*
 		)
 		rocm_4_2? (
 			=dev-util/hip-4.2*:=
-			=sys-devel/llvm-roc-4.2*
+			=llvm-core/llvm-roc-4.2*
 		)
 	)
 "
@@ -306,10 +306,10 @@ BDEPEND="
 	virtual/pkgconfig
 	rocm? (
 		rocm_4_3? (
-			~sys-devel/llvm-roc-${HIP_4_3_VERSION}:4.3/${HIP_4_3_VERSION}
+			~llvm-core/llvm-roc-${HIP_4_3_VERSION}:4.3/${HIP_4_3_VERSION}
 		)
 		rocm_4_2? (
-			~sys-devel/llvm-roc-${HIP_4_2_VERSION}:4.2/${HIP_4_2_VERSION}
+			~llvm-core/llvm-roc-${HIP_4_2_VERSION}:4.2/${HIP_4_2_VERSION}
 		)
 	)
 "
