@@ -222,7 +222,7 @@ gen_clang_depstr() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				sys-devel/clang:${s}[${LLVM_USE_DEPS}]
+				llvm-core/clang:${s}[${LLVM_USE_DEPS}]
 			)
 		"
 	done
@@ -343,7 +343,7 @@ llvm_check_deps() {
 	fi
 
 	if use opencl ; then
-		has_version "sys-devel/clang:${LLVM_SLOT}[${flags}]" || return 1
+		has_version "llvm-core/clang:${LLVM_SLOT}[${flags}]" || return 1
 	fi
 	has_version "llvm-core/llvm:${LLVM_SLOT}[${flags}]"
 }
