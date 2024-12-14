@@ -3935,7 +3935,7 @@ gen_llvm_depends() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				sys-devel/clang:${s}
+				llvm-core/clang:${s}
 				sys-devel/lld:${s}
 				llvm-core/llvm:${s}
 			)
