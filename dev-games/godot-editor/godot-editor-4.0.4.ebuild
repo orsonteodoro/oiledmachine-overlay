@@ -239,7 +239,7 @@ gen_cdepend_lto_llvm() {
 		echo "
 			llvm_slot_${s}? (
 				llvm-core/clang:${s}
-				sys-devel/lld:${s}
+				llvm-core/lld:${s}
 				llvm-core/llvm:${s}
 			)
 		"
@@ -473,7 +473,7 @@ BDEPEND+="
 	>=dev-util/pkgconf-${PKGCONF_PV}[pkg-config(+)]
 	dev-build/scons
 	lld? (
-		sys-devel/lld
+		llvm-core/lld
 	)
 	mono? (
 		x11-base/xorg-server[xvfb]
