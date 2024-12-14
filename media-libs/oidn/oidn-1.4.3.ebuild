@@ -68,7 +68,7 @@ gen_clang_depends() {
 			llvm_slot_${s}? (
 				=sys-devel/clang-runtime-${s}*
 				sys-devel/clang:${s}
-				sys-devel/llvm:${s}
+				llvm-core/llvm:${s}
 				sys-devel/lld:${s}
 			)
 		"
