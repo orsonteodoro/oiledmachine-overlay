@@ -30,7 +30,7 @@ IUSE+=" doc"
 CDEPEND+="
 	|| (
 		>=sys-devel/gcc-5
-		>=sys-devel/clang-3.4
+		>=llvm-core/clang-3.4
 	)
 "
 RDEPEND+="
