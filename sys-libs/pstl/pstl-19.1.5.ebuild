@@ -72,7 +72,7 @@ BDEPEND+="
 		$(python_gen_any_dep '
 			dev-python/lit[${PYTHON_USEDEP}]
 		')
-		>=sys-devel/clang-3.9.0
+		>=llvm-core/clang-3.9.0
 	)
 "
 PATCHES=(
@@ -119,7 +119,7 @@ _configure_abi() {
 	export CPP=$(tc-getCPP)
 
 	if tc-is-clang ; then
-		if ! has_version "sys-devel/clang:${SLOT_MAJOR}" ; then
+		if ! has_version "llvm-core/clang:${SLOT_MAJOR}" ; then
 eerror
 eerror "You must emerge clang:${SLOT_MAJOR} to build with clang."
 eerror
