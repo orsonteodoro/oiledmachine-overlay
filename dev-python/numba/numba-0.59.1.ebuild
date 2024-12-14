@@ -81,8 +81,8 @@ gen_clang_bdepend() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				sys-devel/clang:${s}
-				sys-devel/clang-runtime:${s}[openmp]
+				llvm-core/clang:${s}
+				llvm-core/clang-runtime:${s}[openmp]
 				>=sys-libs/libomp-${s}
 			)
 		"
