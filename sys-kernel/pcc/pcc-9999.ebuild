@@ -76,7 +76,7 @@ BDEPEND+="
 	${CDEPEND}
 	|| (
 		sys-devel/gcc
-		sys-devel/clang
+		llvm-core/clang
 	)
 "
 MAKEOPTS="-j1"
