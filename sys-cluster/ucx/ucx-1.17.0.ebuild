@@ -399,7 +399,7 @@ gen_clang_bdepend() {
 		echo "
 			llvm-core/clang:${s}
 			llvm-core/llvm:${s}
-			sys-devel/lld:${s}
+			llvm-core/lld:${s}
 			openmp? (
 				sys-libs/libomp:${s}
 			)
