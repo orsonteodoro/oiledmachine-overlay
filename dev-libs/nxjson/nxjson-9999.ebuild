@@ -35,7 +35,7 @@ BDEPEND="
 	>=dev-build/cmake-2.8
 	|| (
 		sys-devel/gcc
-		sys-devel/clang
+		llvm-core/clang
 	)
 "
 PATCHES=(
