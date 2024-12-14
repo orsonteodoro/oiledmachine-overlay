@@ -398,7 +398,7 @@ gen_clang_bdepend() {
 	for s in ${CLANG_COMPAT[@]} ; do
 		echo "
 			sys-devel/clang:${s}
-			sys-devel/llvm:${s}
+			llvm-core/llvm:${s}
 			sys-devel/lld:${s}
 			openmp? (
 				sys-libs/libomp:${s}
@@ -411,7 +411,7 @@ gen_hip_clang_bdepend() {
 	for pv in ${ROCM_VERSIONS[@]} ; do
 		echo "
 			=sys-devel/gcc-12*
-			~sys-devel/llvm-roc-${pv}:${pv%.*}
+			~llvm-core/llvm-roc-${pv}:${pv%.*}
 			openmp? (
 				~sys-libs/llvm-roc-libomp-${pv}:${pv%.*}
 			)
