@@ -746,7 +746,7 @@ gen_llvm_bdepend() {
 		if (( ${s} >= 16 )) ; then
 			echo "
 				(
-					sys-devel/clang:${s}
+					llvm-core/clang:${s}
 					llvm-core/llvm:${s}
 					sys-devel/lld:${s}
 				)
@@ -755,7 +755,7 @@ gen_llvm_bdepend() {
 			# Monoslotted at < lld-15.0.3
 			echo "
 				(
-					sys-devel/clang:${s}
+					llvm-core/clang:${s}
 					llvm-core/llvm:${s}
 					>=sys-devel/lld-${s}
 				)
@@ -1270,7 +1270,7 @@ einfo "Using mold"
 			) \
 			|| \
 			( \
-				has_version "sys-devel/clang-common[default-lld]" \
+				has_version "llvm-core/clang-common[default-lld]" \
 			) \
 		) \
 	then
