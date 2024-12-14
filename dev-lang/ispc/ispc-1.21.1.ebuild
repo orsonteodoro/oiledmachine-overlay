@@ -102,7 +102,7 @@ gen_llvm_depends() {
 					llvm-core/lld:${s}
 				)
 				openmp? (
-					sys-libs/libomp:${s}
+					llvm-runtimes/openmp:${s}
 				)
 				video_cards_intel? (
 					>=dev-util/spirv-llvm-translator-${s}
@@ -118,7 +118,7 @@ gen_omp_depends() {
 		echo "
 			llvm_slot_${s}? (
 				llvm-core/clang:${s}=
-				sys-libs/libomp:${s}
+				llvm-runtimes/openmp:${s}
 			)
 		"
 	done
@@ -329,10 +329,10 @@ ewarn "PGO has -O3 in CFLAGS as default ON upstream for release builds but not c
 		)
 	elif use openmp ; then
 		if tc-is-clang ; then
-			if ! has_version "sys-libs/libomp:$(clang-major-version)" ; then
+			if ! has_version "llvm-runtimes/openmp:$(clang-major-version)" ; then
 eerror
 eerror "You need to either switch to GCC or rebuild as"
-eerror "sys-libs/libomp:$(clang-major-version)"
+eerror "llvm-runtimes/openmp:$(clang-major-version)"
 eerror
 				die
 			fi
