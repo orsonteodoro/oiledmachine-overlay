@@ -114,11 +114,11 @@ gen_llvm_depend()
 		echo "
 			llvm_slot_${s}? (
 				!cuda? (
-					sys-devel/clang:${s}[${MULTILIB_USEDEP}]
+					llvm-core/clang:${s}[${MULTILIB_USEDEP}]
 					llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
 				)
 				cuda? (
-					sys-devel/clang:${s}[${MULTILIB_USEDEP},llvm_targets_NVPTX]
+					llvm-core/clang:${s}[${MULTILIB_USEDEP},llvm_targets_NVPTX]
 					llvm-core/llvm:${s}[${MULTILIB_USEDEP},llvm_targets_NVPTX]
 				)
 			)
@@ -131,7 +131,7 @@ gen_opx_llvm_rdepend() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				sys-devel/clang:${s}[${MULTILIB_USEDEP},llvm_targets_NVPTX]
+				llvm-core/clang:${s}[${MULTILIB_USEDEP},llvm_targets_NVPTX]
 				sys-devel/lld:${s}
 				llvm-core/llvm:${s}[${MULTILIB_USEDEP},llvm_targets_NVPTX]
 			)
@@ -144,7 +144,7 @@ gen_llvm_bdepend() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
+				llvm-core/clang:${s}[${MULTILIB_USEDEP}]
 				sys-devel/lld:${s}
 				llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
 			)
@@ -255,7 +255,7 @@ BDEPEND+="
 "
 
 llvm_check_deps() {
-	has_version -r "sys-devel/clang:${LLVM_SLOT}"
+	has_version -r "llvm-core/clang:${LLVM_SLOT}"
 }
 
 get_lib_type() {
