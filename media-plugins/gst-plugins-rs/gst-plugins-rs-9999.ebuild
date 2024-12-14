@@ -976,7 +976,7 @@ gen_llvm_bdepend() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
+				llvm-core/clang:${s}[${MULTILIB_USEDEP}]
 				llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
 			)
 		"
