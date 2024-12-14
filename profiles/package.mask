@@ -91,18 +91,18 @@ www-misc/rainbowstream
 # End Of Life (EOL) on the distro.  Last update was Jan 20, 2021 on the upstream
 # repo.  13 will be removed from this overlay when Python 3.10 EOLs or when
 # Blender 3.3 EOLs.  Use at your own risk.
-=sys-devel/clang-13*
-=sys-devel/clang-toolchain-symlinks-13*
-=sys-devel/lld-13*
-=sys-devel/lld-toolchain-symlinks-13*
-=sys-devel/llvm-13*
-=sys-devel/llvm-toolchain-symlinks-13*
-=sys-devel/llvmgold-13*
-=sys-libs/compiler-rt-13*
-=sys-libs/compiler-rt-sanitizers-13*
-=sys-libs/libcxx-13*
-=sys-libs/libcxxabi-13*
-=sys-libs/libomp-13*
+=llvm-core/clang-13*
+=llvm-core/clang-toolchain-symlinks-13*
+=llvm-core/lld-13*
+=llvm-core/lld-toolchain-symlinks-13*
+=llvm-core/llvm-13*
+=llvm-core/llvm-toolchain-symlinks-13*
+=llvm-core/llvmgold-13*
+=llvm-runtimes/compiler-rt-13*
+=llvm-runtimes/compiler-rt-sanitizers-13*
+=llvm-runtimes/libcxx-13*
+=llvm-runtimes/libcxxabi-13*
+=llvm-runtimes/openmp-13*
 
 # Too early.  Avoid multiple instances single slot issues.
 #>=dev-libs/protobuf-22

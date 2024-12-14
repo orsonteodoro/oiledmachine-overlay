@@ -23,12 +23,12 @@ net-libs/libsoup test-websockets
 sys-fs/ecryptfs-utils -suid
 
 # For assertions or testing
-sys-devel/clang -debug
-sys-devel/lld -debug
-sys-devel/llvm -debug
-sys-libs/compiler-rt -debug
-sys-libs/compiler-rt-sanitizers -debug
-sys-libs/libomp -debug
+llvm-core/clang -debug
+llvm-core/lld -debug
+llvm-core/llvm -debug
+llvm-runtimes/compiler-rt -debug
+llvm-runtimes/compiler-rt-sanitizers -debug
+llvm-runtimes/openmp -debug
 
 # Tests requires python2.7 but packaged pypam is only python3
 sys-auth/pam-python test
@@ -58,8 +58,8 @@ net-libs/webkit-gtk libbacktrace
 #sys-kernel/ot-sources c2tcp deepcc orca
 
 # No rocr-runtime, llvm-roc version correspondance
-=sys-libs/libomp-18* llvm_targets_AMDGPU
-=sys-libs/libomp-13* llvm_targets_AMDGPU
+=llvm-runtimes/openmp-18* llvm_targets_AMDGPU
+=llvm-runtimes/openmp-13* llvm_targets_AMDGPU
 
 # recording_plugin = ffmpeg in /etc/howdy/config.ini is broken - \
 #   bugs:  returns 0 for read() in recorders/ffmpeg_reader.py always, so it always fails for read_frame() in recorders/video_capture.py.

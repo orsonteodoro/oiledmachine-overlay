@@ -1104,6 +1104,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | llvm-core/clang-runtime | A meta-ebuild for the Clang runtime libraries |
 | llvm-core/clang-toolchain-symlinks | Symlinks to use Clang on a GCC-free system |
 | llvm-core/lld | The LLVM linker (link editor) |
+| llvm-core/lld-toolchain-symlinks | Symlinks to use LLD on a binutils-free system |
 | llvm-core/llvm | Low Level Virtual Machine |
 | llvm-core/llvm-common | Common files shared between multiple slots of LLVM |
 | llvm-core/llvm-toolchain-symlinks | Symlinks to use LLVM on a binutils-free system |
@@ -1454,7 +1455,6 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sys-devel/DPC++ | oneAPI Data Parallel C++ compiler |
 | sys-devel/aocc | The AOCC compiler system |
 | sys-devel/clang-ocl | OpenCL compilation with the Clang compiler |
-| sys-devel/lld-toolchain-symlinks | Symlinks to use LLD on a binutils-free system |
 | sys-devel/llvm-roc | The ROCm™ fork of the LLVM project |
 | sys-devel/llvm-roc-alt | AOCC for ROCm™ |
 | sys-devel/llvm-roc-alt-symlinks | llvm-roc-alt symlinks |
