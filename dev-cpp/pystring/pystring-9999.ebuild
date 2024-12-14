@@ -38,7 +38,7 @@ BDEPEND+="
 	sys-apps/grep
 	|| (
 		sys-devel/gcc[cxx]
-		sys-devel/clang
+		llvm-core/clang
 	)
 "
 DOCS=( "README" )
