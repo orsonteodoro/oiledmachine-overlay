@@ -166,9 +166,9 @@ BDEPEND+="
 	>=dev-python/sympy-1.5.1[${PYTHON_USEDEP}]
 	virtual/pkgconfig
 	clang? (
-		>=sys-devel/clang-${MIN_CLANG_PV}
+		>=llvm-core/clang-${MIN_CLANG_PV}
 		cpu_flags_x86_avx512dq? (
-			>=sys-devel/clang-${MIN_CLANG_PV_AVX512SKX}
+			>=llvm-core/clang-${MIN_CLANG_PV_AVX512SKX}
 		)
 	)
 	doc? (
