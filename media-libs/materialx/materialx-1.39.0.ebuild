@@ -103,7 +103,7 @@ BDEPEND+="
 	>=dev-build/cmake-3.16
 	|| (
 		>=sys-devel/gcc-8
-		>=sys-devel/clang-5
+		>=llvm-core/clang-5
 	)
 "
 PATCHES=(
