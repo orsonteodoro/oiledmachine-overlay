@@ -877,7 +877,7 @@ gen_llvm_bdepend() {
 			llvm_slot_${LLVM_SLOT}? (
 				sys-devel/clang:${LLVM_SLOT}[${MULTILIB_USEDEP}]
 				sys-devel/lld:${LLVM_SLOT}
-				sys-devel/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}]
+				llvm-core/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}]
 				pgo? (
 					=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}*:=[${MULTILIB_USEDEP},profile]
 				)
@@ -2887,7 +2887,7 @@ _src_install() {
 	rm "${ED}${MOZILLA_FIVE_HOME}/${PN}-bin" || die
 	dosym "${PN}" "${MOZILLA_FIVE_HOME}/${PN}-bin"
 
-	# Don't install llvm-symbolizer from sys-devel/llvm package
+	# Don't install llvm-symbolizer from llvm-core/llvm package
 	if [[ -f "${ED}${MOZILLA_FIVE_HOME}/llvm-symbolizer" ]] ; then
 		rm -v "${ED}${MOZILLA_FIVE_HOME}/llvm-symbolizer" || die
 	fi
