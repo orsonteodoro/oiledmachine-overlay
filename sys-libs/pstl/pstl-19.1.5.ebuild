@@ -55,7 +55,7 @@ ${LLVM_EBUILDS_LLVM19_REVISION}
 "
 RDEPEND="
 	openmp? (
-		sys-libs/libomp:${LLVM_MAJOR}
+		llvm-runtimes/openmp:${LLVM_MAJOR}
 	)
 	tbb? (
 		dev-cpp/tbb
