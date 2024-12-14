@@ -37,7 +37,7 @@ DEPEND+="
 	net-libs/neon
 	system-clangd? (
 		sys-devel/clang:${YCMD_SLOT_47_LLVM_PV_MAJ}
-		sys-devel/llvm:${YCMD_SLOT_47_LLVM_PV_MAJ}
+		llvm-core/llvm:${YCMD_SLOT_47_LLVM_PV_MAJ}
 	)
 	ycmd-47? (
 		$(python_gen_cond_dep 'dev-util/ycmd:47[${PYTHON_USEDEP}]')
