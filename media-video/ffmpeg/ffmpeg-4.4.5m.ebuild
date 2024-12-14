@@ -1368,7 +1368,7 @@ BDEPEND+="
 		)
 	)
 	cuda-llvm? (
-		>=sys-devel/clang-7[llvm_targets_NVPTX]
+		>=llvm-core/clang-7[llvm_targets_NVPTX]
 	)
 	doc? (
 		sys-apps/texinfo
