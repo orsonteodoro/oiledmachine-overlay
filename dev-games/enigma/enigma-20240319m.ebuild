@@ -195,7 +195,7 @@ gen_clang_deps() {
 				>=sys-libs/libcxxabi-${s}[${MULTILIB_USEDEP}]
 				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 				sys-devel/lld:${s}
-				sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
+				llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
 				test? (
 					>=dev-debug/lldb-${s}
 				)
