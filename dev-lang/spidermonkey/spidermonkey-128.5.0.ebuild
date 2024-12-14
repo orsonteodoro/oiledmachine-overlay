@@ -105,7 +105,7 @@ gen_clang_bdepend() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				sys-devel/llvm:${s}
+				llvm-core/llvm:${s}
 				clang? (
 					sys-devel/clang:${s}
 					sys-devel/lld:${s}
@@ -192,8 +192,8 @@ einfo "sys-devel/clang:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT
 			return 1
 		fi
 
-		if ! has_version -b "sys-devel/llvm:${LLVM_SLOT}" ; then
-einfo "sys-devel/llvm:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+		if ! has_version -b "llvm-core/llvm:${LLVM_SLOT}" ; then
+einfo "llvm-core/llvm:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
 			return 1
 		fi
 
