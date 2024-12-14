@@ -161,7 +161,7 @@ einfo "mentioned in bug #767700."
 einfo
 
 einfo
-einfo "See sys-devel/clang/metadata.xml for details on PGO/BOLT optimization."
+einfo "See llvm-core/clang/metadata.xml for details on PGO/BOLT optimization."
 einfo
 }
 
