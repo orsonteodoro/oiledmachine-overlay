@@ -66,8 +66,8 @@ gen_clang_depends() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				=sys-devel/clang-runtime-${s}*
-				sys-devel/clang:${s}
+				=llvm-core/clang-runtime-${s}*
+				llvm-core/clang:${s}
 				llvm-core/llvm:${s}
 				sys-devel/lld:${s}
 			)
