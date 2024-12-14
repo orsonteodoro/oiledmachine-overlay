@@ -645,7 +645,7 @@ BDEPEND+="
 	)
 	|| (
 		sys-devel/gcc[cxx]
-		sys-devel/clang
+		llvm-core/clang
 	)
 "
 RESTRICT="mirror"
