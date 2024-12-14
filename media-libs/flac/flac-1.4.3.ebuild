@@ -102,7 +102,7 @@ has_sanitizer() {
 
 _src_configure() {
 	filter-flags -fsanitize=cfi-icall
-	if tc-is-clang && has_version "sys-libs/compiler-rt-sanitizers[cfi]" && has_sanitizer "cfi" ; then
+	if tc-is-clang && has_version "llvm-runtimes/compiler-rt-sanitizers[cfi]" && has_sanitizer "cfi" ; then
 		append_all -fno-sanitize=cfi-icall # cfi-icall breaks CEF with illegal instruction
 	fi
 
