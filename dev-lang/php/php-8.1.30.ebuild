@@ -426,7 +426,7 @@ gen_clang_bdepend() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			(
-				=sys-libs/compiler-rt-sanitizers-${s}*[profile]
+				=llvm-runtimes/compiler-rt-sanitizers-${s}*[profile]
 				llvm-core/clang:${s}
 				sys-devel/gcc:${GCC_SLOT}
 				llvm-core/lld:${s}
