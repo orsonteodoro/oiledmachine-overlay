@@ -891,8 +891,8 @@ gen_llvm_bdepend() {
 				llvm-core/lld:${LLVM_SLOT}
 				llvm-core/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}]
 				pgo? (
-					=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}*[${MULTILIB_USEDEP},profile]
-					sys-libs/compiler-rt-sanitizers:=
+					=llvm-runtimes/compiler-rt-sanitizers-${LLVM_SLOT}*[${MULTILIB_USEDEP},profile]
+					llvm-runtimes/compiler-rt-sanitizers:=
 				)
 			)
 			wasm? (
@@ -1002,9 +1002,9 @@ ewarn
 	fi
 
 	if use pgo ; then
-		if ! has_version -b "=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}*[profile]" ; then
+		if ! has_version -b "=llvm-runtimes/compiler-rt-sanitizers-${LLVM_SLOT}*[profile]" ; then
 ewarn
-ewarn "=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}*[profile] is missing!"
+ewarn "=llvm-runtimes/compiler-rt-sanitizers-${LLVM_SLOT}*[profile] is missing!"
 ewarn "Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
 ewarn
 			return 1
@@ -2148,9 +2148,9 @@ eerror "You need to emerge llvm-core/lld:${clang_slot}"
 eerror
 			die
 		fi
-		if ! has_version "=sys-libs/compiler-rt-sanitizers-${clang_slot}*[profile]" ; then
+		if ! has_version "=llvm-runtimes/compiler-rt-sanitizers-${clang_slot}*[profile]" ; then
 eerror
-eerror "You need to emerge =sys-libs/compiler-rt-sanitizers-${clang_slot}*[profile]"
+eerror "You need to emerge =llvm-runtimes/compiler-rt-sanitizers-${clang_slot}*[profile]"
 eerror
 			die
 		fi
