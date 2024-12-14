@@ -88,7 +88,7 @@ BDEPEND+="
 	')
 	>=dev-build/cmake-3.13.0
 	>=sys-devel/gcc-12.3.0:12
-	>=sys-devel/llvm-16.0.6:16
+	>=llvm-core/llvm-16.0.6:16
 	dev-build/ninja
 "
 DOCS=( "README.md" )
