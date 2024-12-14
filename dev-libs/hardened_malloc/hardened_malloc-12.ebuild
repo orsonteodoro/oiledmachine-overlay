@@ -113,7 +113,7 @@ gen_clang_pairs() {
 		echo "
 			llvm_slot_${s}? (
 				sys-devel/clang:${s}
-				sys-devel/llvm:${s}
+				llvm-core/llvm:${s}
 				sys-devel/lld:${s}
 			)
 		"
