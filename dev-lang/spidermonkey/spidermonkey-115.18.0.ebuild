@@ -110,7 +110,7 @@ gen_clang_bdepend() {
 				llvm-core/llvm:${s}
 				clang? (
 					llvm-core/clang:${s}
-					sys-devel/lld:${s}
+					llvm-core/lld:${s}
 				)
 			)
 		"
@@ -286,8 +286,8 @@ einfo "Either dev-lang/rust or dev-lang/rust-bin is missing for ${LLVM_SLOT}! Ca
 		fi
 
 		if ! tc-ld-is-mold ; then
-			if ! has_version -b "sys-devel/lld:${LLVM_SLOT}" ; then
-einfo "sys-devel/lld:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+			if ! has_version -b "llvm-core/lld:${LLVM_SLOT}" ; then
+einfo "llvm-core/lld:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
 				return 1
 			fi
 		fi
