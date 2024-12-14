@@ -193,7 +193,7 @@ gen_clang_deps() {
 			llvm_slot_${s}? (
 				>=sys-libs/libcxx-${s}[${MULTILIB_USEDEP}]
 				>=sys-libs/libcxxabi-${s}[${MULTILIB_USEDEP}]
-				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
+				llvm-core/clang:${s}[${MULTILIB_USEDEP}]
 				sys-devel/lld:${s}
 				llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
 				test? (
