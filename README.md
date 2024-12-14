@@ -504,7 +504,7 @@ UOPTS_GROUP="portage"
 
 ```
 Contents of /etc/portage/env/package.env:
-sys-devel/llvm uopts_portage.conf
+llvm-core/llvm uopts_portage.conf
 media-libs/mesa uopts_x.conf
 games-fps/foo uopts_x.conf
 games-fps/bar uopts_wayland.conf
