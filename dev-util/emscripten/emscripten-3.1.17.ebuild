@@ -185,7 +185,7 @@ RDEPEND+="
 	(
 		>=sys-devel/clang-${LLVM_SLOT}:${LLVM_SLOT}=[llvm_targets_WebAssembly]
 		>=sys-devel/lld-${LLVM_SLOT}:${LLVM_SLOT}
-		>=sys-devel/llvm-${LLVM_SLOT}:${LLVM_SLOT}=[llvm_targets_WebAssembly]
+		>=llvm-core/llvm-${LLVM_SLOT}:${LLVM_SLOT}=[llvm_targets_WebAssembly]
 	)
 "
 DEPEND+="
