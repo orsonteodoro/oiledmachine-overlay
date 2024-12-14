@@ -100,35 +100,35 @@ gen_llvm_rdepend() {
 		echo "
 			llvm_slot_${u}? (
 				amd64? (
-					sys-devel/llvm:${u}[llvm_targets_X86,llvm_targets_NVPTX?]
+					llvm-core/llvm:${u}[llvm_targets_X86,llvm_targets_NVPTX?]
 					sys-devel/mlir:${u}[llvm_targets_X86,llvm_targets_NVPTX?]
 				)
 				arm? (
-					sys-devel/llvm:${u}[llvm_targets_ARM]
+					llvm-core/llvm:${u}[llvm_targets_ARM]
 					sys-devel/mlir:${u}[llvm_targets_ARM]
 				)
 				arm64? (
-					sys-devel/llvm:${u}[llvm_targets_AArch64]
+					llvm-core/llvm:${u}[llvm_targets_AArch64]
 					sys-devel/mlir:${u}[llvm_targets_AArch64]
 				)
 				mips? (
-					sys-devel/llvm:${u}[llvm_targets_Mips]
+					llvm-core/llvm:${u}[llvm_targets_Mips]
 					sys-devel/mlir:${u}[llvm_targets_Mips]
 				)
 				ppc? (
-					sys-devel/llvm:${u}[llvm_targets_PowerPC]
+					llvm-core/llvm:${u}[llvm_targets_PowerPC]
 					sys-devel/mlir:${u}[llvm_targets_PowerPC]
 				)
 				ppc64? (
-					sys-devel/llvm:${u}[llvm_targets_PowerPC]
+					llvm-core/llvm:${u}[llvm_targets_PowerPC]
 					sys-devel/mlir:${u}[llvm_targets_PowerPC]
 				)
 				sparc? (
-					sys-devel/llvm:${u}[llvm_targets_Sparc]
+					llvm-core/llvm:${u}[llvm_targets_Sparc]
 					sys-devel/mlir:${u}[llvm_targets_Sparc]
 				)
 				x86? (
-					sys-devel/llvm:${u}[llvm_targets_X86,llvm_targets_NVPTX?]
+					llvm-core/llvm:${u}[llvm_targets_X86,llvm_targets_NVPTX?]
 					sys-devel/mlir:${u}[llvm_targets_X86,llvm_targets_NVPTX?]
 				)
 			)
@@ -177,13 +177,13 @@ RDEPEND+="
 	)
 	rocm? (
 		rocm_5_1? (
-			sys-devel/llvm-roc:5.1[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
+			llvm-core/llvm-roc:5.1[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
 		)
 		rocm_4_5? (
-			sys-devel/llvm-roc:4.5[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
+			llvm-core/llvm-roc:4.5[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
 		)
 		rocm_4_1? (
-			sys-devel/llvm-roc:4.1[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
+			llvm-core/llvm-roc:4.1[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
 		)
 	)
 	tutorials? (
@@ -249,22 +249,22 @@ python_configure() {
 einfo "Called python_configure"
 	local dynlib=0
 	local llvm_root_dir
-	if use rocm_5_1 && has_version "~sys-devel/llvm-roc-5.1.3" ; then
+	if use rocm_5_1 && has_version "~llvm-core/llvm-roc-5.1.3" ; then
 		llvm_root_dir="/opt/rocm-5.1.3/llvm" # LLVM 14.0.0git
 		export ROCM_VERSION="5.1.3"
-	elif use rocm_4_5 && has_version "~sys-devel/llvm-roc-4.5.2" ; then
+	elif use rocm_4_5 && has_version "~llvm-core/llvm-roc-4.5.2" ; then
 		llvm_root_dir="/opt/rocm-4.5.2/llvm" # LLVM 13.0.0git
 		export ROCM_VERSION="4.5.2"
-	elif use rocm_4_1 && has_version "~sys-devel/llvm-roc-4.1.0" ; then
+	elif use rocm_4_1 && has_version "~llvm-core/llvm-roc-4.1.0" ; then
 		llvm_root_dir="/opt/rocm-4.1.0/llvm" # LLVM 12.0.0git
 		export ROCM_VERSION="4.1.0"
-	elif use llvm_slot_14 && has_version "sys-devel/llvm:14" && has_version "sys-devel/mlir:14"; then
+	elif use llvm_slot_14 && has_version "llvm-core/llvm:14" && has_version "sys-devel/mlir:14"; then
 		llvm_root_dir="/usr/lib/llvm/14"
 		dynlib=1
-	elif use llvm_slot_13 && has_version "sys-devel/llvm:13" && has_version "sys-devel/mlir:13"; then
+	elif use llvm_slot_13 && has_version "llvm-core/llvm:13" && has_version "sys-devel/mlir:13"; then
 		llvm_root_dir="/usr/lib/llvm/13"
 		dynlib=1
-	elif use llvm_slot_12 && has_version "sys-devel/llvm:12" && has_version "sys-devel/mlir:12"; then
+	elif use llvm_slot_12 && has_version "llvm-core/llvm:12" && has_version "sys-devel/mlir:12"; then
 		llvm_root_dir="/usr/lib/llvm/12"
 		dynlib=1
 	else
