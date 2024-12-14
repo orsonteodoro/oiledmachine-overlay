@@ -810,4 +810,6 @@ pkg_postinst() {
 	optfeature "Qt6 GUI frontend" "media-video/video2x-qt6"
 }
 
-# OILEDMACHINE-OVERLAY-TEST PASSED (6.2.0, 20241213)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (6.2.0, 20241213)
+# realesr-animevideov3 - passed
+# realesrgan-plus - passed
