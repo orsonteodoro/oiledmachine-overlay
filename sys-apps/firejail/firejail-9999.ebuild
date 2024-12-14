@@ -1537,7 +1537,7 @@ gen_clang_bdepend() {
 			llvm-core/lld:${s}
 			llvm-core/llvm:${s}
 			scudo? (
-				sys-libs/compiler-rt-sanitizers[scudo]
+				llvm-runtimes/compiler-rt-sanitizers[scudo]
 			)
 		)
 		"
@@ -3600,7 +3600,7 @@ ewarn "See metadata.xml or \`epkginfo -x sys-apps/firejail::oiledmachine-overlay
 	local allocator_args_hardened_malloc=""
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
-		if use "llvm_slot_${s}" && has_version "sys-libs/compiler-rt-sanitizers:${s}[scudo]" ; then
+		if use "llvm_slot_${s}" && has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[scudo]" ; then
 			if [[ "${SCUDO_FREE_IMMEDIATE[${profile_name}]}" != "1" ]] ; then
 				allocator_args_scudo+=" --env=SCUDO_OPTIONS='quarantine_size_kb=256:quarantine_max_chunk_size=2048:thread_local_quarantine_size_kb=64' "
 			fi
