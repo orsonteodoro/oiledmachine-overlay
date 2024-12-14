@@ -187,7 +187,7 @@ BDEPEND="
 		virtual/pkgconfig
 	)
 	|| (
-		sys-devel/lld:${LLVM_SLOT}
+		llvm-core/lld:${LLVM_SLOT}
 		~llvm-core/llvm-roc-${PV}:${ROCM_SLOT}[${LLVM_TARGETS_USEDEP}]
 	)
 "
