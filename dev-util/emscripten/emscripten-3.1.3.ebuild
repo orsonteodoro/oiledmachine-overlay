@@ -183,7 +183,7 @@ RDEPEND+="
 	>=net-libs/nodejs-4.1.1
 	(
 		>=llvm-core/clang-${LLVM_SLOT}:${LLVM_SLOT}=[llvm_targets_WebAssembly]
-		>=sys-devel/lld-${LLVM_SLOT}:${LLVM_SLOT}
+		>=llvm-core/lld-${LLVM_SLOT}:${LLVM_SLOT}
 		>=llvm-core/llvm-${LLVM_SLOT}:${LLVM_SLOT}=[llvm_targets_WebAssembly]
 	)
 "
