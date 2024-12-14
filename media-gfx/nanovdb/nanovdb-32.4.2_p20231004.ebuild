@@ -184,7 +184,7 @@ BDEPEND+="
 	)
 	|| (
 		>=sys-devel/gcc-9.3.1
-		>=sys-devel/clang-5.0
+		>=llvm-core/clang-5.0
 		>=dev-lang/icc-19
 	)
 "
