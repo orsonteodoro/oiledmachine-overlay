@@ -83,7 +83,7 @@ gen_clang_bdepend() {
 			llvm_slot_${s}? (
 				llvm-core/clang:${s}
 				llvm-core/clang-runtime:${s}[openmp]
-				>=sys-libs/libomp-${s}
+				>=llvm-runtimes/openmp-${s}
 			)
 		"
 	done
@@ -159,8 +159,8 @@ eerror "You must enable =sys-devel/gcc-${s}[openmp] or disable the openmp USE fl
 		fi
 		if tc-is-clang ; then
 			local s=$(clang-major-version)
-			if ! has_version ">=sys-libs/libomp-${s}" ; then
-eerror "You must emerge >=sys-libs/libomp-${s} or disable the openmp USE flag."
+			if ! has_version ">=llvm-runtimes/openmp-${s}" ; then
+eerror "You must emerge >=llvm-runtimes/openmp-${s} or disable the openmp USE flag."
 				die
 			fi
 		fi
