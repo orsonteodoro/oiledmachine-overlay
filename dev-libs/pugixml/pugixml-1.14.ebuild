@@ -28,7 +28,7 @@ RDEPEND+="
 "
 BDEPEND+="
 	|| (
-		>=sys-devel/clang-14.0
+		>=llvm-core/clang-14.0
 		>=sys-devel/gcc-11.2.0
 	)
 	>=dev-build/cmake-3.5
