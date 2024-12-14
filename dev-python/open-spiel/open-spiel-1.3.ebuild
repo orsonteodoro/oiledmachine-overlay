@@ -91,7 +91,7 @@ DEPEND+="
 BDEPEND+="
 	>=dev-python/pip-20.0.2[${PYTHON_USEDEP}]
 	>=dev-build/cmake-3.17
-	>=sys-devel/clang-7
+	>=llvm-core/clang-7
 	doc? (
 		>=dev-python/markdown-3.4[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-5.1[${PYTHON_USEDEP}]
