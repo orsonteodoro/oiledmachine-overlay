@@ -37,7 +37,7 @@ BDEPEND="
 	)
 	|| (
 		>=sys-devel/gcc-4.9
-		>=sys-devel/clang-3.7
+		>=llvm-core/clang-3.7
 	)
 "
 DOCS=( "README.md" )
