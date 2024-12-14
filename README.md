@@ -808,6 +808,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-libs/miniz | A lossless, high performance data compression library |
 | dev-libs/nccl | Optimized primitives for collective multi-GPU communication |
 | dev-libs/nccl-rdma-sharp-plugins | RDMA and SHARP plugins for the NCCL library |
+| dev-libs/ncnn | High-performance neural network inference framework |
 | dev-libs/nxjson | A very small JSON parser written in C |
 | dev-libs/protobuf | An extensible mechanism for serializing structured data |
 | dev-libs/pugixml | Light-weight, simple, and fast XML parser for C++ with XPath support |
@@ -876,6 +877,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/coqui-tts | 🐸💬 - a deep learning toolkit for Text-to-Speech, battle-tested in research and production |
 | dev-python/coqui-tts-trainer | 🐸 - A general purpose model trainer, as flexible as it gets |
 | dev-python/cuda-python | Python bindings for CUDA |
+| dev-python/cx-Freeze | Create standalone executables from Python scripts |
 | dev-python/cymem | 💥 Cython memory pool for RAII-style memory management |
 | dev-python/cython | A Python to C compiler |
 | dev-python/dash-bootstrap-components | Bootstrap components for Plotly Dash |
@@ -938,7 +940,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/keras-preprocessing | Easy data preprocessing and data augmentation for deep learning models |
 | dev-python/labmaze | A standalone release of DeepMind Lab's maze generator with Python bindings. |
 | dev-python/langcodes | A Python library for working with and comparing language codes. |
-| dev-python/language-data | An optional supplement to \`langcodes\` that stores names and statistics of languages |
+| dev-python/language-data | An optional supplement to `langcodes ` that stores names and statistics of languages |
 | dev-python/librosa | A Python package for music and audio analysis |
 | dev-python/lightning | The Deep Learning framework to train, deploy, and ship AI products Lightning fast. |
 | dev-python/lightning-api-access | Lightning Frontend Showing how a given API can be accessed |
@@ -1023,6 +1025,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/rlax | A library of reinforcement learning building blocks in JAX. |
 | dev-python/rlcard | Reinforcement Learning or AI bots for card games like Blackjack, Leduc, Texas, DouDizhu, Mahjong, UNO |
 | dev-python/runs | Run a block of text as a subprocess |
+| dev-python/scenedetect | 🎥 Python and OpenCV-based scene cut/transition detection program & library |
 | dev-python/scipy | Scientific algorithms library for Python |
 | dev-python/sentencepiece | Unsupervised text tokenizer for neural network based text generation |
 | dev-python/setuptools-gettext | A setuptools plugin for building multilingual MO files |
@@ -1096,6 +1099,21 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | gui-apps/taigo | A virtual pet for your desktop built with GTK+, Vala, and love. |
 | gui-apps/windowpet | Pet overlay app built with tauri and react that lets you have adorable companion such as pets, anime characters on your screen. |
 | gui-libs/libdecor | A client-side decorations library for Wayland clients |
+| llvm-core/clang | C language family frontend for LLVM |
+| llvm-core/clang-common | Common files shared between multiple slots of clang |
+| llvm-core/clang-runtime | A meta-ebuild for the Clang runtime libraries |
+| llvm-core/clang-toolchain-symlinks | Symlinks to use Clang on a GCC-free system |
+| llvm-core/lld | The LLVM linker (link editor) |
+| llvm-core/llvm | Low Level Virtual Machine |
+| llvm-core/llvm-common | Common files shared between multiple slots of LLVM |
+| llvm-core/llvm-toolchain-symlinks | Symlinks to use LLVM on a binutils-free system |
+| llvm-core/llvmgold | LLVMgold plugin symlink for autoloading |
+| llvm-runtimes/compiler-rt | Compiler runtime library for clang (built-in part) |
+| llvm-runtimes/compiler-rt-sanitizers | Compiler runtime libraries for clang (sanitizers & xray) |
+| llvm-runtimes/libcxx | New implementation of the C++ standard library, targeting C++11 |
+| llvm-runtimes/libcxxabi | Low level support for a standard C++ library |
+| llvm-runtimes/libunwind | C++ runtime stack unwinder from LLVM |
+| llvm-runtimes/openmp | OpenMP runtime library for LLVM/clang compiler |
 | media-fonts/noto-color-emoji-bin | A prebuilt font for colored emojis |
 | media-fonts/noto-color-emoji-config | A minimal config for using Noto colored emojis |
 | media-gfx/alembic | Alembic is an open framework for storing and sharing scene data that includes a C++ library, a file format, and client plugins and applications. |
@@ -1323,6 +1341,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-sound/puddletag | An audio tag editor |
 | media-sound/spotify | A social music platform |
 | media-sound/w3crapcli-lastfm | w3crapcli/last.fm provides a command line interface for the last.fm web service |
+| media-video/REAL-Video-Enhancer | Interpolate and upscale video easily |
 | media-video/ffmpeg | Complete solution to record/convert/stream audio and video. Includes libavcodec |
 | media-video/gspca_ep800 | Kernel Modules for Endpoints EP800/SE402/SE401* |
 | media-video/linux-enable-ir-emitter | Provides support for infrared cameras that are not directly enabled out-of-the box. |
@@ -1434,21 +1453,12 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sys-cluster/xpmem | XPMEM is a Linux kernel module that enables a process to map the memory of another process into its virtual address space. |
 | sys-devel/DPC++ | oneAPI Data Parallel C++ compiler |
 | sys-devel/aocc | The AOCC compiler system |
-| sys-devel/clang | C language family frontend for LLVM |
-| sys-devel/clang-common | Common files shared between multiple slots of clang |
 | sys-devel/clang-ocl | OpenCL compilation with the Clang compiler |
-| sys-devel/clang-runtime | A meta-ebuild for the Clang runtime libraries |
-| sys-devel/clang-toolchain-symlinks | Symlinks to use Clang on a GCC-free system |
-| sys-devel/lld | The LLVM linker (link editor) |
 | sys-devel/lld-toolchain-symlinks | Symlinks to use LLD on a binutils-free system |
-| sys-devel/llvm | Low Level Virtual Machine |
-| sys-devel/llvm-common | Common files shared between multiple slots of LLVM |
 | sys-devel/llvm-roc | The ROCm™ fork of the LLVM project |
 | sys-devel/llvm-roc-alt | AOCC for ROCm™ |
 | sys-devel/llvm-roc-alt-symlinks | llvm-roc-alt symlinks |
 | sys-devel/llvm-roc-symlinks | llvm-roc symlinks |
-| sys-devel/llvm-toolchain-symlinks | Symlinks to use LLVM on a binutils-free system |
-| sys-devel/llvmgold | LLVMgold plugin symlink for autoloading |
 | sys-devel/mlir | Multi Level Intermediate Representation for LLVM |
 | sys-devel/mold | A Modern Linker |
 | sys-firmware/amdgpu-dkms-firmware | Firmware blobs used by the amdgpu kernel driver |
@@ -1461,13 +1471,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sys-kernel/pcc | Performance-oriented Congestion Control |
 | sys-kernel/rock-dkms | ROCk DKMS kernel module |
 | sys-kernel/rock-dkms.bak | ROCk DKMS kernel module |
-| sys-libs/compiler-rt | Compiler runtime library for clang (built-in part) |
-| sys-libs/compiler-rt-sanitizers | Compiler runtime libraries for clang (sanitizers & xray) |
 | sys-libs/libbacktrace | C library that may be linked into a C/C++ program to produce symbolic backtraces |
-| sys-libs/libcxx | New implementation of the C++ standard library, targeting C++11 |
-| sys-libs/libcxxabi | Low level support for a standard C++ library |
-| sys-libs/libomp | OpenMP runtime library for LLVM/clang compiler |
-| sys-libs/llvm-libunwind | C++ runtime stack unwinder from LLVM |
 | sys-libs/llvm-roc-libomp | The ROCm™ fork of LLVM's libomp |
 | sys-libs/pstl | Parallel STL is an implementation of the C++ standard library algorithms with support for execution policies |
 | sys-libs/zlib | Standard (de)compression library |
