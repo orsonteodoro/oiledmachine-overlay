@@ -136,7 +136,7 @@ BDEPEND="
 	)
 	|| (
 		>=sys-devel/gcc-14
-		>=sys-devel/clang-18
+		>=llvm-core/clang-18
 	)
 "
 
