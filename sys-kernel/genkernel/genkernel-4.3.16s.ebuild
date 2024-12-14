@@ -244,7 +244,7 @@ gen_clang_pgo_rdepends() {
 		echo "
 			(
 				sys-devel/clang:${s}
-				sys-devel/llvm:${s}
+				llvm-core/llvm:${s}
 			)
 		"
 	done
@@ -256,7 +256,7 @@ gen_llvm_rdepends() {
 			(
 				sys-devel/clang:${s}
 				sys-devel/lld:${s}
-				sys-devel/llvm:${s}
+				llvm-core/llvm:${s}
 			)
 		"
 	done
@@ -268,7 +268,7 @@ gen_lto_rdepends() {
 			(
 				sys-devel/clang:${s}
 				sys-devel/lld:${s}
-				sys-devel/llvm:${s}
+				llvm-core/llvm:${s}
 			)
 		"
 	done
@@ -283,7 +283,7 @@ gen_cfi_arm64_rdepends() {
 				=sys-libs/compiler-rt-sanitizers-${s}*[cfi?,shadowcallstack?]
 				sys-devel/clang:${s}
 				sys-devel/lld:${s}
-				sys-devel/llvm:${s}
+				llvm-core/llvm:${s}
 			)
 		"
 	done
@@ -298,7 +298,7 @@ gen_cfi_x86_rdepends() {
 				=sys-libs/compiler-rt-sanitizers-${s}*[cfi?,shadowcallstack?]
 				sys-devel/clang:${s}
 				sys-devel/lld:${s}
-				sys-devel/llvm:${s}
+				llvm-core/llvm:${s}
 			)
 		"
 	done
