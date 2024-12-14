@@ -135,7 +135,7 @@ CLANG_PV_MIN="6" # for c++17
 BDEPEND+="
 	|| (
 		>=sys-devel/gcc-${GCC_PV_MIN}[cxx]
-		>=sys-devel/clang-${CLANG_PV_MIN}
+		>=llvm-core/clang-${CLANG_PV_MIN}
 	)
 	>=dev-build/meson-0.45
 	virtual/pkgconfig
