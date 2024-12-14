@@ -25,7 +25,9 @@
     </flag>
     <flag name="vulkan">
       Support CPUs or GPUs with the Vulkan® 1.3 backend.
-      Compatible with Intel® GPUs or older GPU models for different vendors.
+      Compatible with Intel® GPUs based on Skylake (Gen9) or newer.
+      Compatible with AMD GPUs based on Southern Islands or newer.
+      Compatible with NVIDIA® GPUs based on Maxwell or newer.
     </flag>
   </use>
 </pkgmetadata>
