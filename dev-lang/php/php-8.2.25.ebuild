@@ -431,7 +431,7 @@ gen_clang_bdepend() {
 		echo "
 			(
 				=sys-libs/compiler-rt-sanitizers-${s}*[profile]
-				sys-devel/clang:${s}
+				llvm-core/clang:${s}
 				sys-devel/gcc:${GCC_SLOT}
 				sys-devel/lld:${s}
 				llvm-core/llvm:${s}[bolt?]
