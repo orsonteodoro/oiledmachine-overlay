@@ -97,9 +97,9 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	!sys-devel/llvm-rocm:0
+	!llvm-core/llvm-rocm:0
 	dev-libs/libxml2
-	sys-devel/llvm-roc-symlinks:${ROCM_SLOT}/${PV}
+	llvm-core/llvm-roc-symlinks:${ROCM_SLOT}/${PV}
 	sys-libs/ncurses:=
 	sys-libs/zlib
 	virtual/cblas
@@ -124,7 +124,7 @@ src_prepare() {
 
 # FIXES:
 # ld.bfd: tools/llvm-split/CMakeFiles/llvm-split.dir/llvm-split.cpp.o: undefined reference to symbol '_ZN4llvm6TripleC1ERKNS_5TwineE'
-# ld.bfd: /var/tmp/portage/sys-devel/llvm-roc-6.2.0/work/llvm-project-rocm-6.2.0/llvm_build/./lib/libLLVMTargetParser.so.18git: error adding symbols: DSO missing from command line
+# ld.bfd: /var/tmp/portage/llvm-core/llvm-roc-6.2.0/work/llvm-project-rocm-6.2.0/llvm_build/./lib/libLLVMTargetParser.so.18git: error adding symbols: DSO missing from command line
 # collect2: error: ld returned 1 exit status
 
 		eapply "${FILESDIR}/${PN}-6.2.0-link-llvm-split-to-LLVMTargetParser.patch"
