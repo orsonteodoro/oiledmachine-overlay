@@ -33,7 +33,7 @@ RDEPEND+="
 	openmp? (
 		|| (
 			sys-devel/gcc[openmp]
-			sys-libs/libomp
+			llvm-runtimes/openmp
 		)
 	)
 "
