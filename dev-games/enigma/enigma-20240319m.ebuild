@@ -191,8 +191,8 @@ gen_clang_deps() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				>=sys-libs/libcxx-${s}[${MULTILIB_USEDEP}]
-				>=sys-libs/libcxxabi-${s}[${MULTILIB_USEDEP}]
+				>=llvm-runtimes/libcxx-${s}[${MULTILIB_USEDEP}]
+				>=llvm-runtimes/libcxxabi-${s}[${MULTILIB_USEDEP}]
 				llvm-core/clang:${s}[${MULTILIB_USEDEP}]
 				llvm-core/lld:${s}
 				llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
