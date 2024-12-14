@@ -429,7 +429,7 @@ gen_clang_bdepend() {
 				=sys-libs/compiler-rt-sanitizers-${s}*[profile]
 				llvm-core/clang:${s}
 				sys-devel/gcc:${GCC_SLOT}
-				sys-devel/lld:${s}
+				llvm-core/lld:${s}
 				llvm-core/llvm:${s}[bolt?]
 			)
 		"
