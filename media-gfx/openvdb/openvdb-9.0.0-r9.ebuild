@@ -114,15 +114,15 @@ gen_ax_depend() {
 		if [[ "${s}" == "3" ]] ; then
 			echo "
 				llvm_slot_${s}? (
-					=sys-devel/clang-${s}*
+					=llvm-core/clang-${s}*
 					=llvm-core/llvm-${s}*
-					>=sys-devel/clang-3.8
+					>=llvm-core/clang-3.8
 				)
 			"
 		else
 			echo "
 				llvm_slot_${s}? (
-					=sys-devel/clang-${s}*
+					=llvm-core/clang-${s}*
 					=llvm-core/llvm-${s}*
 				)
 			"
@@ -197,15 +197,15 @@ gen_llvm_bdepend() {
 		if [[ "${s}" == "3" ]] ; then
 			echo "
 				llvm_slot_${s}? (
-					=sys-devel/clang-${s}*
+					=llvm-core/clang-${s}*
 					=llvm-core/llvm-${s}*
-					>=sys-devel/clang-3.8
+					>=llvm-core/clang-3.8
 				)
 			"
 		else
 			echo "
 				llvm_slot_${s}? (
-					=sys-devel/clang-${s}*
+					=llvm-core/clang-${s}*
 					=llvm-core/llvm-${s}*
 				)
 			"
@@ -283,7 +283,7 @@ check_clang() {
 	local found=0
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
-		if has_version "sys-devel/clang:${s}" ; then
+		if has_version "llvm-core/clang:${s}" ; then
 			found=1
 			export CC="${CHOST}-clang-${s}"
 			export CXX="${CHOST}-clang++-${s}"
