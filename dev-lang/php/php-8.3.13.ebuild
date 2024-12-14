@@ -436,7 +436,7 @@ gen_clang_bdepend() {
 				sys-devel/clang:${s}
 				sys-devel/gcc:${GCC_SLOT}
 				sys-devel/lld:${s}
-				sys-devel/llvm:${s}[bolt?]
+				llvm-core/llvm:${s}[bolt?]
 			)
 		"
 	done
