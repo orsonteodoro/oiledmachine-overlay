@@ -36,7 +36,7 @@ RDEPEND="
 		llvm-runtimes/openmp:${PV%%.*}[${MULTILIB_USEDEP}]
 	)
 	pstl? (
-		sys-libs/pstl:${PV%%.*}
+		llvm-core/pstl:${PV%%.*}
 	)
 "
 

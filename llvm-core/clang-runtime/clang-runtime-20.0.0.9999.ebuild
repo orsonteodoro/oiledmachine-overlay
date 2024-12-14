@@ -34,7 +34,7 @@ RDEPEND="
 		)
 	)
 	pstl? (
-		sys-libs/pstl:${PV%%.*}
+		llvm-core/pstl:${PV%%.*}
 	)
 "
 

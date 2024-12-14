@@ -1110,6 +1110,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | llvm-core/llvm-toolchain-symlinks | Symlinks to use LLVM on a binutils-free system |
 | llvm-core/llvmgold | LLVMgold plugin symlink for autoloading |
 | llvm-core/mlir | Multi Level Intermediate Representation for LLVM |
+| llvm-core/pstl | Parallel STL is an implementation of the C++ standard library algorithms with support for execution policies |
 | llvm-runtimes/compiler-rt | Compiler runtime library for clang (built-in part) |
 | llvm-runtimes/compiler-rt-sanitizers | Compiler runtime libraries for clang (sanitizers & xray) |
 | llvm-runtimes/libcxx | New implementation of the C++ standard library, targeting C++11 |
@@ -1473,7 +1474,6 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sys-kernel/rock-dkms.bak | ROCk DKMS kernel module |
 | sys-libs/libbacktrace | C library that may be linked into a C/C++ program to produce symbolic backtraces |
 | sys-libs/llvm-roc-libomp | The ROCm™ fork of LLVM's libomp |
-| sys-libs/pstl | Parallel STL is an implementation of the C++ standard library algorithms with support for execution policies |
 | sys-libs/zlib | Standard (de)compression library |
 | sys-power/cpupower-gui | This program is designed to allow you to change the frequency limits of your cpu and its governor similar to cpupower. |
 | sys-process/nvtop | GPU & Accelerator process monitoring |

@@ -49,7 +49,7 @@ RDEPEND="
 		~llvm-runtimes/libcxxabi-${PV}:=[${MULTILIB_USEDEP},hardened?,libunwind=,static-libs?]
 	)
 	threads? (
-		~sys-libs/pstl-${PV}
+		~llvm-core/pstl-${PV}
 	)
 "
 DEPEND="
@@ -267,7 +267,7 @@ _configure_abi() {
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
 
-	if tc-is-clang || ( use pstl && has_version "sys-libs/pstl[openmp]" ) ; then
+	if tc-is-clang || ( use pstl && has_version "llvm-core/pstl[openmp]" ) ; then
 		if ! has_version "llvm-core/clang:${PV%%.*}" ; then
 eerror
 eerror "You must emerge clang:${PV%%.*} to build with clang."
