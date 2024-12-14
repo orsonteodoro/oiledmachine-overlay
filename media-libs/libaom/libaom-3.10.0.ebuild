@@ -307,7 +307,7 @@ src_prepare() {
 	ewarn "If \"Assumed value of MB_LEN_MAX wrong\" is encountered, switch to gcc."
 
 	if tc-is-clang \
-		&& has_version "sys-devel/lld" \
+		&& has_version "llvm-core/lld" \
 		&& [[ "${CFLAGS}" =~ "-flto" ]] ; then
 		sed -i -e "s|-fuse-ld=gold|-fuse-ld=lld|g" \
 			build/cmake/sanitizers.cmake || die
