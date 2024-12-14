@@ -31,7 +31,7 @@ RDEPEND+="
 	dev-libs/boost:=[${MULTILIB_USEDEP},nls]
 	dev-db/unixODBC[${MULTILIB_USEDEP}]
 	libcxx? (
-		sys-libs/libcxx[${MULTILIB_USEDEP}]
+		llvm-runtimes/libcxx[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND+="
