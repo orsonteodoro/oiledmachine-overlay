@@ -809,3 +809,5 @@ pkg_postinst() {
 	optfeature_header "Install optional packages:"
 	optfeature "Qt6 GUI frontend" "media-video/video2x-qt6"
 }
+
+# OILEDMACHINE-OVERLAY-TEST PASSED (6.2.0, 20241213)
