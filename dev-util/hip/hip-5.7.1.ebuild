@@ -273,7 +273,7 @@ src_configure() {
 			-DHIP_PLATFORM="nvidia"
 			-DHIP_RUNTIME="cuda" # There's a typo in the HIP faq.
 		)
-		if ! has_version "sys-devel/clang:${LLVM_SLOT}" ; then
+		if ! has_version "llvm-core/clang:${LLVM_SLOT}" ; then
 			mycmakeargs+=(
 				-D__HIP_ENABLE_PCH=OFF
 			)
