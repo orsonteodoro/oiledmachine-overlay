@@ -19,10 +19,63 @@ EAPI=8
 
 #CMAKE_MAKEFILE_GENERATOR="emake"
 
+BACKEND_PV="2.0.5"
 PYTHON_COMPAT=( "python3_11" )
+MODEL_FILES=(
+# models_ncnn_interpolate
+rife-v4.6.tar.gz
+rife-v4.7.tar.gz
+rife-v4.15.tar.gz
+rife-v4.18.tar.gz
+rife-v4.22.tar.gz
+rife-v4.22-lite.tar.gz
+rife-v4.25.tar.gz
+
+# models_ncnn_upscayl
+2x_ModernSpanimationV2.tar.gz
+4xNomos8k_span_otf_weak.tar.gz
+4xNomos8k_span_otf_medium.tar.gz
+4xNomos8k_span_otf_strong.tar.gz
+up2x-conservative.tar.gz
+up2x-conservative.tar.gz
+2x_OpenProteus_Compact_i2_70K.tar.gz
+2x_AnimeJaNai_HD_V3_Sharp1_Compact_430k.tar.gz
+realesr-animevideov3-x2.tar.gz
+realesr-animevideov3-x3.tar.gz
+realesr-animevideov3-x4.tar.gz
+realesrgan-x4plus.tar.gz
+realesrgan-x4plus-anime.tar.gz
+
+# models_pytorch_interpolate
+GMFSS.pkl
+rife4.6.pkl
+rife4.7.pkl
+rife4.15.pkl
+rife4.18.pkl
+rife4.22.pkl
+rife4.22-lite.pkl
+rife4.25.pkl
+
+# models_pytorch_upscayl
+2x_ModernSpanimationV2.pth
+4xNomos8k_span_otf_weak.pth
+4xNomos8k_span_otf_medium.pth
+4xNomos8k_span_otf_strong.pth
+2x_OpenProteus_Compact_i2_70K.pth
+2x_AnimeJaNai_HD_V3_Sharp1_Compact_430k.pth
+)
 MY_PN="${PN}-RVE"
 
 inherit python-single-r1
+
+gen_models_uris() {
+	local fn
+	for fn in ${MODEL_FILES[@]} ; do
+		echo "
+https://github.com/TNTwise/real-video-enhancer-models/releases/download/models/${fn}
+		"
+	done
+}
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -35,10 +88,12 @@ if [[ "${PV}" =~ "9999" ]] ; then
 else
 #	KEYWORDS="~amd64"
 	S="${WORKDIR}/${MY_PN}-${PV}"
-# TODO add models to SRC_URI
 	SRC_URI="
+	$(gen_models_uris)
 https://github.com/TNTwise/REAL-Video-Enhancer/archive/refs/tags/RVE-${PV}.tar.gz
 	-> ${P}.tar.gz
+https://github.com/TNTwise/real-video-enhancer-models/releases/download/models/backend-v2.0.5.tar.gz
+	-> ${PN}-backend-${BACKEND_PV}.tar.gz
 	"
 fi
 
