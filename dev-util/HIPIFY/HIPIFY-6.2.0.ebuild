@@ -68,23 +68,23 @@ PATCHES=(
 pkg_setup() {
 	if ! use test ; then
 		:
-	elif has_version "=dev-util/nvidia-cuda-toolkit-12.4*" && has_version "=sys-devel/clang-19*" && has_version "=llvm-core/llvm-17*" ; then
+	elif has_version "=dev-util/nvidia-cuda-toolkit-12.4*" && has_version "=llvm-core/clang-19*" && has_version "=llvm-core/llvm-17*" ; then
 		LLVM_SLOT=19
-	elif has_version "=dev-util/nvidia-cuda-toolkit-12.3*" && has_version "=sys-devel/clang-18*" && has_version "=llvm-core/llvm-17*" ; then
+	elif has_version "=dev-util/nvidia-cuda-toolkit-12.3*" && has_version "=llvm-core/clang-18*" && has_version "=llvm-core/llvm-17*" ; then
 		LLVM_SLOT=18
-	elif has_version "=dev-util/nvidia-cuda-toolkit-12.3*" && has_version "=sys-devel/clang-17*" && has_version "=llvm-core/llvm-17*" ; then
+	elif has_version "=dev-util/nvidia-cuda-toolkit-12.3*" && has_version "=llvm-core/clang-17*" && has_version "=llvm-core/llvm-17*" ; then
 		LLVM_SLOT=17
-	elif has_version "=dev-util/nvidia-cuda-toolkit-12.2*" && has_version "=sys-devel/clang-17*" && has_version "=llvm-core/llvm-17*" ; then
+	elif has_version "=dev-util/nvidia-cuda-toolkit-12.2*" && has_version "=llvm-core/clang-17*" && has_version "=llvm-core/llvm-17*" ; then
 		LLVM_SLOT=17
-	elif has_version "=dev-util/nvidia-cuda-toolkit-12.2*" && has_version "=sys-devel/clang-16*" && has_version "=llvm-core/llvm-16*" ; then
+	elif has_version "=dev-util/nvidia-cuda-toolkit-12.2*" && has_version "=llvm-core/clang-16*" && has_version "=llvm-core/llvm-16*" ; then
 		LLVM_SLOT=16
-	elif has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=sys-devel/clang-15*" && has_version "=llvm-core/llvm-15*" ; then
+	elif has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=llvm-core/clang-15*" && has_version "=llvm-core/llvm-15*" ; then
 		LLVM_SLOT=15
-	elif has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=sys-devel/clang-14*" && has_version "=llvm-core/llvm-14*" ; then
+	elif has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=llvm-core/clang-14*" && has_version "=llvm-core/llvm-14*" ; then
 		LLVM_SLOT=14
-	elif has_version "=dev-util/nvidia-cuda-toolkit-11.7*" && has_version "=sys-devel/clang-14*" && has_version "=llvm-core/llvm-14*" ; then
+	elif has_version "=dev-util/nvidia-cuda-toolkit-11.7*" && has_version "=llvm-core/clang-14*" && has_version "=llvm-core/llvm-14*" ; then
 		LLVM_SLOT=14
-	elif has_version "=dev-util/nvidia-cuda-toolkit-11.5*" && has_version "=sys-devel/clang-13*" && has_version "=llvm-core/llvm-13*" ; then
+	elif has_version "=dev-util/nvidia-cuda-toolkit-11.5*" && has_version "=llvm-core/clang-13*" && has_version "=llvm-core/llvm-13*" ; then
 		LLVM_SLOT=13
 	fi
 	rocm_pkg_setup
