@@ -123,7 +123,7 @@ BDEPEND+="
 	dev-build/ninja
 	|| (
 		>=sys-devel/gcc-5
-		>=sys-devel/clang-3.4
+		>=llvm-core/clang-3.4
 	)
 "
 PATCHES=(
