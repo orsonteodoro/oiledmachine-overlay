@@ -301,11 +301,11 @@ RDEPEND="
 	rocm? (
 		rocm_4_3? (
 			=dev-util/hip-4.3*:=
-			=sys-devel/llvm-roc-4.3*[cfi?]
+			=llvm-core/llvm-roc-4.3*[cfi?]
 		)
 		rocm_4_2? (
 			=dev-util/hip-4.2*:=
-			=sys-devel/llvm-roc-4.2*[cfi?]
+			=llvm-core/llvm-roc-4.2*[cfi?]
 		)
 	)
 "
@@ -328,7 +328,7 @@ gen_llvm_bdepend() {
 		echo "
 			(
 				sys-devel/clang:${s}
-				sys-devel/llvm:${s}
+				llvm-core/llvm:${s}
 				sys-devel/lld:${s}
 			)
 		"
@@ -352,10 +352,10 @@ BDEPEND="
 	)
 	rocm? (
 		rocm_4_3? (
-			~sys-devel/llvm-roc-${HIP_4_3_VERSION}:4.3/${HIP_4_3_VERSION}
+			~llvm-core/llvm-roc-${HIP_4_3_VERSION}:4.3/${HIP_4_3_VERSION}
 		)
 		rocm_4_2? (
-			~sys-devel/llvm-roc-${HIP_4_2_VERSION}:4.2/${HIP_4_2_VERSION}
+			~llvm-core/llvm-roc-${HIP_4_2_VERSION}:4.2/${HIP_4_2_VERSION}
 		)
 	)
 	|| (
@@ -438,7 +438,7 @@ eerror "Switch to >=sys-devel/clang-5.0"
 				if \
 					   has_version "sys-devel/clang:${s}" \
 					&& has_version "sys-devel/lld:${s}" \
-					&& has_version "sys-devel/llvm:${s}" \
+					&& has_version "llvm-core/llvm:${s}" \
 				; then
 					LLVM_SLOT="${s}"
 					break
@@ -544,7 +544,7 @@ src_configure() {
 			if \
 				   has_version "sys-devel/clang:${s}" \
 				&& has_version "sys-devel/lld:${s}" \
-				&& has_version "sys-devel/llvm:${s}" \
+				&& has_version "llvm-core/llvm:${s}" \
 			; then
 				export CC="${CHOST}-clang-${s}"
 				export CXX="${CHOST}-clang++-${s}"
