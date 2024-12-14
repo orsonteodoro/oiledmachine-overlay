@@ -1893,7 +1893,7 @@ _y_cet_ibt() {
 	local ready=0
 	if [[ "${compiler}" =~ "gcc" ]] && ver_test "${compiler_version%%.*}" -ge "9" && ot-kernel_has_version ">=sys-devel/binutils-2.29" ; then
 		ready=1
-	elif [[ "${compiler}" =~ "clang" ]] && ver_test "${compiler_version%%.*}" -ge "14" && ot-kernel_has_version ">=sys-devel/lld-${compiler_version}" ; then
+	elif [[ "${compiler}" =~ "clang" ]] && ver_test "${compiler_version%%.*}" -ge "14" && ot-kernel_has_version ">=llvm-core/lld-${compiler_version}" ; then
 		ready=1
 	fi
 	if (( ${ready} == 0 )) ; then
@@ -1928,7 +1928,7 @@ _y_cet_ss() {
 	local ready=0
 	if [[ "${compiler}" =~ "gcc" ]] && ver_test "${compiler_version%%.*}" -ge "8" && ot-kernel_has_version ">=sys-devel/binutils-2.31" ; then
 		ready=1
-	elif [[ "${compiler}" =~ "clang" ]] && ver_test "${compiler_version%%.*}" -ge "6" && ot-kernel_has_version ">=sys-devel/lld-6" ; then
+	elif [[ "${compiler}" =~ "clang" ]] && ver_test "${compiler_version%%.*}" -ge "6" && ot-kernel_has_version ">=llvm-core/lld-6" ; then
 		ready=1
 	fi
 	if (( ${ready} == 0 )) ; then
