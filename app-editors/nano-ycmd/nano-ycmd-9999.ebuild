@@ -114,7 +114,7 @@ RDEPEND+="
 		dev-libs/nettle
 	)
 	openmp? (
-		sys-libs/libomp
+		llvm-runtimes/openmp
 	)
 	openssl? (
 		>=dev-libs/openssl-3
