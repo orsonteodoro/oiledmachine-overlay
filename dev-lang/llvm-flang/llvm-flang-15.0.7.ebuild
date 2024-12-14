@@ -24,7 +24,7 @@ offload test
 REQUIRED_USE="
 "
 RDEPEND="
-	sys-libs/libomp:${LLVM_MAJOR}[offload?]
+	llvm-runtimes/openmp:${LLVM_MAJOR}[offload?]
 	llvm-core/clang:${LLVM_MAJOR}
 	llvm-core/llvm:${LLVM_MAJOR}
 	sys-devel/mlir:${LLVM_MAJOR}
