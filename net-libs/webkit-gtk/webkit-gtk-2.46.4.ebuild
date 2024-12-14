@@ -804,7 +804,7 @@ gen_depend_llvm() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			(
-				sys-devel/clang:${s}
+				llvm-core/clang:${s}
 				llvm-core/llvm:${s}
 				sys-devel/lld:${s}
 				openmp? (
@@ -1013,7 +1013,7 @@ BDEPEND+="
 		|| (
 			$(gen_depend_llvm)
 		)
-		sys-devel/clang:=
+		llvm-core/clang:=
 		llvm-core/llvm:=
 	)
 	doc? (
@@ -1141,7 +1141,7 @@ eerror
 _set_clang() {
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
-		if has_version "sys-devel/clang:${s}" ; then
+		if has_version "llvm-core/clang:${s}" ; then
 			export CC="${CHOST}-clang-${s}"
 			export CXX="${CHOST}-clang++-${s}"
 			break
