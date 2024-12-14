@@ -18,7 +18,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	KEYWORDS="~amd64"
+	KEYWORDS="~amd64 ~arm64 ~arm64-macos ~x64-macos"
 	S="${WORKDIR}/${MY_PN}-${PV}"
 	SRC_URI="
 https://github.com/lief-project/LIEF/archive/refs/tags/${PV}.tar.gz
@@ -42,31 +42,29 @@ doc +examples +json +logging -python -rust -system-expected -system-frozen
 -system-mbedtls -system-nanobind -system-nlohmann-json
 -system-spdlog -system-utfcpp test
 "
-#	$(python_gen_cond_dep '
-#	')
 RDEPEND+="
 	system-nanobind? (
 		$(python_gen_cond_dep '
-			dev-python/nanobind[${PYTHON_USEDEP}]
+			>=dev-python/nanobind-2.4.0[${PYTHON_USEDEP}]
 		')
 	)
 	system-expected? (
-		dev-cpp/tl-expected
+		>=dev-cpp/tl-expected-1.1.0
 	)
 	system-frozen? (
-		dev-cpp/frozen
+		>=dev-cpp/frozen-1.2.0
 	)
 	system-spdlog? (
-		dev-libs/spdlog
+		>=dev-libs/spdlog-1.14.1
 	)
 	system-nlohmann-json? (
-		dev-cpp/nlohmann_json
+		>=dev-cpp/nlohmann_json-3.11.2
 	)
 	system-mbedtls? (
-		net-libs/mbedtls
+		>=net-libs/mbedtls-3.6.1
 	)
 	system-utfcpp? (
-		dev-libs/utfcpp
+		>=dev-libs/utfcpp-4.0.5
 	)
 "
 DEPEND+="
