@@ -112,7 +112,7 @@ gen_clang_pairs() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				sys-devel/clang:${s}
+				llvm-core/clang:${s}
 				llvm-core/llvm:${s}
 				sys-devel/lld:${s}
 			)
