@@ -887,7 +887,7 @@ gen_llvm_bdepend() {
 	for LLVM_SLOT in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${LLVM_SLOT}? (
-				sys-devel/clang:${LLVM_SLOT}[${MULTILIB_USEDEP}]
+				llvm-core/clang:${LLVM_SLOT}[${MULTILIB_USEDEP}]
 				sys-devel/lld:${LLVM_SLOT}
 				llvm-core/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}]
 				pgo? (
@@ -983,9 +983,9 @@ if [[ -z "${MOZ_GMP_PLUGIN_LIST+set}" ]] ; then
 fi
 
 llvm_check_deps() {
-	if ! has_version -b "sys-devel/clang:${LLVM_SLOT}" ; then
+	if ! has_version -b "llvm-core/clang:${LLVM_SLOT}" ; then
 ewarn
-ewarn "sys-devel/clang:${LLVM_SLOT} is missing!"
+ewarn "llvm-core/clang:${LLVM_SLOT} is missing!"
 ewarn "Cannot use LLVM slot ${LLVM_SLOT} ..."
 ewarn
 		return 1
