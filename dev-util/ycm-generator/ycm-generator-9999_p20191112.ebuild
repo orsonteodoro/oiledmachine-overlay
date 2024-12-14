@@ -105,7 +105,7 @@ REQUIRED_USE+="
 	)
 "
 RDEPEND+="
-	sys-devel/clang
+	llvm-core/clang
 	cmake? (
 		dev-build/cmake
 	)
