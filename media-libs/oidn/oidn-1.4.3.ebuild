@@ -69,7 +69,7 @@ gen_clang_depends() {
 				=llvm-core/clang-runtime-${s}*
 				llvm-core/clang:${s}
 				llvm-core/llvm:${s}
-				sys-devel/lld:${s}
+				llvm-core/lld:${s}
 			)
 		"
 	done
