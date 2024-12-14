@@ -639,6 +639,7 @@ zerocopy-derive-0.6.6
 zerocopy-derive-0.7.35
 zeroize-1.8.1
 "
+
 declare -A GIT_CRATES=(
 [cairo-rs]="https://github.com/gtk-rs/gtk-rs-core;ed9a0d549a7bebba77a1d055cefb27c4b59097f3;gtk-rs-core-%commit%/cairo" # 0.19.9
 [cairo-sys-rs]="https://github.com/gtk-rs/gtk-rs-core;ed9a0d549a7bebba77a1d055cefb27c4b59097f3;gtk-rs-core-%commit%/cairo/sys" # 0.19.9
@@ -705,6 +706,7 @@ declare -A GIT_CRATES=(
 [pangocairo-sys]="https://github.com/gtk-rs/gtk-rs-core;ed9a0d549a7bebba77a1d055cefb27c4b59097f3;gtk-rs-core-%commit%/pangocairo/sys" # 0.19.9
 [pangocairo]="https://github.com/gtk-rs/gtk-rs-core;ed9a0d549a7bebba77a1d055cefb27c4b59097f3;gtk-rs-core-%commit%/pangocairo" # 0.19.9
 )
+
 		inherit cargo
 		SRC_URI+="$(cargo_crate_uris)"
 	fi
