@@ -49,7 +49,7 @@ ebuild-revision-5
 # ROCclr uses clang -print-libgcc-file-name which may output a static-lib to link to.
 RDEPEND="
 	!dev-libs/rocm-opencl-runtime:0
-	=sys-libs/compiler-rt-${LLVM_SLOT}*:=
+	=llvm-runtimes/compiler-rt-${LLVM_SLOT}*:=
 	>=media-libs/mesa-22.3.6
 	>=virtual/opencl-3
 	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
