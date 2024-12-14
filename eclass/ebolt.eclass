@@ -30,12 +30,12 @@ if [[ "${UOPTS_BOLT_DISABLE_BDEPEND}" != "1" ]] ; then
 BDEPEND+="
 	ebolt? (
 		|| (
-			>=sys-devel/llvm-19:19[bolt]
-			>=sys-devel/llvm-18:18[bolt]
-			>=sys-devel/llvm-17:17[bolt]
-			>=sys-devel/llvm-16:16[bolt]
-			>=sys-devel/llvm-15:15[bolt]
-			>=sys-devel/llvm-14:14[bolt]
+			>=llvm-core/llvm-19:19[bolt]
+			>=llvm-core/llvm-18:18[bolt]
+			>=llvm-core/llvm-17:17[bolt]
+			>=llvm-core/llvm-16:16[bolt]
+			>=llvm-core/llvm-15:15[bolt]
+			>=llvm-core/llvm-14:14[bolt]
 		)
 	)
 "
@@ -215,14 +215,14 @@ _setup_llvm() {
 		_UOPTS_BOLT_PATH="${ESYSROOT}/usr/lib/llvm/${UOPTS_BOLT_SLOT}/bin"
 	elif [[ -n "${LLVM_SLOT}" ]] ; then
 		s="${LLVM_SLOT}"
-		if has_version "sys-devel/llvm:${s}[bolt]" ; then
+		if has_version "llvm-core/llvm:${s}[bolt]" ; then
 			_UOPTS_BOLT_PATH="${ESYSROOT}/usr/lib/llvm/${s}/bin"
 		fi
 	elif [[ -n "${LLVM_COMPAT[0]}" && ${LLVM_COMPAT[0]} -gt ${LLVM_COMPAT[-1]} ]] ; then
 		# 17 16 15 14 order
 		# This is why we have LLVM_MAX_SLOT.  People can just randomly sort by ascend or descend order.
 		for s in $(seq 14 ${LLVM_COMPAT[0]} | tac) ; do
-			if has_version "sys-devel/llvm:${s}[bolt]" ; then
+			if has_version "llvm-core/llvm:${s}[bolt]" ; then
 				_UOPTS_BOLT_PATH="${ESYSROOT}/usr/lib/llvm/${s}/bin"
 				break
 			fi
@@ -231,21 +231,21 @@ _setup_llvm() {
 		# 14 15 16 17 order
 		# This is why we have LLVM_MAX_SLOT.  People can just randomly sort by ascend or descend order.
 		for s in $(seq 14 ${LLVM_COMPAT[-1]} | tac) ; do
-			if has_version "sys-devel/llvm:${s}[bolt]" ; then
+			if has_version "llvm-core/llvm:${s}[bolt]" ; then
 				_UOPTS_BOLT_PATH="${ESYSROOT}/usr/lib/llvm/${s}/bin"
 				break
 			fi
 		done
 	elif [[ -n "${LLVM_MAX_SLOT}" ]] ; then
 		for s in $(seq 14 ${LLVM_MAX_SLOT} | tac) ; do
-			if has_version "sys-devel/llvm:${s}[bolt]" ; then
+			if has_version "llvm-core/llvm:${s}[bolt]" ; then
 				_UOPTS_BOLT_PATH="${ESYSROOT}/usr/lib/llvm/${s}/bin"
 				break
 			fi
 		done
 	elif [[ -z "${LLVM_MAX_SLOT}" && -z "${LLVM_SLOT}" ]] ; then
 		for s in ${_UOPTS_LLVM_SLOTS[@]} ; do
-			if has_version "sys-devel/llvm:${s}[bolt]" ; then
+			if has_version "llvm-core/llvm:${s}[bolt]" ; then
 				_UOPTS_BOLT_PATH="${ESYSROOT}/usr/lib/llvm/${s}/bin"
 				break
 			fi
@@ -409,8 +409,8 @@ ebolt_src_configure() {
 # @DESCRIPTION:
 # Gets the build time
 _ebolt_get_build_time() {
-# Same as portageq metadata "/${BROOT}" "installed" "sys-devel/llvm-${raw_pv}" "BUILD_TIME"
-	local f="/${BROOT}/var/db/pkg/sys-devel/llvm-${raw_pv}/BUILD_TIME"
+# Same as portageq metadata "/${BROOT}" "installed" "llvm-core/llvm-${raw_pv}" "BUILD_TIME"
+	local f="/${BROOT}/var/db/pkg/llvm-core/llvm-${raw_pv}/BUILD_TIME"
 	if [[ -e "${f}" ]] ; then
 		cat "${f}"
 	else
@@ -426,7 +426,7 @@ _ebolt_meets_bolt_requirements() {
 	if use ebolt ; then
 		local bolt_data_staging_dir="${T}/bolt-${_UOPTS_BOLT_SUFFIX}"
 
-		has_version "sys-devel/llvm[bolt]" || return 2
+		has_version "llvm-core/llvm[bolt]" || return 2
 
 		# Actually, you can use GCC.
 
@@ -448,8 +448,8 @@ ewarn "Compiler is not supported for EBOLT."
 		local bolt_pv=$("${_UOPTS_BOLT_PATH}/llvm-bolt" --version \
 			| grep -E -o "[0-9]+\.[0-9]+\.[0-9]+")
 		local bolt_major_pv="${bolt_pv%%.*}"
-		local raw_pv=$(best_version "=sys-devel/llvm-${bolt_major_pv}*" \
-			| sed -e "s|sys-devel/llvm-||g")
+		local raw_pv=$(best_version "=llvm-core/llvm-${bolt_major_pv}*" \
+			| sed -e "s|llvm-core/llvm-||g")
 		local bolt_slot=$(ver_cut 1-2 "${bolt_pv}") # For stable ABI.
 		if [[ "${raw_pv}" =~ "9999" ]] ; then
 			# Live with unstable ABI.
@@ -862,8 +862,8 @@ ebolt_src_install() {
 		local bolt_pv=$("${_UOPTS_BOLT_PATH}/llvm-bolt" --version \
 			| grep -E -o "[0-9]+\.[0-9]+\.[0-9]+")
 		local bolt_major_pv="${bolt_pv%%.*}"
-		local raw_pv=$(best_version "=sys-devel/llvm-${bolt_major_pv}*" \
-			| sed -e "s|sys-devel/llvm-||g")
+		local raw_pv=$(best_version "=llvm-core/llvm-${bolt_major_pv}*" \
+			| sed -e "s|llvm-core/llvm-||g")
 		local bolt_slot=$(ver_cut 1-2 "${bolt_pv}") # For stable ABI.
 		if [[ "${raw_pv}" =~ "9999" ]] ; then
 			# Live with unstable ABI.

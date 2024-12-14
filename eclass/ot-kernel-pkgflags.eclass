@@ -1966,7 +1966,7 @@ ot-kernel-pkgflags_clamfs() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the clang package
 ot-kernel-pkgflags_clang() { # DONE
-	if ot-kernel_has_version_pkgflags "sys-devel/clang" ; then
+	if ot-kernel_has_version_pkgflags "llvm-core/clang" ; then
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_EPOLL"
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
@@ -2052,7 +2052,7 @@ ot-kernel-pkgflags_collectd() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the compiler-rt-sanitizers package
 ot-kernel-pkgflags_compiler_rt_sanitizers() { # DONE
-	local pkg="sys-libs/compiler-rt-sanitizers"
+	local pkg="llvm-runtimes/compiler-rt-sanitizers"
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 	        ot-kernel_y_configopt "CONFIG_SYSVIPC"
 		if ot-kernel_has_version "${pkg}[test]" ; then
@@ -5354,7 +5354,7 @@ ewarn
 # @DESCRIPTION:
 # Applies kernel config flags for the llvm package
 ot-kernel-pkgflags_llvm() { # DONE
-	local pkg="sys-devel/llvm"
+	local pkg="llvm-core/llvm"
 	if ot-kernel_has_version_pkgflags "${pkg}" ; then
 		_ot-kernel_set_bpf "${pkg}" # Uses syscall with number
 		if ot-kernel_has_version "${pkg}[bolt]" ; then

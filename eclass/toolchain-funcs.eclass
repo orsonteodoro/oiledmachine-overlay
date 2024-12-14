@@ -682,7 +682,7 @@ tc-check-openmp() {
 		if tc-is-gcc; then
 			eerror "Enable OpenMP support by building sys-devel/gcc with USE=\"openmp\"."
 		elif tc-is-clang; then
-			eerror "OpenMP support in sys-devel/clang is provided by sys-libs/libomp."
+			eerror "OpenMP support in llvm-core/clang is provided by sys-libs/libomp."
 		fi
 
 		die "Active compiler does not have required support for OpenMP"
@@ -1287,7 +1287,7 @@ tc-get-cxx-stdlib() {
 # If the runtime is identifed, the function returns 0 and prints one
 # of the following:
 #
-# - ``compiler-rt`` for ``sys-libs/compiler-rt``
+# - ``compiler-rt`` for ``llvm-runtimes/compiler-rt``
 # - ``libgcc`` for ``sys-devel/gcc``'s libgcc
 #
 # If the runtime is not recognized, the function returns 1.

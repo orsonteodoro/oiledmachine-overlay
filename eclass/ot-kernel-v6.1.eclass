@@ -361,8 +361,8 @@ gen_kcfi_rdepend() {
 	for s in $(_seq ${min} ${max}) ; do
 		echo "
 		(
-			sys-devel/clang:${s}
-			sys-devel/llvm:${s}
+			llvm-core/clang:${s}
+			llvm-core/llvm:${s}
 		)
 		     "
 	done
@@ -375,12 +375,12 @@ gen_shadowcallstack_rdepend() {
 	for s in $(_seq ${min} ${max}) ; do
 		echo "
 		(
-			=sys-devel/clang-runtime-${s}*[compiler-rt,sanitize]
-			=sys-libs/compiler-rt-${s}*:=
-			=sys-libs/compiler-rt-sanitizers-${s}*:=[shadowcallstack?]
-			sys-devel/clang:${s}
-			sys-devel/lld:${s}
-			sys-devel/llvm:${s}
+			=llvm-core/clang-runtime-${s}*[compiler-rt,sanitize]
+			=llvm-runtimes/compiler-rt-${s}*:=
+			=llvm-runtimes/compiler-rt-sanitizers-${s}*:=[shadowcallstack?]
+			llvm-core/clang:${s}
+			llvm-core/lld:${s}
+			llvm-core/llvm:${s}
 		)
 		     "
 	done
@@ -393,10 +393,10 @@ gen_lto_rdepend() {
 	for s in $(_seq ${min} ${max}) ; do
 		echo "
 		(
-			=sys-devel/clang-runtime-${s}*
-			sys-devel/clang:${s}
-			sys-devel/lld:${s}
-			sys-devel/llvm:${s}
+			=llvm-core/clang-runtime-${s}*
+			llvm-core/clang:${s}
+			llvm-core/lld:${s}
+			llvm-core/llvm:${s}
 		)
 		     "
 	done
@@ -409,9 +409,9 @@ gen_clang_pgo_rdepend() {
 	for s in $(_seq ${min} ${max}) ; do
 		echo "
 		(
-			=sys-devel/clang-runtime-${s}*
-			sys-devel/clang:${s}
-			sys-devel/llvm:${s}
+			=llvm-core/clang-runtime-${s}*
+			llvm-core/clang:${s}
+			llvm-core/llvm:${s}
 		)
 		     "
 	done
@@ -424,8 +424,8 @@ gen_clang_llvm_pair() {
 	for s in $(_seq ${min} ${max}) ; do
 		echo "
 		(
-			sys-devel/clang:${s}
-			sys-devel/llvm:${s}
+			llvm-core/clang:${s}
+			llvm-core/llvm:${s}
 		)
 		     "
 	done
@@ -438,9 +438,9 @@ gen_clang_lld() {
 	for s in $(_seq ${min} ${max}) ; do
 		echo "
 		(
-			sys-devel/clang:${s}
-			sys-devel/lld:${s}
-			sys-devel/llvm:${s}
+			llvm-core/clang:${s}
+			llvm-core/lld:${s}
+			llvm-core/llvm:${s}
 		)
 		     "
 	done

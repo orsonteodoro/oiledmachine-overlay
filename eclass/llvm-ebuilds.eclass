@@ -81,8 +81,8 @@ ewarn "Stripping -flto=thin"
 		s=$(clang-major-version)
 		if tc-is-clang \
 			&& has_version "sys-devel/binutils[gold,plugins]" \
-			&& has_version "sys-devel/clang:${s}[binutils-plugin]" \
-			&& has_version ">=sys-devel/llvmgold-${s}" \
+			&& has_version "llvm-core/clang:${s}[binutils-plugin]" \
+			&& has_version ">=llvm-core/llvmgold-${s}" \
 			&& test-flag-CCLD '-fuse-ld=gold' ; then
 ewarn "Switching to -fuse-ld=gold"
 			append-ldflags "-fuse-ld=gold"
@@ -156,7 +156,7 @@ ewarn "Stripping -fuse-ld=*"
 		filter-flags "-fuse-ld=*"
 	elif [[ "${CC}" =~ ("clang") ]] \
 		&& ( \
-			has_version "sys-devel/clang-common[default-lld]" \
+			has_version "llvm-core/clang-common[default-lld]" \
 			|| is-flagq '-fuse-ld=lld' \
 			|| is-flagq '-flto=thin' \
 		) ; then

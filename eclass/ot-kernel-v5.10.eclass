@@ -368,9 +368,9 @@ gen_clang_lld() {
 	for s in $(_seq ${min} ${max}) ; do
 		echo "
 		(
-			sys-devel/clang:${s}
-			sys-devel/lld:${s}
-			sys-devel/llvm:${s}
+			llvm-core/clang:${s}
+			llvm-core/lld:${s}
+			llvm-core/llvm:${s}
 		)
 		     "
 	done
@@ -383,8 +383,8 @@ gen_clang_llvm_pair() {
 	for s in $(_seq ${min} ${max}) ; do
 		echo "
 		(
-			sys-devel/clang:${s}
-			sys-devel/llvm:${s}
+			llvm-core/clang:${s}
+			llvm-core/llvm:${s}
 		)
 		     "
 	done

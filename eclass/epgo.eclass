@@ -122,7 +122,7 @@ eerror "directly."
 			# 17 16 15 14 order
 			# This is why we have LLVM_MAX_SLOT.  People can just randomly sort by ascend or descend order.
 			for s in $(seq 14 ${LLVM_COMPAT[0]} | tac) ; do
-				if has_version "sys-devel/llvm:${s}" && has_version "sys-devel/clang:${s}" && has_version "=sys-libs/compiler-rt-sanitizers-${s}*[profile]" ; then
+				if has_version "llvm-core/llvm:${s}" && has_version "llvm-core/clang:${s}" && has_version "=llvm-runtimes/compiler-rt-sanitizers-${s}*[profile]" ; then
 					break
 				fi
 			done
@@ -130,7 +130,7 @@ eerror "directly."
 			# 14 15 16 17 order
 			# This is why we have LLVM_MAX_SLOT.  People can just randomly sort by ascend or descend order.
 			for s in $(seq 14 ${LLVM_COMPAT[-1]} | tac) ; do
-				if has_version "sys-devel/llvm:${s}" && has_version "sys-devel/clang:${s}" && has_version "=sys-libs/compiler-rt-sanitizers-${s}*[profile]" ; then
+				if has_version "llvm-core/llvm:${s}" && has_version "llvm-core/clang:${s}" && has_version "=llvm-runtimes/compiler-rt-sanitizers-${s}*[profile]" ; then
 					break
 				fi
 			done
@@ -139,9 +139,9 @@ eerror "directly."
 				s="${LLVM_MAX_SLOT}"
 			fi
 		fi
-		if ! has_version "=sys-libs/compiler-rt-sanitizers-${s}*[profile]" ; then
+		if ! has_version "=llvm-runtimes/compiler-rt-sanitizers-${s}*[profile]" ; then
 eerror
-eerror "You need to emerge =sys-libs/compiler-rt-sanitizers-${s}*[profile] for"
+eerror "You need to emerge =llvm-runtimes/compiler-rt-sanitizers-${s}*[profile] for"
 eerror "Clang PGO in addition ABIs."
 eerror
 		fi
@@ -208,16 +208,16 @@ einfo "Wiping old PGO pofile from staging dir."
 			if [[ "${_MULTILIB_BUILD_ECLASS}" == "1" ]] ; then
 				use_arg="${MULTILIB_ABI_FLAG},"
 			fi
-			if ! has_version "~sys-libs/compiler-rt-sanitizers-${clang_pv}[${use_arg}profile]" \
-				&& ! has_version "=sys-libs/compiler-rt-sanitizers-${clang_pv}*[${use_arg}profile]" ; then
+			if ! has_version "~llvm-runtimes/compiler-rt-sanitizers-${clang_pv}[${use_arg}profile]" \
+				&& ! has_version "=llvm-runtimes/compiler-rt-sanitizers-${clang_pv}*[${use_arg}profile]" ; then
 eerror
 eerror "You need to emerge"
 eerror
-eerror "~sys-libs/compiler-rt-sanitizers-${clang_pv}[${use_arg}profile]"
+eerror "~llvm-runtimes/compiler-rt-sanitizers-${clang_pv}[${use_arg}profile]"
 eerror
 eerror "  or"
 eerror
-eerror "=sys-libs/compiler-rt-sanitizers-${clang_pv}*[${use_arg}profile]"
+eerror "=llvm-runtimes/compiler-rt-sanitizers-${clang_pv}*[${use_arg}profile]"
 eerror
 				die
 			fi

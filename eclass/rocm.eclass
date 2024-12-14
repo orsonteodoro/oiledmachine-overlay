@@ -533,8 +533,8 @@ ewarn "QA:  ROCM_SLOT should be defined."
 		if ver_test ${LLVM_SLOT} -ge 16 ; then
 			CLANG_SLOT="${LLVM_SLOT}"
 		else
-			CLANG_SLOT=$(best_version "sys-devel/clang:${LLVM_SLOT}" \
-				| sed -e "s|sys-devel/clang-||")
+			CLANG_SLOT=$(best_version "llvm-core/clang:${LLVM_SLOT}" \
+				| sed -e "s|llvm-core/clang-||")
 			CLANG_SLOT=$(ver_cut 1-3 "${CLANG_SLOT}")
 		fi
 	fi
@@ -545,7 +545,7 @@ ewarn "QA:  ROCM_SLOT should be defined."
 		clang_selected_desc="sys-devel/llvm-roc:${ROCM_SLOT}"
 	else
 		EROCM_CLANG_PATH="/usr/lib/clang/${CLANG_SLOT}"
-		clang_selected_desc="sys-devel/clang:${LLVM_SLOT}"
+		clang_selected_desc="llvm-core/clang:${LLVM_SLOT}"
 	fi
 
 	if [[ "${ROCM_USE_LLVM_ROC:-1}" == "1" ]] ; then

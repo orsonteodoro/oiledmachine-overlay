@@ -1154,7 +1154,7 @@ einfo "Verifying profraw version compatibility"
 	local found_patched_version=0 # corresponds to oiledmachine patches to use >= llvm 13 (fixed)
 	local pv
 	for pv in ${PGO_LLVM_SUPPORTED_VERSIONS[@]} ; do
-		( ! ot-kernel_has_version "~sys-devel/llvm-${pv}" ) && continue
+		( ! ot-kernel_has_version "~llvm-core/llvm-${pv}" ) && continue
 einfo "pv=${pv}"
 		local instr_prof_raw_ver=$(cat \
 "${ESYSROOT}/usr/lib/llvm/$(ver_cut 1 ${found_ver})/include/llvm/ProfileData/InstrProfData.inc" \
@@ -1183,7 +1183,7 @@ eerror
 eerror "No installed LLVM versions are compatible.  Please send an issue"
 eerror "request with your LLVM version.  If you are using a live LLVM version,"
 eerror "send the EGIT_VERSION found in"
-eerror "\${ESYSROOT}/var/db/pkg/sys-devel/llvm-\${pv}*/environment.bz2"
+eerror "\${ESYSROOT}/var/db/pkg/llvm-core/llvm-\${pv}*/environment.bz2"
 eerror
 eerror "You may also use one of the supported LLVM versions for PGO support below:"
 eerror "${PGO_LLVM_SUPPORTED_VERSIONS[@]}"
@@ -2187,7 +2187,7 @@ eerror "QA:  Missing ot-kernel_get_llvm_min_slot() for this series."
 
 	local llvm_slot
 	for llvm_slot in $(seq ${_llvm_max_slot} -1 ${_llvm_min_slot}) ; do
-eerror "  sys-devel/clang:${llvm_slot}"
+eerror "  llvm-core/clang:${llvm_slot}"
 	done
 }
 
@@ -2291,7 +2291,7 @@ einfo "OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER:  ${kcp_provider}"
 		local llvm_slot=$(get_llvm_slot)
 		local gcc_slot=$(get_gcc_slot)
 		local gcc_pv=$(best_version "${GCC_PKG}:$(ver_cut 1 ${gcc_slot})" | sed -r -e "s|${GCC_PKG}-||" -e "s|-r[0-9]+||")
-		local clang_pv=$(best_version "sys-devel/clang:${llvm_slot}" | sed -r -e "s|sys-devel/clang-||" -e "s|-r[0-9]+||")
+		local clang_pv=$(best_version "llvm-core/clang:${llvm_slot}" | sed -r -e "s|llvm-core/clang-||" -e "s|-r[0-9]+||")
 		#local vendor_id=$(cat /proc/cpuinfo | grep vendor_id | head -n 1 | cut -f 2 -d ":" | sed -E -e "s|[ ]+||g")
 		#local cpu_family=$(printf "%02x" $(cat /proc/cpuinfo | grep -F -e "cpu family" | head -n 1 | grep -E -o "[0-9]+"))
 		#local cpu_model=$(printf "%02x" $(cat /proc/cpuinfo | grep -F -e "model" | head -n 1 | grep -E -o "[0-9]+"))
@@ -4568,7 +4568,7 @@ eerror
 		fi
 		if ! test-flags -fsanitize=kcfi >/dev/null 2>&1 ; then
 eerror
-eerror "Both >=sys-devel/clang-15 and >=sys-devel/llvm-15 must be patched for"
+eerror "Both >=llvm-core/clang-15 and >=llvm-core/llvm-15 must be patched for"
 eerror "-fsanitize=kcfi support."
 eerror
 eerror "See https://reviews.llvm.org/D119296 for details."
@@ -4789,8 +4789,8 @@ ot-kernel_set_kconfig_compiler_toolchain() {
 		&& is_clang_ready \
 	; then
 einfo "Using Clang ${llvm_slot}"
-		if ! ot-kernel_has_version "sys-devel/llvm:${llvm_slot}" ; then
-eerror "sys-devel/llvm:${llvm_slot} is missing"
+		if ! ot-kernel_has_version "llvm-core/llvm:${llvm_slot}" ; then
+eerror "llvm-core/llvm:${llvm_slot} is missing"
 			die
 		fi
 		ot-kernel_y_configopt "CONFIG_AS_IS_LLVM"
@@ -5748,7 +5748,7 @@ eerror
 		local clang_version=$(clang-version)
 		if tc-is-gcc && ver_test "${gcc_version}" -ge "9" && ot-kernel_has_version ">=sys-devel/binutils-2.29" ; then
 			ready=1
-		elif tc-is-clang && ver_test "${clang_version}" -ge "14" && ot-kernel_has_version ">=sys-devel/lld-${clang_version}" ; then
+		elif tc-is-clang && ver_test "${clang_version}" -ge "14" && ot-kernel_has_version ">=llvm-core/lld-${clang_version}" ; then
 			ready=1
 		fi
 		if (( ${ready} == 0 )) ; then
@@ -5780,7 +5780,7 @@ eerror
 		local clang_version=$(clang-version)
 		if tc-is-gcc && ver_test "${gcc_version}" -ge "8" && ot-kernel_has_version ">=sys-devel/binutils-2.31" ; then
 			ready=1
-		elif tc-is-clang && ver_test "${clang_version}" -ge "6" && ot-kernel_has_version ">=sys-devel/lld-6" ; then
+		elif tc-is-clang && ver_test "${clang_version}" -ge "6" && ot-kernel_has_version ">=llvm-core/lld-6" ; then
 			ready=1
 		fi
 		if (( ${ready} == 0 )) ; then
@@ -8305,37 +8305,37 @@ einfo "Using profraw v8 for == LLVM 16"
 		elif (( ${llvm_slot} == 15 && ${clang_pv_major} == 15 )) ; then
 einfo "Using profraw v8 for == LLVM 15"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
-		elif (( ${llvm_slot} == 14 && ${clang_pv_major} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.6" ; then
+		elif (( ${llvm_slot} == 14 && ${clang_pv_major} == 14 )) && ot-kernel_has_version "~llvm-core/clang-14.0.6" ; then
 einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
-		elif (( ${llvm_slot} == 14 && ${clang_pv_major} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.5" ; then
+		elif (( ${llvm_slot} == 14 && ${clang_pv_major} == 14 )) && ot-kernel_has_version "~llvm-core/clang-14.0.5" ; then
 einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
-		elif (( ${llvm_slot} == 14 && ${clang_pv_major} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.4" ; then
+		elif (( ${llvm_slot} == 14 && ${clang_pv_major} == 14 )) && ot-kernel_has_version "~llvm-core/clang-14.0.4" ; then
 einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
-		elif (( ${llvm_slot} == 14 && ${clang_pv_major} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.3" ; then
+		elif (( ${llvm_slot} == 14 && ${clang_pv_major} == 14 )) && ot-kernel_has_version "~llvm-core/clang-14.0.3" ; then
 einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
-		elif (( ${llvm_slot} == 14 && ${clang_pv_major} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.2" ; then
+		elif (( ${llvm_slot} == 14 && ${clang_pv_major} == 14 )) && ot-kernel_has_version "~llvm-core/clang-14.0.2" ; then
 einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
-		elif (( ${llvm_slot} == 14 && ${clang_pv_major} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.1" ; then
+		elif (( ${llvm_slot} == 14 && ${clang_pv_major} == 14 )) && ot-kernel_has_version "~llvm-core/clang-14.0.1" ; then
 einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
-		elif (( ${llvm_slot} == 14 && ${clang_pv_major} == 14 )) && ot-kernel_has_version "~sys-devel/clang-14.0.0" ; then
+		elif (( ${llvm_slot} == 14 && ${clang_pv_major} == 14 )) && ot-kernel_has_version "~llvm-core/clang-14.0.0" ; then
 einfo "Using profraw v8 for LLVM 14"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V8"
-		elif (( ${llvm_slot} == 13 && ${clang_pv_major} == 13 )) && ot-kernel_has_version "~sys-devel/clang-13.0.1" ; then
+		elif (( ${llvm_slot} == 13 && ${clang_pv_major} == 13 )) && ot-kernel_has_version "~llvm-core/clang-13.0.1" ; then
 einfo "Using profraw v7 for LLVM 13"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V7"
-		elif (( ${llvm_slot} == 13 && ${clang_pv_major} == 13 )) && ot-kernel_has_version "~sys-devel/clang-13.0.0" ; then
+		elif (( ${llvm_slot} == 13 && ${clang_pv_major} == 13 )) && ot-kernel_has_version "~llvm-core/clang-13.0.0" ; then
 einfo "Using profraw v7 for LLVM 13"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V7"
-		elif (( ${llvm_slot} <= 12 && ${clang_pv_major} == 12 )) && ot-kernel_has_version "~sys-devel/clang-12.0.1" ; then
+		elif (( ${llvm_slot} <= 12 && ${clang_pv_major} == 12 )) && ot-kernel_has_version "~llvm-core/clang-12.0.1" ; then
 einfo "Using profraw v5 for LLVM 12"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V5"
-		elif (( ${llvm_slot} <= 12 && ${clang_pv_major} == 11 )) && ot-kernel_has_version "~sys-devel/clang-11.1.0" ; then
+		elif (( ${llvm_slot} <= 12 && ${clang_pv_major} == 11 )) && ot-kernel_has_version "~llvm-core/clang-11.1.0" ; then
 einfo "Using profraw v5 for LLVM 11"
 			ot-kernel_y_configopt "CONFIG_PROFRAW_V5"
 		else
@@ -12424,7 +12424,7 @@ eerror "QA:  Missing ot-kernel_get_llvm_min_slot() for this series."
 
 	local llvm_slot
 	for llvm_slot in $(seq ${_llvm_max_slot} -1 ${_llvm_min_slot}) ; do
-		ot-kernel_has_version "sys-devel/llvm:${llvm_slot}" && is_clang_ready && break
+		ot-kernel_has_version "llvm-core/llvm:${llvm_slot}" && is_clang_ready && break
 	done
 	echo "${llvm_slot}"
 }
@@ -12502,7 +12502,7 @@ eerror
 		fi
 
 einfo "Using Clang ${llvm_slot}"
-		ot-kernel_has_version "sys-devel/llvm:${llvm_slot}" || die "sys-devel/llvm:${llvm_slot} is missing"
+		ot-kernel_has_version "llvm-core/llvm:${llvm_slot}" || die "llvm-core/llvm:${llvm_slot} is missing"
 		# Assumes we are not cross-compiling or we are only building on CBUILD=CHOST.
 		args+=(
 			"CC=${CHOST}-clang-${llvm_slot}"
@@ -14893,10 +14893,10 @@ ot-kernel_postinst_clang_built_linux() {
 	local gcc_pv=$(best_version "${GCC_PKG}" \
 		| sed -r -e "s|${GCC_PKG}-||g" \
 		-e "s|-r[0-9]+||"| cut -f 1-3 -d ".")
-	if ot-kernel_has_version "sys-devel/clang" ; then
+	if ot-kernel_has_version "llvm-core/clang" ; then
 		has_llvm=1
-		llvm_ver_maj=$(best_version "sys-devel/clang" \
-		| sed -r -e "s|sys-devel/clang-||g" \
+		llvm_ver_maj=$(best_version "llvm-core/clang" \
+		| sed -r -e "s|llvm-core/clang-||g" \
 		-e "s|-r[0-9]+||" | cut -f 1 -d ".")
 	fi
 

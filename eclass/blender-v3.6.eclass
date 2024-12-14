@@ -558,9 +558,9 @@ gen_asan_bdepend() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				=sys-devel/clang-runtime-${s}[compiler-rt,sanitize]
-				=sys-libs/compiler-rt-sanitizers-${s}*:=[asan]
-				sys-devel/clang:${s}
+				=llvm-core/clang-runtime-${s}[compiler-rt,sanitize]
+				=llvm-runtimes/compiler-rt-sanitizers-${s}*:=[asan]
+				llvm-core/clang:${s}
 			)
 		"
 	done
@@ -572,7 +572,7 @@ gen_llvm_depends()
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				>=sys-devel/llvm-${s}:${s}=
+				>=llvm-core/llvm-${s}:${s}=
 			)
 		"
 	done
@@ -1187,7 +1187,7 @@ BDEPEND+="
 	cycles? (
 		x86? (
 			|| (
-				>=sys-devel/clang-${CLANG_MIN}
+				>=llvm-core/clang-${CLANG_MIN}
 				dev-lang/icc
 			)
 		)
@@ -1214,7 +1214,7 @@ BDEPEND+="
 	)
 	|| (
 		>=sys-devel/gcc-${GCC_MIN}
-		>=sys-devel/clang-${CLANG_MIN}
+		>=llvm-core/clang-${CLANG_MIN}
 	)
 "
 
@@ -1319,7 +1319,7 @@ _blender_pkg_setup() {
 	if (( ${found} != 0 )) ; then
 ewarn
 ewarn "Upstream supports <= LLVM-${LLVM_MAX_UPSTREAM}.x only."
-ewarn "sys-devel/llvm:${found} compatibility is still in testing in this"
+ewarn "llvm-core/llvm:${found} compatibility is still in testing in this"
 ewarn "overlay and made available to resolve the multiple LLVM libraries"
 ewarn "loaded bug which includes (proprietary) GPU driver parts linked with a"
 ewarn "different version of LLVM.  To avoid this bug, use the same LLVM"

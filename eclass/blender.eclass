@@ -604,7 +604,7 @@ check_optimal_compiler_for_cycles_x86() {
 			export CC
 			export CXX
 			export CPP
-		elif has_version 'sys-devel/clang' ; then
+		elif has_version 'llvm-core/clang' ; then
 			export CC="${CHOST}-clang"
 			export CXX="${CHOST}-clang++"
 			export CPP="${CC} -E"
