@@ -191,7 +191,7 @@ gen_llvm_bdepend()
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
+				llvm-core/clang:${s}[${MULTILIB_USEDEP}]
 				sys-devel/lld:${s}
 				llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
 				sys-libs/libomp:${s}[${MULTILIB_USEDEP}]
@@ -207,14 +207,14 @@ gen_llvm_test_bdepend()
 		echo "
 			llvm_slot_${s}? (
 				!fuzz-testing? (
-					=sys-devel/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt]
+					=llvm-core/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt]
 				)
-				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
+				llvm-core/clang:${s}[${MULTILIB_USEDEP}]
 				sys-devel/lld:${s}
 				llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
 				sys-libs/libomp:${s}[${MULTILIB_USEDEP}]
 				fuzz-testing? (
-					=sys-devel/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
+					=llvm-core/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 					=sys-libs/compiler-rt-sanitizers-${s}*:=[libfuzzer,asan,ubsan]
 				)
 			)
@@ -318,9 +318,9 @@ eerror
 	setup_abi() {
 		# `emerge -1 vips` is not good enough to make
 		# the fuzzer test happy.
-		if ! has_version "sys-devel/clang[${MULTILIB_ABI_FLAG}]" ; then
+		if ! has_version "llvm-core/clang[${MULTILIB_ABI_FLAG}]" ; then
 eerror
-eerror "Inconsistency with sys-devel/clang[${MULTILIB_ABI_FLAG}].  Run emerge"
+eerror "Inconsistency with llvm-core/clang[${MULTILIB_ABI_FLAG}].  Run emerge"
 eerror "with --deep or -D."
 eerror
 			die
@@ -460,8 +460,8 @@ src_configure_abi() {
 		LLVM_MAX_SLOT=
 		local s
 		for s in ${LLVM_COMPAT[@]} ; do
-			if has_version  "sys-devel/clang:${s}" \
-			&& has_version "=sys-devel/clang-runtime-${s}*" \
+			if has_version  "llvm-core/clang:${s}" \
+			&& has_version "=llvm-core/clang-runtime-${s}*" \
 			&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*" \
 				; then
 einfo
@@ -478,8 +478,8 @@ einfo
 eerror
 eerror "Fix the clang toolchain.  It requires:"
 eerror
-eerror "  sys-devel/clang:\${SLOT}"
-eerror "  =sys-devel/clang-runtime-\${SLOT}*"
+eerror "  llvm-core/clang:\${SLOT}"
+eerror "  =llvm-core/clang-runtime-\${SLOT}*"
 eerror "  =sys-libs/compiler-rt-sanitizers-*\${SLOT}"
 eerror
 eerror "where \${SLOT} = 14."
