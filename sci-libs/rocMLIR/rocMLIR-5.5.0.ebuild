@@ -87,7 +87,7 @@ DEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	~sys-devel/llvm-roc-5.5.1:5.5
+	~llvm-core/llvm-roc-5.5.1:5.5
 	>=dev-build/cmake-3.15.1
 	dev-util/patchelf
 	virtual/pkgconfig
