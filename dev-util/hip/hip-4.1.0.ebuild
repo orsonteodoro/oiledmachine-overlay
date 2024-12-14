@@ -275,7 +275,7 @@ src_compile() {
 			-DHIP_RUNTIME="cuda"
 			-DUSE_COMGR_LIBRARY=OFF
 		)
-		if ! has_version "sys-devel/clang:${LLVM_SLOT}" ; then
+		if ! has_version "llvm-core/clang:${LLVM_SLOT}" ; then
 			mycmakeargs+=(
 				-D__HIP_ENABLE_PCH=OFF
 			)
