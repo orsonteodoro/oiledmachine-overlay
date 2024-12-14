@@ -115,11 +115,11 @@ gen_llvm_depend()
 			llvm_slot_${s}? (
 				!cuda? (
 					sys-devel/clang:${s}[${MULTILIB_USEDEP}]
-					sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
+					llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
 				)
 				cuda? (
 					sys-devel/clang:${s}[${MULTILIB_USEDEP},llvm_targets_NVPTX]
-					sys-devel/llvm:${s}[${MULTILIB_USEDEP},llvm_targets_NVPTX]
+					llvm-core/llvm:${s}[${MULTILIB_USEDEP},llvm_targets_NVPTX]
 				)
 			)
 		"
@@ -133,7 +133,7 @@ gen_opx_llvm_rdepend() {
 			llvm_slot_${s}? (
 				sys-devel/clang:${s}[${MULTILIB_USEDEP},llvm_targets_NVPTX]
 				sys-devel/lld:${s}
-				sys-devel/llvm:${s}[${MULTILIB_USEDEP},llvm_targets_NVPTX]
+				llvm-core/llvm:${s}[${MULTILIB_USEDEP},llvm_targets_NVPTX]
 			)
 		"
 	done
@@ -146,7 +146,7 @@ gen_llvm_bdepend() {
 			llvm_slot_${s}? (
 				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 				sys-devel/lld:${s}
-				sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
+				llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
 			)
 		"
 	done
