@@ -32,7 +32,7 @@ gen_clang_bdepend() {
 		echo "
 			(
 				llvm-core/clang:${s}
-				=sys-libs/llvm-libunwind-${s}*
+				=llvm-runtimes/libunwind-${s}*
 			)
 		"
 	done
