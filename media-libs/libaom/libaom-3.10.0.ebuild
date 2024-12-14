@@ -313,7 +313,7 @@ src_prepare() {
 			build/cmake/sanitizers.cmake || die
 	fi
 	if tc-is-clang \
-		&& has_version "sys-libs/compiler-rt-sanitizers[cfi]" \
+		&& has_version "llvm-runtimes/compiler-rt-sanitizers[cfi]" \
 		&& [[ "${CFLAGS}" =~ "-fsanitize".*"cfi" ]] ; then
 		sed -i -e "s|-fno-sanitize-trap=cfi||g" \
 			build/cmake/sanitizers.cmake || die
@@ -497,7 +497,7 @@ einfo "CFLAGS:  ${CFLAGS}"
 
 	# Prevent Illegal instruction with /usr/bin/aomdec --help
 	strip-flag-value "cfi-icall"
-	if tc-is-clang && has_version "sys-libs/compiler-rt-sanitizers[cfi]" ; then
+	if tc-is-clang && has_version "llvm-runtimes/compiler-rt-sanitizers[cfi]" ; then
 		append_all -fno-sanitize=cfi-icall
 	fi
 
