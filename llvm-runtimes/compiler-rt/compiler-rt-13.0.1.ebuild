@@ -22,7 +22,7 @@ SLOT="$(ver_cut 1-3)"
 IUSE+=" +abi_x86_32 abi_x86_64 +clang debug test"
 LLVM_MAX_SLOT=${SLOT%%.*}
 DEPEND="
-	sys-devel/llvm:${LLVM_MAX_SLOT}
+	llvm-core/llvm:${LLVM_MAX_SLOT}
 "
 BDEPEND="
 	>=dev-build/cmake-3.16
