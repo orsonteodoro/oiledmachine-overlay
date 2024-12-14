@@ -145,39 +145,39 @@ gen_llvm_rdepend() {
 		echo "
 			llvm_slot_${u}? (
 				amd64? (
-					sys-devel/llvm:${u}[llvm_targets_X86,llvm_targets_NVPTX?]
+					llvm-core/llvm:${u}[llvm_targets_X86,llvm_targets_NVPTX?]
 					sys-devel/mlir:${u}[llvm_targets_X86,llvm_targets_NVPTX?]
 				)
 				arm? (
-					sys-devel/llvm:${u}[llvm_targets_ARM]
+					llvm-core/llvm:${u}[llvm_targets_ARM]
 					sys-devel/mlir:${u}[llvm_targets_ARM]
 				)
 				arm64? (
-					sys-devel/llvm:${u}[llvm_targets_AArch64]
+					llvm-core/llvm:${u}[llvm_targets_AArch64]
 					sys-devel/mlir:${u}[llvm_targets_AArch64]
 				)
 				loong? (
-					sys-devel/llvm:${u}[llvm_targets_LoongArch]
+					llvm-core/llvm:${u}[llvm_targets_LoongArch]
 					sys-devel/mlir:${u}[llvm_targets_LoongArch]
 				)
 				mips? (
-					sys-devel/llvm:${u}[llvm_targets_Mips]
+					llvm-core/llvm:${u}[llvm_targets_Mips]
 					sys-devel/mlir:${u}[llvm_targets_Mips]
 				)
 				ppc? (
-					sys-devel/llvm:${u}[llvm_targets_PowerPC]
+					llvm-core/llvm:${u}[llvm_targets_PowerPC]
 					sys-devel/mlir:${u}[llvm_targets_PowerPC]
 				)
 				ppc64? (
-					sys-devel/llvm:${u}[llvm_targets_PowerPC]
+					llvm-core/llvm:${u}[llvm_targets_PowerPC]
 					sys-devel/mlir:${u}[llvm_targets_PowerPC]
 				)
 				sparc? (
-					sys-devel/llvm:${u}[llvm_targets_Sparc]
+					llvm-core/llvm:${u}[llvm_targets_Sparc]
 					sys-devel/mlir:${u}[llvm_targets_Sparc]
 				)
 				x86? (
-					sys-devel/llvm:${u}[llvm_targets_X86,llvm_targets_NVPTX?]
+					llvm-core/llvm:${u}[llvm_targets_X86,llvm_targets_NVPTX?]
 					sys-devel/mlir:${u}[llvm_targets_X86,llvm_targets_NVPTX?]
 				)
 			)
@@ -204,13 +204,13 @@ RDEPEND+="
 	)
 	rocm? (
 		rocm_6_1? (
-			sys-devel/llvm-roc:6.1[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
+			llvm-core/llvm-roc:6.1[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
 		)
 		rocm_6_0? (
-			sys-devel/llvm-roc:6.0[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
+			llvm-core/llvm-roc:6.0[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
 		)
 		rocm_5_7? (
-			sys-devel/llvm-roc:5.7[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
+			llvm-core/llvm-roc:5.7[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
 		)
 	)
 	tutorials? (
@@ -291,16 +291,16 @@ python_configure() {
 einfo "Called python_configure"
 	local dynlib=0
 	local llvm_root_dir
-	if use rocm_6_1 && has_version "~sys-devel/llvm-roc-6.1.2" ; then
+	if use rocm_6_1 && has_version "~llvm-core/llvm-roc-6.1.2" ; then
 		llvm_root_dir="/opt/rocm-6.1.2/llvm" # LLVM 17.0.0git
 		export ROCM_VERSION="6.1.2"
-	elif use rocm_6_0 && has_version "~sys-devel/llvm-roc-6.0.2" ; then
+	elif use rocm_6_0 && has_version "~llvm-core/llvm-roc-6.0.2" ; then
 		llvm_root_dir="/opt/rocm-6.0.2/llvm" # LLVM 17.0.0git
 		export ROCM_VERSION="6.0.2"
-	elif use rocm_5_7 && has_version "~sys-devel/llvm-roc-5.7.1" ; then
+	elif use rocm_5_7 && has_version "~llvm-core/llvm-roc-5.7.1" ; then
 		llvm_root_dir="/opt/rocm-5.7.1/llvm" # LLVM 17.0.0git
 		export ROCM_VERSION="5.7.1"
-	elif use llvm_slot_17 && has_version "sys-devel/llvm:17" && has_version "sys-devel/mlir:17" ; then
+	elif use llvm_slot_17 && has_version "llvm-core/llvm:17" && has_version "sys-devel/mlir:17" ; then
 		llvm_root_dir="/usr/lib/llvm/17"
 		dynlib=1
 	else
