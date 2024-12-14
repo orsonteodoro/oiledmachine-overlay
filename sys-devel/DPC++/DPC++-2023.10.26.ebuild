@@ -345,7 +345,7 @@ gen_llvm_bdepend() {
 			(
 				llvm-core/clang:${s}
 				llvm-core/llvm:${s}
-				sys-devel/lld:${s}
+				llvm-core/lld:${s}
 			)
 		"
 	done
@@ -361,7 +361,7 @@ BDEPEND="
 	)
 	cfi? (
 		>=llvm-core/clang-3.7
-		sys-devel/lld
+		llvm-core/lld
 		|| (
 			$(gen_llvm_bdepend)
 		)
@@ -475,7 +475,7 @@ eerror "Switch to >=llvm-core/clang-5.0"
 			for s in ${LLVM_COMPAT[@]} ; do
 				if \
 					   has_version "llvm-core/clang:${s}" \
-					&& has_version "sys-devel/lld:${s}" \
+					&& has_version "llvm-core/lld:${s}" \
 					&& has_version "llvm-core/llvm:${s}" \
 				; then
 					LLVM_SLOT="${s}"
@@ -577,7 +577,7 @@ src_configure() {
 			fi
 			if \
 				   has_version "llvm-core/clang:${s}" \
-				&& has_version "sys-devel/lld:${s}" \
+				&& has_version "llvm-core/lld:${s}" \
 				&& has_version "llvm-core/llvm:${s}" \
 			; then
 				export CC="${CHOST}-clang-${s}"
