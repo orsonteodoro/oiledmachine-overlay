@@ -240,7 +240,7 @@ gen_cdepend_lto_llvm() {
 			llvm_slot_${s}? (
 				sys-devel/clang:${s}
 				sys-devel/lld:${s}
-				sys-devel/llvm:${s}
+				llvm-core/llvm:${s}
 			)
 		"
 	done
@@ -255,7 +255,7 @@ gen_clang_sanitizer() {
 				=sys-devel/clang-runtime-${s}[compiler-rt,sanitize]
 				=sys-libs/compiler-rt-sanitizers-${s}*:=[${san_type}]
 				sys-devel/clang:${s}
-				sys-devel/llvm:${s}
+				llvm-core/llvm:${s}
 			)
 		"
 	done
@@ -634,14 +634,14 @@ ewarn "text-server-fb is slow.  Consider text-server-adv instead."
 		local s
 		for s in ${LLVM_COMPAT[@]} ; do
 			if has_version "sys-devel/clang:${s}" \
-				&& has_version "sys-devel/llvm:${s}" ; then
+				&& has_version "llvm-core/llvm:${s}" ; then
 				LLVM_MAX_SLOT=${s}
 				break
 			fi
 		done
 		if [[ "${LLVM_MAX_SLOT}" == "not_found" ]] ; then
 eerror
-eerror "Both sys-devel/clang:\${SLOT} and sys-devel/llvm:\${SLOT} must have the"
+eerror "Both sys-devel/clang:\${SLOT} and llvm-core/llvm:\${SLOT} must have the"
 eerror "same slot."
 eerror
 			die
