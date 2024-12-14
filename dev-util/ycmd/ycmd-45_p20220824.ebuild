@@ -406,7 +406,7 @@ DEPEND+="
 		>=dev-python/bottle-${BOTTLE_PV}[${PYTHON_USEDEP}]
 	)
 	system-clangd? (
-		>=sys-devel/clang-${CLANGD_PV}:${CLANG_PV_MAJ}
+		>=llvm-core/clang-${CLANGD_PV}:${CLANG_PV_MAJ}
 	)
 	system-go-tools? (
 		>=dev-go/go-tools-0_pre20200701
@@ -420,7 +420,7 @@ DEPEND+="
 		>=dev-python/parso-${PARSO_PV}[${PYTHON_USEDEP}]
 	)
 	system-libclang? (
-		>=sys-devel/clang-${LIBCLANG_PV}:${CLANG_PV_MAJ}
+		>=llvm-core/clang-${LIBCLANG_PV}:${CLANG_PV_MAJ}
 	)
 	system-mrab-regex? (
 		>=dev-python/regex-2020.10.15[${PYTHON_USEDEP}]
@@ -471,7 +471,7 @@ BDEPEND+="
 	)
 	|| (
 		>=sys-devel/gcc-8
-		>=sys-devel/clang-7
+		>=llvm-core/clang-7
 	)
 "
 # Speed up downloads for rebuilds.  Precache outside of sandbox so we don't keep
