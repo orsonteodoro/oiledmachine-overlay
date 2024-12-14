@@ -1534,7 +1534,7 @@ gen_clang_bdepend() {
 		echo "
 		llvm_slot_${s}? (
 			llvm-core/clang:${s}
-			sys-devel/lld:${s}
+			llvm-core/lld:${s}
 			llvm-core/llvm:${s}
 			scudo? (
 				sys-libs/compiler-rt-sanitizers[scudo]
