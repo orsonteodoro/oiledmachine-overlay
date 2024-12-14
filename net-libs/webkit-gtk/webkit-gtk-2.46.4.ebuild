@@ -808,7 +808,7 @@ gen_depend_llvm() {
 				llvm-core/llvm:${s}
 				llvm-core/lld:${s}
 				openmp? (
-					sys-libs/libomp:${s}[${MULTILIB_USEDEP}]
+					llvm-runtimes/openmp:${s}[${MULTILIB_USEDEP}]
 				)
 			)
 		"
@@ -1029,7 +1029,7 @@ BDEPEND+="
 		net-libs/Thunder
 	)
 	openmp? (
-		sys-libs/libomp:=
+		llvm-runtimes/openmp:=
 	)
 	|| (
 		>=sys-devel/gcc-13.2.0:13
