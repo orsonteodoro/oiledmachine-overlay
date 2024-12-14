@@ -229,7 +229,7 @@ gen_llvm_depstr() {
 		echo "
 			llvm_slot_${s}? (
 				!opencl? (
-					sys-devel/llvm:${s}[${LLVM_USE_DEPS}]
+					llvm-core/llvm:${s}[${LLVM_USE_DEPS}]
 				)
 				opencl? (
 					dev-util/spirv-llvm-translator:${s}
@@ -250,7 +250,7 @@ gen_llvm_depstr() {
 LLVM_DEPSTR="
 	$(gen_llvm_depstr)
 	!opencl? (
-		sys-devel/llvm:=[${LLVM_USE_DEPS}]
+		llvm-core/llvm:=[${LLVM_USE_DEPS}]
 	)
 	opencl? (
 		sys-devel/clang:=[${LLVM_USE_DEPS}]
@@ -354,7 +354,7 @@ llvm_check_deps() {
 	if use opencl || { use vulkan && use video_cards_intel && use amd64; } ; then
 		has_version "dev-util/spirv-llvm-translator:${LLVM_SLOT}" || return 1
 	fi
-	has_version "sys-devel/llvm:${LLVM_SLOT}[${LLVM_USE_DEPS}]"
+	has_version "llvm-core/llvm:${LLVM_SLOT}[${LLVM_USE_DEPS}]"
 }
 
 ignore_video_card_use() {
@@ -458,9 +458,9 @@ ewarn "OSMesa will be slow without enabling USE=llvm"
 pkg_setup() {
 	check_libstdcxx
 	# Warning message for bug 459306
-	if use llvm && has_version "sys-devel/llvm[!debug=]" ; then
+	if use llvm && has_version "llvm-core/llvm[!debug=]" ; then
 ewarn
-ewarn "Mismatch between debug USE flags in media-libs/mesa and sys-devel/llvm"
+ewarn "Mismatch between debug USE flags in media-libs/mesa and llvm-core/llvm"
 ewarn "detected! This can cause problems. For details, see bug 459306."
 ewarn
 	fi
