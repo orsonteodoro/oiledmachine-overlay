@@ -142,8 +142,8 @@ BDEPEND="
 	)
 "
 PDEPEND+="
-	sys-devel/clang-toolchain-symlinks:${LLVM_MAJOR}
-	~sys-devel/clang-runtime-${PV}
+	llvm-core/clang-toolchain-symlinks:${LLVM_MAJOR}
+	~llvm-core/clang-runtime-${PV}
 "
 RESTRICT="
 	!test? (
@@ -203,7 +203,7 @@ PDEPEND+=" "$(gen_pdepend)
 # 3. ${CHOST}-clang wrappers are always installed for all ABIs included
 #    in the current profile (i.e. alike supported by sys-devel/gcc).
 #
-# Therefore: use sys-devel/clang[${MULTILIB_USEDEP}] only if you need
+# Therefore: use llvm-core/clang[${MULTILIB_USEDEP}] only if you need
 # multilib clang* libraries (not runtime, not wrappers).
 
 pkg_setup() {
@@ -254,7 +254,7 @@ ewarn
 ewarn
 ewarn "To avoid missing symbols, both clang-${PV} and llvm-${PV} should be"
 ewarn "built with the same commit."
-ewarn "See \`epkginfo -x sys-devel/clang::oiledmachine-overlay\` or the"
+ewarn "See \`epkginfo -x llvm-core/clang::oiledmachine-overlay\` or the"
 ewarn "metadata.xml to see how to accomplish this."
 ewarn
 
@@ -624,7 +624,7 @@ _src_configure() {
 
 	# [Err 8]: control flow integrity check for type '.*' failed during non-virtual call (vtable address 0x[0-9a-z]+)
 	# [Err 5]: runtime error: control flow integrity check for type '.*' failed during cast to unrelated type (vtable address 0x[0-9a-z]+)
-	# sys-devel/clang no-cfi-nvcall.conf no-cfi-cast.conf # Build time failures: [Err 8] with llvm header, [Err 5] with gcc header
+	# llvm-core/clang no-cfi-nvcall.conf no-cfi-cast.conf # Build time failures: [Err 8] with llvm header, [Err 5] with gcc header
 	if tc-is-clang ; then
 		if is-flagq "-fsanitize=*cfi" ; then
 ewarn
@@ -741,8 +741,8 @@ einfo
 	fi
 
 	if tc-is-cross-compiler; then
-		has_version -b sys-devel/clang:${LLVM_MAJOR} ||
-			die "sys-devel/clang:${LLVM_MAJOR} is required on the build host."
+		has_version -b llvm-core/clang:${LLVM_MAJOR} ||
+			die "llvm-core/clang:${LLVM_MAJOR} is required on the build host."
 		local tools_bin=${BROOT}/usr/lib/llvm/${LLVM_MAJOR}/bin
 		mycmakeargs+=(
 			-DLLVM_TOOLS_BINARY_DIR="${tools_bin}"
