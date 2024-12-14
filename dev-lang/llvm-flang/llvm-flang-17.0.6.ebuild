@@ -45,7 +45,7 @@ REQUIRED_USE="
 RDEPEND="
 	sys-libs/libomp:${LLVM_MAJOR}[offload?]
 	sys-devel/clang:${LLVM_MAJOR}
-	sys-devel/llvm:${LLVM_MAJOR}
+	llvm-core/llvm:${LLVM_MAJOR}
 	sys-devel/mlir:${LLVM_MAJOR}
 "
 DEPEND="
