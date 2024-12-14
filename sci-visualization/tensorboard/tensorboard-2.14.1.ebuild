@@ -53,7 +53,7 @@ gen_llvm_bdepend() {
 			llvm_slot_${s}? (
 				llvm-core/clang:${s}
 				llvm-core/llvm:${s}
-				sys-devel/lld:${s}
+				llvm-core/lld:${s}
 			)
 		"
 	done
