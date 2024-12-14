@@ -99,7 +99,7 @@ gen_llvm_depends() {
 			llvm_slot_${s}? (
 				llvm-core/clang:${s}=
 				lto? (
-					sys-devel/lld:${s}
+					llvm-core/lld:${s}
 				)
 				openmp? (
 					sys-libs/libomp:${s}
