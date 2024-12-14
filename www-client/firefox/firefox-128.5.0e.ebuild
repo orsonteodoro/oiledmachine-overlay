@@ -888,7 +888,7 @@ gen_llvm_bdepend() {
 		echo "
 			llvm_slot_${LLVM_SLOT}? (
 				llvm-core/clang:${LLVM_SLOT}[${MULTILIB_USEDEP}]
-				sys-devel/lld:${LLVM_SLOT}
+				llvm-core/lld:${LLVM_SLOT}
 				llvm-core/llvm:${LLVM_SLOT}[${MULTILIB_USEDEP}]
 				pgo? (
 					=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}*[${MULTILIB_USEDEP},profile]
@@ -896,7 +896,7 @@ gen_llvm_bdepend() {
 				)
 			)
 			wasm? (
-				sys-devel/lld:${LLVM_SLOT}
+				llvm-core/lld:${LLVM_SLOT}
 			)
 		"
 	done
@@ -992,9 +992,9 @@ ewarn
 	fi
 
 	if tc-is-clang && ! tc-ld-is-mold ; then
-		if ! has_version -b "sys-devel/lld:${LLVM_SLOT}" ; then
+		if ! has_version -b "llvm-core/lld:${LLVM_SLOT}" ; then
 ewarn
-ewarn "sys-devel/lld:${LLVM_SLOT} is missing!"
+ewarn "llvm-core/lld:${LLVM_SLOT} is missing!"
 ewarn "Cannot use LLVM slot ${LLVM_SLOT} ..."
 ewarn
 			return 1
@@ -1473,7 +1473,7 @@ ewarn "Building ${PN} with USE=pgo and FEATURES=-userpriv is not supported!"
 		llvm_pkg_setup
 
 		if tc-is-clang && is-flagq '-flto*' && tc-ld-is-lld ; then
-			has_version "sys-devel/lld:$(clang-major-version)" \
+			has_version "llvm-core/lld:$(clang-major-version)" \
 				|| die "Clang PGO requires LLD."
 			local lld_pv=$(ld.lld --version 2>/dev/null \
 				| awk '{ print $2 }')
@@ -2142,9 +2142,9 @@ eerror
 		NM="llvm-nm"
 		RANLIB="llvm-ranlib"
 		local clang_slot=$(clang-major-version)
-		if ! has_version "sys-devel/lld:${clang_slot}" ; then
+		if ! has_version "llvm-core/lld:${clang_slot}" ; then
 eerror
-eerror "You need to emerge sys-devel/lld:${clang_slot}"
+eerror "You need to emerge llvm-core/lld:${clang_slot}"
 eerror
 			die
 		fi
@@ -2529,7 +2529,7 @@ einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 			mozconfig_add_options_ac \
 				"forcing ld=mold" \
 				--enable-linker="mold"
-		elif tc-is-clang && has_version "sys-devel/lld:$(clang-major-version)" ; then
+		elif tc-is-clang && has_version "llvm-core/lld:$(clang-major-version)" ; then
 	# This is upstream's default
 			mozconfig_add_options_ac \
 				"forcing ld=lld" \
