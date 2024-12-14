@@ -5,6 +5,7 @@
 EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
+MY_PN="PySceneDetect"
 PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit distutils-r1 pypi
@@ -19,7 +20,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 else
 	KEYWORDS="~amd64"
-	S="${WORKDIR}/${PN}-${PV}"
+	S="${WORKDIR}/${MY_PN}-${PV}-release"
 	SRC_URI="
 https://github.com/Breakthrough/PySceneDetect/archive/refs/tags/v${PV}-release.tar.gz
 	-> ${P}.tar.gz
