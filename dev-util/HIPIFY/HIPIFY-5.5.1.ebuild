@@ -66,16 +66,16 @@ PATCHES=(
 pkg_setup() {
 	if ! use test ; then
 		:
-	elif has_version "=dev-util/nvidia-cuda-toolkit-12.0*" && has_version "=sys-devel/clang-17*" && has_version "=llvm-core/llvm-17*" ; then
+	elif has_version "=dev-util/nvidia-cuda-toolkit-12.0*" && has_version "=llvm-core/clang-17*" && has_version "=llvm-core/llvm-17*" ; then
 ewarn "CUDA 12 support is experimental"
 		LLVM_SLOT=17
-	elif has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=sys-devel/clang-15*" && has_version "=llvm-core/llvm-15*" ; then
+	elif has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=llvm-core/clang-15*" && has_version "=llvm-core/llvm-15*" ; then
 		LLVM_SLOT=15
-	elif has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=sys-devel/clang-14*" && has_version "=llvm-core/llvm-14*" ; then
+	elif has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=llvm-core/clang-14*" && has_version "=llvm-core/llvm-14*" ; then
 		LLVM_SLOT=14
-	elif has_version "=dev-util/nvidia-cuda-toolkit-11.7*" && has_version "=sys-devel/clang-14*" && has_version "=llvm-core/llvm-14*" ; then
+	elif has_version "=dev-util/nvidia-cuda-toolkit-11.7*" && has_version "=llvm-core/clang-14*" && has_version "=llvm-core/llvm-14*" ; then
 		LLVM_SLOT=14
-	elif has_version "=dev-util/nvidia-cuda-toolkit-11.5*" && has_version "=sys-devel/clang-13*" && has_version "=llvm-core/llvm-13*" ; then
+	elif has_version "=dev-util/nvidia-cuda-toolkit-11.5*" && has_version "=llvm-core/clang-13*" && has_version "=llvm-core/llvm-13*" ; then
 		LLVM_SLOT=13
 	fi
 	if has_version "=dev-util/nvidia-cuda-toolkit-12.0*" ; then
