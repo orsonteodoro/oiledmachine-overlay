@@ -266,7 +266,7 @@ gen_clang_pgo_rdepends() {
 	for s in ${LLVM_PGO_SLOTS[@]} ; do
 		echo "
 			(
-				sys-devel/clang:${s}
+				llvm-core/clang:${s}
 				llvm-core/llvm:${s}
 			)
 		"
@@ -277,7 +277,7 @@ gen_llvm_rdepends() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			(
-				sys-devel/clang:${s}
+				llvm-core/clang:${s}
 				sys-devel/lld:${s}
 				llvm-core/llvm:${s}
 			)
@@ -289,7 +289,7 @@ gen_lto_rdepends() {
 	for s in ${LLVM_LTO_SLOTS[@]} ; do
 		echo "
 			(
-				sys-devel/clang:${s}
+				llvm-core/clang:${s}
 				sys-devel/lld:${s}
 				llvm-core/llvm:${s}
 			)
@@ -301,10 +301,10 @@ gen_cfi_arm64_rdepends() {
 	for s in ${LLVM_CFI_ARM64_SLOTS[@]} ; do
 		echo "
 			(
-				=sys-devel/clang-runtime-${s}*[compiler-rt,sanitize]
+				=llvm-core/clang-runtime-${s}*[compiler-rt,sanitize]
 				=sys-libs/compiler-rt-${s}*
 				=sys-libs/compiler-rt-sanitizers-${s}*[cfi?,shadowcallstack?]
-				sys-devel/clang:${s}
+				llvm-core/clang:${s}
 				sys-devel/lld:${s}
 				llvm-core/llvm:${s}
 			)
@@ -316,10 +316,10 @@ gen_cfi_x86_rdepends() {
 	for s in ${LLVM_CFI_X86_SLOTS[@]} ; do
 		echo "
 			(
-				=sys-devel/clang-runtime-${s}*[compiler-rt,sanitize]
+				=llvm-core/clang-runtime-${s}*[compiler-rt,sanitize]
 				=sys-libs/compiler-rt-${s}*
 				=sys-libs/compiler-rt-sanitizers-${s}*[cfi?,shadowcallstack?]
-				sys-devel/clang:${s}
+				llvm-core/clang:${s}
 				sys-devel/lld:${s}
 				llvm-core/llvm:${s}
 			)
