@@ -286,7 +286,7 @@ gen_rocm_depends() {
 				~sci-libs/rocFFT-${pv}:${s}$(get_rocm_usedep ROCFFT)
 				~sci-libs/rocRAND-${pv}:${s}$(get_rocm_usedep ROCRAND)
 
-				sys-devel/lld:${LLD_SLOT[${pv}]}
+				llvm-core/lld:${LLD_SLOT[${pv}]}
 		"
 
 		if ver_test "${s}" -ge "5.5" ; then
@@ -371,7 +371,7 @@ gen_llvm_bdepend() {
 			llvm_slot_${s}? (
 				llvm-core/clang:${s}
 				llvm-core/llvm:${s}
-				sys-devel/lld:${s}
+				llvm-core/lld:${s}
 			)
 		"
 	done
