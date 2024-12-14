@@ -1533,7 +1533,7 @@ gen_clang_bdepend() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 		llvm_slot_${s}? (
-			sys-devel/clang:${s}
+			llvm-core/clang:${s}
 			sys-devel/lld:${s}
 			llvm-core/llvm:${s}
 			scudo? (
