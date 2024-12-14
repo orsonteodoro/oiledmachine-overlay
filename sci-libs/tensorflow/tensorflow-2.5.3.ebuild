@@ -659,7 +659,7 @@ gen_llvm_bdepend() {
 			echo "
 				(
 					sys-devel/clang:${s}
-					sys-devel/llvm:${s}
+					llvm-core/llvm:${s}
 					sys-devel/lld:${s}
 				)
 			"
@@ -668,7 +668,7 @@ gen_llvm_bdepend() {
 			echo "
 				(
 					sys-devel/clang:${s}
-					sys-devel/llvm:${s}
+					llvm-core/llvm:${s}
 					>=sys-devel/lld-${s}
 				)
 			"
