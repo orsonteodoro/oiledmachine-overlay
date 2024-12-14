@@ -63,7 +63,7 @@ PATCHES=(
 pkg_setup() {
 	if ! use test ; then
 		:
-	elif has_version "=dev-util/nvidia-cuda-toolkit-11.2*" && has_version "=sys-devel/clang-11*" && has_version "=llvm-core/llvm-13*" ; then
+	elif has_version "=dev-util/nvidia-cuda-toolkit-11.2*" && has_version "=llvm-core/clang-11*" && has_version "=llvm-core/llvm-13*" ; then
 		LLVM_SLOT=11
 	fi
 	rocm_pkg_setup
