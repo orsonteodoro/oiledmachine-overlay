@@ -236,21 +236,21 @@ BDEPEND+="
 	)
 	rocm? (
 		rocm_5_5? (
-			~llvm-core/llvm-roc-${HIP_5_5_VERSION}:5.5
+			~sys-devel/llvm-roc-${HIP_5_5_VERSION}:5.5
 		)
 		rocm_5_6? (
-			~llvm-core/llvm-roc-${HIP_5_6_VERSION}:5.6
+			~sys-devel/llvm-roc-${HIP_5_6_VERSION}:5.6
 		)
 		rocm_5_7? (
-			~llvm-core/llvm-roc-${HIP_5_7_VERSION}:5.7
+			~sys-devel/llvm-roc-${HIP_5_7_VERSION}:5.7
 		)
 		rocm_6_0? (
-			~llvm-core/llvm-roc-${HIP_6_0_VERSION}:6.0
+			~sys-devel/llvm-roc-${HIP_6_0_VERSION}:6.0
 		)
 		rocm_6_1? (
-			~llvm-core/llvm-roc-${HIP_6_1_VERSION}:6.1
+			~sys-devel/llvm-roc-${HIP_6_1_VERSION}:6.1
 		)
-		llvm-core/llvm-roc:=
+		sys-devel/llvm-roc:=
 		$(gen_hip_depends)
 		>=dev-build/cmake-3.21
 	)

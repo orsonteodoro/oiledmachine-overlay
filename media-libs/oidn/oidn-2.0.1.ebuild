@@ -188,12 +188,12 @@ RDEPEND+="
 	)
 	rocm? (
 		rocm_5_5? (
-			~llvm-core/llvm-roc-${HIP_5_5_VERSION}:5.5
+			~sys-devel/llvm-roc-${HIP_5_5_VERSION}:5.5
 		)
 		rocm_5_6? (
-			~llvm-core/llvm-roc-${HIP_5_6_VERSION}:5.6
+			~sys-devel/llvm-roc-${HIP_5_6_VERSION}:5.6
 		)
-		llvm-core/llvm-roc:=
+		sys-devel/llvm-roc:=
 		$(gen_hip_depends)
 		dev-util/hip:=[rocm]
 	)

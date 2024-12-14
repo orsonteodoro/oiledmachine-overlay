@@ -59,7 +59,7 @@ RDEPEND="
 		)
 		rocm? (
 			~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
-			~llvm-core/llvm-roc-${PV}:${ROCM_SLOT}
+			~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 		)
 	)
 	math? (

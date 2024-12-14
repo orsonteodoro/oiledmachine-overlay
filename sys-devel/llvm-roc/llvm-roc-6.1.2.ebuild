@@ -97,9 +97,9 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	!llvm-core/llvm-rocm:0
+	!sys-devel/llvm-rocm:0
 	dev-libs/libxml2
-	llvm-core/llvm-roc-symlinks:${ROCM_SLOT}/${PV}
+	sys-devel/llvm-roc-symlinks:${ROCM_SLOT}/${PV}
 	sys-libs/ncurses:=
 	sys-libs/zlib
 	virtual/cblas

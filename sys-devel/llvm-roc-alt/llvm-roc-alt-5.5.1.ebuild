@@ -68,7 +68,7 @@ RDEPEND="
 	sys-libs/zlib
 	virtual/libelf
 	~dev-libs/rocm-core-${PV}:${ROCM_SLOT}
-	~llvm-core/llvm-roc-${PV}:${ROCM_SLOT}
+	~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 "
 DEPEND="
 	${RDEPEND}

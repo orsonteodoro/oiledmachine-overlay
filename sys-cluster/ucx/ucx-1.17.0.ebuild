@@ -411,7 +411,7 @@ gen_hip_clang_bdepend() {
 	for pv in ${ROCM_VERSIONS[@]} ; do
 		echo "
 			=sys-devel/gcc-12*
-			~llvm-core/llvm-roc-${pv}:${pv%.*}
+			~sys-devel/llvm-roc-${pv}:${pv%.*}
 			openmp? (
 				~sys-libs/llvm-roc-libomp-${pv}:${pv%.*}
 			)

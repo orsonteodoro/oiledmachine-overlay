@@ -204,13 +204,13 @@ RDEPEND+="
 	)
 	rocm? (
 		rocm_6_1? (
-			llvm-core/llvm-roc:6.1[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
+			sys-devel/llvm-roc:6.1[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
 		)
 		rocm_6_0? (
-			llvm-core/llvm-roc:6.0[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
+			sys-devel/llvm-roc:6.0[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
 		)
 		rocm_5_7? (
-			llvm-core/llvm-roc:5.7[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
+			sys-devel/llvm-roc:5.7[llvm_targets_X86,llvm_targets_AMDGPU,mlir]
 		)
 	)
 	tutorials? (
@@ -291,13 +291,13 @@ python_configure() {
 einfo "Called python_configure"
 	local dynlib=0
 	local llvm_root_dir
-	if use rocm_6_1 && has_version "~llvm-core/llvm-roc-6.1.2" ; then
+	if use rocm_6_1 && has_version "~sys-devel/llvm-roc-6.1.2" ; then
 		llvm_root_dir="/opt/rocm-6.1.2/llvm" # LLVM 17.0.0git
 		export ROCM_VERSION="6.1.2"
-	elif use rocm_6_0 && has_version "~llvm-core/llvm-roc-6.0.2" ; then
+	elif use rocm_6_0 && has_version "~sys-devel/llvm-roc-6.0.2" ; then
 		llvm_root_dir="/opt/rocm-6.0.2/llvm" # LLVM 17.0.0git
 		export ROCM_VERSION="6.0.2"
-	elif use rocm_5_7 && has_version "~llvm-core/llvm-roc-5.7.1" ; then
+	elif use rocm_5_7 && has_version "~sys-devel/llvm-roc-5.7.1" ; then
 		llvm_root_dir="/opt/rocm-5.7.1/llvm" # LLVM 17.0.0git
 		export ROCM_VERSION="5.7.1"
 	elif use llvm_slot_17 && has_version "llvm-core/llvm:17" && has_version "sys-devel/mlir:17" ; then

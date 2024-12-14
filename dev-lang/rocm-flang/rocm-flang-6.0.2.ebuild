@@ -56,7 +56,7 @@ BDEPEND="
 		${ROCM_CLANG_DEPEND}
 	)
 	aocc? (
-		~llvm-core/llvm-roc-alt-${PV}:${ROCM_SLOT}
+		~sys-devel/llvm-roc-alt-${PV}:${ROCM_SLOT}
 	)
 	doc? (
 		app-text/doxygen
@@ -315,7 +315,7 @@ src_install() {
 	insinto "${dest}"
 	doins -r "${staging_prefix}/"*
 	fix_file_permissions
-	# Flang symlink frontend is already installed by llvm-core/llvm-roc.
+	# Flang symlink frontend is already installed by sys-devel/llvm-roc.
 	dosym \
 		"${EROCM_LLVM_PATH}/bin/flang" \
 		"${EROCM_PATH}/bin/flang"

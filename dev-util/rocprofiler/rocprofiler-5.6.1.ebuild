@@ -81,7 +81,7 @@ BDEPEND="
 	')
 	>=dev-build/cmake-3.18.0
 	~dev-libs/ROCdbgapi-${PV}:${ROCM_SLOT}
-	~llvm-core/llvm-roc-symlinks-${PV}:${ROCM_SLOT}
+	~sys-devel/llvm-roc-symlinks-${PV}:${ROCM_SLOT}
 	test? (
 		sys-devel/gcc[sanitize]
 	)

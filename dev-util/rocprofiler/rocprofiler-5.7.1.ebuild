@@ -87,7 +87,7 @@ BDEPEND="
 		dev-python/CppHeaderParser[${PYTHON_USEDEP}]
 	')
 	>=dev-build/cmake-3.18.0
-	~llvm-core/llvm-roc-symlinks-${PV}:${ROCM_SLOT}
+	~sys-devel/llvm-roc-symlinks-${PV}:${ROCM_SLOT}
 	test? (
 		sys-devel/gcc[sanitize]
 	)
