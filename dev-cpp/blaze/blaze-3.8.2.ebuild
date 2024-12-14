@@ -43,7 +43,7 @@ DEPEND+="
 BDEPEND+="
 	>=dev-build/cmake-3.5
 	|| (
-		sys-devel/clang
+		llvm-core/clang
 		sys-devel/gcc[cxx]
 	)
 "
