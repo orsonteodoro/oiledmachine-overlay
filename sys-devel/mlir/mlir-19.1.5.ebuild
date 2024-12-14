@@ -50,14 +50,14 @@ REQUIRED_USE="
 "
 RDEPEND="
 	sys-devel/clang:${SLOT}
-	sys-devel/llvm:${SLOT}
+	llvm-core/llvm:${SLOT}
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
 	sys-devel/clang:${SLOT}
-	sys-devel/llvm:${SLOT}
+	llvm-core/llvm:${SLOT}
 "
 RESTRICT="
 "
