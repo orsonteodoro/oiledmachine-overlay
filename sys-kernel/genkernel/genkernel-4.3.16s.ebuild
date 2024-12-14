@@ -279,8 +279,8 @@ gen_cfi_arm64_rdepends() {
 		echo "
 			(
 				=llvm-core/clang-runtime-${s}*[compiler-rt,sanitize]
-				=sys-libs/compiler-rt-${s}*
-				=sys-libs/compiler-rt-sanitizers-${s}*[cfi?,shadowcallstack?]
+				=llvm-runtimes/compiler-rt-${s}*
+				=llvm-runtimes/compiler-rt-sanitizers-${s}*[cfi?,shadowcallstack?]
 				llvm-core/clang:${s}
 				llvm-core/lld:${s}
 				llvm-core/llvm:${s}
@@ -294,8 +294,8 @@ gen_cfi_x86_rdepends() {
 		echo "
 			(
 				=llvm-core/clang-runtime-${s}*[compiler-rt,sanitize]
-				=sys-libs/compiler-rt-${s}*
-				=sys-libs/compiler-rt-sanitizers-${s}*[cfi?,shadowcallstack?]
+				=llvm-runtimes/compiler-rt-${s}*
+				=llvm-runtimes/compiler-rt-sanitizers-${s}*[cfi?,shadowcallstack?]
 				llvm-core/clang:${s}
 				llvm-core/lld:${s}
 				llvm-core/llvm:${s}
