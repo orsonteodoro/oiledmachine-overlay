@@ -684,14 +684,14 @@ DISTRO_REQUIRE_USE="
 #
 # Generally, the availability of the system-toolchain USE flag is.
 #
-#  ( sys-devel/rust:${LLVM_OFFICIAL_SLOT}  || sys-devel/rust-bin:${LLVM_OFFICIAL_SLOT} ) && sys-devel/clang:${LLVM_OFFICIAL_SLOT} && sys-devel/llvm:${LLVM_OFFICIAL_SLOT}.
+#  ( sys-devel/rust:${LLVM_OFFICIAL_SLOT}  || sys-devel/rust-bin:${LLVM_OFFICIAL_SLOT} ) && sys-devel/clang:${LLVM_OFFICIAL_SLOT} && llvm-core/llvm:${LLVM_OFFICIAL_SLOT}.
 #
 # The community prefers only stable versioning.
 #
 # Upstream uses a customized build where they do not align.  For 128.x.x.x
 # release it should be
 #
-#   dev-lang/rust-cr:${RUST_CR_PV%%.*}-${PV%%.*} && sys-devel/clang:${LLVM_OFFICIAL_SLOT} && sys-devel/llvm:${LLVM_OFFICIAL_SLOT}.
+#   dev-lang/rust-cr:${RUST_CR_PV%%.*}-${PV%%.*} && sys-devel/clang:${LLVM_OFFICIAL_SLOT} && llvm-core/llvm:${LLVM_OFFICIAL_SLOT}.
 #
 # The rust-cr build is actually an older snapshot of 1.79.x that submodules llvm 18.
 # The official slot discussed here is llvm 19.  Hypothetical rust-cr, needs to be
@@ -940,7 +940,7 @@ gen_depend_llvm() {
 			=sys-devel/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 			sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 			sys-devel/lld:${s}
-			sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
+			llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
 			pgo? (
 				=sys-libs/compiler-rt-sanitizers-${s}*[${MULTILIB_USEDEP},profile]
 				sys-libs/compiler-rt-sanitizers:=
@@ -1562,7 +1562,7 @@ get_llvm_profdata_version_info()
 	local PKGDB_PATH="${ESYSROOT}/var/db/pkg"
 	for compatible_pv in ${PGO_LLVM_SUPPORTED_VERSIONS[@]} ; do
 		(( ${compatible_pv%%.*} != ${LLVM_SLOT} )) && continue
-		( ! has_version "~sys-devel/llvm-${compatible_pv}" ) && continue
+		( ! has_version "~llvm-core/llvm-${compatible_pv}" ) && continue
 		found_ver=${compatible_pv}
 		profdata_index_version=$(cat \
 "${ESYSROOT}/usr/lib/llvm/$(ver_cut 1 ${found_ver})/include/llvm/ProfileData/InstrProfData.inc" \
@@ -1585,7 +1585,7 @@ eerror
 		die
 	fi
 	if [[ -z "${found_ver}" ]] ; then
-eerror "Missing the sys-devel/llvm version (aka found_ver)"
+eerror "Missing the llvm-core/llvm version (aka found_ver)"
 		die
 	fi
 	echo "${profdata_index_version}:${found_ver}"
@@ -3220,9 +3220,9 @@ einfo "PATH=${PATH} (after)"
 		if ! which llvm-ar 2>/dev/null 1>/dev/null ; then
 			die "llvm-ar is unreachable"
 		fi
-		if has_version "=sys-devel/llvm-${LLVM_SLOT}.0.9999" ; then
+		if has_version "=llvm-core/llvm-${LLVM_SLOT}.0.9999" ; then
 			if \
-				   has_version "=sys-devel/llvm-${LLVM_SLOT}.0.9999[-fallback-commit]" \
+				   has_version "=llvm-core/llvm-${LLVM_SLOT}.0.9999[-fallback-commit]" \
 				|| has_version "=sys-devel/clang-${LLVM_SLOT}.0.9999[-fallback-commit]" \
 				|| has_version "=sys-devel/lld-${LLVM_SLOT}.0.9999[-fallback-commit]" \
 				|| has_version "=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}.0.9999[-fallback-commit]" \
@@ -3232,7 +3232,7 @@ einfo "PATH=${PATH} (after)"
 eerror
 eerror "The fallback-commit USE flag is required."
 eerror
-eerror "emerge =sys-devel/llvm-${LLVM_SLOT}.0.0.9999[fallback-commit] \\"
+eerror "emerge =llvm-core/llvm-${LLVM_SLOT}.0.0.9999[fallback-commit] \\"
 eerror "       =sys-devel/clang-${LLVM_SLOT}.0.0.9999 \\"
 eerror "       =sys-devel/lld-${LLVM_SLOT}.0.0.9999 \\"
 eerror "       =sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}.0.0.9999 \\"
@@ -4628,7 +4628,7 @@ eerror
 eerror "The PGO profile is not compatible with this version of LLVM."
 eerror
 eerror "Expected:\t$(get_pregenerated_profdata_index_version)"
-eerror "Found:\t${CURRENT_PROFDATA_VERSION} for ~sys-devel/llvm-${CURRENT_PROFDATA_LLVM_VERSION}"
+eerror "Found:\t${CURRENT_PROFDATA_VERSION} for ~llvm-core/llvm-${CURRENT_PROFDATA_LLVM_VERSION}"
 eerror
 eerror "The solution is to rebuild using a newer/older commit or tag."
 eerror
@@ -4641,7 +4641,7 @@ einfo
 einfo "Profdata compatibility:"
 einfo
 einfo "Expected:\t$(get_pregenerated_profdata_index_version)"
-einfo "Found:\t${CURRENT_PROFDATA_VERSION} for ~sys-devel/llvm-${CURRENT_PROFDATA_LLVM_VERSION}"
+einfo "Found:\t${CURRENT_PROFDATA_VERSION} for ~llvm-core/llvm-${CURRENT_PROFDATA_LLVM_VERSION}"
 einfo
 		fi
 	fi
