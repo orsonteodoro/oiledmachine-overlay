@@ -215,7 +215,7 @@ gen_llvm_test_bdepend()
 				sys-libs/libomp:${s}[${MULTILIB_USEDEP}]
 				fuzz-testing? (
 					=llvm-core/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
-					=sys-libs/compiler-rt-sanitizers-${s}*:=[libfuzzer,asan,ubsan]
+					=llvm-runtimes/compiler-rt-sanitizers-${s}*:=[libfuzzer,asan,ubsan]
 				)
 			)
 		"
@@ -462,7 +462,7 @@ src_configure_abi() {
 		for s in ${LLVM_COMPAT[@]} ; do
 			if has_version  "llvm-core/clang:${s}" \
 			&& has_version "=llvm-core/clang-runtime-${s}*" \
-			&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*" \
+			&& has_version "=llvm-runtimes/compiler-rt-sanitizers-${s}*" \
 				; then
 einfo
 einfo "Using clang:${s}"
@@ -480,7 +480,7 @@ eerror "Fix the clang toolchain.  It requires:"
 eerror
 eerror "  llvm-core/clang:\${SLOT}"
 eerror "  =llvm-core/clang-runtime-\${SLOT}*"
-eerror "  =sys-libs/compiler-rt-sanitizers-*\${SLOT}"
+eerror "  =llvm-runtimes/compiler-rt-sanitizers-*\${SLOT}"
 eerror
 eerror "where \${SLOT} = 14."
 eerror
