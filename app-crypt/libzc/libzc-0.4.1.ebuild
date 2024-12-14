@@ -52,10 +52,10 @@ BDEPEND="
 	sys-devel/gcc
 	dev-build/make
 	bolt? (
-		sys-devel/clang
+		llvm-core/clang
 	)
 	pgo? (
-		sys-devel/clang
+		llvm-core/clang
 	)
 "
 
