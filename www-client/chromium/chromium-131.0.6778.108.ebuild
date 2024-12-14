@@ -681,14 +681,14 @@ DISTRO_REQUIRE_USE="
 #
 # Generally, the availability of the system-toolchain USE flag is.
 #
-#  ( sys-devel/rust:${LLVM_OFFICIAL_SLOT}  || sys-devel/rust-bin:${LLVM_OFFICIAL_SLOT} ) && sys-devel/clang:${LLVM_OFFICIAL_SLOT} && llvm-core/llvm:${LLVM_OFFICIAL_SLOT}.
+#  ( sys-devel/rust:${LLVM_OFFICIAL_SLOT}  || sys-devel/rust-bin:${LLVM_OFFICIAL_SLOT} ) && llvm-core/clang:${LLVM_OFFICIAL_SLOT} && llvm-core/llvm:${LLVM_OFFICIAL_SLOT}.
 #
 # The community prefers only stable versioning.
 #
 # Upstream uses a customized build where they do not align.  For 128.x.x.x
 # release it should be
 #
-#   dev-lang/rust-cr:${RUST_CR_PV%%.*}-${PV%%.*} && sys-devel/clang:${LLVM_OFFICIAL_SLOT} && llvm-core/llvm:${LLVM_OFFICIAL_SLOT}.
+#   dev-lang/rust-cr:${RUST_CR_PV%%.*}-${PV%%.*} && llvm-core/clang:${LLVM_OFFICIAL_SLOT} && llvm-core/llvm:${LLVM_OFFICIAL_SLOT}.
 #
 # The rust-cr build is actually an older snapshot of 1.79.x that submodules llvm 18.
 # The official slot discussed here is llvm 19.  Hypothetical rust-cr, needs to be
@@ -934,8 +934,8 @@ gen_depend_llvm() {
 			)
 			=sys-libs/compiler-rt-${s}*
 			sys-libs/compiler-rt:=
-			=sys-devel/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
-			sys-devel/clang:${s}[${MULTILIB_USEDEP}]
+			=llvm-core/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
+			llvm-core/clang:${s}[${MULTILIB_USEDEP}]
 			sys-devel/lld:${s}
 			llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
 			pgo? (
@@ -3123,8 +3123,8 @@ ewarn "  See ebuild for details with keyword search atomic_load."
 ewarn
 ewarn "Solution 2 - Emerge either:"
 ewarn
-ewarn "  sys-devel/clang:16::oiledmachine-overlay"
-ewarn "  sys-devel/clang:17::oiledmachine-overlay"
+ewarn "  llvm-core/clang:16::oiledmachine-overlay"
+ewarn "  llvm-core/clang:17::oiledmachine-overlay"
 ewarn
 ewarn "Solution 3 - Emerge this package with gcc."
 ewarn
@@ -3172,7 +3172,7 @@ einfo "Switching to clang."
 		else
 			local s
 			for s in ${LLVM_COMPAT[@]} ; do
-				if has_version "sys-devel/clang:${s}" ; then
+				if has_version "llvm-core/clang:${s}" ; then
 					slot="${s}"
 					break
 				fi
@@ -3220,21 +3220,21 @@ einfo "PATH=${PATH} (after)"
 		if has_version "=llvm-core/llvm-${LLVM_SLOT}.0.9999" ; then
 			if \
 				   has_version "=llvm-core/llvm-${LLVM_SLOT}.0.9999[-fallback-commit]" \
-				|| has_version "=sys-devel/clang-${LLVM_SLOT}.0.9999[-fallback-commit]" \
+				|| has_version "=llvm-core/clang-${LLVM_SLOT}.0.9999[-fallback-commit]" \
 				|| has_version "=sys-devel/lld-${LLVM_SLOT}.0.9999[-fallback-commit]" \
 				|| has_version "=sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}.0.9999[-fallback-commit]" \
 				|| has_version "=sys-libs/compiler-rt-${LLVM_SLOT}.0.9999[-fallback-commit]" \
-				|| has_version "=sys-devel/clang-runtime-${LLVM_SLOT}.0.9999[-fallback-commit]" \
+				|| has_version "=llvm-core/clang-runtime-${LLVM_SLOT}.0.9999[-fallback-commit]" \
 			; then
 eerror
 eerror "The fallback-commit USE flag is required."
 eerror
 eerror "emerge =llvm-core/llvm-${LLVM_SLOT}.0.0.9999[fallback-commit] \\"
-eerror "       =sys-devel/clang-${LLVM_SLOT}.0.0.9999 \\"
+eerror "       =llvm-core/clang-${LLVM_SLOT}.0.0.9999 \\"
 eerror "       =sys-devel/lld-${LLVM_SLOT}.0.0.9999 \\"
 eerror "       =sys-libs/compiler-rt-sanitizers-${LLVM_SLOT}.0.0.9999 \\"
 eerror "       =sys-libs/compiler-rt-${LLVM_SLOT}.0.0.9999 \\"
-eerror "       =sys-devel/clang-runtime-${LLVM_SLOT}.0.0.9999"
+eerror "       =llvm-core/clang-runtime-${LLVM_SLOT}.0.0.9999"
 eerror
 				die
 			fi
@@ -3247,8 +3247,8 @@ eerror
 			append-cppflags "-isystem/usr/lib/clang/${LLVM_SLOT}/include"
 			show_clang_header_warning "${LLVM_SLOT}"
 		else
-			local clang_pv=$(best_version "sys-devel/clang:${LLVM_SLOT}" \
-				| sed -e "s|sys-devel/clang-||")
+			local clang_pv=$(best_version "llvm-core/clang:${LLVM_SLOT}" \
+				| sed -e "s|llvm-core/clang-||")
 			clang_pv=$(ver_cut 1-3 "${clang_pv}")
 			append-cppflags "-isystem/usr/lib/clang/${clang_pv}/include"
 			show_clang_header_warning "${clang_pv}"
