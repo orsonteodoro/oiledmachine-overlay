@@ -124,7 +124,7 @@ DEPEND="
 "
 BDEPEND="
 	${ROCM_GCC_DEPEND}
-	sys-devel/lld:${LLVM_SLOT}
+	llvm-core/lld:${LLVM_SLOT}
 "
 PATCHES=(
 )
