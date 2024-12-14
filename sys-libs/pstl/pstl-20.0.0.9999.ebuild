@@ -61,7 +61,7 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
-	sys-devel/llvm:${LLVM_MAJOR}
+	llvm-core/llvm:${LLVM_MAJOR}
 "
 BDEPEND+="
 	>=dev-build/cmake-3.20.0
