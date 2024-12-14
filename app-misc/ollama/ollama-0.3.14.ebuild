@@ -2654,7 +2654,7 @@ gen_clang_bdepend() {
 		echo  "
 		llvm_slot_${s}? (
 			sys-devel/clang:${s}
-			sys-devel/llvm:${s}
+			llvm-core/llvm:${s}
 		)
 		"
 	done
@@ -2668,7 +2668,7 @@ gen_rocm_bdepend() {
 		echo "
 			rocm_${s/./_}? (
 				~dev-util/hip-${ROCM_VERSIONS[${s1}]}:${s}[lc,rocm]
-				~sys-devel/llvm-roc-${ROCM_VERSIONS[${s1}]}:${s}[llvm_targets_AMDGPU,llvm_targets_X86]
+				~llvm-core/llvm-roc-${ROCM_VERSIONS[${s1}]}:${s}[llvm_targets_AMDGPU,llvm_targets_X86]
 			)
 		"
 	done
@@ -2690,7 +2690,7 @@ gen_rocm_rdepend() {
 				~sci-libs/rocBLAS-${ROCM_VERSIONS[${s1}]}:${s}[cpu_flags_x86_f16c=]
 				~sci-libs/rocSPARSE-${ROCM_VERSIONS[${s1}]}:${s}$(get_rocm_usedep ROCSPARSE)
 				~sci-libs/rocSOLVER-${ROCM_VERSIONS[${s1}]}:${s}$(get_rocm_usedep ROCSOLVER)
-				~sys-devel/llvm-roc-${ROCM_VERSIONS[${s1}]}:${s}[llvm_targets_AMDGPU,llvm_targets_X86]
+				~llvm-core/llvm-roc-${ROCM_VERSIONS[${s1}]}:${s}[llvm_targets_AMDGPU,llvm_targets_X86]
 			)
 		"
 	done
