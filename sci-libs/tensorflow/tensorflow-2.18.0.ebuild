@@ -548,7 +548,7 @@ gen_rocm_rdepend() {
 				~dev-util/rocminfo-${pv}:${s}
 				~dev-util/Tensile-${pv}:${s}$(get_rocm_usedep TENSILE)
 
-				sys-devel/lld:${LLD_SLOT[${pv}]}
+				llvm-core/lld:${LLD_SLOT[${pv}]}
 			)
 		"
 		if ver_test "${s}" -ge "5.5" ; then
@@ -749,7 +749,7 @@ gen_llvm_bdepend() {
 				(
 					llvm-core/clang:${s}
 					llvm-core/llvm:${s}
-					sys-devel/lld:${s}
+					llvm-core/lld:${s}
 				)
 			"
 		else
@@ -758,7 +758,7 @@ gen_llvm_bdepend() {
 				(
 					llvm-core/clang:${s}
 					llvm-core/llvm:${s}
-					>=sys-devel/lld-${s}
+					>=llvm-core/lld-${s}
 				)
 			"
 		fi
