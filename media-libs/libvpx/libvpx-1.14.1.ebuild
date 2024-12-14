@@ -496,7 +496,7 @@ _src_configure() {
 	)
 
 	strip-flag-value "cfi-icall"
-	if tc-is-clang && has_version "sys-libs/compiler-rt-sanitizers[cfi]" ; then
+	if tc-is-clang && has_version "llvm-runtimes/compiler-rt-sanitizers[cfi]" ; then
 		append_all -fno-sanitize=cfi-icall # Prevent illegal instruction with vpxenc --help
 	fi
 
