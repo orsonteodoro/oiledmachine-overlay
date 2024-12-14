@@ -184,7 +184,7 @@ WANTS_CFI=0
 _usex_cfi() {
 	local s=$(clang-major-version)
 	if tc-is-clang \
-		&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
+		&& has_version "=llvm-runtimes/compiler-rt-sanitizers-${s}*[cfi]" \
 		&& [[ "${HAVE_FLAG_CFI}" == "1" ]] ; then
 		WANTS_CFI=1
 		echo "ON"
@@ -197,7 +197,7 @@ HAVE_FLAG_CFI_CAST="0"
 _usex_cfi_cast() {
 	local s=$(clang-major-version)
 	if tc-is-clang \
-		&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
+		&& has_version "=llvm-runtimes/compiler-rt-sanitizers-${s}*[cfi]" \
 		&& [[ "${HAVE_CFI_CAST}" == "1" ]] ; then
 		WANTS_CFI=1
 		echo "ON"
@@ -210,7 +210,7 @@ HAVE_FLAG_CFI_ICALL="0"
 _usex_cfi_icall() {
 	local s=$(clang-major-version)
 	if tc-is-clang \
-		&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
+		&& has_version "=llvm-runtimes/compiler-rt-sanitizers-${s}*[cfi]" \
 		&& [[ "${HAVE_FLAG_CFI_ICALL}" == "1" ]] ; then
 		WANTS_CFI=1
 		echo "ON"
@@ -223,7 +223,7 @@ HAVE_FLAG_CFI_VCALL="0"
 _usex_cfi_vcall() {
 	local s=$(clang-major-version)
 	if tc-is-clang \
-		&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
+		&& has_version "=llvm-runtimes/compiler-rt-sanitizers-${s}*[cfi]" \
 		&& [[ "${HAVE_FLAG_CFI_VCALL}" == "1" ]] ; then
 		WANTS_CFI=1
 		echo "ON"
@@ -237,7 +237,7 @@ WANTS_CFI_CROSS_DSO=0
 _usex_cfi_cross_dso() {
 	local s=$(clang-major-version)
 	if tc-is-clang \
-		&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[cfi]" \
+		&& has_version "=llvm-runtimes/compiler-rt-sanitizers-${s}*[cfi]" \
 		&& [[ "${HAVE_FLAG_CFI_CROSS_DSO}" == "1" ]] ; then
 		WANTS_CFI_CROSS_DSO=1
 		echo "ON"
@@ -250,7 +250,7 @@ HAVE_FLAG_SHADOW_CALL_STACK="0"
 _usex_shadowcallstack() {
 	local s=$(clang-major-version)
 	if tc-is-clang \
-		&& has_version "=sys-libs/compiler-rt-sanitizers-${s}*[shadowcallstack]" \
+		&& has_version "=llvm-runtimes/compiler-rt-sanitizers-${s}*[shadowcallstack]" \
 		&& [[ "${HAVE_FLAG_SHADOW_CALL_STACK}" == "1" ]] ; then
 		echo "ON"
 	else
