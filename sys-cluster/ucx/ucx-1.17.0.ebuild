@@ -397,7 +397,7 @@ gen_clang_bdepend() {
 	local s
 	for s in ${CLANG_COMPAT[@]} ; do
 		echo "
-			sys-devel/clang:${s}
+			llvm-core/clang:${s}
 			llvm-core/llvm:${s}
 			sys-devel/lld:${s}
 			openmp? (
