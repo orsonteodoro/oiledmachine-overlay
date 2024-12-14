@@ -805,7 +805,7 @@ gen_depend_llvm() {
 		echo "
 			(
 				sys-devel/clang:${s}
-				sys-devel/llvm:${s}
+				llvm-core/llvm:${s}
 				sys-devel/lld:${s}
 				openmp? (
 					sys-libs/libomp:${s}[${MULTILIB_USEDEP}]
@@ -1014,7 +1014,7 @@ BDEPEND+="
 			$(gen_depend_llvm)
 		)
 		sys-devel/clang:=
-		sys-devel/llvm:=
+		llvm-core/llvm:=
 	)
 	doc? (
 		dev-util/gi-docgen
