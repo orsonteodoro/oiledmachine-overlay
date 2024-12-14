@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/lief-project/LIEF/issues</bugs-to>
+    <changelog>https://github.com/lief-project/LIEF/blob/main/CHANGELOG</changelog>
+    <remote-id type="github">lief-project/LIEF</remote-id>
+    <remote-id type="pypi">lief</remote-id>
+  </upstream>
+</pkgmetadata>

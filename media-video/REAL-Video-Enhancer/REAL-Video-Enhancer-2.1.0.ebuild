@@ -182,9 +182,9 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
 		>=dev-python/cx-Freeze-7.0.0[${PYTHON_USEDEP}]
+		dev-libs/lief[${PYTHON_USEDEP},python]
 		dev-python/certifi[${PYTHON_USEDEP}]
 		dev-python/distro[${PYTHON_USEDEP}]
-		dev-python/lief[${PYTHON_USEDEP}]
 		dev-python/opencv-python-headless[${PYTHON_USEDEP}]
 		dev-python/psutil[${PYTHON_USEDEP}]
 		dev-python/py-cpuinfo[${PYTHON_USEDEP}]
