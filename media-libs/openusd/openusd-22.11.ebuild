@@ -222,7 +222,7 @@ BDEPEND+="
 			<sys-devel/gcc-11
 			>=sys-devel/gcc-6.3.1
 		)
-		<sys-devel/clang-12
+		<llvm-core/clang-12
 	)
 "
 PATCHES=(
