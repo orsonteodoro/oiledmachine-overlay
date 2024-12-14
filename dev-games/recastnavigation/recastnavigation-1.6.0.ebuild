@@ -55,7 +55,7 @@ DEPEND+="
 	${RDEPEND}
 	|| (
 		>=sys-devel/gcc-11.2.0
-		>=sys-devel/clang-14.0
+		>=llvm-core/clang-14.0
 	)
 "
 BDEPEND+="
