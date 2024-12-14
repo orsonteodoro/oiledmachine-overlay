@@ -97,7 +97,7 @@ gen_llvm_depends() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				sys-devel/clang:${s}=
+				llvm-core/clang:${s}=
 				lto? (
 					sys-devel/lld:${s}
 				)
@@ -117,7 +117,7 @@ gen_omp_depends() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				sys-devel/clang:${s}=
+				llvm-core/clang:${s}=
 				sys-libs/libomp:${s}
 			)
 		"
