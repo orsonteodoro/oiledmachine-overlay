@@ -60,6 +60,7 @@ einfo "Security announcement date:  ${MITIGATION_DATE}"
 einfo "Security vulnerabilities fixed:  ${MITIGATION_URI}"
 	fi
 	vf_show
+	gstreamer-meson_pkg_setup
 }
 
 multilib_src_configure() {

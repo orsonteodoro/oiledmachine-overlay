@@ -179,6 +179,15 @@ DOCS=( "AUTHORS" "NEWS" "README.md" "RELEASE" )
 PATCHES=(
 )
 
+pkg_setup() {
+	if [[ -n "${MITIGATION_URI}" ]] ; then
+einfo "Security announcement date:  ${MITIGATION_DATE}"
+einfo "Security vulnerabilities fixed:  ${MITIGATION_URI}"
+	fi
+	vf_show
+	gstreamer-meson_pkg_setup
+}
+
 multilib_src_configure() {
 	filter-flags -mno-sse -mno-sse2 -mno-sse4.1 #610340
 
