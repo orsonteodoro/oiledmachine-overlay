@@ -43,7 +43,7 @@ IUSE+="
 ${LLVM_EBUILDS_LLVM18_REVISION}
 "
 DEPEND="
-	sys-devel/llvm:${LLVM_MAJOR}
+	llvm-core/llvm:${LLVM_MAJOR}
 "
 BDEPEND="
 	>=dev-build/cmake-3.16
