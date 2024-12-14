@@ -3936,7 +3936,7 @@ gen_llvm_depends() {
 		echo "
 			llvm_slot_${s}? (
 				llvm-core/clang:${s}
-				sys-devel/lld:${s}
+				llvm-core/lld:${s}
 				llvm-core/llvm:${s}
 			)
 		"
