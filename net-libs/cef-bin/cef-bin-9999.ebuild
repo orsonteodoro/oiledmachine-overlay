@@ -571,7 +571,7 @@ src_configure() {
 		'-march=*' \
 		'-O*'
 
-	if has_version "sys-libs/compiler-rt-sanitizers[cfi,ubsan]" ; then
+	if has_version "llvm-runtimes/compiler-rt-sanitizers[cfi,ubsan]" ; then
 		# Link to UBSan indirectly to avoid missing symbols like these
 		# when linking to CFI .so files:
 		# undefined reference to __ubsan_handle_cfi_check_fail_abort
