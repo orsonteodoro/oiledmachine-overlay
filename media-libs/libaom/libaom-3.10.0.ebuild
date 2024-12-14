@@ -144,7 +144,7 @@ PDEPEND="
 	)
 	|| (
 		>=sys-devel/gcc-${GCC_MIN_SLOT}
-		>=sys-devel/clang-${CLANG_MIN_SLOT}
+		>=llvm-core/clang-${CLANG_MIN_SLOT}
 	)
 "
 PATCHES=(
@@ -285,7 +285,7 @@ eerror "CC/CXX must must be >=sys-devel/gcc-${GCC_MIN_SLOT}"
 		fi
 	elif tc-is-clang ; then
 		if ver_test $(clang-major-version) -lt "${CLANG_MIN_SLOT}" ; then
-eerror "CC/CXX must must be >=sys-devel/clang-${CLANG_MIN_SLOT}"
+eerror "CC/CXX must must be >=llvm-core/clang-${CLANG_MIN_SLOT}"
 			die
 		fi
 	fi
