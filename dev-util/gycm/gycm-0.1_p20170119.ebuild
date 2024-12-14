@@ -36,7 +36,7 @@ DEPEND+="
 	net-libs/libssh
 	net-libs/neon
 	system-clangd? (
-		sys-devel/clang:${YCMD_SLOT_47_LLVM_PV_MAJ}
+		llvm-core/clang:${YCMD_SLOT_47_LLVM_PV_MAJ}
 		llvm-core/llvm:${YCMD_SLOT_47_LLVM_PV_MAJ}
 	)
 	ycmd-47? (
