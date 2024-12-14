@@ -194,3 +194,4 @@ src_install() {
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (6.2.0, 20241213)
 # realesr-animevideov3 - passed
 # realesrgan-plus - passed
+# libplacebo - failed
