@@ -31,7 +31,7 @@ gen_clang_bdepend() {
 	for s in ${CLANG_SLOTS[@]} ; do
 		echo "
 			(
-				sys-devel/clang:${s}
+				llvm-core/clang:${s}
 				=sys-libs/llvm-libunwind-${s}*
 			)
 		"
