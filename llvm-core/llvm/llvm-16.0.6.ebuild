@@ -206,14 +206,14 @@ einfo
 	if ! use llvm_targets_AMDGPU ; then
 ewarn
 ewarn "There is a high rebuild cost if llvm_targets_AMDGPU is not enabled now"
-ewarn "before building sys-libs/libomp[offload,llvm_targets_AMDGPU]."
+ewarn "before building llvm-runtimes/openmp[offload,llvm_targets_AMDGPU]."
 ewarn "Plus, the libomp does not do proper USE flag checks for this flag."
 ewarn
 	fi
 	if ! use llvm_targets_NVPTX ; then
 ewarn
 ewarn "There is a high rebuild cost if llvm_targets_NVPTX is not enabled now"
-ewarn "before building sys-libs/libomp[cuda,offload,llvm_targets_NVPTX]."
+ewarn "before building llvm-runtimes/openmp[cuda,offload,llvm_targets_NVPTX]."
 ewarn "Plus, the libomp ebuild does not do proper USE flag checks for this"
 ewarn "flag."
 ewarn
