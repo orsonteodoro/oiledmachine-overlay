@@ -193,7 +193,7 @@ gen_llvm_bdepend()
 			llvm_slot_${s}? (
 				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 				sys-devel/lld:${s}
-				sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
+				llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
 				sys-libs/libomp:${s}[${MULTILIB_USEDEP}]
 			)
 		"
@@ -211,7 +211,7 @@ gen_llvm_test_bdepend()
 				)
 				sys-devel/clang:${s}[${MULTILIB_USEDEP}]
 				sys-devel/lld:${s}
-				sys-devel/llvm:${s}[${MULTILIB_USEDEP}]
+				llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
 				sys-libs/libomp:${s}[${MULTILIB_USEDEP}]
 				fuzz-testing? (
 					=sys-devel/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
