@@ -42,7 +42,7 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
-	sys-devel/llvm:${LLVM_MAJOR}
+	llvm-core/llvm:${LLVM_MAJOR}
 "
 BDEPEND+="
 	>=dev-build/cmake-3.13.4
@@ -74,7 +74,7 @@ pkg_setup() {
 	# Darwin Prefix builds do not have llvm installed yet, so rely on
 	# bootstrap-prefix to set the appropriate path vars to LLVM instead
 	# of using llvm_pkg_setup.
-	if [[ ${CHOST} != *-darwin* ]] || has_version sys-devel/llvm ; then
+	if [[ ${CHOST} != *-darwin* ]] || has_version llvm-core/llvm ; then
 		LLVM_MAX_SLOT=${LLVM_MAJOR} llvm_pkg_setup
 	fi
 	python-any-r1_pkg_setup
