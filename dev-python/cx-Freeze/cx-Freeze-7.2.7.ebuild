@@ -5,10 +5,9 @@
 EAPI=8
 
 # TODO package:
-# dev-python/patchelf
 # sphinx-new-tab-link
 
-DISTUTILS_USE_PEP517="poetry"
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 pypi
@@ -23,7 +22,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 else
 	KEYWORDS="~amd64"
-	S="${WORKDIR}/${PN}-${PV}"
+	S="${WORKDIR}/${PN/-/_}-${PV}"
 	SRC_URI="
 https://github.com/marcelotduarte/cx_Freeze/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -44,11 +43,11 @@ IUSE+=" dev doc"
 RDEPEND+="
 	>=dev-python/filelock-3.12.3[${PYTHON_USEDEP}]
 	>=dev-python/packaging-24[${PYTHON_USEDEP}]
-	>=dev-python/patchelf-0.14[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-65.6.3[${PYTHON_USEDEP}]
 	$(python_gen_cond_dep '
 		>=dev-python/tomli-2.0.1[${PYTHON_USEDEP}]
 	' python3_10)
+	dev-util/patchelf
 "
 DEPEND+="
 	${RDEPEND}
@@ -68,7 +67,7 @@ BDEPEND+="
 		>=dev-python/sphinx-tabs-3.4.5[${PYTHON_USEDEP}]
 	)
 "
-DOCS=( "CHANGELOG" "README.md" )
+DOCS=( "README.md" )
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
