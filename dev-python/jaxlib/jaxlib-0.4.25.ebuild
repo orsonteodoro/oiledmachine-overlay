@@ -369,7 +369,7 @@ gen_llvm_bdepend() {
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
 			llvm_slot_${s}? (
-				sys-devel/clang:${s}
+				llvm-core/clang:${s}
 				llvm-core/llvm:${s}
 				sys-devel/lld:${s}
 			)
@@ -463,7 +463,7 @@ einfo "Using mold (TESTING)"
 			) \
 				|| \
 			( \
-				has_version "sys-devel/clang-common[default-lld]" \
+				has_version "llvm-core/clang-common[default-lld]" \
 			) \
 		) \
 	then
