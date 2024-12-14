@@ -35,6 +35,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 else
 #	KEYWORDS="~amd64"
 	S="${WORKDIR}/${MY_PN}-${PV}"
+# TODO add models to SRC_URI
 	SRC_URI="
 https://github.com/TNTwise/REAL-Video-Enhancer/archive/refs/tags/RVE-${PV}.tar.gz
 	-> ${P}.tar.gz
