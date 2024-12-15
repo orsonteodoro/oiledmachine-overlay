@@ -10,10 +10,10 @@ MITIGATION_DATE="Dec 3, 2024" # Advisory date
 MITIGATION_URI="https://gstreamer.freedesktop.org/security/"
 SEVERITY_LABEL="CVSS 4.0"
 VULNERABILITIES_FIXED=(
+	"CVE-2024-47540;CE, DoS, DT, ID;High"
+	"CVE-2024-47606;CE, DoS, DT, ID;High"
+	"CVE-2024-47539;CE, DoS, DT, ID;High"
 	"CVE-2024-47613;DoS, DT, ID;High"
-	"CVE-2024-47540;DoS, DT, ID;High"
-	"CVE-2024-47606;DoS, DT, ID;High"
-	"CVE-2024-47539;DoS, DT, ID;High"
 	"CVE-2024-47537;DoS, DT, ID;High"
 	"CVE-2024-47598;DoS, DT;Medium"
 	"CVE-2024-47777;DoS, DT;Medium"
