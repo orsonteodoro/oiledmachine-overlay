@@ -8,7 +8,7 @@
   </maintainer>
   <upstream>
     <bugs-to>https://github.com/lief-project/LIEF/issues</bugs-to>
-    <changelog>https://github.com/lief-project/LIEF/blob/main/CHANGELOG</changelog>
+    <changelog>https://lief-project.github.io/doc/latest/changelog.html</changelog>
     <remote-id type="github">lief-project/LIEF</remote-id>
     <remote-id type="pypi">lief</remote-id>
   </upstream>
