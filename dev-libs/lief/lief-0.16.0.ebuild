@@ -4,6 +4,7 @@
 
 EAPI=8
 
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="standalone"
 MY_PN="LIEF"
 PYTHON_COMPAT=( "python3_"{10..12} )
@@ -43,6 +44,7 @@ IUSE+="
 doc +examples +json +logging -python -rust -system-expected -system-frozen
 -system-mbedtls -system-nanobind -system-nlohmann-json
 -system-spdlog -system-utfcpp test
+ebuild-revision-1
 "
 RDEPEND+="
 	system-nanobind? (
