@@ -87,6 +87,9 @@ BDEPEND+="
 	)
 "
 DOCS=( "CHANGELOG" "README.md" )
+_PATCHES=(
+	"${FILESDIR}/${PN}-0.16.0-libdir.patch"
+)
 
 pkg_setup() {
 	python_setup
@@ -105,6 +108,7 @@ src_unpack() {
 python_prepare_all() {
 	cmake_src_prepare
 	distutils-r1_python_prepare_all
+	eapply ${_PATCHES[@]}
 }
 
 src_prepare() {

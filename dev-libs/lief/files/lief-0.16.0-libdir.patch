@@ -1,0 +1,10 @@
+--- a/CMakeLists.txt.orig	2024-12-14 16:40:31.831086918 -0800
++++ b/CMakeLists.txt	2024-12-14 17:56:48.362776269 -0800
+@@ -116,7 +116,6 @@ message(STATUS "CMAKE_MSVC_RUNTIME_LIBRA
+ if(LIEF_INSTALL)
+   if(UNIX)
+     include(GNUInstallDirs)
+-    set(CMAKE_INSTALL_LIBDIR "lib")
+   else()
+     set(CMAKE_INSTALL_LIBDIR      "lib")
+     set(CMAKE_INSTALL_DATADIR     "share")
