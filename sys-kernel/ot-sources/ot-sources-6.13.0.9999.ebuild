@@ -4,7 +4,7 @@
 EAPI=8
 
 GENPATCHES_FALLBACK_COMMIT="7847c71705cc92ba9e9b1d8728fa8692270170e8" # 2024-11-30 12:29:45 -0500
-LINUX_SOURCES_FALLBACK_COMMIT="fac04efc5c793dccbd07e2d59af9f90b7fc0dca4" # 2024-12-08 14:03:39 -0800
+LINUX_SOURCES_FALLBACK_COMMIT="dccbe2047a5b0859de24bf463dae9eeea8e01c1e" # 2024-12-15 10:01:10 -0800
 RC_PV="rc2" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
