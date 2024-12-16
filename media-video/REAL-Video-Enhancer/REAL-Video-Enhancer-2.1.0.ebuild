@@ -154,7 +154,7 @@ NCNN_DEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/ncnn-20240820[${PYTHON_USEDEP}]
 		>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
-		>=dev-python/rife-ncnn-vulkan-python-1.4.4[${PYTHON_USEDEP}]
+		>=dev-python/rife-ncnn-vulkan-python-tntwise-1.4.4[${PYTHON_USEDEP}]
 		>=dev-python/sympy-1.13.1[${PYTHON_USEDEP}]
 		>=dev-python/upscale-ncnn-py-1.2.0[${PYTHON_USEDEP}]
 		dev-python/mpmath[${PYTHON_USEDEP}]

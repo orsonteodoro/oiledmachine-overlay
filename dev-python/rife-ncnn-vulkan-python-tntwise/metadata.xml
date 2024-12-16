@@ -7,8 +7,8 @@
     <name>Orson Teodoro</name>
   </maintainer>
   <upstream>
-    <bugs-to>https://github.com/media2x/rife-ncnn-vulkan-python/issues</bugs-to>
-    <remote-id type="github">media2x/rife-ncnn-vulkan-python</remote-id>
-    <remote-id type="pypi">rife-ncnn-vulkan-python</remote-id>
+    <bugs-to>https://github.com/TNTwise/rife-ncnn-vulkan-python/issues</bugs-to>
+    <remote-id type="github">TNTwise/rife-ncnn-vulkan-python</remote-id>
+    <remote-id type="pypi">rife-ncnn-vulkan-python-tntwise</remote-id>
   </upstream>
 </pkgmetadata>

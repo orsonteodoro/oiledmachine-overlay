@@ -4,13 +4,15 @@
 
 EAPI=8
 
+MY_PV="2024-10-19"
+
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 GLSLANG_COMMIT="86ff4bca1ddc7e2262f119c16e7228d0efb67610"
 LIBWEBP_COMMIT="5abb55823bb6196a918dd87202b2f32bbaff4c18"
 NCNN_COMMIT="b4ba207c18d3103d6df890c0e3a97b469b196b26"
 RIFE_NCNN_VULKAN_COMMIT_1="c806e66490679aebc1b4a6832985e004fd552f46" # Mar 3, 2022
-RIFE_NCNN_VULKAN_COMMIT_2="a7532fc3f9f8f008cd6eecd6f2ffe2a9698e0cf7" # Oct 23, 2022
+RIFE_NCNN_VULKAN_COMMIT_2="9424f2ab38ae98dcd81a334d000b6ee9d54fa248" # Oct 17, 2024
 PYBIND11_COMMIT="70a58c577eaf067748c2ec31bfd0b0a614cffba6"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
@@ -148,8 +150,8 @@ inherit dep-prepare distutils-r1 pypi
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
-	EGIT_REPO_URI="https://github.com/media2x/rife-ncnn-vulkan-python.git"
-	FALLBACK_COMMIT="577234096d2a337897fea0d0d39a0864d2665d5e" # Oct 29, 2022
+	EGIT_REPO_URI="https://github.com/TNTwise/rife-ncnn-vulkan-python.git"
+	FALLBACK_COMMIT="bb7b08368da10bf830ac95a78c6060a5f829058c" # Oct 19, 2024
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
@@ -159,7 +161,7 @@ else
 #https://github.com/nihui/rife-ncnn-vulkan/archive/${RIFE_NCNN_VULKAN_COMMIT_1}.tar.gz
 #	-> rife-ncnn-vulkan-${RIFE_NCNN_VULKAN_COMMIT_1:0:7}.tar.gz
 	SRC_URI="
-https://github.com/media2x/rife-ncnn-vulkan-python/archive/refs/tags/${PV}.tar.gz
+https://github.com/TNTwise/rife-ncnn-vulkan-python/archive/refs/tags/${MY_PV}.tar.gz
 	-> ${P}.tar.gz
 https://github.com/nihui/rife-ncnn-vulkan/archive/${RIFE_NCNN_VULKAN_COMMIT_2}.tar.gz
 	-> rife-ncnn-vulkan-${RIFE_NCNN_VULKAN_COMMIT_2:0:7}.tar.gz
@@ -176,8 +178,8 @@ fi
 
 DESCRIPTION="A Python FFI of nihui/rife-ncnn-vulkan achieved with SWIG"
 HOMEPAGE="
-	https://github.com/media2x/rife-ncnn-vulkan-python
-	https://pypi.org/project/rife-ncnn-vulkan-python
+	https://github.com/TNTwise/rife-ncnn-vulkan-python
+	https://pypi.org/project/rife-ncnn-vulkan-python-tntwise
 "
 LICENSE="
 	(
