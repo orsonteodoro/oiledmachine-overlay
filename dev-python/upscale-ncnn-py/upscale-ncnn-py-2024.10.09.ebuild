@@ -9,7 +9,12 @@ MY_PV="${PV//./-}"
 DISTUTILS_USE_PEP517="pdm-backend"
 PYTHON_COMPAT=( "python3_"{10..13} )
 
-inherit distutils-r1 pypi
+GLSLANG_COMMIT="86ff4bca1ddc7e2262f119c16e7228d0efb67610"
+NCNN_COMMIT="b4ba207c18d3103d6df890c0e3a97b469b196b26"
+PYBIND11_COMMIT_1="8b48ff878c168b51fe5ef7b8c728815b9e1a9857"
+PYBIND11_COMMIT_2="70a58c577eaf067748c2ec31bfd0b0a614cffba6"
+
+inherit dep-prepare distutils-r1 pypi
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -25,6 +30,15 @@ else
 	SRC_URI="
 https://github.com/TNTwise/Universal-NCNN-upscaler-python/archive/refs/tags/${MY_PV}.tar.gz
 	-> ${P}.tar.gz
+
+https://github.com/Tencent/ncnn/archive/${NCNN_COMMIT}.tar.gz
+	-> ncnn-${NCNN_COMMIT:0:7}.tar.gz
+https://github.com/KhronosGroup/glslang/archive/${GLSLANG_COMMIT}.tar.gz
+	-> glslang-${GLSLANG_COMMIT:0:7}.tar.gz
+https://github.com/pybind/pybind11/archive/${PYBIND11_COMMIT_1}.tar.gz
+	-> pybind11-${PYBIND11_COMMIT_1:0:7}.tar.gz
+https://github.com/pybind/pybind11/archive/${PYBIND11_COMMIT_2}.tar.gz
+	-> pybind11-${PYBIND11_COMMIT_2:0:7}.tar.gz
 	"
 fi
 
@@ -35,17 +49,32 @@ HOMEPAGE="
 LICENSE="
 	GPL-3
 "
-RESTRICT="mirror"
+RESTRICT="mirror test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+IUSE+="
+dev test
+ebuild-revision-1
+"
 RDEPEND+="
 	media-libs/opencv[${PYTHON_USEDEP},python]
+	media-libs/vulkan-loader
 	virtual/pillow[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
+	dev-util/vulkan-headers
 "
 BDEPEND+="
+	dev? (
+		dev-python/mypy[${PYTHON_USEDEP}]
+		dev-util/ruff
+		dev-vcs/pre-commit[${PYTHON_USEDEP}]
+	)
+	test? (
+		dev-python/pytest[${PYTHON_USEDEP}]
+		dev-python/pytest-cov[${PYTHON_USEDEP}]
+		dev-python/scikit-image[${PYTHON_USEDEP}]
+	)
 "
 DOCS=( "README.md" )
 
@@ -56,6 +85,10 @@ src_unpack() {
 		git-r3_checkout
 	else
 		unpack ${A}
+		dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1}" "${S}/src/pybind11"
+		dep_prepare_mv "${WORKDIR}/ncnn-${NCNN_COMMIT}" "${S}/src/upscale-ncnn-vulkan/src/ncnn"
+		dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT}" "${S}/src/upscale-ncnn-vulkan/src/ncnn/glslang"
+		dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT_2}" "${S}/src/upscale-ncnn-vulkan/src/ncnn/python/pybind11"
 	fi
 }
 
