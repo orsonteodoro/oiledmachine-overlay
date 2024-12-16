@@ -14,6 +14,135 @@ RIFE_NCNN_VULKAN_COMMIT_2="a7532fc3f9f8f008cd6eecd6f2ffe2a9698e0cf7" # Oct 23, 2
 PYBIND11_COMMIT="70a58c577eaf067748c2ec31bfd0b0a614cffba6"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
+BF16_ARCHES=(
+	armv8.4-a
+	armv8.5-a
+	armv8.6-a
+	armv8.7-a
+	armv8.8-a
+	armv8.9-a
+	armv9-a
+	armv9.1-a
+	armv9.2-a
+	armv9.3-a
+	armv9.4-a
+)
+
+FP16_ARCHES=(
+	armv8.2-a
+	armv8.3-a
+	armv8.4-a
+	armv8.5-a
+	armv8.6-a
+	armv8.7-a
+	armv8.8-a
+	armv8.9-a
+	armv9-a
+	armv9.1-a
+	armv9.2-a
+	armv9.3-a
+	armv9.4-a
+)
+
+FP16FML_ARCHES=(
+	armv8.2-a
+	armv8.3-a
+	armv8.4-a
+	armv8.5-a
+	armv8.6-a
+	armv8.7-a
+	armv8.8-a
+	armv8.9-a
+	armv9-a
+	armv9.1-a
+	armv9.2-a
+	armv9.3-a
+	armv9.4-a
+)
+
+I8MM_ARCHES=(
+	armv8.4-a
+	armv8.5-a
+	armv8.6-a
+	armv8.7-a
+	armv8.8-a
+	armv8.9-a
+	armv9-a
+	armv9.1-a
+	armv9.2-a
+	armv9.3-a
+	armv9.4-a
+)
+
+SVE_ARCHES=(
+	armv8.6-a
+	armv8.7-a
+	armv8.8-a
+	armv8.9-a
+	armv9-a
+	armv9.1-a
+	armv9.2-a
+	armv9.3-a
+	armv9.4-a
+)
+
+CPU_FLAGS_ARM=(
+	cpu_flags_arm_bf16
+	cpu_flags_arm_dotprod
+	cpu_flags_arm_fp16
+	cpu_flags_arm_fp16fml
+	cpu_flags_arm_i8mm
+	cpu_flags_arm_sve
+	cpu_flags_arm_sve2
+	cpu_flags_arm_svebf16
+	cpu_flags_arm_svei8mm
+	cpu_flags_arm_svef32mm
+	cpu_flags_arm_vfpv4
+)
+
+CPU_FLAGS_LOONG=(
+	cpu_flags_loong_lasx
+	cpu_flags_loong_lsx
+	cpu_flags_loong_mmi
+)
+
+CPU_FLAGS_MIPS=(
+	cpu_flags_mips_msa
+)
+
+CPU_FLAGS_PPC=(
+	cpu_flags_ppc_sse2
+	cpu_flags_ppc_sse41
+)
+
+CPU_FLAGS_RISCV=(
+	cpu_flags_riscv_rvv
+	cpu_flags_riscv_xtheadvector
+	cpu_flags_riscv_zfh
+	cpu_flags_riscv_zvfh
+)
+
+CPU_FLAGS_X86=(
+	cpu_flags_x86_avx
+	cpu_flags_x86_avx2
+	cpu_flags_x86_avxneconvert
+	cpu_flags_x86_avxvnni
+	cpu_flags_x86_avxvnniint8
+	cpu_flags_x86_avxvnniint16
+	cpu_flags_x86_avx512bw
+	cpu_flags_x86_avx512cd
+	cpu_flags_x86_avx512dq
+	cpu_flags_x86_avx512f
+	cpu_flags_x86_avx512bf16
+	cpu_flags_x86_avx512fp16
+	cpu_flags_x86_avx512vl
+	cpu_flags_x86_avx512vnni
+	cpu_flags_x86_f16c
+	cpu_flags_x86_fma
+	cpu_flags_x86_sse2
+	cpu_flags_x86_xop
+)
+
 inherit dep-prepare distutils-r1 pypi
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -55,7 +184,122 @@ LICENSE="
 "
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" ebuild-revision-1"
+IUSE+="
+${CPU_FLAGS_ARM[@]}
+${CPU_FLAGS_LOONG[@]}
+${CPU_FLAGS_MIPS[@]}
+${CPU_FLAGS_PPC[@]}
+${CPU_FLAGS_RISCV[@]}
+${CPU_FLAGS_X86[@]}
+ebuild-revision-2
+"
+REQUIRED_USE="
+	${PYTHON_REQUIRED_USE}
+	cpu_flags_arm_bf16? (
+		cpu_flags_arm_dotprod
+		cpu_flags_arm_fp16fml
+	)
+	cpu_flags_arm_i8mm? (
+		cpu_flags_arm_dotprod
+		cpu_flags_arm_fp16fml
+	)
+	cpu_flags_arm_sve? (
+		cpu_flags_arm_bf16
+		cpu_flags_arm_i8mm
+	)
+	cpu_flags_arm_sve2? (
+		cpu_flags_arm_sve
+	)
+	cpu_flags_arm_svebf16? (
+		cpu_flags_arm_sve
+	)
+	cpu_flags_arm_svef32mm? (
+		cpu_flags_arm_sve
+	)
+	cpu_flags_arm_svei8mm? (
+		cpu_flags_arm_sve
+	)
+	cpu_flags_riscv_zvfh? (
+		cpu_flags_riscv_rvv
+		cpu_flags_riscv_zfh
+	)
+	cpu_flags_x86_avx? (
+		cpu_flags_x86_fma
+	)
+	cpu_flags_x86_avx2? (
+		cpu_flags_x86_avx
+		cpu_flags_x86_fma
+		cpu_flags_x86_f16c
+	)
+	cpu_flags_x86_avx512bw? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512f
+	)
+	cpu_flags_x86_avx512cd? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512f
+	)
+	cpu_flags_x86_avx512dq? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512f
+	)
+	cpu_flags_x86_avx512f? (
+		cpu_flags_x86_sse2
+	)
+	cpu_flags_x86_avx512vl? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512f
+	)
+	cpu_flags_x86_avx512bf16? (
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avx512fp16? (
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avx512vnni? (
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avxneconvert? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_fma
+		cpu_flags_x86_f16c
+	)
+	cpu_flags_x86_avxvnni? (
+		cpu_flags_x86_fma
+		cpu_flags_x86_f16c
+	)
+	cpu_flags_x86_avxvnniint8? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_fma
+		cpu_flags_x86_f16c
+	)
+	cpu_flags_x86_avxvnniint16? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_fma
+		cpu_flags_x86_f16c
+	)
+	cpu_flags_x86_f16c? (
+		cpu_flags_x86_avx
+	)
+	cpu_flags_x86_fma? (
+		cpu_flags_x86_f16c
+	)
+	cpu_flags_x86_xop? (
+		cpu_flags_x86_avx
+	)
+"
 RDEPEND+="
 	virtual/pillow[${PYTHON_USEDEP}]
 "
@@ -107,6 +351,278 @@ src_unpack() {
 
 		gen_git_tag "${S}/rife_ncnn_vulkan_python" "v${PV}"
 	fi
+}
+
+src_configure() {
+	# Force GCC to simplify openmp
+	export CC="${CHOST}-gcc"
+	export CXX="${CHOST}-g++"
+	export CPP="${CHOST}-gcc -E"
+	strip-unsupported-flags
+
+	export MAKEOPTS="-j1"
+
+	#append-flags -DSPDLOG_NO_EXCEPTIONS
+	#if ! use system-boost ; then
+	#	append-flags -I"${S}/third_party/boost"
+	#fi
+
+	local mycmakeargs=(
+	)
+
+	if true ; then
+		:
+	elif has_version "media-video/ffmpeg:58.60.60" ; then
+einfo "Using media-video/ffmpeg:58.60.60"
+		export PKG_CONFIG_PATH="/usr/lib/ffmpeg/58.60.60/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+		mycmakeargs+=(
+			-DFFMPEG_USE_SLOTTED=ON
+			-DFFMPEG_SLOTTED_PATH="/usr/lib/ffmpeg/58.60.60"
+		)
+	else
+einfo "Using media-video/ffmpeg:0/58.60.60"
+		export FFMPEG_LIBDIR=""
+		mycmakeargs+=(
+			-DFFMPEG_USE_SLOTTED=OFF
+		)
+	fi
+
+	mycmakeargs+=(
+#		-DCMAKE_PREFIX_PATH="/usr/lib/ffmpeg/58.60.60"
+#		-DBUILD_SHARED_LIBS=ON
+#		-DBUILD_VIDEO2X_CLI=$(usex cli)
+#		-DCMAKE_MODULE_PATH="${S}/third_party/boost"
+#		-DUSE_SYSTEM_BOOST=$(usex system-boost)
+#		-DUSE_SYSTEM_NCNN=$(usex system-ncnn)
+#		-DUSE_SYSTEM_SPDLOG=$(usex system-spdlog)
+#		-DUSE_SYSTEM_GLSLANG=OFF
+		-DNCNN_AVX=$(usex cpu_flags_x86_avx)
+		-DNCNN_AVX2=$(usex cpu_flags_x86_avx2)
+		-DNCNN_AVXNECONVERT=$(usex cpu_flags_x86_avxneconvert)
+		-DNCNN_AVXVNNI=$(usex cpu_flags_x86_avxvnni)
+		-DNCNN_AVXVNNIINT8=$(usex cpu_flags_x86_avxvnniint8)
+		-DNCNN_AVXVNNIINT16=$(usex cpu_flags_x86_avxvnniint16)
+		-DNCNN_AVX512BF16=$(usex cpu_flags_x86_avx512bf16)
+		-DNCNN_AVX512FP16=$(usex cpu_flags_x86_avx512fp16)
+		-DNCNN_AVX512VNNI=$(usex cpu_flags_x86_avx512vnni)
+		-DNCNN_F16C=$(usex cpu_flags_x86_f16c)
+		-DNCNN_FMA=$(usex cpu_flags_x86_fma)
+		-DNCNN_LASX=$(usex cpu_flags_loong_lasx)
+		-DNCNN_LSX=$(usex cpu_flags_loong_lsx)
+		-DNCNN_MMI=$(usex cpu_flags_loong_mmi)
+		-DNCNN_MSA=$(usex cpu_flags_mips_msa)
+		-DNCNN_RVV=$(usex cpu_flags_riscv_rvv)
+		-DNCNN_SSE2=$(usex cpu_flags_x86_sse2)
+		-DNCNN_VFPV4=$(usex cpu_flags_arm_vfpv4)
+		-DNCNN_VSX_SSE2=$(usex cpu_flags_ppc_sse2)
+		-DNCNN_VSX_SSE41=$(usex cpu_flags_ppc_sse41)
+		-DNCNN_XOP=$(usex cpu_flags_x86_xop)
+		-DNCNN_XTHEADVECTOR=$(usex cpu_flags_riscv_xtheadvector)
+		-DNCNN_ZFH=$(usex cpu_flags_riscv_zfh)
+		-DNCNN_ZVFH=$(usex cpu_flags_riscv_zvfh)
+	)
+	if use cpu_flags_x86_avx512bw && use cpu_flags_x86_avx512cd && use cpu_flags_x86_avx512dq && use cpu_flags_x86_avx512vl ; then
+		mycmakeargs+=(
+			-DNCNN_AVX512=ON
+		)
+	else
+		mycmakeargs+=(
+			-DNCNN_AVX512=OFF
+		)
+	fi
+
+	local found
+	found=0
+	for x in ${FP16_ARCHES[@]} ; do
+		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
+			if use cpu_flags_arm_fp16 ; then
+				found=1
+				break
+			fi
+		fi
+	done
+	if (( ${found} == 1 )) ; then
+		mycmakeargs+=(
+			-DNCNN_ARM82=ON
+		)
+	else
+		mycmakeargs+=(
+			-DNCNN_ARM82=OFF
+		)
+	fi
+
+	found=0
+	for x in ${BF16_ARCHES[@]} ; do
+		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
+			if use cpu_flags_arm_bf16 ; then
+				found=1
+				break
+			fi
+		fi
+	done
+	if (( ${found} == 1 )) ; then
+		mycmakeargs+=(
+			-DNCNN_ARM84BF16=ON
+		)
+	else
+		mycmakeargs+=(
+			-DNCNN_ARM84BF16=OFF
+		)
+	fi
+
+	found=0
+	for x in ${FP16_ARCHES[@]} ; do
+		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
+			if use cpu_flags_arm_dotprod ; then
+				found=1
+				break
+			fi
+		fi
+	done
+	if (( ${found} == 1 )) ; then
+		mycmakeargs+=(
+			-DNCNN_ARM82DOT=ON
+		)
+	else
+		mycmakeargs+=(
+			-DNCNN_ARM82DOT=OFF
+		)
+	fi
+
+	found=0
+	for x in ${FP16FML_ARCHES[@]} ; do
+		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
+			if use cpu_flags_arm_fp16fml ; then
+				found=1
+				break
+			fi
+		fi
+	done
+	if (( ${found} == 1 )) ; then
+		mycmakeargs+=(
+			-DNCNN_ARM82FP16FML=ON
+		)
+	else
+		mycmakeargs+=(
+			-DNCNN_ARM82FP16FML=OFF
+		)
+	fi
+
+	found=0
+	for x in ${I8MM_ARCHES[@]} ; do
+		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
+			if use cpu_flags_arm_i8mm ; then
+				found=1
+				break
+			fi
+		fi
+	done
+	if (( ${found} == 1 )) ; then
+		mycmakeargs+=(
+			-DNCNN_ARM84I8MM=ON
+		)
+	else
+		mycmakeargs+=(
+			-DNCNN_ARM84I8MM=OFF
+		)
+	fi
+
+
+	found=0
+	for x in ${SVE_ARCHES[@]} ; do
+		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
+			if use cpu_flags_arm_sve ; then
+				found=1
+				break
+			fi
+		fi
+	done
+	if (( ${found} == 1 )) ; then
+		mycmakeargs+=(
+			-DNCNN_ARM86SVE=ON
+		)
+	else
+		mycmakeargs+=(
+			-DNCNN_ARM86SVE=OFF
+		)
+	fi
+
+	found=0
+	for x in ${SVE_ARCHES[@]} ; do
+		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
+			if use cpu_flags_arm_sve2 ; then
+				found=1
+				break
+			fi
+		fi
+	done
+	if (( ${found} == 1 )) ; then
+		mycmakeargs+=(
+			-DNCNN_ARM86SVE2=ON
+		)
+	else
+		mycmakeargs+=(
+			-DNCNN_ARM86SVE2=OFF
+		)
+	fi
+
+	found=0
+	for x in ${SVE_ARCHES[@]} ; do
+		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
+			if use cpu_flags_arm_svebf16 ; then
+				found=1
+				break
+			fi
+		fi
+	done
+	if (( ${found} == 1 )) ; then
+		mycmakeargs+=(
+			-DNCNN_ARM86SVEBF16=ON
+		)
+	else
+		mycmakeargs+=(
+			-DNCNN_ARM86SVEBF16=OFF
+		)
+	fi
+
+	found=0
+	for x in ${SVE_ARCHES[@]} ; do
+		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
+			if use cpu_flags_arm_svei8mm ; then
+				found=1
+				break
+			fi
+		fi
+	done
+	if (( ${found} == 1 )) ; then
+		mycmakeargs+=(
+			-DNCNN_ARM86SVEI8MM=ON
+		)
+	else
+		mycmakeargs+=(
+			-DNCNN_ARM86SVEI8MM=OFF
+		)
+	fi
+
+	found=0
+	for x in ${SVE_ARCHES[@]} ; do
+		if [[ "${CFLAGS}" =~ "-march=${x}" ]] ; then
+			if use cpu_flags_arm_svef32mm ; then
+				found=1
+				break
+			fi
+		fi
+	done
+	if (( ${found} == 1 )) ; then
+		mycmakeargs+=(
+			-DNCNN_ARM86SVEF32MM=ON
+		)
+	else
+		mycmakeargs+=(
+			-DNCNN_ARM86SVEF32MM=OFF
+		)
+	fi
+	export CMAKE_FLAGS="${mycmakeargs[@]}"
 }
 
 src_install() {
