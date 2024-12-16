@@ -115,8 +115,13 @@ REQUIRED_USE="
 IUSE+="
 cuda rocm tensorrt vulkan wayland X
 "
+# cuda, rocm, tenssort USE flags are missing dependency packages.
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
+	!cuda
+	!rocm
+	!tensorrt
+	vulkan
 	|| (
 		wayland
 		X
