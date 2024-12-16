@@ -304,7 +304,7 @@ DEPEND="
 BDEPEND="
 "
 PDEPEND="
-	~dev-python/ncnn-${PV}[${PYTHON_USEDEP}]
+	~dev-python/ncnn-${PV}[${PYTHON_USEDEP},openmp?,vulkan?]
 	dev-python/ncnn:=
 "
 
