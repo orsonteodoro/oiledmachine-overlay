@@ -1055,7 +1055,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/types-dataclasses | Typing stubs for dataclasses |
 | dev-python/types-toml | Typing stubs for toml |
 | dev-python/typing-extensions | Backported and experimental type hints for Python |
-| dev-python/upscale-ncnn-py | Python Binding for *-ncnn-vulkan with PyBind11 |
+| dev-python/upscale-ncnn-py | Python bindings for upscaling using neural networks and Vulkan |
 | dev-python/wandb | A CLI and library for interacting with the Weights & Biases API |
 | dev-python/wasabi | 🍣 A lightweight console printing and formatting toolkit |
 | dev-python/weasel | 🦦 weasel: A small and easy workflow system |

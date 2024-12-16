@@ -42,7 +42,7 @@ https://github.com/pybind/pybind11/archive/${PYBIND11_COMMIT_2}.tar.gz
 	"
 fi
 
-DESCRIPTION="Python Binding for *-ncnn-vulkan with PyBind11"
+DESCRIPTION="Python bindings for upscaling using neural networks and Vulkan"
 HOMEPAGE="
 	https://github.com/TNTwise/Universal-NCNN-upscaler-python
 "
