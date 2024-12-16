@@ -103,14 +103,6 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-REQUIRED_USE="
-	|| (
-		cuda
-		rocm
-		tensorrt
-		vulkan
-	)
-"
 IUSE+="
 cuda rocm tensorrt vulkan wayland X
 "
@@ -121,6 +113,12 @@ REQUIRED_USE="
 	!rocm
 	!tensorrt
 	vulkan
+	|| (
+		cuda
+		rocm
+		tensorrt
+		vulkan
+	)
 	|| (
 		wayland
 		X
