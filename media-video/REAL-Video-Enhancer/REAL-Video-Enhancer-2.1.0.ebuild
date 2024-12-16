@@ -95,7 +95,7 @@ https://github.com/TNTwise/real-video-enhancer-models/releases/download/models/b
 	"
 fi
 
-DESCRIPTION="Interpolate and upscale video easily"
+DESCRIPTION="Interpolate for faster framerates and AI upscale video easily"
 HOMEPAGE="
 	https://github.com/TNTwise/REAL-Video-Enhancer
 "

@@ -1344,7 +1344,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-sound/puddletag | An audio tag editor |
 | media-sound/spotify | A social music platform |
 | media-sound/w3crapcli-lastfm | w3crapcli/last.fm provides a command line interface for the last.fm web service |
-| media-video/REAL-Video-Enhancer | Interpolate and upscale video easily |
+| media-video/REAL-Video-Enhancer | Interpolate for faster framerates and AI upscale video easily |
 | media-video/ffmpeg | Complete solution to record/convert/stream audio and video. Includes libavcodec |
 | media-video/gspca_ep800 | Kernel Modules for Endpoints EP800/SE402/SE401* |
 | media-video/linux-enable-ir-emitter | Provides support for infrared cameras that are not directly enabled out-of-the box. |
