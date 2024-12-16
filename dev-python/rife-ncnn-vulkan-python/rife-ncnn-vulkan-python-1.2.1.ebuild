@@ -99,10 +99,10 @@ src_unpack() {
 		unpack ${A}
 		#dep_prepare_mv "${WORKDIR}/rife-ncnn-vulkan-${RIFE_NCNN_VULKAN_COMMIT_1}/models" "${S}/rife_ncnn_vulkan_python/rife-ncnn-vulkan"
 		dep_prepare_mv "${WORKDIR}/rife-ncnn-vulkan-${RIFE_NCNN_VULKAN_COMMIT_2}" "${S}/rife_ncnn_vulkan_python/rife-ncnn-vulkan"
-		dep_prepare_mv "${WORKDIR}/ncnn-${NCNN_COMMIT}" "${S}/src/ncnn"
-		dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT}" "${S}/src/ncnn/glslang"
-		dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT}" "${S}/src/ncnn/python/pybind11"
-		dep_prepare_mv "${WORKDIR}/libwebp-${LIBWEBP_COMMIT}" "${S}/src/libwebp"
+		dep_prepare_mv "${WORKDIR}/ncnn-${NCNN_COMMIT}" "${S}/rife_ncnn_vulkan_python/rife-ncnn-vulkan/src/ncnn"
+		dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT}" "${S}/rife_ncnn_vulkan_python/rife-ncnn-vulkan/src/ncnn/glslang"
+		dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT}" "${S}/rife_ncnn_vulkan_python/rife-ncnn-vulkan/src/ncnn/python/pybind11"
+		dep_prepare_mv "${WORKDIR}/libwebp-${LIBWEBP_COMMIT}" "${S}/rife_ncnn_vulkan_python/rife-ncnn-vulkan/src/libwebp"
 
 		gen_git_tag "${S}/rife_ncnn_vulkan_python" "v${PV}"
 	fi
