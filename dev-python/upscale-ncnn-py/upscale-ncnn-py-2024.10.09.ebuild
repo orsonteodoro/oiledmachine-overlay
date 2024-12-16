@@ -63,9 +63,9 @@ LICENSE="
 	BSD
 	GPL-3
 "
+# Apache-2 BSD BSD-2 custom GPL-3 MIT - glslang
 # BSD - pybind11
 # BSD BSD-2 ZLIB - ncnn
-# Apache-2 BSD BSD-2 custom GPL-3 MIT - glslang
 RESTRICT="mirror test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="

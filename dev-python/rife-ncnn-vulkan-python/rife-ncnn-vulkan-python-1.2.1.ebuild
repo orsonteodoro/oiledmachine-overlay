@@ -180,8 +180,32 @@ HOMEPAGE="
 	https://pypi.org/project/rife-ncnn-vulkan-python
 "
 LICENSE="
+	(
+		Apache-2
+		BSD
+		BSD-2
+		custom
+		GPL-3
+		MIT
+	)
+	(
+		BSD
+		BSD-2
+		ZLIB
+	)
+	(
+		BSD
+		libwebm-PATENTS
+	)
+	BSD
+	GPL-3
 	MIT
 "
+# Apache-2 BSD BSD-2 custom GPL-3 MIT - glslang
+# BSD - pybind11
+# BSD libwebm-PATENTS - libwebp
+# BSD BSD-2 ZLIB - ncnn
+# MIT - rife-ncnn-vulkan
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
