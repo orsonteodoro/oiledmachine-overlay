@@ -556,6 +556,35 @@ main
     blocking security updates.
   - If a package is orphaned in this overlay, it may be dropped.
 
+* Vendor or multislot?  Which one?
+  - Benefits
+    - A package should be rolling for these reasons
+      - For fresh tech experience/asethetics
+      - It is a core philosophy of the distro
+      - Security reasons.  LTS versions may be missing patchfix commits.
+      - Reduce the build cost for slower machines
+      - Always up to date feel
+    - A package should be multislotted these reasons
+      - Stability for modders or developers
+      - A lot of people are still using the older version.
+      - A popular downstream package depends on the older LTS version
+      - To make it possible to use both newer or older apps without being
+        forced to either pick new apps or old apps.
+  - Multislots are recommended for the following
+    - Compilers
+    - Large platform packages (with more than 10 MLOC) with a lot of dependencies
+      per slotted LTS.
+    - Large platform stacks that take more than a day to rebuild for that major
+      version.
+    - Packages that are improperly using monoslot should be changed to multislot.
+    - Package forced monoslotted but stuck perpetually in LTS.
+  - Vendored libs should be placed in /usr/lib/${PN} or /usr/$(get_libdir)/${PN}
+    with RPATH changes.
+    - It applies to small packages with version restrictions that large packages
+      depend on, but the small package is or should be rolling and is in low
+      demand for that particular older version.  Typically tiny or small packages
+      should not be multislotted.
+
 * Multislot:
   - SLOT are up to the ebuild (SLOT="slot/subslot"), but recommened for
     packages where there is difficultly updating or the API/interface has
