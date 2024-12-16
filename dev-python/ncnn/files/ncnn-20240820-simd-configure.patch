@@ -1,0 +1,88 @@
+diff '--color=auto' -urp ncnn-20240820.orig/setup.py ncnn-20240820/setup.py
+--- ncnn-20240820.orig/setup.py	2024-08-19 17:23:56.000000000 -0700
++++ ncnn-20240820/setup.py	2024-12-15 17:24:46.088513775 -0800
+@@ -38,6 +38,42 @@ ENABLE_BITCODE = os.environ.get("ENABLE_
+ ENABLE_ARC = os.environ.get("ENABLE_ARC", "")
+ ENABLE_VISIBILITY = os.environ.get("ENABLE_VISIBILITY", "")
+ 
++NCNN_AVX = os.environ.get("NCNN_AVX", "")
++NCNN_AVX2 = os.environ.get("NCNN_AVX2", "")
++NCNN_AVXNECONVERT = os.environ.get("NCNN_AVXNECONVERT", "")
++NCNN_AVXVNNI = os.environ.get("NCNN_AVXVNNI", "")
++NCNN_AVXVNNIINT8 = os.environ.get("NCNN_AVXVNNIINT8", "")
++NCNN_AVXVNNIINT16 = os.environ.get("NCNN_AVXVNNIINT16", "")
++NCNN_AVX512FP16 = os.environ.get("NCNN_AVX512FP16", "")
++NCNN_AVX512VNNI = os.environ.get("NCNN_AVX512VNNI", "")
++NCNN_F16C = os.environ.get("NCNN_F16C", "")
++NCNN_FMA = os.environ.get("NCNN_FMA", "")
++NCNN_LASX = os.environ.get("NCNN_LASX", "")
++NCNN_LSX = os.environ.get("NCNN_LSX", "")
++NCNN_MMI = os.environ.get("NCNN_MMI", "")
++NCNN_MSA = os.environ.get("NCNN_MSA", "")
++NCNN_RVV = os.environ.get("NCNN_RVV", "")
++NCNN_SSE2 = os.environ.get("NCNN_SSE2", "")
++NCNN_VFPV4 = os.environ.get("NCNN_VFPV4", "")
++NCNN_VSX_SSE2 = os.environ.get("NCNN_VSX_SSE2", "")
++NCNN_VSX_SSE41 = os.environ.get("NCNN_VSX_SSE41", "")
++NCNN_XOP = os.environ.get("NCNN_XOP", "")
++NCNN_XTHEADVECTOR = os.environ.get("NCNN_XTHEADVECTOR", "")
++NCNN_ZFH = os.environ.get("NCNN_ZFH", "")
++NCNN_ZVFH = os.environ.get("NCNN_ZVFH", "")
++NCNN_AVX512 = os.environ.get("NCNN_AVX512", "")
++NCNN_ARM82 = os.environ.get("NCNN_ARM82", "")
++NCNN_ARM84BF16 = os.environ.get("NCNN_ARM84BF16", "")
++NCNN_ARM82DOT = os.environ.get("NCNN_ARM82DOT", "")
++NCNN_ARM82FP16FML = os.environ.get("NCNN_ARM82FP16FML", "")
++NCNN_ARM84I8MM = os.environ.get("NCNN_ARM84I8MM", "")
++NCNN_ARM86SVE = os.environ.get("NCNN_ARM86SVE", "")
++NCNN_ARM86SVE2 = os.environ.get("NCNN_ARM86SVE2", "")
++NCNN_ARM86SVEBF16 = os.environ.get("NCNN_ARM86SVEBF16", "")
++NCNN_ARM86SVEI8MM = os.environ.get("NCNN_ARM86SVEI8MM", "")
++NCNN_ARM86SVEF32MM = os.environ.get("NCNN_ARM86SVEF32MM", "")
++NCNN_AVX512BF16 = os.environ.get("NCNN_AVX512BF16", "")
++
+ # Parse variables from command line with setup.py install
+ class InstallCommand(install):
+     user_options = install.user_options + [
+@@ -100,6 +136,41 @@ class CMakeBuild(build_ext):
+             "-DNCNN_BUILD_BENCHMARK=OFF",
+             "-DNCNN_BUILD_EXAMPLES=OFF",
+             "-DNCNN_BUILD_TOOLS=OFF",
++            "-D=NCNN_AVX={}".format(NCNN_AVX),
++            "-D=NCNN_AVX2={}".format(NCNN_AVX2),
++            "-D=NCNN_AVXNECONVERT={}".format(NCNN_AVXNECONVERT),
++            "-D=NCNN_AVXVNNI={}".format(NCNN_AVXVNNI),
++            "-D=NCNN_AVXVNNIINT8={}".format(NCNN_AVXVNNIINT8),
++            "-D=NCNN_AVXVNNIINT16={}".format(NCNN_AVXVNNIINT16),
++            "-D=NCNN_AVX512FP16={}".format(NCNN_AVX512FP16),
++            "-D=NCNN_AVX512VNNI={}".format(NCNN_AVX512VNNI),
++            "-D=NCNN_F16C={}".format(NCNN_F16C),
++            "-D=NCNN_FMA={}".format(NCNN_FMA),
++            "-D=NCNN_LASX={}".format(NCNN_LASX),
++            "-D=NCNN_LSX={}".format(NCNN_LSX),
++            "-D=NCNN_MMI={}".format(NCNN_MMI),
++            "-D=NCNN_MSA={}".format(NCNN_MSA),
++            "-D=NCNN_RVV={}".format(NCNN_RVV),
++            "-D=NCNN_SSE2={}".format(NCNN_SSE2),
++            "-D=NCNN_VFPV4={}".format(NCNN_VFPV4),
++            "-D=NCNN_VSX_SSE2={}".format(NCNN_VSX_SSE2),
++            "-D=NCNN_VSX_SSE41={}".format(NCNN_VSX_SSE41),
++            "-D=NCNN_XOP={}".format(NCNN_XOP),
++            "-D=NCNN_XTHEADVECTOR={}".format(NCNN_XTHEADVECTOR),
++            "-D=NCNN_ZFH={}".format(NCNN_ZFH),
++            "-D=NCNN_ZVFH={}".format(NCNN_ZVFH),
++            "-D=NCNN_AVX512={}".format(NCNN_AVX512),
++            "-D=NCNN_ARM82={}".format(NCNN_ARM82),
++            "-D=NCNN_ARM84BF16={}".format(NCNN_ARM84BF16),
++            "-D=NCNN_ARM82DOT={}".format(NCNN_ARM82DOT),
++            "-D=NCNN_ARM82FP16FML={}".format(NCNN_ARM82FP16FML),
++            "-D=NCNN_ARM84I8MM={}".format(NCNN_ARM84I8MM),
++            "-D=NCNN_ARM86SVE={}".format(NCNN_ARM86SVE),
++            "-D=NCNN_ARM86SVE2={}".format(NCNN_ARM86SVE2),
++            "-D=NCNN_ARM86SVEBF16={}".format(NCNN_ARM86SVEBF16),
++            "-D=NCNN_ARM86SVEI8MM={}".format(NCNN_ARM86SVEI8MM),
++            "-D=NCNN_ARM86SVEF32MM={}".format(NCNN_ARM86SVEF32MM),
++            "-D=NCNN_AVX512BF16={}".format(NCNN_AVX512BF16),
+         ]
+         if Vulkan_LIBRARY != "":
+             cmake_args.append("-DVulkan_LIBRARY=" + Vulkan_LIBRARY)
