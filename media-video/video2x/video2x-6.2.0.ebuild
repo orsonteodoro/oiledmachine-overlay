@@ -241,7 +241,7 @@ ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
 cli system-boost system-ncnn system-spdlog
-ebuild-revision-1
+ebuild-revision-2
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -806,6 +806,12 @@ src_install() {
 			--add-rpath "/usr/lib/ffmpeg/58.60.60/$(get_libdir)" \
 			"${ED}/usr/lib64/libvideo2x.so" \
 			|| die
+		if use cli ; then
+			patchelf \
+				--add-rpath "/usr/lib/ffmpeg/58.60.60/$(get_libdir)" \
+				"${ED}/usr/bin/video2x" \
+				|| die
+		fi
 	fi
 	if ! use system-boost ; then
 		exeinto "/usr/$(get_libdir)/${PN}/$(get_libdir)"
