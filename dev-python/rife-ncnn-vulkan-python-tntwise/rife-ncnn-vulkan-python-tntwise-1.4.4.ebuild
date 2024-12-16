@@ -346,6 +346,7 @@ BDEPEND+="
 "
 DOCS=( "README.md" )
 PATCHES=(
+	"${FILESDIR}/${PN}-1.4.4-restyle-conditional.patch"
 )
 
 gen_git_tag() {
