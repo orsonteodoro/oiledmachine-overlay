@@ -47,8 +47,25 @@ HOMEPAGE="
 	https://github.com/TNTwise/Universal-NCNN-upscaler-python
 "
 LICENSE="
+	(
+		Apache-2
+		BSD
+		BSD-2
+		custom
+		GPL-3
+		MIT
+	)
+	(
+		BSD
+		BSD-2
+		ZLIB
+	)
+	BSD
 	GPL-3
 "
+# BSD - pybind11
+# BSD BSD-2 ZLIB - ncnn
+# Apache-2 BSD BSD-2 custom GPL-3 MIT - glslang
 RESTRICT="mirror test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
