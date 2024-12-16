@@ -3,8 +3,8 @@
 
 EAPI=8
 
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
-#DISTUTILS_USE_PEP517="standalone"
 GLSLANG_COMMIT="4420f9b33ba44928d5c82d9eae0c3bb4d5674c05"
 PYBIND11_COMMIT="3e9dfa2866941655c56877882565e7577de6fc7b"
 
@@ -168,7 +168,8 @@ ${CPU_FLAGS_MIPS[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
-examples openmp tools +vulkan
+openmp +vulkan
+ebuild-revision
 "
 REQUIRED_USE="
 	cpu_flags_arm_bf16? (
@@ -282,10 +283,6 @@ REQUIRED_USE="
 RESTRICT="test"
 
 RDEPEND="
-	tools? (
-		dev-cpp/abseil-cpp:=
-		dev-libs/protobuf:=
-	)
 	vulkan? (
 		dev-util/glslang:=
 		media-libs/vulkan-loader
@@ -325,9 +322,9 @@ src_prepare() {
 
 src_configure() {
 	export GLSLANG_TARGET_DIR="${ESYSROOT}/usr/$(get_libdir)/cmake"
-	export NCNN_BUILD_EXAMPLES=$(usex examples)
-	export NCNN_BUILD_TOOLS=ON
-	export NCNN_PYTHON=OFF
+	export NCNN_BUILD_EXAMPLES=OFF
+	export NCNN_BUILD_TOOLS=OFF
+	export NCNN_PYTHON=ON
 	export NCNN_OPENMP=$(usex openmp)
 	export NCNN_SHARED_LIB=ON
 	export NCNN_SIMPLEVK=OFF
