@@ -4,6 +4,7 @@
 
 EAPI=8
 
+MY_PN="rife-ncnn-vulkan-python"
 MY_PV="2024-10-19"
 
 DISTUTILS_EXT=1
@@ -157,7 +158,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 else
 	KEYWORDS="~amd64"
-	S="${WORKDIR}/${PN}-${PV}"
+	S="${WORKDIR}/${MY_PN}-${MY_PV}"
 #https://github.com/nihui/rife-ncnn-vulkan/archive/${RIFE_NCNN_VULKAN_COMMIT_1}.tar.gz
 #	-> rife-ncnn-vulkan-${RIFE_NCNN_VULKAN_COMMIT_1:0:7}.tar.gz
 	SRC_URI="
@@ -378,6 +379,7 @@ src_unpack() {
 		dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT}" "${S}/rife_ncnn_vulkan_python/rife-ncnn-vulkan/src/ncnn/python/pybind11"
 		dep_prepare_mv "${WORKDIR}/libwebp-${LIBWEBP_COMMIT}" "${S}/rife_ncnn_vulkan_python/rife-ncnn-vulkan/src/libwebp"
 
+rife-ncnn-vulkan-python-tntwise-1.4.4/rife_ncnn_vulkan_python/rife-ncnn-vulkan
 		gen_git_tag "${S}/rife_ncnn_vulkan_python" "v${PV}"
 	fi
 }
