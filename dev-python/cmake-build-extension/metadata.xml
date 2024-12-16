@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/diegoferigo/cmake-build-extension/issues</bugs-to>
+    <changelog>https://github.com/diegoferigo/cmake-build-extension/releases</changelog>
+    <remote-id type="github">diegoferigo/cmake-build-extension</remote-id>
+    <remote-id type="pypi">cmake-build-extension</remote-id>
+  </upstream>
+</pkgmetadata>
