@@ -578,8 +578,8 @@ main
       version.
     - Packages that are improperly using monoslot should be changed to multislot.
     - Package forced monoslotted but stuck perpetually in LTS.
-  - Vendored libs should be placed in /usr/lib/${PN} or /usr/$(get_libdir)/${PN}
-    with RPATH changes.
+  - Vendored libs should be placed in `/usr/lib/${PN}/$(get_libdir)` or 
+    `/usr/$(get_libdir)/${PN}/$(get_libdir)` with RPATH changes.
     - It applies to small packages with version restrictions that large packages
       depend on, but the small package is or should be rolling and is in low
       demand for that particular older version.  Typically tiny or small packages
