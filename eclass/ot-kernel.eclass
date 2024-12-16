@@ -482,25 +482,11 @@ MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
 # High and critical are noted and only those that are fixed on this release day
 # Medium and low are shown optionally.
-	"CVE-2024-53061;DoS, DT, ID;High"
-	"CVE-2024-53057;DoS, DT, ID;High"
-	"CVE-2024-50286;DoS, DT, ID;High"
-	"CVE-2024-50283;DoS, DT, ID;High"
-	"CVE-2024-50282;DoS, DT, ID;High"
-	"CVE-2024-50276;DoS, DT, ID;High"
-	"CVE-2024-50267;DoS, DT, ID;High"
-	"CVE-2024-50264;DoS, DT, ID;High"
-	"CVE-2023-52921;DoS, DT, ID;High"
-	"CVE-2024-53062;DoS, ID;High"
-	"CVE-2024-50301;DoS, ID;High"
-	"CVE-2024-50268;DoS, ID;High"
-
-	# Microcode
-	"CVE-2024-23918;PE, DoS, DT, ID;High"
-	"CVE-2024-21820;PE, DT, ID;High"
-	"CVE-2024-23984;ID;Medium"
-	"CVE-2024-24968;DoS;Medium"
-	"CVE-2024-21853;DoS;Medium"
+	"CVE-2024-53142;DoS, DT, ID;High"
+	"CVE-2024-53141;DoS, DT, ID;High"
+	"CVE-2024-53139;DoS, DT, ID;High"
+	"CVE-2024-53133;DoS, DT, ID;High"
+	"CVE-2024-53126;DoS, DT, ID;High"
 )
 
 ZEN_MULTIGEN_LRU_BASE_URI=\
