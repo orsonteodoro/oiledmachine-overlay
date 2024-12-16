@@ -4,6 +4,7 @@
 
 EAPI=8
 
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 GLSLANG_COMMIT="86ff4bca1ddc7e2262f119c16e7228d0efb67610"
 LIBWEBP_COMMIT="5abb55823bb6196a918dd87202b2f32bbaff4c18"
@@ -54,7 +55,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+IUSE+=" ebuild-revision-1"
 RDEPEND+="
 	virtual/pillow[${PYTHON_USEDEP}]
 "
