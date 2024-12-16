@@ -47,7 +47,10 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	>=dev-python/setuptools-45[${PYTHON_USEDEP}]
+	>=dev-python/setuptools-scm-6.0[${PYTHON_USEDEP}]
 	dev-vcs/git
+	dev-python/wheel[${PYTHON_USEDEP}]
 "
 DOCS=( "README.md" )
 
