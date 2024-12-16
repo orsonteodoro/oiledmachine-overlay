@@ -243,8 +243,10 @@ ${CPU_FLAGS_X86[@]}
 cli system-boost system-ncnn system-spdlog
 ebuild-revision-2
 "
+# Using the vendored ncnn will break libplacebo.
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
+	system-ncnn
 	cpu_flags_arm_bf16? (
 		cpu_flags_arm_dotprod
 		cpu_flags_arm_fp16fml
