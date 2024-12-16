@@ -11,7 +11,6 @@ EAPI=8
 # tensorrt-cu12_libs
 # tensorrt_cu12_bindings
 # torch-tensorrt
-# upscale-ncnn-py
 
 # U20
 
