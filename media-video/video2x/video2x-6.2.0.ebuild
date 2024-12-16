@@ -351,6 +351,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
+	>=dev-util/glslang-1.3.268.0
 	>=media-libs/vulkan-loader-1.3.275.0
 	media-libs/libplacebo[glslang,vulkan]
 	system-boost? (
@@ -503,6 +504,8 @@ src_configure() {
 	export CPP="${CHOST}-gcc -E"
 	strip-unsupported-flags
 
+	export MAKEOPTS="-j1"
+
 	check_cxxabi
 
 	append-flags -DSPDLOG_NO_EXCEPTIONS
@@ -537,6 +540,7 @@ einfo "Using media-video/ffmpeg:0/58.60.60"
 		-DUSE_SYSTEM_BOOST=$(usex system-boost)
 		-DUSE_SYSTEM_NCNN=$(usex system-ncnn)
 		-DUSE_SYSTEM_SPDLOG=$(usex system-spdlog)
+		-DUSE_SYSTEM_GLSLANG=OFF
 		-DNCNN_AVX=$(usex cpu_flags_x86_avx)
 		-DNCNN_AVX2=$(usex cpu_flags_x86_avx2)
 		-DNCNN_AVXNECONVERT=$(usex cpu_flags_x86_avxneconvert)
@@ -802,6 +806,21 @@ src_install() {
 			--add-rpath "/usr/lib/ffmpeg/58.60.60/$(get_libdir)" \
 			"${ED}/usr/lib64/libvideo2x.so" \
 			|| die
+	fi
+	if ! use system-boost ; then
+		exeinto "/usr/$(get_libdir)/${PN}/$(get_libdir)"
+		IFS=$'\n'
+		local x
+		for x in $(find "${S}_build/third_party/boost/" -name "*.so*") ; do
+			doexe "${x}"
+		done
+		IFS=$' \t\n'
+		if use cli ; then
+			patchelf \
+				--add-rpath "/usr/$(get_libdir)/${PN}/$(get_libdir)" \
+				"${ED}/usr/bin/video2x" \
+				|| die
+		fi
 	fi
 }
 
