@@ -36,7 +36,7 @@ HOMEPAGE="
 LICENSE="
 	ISC
 "
-# ISC video2x-qt6
+# ISC - video2x-qt6
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="

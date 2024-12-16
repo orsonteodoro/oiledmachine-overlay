@@ -48,7 +48,7 @@ HOMEPAGE="
 "
 LICENSE="
 	(
-		Apache-2
+		Apache-2.0
 		BSD
 		BSD-2
 		custom

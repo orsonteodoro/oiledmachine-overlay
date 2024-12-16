@@ -154,7 +154,7 @@ https://github.com/pybind/pybind11/archive/${PYBIND11_COMMIT}.tar.gz
 
 LICENSE="
 	(
-		Apache-2
+		Apache-2.0
 		BSD
 		BSD-2
 		custom

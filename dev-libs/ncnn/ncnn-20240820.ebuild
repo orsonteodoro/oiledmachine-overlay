@@ -157,7 +157,7 @@ https://github.com/Tencent/ncnn/archive/refs/tags/${PV}.tar.gz
 
 LICENSE="
 	(
-		Apache-2
+		Apache-2.0
 		BSD
 		BSD-2
 		custom
