@@ -966,7 +966,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/myst-parser | An extended commonmark compliant parser, with bridges to docutils/sphinx |
 | dev-python/namex | Clean up the public namespace of your package! |
 | dev-python/nashpy | A Python library for 2 player games |
-| dev-python/ncnn | High-performance neural network inference framework |
+| dev-python/ncnn | Python bindings for the high-performance neural network inference framework |
 | dev-python/neural-compressor | State of the art low-bit LLM quantization (INT8/FP8/INT4/FP4/NF4) & sparsity; leading model compression techniques on TensorFlow, PyTorch, and ONNX Runtime |
 | dev-python/nnef-parser | A parser to add support for neural network NNEF files |
 | dev-python/nnef-tools | Convert neural networks models to NNEF format |

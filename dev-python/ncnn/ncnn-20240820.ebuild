@@ -141,7 +141,7 @@ PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 dep-prepare toolchain-funcs
 
-DESCRIPTION="High-performance neural network inference framework"
+DESCRIPTION="Python bindings for the high-performance neural network inference framework"
 HOMEPAGE="https://github.com/Tencent/ncnn/"
 SRC_URI="
 https://github.com/Tencent/ncnn/archive/refs/tags/${PV}.tar.gz
