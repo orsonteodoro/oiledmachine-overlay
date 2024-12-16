@@ -3,6 +3,9 @@
 
 EAPI=8
 
+GLSLANG_COMMIT="4420f9b33ba44928d5c82d9eae0c3bb4d5674c05"
+PYBIND11_COMMIT="3e9dfa2866941655c56877882565e7577de6fc7b"
+
 BF16_ARCHES=(
 	armv8.4-a
 	armv8.5-a
@@ -132,18 +135,30 @@ CPU_FLAGS_X86=(
 	cpu_flags_x86_xop
 )
 
-inherit cmake toolchain-funcs
+PYTHON_COMPAT=( "python3_"{10..12} )
+
+inherit cmake dep-prepare distutils-r1 toolchain-funcs
 
 DESCRIPTION="High-performance neural network inference framework"
 HOMEPAGE="https://github.com/Tencent/ncnn/"
 SRC_URI="
-	https://github.com/Tencent/ncnn/archive/refs/tags/${PV}.tar.gz
-		-> ${P}.tar.gz
+https://github.com/Tencent/ncnn/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
+https://github.com/KhronosGroup/glslang/archive/${GLSLANG_COMMIT}.tar.gz
+	-> glslang-${GLSLANG_COMMIT:0:7}.tar.gz
+https://github.com/pybind/pybind11/archive/${PYBIND11_COMMIT}.tar.gz
+	-> pybind11-${PYBIND11_COMMIT:0:7}.tar.gz
 "
 
-LICENSE="BSD ZLIB"
+LICENSE="
+	BSD
+	ZLIB
+"
 SLOT="0/${PV}" # currently has unstable ABI that often requires rebuilds
-KEYWORDS="amd64 ~x86"
+KEYWORDS="
+~amd64 ~amd64-linux ~arm ~arm-linux ~arm64 ~arm64-linux ~arm64-macos ~loong
+~mips ~ppc64 ~ppc64-linux ~riscv ~riscv-linux ~x64-macos ~x86 ~x86-linux
+"
 IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_LOONG[@]}
@@ -151,7 +166,7 @@ ${CPU_FLAGS_MIPS[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
-openmp tools +vulkan
+openmp python tools +vulkan
 "
 REQUIRED_USE="
 	cpu_flags_arm_bf16? (
@@ -276,10 +291,14 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
-	vulkan? ( dev-util/vulkan-headers )
+	vulkan? (
+		dev-util/vulkan-headers
+	)
+"
+BDEPEND="
 "
 
-DOCS=( README.md docs/. )
+DOCS=( "README.md" "docs/." )
 
 pkg_pretend() {
 	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
@@ -287,19 +306,35 @@ pkg_pretend() {
 
 pkg_setup() {
 	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
+	python_setup
 }
 
-src_configure() {
-	local mycmakeargs=(
+src_unpack() {
+	unpack ${A}
+	dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT}" "${S}/glslang"
+	dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT}" "${S}/python/pybind11"
+}
+
+python_prepare_all() {
+	cmake_src_prepare
+	distutils-r1_python_prepare_all
+	#eapply ${_PATCHES[@]}
+}
+
+src_prepare() {
+	distutils-r1_src_prepare
+}
+
+_src_configure() {
+	mycmakeargs+=(
 		-DGLSLANG_TARGET_DIR="${ESYSROOT}"/usr/$(get_libdir)/cmake
 		-DNCNN_BUILD_EXAMPLES=no
 		-DNCNN_BUILD_TOOLS=$(usex tools)
 		-DNCNN_OPENMP=$(usex openmp)
-		-DNCNN_PYTHON=no # todo if something needs it
 		-DNCNN_SHARED_LIB=yes
 		-DNCNN_SIMPLEVK=no
 		-DNCNN_SYSTEM_GLSLANG=yes
-		-DNCNN_VERSION=${PV} # avoids libncnn.so.*.%Y%m%d using build date
+		-DNCNN_VERSION="${PV}" # avoids libncnn.so.*.%Y%m%d using build date
 		-DNCNN_VULKAN=$(usex vulkan)
 
 		-DNCNN_AVX=$(usex cpu_flags_x86_avx)
@@ -541,4 +576,52 @@ src_configure() {
 	fi
 
 	cmake_src_configure
+}
+
+python_configure() {
+	# Python impls
+	local mycmakeargs=(
+		-DNCNN_PYTHON=$(usex python)
+	)
+	_src_configure
+}
+
+python_configure_all() {
+	# Non Python impls
+	local mycmakeargs=(
+		-DNCNN_PYTHON=OFF
+	)
+	_src_configure
+}
+
+src_configure() {
+	distutils-r1_src_configure
+}
+
+python_compile() {
+	# Python impls
+	cmake_src_compile
+}
+
+python_compile_all() {
+	# Non Python impls
+	cmake_src_compile
+}
+
+src_compile() {
+	distutils-r1_src_compile
+}
+
+python_install() {
+	# Python impls
+	cmake_src_install
+}
+
+python_install_all() {
+	# Non Python impls
+	cmake_src_install
+}
+
+src_install() {
+	distutils-r1_src_install
 }

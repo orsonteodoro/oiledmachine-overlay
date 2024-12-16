@@ -123,12 +123,12 @@ REQUIRED_USE="
 		X
 	)
 "
+# Dropped dev-python/opencv-python-headless
 # See https://github.com/TNTwise/REAL-Video-Enhancer/blob/RVE-2.1.0/src/DownloadDeps.py
 COMMON_DEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
 		dev-python/mpmath[${PYTHON_USEDEP}]
-		dev-python/opencv-python-headless[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
 		dev-python/pypresence[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
@@ -151,12 +151,11 @@ CUDA_DEPEND="
 "
 NCNN_DEPEND="
 	$(python_gen_cond_dep '
+		>=dev-python/ncnn-20240820[${PYTHON_USEDEP},python]
 		>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
-		>=dev-python/ncnn-20240820[${PYTHON_USEDEP}]
 		>=dev-python/rife-ncnn-vulkan-python-tntwise-1.4.4[${PYTHON_USEDEP}]
 		>=dev-python/sympy-1.13.1[${PYTHON_USEDEP}]
 		>=dev-python/upscale-ncnn-py-1.2.0[${PYTHON_USEDEP}]
-		dev-python/opencv-python-headless[${PYTHON_USEDEP}]
 		dev-python/mpmath[${PYTHON_USEDEP}]
 	')
 "
@@ -185,7 +184,6 @@ RDEPEND+="
 		dev-libs/lief[${PYTHON_USEDEP},python]
 		dev-python/certifi[${PYTHON_USEDEP}]
 		dev-python/distro[${PYTHON_USEDEP}]
-		dev-python/opencv-python-headless[${PYTHON_USEDEP}]
 		dev-python/psutil[${PYTHON_USEDEP}]
 		dev-python/py-cpuinfo[${PYTHON_USEDEP}]
 		dev-python/pyinstaller[${PYTHON_USEDEP}]
