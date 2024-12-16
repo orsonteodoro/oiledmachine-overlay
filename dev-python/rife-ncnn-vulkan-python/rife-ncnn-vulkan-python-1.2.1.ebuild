@@ -301,14 +301,17 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
+	media-libs/vulkan-loader
 	virtual/pillow[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
+	dev-util/vulkan-headers
 "
 BDEPEND+="
 	>=dev-build/cmake-3.9
 	>=dev-python/setuptools-40.8.0[${PYTHON_USEDEP}]
+	dev-lang/swig
 	dev-python/cmake-build-extension[${PYTHON_USEDEP}]
 	dev-python/requests[${PYTHON_USEDEP}]
 	dev-python/setuptools-scm[${PYTHON_USEDEP}]
