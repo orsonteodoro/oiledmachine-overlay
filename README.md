@@ -804,6 +804,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-libs/libdatachannel | C/C++ WebRTC network library featuring Data Channels, Media Transport, and WebSockets |
 | dev-libs/libfmt | Small, safe and fast formatting library |
 | dev-libs/libfreenect | Drivers and libraries for the Xbox Kinect device |
+| dev-libs/lief | Library to instrument executable formats |
 | dev-libs/log4c | Logging FrameWork for C, as Log4j or Log4Cpp |
 | dev-libs/miniz | A lossless, high performance data compression library |
 | dev-libs/nccl | Optimized primitives for collective multi-GPU communication |
@@ -869,6 +870,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/chex | Chex is a library of utilities for helping to write reliable JAX code. |
 | dev-python/cloudpathlib | Python pathlib-style classes for cloud storage services |
 | dev-python/clu | A set of libraries for Machine Learning (ML) training loops in JAX |
+| dev-python/cmake-build-extension | Setuptools extension to build and package CMake projects |
 | dev-python/colorlover | Color scales in Python for humans |
 | dev-python/confection | 🍬 Confection: the sweetest config system for Python |
 | dev-python/contextlib2 | contextlib2 is a backport of the standard library's contextlib module to earlier Python versions. |
@@ -964,6 +966,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/myst-parser | An extended commonmark compliant parser, with bridges to docutils/sphinx |
 | dev-python/namex | Clean up the public namespace of your package! |
 | dev-python/nashpy | A Python library for 2 player games |
+| dev-python/ncnn | High-performance neural network inference framework |
 | dev-python/neural-compressor | State of the art low-bit LLM quantization (INT8/FP8/INT4/FP4/NF4) & sparsity; leading model compression techniques on TensorFlow, PyTorch, and ONNX Runtime |
 | dev-python/nnef-parser | A parser to add support for neural network NNEF files |
 | dev-python/nnef-tools | Convert neural networks models to NNEF format |
@@ -1022,6 +1025,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/pytube | Python tools for downloading YouTube Videos |
 | dev-python/pyv4l2 | A simple Video4Linux2 (v4l2) library for Python |
 | dev-python/pyvips | Python bindings for libvips |
+| dev-python/rife-ncnn-vulkan-python-tntwise | A Python FFI of nihui/rife-ncnn-vulkan achieved with SWIG |
 | dev-python/rlax | A library of reinforcement learning building blocks in JAX. |
 | dev-python/rlcard | Reinforcement Learning or AI bots for card games like Blackjack, Leduc, Texas, DouDizhu, Mahjong, UNO |
 | dev-python/runs | Run a block of text as a subprocess |
@@ -1051,6 +1055,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/types-dataclasses | Typing stubs for dataclasses |
 | dev-python/types-toml | Typing stubs for toml |
 | dev-python/typing-extensions | Backported and experimental type hints for Python |
+| dev-python/upscale-ncnn-py | Python Binding for *-ncnn-vulkan with PyBind11 |
 | dev-python/wandb | A CLI and library for interacting with the Weights & Biases API |
 | dev-python/wasabi | 🍣 A lightweight console printing and formatting toolkit |
 | dev-python/weasel | 🦦 weasel: A small and easy workflow system |
