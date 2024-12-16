@@ -572,18 +572,23 @@ main
         forced to either pick new apps or old apps.
   - Multislots are recommended for the following
     - Compilers
-    - Large platform packages (with more than 10 MLOC) with a lot of dependencies
-      per slotted LTS.
+    - Large platform packages (with more than 10 MLOC) with a lot of
+      dependencies per slotted LTS.
     - Large platform stacks that take more than a day to rebuild for that major
       version.
-    - Packages that are improperly using monoslot should be changed to multislot.
+    - Packages that are improperly using monoslot should be changed to
+      multislot.
     - Package forced monoslotted but stuck perpetually in LTS.
-  - Vendored libs should be placed in `/usr/lib/${PN}/$(get_libdir)` or 
-    `/usr/$(get_libdir)/${PN}/$(get_libdir)` with RPATH changes.
+    - The multislots could be placed in `/usr/lib/${PN}/${SLOT}` per root
+      installation.
+  - Vendored libs/packages are recommended for the following
     - It applies to small packages with version restrictions that large packages
       depend on, but the small package is or should be rolling and is in low
-      demand for that particular older version.  Typically tiny or small packages
-      should not be multislotted.
+      demand for that particular older version.  Typically tiny or small
+      packages should not be multislotted.
+    - Vendored libs should be placed in `/usr/lib/${PN}/$(get_libdir)` or 
+      `/usr/$(get_libdir)/${PN}/$(get_libdir)` with RPATH changes.  The
+      `/usr/lib/${PN}` could be used as the root.
 
 * Multislot:
   - SLOT are up to the ebuild (SLOT="slot/subslot"), but recommened for
