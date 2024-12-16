@@ -53,7 +53,7 @@ HOMEPAGE="
 LICENSE="
 	MIT
 "
-RESTRICT="mirror"
+RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" ebuild-revision-1"
 RDEPEND+="
