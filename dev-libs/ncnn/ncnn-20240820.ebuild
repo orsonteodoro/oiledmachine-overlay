@@ -144,13 +144,15 @@ inherit cmake dep-prepare distutils-r1 toolchain-funcs
 
 DESCRIPTION="High-performance neural network inference framework"
 HOMEPAGE="https://github.com/Tencent/ncnn/"
-SRC_URI="
-https://github.com/Tencent/ncnn/archive/refs/tags/${PV}.tar.gz
-	-> ${P}.tar.gz
+SRC_URI_DISABLED="
 https://github.com/KhronosGroup/glslang/archive/${GLSLANG_COMMIT}.tar.gz
 	-> glslang-${GLSLANG_COMMIT:0:7}.tar.gz
 https://github.com/pybind/pybind11/archive/${PYBIND11_COMMIT}.tar.gz
 	-> pybind11-${PYBIND11_COMMIT:0:7}.tar.gz
+"
+SRC_URI="
+https://github.com/Tencent/ncnn/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
 "
 
 LICENSE="
@@ -318,10 +320,30 @@ pkg_setup() {
 	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
 }
 
+gen_git_tag() {
+	local path="${1}"
+	local tag_name="${2}"
+einfo "Generating tag start for ${path}"
+	pushd "${path}" >/dev/null 2>&1 || die
+		git init || die
+		git config user.email "name@example.com" || die
+		git config user.name "John Doe" || die
+		touch dummy || die
+		git add dummy || die
+		#git add -f * || die
+		git commit -m "Dummy" || die
+		git tag ${tag_name} || die
+	popd >/dev/null 2>&1 || die
+einfo "Generating tag done"
+}
+
 src_unpack() {
 	unpack ${A}
-	dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT}" "${S}/glslang"
-	dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT}" "${S}/python/pybind11"
+
+# Breaks during build.
+#	dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT}" "${S}/glslang"
+#	dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT}" "${S}/python/pybind11"
+#	gen_git_tag "${S}" "${PV}"
 }
 
 src_prepare() {
@@ -332,7 +354,7 @@ src_configure() {
 	mycmakeargs+=(
 		-DGLSLANG_TARGET_DIR="${ESYSROOT}/usr/$(get_libdir)/cmake"
 		-DNCNN_BUILD_EXAMPLES=$(usex examples)
-		-DNCNN_BUILD_TOOLS=ON
+		-DNCNN_BUILD_TOOLS=$(usex tools)
 		-DNCNN_PYTHON=OFF
 		-DNCNN_OPENMP=$(usex openmp)
 		-DNCNN_SHARED_LIB=ON
