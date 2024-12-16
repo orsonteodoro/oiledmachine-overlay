@@ -177,7 +177,7 @@ https://github.com/pybind/pybind11/archive/${PYBIND11_COMMIT}.tar.gz
 	"
 fi
 
-DESCRIPTION="The Real-Time Intermediate Flow Estimation (RIFE) algorthm used for video frame interpolation using a Python wrapper and neural networks"
+DESCRIPTION="Video frame interpolation using the Real-Time Intermediate Flow Estimation (RIFE) algorithm, neural networks, and a Python wrapper"
 HOMEPAGE="
 	https://github.com/TNTwise/rife-ncnn-vulkan-python
 	https://pypi.org/project/rife-ncnn-vulkan-python-tntwise
