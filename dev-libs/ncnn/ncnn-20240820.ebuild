@@ -156,9 +156,24 @@ https://github.com/Tencent/ncnn/archive/refs/tags/${PV}.tar.gz
 "
 
 LICENSE="
+	(
+		Apache-2
+		BSD
+		BSD-2
+		custom
+		GPL-3
+		MIT
+	)
+	(
+		BSD
+		BSD-2
+		ZLIB
+	)
 	BSD
-	ZLIB
 "
+# Apache-2 BSD BSD-2 custom GPL-3 MIT - glslang
+# BSD - pybind11
+# BSD BSD-2 ZLIB - ncnn
 SLOT="0/${PV}" # currently has unstable ABI that often requires rebuilds
 KEYWORDS="
 ~amd64 ~amd64-linux ~arm ~arm-linux ~arm64 ~arm64-linux ~arm64-macos ~loong
