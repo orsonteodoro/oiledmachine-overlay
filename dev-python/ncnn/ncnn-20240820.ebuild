@@ -168,7 +168,7 @@ ${CPU_FLAGS_MIPS[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
-openmp +vulkan
+openmp
 ebuild-revision
 "
 REQUIRED_USE="
@@ -283,16 +283,12 @@ REQUIRED_USE="
 RESTRICT="test"
 
 RDEPEND="
-	vulkan? (
-		dev-util/glslang:=
-		media-libs/vulkan-loader
-	)
+	dev-util/glslang:=
+	media-libs/vulkan-loader
 "
 DEPEND="
 	${RDEPEND}
-	vulkan? (
-		dev-util/vulkan-headers
-	)
+	dev-util/vulkan-headers
 "
 BDEPEND="
 "
@@ -321,16 +317,15 @@ src_prepare() {
 }
 
 src_configure() {
-	export GLSLANG_TARGET_DIR="${ESYSROOT}/usr/$(get_libdir)/cmake"
+#	export GLSLANG_TARGET_DIR="${ESYSROOT}/usr/$(get_libdir)/cmake"
 	export NCNN_BUILD_EXAMPLES=OFF
 	export NCNN_BUILD_TOOLS=OFF
 	export NCNN_PYTHON=ON
 	export NCNN_OPENMP=$(usex openmp)
 	export NCNN_SHARED_LIB=ON
-	export NCNN_SIMPLEVK=OFF
-	export NCNN_SYSTEM_GLSLANG=ON
+	export NCNN_SIMPLEVK=ON
+	export NCNN_SYSTEM_GLSLANG=OFF
 	export NCNN_VERSION="${PV}" # avoids libncnn.so.*.%Y%m%d using build date
-	export NCNN_VULKAN=$(usex vulkan)
 
 	export NCNN_AVX=$(usex cpu_flags_x86_avx)
 	export NCNN_AVX2=$(usex cpu_flags_x86_avx2)
