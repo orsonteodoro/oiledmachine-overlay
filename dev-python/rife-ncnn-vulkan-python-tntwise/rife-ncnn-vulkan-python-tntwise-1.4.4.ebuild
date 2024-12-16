@@ -177,7 +177,7 @@ https://github.com/pybind/pybind11/archive/${PYBIND11_COMMIT}.tar.gz
 	"
 fi
 
-DESCRIPTION="A Python FFI of nihui/rife-ncnn-vulkan achieved with SWIG"
+DESCRIPTION="The Real-Time Intermediate Flow Estimation (RIFE) algorthm used for video frame interpolation using a Python wrapper and neural networks"
 HOMEPAGE="
 	https://github.com/TNTwise/rife-ncnn-vulkan-python
 	https://pypi.org/project/rife-ncnn-vulkan-python-tntwise
