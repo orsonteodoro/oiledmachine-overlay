@@ -6,6 +6,7 @@ EAPI=8
 
 # We use the prebuilt because it needs binary cx_Freeze/bases binaries
 
+MY_PN="cx_Freeze"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="standalone"
 PYTHON_COMPAT=( "python3_"{10..13} )
@@ -72,7 +73,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 dev doc multiprocess pandas test
-ebuild-revision-1
+ebuild-revision-2
 "
 RDEPEND+="
 	>=dev-python/filelock-3.12.3[${PYTHON_USEDEP}]
@@ -123,7 +124,7 @@ _install_wheel() {
 	local wheel_path="${1}"
 	local bn=$(basename "${wheel_path}")
 
-	local epython
+	local epython=""
 	if [[ "${bn}" =~ "cp310" ]] ; then
 		epython="python3.10"
 	elif [[ "${bn}" =~ "cp311" ]] ; then
@@ -136,6 +137,8 @@ _install_wheel() {
 		die "Python implementation for ${bn} is not supported"
 	fi
 
+einfo "bn: ${bn}"
+einfo "epython: ${epython}"
 einfo "Installing wheel ${bn} for ${epython}"
 
 	local d="${WORKDIR}/${PN}-${PV}-${epython/./_}/install"
@@ -171,48 +174,21 @@ src_unpack() {
 }
 
 src_compile() {
-	if use amd64 ; then
-		if use python_targets_python3_10 ; then
-			_install_wheel "${DISTDIR}/cx_Freeze-7.2.7-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
+	install_impl() {
+		local id="${EPYTHON/python}"
+		id="cp${id/./}"
+		local manylinux_version="2_17"
+		if [[ "${ARCH}" == "amd64" ]] ; then
+			_install_wheel "${DISTDIR}/${MY_PN}-${PV}-${id}-${id}-manylinux_${manylinux_version}_x86_64.manylinux2014_x86_64.whl"
 		fi
-		if use python_targets_python3_11 ; then
-			_install_wheel "${DISTDIR}/cx_Freeze-7.2.7-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
+		if [[ "${ARCH}" == "arm64" ]] ; then
+			_install_wheel "${DISTDIR}/${MY_PN}-${PV}-${id}-${id}-manylinux_${manylinux_version}_aarch64.manylinux2014_aarch64.whl"
 		fi
-		if use python_targets_python3_12 ; then
-			_install_wheel "${DISTDIR}/cx_Freeze-7.2.7-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
+		if [[ "${ARCH}" == "ppc64" ]] ; then
+			_install_wheel "${DISTDIR}/${MY_PN}-${PV}-${id}-${id}-manylinux_${manylinux_version}_ppc64le.manylinux2014_ppc64le.whl"
 		fi
-		if use python_targets_python3_13 ; then
-			_install_wheel "${DISTDIR}/cx_Freeze-7.2.7-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl"
-		fi
-	fi
-	if use arm64 ; then
-		if use python_targets_python3_10 ; then
-			_install_wheel "${DISTDIR}/cx_Freeze-7.2.7-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl"
-		fi
-		if use python_targets_python3_11 ; then
-			_install_wheel "${DISTDIR}/cx_Freeze-7.2.7-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl"
-		fi
-		if use python_targets_python3_12 ; then
-			_install_wheel "${DISTDIR}/cx_Freeze-7.2.7-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl"
-		fi
-		if use python_targets_python3_13 ; then
-			_install_wheel "${DISTDIR}/cx_Freeze-7.2.7-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl"
-		fi
-	fi
-	if use ppc64 ; then
-		if use python_targets_python3_10 ; then
-			_install_wheel "${DISTDIR}/cx_Freeze-7.2.7-cp310-cp310-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl"
-		fi
-		if use python_targets_python3_11 ; then
-			_install_wheel "${DISTDIR}/cx_Freeze-7.2.7-cp311-cp311-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl"
-		fi
-		if use python_targets_python3_12 ; then
-			_install_wheel "${DISTDIR}/cx_Freeze-7.2.7-cp312-cp312-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl"
-		fi
-		if use python_targets_python3_13 ; then
-			_install_wheel "${DISTDIR}/cx_Freeze-7.2.7-cp313-cp313-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl"
-		fi
-	fi
+	}
+	python_foreach_impl install_impl
 }
 
 src_install() {
