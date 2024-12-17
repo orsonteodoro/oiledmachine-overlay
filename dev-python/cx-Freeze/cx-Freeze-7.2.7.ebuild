@@ -86,6 +86,9 @@ BDEPEND+="
 	)
 "
 DOCS=( "README.md" )
+PATCHES=(
+	"${FILESDIR}/${PN}-7.2.7-buildsystem.patch"
+)
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
@@ -97,7 +100,16 @@ src_unpack() {
 	fi
 }
 
+src_prepare() {
+	# Remove pythonic dep on patchelf exec
+	sed -i -e '/patchelf/d' pyproject.toml || die
+	# Remove repeatedly outdated upper bound on setuptools
+	sed -i -e '/setuptools/s:,<[0-9.]*::' pyproject.toml || die
+	distutils-r1_src_prepare
+}
+
 src_test() {
+	export PYTHONPATH="${S}-${EPYTHON/./_}/install/usr/lib/${EPYTHON}/site-packages/cx_Freeze:/usr/lib/${EPYTHON}/site-packages/console:${PYTHONPATH}"
 	local disabled_tests=(
 		--ignore=tests/test_command_bdist_appimage.py
 		--ignore=tests/test_command_bdist_deb.py
