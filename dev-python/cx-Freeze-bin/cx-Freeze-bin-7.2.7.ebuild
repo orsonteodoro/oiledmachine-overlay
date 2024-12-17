@@ -137,8 +137,6 @@ _install_wheel() {
 		die "Python implementation for ${bn} is not supported"
 	fi
 
-einfo "bn: ${bn}"
-einfo "epython: ${epython}"
 einfo "Installing wheel ${bn} for ${epython}"
 
 	local d="${WORKDIR}/${PN}-${PV}-${epython/./_}/install"
