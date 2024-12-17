@@ -41,7 +41,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-dev doc test
+dev doc multiprocess test
 ebuild-revision-1
 "
 RDEPEND+="
@@ -53,6 +53,9 @@ RDEPEND+="
 	' python3_10)
 	dev-python/console[${PYTHON_USEDEP}]
 	dev-util/patchelf
+	multiprocess? (
+		dev-python/multiprocess
+	)
 "
 DEPEND+="
 	${RDEPEND}
@@ -107,6 +110,11 @@ src_test() {
 		--ignore=tests/test_windows_manifest.py
 		--ignore=tests/test_winversioninfo.py
 	)
+	if ! use multiprocess ; then
+		disabled_tests+=(
+			--ignore=tests/test_hooks_multiprocess.py
+		)
+	fi
 	pytest \
 		${disabled_tests[@]} \
 		|| die
