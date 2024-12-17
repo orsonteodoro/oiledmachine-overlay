@@ -104,7 +104,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-cuda cx-freeze rocm tensorrt vulkan wayland X
+cuda rocm single-exe tensorrt vulkan wayland X
 "
 # cuda, rocm, tenssort USE flags are missing dependency packages.
 REQUIRED_USE="
@@ -192,7 +192,7 @@ RDEPEND+="
 		dev-python/requests[${PYTHON_USEDEP}]
 		dev-python/validators[${PYTHON_USEDEP}]
 		net-misc/yt-dlp[${PYTHON_USEDEP}]
-		cx-freeze? (
+		single-exe? (
 			>=dev-python/cx-Freeze-7.0.0[${PYTHON_USEDEP}]
 		)
 	')
@@ -282,7 +282,7 @@ einfo "PYTHONPATH:  ${PYTHONPATH}"
 src_compile() {
 	local args=(
 	)
-	if use cx-freeze ; then
+	if use single-exe ; then
 		args+=(
 			--build_exe
 		)

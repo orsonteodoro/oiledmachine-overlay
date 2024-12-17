@@ -15,7 +15,7 @@
       Support NVIDIA® GPUs for the CUDA® backend.  
       Compatible with Pascal or later models.
     </flag>
-    <flag name="cx-freeze">
+    <flag name="single-exe">
       Build as a single Python executable
     </flag>
     <flag name="rocm">
