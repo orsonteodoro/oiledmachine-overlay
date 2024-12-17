@@ -174,19 +174,16 @@ src_unpack() {
 }
 
 src_compile() {
+	declare -A arches=(
+		["amd64"]="x86_64"
+		["arm64"]="aarch64"
+		["ppc64"]="ppc64le"
+	)
 	install_impl() {
 		local id="${EPYTHON/python}"
 		id="cp${id/./}"
 		local manylinux_version="2_17"
-		if [[ "${ARCH}" == "amd64" ]] ; then
-			_install_wheel "${DISTDIR}/${MY_PN}-${PV}-${id}-${id}-manylinux_${manylinux_version}_x86_64.manylinux2014_x86_64.whl"
-		fi
-		if [[ "${ARCH}" == "arm64" ]] ; then
-			_install_wheel "${DISTDIR}/${MY_PN}-${PV}-${id}-${id}-manylinux_${manylinux_version}_aarch64.manylinux2014_aarch64.whl"
-		fi
-		if [[ "${ARCH}" == "ppc64" ]] ; then
-			_install_wheel "${DISTDIR}/${MY_PN}-${PV}-${id}-${id}-manylinux_${manylinux_version}_ppc64le.manylinux2014_ppc64le.whl"
-		fi
+		_install_wheel "${DISTDIR}/${MY_PN}-${PV}-${id}-${id}-manylinux_${manylinux_version}_${arches[${ARCH}]}.manylinux2014_x86_64.whl"
 	}
 	python_foreach_impl install_impl
 }
