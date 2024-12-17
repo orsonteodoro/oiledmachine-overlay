@@ -73,7 +73,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 dev doc multiprocess pandas test
-ebuild-revision-2
+ebuild-revision-3
 "
 RDEPEND+="
 	>=dev-python/filelock-3.12.3[${PYTHON_USEDEP}]
@@ -188,6 +188,14 @@ src_compile() {
 		sed -i \
 			-e "54d;55d;56d" \
 			"${S}-${EPYTHON/./_}/install/usr/lib/${EPYTHON}/site-packages/cx_Freeze/hooks/numpy.py" \
+			|| die
+
+	# Fix:
+	# error: cannot find file/directory named /usr/lib/python3.11/site-packages/cv2/config-3.py
+		local ver="${EPYTHON/python}"
+		sed -i \
+			-e "s|config-3.py|config-${ver}.py|g" \
+			"${S}-${EPYTHON/./_}/install/usr/lib/${EPYTHON}/site-packages/cx_Freeze/hooks/cv2.py" \
 			|| die
 	}
 	python_foreach_impl install_impl
