@@ -279,9 +279,14 @@ src_prepare() {
 		|| die
 	export PYTHONPATH="/usr/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
 einfo "PYTHONPATH:  ${PYTHONPATH}"
+	sed -i \
+		-e "s|python3.10|${EPYTHON}|g" \
+		"build.py" \
+		|| die
 }
 
 src_compile() {
+einfo "EPYTHON:  ${EPYTHON}"
 	local args=(
 		--build_exe
 	)
