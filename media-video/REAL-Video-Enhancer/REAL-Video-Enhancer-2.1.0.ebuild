@@ -103,8 +103,9 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
+# cx-Freeze is currently broken
 IUSE+="
-cuda rocm single-exe tensorrt vulkan wayland X
+cuda rocm -single-exe tensorrt vulkan wayland X
 "
 # cuda, rocm, tenssort USE flags are missing dependency packages.
 REQUIRED_USE="
