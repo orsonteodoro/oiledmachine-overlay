@@ -105,7 +105,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 # cx-Freeze is currently broken
 IUSE+="
-cuda rocm -single-exe tensorrt vulkan wayland X
+cuda rocm tensorrt vulkan wayland X
 "
 # cuda, rocm, tenssort USE flags are missing dependency packages.
 REQUIRED_USE="
@@ -193,8 +193,9 @@ RDEPEND+="
 		dev-python/requests[${PYTHON_USEDEP}]
 		dev-python/validators[${PYTHON_USEDEP}]
 		net-misc/yt-dlp[${PYTHON_USEDEP}]
-		single-exe? (
+		|| (
 			>=dev-python/cx-Freeze-7.0.0[${PYTHON_USEDEP}]
+			>=dev-python/cx-Freeze-bin-7.0.0[${PYTHON_USEDEP}]
 		)
 	')
 	dev-qt/qtbase:6[gui,wayland?,widgets,X?]
@@ -282,12 +283,8 @@ einfo "PYTHONPATH:  ${PYTHONPATH}"
 
 src_compile() {
 	local args=(
+		--build_exe
 	)
-	if use single-exe ; then
-		args+=(
-			--build_exe
-		)
-	fi
 	${EPYTHON} build.py ${args[@]} || die
 	grep -q "Traceback" "${T}/build.log" && die
 }
