@@ -35,12 +35,13 @@ HOMEPAGE="
 	https://pypi.org/project/cx-Freeze
 "
 LICENSE="
-	MIT
+	custom
 "
+# custom - See https://github.com/marcelotduarte/cx_Freeze/blob/7.2.7/LICENSE.md
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-dev doc
+dev doc test
 ebuild-revision-1
 "
 RDEPEND+="
@@ -70,6 +71,16 @@ BDEPEND+="
 		>=dev-python/sphinx-new-tab-link-0.6.0[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-tabs-3.4.5[${PYTHON_USEDEP}]
 	)
+	test? (
+		>=dev-python/coverage-7.6.1[${PYTHON_USEDEP}]
+		>=dev-python/pluggy-1.5.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-8.3.3[${PYTHON_USEDEP}]
+		>=dev-python/pytest-cov-5.0.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-datafiles-3.0.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-mock-3.14.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-timeout-2.3.1[${PYTHON_USEDEP}]
+		>=dev-python/pytest-xdist-3.6.1[${PYTHON_USEDEP},psutil(+)]
+	)
 "
 DOCS=( "README.md" )
 
@@ -81,6 +92,10 @@ src_unpack() {
 	else
 		unpack ${A}
 	fi
+}
+
+src_test() {
+	pytest || die
 }
 
 src_install() {
