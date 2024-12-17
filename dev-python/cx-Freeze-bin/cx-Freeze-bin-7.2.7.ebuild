@@ -187,6 +187,14 @@ src_compile() {
 }
 
 src_install() {
+	declare -A arches=(
+		["amd64"]="x86_64"
+		["arm64"]="aarch64"
+		["ppc64"]="ppc64le"
+	)
+	if use python_targets_python3_10 ; then
+ewarn "Python 3.10 fails ldd test for console-cpython-310-${arches}-linux-gnu.  Try >= 3.11 instead if runtime failure."
+	fi
 	distutils-r1_src_install
 }
 
