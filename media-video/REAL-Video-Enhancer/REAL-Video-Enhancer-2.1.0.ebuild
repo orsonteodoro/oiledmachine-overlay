@@ -278,7 +278,8 @@ einfo "PYTHONPATH:  ${PYTHONPATH}"
 }
 
 src_compile() {
-	${EPYTHON} build.py --build_exe
+	${EPYTHON} build.py --build_exe || die
+	grep -q "Traceback" "${T}/build.log" && die
 }
 
 # TODO install models and/or backend to destination
