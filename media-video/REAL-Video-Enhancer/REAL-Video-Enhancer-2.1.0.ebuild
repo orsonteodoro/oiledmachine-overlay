@@ -189,7 +189,7 @@ RDEPEND+="
 		dev-python/py-cpuinfo[${PYTHON_USEDEP}]
 		dev-python/pyinstaller[${PYTHON_USEDEP}]
 		dev-python/pypresence[${PYTHON_USEDEP}]
-		dev-python/pyside6[${PYTHON_USEDEP}]
+		dev-python/pyside6[${PYTHON_USEDEP},network,qml,quick]
 		dev-python/requests[${PYTHON_USEDEP}]
 		dev-python/validators[${PYTHON_USEDEP}]
 		net-misc/yt-dlp[${PYTHON_USEDEP}]
@@ -215,6 +215,9 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	$(python_gen_cond_dep '
+		dev-python/pyside6-tools[${PYTHON_USEDEP}]
+	')
 "
 DOCS=( "README.md" )
 PATCHES=(
