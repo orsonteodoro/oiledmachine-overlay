@@ -39,7 +39,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" dev doc"
+IUSE+="
+dev doc
+ebuild-revision-1
+"
 RDEPEND+="
 	>=dev-python/filelock-3.12.3[${PYTHON_USEDEP}]
 	>=dev-python/packaging-24[${PYTHON_USEDEP}]
