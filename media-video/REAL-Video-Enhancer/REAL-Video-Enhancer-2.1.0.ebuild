@@ -216,8 +216,10 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
+# scikit_build_core needs exceptiongroup
 BDEPEND+="
 	$(python_gen_cond_dep '
+		dev-python/exceptiongroup[${PYTHON_USEDEP}]
 		dev-python/pyside6-tools[${PYTHON_USEDEP}]
 	')
 "
@@ -225,6 +227,11 @@ DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-2.1.0-disable-downloads.patch"
 )
+
+pkg_setup() {
+	python-single-r1_pkg_setup
+einfo "EPYTHON:  ${EPYTHON}"
+}
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
@@ -252,6 +259,22 @@ src_prepare() {
 	sed -i -e "s|@BACKENDS_LIST@|[${backends:1}]|g" \
 		"REAL-Video-Enhancer.py" \
 		|| die
+
+# Fixes:
+# sh: line 1: pyside6-uic: command not found
+# sh: line 1: pyside6-rcc: command not found
+	mkdir -p "${WORKDIR}/bin"
+	export PATH="${WORKDIR}/bin:${PATH}"
+	ln -s \
+		"/usr/lib64/qt6/libexec/uic" \
+		"${WORKDIR}/bin/pyside6-uic" \
+		|| die
+	ln -s \
+		"/usr/lib64/qt6/libexec/rcc" \
+		"${WORKDIR}/bin/pyside6-rcc" \
+		|| die
+	export PYTHONPATH="/usr/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
+einfo "PYTHONPATH:  ${PYTHONPATH}"
 }
 
 src_compile() {
