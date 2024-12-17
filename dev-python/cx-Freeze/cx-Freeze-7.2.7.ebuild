@@ -41,21 +41,20 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-dev doc multiprocess test
+dev doc multiprocess pandas test
 ebuild-revision-1
 "
 RDEPEND+="
 	>=dev-python/filelock-3.12.3[${PYTHON_USEDEP}]
 	>=dev-python/packaging-24[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-65.6.3[${PYTHON_USEDEP}]
-	$(python_gen_cond_dep '
-		>=dev-python/tomli-2.0.1[${PYTHON_USEDEP}]
-	' python3_10)
-	dev-python/console[${PYTHON_USEDEP}]
 	dev-util/patchelf
 	multiprocess? (
 		dev-python/multiprocess[${PYTHON_USEDEP}]
 	)
+	$(python_gen_cond_dep '
+		>=dev-python/tomli-2.0.1[${PYTHON_USEDEP}]
+	' python3_10)
 "
 DEPEND+="
 	${RDEPEND}
@@ -75,6 +74,9 @@ BDEPEND+="
 		>=dev-python/sphinx-tabs-3.4.5[${PYTHON_USEDEP}]
 	)
 	test? (
+		pandas? (
+			dev-python/pandas[${PYTHON_USEDEP}]
+		)
 		>=dev-python/coverage-7.6.1[${PYTHON_USEDEP}]
 		>=dev-python/pluggy-1.5.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-8.3.3[${PYTHON_USEDEP}]
@@ -89,6 +91,10 @@ DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-7.2.7-buildsystem.patch"
 )
+
+pkg_setup() {
+	python_setup
+}
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
@@ -117,11 +123,16 @@ src_test() {
 		--ignore=tests/test_command_bdist_mac.py
 		--ignore=tests/test_command_bdist_msi.py
 		--ignore=tests/test_command_bdist_rpm.py
-		--ignore=tests/test_hooks_pandas.py
 		--ignore=tests/test_win32com.py
 		--ignore=tests/test_windows_manifest.py
 		--ignore=tests/test_winversioninfo.py
 	)
+	if ! use pandas ; then
+
+		disabled_tests+=(
+			--ignore=tests/test_hooks_pandas.py
+		)
+	fi
 	if ! use multiprocess ; then
 		disabled_tests+=(
 			--ignore=tests/test_hooks_multiprocess.py
