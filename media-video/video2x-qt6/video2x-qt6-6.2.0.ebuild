@@ -51,7 +51,7 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	>=media-libs/vulkan-loader-1.3.275.0
-	dev-qt/qttools:6[linguist]
+	dev-qt/qttools:6[designer,linguist,qml,widgets]
 	dev-qt/qttools:=
 	dev-qt/qtbase:6[gui,widgets,wayland?,X?]
 	dev-qt/qtbase:=
