@@ -189,11 +189,13 @@ RDEPEND+="
 		dev-python/py-cpuinfo[${PYTHON_USEDEP}]
 		dev-python/pyinstaller[${PYTHON_USEDEP}]
 		dev-python/pypresence[${PYTHON_USEDEP}]
-		dev-python/pyside6[${PYTHON_USEDEP},network,qml,quick]
+		dev-python/pyside6[${PYTHON_USEDEP},gui,network,qml,quick,widgets]
 		dev-python/requests[${PYTHON_USEDEP}]
 		dev-python/validators[${PYTHON_USEDEP}]
 		net-misc/yt-dlp[${PYTHON_USEDEP}]
 	')
+	dev-qt/qtbase:6[gui,wayland?,widgets,X?]
+	dev-qt/qtbase:=
 	cuda? (
 		${COMMON_DEPEND}
 		${CUDA_DEPEND}
