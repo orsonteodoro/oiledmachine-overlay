@@ -54,7 +54,7 @@ RDEPEND+="
 	dev-python/console[${PYTHON_USEDEP}]
 	dev-util/patchelf
 	multiprocess? (
-		dev-python/multiprocess
+		dev-python/multiprocess[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="
