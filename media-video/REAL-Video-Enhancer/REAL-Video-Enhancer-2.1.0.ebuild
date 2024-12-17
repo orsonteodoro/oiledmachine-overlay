@@ -291,7 +291,8 @@ einfo "EPYTHON:  ${EPYTHON}"
 		--build_exe
 	)
 	${EPYTHON} build.py ${args[@]} || die
-	grep -q "Traceback" "${T}/build.log" && die
+	grep -q "Traceback" "${T}/build.log" && die "Detected error"
+	grep -q "error:" "${T}/build.log" && die "Detected error"
 }
 
 # TODO install models and/or backend to destination
