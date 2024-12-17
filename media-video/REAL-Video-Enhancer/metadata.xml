@@ -15,6 +15,9 @@
       Support NVIDIA® GPUs for the CUDA® backend.  
       Compatible with Pascal or later models.
     </flag>
+    <flag name="cx-freeze">
+      Build as a single Python executable
+    </flag>
     <flag name="rocm">
       Support AMD GPUs for the ROCm™ backend.
       Compatible with GCN 5 or later.

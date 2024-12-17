@@ -104,7 +104,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-cuda rocm tensorrt vulkan wayland X
+cuda cx-freeze rocm tensorrt vulkan wayland X
 "
 # cuda, rocm, tenssort USE flags are missing dependency packages.
 REQUIRED_USE="
@@ -181,7 +181,6 @@ TENSORRT_DEPEND="
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
-		>=dev-python/cx-Freeze-7.0.0[${PYTHON_USEDEP}]
 		dev-libs/lief[${PYTHON_USEDEP},python]
 		dev-python/certifi[${PYTHON_USEDEP}]
 		dev-python/distro[${PYTHON_USEDEP}]
@@ -193,6 +192,9 @@ RDEPEND+="
 		dev-python/requests[${PYTHON_USEDEP}]
 		dev-python/validators[${PYTHON_USEDEP}]
 		net-misc/yt-dlp[${PYTHON_USEDEP}]
+		cx-freeze? (
+			>=dev-python/cx-Freeze-7.0.0[${PYTHON_USEDEP}]
+		)
 	')
 	dev-qt/qtbase:6[gui,wayland?,widgets,X?]
 	dev-qt/qtbase:=
@@ -278,7 +280,14 @@ einfo "PYTHONPATH:  ${PYTHONPATH}"
 }
 
 src_compile() {
-	${EPYTHON} build.py --build_exe || die
+	local args=(
+	)
+	if use cx-freeze ; then
+		args+=(
+			--build_exe
+		)
+	fi
+	${EPYTHON} build.py ${args[@]} || die
 	grep -q "Traceback" "${T}/build.log" && die
 }
 
