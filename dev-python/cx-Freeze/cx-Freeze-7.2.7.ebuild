@@ -47,6 +47,7 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/tomli-2.0.1[${PYTHON_USEDEP}]
 	' python3_10)
+	dev-python/console[${PYTHON_USEDEP}]
 	dev-util/patchelf
 "
 DEPEND+="
