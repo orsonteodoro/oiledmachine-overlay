@@ -182,6 +182,13 @@ src_compile() {
 		id="cp${id/./}"
 		local manylinux_version="2_17"
 		_install_wheel "${DISTDIR}/${MY_PN}-${PV}-${id}-${id}-manylinux_${manylinux_version}_${arches[${ARCH}]}.manylinux2014_x86_64.whl"
+
+	# Prevent:
+	# TypeError: 'NoneType' object is not iterable
+		sed -i \
+			-e "54d;55d;56d" \
+			"${S}-${EPYTHON/./_}/install/usr/lib/${EPYTHON}/site-packages/cx_Freeze/hooks/numpy.py" \
+			|| die
 	}
 	python_foreach_impl install_impl
 }
