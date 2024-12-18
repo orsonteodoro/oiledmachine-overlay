@@ -401,8 +401,17 @@ EOF
 
 	# Remove cached copy
 	rm "${ED}/usr/$(get_libdir)/${PN}/lib/cv2/__init__.pyc" || die
+
+	# TODO fix permissions with new group
+	touch "${ED}/usr/$(get_libdir)/${PN}/frontend_log.txt"
+	touch "${ED}/usr/$(get_libdir)/${PN}/settings.txt"
+	fperms 0664 "/usr/$(get_libdir)/${PN}/frontend_log.txt"
+	fperms 0664 "/usr/$(get_libdir)/${PN}/settings.txt"
+	fowners "root:users" "/usr/$(get_libdir)/${PN}/frontend_log.txt"
+	fowners "root:users" "/usr/$(get_libdir)/${PN}/settings.txt"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  TESTING (2.1.5, 20241217)
+# OILEDMACHINE-OVERLAY-TEST:  fail (2.1.5, 20241217)
 # UI load - pass
+# convert (with anime 2x upscale) - fail
