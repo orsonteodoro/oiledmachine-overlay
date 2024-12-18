@@ -1,15 +1,3 @@
-diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/REAL-Video-Enhancer.py REAL-Video-Enhancer-RVE-2.1.5/REAL-Video-Enhancer.py
---- REAL-Video-Enhancer-RVE-2.1.5.orig/REAL-Video-Enhancer.py	2024-12-18 02:18:51.849486437 -0800
-+++ REAL-Video-Enhancer-RVE-2.1.5/REAL-Video-Enhancer.py	2024-12-18 02:19:06.761382895 -0800
-@@ -89,6 +89,8 @@ class MainWindow(QMainWindow, Ui_MainWin
-         self.isVideoLoaded = False
- 
-         # setup application
-+        createDirectory(os.path.join(self.homeDir, ".config", "REAL-Video-Enhancer"))
-+        createDirectory(os.path.join(self.homeDir, ".cache", "REAL-Video-Enhancer"))
- 
-         # Set up the user interface from Designer.
-         self.setupUi(self)
 diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/backend/src/constants.py REAL-Video-Enhancer-RVE-2.1.5/backend/src/constants.py
 --- REAL-Video-Enhancer-RVE-2.1.5.orig/backend/src/constants.py	2024-12-14 21:22:29.000000000 -0800
 +++ REAL-Video-Enhancer-RVE-2.1.5/backend/src/constants.py	2024-12-18 02:19:06.765382868 -0800
@@ -23,17 +11,21 @@ diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/backend/src/constant
  HAS_SYSTEM_CUDA = checkForCUDA()
 diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/backend/src/utils/Util.py REAL-Video-Enhancer-RVE-2.1.5/backend/src/utils/Util.py
 --- REAL-Video-Enhancer-RVE-2.1.5.orig/backend/src/utils/Util.py	2024-12-14 21:22:29.000000000 -0800
-+++ REAL-Video-Enhancer-RVE-2.1.5/backend/src/utils/Util.py	2024-12-18 02:19:06.765382868 -0800
-@@ -9,7 +9,7 @@ try:
++++ REAL-Video-Enhancer-RVE-2.1.5/backend/src/utils/Util.py	2024-12-18 02:24:52.050991503 -0800
+@@ -9,7 +9,11 @@ try:
  except ImportError:
      CWD = os.getcwd()
  
 -with open(os.path.join(CWD, "backend_log.txt"), "w") as f:
++dir = os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer")
++if not os.path.exists(dir):
++    os.mkdir(dir)
++
 +with open(os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer", "backend_log.txt"), "w") as f:
      pass
  
  
-@@ -49,7 +49,7 @@ def printAndLog(message: str, separate=F
+@@ -49,7 +53,7 @@ def printAndLog(message: str, separate=F
  
  
  def log(message: str):
@@ -44,7 +36,7 @@ diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/backend/src/utils/Ut
  
 diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/src/Util.py REAL-Video-Enhancer-RVE-2.1.5/src/Util.py
 --- REAL-Video-Enhancer-RVE-2.1.5.orig/src/Util.py	2024-12-14 21:22:29.000000000 -0800
-+++ REAL-Video-Enhancer-RVE-2.1.5/src/Util.py	2024-12-18 02:20:23.752848662 -0800
++++ REAL-Video-Enhancer-RVE-2.1.5/src/Util.py	2024-12-18 02:24:53.666980339 -0800
 @@ -13,15 +13,16 @@ import distro
  import webbrowser
  from .constants import CWD, IS_FLATPAK, PLATFORM, HOME_PATH
@@ -70,12 +62,16 @@ diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/src/Util.py REAL-Vid
      """
 diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/src/ui/SettingsTab.py REAL-Video-Enhancer-RVE-2.1.5/src/ui/SettingsTab.py
 --- REAL-Video-Enhancer-RVE-2.1.5.orig/src/ui/SettingsTab.py	2024-12-14 21:22:29.000000000 -0800
-+++ REAL-Video-Enhancer-RVE-2.1.5/src/ui/SettingsTab.py	2024-12-18 02:19:06.765382868 -0800
-@@ -191,7 +191,7 @@ class SettingsTab:
++++ REAL-Video-Enhancer-RVE-2.1.5/src/ui/SettingsTab.py	2024-12-18 02:24:55.394968399 -0800
+@@ -191,7 +191,11 @@ class SettingsTab:
  
  class Settings:
      def __init__(self):
 -        self.settingsFile = os.path.join(currentDirectory(), "settings.txt")
++        dir = os.path.join(os.path.expanduser("~"), ".config", "REAL-Video-Enhancer")
++        if not os.path.exists(dir):
++            os.mkdir(dir)
++
 +        self.settingsFile = os.path.join(os.path.expanduser("~"), ".config", "REAL-Video-Enhancer", "settings.txt")
  
          """
