@@ -161,7 +161,7 @@ COMMON_DEPEND="
 		>=dev-python/tqdm-4.67.1[${PYTHON_USEDEP}]
 		>=dev-python/testresources-2.0.1[${PYTHON_USEDEP}]
 		>=dev-python/typing-extensions-4.12.2[${PYTHON_USEDEP}]
-		>=media-libs/opencv-4.10.0[${PYTHON_USEDEP},python]
+		>=media-libs/opencv-4.10.0[${PYTHON_USEDEP},ffmpeg,python]
 		>=virtual/pillow-11.0.0[${PYTHON_USEDEP}]
 	')
 "
