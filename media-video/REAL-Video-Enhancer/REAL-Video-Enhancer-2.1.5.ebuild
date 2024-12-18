@@ -135,6 +135,7 @@ REQUIRED_USE="
 COMMON_DEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
+		<dev-python/numpy-2[${PYTHON_USEDEP}]
 		dev-python/mpmath[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
 		dev-python/pypresence[${PYTHON_USEDEP}]
