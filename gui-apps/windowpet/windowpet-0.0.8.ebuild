@@ -1090,7 +1090,7 @@ https://github.com/SeakMengs/WindowPet/archive/refs/tags/v${PV}.tar.gz
 "
 S="${WORKDIR}/${MY_PN}-${PV}"
 
-DESCRIPTION="Pet overlay app built with tauri and react that lets you have adorable companion such as pets, anime characters on your screen."
+DESCRIPTION="A pet overlay app that lets you have adorable anime pet companions on your screen"
 HOMEPAGE="
 https://github.com/SeakMengs/WindowPet
 "

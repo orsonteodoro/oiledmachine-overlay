@@ -1102,7 +1102,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | games-engines/box2d | Box2D is a 2D physics engine for games |
 | games-rpg/RisuAI | Make your own story. User-friendly software for LLM roleplaying |
 | gui-apps/taigo | A virtual pet for your desktop built with GTK+, Vala, and love. |
-| gui-apps/windowpet | Pet overlay app built with tauri and react that lets you have adorable companion such as pets, anime characters on your screen. |
+| gui-apps/windowpet | A pet overlay app that lets you have adorable anime pet companions on your screen |
 | gui-libs/libdecor | A client-side decorations library for Wayland clients |
 | llvm-core/clang | C language family frontend for LLVM |
 | llvm-core/clang-common | Common files shared between multiple slots of clang |
