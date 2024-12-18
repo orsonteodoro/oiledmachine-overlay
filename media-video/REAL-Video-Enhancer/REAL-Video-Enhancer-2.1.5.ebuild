@@ -410,8 +410,10 @@ EOF
 	touch "${ED}/usr/$(get_libdir)/${PN}/settings.txt"
 	fperms 0664 "/usr/$(get_libdir)/${PN}/frontend_log.txt"
 	fperms 0664 "/usr/$(get_libdir)/${PN}/settings.txt"
+	fperms 0664 "/usr/$(get_libdir)/${PN}/custom_models"
 	fowners "root:users" "/usr/$(get_libdir)/${PN}/frontend_log.txt"
 	fowners "root:users" "/usr/$(get_libdir)/${PN}/settings.txt"
+	fowners "root:users" "/usr/$(get_libdir)/${PN}/custom_models"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
