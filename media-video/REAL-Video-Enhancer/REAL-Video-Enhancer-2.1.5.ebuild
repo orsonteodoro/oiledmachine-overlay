@@ -88,10 +88,13 @@ gen_models_iuse() {
 	for row in ${MODELS[@]} ; do
 		local fn="${row%;*}"
 		local u=$(get_model_use "${fn}")
-		echo " ${u}"
+		echo "${u}"
 	done
 }
-IUSE+="$(gen_models_iuse)"
+IUSE_MODELS=(
+	$(gen_models_iuse)
+)
+IUSE+="${IUSE_MODELS[@]}"
 
 gen_models_uris() {
 	local row
@@ -179,6 +182,9 @@ REQUIRED_USE="
 	!rocm
 	!tensorrt
 	vulkan
+	|| (
+		${IUSE_MODELS[@]}
+	)
 	|| (
 		cuda
 		rocm
