@@ -758,7 +758,9 @@ src_prepare() {
 	mkdir -p "3rdparty.orig" || die
 	mv "3rdparty/flatbuffers" "3rdparty.orig"
 	rm -r "3rdparty" || die "Removing 3rd party components failed"
-	if ! use system-flatbuffers ; then
+	if use system-flatbuffers ; then
+		rm -rf "3rdparty.orig" || die
+	else
 		mv "3rdparty.orig" "3rdparty" || die
 	fi
 	sed \
