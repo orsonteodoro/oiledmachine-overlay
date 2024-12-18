@@ -15,6 +15,9 @@
       Support NVIDIA® GPUs for the CUDA® backend.  
       Compatible with Pascal or later models.
     </flag>
+    <flag name="fp16">
+      Add support for FP16 if PyTorch was compiled with FP16 support.
+    </flag>
     <flag name="rocm">
       Support AMD GPUs for the ROCm™ backend.
       Compatible with GCN 5 or later.

@@ -1,6 +1,6 @@
 diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/REAL-Video-Enhancer.py REAL-Video-Enhancer-RVE-2.1.5/REAL-Video-Enhancer.py
 --- REAL-Video-Enhancer-RVE-2.1.5.orig/REAL-Video-Enhancer.py	2024-12-14 21:22:29.000000000 -0800
-+++ REAL-Video-Enhancer-RVE-2.1.5/REAL-Video-Enhancer.py	2024-12-17 18:10:12.984375114 -0800
++++ REAL-Video-Enhancer-RVE-2.1.5/REAL-Video-Enhancer.py	2024-12-17 23:12:36.516188417 -0800
 @@ -95,15 +95,15 @@ class MainWindow(QMainWindow, Ui_MainWin
          backendHandler = BackendHandler(self)
          backendHandler.enableCorrectBackends()
@@ -33,9 +33,30 @@ diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/REAL-Video-Enhancer.
          printOut = (
              "------REAL Video Enhancer------\n"
              + "System Information: \n"
+@@ -141,15 +141,16 @@ class MainWindow(QMainWindow, Ui_MainWin
+             + "-------------------------------------------\n"
+             + "Software Information: \n"
+             + f"REAL Video Enhancer Version: {version}\n"
+-            + self.fullOutput
++        #    + self.fullOutput
+         )
+         self.systemInfoText.setText(printOut)
+         log(printOut)
+ 
+         # process the output
+-        for line in self.fullOutput.lower().split("\n"):
+-            if "half precision support:" in line:
+-                halfPrecisionSupport = "true" in line
++        #for line in self.fullOutput.lower().split("\n"):
++        #    if "half precision support:" in line:
++        #        halfPrecisionSupport = "true" in line
++        halfPrecisionSupport = "@PYTORCH_HALF_PRECISION_SUPPORT@" # ncnn = False else depends on pytorch enablement
+         settings = Settings()
+         settings.readSettings()
+         self.settings = settings
 diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/build.py REAL-Video-Enhancer-RVE-2.1.5/build.py
 --- REAL-Video-Enhancer-RVE-2.1.5.orig/build.py	2024-12-14 21:22:29.000000000 -0800
-+++ REAL-Video-Enhancer-RVE-2.1.5/build.py	2024-12-17 17:56:21.593890336 -0800
++++ REAL-Video-Enhancer-RVE-2.1.5/build.py	2024-12-17 23:05:58.299008049 -0800
 @@ -150,8 +150,8 @@ def clean():
  
  def build_venv():
@@ -49,7 +70,7 @@ diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/build.py REAL-Video-
  if len(sys.argv) > 1:
 diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/src/DownloadDeps.py REAL-Video-Enhancer-RVE-2.1.5/src/DownloadDeps.py
 --- REAL-Video-Enhancer-RVE-2.1.5.orig/src/DownloadDeps.py	2024-12-14 21:22:29.000000000 -0800
-+++ REAL-Video-Enhancer-RVE-2.1.5/src/DownloadDeps.py	2024-12-17 18:08:07.257203928 -0800
++++ REAL-Video-Enhancer-RVE-2.1.5/src/DownloadDeps.py	2024-12-17 23:05:58.299008049 -0800
 @@ -21,6 +21,7 @@ from .ui.QTcustom import (
      RegularQTPopup,
  )
@@ -76,7 +97,7 @@ diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/src/DownloadDeps.py 
      downloadDependencies.downloadPython()
 diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/src/DownloadModels.py REAL-Video-Enhancer-RVE-2.1.5/src/DownloadModels.py
 --- REAL-Video-Enhancer-RVE-2.1.5.orig/src/DownloadModels.py	2024-12-14 21:22:29.000000000 -0800
-+++ REAL-Video-Enhancer-RVE-2.1.5/src/DownloadModels.py	2024-12-17 18:03:56.042865347 -0800
++++ REAL-Video-Enhancer-RVE-2.1.5/src/DownloadModels.py	2024-12-17 23:05:58.299008049 -0800
 @@ -23,6 +23,8 @@ class DownloadModel:
          self.downloadModelPath = os.path.join(modelPath, downloadModelFile)
          createDirectory(modelPath)

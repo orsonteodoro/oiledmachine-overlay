@@ -110,7 +110,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 # cx-Freeze is currently broken
 IUSE+="
-cuda rocm tensorrt vulkan wayland X
+fp16 cuda rocm tensorrt vulkan wayland X
 "
 # cuda, rocm, tenssort USE flags are missing dependency packages.
 REQUIRED_USE="
@@ -265,7 +265,6 @@ PATCHES=(
 
 pkg_setup() {
 	python-single-r1_pkg_setup
-einfo "EPYTHON:  ${EPYTHON}"
 }
 
 src_unpack() {
@@ -282,16 +281,22 @@ src_prepare() {
 	default
 	local backends=""
 	if use cuda || use rocm ; then
-		backends+=",pytorch"
+		backends+=",\"pytorch\""
 	fi
 	if use tensorrt ; then
-		backends+=",tensorrt"
+		backends+=",\"tensorrt\""
 	fi
 	if use vulkan ; then
-		backends+=",ncnn"
+		backends+=",\"ncnn\""
 	fi
 
 	sed -i -e "s|@BACKENDS_LIST@|[${backends:1}]|g" \
+		"REAL-Video-Enhancer.py" \
+		|| die
+
+	local has_bf16=$(usex fp16 "true" "false")
+
+	sed -i -e "s|@PYTORCH_HALF_PRECISION_SUPPORT@|${has_bf16}|g" \
 		"REAL-Video-Enhancer.py" \
 		|| die
 
@@ -322,7 +327,6 @@ src_prepare() {
 		|| die
 
 	export PYTHONPATH="/usr/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
-einfo "PYTHONPATH:  ${PYTHONPATH}"
 	sed -i \
 		-e "s|python3.10|${EPYTHON}|g" \
 		"build.py" \
@@ -330,7 +334,6 @@ einfo "PYTHONPATH:  ${PYTHONPATH}"
 }
 
 src_compile() {
-einfo "EPYTHON:  ${EPYTHON}"
 	local args=(
 		--build_exe
 	)
@@ -395,6 +398,11 @@ EOF
 			"/usr/bin/ffmpeg" \
 			"/usr/$(get_libdir)/${PN}/bin/ffmpeg"
 	fi
+
+	# Remove cached copy
+	rm "${ED}/usr/$(get_libdir)/${PN}/lib/cv2/__init__.pyc" || die
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  TESTING (2.1.5, 20241217)
+# UI load - pass
