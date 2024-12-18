@@ -106,7 +106,25 @@ HOMEPAGE="
 "
 LICENSE="
 	AGPL-3
+	BSD
+	CC-BY-4.0
+	CC-BY-NC-4.0
+	CC-BY-NC-SA-4.0
+	MIT
 "
+# AGPL-3 - ModernSpanimationV2 (Under the penumbra of the repo license or this software's license, but V1 was MIT)
+# BSD - GIMM
+# BSD - realesrgan-x4plus*
+# BSD - realesrgan-x4plus-anime*
+# BSD - realesr-animevideov3-x*.tar.gz
+# CC-BY-4.0 - 4xNomos8k_span*
+# CC-BY-NC-4.0 - OpenProteus
+# CC-BY-NC-SA-4.0 - 2x_AnimeJaNai_HD_V3_Sharp1_Compact_430k.pth
+# CC-BY-NC-SA-4.0 - 2x_AnimeJaNai_HD_V3_Sharp1_Compact_430k.tar.gz
+# MIT - Feather icons
+# MIT - GMFSS
+# MIT - RealCUGAN Pro up2x-conservative.tar.gz
+# MIT - rife-v*.tar.gz
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 # cx-Freeze is currently broken
@@ -424,11 +442,10 @@ EOF
 		doins -r "${WORKDIR}/${m}"
 	done
 
-# TODO
-#	for m in ${distdir_models[@]} ; do
-#		insinto "/usr/$(get_libdir)/${PN}/models"
-#		doins $(realpath "${DISTDIR}/${m}")
-#	done
+	for m in ${distdir_models[@]} ; do
+		insinto "/usr/$(get_libdir)/${PN}/models"
+		doins $(realpath "${DISTDIR}/${m}")
+	done
 
 	insinto "/usr/$(get_libdir)/${PN}"
 	doins -r "${WORKDIR}/backend"
