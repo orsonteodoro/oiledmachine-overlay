@@ -10,6 +10,17 @@
     <bugs-to>https://github.com/TNTwise/REAL-Video-Enhancer/issues</bugs-to>
     <remote-id type="github">TNTwise/REAL-Video-Enhancer</remote-id>
   </upstream>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  For model descriptions see
+  https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/profiles/desc/rve_models.desc
+
+  For model enablement, see
+  https://github.com/TNTwise/REAL-Video-Enhancer/blob/RVE-2.1.5/src/ModelHandler.py
+
+  -->
   <use>
     <flag name="cuda">
       Support NVIDIA® GPUs for the CUDA® backend.  
