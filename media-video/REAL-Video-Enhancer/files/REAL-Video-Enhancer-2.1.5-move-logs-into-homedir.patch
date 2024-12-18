@@ -1,80 +1,139 @@
-diff '--color=auto' -urp work.orig/REAL-Video-Enhancer-RVE-2.1.5/backend/src/RenderVideo.py work/REAL-Video-Enhancer-RVE-2.1.5/backend/src/RenderVideo.py
---- work.orig/REAL-Video-Enhancer-RVE-2.1.5/backend/src/RenderVideo.py	2024-12-14 21:22:29.000000000 -0800
-+++ work/REAL-Video-Enhancer-RVE-2.1.5/backend/src/RenderVideo.py	2024-12-18 07:37:43.510542525 -0800
-@@ -65,7 +65,9 @@ class Render(FFMpegRender):
+Only in REAL-Video-Enhancer-RVE-2.1.5.orig: REAL-Video-Enhancer-RVE-2.1.5
+diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/backend/src/RenderVideo.py REAL-Video-Enhancer-RVE-2.1.5/backend/src/RenderVideo.py
+--- REAL-Video-Enhancer-RVE-2.1.5.orig/backend/src/RenderVideo.py	2024-12-14 21:22:29.000000000 -0800
++++ REAL-Video-Enhancer-RVE-2.1.5/backend/src/RenderVideo.py	2024-12-18 08:34:18.188996836 -0800
+@@ -6,6 +6,7 @@ from time import sleep
+ from .FFmpeg import FFMpegRender
+ from .utils.SceneDetect import SceneDetect
+ from .utils.Util import printAndLog, log, removeFile
++from .constants import CACHE_PATH
+ 
+ 
+ class Render(FFMpegRender):
+@@ -65,7 +66,7 @@ class Render(FFMpegRender):
          ensemble: bool = False,
      ):
          if pausedFile is None:
 -            pausedFile = os.path.basename(inputFile) + "_paused_state.txt"
-+            if not os.path.exists(os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer")):
-+                os.mkdir(os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer"))
-+            pausedFile = os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer", os.path.basename(inputFile) + "_paused_state.txt")
++            pausedFile = os.path.join(CACHE_PATH, os.path.basename(inputFile) + "_paused_state.txt")
          self.inputFile = inputFile
          self.pausedFile = pausedFile
          with open(self.pausedFile, "w") as f:
-diff '--color=auto' -urp work.orig/REAL-Video-Enhancer-RVE-2.1.5/backend/src/constants.py work/REAL-Video-Enhancer-RVE-2.1.5/backend/src/constants.py
---- work.orig/REAL-Video-Enhancer-RVE-2.1.5/backend/src/constants.py	2024-12-14 21:22:29.000000000 -0800
-+++ work/REAL-Video-Enhancer-RVE-2.1.5/backend/src/constants.py	2024-12-18 07:30:42.357654730 -0800
-@@ -29,6 +29,6 @@ else:
+diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/backend/src/constants.py REAL-Video-Enhancer-RVE-2.1.5/backend/src/constants.py
+--- REAL-Video-Enhancer-RVE-2.1.5.orig/backend/src/constants.py	2024-12-14 21:22:29.000000000 -0800
++++ REAL-Video-Enhancer-RVE-2.1.5/backend/src/constants.py	2024-12-18 08:34:21.484972427 -0800
+@@ -28,7 +28,15 @@ if IS_FLATPAK:
+ else:
      CWD = os.getcwd()
  
++HOME_PATH = os.path.expanduser("~")
++CACHE_PATH = os.path.join(HOME_PATH, ".cache")
++SETTINGS_PATH = os.path.join(HOME_PATH, ".config")
  FFMPEG_PATH = os.path.join(CWD, "bin", "ffmpeg")
 -FFMPEG_LOG_FILE = os.path.join(CWD, "ffmpeg_log.txt")
-+FFMPEG_LOG_FILE = os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer", "ffmpeg_log.txt")
++FFMPEG_LOG_FILE = os.path.join(CACHE_PATH, "ffmpeg_log.txt")
  MODELS_DIRECTORY = os.path.join(CWD, "models")
  HAS_SYSTEM_CUDA = checkForCUDA()
-diff '--color=auto' -urp work.orig/REAL-Video-Enhancer-RVE-2.1.5/backend/src/utils/Util.py work/REAL-Video-Enhancer-RVE-2.1.5/backend/src/utils/Util.py
---- work.orig/REAL-Video-Enhancer-RVE-2.1.5/backend/src/utils/Util.py	2024-12-14 21:22:29.000000000 -0800
-+++ work/REAL-Video-Enhancer-RVE-2.1.5/backend/src/utils/Util.py	2024-12-18 07:30:42.357654730 -0800
-@@ -9,7 +9,10 @@ try:
++
++if not os.path.exists(CACHE_PATH):
++    os.mkdir(CACHE_PATH)
++if not os.path.exists(SETTINGS_PATH):
++    os.mkdir(SETTINGS_PATH)
+diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/backend/src/utils/Util.py REAL-Video-Enhancer-RVE-2.1.5/backend/src/utils/Util.py
+--- REAL-Video-Enhancer-RVE-2.1.5.orig/backend/src/utils/Util.py	2024-12-14 21:22:29.000000000 -0800
++++ REAL-Video-Enhancer-RVE-2.1.5/backend/src/utils/Util.py	2024-12-18 08:34:23.116960340 -0800
+@@ -3,13 +3,14 @@ import warnings
+ import numpy as np
+ import cv2
+ import shutil
++from ..constants import CACHE_PATH
+ 
+ try:
+     from ..constants import CWD
  except ImportError:
      CWD = os.getcwd()
  
 -with open(os.path.join(CWD, "backend_log.txt"), "w") as f:
-+if not os.path.exists(os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer")):
-+    os.mkdir(os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer"))
-+
-+with open(os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer", "backend_log.txt"), "w") as f:
++with open(os.path.join(CACHE_PATH, "backend_log.txt"), "w") as f:
      pass
  
  
-@@ -49,7 +52,7 @@ def printAndLog(message: str, separate=F
+@@ -49,7 +50,7 @@ def printAndLog(message: str, separate=F
  
  
  def log(message: str):
 -    with open(os.path.join(CWD, "backend_log.txt"), "a") as f:
-+    with open(os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer", "backend_log.txt"), "a") as f:
++    with open(os.path.join(CACHE_PATH, "backend_log.txt"), "a") as f:
          f.write(message + "\n")
  
  
-diff '--color=auto' -urp work.orig/REAL-Video-Enhancer-RVE-2.1.5/src/Util.py work/REAL-Video-Enhancer-RVE-2.1.5/src/Util.py
---- work.orig/REAL-Video-Enhancer-RVE-2.1.5/src/Util.py	2024-12-14 21:22:29.000000000 -0800
-+++ work/REAL-Video-Enhancer-RVE-2.1.5/src/Util.py	2024-12-18 07:38:01.194412131 -0800
-@@ -13,15 +13,15 @@ import distro
+diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/src/Util.py REAL-Video-Enhancer-RVE-2.1.5/src/Util.py
+--- REAL-Video-Enhancer-RVE-2.1.5.orig/src/Util.py	2024-12-14 21:22:29.000000000 -0800
++++ REAL-Video-Enhancer-RVE-2.1.5/src/Util.py	2024-12-18 08:30:15.850791978 -0800
+@@ -11,18 +11,15 @@ import psutil
+ import cpuinfo
+ import distro
  import webbrowser
- from .constants import CWD, IS_FLATPAK, PLATFORM, HOME_PATH
+-from .constants import CWD, IS_FLATPAK, PLATFORM, HOME_PATH
++from .constants import CWD, IS_FLATPAK, PLATFORM, HOME_PATH, CACHE_PATH
  
-+if not os.path.exists(os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer")):
-+    os.mkdir(os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer"))
++with open(os.path.join(CACHE_PATH, "frontend_log.txt"), "w") as f:
++    pass
  
--def log(message: str):
+ def log(message: str):
 -    with open(os.path.join(CWD, "frontend_log.txt"), "a") as f:
--        f.write(message + "\n")
--
++    with open(os.path.join(CACHE_PATH, "frontend_log.txt"), "a") as f:
+         f.write(message + "\n")
+ 
 -
 -with open(os.path.join(CWD, "frontend_log.txt"), "w") as f:
-+with open(os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer", "frontend_log.txt"), "w") as f:
-     pass
- 
-+def log(message: str):
-+    with open(os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer", "frontend_log.txt"), "a") as f:
-+        f.write(message + "\n")
- 
+-    pass
+-
+-
  def printAndLog(message: str, separate=False):
      """
-diff '--color=auto' -urp work.orig/REAL-Video-Enhancer-RVE-2.1.5/src/ui/ProcessTab.py work/REAL-Video-Enhancer-RVE-2.1.5/src/ui/ProcessTab.py
---- work.orig/REAL-Video-Enhancer-RVE-2.1.5/src/ui/ProcessTab.py	2024-12-14 21:22:29.000000000 -0800
-+++ work/REAL-Video-Enhancer-RVE-2.1.5/src/ui/ProcessTab.py	2024-12-18 07:37:57.694437938 -0800
+     Prints and logs a message to the log file
+diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/src/constants.py REAL-Video-Enhancer-RVE-2.1.5/src/constants.py
+--- REAL-Video-Enhancer-RVE-2.1.5.orig/src/constants.py	2024-12-14 21:22:29.000000000 -0800
++++ REAL-Video-Enhancer-RVE-2.1.5/src/constants.py	2024-12-18 08:34:17.181004301 -0800
+@@ -14,6 +14,8 @@ CWD = (
+ )
+ # dirs
+ HOME_PATH = os.path.expanduser("~")
++CACHE_PATH = os.path.join(HOME_PATH, ".cache")
++SETTINGS_PATH = os.path.join(HOME_PATH, ".config")
+ MODELS_PATH = os.path.join(CWD, "models")
+ CUSTOM_MODELS_PATH = os.path.join(CWD, "custom_models")
+ VIDEOS_PATH = (
+@@ -23,6 +25,7 @@ VIDEOS_PATH = (
+ )
+ BACKEND_PATH = "/app/bin/backend" if IS_FLATPAK else os.path.join(CWD, "backend")
+ TEMP_DOWNLOAD_PATH = os.path.join(CWD, "temp")
++
+ # exes
+ FFMPEG_PATH = (
+     os.path.join(CWD, "bin", "ffmpeg.exe")
+@@ -36,3 +39,8 @@ PYTHON_PATH = (
+ )
+ # is installed
+ IS_INSTALLED = os.path.isfile(FFMPEG_PATH) and os.path.isfile(PYTHON_PATH)
++
++if not os.path.exists(CACHE_PATH):
++    os.mkdir(CACHE_PATH)
++if not os.path.exists(SETTINGS_PATH):
++    os.mkdir(SETTINGS_PATH)
+diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/src/ui/ProcessTab.py REAL-Video-Enhancer-RVE-2.1.5/src/ui/ProcessTab.py
+--- REAL-Video-Enhancer-RVE-2.1.5.orig/src/ui/ProcessTab.py	2024-12-14 21:22:29.000000000 -0800
++++ REAL-Video-Enhancer-RVE-2.1.5/src/ui/ProcessTab.py	2024-12-18 08:29:41.727044818 -0800
+@@ -15,7 +15,7 @@ from .QTcustom import (
+     show_layout_widgets,
+     hide_layout_widgets,
+ )
+-from ..constants import BACKEND_PATH, PYTHON_PATH, MODELS_PATH, CUSTOM_MODELS_PATH
++from ..constants import BACKEND_PATH, PYTHON_PATH, MODELS_PATH, CUSTOM_MODELS_PATH, CACHE_PATH
+ from ..Util import (
+     currentDirectory,
+     log,
 @@ -264,8 +264,11 @@ class ProcessTab:
          self.outputVideoHeight = videoHeight * upscaleTimes
  
@@ -84,52 +143,28 @@ diff '--color=auto' -urp work.orig/REAL-Video-Enhancer-RVE-2.1.5/src/ui/ProcessT
 +
          self.pausedFile = os.path.join(
 -            currentDirectory(), os.path.basename(inputFile) + "_pausedState.txt"
-+            os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer", os.path.basename(inputFile) + "_pausedState.txt"
++            CACHE_PATH, os.path.basename(inputFile) + "_pausedState.txt"
          )
          show_layout_widgets(self.parent.onRenderButtonsContiainer)
          self.parent.startRenderButton.setVisible(False)
-diff '--color=auto' -urp work.orig/REAL-Video-Enhancer-RVE-2.1.5/src/ui/SettingsTab.py work/REAL-Video-Enhancer-RVE-2.1.5/src/ui/SettingsTab.py
---- work.orig/REAL-Video-Enhancer-RVE-2.1.5/src/ui/SettingsTab.py	2024-12-14 21:22:29.000000000 -0800
-+++ work/REAL-Video-Enhancer-RVE-2.1.5/src/ui/SettingsTab.py	2024-12-18 07:30:42.357654730 -0800
-@@ -191,7 +191,10 @@ class SettingsTab:
+diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/src/ui/SettingsTab.py REAL-Video-Enhancer-RVE-2.1.5/src/ui/SettingsTab.py
+--- REAL-Video-Enhancer-RVE-2.1.5.orig/src/ui/SettingsTab.py	2024-12-14 21:22:29.000000000 -0800
++++ REAL-Video-Enhancer-RVE-2.1.5/src/ui/SettingsTab.py	2024-12-18 08:29:07.023301974 -0800
+@@ -1,7 +1,7 @@
+ import os
+ 
+ from PySide6.QtWidgets import QMainWindow, QFileDialog
+-from ..constants import PLATFORM, HOME_PATH
++from ..constants import PLATFORM, HOME_PATH, SETTINGS_PATH
+ from ..Util import currentDirectory, checkForWritePermissions
+ from .QTcustom import RegularQTPopup
+ 
+@@ -191,7 +191,7 @@ class SettingsTab:
  
  class Settings:
      def __init__(self):
 -        self.settingsFile = os.path.join(currentDirectory(), "settings.txt")
-+        if not os.path.exists(os.path.join(os.path.expanduser("~"), ".config", "REAL-Video-Enhancer")):
-+            os.mkdir(os.path.join(os.path.expanduser("~"), ".config", "REAL-Video-Enhancer"))
-+
-+        self.settingsFile = os.path.join(os.path.expanduser("~"), ".config", "REAL-Video-Enhancer", "settings.txt")
++        self.settingsFile = os.path.join(SETTINGS_PATH, "settings.txt")
  
          """
          The default settings are set here, and are overwritten by the settings in the settings file if it exists and the legnth of the settings is the same as the default settings.
-diff '--color=auto' -urp work.orig/backend/src/Util.py work/backend/src/Util.py
---- work.orig/backend/src/Util.py	2024-10-19 10:23:32.000000000 -0700
-+++ work/backend/src/Util.py	2024-12-18 07:30:42.357654730 -0800
-@@ -23,7 +23,7 @@ if isFlatpak():
-         )
- else:
-     cwd = os.getcwd()
--with open(os.path.join(cwd, "backend_log.txt"), "w") as f:
-+with open(os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer", "backend_log.txt"), "w") as f:
-     pass
- 
- 
-@@ -51,7 +51,7 @@ def currentDirectory():
- 
- 
- def ffmpegLogFile() -> str:
--    return os.path.join(currentDirectory(), "ffmpeg_log.txt")
-+    return os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer", "ffmpeg_log.txt")
- 
- 
- def errorAndLog(message: str):
-@@ -71,7 +71,7 @@ def printAndLog(message: str, separate=F
- 
- 
- def log(message: str):
--    with open(os.path.join(cwd, "backend_log.txt"), "a") as f:
-+    with open(os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer", "backend_log.txt"), "a") as f:
-         f.write(message + "\n")
- 
- 

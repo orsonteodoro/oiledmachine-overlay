@@ -90,11 +90,12 @@ if [[ "${PV}" =~ "9999" ]] ; then
 else
 #	KEYWORDS="~amd64" # Process video still broken
 	S="${WORKDIR}/${MY_PN}-${PV}"
+	S_BACKEND="${WORKDIR}/backend"
 	SRC_URI="
 	$(gen_models_uris)
 https://github.com/TNTwise/REAL-Video-Enhancer/archive/refs/tags/RVE-${PV}.tar.gz
 	-> ${P}.tar.gz
-https://github.com/TNTwise/real-video-enhancer-models/releases/download/models/backend-v2.0.5.tar.gz
+https://github.com/TNTwise/real-video-enhancer-models/releases/download/models/backend-v${BACKEND_PV}.tar.gz
 	-> ${PN}-backend-${BACKEND_PV}.tar.gz
 	"
 fi
@@ -111,7 +112,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 # cx-Freeze is currently broken
 IUSE+="
 fp16 cuda rocm tensorrt vulkan wayland X
-ebuild-revision-7
+ebuild-revision-9
 "
 # cuda, rocm, tenssort USE flags are missing dependency packages.
 REQUIRED_USE="
@@ -263,8 +264,12 @@ BDEPEND+="
 	')
 "
 DOCS=( "README.md" )
-PATCHES=(
+RVE_PATCHES=(
 	"${FILESDIR}/${PN}-2.1.5-disable-downloads.patch"
+	"${FILESDIR}/${PN}-2.1.5-move-logs-into-homedir.patch"
+)
+BACKEND_PATCHES=(
+	"${FILESDIR}/${PN}-2.1.5-backend-move-logs-into-homedir.patch"
 )
 
 pkg_setup() {
@@ -284,8 +289,12 @@ src_unpack() {
 src_prepare() {
 	default
 
-	pushd "${WORKDIR}" >/dev/null 2>&1 || die
-		eapply "${FILESDIR}/${PN}-2.1.5-move-logs-into-homedir.patch"
+	pushd "${S}" >/dev/null 2>&1 || die
+		eapply ${RVE_PATCHES[@]}
+	popd >/dev/null 2>&1 || die
+
+	pushd "${S_BACKEND}" >/dev/null 2>&1 || die
+		eapply ${BACKEND_PATCHES[@]}
 	popd >/dev/null 2>&1 || die
 
 	local backends=""

@@ -1,0 +1,62 @@
+diff '--color=auto' -urp backend.orig/src/RenderVideo.py backend/src/RenderVideo.py
+--- backend.orig/src/RenderVideo.py	2024-11-26 08:15:55.000000000 -0800
++++ backend/src/RenderVideo.py	2024-12-18 08:19:51.731419181 -0800
+@@ -6,6 +6,7 @@ from time import sleep
+ from .FFmpeg import FFMpegRender
+ from .utils.SceneDetect import SceneDetect
+ from .utils.Util import printAndLog, log, removeFile
++from .constants import CACHE_DIRECTORY
+ 
+ 
+ class Render(FFMpegRender):
+@@ -61,7 +62,7 @@ class Render(FFMpegRender):
+         upscale_output_resolution: str = None,
+     ):
+         if pausedFile is None:
+-            pausedFile = os.path.basename(inputFile) + "_paused_state.txt"
++            pausedFile = os.path.join(CACHE_DIRECTORY, os.path.basename(inputFile) + "_paused_state.txt")
+         self.inputFile = inputFile
+         self.pausedFile = pausedFile
+         with open(self.pausedFile, "w") as f:
+diff '--color=auto' -urp backend.orig/src/constants.py backend/src/constants.py
+--- backend.orig/src/constants.py	2024-11-26 17:20:13.000000000 -0800
++++ backend/src/constants.py	2024-12-18 08:16:21.524979053 -0800
+@@ -16,6 +16,11 @@ if IS_FLATPAK:
+ else:
+     CWD = os.getcwd()
+ 
++CACHE_DIRECTORY = os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer")
++
++if not os.path.exists(CACHE_DIRECTORY):
++    os.mkdir(CACHE_DIRECTORY)
++
+ FFMPEG_PATH = os.path.join(CWD, "bin", "ffmpeg")
+-FFMPEG_LOG_FILE = os.path.join(CWD, "ffmpeg_log.txt")
++FFMPEG_LOG_FILE = os.path.join(CACHE_DIRECTORY, "ffmpeg_log.txt")
+ MODELS_DIRECTORY = os.path.join(CWD, "models")
+diff '--color=auto' -urp backend.orig/src/utils/Util.py backend/src/utils/Util.py
+--- backend.orig/src/utils/Util.py	2024-11-26 17:20:13.000000000 -0800
++++ backend/src/utils/Util.py	2024-12-18 08:19:17.139675823 -0800
+@@ -4,9 +4,9 @@ import numpy as np
+ import cv2
+ import shutil
+ from ..constants import CWD
++from ..constants import CACHE_DIRECTORY
+ 
+-
+-with open(os.path.join(CWD, "backend_log.txt"), "w") as f:
++with open(os.path.join(CACHE_DIRECTORY, "backend_log.txt"), "w") as f:
+     pass
+ 
+ 
+@@ -46,7 +46,7 @@ def printAndLog(message: str, separate=F
+ 
+ 
+ def log(message: str):
+-    with open(os.path.join(CWD, "backend_log.txt"), "a") as f:
++    with open(os.path.join(CACHE_DIRECTORY, "backend_log.txt"), "a") as f:
+         f.write(message + "\n")
+ 
+ 
+Only in backend/src/utils: Util.py.orig
+Only in backend/src/utils: Util.py.rej
