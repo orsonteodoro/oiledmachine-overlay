@@ -172,7 +172,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 # cx-Freeze is currently broken
 IUSE+="
-fp16 cuda rocm tensorrt vulkan wayland X
+fp16 cuda rocm svt-av1 tensorrt vpx vulkan wayland X x264 x265
 ebuild-revision-12
 "
 # cuda, rocm, tenssort USE flags are missing dependency packages.
@@ -182,6 +182,12 @@ REQUIRED_USE="
 	!rocm
 	!tensorrt
 	vulkan
+	|| (
+		svt-av1
+		vpx
+		x264
+		x265
+	)
 	|| (
 		${IUSE_MODELS[@]}
 	)
@@ -308,10 +314,10 @@ RDEPEND+="
 		${NCNN_DEPEND}
 	)
 	|| (
-		=media-video/ffmpeg-6.1*:58.60.60
-		=media-video/ffmpeg-6.1*:0/58.60.60
-		=media-video/ffmpeg-4*:56.58.58
-		=media-video/ffmpeg-4*:0/56.58.58
+		=media-video/ffmpeg-6.1*:58.60.60[svt-av1?,vpx?,x264?,x265?]
+		=media-video/ffmpeg-6.1*:0/58.60.60[svt-av1?,vpx?,x264?,x265?]
+		=media-video/ffmpeg-4*:56.58.58[svt-av1?,vpx?,x264?,x265?]
+		=media-video/ffmpeg-4*:0/56.58.58[svt-av1?,vpx?,x264?,x265?]
 	)
 	media-video/ffmpeg:=
 "
@@ -331,6 +337,7 @@ DOCS=( "README.md" )
 RVE_PATCHES=(
 	"${FILESDIR}/${PN}-2.1.5-disable-downloads.patch"
 	"${FILESDIR}/${PN}-2.1.5-move-logs-into-homedir.patch"
+	"aa"
 )
 BACKEND_PATCHES=(
 	"${FILESDIR}/${PN}-2.1.5-backend-move-logs-into-homedir.patch"

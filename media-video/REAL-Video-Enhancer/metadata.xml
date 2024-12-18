@@ -33,15 +33,27 @@
       Support AMD GPUs for the ROCm™ backend.
       Compatible with GCN 5 or later.
     </flag>
+    <flag name="svt-av1">
+      Support encoding to AV1.
+    </flag>
     <flag name="tensorrt">
       Support NVIDIA® GPUs for the TensorRT™ backend.
       Compatible with Turing, Ampere, or later models.
+    </flag>
+    <flag name="vpx">
+      Support encoding to VP9.
     </flag>
     <flag name="vulkan">
       Support CPUs or GPUs with the Vulkan® 1.3 backend.
       Compatible with Intel® GPUs based on Skylake (Gen9) or newer.
       Compatible with AMD GPUs based on Southern Islands or newer.
       Compatible with NVIDIA® GPUs based on Maxwell or newer.
+    </flag>
+    <flag name="x264">
+      Support encoding to H.264.
+    </flag>
+    <flag name="x265">
+      Support encoding to H.265.
     </flag>
   </use>
 </pkgmetadata>
