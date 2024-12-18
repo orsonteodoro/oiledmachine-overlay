@@ -260,7 +260,7 @@ BDEPEND+="
 "
 DOCS=( "README.md" )
 PATCHES=(
-	"${FILESDIR}/${PN}-2.1.5-disable-downloads.patch"
+	"A${FILESDIR}/${PN}-2.1.5-disable-downloads.patch"
 )
 
 pkg_setup() {

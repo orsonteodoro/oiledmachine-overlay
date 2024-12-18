@@ -1,15 +1,17 @@
 diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/REAL-Video-Enhancer.py REAL-Video-Enhancer-RVE-2.1.5/REAL-Video-Enhancer.py
 --- REAL-Video-Enhancer-RVE-2.1.5.orig/REAL-Video-Enhancer.py	2024-12-14 21:22:29.000000000 -0800
-+++ REAL-Video-Enhancer-RVE-2.1.5/REAL-Video-Enhancer.py	2024-12-17 16:10:30.692989102 -0800
-@@ -96,14 +96,14 @@ class MainWindow(QMainWindow, Ui_MainWin
++++ REAL-Video-Enhancer-RVE-2.1.5/REAL-Video-Enhancer.py	2024-12-17 18:10:12.984375114 -0800
+@@ -95,15 +95,15 @@ class MainWindow(QMainWindow, Ui_MainWin
+         backendHandler = BackendHandler(self)
          backendHandler.enableCorrectBackends()
  
-         backendHandler.setupBackendDeps()
+-        backendHandler.setupBackendDeps()
 -        self.backends, self.fullOutput = (
 -            backendHandler.recursivlyCheckIfDepsOnFirstInstallToMakeSureUserHasInstalledAtLeastOneBackend(
 -                firstIter=True
 -            )
 -        )
++        #backendHandler.setupBackendDeps()
 +        #self.backends, self.fullOutput = (
 +        #    backendHandler.recursivlyCheckIfDepsOnFirstInstallToMakeSureUserHasInstalledAtLeastOneBackend(
 +        #        firstIter=True
@@ -31,10 +33,9 @@ diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/REAL-Video-Enhancer.
          printOut = (
              "------REAL Video Enhancer------\n"
              + "System Information: \n"
-Only in REAL-Video-Enhancer-RVE-2.1.5: REAL-Video-Enhancer.py.orig
 diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/build.py REAL-Video-Enhancer-RVE-2.1.5/build.py
 --- REAL-Video-Enhancer-RVE-2.1.5.orig/build.py	2024-12-14 21:22:29.000000000 -0800
-+++ REAL-Video-Enhancer-RVE-2.1.5/build.py	2024-12-17 16:11:17.904671440 -0800
++++ REAL-Video-Enhancer-RVE-2.1.5/build.py	2024-12-17 17:56:21.593890336 -0800
 @@ -150,8 +150,8 @@ def clean():
  
  def build_venv():
@@ -46,22 +47,9 @@ diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/build.py REAL-Video-
  
  
  if len(sys.argv) > 1:
-Only in REAL-Video-Enhancer-RVE-2.1.5: build.py.orig
-Only in REAL-Video-Enhancer-RVE-2.1.5: build.py.rej
-diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/src/Backendhandler.py REAL-Video-Enhancer-RVE-2.1.5/src/Backendhandler.py
---- REAL-Video-Enhancer-RVE-2.1.5.orig/src/Backendhandler.py	2024-12-14 21:22:29.000000000 -0800
-+++ REAL-Video-Enhancer-RVE-2.1.5/src/Backendhandler.py	2024-12-17 16:10:30.692989102 -0800
-@@ -61,6 +61,7 @@ class BackendHandler:
-             print(e)
- 
-     def setupBackendDeps(self):
-+        return
-         # need pop up window
-         from .DownloadDeps import DownloadDependencies
- 
 diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/src/DownloadDeps.py REAL-Video-Enhancer-RVE-2.1.5/src/DownloadDeps.py
 --- REAL-Video-Enhancer-RVE-2.1.5.orig/src/DownloadDeps.py	2024-12-14 21:22:29.000000000 -0800
-+++ REAL-Video-Enhancer-RVE-2.1.5/src/DownloadDeps.py	2024-12-17 16:10:30.692989102 -0800
++++ REAL-Video-Enhancer-RVE-2.1.5/src/DownloadDeps.py	2024-12-17 18:08:07.257203928 -0800
 @@ -21,6 +21,7 @@ from .ui.QTcustom import (
      RegularQTPopup,
  )
@@ -70,74 +58,31 @@ diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/src/DownloadDeps.py 
  from platform import machine
  import subprocess
  
-@@ -70,6 +71,7 @@ class DownloadDependencies:
-         createDirectory(os.path.join(CWD, "bin"))
- 
-     def downloadBackend(self, tag):
-+        return
+@@ -77,6 +78,8 @@ class DownloadDependencies:
+         tag is unused for now, as still in active development. just downloads the latest backend.
          """
-         Downloads the backend based on the tag of release.
-         The tag of release is equal to the tag of the version.
-@@ -307,5 +309,6 @@ class DownloadDependencies:
+ 
++        return
++
+         if not os.path.exists(BACKEND_PATH):
+             print(str(BACKEND_PATH) + " Does not exist!")
+             backend_url = "https://github.com/TNTwise/real-video-enhancer-models/releases/download/models/backend-v2.1.5.tar.gz"
+@@ -307,5 +310,6 @@ class DownloadDependencies:
  
  
  if __name__ == "__main__":
 +    sys.exit(0)
      downloadDependencies = DownloadDependencies()
      downloadDependencies.downloadPython()
-Only in REAL-Video-Enhancer-RVE-2.1.5/src: DownloadDeps.py.orig
 diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/src/DownloadModels.py REAL-Video-Enhancer-RVE-2.1.5/src/DownloadModels.py
 --- REAL-Video-Enhancer-RVE-2.1.5.orig/src/DownloadModels.py	2024-12-14 21:22:29.000000000 -0800
-+++ REAL-Video-Enhancer-RVE-2.1.5/src/DownloadModels.py	2024-12-17 16:14:02.431563999 -0800
-@@ -27,7 +27,7 @@ class DownloadModel:
++++ REAL-Video-Enhancer-RVE-2.1.5/src/DownloadModels.py	2024-12-17 18:03:56.042865347 -0800
+@@ -23,6 +23,8 @@ class DownloadModel:
+         self.downloadModelPath = os.path.join(modelPath, downloadModelFile)
+         createDirectory(modelPath)
+ 
++        return
++
+         if os.path.isfile(os.path.join(self.modelPath, modelFile)) or os.path.exists(
              os.path.join(self.modelPath, modelFile)
          ):
-             return
--        if NetworkCheckPopup():
-+        if False and NetworkCheckPopup():
-             self.downloadModel(
-                 modelFile=downloadModelFile, downloadModelPath=self.downloadModelPath
-             )
-Only in REAL-Video-Enhancer-RVE-2.1.5/src: ModelHandler.py.orig
-Only in REAL-Video-Enhancer-RVE-2.1.5/src: ModelHandler.py.rej
-diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/src/ui/DownloadTab.py REAL-Video-Enhancer-RVE-2.1.5/src/ui/DownloadTab.py
---- REAL-Video-Enhancer-RVE-2.1.5.orig/src/ui/DownloadTab.py	2024-12-14 21:22:29.000000000 -0800
-+++ REAL-Video-Enhancer-RVE-2.1.5/src/ui/DownloadTab.py	2024-12-17 16:15:51.338830583 -0800
-@@ -40,7 +40,7 @@ class DownloadTab:
-     ):
-         self.parent = parent
-         self.downloadDeps = DownloadDependencies()
--        self.QButtonConnect()
-+        #self.QButtonConnect()
- 
-     def QButtonConnect(self):
-         self.parent.downloadNCNNBtn.clicked.connect(lambda: self.download("ncnn", True))
-@@ -84,6 +84,7 @@ class DownloadTab:
-         )
- 
-     def download(self, dep, install: bool = True):
-+        return
-         """
-         Downloads the specified dependency.
-         Parameters:
-Only in REAL-Video-Enhancer-RVE-2.1.5/src/ui: DownloadTab.py.orig
-diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/src/ui/ProcessTab.py REAL-Video-Enhancer-RVE-2.1.5/src/ui/ProcessTab.py
---- REAL-Video-Enhancer-RVE-2.1.5.orig/src/ui/ProcessTab.py	2024-12-14 21:22:29.000000000 -0800
-+++ REAL-Video-Enhancer-RVE-2.1.5/src/ui/ProcessTab.py	2024-12-17 16:13:02.383968260 -0800
-@@ -249,12 +249,12 @@ class ProcessTab:
-             upscaleTimes = 1
-             upscaleModelArch = "custom"
- 
--        if interpolateModel:
-+        if False and interpolateModel:
-             DownloadModel(
-                 modelFile=interpolateModelFile,
-                 downloadModelFile=interpolateDownloadFile,
-             )
--        if upscaleModelArch != "custom":  # custom models are not downloaded
-+        if False and upscaleModelArch != "custom":  # custom models are not downloaded
-             if upscaleModelFile:
-                 DownloadModel(
-                     modelFile=upscaleModelFile, downloadModelFile=upscaleDownloadFile
-Only in REAL-Video-Enhancer-RVE-2.1.5/src/ui: ProcessTab.py.orig
-Only in REAL-Video-Enhancer-RVE-2.1.5/src/ui: ProcessTab.py.rej
