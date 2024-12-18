@@ -173,7 +173,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 # cx-Freeze is currently broken
 IUSE+="
 fp16 cuda rocm svt-av1 tensorrt vpx vulkan wayland X x264 x265
-ebuild-revision-12
+ebuild-revision-13
 "
 # cuda, rocm, tenssort USE flags are missing dependency packages.
 REQUIRED_USE="
@@ -337,7 +337,7 @@ DOCS=( "README.md" )
 RVE_PATCHES=(
 	"${FILESDIR}/${PN}-2.1.5-disable-downloads.patch"
 	"${FILESDIR}/${PN}-2.1.5-move-logs-into-homedir.patch"
-	"aa"
+	"${FILESDIR}/${PN}-2.1.5-default-encoders.patch"
 )
 BACKEND_PATCHES=(
 	"${FILESDIR}/${PN}-2.1.5-backend-move-logs-into-homedir.patch"
@@ -419,6 +419,40 @@ src_prepare() {
 	sed -i \
 		-e "s|python3.10|${EPYTHON}|g" \
 		"build.py" \
+		|| die
+
+	local default_encoder=""
+	local allowed_encoders=""
+	  if use x264 ; then
+		default_encoder="libx264"
+	elif use x265 ; then
+		default_encoder="libx265"
+	elif use vpx ; then
+		default_encoder="vp9"
+	elif use svt-av1 ; then
+		default_encoder="av1"
+	else
+eerror "You must pick a video encoder."
+		die
+	fi
+	if use x264 ; then
+		allowed_encoders+=", \"libx264\""
+	fi
+	if use x265 ; then
+		allowed_encoders+=", \"libx265\""
+	fi
+	if use vpx ; then
+		allowed_encoders+=", \"vp9\""
+	fi
+	if use svt-av1 ; then
+		allowed_encoders+=", \"av1\""
+	fi
+
+	sed -i \
+		-e "s|@DEFAULT_ENCODER@|${default_encoder}|g" \
+		-e "s|@ALLOWED_ENCODERS@|${allowed_encoders:1}|g" \
+		"backend/src/RenderVideo.py" \
+		"src/ui/SettingsTab.py" \
 		|| die
 }
 
