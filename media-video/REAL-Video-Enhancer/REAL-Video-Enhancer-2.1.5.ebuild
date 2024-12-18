@@ -18,63 +18,104 @@ EAPI=8
 
 BACKEND_PV="2.1.5"
 PYTHON_COMPAT=( "python3_11" )
-MODEL_FILES=(
-# models_ncnn_interpolate
-rife-v4.6.tar.gz
-rife-v4.7.tar.gz
-rife-v4.15.tar.gz
-rife-v4.18.tar.gz
-rife-v4.22.tar.gz
-rife-v4.22-lite.tar.gz
-rife-v4.25.tar.gz
+MODELS=(
+	# models_ncnn_interpolate
+	"rife-v4.6.tar.gz;MIT"
+	"rife-v4.7.tar.gz;MIT"
+	"rife-v4.15.tar.gz;MIT"
+	"rife-v4.18.tar.gz;MIT"
+	"rife-v4.22.tar.gz;MIT"
+	"rife-v4.22-lite.tar.gz;MIT"
+	"rife-v4.25.tar.gz;MIT"
 
-# models_ncnn_upscayl
-2x_ModernSpanimationV2.tar.gz
-4xNomos8k_span_otf_weak.tar.gz
-4xNomos8k_span_otf_medium.tar.gz
-4xNomos8k_span_otf_strong.tar.gz
-up2x-conservative.tar.gz
-up2x-conservative.tar.gz
-2x_OpenProteus_Compact_i2_70K.tar.gz
-2x_AnimeJaNai_HD_V3_Sharp1_Compact_430k.tar.gz
-realesr-animevideov3-x2.tar.gz
-realesr-animevideov3-x3.tar.gz
-realesr-animevideov3-x4.tar.gz
-realesrgan-x4plus.tar.gz
-realesrgan-x4plus-anime.tar.gz
+	# models_ncnn_upscayl
+	"2x_ModernSpanimationV2.tar.gz;AGPL-3"
+	"4xNomos8k_span_otf_weak.tar.gz;CC-BY-4.0"
+	"4xNomos8k_span_otf_medium.tar.gz;CC-BY-4.0"
+	"4xNomos8k_span_otf_strong.tar.gz;CC-BY-4.0"
+	"up2x-conservative.tar.gz;MIT"
+	"up2x-conservative.tar.gz;MIT"
+	"2x_OpenProteus_Compact_i2_70K.tar.gz;CC-BY-NC-4.0"
+	"2x_AnimeJaNai_HD_V3_Sharp1_Compact_430k.tar.gz;CC-BY-NC-SA-4.0"
+	"realesr-animevideov3-x2.tar.gz;BSD"
+	"realesr-animevideov3-x3.tar.gz;BSD"
+	"realesr-animevideov3-x4.tar.gz;BSD"
+	"realesrgan-x4plus.tar.gz;BSD"
+	"realesrgan-x4plus-anime.tar.gz;BSD"
 
-# models_pytorch_interpolate
-GMFSS.pkl
-GMFSS_PRO.pkl
-GIMMVFI_RAFT.pth
-rife4.6.pkl
-rife4.7.pkl
-rife4.15.pkl
-rife4.18.pkl
-rife4.22.pkl
-rife4.22-lite.pkl
-rife4.25.pkl
+	# models_pytorch_interpolate
+	"GMFSS.pkl;MIT"
+	"GMFSS_PRO.pkl;MIT"
+	"GIMMVFI_RAFT.pth"
+	"rife4.6.pkl;MIT"
+	"rife4.7.pkl;MIT"
+	"rife4.15.pkl;MIT"
+	"rife4.18.pkl;MIT"
+	"rife4.22.pkl;MIT"
+	"rife4.22-lite.pkl;MIT"
+	"rife4.25.pkl;MIT"
 
-# models_pytorch_upscayl
-2x_ModernSpanimationV2.pth
-4xNomos8k_span_otf_weak.pth
-4xNomos8k_span_otf_medium.pth
-4xNomos8k_span_otf_strong.pth
-2x_OpenProteus_Compact_i2_70K.pth
-2x_AnimeJaNai_HD_V3_Sharp1_Compact_430k.pth
+	# models_pytorch_upscayl
+	"2x_ModernSpanimationV2.pth;AGPL-3"
+	"4xNomos8k_span_otf_weak.pth;CC-BY-4.0"
+	"4xNomos8k_span_otf_medium.pth;CC-BY-4.0"
+	"4xNomos8k_span_otf_strong.pth;CC-BY-4.0"
+	"2x_OpenProteus_Compact_i2_70K.pth;CC-BY-NC-4.0"
+	"2x_AnimeJaNai_HD_V3_Sharp1_Compact_430k.pth;CC-BY-NC-SA-4.0"
 
-# models_pytorch_denoise
-scunet_color_real_psnr.pth
+	# models_pytorch_denoise
+	"scunet_color_real_psnr.pth;Apache-2.0"
 )
 MY_PN="${PN}-RVE"
 
 inherit python-single-r1
 
+get_model_use() {
+	local fn="${1}"
+	local id="${fn}"
+	id="${id/.pkl}"
+	id="${id/.tar.gz}"
+	id="${id/pth}"
+	id="${id/./_}"
+	if [[ "${id}" =~ "_"$ ]] ; then
+		id="${id::-1}"
+	fi
+	echo "${id}"
+}
+
+gen_models_iuse() {
+	local row
+	for row in ${MODELS[@]} ; do
+		local fn="${row%;*}"
+		local id=$(get_model_use "${fn}")
+		echo " rve_models_${id}"
+	done
+}
+IUSE+="$(gen_models_iuse)"
+
 gen_models_uris() {
-	local fn
-	for fn in ${MODEL_FILES[@]} ; do
+	local row
+	for row in ${MODELS[@]} ; do
+		local fn="${row%;*}"
+		local id=$(get_model_use "${fn}")
 		echo "
+			rve_models_${id}? (
 https://github.com/TNTwise/real-video-enhancer-models/releases/download/models/${fn}
+			)
+		"
+	done
+}
+
+gen_models_license() {
+	local row
+	for row in ${MODELS[@]} ; do
+		local fn="${row%;*}"
+		local license="${row#*;}"
+		local id=$(get_model_use "${fn}")
+		echo "
+			rve_models_${id}? (
+				${license}
+			)
 		"
 	done
 }
@@ -92,6 +133,7 @@ else
 	S="${WORKDIR}/${MY_PN}-${PV}"
 	S_BACKEND="${WORKDIR}/backend"
 	SRC_URI="
+	${MODELS_URI}
 	$(gen_models_uris)
 https://github.com/TNTwise/REAL-Video-Enhancer/archive/refs/tags/RVE-${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -105,14 +147,12 @@ HOMEPAGE="
 	https://github.com/TNTwise/REAL-Video-Enhancer
 "
 LICENSE="
+	$(gen_models_license)
 	AGPL-3
-	BSD
-	CC-BY-4.0
-	CC-BY-NC-4.0
-	CC-BY-NC-SA-4.0
 	MIT
 "
 # AGPL-3 - ModernSpanimationV2 (Under the penumbra of the repo license or this software's license, but V1 was MIT)
+# Apache-2.0 - scunet_color_real_psnr.pth
 # BSD - GIMM
 # BSD - realesrgan-x4plus*
 # BSD - realesrgan-x4plus-anime*
@@ -438,13 +478,19 @@ EOF
 		"scunet_color_real_psnr.pth"
 	)
 	for m in ${workdir_models[@]} ; do
-		insinto "/usr/$(get_libdir)/${PN}/models"
-		doins -r "${WORKDIR}/${m}"
+		local u=$(get_model_use "${m}")
+		if use "${u}" ; then
+			insinto "/usr/$(get_libdir)/${PN}/models"
+			doins -r "${WORKDIR}/${m}"
+		fi
 	done
 
 	for m in ${distdir_models[@]} ; do
-		insinto "/usr/$(get_libdir)/${PN}/models"
-		doins $(realpath "${DISTDIR}/${m}")
+		local u=$(get_model_use "${m}")
+		if use "${u}" ; then
+			insinto "/usr/$(get_libdir)/${PN}/models"
+			doins $(realpath "${DISTDIR}/${m}")
+		fi
 	done
 
 	insinto "/usr/$(get_libdir)/${PN}"
