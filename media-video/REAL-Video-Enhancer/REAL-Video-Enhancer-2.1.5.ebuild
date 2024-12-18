@@ -404,7 +404,6 @@ EOF
 			"/usr/$(get_libdir)/${PN}/bin/ffmpeg"
 	fi
 
-	# TODO fix permissions with new group
 	keepdir "/usr/$(get_libdir)/${PN}/custom_models"
 
 	dodir "/usr/$(get_libdir)/${PN}/python/python/bin/"
