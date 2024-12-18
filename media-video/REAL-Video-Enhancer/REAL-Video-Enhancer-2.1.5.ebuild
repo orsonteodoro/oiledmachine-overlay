@@ -16,7 +16,7 @@ EAPI=8
 
 #CMAKE_MAKEFILE_GENERATOR="emake"
 
-BACKEND_PV="2.0.5"
+BACKEND_PV="2.1.5"
 PYTHON_COMPAT=( "python3_11" )
 MODEL_FILES=(
 # models_ncnn_interpolate
@@ -45,6 +45,8 @@ realesrgan-x4plus-anime.tar.gz
 
 # models_pytorch_interpolate
 GMFSS.pkl
+GMFSS_PRO.pkl
+GIMMVFI_RAFT.pth
 rife4.6.pkl
 rife4.7.pkl
 rife4.15.pkl
@@ -60,6 +62,9 @@ rife4.25.pkl
 4xNomos8k_span_otf_strong.pth
 2x_OpenProteus_Compact_i2_70K.pth
 2x_AnimeJaNai_HD_V3_Sharp1_Compact_430k.pth
+
+# models_pytorch_denoise
+scunet_color_real_psnr.pth
 )
 MY_PN="${PN}-RVE"
 
@@ -142,6 +147,7 @@ COMMON_DEPEND="
 		virtual/pillow[${PYTHON_USEDEP}]
 	')
 "
+# Upstream uses pytorch 2.6.0 with cuda 12.6
 CUDA_DEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/cupy-13.3.0[${PYTHON_USEDEP},cuda]
@@ -216,6 +222,11 @@ RDEPEND+="
 		${COMMON_DEPEND}
 		${NCNN_DEPEND}
 	)
+	|| (
+		=media-video/ffmpeg-7.0*:59.61.61
+		=media-video/ffmpeg-7.0*:0/59.61.61
+	)
+	media-video/ffmpeg:=
 "
 DEPEND+="
 	${RDEPEND}
@@ -295,6 +306,62 @@ einfo "EPYTHON:  ${EPYTHON}"
 	grep -q "error:" "${T}/build.log" && die "Detected error"
 }
 
-# TODO install models and/or backend to destination
+src_install() {
+	dodir "/usr/bin"
+	insinto "/usr/$(get_libdir)/${PN}"
+	doins -r  "dist/"*
+
+cat <<EOF > "${ED}/usr/bin/${PN}"
+#!/bin/bash
+export LD_LIBRARY_PATH="/usr/$(get_libdir)/${PN}/lib"
+cd "/usr/$(get_libdir)/${PN}"
+"./${PN}" "\$@"
+EOF
+	fperms 0755 "/usr/bin/${PN}"
+	fperms 0755 "/usr/$(get_libdir)/${PN}/${PN}"
+
+	docinto "licenses/freeze"
+	dodoc "dist/frozen_application_license.txt"
+
+	local models=(
+		"2x_AnimeJaNai_HD_V3_Sharp1_Compact_430k"
+		"2x_ModernSpanimationV2"
+		"2x_OpenProteus_Compact_i2_70K"
+		"4xNomos8k_span_otf_medium"
+		"4xNomos8k_span_otf_strong"
+		"4xNomos8k_span_otf_weak"
+		"realesr-animevideov3-x2"
+		"realesr-animevideov3-x3"
+		"realesr-animevideov3-x4"
+		"realesrgan-x4plus"
+		"realesrgan-x4plus-anime"
+		"rife-v4.15"
+		"rife-v4.18"
+		"rife-v4.22"
+		"rife-v4.22-lite"
+		"rife-v4.25"
+		"rife-v4.6"
+		"rife-v4.7"
+		"up2x-conservative"
+	)
+	for m in ${models[@]} ; do
+		insinto "/usr/$(get_libdir)/${PN}/models"
+		doins -r "${WORKDIR}/${m}"
+	done
+
+	insinto "/usr/$(get_libdir)/${PN}"
+	doins -r "${WORKDIR}/backend"
+
+	dodir "/usr/$(get_libdir)/${PN}/bin"
+	if has_version "=media-video/ffmpeg-7.0*:59.61.61" ; then
+		dosym \
+			"/usr/lib/ffmpeg/59.61.61/bin/ffmpeg" \
+			"/usr/$(get_libdir)/${PN}/bin/ffmpeg"
+	else
+		dosym \
+			"/usr/bin/ffmpeg" \
+			"/usr/$(get_libdir)/${PN}/bin/ffmpeg"
+	fi
+}
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
