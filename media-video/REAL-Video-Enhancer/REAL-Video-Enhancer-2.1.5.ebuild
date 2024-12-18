@@ -242,11 +242,14 @@ RDEPEND+="
 		${NCNN_DEPEND}
 	)
 	|| (
-		=media-video/ffmpeg-7.0*:59.61.61
-		=media-video/ffmpeg-7.0*:0/59.61.61
+		=media-video/ffmpeg-6.1*:58.60.60
+		=media-video/ffmpeg-6.1*:0/58.60.60
+		=media-video/ffmpeg-4*:56.58.58
+		=media-video/ffmpeg-4*:0/56.58.58
 	)
 	media-video/ffmpeg:=
 "
+# Upstream uses FFmpeg 7.0, but changed here for OpenCV
 DEPEND+="
 	${RDEPEND}
 "
