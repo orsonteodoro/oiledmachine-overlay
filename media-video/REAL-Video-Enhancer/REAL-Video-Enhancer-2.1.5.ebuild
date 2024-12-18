@@ -80,15 +80,15 @@ get_model_use() {
 	if [[ "${id}" =~ "_"$ ]] ; then
 		id="${id::-1}"
 	fi
-	echo "${id}"
+	echo "rve_models_${id}"
 }
 
 gen_models_iuse() {
 	local row
 	for row in ${MODELS[@]} ; do
 		local fn="${row%;*}"
-		local id=$(get_model_use "${fn}")
-		echo " rve_models_${id}"
+		local u=$(get_model_use "${fn}")
+		echo " ${u}"
 	done
 }
 IUSE+="$(gen_models_iuse)"
@@ -97,9 +97,9 @@ gen_models_uris() {
 	local row
 	for row in ${MODELS[@]} ; do
 		local fn="${row%;*}"
-		local id=$(get_model_use "${fn}")
+		local u=$(get_model_use "${fn}")
 		echo "
-			rve_models_${id}? (
+			${u}? (
 https://github.com/TNTwise/real-video-enhancer-models/releases/download/models/${fn}
 			)
 		"
@@ -111,9 +111,9 @@ gen_models_license() {
 	for row in ${MODELS[@]} ; do
 		local fn="${row%;*}"
 		local license="${row#*;}"
-		local id=$(get_model_use "${fn}")
+		local u=$(get_model_use "${fn}")
 		echo "
-			rve_models_${id}? (
+			${u}? (
 				${license}
 			)
 		"
@@ -170,7 +170,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 # cx-Freeze is currently broken
 IUSE+="
 fp16 cuda rocm tensorrt vulkan wayland X
-ebuild-revision-9
+ebuild-revision-10
 "
 # cuda, rocm, tenssort USE flags are missing dependency packages.
 REQUIRED_USE="
