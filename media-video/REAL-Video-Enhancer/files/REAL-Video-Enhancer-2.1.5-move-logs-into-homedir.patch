@@ -1,0 +1,72 @@
+diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/REAL-Video-Enhancer.py REAL-Video-Enhancer-RVE-2.1.5/REAL-Video-Enhancer.py
+--- REAL-Video-Enhancer-RVE-2.1.5.orig/REAL-Video-Enhancer.py	2024-12-18 01:37:14.329800065 -0800
++++ REAL-Video-Enhancer-RVE-2.1.5/REAL-Video-Enhancer.py	2024-12-18 01:44:56.178860715 -0800
+@@ -89,6 +89,7 @@ class MainWindow(QMainWindow, Ui_MainWin
+         self.isVideoLoaded = False
+ 
+         # setup application
++        createDirectory(os.path.join(self.homeDir, "REAL-Video-Enhancer"))
+ 
+         # Set up the user interface from Designer.
+         self.setupUi(self)
+diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/backend/src/constants.py REAL-Video-Enhancer-RVE-2.1.5/backend/src/constants.py
+--- REAL-Video-Enhancer-RVE-2.1.5.orig/backend/src/constants.py	2024-12-14 21:22:29.000000000 -0800
++++ REAL-Video-Enhancer-RVE-2.1.5/backend/src/constants.py	2024-12-18 01:42:21.831843913 -0800
+@@ -29,6 +29,6 @@ else:
+     CWD = os.getcwd()
+ 
+ FFMPEG_PATH = os.path.join(CWD, "bin", "ffmpeg")
+-FFMPEG_LOG_FILE = os.path.join(CWD, "ffmpeg_log.txt")
++FFMPEG_LOG_FILE = os.path.join(os.path.expanduser("~"), "REAL-Video-Enhancer", "ffmpeg_log.txt")
+ MODELS_DIRECTORY = os.path.join(CWD, "models")
+ HAS_SYSTEM_CUDA = checkForCUDA()
+diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/backend/src/utils/Util.py REAL-Video-Enhancer-RVE-2.1.5/backend/src/utils/Util.py
+--- REAL-Video-Enhancer-RVE-2.1.5.orig/backend/src/utils/Util.py	2024-12-14 21:22:29.000000000 -0800
++++ REAL-Video-Enhancer-RVE-2.1.5/backend/src/utils/Util.py	2024-12-18 01:42:44.583699038 -0800
+@@ -9,7 +9,7 @@ try:
+ except ImportError:
+     CWD = os.getcwd()
+ 
+-with open(os.path.join(CWD, "backend_log.txt"), "w") as f:
++with open(os.path.join(os.path.expanduser("~"), "REAL-Video-Enhancer", "backend_log.txt"), "w") as f:
+     pass
+ 
+ 
+@@ -49,7 +49,7 @@ def printAndLog(message: str, separate=F
+ 
+ 
+ def log(message: str):
+-    with open(os.path.join(CWD, "backend_log.txt"), "a") as f:
++    with open(os.path.join(os.path.expanduser("~"), "REAL-Video-Enhancer", "backend_log.txt"), "a") as f:
+         f.write(message + "\n")
+ 
+ 
+diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/src/Util.py REAL-Video-Enhancer-RVE-2.1.5/src/Util.py
+--- REAL-Video-Enhancer-RVE-2.1.5.orig/src/Util.py	2024-12-14 21:22:29.000000000 -0800
++++ REAL-Video-Enhancer-RVE-2.1.5/src/Util.py	2024-12-18 01:42:45.799691295 -0800
+@@ -15,11 +15,11 @@ from .constants import CWD, IS_FLATPAK,
+ 
+ 
+ def log(message: str):
+-    with open(os.path.join(CWD, "frontend_log.txt"), "a") as f:
++    with open(os.path.join(os.path.expanduser("~"), "REAL-Video-Enhancer", "frontend_log.txt"), "a") as f:
+         f.write(message + "\n")
+ 
+ 
+-with open(os.path.join(CWD, "frontend_log.txt"), "w") as f:
++with open(os.path.join(os.path.expanduser("~"), "REAL-Video-Enhancer", "frontend_log.txt"), "w") as f:
+     pass
+ 
+ 
+diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/src/ui/SettingsTab.py REAL-Video-Enhancer-RVE-2.1.5/src/ui/SettingsTab.py
+--- REAL-Video-Enhancer-RVE-2.1.5.orig/src/ui/SettingsTab.py	2024-12-14 21:22:29.000000000 -0800
++++ REAL-Video-Enhancer-RVE-2.1.5/src/ui/SettingsTab.py	2024-12-18 01:42:42.167714423 -0800
+@@ -191,7 +191,7 @@ class SettingsTab:
+ 
+ class Settings:
+     def __init__(self):
+-        self.settingsFile = os.path.join(currentDirectory(), "settings.txt")
++        self.settingsFile = os.path.join(os.path.expanduser("~"), "REAL-Video-Enhancer", "settings.txt")
+ 
+         """
+         The default settings are set here, and are overwritten by the settings in the settings file if it exists and the legnth of the settings is the same as the default settings.
