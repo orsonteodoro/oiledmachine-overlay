@@ -454,3 +454,4 @@ EOF
 # OILEDMACHINE-OVERLAY-TEST:  passed (2.1.5, 20241218)
 # UI load - pass
 # Upscale (with AnimeVideoV3 2x) - pass
+# Vulkan (ncnn) - pass
