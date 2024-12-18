@@ -132,6 +132,7 @@ REQUIRED_USE="
 "
 # Dropped dev-python/opencv-python-headless
 # See https://github.com/TNTwise/REAL-Video-Enhancer/blob/RVE-2.1.0/src/DownloadDeps.py
+# Upstream uses numpy 1.26.4
 COMMON_DEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
