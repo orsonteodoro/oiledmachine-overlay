@@ -1,6 +1,6 @@
-diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/backend/src/constants.py REAL-Video-Enhancer-RVE-2.1.5/backend/src/constants.py
---- REAL-Video-Enhancer-RVE-2.1.5.orig/backend/src/constants.py	2024-12-14 21:22:29.000000000 -0800
-+++ REAL-Video-Enhancer-RVE-2.1.5/backend/src/constants.py	2024-12-18 02:19:06.765382868 -0800
+diff '--color=auto' -urp work.orig/REAL-Video-Enhancer-RVE-2.1.5/backend/src/constants.py work/REAL-Video-Enhancer-RVE-2.1.5/backend/src/constants.py
+--- work.orig/REAL-Video-Enhancer-RVE-2.1.5/backend/src/constants.py	2024-12-14 21:22:29.000000000 -0800
++++ work/REAL-Video-Enhancer-RVE-2.1.5/backend/src/constants.py	2024-12-18 03:25:00.142173197 -0800
 @@ -29,6 +29,6 @@ else:
      CWD = os.getcwd()
  
@@ -9,23 +9,22 @@ diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/backend/src/constant
 +FFMPEG_LOG_FILE = os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer", "ffmpeg_log.txt")
  MODELS_DIRECTORY = os.path.join(CWD, "models")
  HAS_SYSTEM_CUDA = checkForCUDA()
-diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/backend/src/utils/Util.py REAL-Video-Enhancer-RVE-2.1.5/backend/src/utils/Util.py
---- REAL-Video-Enhancer-RVE-2.1.5.orig/backend/src/utils/Util.py	2024-12-14 21:22:29.000000000 -0800
-+++ REAL-Video-Enhancer-RVE-2.1.5/backend/src/utils/Util.py	2024-12-18 02:24:52.050991503 -0800
-@@ -9,7 +9,11 @@ try:
+diff '--color=auto' -urp work.orig/REAL-Video-Enhancer-RVE-2.1.5/backend/src/utils/Util.py work/REAL-Video-Enhancer-RVE-2.1.5/backend/src/utils/Util.py
+--- work.orig/REAL-Video-Enhancer-RVE-2.1.5/backend/src/utils/Util.py	2024-12-14 21:22:29.000000000 -0800
++++ work/REAL-Video-Enhancer-RVE-2.1.5/backend/src/utils/Util.py	2024-12-18 03:25:00.142173197 -0800
+@@ -9,7 +9,10 @@ try:
  except ImportError:
      CWD = os.getcwd()
  
 -with open(os.path.join(CWD, "backend_log.txt"), "w") as f:
-+dir = os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer")
-+if not os.path.exists(dir):
-+    os.mkdir(dir)
++if not os.path.exists(os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer")):
++    os.mkdir(os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer"))
 +
 +with open(os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer", "backend_log.txt"), "w") as f:
      pass
  
  
-@@ -49,7 +53,7 @@ def printAndLog(message: str, separate=F
+@@ -49,7 +52,7 @@ def printAndLog(message: str, separate=F
  
  
  def log(message: str):
@@ -34,16 +33,15 @@ diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/backend/src/utils/Ut
          f.write(message + "\n")
  
  
-diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/src/Util.py REAL-Video-Enhancer-RVE-2.1.5/src/Util.py
---- REAL-Video-Enhancer-RVE-2.1.5.orig/src/Util.py	2024-12-14 21:22:29.000000000 -0800
-+++ REAL-Video-Enhancer-RVE-2.1.5/src/Util.py	2024-12-18 02:24:53.666980339 -0800
-@@ -13,15 +13,16 @@ import distro
+diff '--color=auto' -urp work.orig/REAL-Video-Enhancer-RVE-2.1.5/src/Util.py work/REAL-Video-Enhancer-RVE-2.1.5/src/Util.py
+--- work.orig/REAL-Video-Enhancer-RVE-2.1.5/src/Util.py	2024-12-14 21:22:29.000000000 -0800
++++ work/REAL-Video-Enhancer-RVE-2.1.5/src/Util.py	2024-12-18 03:25:00.142173197 -0800
+@@ -13,15 +13,15 @@ import distro
  import webbrowser
  from .constants import CWD, IS_FLATPAK, PLATFORM, HOME_PATH
  
-+dir = os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer")
-+if not os.path.exists(dir):
-+    os.mkdir(dir)
++if not os.path.exists(os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer")):
++    os.mkdir(os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer"))
  
 -def log(message: str):
 -    with open(os.path.join(CWD, "frontend_log.txt"), "a") as f:
@@ -55,24 +53,53 @@ diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/src/Util.py REAL-Vid
      pass
  
 +def log(message: str):
-+    with open(os.path.join(dir, "frontend_log.txt"), "a") as f:
++    with open(os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer", "frontend_log.txt"), "a") as f:
 +        f.write(message + "\n")
  
  def printAndLog(message: str, separate=False):
      """
-diff '--color=auto' -urp REAL-Video-Enhancer-RVE-2.1.5.orig/src/ui/SettingsTab.py REAL-Video-Enhancer-RVE-2.1.5/src/ui/SettingsTab.py
---- REAL-Video-Enhancer-RVE-2.1.5.orig/src/ui/SettingsTab.py	2024-12-14 21:22:29.000000000 -0800
-+++ REAL-Video-Enhancer-RVE-2.1.5/src/ui/SettingsTab.py	2024-12-18 02:24:55.394968399 -0800
-@@ -191,7 +191,11 @@ class SettingsTab:
+diff '--color=auto' -urp work.orig/REAL-Video-Enhancer-RVE-2.1.5/src/ui/SettingsTab.py work/REAL-Video-Enhancer-RVE-2.1.5/src/ui/SettingsTab.py
+--- work.orig/REAL-Video-Enhancer-RVE-2.1.5/src/ui/SettingsTab.py	2024-12-14 21:22:29.000000000 -0800
++++ work/REAL-Video-Enhancer-RVE-2.1.5/src/ui/SettingsTab.py	2024-12-18 03:25:00.142173197 -0800
+@@ -191,7 +191,10 @@ class SettingsTab:
  
  class Settings:
      def __init__(self):
 -        self.settingsFile = os.path.join(currentDirectory(), "settings.txt")
-+        dir = os.path.join(os.path.expanduser("~"), ".config", "REAL-Video-Enhancer")
-+        if not os.path.exists(dir):
-+            os.mkdir(dir)
++        if not os.path.exists(os.path.join(os.path.expanduser("~"), ".config", "REAL-Video-Enhancer")):
++            os.mkdir(os.path.join(os.path.expanduser("~"), ".config", "REAL-Video-Enhancer"))
 +
 +        self.settingsFile = os.path.join(os.path.expanduser("~"), ".config", "REAL-Video-Enhancer", "settings.txt")
  
          """
          The default settings are set here, and are overwritten by the settings in the settings file if it exists and the legnth of the settings is the same as the default settings.
+diff '--color=auto' -urp work.orig/backend/src/Util.py work/backend/src/Util.py
+--- work.orig/backend/src/Util.py	2024-10-19 10:23:32.000000000 -0700
++++ work/backend/src/Util.py	2024-12-18 03:28:24.376720199 -0800
+@@ -23,7 +23,7 @@ if isFlatpak():
+         )
+ else:
+     cwd = os.getcwd()
+-with open(os.path.join(cwd, "backend_log.txt"), "w") as f:
++with open(os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer", "backend_log.txt"), "w") as f:
+     pass
+ 
+ 
+@@ -51,7 +51,7 @@ def currentDirectory():
+ 
+ 
+ def ffmpegLogFile() -> str:
+-    return os.path.join(currentDirectory(), "ffmpeg_log.txt")
++    return os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer", "ffmpeg_log.txt")
+ 
+ 
+ def errorAndLog(message: str):
+@@ -71,7 +71,7 @@ def printAndLog(message: str, separate=F
+ 
+ 
+ def log(message: str):
+-    with open(os.path.join(cwd, "backend_log.txt"), "a") as f:
++    with open(os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer", "backend_log.txt"), "a") as f:
+         f.write(message + "\n")
+ 
+ 

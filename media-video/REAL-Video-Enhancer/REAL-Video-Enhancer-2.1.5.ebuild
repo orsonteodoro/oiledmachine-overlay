@@ -88,7 +88,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	KEYWORDS="~amd64"
+#	KEYWORDS="~amd64" # Process video still broken
 	S="${WORKDIR}/${MY_PN}-${PV}"
 	SRC_URI="
 	$(gen_models_uris)
@@ -111,7 +111,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 # cx-Freeze is currently broken
 IUSE+="
 fp16 cuda rocm tensorrt vulkan wayland X
-ebuild-revision-5
+ebuild-revision-7
 "
 # cuda, rocm, tenssort USE flags are missing dependency packages.
 REQUIRED_USE="
@@ -265,7 +265,6 @@ BDEPEND+="
 DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-2.1.5-disable-downloads.patch"
-	"${FILESDIR}/${PN}-2.1.5-move-logs-into-homedir.patch"
 )
 
 pkg_setup() {
@@ -284,6 +283,11 @@ src_unpack() {
 
 src_prepare() {
 	default
+
+	pushd "${WORKDIR}" >/dev/null 2>&1 || die
+		eapply "${FILESDIR}/${PN}-2.1.5-move-logs-into-homedir.patch"
+	popd >/dev/null 2>&1 || die
+
 	local backends=""
 	if use cuda || use rocm ; then
 		backends+=",\"pytorch\""
