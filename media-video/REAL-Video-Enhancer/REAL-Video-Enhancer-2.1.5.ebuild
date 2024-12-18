@@ -377,7 +377,7 @@ EOF
 	docinto "licenses/freeze"
 	dodoc "bin/frozen_application_license.txt"
 
-	local models=(
+	local workdir_models=(
 		"2x_AnimeJaNai_HD_V3_Sharp1_Compact_430k"
 		"2x_ModernSpanimationV2"
 		"2x_OpenProteus_Compact_i2_70K"
@@ -398,10 +398,37 @@ EOF
 		"rife-v4.7"
 		"up2x-conservative"
 	)
-	for m in ${models[@]} ; do
+	local distdir_models=(
+		"GMFSS.pkl"
+		"GMFSS_PRO.pkl"
+		"GIMMVFI_RAFT.pth"
+		"rife4.6.pkl"
+		"rife4.7.pkl"
+		"rife4.15.pkl"
+		"rife4.18.pkl"
+		"rife4.22.pkl"
+		"rife4.22-lite.pkl"
+		"rife4.25.pkl"
+
+		"2x_ModernSpanimationV2.pth"
+		"4xNomos8k_span_otf_weak.pth"
+		"4xNomos8k_span_otf_medium.pth"
+		"4xNomos8k_span_otf_strong.pth"
+		"2x_OpenProteus_Compact_i2_70K.pth"
+		"2x_AnimeJaNai_HD_V3_Sharp1_Compact_430k.pth"
+
+		"scunet_color_real_psnr.pth"
+	)
+	for m in ${workdir_models[@]} ; do
 		insinto "/usr/$(get_libdir)/${PN}/models"
 		doins -r "${WORKDIR}/${m}"
 	done
+
+# TODO
+#	for m in ${distdir_models[@]} ; do
+#		insinto "/usr/$(get_libdir)/${PN}/models"
+#		doins $(realpath "${DISTDIR}/${m}")
+#	done
 
 	insinto "/usr/$(get_libdir)/${PN}"
 	doins -r "${WORKDIR}/backend"
@@ -424,6 +451,6 @@ EOF
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  fail (2.1.5, 20241217)
+# OILEDMACHINE-OVERLAY-TEST:  passed (2.1.5, 20241218)
 # UI load - pass
-# convert (with anime 2x upscale) - fail
+# Upscale (with AnimeVideoV3 2x) - pass
