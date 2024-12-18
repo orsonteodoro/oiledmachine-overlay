@@ -408,6 +408,7 @@ EOF
 	# TODO fix permissions with new group
 	touch "${ED}/usr/$(get_libdir)/${PN}/frontend_log.txt"
 	touch "${ED}/usr/$(get_libdir)/${PN}/settings.txt"
+	keepdir "/usr/$(get_libdir)/${PN}/custom_models"
 	fperms 0664 "/usr/$(get_libdir)/${PN}/frontend_log.txt"
 	fperms 0664 "/usr/$(get_libdir)/${PN}/settings.txt"
 	fperms 0664 "/usr/$(get_libdir)/${PN}/custom_models"
