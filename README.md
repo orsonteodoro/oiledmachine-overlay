@@ -879,7 +879,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/coqui-tts | 🐸💬 - a deep learning toolkit for Text-to-Speech, battle-tested in research and production |
 | dev-python/coqui-tts-trainer | 🐸 - A general purpose model trainer, as flexible as it gets |
 | dev-python/cuda-python | Python bindings for CUDA |
-| dev-python/cx-Freeze | Create standalone executables from Python scripts |
+| dev-python/cx-Freeze-bin | Create standalone executables from Python scripts |
 | dev-python/cymem | 💥 Cython memory pool for RAII-style memory management |
 | dev-python/cython | A Python to C compiler |
 | dev-python/dash-bootstrap-components | Bootstrap components for Plotly Dash |
