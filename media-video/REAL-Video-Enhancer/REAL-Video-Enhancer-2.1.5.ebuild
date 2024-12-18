@@ -265,7 +265,7 @@ BDEPEND+="
 DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-2.1.5-disable-downloads.patch"
-	"A${FILESDIR}/${PN}-2.1.5-move-logs-into-homedir.patch"
+	"${FILESDIR}/${PN}-2.1.5-move-logs-into-homedir.patch"
 )
 
 pkg_setup() {
