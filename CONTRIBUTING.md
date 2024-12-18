@@ -9,6 +9,7 @@
    - Missing symbols bugs
    - RPATH bugs (dynamic linking to the wrong slotted library)
    - Illegal Instruction errors for older hardware (requiring changes to USE cpu_flags_, build config, or build files)
+   - Build time non-fatal errors that are actually fatal errors
 3. Vulnerability fixes for
    - Denial of Service (DoS)
      - Crashes (DoS)
