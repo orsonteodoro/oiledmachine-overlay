@@ -342,7 +342,7 @@ einfo "EPYTHON:  ${EPYTHON}"
 src_install() {
 	dodir "/usr/bin"
 	insinto "/usr/$(get_libdir)/${PN}"
-	doins -r  "dist/"*
+	doins -r  "bin/"*
 
 cat <<EOF > "${ED}/usr/bin/${PN}"
 #!/bin/bash
@@ -354,7 +354,7 @@ EOF
 	fperms 0755 "/usr/$(get_libdir)/${PN}/${PN}"
 
 	docinto "licenses/freeze"
-	dodoc "dist/frozen_application_license.txt"
+	dodoc "bin/frozen_application_license.txt"
 
 	local models=(
 		"2x_AnimeJaNai_HD_V3_Sharp1_Compact_430k"
