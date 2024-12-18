@@ -972,7 +972,15 @@ ot-kernel_pkg_pretend() {
 # Reports the estimated End Of Life (EOL).  Sourced from
 # https://www.kernel.org/category/releases.html
 _report_eol() {
-	if [[ "${KV_MAJOR_MINOR}" == "6.6" ]] ; then
+	if [[ "${KV_MAJOR_MINOR}" == "6.12" ]] ; then
+einfo
+einfo "The expected End Of Life (EOL) for the ${KV_MAJOR_MINOR} kernel series is"
+einfo "Dec 2026."
+einfo
+einfo "Use the virtual/ot-sources-lts meta package to ensure proper updates in"
+einfo "the same major.minor branch."
+einfo
+	elif [[ "${KV_MAJOR_MINOR}" == "6.6" ]] ; then
 einfo
 einfo "The expected End Of Life (EOL) for the ${KV_MAJOR_MINOR} kernel series is"
 einfo "Dec 2026."
@@ -983,7 +991,7 @@ einfo
 	elif [[ "${KV_MAJOR_MINOR}" == "6.1" ]] ; then
 einfo
 einfo "The expected End Of Life (EOL) for the ${KV_MAJOR_MINOR} kernel series is"
-einfo "Dec 2026."
+einfo "Dec 2027."
 einfo
 einfo "Use the virtual/ot-sources-lts meta package to ensure proper updates in"
 einfo "the same major.minor branch."
@@ -1014,8 +1022,9 @@ einfo "the same major.minor branch."
 einfo
 	elif [[ "${KV_MAJOR_MINOR}" == "4.19" ]] ; then
 einfo
-einfo "The expected End Of Life (EOL) for the ${KV_MAJOR_MINOR} kernel series is"
-einfo "Dec 2024."
+einfo "This kernel is now End Of Life (EOL) for the ${KV_MAJOR_MINOR} kernel"
+einfo "since Dec 2024.  It will be removed as soon as it is delisted from"
+einfo "The Linux Kernel Archives."
 einfo
 einfo "Use the virtual/ot-sources-lts meta package to ensure proper updates in"
 einfo "the same major.minor branch."
