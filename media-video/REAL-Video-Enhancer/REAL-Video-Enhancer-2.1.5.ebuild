@@ -111,7 +111,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 # cx-Freeze is currently broken
 IUSE+="
 fp16 cuda rocm tensorrt vulkan wayland X
-ebuild-revision-2
+ebuild-revision-3
 "
 # cuda, rocm, tenssort USE flags are missing dependency packages.
 REQUIRED_USE="
