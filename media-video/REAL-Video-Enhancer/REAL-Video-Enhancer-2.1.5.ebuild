@@ -288,6 +288,19 @@ src_prepare() {
 		"/usr/lib64/qt6/libexec/rcc" \
 		"${WORKDIR}/bin/pyside6-rcc" \
 		|| die
+
+	mkdir -p "${S}/venv/lib/${EPYTHON}/site-packages/PySide6/Qt/libexec" || die
+
+	ln -s \
+		"/usr/lib64/qt6/libexec/uic" \
+		"${S}/venv/lib/${EPYTHON}/site-packages/PySide6/Qt/libexec/uic" \
+		|| die
+
+	ln -s \
+		"/usr/lib64/qt6/libexec/rcc" \
+		"${S}/venv/lib/${EPYTHON}/site-packages/PySide6/Qt/libexec/rcc" \
+		|| die
+
 	export PYTHONPATH="/usr/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
 einfo "PYTHONPATH:  ${PYTHONPATH}"
 	sed -i \
