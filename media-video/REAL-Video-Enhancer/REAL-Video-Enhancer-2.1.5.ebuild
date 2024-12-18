@@ -130,15 +130,18 @@ REQUIRED_USE="
 		X
 	)
 "
+# Downloaded packages locally but not in lockfile or requirements
 MISSING_DEPEND="
-	>=dev-python/charset-normalizer-3.4.0[${PYTHON_USEDEP}]
-	>=dev-python/click-8.1.7[${PYTHON_USEDEP}]
-	>=dev-python/idna-3.10[${PYTHON_USEDEP}]
-	>=dev-python/pbr-6.1.0[${PYTHON_USEDEP}]
-	>=dev-python/pip-24.1.2[${PYTHON_USEDEP}]
-	>=dev-python/platformdirs-4.3.6[${PYTHON_USEDEP}]
-	>=dev-python/portalocker-3.0.0[${PYTHON_USEDEP}]
-	>=dev-python/urllib3-2.2.3[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		>=dev-python/charset-normalizer-3.4.0[${PYTHON_USEDEP}]
+		>=dev-python/click-8.1.7[${PYTHON_USEDEP}]
+		>=dev-python/idna-3.10[${PYTHON_USEDEP}]
+		>=dev-python/pbr-6.1.0[${PYTHON_USEDEP}]
+		>=dev-python/pip-24.1.2[${PYTHON_USEDEP}]
+		>=dev-python/platformdirs-4.3.6[${PYTHON_USEDEP}]
+		>=dev-python/portalocker-3.0.0[${PYTHON_USEDEP}]
+		>=dev-python/urllib3-2.2.3[${PYTHON_USEDEP}]
+	')
 "
 # Dropped dev-python/opencv-python-headless
 # See https://github.com/TNTwise/REAL-Video-Enhancer/blob/RVE-2.1.0/src/DownloadDeps.py
@@ -201,6 +204,7 @@ TENSORRT_DEPEND="
 	')
 "
 RDEPEND+="
+	${MISSING_DEPEND}
 	$(python_gen_cond_dep '
 		>=dev-python/certifi-2024.12.14[${PYTHON_USEDEP}]
 		>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
