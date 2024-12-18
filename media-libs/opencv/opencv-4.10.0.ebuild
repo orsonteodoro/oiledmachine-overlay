@@ -847,7 +847,12 @@ src_prepare() {
 	fi
 
 	# Remove bundled stuff
+	mkdir -p "3rdparty.orig" || die
+	mv "3rdparty/flatbuffers" "3rdparty.orig"
 	rm -r "3rdparty" || die "Removing 3rd party components failed"
+	if ! use system-flatbuffers ; then
+		mv "3rdparty.orig" "3rdparty" || die
+	fi
 	sed \
 		-i \
 		-e '/add_subdirectory(.*3rdparty.*)/ d' \
