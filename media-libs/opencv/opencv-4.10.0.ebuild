@@ -281,7 +281,7 @@ SLOT="0/${PV}" # subslot = libopencv* soname version
 IUSE="
 	debug -doc +eigen gflags glog +java -non-free +opencvapps +python
 	-system-flatbuffers test -testprograms -zlib-ng
-	ebuild-revision-8
+	ebuild-revision-9
 "
 # hal for acceleration
 IUSE+="
@@ -1606,6 +1606,27 @@ multilib_src_test() {
 	fi
 }
 
+# Fix loader for cx-Freeze
+# Fixes:
+# ImportError: ERROR: recursion is detected during loading of "cv2" binary extensions. Check OpenCV installation.
+fix_python_loader() {
+	# Use abspath instead of relpath
+	local ver="${EPYTHON/python}"
+	local libdir=$(get_libdir)
+cat <<EOF > "${ED}/usr/lib/${EPYTHON}/site-packages/cv2/config-${ver}.py"
+PYTHON_EXTENSIONS_PATHS = [
+    "/usr/lib/${EPYTHON}/site-packages/cv2/python-${ver}"
+] + PYTHON_EXTENSIONS_PATHS
+EOF
+cat <<EOF > "${ED}/usr/lib/${EPYTHON}/site-packages/cv2/config.py"
+import os
+
+BINARIES_PATHS = [
+     "/usr/${libdir}"
+] + BINARIES_PATHS
+EOF
+}
+
 multilib_src_install() {
 	if use abi_x86_64 && use abi_x86_32 ; then
 		MULTILIB_WRAPPED_HEADERS=( # {{{
@@ -1615,6 +1636,7 @@ multilib_src_install() {
 	if multilib_is_native_abi && use python ; then
 		python_foreach_impl cmake_src_install
 		python_foreach_impl python_optimize
+		python_foreach_impl fix_python_loader
 	else
 		cmake_src_install
 	fi
