@@ -287,7 +287,7 @@ IUSE+="
 IUSE+="
 	+contrib contribcvv +contribdnn contribfreetype contribhdf contribovis
 	contribsfm contribxfeatures2d dnnsamples -examples +features2d
-	+imgproc
+	+flann +imgproc
 "
 # hardware
 IUSE+="
@@ -436,6 +436,7 @@ REQUIRED_USE="
 		contrib
 		contribdnn
 		features2d
+		flann
 		imgproc
 		|| (
 			ffmpeg
@@ -975,6 +976,7 @@ multilib_src_configure() {
 		-DBUILD_opencv_apps=$(usex opencvapps)
 		-DBUILD_opencv_cudalegacy=OFF
 		-DBUILD_opencv_features2d=$(usex features2d)
+		-DBUILD_opencv_flann=$(usex flann)
 		-DBUILD_opencv_gapi=$(usex ffmpeg ON $(usex gstreamer))
 		-DBUILD_opencv_imgproc=$(usex imgproc)
 		-DBUILD_opencv_java_bindings_generator=$(usex java)

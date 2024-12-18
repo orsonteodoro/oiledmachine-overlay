@@ -285,7 +285,7 @@ ${CPU_FEATURES_MAP[@]%:*}
 ${ROCM_SLOTS[@]}
 +atlas -avif +carotene +contrib contribcvv +contribdnn contribfreetype contribhdf
 contribovis contribsfm contribxfeatures2d -cuda -cudnn debug dnnsamples +eigen
--examples +features2d +ffmpeg -gdal gflags glog -gphoto2 +gstreamer +gtk3
+-examples +features2d +ffmpeg +flann -gdal gflags glog -gphoto2 +gstreamer +gtk3
 +ieee1394 +imgproc +java +jpeg +jpeg2k +lapack +libaom -mkl -non-free -openblas
 +opencl +openexr -opengl -openmp +opencvapps +openh264 openvino -openvx +png
 +python +quirc -qt5 -qt6 rocm -spng -system-flatbuffers tesseract -testprograms
@@ -414,6 +414,7 @@ REQUIRED_USE="
 		contrib
 		contribdnn
 		features2d
+		flann
 		imgproc
 		|| (
 			ffmpeg
@@ -883,6 +884,8 @@ multilib_src_configure() {
 		-DBUILD_JAVA=$(multilib_native_usex java)		# Ant needed, no compile flag
 		-DBUILD_opencv_apps=$(usex opencvapps ON OFF)
 		-DBUILD_opencv_features2d=$(usex features2d ON OFF)
+		-DBUILD_opencv_flann=$(usex flann)
+		-DBUILD_opencv_gapi=$(usex ffmpeg ON $(usex gstreamer))
 		-DBUILD_opencv_imgproc=$(usex imgproc)
 		-DBUILD_PACKAGE=OFF
 		-DBUILD_PERF_TESTS=OFF
