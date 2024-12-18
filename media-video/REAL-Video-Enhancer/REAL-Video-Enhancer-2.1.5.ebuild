@@ -111,7 +111,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 # cx-Freeze is currently broken
 IUSE+="
 fp16 cuda rocm tensorrt vulkan wayland X
-ebuild-revision-3
+ebuild-revision-4
 "
 # cuda, rocm, tenssort USE flags are missing dependency packages.
 REQUIRED_USE="
@@ -265,7 +265,7 @@ BDEPEND+="
 DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-2.1.5-disable-downloads.patch"
-	"${FILESDIR}/${PN}-2.1.5-move-logs-into-homedir.patch"
+	"A${FILESDIR}/${PN}-2.1.5-move-logs-into-homedir.patch"
 )
 
 pkg_setup() {
