@@ -46,7 +46,7 @@ MODELS=(
 	# models_pytorch_interpolate
 	"GMFSS.pkl;MIT"
 	"GMFSS_PRO.pkl;MIT"
-	"GIMMVFI_RAFT.pth"
+	"GIMMVFI_RAFT.pth;BSD"
 	"rife4.6.pkl;MIT"
 	"rife4.7.pkl;MIT"
 	"rife4.15.pkl;MIT"
@@ -173,7 +173,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 # cx-Freeze is currently broken
 IUSE+="
 fp16 cuda rocm tensorrt vulkan wayland X
-ebuild-revision-11
+ebuild-revision-12
 "
 # cuda, rocm, tenssort USE flags are missing dependency packages.
 REQUIRED_USE="
