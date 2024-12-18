@@ -283,13 +283,13 @@ SLOT="0/${PV}" # subslot = libopencv* soname version
 IUSE="
 ${CPU_FEATURES_MAP[@]%:*}
 ${ROCM_SLOTS[@]}
-+atlas -avif +carotene contrib contribcvv contribdnn contribfreetype contribhdf
++atlas -avif +carotene +contrib contribcvv +contribdnn contribfreetype contribhdf
 contribovis contribsfm contribxfeatures2d -cuda -cudnn debug dnnsamples +eigen
 -examples +features2d +ffmpeg -gdal gflags glog -gphoto2 +gstreamer +gtk3
-+ieee1394 +java +jpeg +jpeg2k +lapack +libaom -mkl -non-free -openblas +opencl
-+openexr -opengl -openmp +opencvapps +openh264 openvino -openvx +png +python
-+quirc -qt5 -qt6 rocm -spng -system-flatbuffers tesseract -testprograms -tbb
-+tiff +vaapi +v4l +vpx +vtk -wayland +webp -xine video_cards_intel
++ieee1394 +imgproc +java +jpeg +jpeg2k +lapack +libaom -mkl -non-free -openblas
++opencl +openexr -opengl -openmp +opencvapps +openh264 openvino -openvx +png
++python +quirc -qt5 -qt6 rocm -spng -system-flatbuffers tesseract -testprograms
+-tbb +tiff +vaapi +v4l +vpx +vtk -wayland +webp -xine video_cards_intel
 ebuild-revision-8
 "
 # OpenGL needs gtk or Qt installed to activate, otherwise build system
@@ -411,6 +411,14 @@ REQUIRED_USE="
 	)
 	python? (
 		${PYTHON_REQUIRED_USE}
+		contrib
+		contribdnn
+		features2d
+		imgproc
+		|| (
+			ffmpeg
+			gstreamer
+		)
 	)
 	rocm? (
 		^^ (
@@ -875,6 +883,7 @@ multilib_src_configure() {
 		-DBUILD_JAVA=$(multilib_native_usex java)		# Ant needed, no compile flag
 		-DBUILD_opencv_apps=$(usex opencvapps ON OFF)
 		-DBUILD_opencv_features2d=$(usex features2d ON OFF)
+		-DBUILD_opencv_imgproc=$(usex imgproc)
 		-DBUILD_PACKAGE=OFF
 		-DBUILD_PERF_TESTS=OFF
 		-DBUILD_PROTOBUF=OFF
