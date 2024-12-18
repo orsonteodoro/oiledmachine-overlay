@@ -130,23 +130,36 @@ REQUIRED_USE="
 		X
 	)
 "
+MISSING_DEPEND="
+	>=dev-python/charset-normalizer-3.4.0[${PYTHON_USEDEP}]
+	>=dev-python/click-8.1.7[${PYTHON_USEDEP}]
+	>=dev-python/idna-3.10[${PYTHON_USEDEP}]
+	>=dev-python/pbr-6.1.0[${PYTHON_USEDEP}]
+	>=dev-python/pip-24.1.2[${PYTHON_USEDEP}]
+	>=dev-python/platformdirs-4.3.6[${PYTHON_USEDEP}]
+	>=dev-python/portalocker-3.0.0[${PYTHON_USEDEP}]
+	>=dev-python/urllib3-2.2.3[${PYTHON_USEDEP}]
+"
 # Dropped dev-python/opencv-python-headless
 # See https://github.com/TNTwise/REAL-Video-Enhancer/blob/RVE-2.1.0/src/DownloadDeps.py
 # Upstream uses numpy 1.26.4
 COMMON_DEPEND="
 	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
-		<dev-python/numpy-2[${PYTHON_USEDEP}]
-		dev-python/mpmath[${PYTHON_USEDEP}]
-		dev-python/packaging[${PYTHON_USEDEP}]
-		dev-python/pypresence[${PYTHON_USEDEP}]
-		dev-python/requests[${PYTHON_USEDEP}]
-		dev-python/scenedetect[${PYTHON_USEDEP}]
-		dev-python/sympy[${PYTHON_USEDEP}]
-		dev-python/testresources[${PYTHON_USEDEP}]
-		dev-python/tqdm[${PYTHON_USEDEP}]
-		dev-python/typing-extensions[${PYTHON_USEDEP}]
-		virtual/pillow[${PYTHON_USEDEP}]
+		(
+			>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
+			<dev-python/numpy-2[${PYTHON_USEDEP}]
+		)
+		>=dev-python/mpmath-1.3.0[${PYTHON_USEDEP}]
+		>=dev-python/packaging-24.2[${PYTHON_USEDEP}]
+		>=dev-python/pypresence-4.3.0[${PYTHON_USEDEP}]
+		>=dev-python/requests-2.32.3[${PYTHON_USEDEP}]
+		>=dev-python/scenedetect-0.6.5[${PYTHON_USEDEP}]
+		>=dev-python/sympy-1.13.1[${PYTHON_USEDEP}]
+		>=dev-python/tqdm-4.67.1[${PYTHON_USEDEP}]
+		>=dev-python/testresources-2.0.1[${PYTHON_USEDEP}]
+		>=dev-python/typing-extensions-4.12.2[${PYTHON_USEDEP}]
+		>=media-libs/opencv-4.10.0[${PYTHON_USEDEP}]
+		>=virtual/pillow-11.0.0[${PYTHON_USEDEP}]
 	')
 "
 # Upstream uses pytorch 2.6.0 with cuda 12.6
@@ -161,12 +174,12 @@ CUDA_DEPEND="
 "
 NCNN_DEPEND="
 	$(python_gen_cond_dep '
+		>=dev-python/mpmath-1.3.0[${PYTHON_USEDEP}]
 		>=dev-python/ncnn-20240820[${PYTHON_USEDEP}]
 		>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
 		>=dev-python/rife-ncnn-vulkan-python-tntwise-1.4.4[${PYTHON_USEDEP}]
 		>=dev-python/sympy-1.13.1[${PYTHON_USEDEP}]
 		>=dev-python/upscale-ncnn-py-1.2.0[${PYTHON_USEDEP}]
-		dev-python/mpmath[${PYTHON_USEDEP}]
 	')
 "
 ROCM_DEPEND="
@@ -189,16 +202,16 @@ TENSORRT_DEPEND="
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
+		>=dev-python/certifi-2024.12.14[${PYTHON_USEDEP}]
 		>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
+		>=dev-python/pypresence-4.3.0[${PYTHON_USEDEP}]
+		>=dev-python/requests-2.32.3[${PYTHON_USEDEP}]
 		dev-libs/lief[${PYTHON_USEDEP},python]
-		dev-python/certifi[${PYTHON_USEDEP}]
 		dev-python/distro[${PYTHON_USEDEP}]
 		dev-python/psutil[${PYTHON_USEDEP}]
 		dev-python/py-cpuinfo[${PYTHON_USEDEP}]
 		dev-python/pyinstaller[${PYTHON_USEDEP}]
-		dev-python/pypresence[${PYTHON_USEDEP}]
 		dev-python/pyside6[${PYTHON_USEDEP},gui,network,qml,quick,widgets]
-		dev-python/requests[${PYTHON_USEDEP}]
 		dev-python/validators[${PYTHON_USEDEP}]
 		net-misc/yt-dlp[${PYTHON_USEDEP}]
 		|| (
@@ -236,6 +249,7 @@ DEPEND+="
 # scikit_build_core needs exceptiongroup
 BDEPEND+="
 	$(python_gen_cond_dep '
+		>=dev-python/setuptools-70.3.0[${PYTHON_USEDEP}]
 		dev-python/exceptiongroup[${PYTHON_USEDEP}]
 		dev-python/pyside6-tools[${PYTHON_USEDEP}]
 	')
