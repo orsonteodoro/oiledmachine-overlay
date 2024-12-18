@@ -111,6 +111,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 # cx-Freeze is currently broken
 IUSE+="
 fp16 cuda rocm tensorrt vulkan wayland X
+ebuild-revision-1
 "
 # cuda, rocm, tenssort USE flags are missing dependency packages.
 REQUIRED_USE="
@@ -402,18 +403,19 @@ EOF
 			"/usr/$(get_libdir)/${PN}/bin/ffmpeg"
 	fi
 
-	# Remove cached copy
-	rm "${ED}/usr/$(get_libdir)/${PN}/lib/cv2/__init__.pyc" || die
-
 	# TODO fix permissions with new group
 	touch "${ED}/usr/$(get_libdir)/${PN}/frontend_log.txt"
 	touch "${ED}/usr/$(get_libdir)/${PN}/settings.txt"
 	keepdir "/usr/$(get_libdir)/${PN}/custom_models"
-	keepdir "/usr/$(get_libdir)/${PN}/python"
+
+	dodir "/usr/$(get_libdir)/${PN}/python/python/bin/"
+	dosym "/usr/bin/${EPYTHON}" "/usr/$(get_libdir)/${PN}/python/python/bin/python3"
+
 	fperms 0664 "/usr/$(get_libdir)/${PN}/frontend_log.txt"
 	fperms 0664 "/usr/$(get_libdir)/${PN}/settings.txt"
 	fowners "root:users" "/usr/$(get_libdir)/${PN}/frontend_log.txt"
 	fowners "root:users" "/usr/$(get_libdir)/${PN}/settings.txt"
+
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
