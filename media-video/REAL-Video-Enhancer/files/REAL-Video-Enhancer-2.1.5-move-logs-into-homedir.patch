@@ -1,6 +1,20 @@
+diff '--color=auto' -urp work.orig/REAL-Video-Enhancer-RVE-2.1.5/backend/src/RenderVideo.py work/REAL-Video-Enhancer-RVE-2.1.5/backend/src/RenderVideo.py
+--- work.orig/REAL-Video-Enhancer-RVE-2.1.5/backend/src/RenderVideo.py	2024-12-14 21:22:29.000000000 -0800
++++ work/REAL-Video-Enhancer-RVE-2.1.5/backend/src/RenderVideo.py	2024-12-18 07:37:43.510542525 -0800
+@@ -65,7 +65,9 @@ class Render(FFMpegRender):
+         ensemble: bool = False,
+     ):
+         if pausedFile is None:
+-            pausedFile = os.path.basename(inputFile) + "_paused_state.txt"
++            if not os.path.exists(os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer")):
++                os.mkdir(os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer"))
++            pausedFile = os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer", os.path.basename(inputFile) + "_paused_state.txt")
+         self.inputFile = inputFile
+         self.pausedFile = pausedFile
+         with open(self.pausedFile, "w") as f:
 diff '--color=auto' -urp work.orig/REAL-Video-Enhancer-RVE-2.1.5/backend/src/constants.py work/REAL-Video-Enhancer-RVE-2.1.5/backend/src/constants.py
 --- work.orig/REAL-Video-Enhancer-RVE-2.1.5/backend/src/constants.py	2024-12-14 21:22:29.000000000 -0800
-+++ work/REAL-Video-Enhancer-RVE-2.1.5/backend/src/constants.py	2024-12-18 03:25:00.142173197 -0800
++++ work/REAL-Video-Enhancer-RVE-2.1.5/backend/src/constants.py	2024-12-18 07:30:42.357654730 -0800
 @@ -29,6 +29,6 @@ else:
      CWD = os.getcwd()
  
@@ -11,7 +25,7 @@ diff '--color=auto' -urp work.orig/REAL-Video-Enhancer-RVE-2.1.5/backend/src/con
  HAS_SYSTEM_CUDA = checkForCUDA()
 diff '--color=auto' -urp work.orig/REAL-Video-Enhancer-RVE-2.1.5/backend/src/utils/Util.py work/REAL-Video-Enhancer-RVE-2.1.5/backend/src/utils/Util.py
 --- work.orig/REAL-Video-Enhancer-RVE-2.1.5/backend/src/utils/Util.py	2024-12-14 21:22:29.000000000 -0800
-+++ work/REAL-Video-Enhancer-RVE-2.1.5/backend/src/utils/Util.py	2024-12-18 03:25:00.142173197 -0800
++++ work/REAL-Video-Enhancer-RVE-2.1.5/backend/src/utils/Util.py	2024-12-18 07:30:42.357654730 -0800
 @@ -9,7 +9,10 @@ try:
  except ImportError:
      CWD = os.getcwd()
@@ -35,7 +49,7 @@ diff '--color=auto' -urp work.orig/REAL-Video-Enhancer-RVE-2.1.5/backend/src/uti
  
 diff '--color=auto' -urp work.orig/REAL-Video-Enhancer-RVE-2.1.5/src/Util.py work/REAL-Video-Enhancer-RVE-2.1.5/src/Util.py
 --- work.orig/REAL-Video-Enhancer-RVE-2.1.5/src/Util.py	2024-12-14 21:22:29.000000000 -0800
-+++ work/REAL-Video-Enhancer-RVE-2.1.5/src/Util.py	2024-12-18 03:25:00.142173197 -0800
++++ work/REAL-Video-Enhancer-RVE-2.1.5/src/Util.py	2024-12-18 07:38:01.194412131 -0800
 @@ -13,15 +13,15 @@ import distro
  import webbrowser
  from .constants import CWD, IS_FLATPAK, PLATFORM, HOME_PATH
@@ -58,9 +72,25 @@ diff '--color=auto' -urp work.orig/REAL-Video-Enhancer-RVE-2.1.5/src/Util.py wor
  
  def printAndLog(message: str, separate=False):
      """
+diff '--color=auto' -urp work.orig/REAL-Video-Enhancer-RVE-2.1.5/src/ui/ProcessTab.py work/REAL-Video-Enhancer-RVE-2.1.5/src/ui/ProcessTab.py
+--- work.orig/REAL-Video-Enhancer-RVE-2.1.5/src/ui/ProcessTab.py	2024-12-14 21:22:29.000000000 -0800
++++ work/REAL-Video-Enhancer-RVE-2.1.5/src/ui/ProcessTab.py	2024-12-18 07:37:57.694437938 -0800
+@@ -264,8 +264,11 @@ class ProcessTab:
+         self.outputVideoHeight = videoHeight * upscaleTimes
+ 
+         # set up pausing
++        if not os.path.exists(os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer")):
++            os.mkdir(os.path.join(os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer"))
++
+         self.pausedFile = os.path.join(
+-            currentDirectory(), os.path.basename(inputFile) + "_pausedState.txt"
++            os.path.expanduser("~"), ".cache", "REAL-Video-Enhancer", os.path.basename(inputFile) + "_pausedState.txt"
+         )
+         show_layout_widgets(self.parent.onRenderButtonsContiainer)
+         self.parent.startRenderButton.setVisible(False)
 diff '--color=auto' -urp work.orig/REAL-Video-Enhancer-RVE-2.1.5/src/ui/SettingsTab.py work/REAL-Video-Enhancer-RVE-2.1.5/src/ui/SettingsTab.py
 --- work.orig/REAL-Video-Enhancer-RVE-2.1.5/src/ui/SettingsTab.py	2024-12-14 21:22:29.000000000 -0800
-+++ work/REAL-Video-Enhancer-RVE-2.1.5/src/ui/SettingsTab.py	2024-12-18 03:25:00.142173197 -0800
++++ work/REAL-Video-Enhancer-RVE-2.1.5/src/ui/SettingsTab.py	2024-12-18 07:30:42.357654730 -0800
 @@ -191,7 +191,10 @@ class SettingsTab:
  
  class Settings:
@@ -75,7 +105,7 @@ diff '--color=auto' -urp work.orig/REAL-Video-Enhancer-RVE-2.1.5/src/ui/Settings
          The default settings are set here, and are overwritten by the settings in the settings file if it exists and the legnth of the settings is the same as the default settings.
 diff '--color=auto' -urp work.orig/backend/src/Util.py work/backend/src/Util.py
 --- work.orig/backend/src/Util.py	2024-10-19 10:23:32.000000000 -0700
-+++ work/backend/src/Util.py	2024-12-18 03:28:24.376720199 -0800
++++ work/backend/src/Util.py	2024-12-18 07:30:42.357654730 -0800
 @@ -23,7 +23,7 @@ if isFlatpak():
          )
  else:
