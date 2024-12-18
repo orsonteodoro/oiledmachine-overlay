@@ -88,7 +88,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-#	KEYWORDS="~amd64"
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/${MY_PN}-${PV}"
 	SRC_URI="
 	$(gen_models_uris)
