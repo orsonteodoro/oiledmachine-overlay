@@ -140,7 +140,7 @@ CPU_FLAGS_X86=(
 
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit cmake dep-prepare distutils-r1 toolchain-funcs
+inherit cmake dep-prepare distutils-r1 optfeature toolchain-funcs
 
 DESCRIPTION="High-performance neural network inference framework"
 HOMEPAGE="https://github.com/Tencent/ncnn/"
@@ -625,4 +625,10 @@ src_compile() {
 
 src_install() {
 	cmake_src_install
+}
+
+pkg_postinst() {
+	# TODO:  Add more orphaned packages or move into overlay's README.md
+	optfeature_header "Install optional packages:"
+	optfeature "From PyTorch or ONNX to ncnn model converter" "dev-util/pnnx"
 }
