@@ -1328,6 +1328,11 @@ RDEPEND+="
 	modplug? (
 		>=media-libs/libmodplug-0.8.8.4-r1[${MULTILIB_USEDEP}]
 	)
+	network? (
+		elibc_glibc? (
+			sys-libs/glibc[nscd]
+		)
+	)
 	openal? (
 		>=media-libs/openal-1.15.1[${MULTILIB_USEDEP}]
 	)
@@ -4564,10 +4569,12 @@ ewarn "     media-video/ffmpeg[encode]"
 ewarn
 	fi
 
+	if use network && use elibc_glibc ; then
+ewarn "The nscd service must be enabled and running for proper DNS resolution."
+	fi
+
 	if use nonfree ; then
-ewarn
 ewarn "You are not allowed to redistribute this binary."
-ewarn
 	fi
 	uopts_pkg_postinst
 	if use trainer-av-streaming ; then
