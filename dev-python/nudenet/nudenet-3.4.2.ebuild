@@ -107,6 +107,8 @@ src_install() {
 			|| die
 	done
 	IFS=$' \t\n'
+	rm -rf "${ED}/usr/bin" || die
+	rm -rf "${ED}/usr/lib/python-exec" || die
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
