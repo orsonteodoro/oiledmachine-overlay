@@ -6,6 +6,7 @@ EAPI=8
 
 # U22
 
+CMAKE_MAKEFILE_GENERATOR="emake"
 #DISTUTILS_OPTIONAL=1
 DISTUTILS_USE_PEP517="setuptools"
 DISTUTILS_SINGLE_IMPL=1
@@ -84,9 +85,18 @@ src_unpack() {
 
 src_prepare() {
 	cmake_src_prepare
+
+	if has_version ">=sci-libs/pytorch-2" ; then
+		# -std=gnu++14 Breaks pytorch's c10
+		sed -i \
+			-e "s|CMAKE_CXX_STANDARD 14|CMAKE_CXX_STANDARD 17|g" \
+			"${WORKDIR}/ncnn-${PV}/tools/pnnx/CMakeLists.txt" \
+			|| die
+	fi
 }
 
 src_configure() {
+	export MAKEOPTS="-j1"
 	local mycmakeargs=(
 		-DPython3_EXECUTABLE="${PYTHON}"
 		-Donnxruntime_INSTALL_DIR="/usr"
