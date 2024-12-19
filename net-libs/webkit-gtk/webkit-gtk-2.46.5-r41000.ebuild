@@ -103,7 +103,7 @@ LLVM_COMPAT=( 18 14 )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MESA_PV="18.0.0_rc5"
 MITIGATION_DATE="Nov 27, 2024"
-MITIGATION_LAST_UPDATE=1732639560 # From `date +%s -d "2024-11-26 8:46 AM PST"` from tag in GH for this version
+MITIGATION_LAST_UPDATE=1734514260 # From `date +%s -d "2024-12-18 1:31 AM PST"` from tag in GH for this version
 MITIGATION_URI="https://webkitgtk.org/security/WSA-2024-0007.html"
 VULNERABILITIES_FIXED=(
 	"CVE-2024-44308;DoS, DT, ID;High"
