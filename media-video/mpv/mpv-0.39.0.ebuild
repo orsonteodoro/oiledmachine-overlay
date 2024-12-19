@@ -206,9 +206,9 @@ COMMON_DEPEND="
 		>=media-libs/vulkan-loader-1.3.238[X?,wayland?]
 	)
 	wayland? (
+		>=x11-libs/libxkbcommon-0.3.0
 		>=dev-libs/wayland-1.21.0
 		>=dev-libs/wayland-protocols-1.31
-		x11-libs/libxkbcommon
 	)
 	X? (
 		>=x11-libs/libX11-1.0.0
