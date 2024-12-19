@@ -110,16 +110,6 @@ COMMON_DEPEND="
 		media-video/ffmpeg:0/58.60.60[encode,network?,soc(-)?,threads,vaapi?,vdpau?]
 	)
 	media-video/ffmpeg:=
-	X? (
-		>=x11-libs/libX11-1.0.0
-		>=x11-libs/libXext-1.0.0
-		>=x11-libs/libXpresent-1.0.0
-		>=x11-libs/libXrandr-1.4.0
-		>=x11-libs/libXScrnSaver-1.0.0
-		xv? (
-			x11-libs/libXv
-		)
-	)
 	alsa? (
 		>=media-libs/alsa-lib-1.0.18
 	)
@@ -220,6 +210,16 @@ COMMON_DEPEND="
 		>=dev-libs/wayland-protocols-1.31
 		x11-libs/libxkbcommon
 	)
+	X? (
+		>=x11-libs/libX11-1.0.0
+		>=x11-libs/libXext-1.0.0
+		>=x11-libs/libXpresent-1.0.0
+		>=x11-libs/libXrandr-1.4.0
+		>=x11-libs/libXScrnSaver-1.0.0
+		xv? (
+			x11-libs/libXv
+		)
+	)
 	zimg? (
 		>=media-libs/zimg-2.9
 	)
@@ -238,9 +238,6 @@ RDEPEND="
 "
 DEPEND="
 	${COMMON_DEPEND}
-	X? (
-		x11-base/xorg-proto
-	)
 	dvb? (
 		sys-kernel/linux-headers
 	)
@@ -252,6 +249,9 @@ DEPEND="
 	)
 	wayland? (
 		dev-libs/wayland-protocols
+	)
+	X? (
+		x11-base/xorg-proto
 	)
 "
 BDEPEND="
