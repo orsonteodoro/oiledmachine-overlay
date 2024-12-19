@@ -198,7 +198,7 @@ BDEPEND+="
 	test? (
 		>=dev-python/dulwich-${DULWICH_PV}[${PYTHON_USEDEP}]
 		>=dev-python/flake8-${FLAKE8_PV}[${PYTHON_USEDEP}]
-		>=dev-python/subunit-1.4.0[${PYTHON_USEDEP}]
+		>=dev-python/python-subunit-1.4.0[${PYTHON_USEDEP}]
 		>=dev-python/testscenarios-0.5.0[${PYTHON_USEDEP}]
 		>=dev-python/testtools-2.5.0[${PYTHON_USEDEP}]
 		sftp? (
