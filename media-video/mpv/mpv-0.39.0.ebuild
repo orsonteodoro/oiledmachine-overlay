@@ -106,8 +106,8 @@ COMMON_DEPEND="
 	>=media-libs/libplacebo-6.338.2:=[opengl?,vulkan?]
 	>=media-libs/libass-0.12.2:=[fontconfig]
 	|| (
-		media-video/ffmpeg:58.60.60[encode,soc(-)?,network?,threads,vaapi?,vdpau?]
-		media-video/ffmpeg:0/58.60.60[encode,soc(-)?,network?,threads,vaapi?,vdpau?]
+		media-video/ffmpeg:58.60.60[encode,network?,soc(-)?,threads,vaapi?,vdpau?]
+		media-video/ffmpeg:0/58.60.60[encode,network?,soc(-)?,threads,vaapi?,vdpau?]
 	)
 	media-video/ffmpeg:=
 	X? (
