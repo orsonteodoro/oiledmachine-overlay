@@ -41,7 +41,7 @@ IUSE="
 +X +alsa aqua archive bluray cdda +cli coreaudio debug +drm dvb dvd +egl gamepad
 +iconv jack javascript jpeg lcms libcaca +libmpv +lua network nvenc openal opengl
 pipewire pulseaudio rubberband sdl selinux sixel sndio soc test tools +uchardet
-vaapi vdpau vulkan wayland xv zimg zlib
+vaapi vapoursynth vdpau vulkan wayland xv zimg zlib
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -206,6 +206,9 @@ COMMON_DEPEND="
 	vaapi? (
 		>=media-libs/libva-1.1.0:=[X?,drm(+)?,wayland?]
 	)
+	vapoursynth? (
+		>=media-libs/vapoursynth-56
+	)
 	vdpau? (
 		>=x11-libs/libvdpau-0.2
 	)
@@ -323,6 +326,7 @@ einfo "Skipping -DNDEBUG due to USE=test"
 		$(meson_feature sndio)
 		$(meson_feature uchardet)
 		$(meson_feature vaapi)
+		$(meson_feature vapoursynth)
 		$(meson_feature vdpau)
 		$(meson_feature vulkan)
 		$(meson_feature wayland)
