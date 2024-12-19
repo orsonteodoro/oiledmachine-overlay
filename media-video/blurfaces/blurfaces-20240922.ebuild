@@ -4,10 +4,6 @@
 
 EAPI=8
 
-# TODO package:
-# appnope
-# face-recognition-models
-
 FALLBACK_COMMIT="a2f2a08d47f387a50fcbc18786837e9b8741d74b" # Sep 22, 2024
 PYTHON_COMPAT=( "python3_"{10..12} )
 
@@ -40,7 +36,6 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
 RDEPEND+="
-	>=dev-python/appnope-0.1.3[${PYTHON_USEDEP}]
 	>=dev-python/asttokens-2.0.8[${PYTHON_USEDEP}]
 	>=dev-python/backcall-0.2.0[${PYTHON_USEDEP}]
 	>=dev-python/click-8.1.3[${PYTHON_USEDEP}]
