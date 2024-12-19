@@ -71,7 +71,7 @@ src_configure() {
 	local use_cuda=$(usex cuda "True" "False")
 	local use_migraphx=$(usex migraphx "True" "False")
 	local use_rocm=$(usex rocm "True" "False")
-	local use_tensorrt=$(usex rocm "True" "False")
+	local use_tensorrt=$(usex tensorrt "True" "False")
 	sed -i \
 		-e "s|@USE_CUDA@|${use_cuda}|g" \
 		-e "s|@USE_MIGRAPHX@|${use_migraphx}|g" \
