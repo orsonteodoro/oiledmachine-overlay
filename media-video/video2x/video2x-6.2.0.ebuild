@@ -366,8 +366,8 @@ RDEPEND+="
 		>=dev-libs/spdlog-1.12.0
 	)
 	|| (
-		media-video/ffmpeg:58.60.60[libplacebo,vulkan,x264]
-		media-video/ffmpeg:0/58.60.60[libplacebo,vulkan,x264]
+		media-video/ffmpeg:58.60.60[encode,libplacebo,vulkan,x264]
+		media-video/ffmpeg:0/58.60.60[encode,libplacebo,vulkan,x264]
 	)
 	media-video/ffmpeg:=
 "
