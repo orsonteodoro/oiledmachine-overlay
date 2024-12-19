@@ -39,7 +39,7 @@ RESTRICT="
 SLOT="0/2" # soname
 IUSE="
 +X +alsa aqua archive bluray cdda +cli coreaudio debug +drm dvb dvd +egl gamepad
-+iconv jack javascript jpeg lcms libcaca +libmpv +lua nvenc openal opengl
++iconv jack javascript jpeg lcms libcaca +libmpv +lua network nvenc openal opengl
 pipewire pulseaudio rubberband sdl selinux sixel sndio soc test tools +uchardet
 vaapi vdpau vulkan wayland xv zimg zlib
 "
@@ -106,8 +106,8 @@ COMMON_DEPEND="
 	>=media-libs/libplacebo-6.338.2:=[opengl?,vulkan?]
 	>=media-libs/libass-0.12.2:=[fontconfig]
 	|| (
-		media-video/ffmpeg:58.60.60[encode,soc(-)?,threads,vaapi?,vdpau?]
-		media-video/ffmpeg:0/58.60.60[encode,soc(-)?,threads,vaapi?,vdpau?]
+		media-video/ffmpeg:58.60.60[encode,soc(-)?,network?,threads,vaapi?,vdpau?]
+		media-video/ffmpeg:0/58.60.60[encode,soc(-)?,network?,threads,vaapi?,vdpau?]
 	)
 	media-video/ffmpeg:=
 	X? (
@@ -173,6 +173,11 @@ COMMON_DEPEND="
 	)
 	lua? (
 		${LUA_DEPS}
+	)
+	network? (
+		elibc_glibc? (
+			sys-libs/glibc[nscd]
+		)
 	)
 	openal? (
 		>=media-libs/openal-1.13
@@ -408,4 +413,7 @@ pkg_postinst() {
 	xdg_pkg_postinst
 	optfeature_header "Install optional packages:"
 	optfeature "Website URL support (requires ${CATEGORY}/${PN}[lua])" "net-misc/yt-dlp"
+	if use network && use elibc_glibc ; then
+ewarn "The nscd service must be enabled and running for proper DNS resolution."
+	fi
 }
