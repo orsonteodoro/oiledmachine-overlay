@@ -25,7 +25,7 @@ https://github.com/ssabug/nudenet_video/archive/${FALLBACK_COMMIT}.tar.gz
 	"
 fi
 
-DESCRIPTION="A Python use of nudenet API to render blurred video files using FFMPEG"
+DESCRIPTION="A Python use of NudeNet API to render blurred video files using FFmpeg"
 HOMEPAGE="
 	https://github.com/ssabug/nudenet_video
 "
