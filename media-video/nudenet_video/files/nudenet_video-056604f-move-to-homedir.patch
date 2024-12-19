@@ -1,13 +1,21 @@
 diff '--color=auto' -urp nudenet_video-056604f32abda9dc006f8dc65b752351cafe0585.orig/nudenet_mod.py nudenet_video-056604f32abda9dc006f8dc65b752351cafe0585/nudenet_mod.py
 --- nudenet_video-056604f32abda9dc006f8dc65b752351cafe0585.orig/nudenet_mod.py	2024-12-19 14:29:25.940324574 -0800
 +++ nudenet_video-056604f32abda9dc006f8dc65b752351cafe0585/nudenet_mod.py	2024-12-19 14:32:44.130991090 -0800
-@@ -103,9 +103,13 @@ def _postprocess(output, img_width, img_
+@@ -103,9 +103,21 @@ def _postprocess(output, img_width, img_
  
  class NudeDetector:
      def __init__(self):
 +        _providers=[]
-+        if len(os.environ['CUDA_HOME']) > 0 and @USE_CUDA@:
++        if @USE_TENSORRT@:
++            _providers+=["TensorrtExecutionProvider"]
++        elif @USE_MIGRAPHX@:
++            _providers+=["MIGraphXExecutionProvider"]
++        elif @USE_CUDA@:
 +            _providers+=["CUDAExecutionProvider"]
++        elif @USE_ROCM@:
++            _providers+=["ROCMExecutionProvider"]
++        elif @USE_OPENVINO@:
++            _providers+=["OpenVINOExecutionProvider"]
 +        _providers+=["CPUExecutionProvider"]
          self.onnx_session = onnxruntime.InferenceSession(
              os.path.join(os.path.dirname(__file__), "best.onnx"),

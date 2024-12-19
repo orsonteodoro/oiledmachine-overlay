@@ -36,14 +36,14 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" cuda"
+IUSE+=" cuda migraphx rocm tensorrt"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/nudenet[${PYTHON_USEDEP}]
 		media-libs/opencv[${PYTHON_USEDEP},ffmpeg,jpeg,python]
 	')
-	sci-libs/onnxruntime[${PYTHON_SINGLE_USEDEP},cuda?,python]
+	sci-libs/onnxruntime[${PYTHON_SINGLE_USEDEP},cuda?,migraphx?,python,rocm?,tensorrt?]
 	media-video/ffmpeg[encode,x264]
 "
 DEPEND+="
@@ -69,8 +69,14 @@ src_unpack() {
 
 src_configure() {
 	local use_cuda=$(usex cuda "True" "False")
+	local use_migraphx=$(usex migraphx "True" "False")
+	local use_rocm=$(usex rocm "True" "False")
+	local use_tensorrt=$(usex rocm "True" "False")
 	sed -i \
 		-e "s|@USE_CUDA@|${use_cuda}|g" \
+		-e "s|@USE_MIGRAPHX@|${use_migraphx}|g" \
+		-e "s|@USE_ROCM@|${use_rocm}|g" \
+		-e "s|@USE_TENSORRT@|${use_tensorrt}|g" \
 		"nudenet_mod.py" \
 		|| die
 }
