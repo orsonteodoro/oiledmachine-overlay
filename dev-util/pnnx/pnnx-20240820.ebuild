@@ -65,6 +65,7 @@ BDEPEND+="
 DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-20240820-force-system-protobuf.patch"
+	"${FILESDIR}/${PN}-20240820-optionalize-features.patch"
 )
 
 pkg_setup() {
