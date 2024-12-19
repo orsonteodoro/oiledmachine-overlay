@@ -1,0 +1,56 @@
+diff '--color=auto' -urp dlib-19.24.2.orig/dlib/cmake_utils/set_compiler_specific_options.cmake dlib-19.24.2/dlib/cmake_utils/set_compiler_specific_options.cmake
+--- dlib-19.24.2.orig/dlib/cmake_utils/set_compiler_specific_options.cmake	2023-05-14 06:06:12.000000000 -0700
++++ dlib-19.24.2/dlib/cmake_utils/set_compiler_specific_options.cmake	2024-12-19 07:01:51.974194498 -0800
+@@ -6,20 +6,15 @@ cmake_minimum_required(VERSION 3.8.0)
+ if (COMMAND pybind11_add_module)
+    # For python users, enable SSE4 and AVX if they have these instructions.
+    include(${CMAKE_CURRENT_LIST_DIR}/check_if_sse4_instructions_executable_on_host.cmake)
+-   if (SSE4_IS_AVAILABLE_ON_HOST)
+-      set(USE_SSE4_INSTRUCTIONS ON CACHE BOOL "Compile your program with SSE4 instructions")
+-   endif()
+    include(${CMAKE_CURRENT_LIST_DIR}/check_if_avx_instructions_executable_on_host.cmake)
+-   if (AVX_IS_AVAILABLE_ON_HOST)
+-      set(USE_AVX_INSTRUCTIONS ON CACHE BOOL "Compile your program with AVX instructions")
+-   endif()
+    include(${CMAKE_CURRENT_LIST_DIR}/check_if_neon_available.cmake)
+-   if (ARM_NEON_IS_AVAILABLE)
+-      set(USE_NEON_INSTRUCTIONS ON CACHE BOOL "Compile your program with ARM-NEON instructions")
+-   endif()
+ endif()
+ 
+ 
++option(USE_SSE2_INSTRUCTIONS "Compile your program with SSE2 instructions" OFF)
++option(USE_SSE4_INSTRUCTIONS "Compile your program with SSE4 instructions" OFF)
++option(USE_AVX_INSTRUCTIONS  "Compile your program with AVX instructions"  OFF)
++option(USE_NEON_INSTRUCTIONS "Compile your program with ARM-NEON instructions" OFF)
+ 
+ 
+ set(gcc_like_compilers GNU Clang  Intel)
+@@ -29,9 +24,6 @@ set(intel_archs x86_64 i386 i686 AMD64 a
+ # Setup some options to allow a user to enable SSE and AVX instruction use.  
+ if ((";${gcc_like_compilers};" MATCHES ";${CMAKE_CXX_COMPILER_ID};")  AND
+    (";${intel_archs};"        MATCHES ";${CMAKE_SYSTEM_PROCESSOR};") AND NOT USE_AUTO_VECTOR)
+-   option(USE_SSE2_INSTRUCTIONS "Compile your program with SSE2 instructions" OFF)
+-   option(USE_SSE4_INSTRUCTIONS "Compile your program with SSE4 instructions" OFF)
+-   option(USE_AVX_INSTRUCTIONS  "Compile your program with AVX instructions"  OFF)
+    if(USE_AVX_INSTRUCTIONS)
+       list(APPEND active_compile_opts -mavx)
+       message(STATUS "Enabling AVX instructions")
+@@ -44,9 +36,6 @@ if ((";${gcc_like_compilers};" MATCHES "
+    endif()
+ elseif (MSVC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC") # else if using Visual Studio 
+    # Use SSE2 by default when using Visual Studio.
+-   option(USE_SSE2_INSTRUCTIONS "Compile your program with SSE2 instructions" ON)
+-   option(USE_SSE4_INSTRUCTIONS "Compile your program with SSE4 instructions" OFF)
+-   option(USE_AVX_INSTRUCTIONS  "Compile your program with AVX instructions"  OFF)
+ 
+    include(CheckTypeSize)
+    check_type_size( "void*" SIZE_OF_VOID_PTR)
+@@ -75,7 +64,6 @@ elseif (MSVC OR "${CMAKE_CXX_COMPILER_ID
+ 
+ elseif((";${gcc_like_compilers};" MATCHES ";${CMAKE_CXX_COMPILER_ID};")  AND
+         ("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "^arm"))
+-   option(USE_NEON_INSTRUCTIONS "Compile your program with ARM-NEON instructions" OFF)
+    if(USE_NEON_INSTRUCTIONS)
+       list(APPEND active_compile_opts -mfpu=neon)
+       message(STATUS "Enabling ARM-NEON instructions")
