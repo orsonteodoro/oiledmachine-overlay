@@ -3,13 +3,14 @@
 
 EAPI=8
 
-LUA_COMPAT=( "lua5-1" "luajit" )
+LUA_COMPAT=( "lua5-"{1..2} "luajit" )
 PYTHON_COMPAT=( "python3_"{10..13} )
+
 inherit flag-o-matic lua-single meson optfeature pax-utils python-single-r1 xdg
 
-if [[ ${PV} == 9999 ]]; then
-	inherit git-r3
+if [[ "${PV}" == "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/mpv-player/mpv.git"
+	inherit git-r3
 else
 	KEYWORDS="
 amd64 ~arm arm64 ~loong ~ppc ppc64 ~riscv x86 ~amd64-linux
@@ -22,7 +23,14 @@ fi
 
 DESCRIPTION="Media player for the command line"
 HOMEPAGE="https://mpv.io/"
-LICENSE="LGPL-2.1+ GPL-2+ BSD ISC MIT" #506946
+#506946
+LICENSE="
+	BSD
+	GPL-2+
+	ISC
+	LGPL-2.1+
+	MIT
+"
 RESTRICT="
 	!test? (
 		test
@@ -32,7 +40,7 @@ SLOT="0/2" # soname
 IUSE="
 +X +alsa aqua archive bluray cdda +cli coreaudio debug +drm dvb dvd +egl gamepad
 +iconv jack javascript jpeg lcms libcaca +libmpv +lua nvenc openal opengl
-pipewire pulseaudio rubberband sdl selinux sixel sndio soc test tools +uchardet
+pipewire pulseaudio rubberband sdl selinux shaderc sixel sndio soc test tools +uchardet
 vaapi vdpau vulkan wayland xv zimg zlib
 "
 REQUIRED_USE="
@@ -95,45 +103,45 @@ REQUIRED_USE="
 "
 # FFmpeg 6.1
 COMMON_DEPEND="
-	media-libs/libass:=[fontconfig]
 	>=media-libs/libplacebo-6.338.2:=[opengl?,vulkan?]
+	>=media-libs/libass-0.12.2:=[fontconfig]
 	|| (
 		media-video/ffmpeg:58.60.60[encode,soc(-)?,threads,vaapi?,vdpau?]
 		media-video/ffmpeg:0/58.60.60[encode,soc(-)?,threads,vaapi?,vdpau?]
 	)
 	media-video/ffmpeg:=
 	X? (
-		x11-libs/libX11
-		x11-libs/libXScrnSaver
-		x11-libs/libXext
-		x11-libs/libXpresent
-		x11-libs/libXrandr
+		>=x11-libs/libX11-1.0.0
+		>=x11-libs/libXext-1.0.0
+		>=x11-libs/libXpresent-1.0.0
+		>=x11-libs/libXrandr-1.4.0
+		>=x11-libs/libXScrnSaver-1.0.0
 		xv? (
 			x11-libs/libXv
 		)
 	)
 	alsa? (
-		media-libs/alsa-lib
+		>=media-libs/alsa-lib-1.0.18
 	)
 	archive? (
-		app-arch/libarchive:=
+		>=app-arch/libarchive-3.4.0:=
 	)
 	bluray? (
-		media-libs/libbluray:=
+		>=media-libs/libbluray-0.3.0:=
 	)
 	cdda? (
 		dev-libs/libcdio-paranoia:=
-		dev-libs/libcdio:=
+		>=dev-libs/libcdio-0.90:=
 	)
 	drm? (
-		x11-libs/libdrm
+		>=x11-libs/libdrm-2.4.105
 		egl? (
-			media-libs/mesa[gbm(+)]
+			>=media-libs/mesa-17.1.0[gbm(+)]
 		)
 	)
 	dvd? (
-		media-libs/libdvdnav
-		media-libs/libdvdread:=
+		>=media-libs/libdvdnav-4.2.0
+		>=media-libs/libdvdread-4.1.0:=
 	)
 	egl? (
 		media-libs/libglvnd
@@ -152,60 +160,60 @@ COMMON_DEPEND="
 		virtual/jack
 	)
 	javascript? (
-		dev-lang/mujs:=
+		>=dev-lang/mujs-1.0.0:=
 	)
 	jpeg? (
 		media-libs/libjpeg-turbo:=
 	)
 	lcms? (
-		media-libs/lcms:2
+		>=media-libs/lcms-2.6:2
 	)
 	libcaca? (
-		media-libs/libcaca
+		>=media-libs/libcaca-0.99_beta18
 	)
 	lua? (
 		${LUA_DEPS}
 	)
 	openal? (
-		media-libs/openal
+		>=media-libs/openal-1.13
 	)
 	opengl? (
 		media-libs/libglvnd[X?]
 	)
 	pipewire? (
-		media-video/pipewire:=
+		>=media-video/pipewire-0.3.57:=
 	)
 	pulseaudio? (
 		media-libs/libpulse
 	)
 	rubberband? (
-		media-libs/rubberband
+		>=media-libs/rubberband-1.8.0
 	)
 	sdl? (
 		media-libs/libsdl2[sound,threads(+),video]
 	)
 	sixel? (
-		media-libs/libsixel
+		>=media-libs/libsixel-1.5
 	)
 	sndio? (
-		media-sound/sndio:=
+		>=media-sound/sndio-1.9.0:=
 	)
 	vaapi? (
-		media-libs/libva:=[X?,drm(+)?,wayland?]
+		>=media-libs/libva-1.1.0:=[X?,drm(+)?,wayland?]
 	)
 	vdpau? (
-		x11-libs/libvdpau
+		>=x11-libs/libvdpau-0.2
 	)
 	vulkan? (
-		media-libs/vulkan-loader[X?,wayland?]
+		>=media-libs/vulkan-loader-1.3.238[X?,wayland?]
 	)
 	wayland? (
-		dev-libs/wayland
-		dev-libs/wayland-protocols
+		>=dev-libs/wayland-1.21.0
+		>=dev-libs/wayland-protocols-1.31
 		x11-libs/libxkbcommon
 	)
 	zimg? (
-		media-libs/zimg
+		>=media-libs/zimg-2.9
 	)
 	zlib? (
 		sys-libs/zlib:=
@@ -232,7 +240,7 @@ DEPEND="
 		media-libs/nv-codec-headers
 	)
 	vulkan? (
-		dev-util/vulkan-headers
+		>=dev-util/vulkan-headers-1.3.238
 	)
 	wayland? (
 		dev-libs/wayland-protocols
@@ -240,6 +248,7 @@ DEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
+	>=dev-build/meson-0.62.0
 	dev-util/patchelf
 	virtual/pkgconfig
 	cli? (
@@ -302,6 +311,7 @@ einfo "Skipping -DNDEBUG due to USE=test"
 		$(meson_feature openal)
 		$(meson_feature pipewire)
 		$(meson_feature pulseaudio pulse)
+		$(meson_feature shaderc)
 		$(meson_feature rubberband)
 		$(meson_feature sdl sdl2-audio)
 		$(meson_feature sdl sdl2-video)
@@ -338,11 +348,18 @@ einfo "Skipping -DNDEBUG due to USE=test"
 		-Dpdf-build="disabled"
 		-Dsdl2=$(use gamepad || use sdl && echo "enabled" || echo "disabled") #857156
 		-Dvapoursynth="disabled" # only available in overlays
-		# Notable options left to automagic
-		#dmabuf-wayland: USE="drm wayland" + plus memfd_create support
-		#vulkan-interop: USE="vulkan" + >=ffmpeg-6.1
-		# TODO?: perhaps few more similar compound options should be left auto
 	)
+
+	if use drm && use wayland && use elibc_glibc && has_version ">=sys-libs/glibc-2.26" ; then
+		emesonargs+=(
+			-Ddmabuf-wayland="enabled"
+			-Dmemfd-create="enabled"
+		)
+	else
+		emesonargs+=(
+			-Ddmabuf-wayland="disabled"
+		)
+	fi
 
 	meson_src_configure
 }
