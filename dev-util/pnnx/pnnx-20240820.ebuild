@@ -41,7 +41,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" onnxruntime torchvision"
+IUSE+=" onnxruntime protobuf torchvision"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/protobuf-3.12.4[${PYTHON_USEDEP}]
@@ -49,6 +49,9 @@ RDEPEND+="
 	>=sci-libs/pytorch-1.8.1[${PYTHON_SINGLE_USEDEP}]
 	onnxruntime? (
 		sci-libs/onnxruntime
+	)
+	protobuf? (
+		dev-libs/protobuf:=
 	)
 	torchvision? (
 		>=sci-libs/torchvision-0.8.2[${PYTHON_SINGLE_USEDEP}]
