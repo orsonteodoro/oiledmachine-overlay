@@ -40,7 +40,7 @@ SLOT="0/2" # soname
 IUSE="
 +X +alsa aqua archive bluray cdda +cli coreaudio debug +drm dvb dvd +egl gamepad
 +iconv jack javascript jpeg lcms libcaca +libmpv +lua nvenc openal opengl
-pipewire pulseaudio rubberband sdl selinux shaderc sixel sndio soc test tools +uchardet
+pipewire pulseaudio rubberband sdl selinux sixel sndio soc test tools +uchardet
 vaapi vdpau vulkan wayland xv zimg zlib
 "
 REQUIRED_USE="
@@ -311,7 +311,6 @@ einfo "Skipping -DNDEBUG due to USE=test"
 		$(meson_feature openal)
 		$(meson_feature pipewire)
 		$(meson_feature pulseaudio pulse)
-		$(meson_feature shaderc)
 		$(meson_feature rubberband)
 		$(meson_feature sdl sdl2-audio)
 		$(meson_feature sdl sdl2-video)
