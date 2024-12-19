@@ -1,0 +1,27 @@
+diff '--color=auto' -urp nudenet_video-056604f32abda9dc006f8dc65b752351cafe0585.orig/nudenet_mod.py nudenet_video-056604f32abda9dc006f8dc65b752351cafe0585/nudenet_mod.py
+--- nudenet_video-056604f32abda9dc006f8dc65b752351cafe0585.orig/nudenet_mod.py	2024-12-19 14:29:25.940324574 -0800
++++ nudenet_video-056604f32abda9dc006f8dc65b752351cafe0585/nudenet_mod.py	2024-12-19 14:32:44.130991090 -0800
+@@ -103,9 +103,13 @@ def _postprocess(output, img_width, img_
+ 
+ class NudeDetector:
+     def __init__(self):
++        _providers=[]
++        if len(os.environ['CUDA_HOME']) > 0 and @USE_CUDA@:
++            _providers+=["CUDAExecutionProvider"]
++        _providers+=["CPUExecutionProvider"]
+         self.onnx_session = onnxruntime.InferenceSession(
+             os.path.join(os.path.dirname(__file__), "best.onnx"),
+-            providers=["CUDAExecutionProvider", "CPUExecutionProvider"],
++            providers=_providers,
+         )
+         model_inputs = self.onnx_session.get_inputs()
+         input_shape = model_inputs[0].shape
+@@ -127,4 +131,7 @@ class NudeDetector:
+ 
+ if __name__ == "__main__":
+     detector = NudeDetector()
+-    detections = detector.detect("/Users/praneeth.bedapudi/Desktop/images.jpeg")
++    CACHE_DIRECTORY = os.path.join(os.path.expanduser("~"), ".cache", "nudenet_video.py")
++    if not os.path.exists(CACHE_DIRECTORY):
++        os.mkdir(CACHE_DIRECTORY)
++    detections = detector.detect(os.path.join(CACHE_DIRECTORY, "images.jpeg"))
