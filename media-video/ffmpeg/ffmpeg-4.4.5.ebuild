@@ -4406,6 +4406,8 @@ ewarn
 	fi
 
 	if use network && use elibc_glibc ; then
+# Fixes:
+# [ffmpeg] tcp: Failed to resolve hostname <redacted>: Temporary failure in name resolution
 ewarn "The nscd service must be enabled and running for proper DNS resolution."
 	fi
 
