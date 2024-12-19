@@ -314,10 +314,10 @@ RDEPEND+="
 		${NCNN_DEPEND}
 	)
 	|| (
-		=media-video/ffmpeg-6.1*:58.60.60[svt-av1?,vpx?,x264?,x265?]
-		=media-video/ffmpeg-6.1*:0/58.60.60[svt-av1?,vpx?,x264?,x265?]
-		=media-video/ffmpeg-4*:56.58.58[svt-av1?,vpx?,x264?,x265?]
-		=media-video/ffmpeg-4*:0/56.58.58[svt-av1?,vpx?,x264?,x265?]
+		=media-video/ffmpeg-6.1*:58.60.60[encode,svt-av1?,vpx?,x264?,x265?]
+		=media-video/ffmpeg-6.1*:0/58.60.60[encode,svt-av1?,vpx?,x264?,x265?]
+		=media-video/ffmpeg-4*:56.58.58[encode,svt-av1?,vpx?,x264?,x265?]
+		=media-video/ffmpeg-4*:0/56.58.58[encode,svt-av1?,vpx?,x264?,x265?]
 	)
 	media-video/ffmpeg:=
 "

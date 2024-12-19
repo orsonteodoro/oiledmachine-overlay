@@ -68,6 +68,7 @@ RDEPEND+="
 	>=media-libs/opencv-4.8.1.78[${PYTHON_USEDEP},ffmpeg]
 	>=sci-libs/dlib-19.24.0[${PYTHON_USEDEP}]
 	>=virtual/pillow-10.3.0[${PYTHON_USEDEP}]
+	media-video/ffmpeg[encode]
 "
 DEPEND+="
 	${RDEPEND}
