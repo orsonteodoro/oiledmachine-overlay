@@ -1,0 +1,17 @@
+--- a/CMakeLists.txt.orig	2024-12-18 16:40:38.321978936 -0800
++++ b/CMakeLists.txt	2024-12-18 16:49:04.430562941 -0800
+@@ -89,12 +89,12 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "
+ endif()
+ 
+ if((PNNX_TORCH_USE_CXX11_ABI AND PNNX_COMPILER_USE_CXX11_ABI) OR (NOT PNNX_TORCH_USE_CXX11_ABI AND NOT PNNX_COMPILER_USE_CXX11_ABI))
+-    find_package(protobuf CONFIG)
++    #find_package(protobuf CONFIG)
+ 
+-    if(protobuf_FOUND)
++    if(FALSE AND protobuf_FOUND)
+         set(PROTOBUF_FOUND ${protobuf_FOUND})
+         set(PROTOBUF_VERSION ${protobuf_VERSION})
+     else()
+         # fallback to system
+         find_package(Protobuf)
+         set(PROTOBUF_FOUND ${Protobuf_FOUND})
