@@ -65,7 +65,7 @@ RDEPEND+="
 	>=dev-python/tqdm-4.66.3[${PYTHON_USEDEP}]
 	>=dev-python/traitlets-5.4.0[${PYTHON_USEDEP}]
 	>=dev-python/wcwidth-0.2.5[${PYTHON_USEDEP}]
-	>=media-libs/opencv-4.8.1.78[${PYTHON_USEDEP}]
+	>=media-libs/opencv-4.8.1.78[${PYTHON_USEDEP},ffmpeg]
 	>=sci-libs/dlib-19.24.0[${PYTHON_USEDEP}]
 	>=virtual/pillow-10.3.0[${PYTHON_USEDEP}]
 "
@@ -98,3 +98,6 @@ src_install() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (build date 20240922 a2f2a08, test date 20241219)
+# opencv ffmpeg backend:  pass
+# gaussian blur (default):  pass, but shows face on edge cases (requires manual frame cropping)
