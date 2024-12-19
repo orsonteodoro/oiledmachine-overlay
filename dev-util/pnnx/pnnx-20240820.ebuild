@@ -90,6 +90,9 @@ src_configure() {
 	local mycmakeargs=(
 		-DPython3_EXECUTABLE="${PYTHON}"
 		-Donnxruntime_INSTALL_DIR="/usr"
+		-DUSE_ONNXRUNTIME=$(usex onnxruntime)
+		-DUSE_PROTOBUF=$(usex protobuf)
+		-DUSE_TORCHVISION=$(usex torchvision)
 	)
 	cmake_src_configure
 }
