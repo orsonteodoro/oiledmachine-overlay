@@ -21,7 +21,7 @@ diff '--color=auto' -urp nudenet_video-056604f32abda9dc006f8dc65b752351cafe0585.
  if __name__ == "__main__":
      detector = NudeDetector()
 -    detections = detector.detect("/Users/praneeth.bedapudi/Desktop/images.jpeg")
-+    CACHE_DIRECTORY = os.path.join(os.path.expanduser("~"), ".cache", "nudenet_video.py")
++    CACHE_DIRECTORY = os.path.join(os.path.expanduser("~"), ".cache", "nudenet_video")
 +    if not os.path.exists(CACHE_DIRECTORY):
 +        os.mkdir(CACHE_DIRECTORY)
 +    detections = detector.detect(os.path.join(CACHE_DIRECTORY, "images.jpeg"))
