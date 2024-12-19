@@ -9,6 +9,7 @@ PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1
 
+KEYWORDS="~amd64 ~arm64"
 SRC_URI="
 https://github.com/ageitgey/face_recognition/archive/${FALLBACK_COMMIT}.tar.gz
 	-> ${PN}-${FALLBACK_COMMIT:0:7}.tar.gz
@@ -26,7 +27,6 @@ RESTRICT="
 	)
 "
 SLOT="0"
-KEYWORDS="~amd64 ~arm64"
 IUSE=" dev"
 RDEPEND="
 	>=dev-python/click-6.0[${PYTHON_USEDEP}]
