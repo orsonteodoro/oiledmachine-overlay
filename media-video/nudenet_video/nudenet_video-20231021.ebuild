@@ -36,7 +36,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" cuda migraphx openvino rocm tensorrt"
+IUSE+="
+cuda migraphx openvino rocm tensorrt
+ebuild-revision-1
+"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/nudenet[${PYTHON_USEDEP}]
@@ -92,7 +95,7 @@ src_install() {
 cat <<EOF > "${ED}/usr/bin/nudenet_video"
 #!/bin/bash
 cd "/usr/lib/${EPYTHON}/site-packages/nudenet_video"
-${EPYTHON} nudenet_video.py "$@"
+${EPYTHON} nudenet_video.py "\$@"
 EOF
 	fperms 0755 "/usr/bin/nudenet_video"
 }
