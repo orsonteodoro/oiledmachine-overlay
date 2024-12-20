@@ -38,7 +38,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 cuda migraphx openvino rocm tensorrt
-ebuild-revision-3
+ebuild-revision-4
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
@@ -56,7 +56,6 @@ BDEPEND+="
 "
 DOCS=( "HISTORY&DEBUG.md" "README.html" "README.md" )
 PATCHES=(
-	"${FILESDIR}/${PN}-056604f-frombuffer-arg.patch"
 	"${FILESDIR}/${PN}-056604f-move-to-homedir.patch"
 	"${FILESDIR}/${PN}-056604f-fix-arg-folder-path.patch"
 )
