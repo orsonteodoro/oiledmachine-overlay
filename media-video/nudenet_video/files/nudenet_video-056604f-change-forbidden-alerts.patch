@@ -1,0 +1,15 @@
+diff '--color=auto' -urp nudenet_video-056604f32abda9dc006f8dc65b752351cafe0585.orig/nudenet_video.py nudenet_video-056604f32abda9dc006f8dc65b752351cafe0585/nudenet_video.py
+--- nudenet_video-056604f32abda9dc006f8dc65b752351cafe0585.orig/nudenet_video.py	2024-12-19 17:17:11.232677246 -0800
++++ nudenet_video-056604f32abda9dc006f8dc65b752351cafe0585/nudenet_video.py	2024-12-19 17:21:08.515100955 -0800
+@@ -10,7 +10,10 @@ import io;
+ from string import Template;
+ 
+ videoFileExtensions=["mp4","avi","mkv","wmv"];
+-forbiddenAlerts=["MALE_GENITALIA_EXPOSED","FEMALE_GENITALIA_EXPOSED","ANUS_EXPOSED"];
++if os.environ.get('NUDENET_VIDEO_FORBIDDEN_ALERTS'):
++	forbiddenAlerts=os.environ.get('NUDENET_VIDEO_FORBIDDEN_ALERTS').split();
++else:
++	forbiddenAlerts=["MALE_GENITALIA_EXPOSED","FEMALE_GENITALIA_EXPOSED","ANUS_EXPOSED","FEMALE_BREAST_EXPOSED"];
+ analysisRate=1.0;
+ groupingTimeWindow=10;
+ timeMargin=1.0;

@@ -25,7 +25,7 @@ https://github.com/ssabug/nudenet_video/archive/${FALLBACK_COMMIT}.tar.gz
 	"
 fi
 
-DESCRIPTION="A Python script to detect and blur explicit parts of nude videos using NudeNet and FFmpeg"
+DESCRIPTION="A Python script to detect and blur explicit nudity in videos using NudeNet and FFmpeg"
 HOMEPAGE="
 	https://github.com/ssabug/nudenet_video
 "
@@ -58,6 +58,7 @@ DOCS=( "HISTORY&DEBUG.md" "README.html" "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-056604f-move-to-homedir.patch"
 	"${FILESDIR}/${PN}-056604f-fix-arg-folder-path.patch"
+	"${FILESDIR}/${PN}-056604f-change-forbidden-alerts.patch"
 )
 
 src_unpack() {
@@ -101,4 +102,10 @@ EOF
 	fperms 0755 "/usr/bin/nudenet_video"
 }
 
+pkg_postinst() {
+	einfo "The NUDENET_VIDEO_FORBIDDEN_ALERTS environment variable can be set before running nudenet_video."
+}
+
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  FAIL (056604f3, 20241219)
+# Adult video test:  fail (nip slip, does not filter inappropriate behavior)
