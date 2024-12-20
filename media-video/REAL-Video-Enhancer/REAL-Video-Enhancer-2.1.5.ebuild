@@ -138,9 +138,9 @@ else
 	SRC_URI="
 	${MODELS_URI}
 	$(gen_models_uris)
-https://github.com/TNTwise/REAL-Video-Enhancer/archive/refs/tags/RVE-${PV}.tar.gz
+fetch+https://github.com/TNTwise/REAL-Video-Enhancer/archive/refs/tags/RVE-${PV}.tar.gz
 	-> ${P}.tar.gz
-https://github.com/TNTwise/real-video-enhancer-models/releases/download/models/backend-v${BACKEND_PV}.tar.gz
+fetch+https://github.com/TNTwise/real-video-enhancer-models/releases/download/models/backend-v${BACKEND_PV}.tar.gz
 	-> ${PN}-backend-${BACKEND_PV}.tar.gz
 	"
 fi
