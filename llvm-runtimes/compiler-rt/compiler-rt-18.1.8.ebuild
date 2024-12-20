@@ -37,6 +37,14 @@ LICENSE="
 		UoI-NCSA
 	)
 "
+RESTRICT="
+	!clang? (
+		test
+	)
+	!test? (
+		test
+	)
+"
 SLOT="${LLVM_MAJOR}"
 IUSE+="
 +abi_x86_32 abi_x86_64 +clang +debug test
@@ -51,19 +59,13 @@ BDEPEND="
 		llvm-core/clang:${LLVM_MAJOR}
 	)
 	test? (
-		$(python_gen_any_dep ">=dev-python/lit-15[\${PYTHON_USEDEP}]")
+		$(python_gen_any_dep "
+			>=dev-python/lit-15[\${PYTHON_USEDEP}]
+		")
 		=llvm-core/clang-${LLVM_VERSION}*:${LLVM_MAJOR}
 	)
 	!test? (
 		${PYTHON_DEPS}
-	)
-"
-RESTRICT="
-	!clang? (
-		test
-	)
-	!test? (
-		test
 	)
 "
 LLVM_COMPONENTS=(
@@ -79,9 +81,11 @@ python_check_deps() {
 }
 
 pkg_pretend() {
-	if ! use clang && ! tc-is-clang; then
-		ewarn "Building using a compiler other than clang may result in broken atomics"
-		ewarn "library. Enable USE=clang unless you have a very good reason not to."
+	if ! use clang && ! tc-is-clang ; then
+ewarn
+ewarn "Building using a compiler other than clang may result in broken atomics"
+ewarn "library. Enable USE=clang unless you have a very good reason not to."
+ewarn
 	fi
 }
 
@@ -97,7 +101,10 @@ pkg_setup() {
 
 test_compiler() {
 	target_is_not_host && return
-	$(tc-getCC) ${CFLAGS} ${LDFLAGS} "${@}" -o "/dev/null" -x c - \
+	$(tc-getCC) ${CFLAGS} ${LDFLAGS} "${@}" \
+		-o "/dev/null" \
+		-x c \
+		- \
 		<<<'int main() { return 0; }' &>"/dev/null"
 }
 
@@ -126,14 +133,17 @@ src_configure() {
 
 		if test_compiler "${nolib_flags[@]}"; then
 			local -x LDFLAGS="${LDFLAGS} ${nolib_flags[*]}"
-			ewarn "${CC} seems to lack runtime, trying with ${nolib_flags[*]}"
-		elif test_compiler "${nolib_flags[@]}" -nostartfiles; then
+ewarn "${CC} seems to lack runtime, trying with ${nolib_flags[*]}"
+		elif test_compiler "${nolib_flags[@]}" -nostartfiles ; then
 			# Avoiding -nostartfiles earlier on for bug #862540,
 			# and set available entry symbol for bug #862798.
-			nolib_flags+=( -nostartfiles -e main )
+			nolib_flags+=(
+				-nostartfiles
+				-e main
+			)
 
 			local -x LDFLAGS="${LDFLAGS} ${nolib_flags[*]}"
-			ewarn "${CC} seems to lack runtime, trying with ${nolib_flags[*]}"
+ewarn "${CC} seems to lack runtime, trying with ${nolib_flags[*]}"
 		fi
 	fi
 
@@ -191,7 +201,7 @@ src_configure() {
 		)
 	fi
 
-	if use test; then
+	if use test ; then
 		mycmakeargs+=(
 			-DLLVM_EXTERNAL_LIT="${EPREFIX}/usr/bin/lit"
 			-DLLVM_LIT_ARGS="$(get_lit_flags)"

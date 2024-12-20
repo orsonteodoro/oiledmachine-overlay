@@ -1,32 +1,13 @@
-# Copyright 1999-2024 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
 
-# Last update:  2024-09-22
+PYTHON_COMPAT=( "python3_"{8..10} )
 
-if [[ "${PV}" =~ "9999" ]] ; then
-	IUSE+="
-		fallback-commit
-	"
-fi
+inherit cmake flag-o-matic llvm llvm.org python-any-r1 toolchain-funcs
 
-inherit llvm-ebuilds
-
-_llvm_set_globals() {
-	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
-llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM20_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM20_BRANCH}"
-	fi
-}
-_llvm_set_globals
-unset -f _llvm_set_globals
-
-PYTHON_COMPAT=( "python3_"{10..13} )
-
-inherit cmake crossdev flag-o-matic llvm.org llvm-utils python-any-r1
-inherit toolchain-funcs
+KEYWORDS="amd64 arm arm64 ppc64 ~riscv x86 ~amd64-linux ~ppc-macos ~x64-macos"
 
 DESCRIPTION="Compiler runtime library for clang (built-in part)"
 HOMEPAGE="https://llvm.org/"
@@ -45,18 +26,13 @@ RESTRICT="
 		test
 	)
 "
-SLOT="${LLVM_MAJOR}"
+SLOT="$(ver_cut 1-3)"
+LLVM_MAX_SLOT="${SLOT%%.*}"
 IUSE+="
-+abi_x86_32 abi_x86_64 +atomic-builtins +clang +debug test
-${LLVM_EBUILDS_LLVM20_REVISION}
-"
-REQUIRED_USE="
-	atomic-builtins? (
-		clang
-	)
++abi_x86_32 abi_x86_64 +clang debug test
 "
 DEPEND="
-	llvm-core/llvm:${LLVM_MAJOR}
+	llvm-core/llvm:${LLVM_MAX_SLOT}
 "
 BDEPEND="
 	>=dev-build/cmake-3.16
@@ -65,9 +41,9 @@ BDEPEND="
 	)
 	test? (
 		$(python_gen_any_dep "
-			>=dev-python/lit-15[\${PYTHON_USEDEP}]
+			>=dev-python/lit-9.0.1[\${PYTHON_USEDEP}]
 		")
-		=llvm-core/clang-${LLVM_VERSION}*:${LLVM_MAJOR}
+		=llvm-core/clang-${PV%_*}*:${LLVM_MAX_SLOT}
 	)
 	!test? (
 		${PYTHON_DEPS}
@@ -76,16 +52,13 @@ BDEPEND="
 LLVM_COMPONENTS=(
 	"compiler-rt"
 	"cmake"
-	"llvm/cmake"
 )
-LLVM_TEST_COMPONENTS=(
-	"llvm/include/llvm/TargetParser"
-)
+LLVM_PATCHSET="${PV}-r2"
 llvm.org_set_globals
 
 python_check_deps() {
 	use test || return 0
-	python_has_version ">=dev-python/lit-15[${PYTHON_USEDEP}]"
+	python_has_version ">=dev-python/lit-9.0.1[${PYTHON_USEDEP}]"
 }
 
 pkg_pretend() {
@@ -98,17 +71,16 @@ ewarn
 }
 
 pkg_setup() {
-	if target_is_not_host || tc-is-cross-compiler ; then
-		# strips vars like CFLAGS="-march=x86_64-v3" for non-x86 architectures
-		CHOST=${CTARGET} strip-unsupported-flags
-		# overrides host docs otherwise
-		DOCS=()
+	# Darwin Prefix builds do not have llvm installed yet, so rely on
+	# bootstrap-prefix to set the appropriate path vars to LLVM instead
+	# of using llvm_pkg_setup.
+	if [[ "${CHOST}" != *"-darwin"* ]] || has_version "llvm-core/llvm" ; then
+		llvm_pkg_setup
 	fi
 	python-any-r1_pkg_setup
 }
 
 test_compiler() {
-	target_is_not_host && return
 	$(tc-getCC) ${CFLAGS} ${LDFLAGS} "${@}" \
 		-o "/dev/null" \
 		-x c \
@@ -117,15 +89,13 @@ test_compiler() {
 }
 
 src_configure() {
-	llvm_prepend_path "${LLVM_MAJOR}"
-
 	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
 
 	# pre-set since we need to pass it to cmake
 	BUILD_DIR="${WORKDIR}/${P}_build"
 
-	if use clang && ! is_crosspkg ; then
+	if use clang; then
 		# Only do this conditionally to allow overriding with
 		# e.g. CC=clang-13 in case of breakage
 		if ! tc-is-clang ; then
@@ -136,8 +106,11 @@ src_configure() {
 		strip-unsupported-flags
 	fi
 
-	if ! test_compiler && ! test_compiler ; then
-		local nolib_flags=( -nodefaultlibs -lc )
+	if ! test_compiler; then
+		local nolib_flags=(
+			-nodefaultlibs
+			-lc
+		)
 
 		if test_compiler "${nolib_flags[@]}"; then
 			local -x LDFLAGS="${LDFLAGS} ${nolib_flags[*]}"
@@ -156,45 +129,21 @@ ewarn "${CC} seems to lack runtime, trying with ${nolib_flags[*]}"
 	fi
 
 	local mycmakeargs=(
-		-DCOMPILER_RT_INSTALL_PATH="${EPREFIX}/usr/lib/clang/${LLVM_MAJOR}"
-
-		-DCOMPILER_RT_EXCLUDE_ATOMIC_BUILTIN=$(usex !atomic-builtins)
+		-DCOMPILER_RT_INSTALL_PATH="${EPREFIX}/usr/lib/clang/${SLOT}"
 		-DCOMPILER_RT_INCLUDE_TESTS=$(usex test)
-		-DCOMPILER_RT_BUILD_CTX_PROFILE=OFF
 		-DCOMPILER_RT_BUILD_LIBFUZZER=OFF
 		-DCOMPILER_RT_BUILD_MEMPROF=OFF
 		-DCOMPILER_RT_BUILD_ORC=OFF
 		-DCOMPILER_RT_BUILD_PROFILE=OFF
 		-DCOMPILER_RT_BUILD_SANITIZERS=OFF
 		-DCOMPILER_RT_BUILD_XRAY=OFF
-
 		-DPython3_EXECUTABLE="${PYTHON}"
 	)
 
-	if use amd64 && ! target_is_not_host ; then
+	if use amd64 ; then
 		mycmakeargs+=(
 			-DCAN_TARGET_i386=$(usex abi_x86_32)
 			-DCAN_TARGET_x86_64=$(usex abi_x86_64)
-		)
-	fi
-
-	if is_crosspkg ; then
-		# Needed to target built libc headers
-		export CFLAGS="${CFLAGS} -isystem /usr/${CTARGET}/usr/include"
-		mycmakeargs+=(
-			# Without this, the compiler will compile a test program
-			# and fail due to no builtins.
-			-DCMAKE_C_COMPILER_WORKS=1
-			-DCMAKE_CXX_COMPILER_WORKS=1
-
-			# Without this, compiler-rt install location is not unique
-			# to target triples, only to architecture.
-			# Needed if you want to target multiple libcs for one arch.
-			-DLLVM_ENABLE_PER_TARGET_RUNTIME_DIR=ON
-
-			-DCMAKE_ASM_COMPILER_TARGET="${CTARGET}"
-			-DCMAKE_C_COMPILER_TARGET="${CTARGET}"
-			-DCOMPILER_RT_DEFAULT_TARGET_ONLY=ON
 		)
 	fi
 
@@ -215,19 +164,15 @@ ewarn "${CC} seems to lack runtime, trying with ${nolib_flags[*]}"
 		mycmakeargs+=(
 			-DLLVM_EXTERNAL_LIT="${EPREFIX}/usr/bin/lit"
 			-DLLVM_LIT_ARGS="$(get_lit_flags)"
-
-			-DCOMPILER_RT_TEST_COMPILER="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/bin/clang"
-			-DCOMPILER_RT_TEST_CXX_COMPILER="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/bin/clang++"
+			-DCOMPILER_RT_TEST_COMPILER="${EPREFIX}/usr/lib/llvm/${LLVM_MAX_SLOT}/bin/clang"
+			-DCOMPILER_RT_TEST_CXX_COMPILER="${EPREFIX}/usr/lib/llvm/${LLVM_MAX_SLOT}/bin/clang++"
 		)
 	fi
-
 	cmake_src_configure
 }
 
 src_test() {
 	# respect TMPDIR!
 	local -x LIT_PRESERVES_TMP=1
-
 	cmake_build check-builtins
 }
-
