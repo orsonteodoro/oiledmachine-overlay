@@ -860,6 +860,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/astunparse | An Abstract Syntax Tree (AST) unparser for Python |
 | dev-python/autorom | A tool to automate installing Atari ROMs for the Arcade Learning Environment |
 | dev-python/autorom-accept-rom-license | AutoROM ROMs |
+| dev-python/backcall | Backwards compatible callback APIs |
 | dev-python/barectf | Generator of ANSI C tracers which output CTF data streams |
 | dev-python/blis | A self-contained 💥 fast matrix-multiplication Python library without system dependencies! |
 | dev-python/box2d-py | A repackaged version of pybox2d |
@@ -904,6 +905,8 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/encodec | State-of-the-art deep learning based audio codec supporting both mono 24 kHz audio and stereo 48 kHz audio. |
 | dev-python/etils | Collection of eclectic utils for Python |
 | dev-python/exhale | Automatic C++ library api documentation generation: breathe doxygen in and exhale it out |
+| dev-python/face-recognition | Recognize faces from Python or from the command line |
+| dev-python/face_recognition_models | Models used by the face_recognition package. |
 | dev-python/fastbencode | Fast implementation of bencode |
 | dev-python/flake8-colors | ANSI colors highlight for Flake8 |
 | dev-python/flake8-docstrings | Integration of pydocstyle and flake8 for combined linting and reporting |
@@ -971,6 +974,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/nnef-parser | A parser to add support for neural network NNEF files |
 | dev-python/nnef-tools | Convert neural networks models to NNEF format |
 | dev-python/nose_xunitmp | A nosetest xunit plugin with multiprocessor support |
+| dev-python/nudenet | Lightweight nudity detection |
 | dev-python/num2words | Modules to convert numbers to words. |
 | dev-python/numba | NumPy aware dynamic Python compiler using LLVM |
 | dev-python/numpy | Fast array and numerical Python library |
@@ -1000,6 +1004,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/py-stackexchange | A Python binding for the StackExchange API |
 | dev-python/py3c | A Python 2/3 compatibility layer for C extensions |
 | dev-python/pyaudio | Python bindings for PortAudio |
+| dev-python/pybboxes | A Lightweight toolkit for bounding boxes providing conversion between bounding box types and simple computations |
 | dev-python/pyclibrary | C parser and ctypes automation for Python |
 | dev-python/pycsdr | Python bindings for the csdr library |
 | dev-python/pydantic-settings | Settings management using Pydantic |
@@ -1041,6 +1046,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/spacy-loggers | 📟 Logging utilities for spaCy |
 | dev-python/sphinx-theme-builder | Clean up the public namespace of your package! |
 | dev-python/srsly | 🦉 Modern high-performance serialization utilities for Python (JSON, MessagePack, Pickle) |
+| dev-python/statsmodels | Statistical computations and models for use with SciPy |
 | dev-python/sysv-ipc | System V IPC primitives (semaphores, shared memory and message queues) for Python |
 | dev-python/tdir | Create, fill a temporary directory |
 | dev-python/tf-keras | The TensorFlow-specific implementation of the Keras API |
@@ -1055,6 +1061,8 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/types-dataclasses | Typing stubs for dataclasses |
 | dev-python/types-toml | Typing stubs for toml |
 | dev-python/typing-extensions | Backported and experimental type hints for Python |
+| dev-python/ultralytics | Ultralytics YOLO 🚀 for SOTA object detection, multi-object tracking, instance segmentation, pose estimation and image classification |
+| dev-python/ultralytics-thop | Ultralytics THOP package for fast computation of PyTorch model FLOPs and parameters |
 | dev-python/upscale-ncnn-py | Python bindings for upscaling using neural networks and Vulkan |
 | dev-python/wandb | A CLI and library for interacting with the Weights & Biases API |
 | dev-python/wasabi | 🍣 A lightweight console printing and formatting toolkit |
@@ -1086,6 +1094,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-util/jsonlint | JSON/CJSON/JSON5 parser, syntax & schema validator and pretty-printer with a command-line client, written in pure JavaScript. |
 | dev-util/omniperf | Advanced Profiling and Analytics for AMD Hardware |
 | dev-util/omnitrace | Omnitrace: Application Profiling, Tracing, and Analysis |
+| dev-util/pnnx | pnnx is an open standard for PyTorch model interoperability |
 | dev-util/rocm-meta | ROCm metapackage |
 | dev-util/rocm-smi | ROCm System Management Interface Library |
 | dev-util/rocm-validation-suite | The ROCm Validation Suite is a system administrator’s and cluster manager's tool for detecting and troubleshooting common problems affecting AMD GPU(s) running in a high-performance computing environment. |
@@ -1350,9 +1359,14 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-sound/spotify | A social music platform |
 | media-sound/w3crapcli-lastfm | w3crapcli/last.fm provides a command line interface for the last.fm web service |
 | media-video/REAL-Video-Enhancer | Interpolate for faster framerates and AI upscale video easily |
+| media-video/blurfaces | Blurs faces in video |
+| media-video/dashcam_anonymizer | Video anonymization by face detection |
+| media-video/deface | Video anonymization by face detection |
 | media-video/ffmpeg | Complete solution to record/convert/stream audio and video. Includes libavcodec |
 | media-video/gspca_ep800 | Kernel Modules for Endpoints EP800/SE402/SE401* |
 | media-video/linux-enable-ir-emitter | Provides support for infrared cameras that are not directly enabled out-of-the box. |
+| media-video/mpv | Media player for the command line |
+| media-video/nudenet_video | A Python script to detect and blur explicit nudity in videos using NudeNet and FFmpeg |
 | media-video/obs-studio | Software for live streaming and screen recording |
 | media-video/sr | Image and video super resolution models |
 | media-video/video2x | A machine learning based video super resolution and frame interpolation framework |
@@ -1383,6 +1397,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sci-libs/XNNPACK | library of floating-point neural network inference operators |
 | sci-libs/caffe2 | A deep learning framework |
 | sci-libs/composable_kernel | Composable Kernel: Performance Portable Programming Model for Machine Learning Tensor Operators |
+| sci-libs/dlib | Numerical and networking C++ library |
 | sci-libs/hipBLAS | ROCm BLAS marshalling library |
 | sci-libs/hipBLASLt | hipBLASLt is a library that provides general matrix-matrix operations with a flexible API and extends functionalities beyond a traditional BLAS library |
 | sci-libs/hipCUB | Wrapper of rocPRIM or CUB for GPU parallel primitives |
@@ -1511,6 +1526,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | x11-themes/paper-icon-theme | Paper Icon Theme |
 | x11-wm/dwm | A dynamic window manager for X11 |
 | x11-wm/xpra | X Persistent Remote Apps (xpra) and Partitioning WM (parti) based on wimpiggy |
+
 
 ### Contributing ebuilds
 
