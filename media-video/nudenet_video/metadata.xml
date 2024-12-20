@@ -14,14 +14,14 @@
     <flag name="cuda">
       Use CUDA® for inference for NVIDIA® GPUs
     </flag>
-    <flag name="tensorrt">
-      Use TensorRT for inference for NVIDIA® GPUs
-    </flag>
     <flag name="rocm">
       Use ROCm for inference for AMD GPUs
     </flag>
     <flag name="openvino">
       Use OpenVINO™ for inference for Intel® GPUs and NPUs
+    </flag>
+    <flag name="tensorrt">
+      Use TensorRT for inference for NVIDIA® GPUs
     </flag>
   </use>
 </pkgmetadata>
