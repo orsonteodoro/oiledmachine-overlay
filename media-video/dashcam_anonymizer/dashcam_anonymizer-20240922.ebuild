@@ -150,9 +150,10 @@ einfo
 einfo "cp -a /usr/share/dashcam_anonymizer/configs/img_blur.yaml to folder containing images"
 einfo "Run \`blur_images --config \$(pwd)/img_blur.yaml\`"
 einfo
+einfo
 einfo "To blur videos:"
 einfo
-einfo "cp -a /usr/share/dashcam_anonymizer/configs/vid_blur.yaml to folder containing images"
+einfo "cp -a /usr/share/dashcam_anonymizer/configs/vid_blur.yaml to folder containing videos"
 einfo "Run \`blur_images --config \$(pwd)/vid_blur.yaml\`"
 einfo
 }
