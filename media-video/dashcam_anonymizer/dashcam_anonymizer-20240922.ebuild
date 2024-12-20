@@ -8,6 +8,7 @@ EAPI=8
 # pybboxes
 # ultralytics
 
+MODEL_GDOWN_ID="1uV8IMuGDbmDabdjyeSy4SUKV9OS-ULbe"
 FALLBACK_COMMIT="644883f54ce4903e0d2f70e9e4e9e82b261b892b" # Sep 22, 2024
 PYTHON_COMPAT=( "python3_"{10..12} )
 DOWNLOAD_LOCATION="https://github.com/varungupta31/dashcam_anonymizer/tree/${FALLBACK_COMMIT}?tab=readme-ov-file#-blurring-images-in-a-directory--"
@@ -83,6 +84,7 @@ printf "%-20s %-40s %-10s %-10s %-10s\n" "filename" "rename to" "size" "blake2b"
 		local sha512=$(echo "${row}" | cut -f 5 -d ";")
 printf "%-20s %-40s %-10s %-10s %-10s\n" "${orig_name}" "${new_name}" "${size}" "${blake2b:0:7}" "${sha512:0:7}"
 	done
+einfo "Note you may also download with \`gdown ${MODEL_GDOWN_ID}\` via net-misc/gdown"
 }
 
 src_unpack() {
