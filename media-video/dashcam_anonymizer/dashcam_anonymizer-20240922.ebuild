@@ -56,7 +56,7 @@ RDEPEND+="
 		dev-python/rich[${PYTHON_USEDEP}]
 	')
 	>=dev-python/ultralytics-8.0.144[${PYTHON_SINGLE_USEDEP}]
-	sci-libs/pytorch[${PYTHON_SINGLE_USEDEP},rocm?,cuda?]
+	sci-libs/pytorch[${PYTHON_SINGLE_USEDEP},cuda?,rocm?]
 "
 #	net-misc/gdown[${PYTHON_USEDEP}]
 DEPEND+="
