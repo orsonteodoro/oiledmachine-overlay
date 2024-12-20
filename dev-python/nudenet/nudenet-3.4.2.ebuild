@@ -9,9 +9,11 @@ DISTUTILS_USE_PEP517="setuptools"
 DOWNLOAD_URI="https://github.com/notAI-tech/NudeNet/releases/tag/v3.4-weights"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit distutils-r1 pypi
+inherit distutils-r1
+# The pypi eclass looks bugged for fetch restrictions.  So it been dropped.
 
 SRC_URI+="
+fetch+https://files.pythonhosted.org/packages/source/${PN}/${PN}/${P}.tar.gz -> ${P}.tar.gz
 https://github.com/notAI-tech/NudeNet/releases/download/v3.4-weights/320n.onnx -> ${PN}-model-${MODEL_VER}-320n.onnx
 https://github.com/notAI-tech/NudeNet/releases/download/v3.4-weights/320n.pt -> ${PN}-model-${MODEL_VER}-320n.pt
 https://github.com/notAI-tech/NudeNet/releases/download/v3.4-weights/640m.onnx -> ${PN}-model-${MODEL_VER}-640m.onnx
@@ -52,11 +54,13 @@ CHECKSUMS=(
 )
 
 pkg_nofetch() {
+	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 einfo
 einfo "You need to download the models from GitHub while logged in through the web browser."
 einfo
 einfo "Download URI:  ${DOWNLOAD_URI}"
 einfo "Model version:  ${MODEL_VER}"
+einfo "Copy renamed files to:  ${EDISTDIR}"
 einfo
 printf "%15s | %30s | %10s | %10s | %10s\n" "File name" "Rename to" "Size" "blake2b" "sha512"
 	IFS=$'\n'
