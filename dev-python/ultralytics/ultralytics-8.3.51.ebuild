@@ -57,11 +57,11 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.23.0[${PYTHON_USEDEP}]
 		>=dev-python/matplotlib-3.3.0[${PYTHON_USEDEP}]
+		>=dev-python/numpy-1.23.0[${PYTHON_USEDEP}]
+		>=dev-python/pandas-1.1.4[${PYTHON_USEDEP}]
 		>=dev-python/pyyaml-5.3.1[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.23.0[${PYTHON_USEDEP}]
-		>=dev-python/pandas-1.1.4[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.4.1[${PYTHON_USEDEP}]
 		>=dev-python/seaborn-0.11.0[${PYTHON_USEDEP}]
 		>=dev-python/tqdm-4.64.0[${PYTHON_USEDEP}]
