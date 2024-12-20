@@ -14,10 +14,16 @@
 
   oiledmachine-overlay notes:
 
+
   Runtime environment variables:
 
   NUDENET_VIDEO_FORBIDDEN_ALERTS - A space delimited list of IDs.
   Valid values:  See https://github.com/notAI-tech/NudeNet/blob/v3.4-weights/nudenet/nudenet.py#L9
+
+
+  Usage:
+
+  nudenet_video "the absolute path to a video folder"
 
   -->
   <use>

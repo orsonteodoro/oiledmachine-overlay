@@ -103,14 +103,19 @@ EOF
 }
 
 pkg_postinst() {
-einfo
-einfo "The NUDENET_VIDEO_FORBIDDEN_ALERTS environment variable can be set"
-einfo "before running nudenet_video."
-einfo
 ewarn
 ewarn "It will not 100% sanitize the video, but you still need to manually crop"
 ewarn "the edge cases or uncaught cases."
 ewarn
+einfo
+einfo "The NUDENET_VIDEO_FORBIDDEN_ALERTS environment variable can be set"
+einfo "before running nudenet_video."
+einfo
+einfo
+einfo "Usage"
+einfo
+einfo "nudenet_video \"the absolute path to a video folder\""
+einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
