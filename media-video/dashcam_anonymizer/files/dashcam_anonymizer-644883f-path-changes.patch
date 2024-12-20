@@ -68,7 +68,7 @@ diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b
 +os.mkdir(os.path.join(CACHE_DIR, "annot_txt"))
  
 -annot_dir = f'runs/detect/yolo_images_pred/labels/'
-+annot_dir = os.path.join(CACHE_DIR, 'runs', 'detect', 'yolo_images_pred', 'labels') + os.sep
++annot_dir = os.path.join(CACHE_DIR, 'runs', 'detect', 'yolo_images_pred2', 'labels') + os.sep
  
  try:
      for file in os.listdir(annot_dir):
@@ -126,7 +126,7 @@ diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b
  console.print("Loading YOLO Model...", style="bold green")
  model = YOLO(config["model_path"])
  
-+cwd = os.environ['IMAGE_CWD']
++cwd = os.environ['VIDEO_CWD']
 +if os.path.isabs(config['videos_path']):
 +    _videos_path = config['videos_path']
 +else:

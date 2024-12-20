@@ -1,0 +1,99 @@
+diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/blur_images.py dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_images.py
+--- dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/blur_images.py	2024-12-20 11:40:37.818434560 -0800
++++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_images.py	2024-12-20 12:01:03.150133178 -0800
+@@ -39,7 +39,9 @@ if os.path.isabs(config["output_folder"]
+ else:
+     _output_folder = os.path.join(cwd, config["output_folder"])
+ 
++print("Generating YOLO Detections for the Images")
+ if(config["gpu_avail"]):
++    print("GPU Available, Running on GPU")
+     _ = model(source=_images_path,
+             save=False,
+             save_txt=True,
+@@ -47,7 +49,26 @@ if(config["gpu_avail"]):
+             device='cuda:0',
+             project=os.path.join(CACHE_DIR, 'runs', 'detect') + os.sep,
+             name="yolo_images_pred")
++elif(config["xpu_avail"]):
++    print("XPU Available, Running on XPU")
++    _ = model(source=_images_path,
++            save=False,
++            save_txt=True,
++            conf=config['detection_conf_thresh'],
++            device='xpu',
++            project=os.path.join(CACHE_DIR, 'runs', 'detect') + os.sep,
++            name="yolo_images_pred")
++elif(config["xla_avail"]):
++    print("XLA Available, Running on XLA")
++    _ = model(source=_images_path,
++            save=False,
++            save_txt=True,
++            conf=config['detection_conf_thresh'],
++            device='xla',
++            project=os.path.join(CACHE_DIR, 'runs', 'detect') + os.sep,
++            name="yolo_images_pred")
+ else:
++    print("GPU, XPU, and XLA Not Available, Running on CPU")
+     _ = model(source=_images_path,
+             save=False,
+             save_txt=True,
+diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/blur_videos.py dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_videos.py
+--- dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/blur_videos.py	2024-12-20 11:40:37.826434506 -0800
++++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_videos.py	2024-12-20 11:59:13.626864512 -0800
+@@ -57,8 +57,26 @@ if(config["generate_detections"]):
+                 device='cuda:0',
+                 project=os.path.join(CACHE_DIR, 'runs', 'detect') + os.sep,
+                 name="yolo_videos_pred")
++    elif(config["xpu_avail"]):
++        console.print("XPU Available, Running on XPU", style="bold green")
++        _ = model(source=_videos_path,
++                save=False,
++                save_txt=True,
++                conf=config['detection_conf_thresh'],
++                device='xpu',
++                project=os.path.join(CACHE_DIR, 'runs', 'detect') + os.sep,
++                name="yolo_videos_pred")
++    elif(config["xla_avail"]):
++        console.print("XLA Available, Running on XLA", style="bold green")
++        _ = model(source=_videos_path,
++                save=False,
++                save_txt=True,
++                conf=config['detection_conf_thresh'],
++                device='xla',
++                project=os.path.join(CACHE_DIR, 'runs', 'detect') + os.sep,
++                name="yolo_videos_pred")
+     else:
+-        console.print("GPU Not Available, Running on CPU", style="bold orange")
++        console.print("GPU, XPU, and XLA Not Available, Running on CPU", style="bold orange")
+         _ = model(source=_videos_path,
+                 save=False,
+                 save_txt=True,
+diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/configs/img_blur.yaml dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/img_blur.yaml
+--- dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/configs/img_blur.yaml	2024-12-20 11:40:37.826434506 -0800
++++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/img_blur.yaml	2024-12-20 11:58:36.011115550 -0800
+@@ -1,7 +1,9 @@
+ model_path: '@INSTALL_PATH@/model/best.pt'
+ images_path: './'
+ detection_conf_thresh: 0.1
+-gpu_avail: False #True
++gpu_avail: @USE_GPU@ #True
++xla_avail: @USE_XLA@
++xpu_avail: @USE_XPU@
+ img_format: .png #or any other format supported by YOLO
+ img_width: 960
+ img_height: 540
+diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/configs/vid_blur.yaml dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/vid_blur.yaml
+--- dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/configs/vid_blur.yaml	2024-12-20 11:40:37.826434506 -0800
++++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/vid_blur.yaml	2024-12-20 11:58:40.443085975 -0800
+@@ -1,7 +1,9 @@
+ model_path: '@INSTALL_PATH@/model/best.pt'
+ videos_path: './'
+ detection_conf_thresh: 0.1
+-gpu_avail: True #True #False
++gpu_avail: @USE_GPU@ #True #False
++xla_avail: @USE_XLA@
++xpu_avail: @USE_XPU@
+ generate_detections: True #False if the YOLO annotations already present (saves compute!)
+ generate_jsons: True
+ blur_radius: 31 #increase to increase blur intensity (odd values)

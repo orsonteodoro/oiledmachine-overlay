@@ -44,7 +44,7 @@ LICENSE="
 RESTRICT="fetch mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-ebuild-revision-4
+rocm cuda xla xpu ebuild-revision-4
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
@@ -56,6 +56,7 @@ RDEPEND+="
 		dev-python/rich[${PYTHON_USEDEP}]
 	')
 	>=dev-python/ultralytics-8.0.144[${PYTHON_SINGLE_USEDEP}]
+	sci-libs/pytorch[${PYTHON_SINGLE_USEDEP},rocm?,cuda?]
 "
 #	net-misc/gdown[${PYTHON_USEDEP}]
 DEPEND+="
@@ -66,6 +67,7 @@ BDEPEND+="
 DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-644883f-path-changes.patch"
+	"${FILESDIR}/${PN}-644883f-device-options.patch"
 )
 
 pkg_nofetch() {
@@ -106,8 +108,19 @@ src_unpack() {
 
 src_configure() {
 	local dir="/usr/lib/${EPYTHON}/site-packages/${PN}"
+	local use_gpu
+	if use cuda || use rocm ; then
+		use_gpu="True"
+	else
+		use_gpu="False"
+	fi
+	local use_xla=$(usex xla "True" "False")
+	local use_xpu=$(usex xpu "True" "False")
 	sed -i \
 		-e "s|@INSTALL_PATH@|${dir}|g" \
+		-e "s|@USE_GPU@|${use_gpu}|g" \
+		-e "s|@USE_XLA@|${use_xla}|g" \
+		-e "s|@USE_XPU@|${use_xpu}|g" \
 		"${S}/configs/img_blur.yaml" \
 		"${S}/configs/vid_blur.yaml" \
 		|| die
@@ -134,7 +147,7 @@ EOF
 
 cat <<EOF > "${ED}/usr/bin/blur_videos"
 #!/bin/bash
-export IMAGE_CWD=\$(realpath "\$(pwd)")
+export VIDEO_CWD=\$(realpath "\$(pwd)")
 cd "/usr/lib/${EPYTHON}/site-packages/${PN}"
 ${EPYTHON} blur_videos.py "\$@"
 EOF
