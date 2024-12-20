@@ -51,10 +51,7 @@ RDEPEND="
 	')
 	media-video/ffmpeg:=
 	sci-libs/caffe2[cuda?,rocm?]
-	|| (
-		=sci-libs/pytorch-2.6*[${PYTHON_SINGLE_USEDEP}]
-		=sci-libs/pytorch-9999[${PYTHON_SINGLE_USEDEP}]
-	)
+	=sci-libs/pytorch-2.5*[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
