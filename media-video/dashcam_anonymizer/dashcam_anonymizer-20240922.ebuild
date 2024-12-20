@@ -92,8 +92,12 @@ src_unpack() {
 		git-r3_checkout
 	else
 		unpack ${A}
-		mkdir -p "${S}/model"
-		cat $(realpath "${DISTDIR}/dashcam_anonymizer-6dd713f-best.pt") > "${S}/model/best.pt"
+		mkdir -p "${S}/model" || die
+		cat \
+			$(realpath "${DISTDIR}/dashcam_anonymizer-6dd713f-best.pt") \
+			> \
+			"${S}/model/best.pt" \
+			|| die
 	fi
 }
 
