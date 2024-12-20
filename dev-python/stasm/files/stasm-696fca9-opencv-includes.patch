@@ -1,0 +1,56 @@
+diff '--color=auto' -urp PyStasm-696fca9a4c12207ef175a8c3bdd122b11ae0552b.orig/src/err.cpp PyStasm-696fca9a4c12207ef175a8c3bdd122b11ae0552b/src/err.cpp
+--- PyStasm-696fca9a4c12207ef175a8c3bdd122b11ae0552b.orig/src/err.cpp	2015-11-22 05:45:33.000000000 -0800
++++ PyStasm-696fca9a4c12207ef175a8c3bdd122b11ae0552b/src/err.cpp	2024-12-20 13:53:31.403666743 -0800
+@@ -26,6 +26,7 @@
+ // Copyright (C) 2005-2013, Stephen Milborrow
+ 
+ #include "stasm.h"
++#include <opencv2/core/core_c.h>
+ 
+ namespace stasm
+ {
+diff '--color=auto' -urp PyStasm-696fca9a4c12207ef175a8c3bdd122b11ae0552b.orig/src/misc.cpp PyStasm-696fca9a4c12207ef175a8c3bdd122b11ae0552b/src/misc.cpp
+--- PyStasm-696fca9a4c12207ef175a8c3bdd122b11ae0552b.orig/src/misc.cpp	2015-11-22 05:45:33.000000000 -0800
++++ PyStasm-696fca9a4c12207ef175a8c3bdd122b11ae0552b/src/misc.cpp	2024-12-20 13:53:58.619473266 -0800
+@@ -661,7 +661,7 @@ void ImgPrintf(         // printf on ima
+     int thickness = MAX(1, cvRound(img.rows > 1000? 2 * fontsize: fontsize));
+ 
+     putText(img, s, cv::Point(cvRound(x), cvRound(y)),
+-            CV_FONT_HERSHEY_SIMPLEX, fontsize, ToCvColor(color), thickness);
++            cv::FONT_HERSHEY_SIMPLEX, fontsize, ToCvColor(color), thickness);
+ }
+ 
+ static byte RgbToGray( // CIE conversion to gray using integer arithmetic
+diff '--color=auto' -urp PyStasm-696fca9a4c12207ef175a8c3bdd122b11ae0552b.orig/src/misc.h PyStasm-696fca9a4c12207ef175a8c3bdd122b11ae0552b/src/misc.h
+--- PyStasm-696fca9a4c12207ef175a8c3bdd122b11ae0552b.orig/src/misc.h	2015-11-22 05:45:33.000000000 -0800
++++ PyStasm-696fca9a4c12207ef175a8c3bdd122b11ae0552b/src/misc.h	2024-12-20 13:53:31.407666715 -0800
+@@ -5,6 +5,8 @@
+ #ifndef STASM_MISC_H
+ #define STASM_MISC_H
+ 
++#include <opencv2/core/types_c.h>
++
+ namespace stasm
+ {
+ using cv::Rect;
+diff '--color=auto' -urp PyStasm-696fca9a4c12207ef175a8c3bdd122b11ae0552b.orig/src/stasm.h PyStasm-696fca9a4c12207ef175a8c3bdd122b11ae0552b/src/stasm.h
+--- PyStasm-696fca9a4c12207ef175a8c3bdd122b11ae0552b.orig/src/stasm.h	2015-11-22 05:45:33.000000000 -0800
++++ PyStasm-696fca9a4c12207ef175a8c3bdd122b11ae0552b/src/stasm.h	2024-12-20 13:53:31.407666715 -0800
+@@ -30,7 +30,7 @@ static const char* const STASM_VERSION =
+ #pragma warning(disable:4267)
+ #endif
+ 
+-#include "opencv2/opencv.hpp"
++#include <opencv2/opencv.hpp>
+ 
+ #if _MSC_VER >= 1200
+ #pragma warning(default:4996) // re-enable the warnings disabled above
+@@ -38,7 +38,7 @@ static const char* const STASM_VERSION =
+ #endif
+ 
+ #if TRACE_IMAGES              // will be 0 unless debugging
+-#include "opencv/highgui.h"   // need imwrite
++#include <opencv/highgui.h>   // need imwrite
+ #endif
+ 
+ #include <stdio.h>

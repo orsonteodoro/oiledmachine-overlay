@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/alyssaq/face_morpher/issues</bugs-to>
+    <changelog>https://github.com/alyssaq/face_morpher/blob/main/CHANGELOG</changelog>
+    <remote-id type="github">alyssaq/face_morpher</remote-id>
+    <remote-id type="pypi">facemorpher</remote-id>
+  </upstream>
+  <use flag="model">
+    Install the prebuilt shape predictor model with non-commercial restriction.
+  </use>
+</pkgmetadata>
