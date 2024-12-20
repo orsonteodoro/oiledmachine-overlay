@@ -38,7 +38,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 cuda migraphx openvino rocm tensorrt
-ebuild-revision-4
+ebuild-revision-5
 "
 RDEPEND+="
 	$(python_gen_cond_dep '

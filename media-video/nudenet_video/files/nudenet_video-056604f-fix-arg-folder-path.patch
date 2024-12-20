@@ -7,8 +7,8 @@ diff '--color=auto' -urp nudenet_video-056604f32abda9dc006f8dc65b752351cafe0585.
  		path=sys.argv[1];
  		fileList=brosweDirectory(path);
 +
-+		if not path.endswith("/"):
-+			path += "/"
++		if not path.endswith(os.sep):
++			path += os.sep
  		
  		print("/// Full Automatic mode selected ");
  		print("/// Analyzing folder " + path +", "+ str(len(fileList))+ " videos found");
