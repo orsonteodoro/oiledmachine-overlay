@@ -193,8 +193,8 @@ src_install() {
 pkg_postinst() {
 	xdg_pkg_postinst
 ewarn
-ewarn "Some broken videos may need to be manually converted first to be encoded"
-ewarn "as ffv1 in a mkv container before processing.  For the example, see"
+ewarn "Some broken videos may need to be fixed first by manually encoding"
+ewarn "as ffv1 in a mkv container before upscaling.  For examples, see"
 ewarn "https://github.com/k4yt3x/video2x/issues/1222#issuecomment-2466489582"
 ewarn
 }
