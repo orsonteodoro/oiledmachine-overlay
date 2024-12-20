@@ -105,7 +105,7 @@ EOF
 pkg_postinst() {
 ewarn
 ewarn "It will not 100% sanitize the video, but you still need to manually crop"
-ewarn "the edge cases or uncaught cases."
+ewarn "or blur the edge cases or uncaught cases."
 ewarn
 einfo
 einfo "The NUDENET_VIDEO_FORBIDDEN_ALERTS environment variable can be set"
