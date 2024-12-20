@@ -1,0 +1,13 @@
+diff '--color=auto' -urp nudenet_video-056604f32abda9dc006f8dc65b752351cafe0585.orig/nudenet_video.py nudenet_video-056604f32abda9dc006f8dc65b752351cafe0585/nudenet_video.py
+--- nudenet_video-056604f32abda9dc006f8dc65b752351cafe0585.orig/nudenet_video.py	2023-10-21 20:49:32.000000000 -0700
++++ nudenet_video-056604f32abda9dc006f8dc65b752351cafe0585/nudenet_video.py	2024-12-19 16:41:56.467023470 -0800
+@@ -321,6 +321,9 @@ def main():
+ 		
+ 		path=sys.argv[1];
+ 		fileList=brosweDirectory(path);
++
++		if not path.endswith("/"):
++			path += "/"
+ 		
+ 		print("/// Full Automatic mode selected ");
+ 		print("/// Analyzing folder " + path +", "+ str(len(fileList))+ " videos found");

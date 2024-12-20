@@ -58,6 +58,7 @@ DOCS=( "HISTORY&DEBUG.md" "README.html" "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-056604f-frombuffer-arg.patch"
 	"${FILESDIR}/${PN}-056604f-move-to-homedir.patch"
+	"${FILESDIR}/${PN}-056604f-fix-arg-folder-path.patch"
 )
 
 src_unpack() {
