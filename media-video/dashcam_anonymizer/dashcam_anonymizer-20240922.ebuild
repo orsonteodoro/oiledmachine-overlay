@@ -44,7 +44,8 @@ LICENSE="
 RESTRICT="fetch mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-rocm cuda xla xpu ebuild-revision-4
+cuda rocm xla xpu
+ebuild-revision-4
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
