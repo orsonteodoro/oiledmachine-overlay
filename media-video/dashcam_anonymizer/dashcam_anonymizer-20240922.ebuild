@@ -4,14 +4,14 @@
 
 EAPI=8
 
-MODEL_GDOWN_ID="1uV8IMuGDbmDabdjyeSy4SUKV9OS-ULbe"
+DOWNLOAD_LOCATION="https://github.com/varungupta31/dashcam_anonymizer/tree/${FALLBACK_COMMIT}?tab=readme-ov-file#-blurring-images-in-a-directory--"
 FALLBACK_COMMIT="644883f54ce4903e0d2f70e9e4e9e82b261b892b" # Sep 22, 2024
 PYTHON_COMPAT=( "python3_"{10..12} )
-DOWNLOAD_LOCATION="https://github.com/varungupta31/dashcam_anonymizer/tree/${FALLBACK_COMMIT}?tab=readme-ov-file#-blurring-images-in-a-directory--"
 MODELS=(
 	# original file ; rename to ; size ; blake2b ; sha512
 	"best.pt;dashcam_anonymizer-6dd713f-best.pt;83.6MB;5bde9b74b04e29a6164e13ab35a6d0d8d8628c02ed5286de82331fe9061e53a402af29bdca8a7853943ba8481a66b55184ddb6c41170196e45ede2a8a411aab3;6dd713ffe679bd3b0cf41795e39cc04d030f75754ba26683c36b48d6a74a78e51700850e813c0aa7b0cd245bb3b0be0d9846537fe5983805a40029dfbe6baa84"
 )
+MODEL_GDOWN_ID="1uV8IMuGDbmDabdjyeSy4SUKV9OS-ULbe"
 
 inherit python-single-r1
 
