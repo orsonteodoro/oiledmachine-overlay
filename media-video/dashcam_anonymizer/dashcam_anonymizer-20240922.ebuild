@@ -32,7 +32,7 @@ best.pt -> dashcam_anonymizer-6dd713f-best.pt
 	"
 fi
 
-DESCRIPTION="Video anonymization by face detection"
+DESCRIPTION="Blur human faces and vehicle license plates in video and images"
 HOMEPAGE="
 	https://github.com/varungupta31/dashcam_anonymizer
 "

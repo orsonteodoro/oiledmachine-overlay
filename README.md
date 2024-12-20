@@ -1360,7 +1360,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-sound/w3crapcli-lastfm | w3crapcli/last.fm provides a command line interface for the last.fm web service |
 | media-video/REAL-Video-Enhancer | Interpolate for faster framerates and AI upscale video easily |
 | media-video/blurfaces | Blurs faces in video |
-| media-video/dashcam_anonymizer | Video anonymization by face detection |
+| media-video/dashcam_anonymizer | Blur human faces and vehicle license plates in video and images |
 | media-video/deface | Video anonymization by face detection |
 | media-video/ffmpeg | Complete solution to record/convert/stream audio and video. Includes libavcodec |
 | media-video/gspca_ep800 | Kernel Modules for Endpoints EP800/SE402/SE401* |
