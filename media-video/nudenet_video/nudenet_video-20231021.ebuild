@@ -25,7 +25,7 @@ https://github.com/ssabug/nudenet_video/archive/${FALLBACK_COMMIT}.tar.gz
 	"
 fi
 
-DESCRIPTION="A Python script to detect and blur nude videos using NudeNet and FFmpeg"
+DESCRIPTION="A Python script to detect and blur explicit parts of nude videos using NudeNet and FFmpeg"
 HOMEPAGE="
 	https://github.com/ssabug/nudenet_video
 "
