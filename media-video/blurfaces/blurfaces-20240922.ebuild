@@ -93,6 +93,7 @@ src_prepare() {
 }
 
 src_install() {
+	einstalldocs
 	docinto "licenses"
 	dodoc "LICENSE"
 	python_foreach_impl python_newscript "blur_faces.py" "blur_faces"
