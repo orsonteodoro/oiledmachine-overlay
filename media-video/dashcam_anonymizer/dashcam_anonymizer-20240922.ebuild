@@ -1,0 +1,126 @@
+# Copyright 2024 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2023 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+# TODO package
+# pybboxes
+# ultralytics
+
+FALLBACK_COMMIT="644883f54ce4903e0d2f70e9e4e9e82b261b892b" # Sep 22, 2024
+PYTHON_COMPAT=( "python3_"{10..12} )
+DOWNLOAD_LOCATION="https://github.com/varungupta31/dashcam_anonymizer/tree/${FALLBACK_COMMIT}?tab=readme-ov-file#-blurring-images-in-a-directory--"
+MODELS=(
+	# original file ; rename to ; size ; blake2b ; sha512
+	"best.pt;dashcam_anonymizer-6dd713f-best.pt;83.6MB;5bde9b74b04e29a6164e13ab35a6d0d8d8628c02ed5286de82331fe9061e53a402af29bdca8a7853943ba8481a66b55184ddb6c41170196e45ede2a8a411aab3;6dd713ffe679bd3b0cf41795e39cc04d030f75754ba26683c36b48d6a74a78e51700850e813c0aa7b0cd245bb3b0be0d9846537fe5983805a40029dfbe6baa84"
+)
+
+inherit python-single-r1
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_BRANCH="main"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
+	EGIT_REPO_URI="https://github.com/varungupta31/dashcam_anonymizer.git"
+	IUSE+=" fallback-commit"
+	S="${WORKDIR}/${P}"
+	inherit git-r3
+else
+	KEYWORDS="~amd64"
+	S="${WORKDIR}/${PN}-${FALLBACK_COMMIT}"
+	SRC_URI="
+fetch+https://github.com/varungupta31/dashcam_anonymizer/archive/${FALLBACK_COMMIT}.tar.gz
+	-> ${P}-${FALLBACK_COMMIT:0:7}.tar.gz
+best.pt -> dashcam_anonymizer-6dd713f-best.pt
+	"
+fi
+
+DESCRIPTION="Video anonymization by face detection"
+HOMEPAGE="
+	https://github.com/varungupta31/dashcam_anonymizer
+"
+LICENSE="
+	AGPL-3
+	MIT
+"
+# AGPL-3 - YOLOv8 (best.pt)
+RESTRICT="fetch mirror"
+SLOT="0/$(ver_cut 1-2 ${PV})"
+IUSE+=" "
+RDEPEND+="
+	$(python_gen_cond_dep '
+		>=dev-python/numpy-1.25.1[${PYTHON_USEDEP}]
+		>=dev-python/ultralytics-8.0.144[${PYTHON_USEDEP}]
+		>=media-libs/opencv-4.6.0[${PYTHON_USEDEP},python]
+		dev-python/natsort[${PYTHON_USEDEP}]
+		dev-python/pybboxes[${PYTHON_USEDEP}]
+		dev-python/pyyaml[${PYTHON_USEDEP}]
+		dev-python/rich[${PYTHON_USEDEP}]
+	')
+"
+#	net-misc/gdown[${PYTHON_USEDEP}]
+DEPEND+="
+	${RDEPEND}
+"
+BDEPEND+="
+"
+DOCS=( "README.md" )
+
+pkg_nofetch() {
+	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+einfo
+einfo "You need to download the model manually."
+einfo "Download URI:  ${DOWNLOAD_LOCATION}"
+einfo "Copy renamed files to:  ${EDISTDIR}"
+einfo
+printf "%-20s %-40s %-10s %-10s %-10s\n" "filename" "rename to" "size" "blake2b" "sha512"
+	local row
+	for row in ${MODELS[@]} ; do
+		local orig_name=$(echo "${row}" | cut -f 1 -d ";")
+		local new_name=$(echo "${row}" | cut -f 2 -d ";")
+		local size=$(echo "${row}" | cut -f 3 -d ";")
+		local blake2b=$(echo "${row}" | cut -f 4 -d ";")
+		local sha512=$(echo "${row}" | cut -f 5 -d ";")
+printf "%-20s %-40s %-10s %-10s %-10s\n" "${orig_name}" "${new_name}" "${size}" "${blake2b:0:7}" "${sha512:0:7}"
+	done
+}
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack ${A}
+		mkdir -p "${S}/model"
+		cat $(realpath "${DISTDIR}/dashcam_anonymizer-6dd713f-best.pt") > "${S}/model/best.pt"
+	fi
+}
+
+src_install() {
+	docinto "licenses"
+	dodoc "LICENSE"
+
+	einstalldocs
+	python_moduleinto "${PN}"
+	python_domodule "blur_images.py" "blur_videos.py" "model"
+	insinto "/usr/share/${PN}"
+	doins -r "configs"
+	dodir "/usr/bin"
+
+cat <<EOF > "${ED}/usr/bin/blur_images"
+#!/bin/bash
+cd "/usr/lib/${EPYTHON}/site-packages/${PN}"
+${EPYTHON} blur_images.py "\$@"
+EOF
+	fperms 0755 "/usr/bin/blur_images"
+
+cat <<EOF > "${ED}/usr/bin/blur_videos"
+#!/bin/bash
+cd "/usr/lib/${EPYTHON}/site-packages/${PN}"
+${EPYTHON} blur_videos.py "\$@"
+EOF
+	fperms 0755 "/usr/bin/blur_videos"
+}
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
