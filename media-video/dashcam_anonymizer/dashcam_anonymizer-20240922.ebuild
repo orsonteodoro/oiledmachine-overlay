@@ -44,7 +44,7 @@ LICENSE="
 RESTRICT="fetch mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-ebuild-revision-2
+ebuild-revision-3
 "
 RDEPEND+="
 	$(python_gen_cond_dep '

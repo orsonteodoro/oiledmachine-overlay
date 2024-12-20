@@ -1,6 +1,6 @@
 diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/blur_images.py dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_images.py
 --- dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/blur_images.py	2024-09-22 13:26:56.000000000 -0700
-+++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_images.py	2024-12-20 10:15:56.685263736 -0800
++++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_images.py	2024-12-20 10:20:45.307290656 -0800
 @@ -7,13 +7,16 @@ import yaml
  import argparse
  from ultralytics import YOLO
@@ -98,14 +98,14 @@ diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b
 -print(f"@@ The bluured images are saved in Directory -------> {config['output_folder']}")
 \ No newline at end of file
 +#remove runs folder
-+console.print(f"Removing Temporary Files..")
++print(f"Removing Temporary Files..")
 +shutil.rmtree(os.path.join(CACHE_DIR, "runs") + os.sep)
 +shutil.rmtree(os.path.join(CACHE_DIR, "annot_txt") + os.sep)
 +
 +print(f"@@ The bluured images are saved in Directory -------> {_output_folder}")
 diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/blur_videos.py dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_videos.py
 --- dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/blur_videos.py	2024-09-22 13:26:56.000000000 -0700
-+++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_videos.py	2024-12-20 10:14:31.729844000 -0800
++++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_videos.py	2024-12-20 10:20:48.923265920 -0800
 @@ -12,6 +12,12 @@ from rich.progress import track
  from natsort import natsorted
  from os.path import join as osj
@@ -220,7 +220,7 @@ diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b
 +console.print(f"Blurred Videos are stored in {out_vid_path}", style="bold yellow")
 diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/configs/img_blur.yaml dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/img_blur.yaml
 --- dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/configs/img_blur.yaml	2024-09-22 13:26:56.000000000 -0700
-+++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/img_blur.yaml	2024-12-20 10:14:31.729844000 -0800
++++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/img_blur.yaml	2024-12-20 10:19:43.519713267 -0800
 @@ -1,9 +1,9 @@
 -model_path: 'model/best.pt'
 -images_path: 'images/'
@@ -237,7 +237,7 @@ diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b
 +output_folder: "blurred_images"
 diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/configs/vid_blur.yaml dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/vid_blur.yaml
 --- dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/configs/vid_blur.yaml	2024-09-22 13:26:56.000000000 -0700
-+++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/vid_blur.yaml	2024-12-20 10:14:31.729844000 -0800
++++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/vid_blur.yaml	2024-12-20 10:19:43.519713267 -0800
 @@ -1,8 +1,8 @@
 -model_path: 'model/best.pt'
 -videos_path: 'videos/'
