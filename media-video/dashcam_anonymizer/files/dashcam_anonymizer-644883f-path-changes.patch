@@ -1,6 +1,6 @@
 diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/blur_images.py dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_images.py
 --- dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/blur_images.py	2024-09-22 13:26:56.000000000 -0700
-+++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_images.py	2024-12-20 08:38:15.396004793 -0800
++++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_images.py	2024-12-20 10:03:18.274434919 -0800
 @@ -7,6 +7,9 @@ import yaml
  import argparse
  from ultralytics import YOLO
@@ -95,7 +95,7 @@ diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b
 +print(f"@@ The bluured images are saved in Directory -------> {_output_folder}")
 diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/blur_videos.py dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_videos.py
 --- dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/blur_videos.py	2024-09-22 13:26:56.000000000 -0700
-+++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_videos.py	2024-12-20 08:39:44.479289845 -0800
++++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_videos.py	2024-12-20 10:03:18.274434919 -0800
 @@ -12,6 +12,12 @@ from rich.progress import track
  from natsort import natsorted
  from os.path import join as osj
@@ -210,14 +210,15 @@ diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b
 +console.print(f"Blurred Videos are stored in {out_vid_path}", style="bold yellow")
 diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/configs/img_blur.yaml dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/img_blur.yaml
 --- dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/configs/img_blur.yaml	2024-09-22 13:26:56.000000000 -0700
-+++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/img_blur.yaml	2024-12-20 08:30:38.423235342 -0800
-@@ -1,4 +1,4 @@
++++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/img_blur.yaml	2024-12-20 10:03:35.070320627 -0800
+@@ -1,9 +1,9 @@
 -model_path: 'model/best.pt'
+-images_path: 'images/'
 +model_path: '@INSTALL_PATH@/model/best.pt'
- images_path: 'images/'
++images_path: './'
  detection_conf_thresh: 0.1
  gpu_avail: False #True
-@@ -6,4 +6,4 @@ img_format: .png #or any other format su
+ img_format: .png #or any other format supported by YOLO
  img_width: 960
  img_height: 540
  blur_radius: 31 #increase to increase blur intensity (odd values)
@@ -226,11 +227,12 @@ diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b
 +output_folder: "blurred_images"
 diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/configs/vid_blur.yaml dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/vid_blur.yaml
 --- dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/configs/vid_blur.yaml	2024-09-22 13:26:56.000000000 -0700
-+++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/vid_blur.yaml	2024-12-20 08:29:29.143717556 -0800
++++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/vid_blur.yaml	2024-12-20 10:03:30.950348664 -0800
 @@ -1,8 +1,8 @@
 -model_path: 'model/best.pt'
+-videos_path: 'videos/'
 +model_path: '@INSTALL_PATH@/model/best.pt'
- videos_path: 'videos/'
++videos_path: './'
  detection_conf_thresh: 0.1
  gpu_avail: True #True #False
  generate_detections: True #False if the YOLO annotations already present (saves compute!)

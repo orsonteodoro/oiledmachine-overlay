@@ -65,7 +65,7 @@ BDEPEND+="
 "
 DOCS=( "README.md" )
 PATCHES=(
-	"${FILESDIR}/${PN}-644883f-path-changes.patch"
+	"A${FILESDIR}/${PN}-644883f-path-changes.patch"
 )
 
 pkg_nofetch() {
@@ -148,13 +148,11 @@ einfo
 einfo "To blur images:"
 einfo
 einfo "cp -a /usr/share/dashcam_anonymizer/configs/img_blur.yaml to folder containing images"
-einfo "Change images_path in img_blur.yaml to the absolute path of folder"
 einfo "Run \`blur_images --config \$(pwd)/img_blur.yaml\`"
 einfo
 einfo "To blur videos:"
 einfo
 einfo "cp -a /usr/share/dashcam_anonymizer/configs/vid_blur.yaml to folder containing images"
-einfo "Change videos_path in vid_blur.yaml to the absolute path of folder"
 einfo "Run \`blur_images --config \$(pwd)/vid_blur.yaml\`"
 einfo
 }
