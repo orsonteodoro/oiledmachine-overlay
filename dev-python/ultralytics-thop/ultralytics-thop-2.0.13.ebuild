@@ -4,7 +4,8 @@
 
 EAPI=8
 
-DISTUTILS_USE_PEP517="poetry"
+DISTUTILS_SINGLE_IMPL=1
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit distutils-r1 pypi
@@ -39,15 +40,19 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
 RDEPEND+="
-	dev-python/numpy[${PYTHON_USEDEP}]
-	sci-libs/pytorch[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/numpy[${PYTHON_USEDEP}]
+	')
+	sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/setuptools-70.0.0
-	dev-python/wheel
+	$(python_gen_cond_dep '
+		>=dev-python/setuptools-70.0.0[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+	')
 "
 DOCS=( "README.md" )
 
