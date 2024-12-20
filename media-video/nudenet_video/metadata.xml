@@ -17,7 +17,7 @@
   Runtime environment variables:
 
   NUDENET_VIDEO_FORBIDDEN_ALERTS - A space delimited list of IDs.
-  Valid values:  See https://github.com/ssabug/nudenet_video/blob/master/nudenet_mod.py#L7
+  Valid values:  See https://github.com/notAI-tech/NudeNet/blob/v3.4-weights/nudenet/nudenet.py#L9
 
   -->
   <use>

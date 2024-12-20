@@ -103,7 +103,10 @@ EOF
 }
 
 pkg_postinst() {
-	einfo "The NUDENET_VIDEO_FORBIDDEN_ALERTS environment variable can be set before running nudenet_video."
+einfo
+einfo "The NUDENET_VIDEO_FORBIDDEN_ALERTS environment variable can be set"
+einfo "before running nudenet_video."
+einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
