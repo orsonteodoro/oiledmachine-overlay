@@ -4,10 +4,6 @@
 
 EAPI=8
 
-# TODO package
-# pybboxes
-# ultralytics
-
 MODEL_GDOWN_ID="1uV8IMuGDbmDabdjyeSy4SUKV9OS-ULbe"
 FALLBACK_COMMIT="644883f54ce4903e0d2f70e9e4e9e82b261b892b" # Sep 22, 2024
 PYTHON_COMPAT=( "python3_"{10..12} )
