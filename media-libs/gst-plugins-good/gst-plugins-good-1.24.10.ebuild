@@ -46,7 +46,7 @@ HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="LGPL-2.1+"
 IUSE="+orc"
 RDEPEND="
-	!<media-libs/gst-plugins-ugly-1.24.9
+	!<media-libs/gst-plugins-ugly-${PV}
 	>=dev-libs/glib-2.64.0[${MULTILIB_USEDEP}]
 	app-arch/bzip2[${MULTILIB_USEDEP}]
 	sys-libs/zlib[${MULTILIB_USEDEP}]
