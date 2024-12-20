@@ -51,13 +51,13 @@ IUSE+=" "
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.25.1[${PYTHON_USEDEP}]
-		>=dev-python/ultralytics-8.0.144[${PYTHON_USEDEP}]
 		>=media-libs/opencv-4.6.0[${PYTHON_USEDEP},python]
 		dev-python/natsort[${PYTHON_USEDEP}]
 		dev-python/pybboxes[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 		dev-python/rich[${PYTHON_USEDEP}]
 	')
+	>=dev-python/ultralytics-8.0.144[${PYTHON_SINGLE_USEDEP}]
 "
 #	net-misc/gdown[${PYTHON_USEDEP}]
 DEPEND+="
