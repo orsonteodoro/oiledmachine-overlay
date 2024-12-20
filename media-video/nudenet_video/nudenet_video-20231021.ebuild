@@ -92,7 +92,7 @@ cat <<EOF > "${ED}/usr/bin/nudenet_video"
 cd "/usr/lib/${EPYTHON}/site-packages/nudenet_video"
 ${EPYTHON} nudenet_video.py "$@"
 EOF
-	fperms 0744 "/usr/bin/nudenet_video"
+	fperms 0755 "/usr/bin/nudenet_video"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
