@@ -6,6 +6,27 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+
+  Usage:
+
+  To blur images:
+
+  cp -a /usr/share/dashcam_anonymizer/configs/img_blur.yaml to folder containing images
+  Change images_path in img_blur.yaml to the absolute path of folder
+  Run `blur_images --config $(pwd)/img_blur.yaml`
+
+
+  To blur videos:
+
+  cp -a /usr/share/dashcam_anonymizer/configs/vid_blur.yaml to folder containing images
+  Change videos_path in vid_blur.yaml to the absolute path of folder
+  Run `blur_images --config $(pwd)/vid_blur.yaml`
+
+  -->
   <upstream>
     <bugs-to>https://github.com/varungupta31/dashcam_anonymizer/issues</bugs-to>
     <remote-id type="github">varungupta31/dashcam_anonymizer</remote-id>

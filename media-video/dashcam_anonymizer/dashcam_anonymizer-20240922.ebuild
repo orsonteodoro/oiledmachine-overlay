@@ -141,4 +141,22 @@ EOF
 	fperms 0755 "/usr/bin/blur_videos"
 }
 
+pkg_postinst() {
+einfo
+einfo "Usage:"
+einfo
+einfo "To blur images:"
+einfo
+einfo "cp -a /usr/share/dashcam_anonymizer/configs/img_blur.yaml to folder containing images"
+einfo "Change images_path in img_blur.yaml to the absolute path of folder"
+einfo "Run \`blur_images --config \$(pwd)/img_blur.yaml\`"
+einfo
+einfo "To blur videos:"
+einfo
+einfo "cp -a /usr/share/dashcam_anonymizer/configs/vid_blur.yaml to folder containing images"
+einfo "Change videos_path in vid_blur.yaml to the absolute path of folder"
+einfo "Run \`blur_images --config \$(pwd)/vid_blur.yaml\`"
+einfo
+}
+
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
