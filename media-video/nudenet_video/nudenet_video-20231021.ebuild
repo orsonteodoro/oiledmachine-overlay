@@ -36,7 +36,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" cuda migraphx rocm tensorrt"
+IUSE+=" cuda migraphx openvino rocm tensorrt"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/numpy[${PYTHON_USEDEP}]
@@ -70,11 +70,13 @@ src_unpack() {
 src_configure() {
 	local use_cuda=$(usex cuda "True" "False")
 	local use_migraphx=$(usex migraphx "True" "False")
+	local use_openvino=$(usex openvino "True" "False")
 	local use_rocm=$(usex rocm "True" "False")
 	local use_tensorrt=$(usex tensorrt "True" "False")
 	sed -i \
 		-e "s|@USE_CUDA@|${use_cuda}|g" \
 		-e "s|@USE_MIGRAPHX@|${use_migraphx}|g" \
+		-e "s|@USE_OPENVINO@|${use_openvino}|g" \
 		-e "s|@USE_ROCM@|${use_rocm}|g" \
 		-e "s|@USE_TENSORRT@|${use_tensorrt}|g" \
 		"nudenet_mod.py" \
