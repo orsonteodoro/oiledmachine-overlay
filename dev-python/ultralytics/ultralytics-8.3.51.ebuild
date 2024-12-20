@@ -38,13 +38,14 @@ https://github.com/ultralytics/ultralytics/archive/refs/tags/v${PV}.tar.gz
 	"
 fi
 
-DESCRIPTION="Create, fill a temporary directory"
+DESCRIPTION="Ultralytics YOLO 🚀 for SOTA object detection, multi-object tracking, instance segmentation, pose estimation and image classification"
 HOMEPAGE="
+	https://ultralytics.com
 	https://github.com/ultralytics/ultralytics
 	https://pypi.org/project/ultralytics
 "
 LICENSE="
-	MIT
+	AGPL-3
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
@@ -125,7 +126,8 @@ DEPEND+="
 "
 BDEPEND+="
 	$(python_gen_cond_dep '
-		dev-python/setuptools[${PYTHON_USEDEP}]
+		>=dev-python/setuptools-70.0.0[${PYTHON_USEDEP}]
+		dev-python/wheel
 		dev? (
 			>=dev-python/mkdocs-1.6.0[${PYTHON_USEDEP}]
 			>=dev-python/mkdocs-macros-plugin-1.0.5[${PYTHON_USEDEP}]
