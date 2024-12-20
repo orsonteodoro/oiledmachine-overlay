@@ -59,7 +59,6 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.23.0[${PYTHON_USEDEP}]
 		>=dev-python/matplotlib-3.3.0[${PYTHON_USEDEP}]
-		>=dev-python/opencv-4.6.0[${PYTHON_USEDEP}]
 		>=dev-python/pyyaml-5.3.1[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.23.0[${PYTHON_USEDEP}]
 		>=dev-python/pandas-1.1.4[${PYTHON_USEDEP}]
@@ -67,6 +66,7 @@ RDEPEND+="
 		>=dev-python/seaborn-0.11.0[${PYTHON_USEDEP}]
 		>=dev-python/tqdm-4.64.0[${PYTHON_USEDEP}]
 		>=dev-python/ultralytics-thop-2.0.0[${PYTHON_USEDEP}]
+		>=media-libs/opencv-4.6.0[${PYTHON_USEDEP},python]
 		>=virtual/pillow-7.1.2[${PYTHON_USEDEP}]
 		dev-python/psutil[${PYTHON_USEDEP}]
 		dev-python/py-cpuinfo[${PYTHON_USEDEP}]
