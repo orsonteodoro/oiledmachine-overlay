@@ -36,7 +36,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+IUSE+=" jpeg png"
 RDEPEND+="
 	dev-python/docopt[${PYTHON_USEDEP}]
 	dev-python/facemorpher[${PYTHON_USEDEP}]
@@ -44,7 +44,7 @@ RDEPEND+="
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/scipy[${PYTHON_USEDEP}]
 	dev-python/stasm[${PYTHON_USEDEP}]
-	media-libs/opencv[${PYTHON_USEDEP},python]
+	media-libs/opencv[${PYTHON_USEDEP},jpeg?,png?,python]
 "
 DEPEND+="
 	${RDEPEND}
