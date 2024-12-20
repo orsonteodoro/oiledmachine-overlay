@@ -43,7 +43,9 @@ LICENSE="
 # AGPL-3 - YOLOv8 (best.pt)
 RESTRICT="fetch mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+IUSE+="
+ebuild-revision-1
+"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.25.1[${PYTHON_USEDEP}]
@@ -124,6 +126,7 @@ src_install() {
 
 cat <<EOF > "${ED}/usr/bin/blur_images"
 #!/bin/bash
+export IMAGE_CWD=\$(realpath "\$(pwd)")
 cd "/usr/lib/${EPYTHON}/site-packages/${PN}"
 ${EPYTHON} blur_images.py "\$@"
 EOF
@@ -131,6 +134,7 @@ EOF
 
 cat <<EOF > "${ED}/usr/bin/blur_videos"
 #!/bin/bash
+export IMAGE_CWD=\$(realpath "\$(pwd)")
 cd "/usr/lib/${EPYTHON}/site-packages/${PN}"
 ${EPYTHON} blur_videos.py "\$@"
 EOF

@@ -15,7 +15,7 @@ diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b
  
  model = YOLO(config["model_path"])
  
-+cwd = os.getcwd()
++cwd = os.environ['IMAGE_CWD']
 +if os.path.isabs(config['images_path']):
 +    _images_path = config['images_path']
 +else:
@@ -113,7 +113,7 @@ diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b
  console.print("Loading YOLO Model...", style="bold green")
  model = YOLO(config["model_path"])
  
-+cwd = os.getcwd()
++cwd = os.environ['IMAGE_CWD']
 +if os.path.isabs(config['videos_path']):
 +    _videos_path = config['videos_path']
 +else:
