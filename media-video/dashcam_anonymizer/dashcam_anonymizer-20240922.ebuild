@@ -83,7 +83,7 @@ printf "%-20s %-40s %-10s %-10s %-10s\n" "filename" "rename to" "size" "blake2b"
 		local sha512=$(echo "${row}" | cut -f 5 -d ";")
 printf "%-20s %-40s %-10s %-10s %-10s\n" "${orig_name}" "${new_name}" "${size}" "${blake2b:0:7}" "${sha512:0:7}"
 	done
-einfo "Note you may also download with \`gdown ${MODEL_GDOWN_ID}\` via net-misc/gdown"
+einfo "Alternatively, you may also download the model with \`gdown ${MODEL_GDOWN_ID}\` via net-misc/gdown"
 }
 
 src_unpack() {
