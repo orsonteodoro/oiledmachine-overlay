@@ -107,6 +107,10 @@ einfo
 einfo "The NUDENET_VIDEO_FORBIDDEN_ALERTS environment variable can be set"
 einfo "before running nudenet_video."
 einfo
+ewarn
+ewarn "It will not 100% sanitize the video, but you still need to manually crop"
+ewarn "the edge cases or uncaught cases."
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
