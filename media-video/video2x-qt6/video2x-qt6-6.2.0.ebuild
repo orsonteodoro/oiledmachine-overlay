@@ -10,7 +10,7 @@ CMAKE_MAKEFILE_GENERATOR="emake"
 
 PYTHON_COMPAT=( "python3_12" )
 
-inherit cmake dep-prepare flag-o-matic python-single-r1 toolchain-funcs
+inherit cmake dep-prepare flag-o-matic python-single-r1 toolchain-funcs xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -188,6 +188,15 @@ src_install() {
 	docinto "licenses"
 	dodoc "LICENSE"
 	cmake_src_install
+}
+
+pkg_postinst() {
+	xdg_pkg_postinst
+ewarn
+ewarn "Some broken videos may need to be manually converted first to be encoded"
+ewarn "as ffv1 in a mkv container before processing.  For the example, see"
+ewarn "https://github.com/k4yt3x/video2x/issues/1222#issuecomment-2466489582"
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

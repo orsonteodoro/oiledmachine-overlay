@@ -835,6 +835,11 @@ src_install() {
 pkg_postinst() {
 	optfeature_header "Install optional packages:"
 	optfeature "Qt6 GUI frontend" "media-video/video2x-qt6"
+ewarn
+ewarn "Some broken videos may need to be manually converted first to be encoded"
+ewarn "as ffv1 in a mkv container before processing.  For the example, see"
+ewarn "https://github.com/k4yt3x/video2x/issues/1222#issuecomment-2466489582"
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (6.2.0, 20241213)
