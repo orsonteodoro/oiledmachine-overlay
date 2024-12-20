@@ -1,0 +1,241 @@
+diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/blur_images.py dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_images.py
+--- dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/blur_images.py	2024-09-22 13:26:56.000000000 -0700
++++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_images.py	2024-12-20 08:38:15.396004793 -0800
+@@ -7,6 +7,9 @@ import yaml
+ import argparse
+ from ultralytics import YOLO
+ 
++CACHE_DIR = os.path.join(os.path.expanduser("~"), ".cache", "dashcam_anonymizer")
++if not os.path.exists(os.path.join(CACHE_DIR, "runs", "detect", "yolo_images_pred", "labels")):
++    os.makedirs(os.path.join(CACHE_DIR, 'runs', 'detect', 'yolo_images_pred', 'labels'), exist_ok=True)
+ 
+ parser = argparse.ArgumentParser()
+ parser.add_argument("--config", help = "path of the training configuartion file", required = True)
+@@ -24,30 +27,41 @@ with open(args.config, 'r') as f:
+ 
+ model = YOLO(config["model_path"])
+ 
++cwd = os.getcwd()
++if os.path.isabs(config['images_path']):
++    _images_path = config['images_path']
++else:
++    _images_path = os.path.join(cwd, config['images_path'])
++
++if os.path.isabs(config["output_folder"]):
++    _output_folder = config["output_folder"]
++else:
++    _output_folder = os.path.join(cwd, config["output_folder"])
++
+ if(config["gpu_avail"]):
+-    _ = model(source=config['images_path'],
++    _ = model(source=_images_path,
+             save=False,
+             save_txt=True,
+             conf=config['detection_conf_thresh'],
+             device='cuda:0',
+-            project='runs/detect/',
++            project=os.path.join(CACHE_DIR, 'runs', 'detect') + os.sep,
+             name="yolo_images_pred")
+ else:
+-    _ = model(source=config['images_path'],
++    _ = model(source=_images_path,
+             save=False,
+             save_txt=True,
+             conf=config['detection_conf_thresh'],
+             device='cpu',
+-            project="runs/detect/",
++            project=os.path.join(CACHE_DIR, "runs", "detect") + os.sep,
+             name="yolo_images_pred")
+ 
+ 
+ #images = [int(item.split("/")[1].replace(config['img_format'], "")) for item in images]
+-images = sorted(glob.glob(config['images_path']+"/*"+config["img_format"]))
++images = sorted(glob.glob(os.path.join(_images_path, "*"+config["img_format"])))
+ 
+ os.mkdir("annot_txt")
+ 
+-annot_dir = f'runs/detect/yolo_images_pred/labels/'
++annot_dir = os.path.join(CACHE_DIR, 'runs', 'detect', 'yolo_images_pred', 'labels') + os.sep
+ 
+ try:
+     for file in os.listdir(annot_dir):
+@@ -58,7 +72,7 @@ try:
+                     line = [float(item) for item in line.split()[1:]]
+                     line = pbx.convert_bbox(line, from_type="yolo", to_type="voc", image_size=(config["img_width"], config["img_height"]))
+                     data_string = " ".join(str(num) for num in line)
+-                    with open(f"annot_txt/{os.path.basename(file)}", "a") as f:
++                    with open(os.path.join(CACHE_DIR, "annot_txt", f"{os.path.basename(file)}"), "a") as f:
+                         f.write(data_string+"\n")
+ except:
+     print(f'{os.path.basename(file)} has no detected objects.')
+@@ -76,9 +90,9 @@ def blur_regions(image, regions):
+         image[y1:y2, x1:x2] = blurred_roi
+     return image
+ 
+-txt_folder = 'annot_txt/'
+-image_folder = config['images_path']
+-output_folder = config['output_folder']
++txt_folder = os.path.join(CACHE_DIR, 'annot_txt') + os.sep
++image_folder = _images_path
++output_folder = _output_folder
+ 
+ # Create the output folder if it doesn't exist
+ if not os.path.exists(output_folder):
+@@ -113,4 +127,9 @@ for txt_file in txt_files:
+     output_path = os.path.join(output_folder, output_file)
+     cv2.imwrite(output_path, image)
+ 
+-print(f"@@ The bluured images are saved in Directory -------> {config['output_folder']}")
+\ No newline at end of file
++#remove runs folder
++console.print(f"Removing Temporary Files..")
++shutil.rmtree(os.path.join(CACHE_DIR, "runs") + os.sep)
++shutil.rmtree(os.path.join(CACHE_DIR, "annot_txt") + os.sep)
++
++print(f"@@ The bluured images are saved in Directory -------> {_output_folder}")
+diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/blur_videos.py dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_videos.py
+--- dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/blur_videos.py	2024-09-22 13:26:56.000000000 -0700
++++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_videos.py	2024-12-20 08:39:44.479289845 -0800
+@@ -12,6 +12,12 @@ from rich.progress import track
+ from natsort import natsorted
+ from os.path import join as osj
+ 
++CACHE_DIR = os.path.join(os.path.expanduser("~"), ".cache", "dashcam_anonymizer")
++if not os.path.exists(os.path.join(CACHE_DIR, "runs", "detect", "yolo_videos_pred", "labels")):
++    os.makedirs(os.path.join(CACHE_DIR, 'runs', 'detect', 'yolo_videos_pred', 'labels'), exist_ok=True)
++if not os.path.exists(os.path.join(CACHE_DIR, "annot_jsons")):
++    os.makedirs(os.path.join(CACHE_DIR, 'annot_jsons'), exist_ok=True)
++
+ parser = argparse.ArgumentParser()
+ parser.add_argument("--config", help = "path of the training configuartion file", required = True)
+ args = parser.parse_args()
+@@ -29,29 +35,40 @@ with open(args.config, 'r') as f:
+ console.print("Loading YOLO Model...", style="bold green")
+ model = YOLO(config["model_path"])
+ 
++cwd = os.getcwd()
++if os.path.isabs(config['videos_path']):
++    _videos_path = config['videos_path']
++else:
++    _videos_path = os.path.join(cwd, config['videos_path'])
++
++if os.path.isabs(config["output_folder"]):
++    _output_folder = config["output_folder"]
++else:
++    _output_folder = os.path.join(cwd, config["output_folder"])
++
+ if(config["generate_detections"]):
+     console.print("Generating YOLO Detections for the Videos", style="bold green")
+     if(config["gpu_avail"]):
+         console.print("GPU Available, Running on GPU", style="bold green")
+-        _ = model(source=config['videos_path'],
++        _ = model(source=_videos_path,
+                 save=False,
+                 save_txt=True,
+                 conf=config['detection_conf_thresh'],
+                 device='cuda:0',
+-                project='runs/detect/',
++                project=os.path.join(CACHE_DIR, 'runs', 'detect') + os.sep,
+                 name="yolo_videos_pred")
+     else:
+         console.print("GPU Not Available, Running on CPU", style="bold orange")
+-        _ = model(source=config['videos_path'],
++        _ = model(source=_videos_path,
+                 save=False,
+                 save_txt=True,
+                 conf=config['detection_conf_thresh'],
+                 device='cpu',
+-                project='runs/detect/',
++                project=os.path.join(CACHE_DIR, 'runs', 'detect') + os.sep,
+                 name="yolo_videos_pred")
+     
+ 
+-videos = natsorted(glob.glob(f"{config['videos_path']}/*.mp4"))
++videos = natsorted(glob.glob(f"{_videos_path}" + os.sep + "*.mp4"))
+ 
+ if(config["generate_jsons"]):
+     print(f"Generating JSONs for {len(videos)} videos")
+@@ -63,7 +80,7 @@ if(config["generate_jsons"]):
+         width = vid.get(cv2.CAP_PROP_FRAME_WIDTH)
+         
+         data_dict = {}
+-        annot_dir = natsorted(glob.glob(f'runs/detect/yolo_videos_pred/labels/{vid_name}_*.txt'))
++        annot_dir = natsorted(glob.glob(os.path.join(CACHE_DIR, 'runs', 'detect', 'yolo_videos_pred', 'labels', f'{vid_name}_*.txt')))
+         
+         try:
+             for file in annot_dir:
+@@ -77,9 +94,7 @@ if(config["generate_jsons"]):
+                             if(frame_num not in data_dict.keys()):
+                                 data_dict[frame_num] = [line]
+                             data_dict[frame_num].append(line)
+-            if(not os.path.exists("annot_jsons/")):
+-                os.mkdir("annot_jsons")
+-            with open("annot_jsons/"+str(vid_name)+".json", 'w') as f:
++            with open(os.path.join(CACHE_DIR, "annot_jsons", str(vid_name)+".json"), 'w') as f:
+                 json.dump(data_dict, f)
+         except:
+             print(f'{video} has no Annotation!')
+@@ -102,15 +117,15 @@ def blur_regions(image, regions):
+ #videos = glob.glob(config["videos_path"]+"*.mp4")
+ 
+ 
+-if not(os.path.exists(config["output_folder"])):
+-    console.print(f"Creating Directory {config['output_folder']} to store the anonymized videos", style="bold green")
+-    os.mkdir(config["output_folder"])
++if not(os.path.exists(_output_folder)):
++    console.print(f"Creating Directory {_output_folder} to store the anonymized videos", style="bold green")
++    os.mkdir(_output_folder)
+ 
+-anonymized_videos_path = config["output_folder"]
++anonymized_videos_path = _output_folder
+ 
+ for video in track(videos):
+     vid_name = os.path.basename(video).replace(".mp4","")
+-    json_path = f'annot_jsons/{vid_name}.json'
++    json_path = os.path.join(CACHE_DIR, 'annot_jsons', f'{vid_name}.json')
+     if(os.path.exists(json_path)):
+         with open(json_path) as F:
+             #Data is the json dictionary in which key is the frame, and value is a list of lists.
+@@ -150,7 +165,7 @@ for video in track(videos):
+         
+ #remove runs folder
+ console.print(f"Removing Temporary Files..")
+-shutil.rmtree("runs/")
+-shutil.rmtree("annot_jsons/")
++shutil.rmtree(os.path.join(CACHE_DIR, "runs") + os.sep)
++shutil.rmtree(os.path.join(CACHE_DIR, "annot_jsons") + os.sep)
+ 
+-console.print(f"Blurred Videos are stored in {out_vid_path}", style="bold yellow")
+\ No newline at end of file
++console.print(f"Blurred Videos are stored in {out_vid_path}", style="bold yellow")
+diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/configs/img_blur.yaml dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/img_blur.yaml
+--- dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/configs/img_blur.yaml	2024-09-22 13:26:56.000000000 -0700
++++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/img_blur.yaml	2024-12-20 08:30:38.423235342 -0800
+@@ -1,4 +1,4 @@
+-model_path: 'model/best.pt'
++model_path: '@INSTALL_PATH@/model/best.pt'
+ images_path: 'images/'
+ detection_conf_thresh: 0.1
+ gpu_avail: False #True
+@@ -6,4 +6,4 @@ img_format: .png #or any other format su
+ img_width: 960
+ img_height: 540
+ blur_radius: 31 #increase to increase blur intensity (odd values)
+-output_folder: blurred_images
+\ No newline at end of file
++output_folder: "blurred_images"
+diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/configs/vid_blur.yaml dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/vid_blur.yaml
+--- dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/configs/vid_blur.yaml	2024-09-22 13:26:56.000000000 -0700
++++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/vid_blur.yaml	2024-12-20 08:29:29.143717556 -0800
+@@ -1,8 +1,8 @@
+-model_path: 'model/best.pt'
++model_path: '@INSTALL_PATH@/model/best.pt'
+ videos_path: 'videos/'
+ detection_conf_thresh: 0.1
+ gpu_avail: True #True #False
+ generate_detections: True #False if the YOLO annotations already present (saves compute!)
+ generate_jsons: True
+ blur_radius: 31 #increase to increase blur intensity (odd values)
+-output_folder: blurred_videos
+\ No newline at end of file
++output_folder: "blurred_videos"

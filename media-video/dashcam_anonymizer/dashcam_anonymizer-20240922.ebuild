@@ -51,7 +51,7 @@ IUSE+=" "
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.25.1[${PYTHON_USEDEP}]
-		>=media-libs/opencv-4.6.0[${PYTHON_USEDEP},python]
+		>=media-libs/opencv-4.6.0[${PYTHON_USEDEP},jpeg,png,python]
 		dev-python/natsort[${PYTHON_USEDEP}]
 		dev-python/pybboxes[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
@@ -66,6 +66,9 @@ DEPEND+="
 BDEPEND+="
 "
 DOCS=( "README.md" )
+PATCHES=(
+	"${FILESDIR}/${PN}-644883f-path-changes.patch"
+)
 
 pkg_nofetch() {
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
@@ -101,6 +104,15 @@ src_unpack() {
 			"${S}/model/best.pt" \
 			|| die
 	fi
+}
+
+src_configure() {
+	local dir="/usr/lib/${EPYTHON}/site-packages/${PN}"
+	sed -i \
+		-e "s|@INSTALL_PATH@|${dir}|g" \
+		"${S}/configs/img_blur.yaml" \
+		"${S}/configs/vid_blur.yaml" \
+		|| die
 }
 
 src_install() {
