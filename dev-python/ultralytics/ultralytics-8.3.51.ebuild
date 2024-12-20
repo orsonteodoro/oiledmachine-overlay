@@ -47,7 +47,7 @@ HOMEPAGE="
 LICENSE="
 	AGPL-3
 "
-RESTRICT="mirror"
+RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev export extra logging solutions test"
 REQUIRED_USE="
@@ -153,6 +153,11 @@ src_unpack() {
 	else
 		unpack ${A}
 	fi
+}
+
+python_install() {
+	distutils-r1_python_install
+	rm -rf "${ED}/usr/lib/python3.10/site-packages/tests"
 }
 
 src_install() {
