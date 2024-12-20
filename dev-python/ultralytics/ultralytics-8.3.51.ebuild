@@ -143,7 +143,7 @@ BDEPEND+="
 		)
 	')
 "
-DOCS=( "README.md" )
+DOCS=( "README.md" "README.zh-CN.md" )
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
