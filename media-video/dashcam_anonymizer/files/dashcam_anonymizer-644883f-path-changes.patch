@@ -1,7 +1,7 @@
 diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/blur_images.py dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_images.py
 --- dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/blur_images.py	2024-09-22 13:26:56.000000000 -0700
-+++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_images.py	2024-12-20 10:03:18.274434919 -0800
-@@ -7,6 +7,9 @@ import yaml
++++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_images.py	2024-12-20 10:15:56.685263736 -0800
+@@ -7,13 +7,16 @@ import yaml
  import argparse
  from ultralytics import YOLO
  
@@ -11,6 +11,15 @@ diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b
  
  parser = argparse.ArgumentParser()
  parser.add_argument("--config", help = "path of the training configuartion file", required = True)
+ args = parser.parse_args()
+ 
+-if (os.path.exists("annot_txt")):
+-    os.rmdir("annot_txt")
++if (os.path.exists(os.path.join(CACHE_DIR, "annot_txt"))):
++    os.rmdir(os.path.join(CACHE_DIR, "annot_txt"))
+ 
+ #Reading the configuration file
+ with open(args.config, 'r') as f:
 @@ -24,30 +27,41 @@ with open(args.config, 'r') as f:
  
  model = YOLO(config["model_path"])
@@ -52,7 +61,8 @@ diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b
 -images = sorted(glob.glob(config['images_path']+"/*"+config["img_format"]))
 +images = sorted(glob.glob(os.path.join(_images_path, "*"+config["img_format"])))
  
- os.mkdir("annot_txt")
+-os.mkdir("annot_txt")
++os.mkdir(os.path.join(CACHE_DIR, "annot_txt"))
  
 -annot_dir = f'runs/detect/yolo_images_pred/labels/'
 +annot_dir = os.path.join(CACHE_DIR, 'runs', 'detect', 'yolo_images_pred', 'labels') + os.sep
@@ -95,7 +105,7 @@ diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b
 +print(f"@@ The bluured images are saved in Directory -------> {_output_folder}")
 diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/blur_videos.py dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_videos.py
 --- dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/blur_videos.py	2024-09-22 13:26:56.000000000 -0700
-+++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_videos.py	2024-12-20 10:03:18.274434919 -0800
++++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_videos.py	2024-12-20 10:14:31.729844000 -0800
 @@ -12,6 +12,12 @@ from rich.progress import track
  from natsort import natsorted
  from os.path import join as osj
@@ -210,7 +220,7 @@ diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b
 +console.print(f"Blurred Videos are stored in {out_vid_path}", style="bold yellow")
 diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/configs/img_blur.yaml dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/img_blur.yaml
 --- dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/configs/img_blur.yaml	2024-09-22 13:26:56.000000000 -0700
-+++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/img_blur.yaml	2024-12-20 10:03:35.070320627 -0800
++++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/img_blur.yaml	2024-12-20 10:14:31.729844000 -0800
 @@ -1,9 +1,9 @@
 -model_path: 'model/best.pt'
 -images_path: 'images/'
@@ -227,7 +237,7 @@ diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b
 +output_folder: "blurred_images"
 diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/configs/vid_blur.yaml dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/vid_blur.yaml
 --- dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/configs/vid_blur.yaml	2024-09-22 13:26:56.000000000 -0700
-+++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/vid_blur.yaml	2024-12-20 10:03:30.950348664 -0800
++++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/vid_blur.yaml	2024-12-20 10:14:31.729844000 -0800
 @@ -1,8 +1,8 @@
 -model_path: 'model/best.pt'
 -videos_path: 'videos/'

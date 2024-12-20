@@ -65,7 +65,7 @@ BDEPEND+="
 "
 DOCS=( "README.md" )
 PATCHES=(
-	"A${FILESDIR}/${PN}-644883f-path-changes.patch"
+	"${FILESDIR}/${PN}-644883f-path-changes.patch"
 )
 
 pkg_nofetch() {
