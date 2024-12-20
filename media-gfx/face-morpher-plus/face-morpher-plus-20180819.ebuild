@@ -44,13 +44,13 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
+	>=media-libs/opencv-3.4.1[${PYTHON_USEDEP},jpeg?,png?,python]
 	dev-python/docopt[${PYTHON_USEDEP}]
 	dev-python/facemorpher[${PYTHON_USEDEP}]
 	dev-python/matplotlib[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/scipy[${PYTHON_USEDEP}]
 	dev-python/stasm[${PYTHON_USEDEP}]
-	media-libs/opencv[${PYTHON_USEDEP},jpeg?,png?,python]
 "
 DEPEND+="
 	${RDEPEND}
