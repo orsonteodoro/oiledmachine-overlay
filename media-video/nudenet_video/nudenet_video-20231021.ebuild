@@ -38,7 +38,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 cuda migraphx openvino rocm tensorrt
-ebuild-revision-1
+ebuild-revision-2
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
@@ -87,6 +87,7 @@ src_configure() {
 }
 
 src_install() {
+	einstalldocs
 	python_moduleinto "nudenet_video"
 	python_domodule "nudenet_video.py" "nudenet_mod.py" "best.onnx"
 	insinto "/usr/share/nudenet_video"
