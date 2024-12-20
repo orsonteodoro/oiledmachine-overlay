@@ -37,6 +37,12 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" jpeg png"
+REQUIRED_USE="
+	|| (
+		jpeg
+		png
+	)
+"
 RDEPEND+="
 	dev-python/docopt[${PYTHON_USEDEP}]
 	dev-python/facemorpher[${PYTHON_USEDEP}]
