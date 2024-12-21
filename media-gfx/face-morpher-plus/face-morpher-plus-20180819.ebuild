@@ -51,6 +51,7 @@ RDEPEND+="
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/scipy[${PYTHON_USEDEP}]
 	dev-python/stasm[${PYTHON_USEDEP}]
+	sci-libs/dlib[${PYTHON_USEDEP},jpeg?,png?]
 "
 DEPEND+="
 	${RDEPEND}

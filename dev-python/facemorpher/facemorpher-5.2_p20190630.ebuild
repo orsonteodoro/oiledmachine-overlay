@@ -46,13 +46,19 @@ LICENSE="
 # custom - shape_predictor_68_face_landmarks.dat - See https://github.com/davisking/dlib-models?tab=readme-ov-file#shape_predictor_68_face_landmarksdatbz2
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" +model"
+IUSE+=" +jpeg +model +png"
+REQUIRED_USE="
+	|| (
+		jpeg
+		png
+	)
+"
 RDEPEND+="
 	dev-python/docopt[${PYTHON_USEDEP}]
 	dev-python/matplotlib[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/scipy[${PYTHON_USEDEP}]
-	sci-libs/dlib[${PYTHON_USEDEP}]
+	sci-libs/dlib[${PYTHON_USEDEP},jpeg?,png?]
 "
 DEPEND+="
 	${RDEPEND}
