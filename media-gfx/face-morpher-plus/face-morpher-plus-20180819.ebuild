@@ -6,6 +6,7 @@ EAPI=8
 
 MY_PN="face_morpher_plus"
 
+DISTUTILS_SINGLE_IMPL=1 # Wrapper
 FALLBACK_COMMIT="27e6b07fb22732d99a7126d9df86c4e451e6c1c4" # Aug 19, 2018
 PYTHON_COMPAT=( "python3_"{10..12} )
 
@@ -38,7 +39,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 +jpeg +png
-ebuild-revision-1
+ebuild-revision-2
 "
 REQUIRED_USE="
 	|| (
@@ -47,14 +48,16 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
-	>=media-libs/opencv-3.4.1[${PYTHON_USEDEP},jpeg?,png?,python]
-	dev-python/docopt[${PYTHON_USEDEP}]
-	dev-python/facemorpher[${PYTHON_USEDEP},stasm]
-	dev-python/matplotlib[${PYTHON_USEDEP}]
-	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/scipy[${PYTHON_USEDEP}]
-	dev-python/stasm[${PYTHON_USEDEP}]
-	sci-libs/dlib[${PYTHON_USEDEP},jpeg?,png?]
+	$(python_gen_cond_dep '
+		>=media-libs/opencv-3.4.1[${PYTHON_USEDEP},jpeg?,png?,python]
+		dev-python/docopt[${PYTHON_USEDEP}]
+		dev-python/facemorpher[${PYTHON_USEDEP},stasm]
+		dev-python/matplotlib[${PYTHON_USEDEP}]
+		dev-python/numpy[${PYTHON_USEDEP}]
+		dev-python/scipy[${PYTHON_USEDEP}]
+		dev-python/stasm[${PYTHON_USEDEP}]
+		sci-libs/dlib[${PYTHON_USEDEP},jpeg?,png?]
+	')
 "
 DEPEND+="
 	${RDEPEND}
@@ -72,7 +75,7 @@ PATCHES=(
 )
 
 pkg_setup() {
-	python_setup
+	python-single-r1_pkg_setup
 }
 
 src_unpack() {
