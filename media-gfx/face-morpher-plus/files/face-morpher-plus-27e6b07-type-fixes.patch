@@ -1,0 +1,28 @@
+diff '--color=auto' -urp face_morpher_plus-27e6b07fb22732d99a7126d9df86c4e451e6c1c4.orig/process.py face_morpher_plus-27e6b07fb22732d99a7126d9df86c4e451e6c1c4/process.py
+--- face_morpher_plus-27e6b07fb22732d99a7126d9df86c4e451e6c1c4.orig/process.py	2018-08-19 18:14:24.000000000 -0700
++++ face_morpher_plus-27e6b07fb22732d99a7126d9df86c4e451e6c1c4/process.py	2024-12-20 17:14:07.754793591 -0800
+@@ -81,7 +81,7 @@ def calc_angle(point_s,point_e):
+ def rotate(image, angle, center=None, scale=1.0):
+     (h, w) = image.shape[:2]
+     if center is None:
+-        center = (w // 2, h // 2)
++        center = (int(w // 2), int(h // 2))
+ 
+     M = cv2.getRotationMatrix2D(center, angle, scale)
+ 
+@@ -98,7 +98,7 @@ def load_image_points(path, size):
+     center_fore_head = points[14]
+     center_tip_of_chin = points[6]
+     angle = calc_angle(center_fore_head, center_tip_of_chin)
+-    img = rotate(img, -angle, ((center_fore_head[0]+center_tip_of_chin[0])//2, (center_fore_head[1]+center_tip_of_chin[1])//2))
++    img = rotate(img, -angle, (int((center_fore_head[0]+center_tip_of_chin[0])//2), int((center_fore_head[1]+center_tip_of_chin[1])//2)))
+     points = locator.face_points(img)
+     return aligner.resize_align(img, points, size)
+ 
+@@ -254,4 +254,4 @@ def main():
+ 
+ 
+ if __name__ == "__main__":
+-  main()
+\ No newline at end of file
++  main()

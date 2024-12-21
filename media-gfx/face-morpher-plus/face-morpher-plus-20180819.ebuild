@@ -36,7 +36,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" +jpeg +png"
+IUSE+="
++jpeg +png
+ebuild-revision-1
+"
 REQUIRED_USE="
 	|| (
 		jpeg
@@ -59,6 +62,9 @@ DEPEND+="
 BDEPEND+="
 "
 DOCS=( "README.md" )
+PATCHES=(
+	"${FILESDIR}/${PN}-27e6b07-type-fixes.patch"
+)
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
