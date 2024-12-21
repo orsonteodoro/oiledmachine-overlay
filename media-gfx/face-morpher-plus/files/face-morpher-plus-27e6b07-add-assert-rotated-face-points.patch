@@ -1,0 +1,11 @@
+diff '--color=auto' -urp face_morpher_plus-27e6b07fb22732d99a7126d9df86c4e451e6c1c4.orig/process.py face_morpher_plus-27e6b07fb22732d99a7126d9df86c4e451e6c1c4/process.py
+--- face_morpher_plus-27e6b07fb22732d99a7126d9df86c4e451e6c1c4.orig/process.py	2024-12-20 17:59:40.398133351 -0800
++++ face_morpher_plus-27e6b07fb22732d99a7126d9df86c4e451e6c1c4/process.py	2024-12-20 18:00:37.645766301 -0800
+@@ -100,6 +100,7 @@ def load_image_points(path, size):
+     angle = calc_angle(center_fore_head, center_tip_of_chin)
+     img = rotate(img, -angle, (int((center_fore_head[0]+center_tip_of_chin[0])//2), int((center_fore_head[1]+center_tip_of_chin[1])//2)))
+     points = locator.face_points(img)
++    assert len(points) > 0, "Face rotation is broken"
+     return aligner.resize_align(img, points, size)
+ 
+ def load_valid_image_points(imgpaths, size):

@@ -19,7 +19,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	KEYWORDS="~amd64"
+#	KEYWORDS="~amd64" # Broken
 	S="${WORKDIR}/${MY_PN}-${FALLBACK_COMMIT}"
 	SRC_URI="
 https://github.com/HighCWu/face_morpher_plus/archive/${FALLBACK_COMMIT}.tar.gz
@@ -64,6 +64,7 @@ BDEPEND+="
 DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-27e6b07-type-fixes.patch"
+	"${FILESDIR}/${PN}-27e6b07-add-assert-rotated-face-points.patch"
 )
 
 src_unpack() {
