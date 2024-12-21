@@ -1,0 +1,46 @@
+# Fixes:
+# 1. int type error check fix triggered by floats for rows/cols
+# 2. Point correspondance error from facemorpher-opencv to facemorpher-glib
+diff '--color=auto' -urp face_morpher_plus-27e6b07fb22732d99a7126d9df86c4e451e6c1c4.orig/plotter.py face_morpher_plus-27e6b07fb22732d99a7126d9df86c4e451e6c1c4/plotter.py
+--- face_morpher_plus-27e6b07fb22732d99a7126d9df86c4e451e6c1c4.orig/plotter.py	2018-08-19 18:14:24.000000000 -0700
++++ face_morpher_plus-27e6b07fb22732d99a7126d9df86c4e451e6c1c4/plotter.py	2024-12-21 06:17:56.844110226 -0800
+@@ -77,7 +77,7 @@ class Plotter(object):
+ 
+   @check_do_plot
+   def plot_one(self, img, pts=None):
+-    p = plt.subplot(self.rows, self.cols, self.plot_counter)
++    p = plt.subplot(int(self.rows), int(self.cols), self.plot_counter)
+     p.axes.get_xaxis().set_visible(False)
+     p.axes.get_yaxis().set_visible(False)
+     plt.imshow(bgr2rgb(img))
+@@ -202,4 +202,4 @@ class DraggableCircle:
+     'disconnect all the stored connection ids'
+     self.cicle.figure.canvas.mpl_disconnect(self.cidpress)
+     self.cicle.figure.canvas.mpl_disconnect(self.cidrelease)
+-    self.cicle.figure.canvas.mpl_disconnect(self.cidmotion)
+\ No newline at end of file
++    self.cicle.figure.canvas.mpl_disconnect(self.cidmotion)
+diff '--color=auto' -urp face_morpher_plus-27e6b07fb22732d99a7126d9df86c4e451e6c1c4.orig/process.py face_morpher_plus-27e6b07fb22732d99a7126d9df86c4e451e6c1c4/process.py
+--- face_morpher_plus-27e6b07fb22732d99a7126d9df86c4e451e6c1c4.orig/process.py	2024-12-21 06:15:32.217119654 -0800
++++ face_morpher_plus-27e6b07fb22732d99a7126d9df86c4e451e6c1c4/process.py	2024-12-21 06:16:43.644621207 -0800
+@@ -95,8 +95,18 @@ def load_image_points(path, size):
+     print('No face in %s' % path)
+     return None, None
+   else:
+-    center_fore_head = points[14]
+-    center_tip_of_chin = points[6]
++    # 0 cheek
++    # 1, 2, 3 temple
++    # 4, 5, 6, 7, 8, 9, 10, 11 chin
++    # 12, 13, 14, 15, 16 ear
++    # 17, 18, 19, 20, 21, 22, 23, 24, 25, 26 eyebrows
++    # 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37 nose
++    # 38, 39, 40, 41, 42, 43, 44, 45, 46, 47 eyes
++    # 48, 50, 55 lips
++    # 60, 65, 66, 67 mouth
++    # 68(l), 69(r), 70(l), 71(r), 72(l), 73(r), 74(l), 75(r) forehead
++    center_fore_head = ((points[74][0] + points[75][0])//2, (points[74][1] + points[75][1])//2)
++    center_tip_of_chin = points[8]
+     angle = calc_angle(center_fore_head, center_tip_of_chin)
+     img = rotate(img, -angle, (int((center_fore_head[0]+center_tip_of_chin[0])//2), int((center_fore_head[1]+center_tip_of_chin[1])//2)))
+     points = locator.face_points(img)
