@@ -1,0 +1,13 @@
+# int type error check fix triggered by floats for rows/cols
+diff '--color=auto' -urp face_morpher_plus-27e6b07fb22732d99a7126d9df86c4e451e6c1c4.orig/plotter.py face_morpher_plus-27e6b07fb22732d99a7126d9df86c4e451e6c1c4/plotter.py
+--- face_morpher_plus-27e6b07fb22732d99a7126d9df86c4e451e6c1c4.orig/plotter.py	2018-08-19 18:14:24.000000000 -0700
++++ face_morpher_plus-27e6b07fb22732d99a7126d9df86c4e451e6c1c4/plotter.py	2024-12-21 06:17:56.844110226 -0800
+@@ -77,7 +77,7 @@ class Plotter(object):
+ 
+   @check_do_plot
+   def plot_one(self, img, pts=None):
+-    p = plt.subplot(self.rows, self.cols, self.plot_counter)
++    p = plt.subplot(int(self.rows), int(self.cols), self.plot_counter)
+     p.axes.get_xaxis().set_visible(False)
+     p.axes.get_yaxis().set_visible(False)
+     plt.imshow(bgr2rgb(img))

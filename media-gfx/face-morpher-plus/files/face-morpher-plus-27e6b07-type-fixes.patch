@@ -19,10 +19,3 @@ diff '--color=auto' -urp face_morpher_plus-27e6b07fb22732d99a7126d9df86c4e451e6c
      points = locator.face_points(img)
      return aligner.resize_align(img, points, size)
  
-@@ -254,4 +254,4 @@ def main():
- 
- 
- if __name__ == "__main__":
--  main()
-\ No newline at end of file
-+  main()

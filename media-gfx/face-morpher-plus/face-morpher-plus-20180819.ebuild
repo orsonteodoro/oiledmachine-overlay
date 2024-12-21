@@ -65,7 +65,8 @@ DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-27e6b07-type-fixes.patch"
 	"${FILESDIR}/${PN}-27e6b07-add-assert-rotated-face-points.patch"
-	"${FILESDIR}/${PN}-27e6b07-fixes.patch"
+	"${FILESDIR}/${PN}-27e6b07-face-point-correspondance-fix.patch"
+	"${FILESDIR}/${PN}-27e6b07-type-fix.patch"
 )
 
 pkg_setup() {
@@ -101,5 +102,6 @@ EOF
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  IN PROGRESS (27e6b07, 20241221)
+# OILEDMACHINE-OVERLAY-TEST:  FAIL (27e6b07, 20241221)
 # Show plotter - pass
+# Result write - fail
