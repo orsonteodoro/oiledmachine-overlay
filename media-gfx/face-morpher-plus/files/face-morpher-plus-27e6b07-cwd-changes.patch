@@ -1,0 +1,47 @@
+diff '--color=auto' -urp face_morpher_plus-27e6b07fb22732d99a7126d9df86c4e451e6c1c4.orig/process.py face_morpher_plus-27e6b07fb22732d99a7126d9df86c4e451e6c1c4/process.py
+--- face_morpher_plus-27e6b07fb22732d99a7126d9df86c4e451e6c1c4.orig/process.py	2024-12-21 07:21:28.787945630 -0800
++++ face_morpher_plus-27e6b07fb22732d99a7126d9df86c4e451e6c1c4/process.py	2024-12-21 07:24:33.062636784 -0800
+@@ -38,6 +38,11 @@ from facemorpher import blender
+ import plotter
+ from facemorpher import videoer
+ 
++if not os.getenv('IMG_CWD'):
++  IMG_CWD = os.getcwd()
++else:
++  IMG_CWD = os.getenv('IMG_CWD')
++
+ def verify_args(args):
+   if args['--images'] is None:
+     valid = os.path.isfile(args['--src']) & os.path.isfile(args['--dest'])
+@@ -203,11 +209,11 @@ def morph(src_img, src_points, dest_img,
+   plt.plot_one(src_img)
+   video.write(src_img, 1)
+   try:
+-    os.mkdir(os.path.join(os.getcwd(),'result'))
+-    os.mkdir(os.path.join(os.getcwd(),'result','src'))
+-    os.mkdir(os.path.join(os.getcwd(),'result','src_corners'))
+-    os.mkdir(os.path.join(os.getcwd(),'result','end'))
+-    os.mkdir(os.path.join(os.getcwd(),'result','average'))
++    os.mkdir(os.path.join(IMG_CWD,'result'))
++    os.mkdir(os.path.join(IMG_CWD,'result','src'))
++    os.mkdir(os.path.join(IMG_CWD,'result','src_corners'))
++    os.mkdir(os.path.join(IMG_CWD,'result','end'))
++    os.mkdir(os.path.join(IMG_CWD,'result','average'))
+   except Exception as e:
+     print(e)
+ 
+@@ -226,10 +232,10 @@ def morph(src_img, src_points, dest_img,
+     average_face = process_edge(src_face_corners, average_face, width, height)
+     plt.plot_one(average_face)
+     filename = '%d.jpg' % int((1-percent)*num_frames)
+-    cv2.imwrite(os.path.join(os.getcwd(),'result','src',filename), src_face)
+-    cv2.imwrite(os.path.join(os.getcwd(),'result','src_corners',filename), src_face_corners)
+-    cv2.imwrite(os.path.join(os.getcwd(),'result','end',filename), end_face)
+-    cv2.imwrite(os.path.join(os.getcwd(),'result','average',filename), average_face)
++    cv2.imwrite(os.path.join(IMG_CWD,'result','src',filename), src_face)
++    cv2.imwrite(os.path.join(IMG_CWD,'result','src_corners',filename), src_face_corners)
++    cv2.imwrite(os.path.join(IMG_CWD,'result','end',filename), end_face)
++    cv2.imwrite(os.path.join(IMG_CWD,'result','average',filename), average_face)
+     plt.save(average_face)
+     video.write(average_face)
+ 

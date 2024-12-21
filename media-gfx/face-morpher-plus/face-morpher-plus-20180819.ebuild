@@ -67,6 +67,8 @@ PATCHES=(
 	"${FILESDIR}/${PN}-27e6b07-add-assert-rotated-face-points.patch"
 	"${FILESDIR}/${PN}-27e6b07-face-point-correspondance-fix.patch"
 	"${FILESDIR}/${PN}-27e6b07-type-fix.patch"
+	"${FILESDIR}/${PN}-27e6b07-writable-array-fix.patch"
+	"${FILESDIR}/${PN}-27e6b07-cwd-changes.patch"
 )
 
 pkg_setup() {
@@ -95,13 +97,15 @@ src_install() {
 	dodir /usr/bin
 cat <<EOF > "${ED}/usr/bin/${PN}"
 #!/bin/bash
-cd "/usr/lib/${EPYTHON}/site-packages/${PN}"
+IMG_CWD=\$(realpath \$(pwd))
+cd "/usr/lib/${EPYTHON}/site-packages/${PN//-/_}"
 ${EPYTHON} process.py "\$@"
 EOF
 	fperms 0755 "/usr/bin/${PN}"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  FAIL (27e6b07, 20241221)
+# OILEDMACHINE-OVERLAY-TEST:  PASS (27e6b07, 20241221)
 # Show plotter - pass
-# Result write - fail
+# Result write - pass
+# Texture blending quality - fail

@@ -1,0 +1,13 @@
+diff '--color=auto' -urp face_morpher_plus-27e6b07fb22732d99a7126d9df86c4e451e6c1c4.orig/process.py face_morpher_plus-27e6b07fb22732d99a7126d9df86c4e451e6c1c4/process.py
+--- face_morpher_plus-27e6b07fb22732d99a7126d9df86c4e451e6c1c4.orig/process.py	2024-12-21 07:21:28.787945630 -0800
++++ face_morpher_plus-27e6b07fb22732d99a7126d9df86c4e451e6c1c4/process.py	2024-12-21 07:24:33.062636784 -0800
+@@ -172,7 +177,8 @@ def process_edge(src_img, dest_img, widt
+   img_canvas = Image.new('L', (width,height))
+   img = Image.fromarray(np.uint8(dest_img[:,:,-1])).resize((int(width/1.1), int(height/1.1)))
+   img_canvas.paste(img, BLUR_RADIUS)
+-  img = np.asarray(img_canvas)
++  imgt = np.asarray(img_canvas)
++  img = imgt.copy()
+   img.flags.writeable = True
+   img = cv2.GaussianBlur(img, BLUR_RADIUS, 0)
+   img = np.array([img, img, img]).transpose((1, 2, 0)).astype(np.float64)
