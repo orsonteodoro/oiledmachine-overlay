@@ -112,3 +112,4 @@ EOF
 # Show plotter - pass
 # Result write - pass
 # Texture blending quality - fail
+# Result matches upstream result - pass
