@@ -130,7 +130,13 @@ unset -f _yarn_set_globals
 # @DESCRIPTION:
 # The version of the Yarn lockfile. (Default:  1)
 # Use 1.x or 3.x.
-# Valid values:  1, 3
+# Valid values:  1, 3, 4
+# lockfile version | yarn version
+# 8                | 4.x
+# 6                | 3.2.x, 3.3.x, 3.4.x, 3.6.x, 3.7.x
+# 5                | 3.1.x
+# 4                | 2.1.x, 2.3.x, 2.4.x, 3.0.x
+# 1                | 1.22.x
 
 # @ECLASS_VARIABLE: NPM_AUDIT_FIX
 # @DESCRIPTION:
@@ -264,15 +270,15 @@ eerror
 	fi
 }
 
-# @FUNCTION: _yarn_cp_tarballs
+# @FUNCTION: _yarn_cp_tarballs_v1
 # @INTERNAL
 # @DESCRIPTION:
 # Copies all tarballs to the offline cache
-_yarn_cp_tarballs() {
+_yarn_cp_tarballs_v1() {
 	local dest="${WORKDIR}/npm-packages-offline-cache"
 	mkdir -p "${dest}" || die
 	IFS=$'\n'
-einfo "Copying tarballs to ${dest}"
+einfo "Copying tarballs to ${dest} (v1)"
 	local uri
 	for uri in ${YARN_EXTERNAL_URIS} ; do
 		local bn
@@ -296,6 +302,68 @@ einfo "Copying tarballs to ${dest}"
 		fi
 	done
 	IFS=$' \t\n'
+}
+
+# @FUNCTION: _yarn_cp_tarballs_v4
+# @INTERNAL
+# @DESCRIPTION:
+# Copies all tarballs to the offline cache
+_yarn_cp_tarballs_v4() {
+	local dest="${WORKDIR}/npm-packages-offline-cache"
+	mkdir -p "${dest}" || die
+	IFS=$'\n'
+einfo "Copying tarballs to ${dest} (v4)"
+	local uri
+	for uri in ${YARN_EXTERNAL_URIS} ; do
+		local bn
+		if [[ "${uri}" =~ "->" && "${uri}" =~ ".git" ]] ; then
+			bn=$(echo "${uri}" \
+				| cut -f 3 -d " ")
+#einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/yarnpkg-}"
+			local fn="${bn/yarnpkg-}"
+			fn="${fn/.zip}"
+			local path=$(mktemp -d -p "${T}")
+			pushd "${path}" >/dev/null 2>&1 || die
+				tar --strip-components=1 -xvf "${DISTDIR}/${bn}" || die
+				zip -r "${dest}/${fn}" * || die
+			popd >/dev/null 2>&1 || die
+			rm -rf "${path}" || die
+		else
+# contents of zip example:
+# node_modules/@radix-ui/react-primitive/package.json
+# save location example:
+# /var/tmp/portage/media-video/lossless-cut-3.64.0/homedir/.yarn/berry/cache/@jridgewell-resolve-uri-npm-3.1.1-aa2de3f210-10.zip
+			bn=$(echo "${uri}" \
+				| cut -f 3 -d " ")
+#einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/yarnpkg-}"
+			local path=$(mktemp -d -p "${T}")
+			pushd "${path}" >/dev/null 2>&1 || die
+				tar --strip-components=1 -xvf "${DISTDIR}/${bn}" || die
+				local n="${bn}"
+				n="${n/npmpkg-/}"
+				n="${n/.tgz/.zip}"
+				einfo "dest: ${dest}/${n}"
+				mkdir -p "node_modules" || die
+				mv * "node_modules/" || true
+				zip -r "${dest}/${n}" * || die
+			popd >/dev/null 2>&1 || die
+			rm -rf "${path}" || die
+		fi
+	done
+	IFS=$' \t\n'
+}
+
+# @FUNCTION: _yarn_cp_tarballs
+# @INTERNAL
+# @DESCRIPTION:
+# Copies all tarballs to the offline cache
+_yarn_cp_tarballs() {
+	if [[ "${YARN_SLOT}" == "1" ]] ; then
+		_yarn_cp_tarballs_v1
+	else
+		_yarn_cp_tarballs_v4
+		:
+	fi
 }
 
 # @FUNCTION: _yarn_src_unpack_default_ebuild
@@ -335,6 +403,11 @@ _yarn_src_unpack_default_ebuild() {
 		if [[ "${YARN_SLOT}" == "1" ]] ; then
 			yarn config set yarn-offline-mirror "${WORKDIR}/npm-packages-offline-cache" || die
 			mv "${HOME}/.yarnrc" "${WORKDIR}" || die
+		else
+			export YARN_ENABLE_OFFLINE_MODE=1
+			export YARN_CACHE_FOLDER="${WORKDIR}/npm-packages-offline-cache"
+			#yarn config set cacheFolder "${WORKDIR}/npm-packages-offline-cache" || die
+			mv "${HOME}/.yarnrc" "${WORKDIR}" || die
 		fi
 		if [[ -e "${FILESDIR}/${PV}" && "${YARN_MULTI_LOCKFILE}" == "1" && -n "${YARN_ROOT}" ]] ; then
 			cp -aT "${FILESDIR}/${PV}" "${YARN_ROOT}" || die
@@ -359,13 +432,28 @@ _yarn_src_unpack_default_ebuild() {
 	if declare -f yarn_unpack_install_pre > /dev/null 2>&1 ; then
 		yarn_unpack_install_pre
 	fi
-	eyarn install \
-		--network-concurrency ${YARN_NETWORK_CONCURRENT_CONNECTIONS} \
-		--network-timeout ${YARN_NETWORK_TIMEOUT} \
-		--prefer-offline \
-		--pure-lockfile \
-		--verbose \
-		${YARN_INSTALL_ARGS[@]}
+
+	if ver_test "${YARN_SLOT}" -lt "2" ; then
+		args+=(
+			--network-concurrency ${YARN_NETWORK_CONCURRENT_CONNECTIONS}
+			--network-timeout ${YARN_NETWORK_TIMEOUT}
+			--prefer-offline
+			--pure-lockfile
+			--verbose
+		)
+		eyarn install \
+			${args[@]} \
+			${YARN_INSTALL_ARGS[@]}
+	else
+		yarn_network_settings
+		args+=(
+			--cached
+		)
+		eyarn add \
+			${args[@]} \
+			${YARN_INSTALL_ARGS[@]}
+	fi
+
 	if declare -f yarn_unpack_install_post > /dev/null 2>&1 ; then
 		yarn_unpack_install_post
 	fi
@@ -408,12 +496,23 @@ _yarn_src_unpack_default_upstream() {
 		yarn_unpack_install_pre
 	fi
 
+	if ver_test "${YARN_SLOT}" -lt "2" ; then
+		args+=(
+			--network-concurrency ${YARN_NETWORK_CONCURRENT_CONNECTIONS}
+			--network-timeout ${YARN_NETWORK_TIMEOUT}
+			--prefer-offline
+			--pure-lockfile
+			--verbose
+		)
+	else
+		yarn_network_settings
+		args+=(
+			--prefer-offline
+		)
+	fi
+
 	eyarn install \
-		--network-concurrency ${YARN_NETWORK_CONCURRENT_CONNECTIONS} \
-		--network-timeout ${YARN_NETWORK_TIMEOUT} \
-		--prefer-offline \
-		--pure-lockfile \
-		--verbose \
+		${args[@]} \
 		${YARN_INSTALL_ARGS[@]}
 	if declare -f yarn_unpack_install_post > /dev/null 2>&1 ; then
 		yarn_unpack_install_post
@@ -797,10 +896,20 @@ yarn_src_compile() {
 	local cmd="${YARN_BUILD_SCRIPT:-build}"
 	grep -q -e "\"${cmd}\"" package.json || return
 	local args=()
+	if ver_test "${YARN_SLOT}" -lt "2" ; then
+		args+=(
+			--prefer-offline
+			--pure-lockfile
+			--verbose
+		)
+	else
+		args+=(
+			--prefer-offline
+		)
+	fi
+
 	yarn run ${cmd} \
-		--prefer-offline \
-		--pure-lockfile \
-		--verbose \
+		${args[@]} \
 		|| die
 	grep -q -e "ENOENT" "${T}/build.log" && die "Retry"
 	grep -q -e " ERR! Exit handler never called!" "${T}/build.log" && die "Possible indeterministic behavior"

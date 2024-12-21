@@ -17,9 +17,9 @@ LICENSE="
 	BSD-2
 "
 RESTRICT="mirror"
-SLOT_MAJOR="${PV%%.*}"
+SLOT_MAJOR="8" # Based on yarn.lock
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
-IUSE+=" +ssl ebuild-revision-2"
+IUSE+=" +ssl ebuild-revision-3"
 CDEPEND+="
 	!sys-apps/yarn:0
 	>=net-libs/nodejs-18.12[corepack,ssl?]

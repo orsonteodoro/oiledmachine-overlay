@@ -17,7 +17,7 @@ LICENSE="
 	BSD-2
 "
 RESTRICT="mirror"
-SLOT_MAJOR="${PV%%.*}"
+SLOT_MAJOR="1" # Based on yarn.lock
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
 IUSE+=" +ssl ebuild-revision-2"
 CDEPEND+="
