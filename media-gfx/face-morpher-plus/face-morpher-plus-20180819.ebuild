@@ -67,6 +67,10 @@ PATCHES=(
 	"${FILESDIR}/${PN}-27e6b07-add-assert-rotated-face-points.patch"
 )
 
+pkg_setup() {
+	python_setup
+}
+
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
@@ -88,7 +92,7 @@ src_install() {
 	python_foreach_impl python_domodule "plotter.py" "process.py"
 	dodir /usr/bin
 cat <<EOF > "${ED}/usr/bin/${PN}"
-#!/usr/bin
+#!/bin/bash
 cd "/usr/lib/${EPYTHON}/site-packages/${PN}"
 ${EPYTHON} process.py "\$@"
 EOF
