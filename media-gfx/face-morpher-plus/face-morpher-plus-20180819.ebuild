@@ -39,7 +39,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 +jpeg +png
-ebuild-revision-2
+ebuild-revision-3
 "
 REQUIRED_USE="
 	|| (
@@ -96,7 +96,7 @@ src_install() {
 	docinto "licenses"
 	dodoc "LICENSE"
 	python_moduleinto "${MY_PN}"
-	python_foreach_impl python_domodule "plotter.py" "process.py"
+	python_domodule "plotter.py" "process.py"
 	dodir /usr/bin
 cat <<EOF > "${ED}/usr/bin/${PN}"
 #!/bin/bash
