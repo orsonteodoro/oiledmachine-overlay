@@ -175,7 +175,7 @@ ewarn "Run \`eselect lapack set openblas\` to optimize for ${ARCH}."
 		fi
 	fi
 
-	if use blas ; then
+	if use cblas ; then
 		if cat "/proc/cpuinfo" | grep -q "GenuineIntel" ; then
 			if ! eselect blas show | grep -q "mkl" ; then
 ewarn "Run \`eselect blas set mkl\` to optimize for Intel® CPUs/GPUs."
