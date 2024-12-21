@@ -103,3 +103,6 @@ ewarn "DLIB_DATA_DIR must be defined to your custom model containing your own ve
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (7a30611, 20241220)
+# cli test jpeg1 + jpeg2 -> x264 pass
+# cli test png1 + png2 -> x264 pass
