@@ -4,6 +4,9 @@
 
 EAPI=8
 
+# TODO package:
+# tensorflow-addons
+
 MY_PN="DiffMorph"
 
 FALLBACK_COMMIT="6f03bf3d6d8b9766134d10561f4354581fb9ffad" # Aug 22, 2022
@@ -45,10 +48,10 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	>=dev-python/numpy-1.21.6[${PYTHON_USEDEP}]
+	>=dev-python/tensorflow-addons-0.17.1[${PYTHON_USEDEP}]
 	>=dev-python/tqdm-4.64.0[${PYTHON_USEDEP}]
 	>=media-libs/opencv-4.6.0.66[${PYTHON_USEDEP},ffmpeg?,gstreamer?,jpeg,python]
 	>=sci-libs/tensorflow-2.9.1[${PYTHON_USEDEP}]
-	>=sci-libs/tensorflow-addons-0.17.1[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
