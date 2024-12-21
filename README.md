@@ -907,6 +907,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/exhale | Automatic C++ library api documentation generation: breathe doxygen in and exhale it out |
 | dev-python/face-recognition | Recognize faces from Python or from the command line |
 | dev-python/face_recognition_models | Models used by the face_recognition package. |
+| dev-python/facemorpher | 👼 Morph faces with Python, Numpy, Scipy |
 | dev-python/fastbencode | Fast implementation of bencode |
 | dev-python/flake8-colors | ANSI colors highlight for Flake8 |
 | dev-python/flake8-docstrings | Integration of pydocstyle and flake8 for combined linting and reporting |
@@ -1046,6 +1047,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/spacy-loggers | 📟 Logging utilities for spaCy |
 | dev-python/sphinx-theme-builder | Clean up the public namespace of your package! |
 | dev-python/srsly | 🦉 Modern high-performance serialization utilities for Python (JSON, MessagePack, Pickle) |
+| dev-python/stasm | Python wrapper for finding features in faces |
 | dev-python/statsmodels | Statistical computations and models for use with SciPy |
 | dev-python/sysv-ipc | System V IPC primitives (semaphores, shared memory and message queues) for Python |
 | dev-python/tdir | Create, fill a temporary directory |
@@ -1136,6 +1138,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-gfx/alembic | Alembic is an open framework for storing and sharing scene data that includes a C++ library, a file format, and client plugins and applications. |
 | media-gfx/blockbench | Blockbench is a boxy 3D model editor |
 | media-gfx/dssim | Image similarity comparison simulating human perception |
+| media-gfx/face-morpher-plus | Face morpher plus based on facemorpher |
 | media-gfx/material-maker | A procedural textures authoring and 3D model painting tool based on the Godot game engine |
 | media-gfx/nanovdb | A lightweight GPU friendly version of VDB initially targeting rendering applications. |
 | media-gfx/openvdb | Library for the efficient manipulation of volumetric data |
@@ -1526,6 +1529,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | x11-themes/paper-icon-theme | Paper Icon Theme |
 | x11-wm/dwm | A dynamic window manager for X11 |
 | x11-wm/xpra | X Persistent Remote Apps (xpra) and Partitioning WM (parti) based on wimpiggy |
+
 
 
 ### Contributing ebuilds
