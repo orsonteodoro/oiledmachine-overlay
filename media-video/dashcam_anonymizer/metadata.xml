@@ -24,7 +24,7 @@
 
   cp -a /usr/share/dashcam_anonymizer/configs/vid_blur.yaml to folder containing images
   Change videos_path in vid_blur.yaml to the absolute path of folder
-  Run `blur_images --config $(pwd)/vid_blur.yaml`
+  Run `blur_videos --config $(pwd)/vid_blur.yaml`
 
   -->
   <upstream>
