@@ -91,8 +91,8 @@ src_compile() {
                 $(electron-app_get_electron_platarch_args) \
                 -l dir \
                 || die
-	grep -e "failedTask" "${T}/build.log" && die
-	grep -e "Error:" "${T}/build.log" && die
+	grep -q -e "failedTask" "${T}/build.log" && die "Detected error"
+	grep -q -e "Error:" "${T}/build.log" && die "Detected error"
 }
 
 src_install() {
