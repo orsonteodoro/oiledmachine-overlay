@@ -130,10 +130,10 @@ unset -f _yarn_set_globals
 # @DESCRIPTION:
 # The version of the Yarn lockfile. (Default:  1)
 # Use 1.x or 3.x.
-# Valid values:  1, 3, 4
+# Valid values:  1, 8
 # lockfile version | yarn version
 # 8                | 4.x
-# 6                | 3.2.x, 3.3.x, 3.4.x, 3.6.x, 3.7.x
+# 6                | 3.2.x, 3.3.x, 3.4.x, 3.6.x, 3.7.x, 3.8.x
 # 5                | 3.1.x
 # 4                | 2.1.x, 2.3.x, 2.4.x, 3.0.x
 # 1                | 1.22.x
@@ -372,7 +372,6 @@ _yarn_src_unpack_default_ebuild() {
 			addwrite "${YARN_CACHE_FOLDER}"
 			mkdir -p "${YARN_CACHE_FOLDER}"
 			yarn config set cacheFolder "${YARN_CACHE_FOLDER}" || die
-			mv "${HOME}/.yarnrc" "${WORKDIR}" || die
 		fi
 		if [[ -e "${FILESDIR}/${PV}" && "${YARN_MULTI_LOCKFILE}" == "1" && -n "${YARN_ROOT}" ]] ; then
 			cp -aT "${FILESDIR}/${PV}" "${YARN_ROOT}" || die
@@ -747,9 +746,11 @@ yarn_network_settings() {
 		echo "networkConcurrency: ${YARN_NETWORK_CONCURRENT_CONNECTIONS}" >> .yarnrc || die # 8 -> 1
 	else
 # https://github.com/yarnpkg/berry/blob/%40yarnpkg/types/4.0.0/packages/yarnpkg-core/sources/Configuration.ts#L389
-		echo "httpTimeout: ${YARN_NETWORK_TIMEOUT}" >> .yarnrc || die # 1 min -> 5 min
+		npm config set httpTimeout ${YARN_NETWORK_TIMEOUT} # 1 min -> 5 min
+		#echo "httpTimeout: ${YARN_NETWORK_TIMEOUT}" >> .yarnrc || die # 1 min -> 5 min
 # https://github.com/yarnpkg/berry/blob/%40yarnpkg/types/4.0.0/packages/yarnpkg-core/sources/Configuration.ts#L399
-		echo "networkConcurrency: ${YARN_NETWORK_CONCURRENT_CONNECTIONS}" >> .yarnrc || die # 50 -> 1 ; smoother network multitasking
+		npm config set networkConcurrency ${YARN_NETWORK_CONCURRENT_CONNECTIONS} # 50 -> 1 ; smoother network multitasking
+		#echo "networkConcurrency: ${YARN_NETWORK_CONCURRENT_CONNECTIONS}" >> .yarnrc || die # 50 -> 1 ; smoother network multitasking
 	fi
 }
 

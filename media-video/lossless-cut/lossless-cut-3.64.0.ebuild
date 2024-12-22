@@ -8,14 +8,16 @@ MY_PN="${PN/-/}"
 
 # See https://releases.electronjs.org/releases.json
 ELECTRON_APP_ELECTRON_PV="31.3.1" # Cr 126.0.6478.185, node 20.15.1
+#ELECTRON_APP_ELECTRON_PV="32.0.0-beta.2" # Cr 128.0.6611.0, node 20.15.1
 ELECTRON_APP_SHARP_PV="0.32.6"
 NPM_AUDIT_FIX=0
+NODE_GYP_PV="9.3.0"
 NODE_VERSION="20"
 YARN_INSTALL_PATH="/opt/${MY_PN}"
 YARN_LOCKFILE_SOURCE="ebuild"
 YARN_SLOT=8
 
-inherit electron-app lcnr optfeature xdg yarn
+inherit edo electron-app flag-o-matic lcnr optfeature xdg yarn
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -69,27 +71,40 @@ DOCS=( "README.md" )
 
 pkg_setup() {
 	yarn_pkg_setup
+	electron-app_set_sharp_env
 }
 
 src_unpack() {
+	append-cppflags -I"/usr/include/glib-2.0"
 	if [[ "${PV}" =~ "9999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
 	else
 #		unpack ${A}
-		touch "${HOME}/.yarnrc"
+		#touch "${HOME}/.yarnrc"
 		yarn_src_unpack
 	fi
-	eyarn add sharp
+	eyarn add "node-gyp@${NODE_GYP_PV}"
+	eyarn add "sharp@${ELECTRON_APP_SHARP_PV}"
+	grep -q -E -e "exit code [0-9]+, logs can be found here:" "${T}/build.log" && die "Detected error"
 }
 
 src_compile() {
 	yarn_hydrate
 	yarn --version || die
-	electron-app_set_sharp_env
 	electron-app_cp_electron
-	eyarn icon-gen
+
+	electron-app_set_sharp_env
+	eyarn rebuild sharp
+
+	edo mkdirp "icon-build" "build-resources/appx"
+	edo tsx --version
+	edo tsx "script/icon-gen.mts"
+	ls "icon-build/app-512.png" || ewarn "Missing generated icon"
+	die
+
+	eyarn run icon-gen
 	electron-vite build || die
         electron-builder \
                 $(electron-app_get_electron_platarch_args) \
@@ -97,11 +112,13 @@ src_compile() {
                 || die
 	grep -q -e "failedTask" "${T}/build.log" && die "Detected error"
 	grep -q -e "Error:" "${T}/build.log" && die "Detected error"
+	grep -q -e "Failed with errors" "${T}/build.log" && die "Detected error"
 }
 
 src_install() {
 	docinto "licenses"
 	dodoc "LICENSE"
+
 
 	electron-app_gen_wrapper \
 		"${MY_PN}" \
