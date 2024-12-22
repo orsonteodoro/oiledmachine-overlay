@@ -14,6 +14,13 @@
       https://github.com/yarnpkg/berry/issues
     </bugs-to>
   </upstream>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  Additional offline slots available upon request.
+
+  -->
   <use>
     <flag name="ssl">
       Required for remote downloads.  Otherwise, offline install is assumed.

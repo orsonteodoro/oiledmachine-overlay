@@ -6,6 +6,13 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  Additional lockfile slots available upon request.
+
+  -->
   <upstream>
     <remote-id type="cpe">cpe:/a:pnpm:pnpm</remote-id>
     <remote-id type="github">pnpm/pnpm</remote-id>
