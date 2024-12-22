@@ -3,6 +3,10 @@
 # Copy the - unmask lines you need below to your /etc/portage/profile/package.use.mask
 # - unmasking will not work from the overlay directory.
 
+# Developer note:
+# if <use>, then USE=(<use>)
+# if -<use>, then USE=<use>
+
 # Allows to disable the 64 ABI
 www-client/firefox -abi_x86_64 -abi_mips_n64 -abi_ppc_64 -abi_s390_64
 www-client/surf -abi_x86_64 -abi_mips_n64 -abi_ppc_64 -abi_s390_64
@@ -29,3 +33,4 @@ dev-python/cython -python_targets_pypy3
 www-client/chromium partition-alloc partitionalloc
 
 sci-libs/caffe2 openmp
+

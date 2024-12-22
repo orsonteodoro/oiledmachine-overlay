@@ -4,7 +4,8 @@
 # the hard USE flag disable restriction.
 
 # Developer note:
-# without -<use> means block USE flag.
+# if <use>, then USE=(-<use>)
+# if -<use>, then USE=<use>
 
 # Untested.  Please report back to remove hard use mask
 >=sys-kernel/genkernel-4 subdir_mount
@@ -109,3 +110,8 @@ net-libs/webkit-gtk libwebrtc
 
 # Debugging inference performance issue
 app-misc/ollama mimalloc-secure hardened_malloc sandbox chroot
+
+
+# Build time failure Issue #54531
+=net-libs/nodejs-20* pointer-compression
+=net-libs/nodejs-22* pointer-compression
