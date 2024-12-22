@@ -73,10 +73,11 @@ src_compile() {
 	eyarn icon-gen
 	electron-vite build || die
 	electron-builder --linux || die
-	die "lol"
+	grep -e "failedTask" "${T}/build.log" || die
 }
 
 src_install() {
+	die "Install is not finished"
 	docinto "licenses"
 	dodoc "LICENSE"
 }
