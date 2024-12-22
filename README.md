@@ -1368,6 +1368,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-video/ffmpeg | Complete solution to record/convert/stream audio and video. Includes libavcodec |
 | media-video/gspca_ep800 | Kernel Modules for Endpoints EP800/SE402/SE401* |
 | media-video/linux-enable-ir-emitter | Provides support for infrared cameras that are not directly enabled out-of-the box. |
+| media-video/lossless-cut | The swiss army knife of lossless video/audio editing |
 | media-video/mpv | Media player for the command line |
 | media-video/nudenet_video | A Python script to detect and blur explicit nudity in videos using NudeNet and FFmpeg |
 | media-video/obs-studio | Software for live streaming and screen recording |
@@ -1529,7 +1530,6 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | x11-themes/paper-icon-theme | Paper Icon Theme |
 | x11-wm/dwm | A dynamic window manager for X11 |
 | x11-wm/xpra | X Persistent Remote Apps (xpra) and Partitioning WM (parti) based on wimpiggy |
-
 
 
 ### Contributing ebuilds
