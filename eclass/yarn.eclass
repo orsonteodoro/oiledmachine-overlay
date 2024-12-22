@@ -354,27 +354,17 @@ _yarn_src_unpack_default_ebuild() {
 		fi
 		rm -rf "${S}/.yarnrc" || die
 
+		local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 
 		if [[ "${YARN_SLOT}" == "1" ]] ; then
-			yarn config set yarn-offline-mirror "${WORKDIR}/npm-packages-offline-cache" || die
-			mv "${HOME}/.yarnrc" "${WORKDIR}" || die
-	einfo "yarn-offline-mirror:  ${WORKDIR}/npm-packages-offline-cache"
-
-			export YARN_ENABLE_OFFLINE_MODE=1
 			export YARN_CACHE_FOLDER="${EDISTDIR}/yarn-download-cache-${YARN_SLOT}/${CATEGORY}/${P}"
-	einfo "DEBUG:  Default cache folder:  ${HOME}/.yarn/berry/cache/"
-	einfo "YARN_ENABLE_OFFLINE_MODE:  ${YARN_ENABLE_OFFLINE_MODE}"
 	einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
 			mkdir -p "${HOME}/.yarn/berry" || die
-			ln -s "${YARN_CACHE_FOLDER}" "${HOME}/.yarn/berry/cache"
 			addwrite "${EDISTDIR}"
 			addwrite "${YARN_CACHE_FOLDER}"
 			mkdir -p "${YARN_CACHE_FOLDER}"
-
 			yarn config set cacheFolder "${YARN_CACHE_FOLDER}" || die
 		else
-			local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-
 			export YARN_ENABLE_OFFLINE_MODE=1
 			export YARN_CACHE_FOLDER="${EDISTDIR}/yarn-download-cache-${YARN_SLOT}/${CATEGORY}/${P}"
 	einfo "DEBUG:  Default cache folder:  ${HOME}/.yarn/berry/cache/"
@@ -387,6 +377,7 @@ _yarn_src_unpack_default_ebuild() {
 			mkdir -p "${YARN_CACHE_FOLDER}"
 			yarn config set cacheFolder "${YARN_CACHE_FOLDER}" || die
 		fi
+
 		if [[ -e "${FILESDIR}/${PV}" && "${YARN_MULTI_LOCKFILE}" == "1" && -n "${YARN_ROOT}" ]] ; then
 			cp -aT "${FILESDIR}/${PV}" "${YARN_ROOT}" || die
 		elif [[ -e "${FILESDIR}/${PV}" && "${YARN_MULTI_LOCKFILE}" == "1" ]] ; then
