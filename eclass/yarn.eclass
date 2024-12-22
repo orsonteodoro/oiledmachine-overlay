@@ -411,9 +411,9 @@ _yarn_src_unpack_default_ebuild() {
 		yarn_unpack_install_pre
 	fi
 
-	yarn config preferOffline "true"
 	yarn_network_settings
 	if [[ "${YARN_SLOT}" == "1" ]] ; then
+		yarn config preferOffline "true"
 		args+=(
 			--pure-lockfile
 			--verbose
@@ -422,6 +422,9 @@ _yarn_src_unpack_default_ebuild() {
 			${args[@]} \
 			${YARN_INSTALL_ARGS[@]}
 	else
+		if [[ "${YARN_SLOT}" == "8" ]] ; then
+			yarn config enableOfflineMode "true"
+		fi
 		args+=(
 			--cached
 		)
@@ -472,14 +475,17 @@ _yarn_src_unpack_default_upstream() {
 		yarn_unpack_install_pre
 	fi
 
-	yarn config preferOffline "true"
 	yarn_network_settings
 	if [[ "${YARN_SLOT}" == "1" ]] ; then
+		yarn config preferOffline "true"
 		args+=(
 			--pure-lockfile
 			--verbose
 		)
 	else
+		if [[ "${YARN_SLOT}" == "8" ]] ; then
+			yarn config enableOfflineMode "true"
+		fi
 		args+=(
 		)
 	fi
@@ -867,15 +873,18 @@ yarn_src_compile() {
 	[[ "${YARN_BUILD_SCRIPT}" == "null" ]] && return
 	[[ "${YARN_BUILD_SCRIPT}" == "skip" ]] && return
 	local cmd="${YARN_BUILD_SCRIPT:-build}"
-	grep -q -e "\"${cmd}\"" package.json || return
+	grep -q -e "\"${cmd}\"" "package.json" || return
 	local args=()
-	yarn config preferOffline "true"
-	if ver_test "${YARN_SLOT}" -lt "2" ; then
+	if [[ "${YARN_SLOT}" == "1" ]] ; then
+		yarn config preferOffline "true"
 		args+=(
 			--pure-lockfile
 			--verbose
 		)
 	else
+		if [[ "${YARN_SLOT}" == "8" ]] ; then
+			yarn config enableOfflineMode "true"
+		fi
 		args+=(
 		)
 	fi
