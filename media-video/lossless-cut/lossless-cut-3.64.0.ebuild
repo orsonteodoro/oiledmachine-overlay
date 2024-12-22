@@ -48,7 +48,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 mp3 opus svt-av1 theora vorbis vpx x264
-ebuild-revision-1
+ebuild-revision-2
 "
 RDEPEND+="
 	|| (
@@ -136,8 +136,10 @@ src_install() {
 
 	if has_version "media-video/ffmpeg:58.60.60" ; then
 		dosym "/usr/lib/ffmpeg/58.60.60/bin/ffmpeg" "/opt/losslesscut/resources/ffmpeg"
+		dosym "/usr/lib/ffmpeg/58.60.60/bin/ffprobe" "/opt/losslesscut/resources/ffprobe"
 	else
 		dosym "/usr/bin/ffmpeg" "/opt/losslesscut/resources/ffmpeg"
+		dosym "/usr/bin/ffprobe" "/opt/losslesscut/resources/ffprobe"
 	fi
 }
 
@@ -146,3 +148,6 @@ pkg_postinst() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  IN PROGRESS (3.64.0, 20241222)
+# UI load:  pass
+# Load video:  pass
