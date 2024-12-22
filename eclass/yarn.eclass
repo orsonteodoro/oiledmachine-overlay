@@ -746,10 +746,10 @@ yarn_network_settings() {
 		echo "networkConcurrency: ${YARN_NETWORK_CONCURRENT_CONNECTIONS}" >> .yarnrc || die # 8 -> 1
 	else
 # https://github.com/yarnpkg/berry/blob/%40yarnpkg/types/4.0.0/packages/yarnpkg-core/sources/Configuration.ts#L389
-		npm config set httpTimeout ${YARN_NETWORK_TIMEOUT} # 1 min -> 5 min
+		yarn config set httpTimeout ${YARN_NETWORK_TIMEOUT} # 1 min -> 5 min
 		#echo "httpTimeout: ${YARN_NETWORK_TIMEOUT}" >> .yarnrc || die # 1 min -> 5 min
 # https://github.com/yarnpkg/berry/blob/%40yarnpkg/types/4.0.0/packages/yarnpkg-core/sources/Configuration.ts#L399
-		npm config set networkConcurrency ${YARN_NETWORK_CONCURRENT_CONNECTIONS} # 50 -> 1 ; smoother network multitasking
+		yarn config set networkConcurrency ${YARN_NETWORK_CONCURRENT_CONNECTIONS} # 50 -> 1 ; smoother network multitasking
 		#echo "networkConcurrency: ${YARN_NETWORK_CONCURRENT_CONNECTIONS}" >> .yarnrc || die # 50 -> 1 ; smoother network multitasking
 	fi
 }
