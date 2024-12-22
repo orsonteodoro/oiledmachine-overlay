@@ -169,6 +169,7 @@ unset -f _yarn_set_globals
 # Check the network sandbox.
 yarn_check_network_sandbox() {
 # Corepack problems.  Cannot do complete offline install.
+# Required for yarn 4.x
 	if has network-sandbox $FEATURES ; then
 eerror
 eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
@@ -209,8 +210,6 @@ eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
 eerror "env to be able to download micropackages."
 eerror
 				die
-		elif ver_test "${yarn_pv}" -ge "1" ; then
-			: #yarn_check_network_sandbox
 		fi
 	popd >/dev/null 2>&1 || die
 }
@@ -268,6 +267,10 @@ eerror
 			die
 		fi
 	fi
+
+	if [[ "${YARN_SLOT}" != "1" ]] ; then
+		yarn_check_network_sandbox
+	fi
 }
 
 # @FUNCTION: _yarn_cp_tarballs_v1
@@ -304,55 +307,6 @@ einfo "Copying tarballs to ${dest} (v1)"
 	IFS=$' \t\n'
 }
 
-# @FUNCTION: _yarn_cp_tarballs_v4
-# @INTERNAL
-# @DESCRIPTION:
-# Copies all tarballs to the offline cache
-_yarn_cp_tarballs_v4() {
-	local dest="${WORKDIR}/npm-packages-offline-cache"
-	mkdir -p "${dest}" || die
-	IFS=$'\n'
-einfo "Copying tarballs to ${dest} (v4)"
-	local uri
-	for uri in ${YARN_EXTERNAL_URIS} ; do
-		local bn
-		if [[ "${uri}" =~ "->" && "${uri}" =~ ".git" ]] ; then
-			bn=$(echo "${uri}" \
-				| cut -f 3 -d " ")
-#einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/yarnpkg-}"
-			local fn="${bn/yarnpkg-}"
-			fn="${fn/.zip}"
-			local path=$(mktemp -d -p "${T}")
-			pushd "${path}" >/dev/null 2>&1 || die
-				tar --strip-components=1 -xvf "${DISTDIR}/${bn}" || die
-				zip -r "${dest}/${fn}" * || die
-			popd >/dev/null 2>&1 || die
-			rm -rf "${path}" || die
-		else
-# contents of zip example:
-# node_modules/@radix-ui/react-primitive/package.json
-# save location example:
-# /var/tmp/portage/media-video/lossless-cut-3.64.0/homedir/.yarn/berry/cache/@jridgewell-resolve-uri-npm-3.1.1-aa2de3f210-10.zip
-			bn=$(echo "${uri}" \
-				| cut -f 3 -d " ")
-#einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/yarnpkg-}"
-			local path=$(mktemp -d -p "${T}")
-			pushd "${path}" >/dev/null 2>&1 || die
-				tar --strip-components=1 -xvf "${DISTDIR}/${bn}" || die
-				local n="${bn}"
-				n="${n/npmpkg-/}"
-				n="${n/.tgz/.zip}"
-				einfo "dest: ${dest}/${n}"
-				mkdir -p "node_modules" || die
-				mv * "node_modules/" || true
-				zip -r "${dest}/${n}" * || die
-			popd >/dev/null 2>&1 || die
-			rm -rf "${path}" || die
-		fi
-	done
-	IFS=$' \t\n'
-}
-
 # @FUNCTION: _yarn_cp_tarballs
 # @INTERNAL
 # @DESCRIPTION:
@@ -361,7 +315,6 @@ _yarn_cp_tarballs() {
 	if [[ "${YARN_SLOT}" == "1" ]] ; then
 		_yarn_cp_tarballs_v1
 	else
-		_yarn_cp_tarballs_v4
 		:
 	fi
 }
@@ -403,10 +356,22 @@ _yarn_src_unpack_default_ebuild() {
 		if [[ "${YARN_SLOT}" == "1" ]] ; then
 			yarn config set yarn-offline-mirror "${WORKDIR}/npm-packages-offline-cache" || die
 			mv "${HOME}/.yarnrc" "${WORKDIR}" || die
+	einfo "yarn-offline-mirror:  ${WORKDIR}/npm-packages-offline-cache"
 		else
+			local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+
+	# More vendor lock-in nonsense
 			export YARN_ENABLE_OFFLINE_MODE=1
-			export YARN_CACHE_FOLDER="${WORKDIR}/npm-packages-offline-cache"
-			#yarn config set cacheFolder "${WORKDIR}/npm-packages-offline-cache" || die
+			export YARN_CACHE_FOLDER="${EDISTDIR}/yarn-download-cache-${YARN_SLOT}/${CATEGORY}/${P}"
+	einfo "DEBUG:  Default cache folder:  ${HOME}/.yarn/berry/cache/"
+	einfo "YARN_ENABLE_OFFLINE_MODE:  ${YARN_ENABLE_OFFLINE_MODE}"
+	einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
+			mkdir -p "${HOME}/.yarn/berry" || die
+			ln -s "${YARN_CACHE_FOLDER}" "${HOME}/.yarn/berry/cache"
+			addwrite "${EDISTDIR}"
+			addwrite "${YARN_CACHE_FOLDER}"
+			mkdir -p "${YARN_CACHE_FOLDER}"
+			yarn config set cacheFolder "${YARN_CACHE_FOLDER}" || die
 			mv "${HOME}/.yarnrc" "${WORKDIR}" || die
 		fi
 		if [[ -e "${FILESDIR}/${PV}" && "${YARN_MULTI_LOCKFILE}" == "1" && -n "${YARN_ROOT}" ]] ; then
