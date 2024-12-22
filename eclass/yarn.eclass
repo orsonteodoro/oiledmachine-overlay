@@ -353,14 +353,28 @@ _yarn_src_unpack_default_ebuild() {
 			rm -rf "${YARN_ROOT}/.yarnrc" || die
 		fi
 		rm -rf "${S}/.yarnrc" || die
+
+
 		if [[ "${YARN_SLOT}" == "1" ]] ; then
 			yarn config set yarn-offline-mirror "${WORKDIR}/npm-packages-offline-cache" || die
 			mv "${HOME}/.yarnrc" "${WORKDIR}" || die
 	einfo "yarn-offline-mirror:  ${WORKDIR}/npm-packages-offline-cache"
+
+			export YARN_ENABLE_OFFLINE_MODE=1
+			export YARN_CACHE_FOLDER="${EDISTDIR}/yarn-download-cache-${YARN_SLOT}/${CATEGORY}/${P}"
+	einfo "DEBUG:  Default cache folder:  ${HOME}/.yarn/berry/cache/"
+	einfo "YARN_ENABLE_OFFLINE_MODE:  ${YARN_ENABLE_OFFLINE_MODE}"
+	einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
+			mkdir -p "${HOME}/.yarn/berry" || die
+			ln -s "${YARN_CACHE_FOLDER}" "${HOME}/.yarn/berry/cache"
+			addwrite "${EDISTDIR}"
+			addwrite "${YARN_CACHE_FOLDER}"
+			mkdir -p "${YARN_CACHE_FOLDER}"
+
+			yarn config set cacheFolder "${YARN_CACHE_FOLDER}" || die
 		else
 			local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 
-	# More vendor lock-in nonsense
 			export YARN_ENABLE_OFFLINE_MODE=1
 			export YARN_CACHE_FOLDER="${EDISTDIR}/yarn-download-cache-${YARN_SLOT}/${CATEGORY}/${P}"
 	einfo "DEBUG:  Default cache folder:  ${HOME}/.yarn/berry/cache/"
@@ -397,11 +411,10 @@ _yarn_src_unpack_default_ebuild() {
 		yarn_unpack_install_pre
 	fi
 
-	if ver_test "${YARN_SLOT}" -lt "2" ; then
+	yarn config preferOffline "true"
+	yarn_network_settings
+	if [[ "${YARN_SLOT}" == "1" ]] ; then
 		args+=(
-			--network-concurrency ${YARN_NETWORK_CONCURRENT_CONNECTIONS}
-			--network-timeout ${YARN_NETWORK_TIMEOUT}
-			--prefer-offline
 			--pure-lockfile
 			--verbose
 		)
@@ -409,7 +422,6 @@ _yarn_src_unpack_default_ebuild() {
 			${args[@]} \
 			${YARN_INSTALL_ARGS[@]}
 	else
-		yarn_network_settings
 		args+=(
 			--cached
 		)
@@ -460,18 +472,15 @@ _yarn_src_unpack_default_upstream() {
 		yarn_unpack_install_pre
 	fi
 
-	if ver_test "${YARN_SLOT}" -lt "2" ; then
+	yarn config preferOffline "true"
+	yarn_network_settings
+	if [[ "${YARN_SLOT}" == "1" ]] ; then
 		args+=(
-			--network-concurrency ${YARN_NETWORK_CONCURRENT_CONNECTIONS}
-			--network-timeout ${YARN_NETWORK_TIMEOUT}
-			--prefer-offline
 			--pure-lockfile
 			--verbose
 		)
 	else
-		yarn_network_settings
 		args+=(
-			--prefer-offline
 		)
 	fi
 
@@ -860,15 +869,14 @@ yarn_src_compile() {
 	local cmd="${YARN_BUILD_SCRIPT:-build}"
 	grep -q -e "\"${cmd}\"" package.json || return
 	local args=()
+	yarn config preferOffline "true"
 	if ver_test "${YARN_SLOT}" -lt "2" ; then
 		args+=(
-			--prefer-offline
 			--pure-lockfile
 			--verbose
 		)
 	else
 		args+=(
-			--prefer-offline
 		)
 	fi
 
