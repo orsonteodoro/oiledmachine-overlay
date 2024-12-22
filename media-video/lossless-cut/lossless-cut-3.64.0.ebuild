@@ -71,7 +71,6 @@ DOCS=( "README.md" )
 
 pkg_setup() {
 	yarn_pkg_setup
-	electron-app_set_sharp_env
 }
 
 src_unpack() {
@@ -86,8 +85,18 @@ src_unpack() {
 		yarn_src_unpack
 	fi
 	eyarn add "node-gyp@${NODE_GYP_PV}"
+	export SHARP_IGNORE_GLOBAL_LIBVIPS=1 # First download prebuilt vips lib
 	eyarn add "sharp@${ELECTRON_APP_SHARP_PV}"
-	grep -q -E -e "exit code [0-9]+, logs can be found here:" "${T}/build.log" && die "Detected error"
+	electron-app_set_sharp_env # Disabled vips lib
+	if grep -q -E -e "sharp: Installation error: aborted" "${T}/xfs-"*"/build.log" ; then
+		eyarn rebuild sharp
+	fi
+
+	edo mkdirp "icon-build" "build-resources/appx"
+	edo tsx --version
+	edo tsx "script/icon-gen.mts"
+
+	grep -q -e "Something went wrong" "${T}/build.log" && die "Detected error"
 }
 
 src_compile() {
@@ -95,12 +104,6 @@ src_compile() {
 	yarn --version || die
 	electron-app_cp_electron
 
-	electron-app_set_sharp_env
-	eyarn rebuild sharp
-
-	edo mkdirp "icon-build" "build-resources/appx"
-	edo tsx --version
-	edo tsx "script/icon-gen.mts"
 	ls "icon-build/app-512.png" || ewarn "Missing generated icon"
 	die
 
