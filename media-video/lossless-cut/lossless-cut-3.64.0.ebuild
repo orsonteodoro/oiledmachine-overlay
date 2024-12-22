@@ -92,6 +92,7 @@ src_compile() {
                 -l dir \
                 || die
 	grep -e "failedTask" "${T}/build.log" && die
+	grep -e "Error:" "${T}/build.log" && die
 }
 
 src_install() {
