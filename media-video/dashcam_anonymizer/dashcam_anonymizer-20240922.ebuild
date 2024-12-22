@@ -45,7 +45,7 @@ RESTRICT="fetch mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 cuda rocm xla xpu
-ebuild-revision-5
+ebuild-revision-6
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
@@ -70,6 +70,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-644883f-path-changes.patch"
 	"${FILESDIR}/${PN}-644883f-device-options.patch"
 	"${FILESDIR}/${PN}-644883f-use-yellow.patch"
+	"${FILESDIR}/${PN}-644883f-blur_video-model-stream-true.patch"
 )
 
 pkg_nofetch() {

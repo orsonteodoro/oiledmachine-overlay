@@ -1,0 +1,43 @@
+diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/blur_videos.py dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_videos.py
+--- dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/blur_videos.py	2024-12-22 15:49:01.429703521 -0800
++++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_videos.py	2024-12-22 15:50:18.181207774 -0800
+@@ -56,7 +56,8 @@ if(config["generate_detections"]):
+                 conf=config['detection_conf_thresh'],
+                 device='cuda:0',
+                 project=os.path.join(CACHE_DIR, 'runs', 'detect') + os.sep,
+-                name="yolo_videos_pred")
++                name="yolo_videos_pred",
++                stream=True)
+     elif(config["xpu_avail"]):
+         console.print("XPU Available, Running on XPU", style="bold green")
+         _ = model(source=_videos_path,
+@@ -65,7 +66,8 @@ if(config["generate_detections"]):
+                 conf=config['detection_conf_thresh'],
+                 device='xpu',
+                 project=os.path.join(CACHE_DIR, 'runs', 'detect') + os.sep,
+-                name="yolo_videos_pred")
++                name="yolo_videos_pred",
++                stream=True)
+     elif(config["xla_avail"]):
+         console.print("XLA Available, Running on XLA", style="bold green")
+         _ = model(source=_videos_path,
+@@ -74,7 +76,8 @@ if(config["generate_detections"]):
+                 conf=config['detection_conf_thresh'],
+                 device='xla',
+                 project=os.path.join(CACHE_DIR, 'runs', 'detect') + os.sep,
+-                name="yolo_videos_pred")
++                name="yolo_videos_pred",
++                stream=True)
+     else:
+         console.print("GPU, XPU, and XLA Not Available, Running on CPU", style="bold yellow")
+         _ = model(source=_videos_path,
+@@ -83,7 +86,8 @@ if(config["generate_detections"]):
+                 conf=config['detection_conf_thresh'],
+                 device='cpu',
+                 project=os.path.join(CACHE_DIR, 'runs', 'detect') + os.sep,
+-                name="yolo_videos_pred")
++                name="yolo_videos_pred",
++                stream=True)
+     
+ 
+ videos = natsorted(glob.glob(f"{_videos_path}" + os.sep + "*.mp4"))
