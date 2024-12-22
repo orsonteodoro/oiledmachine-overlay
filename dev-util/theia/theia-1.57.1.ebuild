@@ -845,6 +845,7 @@ einfo
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.37.1 (20230525)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.50.1 (20240620)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.56.0 (20241201)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.57.1 (20241222)
 # launch-test:  passed
 # ai-assistant (ollama with yi-coder:1.5b with Universal agent):  passed
 # Run hello world for python:  fail
