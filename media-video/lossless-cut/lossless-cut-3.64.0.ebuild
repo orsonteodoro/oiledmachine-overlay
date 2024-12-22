@@ -4,14 +4,17 @@
 
 EAPI=8
 
+MY_PN="${PN/-/}"
+
 # See https://releases.electronjs.org/releases.json
 ELECTRON_APP_ELECTRON_PV="31.3.1" # Cr 126.0.6478.185, node 20.15.1
 NPM_AUDIT_FIX=0
 NODE_VERSION="20"
+YARN_INSTALL_PATH="/opt/${MY_PN}"
 YARN_LOCKFILE_SOURCE="ebuild"
 YARN_SLOT=8
 
-inherit electron-app yarn
+inherit electron-app lcnr yarn xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -36,12 +39,23 @@ HOMEPAGE="
 	https://github.com/mifi/lossless-cut
 "
 LICENSE="
-	MIT
+	${ELECTRON_APP_LICENSES}
+	electron-31.3.1-chromium.html
+	CC0-1.0
+	GPL-2
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+IUSE+="
+mp3 opus svt-av1 theora vorbis vpx x264
+ebuild-revision-1
+"
 RDEPEND+="
+	|| (
+		media-video/ffmpeg:58.60.60[encode,mp3?,opus?,svt-av1?,theora?,vorbis?,vpx?,x264?]
+		media-video/ffmpeg:0/58.60.60[encode,mp3?,opus?,svt-av1?,theora?,vorbis?,vpx?,x264?]
+	)
+	media-video/ffmpeg:=
 "
 DEPEND+="
 	${RDEPEND}
@@ -73,14 +87,60 @@ src_compile() {
 	electron-app_cp_electron
 	eyarn icon-gen
 	electron-vite build || die
-	electron-builder --linux || die
+        electron-builder \
+                $(electron-app_get_electron_platarch_args) \
+                -l dir \
+                || die
 	grep -e "failedTask" "${T}/build.log" && die
 }
 
 src_install() {
-	die "Install is not finished"
 	docinto "licenses"
 	dodoc "LICENSE"
+
+	electron-app_gen_wrapper \
+		"${MY_PN}" \
+		"${YARN_INSTALL_PATH}/${MY_PN}"
+	newicon "src/renderer/src/icon.svg" "no.mifi.losslesscut.svg"
+	insinto "/usr/share/applications"
+	doins "no.mifi.losslesscut.desktop"
+	insinto "${YARN_INSTALL_PATH}"
+	doins -r "dist/linux-unpacked/"*
+	fperms 0755 "${YARN_INSTALL_PATH}/${MY_PN}"
+
+	EXE_FILES=(
+		"libffmpeg.so"
+		"losslesscut"
+		"libGLESv2.so"
+		"libvk_swiftshader.so"
+		"libEGL.so"
+		"chrome-sandbox"
+		"libvulkan.so.1"
+		"chrome_crashpad_handler"
+	)
+
+	local x
+	for x in ${EXE_FILES[@]} ; do
+		fperms 0755 "${YARN_INSTALL_PATH}/${x}"
+	done
+
+	sed -i \
+		-e "s|/app/bin/run.sh|/usr/bin/${MY_PN}|g" \
+		"${ED}/usr/share/applications/no.mifi.losslesscut.desktop" \
+		|| die
+
+	lcnr_install_files
+	electron-app_set_sandbox_suid "/opt/${MY_PN}/chrome-sandbox"
+
+	if has_version "media-video/ffmpeg:58.60.60" ; then
+		dosym "/usr/lib/ffmpeg/58.60.60/bin/ffmpeg" "/opt/losslesscut/resources/ffmpeg"
+	else
+		dosym "/usr/bin/ffmpeg" "/opt/losslesscut/resources/ffmpeg"
+	fi
+}
+
+pkg_postinst() {
+	xdg_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
