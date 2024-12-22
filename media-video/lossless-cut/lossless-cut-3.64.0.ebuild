@@ -52,7 +52,6 @@ mp3 opus svt-av1 theora vorbis vpx x264
 ebuild-revision-2
 "
 RDEPEND+="
-	>=media-libs/vips-${ELECTRON_APP_VIPS_PV}[cxx,png,svg]
 	|| (
 		media-video/ffmpeg:58.60.60[encode,mp3?,opus?,svt-av1?,theora?,vorbis?,vpx?,x264?]
 		media-video/ffmpeg:0/58.60.60[encode,mp3?,opus?,svt-av1?,theora?,vorbis?,vpx?,x264?]
@@ -63,6 +62,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	>=media-libs/vips-${ELECTRON_APP_VIPS_PV}[cxx,png,svg]
 	>=sys-apps/yarn-4:${YARN_SLOT}
 "
 DOCS=( "README.md" )
