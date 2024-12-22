@@ -12,6 +12,25 @@
 # @DESCRIPTION:
 # Add support for pnpm
 
+# @ECLASS_VARIABLE: PNPM_OFFLINE
+# @DESCRIPTION:
+# 1 - offline preferred, 0 - online
+
+# @ECLASS_VARIABLE: PNPM_SLOT
+# @DESCRIPTION:
+# The version of the pnpm lockfile. (Default:  9)
+# lockfile version | pnpm version
+# 9                | 9.15.x, 10.0.x
+# 8                | 8.0.x, 8.15.x
+# 6                | 7.33.x
+# 5.4              | 6.32.x, 6.33.x, 6.34.x, 6.35.x, 7.0.x
+# 5.3              | 5.18.x, 6.0.x, 6.31.x
+# 5.2              | 5.16.x, 5.17.x
+# 5.1              | 3.5.0, 3.8.x, 4.0.x, 4.14.x, 5.0.2
+# 5                | 3.0.x, 3.4.0                               # lockfileVersion (pnpm-lock.yaml)
+# 4                | 2.25.x (shri)                              # shrinkwrapVersion (shrinkwrap.yaml)
+
+
 case ${EAPI:-0} in
 	[78]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
@@ -23,6 +42,7 @@ _PNPM_ECLASS=1
 EXPORT_FUNCTIONS pkg_setup src_unpack src_compile
 
 _pnpm_set_globals() {
+	export PNPM_OFFLINE=${PNPM_OFFLINE:-1}
 	export PNPM_NETWORK_FETCH_RETRIES=${PNPM_NETWORK_FETCH_RETRIES:-7}
 	export PNPM_NETWORK_FETCH_RETRY_MAXTIMEOUT=${PNPM_NETWORK_FETCH_RETRY_MAXTIMEOUT:-300000}
 	export PNPM_NETWORK_FETCH_RETRY_MINTIMEOUT=${PNPM_NETWORK_FETCH_RETRY_MINTIMEOUT:-60000}
@@ -39,7 +59,7 @@ if [[ -n "${PNPM_SLOT}" ]] ; then
 	"
 else
 	BDEPEND+="
-		sys-apps/pnpm:8
+		sys-apps/pnpm:9
 	"
 fi
 
@@ -165,7 +185,7 @@ eerror
 			die
 		fi
 	fi
-	: #npm_check_network_sandbox
+	: #pnpm_check_network_sandbox
 }
 
 # @FUNCTION: pnpm_src_unpack
@@ -173,6 +193,22 @@ eerror
 # Unpacks a pnpm application.
 pnpm_src_unpack() {
 	pnpm_hydrate
+	if [[ "${PNPM_OFFLINE}" == "1" ]] ; then
+		pnpm config set preferOffline "true" || die
+	fi
+
+	mkdir -p "${HOME}/.local/share/pnpm"
+	export PNPM_CACHE_FOLDER="${EDISTDIR}/pnpm-download-cache-${PNPM_SLOT}/${CATEGORY}/${P}"
+	einfo "DEBUG:  Default cache folder:  ${HOME}/.local/share/pnpm/store"
+	einfo "PNPM_OFFLINE:  ${PNPM_OFFLINE}"
+	einfo "PNPM_CACHE_FOLDER:  ${PNPM_CACHE_FOLDER}"
+	mkdir -p "${HOME}/.local/share/pnpm" || die
+	ln -s "${PNPM_CACHE_FOLDER}" "${HOME}/.local/share/pnpm/store"
+	addwrite "${EDISTDIR}"
+	addwrite "${PNPM_CACHE_FOLDER}"
+	mkdir -p "${PNPM_CACHE_FOLDER}"
+	pnpm config set store-dir "${PNPM_CACHE_FOLDER}" || die
+
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	epnpm install \
 		${PNPM_INSTALL_ARGS[@]}
