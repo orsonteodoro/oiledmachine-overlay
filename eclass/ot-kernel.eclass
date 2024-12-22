@@ -41,7 +41,6 @@
 # genpatches:
 #	https://dev.gentoo.org/~mpagano/genpatches/
 #	https://gitweb.gentoo.org/proj/linux-patches.git/
-#	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=4.19
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.4
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.10
 #	https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=5.15
@@ -58,7 +57,6 @@
 #	https://github.com/torvalds/linux/compare/v6.0...zen-kernel:6.0/mglru
 # MUQSS CPU Scheduler (official, EOL 5.12):
 #	https://ck-hack.blogspot.com/
-#	https://github.com/torvalds/linux/compare/v4.19...ckolivas:4.19-ck
 #	https://github.com/torvalds/linux/compare/v5.4...ckolivas:5.4-ck
 #	https://github.com/torvalds/linux/compare/v5.10...ckolivas:5.10-ck
 # Nest:
@@ -85,7 +83,6 @@
 #       https://github.com/ClangBuiltLinux/linux/issues/1405
 # PREEMPT_RT (-rt):
 #	https://wiki.linuxfoundation.org/realtime/start
-#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/4.19/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.4/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.10/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/5.15/
@@ -101,8 +98,6 @@
 #	https://github.com/dolohow/uksm
 # zen-sauce, zen-tune:
 #	https://liquorix.net/
-#	https://github.com/torvalds/linux/compare/v4.19...zen-kernel:zen-kernel:4.19/zen-tune	# aka part 1 of zen-sauce
-#	https://github.com/torvalds/linux/compare/v4.19...zen-kernel:zen-kernel:4.19/misc	# aka part 2 of zen-sauce
 #	https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
 #	https://github.com/torvalds/linux/compare/v5.10...zen-kernel:5.10/zen-sauce
 #	https://github.com/torvalds/linux/compare/v5.15...zen-kernel:5.15/zen-sauce

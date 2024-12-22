@@ -69,18 +69,6 @@
 
     Kernel series | Patchset  			     | LTS [1,2]
 
-    4.19 (LTS)						Y
-		    -ck / MuQSS				N
-		    -rt (RT_PREEMPT)			Y
-		    genpatches				N
-		    kernel_compiler_patch 		N
-		    O3 [5]				N
-		    PDS					N
-		    TRESOR (AES-NI) [3,4,5]		b
-		    TRESOR (x86) [3,4,5]		b
-		    TRESOR (x86-64) [3,5]		E
-		    UKSM				R
-
     5.4	(LTS)						Y
 		    -ck / MuQSS				N
 		    -rt	(RT_PREEMPT)			Y
@@ -152,21 +140,6 @@
 		    TRESOR (AES-NI) [5]			b
 		    TRESOR (x86) [5]			b
 		    TRESOR (x86-64) [5]			E
-		    zen-sauce				N
-
-    6.11 (Stable)					A
-		    -rt	(RT_PREEMPT)			A
-		    Clang PGO				D
-		    Clear Linux patchset		N
-		    genpatches				A
-		    kernel_compiler_patch		A
-		    Nest				D
-		    Project C				N
-		    TCP BBR v2 [5]			D
-		    TCP BBR v3 [5]			D
-		    TRESOR (AES-NI) [5]			D
-		    TRESOR (x86) [5]			D
-		    TRESOR (x86-64) [5]			D
 		    zen-sauce				N
 
     6.12 (Stable)					A
@@ -1086,12 +1059,10 @@ OT_KERNEL_WORK_PROFILE="http-server-busy"
     OT_KERNEL_CPU_SCHED - can be one of the below depending on the kernel version.
 
       4.14: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, muqss, muqss-latency, muqss-throughput, pds
-      4.19: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, muqss, muqss-latency, muqss-throughput, pds
       5.10: cfs, cfs-throghhput, cfs-interactive, cfs-autogroup, muqss, muqss-latency, muqss-throughput, prjc, prjc-bmq, prjc-pds
       5.15: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
       6.1: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
       6.6: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
-      6.11: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
       6.12: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
       6.13: cfs, cfs-throughput, cfs-interactive, cfs-autogroup
 
@@ -3688,8 +3659,6 @@ unset OT_KERNEL_PRIVATE_KEY
       For the basic kernel driver:
 
         Kernel 5.4 for Arcturus, Renoir, Navi 12
-        Kernel 4.19 for Vega20
-        Kernel 4.14 for Vega10, Raven
 
       For the rock-dkms kernel driver:
 
@@ -4257,11 +4226,6 @@ unset OT_KERNEL_PRIVATE_KEY
 
     For a full list of commits, see the commit history.
 
-    For 4.19, see:
-
-      https://github.com/torvalds/linux/compare/v4.19...zen-kernel:4.19/misc
-      https://github.com/torvalds/linux/compare/v4.19...zen-kernel:zen-kernel:4.19/zen-tune
-
     For 5.4, see:
 
       https://github.com/torvalds/linux/compare/v5.4...zen-kernel:5.4/zen-sauce
@@ -4281,10 +4245,6 @@ unset OT_KERNEL_PRIVATE_KEY
     For 6.6, see:
 
       https://github.com/torvalds/linux/compare/v6.6...zen-kernel:6.6/zen-sauce
-
-    For 6.11, see:
-
-      https://github.com/torvalds/linux/compare/v6.11...zen-kernel:6.11/zen-sauce
 
     For 6.12, see:
 

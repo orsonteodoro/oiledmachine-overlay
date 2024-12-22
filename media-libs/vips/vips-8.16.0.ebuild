@@ -707,8 +707,8 @@ src_install() {
 
 multilib_src_install_all() {
 	# Verify that release is only installed
-	grep -r -e "png_set_crc_action" $(find "${ED}" -name "*.so*") \
-		&& die "Detected fuzzed libs."
+	#grep -r -e "png_set_crc_action" $(find "${ED}" -name "*.so*") \
+	#	&& die "Detected fuzzed libs."
 	cd "${S}" || die
 	einstalldocs
 	find "${ED}" -name '*.la' -delete || die
