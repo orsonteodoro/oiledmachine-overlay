@@ -12,6 +12,8 @@
 # @DESCRIPTION:
 # Eclass similar to the cargo.eclass.
 
+# For additional slot availability send issue request.
+
 # Requirements:  yarn.lock or package.json -> package-lock.json -> yarn.lock
 # For the URI generator, see the scripts/yarn_updater_transform_uris.sh and
 # yarn_updater_update_locks.sh scripts.

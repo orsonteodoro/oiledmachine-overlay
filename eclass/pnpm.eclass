@@ -12,6 +12,8 @@
 # @DESCRIPTION:
 # Add support for pnpm
 
+# For additional slot availability send issue request.
+
 # @ECLASS_VARIABLE: PNPM_OFFLINE
 # @DESCRIPTION:
 # 1 - offline preferred, 0 - online

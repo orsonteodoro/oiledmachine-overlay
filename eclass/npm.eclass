@@ -12,6 +12,8 @@
 # @DESCRIPTION:
 # Eclass similar to the cargo.eclass.
 
+# For additional slot availability send issue request.
+
 case ${EAPI:-0} in
 	[78]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
