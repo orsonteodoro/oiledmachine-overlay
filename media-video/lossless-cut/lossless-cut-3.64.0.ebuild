@@ -8,6 +8,7 @@ MY_PN="${PN/-/}"
 
 # See https://releases.electronjs.org/releases.json
 ELECTRON_APP_ELECTRON_PV="31.3.1" # Cr 126.0.6478.185, node 20.15.1
+ELECTRON_APP_SHARP_PV="0.32.6"
 NPM_AUDIT_FIX=0
 NODE_VERSION="20"
 YARN_INSTALL_PATH="/opt/${MY_PN}"
@@ -51,6 +52,7 @@ mp3 opus svt-av1 theora vorbis vpx x264
 ebuild-revision-2
 "
 RDEPEND+="
+	>=media-libs/vips-${ELECTRON_APP_VIPS_PV}[cxx,png,svg]
 	|| (
 		media-video/ffmpeg:58.60.60[encode,mp3?,opus?,svt-av1?,theora?,vorbis?,vpx?,x264?]
 		media-video/ffmpeg:0/58.60.60[encode,mp3?,opus?,svt-av1?,theora?,vorbis?,vpx?,x264?]
@@ -85,6 +87,7 @@ src_unpack() {
 src_compile() {
 	yarn_hydrate
 	yarn --version || die
+	electron-app_set_sharp_env
 	electron-app_cp_electron
 	eyarn icon-gen
 	electron-vite build || die
