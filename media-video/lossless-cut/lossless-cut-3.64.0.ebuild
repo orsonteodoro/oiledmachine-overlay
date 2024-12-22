@@ -143,21 +143,6 @@ src_install() {
 
 pkg_postinst() {
 	xdg_pkg_postinst
-# For error:
-# Settings schema 'org.gtk.Settings.FileChooser' is not installed
-ewarn
-ewarn "DWM users:"
-ewarn
-ewarn "To show the FileChooser dialog window for visual LLMs, add the following to ~/.xinitrc and restart dwm:"
-ewarn
-ewarn "/usr/libexec/xdg-desktop-portal -r &"
-ewarn
-	optfeature_header "Install a package with FileChooser support required for visual LLM support:"
-	optfeature "gnome FileChooser support" "sys-apps/xdg-desktop-portal-gnome"
-	optfeature "gtk FileChooser support" "sys-apps/xdg-desktop-portal-gtk"
-	optfeature "kde FileChooser support" "kde-plasma/xdg-desktop-portal-kde"
-	optfeature "lxqt FileChooser support" "gui-libs/xdg-desktop-portal-lxqt"
-	optfeature "wlroots FileChooser support" "gui-libs/xdg-desktop-portal-wlr"
 }
 
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
