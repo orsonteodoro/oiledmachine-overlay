@@ -4,7 +4,8 @@
 
 EAPI=8
 
-ELECTRON_APP_ELECTRON_PV="31.3.1"
+# See https://releases.electronjs.org/releases.json
+ELECTRON_APP_ELECTRON_PV="31.3.1" # Cr 126.0.6478.185, node 20.15.1
 NPM_AUDIT_FIX=0
 NODE_VERSION="20"
 YARN_LOCKFILE_SOURCE="ebuild"
@@ -73,7 +74,7 @@ src_compile() {
 	eyarn icon-gen
 	electron-vite build || die
 	electron-builder --linux || die
-	grep -e "failedTask" "${T}/build.log" || die
+	grep -e "failedTask" "${T}/build.log" && die
 }
 
 src_install() {
