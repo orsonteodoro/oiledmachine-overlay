@@ -1,0 +1,12 @@
+diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/blur_videos.py dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_videos.py
+--- dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/blur_videos.py	2024-12-22 15:40:42.856914433 -0800
++++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_videos.py	2024-12-22 15:41:05.932766198 -0800
+@@ -76,7 +76,7 @@ if(config["generate_detections"]):
+                 project=os.path.join(CACHE_DIR, 'runs', 'detect') + os.sep,
+                 name="yolo_videos_pred")
+     else:
+-        console.print("GPU, XPU, and XLA Not Available, Running on CPU", style="bold orange")
++        console.print("GPU, XPU, and XLA Not Available, Running on CPU", style="bold yellow")
+         _ = model(source=_videos_path,
+                 save=False,
+                 save_txt=True,

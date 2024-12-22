@@ -45,7 +45,7 @@ RESTRICT="fetch mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 cuda rocm xla xpu
-ebuild-revision-4
+ebuild-revision-5
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
@@ -69,6 +69,7 @@ DOCS=( "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-644883f-path-changes.patch"
 	"${FILESDIR}/${PN}-644883f-device-options.patch"
+	"${FILESDIR}/${PN}-644883f-use-yellow.patch"
 )
 
 pkg_nofetch() {
