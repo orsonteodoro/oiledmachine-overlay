@@ -79,6 +79,7 @@ src_unpack() {
 		touch "${HOME}/.yarnrc"
 		yarn_src_unpack
 	fi
+	eyarn add sharp
 }
 
 src_compile() {
