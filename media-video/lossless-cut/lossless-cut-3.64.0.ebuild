@@ -143,6 +143,8 @@ src_install() {
 
 pkg_postinst() {
 	xdg_pkg_postinst
+# For error:
+# Settings schema 'org.gtk.Settings.FileChooser' is not installed
 ewarn
 ewarn "DWM users:"
 ewarn
