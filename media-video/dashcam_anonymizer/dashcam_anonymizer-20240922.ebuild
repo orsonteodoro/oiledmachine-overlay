@@ -45,7 +45,7 @@ RESTRICT="fetch mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 cuda ffmpeg gstreamer rocm xla xpu
-ebuild-revision-6
+ebuild-revision-7
 "
 REQUIRED_USE="
 	|| (
@@ -73,7 +73,7 @@ BDEPEND+="
 "
 DOCS=( "README.md" )
 PATCHES=(
-	"${FILESDIR}/${PN}-644883f-path-changes.patch"
+	"A${FILESDIR}/${PN}-644883f-path-changes.patch"
 	"${FILESDIR}/${PN}-644883f-device-options.patch"
 	"${FILESDIR}/${PN}-644883f-use-yellow.patch"
 )
@@ -177,6 +177,7 @@ einfo
 einfo "cp -a /usr/share/dashcam_anonymizer/configs/vid_blur.yaml to folder containing videos"
 einfo "Run \`blur_videos --config \$(pwd)/vid_blur.yaml\`"
 einfo
+ewarn "The ~/.cache/dashcam_anonymizer may need to be removed if processing was disrupted."
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

@@ -1,6 +1,6 @@
 diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/blur_images.py dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_images.py
 --- dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/blur_images.py	2024-09-22 13:26:56.000000000 -0700
-+++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_images.py	2024-12-20 10:24:26.761761935 -0800
++++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_images.py	2024-12-22 17:38:16.776293065 -0800
 @@ -5,15 +5,19 @@ import cv2
  import pybboxes as pbx
  import yaml
@@ -108,7 +108,7 @@ diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b
 +print(f"@@ The bluured images are saved in Directory -------> {_output_folder}")
 diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/blur_videos.py dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_videos.py
 --- dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/blur_videos.py	2024-09-22 13:26:56.000000000 -0700
-+++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_videos.py	2024-12-20 10:24:07.997892292 -0800
++++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/blur_videos.py	2024-12-22 17:38:36.976159502 -0800
 @@ -12,6 +12,12 @@ from rich.progress import track
  from natsort import natsorted
  from os.path import join as osj
@@ -173,7 +173,7 @@ diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b
          
          data_dict = {}
 -        annot_dir = natsorted(glob.glob(f'runs/detect/yolo_videos_pred/labels/{vid_name}_*.txt'))
-+        annot_dir = natsorted(glob.glob(os.path.join(CACHE_DIR, 'runs', 'detect', 'yolo_videos_pred', 'labels', f'{vid_name}_*.txt')))
++        annot_dir = natsorted(glob.glob(os.path.join(CACHE_DIR, 'runs', 'detect', 'yolo_videos_pred2', 'labels', f'{vid_name}_*.txt')))
          
          try:
              for file in annot_dir:
@@ -223,7 +223,7 @@ diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b
 +console.print(f"Blurred Videos are stored in {out_vid_path}", style="bold yellow")
 diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/configs/img_blur.yaml dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/img_blur.yaml
 --- dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/configs/img_blur.yaml	2024-09-22 13:26:56.000000000 -0700
-+++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/img_blur.yaml	2024-12-20 10:24:07.997892292 -0800
++++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/img_blur.yaml	2024-12-22 17:38:16.776293065 -0800
 @@ -1,9 +1,9 @@
 -model_path: 'model/best.pt'
 -images_path: 'images/'
@@ -240,7 +240,7 @@ diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b
 +output_folder: "blurred_images"
 diff '--color=auto' -urp dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/configs/vid_blur.yaml dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/vid_blur.yaml
 --- dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b.orig/configs/vid_blur.yaml	2024-09-22 13:26:56.000000000 -0700
-+++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/vid_blur.yaml	2024-12-20 10:24:07.997892292 -0800
++++ dashcam_anonymizer-644883f54ce4903e0d2f70e9e4e9e82b261b892b/configs/vid_blur.yaml	2024-12-22 17:38:16.776293065 -0800
 @@ -1,8 +1,8 @@
 -model_path: 'model/best.pt'
 -videos_path: 'videos/'
