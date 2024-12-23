@@ -155,9 +155,9 @@ pkg_postinst() {
 ewarn
 ewarn "The selected BLAS or LAPACK should match the vendor."
 ewarn
+ewarn "sci-libs/blis - For non-Intel CPUs (BLAS)"
 ewarn "sci-libs/mkl - For Intel® CPUs/GPUs (BLAS, LAPACK)"
 ewarn "sci-libs/openblas - For non-Intel CPUs (BLAS, LAPACK)"
-ewarn "sci-libs/blis - For non-Intel CPUs (BLAS)"
 ewarn
 	if use lapack ; then
 		if cat "/proc/cpuinfo" | grep -q "GenuineIntel" ; then
@@ -181,18 +181,18 @@ ewarn "Run \`eselect lapack set openblas\` to optimize for ${ARCH}."
 ewarn "Run \`eselect blas set mkl\` to optimize for Intel® CPUs/GPUs."
 			fi
 		elif cat "/proc/cpuinfo" | grep -q "AuthenticAMD" ; then
-			if has_version "sci-libs/openblas" && ! eselect blas show | grep -q "openblas" ; then
-ewarn "Run \`eselect blas set openblas\` to optimize for AMD CPUs."
-			fi
 			if has_version "sci-libs/blis" && ! eselect blas show | grep -q "blis" ; then
 ewarn "Run \`eselect blas set blis\` to optimize for AMD CPUs."
 			fi
-		else
 			if has_version "sci-libs/openblas" && ! eselect blas show | grep -q "openblas" ; then
-ewarn "Run \`eselect blas set openblas\` to optimize for ${ARCH}"
+ewarn "Run \`eselect blas set openblas\` to optimize for AMD CPUs."
 			fi
+		else
 			if has_version "sci-libs/blis" && ! eselect blas show | grep -q "blis" ; then
 ewarn "Run \`eselect blas set blis\` to optimize for ${ARCH}."
+			fi
+			if has_version "sci-libs/openblas" && ! eselect blas show | grep -q "openblas" ; then
+ewarn "Run \`eselect blas set openblas\` to optimize for ${ARCH}"
 			fi
 		fi
 	fi
