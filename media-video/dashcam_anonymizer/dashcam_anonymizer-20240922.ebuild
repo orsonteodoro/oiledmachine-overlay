@@ -44,13 +44,19 @@ LICENSE="
 RESTRICT="fetch mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-cuda rocm xla xpu
+cuda ffmpeg gstreamer rocm xla xpu
 ebuild-revision-6
+"
+REQUIRED_USE="
+	|| (
+		ffmpeg
+		gstreamer
+	)
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.25.1[${PYTHON_USEDEP}]
-		>=media-libs/opencv-4.6.0[${PYTHON_USEDEP},jpeg,png,python]
+		>=media-libs/opencv-4.6.0[${PYTHON_USEDEP},ffmpeg?,gstreamer?,imgproc,jpeg,png,python]
 		dev-python/natsort[${PYTHON_USEDEP}]
 		dev-python/pybboxes[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
