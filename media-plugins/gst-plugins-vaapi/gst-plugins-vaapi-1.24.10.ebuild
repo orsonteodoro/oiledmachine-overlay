@@ -3,8 +3,12 @@
 
 EAPI=8
 
-# gst-plugins-va - newer stateless implementation
-# gst-plugins-vaapi - the older stateful implementation
+# gst-plugins-va - newer stateless implementation (in media-libs/gst-plugins-bad)
+#   # va in documentation
+#   # with va prefix as in vaav1dec
+# gst-plugins-vaapi (aka gstreamer-vaapi) - the older stateful implementation (in this ebuild)
+#   # VAAPI Plugin in documentation
+#   # with vaapi prefix as in vaapiav1dec
 
 # FIXME: "Failed to create vaapipostproc element"
 
@@ -32,7 +36,7 @@ EAPI=8
 
 GST_PLUGINS_NOAUTO="wayland"
 GST_REQ="${PV}"
-MY_PN="gstreamer-vaapi"
+MY_PN="gstreamer-vaapi" # older
 VIDEO_CARDS=(
 	video_cards_amdgpu
 	video_cards_intel

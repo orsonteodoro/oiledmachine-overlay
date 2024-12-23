@@ -706,6 +706,9 @@ RDEPEND="
 		>=media-libs/gstreamer-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
 		>=media-libs/gst-plugins-base-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
 		>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},jpeg?,mpeg?,vaapi?,vpx?,x264?,x265?]
+		vaapi? (
+			>=media-plugins/gst-plugins-vaapi-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
+		)
 	)
 	gtk3? (
 		>=dev-libs/glib-2.64.6:2[${MULTILIB_USEDEP}]
