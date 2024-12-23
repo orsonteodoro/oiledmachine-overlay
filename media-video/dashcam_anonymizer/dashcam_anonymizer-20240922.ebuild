@@ -174,5 +174,6 @@ einfo
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (644883f, 20241220)
+# OILEDMACHINE-OVERLAY-TEST:  FAILED (644883f, 20241220)
 # Image license plate blur - passed
+# Video license plate blur - failed
