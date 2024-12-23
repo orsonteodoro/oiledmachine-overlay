@@ -49,10 +49,14 @@ BDEPEND="
 		dev-cpp/gtest
 	)
 "
+PATCHES=(
+	"${FILESDIR}/${PN}-1.17.1-cache-variable.patch"
+)
 
 src_configure() {
 	local mycmakeargs=(
 		$(cmake_use_find_package doc Doxygen)
+		-DPYTHON_DEST="/usr/lib/${EPYTHON}/site-packages/partio"
 	)
 	cmake_src_configure
 }
