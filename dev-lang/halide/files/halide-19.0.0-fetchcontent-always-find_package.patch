@@ -1,0 +1,40 @@
+diff '--color=auto' -urp Halide-19.0.0.orig/apps/hannk/tflite/CMakeLists.txt Halide-19.0.0/apps/hannk/tflite/CMakeLists.txt
+--- Halide-19.0.0.orig/apps/hannk/tflite/CMakeLists.txt	2024-12-16 18:45:24.000000000 -0800
++++ Halide-19.0.0/apps/hannk/tflite/CMakeLists.txt	2024-12-23 11:46:02.761379244 -0800
+@@ -23,7 +23,8 @@ set(FLATBUFFERS_BUILD_FLATC OFF)
+ FetchContent_Declare(tflite
+                      GIT_REPOSITORY https://github.com/tensorflow/tensorflow
+                      GIT_TAG ${TFLITE_TAG}
+-                     GIT_SHALLOW TRUE)
++                     GIT_SHALLOW TRUE
++                     FETCHCONTENT_TRY_FIND_PACKAGE_MODE ALWAYS)
+ 
+ FetchContent_GetProperties(tflite)
+ if (NOT tflite_POPULATED)
+diff '--color=auto' -urp Halide-19.0.0.orig/cmake/dependencies.cmake Halide-19.0.0/cmake/dependencies.cmake
+--- Halide-19.0.0.orig/cmake/dependencies.cmake	2024-12-16 18:45:24.000000000 -0800
++++ Halide-19.0.0/cmake/dependencies.cmake	2024-12-23 11:45:28.585558529 -0800
+@@ -5,6 +5,7 @@ FetchContent_Declare(
+     GIT_REPOSITORY https://github.com/google/flatbuffers.git
+     GIT_TAG 0100f6a5779831fa7a651e4b67ef389a8752bd9b # v23.5.26
+     GIT_SHALLOW TRUE
++    FETCHCONTENT_TRY_FIND_PACKAGE_MODE ALWAYS
+ )
+ 
+ FetchContent_Declare(
+@@ -12,6 +13,7 @@ FetchContent_Declare(
+     GIT_REPOSITORY https://github.com/pybind/pybind11.git
+     GIT_TAG 5b0a6fc2017fcc176545afe3e09c9f9885283242 # v2.10.4
+     GIT_SHALLOW TRUE
++    FETCHCONTENT_TRY_FIND_PACKAGE_MODE ALWAYS
+ )
+ 
+ FetchContent_Declare(
+@@ -19,6 +21,7 @@ FetchContent_Declare(
+     GIT_REPOSITORY https://github.com/WebAssembly/wabt.git
+     GIT_TAG 3e826ecde1adfba5f88d10d361131405637e65a3 # 1.0.36
+     GIT_SHALLOW TRUE
++    FETCHCONTENT_TRY_FIND_PACKAGE_MODE ALWAYS
+ )
+ 
+ macro(Halide_provide_dependency method dep_name)

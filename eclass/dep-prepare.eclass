@@ -30,13 +30,13 @@ einfo "Moving dep ${from} -> ${to}"
 	rm -rf "${from}" || die
 }
 
-# @FUNCTION: dep_prepare_mv
+# @FUNCTION: dep_prepare_cp
 # @DESCRIPTION:
 # Copy downloaded folder to dest folder
 #
 # Example:
 #
-# dep_prepare_copy "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_1}" "${S}/third_party/onnx-optimizer/third_party/protobuf/third_party/benchmark"
+# dep_prepare_cp "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_1}" "${S}/third_party/onnx-optimizer/third_party/protobuf/third_party/benchmark"
 #
 dep_prepare_cp() {
 	local from="${1}"
