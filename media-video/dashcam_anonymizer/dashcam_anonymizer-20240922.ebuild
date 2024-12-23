@@ -70,7 +70,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-644883f-path-changes.patch"
 	"${FILESDIR}/${PN}-644883f-device-options.patch"
 	"${FILESDIR}/${PN}-644883f-use-yellow.patch"
-	"${FILESDIR}/${PN}-644883f-blur_video-model-stream-true.patch"
 )
 
 pkg_nofetch() {
