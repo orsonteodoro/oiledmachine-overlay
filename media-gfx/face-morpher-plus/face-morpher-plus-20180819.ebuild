@@ -38,10 +38,14 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-+jpeg +png
+ffmpeg gstreamer +jpeg +png
 ebuild-revision-3
 "
 REQUIRED_USE="
+	|| (
+		ffmpeg
+		gstreamer
+	)
 	|| (
 		jpeg
 		png
@@ -49,9 +53,9 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=media-libs/opencv-3.4.1[${PYTHON_USEDEP},jpeg?,png?,python]
+		>=media-libs/opencv-3.4.1[${PYTHON_USEDEP},ffmpeg?,gstreamer?,jpeg?,png?,python]
 		dev-python/docopt[${PYTHON_USEDEP}]
-		dev-python/facemorpher[${PYTHON_USEDEP},stasm]
+		dev-python/facemorpher[${PYTHON_USEDEP},ffmpeg?,gstreamer?,stasm]
 		dev-python/matplotlib[${PYTHON_USEDEP}]
 		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/scipy[${PYTHON_USEDEP}]
