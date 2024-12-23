@@ -115,6 +115,9 @@
     <flag name="gtk3">
       Enable <pkg>x11-libs/gtk+</pkg>:3 support
     </flag>
+    <flag name="halide">
+      Enable support for Halide for scheduling optimized image processing.
+    </flag>
     <flag name="hdr">
       Enable support for HDR images.
     </flag>
@@ -179,7 +182,7 @@
       Build new 3D visualization module viz based on <pkg>sci-libs/vtk</pkg>
     </flag>
     <flag name="vulkan">
-      Enable Vulkan support. (EXPERIMENTAL)
+      Enable DNN (Deep Neural Networks) Vulkan backend. (EXPERIMENTAL)
     </flag>
     <flag name="zlib-ng">
       Build the vendored copy of zlib-ng to speed up decode/encode of compressed

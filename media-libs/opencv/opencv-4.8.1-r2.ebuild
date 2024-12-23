@@ -287,7 +287,7 @@ ${ROCM_SLOTS[@]}
 -atlas -avif +carotene +contrib contribcvv +contribdnn contribfreetype contribhdf
 contribovis contribsfm contribxfeatures2d -cuda -cudnn debug dnnsamples +eigen
 -examples +features2d +ffmpeg +flann -gdal gflags glog -gphoto2 +gstreamer +gtk3
-+hdr +ieee1394 +imgproc +java +jpeg +jpeg2k +lapack +libaom -mkl mpeg +netpbm -non-free -openblas
+-halide +hdr +ieee1394 +imgproc +java +jpeg +jpeg2k +lapack +libaom -mkl mpeg +netpbm -non-free -openblas
 +opencl +openexr -opengl -openmp +opencvapps +openh264 openvino -openvx +png
 +python +quirc -qt5 -qt6 rocm -spng +sun -system-flatbuffers tesseract -testprograms
 -tbb +tiff +vaapi +v4l +vpx +vtk -wayland +webp x264 x265 -xine video_cards_intel
@@ -715,6 +715,9 @@ RDEPEND="
 		>=dev-libs/glib-2.64.6:2[${MULTILIB_USEDEP}]
 		>=x11-libs/gtk+-3.24.18:3[${MULTILIB_USEDEP}]
 	)
+	halide? (
+		dev-lang/halide[${MULTILIB_USEDEP}]
+	)
 	ieee1394? (
 		(
 			>=media-libs/libdc1394-2.2.6:2[${MULTILIB_USEDEP}]
@@ -868,6 +871,7 @@ PATCHES=(
 	# "${FILESDIR}/${PN}_contrib-4.8.1-NVIDIAOpticalFlowSDK-2.0.tar.gz.patch"
 	"${FILESDIR}/${PN}-4.9.0-openvx-paths.patch" # oiledmachine-overlay change
 	"${FILESDIR}/${PN}-4.10.0-vulkan-libdirs.patch"
+	"${FILESDIR}/${PN}-4.10.0-halide-libdirs.patch"
 )
 
 pkg_pretend() {
@@ -1186,6 +1190,12 @@ multilib_src_configure() {
 	else
 		mycmakeargs+=(
 			-DWITH_CAROTENE=OFF
+		)
+	fi
+
+	if use halide ; then
+		mycmakeargs+=(
+			-DHALIDE_ROOT_DIR="/usr"
 		)
 	fi
 

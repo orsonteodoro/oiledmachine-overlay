@@ -1,0 +1,28 @@
+diff '--color=auto' -urp opencv-4.10.0.orig/cmake/OpenCVDetectHalide.cmake opencv-4.10.0/cmake/OpenCVDetectHalide.cmake
+--- opencv-4.10.0.orig/cmake/OpenCVDetectHalide.cmake	2024-06-02 04:41:07.000000000 -0700
++++ opencv-4.10.0/cmake/OpenCVDetectHalide.cmake	2024-12-23 07:26:34.965315778 -0800
+@@ -22,11 +22,19 @@ endif()
+ 
+ if(NOT HAVE_HALIDE AND HALIDE_ROOT_DIR)
+   # Try manual search
+-  find_library(HALIDE_LIBRARY
+-      NAMES Halide
+-      HINTS ${HALIDE_ROOT_DIR}/lib          # Unix
+-      HINTS ${HALIDE_ROOT_DIR}/lib/Release  # Win32
+-  )
++  if(CMAKE_SIZEOF_VOID_P EQUALS 8)
++      find_library(HALIDE_LIBRARY
++          NAMES Halide
++          HINTS ${HALIDE_ROOT_DIR}/lib64          # Unix
++          HINTS ${HALIDE_ROOT_DIR}/lib64/Release  # Win32
++      )
++  else()
++      find_library(HALIDE_LIBRARY
++          NAMES Halide
++          HINTS ${HALIDE_ROOT_DIR}/lib          # Unix
++          HINTS ${HALIDE_ROOT_DIR}/lib/Release  # Win32
++      )
++  endif()
+   find_path(HALIDE_INCLUDE_DIR
+       NAMES Halide.h HalideRuntime.h
+       HINTS ${HALIDE_ROOT_DIR}/include

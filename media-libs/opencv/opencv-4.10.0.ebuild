@@ -279,7 +279,7 @@ SLOT="0/${PV}" # subslot = libopencv* soname version
 # We assume not cross-compiling options enabled.
 # general options
 IUSE="
-	debug -doc +eigen gflags glog +java -non-free +opencvapps +python
+	debug -doc +eigen gflags glog -halide +java -non-free +opencvapps +python
 	-system-flatbuffers test -testprograms -vulkan -zlib-ng
 	ebuild-revision-9
 "
@@ -749,6 +749,9 @@ RDEPEND="
 		>=dev-libs/glib-2.64.6:2[${MULTILIB_USEDEP}]
 		>=x11-libs/gtk+-3.24.18:3[${MULTILIB_USEDEP}]
 	)
+	halide? (
+		dev-lang/halide[${MULTILIB_USEDEP}]
+	)
 	ieee1394? (
 		(
 			>=media-libs/libdc1394-2.2.6:2[${MULTILIB_USEDEP}]
@@ -926,6 +929,7 @@ PATCHES=(
 	# "${FILESDIR}/${PN}_contrib-4.8.1-NVIDIAOpticalFlowSDK-2.0.tar.gz.patch"
 	"${FILESDIR}/${PN}-4.9.0-openvx-paths.patch" # oiledmachine-overlay change
 	"${FILESDIR}/${PN}-4.10.0-vulkan-libdirs.patch"
+	"${FILESDIR}/${PN}-4.10.0-halide-libdirs.patch"
 )
 
 cuda_get_cuda_compiler() {
@@ -1328,6 +1332,12 @@ multilib_src_configure() {
 	else
 		mycmakeargs+=(
 			-DWITH_NDSRVP=OFF
+		)
+	fi
+
+	if use halide ; then
+		mycmakeargs+=(
+			-DHALIDE_ROOT_DIR="/usr"
 		)
 	fi
 
