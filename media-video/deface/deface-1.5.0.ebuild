@@ -50,7 +50,7 @@ RDEPEND+="
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/tqdm[${PYTHON_USEDEP}]
 	dev-python/scikit-image[${PYTHON_USEDEP}]
-	media-libs/opencv[${PYTHON_USEDEP},ffmpeg?,gstreamer?,gtk3?,imgproc,python,qt5?,qt6?]
+	media-libs/opencv[${PYTHON_USEDEP},contribdnn,ffmpeg?,gstreamer?,gtk3?,imgproc,python,qt5?,qt6?]
 	cuda? (
 		sci-libs/onnx[${PYTHON_USEDEP}]
 		sci-libs/onnxruntime[${PYTHON_USEDEP},cuda]
