@@ -42,7 +42,7 @@ ffmpeg gtk3 gstreamer +jpeg +png qt5 qt6 wayland
 ebuild-revision-3
 "
 REQUIRED_USE="
-	|| (
+	^^ (
 		gtk3
 		qt5
 		qt6
