@@ -531,9 +531,6 @@ REQUIRED_USE="
 	java? (
 		python
 	)
-	jpeg? (
-		gstreamer
-	)
 	libaom? (
 		ffmpeg
 	)
