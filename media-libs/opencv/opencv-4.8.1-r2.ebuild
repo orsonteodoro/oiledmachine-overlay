@@ -287,7 +287,7 @@ ${ROCM_SLOTS[@]}
 -atlas -avif +carotene +contrib contribcvv +contribdnn contribfreetype contribhdf
 contribovis contribsfm contribxfeatures2d -cuda -cudnn debug dnnsamples +eigen
 -examples +features2d +ffmpeg +flann -gdal gflags glog -gphoto2 +gstreamer +gtk3
-+hdr +ieee1394 +imgproc +java +jpeg +jpeg2k +lapack +libaom -mkl +netpbm -non-free -openblas
++hdr +ieee1394 +imgproc +java +jpeg +jpeg2k +lapack +libaom -mkl mpeg +netpbm -non-free -openblas
 +opencl +openexr -opengl -openmp +opencvapps +openh264 openvino -openvx +png
 +python +quirc -qt5 -qt6 rocm -spng +sun -system-flatbuffers tesseract -testprograms
 -tbb +tiff +vaapi +v4l +vpx +vtk -wayland +webp x264 x265 -xine video_cards_intel
@@ -867,6 +867,7 @@ PATCHES=(
 	# "${FILESDIR}/${PN}_contrib-${PV}-rgbd.patch"
 	# "${FILESDIR}/${PN}_contrib-4.8.1-NVIDIAOpticalFlowSDK-2.0.tar.gz.patch"
 	"${FILESDIR}/${PN}-4.9.0-openvx-paths.patch" # oiledmachine-overlay change
+	"${FILESDIR}/${PN}-4.10.0-vulkan-libdirs.patch"
 )
 
 pkg_pretend() {
@@ -920,7 +921,9 @@ src_prepare() {
 	# Remove bundled stuff
 	mkdir -p "3rdparty.orig" || die
 	mv "3rdparty/flatbuffers" "3rdparty.orig" || die
-	use carotene && mv "3rdparty/carotene" "3rdparty.orig" || die
+	if use carotene ; then
+		mv "3rdparty/carotene" "3rdparty.orig" || die
+	fi
 	rm -r "3rdparty" || die "Removing 3rd party components failed"
 	if use system-flatbuffers ; then
 		rm -rf "3rdparty.orig" || die
@@ -1370,6 +1373,10 @@ eerror "OpenVINO is not supported for ${ARCH}"
 		export PKG_CONFIG_PATH="/usr/lib/ffmpeg/58.60.60/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
 	elif use ffmpeg && has_version "media-video/ffmpeg:56.58.58" ; then # 4.x
 		export PKG_CONFIG_PATH="/usr/lib/ffmpeg/56.58.58/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+	fi
+
+	if use vulkan ; then
+		export VULKAN_SDK="/usr"
 	fi
 
 	if multilib_is_native_abi && use python ; then
