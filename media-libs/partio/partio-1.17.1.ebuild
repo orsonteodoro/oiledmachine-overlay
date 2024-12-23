@@ -20,7 +20,10 @@ HOMEPAGE="http://partio.us/"
 LICENSE="BSD"
 RESTRICT="test"
 SLOT="0"
-IUSE="doc test"
+IUSE="
+doc test
+ebuild-revision-1
+"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
