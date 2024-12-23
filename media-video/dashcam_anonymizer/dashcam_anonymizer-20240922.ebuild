@@ -61,7 +61,7 @@ REQUIRED_USE="
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.25.1[${PYTHON_USEDEP}]
-		>=media-libs/opencv-4.6.0[${PYTHON_USEDEP},ffmpeg?,gstreamer?,imgproc,jpeg,png,python]
+		>=media-libs/opencv-4.6.0[${PYTHON_USEDEP},ffmpeg?,gstreamer?,imgproc,jpeg,openh264?,png,python]
 		dev-python/natsort[${PYTHON_USEDEP}]
 		dev-python/pybboxes[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
