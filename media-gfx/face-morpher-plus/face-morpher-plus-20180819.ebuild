@@ -38,10 +38,16 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-ffmpeg gstreamer +jpeg +png
+ffmpeg gtk3 gstreamer +jpeg +png qt5 qt6 wayland
 ebuild-revision-3
 "
 REQUIRED_USE="
+	|| (
+		gtk3
+		qt5
+		qt6
+		wayland
+	)
 	|| (
 		ffmpeg
 		gstreamer
@@ -53,7 +59,7 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=media-libs/opencv-3.4.1[${PYTHON_USEDEP},ffmpeg?,gstreamer?,jpeg?,png?,python]
+		>=media-libs/opencv-3.4.1[${PYTHON_USEDEP},ffmpeg?,gstreamer?,gtk3?,jpeg?,png?,python,qt5?,qt6?,wayland?]
 		dev-python/docopt[${PYTHON_USEDEP}]
 		dev-python/facemorpher[${PYTHON_USEDEP},ffmpeg?,gstreamer?,stasm]
 		dev-python/matplotlib[${PYTHON_USEDEP}]
