@@ -126,6 +126,9 @@ RDEPEND="
 	jack? (
 		~media-plugins/gst-plugins-jack-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
+	jpeg? (
+		~media-plugins/gst-plugins-jpeg-${PV}:1.0[${MULTILIB_USEDEP}]
+	)
 	jpeg2k? (
 		~media-plugins/gst-plugins-openjpeg-${PV}:1.0[${MULTILIB_USEDEP}]
 	)

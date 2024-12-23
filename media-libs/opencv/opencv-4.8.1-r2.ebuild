@@ -289,7 +289,7 @@ contribovis contribsfm contribxfeatures2d -cuda -cudnn debug dnnsamples +eigen
 +ieee1394 +imgproc +java +jpeg +jpeg2k +lapack +libaom -mkl -non-free -openblas
 +opencl +openexr -opengl -openmp +opencvapps +openh264 openvino -openvx +png
 +python +quirc -qt5 -qt6 rocm -spng -system-flatbuffers tesseract -testprograms
--tbb +tiff +vaapi +v4l +vpx +vtk -wayland +webp -xine video_cards_intel
+-tbb +tiff +vaapi +v4l +vpx +vtk -wayland +webp x264 x265 -xine video_cards_intel
 ebuild-revision-9
 "
 # OpenGL needs gtk or Qt installed to activate, otherwise build system
@@ -516,11 +516,23 @@ REQUIRED_USE="
 	java? (
 		python
 	)
+	jpeg? (
+		gstreamer
+	)
+	libaom? (
+		ffmpeg
+	)
+	mpeg? (
+		gstreamer
+	)
 	opengl? (
 		|| (
 			qt5
 			qt6
 		)
+	)
+	openh264? (
+		ffmpeg
 	)
 	openvx? (
 		|| (
@@ -546,6 +558,21 @@ REQUIRED_USE="
 	)
 	tesseract? (
 		contrib
+	)
+	vaapi? (
+		gstreamer
+	)
+	vpx? (
+		|| (
+			ffmpeg
+			gstreamer
+		)
+	)
+	x264? (
+		gstreamer
+	)
+	x265? (
+		gstreamer
 	)
 "
 # The following logic is intrinsic in the build system, but we do not enforce
@@ -664,6 +691,7 @@ RDEPEND="
 	gstreamer? (
 		>=media-libs/gstreamer-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
 		>=media-libs/gst-plugins-base-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
+		>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},jpeg?,mpeg?,vaapi?,vpx?,x264?,x265?]
 	)
 	gtk3? (
 		>=dev-libs/glib-2.64.6:2[${MULTILIB_USEDEP}]

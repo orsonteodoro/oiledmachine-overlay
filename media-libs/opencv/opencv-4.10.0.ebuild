@@ -300,8 +300,8 @@ IUSE+="
 "
 # video
 IUSE+="
-	+ffmpeg +gstreamer -xine +vaapi +v4l -gphoto2 +ieee1394 +libaom
-	+openh264 +vpx
+	+ffmpeg -gphoto2 +gstreamer +ieee1394 +libaom mpeg +openh264 +v4l +vaapi
+	+vpx x264 x265 -xine
 "
 # image
 IUSE+="
@@ -537,6 +537,15 @@ REQUIRED_USE="
 	java? (
 		python
 	)
+	jpeg? (
+		gstreamer
+	)
+	libaom? (
+		ffmpeg
+	)
+	mpeg? (
+		gstreamer
+	)
 	opengl? (
 		?? (
 			gtk3
@@ -545,6 +554,9 @@ REQUIRED_USE="
 				qt6
 			)
 		)
+	)
+	openh264? (
+		ffmpeg
 	)
 	openvx? (
 		|| (
@@ -580,6 +592,21 @@ REQUIRED_USE="
 			ffmpeg
 			gstreamer
 		)
+	)
+	vaapi? (
+		gstreamer
+	)
+	vpx? (
+		|| (
+			ffmpeg
+			gstreamer
+		)
+	)
+	x264? (
+		gstreamer
+	)
+	x265? (
+		gstreamer
 	)
 "
 # TODO find a way to compile these with the cuda compiler
@@ -699,6 +726,7 @@ RDEPEND="
 	gstreamer? (
 		>=media-libs/gstreamer-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
 		>=media-libs/gst-plugins-base-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
+		>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},jpeg?,mpeg?,vaapi?,vpx?,x264?,x265?]
 	)
 	gtk3? (
 		>=dev-libs/glib-2.64.6:2[${MULTILIB_USEDEP}]
