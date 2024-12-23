@@ -6,6 +6,7 @@ EAPI=8
 
 MY_PN="Halide"
 
+CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_COMPAT=( {20..17} )
 PYTHON_COMPAT=( "python3_"{10..12} )
 
@@ -40,7 +41,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 # Upstream makes USE=serialization default ON but OFF here to avoid verson sensitive flatbuffers
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-cuda -doc -serialization tutorials +python test +utils
+cuda -doc -serialization tutorials +python test
 "
 REQUIRED_USE="
 	python? (
@@ -118,6 +119,9 @@ BDEPEND+="
 	)
 "
 DOCS=( "README.md" )
+PATCHES=(
+	"${FILESDIR}/${PN}-19.0.0-install-paths.patch"
+)
 
 pkg_setup() {
 einfo "PATH=${PATH} (before)"
@@ -142,16 +146,17 @@ src_unpack() {
 
 src_configure() {
 	local mycmakeargs=(
+		-DCMAKE_INSTALL_LIBDIR="$(get_libdir)"
 		-DHalide_WASM_BACKEND="OFF"
 		-DWITH_AUTOSCHEDULERS=ON
 		-DWITH_DOCS=$(usex doc)
-		-DWITH_PACKAGING=OFF
+		-DWITH_PACKAGING=ON
 		-DWITH_PYTHON_BINDINGS=$(multilib_native_use python)
 		-DWITH_SERIALIZATION=$(usex serialization)
 		-DWITH_SERIALIZATION_JIT_ROUNDTRIP_TESTING=$(usex test $(usex serialization) OFF)
 		-DWITH_TESTS=$(usex test)
 		-DWITH_TUTORIALS=$(usex tutorials)
-		-DWITH_UTILS=$(usex utils)
+		-DWITH_UTILS=ON # Conditional OFF breaks install
 		-DWITH_WABT=OFF
 	)
 	cmake-multilib_src_configure
