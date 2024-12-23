@@ -116,7 +116,7 @@
       Enable <pkg>x11-libs/gtk+</pkg>:3 support
     </flag>
     <flag name="halide">
-      Enable support for Halide for scheduling optimized image processing.
+      Enable support for Halide for schedule optimized image processing.
     </flag>
     <flag name="hdr">
       Enable support for HDR images.
