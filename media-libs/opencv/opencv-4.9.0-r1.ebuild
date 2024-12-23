@@ -341,10 +341,9 @@ REQUIRED_USE="
 	)
 	?? (
 		gtk3
-		|| (
-			qt5
-			qt6
-		)
+		qt5
+		qt6
+		wayland
 	)
 	amd64? (
 		cpu_flags_x86_sse
@@ -540,10 +539,8 @@ REQUIRED_USE="
 	opengl? (
 		?? (
 			gtk3
-			|| (
-				qt5
-				qt6
-			)
+			qt5
+			qt6
 		)
 	)
 	openh264? (

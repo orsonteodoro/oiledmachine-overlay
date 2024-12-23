@@ -314,10 +314,9 @@ REQUIRED_USE="
 	)
 	?? (
 		gtk3
-		|| (
-			qt5
-			qt6
-		)
+		qt5
+		qt6
+		wayland
 	)
 	?? (
 		cuda
@@ -523,10 +522,9 @@ REQUIRED_USE="
 		gstreamer
 	)
 	opengl? (
-		|| (
-			qt5
-			qt6
-		)
+		gtk3
+		qt5
+		qt6
 	)
 	openh264? (
 		ffmpeg

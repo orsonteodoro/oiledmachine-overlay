@@ -36,14 +36,21 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" cuda dev openvino"
+IUSE+=" cuda dev ffmpeg gtk3 gstreamer openvino qt5 qt6"
+REQUIRED_USE="
+	^^ (
+		gtk3
+		qt5
+		qt6
+	)
+"
 RDEPEND+="
 	>=dev-python/imageio-2.25[${PYTHON_USEDEP}]
 	>=dev-python/imageio-ffmpeg-0.4.6[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/tqdm[${PYTHON_USEDEP}]
 	dev-python/scikit-image[${PYTHON_USEDEP}]
-	media-libs/opencv[${PYTHON_USEDEP},python]
+	media-libs/opencv[${PYTHON_USEDEP},ffmpeg?,gstreamer?,gtk3?,imgproc,python,qt5?,qt6?]
 	cuda? (
 		sci-libs/onnx[${PYTHON_USEDEP}]
 		sci-libs/onnxruntime[${PYTHON_USEDEP},cuda]
