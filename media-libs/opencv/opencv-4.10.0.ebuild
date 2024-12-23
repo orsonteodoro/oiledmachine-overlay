@@ -739,7 +739,7 @@ RDEPEND="
 	gstreamer? (
 		>=media-libs/gstreamer-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
 		>=media-libs/gst-plugins-base-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
-		>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},jpeg?,mpeg?,vaapi?,vpx?,x264?,x265?]
+		>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},mpeg?,vaapi?,vpx?,x264?,x265?]
 		vaapi? (
 			>=media-plugins/gst-plugins-vaapi-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
 		)
