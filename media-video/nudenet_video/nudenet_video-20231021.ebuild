@@ -44,7 +44,7 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/nudenet[${PYTHON_USEDEP}]
 		dev-python/numpy[${PYTHON_USEDEP}]
-		media-libs/opencv[${PYTHON_USEDEP},ffmpeg,jpeg,python]
+		media-libs/opencv[${PYTHON_USEDEP},contribdnn,ffmpeg,jpeg,python]
 	')
 	sci-libs/onnxruntime[${PYTHON_SINGLE_USEDEP},cuda?,migraphx?,python,rocm?,tensorrt?]
 	media-video/ffmpeg[encode,x264]
