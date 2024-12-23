@@ -280,7 +280,7 @@ SLOT="0/${PV}" # subslot = libopencv* soname version
 # general options
 IUSE="
 	debug -doc +eigen gflags glog +java -non-free +opencvapps +python
-	-system-flatbuffers test -testprograms -zlib-ng
+	-system-flatbuffers test -testprograms -vulkan -zlib-ng
 	ebuild-revision-9
 "
 # hal for acceleration
@@ -857,6 +857,9 @@ RDEPEND="
 		>=sci-libs/vtk-7.1.1:0[rendering,cuda=]
 		sci-libs/vtk:=
 	)
+	vulkan? (
+		media-libs/vulkan-loader[${MULTILIB_USEDEP}]
+	)
 	wayland? (
 		>=dev-libs/wayland-protocols-1.13
 		>=dev-libs/wayland-1.18.0[${MULTILIB_USEDEP}]
@@ -877,6 +880,9 @@ DEPEND="
 	)
 	java? (
 		>=virtual/jdk-1.8:*
+	)
+	vulkan? (
+		dev-util/vulkan-headers
 	)
 "
 # TODO gstreamer dependencies
@@ -1280,6 +1286,7 @@ multilib_src_configure() {
 		-DWITH_VA_INTEL=$(usex vaapi $(usex video_cards_intel))			# Default ON upstream
 		-DWITH_VFW=OFF								# Video windows support
 		-DWITH_VTK=$(multilib_native_usex vtk)
+		-DWITH_VULKAN=$(usex vulkan)
 		-DWITH_WAYLAND=$(usex wayland)
 		-DWITH_WEBP=$(usex webp)
 		-DWITH_WIN32UI=OFF							# Windows only

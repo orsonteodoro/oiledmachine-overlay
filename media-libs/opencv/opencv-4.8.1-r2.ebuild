@@ -291,7 +291,7 @@ contribovis contribsfm contribxfeatures2d -cuda -cudnn debug dnnsamples +eigen
 +opencl +openexr -opengl -openmp +opencvapps +openh264 openvino -openvx +png
 +python +quirc -qt5 -qt6 rocm -spng +sun -system-flatbuffers tesseract -testprograms
 -tbb +tiff +vaapi +v4l +vpx +vtk -wayland +webp x264 x265 -xine video_cards_intel
-ebuild-revision-9
+-vulkan ebuild-revision-9
 "
 # OpenGL needs gtk or Qt installed to activate, otherwise build system
 # will silently disable it without the user knowing, which defeats the
@@ -812,6 +812,9 @@ RDEPEND="
 		>=sci-libs/vtk-7.1.1:0[rendering,cuda=]
 		sci-libs/vtk:=
 	)
+	vulkan? (
+		media-libs/vulkan-loader[${MULTILIB_USEDEP}]
+	)
 	wayland? (
 		>=dev-libs/wayland-protocols-1.13
 		>=dev-libs/wayland-1.18.0[${MULTILIB_USEDEP}]
@@ -832,6 +835,9 @@ DEPEND="
 	)
 	java? (
 		>=virtual/jdk-1.8:*
+	)
+	vulkan? (
+		dev-util/vulkan-headers
 	)
 "
 BDEPEND="
@@ -1162,6 +1168,7 @@ multilib_src_configure() {
 		-DWITH_VA_INTEL=$(usex vaapi $(usex video_cards_intel))	# Default ON upstream
 		-DWITH_VFW=OFF						# Video windows support
 		-DWITH_VTK=$(multilib_native_usex vtk)
+		-DWITH_VULKAN=$(usex vulkan)
 		-DWITH_WAYLAND=$(usex wayland)
 		-DWITH_WEBP=$(usex webp)
 		-DWITH_WIN32UI=OFF					# Windows only
