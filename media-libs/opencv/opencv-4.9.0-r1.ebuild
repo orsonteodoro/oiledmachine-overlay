@@ -993,7 +993,8 @@ src_prepare() {
 
 	# Remove bundled stuff
 	mkdir -p "3rdparty.orig" || die
-	mv "3rdparty/flatbuffers" "3rdparty.orig"
+	mv "3rdparty/flatbuffers" "3rdparty.orig" || die
+	use carotene && mv "3rdparty/carotene" "3rdparty.orig" || die
 	rm -r "3rdparty" || die "Removing 3rd party components failed"
 	if use system-flatbuffers ; then
 		rm -rf "3rdparty.orig" || die

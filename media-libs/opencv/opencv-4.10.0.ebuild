@@ -997,9 +997,13 @@ src_prepare() {
 		eapply "${FILESDIR}/${PN}-4.8.1-use-system-flatbuffers.patch"
 	fi
 
+	die
 	# Remove bundled stuff
 	mkdir -p "3rdparty.orig" || die
-	mv "3rdparty/flatbuffers" "3rdparty.orig"
+	mv "3rdparty/flatbuffers" "3rdparty.orig" || die
+	use carotene && mv "3rdparty/carotene" "3rdparty.orig" || die
+	use kleidicv && mv "3rdparty/kleidicv" "3rdparty.orig" || die
+	use ndsrvp && mv "3rdparty/ndsrvp" "3rdparty.orig" || die
 	rm -r "3rdparty" || die "Removing 3rd party components failed"
 	if use system-flatbuffers ; then
 		rm -rf "3rdparty.orig" || die
@@ -1245,6 +1249,7 @@ multilib_src_configure() {
 		-DWITH_NVCUVENC=OFF							# TODO needs NVIDIA Video Codec SDK
 	# NOTE set this via MYCMAKEARGS if needed \
 		-DWITH_NVCUVID=OFF							# TODO needs NVIDIA Video Codec SDK
+		-DWITH_OBSENSOR=OFF
 		-DWITH_OPENCL=$(usex opencl)
 		-DWITH_OPENCL_SVM=OFF # $(usex opencl)
 		-DWITH_OPENEXR=$(multilib_native_usex openexr)
