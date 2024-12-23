@@ -44,7 +44,7 @@ LICENSE="
 RESTRICT="fetch mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-cuda ffmpeg gstreamer openh264 rocm vaapi xla xpu x264
+cuda ffmpeg gstreamer openh264 rocm vaapi x264 xla xpu
 ebuild-revision-8
 "
 REQUIRED_USE="
@@ -52,10 +52,14 @@ REQUIRED_USE="
 		ffmpeg
 		gstreamer
 	)
-	|| (
-		openh264
-		vaapi
-		x264
+	openh264? (
+		ffmpeg
+	)
+	vaapi? (
+		gstreamer
+	)
+	x264? (
+		gstreamer
 	)
 "
 RDEPEND+="
@@ -70,7 +74,7 @@ RDEPEND+="
 	>=dev-python/ultralytics-8.0.144[${PYTHON_SINGLE_USEDEP}]
 	sci-libs/pytorch[${PYTHON_SINGLE_USEDEP},cuda?,rocm?]
 	ffmpeg? (
-		media-video/ffmpeg[openh264?,vaapi?,x264?]
+		media-video/ffmpeg[openh264]
 	)
 	gstreamer? (
 		media-plugins/gst-plugins-meta[openh264?,vaapi?,x264?]
