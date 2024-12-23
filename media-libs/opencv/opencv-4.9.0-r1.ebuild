@@ -349,6 +349,37 @@ REQUIRED_USE="
 		cpu_flags_x86_sse
 		cpu_flags_x86_sse2
 	)
+	atlas? (
+		lapack
+	)
+	contribcvv? (
+		contrib
+		|| (
+			qt5
+			qt6
+		)
+	)
+	contribdnn? (
+		contrib
+	)
+	contribfreetype? (
+		contrib
+	)
+	contribhdf? (
+		contrib
+	)
+	contribovis? (
+		contrib
+	)
+	contribsfm? (
+		contrib
+		eigen
+		gflags
+		glog
+	)
+	contribxfeatures2d? (
+		contrib
+	)
 	cpu_flags_x86_avx? (
 		cpu_flags_x86_sse4_2
 	)
@@ -499,42 +530,27 @@ REQUIRED_USE="
 	glog? (
 		contrib
 	)
-	contribcvv? (
-		contrib
-		|| (
-			qt5
-			qt6
-		)
-	)
-	contribdnn? (
-		contrib
-	)
-	contribfreetype? (
-		contrib
-	)
-	contribhdf? (
-		contrib
-	)
-	contribovis? (
-		contrib
-	)
-	contribsfm? (
-		contrib
-		eigen
-		gflags
-		glog
-	)
-	contribxfeatures2d? (
-		contrib
-	)
 	java? (
 		python
+	)
+	lapack? (
+		|| (
+			atlas
+			mkl
+			openblas
+		)
 	)
 	libaom? (
 		ffmpeg
 	)
+	mkl? (
+		lapack
+	)
 	mpeg? (
 		gstreamer
+	)
+	openblas? (
+		lapack
 	)
 	opengl? (
 		?? (
@@ -655,6 +671,9 @@ RDEPEND="
 	)
 	>=app-arch/bzip2-1.0.8[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.3.0[${MULTILIB_USEDEP}]
+	atlas? (
+		>=sci-libs/atlas-3.10.3
+	)
 	avif? (
 		>=media-libs/libavif-0.9.3[${MULTILIB_USEDEP}]
 	)
@@ -745,22 +764,15 @@ RDEPEND="
 		)
 	)
 	lapack? (
-		!atlas? (
-			!mkl? (
-				>=virtual/lapack-3.9.0
-				virtual/cblas
-				virtual/lapacke
-			)
-		)
-		atlas? (
-			>=sci-libs/atlas-3.10.3
-		)
-		mkl? (
-			>=sci-libs/mkl-2020.0.166
-		)
-		openblas? (
-			>=sci-libs/openblas-0.3.8
-		)
+		>=virtual/lapack-3.9.0[eselect-ldso]
+		virtual/cblas[eselect-ldso]
+		virtual/lapacke[eselect-ldso]
+	)
+	mkl? (
+		>=sci-libs/mkl-2020.0.166
+	)
+	openblas? (
+		>=sci-libs/openblas-0.3.8
 	)
 	opencl? (
 		virtual/opencl[${MULTILIB_USEDEP}]
@@ -1665,5 +1677,57 @@ einfo "Fixing rpath for ${x}"
 				patchelf --add-rpath "/usr/lib/ffmpeg/56.58.58/$(get_libdir)" "${x}" || die
 			fi
 		done
+	fi
+}
+
+pkg_postinst() {
+ewarn
+ewarn "The selected BLAS or LAPACK should match the vendor."
+ewarn
+ewarn "sci-libs/atlas - For non-Intel CPUs (BLAS)"
+ewarn "sci-libs/blis - For non-Intel CPUs (BLAS)"
+ewarn "sci-libs/mkl - For Intel® CPUs/GPUs (BLAS, LAPACK)"
+ewarn "sci-libs/openblas - For non-Intel CPUs (BLAS, LAPACK)"
+ewarn
+	if use lapack ; then
+		if cat "/proc/cpuinfo" | grep -q "GenuineIntel" ; then
+			if ! eselect lapack show | grep -q "mkl" ; then
+ewarn "Run \`eselect lapack set mkl\` to optimize for Intel® CPUs/GPUs."
+			fi
+		elif cat "/proc/cpuinfo" | grep -q "AuthenticAMD" ; then
+			if ! eselect lapack show | grep -q "openblas" ; then
+ewarn "Run \`eselect lapack set openblas\` to optimize for AMD CPUs."
+			fi
+		else
+			if ! eselect lapack show | grep -q "openblas" ; then
+ewarn "Run \`eselect lapack set openblas\` to optimize for ${ARCH}."
+			fi
+		fi
+
+		if cat "/proc/cpuinfo" | grep -q "GenuineIntel" ; then
+			if ! eselect blas show | grep -q "mkl" ; then
+ewarn "Run \`eselect blas set mkl\` to optimize for Intel® CPUs/GPUs."
+			fi
+		elif cat "/proc/cpuinfo" | grep -q "AuthenticAMD" ; then
+			if has_version "sci-libs/atlas" && ! eselect blas show | grep -q "atlas" ; then
+ewarn "Run \`eselect blas set atlas\` to optimize for ${ARCH}."
+			fi
+			if has_version "sci-libs/blis" && ! eselect blas show | grep -q "blis" ; then
+ewarn "Run \`eselect blas set blis\` to optimize for AMD CPUs."
+			fi
+			if has_version "sci-libs/openblas" && ! eselect blas show | grep -q "openblas" ; then
+ewarn "Run \`eselect blas set openblas\` to optimize for AMD CPUs."
+			fi
+		else
+			if has_version "sci-libs/atlas" && ! eselect blas show | grep -q "atlas" ; then
+ewarn "Run \`eselect blas set atlas\` to optimize for ${ARCH}."
+			fi
+			if has_version "sci-libs/blis" && ! eselect blas show | grep -q "blis" ; then
+ewarn "Run \`eselect blas set blis\` to optimize for ${ARCH}."
+			fi
+			if has_version "sci-libs/openblas" && ! eselect blas show | grep -q "openblas" ; then
+ewarn "Run \`eselect blas set openblas\` to optimize for ${ARCH}"
+			fi
+		fi
 	fi
 }
