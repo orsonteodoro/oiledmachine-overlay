@@ -115,6 +115,9 @@
     <flag name="gtk3">
       Enable <pkg>x11-libs/gtk+</pkg>:3 support
     </flag>
+    <flag name="hdr">
+      Enable support for HDR images.
+    </flag>
     <flag name="jasper">
       Use <pkg>media-libs/jasper</pkg> for jpeg2k support
     </flag>
@@ -123,6 +126,9 @@
     </flag>
     <flag name="mkl">
       Use <pkg>sci-libs/mkl</pkg> for blas, lapack and sparse blas routines
+    </flag>
+    <flag name="netpbm">
+      Enable support for Netpbm file formats.
     </flag>
     <flag name="non-free">
       Enable non-free components
@@ -152,6 +158,9 @@
     <flag name="system-flatbuffers">
       Build with the system flatbuffers package if it meets major-minor version
       requirements.
+    </flag>
+    <flag name="sun">
+      Enable support for sunraster images.
     </flag>
     <flag name="tbb">
       Enable multithreading with the Intel® Threading Building Blocks

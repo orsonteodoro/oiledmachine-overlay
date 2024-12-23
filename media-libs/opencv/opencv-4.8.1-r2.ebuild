@@ -279,16 +279,17 @@ RESTRICT="
 SLOT="0/${PV}" # subslot = libopencv* soname version
 # We assume not cross-compiling options enabled.
 # CI tests with +atlas -openblas for some jobs.
+# atlas disabled because it cannot compile, but ON upstream
 # mkl not observed in CI.
 IUSE="
 ${CPU_FEATURES_MAP[@]%:*}
 ${ROCM_SLOTS[@]}
-+atlas -avif +carotene +contrib contribcvv +contribdnn contribfreetype contribhdf
+-atlas -avif +carotene +contrib contribcvv +contribdnn contribfreetype contribhdf
 contribovis contribsfm contribxfeatures2d -cuda -cudnn debug dnnsamples +eigen
 -examples +features2d +ffmpeg +flann -gdal gflags glog -gphoto2 +gstreamer +gtk3
-+ieee1394 +imgproc +java +jpeg +jpeg2k +lapack +libaom -mkl -non-free -openblas
++hdr +ieee1394 +imgproc +java +jpeg +jpeg2k +lapack +libaom -mkl +netpbm -non-free -openblas
 +opencl +openexr -opengl -openmp +opencvapps +openh264 openvino -openvx +png
-+python +quirc -qt5 -qt6 rocm -spng -system-flatbuffers tesseract -testprograms
++python +quirc -qt5 -qt6 rocm -spng +sun -system-flatbuffers tesseract -testprograms
 -tbb +tiff +vaapi +v4l +vpx +vtk -wayland +webp x264 x265 -xine video_cards_intel
 ebuild-revision-9
 "
@@ -1119,6 +1120,10 @@ multilib_src_configure() {
 		-DWITH_GTK_2_X=OFF					# We only want GTK3 nowadays
 		-DWITH_GSTREAMER=$(usex gstreamer)
 		-DWITH_GSTREAMER_0_10=OFF				# We don't want this
+		-DWITH_IMGCODEC_HDR=$(usex hdr)
+		-DWITH_IMGCODEC_PFM=$(usex netpbm)
+		-DWITH_IMGCODEC_PXM=$(usex netpbm)
+		-DWITH_IMGCODEC_SUNRASTER=$(usex sun)
 		-DWITH_INTELPERC=OFF
 		-DWITH_IPP=OFF
 		-DWITH_IPP_A=OFF

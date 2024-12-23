@@ -305,7 +305,7 @@ IUSE+="
 "
 # image
 IUSE+="
-	-avif -gdal +jasper +jpeg +jpeg2k +openexr +png -quirc -spng tesseract
+	-avif -gdal +hdr +jasper +jpeg +jpeg2k +netpbm +openexr +png -quirc -spng +sun tesseract
 	+tiff +webp
 "
 # gui
@@ -318,9 +318,10 @@ IUSE+="
 "
 # lapack options
 # CI tests with +atlas -openblas for some jobs.
+# atlas disabled because it cannot compile, but ON upstream.
 # mkl not observed in CI.
 IUSE+="
-	+atlas +lapack -mkl -openblas
+	-atlas +lapack -mkl -openblas
 "
 IUSE+="
 	${CPU_FEATURES_MAP[*]%:*}
@@ -1236,6 +1237,10 @@ multilib_src_configure() {
 		-DWITH_GSTREAMER=$(usex gstreamer)
 		-DWITH_GTK=$(usex gtk3)
 		-DWITH_GTK_2_X=OFF							# We only want GTK3 nowadays
+		-DWITH_IMGCODEC_HDR=$(usex hdr)
+		-DWITH_IMGCODEC_PFM=$(usex netpbm)
+		-DWITH_IMGCODEC_PXM=$(usex netpbm)
+		-DWITH_IMGCODEC_SUNRASTER=$(usex sun)
 		-DWITH_INTELPERC=OFF
 		-DWITH_IPP=OFF
 		-DWITH_IPP_A=OFF
