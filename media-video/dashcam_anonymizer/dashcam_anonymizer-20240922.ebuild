@@ -52,6 +52,11 @@ REQUIRED_USE="
 		ffmpeg
 		gstreamer
 	)
+	|| (
+		openh264
+		vaapi
+		x264
+	)
 	openh264? (
 		ffmpeg
 	)
