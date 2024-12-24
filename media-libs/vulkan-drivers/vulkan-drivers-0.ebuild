@@ -7,7 +7,7 @@ EAPI=8
 inherit multilib-minimal
 
 S="${WORKDIR}"
-VIDEO_DRIVERS=(
+VIDEO_CARDS=(
 	video_cards_amdgpu
 	video_cards_intel
 	video_cards_nouveau
@@ -23,7 +23,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-${VIDEO_DRIVERS[@]}
+${VIDEO_CARDS[@]}
 amdvlk radv
 "
 REQUIRED_USE="
