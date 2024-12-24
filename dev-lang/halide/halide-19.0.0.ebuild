@@ -76,7 +76,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 cuda -doc +serialization tutorials +python test +utils +wabt
-ebuild-revision-1
+ebuild-revision-2
 "
 REQUIRED_USE="
 	python? (
@@ -201,7 +201,6 @@ src_unpack() {
 src_configure() {
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_LIBDIR="$(get_libdir)"
-		-DTARGET_VULKAN=$(usex vulkan)
 		-DFETCHCONTENT_SOURCE_DIR_FLATBUFFERS="${S}/cmake/external/flatbuffers"
 		-DFETCHCONTENT_SOURCE_DIR_PYBIND11="${S}/cmake/external/pybind11"
 		-DFETCHCONTENT_SOURCE_DIR_WABT="${S}/cmake/external/wabt"
