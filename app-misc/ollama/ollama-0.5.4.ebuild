@@ -2548,7 +2548,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
-sandbox systemd unrestrict video_cards_intel ebuild-revision-37
+sandbox systemd unrestrict video_cards_intel ebuild-revision-38
 "
 gen_rocm_required_use() {
 	local s
@@ -3691,7 +3691,7 @@ build_new_runner_cpu() {
 	)
 
 	local cpu_flags_args=""
-	local cpu_flags="sse2"
+	local cpu_flags="no-avx"
 
 	if use cpu_flags_x86_f16c ; then
 		cpu_flag_args+="|-mf16c"
@@ -3759,7 +3759,7 @@ build_new_runner_gpu() {
 	)
 
 	local cpu_flags_args=""
-	local cpu_flags="sse2"
+	local cpu_flags="no-avx"
 
 	if use cpu_flags_x86_f16c ; then
 		cpu_flag_args+="|-mf16c"
