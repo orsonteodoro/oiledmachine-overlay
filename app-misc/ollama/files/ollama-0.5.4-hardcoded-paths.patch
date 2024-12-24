@@ -58,8 +58,8 @@ diff '--color=auto' -urp ollama-0.5.4.orig/llama/llama.go ollama-0.5.4/llama/lla
  #cgo cuda_jetpack6 LDFLAGS: -lggml_cuda_jetpack6
 -#cgo cuda_v11 LDFLAGS: -lggml_cuda_v11
 -#cgo cuda_v12 LDFLAGS: -lggml_cuda_v12
-+#cgo cuda_v11 LDFLAGS: -lggml_cuda_v11 -L/opt/cuda/lib64
-+#cgo cuda_v12 LDFLAGS: -lggml_cuda_v12 -L/opt/cuda/lib64
++#cgo cuda_v11 LDFLAGS: -L${SRCDIR}/build/linux-amd64/runners/cuda_v11 -lggml_cuda_v11 -L/opt/cuda/lib64
++#cgo cuda_v12 LDFLAGS: -L${SRCDIR}/build/linux-amd64/runners/cuda_v12 -lggml_cuda_v12 -L/opt/cuda/lib64
  #cgo darwin,amd64 CFLAGS: -Wno-incompatible-pointer-types-discards-qualifiers
  #cgo darwin,amd64 CXXFLAGS: -Wno-incompatible-pointer-types-discards-qualifiers
  #cgo darwin,amd64 LDFLAGS: -framework Foundation

@@ -2486,7 +2486,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl native openblas openrc rocm
-sandbox systemd unrestrict video_cards_intel ebuild-revision-40
+sandbox systemd unrestrict video_cards_intel ebuild-revision-41
 "
 gen_rocm_required_use() {
 	local s
@@ -2848,6 +2848,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.3.13-fix-os-arch-pair.patch"
 	"${FILESDIR}/${PN}-0.3.13-gpu-libs-path.patch"
 	"${FILESDIR}/${PN}-0.3.13-cmd-changes.patch"
+	"${FILESDIR}/${PN}-0.4.7-nvcc-flags.patch"
 )
 
 pkg_pretend() {
@@ -3185,8 +3186,10 @@ src_configure() {
 	fi
 
 	# Breaks nvcc
-	use cuda && filter-flags -Ofast
-	sed -i -e "s|-Ofast||g" "llama/make/cuda.make" || die
+	sed -i \
+		-e "s|-Ofast||g" \
+		"llama/make/cuda.make" \
+		|| die
 
 	# Use similar hardening flags like TF for community generated LLMs.
 	# These are used as a precaution to mitigate CE, DT, ID, DoS (CWE-121).
@@ -3368,6 +3371,21 @@ eerror "You need to set -march= to one of ${SVE_ARCHES[@]}"
 
 	local olast=$(get_olast)
 	replace-flags "-O*" "${olast}"
+	_NVCC_FLAGS+=" -Xcompiler ${olast}"
+
+	if use cuda ; then
+		filter-flags -Ofast
+		filter-flags -fno-finite-math-only
+		sed -i \
+			-e "s|@NVCC_FLAGS@|${_NVCC_FLAGS}|g" \
+			"llama/make/cuda.make" \
+			|| die
+	else
+		sed -i \
+			-e "s|@NVCC_FLAGS@||g" \
+			"llama/make/cuda.make" \
+			|| die
+	fi
 
 	# Allow custom -Oflag
 	export CMAKE_BUILD_TYPE=" "
@@ -3474,20 +3492,20 @@ einfo "LDFLAGS: ${LDFLAGS}"
 	sed -i -e "s|-j8|-j${jobs}|g" "llm/generate/gen_common.sh" || die
 
 	if ! use cuda ; then
-		export OLLAMA_SKIP_CUDA_GENERATE=1
+		:
 	else
 		[[ "${ARCH}" == "amd64" && "${ABI}" == "amd64" ]] || die "ARCH=${ARCH} ABI=${ABI} not supported for USE=cuda"
 		filter-flags -pipe # breaks NVCC
 	fi
 
 	if ! use rocm ; then
-		export OLLAMA_SKIP_ROCM_GENERATE=1
+		:
 	else
 		[[ "${ARCH}" == "amd64" && "${ABI}" == "amd64" ]] || die "ARCH=${ARCH} ABI=${ABI} not supported for USE=rocm"
 	fi
 
 	if ! use video_cards_intel ; then
-		export OLLAMA_SKIP_ONEAPI_GENERATE=1
+		:
 	else
 		[[ "${ARCH}" == "amd64" && "${ABI}" == "amd64" ]] || die "ARCH=${ARCH} ABI=${ABI} not supported for USE=video_cards_intel"
 	fi
@@ -3689,6 +3707,10 @@ build_binary() {
 build_new_runner_cpu() {
 	# The documentation is sloppy.
 
+	export OLLAMA_SKIP_CUDA_GENERATE=1
+	export OLLAMA_SKIP_ROCM_GENERATE=1
+	export OLLAMA_SKIP_ONEAPI_GENERATE=1
+
 	# See also
 	# https://github.com/ollama/ollama/blob/v0.3.14/llama/llama.go
 	local args=(
@@ -3743,6 +3765,18 @@ build_new_runner_gpu() {
 		:
 	else
 		return
+	fi
+
+	if use cuda ; then
+		export OLLAMA_SKIP_CUDA_GENERATE=0
+	fi
+
+	if use rocm ; then
+		export OLLAMA_SKIP_ROCM_GENERATE=0
+	fi
+
+	if use video_cards_intel ; then
+		export OLLAMA_SKIP_ONEAPI_GENERATE=0
 	fi
 
 	# See also
@@ -3814,9 +3848,6 @@ build_new_runner_gpu() {
 	if use cuda ; then
 		# Breaks nvcc
 		filter-flags '-m*'
-		filter-flags -fno-finite-math-only
-
-		append-flags ${_NVCC_FLAGS}
 
 		export CGO_CFLAGS="${CFLAGS}"
 		export CGO_CXXFLAGS="${CXXFLAGS}"
