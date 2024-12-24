@@ -52,7 +52,7 @@ RDEPEND+="
 			)
 		)
 		radv? (
-			media-libs/mesa[${MULTILIB_USEDEP},video_cards_amdgpu,vulkan]
+			media-libs/mesa[${MULTILIB_USEDEP},video_cards_radeonsi,vulkan]
 		)
 	)
 	video_cards_intel? (
