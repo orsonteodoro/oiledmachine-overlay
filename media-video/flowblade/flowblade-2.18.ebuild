@@ -85,6 +85,7 @@ BDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/setuptools[${PYTHON_USEDEP}]
 	')
+	dev-util/patchelf
 "
 DOCS=( "README.md" )
 
@@ -111,6 +112,11 @@ export SDL_VIDEODRIVER="x11"
 "/usr/bin/flowblade-gui" "\$@"
 EOF
 	fperms 0755 "/usr/bin/flowblade"
+
+	patchelf \
+		--add-rdepend "/usr/lib/flowblade/$(get_libdir)" \
+		"/usr/bin/flowblade-gui" \
+		|| die
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
