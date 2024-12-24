@@ -2486,7 +2486,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl native openblas openrc rocm
-sandbox systemd unrestrict video_cards_intel ebuild-revision-37
+sandbox systemd unrestrict video_cards_intel ebuild-revision-39
 "
 gen_rocm_required_use() {
 	local s
@@ -3178,7 +3178,9 @@ src_configure() {
 	replace-flags '-O0' '-O1'
 
 	# For -Ofast, -ffast-math
-	append-flags -fno-finite-math-only
+	if ! use cuda && tc-is-gcc ; then
+		append-flags -fno-finite-math-only
+	fi
 
 	# Breaks nvcc
 	use cuda && filter-flags -Ofast
