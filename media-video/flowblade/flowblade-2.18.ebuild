@@ -38,8 +38,9 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
+# Assume X and not wayland since libsdl2 is not supported
 IUSE+="
-mp3 opus sox vaapi vorbis vpx wayland x264 x265 X
+mp3 opus sox vaapi vorbis vpx x264 x265
 "
 REQUIRED_USE="
 	|| (
@@ -52,10 +53,6 @@ REQUIRED_USE="
 		vpx
 		x264
 		x265
-	)
-	|| (
-		wayland
-		X
 	)
 "
 RDEPEND+="
@@ -76,7 +73,7 @@ RDEPEND+="
 	>=media-gfx/gmic-2.9.4
 	>=x11-libs/pango-1.50.6[introspection]
 	>=x11-libs/gdk-pixbuf-2.42.8[introspection]
-	>=x11-libs/gtk+-3.24.33[introspection,wayland?,X?]
+	>=x11-libs/gtk+-3.24.33[introspection,X]
 	sox? (
 		>=media-sound/sox-14.4.2
 	)
@@ -105,6 +102,15 @@ src_install() {
 	distutils-r1_src_install
 	docinto "licenses"
 	dodoc "LICENSE"
+	mv "${ED}/usr/bin/flowblade"{"","-gui"}
+cat <<EOF > "${ED}/usr/bin/flowblade"
+#!/bin/bash
+export SDL12COMPAT_NO_QUIT_VIDEO=1
+export GDK_BACKEND="x11"
+export SDL_VIDEODRIVER="x11"
+"/usr/bin/flowblade-gui" "\$@"
+EOF
+	fperms 0755 "/usr/bin/flowblade"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
