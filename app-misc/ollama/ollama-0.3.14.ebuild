@@ -2940,7 +2940,6 @@ einfo "Replace EGO_SUM contents with the following:"
 }
 
 src_unpack() {
-ewarn "The ${PN} ebuild is under development and does not work."
 	if [[ "${PV}" =~ "9999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_src_unpack
