@@ -2514,7 +2514,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
-sandbox systemd unrestrict video_cards_intel ebuild-revision-39
+sandbox systemd unrestrict video_cards_intel ebuild-revision-40
 "
 gen_rocm_required_use() {
 	local s
@@ -3150,6 +3150,7 @@ get_cuda_flags() {
 	echo "${arches}"
 }
 
+_NVCC_FLAGS=""
 src_configure() {
 	if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12.4*" ; then
 		export CC="${CHOST}-gcc-13"
@@ -3202,8 +3203,9 @@ src_configure() {
 	replace-flags '-O0' '-O1'
 
 	# For -Ofast, -ffast-math
-	if ! use cuda && tc-is-gcc ; then
+	if tc-is-gcc ; then
 		append-flags -fno-finite-math-only
+		_NVCC_FLAGS+=" -Xcompiler -fno-finite-math-only"
 	fi
 
 	# Breaks nvcc
@@ -3271,58 +3273,72 @@ einfo "PIE is already enabled."
 	# For sgemm.cpp, ggml.c
 	if use cpu_flags_x86_sse ; then
 		append-flags -msse
+		_NVCC_FLAGS+=" -Xcompiler -msse"
 	fi
 
 	if use cpu_flags_x86_sse2 ; then
 		append-flags -msse2
+		_NVCC_FLAGS+=" -Xcompiler -msse2"
 	fi
 
 	if use cpu_flags_x86_sse3 ; then
 		append-flags -msse3
+		_NVCC_FLAGS+=" -Xcompiler -msse3"
 	fi
 
 	if use cpu_flags_x86_ssse3 ; then
 		append-flags -mssse3
+		_NVCC_FLAGS+=" -Xcompiler -mssse3"
 	fi
 
 	if use cpu_flags_x86_f16c ; then
 		append-flags -mf16c
+		_NVCC_FLAGS+=" -Xcompiler -mf16c"
 	fi
 
 	if use cpu_flags_x86_fma ; then
 		append-flags -mfma
+		_NVCC_FLAGS+=" -Xcompiler -mfma"
 	fi
 
 	if use cpu_flags_x86_avxvnni ; then
 		append-flags -mavxvnni
+		_NVCC_FLAGS+=" -Xcompiler -mavxvnni"
 	fi
 
 	if use cpu_flags_x86_avxvnniint8 ; then
 		append-flags -mavxvnniint8
+		_NVCC_FLAGS+=" -Xcompiler -mavxvnniint8"
 	fi
 
 	if use cpu_flags_x86_avx512f ; then
 		append-flags -mavx512f
+		_NVCC_FLAGS+=" -Xcompiler -mavx512f"
 	fi
 
 	if use cpu_flags_x86_avx512dq ; then
 		append-flags -mavx512dq
+		_NVCC_FLAGS+=" -Xcompiler -mavx512dq"
 	fi
 
 	if use cpu_flags_x86_avx512vl ; then
 		append-flags -mavx512vl
+		_NVCC_FLAGS+=" -Xcompiler -mavx512vl"
 	fi
 
 	if use cpu_flags_x86_avx512bf16 ; then
 		append-flags -mavx512bf16
+		_NVCC_FLAGS+=" -Xcompiler -mavx512bf16"
 	fi
 
 	if use cpu_flags_x86_avx512vbmi ; then
 		append-flags -mavx512vbmi
+		_NVCC_FLAGS+=" -Xcompiler -mavx512vbmi"
 	fi
 
 	if use cpu_flags_x86_avx512vnni ; then
 		append-flags -mavx512vnni
+		_NVCC_FLAGS+=" -Xcompiler -mavx512vnni"
 	fi
 
 	local arm_ext=""
@@ -3770,6 +3786,21 @@ build_new_runner_gpu() {
 	fi
 
 	if use cuda ; then
+		# Breaks nvcc
+		filter-flags '-m*'
+		filter-flags -fno-finite-math-only
+
+		append-flags ${_NVCC_FLAGS}
+
+		export CGO_CFLAGS="${CFLAGS}"
+		export CGO_CXXFLAGS="${CXXFLAGS}"
+		export CGO_CPPFLAGS="${CPPFLAGS}"
+		export CGO_LDFLAGS="${LDFLAGS}"
+einfo "CFLAGS: ${CFLAGS}"
+einfo "CXXFLAGS: ${CXXFLAGS}"
+einfo "CPPLAGS: ${CPPFLAGS}"
+einfo "LDFLAGS: ${LDFLAGS}"
+
 		if has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
 einfo "Building for CUDA v12"
 			emake -C llama cuda_v12
