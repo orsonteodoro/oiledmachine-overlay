@@ -28,5 +28,9 @@
     <flag name="video_cards_nvk">
       Use the open source driver compatible for NVIDIA® GPUs.
     </flag>
+    <flag name="video_cards_radeonsi">
+      Use the open source driver compatible for AMD GPUs
+      for Southern Islands (GCN 1).
+    </flag>
   </use>
 </pkgmetadata>

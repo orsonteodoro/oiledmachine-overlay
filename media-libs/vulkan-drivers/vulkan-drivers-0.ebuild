@@ -13,6 +13,7 @@ VIDEO_DRIVERS=(
 	video_cards_nouveau
 	video_cards_nvidia
 	video_cards_nvk
+	video_cards_radeonsi
 )
 
 DESCRIPTION="Vulkan drivers"
@@ -65,6 +66,9 @@ RDEPEND+="
 	)
 	video_cards_nvidia? (
 		x11-drivers/nvidia-drivers[${MULTILIB_USEDEP}]
+	)
+	video_cards_radeonsi? (
+		media-libs/mesa[${MULTILIB_USEDEP},video_cards_radeonsi,vulkan]
 	)
 "
 DEPEND+="
