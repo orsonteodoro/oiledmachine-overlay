@@ -182,8 +182,8 @@ src_configure() {
 		-DMOD_MOVIT=$(usex opengl)
 		-DMOD_OPENCV=$(usex opencv)
 		-DMOD_PLUS=ON
-		-DMOD_SDL1=OFF
-		-DMOD_SOX=OFF
+		-DMOD_SDL1=$(usex sdl)
+		-DMOD_SOX=$(usex sox)
 		-DMOD_QT6=$(usex qt6)
 		-DMOD_QT=OFF
 		-DMOD_RESAMPLE=$(usex libsamplerate)

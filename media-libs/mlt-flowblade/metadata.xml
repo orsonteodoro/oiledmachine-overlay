@@ -24,6 +24,12 @@
     <flag name="rtaudio">
       Builds rtaudio consumer for native audio support on multiple platforms
     </flag>
+    <flag name="sdl">
+      Build support for libsdl
+    </flag>
+    <flag name="sdl2">
+      Build support for libsdl2
+    </flag>
     <flag name="rubberband">
       Enable audio pitch-shifting.
     </flag>
