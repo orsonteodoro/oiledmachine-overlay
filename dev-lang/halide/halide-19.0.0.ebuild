@@ -17,6 +17,7 @@ PLY_COMMIT="d776a2ece6c12bf8f8b6a0e65b48546ac6078765"
 PYTHON_COMPAT=( "python3_"{10..12} )
 SIMDE_COMMIT="71fd833d9666141edcd1d3c109a80e228303d8d7"
 UVWASI_COMMIT="55eff19f4c7e69ec151424a037f951e0ad006ed6"
+VULKAN_HEADERS_PV="1.3.296"
 WASM_C_API_COMMIT="b6dd1fb658a282c64b029867845bc50ae59e1497"
 WABT_PV="1.0.36"
 WEBASSEMBLY_TESTSUITE_COMMIT="f3f048661dc1686d556a27d522df901cb747ab4a"
@@ -139,12 +140,14 @@ RDEPEND+="
 			virtual/pillow[${PYTHON_USEDEP}]
 		)
 	')
+	>=media-libs/vulkan-loader-${VULKAN_HEADERS_PV}
 	serialization? (
 		>=dev-libs/flatbuffers-23.5.26
 	)
 "
 DEPEND+="
 	${RDEPEND}
+	>=dev-util/vulkan-headers-${VULKAN_HEADERS_PV}
 "
 BDEPEND+="
 	>=dev-build/cmake-3.28
@@ -198,6 +201,7 @@ src_unpack() {
 src_configure() {
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_LIBDIR="$(get_libdir)"
+		-DTARGET_VULKAN=$(usex vulkan)
 		-DFETCHCONTENT_SOURCE_DIR_FLATBUFFERS="${S}/cmake/external/flatbuffers"
 		-DFETCHCONTENT_SOURCE_DIR_PYBIND11="${S}/cmake/external/pybind11"
 		-DFETCHCONTENT_SOURCE_DIR_WABT="${S}/cmake/external/wabt"
