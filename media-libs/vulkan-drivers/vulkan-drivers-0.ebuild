@@ -28,6 +28,12 @@ REQUIRED_USE="
 	|| (
 		${VIDEO_DRIVERS[@]}
 	)
+	amdvlk? (
+		video_cards_amdgpu
+	)
+	radv? (
+		video_cards_amdgpu
+	)
 	video_cards_amdgpu? (
 		|| (
 			amdvlk
