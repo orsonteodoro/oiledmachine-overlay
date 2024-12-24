@@ -3393,7 +3393,7 @@ eerror "You need to set -march= to one of ${SVE_ARCHES[@]}"
 	_NVCC_FLAGS+=" -Xcompiler ${olast}"
 
 	if use cuda ; then
-		filter-flags -Ofast
+		replace-flags -Ofast -O3 # Downgrade
 		filter-flags -fno-finite-math-only
 		sed -i \
 			-e "s|@NVCC_FLAGS@|${_NVCC_FLAGS}|g" \
@@ -3404,7 +3404,6 @@ eerror "You need to set -march= to one of ${SVE_ARCHES[@]}"
 			-e "s|@NVCC_FLAGS@||g" \
 			"llama/make/cuda.make" \
 			|| die
-
 	fi
 
 	# Allow custom -Oflag
