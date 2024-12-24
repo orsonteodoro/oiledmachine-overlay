@@ -39,26 +39,25 @@ RDEPEND+="
 	video_cards_amdgpu? (
 		amdvlk? (
 			|| (
-				media-libs/amdvlk
-				media-libs/amdvlk-bin
+				media-libs/amdvlk[${MULTILIB_USEDEP}]
+				media-libs/amdvlk-bin[${MULTILIB_USEDEP}]
 			)
 		)
 		radv? (
-			media-libs/mesa[video_cards_amdgpu,vulkan]
+			media-libs/mesa[${MULTILIB_USEDEP},video_cards_amdgpu,vulkan]
 		)
 	)
 	video_cards_intel? (
-		media-libs/mesa[video_cards_intel,vulkan]
+		media-libs/mesa[${MULTILIB_USEDEP},video_cards_intel,vulkan]
 	)
 	video_cards_nouveau? (
-		x11-drivers/xf86-video-nouveau
-		media-libs/mesa[video_cards_nouveau,vulkan]
+		media-libs/mesa[${MULTILIB_USEDEP},video_cards_nouveau,vulkan]
 	)
 	video_cards_nvk? (
-		media-libs/mesa[video_cards_nvk,vulkan]
+		media-libs/mesa[${MULTILIB_USEDEP},video_cards_nvk,vulkan]
 	)
 	video_cards_nvidia? (
-		x11-drivers/nvidia-drivers
+		x11-drivers/nvidia-drivers[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND+="
