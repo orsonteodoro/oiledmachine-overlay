@@ -6,6 +6,7 @@ EAPI=8
 
 inherit multilib-minimal
 
+S="${WORKDIR}"
 VIDEO_DRIVERS=(
 	video_cards_amdgpu
 	video_cards_intel
