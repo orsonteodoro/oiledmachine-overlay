@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <use>
+    <flag name="amdvlk">
+      Use the newer vendor provided driver for AMD GPUs.
+    </flag>
+    <flag name="radv">
+      Use the open source RADV driver for AMD GPUs.
+    </flag>
+    <flag name="video_cards_amdgpu">
+      Use a AMDGPU Vulkan® driver.
+    </flag>
+    <flag name="video_cards_intel">
+      Use the Vulkan® driver for Intel® CPUs and GPUs.
+    </flag>
+    <flag name="video_cards_nvidia">
+      Use the NVIDIA® driver for GPUs.
+    </flag>
+    <flag name="video_cards_nvk">
+      Use the open source driver compatible for NVIDIA® GPUs.
+    </flag>
+    <flag name="video_cards_nouveau">
+      Use the community driver for AMD GPUs.
+    </flag>
+  </use>
+</pkgmetadata>
