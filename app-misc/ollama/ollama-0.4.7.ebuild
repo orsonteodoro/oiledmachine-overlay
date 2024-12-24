@@ -2514,7 +2514,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
-sandbox systemd unrestrict video_cards_intel ebuild-revision-34
+sandbox systemd unrestrict video_cards_intel ebuild-revision-37
 "
 gen_rocm_required_use() {
 	local s
@@ -3686,6 +3686,7 @@ build_new_runner_cpu() {
 		)
 	fi
 
+einfo "Building CPU runner"
 	emake -C llama
 
 	edo go build ${args[@]} .
@@ -3724,6 +3725,15 @@ build_new_runner_gpu() {
 		edo go env -w "CGO_CXXFLAGS_ALLOW=${cpu_flags_args}"
 	fi
 
+	local cuda_impl=""
+	if use cuda ; then
+		if has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
+			cuda_impl="cuda_v12"
+		elif has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
+			cuda_impl="cuda_v11"
+		fi
+	fi
+
 	if use cpu_flags_x86_avx2 && use cuda ; then
 		args+=(
 			-tags avx,avx2,cuda,${cuda_impl}
@@ -3757,16 +3767,16 @@ build_new_runner_gpu() {
 		)
 	fi
 
-	local cuda_impl=""
 	if use cuda ; then
 		if has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
+einfo "Building for CUDA v12"
 			emake -C llama cuda_v12
-			cuda_impl="cuda_v12"
 		elif has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
+einfo "Building for CUDA v11"
 			emake -C llama cuda_v11
-			cuda_impl="cuda_v11"
 		fi
 	elif use rocm ; then
+einfo "Building for ROCm"
 		emake -C llama rocm
 	fi
 

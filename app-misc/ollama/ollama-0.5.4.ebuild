@@ -2548,7 +2548,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
-sandbox systemd unrestrict video_cards_intel ebuild-revision-35
+sandbox systemd unrestrict video_cards_intel ebuild-revision-37
 "
 gen_rocm_required_use() {
 	local s
@@ -2892,6 +2892,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.5.4-rename-CUDA_ARCHITECTURES.patch"
 	"${FILESDIR}/${PN}-0.5.4-gpu-libs-path.patch"
 	"${FILESDIR}/${PN}-0.5.4-cmd-changes.patch"
+	"${FILESDIR}/${PN}-0.5.4-config-cuda-slot.patch"
 )
 
 pkg_pretend() {
@@ -3731,6 +3732,10 @@ build_new_runner_cpu() {
 		)
 	fi
 
+	export OLLAMA_SKIP_CUDA_GENERATE=1
+	export USE_CUDA=0
+
+einfo "Building CPU runner"
 	emake
 
 	edo go build ${args[@]} .
@@ -3770,6 +3775,17 @@ build_new_runner_gpu() {
 		edo go env -w "CGO_CXXFLAGS_ALLOW=${cpu_flags_args}"
 	fi
 
+	local cuda_impl=""
+	if use cuda ; then
+		if has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
+			cuda_impl="cuda_v12"
+			export USE_SLOT=12
+		elif has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
+			export USE_SLOT=11
+			cuda_impl="cuda_v11"
+		fi
+	fi
+
 	if use cpu_flags_x86_avx2 && use cuda ; then
 		args+=(
 			-tags avx,avx2,cuda,${cuda_impl}
@@ -3807,16 +3823,18 @@ build_new_runner_gpu() {
 		)
 	fi
 
-	local cuda_impl=""
 	if use cuda ; then
+		export USE_CUDA=1
+		unset OLLAMA_SKIP_CUDA_GENERATE
 		if has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
+einfo "Building for CUDA v12"
 			emake cuda_v12
-			cuda_impl="cuda_v12"
 		elif has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
+einfo "Building for CUDA v11"
 			emake cuda_v11
-			cuda_impl="cuda_v11"
 		fi
 	elif use rocm ; then
+einfo "Building for ROCm"
 		emake rocm
 	fi
 
