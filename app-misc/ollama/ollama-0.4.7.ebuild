@@ -2514,7 +2514,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
-sandbox systemd unrestrict video_cards_intel ebuild-revision-41
+sandbox systemd unrestrict video_cards_intel ebuild-revision-43
 "
 gen_rocm_required_use() {
 	local s
@@ -3046,21 +3046,6 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 			|| die
 	fi
 
-	local olast
-
-	olast=$(get_olast "-O2")
-	sed -i \
-		-e "s|-O2|${olast}|g" \
-		"llama/llama.go" \
-		|| die
-
-	olast=$(get_olast "-O3")
-	sed -i \
-		-e "s|-O3|${olast}|g" \
-		"llama/make/cuda.make" \
-		"llama/make/Makefile.rocm" \
-		|| die
-
 	if [[ "${CFLAGS}" =~ "-march=armv8.6-a" ]] ; then
 		sed -i \
 			-e "s|armv8.6-a||g" \
@@ -3199,21 +3184,6 @@ src_configure() {
 			"llama/make/Makefile.rocm" \
 			|| die
 	fi
-
-	# For proper _FORTIFY_SOURCE
-	replace-flags '-O0' '-O1'
-
-	# For -Ofast, -ffast-math
-	if tc-is-gcc ; then
-		append-flags -fno-finite-math-only
-		_NVCC_FLAGS+=" -Xcompiler -fno-finite-math-only"
-	fi
-
-	# Breaks nvcc
-	sed -i \
-		-e "s|-Ofast||g" \
-		"llama/make/cuda.make" \
-		|| die
 
 	# Use similar hardening flags like TF for community generated LLMs.
 	# These are used as a precaution to mitigate CE, DT, ID, DoS (CWE-121).
@@ -3389,21 +3359,40 @@ eerror "You need to set -march= to one of ${SVE_ARCHES[@]}"
 	fi
 
 	local olast=$(get_olast)
+
+	# For _FORTIFY_SOURCE
+	replace-flags '-O0' '-O1'
+
+	# -Ofast breaks nvcc
+	if use cuda ; then
+		if [[ "${olast}" == "-Ofast" ]] ; then
+			olast="-O3"
+		fi
+	fi
+
 	replace-flags "-O*" "${olast}"
+
+	# For -Ofast, -ffast-math
+	if tc-is-gcc && ! use cuda ; then
+		append-flags -fno-finite-math-only
+	fi
+
+	sed -i \
+		-e "s|-Ofast|${olast}|g" \
+		-e "s|-O2|${olast}|g" \
+		-e "s|-O3|${olast}|g" \
+		"llama/llama.go" \
+		"llama/make/cuda.make" \
+		"llama/make/Makefile.rocm" \
+		|| die
+
 	_NVCC_FLAGS+=" -Xcompiler ${olast}"
 
 	if use cuda ; then
-		replace-flags -Ofast -O3 # Downgrade
 		filter-flags -fno-finite-math-only
-		sed -i \
-			-e "s|@NVCC_FLAGS@|${_NVCC_FLAGS}|g" \
-			"llama/make/cuda.make" \
-			|| die
+		export NVCC_FLAGS="${_NVCC_FLAGS}"
 	else
-		sed -i \
-			-e "s|@NVCC_FLAGS@||g" \
-			"llama/make/cuda.make" \
-			|| die
+		export NVCC_FLAGS=""
 	fi
 
 	# Allow custom -Oflag
@@ -3519,20 +3508,20 @@ einfo "LDFLAGS: ${LDFLAGS}"
 	sed -i -e "s|make -j 8|make -j ${jobs}|g" "llama/llama.go" || die
 
 	if ! use cuda ; then
-		:
+		export OLLAMA_SKIP_CUDA_GENERATE=1
 	else
 		[[ "${ARCH}" == "amd64" && "${ABI}" == "amd64" ]] || die "ARCH=${ARCH} ABI=${ABI} not supported for USE=cuda"
 		filter-flags -pipe # breaks NVCC
 	fi
 
 	if ! use rocm ; then
-		:
+		export OLLAMA_SKIP_ROCM_GENERATE=1
 	else
 		[[ "${ARCH}" == "amd64" && "${ABI}" == "amd64" ]] || die "ARCH=${ARCH} ABI=${ABI} not supported for USE=rocm"
 	fi
 
 	if ! use video_cards_intel ; then
-		:
+		export OLLAMA_SKIP_ONEAPI_GENERATE=1
 	else
 		[[ "${ARCH}" == "amd64" && "${ABI}" == "amd64" ]] || die "ARCH=${ARCH} ABI=${ABI} not supported for USE=video_cards_intel"
 	fi
@@ -4120,20 +4109,20 @@ einfo
 einfo "Quick guide:"
 einfo
 	if use openrc ; then
-printf " \e[32m*\e[0m  %-40s%-40s" "rc-service ${PN} start"		"# Start server"
+printf " \e[32m*\e[0m  %-40s%-40s" "rc-service ${PN} start\n"		"# Start server"
 	elif use systemd ; then
-printf " \e[32m*\e[0m  %-40s%-40s" "systemctl start ${PN}"		"# Start server"
+printf " \e[32m*\e[0m  %-40s%-40s" "systemctl start ${PN}\n"		"# Start server"
 	else
-printf " \e[32m*\e[0m  %-40s%-40s" "${PN} serve"			"# Start server, note you are reponsible for adding it to your init system."
+printf " \e[32m*\e[0m  %-40s%-40s" "${PN} serve\n"			"# Start server, note you are reponsible for adding it to your init system."
 	fi
-printf " \e[32m*\e[0m  %-40s%-40s" "${PN} avail"			"# Lists whitelisted models available to download"
-printf " \e[32m*\e[0m  %-40s%-40s" "${PN} run llama3:70b"		"# Downloads, load, and chat to a llama3 Large Language Model (LLM) with 70 billion parameters"
-printf " \e[32m*\e[0m  %-40s%-40s" "${PN} show llama3 --tags"		"# Shows descriptive tags, capabilities, personality of the llama3 model"
-printf " \e[32m*\e[0m  %-40s%-40s" "${PN} show llama3 --website"	"# Shows the ${PN} website entry for the llama3 model"
-printf " \e[32m*\e[0m  %-40s%-40s" "${PN} show llama3 --licence"	"# Shows the model license of the llama3 model"
-printf " \e[32m*\e[0m  %-40s%-40s" "${PN} find-size 500MB"		"# Shows the models to download that are 500MB or less"
-printf " \e[32m*\e[0m  %-40s%-40s" "${PN} find-size 4GB"		"# Shows the models to download that are 4GB or less"
-printf " \e[32m*\e[0m  %-40s%-40s" "${PN} find-size 4GB | grep orca"	"# Shows orca models less than or equal to 4GB"
+printf " \e[32m*\e[0m  %-40s%-40s" "${PN} avail\n"			"# Lists whitelisted models available to download"
+printf " \e[32m*\e[0m  %-40s%-40s" "${PN} run llama3:70b\n"		"# Downloads, load, and chat to a llama3 Large Language Model (LLM) with 70 billion parameters"
+printf " \e[32m*\e[0m  %-40s%-40s" "${PN} show llama3 --tags\n"		"# Shows descriptive tags, capabilities, personality of the llama3 model"
+printf " \e[32m*\e[0m  %-40s%-40s" "${PN} show llama3 --website\n"	"# Shows the ${PN} website entry for the llama3 model"
+printf " \e[32m*\e[0m  %-40s%-40s" "${PN} show llama3 --licence\n"	"# Shows the model license of the llama3 model"
+printf " \e[32m*\e[0m  %-40s%-40s" "${PN} find-size 500MB\n"		"# Shows the models to download that are 500MB or less"
+printf " \e[32m*\e[0m  %-40s%-40s" "${PN} find-size 4GB\n"		"# Shows the models to download that are 4GB or less"
+printf " \e[32m*\e[0m  %-40s%-40s" "${PN} find-size 4GB | grep orca\n"	"# Shows orca models less than or equal to 4GB"
 einfo
 einfo "You still need to download a pregenerated model.  The full list can be"
 einfo "found at:"
