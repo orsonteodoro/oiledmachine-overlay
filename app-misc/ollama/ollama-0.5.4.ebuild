@@ -2548,7 +2548,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
-sandbox systemd unrestrict video_cards_intel ebuild-revision-33
+sandbox systemd unrestrict video_cards_intel ebuild-revision-34
 "
 gen_rocm_required_use() {
 	local s
@@ -3244,6 +3244,10 @@ src_configure() {
 	# For -Ofast, -ffast-math
 	append-flags -fno-finite-math-only
 
+	# Breaks nvcc
+	use cuda && filter-flags -Ofast
+	sed -i -e "s|-Ofast||g" "make/cuda.make" || die
+
 	# Use similar hardening flags like TF for community generated LLMs.
 	# These are used as a precaution to mitigate CE, DT, ID, DoS (CWE-121).
 	# CE = Code Execution
@@ -3677,8 +3681,6 @@ einfo "OLLAMA_MAX_DOWNLOAD_PART_SIZE:  ${max_download_part_size}"
 build_new_runner_cpu() {
 	# The documentation is sloppy.
 
-	emake
-
 	# See also
 	# https://github.com/ollama/ollama/blob/v0.5.1/llama/llama.go
 	local args=(
@@ -3686,14 +3688,9 @@ build_new_runner_cpu() {
 		-x
 		-v
 	)
-	if ! tc-enables-pie ; then
-		args+=(
-	# ASLR (buffer overflow mitigation)
-			-buildmode=pie
-		)
-	fi
 
 	local cpu_flags_args=""
+	local cpu_flags=""
 
 	if use cpu_flags_x86_f16c ; then
 		cpu_flag_args+="|-mf16c"
@@ -3713,15 +3710,29 @@ build_new_runner_cpu() {
 		args+=(
 			-tags sve
 		)
+		cpu_flags="sve"
 	elif use cpu_flags_x86_avx2 ; then
 		args+=(
 			-tags avx,avx2
 		)
+		cpu_flags="avx2,avx"
 	elif use cpu_flags_x86_avx ; then
 		args+=(
 			-tags avx
 		)
+		cpu_flags="avx"
 	fi
+	export CUSTOM_CPU_FLAGS="${cpu_flags}"
+
+	if ! tc-enables-pie ; then
+		args+=(
+	# ASLR (buffer overflow mitigation)
+			-buildmode=pie
+		)
+	fi
+
+	emake
+
 	edo go build ${args[@]} .
 }
 
@@ -3734,19 +3745,6 @@ build_new_runner_gpu() {
 		return
 	fi
 
-	local cuda_impl=""
-	if use cuda ; then
-		if has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
-			emake cuda_v12
-			cuda_impl="cuda_v12"
-		elif has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
-			emake cuda_v11
-			cuda_impl="cuda_v11"
-		fi
-	elif use rocm ; then
-		emake rocm
-	fi
-
 	# See also
 	# https://github.com/ollama/ollama/blob/v0.5.1/llama/llama.go
 	local args=(
@@ -3754,14 +3752,9 @@ build_new_runner_gpu() {
 		-x
 		-v
 	)
-	if ! tc-enables-pie ; then
-		args+=(
-	# ASLR (buffer overflow mitigation)
-			-buildmode=pie
-		)
-	fi
 
 	local cpu_flags_args=""
+	local cpu_flags=""
 
 	if use cpu_flags_x86_f16c ; then
 		cpu_flag_args+="|-mf16c"
@@ -3781,10 +3774,12 @@ build_new_runner_gpu() {
 		args+=(
 			-tags avx,avx2,cuda,${cuda_impl}
 		)
+		cpu_flags="avx,avx2"
 	elif use cpu_flags_x86_avx && use cuda ; then
 		args+=(
 			-tags avx,cuda,${cuda_impl}
 		)
+		cpu_flags="avx"
 	elif use cuda ; then
 		args+=(
 			-tags cuda,${cuda_impl}
@@ -3793,15 +3788,39 @@ build_new_runner_gpu() {
 		args+=(
 			-tags avx,avx2,rocm
 		)
+		cpu_flags="avx,avx2"
 	elif use cpu_flags_x86_avx && use rocm ; then
 		args+=(
 			-tags avx,rocm
 		)
+		cpu_flags="avx"
 	elif use rocm ; then
 		args+=(
 			-tags rocm
 		)
 	fi
+
+	if ! tc-enables-pie ; then
+		args+=(
+	# ASLR (buffer overflow mitigation)
+			-buildmode=pie
+		)
+	fi
+
+	local cuda_impl=""
+	if use cuda ; then
+		if has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
+			emake cuda_v12
+			cuda_impl="cuda_v12"
+		elif has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
+			emake cuda_v11
+			cuda_impl="cuda_v11"
+		fi
+	elif use rocm ; then
+		emake rocm
+	fi
+
+	export CUSTOM_CPU_FLAGS="${cpu_flags}"
 	edo go build ${args[@]} .
 }
 
