@@ -40,7 +40,7 @@ REQUIRED_USE="
 		)
 	)
 	|| (
-		${VIDEO_DRIVERS[@]}
+		${VIDEO_CARDS[@]}
 	)
 "
 RDEPEND+="
