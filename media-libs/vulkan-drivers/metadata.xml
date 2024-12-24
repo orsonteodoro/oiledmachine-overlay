@@ -19,14 +19,14 @@
     <flag name="video_cards_intel">
       Use the Vulkan® driver for Intel® CPUs and GPUs.
     </flag>
+    <flag name="video_cards_nouveau">
+      Use the community driver for AMD GPUs.
+    </flag>
     <flag name="video_cards_nvidia">
       Use the NVIDIA® driver for GPUs.
     </flag>
     <flag name="video_cards_nvk">
       Use the open source driver compatible for NVIDIA® GPUs.
-    </flag>
-    <flag name="video_cards_nouveau">
-      Use the community driver for AMD GPUs.
     </flag>
   </use>
 </pkgmetadata>
