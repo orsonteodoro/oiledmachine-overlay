@@ -3762,15 +3762,15 @@ build_new_runner_gpu() {
 	fi
 
 	if use cuda ; then
-		export OLLAMA_SKIP_CUDA_GENERATE=0
+		unset OLLAMA_SKIP_CUDA_GENERATE
 	fi
 
 	if use rocm ; then
-		export OLLAMA_SKIP_ROCM_GENERATE=0
+		unset OLLAMA_SKIP_ROCM_GENERATE
 	fi
 
 	if use video_cards_intel ; then
-		export OLLAMA_SKIP_ONEAPI_GENERATE=0
+		unset OLLAMA_SKIP_ONEAPI_GENERATE
 	fi
 
 	# See also
