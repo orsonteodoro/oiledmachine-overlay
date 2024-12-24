@@ -102,6 +102,7 @@ RDEPEND="
 		)
 	)
 	vulkan? (
+		media-libs/vulkan-drivers[${MULTILIB_USEDEP}]
 		media-libs/vulkan-loader[${MULTILIB_USEDEP},wayland?,X?]
 		video_cards_amdgpu? (
 			media-libs/mesa[video_cards_radeonsi,vulkan]

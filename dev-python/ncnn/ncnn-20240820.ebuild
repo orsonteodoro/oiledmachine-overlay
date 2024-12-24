@@ -299,6 +299,7 @@ RESTRICT="test"
 
 RDEPEND="
 	dev-util/glslang:=
+	media-libs/vulkan-drivers
 	media-libs/vulkan-loader
 "
 DEPEND="

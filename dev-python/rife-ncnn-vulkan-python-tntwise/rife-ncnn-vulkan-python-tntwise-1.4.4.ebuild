@@ -328,6 +328,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
+	media-libs/vulkan-drivers
 	media-libs/vulkan-loader
 	virtual/pillow[${PYTHON_USEDEP}]
 "

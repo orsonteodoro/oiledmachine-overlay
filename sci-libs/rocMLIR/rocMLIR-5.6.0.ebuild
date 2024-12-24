@@ -77,6 +77,7 @@ RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-db/sqlite-3:3
 	>=dev-python/pybind11-2.8[${PYTHON_USEDEP}]
+	media-libs/vulkan-drivers
 	media-libs/vulkan-loader
 	virtual/libc
 	|| (

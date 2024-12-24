@@ -4,6 +4,8 @@
 
 EAPI=8
 
+inherit multilib-minimal
+
 VIDEO_DRIVERS=(
 	video_cards_amdgpu
 	video_cards_intel

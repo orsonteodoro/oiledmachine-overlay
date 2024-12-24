@@ -355,6 +355,7 @@ REQUIRED_USE="
 RDEPEND+="
 	>=dev-util/glslang-1.3.268.0
 	>=media-libs/vulkan-loader-1.3.275.0
+	media-libs/vulkan-drivers
 	media-libs/libplacebo[glslang,vulkan]
 	system-boost? (
 		>=dev-libs/boost-${BOOST_PV}

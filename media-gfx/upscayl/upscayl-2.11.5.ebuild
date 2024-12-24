@@ -853,6 +853,7 @@ IUSE+="
 # Upstream uses U 18.04.6 for CI
 RDEPEND+="
 	>=media-libs/vips-${ELECTRON_APP_VIPS_PV}[cxx,lcms,jpeg,png,webp]
+	media-libs/vulkan-drivers
 	media-libs/vulkan-loader
 	custom-models? (
 		media-gfx/upscayl-custom-models

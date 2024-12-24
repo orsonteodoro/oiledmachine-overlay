@@ -444,19 +444,11 @@ RDEPEND+="
 	)
 	vulkan? (
 		media-libs/vulkan-loader
-		|| (
-			video_cards_amdgpu? (
-				|| (
-					media-libs/mesa[video_cards_radeonsi,vulkan]
-					media-libs/amdvlk
-				)
-			)
-			video_cards_intel? (
-				media-libs/mesa[video_cards_intel,vulkan]
-			)
-			video_cards_nvidia? (
-				>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_VULKAN}
-			)
+		!video_cards_amdgpu? (
+			media-libs/vulkan-loader[video_cards_intel?,video_cards_nvidia?]
+		)
+		video_cards_amdgpu? (
+			media-libs/vulkan-loader[video_cards_amdgpu,amdvlk]
 		)
 	)
 "

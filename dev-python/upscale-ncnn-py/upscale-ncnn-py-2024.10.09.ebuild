@@ -74,6 +74,7 @@ ebuild-revision-1
 "
 RDEPEND+="
 	media-libs/opencv[${PYTHON_USEDEP},python]
+	media-libs/vulkan-drivers
 	media-libs/vulkan-loader
 	virtual/pillow[${PYTHON_USEDEP}]
 "

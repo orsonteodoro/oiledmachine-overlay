@@ -1446,6 +1446,7 @@ RDEPEND+="
 	)
 	vulkan? (
 		>=media-libs/vulkan-loader-1.3.277:=[${MULTILIB_USEDEP}]
+		media-libs/vulkan-drivers[${MULTILIB_USEDEP}]
 	)
 	X? (
 		>=x11-libs/libX11-1.6.2[${MULTILIB_USEDEP}]

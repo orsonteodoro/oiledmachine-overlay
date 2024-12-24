@@ -204,6 +204,7 @@ COMMON_DEPEND="
 	)
 	vulkan? (
 		>=media-libs/vulkan-loader-1.3.238[X?,wayland?]
+		media-libs/vulkan-drivers
 	)
 	wayland? (
 		>=x11-libs/libxkbcommon-0.3.0

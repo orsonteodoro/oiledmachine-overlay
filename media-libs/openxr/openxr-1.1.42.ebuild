@@ -8,15 +8,7 @@ EAPI=8
 CMAKE_BUILD_TYPE="Release"
 MESA_PV="22.0.1"
 MY_PN="OpenXR-SDK-Source"
-NV_DRIVER_VERSION_VULKAN="390.132"
 PYTHON_COMPAT=( "python3_"{8..13} )
-VIDEO_CARDS=(
-	video_cards_amdgpu
-	video_cards_intel
-	video_cards_nvidia
-	video_cards_radeonsi
-)
-XORG_SERVER_PV="21.1.4"
 
 inherit cmake flag-o-matic python-any-r1 toolchain-funcs
 
@@ -43,7 +35,6 @@ HOMEPAGE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-${VIDEO_CARDS[@]}
 doc gles2 +system-jsoncpp wayland xcb +xlib
 "
 REQUIRED_USE+="
@@ -52,16 +43,11 @@ REQUIRED_USE+="
 		xlib
 		wayland
 	)
-	|| (
-		video_cards_amdgpu
-		video_cards_intel
-		video_cards_nvidia
-		video_cards_radeonsi
-	)
 "
 DEPEND+="
 	${PYTHON_DEPS}
 	media-libs/mesa[egl(+),gles2?,libglvnd(+)]
+	media-libs/vulkan-drivers
 	media-libs/vulkan-loader
 	virtual/libc
 	system-jsoncpp? (
@@ -75,21 +61,6 @@ DEPEND+="
 	xlib? (
 		x11-base/xorg-proto
 		>=x11-libs/libX11-1.7.5
-	)
-	video_cards_amdgpu? (
-		>=media-libs/mesa-${MESA_PV}[video_cards_radeonsi,vulkan]
-		>=x11-base/xorg-drivers-${XORG_SERVER_PV}[video_cards_amdgpu]
-	)
-	video_cards_intel? (
-		>=media-libs/mesa-${MESA_PV}[video_cards_intel,vulkan]
-		>=x11-base/xorg-drivers-${XORG_SERVER_PV}[video_cards_intel]
-	)
-	video_cards_nvidia? (
-		>=x11-drivers/nvidia-drivers-${NV_DRIVER_VERSION_VULKAN}
-	)
-	video_cards_radeonsi? (
-		>=media-libs/mesa-${MESA_PV}[video_cards_radeonsi,vulkan]
-		>=x11-base/xorg-drivers-${XORG_SERVER_PV}[video_cards_radeonsi]
 	)
 	wayland? (
 		>=dev-libs/wayland-1.20.0

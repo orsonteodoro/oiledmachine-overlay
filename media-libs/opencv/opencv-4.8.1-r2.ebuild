@@ -816,6 +816,7 @@ RDEPEND="
 		sci-libs/vtk:=
 	)
 	vulkan? (
+		media-libs/vulkan-drivers[${MULTILIB_USEDEP}]
 		media-libs/vulkan-loader[${MULTILIB_USEDEP}]
 	)
 	wayland? (

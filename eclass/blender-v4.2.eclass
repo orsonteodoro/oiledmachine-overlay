@@ -693,6 +693,7 @@ RDEPEND+="
 	dev-libs/lzo:2
 	media-libs/libglvnd
 	media-libs/libsamplerate
+	media-libs/vulkan-drivers
 	virtual/libintl
 	alembic? (
 		>=media-gfx/alembic-1.8.3[boost(+),hdf(+)]
