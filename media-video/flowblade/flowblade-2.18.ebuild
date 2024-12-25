@@ -129,7 +129,7 @@ src_unpack() {
 src_install() {
 	distutils-r1_src_install
 	docinto "licenses"
-	dodoc "LICENSE"
+	dodoc "COPYING"
 	dodoc "AUTHORS"
 	dodoc "copyrights"
 	mv "${ED}/usr/bin/flowblade"{"","-gui"}
