@@ -112,7 +112,6 @@ BDEPEND+="
 		dev-python/setuptools[${PYTHON_USEDEP}]
 		dev-python/wheel[${PYTHON_USEDEP}]
 	')
-	dev-util/patchelf
 "
 DOCS=( )
 
@@ -138,15 +137,11 @@ cat <<EOF > "${ED}/usr/bin/flowblade"
 export SDL12COMPAT_NO_QUIT_VIDEO=1
 export GDK_BACKEND="x11"
 export SDL_VIDEODRIVER="x11"
+export LD_LIBRARY_PATH="/usr/lib/flowblade/$(get_libdir):${LD_LIBRARY_PATH}"
 export PYTHONPATH="/usr/lib/mtl-flowblade/lib/${EPYTHON}/site-packages:\${PYTHONPATH}"
 "/usr/bin/flowblade-gui" "\$@"
 EOF
 	fperms 0755 "/usr/bin/flowblade"
-
-	patchelf \
-		--add-rpath "/usr/lib/flowblade/$(get_libdir)" \
-		"${ED}/usr/bin/flowblade-gui" \
-		|| die
 	docinto "readmes"
 	dodoc "${WORKDIR}/README.md"
 }
