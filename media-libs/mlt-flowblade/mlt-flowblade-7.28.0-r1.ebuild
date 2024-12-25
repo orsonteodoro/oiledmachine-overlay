@@ -28,6 +28,7 @@ SLOT="0/7"
 IUSE="
 debug +ffmpeg +frei0r +gtk +jack +libsamplerate +python +rtaudio
 +rubberband +sdl +sox test vdpau +vidstab +xine +xml
+ebuild-revision-1
 "
 REQUIRED_USE="
 	python? (
@@ -42,7 +43,10 @@ DEPEND="
 	sci-libs/fftw:3.0
 	sci-libs/fftw:=
 	ffmpeg? (
-		media-video/ffmpeg:0[vdpau?]
+		|| (
+			media-video/ffmpeg:0/56.58.58[vdpau?]
+			media-video/ffmpeg:56.58.58[vdpau?]
+		)
 		media-video/ffmpeg:=
 	)
 	frei0r? (
@@ -215,6 +219,13 @@ src_configure() {
 		)
 	fi
 
+	if has_version "media-video/ffmpeg:0/56.58.58" ; then
+einfo "Using media-video/ffmpeg:0/56.58.58"
+		export PKG_CONFIG_PATH="/usr/lib/ffmpeg/56.58.58/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+	else
+einfo "Using media-video/ffmpeg:56.58.58"
+	fi
+
 	cmake_src_configure
 }
 
@@ -230,6 +241,11 @@ src_install() {
 	fi
 	mv "${ED}/usr/share/man/man1/melt"{"","-flowblade"}"-7.1" || die
 	mv "${ED}/usr/share/man/man1/melt"{"","-flowblade"}".1" || die
+	if has_version "media-video/ffmpeg:0/56.58.58" ; then
+		patchelf --add-rpath "/usr/lib/ffmpeg/56.58.58/$(get_libdir)" \
+			"${ED}/usr/lib/mtl-flowblade/lib64/mlt-7/libmltavformat.so" \
+			|| die
+	fi
 }
 
 pkg_postinst() {
