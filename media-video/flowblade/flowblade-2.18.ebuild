@@ -98,7 +98,7 @@ RDEPEND+="
 	>=media-video/movit-1.6.3
 	>=media-gfx/gmic-2.9.4[cli]
 	>=x11-libs/pango-1.50.6[introspection]
-	>=x11-libs/gdk-pixbuf-2.42.8[introspection]
+	>=x11-libs/gdk-pixbuf-2.42.8[introspection,png(+)]
 	>=x11-libs/gtk+-3.24.33[introspection,X]
 	frei0r? (
 		>=media-plugins/frei0r-plugins-1.7.0

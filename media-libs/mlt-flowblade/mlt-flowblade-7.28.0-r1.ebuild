@@ -290,7 +290,7 @@ src_install() {
 	fi
 	mv "${ED}/usr/share/man/man1/melt"{"","-flowblade"}"-7.1" || die
 	mv "${ED}/usr/share/man/man1/melt"{"","-flowblade"}".1" || die
-	if has_version "media-video/ffmpeg:0/56.58.58" ; then
+	if use ffmpeg && has_version "media-video/ffmpeg:0/56.58.58" ; then
 		patchelf --add-rpath "/usr/lib/ffmpeg/56.58.58/$(get_libdir)" \
 			"${ED}/usr/lib/mlt-flowblade/lib64/mlt-7/libmltavformat.so" \
 			|| die
