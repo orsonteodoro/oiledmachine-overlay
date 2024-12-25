@@ -40,7 +40,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 # Assume X and not wayland since libsdl2 is not supported
 IUSE+="
-mp3 opus sox vaapi vorbis vpx x264 x265
+mp3 nvenc opus sox vaapi vorbis vpx x264 x265
 "
 REQUIRED_USE="
 	|| (
@@ -68,7 +68,7 @@ RDEPEND+="
 	>=media-libs/mlt-flowblade-7.4.0[${PYTHON_SINGLE_USEDEP},ffmpeg,frei0r,jack,libsamplerate,python,sdl,sox,xml]
 	>=media-plugins/frei0r-plugins-1.7.0
 	>=media-plugins/swh-plugins-0.4.17
-	>=media-video/ffmpeg-4.4.1[encode,mp3?,nvenc,vaapi?,vpx?,x264?,x265?]
+	>=media-video/ffmpeg-4.4.1[encode,mp3?,nvenc?,vaapi?,vpx?,x264?,x265?]
 	>=media-video/movit-1.6.3
 	>=media-gfx/gmic-2.9.4
 	>=x11-libs/pango-1.50.6[introspection]
