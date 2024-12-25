@@ -238,14 +238,6 @@ src_compile() {
 src_install() {
 	dodoc "README.md"
 
-	# By default, "gmic.cpp" includes "gmic.h" which defines "cimg_plugin"
-	# to "gmic.cpp" and then includes "CImg.h" which includes "cimg_plugin"
-	# which is "gmic.cpp", of course.
-	#
-	# Yes, upstream is bad and they should feel bad. Undo this madness so we
-	# can build media-gfx/zart using the installed "gmic.h".
-	sed -i -e '/^#define cimg.*_plugin/d' "${ED}/usr/include/gmic.h" || die "sed failed"
-
 	if use gimp2 || use gimp3 ; then
 		exeinto "${PLUGIN_DIR}"
 		doexe "${WORKDIR}/gimp_build/gmic_gimp_qt"
