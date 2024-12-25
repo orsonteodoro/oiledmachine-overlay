@@ -772,6 +772,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-java/grpc-java | Java libraries for the high performance gRPC framework |
 | dev-lang/classic-flang | Flang is a Fortran language front-end designed for integration with LLVM. |
 | dev-lang/gambas | Gambas is a free development environment and a full powerful development platform based on a Basic interpreter with object extensions and form designer. |
+| dev-lang/halide | A language for fast, portable data-parallel computation |
 | dev-lang/ispc | Intel® SPMD Program Compiler |
 | dev-lang/llvm-flang | LLVM Flang is a continuation of F18 to replace Classic Flang |
 | dev-lang/lua | A powerful light-weight programming language designed for extending applications |
@@ -999,7 +1000,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/pocket | A Python wrapper for the Pocket API |
 | dev-python/portpicker | A module to find available network ports for testing. |
 | dev-python/preshed | 💥 Cython hash tables that assume keys are pre-hashed |
-| dev-python/pretrainedmodels | Pretrained Convolutional Neural Networks for PyTorch:  NASNet, ResNeXt, ResNet, InceptionV4, InceptionResnetV2, Xception, DPN, etc. |
+| dev-python/pretrainedmodels | Pretrained Convolutional Neural Networks for PyTorch: NASNet, ResNeXt, ResNet, InceptionV4, InceptionResnetV2, Xception, DPN, etc. |
 | dev-python/proglog | Logs and progress bars manager for Python |
 | dev-python/protobuf | Python bindings for Google's Protocol Buffers |
 | dev-python/py-stackexchange | A Python binding for the StackExchange API |
@@ -1139,6 +1140,8 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-gfx/blockbench | Blockbench is a boxy 3D model editor |
 | media-gfx/dssim | Image similarity comparison simulating human perception |
 | media-gfx/face-morpher-plus | Face morpher plus based on facemorpher |
+| media-gfx/gmic | GREYC's Magic for Image Computing: A full-featured open-source framework for image processing |
+| media-gfx/gmic-qt | G'MIC-Qt is a versatile frontend to the image processing framework G'MIC |
 | media-gfx/material-maker | A procedural textures authoring and 3D model painting tool based on the Godot game engine |
 | media-gfx/nanovdb | A lightweight GPU friendly version of VDB initially targeting rendering applications. |
 | media-gfx/openvdb | Library for the efficient manipulation of volumetric data |
@@ -1147,6 +1150,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-libs/HIPRT | HIP RT is a ray tracing library in HIP |
 | media-libs/alure | The OpenAL Utility Toolkit |
 | media-libs/assimp | Importer library to import assets from 3D files |
+| media-libs/cimg | C++ template image processing toolkit |
 | media-libs/csfml | The official binding of SFML for C |
 | media-libs/embree | Collection of high-performance ray tracing kernels |
 | media-libs/flac | free lossless audio encoder and decoder |
@@ -1170,6 +1174,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-libs/libzen | Shared library for libmediainfo and mediainfo |
 | media-libs/materialx | MaterialX is an open standard for the exchange of rich material and look-development content across applications and renderers. |
 | media-libs/mesa | OpenGL-like graphic library for Linux |
+| media-libs/mlt-flowblade | MLT Multimedia Framework for the flowblade ebuild |
 | media-libs/mojoshader | Use Direct3D shaders with other 3D rendering APIs. |
 | media-libs/oidn | Intel® Open Image Denoise library |
 | media-libs/opencolorio | A color management framework for visual effects and animation |
@@ -1186,6 +1191,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-libs/tremor | A fixed-point version of the Ogg Vorbis decoder (also known as libvorbisidec) |
 | media-libs/vaapi-drivers | A metapackage for libva drivers |
 | media-libs/vips | VIPS Image Processing Library |
+| media-libs/vulkan-drivers | Vulkan drivers |
 | media-libs/woff2 | Encode/decode WOFF2 font format |
 | media-plugins/RadeonProRenderBlenderAddon | A Blender® rendering plug-in for accurate ray-tracing to produce images and animations of scenes and providing real-time interactive rendering and continuous adjustment of effects. |
 | media-plugins/RadeonProRenderMaterialLibrary | The Radeon™ ProRender for Blender® Material Library |
@@ -1366,6 +1372,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-video/dashcam_anonymizer | Blur human faces and vehicle license plates in video and images |
 | media-video/deface | Video anonymization by face detection |
 | media-video/ffmpeg | Complete solution to record/convert/stream audio and video. Includes libavcodec |
+| media-video/flowblade | Non-linear video editor |
 | media-video/gspca_ep800 | Kernel Modules for Endpoints EP800/SE402/SE401* |
 | media-video/linux-enable-ir-emitter | Provides support for infrared cameras that are not directly enabled out-of-the box. |
 | media-video/lossless-cut | The swiss army knife of lossless video/audio editing |
@@ -1530,6 +1537,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | x11-themes/paper-icon-theme | Paper Icon Theme |
 | x11-wm/dwm | A dynamic window manager for X11 |
 | x11-wm/xpra | X Persistent Remote Apps (xpra) and Partitioning WM (parti) based on wimpiggy |
+
 
 
 ### Contributing ebuilds

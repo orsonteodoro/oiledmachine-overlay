@@ -15,7 +15,7 @@ https://github.com/c-koi/gmic-qt/archive/v.${PV}.tar.gz
 	-> ${P}.tar.gz
 "
 
-DESCRIPTION="G'MIC-Qt is a versatile front-end to the image processing framework G'MIC."
+DESCRIPTION="G'MIC-Qt is a versatile frontend to the image processing framework G'MIC"
 HOMEPAGE="
 	https://github.com/c-koi/gmic-qt
 "
