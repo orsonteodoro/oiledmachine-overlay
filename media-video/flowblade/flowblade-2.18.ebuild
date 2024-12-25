@@ -83,7 +83,7 @@ REQUIRED_USE="
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.21.5[${PYTHON_USEDEP}]
-		>=dev-python/pycairo-3.42.0[${PYTHON_USEDEP}]
+		>=dev-python/pycairo-1.21[${PYTHON_USEDEP}]
 		>=virtual/pillow-9.0.1[${PYTHON_USEDEP}]
 	')
 	>=dev-lang/python-3.10.4
