@@ -34,7 +34,7 @@ HOMEPAGE="
 	https://github.com/jliljebl/flowblade
 "
 LICENSE="
-	GPL-3
+	GPL-3+
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
