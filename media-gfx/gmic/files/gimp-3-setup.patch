@@ -1,0 +1,13 @@
+diff --git a/gmic-v.3.3.2/resources/gmic_buildpackage b/gmic-v.3.3.2/resources/gmic_buildpackage
+index 3cb0fbf..3ffe96f 100755
+--- a/gmic-v.3.3.2/resources/gmic_buildpackage
++++ b/gmic-v.3.3.2/resources/gmic_buildpackage
+@@ -175,7 +175,7 @@ BITS=`uname -m`
+ 
+ IS_210=`grep \(10\) /usr/include/gimp-2.0/libgimpbase/gimpversion.h | wc -l`
+ if [ "$IS_210" == "1" ]; then GIMPVER=2.10
+-else GIMPVER=2.8
++else GIMPVER=3.0
+ fi
+ 
+ if [ "$HOSTNAME" != "C302L-G17P17.png.unicaen.fr" ] && [ "$HOSTNAME" != "C302L-G14F15.png.unicaen.fr" ] && [ "$HOSTNAME" != "C302L-G23P04.png.unicaen.fr" ]; then

@@ -1,0 +1,40 @@
+diff --git gmic-qt-v.3.3.2.orig/src/Host/Gimp/host_gimp.cpp gmic-qt-v.3.3.2/src/Host/Gimp/host_gimp.cpp
+index 166ff0c..6d27f1c 100644
+--- gmic-qt-v.3.3.2.orig/src/Host/Gimp/host_gimp.cpp
++++ gmic-qt-v.3.3.2/src/Host/Gimp/host_gimp.cpp
+@@ -485,7 +485,7 @@ void getLayersExtent(int * width, int * height, GmicQt::InputMode mode)
+   GList * first_layer = g_list_first(selected_layers);
+   _GimpLayerPtr activeLayerID = (_GimpLayerPtr)first_layer->data;
+ #else
+-  _GimpLayerPtr activeLayerID = gimp_image_get_active_layer(gmic_qt_gimp_image_id);
++  _GimpLayerPtr activeLayerID = gimp_image_list_selected_layers(gmic_qt_gimp_image_id);
+ #endif
+ 
+   // Build list of input layers IDs
+@@ -559,7 +559,7 @@ void getCroppedImages(gmic_list<float> & images, gmic_list<char> & imageNames, d
+   GList * first_layer = g_list_first(selected_layers);
+   _GimpLayerPtr active_layer_id = (_GimpLayerPtr)first_layer->data;
+ #else
+-  _GimpLayerPtr active_layer_id = gimp_image_get_active_layer(gmic_qt_gimp_image_id);
++  _GimpLayerPtr active_layer_id = gimp_image_list_selected_layers(gmic_qt_gimp_image_id);
+ #endif
+ 
+   const bool entireImage = (x < 0 && y < 0 && width < 0 && height < 0) || (x == 0.0 && y == 0 && width == 1 && height == 0);
+@@ -894,7 +894,7 @@ void outputImages(gmic_list<gmic_pixel_type> & images, const gmic_list<char> & i
+     GList * first_layer = g_list_first(selected_layers);
+     _GimpLayerPtr active_layer_id = (_GimpLayerPtr)first_layer->data;
+ #else
+-    _GimpLayerPtr active_layer_id = gimp_image_get_active_layer(gmic_qt_gimp_image_id);
++    _GimpLayerPtr active_layer_id = gimp_image_list_selected_layers(gmic_qt_gimp_image_id);
+ #endif
+     if (_GIMP_LAYER_IS_NOT_NULL(active_layer_id)) {
+       gimp_image_undo_group_start(gmic_qt_gimp_image_id);
+@@ -989,7 +989,7 @@ void outputImages(gmic_list<gmic_pixel_type> & images, const gmic_list<char> & i
+     GList * first = g_list_first(selected_layers);
+     _GimpLayerPtr active_layer_id = (_GimpLayerPtr)first->data;
+ #else
+-    _GimpLayerPtr active_layer_id = gimp_image_get_active_layer(gmic_qt_gimp_image_id);
++    _GimpLayerPtr active_layer_id = gimp_image_list_selected_layers(gmic_qt_gimp_image_id);
+ #endif
+     const unsigned int max_width = (unsigned int)bottom_right.x;
+     const unsigned int max_height = (unsigned int)bottom_right.y;

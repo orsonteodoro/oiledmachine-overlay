@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild originators -->
+    <email>revelation@krxt.dev</email>
+    <name>Kirin Etheridge</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="github">c-koi/gmic-qt/tags</remote-id>
+  </upstream>
+  <use>
+    <flag name="gimp2">Enable GIMP 2 support</flag>
+    <flag name="gimp3">Enable GIMP 3 support</flag>
+    <flag name="standalone">Enable standalone support</flag>
+  </use>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  This ebuild was once part of media-gfx/qt.
+  This ebuild is considered orphan.  It may be removed anytime.
+
+  -->
+</pkgmetadata>

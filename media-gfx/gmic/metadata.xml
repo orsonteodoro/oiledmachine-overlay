@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild originators -->
+    <email>revelation@krxt.dev</email>
+    <name>Kirin Etheridge</name>
+  </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  Ebuild obtained from the xira overlay who obtained it from the stefantalpalaru
+  overlay.
+
+  Changes:
+
+  Split gmic-qt parts in separate ebuild.
+
+  -->
+  <use>
+    <flag name="cli">Enable G'Mic CLI</flag>
+    <flag name="opencv">Enable OpenCV support</flag>
+  </use>
+  <upstream>
+    <remote-id type="github">GreycLab/gmic</remote-id>
+  </upstream>
+</pkgmetadata>
