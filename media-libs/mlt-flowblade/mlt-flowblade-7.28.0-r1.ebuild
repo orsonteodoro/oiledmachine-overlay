@@ -26,7 +26,7 @@ HOMEPAGE="https://www.mltframework.org/"
 LICENSE="GPL-3"
 SLOT="0/7"
 IUSE="
-debug +ffmpeg +frei0r gtk +jack +libsamplerate +python +rtaudio
+debug +ffmpeg +frei0r +gtk +jack +libsamplerate +python +rtaudio
 +rubberband +sdl +sox test vdpau +vidstab +xine +xml
 "
 REQUIRED_USE="
@@ -183,7 +183,7 @@ src_configure() {
 		-DMOD_JACKRACK=$(usex jack)
 		-DMOD_KDENLIVE=ON
 		-DMOD_MOVIT=OFF
-		-DMOD_OPENCV=$(usex opencv)
+		-DMOD_OPENCV=OFF
 		-DMOD_PLUS=ON
 		-DMOD_SDL1=$(usex sdl)
 		-DMOD_SOX=$(usex sox)
