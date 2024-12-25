@@ -13,7 +13,7 @@ EAPI=8
 MY_PN="mlt"
 
 PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream tests up to 3.11
-inherit python-single-r1 cmake flag-o-matic optfeature
+inherit python-single-r1 cmake flag-o-matic
 
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86 ~amd64-linux ~x86-linux"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -31,8 +31,20 @@ alsa debug +ffmpeg +frei0r +gtk +jack +libsamplerate oss pulseaudio +python
 ebuild-revision-1
 "
 REQUIRED_USE="
+	alsa? (
+		|| (
+			jack
+			rtaudio
+		)
+	)
 	oss? (
 		jack
+	)
+	pulseaudio? (
+		|| (
+			rtaudio
+			jack
+		)
 	)
 	rtaudio? (
 		|| (
@@ -72,8 +84,18 @@ DEPEND="
 		>=dev-libs/libxml2-2.5
 		media-libs/ladspa-sdk
 		virtual/jack
+		alsa? (
+			|| (
+				media-sound/jack2[alsa]
+				media-sound/jack-audio-connection-kit[alsa]
+				media-video/pipewire
+			)
+		)
 		oss? (
 			media-sound/jack-audio-connection-kit[oss]
+		)
+		pulseaudio? (
+			media-video/pipewire
 		)
 	)
 	libsamplerate? (
@@ -266,16 +288,3 @@ src_install() {
 	fi
 }
 
-pkg_postinst() {
-	optfeature_header "Install optional packages:"
-	if use jack ; then
-		if use alsa ; then
-			optfeature "ALSA output" "media-sound/jack2[alsa]"
-			optfeature "ALSA output" "media-sound/jack-audio-connection-kit[alsa]"
-			optfeature "ALSA output" "media-video/pipewire"
-		fi
-		if use oss ; then
-			optfeature "OSS output" "media-sound/jack-audio-connection-kit[oss]"
-		fi
-	fi
-}
