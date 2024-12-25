@@ -114,6 +114,9 @@ BDEPEND+="
 	')
 "
 DOCS=( )
+PATCHES=(
+	"${FILESDIR}/${PN}-2.18-change-paths.patch"
+)
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
@@ -123,6 +126,13 @@ src_unpack() {
 	else
 		unpack ${A}
 	fi
+}
+
+src_configure() {
+	default
+	sed -i \
+		-e "s|@EPYTHON@|${EPYTHON}|g" "${PN}" \
+		|| die
 }
 
 src_install() {

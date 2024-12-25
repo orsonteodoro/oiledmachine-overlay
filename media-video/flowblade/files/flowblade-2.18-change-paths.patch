@@ -1,0 +1,11 @@
+--- a/flowblade.orig	2024-12-18 08:24:17.000000000 -0800
++++ b/flowblade	2024-12-24 23:12:56.019811152 -0800
+@@ -36,7 +36,7 @@ print ("Launch script dir:", launch_dir)
+ # - When running on distro.
+ if os.path.realpath(launch_dir) == "/usr/bin":
+     print ("Running from installation...")
+-    modules_path = "/usr/share/flowblade/Flowblade"
++    modules_path = "/usr/lib/@EPYTHON@/site-packages/Flowblade"
+     if not os.path.isdir(modules_path):
+         modules_path = "/usr/share/pyshared/Flowblade"
+     print ("modules path:", modules_path)
