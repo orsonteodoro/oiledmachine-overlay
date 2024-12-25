@@ -11,4 +11,45 @@
     <changelog>https://github.com/jliljebl/flowblade/blob/main/CHANGELOG</changelog>
     <remote-id type="github">jliljebl/flowblade</remote-id>
   </upstream>
+  <use>
+    <flag name="alsa">
+      Add support for outputting audio to ALSA
+    </flag>
+    <flag name="jack">
+      Add support for outputting audio to Jack
+    </flag>
+    <flag name="mp3">
+      Add support for encoding audio to MP3
+    </flag>
+    <flag name="nvenc">
+      Add support for encoding video to nvenc
+    </flag>
+    <flag name="opus">
+      Add support for encoding audio to Opus
+    </flag>
+    <flag name="oss">
+      Add support for outputting audio to OSS
+    </flag>
+    <flag name="pulseaudio">
+      Add support for outputting to PulseAudio
+    </flag>
+    <flag name="rtaudio">
+      Add support for outputting audio to RtAudio
+    </flag>
+    <flag name="sox">
+      Add support for sound effects
+    </flag>
+    <flag name="vorbis">
+      Add support for encoding audio to Vorbis
+    </flag>
+    <flag name="vpx">
+      Add support for encoding video to vpx
+    </flag>
+    <flag name="x264">
+      Add support for encoding video to H.264
+    </flag>
+    <flag name="x265">
+      Add support for encoding video to H.265
+    </flag>
+  </use>
 </pkgmetadata>

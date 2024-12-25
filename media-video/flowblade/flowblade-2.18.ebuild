@@ -18,11 +18,11 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/jliljebl/flowblade.git"
 	FALLBACK_COMMIT="13736f8e5882a469a0f794d8e81da9db4741ed80" # Dec 18, 2024
 	IUSE+=" fallback-commit"
-	S="${WORKDIR}/${P}"
+	S="${WORKDIR}/${P}/flowblade-trunk"
 	inherit git-r3
 else
 	KEYWORDS="~amd64"
-	S="${WORKDIR}/${PN}-${PV}"
+	S="${WORKDIR}/${PN}-${PV}/flowblade-trunk"
 	SRC_URI="
 https://github.com/jliljebl/flowblade/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -110,10 +110,11 @@ DEPEND+="
 BDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/setuptools[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
 	')
 	dev-util/patchelf
 "
-DOCS=( "README.md" )
+DOCS=( )
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
@@ -129,6 +130,8 @@ src_install() {
 	distutils-r1_src_install
 	docinto "licenses"
 	dodoc "LICENSE"
+	dodoc "AUTHORS"
+	dodoc "copyrights"
 	mv "${ED}/usr/bin/flowblade"{"","-gui"}
 cat <<EOF > "${ED}/usr/bin/flowblade"
 #!/bin/bash
@@ -144,6 +147,8 @@ EOF
 		--add-rdepend "/usr/lib/flowblade/$(get_libdir)" \
 		"/usr/bin/flowblade-gui" \
 		|| die
+	docinto "readmes"
+	dodoc "${WORKDIR}/README.md"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
