@@ -37,7 +37,7 @@
       Add support for outputting audio to RtAudio
     </flag>
     <flag name="sox">
-      Add support for sound effects
+      Add support for audio processing
     </flag>
     <flag name="vorbis">
       Add support for encoding audio to Vorbis
