@@ -13,7 +13,7 @@ EAPI=8
 MY_PN="mlt"
 
 PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream tests up to 3.11
-inherit python-single-r1 cmake flag-o-matic
+inherit python-single-r1 cmake flag-o-matic optfeature
 
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86 ~amd64-linux ~x86-linux"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -228,4 +228,14 @@ src_install() {
 		dodoc "${S}/src/swig/python/play.py"
 		python_optimize
 	fi
+}
+
+pkg_postinst() {
+	optfeature_header "Install optional packages:"
+	optfeature "ALSA output" "media-libs/rtaudio[alsa]"
+	optfeature "ALSA output" "media-sound/jack2[alsa]"
+	optfeature "ALSA output" "media-sound/jack-audio-connection-kit[alsa]"
+	optfeature "ALSA output" "media-video/pipewire"
+	optfeature "OSS output" "media-sound/jack-audio-connection-kit[oss]"
+	optfeature "PulseAudio output" "media-libs/rtaudio[pulseaudio]"
 }

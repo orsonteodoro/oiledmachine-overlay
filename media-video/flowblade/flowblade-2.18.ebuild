@@ -10,7 +10,7 @@ DISTUTILS_USE_PEP517="setuptools"
 DISTUTILS_SINGLE_IMPL=1
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit distutils-r1 pypi
+inherit distutils-r1 optfeature pypi
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -121,6 +121,16 @@ EOF
 		--add-rdepend "/usr/lib/flowblade/$(get_libdir)" \
 		"/usr/bin/flowblade-gui" \
 		|| die
+}
+
+pkg_postinst() {
+	optfeature_header "Install optional packages:"
+	optfeature "ALSA output" "media-libs/rtaudio[alsa]"
+	optfeature "ALSA output" "media-sound/jack2[alsa]"
+	optfeature "ALSA output" "media-sound/jack-audio-connection-kit[alsa]"
+	optfeature "ALSA output" "media-video/pipewire"
+	optfeature "OSS output" "media-sound/jack-audio-connection-kit[oss]"
+	optfeature "PulseAudio output" "media-libs/rtaudio[pulseaudio]"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
