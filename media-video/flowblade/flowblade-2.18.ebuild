@@ -43,6 +43,27 @@ IUSE+="
 alsa jack mp3 nvenc opus oss pulseaudio rtaudio sox vaapi vorbis vpx x264 x265
 "
 REQUIRED_USE="
+	alsa? (
+		|| (
+			jack
+			rtaudio
+		)
+	)
+	oss? (
+		jack
+	)
+	pulseaudio? (
+		|| (
+			rtaudio
+			jack
+		)
+	)
+	rtaudio? (
+		|| (
+			alsa
+			pulseaudio
+		)
+	)
 	|| (
 		jack
 		rtaudio
