@@ -41,7 +41,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 # Assume X and not wayland since libsdl2 is not supported
 IUSE+="
 alsa jack mp3 nvenc opus oss pulseaudio rtaudio sox vaapi vorbis vpx x264 x265
-ebuild-revision-2
+ebuild-revision-3
 "
 REQUIRED_USE="
 	alsa? (
