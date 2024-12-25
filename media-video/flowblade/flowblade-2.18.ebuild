@@ -10,7 +10,7 @@ DISTUTILS_USE_PEP517="setuptools"
 DISTUTILS_SINGLE_IMPL=1
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit distutils-r1 pypi
+inherit distutils-r1 pypi xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -144,6 +144,10 @@ EOF
 	fperms 0755 "/usr/bin/flowblade"
 	docinto "readmes"
 	dodoc "${WORKDIR}/${P}/README.md"
+}
+
+pkg_postinst() {
+	xdg_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
