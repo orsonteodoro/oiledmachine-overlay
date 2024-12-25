@@ -12,7 +12,7 @@ EAPI=8
 
 MY_PN="mlt"
 
-PYTHON_COMPAT=( "python3_"{10..13} )
+PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream tests up to 3.11
 inherit python-single-r1 cmake flag-o-matic
 
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86 ~amd64-linux ~x86-linux"
