@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# F40
+
 #
 # Re-emerge twice for pgo/testing
 #
@@ -48,7 +50,7 @@ LICENSE="
 #	test
 #"
 SLOT="0"
-IUSE="X aqua debug gles2-only gles3 +glib gtk-doc opengl test"
+IUSE="X aqua debug gles2-only gles3 +glib gtk-doc opengl spectre test"
 REQUIRED_USE="
 	gles2-only? (
 		!opengl
@@ -58,33 +60,37 @@ REQUIRED_USE="
 	)
 "
 RDEPEND="
-	>=dev-libs/lzo-2.06-r1:2[${MULTILIB_USEDEP}]
-	>=media-libs/fontconfig-2.13.92[${MULTILIB_USEDEP}]
-	>=media-libs/freetype-2.13:2[${MULTILIB_USEDEP},png]
-	>=media-libs/libpng-1.6.10:0=[${MULTILIB_USEDEP}]
-	>=sys-libs/zlib-1.2.8-r1[${MULTILIB_USEDEP}]
-	>=x11-libs/pixman-0.42.3[${MULTILIB_USEDEP}]
+	>=dev-libs/lzo-2.10:2[${MULTILIB_USEDEP}]
+	>=media-libs/fontconfig-2.15.0[${MULTILIB_USEDEP}]
+	>=media-libs/freetype-2.13.2:2[${MULTILIB_USEDEP},png]
+	>=media-libs/libpng-1.6.40:0=[${MULTILIB_USEDEP}]
+	>=sys-libs/zlib-1.2.13[${MULTILIB_USEDEP}]
+	>=x11-libs/pixman-0.43.4[${MULTILIB_USEDEP}]
 	debug? (
 		sys-libs/binutils-libs:0=[${MULTILIB_USEDEP}]
 	)
 	glib? (
-		>=dev-libs/glib-2.34.3:2[${MULTILIB_USEDEP}]
+		>=dev-libs/glib-2.80.3:2[${MULTILIB_USEDEP}]
 	)
 	X? (
-		>=x11-libs/libX11-1.6.2[${MULTILIB_USEDEP}]
-		>=x11-libs/libxcb-1.9.1:=[${MULTILIB_USEDEP}]
-		>=x11-libs/libXext-1.3.2[${MULTILIB_USEDEP}]
-		>=x11-libs/libXrender-0.9.8[${MULTILIB_USEDEP}]
+		>=x11-libs/libX11-1.8.10[${MULTILIB_USEDEP}]
+		>=x11-libs/libxcb-1.17.0:=[${MULTILIB_USEDEP}]
+		>=x11-libs/libXext-1.3.6[${MULTILIB_USEDEP}]
+		>=x11-libs/libXrender-0.9.11[${MULTILIB_USEDEP}]
 	)
 "
 TEST_DEPEND="
-	app-text/ghostscript-gpl
-	gnome-base/librsvg
+	>=app-text/poppler-24.02.0
+	>=app-text/ghostscript-gpl-10.02.1
+	>=gnome-base/librsvg-2.57.1
+	spectre? (
+		>=app-text/libspectre-0.2.12
+	)
 "
 DEPEND="
 	${RDEPEND}
 	X? (
-		x11-base/xorg-proto
+		>=x11-base/xorg-proto-2024.1
 	)
 "
 PDEPEND="
@@ -96,6 +102,7 @@ PDEPEND="
 	)
 "
 BDEPEND="
+	>=dev-build/meson-1.4.1
 	virtual/pkgconfig
 "
 PATCHES=(
@@ -170,6 +177,7 @@ _src_configure() {
 		$(meson_feature aqua quartz)
 		$(meson_feature debug symbol-lookup)
 		$(meson_feature glib)
+		$(meson_feature test)
 		$(meson_feature X tee)
 		$(meson_feature X xcb)
 		$(meson_feature X xlib)
@@ -179,10 +187,19 @@ _src_configure() {
 		-Dfreetype=enabled
 		-Dgtk2-utils=disabled
 		-Dpng=enabled
-		-Dspectre=disabled # only used for tests
 		-Dxlib-xcb=disabled
 		-Dzlib=enabled
 	)
+
+	if use test && use spectre ; then
+		emesonargs+=(
+			-Dspectre=enabled
+		)
+	else
+		emesonargs+=(
+			-Dspectre=disabled
+		)
+	fi
 
 	if [[ "${TEST_READY}" == "0" ]] ; then
 ewarn

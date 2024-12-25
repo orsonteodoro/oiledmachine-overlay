@@ -44,6 +44,9 @@
     <flag name="utils">
       Build support for Cairo script and trace utilities
     </flag>
+    <flag name="spectre">
+      Test PostScript surface backend
+    </flag>
     <flag name="valgrind">
       Built-in support to mark memory regions
     </flag>
