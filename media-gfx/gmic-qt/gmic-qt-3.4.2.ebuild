@@ -59,7 +59,7 @@ QT6_DEPS="
 "
 COMMON_DEPEND="
 	media-libs/libpng
-	media-gfx/gmic[curl=,fftw,png,X]
+	media-gfx/gmic[fftw,png,X]
 	sys-libs/zlib
 	x11-libs/libX11
 	curl? (
