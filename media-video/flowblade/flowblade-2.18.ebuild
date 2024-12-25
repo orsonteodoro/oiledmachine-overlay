@@ -145,7 +145,7 @@ EOF
 
 	patchelf \
 		--add-rpath "/usr/lib/flowblade/$(get_libdir)" \
-		"/usr/bin/flowblade-gui" \
+		"${ED}/usr/bin/flowblade-gui" \
 		|| die
 	docinto "readmes"
 	dodoc "${WORKDIR}/README.md"
