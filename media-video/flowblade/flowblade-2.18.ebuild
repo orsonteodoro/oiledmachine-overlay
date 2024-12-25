@@ -41,6 +41,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 # Assume X and not wayland since libsdl2 is not supported
 IUSE+="
 alsa jack mp3 nvenc opus oss pulseaudio rtaudio sox vaapi vorbis vpx x264 x265
+ebuild-revision-1
 "
 REQUIRED_USE="
 	alsa? (
@@ -134,6 +135,7 @@ cat <<EOF > "${ED}/usr/bin/flowblade"
 export SDL12COMPAT_NO_QUIT_VIDEO=1
 export GDK_BACKEND="x11"
 export SDL_VIDEODRIVER="x11"
+export PYTHONPATH="/usr/lib/mtl-flowblade/lib/${EPYTHON}/site-packages:\${PYTHONPATH}"
 "/usr/bin/flowblade-gui" "\$@"
 EOF
 	fperms 0755 "/usr/bin/flowblade"
