@@ -143,7 +143,7 @@ export PYTHONPATH="/usr/lib/mtl-flowblade/lib/${EPYTHON}/site-packages:\${PYTHON
 EOF
 	fperms 0755 "/usr/bin/flowblade"
 	docinto "readmes"
-	dodoc "${WORKDIR}/README.md"
+	dodoc "${WORKDIR}/${P}/README.md"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
