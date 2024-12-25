@@ -237,18 +237,17 @@ src_compile() {
 
 src_install() {
 	dodoc "README.md"
-
 	if use gimp2 || use gimp3 ; then
 		exeinto "${PLUGIN_DIR}"
 		doexe "${WORKDIR}/gimp_build/gmic_gimp_qt"
 	fi
 	if use standalone ; then
-		dobin "${WORKDIR}/standalone_build/gmic_qt"
+		exeinto "/usr/bin"
+		doexe "${WORKDIR}/standalone_build/gmic_qt"
 	fi
 }
 
 pkg_postinst() {
-	default
 	if use gimp2 || use gimp3 ; then
 ewarn
 ewarn "Currently, gmic_qt does NOT support Wayland.  As a result of this, it is"
