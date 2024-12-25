@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# Breaks flowblade on start
+
 # restrict=test needs unpackaged 'kwalify'
 # rtaudio will use OSS on non linux OSes.
 #
@@ -15,7 +17,7 @@ MY_PN="mlt"
 PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream tests up to 3.11
 inherit python-single-r1 cmake flag-o-matic
 
-KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86 ~amd64-linux ~x86-linux"
+#KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86 ~amd64-linux ~x86-linux"
 S="${WORKDIR}/${MY_PN}-${PV}"
 SRC_URI="
 https://github.com/mltframework/${MY_PN}/releases/download/v${PV}/${MY_PN}-${PV}.tar.gz
@@ -26,9 +28,9 @@ HOMEPAGE="https://www.mltframework.org/"
 LICENSE="GPL-3"
 SLOT="0/7"
 IUSE="
-alsa debug +ffmpeg +frei0r +gtk +jack +libsamplerate oss pulseaudio +python
+alsa debug +ffmpeg +frei0r +gtk +jack +libsamplerate opencv oss pulseaudio +python
 +rtaudio +rubberband +sdl +sox test vdpau +vidstab +xine +xml
-ebuild-revision-1
+ebuild-revision-2
 "
 REQUIRED_USE="
 	alsa? (
@@ -101,6 +103,12 @@ DEPEND="
 	libsamplerate? (
 		>=media-libs/libsamplerate-0.1.2
 	)
+	opencv? (
+		>=media-libs/opencv-4.5.1:=[contrib]
+		|| (
+			media-libs/opencv[ffmpeg,gstreamer]
+		)
+	)
 	pulseaudio? (
 		media-libs/libpulse
 	)
@@ -136,12 +144,6 @@ DEPEND="
 DEPEND_DISABLED="
 	java? (
 		>=virtual/jre-1.8:*
-	)
-	opencv? (
-		>=media-libs/opencv-4.5.1:=[contrib]
-		|| (
-			media-libs/opencv[ffmpeg,gstreamer]
-		)
 	)
 	opengl? (
 		media-libs/libglvnd
@@ -188,6 +190,7 @@ PATCHES=(
 	"${FILESDIR}/${MY_PN}-7.0.1-cmake-symlink.patch"
 	# In git master, https://github.com/mltframework/mlt/issues/1020
 	"${FILESDIR}/${MY_PN}-7.28.0-fix-32bit.patch"
+	"${FILESDIR}/${MY_PN}-7.28.0-lib-path.patch"
 )
 
 pkg_setup() {
@@ -211,8 +214,14 @@ src_configure() {
 	# Workaround for bug #919981
 	append-ldflags $(test-flags-CCLD -Wl,--undefined-version)
 
+	local libdir=$(get_libdir)
+	sed -i \
+		-e "s|@LIBDIR@|${libdir}|g" \
+		"src/framework/mlt_factory.c" \
+		|| die
+
 	local mycmakeargs=(
-		-DCMAKE_INSTALL_PREFIX="/usr/lib/mtl-flowblade"
+		-DCMAKE_INSTALL_PREFIX="/usr/lib/mlt-flowblade"
 	# Testing needs unpackaged 'kwalify'.  It's restricted anyway. \
 		-DBUILD_TESTING=OFF
 		-DCLANG_FORMAT=OFF
@@ -283,7 +292,7 @@ src_install() {
 	mv "${ED}/usr/share/man/man1/melt"{"","-flowblade"}".1" || die
 	if has_version "media-video/ffmpeg:0/56.58.58" ; then
 		patchelf --add-rpath "/usr/lib/ffmpeg/56.58.58/$(get_libdir)" \
-			"${ED}/usr/lib/mtl-flowblade/lib64/mlt-7/libmltavformat.so" \
+			"${ED}/usr/lib/mlt-flowblade/lib64/mlt-7/libmltavformat.so" \
 			|| die
 	fi
 }

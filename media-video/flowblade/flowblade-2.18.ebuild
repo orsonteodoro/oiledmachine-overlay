@@ -40,8 +40,8 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 # Assume X and not wayland since libsdl2 is not supported
 IUSE+="
-alsa jack mp3 nvenc opus oss pulseaudio rtaudio sox vaapi vorbis vpx x264 x265
-ebuild-revision-3
+alsa jack mp3 nvenc opencv opus oss pulseaudio rtaudio sox vaapi vorbis vpx x264
+x265 ebuild-revision-4
 "
 REQUIRED_USE="
 	alsa? (
@@ -92,7 +92,7 @@ RDEPEND+="
 	>=dev-libs/dbus-glib-0.112
 	>=dev-libs/gobject-introspection-1.72.0[${PYTHON_SINGLE_USEDEP}]
 	>=gnome-base/librsvg-2.52.5[introspection]
-	>=media-libs/mlt-flowblade-7.4.0[${PYTHON_SINGLE_USEDEP},alsa?,ffmpeg,frei0r,jack?,libsamplerate,oss?,pulseaudio?,python,rtaudio?,sdl,sox?,xml]
+	>=media-libs/mlt-flowblade-7.4.0[${PYTHON_SINGLE_USEDEP},alsa?,ffmpeg,frei0r,jack?,libsamplerate,opencv?,oss?,pulseaudio?,python,rtaudio?,sdl,sox?,xml]
 	>=media-plugins/frei0r-plugins-1.7.0
 	>=media-plugins/swh-plugins-0.4.17
 	>=media-video/ffmpeg-4.4.1[encode,mp3?,nvenc?,vaapi?,vpx?,x264?,x265?]
@@ -148,8 +148,8 @@ cat <<EOF > "${ED}/usr/bin/flowblade"
 export SDL12COMPAT_NO_QUIT_VIDEO=1
 export GDK_BACKEND="x11"
 export SDL_VIDEODRIVER="x11"
-export LD_LIBRARY_PATH="/usr/lib/flowblade/$(get_libdir):\${LD_LIBRARY_PATH}"
-export PYTHONPATH="/usr/lib/mtl-flowblade/lib/${EPYTHON}/site-packages:\${PYTHONPATH}"
+export LD_LIBRARY_PATH="/usr/lib/mlt-flowblade/$(get_libdir):\${LD_LIBRARY_PATH}"
+export PYTHONPATH="/usr/lib/mlt-flowblade/lib/${EPYTHON}/site-packages:\${PYTHONPATH}"
 ${EPYTHON} "/usr/bin/.flowblade" "\$@"
 EOF
 	fperms 0755 "/usr/bin/flowblade"
@@ -162,3 +162,5 @@ pkg_postinst() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  IN PROGRESS (2.18, 20241225)
+# GUI load - pass
