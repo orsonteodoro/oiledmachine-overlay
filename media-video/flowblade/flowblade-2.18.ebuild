@@ -144,7 +144,7 @@ EOF
 	fperms 0755 "/usr/bin/flowblade"
 
 	patchelf \
-		--add-rdepend "/usr/lib/flowblade/$(get_libdir)" \
+		--add-rpath "/usr/lib/flowblade/$(get_libdir)" \
 		"/usr/bin/flowblade-gui" \
 		|| die
 	docinto "readmes"
