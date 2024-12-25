@@ -177,7 +177,7 @@ _src_configure() {
 		$(meson_feature aqua quartz)
 		$(meson_feature debug symbol-lookup)
 		$(meson_feature glib)
-		$(meson_feature test)
+		$(meson_feature test tests)
 		$(meson_feature X tee)
 		$(meson_feature X xcb)
 		$(meson_feature X xlib)
