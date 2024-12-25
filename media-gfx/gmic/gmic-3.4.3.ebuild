@@ -6,7 +6,7 @@ EAPI=8
 CMAKE_MAKEFILE_GENERATOR="emake"
 CMAKE_BUILD_TYPE="Release"
 
-inherit bash-completion-r1 cmake flag-o-matic qmake-utils toolchain-funcs
+inherit bash-completion-r1 cmake flag-o-matic optfeature qmake-utils toolchain-funcs
 
 S="${WORKDIR}/${PN}-v.${PV}"
 SRC_URI="
@@ -193,4 +193,9 @@ einfo "Skipping gmic_cluts.gmz"
 			"${WORKDIR}/${PN}-v.${PV}_build/resources/${PN}_bashcompletion.sh" \
 			"${PN}"
 	fi
+}
+
+pkg_postinst() {
+	optfeature_header "Install optional packages:"
+	optfeature "GIMP plugin or standalone GUI support" "media-gfx/gmic-qt"
 }
