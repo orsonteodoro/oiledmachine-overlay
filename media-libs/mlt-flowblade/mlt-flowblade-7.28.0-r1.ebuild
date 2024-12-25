@@ -26,11 +26,20 @@ HOMEPAGE="https://www.mltframework.org/"
 LICENSE="GPL-3"
 SLOT="0/7"
 IUSE="
-debug +ffmpeg +frei0r +gtk +jack +libsamplerate +python +rtaudio
-+rubberband +sdl +sox test vdpau +vidstab +xine +xml
+alsa debug +ffmpeg +frei0r +gtk +jack +libsamplerate oss pulseaudio +python
++rtaudio +rubberband +sdl +sox test vdpau +vidstab +xine +xml
 ebuild-revision-1
 "
 REQUIRED_USE="
+	oss? (
+		jack
+	)
+	rtaudio? (
+		|| (
+			alsa
+			pulseaudio
+		)
+	)
 	python? (
 		${PYTHON_REQUIRED_USE}
 	)
@@ -42,6 +51,9 @@ DEPEND="
 	>=media-libs/libebur128-1.2.2:=
 	sci-libs/fftw:3.0
 	sci-libs/fftw:=
+	alsa? (
+		media-libs/alsa-lib
+	)
 	ffmpeg? (
 		|| (
 			media-video/ffmpeg:0/56.58.58[vdpau?]
@@ -60,15 +72,21 @@ DEPEND="
 		>=dev-libs/libxml2-2.5
 		media-libs/ladspa-sdk
 		virtual/jack
+		oss? (
+			media-sound/jack-audio-connection-kit[oss]
+		)
 	)
 	libsamplerate? (
 		>=media-libs/libsamplerate-0.1.2
+	)
+	pulseaudio? (
+		media-libs/libpulse
 	)
 	python? (
 		${PYTHON_DEPS}
 	)
 	rtaudio? (
-		>=media-libs/rtaudio-4.1.2
+		>=media-libs/rtaudio-4.1.2[alsa?,pulseaudio?]
 		kernel_linux? (
 			media-libs/alsa-lib
 		)
@@ -250,10 +268,14 @@ src_install() {
 
 pkg_postinst() {
 	optfeature_header "Install optional packages:"
-	optfeature "ALSA output" "media-libs/rtaudio[alsa]"
-	optfeature "ALSA output" "media-sound/jack2[alsa]"
-	optfeature "ALSA output" "media-sound/jack-audio-connection-kit[alsa]"
-	optfeature "ALSA output" "media-video/pipewire"
-	optfeature "OSS output" "media-sound/jack-audio-connection-kit[oss]"
-	optfeature "PulseAudio output" "media-libs/rtaudio[pulseaudio]"
+	if use jack ; then
+		if use alsa ; then
+			optfeature "ALSA output" "media-sound/jack2[alsa]"
+			optfeature "ALSA output" "media-sound/jack-audio-connection-kit[alsa]"
+			optfeature "ALSA output" "media-video/pipewire"
+		fi
+		if use oss ; then
+			optfeature "OSS output" "media-sound/jack-audio-connection-kit[oss]"
+		fi
+	fi
 }

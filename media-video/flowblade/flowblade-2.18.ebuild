@@ -10,7 +10,7 @@ DISTUTILS_USE_PEP517="setuptools"
 DISTUTILS_SINGLE_IMPL=1
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit distutils-r1 optfeature pypi
+inherit distutils-r1 pypi
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -40,7 +40,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 # Assume X and not wayland since libsdl2 is not supported
 IUSE+="
-jack mp3 nvenc opus rtaudio sox vaapi vorbis vpx x264 x265
+alsa jack mp3 nvenc opus oss pulseaudio rtaudio sox vaapi vorbis vpx x264 x265
 "
 REQUIRED_USE="
 	|| (
@@ -69,7 +69,7 @@ RDEPEND+="
 	>=dev-libs/dbus-glib-0.112
 	>=dev-libs/gobject-introspection-1.72.0[${PYTHON_SINGLE_USEDEP}]
 	>=gnome-base/librsvg-2.52.5[introspection]
-	>=media-libs/mlt-flowblade-7.4.0[${PYTHON_SINGLE_USEDEP},ffmpeg,frei0r,jack?,libsamplerate,python,rtaudio?,sdl,sox?,xml]
+	>=media-libs/mlt-flowblade-7.4.0[${PYTHON_SINGLE_USEDEP},alsa?,ffmpeg,frei0r,jack?,libsamplerate,oss?,pulseaudio?,python,rtaudio?,sdl,sox?,xml]
 	>=media-plugins/frei0r-plugins-1.7.0
 	>=media-plugins/swh-plugins-0.4.17
 	>=media-video/ffmpeg-4.4.1[encode,mp3?,nvenc?,vaapi?,vpx?,x264?,x265?]
@@ -121,16 +121,6 @@ EOF
 		--add-rdepend "/usr/lib/flowblade/$(get_libdir)" \
 		"/usr/bin/flowblade-gui" \
 		|| die
-}
-
-pkg_postinst() {
-	optfeature_header "Install optional packages:"
-	optfeature "ALSA output" "media-libs/rtaudio[alsa]"
-	optfeature "ALSA output" "media-sound/jack2[alsa]"
-	optfeature "ALSA output" "media-sound/jack-audio-connection-kit[alsa]"
-	optfeature "ALSA output" "media-video/pipewire"
-	optfeature "OSS output" "media-sound/jack-audio-connection-kit[oss]"
-	optfeature "PulseAudio output" "media-libs/rtaudio[pulseaudio]"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
