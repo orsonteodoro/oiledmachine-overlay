@@ -15,6 +15,15 @@
     <flag name="alsa">
       Add support for outputting audio to ALSA
     </flag>
+    <!--
+    See also
+https://github.com/jliljebl/flowblade/blob/v2.18/flowblade-trunk/Flowblade/res/filters/filters.xml
+    -->
+    <flag name="frei0r">
+      Add support for frei0r video effects enabling alpha gradient, artistic,
+      blur, color, color effects, distort, denoise, sharpness, filter mask
+      filters
+    </flag>
     <flag name="jack">
       Add support for outputting audio to Jack
     </flag>
@@ -27,6 +36,9 @@
     <flag name="opus">
       Add support for encoding audio to Opus
     </flag>
+    <flag name="opencv">
+      Add support for creating motion tracking filter
+    </flag>
     <flag name="oss">
       Add support for outputting audio to OSS
     </flag>
@@ -36,8 +48,14 @@
     <flag name="rtaudio">
       Add support for outputting audio to RtAudio
     </flag>
+    <flag name="rubberband">
+      Add support for audio pitch shift
+    </flag>
     <flag name="sox">
       Add support for audio processing
+    </flag>
+    <flag name="vidstab">
+      Add support for the stabilitize movement filter
     </flag>
     <flag name="vorbis">
       Add support for encoding audio to Vorbis
