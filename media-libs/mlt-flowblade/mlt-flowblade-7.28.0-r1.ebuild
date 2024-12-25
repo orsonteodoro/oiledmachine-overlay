@@ -224,10 +224,12 @@ src_install() {
 	doins -r "demo"
 	# Install SWIG bindings
 	docinto "swig"
-	if use python; then
+	if use python ; then
 		dodoc "${S}/src/swig/python/play.py"
 		python_optimize
 	fi
+	mv "${ED}/usr/share/man/man1/melt"{"","-flowblade"}"-7.1" || die
+	mv "${ED}/usr/share/man/man1/melt"{"","-flowblade"}".1" || die
 }
 
 pkg_postinst() {
