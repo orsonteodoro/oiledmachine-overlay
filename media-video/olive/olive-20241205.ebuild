@@ -14,6 +14,7 @@ QT6_PV="6.0.0"
 inherit cmake dep-prepare xdg
 
 if [[ "${PV}" == *"9999" ]]; then
+	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/olive-editor/olive.git"
 	FALLBACK_COMMIT="7e0e94abf6610026aebb9ddce8564c39522fac6e" # Dec 5, 2024
 	IUSE+=" fallback-commit"
