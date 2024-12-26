@@ -25,7 +25,11 @@ https://github.com/mltframework/${MY_PN}/releases/download/v${PV}/${MY_PN}-${PV}
 
 DESCRIPTION="MLT Multimedia Framework for the flowblade ebuild"
 HOMEPAGE="https://www.mltframework.org/"
-LICENSE="GPL-3"
+LICENSE="
+	GPL-2+
+	GPL-3+
+	LGPL-2.1+
+"
 SLOT="0/7"
 IUSE="
 alsa debug +ffmpeg +frei0r +gtk +jack +libsamplerate opencv oss pulseaudio +python
