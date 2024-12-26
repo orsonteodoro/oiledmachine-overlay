@@ -141,8 +141,8 @@ src_configure() {
 src_install() {
 	distutils-r1_src_install
 	docinto "licenses"
-	dodoc "COPYING"
 	dodoc "AUTHORS"
+	dodoc "COPYING"
 	dodoc "copyrights"
 	mv "${ED}/usr/bin/"{"","."}"flowblade" || die
 cat <<EOF > "${ED}/usr/bin/flowblade"
