@@ -38,10 +38,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-# Assume X and not wayland since libsdl2 is not supported
+# Assume X and not Wayland since libsdl2 is not supported.
 IUSE+="
-alsa frei0r jack mp3 nvenc opencv opus oss pulseaudio rtaudio rubberband sox vaapi vidstab vorbis vpx x264
-x265 ebuild-revision-4
+alsa frei0r jack mp3 nvenc opencv opus oss pulseaudio rtaudio rubberband sox
+vaapi vidstab vorbis vpx x264 x265 ebuild-revision-4
 "
 REQUIRED_USE="
 	alsa? (
