@@ -98,9 +98,14 @@ LIBOGG_PV="1.3.5"
 LIBSNDFILE_PV="1.2.2"
 ONETBB_SLOT="0"
 OPENEXR_V3_PV=(
-	"3.2.4"
-	"3.2.3"
-	"3.2.1"
+	# openexr:imath
+	"3.3.2:3.1.12"
+	"3.3.1:3.1.12"
+	"3.3.0:3.1.11"
+	"3.2.4:3.1.10"
+	"3.2.3:3.1.10"
+	"3.2.2:3.1.9"
+	"3.2.1:3.1.9"
 )
 OSL_PV="1.13.7"
 PUGIXML_PV="1.10"
@@ -597,12 +602,14 @@ gen_oiio_depends() {
 }
 
 gen_openexr_pairs() {
-	local pv
-	for pv in ${OPENEXR_V3_PV[@]} ; do
+	local row
+	for row in ${OPENEXR_V3_PV[@]} ; do
+		local imath_pv="${row#*:}"
+		local openexr_pv="${row%:*}"
 		echo "
 			(
-				~media-libs/openexr-${pv}:=
-				~dev-libs/imath-${pv}:=
+				~media-libs/openexr-${openexr_pv}:=
+				~dev-libs/imath-${imath_pv}:=
 			)
 		"
 	done

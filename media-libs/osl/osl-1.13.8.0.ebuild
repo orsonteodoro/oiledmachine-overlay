@@ -13,8 +13,35 @@ CUDA_TARGETS_COMPAT=(
 )
 LLVM_COMPAT=( {15..13} ) # clang is 16 supported but not llvm 16
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
-OPENEXR_V2_PV="2.5.10 2.5.9 2.5.8 2.5.7"
-OPENEXR_V3_PV="3.1.12 3.1.11 3.1.10 3.1.9 3.1.8 3.1.7 3.1.6 3.1.5 3.1.4"
+OPENEXR_V2_PV=(
+	# openexr:imath
+	"2.5.11:2.5.11"
+	"2.5.10:2.5.10"
+	"2.5.9:2.5.9"
+	"2.5.8:2.5.8"
+	"2.5.7:2.5.7"
+)
+OPENEXR_V3_PV=(
+	# openexr:imath
+	"3.3.2:3.1.12"
+	"3.3.1:3.1.12"
+	"3.3.0:3.1.11"
+	"3.2.4:3.1.10"
+	"3.2.3:3.1.10"
+	"3.2.2:3.1.9"
+	"3.2.1:3.1.9"
+	"3.2.0:3.1.9"
+	"3.1.13:3.1.9"
+	"3.1.12:3.1.9"
+	"3.1.11:3.1.9"
+	"3.1.10:3.1.9"
+	"3.1.9:3.1.9"
+	"3.1.8:3.1.8"
+	"3.1.7:3.1.7"
+	"3.1.6:3.1.5"
+	"3.1.5:3.1.5"
+	"3.1.4:3.1.4"
+)
 PYTHON_COMPAT=( python3_{10..11} ) # Upstream lists up to 3.10
 QT5_MIN="5.6"
 QT6_MIN="6"
@@ -153,20 +180,24 @@ gen_llvm_bdepend() {
 }
 
 gen_openexr_pairs() {
-	local pv
-	for pv in ${OPENEXR_V3_PV} ; do
+	local row
+	for row in ${OPENEXR_V3_PV} ; do
+		local imath_pv="${row#*:}"
+		local openexr_pv="${row%:*}"
 		echo "
 			(
-				~media-libs/openexr-${pv}:=
-				~dev-libs/imath-${pv}:=
+				~media-libs/openexr-${openexr_pv}:=
+				~dev-libs/imath-${imath_pv}:=
 			)
 		"
 	done
-	for pv in ${OPENEXR_V2_PV} ; do
+	for row in ${OPENEXR_V2_PV} ; do
+		local imath_pv="${row#*:}"
+		local openexr_pv="${row%:*}"
 		echo "
 			(
-				~media-libs/openexr-${pv}:=
-				~media-libs/ilmbase-${pv}:=[${MULTILIB_USEDEP}]
+				~media-libs/openexr-${openexr_pv}:=
+				~media-libs/ilmbase-${imath_pv}:=[${MULTILIB_USEDEP}]
 			)
 		"
 	done

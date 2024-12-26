@@ -15,30 +15,54 @@ EAPI=8
 # Works with older OIIO but need to force a version w/ OpenEXR 3
 
 CMAKE_BUILD_TYPE="RelWithDebInfo"
-OPENEXR_V3_PV="3.1.12 3.1.11 3.1.10 3.1.9 3.1.8 3.1.7 3.1.6 3.1.5 3.1.4"
-PYTHON_COMPAT=( python3_{8..11} )
+OPENEXR_V3_PV=(
+	# openexr:imath
+	"3.3.2:3.1.12"
+	"3.3.1:3.1.12"
+	"3.3.0:3.1.11"
+	"3.2.4:3.1.10"
+	"3.2.3:3.1.10"
+	"3.2.2:3.1.9"
+	"3.2.1:3.1.9"
+	"3.2.0:3.1.9"
+	"3.1.13:3.1.9"
+	"3.1.12:3.1.9"
+	"3.1.11:3.1.9"
+	"3.1.10:3.1.9"
+	"3.1.9:3.1.9"
+	"3.1.8:3.1.8"
+	"3.1.7:3.1.7"
+	"3.1.6:3.1.4"
+	"3.1.5:3.1.4"
+	"3.1.4:3.1.4"
+)
+PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit cmake flag-o-matic python-single-r1
 
 gen_half_pairs_rdepend() {
-	local pv
-	for pv in ${OPENEXR_V3_PV} ; do
+	local row
+	for row in ${OPENEXR_V3_PV} ; do
+		local imath_pv="${row#*:}"
+		local openexr_pv="${row%:*}"
 		echo "
 			(
-				~media-libs/openexr-${pv}:=
-				~dev-libs/imath-${pv}:=
+				~media-libs/openexr-${openexr_pv}:=
+				~dev-libs/imath-${imath_pv}:=
 			)
 		"
 	done
 }
 
 gen_imath_bdepend() {
-	local pv
-	for pv in ${OPENEXR_V3_PV} ; do
+	local row
+	for row in ${OPENEXR_V3_PV} ; do
+		local imath_pv="${row#*:}"
+		local openexr_pv="${row%:*}"
 		echo "
 			(
-				~media-libs/openexr-${pv}:=
-				~dev-libs/imath-${pv}:=
+				~media-libs/openexr-${openexr_pv}:=
+				~dev-libs/imath-${imath_pv}:=
 			)
 		"
 	done
