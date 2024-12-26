@@ -100,6 +100,72 @@ BDEPEND="
 	)
 "
 
+verify_qt_consistency() {
+	local QT_SLOT
+	if use qt6 ; then
+		QT_SLOT="6"
+	elif use qt5 ; then
+		QT_SLOT="5"
+	else
+eerror
+eerror "You need to enable qt5 or qt6 USE flag."
+eerror
+		die
+	fi
+	local QTCORE_PV=$(pkg-config --modversion Qt${QT_SLOT}Core)
+
+	local qt_pv_major=$(ver_cut 1 "${QTCORE_PV}")
+	if use qt6 && [[ "${qt_pv_major}" != "6" ]] ; then
+eerror
+eerror "QtCore is not 6.x"
+eerror
+		die
+	elif use qt5 && [[ "${qt_pv_major}" != "5" ]] ; then
+eerror
+eerror "QtCore is not 5.x"
+eerror
+		die
+	fi
+
+	local L=(
+		Qt${QT_SLOT}Concurrent
+		Qt${QT_SLOT}Gui
+		Qt${QT_SLOT}Linguist
+		Qt${QT_SLOT}OpenGL
+		Qt${QT_SLOT}Svg
+		Qt${QT_SLOT}Widgets
+	)
+	local QTPKG_PV
+	local pkg_name
+	for pkg_name in ${L[@]} ; do
+		QTPKG_PV=$(pkg-config --modversion ${pkg_name})
+		if ver_test ${QTCORE_PV} -ne ${QTPKG_PV} ; then
+eerror
+eerror "Qt${QT_SLOT}Core is not the same version as ${pkg_name}."
+eerror "Make them the same to continue."
+eerror
+eerror "Expected version (QtCore):\t\t${QTCORE_PV}"
+eerror "Actual version (${pkg_name}):\t${QTPKG_PV}"
+eerror
+			die
+		fi
+	done
+	pkg_name="qtimageformats"
+	QTPKG_PV=$(best_version "dev-qt/qtimageformats:${QT_SLOT}" \
+		| sed -e "s|dev-qt/qtimageformats-||g")
+	QTPKG_PV=$(ver_cut 1-3 ${QTPKG_PV})
+	if ver_test ${QTCORE_PV} -ne ${QTPKG_PV} ; then
+eerror
+eerror "Qt${QT_SLOT}Core is not the same version as ${pkg_name}."
+eerror "Make them the same to continue."
+eerror
+eerror "Expected version (QtCore):\t\t${QTCORE_PV}"
+eerror "Actual version (${pkg_name}):\t${QTPKG_PV}"
+eerror
+		die
+	fi
+}
+
 src_unpack() {
 	if [[ "${PV}" == *"9999" ]]; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
@@ -113,6 +179,7 @@ src_unpack() {
 }
 
 src_configure() {
+	verify_qt_consistency
 	local mycmakeargs=(
 		-DBUILD_DOXYGEN="$(usex doc)"
 		-DBUILD_TESTS="$(usex test)"
