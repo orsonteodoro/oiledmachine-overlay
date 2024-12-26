@@ -165,6 +165,7 @@ pkg_postinst() {
 
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-TEST:  PASS (2.18, 20241225)
+# Audio playback with RtAudio and ALSA - pass
 # GUI load - pass
 # JPEG show - fail
 # PNG show - pass
