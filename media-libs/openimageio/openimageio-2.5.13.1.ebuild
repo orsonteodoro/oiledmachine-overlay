@@ -235,66 +235,59 @@ RDEPEND+="
 	openvdb? (
 		abi11-compat? (
 			|| (
-				=media-gfx/openvdb-13[abi11-compat]
-
-				=media-gfx/openvdb-12[abi11-compat]
-
-				=media-gfx/openvdb-11[abi11-compat]
+				=media-gfx/openvdb-13*[abi11-compat]
+				=media-gfx/openvdb-12*[abi11-compat]
+				=media-gfx/openvdb-11*[abi11-compat]
 			)
+			media-gfx/openvdb:=
 		)
 		abi10-compat? (
 			|| (
-				=media-gfx/openvdb-12[abi10-compat]
-
-				=media-gfx/openvdb-11[abi10-compat]
-
-				=media-gfx/openvdb-10[abi10-compat]
+				=media-gfx/openvdb-12*[abi10-compat]
+				=media-gfx/openvdb-11*[abi10-compat]
+				=media-gfx/openvdb-10*[abi10-compat]
 			)
+			media-gfx/openvdb:=
 		)
 		abi9-compat? (
 			|| (
-				=media-gfx/openvdb-11[abi9-compat]
-
-				=media-gfx/openvdb-10[abi9-compat]
-
-				=media-gfx/openvdb-9[abi9-compat]
+				=media-gfx/openvdb-11*[abi9-compat]
+				=media-gfx/openvdb-10*[abi9-compat]
+				=media-gfx/openvdb-9*[abi9-compat]
 			)
+			media-gfx/openvdb:=
 		)
 		abi8-compat? (
 			|| (
-				=media-gfx/openvdb-10[abi8-compat]
-
-				=media-gfx/openvdb-9[abi8-compat]
-
-				=media-gfx/openvdb-8[abi8-compat]
+				=media-gfx/openvdb-10*[abi8-compat]
+				=media-gfx/openvdb-9*[abi8-compat]
+				=media-gfx/openvdb-8*[abi8-compat]
 			)
+			media-gfx/openvdb:=
 		)
 		abi7-compat? (
 			|| (
-				=media-gfx/openvdb-9[abi7-compat]
-
-				=media-gfx/openvdb-8[abi7-compat]
-
-				=media-gfx/openvdb-7[abi7-compat]
+				=media-gfx/openvdb-9*[abi7-compat]
+				=media-gfx/openvdb-8*[abi7-compat]
+				=media-gfx/openvdb-7*[abi7-compat]
 			)
+			media-gfx/openvdb:=
 		)
 		abi6-compat? (
 			|| (
-				=media-gfx/openvdb-8[abi6-compat]
-
-				=media-gfx/openvdb-7[abi6-compat]
-
-				=media-gfx/openvdb-6[abi6-compat]
+				=media-gfx/openvdb-8*[abi6-compat]
+				=media-gfx/openvdb-7*[abi6-compat]
+				=media-gfx/openvdb-6*[abi6-compat]
 			)
+			media-gfx/openvdb:=
 		)
 		abi5-compat? (
 			|| (
-				=media-gfx/openvdb-7[abi5-compat]
-
-				=media-gfx/openvdb-6[abi5-compat]
-
-				=media-gfx/openvdb-5[abi5-compat]
+				=media-gfx/openvdb-7*[abi5-compat]
+				=media-gfx/openvdb-6*[abi5-compat]
+				=media-gfx/openvdb-5*[abi5-compat]
 			)
+			media-gfx/openvdb:=
 		)
 		tbb? (
 			|| (
