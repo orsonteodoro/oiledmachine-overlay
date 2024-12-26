@@ -12,8 +12,33 @@ LEGACY_TBB_SLOT="2"
 LLVM_COMPAT=( {16..13} )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 ONETBB_SLOT="0"
-OPENEXR_V2_PV="2.5.9 2.5.8"
-OPENEXR_V3_PV="3.2.4 3.2.3 3.2.2 3.2.1 3.2.0 3.1.13 3.1.12 3.1.11 3.1.10 3.1.9 3.1.8 3.1.7 3.1.6 3.1.5 3.1.4"
+OPENEXR_V2_PV=(
+	# openexr:imath
+	"2.5.9:2.5.9"
+	"2.5.8:2.5.8"
+)
+OPENEXR_V3_PV=(
+	# openexr:imath
+	"3.3.2:3.1.12"
+	"3.3.1:3.1.12"
+	"3.3.0:3.1.11"
+	"3.2.4:3.1.10"
+	"3.2.3:3.1.10"
+	"3.2.2:3.1.9"
+	"3.2.1:3.1.9"
+	"3.2.0:3.1.9"
+
+	"3.1.13:3.1.9"
+	"3.1.12:3.1.9"
+	"3.1.11:3.1.9"
+	"3.1.10:3.1.9"
+	"3.1.9:3.1.9"
+	"3.1.8:3.1.8"
+	"3.1.7:3.1.7"
+	"3.1.6:3.1.5"
+	"3.1.5:3.1.5"
+	"3.1.4:3.1.4"
+)
 OPENVDB_APIS=( {10..5} )
 OPENVDB_APIS_=( ${OPENVDB_APIS[@]/#/abi} )
 OPENVDB_APIS_=( ${OPENVDB_APIS_[@]/%/-compat} )
@@ -142,20 +167,24 @@ REQUIRED_USE="
 	)
 "
 gen_openexr_pairs() {
-	local pv
-	for pv in ${OPENEXR_V3_PV} ; do
+	local row
+	for row in ${OPENEXR_V3_PV[@]} ; do
+		local imath_pv="${row#*:}"
+		local openexr_pv="${row%:*}"
 		echo "
 			(
-				~media-libs/openexr-${pv}:=
-				~dev-libs/imath-${pv}:=
+				~media-libs/openexr-${openexr_pv}:=
+				~dev-libs/imath-${imath_pv}:=
 			)
 		"
 	done
-	for pv in ${OPENEXR_V2_PV} ; do
+	for row in ${OPENEXR_V2_PV[@]} ; do
+		local imath_pv="${row#*:}"
+		local openexr_pv="${row%:*}"
 		echo "
 			(
-				~media-libs/openexr-${pv}:=
-				~media-libs/ilmbase-${pv}:=
+				~media-libs/openexr-${openexr_pv}:=
+				~media-libs/ilmbase-${imath_pv}:=
 			)
 		"
 	done
