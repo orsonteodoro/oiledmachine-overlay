@@ -73,7 +73,10 @@ S="${WORKDIR}/OpenColorIO-${PV}"
 SRC_URI="
 https://github.com/AcademySoftwareFoundation/OpenColorIO/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
+https://github.com/AcademySoftwareFoundation/OpenColorIO/commit/bdc4cd124140f997cdec1c5d7db72b1550fe7eac.patch
+	-> opencolorio-commit-bdc4cd1.patch
 "
+# bdc4cd1 - Add support for minizip-ng 4 API
 
 DESCRIPTION="A color management framework for visual effects and animation"
 HOMEPAGE="
@@ -155,6 +158,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-2.2.1-adjust-python-installation.patch"
+	"${DISTDIR}/${PN}-commit-bdc4cd1.patch"
 )
 
 pkg_setup() {
