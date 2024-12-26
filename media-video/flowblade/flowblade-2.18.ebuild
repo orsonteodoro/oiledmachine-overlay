@@ -120,6 +120,7 @@ BDEPEND+="
 DOCS=( )
 PATCHES=(
 	"${FILESDIR}/${PN}-2.18-change-paths.patch"
+	"${FILESDIR}/${PN}-2.18-credit-scroll-fixes.patch"
 )
 
 src_unpack() {
@@ -171,5 +172,5 @@ pkg_postinst() {
 # JPEG show - partial, broken on media thumbnail.
 # PNG show - pass
 # Save video composition - pass
-# Credit scroll generator - fail
+# Text generators placed on timeline and playback - fail
 # Widget show and play video - pass

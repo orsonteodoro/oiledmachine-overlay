@@ -1,0 +1,23 @@
+diff '--color=auto' -urp flowblade-trunk.orig/Flowblade/res/mediaplugins/plugins.json flowblade-trunk/Flowblade/res/mediaplugins/plugins.json
+--- flowblade-trunk.orig/Flowblade/res/mediaplugins/plugins.json	2024-12-18 08:24:17.000000000 -0800
++++ flowblade-trunk/Flowblade/res/mediaplugins/plugins.json	2024-12-25 18:49:49.912756004 -0800
+@@ -6,6 +6,6 @@
+ 		{ "folder":"transitions_2", "scriptfile":"hex_overlay.py", "name":"Hex Overlay", "category":"Cover Transitions", "defaultrender":"alphaclip"},
+ 		{ "folder":"text_1", "scriptfile":"multiline_animation.py", "name":"Multiline Animation", "category":"Animated Texts", "defaultrender":"alphaclip"},
+ 		{ "folder":"text_2", "scriptfile":"typewriter.py", "name":"Typewriter", "category":"Animated Texts", "defaultrender":"alphaclip"},
+-		{ "folder":"text_3", "scriptfile":"credit_scroll.py", "name":"Creadit Scroll", "category":"Animated Texts", "defaultrender":"alphaclip"}
++		{ "folder":"text_3", "scriptfile":"credit_scroll.py", "name":"Credit Scroll", "category":"Animated Texts", "defaultrender":"alphaclip"}
+ 	 ]
+ }
+diff '--color=auto' -urp flowblade-trunk.orig/setup.py flowblade-trunk/setup.py
+--- flowblade-trunk.orig/setup.py	2024-12-18 08:24:17.000000000 -0800
++++ flowblade-trunk/setup.py	2024-12-25 18:49:20.136951202 -0800
+@@ -40,7 +40,7 @@ flowblade_package_data = ['res/filters/*
+                           'res/css3/*','res/css3/assets/*','res/css3/sass/*',
+                           'res/mediaplugins/*', 'res/mediaplugins/animations_1/*',
+                           'res/mediaplugins/animations_2/*', 'res/mediaplugins/text_1/*',
+-                          'res/mediaplugins/text_2/*', 'res/mediaplugins/transitions_1/*',
++                          'res/mediaplugins/text_2/*', 'res/mediaplugins/text_3/*', 'res/mediaplugins/transitions_1/*',
+                           'res/mediaplugins/transitions_2/*','res/gpu-test/*','res/scripttool/*', 'res/usbhid/*']
+ 
+ locale_files = []
