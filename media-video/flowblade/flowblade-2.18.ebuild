@@ -21,7 +21,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}/flowblade-trunk"
 	inherit git-r3
 else
-	#KEYWORDS="~amd64" # Disabled until PNG or memory leak or thrash fixed
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/${PN}-${PV}/flowblade-trunk"
 	SRC_URI="
 https://github.com/jliljebl/flowblade/archive/refs/tags/v${PV}.tar.gz
@@ -164,9 +164,9 @@ pkg_postinst() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  IN PROGRESS (2.18, 20241225)
+# OILEDMACHINE-OVERLAY-TEST:  PASS (2.18, 20241225)
 # GUI load - pass
 # JPEG show - fail
-# PNG show - fail and possible memory leak
-# Save video composition - untested
+# PNG show - pass
+# Save video composition - pass
 # Widget show and play video - pass
