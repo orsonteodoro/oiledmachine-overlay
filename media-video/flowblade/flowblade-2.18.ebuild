@@ -171,5 +171,5 @@ pkg_postinst() {
 # JPEG show - partial, broken on media thumbnail.
 # PNG show - pass
 # Save video composition - pass
-# Text generator preview - fail
+# Credit scroll generator - fail
 # Widget show and play video - pass
