@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild originators -->
+    <email>parona@protonmail.com</email>
+    <name>Alfred Wingate</name>
+  </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  Ebuild obtained from src_prepare-overlay.
+  Ebuild forked for increased build reproducibility.
+
+  -->
+  <upstream>
+    <bugs-to>https://github.com/AcademySoftwareFoundation/OpenTimelineIO/issues</bugs-to>
+    <remote-id type="github">AcademySoftwareFoundation/OpenTimelineIO</remote-id>
+  </upstream>
+</pkgmetadata>

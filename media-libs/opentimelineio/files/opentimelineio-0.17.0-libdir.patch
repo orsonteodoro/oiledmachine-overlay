@@ -1,0 +1,11 @@
+--- a/CMakeLists.txt.orig	2024-12-26 09:37:18.120458249 -0800
++++ b/CMakeLists.txt	2024-12-26 09:53:34.365860426 -0800
+@@ -100,7 +100,7 @@ if(OTIO_PYTHON_INSTALL)
+     endif()
+ 
+ else()
+-    set(OTIO_RESOLVED_CXX_DYLIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib")
++    set(OTIO_RESOLVED_CXX_DYLIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
+     message(STATUS "OTIO C++ installing to ${CMAKE_INSTALL_PREFIX}")
+ endif()
+ 

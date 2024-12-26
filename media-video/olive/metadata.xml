@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild overlay -->
+    <email>parona@protonmail.com</email>
+    <name>Alfred Wingate</name>
+  </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  Ebuild obtained from src_prepare-overlay
+  Forked ebuild for increased reproduceability.
+
+  -->
+  <upstream>
+    <bugs-to>https://github.com/olive-editor/olive/issues</bugs-to>
+    <remote-id type="github">olive-editor/olive</remote-id>
+  </upstream>  
+</pkgmetadata>
