@@ -178,12 +178,12 @@ gen_openexr_pairs() {
 		"
 	done
 	for row in ${OPENEXR_V2_PV[@]} ; do
-		local imath_pv="${row#*:}"
+		local ilmbase_pv="${row#*:}"
 		local openexr_pv="${row%:*}"
 		echo "
 			(
 				~media-libs/openexr-${openexr_pv}:=
-				~media-libs/ilmbase-${imath_pv}:=
+				~media-libs/ilmbase-${ilmbase_pv}:=
 			)
 		"
 	done
