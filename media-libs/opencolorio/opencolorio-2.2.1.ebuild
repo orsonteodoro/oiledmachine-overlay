@@ -42,7 +42,7 @@ inherit cmake flag-o-matic python-single-r1
 
 gen_half_pairs_rdepend() {
 	local row
-	for row in ${OPENEXR_V3_PV} ; do
+	for row in ${OPENEXR_V3_PV[@]} ; do
 		local imath_pv="${row#*:}"
 		local openexr_pv="${row%:*}"
 		echo "
@@ -56,7 +56,7 @@ gen_half_pairs_rdepend() {
 
 gen_imath_bdepend() {
 	local row
-	for row in ${OPENEXR_V3_PV} ; do
+	for row in ${OPENEXR_V3_PV[@]} ; do
 		local imath_pv="${row#*:}"
 		local openexr_pv="${row%:*}"
 		echo "
