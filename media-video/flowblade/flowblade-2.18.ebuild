@@ -144,7 +144,7 @@ src_install() {
 	dodoc "COPYING"
 	dodoc "AUTHORS"
 	dodoc "copyrights"
-	mv "${ED}/usr/bin/"{"","."}"flowblade"
+	mv "${ED}/usr/bin/"{"","."}"flowblade" || die
 cat <<EOF > "${ED}/usr/bin/flowblade"
 #!/bin/bash
 export SDL12COMPAT_NO_QUIT_VIDEO=1
