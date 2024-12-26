@@ -40,8 +40,9 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 # Assume X and not Wayland since libsdl2 is not supported.
 IUSE+="
-alsa frei0r jack mp3 nvenc opencv opus oss pulseaudio rtaudio rubberband sox
-vaapi vidstab vorbis vpx x264 x265 ebuild-revision-4
+alsa frei0r jack jpeg mp3 nvenc opencv opus oss pulseaudio rtaudio rubberband
+sox vaapi vidstab vorbis vpx x264 x265
+ebuild-revision-4
 "
 REQUIRED_USE="
 	alsa? (
@@ -98,7 +99,7 @@ RDEPEND+="
 	>=media-video/movit-1.6.3
 	>=media-gfx/gmic-2.9.4[cli]
 	>=x11-libs/pango-1.50.6[introspection]
-	>=x11-libs/gdk-pixbuf-2.42.8[introspection,png(+)]
+	>=x11-libs/gdk-pixbuf-2.42.8[introspection,jpeg?,png(+)]
 	>=x11-libs/gtk+-3.24.33[introspection,X]
 	frei0r? (
 		>=media-plugins/frei0r-plugins-1.7.0
@@ -167,7 +168,7 @@ pkg_postinst() {
 # OILEDMACHINE-OVERLAY-TEST:  PASS (2.18, 20241225)
 # Audio playback with RtAudio and ALSA - pass
 # GUI load - pass
-# JPEG show - fail
+# JPEG show - partial, broken on media thumbnail.
 # PNG show - pass
 # Save video composition - pass
 # Widget show and play video - pass

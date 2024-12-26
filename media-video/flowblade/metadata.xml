@@ -27,6 +27,9 @@ https://github.com/jliljebl/flowblade/blob/v2.18/flowblade-trunk/Flowblade/res/f
     <flag name="jack">
       Add support for outputting audio to Jack
     </flag>
+    <flag name="jpeg">
+      Add support for importing JPEG images.
+    </flag>
     <flag name="mp3">
       Add support for encoding audio to MP3
     </flag>
