@@ -33,4 +33,3 @@ dev-python/cython -python_targets_pypy3
 www-client/chromium partition-alloc partitionalloc
 
 sci-libs/caffe2 openmp
-
