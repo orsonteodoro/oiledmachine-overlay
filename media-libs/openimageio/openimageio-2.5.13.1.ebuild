@@ -66,29 +66,29 @@ S="${WORKDIR}/OpenImageIO-${PV}"
 SRC_URI="
 https://github.com/OpenImageIO/oiio/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
-test? (
-	https://github.com/AcademySoftwareFoundation/openexr-images/archive/${TEST_OEXR_IMAGE_COMMIT}.tar.gz
-		-> ${PN}-oexr-test-image-${TEST_OEXR_IMAGE_COMMIT}.tar.gz
-	https://github.com/AcademySoftwareFoundation/OpenImageIO-images/archive/${TEST_OIIO_IMAGE_COMMIT}.tar.gz
-		-> ${PN}-oiio-test-image-${TEST_OIIO_IMAGE_COMMIT}.tar.gz
-	fits? (
-		https://www.cv.nrao.edu/fits/data/tests/ftt4b/file001.fits
-		https://www.cv.nrao.edu/fits/data/tests/ftt4b/file002.fits
-		https://www.cv.nrao.edu/fits/data/tests/ftt4b/file003.fits
-		https://www.cv.nrao.edu/fits/data/tests/ftt4b/file009.fits
-		https://www.cv.nrao.edu/fits/data/tests/ftt4b/file012.fits
-		https://www.cv.nrao.edu/fits/data/tests/pg93/tst0001.fits
-		https://www.cv.nrao.edu/fits/data/tests/pg93/tst0003.fits
-		https://www.cv.nrao.edu/fits/data/tests/pg93/tst0005.fits
-		https://www.cv.nrao.edu/fits/data/tests/pg93/tst0006.fits
-		https://www.cv.nrao.edu/fits/data/tests/pg93/tst0007.fits
-		https://www.cv.nrao.edu/fits/data/tests/pg93/tst0008.fits
-		https://www.cv.nrao.edu/fits/data/tests/pg93/tst0013.fits
+	test? (
+https://github.com/AcademySoftwareFoundation/openexr-images/archive/${TEST_OEXR_IMAGE_COMMIT}.tar.gz
+	-> ${PN}-oexr-test-image-${TEST_OEXR_IMAGE_COMMIT:0:7}.tar.gz
+https://github.com/AcademySoftwareFoundation/OpenImageIO-images/archive/${TEST_OIIO_IMAGE_COMMIT}.tar.gz
+	-> ${PN}-oiio-test-image-${TEST_OIIO_IMAGE_COMMIT:0:7}.tar.gz
+		fits? (
+https://www.cv.nrao.edu/fits/data/tests/ftt4b/file001.fits
+https://www.cv.nrao.edu/fits/data/tests/ftt4b/file002.fits
+https://www.cv.nrao.edu/fits/data/tests/ftt4b/file003.fits
+https://www.cv.nrao.edu/fits/data/tests/ftt4b/file009.fits
+https://www.cv.nrao.edu/fits/data/tests/ftt4b/file012.fits
+https://www.cv.nrao.edu/fits/data/tests/pg93/tst0001.fits
+https://www.cv.nrao.edu/fits/data/tests/pg93/tst0003.fits
+https://www.cv.nrao.edu/fits/data/tests/pg93/tst0005.fits
+https://www.cv.nrao.edu/fits/data/tests/pg93/tst0006.fits
+https://www.cv.nrao.edu/fits/data/tests/pg93/tst0007.fits
+https://www.cv.nrao.edu/fits/data/tests/pg93/tst0008.fits
+https://www.cv.nrao.edu/fits/data/tests/pg93/tst0013.fits
+		)
+		jpeg2k? (
+https://www.itu.int/wftp3/Public/t/testsignal/SpeImage/T803/v2002_11/J2KP4files.zip
+		)
 	)
-	jpeg2k? (
-		https://www.itu.int/wftp3/Public/t/testsignal/SpeImage/T803/v2002_11/J2KP4files.zip
-	)
-)
 "
 
 DESCRIPTION="A library for reading and writing images"
