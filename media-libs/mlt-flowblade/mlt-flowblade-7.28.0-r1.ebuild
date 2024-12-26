@@ -34,7 +34,7 @@ SLOT="0/7"
 IUSE="
 alsa debug +ffmpeg +frei0r +gtk +jack +libsamplerate opencv oss pulseaudio +python
 +rtaudio +rubberband +sdl +sox test vdpau +vidstab +xine +xml
-ebuild-revision-2
+ebuild-revision-3
 "
 REQUIRED_USE="
 	alsa? (
@@ -240,7 +240,7 @@ src_configure() {
 		-DMOD_JACKRACK=$(usex jack)
 		-DMOD_KDENLIVE=ON
 		-DMOD_MOVIT=OFF
-		-DMOD_OPENCV=OFF
+		-DMOD_OPENCV=$(usex opencv)
 		-DMOD_PLUS=ON
 		-DMOD_SDL1=$(usex sdl)
 		-DMOD_SOX=$(usex sox)
