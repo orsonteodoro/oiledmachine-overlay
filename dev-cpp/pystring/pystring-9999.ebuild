@@ -70,7 +70,7 @@ einfo
 	else
 eerror
 eerror "Libtool & GCC compatibility:  Fail"
-eerror "You need to \`emerge -1 libtool\` everytime GCC is updated."
+eerror "You need to \`emerge -o libtool && emerge -O libtool\` everytime GCC is updated."
 eerror
 		die
 	fi
