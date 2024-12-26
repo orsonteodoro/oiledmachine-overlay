@@ -123,7 +123,7 @@ REQUIRED_USE+="
 "
 gen_openexr_pairs() {
 	local row
-	for row in ${OPENEXR_V2_PV} ; do
+	for row in ${OPENEXR_V2_PV[@]} ; do
 		local ilmbase_pv="${row#*:}"
 		local openexr_pv="${row%:*}"
 		echo "
@@ -137,7 +137,7 @@ gen_openexr_pairs() {
 			)
 		"
 	done
-	for row in ${OPENEXR_V3_PV} ; do
+	for row in ${OPENEXR_V3_PV[@]} ; do
 		local imath_pv="${row#*:}"
 		local openexr_pv="${row%:*}"
 		echo "
