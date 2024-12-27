@@ -830,7 +830,7 @@ RDEPEND+="
 		)
 		vaapi? (
 			>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},vaapi]
-			media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
+			media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_new_hardware?]
 		)
 		webvtt? (
 			>=media-plugins/gst-plugins-rs-0.6.0:1.0[${MULTILIB_USEDEP},closedcaption]

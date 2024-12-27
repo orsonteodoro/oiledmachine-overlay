@@ -906,7 +906,7 @@ LIBVA_DEPEND="
 	vaapi? (
 		>=media-libs/libva-${LIBVA_PV}[${MULTILIB_USEDEP},drm(+),wayland?,X?]
 		media-libs/libva:=
-		media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
+		media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_new_hardware?]
 		system-ffmpeg? (
 			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},patent_status_new_hardware?,vaapi]
 		)

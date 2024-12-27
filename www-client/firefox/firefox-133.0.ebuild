@@ -634,7 +634,7 @@ PATENT_CDEPENDS="
 			)
 		)
 		vaapi? (
-			media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
+			media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_new_hardware?]
 		)
 	)
 	patent_status_without_codec_developer_tax? (
