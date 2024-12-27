@@ -6,6 +6,7 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <![CDATA[
   <!--
 
   oiledmachine-overlay notes:
@@ -27,6 +28,7 @@
   Run `blur_videos --config $(pwd)/vid_blur.yaml`
 
   -->
+  ]]>
   <upstream>
     <bugs-to>https://github.com/varungupta31/dashcam_anonymizer/issues</bugs-to>
     <remote-id type="github">varungupta31/dashcam_anonymizer</remote-id>
