@@ -6,6 +6,7 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <![CDATA[
   <!--
 
     oiledmachine-overlay notes:
@@ -95,6 +96,7 @@
     This is to allow to support LTS, stable, and live kernels at the same time."
 
   -->
+  ]]>
   <upstream>
     <bugs-to>https://github.com/PCCproject/PCC-Kernel/issues</bugs-to>
     <remote-id type="github">PCCproject/PCC-Kernel</remote-id>
