@@ -1,0 +1,7 @@
+# This file is part of the mono ebuild
+acceptance_tests_coreclr - Optimize the CoreCLR using the acceptance tests for CoreCLR
+acceptance_tests_microbench - Optimize using the acceptance tests using the Debian Shootout microbenchmarks (aka The Computer Language Benchmarks Game)
+mono_benchmark - Optimize using benchmark tests
+mono_managed - Optimize managed Mono using managed tests
+mono_native - Optimize native Mono using native tests
+mcs - Optimize mcs (Mono csharp compiler) using mcs tests

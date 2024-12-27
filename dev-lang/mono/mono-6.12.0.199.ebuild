@@ -25,13 +25,13 @@ FLAMEGRAPH_COMMIT="f857ebc94bfe2a9bfdc4f1536ebacfb7466f69ba"
 JEMALLOC_PV="5.3.0" # 5.0.1 (circa 2018) was the upstream selected.
 MONO_CORECLR_COMMIT="90f7060935732bb624e1f325d23f63072433725f"
 NABIS=0 # Global variable not constant
-PGO_TRAINERS="
-	acceptance-tests-coreclr-trainer
-	acceptance-tests-microbench-trainer
-	mono-benchmark-trainer
-	mono-managed-trainer
-	mono-native-trainer
-	mcs-trainer
+TRAINERS="
+	mono_trainers_acceptance_tests_coreclr
+	mono_trainers_acceptance_tests_microbench
+	mono_trainers_mono_benchmark
+	mono_trainers_mono_managed
+	mono_trainers_mono_native
+	mono_trainers_mcs
 "
 TRAIN_TEST_DURATION=1800 # 30 min
 UOPTS_SUPPORT_EBOLT=0
@@ -50,11 +50,11 @@ jemalloc? (
 	https://github.com/jemalloc/jemalloc/archive/refs/tags/${JEMALLOC_PV}.tar.gz
 		-> jemalloc-${JEMALLOC_PV}.tar.gz
 )
-acceptance-tests-coreclr-trainer? (
+mono_trainers_acceptance_tests_coreclr? (
 	https://github.com/mono/coreclr/archive/${MONO_CORECLR_COMMIT}.tar.gz
 		-> mono-coreclr-${MONO_CORECLR_COMMIT:0:7}.tar.gz
 )
-acceptance-tests-microbench-trainer? (
+mono_trainers_acceptance_tests_microbench? (
 	https://github.com/alexanderkyte/DebianShootoutMono/archive/${DEBIANSHOOTOUTMONO_COMMIT}.tar.gz
 		-> DebianShootoutMono-${DEBIANSHOOTOUTMONO_COMMIT:0:7}.tar.gz
 	https://github.com/alexanderkyte/BenchmarkDotNet/archive/${BENCHMARKDOTNET_COMMIT}.tar.gz
@@ -65,9 +65,9 @@ acceptance-tests-microbench-trainer? (
 )
 "
 
-gen_pgo_trainers_required_use() {
+gen_trainers_required_use() {
 	local u
-	for u in ${PGO_TRAINERS[@]} ; do
+	for u in ${TRAINERS[@]} ; do
 		echo "${u}? ( pgo )"
 	done
 }
@@ -118,7 +118,7 @@ LICENSE="
 	OSL-3.0
 	SunPro
 	ZLIB
-	acceptance-tests-coreclr-trainer? (
+	mono_trainers_acceptance_tests_coreclr? (
 		(
 			all-rights-reserved
 			MIT
@@ -126,7 +126,7 @@ LICENSE="
 		DOTNET-libraries-and-runtime-components-patents
 		MIT
 	)
-	acceptance-tests-microbench-trainer? (
+	mono_trainers_acceptance_tests_microbench? (
 		(
 			all-rights-reserved
 			CDDL-1.1
@@ -197,7 +197,7 @@ LICENSE="
 
 SLOT="0"
 IUSE+="
-${PGO_TRAINERS[@]}
+${TRAINERS[@]}
 doc jemalloc jemalloc-assert jemalloc-custom-cflags jemalloc-default minimal nls
 pax-kernel xen
 
@@ -215,12 +215,12 @@ REQUIRED_USE+="
 	)
 	pgo? (
 		|| (
-			${PGO_TRAINERS[@]}
+			${TRAINERS[@]}
 		)
 	)
 "
 REQUIRED_USE+="
-	$(gen_pgo_trainers_required_use)
+	$(gen_trainers_required_use)
 "
 DEPEND+="
 	app-crypt/mit-krb5[${MULTILIB_USEDEP}]
@@ -239,7 +239,7 @@ RDEPEND+="
 BDEPEND+="
 	dev-util/yacc
 	sys-devel/bc
-	mono-benchmark-trainer? (
+	mono_trainers_mono_benchmark? (
 		sys-process/time
 	)
 	pax-kernel? (
@@ -295,8 +295,8 @@ pkg_setup() {
 
 	if \
 		( \
-			   use acceptance-tests-coreclr-trainer \
-			|| use acceptance-tests-microbench-trainer \
+			   use mono_trainers_acceptance_tests_coreclr \
+			|| use mono_trainers_acceptance_tests_microbench \
 		) \
 		&& \
 		has network-sandbox ${FEATURES} \
@@ -308,9 +308,9 @@ eerror
 		die
 	fi
 
-	if use acceptance-tests-coreclr-trainer ; then
+	if use mono_trainers_acceptance_tests_coreclr ; then
 ewarn
-ewarn "Time to build acceptance-tests-coreclr-trainer test may take hours."
+ewarn "Time to build mono_trainers_acceptance_tests_coreclr test may take hours."
 ewarn
 	fi
 
@@ -331,7 +331,7 @@ src_unpack() {
 	fi
 
 	mkdir -p "${S}/acceptance-tests/external"
-	if use acceptance-tests-coreclr-trainer ; then
+	if use mono_trainers_acceptance_tests_coreclr ; then
 		unpack mono-coreclr-${MONO_CORECLR_COMMIT:0:7}.tar.gz
 		mv \
 			"${WORKDIR}/coreclr-${MONO_CORECLR_COMMIT}" \
@@ -345,7 +345,7 @@ src_unpack() {
 #		git-r3_fetch
 #		git-r3_checkout
 	fi
-	if use acceptance-tests-microbench-trainer ; then
+	if use mono_trainers_acceptance_tests_microbench ; then
 		unpack "DebianShootoutMono-${DEBIANSHOOTOUTMONO_COMMIT:0:7}.tar.gz"
 		unpack "BenchmarkDotNet-${BENCHMARKDOTNET_COMMIT:0:7}.tar.gz"
 		unpack "FlameGraph-${FLAMEGRAPH_COMMIT:0:7}.tar.gz"
@@ -476,16 +476,16 @@ src_compile() {
 }
 
 train_trainer_list() {
-	use acceptance-tests-coreclr-trainer && echo "acceptance-tests-coreclr-trainer"
-	use acceptance-tests-microbench-trainer && echo "acceptance-tests-microbench-trainer"
-	use mono-benchmark-trainer && echo "mono-benchmark-trainer"
-	use mono-managed-trainer && echo "mono-managed-trainer"
-	use mono-native-trainer && echo "mono-native-trainer"
-	use mcs-trainer && echo "mcs-trainer"
+	use mono_trainers_acceptance_tests_coreclr && echo "mono_trainers_acceptance_tests_coreclr"
+	use mono_trainers_acceptance_tests_microbench && echo "mono_trainers_acceptance_tests_microbench"
+	use mono_trainers_mono_benchmark && echo "mono_trainers_mono_benchmark"
+	use mono_trainers_mono_managed && echo "mono_trainers_mono_managed"
+	use mono_trainers_mono_native && echo "mono_trainers_mono_native"
+	use mono_trainers_mcs && echo "mono_trainers_mcs"
 }
 
 _pre_trainer_acceptance_tests_coreclr() {
-	local use_id="acceptance-tests-coreclr-trainer"
+	local use_id="mono_trainers_acceptance_tests_coreclr"
 	local d=$(_get_s)
 cat <<EOF > "${d}/${use_id}" || die
 #!/bin/bash
@@ -496,7 +496,7 @@ chmod +x "${d}/${use_id}" || die
 }
 
 _pre_trainer_acceptance_tests_microbench() {
-	local use_id="acceptance-tests-microbench-trainer"
+	local use_id="mono_trainers_acceptance_tests_microbench"
 	local d=$(_get_s)
 cat <<EOF > "${d}/${use_id}" || die
 #!/bin/bash
@@ -507,7 +507,7 @@ chmod +x "${d}/${use_id}" || die
 }
 
 _pre_trainer_mono_benchmark() {
-	local use_id="mono-benchmark-trainer"
+	local use_id="mono_trainers_mono_benchmark"
 	local d=$(_get_s)
 cat <<EOF > "${d}/${use_id}" || die
 #!/bin/bash
@@ -518,7 +518,7 @@ chmod +x "${d}/${use_id}" || die
 }
 
 _pre_trainer_mono_managed() {
-	local use_id="mono-managed-trainer"
+	local use_id="mono_trainers_mono_managed"
 	local d=$(_get_s)
 cat <<EOF > "${d}/${use_id}" || die
 #!/bin/bash
@@ -529,7 +529,7 @@ chmod +x "${d}/${use_id}" || die
 }
 
 _pre_trainer_mono_native() {
-	local use_id="mono-native-trainer"
+	local use_id="mono_trainers_mono_native"
 	local d=$(_get_s)
 cat <<EOF > "${d}/${use_id}" || die
 #!/bin/bash
@@ -540,7 +540,7 @@ chmod +x "${d}/${use_id}" || die
 }
 
 _pre_trainer_mcs() {
-	local use_id="mcs-trainer"
+	local use_id="mono_trainers_mcs"
 	local d=$(_get_s)
 cat <<EOF > "${d}/${use_id}" || die
 #!/bin/bash
@@ -551,12 +551,12 @@ chmod +x "${d}/${use_id}" || die
 }
 
 _src_pre_train() {
-	use acceptance-tests-coreclr-trainer && _pre_trainer_acceptance_tests_coreclr
-	use acceptance-tests-microbench-trainer && _pre_trainer_acceptance_tests_microbench
-	use mono-benchmark-trainer && _pre_trainer_mono_benchmark
-	use mono-managed-trainer && _pre_trainer_mono_managed
-	use mono-native-trainer && _pre_trainer_mono_native
-	use mcs-trainer && _pre_trainer_mcs
+	use mono_trainers_acceptance_tests_coreclr && _pre_trainer_acceptance_tests_coreclr
+	use mono_trainers_acceptance_tests_microbench && _pre_trainer_acceptance_tests_microbench
+	use mono_trainers_mono_benchmark && _pre_trainer_mono_benchmark
+	use mono_trainers_mono_managed && _pre_trainer_mono_managed
+	use mono_trainers_mono_native && _pre_trainer_mono_native
+	use mono_trainers_mcs && _pre_trainer_mcs
 }
 
 train_get_trainer_exe() {
@@ -567,32 +567,32 @@ train_get_trainer_exe() {
 train_override_duration() {
 	local trainer="${1}"
 	# 10 min slack is added for older computers.
-	if [[ "${trainer}" == "acceptance-tests-coreclr-trainer" ]] ; then
+	if [[ "${trainer}" == "mono_trainers_acceptance_tests_coreclr" ]] ; then
 # real	234m55.992s
 # user	748m11.238s
 # sys	14m25.457s
 		echo "18000" # 4 hrs + 1 hr slack.
-	elif [[ "${trainer}" == "acceptance-tests-microbench-trainer" ]] ; then
+	elif [[ "${trainer}" == "mono_trainers_acceptance_tests_microbench" ]] ; then
 # real	9m35.200s
 # user	15m54.854s
 # sys	0m12.760s
 		echo "1140" # 19 min
-	elif [[ "${trainer}" == "mono-benchmark-trainer" ]] ; then
+	elif [[ "${trainer}" == "mono_trainers_mono_benchmark" ]] ; then
 # real	2m44.450s
 # user	2m39.598s
 # sys	0m4.267s
 		echo "780" # 13 min
-	elif [[ "${trainer}" == "mono-managed-trainer" ]] ; then
+	elif [[ "${trainer}" == "mono_trainers_mono_managed" ]] ; then
 # real	26m47.029s
 # user	63m6.389s
 # sys	3m57.119s
 		echo "2160" # 36 min
-	elif [[ "${trainer}" == "mono-native-trainer" ]] ; then
+	elif [[ "${trainer}" == "mono_trainers_mono_native" ]] ; then
 # real	1m37.212s
 # user	3m30.138s
 # sys	0m4.229s
 		echo "720" # 12 min
-	elif [[ "${trainer}" == "mcs-trainer" ]] ; then
+	elif [[ "${trainer}" == "mono_trainers_mcs" ]] ; then
 # real	11m16.586s
 # user	15m58.958s
 # sys	0m23.959s

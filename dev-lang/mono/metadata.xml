@@ -48,16 +48,16 @@
     <flag name="jemalloc-default">
       Makes Jemalloc as the default memory allocator for the Mono runtime.
     </flag>
-    <flag name="mono-benchmark-trainer">
+    <flag name="mono_trainers_mono_benchmark">
       PGO train the Mono runtime using benchmarks.
     </flag>
-    <flag name="mono-managed-trainer">
+    <flag name="mono_trainers_mono_managed">
       PGO train the Mono runtime using managed C#.
     </flag>
-    <flag name="mono-native-trainer">
+    <flag name="mono_trainers_mono_native">
       PGO train the Mono runtime using native C.
     </flag>
-    <flag name="mcs-trainer">
+    <flag name="mono_trainers_mcs">
       PGO Train the MCS (aka Mono C# compiler).
     </flag>
     <flag name="pax-kernel">
