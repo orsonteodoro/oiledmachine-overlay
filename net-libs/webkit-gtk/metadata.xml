@@ -282,7 +282,7 @@
     </flag>
     <flag name="microphone">
       Enable microphone support
-    </flag
+    </flag>
     <flag name="mold">
       Use the Mold linker to reduce linking times.
     </flag>
