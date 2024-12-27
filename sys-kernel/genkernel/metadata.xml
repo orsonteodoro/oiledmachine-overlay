@@ -11,6 +11,7 @@
     <!-- Ebuild originators -->
     <email>genkernel@gentoo.org</email>
   </maintainer>
+  <![CDATA[
   <!--
 
     oiledmachine-overlay notes:
@@ -221,6 +222,7 @@
       https://wiki.gentoo.org/wiki//etc/portage/patches
 
   -->
+  ]]>
   <use>
     <flag name="cfi">
       Ensure that the Code Flow Integrity toolchain requirements are met.
