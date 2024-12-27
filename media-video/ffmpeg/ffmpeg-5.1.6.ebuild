@@ -222,9 +222,6 @@ USE_VERSION3_ONLY=(
 	"libaribb24"
 	"liblensfun"
 )
-VIDEO_CARDS=(
-	video_cards_radeonsi
-)
 WANT_LTO=0 # Global variable not const
 
 # Strings for CPU features in the useflag[:configure_option] form
@@ -469,7 +466,6 @@ ${FFTOOLS[@]/#/+fftools_}
 ${PATENT_STATUS[@]}
 ${TRAINERS[@]}
 ${USE_LICENSES[@]}
-${VIDEO_CARDS[@]}
 alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm
 jack-audio-connection-kit jack2 liblensfun mold opencl-icd-loader openvino oss
 pgo +pic pipewire 
