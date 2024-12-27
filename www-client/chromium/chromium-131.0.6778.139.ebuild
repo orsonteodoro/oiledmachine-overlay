@@ -166,6 +166,11 @@ VULNERABILITIES_FIXED=(
 )
 NABIS=0 # Global variable
 NODE_VERSION=20
+PATENT_STATUS=(
+	patent_status_free_for_end_users
+	patent_status_nonfree_patents
+	patent_status_without_codec_developer_tax
+)
 PPC64_HASH="a85b64f07b489b8c6fdb13ecf79c16c56c560fc6"
 PATCHSET_PPC64="128.0.6613.84-1raptor0~deb12u1"
 PATCH_REVISION="-1"
@@ -581,12 +586,12 @@ ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${IUSE_CODECS[@]}
 ${IUSE_LIBCXX[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
+${PATENT_STATUS[@]}
 +accessibility bindist bluetooth +bundled-libcxx +cfi -cet +cups
 +css-hyphen -debug +drumbrake +encode +extensions ffmpeg-chromium firejail
 -gtk4 -hangouts -headless +hidpi +jit +js-type-check +kerberos +mdns +ml mold
 +mpris -official +partitionalloc pax-kernel +pdf pic +pgo +plugins +pointer-compression
-+pre-check-vaapi proprietary-codecs proprietary-codecs-disable
-proprietary-codecs-disable-codec-developer proprietary-codecs-disable-end-user
++pre-check-vaapi
 +pulseaudio +reporting-api qt5 qt6 +screencast selinux
 -system-dav1d +system-ffmpeg -system-flac -system-fontconfig
 -system-freetype -system-harfbuzz -system-icu -system-libaom -system-libdrm
@@ -630,39 +635,33 @@ ebuild-revision-1
 #   https://clang.llvm.org/docs/ControlFlowIntegrity.html#indirect-function-call-checking
 #   https://clang.llvm.org/docs/ControlFlowIntegrity.html#bad-cast-checking
 #
-DISABLED_NON_FREE_USE_FLAGS="
-	^^ (
-		proprietary-codecs
-		proprietary-codecs-disable
-		proprietary-codecs-disable-codec-developer
-		proprietary-codecs-disable-end-user
-	)
+PATENT_USE_FLAGS="
 	openh264? (
-		proprietary-codecs
+		patent_status_nonfree_patents
 	)
-	proprietary-codecs-disable? (
+	!patent_status_nonfree_patents? (
 		!openh264
 		!vaapi-hevc
 		!widevine
 		system-ffmpeg
 	)
-	proprietary-codecs-disable-codec-developer? (
+	patent_status_without_codec_developer_tax? (
 		!openh264
 		!vaapi-hevc
 		!widevine
 		system-ffmpeg
 	)
-	proprietary-codecs-disable-end-user? (
+	patent_status_free_for_end_users? (
 		!openh264
 		!vaapi-hevc
 		!widevine
 		system-ffmpeg
 	)
 	vaapi-hevc? (
-		proprietary-codecs
+		patent_status_nonfree_patents
 	)
 	widevine? (
-		proprietary-codecs
+		patent_status_nonfree_patents
 	)
 "
 
@@ -702,7 +701,7 @@ DISTRO_REQUIRE_USE="
 #	extensions
 #	!partitionalloc
 REQUIRED_USE+="
-	${DISABLED_NON_FREE_USE_FLAGS}
+	${PATENT_USE_FLAGS}
 	!headless (
 		extensions
 		pdf
@@ -746,7 +745,7 @@ REQUIRED_USE+="
 	)
 	ffmpeg-chromium? (
 		bindist
-		proprietary-codecs
+		patent_status_nonfree_patents
 	)
 	!headless? (
 		pdf
@@ -797,7 +796,7 @@ REQUIRED_USE+="
 		pdf
 		pgo
 		plugins
-		proprietary-codecs
+		patent_status_nonfree_patents
 		reporting-api
 		screencast
 		vaapi
@@ -860,7 +859,7 @@ if is_cromite_compatible ; then
 	REQUIRED_USE+="
 		cromite? (
 			amd64
-			proprietary-codecs
+			patent_status_nonfree_patents
 			dav1d
 			pdf
 			plugins
@@ -1036,7 +1035,7 @@ COMMON_SNAPSHOT_DEPEND="
 	dev-libs/nspr:=
 	>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},gbm(+)]
 	media-libs/mesa:=
-	proprietary-codecs? (
+	patent_status_nonfree_patents? (
 		system-openh264? (
 			>=media-libs/openh264-2.4.1[${MULTILIB_USEDEP}]
 			media-libs/openh264:=
@@ -1165,17 +1164,17 @@ COMMON_DEPEND="
 			>=media-libs/opus-1.4[${MULTILIB_USEDEP}]
 			media-libs/opus:=
 		)
-		proprietary-codecs? (
-			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},encode?,opus?,vorbis?,vpx?]
+		patent_status_nonfree_patents? (
+			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree_patents,vorbis?,vpx?]
 		)
-		proprietary-codecs-disable? (
-			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
+		!patent_status_nonfree_patents? (
+			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,-patent_status_nonfree_patents,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
 		)
-		proprietary-codecs-disable-codec-developer? (
-			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable-codec-developer,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
+		patent_status_without_codec_developer_tax? (
+			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,patent_status_without_codec_developer_tax,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
 		)
-		proprietary-codecs-disable-end-user? (
-			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable-end-user,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
+		patent_status_free_for_end_users? (
+			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,patent_status_free_for_end_users,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
 		)
 		|| (
 			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-samba]
@@ -3907,26 +3906,27 @@ ewarn "The new V8 Sandbox [for the JavaScript engine] (2024) will be automagic o
 	# remove / substitute
 		myconf_gn+=" is_component_ffmpeg=true"
 	else
-		ffmpeg_branding="$(usex proprietary-codecs Chrome Chromium)"
-		myconf_gn+=" proprietary_codecs=$(usex proprietary-codecs true false)"
+		ffmpeg_branding="$(usex patent_status_nonfree_patents Chrome Chromium)"
+		myconf_gn+=" proprietary_codecs=$(usex patent_status_nonfree_patents true false)"
 		myconf_gn+=" ffmpeg_branding=\"${ffmpeg_branding}\""
 	fi
 
 	myconf_gn+=" enable_av1_decoder=$(usex dav1d true false)"
 	myconf_gn+=" enable_dav1d_decoder=$(usex dav1d true false)"
-	myconf_gn+=" enable_hevc_parser_and_hw_decoder=$(usex proprietary-codecs $(usex vaapi-hevc true false) false)"
+	myconf_gn+=" enable_hevc_parser_and_hw_decoder=$(usex patent_status_nonfree_patents $(usex vaapi-hevc true false) false)"
 	myconf_gn+=" enable_libaom=$(usex libaom $(usex encode true false) false)"
-	myconf_gn+=" enable_platform_hevc=$(usex proprietary-codecs $(usex vaapi-hevc true false) false)"
+	myconf_gn+=" enable_platform_hevc=$(usex patent_status_nonfree_patents $(usex vaapi-hevc true false) false)"
 	myconf_gn+=" media_use_libvpx=$(usex vpx true false)"
-	myconf_gn+=" media_use_openh264=$(usex proprietary-codecs $(usex openh264 true false) false)"
+	myconf_gn+=" media_use_openh264=$(usex patent_status_nonfree_patents $(usex openh264 true false) false)"
 	myconf_gn+=" rtc_include_opus=$(usex opus true false)"
-	myconf_gn+=" rtc_use_h264=$(usex proprietary-codecs true false)"
+	myconf_gn+=" rtc_use_h264=$(usex patent_status_nonfree_patents true false)"
 	if ! use system-ffmpeg ; then
 	# The internal/vendored ffmpeg enables non-free codecs.
 		local _media_use_ffmpeg="true"
 		if \
-			   use proprietary-codecs-disable-codec-developer \
-			|| use proprietary-codecs-disable ; then
+			     use patent_status_without_codec_developer_tax \
+			||   use patent_status_free_for_end_users \
+			|| ! use patent_status_nonfree_patents ; then
 			_media_use_ffmpeg="false"
 		fi
 		myconf_gn+=" media_use_ffmpeg=${_media_use_ffmpeg}"
