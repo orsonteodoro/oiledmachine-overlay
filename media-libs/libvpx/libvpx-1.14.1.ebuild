@@ -39,12 +39,12 @@ PPC_IUSE="
 	cpu_flags_ppc_vsx3
 "
 TRAINER_IUSE="
-	trainer-2-pass-constrained-quality
-	trainer-2-pass-constrained-quality-quick
-	trainer-constrained-quality
-	trainer-constrained-quality-quick
-	trainer-lossless
-	trainer-lossless-quick
+	libvpx_trainers_2_pass_constrained_quality
+	libvpx_trainers_2_pass_constrained_quality_quick
+	libvpx_trainers_constrained_quality
+	libvpx_trainers_constrained_quality_quick
+	libvpx_trainers_lossless
+	libvpx_trainers_lossless_quick
 "
 IUSE="
 ${PPC_IUSE}
@@ -61,22 +61,22 @@ REQUIRED_USE="
 	test? (
 		threads
 	)
-	trainer-2-pass-constrained-quality? (
+	libvpx_trainers_2_pass_constrained_quality? (
 		pgo
 	)
-	trainer-2-pass-constrained-quality-quick? (
+	libvpx_trainers_2_pass_constrained_quality_quick? (
 		pgo
 	)
-	trainer-constrained-quality? (
+	libvpx_trainers_constrained_quality? (
 		pgo
 	)
-	trainer-constrained-quality-quick? (
+	libvpx_trainers_constrained_quality_quick? (
 		pgo
 	)
-	trainer-lossless? (
+	libvpx_trainers_lossless? (
 		pgo
 	)
-	trainer-lossless-quick? (
+	libvpx_trainers_lossless_quick? (
 		pgo
 	)
 "
@@ -898,27 +898,27 @@ train_trainer_custom() {
 	[[ "${lib_type}" == "static" ]] && return # Reuse the shared PGO profile
 	export S="${S_ORIG}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 	export BUILD_DIR="${S}"
-	if use trainer-2-pass-constrained-quality ; then
+	if use libvpx_trainers_2_pass_constrained_quality ; then
 		_trainer_plan_2_pass_constrained_quality "libvpx" "full"
 		_trainer_plan_2_pass_constrained_quality "libvpx-vp9" "full"
 	fi
-	if use trainer-2-pass-constrained-quality-quick ; then
+	if use libvpx_trainers_2_pass_constrained_quality_quick ; then
 		_trainer_plan_2_pass_constrained_quality "libvpx" "quick"
 		_trainer_plan_2_pass_constrained_quality "libvpx-vp9" "quick"
 	fi
-	if use trainer-constrained-quality ; then
+	if use libvpx_trainers_constrained_quality ; then
 		_trainer_plan_constrained_quality "libvpx" "full"
 		_trainer_plan_constrained_quality "libvpx-vp9" "full"
 	fi
-	if use trainer-constrained-quality-quick ; then
+	if use libvpx_trainers_constrained_quality_quick ; then
 		_trainer_plan_constrained_quality "libvpx" "quick"
 		_trainer_plan_constrained_quality "libvpx-vp9" "quick"
 	fi
-	if use trainer-lossless ; then
+	if use libvpx_trainers_lossless ; then
 		_trainer_plan_lossless "libvpx" "full"
 		_trainer_plan_lossless "libvpx-vp9" "full"
 	fi
-	if use trainer-lossless-quick ; then
+	if use libvpx_trainers_lossless_quick ; then
 		_trainer_plan_lossless "libvpx" "quick"
 		_trainer_plan_lossless "libvpx-vp9" "quick"
 	fi

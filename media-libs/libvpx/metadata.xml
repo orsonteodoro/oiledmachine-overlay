@@ -138,13 +138,13 @@
     <flag name="pgo">
       Use profile guided optimization.
     </flag>
-    <flag name="trainer-2-pass-constrained-quality">
+    <flag name="libvpx_trainers_2_pass_constrained_quality">
       Performs an addtional 2 pass training.  Two pass improves quality
       and rate control.  This step can be skipped for live streamers.
 
       3 second with multiple resolutions.
     </flag>
-    <flag name="trainer-2-pass-constrained-quality-quick">
+    <flag name="libvpx_trainers_2_pass_constrained_quality_quick">
       Performs an addtional 2 pass training.  Two pass improves quality
       and rate control.  This step can be skipped for live streamers.
 
@@ -152,25 +152,25 @@
 
       (Ebuild maintainer recommended for encoding)
     </flag>
-    <flag name="trainer-constrained-quality">
+    <flag name="libvpx_trainers_constrained_quality">
       Use the 1 pass constrained quality trainer.  (ebuild
       maintainer recommended)
 
       3 second with multiple resolutions.
     </flag>
-    <flag name="trainer-constrained-quality-quick">
+    <flag name="libvpx_trainers_constrained_quality_quick">
       Use the 1 pass constrained quality trainer.
 
       1 second with lowest resolution only.
 
       (Ebuild maintainer recommended for decoding)
     </flag>
-    <flag name="trainer-lossless">
+    <flag name="libvpx_trainers_lossless">
       Use the lossless trainer.
 
       3 second with multiple resolutions.
     </flag>
-    <flag name="trainer-lossless-quick">
+    <flag name="libvpx_trainers_lossless_quick">
       Use the lossless trainer.
 
       1 second with lowest resolutions only.
