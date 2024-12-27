@@ -10,6 +10,7 @@
     <bugs-to>https://github.com/openvinotoolkit/openvino/issues</bugs-to>
     <remote-id type="github">openvinotoolkit/openvino</remote-id>
   </upstream>
+  <![CDATA[
   <!--
 
   oiledmachine-overlay:
@@ -21,9 +22,10 @@
   2021.4.2 - OpenVINO™ 1.0 API (End Of Life [EOL])
   
   -->
+  ]]>
   <use>
     <flag name="gna">
-      Support Intel® Gaussian & Neural Accelerator (Intel® GNA).
+      Support Intel® Gaussian and Neural Accelerator (Intel® GNA).
       [Discontinued in 2024.0]
     </flag>
     <flag name="gna1">
