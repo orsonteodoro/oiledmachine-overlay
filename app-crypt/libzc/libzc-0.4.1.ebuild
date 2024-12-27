@@ -8,6 +8,10 @@ UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
+TRAINERS=(
+	"libzc_trainers_all"
+	"libzc_trainers_bruteforce"
+)
 
 inherit autotools flag-o-matic toolchain-funcs uopts
 
@@ -27,18 +31,21 @@ RESTRICT="
 	)
 "
 SLOT="0"
-IUSE="test trainer-all trainer-bruteforce"
+IUSE="
+${TRAINERS[@]}
+test
+"
 REQUIRED_USE="
 	bolt? (
 		|| (
-			trainer-all
-			trainer-bruteforce
+			libzc_trainers_all
+			libzc_trainers_bruteforce
 		)
 	)
 	pgo? (
 		|| (
-			trainer-all
-			trainer-bruteforce
+			libzc_trainers_all
+			libzc_trainers_bruteforce
 		)
 	)
 "
@@ -107,9 +114,9 @@ train_meets_requirements() {
 }
 
 train_trainer_custom() {
-	if use trainer-all ; then
+	if use libzc_trainers_all ; then
 		emake -C tests check
-	elif use trainer-bruteforce ; then
+	elif use libzc_trainers_bruteforce ; then
 		emake -C tests bruteforce
 		pushd tests || die
 			./bruteforce || true
