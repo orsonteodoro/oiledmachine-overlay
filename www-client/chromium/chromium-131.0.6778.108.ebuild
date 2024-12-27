@@ -845,8 +845,8 @@ REQUIRED_USE+="
 	)
 "
 if is_cromite_compatible ; then
-	# USE=pgo is default ON in Chromite but dropped for user choice.
-	# USE=official is default ON in Chromite, but this ebuild reserves it
+	# USE=pgo is default ON in Cromite but dropped for user choice.
+	# USE=official is default ON in Cromite, but this ebuild reserves it
 	# for authentic Chromium.
 	#
 	# The rest are the same defaults as the patchset.
@@ -1162,16 +1162,16 @@ COMMON_DEPEND="
 			media-libs/opus:=
 		)
 		patent_status_nonfree_patents? (
-			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},encode?,opus?,vorbis?,vpx?]
+			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree_patents,vorbis?,vpx?]
 		)
 		!patent_status_nonfree_patents? (
-			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
+			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,-patent_status_nonfree_patents,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
 		)
 		patent_status_without_codec_developer_tax? (
-			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable-codec-developer,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
+			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,patent_status_without_codec_developer_tax,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
 		)
 		patent_status_free_for_end_users? (
-			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,proprietary-codecs-disable-end-user,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
+			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,patent_status_free_for_end_users,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
 		)
 		|| (
 			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-samba]
@@ -2426,7 +2426,7 @@ einfo "Removing ${x} from ungoogled-chromium"
 	popd >/dev/null 2>&1 || die
 }
 
-prepare_chromite_with_ungoogled_chromium() {
+prepare_cromite_with_ungoogled_chromium() {
 	# Fix hunk collisions.
 	filterdiff \
 		-x '*/chrome/browser/ui/browser_commands.cc' \
@@ -2460,7 +2460,7 @@ prepare_chromite_with_ungoogled_chromium() {
 	# can get a hunk dependency within the same patch which it doesn't
 	# handle well.
 	local rows=(
-#		chromite_patch;ungoogle_chromium_patch
+#		cromite_patch;ungoogle_chromium_patch
 		"autofill-miscellaneous.patch;0003-disable-autofill-download-manager.patch"
 		"ungoogled-chromium-no-special-hosts-domains.patch;disable-google-host-detection.patch"
 		"ungoogled-chromium-Disable-untraceable-URLs.patch;all-add-trk-prefixes-to-possibly-evil-connections.patch"
@@ -2548,7 +2548,7 @@ einfo "Preferring Cromite over ungoogled-chromium"
 			local x="${ungoogle_chromium_patch}"
 			sed -i -e "/${x}/d" "${S_UNGOOGLED_CHROMIUM}/patches/series" || die
 		elif is_user_choice_ungoogled_chromium ; then
-			local x="${chromite_patch}"
+			local x="${cromite_patch}"
 			if [[ -e "build/cromite_patches_list_new.txt" ]] ; then
 				sed -i -e "/${x}/d" "${S_CROMITE}/build/cromite_patches_list_new.txt" || die
 			else
@@ -2560,7 +2560,7 @@ eerror "Invalid choice.  You must choose on of the patches on the right to resol
 eerror
 eerror "Valid values:"
 eerror
-eerror "         Chromite patch:  ${chromite_patch}"
+eerror "         Cromite patch:  ${cromite_patch}"
 eerror "ungoogle-chromium patch:  ${ungoogle_chromium_patch}"
 eerror
 			die
@@ -2579,7 +2579,7 @@ src_prepare() {
 
 
 	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium && has cromite ${IUSE_EFFECTIVE} && use cromite ; then
-		prepare_chromite_with_ungoogled_chromium
+		prepare_cromite_with_ungoogled_chromium
 	fi
 
 	if has cromite ${IUSE_EFFECTIVE} && use cromite ; then
@@ -2986,7 +2986,7 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 	if has cromite ${IUSE_EFFECTIVE} && use cromite ; then
 		keeplibs+=(
 			"cromite_flags/third_party"
-	#		"third_party/chromite"
+	#		"third_party/cromite"
 		)
 	fi
 
@@ -3903,26 +3903,27 @@ ewarn "The new V8 Sandbox [for the JavaScript engine] (2024) will be automagic o
 	# remove / substitute
 		myconf_gn+=" is_component_ffmpeg=true"
 	else
-		ffmpeg_branding="$(usex proprietary-codecs Chrome Chromium)"
-		myconf_gn+=" proprietary_codecs=$(usex proprietary-codecs true false)"
+		ffmpeg_branding="$(usex patent_status_nonfree_patents Chrome Chromium)"
+		myconf_gn+=" proprietary_codecs=$(usex patent_status_nonfree_patents true false)"
 		myconf_gn+=" ffmpeg_branding=\"${ffmpeg_branding}\""
 	fi
 
 	myconf_gn+=" enable_av1_decoder=$(usex dav1d true false)"
 	myconf_gn+=" enable_dav1d_decoder=$(usex dav1d true false)"
-	myconf_gn+=" enable_hevc_parser_and_hw_decoder=$(usex proprietary-codecs $(usex vaapi-hevc true false) false)"
+	myconf_gn+=" enable_hevc_parser_and_hw_decoder=$(usex patent_status_nonfree_patents $(usex vaapi-hevc true false) false)"
 	myconf_gn+=" enable_libaom=$(usex libaom $(usex encode true false) false)"
-	myconf_gn+=" enable_platform_hevc=$(usex proprietary-codecs $(usex vaapi-hevc true false) false)"
+	myconf_gn+=" enable_platform_hevc=$(usex patent_status_nonfree_patents $(usex vaapi-hevc true false) false)"
 	myconf_gn+=" media_use_libvpx=$(usex vpx true false)"
-	myconf_gn+=" media_use_openh264=$(usex proprietary-codecs $(usex openh264 true false) false)"
+	myconf_gn+=" media_use_openh264=$(usex patent_status_nonfree_patents $(usex openh264 true false) false)"
 	myconf_gn+=" rtc_include_opus=$(usex opus true false)"
-	myconf_gn+=" rtc_use_h264=$(usex proprietary-codecs true false)"
+	myconf_gn+=" rtc_use_h264=$(usex patent_status_nonfree_patents true false)"
 	if ! use system-ffmpeg ; then
 	# The internal/vendored ffmpeg enables non-free codecs.
 		local _media_use_ffmpeg="true"
 		if \
-			   use proprietary-codecs-disable-codec-developer \
-			|| use proprietary-codecs-disable ; then
+			     use patent_status_without_codec_developer_tax \
+			||   use patent_status_free_for_end_users \
+			|| ! use patent_status_nonfree_patents ; then
 			_media_use_ffmpeg="false"
 		fi
 		myconf_gn+=" media_use_ffmpeg=${_media_use_ffmpeg}"

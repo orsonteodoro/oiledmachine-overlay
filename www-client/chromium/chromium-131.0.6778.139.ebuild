@@ -2989,7 +2989,7 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 	if has cromite ${IUSE_EFFECTIVE} && use cromite ; then
 		keeplibs+=(
 			"cromite_flags/third_party"
-			"third_party/cromite"
+	#		"third_party/cromite"
 		)
 	fi
 
