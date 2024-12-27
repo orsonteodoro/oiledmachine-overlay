@@ -1,0 +1,9 @@
+# This file is part of the genkernel ebuild
+genkernel_trainers_crypto - Add dependencies required for optimizing cryptography kernel codepaths
+genkernel_trainers_memory - Add dependencies required for optimizing memory codepaths
+genkernel_trainers_network - Add dependencies required for optimizing network codepaths
+genkernel_trainers_p2p - Add dependencies required for optimizing network codepaths
+genkernel_trainers_webcam - Add dependencies required for optimizing webcam codepaths
+genkernel_trainers_xscreensaver_2d - Add dependencies required for optimizing graphics codepaths
+genkernel_trainers_xscreensaver_3d - Add dependencies required for optimizing graphics codepaths
+genkernel_trainers_yt - Add dependencies required for optimizing using online video

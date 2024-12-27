@@ -187,14 +187,14 @@ IUSE+="
 	steghide
 	sudo
 	pgo-custom
-	pgo_trainer_crypto
-	pgo_trainer_memory
-	pgo_trainer_network
-	pgo_trainer_p2p
-	pgo_trainer_webcam
-	pgo_trainer_xscreensaver_2d
-	pgo_trainer_xscreensaver_3d
-	pgo_trainer_yt
+	genkernel_trainers_crypto
+	genkernel_trainers_memory
+	genkernel_trainers_network
+	genkernel_trainers_p2p
+	genkernel_trainers_webcam
+	genkernel_trainers_xscreensaver_2d
+	genkernel_trainers_xscreensaver_3d
+	genkernel_trainers_yt
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -205,41 +205,41 @@ REQUIRED_USE+="
 	clang-pgo? (
 		llvm
 		|| (
-			pgo_trainer_crypto
-			pgo_trainer_memory
-			pgo_trainer_network
-			pgo_trainer_p2p
-			pgo_trainer_webcam
-			pgo_trainer_xscreensaver_2d
-			pgo_trainer_xscreensaver_3d
-			pgo_trainer_yt
+			genkernel_trainers_crypto
+			genkernel_trainers_memory
+			genkernel_trainers_network
+			genkernel_trainers_p2p
+			genkernel_trainers_webcam
+			genkernel_trainers_xscreensaver_2d
+			genkernel_trainers_xscreensaver_3d
+			genkernel_trainers_yt
 		)
 	)
 	lto? (
 		llvm
 	)
-	pgo_trainer_crypto? (
+	genkernel_trainers_crypto? (
 		clang-pgo
 	)
-	pgo_trainer_memory? (
+	genkernel_trainers_memory? (
 		clang-pgo
 	)
-	pgo_trainer_network? (
+	genkernel_trainers_network? (
 		clang-pgo
 	)
-	pgo_trainer_p2p? (
+	genkernel_trainers_p2p? (
 		clang-pgo
 	)
-	pgo_trainer_webcam? (
+	genkernel_trainers_webcam? (
 		clang-pgo
 	)
-	pgo_trainer_xscreensaver_2d? (
+	genkernel_trainers_xscreensaver_2d? (
 		clang-pgo
 	)
-	pgo_trainer_xscreensaver_3d? (
+	genkernel_trainers_xscreensaver_3d? (
 		clang-pgo
 	)
-	pgo_trainer_yt? (
+	genkernel_trainers_yt? (
 		clang-pgo
 	)
 	shadowcallstack? (
@@ -397,28 +397,28 @@ RDEPEND+="
 			$(gen_llvm_rdepends)
 		)
 	)
-	pgo_trainer_crypto? (
+	genkernel_trainers_crypto? (
 		sys-fs/cryptsetup
 	)
-	pgo_trainer_memory? (
+	genkernel_trainers_memory? (
 		sys-apps/util-linux
 		sys-process/procps
 	)
-	pgo_trainer_network? (
+	genkernel_trainers_network? (
 		net-analyzer/traceroute
 		net-misc/curl
 		net-misc/iputils
 	)
-	pgo_trainer_p2p? (
+	genkernel_trainers_p2p? (
 		net-p2p/ctorrent
 		sys-apps/util-linux
 		sys-process/procps
 	)
-	pgo_trainer_webcam? (
+	genkernel_trainers_webcam? (
 		media-libs/libv4l[utils]
 		media-video/ffmpeg[encode,v4l]
 	)
-	pgo_trainer_yt? (
+	genkernel_trainers_yt? (
 		$(python_gen_cond_dep 'dev-python/selenium[${PYTHON_USEDEP}]')
 		|| (
 			(
@@ -433,11 +433,11 @@ RDEPEND+="
 			)
 		)
 	)
-	pgo_trainer_xscreensaver_2d? (
+	genkernel_trainers_xscreensaver_2d? (
 		sys-process/procps
 		x11-misc/xscreensaver[X]
 	)
-	pgo_trainer_xscreensaver_3d? (
+	genkernel_trainers_xscreensaver_3d? (
 		sys-process/procps
 		virtual/opengl
 		x11-misc/xscreensaver[X,opengl]
