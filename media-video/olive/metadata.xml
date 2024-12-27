@@ -19,11 +19,20 @@
     <remote-id type="github">olive-editor/olive</remote-id>
   </upstream>  
   <use>
+    <flag name="alsa">
+      Add ALSA audio output support
+    </flag>
+    <flag name="jack">
+      Add Jack audio output support
+    </flag>
     <flag name="mp3">
       Add MP3 audio encode support
     </flag>
     <flag name="opus">
       Add Opus audio encode support
+    </flag>
+    <flag name="oss">
+      Add OSS audio output support
     </flag>
     <flag name="png">
       Add PNG encode support
