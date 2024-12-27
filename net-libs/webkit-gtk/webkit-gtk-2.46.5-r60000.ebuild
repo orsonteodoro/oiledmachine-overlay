@@ -696,29 +696,6 @@ REQUIRED_USE+="
 	)
 "
 
-gen_ffmpeg_g722_depends() {
-	local use_deps="${1}"
-	echo "
-		|| (
-	"
-	local s
-	for s in ${FFMPEG_COMPAT} ; do
-			echo "
-				(
-					!<dev-libs/openssl-3
-					media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,-fdk,-kvazaar,-openh264,openssl,-vaapi,-x264,-x265]
-				)
-				(
-					media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,-fdk,-kvazaar,-openh264,-openssl,-vaapi,-x264,-x265]
-				)
-			"
-	done
-	echo "
-		)
-		media-video/ffmpeg:=
-	"
-}
-
 RDEPEND_PATENTS="
 	>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},patent_status_new_hardware?]
 	!patent_status_nonfree? (
@@ -726,16 +703,8 @@ RDEPEND_PATENTS="
 		!media-plugins/gst-plugins-hls
 		!media-plugins/gst-plugins-libde265
 		!media-plugins/gst-plugins-openh264
-		!media-plugins/gst-plugins-vaapi
 		!media-plugins/gst-plugins-x264
 		!media-plugins/gst-plugins-x265
-		g722? (
-			!<media-video/ffmpeg-5[openssl]
-			$(gen_ffmpeg_g722_depends)
-		)
-		gstreamer? (
-			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},-vaapi]
-		)
 	)
 "
 
@@ -1221,7 +1190,6 @@ verify_codecs() {
 		"cuda"
 		"fdk"
 		"openh264"
-		"vaapi"
 		"x264"
 		"x265"
 	)
@@ -1242,22 +1210,15 @@ eerror
 eerror "Required changes:"
 eerror
 eerror    ">=dev-libs/openssl-3"
-eerror    "media-video/ffmpeg[-amr,-cuda,-fdk,-openh264,openssl,-vaapi,-x264,-x265]"
+eerror    "media-video/ffmpeg[-amr,-cuda,-fdk,-openh264,openssl,-x264,-x265]"
 eerror
 eerror "or"
 eerror
-eerror    "media-video/ffmpeg[-amr,-cuda,-fdk,-openh264,-openssl,-vaapi,-x264,-x265]"
+eerror    "media-video/ffmpeg[-amr,-cuda,-fdk,-openh264,-openssl,-x264,-x265]"
 eerror
 			die
 		fi
 	done
-	if has_version "media-libs/gst-plugins-bad[vaapi]" ; then
-eerror
-eerror "Disabling vaapi in the media-libs/gst-plugins-bad package is required"
-eerror "for proprietary-codecs-disable* USE flags."
-eerror
-		die
-	fi
 	if has_version "<dev-libs/openssl-3" \
 		&& has_version "media-video/ffmpeg[openssl]" ; then
 # Version 3 is allowed because of the Grant of Patent Clause in Apache-2.0.
