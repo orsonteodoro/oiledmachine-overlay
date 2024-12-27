@@ -40,10 +40,24 @@ HOMEPAGE="
 "
 LICENSE="GPL-3"
 SLOT="0"
+# For default ON status see docker/scripts/build_ffmpeg.sh
+# Only non taxed will be enabled ON in this ebuild.
 IUSE+="
-doc qt5 qt6 test
+doc +jpeg2k +mp3 +opus +png qt5 qt6 test +svt-av1 +theora +truetype +vorbis +webp xvid x264 x265
 "
 REQUIRED_USE="
+	|| (
+		mp3
+		opus
+		vorbis
+	)
+	|| (
+		svt-av1
+		theora
+		x264
+		x265
+		xvid
+	)
 	^^ (
 		qt5
 		qt6
@@ -57,8 +71,8 @@ RESTRICT="
 #	media-libs/olivecore
 DEPEND="
 	>=media-libs/opencolorio-2.1.1:=
-	>=media-libs/openimageio-2.1.12:=
-	>=media-video/ffmpeg-3.0.0
+	>=media-libs/openimageio-2.1.12:=[png?]
+	>=media-video/ffmpeg-3.0.0[jpeg2k?,mp3?,opus?,svt-av1?,theora?,truetype?,vorbis?,webp?]
 	>=media-libs/portaudio-19.06.0
 	>=media-libs/openexr-2.3.0:=
 	media-libs/opentimelineio:=
@@ -82,6 +96,15 @@ DEPEND="
 		dev-qt/qtbase:=
 		>=dev-qt/qtsvg-${QT6_PV}:6
 		dev-qt/qtsvg:=
+	)
+	xvid? (
+		media-video/ffmpeg[gpl,xvid]
+	)
+	x264? (
+		media-video/ffmpeg[gpl,x264]
+	)
+	x265? (
+		media-video/ffmpeg[gpl,x265]
 	)
 "
 RDEPEND="

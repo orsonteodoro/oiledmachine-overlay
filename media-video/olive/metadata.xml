@@ -18,4 +18,33 @@
     <bugs-to>https://github.com/olive-editor/olive/issues</bugs-to>
     <remote-id type="github">olive-editor/olive</remote-id>
   </upstream>  
+  <use>
+    <flag name="mp3">
+      Add MP3 audio encode support
+    </flag>
+    <flag name="opus">
+      Add Opus audio encode support
+    </flag>
+    <flag name="png">
+      Add PNG encode support
+    </flag>
+    <flag name="svt-av1">
+      Add AV1 audio encode support
+    </flag>
+    <flag name="theora">
+      Add Theora video encode support
+    </flag>
+    <flag name="vorbis">
+      Add Vorbis audio encode support
+    </flag>
+    <flag name="x264">
+      Add H.264 video encode support
+    </flag>
+    <flag name="x265">
+      Add H.265 video encode support
+    </flag>
+    <flag name="xvid">
+      Add H.265 video encode support
+    </flag>
+  </use>
 </pkgmetadata>
