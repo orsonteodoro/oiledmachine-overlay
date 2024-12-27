@@ -324,7 +324,7 @@
       FFMPEG_TRAINING_256_PRESET="ultrafast" # unsharp edges but fast encoding
       FFMPEG_TRAINING_256_PRESET="medium" # default
 
-  FFMPEG_TRAINER_VAAPI_SCALE_ALG - Choose either CPU or GPU
+  ffmpeg_trainers_VAAPI_SCALE_ALG - Choose either CPU or GPU
   VA-API scaling.  Acceptable values:  gpu (default), igp, cpu.
 
 
@@ -775,28 +775,28 @@
     See also
     https://ffmpeg.org/ffmpeg-filters.html#dnn_005fprocessing-1
   </flag>
-  <flag name="trainer-audio-cbr">
+  <flag name="ffmpeg_trainers_audio_cbr">
     Use the CBR audio trainer.
   </flag>
-  <flag name="trainer-audio-lossless">
+  <flag name="ffmpeg_trainers_audio_lossless">
     Use the lossless audio trainer.
   </flag>
-  <flag name="trainer-audio-vbr">
+  <flag name="ffmpeg_trainers_audio_vbr">
     Use the VBR audio trainer.
   </flag>
-  <flag name="trainer-av-streaming">
+  <flag name="ffmpeg_trainers_av_streaming">
     Use the audio video stream trainer.  This will access the camera, X11, or
     active KMS plane as sources of data.  Currently it will train for bitrates
     requested by live streaming websites, but it may be updated later to train
     with the network connections.
   </flag>
-  <flag name="trainer-video-2-pass-constrained-quality">
+  <flag name="ffmpeg_trainers_video_2_pass_constrained_quality">
     Performs an addtional 2 pass training.  Two pass improves quality and rate
     control.  This step can be skipped for live streamers.
 
     Uses 3 second with multiple resolutions.
   </flag>
-  <flag name="trainer-video-2-pass-constrained-quality-quick">
+  <flag name="ffmpeg_trainers_video_2_pass_constrained_quality_quick">
     Performs an addtional 2 pass training.  Two pass improves quality and rate
     control.  This step can be skipped for live streamers.
 
@@ -804,24 +804,24 @@
 
     (Ebuild maintainer recommended for encoding)
   </flag>
-  <flag name="trainer-video-constrained-quality">
+  <flag name="ffmpeg_trainers_video_constrained_quality">
     Use the 1 pass constrained quality video trainer.
 
     Uses 3 second with multiple resolutions.
   </flag>
-  <flag name="trainer-video-constrained-quality-quick">
+  <flag name="ffmpeg_trainers_video_constrained_quality_quick">
     Use the 1 pass constrained quality video trainer.
 
     Uses 1 second with lowest resolutions.
 
     (Ebuild maintainer recommended for decoding)
   </flag>
-  <flag name="trainer-video-lossless">
+  <flag name="ffmpeg_trainers_video_lossless">
     Use the lossless video trainer.
 
     Uses 3 second with multiple resolutions.
   </flag>
-  <flag name="trainer-video-lossless-quick">
+  <flag name="ffmpeg_trainers_video_lossless_quick">
     Use the lossless video trainer.
 
     Uses 1 second with lowest resolutions.

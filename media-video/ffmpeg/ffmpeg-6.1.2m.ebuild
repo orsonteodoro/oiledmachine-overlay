@@ -178,16 +178,16 @@ NV_CODEC_HEADERS_PV="9.1.23.1"
 SCM=""
 SOC_PATCH="ffmpeg-rpi-6.1-r3.patch"
 TRAINERS=(
-	"trainer-audio-cbr"
-	"trainer-audio-lossless"
-	"trainer-audio-vbr"
-	"trainer-av-streaming"
-	"trainer-video-2-pass-constrained-quality"
-	"trainer-video-2-pass-constrained-quality-quick"
-	"trainer-video-constrained-quality"
-	"trainer-video-constrained-quality-quick"
-	"trainer-video-lossless"
-	"trainer-video-lossless-quick"
+	"ffmpeg_trainers_audio_cbr"
+	"ffmpeg_trainers_audio_lossless"
+	"ffmpeg_trainers_audio_vbr"
+	"ffmpeg_trainers_av_streaming"
+	"ffmpeg_trainers_video_2_pass_constrained_quality"
+	"ffmpeg_trainers_video_2_pass_constrained_quality_quick"
+	"ffmpeg_trainers_video_constrained_quality"
+	"ffmpeg_trainers_video_constrained_quality_quick"
+	"ffmpeg_trainers_video_lossless"
+	"ffmpeg_trainers_video_lossless_quick"
 )
 TRAIN_SANDBOX_EXCEPTION_VAAPI=1
 UOPTS_SUPPORT_EBOLT=1
@@ -562,7 +562,7 @@ REQUIRED_USE+="
 	${CPU_REQUIRED_USE}
 	${REQUIRED_USE_LICENSES}
 	!kernel_linux? (
-		!trainer-av-streaming
+		!ffmpeg_trainers_av_streaming
 	)
 	!proprietary-codecs-disable? (
 		!proprietary-codecs-disable-end-user? (
@@ -638,16 +638,16 @@ REQUIRED_USE+="
 	)
 	pgo? (
 		|| (
-			trainer-audio-cbr
-			trainer-audio-lossless
-			trainer-audio-vbr
-			trainer-av-streaming
-			trainer-video-2-pass-constrained-quality
-			trainer-video-2-pass-constrained-quality-quick
-			trainer-video-constrained-quality
-			trainer-video-constrained-quality-quick
-			trainer-video-lossless
-			trainer-video-lossless-quick
+			ffmpeg_trainers_audio_cbr
+			ffmpeg_trainers_audio_lossless
+			ffmpeg_trainers_audio_vbr
+			ffmpeg_trainers_av_streaming
+			ffmpeg_trainers_video_2_pass_constrained_quality
+			ffmpeg_trainers_video_2_pass_constrained_quality_quick
+			ffmpeg_trainers_video_constrained_quality
+			ffmpeg_trainers_video_constrained_quality_quick
+			ffmpeg_trainers_video_lossless
+			ffmpeg_trainers_video_lossless_quick
 		)
 	)
 	proprietary-codecs? (
@@ -685,16 +685,16 @@ REQUIRED_USE+="
 	test? (
 		encode
 	)
-	trainer-audio-cbr? (
+	ffmpeg_trainers_audio_cbr? (
 		pgo
 	)
-	trainer-audio-lossless? (
+	ffmpeg_trainers_audio_lossless? (
 		pgo
 	)
-	trainer-audio-vbr? (
+	ffmpeg_trainers_audio_vbr? (
 		pgo
 	)
-	trainer-av-streaming? (
+	ffmpeg_trainers_av_streaming? (
 		encode
 		kernel_linux
 		pgo
@@ -711,22 +711,22 @@ REQUIRED_USE+="
 			x265
 		)
 	)
-	trainer-video-2-pass-constrained-quality? (
+	ffmpeg_trainers_video_2_pass_constrained_quality? (
 		pgo
 	)
-	trainer-video-2-pass-constrained-quality-quick? (
+	ffmpeg_trainers_video_2_pass_constrained_quality_quick? (
 		pgo
 	)
-	trainer-video-constrained-quality? (
+	ffmpeg_trainers_video_constrained_quality? (
 		pgo
 	)
-	trainer-video-constrained-quality-quick? (
+	ffmpeg_trainers_video_constrained_quality_quick? (
 		pgo
 	)
-	trainer-video-lossless? (
+	ffmpeg_trainers_video_lossless? (
 		pgo
 	)
-	trainer-video-lossless-quick? (
+	ffmpeg_trainers_video_lossless_quick? (
 		pgo
 	)
 "
@@ -1097,7 +1097,7 @@ BDEPEND+="
 		app-alternatives/bc
 		net-misc/wget
 	)
-	trainer-av-streaming? (
+	ffmpeg_trainers_av_streaming? (
 		vaapi? (
 			>=media-libs/libva-1.2.1-r1:0=[${MULTILIB_USEDEP},drm(+),X]
 			media-video/libva-utils[vainfo]
@@ -1305,7 +1305,7 @@ eerror
 }
 
 _pgo_check_av() {
-	! use trainer-av-streaming && return
+	! use ffmpeg_trainers_av_streaming && return
 	if [[ -z "${capture_path}" ]] ; then
 eerror
 eerror "${id} is missing the abspath to your capture device as a per-package"
@@ -1388,7 +1388,7 @@ ewarn "The PGO use flag is a Work In Progress (WIP)"
 	llvm_pkg_setup
 	uopts_setup
 
-	if use trainer-av-streaming ; then
+	if use ffmpeg_trainers_av_streaming ; then
 		if false \
 			&& ! grep -q "register_sanitize_hook" \
 				$(realpath "${EROOT}/usr/lib/portage/"*"/bashrc-functions.sh") ; then
@@ -1405,7 +1405,7 @@ eerror
 			die
 		fi
 ewarn
-ewarn "trainer-av-streaming is WIP"
+ewarn "ffmpeg_trainers_av_streaming is WIP"
 ewarn "Do not use until hooks for (secure) _wipe_data callbacks are fixed."
 ewarn
 
@@ -1424,11 +1424,11 @@ ewarn
 		sleep 15
 	fi
 
-	if use trainer-av-streaming \
+	if use ffmpeg_trainers_av_streaming \
 		&& ( has pid-sandbox ${FEATURES} || has ipc-sandbox ${FEATURES} ) ; then
 eerror
 eerror "You must disable the pid-sandbox and ipc-sandbox on a per-package"
-eerror "level for the USE=trainer-av-streaming for screencast PGO/BOLT"
+eerror "level for the USE=ffmpeg_trainers_av_streaming for screencast PGO/BOLT"
 eerror "training."
 eerror
 eerror "pid-sandbox is required for checking if X11 is being used."
@@ -1455,7 +1455,7 @@ eprintf "PID" "${pid}"
 		| tr -d '\0' \
 		| cut -f 2 -d "=")
 eprintf "DISPLAY" "${display}"
-	if use trainer-av-streaming \
+	if use ffmpeg_trainers_av_streaming \
 		&& ( use pgo || use bolt ) \
 		&& [[ -z "${display}" ]] ; then
 eerror
@@ -1464,7 +1464,7 @@ eerror
 		die
 	fi
 
-	if use trainer-av-streaming \
+	if use ffmpeg_trainers_av_streaming \
 		&& ( use pgo || use bolt ) \
 		&& ! ( DISPLAY="${TRAIN_DISPLAY:-${display}}" xhost \
 			| grep -q -e "LOCAL:" ) ; then
@@ -3370,7 +3370,7 @@ ewarn "VA-API training is WIP"
 			local vaapi_codec
 			local _vaapi_codec
 
-			local vaapi_scale_alg=${FFMPEG_TRAINER_VAAPI_SCALE_ALG:-gpu}
+			local vaapi_scale_alg=${ffmpeg_trainers_VAAPI_SCALE_ALG:-gpu}
 			vaapi_args=(
 				-init_hw_device
 				vaapi=card0:${vaapi_dev}
@@ -3552,7 +3552,7 @@ _trainer_plan_av_streaming() {
 	local training_args=
 
 ewarn
-ewarn "trainer-av-streaming is a Work In Progress (WIP)"
+ewarn "ffmpeg_trainers_av_streaming is a Work In Progress (WIP)"
 ewarn
 
 	local name="${encoding_codec^^}"
@@ -3769,7 +3769,7 @@ run_trainer_audio_codecs() {
 		local decode_codec=$(echo "${codec}" | cut -f 3 -d ":")
 		local container_extension=$(echo "${codec}" | cut -f 4 -d ":")
 		local tags=$(echo "${codec}" | cut -f 5 -d ":")
-		if use trainer-audio-cbr ; then
+		if use ffmpeg_trainers_audio_cbr ; then
 			_trainer_plan_audio_cbr \
 				"${audio_scenario}" \
 				"${encode_codec}" \
@@ -3777,7 +3777,7 @@ run_trainer_audio_codecs() {
 				"${container_extension}" \
 				"${tags}"
 		fi
-		if use trainer-audio-vbr ; then
+		if use ffmpeg_trainers_audio_vbr ; then
 			_trainer_plan_audio_vbr \
 				"${audio_scenario}" \
 				"${encode_codec}" \
@@ -3785,7 +3785,7 @@ run_trainer_audio_codecs() {
 				"${container_extension}" \
 				"${tags}"
 		fi
-		if use trainer-audio-lossless ; then
+		if use ffmpeg_trainers_audio_lossless ; then
 			_trainer_plan_audio_lossless \
 				"${audio_scenario}" \
 				"${encode_codec}" \
@@ -3807,7 +3807,7 @@ ewarn
 		local decode_codec=$(echo "${codec}" | cut -f 3 -d ":")
 		local container_extension=$(echo "${codec}" | cut -f 4 -d ":")
 		local tags=$(echo "${codec}" | cut -f 5 -d ":")
-		if use trainer-video-2-pass-constrained-quality ; then
+		if use ffmpeg_trainers_video_2_pass_constrained_quality ; then
 			_trainer_plan_video_2_pass_constrained_quality \
 				"full" \
 				"${video_scenario}" \
@@ -3816,7 +3816,7 @@ ewarn
 				"${container_extension}" \
 				"${tags}"
 		fi
-		if use trainer-video-2-pass-constrained-quality-quick ; then
+		if use ffmpeg_trainers_video_2_pass_constrained_quality_quick ; then
 			_trainer_plan_video_2_pass_constrained_quality \
 				"quick" \
 				"${video_scenario}" \
@@ -3825,7 +3825,7 @@ ewarn
 				"${container_extension}" \
 				"${tags}"
 		fi
-		if use trainer-video-constrained-quality ; then
+		if use ffmpeg_trainers_video_constrained_quality ; then
 			_trainer_plan_video_constrained_quality \
 				"full" \
 				"${video_scenario}" \
@@ -3834,7 +3834,7 @@ ewarn
 				"${container_extension}" \
 				"${tags}"
 		fi
-		if use trainer-video-constrained-quality-quick ; then
+		if use ffmpeg_trainers_video_constrained_quality_quick ; then
 			_trainer_plan_video_constrained_quality \
 				"quick" \
 				"${video_scenario}" \
@@ -3843,7 +3843,7 @@ ewarn
 				"${container_extension}" \
 				"${tags}"
 		fi
-		if use trainer-video-lossless ; then
+		if use ffmpeg_trainers_video_lossless ; then
 			_trainer_plan_video_lossless \
 				"full" \
 				"${video_scenario}" \
@@ -3852,7 +3852,7 @@ ewarn
 				"${container_extension}" \
 				"${tags}"
 		fi
-		if use trainer-video-lossless-quick ; then
+		if use ffmpeg_trainers_video_lossless_quick ; then
 			_trainer_plan_video_lossless \
 				"quick" \
 				"${video_scenario}" \
@@ -3873,7 +3873,7 @@ run_trainer_av_codecs() {
 		local adecode_codec=$(echo "${codec}" | cut -f 5 -d ":")
 		local container=$(echo "${codec}" | cut -f 6 -d ":")
 		local tags=$(echo "${codec}" | cut -f 6 -d ":")
-		if use trainer-av-streaming ; then
+		if use ffmpeg_trainers_av_streaming ; then
 			_trainer_plan_av_streaming \
 				"${av_scenario}" \
 				"${vencode_codec}" \
@@ -4128,7 +4128,7 @@ ewarn "The nscd service must be enabled and running for proper DNS resolution."
 ewarn "You are not allowed to redistribute this binary."
 	fi
 	uopts_pkg_postinst
-	if use trainer-av-streaming ; then
+	if use ffmpeg_trainers_av_streaming ; then
 einfo
 einfo "The recommended live streaming settings all of which met deadlines:"
 einfo
@@ -4145,7 +4145,7 @@ ewarn "The /dev/video* should have portage removed from ACL permissions after"
 ewarn "training."
 ewarn
 	fi
-	if use trainer-av-streaming && ( use pgo || use bolt ) ; then
+	if use ffmpeg_trainers_av_streaming && ( use pgo || use bolt ) ; then
 ewarn
 ewarn "You must run \`xhost -local:root:\` after PGO training to restore the"
 ewarn "security default."
