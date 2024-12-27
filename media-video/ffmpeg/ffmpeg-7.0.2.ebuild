@@ -173,6 +173,11 @@ MULTILIB_WRAPPED_HEADERS=(
 )
 N_SAMPLES=1
 NV_CODEC_HEADERS_PV="9.1.23.1"
+PATENT_STATUS=(
+	patent_status_free_for_end_users
+	patent_status_nonfree_patents
+	patent_status_without_codec_developer_tax
+)
 PYTORCH_VERSIONS=(
 	"2.3.0"
 	"2.2.2"
@@ -495,12 +500,12 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${FFMPEG_ENCODER_FLAG_MAP[@]%:*}
 ${FFMPEG_FLAG_MAP[@]%:*}
 ${FFTOOLS[@]/#/+fftools_}
+${PATENT_STATUS[@]}
 ${TRAINERS[@]}
 ${USE_LICENSES[@]}
 alsa chromium -clear-config-first cuda cuda-filters doc dvdvideo +encode gdbm
 jack-audio-connection-kit jack2 liblensfun libqrencode mold opencl-icd-loader
-openvino oss pgo +pic pipewire proprietary-codecs proprietary-codecs-disable
-proprietary-codecs-disable-codec-developer proprietary-codecs-disable-end-user
+openvino oss pgo +pic pipewire 
 +re-codecs sndio soc sr static-libs tensorflow test torch v4l wayland
 
 ebuild-revision-17
@@ -582,25 +587,37 @@ REQUIRED_USE_LICENSES="
 	$(gen_required_use_version3)
 "
 
+PATENT_REQUIRED_USE="
+	amr? (
+		patent_status_nonfree_patents
+	)
+	fdk? (
+		patent_status_nonfree_patents
+	)
+	kvazaar? (
+		patent_status_nonfree_patents
+	)
+	openh264? (
+		patent_status_nonfree_patents
+	)
+	x264? (
+		patent_status_nonfree_patents
+	)
+	x265? (
+		patent_status_nonfree_patents
+	)
+	xvid? (
+		patent_status_nonfree_patents
+	)
+"
+
 REQUIRED_USE+="
 	!soc
 	${CPU_REQUIRED_USE}
+	${PATENT_REQUIRED_USE}
 	${REQUIRED_USE_LICENSES}
 	!kernel_linux? (
 		!ffmpeg_trainers_av_streaming
-	)
-	!proprietary-codecs-disable? (
-		!proprietary-codecs-disable-end-user? (
-			!proprietary-codecs-disable-end-user? (
-				re-codecs
-			)
-		)
-	)
-	^^ (
-		proprietary-codecs
-		proprietary-codecs-disable
-		proprietary-codecs-disable-codec-developer
-		proprietary-codecs-disable-end-user
 	)
 	chromium? (
 		opus
@@ -679,35 +696,6 @@ REQUIRED_USE+="
 			ffmpeg_trainers_video_lossless
 			ffmpeg_trainers_video_lossless_quick
 		)
-	)
-	proprietary-codecs? (
-		re-codecs
-	)
-	proprietary-codecs-disable? (
-		!amr
-		!fdk
-		!kvazaar
-		!openh264
-		!x264
-		!x265
-		!xvid
-	)
-	proprietary-codecs-disable-codec-developer? (
-		!amr
-		!fdk
-		!kvazaar
-		!openh264
-		!x264
-		!x265
-		!xvid
-	)
-	proprietary-codecs-disable-end-user? (
-		!amr
-		!kvazaar
-		!openh264
-		!x264
-		!x265
-		!xvid
 	)
 	soc? (
 		libdrm
@@ -1982,15 +1970,15 @@ eerror
 		)
 	fi
 
-	if use proprietary-codecs-disable ; then
+	if ! use patent_status_nonfree_patents ; then
 		myconf+=(
 			--non-free-patented-codecs=deny
 		)
-	elif use proprietary-codecs-disable-end-user ; then
+	elif use patent_status_free_for_end_users ; then
 		myconf+=(
 			--non-free-patented-codecs=user
 		)
-	elif use proprietary-codecs-disable-codec-developer ; then
+	elif use patent_status_without_codec_developer_tax ; then
 		myconf+=(
 			--non-free-patented-codecs=codec-developer
 		)

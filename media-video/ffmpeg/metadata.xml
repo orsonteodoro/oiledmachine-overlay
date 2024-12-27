@@ -688,23 +688,6 @@
   <flag name="pic">
     Force shared libraries to be built as PIC (this is slower)
   </flag>
-  <flag name="proprietary-codecs">
-    Allows non-free patent-encumbered codecs or network protocols but allows
-    to select or reject specific codec implementations.
-  </flag>
-  <flag name="proprietary-codecs-disable">
-    Disables all codecs that are non-free.
-  </flag>
-  <flag name="proprietary-codecs-disable-codec-developer">
-    Disables all non-free codecs for codec developers.
-
-    Codecs that require developer fees for codec developers will be disabled.
-  </flag>
-  <flag name="proprietary-codecs-disable-end-user">
-    Disable all non-free codecs for end users.
-
-    Codecs that are free for non codec developers will be allowed.
-  </flag>
   <flag name="postproc">
     Build and install libpostproc.
   </flag>
