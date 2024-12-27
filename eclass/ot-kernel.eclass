@@ -422,7 +422,7 @@ PGO_PHASE_PGO="PGO" # Optimization step
 PGO_PHASE_PG0="PG0" # No PGO
 PGO_PHASE_DONE="DONE" # DONE
 
-PGT_TRAINERS=(
+TRAINERS=(
 	2d
 	3d
 	crypto_chn
@@ -591,65 +591,65 @@ SLOT=${SLOT:-${PV}}
 # Upstream keeps reiserfs
 IUSE+="
 ${EBUILD_REV}
-${PGT_TRAINERS[@]/#/ot_kernel_pgt_}
+${TRAINERS[@]/#/ot_kernel_trainers_}
 big-endian bzip2 cpu_flags_arm_thumb gost graphicsmagick gtk gzip imagemagick
 intel-microcode linux-firmware lz4 lzma lzo +ncurses openssl pcc +reiserfs
 xz zstd
 "
 
 REQUIRED_USE+="
-	ot_kernel_pgt_2d? (
+	ot_kernel_trainers_2d? (
 		pgo
 	)
-	ot_kernel_pgt_3d? (
+	ot_kernel_trainers_3d? (
 		pgo
 	)
-	ot_kernel_pgt_crypto_std? (
+	ot_kernel_trainers_crypto_std? (
 		pgo
 	)
-	ot_kernel_pgt_crypto_kor? (
+	ot_kernel_trainers_crypto_kor? (
 		pgo
 	)
-	ot_kernel_pgt_crypto_chn? (
+	ot_kernel_trainers_crypto_chn? (
 		pgo
 	)
-	ot_kernel_pgt_crypto_rus? (
+	ot_kernel_trainers_crypto_rus? (
 		pgo
 	)
-	ot_kernel_pgt_crypto_common? (
+	ot_kernel_trainers_crypto_common? (
 		pgo
 	)
-	ot_kernel_pgt_crypto_less_common? (
+	ot_kernel_trainers_crypto_less_common? (
 		pgo
 	)
-	ot_kernel_pgt_crypto_deprecated? (
+	ot_kernel_trainers_crypto_deprecated? (
 		pgo
 	)
-	ot_kernel_pgt_custom? (
+	ot_kernel_trainers_custom? (
 		pgo
 	)
-	ot_kernel_pgt_emerge1? (
+	ot_kernel_trainers_emerge1? (
 		pgo
 	)
-	ot_kernel_pgt_emerge2? (
+	ot_kernel_trainers_emerge2? (
 		pgo
 	)
-	ot_kernel_pgt_filesystem? (
+	ot_kernel_trainers_filesystem? (
 		pgo
 	)
-	ot_kernel_pgt_memory? (
+	ot_kernel_trainers_memory? (
 		pgo
 	)
-	ot_kernel_pgt_network? (
+	ot_kernel_trainers_network? (
 		pgo
 	)
-	ot_kernel_pgt_p2p? (
+	ot_kernel_trainers_p2p? (
 		pgo
 	)
-	ot_kernel_pgt_webcam? (
+	ot_kernel_trainers_webcam? (
 		pgo
 	)
-	ot_kernel_pgt_yt? (
+	ot_kernel_trainers_yt? (
 		pgo
 	)
 "
@@ -706,64 +706,64 @@ PDEPEND+="
 	gost? (
 		sys-kernel/gostcrypt-linux-crypto
 	)
-	ot_kernel_pgt_2d? (
+	ot_kernel_trainers_2d? (
 		sys-apps/findutils
 		sys-process/procps
 		x11-misc/xscreensaver[X]
 	)
-	ot_kernel_pgt_3d? (
+	ot_kernel_trainers_3d? (
 		sys-apps/findutils
 		sys-process/procps
 		x11-misc/xscreensaver[X,opengl]
 		virtual/opengl
 	)
-	ot_kernel_pgt_crypto_std? (
+	ot_kernel_trainers_crypto_std? (
 		${PGT_CRYPTO_DEPEND}
 	)
-	ot_kernel_pgt_crypto_kor? (
+	ot_kernel_trainers_crypto_kor? (
 		${PGT_CRYPTO_DEPEND}
 	)
-	ot_kernel_pgt_crypto_chn? (
+	ot_kernel_trainers_crypto_chn? (
 		${PGT_CRYPTO_DEPEND}
 	)
-	ot_kernel_pgt_crypto_rus? (
+	ot_kernel_trainers_crypto_rus? (
 		${PGT_CRYPTO_DEPEND}
 	)
-	ot_kernel_pgt_crypto_common? (
+	ot_kernel_trainers_crypto_common? (
 		${PGT_CRYPTO_DEPEND}
 	)
-	ot_kernel_pgt_crypto_less_common? (
+	ot_kernel_trainers_crypto_less_common? (
 		${PGT_CRYPTO_DEPEND}
 	)
-	ot_kernel_pgt_crypto_deprecated? (
+	ot_kernel_trainers_crypto_deprecated? (
 		${PGT_CRYPTO_DEPEND}
 	)
-	ot_kernel_pgt_emerge1? (
+	ot_kernel_trainers_emerge1? (
 		sys-apps/findutils
 	)
-	ot_kernel_pgt_filesystem? (
+	ot_kernel_trainers_filesystem? (
 		sys-apps/findutils
 	)
-	ot_kernel_pgt_memory? (
+	ot_kernel_trainers_memory? (
 		${PYTHON_DEPS}
 		sys-apps/util-linux
 		sys-process/procps
 	)
-	ot_kernel_pgt_network? (
+	ot_kernel_trainers_network? (
 		net-analyzer/traceroute
 		net-misc/curl
 		net-misc/iputils
 	)
-	ot_kernel_pgt_p2p? (
+	ot_kernel_trainers_p2p? (
 		net-p2p/ctorrent
 		sys-apps/util-linux
 		sys-process/procps
 	)
-	ot_kernel_pgt_webcam? (
+	ot_kernel_trainers_webcam? (
 		media-libs/libv4l[utils]
 		media-video/ffmpeg[encode,v4l]
 	)
-	ot_kernel_pgt_yt? (
+	ot_kernel_trainers_yt? (
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
 			dev-python/selenium[${PYTHON_USEDEP}]
@@ -8393,7 +8393,7 @@ ewarn "attacks.  It may be disabled in the PGO step if no dependency on this"
 ewarn "kernel option."
 ewarn
 
-	# For ot_kernel_pgt_memory
+	# For ot_kernel_trainers_memory
 			ot-kernel_set_kconfig_dmesg "default"
 
 	# For profile compatibility checks

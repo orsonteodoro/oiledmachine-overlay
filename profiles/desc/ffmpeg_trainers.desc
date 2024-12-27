@@ -1,11 +1,11 @@
 # This file is part of the ffmpeg ebuilds
-ffmpeg_trainer_audio_cbr - Optimize audio for CBR
-ffmpeg_trainer_audio_lossless - Optimize audio for lossless
-ffmpeg_trainer_audio_vbr - Optimize audio for VBR
-ffmpeg_trainer_av_streaming - Optimize audio and video for streaming
-ffmpeg_trainer_video_2_pass_constrained_quality - Optimize video for 2 pass constrianed quality
-ffmpeg_trainer_video_2_pass_constrained_quality_quick - Optimize video for 2 pass constrianed quality quickly
-ffmpeg_trainer_video_constrained_quality - Optimize video for 1 pass constrianed quality
-ffmpeg_trainer_video_constrained_quality_quick - Optimize video for 1 pass constrianed quality quickly
-ffmpeg_trainer_video_lossless - Optimize video for lossless
-ffmpeg_trainer_video_lossless_quick - Optimize video for lossless quickly
+audio_cbr - Optimize audio for CBR
+audio_lossless - Optimize audio for lossless
+audio_vbr - Optimize audio for VBR
+av_streaming - Optimize audio and video for streaming
+video_2_pass_constrained_quality - Optimize video for 2 pass constrianed quality
+video_2_pass_constrained_quality_quick - Optimize video for 2 pass constrianed quality quickly
+video_constrained_quality - Optimize video for 1 pass constrianed quality
+video_constrained_quality_quick - Optimize video for 1 pass constrianed quality quickly
+video_lossless - Optimize video for lossless
+video_lossless_quick - Optimize video for lossless quickly

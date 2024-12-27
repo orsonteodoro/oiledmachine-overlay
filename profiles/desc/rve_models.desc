@@ -1,32 +1,32 @@
 # This file is part of the REAL-Video-Enhancer ebuild
 
-rve_models_2x_AnimeJaNai_HD_V3_Sharp1_Compact_430k - Install the -rve_models_2x_AnimeJaNai_HD_V3_Sharp1_Compact_430k upscale model
-rve_models_2x_ModernSpanimationV2 - Install the rve_models_2x_ModernSpanimationV2 upscale model
-rve_models_2x_OpenProteus_Compact_i2_70K - Install the rve_models_2x_OpenProteus_Compact_i2_70K upscale model
-rve_models_4xNomos8k_span_otf_medium - Install the rve_models_4xNomos8k_span_otf_medium upscale model
-rve_models_4xNomos8k_span_otf_strong - Install the rve_models_4xNomos8k_span_otf_strong upscale model
-rve_models_4xNomos8k_span_otf_weak - Install the rve_models_4xNomos8k_span_otf_weak upscale model
-rve_models_GIMMVFI_RAFT - Install the rve_models_GIMMVFI_RAFT frame interpolation model
-rve_models_GMFSS - Install the rve_models_GMFSS frame interpolation model
-rve_models_GMFSS_PRO - Install the rve_models_GMFSS_PRO frame interpolation model
-rve_models_realesr-animevideov3-x2 - Install the rve_models_realesr-animevideov3-x2 upscale model
-rve_models_realesr-animevideov3-x3 - Install the rve_models_realesr-animevideov3-x3 upscale model
-rve_models_realesr-animevideov3-x4 - Install the rve_models_realesr-animevideov3-x4 upscale model
-rve_models_realesrgan-x4plus - Install the rve_models_realesrgan-x4plus upscale model
-rve_models_realesrgan-x4plus-anime - Install the rve_models_realesrgan-x4plus-anime upscale model
-rve_models_rife4_6 - Install the rve_models_rife4_6 frame interpolation model
-rve_models_rife4_7 - Install the rve_models_rife4_7 frame interpolation model
-rve_models_rife4_15 - Install the rve_models_rife4_15 frame interpolation model
-rve_models_rife4_18 - Install the rve_models_rife4_18 frame interpolation model
-rve_models_rife4_22 - Install the rve_models_rife4_22 frame interpolation model
-rve_models_rife4_22-lite - Install the rve_models_rife4_22-lite frame interpolation model
-rve_models_rife4_25 - Install the rve_models_rife4_25 frame interpolation model
-rve_models_rife-v4_6 - Install the rve_models_rife-v4_6 frame interpolation model
-rve_models_rife-v4_7 - Install the rve_models_rife-v4_7 frame interpolation model
-rve_models_rife-v4_15 - Install the rve_models_rife-v4_15 frame interpolation model
-rve_models_rife-v4_18 - Install the rve_models_rife-v4_18 frame interpolation model
-rve_models_rife-v4_22 - Install the rve_models_rife-v4_22 frame interpolation model
-rve_models_rife-v4_22-lite - Install the rve_models_rife-v4_22-lite frame interpolation model
-rve_models_rife-v4_25 - Install the rve_models_rife-v4_25 frame interpolation model
-rve_models_scunet_color_real_psnr - Install the rve_models_scunet_color_real_psnr denoiser model
-rve_models_up2x-conservative - Install the rve_models_up2x-conservative upscale model
+2x_AnimeJaNai_HD_V3_Sharp1_Compact_430k - Install the -2x_AnimeJaNai_HD_V3_Sharp1_Compact_430k upscale model
+2x_ModernSpanimationV2 - Install the 2x_ModernSpanimationV2 upscale model
+2x_OpenProteus_Compact_i2_70K - Install the 2x_OpenProteus_Compact_i2_70K upscale model
+4xNomos8k_span_otf_medium - Install the 4xNomos8k_span_otf_medium upscale model
+4xNomos8k_span_otf_strong - Install the 4xNomos8k_span_otf_strong upscale model
+4xNomos8k_span_otf_weak - Install the 4xNomos8k_span_otf_weak upscale model
+GIMMVFI_RAFT - Install the GIMMVFI_RAFT frame interpolation model
+GMFSS - Install the GMFSS frame interpolation model
+GMFSS_PRO - Install the GMFSS_PRO frame interpolation model
+realesr-animevideov3-x2 - Install the realesr-animevideov3-x2 upscale model
+realesr-animevideov3-x3 - Install the realesr-animevideov3-x3 upscale model
+realesr-animevideov3-x4 - Install the realesr-animevideov3-x4 upscale model
+realesrgan-x4plus - Install the realesrgan-x4plus upscale model
+realesrgan-x4plus-anime - Install the realesrgan-x4plus-anime upscale model
+rife4_6 - Install the rife4_6 frame interpolation model
+rife4_7 - Install the rife4_7 frame interpolation model
+rife4_15 - Install the rife4_15 frame interpolation model
+rife4_18 - Install the rife4_18 frame interpolation model
+rife4_22 - Install the rife4_22 frame interpolation model
+rife4_22-lite - Install the rife4_22-lite frame interpolation model
+rife4_25 - Install the rife4_25 frame interpolation model
+rife-v4_6 - Install the rife-v4_6 frame interpolation model
+rife-v4_7 - Install the rife-v4_7 frame interpolation model
+rife-v4_15 - Install the rife-v4_15 frame interpolation model
+rife-v4_18 - Install the rife-v4_18 frame interpolation model
+rife-v4_22 - Install the rife-v4_22 frame interpolation model
+rife-v4_22-lite - Install the rife-v4_22-lite frame interpolation model
+rife-v4_25 - Install the rife-v4_25 frame interpolation model
+scunet_color_real_psnr - Install the scunet_color_real_psnr denoiser model
+up2x-conservative - Install the up2x-conservative upscale model

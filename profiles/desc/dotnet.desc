@@ -1,38 +1,38 @@
-dotnet_android_arm - Build assembly for Android armv7
-dotnet_android_arm64 - Build assembly for Android arm64
-dotnet_android_x64 - Build assembly for	Android x86_64
-dotnet_android_x86 - Build assembly for	Android x86
-dotnet_ios_arm - Build assembly for iOS arm
-dotnet_ios_arm64 - Build assembly for iOS arm64
-dotnet_ios_x64 - Build assembly for iOS x64
-dotnet_ios_x86 - Build assembly for iOS x86
-dotnet_iossimulator_arm64 - Build assembly for iOS Simulator arm64
-dotnet_iossimulator_x64 - Build assembly for iOS Simulator x64
-dotnet_iossimulator_x86 - Build assembly for iOS Simulator x86
-dotnet_linux_arm - Build assembly for Linux armv7 hard float
-dotnet_linux_arm64 - Build assembly for Linux arm64
-dotnet_linux_armel - Build assembly for Linux armv7 soft float
-dotnet_linux_armv6 - Build assembly for Linux armv6 hard float
-dotnet_linux_loongarch64 - Build assembly for Linux 
-dotnet_linux_mips64 - Build assembly for Linux 
-dotnet_linux_musl_arm - Build assembly for Linux with musl arm
-dotnet_linux_musl_arm64 - Build assembly for Linux with musl arm64
-dotnet_linux_musl_armel - Build assembly for Linux with musl armel
-dotnet_linux_musl_ppc64le - Build assembly for Linux with musl ppc64le
-dotnet_linux_musl_s390x - Build assembly for Linux with musl 390x
-dotnet_linux_musl_x64 - Build assembly for Linux with musl x64
-dotnet_linux_musl_x86 - Build assembly for Linux with musl x86
-dotnet_linux_ppc64le - Build assembly for Linux PPC little endian
-dotnet_linux_s390x - Build assembly for Linux s390x
-dotnet_linux_x64 - Build assembly for Linux x86_64
-dotnet_linux_x86 - Build assembly for Linux x86
-dotnet_osx_arm64 - Build assembly for macOS arm64
-dotnet_osx_x64 - Build assembly for macOS x86_64
-dotnet_uap_arm - Build assembly for UAP arm
-dotnet_uap_arm64 - Build assembly for UAP arm64
-dotnet_uap_x64 - Build assembly for UAP x86_64
-dotnet_uap_x86 - Build assembly for UAP x86
-dotnet_win_arm - Build assembly for Windows arm
-dotnet_win_arm64 - Build assembly for Windows arm64
-dotnet_win_x64 - Build assembly for Windows x86_64
-dotnet_win_x86 - Build assembly for Windows x86
+android_arm - Build assembly for Android armv7
+android_arm64 - Build assembly for Android arm64
+android_x64 - Build assembly for	Android x86_64
+android_x86 - Build assembly for	Android x86
+ios_arm - Build assembly for iOS arm
+ios_arm64 - Build assembly for iOS arm64
+ios_x64 - Build assembly for iOS x64
+ios_x86 - Build assembly for iOS x86
+iossimulator_arm64 - Build assembly for iOS Simulator arm64
+iossimulator_x64 - Build assembly for iOS Simulator x64
+iossimulator_x86 - Build assembly for iOS Simulator x86
+linux_arm - Build assembly for Linux armv7 hard float
+linux_arm64 - Build assembly for Linux arm64
+linux_armel - Build assembly for Linux armv7 soft float
+linux_armv6 - Build assembly for Linux armv6 hard float
+linux_loongarch64 - Build assembly for Linux 
+linux_mips64 - Build assembly for Linux 
+linux_musl_arm - Build assembly for Linux with musl arm
+linux_musl_arm64 - Build assembly for Linux with musl arm64
+linux_musl_armel - Build assembly for Linux with musl armel
+linux_musl_ppc64le - Build assembly for Linux with musl ppc64le
+linux_musl_s390x - Build assembly for Linux with musl 390x
+linux_musl_x64 - Build assembly for Linux with musl x64
+linux_musl_x86 - Build assembly for Linux with musl x86
+linux_ppc64le - Build assembly for Linux PPC little endian
+linux_s390x - Build assembly for Linux s390x
+linux_x64 - Build assembly for Linux x86_64
+linux_x86 - Build assembly for Linux x86
+osx_arm64 - Build assembly for macOS arm64
+osx_x64 - Build assembly for macOS x86_64
+uap_arm - Build assembly for UAP arm
+uap_arm64 - Build assembly for UAP arm64
+uap_x64 - Build assembly for UAP x86_64
+uap_x86 - Build assembly for UAP x86
+win_arm - Build assembly for Windows arm
+win_arm64 - Build assembly for Windows arm64
+win_x64 - Build assembly for Windows x86_64
+win_x86 - Build assembly for Windows x86

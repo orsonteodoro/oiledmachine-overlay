@@ -1,25 +1,25 @@
 # This file is part of the zlib ebuild
-zlib_trainers_minizip_binary_long - Optimize for binary compression using all compression/decompression levels
-zlib_trainers_minizip_binary_max_compression - Optimize for binary compression using max compression/decompression level
-zlib_trainers_minizip_binary_short - Optimize for binary compression using compression/decompression quickly
-zlib_trainers_minizip_binary_store - Optimize for binary compression using store level compression/decompression
-zlib_trainers_minizip_text_long - Optimize for text compression using all compression/decompression levels
-zlib_trainers_minizip_text_max_compression - Optimize for text compression using max compression/decompression level
-zlib_trainers_minizip_text_short - Optimize for text compression using compression/decompression quickly
-zlib_trainers_minizip_text_store - Optimize for text compression using store only compression/decompression
-zlib_trainers_zlib_binary_all - Optimize for binary compression using all compression/decompression levels
-zlib_trainers_zlib_binary_default - Optimize for binary compression using default compression/decompression level
-zlib_trainers_zlib_binary_max - Optimize for binary compression using max compression/decompression level
-zlib_trainers_zlib_binary_min - Optimize for binary compression using min compression/decompression level
-zlib_trainers_zlib_binary_random - Optimize for binary compression using random compression/decompression levels
-zlib_trainers_zlib_images_all - Optimize for image compression using all compression/decompression levels
-zlib_trainers_zlib_images_default - Optimize image text compression using default compression/decompression level
-zlib_trainers_zlib_images_level_8 - Optimize image text compression using default compression/decompression level
-zlib_trainers_zlib_images_max - Optimize for image compression using max compression/decompression level
-zlib_trainers_zlib_images_min - Optimize for image compression using min compression/decompression level
-zlib_trainers_zlib_images_random - Optimize for image compression using random compression/decompression levels
-zlib_trainers_zlib_text_all - Optimize for text compression using all compression/decompression levels
-zlib_trainers_zlib_text_default - Optimize for text compression using default compression/decompression level
-zlib_trainers_zlib_text_max - Optimize for text compression using max compression/decompression level
-zlib_trainers_zlib_text_min - Optimize for text compression using min compression/decompression level
-zlib_trainers_zlib_text_random - Optimize for text compression using random compression/decompression levels
+minizip_binary_long - Optimize for binary compression using all compression/decompression levels
+minizip_binary_max_compression - Optimize for binary compression using max compression/decompression level
+minizip_binary_short - Optimize for binary compression using compression/decompression quickly
+minizip_binary_store - Optimize for binary compression using store level compression/decompression
+minizip_text_long - Optimize for text compression using all compression/decompression levels
+minizip_text_max_compression - Optimize for text compression using max compression/decompression level
+minizip_text_short - Optimize for text compression using compression/decompression quickly
+minizip_text_store - Optimize for text compression using store only compression/decompression
+zlib_binary_all - Optimize for binary compression using all compression/decompression levels
+zlib_binary_default - Optimize for binary compression using default compression/decompression level
+zlib_binary_max - Optimize for binary compression using max compression/decompression level
+zlib_binary_min - Optimize for binary compression using min compression/decompression level
+zlib_binary_random - Optimize for binary compression using random compression/decompression levels
+zlib_images_all - Optimize for image compression using all compression/decompression levels
+zlib_images_default - Optimize image text compression using default compression/decompression level
+zlib_images_level_8 - Optimize image text compression using default compression/decompression level
+zlib_images_max - Optimize for image compression using max compression/decompression level
+zlib_images_min - Optimize for image compression using min compression/decompression level
+zlib_images_random - Optimize for image compression using random compression/decompression levels
+zlib_text_all - Optimize for text compression using all compression/decompression levels
+zlib_text_default - Optimize for text compression using default compression/decompression level
+zlib_text_max - Optimize for text compression using max compression/decompression level
+zlib_text_min - Optimize for text compression using min compression/decompression level
+zlib_text_random - Optimize for text compression using random compression/decompression levels

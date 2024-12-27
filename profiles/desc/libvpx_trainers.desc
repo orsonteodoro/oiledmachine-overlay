@@ -1,7 +1,7 @@
 # This file is part of the libvpx ebuild
-libvpx_trainers_2_pass_constrained_quality - Optimize libvpx for 2 pass constrained quality
-libvpx_trainers_2_pass_constrained_quality_quick - Optimize libvpx for 2 pass constrained quality quickly
-libvpx_trainers_constrained_quality - Optimize libvpx for 1 pass constrained quality
-libvpx_trainers_constrained_quality_quick - Optimize libvpx for 1 pass constrained quality quickly
-libvpx_trainers_lossless - Optimize libvpx for lossess
-libvpx_trainers_lossless_quick - Optimize libvpx for lossess quickly
+2_pass_constrained_quality - Optimize libvpx for 2 pass constrained quality
+2_pass_constrained_quality_quick - Optimize libvpx for 2 pass constrained quality quickly
+constrained_quality - Optimize libvpx for 1 pass constrained quality
+constrained_quality_quick - Optimize libvpx for 1 pass constrained quality quickly
+lossless - Optimize libvpx for lossess
+lossless_quick - Optimize libvpx for lossess quickly
