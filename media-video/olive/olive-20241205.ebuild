@@ -43,9 +43,14 @@ SLOT="0"
 # For default ON status see docker/scripts/build_ffmpeg.sh
 # Only expired patents or non taxed patents will be enabled default ON in this ebuild.
 IUSE+="
-alsa doc jack +jpeg2k +mp3 +opus oss +png qt5 qt6 test +svt-av1 +theora +truetype +vorbis +webp +xvid x264 x265
+alsa doc jack +jpeg2k +mp3 +opus oss +png qt5 qt6 test +svt-av1 +theora
++truetype +vorbis wayland +webp X +xvid x264 x265
 "
 REQUIRED_USE="
+	^^ (
+		qt5
+		qt6
+	)
 	|| (
 		mp3
 		opus
@@ -58,9 +63,9 @@ REQUIRED_USE="
 		x265
 		xvid
 	)
-	^^ (
-		qt5
-		qt6
+	|| (
+		wayland
+		X
 	)
 "
 RESTRICT="
@@ -82,17 +87,17 @@ DEPEND="
 		dev-qt/qtconcurrent:=
 		>=dev-qt/qtcore-${QT5_PV}:5
 		dev-qt/qtcore:=
-		>=dev-qt/qtgui-${QT5_PV}:5
+		>=dev-qt/qtgui-${QT5_PV}:5[wayland?,X?]
 		dev-qt/qtgui:=
 		>=dev-qt/qtopengl-${QT5_PV}:5
 		dev-qt/qtopengl:=
 		>=dev-qt/qtsvg-${QT5_PV}:5
 		dev-qt/qtsvg:=
-		>=dev-qt/qtwidgets-${QT5_PV}:5
+		>=dev-qt/qtwidgets-${QT5_PV}:5[X?]
 		dev-qt/qtwidgets:=
 	)
 	qt6? (
-		>=dev-qt/qtbase-${QT6_PV}:6[concurrent,gui,opengl,widgets]
+		>=dev-qt/qtbase-${QT6_PV}:6[concurrent,gui,opengl,wayland?,widgets,X?]
 		dev-qt/qtbase:=
 		>=dev-qt/qtsvg-${QT6_PV}:6
 		dev-qt/qtsvg:=
@@ -198,7 +203,7 @@ src_configure() {
 
 src_install() {
 	cmake_src_install
-	if use doc; then
+	if use doc ; then
 		docinto "html"
 		dodoc -r "${BUILD_DIR}/docs/html/"*
 	fi
