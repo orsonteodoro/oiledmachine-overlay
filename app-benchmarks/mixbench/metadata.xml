@@ -23,18 +23,18 @@
   <use>
     <flag name="cuda">
       Build/install the CUDA® version for benchmarking NVIDIA® GPUs.
-    </name>
+    </flag>
     <flag name="opencl">
       Build/install the OpenCL version for CPU/GPU benchmarking.
-    </name>
+    </flag>
     <flag name="openmp">
       Build/install the OpenMP version for CPU benchmarking.
-    </name>
+    </flag>
     <flag name="rocm">
       Build/install the HIP ROCm™ version for benchmarking AMD® GPUs.
-    </name>
+    </flag>
     <flag name="sycl">
       Build/install the SYCL version for benchmarking GPUs.
-    </name>
+    </flag>
   </use>
 </pkgmetadata>
