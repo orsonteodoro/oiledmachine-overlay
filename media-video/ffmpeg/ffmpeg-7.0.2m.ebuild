@@ -233,6 +233,9 @@ USE_VERSION3_ONLY=(
 	"libaribb24"
 	"liblensfun"
 )
+VIDEO_CARDS=(
+	video_cards_radeonsi
+)
 WANT_LTO=0 # Global variable not const
 
 # Strings for CPU features in the useflag[:configure_option] form
@@ -504,6 +507,7 @@ ${FFTOOLS[@]/#/+fftools_}
 ${PATENT_STATUS[@]}
 ${TRAINERS[@]}
 ${USE_LICENSES[@]}
+${VIDEO_CARDS[@]}
 alsa chromium -clear-config-first cuda cuda-filters doc dvdvideo +encode gdbm
 jack-audio-connection-kit jack2 liblensfun libqrencode mold opencl-icd-loader
 openvino oss pgo +pic pipewire 
@@ -1053,6 +1057,9 @@ RDEPEND+="
 	vaapi? (
 		>=media-libs/libva-1.2.1-r1:0=[${MULTILIB_USEDEP},drm(+),X?]
 		media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
+		video_cards_radeonsi? (
+			media-libs/mesa[${MULTILIB_USEDEP},patent_status_new_hardware?]
+		)
 	)
 	vdpau? (
 		>=x11-libs/libvdpau-0.7[${MULTILIB_USEDEP}]
