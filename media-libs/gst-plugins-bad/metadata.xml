@@ -20,10 +20,10 @@
     </flag>
     <flag name="msdk">
       Use Media SDK for QSV support
-    <flag>
+    </flag>
     <flag name="onevpl">
       Use oneVPL for QSV support
-    <flag>
+    </flag>
     <flag name="vulkan">
       Enable Vulkan integration library and video sink plugin
     </flag>
