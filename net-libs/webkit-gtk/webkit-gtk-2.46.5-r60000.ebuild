@@ -712,6 +712,11 @@ RDEPEND_PATENTS="
 		!media-plugins/gst-plugins-x264
 		!media-plugins/gst-plugins-x265
 	)
+	vaapi? (
+		!patent_status_new_hardware? (
+			media-libs/gst-plugins-bad[-vaapi]
+		)
+	)
 "
 
 gen_depend_llvm() {
