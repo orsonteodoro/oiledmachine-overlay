@@ -41,9 +41,9 @@ HOMEPAGE="
 LICENSE="GPL-3"
 SLOT="0"
 # For default ON status see docker/scripts/build_ffmpeg.sh
-# Only non taxed will be enabled ON in this ebuild.
+# Only expired patents or non taxed patents will be enabled default ON in this ebuild.
 IUSE+="
-alsa doc jack +jpeg2k +mp3 +opus oss +png qt5 qt6 test +svt-av1 +theora +truetype +vorbis +webp xvid x264 x265
+alsa doc jack +jpeg2k +mp3 +opus oss +png qt5 qt6 test +svt-av1 +theora +truetype +vorbis +webp +xvid x264 x265
 "
 REQUIRED_USE="
 	|| (
