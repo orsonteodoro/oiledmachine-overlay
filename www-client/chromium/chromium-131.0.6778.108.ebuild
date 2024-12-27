@@ -596,7 +596,7 @@ ${PATENT_STATUS[@]}
 -system-libxslt -system-openh264 -system-opus -system-re2 -system-toolchain
 -system-zlib +system-zstd systemd test +vaapi +wayland +webassembly
 -widevine +X
-ebuild-revision-1
+ebuild_revision_1
 "
 
 # What is considered a proprietary codec can be found at:
