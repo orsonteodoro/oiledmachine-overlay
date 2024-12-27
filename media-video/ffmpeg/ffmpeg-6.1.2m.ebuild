@@ -212,8 +212,8 @@ USE_GPL3_ONLY=(
 	"samba"
 )
 USE_NONFREE_ONLY="
+	"cuda-nvcc"
 	"fdk"
-	"gnutls"
 "
 USE_VERSION3_ONLY=(
 	"amr"
