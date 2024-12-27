@@ -203,3 +203,7 @@ src_install() {
 		dodoc -r "${BUILD_DIR}/docs/html/"*
 	fi
 }
+
+pkg_postinst() {
+	xdg_pkg_postinst
+}
