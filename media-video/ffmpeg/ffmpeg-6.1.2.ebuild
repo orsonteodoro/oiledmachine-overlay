@@ -198,7 +198,6 @@ USE_LICENSES=(
 )
 USE_GPL_ONLY=(
 	"cdio"
-	"dvdvideo"
 	"frei0r"
 	"rubberband"
 	"vidstab"
@@ -447,6 +446,22 @@ fi
 # BSD - libavcodec/ilbcdec.c
 LICENSE="
 	BSD
+	LGPL-2.1+
+	gpl? (
+		GPL-2+
+	)
+	nonfree? (
+		nonfree-and-unredistributable
+	)
+	version3? (
+		|| (
+			GPL-3+
+			LGPL-3+
+		)
+		gpl? (
+			GPL-3+
+		)
+	)
 	static-libs? (
 		BSD
 		BSD-2
