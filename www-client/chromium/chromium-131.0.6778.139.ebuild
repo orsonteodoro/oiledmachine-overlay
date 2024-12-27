@@ -638,24 +638,15 @@ ebuild_revision_1
 #
 PATENT_USE_FLAGS="
 	!patent_status_nonfree? (
-		!openh264
-		!vaapi-hevc
-		!widevine
 		system-ffmpeg
 	)
 	openh264? (
 		patent_status_nonfree
 	)
 	patent_status_without_codec_developer_tax? (
-		!openh264
-		!vaapi-hevc
-		!widevine
 		system-ffmpeg
 	)
 	patent_status_free_for_end_users? (
-		!openh264
-		!vaapi-hevc
-		!widevine
 		system-ffmpeg
 	)
 	vaapi-hevc? (
