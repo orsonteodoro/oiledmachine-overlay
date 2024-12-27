@@ -627,9 +627,6 @@ REQUIRED_USE+="
 		!x264
 		!x265
 		!xvid
-		openssl? (
-			version3
-		)
 	)
 	proprietary-codecs-disable-codec-developer? (
 		!amr
@@ -639,9 +636,6 @@ REQUIRED_USE+="
 		!x264
 		!x265
 		!xvid
-		openssl? (
-			version3
-		)
 	)
 	proprietary-codecs-disable-end-user? (
 		!amr
@@ -650,9 +644,6 @@ REQUIRED_USE+="
 		!x264
 		!x265
 		!xvid
-		openssl? (
-			version3
-		)
 	)
 	test? (
 		encode
@@ -921,13 +912,7 @@ RDEPEND+="
 		media-libs/libglvnd[X,${MULTILIB_USEDEP}]
 	)
 	openssl? (
-		!version3? (
-			>=dev-libs/openssl-1.0.1h-r2:0=[${MULTILIB_USEDEP}]
-			<dev-libs/openssl-3:=[${MULTILIB_USEDEP}]
-		)
-		version3? (
-			>=dev-libs/openssl-3.0.0_beta2:0=[${MULTILIB_USEDEP}]
-		)
+		>=dev-libs/openssl-3.0.0_beta2:0=[${MULTILIB_USEDEP}]
 	)
 	openvino? (
 		>=sci-libs/openvino-2020.1

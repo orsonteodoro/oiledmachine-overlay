@@ -479,7 +479,7 @@ ${USE_LICENSES[@]}
 alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm
 jack-audio-connection-kit jack2 liblensfun mold opencl-icd-loader openvino oss
 pgo +pic pipewire proprietary-codecs proprietary-codecs-disable
-proprietary-codecs-disable-nc-developer proprietary-codecs-disable-nc-user
+proprietary-codecs-disable-codec-developer proprietary-codecs-disable-end-user
 +re-codecs sndio soc sr static-libs tensorflow test v4l wayland
 
 ebuild-revision-19
@@ -565,8 +565,8 @@ REQUIRED_USE+="
 		!trainer-av-streaming
 	)
 	!proprietary-codecs-disable? (
-		!proprietary-codecs-disable-nc-user? (
-			!proprietary-codecs-disable-nc-user? (
+		!proprietary-codecs-disable-end-user? (
+			!proprietary-codecs-disable-end-user? (
 				re-codecs
 			)
 		)
@@ -574,8 +574,8 @@ REQUIRED_USE+="
 	^^ (
 		proprietary-codecs
 		proprietary-codecs-disable
-		proprietary-codecs-disable-nc-developer
-		proprietary-codecs-disable-nc-user
+		proprietary-codecs-disable-codec-developer
+		proprietary-codecs-disable-end-user
 	)
 	chromium? (
 		opus
@@ -661,11 +661,8 @@ REQUIRED_USE+="
 		!x264
 		!x265
 		!xvid
-		openssl? (
-			version3
-		)
 	)
-	proprietary-codecs-disable-nc-developer? (
+	proprietary-codecs-disable-codec-developer? (
 		!amr
 		!fdk
 		!kvazaar
@@ -673,20 +670,14 @@ REQUIRED_USE+="
 		!x264
 		!x265
 		!xvid
-		openssl? (
-			version3
-		)
 	)
-	proprietary-codecs-disable-nc-user? (
+	proprietary-codecs-disable-end-user? (
 		!amr
 		!kvazaar
 		!openh264
 		!x264
 		!x265
 		!xvid
-		openssl? (
-			version3
-		)
 	)
 	soc? (
 		libdrm
@@ -958,13 +949,7 @@ RDEPEND+="
 		media-libs/libglvnd[X,${MULTILIB_USEDEP}]
 	)
 	openssl? (
-		!version3? (
-			>=dev-libs/openssl-1.0.1h-r2:0=[${MULTILIB_USEDEP}]
-			<dev-libs/openssl-3:=[${MULTILIB_USEDEP}]
-		)
-		version3? (
-			>=dev-libs/openssl-3.0.0_beta2:0=[${MULTILIB_USEDEP}]
-		)
+		>=dev-libs/openssl-3.0.0_beta2:0=[${MULTILIB_USEDEP}]
 	)
 	openvino? (
 		>=sci-libs/openvino-2020.1
@@ -1922,11 +1907,11 @@ eerror
 		myconf+=(
 			--non-free-patented-codecs=deny
 		)
-	elif use proprietary-codecs-disable-nc-user ; then
+	elif use proprietary-codecs-disable-end-user ; then
 		myconf+=(
 			--non-free-patented-codecs=user
 		)
-	elif use proprietary-codecs-disable-nc-developer ; then
+	elif use proprietary-codecs-disable-codec-developer ; then
 		myconf+=(
 			--non-free-patented-codecs=codec-developer
 		)

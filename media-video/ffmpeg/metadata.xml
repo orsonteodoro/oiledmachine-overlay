@@ -866,95 +866,14 @@
   </flag>
 
   <!-- For license compatibility checking -->
-  <flag name="apache2_0">
-    Checks Apache-2.0 license compatibility
-  </flag>
   <flag name="gpl">
-    Synonym for gpl2x/gpl3x USE flags to build a GPL-2.0+/GPL-3.0+ package.
-    Certain license incompatibilities may be encountered.  This USE flag is kept
-    for compatibility for ebuilds from the distro repo.
-
-    Enabling makes the gpl and nonfree USE flags inclusive-or which was the
-    original ebuild design.
-
-    Disabling makes the gpl and nonfree USE flags mutually exclusive for the new
-    behavior.
-  </flag>
-  <flag name="gpl2">
-    Checks GPL-2.0 license compatibility
-  </flag>
-  <flag name="gpl2x">
-    Checks GPL-2.0+ license compatibility
-  </flag>
-  <flag name="gpl3">
-    Checks GPL-3 license compatibility
-  </flag>
-  <flag name="gpl3x">
-    Checks GPL-3+ license compatibility
-  </flag>
-  <flag name="lgpl2">
-    Checks LGPL-2 license compatibility
-  </flag>
-  <flag name="lgpl2x">
-    Checks LGPL-2.0+ license compatibility
-  </flag>
-  <flag name="lgpl2_1">
-    Checks LGPL-2.1 license compatibility
-  </flag>
-  <flag name="lgpl2_1x">
-    Checks LGPL-2.1+ license compatibility
-  </flag>
-  <flag name="lgpl3">
-    Checks LGPL-3.0 license compatibility
-  </flag>
-  <flag name="lgpl3x">
-    Checks LGPL-3.0+ license compatibility
-  </flag>
-  <flag name="mpl2_0">
-    Checks MPL-2.0 license compatibility
+    Enable GPL-2 or later codecs, libraries, and audio/video processing filters
   </flag>
   <flag name="nonfree">
-    Allows to compile against non-free packages that prevent redistribution.
+    Enable linking to non-free codecs and libraries
   </flag>
-
-  <flag name="lgpl2_1_to_gpl2">
-    Relicense or use as GPL-2
-  </flag>
-  <flag name="lgpl2_1_to_gpl2x">
-    Relicense or use as GPL-2+
-  </flag>
-  <flag name="lgpl2_1_to_gpl3">
-    Relicense or use as GPL-3
-  </flag>
-  <flag name="lgpl2_1x_to_gpl2">
-    Relicense or use as GPL-2
-  </flag>
-  <flag name="lgpl2_1x_to_gpl2x">
-    Relicense or use as GPL-2+
-  </flag>
-  <flag name="lgpl2_1x_to_gpl3">
-    Relicense or use as GPL-3
-  </flag>
-  <flag name="lgpl2_1x_to_lgpl3">
-    Relicense or use as LGPL-3
-  </flag>
-  <flag name="lgpl2_1x_to_lgpl3x">
-    Relicense or use as LGPL-3+
-  </flag>
-  <flag name="lgpl2x_to_gpl2">
-    Relicense or use as GPL-2
-  </flag>
-  <flag name="lgpl2x_to_gpl3">
-    Relicense or use as GPL-3
-  </flag>
-  <flag name="lgpl2x_to_lgpl3x">
-    Relicense or use as LGPL-3+
-  </flag>
-  <flag name="lgpl3_to_gpl3">
-    Relicense or use as GPL-3
-  </flag>
-  <flag name="lgpl3x_to_gpl3">
-    Relicense or use as GPL-3
+  <flag name="version3">
+    Enable GPL-3 or LGPL-3 libraries
   </flag>
 
   <flag name="ebuild-revision-N">
