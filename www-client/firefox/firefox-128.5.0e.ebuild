@@ -430,10 +430,15 @@ LICENSE+="
 #   the vanilla ZLIB lib license doesn't contain all rights reserved
 
 # (unforced) -hwaccel, pgo, x11 + wayland are defaults in -bin browser
+PATENT_STATUS=(
+	patent_status_free_for_end_users
+	patent_status_nonfree_patents
+	patent_status_without_codec_developer_tax
+)
 CODEC_IUSE="
 -aac
 +dav1d
--h264
+-openh264
 +opus
 +vpx
 "
@@ -441,10 +446,9 @@ CODEC_IUSE="
 IUSE+="
 ${CODEC_IUSE}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
+${PATENT_STATUS[@]}
 alsa cups +dbus debug eme-free +ffvpx firejail +hardened -hwaccel jack +jemalloc
-+jit libcanberra libnotify libproxy libsecret mold +openh264 +pgo
-proprietary-codecs proprietary-codecs-disable
-proprietary-codecs-disable-codec-developer proprietary-codecs-disable-end-user
++jit libcanberra libnotify libproxy libsecret mold +pgo
 +pulseaudio rust-simd selinux sndio speech +system-av1 +system-ffmpeg
 +system-harfbuzz +system-icu +system-jpeg +system-libevent +system-libvpx
 system-png +system-webp systemd -telemetry +vaapi +wayland +webrtc wifi
@@ -458,41 +462,17 @@ IUSE+="
 
 # The wayland flag actually allows vaapi, but upstream lazy to make it
 # an independent option.
-NON_FREE_REQUIRED_USE="
-	^^ (
-		proprietary-codecs
-		proprietary-codecs-disable
-		proprietary-codecs-disable-codec-developer
-		proprietary-codecs-disable-end-user
-	)
+PATENT_REQUIRED_USE="
 	aac? (
-		|| (
-			proprietary-codecs
-			proprietary-codecs-disable-end-user
-		)
-	)
-	h264? (
-		proprietary-codecs
+		patent_status_free_for_end_users
 	)
 	openh264? (
-		proprietary-codecs
+		patent_status_nonfree_patents
 		system-ffmpeg
-	)
-	proprietary-codecs-disable? (
-		!openh264
-		eme-free
-	)
-	proprietary-codecs-disable-codec-developer? (
-		!openh264
-		eme-free
-	)
-	proprietary-codecs-disable-end-user? (
-		!openh264
-		eme-free
 	)
 "
 REQUIRED_USE="
-	${NON_FREE_REQUIRED_USE}
+	${PATENT_REQUIRED_USE}
 	X
 	^^ (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
@@ -505,9 +485,6 @@ REQUIRED_USE="
 			ffvpx
 			system-ffmpeg
 		)
-	)
-	h264? (
-		system-ffmpeg
 	)
 	libcanberra? (
 		|| (
@@ -594,10 +571,10 @@ gen_ffmpeg_cdepend1() {
 		echo "
 			(
 				!<dev-libs/openssl-3
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable,vaapi?,vpx?,-x264,-x265,-xvid]
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,-patent_status_nonfree_patents,vaapi?,vpx?,-x264,-x265,-xvid]
 			)
 			(
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable,vaapi?,vpx?,-x264,-x265,-xvid]
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,-patent_status_nonfree_patents,vaapi?,vpx?,-x264,-x265,-xvid]
 			)
 		"
 	done
@@ -609,10 +586,10 @@ gen_ffmpeg_cdepend2() {
 		echo "
 			(
 				!<dev-libs/openssl-3
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable-codec-developer,vaapi?,vpx?,-x264,-x265,-xvid]
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,patent_status_without_codec_developer_tax,vaapi?,vpx?,-x264,-x265,-xvid]
 			)
 			(
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable-codec-developer,vaapi?,vpx?,-x264,-x265,-xvid]
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,patent_status_without_codec_developer_tax,vaapi?,vpx?,-x264,-x265,-xvid]
 			)
 		"
 	done
@@ -624,18 +601,26 @@ gen_ffmpeg_cdepend3() {
 		echo "
 			(
 				!<dev-libs/openssl-3
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,proprietary-codecs-disable-end-user,vaapi?,vpx?,-x264,-x265,-xvid]
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,patent_status_free_for_end_users,vaapi?,vpx?,-x264,-x265,-xvid]
 			)
 			(
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,proprietary-codecs-disable-end-user,vaapi?,vpx?,-x264,-x265,-xvid]
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,patent_status_free_for_end_users,vaapi?,vpx?,-x264,-x265,-xvid]
 			)
 		"
 	done
 }
 
 # x86_64 will use ffvpx and system-ffmpeg but others will use system-ffmpeg
-NON_FREE_CDEPENDS="
-	proprietary-codecs? (
+PATENT_CDEPENDS="
+	!patent_status_nonfree_patents? (
+		media-libs/mesa[${MULTILIB_USEDEP},-proprietary-codecs]
+		system-ffmpeg? (
+			|| (
+				$(gen_ffmpeg_cdepend1)
+			)
+		)
+	)
+	patent_status_nonfree_patents? (
 		media-libs/mesa[${MULTILIB_USEDEP},proprietary-codecs]
 		system-ffmpeg? (
 			|| (
@@ -646,15 +631,7 @@ NON_FREE_CDEPENDS="
 			media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
 		)
 	)
-	proprietary-codecs-disable? (
-		media-libs/mesa[${MULTILIB_USEDEP},-proprietary-codecs]
-		system-ffmpeg? (
-			|| (
-				$(gen_ffmpeg_cdepend1)
-			)
-		)
-	)
-	proprietary-codecs-disable-codec-developer? (
+	patent_status_without_codec_developer_tax? (
 		media-libs/mesa[${MULTILIB_USEDEP},-proprietary-codecs]
 		system-ffmpeg? (
 			|| (
@@ -662,7 +639,7 @@ NON_FREE_CDEPENDS="
 			)
 		)
 	)
-	proprietary-codecs-disable-end-user? (
+	patent_status_free_for_end_users? (
 		media-libs/mesa[${MULTILIB_USEDEP},-proprietary-codecs]
 		system-ffmpeg? (
 			|| (
@@ -705,7 +682,7 @@ RUST_CDEPEND="
 "
 CDEPEND="
 	${FF_ONLY_DEPEND}
-	${NON_FREE_CDEPENDS}
+	${PATENT_CDEPENDS}
 	>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.42:2[${MULTILIB_USEDEP}]
 	>=dev-libs/nss-3.101[${MULTILIB_USEDEP}]
@@ -1269,9 +1246,9 @@ eerror
 }
 
 verify_codecs() {
-	if use proprietary-codecs-disable \
-		|| use proprietary-codecs-disable-codec-developer \
-		|| use proprietary-codecs-disable-end-user \
+	if ! use patent_status_nonfree_patents \
+		|| use patent_status_nonfree_patents \
+		|| use patent_status_free_for_end_users \
 	; then
 		:
 	else
