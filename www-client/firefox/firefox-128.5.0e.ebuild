@@ -556,16 +556,16 @@ UDEV_RDEPEND="
 	)
 "
 
-gen_ffmpeg_cdepend0() {
+gen_ffmpeg_nonfree_depends() {
 	local s
 	for s in ${FFMPEG_COMPAT} ; do
 		echo "
-			media-video/ffmpeg:${s}[${MULTILIB_USEDEP},dav1d?,opus?,vaapi?,vpx?]
+			media-video/ffmpeg:${s}[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree_patents,vaapi?,vpx?]
 		"
 	done
 }
 
-gen_ffmpeg_cdepend1() {
+gen_ffmpeg_royalty_free_depends() {
 	local s
 	for s in ${FFMPEG_COMPAT} ; do
 		echo "
@@ -580,7 +580,7 @@ gen_ffmpeg_cdepend1() {
 	done
 }
 
-gen_ffmpeg_cdepend2() {
+gen_ffmpeg_without_codec_developer_tax_depends() {
 	local s
 	for s in ${FFMPEG_COMPAT} ; do
 		echo "
@@ -595,7 +595,7 @@ gen_ffmpeg_cdepend2() {
 	done
 }
 
-gen_ffmpeg_cdepend3() {
+gen_ffmpeg_free_for_end_users_depends() {
 	local s
 	for s in ${FFMPEG_COMPAT} ; do
 		echo "
@@ -616,7 +616,7 @@ PATENT_CDEPENDS="
 		media-libs/mesa[${MULTILIB_USEDEP},-proprietary-codecs]
 		system-ffmpeg? (
 			|| (
-				$(gen_ffmpeg_cdepend1)
+				$(gen_ffmpeg_royalty_free_depends)
 			)
 		)
 	)
@@ -624,7 +624,7 @@ PATENT_CDEPENDS="
 		media-libs/mesa[${MULTILIB_USEDEP},proprietary-codecs]
 		system-ffmpeg? (
 			|| (
-				$(gen_ffmpeg_cdepend0)
+				$(gen_ffmpeg_nonfree_depends)
 			)
 		)
 		vaapi? (
@@ -635,7 +635,7 @@ PATENT_CDEPENDS="
 		media-libs/mesa[${MULTILIB_USEDEP},-proprietary-codecs]
 		system-ffmpeg? (
 			|| (
-				$(gen_ffmpeg_cdepend2)
+				$(gen_ffmpeg_without_codec_developer_tax_depends)
 			)
 		)
 	)
@@ -643,7 +643,7 @@ PATENT_CDEPENDS="
 		media-libs/mesa[${MULTILIB_USEDEP},-proprietary-codecs]
 		system-ffmpeg? (
 			|| (
-				$(gen_ffmpeg_cdepend3)
+				$(gen_ffmpeg_free_for_end_users_depends)
 			)
 		)
 	)
