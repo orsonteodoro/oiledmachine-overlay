@@ -22,5 +22,5 @@
     <flag name="precompile">
       Precompile kernels
     </flag>
-  <use>
+  </use>
 </pkgmetadata>
