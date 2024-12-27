@@ -504,7 +504,7 @@ PATENT_STATUS=(
 	patent_status_without_codec_developer_tax
 	patent_status_free_for_end_users
 	patent_status_new_hardware
-	patent_status_nonfree_patents
+	patent_status_nonfree
 )
 CPU_FLAGS_ARM=(
 	cpu_flags_arm_thumb2
@@ -583,22 +583,22 @@ PATENT_REQUIRED_USE="
 		patent_status_free_for_end_users
 	)
 	dash? (
-		patent_status_nonfree_patents
+		patent_status_nonfree
 	)
 	hls? (
-		patent_status_nonfree_patents
+		patent_status_nonfree
 	)
 	libde265? (
-		patent_status_nonfree_patents
+		patent_status_nonfree
 	)
 	openh264? (
-		patent_status_nonfree_patents
+		patent_status_nonfree
 	)
 	x264? (
-		patent_status_nonfree_patents
+		patent_status_nonfree
 	)
 	x265? (
-		patent_status_nonfree_patents
+		patent_status_nonfree
 	)
 "
 
@@ -721,7 +721,7 @@ gen_ffmpeg_g722_depends() {
 
 RDEPEND_PATENTS="
 	>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},patent_status_new_hardware?]
-	!patent_status_nonfree_patents? (
+	!patent_status_nonfree? (
 		!media-plugins/gst-plugins-dash
 		!media-plugins/gst-plugins-hls
 		!media-plugins/gst-plugins-libde265
@@ -875,7 +875,7 @@ RDEPEND+="
 			$(gen_depend_llvm)
 		)
 	)
-	!patent_status_nonfree_patents? (
+	!patent_status_nonfree? (
 		!media-plugins/gst-plugins-faac
 		!media-plugins/gst-plugins-faad
 	)
@@ -1208,7 +1208,7 @@ ewarn
 # It may use runtime codec detection for both gst-ffmpeg and in webkit-gtk.
 verify_codecs() {
 	if \
-		 ! use patent_status_nonfree_patents \
+		 ! use patent_status_nonfree \
 		|| use patent_status_without_codec_developer_tax \
 		|| use patent_status_free_for_end_users \
 	; then
@@ -1225,7 +1225,7 @@ verify_codecs() {
 		"x264"
 		"x265"
 	)
-	if use patent_status_nonfree_patents ; then
+	if use patent_status_nonfree ; then
 		use_flags+=(
 			"aac"
 		)

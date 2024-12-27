@@ -433,7 +433,7 @@ LICENSE+="
 PATENT_STATUS=(
 	patent_status_free_for_end_users
 	patent_status_new_hardware
-	patent_status_nonfree_patents
+	patent_status_nonfree
 	patent_status_without_codec_developer_tax
 )
 CODEC_IUSE="
@@ -468,7 +468,7 @@ PATENT_REQUIRED_USE="
 		patent_status_free_for_end_users
 	)
 	openh264? (
-		patent_status_nonfree_patents
+		patent_status_nonfree
 		system-ffmpeg
 	)
 "
@@ -561,7 +561,7 @@ gen_ffmpeg_nonfree_depends() {
 	local s
 	for s in ${FFMPEG_COMPAT} ; do
 		echo "
-			media-video/ffmpeg:${s}[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree_patents,vaapi?,vpx?]
+			media-video/ffmpeg:${s}[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
 		"
 	done
 }
@@ -572,10 +572,10 @@ gen_ffmpeg_royalty_free_depends() {
 		echo "
 			(
 				!<dev-libs/openssl-3
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,-patent_status_nonfree_patents,vaapi?,vpx?,-x264,-x265]
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,-patent_status_nonfree,vaapi?,vpx?,-x264,-x265]
 			)
 			(
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,-patent_status_nonfree_patents,vaapi?,vpx?,-x264,-x265]
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,-patent_status_nonfree,vaapi?,vpx?,-x264,-x265]
 			)
 		"
 	done
@@ -614,14 +614,14 @@ gen_ffmpeg_free_for_end_users_depends() {
 # x86_64 will use ffvpx and system-ffmpeg but others will use system-ffmpeg
 PATENT_CDEPENDS="
 	media-libs/mesa[${MULTILIB_USEDEP},patent_status_new_hardware?]
-	!patent_status_nonfree_patents? (
+	!patent_status_nonfree? (
 		system-ffmpeg? (
 			|| (
 				$(gen_ffmpeg_royalty_free_depends)
 			)
 		)
 	)
-	patent_status_nonfree_patents? (
+	patent_status_nonfree? (
 		system-ffmpeg? (
 			|| (
 				$(gen_ffmpeg_nonfree_depends)
@@ -1244,8 +1244,8 @@ eerror
 }
 
 verify_codecs() {
-	if ! use patent_status_nonfree_patents \
-		|| use patent_status_nonfree_patents \
+	if ! use patent_status_nonfree \
+		|| use patent_status_nonfree \
 		|| use patent_status_free_for_end_users \
 	; then
 		:

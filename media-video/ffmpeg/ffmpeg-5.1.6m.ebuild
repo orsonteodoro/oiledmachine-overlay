@@ -174,7 +174,7 @@ NV_CODEC_HEADERS_PV="9.1.23.1"
 PATENT_STATUS=(
 	patent_status_free_for_end_users
 	patent_status_new_hardware
-	patent_status_nonfree_patents
+	patent_status_nonfree
 	patent_status_without_codec_developer_tax
 )
 SCM=""
@@ -549,16 +549,16 @@ REQUIRED_USE_LICENSES="
 
 PATENT_REQUIRED_USE="
 	amr? (
-		patent_status_nonfree_patents
+		patent_status_nonfree
 	)
 	fdk? (
-		patent_status_nonfree_patents
+		patent_status_nonfree
 	)
 	kvazaar? (
-		patent_status_nonfree_patents
+		patent_status_nonfree
 	)
 	openh264? (
-		patent_status_nonfree_patents
+		patent_status_nonfree
 	)
 	vaapi? (
 		patent_status_new_hardware
@@ -567,10 +567,10 @@ PATENT_REQUIRED_USE="
 		patent_status_new_hardware
 	)
 	x264? (
-		patent_status_nonfree_patents
+		patent_status_nonfree
 	)
 	x265? (
-		patent_status_nonfree_patents
+		patent_status_nonfree
 	)
 "
 
@@ -1839,7 +1839,7 @@ eerror
 		)
 	fi
 
-	if ! use patent_status_nonfree_patents ; then
+	if ! use patent_status_nonfree ; then
 		myconf+=(
 			--non-free-patented-codecs=deny
 		)

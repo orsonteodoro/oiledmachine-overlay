@@ -167,7 +167,7 @@ NODE_VERSION=20
 PATENT_STATUS=(
 	patent_status_free_for_end_users
 	patent_status_new_hardware
-	patent_status_nonfree_patents
+	patent_status_nonfree
 	patent_status_without_codec_developer_tax
 )
 PPC64_HASH="a85b64f07b489b8c6fdb13ecf79c16c56c560fc6"
@@ -634,14 +634,14 @@ ebuild_revision_1
 #   https://clang.llvm.org/docs/ControlFlowIntegrity.html#bad-cast-checking
 #
 PATENT_USE_FLAGS="
-	!patent_status_nonfree_patents? (
+	!patent_status_nonfree? (
 		!openh264
 		!vaapi-hevc
 		!widevine
 		system-ffmpeg
 	)
 	openh264? (
-		patent_status_nonfree_patents
+		patent_status_nonfree
 	)
 	patent_status_without_codec_developer_tax? (
 		!openh264
@@ -659,7 +659,7 @@ PATENT_USE_FLAGS="
 		patent_status_new_hardware
 	)
 	widevine? (
-		patent_status_nonfree_patents
+		patent_status_nonfree
 	)
 "
 
@@ -743,7 +743,7 @@ REQUIRED_USE+="
 	)
 	ffmpeg-chromium? (
 		bindist
-		patent_status_nonfree_patents
+		patent_status_nonfree
 	)
 	!headless? (
 		pdf
@@ -794,7 +794,7 @@ REQUIRED_USE+="
 		pdf
 		pgo
 		plugins
-		patent_status_nonfree_patents
+		patent_status_nonfree
 		reporting-api
 		screencast
 		vaapi
@@ -857,7 +857,7 @@ if is_cromite_compatible ; then
 	REQUIRED_USE+="
 		cromite? (
 			amd64
-			patent_status_nonfree_patents
+			patent_status_nonfree
 			dav1d
 			pdf
 			plugins
@@ -1033,7 +1033,7 @@ COMMON_SNAPSHOT_DEPEND="
 	dev-libs/nspr:=
 	>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},gbm(+)]
 	media-libs/mesa:=
-	patent_status_nonfree_patents? (
+	patent_status_nonfree? (
 		system-openh264? (
 			>=media-libs/openh264-2.4.1[${MULTILIB_USEDEP}]
 			media-libs/openh264:=
@@ -1163,11 +1163,11 @@ COMMON_DEPEND="
 			>=media-libs/opus-1.4[${MULTILIB_USEDEP}]
 			media-libs/opus:=
 		)
-		patent_status_nonfree_patents? (
-			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree_patents,vorbis?,vpx?]
+		patent_status_nonfree? (
+			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
 		)
-		!patent_status_nonfree_patents? (
-			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,-patent_status_nonfree_patents,vaapi?,vorbis?,vpx?,-x264,-x265]
+		!patent_status_nonfree? (
+			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,-patent_status_nonfree,vaapi?,vorbis?,vpx?,-x264,-x265]
 		)
 		patent_status_without_codec_developer_tax? (
 			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,patent_status_without_codec_developer_tax,vaapi?,vorbis?,vpx?,-x264,-x265]
@@ -3905,27 +3905,27 @@ ewarn "The new V8 Sandbox [for the JavaScript engine] (2024) will be automagic o
 	# remove / substitute
 		myconf_gn+=" is_component_ffmpeg=true"
 	else
-		ffmpeg_branding="$(usex patent_status_nonfree_patents Chrome Chromium)"
-		myconf_gn+=" proprietary_codecs=$(usex patent_status_nonfree_patents true false)"
+		ffmpeg_branding="$(usex patent_status_nonfree Chrome Chromium)"
+		myconf_gn+=" proprietary_codecs=$(usex patent_status_nonfree true false)"
 		myconf_gn+=" ffmpeg_branding=\"${ffmpeg_branding}\""
 	fi
 
 	myconf_gn+=" enable_av1_decoder=$(usex dav1d true false)"
 	myconf_gn+=" enable_dav1d_decoder=$(usex dav1d true false)"
-	myconf_gn+=" enable_hevc_parser_and_hw_decoder=$(usex patent_status_nonfree_patents $(usex vaapi-hevc true false) false)"
+	myconf_gn+=" enable_hevc_parser_and_hw_decoder=$(usex patent_status_nonfree $(usex vaapi-hevc true false) false)"
 	myconf_gn+=" enable_libaom=$(usex libaom $(usex encode true false) false)"
-	myconf_gn+=" enable_platform_hevc=$(usex patent_status_nonfree_patents $(usex vaapi-hevc true false) false)"
+	myconf_gn+=" enable_platform_hevc=$(usex patent_status_nonfree $(usex vaapi-hevc true false) false)"
 	myconf_gn+=" media_use_libvpx=$(usex vpx true false)"
-	myconf_gn+=" media_use_openh264=$(usex patent_status_nonfree_patents $(usex openh264 true false) false)"
+	myconf_gn+=" media_use_openh264=$(usex patent_status_nonfree $(usex openh264 true false) false)"
 	myconf_gn+=" rtc_include_opus=$(usex opus true false)"
-	myconf_gn+=" rtc_use_h264=$(usex patent_status_nonfree_patents true false)"
+	myconf_gn+=" rtc_use_h264=$(usex patent_status_nonfree true false)"
 	if ! use system-ffmpeg ; then
 	# The internal/vendored ffmpeg enables non-free codecs.
 		local _media_use_ffmpeg="true"
 		if \
 			     use patent_status_without_codec_developer_tax \
 			||   use patent_status_free_for_end_users \
-			|| ! use patent_status_nonfree_patents ; then
+			|| ! use patent_status_nonfree ; then
 			_media_use_ffmpeg="false"
 		fi
 		myconf_gn+=" media_use_ffmpeg=${_media_use_ffmpeg}"
