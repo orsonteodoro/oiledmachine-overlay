@@ -107,28 +107,27 @@ SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
 gen_iuse_pgo() {
 	local t
 	for t in ${TRAINER_TYPES[@]} ; do
-		echo " ${PN}_pgo_trainers_${t}"
+		echo " ${PN}_trainers_${t}"
 	done
 }
 
 IUSE+="
-acorn +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu +jit
-inspector npm mold pax-kernel -pointer-compression +snapshot +ssl system-icu
-+system-ssl systemtap test
-
 $(gen_iuse_pgo)
-man pgo ebuild-revision-12
+acorn +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu +jit
+inspector npm man mold pax-kernel pgo -pointer-compression +snapshot +ssl system-icu
++system-ssl systemtap test
+ebuild_revision_12
 "
 
 gen_required_use_pgo() {
 	local t
 	for t in ${TRAINER_TYPES[@]} ; do
-		echo " ${PN}_pgo_trainers_${t}? ( pgo )"
+		echo " ${PN}_trainers_${t}? ( pgo )"
 	done
 }
 REQUIRED_USE+="
 	$(gen_required_use_pgo)
-	${PN}_pgo_trainers_module? (
+	${PN}_trainers_module? (
 		inspector
 	)
 	corepack
@@ -177,7 +176,7 @@ BDEPEND+="
 		sys-apps/elfix
 	)
 	pgo? (
-		${PN}_pgo_trainers_http2? (
+		${PN}_trainers_http2? (
 			>=net-libs/nghttp2-${NGHTTP2_PV}[utils]
 		)
 	)
@@ -274,7 +273,7 @@ eerror
 	fi
 
 	local u
-	for u in ${PN}_pgo_trainers_http ${PN}_pgo_trainers_https ; do
+	for u in ${PN}_trainers_http ${PN}_trainers_https ; do
                 if use "${u}" && has network-sandbox $FEATURES ; then
 eerror
 eerror "The ${u} USE flag requires FEATURES=\"\${FEATURES} -network-sandbox\""
@@ -292,7 +291,7 @@ eerror
 		die
 	fi
 
-	if use ${PN}_pgo_trainers_string_decoder \
+	if use ${PN}_trainers_string_decoder \
 		&& [[ ! ( "${NODEJS_EXCLUDED_TRAINERS}" =~ \
 			"benchmark/string_decoder/string-decoder.js" ) ]] ; then
 ewarn
@@ -302,7 +301,7 @@ ewarn "per-package envvar set."
 ewarn
 	fi
 
-	if use ${PN}_pgo_trainers_path ; then
+	if use ${PN}_trainers_path ; then
 ewarn
 ewarn "The benchmark/path/resolve-win32.js may not reflect typical usage."
 ewarn "Consider adding it to the NODEJS_EXCLUDED_TRAINERS."
@@ -605,7 +604,7 @@ _src_compile() {
 }
 
 init_local_npm() {
-	if use "${PN}_pgo_trainers_http" || use "${PN}_pgo_trainers_https" ; then
+	if use "${PN}_trainers_http" || use "${PN}_trainers_https" ; then
 		DEFAULT_BENCHMARKER="autocannon" # \
 		# Upstream uses wrk by default but autocannon does typical npm downloads.
 		if [[ "${DEFAULT_BENCHMARKER}" == "wrk" ]] ; then
@@ -638,7 +637,7 @@ train_trainer_custom() {
 	local b
 	for t in ${TRAINER_TYPES[@]} ; do
 		for b in ${benchmark[@]} ; do
-			if use "${PN}_pgo_trainers_${t}" \
+			if use "${PN}_trainers_${t}" \
 				&& [[ "${b}" =~ ^"benchmark/${t}/" ]] ; then
 				accepted_trainers["${b//\//_}"]="${b}"
 			fi
@@ -666,7 +665,7 @@ train_trainer_custom() {
 	# benchmark/common.js:238 throw new Error('called end() with operation count <= 0');
 	NODEJS_EXCLUDED_TRAINERS+=" benchmark/net/net-pipe.js"
 
-	if ! use "${PN}_pgo_trainers_module" ; then
+	if ! use "${PN}_trainers_module" ; then
 		NODEJS_EXCLUDED_TRAINERS+=" benchmark/module/module-loader.js"
 	fi
 einfo "NODEJS_EXCLUDED_TRAINERS=${NODEJS_EXCLUDED_TRAINERS}"
