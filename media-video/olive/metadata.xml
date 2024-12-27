@@ -53,7 +53,7 @@
       Add H.265 video encode support
     </flag>
     <flag name="xvid">
-      Add MPEG-4 Part 2 (ASP) video encode support
+      Add MPEG-4 video encode support
     </flag>
   </use>
 </pkgmetadata>
