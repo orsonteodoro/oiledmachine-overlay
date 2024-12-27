@@ -171,7 +171,7 @@ N_SAMPLES=1
 NV_CODEC_HEADERS_PV="9.1.23.1"
 PATENT_STATUS=(
 	patent_status_free_for_end_users
-	patent_status_new_hardware
+	patent_status_new_or_renewed
 	patent_status_nonfree
 	patent_status_without_codec_developer_tax
 )
@@ -958,7 +958,7 @@ RDEPEND+="
 	)
 	vaapi? (
 		>=media-libs/libva-1.2.1-r1:0=[${MULTILIB_USEDEP},drm(+),X?]
-		media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_new_hardware?]
+		media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_new_or_renewed?]
 	)
 	vdpau? (
 		>=x11-libs/libvdpau-0.7[${MULTILIB_USEDEP}]
@@ -1039,7 +1039,7 @@ BDEPEND+="
 		vaapi? (
 			>=media-libs/libva-1.2.1-r1:0=[${MULTILIB_USEDEP},X,drm(+)]
 			media-video/libva-utils[vainfo]
-			media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_new_hardware?]
+			media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_new_or_renewed?]
 		)
 	)
 "

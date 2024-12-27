@@ -17,7 +17,7 @@ video_cards_vmware?,\
 LLVM_COMPAT=( {16..15} )
 MY_P="${P/_/-}"
 PATENT_STATUS=(
-	patent_status_new_hardware
+	patent_status_new_or_renewed
 )
 PYTHON_COMPAT=( python3_{10..11} )
 RADEON_CARDS=(
@@ -712,7 +712,7 @@ _src_configure() {
 		-Dglvnd=true
 		-Dshared-glapi=enabled
 		-Dvalgrind=$(usex valgrind auto disabled)
-		-Dvideo-codecs=$(usex patent_status_new_hardware "h264dec,h264enc,h265dec,h265enc,vc1dec" "")
+		-Dvideo-codecs=$(usex patent_status_new_or_renewed "h264dec,h264enc,h265dec,h265enc,vc1dec" "")
 		-Dvulkan-drivers=$(driver_list "${VULKAN_DRIVERS[*]}")
 	)
 	meson_src_configure

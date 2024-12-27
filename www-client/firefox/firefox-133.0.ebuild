@@ -436,7 +436,7 @@ LICENSE+="
 # (unforced) -hwaccel, pgo, x11 + wayland are defaults in -bin browser
 PATENT_STATUS=(
 	patent_status_free_for_end_users
-	patent_status_new_hardware
+	patent_status_new_or_renewed
 	patent_status_nonfree
 	patent_status_without_codec_developer_tax
 )
@@ -619,7 +619,7 @@ gen_ffmpeg_free_for_end_users_depends() {
 
 # x86_64 will use ffvpx and system-ffmpeg but others will use system-ffmpeg
 PATENT_CDEPENDS="
-	media-libs/mesa[${MULTILIB_USEDEP},patent_status_new_hardware?]
+	media-libs/mesa[${MULTILIB_USEDEP},patent_status_new_or_renewed?]
 	!patent_status_nonfree? (
 		system-ffmpeg? (
 			|| (
@@ -634,7 +634,7 @@ PATENT_CDEPENDS="
 			)
 		)
 		vaapi? (
-			media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_new_hardware?]
+			media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_new_or_renewed?]
 		)
 	)
 	patent_status_without_codec_developer_tax? (

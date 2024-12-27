@@ -503,7 +503,7 @@ DEFAULT_GST_PLUGINS="
 PATENT_STATUS=(
 	patent_status_without_codec_developer_tax
 	patent_status_free_for_end_users
-	patent_status_new_hardware
+	patent_status_new_or_renewed
 	patent_status_nonfree
 )
 CPU_FLAGS_ARM=(
@@ -582,7 +582,7 @@ REQUIRED_USE+=" "$(gen_gst_plugins_required_use)
 
 # Sorted by least restrictive top
 PATENT_REQUIRED_USE="
-	!patent_status_new_hardware? (
+	!patent_status_new_or_renewed? (
 		!vaapi
 	)
 	aac? (
@@ -601,7 +601,7 @@ PATENT_REQUIRED_USE="
 		patent_status_nonfree
 	)
 	vaapi? (
-		patent_status_new_hardware
+		patent_status_new_or_renewed
 	)
 	x264? (
 		patent_status_nonfree
@@ -709,7 +709,7 @@ REQUIRED_USE+="
 "
 
 RDEPEND_PATENTS="
-	>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},patent_status_new_hardware?]
+	>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},patent_status_new_or_renewed?]
 	!patent_status_nonfree? (
 		!media-plugins/gst-plugins-dash
 		!media-plugins/gst-plugins-hls
@@ -718,7 +718,7 @@ RDEPEND_PATENTS="
 		!media-plugins/gst-plugins-x264
 		!media-plugins/gst-plugins-x265
 	)
-	!patent_status_new_hardware? (
+	!patent_status_new_or_renewed? (
 		gstreamer? (
 			media-plugins/gst-plugins-meta[-vaapi]
 			media-libs/gst-plugins-bad[-vaapi]
@@ -817,7 +817,7 @@ RDEPEND+="
 		)
 		vaapi? (
 			>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},vaapi]
-			media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_new_hardware?]
+			media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_new_or_renewed?]
 		)
 		webvtt? (
 			>=media-plugins/gst-plugins-rs-0.6.0:1.0[${MULTILIB_USEDEP},closedcaption]

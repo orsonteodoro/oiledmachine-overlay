@@ -168,7 +168,7 @@ NABIS=0 # Global variable
 NODE_VERSION=20
 PATENT_STATUS=(
 	patent_status_free_for_end_users
-	patent_status_new_hardware
+	patent_status_new_or_renewed
 	patent_status_nonfree
 	patent_status_without_codec_developer_tax
 )
@@ -650,7 +650,7 @@ PATENT_USE_FLAGS="
 		system-ffmpeg
 	)
 	vaapi-hevc? (
-		patent_status_new_hardware
+		patent_status_new_or_renewed
 	)
 	widevine? (
 		patent_status_nonfree
@@ -906,9 +906,9 @@ LIBVA_DEPEND="
 	vaapi? (
 		>=media-libs/libva-${LIBVA_PV}[${MULTILIB_USEDEP},drm(+),wayland?,X?]
 		media-libs/libva:=
-		media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_new_hardware?]
+		media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_new_or_renewed?]
 		system-ffmpeg? (
-			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},patent_status_new_hardware?,vaapi]
+			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},patent_status_new_or_renewed?,vaapi]
 		)
 	)
 "
@@ -1152,7 +1152,7 @@ COMMON_DEPEND="
 		>=net-wireless/bluez-5.55[${MULTILIB_USEDEP}]
 	)
 	system-ffmpeg? (
-		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},patent_status_new_hardware?]
+		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},patent_status_new_or_renewed?]
 		system-opus? (
 			>=media-libs/opus-1.4[${MULTILIB_USEDEP}]
 			media-libs/opus:=

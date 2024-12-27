@@ -23,7 +23,7 @@ IUSE_VAAPI=(
 	video_cards_radeonsi
 )
 PATENT_STATUS=(
-	patent_status_new_hardware
+	patent_status_new_or_renewed
 )
 
 IUSE+="
@@ -42,7 +42,7 @@ REQUIRED_USE+="
 
 RDEPEND_DRIVERS="
 	video_cards_amdgpu? (
-		media-libs/mesa:=[${MULTILIB_USEDEP},patent_status_new_hardware?,vaapi,video_cards_radeonsi]
+		media-libs/mesa:=[${MULTILIB_USEDEP},patent_status_new_or_renewed?,vaapi,video_cards_radeonsi]
 	)
 	video_cards_intel? (
 		|| (
@@ -53,11 +53,11 @@ RDEPEND_DRIVERS="
 	video_cards_nouveau? (
 		|| (
 			(
-				media-libs/mesa:=[${MULTILIB_USEDEP},patent_status_new_hardware?,vaapi,video_cards_nouveau]
+				media-libs/mesa:=[${MULTILIB_USEDEP},patent_status_new_or_renewed?,vaapi,video_cards_nouveau]
 			)
 			(
 				>=media-libs/libva-vdpau-driver-0.7.4-r3[${MULTILIB_USEDEP}]
-				media-libs/mesa:=[${MULTILIB_USEDEP},patent_status_new_hardware?,vdpau,video_cards_nouveau]
+				media-libs/mesa:=[${MULTILIB_USEDEP},patent_status_new_or_renewed?,vdpau,video_cards_nouveau]
 			)
 		)
 	)
@@ -69,10 +69,10 @@ RDEPEND_DRIVERS="
 		x11-drivers/nvidia-drivers
 	)
 	video_cards_r600? (
-		media-libs/mesa:=[${MULTILIB_USEDEP},patent_status_new_hardware?,vaapi,video_cards_r600]
+		media-libs/mesa:=[${MULTILIB_USEDEP},patent_status_new_or_renewed?,vaapi,video_cards_r600]
 	)
 	video_cards_radeonsi? (
-		media-libs/mesa:=[${MULTILIB_USEDEP},patent_status_new_hardware?,vaapi,video_cards_radeonsi]
+		media-libs/mesa:=[${MULTILIB_USEDEP},patent_status_new_or_renewed?,vaapi,video_cards_radeonsi]
 	)
 "
 
