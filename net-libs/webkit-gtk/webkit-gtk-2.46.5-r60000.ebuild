@@ -712,10 +712,10 @@ gen_ffmpeg_g722_depends() {
 			echo "
 				(
 					!<dev-libs/openssl-3
-					media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,-fdk,-kvazaar,-openh264,openssl,-vaapi,-x264,-x265,-xvid]
+					media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,-fdk,-kvazaar,-openh264,openssl,-vaapi,-x264,-x265]
 				)
 				(
-					media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,-fdk,-kvazaar,-openh264,-openssl,-vaapi,-x264,-x265,-xvid]
+					media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,-fdk,-kvazaar,-openh264,-openssl,-vaapi,-x264,-x265]
 				)
 			"
 	done
@@ -1230,7 +1230,6 @@ verify_codecs() {
 		"vaapi"
 		"x264"
 		"x265"
-		"xvid"
 	)
 	if use patent_status_nonfree_patents ; then
 		use_flags+=(
@@ -1249,11 +1248,11 @@ eerror
 eerror "Required changes:"
 eerror
 eerror    ">=dev-libs/openssl-3"
-eerror    "media-video/ffmpeg[-amr,-cuda,-fdk,-openh264,openssl,-vaapi,-x264,-x265,-xvid]"
+eerror    "media-video/ffmpeg[-amr,-cuda,-fdk,-openh264,openssl,-vaapi,-x264,-x265]"
 eerror
 eerror "or"
 eerror
-eerror    "media-video/ffmpeg[-amr,-cuda,-fdk,-openh264,-openssl,-vaapi,-x264,-x265,-xvid]"
+eerror    "media-video/ffmpeg[-amr,-cuda,-fdk,-openh264,-openssl,-vaapi,-x264,-x265]"
 eerror
 			die
 		fi

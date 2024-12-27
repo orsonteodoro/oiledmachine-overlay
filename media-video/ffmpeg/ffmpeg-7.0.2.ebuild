@@ -616,9 +616,6 @@ PATENT_REQUIRED_USE="
 	x265? (
 		patent_status_nonfree_patents
 	)
-	xvid? (
-		patent_status_nonfree_patents
-	)
 "
 
 REQUIRED_USE+="

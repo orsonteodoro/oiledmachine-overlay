@@ -581,10 +581,10 @@ gen_ffmpeg_royalty_free_depends() {
 		echo "
 			(
 				!<dev-libs/openssl-3
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,-patent_status_nonfree_patents,vaapi?,vpx?,-x264,-x265,-xvid]
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,-patent_status_nonfree_patents,vaapi?,vpx?,-x264,-x265]
 			)
 			(
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,-patent_status_nonfree_patents,vaapi?,vpx?,-x264,-x265,-xvid]
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,-patent_status_nonfree_patents,vaapi?,vpx?,-x264,-x265]
 			)
 		"
 	done
@@ -596,10 +596,10 @@ gen_ffmpeg_without_codec_developer_tax_depends() {
 		echo "
 			(
 				!<dev-libs/openssl-3
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,patent_status_without_codec_developer_tax,vaapi?,vpx?,-x264,-x265,-xvid]
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,patent_status_without_codec_developer_tax,vaapi?,vpx?,-x264,-x265]
 			)
 			(
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,patent_status_without_codec_developer_tax,vaapi?,vpx?,-x264,-x265,-xvid]
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,patent_status_without_codec_developer_tax,vaapi?,vpx?,-x264,-x265]
 			)
 		"
 	done
@@ -611,10 +611,10 @@ gen_ffmpeg_free_for_end_users_depends() {
 		echo "
 			(
 				!<dev-libs/openssl-3
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,patent_status_free_for_end_users,vaapi?,vpx?,-x264,-x265,-xvid]
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,patent_status_free_for_end_users,vaapi?,vpx?,-x264,-x265]
 			)
 			(
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,patent_status_free_for_end_users,vaapi?,vpx?,-x264,-x265,-xvid]
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,patent_status_free_for_end_users,vaapi?,vpx?,-x264,-x265]
 			)
 		"
 	done

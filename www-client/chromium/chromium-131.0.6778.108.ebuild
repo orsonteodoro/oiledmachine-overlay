@@ -1170,13 +1170,13 @@ COMMON_DEPEND="
 			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree_patents,vorbis?,vpx?]
 		)
 		!patent_status_nonfree_patents? (
-			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,-patent_status_nonfree_patents,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
+			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,-patent_status_nonfree_patents,vaapi?,vorbis?,vpx?,-x264,-x265]
 		)
 		patent_status_without_codec_developer_tax? (
-			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,patent_status_without_codec_developer_tax,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
+			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,patent_status_without_codec_developer_tax,vaapi?,vorbis?,vpx?,-x264,-x265]
 		)
 		patent_status_free_for_end_users? (
-			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,patent_status_free_for_end_users,vaapi?,vorbis?,vpx?,-x264,-x265,-xvid]
+			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,patent_status_free_for_end_users,vaapi?,vorbis?,vpx?,-x264,-x265]
 		)
 		|| (
 			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-samba]
