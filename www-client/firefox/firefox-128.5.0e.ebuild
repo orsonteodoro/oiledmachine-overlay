@@ -432,6 +432,7 @@ LICENSE+="
 # (unforced) -hwaccel, pgo, x11 + wayland are defaults in -bin browser
 PATENT_STATUS=(
 	patent_status_free_for_end_users
+	patent_status_new_hardware
 	patent_status_nonfree_patents
 	patent_status_without_codec_developer_tax
 )
@@ -469,6 +470,9 @@ PATENT_REQUIRED_USE="
 	openh264? (
 		patent_status_nonfree_patents
 		system-ffmpeg
+	)
+	vaapi? (
+		patent_status_new_hardware
 	)
 "
 REQUIRED_USE="
@@ -612,8 +616,8 @@ gen_ffmpeg_free_for_end_users_depends() {
 
 # x86_64 will use ffvpx and system-ffmpeg but others will use system-ffmpeg
 PATENT_CDEPENDS="
+	media-libs/mesa[${MULTILIB_USEDEP},patent_status_new_hardware?]
 	!patent_status_nonfree_patents? (
-		media-libs/mesa[${MULTILIB_USEDEP},-proprietary-codecs]
 		system-ffmpeg? (
 			|| (
 				$(gen_ffmpeg_royalty_free_depends)
@@ -621,7 +625,6 @@ PATENT_CDEPENDS="
 		)
 	)
 	patent_status_nonfree_patents? (
-		media-libs/mesa[${MULTILIB_USEDEP},proprietary-codecs]
 		system-ffmpeg? (
 			|| (
 				$(gen_ffmpeg_nonfree_depends)
@@ -632,7 +635,6 @@ PATENT_CDEPENDS="
 		)
 	)
 	patent_status_without_codec_developer_tax? (
-		media-libs/mesa[${MULTILIB_USEDEP},-proprietary-codecs]
 		system-ffmpeg? (
 			|| (
 				$(gen_ffmpeg_without_codec_developer_tax_depends)
@@ -640,7 +642,6 @@ PATENT_CDEPENDS="
 		)
 	)
 	patent_status_free_for_end_users? (
-		media-libs/mesa[${MULTILIB_USEDEP},-proprietary-codecs]
 		system-ffmpeg? (
 			|| (
 				$(gen_ffmpeg_free_for_end_users_depends)

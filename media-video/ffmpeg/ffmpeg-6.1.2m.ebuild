@@ -177,6 +177,7 @@ N_SAMPLES=1
 NV_CODEC_HEADERS_PV="9.1.23.1"
 PATENT_STATUS=(
 	patent_status_free_for_end_users
+	patent_status_new_hardware
 	patent_status_nonfree_patents
 	patent_status_without_codec_developer_tax
 )
@@ -590,6 +591,12 @@ PATENT_REQUIRED_USE="
 	)
 	openh264? (
 		patent_status_nonfree_patents
+	)
+	vaapi? (
+		patent_status_new_hardware
+	)
+	vdpau? (
+		patent_status_new_hardware
 	)
 	x264? (
 		patent_status_nonfree_patents

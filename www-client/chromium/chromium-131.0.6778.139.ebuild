@@ -168,6 +168,7 @@ NABIS=0 # Global variable
 NODE_VERSION=20
 PATENT_STATUS=(
 	patent_status_free_for_end_users
+	patent_status_new_hardware
 	patent_status_nonfree_patents
 	patent_status_without_codec_developer_tax
 )
@@ -636,14 +637,14 @@ ebuild_revision_1
 #   https://clang.llvm.org/docs/ControlFlowIntegrity.html#bad-cast-checking
 #
 PATENT_USE_FLAGS="
-	openh264? (
-		patent_status_nonfree_patents
-	)
 	!patent_status_nonfree_patents? (
 		!openh264
 		!vaapi-hevc
 		!widevine
 		system-ffmpeg
+	)
+	openh264? (
+		patent_status_nonfree_patents
 	)
 	patent_status_without_codec_developer_tax? (
 		!openh264
@@ -657,8 +658,11 @@ PATENT_USE_FLAGS="
 		!widevine
 		system-ffmpeg
 	)
+	vaapi? (
+		patent_status_new_hardware
+	)
 	vaapi-hevc? (
-		patent_status_nonfree_patents
+		patent_status_new_hardware
 	)
 	widevine? (
 		patent_status_nonfree_patents
@@ -1160,6 +1164,7 @@ COMMON_DEPEND="
 		>=net-wireless/bluez-5.55[${MULTILIB_USEDEP}]
 	)
 	system-ffmpeg? (
+		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},patent_status_new_hardware?]
 		system-opus? (
 			>=media-libs/opus-1.4[${MULTILIB_USEDEP}]
 			media-libs/opus:=

@@ -16,6 +16,9 @@ video_cards_vmware?,\
 "
 LLVM_COMPAT=( {17..15} )
 MY_P="${P/_/-}"
+PATENT_STATUS=(
+	patent_status_new_hardware
+)
 PYTHON_COMPAT=( python3_{10..12} )
 RADEON_CARDS=(
 	r300
@@ -83,7 +86,7 @@ IUSE+="
 ${IUSE_VIDEO_CARDS}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 cpu_flags_x86_sse2 d3d9 debug gles1 +gles2 +llvm lm-sensors opencl +opengl
-osmesa +proprietary-codecs selinux test unwind vaapi valgrind vdpau vulkan
+osmesa selinux test unwind vaapi valgrind vdpau vulkan
 vulkan-overlay wayland +X xa zink +zstd
 "
 REQUIRED_USE="
@@ -746,7 +749,7 @@ _src_configure() {
 		-Dgallium-drivers=$(driver_list "${GALLIUM_DRIVERS[*]}")
 		-Dshared-glapi=enabled
 		-Dvalgrind=$(usex valgrind auto disabled)
-		-Dvideo-codecs=$(usex proprietary-codecs "all" "all_free")
+		-Dvideo-codecs=$(usex patent_status_new_hardware "all" "all_free")
 		-Dvulkan-drivers=$(driver_list "${VULKAN_DRIVERS[*]}")
 	)
 	meson_src_configure

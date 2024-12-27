@@ -150,9 +150,6 @@
     <flag name="osmesa">
       Build the Mesa library for off-screen rendering.
     </flag>
-    <flag name="proprietary-codecs">
-      Enable codecs for patent-encumbered audio and video formats.
-    </flag>
     <flag name="vdpau">
       Enable the VDPAU acceleration interface for the Gallium3D Video Layer.
     </flag>

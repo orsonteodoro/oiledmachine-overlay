@@ -17,6 +17,9 @@ video_cards_vmware?,\
 LLVM_COMPAT=( {16..13} )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MY_P="${P/_/-}"
+PATENT_STATUS=(
+	patent_status_new_hardware
+)
 PYTHON_COMPAT=( python3_{9..11} )
 RADEON_CARDS=(
 	r300
@@ -82,7 +85,7 @@ IUSE+="
 ${IUSE_VIDEO_CARDS}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 cpu_flags_x86_sse2 d3d9 debug gles1 +gles2 +llvm lm-sensors opencl osmesa
-+proprietary-codecs selinux test unwind vaapi valgrind vdpau vulkan
+selinux test unwind vaapi valgrind vdpau vulkan
 vulkan-overlay wayland +X xa zink +zstd
 ebuild-revision-1
 "
@@ -678,7 +681,7 @@ _src_configure() {
 		-Dglx=$(usex X dri disabled)
 		-Dshared-glapi=enabled
 		-Dvalgrind=$(usex valgrind auto disabled)
-		-Dvideo-codecs=$(usex proprietary-codecs "h264dec,h264enc,h265dec,h265enc,vc1dec" "")
+		-Dvideo-codecs=$(usex patent_status_new_hardware "h264dec,h264enc,h265dec,h265enc,vc1dec" "")
 		-Dvulkan-drivers=$(driver_list "${VULKAN_DRIVERS[*]}")
 	)
 	meson_src_configure

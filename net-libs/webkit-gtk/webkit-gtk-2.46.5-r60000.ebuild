@@ -503,6 +503,7 @@ DEFAULT_GST_PLUGINS="
 PATENT_STATUS=(
 	patent_status_without_codec_developer_tax
 	patent_status_free_for_end_users
+	patent_status_new_hardware
 	patent_status_nonfree_patents
 )
 CPU_FLAGS_ARM=(
@@ -597,7 +598,7 @@ PATENT_REQUIRED_USE="
 		patent_status_nonfree_patents
 	)
 	vaapi? (
-		patent_status_nonfree_patents
+		patent_status_new_hardware
 	)
 	x264? (
 		patent_status_nonfree_patents
@@ -725,6 +726,7 @@ gen_ffmpeg_g722_depends() {
 }
 
 RDEPEND_PATENTS="
+	>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},patent_status_new_hardware?]
 	!patent_status_nonfree_patents? (
 		!media-plugins/gst-plugins-dash
 		!media-plugins/gst-plugins-hls
@@ -737,20 +739,8 @@ RDEPEND_PATENTS="
 			!<media-video/ffmpeg-5[openssl]
 			$(gen_ffmpeg_g722_depends)
 		)
-		gles2? (
-			>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},-proprietary-codecs]
-		)
 		gstreamer? (
 			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},-vaapi]
-		)
-		opengl? (
-			>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},-proprietary-codecs]
-		)
-		wayland? (
-			>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},-proprietary-codecs]
-		)
-		webgl? (
-			>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},-proprietary-codecs]
 		)
 	)
 "
