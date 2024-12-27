@@ -595,7 +595,7 @@ PATENT_REQUIRED_USE="
 		patent_status_nonfree_patents
 	)
 	v4l? (
-		patent_status_nonfree_patents
+		patent_status_new_hardware
 	)
 	vaapi? (
 		patent_status_new_hardware
