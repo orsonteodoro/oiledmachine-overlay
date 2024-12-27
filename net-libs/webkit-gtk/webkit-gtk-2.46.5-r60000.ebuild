@@ -577,6 +577,9 @@ REQUIRED_USE+=" "$(gen_gst_plugins_required_use)
 # See https://webkit.org/status/#specification-webxr for feature quality status
 # of emerging web technologies.  Also found in Source/WebCore/features.json
 
+# The gstreamer va plugin doesn't allow selective codec disablement
+# between free and nonfree so it is restricted.
+
 # Sorted by least restrictive top
 PATENT_REQUIRED_USE="
 	aac? (
@@ -593,6 +596,9 @@ PATENT_REQUIRED_USE="
 	)
 	openh264? (
 		patent_status_nonfree
+	)
+	vaapi? (
+		patent_status_new_hardware
 	)
 	x264? (
 		patent_status_nonfree
