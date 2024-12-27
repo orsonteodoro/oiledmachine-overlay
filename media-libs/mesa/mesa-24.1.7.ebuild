@@ -105,6 +105,7 @@ SLOT="0"
 IUSE+="
 ${IUSE_VIDEO_CARDS}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
+${PATENT_STATUS[@]}
 cpu_flags_x86_sse2 d3d9 debug +llvm lm-sensors opencl +opengl
 osmesa selinux test unwind vaapi valgrind vdpau vulkan
 vulkan-overlay wayland +X xa +zstd

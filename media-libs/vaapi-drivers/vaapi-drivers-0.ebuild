@@ -14,65 +14,66 @@ DESCRIPTION="A metapackage for libva drivers"
 KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv ~x86 ~amd64-linux ~x86-linux" # Same as libva
 SLOT="0"
 
-IUSE_VAAPI="
-video_cards_amdgpu
-video_cards_intel
-video_cards_nouveau
-video_cards_nvidia
-video_cards_r600
-video_cards_radeonsi
-"
+IUSE_VAAPI=(
+	video_cards_amdgpu
+	video_cards_intel
+	video_cards_nouveau
+	video_cards_nvidia
+	video_cards_r600
+	video_cards_radeonsi
+)
+PATENT_STATUS=(
+	patent_status_new_hardware
+)
 
 IUSE+="
-${IUSE_VAAPI}
+${IUSE_VAAPI[@]}
+${PATENT_STATUS[@]}
 custom
 "
 
 REQUIRED_USE+="
 	!custom? (
 		|| (
-			${IUSE_VAAPI}
+			${IUSE_VAAPI[@]}
 		)
 	)
 "
 
 RDEPEND_DRIVERS="
-	|| (
-		video_cards_amdgpu? (
-			media-libs/mesa:=[${MULTILIB_USEDEP},vaapi,video_cards_radeonsi]
-		)
-		video_cards_intel? (
-			|| (
-				media-libs/libva-intel-media-driver
-				media-libs/libva-intel-driver[${MULTILIB_USEDEP}]
-			)
-		)
-		video_cards_nouveau? (
-			|| (
-				(
-					media-libs/mesa:=[${MULTILIB_USEDEP},vaapi,video_cards_nouveau]
-				)
-				(
-					>=media-libs/libva-vdpau-driver-0.7.4-r3[${MULTILIB_USEDEP}]
-					media-libs/mesa:=[${MULTILIB_USEDEP},vdpau,video_cards_nouveau]
-				)
-			)
-		)
-		video_cards_nvidia? (
-			|| (
-				>=media-libs/libva-vdpau-driver-0.7.4-r1[${MULTILIB_USEDEP}]
-				media-plugins/nvidia-vaapi-driver
-			)
-			x11-drivers/nvidia-drivers
-		)
-		video_cards_r600? (
-			media-libs/mesa:=[${MULTILIB_USEDEP},vaapi,video_cards_r600]
-		)
-		video_cards_radeonsi? (
-			media-libs/mesa:=[${MULTILIB_USEDEP},vaapi,video_cards_radeonsi]
+	video_cards_amdgpu? (
+		media-libs/mesa:=[${MULTILIB_USEDEP},patent_status_new_hardware?,vaapi,video_cards_radeonsi]
+	)
+	video_cards_intel? (
+		|| (
+			media-libs/libva-intel-media-driver
+			media-libs/libva-intel-driver[${MULTILIB_USEDEP}]
 		)
 	)
-
+	video_cards_nouveau? (
+		|| (
+			(
+				media-libs/mesa:=[${MULTILIB_USEDEP},patent_status_new_hardware?,vaapi,video_cards_nouveau]
+			)
+			(
+				>=media-libs/libva-vdpau-driver-0.7.4-r3[${MULTILIB_USEDEP}]
+				media-libs/mesa:=[${MULTILIB_USEDEP},patent_status_new_hardware?,vdpau,video_cards_nouveau]
+			)
+		)
+	)
+	video_cards_nvidia? (
+		|| (
+			>=media-libs/libva-vdpau-driver-0.7.4-r1[${MULTILIB_USEDEP}]
+			media-plugins/nvidia-vaapi-driver
+		)
+		x11-drivers/nvidia-drivers
+	)
+	video_cards_r600? (
+		media-libs/mesa:=[${MULTILIB_USEDEP},patent_status_new_hardware?,vaapi,video_cards_r600]
+	)
+	video_cards_radeonsi? (
+		media-libs/mesa:=[${MULTILIB_USEDEP},patent_status_new_hardware?,vaapi,video_cards_radeonsi]
+	)
 "
 
 RDEPEND+="

@@ -1056,10 +1056,7 @@ RDEPEND+="
 	)
 	vaapi? (
 		>=media-libs/libva-1.2.1-r1:0=[${MULTILIB_USEDEP},drm(+),X?]
-		media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
-		video_cards_radeonsi? (
-			media-libs/mesa[${MULTILIB_USEDEP},patent_status_new_hardware?]
-		)
+		media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_new_hardware?]
 	)
 	vdpau? (
 		>=x11-libs/libvdpau-0.7[${MULTILIB_USEDEP}]
