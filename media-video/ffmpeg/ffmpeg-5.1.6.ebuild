@@ -189,6 +189,34 @@ UOPTS_SUPPORT_EBOLT=1
 UOPTS_SUPPORT_EPGO=1
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
+USE_LICENSES=(
+	"gpl"
+	"nonfree"
+	"version3"
+)
+USE_GPL_ONLY=(
+	"cdio"
+	"dvdvideo"
+	"frei0r"
+	"rubberband"
+	"vidstab"
+	"x264"
+	"x265"
+	"xvid"
+)
+USE_GPL3_ONLY=(
+	"samba"
+)
+USE_NONFREE_ONLY="
+	"fdk"
+	"gnutls"
+"
+USE_VERSION3_ONLY=(
+	"amr"
+	"gmp"
+	"libaribb24"
+	"liblensfun"
+)
 WANT_LTO=0 # Global variable not const
 
 # Strings for CPU features in the useflag[:configure_option] form
@@ -332,37 +360,6 @@ CPU_REQUIRED_USE="
 
 # +re-codecs is based on unpatched behavior to prevent breaking changes.
 
-LICENSE_USE=(
-	"apache2_0"
-	"+gpl"
-	"gpl2"
-	"+gpl2x"
-	"gpl2x_to_gpl3"
-	"gpl3"
-	"gpl3x"
-	"lgpl2_1"
-	"lgpl2_1_to_gpl2"
-	"lgpl2_1_to_gpl2x"
-	"lgpl2_1_to_gpl3"
-	"lgpl2_1x"
-	"lgpl2_1x_to_gpl2"
-	"lgpl2_1x_to_gpl2x"
-	"lgpl2_1x_to_gpl3"
-	"lgpl2_1x_to_lgpl3"
-	"lgpl2_1x_to_lgpl3x"
-	"lgpl2"
-	"lgpl2x"
-	"lgpl2x_to_gpl2"
-	"lgpl2x_to_gpl3"
-	"lgpl2x_to_lgpl3x"
-	"lgpl3"
-	"lgpl3_to_gpl3"
-	"lgpl3x"
-	"lgpl3x_to_gpl3"
-	"mpl2_0"
-	"nonfree"
-)
-
 inherit cuda flag-o-matic multilib multilib-minimal toolchain-funcs ${SCM}
 inherit flag-o-matic-om llvm uopts
 
@@ -421,39 +418,6 @@ fi
 # BSD - libavcodec/ilbcdec.c
 LICENSE="
 	BSD
-	gpl2? (
-		GPL-2
-	)
-	gpl2x? (
-		GPL-2+
-	)
-	gpl3? (
-		GPL-3
-	)
-	gpl3x? (
-		GPL-3+
-	)
-	lgpl2? (
-		LGPL-2
-	)
-	lgpl2_1? (
-		LGPL-2.1
-	)
-	lgpl2_1? (
-		LGPL-2.1
-	)
-	lgpl2_1x? (
-		LGPL-2.1+
-	)
-	lgpl2x? (
-		LGPL-2+
-	)
-	lgpl3? (
-		LGPL-3
-	)
-	lgpl3x? (
-		LGPL-3+
-	)
 	static-libs? (
 		BSD
 		BSD-2
@@ -478,8 +442,8 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${FFMPEG_ENCODER_FLAG_MAP[@]%:*}
 ${FFMPEG_FLAG_MAP[@]%:*}
 ${FFTOOLS[@]/#/+fftools_}
-${LICENSE_USE[@]}
 ${TRAINERS[@]}
+${USE_LICENSES[@]}
 alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm
 jack-audio-connection-kit jack2 liblensfun mold opencl-icd-loader openvino oss
 pgo +pic pipewire proprietary-codecs proprietary-codecs-disable
@@ -495,111 +459,6 @@ ebuild-revision-17
 # The relicense covers copying the headers which may contain inline code.
 # The linking should be about the same.
 # See also https://www.gnu.org/licenses/gpl-faq.html#AllCompatibility
-gen_relicense() {
-	local in_license="${1}"
-	case ${in_license} in
-		gpl2x)
-			echo "
-				!gpl2x_to_gpl3? (
-					gpl2x
-				)
-				gpl2x_to_gpl3? (
-					gpl3
-				)
-			"
-			;;
-		lgpl2x)
-			echo "
-				!lgpl2x_to_gpl2? (
-					!lgpl2x_to_gpl3? (
-						!lgpl2x_to_lgpl3x? (
-							lgpl2x
-						)
-					)
-				)
-				lgpl2x_to_gpl2? (
-					gpl2
-				)
-				lgpl2x_to_gpl3? (
-					gpl3
-				)
-				lgpl2x_to_lgpl3x? (
-					lgpl3x
-				)
-			"
-			;;
-		lgpl2_1)
-			echo "
-				!lgpl2_1_to_gpl2? (
-					!lgpl2_1_to_gpl2x (
-						!lgpl2_1_to_gpl3? (
-							lgpl2_1
-						)
-					)
-				)
-				lgpl2_1_to_gpl2? (
-					gpl2
-				)
-				lgpl2_1_to_gpl2x? (
-					gpl2x
-				)
-				lgpl2_1_to_gpl3? (
-					gpl3
-				)
-			"
-			;;
-		lgpl2_1x)
-			echo "
-				lgpl2_1x_to_gpl2? (
-					!lgpl2_1x_to_gpl2x? (
-						!lgpl2_1x_to_gpl3? (
-							!lgpl2_1x_to_lgpl3? (
-								!lgpl2_1x_to_lgpl3x? (
-									lgpl2_1x
-								)
-							)
-						)
-					)
-					gpl2
-				)
-				lgpl2_1x_to_gpl2x? (
-					gpl2x
-				)
-				lgpl2_1x_to_gpl3? (
-					gpl3
-				)
-				lgpl2_1x_to_lgpl3? (
-					lgpl3
-				)
-				lgpl2_1x_to_lgpl3x? (
-					lgpl3x
-				)
-			"
-			;;
-		lgpl3)
-			echo "
-				!gpl2
-				!lgpl3_to_gpl3? (
-					lgpl3
-				)
-				lgpl3_to_gpl3? (
-					gpl3
-				)
-			"
-			;;
-		lgpl3x)
-			echo "
-				!gpl2
-				!lgpl3x_to_gpl3? (
-					lgpl3x
-				)
-				lgpl3x_to_gpl3? (
-					gpl3
-				)
-			"
-			;;
-	esac
-}
 
 # The distro has frei0r-plugins as GPL-2 only but source is actually GPL-2+, GPL-3+ [baltan.cpp], LGPL-2.1+ [nois0r.cpp].
 # The distro has libcdio as GPL-3 only but the source is GPL-3+, LGPL-2.1+.
@@ -614,257 +473,63 @@ gen_relicense() {
 # dav1d is BSD-2
 # MPL-2.0 is indirect compatible with the GPL-2, LGPL-2.1 -- with exceptions.  \
 #   For details see: https://www.gnu.org/licenses/license-list.html#MPL-2.0
-REQUIRED_USE_VERSION3="
-	^^ (
-		gpl3
-		gpl3x
-		lgpl3
-		lgpl3x
-	)
-"
-LICENSE_REQUIRED_USE="
-	apache2_0? (
-		$(gen_relicense lgpl2_1x)
-	)
-	apache2_0? (
-		${REQUIRED_USE_VERSION3}
-		!gpl2
-		!lgpl2_1
-	)
-	amr? (
-		${REQUIRED_USE_VERSION3}
-		apache2_0
-	)
-	cdio? (
-		$(gen_relicense gpl2x)
-		$(gen_relicense lgpl2_1)
-		gpl3x
-	)
-	chromaprint? (
-		$(gen_relicense lgpl2_1)
-	)
-	codec2? (
-		$(gen_relicense lgpl2_1)
-	)
-	cuda-nvcc? (
-		nonfree
-	)
-	encode? (
-		amrenc? (
-			${REQUIRED_USE_VERSION3}
-			apache2_0
-		)
-		kvazaar? (
-			$(gen_relicense lgpl2_1)
-		)
-		mp3? (
-			$(gen_relicense lgpl2_1x)
-		)
-		twolame? (
-			$(gen_relicense lgpl2_1x)
-		)
-		x264? (
-			$(gen_relicense gpl2x)
-		)
-		x265? (
-			$(gen_relicense gpl2x)
-		)
-		xvid? (
-			$(gen_relicense gpl2x)
-		)
-	)
-	fdk? (
-		!gpl2
-		!gpl3
-		nonfree
-	)
-	frei0r? (
-		$(gen_relicense gpl2x)
-		$(gen_relicense lgpl2_1x)
-		gpl3x
-	)
-	fribidi? (
-		$(gen_relicense lgpl2_1x)
-	)
-	gcrypt? (
-		$(gen_relicense lgpl2_1)
-	)
-	gme? (
-		$(gen_relicense lgpl2_1)
-	)
-	gmp? (
-		${REQUIRED_USE_VERSION3}
-		|| (
-			$(gen_relicense gpl2x)
-			$(gen_relicense lgpl3x)
-		)
-	)
-	gpl? (
-		|| (
-			gpl2x
-			gpl3x
-		)
-	)
-	gpl2? (
-		!lgpl3
-		!lgpl3x
-		!gpl3
-	)
-	gpl3? (
-		!gpl2
-	)
-	gpl3x? (
-		!gpl2
-	)
-	jack? (
-		jack2? (
-			gpl2
-		)
-		jack-audio-connection-kit? (
-			$(gen_relicense lgpl2_1)
-			gpl2
-		)
-		pipewire? (
-			$(gen_relicense lgpl2_1x)
-			gpl2
-		)
-	)
-	iec61883? (
-		|| (
-			$(gen_relicense lgpl2_1)
-			gpl2
-		)
-		$(gen_relicense lgpl2_1)
-	)
-	ieee1394? (
-		$(gen_relicense lgpl2_1)
-	)
-	lgpl3? (
-		!gpl2
-	)
-	libaribb24? (
-		${REQUIRED_USE_VERSION3}
-		$(gen_relicense lgpl3)
-	)
-	libcaca? (
-		gpl2
-		$(gen_relicense lgpl2_1)
-	)
-	liblensfun? (
-		${REQUIRED_USE_VERSION3}
-		$(gen_relicense lgpl3)
-	)
-	librtmp? (
-		$(gen_relicense gpl2x)
-		$(gen_relicense lgpl2_1x)
-	)
-	libsoxr? (
-		$(gen_relicense lgpl2_1)
-	)
-	libtesseract? (
-		apache2_0
-	)
-	libv4l? (
-		$(gen_relicense lgpl2_1x)
-	)
-	lzma? (
-		$(gen_relicense lgpl2_1x)
-		$(gen_relicense gpl2x)
-	)
-	nonfree? (
-		!gpl2
-		!gpl2x
-		!gpl3
-		!gpl3x
-	)
-	openal? (
-		$(gen_relicense lgpl2x)
-	)
-	openssl? (
-		!apache2_0? (
-			!gpl2
-			!gpl2x
-			!gpl3
-			!gpl3x
-			nonfree
-		)
-		apache2_0? (
-			!gpl2
-			|| (
-				gpl3
-				gpl3x
-				lgpl3
-				lgpl3x
-			)
-		)
-	)
-	opencl? (
-		opencl-icd-loader? (
-			apache2_0
-		)
-	)
-	openvino? (
-		apache2_0
-	)
-	postproc? (
-		$(gen_relicense gpl2x)
-		$(gen_relicense lgpl2_1x)
-	)
-	pulseaudio? (
-		!gdbm? (
-			gpl2
-		)
-		gdbm? (
-			$(gen_relicense lgpl2_1)
-		)
-	)
-	rav1e? (
-		apache2_0
-	)
-	rubberband? (
-		$(gen_relicense gpl2x)
-	)
-	samba? (
-		gpl3x
-	)
-	srt? (
-		mpl2_0
-	)
-	ssh? (
-		$(gen_relicense lgpl2_1)
-	)
-	svg? (
-		$(gen_relicense lgpl2x)
-	)
-	tensorflow? (
-		apache2_0
-	)
-	truetype? (
-		$(gen_relicense gpl2x)
-	)
-	vidstab? (
-		$(gen_relicense gpl2x)
-	)
-	vulkan? (
-		apache2_0
-	)
-	zeromq? (
-		$(gen_relicense lgpl3)
-	)
-	zvbi? (
-		$(gen_relicense gpl2x)
-		$(gen_relicense lgpl2x)
-		gpl2
-	)
-"
+
 # GPL_REQUIRED_USE moved to LICENSE_REQUIRED_USE
 # FIXME: fix missing symbols with -re-codecs
+
+gen_required_use_gpl_only() {
+	local u
+	for u in ${USE_GPL_ONLY[@]} ; do
+		echo "
+			${u}? (
+				gpl
+			)
+		"
+	done
+}
+gen_required_use_gpl3_only() {
+	local u
+	for u in ${USE_GPL3_ONLY[@]} ; do
+		echo "
+			${u}? (
+				gpl
+				version3
+			)
+		"
+	done
+}
+gen_required_use_nonfree_only() {
+	local u
+	for u in ${USE_NONFREE_ONLY[@]} ; do
+		echo "
+			${u}? (
+				nonfree
+			)
+		"
+	done
+}
+gen_required_use_version3() {
+	local u
+	for u in ${USE_VERSION3_ONLY[@]} ; do
+		echo "
+			${u}? (
+				version3
+			)
+		"
+	done
+}
+
+REQUIRED_USE_LICENSES="
+	$(gen_required_use_gpl_only)
+	$(gen_required_use_gpl3_only)
+	$(gen_required_use_nonfree_only)
+	$(gen_required_use_version3)
+"
+
 REQUIRED_USE+="
 	!libplacebo
 	${CPU_REQUIRED_USE}
-	!gpl? (
-		${LICENSE_REQUIRED_USE}
-	)
+	${REQUIRED_USE_LICENSES}
 	!kernel_linux? (
 		!trainer-av-streaming
 	)
@@ -963,7 +628,7 @@ REQUIRED_USE+="
 		!x265
 		!xvid
 		openssl? (
-			apache2_0
+			version3
 		)
 	)
 	proprietary-codecs-disable-codec-developer? (
@@ -975,7 +640,7 @@ REQUIRED_USE+="
 		!x265
 		!xvid
 		openssl? (
-			apache2_0
+			version3
 		)
 	)
 	proprietary-codecs-disable-end-user? (
@@ -986,7 +651,7 @@ REQUIRED_USE+="
 		!x265
 		!xvid
 		openssl? (
-			apache2_0
+			version3
 		)
 	)
 	test? (
@@ -1039,12 +704,7 @@ REQUIRED_USE+="
 "
 # License incompatibility
 LICENSE_RDEPEND="
-	gpl2? (
-		opencl-icd-loader? (
-			!dev-libs/opencl-icd-loader
-		)
-	)
-	lgpl2_1? (
+	!version3? (
 		opencl-icd-loader? (
 			!dev-libs/opencl-icd-loader
 		)
@@ -1261,11 +921,11 @@ RDEPEND+="
 		media-libs/libglvnd[X,${MULTILIB_USEDEP}]
 	)
 	openssl? (
-		!apache2_0? (
+		!version3? (
 			>=dev-libs/openssl-1.0.1h-r2:0=[${MULTILIB_USEDEP}]
 			<dev-libs/openssl-3:=[${MULTILIB_USEDEP}]
 		)
-		apache2_0? (
+		version3? (
 			>=dev-libs/openssl-3.0.0_beta2:0=[${MULTILIB_USEDEP}]
 		)
 	)
@@ -1979,29 +1639,6 @@ append_all() {
 	append-ldflags ${@}
 }
 
-_is_gpl() {
-	if use gpl || use gpl2 || use gpl2x || use gpl3 || use gpl3x ; then
-		return 0
-	fi
-	return 1
-}
-
-# By definition of configure script
-_is_lgplv3() {
-	if use lgpl3 || use lgpl3x ; then
-		return 0
-	fi
-	return 1
-}
-
-# By definition of configure script
-_is_version3() {
-	if ( _is_gpl && ( use gpl3 || use gpl3x ) ) || _is_lgplv3 ; then
-		return 0
-	fi
-	return 1
-}
-
 src_configure() { :; }
 
 _src_configure_compiler() {
@@ -2122,12 +1759,12 @@ eerror
 			--enable-nonfree
 		)
 	fi
-	if _is_gpl ; then
+	if use gpl ; then
 		myconf+=(
 			--enable-gpl
 		)
 	fi
-	if _is_version3 ; then
+	if use version3 ; then
 		myconf+=(
 			--enable-version3
 		)
