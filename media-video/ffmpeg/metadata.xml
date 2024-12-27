@@ -5,6 +5,7 @@
 	<!-- ebuild originator -->
 	<email>media-video@gentoo.org</email>
 </maintainer>
+<![CDATA[
 <!--
 
   oiledmachine-overlay notes:
@@ -80,7 +81,7 @@
 
     The value of vscenario can be fantasy, film, grainy, streaming, realism.
     The value of vencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][V][I.][L.][S.] .*" in parens
-    The value of vdecoder matches  mpv ~~vd=help ; replace ~~ with double hyphens
+    The value of vdecoder matches  mpv --vd=help
     The value of ext matches  ffmpeg -formats
     The value of tags may be added for custom trainers providing metadata
     for enablement of special optimization options.  Multiple tags
@@ -99,7 +100,7 @@
 
     The value of ascenario can be voice, radio, music.
     The value of aencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][A][I.][L.][S.] .*" in parens
-    The value of adecoder matches  mpv ~~ad=help ; replace ~~ with double hyphens
+    The value of adecoder matches  mpv --ad=help
     The value of ext matches  ffmpeg -formats
     The value of tags may be added for custom trainers providing metadata
     for enablement of special optimization options.  Multiple tags
@@ -196,9 +197,9 @@
 
     The value of avscenario can be live-streaming
     The value of vencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][V][I.][L.][S.] .*" in parens
-    The value of vdecoder matches  mpv ~~vd=help ; replace ~~ with double hyphens.  you may specify none.
+    The value of vdecoder matches  mpv --vd=help ; you may specify none.
     The value of aencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][A][I.][L.][S.] .*" in parens
-    The value of adecoder matches  mpv ~~ad=help ; replace ~~ with double hyphens.  you may specify none.
+    The value of adecoder matches  mpv --ad=help ; you may specify none.
     The value of container matches  ffmpeg -formats ; if you don't know put unknown.
     The value of tags may be added for custom trainers providing metadata
     for enablement of special optimization options.  Multiple tags
@@ -476,10 +477,9 @@
    * The pic USE flag may be required for LTO builds.
    * Either Gold LTO or Thin LTO may only be used for LTO.
    * Using BFD LTO may result in linker errors.
-   * Replace ~~ with double hyphens.
-     XML does not support double hyphens in xml comments in compatibility mode.
 
 -->
+]]>
 <upstream>
   <remote-id type="cpe">cpe:/a:ffmpeg:ffmpeg</remote-id>
   <remote-id type="github">FFmpeg/FFmpeg</remote-id>

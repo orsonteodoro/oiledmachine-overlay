@@ -9,6 +9,7 @@
     ot-sources is a customizable patchset compilation package that applies
     patches for performance, encryption, and security to the Linux kernel.
   </longdescription>
+  <![CDATA[
   <!--
 
     oiledmachine-overlay notes:
@@ -2261,8 +2262,7 @@ OT_KERNEL_WORK_PROFILE="http-server-busy"
     Notes:
 
       - Use `sha512sum /etc/portage/ot-sources/6.1/gaming/x86_64/logo_preprocess.sh | cut -f 1 -d " "` to obtain the sha512 checksum.
-      - Use `rhash ~~blake2b /etc/portage/ot-sources/6.1/gaming/x86_64/logo_preprocess.sh | cut -f 1 -d " "` to obtain the blake2b checksum
-        (You must replace the ~~ with double comments.  xml does not allow double hyphens in comments.)
+      - Use `rhash --blake2b /etc/portage/ot-sources/6.1/gaming/x86_64/logo_preprocess.sh | cut -f 1 -d " "` to obtain the blake2b checksum
 
 
 
@@ -3918,11 +3918,9 @@ unset OT_KERNEL_PRIVATE_KEY
     Valid values:
       See iucode_tool man page for details.
     Examples:
-      MICROCODE_SIGNATURES="-S" # Equivalent to ~~scan-system=auto ; Not recommended for multisocket mobos.
-      MICROCODE_SIGNATURES="~~scan-system=exact" # Recommended for multisocket, server.  Ebuild default.
+      MICROCODE_SIGNATURES="-S" # Equivalent to --scan-system=auto ; Not recommended for multisocket mobos.
+      MICROCODE_SIGNATURES="--scan-system=exact" # Recommended for multisocket, server.  Ebuild default.
       MICROCODE_SIGNATURES="-s 0x000306c3"
-
-      (You must replace ~~ with double hyphen.  xml does not allow double hyphen in comments.)
 
     MICROCODE_BLACKLIST - Blacklist processor signatures.
       Requires OT_KERNEL_CPU_MICROCODE=1.
@@ -4255,6 +4253,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Please read the metadata.xml comments for more info.
   -->
+  ]]>
   <upstream>
     <!-- Send bug reports to the oiledmachine-overlay first. -->
     <bugs-to>
