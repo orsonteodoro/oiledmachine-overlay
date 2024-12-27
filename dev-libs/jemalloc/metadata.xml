@@ -60,10 +60,10 @@
     <flag name="stats">
       Enable statistics calculation/reporting
     </flag>
-    <flag name="stress-test-trainer">
+    <flag name="jemalloc_trainers_stress_test">
       Use the stress test as the PGO trainer.
     </flag>
-    <flag name="test-trainer">
+    <flag name="jemalloc_trainers_test_suite">
       Use the test suite as the PGO trainer.
     </flag>
     <flag name="xmalloc">

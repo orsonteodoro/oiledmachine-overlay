@@ -11,8 +11,8 @@ MULTILIB_WRAPPED_HEADERS=(
 	"/usr/include/jemalloc/jemalloc.h"
 )
 TRAINERS=(
-	"test-trainer"
-	"stress-test-trainer"
+	"jemalloc_trainers_test_suite"
+	"jemalloc_trainers_stress_test"
 )
 TRAIN_TEST_DURATION=1800 # 30 min
 UOPTS_SUPPORT_EBOLT=0
@@ -62,10 +62,10 @@ REQUIRED_USE+="
 			${TRAINERS[@]}
 		)
 	)
-	test-trainer? (
+	jemalloc_trainers_test_suite? (
 		pgo
 	)
-	stress-test-trainer? (
+	jemalloc_trainers_stress_test? (
 		pgo
 	)
 "
@@ -163,7 +163,7 @@ src_compile() {
 }
 
 _test_trainer_wrapper() {
-	local use_id="test-trainer"
+	local use_id="jemalloc_trainers_test_suite"
 	local d="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
 cat <<EOF > "${d}/${use_id}" || die
 #!${EPREFIX}/bin/bash
@@ -174,7 +174,7 @@ chmod +x "${d}/${use_id}" || die
 }
 
 _stress_test_trainer_wrapper() {
-	local use_id="stress-test-trainer"
+	local use_id="jemalloc_trainers_stress_test"
 	local d="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
 cat <<EOF > "${d}/${use_id}" || die
 #!${EPREFIX}/bin/bash
@@ -185,13 +185,13 @@ chmod +x "${d}/${use_id}" || die
 }
 
 _src_pre_train() {
-	use test-trainer && _test_trainer_wrapper
-	use stress-test-trainer && _stress_test_trainer_wrapper
+	use jemalloc_trainers_test_suite && _test_trainer_wrapper
+	use jemalloc_trainers_stress_test && _stress_test_trainer_wrapper
 }
 
 train_trainer_list() {
-	use test-trainer && echo "test-trainer"
-	use stress-test-trainer && echo "stress-test-trainer"
+	use jemalloc_trainers_test_suite && echo "jemalloc_trainers_test_suite"
+	use jemalloc_trainers_stress_test && echo "jemalloc_trainers_stress_test"
 }
 
 train_get_trainer_exe() {
@@ -203,12 +203,12 @@ train_get_trainer_exe() {
 train_override_duration() {
 	local trainer="${1}"
 	# 10 min slack is added for older computers.
-	if [[ "${trainer}" == "test-trainer" ]] ; then
+	if [[ "${trainer}" == "jemalloc_trainers_test_suite" ]] ; then
 # real	10m40.282s
 # user	8m57.655s
 # sys	0m38.096s
 		echo "1260" # 21 min
-	elif [[ "${trainer}" == "stress-test-trainer" ]] ; then
+	elif [[ "${trainer}" == "jemalloc_trainers_stress_test" ]] ; then
 # real	16m35.275s
 # user	14m33.077s
 # sys	0m17.290s

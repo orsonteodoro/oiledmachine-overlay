@@ -36,7 +36,7 @@
     <flag name="pgo">
       Use 3 step PGO training
     </flag>
-    <flag name="trainer-zopflipng-with-noto-emoji">
+    <flag name="zopfli_trainers_zopflipng_with_noto_emoji">
       Use noto-emoji to train with zopflipng
     </flag>
   </use>

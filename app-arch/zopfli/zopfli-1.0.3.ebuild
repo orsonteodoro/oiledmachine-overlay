@@ -8,6 +8,9 @@ UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
+TRAINERS=(
+zopfli_trainers_zopflipng_with_noto_emoji
+)
 
 inherit cmake flag-o-matic uopts
 
@@ -15,7 +18,7 @@ KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${P}"
 SRC_URI="
 	https://github.com/google/zopfli/archive/${P}.tar.gz
-	trainer-zopflipng-with-noto-emoji? (
+	zopfli_trainers_zopflipng_with_noto_emoji? (
 		https://github.com/googlefonts/noto-emoji/archive/refs/tags/v${NOTO_EMOJI_PV}.tar.gz
 			-> noto-emoji-${NOTO_EMOJI_PV}.tar.gz
 	)
@@ -25,7 +28,7 @@ DESCRIPTION="A very good, but slow, deflate or zlib compression"
 HOMEPAGE="https://github.com/google/zopfli/"
 LICENSE="
 	Apache-2.0
-	trainer-zopflipng-with-noto-emoji? (
+	zopfli_trainers_zopflipng_with_noto_emoji? (
 		(
 			all-rights-reserved
 			Apache-2.0
@@ -37,8 +40,8 @@ LICENSE="
 # The noto-emoji tarball is OFL-1.1, Apache-2.0, public-domain.
 SLOT="0/1"
 IUSE+="
-	bolt-aggressive-optimizations
-	trainer-zopflipng-with-noto-emoji
+${TRAINERS[@]}
+bolt-aggressive-optimizations
 "
 REQUIRED_USE+="
 	bolt-aggressive-optimizations? (
@@ -47,10 +50,10 @@ REQUIRED_USE+="
 		)
 	)
 	bolt? (
-		trainer-zopflipng-with-noto-emoji
+		zopfli_trainers_zopflipng_with_noto_emoji
 	)
 	pgo? (
-		trainer-zopflipng-with-noto-emoji
+		zopfli_trainers_zopflipng_with_noto_emoji
 	)
 "
 DOCS=( CONTRIBUTORS README README.zopflipng )
@@ -94,7 +97,7 @@ ${extra_args} \
 
 src_unpack() {
 	unpack ${P}.tar.gz
-	if use trainer-zopflipng-with-noto-emoji ; then
+	if use zopfli_trainers_zopflipng_with_noto_emoji ; then
 		unpack noto-emoji-${NOTO_EMOJI_PV}.tar.gz
 	fi
 }
@@ -169,7 +172,7 @@ einfo "ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES:\t${ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES
 }
 
 train_trainer_custom() {
-	if use trainer-zopflipng-with-noto-emoji ; then
+	if use zopfli_trainers_zopflipng_with_noto_emoji ; then
 		trainer_zopflipng_with_noto_emoji
 	fi
 }
