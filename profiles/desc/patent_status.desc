@@ -7,12 +7,12 @@
 # patent_status_expired
 # patent_status_nonfree
 # patent_status_free_for_end_users
-# patent_status_new_hardware
+# patent_status_new_or_renewed
 # patent_status_without_codec_developer_tax
 #
 expired - Allow expired proprietary patents
 nonfree - Allow proprietary active patents
 free_for_end_users - Allow codecs that are free for non developers
-new_hardware - Allow nonfree codecs for hardware released in four years.  Hardware released beyond 4 years may need a license renewal fee for nonfree patented codec.
+new_hardware - Allow nonfree hardware accelerated codecs released within four years or renewed licensed hardware.  Hardware released beyond 4 years may need a license renewal fee for nonfree patented codec.
 without_codec_developer_tax - Allow codecs that do not require fees from codec developers
 
