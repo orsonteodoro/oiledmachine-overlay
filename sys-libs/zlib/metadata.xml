@@ -71,95 +71,95 @@
     <flag name="trainer-custom">
       Run a custom trainer script
     </flag>
-    <flag name="trainer-minizip-binary-long">
+    <flag name="zlib_trainers_minizip_binary_long">
       Run the trainer against text files for minizip only with N=300 so that
       each compression level is trained fairly
     </flag>
-    <flag name="trainer-minizip-binary-max-compression">
+    <flag name="zlib_trainers_minizip_binary_max_compression">
       Run the trainer against text files for minizip only abridged training with
       N=30 with maximum compression level
     </flag>
-    <flag name="trainer-minizip-binary-short">
+    <flag name="zlib_trainers_minizip_binary_short">
       Run the trainer against text files for minizip only abridged training with
       N=30 so that essential code paths do not get deoptimized
     </flag>
-    <flag name="trainer-minizip-binary-store">
+    <flag name="zlib_trainers_minizip_binary_store">
       Run the trainer against text files for minizip only abridged training with
       N=30 with store only archival
     </flag>
-    <flag name="trainer-minizip-text-long">
+    <flag name="zlib_trainers_minizip_text_long">
       Run the trainer against binary files for minizip only with N=300 so that
       each compression level is trained fairly
     </flag>
-    <flag name="trainer-minizip-text-max-compression">
+    <flag name="zlib_trainers_minizip_text_max_compression">
       Run the trainer against binary files for minizip only abridged training
       with with N=30 with maximum compression level
     </flag>
-    <flag name="trainer-minizip-text-short">
+    <flag name="zlib_trainers_minizip_text_short">
       Run the trainer against binary files for minizip only abridged training
       version with with N=30 so that code paths do not get deoptimized
     </flag>
-    <flag name="trainer-minizip-text-store">
+    <flag name="zlib_trainers_minizip_text_store">
       Run the trainer against binary files for minizip only abridged training
       with with N=30 with store only archiving
     </flag>
-    <flag name="trainer-zlib-binary-all">
+    <flag name="zlib_trainers_zlib_binary_all">
       Run the trainer against text files for zlib only with all compression
       levels
     </flag>
-    <flag name="trainer-zlib-binary-default">
+    <flag name="zlib_trainers_zlib_binary_default">
       Run the trainer against text files for zlib only with compression level 6
     </flag>
-    <flag name="trainer-zlib-binary-max">
+    <flag name="zlib_trainers_zlib_binary_max">
       Run the trainer against text files for zlib only with compression level 9
     </flag>
-    <flag name="trainer-zlib-binary-min">
+    <flag name="zlib_trainers_zlib_binary_min">
       Run the trainer against text files for zlib only with compression level 1
     </flag>
-    <flag name="trainer-zlib-binary-random">
+    <flag name="zlib_trainers_zlib_binary_random">
       Run the trainer against text files for zlib only with random compression
       levels
     </flag>
-    <flag name="trainer-zlib-images-all">
+    <flag name="zlib_trainers_zlib_images_all">
       Run the trainer against image files for zlib only with all compression
       levels
     </flag>
-    <flag name="trainer-zlib-images-default">
+    <flag name="zlib_trainers_zlib_images_default">
       Run the trainer against image files for zlib only with compression level 6
     </flag>
-    <flag name="trainer-zlib-images-max">
+    <flag name="zlib_trainers_zlib_images_max">
       Run the trainer against image files for zlib only with compression
       level 9, which is also used by libpng as the default for saving
     </flag>
-    <flag name="trainer-zlib-images-level-8">
+    <flag name="zlib_trainers_zlib_images_level_8">
       Run the trainer against image files for zlib only with compression
       level 8, used for memory compression in libpng
     </flag>
-    <flag name="trainer-zlib-images-min">
+    <flag name="zlib_trainers_zlib_images_min">
       Run the trainer against image files for zlib only with compression
       level 1
     </flag>
-    <flag name="trainer-zlib-images-random">
+    <flag name="zlib_trainers_zlib_images_random">
       Run the trainer against image files for zlib only with random compression
       levels
     </flag>
-    <flag name="trainer-zlib-text-all">
+    <flag name="zlib_trainers_zlib_text_all">
       Run the trainer against binary files for zlib only with all compression
       levels
     </flag>
-    <flag name="trainer-zlib-text-default">
+    <flag name="zlib_trainers_zlib_text_default">
       Run the trainer against binary files for zlib only with compression
       level 6
     </flag>
-    <flag name="trainer-zlib-text-max">
+    <flag name="zlib_trainers_zlib_text_max">
       Run the trainer against binary files for zlib only with compression
       level 9
     </flag>
-    <flag name="trainer-zlib-text-min">
+    <flag name="zlib_trainers_zlib_text_min">
       Run the trainer against binary files for zlib only with compression
       level 1
     </flag>
-    <flag name="trainer-zlib-text-random">
+    <flag name="zlib_trainers_zlib_text_random">
       Run the trainer against binary files for zlib only with random compression
       levels
     </flag>

@@ -39,30 +39,30 @@ SLOT="0/1" # subslot = SONAME
 IUSE="minizip minizip-utils static-libs backup-copy"
 IUSE+="
 	pgo
-	trainer-minizip-binary-long
-	trainer-minizip-binary-max-compression
-	trainer-minizip-binary-short
-	trainer-minizip-binary-store
-	trainer-minizip-text-long
-	trainer-minizip-text-max-compression
-	trainer-minizip-text-short
-	trainer-minizip-text-store
-	trainer-zlib-binary-all
-	trainer-zlib-binary-default
-	trainer-zlib-binary-max
-	trainer-zlib-binary-min
-	trainer-zlib-binary-random
-	trainer-zlib-images-all
-	trainer-zlib-images-default
-	trainer-zlib-images-level-8
-	trainer-zlib-images-max
-	trainer-zlib-images-min
-	trainer-zlib-images-random
-	trainer-zlib-text-all
-	trainer-zlib-text-default
-	trainer-zlib-text-max
-	trainer-zlib-text-min
-	trainer-zlib-text-random
+	zlib_trainers_minizip_binary_long
+	zlib_trainers_minizip_binary_max_compression
+	zlib_trainers_minizip_binary_short
+	zlib_trainers_minizip_binary_store
+	zlib_trainers_minizip_text_long
+	zlib_trainers_minizip_text_max_compression
+	zlib_trainers_minizip_text_short
+	zlib_trainers_minizip_text_store
+	zlib_trainers_zlib_binary_all
+	zlib_trainers_zlib_binary_default
+	zlib_trainers_zlib_binary_max
+	zlib_trainers_zlib_binary_min
+	zlib_trainers_zlib_binary_random
+	zlib_trainers_zlib_images_all
+	zlib_trainers_zlib_images_default
+	zlib_trainers_zlib_images_level_8
+	zlib_trainers_zlib_images_max
+	zlib_trainers_zlib_images_min
+	zlib_trainers_zlib_images_random
+	zlib_trainers_zlib_text_all
+	zlib_trainers_zlib_text_default
+	zlib_trainers_zlib_text_max
+	zlib_trainers_zlib_text_min
+	zlib_trainers_zlib_text_random
 "
 REQUIRED_USE="
 	pgo? (
@@ -70,105 +70,109 @@ REQUIRED_USE="
 			minizip-utils
 		)
 		|| (
-			trainer-minizip-binary-long
-			trainer-minizip-binary-max-compression
-			trainer-minizip-binary-short
-			trainer-minizip-binary-store
-			trainer-minizip-text-long
-			trainer-minizip-text-max-compression
-			trainer-minizip-text-short
-			trainer-minizip-text-store
-			trainer-zlib-binary-all
-			trainer-zlib-binary-default
-			trainer-zlib-binary-max
-			trainer-zlib-binary-min
-			trainer-zlib-binary-random
-			trainer-zlib-images-all
-			trainer-zlib-images-default
-			trainer-zlib-images-max
-			trainer-zlib-images-min
-			trainer-zlib-images-random
-			trainer-zlib-text-all
-			trainer-zlib-text-default
-			trainer-zlib-text-max
-			trainer-zlib-text-min
-			trainer-zlib-text-random
+			zlib_trainers_minizip_binary_long
+			zlib_trainers_minizip_binary_max_compression
+			zlib_trainers_minizip_binary_short
+			zlib_trainers_minizip_binary_store
+			zlib_trainers_minizip_text_long
+			zlib_trainers_minizip_text_max_compression
+			zlib_trainers_minizip_text_short
+			zlib_trainers_minizip_text_store
+			zlib_trainers_zlib_binary_all
+			zlib_trainers_zlib_binary_default
+			zlib_trainers_zlib_binary_max
+			zlib_trainers_zlib_binary_min
+			zlib_trainers_zlib_binary_random
+			zlib_trainers_zlib_images_all
+			zlib_trainers_zlib_images_default
+			zlib_trainers_zlib_images_level_8
+			zlib_trainers_zlib_images_max
+			zlib_trainers_zlib_images_min
+			zlib_trainers_zlib_images_random
+			zlib_trainers_zlib_text_all
+			zlib_trainers_zlib_text_default
+			zlib_trainers_zlib_text_max
+			zlib_trainers_zlib_text_min
+			zlib_trainers_zlib_text_random
 		)
 	)
-	trainer-zlib-binary-all? (
+	zlib_trainers_zlib_binary_all? (
 		pgo
 	)
-	trainer-zlib-binary-default? (
+	zlib_trainers_zlib_binary_default? (
 		pgo
 	)
-	trainer-zlib-binary-max? (
+	zlib_trainers_zlib_binary_max? (
 		pgo
 	)
-	trainer-zlib-binary-min? (
+	zlib_trainers_zlib_binary_min? (
 		pgo
 	)
-	trainer-zlib-binary-random? (
+	zlib_trainers_zlib_binary_random? (
 		pgo
 	)
-	trainer-zlib-images-all? (
+	zlib_trainers_zlib_images_all? (
 		pgo
 	)
-	trainer-zlib-images-default? (
+	zlib_trainers_zlib_images_default? (
 		pgo
 	)
-	trainer-zlib-images-max? (
+	zlib_trainers_zlib_images_level_8? (
 		pgo
 	)
-	trainer-zlib-images-min? (
+	zlib_trainers_zlib_images_max? (
 		pgo
 	)
-	trainer-zlib-images-random? (
+	zlib_trainers_zlib_images_min? (
 		pgo
 	)
-	trainer-zlib-text-all? (
+	zlib_trainers_zlib_images_random? (
 		pgo
 	)
-	trainer-zlib-text-default? (
+	zlib_trainers_zlib_text_all? (
 		pgo
 	)
-	trainer-zlib-text-max? (
+	zlib_trainers_zlib_text_default? (
 		pgo
 	)
-	trainer-zlib-text-min? (
+	zlib_trainers_zlib_text_max? (
 		pgo
 	)
-	trainer-zlib-text-random? (
+	zlib_trainers_zlib_text_min? (
 		pgo
 	)
-	trainer-minizip-binary-long? (
+	zlib_trainers_zlib_text_random? (
+		pgo
+	)
+	zlib_trainers_minizip_binary_long? (
 		minizip
 		pgo
 	)
-	trainer-minizip-binary-max-compression? (
+	zlib_trainers_minizip_binary_max_compression? (
 		minizip
 		pgo
 	)
-	trainer-minizip-binary-short? (
+	zlib_trainers_minizip_binary_short? (
 		minizip
 		pgo
 	)
-	trainer-minizip-binary-store? (
+	zlib_trainers_minizip_binary_store? (
 		minizip
 		pgo
 	)
-	trainer-minizip-text-long? (
+	zlib_trainers_minizip_text_long? (
 		minizip
 		pgo
 	)
-	trainer-minizip-text-max-compression? (
+	zlib_trainers_minizip_text_max_compression? (
 		minizip
 		pgo
 	)
-	trainer-minizip-text-short? (
+	zlib_trainers_minizip_text_short? (
 		minizip
 		pgo
 	)
-	trainer-minizip-text-store? (
+	zlib_trainers_minizip_text_store? (
 		minizip
 		pgo
 	)
@@ -327,7 +331,7 @@ ewarn "Emerge this package twice to see if the patch/optimization works"
 ewarn "properly."
 ewarn
 sleep 15
-	if [[ "${IUSE}" =~ "trainer-zlib-images-" ]] ; then
+	if [[ "${IUSE}" =~ "zlib_trainers_zlib_images_" ]] ; then
 		check_img_converter
 	fi
 	uopts_setup
@@ -974,89 +978,89 @@ einfo "Running trainer"
 einfo
 	export PATH="${S}/contrib/minizip:${PATH_orig}"
 	export LD_LIBRARY_PATH="${ED}/usr/$(get_libdir)"
-	if use trainer-zlib-binary-all ; then
+	if use zlib_trainers_zlib_binary_all ; then
 		_run_trainer_binary_zlib "all"
 	fi
-	if use trainer-zlib-binary-default ; then
+	if use zlib_trainers_zlib_binary_default ; then
 		_run_trainer_binary_zlib "default"
 	fi
-	if use trainer-zlib-binary-max ; then
+	if use zlib_trainers_zlib_binary_max ; then
 		_run_trainer_binary_zlib "max"
 	fi
-	if use trainer-zlib-binary-min ; then
+	if use zlib_trainers_zlib_binary_min ; then
 		_run_trainer_binary_zlib "min"
 	fi
-	if use trainer-zlib-binary-random ; then
+	if use zlib_trainers_zlib_binary_random ; then
 		_run_trainer_binary_zlib "random"
 	fi
-	if use trainer-zlib-images-all ; then
+	if use zlib_trainers_zlib_images_all ; then
 		_run_trainer_images_zlib "all"
 	fi
-	if use trainer-zlib-images-default ; then
+	if use zlib_trainers_zlib_images_default ; then
 		_run_trainer_images_zlib "default"
 	fi
-	if use trainer-zlib-images-level-8 ; then
+	if use zlib_trainers_zlib_images_level_8 ; then
 		_run_trainer_images_zlib "level-8"
 	fi
-	if use trainer-zlib-images-max ; then
+	if use zlib_trainers_zlib_images_max ; then
 		_run_trainer_images_zlib "max"
 	fi
-	if use trainer-zlib-images-min ; then
+	if use zlib_trainers_zlib_images_min ; then
 		_run_trainer_images_zlib "min"
 	fi
-	if use trainer-zlib-images-random ; then
+	if use zlib_trainers_zlib_images_random ; then
 		_run_trainer_images_zlib "random"
 	fi
-	if use trainer-zlib-text-all ; then
+	if use zlib_trainers_zlib_text_all ; then
 		_run_trainer_text_zlib "all"
 	fi
-	if use trainer-zlib-text-default ; then
+	if use zlib_trainers_zlib_text_default ; then
 		_run_trainer_text_zlib "default"
 	fi
-	if use trainer-zlib-text-max ; then
+	if use zlib_trainers_zlib_text_max ; then
 		_run_trainer_text_zlib "max"
 	fi
-	if use trainer-zlib-text-min ; then
+	if use zlib_trainers_zlib_text_min ; then
 		_run_trainer_text_zlib "min"
 	fi
-	if use trainer-zlib-text-random ; then
+	if use zlib_trainers_zlib_text_random ; then
 		_run_trainer_text_zlib "random"
 	fi
-	if use trainer-minizip-binary-long ; then
+	if use zlib_trainers_minizip_binary_long ; then
 		local N=${MINIZIP_TRAINING_LONG_N_ITERATIONS:=300}
 		_run_trainer_binary_minizip
 	fi
-	if use trainer-minizip-binary-max-compression ; then
+	if use zlib_trainers_minizip_binary_max_compression ; then
 		local N=${MINIZIP_TRAINING_SHORT_N_ITERATIONS:=30}
 		local max_compression=1
 		_run_trainer_binary_minizip
 		unset max_compression
 	fi
-	if use trainer-minizip-binary-short ; then
+	if use zlib_trainers_minizip_binary_short ; then
 		local N=${MINIZIP_TRAINING_SHORT_N_ITERATIONS:=30}
 		_run_trainer_binary_minizip
 	fi
-	if use trainer-minizip-binary-store ; then
+	if use zlib_trainers_minizip_binary_store ; then
 		local N=${MINIZIP_TRAINING_SHORT_N_ITERATIONS:=30}
 		local store_only=1
 		_run_trainer_binary_minizip
 		unset store_only
 	fi
-	if use trainer-minizip-text-long ; then
+	if use zlib_trainers_minizip_text_long ; then
 		local N=${MINIZIP_TRAINING_LONG_N_ITERATIONS:=300}
 		_run_trainer_text_minizip
 	fi
-	if use trainer-minizip-text-max-compression ; then
+	if use zlib_trainers_minizip_text_max_compression ; then
 		local N=${MINIZIP_TRAINING_SHORT_N_ITERATIONS:=30}
 		local max_compression=1
 		_run_trainer_text_minizip
 		unset max_compression
 	fi
-	if use trainer-minizip-text-short ; then
+	if use zlib_trainers_minizip_text_short ; then
 		local N=${MINIZIP_TRAINING_SHORT_N_ITERATIONS:=30}
 		_run_trainer_text_minizip
 	fi
-	if use trainer-minizip-text-store ; then
+	if use zlib_trainers_minizip_text_store ; then
 		local N=${MINIZIP_TRAINING_SHORT_N_ITERATIONS:=30}
 		local store_only=1
 		_run_trainer_text_minizip
