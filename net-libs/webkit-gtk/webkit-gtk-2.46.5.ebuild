@@ -500,6 +500,11 @@ DEFAULT_GST_PLUGINS="
 # Using dav1d because aom is slow for decoding.
 # libbacktrace is enabled upstream but disabled for security reasons.
 
+PATENT_STATUS=(
+	patent_status_codec_developer_tax
+	patent_status_free_for_end_users
+	patent_status_nonfree_patents
+)
 CPU_FLAGS_ARM=(
 	cpu_flags_arm_thumb2
 )
@@ -512,13 +517,12 @@ ${GST_VCODECS_IUSE}
 ${LANGS[@]/#/l10n_}
 ${MSE_ACODECS_IUSE}
 ${MSE_VCODECS_IUSE}
+${PATENT_STATUS[@]}
 
 aqua +avif -bmalloc -cache-partitioning clang dash debug +doc -eme -gamepad +gbm
 +geolocation gles2 gnome-keyring +gstreamer gstwebrtc +introspection
 +javascript +jit +journald +jpegxl +libpas +lcms -libbacktrace +libhyphen
 -libwebrtc -mediarecorder -mediastream +microphone +minibrowser mold +opengl openmp
-proprietary-codecs proprietary-codecs-disable
-proprietary-codecs-disable-codec-developer proprietary-codecs-disable-end-user
 -seccomp speech-synthesis -spell -system-malloc test thunder
 +variation-fonts wayland +webassembly -webdriver +webgl webm-eme
 -webrtc webvtt -webxr +woff2 +X
@@ -573,83 +577,34 @@ REQUIRED_USE+=" "$(gen_gst_plugins_required_use)
 # of emerging web technologies.  Also found in Source/WebCore/features.json
 
 # Sorted by least restrictive top
-NON_FREE_REQUIRED_USE="
-	^^ (
-		proprietary-codecs
-		proprietary-codecs-disable
-		proprietary-codecs-disable-codec-developer
-		proprietary-codecs-disable-end-user
-	)
+PATENT_REQUIRED_USE="
 	aac? (
-		|| (
-			proprietary-codecs
-			proprietary-codecs-disable-end-user
-		)
+		!patent_status_codec_developer_tax
+		patent_status_free_for_end_users
 	)
 	dash? (
-		proprietary-codecs
+		patent_status_nonfree_patents
 	)
 	hls? (
-		proprietary-codecs
+		patent_status_nonfree_patents
 	)
 	libde265? (
-		proprietary-codecs
+		patent_status_nonfree_patents
 	)
 	openh264? (
-		proprietary-codecs
-	)
-	proprietary-codecs-disable? (
-		!aac
-		!dash
-		!eme
-		!hls
-		!libde265
-		!libwebrtc
-		!openh264
-		!thunder
-		!vaapi
-		!webm-eme
-		!x264
-		!x265
-	)
-	proprietary-codecs-disable-codec-developer? (
-		!aac
-		!dash
-		!eme
-		!hls
-		!libde265
-		!libwebrtc
-		!openh264
-		!thunder
-		!vaapi
-		!webm-eme
-		!x264
-		!x265
-	)
-	proprietary-codecs-disable-end-user? (
-		!dash
-		!eme
-		!hls
-		!libde265
-		!libwebrtc
-		!openh264
-		!thunder
-		!vaapi
-		!webm-eme
-		!x264
-		!x265
+		patent_status_nonfree_patents
 	)
 	v4l? (
-		proprietary-codecs
+		patent_status_nonfree_patents
 	)
 	vaapi? (
-		proprietary-codecs
+		patent_status_nonfree_patents
 	)
 	x264? (
-		proprietary-codecs
+		patent_status_nonfree_patents
 	)
 	x265? (
-		proprietary-codecs
+		patent_status_nonfree_patents
 	)
 "
 
@@ -662,7 +617,7 @@ _TRASH="
 "
 
 REQUIRED_USE+="
-	${NON_FREE_REQUIRED_USE}
+	${PATENT_REQUIRED_USE}
 	alsa? (
 		gstreamer
 	)
@@ -770,32 +725,34 @@ gen_ffmpeg_g722_depends() {
 	"
 }
 
-RDEPEND_PROPRIETARY_CODECS_DISABLE="
-	!media-plugins/gst-plugins-dash
-	!media-plugins/gst-plugins-hls
-	!media-plugins/gst-plugins-libde265
-	!media-plugins/gst-plugins-openh264
-	!media-plugins/gst-plugins-vaapi
-	!media-plugins/gst-plugins-x264
-	!media-plugins/gst-plugins-x265
-	g722? (
-		!<media-video/ffmpeg-5[openssl]
-		$(gen_ffmpeg_g722_depends)
-	)
-	gles2? (
-		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},-proprietary-codecs]
-	)
-	gstreamer? (
-		>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},-vaapi]
-	)
-	opengl? (
-		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},-proprietary-codecs]
-	)
-	wayland? (
-		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},-proprietary-codecs]
-	)
-	webgl? (
-		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},-proprietary-codecs]
+RDEPEND_PATENTS="
+	!patent_status_nonfree_patents? (
+		!media-plugins/gst-plugins-dash
+		!media-plugins/gst-plugins-hls
+		!media-plugins/gst-plugins-libde265
+		!media-plugins/gst-plugins-openh264
+		!media-plugins/gst-plugins-vaapi
+		!media-plugins/gst-plugins-x264
+		!media-plugins/gst-plugins-x265
+		g722? (
+			!<media-video/ffmpeg-5[openssl]
+			$(gen_ffmpeg_g722_depends)
+		)
+		gles2? (
+			>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},-proprietary-codecs]
+		)
+		gstreamer? (
+			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},-vaapi]
+		)
+		opengl? (
+			>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},-proprietary-codecs]
+		)
+		wayland? (
+			>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},-proprietary-codecs]
+		)
+		webgl? (
+			>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},-proprietary-codecs]
+		)
 	)
 "
 
@@ -816,6 +773,7 @@ gen_depend_llvm() {
 }
 
 RDEPEND+="
+	${RDEPEND_PATENTS}
 	>=dev-db/sqlite-3.22.0:3=[${MULTILIB_USEDEP}]
 	>=dev-libs/icu-61.2:=[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-${GLIB_PV}:2[${MULTILIB_USEDEP}]
@@ -934,18 +892,13 @@ RDEPEND+="
 			$(gen_depend_llvm)
 		)
 	)
-	proprietary-codecs-disable? (
-		${RDEPEND_PROPRIETARY_CODECS_DISABLE}
+	!patent_status_nonfree_patents? (
 		!media-plugins/gst-plugins-faac
 		!media-plugins/gst-plugins-faad
 	)
-	proprietary-codecs-disable-codec-developer? (
-		${RDEPEND_PROPRIETARY_CODECS_DISABLE}
+	patent_status_codec_developer_tax? (
 		!media-plugins/gst-plugins-faac
 		!media-plugins/gst-plugins-faad
-	)
-	proprietary-codecs-disable-end-user? (
-		${RDEPEND_PROPRIETARY_CODECS_DISABLE}
 	)
 	seccomp? (
 		>=sys-apps/bubblewrap-0.3.1
