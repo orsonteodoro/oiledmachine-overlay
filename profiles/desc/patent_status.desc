@@ -1,9 +1,5 @@
 # License - CC0-1.0
-codec_developer_tax - Allow codecs that require fees from codec developers
-developer_tax - Allow codecs that require fees from any developers
 expired_patents - Allow expired proprietary patents
 nonfree_patents - Allow codecs that are proprietary active patent
 free_for_end_users - Allow codecs that are free for non developers
-re - Allow reverse engineered codecs
-royalty_free_patents - Allow patents that are royalty free
-
+without_codec_developer_tax - Allow codecs that do not require fees from codec developers

@@ -501,7 +501,7 @@ DEFAULT_GST_PLUGINS="
 # libbacktrace is enabled upstream but disabled for security reasons.
 
 PATENT_STATUS=(
-	patent_status_codec_developer_tax
+	patent_status_without_codec_developer_tax
 	patent_status_free_for_end_users
 	patent_status_nonfree_patents
 )
@@ -579,7 +579,6 @@ REQUIRED_USE+=" "$(gen_gst_plugins_required_use)
 # Sorted by least restrictive top
 PATENT_REQUIRED_USE="
 	aac? (
-		!patent_status_codec_developer_tax
 		patent_status_free_for_end_users
 	)
 	dash? (
@@ -896,7 +895,7 @@ RDEPEND+="
 		!media-plugins/gst-plugins-faac
 		!media-plugins/gst-plugins-faad
 	)
-	patent_status_codec_developer_tax? (
+	patent_status_without_codec_developer_tax? (
 		!media-plugins/gst-plugins-faac
 		!media-plugins/gst-plugins-faad
 	)
@@ -1224,9 +1223,10 @@ ewarn
 # It is not clear about the end scope/extent of non-commericial.
 # It may use runtime codec detection for both gst-ffmpeg and in webkit-gtk.
 verify_codecs() {
-	if use proprietary-codecs-disable \
-		|| use proprietary-codecs-disable-codec-developer \
-		|| use proprietary-codecs-disable-end-user \
+	if \
+		 ! use patent_status_nonfree_patents \
+		|| use patent_status_without_codec_developer_tax \
+		|| use patent_status_free_for_end_users \
 	; then
 		:
 	else
@@ -1242,8 +1242,7 @@ verify_codecs() {
 		"x265"
 		"xvid"
 	)
-	if use proprietary-codecs-disable \
-		|| use proprietary-codecs-disable-codec-developer ; then
+	if use patent_status_nonfree_patents ; then
 		use_flags+=(
 			"aac"
 		)
