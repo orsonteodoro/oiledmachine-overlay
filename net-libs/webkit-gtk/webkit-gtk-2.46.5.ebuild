@@ -582,6 +582,9 @@ REQUIRED_USE+=" "$(gen_gst_plugins_required_use)
 
 # Sorted by least restrictive top
 PATENT_REQUIRED_USE="
+	!patent_status_new_hardware? (
+		!vaapi
+	)
 	aac? (
 		patent_status_free_for_end_users
 	)
@@ -667,6 +670,9 @@ REQUIRED_USE+="
 		gstreamer
 		mediastream
 	)
+	vaapi? (
+		gstreamer
+	)
 	webassembly? (
 		jit
 	)
@@ -712,8 +718,9 @@ RDEPEND_PATENTS="
 		!media-plugins/gst-plugins-x264
 		!media-plugins/gst-plugins-x265
 	)
-	vaapi? (
-		!patent_status_new_hardware? (
+	!patent_status_new_hardware? (
+		gstreamer? (
+			media-plugins/gst-plugins-meta[-vaapi]
 			media-libs/gst-plugins-bad[-vaapi]
 		)
 	)
