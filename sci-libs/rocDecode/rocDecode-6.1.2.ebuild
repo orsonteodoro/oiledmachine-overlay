@@ -72,7 +72,7 @@ REQUIRED_USE="
 RDEPEND="
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 	>=media-libs/libva-2.7.0
-	>=media-libs/mesa-24.1.0[proprietary-codecs,vaapi,video_cards_radeonsi]
+	>=media-libs/mesa-24.1.0[patent_status_new_hardware,vaapi,video_cards_radeonsi]
 	samples? (
 		>=media-video/ffmpeg-4.2.7:0/56.58.58
 	)
