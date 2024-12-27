@@ -128,13 +128,13 @@
     <flag name="pgo">
       Use profile guided optimization.
     </flag>
-    <flag name="trainer-2-pass-constrained-quality">
+    <flag name="libaom_trainers_2_pass_constrained_quality">
       Performs an addtional 2 pass training.  Two pass improves quality and rate
       control.  This step can be skipped for live streamers.
 
       3 seconds with many resolutions.
     </flag>
-    <flag name="trainer-2-pass-constrained-quality-quick">
+    <flag name="libaom_trainers_2_pass_constrained_quality_quick">
       Performs an addtional 2 pass training.  Two pass improves quality and rate
       control.  This step can be skipped for live streamers.
 
@@ -142,24 +142,24 @@
 
       (Ebuild maintainer recommended for encoding)
     </flag>
-    <flag name="trainer-constrained-quality">
+    <flag name="libaom_trainers_constrained_quality">
       Use the 1 pass constrained quality trainer.
 
       3 seconds with many resolutions.
     </flag>
-    <flag name="trainer-constrained-quality-quick">
+    <flag name="libaom_trainers_constrained_quality_quick">
       Use the 1 pass constrained quality trainer.
 
       Lowest resolution only 5 times each for 2 seconds.
 
       (Ebuild maintainer recommended for decoding)
     </flag>
-    <flag name="trainer-lossless">
+    <flag name="libaom_trainers_lossless">
       Use the lossless trainer.
 
       3 second only.
     </flag>
-    <flag name="trainer-lossless-quick">
+    <flag name="libaom_trainers_lossless_quick">
       Use the lossless trainer.
 
       Lowest resolution only 5 times each for 2 seconds.

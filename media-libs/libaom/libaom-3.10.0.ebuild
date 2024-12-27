@@ -75,12 +75,12 @@ X86_IUSE="
 	cpu_flags_x86_avx2
 "
 PGO_TRAINERS="
-	trainer-2-pass-constrained-quality
-	trainer-2-pass-constrained-quality-quick
-	trainer-constrained-quality
-	trainer-constrained-quality-quick
-	trainer-lossless
-	trainer-lossless-quick
+	libaom_trainers_2_pass_constrained_quality
+	libaom_trainers_2_pass_constrained_quality_quick
+	libaom_trainers_constrained_quality
+	libaom_trainers_constrained_quality_quick
+	libaom_trainers_lossless
+	libaom_trainers_lossless_quick
 "
 IUSE="
 ${ARM_IUSE}
@@ -101,22 +101,22 @@ REQUIRED_USE="
 			${PGO_TRAINERS}
 		)
 	)
-	trainer-2-pass-constrained-quality? (
+	libaom_trainers_2_pass_constrained_quality? (
 		pgo
 	)
-	trainer-2-pass-constrained-quality-quick? (
+	libaom_trainers_2_pass_constrained_quality_quick? (
 		pgo
 	)
-	trainer-constrained-quality? (
+	libaom_trainers_constrained_quality? (
 		pgo
 	)
-	trainer-constrained-quality-quick? (
+	libaom_trainers_constrained_quality_quick? (
 		pgo
 	)
-	trainer-lossless? (
+	libaom_trainers_lossless? (
 		pgo
 	)
-	trainer-lossless-quick? (
+	libaom_trainers_lossless_quick? (
 		pgo
 	)
 "
@@ -961,22 +961,22 @@ train_trainer_custom() {
 	[[ "${lib_type}" == "static" ]] && return
 	export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
-	if use trainer-2-pass-constrained-quality ; then
+	if use libaom_trainers_2_pass_constrained_quality ; then
 		_trainer_plan_2_pass_constrained_quality "full"
 	fi
-	if use trainer-2-pass-constrained-quality-quick ; then
+	if use libaom_trainers_2_pass_constrained_quality_quick ; then
 		_trainer_plan_2_pass_constrained_quality "quick"
 	fi
-	if use trainer-constrained-quality ; then
+	if use libaom_trainers_constrained_quality ; then
 		_trainer_plan_constrained_quality "full"
 	fi
-	if use trainer-constrained-quality-quick ; then
+	if use libaom_trainers_constrained_quality_quick ; then
 		_trainer_plan_constrained_quality "quick"
 	fi
-	if use trainer-lossless ; then
+	if use libaom_trainers_lossless ; then
 		_trainer_plan_lossless "full"
 	fi
-	if use trainer-lossless-quick ; then
+	if use libaom_trainers_lossless_quick ; then
 		_trainer_plan_lossless "quick"
 	fi
 }

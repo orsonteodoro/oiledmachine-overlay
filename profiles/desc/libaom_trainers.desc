@@ -1,0 +1,7 @@
+# This file is part of the libaom ebuild
+libaom_trainers_2_pass_constrained_quality - Optimize libaom for 2 pass contrained quality
+libaom_trainers_2_pass_constrained_quality_quick - Optimize libaom for 2 pass contrained quality quickly
+libaom_trainers_constrained_quality - Optimize libaom for 1 pass contrained quality
+libaom_trainers_constrained_quality_quick - Optimize libaom for 1 pass contrained quality quickly
+libaom_trainers_lossless - Optimize libaom for lossless
+libaom_trainers_lossless_quick - Optimize libaom for lossless quickly
