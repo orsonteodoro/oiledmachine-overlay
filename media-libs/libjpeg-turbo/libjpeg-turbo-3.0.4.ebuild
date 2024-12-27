@@ -49,111 +49,111 @@ SLOT="0/0.2"
 IUSE="
 	+asm cpu_flags_arm_neon java static-libs
 	pgo
-	trainer-70-pct-quality-baseline
-	trainer-75-pct-quality-baseline
-	trainer-80-pct-quality-baseline
-	trainer-90-pct-quality-baseline
-	trainer-95-pct-quality-baseline
-	trainer-98-pct-quality-baseline
-	trainer-99-pct-quality-baseline
-	trainer-100-pct-quality-baseline
-	trainer-70-pct-quality-progressive
-	trainer-75-pct-quality-progressive
-	trainer-80-pct-quality-progressive
-	trainer-90-pct-quality-progressive
-	trainer-95-pct-quality-progressive
-	trainer-98-pct-quality-progressive
-	trainer-99-pct-quality-progressive
-	trainer-100-pct-quality-progressive
-	trainer-crop
-	trainer-decode
-	trainer-grayscale
-	trainer-transformations
+	libjpeg_turbo_trainers_70_pct_quality_baseline
+	libjpeg_turbo_trainers_75_pct_quality_baseline
+	libjpeg_turbo_trainers_80_pct_quality_baseline
+	libjpeg_turbo_trainers_90_pct_quality_baseline
+	libjpeg_turbo_trainers_95_pct_quality_baseline
+	libjpeg_turbo_trainers_98_pct_quality_baseline
+	libjpeg_turbo_trainers_99_pct_quality_baseline
+	libjpeg_turbo_trainers_100_pct_quality_baseline
+	libjpeg_turbo_trainers_70_pct_quality_progressive
+	libjpeg_turbo_trainers_75_pct_quality_progressive
+	libjpeg_turbo_trainers_80_pct_quality_progressive
+	libjpeg_turbo_trainers_90_pct_quality_progressive
+	libjpeg_turbo_trainers_95_pct_quality_progressive
+	libjpeg_turbo_trainers_98_pct_quality_progressive
+	libjpeg_turbo_trainers_99_pct_quality_progressive
+	libjpeg_turbo_trainers_100_pct_quality_progressive
+	libjpeg_turbo_trainers_crop
+	libjpeg_turbo_trainers_decode
+	libjpeg_turbo_trainers_grayscale
+	libjpeg_turbo_trainers_transformations
 "
 REQUIRED_USE="
 	pgo? (
-		trainer-decode
+		libjpeg_turbo_trainers_decode
 		|| (
-			trainer-70-pct-quality-baseline
-			trainer-75-pct-quality-baseline
-			trainer-80-pct-quality-baseline
-			trainer-90-pct-quality-baseline
-			trainer-95-pct-quality-baseline
-			trainer-98-pct-quality-baseline
-			trainer-99-pct-quality-baseline
-			trainer-100-pct-quality-baseline
-			trainer-70-pct-quality-progressive
-			trainer-75-pct-quality-progressive
-			trainer-80-pct-quality-progressive
-			trainer-90-pct-quality-progressive
-			trainer-95-pct-quality-progressive
-			trainer-98-pct-quality-progressive
-			trainer-99-pct-quality-progressive
-			trainer-100-pct-quality-progressive
-			trainer-crop
-			trainer-decode
-			trainer-grayscale
-			trainer-transformations
+			libjpeg_turbo_trainers_70_pct_quality_baseline
+			libjpeg_turbo_trainers_75_pct_quality_baseline
+			libjpeg_turbo_trainers_80_pct_quality_baseline
+			libjpeg_turbo_trainers_90_pct_quality_baseline
+			libjpeg_turbo_trainers_95_pct_quality_baseline
+			libjpeg_turbo_trainers_98_pct_quality_baseline
+			libjpeg_turbo_trainers_99_pct_quality_baseline
+			libjpeg_turbo_trainers_100_pct_quality_baseline
+			libjpeg_turbo_trainers_70_pct_quality_progressive
+			libjpeg_turbo_trainers_75_pct_quality_progressive
+			libjpeg_turbo_trainers_80_pct_quality_progressive
+			libjpeg_turbo_trainers_90_pct_quality_progressive
+			libjpeg_turbo_trainers_95_pct_quality_progressive
+			libjpeg_turbo_trainers_98_pct_quality_progressive
+			libjpeg_turbo_trainers_99_pct_quality_progressive
+			libjpeg_turbo_trainers_100_pct_quality_progressive
+			libjpeg_turbo_trainers_crop
+			libjpeg_turbo_trainers_decode
+			libjpeg_turbo_trainers_grayscale
+			libjpeg_turbo_trainers_transformations
 		)
 	)
-	trainer-70-pct-quality-baseline? (
+	libjpeg_turbo_trainers_70_pct_quality_baseline? (
 		pgo
 	)
-	trainer-75-pct-quality-baseline? (
+	libjpeg_turbo_trainers_75_pct_quality_baseline? (
 		pgo
 	)
-	trainer-80-pct-quality-baseline? (
+	libjpeg_turbo_trainers_80_pct_quality_baseline? (
 		pgo
 	)
-	trainer-90-pct-quality-baseline? (
+	libjpeg_turbo_trainers_90_pct_quality_baseline? (
 		pgo
 	)
-	trainer-95-pct-quality-baseline? (
+	libjpeg_turbo_trainers_95_pct_quality_baseline? (
 		pgo
 	)
-	trainer-98-pct-quality-baseline? (
+	libjpeg_turbo_trainers_98_pct_quality_baseline? (
 		pgo
 	)
-	trainer-99-pct-quality-baseline? (
+	libjpeg_turbo_trainers_99_pct_quality_baseline? (
 		pgo
 	)
-	trainer-100-pct-quality-baseline? (
+	libjpeg_turbo_trainers_100_pct_quality_baseline? (
 		pgo
 	)
-	trainer-70-pct-quality-progressive? (
+	libjpeg_turbo_trainers_70_pct_quality_progressive? (
 		pgo
 	)
-	trainer-75-pct-quality-progressive? (
+	libjpeg_turbo_trainers_75_pct_quality_progressive? (
 		pgo
 	)
-	trainer-80-pct-quality-progressive? (
+	libjpeg_turbo_trainers_80_pct_quality_progressive? (
 		pgo
 	)
-	trainer-90-pct-quality-progressive? (
+	libjpeg_turbo_trainers_90_pct_quality_progressive? (
 		pgo
 	)
-	trainer-95-pct-quality-progressive? (
+	libjpeg_turbo_trainers_95_pct_quality_progressive? (
 		pgo
 	)
-	trainer-98-pct-quality-progressive? (
+	libjpeg_turbo_trainers_98_pct_quality_progressive? (
 		pgo
 	)
-	trainer-99-pct-quality-progressive? (
+	libjpeg_turbo_trainers_99_pct_quality_progressive? (
 		pgo
 	)
-	trainer-100-pct-quality-progressive? (
+	libjpeg_turbo_trainers_100_pct_quality_progressive? (
 		pgo
 	)
-	trainer-crop? (
+	libjpeg_turbo_trainers_crop? (
 		pgo
 	)
-	trainer-decode? (
+	libjpeg_turbo_trainers_decode? (
 		pgo
 	)
-	trainer-grayscale? (
+	libjpeg_turbo_trainers_grayscale? (
 		pgo
 	)
-	trainer-transformations? (
+	libjpeg_turbo_trainers_transformations? (
 		pgo
 	)
 "
@@ -382,19 +382,19 @@ train_trainer_custom() {
                                 | sed -r -e "s|\.jpg|.bmp$|g" -e "s|\.jpeg|.bmp$|"
 		)
 
-		if use trainer-decode ; then
+		if use libjpeg_turbo_trainers_decode ; then
 			einfo "Decoding image jpeg -> bmp"
 			djpeg -verbose "${p}" > "${sandbox_path}/${bn_bmp}" || die
 		fi
 
 		for pct in 70 75 80 90 95 98 99 100 ; do
-			if use "trainer-${pct}-pct-quality-baseline" ; then
+			if use "libjpeg_turbo_trainers_${pct}_pct_quality_baseline" ; then
 				einfo "Encoding image bmp -> baseline jpeg with ${pct}% quality"
 				cjpeg -verbose -quality ${pct} "${sandbox_path}/${bn_bmp}" > "${sandbox_path}/t-${bn}" || die
 				einfo "Decoding image baseline jpeg with ${pct}% (default) -> bmp"
 				djpeg -verbose "${sandbox_path}/t-${bn}" > "${sandbox_path}/t-${bn_bmp}" || die
 			fi
-			if use "trainer-${pct}-pct-quality-progressive" ; then
+			if use "libjpeg_turbo_trainers_${pct}_pct_quality_progressive" ; then
 				einfo "Encoding image bmp -> progressive jpeg with ${pct}% quality"
 				cjpeg -verbose -progressive -quality ${pct} "${sandbox_path}/${bn_bmp}" > "${sandbox_path}/t-${bn}" || die
 				einfo "Decoding image progressive jpeg with ${pct}% (default) -> bmp"
@@ -406,7 +406,7 @@ train_trainer_custom() {
 			fi
 		done
 
-		if use trainer-transformations ; then
+		if use libjpeg_turbo_trainers_transformations ; then
 			einfo "Flipping horizontal"
 			jpegtran -verbose -flip horizontal "${p}" > "${sandbox_path}/${bn}" || die
 			einfo "Flipping vertical"
@@ -429,12 +429,12 @@ train_trainer_custom() {
 				mv "${sandbox_path}/t-${bn}" "${sandbox_path}/${bn}" || die
 			done
 		fi
-		if use trainer-grayscale ; then
+		if use libjpeg_turbo_trainers_grayscale ; then
 			einfo "Converting to grayscale"
 			jpegtran -verbose -grayscale "${p}" > "${sandbox_path}/${bn}" || die
 		fi
 
-		if use trainer-crop ; then
+		if use libjpeg_turbo_trainers_crop ; then
 			cp -a "${p}" "${sandbox_path}/orig-${bn}" || die
 
 			local w=$(jpegtran -flip horizontal -verbose "${sandbox_path}/orig-${bn}" 2>&1 \

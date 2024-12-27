@@ -27,8 +27,8 @@
     this option if you work with alternative input image formats for conversion
     or use color management profiles.
 
-    Multiple trainer-*-pct-quality-baseline or
-    trainer-*-pct-quality-progressive has been provided for flexibility
+    Multiple libjpeg_turbo_trainers_*_pct_quality_baseline or
+    libjpeg_turbo_trainers_*_pct_quality-progressive has been provided for flexibility
     on typical use but used typically for content creators.  75% is the
     default without quality setting.  Using trainers that don't reflect
     typical use may result in a performance regression.
@@ -43,73 +43,73 @@
   <use>
     <!-- added to ebuild by oiledmachine-overlay -->
     <flag name="asm">Build with SIMD acceleration</flag>
-    <flag name="trainer-70-pct-quality-baseline">
+    <flag name="libjpeg_turbo_trainers_70_pct_quality_baseline">
       Trains with 70% quality baseline for encode and decode for offline
     </flag>
-    <flag name="trainer-75-pct-quality-baseline">
+    <flag name="libjpeg_turbo_trainers_75_pct_quality_baseline">
       Trains with 75% quality baseline for encode and decode for offline
     </flag>
-    <flag name="trainer-80-pct-quality-baseline">
+    <flag name="libjpeg_turbo_trainers_80_pct_quality_baseline">
       Trains with 80% quality baseline for encode and decode for offline
     </flag>
-    <flag name="trainer-90-pct-quality-baseline">
+    <flag name="libjpeg_turbo_trainers_90_pct_quality_baseline">
       Trains with 90% quality baseline for encode and decode for offline
     </flag>
-    <flag name="trainer-95-pct-quality-baseline">
+    <flag name="libjpeg_turbo_trainers_95_pct_quality_baseline">
       Trains with 95% quality baseline for encode and decode for offline
     </flag>
-    <flag name="trainer-98-pct-quality-baseline">
+    <flag name="libjpeg_turbo_trainers_98_pct_quality_baseline">
       Trains with 98% quality baseline for encode and decode for offline
     </flag>
-    <flag name="trainer-99-pct-quality-baseline">
+    <flag name="libjpeg_turbo_trainers_99_pct_quality_baseline">
       Trains with 99% quality baseline for encode and decode for offline
     </flag>
-    <flag name="trainer-100-pct-quality-baseline">
+    <flag name="libjpeg_turbo_trainers_100_pct_quality_baseline">
       Trains with 100% quality baseline for encode and decode for offline
     </flag>
-    <flag name="trainer-70-pct-quality-progressive">
+    <flag name="libjpeg_turbo_trainers_70_pct_quality-progressive">
       Trains with 70% quality progressive for encode and decode for web
     </flag>
-    <flag name="trainer-75-pct-quality-progressive">
+    <flag name="libjpeg_turbo_trainers_75_pct_quality-progressive">
       Trains with 75% quality progressive rendering for encode and decode for
       web
     </flag>
-    <flag name="trainer-80-pct-quality-progressive">
+    <flag name="libjpeg_turbo_trainers_80_pct_quality-progressive">
       Trains with 80% quality progressive rendering for encode and decode for
       web
     </flag>
-    <flag name="trainer-90-pct-quality-progressive">
+    <flag name="libjpeg_turbo_trainers_90_pct_quality-progressive">
       Trains with 90% quality progressive rendering for encode and decode for
       web
     </flag>
-    <flag name="trainer-95-pct-quality-progressive">
+    <flag name="libjpeg_turbo_trainers_95_pct_quality-progressive">
       Trains with 95% quality progressive rendering for encode and decode for
       web
     </flag>
-    <flag name="trainer-98-pct-quality-progressive">
+    <flag name="libjpeg_turbo_trainers_98_pct_quality-progressive">
       Trains with 98% quality progressive rendering for encode and decode for
       web
     </flag>
-    <flag name="trainer-99-pct-quality-progressive">
+    <flag name="libjpeg_turbo_trainers_99_pct_quality-progressive">
       Trains with 99% quality progressive rendering for encode and decode for
       web
     </flag>
-    <flag name="trainer-100-pct-quality-progressive">
+    <flag name="libjpeg_turbo_trainers_100_pct_quality-progressive">
       Train with 100% quality progressive for encode and decode for web
     </flag>
-    <flag name="trainer-decode">
+    <flag name="libjpeg_turbo_trainers_decode">
       Runs training to simply batch decode assets from the pgo jpeg folder.  You
       may just provide this and skip the other trainers, but apps may use
-      transformations as well so consider trainer-crop and
-      trainer-transformations USE flags.
+      transformations as well so consider libjpeg_turbo_trainers_crop and
+      libjpeg_turbo_trainers_transformations USE flags.
     </flag>
-    <flag name="trainer-crop">
+    <flag name="libjpeg_turbo_trainers_crop">
       Train for slicing images
     </flag>
-    <flag name="trainer-grayscale">
+    <flag name="libjpeg_turbo_trainers_grayscale">
       Train for black and white photos
     </flag>
-    <flag name="trainer-transformations">
+    <flag name="libjpeg_turbo_trainers_transformations">
       Train for rotations
     </flag>
   </use>

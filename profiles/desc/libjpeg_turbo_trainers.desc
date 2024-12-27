@@ -1,0 +1,21 @@
+# This file is part of the libjpeg-turbo ebuild
+70_pct_quality_baseline - Optimize for 70% quality with baseline rendering
+75_pct_quality_baseline - Optimize for 75% quality with baseline rendering
+80_pct_quality_baseline - Optimize for 80% quality with baseline rendering
+90_pct_quality_baseline - Optimize for 90% quality with baseline rendering
+95_pct_quality_baseline - Optimize for 95% quality with baseline rendering
+98_pct_quality_baseline - Optimize for 98% quality with baseline rendering
+99_pct_quality_baseline - Optimize for 99% quality with baseline rendering
+100_pct_quality_baseline - Optimize for 100% quality with baseline rendering
+70_pct_quality_progressive - Optimize for 70% quality with progressive rendering
+75_pct_quality_progressive - Optimize for 75% quality with progressive rendering
+80_pct_quality_progressive - Optimize for 80% quality with progressive rendering
+90_pct_quality_progressive - Optimize for 90% quality with progressive rendering
+95_pct_quality_progressive - Optimize for 95% quality with progressive rendering
+98_pct_quality_progressive - Optimize for 98% quality with progressive rendering
+99_pct_quality_progressive - Optimize for 99% quality with progressive rendering
+100_pct_quality_progressive - Optimize for 100% quality with progressive rendering
+crop - Optimize cropping
+decode - Optimize decoding
+grayscale - Optimize grayscaling
+transformations - Optimize image transformations
