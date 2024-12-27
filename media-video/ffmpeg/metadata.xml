@@ -838,6 +838,9 @@
   <flag name="x265">
     Enables HEVC encoding with <pkg>media-libs/x265</pkg>.
   </flag>
+  <flag name="xvid">
+    Enables MPEG-4 video encoding
+  </flag>
   <flag name="zeromq">
     Enables <pkg>net-libs/zeromq</pkg> support with the zmq/azmq filters.
   </flag>
