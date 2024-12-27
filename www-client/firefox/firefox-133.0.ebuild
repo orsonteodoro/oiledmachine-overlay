@@ -477,9 +477,6 @@ PATENT_REQUIRED_USE="
 		patent_status_nonfree_patents
 		system-ffmpeg
 	)
-	vaapi? (
-		patent_status_new_hardware
-	)
 "
 REQUIRED_USE="
 	${PATENT_REQUIRED_USE}

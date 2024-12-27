@@ -594,9 +594,6 @@ PATENT_REQUIRED_USE="
 	openh264? (
 		patent_status_nonfree_patents
 	)
-	vaapi? (
-		patent_status_new_hardware
-	)
 	x264? (
 		patent_status_nonfree_patents
 	)

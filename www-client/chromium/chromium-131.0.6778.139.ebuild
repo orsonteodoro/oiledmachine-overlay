@@ -658,9 +658,6 @@ PATENT_USE_FLAGS="
 		!widevine
 		system-ffmpeg
 	)
-	vaapi? (
-		patent_status_new_hardware
-	)
 	vaapi-hevc? (
 		patent_status_new_hardware
 	)
@@ -920,7 +917,7 @@ LIBVA_DEPEND="
 		media-libs/libva:=
 		media-libs/vaapi-drivers[${MULTILIB_USEDEP}]
 		system-ffmpeg? (
-			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},vaapi]
+			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},patent_status_new_hardware?,vaapi]
 		)
 	)
 "
