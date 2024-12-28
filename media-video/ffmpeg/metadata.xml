@@ -814,10 +814,8 @@
       the internal encoder.
     </flag>
     <flag name="vaapi">
-      Enables GPU acceleration for mjpeg, MPEG-2, VC-1, H.264, H.265, VP8, VP9,
-      AV1 if supported by the GPU only if a VAAPI driver is available or the
-      proprietary-codecs USE flag was manually enabled in
-      <pkg>media-video/mesa</pkg>.
+      Enables GPU acceleration for MJPEG, MPEG-2, VC-1, H.264, H.265, VP8, VP9,
+      AV1 if supported by the GPU only if a VAAPI driver is available.
     </flag>
     <flag name="vidstab">
       Enables video stabilization filter using vid.stab library
