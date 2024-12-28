@@ -167,6 +167,7 @@ VULNERABILITIES_FIXED=(
 NABIS=0 # Global variable
 NODE_VERSION=20
 PATENT_STATUS=(
+	patent_status_end_user_sponsored
 	patent_status_free_for_end_users
 	patent_status_new_or_renewed
 	patent_status_nonfree
@@ -641,7 +642,12 @@ PATENT_USE_FLAGS="
 		system-ffmpeg
 	)
 	openh264? (
-		patent_status_nonfree
+		!system-openh264? (
+			patent_status_end_user_sponsored
+		)
+		system-openh264? (
+			patent_status_nonfree
+		)
 	)
 	patent_status_without_codec_developer_tax? (
 		system-ffmpeg
