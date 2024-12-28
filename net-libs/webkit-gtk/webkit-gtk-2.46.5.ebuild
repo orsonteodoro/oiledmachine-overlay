@@ -1237,24 +1237,6 @@ eerror
 			die
 		fi
 	done
-	if has_version "<dev-libs/openssl-3" \
-		&& has_version "media-video/ffmpeg[openssl]" ; then
-# Version 3 is allowed because of the Grant of Patent Clause in Apache-2.0.
-eerror
-eerror "Using <dev-libs/openssl-3 is disallowed with the"
-eerror "proprietary-codecs-disable* USE flags."
-eerror
-		die
-	fi
-	if has_version ">=dev-libs/openssl-3" \
-		&& has_version "<media-video/ffmpeg-5[openssl]" ; then
-eerror
-eerror "Using <media-video/ffmpeg-5 is disallowed with the"
-eerror "proprietary-codecs-disable* USE flags.  This may add nonfree code"
-eerror "paths in FFmpeg."
-eerror
-		die
-	fi
 	if has_version "media-video/ffmpeg" ; then
 ewarn
 ewarn "Use a corrected local copy or the FFmpeg ebuild from the"
