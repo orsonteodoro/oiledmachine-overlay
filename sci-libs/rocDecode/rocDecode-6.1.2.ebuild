@@ -31,6 +31,9 @@ AMDGPU_TARGETS_UNTESTED=(
 	gfx1102
 )
 LLVM_SLOT=17
+PATENT_STATUS=(
+	patent_status_new_or_renewed
+)
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic rocm
@@ -65,6 +68,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
+${PATENT_STATUS[@]}
 samples ebuild-revision-0
 "
 REQUIRED_USE="
@@ -72,7 +76,7 @@ REQUIRED_USE="
 RDEPEND="
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
 	>=media-libs/libva-2.7.0
-	>=media-libs/mesa-24.1.0[patent_status_new_or_renewed,vaapi,video_cards_radeonsi]
+	>=media-libs/mesa-24.1.0[patent_status_new_or_renewed=,vaapi,video_cards_radeonsi]
 	samples? (
 		>=media-video/ffmpeg-4.2.7:0/56.58.58
 	)
