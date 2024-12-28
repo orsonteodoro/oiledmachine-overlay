@@ -642,6 +642,9 @@ PATENT_USE_FLAGS="
 		!system-openh264? (
 			patent_status_end_user_sponsored
 		)
+		patent_status_end_user_sponsored? (
+			!system-openh264
+		)
 		system-openh264? (
 			patent_status_nonfree
 		)
