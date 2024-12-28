@@ -461,7 +461,7 @@ eerror
 	fi
 ewarn
 ewarn "If the following similar error is encountered, manually delete the file listed"
-ewarn "KeyError: [...] (/usr/lib64/libopenvdb.so.10.0.1) not in object list'"
+ewarn "KeyError: [...] (/usr/lib64/libopenvdb.so.<SO_VERSION>) not in object list'"
 ewarn
 }
 
