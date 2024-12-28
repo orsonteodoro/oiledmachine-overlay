@@ -195,8 +195,9 @@ src_unpack() {
 src_configure() {
 	verify_qt_consistency
 	local mycmakeargs=(
-		-DBUILD_DOXYGEN="$(usex doc)"
-		-DBUILD_TESTS="$(usex test)"
+		-DBUILD_DOXYGEN=$(usex doc)
+		-DBUILD_QT6=$(usex qt6)
+		-DBUILD_TESTS=$(usex test)
 	)
 	cmake_src_configure
 }
