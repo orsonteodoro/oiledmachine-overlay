@@ -42,6 +42,9 @@
     <flag name="png">
       Add PNG encode support
     </flag>
+    <flag name="srt">
+      Add SubRip subtitles support
+    </flag>
     <flag name="svt-av1">
       Add AV1 audio encode support
     </flag>

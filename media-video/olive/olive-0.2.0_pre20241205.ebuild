@@ -46,7 +46,7 @@ SLOT="0/${MY_PV}"
 # For default ON status see docker/scripts/build_ffmpeg.sh
 # Only expired patents or non taxed patents will be enabled default ON in this ebuild.
 IUSE+="
-alsa doc jack +jpeg2k +mp3 +opus oss +png qt5 qt6 test +svt-av1 +theora
+alsa doc jack +jpeg2k +mp3 +opus oss +png qt5 qt6 test srt +svt-av1 +theora
 +truetype +vorbis wayland +webp X +xvid x264 x265
 ebuild_revision_1
 "
@@ -81,7 +81,7 @@ RESTRICT="
 DEPEND="
 	>=media-libs/opencolorio-2.1.1:=
 	>=media-libs/openimageio-2.1.12:=[png?]
-	>=media-video/ffmpeg-3.0.0[jpeg2k?,mp3?,opus?,svt-av1?,theora?,truetype?,vorbis?,webp?]
+	>=media-video/ffmpeg-3.0.0[jpeg2k?,mp3?,opus?,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?]
 	>=media-libs/portaudio-19.06.0[alsa?,jack?,oss?]
 	>=media-libs/openexr-2.3.0:=
 	media-libs/opentimelineio:=
