@@ -204,7 +204,7 @@ eerror
 eerror "Ensure that the qt${qt_slot}core and the currently selected compiler"
 eerror "are built with the same compiler slot."
 eerror
-eerror "You must decide to pick the GCC slot to rebuild for these 2 packages."
+eerror "You must decide to pick the GCC slot to rebuild for all packages listed."
 eerror
 printf "%-20s %-30s %-10s %-s\n" "Library" "Package" "API/ABI" "API/ABI Version"
 printf "%-20s %-30s %-10s %-s\n" "libstdc++.so" "sys-devel/gcc" "CXXABI" "${libstdcxx_cxxabi_ver} (GCC slot ${gcc_current_profile_slot})"
@@ -228,7 +228,7 @@ eerror
 eerror "Ensure that the OpenColorIO, OpenEXR, Qt${qt_slot}Core, and the"
 eerror "currently selected compiler are built with the same compiler slot."
 eerror
-eerror "You must decide to pick the GCC slot to rebuild for all 3 packages."
+eerror "You must decide to pick the GCC slot to rebuild for all packages listed."
 eerror
 printf "%-20s %-30s %-10s %-s\n" "Library" "Package" "API/ABI" "API/ABI Version"
 printf "%-20s %-30s %-10s %-s\n" "libstdc++.so" "sys-devel/gcc" "CXXABI" "${libstdcxx_cxxabi_ver} (GCC slot ${gcc_current_profile_slot})"
@@ -252,7 +252,7 @@ eerror
 eerror "Ensure that the OpenColorIO, OpenEXR, Qt${qt_slot}Core, and the"
 eerror "currently selected compiler are built with the same compiler slot."
 eerror
-eerror "You must decide to pick the GCC slot to rebuild for all 3 packages."
+eerror "You must decide to pick the GCC slot to rebuild for all packages listed."
 eerror
 printf "%-20s %-30s %-10s %-s\n" "Library" "Package" "API/ABI" "API/ABI Version"
 printf "%-20s %-30s %-10s %-s\n" "libstdc++.so" "sys-devel/gcc" "CXXABI" "${libstdcxx_cxxabi_ver} (GCC slot ${gcc_current_profile_slot})"
