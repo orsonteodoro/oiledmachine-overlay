@@ -480,6 +480,10 @@ eerror
 			die
 		fi
 	fi
+ewarn
+ewarn "If the following similar error is encountered, manually delete the file listed"
+ewarn "KeyError: [...] (/usr/lib64/libopenvdb.so.10.0.1) not in object list'"
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  link-to-multislot-tbb
