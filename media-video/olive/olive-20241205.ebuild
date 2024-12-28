@@ -131,6 +131,51 @@ BDEPEND="
 PATCHES=(
 )
 
+check_cxxabi() {
+	local gcc_current_profile=$(gcc-config -c)
+	local gcc_current_profile_slot=${gcc_current_profile##*-}
+	local libstdcxx_cxxabi_ver=$(strings "/usr/lib/gcc/${CHOST}/${gcc_current_profile_slot}/libstdc++.so" \
+		| grep CXXABI \
+		| sort -V \
+		| grep -E -e "CXXABI_[0-9]+" \
+		| tail -n 1 \
+		| cut -f 2 -d "_")
+	local libstdcxx_glibcxx_ver=$(strings "/usr/lib/gcc/${CHOST}/${gcc_current_profile_slot}/libstdc++.so" \
+		| grep GLIBCXX \
+		| sort -V \
+		| grep -E -e "GLIBCXX_[0-9]+" \
+		| tail -n 1 \
+		| cut -f 2 -d "_")
+	local qt6core_cxxabi_ver=$(strings "/usr/lib64/libQt6Core.so" \
+		| grep CXXABI \
+		| sort -V \
+		| grep -E -e "CXXABI_[0-9]+" \
+		| tail -n 1 \
+		| cut -f 2 -d "_")
+	local qt6core_glibcxx_ver=$(strings "/usr/lib64/libQt6Core.so" \
+		| grep GLIBCXX \
+		| sort -V \
+		| grep -E -e "GLIBCXX_[0-9]+" \
+		| tail -n 1 \
+		| cut -f 2 -d "_")
+	if ver_test ${libstdcxx_cxxabi_ver} -lt ${qt6core_cxxabi_ver} ; then
+eerror
+eerror "Detected CXXABI missing symbol."
+eerror
+eerror "Ensure that the qt6core was build with the same gcc version as the"
+eerror "currently selected compiler."
+eerror
+eerror "libstdcxx CXXABI  - ${libstdcxx_cxxabi_ver} (GCC slot ${gcc_current_profile_slot})"
+eerror "libstdcxx GLIBCXX - ${libstdcxx_glibcxx_ver} (GCC slot ${gcc_current_profile_slot})"
+eerror "qt6core CXXABI    - ${qt6core_cxxabi_ver}"
+eerror "qt6core GLIBCXX   - ${qt6core_glibcxx_ver}"
+eerror
+eerror "See https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html for details"
+eerror
+		die
+	fi
+}
+
 verify_qt_consistency() {
 	local QT_SLOT
 	if use qt6 ; then
@@ -209,6 +254,7 @@ src_prepare() {
 
 src_configure() {
 	verify_qt_consistency
+	check_cxxabi
 	local mycmakeargs=(
 		-DBUILD_DOXYGEN=$(usex doc)
 		-DBUILD_QT6=$(usex qt6)
