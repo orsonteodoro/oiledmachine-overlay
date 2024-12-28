@@ -208,6 +208,19 @@ check_cxxabi() {
 		| tail -n 1 \
 		| cut -f 2 -d "_")
 
+	local pystring_cxxabi_ver=$(strings "/usr/$(get_libdir)/libpystring.so" \
+		| grep CXXABI \
+		| sort -V \
+		| grep -E -e "CXXABI_[0-9]+" \
+		| tail -n 1 \
+		| cut -f 2 -d "_")
+	local pystring_glibcxx_ver=$(strings "/usr/$(get_libdir)/libpystring.so" \
+		| grep GLIBCXX \
+		| sort -V \
+		| grep -E -e "GLIBCXX_[0-9]+" \
+		| tail -n 1 \
+		| cut -f 2 -d "_")
+
 	_check_lib() {
 		local downstream_glibcxx_ver="${1}"
 		local downstream_lib="${2}"
@@ -240,9 +253,10 @@ eerror
 	}
 
 	_check_lib "${qtcore_glibcxx_ver}" "Q${qt_slot}tCore"
-	_check_lib "${imath_glibcxx_ver}" "Imath"
+	_check_lib "${imath_glibcxx_ver}" "Imath" # An OpenEXR dependency
 	_check_lib "${openexr_glibcxx_ver}" "OpenEXR"
 	_check_lib "${ocio_glibcxx_ver}" "OpenColorIO"
+	_check_lib "${pystring_glibcxx_ver}" "pystring" # An OpenColorIO dependency
 }
 
 verify_qt_consistency() {
