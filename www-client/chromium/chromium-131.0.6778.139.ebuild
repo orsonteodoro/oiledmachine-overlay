@@ -167,10 +167,10 @@ VULNERABILITIES_FIXED=(
 NABIS=0 # Global variable
 NODE_VERSION=20
 PATENT_STATUS=(
-	patent_status_end_user_sponsored
 	patent_status_free_for_end_users
 	patent_status_new_or_renewed
 	patent_status_nonfree
+	patent_status_sponsored_ncp_nb
 	patent_status_without_codec_developer_tax
 )
 PPC64_HASH="a85b64f07b489b8c6fdb13ecf79c16c56c560fc6"
@@ -643,9 +643,9 @@ PATENT_USE_FLAGS="
 	)
 	openh264? (
 		!system-openh264? (
-			patent_status_end_user_sponsored
+			patent_status_sponsored_ncp_nb
 		)
-		patent_status_end_user_sponsored? (
+		patent_status_sponsored_ncp_nb? (
 			!system-openh264
 		)
 		system-openh264? (
