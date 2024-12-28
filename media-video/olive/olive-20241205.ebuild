@@ -195,6 +195,18 @@ check_cxxabi() {
 		| tail -n 1 \
 		| cut -f 2 -d "_")
 
+	local imath_cxxabi_ver=$(strings "/usr/$(get_libdir)/libImath.so" \
+		| grep CXXABI \
+		| sort -V \
+		| grep -E -e "CXXABI_[0-9]+" \
+		| tail -n 1 \
+		| cut -f 2 -d "_")
+	local imath_glibcxx_ver=$(strings "/usr/$(get_libdir)/libImath.so" \
+		| grep GLIBCXX \
+		| sort -V \
+		| grep -E -e "GLIBCXX_[0-9]+" \
+		| tail -n 1 \
+		| cut -f 2 -d "_")
 
 	# The CXXABI version will vary if built with the same GCC slot.
 	if ver_test ${qtcore_glibcxx_ver} -gt ${libstdcxx_glibcxx_ver} ; then
@@ -207,6 +219,8 @@ eerror
 eerror "You must decide to pick the GCC slot to rebuild for all packages listed."
 eerror
 printf "%-20s %-30s %-10s %-s\n" "Library" "Package" "API/ABI" "API/ABI Version"
+printf "%-20s %-30s %-10s %-s\n" "libImath.so" "dev-libs/imath" "CXXABI" "${imath_cxxabi_ver}"
+printf "%-20s %-30s %-10s %-s\n" "libImath.so" "dev-libs/imath" "GLIBCXX" "${imath_glibcxx_ver}"
 printf "%-20s %-30s %-10s %-s\n" "libstdc++.so" "sys-devel/gcc" "CXXABI" "${libstdcxx_cxxabi_ver} (GCC slot ${gcc_current_profile_slot})"
 printf "%-20s %-30s %-10s %-s\n" "libstdc++.so" "sys-devel/gcc" "GLIBCXX" "${libstdcxx_glibcxx_ver} (GCC slot ${gcc_current_profile_slot})"
 printf "%-20s %-30s %-10s %-s\n" "libOpenColorIO.so" "media-libs/opencolorio" "CXXABI" "${ocio_cxxabi_ver}"
@@ -221,16 +235,18 @@ eerror
 		die
 	fi
 
-	if ver_test ${ocio_glibcxx_ver} -gt ${libstdcxx_glibcxx_ver} ; then
+	if ver_test ${imath_glibcxx_ver} -gt ${libstdcxx_glibcxx_ver} ; then
 eerror
-eerror "Detected GLIBCXX > ${libstdcxx_glibcxx_ver} for OpenColorIO."
+eerror "Detected GLIBCXX > ${libstdcxx_glibcxx_ver} for Imath."
 eerror
-eerror "Ensure that the OpenImageIO is built with"
+eerror "Ensure that Imath is built with"
 eerror "GCC ${gcc_current_profile_slot} slot or earlier."
 eerror
 eerror "You must decide to pick the GCC slot to rebuild for all packages listed."
 eerror
 printf "%-20s %-30s %-10s %-s\n" "Library" "Package" "API/ABI" "API/ABI Version"
+printf "%-20s %-30s %-10s %-s\n" "libImath.so" "dev-libs/imath" "CXXABI" "${imath_cxxabi_ver}"
+printf "%-20s %-30s %-10s %-s\n" "libImath.so" "dev-libs/imath" "GLIBCXX" "${imath_glibcxx_ver}"
 printf "%-20s %-30s %-10s %-s\n" "libstdc++.so" "sys-devel/gcc" "CXXABI" "${libstdcxx_cxxabi_ver} (GCC slot ${gcc_current_profile_slot})"
 printf "%-20s %-30s %-10s %-s\n" "libstdc++.so" "sys-devel/gcc" "GLIBCXX" "${libstdcxx_glibcxx_ver} (GCC slot ${gcc_current_profile_slot})"
 printf "%-20s %-30s %-10s %-s\n" "libOpenColorIO.so" "media-libs/opencolorio" "CXXABI" "${ocio_cxxabi_ver}"
@@ -249,12 +265,14 @@ eerror
 eerror
 eerror "Detected GLIBCXX > ${libstdcxx_glibcxx_ver} for OpenEXR."
 eerror
-eerror "Ensure that the OpenEXR is built with"
+eerror "Ensure that OpenEXR is built with"
 eerror "GCC ${gcc_current_profile_slot} slot or earlier."
 eerror
 eerror "You must decide to pick the GCC slot to rebuild for all packages listed."
 eerror
 printf "%-20s %-30s %-10s %-s\n" "Library" "Package" "API/ABI" "API/ABI Version"
+printf "%-20s %-30s %-10s %-s\n" "libImath.so" "dev-libs/imath" "CXXABI" "${imath_cxxabi_ver}"
+printf "%-20s %-30s %-10s %-s\n" "libImath.so" "dev-libs/imath" "GLIBCXX" "${imath_glibcxx_ver}"
 printf "%-20s %-30s %-10s %-s\n" "libstdc++.so" "sys-devel/gcc" "CXXABI" "${libstdcxx_cxxabi_ver} (GCC slot ${gcc_current_profile_slot})"
 printf "%-20s %-30s %-10s %-s\n" "libstdc++.so" "sys-devel/gcc" "GLIBCXX" "${libstdcxx_glibcxx_ver} (GCC slot ${gcc_current_profile_slot})"
 printf "%-20s %-30s %-10s %-s\n" "libOpenColorIO.so" "media-libs/opencolorio" "CXXABI" "${ocio_cxxabi_ver}"
@@ -268,6 +286,33 @@ eerror "See https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html for details
 eerror
 		die
 	fi
+
+	if ver_test ${ocio_glibcxx_ver} -gt ${libstdcxx_glibcxx_ver} ; then
+eerror
+eerror "Detected GLIBCXX > ${libstdcxx_glibcxx_ver} for OpenColorIO."
+eerror
+eerror "Ensure that OpenImageIO is built with"
+eerror "GCC ${gcc_current_profile_slot} slot or earlier."
+eerror
+eerror "You must decide to pick the GCC slot to rebuild for all packages listed."
+eerror
+printf "%-20s %-30s %-10s %-s\n" "Library" "Package" "API/ABI" "API/ABI Version"
+printf "%-20s %-30s %-10s %-s\n" "libImath.so" "dev-libs/imath" "CXXABI" "${imath_cxxabi_ver}"
+printf "%-20s %-30s %-10s %-s\n" "libImath.so" "dev-libs/imath" "GLIBCXX" "${imath_glibcxx_ver}"
+printf "%-20s %-30s %-10s %-s\n" "libstdc++.so" "sys-devel/gcc" "CXXABI" "${libstdcxx_cxxabi_ver} (GCC slot ${gcc_current_profile_slot})"
+printf "%-20s %-30s %-10s %-s\n" "libstdc++.so" "sys-devel/gcc" "GLIBCXX" "${libstdcxx_glibcxx_ver} (GCC slot ${gcc_current_profile_slot})"
+printf "%-20s %-30s %-10s %-s\n" "libOpenColorIO.so" "media-libs/opencolorio" "CXXABI" "${ocio_cxxabi_ver}"
+printf "%-20s %-30s %-10s %-s\n" "libOpenColorIO.so" "media-libs/opencolorio" "GLIBCXX" "${ocio_glibcxx_ver}"
+printf "%-20s %-30s %-10s %-s\n" "libOpenEXR.so" "media-libs/openexr" "CXXABI" "${openexr_cxxabi_ver}"
+printf "%-20s %-30s %-10s %-s\n" "libOpenEXR.so" "media-libs/openexr" "GLIBCXX" "${openexr_glibcxx_ver}"
+printf "%-20s %-30s %-10s %-s\n" "libQt${qt_slot}Core.so" "${qtcore_package}" "CXXABI" "${qtcore_cxxabi_ver}"
+printf "%-20s %-30s %-10s %-s\n" "libQt${qt_slot}Core.so" "${qtcore_package}" "GLIBCXX" "${qtcore_glibcxx_ver}"
+eerror
+eerror "See https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html for details"
+eerror
+		die
+	fi
+
 
 
 }
