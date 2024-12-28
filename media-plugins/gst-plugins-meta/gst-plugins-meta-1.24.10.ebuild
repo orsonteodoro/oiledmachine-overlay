@@ -13,6 +13,9 @@ EAPI=7
 
 # When adding deps here, make sure the keywords on the gst-plugin are valid.
 
+# There is no current way to disable individual codecs like mesa for va,
+# vaapi, vulkan.  This is why they are restricted.
+
 VIDEO_CARDS=(
 	video_cards_amdgpu
 	video_cards_r600
@@ -28,12 +31,19 @@ KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~m68k ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86
 ~amd64-linux ~arm64-macos ~x86-linux
 "
+PATENT_STATUS=(
+	patent_status_free_for_codec_developers
+	patent_status_free_for_end_users
+	patent_status_new_or_renewed
+	patent_status_nonfree
+)
 
 DESCRIPTION="A metapackage to pull in gst plugins for apps"
 HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="metapackage"
 SLOT="1.0"
 IUSE="
+${PATENT_STATUS[@]}
 ${VIDEO_CARDS[@]}
 a52 aac alsa aom av1 cdda dash dav1d dts dv dvb dvd ffmpeg flac fluidsynth gme
 gsm hls http jack jpeg jpeg2k lame libass libvisual midi mp3 modplug mpeg
@@ -42,6 +52,14 @@ sndfile svg taglib theora v4l va vaapi vcd vorbis vpx wavpack wildmidi webp X x2
 x265
 "
 REQUIRED_USE="
+	!patent_status_nonfree? (
+		!dash
+		!hls
+		!va
+		!vaapi
+		!x264
+		!x265
+	)
 	av1? (
 		|| (
 			aom
@@ -51,6 +69,12 @@ REQUIRED_USE="
 			aom
 			dav1d
 		)
+	)
+	dash? (
+		patent_status_nonfree
+	)
+	hls? (
+		patent_status_nonfree
 	)
 	midi? (
 		|| (
@@ -64,12 +88,40 @@ REQUIRED_USE="
 	theora? (
 		ogg
 	)
+	va? (
+		patent_status_nonfree
+	)
+	vaapi? (
+		patent_status_nonfree
+	)
 	vorbis? (
 		ogg
+	)
+	openh264? (
+		patent_status_nonfree
+	)
+	x264? (
+		patent_status_nonfree
+	)
+	x265? (
+		patent_status_nonfree
+	)
+"
+
+PATENT_RDEPEND="
+	!patent_status_nonfree? (
+		!media-plugins/gst-plugins-dash
+		!media-plugins/gst-plugins-hls
+		!media-plugins/gst-plugins-vaapi
+		!media-plugins/gst-plugins-x264
+		!media-plugins/gst-plugins-x265
+		media-libs/gst-plugins-bad[-vaapi,-vulkan]
 	)
 "
 
 RDEPEND="
+	${PATENT_RDEPEND}
+	virtual/patent-status[patent_status_free_for_codec_developers=,patent_status_free_for_end_users=,patent_status_new_or_renewed=,patent_status_nonfree=]
 	~media-libs/gstreamer-${PV}:1.0[${MULTILIB_USEDEP}]
 	~media-libs/gst-plugins-base-${PV}:1.0[${MULTILIB_USEDEP},alsa?,ogg?,theora?,vorbis?,X?]
 	~media-libs/gst-plugins-good-${PV}:1.0[${MULTILIB_USEDEP}]
@@ -90,6 +142,9 @@ RDEPEND="
 	)
 	dav1d? (
 		~media-plugins/gst-plugins-rs-${PV}:1.0[${MULTILIB_USEDEP},dav1d]
+	)
+	dash? (
+		~media-plugins/gst-plugins-dash-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
 	dts? (
 		~media-plugins/gst-plugins-dts-${PV}:1.0[${MULTILIB_USEDEP}]
