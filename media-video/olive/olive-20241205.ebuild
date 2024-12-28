@@ -6,6 +6,8 @@ EAPI=8
 
 # U20
 
+MY_PV="0.2.0"
+
 EGIT_COMMIT="7e0e94abf6610026aebb9ddce8564c39522fac6e" # Dec 5, 2024
 KDDOCWIDGETS_COMMIT="8d2d0a5764f8393cc148a2296d511276a8ffe559"
 OLIVE_EDITOR_CORE_COMMIT="277792824801495e868580ca86f6e7a1b53e4779"
@@ -40,7 +42,7 @@ HOMEPAGE="
 	https://github.com/olive-editor/olive
 "
 LICENSE="GPL-3"
-SLOT="0"
+SLOT="0/${MY_PV}"
 # For default ON status see docker/scripts/build_ffmpeg.sh
 # Only expired patents or non taxed patents will be enabled default ON in this ebuild.
 IUSE+="
@@ -318,6 +320,17 @@ src_prepare() {
 	cmake_src_prepare
 	if use qt6 ; then
 		eapply "${FILESDIR}/${PN}-7e0e94a-stringref-header.patch"
+	fi
+	local pv=$(grep -o -E -e "olive-editor VERSION [0-9.]+" "CMakeLists.txt" \
+		| cut -f 3 -d " ")
+	if [[ "${pv}" != "${MY_PV}" ]] ; then
+eerror
+eerror "QA:  Bump MY_PV"
+eerror
+eerror "Actual:  ${pv}"
+eerror "Expected:  ${MY_PV}"
+eerror
+		die
 	fi
 }
 
