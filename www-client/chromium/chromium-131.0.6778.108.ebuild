@@ -165,11 +165,11 @@ VULNERABILITIES_FIXED=(
 NABIS=0 # Global variable
 NODE_VERSION=20
 PATENT_STATUS=(
+	patent_status_free_for_codec_developers
 	patent_status_free_for_end_users
 	patent_status_new_or_renewed
 	patent_status_nonfree
 	patent_status_sponsored_ncp_nb
-	patent_status_without_codec_developer_tax
 )
 PPC64_HASH="a85b64f07b489b8c6fdb13ecf79c16c56c560fc6"
 PATCHSET_PPC64="128.0.6613.84-1raptor0~deb12u1"
@@ -649,7 +649,7 @@ PATENT_USE_FLAGS="
 			patent_status_nonfree
 		)
 	)
-	patent_status_without_codec_developer_tax? (
+	patent_status_free_for_codec_developers? (
 		system-ffmpeg
 	)
 	patent_status_free_for_end_users? (
@@ -1169,8 +1169,8 @@ COMMON_DEPEND="
 		!patent_status_nonfree? (
 			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,-patent_status_nonfree,vaapi?,vorbis?,vpx?,-x264,-x265]
 		)
-		patent_status_without_codec_developer_tax? (
-			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,patent_status_without_codec_developer_tax,vaapi?,vorbis?,vpx?,-x264,-x265]
+		patent_status_free_for_codec_developers? (
+			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,patent_status_free_for_codec_developers,vaapi?,vorbis?,vpx?,-x264,-x265]
 		)
 		patent_status_free_for_end_users? (
 			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,patent_status_free_for_end_users,vaapi?,vorbis?,vpx?,-x264,-x265]
@@ -3923,7 +3923,7 @@ ewarn "The new V8 Sandbox [for the JavaScript engine] (2024) will be automagic o
 	# The internal/vendored ffmpeg enables non-free codecs.
 		local _media_use_ffmpeg="true"
 		if \
-			     use patent_status_without_codec_developer_tax \
+			     use patent_status_free_for_codec_developers \
 			||   use patent_status_free_for_end_users \
 			|| ! use patent_status_nonfree ; then
 			_media_use_ffmpeg="false"

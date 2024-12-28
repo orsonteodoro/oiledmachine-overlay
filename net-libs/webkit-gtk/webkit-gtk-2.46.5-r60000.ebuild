@@ -501,7 +501,7 @@ DEFAULT_GST_PLUGINS="
 # libbacktrace is enabled upstream but disabled for security reasons.
 
 PATENT_STATUS=(
-	patent_status_without_codec_developer_tax
+	patent_status_free_for_codec_developers
 	patent_status_free_for_end_users
 	patent_status_new_or_renewed
 	patent_status_nonfree
@@ -866,7 +866,7 @@ RDEPEND+="
 		!media-plugins/gst-plugins-faac
 		!media-plugins/gst-plugins-faad
 	)
-	patent_status_without_codec_developer_tax? (
+	patent_status_free_for_codec_developers? (
 		!media-plugins/gst-plugins-faac
 		!media-plugins/gst-plugins-faad
 	)
@@ -1196,7 +1196,7 @@ ewarn
 verify_codecs() {
 	if \
 		 ! use patent_status_nonfree \
-		|| use patent_status_without_codec_developer_tax \
+		|| use patent_status_free_for_codec_developers \
 		|| use patent_status_free_for_end_users \
 	; then
 		:
