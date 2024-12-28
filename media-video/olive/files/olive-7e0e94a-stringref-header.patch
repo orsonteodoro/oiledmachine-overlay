@@ -1,0 +1,44 @@
+diff '--color=auto' -urp olive-7e0e94abf6610026aebb9ddce8564c39522fac6e.orig/CMakeLists.txt olive-7e0e94abf6610026aebb9ddce8564c39522fac6e/CMakeLists.txt
+--- olive-7e0e94abf6610026aebb9ddce8564c39522fac6e.orig/CMakeLists.txt	2024-12-28 06:14:17.322182391 -0800
++++ olive-7e0e94abf6610026aebb9ddce8564c39522fac6e/CMakeLists.txt	2024-12-28 06:14:33.570064106 -0800
+@@ -149,11 +149,16 @@ list(APPEND OLIVE_LIBRARIES
+ if (${QT_VERSION_MAJOR} EQUAL "6")
+   find_package(Qt${QT_VERSION_MAJOR}
+     REQUIRED
++    COMPONENTS Core5Compat
++  )
++  find_package(Qt${QT_VERSION_MAJOR}
++    REQUIRED
+       OpenGLWidgets
+   )
+ 
+   list(APPEND OLIVE_LIBRARIES
+     Qt${QT_VERSION_MAJOR}::OpenGLWidgets
++    Qt${QT_VERSION_MAJOR}::Core5Compat
+   )
+ 
+   # Link KDDockWidgets
+diff '--color=auto' -urp olive-7e0e94abf6610026aebb9ddce8564c39522fac6e.orig/app/node/project/serializer/serializer230220.cpp olive-7e0e94abf6610026aebb9ddce8564c39522fac6e/app/node/project/serializer/serializer230220.cpp
+--- olive-7e0e94abf6610026aebb9ddce8564c39522fac6e.orig/app/node/project/serializer/serializer230220.cpp	2024-12-05 02:34:16.000000000 -0800
++++ olive-7e0e94abf6610026aebb9ddce8564c39522fac6e/app/node/project/serializer/serializer230220.cpp	2024-12-28 06:15:57.577452690 -0800
+@@ -18,6 +18,8 @@
+ 
+ ***/
+ 
++#include <QStringRef>
++
+ #include "serializer230220.h"
+ 
+ #include "config/config.h"
+@@ -190,9 +192,9 @@ ProjectSerializer230220::LoadData Projec
+             } else if (attr.name() == QStringLiteral("ptr")) {
+               ptr = attr.value().toULongLong();
+             } else if (attr.name() == QStringLiteral("items")) {
+-              QVector<QStringRef> l = attr.value().split(',');
++              QVector<QStringView> l = attr.value().split(',');
+               items.reserve(l.size());
+-              for (const QStringRef &s : l) {
++              for (const QStringView &s : l) {
+                 items.append(s.toULongLong());
+               }
+             }

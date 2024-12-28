@@ -97,6 +97,7 @@ DEPEND="
 		dev-qt/qtwidgets:=
 	)
 	qt6? (
+		>=dev-qt/qt5compat-${QT6_PV}:6
 		>=dev-qt/qtbase-${QT6_PV}:6[concurrent,gui,opengl,wayland?,widgets,X?]
 		dev-qt/qtbase:=
 		>=dev-qt/qtsvg-${QT6_PV}:6
@@ -127,6 +128,8 @@ BDEPEND="
 		>=dev-qt/qttools-${QT6_PV}:6[linguist]
 	)
 "
+PATCHES=(
+)
 
 verify_qt_consistency() {
 	local QT_SLOT
@@ -163,6 +166,11 @@ eerror
 		Qt${QT_SLOT}Svg
 		Qt${QT_SLOT}Widgets
 	)
+	if use qt6 ; then
+		L+=(
+			Qt${QT_SLOT}Core5Compat
+		)
+	fi
 	local QTPKG_PV
 	local pkg_name
 	for pkg_name in ${L[@]} ; do
@@ -189,6 +197,13 @@ src_unpack() {
 		unpack ${A}
 		dep_prepare_mv "${WORKDIR}/KDDockWidgets-${KDDOCWIDGETS_COMMIT}" "${S}/ext/KDDockWidgets"
 		dep_prepare_mv "${WORKDIR}/core-${OLIVE_EDITOR_CORE_COMMIT}" "${S}/ext/core"
+	fi
+}
+
+src_prepare() {
+	cmake_src_prepare
+	if use qt6 ; then
+		eapply "${FILESDIR}/${PN}-7e0e94a-stringref-header.patch"
 	fi
 }
 
