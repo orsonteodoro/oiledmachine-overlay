@@ -353,7 +353,7 @@ src_install() {
 		dodoc -r "${BUILD_DIR}/docs/html/"*
 	fi
 ewarn
-ewarn "You are using a live snapshot.  No guarantees for project files"
+ewarn "You are using an unstable live snapshot.  No guarantees for project files"
 ewarn "compatibility with later stable versions."
 ewarn
 }
