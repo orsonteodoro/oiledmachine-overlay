@@ -174,10 +174,10 @@ MULTILIB_WRAPPED_HEADERS=(
 N_SAMPLES=1
 NV_CODEC_HEADERS_PV="9.1.23.1"
 PATENT_STATUS=(
+	patent_status_free_for_codec_developers
 	patent_status_free_for_end_users
 	patent_status_new_or_renewed
 	patent_status_nonfree
-	patent_status_without_codec_developer_tax
 )
 PYTORCH_VERSIONS=(
 	"2.3.0"
@@ -1974,7 +1974,7 @@ eerror
 		myconf+=(
 			--non-free-patented-codecs=user
 		)
-	elif use patent_status_without_codec_developer_tax ; then
+	elif use patent_status_free_for_codec_developers ; then
 		myconf+=(
 			--non-free-patented-codecs=codec-developer
 		)
