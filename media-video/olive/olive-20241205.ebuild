@@ -1,3 +1,4 @@
+# Copyright 2024 Orson Teodoro
 # Copyright 2020-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
@@ -5,7 +6,7 @@ EAPI=8
 
 # U20
 
-EGIT_COMMIT="7e0e94abf6610026aebb9ddce8564c39522fac6e"
+EGIT_COMMIT="7e0e94abf6610026aebb9ddce8564c39522fac6e" # Dec 5, 2024
 KDDOCWIDGETS_COMMIT="8d2d0a5764f8393cc148a2296d511276a8ffe559"
 OLIVE_EDITOR_CORE_COMMIT="277792824801495e868580ca86f6e7a1b53e4779"
 QT5_PV="5.6.0"
@@ -16,7 +17,7 @@ inherit cmake dep-prepare xdg
 if [[ "${PV}" == *"9999" ]]; then
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/olive-editor/olive.git"
-	FALLBACK_COMMIT="7e0e94abf6610026aebb9ddce8564c39522fac6e" # Dec 5, 2024
+	FALLBACK_COMMIT="${EGIT_COMMIT}"
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
@@ -339,8 +340,19 @@ src_install() {
 		docinto "html"
 		dodoc -r "${BUILD_DIR}/docs/html/"*
 	fi
+ewarn
+ewarn "You are using a live snapshot.  No guarantees for project files"
+ewarn "compatibility with later stable versions."
+ewarn
 }
 
 pkg_postinst() {
 	xdg_pkg_postinst
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (7e0e94a, 20241228)
+# ALSA sound output - passed
+# Import videos - passed
+# Qt6 GUI - passed
+# Video playback in widget - passed
+# Video export - pass
