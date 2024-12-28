@@ -156,107 +156,91 @@ check_cxxabi() {
 		| grep -E -e "GLIBCXX_[0-9]+" \
 		| tail -n 1 \
 		| cut -f 2 -d "_")
-	local qtcore_cxxabi_ver=$(strings "/usr/$(get_libdir)/libQt${qt_slot}Core.so" \
-		| grep CXXABI \
-		| sort -V \
-		| grep -E -e "CXXABI_[0-9]+" \
-		| tail -n 1 \
-		| cut -f 2 -d "_")
-	local qtcore_glibcxx_ver=$(strings "/usr/$(get_libdir)/libQt${qt_slot}Core.so" \
-		| grep GLIBCXX \
-		| sort -V \
-		| grep -E -e "GLIBCXX_[0-9]+" \
-		| tail -n 1 \
-		| cut -f 2 -d "_")
 
-	local ocio_cxxabi_ver=$(strings "/usr/$(get_libdir)/libOpenColorIO.so" \
-		| grep CXXABI \
-		| sort -V \
-		| grep -E -e "CXXABI_[0-9]+" \
-		| tail -n 1 \
-		| cut -f 2 -d "_")
-	local ocio_glibcxx_ver=$(strings "/usr/$(get_libdir)/libOpenColorIO.so" \
-		| grep GLIBCXX \
-		| sort -V \
-		| grep -E -e "GLIBCXX_[0-9]+" \
-		| tail -n 1 \
-		| cut -f 2 -d "_")
-
-	local openexr_cxxabi_ver=$(strings "/usr/$(get_libdir)/libOpenEXR.so" \
-		| grep CXXABI \
-		| sort -V \
-		| grep -E -e "CXXABI_[0-9]+" \
-		| tail -n 1 \
-		| cut -f 2 -d "_")
-	local openexr_glibcxx_ver=$(strings "/usr/$(get_libdir)/libOpenEXR.so" \
-		| grep GLIBCXX \
-		| sort -V \
-		| grep -E -e "GLIBCXX_[0-9]+" \
-		| tail -n 1 \
-		| cut -f 2 -d "_")
-
-	local imath_cxxabi_ver=$(strings "/usr/$(get_libdir)/libImath.so" \
-		| grep CXXABI \
-		| sort -V \
-		| grep -E -e "CXXABI_[0-9]+" \
-		| tail -n 1 \
-		| cut -f 2 -d "_")
-	local imath_glibcxx_ver=$(strings "/usr/$(get_libdir)/libImath.so" \
-		| grep GLIBCXX \
-		| sort -V \
-		| grep -E -e "GLIBCXX_[0-9]+" \
-		| tail -n 1 \
-		| cut -f 2 -d "_")
-
-	local pystring_cxxabi_ver=$(strings "/usr/$(get_libdir)/libpystring.so" \
-		| grep CXXABI \
-		| sort -V \
-		| grep -E -e "CXXABI_[0-9]+" \
-		| tail -n 1 \
-		| cut -f 2 -d "_")
-	local pystring_glibcxx_ver=$(strings "/usr/$(get_libdir)/libpystring.so" \
-		| grep GLIBCXX \
-		| sort -V \
-		| grep -E -e "GLIBCXX_[0-9]+" \
-		| tail -n 1 \
-		| cut -f 2 -d "_")
 
 	_check_lib() {
-		local downstream_glibcxx_ver="${1}"
-		local downstream_lib="${2}"
+		local row="${1}"
+		local downstream_libpath="${row%;*}"
+		local downstream_package="${row#*;}"
 	# The CXXABI version will vary if built with the same GCC slot.
-		if ver_test ${downstream_glibcxx_ver} -gt ${libstdcxx_glibcxx_ver} ; then
+
+		strings "${downstream_libpath}" | grep -q -e "GLIBCXX" || return
+einfo "Inspecting ${downstream_libpath} for GLIBCXX symbol compatibility"
+
+		local x_cxxabi_ver=$(strings "/usr/$(get_libdir)/libQt${qt_slot}Core.so" \
+			| grep CXXABI \
+			| sort -V \
+			| grep -E -e "CXXABI_[0-9]+" \
+			| tail -n 1 \
+			| cut -f 2 -d "_")
+		local x_glibcxx_ver=$(strings "/usr/$(get_libdir)/libQt${qt_slot}Core.so" \
+			| grep GLIBCXX \
+			| sort -V \
+			| grep -E -e "GLIBCXX_[0-9]+" \
+			| tail -n 1 \
+			| cut -f 2 -d "_")
+
+		if ver_test ${x_glibcxx_ver} -gt ${libstdcxx_glibcxx_ver} ; then
 eerror
-eerror "Detected GLIBCXX > ${libstdcxx_glibcxx_ver} for ${downstream_lib}."
+eerror "Detected GLIBCXX > ${libstdcxx_glibcxx_ver} for ${downstream_libpath}."
 eerror
-eerror "Ensure that the ${downstream_lib} is built with"
+eerror "Ensure that the ${downstream_libpath} (${downstream_package}) is built with"
 eerror "GCC ${gcc_current_profile_slot} slot or earlier."
-eerror
-eerror "You must decide to pick the GCC slot to rebuild for all packages listed."
-eerror
-printf "%-20s %-30s %-10s %-s\n" "Library" "Package" "API/ABI" "API/ABI Version"
-printf "%-20s %-30s %-10s %-s\n" "libImath.so" "dev-libs/imath" "CXXABI" "${imath_cxxabi_ver}"
-printf "%-20s %-30s %-10s %-s\n" "libImath.so" "dev-libs/imath" "GLIBCXX" "${imath_glibcxx_ver}"
-printf "%-20s %-30s %-10s %-s\n" "libstdc++.so" "sys-devel/gcc" "CXXABI" "${libstdcxx_cxxabi_ver} (GCC slot ${gcc_current_profile_slot})"
-printf "%-20s %-30s %-10s %-s\n" "libstdc++.so" "sys-devel/gcc" "GLIBCXX" "${libstdcxx_glibcxx_ver} (GCC slot ${gcc_current_profile_slot})"
-printf "%-20s %-30s %-10s %-s\n" "libOpenColorIO.so" "media-libs/opencolorio" "CXXABI" "${ocio_cxxabi_ver}"
-printf "%-20s %-30s %-10s %-s\n" "libOpenColorIO.so" "media-libs/opencolorio" "GLIBCXX" "${ocio_glibcxx_ver}"
-printf "%-20s %-30s %-10s %-s\n" "libOpenEXR.so" "media-libs/openexr" "CXXABI" "${openexr_cxxabi_ver}"
-printf "%-20s %-30s %-10s %-s\n" "libOpenEXR.so" "media-libs/openexr" "GLIBCXX" "${openexr_glibcxx_ver}"
-printf "%-20s %-30s %-10s %-s\n" "libQt${qt_slot}Core.so" "${qtcore_package}" "CXXABI" "${qtcore_cxxabi_ver}"
-printf "%-20s %-30s %-10s %-s\n" "libQt${qt_slot}Core.so" "${qtcore_package}" "GLIBCXX" "${qtcore_glibcxx_ver}"
-eerror
-eerror "See https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html for details"
 eerror
 			die
 		fi
 	}
 
-	_check_lib "${qtcore_glibcxx_ver}" "Q${qt_slot}tCore"
-	_check_lib "${imath_glibcxx_ver}" "Imath" # An OpenEXR dependency
-	_check_lib "${openexr_glibcxx_ver}" "OpenEXR"
-	_check_lib "${ocio_glibcxx_ver}" "OpenColorIO"
-	_check_lib "${pystring_glibcxx_ver}" "pystring" # An OpenColorIO dependency
+	local libdir=$(get_libdir)
+	local linked_libs=(
+		"/usr/${libdir}/libOpenEXR.so;media-libs/openexr"
+		"/usr/${libdir}/libIlmThread.so;media-libs/openexr"
+		"/usr/${libdir}/libOpenEXRCore.so;media-libs/openexr"
+		"/usr/${libdir}/libIex.so;media-libs/openexr"
+		#-lm
+		#ext/core/libolivecore.so"
+		#ext/KDDockWidgets/src/libkddockwidgets-qt${qt_slot}.a;"
+		"/usr/${libdir}/libavutil.so;media-video/ffmpeg"
+		"/usr/${libdir}/libavcodec.so;media-video/ffmpeg"
+		"/usr/${libdir}/libavformat.so;media-video/ffmpeg"
+		"/usr/${libdir}/libavfilter.so;media-video/ffmpeg"
+		"/usr/${libdir}/libswscale.so;media-video/ffmpeg"
+		"/usr/${libdir}/libswresample.so;media-video/ffmpeg"
+		"/usr/${libdir}/libportaudio.so;media-libs/portaudio"
+		"/usr/${libdir}/libImath.so;dev-libs/imath"
+		"/usr/${libdir}/libGL.so;media-libs/libglvnd"
+		"/usr/${libdir}/libxkbcommon.so;x11-libs/libxkbcommon"
+		"/usr/${libdir}/libavcodec.so;media-video/ffmpeg"
+		"/usr/${libdir}/libavutil.so;media-video/ffmpeg"
+		"/usr/${libdir}/libpystring.so;dev-cpp/pystring"
+	)
+	if use qt6 ; then
+		linked_libs+=(
+			"/usr/${libdir}/libQt${qt_slot}Concurrent.so;dev-qt/qtbase:6"
+			"/usr/${libdir}/libQt${qt_slot}OpenGLWidgets.so;dev-qt/qtbase:6"
+			"/usr/${libdir}/libQt${qt_slot}Core5Compat.so;dev-qt/qt5compat:6"
+			"/usr/${libdir}/libQt${qt_slot}OpenGL.so;dev-qt/qtbase:6"
+			"/usr/${libdir}/libQt${qt_slot}Widgets.so;dev-qt/qtbase:6"
+			"/usr/${libdir}/libQt${qt_slot}Gui.so;dev-qt/qtbase:6"
+			"/usr/${libdir}/libQt${qt_slot}DBus.so;dev-qt/qtbase:6"
+			"/usr/${libdir}/libQt${qt_slot}Core.so;dev-qt/qtbase:6"
+		)
+	else
+		linked_libs+=(
+			"/usr/${libdir}/libQt${qt_slot}Concurrent.so;dev-qt/qtconcurrent:5"
+			"/usr/${libdir}/libQt${qt_slot}OpenGLWidgets.so;dev-qt/qtwidgets:5"
+			"/usr/${libdir}/libQt${qt_slot}OpenGL.so;dev-qt/qtopengl:5"
+			"/usr/${libdir}/libQt${qt_slot}Widgets.so;dev-qt/qtwidgets:5"
+			"/usr/${libdir}/libQt${qt_slot}Gui.so;dev-qt/qtgui:5"
+			"/usr/${libdir}/libQt${qt_slot}DBus.so;dev-qt/qtdbus:5"
+			"/usr/${libdir}/libQt${qt_slot}Core.so;dev-qt/qtcore:5"
+		)
+	fi
+
+	local row
+	for row in ${linked_libs[@]} ; do
+		_check_lib "${row}"
+	done
 }
 
 verify_qt_consistency() {
