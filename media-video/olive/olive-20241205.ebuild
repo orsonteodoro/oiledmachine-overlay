@@ -45,6 +45,7 @@ SLOT="0"
 IUSE+="
 alsa doc jack +jpeg2k +mp3 +opus oss +png qt5 qt6 test +svt-av1 +theora
 +truetype +vorbis wayland +webp X +xvid x264 x265
+ebuild_revision_1
 "
 REQUIRED_USE="
 	^^ (
@@ -332,6 +333,8 @@ src_configure() {
 
 src_install() {
 	cmake_src_install
+	exeinto "/usr/$(get_libdir)"
+	doexe "ext/core/libolivecore.so"
 	if use doc ; then
 		docinto "html"
 		dodoc -r "${BUILD_DIR}/docs/html/"*
