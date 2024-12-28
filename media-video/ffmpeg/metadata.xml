@@ -1,898 +1,898 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-<maintainer type="project">
-	<!-- ebuild originator -->
-	<email>media-video@gentoo.org</email>
-</maintainer>
-<![CDATA[
-<!--
+  <maintainer type="project">
+    <!-- ebuild originator -->
+    <email>media-video@gentoo.org</email>
+  </maintainer>
+  <![CDATA[
+  <!--
 
-  oiledmachine-overlay notes:
+    oiledmachine-overlay notes:
 
-  This fork provides this ebuild for PGO/BOLT optimization.
+    This fork provides this ebuild for PGO/BOLT optimization.
 
-  USE flag status:
+    USE flag status:
 
-    pgo - done
-    bolt - done
+      pgo - done
+      bolt - done
 
 
-  BOLT/PGO optimization requires several steps:
+    BOLT/PGO optimization requires several steps:
 
-  (1) Fetch assets to train with.  They should be licensed under public-domain,
-      CC0-1.0, or your own assets.  They need to be 60 fps, 4k, and at least 5
-      seconds long for video PGO training.
+    (1) Fetch assets to train with.  They should be licensed under public-domain,
+        CC0-1.0, or your own assets.  They need to be 60 fps, 4k, and at least 5
+        seconds long for video PGO training.
 
-      For audio training, pick 3 samples 15 seconds each.
+        For audio training, pick 3 samples 15 seconds each.
 
-      These high quality samples will be used to generate lower quality samples.
-      The long 30 second requirement is to ensure sufficient coverage of dynamic
-      range.  In addition, the sample will decide the code paths of the chroma
-      subsample to train.
+        These high quality samples will be used to generate lower quality samples.
+        The long 30 second requirement is to ensure sufficient coverage of dynamic
+        range.  In addition, the sample will decide the code paths of the chroma
+        subsample to train.
 
-  (2) Emerge FFmpeg the first time to get the PGO toolchain installed.
+    (2) Emerge FFmpeg the first time to get the PGO toolchain installed.
 
-  (3) Configure the following variables, replacing i with a unpadded number
+    (3) Configure the following variables, replacing i with a unpadded number
 
-        FFMPEG_TRAINING_VIDEO_CGI_i               # Computer Generated Imagery
-        FFMPEG_TRAINING_VIDEO_SCREENCAST_i
-        FFMPEG_TRAINING_VIDEO_FANTASY_i
-        FFMPEG_TRAINING_VIDEO_GAMING_i
-        FFMPEG_TRAINING_VIDEO_GRAINY_i
-        FFMPEG_TRAINING_VIDEO_REALISM_i
-        FFMPEG_TRAINING_VIDEO_STILL_i             # Same image used from start to finish in podcasting or music
-        FFMPEG_TRAINING_AUDIO_VOICE_i
-        FFMPEG_TRAINING_AUDIO_RADIO_i
-        FFMPEG_TRAINING_AUDIO_MUSIC_INSTRUMENTAL_i
-        FFMPEG_TRAINING_AUDIO_VOCAL_MUSIC_i
-        FFMPEG_TRAINING_AV_DEVICE_i
-        FFMPEG_TRAINING_AV_MICROPHONE_i
+          FFMPEG_TRAINING_VIDEO_CGI_i               # Computer Generated Imagery
+          FFMPEG_TRAINING_VIDEO_SCREENCAST_i
+          FFMPEG_TRAINING_VIDEO_FANTASY_i
+          FFMPEG_TRAINING_VIDEO_GAMING_i
+          FFMPEG_TRAINING_VIDEO_GRAINY_i
+          FFMPEG_TRAINING_VIDEO_REALISM_i
+          FFMPEG_TRAINING_VIDEO_STILL_i             # Same image used from start to finish in podcasting or music
+          FFMPEG_TRAINING_AUDIO_VOICE_i
+          FFMPEG_TRAINING_AUDIO_RADIO_i
+          FFMPEG_TRAINING_AUDIO_MUSIC_INSTRUMENTAL_i
+          FFMPEG_TRAINING_AUDIO_VOCAL_MUSIC_i
+          FFMPEG_TRAINING_AV_DEVICE_i
+          FFMPEG_TRAINING_AV_MICROPHONE_i
 
-      to the abspath to your asset(s). Only one asset can be used for each
-      variable.  The reason for the long list is to ensure dynamic range
-      coverage based on typical use.  One may add samples across decades, across
-      genres, across live or studio so that the codecs do not get parts
-      deoptimized in the PGO process.  It is unnecessary to fill all of them
-      out.  For example one may inadvertantly optimize for 60s music once only.
-      These allow to specify more so that contemporary music or scenarios also
-      gets optimized.  One may inadvertantly cover women radio quality but
-      inadvertantly deoptimize for male or lgtbtqia.
+        to the abspath to your asset(s). Only one asset can be used for each
+        variable.  The reason for the long list is to ensure dynamic range
+        coverage based on typical use.  One may add samples across decades, across
+        genres, across live or studio so that the codecs do not get parts
+        deoptimized in the PGO process.  It is unnecessary to fill all of them
+        out.  For example one may inadvertantly optimize for 60s music once only.
+        These allow to specify more so that contemporary music or scenarios also
+        gets optimized.  One may inadvertantly cover women radio quality but
+        inadvertantly deoptimize for male or lgtbtqia.
 
-  (4) Setup FFMPEG_TRAINING_VIDEO_CODECS, FFMPEG_TRAINING_AUDIO_CODECS,
-      FFMPEG_TRAINING_CODECNAME_ARGS, FFMPEG_TRAINING_CODECNAME_ARGS_LOSSLESS,
-      per-package envvars.  See below for details.
+    (4) Setup FFMPEG_TRAINING_VIDEO_CODECS, FFMPEG_TRAINING_AUDIO_CODECS,
+        FFMPEG_TRAINING_CODECNAME_ARGS, FFMPEG_TRAINING_CODECNAME_ARGS_LOSSLESS,
+        per-package envvars.  See below for details.
 
-  (5) Emerge FFmpeg again with an optimized PGO build.
+    (5) Emerge FFmpeg again with an optimized PGO build.
 
-  (Planning) FFMPEG_TRAINING_VIDEO_STREAMING_i is the v4l device to train for
-  codec streaming.
+    (Planning) FFMPEG_TRAINING_VIDEO_STREAMING_i is the v4l device to train for
+    codec streaming.
 
-  (Planning) FFMPEG_TRAINING_MOBILE_STREAMING_i is a sample for mobile
-  training.
+    (Planning) FFMPEG_TRAINING_MOBILE_STREAMING_i is a sample for mobile
+    training.
 
-  FFMPEG_TRAINING_MAX_ASSETS_PER_TYPE is a number of assets per *_i type.
-  Currently it is set to 100 but can be expanded to more than
-  that.
+    FFMPEG_TRAINING_MAX_ASSETS_PER_TYPE is a number of assets per *_i type.
+    Currently it is set to 100 but can be expanded to more than
+    that.
 	
-  FFMPEG_TRAINING_VIDEO_CODECS is a string separated list of elements.
-  Each element is in this format vscenario:vencoder:vdecoder:ext:tags.
-  Empty elements are shown as :: for inner or : for outer.
-
-    The value of vscenario can be fantasy, film, grainy, streaming, realism.
-    The value of vencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][V][I.][L.][S.] .*" in parens
-    The value of vdecoder matches  mpv --vd=help
-    The value of ext matches  ffmpeg -formats
-    The value of tags may be added for custom trainers providing metadata
-    for enablement of special optimization options.  Multiple tags
-    may be appended by comma and spaces replaced with _.  Tags can
-    be filtered with bash regex to apply extra args.
-
-    * VA-API codecs are currently not supported for training in the ebuild level.
-
-    Example
-	
-      FFMPEG_TRAINING_VIDEO_CODECS=" fantasy:libvpx-vp9:libvpx-vp9:webm: realism:libvpx-vp9:libvpx-vp9:webm:"
-
-  FFMPEG_TRAINING_AUDIO_CODECS is a string separated list of elements.
-  Each element is in this format ascenario:aencoder:adecoder:ext:tags.
-  Empty elements are shown as :: for inner or : for outer.
-
-    The value of ascenario can be voice, radio, music.
-    The value of aencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][A][I.][L.][S.] .*" in parens
-    The value of adecoder matches  mpv --ad=help
-    The value of ext matches  ffmpeg -formats
-    The value of tags may be added for custom trainers providing metadata
-    for enablement of special optimization options.  Multiple tags
-    may be appended by comma and spaces replaced with _.  Tags can
-    be filtered with bash regex to apply extra args.
-
-    Each codec can be supplied additional per-package envvar args to
-    pass to ffmpeg in this general form:
-
-      FFMPEG_TRAINING_CODECNAME_ARGS
-      FFMPEG_TRAINING_CODECNAME_ARGS_LOSSLESS
-
-    Example
-
-      FFMPEG_TRAINING_AUDIO_CODECS=" voice:libopus:libopus:webm: music:libvorbis:libvorbis:ogg:high_profile"
-
-    replacing CODECNAME with uppercases and hyphens with underscores.
-    For example, if one wanted to train an imaginary codec libfoo-bar,
-    you need to set the variables FFMPEG_TRAINING_LIBFOO_BAR_ARGS
-    or FFMPEG_TRAINING_LIBFOO_BAR_ARGS_LOSSLESS.  These args correspond to
-    additional  ffmpeg -h full  codec settings for that codec.  You
-    should change them to the type of performance or quality settings
-    you want to use typically.  Setting the -crf or the -threads is
-    something you should set.
-
-  The variables with _LOSSLESS suffix should only add arguments that
-  modify performance and not the framerate or quality.
-
-  Both FFMPEG_TRAINING_VIDEO_CODECS and FFMPEG_TRAINING_AUDIO_CODECS are for
-  use only for the ffmpeg codebase.  Using another external codec
-  in an external ebuild requires that ebuild be modified for
-  PGO.
-
-  The cbr and vbr trainers for audio PGO training have additional
-  envvars.  Let's pretend that there is an imaginary codec called
-  foo.  Foo supports bitrates between 64 and 1411.  We can support
-  only discrete values for PGO training.
-
-  # Use this to support 64 kbps, 128 kbps, 256 kbps, 320 kbps, 1411 kbps
-  FFMPEG_TRAINING_CBR_TABLE_FOO_MUSIC="128 256 320 1411"
-  FFMPEG_TRAINING_CBR_TABLE_FOO_RADIO="64"
-  FFMPEG_TRAINING_CBR_TABLE_FOO_VOICE="32"
-
-  The codec will match the suffix with the asset scenario to
-  not waste time on unlikely parings encountered in the real world.
-
-  Foo also can be used for VBR encoding.  The user needs to supply
-  the ffmpeg option and the value.
-
-  # Train with -vbr 1, -vbr 2, -vbr 3, -vbr 4
-  FFMPEG_TRAINING_VBR_OPTION_FOO="-vbr"
-  FFMPEG_TRAINING_VBR_TABLE_LIBFOO_FOO_MUSIC="7 8 9"
-  FFMPEG_TRAINING_VBR_TABLE_LIBFOO_FOO_RADIO="2 3"
-
-  It is recommended to only train codecs that reflect typical use.
-  Not doing so will result in increased code size and performance
-  degradation.
-
-
-  Audio Video (AV) capture training (Work in Progress)
-
-  Do not use the USE=trainer-av-streaming this feature until portage is
-  patched with mitigations.
-
-  This is accessible via the trainer-av-streaming USE flag.  Note
-  it will require access to either camera, X11, or KMS.  The reason why
-  is to reduce CPU load that may result in decoding other assets and
-  to similate or replicate the conditions similar to live streaming.
-
-  It also requires some permission changes for the portage account
-  such as either adding portage to video group or changing the /dev/video*
-  device with +rw ACL changes for portage in order to capture from the
-  camera.  These should be temporary changes and the permitted
-  permissions should be removed after training.  It also requires
-  FEATURES="${FEATURES} -ipc-sandbox -pid-sandbox" permissions in order
-  to train for a screencasting scenario.  When performing screencasting
-  training (which is always enabled), it will take a grab of the screen
-  which is a big security/privacy issue.  When portage is fixed with
-  trap INT, trap QUIT, trap HUP, etc support, some mitigation can be
-  achieved but not total especially in brownout or low battery
-  situation.  It is recommended to only use this training only during
-  a single user controlled setting when passwords, private accounts,
-  personal identifiable information are not being used or not being
-  exposed.
-	
-
-  FFMPEG_TRAINING_AV_CODECS must be set as a space separated list of elements.
-
-    Each element of FFMPEG_TRAINING_AV_CODECS is in the format
-
-      avscenario:vencoder:vdecoder:aencoder:adecoder:container:tags
-
+    FFMPEG_TRAINING_VIDEO_CODECS is a string separated list of elements.
+    Each element is in this format vscenario:vencoder:vdecoder:ext:tags.
     Empty elements are shown as :: for inner or : for outer.
 
-    The value of avscenario can be live-streaming
-    The value of vencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][V][I.][L.][S.] .*" in parens
-    The value of vdecoder matches  mpv --vd=help ; you may specify none.
-    The value of aencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][A][I.][L.][S.] .*" in parens
-    The value of adecoder matches  mpv --ad=help ; you may specify none.
-    The value of container matches  ffmpeg -formats ; if you don't know put unknown.
-    The value of tags may be added for custom trainers providing metadata
-    for enablement of special optimization options.  Multiple tags
-    may be appended by comma and spaces replaced with _.  Tags can
-    be filtered with bash regex to apply extra args.
+      The value of vscenario can be fantasy, film, grainy, streaming, realism.
+      The value of vencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][V][I.][L.][S.] .*" in parens
+      The value of vdecoder matches  mpv --vd=help
+      The value of ext matches  ffmpeg -formats
+      The value of tags may be added for custom trainers providing metadata
+      for enablement of special optimization options.  Multiple tags
+      may be appended by comma and spaces replaced with _.  Tags can
+      be filtered with bash regex to apply extra args.
 
-    * The decoders may be used in the future for simulating video conferencing
-    * The avscenario may be expanded to include video-conferencing.
-    * live-streaming assumes client side only.  No network training currently.
-    * The permissions for /dev/video* require either portage be in the video
-      group or Access Control List (ACL) of the /dev/video* have portage with
-      rw- permission in order to to do training with the capture device.
+      * VA-API codecs are currently not supported for training in the ebuild level.
+
+      Example
+	
+        FFMPEG_TRAINING_VIDEO_CODECS=" fantasy:libvpx-vp9:libvpx-vp9:webm: realism:libvpx-vp9:libvpx-vp9:webm:"
+
+    FFMPEG_TRAINING_AUDIO_CODECS is a string separated list of elements.
+    Each element is in this format ascenario:aencoder:adecoder:ext:tags.
+    Empty elements are shown as :: for inner or : for outer.
+
+      The value of ascenario can be voice, radio, music.
+      The value of aencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][A][I.][L.][S.] .*" in parens
+      The value of adecoder matches  mpv --ad=help
+      The value of ext matches  ffmpeg -formats
+      The value of tags may be added for custom trainers providing metadata
+      for enablement of special optimization options.  Multiple tags
+      may be appended by comma and spaces replaced with _.  Tags can
+      be filtered with bash regex to apply extra args.
+
+      Each codec can be supplied additional per-package envvar args to
+      pass to FFmpeg in this general form:
+
+        FFMPEG_TRAINING_CODECNAME_ARGS
+        FFMPEG_TRAINING_CODECNAME_ARGS_LOSSLESS
+
+      Example
+
+        FFMPEG_TRAINING_AUDIO_CODECS=" voice:libopus:libopus:webm: music:libvorbis:libvorbis:ogg:high_profile"
+
+      replacing CODECNAME with uppercases and hyphens with underscores.
+      For example, if one wanted to train an imaginary codec libfoo-bar,
+      you need to set the variables FFMPEG_TRAINING_LIBFOO_BAR_ARGS
+      or FFMPEG_TRAINING_LIBFOO_BAR_ARGS_LOSSLESS.  These args correspond to
+      additional  ffmpeg -h full  codec settings for that codec.  You
+      should change them to the type of performance or quality settings
+      you want to use typically.  Setting the -crf or the -threads is
+      something you should set.
+
+    The variables with _LOSSLESS suffix should only add arguments that
+    modify performance and not the framerate or quality.
+
+    Both FFMPEG_TRAINING_VIDEO_CODECS and FFMPEG_TRAINING_AUDIO_CODECS are for
+    use only for the ffmpeg codebase.  Using another external codec
+    in an external ebuild requires that ebuild be modified for
+    PGO.
+
+    The cbr and vbr trainers for audio PGO training have additional
+    envvars.  Let's pretend that there is an imaginary codec called
+    foo.  Foo supports bitrates between 64 and 1411.  We can support
+    only discrete values for PGO training.
+
+    # Use this to support 64 kbps, 128 kbps, 256 kbps, 320 kbps, 1411 kbps
+    FFMPEG_TRAINING_CBR_TABLE_FOO_MUSIC="128 256 320 1411"
+    FFMPEG_TRAINING_CBR_TABLE_FOO_RADIO="64"
+    FFMPEG_TRAINING_CBR_TABLE_FOO_VOICE="32"
+
+    The codec will match the suffix with the asset scenario to
+    not waste time on unlikely parings encountered in the real world.
+
+    Foo also can be used for VBR encoding.  The user needs to supply
+    the FFmpeg option and the value.
+
+    # Train with -vbr 1, -vbr 2, -vbr 3, -vbr 4
+    FFMPEG_TRAINING_VBR_OPTION_FOO="-vbr"
+    FFMPEG_TRAINING_VBR_TABLE_LIBFOO_FOO_MUSIC="7 8 9"
+    FFMPEG_TRAINING_VBR_TABLE_LIBFOO_FOO_RADIO="2 3"
+
+    It is recommended to only train codecs that reflect typical use.
+    Not doing so will result in increased code size and performance
+    degradation.
+
+
+    Audio Video (AV) capture training (Work in Progress)
+
+    Do not use the USE=trainer-av-streaming this feature until portage is
+    patched with mitigations.
+
+    This is accessible via the trainer-av-streaming USE flag.  Note
+    it will require access to either camera, X11, or KMS.  The reason why
+    is to reduce CPU load that may result in decoding other assets and
+    to similate or replicate the conditions similar to live streaming.
+
+    It also requires some permission changes for the portage account
+    such as either adding portage to video group or changing the /dev/video*
+    device with +rw ACL changes for portage in order to capture from the
+    camera.  These should be temporary changes and the permitted
+    permissions should be removed after training.  It also requires
+    FEATURES="${FEATURES} -ipc-sandbox -pid-sandbox" permissions in order
+    to train for a screencasting scenario.  When performing screencasting
+    training (which is always enabled), it will take a grab of the screen
+    which is a big security/privacy issue.  When portage is fixed with
+    trap INT, trap QUIT, trap HUP, etc support, some mitigation can be
+    achieved but not total especially in brownout or low battery
+    situation.  It is recommended to only use this training only during
+    a single user controlled setting when passwords, private accounts,
+    personal identifiable information are not being used or not being
+    exposed.
+	
+
+    FFMPEG_TRAINING_AV_CODECS must be set as a space separated list of elements.
+
+      Each element of FFMPEG_TRAINING_AV_CODECS is in the format
+
+        avscenario:vencoder:vdecoder:aencoder:adecoder:container:tags
+
+      Empty elements are shown as :: for inner or : for outer.
+
+      The value of avscenario can be live-streaming
+      The value of vencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][V][I.][L.][S.] .*" in parens
+      The value of vdecoder matches  mpv --vd=help ; you may specify none.
+      The value of aencoder matches  ffmpeg -codecs | grep -E -e "[D.][E][A][I.][L.][S.] .*" in parens
+      The value of adecoder matches  mpv --ad=help ; you may specify none.
+      The value of container matches  ffmpeg -formats ; if you don't know put unknown.
+      The value of tags may be added for custom trainers providing metadata
+      for enablement of special optimization options.  Multiple tags
+      may be appended by comma and spaces replaced with _.  Tags can
+      be filtered with bash regex to apply extra args.
+
+      * The decoders may be used in the future for simulating video conferencing
+      * The avscenario may be expanded to include video-conferencing.
+      * live-streaming assumes client side only.  No network training currently.
+      * The permissions for /dev/video* require either portage be in the video
+        group or Access Control List (ACL) of the /dev/video* have portage with
+        rw- permission in order to to do training with the capture device.
 	  
-    See the above section how to setup these variables.
+      See the above section how to setup these variables.
 
 
-  AV environment variables
+    AV environment variables
 
-  FFMPEG_TRAINING_STREAMING_UPLOAD_BANDWIDTH - Upload bandwidth in Mbps
-  (megabits) that the host machine supports.  Anything exceeding that
-  will not be trained.  Decimal values supported.
+    FFMPEG_TRAINING_STREAMING_UPLOAD_BANDWIDTH - Upload bandwidth in Mbps
+    (megabits) that the host machine supports.  Anything exceeding that
+    will not be trained.  Decimal values supported.
 
-  FFMPEG_TRAINING_AV_STREAMING_WS - This is a weighted function formula
-  that uses a weighted sum for sorting recommendations.  You must
-  place the formula in single quotes.  This can be used to control the
-  recommended codec or preference for FPS or quality or other aspects
-  based on sum of subscores.  The score without your formula is maxed out
-  at less than the approaching 60000 Kbps corresponding to total_bitrate.
-  If the term exceeds that number, then it is a dominator term and has
-  more influence over sorting the list with higher scores climbing to
-  more to the top of recommended.  The idea is to boost the score of
-  aspects that you are more interested in.  Some people are more
-  interested in audio.  Others may be interested in video quality.
-  Some may prefer FPS over video quality or vice-versa.
+    FFMPEG_TRAINING_AV_STREAMING_WS - This is a weighted function formula
+    that uses a weighted sum for sorting recommendations.  You must
+    place the formula in single quotes.  This can be used to control the
+    recommended codec or preference for FPS or quality or other aspects
+    based on sum of subscores.  The score without your formula is maxed out
+    at less than the approaching 60000 Kbps corresponding to total_bitrate.
+    If the term exceeds that number, then it is a dominator term and has
+    more influence over sorting the list with higher scores climbing to
+    more to the top of recommended.  The idea is to boost the score of
+    aspects that you are more interested in.  Some people are more
+    interested in audio.  Others may be interested in video quality.
+    Some may prefer FPS over video quality or vice-versa.
 
-  Available variables:
+    Available variables:
 
-    ${abitrate}      - audio bitrate in kbps.  Some sites cap it at 256 kbps.
-    ${asample_rate}  - audio sample rate.  Some sites cap it at 44.8 kHz.
-    ${vquality}      - 1 for low, 2 for mid, 3 for high video quality
-    ${is_30fps}      - 1 for true
-    ${is_60fps}      - 1 for true
-    ${fps}           - frames per second.  Max is 60
-    ${mic}           - 1 for true
-    ${total_bitrate} - in kbps summing the audio and video bitrates
+      ${abitrate}      - audio bitrate in kbps.  Some sites cap it at 256 kbps.
+      ${asample_rate}  - audio sample rate.  Some sites cap it at 44.8 kHz.
+      ${vquality}      - 1 for low, 2 for mid, 3 for high video quality
+      ${is_30fps}      - 1 for true
+      ${is_60fps}      - 1 for true
+      ${fps}           - frames per second.  Max is 60
+      ${mic}           - 1 for true
+      ${total_bitrate} - in kbps summing the audio and video bitrates
 
-    * It is recommended to normalize the variables from [0,1].
-    * It may be left unset, it will fall back to the total bitrate.
-    * If set, the score formula is replaced with your formula starting
-      at zero score.
-    * Have at least one term dominating the total_bitrate in order
-      to be satisfied about recommendation sorting.  Total bitrates
-      may range from 6000 to 60000 for live streaming.
-    * You may want to leave the total_bitrate in so that the worst case
-      sorting if all other terms are zeroed or are too small, it can be
-      still be sorted in a satisfactory way with it as fallback, or
-      as a way to break ties with scores sharing the same score
-      with just dominating factors.  If all scores are the same 60000,
-      the total_bitrate term can break theses ties.
+      * It is recommended to normalize the variables from [0,1].
+      * It may be left unset, it will fall back to the total bitrate.
+      * If set, the score formula is replaced with your formula starting
+        at zero score.
+      * Have at least one term dominating the total_bitrate in order
+        to be satisfied about recommendation sorting.  Total bitrates
+        may range from 6000 to 60000 for live streaming.
+      * You may want to leave the total_bitrate in so that the worst case
+        sorting if all other terms are zeroed or are too small, it can be
+        still be sorted in a satisfactory way with it as fallback, or
+        as a way to break ties with scores sharing the same score
+        with just dominating factors.  If all scores are the same 60000,
+        the total_bitrate term can break theses ties.
 
-  General formula:
-  score = a_1*x_1 + a_2*x_2 + .... + a_n*x_n, where a_i are weights and x_i
-  are one of the variables above of your choosing.
+    General formula:
+    score = a_1*x_1 + a_2*x_2 + .... + a_n*x_n, where a_i are weights and x_i
+    are one of the variables above of your choosing.
 
-  Example
+    Example
 
-    FFMPEG_TRAINING_AV_STREAMING_WS='200000*${is_60fps} + 100000*(${aquality}/3) + ${total_bitrate}'
+      FFMPEG_TRAINING_AV_STREAMING_WS='200000*${is_60fps} + 100000*(${aquality}/3) + ${total_bitrate}'
 
-  This formula just says I like 60 fps more than quality.
-
-
-  Custom training resolutions
-
-  Set FFMPEG_TRAINING_CUSTOM_VOD_RESOLUTIONS as a space separated list of
-  sublists to control training Video On Demand (VOD).  Use
-  FFMPEG_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK for the quick trainers.
-
-  Sublist format:
-
-    fps;width;height;dynamic_range
-
-  dynamic range - sdr or hdr only
-  fps - 24, 25, 30, or 60 mostly.
-
-  Examples
-
-    FFMPEG_TRAINING_CUSTOM_VOD_RESOLUTIONS="30;1280;720;sdr 60;1280;720;sdr"
-    FFMPEG_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK="30;1280;720;sdr 60;1280;720;sdr"
-    FFMPEG_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK="30;1920;1080;hdr 60;1920;1080;hdr"
-
-  Set FFMPEG_TRAINING_CUSTOM_STREAMING_RESOLUTIONS as a space separated
-  list of sublists for level of detail for streaming:
-
-  Sublist format:
-
-    fps;width;height;bitrate;sample_rate;microphone
-
-  Example
-
-    FFMPEG_TRAINING_CUSTOM_STREAMING_RESOLUTIONS="30;1980;1080;128;44.1;1 30;640;360;128;44.1;1"	
-
-  bitrate is in Kbps (kilobits per second).
-  sample rate is in kHZ (kilohertz).
-
-  Setting this will override the defaults which trains all.
+    This formula just says I like 60 fps more than quality.
 
 
-  Environment variables related to training
+    Custom training resolutions
 
-  The following are customizable
+    Set FFMPEG_TRAINING_CUSTOM_VOD_RESOLUTIONS as a space separated list of
+    sublists to control training Video On Demand (VOD).  Use
+    FFMPEG_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK for the quick trainers.
 
-  FFMPEG_TRAINING_264_HW_LEVEL_SUPPORTED - A space delimited list of hw
-  supported levels.  Check the technical manual for details.
+    Sublist format:
 
-  FFMPEG_TRAINING_256_PRESET - A string representing speed to compression
-  ratio.  See the wiki for details under preset.  (This may be changed or
-  removed and appied to FFMPEG_TRAINING_CUSTOM_STREAMING_RESOLUTIONS
-  instead).  Currently allowed only for trainer-av-streaming USE flag.
+      fps;width;height;dynamic_range
+
+    dynamic range - sdr or hdr only
+    fps - 24, 25, 30, or 60 mostly.
 
     Examples
 
-      FFMPEG_TRAINING_256_PRESET="superfast" # blocky artifacts
-      FFMPEG_TRAINING_256_PRESET="ultrafast" # unsharp edges but fast encoding
-      FFMPEG_TRAINING_256_PRESET="medium" # default
+      FFMPEG_TRAINING_CUSTOM_VOD_RESOLUTIONS="30;1280;720;sdr 60;1280;720;sdr"
+      FFMPEG_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK="30;1280;720;sdr 60;1280;720;sdr"
+      FFMPEG_TRAINING_CUSTOM_VOD_RESOLUTIONS_QUICK="30;1920;1080;hdr 60;1920;1080;hdr"
 
-  ffmpeg_trainers_VAAPI_SCALE_ALG - Choose either CPU or GPU
-  VA-API scaling.  Acceptable values:  gpu (default), igp, cpu.
+    Set FFMPEG_TRAINING_CUSTOM_STREAMING_RESOLUTIONS as a space separated
+    list of sublists for level of detail for streaming:
 
+    Sublist format:
 
-  Custom training
+      fps;width;height;bitrate;sample_rate;microphone
 
-  Since it would be impratical to permute and PGO train all the possible
-  features and settings of the software, customized PGO training is
-  provided (See README.md of overlay) to allow people to script their own
-  trainers.  You may also define additional per-package environment
-  variable assigned assets.  See the ebuild for ways to use the
-  variables.
+    Example
 
+      FFMPEG_TRAINING_CUSTOM_STREAMING_RESOLUTIONS="30;1980;1080;128;44.1;1 30;640;360;128;44.1;1"	
 
-  Decrapifying
+    bitrate is in Kbps (kilobits per second).
+    sample rate is in kHZ (kilohertz).
 
-  The FFmpeg package is known to keep around codecs created as far back as the
-  80s and 90s and more and more over time keep being added.  From the distro
-  perspective, having these old formats around is counter to the aesthetic.
-  From the younger audience point of view, these older codecs are never going to
-  be used by most.  From a security standpoint, it presents a security risk as
-  the attack surface is increased.  Some options are also being buried or denied
-  being toggled for unknown reasons, or you just don't like what the packager
-  maintainer is doing.  The bad side of uncrapifying is that it may also may
-  break software that depends on FFmpeg.  The next per-package environment
-  variable addresses these issues.
+    Setting this will override the defaults which trains all.
 
-  FFMPEG_CUSTOM_OPTIONS - a space separated list of *_encoders, *_decoders,
-  *_muxers, *_demuxers, *_parsers, *_protocols, *_bsfs, *_indevs, *_outdevs to
-  blacklist or whitelist.  Options prefixed with a - are disabled.  These can be
-  case insensitive or in raw form with the CONFIG_ prefix.  See the following
-  links:
 
-  For bsfs, codecs, parsers, protocols see:
+    Environment variables related to training
 
-       https://github.com/FFmpeg/FFmpeg/blob/master/libavcodec/Makefile
+    The following are customizable
 
-  Note the subsection section in the above link is can be added and
-  should be considered for FFMPEG_CUSTOM_OPTIONS.
+    FFMPEG_TRAINING_264_HW_LEVEL_SUPPORTED - A space delimited list of hw
+    supported levels.  Check the technical manual for details.
 
-  For containers see:
+    FFMPEG_TRAINING_256_PRESET - A string representing speed to compression
+    ratio.  See the wiki for details under preset.  (This may be changed or
+    removed and appied to FFMPEG_TRAINING_CUSTOM_STREAMING_RESOLUTIONS
+    instead).  Currently allowed only for trainer-av-streaming USE flag.
 
-       https://github.com/FFmpeg/FFmpeg/blob/master/libavformat/Makefile
+      Examples
 
-  For devices see:
+        FFMPEG_TRAINING_256_PRESET="superfast" # blocky artifacts
+        FFMPEG_TRAINING_256_PRESET="ultrafast" # unsharp edges but fast encoding
+        FFMPEG_TRAINING_256_PRESET="medium" # default
 
-       https://github.com/FFmpeg/FFmpeg/blob/master/libavdevice/Makefile
+    ffmpeg_trainers_VAAPI_SCALE_ALG - Choose either CPU or GPU
+    VA-API scaling.  Acceptable values:  gpu (default), igp, cpu.
 
-  For filters see:
 
-       https://github.com/FFmpeg/FFmpeg/blob/master/libavfilter/Makefile
+    Custom training
 
-  For the dependency chain see:
+    Since it would be impratical to permute and PGO train all the possible
+    features and settings of the software, customized PGO training is
+    provided (See README.md of overlay) to allow people to script their own
+    trainers.  You may also define additional per-package environment
+    variable assigned assets.  See the ebuild for ways to use the
+    variables.
 
-       https://github.com/FFmpeg/FFmpeg/blob/master/configure
 
-  These options may need to be customized exactly per major.minor version.
+    Decrapifying
 
-  These have absolute control and are evaluated at the end just before writing
-  out the config.mak.
+    The FFmpeg package is known to keep around codecs created as far back as the
+    80s and 90s and more and more over time keep being added.  From the distro
+    perspective, having these old formats around is counter to the aesthetic.
+    From the younger audience point of view, these older codecs are never going to
+    be used by most.  From a security standpoint, it presents a security risk as
+    the attack surface is increased.  Some options are also being buried or denied
+    being toggled for unknown reasons, or you just don't like what the packager
+    maintainer is doing.  The bad side of uncrapifying is that it may also may
+    break software that depends on FFmpeg.  The next per-package environment
+    variable addresses these issues.
 
-  You can use the clear-config-first USE flag to disable all flags first
-  before whitelisting.
+    FFMPEG_CUSTOM_OPTIONS - a space separated list of *_encoders, *_decoders,
+    *_muxers, *_demuxers, *_parsers, *_protocols, *_bsfs, *_indevs, *_outdevs to
+    blacklist or whitelist.  Options prefixed with a - are disabled.  These can be
+    case insensitive or in raw form with the CONFIG_ prefix.  See the following
+    links:
 
-  Some CONFIG_ options have dependencies which manifest as missing symbols.
-  You must manually enable the CONFIG_ dependency chain.
+    For bsfs, codecs, parsers, protocols see:
 
-  You may encounter visibility, naming inconsistencies, or config dependency
-  isssues.  Check if the option is inside the file.  Also, see the association
-  between the missing symbol, the .o file, and the CONFIG_* option to ultimately
-  whitelist the CONFIG_ option that is causing the missing symbol.
+      https://github.com/FFmpeg/FFmpeg/blob/master/libavcodec/Makefile
 
-  Examples:
+    Note the subsection section in the above link is can be added and
+    should be considered for FFMPEG_CUSTOM_OPTIONS.
 
-       FFMPEG_CUSTOM_OPTIONS="
-           -CONFIG_LIBVPX_VP8_DECODER
-           -CONFIG_LIBVPX_VP8_ENCODER
-           CONFIG_LIBVPX_VP9_DECODER
-           CONFIG_LIBVPX_VP9_ENCODER
-           CONFIG_OGG_DEMUXER
-           CONFIG_OGG_MUXER
-           CONFIG_OPUS_DECODER
-           -CONFIG_OPUS_ENCODER
-           CONFIG_OPUS_MUXER
-           CONFIG_OPUS_PARSER
-           CONFIG_POSTPROC
-           CONFIG_PP
-       "
-       FFMPEG_CUSTOM_OPTIONS="
-           -libvpx_vp8_decoder
-           -libvpx_vp8_encoder
-           libvpx_vp9_decoder
-           libvpx_vp9_encoder
-           opus_decoder
-           -opus_encoder
-           opus_muxer
-           opus_parser
-           postproc
-           pp
-       "
-
-
-  For the pp filter used for deringing artifacts.  In this example, pp depends
-  on postproc and CONFIG_GPL, enabled by the USE flag.
-
-  After you have built your package, it would be a good idea to test it first
-  to find missing symbols that may prevent the parent app from functioning.
-  This can be done with the `ffmpeg -formats` and the
-  `ffmpeg -codecs | grep -E -e "(D\.|\.E|DE)[V][I.][L.][S.] .*"` commands.
-  Also test with actual scenario also.
-
-  FFMPEG_CLEAR_CONFIG_SETS - space delimited list to of component types to
-  disable.  This can be used to find problematic sets of options.  Only valid
-  when the clear-config-first USE flag is enabled.
-
-  Examples:
-
-    FFMPEG_CLEAR_CONFIG_SETS="decoders demuxers" # Clears decoders or demuxers
-    FFMPEG_CLEAR_CONFIG_SETS="bsfs decoders demuxers encoders indevs muxers outdevs" # Default
-
-  Acceptable values:
-
-    bsfs, decoders, demuxers, encoders, indevs, muxers, outdevs
-
-  Notes:
-
-  Adding parsers, protocol, protocols to FFMPEG_CLEAR_CONFIG_SETS will likely
-  break.  It is better to remove options individually.
-
-  You can use the corresponding one liners with 3 column entries under
-  the "Enabled parsers", "Enabled protocols", "Enabled filters" sections during
-  the configure phase dumped to a file t to disable each corresponding set
-  individually:
-
-  for x in $(cat t | tr " " "\n" | sort | uniq) ; do echo "-${x}_parser" ; done
-  for x in $(cat t | tr " " "\n" | sort | uniq) ; do echo "-${x}_protocol" ; done
-  for x in $(cat t | tr " " "\n" | sort | uniq) ; do echo "-${x}_filter" ; done
-
-
-  FFMPEG_NVCCFLAGS
-
-   You can override the defaults to nvcc flags passed to the nvcc compiler.
-
-   Example:
-
-   FFMPEG_NVCCFLAGS="-gencode arch=compute_60,code=sm_61 -O2"
-
-  Additional notes
-
-   * The pic USE flag may be required for LTO builds.
-   * Either Gold LTO or Thin LTO may only be used for LTO.
-   * Using BFD LTO may result in linker errors.
-
--->
-]]>
-<upstream>
-  <remote-id type="cpe">cpe:/a:ffmpeg:ffmpeg</remote-id>
-  <remote-id type="github">FFmpeg/FFmpeg</remote-id>
-</upstream>
-<use>
-  <flag name="amf">
-    Enables support with the Advanced Media Framework (AMF)
-  </flag>
-  <flag name="amr">
-    Enables Adaptive Multi-Rate Audio support
-  </flag>
-  <flag name="amrenc">
-    Enables Adaptive Multi-Rate Audio encoding support with
-    <pkg>media-libs/vo-amrwbenc</pkg>.
-  </flag>
-  <flag name="appkit">
-    Enables of the AppKit framework
-  </flag>
-  <flag name="bluray">
-    Enable playback of Blu-ray filesystems
-  </flag>
-  <flag name="bs2b">
-    Enables <pkg>media-libs/libbs2b</pkg> based Bauer stereo-to-binaural filter.
-  </flag>
-  <flag name="clear-config-first">
-    Clear components first before applying FFMPEG_CUSTOM_OPTIONS.  It's only
-    useful with the FFMPEG_CUSTOM_OPTIONS environment variable.  See
-    the decrapify section of the metadata.xml for details.
-  </flag>
-  <flag name="cdio">
-    Enables audio CD grabbing with <pkg>dev-libs/libcdio</pkg>.
-  </flag>
-  <flag name="chromaprint">
-    Enables audio fingerprinting support with <pkg>media-libs/chromaprint</pkg>.
-  </flag>
-  <flag name="chromium">
-    Builds libffmpeg.so to enable media playback in Chromium-based browsers like
-    Opera and Vivaldi.
-  </flag>
-  <flag name="codec2">
-    Enables codec2 low bit rate speech codec support via
-    <pkg>media-libs/codec2</pkg>.
-  </flag>
-  <flag name="cpudetection">
-    Enables runtime CPU detection (useful for bindist, compatibility on other
-    CPUs)
-  </flag>
-  <flag name="cuda">
-    Enables CUDA-based acceleration. Mostly used for specific filters.
-  </flag>
-  <flag name="cuda-filters">
-    Enables CUDA-based filters.
-  </flag>
-  <flag name="cuda-llvm">
-    Use clang to build CUDA filters.
-  </flag>
-  <flag name="cuda-nvcc">
-    Use nvcc to build CUDA filters.
-  </flag>
-  <flag name="dvdvideo">
-    Add support for DVD navigation menus and structure parsing via the dvdvideo
-    demuxer.
-  </flag>
-  <flag name="dav1d">
-    Enables AV1 decoding via <pkg>media-libs/dav1d</pkg>.
-  </flag>
-  <flag name="debug">
-    Add debugging symbols
-  </flag>
-  <flag name="fallback-commit">
-    Rewind the commits backwards to when when the all the patches worked and the
-    same SOVERSION/SLOT this ebuild fork was tested.
-  </flag>
-  <flag name="fdk">
-    Use external fdk-aac library for AAC encoding
-  </flag>
-  <flag name="flite">
-    Adds a text-to-speech filter based on <pkg>app-accessibility/flite</pkg>.
-  </flag>
-  <flag name="frei0r">
-    Enable frei0r wrapping in libavfilter
-  </flag>
-  <flag name="fribidi">
-    Enables fribidi support in the drawtext filter.
-  </flag>
-  <flag name="gcrypt">
-    Enables gcrypt support: Needed for rtmp(t)e support if openssl, librtmp or
-    gmp is not used.
-  </flag>
-  <flag name="gme">
-    Enables support for <pkg>media-libs/game-music-emu</pkg> for playing various
-    video game music formats.
-  </flag>
-  <flag name="hardcoded-tables">
-    Use pre-calculated tables rather than calculating them on the fly, resulting
-    in initalization savings in table generation time, with a tradeoff of ~15%
-    increase in the size of libavcodec.  Savings are often negligible (~100k
-    cycles) when amortized over the entire encoding/decoding operation.
-  </flag>
-  <flag name="iec61883">
-    Support for FireWire DV/HDV input device using
-    <pkg>media-libs/libiec61883</pkg>.
-  </flag>
-  <flag name="jpegxl">
-    Enable JPEG XL de/encoding via <pkg>media-libs/libjxl</pkg>.
-  </flag>
-  <flag name="kvazaar">
-    Enables <pkg>media-libs/kvazaar</pkg> based HEVC encoder.
-  </flag>
-  <flag name="libaom">
-    Enables <pkg>media-libs/libaom</pkg> based AV1 codec support.
-  </flag>
-  <flag name="libaribb24">
-    Enables ARIB text and caption decoding via <pkg>media-libs/aribb24</pkg>.
-  </flag>
-  <flag name="libdrm">
-    Enables <pkg>x11-libs/libdrm</pkg> support for better screen grabbing and
-    hardware accelerated codecs.
-  </flag>
-  <flag name="libilbc">
-    Enables iLBC de/encoding via <pkg>media-libs/libilbc</pkg>.
-  </flag>
-  <flag name="liblc3">
-    Enables lc3 decoding via <pkg>media-sound/liblc3</pkg>.
-  </flag>
-  <flag name="liblensfun">
-    Enables the use of lens correction via <pkg>media-libs/lensfun</pkg> with
-    the lensfun filter.
-  </flag>
-  <flag name="librtmp">
-    Enables Real Time Messaging Protocol using librtmp
-    (<pkg>media-video/rtmpdump</pkg>) in addition to FFmpeg's native
-    implementation.
-  </flag>
-  <flag name="libsoxr">
-    Enables audio resampling through <pkg>media-libs/soxr</pkg>.
-  </flag>
-  <flag name="libtesseract">
-    Enables the OCR filter via <pkg>app-text/tesseract</pkg>.
-  </flag>
-  <flag name="libqrencode">
-    Enables qrencode filter to add QR code overlay over the current image/video
-    frame.
-  </flag>
-  <flag name="libquirc">
-    Add support for QR code decoding.
-  </flag>
-  <flag name="libv4l">
-    Uses <pkg>media-libs/libv4l</pkg> for video4linux instead of direct calls.
-    Adds support for more devices via the userspace library.
-  </flag>
-  <flag name="libvvenc">
-    Add support for VVenC via <pkg>media-libs/vvenc</pkg>.
-  </flag>
-  <flag name="libxml2">
-    Uses <pkg>dev-libs/libxml2</pkg> to enable dash demuxing support.
-  </flag>
-  <flag name="lv2">
-    Enables lv2 audio filter wrapper.
-  </flag>
-  <flag name="mold">
-    Use mold to reduce linking time.
-  </flag>
-  <flag name="mipsdspr1">
-    Enables MIPS DSP ASE R1 optimizations.
-  </flag>
-  <flag name="mipsdspr2">
-    Enables MIPS DSP ASE R2 optimizations.
-  </flag>
-  <flag name="mipsfpu">
-    Enables floating point MIPS optimizations.
-  </flag>
-  <flag name="mmal">
-    Enables Multi-Media Abstraction Layer (MMAL) decoding support: Available
-    e.g. on the Raspberry Pi.
-  </flag>
-  <flag name="network">
-    Enables network streaming support
-  </flag>
-  <flag name="nvdec">
-    Enables GPU accelerated decode for mjpeg, mpeg1, mpeg2, vc-1, h264,
-    h265, vp8, vp9, av1 if available on the GPU
-  </flag>
-  <flag name="nvenc">
-    Enables GPU accelerated encode for mpeg1, mpeg2, vc-1, h264,
-    h265, vp8, vp9, av1 if available on the GPU
-  </flag>
-  <flag name="opencl">
-    Enable OpenCL support
-  </flag>
-  <flag name="openh264">
-    Enables H.264 encoding suppoprt via <pkg>media-libs/openh264</pkg>.
-  </flag>
-  <flag name="openssl">
-    Enables <pkg>dev-libs/openssl</pkg> support. Adds support for encrypted
-    network protocols (TLS/HTTPS).
-  </flag>
-  <flag name="openvino">
-    Support openvino with the dnn_processing filter.
-
-    Models must be provided in .xml format.
-
-    To convert models from TensorFlow (.pb) to OpenVINO™ (.xml), see
-    https://github.com/FFmpeg/FFmpeg/commit/9bcf2aa47756c253238903f3e5ef6c96d927cfe6
-  </flag>
-  <flag name="pic">
-    Force shared libraries to be built as PIC (this is slower)
-  </flag>
-  <flag name="postproc">
-    Build and install libpostproc.
-  </flag>
-  <flag name="qsv">
-    Enable Quick Sync Video via <pkg>media-libs/intel-mediasdk</pkg> (ffmpeg
-    versions older than, and including, 5.1) or <pkg>media-libs/oneVPL</pkg>
-    (ffmpeg version newer than 5.1).
-  </flag>
-  <flag name="rav1e">
-    Enables AV1 encoding support via <pkg>media-video/rav1e</pkg>.
-  </flag>
-  <flag name="re-codecs">
-    Allow/deny less likely patented reversed-engineered codecs or closed codecs.
-  </flag>
-  <flag name="rist">
-    Add support for the RIST protocol for video streaming.
-  </flag>
-  <flag name="rubberband">
-    Adds time-stretching and pitch-shifting audio filter based on
-    <pkg>media-libs/rubberband</pkg>.
-  </flag>
-  <flag name="snappy">
-    Enable <pkg>app-arch/snappy</pkg> support. Required for e.g. Vidvox Hap encoder.
-  </flag>
-  <flag name="sndio">
-    Enable support for the <pkg>media-sound/sndio</pkg> backend
-  </flag>
-  <flag name="soc">
-    Apply additional patches for efficient playback on some SoCs (e.g. ARM,
-    RISC-V).
-  </flag>
-  <flag name="sr">
-    Generate or use prebuilt sr (super-resolution) training models.
-
-    For the sr filter, SCRNN and ESPCN are only supported with .pb tensorflow
-    files.
-  </flag>
-  <flag name="srt">
-    Enable support for Secure Reliable Transport (SRT) via <pkg>net-libs/srt</pkg>
-  </flag>
-  <flag name="ssh">
-    Enable SSH/sftp support via <pkg>net-libs/libssh</pkg>.
-  </flag>
-  <flag name="ssp">
-    Build with stack smashing protection
-  </flag>
-  <flag name="tensorflow">
-    Enable use of AI based TensorFlow library for the sr (super-resolution)
-    filter, dnn_processing filter, derain filter.
-
-    Both sr and dnn_processing require you provide AI models in .pb format.
-    
-    Using the SR filter will improve the image quality of low resolution
-    images/videos.  SR requires the 4.4.x series.
-
-    The derain filter requires a RESCAN model.
-
-    See also
-    https://ffmpeg.org/ffmpeg-filters.html#sr-1
-    https://ffmpeg.org/ffmpeg-filters.html#dnn_005fprocessing-1
-  </flag>
-  <flag name="torch">
-    Use pytorch as a backend for dnn_processing filter for image processing for
-    the derain filter.
-
-    You may use models in the .pt format.
-
-    See also
-    https://ffmpeg.org/ffmpeg-filters.html#dnn_005fprocessing-1
-  </flag>
-  <flag name="ffmpeg_trainers_audio_cbr">
-    Use the CBR audio trainer.
-  </flag>
-  <flag name="ffmpeg_trainers_audio_lossless">
-    Use the lossless audio trainer.
-  </flag>
-  <flag name="ffmpeg_trainers_audio_vbr">
-    Use the VBR audio trainer.
-  </flag>
-  <flag name="ffmpeg_trainers_av_streaming">
-    Use the audio video stream trainer.  This will access the camera, X11, or
-    active KMS plane as sources of data.  Currently it will train for bitrates
-    requested by live streaming websites, but it may be updated later to train
-    with the network connections.
-  </flag>
-  <flag name="ffmpeg_trainers_video_2_pass_constrained_quality">
-    Performs an addtional 2 pass training.  Two pass improves quality and rate
-    control.  This step can be skipped for live streamers.
-
-    Uses 3 second with multiple resolutions.
-  </flag>
-  <flag name="ffmpeg_trainers_video_2_pass_constrained_quality_quick">
-    Performs an addtional 2 pass training.  Two pass improves quality and rate
-    control.  This step can be skipped for live streamers.
-
-    Uses 1 second with lowest resolutions.
-
-    (Ebuild maintainer recommended for encoding)
-  </flag>
-  <flag name="ffmpeg_trainers_video_constrained_quality">
-    Use the 1 pass constrained quality video trainer.
-
-    Uses 3 second with multiple resolutions.
-  </flag>
-  <flag name="ffmpeg_trainers_video_constrained_quality_quick">
-    Use the 1 pass constrained quality video trainer.
-
-    Uses 1 second with lowest resolutions.
-
-    (Ebuild maintainer recommended for decoding)
-  </flag>
-  <flag name="ffmpeg_trainers_video_lossless">
-    Use the lossless video trainer.
-
-    Uses 3 second with multiple resolutions.
-  </flag>
-  <flag name="ffmpeg_trainers_video_lossless_quick">
-    Use the lossless video trainer.
-
-    Uses 1 second with lowest resolutions.
-  </flag>
-  <flag name="twolame">
-    Enables MP2 encoding via <pkg>media-sound/twolame</pkg> as an alternative to
-    the internal encoder.
-  </flag>
-  <flag name="vaapi">
-    Enables GPU acceleration for mjpeg, mpeg2, vc-1, h264, h265, vp8, vp9,
-    av1 if supported by the GPU only if a VAAPI driver is available or the
-    proprietary-codecs USE flag was manually enabled in
-    <pkg>media-video/mesa</pkg>.
-  </flag>
-  <flag name="vidstab">
-    Enables video stabilization filter using vid.stab library
-    (<pkg>media-libs/vidstab</pkg>).
-  </flag>
-  <flag name="vmaf">
-    Enables a perceptual video quality assessment filter using the library
-    (<pkg>media-libs/libvmaf</pkg>).
-  </flag>
-  <flag name="vpx">
-    Enables VP8 and VP9 codec support using libvpx: Decoding does not require
-    this to be enabled but libvpx can also be used for decoding; encoding
-    requires this useflag to be enabled though.
-  </flag>
-  <flag name="vulkan">
-    Enables support for the vulkan API for GPU offload.
-  </flag>
-  <flag name="x265">
-    Enables HEVC encoding with <pkg>media-libs/x265</pkg>.
-  </flag>
-  <flag name="xvid">
-    Enables MPEG-4 ASP video encoding
-  </flag>
-  <flag name="zeromq">
-    Enables <pkg>net-libs/zeromq</pkg> support with the zmq/azmq filters.
-  </flag>
-  <flag name="zimg">
-    Enables <pkg>media-libs/zimg</pkg> based scale filter.
-  </flag>
-  <flag name="zvbi">
-    Enables <pkg>media-libs/zvbi</pkg> based teletext decoder.
-  </flag>
-
-  <!-- For license compatibility checking -->
-  <flag name="gpl">
-    Enable GPL-2 or later codecs, libraries, and audio/video processing filters
-  </flag>
-  <flag name="nonfree">
-    Enable linking to non-free codecs and libraries
-  </flag>
-  <flag name="version3">
-    Enable GPL-3 or LGPL-3 libraries
-  </flag>
-</use>
-<slots>
-  <!--
-
-  We would like to free the user to allow them to use newer features or
-  capabilities and to unstuck from forced lower versions caused by
-  closed source packages, older builder container images, anti rolling release
-  developers in downstream packages.
+    For containers see:
+
+      https://github.com/FFmpeg/FFmpeg/blob/master/libavformat/Makefile
+
+    For devices see:
+
+      https://github.com/FFmpeg/FFmpeg/blob/master/libavdevice/Makefile
+
+    For filters see:
+
+      https://github.com/FFmpeg/FFmpeg/blob/master/libavfilter/Makefile
+
+    For the dependency chain see:
+
+      https://github.com/FFmpeg/FFmpeg/blob/master/configure
+
+    These options may need to be customized exactly per major.minor version.
+
+    These have absolute control and are evaluated at the end just before writing
+    out the config.mak.
+
+    You can use the clear-config-first USE flag to disable all flags first
+    before whitelisting.
+
+    Some CONFIG_ options have dependencies which manifest as missing symbols.
+    You must manually enable the CONFIG_ dependency chain.
+
+    You may encounter visibility, naming inconsistencies, or config dependency
+    isssues.  Check if the option is inside the file.  Also, see the association
+    between the missing symbol, the .o file, and the CONFIG_* option to ultimately
+    whitelist the CONFIG_ option that is causing the missing symbol.
+
+    Examples:
+
+         FFMPEG_CUSTOM_OPTIONS="
+             -CONFIG_LIBVPX_VP8_DECODER
+             -CONFIG_LIBVPX_VP8_ENCODER
+             CONFIG_LIBVPX_VP9_DECODER
+             CONFIG_LIBVPX_VP9_ENCODER
+             CONFIG_OGG_DEMUXER
+             CONFIG_OGG_MUXER
+             CONFIG_OPUS_DECODER
+             -CONFIG_OPUS_ENCODER
+             CONFIG_OPUS_MUXER
+             CONFIG_OPUS_PARSER
+             CONFIG_POSTPROC
+             CONFIG_PP
+         "
+         FFMPEG_CUSTOM_OPTIONS="
+             -libvpx_vp8_decoder
+             -libvpx_vp8_encoder
+             libvpx_vp9_decoder
+             libvpx_vp9_encoder
+             opus_decoder
+             -opus_encoder
+             opus_muxer
+             opus_parser
+             postproc
+             pp
+         "
+
+
+    For the pp filter used for deringing artifacts.  In this example, pp depends
+    on postproc and CONFIG_GPL, enabled by the USE flag.
+
+    After you have built your package, it would be a good idea to test it first
+    to find missing symbols that may prevent the parent app from functioning.
+    This can be done with the `ffmpeg -formats` and the
+    `ffmpeg -codecs | grep -E -e "(D\.|\.E|DE)[V][I.][L.][S.] .*"` commands.
+    Also test with actual scenario also.
+
+    FFMPEG_CLEAR_CONFIG_SETS - space delimited list to of component types to
+    disable.  This can be used to find problematic sets of options.  Only valid
+    when the clear-config-first USE flag is enabled.
+
+    Examples:
+
+      FFMPEG_CLEAR_CONFIG_SETS="decoders demuxers" # Clears decoders or demuxers
+      FFMPEG_CLEAR_CONFIG_SETS="bsfs decoders demuxers encoders indevs muxers outdevs" # Default
+
+    Acceptable values:
+
+      bsfs, decoders, demuxers, encoders, indevs, muxers, outdevs
+
+    Notes:
+
+    Adding parsers, protocol, protocols to FFMPEG_CLEAR_CONFIG_SETS will likely
+    break.  It is better to remove options individually.
+
+    You can use the corresponding one liners with 3 column entries under
+    the "Enabled parsers", "Enabled protocols", "Enabled filters" sections during
+    the configure phase dumped to a file t to disable each corresponding set
+    individually:
+
+    for x in $(cat t | tr " " "\n" | sort | uniq) ; do echo "-${x}_parser" ; done
+    for x in $(cat t | tr " " "\n" | sort | uniq) ; do echo "-${x}_protocol" ; done
+    for x in $(cat t | tr " " "\n" | sort | uniq) ; do echo "-${x}_filter" ; done
+
+
+    FFMPEG_NVCCFLAGS
+
+     You can override the defaults to nvcc flags passed to the nvcc compiler.
+
+     Example:
+
+     FFMPEG_NVCCFLAGS="-gencode arch=compute_60,code=sm_61 -O2"
+
+    Additional notes
+  
+     * The pic USE flag may be required for LTO builds.
+     * Either Gold LTO or Thin LTO may only be used for LTO.
+     * Using BFD LTO may result in linker errors.
 
   -->
-  <slot name="0">
-    For unislot with prefix set to /usr
-  </slot>
-  <slot name="56.58.58">
-    For multislot 4.4.x build with prefix set to
-    /usr/$(get_libdir)/ffmpeg/56.58.58
-  </slot>
-  <slot name="57.59.59">
-    Reserved for multislot 5.1.x build with prefix set to
-    /usr/$(get_libdir)/ffmpeg/57.59.59
-  </slot>
-  <slot name="58.60.60">
-    Reserved for multislot 6.1.x build with prefix set to
-    /usr/$(get_libdir)/ffmpeg/58.60.60
-  </slot>
-  <slot name="59.61.61">
-    Reserved for multislot 7.0.x or 7.1.x build with prefix set to
-    /usr/$(get_libdir)/ffmpeg/59.61.61
-  </slot>
-  <subslots>
-    If unislot, reflect the libavutil_major.libavcodec_major.libavformat_major.
-    Increases in these components reflect gained capabilities.
-  </subslots>
-</slots>
+  ]]>
+  <upstream>
+    <remote-id type="cpe">cpe:/a:ffmpeg:ffmpeg</remote-id>
+    <remote-id type="github">FFmpeg/FFmpeg</remote-id>
+  </upstream>
+  <use>
+    <flag name="amf">
+      Enables support with the Advanced Media Framework (AMF)
+    </flag>
+    <flag name="amr">
+      Enables Adaptive Multi-Rate Audio support
+    </flag>
+    <flag name="amrenc">
+      Enables Adaptive Multi-Rate Audio encoding support with
+      <pkg>media-libs/vo-amrwbenc</pkg>.
+    </flag>
+    <flag name="appkit">
+      Enables of the AppKit framework
+    </flag>
+    <flag name="bluray">
+      Enable playback of Blu-ray filesystems
+    </flag>
+    <flag name="bs2b">
+      Enables <pkg>media-libs/libbs2b</pkg> based Bauer stereo-to-binaural filter.
+    </flag>
+    <flag name="clear-config-first">
+      Clear components first before applying FFMPEG_CUSTOM_OPTIONS.  It's only
+      useful with the FFMPEG_CUSTOM_OPTIONS environment variable.  See
+      the decrapify section of the metadata.xml for details.
+    </flag>
+    <flag name="cdio">
+      Enables audio CD grabbing with <pkg>dev-libs/libcdio</pkg>.
+    </flag>
+    <flag name="chromaprint">
+      Enables audio fingerprinting support with <pkg>media-libs/chromaprint</pkg>.
+    </flag>
+    <flag name="chromium">
+      Builds libffmpeg.so to enable media playback in Chromium-based browsers like
+      Opera and Vivaldi.
+    </flag>
+    <flag name="codec2">
+      Enables codec2 low bit rate speech codec support via
+      <pkg>media-libs/codec2</pkg>.
+    </flag>
+    <flag name="cpudetection">
+      Enables runtime CPU detection (useful for bindist, compatibility on other
+      CPUs)
+    </flag>
+    <flag name="cuda">
+      Enables CUDA-based acceleration. Mostly used for specific filters.
+    </flag>
+    <flag name="cuda-filters">
+      Enables CUDA-based filters.
+    </flag>
+    <flag name="cuda-llvm">
+      Use clang to build CUDA filters.
+    </flag>
+    <flag name="cuda-nvcc">
+      Use nvcc to build CUDA filters.
+    </flag>
+    <flag name="dvdvideo">
+      Add support for DVD navigation menus and structure parsing via the dvdvideo
+      demuxer.
+    </flag>
+    <flag name="dav1d">
+      Enables AV1 decoding via <pkg>media-libs/dav1d</pkg>.
+    </flag>
+    <flag name="debug">
+      Add debugging symbols
+    </flag>
+    <flag name="fallback-commit">
+      Rewind the commits backwards to when when the all the patches worked and the
+      same SOVERSION/SLOT this ebuild fork was tested.
+    </flag>
+    <flag name="fdk">
+      Use external fdk-aac library for AAC encoding
+    </flag>
+    <flag name="flite">
+      Adds a text-to-speech filter based on <pkg>app-accessibility/flite</pkg>.
+    </flag>
+    <flag name="frei0r">
+      Enable frei0r wrapping in libavfilter
+    </flag>
+    <flag name="fribidi">
+      Enables fribidi support in the drawtext filter.
+    </flag>
+    <flag name="gcrypt">
+      Enables gcrypt support: Needed for rtmp(t)e support if openssl, librtmp or
+      gmp is not used.
+    </flag>
+    <flag name="gme">
+      Enables support for <pkg>media-libs/game-music-emu</pkg> for playing various
+      video game music formats.
+    </flag>
+    <flag name="hardcoded-tables">
+      Use pre-calculated tables rather than calculating them on the fly, resulting
+      in initalization savings in table generation time, with a tradeoff of ~15%
+      increase in the size of libavcodec.  Savings are often negligible (~100k
+      cycles) when amortized over the entire encoding/decoding operation.
+    </flag>
+    <flag name="iec61883">
+      Support for FireWire DV/HDV input device using
+      <pkg>media-libs/libiec61883</pkg>.
+    </flag>
+    <flag name="jpegxl">
+      Enable JPEG XL de/encoding via <pkg>media-libs/libjxl</pkg>.
+    </flag>
+    <flag name="kvazaar">
+      Enables <pkg>media-libs/kvazaar</pkg> based HEVC encoder.
+    </flag>
+    <flag name="libaom">
+      Enables <pkg>media-libs/libaom</pkg> based AV1 codec support.
+    </flag>
+    <flag name="libaribb24">
+      Enables ARIB text and caption decoding via <pkg>media-libs/aribb24</pkg>.
+    </flag>
+    <flag name="libdrm">
+      Enables <pkg>x11-libs/libdrm</pkg> support for better screen grabbing and
+      hardware accelerated codecs.
+    </flag>
+    <flag name="libilbc">
+      Enables iLBC de/encoding via <pkg>media-libs/libilbc</pkg>.
+    </flag>
+    <flag name="liblc3">
+      Enables lc3 decoding via <pkg>media-sound/liblc3</pkg>.
+    </flag>
+    <flag name="liblensfun">
+      Enables the use of lens correction via <pkg>media-libs/lensfun</pkg> with
+      the lensfun filter.
+    </flag>
+    <flag name="librtmp">
+      Enables Real Time Messaging Protocol using librtmp
+      (<pkg>media-video/rtmpdump</pkg>) in addition to FFmpeg's native
+      implementation.
+    </flag>
+    <flag name="libsoxr">
+      Enables audio resampling through <pkg>media-libs/soxr</pkg>.
+    </flag>
+    <flag name="libtesseract">
+      Enables the OCR filter via <pkg>app-text/tesseract</pkg>.
+    </flag>
+    <flag name="libqrencode">
+      Enables qrencode filter to add QR code overlay over the current image/video
+      frame.
+    </flag>
+    <flag name="libquirc">
+      Add support for QR code decoding.
+    </flag>
+    <flag name="libv4l">
+      Uses <pkg>media-libs/libv4l</pkg> for video4linux instead of direct calls.
+      Adds support for more devices via the userspace library.
+    </flag>
+    <flag name="libvvenc">
+      Add support for VVenC via <pkg>media-libs/vvenc</pkg>.
+    </flag>
+    <flag name="libxml2">
+      Uses <pkg>dev-libs/libxml2</pkg> to enable dash demuxing support.
+    </flag>
+    <flag name="lv2">
+      Enables lv2 audio filter wrapper.
+    </flag>
+    <flag name="mold">
+      Use mold to reduce linking time.
+    </flag>
+    <flag name="mipsdspr1">
+      Enables MIPS DSP ASE R1 optimizations.
+    </flag>
+    <flag name="mipsdspr2">
+      Enables MIPS DSP ASE R2 optimizations.
+    </flag>
+    <flag name="mipsfpu">
+      Enables floating point MIPS optimizations.
+    </flag>
+    <flag name="mmal">
+      Enables Multi-Media Abstraction Layer (MMAL) decoding support: Available
+      e.g. on the Raspberry Pi.
+    </flag>
+    <flag name="network">
+      Enables network streaming support
+    </flag>
+    <flag name="nvdec">
+      Enables GPU accelerated decode for MJPEG, MPEG-1, MPEG-2, VC-1, H.264,
+      H.265, VP8, VP9, AV1 if available on the GPU
+    </flag>
+    <flag name="nvenc">
+      Enables GPU accelerated encode for MJPEG-1, MJPEG-2, VC-1, H.264,
+      H.265, VP8, VP9, AV1 if available on the GPU
+    </flag>
+    <flag name="opencl">
+      Enable OpenCL support
+    </flag>
+    <flag name="openh264">
+      Enables H.264 encoding suppoprt via <pkg>media-libs/openh264</pkg>.
+    </flag>
+    <flag name="openssl">
+      Enables <pkg>dev-libs/openssl</pkg> support. Adds support for encrypted
+      network protocols (TLS/HTTPS).
+    </flag>
+    <flag name="openvino">
+      Support openvino with the dnn_processing filter.
+  
+      Models must be provided in .xml format.
+  
+      To convert models from TensorFlow (.pb) to OpenVINO™ (.xml), see
+      https://github.com/FFmpeg/FFmpeg/commit/9bcf2aa47756c253238903f3e5ef6c96d927cfe6
+    </flag>
+    <flag name="pic">
+      Force shared libraries to be built as PIC (this is slower)
+    </flag>
+    <flag name="postproc">
+      Build and install libpostproc.
+    </flag>
+    <flag name="qsv">
+      Enable Quick Sync Video via <pkg>media-libs/intel-mediasdk</pkg> (FFmpeg
+      versions older than, and including, 5.1) or <pkg>media-libs/oneVPL</pkg>
+      (FFmpeg version newer than 5.1).
+    </flag>
+    <flag name="rav1e">
+      Enables AV1 encoding support via <pkg>media-video/rav1e</pkg>.
+    </flag>
+    <flag name="re-codecs">
+      Allow/deny less likely patented reversed engineered codecs or closed codecs.
+    </flag>
+    <flag name="rist">
+      Add support for the RIST protocol for video streaming.
+    </flag>
+    <flag name="rubberband">
+      Adds time-stretching and pitch-shifting audio filter based on
+      <pkg>media-libs/rubberband</pkg>.
+    </flag>
+    <flag name="snappy">
+      Enable <pkg>app-arch/snappy</pkg> support. Required for e.g. Vidvox Hap encoder.
+    </flag>
+    <flag name="sndio">
+      Enable support for the <pkg>media-sound/sndio</pkg> backend
+    </flag>
+    <flag name="soc">
+      Apply additional patches for efficient playback on some SoCs (e.g. ARM,
+      RISC-V).
+    </flag>
+    <flag name="sr">
+      Generate or use prebuilt sr (super-resolution) training models.
+  
+      For the sr filter, SCRNN and ESPCN are only supported with .pb tensorflow
+      files.
+    </flag>
+    <flag name="srt">
+      Enable support for Secure Reliable Transport (SRT) via <pkg>net-libs/srt</pkg>
+    </flag>
+    <flag name="ssh">
+      Enable SSH/sftp support via <pkg>net-libs/libssh</pkg>.
+    </flag>
+    <flag name="ssp">
+      Build with stack smashing protection
+    </flag>
+    <flag name="tensorflow">
+      Enable use of AI based TensorFlow library for the sr (super-resolution)
+      filter, dnn_processing filter, derain filter.
+  
+      Both sr and dnn_processing require you provide AI models in .pb format.
+      
+      Using the SR filter will improve the image quality of low resolution
+      images/videos.  SR requires the 4.4.x series.
+  
+      The derain filter requires a RESCAN model.
+  
+      See also
+      https://ffmpeg.org/ffmpeg-filters.html#sr-1
+      https://ffmpeg.org/ffmpeg-filters.html#dnn_005fprocessing-1
+    </flag>
+    <flag name="torch">
+      Use pytorch as a backend for dnn_processing filter for image processing for
+      the derain filter.
+  
+      You may use models in the .pt format.
+  
+      See also
+      https://ffmpeg.org/ffmpeg-filters.html#dnn_005fprocessing-1
+    </flag>
+    <flag name="ffmpeg_trainers_audio_cbr">
+      Use the CBR audio trainer.
+    </flag>
+    <flag name="ffmpeg_trainers_audio_lossless">
+      Use the lossless audio trainer.
+    </flag>
+    <flag name="ffmpeg_trainers_audio_vbr">
+      Use the VBR audio trainer.
+    </flag>
+    <flag name="ffmpeg_trainers_av_streaming">
+      Use the audio video stream trainer.  This will access the camera, X11, or
+      active KMS plane as sources of data.  Currently it will train for bitrates
+      requested by live streaming websites, but it may be updated later to train
+      with the network connections.
+    </flag>
+    <flag name="ffmpeg_trainers_video_2_pass_constrained_quality">
+      Performs an addtional 2 pass training.  Two pass improves quality and rate
+      control.  This step can be skipped for live streamers.
+  
+      Uses 3 second with multiple resolutions.
+    </flag>
+    <flag name="ffmpeg_trainers_video_2_pass_constrained_quality_quick">
+      Performs an addtional 2 pass training.  Two pass improves quality and rate
+      control.  This step can be skipped for live streamers.
+  
+      Uses 1 second with lowest resolutions.
+  
+      (Ebuild maintainer recommended for encoding)
+    </flag>
+    <flag name="ffmpeg_trainers_video_constrained_quality">
+      Use the 1 pass constrained quality video trainer.
+  
+      Uses 3 second with multiple resolutions.
+    </flag>
+    <flag name="ffmpeg_trainers_video_constrained_quality_quick">
+      Use the 1 pass constrained quality video trainer.
+ 
+      Uses 1 second with lowest resolutions.
+  
+      (Ebuild maintainer recommended for decoding)
+    </flag>
+    <flag name="ffmpeg_trainers_video_lossless">
+      Use the lossless video trainer.
+  
+      Uses 3 second with multiple resolutions.
+    </flag>
+    <flag name="ffmpeg_trainers_video_lossless_quick">
+      Use the lossless video trainer.
+
+      Uses 1 second with lowest resolutions.
+    </flag>
+    <flag name="twolame">
+      Enables MP2 encoding via <pkg>media-sound/twolame</pkg> as an alternative to
+      the internal encoder.
+    </flag>
+    <flag name="vaapi">
+      Enables GPU acceleration for mjpeg, MPEG-2, VC-1, H.264, H.265, VP8, VP9,
+      AV1 if supported by the GPU only if a VAAPI driver is available or the
+      proprietary-codecs USE flag was manually enabled in
+      <pkg>media-video/mesa</pkg>.
+    </flag>
+    <flag name="vidstab">
+      Enables video stabilization filter using vid.stab library
+      (<pkg>media-libs/vidstab</pkg>).
+    </flag>
+    <flag name="vmaf">
+      Enables a perceptual video quality assessment filter using the library
+      (<pkg>media-libs/libvmaf</pkg>).
+    </flag>
+    <flag name="vpx">
+      Enables VP8 and VP9 codec support using libvpx: Decoding does not require
+      this to be enabled but libvpx can also be used for decoding; encoding
+      requires this useflag to be enabled though.
+    </flag>
+    <flag name="vulkan">
+      Enables support for the vulkan API for GPU offload.
+    </flag>
+    <flag name="x265">
+      Enables HEVC encoding with <pkg>media-libs/x265</pkg>.
+    </flag>
+    <flag name="xvid">
+      Enables MPEG-4 ASP video encoding
+    </flag>
+    <flag name="zeromq">
+      Enables <pkg>net-libs/zeromq</pkg> support with the zmq/azmq filters.
+    </flag>
+    <flag name="zimg">
+      Enables <pkg>media-libs/zimg</pkg> based scale filter.
+    </flag>
+    <flag name="zvbi">
+      Enables <pkg>media-libs/zvbi</pkg> based teletext decoder.
+    </flag>
+ 
+    <!-- For license compatibility checking -->
+    <flag name="gpl">
+      Enable GPL-2 or later codecs, libraries, and audio/video processing filters
+    </flag>
+    <flag name="nonfree">
+      Enable linking to non-free codecs and libraries
+    </flag>
+    <flag name="version3">
+      Enable GPL-3 or LGPL-3 libraries
+    </flag>
+  </use>
+  <slots>
+    <!--
+  
+    We would like to free the user to allow them to use newer features or
+    capabilities and to unstuck from forced lower versions caused by
+    closed source packages, older builder container images, anti rolling release
+    developers in downstream packages.
+
+    -->
+    <slot name="0">
+      For unislot with prefix set to /usr
+    </slot>
+    <slot name="56.58.58">
+      For multislot 4.4.x build with prefix set to
+      /usr/$(get_libdir)/ffmpeg/56.58.58
+    </slot>
+    <slot name="57.59.59">
+      Reserved for multislot 5.1.x build with prefix set to
+      /usr/$(get_libdir)/ffmpeg/57.59.59
+    </slot>
+    <slot name="58.60.60">
+      Reserved for multislot 6.1.x build with prefix set to
+      /usr/$(get_libdir)/ffmpeg/58.60.60
+    </slot>
+    <slot name="59.61.61">
+      Reserved for multislot 7.0.x or 7.1.x build with prefix set to
+      /usr/$(get_libdir)/ffmpeg/59.61.61
+    </slot>
+    <subslots>
+      If unislot, reflect the libavutil_major.libavcodec_major.libavformat_major.
+      Increases in these components reflect gained capabilities.
+    </subslots>
+  </slots>
 </pkgmetadata>
