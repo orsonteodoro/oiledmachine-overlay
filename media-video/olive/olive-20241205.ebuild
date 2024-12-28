@@ -334,7 +334,7 @@ src_configure() {
 src_install() {
 	cmake_src_install
 	exeinto "/usr/$(get_libdir)"
-	doexe "ext/core/libolivecore.so"
+	doexe "${S}_build/ext/core/libolivecore.so"
 	if use doc ; then
 		docinto "html"
 		dodoc -r "${BUILD_DIR}/docs/html/"*
