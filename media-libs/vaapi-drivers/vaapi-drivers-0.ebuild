@@ -78,6 +78,7 @@ RDEPEND_DRIVERS="
 
 RDEPEND+="
 	media-libs/libva
+	virtual/patent-status[patent_status_new_or_renewed=]
 	!custom? (
 		${RDEPEND_DRIVERS}
 	)

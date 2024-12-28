@@ -1205,6 +1205,7 @@ RDEPEND+="
 	${CLANG_RDEPEND}
 	sys-kernel/mitigate-id
 	virtual/ttf-fonts
+	virtual/patent-status[patent_status_free_for_codec_developers=,patent_status_free_for_end_users=,patent_status_new_or_renewed=,patent_status_nonfree=,patent_status_sponsored_ncp_nb=]
 	!headless? (
 		qt5? (
 			>=dev-qt/qtgui-${QT5_PV}:5[wayland?,X?]

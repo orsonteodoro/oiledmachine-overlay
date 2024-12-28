@@ -788,6 +788,7 @@ RDEPEND+="
 	${CDEPEND}
 	${UDEV_RDEPEND}
 	sys-kernel/mitigate-id
+	virtual/patent-status[patent_status_free_for_codec_developers=,patent_status_free_for_end_users=,patent_status_new_or_renewed=,patent_status_nonfree=]
 	cups? (
 		net-print/cups[${MULTILIB_USEDEP}]
 	)

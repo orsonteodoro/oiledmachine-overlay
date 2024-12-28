@@ -773,6 +773,7 @@ gen_pytorch_rdepend() {
 # Update both !openssl and openssl USE flags.
 RDEPEND+="
 	${LICENSE_RDEPEND}
+	virtual/patent-status[patent_status_free_for_codec_developers=,patent_status_free_for_end_users=,patent_status_new_or_renewed=,patent_status_nonfree=]
 	!openssl? (
 		gnutls? (
 			>=net-libs/gnutls-2.12.23-r6:=[${MULTILIB_USEDEP}]

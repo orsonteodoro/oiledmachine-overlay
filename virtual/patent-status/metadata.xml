@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <use>
+    <flag name="patent_status_nonfree">
+      Allow unexpired patents.
+    </flag>
+    <flag name="patent_status_free_for_codec_developers">
+      Allow codecs that do not require fees from codec developers.
+    </flag>
+    <flag name="patent_status_free_for_end_users">
+      Allow codecs that are free for non developers.
+    </flag>
+    <flag name="patent_status_new_or_renewed">
+      Allow nonfree hardware accelerated codecs released within four years or
+      renewed licensed hardware.  Hardware released beyond 4 years may need a
+      license renewal fee for nonfree patented codec.
+    </flag>
+    <flag name="patent_status_sponsored_ncp_nb">
+      Allow the fully sponsored proprietary codecs for use by non content
+      providers and non broadcasters.
+    </flag>
+  </use>
+
+</pkgmetadata>

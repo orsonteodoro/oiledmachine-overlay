@@ -149,7 +149,10 @@ RDEPEND="
 	>=dev-libs/expat-2.1.0-r3[${MULTILIB_USEDEP}]
 	>=media-libs/libglvnd-1.3.2[X?,${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.8[${MULTILIB_USEDEP}]
-	unwind? ( sys-libs/libunwind[${MULTILIB_USEDEP}] )
+	virtual/patent-status[patent_status_new_or_renewed=]
+	unwind? (
+		sys-libs/libunwind[${MULTILIB_USEDEP}]
+	)
 	llvm? (
 		video_cards_radeonsi? (
 			virtual/libelf:0=[${MULTILIB_USEDEP}]

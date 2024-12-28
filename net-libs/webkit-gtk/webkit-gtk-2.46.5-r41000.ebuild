@@ -765,6 +765,7 @@ RDEPEND+="
 	>=x11-libs/gtk+-3.22.0:3[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
 	sys-kernel/mitigate-id
 	virtual/jpeg:0=[${MULTILIB_USEDEP}]
+	virtual/patent-status[patent_status_free_for_codec_developers=,patent_status_free_for_end_users=,patent_status_new_or_renewed=,patent_status_nonfree=]
 	avif? (
 		>=media-libs/libavif-0.9.0[${MULTILIB_USEDEP}]
 	)
