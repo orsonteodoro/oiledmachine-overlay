@@ -6,7 +6,7 @@ EAPI=8
 
 # U20
 
-MY_PV="0.2.0"
+MY_PV="$(ver_cut 1-3 ${PV})"
 
 EGIT_COMMIT="7e0e94abf6610026aebb9ddce8564c39522fac6e" # Dec 5, 2024
 KDDOCWIDGETS_COMMIT="8d2d0a5764f8393cc148a2296d511276a8ffe559"
@@ -28,7 +28,7 @@ else
 	S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 	SRC_URI="
 https://github.com/olive-editor/olive/archive/${EGIT_COMMIT}.tar.gz
-	-> ${P}-${EGIT_COMMIT:0:7}.tar.gz
+	-> ${PN}-${EGIT_COMMIT:0:7}.tar.gz
 https://github.com/olive-editor/KDDockWidgets/archive/${KDDOCWIDGETS_COMMIT}.tar.gz
 	-> KDDockWidgets-${KDDOCWIDGETS_COMMIT:0:7}.tar.gz
 https://github.com/olive-editor/core/archive/${OLIVE_EDITOR_CORE_COMMIT}.tar.gz
