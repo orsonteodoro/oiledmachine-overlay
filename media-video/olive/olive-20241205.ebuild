@@ -182,10 +182,24 @@ check_cxxabi() {
 		| tail -n 1 \
 		| cut -f 2 -d "_")
 
+	local openexr_cxxabi_ver=$(strings "/usr/$(get_libdir)/libOpenEXR.so" \
+		| grep CXXABI \
+		| sort -V \
+		| grep -E -e "CXXABI_[0-9]+" \
+		| tail -n 1 \
+		| cut -f 2 -d "_")
+	local openexr_glibcxx_ver=$(strings "/usr/$(get_libdir)/libOpenEXR.so" \
+		| grep GLIBCXX \
+		| sort -V \
+		| grep -E -e "GLIBCXX_[0-9]+" \
+		| tail -n 1 \
+		| cut -f 2 -d "_")
 
-	if ver_test ${libstdcxx_cxxabi_ver} -lt ${qtcore_cxxabi_ver} ; then
+
+	# The CXXABI version will vary if built with the same GCC slot.
+	if ver_test ${libstdcxx_glibcxx_ver} -ne ${qtcore_glibcxx_ver} ; then
 eerror
-eerror "Detected CXXABI missing symbol or CXXABI inconsistency."
+eerror "Detected CXXABI missing symbol or GLIBCXX inconsistency."
 eerror
 eerror "Ensure that the qt${qt_slot}core and the currently selected compiler"
 eerror "are built with the same compiler slot."
@@ -193,54 +207,62 @@ eerror
 eerror "You must decide to pick the GCC slot to rebuild for these 2 packages."
 eerror
 printf "%-20s %-30s %-10s %-s\n" "Library" "Package" "API/ABI" "API/ABI Version"
-printf "%-20s %-30s %-10s %-s\n" "libstdcxx" "sys-devel/gcc" "CXXABI" "${libstdcxx_cxxabi_ver} (GCC slot ${gcc_current_profile_slot})"
-printf "%-20s %-30s %-10s %-s\n" "libstdcxx" "sys-devel/gcc" "GLIBCXX" "${libstdcxx_glibcxx_ver} (GCC slot ${gcc_current_profile_slot})"
-printf "%-20s %-30s %-10s %-s\n" "qt${qt_slot}core" "${qtcore_package}" "CXXABI" "${qtcore_cxxabi_ver}"
-printf "%-20s %-30s %-10s %-s\n" "qt${qt_slot}core" "${qtcore_package}" "GLIBCXX" "${qtcore_glibcxx_ver}"
+printf "%-20s %-30s %-10s %-s\n" "libstdc++.so" "CXXABI" "${libstdcxx_cxxabi_ver} (GCC slot ${gcc_current_profile_slot})"
+printf "%-20s %-30s %-10s %-s\n" "libstdc++.so" "GLIBCXX" "${libstdcxx_glibcxx_ver} (GCC slot ${gcc_current_profile_slot})"
+printf "%-20s %-30s %-10s %-s\n" "libOpenColorIO.so" "media-libs/opencolorio" "CXXABI" "${ocio_cxxabi_ver}"
+printf "%-20s %-30s %-10s %-s\n" "libOpenColorIO.so" "media-libs/opencolorio" "GLIBCXX" "${ocio_glibcxx_ver}"
+printf "%-20s %-30s %-10s %-s\n" "libOpenEXR.so" "media-libs/openexr" "CXXABI" "${ocio_cxxabi_ver}"
+printf "%-20s %-30s %-10s %-s\n" "libOpenEXR.so" "media-libs/openexr" "GLIBCXX" "${ocio_glibcxx_ver}"
+printf "%-20s %-30s %-10s %-s\n" "libQt${qt_slot}Core.so" "CXXABI" "${qtcore_package}" "${qtcore_cxxabi_ver}"
+printf "%-20s %-30s %-10s %-s\n" "libQt${qt_slot}Core.so" "GLIBCXX" "${qtcore_package}" "${qtcore_glibcxx_ver}"
 eerror
 eerror "See https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html for details"
 eerror
 		die
 	fi
 
-	if ver_test ${libstdcxx_cxxabi_ver} -lt ${ocio_cxxabi_ver} ; then
+	if ver_test ${qtcore_glibcxx_ver} -ne ${ocio_glibcxx_ver} ; then
 eerror
-eerror "Detected CXXABI missing symbol or CXXABI inconsistency between GCC's libstdc++ and ocio."
+eerror "Detected CXXABI missing symbol or GLIBCXX inconsistency between Qt${qt_slot}Core and OpenColorIO."
 eerror
-eerror "Ensure that the ocio, qt${qt_slot}core, and the currently selected compiler"
-eerror "are built with the same compiler slot."
+eerror "Ensure that the OpenColorIO, OpenEXR, Qt${qt_slot}Core, and the"
+eerror "currently selected compiler are built with the same compiler slot."
 eerror
 eerror "You must decide to pick the GCC slot to rebuild for all 3 packages."
 eerror
 printf "%-20s %-30s %-10s %-s\n" "Library" "Package" "API/ABI" "API/ABI Version"
-printf "%-20s %-30s %-10s %-s\n" "libstdcxx" "sys-devel/gcc" "CXXABI" "${libstdcxx_cxxabi_ver} (GCC slot ${gcc_current_profile_slot})"
-printf "%-20s %-30s %-10s %-s\n" "libstdcxx" "sys-devel/gcc" "GLIBCXX" "${libstdcxx_glibcxx_ver} (GCC slot ${gcc_current_profile_slot})"
-printf "%-20s %-30s %-10s %-s\n" "ocio" "media-libs/opencolorio" "CXXABI" "${ocio_cxxabi_ver}"
-printf "%-20s %-30s %-10s %-s\n" "ocio" "media-libs/opencolorio" "GLIBCXX" "${ocio_glibcxx_ver}"
-printf "%-20s %-30s %-10s %-s\n" "qt${qt_slot}core" "${qtcore_package}" "CXXABI" "${qtcore_cxxabi_ver}"
-printf "%-20s %-30s %-10s %-s\n" "qt${qt_slot}core" "${qtcore_package}" "GLIBCXX" "${qtcore_glibcxx_ver}"
+printf "%-20s %-30s %-10s %-s\n" "libstdc++.so" "CXXABI" "${libstdcxx_cxxabi_ver} (GCC slot ${gcc_current_profile_slot})"
+printf "%-20s %-30s %-10s %-s\n" "libstdc++.so" "GLIBCXX" "${libstdcxx_glibcxx_ver} (GCC slot ${gcc_current_profile_slot})"
+printf "%-20s %-30s %-10s %-s\n" "libOpenColorIO.so" "media-libs/opencolorio" "CXXABI" "${ocio_cxxabi_ver}"
+printf "%-20s %-30s %-10s %-s\n" "libOpenColorIO.so" "media-libs/opencolorio" "GLIBCXX" "${ocio_glibcxx_ver}"
+printf "%-20s %-30s %-10s %-s\n" "libOpenEXR.so" "media-libs/openexr" "CXXABI" "${ocio_cxxabi_ver}"
+printf "%-20s %-30s %-10s %-s\n" "libOpenEXR.so" "media-libs/openexr" "GLIBCXX" "${ocio_glibcxx_ver}"
+printf "%-20s %-30s %-10s %-s\n" "libQt${qt_slot}Core.so" "CXXABI" "${qtcore_package}" "${qtcore_cxxabi_ver}"
+printf "%-20s %-30s %-10s %-s\n" "libQt${qt_slot}Core.so" "GLIBCXX" "${qtcore_package}" "${qtcore_glibcxx_ver}"
 eerror
 eerror "See https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html for details"
 eerror
 		die
 	fi
 
-	if ver_test ${qt6core_cxxabi_ver} -ne ${ocio_cxxabi_ver} ; then
+	if ver_test ${qtcore_glibcxx_ver} -ne ${openexr_glibcxx_ver} ; then
 eerror
-eerror "Detected CXXABI missing symbol or CXXABI inconsistency between qt${qt_slot}core and ocio."
+eerror "Detected CXXABI missing symbol or GLIBCXX inconsistency between Qt${qt_slot}Core and OpenEXR."
 eerror
-eerror "Ensure that the ocio, qt${qt_slot}core, and the currently selected compiler"
-eerror "are built with the same compiler slot."
+eerror "Ensure that the OpenColorIO, OpenEXR, Qt${qt_slot}Core, and the"
+eerror "currently selected compiler are built with the same compiler slot."
 eerror
 eerror "You must decide to pick the GCC slot to rebuild for all 3 packages."
 eerror
 printf "%-20s %-30s %-10s %-s\n" "Library" "Package" "API/ABI" "API/ABI Version"
-printf "%-20s %-30s %-10s %-s\n" "libstdcxx" "CXXABI" "${libstdcxx_cxxabi_ver} (GCC slot ${gcc_current_profile_slot})"
-printf "%-20s %-30s %-10s %-s\n" "libstdcxx" "GLIBCXX" "${libstdcxx_glibcxx_ver} (GCC slot ${gcc_current_profile_slot})"
-printf "%-20s %-30s %-10s %-s\n" "ocio" "media-libs/opencolorio" "CXXABI" "${ocio_cxxabi_ver}"
-printf "%-20s %-30s %-10s %-s\n" "ocio" "media-libs/opencolorio" "GLIBCXX" "${ocio_glibcxx_ver}"
-printf "%-20s %-30s %-10s %-s\n" "qt${qt_slot}core" "CXXABI" "${qtcore_package}" "${qtcore_cxxabi_ver}"
-printf "%-20s %-30s %-10s %-s\n" "qt${qt_slot}core" "GLIBCXX" "${qtcore_package}" "${qtcore_glibcxx_ver}"
+printf "%-20s %-30s %-10s %-s\n" "libstdc++.so" "CXXABI" "${libstdcxx_cxxabi_ver} (GCC slot ${gcc_current_profile_slot})"
+printf "%-20s %-30s %-10s %-s\n" "libstdc++.so" "GLIBCXX" "${libstdcxx_glibcxx_ver} (GCC slot ${gcc_current_profile_slot})"
+printf "%-20s %-30s %-10s %-s\n" "libOpenColorIO.so" "media-libs/opencolorio" "CXXABI" "${ocio_cxxabi_ver}"
+printf "%-20s %-30s %-10s %-s\n" "libOpenColorIO.so" "media-libs/opencolorio" "GLIBCXX" "${ocio_glibcxx_ver}"
+printf "%-20s %-30s %-10s %-s\n" "libOpenEXR.so" "media-libs/openexr" "CXXABI" "${ocio_cxxabi_ver}"
+printf "%-20s %-30s %-10s %-s\n" "libOpenEXR.so" "media-libs/openexr" "GLIBCXX" "${ocio_glibcxx_ver}"
+printf "%-20s %-30s %-10s %-s\n" "libQt${qt_slot}Core.so" "CXXABI" "${qtcore_package}" "${qtcore_cxxabi_ver}"
+printf "%-20s %-30s %-10s %-s\n" "libQt${qt_slot}Core.so" "GLIBCXX" "${qtcore_package}" "${qtcore_glibcxx_ver}"
 eerror
 eerror "See https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html for details"
 eerror
