@@ -132,6 +132,16 @@ PATCHES=(
 )
 
 check_cxxabi() {
+	local qt_slot
+	local qtcore_package=""
+	if use qt6 ; then
+		qtcore_package="dev-qt/qtbase"
+		qt_slot="6"
+	else
+		qtcore_package="dev-qt/core"
+		qt_slot="5"
+	fi
+
 	local gcc_current_profile=$(gcc-config -c)
 	local gcc_current_profile_slot=${gcc_current_profile##*-}
 	local libstdcxx_cxxabi_ver=$(strings "/usr/lib/gcc/${CHOST}/${gcc_current_profile_slot}/libstdc++.so" \
@@ -146,13 +156,13 @@ check_cxxabi() {
 		| grep -E -e "GLIBCXX_[0-9]+" \
 		| tail -n 1 \
 		| cut -f 2 -d "_")
-	local qt6core_cxxabi_ver=$(strings "/usr/$(get_libdir)/libQt6Core.so" \
+	local qtcore_cxxabi_ver=$(strings "/usr/$(get_libdir)/libQt${qt_slot}Core.so" \
 		| grep CXXABI \
 		| sort -V \
 		| grep -E -e "CXXABI_[0-9]+" \
 		| tail -n 1 \
 		| cut -f 2 -d "_")
-	local qt6core_glibcxx_ver=$(strings "/usr/$(get_libdir)/libQt6Core.so" \
+	local qtcore_glibcxx_ver=$(strings "/usr/$(get_libdir)/libQt${qt_slot}Core.so" \
 		| grep GLIBCXX \
 		| sort -V \
 		| grep -E -e "GLIBCXX_[0-9]+" \
@@ -172,19 +182,21 @@ check_cxxabi() {
 		| tail -n 1 \
 		| cut -f 2 -d "_")
 
-	if ver_test ${libstdcxx_cxxabi_ver} -lt ${qt6core_cxxabi_ver} ; then
+
+	if ver_test ${libstdcxx_cxxabi_ver} -lt ${qtcore_cxxabi_ver} ; then
 eerror
 eerror "Detected CXXABI missing symbol or CXXABI inconsistency."
 eerror
-eerror "Ensure that the qt6core and the currently selected compiler"
+eerror "Ensure that the qt${qt_slot}core and the currently selected compiler"
 eerror "are built with the same compiler slot."
 eerror
-eerror "You must decide to pick the GCC slot to rebuild for these 2."
+eerror "You must decide to pick the GCC slot to rebuild for these 2 packages."
 eerror
-eerror "libstdcxx CXXABI  - ${libstdcxx_cxxabi_ver} (GCC slot ${gcc_current_profile_slot})"
-eerror "libstdcxx GLIBCXX - ${libstdcxx_glibcxx_ver} (GCC slot ${gcc_current_profile_slot})"
-eerror "qt6core CXXABI    - ${qt6core_cxxabi_ver}"
-eerror "qt6core GLIBCXX   - ${qt6core_glibcxx_ver}"
+printf "%-20s %-30s %-10s %-s\n" "Library" "Package" "API/ABI" "API/ABI Version"
+printf "%-20s %-30s %-10s %-s\n" "libstdcxx" "sys-devel/gcc" "CXXABI" "${libstdcxx_cxxabi_ver} (GCC slot ${gcc_current_profile_slot})"
+printf "%-20s %-30s %-10s %-s\n" "libstdcxx" "sys-devel/gcc" "GLIBCXX" "${libstdcxx_glibcxx_ver} (GCC slot ${gcc_current_profile_slot})"
+printf "%-20s %-30s %-10s %-s\n" "qt${qt_slot}core" "${qtcore_package}" "CXXABI" "${qtcore_cxxabi_ver}"
+printf "%-20s %-30s %-10s %-s\n" "qt${qt_slot}core" "${qtcore_package}" "GLIBCXX" "${qtcore_glibcxx_ver}"
 eerror
 eerror "See https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html for details"
 eerror
@@ -195,17 +207,18 @@ eerror
 eerror
 eerror "Detected CXXABI missing symbol or CXXABI inconsistency between GCC's libstdc++ and ocio."
 eerror
-eerror "Ensure that the ocio, qt6core, and the currently selected compiler"
+eerror "Ensure that the ocio, qt${qt_slot}core, and the currently selected compiler"
 eerror "are built with the same compiler slot."
 eerror
-eerror "You must decide to pick the GCC slot to rebuild for all 3."
+eerror "You must decide to pick the GCC slot to rebuild for all 3 packages."
 eerror
-eerror "libstdcxx CXXABI  - ${libstdcxx_cxxabi_ver} (GCC slot ${gcc_current_profile_slot})"
-eerror "libstdcxx GLIBCXX - ${libstdcxx_glibcxx_ver} (GCC slot ${gcc_current_profile_slot})"
-eerror "ocio CXXABI    - ${ocio_cxxabi_ver}"
-eerror "ocio GLIBCXX   - ${ocio_glibcxx_ver}"
-eerror "qt6core CXXABI    - ${qt6core_cxxabi_ver}"
-eerror "qt6core GLIBCXX   - ${qt6core_glibcxx_ver}"
+printf "%-20s %-30s %-10s %-s\n" "Library" "Package" "API/ABI" "API/ABI Version"
+printf "%-20s %-30s %-10s %-s\n" "libstdcxx" "sys-devel/gcc" "CXXABI" "${libstdcxx_cxxabi_ver} (GCC slot ${gcc_current_profile_slot})"
+printf "%-20s %-30s %-10s %-s\n" "libstdcxx" "sys-devel/gcc" "GLIBCXX" "${libstdcxx_glibcxx_ver} (GCC slot ${gcc_current_profile_slot})"
+printf "%-20s %-30s %-10s %-s\n" "ocio" "media-libs/opencolorio" "CXXABI" "${ocio_cxxabi_ver}"
+printf "%-20s %-30s %-10s %-s\n" "ocio" "media-libs/opencolorio" "GLIBCXX" "${ocio_glibcxx_ver}"
+printf "%-20s %-30s %-10s %-s\n" "qt${qt_slot}core" "${qtcore_package}" "CXXABI" "${qtcore_cxxabi_ver}"
+printf "%-20s %-30s %-10s %-s\n" "qt${qt_slot}core" "${qtcore_package}" "GLIBCXX" "${qtcore_glibcxx_ver}"
 eerror
 eerror "See https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html for details"
 eerror
@@ -214,19 +227,20 @@ eerror
 
 	if ver_test ${qt6core_cxxabi_ver} -ne ${ocio_cxxabi_ver} ; then
 eerror
-eerror "Detected CXXABI missing symbol or CXXABI inconsistency between qt6core and ocio."
+eerror "Detected CXXABI missing symbol or CXXABI inconsistency between qt${qt_slot}core and ocio."
 eerror
-eerror "Ensure that the ocio, qt6core, and the currently selected compiler"
+eerror "Ensure that the ocio, qt${qt_slot}core, and the currently selected compiler"
 eerror "are built with the same compiler slot."
 eerror
-eerror "You must decide to pick the GCC slot to rebuild for all 3."
+eerror "You must decide to pick the GCC slot to rebuild for all 3 packages."
 eerror
-eerror "libstdcxx CXXABI  - ${libstdcxx_cxxabi_ver} (GCC slot ${gcc_current_profile_slot})"
-eerror "libstdcxx GLIBCXX - ${libstdcxx_glibcxx_ver} (GCC slot ${gcc_current_profile_slot})"
-eerror "qt6core CXXABI    - ${qt6core_cxxabi_ver}"
-eerror "qt6core GLIBCXX   - ${qt6core_glibcxx_ver}"
-eerror "ocio CXXABI    - ${ocio_cxxabi_ver}"
-eerror "ocio GLIBCXX   - ${ocio_glibcxx_ver}"
+printf "%-20s %-30s %-10s %-s\n" "Library" "Package" "API/ABI" "API/ABI Version"
+printf "%-20s %-30s %-10s %-s\n" "libstdcxx" "CXXABI" "${libstdcxx_cxxabi_ver} (GCC slot ${gcc_current_profile_slot})"
+printf "%-20s %-30s %-10s %-s\n" "libstdcxx" "GLIBCXX" "${libstdcxx_glibcxx_ver} (GCC slot ${gcc_current_profile_slot})"
+printf "%-20s %-30s %-10s %-s\n" "ocio" "media-libs/opencolorio" "CXXABI" "${ocio_cxxabi_ver}"
+printf "%-20s %-30s %-10s %-s\n" "ocio" "media-libs/opencolorio" "GLIBCXX" "${ocio_glibcxx_ver}"
+printf "%-20s %-30s %-10s %-s\n" "qt${qt_slot}core" "CXXABI" "${qtcore_package}" "${qtcore_cxxabi_ver}"
+printf "%-20s %-30s %-10s %-s\n" "qt${qt_slot}core" "GLIBCXX" "${qtcore_package}" "${qtcore_glibcxx_ver}"
 eerror
 eerror "See https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html for details"
 eerror
