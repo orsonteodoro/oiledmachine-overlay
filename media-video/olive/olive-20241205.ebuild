@@ -146,24 +146,40 @@ check_cxxabi() {
 		| grep -E -e "GLIBCXX_[0-9]+" \
 		| tail -n 1 \
 		| cut -f 2 -d "_")
-	local qt6core_cxxabi_ver=$(strings "/usr/lib64/libQt6Core.so" \
+	local qt6core_cxxabi_ver=$(strings "/usr/$(get_libdir)/libQt6Core.so" \
 		| grep CXXABI \
 		| sort -V \
 		| grep -E -e "CXXABI_[0-9]+" \
 		| tail -n 1 \
 		| cut -f 2 -d "_")
-	local qt6core_glibcxx_ver=$(strings "/usr/lib64/libQt6Core.so" \
+	local qt6core_glibcxx_ver=$(strings "/usr/$(get_libdir)/libQt6Core.so" \
 		| grep GLIBCXX \
 		| sort -V \
 		| grep -E -e "GLIBCXX_[0-9]+" \
 		| tail -n 1 \
 		| cut -f 2 -d "_")
+
+	local ocio_cxxabi_ver=$(strings "/usr/$(get_libdir)/libOpenColorIO.so" \
+		| grep CXXABI \
+		| sort -V \
+		| grep -E -e "CXXABI_[0-9]+" \
+		| tail -n 1 \
+		| cut -f 2 -d "_")
+	local ocio_glibcxx_ver=$(strings "/usr/$(get_libdir)/libOpenColorIO.so" \
+		| grep GLIBCXX \
+		| sort -V \
+		| grep -E -e "GLIBCXX_[0-9]+" \
+		| tail -n 1 \
+		| cut -f 2 -d "_")
+
 	if ver_test ${libstdcxx_cxxabi_ver} -lt ${qt6core_cxxabi_ver} ; then
 eerror
-eerror "Detected CXXABI missing symbol."
+eerror "Detected CXXABI missing symbol or CXXABI inconsistency."
 eerror
-eerror "Ensure that the qt6core was build with the same gcc version as the"
-eerror "currently selected compiler."
+eerror "Ensure that the qt6core and the currently selected compiler"
+eerror "are built with the same compiler slot."
+eerror
+eerror "You must decide to pick the GCC slot to rebuild for these 2."
 eerror
 eerror "libstdcxx CXXABI  - ${libstdcxx_cxxabi_ver} (GCC slot ${gcc_current_profile_slot})"
 eerror "libstdcxx GLIBCXX - ${libstdcxx_glibcxx_ver} (GCC slot ${gcc_current_profile_slot})"
@@ -174,6 +190,50 @@ eerror "See https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html for details
 eerror
 		die
 	fi
+
+	if ver_test ${libstdcxx_cxxabi_ver} -lt ${ocio_cxxabi_ver} ; then
+eerror
+eerror "Detected CXXABI missing symbol or CXXABI inconsistency between GCC's libstdc++ and ocio."
+eerror
+eerror "Ensure that the ocio, qt6core, and the currently selected compiler"
+eerror "are built with the same compiler slot."
+eerror
+eerror "You must decide to pick the GCC slot to rebuild for all 3."
+eerror
+eerror "libstdcxx CXXABI  - ${libstdcxx_cxxabi_ver} (GCC slot ${gcc_current_profile_slot})"
+eerror "libstdcxx GLIBCXX - ${libstdcxx_glibcxx_ver} (GCC slot ${gcc_current_profile_slot})"
+eerror "ocio CXXABI    - ${ocio_cxxabi_ver}"
+eerror "ocio GLIBCXX   - ${ocio_glibcxx_ver}"
+eerror "qt6core CXXABI    - ${qt6core_cxxabi_ver}"
+eerror "qt6core GLIBCXX   - ${qt6core_glibcxx_ver}"
+eerror
+eerror "See https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html for details"
+eerror
+		die
+	fi
+
+	if ver_test ${qt6core_cxxabi_ver} -ne ${ocio_cxxabi_ver} ; then
+eerror
+eerror "Detected CXXABI missing symbol or CXXABI inconsistency between qt6core and ocio."
+eerror
+eerror "Ensure that the ocio, qt6core, and the currently selected compiler"
+eerror "are built with the same compiler slot."
+eerror
+eerror "You must decide to pick the GCC slot to rebuild for all 3."
+eerror
+eerror "libstdcxx CXXABI  - ${libstdcxx_cxxabi_ver} (GCC slot ${gcc_current_profile_slot})"
+eerror "libstdcxx GLIBCXX - ${libstdcxx_glibcxx_ver} (GCC slot ${gcc_current_profile_slot})"
+eerror "qt6core CXXABI    - ${qt6core_cxxabi_ver}"
+eerror "qt6core GLIBCXX   - ${qt6core_glibcxx_ver}"
+eerror "ocio CXXABI    - ${ocio_cxxabi_ver}"
+eerror "ocio GLIBCXX   - ${ocio_glibcxx_ver}"
+eerror
+eerror "See https://gcc.gnu.org/onlinedocs/libstdc++/manual/abi.html for details"
+eerror
+		die
+	fi
+
+
 }
 
 verify_qt_consistency() {
