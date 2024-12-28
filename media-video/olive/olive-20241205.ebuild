@@ -215,7 +215,6 @@ eerror
 		"/usr/${libdir}/libGL.so;media-libs/libglvnd"
 		"/usr/${libdir}/libxkbcommon.so;x11-libs/libxkbcommon"
 		"/usr/${libdir}/libavcodec.so;media-video/ffmpeg"
-		"/usr/${libdir}/libavutil.so;media-video/ffmpeg"
 		"/usr/${libdir}/libpystring.so;dev-cpp/pystring"
 	)
 	if use qt6 ; then
