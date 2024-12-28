@@ -861,10 +861,6 @@
   <flag name="version3">
     Enable GPL-3 or LGPL-3 libraries
   </flag>
-
-  <flag name="ebuild-revision-N">
-    (FOR INTERNAL USE ONLY) Ebuild fork revision.
-  </flag>
 </use>
 <slots>
   <!--
