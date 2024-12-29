@@ -33,7 +33,7 @@ HOMEPAGE="
 	https://pypi.org/project/asdff
 "
 LICENSE="
-	AGPL-3.0
+	AGPL-3
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
