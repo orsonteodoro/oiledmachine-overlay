@@ -8,7 +8,6 @@ EAPI=8
 
 # TODO package
 # aitemplate
-# asdff
 # controlnet-aux
 # diffusers
 # discord.py
@@ -122,10 +121,10 @@ PYTORCH_DEPENDS="
 		>=dev-python/tomesd-0.1.3[${PYTHON_USEDEP}]
 		>=media-libs/opencv-4.7.0.72[${PYTHON_USEDEP},imgproc,png,python]
 		>=sci-libs/safetensors-0.4.0[${PYTHON_USEDEP}]
-		>=sci-libs/transformers-4.36.1[${PYTHON_USEDEP}]
 	')
 	>=dev-python/pytorch-lightning-2.1.1[${PYTHON_SINGLE_USEDEP}]
 	>=sci-libs/tokenizers-0.15.0[${PYTHON_SINGLE_USEDEP}]
+	>=sci-libs/transformers-4.36.1[${PYTHON_SINGLE_USEDEP}]
 "
 INTERROGATION_DEPENDS="
 	$(python_gen_cond_dep '
