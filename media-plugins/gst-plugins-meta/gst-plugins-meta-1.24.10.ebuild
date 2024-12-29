@@ -60,6 +60,9 @@ REQUIRED_USE="
 		!x264
 		!x265
 	)
+	aac? (
+		patent_status_nonfree
+	)
 	av1? (
 		|| (
 			aom
