@@ -88,9 +88,9 @@ API_DEPENDS="
 		>=dev-python/nest-asyncio-1.5.8[${PYTHON_USEDEP}]
 		>=dev-python/pyngrok-7.0.0[${PYTHON_USEDEP}]
 		>=dev-python/python-multipart-0.0.6[${PYTHON_USEDEP}]
-		>=dev-python/streaming-form-data-1.13.0[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.31.0[${PYTHON_USEDEP}]
 		>=dev-python/rich-13.6.0[${PYTHON_USEDEP}]
+		>=dev-python/streaming-form-data-1.13.0[${PYTHON_USEDEP}]
 		>=dev-python/uvicorn-0.24.0_p1[${PYTHON_USEDEP}]
 		>=dev-python/websockets-12.0[${PYTHON_USEDEP}]
 	')
