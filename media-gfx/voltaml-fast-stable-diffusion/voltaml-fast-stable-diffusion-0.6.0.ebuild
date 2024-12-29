@@ -13,13 +13,13 @@ EAPI=8
 # cpufeature
 # diffusers
 # discord.py
-# fastapi-simple-cachecontrol
 # fastapi-analytics
+# fastapi-simple-cachecontrol
 # flamingo-mini
 # huggingface-hub
 # invisible-watermark
 # k-diffusion
-# OmegaConf
+# omegaconf
 # open-clip-torch
 # pyamdgpuinfo
 # pyngrok
@@ -120,7 +120,7 @@ PYTORCH_DEPENDS="
 		>=dev-python/realesrgan-0.3.0[${PYTHON_USEDEP}]
 		>=dev-python/timm-0.9.10[${PYTHON_USEDEP}]
 		>=dev-python/tomesd-0.1.3[${PYTHON_USEDEP}]
-		>=dev-python/OmegaConf-2.3.0[${PYTHON_USEDEP}]
+		>=dev-python/omegaconf-2.3.0[${PYTHON_USEDEP}]
 		>=dev-python/piexif-1.1.3[${PYTHON_USEDEP}]
 		>=dev-python/pyamdgpuinfo-2.1.6[${PYTHON_USEDEP}]
 		>=media-libs/opencv-4.7.0.72[${PYTHON_USEDEP},imgproc,python,png]
