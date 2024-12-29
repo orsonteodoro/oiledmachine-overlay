@@ -10,7 +10,6 @@ EAPI=8
 # aitemplate
 # asdff
 # controlnet-aux
-# cpufeature
 # diffusers
 # discord.py
 # fastapi-analytics
