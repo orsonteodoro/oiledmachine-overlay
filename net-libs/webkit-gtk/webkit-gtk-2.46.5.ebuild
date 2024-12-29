@@ -710,6 +710,9 @@ RDEPEND_PATENTS="
 	>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},patent_status_new_or_renewed?]
 	!patent_status_nonfree? (
 		!media-plugins/gst-plugins-dash
+		!media-plugins/gst-plugins-faac
+		!media-plugins/gst-plugins-faad
+		!media-plugins/gst-plugins-fdkaac
 		!media-plugins/gst-plugins-hls
 		!media-plugins/gst-plugins-libde265
 		!media-plugins/gst-plugins-openh264
@@ -860,11 +863,6 @@ RDEPEND+="
 		|| (
 			$(gen_depend_llvm)
 		)
-	)
-	!patent_status_nonfree? (
-		!media-plugins/gst-plugins-faac
-		!media-plugins/gst-plugins-faad
-		!media-plugins/gst-plugins-fdkaac
 	)
 	seccomp? (
 		>=sys-apps/bubblewrap-0.3.1
