@@ -148,12 +148,6 @@ IMAGE_RDEPEND="
 "
 MULTIMODAL_RDEPEND="
 	$(python_gen_cond_dep '
-		(
-			>=dev-python/transformers-4.10.0[${PYTHON_USEDEP}]
-			strict? (
-				<dev-python/transformers-4.41.0[${PYTHON_USEDEP}]
-			)
-		)
 		!strict? (
 			dev-python/piq[${PYTHON_USEDEP}]
 		)
@@ -161,6 +155,12 @@ MULTIMODAL_RDEPEND="
 			<dev-python/piq-0.8.1[${PYTHON_USEDEP}]
 		)
 	')
+	(
+		>=dev-python/transformers-4.10.0[${PYTHON_SINGLE_USEDEP}]
+		strict? (
+			<dev-python/transformers-4.41.0[${PYTHON_SINGLE_USEDEP}]
+		)
+	)
 "
 TEXT_RDEPEND="
 	$(python_gen_cond_dep '
@@ -200,13 +200,13 @@ TEXT_RDEPEND="
 				<dev-python/tqdm-4.67.0[${PYTHON_USEDEP}]
 			)
 		)
-		(
-			>dev-python/transformers-4.4.0[${PYTHON_USEDEP}]
-			strict? (
-				<dev-python/transformers-4.41.0[${PYTHON_USEDEP}]
-			)
-		)
 	')
+	(
+		>dev-python/transformers-4.4.0[${PYTHON_SINGLE_USEDEP}]
+		strict? (
+			<dev-python/transformers-4.41.0[${PYTHON_SINGLE_USEDEP}]
+		)
+	)
 "
 VISUAL_RDEPEND="
 	$(python_gen_cond_dep '
