@@ -71,7 +71,7 @@ LICENSE="
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-aitemplate cuda doc rocm onnx pytorch xformers
+aitemplate cuda doc onnx pytorch rocm xformers
 "
 REQUIRED_USE="
 	|| (
