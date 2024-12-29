@@ -115,7 +115,7 @@ PYTORCH_DEPENDS="
 		>=dev-python/OmegaConf-2.3.0[${PYTHON_USEDEP}]
 		>=dev-python/piexif-1.1.3[${PYTHON_USEDEP}]
 		>=dev-python/pyamdgpuinfo-2.1.6[${PYTHON_USEDEP}]
-		>=media-libs/opencv-4.7.0.72[${PYTHON_USEDEP},python]
+		>=media-libs/opencv-4.7.0.72[${PYTHON_USEDEP},imgproc,python,png]
 		>=sci-libs/safetensors-0.4.0[${PYTHON_USEDEP}]
 		>=sci-libs/transformers-4.36.1[${PYTHON_USEDEP}]
 	')
