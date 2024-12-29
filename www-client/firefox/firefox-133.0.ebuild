@@ -438,6 +438,14 @@ PATENT_STATUS=(
 	patent_status_new_or_renewed
 	patent_status_nonfree
 )
+#
+# The aac is not free on the distro because the distro packager is lazy using
+# the unmodified codebase containing an unexpired patented variation (AAC-HE)
+# with undeleted libSDR* folders.  To fix it, the ~wtay/fdk-aac repo (used by
+# Fedora) needs to be used instead so it just contains the expired AAC-LE.
+#
+# The openh264 needs verification.  Marked nonfree as a precaution.
+#
 CODEC_IUSE="
 -aac
 +dav1d
