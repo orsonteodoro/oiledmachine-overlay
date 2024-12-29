@@ -123,11 +123,11 @@ PATENT_RDEPEND="
 		!media-plugins/gst-plugins-x265
 		media-libs/gst-plugins-bad[-vaapi,-vulkan]
 	)
+	virtual/patent-status[patent_status_free_for_codec_developers=,patent_status_free_for_end_users=,patent_status_new_or_renewed=,patent_status_nonfree=]
 "
 
 RDEPEND="
 	${PATENT_RDEPEND}
-	virtual/patent-status[patent_status_free_for_codec_developers=,patent_status_free_for_end_users=,patent_status_new_or_renewed=,patent_status_nonfree=]
 	~media-libs/gstreamer-${PV}:1.0[${MULTILIB_USEDEP}]
 	~media-libs/gst-plugins-base-${PV}:1.0[${MULTILIB_USEDEP},alsa?,ogg?,theora?,vorbis?,X?]
 	~media-libs/gst-plugins-good-${PV}:1.0[${MULTILIB_USEDEP}]
