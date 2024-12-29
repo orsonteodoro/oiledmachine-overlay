@@ -51,7 +51,7 @@ nvcodec ogg openal openh264 opus oss speex png pulseaudio qsv rav1e rtmp sndio
 sndfile svg taglib theora v4l va vaapi vcd vorbis vpx wavpack wildmidi webp X x264
 x265
 "
-REQUIRED_USE="
+PATENT_REQUIRED_USE="
 	!patent_status_nonfree? (
 		!dash
 		!hls
@@ -63,6 +63,30 @@ REQUIRED_USE="
 	aac? (
 		patent_status_nonfree
 	)
+	dash? (
+		patent_status_nonfree
+	)
+	hls? (
+		patent_status_nonfree
+	)
+	openh264? (
+		patent_status_nonfree
+	)
+	va? (
+		patent_status_nonfree
+	)
+	vaapi? (
+		patent_status_nonfree
+	)
+	x264? (
+		patent_status_nonfree
+	)
+	x265? (
+		patent_status_nonfree
+	)
+"
+REQUIRED_USE="
+	${PATENT_REQUIRED_USE}
 	av1? (
 		|| (
 			aom
@@ -72,12 +96,6 @@ REQUIRED_USE="
 			aom
 			dav1d
 		)
-	)
-	dash? (
-		patent_status_nonfree
-	)
-	hls? (
-		patent_status_nonfree
 	)
 	midi? (
 		|| (
@@ -91,23 +109,8 @@ REQUIRED_USE="
 	theora? (
 		ogg
 	)
-	va? (
-		patent_status_nonfree
-	)
-	vaapi? (
-		patent_status_nonfree
-	)
 	vorbis? (
 		ogg
-	)
-	openh264? (
-		patent_status_nonfree
-	)
-	x264? (
-		patent_status_nonfree
-	)
-	x265? (
-		patent_status_nonfree
 	)
 "
 
