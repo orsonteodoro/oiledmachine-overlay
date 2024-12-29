@@ -20,7 +20,7 @@
       Fallback to the slower CPU based reference AV1 codec
     </flag>
     <flag name="aac">
-      AAC audio support
+      AAC audio support via FAAC (encoder) and FAAD (decoder)
     </flag>
     <flag name="cdda">
       CD Digital Audio support
@@ -39,6 +39,9 @@
     </flag>
     <flag name="dvd">
       DVD support
+    </flag>
+    <flag name="fdk">
+      AAC audio support
     </flag>
     <flag name="ffmpeg">
       Decode support for ffmpeg supported formats

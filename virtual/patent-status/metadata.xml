@@ -10,12 +10,6 @@
     <flag name="patent_status_nonfree">
       Allow unexpired patents.
     </flag>
-    <flag name="patent_status_free_for_codec_developers">
-      Allow codecs that do not require fees from codec developers.
-    </flag>
-    <flag name="patent_status_free_for_end_users">
-      Allow codecs that are free for non developers.
-    </flag>
     <flag name="patent_status_new_or_renewed">
       Allow nonfree hardware accelerated codecs released within four years or
       renewed licensed hardware.  Hardware released beyond 4 years may need a

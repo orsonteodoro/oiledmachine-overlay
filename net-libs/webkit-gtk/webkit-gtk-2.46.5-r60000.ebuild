@@ -501,8 +501,6 @@ DEFAULT_GST_PLUGINS="
 # libbacktrace is enabled upstream but disabled for security reasons.
 
 PATENT_STATUS=(
-	patent_status_free_for_codec_developers
-	patent_status_free_for_end_users
 	patent_status_new_or_renewed
 	patent_status_nonfree
 )
@@ -586,7 +584,7 @@ PATENT_REQUIRED_USE="
 		!vaapi
 	)
 	aac? (
-		patent_status_free_for_end_users
+		patent_status_nonfree
 	)
 	dash? (
 		patent_status_nonfree
@@ -765,7 +763,7 @@ RDEPEND+="
 	>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP},X?]
 	sys-kernel/mitigate-id
 	virtual/jpeg:0=[${MULTILIB_USEDEP}]
-	virtual/patent-status[patent_status_free_for_codec_developers=,patent_status_free_for_end_users=,patent_status_new_or_renewed=,patent_status_nonfree=]
+	virtual/patent-status[patent_status_new_or_renewed=,patent_status_nonfree=]
 	avif? (
 		>=media-libs/libavif-0.9.0[${MULTILIB_USEDEP}]
 	)
@@ -866,10 +864,7 @@ RDEPEND+="
 	!patent_status_nonfree? (
 		!media-plugins/gst-plugins-faac
 		!media-plugins/gst-plugins-faad
-	)
-	patent_status_free_for_codec_developers? (
-		!media-plugins/gst-plugins-faac
-		!media-plugins/gst-plugins-faad
+		!media-plugins/gst-plugins-fdkaac
 	)
 	seccomp? (
 		>=sys-apps/bubblewrap-0.3.1
@@ -1189,61 +1184,6 @@ ewarn "to get GPS coordinates with the router's BSSID for non-mobile devices or"
 ewarn "editing the [wifi] section to use another location service."
 ewarn
 		fi
-	fi
-}
-
-# It is not clear about the end scope/extent of non-commericial.
-# It may use runtime codec detection for both gst-ffmpeg and in webkit-gtk.
-verify_codecs() {
-	if \
-		 ! use patent_status_nonfree \
-		|| use patent_status_free_for_codec_developers \
-		|| use patent_status_free_for_end_users \
-	; then
-		:
-	else
-		return
-	fi
-	local use_flags=(
-		"amr"
-		"cuda"
-		"fdk"
-		"openh264"
-		"x264"
-		"x265"
-	)
-	if use patent_status_nonfree ; then
-		use_flags+=(
-			"aac"
-		)
-	fi
-	local flag
-	for flag in ${use_flags[@]} ; do
-# We check again because FFmpeg is not required, but user may set USE flags
-# outside of package.
-		if has_version "media-video/ffmpeg[${flag}]" ; then
-eerror
-eerror "Detected ${flag} USE enabled for media-video/ffmpeg.  This flag must be"
-eerror "disabled to disable proprietary codecs."
-eerror
-eerror "Required changes:"
-eerror
-eerror    ">=dev-libs/openssl-3"
-eerror    "media-video/ffmpeg[-amr,-cuda,-fdk,-openh264,openssl,-x264,-x265]"
-eerror
-eerror "or"
-eerror
-eerror    "media-video/ffmpeg[-amr,-cuda,-fdk,-openh264,-openssl,-x264,-x265]"
-eerror
-			die
-		fi
-	done
-	if has_version "media-video/ffmpeg" ; then
-ewarn
-ewarn "Use a corrected local copy or the FFmpeg ebuild from the"
-ewarn "oiledmachine-overlay to eliminate the possiblity of nonfree codepaths"
-ewarn "and to ensure the package is LGPL/GPL."
-ewarn
 	fi
 }
 
@@ -2075,7 +2015,6 @@ einfo "echo \"net-libs/webkit-gtk -gstreamer\" >> /etc/portage/profile/package.u
 einfo
 
 	check_page_size
-	verify_codecs
 	check_security_expire
 	check_ulimit
 }

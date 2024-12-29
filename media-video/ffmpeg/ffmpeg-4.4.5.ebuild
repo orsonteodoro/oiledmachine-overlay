@@ -167,8 +167,6 @@ MULTILIB_WRAPPED_HEADERS=(
 N_SAMPLES=1
 NV_CODEC_HEADERS_PV="9.1.23.1"
 PATENT_STATUS=(
-	patent_status_free_for_codec_developers
-	patent_status_free_for_end_users
 	patent_status_new_or_renewed
 	patent_status_nonfree
 )
@@ -550,13 +548,11 @@ REQUIRED_USE_LICENSES="
 PATENT_REQUIRED_USE="
 	!patent_status_nonfree? (
 		!amr
+		!fdk
 		!kvazaar
 		!openh264
 		!x264
 		!x265
-	)
-	!patent_status_free_for_codec_developers? (
-		!fdk
 	)
 	amr? (
 		patent_status_nonfree
@@ -710,7 +706,7 @@ LICENSE_RDEPEND="
 # Update both !openssl and openssl USE flags.
 RDEPEND+="
 	${LICENSE_RDEPEND}
-	virtual/patent-status[patent_status_free_for_codec_developers=,patent_status_free_for_end_users=,patent_status_new_or_renewed=,patent_status_nonfree=]
+	virtual/patent-status[patent_status_new_or_renewed=,patent_status_nonfree=]
 	!openssl? (
 		gnutls? (
 			>=net-libs/gnutls-2.12.23-r6:=[${MULTILIB_USEDEP}]
@@ -1829,14 +1825,6 @@ eerror
 	if ! use patent_status_nonfree ; then
 		myconf+=(
 			--non-free-patented-codecs=deny
-		)
-	elif use patent_status_free_for_end_users ; then
-		myconf+=(
-			--non-free-patented-codecs=user
-		)
-	elif use patent_status_free_for_codec_developers ; then
-		myconf+=(
-			--non-free-patented-codecs=codec-developer
 		)
 	fi
 

@@ -435,8 +435,6 @@ LICENSE+="
 
 # (unforced) -hwaccel, pgo, x11 + wayland are defaults in -bin browser
 PATENT_STATUS=(
-	patent_status_free_for_codec_developers
-	patent_status_free_for_end_users
 	patent_status_new_or_renewed
 	patent_status_nonfree
 )
@@ -475,14 +473,11 @@ PATENT_REQUIRED_USE="
 		!openh264
 	)
 	aac? (
-		patent_status_free_for_end_users
+		patent_status_nonfree
 	)
 	openh264? (
 		patent_status_nonfree
 		system-ffmpeg
-	)
-	patent_status_free_for_codec_developers? (
-		!aac
 	)
 "
 REQUIRED_USE="
@@ -585,40 +580,10 @@ gen_ffmpeg_royalty_free_depends() {
 		echo "
 			(
 				!<dev-libs/openssl-3
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,dav1d?,-kvazaar,-openh264,openssl,opus?,-patent_status_nonfree,vaapi?,vpx?,-x264,-x265]
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,-patent_status_nonfree,vaapi?,vpx?,-x264,-x265]
 			)
 			(
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,dav1d?,-kvazaar,-openh264,-openssl,opus?,-patent_status_nonfree,vaapi?,vpx?,-x264,-x265]
-			)
-		"
-	done
-}
-
-gen_ffmpeg_without_codec_developer_tax_depends() {
-	local s
-	for s in ${FFMPEG_COMPAT} ; do
-		echo "
-			(
-				!<dev-libs/openssl-3
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,patent_status_free_for_codec_developers,vaapi?,vpx?,-x264,-x265]
-			)
-			(
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,patent_status_free_for_codec_developers,vaapi?,vpx?,-x264,-x265]
-			)
-		"
-	done
-}
-
-gen_ffmpeg_free_for_end_users_depends() {
-	local s
-	for s in ${FFMPEG_COMPAT} ; do
-		echo "
-			(
-				!<dev-libs/openssl-3
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,dav1d?,-kvazaar,-openh264,openssl,opus?,patent_status_free_for_end_users,vaapi?,vpx?,-x264,-x265]
-			)
-			(
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,dav1d?,-kvazaar,-openh264,-openssl,opus?,patent_status_free_for_end_users,vaapi?,vpx?,-x264,-x265]
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,-patent_status_nonfree,vaapi?,vpx?,-x264,-x265]
 			)
 		"
 	done
@@ -642,20 +607,6 @@ PATENT_CDEPENDS="
 		)
 		vaapi? (
 			media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_new_or_renewed?]
-		)
-	)
-	patent_status_free_for_codec_developers? (
-		system-ffmpeg? (
-			|| (
-				$(gen_ffmpeg_without_codec_developer_tax_depends)
-			)
-		)
-	)
-	patent_status_free_for_end_users? (
-		system-ffmpeg? (
-			|| (
-				$(gen_ffmpeg_free_for_end_users_depends)
-			)
 		)
 	)
 "
@@ -783,7 +734,7 @@ RDEPEND+="
 	${CDEPEND}
 	${UDEV_RDEPEND}
 	sys-kernel/mitigate-id
-	virtual/patent-status[patent_status_free_for_codec_developers=,patent_status_free_for_end_users=,patent_status_new_or_renewed=,patent_status_nonfree=]
+	virtual/patent-status[patent_status_new_or_renewed=,patent_status_nonfree=]
 	cups? (
 		net-print/cups[${MULTILIB_USEDEP}]
 	)
@@ -1185,14 +1136,6 @@ eerror
 }
 
 verify_codecs() {
-	if ! use patent_status_nonfree \
-		|| use patent_status_nonfree \
-		|| use patent_status_free_for_end_users \
-	; then
-		:
-	else
-		return
-	fi
 	if has_version "media-video/ffmpeg" ; then
 ewarn
 ewarn "Use a corrected local copy or the FFmpeg ebuild from the"

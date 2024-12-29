@@ -165,8 +165,6 @@ VULNERABILITIES_FIXED=(
 NABIS=0 # Global variable
 NODE_VERSION=20
 PATENT_STATUS=(
-	patent_status_free_for_codec_developers
-	patent_status_free_for_end_users
 	patent_status_new_or_renewed
 	patent_status_nonfree
 	patent_status_sponsored_ncp_nb
@@ -1165,13 +1163,7 @@ COMMON_DEPEND="
 			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
 		)
 		!patent_status_nonfree? (
-			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,-patent_status_nonfree,vaapi?,vorbis?,vpx?,-x264,-x265]
-		)
-		patent_status_free_for_codec_developers? (
-			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,patent_status_free_for_codec_developers,vaapi?,vorbis?,vpx?,-x264,-x265]
-		)
-		patent_status_free_for_end_users? (
-			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,-cuda,encode?,-fdk,-kvazaar,-openh264,opus?,patent_status_free_for_end_users,vaapi?,vorbis?,vpx?,-x264,-x265]
+			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,encode?,-fdk,-kvazaar,-openh264,opus?,-patent_status_nonfree,vaapi?,vorbis?,vpx?,-x264,-x265]
 		)
 		|| (
 			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-samba]
@@ -1200,7 +1192,7 @@ RDEPEND+="
 	${CLANG_RDEPEND}
 	sys-kernel/mitigate-id
 	virtual/ttf-fonts
-	virtual/patent-status[patent_status_free_for_codec_developers=,patent_status_free_for_end_users=,patent_status_new_or_renewed=,patent_status_nonfree=,patent_status_sponsored_ncp_nb=]
+	virtual/patent-status[patent_status_new_or_renewed=,patent_status_nonfree=,patent_status_sponsored_ncp_nb=]
 	!headless? (
 		qt5? (
 			>=dev-qt/qtgui-${QT5_PV}:5[wayland?,X?]
@@ -3918,17 +3910,6 @@ ewarn "The new V8 Sandbox [for the JavaScript engine] (2024) will be automagic o
 	myconf_gn+=" media_use_openh264=$(usex patent_status_nonfree $(usex openh264 true false) false)"
 	myconf_gn+=" rtc_include_opus=$(usex opus true false)"
 	myconf_gn+=" rtc_use_h264=$(usex patent_status_nonfree true false)"
-	if ! use system-ffmpeg ; then
-	# The internal/vendored ffmpeg enables non-free codecs.
-		local _media_use_ffmpeg="true"
-		if \
-			     use patent_status_free_for_codec_developers \
-			||   use patent_status_free_for_end_users \
-			|| ! use patent_status_nonfree ; then
-			_media_use_ffmpeg="false"
-		fi
-		myconf_gn+=" media_use_ffmpeg=${_media_use_ffmpeg}"
-	fi
 
 	#
 	# Set up Google API keys, see http://www.chromium.org/developers/how-tos/api-keys .

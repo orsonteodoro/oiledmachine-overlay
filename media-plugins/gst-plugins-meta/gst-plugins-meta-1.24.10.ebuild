@@ -49,7 +49,7 @@ SLOT="1.0"
 IUSE="
 ${PATENT_STATUS[@]}
 ${VIDEO_CARDS[@]}
-a52 aac alsa aom av1 cdda dash dav1d dts dv dvb dvd ffmpeg flac fluidsynth gme
+a52 aac alsa aom av1 cdda dash dav1d dts dv dvb dvd fdk ffmpeg flac fluidsynth gme
 gsm hls http jack jpeg jpeg2k lame libass libvisual midi mp3 modplug mpeg
 nvcodec ogg openal openh264 opus oss speex png pulseaudio qsv rav1e rtmp sndio
 sndfile svg taglib theora v4l va vaapi vcd vorbis vpx wavpack wildmidi webp X x264
@@ -57,7 +57,9 @@ x265
 "
 PATENT_REQUIRED_USE="
 	!patent_status_nonfree? (
+		!aac
 		!dash
+		!fdk
 		!hls
 		!va
 		!vaapi
@@ -68,6 +70,9 @@ PATENT_REQUIRED_USE="
 		patent_status_nonfree
 	)
 	dash? (
+		patent_status_nonfree
+	)
+	fdk? (
 		patent_status_nonfree
 	)
 	hls? (
@@ -121,13 +126,16 @@ REQUIRED_USE="
 PATENT_RDEPEND="
 	!patent_status_nonfree? (
 		!media-plugins/gst-plugins-dash
+		!media-plugins/gst-plugins-faac
+		!media-plugins/gst-plugins-faad
+		!media-plugins/gst-plugins-fdkaac
 		!media-plugins/gst-plugins-hls
 		!media-plugins/gst-plugins-vaapi
 		!media-plugins/gst-plugins-x264
 		!media-plugins/gst-plugins-x265
 		media-libs/gst-plugins-bad[-vaapi,-vulkan]
 	)
-	virtual/patent-status[patent_status_free_for_codec_developers=,patent_status_free_for_end_users=,patent_status_new_or_renewed=,patent_status_nonfree=]
+	virtual/patent-status[patent_status_new_or_renewed=,patent_status_nonfree=]
 "
 
 RDEPEND="
@@ -139,6 +147,7 @@ RDEPEND="
 		~media-plugins/gst-plugins-a52dec-${PV}:1.0[${MULTILIB_USEDEP}]
         )
 	aac? (
+		~media-plugins/gst-plugins-faac-${PV}:1.0[${MULTILIB_USEDEP}]
 		~media-plugins/gst-plugins-faad-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
 	aom? (
@@ -172,6 +181,9 @@ RDEPEND="
 		~media-plugins/gst-plugins-dvdread-${PV}:1.0[${MULTILIB_USEDEP}]
 		~media-plugins/gst-plugins-mpeg2dec-${PV}:1.0[${MULTILIB_USEDEP}]
 		~media-plugins/gst-plugins-resindvd-${PV}:1.0[${MULTILIB_USEDEP}]
+	)
+	fdk? (
+		~media-plugins/gst-plugins-fdkaac-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
 	ffmpeg? (
 		~media-plugins/gst-plugins-libav-${PV}:1.0[${MULTILIB_USEDEP}]
