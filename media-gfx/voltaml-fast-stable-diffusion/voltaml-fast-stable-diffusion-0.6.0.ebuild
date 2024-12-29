@@ -114,16 +114,16 @@ PYTORCH_DEPENDS="
 		>=dev-python/hypertile-0.1.5_p9999[${PYTHON_USEDEP}]
 		>=dev-python/invisible-watermark-0.2.0[${PYTHON_USEDEP}]
 		>=dev-python/k-diffusion-0.1.1[${PYTHON_USEDEP}]
-		>=dev-python/scipy-1.10.1[${PYTHON_USEDEP}]
 		>=dev-python/ftfy-6.1.1[${PYTHON_USEDEP}]
 		>=dev-python/gpustat-1.1.1[${PYTHON_USEDEP}]
-		>=dev-python/realesrgan-0.3.0[${PYTHON_USEDEP}]
-		>=dev-python/timm-0.9.10[${PYTHON_USEDEP}]
-		>=dev-python/tomesd-0.1.3[${PYTHON_USEDEP}]
 		>=dev-python/omegaconf-2.3.0[${PYTHON_USEDEP}]
 		>=dev-python/piexif-1.1.3[${PYTHON_USEDEP}]
 		>=dev-python/pyamdgpuinfo-2.1.6[${PYTHON_USEDEP}]
-		>=media-libs/opencv-4.7.0.72[${PYTHON_USEDEP},imgproc,python,png]
+		>=dev-python/realesrgan-0.3.0[${PYTHON_USEDEP}]
+		>=dev-python/scipy-1.10.1[${PYTHON_USEDEP}]
+		>=dev-python/timm-0.9.10[${PYTHON_USEDEP}]
+		>=dev-python/tomesd-0.1.3[${PYTHON_USEDEP}]
+		>=media-libs/opencv-4.7.0.72[${PYTHON_USEDEP},imgproc,png,python]
 		>=sci-libs/safetensors-0.4.0[${PYTHON_USEDEP}]
 		>=sci-libs/transformers-4.36.1[${PYTHON_USEDEP}]
 	')
@@ -132,15 +132,15 @@ PYTORCH_DEPENDS="
 "
 INTERROGATION_DEPENDS="
 	$(python_gen_cond_dep '
-		>=dev-python/open-clip-torch-2.23.0[${PYTHON_USEDEP}]
 		>=dev-python/flamingo-mini-0.0.2_p9999[${PYTHON_USEDEP}]
+		>=dev-python/open-clip-torch-2.23.0[${PYTHON_USEDEP}]
 	')
 "
 gen_pytorch_rdepend() {
 	local row
 	for row in ${TORCH_VERSIONS[@]} ; do
-		local torch_pv="${row%%;*}"
-		local torchvision_pv="${row##*;}"
+		local torch_pv="${row%;*}"
+		local torchvision_pv="${row#*;}"
 		echo "
 			(
 				~sci-libs/pytorch-${torch_pv}[${PYTHON_SINGLE_USEDEP},cuda?,rocm?]
