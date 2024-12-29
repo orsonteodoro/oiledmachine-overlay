@@ -156,6 +156,7 @@ RDEPEND+="
 	${INTERROGATION_DEPENDS}
 	acct-group/voltaml-fast-stable-diffusion
 	acct-user/voltaml-fast-stable-diffusion
+	x11-misc/xdg-utils
 	aitemplate? (
 		$(python_gen_cond_dep '
 			dev-python/aitemplate[${PYTHON_USEDEP}]
