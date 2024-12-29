@@ -92,10 +92,12 @@ DEPEND+="
 "
 BDEPEND+="
 	dev? (
+		$(python_gen_any_dep '
+			>=dev-vcs/pre-commit-3.5.0[${PYTHON_SINGLE_USEDEP}]
+		')
 		>=dev-python/build-1.2.0[${PYTHON_USEDEP}]
 		>=dev-python/cibuildwheel-2.22.0[${PYTHON_USEDEP}]
 		>=dev-util/bump-my-version-0.26.1[${PYTHON_USEDEP}]
-		>=dev-vcs/pre-commit-3.5.0[${PYTHON_USEDEP}]
 	)
 	doc? (
 		>=dev-python/furo-2024.8.6[${PYTHON_USEDEP}]

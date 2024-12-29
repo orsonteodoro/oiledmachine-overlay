@@ -6,6 +6,7 @@ EAPI=8
 
 # TODO package:
 # editor
+# pre-commit-hooks
 
 DISTUTILS_USE_PEP517="poetry"
 PYTHON_COMPAT=( "python3_"{10..12} )
