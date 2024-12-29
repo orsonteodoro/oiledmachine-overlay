@@ -21,7 +21,6 @@ EAPI=8
 # pyngrok
 # streaming-form-data
 # tomesd
-# xformers
 
 MY_PN="voltaML-fast-stable-diffusion"
 
