@@ -551,6 +551,16 @@ REQUIRED_USE_LICENSES="
 "
 
 PATENT_REQUIRED_USE="
+	!patent_status_nonfree? (
+		!amr
+		!kvazaar
+		!openh264
+		!x264
+		!x265
+	)
+	!patent_status_free_for_codec_developers? (
+		!fdk
+	)
 	amr? (
 		patent_status_nonfree
 	)
