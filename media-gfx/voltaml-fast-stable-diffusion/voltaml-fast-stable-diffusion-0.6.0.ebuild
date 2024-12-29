@@ -276,6 +276,8 @@ EOF
 		fperms 0775 "/opt/${PN}/data/${d}"
 	done
 
+	lcnr_install_files
+
 	rm -rf "frontend/node_modules" || die
 	rm -rf "scripts/start-windows.bat"
 	rm -rf "scripts/test-docker-gpu-availability.sh"
@@ -316,7 +318,6 @@ EOF
 	done
 	IFS=$' \t\n'
 
-	lcnr_install_files
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
