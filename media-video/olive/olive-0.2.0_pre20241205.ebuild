@@ -81,9 +81,9 @@ RESTRICT="
 DEPEND="
 	>=media-libs/opencolorio-2.1.1:=
 	>=media-libs/openimageio-2.1.12:=[png?]
-	>=media-video/ffmpeg-3.0.0:0[jpeg2k?,mp3?,opus?,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?]
 	>=media-libs/portaudio-19.06.0[alsa?,jack?,oss?]
 	>=media-libs/openexr-2.3.0:=
+	>=media-video/ffmpeg-3.0.0:0[jpeg2k?,mp3?,opus?,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?]
 	media-libs/opentimelineio:=
 	virtual/opengl
 	qt5? (
@@ -217,6 +217,11 @@ eerror
 		"/usr/${libdir}/libavcodec.so;media-video/ffmpeg"
 		"/usr/${libdir}/libpystring.so;dev-cpp/pystring"
 	)
+	if has_version "media-libs/mesa[vulkan]" || has_version "media-video/ffmpeg[glslang]" ; then
+		linked_libs+=(
+			"/usr/$(libdir)/libglslang.so;media-libs/glslang"
+		)
+	fi
 	if use qt6 ; then
 		linked_libs+=(
 			"/usr/${libdir}/libQt${qt_slot}Concurrent.so;dev-qt/qtbase:6"
