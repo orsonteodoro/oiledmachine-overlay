@@ -639,7 +639,11 @@ ebuild_revision_1
 #
 PATENT_USE_FLAGS="
 	!patent_status_nonfree? (
-		system-ffmpeg
+		!bindist
+		!system-openh264
+	)
+	bindist? (
+		patent_status_nonfree
 	)
 	openh264? (
 		!system-openh264? (
@@ -651,12 +655,6 @@ PATENT_USE_FLAGS="
 		system-openh264? (
 			patent_status_nonfree
 		)
-	)
-	patent_status_free_for_codec_developers? (
-		system-ffmpeg
-	)
-	patent_status_free_for_end_users? (
-		system-ffmpeg
 	)
 	vaapi-hevc? (
 		patent_status_new_or_renewed
