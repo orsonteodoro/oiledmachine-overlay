@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/voltaML/voltaML-fast-stable-diffusion/issues</bugs-to>
+    <remote-id type="github">voltaML/voltaML-fast-stable-diffusion</remote-id>
+  </upstream>
+  <use>
+    <flag name="aitemplate">
+      Add support for the AITemplate backend
+    </flag>
+    <flag name="cuda">
+      Add support for NVIDIA® GPUs
+    </flag>
+    <flag name="onnx">
+      Add support for the ONNX backend (EXPERIMENTAL)
+    </flag>
+    <flag name="pytorch">
+      Add support for the PyTorch backend
+    </flag>
+    <flag name="rocm">
+      Add support AMD GPUs
+    </flag>
+  </use>
+</pkgmetadata>
