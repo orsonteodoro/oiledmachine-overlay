@@ -10,7 +10,6 @@ EAPI=8
 # aitemplate
 # controlnet-aux
 # diffusers
-# discord.py
 # fastapi-analytics
 # fastapi-simple-cachecontrol
 # huggingface-hub
