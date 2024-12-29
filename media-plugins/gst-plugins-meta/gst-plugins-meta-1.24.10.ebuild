@@ -16,6 +16,12 @@ EAPI=7
 # There is no current way to disable individual codecs like mesa for va,
 # vaapi, vulkan.  This is why they are restricted.
 
+PATENT_STATUS=(
+	patent_status_free_for_codec_developers
+	patent_status_free_for_end_users
+	patent_status_new_or_renewed
+	patent_status_nonfree
+)
 VIDEO_CARDS=(
 	video_cards_amdgpu
 	video_cards_r600
@@ -31,12 +37,6 @@ KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~m68k ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86
 ~amd64-linux ~arm64-macos ~x86-linux
 "
-PATENT_STATUS=(
-	patent_status_free_for_codec_developers
-	patent_status_free_for_end_users
-	patent_status_new_or_renewed
-	patent_status_nonfree
-)
 
 DESCRIPTION="A metapackage to pull in gst plugins for apps"
 HOMEPAGE="https://gstreamer.freedesktop.org/"
