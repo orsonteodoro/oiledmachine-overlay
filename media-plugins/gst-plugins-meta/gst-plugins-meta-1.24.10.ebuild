@@ -21,8 +21,6 @@ EAPI=7
 # have H.264, H.265.
 
 PATENT_STATUS=(
-	patent_status_free_for_codec_developers
-	patent_status_free_for_end_users
 	patent_status_new_or_renewed
 	patent_status_nonfree
 )
@@ -85,7 +83,7 @@ PATENT_REQUIRED_USE="
 		patent_status_nonfree
 	)
 	vaapi? (
-		patent_status_nonfree
+		patent_status_new_or_renewed
 	)
 	x264? (
 		patent_status_nonfree
