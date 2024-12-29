@@ -288,11 +288,9 @@ EOF
 		"bot"
 		"core"
 		"data"
-		"docs"
 		"frontend"
 		"requirements"
 		"scripts"
-		"static"
 		"README.md"
 		"example.env"
 		"bot.py"
@@ -304,8 +302,12 @@ EOF
 		doins "${p}"
 	done
 
-	docinto "readmes"
-	dodoc "README.md"
+	if use doc ; then
+		insinto "/usr/${PN}/doc"
+		doins -r "static"
+		doins "README.md"
+		doins "docs"
+	fi
 
 	IFS=$'\n'
 	for x in $(find "${ED}") ; do
