@@ -6,15 +6,15 @@ EAPI=8
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..12} ) # Upstream listed up to 3.8
+PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 pypi
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
-	EGIT_REPO_URI="https://github.com/xinntao/Real-ESRGAN.git"
-	FALLBACK_COMMIT="fa4c8a03ae3dbc9ea6ed471a6ab5da94ac15c2ea" # Sep 22, 2022
+	EGIT_REPO_URI="https://github.com/TencentARC/GFPGAN.git"
+	FALLBACK_COMMIT="a934f413e487d6cf86dd24598a3d6f2dc3c246d5" # Jan 25, 2024
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
@@ -22,19 +22,18 @@ else
 	KEYWORDS="~amd64"
 	S="${WORKDIR}/${PN}-${PV}"
 	SRC_URI="
-https://github.com/xinntao/Real-ESRGAN/archive/refs/tags/v${PV}.tar.gz
+https://github.com/TencentARC/GFPGAN/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 	"
 fi
 
-DESCRIPTION="Real-ESRGAN aims at developing practical algorithms for general image or video restoration"
+DESCRIPTION="GFPGAN aims at developing Practical Algorithms for Real-world Face Restoration"
 HOMEPAGE="
-	https://github.com/xinntao/Real-ESRGAN
-	https://pypi.org/project/realesrgan
+	https://github.com/TencentARC/GFPGAN
+	https://pypi.org/project/gfpgan
 "
 LICENSE="
 	Apache-2.0
-	BSD
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
@@ -43,21 +42,28 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/basicsr-1.4.2[${PYTHON_USEDEP}]
 		>=dev-python/facexlib-0.2.5[${PYTHON_USEDEP}]
-		>=dev-python/gfpgan-1.3.5[${PYTHON_USEDEP}]
+		dev-python/lmdb[${PYTHON_USEDEP}]
 		dev-python/numpy[${PYTHON_USEDEP}]
+		dev-python/pyyaml[${PYTHON_USEDEP}]
+		dev-python/scipy[${PYTHON_USEDEP}]
 		dev-python/tqdm[${PYTHON_USEDEP}]
+		dev-python/yapf[${PYTHON_USEDEP}]
 		media-libs/opencv[${PYTHON_USEDEP},python]
-		virtual/pillow[${PYTHON_USEDEP}]
 	')
 	>=sci-libs/pytorch-1.7[${PYTHON_SINGLE_USEDEP}]
+	>=sci-visualization/tensorboard-9999[${PYTHON_SINGLE_USEDEP}]
 	sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	$(python_gen_cond_dep '
+		dev-python/cython[${PYTHON_USEDEP}]
+		dev-python/numpy[${PYTHON_USEDEP}]
+	')
 "
-DOCS=( "README.md" "README_CN.md" )
+DOCS=( "README.md" )
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
