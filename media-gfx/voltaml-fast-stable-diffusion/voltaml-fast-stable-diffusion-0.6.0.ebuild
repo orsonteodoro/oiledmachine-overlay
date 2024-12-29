@@ -60,7 +60,7 @@ https://github.com/voltaML/voltaML-fast-stable-diffusion/archive/refs/tags/v${PV
 	"
 fi
 
-DESCRIPTION="Beautiful and Easy to use Stable Diffusion WebUI"
+DESCRIPTION="A beautiful and easy to use Stable Diffusion web user interface"
 HOMEPAGE="
 	https://voltaml.github.io/voltaML-fast-stable-diffusion/
 	https://github.com/voltaML/voltaML-fast-stable-diffusion
