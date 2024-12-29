@@ -70,8 +70,8 @@ RDEPEND+="
 		dev-python/scipy[${PYTHON_USEDEP}]
 	)
 	scikit? (
-		sci-libs/scikit-image[${PYTHON_USEDEP}]
-		sci-libs/scikit-learn[${PYTHON_USEDEP}]
+		dev-python/scikit-image[${PYTHON_USEDEP}]
+		dev-python/scikit-learn[${PYTHON_USEDEP}]
 	)
 	youtube-dl? (
 		net-misc/yt-dlp
