@@ -304,9 +304,8 @@ EOF
 
 	if use doc ; then
 		insinto "/usr/${PN}/doc"
-		doins -r "static"
+		doins -r "docs" "static"
 		doins "README.md"
-		doins "docs"
 	fi
 
 	IFS=$'\n'
