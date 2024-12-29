@@ -41,7 +41,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" dev"
+IUSE+=" "
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/basicsr-1.4.2[${PYTHON_USEDEP}]

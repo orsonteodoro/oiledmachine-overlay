@@ -74,6 +74,7 @@ BDEPEND+="
 		)
 		doc? (
 			dev-python/sphinx[${PYTHON_USEDEP}]
+			dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}]
 			dev-python/recommonmark[${PYTHON_USEDEP}]
 			dev-python/sphinx-markdown-tables[${PYTHON_USEDEP}]
 		)
