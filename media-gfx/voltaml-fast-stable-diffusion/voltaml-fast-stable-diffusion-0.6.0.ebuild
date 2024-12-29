@@ -19,7 +19,6 @@ EAPI=8
 # open-clip-torch
 # pyamdgpuinfo
 # pyngrok
-# realesrgan
 # streaming-form-data
 # tomesd
 # xformers
