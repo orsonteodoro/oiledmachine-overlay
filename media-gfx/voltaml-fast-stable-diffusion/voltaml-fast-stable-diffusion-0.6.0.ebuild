@@ -32,6 +32,14 @@ MY_PN="voltaML-fast-stable-diffusion"
 
 NODE_VERSION="18"
 PYTHON_COMPAT=( "python3_"{10..12} )
+TORCH_VERSIONS=(
+	# pytorch = torchaudio; torchvideo
+	"2.1.2;0.16.2"
+	"2.2.2;0.17.2"
+	"2.3.1;0.18.1"
+	"2.4.1;0.19.1"
+	"2.5.1;0.20.1"
+)
 
 inherit lcnr python-single-r1 pypi yarn
 
@@ -128,6 +136,20 @@ INTERROGATION_DEPENDS="
 		>=dev-python/flamingo-mini-0.0.2_p9999[${PYTHON_USEDEP}]
 	')
 "
+gen_pytorch_rdepend() {
+	local row
+	for row in ${TORCH_VERSIONS[@]} ; do
+		local torch_pv="${row%%;*}"
+		local torchvision_pv="${row##*;}"
+		echo "
+			(
+				~sci-libs/pytorch-${torch_pv}[${PYTHON_SINGLE_USEDEP},cuda?,rocm?]
+				~sci-libs/torchaudio-${torch_pv}[${PYTHON_SINGLE_USEDEP}]
+				~sci-libs/torchvision-${torchvision_pv}[${PYTHON_SINGLE_USEDEP}]
+			)
+		"
+	done
+}
 RDEPEND+="
 	${API_DEPENDS}
 	${BOT_DEPENDS}
@@ -155,9 +177,12 @@ RDEPEND+="
 			dev-python/python-dotenv[${PYTHON_USEDEP}]
 			dev-python/requests[${PYTHON_USEDEP}]
 		')
-		>=sci-libs/pytorch-2.1.2[${PYTHON_SINGLE_USEDEP},cuda?,rocm?]
-		sci-libs/torchaudio[${PYTHON_SINGLE_USEDEP}]
-		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
+		|| (
+			$(gen_pytorch_rdepend)
+		)
+		sci-libs/pytorch:=
+		sci-libs/torchaudio:=
+		sci-libs/torchvision:=
 	)
 	xformers? (
 		$(python_gen_cond_dep '
