@@ -16,6 +16,10 @@ EAPI=7
 # There is no current way to disable individual codecs like mesa for va,
 # vaapi, vulkan.  This is why they are restricted.
 
+# gst-plugins-good/sys/v4l2/meson.build also does not restrict codecs and could
+# be restricted like mesa's config flag but there are some webcams that do not
+# have H.264, H.265.
+
 PATENT_STATUS=(
 	patent_status_free_for_codec_developers
 	patent_status_free_for_end_users
