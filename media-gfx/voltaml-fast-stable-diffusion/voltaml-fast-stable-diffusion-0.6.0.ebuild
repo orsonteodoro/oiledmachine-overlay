@@ -155,12 +155,9 @@ RDEPEND+="
 			dev-python/python-dotenv[${PYTHON_USEDEP}]
 			dev-python/requests[${PYTHON_USEDEP}]
 		')
-		sci-libs/pytorch[${PYTHON_SINGLE_USEDEP},rocm?]
+		>=sci-libs/pytorch-2.1.2[${PYTHON_SINGLE_USEDEP},cuda?,rocm?]
 		sci-libs/torchaudio[${PYTHON_SINGLE_USEDEP}]
 		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
-		cuda? (
-			>=sci-libs/pytorch-2.1.2[${PYTHON_SINGLE_USEDEP},cuda]
-		)
 	)
 	xformers? (
 		$(python_gen_cond_dep '
