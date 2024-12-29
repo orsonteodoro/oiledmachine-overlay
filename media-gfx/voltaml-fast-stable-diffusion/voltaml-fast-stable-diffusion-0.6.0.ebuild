@@ -243,7 +243,7 @@ cat <<EOF > "${ED}/usr/bin/voltaml-fsd"
 #!/bin/bash
 xdg-open "localhost:5003"
 EOF
-	fperms "/usr/bin/voltaml-fsd"
+	fperms 0755 "/usr/bin/voltaml-fsd"
 
 einfo "The server start script is called voltaml-fsd-server"
 	# Server
@@ -252,7 +252,7 @@ cat <<EOF > "${ED}/usr/bin/voltaml-fsd-server"
 cd "/opt/${PN}"
 ./scripts/start.sh
 EOF
-	fperms "/usr/bin/voltaml-fsd-server"
+	fperms 0755 "/usr/bin/voltaml-fsd-server"
 
 	local dirs=(
 		"aitemplate"
