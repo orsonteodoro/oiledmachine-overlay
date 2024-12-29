@@ -15,7 +15,6 @@ EAPI=8
 # discord.py
 # fastapi-analytics
 # fastapi-simple-cachecontrol
-# flamingo-mini
 # huggingface-hub
 # invisible-watermark
 # k-diffusion
