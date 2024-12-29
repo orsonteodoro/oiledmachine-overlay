@@ -18,7 +18,6 @@ EAPI=8
 # huggingface-hub
 # invisible-watermark
 # k-diffusion
-# omegaconf
 # open-clip-torch
 # pyamdgpuinfo
 # pyngrok
