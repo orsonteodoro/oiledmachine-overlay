@@ -83,13 +83,13 @@ API_DEPENDS="
 		>=dev-python/streaming-form-data-1.13.0[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.31.0[${PYTHON_USEDEP}]
 		>=dev-python/rich-13.6.0[${PYTHON_USEDEP}]
-		>=dev-python/uvicorn-0.24.0.post1[${PYTHON_USEDEP}]
+		>=dev-python/uvicorn-0.24.0_p1[${PYTHON_USEDEP}]
 		>=dev-python/websockets-12.0[${PYTHON_USEDEP}]
 	')
 "
 BOT_DEPENDS="
 	$(python_gen_cond_dep '
-		>=dev-python/discord.py-2.3.0[${PYTHON_USEDEP}]
+		>=dev-python/discord-py-2.3.0[${PYTHON_USEDEP}]
 	')
 "
 PYTORCH_DEPENDS="
@@ -129,6 +129,10 @@ INTERROGATION_DEPENDS="
 	')
 "
 RDEPEND+="
+	${API_DEPENDS}
+	${BOT_DEPENDS}
+	${PYTORCH_DEPENDS}
+	${INTERROGATION_DEPENDS}
 	acct-group/voltaml-fast-stable-diffusion
 	acct-user/voltaml-fast-stable-diffusion
 	aitemplate? (
