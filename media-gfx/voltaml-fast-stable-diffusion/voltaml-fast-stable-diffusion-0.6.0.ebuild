@@ -61,6 +61,7 @@ REQUIRED_USE="
 		onnx
 	)
 	aitemplate? (
+		pytorch
 		|| (
 			cuda
 			rocm
@@ -138,6 +139,7 @@ gen_pytorch_rdepend() {
 	done
 }
 # The CUDA and ROCm requirements are limited by PyTorch and AITemplate.
+# The Docker images for PyTorch and AITemplate have overlap
 RDEPEND+="
 	${API_DEPENDS}
 	${BOT_DEPENDS}
