@@ -9,18 +9,8 @@ PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 pypi
 
-if [[ "${PV}" =~ "9999" ]] ; then
-	EGIT_BRANCH="main"
-	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
-	EGIT_REPO_URI="https://github.com/tom-draper/api-analytics.git"
-	FALLBACK_COMMIT="a934f413e487d6cf86dd24598a3d6f2dc3c246d5" # Jan 25, 2024
-	IUSE+=" fallback-commit"
-	S="${WORKDIR}/${P}"
-	inherit git-r3
-else
-	KEYWORDS="~amd64"
-	S="${WORKDIR}/${PN}-${PV}"
-fi
+KEYWORDS="~amd64"
+S="${WORKDIR}/${PN}-${PV}"
 
 DESCRIPTION="Lightweight monitoring and analytics for API frameworks"
 HOMEPAGE="
@@ -59,13 +49,7 @@ BDEPEND+="
 DOCS=( "README.md" )
 
 src_unpack() {
-	if [[ "${PV}" =~ "9999" ]] ; then
-		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
-		git-r3_fetch
-		git-r3_checkout
-	else
-		unpack ${A}
-	fi
+	unpack ${A}
 }
 
 src_install() {
