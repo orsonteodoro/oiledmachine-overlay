@@ -60,6 +60,12 @@ REQUIRED_USE="
 		pytorch
 		onnx
 	)
+	aitemplate? (
+		|| (
+			cuda
+			rocm
+		)
+	)
 "
 API_DEPENDS="
 	$(python_gen_cond_dep '
@@ -141,7 +147,7 @@ RDEPEND+="
 	x11-misc/xdg-utils
 	aitemplate? (
 		$(python_gen_cond_dep '
-			dev-python/AITemplate[${PYTHON_USEDEP}]
+			dev-python/AITemplate[${PYTHON_USEDEP},cuda?,rocm?]
 		')
 	)
 	cuda? (

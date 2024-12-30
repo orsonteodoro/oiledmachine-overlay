@@ -64,6 +64,12 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" cuda dev doc rocm"
+REQUIRED_USE="
+	|| (
+		cuda
+		rocm
+	)
+"
 # The dependencies for GPUs are old.  Upstream uses CUDA 11.6.2 and ROCm 5.2.3
 gen_rocm_depends() {
 	local pv
