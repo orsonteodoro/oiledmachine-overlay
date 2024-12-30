@@ -5,7 +5,6 @@
 EAPI=8
 
 # TODO package
-# ivy
 # kornia_moons
 # kornia_rs
 # sphinx-autodoc-defaultargs
@@ -66,16 +65,14 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
+# ivy-9999 is forced for license compatibility.  Upstream listed >= 1.0.0.1
 BDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/setuptools-61.2[${PYTHON_USEDEP}]
 	')
 	dev? (
-		>=dev-vcs/pre-commit-2[${PYTHON_SINGLE_USEDEP}]
-		dev-python/onnxruntime[${PYTHON_SINGLE_USEDEP}]
 		$(python_gen_cond_dep '
 			<dev-python/numpy-2[${PYTHON_USEDEP}]
-			>=dev-python/ivy-1.0.0.0[${PYTHON_USEDEP}]
 			>=dev-python/pytest-8.3.3[${PYTHON_USEDEP}]
 			>=dev-python/setuptools-61.2[${PYTHON_USEDEP}]
 			dev-python/accelerate[${PYTHON_USEDEP}]
@@ -89,11 +86,12 @@ BDEPEND+="
 			sci-libs/transformers[${PYTHON_USEDEP}]
 			virtual/pillow[${PYTHON_USEDEP}]
 		')
+		>=dev-python/ivy-9999[${PYTHON_SINGLE_USEDEP}]
+		>=dev-vcs/pre-commit-2[${PYTHON_SINGLE_USEDEP}]
+		dev-python/onnxruntime[${PYTHON_SINGLE_USEDEP}]
 	)
 	doc? (
-		dev-python/onnxruntime[${PYTHON_SINGLE_USEDEP}]
 		$(python_gen_cond_dep '
-			>=dev-python/ivy-1.0.0.0[${PYTHON_USEDEP}]
 			>=dev-python/pyyaml-5.1[${PYTHON_USEDEP}]
 			>=dev-python/sphinx-copybutton-0.3[${PYTHON_USEDEP}]
 			dev-python/furo[${PYTHON_USEDEP}]
@@ -110,6 +108,8 @@ BDEPEND+="
 			dev-python/sphinxcontrib-youtube[${PYTHON_USEDEP}]
 			media-libs/opencv[${PYTHON_USEDEP},python]
 		')
+		>=dev-python/ivy-9999[${PYTHON_SINGLE_USEDEP}]
+		dev-python/onnxruntime[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DOCS=( "CHANGELOG.md" "README.md" "README_zh-CN.md" )
