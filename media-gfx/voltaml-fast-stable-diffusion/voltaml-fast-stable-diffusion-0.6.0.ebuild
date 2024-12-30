@@ -13,7 +13,6 @@ EAPI=8
 # fastapi-simple-cachecontrol
 # k-diffusion
 # open-clip-torch
-# pyamdgpuinfo
 # pyngrok
 # streaming-form-data
 # tomesd
