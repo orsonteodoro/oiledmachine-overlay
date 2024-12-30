@@ -40,8 +40,6 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/basicsr-1.4.2[${PYTHON_USEDEP}]
-		>=dev-python/facexlib-0.2.5[${PYTHON_USEDEP}]
 		dev-python/lmdb[${PYTHON_USEDEP}]
 		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
@@ -50,6 +48,8 @@ RDEPEND+="
 		dev-python/yapf[${PYTHON_USEDEP}]
 		media-libs/opencv[${PYTHON_USEDEP},python]
 	')
+	>=dev-python/basicsr-1.4.2[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/facexlib-0.2.5[${PYTHON_SINGLE_USEDEP}]
 	>=sci-libs/pytorch-1.7[${PYTHON_SINGLE_USEDEP}]
 	>=sci-visualization/tensorboard-9999[${PYTHON_SINGLE_USEDEP}]
 	sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
