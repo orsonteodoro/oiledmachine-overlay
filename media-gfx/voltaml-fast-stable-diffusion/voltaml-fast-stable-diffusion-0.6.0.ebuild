@@ -152,7 +152,7 @@ RDEPEND+="
 		$(python_gen_cond_dep '
 			sci-libs/onnx[${PYTHON_USEDEP}]
 		')
-		sci-libs/onnxruntime[${PYTHON_SINGLE_USEDEP},cuda?,rocm?]
+		sci-libs/onnxruntime[${PYTHON_SINGLE_USEDEP},cuda?,python,rocm?]
 	)
 	pytorch? (
 		$(python_gen_cond_dep '

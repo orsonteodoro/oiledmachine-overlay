@@ -49,7 +49,7 @@ RDEPEND+="
 	')
 	>=sci-libs/pytorch-1.8.1[${PYTHON_SINGLE_USEDEP}]
 	onnxruntime? (
-		sci-libs/onnxruntime[${PYTHON_SINGLE_USEDEP}]
+		sci-libs/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
 	)
 	protobuf? (
 		dev-libs/protobuf:=
