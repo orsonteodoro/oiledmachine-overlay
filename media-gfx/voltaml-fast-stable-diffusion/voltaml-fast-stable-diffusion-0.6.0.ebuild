@@ -9,7 +9,6 @@ EAPI=8
 # TODO package
 # aitemplate
 # fastapi-analytics
-# fastapi-simple-cachecontrol
 # k-diffusion
 # pyngrok
 # tomesd
