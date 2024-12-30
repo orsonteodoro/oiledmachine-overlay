@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/crowsonkb/k-diffusion/issues</bugs-to>
+    <remote-id type="github">crowsonkb/k-diffusion</remote-id>
+    <remote-id type="pypi">k-diffusion</remote-id>
+  </upstream>
+</pkgmetadata>
