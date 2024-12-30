@@ -12,7 +12,6 @@ EAPI=8
 # fastapi-analytics
 # fastapi-simple-cachecontrol
 # k-diffusion
-# open-clip-torch
 # pyngrok
 # streaming-form-data
 # tomesd
@@ -122,8 +121,8 @@ PYTORCH_DEPENDS="
 INTERROGATION_DEPENDS="
 	$(python_gen_cond_dep '
 		>=dev-python/flamingo-mini-0.0.2_p9999[${PYTHON_USEDEP}]
-		>=dev-python/open-clip-torch-2.23.0[${PYTHON_USEDEP}]
 	')
+	>=dev-python/open-clip-torch-2.23.0[${PYTHON_SINGLE_USEDEP}]
 "
 gen_pytorch_rdepend() {
 	local row
