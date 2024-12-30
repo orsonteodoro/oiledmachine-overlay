@@ -10,6 +10,10 @@ CUTLASS_COMMIT="5d7be1ac1b0dae1e9b8ccbe98d494ccaa437ddc0"
 DISTUTILS_USE_PEP517="setuptools"
 PICOJSON_COMMIT="111c9be5188f7350c2eac9ddaedd8cca3d7bf394"
 PYTHON_COMPAT=( "python3_"{10..12} )
+inherit hip-versions
+ROCM_VERSIONS=(
+	"${HIP_5_6_VERSION}" # Same same major.minor version used in Composable Kernel, similar range to PyTorch 2.1, 2.2
+)
 
 inherit dep-prepare distutils-r1
 
@@ -59,11 +63,39 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" dev doc"
+IUSE+=" cuda dev doc rocm"
+# The dependencies for GPUs are old.  Upstream uses CUDA 11.6.2 and ROCm 5.2.3
+gen_rocm_depends() {
+	local pv
+	for pv in ${ROCM_VERSIONS} ; do
+		local s="${pv%.*}"
+		echo "
+			(
+				~dev-build/rocm-cmake-${pv}:${s}
+				~dev-libs/rocm-device-libs-${pv}:${s}
+				~dev-util/hip-${pv}:${s}[numa,rocm]
+				~sys-devel/llvm-roc-${pv}:${s}[llvm_targets_AMDGPU,llvm_targets_X86,runtime]
+			)
+		"
+	done
+}
 RDEPEND+="
 	dev-python/jinja2[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/sympy[${PYTHON_USEDEP}]
+	cuda? (
+		=dev-util/nvidia-cuda-toolkit-11.8*
+		dev-util/nvidia-cuda-toolkit:=
+	)
+	rocm? (
+		|| (
+			$(gen_rocm_depends)
+		)
+		dev-build/rocm-cmake:=
+		dev-libs/rocm-device-libs:=
+		dev-util/hip:=
+		sys-devel/llvm-roc:=
+	)
 "
 DEPEND+="
 	${RDEPEND}
