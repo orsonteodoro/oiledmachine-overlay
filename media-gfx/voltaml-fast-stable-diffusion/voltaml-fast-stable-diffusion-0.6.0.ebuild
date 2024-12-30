@@ -61,7 +61,6 @@ REQUIRED_USE="
 		onnx
 	)
 	aitemplate? (
-		pytorch
 		|| (
 			cuda
 			rocm
@@ -140,6 +139,7 @@ gen_pytorch_rdepend() {
 }
 # The CUDA and ROCm requirements are limited by PyTorch and AITemplate.
 # The Docker images for PyTorch and AITemplate have overlap
+# There is no conditional around `import torch`
 RDEPEND+="
 	${API_DEPENDS}
 	${BOT_DEPENDS}
@@ -148,6 +148,17 @@ RDEPEND+="
 	acct-group/voltaml-fast-stable-diffusion
 	acct-user/voltaml-fast-stable-diffusion
 	x11-misc/xdg-utils
+	$(python_gen_cond_dep '
+		dev-python/packaging[${PYTHON_USEDEP}]
+		dev-python/python-dotenv[${PYTHON_USEDEP}]
+		dev-python/requests[${PYTHON_USEDEP}]
+	')
+	|| (
+		$(gen_pytorch_rdepend)
+	)
+	sci-libs/pytorch:=
+	sci-libs/torchaudio:=
+	sci-libs/torchvision:=
 	aitemplate? (
 		$(python_gen_cond_dep '
 			dev-python/AITemplate[${PYTHON_USEDEP},cuda?,rocm?]
@@ -158,19 +169,6 @@ RDEPEND+="
 			sci-libs/onnx[${PYTHON_USEDEP}]
 		')
 		sci-libs/onnxruntime[${PYTHON_SINGLE_USEDEP},cuda?,python,rocm?]
-	)
-	pytorch? (
-		$(python_gen_cond_dep '
-			dev-python/packaging[${PYTHON_USEDEP}]
-			dev-python/python-dotenv[${PYTHON_USEDEP}]
-			dev-python/requests[${PYTHON_USEDEP}]
-		')
-		|| (
-			$(gen_pytorch_rdepend)
-		)
-		sci-libs/pytorch:=
-		sci-libs/torchaudio:=
-		sci-libs/torchvision:=
 	)
 	xformers? (
 		$(python_gen_cond_dep '
