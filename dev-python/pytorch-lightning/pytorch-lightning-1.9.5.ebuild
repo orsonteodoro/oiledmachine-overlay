@@ -320,7 +320,6 @@ PYTORCH_TEST_BDEPEND="
 		!strict? (
 			dev-python/fastapi[${PYTHON_USEDEP}]
 			dev-python/onnx[${PYTHON_USEDEP}]
-			sci-libs/onnxruntime[${PYTHON_USEDEP},python]
 			>=dev-python/protobuf-3.20.2:0/3.21[${PYTHON_USEDEP}]
 			dev-python/psutil[${PYTHON_USEDEP}]
 			dev-python/uvicorn[${PYTHON_USEDEP}]
@@ -328,7 +327,6 @@ PYTORCH_TEST_BDEPEND="
 		strict? (
 			<dev-python/fastapi-0.87.0[${PYTHON_USEDEP}]
 			<dev-python/onnx-1.14.0[${PYTHON_USEDEP}]
-			<sci-libs/onnxruntime-1.14.0[${PYTHON_USEDEP},python]
 			<dev-python/protobuf-3.20.2:0/3.21[${PYTHON_USEDEP}]
 			<dev-python/psutil-5.9.5[${PYTHON_USEDEP}]
 			<dev-python/uvicorn-0.19.1[${PYTHON_USEDEP}]
@@ -341,6 +339,12 @@ PYTORCH_TEST_BDEPEND="
 		>=dev-python/pytest-rerunfailures-10.3[${PYTHON_USEDEP}]
 	')
 	>=dev-vcs/pre-commit-2.20.0[${PYTHON_SINGLE_USEDEP}]
+	!strict? (
+		sci-libs/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
+	)
+	strict? (
+		<sci-libs/onnxruntime-1.14.0[${PYTHON_USEDEP},python]
+	)
 "
 BDEPEND="
 	$(python_gen_cond_dep '

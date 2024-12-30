@@ -354,6 +354,7 @@ BDEPEND_MODEL_HUB_TESTS_PERFORMANCE_TESTS="
 BDEPEND_LAYER_TESTS="
 	${BDEPEND_TEST_CONSTRAINTS}
 	$(python_gen_any_dep '
+		sci-libs/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
 		sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
 		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
 		sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
@@ -363,7 +364,6 @@ BDEPEND_LAYER_TESTS="
 	' python3_10)
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/pytest[${PYTHON_USEDEP}]
-	sci-libs/onnxruntime[${PYTHON_USEDEP},python]
 	dev-python/requests[${PYTHON_USEDEP}]
 	kernel_linux? (
 		amd64? (

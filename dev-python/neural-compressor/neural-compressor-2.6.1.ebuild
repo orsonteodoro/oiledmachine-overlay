@@ -68,12 +68,6 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
-	ort? (
-		>=sci-libs/transformers-4.34.0[${PYTHON_SINGLE_USEDEP}]
-	)
-	pytorch? (
-		>=sci-libs/pytorch-2.2.1[${PYTHON_SINGLE_USEDEP}]
-	)
 	$(python_gen_cond_dep '
 		>=dev-python/deprecated-1.2.13[${PYTHON_USEDEP}]
 		<dev-python/numpy-2.0[${PYTHON_USEDEP}]
@@ -88,15 +82,11 @@ RDEPEND+="
 		dev-python/requests[${PYTHON_USEDEP}]
 		dev-python/schema[${PYTHON_USEDEP}]
 		dev-python/scikit-learn[${PYTHON_USEDEP}]
-		ipex? (
-			>sci-libs/intel-extension-for-pytorch-1.10[${PYTHON_USEDEP}]
-		)
 		mxnet? (
 			>=sci-libs/mxnet-1.9.1[${PYTHON_USEDEP}]
 		)
 		ort? (
 			>=sci-libs/onnx-1.15.0[${PYTHON_USEDEP}]
-			>=sci-libs/onnxruntime-1.17.1[${PYTHON_USEDEP},extensions,python,training-ort]
 			dev-python/numpy[${PYTHON_USEDEP}]
 			dev-python/py-cpuinfo[${PYTHON_USEDEP}]
 			dev-python/psutil[${PYTHON_USEDEP}]
@@ -119,7 +109,16 @@ RDEPEND+="
 			dev-python/pyyaml[${PYTHON_USEDEP}]
 		)
 	')
-
+	ipex? (
+		>sci-libs/intel-extension-for-pytorch-1.10[${PYTHON_SINGLE_USEDEP}]
+	)
+	ort? (
+		>=sci-libs/onnxruntime-1.17.1[${PYTHON_SINGLE_USEDEP},extensions,python,training-ort]
+		>=sci-libs/transformers-4.34.0[${PYTHON_SINGLE_USEDEP}]
+	)
+	pytorch? (
+		>=sci-libs/pytorch-2.2.1[${PYTHON_SINGLE_USEDEP}]
+	)
 "
 DEPEND+="
 	${RDEPEND}
@@ -140,10 +139,7 @@ BDEPEND+="
 			>=dev-python/accelerate-0.21.0[${PYTHON_USEDEP}]
 			>=sci-libs/dynast-1.6.0_rc1[${PYTHON_USEDEP}]
 			>=sci-libs/intel-tensorflow-2.12.0[${PYTHON_USEDEP}]
-			>=sci-libs/intel-extension-for-pytorch-1.10[${PYTHON_USEDEP}]
 			>=sci-libs/onnx-1.15.0[${PYTHON_USEDEP}]
-			>=sci-libs/onnxruntime-1.17.1[${PYTHON_USEDEP},python]
-			>=sci-libs/torchvision-0.17.1[${PYTHON_USEDEP}]
 			sci-libs/auto-round[${PYTHON_USEDEP}]
 			sci-libs/horovod[${PYTHON_USEDEP}]
 			sci-libs/mxnet-mkl[${PYTHON_USEDEP}]
@@ -152,7 +148,6 @@ BDEPEND+="
 			sci-libs/tensorflow-addons[${PYTHON_USEDEP}]
 			sci-libs/tf2onnx[${PYTHON_USEDEP}]
 			sci-libs/tf-slim[${PYTHON_USEDEP}]
-			sci-libs/torch[${PYTHON_USEDEP}]
 			dev-python/xgboost[${PYTHON_USEDEP}]
 
 			dev-python/isort[${PYTHON_USEDEP}]
@@ -167,4 +162,10 @@ BDEPEND+="
 			dev-python/onnxruntime-extensions[${PYTHON_USEDEP}]
 		)
 	' python3_10)
+	test? (
+		>=sci-libs/intel-extension-for-pytorch-1.10[${PYTHON_SINGLE_USEDEP}]
+		>=sci-libs/onnxruntime-1.17.1[${PYTHON_SINGLE_USEDEP},python]
+		>=sci-libs/torchvision-0.17.1[${PYTHON_SINGLE_USEDEP}]
+		sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+	)
 "

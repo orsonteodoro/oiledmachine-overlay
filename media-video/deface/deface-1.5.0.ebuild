@@ -53,12 +53,16 @@ RDEPEND+="
 	dev-python/scikit-image[${PYTHON_USEDEP}]
 	media-libs/opencv[${PYTHON_USEDEP},contribdnn,ffmpeg?,gstreamer?,gtk3?,imgproc,python,qt5?,qt6?,wayland?]
 	cuda? (
+		$(python_gen_any_dep '
+			sci-libs/onnxruntime[${PYTHON_SINGLE_USEDEP},cuda]
+		')
 		sci-libs/onnx[${PYTHON_USEDEP}]
-		sci-libs/onnxruntime[${PYTHON_USEDEP},cuda]
 	)
 	openvino? (
+		$(python_gen_any_dep '
+			sci-libs/onnxruntime[${PYTHON_SINGLE_USEDEP},openvino]
+		')
 		sci-libs/onnx[${PYTHON_USEDEP}]
-		sci-libs/onnxruntime[${PYTHON_USEDEP},openvino]
 	)
 "
 DEPEND+="
