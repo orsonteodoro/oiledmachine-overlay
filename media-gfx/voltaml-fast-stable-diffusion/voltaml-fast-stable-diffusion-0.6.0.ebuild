@@ -102,7 +102,6 @@ PYTORCH_DEPENDS="
 		>=dev-python/diffusers-0.24.0[${PYTHON_USEDEP}]
 		>=dev-python/huggingface_hub-0.19.4[${PYTHON_USEDEP}]
 		>=dev-python/hypertile-0.1.5_p9999[${PYTHON_USEDEP}]
-		>=dev-python/invisible-watermark-0.2.0[${PYTHON_USEDEP}]
 		>=dev-python/k-diffusion-0.1.1[${PYTHON_USEDEP}]
 		>=dev-python/ftfy-6.1.1[${PYTHON_USEDEP}]
 		>=dev-python/gpustat-1.1.1[${PYTHON_USEDEP}]
@@ -116,6 +115,7 @@ PYTORCH_DEPENDS="
 		>=media-libs/opencv-4.7.0.72[${PYTHON_USEDEP},imgproc,png,python]
 		>=sci-libs/safetensors-0.4.0[${PYTHON_USEDEP}]
 	')
+	>=dev-python/invisible-watermark-0.2.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/pytorch-lightning-2.1.1[${PYTHON_SINGLE_USEDEP}]
 	>=sci-libs/tokenizers-0.15.0[${PYTHON_SINGLE_USEDEP}]
 	>=sci-libs/transformers-4.36.1[${PYTHON_SINGLE_USEDEP}]

@@ -7,7 +7,6 @@ EAPI=8
 # TODO package:
 # compel
 # hf-doc-builder
-# invisible-watermark
 # k-diffusion
 # note_seq		*
 # peft
@@ -110,6 +109,7 @@ BDEPEND+="
 	)
 	test? (
 		$(python_gen_any_dep '
+			>=dev-python/invisible-watermark-0.2.0[${PYTHON_SINGLE_USEDEP}]
 			sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
 		')
 		(
@@ -118,7 +118,6 @@ BDEPEND+="
 		)
 		<dev-python/GitPython-3.1.19[${PYTHON_USEDEP}]
 		>=dev-python/compel-0.1.8[${PYTHON_USEDEP}]
-		>=dev-python/invisible-watermark-0.2.0[${PYTHON_USEDEP}]
 		>=dev-python/k-diffusion-0.0.12[${PYTHON_USEDEP}]
 		>=dev-python/requests-mock-1.10.0[${PYTHON_USEDEP}]
 		>=dev-python/transformers-4.25.1[${PYTHON_USEDEP}]
