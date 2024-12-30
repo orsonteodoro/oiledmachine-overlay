@@ -8,7 +8,6 @@ EAPI=8
 
 # TODO package
 # aitemplate
-# fastapi-analytics
 # k-diffusion
 
 MY_PN="voltaML-fast-stable-diffusion"
