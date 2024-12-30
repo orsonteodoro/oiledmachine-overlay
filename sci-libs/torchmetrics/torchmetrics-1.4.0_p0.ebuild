@@ -9,7 +9,6 @@ EAPI=8
 # cachier
 # dev-python/ipadic
 # dython
-# huggingface-hub
 # fairlearn
 # fast-bss-eval
 # faster-coco-eval
@@ -538,10 +537,10 @@ TEXT_TEST_BDEPEND="
 			)
 		)
 		!strict? (
-			sci-libs/huggingface-hub[${PYTHON_USEDEP}]
+			sci-libs/huggingface_hub[${PYTHON_USEDEP}]
 		)
 		strict? (
-			<sci-libs/huggingface-hub-0.23[${PYTHON_USEDEP}]
+			<sci-libs/huggingface_hub-0.23[${PYTHON_USEDEP}]
 		)
 	')
 "

@@ -56,7 +56,7 @@ BDEPEND+="
 		>=dev-python/pytest-cov-3.0.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-timeout-2.1.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-depends-1.0.1[${PYTHON_USEDEP}]
-		>=dev-python/huggingface-hub-0.25.0[${PYTHON_USEDEP}]
+		>=dev-python/huggingface_hub-0.25.0[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "README.md" )

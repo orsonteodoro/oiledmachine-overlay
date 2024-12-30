@@ -12,7 +12,6 @@ EAPI=8
 # diffusers
 # fastapi-analytics
 # fastapi-simple-cachecontrol
-# huggingface-hub
 # invisible-watermark
 # k-diffusion
 # open-clip-torch
@@ -103,7 +102,7 @@ PYTORCH_DEPENDS="
 		>=dev-python/cpufeature-0.2.1[${PYTHON_USEDEP}]
 		>=dev-python/dataclasses-json-0.6.1[${PYTHON_USEDEP}]
 		>=dev-python/diffusers-0.24.0[${PYTHON_USEDEP}]
-		>=dev-python/huggingface-hub-0.19.4[${PYTHON_USEDEP}]
+		>=dev-python/huggingface_hub-0.19.4[${PYTHON_USEDEP}]
 		>=dev-python/hypertile-0.1.5_p9999[${PYTHON_USEDEP}]
 		>=dev-python/invisible-watermark-0.2.0[${PYTHON_USEDEP}]
 		>=dev-python/k-diffusion-0.1.1[${PYTHON_USEDEP}]
