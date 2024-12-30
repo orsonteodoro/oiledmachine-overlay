@@ -13,7 +13,6 @@ EAPI=8
 # fastapi-simple-cachecontrol
 # k-diffusion
 # pyngrok
-# streaming-form-data
 # tomesd
 
 MY_PN="voltaML-fast-stable-diffusion"
