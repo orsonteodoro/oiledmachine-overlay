@@ -137,6 +137,7 @@ gen_pytorch_rdepend() {
 		"
 	done
 }
+# The CUDA and ROCm requirements are limited by PyTorch and AITemplate.
 RDEPEND+="
 	${API_DEPENDS}
 	${BOT_DEPENDS}
@@ -149,9 +150,6 @@ RDEPEND+="
 		$(python_gen_cond_dep '
 			dev-python/AITemplate[${PYTHON_USEDEP},cuda?,rocm?]
 		')
-	)
-	cuda? (
-		>=dev-util/nvidia-cuda-toolkit-12.1
 	)
 	onnx? (
 		$(python_gen_cond_dep '
