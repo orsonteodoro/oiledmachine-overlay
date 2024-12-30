@@ -5,8 +5,8 @@
 EAPI=8
 
 # TODO package
-# kornia_moons
-# kornia_rs
+# kornia-moons
+# kornia-rs
 # sphinx-autodoc-defaultargs
 # sphinxcontrib-gtagjs
 
@@ -51,7 +51,7 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/kornia_rs-0.1.0[${PYTHON_USEDEP}]
+		>=dev-python/kornia-rs-0.1.0[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
 		x? (
 			dev-python/accelerate[${PYTHON_USEDEP}]
@@ -95,7 +95,7 @@ BDEPEND+="
 			>=dev-python/pyyaml-5.1[${PYTHON_USEDEP}]
 			>=dev-python/sphinx-copybutton-0.3[${PYTHON_USEDEP}]
 			dev-python/furo[${PYTHON_USEDEP}]
-			dev-python/kornia_moons[${PYTHON_USEDEP}]
+			dev-python/kornia-moons[${PYTHON_USEDEP}]
 			dev-python/matplotlib[${PYTHON_USEDEP}]
 			dev-python/onnx[${PYTHON_USEDEP}]
 			dev-python/sphinx[${PYTHON_USEDEP}]

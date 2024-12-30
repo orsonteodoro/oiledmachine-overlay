@@ -7,7 +7,6 @@ EAPI=8
 # U22
 
 # TODO package
-# aitemplate
 # k-diffusion
 
 MY_PN="voltaML-fast-stable-diffusion"
@@ -142,7 +141,7 @@ RDEPEND+="
 	x11-misc/xdg-utils
 	aitemplate? (
 		$(python_gen_cond_dep '
-			dev-python/aitemplate[${PYTHON_USEDEP}]
+			dev-python/AITemplate[${PYTHON_USEDEP}]
 		')
 	)
 	cuda? (
