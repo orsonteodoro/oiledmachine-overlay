@@ -9,8 +9,6 @@ EAPI=8
 # clip-anytorch
 # dctorch
 # kornia
-# torchsde
-# wandb
 
 MY_PV="0.1.1.post1"
 
@@ -59,7 +57,6 @@ RDEPEND+="
 		dev-python/kornia[${PYTHON_USEDEP}]
 		dev-python/scikit-image[${PYTHON_USEDEP}]
 		dev-python/scipy[${PYTHON_USEDEP}]
-		dev-python/torchdiffeq[${PYTHON_USEDEP}]
 		dev-python/torchsde[${PYTHON_USEDEP}]
 		dev-python/tqdm[${PYTHON_USEDEP}]
 		dev-python/wandb[${PYTHON_USEDEP}]
@@ -67,6 +64,7 @@ RDEPEND+="
 		virtual/pillow[${PYTHON_USEDEP}]
 	')
 	>=sci-libs/pytorch-2.0[${PYTHON_SINGLE_USEDEP}]
+	dev-python/torchdiffeq[${PYTHON_SINGLE_USEDEP}]
 	sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
