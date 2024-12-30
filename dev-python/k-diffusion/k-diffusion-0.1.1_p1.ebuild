@@ -6,7 +6,6 @@ EAPI=8
 
 # TODO package
 # clip-anytorch
-# dctorch
 # kornia
 
 MY_PV="0.1.1.post1"
