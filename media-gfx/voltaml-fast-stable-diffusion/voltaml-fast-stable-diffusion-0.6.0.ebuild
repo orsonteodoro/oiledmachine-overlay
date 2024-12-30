@@ -8,7 +8,6 @@ EAPI=8
 
 # TODO package
 # aitemplate
-# controlnet-aux
 # fastapi-analytics
 # fastapi-simple-cachecontrol
 # k-diffusion
