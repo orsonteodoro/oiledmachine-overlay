@@ -10,7 +10,6 @@ EAPI=8
 # aitemplate
 # fastapi-analytics
 # k-diffusion
-# pyngrok
 # tomesd
 
 MY_PN="voltaML-fast-stable-diffusion"
