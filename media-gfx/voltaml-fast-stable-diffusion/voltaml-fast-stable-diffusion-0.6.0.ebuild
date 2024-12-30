@@ -11,7 +11,6 @@ EAPI=8
 # controlnet-aux
 # fastapi-analytics
 # fastapi-simple-cachecontrol
-# invisible-watermark
 # k-diffusion
 # open-clip-torch
 # pyamdgpuinfo
