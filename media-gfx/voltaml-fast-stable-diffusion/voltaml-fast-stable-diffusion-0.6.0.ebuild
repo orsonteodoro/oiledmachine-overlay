@@ -9,7 +9,6 @@ EAPI=8
 # TODO package
 # aitemplate
 # controlnet-aux
-# diffusers
 # fastapi-analytics
 # fastapi-simple-cachecontrol
 # invisible-watermark
