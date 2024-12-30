@@ -155,9 +155,9 @@ MULTIMODAL_RDEPEND="
 		)
 	')
 	(
-		>=dev-python/transformers-4.10.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-libs/transformers-4.10.0[${PYTHON_SINGLE_USEDEP}]
 		strict? (
-			<dev-python/transformers-4.41.0[${PYTHON_SINGLE_USEDEP}]
+			<sci-libs/transformers-4.41.0[${PYTHON_SINGLE_USEDEP}]
 		)
 	)
 "
@@ -201,9 +201,9 @@ TEXT_RDEPEND="
 		)
 	')
 	(
-		>dev-python/transformers-4.4.0[${PYTHON_SINGLE_USEDEP}]
+		>sci-libs/transformers-4.4.0[${PYTHON_SINGLE_USEDEP}]
 		strict? (
-			<dev-python/transformers-4.41.0[${PYTHON_SINGLE_USEDEP}]
+			<sci-libs/transformers-4.41.0[${PYTHON_SINGLE_USEDEP}]
 		)
 	)
 "
