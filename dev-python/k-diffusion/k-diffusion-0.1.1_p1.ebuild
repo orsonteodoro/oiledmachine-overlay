@@ -9,7 +9,6 @@ EAPI=8
 # clip-anytorch
 # dctorch
 # kornia
-# torchdiffeq
 # torchsde
 # wandb
 
