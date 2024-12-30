@@ -41,6 +41,7 @@ LICENSE="
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev doc test"
+# tensorboard based on author-date:2022-08-29 and RELEASE.md
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.17[${PYTHON_USEDEP}]
@@ -57,7 +58,7 @@ RDEPEND+="
 		virtual/pillow[${PYTHON_USEDEP}]
 	')
 	>=sci-libs/pytorch-1.7[${PYTHON_SINGLE_USEDEP}]
-	>=sci-visualization/tensorboard-9999[${PYTHON_SINGLE_USEDEP}]
+	>=sci-visualization/tensorboard-2.10.0[${PYTHON_SINGLE_USEDEP}]
 	dev-python/torchvision[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
