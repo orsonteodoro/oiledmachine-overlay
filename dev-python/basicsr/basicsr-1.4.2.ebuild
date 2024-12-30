@@ -57,7 +57,7 @@ RDEPEND+="
 		media-libs/opencv[${PYTHON_USEDEP},python]
 		virtual/pillow[${PYTHON_USEDEP}]
 	')
-	>=sci-visualization/tensorboard-2.10.0
+	>=sci-visualization/tensorboard-2.10.0[${PYTHON_SINGLE_USEDEP}]
 	>=sci-libs/pytorch-1.7[${PYTHON_SINGLE_USEDEP}]
 	dev-python/torchvision[${PYTHON_SINGLE_USEDEP}]
 "
