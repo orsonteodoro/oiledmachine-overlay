@@ -195,7 +195,7 @@ RESTRICT="binchecks mirror strip"
 SLOT="0/${DEFAULT_CONFIGURATION}"
 IUSE+="
 emoji ffmpeg firejail bluetooth libnotify pulseaudio vaapi wayland zenity +X
-ebuild-revision-1
+ebuild_revision_1
 "
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
