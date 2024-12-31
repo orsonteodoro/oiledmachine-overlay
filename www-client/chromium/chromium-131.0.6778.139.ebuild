@@ -3921,8 +3921,6 @@ ewarn "The new V8 Sandbox [for the JavaScript engine] (2024) will be automagic o
 	#
 		myconf_gn+=" proprietary_codecs=false"
 		myconf_gn+=" ffmpeg_branding=\"Chromium\""
-	# Build ffmpeg as an external component (libffmpeg.so) that we can
-	# remove / substitute
 		myconf_gn+=" is_component_ffmpeg=false"
 	else
 		ffmpeg_branding="$(usex patent_status_nonfree Chrome Chromium)"
