@@ -472,6 +472,7 @@ PATENT_REQUIRED_USE="
 	!patent_status_nonfree? (
 		!aac
 		!openh264
+		!vaapi
 	)
 	aac? (
 		patent_status_nonfree
@@ -479,6 +480,9 @@ PATENT_REQUIRED_USE="
 	openh264? (
 		patent_status_nonfree
 		system-ffmpeg
+	)
+	vaapi? (
+		patent_status_nonfree
 	)
 "
 REQUIRED_USE="
@@ -575,16 +579,19 @@ gen_ffmpeg_nonfree_depends() {
 	done
 }
 
+# vaapi, qsv, etc are disabled because some packages (especially the drivers)
+# cannot individually disable just the nonfree just like the mesa package.
+# It may inadvertantly touch the nonfree during runtime.
 gen_ffmpeg_royalty_free_depends() {
 	local s
 	for s in ${FFMPEG_COMPAT} ; do
 		echo "
 			(
 				!<dev-libs/openssl-3
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,vaapi?,vpx?,-x264,-x265]
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,vpx?,-x264,-x265]
 			)
 			(
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,vaapi?,vpx?,-x264,-x265]
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,vpx?,-x264,-x265]
 			)
 		"
 	done

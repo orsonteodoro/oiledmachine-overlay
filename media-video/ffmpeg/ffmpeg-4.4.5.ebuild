@@ -553,6 +553,9 @@ PATENT_REQUIRED_USE="
 		!nvenc
 		!nvdec
 		!openh264
+		!qsv
+		!vaapi
+		!vdpau
 		!x264
 		!x265
 	)
@@ -575,6 +578,15 @@ PATENT_REQUIRED_USE="
 		patent_status_nonfree
 	)
 	openh264? (
+		patent_status_nonfree
+	)
+	qsv? (
+		patent_status_nonfree
+	)
+	vaapi? (
+		patent_status_nonfree
+	)
+	vdpau? (
 		patent_status_nonfree
 	)
 	x264? (

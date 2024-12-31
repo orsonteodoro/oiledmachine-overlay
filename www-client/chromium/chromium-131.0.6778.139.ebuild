@@ -570,6 +570,7 @@ IUSE_CODECS=(
 	+libaom
 	-openh264
 	+opus
+	-vaapi
 	-vaapi-hevc
 	+vorbis
 	+vpx
@@ -596,7 +597,7 @@ ${PATENT_STATUS[@]}
 -system-freetype -system-harfbuzz -system-icu -system-libaom -system-libdrm
 -system-libjpeg-turbo -system-libpng -system-libwebp -system-libxml
 -system-libxslt -system-openh264 -system-opus -system-re2 -system-toolchain
--system-zlib +system-zstd systemd test +vaapi +wayland +webassembly
+-system-zlib +system-zstd systemd test +wayland +webassembly
 -widevine +X
 ebuild_revision_1
 "
@@ -638,6 +639,8 @@ PATENT_USE_FLAGS="
 	!patent_status_nonfree? (
 		!bindist
 		!system-openh264
+		!vaapi
+		!vaapi-hevc
 	)
 	bindist? (
 		patent_status_nonfree
@@ -652,6 +655,9 @@ PATENT_USE_FLAGS="
 		system-openh264? (
 			patent_status_nonfree
 		)
+	)
+	vaapi? (
+		patent_status_nonfree
 	)
 	vaapi-hevc? (
 		patent_status_nonfree
