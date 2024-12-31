@@ -26,7 +26,7 @@ HOMEPAGE="https://www.threadingbuildingblocks.org"
 LICENSE="Apache-2.0"
 RESTRICT="mirror"
 SLOT="${SLOT_MAJOR}/${SOVER_TBB}-${SOVER_TBBMALLOC}-${SOVER_TBBBIND}"
-IUSE+=" debug examples numa rml ebuild-revision-8"
+IUSE+=" debug examples numa rml ebuild_revision_8"
 DEPEND+="
 	!<dev-cpp/tbb-2021:0
 "
