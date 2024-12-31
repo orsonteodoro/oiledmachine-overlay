@@ -16,6 +16,9 @@ IUSE="
 ${PATENT_STATUS[@]}
 "
 
+# The ffmpeg-chromium is blacklisted because it is misconfigured to
+# unconditionally enable patented codecs (aac, h264).
+
 RDEPEND+="
 	!patent_status_nonfree? (
 		!media-libs/faac
@@ -42,6 +45,7 @@ RDEPEND+="
 		!media-plugins/gst-plugins-voaacenc
 		!media-plugins/gst-plugins-x264
 		!media-plugins/gst-plugins-x265
+		!media-video/ffmpeg-chromium
 		!x11-libs/libvdpau
 	)
 "
