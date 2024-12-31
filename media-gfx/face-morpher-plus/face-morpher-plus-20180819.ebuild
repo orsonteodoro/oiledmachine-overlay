@@ -39,7 +39,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ffmpeg gtk3 gstreamer +jpeg +png qt5 qt6 wayland
-ebuild-revision-3
+ebuild_revision_3
 "
 REQUIRED_USE="
 	^^ (
