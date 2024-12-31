@@ -106,7 +106,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 -debuginfod examples -mpi +openmp +papi -python +rccl +rocprofiler
 +roctracer test system-dyninst system-libunwind system-papi +rocm-smi
-ebuild-revision-0
+ebuild_revision_0
 "
 # The vendored dyninst is build-time broken.
 REQUIRED_USE="
