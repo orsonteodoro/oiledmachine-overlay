@@ -55,7 +55,7 @@ LICENSE="
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/$(ver_cut 1-2)"
 IUSE+="
-test ebuild-revision-10
+test ebuild_revision_10
 "
 REQUIRED_USE="
 "
