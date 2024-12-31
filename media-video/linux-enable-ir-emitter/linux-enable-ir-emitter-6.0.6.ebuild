@@ -23,7 +23,7 @@ LICENSE="MIT"
 KEYWORDS="~amd64 ~x86"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-openrc systemd ebuild-revision-1
+openrc systemd ebuild_revision_1
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
