@@ -54,7 +54,7 @@ RESTRICT="
 	)
 "
 SLOT="0/${PV%.*}.1"
-IUSE="debug doc examples static-libs test ebuild-revision-1"
+IUSE="debug doc examples static-libs test ebuild_revision_1"
 BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
