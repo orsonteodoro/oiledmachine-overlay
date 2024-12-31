@@ -45,7 +45,7 @@ LICENSE="
 	)
 "
 SLOT="${ROCM_SLOT}/${MY_PV}"
-IUSE="si ebuild-revision-8"
+IUSE="si ebuild_revision_8"
 REQUIRED_USE="
 "
 RDEPEND="
