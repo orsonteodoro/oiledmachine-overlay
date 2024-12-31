@@ -48,7 +48,7 @@ SLOT="${LLVM_MAJOR}"
 IUSE+="
 +abi_x86_32 abi_x86_64 +clang +ctx-profile debug hexagon +libfuzzer +memprof
 +orc +profile test +xray
-ebuild-revision-4
+ebuild_revision_4
 ${LLVM_EBUILDS_LLVM19_REVISION}
 "
 # sanitizer targets, keep in sync with config-ix.cmake
