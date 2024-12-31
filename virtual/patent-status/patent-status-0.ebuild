@@ -21,9 +21,9 @@ ${PATENT_STATUS[@]}
 # mesa package.  This is to prevent inadvertant conversion or contamination of
 # content wrapped in nonfree.  These restrictions can be removed once the
 # packages are properly fixed to prune/disable nonfree support.  Sometimes,
-# app developers do not give you a choice to select the codec.  The
-# patent_status_nonfree can help encourage packagers to mod for free codec
-# support.
+# app developers do not give you a choice to select the codec.  The disabled
+# patent_status_nonfree USE flag can help encourage packagers to mod for free
+# codec support.
 
 # The ffmpeg-chromium is blacklisted because it is misconfigured to
 # unconditionally enable patented codecs (aac, h264).
