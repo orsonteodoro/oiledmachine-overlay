@@ -22,7 +22,7 @@ RESTRICT="test"
 SLOT="0"
 IUSE="
 doc test
-ebuild-revision-1
+ebuild_revision_1
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
