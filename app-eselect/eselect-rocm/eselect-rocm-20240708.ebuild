@@ -12,7 +12,7 @@ HOMEPAGE="https://github.com/orsonteodoro/oiledmachine-overlay/tree/master/app-e
 LICENSE="GPL-2+"
 RESTRICT="fetch"
 SLOT="0"
-IUSE+=" ebuild-revision-1"
+IUSE+=" ebuild_revision_1"
 
 src_unpack() {
 	default
