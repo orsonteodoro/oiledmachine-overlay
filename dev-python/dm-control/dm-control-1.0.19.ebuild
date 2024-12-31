@@ -30,7 +30,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 hdf5 test
-ebuild-revision-1
+ebuild_revision_1
 "
 
 RDEPEND+="
