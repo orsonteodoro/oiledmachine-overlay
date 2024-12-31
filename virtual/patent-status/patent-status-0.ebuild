@@ -38,6 +38,7 @@ RDEPEND+="
 		!media-libs/faac
 		!media-libs/faad2
 		!media-libs/fdk-aac
+		!media-libs/intel-mediasdk
 		!media-libs/kvazaar
 		!media-libs/libde265
 		!media-libs/libva
@@ -59,6 +60,7 @@ RDEPEND+="
 		!media-plugins/gst-plugins-voaacenc
 		!media-plugins/gst-plugins-x264
 		!media-plugins/gst-plugins-x265
+		!media-video/amdgpu-pro-amf
 		!media-video/ffmpeg-chromium
 		!x11-libs/libvdpau
 	)
