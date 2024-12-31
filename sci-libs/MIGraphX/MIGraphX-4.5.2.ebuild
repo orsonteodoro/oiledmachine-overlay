@@ -40,7 +40,7 @@ LICENSE="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 -cpu -fpga -hip-rtc -mlir +rocm test
-ebuild-revision-6
+ebuild_revision_6
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
