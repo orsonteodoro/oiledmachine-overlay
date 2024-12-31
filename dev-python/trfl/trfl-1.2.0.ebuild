@@ -46,8 +46,8 @@ RDEPEND+="
 	dev-python/six[${PYTHON_USEDEP}]
 	dev-python/wrapt[${PYTHON_USEDEP}]
 	tensorflow? (
-		>=dev-python/tensorflow-1.15[${PYTHON_USEDEP},cuda?]
-		>=dev-python/tensorflow-probability-0.8[${PYTHON_USEDEP}]
+		>=sci-libs/tensorflow-1.15[${PYTHON_USEDEP},cuda?]
+		>=sci-libs/tensorflow-probability-0.8[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="

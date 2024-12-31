@@ -264,7 +264,7 @@ RDEPEND="
 		)
 		tf-cpu? (
 			>=dev-python/keras-2.9[${PYTHON_USEDEP}]
-			dev-python/tensorflow-probability[${PYTHON_USEDEP}]
+			sci-libs/tensorflow-probability[${PYTHON_USEDEP}]
 		)
 		timm? (
 			dev-python/timm[${PYTHON_USEDEP}]
