@@ -56,7 +56,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 caffe cpu ffmpeg +ieee1394 +loom +neural-net nnef onnx opencl opencv +rocal
 +rocm +rpp system-rapidjson
-ebuild-revision-16
+ebuild_revision_16
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
