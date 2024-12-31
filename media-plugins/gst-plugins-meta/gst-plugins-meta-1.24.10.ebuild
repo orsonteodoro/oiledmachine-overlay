@@ -143,7 +143,7 @@ PATENT_RDEPEND="
 		!media-plugins/gst-plugins-vaapi
 		!media-plugins/gst-plugins-x264
 		!media-plugins/gst-plugins-x265
-		media-libs/gst-plugins-bad[-nvcodec,-qsv,-vaapi,-vulkan]
+		media-libs/gst-plugins-bad[-nvcodec,-qsv,-vaapi,-vulkan-video]
 	)
 	virtual/patent-status[patent_status_nonfree=,patent_status_nonfree=]
 "
