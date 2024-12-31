@@ -55,7 +55,7 @@ LICENSE="
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 cuda +rocm
-ebuild-revision-7
+ebuild_revision_7
 "
 gen_cuda_required_use() {
 	local x
