@@ -89,7 +89,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-11"
+IUSE="test ebuild_revision_11"
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
 	!dev-libs/rocm-device-libs:0
