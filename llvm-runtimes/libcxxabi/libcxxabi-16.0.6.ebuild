@@ -24,7 +24,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 hardened +static-libs test
-ebuild-revision-9
+ebuild_revision_9
 "
 # in 15.x, cxxabi.h is moving from libcxx to libcxxabi
 RDEPEND="
