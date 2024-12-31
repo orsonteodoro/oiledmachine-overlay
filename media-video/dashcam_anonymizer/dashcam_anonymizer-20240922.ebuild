@@ -45,7 +45,7 @@ RESTRICT="fetch mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 cuda ffmpeg gstreamer openh264 rocm vaapi x264 xla xpu
-ebuild-revision-8
+ebuild_revision_8
 "
 REQUIRED_USE="
 	|| (
