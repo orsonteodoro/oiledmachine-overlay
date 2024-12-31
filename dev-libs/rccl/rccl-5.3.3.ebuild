@@ -36,7 +36,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test peermem rdma roce verbs ebuild-revision-7"
+IUSE="test peermem rdma roce verbs ebuild_revision_7"
 REQUIRED_USE="
 	rdma? (
 		|| (
