@@ -16,7 +16,7 @@ DESCRIPTION="A small OpenCL benchmark program to measure peak GPU/CPU performanc
 HOMEPAGE="https://github.com/ProjectPhysX/OpenCL-Benchmark"
 LICENSE="ZLIB"
 SLOT="0"
-IUSE="ebuild-revision-1"
+IUSE="ebuild_revision_1"
 RDEPEND="
 	virtual/opencl
 "
