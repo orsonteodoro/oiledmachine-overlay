@@ -7,5 +7,5 @@
 # patent_status_nonfree
 # patent_status_sponsored_ncp_nb
 #
-nonfree - Allow unexpired patents
+nonfree - Allow unexpired nonfree patents
 sponsored_ncp_nb - Allow the fully sponsored proprietary codecs for use by non content providers and non broadcasters
