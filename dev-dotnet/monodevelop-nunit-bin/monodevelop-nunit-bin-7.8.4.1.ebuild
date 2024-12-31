@@ -27,7 +27,7 @@ LICENSE="
 # ZLIB - NUnit
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE=" r1"
+IUSE=" ebuild_revision_1"
 REQUIRED_USE=" "
 CDEPEND="
 "
