@@ -35,7 +35,7 @@ RESTRICT="
 SLOT="0"
 IUSE="
 hardened +libcxxabi +static-libs test +threads -pstl
-ebuild-revision-11
+ebuild_revision_11
 "
 RDEPEND="
 	!libcxxabi? (
