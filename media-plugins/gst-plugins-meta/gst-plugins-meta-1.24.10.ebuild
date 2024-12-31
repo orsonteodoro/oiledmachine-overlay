@@ -138,7 +138,9 @@ PATENT_RDEPEND="
 		!media-libs/faad2
 		!media-libs/fdk-aac
 		!media-libs/libde265
+		!media-libs/libva
 		!media-libs/openh264
+		!media-libs/vaapi-drivers
 		!media-libs/vo-aacenc
 		!media-libs/x264
 		!media-libs/x265

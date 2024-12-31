@@ -575,7 +575,6 @@ REQUIRED_USE_LICENSES="
 
 PATENT_REQUIRED_USE="
 	!patent_status_nonfree? (
-		!amr
 		!cuda
 		!fdk
 		!kvazaar
@@ -587,9 +586,6 @@ PATENT_REQUIRED_USE="
 		!vdpau
 		!x264
 		!x265
-	)
-	amr? (
-		patent_status_nonfree
 	)
 	cuda? (
 		patent_status_nonfree
@@ -765,10 +761,23 @@ LICENSE_RDEPEND="
 		)
 	)
 "
+PATENT_RDEPEND="
+	!patent_status_nonfree? (
+		!media-libs/fdk-aac
+		!media-libs/kvazaar
+		!media-libs/libva
+		!media-libs/openh264
+		!media-libs/vaapi-drivers
+		!media-libs/x264
+		!media-libs/x265
+		!x11-libs/libvdpau
+	)
+"
 # Only vaapi_x11 and vaapi_drm checks.  No vaapi_wayland checks in configure.
 # Update both !openssl and openssl USE flags.
 RDEPEND+="
 	${LICENSE_RDEPEND}
+	${PATENT_RDEPEND}
 	virtual/patent-status[patent_status_nonfree=]
 	!openssl? (
 		gnutls? (

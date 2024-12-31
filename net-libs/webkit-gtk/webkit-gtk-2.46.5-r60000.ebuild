@@ -708,6 +708,8 @@ REQUIRED_USE+="
 RDEPEND_PATENTS="
 	>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},patent_status_nonfree=]
 	!patent_status_nonfree? (
+		!media-libs/libva
+		!media-libs/vaapi-drivers
 		!media-plugins/gst-plugins-dash
 		!media-plugins/gst-plugins-faac
 		!media-plugins/gst-plugins-faad
