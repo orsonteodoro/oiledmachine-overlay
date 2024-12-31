@@ -69,7 +69,7 @@ LICENSE="
 "
 KEYWORDS="~amd64 ~arm64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" -examples -oiio -python test wayland +X r1"
+IUSE+=" -examples -oiio -python test wayland +X ebuild_revision_1"
 REQUIRED_USE+="
 	python? (
 		${PYTHON_REQUIRED_USE}
