@@ -140,6 +140,9 @@ PATENT_RDEPEND="
 		!media-plugins/gst-plugins-faad
 		!media-plugins/gst-plugins-fdkaac
 		!media-plugins/gst-plugins-hls
+		!media-plugins/gst-plugins-hlssink3
+		!media-plugins/gst-plugins-libde265
+		!media-plugins/gst-plugins-uvch264
 		!media-plugins/gst-plugins-vaapi
 		!media-plugins/gst-plugins-x264
 		!media-plugins/gst-plugins-x265
