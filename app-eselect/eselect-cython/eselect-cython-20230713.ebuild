@@ -4,24 +4,29 @@
 
 EAPI="8"
 
+KEYWORDS="~amd64 ~arm64"
+SRC_URI=""
+
 DESCRIPTION="Manages the cython symlinks"
 HOMEPAGE="https://github.com/orsonteodoro/oiledmachine-overlay/tree/master/app-eselect/eselect-cython"
 LICENSE="GPL-2"
-KEYWORDS="~amd64 ~arm64"
-SLOT="0"
-SRC_URI=""
 RESTRICT="fetch"
-IUSE+=" r1"
+SLOT="0"
+IUSE+=" ebuild_revision_1"
 
 src_unpack() {
 	default
 	mkdir -p "${S}" || die
-	cat "${FILESDIR}/cython-${PVR}.eselect" > "${S}/cython.eselect" || die
+	cat \
+		"${FILESDIR}/cython-${PVR}.eselect" \
+		> \
+		"${S}/cython.eselect" \
+		|| die
 }
 
 src_install() {
-	insinto /usr/share/eselect/modules
-	doins cython.eselect
+	insinto "/usr/share/eselect/modules"
+	doins "cython.eselect"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
