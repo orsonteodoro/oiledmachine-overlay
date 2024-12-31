@@ -26,7 +26,7 @@ LICENSE="MIT"
 # BSD - test/fortran/fruit/LICENSE.txt
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="cuda rocm ebuild-revision-7"
+IUSE="cuda rocm ebuild_revision_7"
 REQUIRED_USE="
 	^^ (
 		cuda
