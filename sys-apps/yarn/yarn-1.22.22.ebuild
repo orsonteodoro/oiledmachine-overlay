@@ -19,7 +19,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT_MAJOR="1" # Based on yarn.lock
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
-IUSE+=" +ssl ebuild-revision-2"
+IUSE+=" +ssl ebuild_revision_2"
 CDEPEND+="
 	!sys-apps/yarn:0
 	>=net-libs/nodejs-4[corepack,ssl?]
