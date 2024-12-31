@@ -48,7 +48,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/MIOpen#installing-miopen-kerne
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
-IUSE="ebuild-revision-3"
+IUSE="ebuild_revision_3"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
