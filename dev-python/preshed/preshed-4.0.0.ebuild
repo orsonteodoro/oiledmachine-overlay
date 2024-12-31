@@ -29,7 +29,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 dev
-ebuild-revision-1
+ebuild_revision_1
 "
 RDEPEND+="
 	>=dev-python/cymem-2.0.2[${PYTHON_USEDEP}]
