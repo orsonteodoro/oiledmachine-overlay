@@ -25,7 +25,7 @@ LICENSE="
 "
 # The distro MIT license template does not contain All rights Reserved.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="-benchmark ebuild-revision-5"
+IUSE="-benchmark ebuild_revision_5"
 RDEPEND="
 	virtual/blas
 	virtual/opencl
