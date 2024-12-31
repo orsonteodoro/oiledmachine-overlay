@@ -37,7 +37,7 @@ LICENSE="
 # The distro Apache-2.0 template doesn't have all-rights-reserved
 PROPERTIES="live"
 SLOT="0"
-IUSE+=" test ebuild-revision-3"
+IUSE+=" test ebuild_revision_3"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
