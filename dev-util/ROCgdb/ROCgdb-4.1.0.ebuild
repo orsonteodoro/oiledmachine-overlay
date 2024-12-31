@@ -71,7 +71,7 @@ LICENSE="
 # NEWLIB - COPYING.NEWLIB
 # ZLIB - zlib/contrib/puff/puff.h
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="ebuild-revision-9"
+IUSE="ebuild_revision_9"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
