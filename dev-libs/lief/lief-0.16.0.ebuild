@@ -44,7 +44,7 @@ IUSE+="
 doc +examples +json +logging -python -rust -system-expected -system-frozen
 -system-mbedtls -system-nanobind -system-nlohmann-json
 -system-spdlog -system-utfcpp test
-ebuild-revision-1
+ebuild_revision_1
 "
 RDEPEND+="
 	system-nanobind? (
