@@ -580,7 +580,14 @@ REQUIRED_USE+=" "$(gen_gst_plugins_required_use)
 # Sorted by least restrictive top
 PATENT_REQUIRED_USE="
 	!patent_status_nonfree? (
+		!aac
+		!dash
+		!hls
+		!libde265
+		!openh264
 		!vaapi
+		!x264
+		!x265
 	)
 	aac? (
 		patent_status_nonfree
