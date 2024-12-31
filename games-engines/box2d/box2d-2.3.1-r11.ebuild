@@ -30,7 +30,7 @@ LICENSE="ZLIB"
 RESTRICT="mirror"
 SLOT_MAJ="$(ver_cut 1-2 ${PV})"
 SLOT="${SLOT_MAJ}/${PV}"
-IUSE+=" doc examples static-libs test r1"
+IUSE+=" doc examples static-libs test ebuild_revision_1"
 REQUIRED_USE+="
 	test? (
 		examples
