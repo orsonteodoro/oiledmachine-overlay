@@ -3915,7 +3915,7 @@ SLOT="${SLOT_MAJOR}/${PV}"
 IUSE+="
 	${LLVM_COMPAT[@]/#/llvm_slot_}
 	-analytics
-	ebuild-revision-4
+	ebuild_revision_4
 "
 REQUIRED_USE+="
 	!wayland
