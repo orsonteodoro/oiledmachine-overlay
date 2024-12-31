@@ -5365,7 +5365,7 @@ ewarn
 # USE="X async-dns bundled-libcxx custom-cflags dav1d extensions mold openh264
 # opus pdf plugins pointer-compression proprietary-codecs pulseaudio qt6
 # screen-capture vaapi vpx wayland -accessibility -bindist -bluetooth
-# -cet -cfi -css-hyphen -cups (-debug) -drumbrake -ebuild-revision-1 -encode
+# -cet -cfi -css-hyphen -cups (-debug) -drumbrake -ebuild_revision_1 -encode
 # -ffmpeg-chromium -firejail -gtk4 -hangouts (-headless) -hidpi -jit
 # -js-type-check -kerberos -libaom -mdns -ml -mpris -official -partitionalloc
 # -pax-kernel -pgo -pic -pre-check-vaapi -proprietary-codecs-disable
