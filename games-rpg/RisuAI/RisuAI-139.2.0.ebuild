@@ -1513,7 +1513,7 @@ LICENSE="
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 ollama tray wayland X
-ebuild-revision-1
+ebuild_revision_1
 "
 REQUIRED_USE="
 	|| (
