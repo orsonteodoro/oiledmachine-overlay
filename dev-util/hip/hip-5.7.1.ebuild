@@ -50,7 +50,7 @@ LICENSE="
 # MIT - clr-rocm-5.7.1/rocclr/LICENSE.txt
 RESTRICT="strip"
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test ebuild-revision-39"
+IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test ebuild_revision_39"
 REQUIRED_USE="
 	hsa? (
 		rocm
