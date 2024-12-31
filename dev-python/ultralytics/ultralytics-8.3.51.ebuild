@@ -127,7 +127,7 @@ DEPEND+="
 BDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/setuptools-70.0.0[${PYTHON_USEDEP}]
-		dev-python/wheel
+		dev-python/wheel[${PYTHON_USEDEP}]
 		dev? (
 			>=dev-python/mkdocs-1.6.0[${PYTHON_USEDEP}]
 			>=dev-python/mkdocs-macros-plugin-1.0.5[${PYTHON_USEDEP}]

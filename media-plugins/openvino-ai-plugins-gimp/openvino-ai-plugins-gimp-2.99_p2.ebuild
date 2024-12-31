@@ -64,12 +64,12 @@ STABLE_DIFFUSION_MODEL_RDEPEND="
 	)
 	>=dev-python/librosa-0.8.1[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.21.0[${PYTHON_USEDEP}]
-	>=virtual/pillow-8.3.2[${PYTHON_USEDEP}]
 	>=dev-python/pytube-12.1.0[${PYTHON_USEDEP}]
 	>=dev-python/shapely-1.7.1[${PYTHON_USEDEP}]
+	>=virtual/pillow-8.3.2[${PYTHON_USEDEP}]
 	dev-python/psutil[${PYTHON_USEDEP}]
 	dev-python/scipy[${PYTHON_USEDEP}]
-	media-libs/opencv[${PYTHON_USEDEP}]
+	media-libs/opencv[${PYTHON_USEDEP},python]
 	net-misc/gdown[${PYTHON_USEDEP}]
 
 
@@ -128,7 +128,7 @@ RDEPEND+="
 	dev-python/scikit-image[${PYTHON_USEDEP}]
 	dev-python/scipy[${PYTHON_USEDEP}]
 	dev-python/typing[${PYTHON_USEDEP}]
-	media-libs/opencv[${PYTHON_USEDEP}]
+	media-libs/opencv[${PYTHON_USEDEP},python]
 	media-gfx/gimp:0/3
 	net-misc/gdown[${PYTHON_USEDEP}]
 	sci-libs/openvino[${PYTHON_USEDEP}]
@@ -137,7 +137,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/setuptools-56.0.0
+	>=dev-python/setuptools-56.0.0[${PYTHON_USEDEP}]
 "
 DOCS=( "README.md" )
 

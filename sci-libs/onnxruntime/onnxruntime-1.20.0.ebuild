@@ -772,9 +772,9 @@ DEPEND+="
 "
 BDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-python/setuptools-68.2.2
 	dev-util/patchelf
 	$(python_gen_cond_dep '
+		>=dev-python/setuptools-68.2.2[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
 		dev-python/wheel[${PYTHON_USEDEP}]
 	')

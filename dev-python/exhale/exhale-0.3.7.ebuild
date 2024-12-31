@@ -43,8 +43,8 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/setuptools-42
-	dev-python/wheel
+	>=dev-python/setuptools-42[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
 	doc? (
 		>=dev-python/sphinx-${SPHINX_PV}[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-rtd-theme-1.0.0[${PYTHON_USEDEP}]

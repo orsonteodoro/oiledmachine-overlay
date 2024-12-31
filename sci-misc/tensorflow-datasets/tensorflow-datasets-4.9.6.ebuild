@@ -110,7 +110,7 @@ HUGGINGFACE_RDEPEND="
 	dev-python/tqdm[${PYTHON_USEDEP}]
 	dev-python/wrapt[${PYTHON_USEDEP}]
 	dev-python/zarr[${PYTHON_USEDEP}]
-	media-libs/opencv[${PYTHON_USEDEP}]
+	media-libs/opencv[${PYTHON_USEDEP},python]
 	dev-python/dm-tree[${PYTHON_USEDEP}]
 	sci-libs/gcld3[${PYTHON_USEDEP}]
 	sci-libs/tensorflow[${PYTHON_USEDEP}]
@@ -197,7 +197,7 @@ RDEPEND+="
 	imagenet2012_corrupted? (
 		dev-python/scikit-image[${PYTHON_USEDEP}]
 		dev-python/scipy[${PYTHON_USEDEP}]
-		media-libs/opencv[${PYTHON_USEDEP}]
+		media-libs/opencv[${PYTHON_USEDEP},python]
 	)
 	locomotion? (
 		$(python_gen_cond_dep '

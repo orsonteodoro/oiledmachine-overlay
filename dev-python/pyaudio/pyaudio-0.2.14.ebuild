@@ -26,8 +26,8 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	dev-python/setuptools
-	dev-python/wheel
+	dev-python/setuptools[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
 	test? (
 		dev-python/numpy[${PYTHON_USEDEP}]
 	)

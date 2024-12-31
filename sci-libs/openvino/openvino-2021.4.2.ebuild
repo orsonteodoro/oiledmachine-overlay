@@ -283,7 +283,7 @@ BDEPEND+="
 "
 PDEPEND+="
 	test? (
-		>=media-libs/opencv-3.4.4.19[${PYTHON_USEDEP}]
+		>=media-libs/opencv-3.4.4.19[${PYTHON_USEDEP},python]
 	)
 "
 DOCS=( "README.md" )

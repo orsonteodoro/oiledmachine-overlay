@@ -215,7 +215,6 @@ MISSING_DEPEND="
 		>=dev-python/urllib3-2.2.3[${PYTHON_USEDEP}]
 	')
 "
-# Dropped dev-python/opencv-python-headless
 # See https://github.com/TNTwise/REAL-Video-Enhancer/blob/RVE-2.1.0/src/DownloadDeps.py
 # Upstream uses numpy 1.26.4
 COMMON_DEPEND="

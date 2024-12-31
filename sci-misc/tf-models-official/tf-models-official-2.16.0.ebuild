@@ -48,14 +48,14 @@ if [[ "${PV}" =~ "9999" ]] ; then
 		>=dev-python/tf-keras-9999[${PYTHON_USEDEP}]
 		>=sci-libs/tensorflow-hub-9999[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
-		dev-python/opencv-python-headless[${PYTHON_USEDEP}]
+		media-libs/opencv[${PYTHON_USEDEP},python]
 	"
 else
 	RDEPEND+="
 		>=dev-python/pyyaml-6.0.0[${PYTHON_USEDEP}]
 		>=dev-python/tf-keras-2.16.0[${PYTHON_USEDEP}]
 		>=sci-libs/tensorflow-hub-0.6.0[${PYTHON_USEDEP}]
-		dev-python/opencv-python-headless[${PYTHON_USEDEP}]
+		media-libs/opencv[${PYTHON_USEDEP},python]
 	"
 fi
 RDEPEND+="

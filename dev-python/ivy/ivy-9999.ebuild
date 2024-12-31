@@ -94,7 +94,7 @@ RDEPEND+="
 			dev-python/scipy[${PYTHON_USEDEP}]
 			dev-python/snakeviz[${PYTHON_USEDEP}]
 			dev-python/xgboost[${PYTHON_USEDEP}]
-			media-libs/opencv[${PYTHON_USEDEP}]
+			media-libs/opencv[${PYTHON_USEDEP},python]
 			sci-libs/tensorflow[${PYTHON_USEDEP}]
 		')
 		sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
@@ -121,7 +121,7 @@ RDEPEND+="
 			dev-python/scikit-learn[${PYTHON_USEDEP}]
 			dev-python/scipy[${PYTHON_USEDEP}]
 			dev-python/snakeviz[${PYTHON_USEDEP}]
-			media-libs/opencv[${PYTHON_USEDEP}]
+			media-libs/opencv[${PYTHON_USEDEP},python]
 			sci-libs/tensorflow[${PYTHON_USEDEP}]
 		')
 		sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]

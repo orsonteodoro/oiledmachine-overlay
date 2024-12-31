@@ -312,7 +312,7 @@ BDEPEND_E2E_TESTS="
 	>=dev-python/scikit-image-0.17.2[${PYTHON_USEDEP}]
 	>=dev-python/tabulate-0.9.0[${PYTHON_USEDEP}]
 	>=dev-python/unittest-xml-reporting-3.0.4[${PYTHON_USEDEP}]
-	>=media-libs/opencv-4.5[${PYTHON_USEDEP}]
+	>=media-libs/opencv-4.5[${PYTHON_USEDEP},python]
 	>=dev-python/pretrainedmodels-0.7.4[${PYTHON_USEDEP}]
 	>=dev-python/timm-0.9.2[${PYTHON_USEDEP}]
 	dev-python/deepctr-torch[${PYTHON_USEDEP}]
@@ -450,11 +450,11 @@ BDEPEND_CONDITIONAL_COMPILATION="
 # tests/samples_tests/smoke_tests/requirements.txt \
 BDEPEND_SAMPLES_TESTS_SMOKE_TESTS="
 	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/opencv-python-headless[${PYTHON_USEDEP}]
 	dev-python/pytest[${PYTHON_USEDEP}]
 	dev-python/pytest-xdist[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	dev-python/requests[${PYTHON_USEDEP}]
+	media-libs/opencv[${PYTHON_USEDEP},python]
 "
 BDEPEND+="
 	>=dev-build/cmake-3.13

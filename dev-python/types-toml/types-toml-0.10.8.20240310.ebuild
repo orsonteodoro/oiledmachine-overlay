@@ -32,7 +32,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	dev-python/setuptools
+	dev-python/setuptools[${PYTHON_USEDEP}]
 "
 DOCS=( "CHANGELOG.md" )
 

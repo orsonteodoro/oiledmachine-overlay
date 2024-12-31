@@ -46,9 +46,9 @@ RDEPEND+="
 	virtual/pillow[${PYTHON_USEDEP}]
 	dev-python/importlib-metadata[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/opencv-python-headless[${PYTHON_USEDEP}]
 	dev-python/scipy[${PYTHON_USEDEP}]
 	dev-python/scikit-image[${PYTHON_USEDEP}]
+	media-libs/opencv[${PYTHON_USEDEP},python]
 	sci-libs/huggingface_hub[${PYTHON_USEDEP}]
 	$(python_gen_any_dep '
 		sci-libs/torch[${PYTHON_SINGLE_USEDEP}]

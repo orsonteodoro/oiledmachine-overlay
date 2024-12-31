@@ -418,18 +418,18 @@ BDEPEND_CONDITIONAL_COMPILATION="
 # tests/samples_tests/smoke_tests/requirements.txt \
 BDEPEND_SAMPLES_TESTS_SMOKE_TESTS="
 	${BDEPEND_TEST_CONSTRAINTS}
-	dev-python/pyyaml
-	dev-python/nibabel
-	dev-python/numpy
-	dev-python/opencv-python-headless
-	dev-python/progress
-	dev-python/py
-	dev-python/pytest
-	dev-python/requests
-	dev-python/scikit-build
-	dev-python/scipy
-	dev-python/test-generator
-	dev-python/wheel
+	dev-python/pyyaml[${PYTHON_USEDEP}]
+	dev-python/nibabel[${PYTHON_USEDEP}]
+	dev-python/numpy[${PYTHON_USEDEP}]
+	dev-python/progress[${PYTHON_USEDEP}]
+	dev-python/py[${PYTHON_USEDEP}]
+	dev-python/pytest[${PYTHON_USEDEP}]
+	dev-python/requests[${PYTHON_USEDEP}]
+	dev-python/scikit-build[${PYTHON_USEDEP}]
+	dev-python/scipy[${PYTHON_USEDEP}]
+	dev-python/test-generator[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
+	media-libs/opencv[${PYTHON_USEDEP},python]
 "
 
 BDEPEND+="

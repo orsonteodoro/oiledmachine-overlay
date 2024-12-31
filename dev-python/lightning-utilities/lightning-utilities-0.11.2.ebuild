@@ -44,7 +44,7 @@ RDEPEND+="
 	dev-python/typing-extensions
 "
 DEPEND+="
-	dev-python/setuptools
+	dev-python/setuptools[${PYTHON_USEDEP}]
 	${RDEPEND}
 "
 BDEPEND+="

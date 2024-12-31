@@ -86,7 +86,7 @@ RDEPEND+="
 		>=dev-python/lz4-3.1.0[${PYTHON_USEDEP}]
 		>=dev-python/matplotlib-3.0[${PYTHON_USEDEP}]
 		>=dev-python/moviepy-1.0.0[${PYTHON_USEDEP}]
-		>=media-libs/opencv-3.0[${PYTHON_USEDEP}]
+		>=media-libs/opencv-3.0[${PYTHON_USEDEP},python]
 	)
 	pygame? (
 		>=dev-python/pygame-2.1.3[${PYTHON_USEDEP}]

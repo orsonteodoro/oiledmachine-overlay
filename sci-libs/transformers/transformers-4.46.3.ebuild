@@ -178,7 +178,7 @@ RDEPEND="
 		agents? (
 			dev-python/datasets[${PYTHON_USEDEP}]
 			dev-python/diffusers[${PYTHON_USEDEP}]
-			media-libs/opencv[${PYTHON_USEDEP}]
+			media-libs/opencv[${PYTHON_USEDEP},python]
 		)
 		av? (
 			>=dev-python/av-9.2.0[${PYTHON_USEDEP}]

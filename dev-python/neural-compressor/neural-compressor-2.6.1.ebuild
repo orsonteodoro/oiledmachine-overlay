@@ -71,9 +71,7 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/deprecated-1.2.13[${PYTHON_USEDEP}]
 		<dev-python/numpy-2.0[${PYTHON_USEDEP}]
-		dev-python/opencv-python-headless[${PYTHON_USEDEP}]
 		dev-python/pandas[${PYTHON_USEDEP}]
-		virtual/pillow[${PYTHON_USEDEP}]
 		dev-python/prettytable[${PYTHON_USEDEP}]
 		dev-python/psutil[${PYTHON_USEDEP}]
 		dev-python/py-cpuinfo[${PYTHON_USEDEP}]
@@ -82,6 +80,8 @@ RDEPEND+="
 		dev-python/requests[${PYTHON_USEDEP}]
 		dev-python/schema[${PYTHON_USEDEP}]
 		dev-python/scikit-learn[${PYTHON_USEDEP}]
+		media-libs/opencv[${PYTHON_USEDEP},python]
+		virtual/pillow[${PYTHON_USEDEP}]
 		mxnet? (
 			>=sci-libs/mxnet-1.9.1[${PYTHON_USEDEP}]
 		)

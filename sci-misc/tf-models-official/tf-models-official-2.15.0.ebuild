@@ -43,12 +43,12 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	RDEPEND+="
 		>=dev-python/wrapt-1.15[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
-		dev-python/opencv-python-headless[${PYTHON_USEDEP}]
+		media-libs/opencv[${PYTHON_USEDEP},python]
 	"
 else
 	RDEPEND+="
 		>=dev-python/pyyaml-6.0.0[${PYTHON_USEDEP}]
-		dev-python/opencv-python-headless[${PYTHON_USEDEP}]
+		media-libs/opencv[${PYTHON_USEDEP},python]
 	"
 fi
 RDEPEND+="

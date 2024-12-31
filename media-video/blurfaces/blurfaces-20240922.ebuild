@@ -65,7 +65,7 @@ RDEPEND+="
 	>=dev-python/tqdm-4.66.3[${PYTHON_USEDEP}]
 	>=dev-python/traitlets-5.4.0[${PYTHON_USEDEP}]
 	>=dev-python/wcwidth-0.2.5[${PYTHON_USEDEP}]
-	>=media-libs/opencv-4.8.1.78[${PYTHON_USEDEP},ffmpeg,imgproc]
+	>=media-libs/opencv-4.8.1.78[${PYTHON_USEDEP},ffmpeg,imgproc,python]
 	>=sci-libs/dlib-19.24.0[${PYTHON_USEDEP}]
 	>=virtual/pillow-10.3.0[${PYTHON_USEDEP}]
 	media-video/ffmpeg[encode]
