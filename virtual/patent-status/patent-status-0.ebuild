@@ -28,10 +28,11 @@ ${PATENT_STATUS[@]}
 # The ffmpeg-chromium is blacklisted because it is misconfigured to
 # unconditionally enable patented codecs (aac, h264).
 
-# The distro's fdk-aac tarball package contains the nonfree folders referencing
-# unexpired patents based on commit message.  This is why it is blacklisted.  It
-# can be fixed by using the same tarball as Fedora's fdk-aac-free package.  The
-# free was suggested in the Wikipedia page for just the expired variant.
+# The distro's fdk-aac ebuild references a tarball containing the nonfree
+# folders referencing unexpired patents based on commit message.  This is why it
+# is blacklisted.  It can be fixed by using the same tarball as Fedora's
+# fdk-aac-free package.  The free was suggested in the Wikipedia page for just
+# the expired variant.
 
 RDEPEND+="
 	!patent_status_nonfree? (
