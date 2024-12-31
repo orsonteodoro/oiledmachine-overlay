@@ -44,7 +44,7 @@ LICENSE="
 "
 # BSD-2 - test/util/hsa_rsrc_factory.h
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" test ebuild-revision-15"
+IUSE=" test ebuild_revision_15"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
