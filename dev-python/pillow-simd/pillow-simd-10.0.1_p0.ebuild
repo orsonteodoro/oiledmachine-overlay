@@ -41,7 +41,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_X86_FLAGS[@]}
 doc imagequant jpeg jpeg2k lcms test tiff tk truetype webp xcb zlib
-ebuild-revision-1
+ebuild_revision_1
 "
 REQUIRED_USE="
 	|| (
