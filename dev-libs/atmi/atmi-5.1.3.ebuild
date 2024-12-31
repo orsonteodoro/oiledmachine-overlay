@@ -70,7 +70,7 @@ LICENSE="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 debug
-ebuild-revision-6
+ebuild_revision_6
 "
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
