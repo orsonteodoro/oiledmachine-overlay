@@ -27,7 +27,7 @@ SLOT="${LLVM_VERSION}"
 IUSE+="
 +abi_x86_32 abi_x86_64 +clang debug hexagon +libfuzzer +memprof +orc +profile
 test +xray
-ebuild-revision-5
+ebuild_revision_5
 "
 # sanitizer targets, keep in sync with config-ix.cmake
 # NB: ubsan, scudo deliberately match two entries
