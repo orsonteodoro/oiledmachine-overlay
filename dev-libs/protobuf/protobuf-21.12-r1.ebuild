@@ -46,7 +46,7 @@ SLOT="0/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 # 18.3 : 3.18 From AC_INIT
 # 16.2 : 3.16 From AC_INIT
 
-IUSE="emacs examples static-libs test zlib r1"
+IUSE="emacs examples static-libs test zlib ebuild_revision_1"
 RDEPEND="
 	zlib? (
 		>=sys-libs/zlib-1.2.13[${MULTILIB_USEDEP}]
