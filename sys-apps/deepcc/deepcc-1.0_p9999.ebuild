@@ -37,7 +37,7 @@ https://github.com/Soheil-ab/DeepCC.v1.0
 LICENSE="MIT"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" build-models evaluate kernel-patch polkit +sudo ebuild-revision-3"
+IUSE+=" build-models evaluate kernel-patch polkit +sudo ebuild_revision_3"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
