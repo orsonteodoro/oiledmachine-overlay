@@ -88,7 +88,7 @@ IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 -cuda_11_7 profile -mlir +runtime cfi
-ebuild-revision-21
+ebuild_revision_21
 "
 REQUIRED_USE="
 	cfi? (
