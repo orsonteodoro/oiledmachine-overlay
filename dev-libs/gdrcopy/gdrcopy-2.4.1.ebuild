@@ -54,7 +54,7 @@ LICENSE="
 # BSD - open-gpu-kernel-modules-550.100/src/common/softfloat/COPYING.txt
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="0"
-IUSE="ebuild-revision-2"
+IUSE="ebuild_revision_2"
 gen_driver_versions() {
 	local ver
 	for ver in ${DRIVER_VERSIONS[@]} ; do
