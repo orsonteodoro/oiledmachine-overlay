@@ -142,7 +142,7 @@ nvenc nvvfx oss +pipewire +pulseaudio +python qsv +qt6 +rnnoise +rtmps
 +service-updates -sndio +speexdsp svt-av1 -test +v4l2 vaapi +vlc +virtualcam
 +vst +wayland +webrtc win-dshow +websocket -win-mf +whatsnew x264
 
-ebuild-revision-7
+ebuild_revision_7
 "
 REQUIRED_USE+="
 	!nvafx
