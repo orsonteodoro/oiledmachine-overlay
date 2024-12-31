@@ -747,7 +747,7 @@ IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${MODULES[@]}
 aom doc nvcodec openh264 qsv rav1e system-libsodium va vaapi vpx vulkan x264 x265
-ebuild-revision-1
+ebuild_revision_1
 "
 WEBRTC_AV1_ENCODERS_REQUIRED_USE="
 	|| (
