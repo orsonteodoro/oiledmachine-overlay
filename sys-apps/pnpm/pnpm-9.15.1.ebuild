@@ -19,7 +19,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT_MAJOR="9" # Same as lockfileVersion (pnpm-lock.yaml)
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
-IUSE+=" ebuild-revision-2"
+IUSE+=" ebuild_revision_2"
 CDEPEND+="
 	>=net-libs/nodejs-18.19[corepack,ssl]
 "
