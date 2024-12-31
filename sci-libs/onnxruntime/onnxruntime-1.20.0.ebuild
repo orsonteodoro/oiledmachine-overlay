@@ -457,7 +457,7 @@ onnxruntime_USE_EXTENSIONS
 openvino-auto
 openvino-hetero
 openvino-multi
-ebuild-revision-6
+ebuild_revision_6
 "
 gen_cuda_required_use() {
 	local x
