@@ -26,7 +26,7 @@ LICENSE="
 "
 # The distro's MIT license template does not have all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE+=" cuda +rocm ebuild-revision-5"
+IUSE+=" cuda +rocm ebuild_revision_5"
 REQUIRED_USE="
 	^^ (
 		cuda
