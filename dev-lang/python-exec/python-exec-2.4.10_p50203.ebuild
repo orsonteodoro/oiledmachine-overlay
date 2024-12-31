@@ -26,7 +26,7 @@ RESTRICT="
 SLOT="rocm-${ROCM_SLOT}/${ROCM_VERSION}"
 IUSE="
 ${_PYTHON_ALL_IMPLS[@]/#/python_targets_} +native-symlinks test
-ebuild-revision-1
+ebuild_revision_1
 "
 RDEPEND="
 	!<=dev-lang/python-2.7.18-r3:2.7
