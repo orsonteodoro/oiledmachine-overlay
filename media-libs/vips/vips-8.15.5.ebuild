@@ -45,7 +45,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 +lcms +libde265 +matio -minimal -nifti +openexr +openslide +orc +pangocairo +png
 +poppler +python -rav1e +ppm -spng +svg test +tiff +vala +webp +x265
 +zlib
-ebuild-revision-1
+ebuild_revision_1
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
