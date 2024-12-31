@@ -126,7 +126,7 @@ IUSE+="
 -system-miniaudio -system-qtkeychain -test +qt5 -qt6 +qtkeychain +update-check
 wayland X
 
-ebuild-revision-4
+ebuild_revision_4
 "
 # Building benchmarks is broken
 REQUIRED_USE="
