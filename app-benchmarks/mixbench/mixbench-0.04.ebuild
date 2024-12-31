@@ -48,7 +48,7 @@ LICENSE="GPL-2"
 SLOT="0"
 IUSE+="
 	${ROCM_SLOTS[@]}
-	cuda doc rocm opencl sycl ebuild-revision-0
+	cuda doc rocm opencl sycl ebuild_revision_0
 "
 REQUIRED_USE="
 	rocm? (
