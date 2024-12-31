@@ -206,7 +206,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
 aot cuda esimd_emulator rocm test video_cards_intel
-ebuild-revision-2
+ebuild_revision_2
 "
 gen_cuda_required_use() {
 	local x
