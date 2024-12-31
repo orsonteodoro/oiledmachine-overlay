@@ -80,7 +80,7 @@ LICENSE="
 # The distro's GPL-3+ license template does not contain all rights reserved.
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="ebuild-revision-8"
+IUSE="ebuild_revision_8"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
