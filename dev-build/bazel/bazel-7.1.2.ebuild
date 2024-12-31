@@ -23,7 +23,7 @@ RESTRICT="
 SLOT="$(ver_cut 1-2 ${PV})"
 IUSE="
 bash-completion examples tools zsh-completion
-ebuild-revision-6
+ebuild_revision_6
 "
 RDEPEND="
 	!dev-build/bazel:0
