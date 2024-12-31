@@ -9,24 +9,13 @@ NODEJS_PV="0.8"
 NPM_BUILD_SCRIPT="none"
 NPM_INSTALL_PATH="/opt/${PN}"
 NPM_EXE_LIST="
-${NPM_INSTALL_PATH}/bin/uglifyjs
-${NPM_INSTALL_PATH}/node_modules/.bin/acorn
-${NPM_INSTALL_PATH}/node_modules/.bin/semver
+	${NPM_INSTALL_PATH}/bin/uglifyjs
+	${NPM_INSTALL_PATH}/node_modules/.bin/acorn
+	${NPM_INSTALL_PATH}/node_modules/.bin/semver
 "
+
 inherit npm
 
-DESCRIPTION="JavaScript parser / mangler / compressor / beautifier toolkit"
-HOMEPAGE="https://github.com/mishoo/UglifyJS"
-LICENSE="BSD-2"
-KEYWORDS="~amd64"
-SLOT="0"
-IUSE=" test r1"
-RDEPEND+="
-	>=net-libs/nodejs-${NODEJS_PV}
-"
-BDEPEND+="
-	>=net-libs/nodejs-${NODEJS_PV}
-"
 # Initially generated from:
 #   grep "resolved" /var/tmp/portage/dev-util/uglifyjs-3.17.4/work/UglifyJS-3.17.4/package-lock.json | cut -f 4 -d '"' | cut -f 1 -d "#" | sort | uniq
 # UPDATER_START_NPM_EXTERNAL_URIS
@@ -40,7 +29,20 @@ ${NPM_EXTERNAL_URIS}
 https://github.com/mishoo/UglifyJS/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
-RESTRICT="mirror"
 S="${WORKDIR}/${MY_PN}-${PV}"
+
+DESCRIPTION="JavaScript parser / mangler / compressor / beautifier toolkit"
+HOMEPAGE="https://github.com/mishoo/UglifyJS"
+LICENSE="BSD-2"
+KEYWORDS="~amd64"
+RESTRICT="mirror"
+SLOT="0"
+IUSE=" test ebuild_revision_1"
+RDEPEND+="
+	>=net-libs/nodejs-${NODEJS_PV}
+"
+BDEPEND+="
+	>=net-libs/nodejs-${NODEJS_PV}
+"
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
