@@ -107,7 +107,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0"
-IUSE=" ebuild-revision-1"
+IUSE=" ebuild_revision_1"
 BDEPEND="
 	dev-util/cargo-c
 "
