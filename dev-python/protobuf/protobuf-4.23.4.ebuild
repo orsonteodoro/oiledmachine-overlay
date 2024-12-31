@@ -36,7 +36,7 @@ HOMEPAGE="
 "
 LICENSE="BSD"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" ebuild-revision-1"
+IUSE+=" ebuild_revision_1"
 RDEPEND="
 	${PYTHON_DEPS}
 	dev-libs/protobuf:${SLOT}
