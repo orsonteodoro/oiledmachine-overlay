@@ -55,7 +55,7 @@ ROCM_SLOT="${ROCM_VERSION%.*}"
 
 DESCRIPTION="The Kernel Fusion Driver (KFD)"
 KEYWORDS="~amd64 ~x86"
-IUSE="custom-kernel kernel rock-dkms strict-pairing ebuild-revision-4"
+IUSE="custom-kernel kernel rock-dkms strict-pairing ebuild_revision_4"
 SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
 FIRMWARE_RDEPEND="
 	!strict-pairing? (
