@@ -243,8 +243,8 @@ CUDA_DEPEND="
 		dev-python/einops[${PYTHON_USEDEP}]
 		sci-libs/safetensors[${PYTHON_USEDEP}]
 	')
-	>=dev-python/pytorch-9999[${PYTHON_SINGLE_USEDEP}]
-	>=dev-python/torchvision-9999[${PYTHON_SINGLE_USEDEP}]
+	>=sci-libs/pytorch-9999[${PYTHON_SINGLE_USEDEP}]
+	>=sci-libs/torchvision-9999[${PYTHON_SINGLE_USEDEP}]
 "
 NCNN_DEPEND="
 	$(python_gen_cond_dep '
