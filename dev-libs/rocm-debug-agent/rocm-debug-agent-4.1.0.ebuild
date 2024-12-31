@@ -23,7 +23,7 @@ RESTRICT="
 	test
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-6"
+IUSE="test ebuild_revision_6"
 RDEPEND="
 	!dev-libs/rocm-debug-agent:0
 	dev-libs/elfutils
