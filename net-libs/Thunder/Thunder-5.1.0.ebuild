@@ -45,7 +45,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 -awc -bcm43xx -bluetooth -bluetooth-audio -broadcast -crun -debug -dobby -gatt -hibernate
 -lxc -privileged-request -process-containers -runc ssl -systemd test
-ebuild-revision-1
+ebuild_revision_1
 "
 REQUIRED_USE="
 	process-containers? (
