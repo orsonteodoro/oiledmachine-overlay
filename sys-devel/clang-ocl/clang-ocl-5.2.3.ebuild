@@ -35,7 +35,7 @@ LICENSE="
 "
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE+=" ebuild-revision-0"
+IUSE+=" ebuild_revision_0"
 RDEPEND="
 	~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}
 	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}
