@@ -106,7 +106,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 acpi +build +check-mmu-notifier +compress custom-kernel directgma gzip hybrid-graphics
 numa +sign-modules ssg strict-pairing xz zstd
-ebuild-revision-16
+ebuild_revision_16
 "
 REQUIRED_USE="
 	compress? (
