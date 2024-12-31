@@ -33,7 +33,7 @@ LICENSE="
 "
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="ebuild-revision-6"
+IUSE="ebuild_revision_6"
 RDEPEND="
 	!dev-libs/rocm-core:0
 "
