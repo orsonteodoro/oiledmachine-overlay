@@ -49,7 +49,7 @@ LICENSE="
 # custom - clr-rocm-6.0.2/opencl/khronos/headers/opencl2.2/LICENSE
 # MIT - HIPCC-rocm-6.0.2/LICENSE.txt
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test ebuild-revision-39"
+IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm test ebuild_revision_39"
 REQUIRED_USE="
 	hsa? (
 		rocm
