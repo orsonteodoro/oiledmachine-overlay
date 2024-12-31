@@ -32,7 +32,7 @@ LICENSE="MIT"
 RESTRICT="mirror"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-rocm samples +openmp mpi ebuild-revision-6
+rocm samples +openmp mpi ebuild_revision_6
 "
 gen_rocm_required_use() {
 	local x
