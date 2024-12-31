@@ -25,7 +25,7 @@ LICENSE="
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE="
 	debug test
-	ebuild-revision-4
+	ebuild_revision_4
 "
 REQUIRED_USE="
 "
