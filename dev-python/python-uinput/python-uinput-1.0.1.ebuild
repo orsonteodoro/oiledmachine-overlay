@@ -22,7 +22,7 @@ https://github.com/pyinput/python-uinput
 "
 LICENSE="GPL-3+"
 SLOT="0"
-IUSE=" ebuild-revision-1"
+IUSE=" ebuild_revision_1"
 RDEPEND="
 	virtual/udev
 "
