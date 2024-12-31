@@ -27,7 +27,7 @@ DESCRIPTION="Protobuf code generator for gRPC"
 HOMEPAGE="https://grpc.io"
 LICENSE="Apache-2.0"
 SLOT="0"
-IUSE+=" ebuild-revision-1"
+IUSE+=" ebuild_revision_1"
 # See https://github.com/grpc/grpc/blob/v1.62.3/bazel/grpc_python_deps.bzl#L45
 # See https://github.com/grpc/grpc/tree/v1.62.3/third_party
 RDEPEND="
