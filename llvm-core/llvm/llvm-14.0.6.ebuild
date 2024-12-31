@@ -32,7 +32,7 @@ SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 +binutils-plugin bolt debug doc -dump exegesis jemalloc libedit +libffi ncurses
 tcmalloc test xar xml z3
-ebuild-revision-5
+ebuild_revision_5
 "
 REQUIRED_USE+="
 	!amd64? (
