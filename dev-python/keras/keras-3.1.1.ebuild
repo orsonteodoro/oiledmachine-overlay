@@ -26,7 +26,7 @@ LICENSE="Apache-2.0"
 RESTRICT=""
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE=" cpu cuda jax pytorch tensorflow test ebuild-revision-3"
+IUSE=" cpu cuda jax pytorch tensorflow test ebuild_revision_3"
 REQUIRED_USE="
 	cpu? (
 		jax
