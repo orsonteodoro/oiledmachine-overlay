@@ -60,7 +60,7 @@ BDEPEND+="
 		>=dev-python/pytest-asyncio-0.24.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-cov-5.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-httpserver-1.1.0[${PYTHON_USEDEP}]
-		>=dev-util/ruff-0.7.4[${PYTHON_USEDEP}]
+		>=dev-util/ruff-0.7.4
 		>=virtual/pillow-10.4.0[${PYTHON_USEDEP}]
 	)
 "

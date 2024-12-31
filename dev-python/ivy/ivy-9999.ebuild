@@ -64,7 +64,7 @@ RDEPEND+="
 		dev-python/psutil[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
 		dev-python/tqdm[${PYTHON_USEDEP}]
-		dev-util/ruff[${PYTHON_USEDEP}]
+		dev-util/ruff
 	')
 	optional? (
 		$(python_gen_cond_dep '

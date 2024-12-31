@@ -73,7 +73,7 @@ BDEPEND+="
 	>=dev-python/setuptools-scm-7.1[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
 	dev? (
-		dev-util/ruff[${PYTHON_USEDEP}]
+		dev-util/ruff
 	)
 "
 DOCS=( "README.md" )
