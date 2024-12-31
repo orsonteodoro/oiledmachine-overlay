@@ -73,7 +73,7 @@ LICENSE="
 # The distro's MIT license template does not have all rights reserved.
 RESTRICT="test" # Test ebuild sections needs update
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="cuda +rocm test ebuild-revision-9"
+IUSE="cuda +rocm test ebuild_revision_9"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 	^^ (
