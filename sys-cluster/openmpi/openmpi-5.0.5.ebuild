@@ -57,7 +57,7 @@ ${IUSE_OPENMPI_FABRICS}
 ${IUSE_OPENMPI_RM}
 ${ROCM_IUSE[@]}
 cma cuda custom-kernel fortran hcoll ipv6 peruse rocm romio system-ucx ucx valgrind
-ebuild-revision-4
+ebuild_revision_4
 "
 
 gen_rocm_iuse_required_use() {
