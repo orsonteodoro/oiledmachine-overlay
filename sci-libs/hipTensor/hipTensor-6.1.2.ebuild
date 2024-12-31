@@ -35,7 +35,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-cuda +rocm samples test ebuild-revision-5
+cuda +rocm samples test ebuild_revision_5
 "
 gen_rocm_required_use() {
 	local x
