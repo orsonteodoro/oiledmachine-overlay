@@ -33,7 +33,7 @@ LICENSE="
 # MIT - tests/unit_tests/libraries/cuRAND/cmdparser.hpp
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild-revision-15"
+IUSE="test ebuild_revision_15"
 # https://github.com/ROCm-Developer-Tools/HIPIFY/tree/rocm-5.1.3#-hipify-clang-dependencies
 RDEPEND="
 	!test? (
