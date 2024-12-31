@@ -96,6 +96,7 @@ CPU_FLAGS_X86=(
 	cpu_flags_x86_avx512bw
 	cpu_flags_x86_avx512dq
 	cpu_flags_x86_avx512f
+	cpu_flags_x86_avx512vbmi
 	cpu_flags_x86_avx512vl
 	cpu_flags_x86_f16c
 	cpu_flags_x86_fma
@@ -501,6 +502,9 @@ REQUIRED_USE="
 	)
 	cpu_flags_x86_avx512f? (
 		cpu_flags_x86_avx2
+	)
+	cpu_flags_x86_avx512vbmi? (
+		${REQUIRED_USE_AVX512}
 	)
 	cpu_flags_x86_avx512vl? (
 		${REQUIRED_USE_AVX512}
@@ -949,6 +953,10 @@ BDEPEND="
 			>=sys-devel/gcc-5.1
 			>=sys-devel/binutils-2.25
 		)
+		cpu_flags_x86_avx512vbmi? (
+			>=sys-devel/gcc-12.1
+			>=sys-devel/binutils-2.32
+		)
 	)
 	clang? (
 		$(gen_clang)
@@ -1032,6 +1040,8 @@ ewarn
 
 				if use cpu_flags_riscv_rvv ; then
 					min_slot=14
+				elif use cpu_flags_x86_avx512vbmi ; then
+					min_slot=12
 				elif use cpu_flags_x86_amx ; then
 					min_slot=11
 				elif use cpu_flags_s390_vxe_z14 || use cpu_flags_s390_vxe_z15 ; then
