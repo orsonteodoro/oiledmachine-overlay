@@ -632,12 +632,22 @@ ebuild_revision_1
 #   https://clang.llvm.org/docs/ControlFlowIntegrity.html#indirect-function-call-checking
 #   https://clang.llvm.org/docs/ControlFlowIntegrity.html#bad-cast-checking
 #
+
+#
+# The ffmpeg-chromium ebuild enables aac,h264 unconditionally which the patents have not expired.
+#
 PATENT_USE_FLAGS="
 	!patent_status_nonfree? (
 		!official
 		!system-openh264
 		!vaapi
 		!vaapi-hevc
+	)
+	ffmpeg-chromium? (
+		patent_status_nonfree
+	)
+	official? (
+		patent_status_nonfree
 	)
 	openh264? (
 		!system-openh264? (
@@ -744,7 +754,6 @@ REQUIRED_USE+="
 	)
 	ffmpeg-chromium? (
 		bindist
-		patent_status_nonfree
 	)
 	!headless? (
 		pdf
@@ -795,7 +804,6 @@ REQUIRED_USE+="
 		pdf
 		pgo
 		plugins
-		patent_status_nonfree
 		reporting-api
 		screencast
 		vaapi
@@ -1122,6 +1130,9 @@ VIRTUAL_UDEV="
 # formats due to package/drivers not selectively dropping codecs like the mesa
 # package.
 PATENT_STATUS_DEPEND="
+	!patent_status_nonfree? (
+		!media-video/ffmpeg-chromium
+	)
 	system-ffmpeg? (
 		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},patent_status_nonfree=]
 		patent_status_nonfree? (
@@ -1233,9 +1244,6 @@ RDEPEND+="
 		sec-policy/selinux-chromium
 	)
 	bindist? (
-		!ffmpeg-chromium? (
-			>=media-video/ffmpeg-6.1-r1:${FFMPEG_SLOT}[chromium]
-		)
 		ffmpeg-chromium? (
 			media-video/ffmpeg-chromium:${PV%%\.*}
 		)
