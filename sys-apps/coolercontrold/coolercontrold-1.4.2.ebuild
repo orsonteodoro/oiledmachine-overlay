@@ -911,7 +911,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" hwmon video_cards_nvidia openrc systemd ebuild-revision-1"
+IUSE+=" hwmon video_cards_nvidia openrc systemd ebuild_revision_1"
 RDEPEND+="
 	~sys-apps/coolercontrol-liqctld-${PV}
 	hwmon? (
