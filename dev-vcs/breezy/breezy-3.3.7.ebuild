@@ -130,7 +130,7 @@ LICENSE+="
 # homedir/.cargo/registry/src/github.com-1ecc6299db9ec823/unicode-ident-1.0.5/LICENSE-UNICODE - Unicode-DFS-2016
 RESTRICT="mirror"
 SLOT="0"
-IUSE+=" cext fastimport git github gpg launchpad sftp test workspace ebuild-revision-1"
+IUSE+=" cext fastimport git github gpg launchpad sftp test workspace ebuild_revision_1"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	test? (
