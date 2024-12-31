@@ -35,7 +35,7 @@ LICENSE="Apache-2.0"
 RESTRICT=""
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE=" test ebuild-revision-3"
+IUSE=" test ebuild_revision_3"
 PROTOBUF_PV="3.21.9" # From WORKSPACE which differs from requirements.txt
 PROTOBUF_SLOT="0/${PROTOBUF_PV%.*}"
 # TensorFlow 2.14.0 needs numpy 1.x
