@@ -89,7 +89,7 @@ RESTRICT="
 	test
 "
 SLOT="0/$(ver_cut 1-2)"
-IUSE="cpu_flags_x86_sse2 doc opengl python static-libs test ebuild-revision-1"
+IUSE="cpu_flags_x86_sse2 doc opengl python static-libs test ebuild_revision_1"
 REQUIRED_USE="
 	doc? (
 		python
