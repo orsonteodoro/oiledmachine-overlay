@@ -25,7 +25,7 @@ https://github.com/Farama-Foundation/Jumpy
 LICENSE="Apache-2.0"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" jax test ebuild-revision-1"
+IUSE+=" jax test ebuild_revision_1"
 REQUIRED_USE="
 	test? (
 		jax
