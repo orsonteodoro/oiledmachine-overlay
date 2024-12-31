@@ -637,13 +637,9 @@ ebuild_revision_1
 #
 PATENT_USE_FLAGS="
 	!patent_status_nonfree? (
-		!bindist
 		!system-openh264
 		!vaapi
 		!vaapi-hevc
-	)
-	bindist? (
-		patent_status_nonfree
 	)
 	openh264? (
 		!system-openh264? (
@@ -738,6 +734,9 @@ REQUIRED_USE+="
 		!system-zlib
 		!system-zstd
 		bundled-libcxx
+	)
+	bindist? (
+		!system-ffmpeg
 	)
 	cups? (
 		pdf
@@ -3908,15 +3907,23 @@ ewarn "The new V8 Sandbox [for the JavaScript engine] (2024) will be automagic o
 	# See https://github.com/chromium/chromium/blob/131.0.6778.139/media/media_options.gni#L19
 
 	if use bindist ; then
+	#
+	# Distro maintainer note:
+	#
 	# The proprietary_codecs USE flag just forces Chromium to say that it
 	# can use h264/aac, the work is still done by ffmpeg.  If this is set to
 	# no, Chromium won't be able to load the codec even if the library can
 	# handle it.
-		myconf_gn+=" proprietary_codecs=true"
-		myconf_gn+=" ffmpeg_branding=\"Chrome\""
+	#
+	# oiledmachine-overlay note:
+	#
+	# Bindist changes are reverted to free codecs only.
+	#
+		myconf_gn+=" proprietary_codecs=false"
+		myconf_gn+=" ffmpeg_branding=\"Chromium\""
 	# Build ffmpeg as an external component (libffmpeg.so) that we can
 	# remove / substitute
-		myconf_gn+=" is_component_ffmpeg=true"
+		myconf_gn+=" is_component_ffmpeg=false"
 	else
 		ffmpeg_branding="$(usex patent_status_nonfree Chrome Chromium)"
 		myconf_gn+=" proprietary_codecs=$(usex patent_status_nonfree true false)"
@@ -4974,22 +4981,7 @@ _src_install() {
 	doins "out/Release/"*".bin"
 	doins "out/Release/"*".pak"
 
-	if use bindist; then
-	# We built libffmpeg as a component library, but we can't distribute it
-	# with proprietary codec support.  Remove it and make a symlink to the
-	# requested system library.
-		if ! rm -f out/Release/libffmpeg.so ; then \
-eerror "Failed to remove bundled libffmpeg.so (with proprietary codecs)"
-			die
-		fi
-	# Symlink the libffmpeg.so from either ffmpeg-chromium or
-	# ffmpeg[chromium].
-	local symlink_loc=$(usex ffmpeg-chromium "ffmpeg-chromium" "ffmpeg[chromium]")
-einfo "Creating symlink to libffmpeg.so from ${symlink_loc}..."
-		dosym \
-			"../chromium/libffmpeg.so"$(usex ffmpeg-chromium ".${PV%%\.*}" "") \
-			"/usr/$(get_libdir)/chromium-browser/libffmpeg.so"
-	fi
+	# oiledmachine-overlay notes - dropped section.  Bindist is static or vendored.
 
 	(
 		shopt -s nullglob
