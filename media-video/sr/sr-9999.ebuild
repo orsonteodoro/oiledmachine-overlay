@@ -136,7 +136,7 @@ ${ALGS[@]}
 ${FORMATS[@]}
 div2k fallback-commit ffmpeg gstreamer harmonic -hvrr nvdec +pretrained
 quick-test vaapi vdpau vpx
-ebuild-revision-2
+ebuild_revision_2
 "
 # See formats see, https://ffmpeg.org/ffmpeg-filters.html#sr-1
 # We use the tensorflow .pb because it is multicore.
