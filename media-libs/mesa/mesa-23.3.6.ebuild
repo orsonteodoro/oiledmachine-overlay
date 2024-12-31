@@ -17,7 +17,7 @@ video_cards_vmware?,\
 LLVM_COMPAT=( {17..15} )
 MY_P="${P/_/-}"
 PATENT_STATUS=(
-	patent_status_new_or_renewed
+	patent_status_nonfree
 )
 PYTHON_COMPAT=( python3_{10..12} )
 RADEON_CARDS=(
@@ -150,7 +150,7 @@ RDEPEND="
 	>=dev-libs/expat-2.1.0-r3[${MULTILIB_USEDEP}]
 	>=media-libs/libglvnd-1.3.2[X?,${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.8[${MULTILIB_USEDEP}]
-	virtual/patent-status[patent_status_new_or_renewed=]
+	virtual/patent-status[patent_status_nonfree=]
 	llvm? (
 		video_cards_r600? (
 			virtual/libelf:0=[${MULTILIB_USEDEP}]
@@ -712,7 +712,7 @@ _src_configure() {
 		-Dglvnd=true
 		-Dshared-glapi=enabled
 		-Dvalgrind=$(usex valgrind auto disabled)
-		-Dvideo-codecs=$(usex patent_status_new_or_renewed "h264dec,h264enc,h265dec,h265enc,vc1dec" "")
+		-Dvideo-codecs=$(usex patent_status_nonfree "h264dec,h264enc,h265dec,h265enc,vc1dec" "")
 		-Dvulkan-drivers=$(driver_list "${VULKAN_DRIVERS[*]}")
 	)
 	meson_src_configure

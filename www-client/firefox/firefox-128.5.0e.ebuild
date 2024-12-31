@@ -431,7 +431,6 @@ LICENSE+="
 
 # (unforced) -hwaccel, pgo, x11 + wayland are defaults in -bin browser
 PATENT_STATUS=(
-	patent_status_new_or_renewed
 	patent_status_nonfree
 )
 #
@@ -582,10 +581,10 @@ gen_ffmpeg_royalty_free_depends() {
 		echo "
 			(
 				!<dev-libs/openssl-3
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,dav1d?,-fdk,-kvazaar,-openh264,openssl,opus?,-patent_status_nonfree,vaapi?,vpx?,-x264,-x265]
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,vaapi?,vpx?,-x264,-x265]
 			)
 			(
-				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,dav1d?,-fdk,-kvazaar,-openh264,-openssl,opus?,-patent_status_nonfree,vaapi?,vpx?,-x264,-x265]
+				media-video/ffmpeg:${s}[${MULTILIB_USEDEP},-amr,-cuda,dav1d?,-fdk,-kvazaar,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,vaapi?,vpx?,-x264,-x265]
 			)
 		"
 	done
@@ -593,7 +592,7 @@ gen_ffmpeg_royalty_free_depends() {
 
 # x86_64 will use ffvpx and system-ffmpeg but others will use system-ffmpeg
 PATENT_CDEPENDS="
-	media-libs/mesa[${MULTILIB_USEDEP},patent_status_new_or_renewed?]
+	media-libs/mesa[${MULTILIB_USEDEP},patent_status_nonfree=]
 	!patent_status_nonfree? (
 		system-ffmpeg? (
 			|| (
@@ -608,7 +607,7 @@ PATENT_CDEPENDS="
 			)
 		)
 		vaapi? (
-			media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_new_or_renewed?]
+			media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_nonfree=]
 		)
 	)
 "
@@ -754,7 +753,7 @@ RDEPEND+="
 	${CDEPEND}
 	${UDEV_RDEPEND}
 	sys-kernel/mitigate-id
-	virtual/patent-status[patent_status_new_or_renewed=,patent_status_nonfree=]
+	virtual/patent-status[patent_status_nonfree=]
 	cups? (
 		net-print/cups[${MULTILIB_USEDEP}]
 	)

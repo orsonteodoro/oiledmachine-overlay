@@ -167,7 +167,6 @@ VULNERABILITIES_FIXED=(
 NABIS=0 # Global variable
 NODE_VERSION=20
 PATENT_STATUS=(
-	patent_status_new_or_renewed
 	patent_status_nonfree
 	patent_status_sponsored_ncp_nb
 )
@@ -655,7 +654,7 @@ PATENT_USE_FLAGS="
 		)
 	)
 	vaapi-hevc? (
-		patent_status_new_or_renewed
+		patent_status_nonfree
 	)
 	widevine? (
 		patent_status_nonfree
@@ -911,9 +910,9 @@ LIBVA_DEPEND="
 	vaapi? (
 		>=media-libs/libva-${LIBVA_PV}[${MULTILIB_USEDEP},drm(+),wayland?,X?]
 		media-libs/libva:=
-		media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_new_or_renewed?]
+		media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_nonfree=]
 		system-ffmpeg? (
-			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},patent_status_new_or_renewed?,vaapi]
+			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi]
 		)
 	)
 "
@@ -1157,7 +1156,7 @@ COMMON_DEPEND="
 		>=net-wireless/bluez-5.55[${MULTILIB_USEDEP}]
 	)
 	system-ffmpeg? (
-		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},patent_status_new_or_renewed?]
+		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},patent_status_nonfree=]
 		system-opus? (
 			>=media-libs/opus-1.4[${MULTILIB_USEDEP}]
 			media-libs/opus:=
@@ -1195,7 +1194,7 @@ RDEPEND+="
 	${CLANG_RDEPEND}
 	sys-kernel/mitigate-id
 	virtual/ttf-fonts
-	virtual/patent-status[patent_status_new_or_renewed=,patent_status_nonfree=,patent_status_sponsored_ncp_nb=]
+	virtual/patent-status[patent_status_nonfree=,patent_status_sponsored_ncp_nb=]
 	!headless? (
 		qt5? (
 			>=dev-qt/qtgui-${QT5_PV}:5[wayland?,X?]

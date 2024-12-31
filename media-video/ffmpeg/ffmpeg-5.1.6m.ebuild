@@ -172,7 +172,6 @@ MULTILIB_WRAPPED_HEADERS=(
 N_SAMPLES=1
 NV_CODEC_HEADERS_PV="9.1.23.1"
 PATENT_STATUS=(
-	patent_status_new_or_renewed
 	patent_status_nonfree
 )
 SCM=""
@@ -548,8 +547,11 @@ REQUIRED_USE_LICENSES="
 PATENT_REQUIRED_USE="
 	!patent_status_nonfree? (
 		!amr
+		!cuda
 		!fdk
 		!kvazaar
+		!nvenc
+		!nvdec
 		!openh264
 		!x264
 		!x265
@@ -557,10 +559,19 @@ PATENT_REQUIRED_USE="
 	amr? (
 		patent_status_nonfree
 	)
+	cuda? (
+		patent_status_nonfree
+	)
 	fdk? (
 		patent_status_nonfree
 	)
 	kvazaar? (
+		patent_status_nonfree
+	)
+	nvdec? (
+		patent_status_nonfree
+	)
+	nvdec? (
 		patent_status_nonfree
 	)
 	openh264? (
@@ -712,7 +723,7 @@ LICENSE_RDEPEND="
 # Update both !openssl and openssl USE flags.
 RDEPEND+="
 	${LICENSE_RDEPEND}
-	virtual/patent-status[patent_status_new_or_renewed=,patent_status_nonfree=]
+	virtual/patent-status[patent_status_nonfree=]
 	!openssl? (
 		gnutls? (
 			>=net-libs/gnutls-2.12.23-r6:=[${MULTILIB_USEDEP}]
@@ -977,7 +988,7 @@ RDEPEND+="
 	)
 	vaapi? (
 		>=media-libs/libva-1.2.1-r1:0=[${MULTILIB_USEDEP},drm(+),X?]
-		media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_new_or_renewed?]
+		media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_nonfree=]
 	)
 	vdpau? (
 		>=x11-libs/libvdpau-0.7[${MULTILIB_USEDEP}]
@@ -1061,7 +1072,7 @@ BDEPEND+="
 		vaapi? (
 			>=media-libs/libva-1.2.1-r1:0=[${MULTILIB_USEDEP},drm(+),X]
 			media-video/libva-utils[vainfo]
-			media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_new_or_renewed?]
+			media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_nonfree?]
 		)
 	)
 "

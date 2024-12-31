@@ -10,7 +10,7 @@ EAPI=8
 
 GST_ORG_MODULE="gst-plugins-bad"
 PATENT_STATUS=(
-	patent_status_new_or_renewed
+	patent_status_nonfree
 )
 VIDEO_CARDS=(
 	video_cards_amdgpu
@@ -39,11 +39,23 @@ vulkan-video wayland X
 ebuild-revision-1
 "
 PATENT_STATUS_REQUIRED_USE="
+	!patent_status_nonfree? (
+		!nvcodec
+		!qsv
+		!vaapi
+		!vulkan-video
+	)
+	nvcodec? (
+		patent_status_nonfree
+	)
+	qsv? (
+		patent_status_nonfree
+	)
 	vaapi? (
-		patent_status_new_or_renewed
+		patent_status_nonfree
 	)
 	vulkan-video? (
-		patent_status_new_or_renewed
+		patent_status_nonfree
 	)
 "
 REQUIRED_USE="
@@ -76,7 +88,7 @@ RDEPEND="
 	>=dev-libs/glib-2.64.0:2[${MULTILIB_USEDEP}]
 	~media-libs/gstreamer-${PV}:${SLOT}[${MULTILIB_USEDEP},introspection?]
 	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP},introspection?]
-	virtual/patent-status[patent_status_new_or_renewed=]
+	virtual/patent-status[patent_status_nonfree=]
 	bzip2? (
 		app-arch/bzip2[${MULTILIB_USEDEP}]
 	)

@@ -21,7 +21,7 @@ EAPI=7
 # have H.264, H.265.
 
 PATENT_STATUS=(
-	patent_status_new_or_renewed
+	patent_status_nonfree
 	patent_status_nonfree
 )
 VIDEO_CARDS=(
@@ -59,6 +59,8 @@ PATENT_REQUIRED_USE="
 		!dash
 		!fdk
 		!hls
+		!nvcodec
+		!qsv
 		!va
 		!vaapi
 		!vulkan
@@ -77,17 +79,23 @@ PATENT_REQUIRED_USE="
 	hls? (
 		patent_status_nonfree
 	)
+	nvcodec? (
+		patent_status_nonfree
+	)
 	openh264? (
 		patent_status_nonfree
 	)
+	qsv? (
+		patent_status_nonfree
+	)
 	va? (
-		patent_status_new_or_renewed
+		patent_status_nonfree
 	)
 	vaapi? (
-		patent_status_new_or_renewed
+		patent_status_nonfree
 	)
 	vulkan? (
-		patent_status_new_or_renewed
+		patent_status_nonfree
 	)
 	x264? (
 		patent_status_nonfree
@@ -135,9 +143,9 @@ PATENT_RDEPEND="
 		!media-plugins/gst-plugins-vaapi
 		!media-plugins/gst-plugins-x264
 		!media-plugins/gst-plugins-x265
-		media-libs/gst-plugins-bad[-vaapi,-vulkan]
+		media-libs/gst-plugins-bad[-nvcodec,-qsv,-vaapi,-vulkan]
 	)
-	virtual/patent-status[patent_status_new_or_renewed=,patent_status_nonfree=]
+	virtual/patent-status[patent_status_nonfree=,patent_status_nonfree=]
 "
 
 RDEPEND="

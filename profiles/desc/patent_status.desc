@@ -4,10 +4,8 @@
 #
 # USE flag aliases for grep search:
 #
-# patent_status_new_or_renewed
 # patent_status_nonfree
 # patent_status_sponsored_ncp_nb
 #
 nonfree - Allow unexpired patents
-new_or_renewed - Allow nonfree hardware accelerated codecs released within four years or renewed licensed hardware.  Hardware released beyond 4 years may need a license renewal fee for nonfree patented codec.
 sponsored_ncp_nb - Allow the fully sponsored proprietary codecs for use by non content providers and non broadcasters

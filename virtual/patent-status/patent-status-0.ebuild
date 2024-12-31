@@ -4,7 +4,6 @@
 EAPI=8
 
 PATENT_STATUS=(
-        patent_status_new_or_renewed
         patent_status_nonfree
 	patent_status_sponsored_ncp_nb
 )

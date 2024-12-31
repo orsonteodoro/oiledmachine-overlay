@@ -501,7 +501,6 @@ DEFAULT_GST_PLUGINS="
 # libbacktrace is enabled upstream but disabled for security reasons.
 
 PATENT_STATUS=(
-	patent_status_new_or_renewed
 	patent_status_nonfree
 )
 CPU_FLAGS_ARM=(
@@ -580,7 +579,7 @@ REQUIRED_USE+=" "$(gen_gst_plugins_required_use)
 
 # Sorted by least restrictive top
 PATENT_REQUIRED_USE="
-	!patent_status_new_or_renewed? (
+	!patent_status_nonfree? (
 		!vaapi
 	)
 	aac? (
@@ -599,7 +598,7 @@ PATENT_REQUIRED_USE="
 		patent_status_nonfree
 	)
 	vaapi? (
-		patent_status_new_or_renewed
+		patent_status_nonfree
 	)
 	x264? (
 		patent_status_nonfree
@@ -707,7 +706,7 @@ REQUIRED_USE+="
 "
 
 RDEPEND_PATENTS="
-	>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},patent_status_new_or_renewed?]
+	>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},patent_status_nonfree=]
 	!patent_status_nonfree? (
 		!media-plugins/gst-plugins-dash
 		!media-plugins/gst-plugins-faac
@@ -718,11 +717,9 @@ RDEPEND_PATENTS="
 		!media-plugins/gst-plugins-openh264
 		!media-plugins/gst-plugins-x264
 		!media-plugins/gst-plugins-x265
-	)
-	!patent_status_new_or_renewed? (
 		gstreamer? (
-			media-plugins/gst-plugins-meta[-vaapi]
-			media-libs/gst-plugins-bad[-vaapi]
+			media-plugins/gst-plugins-meta[-nvcodec,-qsv,-vaapi,-vulkan]
+			media-libs/gst-plugins-bad[-nvcodec,-qsv,-vaapi,-vulkan]
 		)
 	)
 "
@@ -766,7 +763,7 @@ RDEPEND+="
 	>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP},X?]
 	sys-kernel/mitigate-id
 	virtual/jpeg:0=[${MULTILIB_USEDEP}]
-	virtual/patent-status[patent_status_new_or_renewed=,patent_status_nonfree=]
+	virtual/patent-status[patent_status_nonfree=]
 	avif? (
 		>=media-libs/libavif-0.9.0[${MULTILIB_USEDEP}]
 	)
@@ -819,7 +816,7 @@ RDEPEND+="
 		)
 		vaapi? (
 			>=media-libs/gst-plugins-bad-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},vaapi]
-			media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_new_or_renewed?]
+			media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_nonfree=]
 		)
 		webvtt? (
 			>=media-plugins/gst-plugins-rs-0.6.0:1.0[${MULTILIB_USEDEP},closedcaption]

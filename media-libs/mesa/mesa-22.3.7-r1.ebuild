@@ -18,7 +18,7 @@ LLVM_COMPAT=( {16..13} )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MY_P="${P/_/-}"
 PATENT_STATUS=(
-	patent_status_new_or_renewed
+	patent_status_nonfree
 )
 PYTHON_COMPAT=( python3_{9..11} )
 RADEON_CARDS=(
@@ -143,7 +143,7 @@ RDEPEND="
 	>=dev-libs/expat-2.1.0-r3[${MULTILIB_USEDEP}]
 	>=media-libs/libglvnd-1.3.2[X?,${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.8[${MULTILIB_USEDEP}]
-	virtual/patent-status[patent_status_new_or_renewed=]
+	virtual/patent-status[patent_status_nonfree=]
 	unwind? (
 		sys-libs/libunwind[${MULTILIB_USEDEP}]
 	)
@@ -683,7 +683,7 @@ _src_configure() {
 		-Dglx=$(usex X dri disabled)
 		-Dshared-glapi=enabled
 		-Dvalgrind=$(usex valgrind auto disabled)
-		-Dvideo-codecs=$(usex patent_status_new_or_renewed "h264dec,h264enc,h265dec,h265enc,vc1dec" "")
+		-Dvideo-codecs=$(usex patent_status_nonfree "h264dec,h264enc,h265dec,h265enc,vc1dec" "")
 		-Dvulkan-drivers=$(driver_list "${VULKAN_DRIVERS[*]}")
 	)
 	meson_src_configure
