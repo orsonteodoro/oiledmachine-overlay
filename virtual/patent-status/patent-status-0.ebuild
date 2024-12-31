@@ -16,6 +16,12 @@ IUSE="
 ${PATENT_STATUS[@]}
 "
 
+# The libva, libvdpau are blacklisted because drivers/packages typically do not
+# have a selective configuration choice between free and nonfree like in the
+# mesa package.  This is to prevent inadvertant conversion or contamination of
+# content wrapped in nonfree.  These restrictions can be removed once the
+# packages are properly fixed to prune/disable nonfree support.
+
 # The ffmpeg-chromium is blacklisted because it is misconfigured to
 # unconditionally enable patented codecs (aac, h264).
 
