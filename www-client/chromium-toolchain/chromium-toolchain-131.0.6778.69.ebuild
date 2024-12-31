@@ -167,7 +167,7 @@ LICENSE="
 
 RESTRICT="binchecks mirror strip test"
 SLOT="0/llvm${LLVM_OFFICIAL_SLOT}-rust$(ver_cut 1-2 ${RUST_PV})-gn${GN_PV}"
-IUSE+=" +clang +gn +rust ebuild-revision-3"
+IUSE+=" +clang +gn +rust ebuild_revision_3"
 REQUIRED_USE="
 	gn? (
 		clang
