@@ -40,7 +40,7 @@ RESTRICT="
 	strip
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="ebuild-revision-15"
+IUSE="ebuild_revision_15"
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
 	!dev-libs/rocm-comgr:0
