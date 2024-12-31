@@ -117,7 +117,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 ${ROCM_SLOTS2[@]}
 cuda rocm
-ebuild-revision-1
+ebuild_revision_1
 "
 gen_cuda_required_use() {
 	local x
