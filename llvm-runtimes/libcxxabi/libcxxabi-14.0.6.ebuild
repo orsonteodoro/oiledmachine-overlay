@@ -24,7 +24,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 hardened +libunwind +static-libs test
-ebuild-revision-9
+ebuild_revision_9
 "
 RDEPEND="
 	libunwind? (
