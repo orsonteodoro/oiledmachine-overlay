@@ -37,7 +37,7 @@ RESTRICT="
 	)
 "
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
-IUSE="emacs test ebuild-revision-1"
+IUSE="emacs test ebuild_revision_1"
 RDEPEND="
 	app-eselect/eselect-cython
 	emacs? (
