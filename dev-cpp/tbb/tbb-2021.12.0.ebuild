@@ -64,7 +64,7 @@ LICENSE="Apache-2.0"
 RESTRICT="mirror"
 SLOT="${SLOT_MAJOR}/${SOVER_TBB}-${SOVER_TBBMALLOC}-${SOVER_TBBBIND}"
 # Upstream enables tests by default.
-IUSE+=" -X debug doc -examples -python +tbbmalloc -test ebuild-revision-1"
+IUSE+=" -X debug doc -examples -python +tbbmalloc -test ebuild_revision_1"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	X? (
