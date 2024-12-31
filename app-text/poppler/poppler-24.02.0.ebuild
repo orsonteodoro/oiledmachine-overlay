@@ -40,7 +40,7 @@ LICENSE="GPL-2"
 IUSE="
 +boost cairo cjk gtk +curl +cxx debug -doc +gpgme +introspection +jpeg +jpeg2k
 +lcms +nss png +qt5 +qt6 test +tiff +utils
-ebuild-revision-2
+ebuild_revision_2
 "
 REQUIRED_USE+="
 	gtk? (
