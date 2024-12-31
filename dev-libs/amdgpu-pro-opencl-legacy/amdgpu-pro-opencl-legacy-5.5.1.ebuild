@@ -55,7 +55,7 @@ LICENSE="
 "
 RESTRICT="binchecks bindist fetch mirror strip"
 SLOT="0/${PV}"
-IUSE+=" system-libdrm ebuild-revision-0"
+IUSE+=" system-libdrm ebuild_revision_0"
 RDEPEND="
 	!dev-libs/amdgpu-pro-opencl
 	>=sys-libs/glibc-2.12
