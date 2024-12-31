@@ -42,7 +42,7 @@ LICENSE="
 SLOT="0"
 IUSE+="
 hardened +static-libs test
-ebuild-revision-9
+ebuild_revision_9
 ${LLVM_EBUILDS_LLVM18_REVISION}
 "
 # in 15.x, cxxabi.h is moving from libcxx to libcxxabi
