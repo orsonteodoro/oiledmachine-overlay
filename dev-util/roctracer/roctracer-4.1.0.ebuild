@@ -46,7 +46,7 @@ RESTRICT="
 	test
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" test ebuild-revision-9"
+IUSE=" test ebuild_revision_9"
 #	sys-devel/gcc:11
 CDEPEND="
 	${ROCM_CLANG_DEPEND}
