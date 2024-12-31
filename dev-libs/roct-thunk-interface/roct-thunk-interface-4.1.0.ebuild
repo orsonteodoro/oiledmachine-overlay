@@ -45,7 +45,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE+="
-ebuild-revision-8
+ebuild_revision_8
 "
 RDEPEND="
 	!dev-libs/roct-thunk-interface:0
