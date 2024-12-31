@@ -54,7 +54,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-benchmark test ebuild-revision-4
+benchmark test ebuild_revision_4
 "
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
