@@ -486,7 +486,8 @@
   </upstream>
   <use>
     <flag name="amf">
-      Enables support with the Advanced Media Framework (AMF)
+      Enables support with the Advanced Media Framework (AMF) for
+      H.264, H.265, AV1.
     </flag>
     <flag name="amr">
       Enables Adaptive Multi-Rate Audio support
@@ -528,16 +529,17 @@
       CPUs)
     </flag>
     <flag name="cuda">
-      Enables CUDA-based acceleration. Mostly used for specific filters.
+      Enables CUDA-based acceleration. Mostly used for specific video processing
+      filters.
     </flag>
     <flag name="cuda-filters">
-      Enables CUDA-based filters.
+      Enables CUDA-based video processing filters.
     </flag>
     <flag name="cuda-llvm">
-      Use clang to build CUDA filters.
+      Use clang to build CUDA video processing filters.
     </flag>
     <flag name="cuda-nvcc">
-      Use nvcc to build CUDA filters.
+      Use nvcc to build CUDA video processing filters.
     </flag>
     <flag name="dvdvideo">
       Add support for DVD navigation menus and structure parsing via the dvdvideo
@@ -692,6 +694,9 @@
       Build and install libpostproc.
     </flag>
     <flag name="qsv">
+      Add support for accelerated H.264, H.265, JPEG, MPEG-2, VP8, VP9, AV1
+      and video processing filters
+
       Enable Quick Sync Video via <pkg>media-libs/intel-mediasdk</pkg> (FFmpeg
       versions older than, and including, 5.1) or <pkg>media-libs/oneVPL</pkg>
       (FFmpeg version newer than 5.1).
@@ -815,7 +820,7 @@
     </flag>
     <flag name="vaapi">
       Enables GPU acceleration for MJPEG, MPEG-2, VC-1, H.264, H.265, VP8, VP9,
-      AV1 if supported by the GPU only if a VAAPI driver is available.
+      AV1 and video processing filters if supported by the GPU and driver.
     </flag>
     <flag name="vidstab">
       Enables video stabilization filter using vid.stab library
@@ -832,7 +837,7 @@
     </flag>
     <flag name="vulkan">
       Enables support for the vulkan API for GPU offload and decoding of
-      H.264, HEVC, AV1.
+      H.264, HEVC, AV1 and video processing filters.
     </flag>
     <flag name="x265">
       Enables HEVC encoding with <pkg>media-libs/x265</pkg>.

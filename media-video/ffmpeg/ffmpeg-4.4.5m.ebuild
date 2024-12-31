@@ -549,6 +549,7 @@ REQUIRED_USE_LICENSES="
 
 PATENT_REQUIRED_USE="
 	!patent_status_nonfree? (
+		!amf
 		!cuda
 		!fdk
 		!kvazaar
@@ -561,6 +562,9 @@ PATENT_REQUIRED_USE="
 		!vulkan
 		!x264
 		!x265
+	)
+	amf? (
+		patent_status_nonfree
 	)
 	cuda? (
 		patent_status_nonfree
