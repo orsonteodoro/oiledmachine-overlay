@@ -88,7 +88,7 @@ ${PATENT_STATUS[@]}
 cpu_flags_x86_sse2 d3d9 debug gles1 +gles2 +llvm lm-sensors opencl osmesa
 selinux test unwind vaapi valgrind vdpau vulkan
 vulkan-overlay wayland +X xa zink +zstd
-ebuild-revision-1
+ebuild_revision_1
 "
 REQUIRED_USE="
 	d3d9? (
