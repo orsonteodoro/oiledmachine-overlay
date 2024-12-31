@@ -20,7 +20,7 @@ LICENSE="
 #   https://openclipart.org/detail/291738/hannukah-symbol
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="custom-image keffiyeh-woman keffiyeh-woman-mask-on menorah palestine-flag +ukraine-flag no-flag r1"
+IUSE="custom-image keffiyeh-woman keffiyeh-woman-mask-on menorah palestine-flag +ukraine-flag no-flag ebuild_revision_1"
 REQUIRED_USE="
 	|| (
 		custom-image
