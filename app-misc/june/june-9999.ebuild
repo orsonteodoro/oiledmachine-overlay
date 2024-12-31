@@ -37,7 +37,7 @@ RESTRICT="mirror test" # untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 alsa dev jack nas oss pipewire pulseaudio sndio test
-ebuild-revision-1
+ebuild_revision_1
 "
 AUDIO_OUTPUT_REQUIRED_USE="
 	|| (
