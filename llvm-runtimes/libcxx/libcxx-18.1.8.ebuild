@@ -58,7 +58,7 @@ RESTRICT="
 SLOT="0"
 IUSE+="
 hardened +libcxxabi +static-libs test +threads
-ebuild-revision-12
+ebuild_revision_12
 ${LLVM_EBUILDS_LLVM18_REVISION}
 "
 RDEPEND="
