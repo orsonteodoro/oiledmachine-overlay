@@ -1125,11 +1125,6 @@ VIRTUAL_UDEV="
 # formats due to package/drivers not selectively dropping codecs like the mesa
 # package.
 PATENT_STATUS_DEPEND="
-	!patent_status_nonfree? (
-		!media-libs/libva
-		!media-libs/openh264
-		!media-libs/vaapi-drivers
-	)
 	system-ffmpeg? (
 		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},patent_status_nonfree=]
 		patent_status_nonfree? (

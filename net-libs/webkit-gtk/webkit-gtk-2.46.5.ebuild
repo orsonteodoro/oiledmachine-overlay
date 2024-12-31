@@ -708,17 +708,6 @@ REQUIRED_USE+="
 RDEPEND_PATENTS="
 	>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},patent_status_nonfree=]
 	!patent_status_nonfree? (
-		!media-libs/libva
-		!media-libs/vaapi-drivers
-		!media-plugins/gst-plugins-dash
-		!media-plugins/gst-plugins-faac
-		!media-plugins/gst-plugins-faad
-		!media-plugins/gst-plugins-fdkaac
-		!media-plugins/gst-plugins-hls
-		!media-plugins/gst-plugins-libde265
-		!media-plugins/gst-plugins-openh264
-		!media-plugins/gst-plugins-x264
-		!media-plugins/gst-plugins-x265
 		gstreamer? (
 			media-plugins/gst-plugins-meta[-nvcodec,-qsv,-vaapi,-vulkan]
 			media-libs/gst-plugins-bad[-nvcodec,-qsv,-vaapi,-vulkan-video]

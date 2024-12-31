@@ -134,29 +134,6 @@ REQUIRED_USE="
 
 PATENT_RDEPEND="
 	!patent_status_nonfree? (
-		!media-libs/faac
-		!media-libs/faad2
-		!media-libs/fdk-aac
-		!media-libs/libde265
-		!media-libs/libva
-		!media-libs/openh264
-		!media-libs/vaapi-drivers
-		!media-libs/vo-aacenc
-		!media-libs/x264
-		!media-libs/x265
-		!media-plugins/gst-plugins-dash
-		!media-plugins/gst-plugins-faac
-		!media-plugins/gst-plugins-faad
-		!media-plugins/gst-plugins-fdkaac
-		!media-plugins/gst-plugins-hls
-		!media-plugins/gst-plugins-hlssink3
-		!media-plugins/gst-plugins-libde265
-		!media-plugins/gst-plugins-openh264
-		!media-plugins/gst-plugins-uvch264
-		!media-plugins/gst-plugins-vaapi
-		!media-plugins/gst-plugins-voaacenc
-		!media-plugins/gst-plugins-x264
-		!media-plugins/gst-plugins-x265
 		media-libs/gst-plugins-bad[-nvcodec,-qsv,-vaapi,-vulkan-video]
 	)
 	virtual/patent-status[patent_status_nonfree=]
