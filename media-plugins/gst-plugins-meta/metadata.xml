@@ -182,6 +182,10 @@
     <flag name="wavpack">
       Lossless audio support
     </flag>
+    <flag name="vulkan">
+      Add support for hardware accelerated H.264 and H.265 through Vulkan Video
+      Extensions.
+    </flag>
     <flag name="webp">
       WebP Image support
     </flag>

@@ -47,11 +47,11 @@ SLOT="1.0"
 IUSE="
 ${PATENT_STATUS[@]}
 ${VIDEO_CARDS[@]}
-a52 aac alsa aom av1 cdda dash dav1d dts dv dvb dvd fdk ffmpeg flac fluidsynth gme
-gsm hls http jack jpeg jpeg2k lame libass libvisual midi mp3 modplug mpeg
+a52 aac alsa aom av1 cdda dash dav1d dts dv dvb dvd fdk ffmpeg flac fluidsynth
+gme gsm hls http jack jpeg jpeg2k lame libass libvisual midi mp3 modplug mpeg
 nvcodec ogg openal openh264 opus oss speex png pulseaudio qsv rav1e rtmp sndio
-sndfile svg taglib theora v4l va vaapi vcd vorbis vpx wavpack wildmidi webp X x264
-x265
+sndfile svg taglib theora v4l va vaapi vcd vorbis vpx vulkan wavpack wildmidi
+webp X x264 x265
 "
 PATENT_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -61,6 +61,7 @@ PATENT_REQUIRED_USE="
 		!hls
 		!va
 		!vaapi
+		!vulkan
 		!x264
 		!x265
 	)
@@ -80,9 +81,12 @@ PATENT_REQUIRED_USE="
 		patent_status_nonfree
 	)
 	va? (
-		patent_status_nonfree
+		patent_status_new_or_renewed
 	)
 	vaapi? (
+		patent_status_new_or_renewed
+	)
+	vulkan? (
 		patent_status_new_or_renewed
 	)
 	x264? (
@@ -295,6 +299,9 @@ RDEPEND="
 	)
 	vpx? (
 		~media-plugins/gst-plugins-vpx-${PV}:1.0[${MULTILIB_USEDEP}]
+	)
+	vulkan? (
+		~media-libs/gst-plugins-bad-${PV}:1.0[vulkan,vulkan-video]
 	)
 	wavpack? (
 		~media-plugins/gst-plugins-wavpack-${PV}:1.0[${MULTILIB_USEDEP}]

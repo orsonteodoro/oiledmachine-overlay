@@ -9,6 +9,9 @@ EAPI=8
 # Baseline requirement for libva is 1.6, but 1.10 gets more features
 
 GST_ORG_MODULE="gst-plugins-bad"
+PATENT_STATUS=(
+	patent_status_new_or_renewed
+)
 VIDEO_CARDS=(
 	video_cards_amdgpu
 	video_cards_r600
@@ -29,12 +32,22 @@ DESCRIPTION="A set of bad plugins that fall short of code quality or support nee
 HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="LGPL-2"
 IUSE="
+${PATENT_STATUS}
 ${VIDEO_CARDS[@]}
 bzip2 +introspection msdk nvcodec onevpl +orc qsv udev vaapi vnc vulkan
 vulkan-video wayland X
 ebuild-revision-1
 "
+PATENT_STATUS_REQUIRED_USE="
+	vaapi? (
+		patent_status_new_or_renewed
+	)
+	vulkan-video? (
+		patent_status_new_or_renewed
+	)
+"
 REQUIRED_USE="
+	${PATENT_STATUS_REQUIRED_USE}
 	qsv? (
 		vaapi
 		|| (
@@ -63,6 +76,7 @@ RDEPEND="
 	>=dev-libs/glib-2.64.0:2[${MULTILIB_USEDEP}]
 	~media-libs/gstreamer-${PV}:${SLOT}[${MULTILIB_USEDEP},introspection?]
 	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP},introspection?]
+	virtual/patent-status[patent_status_new_or_renewed=]
 	bzip2? (
 		app-arch/bzip2[${MULTILIB_USEDEP}]
 	)
