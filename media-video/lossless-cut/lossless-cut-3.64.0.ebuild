@@ -51,7 +51,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 mp3 opus svt-av1 theora vorbis vpx x264
-ebuild-revision-2
+ebuild_revision_2
 "
 RDEPEND+="
 	|| (
