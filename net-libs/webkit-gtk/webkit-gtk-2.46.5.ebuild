@@ -719,7 +719,7 @@ RDEPEND_PATENTS="
 		!media-plugins/gst-plugins-x265
 		gstreamer? (
 			media-plugins/gst-plugins-meta[-nvcodec,-qsv,-vaapi,-vulkan]
-			media-libs/gst-plugins-bad[-nvcodec,-qsv,-vaapi,-vulkan]
+			media-libs/gst-plugins-bad[-nvcodec,-qsv,-vaapi,-vulkan-video]
 		)
 	)
 "
