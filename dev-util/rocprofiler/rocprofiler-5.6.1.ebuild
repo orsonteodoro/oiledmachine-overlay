@@ -50,7 +50,7 @@ LICENSE="
 # BSD-2 - test/util/hsa_rsrc_factory.h
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" plugins samples test ebuild-revision-15"
+IUSE=" plugins samples test ebuild_revision_15"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
