@@ -49,7 +49,7 @@ IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 debug hwloc offload ompt test llvm_targets_NVPTX
 rpc
-ebuild-revision-8
+ebuild_revision_8
 "
 gen_cuda_required_use() {
 	local x
