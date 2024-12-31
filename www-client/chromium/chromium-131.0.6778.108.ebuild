@@ -1112,7 +1112,27 @@ VIRTUAL_UDEV="
 	)
 "
 
+# The libva and others are removed to prevent inadvertant encoding to nonfree
+# formats due to package/drivers not selectively dropping codecs like the mesa
+# package.
+PATENT_STATUS_DEPEND="
+	!patent_status_nonfree? (
+		!media-libs/libva
+		!media-libs/openh264
+		!media-libs/vaapi-drivers
+	)
+	system-ffmpeg? (
+		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},patent_status_nonfree=]
+		patent_status_nonfree? (
+			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
+		)
+		!patent_status_nonfree? (
+			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-cuda,encode?,-fdk,-kvazaar,-nvdec,-nvenc,-openh264,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vorbis?,-vulkan,vpx?,-vulkan,-x264,-x265]
+		)
+	)
+"
 COMMON_DEPEND="
+	${PATENT_STATUS_DEPEND}
 	!headless? (
 		${VIRTUAL_UDEV}
 		(
@@ -1159,16 +1179,9 @@ COMMON_DEPEND="
 		>=net-wireless/bluez-5.55[${MULTILIB_USEDEP}]
 	)
 	system-ffmpeg? (
-		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},patent_status_nonfree=]
 		system-opus? (
 			>=media-libs/opus-1.4[${MULTILIB_USEDEP}]
 			media-libs/opus:=
-		)
-		patent_status_nonfree? (
-			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},encode?,opus?,patent_status_nonfree,vorbis?,vpx?]
-		)
-		!patent_status_nonfree? (
-			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-amr,encode?,-fdk,-kvazaar,-openh264,opus?,-patent_status_nonfree,vaapi?,vorbis?,vpx?,-x264,-x265]
 		)
 		|| (
 			media-video/ffmpeg:${FFMPEG_SLOT}[${MULTILIB_USEDEP},-samba]

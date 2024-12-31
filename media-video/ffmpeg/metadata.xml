@@ -831,7 +831,8 @@
       requires this useflag to be enabled though.
     </flag>
     <flag name="vulkan">
-      Enables support for the vulkan API for GPU offload.
+      Enables support for the vulkan API for GPU offload and decoding of
+      H.264, HEVC, AV1.
     </flag>
     <flag name="x265">
       Enables HEVC encoding with <pkg>media-libs/x265</pkg>.

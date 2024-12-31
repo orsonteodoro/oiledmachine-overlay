@@ -588,6 +588,7 @@ PATENT_REQUIRED_USE="
 		!qsv
 		!vaapi
 		!vdpau
+		!vulkan
 		!x264
 		!x265
 	)
@@ -616,6 +617,9 @@ PATENT_REQUIRED_USE="
 		patent_status_nonfree
 	)
 	vdpau? (
+		patent_status_nonfree
+	)
+	vulkan? (
 		patent_status_nonfree
 	)
 	x264? (
