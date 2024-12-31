@@ -387,7 +387,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" openrc +systemd wayland X r1"
+IUSE+=" openrc +systemd wayland X ebuild_revision_1"
 # U 22.04
 RUST_BINDINGS_DEPENDS="
 	>=dev-libs/glib-2.56:2
