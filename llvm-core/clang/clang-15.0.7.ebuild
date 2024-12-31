@@ -30,7 +30,7 @@ default-full-relro default-libcxx default-lld default-partial-relro
 default-ssp-buffer-size-4 default-stack-clash-protection doc +extra hardened
 hardened-compat ieee-long-double ssp llvm-libunwind +pie ssp +static-analyzer
 test xml
-ebuild-revision-7
+ebuild_revision_7
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
