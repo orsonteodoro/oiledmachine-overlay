@@ -29,7 +29,7 @@ cet debug default-compiler-rt default-fortify-source-2 default-fortify-source-3
 default-full-relro default-libcxx default-lld default-partial-relro
 default-ssp-buffer-size-4 default-stack-clash-protection doc hardened
 hardened-compat llvm-libunwind +pie ssp +static-analyzer test xml
-ebuild-revision-7
+ebuild_revision_7
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
