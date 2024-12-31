@@ -87,7 +87,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" -jit ebuild-revision-1"
+IUSE+=" -jit ebuild_revision_1"
 REQUIRED_USE="
 	!jit
 "
