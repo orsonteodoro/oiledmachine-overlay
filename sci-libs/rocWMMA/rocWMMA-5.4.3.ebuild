@@ -33,9 +33,10 @@ IUSE="ebuild_revision_3"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
+#	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_5_4_AMDGPU_USEDEP}]
 RDEPEND="
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
-	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_5_4_AMDGPU_USEDEP}]
+	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[amdgpu_targets_gfx908?,amdgpu_targets_gfx90a?]
 	sys-libs/llvm-roc-libomp:=
 "
 DEPEND="
