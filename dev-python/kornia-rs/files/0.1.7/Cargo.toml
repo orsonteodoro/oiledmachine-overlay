@@ -1,0 +1,36 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/kornia-core",
+    "crates/kornia-core-ops",
+    "crates/kornia-image",
+    "crates/kornia-io",
+    "crates/kornia-imgproc",
+    "crates/kornia",
+    "examples/*",
+    # "kornia-py",
+]
+exclude = ["kornia-py", "kornia-serve"]
+
+[workspace.package]
+authors = ["kornia.org <edgar@kornia.org>"]
+categories = ["computer-vision", "science::robotics"]
+description = "Low-level computer vision library in Rust"
+edition = "2021"
+homepage = "http://kornia.org"
+include = ["Cargo.toml"]
+license = "Apache-2.0"
+license-file = "LICENSE"
+readme = "README.md"
+repository = "https://github.com/kornia/kornia-rs"
+rust-version = "1.76"
+version = "0.1.7"
+
+[workspace.dependencies]
+# NOTE: remember to update the kornia-py package version in `kornia-py/Cargo.toml` when updating the Rust package version
+kornia-core = { path = "crates/kornia-core", version = "0.1.7" }
+kornia-core-ops = { path = "crates/kornia-core-ops", version = "0.1.7" }
+kornia-image = { path = "crates/kornia-image", version = "0.1.7" }
+kornia-io = { path = "crates/kornia-io", version = "0.1.7" }
+kornia-imgproc = { path = "crates/kornia-imgproc", version = "0.1.7" }
+kornia = { path = "crates/kornia", version = "0.1.7" }

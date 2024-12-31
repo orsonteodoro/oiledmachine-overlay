@@ -1,0 +1,55 @@
+[package]
+name = "kornia-imgproc"
+authors.workspace = true
+description = "Image processing operations in Rust"
+edition.workspace = true
+homepage.workspace = true
+license.workspace = true
+publish = true
+repository.workspace = true
+rust-version.workspace = true
+version.workspace = true
+
+[dependencies]
+
+# kornia
+kornia-core.workspace = true
+kornia-image.workspace = true
+
+# external
+fast_image_resize = "3.0.4"
+num-traits = "0.2"
+rayon = "1.10"
+thiserror = "1"
+
+[dev-dependencies]
+kornia-io.workspace = true
+
+criterion = "0.5"
+image = "0.25.1"
+ndarray = { version = "0.15", features = ["rayon"] }
+rayon = "1.10"
+
+[[bench]]
+name = "bench_color"
+harness = false
+
+[[bench]]
+name = "bench_resize"
+harness = false
+
+[[bench]]
+name = "bench_metrics"
+harness = false
+
+[[bench]]
+name = "bench_warp"
+harness = false
+
+[[bench]]
+name = "bench_flip"
+harness = false
+
+[[bench]]
+name = "bench_crop"
+harness = false
