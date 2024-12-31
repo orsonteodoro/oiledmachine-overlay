@@ -24,7 +24,7 @@ DESCRIPTION="Python libraries for the high performance gRPC framework"
 HOMEPAGE="https://grpc.io"
 LICENSE="Apache-2.0"
 SLOT="0"
-IUSE+=" doc ebuild-revision-2"
+IUSE+=" doc ebuild_revision_2"
 # See src/include/openssl/crypto.h#L99 for versioning
 # See src/include/openssl/base.h#L187 for versioning
 # See https://github.com/grpc/grpc/blob/v1.65.5/bazel/grpc_python_deps.bzl#L45
