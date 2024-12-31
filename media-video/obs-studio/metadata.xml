@@ -161,7 +161,7 @@
       Enable native SRT/RIST for mpegts output when using FFMpeg
     </flag>
     <flag name="nvenc">
-      Enable GPU accelerated encoding using NVENC for h264, h265, av1.
+      Enable GPU accelerated encoding using NVENC for H.264, H.265, AV1.
     </flag>
     <flag name="nvafx">
       Enable building with NVAFX.
@@ -201,8 +201,8 @@
       <pkg>media-libs/svt-av1</pkg>.
     </flag>
     <flag name="qsv">
-      Enable use of the Quick Sync Video hardware accelerated encoder for h264,
-      h265, av1.
+      Enable use of the Quick Sync Video hardware accelerated encoder for H.264,
+      H.265, AV1.
 
       It requires one additional package:
 
@@ -221,7 +221,7 @@
       Build v4l2 support.
     </flag>
     <flag name="vaapi">
-      Enable GPU accelerated encoding via VA-API for h264.
+      Enable GPU accelerated encoding via VA-API for H.264.
     </flag>
     <flag name="vlc">
       Build support for using <pkg>media-video/vlc</pkg> as a media source.
