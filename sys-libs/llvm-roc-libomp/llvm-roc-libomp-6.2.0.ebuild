@@ -127,7 +127,7 @@ ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 +archer -cuda +gdb-plugin -offload -ompt +ompd -rpc
-ebuild-revision-26
+ebuild_revision_26
 "
 
 gen_cuda_required_use() {
