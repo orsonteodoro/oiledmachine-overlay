@@ -8,7 +8,7 @@ PATENT_STATUS=(
 	patent_status_sponsored_ncp_nb
 )
 
-DESCRIPTION="A virtual for patent status consistency across ebuilds"
+DESCRIPTION="A virtual package for patent status consistency across ebuilds"
 LICENSE="metapackage"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
