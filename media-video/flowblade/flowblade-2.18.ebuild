@@ -42,7 +42,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 alsa frei0r jack jpeg mp3 nvenc opencv opus oss pulseaudio rtaudio rubberband
 sox vaapi vidstab vorbis vpx x264 x265
-ebuild-revision-4
+ebuild_revision_4
 "
 REQUIRED_USE="
 	alsa? (
