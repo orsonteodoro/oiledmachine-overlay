@@ -31,7 +31,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 australis cpu cuda doc experimental rocm test
-ebuild-revision-2
+ebuild_revision_2
 "
 # flax and tensorstore are missing in setup.py *_require sections but referenced
 # in experimental but not in tests folder.
