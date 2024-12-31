@@ -126,7 +126,7 @@ IUSE+="
 	${CPU_FLAGS_X86[@]}
 	doc gna gna1 gna1_1401 gna2 -lto +mkl-dnn -openmp
 	+samples system-pugixml test +tbb video_cards_intel
-	ebuild-revision-3
+	ebuild_revision_3
 "
 REQUIRED_USE="
 	?? (
