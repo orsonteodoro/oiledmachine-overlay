@@ -41,7 +41,7 @@ RESTRICT="
 "
 SLOT="${LLVM_MAX_SLOT}/${PV}"
 IUSE="
-	ebuild-revision-3
+	ebuild_revision_3
 "
 REQUIRED_USE="
 "
