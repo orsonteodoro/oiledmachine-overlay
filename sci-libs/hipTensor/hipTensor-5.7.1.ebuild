@@ -29,7 +29,7 @@ HOMEPAGE="https://github.com/ROCmSoftwarePlatform/hipTensor"
 LICENSE="MIT"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-cuda +rocm samples test ebuild-revision-5
+cuda +rocm samples test ebuild_revision_5
 "
 gen_rocm_required_use() {
 	local x
