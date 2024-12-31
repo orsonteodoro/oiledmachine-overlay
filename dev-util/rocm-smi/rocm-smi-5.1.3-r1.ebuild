@@ -35,7 +35,7 @@ LICENSE="
 # MIT - third_party/shared_mutex/LICENSE
 # NCSA-AMD - License.txt
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" ebuild-revision-8"
+IUSE=" ebuild_revision_8"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
