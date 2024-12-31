@@ -39,7 +39,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-aocc doc test ebuild-revision-4
+aocc doc test ebuild_revision_4
 "
 REQUIRED_USE="
 "
