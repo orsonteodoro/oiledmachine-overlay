@@ -38,7 +38,7 @@ LICENSE="
 KEYWORDS="~amd64 ~x86"
 RESTRICT="mirror strip" # No strip required by CONFIG_MODULE_SIG
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" allegro custom-kernel doc +vivace ebuild-revision-2"
+IUSE+=" allegro custom-kernel doc +vivace ebuild_revision_2"
 REQUIRED_USE="
 	^^ (
 		allegro
