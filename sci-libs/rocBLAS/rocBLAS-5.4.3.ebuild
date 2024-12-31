@@ -57,7 +57,7 @@ RESTRICT="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CPU_FLAGS_X86[@]}
-benchmark cuda +rocm test ebuild-revision-21
+benchmark cuda +rocm test ebuild_revision_21
 "
 gen_rocm_required_use() {
 	local x
