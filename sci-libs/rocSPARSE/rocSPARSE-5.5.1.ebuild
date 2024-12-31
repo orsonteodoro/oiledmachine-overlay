@@ -97,7 +97,7 @@ LICENSE="
 	)
 "
 # The distro's MIT license template does not have All rights reserved.
-IUSE="benchmark test ebuild-revision-8"
+IUSE="benchmark test ebuild_revision_8"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
