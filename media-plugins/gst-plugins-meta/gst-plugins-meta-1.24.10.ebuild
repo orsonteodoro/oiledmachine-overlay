@@ -22,7 +22,6 @@ EAPI=7
 
 PATENT_STATUS=(
 	patent_status_nonfree
-	patent_status_nonfree
 )
 VIDEO_CARDS=(
 	video_cards_amdgpu
@@ -148,7 +147,7 @@ PATENT_RDEPEND="
 		!media-plugins/gst-plugins-x265
 		media-libs/gst-plugins-bad[-nvcodec,-qsv,-vaapi,-vulkan-video]
 	)
-	virtual/patent-status[patent_status_nonfree=,patent_status_nonfree=]
+	virtual/patent-status[patent_status_nonfree=]
 "
 
 RDEPEND="
