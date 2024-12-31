@@ -994,7 +994,7 @@ LICENSE="
 	MIT
 "
 SLOT="0"
-IUSE+="clipboard ebuild-revision-4"
+IUSE+="clipboard ebuild_revision_4"
 REQUIRED_USE+="
 	^^ (
 		${PLAYWRIGHT_BROWSERS[@]}
