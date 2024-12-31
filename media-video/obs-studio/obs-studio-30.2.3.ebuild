@@ -423,8 +423,8 @@ DEPEND_PLUGINS_QSV="
 			media-libs/libvpl
 			|| (
 				media-libs/oneVPL-cpu
-				>=media-libs/oneVPL-intel-gpu-23.3.1
 				>=media-libs/intel-mediasdk-23.2.2
+				>=media-libs/vpl-gpu-rt-23.3.1
 			)
 		)
 		elibc_mingw? (

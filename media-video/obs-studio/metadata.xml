@@ -207,8 +207,8 @@
       It requires one additional package:
 
                     CPUs - <pkg>media-libs/oneVPL-cpu</pkg>
-      2020 or later GPUs - <pkg>media-libs/oneVPL-intel-gpu</pkg>
            Pre 2020 GPUs - <pkg>media-libs/intel-mediasdk</pkg>
+      2020 or later GPUs - <pkg>media-libs/vpl-gpu-rt</pkg>
 
     </flag>
     <flag name="sndio">
