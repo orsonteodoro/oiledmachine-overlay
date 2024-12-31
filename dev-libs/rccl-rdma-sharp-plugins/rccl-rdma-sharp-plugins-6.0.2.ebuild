@@ -23,7 +23,7 @@ LICENSE="
 	BSD
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="sharp ucx verbs ebuild-revision-0"
+IUSE="sharp ucx verbs ebuild_revision_0"
 RDEPEND="
 	~dev-util/hip-${PV}:${ROCM_SLOT}
 	sharp? (
