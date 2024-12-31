@@ -43,7 +43,7 @@ LICENSE="
 	)
 "
 SLOT="0"
-IUSE+=" hcoll mlnx-ofed-kernel sharp ebuild-revision-1"
+IUSE+=" hcoll mlnx-ofed-kernel sharp ebuild_revision_1"
 REQUIRED_USE="
 	hcoll? (
 		sharp
