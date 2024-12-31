@@ -21,7 +21,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="${LOCKFILE_VER}/$(ver_cut 1-2 ${PV})"
-IUSE+=" +ssl ebuild-revision-3"
+IUSE+=" +ssl ebuild_revision_3"
 CDEPEND+="
 	!sys-apps/npm:0
 	|| (
