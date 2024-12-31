@@ -1467,7 +1467,7 @@ SLOT="0"
 # Deps based on their CI
 IUSE+="
 	firejail
-	ebuild-revision-7
+	ebuild_revision_7
 "
 BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
