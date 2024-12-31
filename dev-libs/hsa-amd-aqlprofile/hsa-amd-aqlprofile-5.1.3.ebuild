@@ -32,7 +32,7 @@ LICENSE="
 "
 RESTRICT="binchecks strip"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="deny-install skip-install ebuild-revision-2"
+IUSE="deny-install skip-install ebuild_revision_2"
 RDEPEND="
 	!dev-libs/hsa-amd-aqlprofile:0
 "
