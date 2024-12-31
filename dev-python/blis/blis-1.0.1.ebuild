@@ -30,7 +30,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" test ebuild-revision-1"
+IUSE+=" test ebuild_revision_1"
 RDEPEND+="
 	>=dev-python/numpy-2.0.0[${PYTHON_USEDEP}]
 "
