@@ -17,7 +17,7 @@ HOMEPAGE="https://cloud.google.com/"
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE=" test r2"
+IUSE=" test ebuild_revision_2"
 # Tests need a GCP account
 RESTRICT="test"
 # U 18.04
