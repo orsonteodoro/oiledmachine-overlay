@@ -50,7 +50,7 @@ ROCM_SLOT="${ROCM_VERSION%.*}"
 
 DESCRIPTION="The Kernel Fusion Driver (KFD)"
 #KEYWORDS="~amd64 ~x86" # Work In Progress (WIP)
-IUSE="custom-kernel kernel rock-dkms strict-pairing ebuild-revision-4"
+IUSE="custom-kernel kernel rock-dkms strict-pairing ebuild_revision_4"
 REQUIRED_USE="
 	!strict-paring
 "
