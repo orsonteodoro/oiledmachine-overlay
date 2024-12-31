@@ -135,7 +135,7 @@ IUSE+="
 -closure-compiler closure_compiler_java closure_compiler_native
 closure_compiler_nodejs java test
 
-ebuild-revision-4
+ebuild_revision_4
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
