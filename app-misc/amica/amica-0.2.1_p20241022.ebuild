@@ -2918,7 +2918,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 coqui debug ollama tray voice-recognition wayland whisper-cpp X
-ebuild-revision-1
+ebuild_revision_1
 "
 REQUIRED_USE="
 	voice-recognition
