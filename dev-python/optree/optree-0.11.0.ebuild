@@ -27,7 +27,7 @@ LICENSE="
 "
 RESTRICT="mirror test" # Not tested
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" benchmark doc jax numpy test pytorch ebuild-revision-2"
+IUSE+=" benchmark doc jax numpy test pytorch ebuild_revision_2"
 RDEPEND+="
 	dev-python/typing-extensions[${PYTHON_USEDEP}]
 	jax? (
