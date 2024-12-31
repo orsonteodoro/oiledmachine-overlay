@@ -1,4 +1,4 @@
-# Copyright 1999-2024 Gentoo Authors
+# Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # TODO:  live streamer trainers will be added after portage secure wipe hooks [aka bash exit/abort traps] are implemented/fixed.
