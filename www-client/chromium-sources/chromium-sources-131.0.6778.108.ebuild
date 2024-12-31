@@ -260,7 +260,7 @@ LICENSE="
 #
 RESTRICT="binchecks mirror strip test"
 SLOT="0/${PV}"
-IUSE+=" ebuild-revision-4"
+IUSE+=" ebuild_revision_4"
 RDEPEND+="
 "
 DEPEND+="
