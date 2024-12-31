@@ -45,7 +45,7 @@ RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 doc system-soxr test
-ebuild-revision-1
+ebuild_revision_1
 "
 RDEPEND+="
 	dev-python/numpy[${PYTHON_USEDEP}]
