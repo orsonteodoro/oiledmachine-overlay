@@ -459,7 +459,7 @@ ${ROCM_SLOTS2[@]}
 clang cuda +distributed +eigen +fbgemm -ffmpeg +flash-attention +gloo -jit +kineto +magma
 -mkl +mpi +nccl +nnpack +numpy +onednn -openblas -opencl -opencv +openmp +rccl rocm
 roctracer -ssl system-libs +tensorpipe +qnnpack test +xnnpack
-ebuild-revision-8
+ebuild_revision_8
 "
 gen_cuda_required_use() {
 	local x
