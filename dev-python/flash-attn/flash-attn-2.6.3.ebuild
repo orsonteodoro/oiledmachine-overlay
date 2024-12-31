@@ -86,7 +86,7 @@ IUSE="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${ROCM_IUSE[@]}
 cuda rocm training
-ebuild-revision-1
+ebuild_revision_1
 "
 gen_rocm_required_use() {
 	local pv
