@@ -70,7 +70,7 @@ RESTRICT="mirror test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 dev test
-ebuild-revision-1
+ebuild_revision_1
 "
 RDEPEND+="
 	media-libs/opencv[${PYTHON_USEDEP},python]
