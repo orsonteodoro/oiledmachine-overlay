@@ -35,7 +35,7 @@ RESTRICT="mirror test" # untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 dev doc test
-ebuild-revision-1
+ebuild_revision_1
 "
 RDEPEND+="
 "
