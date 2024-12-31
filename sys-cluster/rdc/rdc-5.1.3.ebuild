@@ -44,7 +44,7 @@ LICENSE="
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
 # raslib is installed by default, but disabled for security.
-IUSE="+compile-commands doc +raslib +standalone systemd test ebuild-revision-14"
+IUSE="+compile-commands doc +raslib +standalone systemd test ebuild_revision_14"
 REQUIRED_USE="
 	raslib
 	systemd? (
