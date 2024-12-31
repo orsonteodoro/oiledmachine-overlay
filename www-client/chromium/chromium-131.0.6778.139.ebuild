@@ -637,6 +637,7 @@ ebuild_revision_1
 #
 PATENT_USE_FLAGS="
 	!patent_status_nonfree? (
+		!official
 		!system-openh264
 		!vaapi
 		!vaapi-hevc
