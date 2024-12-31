@@ -855,7 +855,13 @@ if is_cromite_compatible ; then
 	#
 	# The reason that these USE flags are forced to match the patchset
 	# defaults is because I don't know if these were pruned by the scripts.
+	#
+	# The patchset build scripts say ffmpeg_branding="Chrome" which enables aac.
+	#
 	REQUIRED_USE+="
+		!patent_status_nonfree? (
+			!cromite
+		)
 		cromite? (
 			amd64
 			patent_status_nonfree
