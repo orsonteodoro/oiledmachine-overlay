@@ -43,9 +43,13 @@ RDEPEND+="
 		!media-libs/kvazaar
 		!media-libs/libde265
 		!media-libs/libva
+		!media-libs/libvpl
+		!media-libs/oneVPL-cpu
+		!media-libs/oneVPL-intel-gpu
 		!media-libs/openh264
 		!media-libs/vaapi-drivers
 		!media-libs/vo-aacenc
+		!media-libs/vpl-gpu-rt
 		!media-libs/x264
 		!media-libs/x265
 		!media-plugins/gst-plugins-dash

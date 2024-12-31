@@ -60,6 +60,10 @@ PATENT_STATUS_REQUIRED_USE="
 "
 REQUIRED_USE="
 	${PATENT_STATUS_REQUIRED_USE}
+	!qsv? (
+		!msdk
+		!onevpl
+	)
 	qsv? (
 		vaapi
 		|| (
@@ -111,7 +115,7 @@ RDEPEND="
 			media-libs/libvpl[${MULTILIB_USEDEP}]
 			media-libs/oneVPL-cpu
 			video_cards_intel? (
-				media-libs/oneVPL-intel-gpu
+				media-libs/vpl-gpu-rt
 			)
 		)
 	)
