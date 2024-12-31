@@ -1,4 +1,4 @@
-# Copyright 2019-2023 Orson Teodoro
+# Copyright 2019-2025 Orson Teodoro <orsonteodoro@hotmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
