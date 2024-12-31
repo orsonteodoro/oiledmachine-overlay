@@ -34,7 +34,7 @@ RESTRICT="
 SLOT="0"
 IUSE="
 hardened +libcxxabi +libunwind +static-libs test +threads -pstl
-ebuild-revision-11
+ebuild_revision_11
 "
 REQUIRED_USE="
 	libunwind? (
