@@ -40,7 +40,7 @@ SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 +debug default-full-relro default-no-relro +default-partial-relro hardened
 hardened-compat test zstd
-ebuild-revision-1
+ebuild_revision_1
 ${LLVM_EBUILDS_LLVM18_REVISION}
 "
 REQUIRED_USE+="
