@@ -40,7 +40,7 @@ LICENSE="
 KEYWORDS="~amd64 ~arm64"
 SLOT="$(ver_cut 1-2 ${PV})/${PV}"
 IUSE+="
-test ebuild-revision-3
+test ebuild_revision_3
 "
 RDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
