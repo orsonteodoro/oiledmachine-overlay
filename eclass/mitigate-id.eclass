@@ -1,4 +1,4 @@
-# Copyright 2024 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 2024-2025 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 1999-2025 Gentoo Authors
 # @ECLASS: mitigate-id.eclass
 # @MAINTAINER: Orson Teodoro <orsonteodoro@hotmail.com>
