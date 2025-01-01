@@ -1436,6 +1436,22 @@ ot-kernel_get_llvm_max_slot() {
 ot-kernel_get_gcc_max_slot() {
 	local _gcc_max_slot
 
+	# TODO:
+	# The dev-libs/gdrcopy ebuild needs the max gcc version capped at the
+	# max allowed gcc for the nvidia-cuda-toolkit ebuild.  This will
+	# interfere with the mitigations which need also a minimum gcc version
+	# for compiler mitigation flags.  We can make the user decide to go the
+	# max compatibility route or security route with environment variable
+	# similar to ot-kernel-pkgflags.  This cap is to avoid symbol issue.
+
+	# The same goes with external modules.  Certain external modules require
+	# maximum gcc version.
+	#
+	# This issue applies to:
+	# sys-kernel/pcc
+	# sys-cluster/knem
+	# sys-cluster/xpmem
+
 	# Ascending sort
 	if grep -q -E -e "^CONFIG_ARCH_RPC=y" "${path_config}" && [[ "${arch}" == "arm" ]] ; then
 		_gcc_max_slot=8
