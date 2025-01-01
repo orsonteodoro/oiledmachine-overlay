@@ -13,7 +13,7 @@ RDEPEND=">=dev-lang/mono-3
 	gtk? ( >=dev-dotnet/gtk-sharp-2.12.21:2 )"
 DEPEND="${RDEPEND}
 	virtual/pkgconfig"
-inherit autotools dotnet eutils
+inherit autotools dotnet
 SRC_URI="https://github.com/mono/${PN}/archive/${P}.tar.gz -> ${P}.tar.gz"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 MAKEOPTS="${MAKEOPTS} -j1" #nowarn

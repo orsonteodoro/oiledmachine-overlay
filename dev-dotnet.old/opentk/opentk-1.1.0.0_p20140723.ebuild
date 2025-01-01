@@ -18,7 +18,7 @@ RDEPEND=">=dev-lang/mono-2.0
 	   virtual/opengl"
 DEPEND="${RDEPEND}
 	app-arch/p7zip"
-inherit dotnet eutils
+inherit dotnet
 SRC_URI="mirror://sourceforge/${PN}/${MY_P}.zip"
 inherit gac
 S="${WORKDIR}/${MY_P}"

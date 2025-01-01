@@ -13,7 +13,7 @@ REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net45 )"
 RDEPEND=">=dev-lang/mono-4"
 DEPEND="${RDEPEND}
 	virtual/pkgconfig"
-inherit dotnet eutils mono multilib-minimal
+inherit dotnet mono multilib-minimal
 COMMIT="f8dfe74c8d767404d41c97d87eace04df636d021"
 SRC_URI="https://github.com/KonajuGames/PVRTexLibNET/archive/${COMMIT}.tar.gz
 		-> ${P}.tar.gz"

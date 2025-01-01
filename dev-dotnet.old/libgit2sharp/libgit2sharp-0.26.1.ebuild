@@ -1,13 +1,15 @@
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+# TODO fix missing blob issue
+
 EAPI=7
 DESCRIPTION="A C# PInvoke wrapper library for LibGit2 C library"
 HOMEPAGE="https://github.com/libgit2/libgit2sharp"
 LICENSE="MIT"
 KEYWORDS="~arm ~arm64 ~x86 ~amd64"
 SLOT="0"
-IUSE="${USE_DOTNET} debug developer gac system-libgit2 test"
+IUSE="${USE_DOTNET} debug developer gac system-libgit2 test netcoreapp21 net46"
 REQUIRED_USE="|| ( ${USE_DOTNET} )
 	      test? ( || ( netcoreapp21 net46 ) )
 	      gac? ( net46 )"
@@ -21,7 +23,7 @@ SRC_URI=""
 #${HOMEPAGE}/archive/v0.26.tar.gz -> ${P}.tar.gz
 USE_DOTNET="netstandard20 net46 netcoreapp21"
 TOOLS_VERSION="Current"
-inherit dotnet eutils
+inherit dotnet
 S="${WORKDIR}/${PN}-${PV}"
 EGIT_COMMIT="8950f498511d9e4cc1756193682ac3bb08581166"
 REPO_URL="https://github.com/libgit2/libgit2sharp.git"

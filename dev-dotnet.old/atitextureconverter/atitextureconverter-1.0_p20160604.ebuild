@@ -14,7 +14,7 @@ IUSE="${USE_DOTNET} debug bindist +gac"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net45 )"
 DEPEND="${RDEPEND}
 	virtual/pkgconfig"
-inherit dotnet eutils
+inherit dotnet
 EGIT_COMMIT="ac1103f765ade4c59b2475a43e1d4ea98d4bbd26"
 SRC_URI="https://github.com/infinitespace-studios/ATI.TextureConverter/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
 inherit gac

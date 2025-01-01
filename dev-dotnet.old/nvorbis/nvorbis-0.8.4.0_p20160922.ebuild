@@ -14,7 +14,7 @@ REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net40 )"
 RDEPEND="dev-dotnet/opentk"
 DEPEND="${RDEPEND}"
 RESTRICT="mirror"
-inherit dotnet eutils
+inherit dotnet
 EGIT_COMMIT="0d40b48a48c4f87bb18b3593e7db0dab74dbb829"
 SRC_URI="https://github.com/ioctlLR/NVorbis/archive/${EGIT_COMMIT}.tar.gz \
 		-> ${P}.tar.gz"

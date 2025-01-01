@@ -12,7 +12,7 @@ USE_DOTNET="net45"
 IUSE="${USE_DOTNET} debug +gac"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net45 )"
 EGIT_COMMIT="cd710a42a895b05337047079b0ba16d081dd87ed"
-inherit dotnet eutils
+inherit dotnet
 SRC_URI=\
 "https://github.com/mono/xwt/archive/${EGIT_COMMIT}.tar.gz \
 	-> ${PN}-${PV}.tar.gz"

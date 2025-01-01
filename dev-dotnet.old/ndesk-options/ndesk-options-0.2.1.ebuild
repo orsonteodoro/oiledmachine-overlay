@@ -12,7 +12,7 @@ IUSE="${USE_DOTNET} debug +gac"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net40 )"
 DEPEND="${RDEPEND}
 	virtual/pkgconfig"
-inherit autotools dotnet eutils
+inherit autotools dotnet
 SRC_URI="http://www.ndesk.org/archive/ndesk-options/ndesk-options-0.2.1.tar.gz"
 inherit gac
 RESTRICT="mirror"

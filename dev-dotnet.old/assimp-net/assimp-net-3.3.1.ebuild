@@ -12,7 +12,7 @@ IUSE="${USE_DOTNET} debug doc gac"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net45 )"
 DEPEND="${RDEPEND}
 	virtual/pkgconfig"
-inherit dotnet eutils
+inherit dotnet
 SRC_URI="https://github.com/assimp/assimp-net/archive/${PV}.tar.gz \
 		-> ${P}.tar.gz"
 inherit gac

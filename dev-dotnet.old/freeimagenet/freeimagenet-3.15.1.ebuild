@@ -14,7 +14,7 @@ IUSE="${USE_DOTNET} debug +gac"
 REQUIRED_USE="|| ( ${USE_DOTNET} ) gac? ( net45 )"
 RDEPEND=">=media-libs/freeimage-${PV}"
 DEPEND="${RDEPEND}"
-inherit dotnet eutils
+inherit dotnet
 # The versioning was 3.15.1 for the wrapper but the system lib or zip was 3.17.0
 SRC_URI="http://downloads.sourceforge.net/freeimage/FreeImage${PV//./}.zip"
 inherit gac

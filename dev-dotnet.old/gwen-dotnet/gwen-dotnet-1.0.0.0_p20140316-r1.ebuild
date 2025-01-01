@@ -16,7 +16,7 @@ RDEPEND="dev-dotnet/opentk
          dev-dotnet/sfmldotnet
          dev-dotnet/taoframework"
 DEPEND="${RDEPEND}"
-inherit dotnet eutils
+inherit dotnet
 SRC_URI="https://storage.googleapis.com/google-code-archive-source/v2/code.google.com/gwen-dotnet/source-archive.zip \
 		-> ${P}.zip"
 inherit gac
