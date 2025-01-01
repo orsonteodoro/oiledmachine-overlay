@@ -343,7 +343,7 @@ PYTORCH_TEST_BDEPEND="
 		sci-libs/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
 	)
 	strict? (
-		<sci-libs/onnxruntime-1.14.0[${PYTHON_USEDEP},python]
+		<sci-libs/onnxruntime-1.14.0[${PYTHON_SINGLE_USEDEP},python]
 	)
 "
 BDEPEND="
