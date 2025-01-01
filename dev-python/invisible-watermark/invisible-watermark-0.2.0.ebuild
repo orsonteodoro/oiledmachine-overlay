@@ -27,7 +27,7 @@ https://github.com/ShieldMnt/invisible-watermark/archive/${FALLBACK_COMMIT}.tar.
 	"
 fi
 
-DESCRIPTION="Create, fill a temporary directory"
+DESCRIPTION="A Python library for invisible image watermark (blind image watermark)"
 HOMEPAGE="
 	https://github.com/ShieldMnt/invisible-watermark
 	https://pypi.org/project/invisible-watermark

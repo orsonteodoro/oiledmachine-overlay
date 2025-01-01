@@ -953,7 +953,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/hanabi-learning-environment | hanabi_learning_environment is a research platform for Hanabi experiments. |
 | dev-python/inquirer | Collection of common interactive command line user interfaces, based on Inquirer.js |
 | dev-python/instructor | Structured outputs for LLMs |
-| dev-python/invisible-watermark | Create, fill a temporary directory |
+| dev-python/invisible-watermark | A Python library for invisible image watermark (blind image watermark) |
 | dev-python/ivy | Convert machine learning code between frameworks |
 | dev-python/jax | Differentiate, compile, and transform Numpy code |
 | dev-python/jaxlib | Support library for JAX |
