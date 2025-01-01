@@ -302,7 +302,7 @@ APP_TEST_BDEPEND="
 		dev-python/sqlmodel[${PYTHON_USEDEP}]
 	')
 "
-STORE_TEST_BDEPEND_DISABLED="
+STORE_TEST_BDEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/coverage-7.3.1[${PYTHON_USEDEP}]
 		>=dev-python/pytest-7.4.0[${PYTHON_USEDEP}]
