@@ -42,6 +42,10 @@ unset -f _mitigate_id_set_globals
 # do auto detect min required kernel via USE=auto.  The cpu_target_x86_* does
 # more accurate pruning allowing for better LTS support.  The auto will just
 # simplify and prune everything except the latest stable.
+
+# Sometimes the mitigation is not backported to older kernel series.  This
+# is why the min is lifted higher for certain microarches.
+
 #
 # lakefield is incomplete
 # cannon lake is incomplete
