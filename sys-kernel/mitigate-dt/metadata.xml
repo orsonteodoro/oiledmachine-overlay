@@ -39,12 +39,15 @@
   -->
   <use>
     <flag name="auto">
-      Auto resolves firmware and kernel version required for full mitigation,
-      instead of manually selecting microarchitecture which determines the
-      minimum requirements for those 2 items which benefits mostly LTS
-      configurations.
+      Auto resolves firmware and kernel version required for full mitigation.
 
-      This is recommended for Intel® CPUs since the USE flag coverage for
+      If enabled, this will remove LTS support.
+
+      If disabled, this will allow for LTS support if the microarchitecture
+      mitigations are provided for that series or if the microarchitecture
+      is not vulnerable.
+
+      Enabled is recommended for Intel® CPUs since the USE flag coverage for
       microarchitectures is incomplete.
     </flag>
     <flag name="custom-kernel">
