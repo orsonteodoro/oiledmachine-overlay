@@ -16,6 +16,7 @@ DRIVER_VERSIONS=(
 	# 515.43.04 is the last tag
 )
 declare -A CUDA_GCC_SLOT=(
+	["12.6"]="13"
 	["12.5"]="13"
 	["12.4"]="13"
 	["12.3"]="12"
