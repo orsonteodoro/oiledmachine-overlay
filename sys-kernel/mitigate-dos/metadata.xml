@@ -118,7 +118,7 @@
       32-bit Cortex R8
     </flag>
     <flag name="cpu_target_arm_brahma_b15">
-      32-bit Brama B15
+      32-bit Brahma B15
     </flag>
 
     <flag name="cpu_target_arm_cortex_a35">

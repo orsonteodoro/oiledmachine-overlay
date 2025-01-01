@@ -7,7 +7,7 @@ cortex_a17 - 32-bit Cortex A17
 cortex_a32 - 32-bit Cortex A32
 cortex_r7 - 32-bit Cortex R7
 cortex_r8 - 32-bit Cortex R8
-brahma_b15 - 32-bit Brama B15
+brahma_b15 - 32-bit Brahma B15
 
 cortex_a35 - 32-/64-bit Cortex A35
 cortex_a53 - 32-/64-bit Cortex A53
