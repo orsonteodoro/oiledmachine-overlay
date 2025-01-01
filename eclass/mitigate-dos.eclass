@@ -43,8 +43,8 @@ unset -f _mitigate_dos_set_globals
 # more accurate pruning allowing for better LTS support.  The auto will just
 # simplify and prune everything except the latest stable.
 
-# Sometimes the mitigation is not backported to older kernel series.  This
-# is why the min is lifted higher for certain microarches.
+# Sometimes the mitigation is not backported to the older kernel series.  This
+# is why the min is raised higher for certain microarches.
 
 CPU_TARGET_X86=(
 	cpu_target_x86_haswell
