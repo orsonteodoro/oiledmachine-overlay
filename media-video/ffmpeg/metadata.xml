@@ -687,6 +687,9 @@
       To convert models from TensorFlow (.pb) to OpenVINO™ (.xml), see
       https://github.com/FFmpeg/FFmpeg/commit/9bcf2aa47756c253238903f3e5ef6c96d927cfe6
     </flag>
+    <flag name="patent_status_nonfree">
+      Allow unexpired nonfree patents.
+    </flag>
     <flag name="pic">
       Force shared libraries to be built as PIC (this is slower)
     </flag>

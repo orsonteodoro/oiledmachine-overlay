@@ -397,6 +397,9 @@
       Support for encoding or decoding Opus audio and for GstWebRTC RTP audio
       streams.
     </flag>
+    <flag name="patent_status_nonfree">
+      Allow unexpired nonfree patents.
+    </flag>
     <flag name="speex">
       Support for decoding Speex speech files.
 

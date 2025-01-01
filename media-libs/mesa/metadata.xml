@@ -150,6 +150,9 @@
     <flag name="osmesa">
       Build the Mesa library for off-screen rendering.
     </flag>
+    <flag name="patent_status_nonfree">
+      Allow unexpired nonfree patents.
+    </flag>
     <flag name="vdpau">
       Enable the VDPAU acceleration interface for the Gallium3D Video Layer.
     </flag>

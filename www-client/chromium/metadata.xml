@@ -453,6 +453,13 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
 
       Disabling may allow access to alternative hardened allocators.
     </flag>
+    <flag name="patent_status_nonfree">
+      Allow unexpired nonfree patents.
+    </flag>
+    <flag name="patent_status_sponsored_ncp_nb">
+      Allow the fully sponsored proprietary codecs for use by non content
+      providers and non broadcasters.
+    </flag>
     <flag name="pdf">
       Build and enable the pdf viewer for legal docs, ebooks, tech whitepapers,
       etc.

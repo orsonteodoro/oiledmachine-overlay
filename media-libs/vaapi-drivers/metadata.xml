@@ -55,6 +55,9 @@
     <flag name="custom">
       Allow to manually install VA-API drivers or install none at all.
     </flag>
+    <flag name="patent_status_nonfree">
+      Allow unexpired nonfree patents.
+    </flag>
     <flag name="video_cards_amdgpu">
       Checks or installs for a VA-API driver for both encoding and decoding.
 

@@ -113,6 +113,9 @@
     <flag name="oss">
       Legacy sound driver support
     </flag>
+    <flag name="patent_status_nonfree">
+      Allow unexpired nonfree patents.
+    </flag>
     <flag name="png">
       PNG image support
     </flag>
