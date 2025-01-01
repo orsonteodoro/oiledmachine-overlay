@@ -73,5 +73,399 @@
       or the vulnerability report doesn't clearly state the types of
       vulnerabilities.
     </flag>
+
+    <flag name="cpu_target_arm_cortex_a8">
+      32-bit Cortex A8
+    </flag>
+    <flag name="cpu_target_arm_cortex_a9">
+      32-bit Cortex A9
+    </flag>
+    <flag name="cpu_target_arm_cortex_a12">
+      32-bit Cortex A12
+    </flag>
+    <flag name="cpu_target_arm_cortex_a15">
+      32-bit Cortex A15
+    </flag>
+    <flag name="cpu_target_arm_cortex_a17">
+      32-bit Cortex A17
+    </flag>
+    <flag name="cpu_target_arm_cortex_a32">
+      32-bit Cortex A32
+    </flag>
+    <flag name="cpu_target_arm_cortex_r7">
+      32-bit Cortex R7
+    </flag>
+    <flag name="cpu_target_arm_cortex_r8">
+      32-bit Cortex R8
+    </flag>
+    <flag name="cpu_target_arm_brahma_b15">
+      32-bit Brama B15
+    </flag>
+
+    <flag name="cpu_target_arm_cortex_a35">
+      32-/64-bit Cortex A35
+    </flag>
+    <flag name="cpu_target_arm_cortex_a53">
+      32-/64-bit Cortex A53
+    </flag>
+    <flag name="cpu_target_arm_cortex_a57">
+      32-/64-bit Cortex A57
+    </flag>
+    <flag name="cpu_target_arm_cortex_a72">
+      32-/64-bit Cortex A72
+    </flag>
+    <flag name="cpu_target_arm_cortex_a73">
+      32-/64-bit Cortex A73
+    </flag>
+    <flag name="cpu_target_arm_cortex_a75">
+      32-/64-bit Cortex A75
+    </flag>
+    <flag name="cpu_target_arm_cortex_a76">
+      32-/64-bit Cortex A76
+    </flag>
+    <flag name="cpu_target_arm_cortex_a77">
+      32-/64-bit Cortex A77
+    </flag>
+    <flag name="cpu_target_arm_cortex_a78">
+      32-/64-bit Cortex A78
+    </flag>
+    <flag name="cpu_target_arm_cortex_a78c">
+      32-/64-bit Cortex A78C
+    </flag>
+    <flag name="cpu_target_arm_cortex_x1">
+      32-/64-bit Cortex X1
+    </flag>
+    <flag name="cpu_target_arm_cortex_x1c">
+      32-/64-bit Cortex X1C
+    </flag>
+    <flag name="cpu_target_arm_neoverse_n1">
+      32-/64-bit Neoverse N1
+    </flag>
+
+    <flag name="cpu_target_arm_cortex_a34">
+      64-bit Cortex A34
+    </flag>
+    <flag name="cpu_target_arm_cortex_a65">
+      64-bit Cortex A65
+    </flag>
+    <flag name="cpu_target_arm_cortex_a65ae">
+      64-bit Cortex A65AE
+    </flag>
+    <flag name="cpu_target_arm_cortex_a78ae">
+      64-bit Cortex A78AE
+    </flag>
+    <flag name="cpu_target_arm_cortex_a710">
+      64-bit Cortex A710
+    </flag>
+    <flag name="cpu_target_arm_cortex_a715">
+      64-bit Cortex A715
+    </flag>
+    <flag name="cpu_target_arm_cortex_a720">
+      64-bit Cortex A720
+    </flag>
+    <flag name="cpu_target_arm_cortex_a725">
+      64-bit Cortex A725
+    </flag>
+    <flag name="cpu_target_arm_cortex_x2">
+      64-bit Cortex X2
+    </flag>
+    <flag name="cpu_target_arm_cortex_x3">
+      64-bit Cortex X3
+    </flag>
+    <flag name="cpu_target_arm_cortex_x4">
+      64-bit Cortex X4
+    </flag>
+    <flag name="cpu_target_arm_cortex_x925">
+      64-bit Cortex X925
+    </flag>
+    <flag name="cpu_target_arm_neoverse_e1">
+      64-bit Neoverse E1
+    </flag>
+    <flag name="cpu_target_arm_neoverse_n2">
+      64-bit Neoverse N2
+    </flag>
+    <flag name="cpu_target_arm_neoverse_v1">
+      64-bit Neoverse V1
+    </flag>
+    <flag name="cpu_target_arm_neoverse_v2">
+      64-bit Neoverse V2
+    </flag>
+    <flag name="cpu_target_arm_neoverse_v3">
+      64-bit Neoverse V3
+    </flag>
+    <flag name="cpu_target_arm_ampereone">
+      64-bit AmpereOne
+    </flag>
+    <flag name="cpu_target_arm_thunderx2">
+      64-bit ThunderX2
+    </flag>
+    <flag name="cpu_target_arm_falkor">
+      64-bit Falkor
+    </flag>
+    <flag name="cpu_target_arm_vulkan">
+      64-bit Vulkan
+    </flag>
+
+
+    <flag name="cpu_target_ppc_85xx">
+      MPC85xx
+    </flag>
+    <flag name="cpu_target_ppc_e500mc">
+      e500 series (e500mc)
+    </flag>
+    <flag name="cpu_target_ppc_e5500">
+      e500 series (e5000)
+    </flag>
+    <flag name="cpu_target_ppc_e6500">
+      e500 series (e6500)
+    </flag>
+    <flag name="cpu_target_ppc_power7">
+      POWER7®
+    </flag>
+    <flag name="cpu_target_ppc_power8">
+      POWER8
+    </flag>
+    <flag name="cpu_target_ppc_power9">
+      POWER9™
+    </flag>
+
+    <flag name="cpu_target_x86_apollo_lake">
+      Atom® Gen 2 E3900
+    </flag>
+    <flag name="cpu_target_x86_denverton">
+      Atom® Gen 2 C 
+    </flag>
+    <flag name="cpu_target_x86_broxton">
+      Atom® Gen 2
+    </flag>
+    <flag name="cpu_target_x86_gemini_lake">
+      Atom® Gen 2, Pentium® Silver, Celeron® J, Celeron® N
+    </flag>
+    <flag name="cpu_target_x86_snow_ridge">
+      Atom® Gen 3 C5000, Atom® Gen 3 P5300, Atom® Gen 3 P5700, Atom® Gen 3 C5900
+    </flag>
+    <flag name="cpu_target_x86_snow_ridge_bts">
+      Atom® Gen 3
+    </flag>
+    <flag name="cpu_target_x86_parker_ridge">
+      Atom® Gen 3
+    </flag>
+    <flag name="cpu_target_x86_elkhart_lake">
+      Atom® Gen 3
+    </flag>
+    <flag name="cpu_target_x86_jasper_lake">
+      Atom® Gen 3
+    </flag>
+    <flag name="cpu_target_x86_arizona_beach">
+      Atom® Gen 4
+    </flag>
+    <flag name="cpu_target_x86_alder_lake_n">
+      Atom® Gen 4, Core™ N
+    </flag>
+    <flag name="cpu_target_x86_clarkdale">
+      Core™ Gen 1
+    </flag>
+    <flag name="cpu_target_x86_lynnfield">
+      Core™ Gen 1
+    </flag>
+    <flag name="cpu_target_x86_nehalem">
+      Core™ Gen 1
+    </flag>
+    <flag name="cpu_target_x86_arrandale">
+      Core™ Gen 1
+    </flag>
+    <flag name="cpu_target_x86_westmere">
+      Core™ Gen 1
+    </flag>
+    <flag name="cpu_target_x86_gladden">
+      Core™ Gen 2
+    </flag>
+    <flag name="cpu_target_x86_sandy_bridge">
+      Core™ Gen 2
+    </flag>
+    <flag name="cpu_target_x86_ivy_bridge">
+      Core™ Gen 3
+    </flag>
+    <flag name="cpu_target_x86_haswell">
+      Core™ Gen 4
+    </flag>
+    <flag name="cpu_target_x86_broadwell">
+      Core™ Gen 5
+    </flag>
+    <flag name="cpu_target_x86_hewitt_lake">
+      Xeon® Gen 2 D-1600
+    </flag>
+    <flag name="cpu_target_x86_bakerville">
+      Xeon® Gen 2 D-2100
+    </flag>
+    <flag name="cpu_target_x86_skylake">
+      Core™ Gen 6, Xeon® Scalable Gen 1
+    </flag>
+    <flag name="cpu_target_x86_kaby_lake_gen7">
+      Core™ Gen 7, Core™ X, Xeon® E3
+    </flag>
+    <flag name="cpu_target_x86_amber_lake_gen8">
+      Core™ Gen 8
+    </flag>
+    <flag name="cpu_target_x86_coffee_lake_gen8">
+      Core™ Gen 8, Pentium® Gold, Celeron® G
+    </flag>
+    <flag name="cpu_target_x86_kaby_lake_gen8">
+      Core™ Gen 8, Pentium®
+    </flag>
+    <flag name="cpu_target_x86_cannon_lake">
+      Core™ Gen 9
+    </flag>
+    <flag name="cpu_target_x86_whiskey_lake">
+      Core™ Gen 8
+    </flag>
+    <flag name="cpu_target_x86_coffee_lake_gen9">
+      Core™ Gen 9
+    </flag>
+    <flag name="cpu_target_x86_comet_lake">
+      Core™ Gen 10, Pentium® Gold, Celeron® 5000
+    </flag>
+    <flag name="cpu_target_x86_amber_lake_gen10">
+      Core™ Gen 10
+    </flag>
+    <flag name="cpu_target_x86_ice_lake">
+      Core™ Gen 10
+    </flag>
+    <flag name="cpu_target_x86_rocket_lake">
+      Core™ Gen 11
+    </flag>
+    <flag name="cpu_target_x86_tiger_lake">
+      Core™ Gen 11
+    </flag>
+    <flag name="cpu_target_x86_alder_lake">
+      Core™ Gen 12, Pentium® Gold, Celeron®
+    </flag>
+    <flag name="cpu_target_x86_raptor_lake_gen13">
+      Core™ Gen 13, Pentium®, Celeron®
+    </flag>
+    <flag name="cpu_target_x86_raptor_lake_gen14">
+      Core™ Gen 14, Pentium®, Celeron®
+    </flag>
+    <flag name="cpu_target_x86_meteor_lake">
+      Core™ Ultra
+    </flag>
+    <flag name="cpu_target_x86_greenlow">
+      Xeon® E3-1200 v5
+    </flag>
+    <flag name="cpu_target_x86_tatlow">
+      Xeon® E
+    </flag>
+    <flag name="cpu_target_x86_eagle_stream">
+      Xeon® Scalable Gen 4, Xeon® Scalable Gen 5
+    </flag>
+
+    <flag name="cpu_target_x86_cascade_lake">
+      Xeon® Scalable Gen 2
+    </flag>
+    <flag name="cpu_target_x86_purley_refresh">
+      Xeon® Scalable Gen 2
+    </flag>
+    <flag name="cpu_target_x86_cedar_island">
+      Xeon® Scalable Gen 3
+    </flag>
+    <flag name="cpu_target_x86_cooper_lake">
+      Xeon® Scalable Gen 3
+    </flag>
+    <flag name="cpu_target_x86_idaville">
+      Xeon® Scalable Gen 3
+    </flag>
+    <flag name="cpu_target_x86_whitley">
+      Xeon® Scalable Gen 3
+    </flag>
+    <flag name="cpu_target_x86_sapphire_rapids">
+      Xeon® Scalable Gen 4
+    </flag>
+    <flag name="cpu_target_x86_sapphire_rapids_edge_enhanced">
+      Xeon® Scalable Gen 4
+    </flag>
+    <flag name="cpu_target_x86_emerald_rapids">
+      Xeon® Scalable Gen 5
+    </flag>
+    <flag name="cpu_target_x86_granite_rapids">
+      Xeon® Scalable Gen 6
+    </flag>
+    <flag name="cpu_target_x86_sierra_forest">
+      Xeon® 6
+    </flag>
+
+    <flag name="cpu_target_x86_catlow_golden_cove">
+      Pentium G7400/G7400T
+    </flag>
+    <flag name="cpu_target_x86_catlow_raptor_cove">
+      Xeon® E
+    </flag>
+
+    <flag name="cpu_target_x86_lakefield">
+      Atom Gen 3 Core™ i3, Atom Gen 3 Core™ i5
+    </flag>
+
+    <flag name="cpu_target_x86_bulldozer">
+      F15h Gen 1
+    </flag>
+    <flag name="cpu_target_x86_piledriver">
+      F15h Gen 2
+    </flag>
+    <flag name="cpu_target_x86_steamroller">
+      F15h Gen 3
+    </flag>
+    <flag name="cpu_target_x86_excavator">
+      F15h Gen 4
+    </flag>
+    <flag name="cpu_target_x86_jaguar">
+      F16h Gen 1
+    </flag>
+    <flag name="cpu_target_x86_puma">
+      F16h Gen 2
+    </flag>
+    <flag name="cpu_target_x86_zen">
+      F17h
+    </flag>
+    <flag name="cpu_target_x86_zen_plus">
+      F17h
+    </flag>
+    <flag name="cpu_target_x86_zen_2">
+      F17h
+    </flag>
+    <flag name="cpu_target_x86_zen_3">
+      F19h
+    </flag>
+    <flag name="cpu_target_x86_zen_4">
+      F19h
+    </flag>
+    <flag name="cpu_target_x86_naples">
+      Zen 1
+    </flag>
+    <flag name="cpu_target_x86_rome">
+      Zen 2
+    </flag>
+    <flag name="cpu_target_x86_milan">
+      Zen 3
+    </flag>
+    <flag name="cpu_target_x86_milan-x">
+      Zen 3
+    </flag>
+    <flag name="cpu_target_x86_genoa">
+      Zen 4
+    </flag>
+    <flag name="cpu_target_x86_genoa-x">
+      Zen 4
+    </flag>
+    <flag name="cpu_target_x86_bergamo">
+      Zen 4
+    </flag>
+    <flag name="cpu_target_x86_siena">
+      Zen 4
+    </flag>
+
+    <flag name="cpu_target_x86_dhyana">
+      Hygon Dhyana
+    </flag>
+
+
   </use>
 </pkgmetadata>
