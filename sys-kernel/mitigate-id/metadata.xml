@@ -38,6 +38,24 @@
 
   -->
   <use>
+    <flag name="5_4">
+      Consider saving the 5.4 kernel series from pruning.
+    </flag>
+    <flag name="5_15">
+      Consider saving the 5.15 kernel series from pruning.
+    </flag>
+    <flag name="6_1">
+      Consider saving the 6.1 kernel series from pruning.
+    </flag>
+    <flag name="6_6">
+      Consider saving the 6.6 kernel series from pruning.
+    </flag>
+    <flag name="6_12">
+      Consider saving the 6.12 kernel series from pruning.
+    </flag>
+    <flag name="6_13">
+      Consider saving the 6.13 kernel series from pruning.
+    </flag>
     <flag name="auto">
       Auto resolves firmware and kernel version required for full mitigation.
 
