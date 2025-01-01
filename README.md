@@ -960,7 +960,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/jaxtyping | Type annotations and runtime checking for shape and dtype of JAX/NumPy/PyTorch/etc. arrays. |
 | dev-python/js8py | Python module for parsing messages from the 'js8' command line decoder |
 | dev-python/jumpy | On-the-fly conversions between Jax and NumPy tensors |
-| dev-python/k-diffusion | |
+| dev-python/k-diffusion | Diffusion models for PyTorch |
 | dev-python/kaggle | The Official Kaggle API |
 | dev-python/kaldi-io | Python functions for reading kaldi data formats which is useful for rapid prototyping |
 | dev-python/keras | Deep Learning for humans |

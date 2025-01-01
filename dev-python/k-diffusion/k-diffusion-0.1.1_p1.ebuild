@@ -32,7 +32,7 @@ https://github.com/crowsonkb/k-diffusion/archive/refs/tags/v${MY_PV}.tar.gz
 	"
 fi
 
-DESCRIPTION=""
+DESCRIPTION="Diffusion models for PyTorch"
 HOMEPAGE="
 	https://github.com/crowsonkb/k-diffusion
 	https://pypi.org/project/k-diffusion
