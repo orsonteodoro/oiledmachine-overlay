@@ -38,24 +38,6 @@
 
   -->
   <use>
-    <flag name="aacraid">
-      Mitigate against information disclosure for the AAC RAID driver.
-    </flag>
-    <flag name="acpi">
-      Mitigate against information disclosure for the ACPI driver.
-    </flag>
-    <flag name="aead">
-      Mitigate against information disclosure for the AEAD crypto driver.
-    </flag>
-    <flag name="ata">
-      Mitigate against information disclosure for the ATA driver.
-    </flag>
-    <flag name="ath11k">
-      Mitigate against information disclosure for the ath11k network driver.
-    </flag>
-    <flag name="ath12k">
-      Mitigate against information disclosure for the ath12k network driver.
-    </flag>
     <flag name="auto">
       Auto resolves firmware and kernel version required for full mitigation,
       instead of manually selecting microarchitecture which determines the
@@ -65,159 +47,20 @@
       This is recommended for Intel® CPUs since the USE flag coverage for
       microarchitectures is incomplete.
     </flag>
-    <flag name="bfq">
-      Mitigate against information disclosure for the BFQ IO scheduler.
-    </flag>
-    <flag name="bluetooth">
-      Mitigate against information disclosure for the Bluetooth® subsystem.
-    </flag>
-    <flag name="bpf">
-      Apply BPF mitigations for Spectre (Variant 2) or Spectre-NG and
-      mitigation against information disclosure.
-    </flag>
-    <flag name="bridge">
-      Mitigate against information disclosure for Ethernet bridge support.
-    </flag>
-    <flag name="btrfs">
-      Mitigate against information disclosure for the Btrfs filesystem.
-    </flag>
-    <flag name="cdrom">
-      Mitigate against data tampering for the cdrom driver.
-    </flag>
-    <flag name="cougar">
-      Mitigate against information disclosure for the Cougar 500K gaming
-      keyboard.
-    </flag>
     <flag name="custom-kernel">
       Prevent vendor lock-in when doing kernel mitigation checks.
     </flag>
-    <flag name="ecdh">
-      Mitigate against information disclosure in the ecdh symmetric key exchange.
-    </flag>
     <flag name="enforce">
       Protect against information disclosure by replacing vulnerable versions.
-    </flag>
-    <flag name="ext4">
-      Mitigate against information disclosure for the ext4 filesystem.
     </flag>
     <flag name="firmware">
       Use firmware as mitigation.
       (A BIOS firmware update from the motherboard manufacturer may still be
       required if the firmware package doesn't apply to your model.)
     </flag>
-    <flag name="fuse">
-      Mitigate against information disclosure for FUSE based filesystems.
-    </flag>
-    <flag name="hfsplus">
-      Mitigate against information disclosure for the HFS+ filesystem.
-    </flag>
-    <flag name="fscache">
-      Mitigate against information disclosure for the FS-Cache filesystem.
-    </flag>
-    <flag name="hugetlbfs">
-      Mitigate against information disclosure for the hugetlbfs filesystem.
-    </flag>
-    <flag name="iaa">
-      Mitigate against information disclosure for the IAA Compression Accelerator driver.
-    </flag>
-    <flag name="ice">
-      Mitigate against information disclosure for the E800 network driver.
-    </flag>
-    <flag name="ima">
-      Mitigate against information disclosure for the IMA security module.
-    </flag>
-    <flag name="ipv4">
-      Mitigate against information disclosure in ipv4.
-    </flag>
-    <flag name="ipv6">
-      Mitigate against information disclosure in ipv6.
-    </flag>
-    <flag name="jfs">
-      Mitigate against information disclosure in the JFS filesystem.
-    </flag>
-    <flag name="kvm">
-      Mitigate against information disclosure in the KVM subsystem.
-    </flag>
-    <flag name="mcast">
-      Mitigate against information disclosure for multicast (mcast) network
-      support.
-    </flag>
-    <flag name="mlx5">
-      Mitigate against information disclosure for the mlx5 network driver.
-    </flag>
-    <flag name="mptcp">
-      Mitigate against information disclosure for Multipath TCP (MPTCP).
-    </flag>
-    <flag name="mt76">
-      Mitigate against information disclosure for the mt76 network driver.
-    </flag>
-    <flag name="netfilter">
-      Mitigate against information disclosure for the netfilter firewall.
-    </flag>
-    <flag name="nfs">
-      Mitigate against information disclosure for the NFS server network
-      filesystem driver.
-    </flag>
-    <flag name="nftables">
-      Mitigate against information disclosure for the nftables firewall.
-    </flag>
-    <flag name="nilfs2">
-      Mitigate against information disclosure for the NILFS2 filesystem.
-    </flag>
-    <flag name="ntfs">
-      Mitigate against information disclosure for the NTFS3 filesystem driver.
-    </flag>
-    <flag name="nvme">
-      Mitigate against information disclosure for the NVMe driver.
-    </flag>
-    <flag name="powercap">
-      Mitigate against information disclosure for the powercap driver.
-    </flag>
-    <flag name="rtw88">
-      Mitigate against information disclosure for the rtw88 network driver.
-    </flag>
-    <flag name="samba">
-      Mitigate against information disclosure for the Samba network filesystem.
-    </flag>
-    <flag name="scsi-sd">
-      Mitigate against information disclosure for the SCSI disk driver.
-    </flag>
-    <flag name="selinux">
-      Mitigate against information disclosure for the SELinux security module.
-    </flag>
-    <flag name="squashfs">
-      Mitigate against information disclosure for the SquashFS filesystem driver.
-    </flag>
-    <flag name="tipc">
-      Mitigate against information disclosure for the TIPC protocol.
-    </flag>
-    <flag name="video_cards_amdgpu">
-      Mitigate against information disclosure for the amdgpu driver.
-    </flag>
-    <flag name="video_cards_intel">
-      Mitigate against information disclosure for the Xe and i915 video drivers.
-    </flag>
-    <flag name="video_cards_nouveau">
-      Mitigate against information disclosure for the nouveau video driver.
-    </flag>
     <flag name="video_cards_nvidia">
       Mitigate against information disclosure, privilege escalation, Spectre V1,
       Spectre V2 for the NVIDIA® video driver.
-    </flag>
-    <flag name="video_cards_v3d">
-      Mitigate against information disclosure for the v3d video driver.
-    </flag>
-    <flag name="video_cards_vmware">
-      Mitigate against information disclosure for the vmwgfx video driver.
-    </flag>
-    <flag name="vmware">
-      Mitigate against information disclosure for VMware support.
-    </flag>
-    <flag name="xen">
-      Mitigate against information disclosure for Xen support.
-    </flag>
-    <flag name="xfs">
-      Mitigate against information disclosure for XFS filesystem.
     </flag>
     <flag name="zero-tolerance">
       Bump to the latest patched kernel point releases when the changelog

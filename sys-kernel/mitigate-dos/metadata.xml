@@ -37,24 +37,6 @@
 
   -->
   <use>
-    <flag name="aacraid">
-      Mitigate against Denial of Service for the AAC RAID driver.
-    </flag>
-    <flag name="acpi">
-      Mitigate against Denial of Service for the ACPI driver.
-    </flag>
-    <flag name="apparmor">
-      Mitigate against Denial of Service for the AppArmor security module.
-    </flag>
-    <flag name="ath11k">
-      Mitigate against Denial of Service for the ath11k network driver.
-    </flag>
-    <flag name="ath12k">
-      Mitigate against Denial of Service for the ath12k network driver.
-    </flag>
-    <flag name="ata">
-      Mitigate against Denial of Service for the ATA driver.
-    </flag>
     <flag name="auto">
       Auto resolves firmware and kernel version required for full mitigation,
       instead of manually selecting microarchitecture which determines the
@@ -64,251 +46,23 @@
       This is recommended for Intel® CPUs since the USE flag coverage for
       microarchitectures is incomplete.
     </flag>
-    <flag name="bcrm80211">
-      Mitigate against Denial of Service for the bcrm80211 network driver.
-    </flag>
-    <flag name="bfq">
-      Mitigate against Denial of Service for the BFQ IO scheduler.
-    </flag>
-    <flag name="bluetooth">
-      Mitigate against Denial of Service for the Bluetooth® subsystem.
-    </flag>
-    <flag name="bpf">
-      Mitigate against Denial of Service for BPF used in network socket packet
-      filtering and syscall blacklist/whitelists for app/browser sandboxes.
-    </flag>
-    <flag name="bpf-stream-parser">
-      Mitigate against Denial of Service for BPF Stream Parser dependency.
-    </flag>
-    <flag name="bridge">
-      Mitigate against Denial of Service for Ethernet bridge support.
-    </flag>
-    <flag name="btrfs">
-      Mitigate against Denial of Service for the Btrfs filesystem.
-    </flag>
-    <flag name="ccp">
-      Mitigate against Denial of Service for the Cryptographic Co-Processor
-      driver.
-    </flag>
-    <flag name="cdrom">
-      Mitigate against Denial of Service for the cdrom driver.
-    </flag>
-    <flag name="cougar">
-      Mitigate against Denial of Service for the Cougar 500K gaming keyboard.
-    </flag>
-    <flag name="cpuset">
-      Mitigate against Denial of Service for cgroup's cpuset support.
-    </flag>
-    <flag name="crypto-keys">
-      Mitigate against Denial of Service for crypto/keys subsystem.
-    </flag>
     <flag name="custom-kernel">
       Prevent vendor lock-in when doing kernel mitigation checks.
     </flag>
     <flag name="enforce">
       Protect against Denial of Service by replacing vulnerable versions.
     </flag>
-    <flag name="esp-in-tcp">
-      Mitigate against Denial of Service for IP: ESP in TCP dependency.
-    </flag>
-    <flag name="ext4">
-      Mitigate against Denial of Service for the ext4 filesystem.
-    </flag>
     <flag name="firmware">
       Use firmware as mitigation.
       (A BIOS firmware update from the motherboard manufacturer may still be
       required if the firmware package doesn't apply to your model.)
     </flag>
-    <flag name="f2fs">
-      Mitigate against Denial of Service for the F2FS filesystem.
-    </flag>
-    <flag name="fscache">
-      Mitigate against Denial of Service for the FS-Cache filesystem.
-    </flag>
-    <flag name="fuse">
-      Mitigate against Denial of Service for the FUSE driver.
-    </flag>
-    <flag name="hfs">
-      Mitigate against Denial of Service for the HFS filesystem.
-    </flag>
-    <flag name="hfsplus">
-      Mitigate against Denial of Service for the HFS+ filesystem.
-    </flag>
-    <flag name="hugetlbfs">
-      Mitigate against Denial of Service for the hugetlbfs filesystem.
-    </flag>
-    <flag name="hyperv">
-      Mitigate against Denial of Service for Hyper-V support.
-    </flag>
-    <flag name="i40e">
-      Mitigate against Denial of Service for the XL710 network driver
-    </flag>
-    <flag name="iaa">
-      Mitigate against Denial of Service for the IAA Compression Accelerator driver.
-    </flag>
-    <flag name="ice">
-      Mitigate against Denial of Service for the E800 network driver.
-    </flag>
-    <flag name="igb">
-      Mitigate against Denial of Service for the 82575/82576 network driver.
-    </flag>
-    <flag name="igc">
-      Mitigate against Denial of Service for the I225-LM/I225-V network driver.
-    </flag>
-    <flag name="ima">
-      Mitigate against Denial of Service for the IMA security module.
-    </flag>
-    <flag name="ivtv">
-      Mitigate against Denial of Service for the ivtv driver.
-    </flag>
-    <flag name="iwlwifi">
-      Mitigate against Denial of Service for the iwlwifi network driver.
-    </flag>
-    <flag name="ipv4">
-      Mitigate against Denial of Service in ipv4.
-    </flag>
-    <flag name="ipv6">
-      Mitigate against Denial of Service in ipv6.
-    </flag>
-    <flag name="jfs">
-      Mitigate against Denial of Service in the JFS filesystem.
-    </flag>
-    <flag name="landlock">
-      Mitigate against Denial of Service in the Landlock security module.
-    </flag>
-    <flag name="kvm">
-      Mitigate against Denial of Service in the KVM subsystem.
-    </flag>
     <flag name="max-uptime">
       Verifies defaults for security and compiler settings in order mitigate
       against deadlock or hard reset.
     </flag>
-    <flag name="md-raid1">
-      Mitigate against Denial of Service for the md/raid1 driver.
-    </flag>
-    <flag name="md-raid5">
-      Mitigate against Denial of Service for the md/raid5 driver.
-    </flag>
-    <flag name="mlx5">
-      Mitigate against Denial of Service for the mlx5 network driver.
-    </flag>
-    <flag name="mptcp">
-      Mitigate against Denial of Service for Multipath TCP (MPTCP).
-    </flag>
-    <flag name="mt76">
-      Mitigate against Denial of Service for the mt76 network driver.
-    </flag>
-    <flag name="mt7921">
-      Mitigate against Denial of Service for the mt7921 network driver.
-    </flag>
-    <flag name="mt7925">
-      Mitigate against Denial of Service for the mt7925 network driver.
-    </flag>
-    <flag name="mwifiex">
-      Mitigate against Denial of Service for the mwifiex network driver.
-    </flag>
-    <flag name="nvme">
-      Mitigate against Denial of Service for the NVMe driver.
-    </flag>
-    <flag name="netfilter">
-      Mitigate against Denial of Service for the netfilter firewall.
-    </flag>
-    <flag name="nfs">
-      Mitigate against Denial of Service for the NFS server network
-      filesystem driver.
-    </flag>
-    <flag name="nilfs2">
-      Mitigate against Denial of Service for the NILFS2 filesystem driver.
-    </flag>
-    <flag name="nf_tables">
-      Mitigate against Denial of Service for the nftables firewall.
-    </flag>
-    <flag name="ntfs">
-      Mitigate against Denial of Service for the NTFS3 filesystem driver.
-    </flag>
-    <flag name="pci">
-      Mitigate against Denial of Service for the PCI driver.
-    </flag>
-    <flag name="pci-hotplug">
-      Mitigate against Denial of Service for the PCI Hotplug driver.
-    </flag>
-    <flag name="powercap">
-      Mitigate against Denial of Service for the powercap driver.
-    </flag>
-    <flag name="qat">
-      Mitigate against Denial of Service for the QAT (QuickAssist Technology)
-      driver.
-    </flag>
-    <flag name="rtw88">
-      Mitigate against Denial of Service for the rtw88 network driver.
-    </flag>
-    <flag name="scsi-sd">
-      Mitigate against Denial of Service for the SCSI disk driver.
-    </flag>
-    <flag name="sctp">
-      Mitigate against Denial of Service for the SCTP network protocol.
-    </flag>
-    <flag name="samba">
-      Mitigate against Denial of Service for the Samba network file system.
-    </flag>
-    <flag name="selinux">
-      Mitigate against Denial of Service for the SELinux security module.
-    </flag>
-    <flag name="smmu-v3-sva">
-      Mitigate against Denial of Service for the SMMUv3 Shared Virtual
-      Addressing dependency.
-    </flag>
-    <flag name="squashfs">
-      Mitigate against Denial of Service for the SquashFS filesystem driver.
-    </flag>
-    <flag name="tcp">
-      Mitigate against Denial of Service for the TCP protocol.
-      [See also TCP port numbers for affected protocols.]
-    </flag>
-    <flag name="tipc">
-      Mitigate against Denial of Service for the TIPC protocol.
-    </flag>
-    <flag name="tls">
-      Mitigate against Denial of Service for the TLS protocol.
-    </flag>
-    <flag name="usb">
-      Mitigate against Denial of Service for the USB driver.
-    </flag>
-    <flag name="video_cards_amdgpu">
-      Mitigate against Denial of Service for the amdgpu driver.
-    </flag>
-    <flag name="video_cards_freedreno">
-      Mitigate against Denial of Service for the msm driver.
-    </flag>
-    <flag name="video_cards_intel">
-      Mitigate against Denial of Service for the Xe and i915 video drivers.
-    </flag>
-    <flag name="video_cards_nouveau">
-      Mitigate against Denial of Service for the nouveau video driver.
-    </flag>
     <flag name="video_cards_nvidia">
       Mitigate against Denial of Service for the NVIDIA® video driver.
-    </flag>
-    <flag name="video_cards_v3d">
-      Mitigate against Denial of Service for the v3d video driver.
-    </flag>
-    <flag name="video_cards_vmware">
-      Mitigate against Denial of Service for the wmwgfx video driver.
-    </flag>
-    <flag name="wireguard">
-      Mitigate against Denial of Service for WireGuard support.
-    </flag>
-    <flag name="v4l2">
-      Mitigate against Denial of Service for Video4Linux support.
-    </flag>
-    <flag name="vmware">
-      Mitigate against Denial of Service for VMware support.
-    </flag>
-    <flag name="xen">
-      Mitigate against Denial of Service for Xen support.
-    </flag>
-    <flag name="xfs">
-      Mitigate against Denial of Service for XFS filesystem.
     </flag>
     <flag name="zero-tolerance">
       Bump to the latest patched kernel point releases when the changelog
