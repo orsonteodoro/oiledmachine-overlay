@@ -694,8 +694,8 @@
       Build and install libpostproc.
     </flag>
     <flag name="qsv">
-      Add support for accelerated H.264, H.265, JPEG, MPEG-2, VP8, VP9, AV1
-      and video processing filters
+      Add support for accelerated H.264, H.265, JPEG, MPEG-2, VP8, VP9, VC-1,
+      AV1 and video processing filters
 
       Enable Quick Sync Video via <pkg>media-libs/intel-mediasdk</pkg> (FFmpeg
       versions older than, and including, 5.1) or <pkg>media-libs/oneVPL</pkg>
