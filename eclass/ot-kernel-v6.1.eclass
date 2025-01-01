@@ -1329,6 +1329,8 @@ ot-kernel_get_llvm_min_slot() {
 		_llvm_min_slot=14
 	elif grep -q -E -e "^CONFIG_KCSAN_WEAK_MEMORY=y" "${path_config}" ; then
 		_llvm_min_slot=14
+	elif grep -q -E -e "^CONFIG_SLS=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+		_llvm_min_slot=15
 	elif grep -q -E -e "^CONFIG_RANDOMIZE_KSTACK_OFFSET=y" "${path_config}" ; then
 		_llvm_min_slot=14
 	elif grep -q -E -e "^CONFIG_X86_KERNEL_IBT=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
@@ -1378,6 +1380,8 @@ ot-kernel_get_gcc_min_slot() {
 	elif grep -q -E -e "^CONFIG_EXPOLINE_EXTERN=y" "${path_config}" && [[ "${arch}" == "s390" ]] ; then
 		_gcc_min_slot=11
 	elif grep -q -E -e "^CONFIG_KASAN_SW_TAGS=y" "${path_config}" ; then
+		_gcc_min_slot=11
+	elif grep -q -E -e "^CONFIG_SLS=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 		_gcc_min_slot=11
 	elif grep -q -E -e "^CONFIG_ARM64_BTI_KERNEL=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
 		_gcc_min_slot=10

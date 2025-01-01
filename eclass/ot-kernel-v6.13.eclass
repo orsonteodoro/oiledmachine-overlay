@@ -1503,6 +1503,8 @@ ot-kernel_get_llvm_min_slot() {
 		_llvm_min_slot=15
 	elif grep -q -E -e "^CONFIG_DEBUG_INFO_DWARF5=y" "${path_config}" ; then
 		_llvm_min_slot=15
+	elif grep -q -E -e "^CONFIG_MITIGATION_SLS=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+		_llvm_min_slot=15
 	elif grep -q -E -e "^CONFIG_RETHUNK=y" "${path_config}" ; then
 		_llvm_min_slot=15
 	elif grep -q -E -e "^CONFIG_UNWIND_PATCH_PAC_INTO_SCS=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
@@ -1556,6 +1558,8 @@ ot-kernel_get_gcc_min_slot() {
 	elif grep -q -E -e "^CONFIG_EXPOLINE_EXTERN=y" "${path_config}" && [[ "${arch}" == "s390" ]] ; then
 		_gcc_min_slot=11
 	elif grep -q -E -e "^CONFIG_KASAN_SW_TAGS=y" "${path_config}" ; then
+		_gcc_min_slot=11
+	elif grep -q -E -e "^CONFIG_MITIGATION_SLS=y" "${path_config}" && [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 		_gcc_min_slot=11
 	elif grep -q -E -e "^CONFIG_ARM64_BTI_KERNEL=y" "${path_config}" && [[ "${arch}" == "arm64" ]] ; then
 		_gcc_min_slot=10

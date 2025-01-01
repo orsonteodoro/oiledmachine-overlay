@@ -5950,7 +5950,6 @@ eerror
 					ot-kernel_set_kconfig_kernel_cmdline "spec_rstack_overflow=off"
 				fi
 				ot-kernel_unset_configopt "CONFIG_SPECULATION_MITIGATIONS"
-				ot-kernel_unset_configopt "CONFIG_SLS"
 			fi
 			ot-kernel_unset_configopt "CONFIG_RETHUNK"
 			ot-kernel_unset_configopt "CONFIG_CPU_IBPB_ENTRY"
@@ -5976,6 +5975,11 @@ eerror
 		elif ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "retbleed=off"
+			fi
+		fi
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.17" ; then
+			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+				ot-kernel_unset_configopt "CONFIG_SLS"
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.18" ; then
@@ -6212,7 +6216,6 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags
 					ot-kernel_set_kconfig_kernel_cmdline "spec_rstack_overflow=safe-ret"
 				fi
 				ot-kernel_y_configopt "CONFIG_SPECULATION_MITIGATIONS"
-				ot-kernel_unset_configopt "CONFIG_SLS"
 			fi
 			ot-kernel_y_configopt "CONFIG_RETHUNK"
 			ot-kernel_y_configopt "CONFIG_CPU_IBPB_ENTRY"
@@ -6238,6 +6241,11 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags
 		elif ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "retbleed=auto"
+			fi
+		fi
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.17" ; then
+			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+				ot-kernel_y_configopt "CONFIG_SLS"
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.18" ; then
@@ -6288,7 +6296,7 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags
 		if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
 			if [[ "${arch}" == "x86_64" ]] ; then
 				ot-kernel_y_configopt "CONFIG_MITIGATION_PAGE_TABLE_ISOLATION"
-				ot-kernel_unset_configopt "CONFIG_MITIGATION_SLS"
+				ot-kernel_y_configopt "CONFIG_MITIGATION_SLS"
 				ot-kernel_y_configopt "CONFIG_MITIGATION_RETHUNK"
 				if [[ $(ot-kernel_get_cpu_mfg_id) == "amd" ]] ; then
 					ot-kernel_y_configopt "CONFIG_MITIGATION_SRSO"
@@ -6593,7 +6601,6 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5.  Set OT_KERNEL_USE=cpu_flags
 					ot-kernel_set_kconfig_kernel_cmdline "spec_rstack_overflow=safe-ret"
 				fi
 				ot-kernel_y_configopt "CONFIG_SPECULATION_MITIGATIONS"
-				ot-kernel_y_configopt "CONFIG_SLS"
 			fi
 			ot-kernel_y_configopt "CONFIG_RETHUNK"
 			if ! test-flags "-mfunction-return=thunk-extern" >/dev/null 2>&1 ; then
@@ -6639,6 +6646,11 @@ eerror
 		elif ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
 			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 				ot-kernel_set_kconfig_kernel_cmdline "retbleed=auto"
+			fi
+		fi
+		if ver_test "${KV_MAJOR_MINOR}" -ge "5.17" ; then
+			if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+				ot-kernel_y_configopt "CONFIG_SLS"
 			fi
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.18" ; then
