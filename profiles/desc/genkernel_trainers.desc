@@ -1,9 +1,9 @@
 # This file is part of the genkernel ebuild
 crypto - Add dependencies required for optimizing cryptography kernel codepaths
-memory - Add dependencies required for optimizing memory codepaths
+memory - Add dependencies required for optimizing out of memory killer memory codepaths
 network - Add dependencies required for optimizing network codepaths
 p2p - Add dependencies required for optimizing network codepaths
-webcam - Add dependencies required for optimizing webcam codepaths
+webcam - Add dependencies required for optimizing in-kernel webcam codecs codepaths
 xscreensaver_2d - Add dependencies required for optimizing graphics codepaths
 xscreensaver_3d - Add dependencies required for optimizing graphics codepaths
-yt - Add dependencies required for optimizing using online video
+yt - Add dependencies required for optimizing graphics and network codepaths using online video
