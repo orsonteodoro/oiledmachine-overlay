@@ -117,7 +117,7 @@ IUSE+="
 	firmware
 	xen
 	zero-tolerance
-	ebuild-revision-2
+	ebuild_revision_2
 "
 REQUIRED_USE="
 	cpu_target_x86_ice_lake? (

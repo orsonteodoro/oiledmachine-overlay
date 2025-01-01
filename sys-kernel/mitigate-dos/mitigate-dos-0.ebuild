@@ -31,7 +31,7 @@ declare -A _ALL_VERSIONS=(
 ["_4_16"]="EOL"
 ["_4_17"]="EOL"
 ["_4_18"]="EOL"
-["_4_19"]="4.19"
+["_4_19"]="EOL"
 ["_4_20"]="EOL"
 ["_5_0"]="EOL"
 ["_5_1"]="EOL"
@@ -72,8 +72,8 @@ _INTEL_MICROCODE_PV=0
 _LINUX_FIRMWARE_PV=0
 _XEN_PV=0
 
-LTS_VERSIONS=("4.19" "5.4" "5.10" "5.15" "6.1" "6.6" "6.12")
-ACTIVE_VERSIONS=("4.19" "5.4" "5.10" "5.15" "6.1" "6.6" "6.12" "6.13")
+LTS_VERSIONS=("5.4" "5.10" "5.15" "6.1" "6.6" "6.12")
+ACTIVE_VERSIONS=("5.4" "5.10" "5.15" "6.1" "6.6" "6.12" "6.13")
 STABLE_OR_MAINLINE_VERSIONS=("6.11")
 ALL_VERSIONS=(
 	"0"

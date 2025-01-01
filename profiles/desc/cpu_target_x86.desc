@@ -1,0 +1,83 @@
+# This is part of the mitigate-id, mitigate-dt, mitigate-dos ebuilds
+apollo_lake - Atom® Gen 2 E3900
+denverton - Atom® Gen 2 C 
+broxton - Atom® Gen 2
+gemini_lake - Atom® Gen 2, Pentium® Silver, Celeron® J, Celeron® N
+snow_ridge - Atom® Gen 3 C5000, Atom® Gen 3 P5300, Atom® Gen 3 P5700, Atom® Gen 3 C5900
+snow_ridge_bts - Atom® Gen 3
+parker_ridge - Atom® Gen 3
+elkhart_lake - Atom® Gen 3
+jasper_lake - Atom® Gen 3
+arizona_beach - Atom® Gen 4
+alder_lake_n - Atom® Gen 4, Core™ N
+clarkdale - Core™ Gen 1
+lynnfield - Core™ Gen 1
+nehalem - Core™ Gen 1
+arrandale - Core™ Gen 1
+westmere - Core™ Gen 1
+gladden - Core™ Gen 2
+sandy_bridge - Core™ Gen 2
+ivy_bridge - Core™ Gen 3
+haswell - Core™ Gen 4
+broadwell - Core™ Gen 5
+hewitt_lake - (2010)
+bakerville - Xeon® D
+skylake - Core™ Gen 6, Xeon® Scalable Gen 1
+kaby_lake_gen7 - Core™ Gen 7, Core™ X, Xeon® E3
+amber_lake_gen8 - Core™ Gen 8
+coffee_lake_gen8 - Core™ Gen 8, Pentium® Gold, Celeron® G
+kaby_lake_gen8 - Core™ Gen 8, Pentium®
+cannon_lake - Core™ Gen 9
+whiskey_lake - Core™ Gen 8
+coffee_lake_gen9 - Core™ Gen 9
+comet_lake - Core™ Gen 10, Pentium® Gold, Celeron® 5000
+amber_lake_gen10 - Core™ Gen 10
+ice_lake - Core™ Gen 10
+rocket_lake - Core™ Gen 11
+tiger_lake - Core™ Gen 11
+alder_lake - Core™ Gen 12, Pentium® Gold, Celeron®
+raptor_lake_gen13 - Core™ Gen 13, Pentium®, Celeron®
+raptor_lake_gen14 - Core™ Gen 14, Pentium®, Celeron®
+meteor_lake - Core™ Ultra
+greenlow - Xeon® E3-1200 v5
+tatlow - Xeon® E
+eagle_stream - Xeon® Scalable Gen 4, Xeon® Scalable Gen 5
+
+cascade_lake - Xeon® Scalable Gen 2
+purley_refresh - Xeon® Scalable Gen 2
+cedar_island - Xeon® Scalable Gen 3
+cooper_lake - Xeon® Scalable Gen 3
+idaville - Xeon® Scalable Gen 3
+whitley - Xeon® Scalable Gen 3
+sapphire_rapids - Xeon® Scalable Gen 4
+sapphire_rapids_edge_enhanced - Xeon® Scalable Gen 4
+emerald_rapids - Xeon® Scalable Gen 5
+granite_rapids - Xeon® Scalable Gen 6
+sierra_forest - Xeon® 6
+
+catlow_golden_cove - Pentium G7400/G7400T
+catlow_raptor_cove - Xeon® E
+
+lakefield - Atom Gen 3 Core™ i3, Atom Gen 3 Core™ i5
+
+bulldozer - F15h Gen 1
+piledriver - F15h Gen 2
+steamroller - F15h Gen 3
+excavator - F15h Gen 4
+jaguar - F16h Gen 1
+puma - F16h Gen 2
+zen - F17h
+zen_plus - F17h
+zen_2 - F17h
+zen_3 - F19h
+zen_4 - F19h
+naples - Zen 1
+rome - Zen 2
+milan - Zen 3
+milan-x - Zen 3
+genoa - Zen 4
+genoa-x - Zen 4
+bergamo - Zen 4
+siena - Zen 4
+
+dhyana - Hygon Dhyana

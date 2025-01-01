@@ -115,7 +115,7 @@ IUSE+="
 	firmware
 	kvm
 	zero-tolerance
-	ebuild-revision-0
+	ebuild_revision_0
 "
 REQUIRED_USE="
 	cpu_target_x86_arrandale? (

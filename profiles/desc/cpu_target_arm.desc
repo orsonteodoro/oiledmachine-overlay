@@ -1,0 +1,46 @@
+# This is part of the mitigate-id, mitigate-dt, mitigate-dos ebuilds
+cortex_a8 - 32-bit Cortex A8
+cortex_a9 - 32-bit Cortex A9
+cortex_a12 - 32-bit Cortex A12
+cortex_a15 - 32-bit Cortex A15
+cortex_a17 - 32-bit Cortex A17
+cortex_a32 - 32-bit Cortex A32
+cortex_r7 - 32-bit Cortex R7
+cortex_r8 - 32-bit Cortex R8
+brahma_b15 - 32-bit Brama B15
+
+cortex_a35 - 32-/64-bit Cortex A35
+cortex_a53 - 32-/64-bit Cortex A53
+cortex_a57 - 32-/64-bit Cortex A57
+cortex_a72 - 32-/64-bit Cortex A72
+cortex_a73 - 32-/64-bit Cortex A73
+cortex_a75 - 32-/64-bit Cortex A75
+cortex_a76 - 32-/64-bit Cortex A76
+cortex_a77 - 32-/64-bit Cortex A77
+cortex_a78 - 32-/64-bit Cortex A78
+cortex_a78c - 32-/64-bit Cortex A78C
+cortex_x1 - 32-/64-bit Cortex X1
+cortex_x1c - 32-/64-bit Cortex X1C
+neoverse_n1 - 32-/64-bit Neoverse N1
+
+cortex_a34 - 64-bit Cortex A34
+cortex_a65 - 64-bit Cortex A65
+cortex_a65ae - 64-bit Cortex A65AE
+cortex_a78ae - 64-bit Cortex A78AE
+cortex_a710 - 64-bit Cortex A710
+cortex_a715 - 64-bit Cortex A715
+cortex_a720 - 64-bit Cortex A720
+cortex_a725 - 64-bit Cortex A725
+cortex_x2 - 64-bit Cortex X2
+cortex_x3 - 64-bit Cortex X3
+cortex_x4 - 64-bit Cortex X4
+cortex_x925 - 64-bit Cortex X925
+neoverse_e1 - 64-bit Neoverse E1
+neoverse_n2 - 64-bit Neoverse N2
+neoverse_v1 - 64-bit Neoverse V1
+neoverse_v2 - 64-bit Neoverse V2
+neoverse_v3 - 64-bit Neoverse V3
+ampereone - 64-bit AmpereOne
+thunderx2 - 64-bit ThunderX2
+falkor - 64-bit Falkor
+vulkan - 64-bit Vulkan
