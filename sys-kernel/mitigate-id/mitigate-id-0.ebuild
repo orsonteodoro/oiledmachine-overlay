@@ -271,6 +271,7 @@ einfo "${cve}:  mitigated, component name - ${driver_name}, found version - ${fo
 }
 
 pkg_setup() {
+	use enforce || return
 	mitigate-id_pkg_setup
 ewarn "This ebuild is a Work In Progress (WIP) and may be renamed."
 }
