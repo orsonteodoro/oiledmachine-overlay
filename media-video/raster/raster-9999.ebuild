@@ -4,21 +4,27 @@
 
 EAPI=8
 
+# Package about:
+# Video editor
+
+# TODO:
+# Finish or drop ebuild
+
 DISTUTILS_USE_PEP517="poetry"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit distutils-r1 pypi
+inherit distutils-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/corgifist/raster.git"
-	FALLBACK_COMMIT="a934f413e487d6cf86dd24598a3d6f2dc3c246d5" # Jan 25, 2024
+	FALLBACK_COMMIT="9b31bb7ff5bfd372327f989f8526292b2b6a78e6" # Dec 29, 2024
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	KEYWORDS="~amd64"
+	#KEYWORDS="~amd64"
 	S="${WORKDIR}/${PN}-${PV}"
 	SRC_URI="
 https://github.com/corgifist/raster/archive/refs/tags/v${PV}.tar.gz
@@ -26,7 +32,7 @@ https://github.com/corgifist/raster/archive/refs/tags/v${PV}.tar.gz
 	"
 fi
 
-DESCRIPTION="Create, fill a temporary directory"
+DESCRIPTION="GPU-Based Node Video Editor"
 HOMEPAGE="
 	https://github.com/corgifist/raster
 "
@@ -35,35 +41,21 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" dev"
+IUSE+=" "
 RDEPEND+="
-	dev-python/dek[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	dev-python/poetry-core[${PYTHON_USEDEP}]
-	dev? (
-		dev-python/black[${PYTHON_USEDEP}]
-		dev-python/coverage[${PYTHON_USEDEP}]
-		dev-python/doks[${PYTHON_USEDEP}]
-		dev-python/flake8[${PYTHON_USEDEP}]
-		dev-python/isort[${PYTHON_USEDEP}]
-		dev-python/mypy[${PYTHON_USEDEP}]
-		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-util/ruff
-	)
 "
-DOCS=( "CHANGELOG" "README.md" )
+DOCS=( "README.md" )
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
-		grep -q -e "version = \"1.8.2\"" "${S}/pyproject.toml" \
-			|| die "QA:  Bump version"
 	else
 		unpack ${A}
 	fi
