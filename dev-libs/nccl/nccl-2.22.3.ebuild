@@ -77,9 +77,13 @@ CUDA_TOOLKIT_12_4="
 CUDA_TOOLKIT_12_5="
 	=dev-util/nvidia-cuda-toolkit-12.5*[rdma]
 "
+CUDA_TOOLKIT_12_6="
+	=dev-util/nvidia-cuda-toolkit-12.6*[rdma]
+"
 RDEPEND="
 	>=x11-drivers/nvidia-drivers-470[kernel-open,modules]
 	|| (
+		${CUDA_TOOLKIT_12_6}
 		${CUDA_TOOLKIT_12_5}
 		${CUDA_TOOLKIT_12_4}
 		${CUDA_TOOLKIT_12_3}
@@ -87,6 +91,7 @@ RDEPEND="
 	)
 	cuda_targets_compute_61? (
 		|| (
+			${CUDA_TOOLKIT_12_6}
 			${CUDA_TOOLKIT_12_5}
 			${CUDA_TOOLKIT_12_4}
 			${CUDA_TOOLKIT_12_3}
@@ -95,6 +100,7 @@ RDEPEND="
 	)
 	cuda_targets_compute_70? (
 		|| (
+			${CUDA_TOOLKIT_12_6}
 			${CUDA_TOOLKIT_12_5}
 			${CUDA_TOOLKIT_12_4}
 			${CUDA_TOOLKIT_12_3}
@@ -103,6 +109,7 @@ RDEPEND="
 	)
 	cuda_targets_compute_80? (
 		|| (
+			${CUDA_TOOLKIT_12_6}
 			${CUDA_TOOLKIT_12_5}
 			${CUDA_TOOLKIT_12_4}
 			${CUDA_TOOLKIT_12_3}
@@ -111,6 +118,7 @@ RDEPEND="
 	)
 	cuda_targets_compute_90? (
 		|| (
+			${CUDA_TOOLKIT_12_6}
 			${CUDA_TOOLKIT_12_5}
 			${CUDA_TOOLKIT_12_4}
 			${CUDA_TOOLKIT_12_3}
@@ -122,6 +130,7 @@ RDEPEND="
 	)
 	cuda_targets_sm_50? (
 		|| (
+			${CUDA_TOOLKIT_12_6}
 			${CUDA_TOOLKIT_12_5}
 			${CUDA_TOOLKIT_12_4}
 			${CUDA_TOOLKIT_12_3}
@@ -130,6 +139,7 @@ RDEPEND="
 	)
 	cuda_targets_sm_60? (
 		|| (
+			${CUDA_TOOLKIT_12_6}
 			${CUDA_TOOLKIT_12_5}
 			${CUDA_TOOLKIT_12_4}
 			${CUDA_TOOLKIT_12_3}
@@ -138,6 +148,7 @@ RDEPEND="
 	)
 	cuda_targets_sm_61? (
 		|| (
+			${CUDA_TOOLKIT_12_6}
 			${CUDA_TOOLKIT_12_5}
 			${CUDA_TOOLKIT_12_4}
 			${CUDA_TOOLKIT_12_3}
@@ -146,6 +157,7 @@ RDEPEND="
 	)
 	cuda_targets_sm_70? (
 		|| (
+			${CUDA_TOOLKIT_12_6}
 			${CUDA_TOOLKIT_12_5}
 			${CUDA_TOOLKIT_12_4}
 			${CUDA_TOOLKIT_12_3}
@@ -154,6 +166,7 @@ RDEPEND="
 	)
 	cuda_targets_sm_80? (
 		|| (
+			${CUDA_TOOLKIT_12_6}
 			${CUDA_TOOLKIT_12_5}
 			${CUDA_TOOLKIT_12_4}
 			${CUDA_TOOLKIT_12_3}
@@ -162,6 +175,7 @@ RDEPEND="
 	)
 	cuda_targets_sm_90? (
 		|| (
+			${CUDA_TOOLKIT_12_6}
 			${CUDA_TOOLKIT_12_5}
 			${CUDA_TOOLKIT_12_4}
 			${CUDA_TOOLKIT_12_3}
