@@ -1,4 +1,4 @@
-# Copyright 2024 Orson Teodoro
+# Copyright 2024-2025 Orson Teodoro <orsonteodoro@hotmail.com>
 # Distributed under the terms of the GNU General Public License v2
 
 HIP_3_5_VERSION="3.5.1"

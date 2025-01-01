@@ -1,4 +1,4 @@
-# Copyright 2024 Orson Teodoro
+# Copyright 2024-2025 Orson Teodoro <orsonteodoro@hotmail.com>
 # Copyright 2022-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
