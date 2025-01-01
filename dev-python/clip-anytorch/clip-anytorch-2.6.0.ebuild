@@ -27,7 +27,7 @@ https://github.com/rom1504/CLIP/archive/refs/tags/${PV}.tar.gz
 	"
 fi
 
-DESCRIPTION="Create, fill a temporary directory"
+DESCRIPTION="Contrastive Language-Image Pretraining"
 HOMEPAGE="
 	https://github.com/rom1504/CLIP
 	https://pypi.org/project/clip-anytorch

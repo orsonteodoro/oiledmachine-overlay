@@ -877,7 +877,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/celshast | A Sphinx documentation theme based on the Furo template |
 | dev-python/chex | Chex is a library of utilities for helping to write reliable JAX code. |
 | dev-python/clean-fid | FID calculation in PyTorch with proper image resizing and quantization steps |
-| dev-python/clip-anytorch | Create, fill a temporary directory |
+| dev-python/clip-anytorch | Contrastive Language-Image Pretraining |
 | dev-python/cloudpathlib | Python pathlib-style classes for cloud storage services |
 | dev-python/clu | A set of libraries for Machine Learning (ML) training loops in JAX |
 | dev-python/cmake-build-extension | Setuptools extension to build and package CMake projects |
