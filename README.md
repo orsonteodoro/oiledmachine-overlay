@@ -654,7 +654,9 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | package | description |
 | --- | --- |
 | acct-group/ollama | A group for ollama |
+| acct-group/voltaml-fast-stable-diffusion | A group for VoltaML - Fast Stable Diffusion |
 | acct-user/ollama | A user for ollama |
+| acct-user/voltaml-fast-stable-diffusion | A user for VoltaML - Fast Stable Diffusion |
 | app-admin/coreboot-utils | A selection from coreboot/utils useful in general |
 | app-admin/howdy | Facial authentication for Linux |
 | app-admin/keepassxc | KeePassXC - KeePass Cross-platform Community Edition |
@@ -798,6 +800,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-libs/hsa-amd-aqlprofile | AQLPROFILE library for AMD HSA runtime API extension support |
 | dev-libs/hyphen | ALTLinux hyphenation library |
 | dev-libs/icu | International Components for Unicode |
+| dev-libs/imath | Imath basic math package |
 | dev-libs/jemalloc | A general-purpose scalable concurrent allocator |
 | dev-libs/jemalloc-usd | USD support for Jemalloc, a general-purpose scalable concurrent allocator |
 | dev-libs/leveldb | A fast key-value storage library |
@@ -847,6 +850,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-perl/URI-git | URI handler for git scheme |
 | dev-php/grpc | PHP libraries for the high performance gRPC framework |
 | dev-php/libcaca | A library that creates colored ASCII-art graphics |
+| dev-python/AITemplate | A Python framework rendering neural network into high performance CUDA/HIP C++ code |
 | dev-python/Farama-Notifications | Gymnasium Notices |
 | dev-python/Flask-HTTPAuth | Simple extension that provides Basic, Digest and Token HTTP authentication for Flask routes |
 | dev-python/JaroWinkler | Python library for fast approximate string matching using Jaro and Jaro-Winkler similarity |
@@ -858,11 +862,13 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/ale-py | The Arcade Learning Environment (ALE) is a platform for AI research |
 | dev-python/anyio | A compatibility layer for multiple asynchronous event loop implementations |
 | dev-python/array-record | A file format that achieves a new frontier of IO efficiency |
+| dev-python/asdff | Adetailer Stable Diffusion diFFusers pipeline |
 | dev-python/astunparse | An Abstract Syntax Tree (AST) unparser for Python |
 | dev-python/autorom | A tool to automate installing Atari ROMs for the Arcade Learning Environment |
 | dev-python/autorom-accept-rom-license | AutoROM ROMs |
 | dev-python/backcall | Backwards compatible callback APIs |
 | dev-python/barectf | Generator of ANSI C tracers which output CTF data streams |
+| dev-python/basicsr | An open source image and video super-resolution toolbox |
 | dev-python/blis | A self-contained 💥 fast matrix-multiplication Python library without system dependencies! |
 | dev-python/box2d-py | A repackaged version of pybox2d |
 | dev-python/bsuite | bsuite is a collection of carefully-designed experiments that investigate core capabilities of a reinforcement learning (RL) agent |
@@ -870,6 +876,8 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/catalogue | Super lightweight function registries for your library |
 | dev-python/celshast | A Sphinx documentation theme based on the Furo template |
 | dev-python/chex | Chex is a library of utilities for helping to write reliable JAX code. |
+| dev-python/clean-fid | FID calculation in PyTorch with proper image resizing and quantization steps |
+| dev-python/clip-anytorch | Create, fill a temporary directory |
 | dev-python/cloudpathlib | Python pathlib-style classes for cloud storage services |
 | dev-python/clu | A set of libraries for Machine Learning (ML) training loops in JAX |
 | dev-python/cmake-build-extension | Setuptools extension to build and package CMake projects |
@@ -880,6 +888,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/coqpit | A simple but maybe too simple config management through Python data classes used for machine learning |
 | dev-python/coqui-tts | 🐸💬 - a deep learning toolkit for Text-to-Speech, battle-tested in research and production |
 | dev-python/coqui-tts-trainer | 🐸 - A general purpose model trainer, as flexible as it gets |
+| dev-python/cpufeature | CPU feature detection with Python |
 | dev-python/cuda-python | Python bindings for CUDA |
 | dev-python/cx-Freeze-bin | Create standalone executables from Python scripts |
 | dev-python/cymem | 💥 Cython memory pool for RAII-style memory management |
@@ -887,8 +896,10 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/dash-bootstrap-components | Bootstrap components for Plotly Dash |
 | dev-python/dash-svg | SVG support library for Plotly/Dash |
 | dev-python/dataclass-wizard | A simple, yet elegant, set of wizarding tools for interacting with Python dataclasses. |
+| dev-python/dctorch | Fast discrete cosine transforms for PyTorch |
 | dev-python/dek | The decorator-decorator |
 | dev-python/diffusers | State-of-the-art diffusion in PyTorch and JAX. |
+| dev-python/discord-py | An API wrapper for Discord written in Python |
 | dev-python/distrax | Distrax: Probability distributions in JAX. |
 | dev-python/dm-control | DeepMind's software stack for physics-based simulation and Reinforcement Learning environments, using MuJoCo. |
 | dev-python/dm-env | A Python interface for reinforcement learning environments |
@@ -902,6 +913,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/dopamine-rl | Dopamine is a research framework for fast prototyping of reinforcement learning algorithms. |
 | dev-python/ecos | A Python interface for the Embedded Conic Solver (ECOS) |
 | dev-python/editor | A Python library to open the default text editor |
+| dev-python/einops-exts | Implementation of some personal helper functions for Einops, my most favorite tensor manipulation library ❤️ |
 | dev-python/elevate | A Python library for requesting root privileges |
 | dev-python/encodec | State-of-the-art deep learning based audio codec supporting both mono 24 kHz audio and stereo 48 kHz audio. |
 | dev-python/etils | Collection of eclectic utils for Python |
@@ -909,14 +921,20 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/face-recognition | Recognize faces from Python or from the command line |
 | dev-python/face_recognition_models | Models used by the face_recognition package. |
 | dev-python/facemorpher | 👼 Morph faces with Python, Numpy, Scipy |
+| dev-python/facexlib | FaceXlib provides face-related functions |
+| dev-python/fastapi-analytics | Lightweight monitoring and analytics for API frameworks |
+| dev-python/fastapi-simple-cachecontrol | Cache-Control header management for FastAPI |
 | dev-python/fastbencode | Fast implementation of bencode |
+| dev-python/filterpy | Kalman filters filtering optimal estimation tracking |
 | dev-python/flake8-colors | ANSI colors highlight for Flake8 |
 | dev-python/flake8-docstrings | Integration of pydocstyle and flake8 for combined linting and reporting |
 | dev-python/flake8-future-import | Flake8 extension to check imports |
 | dev-python/flake8-import-order | Flake8 plugin that checks import order against various Python Style Guides |
 | dev-python/flake8-print | Check for print statements in Python files |
+| dev-python/flamingo-mini | Implementation of the deepmind Flamingo vision-language model, based on Hugging Face language models and ready for training |
 | dev-python/flash-attn | Fast and memory-efficient exact attention |
 | dev-python/flax | Flax is a neural network library for JAX that is designed for flexibility. |
+| dev-python/gfpgan | GFPGAN aims at developing Practical Algorithms for Real-world Face Restoration |
 | dev-python/gin-config | Gin-Config: A lightweight configuration library for Python |
 | dev-python/gitdb | IO of git-style object databases |
 | dev-python/google | Python bindings to the Google search engine. |
@@ -935,16 +953,21 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/hanabi-learning-environment | hanabi_learning_environment is a research platform for Hanabi experiments. |
 | dev-python/inquirer | Collection of common interactive command line user interfaces, based on Inquirer.js |
 | dev-python/instructor | Structured outputs for LLMs |
+| dev-python/invisible-watermark | Create, fill a temporary directory |
+| dev-python/ivy | Convert machine learning code between frameworks |
 | dev-python/jax | Differentiate, compile, and transform Numpy code |
 | dev-python/jaxlib | Support library for JAX |
 | dev-python/jaxtyping | Type annotations and runtime checking for shape and dtype of JAX/NumPy/PyTorch/etc. arrays. |
 | dev-python/js8py | Python module for parsing messages from the 'js8' command line decoder |
 | dev-python/jumpy | On-the-fly conversions between Jax and NumPy tensors |
+| dev-python/k-diffusion | |
 | dev-python/kaggle | The Official Kaggle API |
 | dev-python/kaldi-io | Python functions for reading kaldi data formats which is useful for rapid prototyping |
 | dev-python/keras | Deep Learning for humans |
 | dev-python/keras-applications | Keras deep learning library reference implementations of deep learning models |
 | dev-python/keras-preprocessing | Easy data preprocessing and data augmentation for deep learning models |
+| dev-python/kornia | Geometric computer vision library for spatial AI |
+| dev-python/kornia-rs | A low-level 3D computer vision library in Rust |
 | dev-python/labmaze | A standalone release of DeepMind Lab's maze generator with Python bindings. |
 | dev-python/langcodes | A Python library for working with and comparing language codes. |
 | dev-python/language-data | An optional supplement to `langcodes ` that stores names and statistics of languages |
@@ -981,8 +1004,10 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/numba | NumPy aware dynamic Python compiler using LLVM |
 | dev-python/numpy | Fast array and numerical Python library |
 | dev-python/ollama | Ollama Python library |
+| dev-python/omegaconf | A flexible configuration library |
 | dev-python/onnx-simplifier | Simplify your ONNX model |
 | dev-python/onnxoptimizer | A C++ library for performing arbitrary optimizations on ONNX models |
+| dev-python/open-clip-torch | An open source implementation of CLIP |
 | dev-python/open-spiel | OpenSpiel is a collection of environments and algorithms for research in general reinforcement learning and search/planning in games. |
 | dev-python/openai | The official Python library for the OpenAI API |
 | dev-python/optax | Optax is a gradient processing and optimization library for JAX. |
@@ -1005,6 +1030,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/protobuf | Python bindings for Google's Protocol Buffers |
 | dev-python/py-stackexchange | A Python binding for the StackExchange API |
 | dev-python/py3c | A Python 2/3 compatibility layer for C extensions |
+| dev-python/pyamdgpuinfo | AMD GPU stats |
 | dev-python/pyaudio | Python bindings for PortAudio |
 | dev-python/pybboxes | A Lightweight toolkit for bounding boxes providing conversion between bounding box types and simple computations |
 | dev-python/pyclibrary | C parser and ctypes automation for Python |
@@ -1015,6 +1041,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/pyglfw | Python bindings for GLFW |
 | dev-python/pylsqpack | Python bindings for ls-qpack |
 | dev-python/pymunk | A Pythonic 2D rigid body physics library |
+| dev-python/pyngrok | A Python wrapper for ngrok |
 | dev-python/pynvml | Python Bindings for the NVIDIA Management Library |
 | dev-python/pyperf | Toolkit to run Python benchmarks |
 | dev-python/pyreadline3 | Windows implementation of the GNU readline library Resources |
@@ -1032,6 +1059,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/pytube | Python tools for downloading YouTube Videos |
 | dev-python/pyv4l2 | A simple Video4Linux2 (v4l2) library for Python |
 | dev-python/pyvips | Python bindings for libvips |
+| dev-python/realesrgan | Real-ESRGAN aims at developing practical algorithms for general image or video restoration |
 | dev-python/rife-ncnn-vulkan-python-tntwise | Video frame interpolation using the Real-Time Intermediate Flow Estimation (RIFE) algorithm, neural networks, and a Python wrapper |
 | dev-python/rlax | A library of reinforcement learning building blocks in JAX. |
 | dev-python/rlcard | Reinforcement Learning or AI bots for card games like Blackjack, Leduc, Texas, DouDizhu, Mahjong, UNO |
@@ -1050,12 +1078,17 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/srsly | 🦉 Modern high-performance serialization utilities for Python (JSON, MessagePack, Pickle) |
 | dev-python/stasm | Python wrapper for finding features in faces |
 | dev-python/statsmodels | Statistical computations and models for use with SciPy |
+| dev-python/streaming-form-data | Streaming (and fast!) parser for multipart/form-data written in Cython |
 | dev-python/sysv-ipc | System V IPC primitives (semaphores, shared memory and message queues) for Python |
 | dev-python/tdir | Create, fill a temporary directory |
 | dev-python/tf-keras | The TensorFlow-specific implementation of the Keras API |
 | dev-python/thinc | 🔮 A refreshing functional take on deep learning, compatible with your favorite libraries |
 | dev-python/timm | PyTorch Image Models |
+| dev-python/tomesd | Token merging for Stable Diffusion |
 | dev-python/toml | A Python library for TOML |
+| dev-python/torchdiffeq | Differentiable Ordinary Differential Equation (ODE) solvers with full GPU support and O(1)-memory backpropagation |
+| dev-python/torchsde | Differentiable SDE solvers with GPU support and efficient sensitivity analysis |
+| dev-python/trampoline | Create, fill a temporary directory |
 | dev-python/trfl | trfl is a library of building blocks for reinforcement learning algorithms. |
 | dev-python/triton | Development repository for the Triton language and compiler |
 | dev-python/triton | The Triton language and compiler |
@@ -1071,6 +1104,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/wasabi | 🍣 A lightweight console printing and formatting toolkit |
 | dev-python/weasel | 🦦 weasel: A small and easy workflow system |
 | dev-python/wrapt | Module for decorators, wrappers and monkey patching |
+| dev-python/xformers | Hackable and optimized Transformers building blocks, supporting a composable construction |
 | dev-python/xmod | Turn any object into a module |
 | dev-ruby/libcaca | A library that creates colored ASCII-art graphics |
 | dev-util/DOCA-Host | DOCA-Host |
@@ -1147,6 +1181,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-gfx/openvdb | Library for the efficient manipulation of volumetric data |
 | media-gfx/upscayl | Upscayl is an AI based image upscaler |
 | media-gfx/upscayl-custom-models | Extra custom models for Upscayl. |
+| media-gfx/voltaml-fast-stable-diffusion | A beautiful and easy to use Stable Diffusion web user interface |
 | media-libs/HIPRT | HIP RT is a ray tracing library in HIP |
 | media-libs/alure | The OpenAL Utility Toolkit |
 | media-libs/assimp | Importer library to import assets from 3D files |
@@ -1179,9 +1214,11 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-libs/oidn | Intel® Open Image Denoise library |
 | media-libs/opencolorio | A color management framework for visual effects and animation |
 | media-libs/opencv | A collection of algorithms and sample code for various computer vision problems |
+| media-libs/openexr | ILM's OpenEXR high dynamic-range image file format libraries |
 | media-libs/openimageio | A library for reading and writing images |
 | media-libs/openpgl | Implements a set of representations and training algorithms needed to integrate path guiding into a renderer |
 | media-libs/opensubdiv | A subdivision surface library |
+| media-libs/opentimelineio | An interchange format for editorial timeline information |
 | media-libs/openusd | Universal Scene Description is a system for 3D scene interexchange between apps |
 | media-libs/openxr | Generated headers and sources for OpenXR loader. |
 | media-libs/opusfile | A high-level decoding and seeking API for .opus files |
@@ -1379,6 +1416,8 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-video/mpv | Media player for the command line |
 | media-video/nudenet_video | A Python script to detect and blur explicit nudity in videos using NudeNet and FFmpeg |
 | media-video/obs-studio | Software for live streaming and screen recording |
+| media-video/olive | Professional open-source non-linear video editor |
+| media-video/raster | GPU-Based Node Video Editor |
 | media-video/sr | Image and video super resolution models |
 | media-video/video2x | A machine learning based video super resolution and frame interpolation framework |
 | media-video/video2x-qt6 | An AI video upscaler with a graphical user friendly Qt6 frontend |
@@ -1517,6 +1556,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | virtual/linux-sources | Virtual for Linux kernel sources |
 | virtual/ot-sources-lts | Virtual for the ot-sources LTS ebuilds for |
 | virtual/ot-sources-stable | Virtual for the ot-sources stable ebuilds |
+| virtual/patent-status | A virtual package for patent status consistency across ebuilds |
 | virtual/pillow | Virtual for Python Pillow packages |
 | virtual/tmpfiles | Virtual to select between different tmpfiles.d handlers |
 | www-apps/xpra-html5 | HTML5 client for Xpra |
