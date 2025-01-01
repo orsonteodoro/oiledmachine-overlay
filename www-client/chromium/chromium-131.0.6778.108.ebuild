@@ -643,6 +643,11 @@ PATENT_USE_FLAGS="
 		!vaapi
 		!vaapi-hevc
 	)
+	!patent_status_sponsored_ncp_nb? (
+		!system-openh264? (
+			!openh264
+		)
+	)
 	ffmpeg-chromium? (
 		patent_status_nonfree
 	)
