@@ -1088,7 +1088,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/toml | A Python library for TOML |
 | dev-python/torchdiffeq | Differentiable Ordinary Differential Equation (ODE) solvers with full GPU support and O(1)-memory backpropagation |
 | dev-python/torchsde | Differentiable SDE solvers with GPU support and efficient sensitivity analysis |
-| dev-python/trampoline | Create, fill a temporary directory |
+| dev-python/trampoline | Simple and tiny yield-based trampoline implementation |
 | dev-python/trfl | trfl is a library of building blocks for reinforcement learning algorithms. |
 | dev-python/triton | Development repository for the Triton language and compiler |
 | dev-python/triton | The Triton language and compiler |

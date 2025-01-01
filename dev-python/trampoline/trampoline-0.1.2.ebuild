@@ -10,7 +10,7 @@ PYTHON_COMPAT=( "python3_"{10..12} ) # Upstream lists up to 3.7
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${PV}"
 
-DESCRIPTION="Create, fill a temporary directory"
+DESCRIPTION="Simple and tiny yield-based trampoline implementation"
 HOMEPAGE="
 	https://gitlab.com/ferreum/trampoline/-/tree/master
 	https://pypi.org/project/trampoline
