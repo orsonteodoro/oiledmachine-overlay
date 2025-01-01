@@ -1,6 +1,6 @@
 # This file is part of the genkernel ebuild
 crypto - Add dependencies required for optimizing cryptography kernel codepaths
-memory - Add dependencies required for optimizing out of memory killer memory codepaths
+memory - Add dependencies required for optimizing out of memory killer codepaths
 network - Add dependencies required for optimizing network codepaths
 p2p - Add dependencies required for optimizing network codepaths
 webcam - Add dependencies required for optimizing in-kernel webcam codecs codepaths
