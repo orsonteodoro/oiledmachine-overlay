@@ -110,11 +110,7 @@ DESCRIPTION="Enforce Data Tampering mitigations"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 VIDEO_CARDS=(
-	video_cards_amdgpu
-	video_cards_nouveau
 	video_cards_nvidia
-	video_cards_v3d
-	video_cards_vmware
 )
 IUSE+="
 ${VIDEO_CARDS[@]}

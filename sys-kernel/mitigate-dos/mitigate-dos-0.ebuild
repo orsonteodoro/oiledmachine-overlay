@@ -110,14 +110,7 @@ DESCRIPTION="Enforce Denial of Service mitigations"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 VIDEO_CARDS=(
-	video_cards_amdgpu
-	video_cards_freedreno
-	video_cards_intel
-	video_cards_nouveau
 	video_cards_nvidia
-	video_cards_radeon
-	video_cards_v3d
-	video_cards_vmware
 )
 IUSE+="
 ${VIDEO_CARDS[@]}
