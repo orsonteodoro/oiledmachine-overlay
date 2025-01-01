@@ -38,6 +38,11 @@ _mitigate_id_set_globals() {
 _mitigate_id_set_globals
 unset -f _mitigate_id_set_globals
 
+# We like to delete all of the cpu_target_* but can't because the eclass doesn't
+# do auto detect min required kernel via USE=auto.  The cpu_target_x86_* does
+# more accurate pruning allowing for better LTS support.  The auto will just
+# simplify and prune everything except the latest stable.
+#
 # lakefield is incomplete
 # cannon lake is incomplete
 CPU_TARGET_X86=(

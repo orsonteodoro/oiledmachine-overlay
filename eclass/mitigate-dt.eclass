@@ -38,6 +38,11 @@ _mitigate_dt_set_globals() {
 _mitigate_dt_set_globals
 unset -f _mitigate_dt_set_globals
 
+# We like to delete all of the cpu_target_* but can't because the eclass doesn't
+# do auto detect min required kernel via USE=auto.  The cpu_target_x86_* does
+# more accurate pruning allowing for better LTS support.  The auto will just
+# simplify and prune everything except the latest stable.
+
 CPU_TARGET_X86=(
 	cpu_target_x86_arrandale
 	cpu_target_x86_clarkdale
