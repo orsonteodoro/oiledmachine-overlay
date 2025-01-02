@@ -456,28 +456,28 @@
       F19h
     </flag>
     <flag name="cpu_target_x86_naples">
-      Zen 1
+      Zen 1 EPYC™
     </flag>
     <flag name="cpu_target_x86_rome">
-      Zen 2
+      Zen 2 EPYC™
     </flag>
     <flag name="cpu_target_x86_milan">
-      Zen 3
+      Zen 3 EPYC™
     </flag>
     <flag name="cpu_target_x86_milan-x">
-      Zen 3
+      Zen 3 EPYC™
     </flag>
     <flag name="cpu_target_x86_genoa">
-      Zen 4
+      Zen 4 EPYC™
     </flag>
     <flag name="cpu_target_x86_genoa-x">
-      Zen 4
+      Zen 4 EPYC™
     </flag>
     <flag name="cpu_target_x86_bergamo">
-      Zen 4
+      Zen 4 EPYC™
     </flag>
     <flag name="cpu_target_x86_siena">
-      Zen 4
+      Zen 4 EPYC™
     </flag>
 
     <flag name="cpu_target_x86_dhyana">
