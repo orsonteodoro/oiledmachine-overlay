@@ -128,19 +128,20 @@ _hip_set_globals() {
 	if [[ "${hip_platform}" == "amd" ]] ; then
 		# Based on rocBLAS linking to libstdc++
 		# For HIP_PLATFORM == amd.
-		HIP_4_1_GCC_SLOT="12"
-		HIP_4_5_GCC_SLOT="12"
-		HIP_5_1_GCC_SLOT="12"
-		HIP_5_2_GCC_SLOT="12"
-		HIP_5_3_GCC_SLOT="12"
-		HIP_5_4_GCC_SLOT="12"
-		HIP_5_5_GCC_SLOT="12"
-		HIP_5_6_GCC_SLOT="12"
-		HIP_5_7_GCC_SLOT="12"
-		HIP_6_0_GCC_SLOT="12"
-		HIP_6_1_GCC_SLOT="12"
-		HIP_6_2_GCC_SLOT="13" # GCC 13.2
-		HIP_6_3_GCC_SLOT="13" # GCC 13.2
+	#		  This distro # Upstream
+		HIP_4_1_GCC_SLOT="12" # GCC 6.1 U18 and U20, which is EOL on distro
+		HIP_4_5_GCC_SLOT="12" # GCC 6.1 U18 and U20, which is EOL on distro
+		HIP_5_1_GCC_SLOT="12" # GCC 6.1 U18 and U20, which is EOL on distro
+		HIP_5_2_GCC_SLOT="12" # GCC 6.1 U18 and U20, which is EOL on distro
+		HIP_5_3_GCC_SLOT="12" # GCC 9.1 U20, GCC 12.1 U22
+		HIP_5_4_GCC_SLOT="12" # GCC 9.1 U20, GCC 12.1 U22
+		HIP_5_5_GCC_SLOT="12" # GCC 9.1 U20, GCC 12.1 U22
+		HIP_5_6_GCC_SLOT="12" # GCC 9.1 U20, GCC 12.1 U22
+		HIP_5_7_GCC_SLOT="12" # GCC 9.1 U20, GCC 12.1 U22
+		HIP_6_0_GCC_SLOT="12" # GCC 9.1 U20, GCC 12.1 U22
+		HIP_6_1_GCC_SLOT="12" # GCC 9.1 U20, GCC 12.1 U22
+		HIP_6_2_GCC_SLOT="13" # GCC 9.1 U20, GCC 12.1 U22, GCC 13.2 U24
+		HIP_6_3_GCC_SLOT="13" # GCC 9.1 U20, GCC 12.1 U22, GCC 13.2 U24
 	else
 		# For HIP_PLATFORM == nvidia.
 		HIP_4_1_GCC_SLOT="10" # CUDA 11.3
