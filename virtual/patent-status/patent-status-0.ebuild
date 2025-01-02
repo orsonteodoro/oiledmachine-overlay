@@ -47,6 +47,7 @@ RDEPEND+="
 		!media-libs/oneVPL-cpu
 		!media-libs/oneVPL-intel-gpu
 		!media-libs/openh264
+		!media-libs/raspberrypi-userland
 		!media-libs/vaapi-drivers
 		!media-libs/vo-aacenc
 		!media-libs/vpl-gpu-rt
