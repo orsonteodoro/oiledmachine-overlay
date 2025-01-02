@@ -126,8 +126,8 @@ HIP_6_3_GLIBCXX="3.4.30" # GCC 12.1.0 placeholder, TODO verify
 _hip_set_globals() {
 	local hip_platform="${HIP_PLATFORM:-amd}"
 	if [[ "${hip_platform}" == "amd" ]] ; then
-		# Based on rocBLAS linking to libstdc++
-		# For HIP_PLATFORM == amd.
+	# Based on rocBLAS linking to libstdc++
+	# For HIP_PLATFORM == amd.
 	#		  This distro # Upstream
 		HIP_4_1_GCC_SLOT="12" # GCC 6.1 U18 and U20, which GCC 6.1 is EOL
 		HIP_4_5_GCC_SLOT="12" # GCC 6.1 U18 and U20, which GCC 6.1 is EOL
@@ -143,7 +143,8 @@ _hip_set_globals() {
 		HIP_6_2_GCC_SLOT="13" # GCC 9.1 U20, GCC 12.1 U22, GCC 13.2 U24
 		HIP_6_3_GCC_SLOT="13" # GCC 9.1 U20, GCC 12.1 U22, GCC 13.2 U24
 	else
-		# For HIP_PLATFORM == nvidia.
+	# The GCC slots listed is based on the max GCC allowed in the dev-util/nvidia-cuda-toolkit ebuild.
+	# For HIP_PLATFORM == nvidia.
 		HIP_4_1_GCC_SLOT="10" # CUDA 11.3
 		HIP_4_5_GCC_SLOT="11" # CUDA 11.5
 		HIP_5_1_GCC_SLOT="11" # CUDA 11.5
