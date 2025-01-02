@@ -129,10 +129,10 @@ _hip_set_globals() {
 		# Based on rocBLAS linking to libstdc++
 		# For HIP_PLATFORM == amd.
 	#		  This distro # Upstream
-		HIP_4_1_GCC_SLOT="12" # GCC 6.1 U18 and U20, which is EOL on distro
-		HIP_4_5_GCC_SLOT="12" # GCC 6.1 U18 and U20, which is EOL on distro
-		HIP_5_1_GCC_SLOT="12" # GCC 6.1 U18 and U20, which is EOL on distro
-		HIP_5_2_GCC_SLOT="12" # GCC 6.1 U18 and U20, which is EOL on distro
+		HIP_4_1_GCC_SLOT="12" # GCC 6.1 U18 and U20, which GCC 6.1 is EOL
+		HIP_4_5_GCC_SLOT="12" # GCC 6.1 U18 and U20, which GCC 6.1 is EOL
+		HIP_5_1_GCC_SLOT="12" # GCC 6.1 U18 and U20, which GCC 6.1 is EOL
+		HIP_5_2_GCC_SLOT="12" # GCC 6.1 U18 and U20, which GCC 6.1 is EOL
 		HIP_5_3_GCC_SLOT="12" # GCC 9.1 U20, GCC 12.1 U22
 		HIP_5_4_GCC_SLOT="12" # GCC 9.1 U20, GCC 12.1 U22
 		HIP_5_5_GCC_SLOT="12" # GCC 9.1 U20, GCC 12.1 U22
