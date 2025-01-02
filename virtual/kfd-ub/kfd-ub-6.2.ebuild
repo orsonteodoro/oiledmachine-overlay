@@ -6,7 +6,7 @@ EAPI=7
 # The PV is the same as DC_VER in
 # https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-6.2.0/drivers/gpu/drm/amd/display/dc/dc.h#L48
 
-AMDGPU_FIRMWARE_PV="6.7.0.60102" # Not available yet.
+AMDGPU_FIRMWARE_PV="6.8.5.60204"
 DC_VER="3.2.286" # From rock-dkms
 KERNEL_FIRMWARE_PV="99999999" # DCN 4.0.1 and VCN 5.0.0 was not found.  Currently DCN is 3.1.4, VCN is 4.0.0 on linux-firmware.git
 # Expected firmware properites:
@@ -17,7 +17,7 @@ KERNEL_FIRMWARE_PV="99999999" # DCN 4.0.1 and VCN 5.0.0 was not found.  Currentl
 # PSP = ?
 # SDMA = ?
 # VCN = 5.0.0
-KERNEL_PV="6.11" # DC_VER = 3.2.291 ; DCN = 4.0.1 ; KERNEL_PV is from linux-kernel not rock-dkms
+KERNEL_PV="6.11" # DC_VER = 3.2.291 ; DCN = 4.0.1 ; This row is from linux-kernel not rock-dkms
 # Expected kernel properties:
 # Some of the last amdkfd commits are applied to the amdkfd folder (d2e5bf7, b7c09a6, 97f3ca8, 37209d5) ; missing 835309f, a3431f7
 # DCN is >= 4.0.1
@@ -50,15 +50,15 @@ ROCM_SLOT="${ROCM_VERSION%.*}"
 
 DESCRIPTION="KFD (Kernel Fusion Driver) with version limited upper boundary"
 #KEYWORDS="~amd64 ~x86" # Work In Progress (WIP)
-IUSE="custom-kernel kernel rock-dkms strict-pairing ebuild_revision_4"
+IUSE="custom-kernel kernel rock-dkms strict-pairing ebuild_revision_5"
 REQUIRED_USE="
-	!strict-paring
+	^^ (
+		kernel
+		rock-dkms
+	)
 "
 SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
 FIRMWARE_RDEPEND="
-	>=sys-kernel/linux-firmware-${KERNEL_FIRMWARE_PV}
-"
-DISABLED_FIRMWARE_RDEPEND="
 	!strict-pairing? (
 		|| (
 			>=sys-firmware/amdgpu-dkms-firmware-${AMDGPU_FIRMWARE_PV}
@@ -106,13 +106,6 @@ RDEPEND="
 	!virtual/amdgpu-drm
 	${FIRMWARE_RDEPEND}
 	${KFD_RDEPEND}
-"
-# A mask for sys-kernel/linux-firmware should be in REQUIRED_USE
-REQUIRED_USE="
-	^^ (
-		kernel
-		rock-dkms
-	)
 "
 
 pkg_setup() {

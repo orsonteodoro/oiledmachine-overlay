@@ -20,7 +20,7 @@ KERNEL_FIRMWARE_PV="20210812" # Based on vangogh presence and missing beige goby
 # beige_goby = missing
 # vangogh = present
 # yellow_carp = missing
-KERNEL_PV="5.13" # DC_VER = 3.2.132 ; DCN = 3.0.2 ; KERNEL_PV is from linux-kernel not rock-dkms
+KERNEL_PV="5.13" # DC_VER = 3.2.132 ; DCN = 3.0.2 ; This row is from linux-kernel not rock-dkms
 # Expected kernel properties:
 # Some of the last amdkfd commits are applied to the amdkfd folder (6a986c0, e6a20c0, 67ac9c3) ; not applied: 9b83380, 32572fa, d7aad84, 34bdd37
 # DCN is >= 3.0.2
@@ -54,6 +54,12 @@ ROCM_SLOT="${ROCM_VERSION%.*}"
 DESCRIPTION="KFD (Kernel Fusion Driver) with version limited upper boundary"
 #KEYWORDS="~amd64 ~x86" # Work In Progress (WIP)
 IUSE="custom-kernel kernel rock-dkms strict-pairing ebuild_revision_4"
+REQUIRED_USE="
+	^^ (
+		kernel
+		rock-dkms
+	)
+"
 SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
 FIRMWARE_RDEPEND="
 	!strict-pairing? (
@@ -97,13 +103,6 @@ RDEPEND="
 	!virtual/amdgpu-drm
 	${FIRMWARE_RDEPEND}
 	${KFD_RDEPEND}
-"
-# A mask for sys-kernel/linux-firmware should be in REQUIRED_USE
-REQUIRED_USE="
-	^^ (
-		kernel
-		rock-dkms
-	)
 "
 
 pkg_setup() {

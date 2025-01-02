@@ -17,7 +17,7 @@ KERNEL_FIRMWARE_PV="20230523" # Based on linux-firmware commit logs for git mess
 # PSP = 13.0.11
 # SDMA = 6.0.2
 # VCN = 4.0.4
-KERNEL_PV="6.3" # DC_VER = 3.2.223 ; DCN = 3.2.1 ; KERNEL_PV is from linux-kernel not rock-dkms
+KERNEL_PV="6.3" # DC_VER = 3.2.223 ; DCN = 3.2.1 ; This row is from linux-kernel not rock-dkms
 # Expected kernel properties:
 # Some of the last amdkfd commits are applied to the amdkfd folder (62e2a0f, 7f75823 [cancelled by 62e2a0f but applied for 6.0 with 0ab2d75], 7efe5d3, e81ed7b, f5c1d84)
 # DCN is >= 3.2
@@ -53,6 +53,12 @@ ROCM_SLOT="${ROCM_VERSION%.*}"
 DESCRIPTION="The Kernel Fusion Driver (KFD)"
 KEYWORDS="~amd64 ~x86"
 IUSE="custom-kernel kernel rock-dkms strict-pairing ebuild_revision_4"
+REQUIRED_USE="
+	^^ (
+		kernel
+		rock-dkms
+	)
+"
 SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
 FIRMWARE_RDEPEND="
 	!strict-pairing? (
@@ -99,13 +105,6 @@ RDEPEND="
 	!virtual/amdgpu-drm
 	${FIRMWARE_RDEPEND}
 	${KFD_RDEPEND}
-"
-# A mask for sys-kernel/linux-firmware should be in REQUIRED_USE
-REQUIRED_USE="
-	^^ (
-		kernel
-		rock-dkms
-	)
 "
 
 pkg_setup() {
