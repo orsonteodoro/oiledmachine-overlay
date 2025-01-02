@@ -12,7 +12,7 @@ inherit cmake flag-o-matic python-single-r1 rocm
 if [[ "${PV}" == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/rocminfo/"
 	EGIT_BRANCH="amd-staging"
-	FALLBACK_COMMIT="rocm-6.2.0"
+	FALLBACK_COMMIT="rocm-6.2.4"
 	IUSE+=" fallback-commit"
 	inherit git-r3
 else
@@ -28,7 +28,7 @@ DESCRIPTION="ROCm Application for Reporting System Info"
 HOMEPAGE="https://github.com/RadeonOpenCompute/rocminfo"
 LICENSE="NCSA-AMD"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE+=" ebuild_revision_4"
+IUSE+=" ebuild_revision_5"
 RDEPEND="
 	~dev-libs/rocr-runtime-${PV}:${ROCM_SLOT}
 	sys-apps/pciutils

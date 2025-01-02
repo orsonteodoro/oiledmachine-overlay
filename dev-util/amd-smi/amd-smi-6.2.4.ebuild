@@ -18,7 +18,7 @@ if [[ "${PV}" == *"9999" ]] ; then
 	EGIT_BRANCH="amd-staging"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/ROCm/amdsmi/"
-	FALLBACK_COMMIT="rocm-6.2.0"
+	FALLBACK_COMMIT="rocm-6.2.4"
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
@@ -56,7 +56,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test" # Not tested
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE+=" doc +esmi test ebuild_revision_1"
+IUSE+=" doc +esmi test ebuild_revision_2"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	esmi

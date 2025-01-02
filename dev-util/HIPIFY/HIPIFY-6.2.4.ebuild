@@ -34,8 +34,8 @@ LICENSE="
 # MIT - LICENSE.txt
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild_revision_15"
-# https://github.com/ROCm/HIPIFY/blob/rocm-6.2.0/docs/hipify-clang.rst
+IUSE="test ebuild_revision_16"
+# https://github.com/ROCm/HIPIFY/blob/rocm-6.2.4/docs/hipify-clang.rst
 RDEPEND="
 	!test? (
 		${ROCM_CLANG_DEPEND}
@@ -48,6 +48,7 @@ BDEPEND="
 	${ROCM_CLANG_DEPEND}
 	test? (
 		|| (
+			=dev-util/nvidia-cuda-toolkit-12.6*
 			=dev-util/nvidia-cuda-toolkit-12.3*
 			=dev-util/nvidia-cuda-toolkit-12.2*
 			=dev-util/nvidia-cuda-toolkit-11.8*
@@ -68,6 +69,10 @@ PATCHES=(
 pkg_setup() {
 	if ! use test ; then
 		:
+	elif has_version "=dev-util/nvidia-cuda-toolkit-12.6*" && has_version "=llvm-core/clang-19*" && has_version "=llvm-core/llvm-17*" ; then
+		LLVM_SLOT=19
+	elif has_version "=dev-util/nvidia-cuda-toolkit-12.5*" && has_version "=llvm-core/clang-19*" && has_version "=llvm-core/llvm-17*" ; then
+		LLVM_SLOT=19
 	elif has_version "=dev-util/nvidia-cuda-toolkit-12.4*" && has_version "=llvm-core/clang-19*" && has_version "=llvm-core/llvm-17*" ; then
 		LLVM_SLOT=19
 	elif has_version "=dev-util/nvidia-cuda-toolkit-12.3*" && has_version "=llvm-core/clang-18*" && has_version "=llvm-core/llvm-17*" ; then

@@ -3,7 +3,7 @@
 
 EAPI=8
 
-LLVM_SLOT=18 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.0/llvm/CMakeLists.txt
+LLVM_SLOT=18 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.4/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic rocm
@@ -35,7 +35,7 @@ RESTRICT="strip" # Fix issue with finding symbols
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 	debug
-	ebuild_revision_13
+	ebuild_revision_14
 "
 RDEPEND="
 	${ROCM_CLANG_DEPEND}

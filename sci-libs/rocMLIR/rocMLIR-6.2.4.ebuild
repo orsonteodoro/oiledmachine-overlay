@@ -5,7 +5,7 @@ EAPI=8
 
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_SLOT=18
-PYTHON_COMPAT=( "python3_"{10..11} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake python-r1 rocm

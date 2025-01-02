@@ -54,8 +54,8 @@ DOCS_DEPEND="
 	media-gfx/graphviz
 "
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=18 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.0/llvm/CMakeLists.txt
-PYTHON_COMPAT=( "python3_"{10..11} )
+LLVM_SLOT=18 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.4/llvm/CMakeLists.txt
+PYTHON_COMPAT=( "python3_"{10..12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake docs edo flag-o-matic multiprocessing python-single-r1 rocm
@@ -85,7 +85,7 @@ RESTRICT="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CPU_FLAGS_X86[@]}
-benchmark cuda +rocm test ebuild_revision_21
+benchmark cuda +rocm test ebuild_revision_22
 "
 gen_rocm_required_use() {
 	local x

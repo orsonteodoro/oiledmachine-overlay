@@ -40,9 +40,9 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE+="
-ebuild_revision_8
+ebuild_revision_9
 "
-# See https://github.com/ROCm/rocm-install-on-linux/blob/docs/6.2.0/docs/reference/user-kernel-space-compat-matrix.rst
+# See https://github.com/ROCm/rocm-install-on-linux/blob/docs/6.2.4/docs/reference/user-kernel-space-compat-matrix.rst
 RDEPEND="
 	!dev-libs/roct-thunk-interface:0
 	>=sys-apps/pciutils-3.9.0

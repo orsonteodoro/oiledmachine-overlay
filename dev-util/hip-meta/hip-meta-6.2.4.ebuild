@@ -3,7 +3,7 @@
 
 EAPI=8
 
-# See https://github.com/ROCm/rocm-install-on-linux/blob/docs/6.2.0/docs/reference/system-requirements.rst
+# See https://github.com/ROCm/rocm-install-on-linux/blob/docs/6.2.4/docs/reference/system-requirements.rst
 AMDGPU_TARGETS_COMPAT=(
 	gfx906
 	gfx908
@@ -33,6 +33,7 @@ IUSE="
 	rocm
 	runtimes
 	support-libs
+	ebuild_revision_1
 "
 REQUIRED_USE="
 	hip? (

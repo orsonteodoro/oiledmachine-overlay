@@ -6,11 +6,11 @@ EAPI=8
 BOOST_PV="1.72.0"
 LIBJPEG_TURBO_PV="3.0.2"
 LLVM_SLOT=18
-PYTHON_COMPAT=( "python3_10" ) # U 20/22
+PYTHON_COMPAT=( "python3_"{10..12} ) # U 20/22
 RAPIDJSON_COMMIT="f9d53419e912910fd8fa57d5705fa41425428c35" # committer-date:<=2023-10-05
 PROTOBUF_PV="3.12.4" # The version is behind the 3.21 offered.
 ROCM_SLOT="6.2"
-ROCM_VERSION="6.2.0"
+ROCM_VERSION="6.2.4"
 RRAWTHER_LIBJPEG_TURBO_COMMIT="ae4e2a24e54514d1694d058650c929e6086cc4bb"
 
 inherit cmake python-single-r1 rocm
@@ -43,7 +43,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE+="
 cpu enhanced-message ffmpeg ieee1394 opencv python system-rapidjson system-jpeg
 test
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND="
 	${PYTHON_DEPS}
