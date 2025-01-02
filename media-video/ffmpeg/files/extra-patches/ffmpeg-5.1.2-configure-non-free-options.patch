@@ -57,31 +57,26 @@ Resulting benefits:
  * 4291 4k sized pages removed from memory.
 
 
---- ffmpeg-4.4.3/configure.orig	2023-03-06 16:08:27.142875395 -0800
-+++ ffmpeg-4.4.3/configure	2023-03-06 16:53:25.382910256 -0800
+diff '--color=auto' -urp ffmpeg-5.1.6.orig/configure ffmpeg-5.1.6/configure
+--- ffmpeg-5.1.6.orig/configure	2024-08-04 16:23:18.000000000 -0700
++++ ffmpeg-5.1.6/configure	2025-01-02 09:55:07.893465272 -0800
 @@ -100,6 +100,10 @@ Licensing options:
    --enable-version3        upgrade (L)GPL to version 3 [no]
    --enable-nonfree         allow use of nonfree code, the resulting libs
                             and binaries will be unredistributable [no]
-+  --non-free-patented-codecs=<allow|codec-developer|deny|user>        level of support for likely patented non-free or likely patented non-free network protocols
++  --non-free-patented-codecs=<allow|deny>                             level of support for likely patented non-free or likely patented non-free network protocols
 +  --re-codecs=<allow|deny>                                            toggle likely patentless reversed-engineered (RE) codecs
 +  --codec-transparency=<closed|open>                                  toggle likely patentless closed codecs
 +  --enforceability=<patents-are-unrecognized|patents-are-illegal|enforced|unenforced>        changes the default based on enforceablity
  
  Configuration options:
    --disable-static         do not build static libraries [no]
-@@ -4065,6 +4069,36 @@ for opt do
+@@ -4154,6 +4158,30 @@ for opt do
          --enable-sdl)
              enable sdl2
          ;;
 +        --non-free-patented-codecs|--non-free-patented-codecs=allow|--non-free-patented-codecs=enable)
 +            non_free_patented_codecs="allow"
-+        ;;
-+        --non-free-patented-codecs=user)
-+            non_free_patented_codecs="user"
-+        ;;
-+        --non-free-patented-codecs=codec-developer)
-+            non_free_patented_codecs="codec-developer"
 +        ;;
 +        --non-free-patented-codecs=deny|--non-free-patented-codecs=disable)
 +            non_free_patented_codecs="deny"
@@ -107,7 +102,7 @@ Resulting benefits:
          --enable-*=*|--disable-*=*)
              eval $(echo "${opt%%=*}" | sed 's/--/action=/;s/-/ thing=/')
              is_in "${thing}s" $COMPONENT_LIST || die_unknown "$opt"
-@@ -7288,6 +7322,1163 @@ postproc_deps="$(filter_out 'gpl' $postp
+@@ -7471,6 +7499,1150 @@ postproc_deps="$(filter_out 'gpl' $postp
  
  map 'expand_deps $v' $LIBRARY_LIST
  
@@ -281,12 +276,22 @@ Resulting benefits:
 +# Dropped patent applications
 +# Dirac
 +
-+if [ "${non_free_patented_codecs}" = "user" ] \
-+    || [ "${non_free_patented_codecs}" = "codec-developer" ] \
-+    || [ "${non_free_patented_codecs}" = "deny" ] \
++if [   [ "${non_free_patented_codecs}" = "deny" ] \
 +    || [ "${non_free_patented_codecs}" = "disable" ] \
 +; then
 +    echo "Disabling likely patented non-free codecs or likely patented non-free network protocols"
++    disable2 aac_adtstoasc_bsf
++    disable2 aac_at_decoder
++    disable2 aac_decoder
++    disable2 aac_demuxer
++    disable2 aac_fixed_decoder
++    disable2 aac_latm_decoder
++    disable2 aac_latm_muxer
++    disable2 aac_latm_parser
++    disable2 aac_mf_encoder
++    disable2 aac_parser
++    disable2 adts_header
++    disable2 adts_muxer
 +    disable2 als_decoder
 +    disable2 amr_demuxer
 +    disable2 amr_muxer
@@ -305,6 +310,10 @@ Resulting benefits:
 +    disable2 aptx_hd_decoder
 +    disable2 aptx_hd_demuxer
 +    disable2 aptx_hd_muxer
++    disable2 asf_demuxer
++    disable2 asf_muxer
++    disable2 asf_o_demuxer
++    disable2 asf_stream_muxer
 +    disable2 atrac1_decoder
 +    disable2 atrac3_decoder
 +    disable2 atrac3al_decoder
@@ -445,7 +454,11 @@ Resulting benefits:
 +    disable2 indeo5_decoder
 +    disable2 ividsp
 +    disable2 kvazaar
++    disable2 latm_muxer # AAC LATM
 +    disable2 libdavs2_decoder
++    disable2 libfdk_aac
++    disable2 libfdk_aac_decoder
++    disable2 libfdk_aac_encoder
 +    disable2 libkvazaar_encoder
 +    disable2 libopencore_amrnb
 +    disable2 libopencore_amrnb_decoder
@@ -615,6 +628,7 @@ Resulting benefits:
 +    disable2 luodat_demuxer # Use h264
 +    disable2 live_flv_demuxer
 +    disable2 lmlm4_demuxer # Uses mpeg4
++    disable2 loas_demuxer # Uses AAC
 +    disable2 lvf_demuxer # May use h264.  See also trac ticket 18
 +    disable2 metasound_decoder # Uses twinvq.o
 +    disable2 mov_demuxer
@@ -638,6 +652,7 @@ Resulting benefits:
 +    disable2 smoothstreaming_muxer # References h264, aac, vc1
 +    disable2 tg2_muxer # Requires mov_muxer
 +    disable2 tgp_muxer # Requires mov_muxer
++    disable2 transcode_aac_example
 +    disable2 vivo_demuxer # Uses h263 and Siren
 +    disable2 webm_dash_manifest_muxer
 +    disable2 wmv3image_decoder
@@ -1218,39 +1233,6 @@ Resulting benefits:
 +    echo "Allowing only likely patentless open codecs"
 +fi
 +
-+if [ "${non_free_patented_codecs}" = "codec-developer" ] \
-+   || [ "${non_free_patented_codecs}" = "deny" ] \
-+   || [ "${non_free_patented_codecs}" = "disable" ] \
-+; then
-+    echo "Disabling codec developer restricted codecs"
-+    disable2 aac_adtstoasc_bsf
-+    disable2 aac_at_decoder
-+    disable2 aac_decoder
-+    disable2 aac_demuxer
-+    disable2 aac_fixed_decoder
-+    disable2 aac_latm_decoder
-+    disable2 aac_latm_muxer
-+    disable2 aac_latm_parser
-+    disable2 aac_mf_encoder
-+    disable2 aac_parser
-+    disable2 adts_header
-+    disable2 adts_muxer
-+    disable2 asf_demuxer
-+    disable2 asf_muxer
-+    disable2 asf_o_demuxer
-+    disable2 asf_stream_muxer
-+    disable2 latm_muxer
-+    disable2 libfdk_aac
-+    disable2 libfdk_aac_decoder
-+    disable2 libfdk_aac_encoder
-+
-+    # Disabled as a consequence
-+    disable2 loas_demuxer # Uses AAC
-+    disable2 transcode_aac_example
-+else
-+    echo "Allowing codec developer restricted codecs with exceptions"
-+fi
-+
 +# Allow the user to override or remove extra options
 +if [ -n "$FFMPEG_CUSTOM_OPTIONS" ] ; then
 +    for opt in $FFMPEG_CUSTOM_OPTIONS ; do
@@ -1271,3 +1253,4 @@ Resulting benefits:
  if test "$quiet" != "yes"; then
  
  echo "install prefix            $prefix"
+Only in ffmpeg-5.1.6: configure.orig

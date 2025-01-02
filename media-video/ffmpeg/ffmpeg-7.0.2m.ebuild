@@ -1990,8 +1990,13 @@ eerror
 		)
 	fi
 
-	if ! use patent_status_nonfree ; then
+	if use patent_status_nonfree ; then
 		myconf+=(
+			--enforceability=unenforced
+		)
+	elif ! use patent_status_nonfree ; then
+		myconf+=(
+			--enforceability=enforced
 			--non-free-patented-codecs=deny
 		)
 	fi

@@ -22,7 +22,8 @@ HIP_5_6_VERSION="5.6.1"
 HIP_5_7_VERSION="5.7.1"
 HIP_6_0_VERSION="6.0.2"
 HIP_6_1_VERSION="6.1.2"
-HIP_6_2_VERSION="6.2.0"
+HIP_6_2_VERSION="6.2.4"
+HIP_6_3_VERSION="6.3.1"
 
 HIP_3_5_LLVM_SLOT="11"
 HIP_3_7_LLVM_SLOT="11"
@@ -46,6 +47,7 @@ HIP_5_7_LLVM_SLOT="17"
 HIP_6_0_LLVM_SLOT="17"
 HIP_6_1_LLVM_SLOT="17"
 HIP_6_2_LLVM_SLOT="18"
+HIP_6_3_LLVM_SLOT="18"
 
 # AOCC in this context means rocm-llvm-alt
 AOCC_5_1_SLOT="13"
@@ -83,6 +85,7 @@ HIP_5_7_GLIBCXX_MIN="3.4.26" # GCC 9.1.0
 HIP_6_0_GLIBCXX_MIN="3.4.26" # GCC 9.1.0
 HIP_6_1_GLIBCXX_MIN="3.4.26" # GCC 9.1.0
 HIP_6_2_GLIBCXX_MIN="3.4.26" # GCC 9.1.0
+HIP_6_3_GLIBCXX_MIN="3.4.26" # GCC 9.1.0 placeholder, TODO verify
 
 # Upstream preference
 HIP_4_1_GLIBCXX_MAX="3.4.22" # GCC 6.1.0
@@ -97,6 +100,7 @@ HIP_5_7_GLIBCXX_MAX="3.4.30" # GCC 12.1.0
 HIP_6_0_GLIBCXX_MAX="3.4.30" # GCC 12.1.0
 HIP_6_1_GLIBCXX_MAX="3.4.30" # GCC 12.1.0
 HIP_6_2_GLIBCXX_MAX="3.4.32" # GCC 13.2.0
+HIP_6_3_GLIBCXX_MAX="3.4.32" # GCC 13.2.0 placeholder, TODO verify
 
 # oiledmachine-overlay preference
 # The choice of GLIBCXX and GCC_SLOT maximum currently is based on rebuild mood.
@@ -117,6 +121,7 @@ HIP_5_7_GLIBCXX="3.4.30" # GCC 12.1.0
 HIP_6_0_GLIBCXX="3.4.30" # GCC 12.1.0
 HIP_6_1_GLIBCXX="3.4.30" # GCC 12.1.0
 HIP_6_2_GLIBCXX="3.4.30" # GCC 12.1.0
+HIP_6_3_GLIBCXX="3.4.30" # GCC 12.1.0 placeholder, TODO verify
 
 _hip_set_globals() {
 	local hip_platform="${HIP_PLATFORM:-amd}"
@@ -135,6 +140,7 @@ _hip_set_globals() {
 		HIP_6_0_GCC_SLOT="12"
 		HIP_6_1_GCC_SLOT="12"
 		HIP_6_2_GCC_SLOT="12"
+		HIP_6_3_GCC_SLOT="13" # 13.2
 	else
 		# For HIP_PLATFORM == nvidia.
 		HIP_4_1_GCC_SLOT="10" # CUDA 11.3
@@ -148,7 +154,8 @@ _hip_set_globals() {
 		HIP_5_7_GCC_SLOT="12" # CUDA 12.2
 		HIP_6_0_GCC_SLOT="12" # CUDA 12.2
 		HIP_6_1_GCC_SLOT="12" # CUDA 12.3
-		HIP_6_2_GCC_SLOT="12" # CUDA 12.3
+		HIP_6_2_GCC_SLOT="13" # CUDA 12.5
+		HIP_6_3_GCC_SLOT="13" # CUDA 12.6, placeholder, TODO verify
 	fi
 }
 
@@ -186,7 +193,8 @@ HIPIFY_5_6_CUDA_SLOT="12.1" # LLVM 16, [c,s]
 HIPIFY_5_7_CUDA_SLOT="12.2" # LLVM 17, [c,u,match]
 HIPIFY_6_0_CUDA_SLOT="12.2" # LLVM 17, [c,s]
 HIPIFY_6_1_CUDA_SLOT="12.3" # LLVM 17, [c,s]
-HIPIFY_6_2_CUDA_SLOT="12.4" # LLVM 18, [c,s]
+HIPIFY_6_2_CUDA_SLOT="12.5" # LLVM 19, [u]
+HIPIFY_6_3_CUDA_SLOT="12.6" # LLVM 19, [missing]
 
 HIPIFY_4_1_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-11.3.1.ebuild?id=38b155fa1bf907617067c98eb4ba3a5d0790eb1a"
 HIPIFY_4_5_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-12.5.0-r1.ebuild?id=3e598a395f06403e05d63b15458d90a56cb1a3ec"
@@ -203,4 +211,5 @@ HIPIFY_5_6_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvi
 HIPIFY_5_7_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-12.2.2-r1.ebuild?id=6d5c521d947b4ccc81b2031f1b51b5ce06fdb880"
 HIPIFY_6_0_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-12.2.2-r1.ebuild?id=6d5c521d947b4ccc81b2031f1b51b5ce06fdb880"
 HIPIFY_6_1_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-12.3.2.ebuild?id=c6a96e9169b96c35d91263b113b334655f752e60"
-HIPIFY_6_2_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-12.4.1.ebuild?id=d071cb72002d9422a4d1d94160012d222196173c"
+HIPIFY_6_2_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-12.5.1.ebuild?id=d071cb72002d9422a4d1d94160012d222196173c"
+HIPIFY_6_3_CUDA_URI="https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-12.6.1.ebuild?id=91e6a514e9d7c73279ab9bd40a796c9c389b931e"

@@ -1104,7 +1104,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-6.0-fix-lto-type-mismatch.patch"
 	"${FILESDIR}/${PN}-4.4.4-opencl-parallel-gmake-fix.patch"
 	"${FILESDIR}/extra-patches/${PN}-5.1.2-allow-7regs.patch"			# Added by oiledmachine-overlay
-	"${FILESDIR}/extra-patches/${PN}-5.1.2-configure-non-free-options.patch"	# Added by oiledmachine-overlay
+	"A${FILESDIR}/extra-patches/${PN}-5.1.2-configure-non-free-options.patch"	# Added by oiledmachine-overlay
 	"${FILESDIR}/extra-patches/${PN}-4.4.4-no-m32-or-m64-for-nvcc.patch"
 	"${FILESDIR}/extra-patches/${PN}-6.0.1-convert_from_tensorflow-tensorflow2-compat.patch"
 	"${FILESDIR}/extra-patches/${PN}-5.1.6-glslang-fix-configure-test.patch"
@@ -1864,8 +1864,13 @@ eerror
 		)
 	fi
 
-	if ! use patent_status_nonfree ; then
+	if use patent_status_nonfree ; then
 		myconf+=(
+			--enforceability=unenforced
+		)
+	elif ! use patent_status_nonfree ; then
+		myconf+=(
+			--enforceability=enforced
 			--non-free-patented-codecs=deny
 		)
 	fi
