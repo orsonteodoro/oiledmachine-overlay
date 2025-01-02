@@ -273,7 +273,7 @@
       Latinized Serbian
     </flag>
     <flag name="l10n_zh_CN">
-      Traditional Chinese
+      Simplified Chinese
     </flag>
     <flag name="libbacktrace">
       Enables backtracing to list what last function(s) may caused the crash.
