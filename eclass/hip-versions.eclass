@@ -126,7 +126,7 @@ HIP_6_3_GLIBCXX="3.4.30" # GCC 12.1.0 placeholder, TODO verify
 _hip_set_globals() {
 	local hip_platform="${HIP_PLATFORM:-amd}"
 	if [[ "${hip_platform}" == "amd" ]] ; then
-	# Based on rocBLAS linking to libstdc++
+	# Based on GLIBCXX version correspondance in rocBLAS linking to libstdc++
 	# For HIP_PLATFORM == amd.
 	#		  This distro # Upstream
 		HIP_4_1_GCC_SLOT="12" # GCC 6.1 U18 and U20, which GCC 6.1 is EOL
