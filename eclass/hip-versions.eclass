@@ -120,8 +120,8 @@ HIP_5_6_GLIBCXX="3.4.30" # GCC 12.1.0
 HIP_5_7_GLIBCXX="3.4.30" # GCC 12.1.0
 HIP_6_0_GLIBCXX="3.4.30" # GCC 12.1.0
 HIP_6_1_GLIBCXX="3.4.30" # GCC 12.1.0
-HIP_6_2_GLIBCXX="3.4.30" # GCC 12.1.0
-HIP_6_3_GLIBCXX="3.4.30" # GCC 12.1.0 placeholder, TODO verify
+HIP_6_2_GLIBCXX="3.4.32" # GCC 13.2.0
+HIP_6_3_GLIBCXX="3.4.32" # GCC 13.2.0
 
 _hip_set_globals() {
 	local hip_platform="${HIP_PLATFORM:-amd}"
