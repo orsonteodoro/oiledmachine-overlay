@@ -554,6 +554,7 @@ PATENT_REQUIRED_USE="
 		!cuda
 		!fdk
 		!kvazaar
+		!mmal
 		!nvenc
 		!nvdec
 		!openh264
@@ -574,6 +575,9 @@ PATENT_REQUIRED_USE="
 		patent_status_nonfree
 	)
 	kvazaar? (
+		patent_status_nonfree
+	)
+	mmal? (
 		patent_status_nonfree
 	)
 	nvdec? (
