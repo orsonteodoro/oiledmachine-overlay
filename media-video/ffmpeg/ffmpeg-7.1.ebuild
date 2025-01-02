@@ -229,6 +229,7 @@ USE_VERSION3_ONLY=(
 	"gmp"
 	"libaribb24"
 	"liblensfun"
+	"opencl" # opencl-icd-loader is Apache-2.0 but the docs say it needs it.
 )
 WANT_LTO=0 # Global variable not const
 
@@ -501,7 +502,7 @@ ${PATENT_STATUS[@]}
 ${TRAINERS[@]}
 ${USE_LICENSES[@]}
 alsa chromium -clear-config-first cuda cuda-filters doc dvdvideo +encode gdbm
-jack-audio-connection-kit jack2 liblensfun libqrencode mold opencl-icd-loader
+liblensfun libqrencode mold
 openvino oss pgo +pic pipewire 
 +re-codecs sndio soc sr static-libs tensorflow test torch v4l wayland
 
@@ -769,15 +770,6 @@ REQUIRED_USE+="
 	)
 	ffmpeg_trainers_video_lossless_quick? (
 		pgo
-	)
-"
-
-# License incompatibility
-LICENSE_RDEPEND="
-	!version3? (
-		opencl-icd-loader? (
-			!dev-libs/opencl-icd-loader
-		)
 	)
 "
 

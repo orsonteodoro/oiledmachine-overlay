@@ -502,6 +502,9 @@
     <flag name="bluray">
       Enable playback of Blu-ray filesystems
     </flag>
+    <flag name="bolt">
+      Perform automated post link BOLT optimization.
+    </flag>
     <flag name="bs2b">
       Enables <pkg>media-libs/libbs2b</pkg> based Bauer stereo-to-binaural filter.
     </flag>
@@ -541,6 +544,12 @@
     <flag name="cuda-nvcc">
       Use nvcc to build CUDA video processing filters.
     </flag>
+    <flag name="cuda_targets_sm_30">
+      Optimize and add support for the Kepler microarchitecture
+    </flag>
+    <flag name="cuda_targets_sm_60">
+      Optimize and add support for the Pascal microarchitecture
+    </flag>
     <flag name="dvdvideo">
       Add support for DVD navigation menus and structure parsing via the dvdvideo
       demuxer.
@@ -550,6 +559,12 @@
     </flag>
     <flag name="debug">
       Add debugging symbols
+    </flag>
+    <flag name="ebolt">
+      Perform event based post link BOLT optimization.
+    </flag>
+    <flag name="epgo">
+      Perform event based Profile Guided Optimization (PGO).
     </flag>
     <flag name="fallback-commit">
       Rewind the commits backwards to when when the all the patches worked and the
@@ -570,6 +585,10 @@
     <flag name="gcrypt">
       Enables gcrypt support: Needed for rtmp(t)e support if openssl, librtmp or
       gmp is not used.
+    </flag>
+    <flag name="glslang">
+      Use glslang for Vulkan Video Filters to convert from GLSL/ESSL/HLSL
+      shaders to AST to SPIR-V Vulkan shaders
     </flag>
     <flag name="gme">
       Enables support for <pkg>media-libs/game-music-emu</pkg> for playing various
@@ -610,6 +629,9 @@
     <flag name="liblensfun">
       Enables the use of lens correction via <pkg>media-libs/lensfun</pkg> with
       the lensfun filter.
+    </flag>
+    <flag name="libplacebo">
+      Add support for GPU video filters.
     </flag>
     <flag name="librtmp">
       Enables Real Time Messaging Protocol using librtmp
@@ -693,6 +715,9 @@
     <flag name="pic">
       Force shared libraries to be built as PIC (this is slower)
     </flag>
+    <flag name="pgo">
+      Perform automated Profile Guided Optimization (PGO).
+    </flag>
     <flag name="postproc">
       Build and install libpostproc.
     </flag>
@@ -716,6 +741,9 @@
     <flag name="rubberband">
       Adds time-stretching and pitch-shifting audio filter based on
       <pkg>media-libs/rubberband</pkg>.
+    </flag>
+    <flag name="shaderc">
+      Use shaderc for Vulkan Video Filters for conversion of GLSL/HLSL shaders to Vulkan shaders (SPIR-V)
     </flag>
     <flag name="snappy">
       Enable <pkg>app-arch/snappy</pkg> support. Required for e.g. Vidvox Hap encoder.
@@ -741,6 +769,9 @@
     </flag>
     <flag name="ssp">
       Build with stack smashing protection
+    </flag>
+    <flag name="svt-av1">
+      Enable AV1 encoding via the <pkg>media-libs/svt-av1</pkg>.
     </flag>
     <flag name="tensorflow">
       Enable use of AI based TensorFlow library for the sr (super-resolution)

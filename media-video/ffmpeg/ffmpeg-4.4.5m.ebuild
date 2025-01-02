@@ -216,6 +216,7 @@ USE_VERSION3_ONLY=(
 	"gmp"
 	"libaribb24"
 	"liblensfun"
+	"opencl" # opencl-icd-loader is Apache-2.0 but the docs say it needs it.
 )
 WANT_LTO=0 # Global variable not const
 
@@ -467,8 +468,8 @@ ${PATENT_STATUS[@]}
 ${TRAINERS[@]}
 ${USE_LICENSES[@]}
 alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm
-jack-audio-connection-kit jack2 liblensfun mold opencl-icd-loader openvino oss
-pgo +pic pipewire 
+liblensfun mold openvino oss
+pgo +pic
 +re-codecs sndio sr static-libs tensorflow test v4l wayland
 
 ebuild_revision_19
@@ -724,18 +725,9 @@ REQUIRED_USE+="
 		pgo
 	)
 "
-# License incompatibility
-LICENSE_RDEPEND="
-	!version3? (
-		opencl-icd-loader? (
-			!dev-libs/opencl-icd-loader
-		)
-	)
-"
 # Only vaapi_x11 and vaapi_drm checks.  No vaapi_wayland checks in configure.
 # Update both !openssl and openssl USE flags.
 RDEPEND+="
-	${LICENSE_RDEPEND}
 	virtual/patent-status[patent_status_nonfree=]
 	!openssl? (
 		gnutls? (
