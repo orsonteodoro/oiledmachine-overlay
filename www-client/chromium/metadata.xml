@@ -399,6 +399,12 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="firejail">
       Use Firejail for sandboxing.
     </flag>
+    <flag name="ffmpeg-chromium">
+      Use the upstream vendored FFmpeg as an external module.
+    </flag>
+    <flag name="gtk4">
+      Add support for GTK4 as the widget engine for GTK4 based themes.
+    </flag>
     <flag name="hangouts">
       Enable support for Hangouts and features such as screen sharing
     </flag>
@@ -417,6 +423,9 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="js-type-check">
       Enable JavaScript type-checking for Chrome's web technology-based UI.
       Requires Java.
+    </flag>
+    <flag name="llvm_slot_20">
+      Use LLVM 20.
     </flag>
     <flag name="mdns">
       Enable Multicast DNS support.
@@ -540,6 +549,12 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Use system fontconfig instead of the bundled one
 
       No modifications or no patch files in vendored package.
+
+      Enabling may decrease performance (w/o PGO) and increase vulnerabilities
+      (w/o Clang CFI).
+    </flag>
+    <flag name="system-freetype">
+      Use system freetype instead of the bundled one
 
       Enabling may decrease performance (w/o PGO) and increase vulnerabilities
       (w/o Clang CFI).
@@ -669,6 +684,12 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Enabling may decrease performance (w/o PGO) and increase vulnerabilities
       (w/o Clang CFI).
     </flag>
+    <flag name="system-zstd">
+      Use system zstd instead of the bundled one
+
+      Enabling may decrease performance (w/o PGO) and increase vulnerabilities
+      (w/o Clang CFI).
+    </flag>
     <flag name="thinlto-opt">
       Enables selective ThinLTO -O2 optimizations for the browser binary and
       other targets while others use the default --lto-O0.  This optimization
@@ -721,14 +742,17 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="libaom">
       Add CPU based libaom encode support
     </flag>
+    <flag name="openh264">
+      Add CPU based H.264 support
+    </flag>
     <flag name="opus">
       Add CPU based Opus audio codec support
     </flag>
     <flag name="vpx">
       Add CPU based libvpx video codec support
     </flag>
-    <flag name="vaapi-hvec">
-      Add GPU accelerated h265 video decode support
+    <flag name="vaapi-hevc">
+      Add GPU accelerated H.265 video decode support
     </flag>
   </use>
 </pkgmetadata>
