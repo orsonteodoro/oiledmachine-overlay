@@ -3,16 +3,16 @@
 
 EAPI=8
 
-DOWNLOAD_FILE="hsa-amd-aqlprofile_1.0.0.60200.60200-66~22.04_amd64.deb"
-DOWNLOAD_FOLDER_URI="http://repo.radeon.com/rocm/apt/6.2/pool/main/h/hsa-amd-aqlprofile/"
+DOWNLOAD_FILE="hsa-amd-aqlprofile_1.0.0.60204.60204-139~24.04_amd64.deb"
+DOWNLOAD_FOLDER_URI="http://repo.radeon.com/rocm/apt/6.2.4/pool/main/h/hsa-amd-aqlprofile/"
 QA_PREBUILT="
-/opt/rocm-6.2.0/lib/libhsa-amd-aqlprofile64.so.1
-/opt/rocm-6.2.0/lib/hsa-amd-aqlprofile/librocprofv2_att.so
-/opt/rocm-6.2.0/lib/libhsa-amd-aqlprofile64.so.1.0.60200
-/opt/rocm-6.2.0/lib/libhsa-amd-aqlprofile64.so
-/opt/rocm-6.2.0/share/doc/hsa-amd-aqlprofile/EULA
-/opt/rocm-6.2.0/share/doc/hsa-amd-aqlprofile/DISCLAIMER.txt
-/opt/rocm-6.2.0/share/doc/hsa-amd-aqlprofile/LICENSE.md
+/opt/rocm-6.2.4/lib/libhsa-amd-aqlprofile64.so.1
+/opt/rocm-6.2.4/lib/hsa-amd-aqlprofile/librocprofv2_att.so
+/opt/rocm-6.2.4/lib/libhsa-amd-aqlprofile64.so.1.0.60204
+/opt/rocm-6.2.4/lib/libhsa-amd-aqlprofile64.so
+/opt/rocm-6.2.4/share/doc/hsa-amd-aqlprofile/EULA
+/opt/rocm-6.2.4/share/doc/hsa-amd-aqlprofile/DISCLAIMER.txt
+/opt/rocm-6.2.4/share/doc/hsa-amd-aqlprofile/LICENSE.md
 "
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -52,7 +52,7 @@ pkg_nofetch() {
 einfo
 einfo "Due to EULA restrictions.  You must manually download."
 einfo
-einfo "(1) Read https://github.com/ROCm/ROCm/blob/docs/6.2.0/docs/about/license.md?plain=1#L87 for the overview and general guidance."
+einfo "(1) Read https://github.com/ROCm/ROCm/blob/docs/6.2.4/docs/about/license.md?plain=1#L87 for the overview and general guidance."
 einfo "    Read and accept the EULA at https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/licenses/hsa-amd-aqlprofile-EULA"
 einfo "    Read and accept the DISCLAIMER at https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/licenses/hsa-amd-aqlprofile-DISCLAIMER"
 einfo "    Read and accept the LICENSE at https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/licenses/hsa-amd-aqlprofile-LICENSE"
