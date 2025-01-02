@@ -441,19 +441,19 @@
       F16h Gen 2
     </flag>
     <flag name="cpu_target_x86_zen">
-      F17h
+      Zen 1
     </flag>
     <flag name="cpu_target_x86_zen_plus">
-      F17h
+      Zen 1 Plus
     </flag>
     <flag name="cpu_target_x86_zen_2">
-      F17h
+      Zen 2
     </flag>
     <flag name="cpu_target_x86_zen_3">
-      F19h
+      Zen 3
     </flag>
     <flag name="cpu_target_x86_zen_4">
-      F19h
+      Zen 4
     </flag>
     <flag name="cpu_target_x86_naples">
       Zen 1 EPYC™
