@@ -29,9 +29,9 @@ _llvm_roc_libomp_globals
 unset -f _llvm_roc_libomp_globals
 
 # Cuda compatibility:
-# https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.0/clang/include/clang/Basic/Cuda.h
-# CUDA targets:  https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.0/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L64
-# ROCm targets:  https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.0/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L59
+# https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.4/clang/include/clang/Basic/Cuda.h
+# CUDA targets:  https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.4/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L64
+# ROCm targets:  https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.4/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L59
 
 AMDGPU_TARGETS_COMPAT=(
 	gfx700
@@ -112,7 +112,7 @@ LICENSE="
 	public-domain
 	UoI-NCSA
 "
-# Apache-2.0-with-LLVM-exceptions, UoI-NCSA, MIT, custom - llvm-project-rocm-6.2.0/openmp/LICENSE.TXT
+# Apache-2.0-with-LLVM-exceptions, UoI-NCSA, MIT, custom - llvm-project-rocm-6.2.4/openmp/LICENSE.TXT
 #   Keyword search:  "all right, title, and interest"
 RESTRICT="
 	strip
