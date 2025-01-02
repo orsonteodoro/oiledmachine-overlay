@@ -424,22 +424,22 @@
     </flag>
 
     <flag name="cpu_target_x86_bulldozer">
-      F15h Gen 1
+      Bulldozer, F15h Gen 1
     </flag>
     <flag name="cpu_target_x86_piledriver">
-      F15h Gen 2
+      Piledriver, F15h Gen 2
     </flag>
     <flag name="cpu_target_x86_steamroller">
-      F15h Gen 3
+      Steamroller, F15h Gen 3
     </flag>
     <flag name="cpu_target_x86_excavator">
-      F15h Gen 4
+      Excavator, F15h Gen 4
     </flag>
     <flag name="cpu_target_x86_jaguar">
-      F16h Gen 1
+      Jaguar, F16h Gen 1
     </flag>
     <flag name="cpu_target_x86_puma">
-      F16h Gen 2
+      Puma, F16h Gen 2
     </flag>
     <flag name="cpu_target_x86_zen">
       Zen 1
