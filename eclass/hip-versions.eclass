@@ -85,7 +85,7 @@ HIP_5_7_GLIBCXX_MIN="3.4.26" # GCC 9.1.0
 HIP_6_0_GLIBCXX_MIN="3.4.26" # GCC 9.1.0
 HIP_6_1_GLIBCXX_MIN="3.4.26" # GCC 9.1.0
 HIP_6_2_GLIBCXX_MIN="3.4.26" # GCC 9.1.0
-HIP_6_3_GLIBCXX_MIN="3.4.26" # GCC 9.1.0 placeholder, TODO verify
+HIP_6_3_GLIBCXX_MIN="3.4.26" # GCC 9.1.0
 
 # Upstream preference
 HIP_4_1_GLIBCXX_MAX="3.4.22" # GCC 6.1.0
@@ -100,7 +100,7 @@ HIP_5_7_GLIBCXX_MAX="3.4.30" # GCC 12.1.0
 HIP_6_0_GLIBCXX_MAX="3.4.30" # GCC 12.1.0
 HIP_6_1_GLIBCXX_MAX="3.4.30" # GCC 12.1.0
 HIP_6_2_GLIBCXX_MAX="3.4.32" # GCC 13.2.0
-HIP_6_3_GLIBCXX_MAX="3.4.32" # GCC 13.2.0 placeholder, TODO verify
+HIP_6_3_GLIBCXX_MAX="3.4.32" # GCC 13.2.0
 
 # oiledmachine-overlay preference
 # The choice of GLIBCXX and GCC_SLOT maximum currently is based on rebuild mood.
@@ -157,7 +157,7 @@ _hip_set_globals() {
 		HIP_6_0_GCC_SLOT="12" # CUDA 12.2
 		HIP_6_1_GCC_SLOT="12" # CUDA 12.3
 		HIP_6_2_GCC_SLOT="13" # CUDA 12.5
-		HIP_6_3_GCC_SLOT="13" # CUDA 12.6, placeholder, TODO verify
+		HIP_6_3_GCC_SLOT="13" # CUDA 12.6
 	fi
 }
 
