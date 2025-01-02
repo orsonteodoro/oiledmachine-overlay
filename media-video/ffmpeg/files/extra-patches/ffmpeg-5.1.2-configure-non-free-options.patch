@@ -59,12 +59,12 @@ Resulting benefits:
 
 diff '--color=auto' -urp ffmpeg-5.1.6.orig/configure ffmpeg-5.1.6/configure
 --- ffmpeg-5.1.6.orig/configure	2024-08-04 16:23:18.000000000 -0700
-+++ ffmpeg-5.1.6/configure	2025-01-02 09:55:07.893465272 -0800
++++ ffmpeg-5.1.6/configure	2025-01-02 10:11:34.553745826 -0800
 @@ -100,6 +100,10 @@ Licensing options:
    --enable-version3        upgrade (L)GPL to version 3 [no]
    --enable-nonfree         allow use of nonfree code, the resulting libs
                             and binaries will be unredistributable [no]
-+  --non-free-patented-codecs=<allow|deny>                             level of support for likely patented non-free or likely patented non-free network protocols
++  --non-free-patented-codecs=<allow|codec-developer|deny|user>        level of support for likely patented non-free or likely patented non-free network protocols
 +  --re-codecs=<allow|deny>                                            toggle likely patentless reversed-engineered (RE) codecs
 +  --codec-transparency=<closed|open>                                  toggle likely patentless closed codecs
 +  --enforceability=<patents-are-unrecognized|patents-are-illegal|enforced|unenforced>        changes the default based on enforceablity
@@ -102,7 +102,7 @@ diff '--color=auto' -urp ffmpeg-5.1.6.orig/configure ffmpeg-5.1.6/configure
          --enable-*=*|--disable-*=*)
              eval $(echo "${opt%%=*}" | sed 's/--/action=/;s/-/ thing=/')
              is_in "${thing}s" $COMPONENT_LIST || die_unknown "$opt"
-@@ -7471,6 +7499,1150 @@ postproc_deps="$(filter_out 'gpl' $postp
+@@ -7471,6 +7499,1134 @@ postproc_deps="$(filter_out 'gpl' $postp
  
  map 'expand_deps $v' $LIBRARY_LIST
  
@@ -293,14 +293,6 @@ diff '--color=auto' -urp ffmpeg-5.1.6.orig/configure ffmpeg-5.1.6/configure
 +    disable2 adts_header
 +    disable2 adts_muxer
 +    disable2 als_decoder
-+    disable2 amr_demuxer
-+    disable2 amr_muxer
-+    disable2 amr_parser
-+    disable2 amr_nb_at_decoder
-+    disable2 amrnb_decoder
-+    disable2 amrnb_demuxer
-+    disable2 amrwb_decoder
-+    disable2 amrwb_demuxer
 +    disable2 applehttp_protocol # Uses hlsproto.o
 +    disable2 aptx_demuxer
 +    disable2 aptx_encoder
@@ -460,18 +452,10 @@ diff '--color=auto' -urp ffmpeg-5.1.6.orig/configure ffmpeg-5.1.6/configure
 +    disable2 libfdk_aac_decoder
 +    disable2 libfdk_aac_encoder
 +    disable2 libkvazaar_encoder
-+    disable2 libopencore_amrnb
-+    disable2 libopencore_amrnb_decoder
-+    disable2 libopencore_amrnb_encoder
-+    disable2 libopencore_amrnb_encoder
-+    disable2 libopencore_amrwb
-+    disable2 libopencore_amrwb_decoder
 +    disable2 libopenh264
 +    disable2 libopenh264_encoder
 +    disable2 libopenh264_decoder
 +    disable2 libuavs3d_decoder
-+    disable2 libvo_amrwbenc
-+    disable2 libvo_amrwbenc_encoder
 +    disable2 libx264
 +    disable2 libx264_encoder
 +    disable2 libx264rgb_encoder
