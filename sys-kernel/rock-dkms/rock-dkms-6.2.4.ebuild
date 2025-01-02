@@ -4,10 +4,10 @@
 EAPI=8
 
 AMDGPU_FIRMWARE_PV="6.2.4.50701"
-DC_VER="3.2.286" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-6.2.0/drivers/gpu/drm/amd/display/dc/dc.h#L48
-DCN_VER="3.5.1" # See https://github.com/ROCm/ROCK-Kernel-Driver/blob/rocm-6.0.2/drivers/gpu/drm/amd/display/include/dal_types.h#L61
+DC_VER="3.2.286" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-6.2.4/drivers/gpu/drm/amd/display/dc/dc.h#L48
+DCN_VER="4.0.1" # See https://github.com/ROCm/ROCK-Kernel-Driver/blob/rocm-6.2.4/drivers/gpu/drm/amd/display/include/dal_types.h#L61
 DKMS_MODULES=(
-# Keep in sync with https://github.com/ROCm/ROCK-Kernel-Driver/blob/rocm-6.2.0/drivers/gpu/drm/amd/dkms/dkms.conf
+# Keep in sync with https://github.com/ROCm/ROCK-Kernel-Driver/blob/rocm-6.2.4/drivers/gpu/drm/amd/dkms/dkms.conf
 	"amdgpu amd/amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
 	"amdttm ttm /kernel/drivers/gpu/drm/ttm"
 	"amdkcl amd/amdkcl /kernel/drivers/gpu/drm/amd/amdkcl"
@@ -17,9 +17,9 @@ DKMS_MODULES=(
 	"amdxcp amd/amdxcp /kernel/drivers/gpu/drm/amd/amdxcp"
 )
 DKMS_PKG_NAME="amdgpu"
-KV="6.7.0" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-6.2.0/Makefile#L2
+KV="6.8.0" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-6.2.4/Makefile#L2
 KVS=(
-# See https://github.com/ROCm/rocm-install-on-linux/blob/docs/6.2.0/docs/reference/system-requirements.rst#supported-operating-systems
+# See https://github.com/ROCm/rocm-install-on-linux/blob/docs/6.2.4/docs/reference/system-requirements.rst#supported-operating-systems
 # Commented out means EOL kernel.
 #	"6.8"  # U 24.04 GA
 #	"6.5"  # U 22.04 HWE
@@ -560,7 +560,7 @@ eerror "Missing kernel sources.  Install the kernel sources package first."
 fi
 }
 
-# See also https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-6.2.0/drivers/gpu/drm/amd/dkms/sources
+# See also https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-6.2.4/drivers/gpu/drm/amd/dkms/sources
 _reconstruct_tarball_layout() {
 einfo "Reconstructing tarball layout"
 	local tarball_root="${WORKDIR}/ROCK-Kernel-Driver-rocm-${PV}"
@@ -833,7 +833,7 @@ _verify_magic_all() {
 }
 
 _copy_modules() {
-	# Keep in sync with https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-6.2.0/drivers/gpu/drm/amd/dkms/dkms.conf
+	# Keep in sync with https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-6.2.4/drivers/gpu/drm/amd/dkms/dkms.conf
 	IFS=$'\n'
 
 	local x
