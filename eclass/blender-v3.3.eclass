@@ -173,7 +173,7 @@ ${ROCM_SLOTS[@]}
 +openimageio +openmp +opensubdiv +openvdb +openxr -optix +osl +pdf +potrace
 +pulseaudio release -rocm +sdl +sndfile sycl +tbb test +tiff +usd
 -valgrind
-ebuild-revision-3
+ebuild_revision_3
 "
 
 inherit blender
