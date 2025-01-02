@@ -139,8 +139,8 @@ _hip_set_globals() {
 		HIP_5_7_GCC_SLOT="12"
 		HIP_6_0_GCC_SLOT="12"
 		HIP_6_1_GCC_SLOT="12"
-		HIP_6_2_GCC_SLOT="12"
-		HIP_6_3_GCC_SLOT="13" # 13.2
+		HIP_6_2_GCC_SLOT="13" # GCC 13.2
+		HIP_6_3_GCC_SLOT="13" # GCC 13.2
 	else
 		# For HIP_PLATFORM == nvidia.
 		HIP_4_1_GCC_SLOT="10" # CUDA 11.3
