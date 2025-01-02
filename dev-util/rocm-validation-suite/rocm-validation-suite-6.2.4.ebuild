@@ -14,7 +14,7 @@ if [[ ${PV} == *"9999" ]] ; then
 	EGIT_BRANCH="master"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/ROCm/ROCmValidationSuite.git"
-	FALLBACK_COMMIT="rocm-6.2.0"
+	FALLBACK_COMMIT="rocm-6.2.4"
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
@@ -83,7 +83,7 @@ src_configure() {
 
 # Prevent:
 # ld.bfd: /usr/lib/gcc/x86_64-pc-linux-gnu/12/../../../../lib64/libyaml-cpp.so: undefined reference to `std::ios_base_library_init()@GLIBCXX_3.4.32'
-	check_pkg_glibcxx "dev-cpp/yaml-cpp" "/usr/$(get_libdir)/libyaml-cpp.so" "${HIP_6_1_GLIBCXX}"
+	check_pkg_glibcxx "dev-cpp/yaml-cpp" "/usr/$(get_libdir)/libyaml-cpp.so" "${HIP_6_2_GLIBCXX}"
 
 	local mycmakeargs=(
 		-DBUILD_FILE_REORG_BACKWARD_COMPATIBILITY=OFF
