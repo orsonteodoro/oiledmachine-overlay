@@ -102,7 +102,7 @@ diff '--color=auto' -urp ffmpeg-5.1.6.orig/configure ffmpeg-5.1.6/configure
          --enable-*=*|--disable-*=*)
              eval $(echo "${opt%%=*}" | sed 's/--/action=/;s/-/ thing=/')
              is_in "${thing}s" $COMPONENT_LIST || die_unknown "$opt"
-@@ -7471,6 +7499,1134 @@ postproc_deps="$(filter_out 'gpl' $postp
+@@ -7471,6 +7499,1135 @@ postproc_deps="$(filter_out 'gpl' $postp
  
  map 'expand_deps $v' $LIBRARY_LIST
  
@@ -270,6 +270,7 @@ diff '--color=auto' -urp ffmpeg-5.1.6.orig/configure ffmpeg-5.1.6/configure
 +# libvpx
 +
 +# Expired patents
++# AMR
 +# MP3
 +# g711 (μ-law & A-law)
 +
