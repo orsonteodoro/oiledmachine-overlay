@@ -68,6 +68,10 @@
       Enabled is recommended for Intel® CPUs since the USE flag coverage for
       microarchitectures is incomplete.
     </flag>
+    <flag name="bpf">
+      Check Spectre information disclosure mitigations for BPF support which
+      Linux networking and sandboxing depend on.
+    </flag>
     <flag name="custom-kernel">
       Prevent vendor lock-in when doing kernel mitigation checks.
     </flag>
@@ -78,6 +82,9 @@
       Use firmware as mitigation.
       (A BIOS firmware update from the motherboard manufacturer may still be
       required if the firmware package doesn't apply to your model.)
+    </flag>
+    <flag name="kvm">
+      Check for information disclosure mitigations for KVM.
     </flag>
     <flag name="video_cards_nvidia">
       Mitigate against information disclosure, privilege escalation, Spectre V1,

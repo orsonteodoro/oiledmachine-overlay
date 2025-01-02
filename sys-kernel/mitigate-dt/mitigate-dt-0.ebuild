@@ -169,6 +169,8 @@ all_rdepend() {
 all_rdepend
 RDEPEND="
 	enforce? (
+		!sys-kernel/rock-dkms
+		!sys-kernel/rocm-sources
 		!custom-kernel? (
 			$(gen_render_kernels_list ${MULTISLOT_LATEST_KERNEL_RELEASE[@]})
 		)

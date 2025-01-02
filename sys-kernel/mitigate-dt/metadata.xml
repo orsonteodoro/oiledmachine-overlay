@@ -79,6 +79,9 @@
       (A BIOS firmware update from the motherboard manufacturer may still be
       required if the firmware package doesn't apply to your model.)
     </flag>
+    <flag name="kvm">
+      Check for data tampering mitigations for KVM.
+    </flag>
     <flag name="video_cards_nvidia">
       Mitigate against data tampering, privilege escalation, Spectre V1,
       Spectre V2 for the NVIDIA® video driver.
