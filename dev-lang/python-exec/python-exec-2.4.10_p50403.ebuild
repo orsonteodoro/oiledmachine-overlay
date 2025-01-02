@@ -3,11 +3,13 @@
 
 EAPI=8
 
+inherit hip-versions
+
 LLVM_SLOT=15
 MY_P="${PN}-$(ver_cut 1-3 ${PV})"
 PYTHON_COMPAT=( "python3_"{9..11} "pypy3" )
 ROCM_SLOT="5.4"
-ROCM_VERSION="5.4.3"
+ROCM_VERSION="${HIP_5_4_VERSION}"
 
 inherit python-any-r1 rocm
 

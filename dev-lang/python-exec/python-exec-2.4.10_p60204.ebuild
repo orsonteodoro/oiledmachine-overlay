@@ -3,11 +3,13 @@
 
 EAPI=8
 
+inherit hip-versions
+
 LLVM_SLOT=18
 MY_P="${PN}-$(ver_cut 1-3 ${PV})"
 PYTHON_COMPAT=( "python3_"{9..11} "pypy3" )
 ROCM_SLOT="6.2"
-ROCM_VERSION="6.2.0"
+ROCM_VERSION="${HIP_6_2_VERSION}"
 
 inherit python-any-r1 rocm
 
@@ -26,7 +28,7 @@ RESTRICT="
 SLOT="rocm-${ROCM_SLOT}/${ROCM_VERSION}"
 IUSE="
 ${_PYTHON_ALL_IMPLS[@]/#/python_targets_} +native-symlinks test
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND="
 	!<=dev-lang/python-2.7.18-r3:2.7
