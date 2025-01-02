@@ -206,6 +206,9 @@
     <flag name="cache-partitioning">
       Enable cache parititioning to block third party tracking
     </flag>
+    <flag name="clang">
+      Build the package using the Clang compiler.
+    </flag>
     <flag name="coverage">
       Enable code coverage support
     </flag>
@@ -257,8 +260,26 @@
       Disabling could reduce performance by 97% relative to the best
       optimization (FTL-B3).
     </flag>
+    <flag name="l10n_en_CA">
+      Canadian English
+    </flag>
+    <flag name="l10n_en_GB">
+      British English
+    </flag>
+    <flag name="l10n_pt_BR">
+      Brazillian Portuguese
+    </flag>
+    <flag name="l10n_sr@latin">
+      Latinized Serbian
+    </flag>
+    <flag name="l10n_zh_CN">
+      Traditional Chinese
+    </flag>
     <flag name="libbacktrace">
       Enables backtracing to list what last function(s) may caused the crash.
+    </flag>
+    <flag name="libhyphen">
+      Add support for CSS styled hypenated elements.
     </flag>
     <flag name="libpas">
       Use libpas as the new allocator which is compatible with amd64 and arm64.
@@ -283,6 +304,9 @@
     <flag name="microphone">
       Enable microphone support
     </flag>
+    <flag name="minibrowser">
+      Allow to build and install the bundled web browser.
+    </flag>
     <flag name="mold">
       Use the Mold linker to reduce linking times.
     </flag>
@@ -296,6 +320,9 @@
       Adds PulseAudio and microphone support.
 
       You may need <pkg>media-sound/pulseaudio-daemon[alsa]</pkg> to hear sound.
+    </flag>
+    <flag name="speech-synthesis">
+      Add support for text-to-speech.
     </flag>
     <flag name="system-malloc">
       Use the system allocator associated with the libc.
