@@ -74,7 +74,11 @@ RDEPEND="
 	>=media-libs/libva-2.7.0
 	>=media-libs/mesa-24.1.0[vaapi,video_cards_radeonsi]
 	samples? (
-		>=media-video/ffmpeg-4.2.7:0/56.58.58
+		|| (
+			>=media-video/ffmpeg-4.2.7:56.58.58
+			>=media-video/ffmpeg-4.2.7:0/56.58.58
+		)
+		media-video/ffmpeg:=
 	)
 "
 DEPEND="
