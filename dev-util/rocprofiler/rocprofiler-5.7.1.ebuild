@@ -84,7 +84,7 @@ DEPEND="
 BDEPEND="
 	${ROCM_CLANG_DEPEND}
 	$(python_gen_any_dep '
-		dev-python/CppHeaderParser[${PYTHON_USEDEP}]
+		dev-python/cppheaderparser[${PYTHON_USEDEP}]
 	')
 	>=dev-build/cmake-3.18.0
 	~sys-devel/llvm-roc-symlinks-${PV}:${ROCM_SLOT}
@@ -99,7 +99,7 @@ PATCHES=(
 )
 
 python_check_deps() {
-	python_has_version "dev-python/CppHeaderParser[${PYTHON_USEDEP}]"
+	python_has_version "dev-python/cppheaderparser[${PYTHON_USEDEP}]"
 }
 
 warn_untested_gpu() {
