@@ -5,7 +5,7 @@ EAPI=8
 
 LLVM_SLOT=17
 MY_PN="TransferBench"
-MY_PV="1.50" # Based on filename and major-minor version compatibility
+MY_PV="1.48" # Based on filename and major-minor version compatibility
 ROCM_SLOT="6.1"
 inherit hip-versions
 ROCM_VERSION="${HIP_6_1_VERSION}"

@@ -208,7 +208,6 @@ RDEPEND="
 		~dev-util/ROCgdb-${PV}:${ROCM_SLOT}
 	)
 	tools-perf? (
-		app-benchmarks/transferbench:${ROCM_SLOT}
 		~dev-util/omniperf-${PV}:${ROCM_SLOT}
 		~dev-util/omnitrace-${PV}:${ROCM_SLOT}
 		~dev-util/rocprofiler-sdk-${PV}:${ROCM_SLOT}
