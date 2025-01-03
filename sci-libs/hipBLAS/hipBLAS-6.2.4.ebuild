@@ -4,7 +4,7 @@
 EAPI=8
 
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=17
+LLVM_SLOT=18
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic rocm
@@ -26,7 +26,7 @@ LICENSE="
 "
 # The distro's MIT license template does not have all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE+=" cuda +rocm ebuild_revision_5"
+IUSE+=" cuda +rocm ebuild_revision_6"
 REQUIRED_USE="
 	^^ (
 		cuda
