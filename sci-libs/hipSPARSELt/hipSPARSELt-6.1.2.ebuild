@@ -38,7 +38,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="cuda rocm samples test ebuild_revision_0"
+IUSE="cuda rocm samples test ebuild_revision_1"
 REQUIRED_USE="
 	^^ (
 		cuda

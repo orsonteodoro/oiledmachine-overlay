@@ -1,6 +1,6 @@
 diff '--color=auto' -urp hipSPARSELt-rocm-6.0.2.orig/CMakeLists.txt hipSPARSELt-rocm-6.0.2/CMakeLists.txt
 --- hipSPARSELt-rocm-6.0.2.orig/CMakeLists.txt	2023-11-16 17:41:58.000000000 -0800
-+++ hipSPARSELt-rocm-6.0.2/CMakeLists.txt	2024-07-21 20:55:23.270745957 -0700
++++ hipSPARSELt-rocm-6.0.2/CMakeLists.txt	2025-01-03 08:51:08.060011207 -0800
 @@ -50,23 +50,23 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
  if(WIN32)
    set(CMAKE_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/package" CACHE PATH "Install path prefix, prepended onto install directories")
@@ -58,7 +58,7 @@ diff '--color=auto' -urp hipSPARSELt-rocm-6.0.2.orig/CMakeLists.txt hipSPARSELt-
  
 diff '--color=auto' -urp hipSPARSELt-rocm-6.0.2.orig/clients/CMakeLists.txt hipSPARSELt-rocm-6.0.2/clients/CMakeLists.txt
 --- hipSPARSELt-rocm-6.0.2.orig/clients/CMakeLists.txt	2023-11-16 17:41:58.000000000 -0800
-+++ hipSPARSELt-rocm-6.0.2/clients/CMakeLists.txt	2024-07-21 20:55:32.022598808 -0700
++++ hipSPARSELt-rocm-6.0.2/clients/CMakeLists.txt	2025-01-03 08:51:08.060011207 -0800
 @@ -66,11 +66,11 @@ list( APPEND CMAKE_MODULE_PATH ${CMAKE_C
  set( CMAKE_EXPORT_COMPILE_COMMANDS ON )
  
@@ -75,7 +75,7 @@ diff '--color=auto' -urp hipSPARSELt-rocm-6.0.2.orig/clients/CMakeLists.txt hipS
  endif( )
 diff '--color=auto' -urp hipSPARSELt-rocm-6.0.2.orig/cmake/Dependencies.cmake hipSPARSELt-rocm-6.0.2/cmake/Dependencies.cmake
 --- hipSPARSELt-rocm-6.0.2.orig/cmake/Dependencies.cmake	2023-11-16 17:41:58.000000000 -0800
-+++ hipSPARSELt-rocm-6.0.2/cmake/Dependencies.cmake	2024-07-21 20:55:37.974498739 -0700
++++ hipSPARSELt-rocm-6.0.2/cmake/Dependencies.cmake	2025-01-03 08:51:08.060011207 -0800
 @@ -28,7 +28,7 @@ find_package(Git REQUIRED)
  
  # Workaround until hcc & hip cmake modules fixes symlink logic in their config files.
@@ -85,3 +85,27 @@ diff '--color=auto' -urp hipSPARSELt-rocm-6.0.2.orig/cmake/Dependencies.cmake hi
  
  # ROCm cmake package
  find_package(ROCM 0.6 QUIET CONFIG PATHS ${CMAKE_PREFIX_PATH})
+diff '--color=auto' -urp hipSPARSELt-rocm-6.0.2.orig/library/src/hcc_detail/rocsparselt/src/spmm/hip/kernel_launcher.cpp hipSPARSELt-rocm-6.0.2/library/src/hcc_detail/rocsparselt/src/spmm/hip/kernel_launcher.cpp
+--- hipSPARSELt-rocm-6.0.2.orig/library/src/hcc_detail/rocsparselt/src/spmm/hip/kernel_launcher.cpp	2023-11-16 17:41:58.000000000 -0800
++++ hipSPARSELt-rocm-6.0.2/library/src/hcc_detail/rocsparselt/src/spmm/hip/kernel_launcher.cpp	2025-01-03 08:51:53.115732952 -0800
+@@ -49,7 +49,7 @@
+ #include <link.h>
+ #include <unistd.h>
+ 
+-#define ROCSPARSELT_LIB_PATH "/opt/rocm/hipsparselt/lib"
++#define ROCSPARSELT_LIB_PATH "/opt/rocm-@ROCM_VERSION@/hipsparselt/lib"
+ 
+ namespace
+ {
+diff '--color=auto' -urp hipSPARSELt-rocm-6.0.2.orig/library/src/hcc_detail/rocsparselt/src/tensile_host.cpp hipSPARSELt-rocm-6.0.2/library/src/hcc_detail/rocsparselt/src/tensile_host.cpp
+--- hipSPARSELt-rocm-6.0.2.orig/library/src/hcc_detail/rocsparselt/src/tensile_host.cpp	2023-11-16 17:41:58.000000000 -0800
++++ hipSPARSELt-rocm-6.0.2/library/src/hcc_detail/rocsparselt/src/tensile_host.cpp	2025-01-03 08:51:54.027727314 -0800
+@@ -62,7 +62,7 @@
+ #include <link.h>
+ #include <unistd.h>
+ 
+-#define ROCSPARSELT_LIB_PATH "/opt/rocm/hipsparselt/lib"
++#define ROCSPARSELT_LIB_PATH "/opt/rocm-@ROCM_VERSION@/hipsparselt/lib"
+ 
+ namespace
+ {
