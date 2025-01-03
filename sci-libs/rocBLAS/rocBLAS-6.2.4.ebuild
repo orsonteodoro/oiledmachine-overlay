@@ -85,7 +85,7 @@ RESTRICT="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CPU_FLAGS_X86[@]}
-benchmark cuda +rocm test ebuild_revision_22
+benchmark cuda +rocm test ebuild_revision_24
 "
 gen_rocm_required_use() {
 	local x
@@ -123,7 +123,7 @@ RDEPEND="
 	rocm? (
 		~dev-util/Tensile-${PV}:${ROCM_SLOT}[${TENSILE_6_2_AMDGPU_USEDEP},rocm]
 		$(python_gen_cond_dep '
-			~dev-util/Tensile-'"${PV}:${ROCM_SLOT}"'['"${TENSILE_6_1_AMDGPU_USEDEP}"',rocm]
+			~dev-util/Tensile-'"${PV}:${ROCM_SLOT}"'['"${TENSILE_6_2_AMDGPU_USEDEP}"',rocm]
 		')
 	)
 "
@@ -148,7 +148,7 @@ BDEPEND="
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	rocm? (
 		$(python_gen_cond_dep '
-			~dev-util/Tensile-'"${PV}:${ROCM_SLOT}"'['"${TENSILE_6_1_AMDGPU_USEDEP}"',${PYTHON_USEDEP},client,rocm]
+			~dev-util/Tensile-'"${PV}:${ROCM_SLOT}"'['"${TENSILE_6_2_AMDGPU_USEDEP}"',${PYTHON_USEDEP},client,rocm]
 		')
 	)
 "

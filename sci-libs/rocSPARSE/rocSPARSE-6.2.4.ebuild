@@ -110,8 +110,8 @@ SLOT="${ROCM_SLOT}/${PV}"
 RDEPEND="
 	!sci-libs/rocSPARSE:0
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
-	~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}[${ROCPRIM_6_1_AMDGPU_USEDEP},rocm(+)]
-	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_1_AMDGPU_USEDEP}]
+	~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}[${ROCPRIM_6_2_AMDGPU_USEDEP},rocm(+)]
+	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_2_AMDGPU_USEDEP}]
 	sys-libs/llvm-roc-libomp:=
 "
 DEPEND="
@@ -120,7 +120,7 @@ DEPEND="
 BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.5
-	sys-devel/gcc:${HIP_6_1_GCC_SLOT}[fortran]
+	sys-devel/gcc:${HIP_6_2_GCC_SLOT}[fortran]
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	test? (
 		$(python_gen_any_dep '
@@ -164,7 +164,7 @@ args=\$(echo "\${args}" \
 		-e "/-pipe/d" \
 		-e "/--rocm-path/d" \
 		-e "/--rocm-device-lib-path=/d")
-"/usr/${CHOST}/gcc-bin/${HIP_6_1_GCC_SLOT}/gfortran" \${args}
+"/usr/${CHOST}/gcc-bin/${HIP_6_2_GCC_SLOT}/gfortran" \${args}
 EOF
 	chmod +x "${WORKDIR}/bin/${CHOST}-gfortran" || die
 	ln -s \
@@ -173,7 +173,7 @@ EOF
 		|| die
 	ln -s \
 		"${WORKDIR}/bin/${CHOST}-gfortran" \
-		"${WORKDIR}/bin/gfortran-${HIP_6_1_GCC_SLOT}" \
+		"${WORKDIR}/bin/gfortran-${HIP_6_2_GCC_SLOT}" \
 		|| die
 }
 

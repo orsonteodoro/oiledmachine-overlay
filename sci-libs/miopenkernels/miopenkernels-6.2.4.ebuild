@@ -41,9 +41,6 @@ https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx908kdb/miope
 		amdgpu_targets_gfx90a? (
 https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx90akdb/miopen-hip-gfx90akdb_3.2.0.60204-139~24.04_amd64.deb
 		)
-		amdgpu_targets_gfx942? (
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx942kdb/miopen-hip-gfx942kdb_3.2.0.60204-139~24.04_amd64.deb
-		)
 	"
 fi
 
