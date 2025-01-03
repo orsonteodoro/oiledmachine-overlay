@@ -8,6 +8,7 @@ DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 LLVM_SLOT=18
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
+ROCM_VERSION="${PV}"
 
 inherit distutils-r1
 
@@ -43,7 +44,7 @@ LICENSE="
 # The distro's MIT license does not contain all rights reserved.
 RESTRICT="mirror"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE+=" "
+IUSE+=" ebuild_revision_1"
 RDEPEND+="
 	~sci-libs/rocDecode-${PV}:${ROCM_SLOT}
 	dev-python/pybind11[${PYTHON_USEDEP}]
@@ -89,6 +90,17 @@ einfo "Detected media-video/ffmpeg:56.58.58 (4.x series)"
 
 python_compile() {
 	distutils-r1_python_compile
+}
+
+python_install() {
+	distutils-r1_python_install
+	dodir "/opt/rocm-${ROCM_VERSION}/lib"
+	cp -aT \
+		"${ED}/usr/lib/${EPYTHON}" \
+		"${ED}/opt/rocm-${ROCM_VERSION}/lib" \
+		|| die
+	rm -rf "${ED}/usr/lib/${EPYTHON}" || die
+	# Dev note:  Use PYTHONPATH
 }
 
 src_install() {
