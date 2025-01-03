@@ -484,6 +484,7 @@ VULNERABILITIES_FIXED=(
 	"e54b000;DoS or UAF;Medium to High"
 	"d8e4771;DF;Medium to High"
 	"2783497;ID;Medium to High"
+	"d5ff2fb;UAF;Medium to High"
 	"3e74859;DoS;Medium"
 	"489304e;DoS;Medium"
 	"50740f4;DoS;Medium"
@@ -491,9 +492,9 @@ VULNERABILITIES_FIXED=(
 	"c0b82ab;DoS;Medium"
 	"c43ec96;DoS;Medium"
 	"ccfa313;DoS;Medium"
-	"d8e4771;DoS;Medium"
 	"dc81e55;DoS;Medium"
 	"e8d0ba1;DoS;Medium"
+	"4dbc1d1;DoS;Medium"
 )
 
 ZEN_MULTIGEN_LRU_BASE_URI=\
