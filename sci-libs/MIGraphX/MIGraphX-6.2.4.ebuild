@@ -16,8 +16,8 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1101
 	gfx1102
 )
-LLVM_SLOT=17
-PYTHON_COMPAT=( "python3_"{10..11} )
+LLVM_SLOT=18
+PYTHON_COMPAT=( "python3_"{10..12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic python-r1 rocm
@@ -46,7 +46,7 @@ LICENSE="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 +composable-kernel -cpu -fpga -hip-rtc -mlir +rocm test
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
