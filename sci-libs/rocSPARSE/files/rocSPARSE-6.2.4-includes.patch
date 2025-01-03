@@ -1,0 +1,15 @@
+diff '--color=auto' -urp rocSPARSE-rocm-6.2.4.orig/library/src/include/envariables.h rocSPARSE-rocm-6.2.4/library/src/include/envariables.h
+--- rocSPARSE-rocm-6.2.4.orig/library/src/include/envariables.h	2024-10-09 16:28:12.000000000 -0700
++++ rocSPARSE-rocm-6.2.4/library/src/include/envariables.h	2025-01-02 21:39:12.626519331 -0800
+@@ -23,6 +23,9 @@
+  * ************************************************************************ */
+ #pragma once
+ 
++#include <cstddef>
++#include <stdint.h>
++
+ namespace rocsparse
+ {
+     template <std::size_t N, typename T>
+Only in rocSPARSE-rocm-6.2.4/library/src/include: envariables.h.orig
+Only in rocSPARSE-rocm-6.2.4/library/src/include: envariables.h.rej

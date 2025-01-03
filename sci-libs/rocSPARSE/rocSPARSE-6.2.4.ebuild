@@ -3,6 +3,15 @@
 
 EAPI=8
 
+# FIXME:  gfortran src_configure()
+#
+#CMake Error at /usr/share/cmake/Modules/CMakeTestFortranCompiler.cmake:59 (message):
+#  The Fortran compiler
+#
+#    "/usr/bin/${CHOST}-gfortran"
+#
+#  is not able to compile a simple test program.
+
 AMDGPU_TARGETS_COMPAT=(
 	gfx803
 	gfx900_xnack_minus
@@ -10,9 +19,16 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx908_xnack_minus
 	gfx90a_xnack_minus
 	gfx90a_xnack_plus
+	gfx940
+	gfx941
+	gfx942
 	gfx1030
+	gfx1100
+	gfx1101
+	gfx1102
 )
-LLVM_SLOT=14 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.2.3/llvm/CMakeLists.txt
+CMAKE_MAKEFILE_GENERATOR="emake"
+LLVM_SLOT=18 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.4/llvm/CMakeLists.txt
 PYTHON_COMPAT=( "python3_"{9..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -74,10 +90,17 @@ https://sparse.tamu.edu/MM/Chevron/Chevron4.tar.gz
 	-> ${PN}_Chevron4.tar.gz
 	)
 "
+# 0be37a2 - fixing fma ambiguities (#516)
 
 DESCRIPTION="Basic Linear Algebra Subroutines for sparse computation"
 HOMEPAGE="https://github.com/ROCmSoftwarePlatform/rocSPARSE"
-LICENSE="MIT"
+LICENSE="
+	(
+		all-rights-reserved
+		MIT
+	)
+"
+# The distro's MIT license template does not have All rights reserved.
 IUSE="benchmark test ebuild_revision_8"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
@@ -87,8 +110,8 @@ SLOT="${ROCM_SLOT}/${PV}"
 RDEPEND="
 	!sci-libs/rocSPARSE:0
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
-	~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}[${ROCPRIM_5_2_AMDGPU_USEDEP},rocm(+)]
-	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_5_2_AMDGPU_USEDEP}]
+	~sci-libs/rocPRIM-${PV}:${ROCM_SLOT}[${ROCPRIM_6_1_AMDGPU_USEDEP},rocm(+)]
+	~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_1_AMDGPU_USEDEP}]
 	sys-libs/llvm-roc-libomp:=
 "
 DEPEND="
@@ -97,7 +120,7 @@ DEPEND="
 BDEPEND="
 	${HIPCC_DEPEND}
 	>=dev-build/cmake-3.5
-	sys-devel/gcc:${HIP_5_2_GCC_SLOT}[fortran]
+	sys-devel/gcc:${HIP_6_1_GCC_SLOT}[fortran]
 	~dev-build/rocm-cmake-${PV}:${ROCM_SLOT}
 	test? (
 		$(python_gen_any_dep '
@@ -110,9 +133,10 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.2.3-remove-matrices-unpacking.patch"
-	"${FILESDIR}/${PN}-5.2.3-fma-fix.patch"
-	"${FILESDIR}/${PN}-5.2.3-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-5.4.3-remove-matrices-unpacking.patch"
+	"${FILESDIR}/${PN}-6.2.4-includes.patch"
+#	"${FILESDIR}/${PN}-5.6.0-fma-fix.patch"
+	"${FILESDIR}/${PN}-6.1.2-hardcoded-paths.patch"
 )
 
 python_check_deps() {
@@ -124,6 +148,33 @@ python_check_deps() {
 pkg_setup() {
 	python-any-r1_pkg_setup
 	rocm_pkg_setup
+}
+
+add_gfortran_wrapper() {
+	mkdir -p "${WORKDIR}/bin" || die
+	touch "${WORKDIR}/bin/${CHOST}-gfortran" || die
+cat <<EOF > "${WORKDIR}/bin/${CHOST}-gfortran" || die
+#!/bin/bash
+args="\$@"
+args=\$(echo "\${args}" \
+	| tr " " "\n" \
+	| sed \
+		-E \
+		-e "/-O(0|1|2|3|4|Ofast|s|z)/d" \
+		-e "/-pipe/d" \
+		-e "/--rocm-path/d" \
+		-e "/--rocm-device-lib-path=/d")
+"/usr/${CHOST}/gcc-bin/${HIP_6_1_GCC_SLOT}/gfortran" \${args}
+EOF
+	chmod +x "${WORKDIR}/bin/${CHOST}-gfortran" || die
+	ln -s \
+		"${WORKDIR}/bin/${CHOST}-gfortran" \
+		"${WORKDIR}/bin/gfortran" \
+		|| die
+	ln -s \
+		"${WORKDIR}/bin/${CHOST}-gfortran" \
+		"${WORKDIR}/bin/gfortran-${HIP_6_1_GCC_SLOT}" \
+		|| die
 }
 
 src_prepare() {
@@ -167,6 +218,7 @@ src_prepare() {
 		done
 	fi
 	rocm_src_prepare
+	add_gfortran_wrapper
 }
 
 src_configure() {
@@ -192,7 +244,8 @@ src_configure() {
 		-DHIP_RUNTIME="rocclr"
 	)
 	rocm_set_default_hipcc
-	export FC="${CHOST}-gfortran-${HIP_5_2_GCC_SLOT}"
+	export FC="${WORKDIR}/bin/gfortran"
+	export PATH="${WORKDIR}/bin:${PATH}"
 	rocm_src_configure
 }
 
@@ -213,5 +266,4 @@ src_install() {
 	rocm_fix_rpath
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  build-needs-test
-# OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  NO
+# OILEDMACHINE-OVERLAY-STATUS:  ebuild-needs-test

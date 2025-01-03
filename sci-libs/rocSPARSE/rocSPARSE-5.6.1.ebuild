@@ -25,7 +25,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1102
 )
 CMAKE_MAKEFILE_GENERATOR="emake"
-LLVM_SLOT=16 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.6.0/llvm/CMakeLists.txt
+LLVM_SLOT=16 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-5.6.1/llvm/CMakeLists.txt
 PYTHON_COMPAT=( "python3_"{9..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
