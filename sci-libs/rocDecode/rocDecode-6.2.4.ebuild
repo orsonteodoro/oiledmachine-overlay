@@ -30,7 +30,7 @@ AMDGPU_TARGETS_UNTESTED=(
 #	gfx1101
 	gfx1102
 )
-LLVM_SLOT=17
+LLVM_SLOT=18
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic rocm
@@ -65,7 +65,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-samples ebuild_revision_0
+samples ebuild_revision_1
 "
 REQUIRED_USE="
 "

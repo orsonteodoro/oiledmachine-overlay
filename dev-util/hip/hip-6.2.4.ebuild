@@ -305,33 +305,33 @@ src_prepare() {
 		)
 	done
 
-	# grep -F -r -e "+++" files/*6.2.0*hardcode* | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
+	# grep -F -r -e "+++" files/*6.2.4*hardcode* | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
 	PATCH_PATHS+=(
-		"${WORKDIR}/clr-rocm-6.2.0/CMakeLists.txt"
-		"${WORKDIR}/clr-rocm-6.2.0/hipamd/CMakeLists.txt"
-		"${WORKDIR}/clr-rocm-6.2.0/hipamd/src/CMakeLists.txt"
-		"${WORKDIR}/clr-rocm-6.2.0/opencl/CMakeLists.txt"
-		"${WORKDIR}/clr-rocm-6.2.0/opencl/cmake/FindAMD_ICD.cmake"
-		"${WORKDIR}/clr-rocm-6.2.0/rocclr/cmake/ROCclrHSA.cmake"
-		"${WORKDIR}/clr-rocm-6.2.0/rocclr/cmake/ROCclrLC.cmake"
-		"${WORKDIR}/clr-rocm-6.2.0/rocclr/elf/test/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-6.2.0/amd/hipcc/bin/hipcc.pl"
-		"${WORKDIR}/llvm-project-rocm-6.2.0/amd/hipcc/src/hipBin_nvidia.h"
-		"${WORKDIR}/llvm-project-rocm-6.2.0/clang/tools/amdgpu-arch/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-6.2.0/compiler-rt/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-6.2.0/libc/cmake/modules/prepare_libc_gpu_build.cmake"
-		"${WORKDIR}/llvm-project-rocm-6.2.0/libc/src/math/gpu/vendor/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-6.2.0/libc/utils/gpu/loader/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-6.2.0/mlir/lib/Dialect/GPU/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-6.2.0/mlir/lib/ExecutionEngine/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-6.2.0/mlir/lib/Target/LLVM/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-6.2.0/openmp/libomptarget/DeviceRTL/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-6.2.0/openmp/libomptarget/hostexec/CMakeLists.txt"
-		"${WORKDIR}/llvm-project-rocm-6.2.0/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt"
+		"${WORKDIR}/clr-rocm-6.2.4/CMakeLists.txt"
+		"${WORKDIR}/clr-rocm-6.2.4/hipamd/CMakeLists.txt"
+		"${WORKDIR}/clr-rocm-6.2.4/hipamd/src/CMakeLists.txt"
+		"${WORKDIR}/clr-rocm-6.2.4/opencl/CMakeLists.txt"
+		"${WORKDIR}/clr-rocm-6.2.4/opencl/cmake/FindAMD_ICD.cmake"
+		"${WORKDIR}/clr-rocm-6.2.4/rocclr/cmake/ROCclrHSA.cmake"
+		"${WORKDIR}/clr-rocm-6.2.4/rocclr/cmake/ROCclrLC.cmake"
+		"${WORKDIR}/clr-rocm-6.2.4/rocclr/elf/test/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-6.2.4/amd/hipcc/bin/hipcc.pl"
+		"${WORKDIR}/llvm-project-rocm-6.2.4/amd/hipcc/src/hipBin_nvidia.h"
+		"${WORKDIR}/llvm-project-rocm-6.2.4/clang/tools/amdgpu-arch/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-6.2.4/compiler-rt/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-6.2.4/libc/cmake/modules/prepare_libc_gpu_build.cmake"
+		"${WORKDIR}/llvm-project-rocm-6.2.4/libc/src/math/gpu/vendor/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-6.2.4/libc/utils/gpu/loader/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-6.2.4/mlir/lib/Dialect/GPU/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-6.2.4/mlir/lib/ExecutionEngine/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-6.2.4/mlir/lib/Target/LLVM/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-6.2.4/openmp/libomptarget/DeviceRTL/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-6.2.4/openmp/libomptarget/hostexec/CMakeLists.txt"
+		"${WORKDIR}/llvm-project-rocm-6.2.4/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt"
 	)
 
 	pushd "${WORKDIR}" >/dev/null 2>&1 || die
-		eapply "${FILESDIR}/${PN}-6.2.0-hardcoded-paths.patch"
+		eapply "${FILESDIR}/${PN}-6.2.4-hardcoded-paths.patch"
 	popd >/dev/null 2>&1 || die
 
 	rocm_src_prepare
