@@ -479,11 +479,11 @@ VULNERABILITIES_FIXED=(
 # Medium and low are shown optionally.
 	"e33ac68;DoS, UAF;Medium to High"
 	"05aa156;DoS, UAF;Medium to High"
-	"e54b000;NPD or UAF;Medium to High"
-	"44f52bb;UAF;Medium to High"
 	"75cd400;UAF;Medium to High"
+	"44f52bb;UAF;Medium to High"
+	"e54b000;DoS or UAF;Medium to High"
 	"d8e4771;DF;Medium to High"
-	"2783497;ID;High"
+	"2783497;ID;Medium to High"
 	"3e74859;DoS;Medium"
 	"c43ec96;DoS;Medium"
 	"e8d0ba1;DoS;Medium"
@@ -493,6 +493,7 @@ VULNERABILITIES_FIXED=(
 	"50740f4;DoS;Medium"
 	"7678abe;DoS;Medium"
 	"489304e;DoS;Medium"
+	"dc81e55;DoS;Medium"
 )
 
 ZEN_MULTIGEN_LRU_BASE_URI=\
