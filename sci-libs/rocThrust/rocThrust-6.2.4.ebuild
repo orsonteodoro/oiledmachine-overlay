@@ -20,7 +20,7 @@ AMDGPU_TARGETS_COMPAT=(
 )
 CUB_COMMIT="7106f901990803ca512cd7d9e6d7d2782f2c4839"
 LIBCUDACXX_COMMIT="05d48aaa12a3c310c333298331c41a9214f08f22"
-LLVM_SLOT=17
+LLVM_SLOT=18
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake rocm
@@ -54,7 +54,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-benchmark test ebuild_revision_4
+benchmark test ebuild_revision_5
 "
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
