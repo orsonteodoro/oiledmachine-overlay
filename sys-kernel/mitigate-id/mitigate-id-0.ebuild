@@ -94,7 +94,7 @@ EOL_VERSIONS=(
 )
 
 # For zero-tolerance mode
-MULTISLOT_LATEST_KERNEL_RELEASE=("5.4.288" "5.10.232" "5.15.175" "6.1.122" "6.6.68" "6.12.7")
+MULTISLOT_LATEST_KERNEL_RELEASE=("5.4.288" "5.10.232" "5.15.175" "6.1.123" "6.6.69" "6.12.8")
 
 inherit mitigate-id toolchain-funcs
 
