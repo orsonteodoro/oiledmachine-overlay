@@ -51,7 +51,7 @@ DEPEND="
 BDEPEND="
 	${CDEPEND}
 	$(python_gen_any_dep '
-		dev-python/CppHeaderParser[${PYTHON_USEDEP}]
+		dev-python/cppheaderparser[${PYTHON_USEDEP}]
 		dev-python/ply[${PYTHON_USEDEP}]
 	')
 	>=dev-build/cmake-3.18.0
@@ -63,7 +63,7 @@ PATCHES=(
 
 python_check_deps() {
 	python_has_version \
-		"dev-python/CppHeaderParser[${PYTHON_USEDEP}]" \
+		"dev-python/cppheaderparser[${PYTHON_USEDEP}]" \
 		"dev-python/ply[${PYTHON_USEDEP}]"
 }
 
