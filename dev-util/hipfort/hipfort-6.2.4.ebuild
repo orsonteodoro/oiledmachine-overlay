@@ -4,7 +4,7 @@
 EAPI=8
 
 CMAKE_BUILD_TYPE="RELEASE"
-LLVM_SLOT=17
+LLVM_SLOT=18
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake rocm
@@ -29,7 +29,7 @@ LICENSE="
 "
 # The distro's MIT license template does not have all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="debug ebuild_revision_9"
+IUSE="debug ebuild_revision_10"
 RDEPEND="
 	!dev-util/hipfort:0
 	|| (

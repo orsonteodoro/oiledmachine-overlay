@@ -11,7 +11,7 @@ EAPI=8
 # See commit 52a3463 for details
 
 CMAKE_MAKEFILE_GENERATOR="emake"
-LLVM_SLOT=17
+LLVM_SLOT=18
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake rocm
@@ -42,7 +42,7 @@ LICENSE="
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
 # raslib is installed by default, but disabled for security.
-IUSE="+compile-commands doc +raslib +standalone systemd test ebuild_revision_13"
+IUSE="+compile-commands doc +raslib +standalone systemd test ebuild_revision_14"
 REQUIRED_USE="
 	raslib
 	systemd? (
