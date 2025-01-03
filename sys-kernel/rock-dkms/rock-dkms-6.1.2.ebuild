@@ -108,7 +108,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 acpi +build +check-mmu-notifier +compress custom-kernel directgma gzip hybrid-graphics
 numa +sign-modules ssg strict-pairing xz zstd
-ebuild_revision_16
+ebuild_revision_18
 "
 REQUIRED_USE="
 	compress? (
@@ -469,7 +469,7 @@ einfo "k: ${k}"
 eerror
 eerror "The ROCK_DKMS_KERNELS has been renamed to ROCK_DKMS_KERNELS_X_Y, where"
 eerror "X is the major version and Y is the minor version corresponding to this"
-eerror "package.  For this kernel it is named ROCK_DKMS_KERNELS_5_7."
+eerror "package.  For this kernel it is named ROCK_DKMS_KERNELS_6_1."
 eerror
 eerror "Rename it to continue."
 eerror
@@ -477,14 +477,14 @@ eerror
 	fi
 	if ver_test ${kv} -ge ${KV_NOT_SUPPORTED_MAX} ; then
 eerror
-eerror "Kernel version ${kv} is not supported.  Update your ROCK_DKMS_KERNELS_5_7"
+eerror "Kernel version ${kv} is not supported.  Update your ROCK_DKMS_KERNELS_6_1"
 eerror "environmental variable."
 eerror
 		die
 	fi
 	if ver_test ${kv} -lt ${KV_SUPPORTED_MIN} ; then
 eerror
-eerror "Kernel version ${kv} is not supported.  Update your ROCK_DKMS_KERNELS_5_7"
+eerror "Kernel version ${kv} is not supported.  Update your ROCK_DKMS_KERNELS_6_1"
 eerror "environmental variable."
 eerror
 		die
@@ -512,20 +512,20 @@ ewarn
 
 pkg_setup() {
 	show_supported_kv
-	if [[ -z "${ROCK_DKMS_KERNELS_5_7}" ]] ; then
+	if [[ -z "${ROCK_DKMS_KERNELS_6_1}" ]] ; then
 eerror
 eerror "You must define a per-package env or add to /etc/portage/make.conf an"
-eerror "environmental variable named ROCK_DKMS_KERNELS_5_7 containing a space"
+eerror "environmental variable named ROCK_DKMS_KERNELS_6_1 containing a space"
 eerror "delimited <kernvel_ver>-<extra_version>."
 eerror
-eerror "It should look like ROCK_DKMS_KERNELS_5_7=\"${KV}-pf ${KV}-zen\""
+eerror "It should look like ROCK_DKMS_KERNELS_6_1=\"${KV}-pf ${KV}-zen\""
 eerror
 		die
 	fi
 
 if [[ "${MAINTAINER_MODE}" != "1" ]] ; then
 	local k
-	for k in ${ROCK_DKMS_KERNELS_5_7} ; do
+	for k in ${ROCK_DKMS_KERNELS_6_1} ; do
 		if [[ "${k}" =~ "*" ]] ; then
 			# Pick all point releases:  6.1.*-zen
 			local V=$(find /usr/src/ -maxdepth 1 -name "linux-${k}" \
@@ -1138,7 +1138,7 @@ pkg_postinst() {
 	chmod -v 0750 "${EROOT}/usr/src/${DKMS_PKG_NAME}-${DKMS_PKG_VER}/amd/dkms/configure"
 	if use build ; then
 		local k
-		for k in ${ROCK_DKMS_KERNELS_5_7} ; do
+		for k in ${ROCK_DKMS_KERNELS_6_1} ; do
 			if [[ "${k}" =~ "*" ]] ; then
 				# Pick all point releases:  6.1.*-zen
 				local pat="${k}"

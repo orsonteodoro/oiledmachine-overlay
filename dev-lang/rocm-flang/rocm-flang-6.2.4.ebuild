@@ -38,7 +38,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-aocc doc test ebuild_revision_4
+aocc doc test ebuild_revision_6
 "
 REQUIRED_USE="
 "
@@ -210,7 +210,7 @@ src_configure() {
 }
 
 src_compile() {
-	local gcc_slot="${HIP_6_1_GCC_SLOT}"
+	local gcc_slot="${HIP_6_2_GCC_SLOT}"
 	gcc_slot="${gcc_slot%%.*}"
 	local gcc_current_profile=$(gcc-config -c)
 	local gcc_current_profile_slot=${gcc_current_profile##*-}
