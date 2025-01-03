@@ -62,7 +62,7 @@ IUSE+="
 ${LLVM_COMPAT/#/llvm_slot_}
 ${ROCM_IUSE}
 cpu opencl rocm test
-ebuild_revision_12
+ebuild_revision_13
 "
 gen_rocm_required_use() {
 	local x
@@ -114,7 +114,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-6.2.0-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-6.2.4-hardcoded-paths.patch"
 )
 
 warn_untested_gpu() {
