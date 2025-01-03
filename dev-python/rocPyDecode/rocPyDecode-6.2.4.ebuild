@@ -46,11 +46,11 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE+=" "
 RDEPEND+="
 	~sci-libs/rocDecode-${PV}:${ROCM_SLOT}
-	dev-python/dlpack[${PYTHON_USEDEP}]
 	dev-python/pybind11[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
+	>=dev-libs/dlpack-0.6
 "
 BDEPEND+="
 	>=dev-python/setuptools-42[${PYTHON_USEDEP}]
