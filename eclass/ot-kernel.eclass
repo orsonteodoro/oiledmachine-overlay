@@ -477,23 +477,23 @@ MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
 # High and critical are noted and only those that are fixed on this release day
 # Medium and low are shown optionally.
-	"e33ac68;DoS, UAF;Medium to High"
 	"05aa156;DoS, UAF;Medium to High"
-	"75cd400;UAF;Medium to High"
+	"e33ac68;DoS, UAF;Medium to High"
 	"44f52bb;UAF;Medium to High"
+	"75cd400;UAF;Medium to High"
 	"e54b000;DoS or UAF;Medium to High"
 	"d8e4771;DF;Medium to High"
 	"2783497;ID;Medium to High"
 	"3e74859;DoS;Medium"
-	"c43ec96;DoS;Medium"
-	"e8d0ba1;DoS;Medium"
-	"d8e4771;DoS;Medium"
-	"ccfa313;DoS;Medium"
-	"c0b82ab;DoS;Medium"
+	"489304e;DoS;Medium"
 	"50740f4;DoS;Medium"
 	"7678abe;DoS;Medium"
-	"489304e;DoS;Medium"
+	"c0b82ab;DoS;Medium"
+	"c43ec96;DoS;Medium"
+	"ccfa313;DoS;Medium"
+	"d8e4771;DoS;Medium"
 	"dc81e55;DoS;Medium"
+	"e8d0ba1;DoS;Medium"
 )
 
 ZEN_MULTIGEN_LRU_BASE_URI=\
