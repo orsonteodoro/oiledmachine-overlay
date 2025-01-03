@@ -8,6 +8,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx906
 	gfx908
 	gfx90a
+	gfx942
 	gfx1030
 )
 MAINTAINER_MODE=0
@@ -26,22 +27,22 @@ if [[ "${MAINTAINER_MODE}" =~ "1" ]] ; then
 else
 	SRC_URI="
 		amdgpu_targets_gfx1030? (
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx1030-36kdb/miopen-hip-gfx1030-36kdb_2.19.0.50501-74~22.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx1030kdb/miopen-hip-gfx1030kdb_3.2.0.60204-139~24.04_amd64.deb
 		)
 		amdgpu_targets_gfx900? (
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx900-56kdb/miopen-hip-gfx900-56kdb_2.19.0.50501-74~22.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx900-64kdb/miopen-hip-gfx900-64kdb_2.19.0.50501-74~22.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx900kdb/miopen-hip-gfx900kdb_3.2.0.60204-139~24.04_amd64.deb
 		)
 		amdgpu_targets_gfx906? (
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx906-60kdb/miopen-hip-gfx906-60kdb_2.19.0.50501-74~22.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx906-64kdb/miopen-hip-gfx906-64kdb_2.19.0.50501-74~22.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx906kdb/miopen-hip-gfx906kdb_3.2.0.60204-139~24.04_amd64.deb
 		)
 		amdgpu_targets_gfx908? (
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx908-120kdb/miopen-hip-gfx908-120kdb_2.19.0.50501-74~22.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx908kdb/miopen-hip-gfx908kdb_3.2.0.60204-139~24.04_amd64.deb
 		)
 		amdgpu_targets_gfx90a? (
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx90a-104kdb/miopen-hip-gfx90a-104kdb_2.19.0.50501-74~22.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx90a-110kdb/miopen-hip-gfx90a-110kdb_2.19.0.50501-74~22.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx90akdb/miopen-hip-gfx90akdb_3.2.0.60204-139~24.04_amd64.deb
+		)
+		amdgpu_targets_gfx942? (
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx942kdb/miopen-hip-gfx942kdb_3.2.0.60204-139~24.04_amd64.deb
 		)
 	"
 fi
@@ -158,4 +159,4 @@ einfo "Compressing kernels"
 	find "${ED}" -name "gfx*.kdb" -delete || die
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  finished, builds-without-problems
+# OILEDMACHINE-OVERLAY-STATUS:  ebuild needs install test

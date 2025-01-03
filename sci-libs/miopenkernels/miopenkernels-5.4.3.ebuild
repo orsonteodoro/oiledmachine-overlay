@@ -26,22 +26,22 @@ if [[ "${MAINTAINER_MODE}" =~ "1" ]] ; then
 else
 	SRC_URI="
 		amdgpu_targets_gfx1030? (
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopenkernels-gfx1030-36kdb/miopenkernels-gfx1030-36kdb_1.1.0.50403-121~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopenkernels-gfx1030-36kdb/miopenkernels-gfx1030-36kdb_1.1.0.50403-121~22.04_amd64.deb
 		)
 		amdgpu_targets_gfx900? (
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopenkernels-gfx900-56kdb/miopenkernels-gfx900-56kdb_1.1.0.50403-121~20.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopenkernels-gfx900-64kdb/miopenkernels-gfx900-64kdb_1.1.0.50403-121~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopenkernels-gfx900-56kdb/miopenkernels-gfx900-56kdb_1.1.0.50403-121~22.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopenkernels-gfx900-64kdb/miopenkernels-gfx900-64kdb_1.1.0.50403-121~22.04_amd64.deb
 		)
 		amdgpu_targets_gfx906? (
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopenkernels-gfx906-60kdb/miopenkernels-gfx906-60kdb_1.1.0.50403-121~20.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopenkernels-gfx906-64kdb/miopenkernels-gfx906-64kdb_1.1.0.50403-121~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopenkernels-gfx906-60kdb/miopenkernels-gfx906-60kdb_1.1.0.50403-121~22.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopenkernels-gfx906-64kdb/miopenkernels-gfx906-64kdb_1.1.0.50403-121~22.04_amd64.deb
 		)
 		amdgpu_targets_gfx908? (
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopenkernels-gfx908-120kdb/miopenkernels-gfx908-120kdb_1.1.0.50403-121~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopenkernels-gfx908-120kdb/miopenkernels-gfx908-120kdb_1.1.0.50403-121~22.04_amd64.deb
 		)
 		amdgpu_targets_gfx90a? (
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopenkernels-gfx90a-104kdb/miopenkernels-gfx90a-104kdb_1.1.0.50403-121~20.04_amd64.deb
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopenkernels-gfx90a-110kdb/miopenkernels-gfx90a-110kdb_1.1.0.50403-121~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopenkernels-gfx90a-104kdb/miopenkernels-gfx90a-104kdb_1.1.0.50403-121~22.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopenkernels-gfx90a-110kdb/miopenkernels-gfx90a-110kdb_1.1.0.50403-121~22.04_amd64.deb
 		)
 	"
 fi

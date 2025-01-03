@@ -26,19 +26,19 @@ if [[ "${MAINTAINER_MODE}" =~ "1" ]] ; then
 else
 	SRC_URI="
 		amdgpu_targets_gfx1030? (
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx1030kdb/miopen-hip-gfx1030kdb_2.20.0.50701-98~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx1030kdb/miopen-hip-gfx1030kdb_2.20.0.50701-98~22.04_amd64.deb
 		)
 		amdgpu_targets_gfx900? (
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx900kdb/miopen-hip-gfx900kdb_2.20.0.50701-98~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx900kdb/miopen-hip-gfx900kdb_2.20.0.50701-98~22.04_amd64.deb
 		)
 		amdgpu_targets_gfx906? (
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx906kdb/miopen-hip-gfx906kdb_2.20.0.50701-98~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx906kdb/miopen-hip-gfx906kdb_2.20.0.50701-98~22.04_amd64.deb
 		)
 		amdgpu_targets_gfx908? (
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx908kdb/miopen-hip-gfx908kdb_2.20.0.50701-98~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx908kdb/miopen-hip-gfx908kdb_2.20.0.50701-98~22.04_amd64.deb
 		)
 		amdgpu_targets_gfx90a? (
-https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx90akdb/miopen-hip-gfx90akdb_2.20.0.50701-98~20.04_amd64.deb
+https://repo.radeon.com/rocm/apt/${MY_PV}/pool/main/m/miopen-hip-gfx90akdb/miopen-hip-gfx90akdb_2.20.0.50701-98~22.04_amd64.deb
 		)
 	"
 fi

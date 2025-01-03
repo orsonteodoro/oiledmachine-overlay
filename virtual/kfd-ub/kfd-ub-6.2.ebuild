@@ -11,12 +11,14 @@ DC_VER="3.2.286" # From rock-dkms
 KERNEL_FIRMWARE_PV="99999999" # DCN 4.0.1 and VCN 5.0.0 was not found.  Currently DCN is 3.1.4, VCN is 4.0.0 on linux-firmware.git
 # Expected firmware properites:
 # Git message:  6.2
-# Driver folder = 6.2.0
+# Driver folder = 6.2.4
 # DCN = 4.0.1
-# GC = ?
-# PSP = ?
-# SDMA = ?
+# GC = 12.0.1
+# PSP = 14.0.3
+# SDMA = 7.0.1
+# SMU = 14.0.3
 # VCN = 5.0.0
+# VPE = 6.1.1
 KERNEL_PV="6.11" # DC_VER = 3.2.291 ; DCN = 4.0.1 ; This row is from linux-kernel not rock-dkms
 # Expected kernel properties:
 # Some of the last amdkfd commits are applied to the amdkfd folder (d2e5bf7, b7c09a6, 97f3ca8, 37209d5) ; missing 835309f, a3431f7
