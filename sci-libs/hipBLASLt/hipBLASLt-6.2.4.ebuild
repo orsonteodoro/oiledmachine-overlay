@@ -48,7 +48,7 @@ LICENSE="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE+="
 ${ROCM_IUSE}
-benchmark cuda +rocm +tensile ebuild_revision_12
+benchmark cuda +rocm +tensile ebuild_revision_13
 "
 gen_rocm_required_use() {
 	local x
@@ -107,7 +107,7 @@ BDEPEND="
 RESTRICT="test"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.6.0-set-CMP0074-NEW.patch"
-	"${FILESDIR}/${PN}-6.2.0-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-6.2.4-hardcoded-paths.patch"
 )
 
 pkg_setup() {
