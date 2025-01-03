@@ -6,7 +6,7 @@ diff '--color=auto' -urp omniperf-rocm-6.2.0.orig/CMakeLists.txt omniperf-rocm-6
  if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
      set(CMAKE_INSTALL_PREFIX
 -        "/opt/rocm"
-+        "/opt/rocm-@ROCM_PATH@"
++        "/opt/rocm-@ROCM_VERSION@"
          CACHE PATH "default install path" FORCE)
  endif()
  message(STATUS "Installation path: ${CMAKE_INSTALL_PREFIX}")

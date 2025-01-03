@@ -15,7 +15,7 @@ if [[ ${PV} == *"9999" ]] ; then
 	inherit git-r3
 else
 	#KEYWORDS="~amd64" # Missing dependencies
-	S="${WORKDIR}/${PN}-rocm-${PV}"
+	S="${WORKDIR}/rocprofiler-compute-rocm-${PV}"
 	SRC_URI="
 https://github.com/ROCm/omniperf/archive/refs/tags/rocm-${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -35,7 +35,7 @@ LICENSE="
 "
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild_revision_1"
+IUSE="test ebuild_revision_2"
 RDEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/astunparse-1.6.2[${PYTHON_USEDEP}]
