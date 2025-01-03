@@ -471,17 +471,28 @@ UKSM_BASE_URI=\
 UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
-MITIGATION_DATE="Dec 15, 2024" # Advisory date
-MITIGATION_LAST_UPDATE=1734045420 # From `date +%s -d "2024-12-12 15:17"` from earliest timestamp corresponding to the weekly release in link below
+MITIGATION_DATE="Jan 2, 2025" # Advisory date
+MITIGATION_LAST_UPDATE=1735857480 # From `date +%s -d "2025-01-02 14:38"` from earliest timestamp corresponding to the weekly release in link below
 MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
 # High and critical are noted and only those that are fixed on this release day
 # Medium and low are shown optionally.
-	"CVE-2024-53142;DoS, DT, ID;High"
-	"CVE-2024-53141;DoS, DT, ID;High"
-	"CVE-2024-53139;DoS, DT, ID;High"
-	"CVE-2024-53133;DoS, DT, ID;High"
-	"CVE-2024-53126;DoS, DT, ID;High"
+	"e33ac68;DoS, UAF;Medium to High"
+	"05aa156;DoS, UAF;Medium to High"
+	"e54b000;NPD or UAF;Medium to High"
+	"44f52bb;UAF;Medium to High"
+	"75cd400;UAF;Medium to High"
+	"2783497;ID;High"
+	"d8e4771;DF;Medium"
+	"3e74859;DoS;Medium"
+	"c43ec96;DoS;Medium"
+	"e8d0ba1;DoS;Medium"
+	"d8e4771;DoS;Medium"
+	"ccfa313;DoS;Medium"
+	"c0b82ab;DoS;Medium"
+	"50740f4;DoS;Medium"
+	"7678abe;DoS;Medium"
+	"489304e;DoS;Medium"
 )
 
 ZEN_MULTIGEN_LRU_BASE_URI=\
