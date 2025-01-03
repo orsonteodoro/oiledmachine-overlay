@@ -5,7 +5,7 @@ EAPI=8
 
 DOWNLOAD_FOLDER_URI="http://repo.radeon.com/rocm/apt/6.1.2/pool/proprietary/r/rocm-llvm-alt"
 DOWNLOAD_FILE="rocm-llvm-alt_17.0.0.24050.60102-119~22.04_amd64.deb"
-LLVM_MAX_SLOT=16 # Based on sover
+LLVM_MAX_SLOT=17 # Based on sover and tarball name
 MY_PN="rocm-llvm-alt"
 PYTHON_COMPAT=( "python3_"{10..12} )
 ROCM_SLOT="${PV%.*}"
@@ -51,14 +51,15 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-	ebuild_revision_1
+	ebuild_revision_3
 "
 REQUIRED_USE="
 "
 # See also https://github.com/RadeonOpenCompute/rocm-spack/blob/develop/var/spack/repos/builtin/packages/aocc/package.py#L50
+# Links to GCC 12.1.0 (particularly libstdc++)
 RDEPEND="
 	${PYTHON_DEPS}
-	>=sys-devel/gcc-11.4.0:11
+	>=sys-devel/gcc-12.1.0:12
 	>=sys-libs/glibc-2.35
 	dev-build/libtool
 	dev-libs/libffi
