@@ -76,6 +76,9 @@ einfo "CSRF = Cross Site Request Forgery"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "DoS" ]] ; then
 einfo "DoS = Denial of Service"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "DF" ]] ; then
+einfo "DF = Double Free"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "DT" ]] ; then
 einfo "DT = Data Tampering"
 		fi
