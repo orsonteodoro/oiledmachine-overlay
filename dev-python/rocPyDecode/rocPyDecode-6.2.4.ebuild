@@ -47,6 +47,11 @@ IUSE+=" "
 RDEPEND+="
 	~sci-libs/rocDecode-${PV}:${ROCM_SLOT}
 	dev-python/pybind11[${PYTHON_USEDEP}]
+	|| (
+		>=media-video/ffmpeg-4.2.7:56.58.58
+		>=media-video/ffmpeg-4.2.7:0/56.58.58
+	)
+	media-video/ffmpeg:=
 "
 DEPEND+="
 	${RDEPEND}
@@ -59,6 +64,9 @@ BDEPEND+="
 	virtual/pkgconfig
 "
 DOCS=( "CHANGELOG.md" "README.md" )
+PATCHES=(
+	"${FILESDIR}/rocPyDecode-6.2.4-ffmpeg-path.patch"
+)
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
@@ -68,6 +76,19 @@ src_unpack() {
 	else
 		unpack ${A}
 	fi
+}
+
+python_configure() {
+	if has_version "media-video/ffmpeg:56.58.58" ; then
+einfo "Detected media-video/ffmpeg:56.58.58 (4.x series)"
+		export PKG_CONFIG_PATH="/usr/lib/ffmpeg/56.58.58/$(get_libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+		export FFMPEG_INCLUDES_PATH="/usr/lib/ffmpeg/56.58.58/include"
+		export FFMPEG_LIBS_PATH="/usr/lib/ffmpeg/56.58.58/$(get_libdir)"
+	fi
+}
+
+python_compile() {
+	distutils-r1_python_compile
 }
 
 src_install() {

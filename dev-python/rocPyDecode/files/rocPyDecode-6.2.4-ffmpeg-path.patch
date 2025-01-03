@@ -1,0 +1,133 @@
+diff '--color=auto' -urp rocPyDecode-rocm-6.2.4.orig/cmake/FindFFmpeg.cmake rocPyDecode-rocm-6.2.4/cmake/FindFFmpeg.cmake
+--- rocPyDecode-rocm-6.2.4.orig/cmake/FindFFmpeg.cmake	2024-08-13 16:03:26.000000000 -0700
++++ rocPyDecode-rocm-6.2.4/cmake/FindFFmpeg.cmake	2025-01-03 11:20:52.013377620 -0800
+@@ -62,63 +62,93 @@ else()
+   # AVCODEC
+   find_path(AVCODEC_INCLUDE_DIR 
+     NAMES libavcodec/avcodec.h
+-    PATHS ${_FFMPEG_AVCODEC_INCLUDE_DIRS}
++    PATHS
++      #/usr/lib/ffmpeg/56.58.58/include
++      $ENV{FFMPEG_INCLUDES_PATH}
++      ${_FFMPEG_AVCODEC_INCLUDE_DIRS}
+       /usr/local/include
+       /usr/include
+       /opt/local/include
+       /sw/include
+     PATH_SUFFIXES ffmpeg libav
++    NO_CACHE
++    NO_DEFAULT_PATH
+   )
+   mark_as_advanced(AVCODEC_INCLUDE_DIR)
+   find_library(AVCODEC_LIBRARY
+     NAMES avcodec
+-    PATHS ${_FFMPEG_AVCODEC_LIBRARY_DIRS}
++    PATHS
++      #/usr/lib/ffmpeg/56.58.58/lib64
++      $ENV{FFMPEG_LIBS_PATH}
++      ${_FFMPEG_AVCODEC_LIBRARY_DIRS}
+       /usr/local/lib
+       /usr/lib
+       /opt/local/lib
+       /sw/lib
++    NO_CACHE
++    NO_DEFAULT_PATH
+   )
+   mark_as_advanced(AVCODEC_LIBRARY)
+ 
+   # AVFORMAT
+   find_path(AVFORMAT_INCLUDE_DIR 
+     NAMES libavformat/avformat.h
+-    PATHS ${_FFMPEG_AVFORMAT_INCLUDE_DIRS}
++    PATHS
++      #/usr/lib/ffmpeg/56.58.58/include
++      $ENV{FFMPEG_INCLUDES_PATH}
++      ${_FFMPEG_AVFORMAT_INCLUDE_DIRS}
+       /usr/local/include
+       /usr/include
+       /opt/local/include
+       /sw/include
+     PATH_SUFFIXES ffmpeg libav
++    NO_CACHE
++    NO_DEFAULT_PATH
+   )
+   mark_as_advanced(AVFORMAT_INCLUDE_DIR)
+   find_library(AVFORMAT_LIBRARY
+     NAMES avformat
+-    PATHS ${_FFMPEG_AVFORMAT_LIBRARY_DIRS}
++    PATHS
++      #/usr/lib/ffmpeg/56.58.58/lib64
++      $ENV{FFMPEG_LIBS_PATH}
++      ${_FFMPEG_AVFORMAT_LIBRARY_DIRS}
+       /usr/local/lib
+       /usr/lib
+       /opt/local/lib
+       /sw/lib
++    NO_CACHE
++    NO_DEFAULT_PATH
+   )
+   mark_as_advanced(AVFORMAT_LIBRARY)
+ 
+   # AVUTIL
+   find_path(AVUTIL_INCLUDE_DIR 
+     NAMES libavutil/avutil.h
+-    PATHS ${_FFMPEG_AVUTIL_INCLUDE_DIRS}
++    PATHS
++      #/usr/lib/ffmpeg/56.58.58/include
++      $ENV{FFMPEG_INCLUDES_PATH}
++      ${_FFMPEG_AVUTIL_INCLUDE_DIRS}
+       /usr/local/include
+       /usr/include
+       /opt/local/include
+       /sw/include
+     PATH_SUFFIXES ffmpeg libav
++    NO_CACHE
++    NO_DEFAULT_PATH
+   )
+   mark_as_advanced(AVUTIL_INCLUDE_DIR)
+   find_library(AVUTIL_LIBRARY
+     NAMES avutil
+-    PATHS ${_FFMPEG_AVUTIL_LIBRARY_DIRS}
++    PATHS
++      /usr/lib/ffmpeg/56.58.58/lib64
++      $ENV{FFMPEG_LIBS_PATH}
++      ${_FFMPEG_AVUTIL_LIBRARY_DIRS}
+       /usr/local/lib
+       /usr/lib
+       /opt/local/lib
+       /sw/lib
++    NO_CACHE
++    NO_DEFAULT_PATH
+   )
+   mark_as_advanced(AVUTIL_LIBRARY)
+ 
+diff '--color=auto' -urp rocPyDecode-rocm-6.2.4.orig/setup.py rocPyDecode-rocm-6.2.4/setup.py
+--- rocPyDecode-rocm-6.2.4.orig/setup.py	2024-08-13 16:03:26.000000000 -0700
++++ rocPyDecode-rocm-6.2.4/setup.py	2025-01-03 11:19:12.305962259 -0800
+@@ -62,17 +62,23 @@ class custom_bdist_wheel(_bdist_wheel):
+         plat = 'manylinux_2_28_x86_64'
+         return python, abi, plat
+ 
++env = os.environ
++if os.environ.get('FFMPEG_INCLUDES_PATH'):
++    env['FFMPEG_INCLUDES_PATH'] = os.environ.get('FFMPEG_INCLUDES_PATH')
++if os.environ.get('FFMPEG_LIBS_PATH'):
++    env['FFMPEG_LIBS_PATH'] = os.environ.get('FFMPEG_LIBS_PATH')
++
+ # Call CMake to configure and build the project
+ build_dir = os.path.join(os.getcwd(), 'build')
+ os.makedirs(build_dir, exist_ok=True)
+ cmake_args=["cmake", ".", "-B"+build_dir, "-H"+os.getcwd()]
+-subprocess.check_call(cmake_args,cwd=os.getcwd())
++subprocess.check_call(cmake_args,cwd=os.getcwd(),env=env)
+ 
+ # Invoke cmake --build to build the project
+-subprocess.check_call(['cmake', '--build', build_dir, '--config', 'Release'])
++subprocess.check_call(['cmake', '--build', build_dir, '--config', 'Release'],env=env)
+ 
+ # Install the built binaries
+-subprocess.check_call(['cmake', '--install', build_dir])
++subprocess.check_call(['cmake', '--install', build_dir],env=env)
+ 
+ setup(
+       name='rocPyDecode',
