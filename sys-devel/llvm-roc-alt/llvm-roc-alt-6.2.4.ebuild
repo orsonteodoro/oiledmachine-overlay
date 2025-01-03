@@ -23,7 +23,7 @@ SRC_URI="
 DESCRIPTION="AOCC for ROCm™"
 HOMEPAGE="
 	https://www.amd.com/en/developer/aocc.html
-	https://github.com/ROCm/ROCm/blob/rocm-6.1.2/docs/about/license.md?plain=1#L84
+	https://github.com/ROCm/ROCm/blob/rocm-6.2.4/docs/about/license.md?plain=1#L131
 	https://github.com/ROCm/ROCm/blob/rocm-6.1.2/docs/conceptual/compiler-disambiguation.md?plain=1#L17
 "
 LICENSE="
