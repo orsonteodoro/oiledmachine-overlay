@@ -4,10 +4,11 @@
 EAPI=8
 
 CMAKE_BUILD_TYPE="Release"
+FALLBACK_COMMIT="e112c935057434897bb12d9ab3910380a8bd5f58"
 
 inherit cmake linux-info
 
-if [[ ${PV} == *9999 ]] ; then
+if [[ ${PV} == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCm-Developer-Tools/HIP-CPU.git"
 	IUSE+=" fallback-commit"
 	inherit git-r3
@@ -34,7 +35,7 @@ PATCHES=(
 )
 
 src_unpack() {
-	use fallback-commit && EGIT_COMMIT="e112c935057434897bb12d9ab3910380a8bd5f58"
+	use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 	git-r3_fetch
 	git-r3_checkout
 	grep -q \
