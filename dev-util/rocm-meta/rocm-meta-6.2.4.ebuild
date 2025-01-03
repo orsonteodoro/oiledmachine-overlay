@@ -120,10 +120,10 @@ RDEPEND="
 		~dev-libs/rccl-rdma-sharp-plugins-${PV}:${ROCM_SLOT}
 	)
 	cv? (
+		~dev-python/rocPyDecode-${PV}:${ROCM_SLOT}
 		~sci-libs/MIVisionX-${PV}:${ROCM_SLOT}[rocm]
 		~sci-libs/rocAL-${PV}:${ROCM_SLOT}
 		~sci-libs/rocDecode-${PV}:${ROCM_SLOT}
-		~sci-libs/rocPyDecode-${PV}:${ROCM_SLOT}
 		~sci-libs/rpp-${PV}:${ROCM_SLOT}$(get_rocm_usedep RPP)
 	)
 	kernel-driver? (
