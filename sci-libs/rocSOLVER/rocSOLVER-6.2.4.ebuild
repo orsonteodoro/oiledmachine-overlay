@@ -17,7 +17,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1101
 	gfx1102
 )
-LLVM_SLOT=17
+LLVM_SLOT=18
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake edo rocm
@@ -41,7 +41,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="+sparse test benchmark ebuild_revision_6"
+IUSE="+sparse test benchmark ebuild_revision_7"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "

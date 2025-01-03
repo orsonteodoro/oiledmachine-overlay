@@ -30,7 +30,7 @@ CUDA_TARGETS_COMPAT=(
 	compute_75
 )
 HIP_SUPPORT_CUDA=1
-LLVM_SLOT=17
+LLVM_SLOT=18
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic rocm
@@ -59,7 +59,7 @@ RESTRICT="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda hip-cpu +rocm test ebuild_revision_10
+benchmark cuda hip-cpu +rocm test ebuild_revision_11
 "
 gen_cuda_required_use() {
 	local x
