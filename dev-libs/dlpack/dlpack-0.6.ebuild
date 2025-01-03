@@ -4,11 +4,7 @@
 
 EAPI=8
 
-DISTUTILS_OPTIONAL=1
-DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..12} )
-
-inherit cmake distutils-r1 pypi
+inherit cmake
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -71,7 +67,6 @@ src_configure() {
 
 src_install() {
 	cmake_src_install
-	#distutils-r1_src_install
 	docinto "licenses"
 	dodoc "LICENSE"
 }
