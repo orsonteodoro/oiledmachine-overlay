@@ -4,11 +4,11 @@
 EAPI=7
 
 # The PV is the same as DC_VER in
-# https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-6.2.0/drivers/gpu/drm/amd/display/dc/dc.h#L48
+# https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-6.2.4/drivers/gpu/drm/amd/display/dc/dc.h#L48
 
 AMDGPU_FIRMWARE_PV="6.8.5.60204"
 DC_VER="3.2.286" # From rock-dkms
-KERNEL_FIRMWARE_PV="99999999" # DCN 4.0.1 and VCN 5.0.0 was not found.  Currently DCN is 3.1.4, VCN is 4.0.0 on linux-firmware.git
+KERNEL_FIRMWARE_PV="99999999" # DCN 4.0.1 was not found.  Currently DCN is 3.5.1 on linux-firmware.git
 # Expected firmware properites:
 # Git message:  6.2
 # Driver folder = 6.2.4
@@ -27,7 +27,7 @@ KERNEL_PV="6.11" # DC_VER = 3.2.291 ; DCN = 4.0.1 ; This row is from linux-kerne
 # KMS is >= 3.58.0
 #
 # See also
-# https://github.com/ROCm/ROCK-Kernel-Driver/commits/rocm-6.2.0/drivers/gpu/drm/amd/amdkfd
+# https://github.com/ROCm/ROCK-Kernel-Driver/commits/rocm-6.2.4/drivers/gpu/drm/amd/amdkfd
 # drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c for KMS version
 # drivers/gpu/drm/amd/display/dc/dc.h for DC_VER
 # drivers/gpu/drm/amd/display/include/dal_types.h for DCN version
@@ -37,7 +37,7 @@ KERNEL_RANGE=(
 # See footnote 2 in metadata.xml.
 	"6.11" #  0 : KERNEL_PV
 )
-ROCM_VERSION="6.2.0" # DC_VER = ${PV}
+ROCM_VERSION="6.2.4" # DC_VER = ${PV}
 ROCM_SLOT="${ROCM_VERSION%.*}"
 #
 # linux firmware notes:
