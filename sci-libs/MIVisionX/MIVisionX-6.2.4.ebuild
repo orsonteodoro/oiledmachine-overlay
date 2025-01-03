@@ -7,7 +7,7 @@ BOOST_PV="1.72.0"
 LLVM_SLOT=18
 NNEF_TOOLS_COMMIT="a1a900ae52128d4d00d9bd1fe3b605dcc46389bb" # committer-date:<=2024-03-08
 PROTOBUF_PV="3.12.0" # The version is behind the 3.21 offered.
-PYTHON_COMPAT=( "python3_10" ) # U 20/22
+PYTHON_COMPAT=( "python3_"{10..12} ) # U 20/22
 RAPIDJSON_COMMIT="f9d53419e912910fd8fa57d5705fa41425428c35" # committer-date:<=2023-10-05
 RRAWTHER_LIBJPEG_TURBO_COMMIT="ae4e2a24e54514d1694d058650c929e6086cc4bb"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
@@ -64,7 +64,7 @@ IUSE="
 caffe cpu +enhanced-message ffmpeg -fp16 +ieee1394 +loom +migraphx +neural-net
 nnef onnx opencl opencv +rocal +rocal-python +rocm +rpp system-nnef-parser
 system-rapidjson
-ebuild_revision_15
+ebuild_revision_16
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
