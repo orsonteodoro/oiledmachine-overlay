@@ -276,26 +276,10 @@ _npm_src_unpack_default_ebuild() {
 		mkdir -p "${NPM_CACHE_FOLDER}"
 
 		rm -f "package-lock.json" || true
-		if [[ -e "${FILESDIR}/${PV}" && "${NPM_MULTI_LOCKFILE}" == "1" && -n "${NPM_ROOT}" ]] ; then
+		if [[ -e "${FILESDIR}/${PV}" && -n "${NPM_ROOT}" ]] ; then
 			cp -aT "${FILESDIR}/${PV}" "${NPM_ROOT}" || die
-		elif [[ -e "${FILESDIR}/${PV}" && "${NPM_MULTI_LOCKFILE}" == "1" ]] ; then
+		elif [[ -e "${FILESDIR}/${PV}" ]] ; then
 			cp -aT "${FILESDIR}/${PV}" "${S}" || die
-		elif [[ -f "${FILESDIR}/${PV}/package.json" && -n "${NPM_ROOT}" ]] ; then
-			cp "${FILESDIR}/${PV}/package.json" "${NPM_ROOT}" || die
-		elif [[ -f "${FILESDIR}/${PV}/package.json" ]] ; then
-			cp "${FILESDIR}/${PV}/package.json" "${S}" || die
-		fi
-		if [[ -e "${FILESDIR}/${PV}" && "${NPM_MULTI_LOCKFILE}" == "1" && -n "${NPM_ROOT}" ]] ; then
-			cp -aT "${FILESDIR}/${PV}" "${NPM_ROOT}" || die
-		elif [[ -e "${FILESDIR}/${PV}" && "${NPM_MULTI_LOCKFILE}" == "1" ]] ; then
-			cp -aT "${FILESDIR}/${PV}" "${S}" || die
-		elif [[ -f "${FILESDIR}/${PV}/package-lock.json" && -n "${NPM_ROOT}" ]] ; then
-			cp "${FILESDIR}/${PV}/package-lock.json" "${NPM_ROOT}" || die
-		elif [[ -f "${FILESDIR}/${PV}/package-lock.json" ]] ; then
-			cp "${FILESDIR}/${PV}/package-lock.json" "${S}" || die
-		else
-einfo "Missing package-lock.json"
-			die
 		fi
 	fi
 	local args=()

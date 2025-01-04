@@ -337,23 +337,10 @@ _yarn_src_unpack_default_ebuild() {
 			yarn config set cacheFolder "${YARN_CACHE_FOLDER}" || die
 		fi
 
-		if [[ -e "${FILESDIR}/${PV}" && "${YARN_MULTI_LOCKFILE}" == "1" && -n "${YARN_ROOT}" ]] ; then
+		if [[ -e "${FILESDIR}/${PV}" && -n "${YARN_ROOT}" ]] ; then
 			cp -aT "${FILESDIR}/${PV}" "${YARN_ROOT}" || die
-		elif [[ -e "${FILESDIR}/${PV}" && "${YARN_MULTI_LOCKFILE}" == "1" ]] ; then
+		elif [[ -e "${FILESDIR}/${PV}" ]] ; then
 			cp -aT "${FILESDIR}/${PV}" "${S}" || die
-		elif [[ -f "${FILESDIR}/${PV}/package.json" && -n "${YARN_ROOT}" ]] ; then
-			cp "${FILESDIR}/${PV}/package.json" "${YARN_ROOT}" || die
-		elif [[ -f "${FILESDIR}/${PV}/package.json" ]] ; then
-			cp "${FILESDIR}/${PV}/package.json" "${S}" || die
-		fi
-		if [[ -e "${FILESDIR}/${PV}" && "${YARN_MULTI_LOCKFILE}" == "1" && -n "${YARN_ROOT}" ]] ; then
-			cp -aT "${FILESDIR}/${PV}" "${YARN_ROOT}" || die
-		elif [[ -e "${FILESDIR}/${PV}" && "${YARN_MULTI_LOCKFILE}" == "1" ]] ; then
-			cp -aT "${FILESDIR}/${PV}" "${S}" || die
-		elif [[ -f "${FILESDIR}/${PV}/yarn.lock" && -n "${YARN_ROOT}" ]] ; then
-			cp "${FILESDIR}/${PV}/yarn.lock" "${YARN_ROOT}" || die
-		elif [[ -f "${FILESDIR}/${PV}/yarn.lock" ]] ; then
-			cp "${FILESDIR}/${PV}/yarn.lock" "${S}" || die
 		fi
 	fi
 	local args=()
