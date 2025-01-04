@@ -243,8 +243,8 @@ src_prepare() {
 	default
 	export JAVA_HOME=$(java-config --jre-home)
 	eapply "${FILESDIR}/tensorboard-2.11.2-yarn-local-cache.patch"
-	sed -i -e "s|\.yarnrc|${WORKDIR}/.yarnrc|g" WORKSPACE || die
-	sed -i -e "s|\.cache/yarn2|${HOME}/.cache/yarn2|g" WORKSPACE || die
+	sed -i -e "s|\.yarnrc|${WORKDIR}/.yarnrc|g" "WORKSPACE" || die
+	sed -i -e "s|\.cache/yarn2|${HOME}/.cache/yarn2|g" "WORKSPACE" || die
 
 	filter-flags '-fuse-ld=*'
 	bazel_setup_bazelrc
