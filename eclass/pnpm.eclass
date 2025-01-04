@@ -70,6 +70,12 @@ fi
 # This variable is an array.
 # Global arguments to append to `pnpm install`
 
+# @ECLASS_VARIABLE: _PNPM_PKG_SETUP_CALLED
+# @INTERNAL
+# @DESCRIPTION:
+# Checks if state variables are initalized and network sandbox disabled.
+_PNPM_PKG_SETUP_CALLED=0
+
 # @FUNCTION: pnpm_check_network_sandbox
 # @DESCRIPTION:
 # Check the network sandbox.
@@ -115,9 +121,9 @@ pnpm_network_settings() {
 # @DESCRIPTION:
 # Load pnpm in the sandbox.
 pnpm_hydrate() {
+	(( ${_PNPM_PKG_SETUP_CALLED} == 0 )) && die "QA:  Call pnpm_pkg_setup() first"
 # Cannot use pnpm for offline install with distfiles yet, so always online.
 # This is why pnpm is avoided.
-	pnpm_check_network_sandbox
 	if [[ "${NPM_OFFLINE:-1}" == "0" ]] ; then
 		COREPACK_ENABLE_NETWORK="1" # It still requires online.
 	else
@@ -194,6 +200,7 @@ eerror
 		fi
 	fi
 	pnpm_check_network_sandbox
+	_PNPM_PKG_SETUP_CALLED=1
 }
 
 # @FUNCTION: pnpm_src_unpack

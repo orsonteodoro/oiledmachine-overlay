@@ -41,6 +41,12 @@ esac
 if [[ -z "${_YARN_ECLASS}" ]]; then
 _YARN_ECLASS=1
 
+# @ECLASS_VARIABLE: _YARN_PKG_SETUP_CALLED
+# @INTERNAL
+# @DESCRIPTION:
+# Checks if state variables are initalized and network sandbox disabled.
+_YARN_PKG_SETUP_CALLED=0
+
 EXPORT_FUNCTIONS pkg_setup src_unpack src_compile src_test src_install
 
 BDEPEND+="
@@ -277,6 +283,7 @@ eerror
 	fi
 
 	yarn_check_network_sandbox
+	_YARN_PKG_SETUP_CALLED=1
 }
 
 # @FUNCTION: _yarn_src_unpack_default_ebuild
@@ -538,7 +545,7 @@ einfo "Running:\t\tnpm ${cmd[@]}"
 		fi
 		rm -rf "${HOME}/.npm/_logs"
 	done
-	[[ -f package-lock.json ]] || die "Missing package-lock.json for audit fix"
+	[[ -f "package-lock.json" ]] || die "Missing package-lock.json for audit fix"
 	_npm_check_errors
 }
 
@@ -602,9 +609,9 @@ einfo "Updating lockfile"
 		fi
 
 	einfo "Deleting $(pwd)/package-lock.json to generate a new one."
-		rm -f package-lock.json
+		rm -f "package-lock.json"
 	einfo "Deleting $(pwd)/yarn.lock to generate a new one."
-		rm -f yarn.lock
+		rm -f "yarn.lock"
 
 		if declare -f \
 			yarn_update_lock_install_pre > /dev/null 2>&1 ; then
@@ -729,6 +736,7 @@ yarn_network_settings() {
 # @DESCRIPTION:
 # Load the package manager in the sandbox.
 yarn_hydrate() {
+	(( ${_YARN_PKG_SETUP_CALLED} == 0 )) && die "QA:  Call yarn_pkg_setup() first"
 	if [[ "${YARN_OFFLINE:-1}" == "0" ]] ; then
 		COREPACK_ENABLE_NETWORK="1" # It still requires online.
 	else

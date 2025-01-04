@@ -120,6 +120,12 @@ unset -f _npm_set_globals
 # @DESCRIPTION:
 # The number of reconnect tries.
 
+# @ECLASS_VARIABLE: _NPM_PKG_SETUP_CALLED
+# @INTERNAL
+# @DESCRIPTION:
+# Checks if state variables are initalized and network sandbox disabled.
+_NPM_PKG_SETUP_CALLED=0
+
 # @FUNCTION: npm_check_network_sandbox
 # @DESCRIPTION:
 # Check the network sandbox.
@@ -209,6 +215,7 @@ eerror
 		fi
 	fi
 	npm_check_network_sandbox
+	_NPM_PKG_SETUP_CALLED=1
 }
 
 # @FUNCTION: npm_gen_new_name
@@ -475,6 +482,7 @@ npm_network_settings() {
 # @DESCRIPTION:
 # Load the package manager in the sandbox.
 npm_hydrate() {
+	(( ${_NPM_PKG_SETUP_CALLED} == 0 )) && die "QA:  Call npm_pkg_setup() first"
 	local offline="${NPM_OFFLINE:-1}"
 	if [[ "${offline}" == "0" ]] ; then
 		COREPACK_ENABLE_NETWORK="1" # It still requires online.
