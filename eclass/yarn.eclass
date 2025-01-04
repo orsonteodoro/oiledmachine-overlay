@@ -307,7 +307,6 @@ _yarn_src_unpack_default_ebuild() {
 	fi
 
 	if [[ "${YARN_OFFLINE:-1}" == "1" ]] ; then
-		rm -f "package-lock.json" || true
 		if [[ -n "${YARN_ROOT}" ]] ; then
 			rm -rf "${YARN_ROOT}/.yarnrc" || die
 		fi
@@ -602,7 +601,9 @@ einfo "Updating lockfile"
 			yarn_unpack_post
 		fi
 
+	einfo "Deleting $(pwd)/package-lock.json to generate a new one."
 		rm -f package-lock.json
+	einfo "Deleting $(pwd)/yarn.lock to generate a new one."
 		rm -f yarn.lock
 
 		if declare -f \

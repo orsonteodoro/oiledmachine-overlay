@@ -275,7 +275,6 @@ _npm_src_unpack_default_ebuild() {
 		addwrite "${NPM_CACHE_FOLDER}"
 		mkdir -p "${NPM_CACHE_FOLDER}"
 
-		rm -f "package-lock.json" || true
 		if [[ -e "${FILESDIR}/${PV}" && -n "${NPM_ROOT}" ]] ; then
 			cp -aT "${FILESDIR}/${PV}" "${NPM_ROOT}" || die
 		elif [[ -e "${FILESDIR}/${PV}" ]] ; then
@@ -525,7 +524,8 @@ npm_src_unpack() {
 		if declare -f npm_unpack_post >/dev/null 2>&1 ; then
 			npm_unpack_post
 		fi
-		rm -f package-lock.json
+	einfo "Deleting $(pwd)/package-lock.json to generate a new one."
+		rm -f "package-lock.json"
 
 		if declare -f npm_update_lock_install_pre > /dev/null 2>&1 ; then
 			npm_update_lock_install_pre
