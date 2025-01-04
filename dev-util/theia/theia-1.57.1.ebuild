@@ -143,8 +143,6 @@ SLOT="0/monthly"
 if [[ "${SLOT}" =~ "community" ]] ; then
 	SUFFIX="-community"
 fi
-# UPDATER_START_YARN_EXTERNAL_URIS
-# UPDATER_END_YARN_EXTERNAL_URIS
 SRC_URI="
 $(electron-app_gen_electron_uris)
 ${YARN_EXTERNAL_URIS}
