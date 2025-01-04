@@ -78,7 +78,13 @@ pnpm_check_network_sandbox() {
 	if has network-sandbox $FEATURES ; then
 eerror
 eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
-eerror "env to be able to download micropackages."
+eerror "env to be able to download and cache offline micropackages."
+eerror
+eerror "Contents of /etc/portage/env/no-network-sandbox.conf"
+eerror "FEATURES=\"\${FEATURES} -network-sandbox\""
+eerror
+eerror "Contents of /etc/portage/package.env"
+eerror "${CATEGORY}/${PN} no-network-sandbox.conf"
 eerror
 		die
 	fi
