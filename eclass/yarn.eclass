@@ -270,9 +270,7 @@ eerror
 		fi
 	fi
 
-	if [[ "${YARN_SLOT}" != "1" ]] ; then
-		yarn_check_network_sandbox
-	fi
+	yarn_check_network_sandbox
 }
 
 # @FUNCTION: _yarn_cp_tarballs_v1

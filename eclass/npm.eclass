@@ -202,7 +202,7 @@ eerror
 			die
 		fi
 	fi
-	: #npm_check_network_sandbox
+	npm_check_network_sandbox
 }
 
 # @FUNCTION: _npm_cp_tarballs

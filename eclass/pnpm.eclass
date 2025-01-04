@@ -187,7 +187,7 @@ eerror
 			die
 		fi
 	fi
-	: #pnpm_check_network_sandbox
+	pnpm_check_network_sandbox
 }
 
 # @FUNCTION: pnpm_src_unpack
