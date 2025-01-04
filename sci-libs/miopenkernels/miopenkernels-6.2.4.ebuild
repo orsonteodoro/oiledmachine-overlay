@@ -8,7 +8,6 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx906
 	gfx908
 	gfx90a
-	gfx942
 	gfx1030
 )
 MAINTAINER_MODE=0
