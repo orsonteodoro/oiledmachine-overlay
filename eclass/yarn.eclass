@@ -314,11 +314,6 @@ _yarn_src_unpack_default_ebuild() {
 	fi
 
 	if [[ "${YARN_OFFLINE:-1}" == "1" ]] ; then
-		if [[ -n "${YARN_ROOT}" ]] ; then
-			rm -rf "${YARN_ROOT}/.yarnrc" || die
-		fi
-		rm -rf "${S}/.yarnrc" || die
-
 		local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 
 		if [[ "${YARN_SLOT}" == "1" ]] ; then
@@ -403,11 +398,6 @@ _yarn_src_unpack_default_upstream() {
 	fi
 
 	if [[ "${YARN_OFFLINE:-1}" == "1" ]] ; then
-		if [[ -n "${YARN_ROOT}" ]] ; then
-			rm -rf "${YARN_ROOT}/.yarnrc" || die
-		fi
-		rm -rf "${S}/.yarnrc" || die
-
 		local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 
 		if [[ "${YARN_SLOT}" == "1" ]] ; then
