@@ -82,7 +82,7 @@ npm_unpack_post() {
 	pushd "${S}" >/dev/null 2>&1 || die
 		eapply "${FILESDIR}/signal-desktop-7.36.1-node-abi-overrides.patch"
 	popd >/dev/null 2>&1 || die
-	enpm install "node-abi@3.71.0" ${NPM_INSTALL_ARGS[@]}
+	enpm install "node-abi@3.71.0" --prefer-offline
 	:
 }
 
@@ -112,7 +112,7 @@ src_unpack() {
 		pushd "${S}" >/dev/null 2>&1 || die
 			eapply "${FILESDIR}/signal-desktop-7.36.1-node-abi-overrides.patch"
 		popd >/dev/null 2>&1 || die
-		enpm install "node-abi@3.71.0" ${NPM_INSTALL_ARGS[@]}
+		enpm install "node-abi@3.71.0" --prefer-offline
 
 		grep -e "TypeError:" "${T}/build.log" && die "Detected error.  Retry."
 		_npm_check_errors
