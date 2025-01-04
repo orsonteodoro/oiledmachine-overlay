@@ -115,7 +115,7 @@ $(cat transformed-uris.txt)
 "
 EOF
 		block=$(cat extern-uris.txt)
-		sed -i "/UPDATER_START_NPM_EXTERNAL_URIS/r extern-uris.txt" "${PN}-${pv}.ebuild"
+		#sed -i "/UPDATER_START_NPM_EXTERNAL_URIS/r extern-uris.txt" "${PN}-${pv}.ebuild"
 
 		ebuild "${PN}-${pv}.ebuild" digest
 	done
