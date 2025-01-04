@@ -218,33 +218,6 @@ eerror
 	_NPM_PKG_SETUP_CALLED=1
 }
 
-# @FUNCTION: npm_gen_new_name
-# @DESCRIPTION:
-# Generate new name with @ in URIs to prevent wrong hash.
-npm_gen_new_name() {
-	local uri="${1}"
-	if [[ "${uri}" =~ ("git+https"|"git+ssh") && "${uri}" =~ "github" ]] ; then
-		local commit_id=$(echo "${uri}" \
-			| cut -f 2 -d "#")
-		local owner=$(echo "${uri}" \
-			| cut -f 4 -d "/")
-		local project_name=$(echo "${uri}" \
-			| cut -f 5 -d "/" \
-			| cut -f 1 -d "#" \
-			| sed -e "s|.git$||")
-		echo "${project_name}.git-${commit_id}"
-	elif [[ "${uri}" =~ "@" ]] ; then
-		local ns=$(echo "${uri}" \
-			| grep -E -o -e "@[a-zA-Z0-9._-]+")
-		local bn=$(basename "${uri}")
-		echo "${ns}-${bn}"
-	else
-		local bn=$(basename "${uri}")
-		echo "${bn}"
-	fi
-
-}
-
 # @FUNCTION: _npm_src_unpack_default_upstream
 # @DESCRIPTION:
 # Use the ebuild lockfiles
