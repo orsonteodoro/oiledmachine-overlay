@@ -598,14 +598,6 @@ eerror
 		die
 	fi
 
-	if false && has network-sandbox $FEATURES ; then
-eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
-eerror "env to be able to download micropackages."
-eerror
-		die
-	fi
-
 	# Do not make conditional.
 	npm_pkg_setup
 	yarn_pkg_setup

@@ -60,19 +60,7 @@ PDEPEND+="
 	)
 "
 
-check_network_sandbox() {
-	if has network-sandbox $FEATURES ; then
-eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package env"
-eerror "to be able to download micropackages and obtain version releases"
-eerror "information."
-eerror
-		die
-	fi
-}
-
 pkg_setup() {
-	check_network_sandbox
 	npm_pkg_setup
 }
 

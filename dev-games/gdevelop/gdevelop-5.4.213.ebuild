@@ -219,16 +219,6 @@ BDEPEND+="
 "
 RESTRICT="mirror"
 
-check_network_sandbox() {
-	if has network-sandbox $FEATURES ; then
-eerror
-eerror "FEATURES=\"-network-sandbox\" must be added per-package env to be able"
-eerror "to download micropackages."
-eerror
-		die
-	fi
-}
-
 pkg_pretend() {
 	check-reqs_pkg_setup
 }
@@ -279,9 +269,6 @@ pkg_setup() {
 	check-reqs_pkg_setup
 	npm_pkg_setup
 	python_setup
-
-	# It still breaks when NPM_OFFLINE=1.
-	check_network_sandbox
 
 	llvm_pkg_setup
 

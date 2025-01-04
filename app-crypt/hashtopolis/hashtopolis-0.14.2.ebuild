@@ -180,17 +180,6 @@ PDEPEND="
 PATCHES=(
 )
 
-check_network_sandbox() {
-	# For composer/npm
-	if has network-sandbox $FEATURES ; then
-eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
-eerror "env to be able to download micropackages."
-eerror
-		die
-	fi
-}
-
 check_php_support_in_apache() {
 	if has_version "www-servers/apache" ; then
 		if ! grep -q -e "APACHE2_OPTS.*-D PHP" /etc/conf.d/apache2 ; then
@@ -200,7 +189,6 @@ ewarn "Apache is not configured for PHP.  Add \"-D PHP\" to APACHE2_OPTS in /etc
 }
 
 pkg_setup() {
-	check_network_sandbox
 	check_php_support_in_apache
 	webapp_pkg_setup
 	if use angular ; then

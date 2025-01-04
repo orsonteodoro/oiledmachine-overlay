@@ -133,13 +133,6 @@ ewarn
 ewarn "You need a CPU with SSE 4.2 to use system-vips USE flag disabled."
 ewarn
 	fi
-	if has network-sandbox $FEATURES ; then
-eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
-eerror "env to be able to download micropackages."
-eerror
-		die
-	fi
 	npm_pkg_setup
 }
 

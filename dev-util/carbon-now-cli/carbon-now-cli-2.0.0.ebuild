@@ -208,16 +208,6 @@ BDEPEND="
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
 "
 
-check_network_sandbox() {
-	if has network-sandbox $FEATURES ; then
-eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package env"
-eerror "to be able to download a web browser."
-eerror
-		die
-	fi
-}
-
 enpx() {
 einfo "Running:  npx ${@}"
 	npx "${@}" || die
@@ -349,7 +339,6 @@ eerror
 }
 
 pkg_setup() {
-	check_network_sandbox
 	npm_pkg_setup
 }
 

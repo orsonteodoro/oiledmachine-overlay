@@ -141,19 +141,6 @@ PATCHES=(
 	"${FILESDIR}/tensorboard-2.12.0-vz_projector-BUILD-add-types-three.patch"
 )
 
-check_network_sandbox() {
-	# It takes too much time to package and third party bazel ruins offline install.
-	# Required for yarn config set yarn-offline-mirror
-	if has network-sandbox $FEATURES ; then
-eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package env"
-eerror "to be able to download micropackages and obtain version releases"
-eerror "information."
-eerror
-		die
-	fi
-}
-
 # Fix linking problems.  gcc+lld cannot be combined.
 use_clang() {
 einfo "FORCE_LLVM_SLOT may be specified."
@@ -213,7 +200,7 @@ eerror
 }
 
 pkg_setup() {
-	check_network_sandbox
+	yarn_pkg_setup
 	use_clang
 # Avoid /usr/include/bits/stdlib.h:86:3: error: "Assumed value of MB_LEN_MAX wrong" \
 	check_libstdcxx ${GCC_SLOT}
@@ -260,7 +247,6 @@ eerror
 	local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	addwrite "${distdir}"
 	if [[ "${YARN_SLOT}" == "1" ]] ; then
-		yarn config set yarn-offline-mirror "${distdir}/${PN}/${PV}/npm-packages-offline-cache" || die
 		cp "${HOME}/.yarnrc" "${WORKDIR}" || die
 	fi
 }

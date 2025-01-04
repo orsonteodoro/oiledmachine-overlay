@@ -623,21 +623,9 @@ BDEPEND+="
 "
 DOCS=( "README.md" )
 
-check_sandbox() {
-	if has network-sandbox ${FEATURES} ; then
-eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
-eerror "env to be able to download fonts and to compile."
-eerror
-		die
-	fi
-}
-
 pkg_setup() {
-	ewarn "${PN} is still broken for ollama support."
 	npm_pkg_setup
 	export NEXT_TELEMETRY_DISABLED=1
-	check_sandbox
 }
 
 _lockfile_gen_unpack() {

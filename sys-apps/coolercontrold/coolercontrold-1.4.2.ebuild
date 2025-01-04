@@ -6,8 +6,6 @@ EAPI=8
 
 # U 22.04
 
-# network-sandbox must be disabled for npm update.
-
 # NPM_AUDIT_FIX=0
 
 # To update npm side use:

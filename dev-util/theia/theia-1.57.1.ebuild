@@ -503,21 +503,9 @@ BDEPEND+="
 PATCHES=(
 )
 
-check_network_sandbox() {
-	if has network-sandbox $FEATURES ; then
-eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package env"
-eerror "to be able to download micropackages and obtain version releases"
-eerror "information."
-eerror
-		die
-	fi
-}
-
 pkg_setup() {
 	einfo "This is the monthly release."
 	python_setup
-	check_network_sandbox
 	yarn_pkg_setup
 }
 
