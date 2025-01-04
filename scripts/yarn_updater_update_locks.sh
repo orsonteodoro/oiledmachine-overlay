@@ -3,7 +3,6 @@
 __YARN_UPDATER_PKG_FOLDER_PATH=$(pwd)
 export YARN_UPDATER_PKG_FOLDER="${YARN_UPDATER_PKG_FOLDER:-${__YARN_UPDATER_PKG_FOLDER_PATH}}"
 YARN_UPDATER_SCRIPTS_PATH=$(realpath $(dirname "${BASH_SOURCE[0]}"))
-YARN_UPDATER_MODE="${YARN_UPDATER_MODE:-full}"
 
 len=$(echo "${__YARN_UPDATER_PKG_FOLDER_PATH}" | tr "/" "\n" | wc -l)
 CATEGORY=$(echo "${__YARN_UPDATER_PKG_FOLDER_PATH}" | cut -f $((${len} - 1)) -d "/")
@@ -37,33 +36,28 @@ echo "YARN_UPDATE_LOCK=${YARN_UPDATE_LOCK}"
 	local pv
 	for pv in ${versions[@]} ; do
 		echo "Updating ${pv}"
-		if [[ "${YARN_UPDATER_MODE}" == "uri-list-only" ]] ; then
-			ebuild "${PN}-${pv}.ebuild" digest
+		ebuild "${PN}-${pv}.ebuild" digest clean unpack
 
-		elif [[ "${YARN_UPDATER_MODE}" == "full" ]] ; then
-			ebuild "${PN}-${pv}.ebuild" digest clean unpack
-
-			local log_path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/temp/build.log")
-			if grep -F "source file(s) corrupted" "${log_path}" ; then
+		local log_path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/temp/build.log")
+		if grep -F "source file(s) corrupted" "${log_path}" ; then
 echo "Fail lockfile for =${CATEGORY}/${PN}-${pv}"
-				exit 1
-			fi
+			exit 1
+		fi
 
-			local dest="${YARN_UPDATER_PKG_FOLDER}/files/${pv%-*}"
-			mkdir -p "${dest}"
-			if [[ -d "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/lockfile-image" ]] ; then
-				cp -aT "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/lockfile-image" "${dest}"
-			elif [[ -n "${YARN_UPDATER_PROJECT_ROOT}" ]] ; then
-				local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/${YARN_UPDATER_PROJECT_ROOT}/package.json")
-				cp -a "${path}" "${dest}"
-				local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/${YARN_UPDATER_PROJECT_ROOT}/yarn.lock")
-				cp -a "${path}" "${dest}"
-			else
-				local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/"*"/package.json")
-				cp -a "${path}" "${dest}"
-				local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/"*"/yarn.lock")
-				cp -a "${path}" "${dest}"
-			fi
+		local dest="${YARN_UPDATER_PKG_FOLDER}/files/${pv%-*}"
+		mkdir -p "${dest}"
+		if [[ -d "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/lockfile-image" ]] ; then
+			cp -aT "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/lockfile-image" "${dest}"
+		elif [[ -n "${YARN_UPDATER_PROJECT_ROOT}" ]] ; then
+			local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/${YARN_UPDATER_PROJECT_ROOT}/package.json")
+			cp -a "${path}" "${dest}"
+			local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/${YARN_UPDATER_PROJECT_ROOT}/yarn.lock")
+			cp -a "${path}" "${dest}"
+		else
+			local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/"*"/package.json")
+			cp -a "${path}" "${dest}"
+			local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/"*"/yarn.lock")
+			cp -a "${path}" "${dest}"
 		fi
 
 		ebuild "${PN}-${pv}.ebuild" digest
