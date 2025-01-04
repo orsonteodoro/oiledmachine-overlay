@@ -26,8 +26,6 @@ COLRV1_DEPEND="
 	>=media-libs/freetype-2.11.0
 "
 RDEPEND="
-	!media-fonts/noto-color-emoji
-	!media-fonts/noto-emoji
 	>=media-libs/fontconfig-2.11.91
         >=x11-libs/cairo-1.16
 	media-libs/freetype[png]

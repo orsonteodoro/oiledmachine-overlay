@@ -14,8 +14,6 @@ LICENSE="OFL-1.1"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 RDEPEND="
-	!media-fonts/noto-color-emoji
-	!media-fonts/noto-emoji
 	>=media-libs/fontconfig-2.11.91
         >=x11-libs/cairo-1.16
 	media-libs/freetype[png]
