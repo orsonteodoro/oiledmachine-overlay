@@ -998,55 +998,6 @@ else
 	"
 fi
 
-# This is for single exe portable versions versus the traditional install
-# `doins -r.`   AppImage or snaps have advantages like putting electron apps
-# in a sandbox and bundled in a compressed archive like squashfs.
-# The uncompressed install is typically +1G so using a portable install
-# may reduce to just a few MB.
-# Ebuild developer must provide an electron-app_src_compile to tell
-# electron-builder package the app manually.  Do something like:
-# electron-builder -l AppImage --pd dist/linux-unpackaged/
-# electron-builder -l flatpak --pd dist/linux-unpackaged/
-# electron-builder -l snap --pd dist/linux-unpackaged/
-#
-_ELECTRON_APP_PACKAGING_METHODS+=( unpacked )
-if [[ "${ELECTRON_APP_APPIMAGE}" == "1" ]] ; then
-	IUSE+=" appimage"
-	_ELECTRON_APP_PACKAGING_METHODS+=( appimage )
-	RDEPEND+="
-		appimage? (
-			|| (
-				app-arch/appimaged
-				app-arch/go-appimage[appimaged]
-			)
-		)
-	"
-	# emerge will dump the .AppImage in that folder.
-	ELECTRON_APP_APPIMAGE_INSTALL_DIR=${ELECTRON_APP_APPIMAGE_INSTALL_DIR:-"/opt/AppImage"}
-fi
-if [[ "${ELECTRON_APP_SNAP}" == "1" ]] ; then
-	IUSE+=" snap"
-	_ELECTRON_APP_PACKAGING_METHODS+=( snap )
-	RDEPEND+="
-		snap? ( app-emulation/snapd )
-	"
-	# emerge will dump it in that folder then use snap functions
-	# to install desktop files and mount the image.
-	ELECTRON_APP_SNAP_INSTALL_DIR=${ELECTRON_APP_SNAP_INSTALL_DIR:-"/opt/snap"}
-	ELECTRON_APP_SNAP_NAME=${ELECTRON_APP_SNAP_NAME:-${PN}}
-	# ELECTRON_APP_SNAP_REVISION is also defineable
-fi
-if [[ "${ELECTRON_APP_FLATPAK}" == "1" ]] ; then
-	IUSE+=" flatpak"
-	RDEPEND+="
-		flatpak? ( sys-apps/flatpak )
-	"
-	_ELECTRON_APP_PACKAGING_METHODS+=( flatpak )
-	ELECTRON_APP_FLATPAK_INSTALL_DIR=${ELECTRON_APP_SNAP_INSTALL_DIR:-"/opt/flatpak"}
-fi
-IUSE+=" ${_ELECTRON_APP_PACKAGING_METHODS[@]/unpacked/+unpacked}"
-REQUIRED_USE+=" || ( ${_ELECTRON_APP_PACKAGING_METHODS[@]} )"
-
 # The sandbox support via appimage/snap is on hold.
 # To restore appimage/snap parts, see
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/290569a4d3c98d225cd6576beea3bf5b6bb41b20/eclass/electron-app.eclass
