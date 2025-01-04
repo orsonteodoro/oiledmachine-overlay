@@ -67,6 +67,10 @@ NPM_OFFLINE=1 # Completely offline (2) is broken.
 # tarball data for ... seems to be corrupted. Trying again.
 NPM_AUDIT_FIX=0 # Audit fix is broken
 NPM_AUDIT_FIX_ARGS=(
+	"--prefer-offline"
+)
+NPM_INSTALL_ARGS=(
+	"--prefer-offline"
 )
 PYTHON_COMPAT=( python3_{10,11} ) # CI uses 3.8, 3.9
 
@@ -377,8 +381,7 @@ einfo "Running \`npm install ${NPM_INSTALL_ARGS[@]}\` per each lockfile"
 	for lockfile in ${lockfiles[@]} ; do
 		local d="$(dirname ${lockfile})"
 		pushd "${S}/${d}" >/dev/null 2>&1 || die
-			enpm install \
-				${NPM_INSTALL_ARGS[@]}
+			enpm install ${NPM_INSTALL_ARGS[@]}
 		popd >/dev/null 2>&1 || die
 	done
 einfo "Running \`npm audit fix ${NPM_AUDIT_FIX_ARGS[@]}\` per each lockfile"
@@ -386,8 +389,7 @@ einfo "Running \`npm audit fix ${NPM_AUDIT_FIX_ARGS[@]}\` per each lockfile"
 	for lockfile in ${lockfiles[@]} ; do
 		local d="$(dirname ${lockfile})"
 		pushd "${S}/${d}" >/dev/null 2>&1 || die
-			enpm audit fix \
-				${NPM_AUDIT_FIX_ARGS[@]}
+			enpm audit fix ${NPM_AUDIT_FIX_ARGS[@]}
 			if [[ "${NPM_DEDUPE}" == "1" ]] ; then
 				enpm dedupe
 			fi

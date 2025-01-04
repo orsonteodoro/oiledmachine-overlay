@@ -8,11 +8,13 @@ EAPI=8
 # PATH="${OILEDMACHINE_OVERLAY_PATH}/scripts:${PATH}"
 # NPM_UPDATER_PROJECT_ROOT="web-ui-0.14.2" NPM_UPDATER_VERSIONS="0.14.2" npm_updater_update_locks.sh
 
-PYTHON_COMPAT=( python3_10 python3_11 )
+PYTHON_COMPAT=( "python3_"{10..11} )
 HASTOPOLIS_WEBUI_PV="${PV}"
 MY_ETCDIR="/etc/webapps/${PF}"
 NODE_VERSION=18
 NPM_AUDIT_FIX=1
+NPM_AUDIT_FIX_ARGS=( "--prefer-offline" )
+NPM_INSTALL_ARGS=( "--prefer-offline" )
 WEBAPP_MANUAL_SLOT="yes"
 
 inherit lcnr npm webapp
@@ -247,8 +249,7 @@ einfo "Running \`npm install ${NPM_INSTALL_ARGS[@]}\` per package-lock.json"
 				local d="$(dirname ${lockfile})"
 				pushd "${S_WEBUI}/${d}" || die
 					if [[ "${NPM_AUDIT_FIX}" == "1" ]] ; then
-						enpm install \
-							${NPM_INSTALL_ARGS[@]}
+						enpm install ${NPM_INSTALL_ARGS[@]}
 					fi
 				popd
 			done
@@ -258,8 +259,7 @@ einfo "Running \`npm audit fix ${NPM_AUDIT_FIX_ARGS[@]}\` per package-lock.json"
 				for lockfile in ${lockfiles[@]} ; do
 					local d="$(dirname ${lockfile})"
 					pushd "${S_WEBUI}/${d}" || die
-						enpm audit fix \
-							${NPM_AUDIT_FIX_ARGS[@]}
+						enpm audit fix ${NPM_AUDIT_FIX_ARGS[@]}
 					popd
 				done
 			fi

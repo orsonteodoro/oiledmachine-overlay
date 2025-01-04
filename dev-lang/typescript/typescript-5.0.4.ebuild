@@ -62,7 +62,7 @@ S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="mirror"
 
 npm_update_lock_install_pre() {
-	enpm install "@types/node@${NPM_SECAUDIT_AT_TYPES_NODE_PV}"
+	enpm install "@types/node@${NPM_SECAUDIT_AT_TYPES_NODE_PV}" --prefer-offline
 }
 
 src_install() {

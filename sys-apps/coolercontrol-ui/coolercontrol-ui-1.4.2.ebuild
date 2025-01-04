@@ -8,6 +8,10 @@ EAPI=8
 
 # NPM_AUDIT_FIX=0
 
+NPM_INSTALL_ARGS=(
+	"--prefer-offline"
+)
+
 # To update npm side use:
 # PATH="/usr/local/oiledmachine-overlay/scripts:${PATH}"
 # NPM_UPDATER_PROJECT_ROOT="coolercontrol-1.4.2/coolercontrol-ui" NPM_UPDATER_VERSIONS="1.4.2" npm_updater_update_locks.sh
@@ -855,8 +859,7 @@ src_compile() {
 	pushd "${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui" || die
 einfo "PWD: $(pwd)"
 		S="${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui" \
-		enpm install \
-			${NPM_INSTALL_ARGS[@]}
+		enpm install ${NPM_INSTALL_ARGS[@]}
 	# Audit fix already done with NPM_UPDATE_LOCK=1
 		S="${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui" \
 		enpm run build

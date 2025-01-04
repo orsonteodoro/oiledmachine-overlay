@@ -538,16 +538,14 @@ npm_src_unpack() {
 		if declare -f npm_update_lock_install_pre > /dev/null 2>&1 ; then
 			npm_update_lock_install_pre
 		fi
-		enpm install \
-			${NPM_INSTALL_ARGS[@]}
+		enpm install ${NPM_INSTALL_ARGS[@]}
 		if declare -f npm_update_lock_install_post > /dev/null 2>&1 ; then
 			npm_update_lock_install_post
 		fi
 		if declare -f npm_update_lock_audit_pre > /dev/null 2>&1 ; then
 			npm_update_lock_audit_pre
 		fi
-		enpm audit fix \
-			${NPM_AUDIT_FIX_ARGS[@]}
+		enpm audit fix ${NPM_AUDIT_FIX_ARGS[@]}
 		if declare -f npm_update_lock_audit_post > /dev/null 2>&1 ; then
 			npm_update_lock_audit_post
 		fi

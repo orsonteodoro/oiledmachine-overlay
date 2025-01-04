@@ -13,8 +13,10 @@ ELECTRON_APP_ELECTRON_PV="34.0.0-beta.7" # Cr 132.0.6834.15, node 20.18.1
 ELECTRON_APP_MODE="npm"
 NODE_ENV="development"
 NODE_VERSION=20 # This corresponds to the node major version in releases.json.
+NPM_AUDIT_FIX_ARGS=( "--prefer-offline" )
+NPM_INSTALL_ARGS=( "--prefer-offline" )
 if [[ "${NPM_UPDATE_LOCK}" != "1" ]] ; then
-	NPM_INSTALL_ARGS="--force"
+	NPM_INSTALL_ARGS+=( "--force" )
 fi
 # See https://releases.electronjs.org/releases.json
 
@@ -155,13 +157,11 @@ src_unpack() {
 		cd "${S}" || die
 
 		rm -vf package-lock.json
-		enpm install \
-			${NPM_INSTALL_ARGS[@]}
+		enpm install ${NPM_INSTALL_ARGS[@]}
 
-		enpm install "electron-builder@25.1.8"
+		enpm install "electron-builder@25.1.8" ${NPM_INSTALL_ARGS[@]}
 
-		enpm audit fix \
-			${NPM_AUDIT_FIX_ARGS[@]}
+		enpm audit fix ${NPM_AUDIT_FIX_ARGS[@]}
 
 		_npm_check_errors
 einfo "Updating lockfile done."

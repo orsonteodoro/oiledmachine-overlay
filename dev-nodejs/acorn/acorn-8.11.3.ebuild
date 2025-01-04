@@ -33,7 +33,7 @@ BDEPEND+="
 "
 
 pkg_postinst() {
-	npm install -g "acorn@${PV}"
+	npm install -g "acorn@${PV}" --prefer-offline
 }
 
 pkg_prerm() {

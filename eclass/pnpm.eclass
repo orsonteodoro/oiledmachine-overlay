@@ -225,8 +225,7 @@ pnpm_src_unpack() {
 	pnpm config set store-dir "${PNPM_CACHE_FOLDER}" || die
 
 	export PATH="${S}/node_modules/.bin:${PATH}"
-	epnpm install \
-		${PNPM_INSTALL_ARGS[@]}
+	epnpm install ${PNPM_INSTALL_ARGS[@]}
 }
 
 # @FUNCTION: pnpm_src_compile

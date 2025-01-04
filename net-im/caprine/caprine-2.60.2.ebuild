@@ -8,7 +8,6 @@ EAPI=8
 
 MY_PN="${PN^}"
 
-NPM_INSTALL_PATH="/opt/${PN}"
 #ELECTRON_APP_APPIMAGE="1"
 ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${MY_PN}-${PV}.AppImage"
 #ELECTRON_APP_SNAP="1"
@@ -18,11 +17,14 @@ ELECTRON_APP_ELECTRON_PV="34.0.0-beta.7" # Cr 132.0.6834.15 (dev).  Similar to n
 #ELECTRON_APP_ELECTRON_PV="29.4.2" # lockfile
 ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK="1"
 ELECTRON_APP_TYPESCRIPT_PV="5.4.4"
+NODE_ENV="development"
+NPM_AUDIT_FIX_ARGS=( "--prefer-offline" )
+NPM_INSTALL_ARGS=( "--prefer-offline" )
+NPM_INSTALL_PATH="/opt/${PN}"
 if [[ "${NPM_UPDATE_LOCK}" != "1" ]] ; then
-	NPM_INSTALL_ARGS="--force"
+	NPM_INSTALL_ARGS+=( "--force" )
 fi
 NODE_VERSION=20 # Upstream uses 20.11.1
-NODE_ENV="development"
 
 inherit desktop electron-app lcnr npm
 
@@ -80,21 +82,23 @@ src_unpack() {
 		cd "${S}" || die
 
 		rm -vf package-lock.json
-		enpm install \
-			${NPM_INSTALL_ARGS[@]}
-		enpm audit fix \
-			${NPM_AUDIT_FIX_ARGS[@]}
+		enpm install ${NPM_INSTALL_ARGS[@]}
+		enpm audit fix ${NPM_AUDIT_FIX_ARGS[@]}
 
 einfo "Applying mitigation"
 		patch_edits() {
-			sed -i -e "s|\"got\": \"^11.8.0\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die
-			sed -i -e "s|\"got\": \"^9.6.0\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die
+			sed -i -e "s|\"got\": \"^11.8.0\"|\"got\": \"^11.8.5\"|g" \
+				"package-lock.json" \
+				|| die
+			sed -i -e "s|\"got\": \"^9.6.0\"|\"got\": \"^11.8.5\"|g" \
+				"package-lock.json" \
+				|| die
 		}
 		patch_edits
 
 	# DT = Data Tampering
-		enpm install "got@^11.8.5" -P					# DT		# CVE-2022-33987
-		enpm install "electron@${ELECTRON_APP_ELECTRON_PV}" -D
+		enpm install "got@^11.8.5" -P --prefer-offline					# DT		# CVE-2022-33987
+		enpm install "electron@${ELECTRON_APP_ELECTRON_PV}" -D --prefer-offline
 
 		patch_edits
 

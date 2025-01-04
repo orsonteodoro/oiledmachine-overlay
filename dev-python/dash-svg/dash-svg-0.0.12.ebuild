@@ -94,29 +94,29 @@ npm_update_lock_audit_post() {
 	# ID = Information Disclosure
 
 	# webpack
-	enpm install "loader-utils@^1.4.2" -D	# CVE-2022-37601	# DoS, DT, ID
+	enpm install "loader-utils@^1.4.2" -D --prefer-offline	# CVE-2022-37601	# DoS, DT, ID
 
 	# watchpack
-	enpm install "braces@^3.0.3" -D		# CVE-2024-4068		# DoS
+	enpm install "braces@^3.0.3" -D --prefer-offline	# CVE-2024-4068		# DoS
 
 	# npm
-	enpm install "ansi-regex@^4.1.1" -D	# CVE-2021-3807		# DoS
-	enpm install "tough-cookie@^4.1.3" -D	# CVE-2023-26136	# DT, ID
-	enpm install "got@^11.8.5" -D		# CVE-2022-33987	# DT
-	enpm install "ip@^1.1.9" -D		# CVE-2023-42282	# DoS, DT, ID # For npm
-	# request EOL				# CVE-2023-28155	# DT, ID
+	enpm install "ansi-regex@^4.1.1" -D --prefer-offline	# CVE-2021-3807		# DoS
+	enpm install "tough-cookie@^4.1.3" -D --prefer-offline	# CVE-2023-26136	# DT, ID
+	enpm install "got@^11.8.5" -D --prefer-offline		# CVE-2022-33987	# DT
+	enpm install "ip@^1.1.9" -D --prefer-offline		# CVE-2023-42282	# DoS, DT, ID # For npm
+	# request EOL						# CVE-2023-28155	# DT, ID
 
 	# css loader
-	enpm install "postcss@^8.4.31" -D	# CVE-2023-44270	# DT
+	enpm install "postcss@^8.4.31" -D --prefer-offline	# CVE-2023-44270	# DT
 
 	# cheerio, parent webpack
-	# lodash.pick				# CVE-2020-8203		# DT, ID
+	# lodash.pick						# CVE-2020-8203		# DT, ID
 
 	# Bump parent packages to remove vulnerable dependencies while node 14.x compatible
-	enpm install "npm@8.12.2" -D
-	enpm install "webpack@^4.47.0" -D
-	enpm install "webpack-cli@^4.10.0" -D
-	enpm install "webpack-serve@^4.0.0" -D
+	enpm install "npm@8.12.2" -D --prefer-offline
+	enpm install "webpack@^4.47.0" -D --prefer-offline
+	enpm install "webpack-cli@^4.10.0" -D --prefer-offline
+	enpm install "webpack-serve@^4.0.0" -D --prefer-offline
 
 
 	# Reapply

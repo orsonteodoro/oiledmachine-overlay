@@ -98,6 +98,6 @@ einfo "Applying mitigation"
 	# DoS = Denial of Service
 	# DT = Data Tampering
 	# ID = Information Disclosure
-	enpm install "rollup@^4.22.4" -D # DoS, DT, ID		# CVE-2024-47068, GHSA-gcx4-mw62-g8wm
+	enpm install "rollup@^4.22.4" -D --prefer-offline # DoS, DT, ID		# CVE-2024-47068, GHSA-gcx4-mw62-g8wm
 	patch_edits
 }

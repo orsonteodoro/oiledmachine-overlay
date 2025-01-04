@@ -6,8 +6,8 @@ EAPI=8
 
 PNPM_SLOT=9
 NODE_VERSION=20
-NPM_AUDIT_FIX_ARGS="--legacy-peer-deps"
-NPM_INSTALL_ARGS="--legacy-peer-deps"
+NPM_AUDIT_FIX_ARGS=( "--legacy-peer-deps" )
+NPM_INSTALL_ARGS=( "--legacy-peer-deps" )
 TARBALL="${P}.tar.gz"
 NPM_TARBALL="${TARBALL}"
 VITE_PV="5.4.9"
@@ -747,7 +747,7 @@ ewarn "This ebuild is still in development"
 
 npm_unpack_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-		enpm install -D "vite@${VITE_PV}" ${NPM_INSTALL_ARGS}
+		enpm install -D "vite@${VITE_PV}" ${NPM_INSTALL_ARGS[@]}
 	fi
 }
 
@@ -911,7 +911,7 @@ eerror "Unsupported ARCH=${ARCH} ABI=${ABI}"
 src_compile() {
 	npm_hydrate
 	enpm --version
-#	enpm install -D "vite@${VITE_PV}" ${NPM_INSTALL_ARGS}
+#	enpm install -D "vite@${VITE_PV}" ${NPM_INSTALL_ARGS[@]}
 	enpm run build
 	local chost=$(get_rustc_target)
 	enpm run tauri build -- --target "${chost}"

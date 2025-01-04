@@ -272,7 +272,7 @@ einfo "Applying mitigation"
 	patch_edits
 
 	# ID = Information Disclosure
-	enpm install "phin@^3.7.1" -P		# ID		# GHSA-x565-32qp-m3vf
+	enpm install "phin@^3.7.1" -P --prefer-offline		# ID		# GHSA-x565-32qp-m3vf
 
 	patch_edits
 

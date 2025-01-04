@@ -141,7 +141,7 @@ npm_update_lock_install_post() {
 }
 
 npm_update_lock_audit_post() {
-	enpm install -D "electron@${ELECTRON_APP_ELECTRON_PV}"
+	enpm install -D "electron@${ELECTRON_APP_ELECTRON_PV}" --prefer-offline
 }
 
 src_compile() {
