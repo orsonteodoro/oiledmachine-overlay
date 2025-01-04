@@ -211,52 +211,6 @@ eerror
 	npm_check_network_sandbox
 }
 
-# @FUNCTION: _npm_cp_tarballs
-# @INTERNAL
-# @DESCRIPTION:
-# Copies all tarballs to the offline cache
-_npm_cp_tarballs() {
-	local dest="${WORKDIR}/npm-packages-offline-cache"
-	mkdir -p "${dest}" || die
-	IFS=$'\n'
-
-	local tarballs=()
-
-einfo "Copying/expanding tarballs to ${dest}"
-	local uri
-	for uri in ${NPM_EXTERNAL_URIS} ; do
-		local bn
-		if [[ "${uri}" =~ "->" && "${uri}" =~ ".git" ]] ; then
-			bn=$(echo "${uri}" \
-				| cut -f 3 -d " ")
-#einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/npmpkg-}"
-			local fn="${bn/npmpkg-}"
-			fn_raw="${fn}"
-			fn="${fn/.tgz}"
-			local path=$(mktemp -d -p "${T}")
-			pushd "${path}" >/dev/null 2>&1 || die
-# See https://docs.npmjs.com/cli/v10/configuring-npm/package-json#local-paths
-				tar --strip-components=1 -xvf "${DISTDIR}/${bn}" >/dev/null 2>&1 || die
-				mkdir -p "${dest}/${fn}" || die
-				mv * "${dest}/${fn}" || die
-			popd >/dev/null 2>&1 || die
-			rm -rf "${path}" || die
-		else
-			bn=$(echo "${uri}" \
-				| cut -f 3 -d " ")
-#einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/npmpkg-}"
-			cp -a "${DISTDIR}/${bn}" "${dest}/${bn/npmpkg-}" || die
-			tarballs+=( "${dest}/${bn/npmpkg-}" )
-		fi
-	done
-
-ewarn "Adding tarballs to cache.  Please wait..."
-einfo "running:  npm cache add ${tarballs[@]}"
-	npm cache add ${tarballs[@]}
-
-	IFS=$' \t\n'
-}
-
 # @FUNCTION: npm_gen_new_name
 # @DESCRIPTION:
 # Generate new name with @ in URIs to prevent wrong hash.
@@ -308,8 +262,6 @@ _npm_src_unpack_default_ebuild() {
 		npm_unpack_post
 	fi
 	if [[ "${offline}" == "1" || "${offline}" == "2" ]] ; then
-		#_npm_cp_tarballs
-
 		local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 
 		export NPM_ENABLE_OFFLINE_MODE=1

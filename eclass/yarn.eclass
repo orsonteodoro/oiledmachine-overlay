@@ -279,52 +279,6 @@ eerror
 	yarn_check_network_sandbox
 }
 
-# @FUNCTION: _yarn_cp_tarballs_v1
-# @INTERNAL
-# @DESCRIPTION:
-# Copies all tarballs to the offline cache
-_yarn_cp_tarballs_v1() {
-	local dest="${WORKDIR}/npm-packages-offline-cache"
-	mkdir -p "${dest}" || die
-	IFS=$'\n'
-einfo "Copying tarballs to ${dest} (v1)"
-	local uri
-	for uri in ${YARN_EXTERNAL_URIS} ; do
-		local bn
-		if [[ "${uri}" =~ "->" && "${uri}" =~ ".git" ]] ; then
-			bn=$(echo "${uri}" \
-				| cut -f 3 -d " ")
-#einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/yarnpkg-}"
-			local fn="${bn/yarnpkg-}"
-			fn="${fn/.tgz}"
-			local path=$(mktemp -d -p "${T}")
-			pushd "${path}" >/dev/null 2>&1 || die
-				tar --strip-components=1 -xvf "${DISTDIR}/${bn}" || die
-				tar -cf "${dest}/${fn}" * || die
-			popd >/dev/null 2>&1 || die
-			rm -rf "${path}" || die
-		else
-			bn=$(echo "${uri}" \
-				| cut -f 3 -d " ")
-#einfo "Copying ${DISTDIR}/${bn} -> ${dest}/${bn/yarnpkg-}"
-			cp -a "${DISTDIR}/${bn}" "${dest}/${bn/yarnpkg-}" || die
-		fi
-	done
-	IFS=$' \t\n'
-}
-
-# @FUNCTION: _yarn_cp_tarballs
-# @INTERNAL
-# @DESCRIPTION:
-# Copies all tarballs to the offline cache
-_yarn_cp_tarballs() {
-	if [[ "${YARN_SLOT}" == "1" ]] ; then
-		_yarn_cp_tarballs_v1
-	else
-		:
-	fi
-}
-
 # @FUNCTION: _yarn_src_unpack_default_ebuild
 # @DESCRIPTION:
 # Use the ebuild lockfiles
@@ -353,7 +307,6 @@ _yarn_src_unpack_default_ebuild() {
 	fi
 
 	if [[ "${YARN_OFFLINE:-1}" == "1" ]] ; then
-		_yarn_cp_tarballs
 		rm -f "package-lock.json" || true
 		if [[ -n "${YARN_ROOT}" ]] ; then
 			rm -rf "${YARN_ROOT}/.yarnrc" || die
@@ -457,15 +410,35 @@ _yarn_src_unpack_default_upstream() {
 	fi
 
 	if [[ "${YARN_OFFLINE:-1}" == "1" ]] ; then
-		_yarn_cp_tarballs
 		if [[ -n "${YARN_ROOT}" ]] ; then
 			rm -rf "${YARN_ROOT}/.yarnrc" || die
 		fi
 		rm -rf "${S}/.yarnrc" || die
+
+		local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+
 		if [[ "${YARN_SLOT}" == "1" ]] ; then
-			yarn config set yarn-offline-mirror "${WORKDIR}/npm-packages-offline-cache" || die
-			mv "${HOME}/.yarnrc" "${WORKDIR}" || die
+			export YARN_CACHE_FOLDER="${EDISTDIR}/yarn-download-cache-${YARN_SLOT}/${CATEGORY}/${P}"
+	einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
+			mkdir -p "${HOME}/.yarn/berry" || die
+			addwrite "${EDISTDIR}"
+			addwrite "${YARN_CACHE_FOLDER}"
+			mkdir -p "${YARN_CACHE_FOLDER}"
+			yarn config set cacheFolder "${YARN_CACHE_FOLDER}" || die
+		else
+			export YARN_ENABLE_OFFLINE_MODE=1
+			export YARN_CACHE_FOLDER="${EDISTDIR}/yarn-download-cache-${YARN_SLOT}/${CATEGORY}/${P}"
+	einfo "DEBUG:  Default cache folder:  ${HOME}/.yarn/berry/cache/"
+	einfo "YARN_ENABLE_OFFLINE_MODE:  ${YARN_ENABLE_OFFLINE_MODE}"
+	einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
+			mkdir -p "${HOME}/.yarn/berry" || die
+			ln -s "${YARN_CACHE_FOLDER}" "${HOME}/.yarn/berry/cache"
+			addwrite "${EDISTDIR}"
+			addwrite "${YARN_CACHE_FOLDER}"
+			mkdir -p "${YARN_CACHE_FOLDER}"
+			yarn config set cacheFolder "${YARN_CACHE_FOLDER}" || die
 		fi
+
 	fi
 	local args=()
 	if declare -f yarn_unpack_install_pre > /dev/null 2>&1 ; then
