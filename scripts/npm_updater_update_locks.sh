@@ -37,30 +37,9 @@ echo "NPM_UPDATE_LOCK=${NPM_UPDATE_LOCK}"
 	local pv
 	for pv in ${versions[@]} ; do
 		echo "Updating ${pv}"
-		cat "${PN}-${pv}.ebuild" | sed -e '/UPDATER_START_NPM_EXTERNAL_URIS/,/UPDATER_END_NPM_EXTERNAL_URIS/{//!d}' > "${PN}-${pv}.ebuild.t"
-		mv "${PN}-${pv}.ebuild"{.t,}
-cat <<EOF > extern-uris.txt
-NPM_EXTERNAL_URIS="
-"
-EOF
-		local block
-		block=$(cat extern-uris.txt)
-		sed -i "/UPDATER_START_NPM_EXTERNAL_URIS/r extern-uris.txt" "${PN}-${pv}.ebuild"
 		if [[ "${NPM_UPDATER_MODE}" == "uri-list-only" ]] ; then
 			ebuild "${PN}-${pv}.ebuild" digest
 
-			local dest="${NPM_UPDATER_PKG_FOLDER}/files/${pv%-*}"
-			local nlocks=$(grep -r -l -e "resolved" "${dest}" | wc -l)
-			if (( ${nlocks} > 1 )) ; then
-echo "Multilock package detected"
-				grep -r -e "resolved" "${dest}" \
-					| cut -f 4 -d '"' \
-					> npm-uris.txt
-			else
-				grep "resolved" "${NPM_UPDATER_PKG_FOLDER}/files/${pv}/package-lock.json" \
-					| cut -f 4 -d '"' \
-					> npm-uris.txt
-			fi
 		elif [[ "${NPM_UPDATER_MODE}" == "full" ]] ; then
 			ebuild "${PN}-${pv}.ebuild" digest clean unpack
 
@@ -75,9 +54,6 @@ echo "Fail lockfile for =${CATEGORY}/${PN}-${pv} (1)"
 			if [[ -d "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/lockfile-image" ]] ; then
 echo "DEBUG:  Case 1"
 				cp -aT "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/lockfile-image" "${dest}"
-				grep -r -e "resolved" "${dest}" \
-					| cut -f 4 -d '"' \
-					> npm-uris.txt
 			elif [[ -n "${NPM_UPDATER_PROJECT_ROOT}" ]] ; then
 echo "DEBUG:  Case 2"
 				local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/${NPM_UPDATER_PROJECT_ROOT}/package.json")
@@ -88,9 +64,6 @@ echo "Fail lockfile for =${CATEGORY}/${PN}-${pv} (2a)"
 					exit 1
 				fi
 				cp -a "${path}" "${dest}"
-				grep "resolved" "${path}" \
-					| cut -f 4 -d '"' \
-					> npm-uris.txt
 			else
 echo "DEBUG:  Case 3"
 				local path=$(ls "/var/tmp/portage/${CATEGORY}/${PN}-${pv}/work/"*"/package.json")
@@ -101,21 +74,8 @@ echo "Fail lockfile for =${CATEGORY}/${PN}-${pv} (2b)"
 					exit 1
 				fi
 				cp -a "${path}" "${dest}"
-				grep "resolved" "${path}" \
-					| cut -f 4 -d '"' \
-					> npm-uris.txt
 			fi
 		fi
-		"${NPM_UPDATER_SCRIPTS_PATH}/npm_updater_transform_uris.sh" > transformed-uris.txt
-		cat "${PN}-${pv}.ebuild" | sed -e '/UPDATER_START_NPM_EXTERNAL_URIS/,/UPDATER_END_NPM_EXTERNAL_URIS/{//!d}' > "${PN}-${pv}.ebuild.t"
-		mv "${PN}-${pv}.ebuild"{.t,}
-cat <<EOF > extern-uris.txt
-NPM_EXTERNAL_URIS="
-$(cat transformed-uris.txt)
-"
-EOF
-		block=$(cat extern-uris.txt)
-		#sed -i "/UPDATER_START_NPM_EXTERNAL_URIS/r extern-uris.txt" "${PN}-${pv}.ebuild"
 
 		ebuild "${PN}-${pv}.ebuild" digest
 	done
@@ -124,9 +84,6 @@ EOF
 npm_updater_cleanup() {
 echo "Called npm_updater_cleanup()"
 	cd "${NPM_UPDATER_PKG_FOLDER}"
-	rm extern-uris.txt
-	rm transformed-uris.txt
-	rm npm-uris.txt
 }
 
 trap 'npm_updater_cleanup' EXIT
