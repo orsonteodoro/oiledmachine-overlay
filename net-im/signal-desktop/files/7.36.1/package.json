@@ -109,6 +109,7 @@
     "@signalapp/libsignal-client": "0.62.0",
     "@signalapp/ringrtc": "2.48.7",
     "@types/fabric": "4.5.3",
+    "app-builder-lib": "^26.0.0-alpha.8",
     "backbone": "1.6.0",
     "blob-util": "2.0.2",
     "blueimp-load-image": "5.16.0",
@@ -147,7 +148,6 @@
     "memoizee": "0.4.17",
     "moment": "2.30.1",
     "mp4box": "0.5.3",
-    "node-abi": "^3.71.0",
     "node-fetch": "2.6.7",
     "nop": "1.0.0",
     "normalize-path": "3.0.0",
@@ -280,7 +280,7 @@
     "danger": "12.3.3",
     "debug": "4.3.7",
     "electron": "33.1.0",
-    "electron-builder": "24.13.3",
+    "electron-builder": "^26.0.0-alpha.8",
     "electron-mocha": "13.0.1",
     "endanger": "7.0.4",
     "enquirer": "2.4.1",
@@ -332,7 +332,27 @@
     "webpack-dev-server": "5.1.0"
   },
   "overrides": {
-    "node-abi": "3.71.0"
+    "@storybook/react": {
+      "@storybook/core": {
+        "node-fetch": "2.6.1"
+      }
+    },
+    "@types/react": "17.0.45",
+    "@types/react-dom": "17.0.17",
+    "eslint-config-airbnb-typescript-prettier": {
+      "eslint-plugin-prettier": "5.2.1"
+    },
+    "fabric": {
+      "canvas": "$nop",
+      "jsdom": "$nop"
+    },
+    "read-last-lines": {
+      "mz": {
+        "thenify-all": {
+          "thenify": "3.3.1"
+        }
+      }
+    }
   },
   "engines": {
     "node": "20.18.0"

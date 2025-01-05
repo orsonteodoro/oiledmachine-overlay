@@ -3,14 +3,23 @@
 
 EAPI=8
 
+# To update use:
+# NPM_UPDATER_PROJECT_ROOT="Signal-Desktop-7.36.1" npm_updater_update_locks.sh 7.36.1
+
 MY_PN="Signal-Desktop"
 NPM_INSTALL_ARGS=( "--prefer-offline" )
 NPM_AUDIT_FIX_ARGS=( "--prefer-offline" )
 
 # See https://releases.electronjs.org/releases.json
 # Use the newer Electron to increase mitigation with vendor static libs.
-ELECTRON_APP_ELECTRON_PV="34.0.0-beta.5" # Cr 132.0.6834.6, node 20.18.0
-#ELECTRON_APP_ELECTRON_PV="33.1.0" # Cr 130.0.6723.91, node 20.18.0
+_ELECTRON_DEP_ROUTE="secure" # reproducible or secure
+if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
+	# Ebuild maintainer's choice
+	ELECTRON_APP_ELECTRON_PV="34.0.0-beta.5" # Cr 132.0.6834.6, node 20.18.0
+else
+	# Upstream's choice
+	ELECTRON_APP_ELECTRON_PV="33.1.0" # Cr 130.0.6723.91, node 20.18.0
+fi
 ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK="1"
 NPM_SLOT=3
 NODE_VERSION=20 # Upstream uses 20.18.0
@@ -38,9 +47,17 @@ HOMEPAGE="
 # electron-33.1.0-chromium.html fingerprint is the same as electron-33.0.0-beta.9-chromium.html
 LICENSE="
 	${ELECTRON_APP_LICENSES}
-	electron-34.0.0-beta.7-chromium.html
 	AGPL-3
 "
+if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
+	LICENSE+="
+		electron-34.0.0-beta.7-chromium.html
+	"
+else
+	LICENSE+="
+		electron-33.0.0-beta.9-chromium.html
+	"
+fi
 SLOT="0"
 KEYWORDS="-* amd64"
 RESTRICT="splitdebug"
@@ -79,11 +96,8 @@ get_deps() {
 }
 
 npm_unpack_post() {
-	pushd "${S}" >/dev/null 2>&1 || die
-		eapply "${FILESDIR}/signal-desktop-7.36.1-node-abi-overrides.patch"
-	popd >/dev/null 2>&1 || die
-	enpm install "node-abi@3.71.0" --prefer-offline
 	:
+	#enpm install "node-abi@^3.71.0" --prefer-offline
 }
 
 src_unpack() {
@@ -105,14 +119,32 @@ src_unpack() {
 		addwrite "${NPM_CACHE_FOLDER}"
 		mkdir -p "${NPM_CACHE_FOLDER}"
 
+		enpm install "app-builder-lib@26.0.0-alpha.8" --prefer-offline
+		enpm install "electron-builder@26.0.0-alpha.8" --prefer-offline
+
 		enpm install ${NPM_INSTALL_ARGS[@]}
 		enpm audit fix ${NPM_AUDIT_FIX_ARGS[@]}
 
 #einfo "Applying mitigation"
-		pushd "${S}" >/dev/null 2>&1 || die
-			eapply "${FILESDIR}/signal-desktop-7.36.1-node-abi-overrides.patch"
-		popd >/dev/null 2>&1 || die
-		enpm install "node-abi@3.71.0" --prefer-offline
+
+einfo "Copying lockfiles"
+		mkdir -p "${WORKDIR}/lockfile-image"
+		local L=(
+			danger/package-lock.json
+			sticker-creator/package-lock.json
+			package-lock.json
+		)
+		local x
+		for x in ${L[@]} ; do
+			local d=$(dirname "${x}")
+			mkdir -p "${WORKDIR}/lockfile-image/${d}" || die
+			if [[ -e "${d}/package.json" ]] ; then
+				cp -av "${d}/package.json" "${WORKDIR}/lockfile-image/${d}" || die
+			fi
+			if [[ -e "${d}/package-lock.json" ]] ; then
+				cp -av "${d}/package-lock.json" "${WORKDIR}/lockfile-image/${d}" || die
+			fi
+		done
 
 		grep -e "TypeError:" "${T}/build.log" && die "Detected error.  Retry."
 		_npm_check_errors
@@ -129,11 +161,6 @@ einfo "Updating lockfile done."
 
 src_prepare() {
 	default
-	sed \
-		-e 's| --no-sandbox||g' \
-		-i "usr/share/applications/signal-desktop.desktop" \
-		|| die
-	unpack "usr/share/doc/signal-desktop/changelog.gz"
 }
 
 src_compile() {
@@ -159,6 +186,13 @@ src_install() {
 	pax-mark m "opt/Signal/signal-desktop" "opt/Signal/chrome-sandbox" "opt/Signal/chrome_crashpad_handler"
 
 	dosym -r "/opt/Signal/${MY_PN}" "/usr/bin/${MY_PN}"
+
+	sed \
+		-e 's| --no-sandbox||g' \
+		-i "${ED}/usr/share/applications/signal-desktop.desktop" \
+		|| die
+#	unpack "usr/share/doc/signal-desktop/changelog.gz"
+
 }
 
 pkg_postinst() {
