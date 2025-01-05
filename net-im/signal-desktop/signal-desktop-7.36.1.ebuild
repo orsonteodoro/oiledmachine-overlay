@@ -12,7 +12,7 @@ NPM_AUDIT_FIX_ARGS=( "--prefer-offline" )
 
 # See https://releases.electronjs.org/releases.json
 # Use the newer Electron to increase mitigation with vendor static libs.
-_ELECTRON_DEP_ROUTE="secure" # reproducible or secure
+_ELECTRON_DEP_ROUTE="reproducible" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
 	ELECTRON_APP_ELECTRON_PV="34.0.0-beta.5" # Cr 132.0.6834.6, node 20.18.0
@@ -119,11 +119,15 @@ src_unpack() {
 		addwrite "${NPM_CACHE_FOLDER}"
 		mkdir -p "${NPM_CACHE_FOLDER}"
 
-		enpm install "app-builder-lib@26.0.0-alpha.8" --prefer-offline
-		enpm install "electron-builder@26.0.0-alpha.8" --prefer-offline
+		sed -i -e "s|postinstall|disabled_postinstall|g" "package.json" || die
+
+		#enpm install "app-builder-lib@26.0.0-alpha.8" --prefer-offline
+		#enpm install "electron-builder@26.0.0-alpha.8" --prefer-offline
 
 		enpm install ${NPM_INSTALL_ARGS[@]}
 		enpm audit fix ${NPM_AUDIT_FIX_ARGS[@]}
+
+		sed -i -e "s|disabled_postinstall|postinstall|g" "package.json" || die
 
 #einfo "Applying mitigation"
 
