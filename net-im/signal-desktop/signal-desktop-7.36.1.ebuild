@@ -6,13 +6,22 @@ EAPI=8
 # To update use:
 # NPM_UPDATER_PROJECT_ROOT="Signal-Desktop-7.36.1" npm_updater_update_locks.sh 7.36.1
 
+# Ignore if error:
+# Could not detect abi for version ' + target + ' and runtime ' + runtime + '.  Updating "node-abi" might help solve this issue if it is a new release of ' + runtime)
+# https://github.com/signalapp/Signal-Desktop/blob/v7.36.1/CONTRIBUTING.md#known-issues
+
 MY_PN="Signal-Desktop"
+MY_PN2="Signal"
 NPM_INSTALL_ARGS=( "--prefer-offline" )
 NPM_AUDIT_FIX_ARGS=( "--prefer-offline" )
 
-# See https://releases.electronjs.org/releases.json
+# See
+# https://releases.electronjs.org/releases.json
+# https://github.com/electron/node-abi/blob/v3.71.0/abi_registry.json
+# prebuilt-install depends on node-abi
 # Use the newer Electron to increase mitigation with vendor static libs.
-_ELECTRON_DEP_ROUTE="reproducible" # reproducible or secure
+ELECTRON_BUILDER_PV="24.13.3"
+_ELECTRON_DEP_ROUTE="secure" # reproducible [works] or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
 	ELECTRON_APP_ELECTRON_PV="34.0.0-beta.5" # Cr 132.0.6834.6, node 20.18.0
@@ -28,7 +37,7 @@ if [[ "${NPM_UPDATE_LOCK}" != "1" ]] ; then
 	NPM_INSTALL_ARGS+=( "--force" )
 fi
 
-inherit electron-app npm pax-utils unpacker xdg
+inherit electron-app lcnr npm pax-utils unpacker xdg
 
 S="${WORKDIR}/${MY_PN}-${PV}"
 SRC_URI="
@@ -64,6 +73,7 @@ RESTRICT="splitdebug"
 IUSE+=" wayland X"
 # RRDEPEND already added from electron-app
 RDEPEND+="
+	!net-im/signal-desktop-bin
 	>=media-fonts/noto-emoji-20231130
 	media-libs/libpulse
 "
@@ -90,14 +100,13 @@ get_deps() {
 	cd "${S}" || die
 	[[ -d "${S}/node_modules/.bin" ]] || die
 	export PATH="${S}/node_modules/.bin:${PATH}"
-	#electron-builder \
-	#	install-app-deps \
-	#	|| die
+	enpm run build:acknowledgments
+	patch-package --error-on-fail --error-on-warn
+	enpm run electron:install-app-deps
 }
 
 npm_unpack_post() {
-	:
-	#enpm install "node-abi@^3.71.0" --prefer-offline
+	sed -i -e "s|postinstall|disabled_postinstall|g" "${S}/package.json" || die
 }
 
 src_unpack() {
@@ -121,22 +130,19 @@ src_unpack() {
 
 		sed -i -e "s|postinstall|disabled_postinstall|g" "package.json" || die
 
-		#enpm install "app-builder-lib@26.0.0-alpha.8" --prefer-offline
-		#enpm install "electron-builder@26.0.0-alpha.8" --prefer-offline
-
 		enpm install ${NPM_INSTALL_ARGS[@]}
-		enpm audit fix ${NPM_AUDIT_FIX_ARGS[@]}
+		enpm install "electron@${ELECTRON_APP_ELECTRON_PV}" -D --prefer-offline
 
 		sed -i -e "s|disabled_postinstall|postinstall|g" "package.json" || die
 
 #einfo "Applying mitigation"
 
 einfo "Copying lockfiles"
-		mkdir -p "${WORKDIR}/lockfile-image"
+		mkdir -p "${WORKDIR}/lockfile-image" || die
 		local L=(
-			danger/package-lock.json
-			sticker-creator/package-lock.json
-			package-lock.json
+			"danger/package-lock.json"
+			"sticker-creator/package-lock.json"
+			"package-lock.json"
 		)
 		local x
 		for x in ${L[@]} ; do
@@ -178,25 +184,53 @@ src_compile() {
 }
 
 src_install() {
-	insinto "/"
-	dodoc "changelog"
-	doins -r "opt"
-	insinto "/usr/share"
+	insinto "/opt/${MY_PN2}"
+	doins -r "dist/linux-unpacked/"*
 
-	doins -r "usr/share/applications"
-	doins -r "usr/share/icons"
-	fperms +x "/opt/Signal/signal-desktop" "/opt/Signal/chrome-sandbox" "/opt/Signal/chrome_crashpad_handler"
-	fperms u+s "/opt/Signal/chrome-sandbox"
-	pax-mark m "opt/Signal/signal-desktop" "opt/Signal/chrome-sandbox" "opt/Signal/chrome_crashpad_handler"
+	local L=(
+		"electron"
+		"libffmpeg.so"
+		"libGLESv2.so"
+		"libvk_swiftshader.so"
+		"libEGL.so"
+		"chrome-sandbox"
+		"libvulkan.so.1"
+		"chrome_crashpad_handler"
+	)
 
-	dosym -r "/opt/Signal/${MY_PN}" "/usr/bin/${MY_PN}"
+	local x
+	for x in ${L[@]} ; do
+		fperms 0755 "/opt/${MY_PN2}/${x}"
+	done
 
-	sed \
-		-e 's| --no-sandbox||g' \
-		-i "${ED}/usr/share/applications/signal-desktop.desktop" \
-		|| die
-#	unpack "usr/share/doc/signal-desktop/changelog.gz"
+	electron-app_gen_wrapper "${MY_PN2,,}" "/opt/${MY_PN2}/electron"
+	electron-app_set_sandbox_suid "/opt/${MY_PN2}/chrome-sandbox"
+	pax-mark m "opt/${MY_PN2}/electron" "opt/${MY_PN2}/chrome-sandbox" "opt/${MY_PN2}/chrome_crashpad_handler"
 
+	local sizes=(
+		1024
+		128
+		16
+		24
+		256
+		32
+		48
+		512
+		64
+	)
+
+	local x
+	for x in ${sizes[@]} ; do
+		newicon -s ${x} "build/icons/png/${x}x${x}.png" "${MY_PN2}.png"
+	done
+
+	make_desktop_entry \
+		"/usr/bin/${MY_PN2,,}" \
+		"${MY_PN2}" \
+		"${MY_PN2}.png" \
+		"Network;InstantMessaging;Chat"
+
+	lcnr_install_files
 }
 
 pkg_postinst() {
