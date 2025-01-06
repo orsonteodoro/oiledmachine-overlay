@@ -483,6 +483,7 @@ einfo "Hydrating npm..."
 		local npm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/npm/"*))
 		export PATH=".:${HOME}/.cache/node/corepack/npm/${npm_pv}/bin:${PATH}"
 	fi
+	npm --version || die
 
 	npm_network_settings
 }
