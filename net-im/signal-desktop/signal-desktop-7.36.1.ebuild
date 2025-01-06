@@ -115,7 +115,7 @@ get_deps() {
 	[[ -d "${S}/node_modules/.bin" ]] || die
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	enpm run build:acknowledgments
-	patch-package --error-on-fail --error-on-warn
+	patch-package --error-on-fail --error-on-warn || die
 	enpm run electron:install-app-deps
 }
 
