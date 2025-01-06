@@ -17,7 +17,7 @@ ELECTRON_APP_SNAP_ARCHIVE_NAME="${PN}_${PV}_amd64.snap"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="34.0.0-beta.13" # Cr 132.0.6834.46 (dev), node 20.18.1
+	ELECTRON_APP_ELECTRON_PV="34.0.0-beta.14" # Cr 132.0.6834.57 (dev), node 20.18.1
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="29.0.1" # Cr 122.0.6261.57, node 20.9.0
@@ -57,7 +57,7 @@ SLOT="0"
 # Deps based on their CI
 IUSE+="
 	firejail
-	ebuild_revision_7
+	ebuild_revision_8
 "
 BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
