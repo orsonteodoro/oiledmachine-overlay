@@ -21,7 +21,7 @@ NPM_AUDIT_FIX_ARGS=( "--prefer-offline" )
 # prebuilt-install depends on node-abi
 # Use the newer Electron to increase mitigation with vendor static libs.
 ELECTRON_BUILDER_PV="24.13.3"
-_ELECTRON_DEP_ROUTE="secure" # reproducible [works] or secure
+_ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
 	ELECTRON_APP_ELECTRON_PV="34.0.0-beta.5" # Cr 132.0.6834.6, node 20.18.0
@@ -69,8 +69,11 @@ else
 fi
 SLOT="0"
 KEYWORDS="-* amd64"
-RESTRICT="splitdebug"
-IUSE+=" wayland X"
+RESTRICT="splitdebug binchecks strip"
+IUSE+="
+wayland X
+ebuild-revision-1
+"
 # RRDEPEND already added from electron-app
 RDEPEND+="
 	!net-im/signal-desktop-bin
@@ -92,8 +95,20 @@ QA_PREBUILT="
 	opt/Signal/swiftshader/libGLESv2.so
 "
 
-pkg_setup() {
-	npm_pkg_setup
+gen_git_tag() {
+	local path="${1}"
+	local tag_name="${2}"
+einfo "Generating tag start for ${path}"
+	pushd "${path}" >/dev/null 2>&1 || die
+		git init || die
+		git config user.email "name@example.com" || die
+		git config user.name "John Doe" || die
+		touch dummy || die
+		git add dummy || die
+		git commit -m "Dummy" || die
+		git tag ${tag_name} || die
+	popd >/dev/null 2>&1 || die
+einfo "Generating tag done"
 }
 
 get_deps() {
@@ -103,6 +118,10 @@ get_deps() {
 	enpm run build:acknowledgments
 	patch-package --error-on-fail --error-on-warn
 	enpm run electron:install-app-deps
+}
+
+pkg_setup() {
+	npm_pkg_setup
 }
 
 npm_unpack_post() {
@@ -131,6 +150,8 @@ src_unpack() {
 		sed -i -e "s|postinstall|disabled_postinstall|g" "package.json" || die
 
 		enpm install ${NPM_INSTALL_ARGS[@]}
+
+	# Required for custom version bump
 		enpm install "electron@${ELECTRON_APP_ELECTRON_PV}" -D --prefer-offline
 
 		sed -i -e "s|disabled_postinstall|postinstall|g" "package.json" || die
@@ -173,14 +194,31 @@ src_prepare() {
 	default
 }
 
+src_configure() {
+	export SIGNAL_ENV="production"
+}
+
 src_compile() {
+	npm_hydrate
+
 	# The zip gets wiped for some reason in src_unpack.
 	electron-app_cp_electron
+
+	# Prevent:
+	# fatal: not a git repository (or any of the parent directories): .git
+	gen_git_tag "${S}" "v${PV}"
+
+	enpm run build
 
 	electron-builder \
 		$(electron-app_get_electron_platarch_args) \
 		-l dir \
 		|| die
+
+	# All the node package managers make errors non-fatal.
+	# This is why we do these custom checks below.
+	grep -q -e "⨯" "${T}/build.log" && die "Detected error"
+	[[ -e "dist/linux-unpacked/signal-desktop" ]] || die "Build failed"
 }
 
 src_install() {
@@ -188,7 +226,7 @@ src_install() {
 	doins -r "dist/linux-unpacked/"*
 
 	local L=(
-		"electron"
+		"signal-desktop"
 		"libffmpeg.so"
 		"libGLESv2.so"
 		"libvk_swiftshader.so"
@@ -203,7 +241,7 @@ src_install() {
 		fperms 0755 "/opt/${MY_PN2}/${x}"
 	done
 
-	electron-app_gen_wrapper "${MY_PN2,,}" "/opt/${MY_PN2}/electron"
+	electron-app_gen_wrapper "${MY_PN2,,}" "/opt/${MY_PN2}/signal-desktop"
 	electron-app_set_sandbox_suid "/opt/${MY_PN2}/chrome-sandbox"
 	pax-mark m "opt/${MY_PN2}/electron" "opt/${MY_PN2}/chrome-sandbox" "opt/${MY_PN2}/chrome_crashpad_handler"
 
