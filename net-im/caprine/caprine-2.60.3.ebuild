@@ -13,8 +13,15 @@ ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${MY_PN}-${PV}.AppImage"
 #ELECTRON_APP_SNAP="1"
 ELECTRON_APP_SNAP_ARCHIVE_NAME="${PN}_${PV}_amd64.snap"
 # See https://releases.electronjs.org/releases.json for version details.
-ELECTRON_APP_ELECTRON_PV="34.0.0-beta.7" # Cr 132.0.6834.15 (dev).  Similar to nightly since nightly does not have prebuilt.
-#ELECTRON_APP_ELECTRON_PV="29.4.2" # lockfile
+# The preferred nightly does not have prebuilt.
+_ELECTRON_DEP_ROUTE="secure" # reproducible or secure
+if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
+	# Ebuild maintainer preference
+	ELECTRON_APP_ELECTRON_PV="34.0.0-beta.13" # Cr 132.0.6834.46 (dev), node 20.18.1
+else
+	# Upstream preference
+	ELECTRON_APP_ELECTRON_PV="29.0.1" # Cr 122.0.6261.57, node 20.9.0
+fi
 ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK="1"
 ELECTRON_APP_TYPESCRIPT_PV="5.4.4"
 NODE_ENV="development"
@@ -162,3 +169,4 @@ einfo
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (2.60.1, 20241009 with Electron 33.0.0-beta.9)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (2.60.1, 20241031 with Electron 34.0.0-alpha.5)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (2.60.2, 20241130 with Electron 34.0.0-alpha.7)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (2.60.3, 20241130 with Electron 34.0.0-beta.13)
