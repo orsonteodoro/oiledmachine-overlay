@@ -4,8 +4,7 @@
 
 EAPI=8
 
-LOCKFILE_VER="3" # See https://docs.npmjs.com/cli/v10/configuring-npm/package-lock-json#lockfileversion
-# See also https://github.com/npm/cli/blob/v10.7.0/package-lock.json#L4
+LOCKFILE_VER="3" # See https://github.com/npm/cli/blob/v11.0.0/package-lock.json#L4
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}"
@@ -25,8 +24,8 @@ IUSE+=" +ssl ebuild_revision_1"
 CDEPEND+="
 	!sys-apps/npm:0
 	|| (
-		>=net-libs/nodejs-18.17:18[corepack,ssl?]
-		>=net-libs/nodejs-20.5[corepack,ssl?]
+		>=net-libs/nodejs-22.9.0:20[corepack,ssl?]
+		>=net-libs/nodejs-20.17.0[corepack,ssl?]
 	)
 "
 DEPEND+="
