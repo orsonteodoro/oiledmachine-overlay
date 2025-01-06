@@ -143,7 +143,11 @@ einfo "Hydrating pnpm..."
 	corepack hydrate "${ESYSROOT}/usr/share/pnpm/pnpm-${pnpm_slot}.tgz" || die
 	local pnpm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/v1/pnpm/"*))
 	export PATH=".:${HOME}/.cache/node/corepack/v1/pnpm/${pnpm_pv}/bin:${PATH}"
-	pnpm --version || die
+	local pnpm_pv=$(pnpm --version)
+	local node_pv=$(node --version)
+einfo "pnpm version:  ${pnpm_pv}"
+einfo "Node.js version:  ${node_pv}"
+
 	pnpm_network_settings
 }
 

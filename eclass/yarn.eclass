@@ -772,8 +772,10 @@ einfo "Hydrating yarn..."
 		yarn_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/yarn/"*))
 		export PATH="${HOME}/.cache/node/corepack/yarn/${yarn_pv}/bin:${PATH}"
 	fi
-	npm --version || die
-	yarn --version || die
+	local yarn_pv=$(yarn --version)
+	local node_pv=$(node --version)
+einfo "Yarn version:  ${yarn_pv}"
+einfo "Node.js version:  ${node_pv}"
 
 	npm_network_settings
 }
