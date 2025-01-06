@@ -24,7 +24,8 @@ ELECTRON_BUILDER_PV="24.13.3"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
-	ELECTRON_APP_ELECTRON_PV="34.0.0-beta.5" # Cr 132.0.6834.6, node 20.18.0
+	ELECTRON_APP_ELECTRON_PV="34.0.0-beta.14" # Cr 132.0.6834.57, node 20.18.1
+#	ELECTRON_APP_ELECTRON_PV="34.0.0-beta.5" # Cr 132.0.6834.6, node 20.18.0
 else
 	# Upstream's choice
 	ELECTRON_APP_ELECTRON_PV="33.1.0" # Cr 130.0.6723.91, node 20.18.0
@@ -85,7 +86,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 wayland X
-ebuild-revision-1
+ebuild-revision-2
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -149,6 +150,7 @@ src_unpack() {
 		sed -i -e "s|postinstall|disabled_postinstall|g" "package.json" || die
 
 		enpm install ${NPM_INSTALL_ARGS[@]}
+		enpm audit fix ${NPM_AUDIT_FIX_ARGS[@]}
 
 	# Required for custom version bump
 		enpm install "electron@${ELECTRON_APP_ELECTRON_PV}" -D --prefer-offline
@@ -276,4 +278,5 @@ pkg_postinst() {
 	elog " '--start-in-tray' or '--use-tray-icon'."
 }
 # OILEDMACHINE-OVERLAY-TEST:  passed (7.36.1, 20250105, electron 34.0.0-beta.5)
+# OILEDMACHINE-OVERLAY-TEST:  passed (7.36.1, 20250105, electron 34.0.0-beta.14)
 # UI load - pass
