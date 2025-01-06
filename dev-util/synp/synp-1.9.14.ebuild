@@ -4,10 +4,10 @@
 
 EAPI=8
 
-NODE_SLOTS=( 16 18 20 22 )
+NODE_SLOTS=( 20 22 )
 
 # Generated from
-#PV="1.9.13"
+#PV="1.9.14"
 #find /var/tmp/portage/dev-util/synp-${PV}/work/synp-${PV} \( -path "*/.bin/*" -o -path "*/cli/*" \) \
 #	| sed -e "s|/var/tmp/portage/dev-util/synp-${PV}/work/synp-${PV}|/opt/synp|g" \
 #	| sort
@@ -157,7 +157,7 @@ src_unpack() {
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
-		grep -q -e "\"version\": \"1.9.13\"," "${S}/setup.py" \
+		grep -q -e "\"version\": \"1.9.14\"," "${S}/setup.py" \
 			|| die "QA:  Bump version"
 	else
 		unpack ${A}
