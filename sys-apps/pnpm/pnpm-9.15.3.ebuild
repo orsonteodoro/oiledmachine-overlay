@@ -17,7 +17,7 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT_MAJOR="9" # Same as lockfileVersion (pnpm-lock.yaml)
+SLOT_MAJOR="9" # See https://github.com/pnpm/pnpm/blob/v9.15.3/pnpm-lock.yaml#L1
 SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
 IUSE+=" ebuild_revision_2"
 CDEPEND+="
