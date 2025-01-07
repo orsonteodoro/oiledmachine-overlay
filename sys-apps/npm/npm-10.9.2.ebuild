@@ -21,10 +21,10 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="${LOCKFILE_VER}/$(ver_cut 1-2 ${PV})"
 IUSE+=" +ssl ebuild_revision_1"
-# Node.js 18.20 support is broken
 CDEPEND+="
 	!sys-apps/npm:0
 	|| (
+		>=net-libs/nodejs-18.17.0:18[corepack,ssl?]
 		>=net-libs/nodejs-20.5.0[corepack,ssl?]
 	)
 "
@@ -40,11 +40,11 @@ BDEPEND+="
 
 src_configure() {
 	local node_version=$(node --version | sed -e "s|v||g")
-	if ver_test "${node_version%%.*}" -ge "20" ; then
+	if ver_test "${node_version%%.*}" -eq "18" ; then
+		:
+	elif ver_test "${node_version%%.*}" -ge "20" ; then
 		:
 	else
-# Avoid:
-# Internal Error: Error when performing the request to https://registry.npmjs.org/npm/-/npm-10.9.2.tgz; for troubleshooting help, see https://github.com/nodejs/corepack#troubleshooting
 eerror
 eerror "Do either:"
 eerror
