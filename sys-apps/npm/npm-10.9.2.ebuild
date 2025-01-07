@@ -38,6 +38,36 @@ BDEPEND+="
 	${CDEPEND}
 "
 
+src_configure() {
+	local node_version=$(node --version | sed -e "s|v||g")
+	if ver_test "${node_version%%.*}" -eq "18" ; then
+		:
+	elif ver_test "${node_version%%.*}" -ge "20" ; then
+		:
+	else
+# Avoid:
+# Internal Error: Error when performing the request to https://registry.npmjs.org/npm/-/npm-10.9.2.tgz; for troubleshooting help, see https://github.com/nodejs/corepack#troubleshooting
+eerror
+eerror "Do either:"
+eerror
+eerror "  eselect nodejs set node18"
+eerror
+eerror "    or"
+eerror
+eerror "  eselect nodejs set node20"
+eerror
+eerror "    or"
+eerror
+eerror "  eselect nodejs set node22"
+eerror
+eerror "    or"
+eerror
+eerror "  eselect nodejs set node23"
+eerror
+		die
+	fi
+}
+
 pkg_postinst() {
 	corepack enable
 	mkdir -p "${EROOT}/usr/share/${PN}"
