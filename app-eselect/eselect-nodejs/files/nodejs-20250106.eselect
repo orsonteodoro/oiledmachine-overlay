@@ -5,7 +5,7 @@
 
 DESCRIPTION="Manages the nodejs include symlink"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20230521"
+VERSION="20250106"
 PN="nodejs"
 
 # find a list of Node.js symlink targets
@@ -32,16 +32,20 @@ set_symlink() {
 
 	corepack disable 2>/dev/null || true
 	mkdir -p "/usr/$(get_libdir)/node_modules"
+	rm "/usr/$(get_libdir)/node_modules/corepack"
+	rm "/usr/bin/corepack"
 	ln -sf "/usr/$(get_libdir)/corepack/${target}" "/usr/$(get_libdir)/node_modules/corepack"
-	ln -sf "/usr/$(get_libdir)/node_modules/corepack/${target}/dist/corepack.js" "/usr/bin/corepack"
+	ln -sf "/usr/$(get_libdir)/node_modules/corepack/dist/corepack.js" "/usr/bin/corepack"
 	corepack enable
     elif [[ -d "/usr/include/${target}" && "${target}" =~ ^node[0-9]* ]] ; then
         ln -s "/usr/include/${target}" "/usr/include/node"
 
 	corepack disable 2>/dev/null || true
 	mkdir -p "/usr/$(get_libdir)/node_modules"
+	rm "/usr/$(get_libdir)/node_modules/corepack"
+	rm "/usr/bin/corepack"
 	ln -sf "/usr/$(get_libdir)/corepack/${target}" "/usr/$(get_libdir)/node_modules/corepack"
-	ln -sf "/usr/$(get_libdir)/node_modules/corepack/${target}/dist/corepack.js" "/usr/bin/corepack"
+	ln -sf "/usr/$(get_libdir)/node_modules/corepack/dist/corepack.js" "/usr/bin/corepack"
 	corepack enable
     else
         echo "Failed to set symlink and is now gone."
