@@ -40,9 +40,9 @@ BDEPEND+="
 
 src_configure() {
 	local node_version=$(node --version | sed -e "s|v||g")
-	if ver_test "${node_version%%.*}" -eq "18" ; then
-		:
-	elif ver_test "${node_version%%.*}" -ge "20" ; then
+	#if ver_test "${node_version%%.*}" -eq "18" ; then
+	#	:
+	if ver_test "${node_version%%.*}" -ge "20" ; then
 		:
 	else
 # Avoid:

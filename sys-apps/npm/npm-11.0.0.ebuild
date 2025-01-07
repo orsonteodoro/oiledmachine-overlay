@@ -45,8 +45,6 @@ src_configure() {
 	elif ver_test "${node_version%%.*}" -ge "22" ; then
 		:
 	else
-# Avoid:
-# Internal Error: Error when performing the request to https://registry.npmjs.org/npm/-/npm-10.9.2.tgz; for troubleshooting help, see https://github.com/nodejs/corepack#troubleshooting
 eerror
 eerror "Do either:"
 eerror
