@@ -188,7 +188,7 @@ BDEPEND+="
 	)
 "
 PDEPEND+="
-	sys-apps/npm:3
+	=sys-apps/npm-10.8*:3
 	acorn? (
 		=dev-nodejs/acorn-$(ver_cut 1-2 ${ACORN_PV})*
 	)
