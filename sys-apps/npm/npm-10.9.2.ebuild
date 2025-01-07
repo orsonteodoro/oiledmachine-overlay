@@ -21,6 +21,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="${LOCKFILE_VER}/$(ver_cut 1-2 ${PV})"
 IUSE+=" +ssl ebuild_revision_1"
+# Node.js 18.20 support is broken
 CDEPEND+="
 	!sys-apps/npm:0
 	|| (
