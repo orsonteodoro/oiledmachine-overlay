@@ -46,10 +46,10 @@ LICENSE="
 # MIT - xpra/platform/win32/lsa_logon_lib.py
 #	- xpra/client/gl/gl_colorspace_conversions.py
 KEYWORDS="~amd64 ~arm64 ~x86"
-GSTREAMER_IUSE+="
-aac alsa flac jack lame matroska ogg opus oss pulseaudio speex twolame vorbis
+GSTREAMER_IUSE=(
+aac alsa flac jack lame matroska ogg opus oss pulseaudio speex vorbis
 wavpack
-"
+)
 
 CUDA_TARGETS_COMPAT=(
 	sm_52
@@ -66,19 +66,19 @@ CUDA_TARGETS_COMPAT=(
 
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-${GSTREAMER_IUSE}
+${GSTREAMER_IUSE[@]}
 ${PATENT_STATUS_IUSE[@]}
 
-aes appindicator +audio +avahi avif brotli +client +clipboard cpu-percent
+aes amf appindicator +audio +avahi avif brotli +client +clipboard cpu-percent
 +csc_cython csc_libyuv cuda +cuda_rebuild +cups cups-forwarding +cython +dbus
 +doc -drm ffmpeg evdi firejail gnome-shell +gtk3 gssapi html5-client html5_gzip
 html5_brotli +http ibus jpeg kerberos +keyboard-layout keycloak ldap ldap3 +lz4
 lzo +mdns mysql +netdev +notifications nvdec nvenc nvfbc nvjpeg +opengl +openh264
-openrc osmesa +pam pinentry png proc +proxy pyinotify qrencode +quic -rencode
-+rencodeplus +rfb sd_listen selinux +server +socks sound-forwarding spng sqlite
-+ssh sshpass +ssl systemd +tcp-wrappers test tiff u2f -uinput +v4l2 vaapi vpx
-vsock -wayland +webcam webcam-forwarding webp +websockets +X x264 +xdg
-+xinput yaml zeroconf zlib
+opencl openrc osmesa +pam pinentry png proc +proxy pyinotify qrencode qsv +quic
+-rencode +rencodeplus +rfb sd_listen selinux +server +socks sound-forwarding
+spng sqlite +ssh sshpass +ssl systemd +tcp-wrappers test tiff u2f -uinput +v4l2
+vaapi vpx vsock -wayland +webcam webcam-forwarding webp +websockets +X x264 x265
++xdg +xinput yaml zeroconf zlib
 
 ebuild_revision_1
 "
@@ -154,13 +154,20 @@ gen_required_use_cuda_targets() {
 PATENT_STATUS_REQUIRED_USE="
 	patent_status_nonfree? (
 		!aac
+		!amf
 		!nvdec
 		!nvenc
+		!opencl
 		!openh264
+		!qsv
 		!vaapi
 		!x264
+		!x265
 	)
 	aac? (
+		patent_status_nonfree
+	)
+	amf? (
 		patent_status_nonfree
 	)
 	nvdec? (
@@ -169,13 +176,22 @@ PATENT_STATUS_REQUIRED_USE="
 	nvenc? (
 		patent_status_nonfree
 	)
+	opencl? (
+		patent_status_nonfree
+	)
 	openh264? (
+		patent_status_nonfree
+	)
+	qsv? (
 		patent_status_nonfree
 	)
 	vaapi? (
 		patent_status_nonfree
 	)
 	x264? (
+		patent_status_nonfree
+	)
+	x265? (
 		patent_status_nonfree
 	)
 "
@@ -280,6 +296,9 @@ REQUIRED_USE+="
 			cuda_targets_sm_80
 		)
 	)
+	opencl? (
+		ffmpeg
+	)
 	opengl? (
 		client
 	)
@@ -288,6 +307,9 @@ REQUIRED_USE+="
 	)
 	png? (
 		zlib
+	)
+	qsv? (
+		ffmpeg
 	)
 	sd_listen? (
 		systemd
@@ -346,12 +368,58 @@ gen_opengl_rdepend() {
 	done
 }
 
+PATENT_STATUS_RDEPEND="
+	!patent_status_nonfree? (
+		audio? (
+			!media-plugins/gst-plugins-faac
+			!media-plugins/gst-plugins-faad
+			media-plugins/gst-plugins-meta:1.0[-aac,alsa?,flac?,jack?,lame?,mp3?,ogg?,opus?,oss?,-patent_status_nonfree,pulseaudio?,speex?,vorbis?,wavpack?]
+		)
+		!ffmpeg? (
+			media-libs/gst-plugins-bad:1.0[-amf]
+			media-plugins/gst-plugins-meta:1.0[aom?,ogg?,-vaapi,vpx?,-x264?]
+			nvdec? (
+				media-libs/gst-plugins-bad[-nvcodec]
+				media-plugins/gst-plugins-meta:1.0[-nvcodec]
+			)
+			nvenc? (
+				media-libs/gst-plugins-bad[-nvcodec]
+				media-plugins/gst-plugins-meta:1.0[-nvcodec]
+			)
+		)
+		ffmpeg? (
+			media-video/ffmpeg:${FFMPEG_SLOT}[-amf,-cuda,-patent_status_nonfree,-qsv,-vaapi,vpx?,-x264,-x265,-vdpau]
+		)
+	)
+	patent_status_nonfree? (
+		audio? (
+			media-plugins/gst-plugins-meta:1.0[aac?,alsa?,flac?,jack?,lame?,mp3?,ogg?,opus?,oss?,patent_status_nonfree,pulseaudio?,speex?,vorbis?,wavpack?]
+		)
+		!ffmpeg? (
+			media-libs/gst-plugins-bad:1.0[amf?]
+			media-plugins/gst-plugins-meta:1.0[aom?,ogg?,vaapi?,vpx?,x264?]
+			nvdec? (
+				media-libs/gst-plugins-bad[nvcodec]
+				media-plugins/gst-plugins-meta:1.0[nvcodec]
+			)
+			nvenc? (
+				media-libs/gst-plugins-bad[nvcodec]
+				media-plugins/gst-plugins-meta:1.0[nvcodec]
+			)
+		)
+		ffmpeg? (
+			media-video/ffmpeg:${FFMPEG_SLOT}[amf?,cuda?,patent_status_nonfree,qsv?,vaapi?,vpx?,x264?,x265?]
+		)
+	)
+"
+
 # The media-video/nvidia-video-codec-sdk is a placeholder.  You need to package
 # it yourself locally.  See also
 # https://github.com/Xpra-org/xpra/blob/v5.0.11/docs/Usage/NVENC.md?plain=1
 # https://developer.nvidia.com/nvidia-video-codec-sdk/download
 # https://developer.nvidia.com/video-codec-sdk-archive
 RDEPEND+="
+	${PATENT_STATUS_RDEPEND}
 	acct-group/xpra
 	app-admin/sudo
 	dev-lang/python[sqlite?,ssl?]
@@ -371,20 +439,8 @@ RDEPEND+="
 		media-libs/gst-plugins-bad:1.0[introspection]
 		media-libs/gst-plugins-base:1.0[introspection]
 		media-libs/gstreamer:1.0[introspection]
-		media-plugins/gst-plugins-meta:1.0\
-[aac?,alsa?,flac?,jack?,lame?,ogg?,opus?,oss?,pulseaudio?,vorbis?,wavpack?]
-		aac? (
-			media-plugins/gst-plugins-faac:1.0
-			media-plugins/gst-plugins-faad:1.0
-		)
 		matroska? (
 			media-libs/gst-plugins-good:1.0
-		)
-		speex? (
-			media-plugins/gst-plugins-speex:1.0
-		)
-		twolame? (
-			media-plugins/gst-plugins-twolame:1.0
 		)
 	)
 	avif? (
@@ -450,9 +506,6 @@ RDEPEND+="
 	)
 	evdi? (
 		>=x11-drivers/evdi-1.9
-	)
-	ffmpeg? (
-		media-video/ffmpeg:${FFMPEG_SLOT}[vpx?,x264?]
 	)
 	gnome-shell? (
 		gnome-extra/gnome-shell-extension-appindicator

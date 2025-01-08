@@ -43,6 +43,9 @@
     <flag name="alsa">
       Adds support for ALSA sound cards.
     </flag>
+    <flag name="amf">
+      Adds support for H.264, H.265 encoding.
+    </flag>
     <flag name="appindicator">
       Adds support for a status bar icon.
     </flag>
@@ -199,6 +202,9 @@
     </flag>
     <flag name="ogg">
       Adds support for the OGG container format.
+    </flag>
+    <flag name="opencl">
+      Enables video processing support
     </flag>
     <flag name="opengl">
       Enables support for OpenGL accelerated rendering on client.
