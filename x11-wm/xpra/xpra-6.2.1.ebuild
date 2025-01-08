@@ -47,7 +47,7 @@ LICENSE="
 #	- xpra/client/gl/gl_colorspace_conversions.py
 KEYWORDS="~amd64"
 GSTREAMER_IUSE=(
-aac alsa flac jack lame matroska ogg opus oss pulseaudio speex vorbis
+aac alsa flac jack lame matroska mp3 ogg opus oss pulseaudio speex vorbis
 wavpack
 )
 
@@ -80,7 +80,7 @@ sound-forwarding spng sqlite +ssh sshpass +ssl systemd +tcp-wrappers test tiff
 u2f -uinput +v4l2 vaapi vpx vsock -wayland +webcam webcam-forwarding webp
 +websockets +X x264 +xdg +xinput yaml zeroconf zlib
 
-ebuild_revision_1
+ebuild_revision_2
 "
 # Upstream enables uinput by default.  Disabled because ebuild exists.
 # Upstream enables drm by default.  Disabled because unfinished.
@@ -149,7 +149,7 @@ gen_required_use_cuda_targets() {
 }
 
 PATENT_STATUS_REQUIRED_USE="
-	patent_status_nonfree? (
+	!patent_status_nonfree? (
 		!aac
 		!amf
 		!nvdec
