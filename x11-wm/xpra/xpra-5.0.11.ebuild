@@ -290,7 +290,7 @@ PYCUDA_PV="2022.1"
 RENCODE_PV="1.0.6"
 # From my experience, firejail doesn't need pillow with webp or with jpeg.
 # The encoding when set to auto may require jpeg and webp.
-# See https://github.com/Xpra-org/xpra/blob/v4.2/docs/Build/Dependencies.md for the full list.
+# See https://github.com/Xpra-org/xpra/blob/v5.0.11/docs/Build/Dependencies.md for the full list.
 
 PILLOW_DEPEND="
 	virtual/pillow[${PYTHON_USEDEP},jpeg?,tiff?,webp?,zlib?]
@@ -314,7 +314,7 @@ gen_opengl_rdepend() {
 
 # The media-video/nvidia-video-codec-sdk is a placeholder.  You need to package
 # it yourself locally.  See also
-# https://github.com/Xpra-org/xpra/blob/v5.0.8/docs/Usage/NVENC.md?plain=1
+# https://github.com/Xpra-org/xpra/blob/v5.0.11/docs/Usage/NVENC.md?plain=1
 # https://developer.nvidia.com/nvidia-video-codec-sdk/download
 # https://developer.nvidia.com/video-codec-sdk-archive
 RDEPEND+="
