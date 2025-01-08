@@ -150,11 +150,10 @@ gen_required_use_cuda_targets() {
 # LIMD # ATM, GEN 5-12
 # LID # C2M, GEN 5-9
 REQUIRED_USE+="
-	avif
-
 	$(gen_required_use_cuda_targets)
 	${CLIENT_OPTIONS}
 	${SERVER_OPTIONS}
+	avif
 	doc
 	gtk3
 	audio? (
