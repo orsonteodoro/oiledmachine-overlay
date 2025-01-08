@@ -182,10 +182,10 @@
       Enables support for system notifications.
     </flag>
     <flag name="nvdec">
-      Enables support for the NVDEC hardware decoder.
+      Enables support for the NVDEC hardware decoder for H.264.
     </flag>
     <flag name="nvenc">
-      Enables support for the NVENC hardware encoder.
+      Enables support for the NVENC hardware encoder for H.264, H.265.
     </flag>
     <flag name="nvfbc">
       Enables support for NvFBC screen capture.

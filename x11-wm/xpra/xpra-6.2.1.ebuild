@@ -12,6 +12,9 @@ MY_PV="$(ver_cut 1-4)"
 
 unset DISTUTILS_USE_PEP517
 DISTUTILS_EXT=1
+PATENT_STATUS_IUSE=(
+	patent_status_nonfree
+)
 PYTHON_COMPAT=( "python3_10" "python3_12" )
 
 inherit cuda distutils-r1 flag-o-matic linux-info prefix tmpfiles udev
@@ -64,6 +67,7 @@ CUDA_TARGETS_COMPAT=(
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${GSTREAMER_IUSE}
+${PATENT_STATUS_IUSE[@]}
 
 aes appindicator +audio +avahi avif brotli cityhash +client +clipboard cpu-percent
 +csc_cython csc_libyuv cuda +cuda_rebuild +cups cups-forwarding +cython
@@ -144,11 +148,41 @@ gen_required_use_cuda_targets() {
 	done
 }
 
+PATENT_STATUS_REQUIRED_USE="
+	patent_status_nonfree? (
+		!aac
+		!nvdec
+		!nvenc
+		!openh264
+		!vaapi
+		!x264
+	)
+	aac? (
+		patent_status_nonfree
+	)
+	nvdec? (
+		patent_status_nonfree
+	)
+	nvenc? (
+		patent_status_nonfree
+	)
+	openh264? (
+		patent_status_nonfree
+	)
+	vaapi? (
+		patent_status_nonfree
+	)
+	x264? (
+		patent_status_nonfree
+	)
+"
+
 # LIMD # ATM, GEN 5-12
 # LID # C2M, GEN 5-9
 REQUIRED_USE+="
 	$(gen_required_use_cuda_targets)
 	${CLIENT_OPTIONS}
+	${PATENT_STATUS_REQUIRED_USE}
 	${SERVER_OPTIONS}
 	avif
 	cython
@@ -315,6 +349,7 @@ RDEPEND+="
 	dev-libs/gobject-introspection
 	dev-libs/glib[dbus?]
 	dev-python/pygobject[${PYTHON_USEDEP}]
+	virtual/patent-status[patent_status_nonfree=]
 	aes? (
 		dev-python/cryptography[${PYTHON_USEDEP}]
 	)
@@ -456,8 +491,8 @@ RDEPEND+="
 		>=dev-python/pycuda-${PYCUDA_PV}[${PYTHON_USEDEP}]
 		>=dev-util/nvidia-cuda-toolkit-5:=
 		>=media-video/nvidia-video-codec-sdk-10
-		dev-python/pynvml[${PYTHON_USEDEP}]
 		dev-python/numpy[${PYTHON_USEDEP}]
+		dev-python/pynvml[${PYTHON_USEDEP}]
 	)
 	nvfbc? (
 		>=dev-python/pycuda-${PYCUDA_PV}[${PYTHON_USEDEP}]
