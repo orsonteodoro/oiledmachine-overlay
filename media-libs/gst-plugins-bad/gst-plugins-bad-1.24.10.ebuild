@@ -34,7 +34,7 @@ LICENSE="LGPL-2"
 IUSE="
 ${PATENT_STATUS}
 ${VIDEO_CARDS[@]}
-bzip2 +introspection msdk nvcodec onevpl +orc qsv udev vaapi vnc vulkan
+amf bzip2 +introspection msdk nvcodec onevpl +orc qsv udev vaapi vnc vulkan
 vulkan-video wayland X
 ebuild_revision_1
 "
@@ -44,6 +44,9 @@ PATENT_STATUS_REQUIRED_USE="
 		!qsv
 		!vaapi
 		!vulkan-video
+	)
+	amf? (
+		patent_status_nonfree
 	)
 	nvcodec? (
 		patent_status_nonfree
@@ -93,6 +96,10 @@ RDEPEND="
 	~media-libs/gstreamer-${PV}:${SLOT}[${MULTILIB_USEDEP},introspection?]
 	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP},introspection?]
 	virtual/patent-status[patent_status_nonfree=]
+	amf? (
+		media-libs/amf-headers
+		media-video/amdgpu-pro-amf[video_cards_amdgpu?]
+	)
 	bzip2? (
 		app-arch/bzip2[${MULTILIB_USEDEP}]
 	)
@@ -183,6 +190,7 @@ src_prepare() {
 multilib_src_configure() {
 	GST_PLUGINS_NOAUTO="bz2 codec2json hls ipcpipeline librfb msdk nvcodec qsv shm va vulkan wayland x11"
 	local emesonargs=(
+		$(meson_feature "amf" "amfcodec")
 		$(meson_feature "bzip2" "bz2")
 		$(meson_feature "qsv")
 		$(meson_feature "vaapi" "va")

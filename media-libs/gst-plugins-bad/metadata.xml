@@ -8,6 +8,9 @@
   </maintainer>
   <use>
     <flag name="bzip2">
+      Enable GPU accelerated encoding for AV1, H.264, H.265
+    </flag>
+    <flag name="bzip2">
       Enable bzip2 encoder/decoder plugin
     </flag>
     <flag name="nvcodec">
