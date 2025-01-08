@@ -20,16 +20,13 @@ TRAINER_TYPES=(
 	buffers
 	child_process
 	cluster
-	custom
 	crypto
 	dgram
 	diagnostics_channel
 	dns
 	domain
-	error
 	es
 	esm
-	es
 	events
 	fs
 	http
@@ -37,6 +34,7 @@ TRAINER_TYPES=(
 	https
 	misc
 	module
+	napi
 	net
 	os
 	path

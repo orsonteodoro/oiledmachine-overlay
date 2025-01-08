@@ -15,13 +15,13 @@ EAPI=8
 ACORN_PV="8.12.1"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 TRAINER_TYPES=(
+	abort_controller
 	assert
 	async_hooks
 	blob
 	buffers
 	child_process
 	cluster
-	custom
 	crypto
 	dgram
 	diagnostics_channel
@@ -30,29 +30,37 @@ TRAINER_TYPES=(
 	error
 	es
 	esm
-	es
 	events
 	fs
 	http
 	http2
 	https
+	mime
 	misc
 	module
+	napi
 	net
 	os
 	path
 	perf_hooks
+	permission
 	policy
 	process
 	querystring
+	readline
 	streams
 	string_decoder
+	test_runner
 	timers
 	tls
+	ts
 	url
 	util
 	v8
+	validators
 	vm
+	websocket
+	webstreams
 	worker
 	zlib
 )

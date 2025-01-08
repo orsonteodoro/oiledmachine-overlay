@@ -17,10 +17,10 @@ AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump
 TRAINER_TYPES=(
 	assert
 	async_hooks
+	blob
 	buffers
 	child_process
 	cluster
-	custom
 	crypto
 	dgram
 	diagnostics_channel
@@ -29,7 +29,6 @@ TRAINER_TYPES=(
 	error
 	es
 	esm
-	es
 	events
 	fs
 	http
@@ -37,6 +36,7 @@ TRAINER_TYPES=(
 	https
 	misc
 	module
+	napi
 	net
 	os
 	path
@@ -46,12 +46,14 @@ TRAINER_TYPES=(
 	querystring
 	streams
 	string_decoder
+	test_runner
 	timers
 	tls
 	url
 	util
 	v8
 	vm
+	webstreams
 	worker
 	zlib
 )
