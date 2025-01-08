@@ -189,6 +189,8 @@ REQUIRED_USE+="
 	)
 	firejail? (
 		client
+		cython
+		rencodeplus
 		server
 	)
 	gnome-shell? (
