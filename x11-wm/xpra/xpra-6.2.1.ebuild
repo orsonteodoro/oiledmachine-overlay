@@ -792,10 +792,12 @@ python_prepare_all() {
 			"fs/etc/xpra/conf.d/40_client.conf.in" \
 			|| die
 	else
-		sed -i -e "s|#opengl = no|opengl = no|g" \
+		sed -i \
+			-e "s|#opengl = no|opengl = no|g" \
 			"fs/etc/xpra/conf.d/40_client.conf.in" \
 			|| die
-		sed -i -e 's|"+extension", "GLX"|"-extension", "GLX"|g' \
+		sed -i \
+			-e 's|"+extension", "GLX"|"-extension", "GLX"|g' \
 			"xpra/scripts/config.py" \
 			|| die
 	fi

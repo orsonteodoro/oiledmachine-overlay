@@ -649,6 +649,7 @@ PATCHES=(
 )
 
 check_cython() {
+	cython --version || die "Check eselect cython"
 	local actual_cython_pv=$(cython --version 2>&1 \
 		| cut -f 3 -d " " \
 		| sed -e "s|a|_alpha|g" \
@@ -915,10 +916,12 @@ python_install_all() {
 		"${ED}/usr/etc" \
 		"${ED}/etc" \
 		|| die
-	mv \
-		"${ED}/usr/share/doc/xpra" \
-		"${ED}/usr/share/doc/${PN}-${PVR}" \
-		|| die
+	if use doc ; then
+		mv \
+			"${ED}/usr/share/doc/xpra" \
+			"${ED}/usr/share/doc/${PN}-${PVR}" \
+			|| die
+	fi
 	if use openrc ; then
 		fperms 0750 "/etc/init.d/xpra"
 	fi
