@@ -6,6 +6,7 @@ EAPI=8
 
 # CI: U24
 # Min supported:  U16, D11
+# EOL Q2, See https://github.com/Xpra-org/xpra/wiki/Versions
 
 MY_PV="$(ver_cut 1-4)"
 
