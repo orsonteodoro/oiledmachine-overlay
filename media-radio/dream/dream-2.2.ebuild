@@ -4,6 +4,9 @@
 
 EAPI=8
 
+PATENT_STATUS_IUSE=(
+	patent_status_nonfree
+)
 QT_PV="5"
 
 inherit flag-o-matic qmake-utils toolchain-funcs
@@ -18,10 +21,28 @@ LICENSE="GPL-2+"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
+${PATENT_STATUS_IUSE[@]}
 alsa -faad -faac -fdk gps gui hamlib jack +opus portaudio pulseaudio qt${QT_PV}
 qtmultimedia sound sndfile speexdsp webengine
 "
+PATENT_STATUS_REQUIRED_USE="
+	!patent_status_nonfree? (
+		!faac
+		!faad
+		!fdk
+	)
+	faac? (
+		patent_status_nonfree
+	)
+	faad? (
+		patent_status_nonfree
+	)
+	fdk? (
+		patent_status_nonfree
+	)
+"
 REQUIRED_USE="
+	${PATENT_STATUS_REQUIRED_USE}
 	gui? (
 		qt${QT_PV}
 	)
@@ -35,10 +56,11 @@ REQUIRED_USE="
 		)
 	)
 "
-DEPEND+="
+RDEPEND+="
 	net-libs/libpcap
 	sci-libs/fftw
 	sys-libs/zlib
+	virtual/patent-status[patent_status_nonfree=]
 	alsa? (
 		media-libs/alsa-lib
 	)
@@ -94,8 +116,8 @@ DEPEND+="
 		dev-qt/qtwebengine:${QT_PV}
 	)
 "
-RDEPEND+="
-	${DEPEND}
+DEPEND+="
+	${RDEPEND}
 "
 BDEPEND+="
 	sys-devel/gcc
