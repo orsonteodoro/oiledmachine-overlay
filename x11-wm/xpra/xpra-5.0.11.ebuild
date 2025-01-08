@@ -154,8 +154,10 @@ REQUIRED_USE+="
 	${CLIENT_OPTIONS}
 	${SERVER_OPTIONS}
 	avif
+	cython
 	doc
 	gtk3
+	rencodeplus
 	audio? (
 		pulseaudio
 	)
