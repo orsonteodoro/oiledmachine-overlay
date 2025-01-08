@@ -40,6 +40,7 @@ ebuild_revision_1
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
+		!amf
 		!nvcodec
 		!qsv
 		!vaapi
