@@ -20,6 +20,7 @@ TRAINER_TYPES=(
 	buffers
 	child_process
 	cluster
+	custom
 	crypto
 	dgram
 	diagnostics_channel

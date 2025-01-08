@@ -22,6 +22,7 @@ TRAINER_TYPES=(
 	child_process
 	cluster
 	crypto
+	custom
 	dgram
 	diagnostics_channel
 	dns
