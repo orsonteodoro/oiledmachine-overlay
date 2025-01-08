@@ -155,7 +155,6 @@ REQUIRED_USE+="
 	${SERVER_OPTIONS}
 	avif
 	cython
-	doc
 	gtk3
 	rencodeplus
 	audio? (
@@ -296,6 +295,22 @@ RENCODE_PV="1.0.6"
 PILLOW_DEPEND="
 	virtual/pillow[${PYTHON_USEDEP},jpeg?,tiff?,webp?,zlib?]
 "
+
+PYOPENGL_VER=(
+	"3.1.7"
+)
+
+gen_opengl_rdepend() {
+	local s
+	for s in ${PYOPENGL_VER[@]} ; do
+		echo "
+			(
+				~dev-python/pyopengl-${s}[${PYTHON_USEDEP}]
+				~dev-python/pyopengl-accelerate-${s}[${PYTHON_USEDEP}]
+			)
+		"
+	done
+}
 
 # The media-video/nvidia-video-codec-sdk is a placeholder.  You need to package
 # it yourself locally.  See also
@@ -469,7 +484,11 @@ RDEPEND+="
 	opengl? (
 		x11-base/xorg-drivers[video_cards_dummy]
 		client? (
-			>=dev-python/pyopengl_accelerate-3.1.5[${PYTHON_USEDEP},numpy]
+			|| (
+				$(gen_opengl_rdepend)
+			)
+			dev-python/pyopengl:=
+			dev-python/pyopengl-accelerate:=
 		)
 		server? (
 			media-libs/mesa[osmesa?]
