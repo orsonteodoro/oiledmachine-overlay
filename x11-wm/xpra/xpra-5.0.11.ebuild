@@ -1,5 +1,5 @@
-# Copyright 2022-2023 Orson Teodoro <orsonteodoro@hotmail.com>
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 2022-2025 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -12,7 +12,7 @@ MY_PV="$(ver_cut 1-4)"
 DISTUTILS_USE_PEP517="setuptools"
 DISTUTILS_EXT=1
 FFMPEG_SLOT="0/56.58.58"
-PYTHON_COMPAT=( python3_10 ) # Upstream only tests with 3.10
+PYTHON_COMPAT=( "python3_10" ) # Upstream only tests with 3.10
 
 inherit cuda distutils-r1 flag-o-matic linux-info prefix tmpfiles udev
 inherit user-info xdg
@@ -76,7 +76,7 @@ openrc osmesa +pam pinentry png proc +proxy pyinotify qrencode +quic -rencode
 vsock -wayland +webcam webcam-forwarding webp +websockets +X x264 +xdg
 +xinput yaml zeroconf zlib
 
-ebuild-revision-1
+ebuild_revision_1
 "
 # Upstream enables uinput by default.  Disabled because ebuild exists.
 # Upstream enables drm by default.  Disabled because unfinished.
@@ -291,7 +291,7 @@ RENCODE_PV="1.0.6"
 # See https://github.com/Xpra-org/xpra/blob/v4.2/docs/Build/Dependencies.md for the full list.
 
 PILLOW_DEPEND="
-	dev-python/pillow[${PYTHON_USEDEP},jpeg?,tiff?,webp?,zlib?]
+	virtual/pillow[${PYTHON_USEDEP},jpeg?,tiff?,webp?,zlib?]
 "
 
 # The media-video/nvidia-video-codec-sdk is a placeholder.  You need to package
@@ -634,7 +634,7 @@ BDEPEND+="
 	)
 	|| (
 		sys-devel/gcc[cxx]
-		sys-devel/clang
+		llvm-core/clang
 	)
 "
 RESTRICT="mirror"
