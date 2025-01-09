@@ -166,6 +166,9 @@ GSTREAMER_PV="1.16.2"
 NVIDIA_OPTICAL_FLOW_COMMIT="edb50da3cf849840d680249aa6dbef248ebce2ca"		# See https://github.com/opencv/opencv_contrib/blob/4.8.1/modules/cudaoptflow/CMakeLists.txt#L12
 OPENEXR2_PV="2.5.10 2.5.9 2.5.8 2.5.7 2.4.3 2.4.2 2.4.1 2.4.0 2.3.0"
 OPENEXR3_PV="3.1.12 3.1.11 3.1.10 3.1.9 3.1.8 3.1.7 3.1.6 3.1.5 3.1.4 3.1.3 3.0.5 3.0.4 3.0.3 3.0.2 3.0.1"
+PATENT_STATUS_IUSE=(
+	patent_status_nonfree
+)
 PYTHON_COMPAT=( "python3_"{10..12} )
 QRCODE_COMMIT="a8b69ccc738421293254aec5ddb38bd523503252"			# See https://github.com/opencv/opencv_contrib/blob/4.8.1/modules/wechat_qrcode/CMakeLists.txt#L15
 QT5_PV="5.12.8"
@@ -283,6 +286,7 @@ SLOT="0/${PV}" # subslot = libopencv* soname version
 # mkl not observed in CI.
 IUSE="
 ${CPU_FEATURES_MAP[@]%:*}
+${PATENT_STATUS_IUSE[@]}
 ${ROCM_SLOTS[@]}
 -atlas -avif +carotene +contrib contribcvv +contribdnn contribfreetype contribhdf
 contribovis contribsfm contribxfeatures2d -cuda -cudnn debug dnnsamples +eigen
@@ -307,8 +311,29 @@ gen_rocm_required_use() {
 		"
 	done
 }
+PATENT_STATUS_REQUIRED_USE="
+	!patent_status_nonfree? (
+		!openh264
+		!vaapi
+		!x264
+		!x265
+	)
+	openh264? (
+		patent_status_nonfree
+	)
+	vaapi? (
+		patent_status_nonfree
+	)
+	x264? (
+		patent_status_nonfree
+	)
+	x265? (
+		patent_status_nonfree
+	)
+"
 REQUIRED_USE="
 	$(gen_rocm_required_use)
+	${PATENT_STATUS_REQUIRED_USE}
 	?? (
 		carotene
 		openvx
@@ -627,6 +652,39 @@ gen_rocm_rdepend() {
 		"
 	done
 }
+PATENT_STATUS_RDEPEND="
+	virtual/patent-status[patent_status_nonfree=]
+	!patent_status_nonfree? (
+		ffmpeg? (
+			|| (
+				media-video/ffmpeg:58.60.60[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
+				media-video/ffmpeg:56.58.58[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
+				media-video/ffmpeg:0/58.60.60[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
+				media-video/ffmpeg:0/56.58.58[${MULTILIB_USEDEP},libaom?,-openh264,-patent_status_nonfree,vpx?]
+			)
+		)
+		gstreamer? (
+			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},mpeg?,-patent_status_nonfree,-vaapi,vpx?,-x264,-x265]
+			!media-plugins/gst-plugins-vaapi
+		)
+	)
+	patent_status_nonfree? (
+		ffmpeg? (
+			|| (
+				media-video/ffmpeg:58.60.60[${MULTILIB_USEDEP},libaom?,openh264?,patent_status_nonfree,vpx?]
+				media-video/ffmpeg:56.58.58[${MULTILIB_USEDEP},libaom?,openh264?,patent_status_nonfree,vpx?]
+				media-video/ffmpeg:0/58.60.60[${MULTILIB_USEDEP},libaom?,openh264?,patent_status_nonfree,vpx?]
+				media-video/ffmpeg:0/56.58.58[${MULTILIB_USEDEP},libaom?,openh264?,patent_status_nonfree,vpx?]
+			)
+		)
+		gstreamer? (
+			>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},mpeg?,patent_status_nonfree,vaapi?,vpx?,x264?,x265?]
+			vaapi? (
+				>=media-plugins/gst-plugins-vaapi-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
+			)
+		)
+	)
+"
 RDEPEND="
 	(
 		|| (
@@ -679,12 +737,6 @@ RDEPEND="
 		dev-games/ogre:=
 	)
 	ffmpeg? (
-		|| (
-			media-video/ffmpeg:58.60.60[${MULTILIB_USEDEP},libaom?,openh264?,vpx?]
-			media-video/ffmpeg:56.58.58[${MULTILIB_USEDEP},libaom?,openh264?,vpx?]
-			media-video/ffmpeg:0/58.60.60[${MULTILIB_USEDEP},libaom?,openh264?,vpx?]
-			media-video/ffmpeg:0/56.58.58[${MULTILIB_USEDEP},libaom?,openh264?,vpx?]
-		)
 		media-video/ffmpeg:=[${MULTILIB_USEDEP}]
 	)
 	gdal? (
@@ -706,10 +758,6 @@ RDEPEND="
 	gstreamer? (
 		>=media-libs/gstreamer-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
 		>=media-libs/gst-plugins-base-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
-		>=media-plugins/gst-plugins-meta-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP},mpeg?,vaapi?,vpx?,x264?,x265?]
-		vaapi? (
-			>=media-plugins/gst-plugins-vaapi-${GSTREAMER_PV}:1.0[${MULTILIB_USEDEP}]
-		)
 	)
 	gtk3? (
 		>=dev-libs/glib-2.64.6:2[${MULTILIB_USEDEP}]
