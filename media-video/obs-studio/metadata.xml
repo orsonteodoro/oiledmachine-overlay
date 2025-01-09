@@ -197,7 +197,8 @@
       <pkg>media-libs/speexdsp</pkg>.
     </flag>
     <flag name="rnnoise">
-      Build support for RNNoise supression filter.
+      Build support for the recurrent neural network based RNNoise background
+      noise supression filter.
     </flag>
     <flag name="service-updates">
       Enable service updates.  This will override OBS_STUDIO_SERVICES_WHITELIST
