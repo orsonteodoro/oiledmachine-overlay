@@ -1,0 +1,14 @@
+--- a/plugins/CMakeLists.txt.orig	2025-01-08 20:18:15.241127391 -0800
++++ b/plugins/CMakeLists.txt	2025-01-08 20:20:04.984396910 -0800
+@@ -80,7 +80,10 @@ add_obs_plugin(obs-webrtc)
+ 
+ check_obs_websocket()
+ 
+-add_obs_plugin(obs-x264)
++option(ENABLE_X264 "Enable x264 support?" ON)
++if(ENABLE_X264)
++  add_obs_plugin(obs-x264)
++endif()
+ add_obs_plugin(oss-audio PLATFORMS FREEBSD OPENBSD)
+ add_obs_plugin(rtmp-services)
+ add_obs_plugin(sndio PLATFORMS LINUX FREEBSD OPENBSD)

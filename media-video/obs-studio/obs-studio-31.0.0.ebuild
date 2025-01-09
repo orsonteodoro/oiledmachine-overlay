@@ -699,7 +699,8 @@ PATCHES=(
 	# https://github.com/obsproject/obs-studio/pull/3335
 	"${FILESDIR}/${PN}-26.1.2-python-3.8.patch"
 	"${FILESDIR}/${PN}-30.2.3-hevc-preprocessor-cond.patch"
-	"${FILESDIR}/${PN}-30.2.3-browser-checks.patch"
+	"${FILESDIR}/${PN}-31.0.0-browser-checks.patch"
+	"${FILESDIR}/${PN}-31.0.0-optionalize-x264.patch"
 )
 
 qt_check() {
@@ -899,13 +900,6 @@ src_prepare() {
 			cmake/Modules/FindCEF.cmake \
 			|| die
 	fi
-
-	if ! use x264 ; then
-		sed -i \
-			-e "/obs-x264/d" \
-			"${S}/plugins/CMakeLists.txt" \
-			|| die
-	fi
 }
 
 gen_rtmp_services() {
@@ -990,6 +984,7 @@ einfo
 		-DENABLE_WEBSOCKET=$(usex websocket)
 		-DENABLE_WINMF=$(usex win-mf)
 		-DENABLE_WHATSNEW=$(usex whatsnew)
+		-DENABLE_X264=$(usex x264)
 		-DOBS_MULTIARCH_SUFFIX=${libdir#lib}
 		-DUNIX_STRUCTURE=1
 	)
