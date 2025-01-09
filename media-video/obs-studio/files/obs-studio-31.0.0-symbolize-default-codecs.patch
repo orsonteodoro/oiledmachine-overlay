@@ -1,0 +1,101 @@
+diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/window-basic-main-outputs.cpp obs-studio-31.0.0/UI/window-basic-main-outputs.cpp
+--- obs-studio-31.0.0.orig/UI/window-basic-main-outputs.cpp	2024-12-06 15:21:55.000000000 -0800
++++ obs-studio-31.0.0/UI/window-basic-main-outputs.cpp	2025-01-08 21:27:39.964228266 -0800
+@@ -576,6 +576,10 @@ const char *get_simple_output_encoder(co
+ 	} else if (strcmp(encoder, SIMPLE_ENCODER_APPLE_HEVC) == 0) {
+ 		return "com.apple.videotoolbox.videoencoder.ave.hevc";
+ #endif
++	} else if (strcmp(encoder, SIMPLE_ENCODER_SVT_AOM) == 0) {
++		return "ffmpeg_svt_av1";
++	} else if (strcmp(encoder, SIMPLE_ENCODER_AOM) == 0) {
++		return "ffmpeg_aom_av1";
+ 	}
+ 
+ 	return "obs_x264";
+diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/window-basic-main.cpp obs-studio-31.0.0/UI/window-basic-main.cpp
+--- obs-studio-31.0.0.orig/UI/window-basic-main.cpp	2024-12-06 15:21:55.000000000 -0800
++++ obs-studio-31.0.0/UI/window-basic-main.cpp	2025-01-08 21:34:32.953407396 -0800
+@@ -1739,8 +1739,8 @@ bool OBSBasic::InitBasicConfigDefaults()
+ 	config_set_default_int(activeConfiguration, "SimpleOutput", "RecRBTime", 20);
+ 	config_set_default_int(activeConfiguration, "SimpleOutput", "RecRBSize", 512);
+ 	config_set_default_string(activeConfiguration, "SimpleOutput", "RecRBPrefix", "Replay");
+-	config_set_default_string(activeConfiguration, "SimpleOutput", "StreamAudioEncoder", "aac");
+-	config_set_default_string(activeConfiguration, "SimpleOutput", "RecAudioEncoder", "aac");
++	config_set_default_string(activeConfiguration, "SimpleOutput", "StreamAudioEncoder", "@DEFAULT_AUDIO_CODEC@");
++	config_set_default_string(activeConfiguration, "SimpleOutput", "RecAudioEncoder", "@DEFAULT_AUDIO_CODEC@");
+ 	config_set_default_uint(activeConfiguration, "SimpleOutput", "RecTracks", (1 << 0));
+ 
+ 	config_set_default_bool(activeConfiguration, "AdvOut", "ApplyServiceSettings", true);
+@@ -1866,18 +1866,18 @@ void OBSBasic::InitBasicConfigDefaults2(
+ 	bool useNV = EncoderAvailable("ffmpeg_nvenc") && !oldEncDefaults;
+ 
+ 	config_set_default_string(activeConfiguration, "SimpleOutput", "StreamEncoder",
+-				  useNV ? SIMPLE_ENCODER_NVENC : SIMPLE_ENCODER_X264);
++				  useNV ? SIMPLE_ENCODER_NVENC : @DEFAULT_SIMPLE_ENCODER_AV1@);
+ 	config_set_default_string(activeConfiguration, "SimpleOutput", "RecEncoder",
+-				  useNV ? SIMPLE_ENCODER_NVENC : SIMPLE_ENCODER_X264);
++				  useNV ? SIMPLE_ENCODER_NVENC : @DEFAULT_SIMPLE_ENCODER_AV1@);
+ 
+-	const char *aac_default = "ffmpeg_aac";
++	const char *audio_default = "@DEFAULT_AUDIO_FFMPEG_CODEC@";
+ 	if (EncoderAvailable("CoreAudio_AAC"))
+-		aac_default = "CoreAudio_AAC";
++		audio_default = "CoreAudio_AAC";
+ 	else if (EncoderAvailable("libfdk_aac"))
+-		aac_default = "libfdk_aac";
++		audio_default = "libfdk_aac";
+ 
+-	config_set_default_string(activeConfiguration, "AdvOut", "AudioEncoder", aac_default);
+-	config_set_default_string(activeConfiguration, "AdvOut", "RecAudioEncoder", aac_default);
++	config_set_default_string(activeConfiguration, "AdvOut", "AudioEncoder", audio_default);
++	config_set_default_string(activeConfiguration, "AdvOut", "RecAudioEncoder", audio_default);
+ }
+ 
+ bool OBSBasic::InitBasicConfig()
+diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/window-basic-main.hpp obs-studio-31.0.0/UI/window-basic-main.hpp
+--- obs-studio-31.0.0.orig/UI/window-basic-main.hpp	2024-12-06 15:21:55.000000000 -0800
++++ obs-studio-31.0.0/UI/window-basic-main.hpp	2025-01-08 21:28:38.203830278 -0800
+@@ -68,6 +68,8 @@ class OBSBasicVCamConfig;
+ #define AUX_AUDIO_3 Str("AuxAudioDevice3")
+ #define AUX_AUDIO_4 Str("AuxAudioDevice4")
+ 
++#define SIMPLE_ENCODER_AOM "aom_av1"
++#define SIMPLE_ENCODER_SVT_AV1 "svt_av1"
+ #define SIMPLE_ENCODER_X264 "x264"
+ #define SIMPLE_ENCODER_X264_LOWCPU "x264_lowcpu"
+ #define SIMPLE_ENCODER_QSV "qsv"
+diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/window-basic-settings-stream.cpp obs-studio-31.0.0/UI/window-basic-settings-stream.cpp
+--- obs-studio-31.0.0.orig/UI/window-basic-settings-stream.cpp	2024-12-06 15:21:55.000000000 -0800
++++ obs-studio-31.0.0/UI/window-basic-settings-stream.cpp	2025-01-08 21:27:51.660148335 -0800
+@@ -1459,6 +1459,10 @@ static QString get_adv_fallback(const QS
+ 		return "com.apple.videotoolbox.videoencoder.ave.avc";
+ 	if (enc == "obs_qsv11_av1")
+ 		return "obs_qsv11";
++	if (enc == "ffmpeg_svt_av1")
++		return "ffmpeg_svt_av1";
++	if (enc == "ffmpeg_aom_av1")
++		return "ffmpeg_aom_av1";
+ 	return "obs_x264";
+ }
+ 
+@@ -1469,6 +1473,9 @@ static QString get_adv_audio_fallback(co
+ 	if (codec && strcmp(codec, "aac") == 0)
+ 		return "ffmpeg_opus";
+ 
++	if (codec && strcmp(codec, "opus") == 0)
++		return "ffmpeg_opus";
++
+ 	QString aac_default = "ffmpeg_aac";
+ 	if (EncoderAvailable("CoreAudio_AAC"))
+ 		aac_default = "CoreAudio_AAC";
+@@ -1488,6 +1495,10 @@ static QString get_simple_fallback(const
+ 		return SIMPLE_ENCODER_APPLE_H264;
+ 	if (enc == SIMPLE_ENCODER_QSV_AV1)
+ 		return SIMPLE_ENCODER_QSV;
++	if (enc == SIMPLE_ENCODER_SVT_AV1)
++		return SIMPLE_ENCODER_SVT_AV1;
++	if (enc == SIMPLE_ENCODER_AOM)
++		return SIMPLE_ENCODER_AOM;
+ 	return SIMPLE_ENCODER_X264;
+ }
+ 

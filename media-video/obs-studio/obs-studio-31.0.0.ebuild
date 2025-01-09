@@ -123,7 +123,7 @@ IUSE+="
 ${PATENT_STATUS_IUSE[@]}
 +alsa aja amf +browser +browser-panels coreaudio-encoder -decklink -fdk firejail
 +freetype +hevc +ipv6 jack libaom +lua mac-syphon +new-mpegts-output nvafx
-nvenc nvvfx oss +pipewire +pulseaudio +python qsv +qt6 +rnnoise +rtmps
+nvenc nvvfx opus oss +pipewire +pulseaudio +python qsv +qt6 +rnnoise +rtmps
 +service-updates -sndio +speexdsp svt-av1 -test +v4l2 vaapi +vlc +virtualcam
 +vst +wayland +webrtc win-dshow +websocket -win-mf +whatsnew x264
 
@@ -140,6 +140,13 @@ PATENT_STATUS_REQUIRED_USE="
 		!qsv
 		!vaapi
 		!x264
+	)
+	patent_status_nonfree? (
+		opus
+		|| (
+			libaom
+			svt-av1
+		)
 	)
 	amf? (
 		patent_status_nonfree
@@ -258,7 +265,7 @@ gen_ffmpeg_depend() {
 }
 
 DEPEND_FFMPEG="
-	$(gen_ffmpeg_depend '[libaom?,opus,svt-av1?]')
+	$(gen_ffmpeg_depend '[libaom?,opus?,svt-av1?]')
 "
 
 DEPEND_LIBX11="
@@ -701,6 +708,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-30.2.3-hevc-preprocessor-cond.patch"
 	"${FILESDIR}/${PN}-31.0.0-browser-checks.patch"
 	"${FILESDIR}/${PN}-31.0.0-optionalize-plugins.patch"
+	"${FILESDIR}/${PN}-31.0.0-symbolize-default-codecs.patch"
 )
 
 qt_check() {
@@ -896,6 +904,30 @@ src_prepare() {
 		sed -i -e "s|libcef_dll_wrapper.a|libcef_dll_wrapper.so|g" \
 			"${S}/cmake/finders/FindCEF.cmake" \
 			|| die
+	fi
+
+	if ! use patent_status_nonfree ; then
+		if use opus ; then
+			sed -i \
+				-e "s|@DEFAULT_AUDIO_CODEC@|opus|g" \
+				"UI/window-basic-main.cpp" \
+				|| die
+			sed -i \
+				-e "s|@DEFAULT_AUDIO_FFMPEG_CODEC@|ffmpeg_opus|g" \
+				"UI/window-basic-main.cpp" \
+				|| die
+		fi
+		if use svt-av1 ; then
+			sed -i \
+				-e "s|@DEFAULT_SIMPLE_ENCODER_AV1@|SIMPLE_ENCODER_SVT_AV1|g" \
+				"UI/window-basic-main.cpp" \
+				|| die
+		elif use libaom ; then
+			sed -i \
+				-e "s|@DEFAULT_SIMPLE_ENCODER_AV1@|SIMPLE_ENCODER_AOM|g" \
+				"UI/window-basic-main.cpp" \
+				|| die
+		fi
 	fi
 }
 
