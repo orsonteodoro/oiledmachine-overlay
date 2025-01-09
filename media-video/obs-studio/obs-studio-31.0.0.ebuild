@@ -122,7 +122,7 @@ SLOT="0"
 IUSE+="
 ${PATENT_STATUS_IUSE[@]}
 +alsa aja amf +browser +browser-panels coreaudio-encoder -decklink -fdk firejail
-+freetype +hevc +ipv6 jack libaom +lua mac-syphon +new-mpegts-output nvafx
++freetype +hevc +ipv6 jack libaom +lua mac-syphon +mpegts nvafx
 nvenc nvvfx opus oss +pipewire +pulseaudio +python qsv +qt6 +rnnoise +rtmps
 +service-updates -sndio +speexdsp svt-av1 -test +v4l2 vaapi +vlc +virtualcam
 +vst +wayland +webrtc win-dshow +websocket -win-mf +whatsnew x264
@@ -135,7 +135,7 @@ PATENT_STATUS_REQUIRED_USE="
 		!coreaudio-encoder
 		!fdk
 		!hevc
-		!new-mpegts-output
+		!mpegts
 		!nvenc
 		!qsv
 		!vaapi
@@ -160,7 +160,7 @@ PATENT_STATUS_REQUIRED_USE="
 	hevc? (
 		patent_status_nonfree
 	)
-	new-mpegts-output? (
+	mpegts? (
 		patent_status_nonfree
 	)
 	nvenc? (
@@ -391,7 +391,7 @@ PATENT_STATUS_FFMPEG_DEPEND="
 			>=media-libs/fdk-aac-2.0.2
 			media-libs/fdk-aac:=
 		)
-		new-mpegts-output? (
+		mpegts? (
 			>=net-libs/librist-0.2.10
 			>=net-libs/srt-1.5.3
 		)
@@ -1025,7 +1025,7 @@ einfo
 		-DENABLE_IPV6=$(usex ipv6)
 		-DENABLE_JACK=$(usex jack)
 		-DENABLE_LIBFDK=$(usex fdk)
-		-DENABLE_NEW_MPEGTS_OUTPUT=$(usex new-mpegts-output)
+		-DENABLE_NEW_MPEGTS_OUTPUT=$(usex mpegts)
 		-DENABLE_NATIVE_NVENC=$(usex nvenc)
 		-DENABLE_NVENC=$(usex nvenc)
 		-DENABLE_OSS=$(usex oss)
@@ -1207,7 +1207,7 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 29.1.3 (20230625) with qt6 only
 # USE="browser qt6 v4l2 vaapi -aja -alsa -amf -browser-panels -coreaudio-encoder
 # -decklink -fdk -freetype -ftl -hevc -ipv6 -jack -libaom -lua -mac-syphon
-# -new-mpegts-output -nvafx -nvenc -nvvfx -oss -pipewire -pulseaudio -python
+# -mpegts -nvafx -nvenc -nvvfx -oss -pipewire -pulseaudio -python
 # -qsv (-qt5) -r3 -rnnoise -rtmps -service-updates -sndio -speexdsp -svt-av1
 # -test -virtualcam -vlc -vst -wayland -websocket -whatsnew -win-dshow -win-mf
 # -x264"

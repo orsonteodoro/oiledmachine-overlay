@@ -157,7 +157,7 @@
     <flag name="mac-syphon">
       Build the mac-syphon plugin.
     </flag>
-    <flag name="new-mpegts-output">
+    <flag name="mpegts">
       Enable native SRT/RIST for mpegts output when using FFMpeg
     </flag>
     <flag name="nvenc">
