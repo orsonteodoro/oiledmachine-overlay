@@ -127,7 +127,7 @@ nvenc nvvfx opus oss +pipewire +pulseaudio +python qsv +qt6 +rnnoise +rtmps
 +service-updates -sndio +speexdsp svt-av1 -test +v4l2 vaapi +vlc +virtualcam
 +vst +wayland +webrtc win-dshow +websocket -win-mf +whatsnew x264
 
-ebuild_revision_8
+ebuild_revision_9
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -1015,6 +1015,7 @@ einfo
 		-DBUILD_TESTS=$(usex test)
 		-DENABLE_AJA=$(usex aja)
 		-DENABLE_ALSA=$(usex alsa)
+		-DENABLE_AOM=$(usex libaom)
 		-DENABLE_BROWSER=$(usex browser)
 		-DENABLE_BROWSER_PANELS=$(usex browser-panels)
 		-DENABLE_COREAUDIO_ENCODER=$(usex coreaudio-encoder)
@@ -1037,6 +1038,7 @@ einfo
 		-DENABLE_SNDIO=$(usex sndio)
 		-DENABLE_SERVICE_UPDATES=$(usex service-updates)
 		-DENABLE_SPEEXDSP=$(usex speexdsp)
+		-DENABLE_SVT_AV1=$(usex svt-av1)
 		-DENABLE_UPDATER=OFF
 		-DENABLE_V4L2=$(usex v4l2)
 		-DENABLE_VLC=$(usex vlc)
