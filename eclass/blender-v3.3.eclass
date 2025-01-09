@@ -674,16 +674,16 @@ PATENT_STATUS_RDEPEND="
 	!patent_status_nonfree? (
 		ffmpeg? (
 			|| (
-				media-video/ffmpeg:0/56.58.58[encode,jpeg2k?,libaom?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,-x264,xvid?,zlib]
-				media-video/ffmpeg:0/57.59.59[encode,jpeg2k?,libaom?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,-x264,xvid?,zlib]
+				media-video/ffmpeg:0/56.58.58[encode,jpeg2k?,libaom?,mp3?,opus?,-patent_status_nonfree,sdl,theora?,vorbis?,vpx?,-x264,xvid?,zlib]
+				media-video/ffmpeg:0/57.59.59[encode,jpeg2k?,libaom?,mp3?,opus?,-patent_status_nonfree,sdl,theora?,vorbis?,vpx?,-x264,xvid?,zlib]
 			)
 		)
 	)
 	patent_status_nonfree? (
 		ffmpeg? (
 			|| (
-				media-video/ffmpeg:0/56.58.58[encode,jpeg2k?,libaom?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,x264?,xvid?,zlib]
-				media-video/ffmpeg:0/57.59.59[encode,jpeg2k?,libaom?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,x264?,xvid?,zlib]
+				media-video/ffmpeg:0/56.58.58[encode,jpeg2k?,libaom?,mp3?,opus?,patent_status_nonfree,sdl,theora?,vorbis?,vpx?,x264?,xvid?,zlib]
+				media-video/ffmpeg:0/57.59.59[encode,jpeg2k?,libaom?,mp3?,opus?,patent_status_nonfree,sdl,theora?,vorbis?,vpx?,x264?,xvid?,zlib]
 			)
 		)
 	)
