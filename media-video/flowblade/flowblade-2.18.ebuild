@@ -108,6 +108,7 @@ REQUIRED_USE="
 	)
 "
 PATENT_STATUS_RDEPEND="
+	virtual/patent-status[patent_status_nonfree=]
 	!patent_status_nonfree? (
 		>=media-video/ffmpeg-4.4.1[encode,mp3?,-nvenc,-patent_status_nonfree,-vaapi,vpx?,-x264,-x265]
 	)

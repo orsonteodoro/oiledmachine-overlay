@@ -671,6 +671,7 @@ CODECS="
 # The distro's llvm 14 for mesa is 22.05.
 # The required openjpeg version is different for security update.  It is not tagged but newer commit.
 PATENT_STATUS_RDEPEND="
+	virtual/patent-status[patent_status_nonfree=]
 	!patent_status_nonfree? (
 		ffmpeg? (
 			|| (
@@ -710,7 +711,6 @@ RDEPEND+="
 	dev-libs/lzo:2
 	media-libs/libglvnd
 	media-libs/libsamplerate
-	virtual/patent-status[patent_status_nonfree=]
 	virtual/libintl
 	alembic? (
 		>=media-gfx/alembic-1.8.3[boost(+),hdf(+)]

@@ -96,6 +96,7 @@ RESTRICT="
 "
 #	media-libs/olivecore
 PATENT_STATUS_RDEPEND="
+	virtual/patent-status[patent_status_nonfree=]
 	!patent_status_nonfree? (
 		>=media-video/ffmpeg-3.0.0:0[jpeg2k?,mp3?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
 	)

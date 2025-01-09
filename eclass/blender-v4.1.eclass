@@ -682,6 +682,7 @@ CODECS="
 # The distro's llvm 14 for mesa is 22.05.
 # Missing OCLOC
 PATENT_STATUS_RDEPEND="
+	virtual/patent-status[patent_status_nonfree=]
 	!patent_status_nonfree? (
 		ffmpeg? (
 			|| (
@@ -728,7 +729,6 @@ RDEPEND+="
 	media-libs/libglvnd
 	media-libs/libsamplerate
 	media-libs/vulkan-drivers
-	virtual/patent-status[patent_status_nonfree=]
 	virtual/libintl
 	alembic? (
 		>=media-gfx/alembic-1.8.3[boost(+),hdf(+)]
