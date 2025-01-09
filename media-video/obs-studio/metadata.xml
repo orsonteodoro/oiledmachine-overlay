@@ -210,7 +210,7 @@
     </flag>
     <flag name="qsv">
       Enable use of the Quick Sync Video hardware accelerated encoder for H.264,
-      H.265, AV1.
+      AV1.
 
       It requires one additional package:
 
@@ -229,7 +229,7 @@
       Build v4l2 support.
     </flag>
     <flag name="vaapi">
-      Enable GPU accelerated H.264 encoding via VA-API.
+      Enable GPU accelerated H.264, H.265, AV1 encoding via VA-API.
     </flag>
     <flag name="vlc">
       Build support for using <pkg>media-video/vlc</pkg> as a media source.
