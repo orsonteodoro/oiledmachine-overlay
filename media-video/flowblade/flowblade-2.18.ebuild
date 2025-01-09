@@ -8,6 +8,9 @@ EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
 DISTUTILS_SINGLE_IMPL=1
+PATENT_STATUS_IUSE=(
+	patent_status_nonfree
+)
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 pypi xdg
@@ -40,11 +43,33 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 # Assume X and not Wayland since libsdl2 is not supported.
 IUSE+="
+${PATENT_STATUS_IUSE[@]}
 alsa frei0r jack jpeg mp3 nvenc opencv opus oss pulseaudio rtaudio rubberband
 sox vaapi vidstab vorbis vpx x264 x265
 ebuild_revision_4
 "
+PATENT_STATUS_REQUIRED_USE="
+	!patent_status_nonfree? (
+		!nvenc
+		!vaapi
+		!x264
+		!x265
+	)
+	nvenc? (
+		patent_status_nonfree
+	)
+	vaapi? (
+		patent_status_nonfree
+	)
+	x264? (
+		patent_status_nonfree
+	)
+	x265? (
+		patent_status_nonfree
+	)
+"
 REQUIRED_USE="
+	${PATENT_STATUS_REQUIRED_USE}
 	alsa? (
 		|| (
 			jack
@@ -82,6 +107,14 @@ REQUIRED_USE="
 		x265
 	)
 "
+PATENT_STATUS_RDEPEND="
+	!patent_status_nonfree? (
+		>=media-video/ffmpeg-4.4.1[encode,mp3?,-nvenc,-patent_status_nonfree,-vaapi,vpx?,-x264,-x265]
+	)
+	patent_status_nonfree? (
+		>=media-video/ffmpeg-4.4.1[encode,mp3?,nvenc?,patent_status_nonfree,vaapi?,vpx?,x264?,x265?]
+	)
+"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/libusb1-2.0.1[${PYTHON_USEDEP}]
@@ -95,7 +128,6 @@ RDEPEND+="
 	>=gnome-base/librsvg-2.52.5[introspection]
 	>=media-libs/mlt-flowblade-7.4.0[${PYTHON_SINGLE_USEDEP},alsa?,ffmpeg,frei0r?,gtk,jack?,libsamplerate,opencv?,oss?,pulseaudio?,python,rtaudio?,rubberband?,sdl,sox?,vidstab?,xml]
 	>=media-plugins/swh-plugins-0.4.17
-	>=media-video/ffmpeg-4.4.1[encode,mp3?,nvenc?,vaapi?,vpx?,x264?,x265?]
 	>=media-video/movit-1.6.3
 	>=media-gfx/gmic-2.9.4[cli]
 	>=x11-libs/pango-1.50.6[introspection]
