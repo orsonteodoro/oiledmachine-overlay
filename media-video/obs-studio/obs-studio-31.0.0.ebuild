@@ -408,8 +408,8 @@ PATENT_STATUS_FFMPEG_DEPEND="
 			media-libs/vaapi-drivers
 		)
 		x264? (
-			>=media-libs/x264-0.0.20210613
 			$(gen_ffmpeg_depend '[patent_status_nonfree,x264]')
+			>=media-libs/x264-0.0.20210613
 		)
 	)
 
