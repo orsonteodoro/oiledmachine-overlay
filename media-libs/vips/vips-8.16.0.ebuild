@@ -91,6 +91,7 @@ REQUIRED_USE="
 	)
 "
 PATENT_STATUS_RDEPEND="
+	virtual/patent-status[patent_status_nonfree=]
 	!patent_status_nonfree? (
 		heif? (
 			!media-libs/libde265
