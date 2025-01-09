@@ -126,13 +126,13 @@
       Enable browser to run in main UI thread.
     </flag>
     <flag name="coreaudio">
-      Enable AAC support.
+      Enable AAC encoding support.
     </flag>
     <flag name="decklink">
       Enable support for DeckLink devices.
     </flag>
     <flag name="fdk">
-      Enable libfdk support for AAC encoding.
+      Enable AAC encoding support.
     </flag>
     <flag name="freetype">
       Builds the Freetype text plugin.
