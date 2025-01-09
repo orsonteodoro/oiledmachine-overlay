@@ -66,8 +66,9 @@ CXXABI_VER=17 # Linux builds should be gnu11, but in Win builds it is c++17
 
 # For max and min package versions see link below. \
 # https://github.com/blender/blender/blob/v3.3.21/build_files/build_environment/install_deps.sh#L488
+# Ebuild will disable patented codecs by default, but upstream enables by default.
 FFMPEG_IUSE+="
-	+aom +jpeg2k +mp3 +opus +theora +vorbis +vpx webm +webp +x264 +xvid
+	+jpeg2k libaom +mp3 +opus +theora +vorbis +vpx webm +webp x264 +xvid
 "
 
 # FAIL!  Distro only has >= 14.
@@ -78,6 +79,10 @@ LLVM_MAX_UPSTREAM=13 # (inclusive)
 # For the max exclusive Python supported (and others), see \
 # https://github.com/blender/blender/blob/v3.3.21/build_files/build_environment/install_deps.sh#L382
 PYTHON_COMPAT=( "python3_"{10,11} ) # <= 3.11.
+
+PATENT_STATUS_IUSE=(
+	patent_status_nonfree
+)
 
 OPENVDB_ABIS_MAJOR_VERS=9
 OPENVDB_ABIS=(
@@ -165,6 +170,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${FFMPEG_IUSE}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${OPENVDB_ABIS[@]}
+${PATENT_STATUS_IUSE[@]}
 ${ROCM_SLOTS[@]}
 +X +abi9-compat +alembic aot -asan +boost +bullet +collada +color-management
 -cpudetection +cuda +cycles -cycles-device-oneapi +dds -debug doc +draco
@@ -346,17 +352,27 @@ gen_required_use_rocm_targets() {
 
 # The below are hardcoded enabled in the dependency builder but no explicit option
 IMPLIED_RELEASE_BUILD_REQUIRED_USE="
-	aom
+	libaom
 	mp3
 	opus
 	theora
 	vorbis
 	vpx
+	x264
 	xvid
+"
+PATENT_STATUS_REQUIRED_USE="
+	!patent_status_nonfree? (
+		!x264
+	)
+	x264? (
+		patent_status_nonfree
+	)
 "
 REQUIRED_USE+="
 	$(gen_required_use_cuda_targets)
 	$(gen_required_use_rocm_targets)
+	${PATENT_STATUS_REQUIRED_USE}
 	!boost? (
 		!alembic
 		!color-management
@@ -379,9 +395,6 @@ REQUIRED_USE+="
 	^^ (
 		${OPENVDB_ABIS[@]}
 	)
-	aom? (
-		ffmpeg
-	)
 	build_creator? (
 		X
 	)
@@ -403,6 +416,9 @@ REQUIRED_USE+="
 	)
 	embree? (
 		cycles
+	)
+	libaom? (
+		ffmpeg
 	)
 	mp3? (
 		ffmpeg
@@ -621,7 +637,7 @@ gen_osl_depends()
 # build_files/build_environment/install_deps.sh : --disable-ffplay
 # The FFMPEG_VERSION_MEX is set to 6.0 but contradicts versions.cmake @ 96c5cc5.  _MEX means excludes the mentioned.
 CODECS="
-	aom? (
+	libaom? (
 		>=media-libs/libaom-3.3.0
 	)
 	mp3? (
@@ -654,7 +670,24 @@ CODECS="
 
 # The distro's llvm 14 for mesa is 22.05.
 # The required openjpeg version is different for security update.  It is not tagged but newer commit.
-
+PATENT_STATUS_RDEPEND="
+	!patent_status_nonfree? (
+		ffmpeg? (
+			|| (
+				media-video/ffmpeg:0/56.58.58[encode,jpeg2k?,libaom?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,-x264,xvid?,zlib]
+				media-video/ffmpeg:0/57.59.59[encode,jpeg2k?,libaom?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,-x264,xvid?,zlib]
+			)
+		)
+	)
+	patent_status_nonfree? (
+		ffmpeg? (
+			|| (
+				media-video/ffmpeg:0/56.58.58[encode,jpeg2k?,libaom?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,x264?,xvid?,zlib]
+				media-video/ffmpeg:0/57.59.59[encode,jpeg2k?,libaom?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,x264?,xvid?,zlib]
+			)
+		)
+	)
+"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/certifi-2021.10.8[${PYTHON_USEDEP}]
@@ -666,6 +699,7 @@ RDEPEND+="
 		>=dev-python/zstandard-0.16.0[${PYTHON_USEDEP}]
 	' 'python*')
 	${CODECS}
+	${PATENT_STATUS_RDEPEND}
 	${PYTHON_DEPS}
 	>=dev-cpp/pystring-1.1.3
 	>=dev-lang/python-3.10.13
@@ -676,6 +710,7 @@ RDEPEND+="
 	dev-libs/lzo:2
 	media-libs/libglvnd
 	media-libs/libsamplerate
+	virtual/patent-status[patent_status_nonfree=]
 	virtual/libintl
 	alembic? (
 		>=media-gfx/alembic-1.8.3[boost(+),hdf(+)]
@@ -787,19 +822,10 @@ RDEPEND+="
 		<dev-libs/level-zero-2
 	)
 	embree? (
-		>=media-libs/embree-3.13.4:=\
-[-backface-culling(-),-compact-polys(-),cpu_flags_arm_neon2x?,\
-cpu_flags_x86_sse4_2?,\
-cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tbb?]
+		>=media-libs/embree-3.13.4:=[-backface-culling(-),-compact-polys(-),cpu_flags_arm_neon2x?,cpu_flags_x86_sse4_2?,cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,tbb?]
 		<media-libs/embree-4
 	)
 	ffmpeg? (
-		|| (
-			media-video/ffmpeg:0/56.58.58\
-[encode,jpeg2k?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,x264,xvid?,zlib]
-			media-video/ffmpeg:0/57.59.59\
-[encode,jpeg2k?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,x264,xvid?,zlib]
-		)
 		media-video/ffmpeg:=
 	)
 	fftw? (

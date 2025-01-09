@@ -235,6 +235,9 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
       Adds support for a joystick through SDL used for the Blender Game Engine
       (BGE, 2.79.x only).
     </flag>
+    <flag name="libaom">
+      Adds support for AV1 for video output.
+    </flag>
     <flag name="llvm">
       Enable features depending on llvm.
     </flag>
@@ -310,6 +313,9 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
       Add support for converting bitmaps into a grease pencil line for smoother
       edges.
     </flag>
+    <flag name="rav1e">
+      Adds support for AV1 for video output.
+    </flag>
     <flag name="release">
       Builds Blender with the release configuration (AKA precompiled Blender),
       with a subset of the release configuration but allows for flexibility.
@@ -321,6 +327,9 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
 
       The hard USE requirements are to ensure compatibility and render quality
       consistency with render farms.
+    </flag>
+    <flag name="svt-av1">
+      Adds support for AV1 for video output.
     </flag>
     <flag name="sycl">
       Add support for GPU accelerated raytracing for Intel® GPUs.
@@ -358,7 +367,10 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
       Adds support for VP9 for video output.
     </flag>
     <flag name="x264">
-      Adds support for x264 for video output.
+      Adds support for H.264 for video output.
+    </flag>
+    <flag name="x265">
+      Adds support for H.265 for video output.
     </flag>
     <flag name="X">
       Checks for X11 dependencies.

@@ -68,8 +68,9 @@ CXXABI_VER=17 # Linux builds should be gnu11, but in Win builds it is c++17
 
 # For max and min package versions see link below. \
 # https://github.com/blender/blender/blob/v3.6.18/build_files/build_environment/install_linux_packages.py
+# Ebuild will disable patented codecs by default, but upstream enables by default.
 FFMPEG_IUSE+="
-	+aom +jpeg2k +mp3 +opus +theora +vorbis +vpx webm +webp +x264 +xvid
+	+jpeg2k libaom +mp3 +opus rav1e svt-av1 +theora +vorbis +vpx webm +webp x264 +xvid
 "
 
 LLVM_COMPAT=( {15..11} )
@@ -83,6 +84,10 @@ OPENVDB_ABIS=(
 )
 OPENVDB_ABIS=(
 	${OPENVDB_ABIS[@]/%/-compat}
+)
+
+PATENT_STATUS_IUSE=(
+	patent_status_nonfree
 )
 
 # For the max exclusive Python supported (and others), see \
@@ -183,6 +188,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${FFMPEG_IUSE}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${OPENVDB_ABIS[@]}
+${PATENT_STATUS_IUSE[@]}
 ${ROCM_SLOTS[@]}
 +X +abi10-compat +alembic aot -asan +boost +bullet +collada +color-management
 -cpudetection +cuda +cycles +cycles-path-guiding +dds
@@ -359,17 +365,27 @@ gen_required_use_rocm_targets() {
 
 # The below are hardcoded enabled in the dependency builder but no explicit option
 IMPLIED_RELEASE_BUILD_REQUIRED_USE="
-	aom
+	libaom
 	mp3
 	opus
 	theora
 	vorbis
 	vpx
+	x264
 	xvid
+"
+PATENT_STATUS_REQUIRED_USE="
+	!patent_status_nonfree? (
+		!x264
+	)
+	x264? (
+		patent_status_nonfree
+	)
 "
 REQUIRED_USE+="
 	$(gen_required_use_cuda_targets)
 	$(gen_required_use_rocm_targets)
+	${PATENT_STATUS_REQUIRED_USE}
 	!boost? (
 		!alembic
 		!color-management
@@ -388,9 +404,6 @@ REQUIRED_USE+="
 	)
 	^^ (
 		${OPENVDB_ABIS[@]}
-	)
-	aom? (
-		ffmpeg
 	)
 	build_creator? (
 		X
@@ -424,6 +437,9 @@ REQUIRED_USE+="
 		|| (
 			rocm_5_3
 		)
+	)
+	libaom? (
+		ffmpeg
 	)
 	materialx? (
 		!python_single_target_python3_10
@@ -640,7 +656,7 @@ gen_osl_depends()
 # build_files/build_environment/cmake/ffmpeg.cmake : --enable-ffplay
 # build_files/build_environment/install_linux_packages.py : --disable-ffplay
 CODECS="
-	aom? (
+	libaom? (
 		>=media-libs/libaom-3.3.0
 	)
 	mp3? (
@@ -673,6 +689,26 @@ CODECS="
 
 # The distro's llvm 14 for mesa is 22.05.
 # Missing OCLOC
+PATENT_STATUS_RDEPEND="
+	!patent_status_nonfree? (
+		ffmpeg? (
+			|| (
+				media-video/ffmpeg:0/56.58.58[encode,jpeg2k?,libaom?,mp3?,opus?,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,-x264,xvid?,zlib]
+				media-video/ffmpeg:0/57.59.59[encode,jpeg2k?,libaom?,mp3?,opus?,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,-x264,xvid?,zlib]
+				media-video/ffmpeg:0/58.60.60[encode,jpeg2k?,libaom?,mp3?,opus?,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,-x264,xvid?,zlib]
+			)
+		)
+	)
+	patent_status_nonfree? (
+		ffmpeg? (
+			|| (
+				media-video/ffmpeg:0/56.58.58[encode,jpeg2k?,libaom?,mp3?,opus?,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,x264?,xvid?,zlib]
+				media-video/ffmpeg:0/57.59.59[encode,jpeg2k?,libaom?,mp3?,opus?,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,x264?,xvid?,zlib]
+				media-video/ffmpeg:0/58.60.60[encode,jpeg2k?,libaom?,mp3?,opus?,rav1e?,sdl,svt-av1?,theora?,vorbis?,vpx?,x264?,xvid?,zlib]
+			)
+		)
+	)
+"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/certifi-2021.10.8[${PYTHON_USEDEP}]
@@ -685,6 +721,7 @@ RDEPEND+="
 		>=dev-python/zstandard-0.16.0[${PYTHON_USEDEP}]
 	' 'python*')
 	${CODECS}
+	${PATENT_STATUS_RDEPEND}
 	${PYTHON_DEPS}
 	>=dev-cpp/pystring-1.1.3
 	>=dev-lang/python-3.10.13
@@ -699,6 +736,7 @@ RDEPEND+="
 	media-libs/libglvnd
 	media-libs/libsamplerate
 	media-libs/vulkan-drivers
+	virtual/patent-status[patent_status_nonfree=]
 	virtual/libintl
 	alembic? (
 		>=media-gfx/alembic-1.8.3[boost(+),hdf(+)]
@@ -832,21 +870,10 @@ RDEPEND+="
 		sys-apps/dbus
 	)
 	embree? (
-		>=media-libs/embree-4.1.0:=\
-[-backface-culling(-),-compact-polys(-),cpu_flags_arm_neon2x?,\
-cpu_flags_x86_sse4_2?,\
-cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sycl?,tbb?]
+		>=media-libs/embree-4.1.0:=[-backface-culling(-),-compact-polys(-),cpu_flags_arm_neon2x?,cpu_flags_x86_sse4_2?,cpu_flags_x86_avx?,cpu_flags_x86_avx2?,filter-function(+),raymask,static-libs,sycl?,tbb?]
 		<media-libs/embree-5
 	)
 	ffmpeg? (
-		|| (
-			media-video/ffmpeg:0/56.58.58\
-[encode,jpeg2k?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,x264,xvid?,zlib]
-			media-video/ffmpeg:0/57.59.59\
-[encode,jpeg2k?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,x264,xvid?,zlib]
-			media-video/ffmpeg:0/58.60.60\
-[encode,jpeg2k?,mp3?,opus?,sdl,theora?,vorbis?,vpx?,x264,xvid?,zlib]
-		)
 		media-video/ffmpeg:=
 	)
 	fftw? (
