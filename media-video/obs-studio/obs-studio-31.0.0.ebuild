@@ -267,10 +267,6 @@ DEPEND_LIBX11="
 	)
 "
 
-DEPEND_LIBX264="
-	>=media-libs/x264-0.0.20210613
-"
-
 DEPEND_LIBXCB="
         >=x11-libs/libxcb-1.14
 "
@@ -405,7 +401,7 @@ PATENT_STATUS_FFMPEG_DEPEND="
 			media-libs/vaapi-drivers
 		)
 		x264? (
-			${DEPEND_LIBX264}
+			>=media-libs/x264-0.0.20210613
 			$(gen_ffmpeg_depend '[patent_status_nonfree,x264]')
 		)
 	)
