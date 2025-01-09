@@ -177,7 +177,6 @@ REQUIRED_USE+="
 	!win-dshow
 	!win-mf
 	qt6
-	vaapi
 	!kernel_Darwin? (
 		!coreaudio-encoder
 		!mac-syphon
@@ -194,9 +193,6 @@ REQUIRED_USE+="
 		!v4l2
 		!vaapi
 		!wayland
-	)
-	kernel_linux? (
-		vaapi
 	)
 	lua? (
 		${LUA_REQUIRED_USE}
