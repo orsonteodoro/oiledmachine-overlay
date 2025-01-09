@@ -47,7 +47,7 @@ LICENSE="
 #	- xpra/client/gl/gl_colorspace_conversions.py
 KEYWORDS="~amd64 ~arm64 ~x86"
 GSTREAMER_IUSE=(
-aac alsa flac jack lame matroska mp3 ogg opus oss pulseaudio speex vorbis
+aac alsa aom flac jack lame matroska mp3 ogg opus oss pulseaudio speex vorbis
 wavpack
 )
 
@@ -207,6 +207,9 @@ REQUIRED_USE+="
 	cython
 	gtk3
 	rencodeplus
+	aom? (
+		!ffmpeg
+	)
 	audio? (
 		pulseaudio
 	)
@@ -369,6 +372,7 @@ gen_opengl_rdepend() {
 }
 
 PATENT_STATUS_RDEPEND="
+	virtual/patent-status[patent_status_nonfree=]
 	!patent_status_nonfree? (
 		audio? (
 			!media-plugins/gst-plugins-faac
@@ -377,7 +381,7 @@ PATENT_STATUS_RDEPEND="
 		)
 		!ffmpeg? (
 			media-libs/gst-plugins-bad:1.0[-amf]
-			media-plugins/gst-plugins-meta:1.0[aom?,ogg?,-vaapi,vpx?,-x264?]
+			media-plugins/gst-plugins-meta:1.0[aom?,ogg?,-vaapi,vpx?,-x264]
 			nvdec? (
 				media-libs/gst-plugins-bad[-nvcodec]
 				media-plugins/gst-plugins-meta:1.0[-nvcodec]
@@ -426,7 +430,6 @@ RDEPEND+="
 	dev-libs/gobject-introspection
 	dev-libs/glib[dbus?]
 	dev-python/pygobject[${PYTHON_USEDEP}]
-	virtual/patent-status[patent_status_nonfree=]
 	aes? (
 		dev-python/cryptography[${PYTHON_USEDEP}]
 	)
