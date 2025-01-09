@@ -5,7 +5,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/window-basic-main-outputs.cpp
  	} else if (strcmp(encoder, SIMPLE_ENCODER_APPLE_HEVC) == 0) {
  		return "com.apple.videotoolbox.videoencoder.ave.hevc";
  #endif
-+	} else if (strcmp(encoder, SIMPLE_ENCODER_SVT_AOM) == 0) {
++	} else if (strcmp(encoder, SIMPLE_ENCODER_SVT_AV1) == 0) {
 +		return "ffmpeg_svt_av1";
 +	} else if (strcmp(encoder, SIMPLE_ENCODER_AOM) == 0) {
 +		return "ffmpeg_aom_av1";
