@@ -722,6 +722,7 @@ PATENT_STATUS_RDEPEND="
 	)
 "
 RDEPEND="
+	${PATENT_STATUS_RDEPEND}
 	(
 		|| (
 			>=dev-libs/protobuf-3.19.1:0/3.21[${MULTILIB_USEDEP}]
