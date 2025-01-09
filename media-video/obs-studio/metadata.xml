@@ -114,7 +114,7 @@
       Add support for AJA capture hardware.
     </flag>
     <flag name="amf">
-      Add support for AMD hardware encoders.
+      Add support for AMD GPU accelerated encoding for H.264, H.265, AV1.
     </flag>
     <flag name="browser">
       Enable adding web pages as a source.
@@ -139,7 +139,7 @@
       streaming.  (Deprecated)
     </flag>
     <flag name="hevc">
-      Enable HEVC (aka H.265) encoders.
+      Enable H.265 encoding support.
     </flag>
     <flag name="imagemagick">
       Use ImageMagick for image loading instead of FFmpeg.
@@ -164,10 +164,12 @@
       Enable GPU accelerated encoding using NVENC for H.264, H.265, AV1.
     </flag>
     <flag name="nvafx">
-      Enable building with NVAFX.
+      Enable building with the NVIDIA® Audio Effects SDK for denoiser
+      and reverb.
     </flag>
     <flag name="nvvfx">
-      Enable building with NVVFX.
+      Enable building with the NVIDIA® Video Effects SDK for blur and
+      green screen support.
     </flag>
     <flag name="oss">
       Enable OSS support in FreeBSD.
@@ -221,7 +223,7 @@
       Build v4l2 support.
     </flag>
     <flag name="vaapi">
-      Enable GPU accelerated encoding via VA-API for H.264.
+      Enable GPU accelerated H.264 encoding via VA-API.
     </flag>
     <flag name="vlc">
       Build support for using <pkg>media-video/vlc</pkg> as a media source.
@@ -263,8 +265,7 @@
       Build deprecated win-mf plugin for H.264 and AAC encoders.
     </flag>
     <flag name="x264">
-      A fallback placeholder for CPU based encoding x264 is always required
-      when building.
+      Build with CPU based H.264 support.
     </flag>
   </use>
 </pkgmetadata>

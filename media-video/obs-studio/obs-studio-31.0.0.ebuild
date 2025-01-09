@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# U 22.04
+# U24
 
 #
 # To find differences between release use:
@@ -16,58 +16,46 @@ EAPI=8
 # done
 #
 
-# 103 is EOL.  The current Cr version is 122.
+# 95 is EOL.  The current Cr version is 122.
 # See also
 # https://github.com/obsproject/obs-studio/blob/30.1.0/build-aux/modules/99-cef.json
 # https://bitbucket.org/chromiumembedded/cef/wiki/BranchesAndBuilding
 # https://bitbucket.org/chromiumembedded/cef/src/5060/CHROMIUM_BUILD_COMPATIBILITY.txt?at=5060
 CAPTURE_DEVICE_SUPPORT_COMMIT="81c94fb13dfddb412fcb17f1ba031917ec24be64"
-CEF_PV="103"
-CMAKE_REMOVE_MODULES_LIST=( FindFreetype )
-CURL_COMMIT="44b9b4d4f56d6f6de92c89636994c03984e9cd01"
+CEF_PV="95" # See https://github.com/obsproject/obs-browser/blob/a76b4d8810a0a33e91ac5b76a0b1af2f22bf8efd/CMakeLists.txt#L12
+CMAKE_REMOVE_MODULES_LIST=( "FindFreetype" )
 FFMPEG_COMPAT=(
 	"0/58.60.60" # 6.1
-	"0/56.58.58" # 4.4
 )
-FTL_SDK_COMMIT="d0c8469f66806b5ea738d607f7d2b000af8b1129"
-JANSSON_COMMIT="bc5741fb1ac730ead24e9bd08977fc6c248e04b0"
 LIBDSHOWCAPTURE_COMMIT="ef8c1d2e19c93e664100dd41e1a0df4f8ad45430"
-LIBVA_PV="2.14.0"
-LIBX11_PV="1.7.5"
-LUA_COMPAT=( luajit )
+LIBVA_PV="2.20.0"
+LIBX11_PV="1.8.7"
+LUA_COMPAT=( "luajit" )
 MAKEOPTS="-j1"
-MESA_PV="22.0.1"
-OBS_BROWSER_COMMIT="c710222ec9d7ef9aa5d7099e9019d636e2c89f00"
-OBS_WEBSOCKET_COMMIT="0548c7798a323fe5296c150e13b898a5ee62fc1e"
-PYTHON_COMPAT=( python3_{8..11} )
-QT6_PV="6.2.4"
+MESA_PV="24.0.5"
+OBS_BROWSER_COMMIT="a76b4d8810a0a33e91ac5b76a0b1af2f22bf8efd"
+OBS_WEBSOCKET_COMMIT="eed8a49933786383d11f4868a4e5604a9ee303c6"
+PATENT_STATUS_IUSE=(
+	patent_status_nonfree
+)
+PYTHON_COMPAT=( "python3_"{8..11} )
+QT6_PV="6.4.2"
 QT6_SLOT="$(ver_cut 1 ${QT6_PV})"
-SWIG_PV="4.0.2"
+SWIG_PV="4.2.0"
 
 inherit cmake dep-prepare flag-o-matic git-r3 lcnr lua-single python-single-r1 xdg-utils
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_COMMIT="${PV}"
 	EGIT_REPO_URI="https://github.com/obsproject/obs-studio.git"
-	#EGIT_SUBMODULES=(
-	#	'*'
-	#	'-plugins/win-dshow'
-	#	'-plugins/enc-amf'
-	#)
 	FALLBACK_COMMIT="144599fbff18e348652ccadfc3ca08794a03d970"
 	IUSE+=" fallback-commit"
 	inherit git
 else
 	KEYWORDS="~amd64 ~arm64"
 	SRC_URI="
-https://github.com/akheron/jansson/archive/${JANSSON_COMMIT}.tar.gz
-	-> jansson-${JANSSON_COMMIT:0:7}.tar.gz
-https://github.com/curl/curl/archive/${CURL_COMMIT}.tar.gz
-	-> curl-${CURL_COMMIT:0:7}.tar.gz
 https://github.com/elgatosf/capture-device-support/archive/${CAPTURE_DEVICE_SUPPORT_COMMIT}.tar.gz
 	-> capture-device-support-${CAPTURE_DEVICE_SUPPORT_COMMIT:0:7}.tar.gz
-https://github.com/microsoft/ftl-sdk/archive/${FTL_SDK_COMMIT}.tar.gz
-	-> ftl-sdk-${FTL_SDK_COMMIT:0:7}.tar.gz
 https://github.com/obsproject/libdshowcapture/archive/${LIBDSHOWCAPTURE_COMMIT}.tar.gz
 	-> libdshowcapture-${LIBDSHOWCAPTURE_COMMIT:0:7}.tar.gz
 	browser? (
@@ -98,10 +86,6 @@ LICENSE="
 	)
 	decklink? (
 		Boost-1.0
-	)
-	ftl? (
-		curl
-		MIT
 	)
 	mac-syphon? (
 		BSD
@@ -136,15 +120,53 @@ SLOT="0"
 # qsv is enabled by default upstream
 # vlc is enabled by default upstream
 IUSE+="
+${PATENT_STATUS_IUSE[@]}
 +alsa aja amf +browser +browser-panels coreaudio-encoder -decklink -fdk firejail
-+freetype ftl +hevc +ipv6 jack libaom +lua mac-syphon +new-mpegts-output nvafx
++freetype +hevc +ipv6 jack libaom +lua mac-syphon +new-mpegts-output nvafx
 nvenc nvvfx oss +pipewire +pulseaudio +python qsv +qt6 +rnnoise +rtmps
 +service-updates -sndio +speexdsp svt-av1 -test +v4l2 vaapi +vlc +virtualcam
 +vst +wayland +webrtc win-dshow +websocket -win-mf +whatsnew x264
 
 ebuild_revision_7
 "
+PATENT_STATUS_REQUIRED_USE="
+	!patent_status_nonfree? (
+		!amf
+		!coreaudio-encoder
+		!hevc
+		!new-mpegts-output
+		!nvenc
+		!qsv
+		!vaapi
+		!x264
+	)
+	amf? (
+		patent_status_nonfree
+	)
+	coreaudio-encoder? (
+		patent_status_nonfree
+	)
+	hevc? (
+		patent_status_nonfree
+	)
+	new-mpegts-output? (
+		patent_status_nonfree
+	)
+	nvenc? (
+		patent_status_nonfree
+	)
+	qsv? (
+		patent_status_nonfree
+	)
+	vaapi? (
+		patent_status_nonfree
+	)
+	x264? (
+		patent_status_nonfree
+	)
+"
 REQUIRED_USE+="
+	${PATENT_STATUS_REQUIRED_USE}
 	!nvafx
 	!nvvfx
 	!oss
@@ -168,15 +190,6 @@ REQUIRED_USE+="
 		!v4l2
 		!vaapi
 		!wayland
-	)
-	ftl? (
-		|| (
-			amf
-			nvenc
-			vaapi
-			win-mf
-			x264
-		)
 	)
 	kernel_linux? (
 		vaapi
@@ -204,8 +217,8 @@ REQUIRED_USE+="
 # deps/obs-scripting/obslua/CMakeLists.txt
 # deps/obs-scripting/obspython/CMakeLists.txt
 BDEPEND+="
-	>=app-misc/jq-1.6
-	>=dev-build/cmake-3.22.1
+	>=app-misc/jq-1.7.1
+	>=dev-build/cmake-3.28.3
 	>=dev-util/pkgconf-1.8.0[pkg-config(+)]
 	lua? (
 		>=dev-lang/swig-${SWIG_PV}
@@ -215,9 +228,9 @@ BDEPEND+="
 		>=dev-lang/swig-${SWIG_PV}
 	)
 	test? (
-		>=dev-util/cmocka-1.1.5
+		>=dev-util/cmocka-1.1.7
 		websocket? (
-			>=dev-libs/boost-1.74.0
+			>=dev-libs/boost-1.83.0
 		)
 	)
 "
@@ -268,13 +281,13 @@ DEPEND_JANSSON="
 
 DEPEND_WAYLAND="
 	wayland? (
-		>=dev-libs/wayland-1.20.0
-		>=x11-libs/libxkbcommon-1.4.0
+		>=dev-libs/wayland-1.34
+		>=x11-libs/libxkbcommon-1.6.0
 	)
 "
 
 DEPEND_ZLIB="
-	>=sys-libs/zlib-1.2.11
+	>=sys-libs/zlib-1:1.3
 "
 
 DEPEND_PLUGINS_AJA="
@@ -298,7 +311,7 @@ DEPEND_PLUGINS_RNNOISE="
 DEPEND_PLUGINS_SNDIO="
 	sndio? (
 		${DEPEND_LIBOBS}
-		>=media-sound/sndio-1.8.1
+		>=media-sound/sndio-1.9.0
 	)
 "
 
@@ -352,9 +365,9 @@ DEPEND_PLUGINS_LINUX_CAPTURE="
         >=x11-libs/libXinerama-1.1.4
         >=x11-libs/libXrandr-1.5.2
 	pipewire? (
-		>=media-video/pipewire-0.3.48
-		>=dev-libs/glib-2.72.4:2
-		>=x11-libs/libdrm-2.4.110
+		>=media-video/pipewire-1.0.5
+		>=dev-libs/glib-2.80.0:2
+		>=x11-libs/libdrm-2.4.120
 	)
 "
 
@@ -363,16 +376,16 @@ DEPEND_PLUGINS_LINUX_CAPTURE="
 # From inspection, the video_cards_nouveau supports h264 decode but not h264
 # encode.  This is why it is omitted below in the vaapi driver section.
 DEPEND_PLUGINS_OBS_FFMPEG="
-	>=sys-apps/pciutils-3.7.0
+	>=sys-apps/pciutils-3.10.0
 	x11-libs/libdrm
 	new-mpegts-output? (
-		>=net-libs/librist-0.2.7
-		>=net-libs/srt-1.4.4
+		>=net-libs/librist-0.2.10
+		>=net-libs/srt-1.5.3
 	)
 	nvenc? (
 		$(gen_ffmpeg_depend '[nvenc]')
 		(
-			>=media-libs/nv-codec-headers-12
+			>=media-libs/nv-codec-headers-12.1.14.0
 			<media-libs/nv-codec-headers-12.2.0.0
 		)
 	)
@@ -384,18 +397,14 @@ DEPEND_PLUGINS_OBS_FFMPEG="
 "
 
 DEPEND_CURL="
-	>=net-misc/curl-7.81.0
+	>=net-misc/curl-8.5.0
 "
 
 DEPEND_PLUGINS_OBS_OUTPUTS="
 	${DEPEND_LIBOBS}
 	${DEPEND_ZLIB}
-	>=net-libs/mbedtls-2.28.0
+	>=net-libs/mbedtls-2.28.8
 	net-libs/mbedtls:=
-	ftl? (
-		${DEPEND_CURL}
-		${DEPEND_JANSSON}
-	)
 "
 
 DEPEND_PLUGINS_OBS_BROWSER="
@@ -417,10 +426,11 @@ DEPEND_PLUGINS_OBS_BROWSER="
 	)
 "
 
+# TODO:  bump libvpl and section to 2023.3.0
 DEPEND_PLUGINS_QSV="
 	qsv? (
 		elibc_glibc? (
-			media-libs/libvpl
+			>=media-libs/libvpl-2.9
 			|| (
 				media-libs/oneVPL-cpu
 				>=media-libs/intel-mediasdk-23.2.2
@@ -452,10 +462,10 @@ DEPEND_PLUGINS_VST="
 
 DEPEND_PLUGINS_WEBSOCKET="
 	websocket? (
-		>=dev-cpp/asio-1.18.1
-		>=dev-cpp/nlohmann_json-3.10.5
+		>=dev-cpp/asio-1.28.1
+		>=dev-cpp/nlohmann_json-3.11.3
 		>=dev-cpp/websocketpp-0.8.2
-		>=dev-libs/qr-code-generator-1.7.0
+		>=dev-libs/qr-code-generator-1.8.0
 		qt6? (
 			>=dev-qt/qtbase-${QT6_PV}:${QT6_SLOT}[network,widgets]
 			dev-qt/qtbase:=
@@ -465,6 +475,7 @@ DEPEND_PLUGINS_WEBSOCKET="
 	)
 "
 
+# TODO verify libdatachannel
 DEPEND_PLUGINS_WEBRTC="
 	webrtc? (
 		${DEPEND_CURL}
@@ -487,12 +498,10 @@ DEPEND_PLUGINS_WEBRTC="
 # >=media-sound/jack2-1.9.12
 # >=sys-fs/udev-237
 DEPEND_PLUGINS="
-	$(gen_ffmpeg_depend '[x264]')
 	${DEPEND_CURL}
 	${DEPEND_DEPS_FILE_UPDATER}
 	${DEPEND_DEPS_MEDIA_PLAYBACK}
 	${DEPEND_LIBOBS}
-	${DEPEND_LIBX264}
 	${DEPEND_PLUGINS_AJA}
 	${DEPEND_PLUGINS_DECKLINK}
 	${DEPEND_PLUGINS_DECKLINK_OUTPUT_UI}
@@ -508,30 +517,34 @@ DEPEND_PLUGINS="
 	${DEPEND_PLUGINS_VST}
 	${DEPEND_PLUGINS_WEBRTC}
 	alsa? (
-		>=media-libs/alsa-lib-1.2.6.1
+		>=media-libs/alsa-lib-1.2.11
 	)
 	fdk? (
 		>=media-libs/fdk-aac-2.0.2
 		media-libs/fdk-aac:=
 	)
 	freetype? (
-		>=media-libs/fontconfig-2.13.1
-		>=media-libs/freetype-2.11.1
+		>=media-libs/fontconfig-2.15.0
+		>=media-libs/freetype-2.13.2
 	)
 	jack? (
 		virtual/jack
 	)
 	speexdsp? (
-		>=media-libs/speexdsp-1.2
+		>=media-libs/speexdsp-1.2.1
 	)
 	v4l2? (
 		${DEPEND_FFMPEG}
-		>=media-libs/libv4l-1.22.1[utils]
+		>=media-libs/libv4l-1.26.1[utils]
 		virtual/udev
 	)
 	vlc? (
-		>=media-video/vlc-3.0.16
+		>=media-video/vlc-3.0.20
 		media-video/vlc:=
+	)
+	x264? (
+		${DEPEND_LIBX264}
+		$(gen_ffmpeg_depend '[x264]')
 	)
 "
 
@@ -556,17 +569,17 @@ DEPEND_LIBOBS="
 	${DEPEND_LIBX11}
 	${DEPEND_LIBXCB}
 	${DEPEND_ZLIB}
-	>=sys-apps/dbus-1.12.20
+	>=sys-apps/dbus-1.14.10
 	dev-libs/uthash
 	sys-apps/util-linux
 	pulseaudio? (
-		>=media-sound/pulseaudio-15.99.1
+		>=media-sound/pulseaudio-16.1
 	)
 "
 
 DEPEND_WHATSNEW="
 	whatsnew? (
-		dev-cpp/nlohmann_json
+		>=dev-cpp/nlohmann_json-3.11.3
 		net-libs/mbedtls
 	)
 "
@@ -606,7 +619,7 @@ DEPEND_MESA="
 DEPEND_GLAD="
 	${DEPEND_MESA}
 	${DEPEND_LIBX11}
-	>=media-libs/libglvnd-1.4.0
+	>=media-libs/libglvnd-1.7.0
 	>=media-libs/mesa-${MESA_PV}[egl(+)]
 "
 
@@ -668,9 +681,6 @@ DEPEND+="
 # The obs-amd-encoder submodule currently doesn't support Linux
 # https://github.com/obsproject/obs-amd-encoder/archive/${OBS_AMD_ENCODER_COMMIT}.tar.gz \
 #	-> obs-amd-encoder-${OBS_AMD_ENCODER_COMMIT}.tar.gz
-# For some details on FTL support and possible deprecation see:
-#  https://github.com/obsproject/obs-studio/discussions/4021
-#  The module is licensed as MIT.
 
 RESTRICT="mirror" # Speed up download of the latest release.
 PATCHES=(
@@ -852,11 +862,8 @@ src_unpack() {
 		git-r3_checkout
 	else
 		unpack ${A}
-		dep_prepare_mv "${WORKDIR}/libdshowcapture-${LIBDSHOWCAPTURE_COMMIT}" "${S}/plugins/win-dshow/libdshowcapture"
-		dep_prepare_mv "${WORKDIR}/capture-device-support-${CAPTURE_DEVICE_SUPPORT_COMMIT}" "${S}/plugins/win-dshow/libdshowcapture/external/capture-device-support"
-		dep_prepare_mv "${WORKDIR}/ftl-sdk-${FTL_SDK_COMMIT}" "${S}/plugins/obs-outputs/ftl-sdk"
-		dep_prepare_mv "${WORKDIR}/curl-${CURL_COMMIT}" "${S}/plugins/obs-outputs/ftl-sdk/libcurl"
-		dep_prepare_mv "${WORKDIR}/jansson-${JANSSON_COMMIT}" "${S}/plugins/obs-outputs/ftl-sdk/libjansson"
+		dep_prepare_mv "${WORKDIR}/libdshowcapture-${LIBDSHOWCAPTURE_COMMIT}" "${S}/deps/libdshowcapture/src"
+		dep_prepare_mv "${WORKDIR}/capture-device-support-${CAPTURE_DEVICE_SUPPORT_COMMIT}" "${S}/deps/libdshowcapture/src/external/capture-device-support"
 		if use browser ; then
 			dep_prepare_mv "${WORKDIR}/obs-browser-${OBS_BROWSER_COMMIT}" "${S}/plugins/obs-browser"
 		fi
@@ -866,11 +873,6 @@ src_unpack() {
 
 src_prepare() {
 	cmake_src_prepare
-	if use ftl ; then
-		pushd "${S}/plugins/obs-outputs/ftl-sdk" || die
-			eapply -p1 "${FILESDIR}/obs-studio-27.0.0-ftl-use-system-deps.patch"
-		popd
-	fi
 
 	# typos
 	sed -i -e "s|LIBVA_LBRARIES|LIBVA_LIBRARIES|g" \
@@ -883,6 +885,13 @@ src_prepare() {
 			|| die
 		sed -i -e "s|libcef_dll_wrapper.a|libcef_dll_wrapper.so|g" \
 			cmake/Modules/FindCEF.cmake \
+			|| die
+	fi
+
+	if ! use x264 ; then
+		sed -i \
+			-e "/obs-x264/d" \
+			"${S}/plugins/CMakeLists.txt" \
 			|| die
 	fi
 }
@@ -1090,15 +1099,6 @@ einfo "Advanced > Streaming > Encoder > FFMPEG VAAPI"
 einfo
 	fi
 
-	if use ftl ; then
-einfo
-einfo "FTL is currently being planned for removal (or deprecated).  It requires"
-einfo "x264 video, opus audio, and for lowest latency bframes=0."
-einfo
-einfo "Edit plugins/rtmp-services/data/services.json and add a per-package"
-einfo "patch for adding custom FTL servers."
-einfo
-	fi
 ewarn
 ewarn "SECURITY NOTICE:"
 ewarn
