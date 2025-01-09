@@ -700,7 +700,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-26.1.2-python-3.8.patch"
 	"${FILESDIR}/${PN}-30.2.3-hevc-preprocessor-cond.patch"
 	"${FILESDIR}/${PN}-31.0.0-browser-checks.patch"
-	"${FILESDIR}/${PN}-31.0.0-optionalize-x264.patch"
+	"${FILESDIR}/${PN}-31.0.0-optionalize-plugins.patch"
 )
 
 qt_check() {
@@ -812,7 +812,7 @@ ewarn
 ewarn "After being built, this information provided via package.env or"
 ewarn "by patch should be sanitized with shred from forensics attacks."
 ewarn
-	sleep 15
+	sleep 10
 
 	if ! use browser || \
 		[[ -z "${RESTREAM_CLIENTID}" || -z "${RESTREAM_HASH}" ]] ; then
@@ -962,6 +962,7 @@ einfo
 		-DENABLE_LIBFDK=$(usex fdk)
 		-DENABLE_NEW_MPEGTS_OUTPUT=$(usex new-mpegts-output)
 		-DENABLE_NATIVE_NVENC=$(usex nvenc)
+		-DENABLE_NVENC=$(usex nvenc)
 		-DENABLE_OSS=$(usex oss)
 		-DENABLE_PIPEWIRE=$(usex pipewire)
 		-DENABLE_PLUGINS=ON

@@ -1,0 +1,34 @@
+diff '--color=auto' -urp obs-studio-31.0.0.orig/plugins/CMakeLists.txt obs-studio-31.0.0/plugins/CMakeLists.txt
+--- obs-studio-31.0.0.orig/plugins/CMakeLists.txt	2025-01-08 20:28:41.024845707 -0800
++++ obs-studio-31.0.0/plugins/CMakeLists.txt	2025-01-08 20:29:57.252302276 -0800
+@@ -1,6 +1,8 @@
+ cmake_minimum_required(VERSION 3.28...3.30)
+ 
+ option(ENABLE_PLUGINS "Enable building OBS plugins" ON)
++option(ENABLE_NVENC "Enable nvenc support?" ON)
++option(ENABLE_X264 "Enable x264 support?" ON)
+ 
+ if(NOT ENABLE_PLUGINS)
+   set_property(GLOBAL APPEND PROPERTY OBS_FEATURES_DISABLED "Plugin Support")
+@@ -62,7 +64,9 @@ check_obs_browser()
+ add_obs_plugin(obs-ffmpeg)
+ add_obs_plugin(obs-filters)
+ add_obs_plugin(obs-libfdk)
+-add_obs_plugin(obs-nvenc PLATFORMS WINDOWS LINUX)
++if(ENABLE_NVENC)
++    add_obs_plugin(obs-nvenc PLATFORMS WINDOWS LINUX)
++endif()
+ add_obs_plugin(obs-outputs)
+ add_obs_plugin(
+     obs-qsv11
+@@ -80,7 +84,9 @@ add_obs_plugin(obs-webrtc)
+ 
+ check_obs_websocket()
+ 
+-add_obs_plugin(obs-x264)
++if(ENABLE_X264)
++  add_obs_plugin(obs-x264)
++endif()
+ add_obs_plugin(oss-audio PLATFORMS FREEBSD OPENBSD)
+ add_obs_plugin(rtmp-services)
+ add_obs_plugin(sndio PLATFORMS LINUX FREEBSD OPENBSD)
