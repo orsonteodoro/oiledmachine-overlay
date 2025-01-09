@@ -113,7 +113,7 @@ LICENSE="
 SLOT="0"
 # aja is enabled by default upstream
 # amf is enabled by default upstream
-# coreaudio-encoder is enabled by default upstream
+# coreaudio is enabled by default upstream
 # nvafx is enabled by default upstream
 # nvvfx is enabled by default upstream
 # oss is enabled by default upstream
@@ -121,7 +121,7 @@ SLOT="0"
 # vlc is enabled by default upstream
 IUSE+="
 ${PATENT_STATUS_IUSE[@]}
-+alsa aja amf +browser +browser-panels coreaudio-encoder -decklink -fdk firejail
++alsa aja amf +browser +browser-panels coreaudio -decklink -fdk firejail
 +freetype +hevc +ipv6 jack libaom +lua mac-syphon +mpegts nvafx
 nvenc nvvfx opus oss +pipewire +pulseaudio +python qsv +qt6 +rnnoise +rtmps
 +service-updates -sndio +speexdsp svt-av1 -test +v4l2 vaapi +vlc +virtualcam
@@ -132,7 +132,7 @@ ebuild_revision_9
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
 		!amf
-		!coreaudio-encoder
+		!coreaudio
 		!fdk
 		!hevc
 		!mpegts
@@ -151,7 +151,7 @@ PATENT_STATUS_REQUIRED_USE="
 	amf? (
 		patent_status_nonfree
 	)
-	coreaudio-encoder? (
+	coreaudio? (
 		patent_status_nonfree
 	)
 	fdk? (
@@ -188,7 +188,7 @@ REQUIRED_USE+="
 	!win-mf
 	qt6
 	!kernel_Darwin? (
-		!coreaudio-encoder
+		!coreaudio
 		!mac-syphon
 		!kernel_linux? (
 			!decklink
@@ -1021,7 +1021,7 @@ einfo
 		-DENABLE_AOM=$(usex libaom)
 		-DENABLE_BROWSER=$(usex browser)
 		-DENABLE_BROWSER_PANELS=$(usex browser-panels)
-		-DENABLE_COREAUDIO_ENCODER=$(usex coreaudio-encoder)
+		-DENABLE_COREAUDIO_ENCODER=$(usex coreaudio)
 		-DENABLE_DECKLINK=$(usex decklink)
 		-DENABLE_FREETYPE=$(usex freetype)
 		-DENABLE_HEVC=$(usex hevc)
@@ -1208,7 +1208,7 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-META-TAGS:  link-to-unvulnerable-blink-derivative
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 29.1.2 (20230608) with qt5 only
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 29.1.3 (20230625) with qt6 only
-# USE="browser qt6 v4l2 vaapi -aja -alsa -amf -browser-panels -coreaudio-encoder
+# USE="browser qt6 v4l2 vaapi -aja -alsa -amf -browser-panels -coreaudio
 # -decklink -fdk -freetype -ftl -hevc -ipv6 -jack -libaom -lua -mac-syphon
 # -mpegts -nvafx -nvenc -nvvfx -oss -pipewire -pulseaudio -python
 # -qsv (-qt5) -r3 -rnnoise -rtmps -service-updates -sndio -speexdsp -svt-av1
