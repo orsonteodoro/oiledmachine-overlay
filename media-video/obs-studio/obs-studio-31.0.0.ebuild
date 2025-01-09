@@ -365,8 +365,8 @@ DEPEND_PLUGINS_LINUX_CAPTURE="
         >=x11-libs/libXinerama-1.1.4
         >=x11-libs/libXrandr-1.5.2
 	pipewire? (
-		>=media-video/pipewire-1.0.5
 		>=dev-libs/glib-2.80.0:2
+		>=media-video/pipewire-1.0.5
 		>=x11-libs/libdrm-2.4.120
 	)
 "
@@ -375,25 +375,41 @@ DEPEND_PLUGINS_LINUX_CAPTURE="
 # https://github.com/obsproject/obs-studio/pull/1482/commits/2dc67f140d8156d9000db57786e53a4c1597c097
 # From inspection, the video_cards_nouveau supports h264 decode but not h264
 # encode.  This is why it is omitted below in the vaapi driver section.
-DEPEND_PLUGINS_OBS_FFMPEG="
-	>=sys-apps/pciutils-3.10.0
-	x11-libs/libdrm
-	new-mpegts-output? (
-		>=net-libs/librist-0.2.10
-		>=net-libs/srt-1.5.3
+PATENT_STATUS_FFMPEG_DEPEND="
+	!patent_status_nonfree? (
+		!media-libs/vaapi-drivers
+		!media-libs/libva
+		!media-libs/x264
+		$(gen_ffmpeg_depend '[-nvenc,-patent_status_nonfree,-vaapi,-x264]')
 	)
-	nvenc? (
-		$(gen_ffmpeg_depend '[nvenc]')
-		(
-			>=media-libs/nv-codec-headers-12.1.14.0
-			<media-libs/nv-codec-headers-12.2.0.0
+	patent_status_nonfree? (
+		new-mpegts-output? (
+			>=net-libs/librist-0.2.10
+			>=net-libs/srt-1.5.3
+		)
+		nvenc? (
+			$(gen_ffmpeg_depend '[nvenc,patent_status_nonfree]')
+			(
+				>=media-libs/nv-codec-headers-12.1.14.0
+				<media-libs/nv-codec-headers-12.2.0.0
+			)
+		)
+		vaapi? (
+			$(gen_ffmpeg_depend '[patent_status_nonfree,vaapi]')
+			>=media-libs/libva-${LIBVA_PV}[X,wayland?]
+			media-libs/vaapi-drivers
+		)
+		x264? (
+			${DEPEND_LIBX264}
+			$(gen_ffmpeg_depend '[patent_status_nonfree,x264]')
 		)
 	)
-	vaapi? (
-		$(gen_ffmpeg_depend '[vaapi]')
-		>=media-libs/libva-${LIBVA_PV}[X,wayland?]
-		media-libs/vaapi-drivers
-	)
+
+"
+DEPEND_PLUGINS_OBS_FFMPEG="
+	${PATENT_STATUS_FFMPEG_DEPEND}
+	>=sys-apps/pciutils-3.10.0
+	x11-libs/libdrm
 "
 
 DEPEND_CURL="
@@ -497,6 +513,7 @@ DEPEND_PLUGINS_WEBRTC="
 # plugins/vlc-video/CMakeLists.txt
 # >=media-sound/jack2-1.9.12
 # >=sys-fs/udev-237
+# x264 section moved into PATENT_STATUS_FFMPEG_DEPEND section
 DEPEND_PLUGINS="
 	${DEPEND_CURL}
 	${DEPEND_DEPS_FILE_UPDATER}
@@ -516,6 +533,7 @@ DEPEND_PLUGINS="
 	${DEPEND_PLUGINS_RNNOISE}
 	${DEPEND_PLUGINS_VST}
 	${DEPEND_PLUGINS_WEBRTC}
+	${DEPEND_PLUGINS_X264}
 	alsa? (
 		>=media-libs/alsa-lib-1.2.11
 	)
@@ -541,10 +559,6 @@ DEPEND_PLUGINS="
 	vlc? (
 		>=media-video/vlc-3.0.20
 		media-video/vlc:=
-	)
-	x264? (
-		${DEPEND_LIBX264}
-		$(gen_ffmpeg_depend '[x264]')
 	)
 "
 
