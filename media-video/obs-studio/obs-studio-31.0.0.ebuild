@@ -133,6 +133,7 @@ PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
 		!amf
 		!coreaudio-encoder
+		!fdk
 		!hevc
 		!new-mpegts-output
 		!nvenc
@@ -144,6 +145,9 @@ PATENT_STATUS_REQUIRED_USE="
 		patent_status_nonfree
 	)
 	coreaudio-encoder? (
+		patent_status_nonfree
+	)
+	fdk? (
 		patent_status_nonfree
 	)
 	hevc? (
@@ -377,12 +381,17 @@ DEPEND_PLUGINS_LINUX_CAPTURE="
 # encode.  This is why it is omitted below in the vaapi driver section.
 PATENT_STATUS_FFMPEG_DEPEND="
 	!patent_status_nonfree? (
-		!media-libs/vaapi-drivers
+		!media-libs/fdk-aac
 		!media-libs/libva
+		!media-libs/vaapi-drivers
 		!media-libs/x264
 		$(gen_ffmpeg_depend '[-nvenc,-patent_status_nonfree,-vaapi,-x264]')
 	)
 	patent_status_nonfree? (
+		fdk? (
+			>=media-libs/fdk-aac-2.0.2
+			media-libs/fdk-aac:=
+		)
 		new-mpegts-output? (
 			>=net-libs/librist-0.2.10
 			>=net-libs/srt-1.5.3
@@ -513,6 +522,7 @@ DEPEND_PLUGINS_WEBRTC="
 # plugins/vlc-video/CMakeLists.txt
 # >=media-sound/jack2-1.9.12
 # >=sys-fs/udev-237
+# fdk section moved into PATENT_STATUS_FFMPEG_DEPEND section
 # x264 section moved into PATENT_STATUS_FFMPEG_DEPEND section
 DEPEND_PLUGINS="
 	${DEPEND_CURL}
@@ -536,10 +546,6 @@ DEPEND_PLUGINS="
 	${DEPEND_PLUGINS_X264}
 	alsa? (
 		>=media-libs/alsa-lib-1.2.11
-	)
-	fdk? (
-		>=media-libs/fdk-aac-2.0.2
-		media-libs/fdk-aac:=
 	)
 	freetype? (
 		>=media-libs/fontconfig-2.15.0
