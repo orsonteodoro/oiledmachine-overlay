@@ -17,6 +17,9 @@ GCC_PV="11.3.0"
 LIBJPEG_TURBO_V="2.1.2"
 LLVM_COMPAT=( 15 ) # CI uses 15
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
+PATENT_STATUS_IUSE=(
+	patent_status_nonfree
+)
 PYTHON_COMPAT=( "python3_"{8..11} )
 SO_C=59
 SO_R=5
@@ -39,6 +42,7 @@ RESTRICT="mirror"
 SLOT="0/${SO_MAJOR}"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
+${PATENT_STATUS_IUSE[@]}
 +analyze +archive +aom +cairo +cgif +cxx debug +deprecated -doxygen +examples
 +exif +fftw +fits fuzz-testing +gif -graphicsmagick -gtk-doc +fontconfig
 +hdr +heif -highway +imagemagick +imagequant -introspection +jpeg +jpeg2k -jxl
@@ -47,7 +51,20 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 +zlib
 ebuild_revision_1
 "
+PATENT_STATUS_REQUIRED_USE="
+	!patent_status_nonfree? (
+		!libde265
+		!x265
+	)
+	libde265? (
+		patent_status_nonfree
+	)
+	x265? (
+		patent_status_nonfree
+	)
+"
 REQUIRED_USE="
+	${PATENT_STATUS_REQUIRED_USE}
 	${PYTHON_REQUIRED_USE}
 	?? (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
@@ -73,7 +90,24 @@ REQUIRED_USE="
 		)
 	)
 "
+PATENT_STATUS_RDEPEND="
+	!patent_status_nonfree? (
+		heif? (
+			!media-libs/libde265
+			>=media-libs/libheif-1.12.0[${MULTILIB_USEDEP},aom?,-libde265,rav1e?,-x265]
+		)
+	)
+	patent_status_nonfree? (
+		heif? (
+			>=media-libs/libheif-1.12.0[${MULTILIB_USEDEP},aom?,libde265?,rav1e?,x265?]
+			libde265? (
+				>=media-libs/libde265-1.0.8[${MULTILIB_USEDEP}]
+			)
+		)
+	)
+"
 RDEPEND+="
+	${PATENT_STATUS_RDEPEND}
 	${PYTHON_DEPS}
 	$(python_gen_any_dep '
 		>=dev-libs/gobject-introspection-1.72.0[${PYTHON_SINGLE_USEDEP}]
@@ -106,12 +140,6 @@ RDEPEND+="
 	)
 	gif? (
 		media-libs/libnsgif[${MULTILIB_USEDEP}]
-	)
-	heif? (
-		>=media-libs/libheif-1.12.0[aom?,libde265?,rav1e?,x265?,${MULTILIB_USEDEP}]
-		libde265? (
-			>=media-libs/libde265-1.0.8[${MULTILIB_USEDEP}]
-		)
 	)
 	highway? (
 		>=dev-cpp/highway-0.16.0[${MULTILIB_USEDEP}]
