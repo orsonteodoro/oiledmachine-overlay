@@ -127,7 +127,7 @@ nvenc nvvfx opus oss +pipewire +pulseaudio +python qsv +qt6 +rnnoise +rtmps
 +service-updates -sndio +speexdsp svt-av1 -test +v4l2 vaapi +vlc +virtualcam
 +vst +wayland +webrtc win-dshow +websocket -win-mf +whatsnew x264
 
-ebuild_revision_9
+ebuild_revision_10
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -1056,8 +1056,6 @@ einfo
 		-DOBS_MULTIARCH_SUFFIX=${libdir#lib}
 		-DUNIX_STRUCTURE=1
 	)
-
-	append-flags -g
 
 	local clang_slot=$(clang-major-version)
 	if tc-is-clang && has_version "=llvm-core/clang-runtime-${clang_slot}*[libcxx]" ; then
