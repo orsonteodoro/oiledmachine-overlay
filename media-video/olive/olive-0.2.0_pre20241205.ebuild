@@ -11,6 +11,9 @@ MY_PV="$(ver_cut 1-3 ${PV})"
 EGIT_COMMIT="7e0e94abf6610026aebb9ddce8564c39522fac6e" # Dec 5, 2024
 KDDOCWIDGETS_COMMIT="8d2d0a5764f8393cc148a2296d511276a8ffe559"
 OLIVE_EDITOR_CORE_COMMIT="277792824801495e868580ca86f6e7a1b53e4779"
+PATENT_STATUS_IUSE=(
+	patent_status_nonfree
+)
 QT5_PV="5.6.0"
 QT6_PV="6.0.0"
 
@@ -46,11 +49,25 @@ SLOT="0/${MY_PV}"
 # For default ON status see docker/scripts/build_ffmpeg.sh
 # Only expired patents or non taxed patents will be enabled default ON in this ebuild.
 IUSE+="
+${PATENT_STATUS_IUSE[@]}
 alsa doc jack +jpeg2k +mp3 +opus oss +png qt5 qt6 test srt +svt-av1 +theora
 +truetype +vorbis wayland +webp X +xvid x264 x265
 ebuild_revision_1
 "
+PATENT_STATUS_REQUIRED_USE="
+	patent_status_nonfree? (
+		!x264
+		!x265
+	)
+	x264? (
+		patent_status_nonfree
+	)
+	x265? (
+		patent_status_nonfree
+	)
+"
 REQUIRED_USE="
+	${PATENT_STATUS_REQUIRED_USE}
 	^^ (
 		qt5
 		qt6
@@ -78,12 +95,26 @@ RESTRICT="
 	)
 "
 #	media-libs/olivecore
-DEPEND="
+PATENT_STATUS_RDEPEND="
+	!patent_status_nonfree? (
+		>=media-video/ffmpeg-3.0.0:0[jpeg2k?,mp3?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
+	)
+	patent_status_nonfree? (
+		>=media-video/ffmpeg-3.0.0:0[jpeg2k?,mp3?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
+		x264? (
+			media-video/ffmpeg[gpl]
+		)
+		x265? (
+			media-video/ffmpeg[gpl]
+		)
+	)
+"
+RDEPEND="
+	${PATENT_STATUS_RDEPEND}
 	>=media-libs/opencolorio-2.1.1:=
 	>=media-libs/openimageio-2.1.12:=[png?]
 	>=media-libs/portaudio-19.06.0[alsa?,jack?,oss?]
 	>=media-libs/openexr-2.3.0:=
-	>=media-video/ffmpeg-3.0.0:0[jpeg2k?,mp3?,opus?,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?]
 	media-libs/opentimelineio:=
 	virtual/opengl
 	qt5? (
@@ -110,15 +141,9 @@ DEPEND="
 	xvid? (
 		media-video/ffmpeg[gpl,xvid]
 	)
-	x264? (
-		media-video/ffmpeg[gpl,x264]
-	)
-	x265? (
-		media-video/ffmpeg[gpl,x265]
-	)
 "
-RDEPEND="
-	${DEPEND}
+DEPEND="
+	${RDEPEND}
 "
 BDEPEND="
 	>=dev-build/cmake-3.13
