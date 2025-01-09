@@ -13,6 +13,9 @@ ELECTRON_APP_SHARP_PV="0.32.6"
 NPM_AUDIT_FIX=0
 NODE_GYP_PV="9.3.0"
 NODE_VERSION="20"
+PATENT_STATUS=(
+	patent_status_nonfree
+)
 YARN_INSTALL_PATH="/opt/${MY_PN}"
 YARN_LOCKFILE_SOURCE="ebuild"
 YARN_SLOT=8
@@ -50,14 +53,34 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
+${PATENT_STATUS[@]}
 mp3 opus svt-av1 theora vorbis vpx x264
 ebuild_revision_2
 "
-RDEPEND+="
-	|| (
-		media-video/ffmpeg:58.60.60[encode,mp3?,opus?,svt-av1?,theora?,vorbis?,vpx?,x264?]
-		media-video/ffmpeg:0/58.60.60[encode,mp3?,opus?,svt-av1?,theora?,vorbis?,vpx?,x264?]
+REQUIRED_USE="
+	!patent_status_nonfree? (
+		!x264
 	)
+	x264? (
+		patent_status_nonfree
+	)
+"
+PATENT_STATUS_RDEPEND="
+	!patent_status_nonfree? (
+		|| (
+			media-video/ffmpeg:58.60.60[encode,mp3?,opus?,-patent_status_nonfree,svt-av1?,theora?,vorbis?,vpx?,-x264]
+			media-video/ffmpeg:0/58.60.60[encode,mp3?,opus?,-patent_status_nonfree,svt-av1?,theora?,vorbis?,vpx?,-x264]
+		)
+	)
+	patent_status_nonfree? (
+		|| (
+			media-video/ffmpeg:58.60.60[encode,mp3?,opus?,patent_status_nonfree,svt-av1?,theora?,vorbis?,vpx?,x264?]
+			media-video/ffmpeg:0/58.60.60[encode,mp3?,opus?,patent_status_nonfree,svt-av1?,theora?,vorbis?,vpx?,x264?]
+		)
+	)
+"
+RDEPEND+="
+	${PATENT_STATUS_RDEPEND}
 	media-video/ffmpeg:=
 "
 DEPEND+="
