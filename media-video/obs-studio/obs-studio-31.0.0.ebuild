@@ -381,6 +381,7 @@ DEPEND_PLUGINS_LINUX_CAPTURE="
 # https://github.com/obsproject/obs-studio/pull/1482/commits/2dc67f140d8156d9000db57786e53a4c1597c097
 # From inspection, the video_cards_nouveau supports h264 decode but not h264
 # encode.  This is why it is omitted below in the vaapi driver section.
+
 PATENT_STATUS_FFMPEG_DEPEND="
 	!patent_status_nonfree? (
 		!media-libs/fdk-aac
@@ -408,7 +409,7 @@ PATENT_STATUS_FFMPEG_DEPEND="
 		vaapi? (
 			$(gen_ffmpeg_depend '[patent_status_nonfree,vaapi]')
 			>=media-libs/libva-${LIBVA_PV}[X,wayland?]
-			media-libs/vaapi-drivers
+			media-libs/vaapi-drivers[patent_status_nonfree]
 		)
 		x264? (
 			$(gen_ffmpeg_depend '[patent_status_nonfree,x264]')
