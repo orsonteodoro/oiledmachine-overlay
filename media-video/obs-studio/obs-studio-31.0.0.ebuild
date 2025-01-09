@@ -889,15 +889,12 @@ src_prepare() {
 
 	# typos
 	sed -i -e "s|LIBVA_LBRARIES|LIBVA_LIBRARIES|g" \
-		plugins/obs-ffmpeg/CMakeLists.txt \
+		"${S}/plugins/obs-ffmpeg/CMakeLists.txt" \
 		|| die
 
 	if use browser ; then
 		sed -i -e "s|libcef_dll_wrapper.a|libcef_dll_wrapper.so|g" \
-			plugins/obs-browser/FindCEF.cmake \
-			|| die
-		sed -i -e "s|libcef_dll_wrapper.a|libcef_dll_wrapper.so|g" \
-			cmake/Modules/FindCEF.cmake \
+			"${S}/cmake/finders/FindCEF.cmake" \
 			|| die
 	fi
 }
