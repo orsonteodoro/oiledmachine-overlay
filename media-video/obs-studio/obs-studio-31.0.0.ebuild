@@ -166,6 +166,9 @@ PATENT_STATUS_REQUIRED_USE="
 	nvenc? (
 		patent_status_nonfree
 	)
+	patent_status_nonfree? (
+		x264
+	)
 	qsv? (
 		patent_status_nonfree
 	)
