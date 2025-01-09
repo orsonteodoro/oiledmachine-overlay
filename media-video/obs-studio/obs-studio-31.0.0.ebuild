@@ -141,7 +141,7 @@ PATENT_STATUS_REQUIRED_USE="
 		!vaapi
 		!x264
 	)
-	patent_status_nonfree? (
+	!patent_status_nonfree? (
 		opus
 		|| (
 			libaom
@@ -906,13 +906,17 @@ src_prepare() {
 			|| die
 	fi
 
-	if ! use patent_status_nonfree ; then
+	if use patent_status_nonfree ; then
+		sed -i \
+			-e "s|@DEFAULT_AUDIO_CODEC@|aac|g" \
+			-e "s|@DEFAULT_AUDIO_FFMPEG_CODEC@|ffmpeg_aac|g" \
+			-e "s|@DEFAULT_SIMPLE_ENCODER_AV1@|SIMPLE_ENCODER_X264|g" \
+			"UI/window-basic-main.cpp" \
+			|| die
+	else
 		if use opus ; then
 			sed -i \
 				-e "s|@DEFAULT_AUDIO_CODEC@|opus|g" \
-				"UI/window-basic-main.cpp" \
-				|| die
-			sed -i \
 				-e "s|@DEFAULT_AUDIO_FFMPEG_CODEC@|ffmpeg_opus|g" \
 				"UI/window-basic-main.cpp" \
 				|| die
