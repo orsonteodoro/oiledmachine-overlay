@@ -127,7 +127,7 @@ nvenc nvvfx opus oss +pipewire +pulseaudio +python qsv +qt6 +rnnoise +rtmps
 +service-updates -sndio +speexdsp svt-av1 -test +v4l2 vaapi +vlc +virtualcam
 +vst +wayland +webrtc win-dshow +websocket -win-mf +whatsnew x264
 
-ebuild_revision_7
+ebuild_revision_8
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -907,31 +907,61 @@ src_prepare() {
 	fi
 
 	if use patent_status_nonfree ; then
+	# Upstream defaults
 		sed -i \
-			-e "s|@DEFAULT_AUDIO_CODEC@|aac|g" \
-			-e "s|@DEFAULT_AUDIO_FFMPEG_CODEC@|ffmpeg_aac|g" \
-			-e "s|@DEFAULT_SIMPLE_ENCODER_AV1@|SIMPLE_ENCODER_X264|g" \
+			-e "s|@DEFAULT_AUDIO_CODEC_CLASS@|aac|g" \
+			-e "s|@DEFAULT_AUDIO_CODEC_IMPL@|ffmpeg_aac|g" \
+			-e "s|@DEFAULT_SIMPLE_ENCODER_VIDEO@|SIMPLE_ENCODER_X264|g" \
+			-e "s|@DEFAULT_VIDEO_CODEC_IMPL@|obs_x264|g" \
+			-e "s|@DEFAULT_STREAMING_ENCODER@|x264|g" \
+			-e "s|@DEFAULT_CODEC_VIDEO_TEST1@|obs_x264|g" \
+			-e "s|@DEFAULT_CODEC_VIDEO_TEST2@|test_x264|g" \
+			-e "s|@DEFAULT_CODEC_AUDIO_TEST1@|ffmpeg_aac|g" \
+			-e "s|@DEFAULT_CODEC_AUDIO_TEST2@|test_aac|g" \
 			"UI/window-basic-main.cpp" \
+			"UI/window-basic-auto-config.hpp" \
+			"UI/window-basic-auto-config-test.cpp" \
 			|| die
 	else
+		local default_simple_encoder_video=""
+		local default_audio_codec_class=""
+		local default_audio_codec_impl=""
+		local default_simple_video_impl=""
+		local default_video_codec_impl=""
+		local default_streaming_encoder=""
 		if use opus ; then
-			sed -i \
-				-e "s|@DEFAULT_AUDIO_CODEC@|opus|g" \
-				-e "s|@DEFAULT_AUDIO_FFMPEG_CODEC@|ffmpeg_opus|g" \
-				"UI/window-basic-main.cpp" \
-				|| die
+			default_audio_codec_class="opus"
+			default_audio_codec_impl="ffmpeg_opus"
+			default_codec_audio_test1="ffmpeg_opus"
+			default_codec_audio_test2="test_opus"
 		fi
 		if use svt-av1 ; then
-			sed -i \
-				-e "s|@DEFAULT_SIMPLE_ENCODER_AV1@|SIMPLE_ENCODER_SVT_AV1|g" \
-				"UI/window-basic-main.cpp" \
-				|| die
+			default_simple_encoder_video="SIMPLE_ENCODER_SVT_AV1"
+			default_video_codec_impl="ffmpeg_svt_av1"
+			default_streaming_encoder="SVT_AV1"
+			default_codec_video_test1="ffmpeg_svt_av1"
+			default_codec_video_test2="test_av1"
 		elif use libaom ; then
-			sed -i \
-				-e "s|@DEFAULT_SIMPLE_ENCODER_AV1@|SIMPLE_ENCODER_AOM|g" \
-				"UI/window-basic-main.cpp" \
-				|| die
+			default_simple_encoder_video="SIMPLE_ENCODER_AOM"
+			default_video_codec_impl="ffmpeg_aom_av1"
+			default_streaming_encoder="AOM"
+			default_codec_video_test1="ffmpeg_aom_av1"
+			default_codec_video_test2="test_av1"
 		fi
+		sed -i \
+			-e "s|@DEFAULT_AUDIO_CODEC_CLASS@|${default_audio_codec_class}|g" \
+			-e "s|@DEFAULT_AUDIO_CODEC_IMPL@|${default_audio_codec_impl}|g" \
+			-e "s|@DEFAULT_SIMPLE_ENCODER_VIDEO@|${default_simple_encoder_video}|g" \
+			-e "s|@DEFAULT_VIDEO_CODEC_IMPL@|${default_video_codec_impl}|g" \
+			-e "s|@DEFAULT_STREAMING_ENCODER@|${default_streaming_encoder}|g" \
+			-e "s|@DEFAULT_CODEC_VIDEO_TEST1@|${default_codec_video_test1}|g" \
+			-e "s|@DEFAULT_CODEC_VIDEO_TEST2@|${default_codec_video_test2}|g" \
+			-e "s|@DEFAULT_CODEC_AUDIO_TEST1@|${default_codec_audio_test1}|g" \
+			-e "s|@DEFAULT_CODEC_AUDIO_TEST2@|${default_codec_audio_test2}|g" \
+			"UI/window-basic-main.cpp" \
+			"UI/window-basic-auto-config.hpp" \
+			"UI/window-basic-auto-config-test.cpp" \
+			|| die
 	fi
 }
 
@@ -1020,6 +1050,8 @@ einfo
 		-DOBS_MULTIARCH_SUFFIX=${libdir#lib}
 		-DUNIX_STRUCTURE=1
 	)
+
+	append-flags -g
 
 	local clang_slot=$(clang-major-version)
 	if tc-is-clang && has_version "=llvm-core/clang-runtime-${clang_slot}*[libcxx]" ; then
