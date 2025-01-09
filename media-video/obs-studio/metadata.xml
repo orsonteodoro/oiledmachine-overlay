@@ -148,7 +148,7 @@
       Use ImageMagick for image loading instead of FFmpeg.
     </flag>
     <flag name="jack">
-      Enable jack support.
+      Enable JACK audio support.
     </flag>
     <flag name="libaom">
       Add support for CPU based AV1 video encoding via
