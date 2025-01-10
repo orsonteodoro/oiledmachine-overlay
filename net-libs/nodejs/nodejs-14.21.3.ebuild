@@ -559,9 +559,6 @@ eerror "To use mold, enable the mold USE flag."
 		myconf+=( --gdb )
 	fi
 	use pointer-compression && myconf+=( --experimental-enable-pointer-compression )
-	if use kernel_linux && linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
-		myconf+=( --v8-enable-hugepage )
-	fi
 
 	local myarch
 	myarch="${ABI/amd64/x64}"
