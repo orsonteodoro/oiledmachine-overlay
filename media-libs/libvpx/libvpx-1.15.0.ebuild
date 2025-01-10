@@ -7,7 +7,7 @@
 EAPI=8
 
 AOCC_COMPAT=( 14 16 )
-LIBVPX_TESTDATA_VER="1.14.0"
+LIBVPX_TESTDATA_VER="1.14.1"
 N_SAMPLES=1
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
@@ -25,7 +25,7 @@ S_ORIG="${WORKDIR}/${P}"
 SRC_URI="
 	https://github.com/webmproject/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
 	test? (
-		https://deps.gentoo.zip/media-libs/${P}-testdata.tar.xz
+		https://deps.gentoo.zip/media-libs/${PN}-${LIBVPX_TESTDATA_VER}-testdata.tar.xz
 	)
 "
 
