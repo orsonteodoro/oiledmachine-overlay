@@ -166,19 +166,15 @@ INTEL_MICROCODE_PV="20241112"
 IPD_RAW_VER=5 # < llvm-13 Dec 28, 2020
 IPD_RAW_VER_MIN=6
 IPD_RAW_VER_MAX=9
-KCP_COMMIT_SNAPSHOT="8d4835ea80eb45256e1fd19618e6dcaf8310c22b" # 20240921
+KCP_COMMIT_SNAPSHOT="8b4675b3a96547b73fa92f87f6a6b3a2e387ac06" # 20241231
 KCP_CORTEX_A72_BN="build-with-mcpu-for-cortex-a72" # >= clang 3.8.0, >= gcc 5.1.0
 KERNEL_DOMAIN_URI=${KERNEL_DOMAIN_URI:-"cdn.kernel.org"}
 KERNEL_SERIES_TARBALL_FN="linux-${KV_MAJOR_MINOR}.tar.xz"
-KERNEL_INC_BASE_URI=\
-"https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${KV_MAJOR}.x/incr/"
-KERNEL_PATCH_0_TO_1_URI=\
-"https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${KV_MAJOR}.x/patch-${KV_MAJOR_MINOR}.1.xz"
+KERNEL_INC_BASE_URI="https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${KV_MAJOR}.x/incr/"
+KERNEL_PATCH_0_TO_1_URI="https://${KERNEL_DOMAIN_URI}/pub/linux/kernel/v${KV_MAJOR}.x/patch-${KV_MAJOR_MINOR}.1.xz"
 
-if ver_test "${KV_MAJOR_MINOR}" -ge "6.8" ; then
-	KCP_9_1_BN="more-ISA-levels-and-uarches-for-kernel-6.8-rc4%2B"
-elif ver_test "${KV_MAJOR_MINOR}" -ge "6.1" ; then
-	KCP_9_1_BN="more-ISA-levels-and-uarches-for-kernel-6.1.79-6.8-rc3"
+if ver_test "${KV_MAJOR_MINOR}" -ge "6.1" ; then
+	KCP_9_1_BN="more-ISA-levels-and-uarches-for-kernel-6.1.79%2B"
 elif ver_test "${KV_MAJOR_MINOR}" -ge "5.17" ; then
 	KCP_9_1_BN="more-ISA-levels-and-uarches-for-kernel-5.17-6.1.78"
 elif ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
@@ -193,8 +189,8 @@ elif ver_test "${KV_MAJOR_MINOR}" -ge "4.13" ; then
 	KCP_8_1_BN="enable_additional_cpu_optimizations_for_gcc_v8.1%2B_kernel_v4.13%2B"
 	KCP_4_9_BN="enable_additional_cpu_optimizations_for_gcc_v4.9%2B_kernel_v4.13%2B"
 fi
-KCP_URI_BASE=\
-"https://raw.githubusercontent.com/graysky2/kernel_compiler_patch/${KCP_COMMIT_SNAPSHOT}/"
+KCP_URI_BASE="https://raw.githubusercontent.com/graysky2/kernel_compiler_patch/${KCP_COMMIT_SNAPSHOT}/"
+
 if [[ -n "${KCP_4_9_BN}" ]] ; then
 	KCP_SRC_4_9_URI="
 		${KCP_URI_BASE}/outdated_versions/${KCP_4_9_BN}.patch
@@ -3471,6 +3467,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_IOSCHED_OVERRIDE
 	unset OT_KERNEL_IOSCHED_SYSTEMD
 	unset OT_KERNEL_KCONFIG
+	unset OT_KERNEL_KERNEL_COMPILER_PATCH_GENERIC_LEVEL
 	unset OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER
 	unset OT_KERNEL_KERNEL_DIR
 	unset OT_KERNEL_KEXEC
@@ -6936,7 +6933,7 @@ einfo "Passed check for ${x}"
 	if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 		if tc-is-cross-compiler ; then
 			# Cannot use -march=native if doing distcc.
-			if grep "^CONFIG_MNATIVE" "${path_config}" ; then
+			if grep -q "^CONFIG_MNATIVE" "${path_config}" ; then
 einfo
 einfo "Detected cross-compiling.  Converting -march=native -> -mtune=generic"
 einfo "In the future, change the setting to the microarchitecture instead."
@@ -6950,6 +6947,25 @@ einfo
 einfo "Detected cross-compiling.  Using previous generic or microarchitecture"
 einfo "setting."
 einfo
+			fi
+		fi
+	fi
+
+	if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+		if grep -q "^CONFIG_GENERIC_CPU" "${path_config}" ; then
+			local march_flags=($(echo "${CFLAGS}" \
+				| grep -E -e "(-mtune=generic|-march=x86-64-v2|-march=x86-64-v3)"))
+			if [[ "${march_flags[@]}" =~ "-march=x86-64-v3" ]] ; then
+einfo "Detected -march=x86-64-v3"
+				ot-kernel_set_configopt "CONFIG_X86_64_VERSION" "\"3\""
+			elif [[ "${march_flags[@]}" =~ "-march=x86-64-v2" ]] ; then
+einfo "Detected -march=x86-64-v2"
+				ot-kernel_set_configopt "CONFIG_X86_64_VERSION" "\"2\""
+			elif [[ "${march_flags[@]}" =~ "-mtune=generic" ]] ; then
+einfo "Detected -mtune=generic"
+				ot-kernel_set_configopt "CONFIG_X86_64_VERSION" "\"1\""
+			else
+				ot-kernel_set_configopt "CONFIG_X86_64_VERSION" "\"1\""
 			fi
 		fi
 	fi
