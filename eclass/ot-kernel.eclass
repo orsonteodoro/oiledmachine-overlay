@@ -491,6 +491,24 @@ VULNERABILITIES_FIXED=(
 	"CVE-2024-56786;?;?"
 	"CVE-2024-56771;?;?"
 	"CVE-2024-56770;?;?"
+
+	"16b8703;UAF;Medium to High"
+	"260466b;UAF;Medium to High"
+	"2ac5415;UAF;Medium to High"
+	"2d5ff7e;UAF;Medium to High"
+	"5a03b36;UAF;Medium to High"
+	"5f3fd77;UAF;Medium to High"
+	"81adbd3;UAF;Medium to High"
+	"da273b3;UAF;Medium to High"
+	"f10bef7;UAF;Medium to High"
+	"d8e4771;DF;Medium to High"
+	"2828e58;DoS;Medium"
+	"40338d7;DoS;Medium"
+	"4f4aa4a;DoS;Medium"
+	"f91a5b8;DoS;Medium"
+	"77ee7a6;DoS;Medium"
+	"79d330f;DoS;Medium"
+	"8debfc5;DoS;Medium"
 )
 
 ZEN_MULTIGEN_LRU_BASE_URI=\

@@ -2132,6 +2132,10 @@ OT_KERNEL_WORK_PROFILE="http-server-busy"
       none       - (default for live) Disables kernel_compiler_patch
       disable    - Disables kernel_compiler_patch
 
+    See also:
+
+      OT_KERNEL_KERNEL_COMPILER_PATCH_LEVEL
+
 
 
     OT_KERNEL_KERNEL_DIR - Sets and overrides the install location to install
