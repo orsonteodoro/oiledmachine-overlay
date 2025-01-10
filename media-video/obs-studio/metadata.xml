@@ -110,6 +110,9 @@
     <remote-id type="github">obsproject/obs-studio</remote-id>
   </upstream>
   <use>
+    <flag name="aac">
+      Add support for AAC from FFmpeg alone.
+    </flag>
     <flag name="aja">
       Add support for AJA capture hardware.
     </flag>

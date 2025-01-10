@@ -121,16 +121,17 @@ SLOT="0"
 # vlc is enabled by default upstream
 IUSE+="
 ${PATENT_STATUS_IUSE[@]}
-+alsa aja amf +browser +browser-panels coreaudio -decklink -fdk firejail
+aac +alsa aja amf +browser +browser-panels coreaudio -decklink -fdk firejail
 +freetype +hevc +ipv6 jack libaom +lua mac-syphon +mpegts nvafx
 nvenc nvvfx opus oss +pipewire +pulseaudio +python qsv +qt6 +rnnoise +rtmps
 +service-updates -sndio +speexdsp svt-av1 -test +v4l2 vaapi +vlc +virtualcam
 +vst +wayland +webrtc win-dshow +websocket -win-mf +whatsnew x264
 
-ebuild_revision_10
+ebuild_revision_12
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
+		!aac
 		!amf
 		!coreaudio
 		!fdk
@@ -147,6 +148,9 @@ PATENT_STATUS_REQUIRED_USE="
 			libaom
 			svt-av1
 		)
+	)
+	aac? (
+		patent_status_nonfree
 	)
 	amf? (
 		patent_status_nonfree
@@ -167,6 +171,7 @@ PATENT_STATUS_REQUIRED_USE="
 		patent_status_nonfree
 	)
 	patent_status_nonfree? (
+		aac
 		x264
 	)
 	qsv? (
@@ -925,6 +930,7 @@ src_prepare() {
 			"UI/window-basic-main.cpp" \
 			"UI/window-basic-auto-config.hpp" \
 			"UI/window-basic-auto-config-test.cpp" \
+			"UI/window-basic-settings-stream.cpp" \
 			|| die
 	else
 		local default_simple_encoder_video=""
@@ -965,6 +971,7 @@ src_prepare() {
 			"UI/window-basic-main.cpp" \
 			"UI/window-basic-auto-config.hpp" \
 			"UI/window-basic-auto-config-test.cpp" \
+			"UI/window-basic-settings-stream.cpp" \
 			|| die
 	fi
 }
@@ -1017,13 +1024,16 @@ einfo
 	local libdir=$(get_libdir)
 	local mycmakeargs=(
 		-DBUILD_TESTS=$(usex test)
+		-DENABLE_AAC=$(usex aac)
 		-DENABLE_AJA=$(usex aja)
 		-DENABLE_ALSA=$(usex alsa)
 		-DENABLE_AOM=$(usex libaom)
 		-DENABLE_BROWSER=$(usex browser)
 		-DENABLE_BROWSER_PANELS=$(usex browser-panels)
+		-DENABLE_COREAUDIO=$(usex coreaudio)
 		-DENABLE_COREAUDIO_ENCODER=$(usex coreaudio)
 		-DENABLE_DECKLINK=$(usex decklink)
+		-DENABLE_FDK=$(usex fdk)
 		-DENABLE_FREETYPE=$(usex freetype)
 		-DENABLE_HEVC=$(usex hevc)
 		-DENABLE_IPV6=$(usex ipv6)
