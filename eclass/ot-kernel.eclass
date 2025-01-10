@@ -493,6 +493,9 @@ VULNERABILITIES_FIXED=(
 	"CVE-2024-56771;?;?"
 	"CVE-2024-56770;?;?"
 
+# Some CVE reports may be slow released.  The second group may
+# catch these.
+
 	"901ce97;DoS,DT,UAF;Medium to High"
 	"16b8703;UAF;Medium to High"
 	"260466b;UAF;Medium to High"
