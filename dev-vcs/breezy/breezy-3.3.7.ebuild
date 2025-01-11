@@ -57,6 +57,7 @@ windows_x86_64_gnu-0.48.5
 windows_x86_64_gnullvm-0.48.5
 windows_x86_64_msvc-0.48.5
 "
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 DULWICH_PV="0.21.6"
 FLAKE8_PV="4.0.1"
@@ -64,6 +65,7 @@ GENERATE_LOCKFILE=${GENERATE_LOCKFILE:-0}
 PARAMIKO_PV="2.9.3"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
+# Cargo must go after distutils-r1
 inherit autotools distutils-r1 cargo lcnr
 
 KEYWORDS="~amd64 ~arm64"
@@ -128,7 +130,7 @@ LICENSE+="
 # homedir/.cargo/registry/src/github.com-1ecc6299db9ec823/pkg-version-1.0.0 - custom
 # homedir/.cargo/registry/src/github.com-1ecc6299db9ec823/regex-syntax-0.6.27/src/unicode_tables/LICENSE-UNICODE - Unicode-DFS-2016
 # homedir/.cargo/registry/src/github.com-1ecc6299db9ec823/unicode-ident-1.0.5/LICENSE-UNICODE - Unicode-DFS-2016
-RESTRICT="mirror"
+RESTRICT="mirror test" # Tester broken
 SLOT="0"
 IUSE+=" cext fastimport git github gpg launchpad sftp test workspace ebuild_revision_1"
 REQUIRED_USE+="
@@ -243,6 +245,7 @@ pkg_setup() {
 		check_usersandbox
 		use sftp && check_network_sandbox
 	fi
+	rust_pkg_setup
 }
 
 _lockfile_gen_unpack() {
@@ -273,6 +276,27 @@ src_unpack() {
 	else
 		_production_unpack
 	fi
+}
+
+src_prepare() {
+	distutils-r1_src_prepare
+}
+
+python_configure() {
+	cargo_src_configure
+}
+
+src_configure() {
+	distutils-r1_src_configure
+}
+
+python_compile() {
+	cargo_src_compile
+	distutils-r1_python_compile
+}
+
+src_compile() {
+	distutils-r1_src_compile
 }
 
 src_test() {
