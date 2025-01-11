@@ -16,6 +16,9 @@ UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 YASM_PV="2.14"
+UOPTS_BOLT_INST_ARGS=(
+	"libaom_version.so:--skip-funcs=.text/1"
+)
 
 inherit aocc cmake-multilib flag-o-matic flag-o-matic-om multiprocessing python-any-r1
 inherit toolchain-funcs uopts
