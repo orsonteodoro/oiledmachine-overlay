@@ -382,6 +382,7 @@ echo
 echo "mkdir -p /etc/portage/profile/package.use.mask"
 echo "echo \"app-antivirus/clamav -jit\" >> /etc/portage/profile/package.use.mask"
 echo
+	rust_pkg_setup
 }
 
 PATCHES=(

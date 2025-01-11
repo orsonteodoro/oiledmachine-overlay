@@ -793,6 +793,7 @@ _cargo_src_unpack() {
 pkg_setup() {
 ewarn "Do not emerge ${CATEGORY}/${PN} package directly.  Emerge sys-apps/coolercontrol instead."
 	npm_pkg_setup
+	rust_pkg_setup
 }
 
 src_unpack() {

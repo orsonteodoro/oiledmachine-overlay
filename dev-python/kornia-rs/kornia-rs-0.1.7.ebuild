@@ -1082,84 +1082,9 @@ _production_unpack() {
 		|| die
 }
 
-# From cargo.eclass.  Complains missing
-# @FUNCTION: cargo_env
-# @USAGE: Command with its arguments
-# @DESCRIPTION:
-# Run the given command under an environment needed for performing tasks with
-# Cargo such as building. RUSTFLAGS are appended to additional flags set here.
-# Ensure these are set consistently between Cargo invocations, otherwise
-# rebuilds will occur. Project-specific rustflags set against [build] will not
-# take affect due to Cargo limitations, so add these to your ebuild's RUSTFLAGS
-# if they seem important.
-cargo_env() {
-	debug-print-function ${FUNCNAME} "$@"
-
-	[[ ${_CARGO_GEN_CONFIG_HAS_RUN} ]] || \
-		die "FATAL: please call cargo_gen_config before using ${FUNCNAME}"
-
-	# Shadow flag variables so that filtering below remains local.
-	local flag
-	for flag in $(all-flag-vars); do
-		local -x "${flag}=${!flag}"
-	done
-
-	# Rust extensions are incompatible with C/C++ LTO compiler see e.g.
-	# https://bugs.gentoo.org/910220
-	filter-lto
-
-	tc-export AR CC CXX PKG_CONFIG
-
-	# Set vars for cc-rs crate.
-	local -x \
-		HOST_AR=$(tc-getBUILD_AR)
-		HOST_CC=$(tc-getBUILD_CC)
-		HOST_CXX=$(tc-getBUILD_CXX)
-		HOST_CFLAGS=${BUILD_CFLAGS}
-		HOST_CXXFLAGS=${BUILD_CXXFLAGS}
-
-	# Unfortunately, Cargo is *really* bad at handling flags. In short, it uses
-	# the first of the RUSTFLAGS env var, any target-specific config, and then
-	# any generic [build] config. It can merge within the latter two types from
-	# different sources, but it will not merge across these different types, so
-	# if a project sets flags under [target.'cfg(all())'], it will override any
-	# flags we set under [build] and vice-versa.
-	#
-	# It has been common for users and ebuilds to set RUSTFLAGS, which would
-	# have overridden whatever a project sets anyway, so the least-worst option
-	# is to include those RUSTFLAGS in target-specific config here, which will
-	# merge with any the project sets. Only flags in generic [build] config set
-	# by the project will be lost, and ebuilds will need to add those to
-	# RUSTFLAGS themselves if they are important.
-	#
-	# We could potentially inspect a project's generic [build] config and
-	# reapply those flags ourselves, but that would require a proper toml parser
-	# like tomlq, it might lead to confusion where projects also have
-	# target-specific config, and converting arrays to strings may not work
-	# well. Nightly features to inspect the config might help here in future.
-	#
-	# As of Rust 1.80, it is not possible to set separate flags for the build
-	# host and the target host when cross-compiling. The flags given are applied
-	# to the target host only with no flags being applied to the build host. The
-	# nightly host-config feature will improve this situation later.
-	#
-	# The default linker is "cc" so override by setting linker to CC in the
-	# RUSTFLAGS. The given linker cannot include any arguments, so split these
-	# into link-args along with LDFLAGS.
-	local -x CARGO_BUILD_TARGET=$(rust_abi)
-	local TRIPLE=${CARGO_BUILD_TARGET//-/_}
-	local TRIPLE=${TRIPLE^^} LD_A=( $(tc-getCC) ${LDFLAGS} )
-	local -Ix CARGO_TARGET_"${TRIPLE}"_RUSTFLAGS+=" -C strip=none -C linker=${LD_A[0]}"
-	[[ ${#LD_A[@]} -gt 1 ]] && local CARGO_TARGET_"${TRIPLE}"_RUSTFLAGS+="$(printf -- ' -C link-arg=%s' "${LD_A[@]:1}")"
-	local CARGO_TARGET_"${TRIPLE}"_RUSTFLAGS+=" ${RUSTFLAGS}"
-
-	(
-		# These variables will override the above, even if empty, so unset them
-		# locally. Do this in a subshell so that they remain set afterwards.
-		unset CARGO_BUILD_RUSTFLAGS CARGO_ENCODED_RUSTFLAGS RUSTFLAGS
-
-		"${@}"
-	)
+pkg_setup() {
+	python_setup
+	rust_pkg_setup
 }
 
 src_unpack() {

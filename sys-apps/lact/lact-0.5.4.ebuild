@@ -427,6 +427,10 @@ BDEPEND+="
 	virtual/pkgconfig
 "
 
+pkg_setup() {
+	rust_pkg_setup
+}
+
 src_install() {
 	cargo_src_install --path lact
 	if use systemd ; then

@@ -653,6 +653,7 @@ pkg_setup() {
 	npm_pkg_setup
 	export NEXT_TELEMETRY_DISABLED=1
 	python_setup
+	rust_pkg_setup
 }
 
 _lockfile_gen_unpack() {

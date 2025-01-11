@@ -743,6 +743,7 @@ BDEPEND+="
 pkg_setup() {
 ewarn "This ebuild is still in development"
 	npm_pkg_setup
+	rust_pkg_setup
 }
 
 npm_unpack_post() {

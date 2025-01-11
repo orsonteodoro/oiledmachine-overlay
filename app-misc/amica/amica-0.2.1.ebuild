@@ -625,6 +625,7 @@ DOCS=( "README.md" )
 
 pkg_setup() {
 	npm_pkg_setup
+	rust_pkg_setup
 	export NEXT_TELEMETRY_DISABLED=1
 }
 

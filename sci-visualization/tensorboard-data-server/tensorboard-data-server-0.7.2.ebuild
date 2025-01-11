@@ -374,6 +374,7 @@ DOCS=( )
 
 pkg_setup() {
 	python_setup
+	rust_pkg_setup
 }
 
 src_unpack() {

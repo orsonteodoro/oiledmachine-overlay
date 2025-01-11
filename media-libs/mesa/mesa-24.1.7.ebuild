@@ -550,6 +550,7 @@ einfo "PATH=${PATH} (after)"
 	fi
 	python-any-r1_pkg_setup
 	uopts_setup
+	rust_pkg_setup
 }
 
 src_unpack() {

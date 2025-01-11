@@ -112,6 +112,10 @@ BDEPEND="
 	dev-util/cargo-c
 "
 
+pkg_setup() {
+	rust_pkg_setup
+}
+
 # @FUNCTION: cargo_src_unpack
 # @DESCRIPTION:
 # Unpacks the package and the cargo registry.

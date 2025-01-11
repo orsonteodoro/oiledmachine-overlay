@@ -676,7 +676,7 @@ BDEPEND="
 
 pkg_setup() {
 	npm_pkg_setup
-	npm_check_network_sandbox
+	rust_pkg_setup
 }
 
 # @FUNCTION: cargo_src_unpack

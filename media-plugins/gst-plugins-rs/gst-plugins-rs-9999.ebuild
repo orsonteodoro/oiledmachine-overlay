@@ -1073,6 +1073,7 @@ ewarn
 		check_network_sandbox
 	fi
 	python-any-r1_pkg_setup
+	rust_pkg_setup
 }
 
 multilib_src_configure() {

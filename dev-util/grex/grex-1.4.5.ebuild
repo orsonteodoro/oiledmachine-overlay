@@ -190,6 +190,10 @@ grex-1.4.5
 	windows_x86_64_msvc-0.52.4
 "
 
+# Rust does not use *FLAGS from make.conf, silence portage warning
+# update with proper path to binaries this crate installs, omit leading /
+QA_FLAGS_IGNORED="usr/bin/${PN}"
+
 inherit cargo
 inherit lcnr
 
@@ -223,9 +227,9 @@ RDEPEND="
 BDEPEND="
 "
 
-# rust does not use *FLAGS from make.conf, silence portage warning
-# update with proper path to binaries this crate installs, omit leading /
-QA_FLAGS_IGNORED="usr/bin/${PN}"
+pkg_setup() {
+	rust_pkg_setup
+}
 
 src_install() {
         cargo_src_install
