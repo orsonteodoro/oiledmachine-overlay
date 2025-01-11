@@ -97,7 +97,7 @@ einfo "NPD = Null Pointer Dereference"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "OOB" ]] ; then
 einfo "OOB = Out Of Bounds Access"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "PE" ]] ; then
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ ("PE"|"EP"|"EoP") ]] ; then
 einfo "PE = Privilege Escalation"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "PI" ]] ; then
