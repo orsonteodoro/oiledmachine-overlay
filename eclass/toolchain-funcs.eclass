@@ -4,7 +4,7 @@
 # @ECLASS: toolchain-funcs.eclass
 # @MAINTAINER:
 # Toolchain Ninjas <toolchain@gentoo.org>
-# @SUPPORTED_EAPIS: 6 7 8
+# @SUPPORTED_EAPIS: 7 8
 # @BLURB: functions to query common info about the toolchain
 # @DESCRIPTION:
 # The toolchain-funcs aims to provide a complete suite of functions
@@ -16,13 +16,13 @@
 # oiledmachine-overlay changes:
 # Change _tc-has-openmp
 
-case ${EAPI} in
-	6|7|8) ;;
-	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
-esac
-
 if [[ -z ${_TOOLCHAIN_FUNCS_ECLASS} ]]; then
 _TOOLCHAIN_FUNCS_ECLASS=1
+
+case ${EAPI} in
+	7|8) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
+esac
 
 inherit multilib
 
@@ -644,17 +644,65 @@ _tc-has-openmp() {
 		return ret;
 	}
 	EOF
-	local extra_args
 	if tc-is-clang ; then
-		local llvm_slot=$(clang-major-version)
-		extra_args="-I${ESYSROOT}/usr/lib/llvm/${llvm_slot}/include"
-		$(tc-getCC "$@") ${extra_args} -fopenmp=libomp "${base}.c" -o "${base}" >&/dev/null
+		if [[ -n "${TOOLCHAIN_FUNCS_CLANG_LIBOMP_ARGS}" ]] ; then
+			$(tc-getCC "$@") ${TOOLCHAIN_FUNCS_CLANG_LIBOMP_ARGS} -fopenmp=libomp "${base}.c" -o "${base}" >&/dev/null
+		else
+			local llvm_slot=$(clang-major-version)
+			local extra_args
+			extra_args="-I${ESYSROOT}/usr/lib/llvm/${llvm_slot}/include"
+			$(tc-getCC "$@") ${extra_args} -fopenmp=libomp "${base}.c" -o "${base}" >&/dev/null
+		fi
 	else
 		$(tc-getCC "$@") -fopenmp "${base}.c" -o "${base}" >&/dev/null
 	fi
 	local ret=$?
 	rm -f "${base}"*
 	return ${ret}
+}
+
+# @FUNCTION: tc-check-min_ver
+# @USAGE: <gcc or clang> <minimum version>
+# @DESCRIPTION:
+# Minimum version of active GCC or Clang to require.
+#
+# You should test for any necessary minimum version in pkg_pretend in order to
+# warn the user of required toolchain changes.  You must still check for it at
+# build-time, e.g.
+# @CODE
+# pkg_pretend() {
+#	[[ ${MERGE_TYPE} != binary ]] && tc-check-min_ver gcc 13.2.0
+# }
+#
+# pkg_setup() {
+#	[[ ${MERGE_TYPE} != binary ]] && tc-check-min_ver gcc 13.2.0
+# }
+# @CODE
+tc-check-min_ver() {
+	do_check() {
+		debug-print "Compiler version check for ${1}"
+		debug-print "Detected: ${2}"
+		debug-print "Required: ${3}"
+		if ver_test ${2} -lt ${3}; then
+			eerror "Your current compiler is too old for this package!"
+			die "Active compiler is too old for this package (found ${1} ${2})."
+		fi
+	}
+
+	case ${1} in
+		gcc)
+			tc-is-gcc || return
+			do_check GCC $(gcc-version) ${2}
+			;;
+		clang)
+			tc-is-clang || return
+			do_check Clang $(clang-version) ${2}
+			;;
+		*)
+			eerror "Unknown first parameter for ${FUNCNAME} - must be gcc or clang"
+			die "${FUNCNAME}: Parameter ${1} unknown"
+			;;
+	esac
 }
 
 # @FUNCTION: tc-check-openmp
@@ -682,7 +730,7 @@ tc-check-openmp() {
 		if tc-is-gcc; then
 			eerror "Enable OpenMP support by building sys-devel/gcc with USE=\"openmp\"."
 		elif tc-is-clang; then
-			eerror "OpenMP support in llvm-core/clang is provided by sys-libs/libomp."
+			eerror "OpenMP support in llvm-core/clang is provided by llvm-runtimes/openmp."
 		fi
 
 		die "Active compiler does not have required support for OpenMP"
@@ -751,6 +799,7 @@ tc-ninja_magic_to_arch() {
 		hexagon*)	echo hexagon;;
 		hppa*)		_tc_echo_kernel_alias parisc hppa;;
 		i?86*)		echo x86;;
+		ia64*)		echo ia64;;
 		loongarch*)	_tc_echo_kernel_alias loongarch loong;;
 		m68*)		echo m68k;;
 		metag*)		echo metag;;
@@ -836,6 +885,7 @@ tc-endian() {
 		cris*)		echo little;;
 		hppa*)		echo big;;
 		i?86*)		echo little;;
+		ia64*)		echo little;;
 		loongarch*)	echo little;;
 		m68*)		echo big;;
 		mips*l*)	echo little;;
@@ -1121,7 +1171,6 @@ gen_usr_ldscript() {
 	ewarn "${FUNCNAME}: Please migrate to usr-ldscript.eclass"
 
 	local lib libdir=$(get_libdir) output_format="" auto=false suffix=$(get_libname)
-	[[ -z ${ED+set} ]] && local ED=${D%/}${EPREFIX}/
 
 	tc-is-static-only && return
 	use prefix && return
@@ -1251,7 +1300,7 @@ gen_usr_ldscript() {
 # If the library is identified, the function returns 0 and prints one
 # of the following:
 #
-# - ``libc++`` for ``sys-libs/libcxx``
+# - ``libc++`` for ``llvm-runtimes/libcxx``
 # - ``libstdc++`` for ``sys-devel/gcc``'s libstdc++
 #
 # If the library is not recognized, the function returns 1.
