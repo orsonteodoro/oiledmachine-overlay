@@ -20,6 +20,7 @@ UOPTS_BOLT_INST_ARGS=(
 	"libaom_version.so:--skip-funcs=.text/1"
 	"libaom_pc.so:--skip-funcs=.text/1"
 	"libaom.so.3.11.0:--skip-funcs=.text/1"
+	"libaom_av1_rc.so:--skip-funcs=.text/1"
 )
 
 inherit aocc cmake-multilib flag-o-matic flag-o-matic-om multiprocessing python-any-r1
