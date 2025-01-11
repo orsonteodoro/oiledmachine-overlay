@@ -66,6 +66,7 @@ REQUIRED_USE="
 	)
 "
 PATENT_STATUS_RDEPEND="
+	virtual/patent-status[patent_status_nonfree=]
 	!patent_status_nonfree? (
 		|| (
 			media-video/ffmpeg:58.60.60[encode,mp3?,opus?,-patent_status_nonfree,svt-av1?,theora?,vorbis?,vpx?,-x264]
