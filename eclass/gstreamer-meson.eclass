@@ -38,11 +38,6 @@ esac
 PYTHON_COMPAT=( python3_{10..12} )
 [[ ${EAPI} == 8 ]] && inherit python-any-r1
 
-# TODO: Remove after all older versions are gone from tree
-if ver_test ${PV} -lt 1.22.10 ; then
-	inherit virtualx
-fi
-
 # multilib-minimal goes last
 inherit meson multilib toolchain-funcs xdg-utils multilib-minimal
 
@@ -133,10 +128,7 @@ gstreamer_system_package() {
 			pc=${tuple#*:}-${SLOT}
 			sed -e "1i${dependency} = dependency('${pc}', required : true)" \
 				-i "${pdir}"/meson.build || die
-			# TODO: Remove conditional applying once older versions are all gone
-			if ver_test ${PV} -gt 1.22.5 ; then
-				sed -e "/meson\.override_dependency[(]pkg_name, ${dependency}[)]/d" -i "${S}"/gst-libs/gst/*/meson.build || die
-			fi
+			sed -e "/meson\.override_dependency[(]pkg_name, ${dependency}[)]/d" -i "${S}"/gst-libs/gst/*/meson.build || die
 		done
 	done
 }
@@ -207,8 +199,14 @@ S="${WORKDIR}/${GST_ORG_MODULE}-${PV}"
 LICENSE="GPL-2"
 SLOT="1.0"
 
+if ver_test ${GST_ORG_PVP} -ge 1.24 ; then
+	GLIB_VERSION=2.64.0
+else
+	GLIB_VERSION=2.62.0
+fi
+
 RDEPEND="
-	>=dev-libs/glib-2.64.0:2[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-${GLIB_VERSION}:2[${MULTILIB_USEDEP}]
 "
 BDEPEND="
 	virtual/pkgconfig
@@ -238,7 +236,7 @@ if [[ "${PN}" != "${GST_ORG_MODULE}" ]]; then
 	# Do not run test phase for individual plugin ebuilds.
 	RESTRICT="test"
 	RDEPEND="${RDEPEND}
-		>=media-libs/${GST_ORG_MODULE}-${PV}:${SLOT}[${MULTILIB_USEDEP}]"
+		~media-libs/${GST_ORG_MODULE}-${PV}:${SLOT}[${MULTILIB_USEDEP}]"
 
 	# Export multilib phases used for split builds.
 	multilib_src_install_all() { gstreamer_multilib_src_install_all; }
