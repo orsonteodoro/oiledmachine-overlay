@@ -64,7 +64,7 @@ GENERATE_LOCKFILE=${GENERATE_LOCKFILE:-0}
 PARAMIKO_PV="2.9.3"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit autotools cargo distutils-r1 lcnr
+inherit autotools distutils-r1 cargo lcnr
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${PN}-${PV}"
