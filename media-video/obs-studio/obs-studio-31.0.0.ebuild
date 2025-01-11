@@ -6,6 +6,10 @@ EAPI=8
 
 # U24
 
+# TODO package:
+# nvafx
+# nvvfx
+
 #
 # To find differences between release use:
 #
@@ -186,9 +190,6 @@ PATENT_STATUS_REQUIRED_USE="
 "
 REQUIRED_USE+="
 	${PATENT_STATUS_REQUIRED_USE}
-	!nvafx
-	!nvvfx
-	!oss
 	!win-dshow
 	!win-mf
 	qt6
