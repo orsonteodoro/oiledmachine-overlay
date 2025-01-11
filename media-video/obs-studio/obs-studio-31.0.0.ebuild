@@ -127,7 +127,7 @@ nvenc nvvfx opus oss +pipewire +pulseaudio +python qsv +qt6 +rnnoise +rtmps
 +service-updates -sndio +speexdsp svt-av1 -test +v4l2 vaapi +vlc +virtualcam
 +vst +wayland +webrtc win-dshow +websocket -win-mf +whatsnew x264
 
-ebuild_revision_12
+ebuild_revision_13
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (

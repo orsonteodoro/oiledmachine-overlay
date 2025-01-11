@@ -1,6 +1,6 @@
 diff '--color=auto' -urp obs-studio-31.0.0.orig/CMakeLists.txt obs-studio-31.0.0/CMakeLists.txt
 --- obs-studio-31.0.0.orig/CMakeLists.txt	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/CMakeLists.txt	2025-01-09 17:57:59.005676929 -0800
++++ obs-studio-31.0.0/CMakeLists.txt	2025-01-10 07:03:38.193552689 -0800
 @@ -17,7 +17,15 @@ include(helpers)
  
  option(ENABLE_UI "Enable building with UI (requires Qt)" ON)
@@ -19,7 +19,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/CMakeLists.txt obs-studio-31.0.0
  if(OS_WINDOWS)
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/CMakeLists.txt obs-studio-31.0.0/UI/CMakeLists.txt
 --- obs-studio-31.0.0.orig/UI/CMakeLists.txt	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/CMakeLists.txt	2025-01-09 17:57:59.005676929 -0800
++++ obs-studio-31.0.0/UI/CMakeLists.txt	2025-01-10 07:03:38.193552689 -0800
 @@ -25,6 +25,31 @@ endif()
  add_executable(obs-studio)
  add_executable(OBS::studio ALIAS obs-studio)
@@ -54,7 +54,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/CMakeLists.txt obs-studio-31.
    PRIVATE
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/audio-encoders.cpp obs-studio-31.0.0/UI/audio-encoders.cpp
 --- obs-studio-31.0.0.orig/UI/audio-encoders.cpp	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/audio-encoders.cpp	2025-01-09 17:57:59.005676929 -0800
++++ obs-studio-31.0.0/UI/audio-encoders.cpp	2025-01-10 07:03:38.193552689 -0800
 @@ -141,7 +141,11 @@ static void PopulateBitrateLists()
  
  		/* NOTE: ffmpeg_aac and ffmpeg_opus have the same properties
@@ -86,7 +86,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/audio-encoders.cpp obs-studio
  		const string fallbackEncoder = encoders[0];
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/af-ZA.ini obs-studio-31.0.0/UI/data/locale/af-ZA.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/af-ZA.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/af-ZA.ini	2025-01-09 17:57:59.005676929 -0800
++++ obs-studio-31.0.0/UI/data/locale/af-ZA.ini	2025-01-10 07:03:38.193552689 -0800
 @@ -369,6 +369,8 @@ Basic.Settings.Output.Simple.Warn.Incomp
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="Is u seker u wil verlieslose kwaliteit gebruik?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="Verlieslosekwaliteitwaarskuwing!"
@@ -98,7 +98,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/af-ZA.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="Apparatuur (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/ar-SA.ini obs-studio-31.0.0/UI/data/locale/ar-SA.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/ar-SA.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/ar-SA.ini	2025-01-09 17:57:59.005676929 -0800
++++ obs-studio-31.0.0/UI/data/locale/ar-SA.ini	2025-01-10 07:03:38.197552660 -0800
 @@ -830,6 +830,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="هل أنت متأكد أنك تريد استخدام الجودة الغير فقودة؟"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="تحذير الجودة الغير فقودة!"
@@ -110,7 +110,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/ar-SA.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="المعدات (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/be-BY.ini obs-studio-31.0.0/UI/data/locale/be-BY.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/be-BY.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/be-BY.ini	2025-01-09 17:57:59.005676929 -0800
++++ obs-studio-31.0.0/UI/data/locale/be-BY.ini	2025-01-10 07:03:38.225552458 -0800
 @@ -840,6 +840,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="Ці вы ўпэўненыя, што хочаце выкарыстоўваць якасць без страт?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="Папярэджанне аб якасці без страт!"
@@ -122,7 +122,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/be-BY.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="Апаратны (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/bg-BG.ini obs-studio-31.0.0/UI/data/locale/bg-BG.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/bg-BG.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/bg-BG.ini	2025-01-09 17:57:59.005676929 -0800
++++ obs-studio-31.0.0/UI/data/locale/bg-BG.ini	2025-01-10 07:03:38.225552458 -0800
 @@ -822,6 +822,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="Сигурни ли сте че искате да ползвате оригиналното качество на записа?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="Предупреждение при ползване на Оригинално Качество!"
@@ -134,7 +134,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/bg-BG.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="Хардуер (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/ca-ES.ini obs-studio-31.0.0/UI/data/locale/ca-ES.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/ca-ES.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/ca-ES.ini	2025-01-09 17:57:59.009676899 -0800
++++ obs-studio-31.0.0/UI/data/locale/ca-ES.ini	2025-01-10 07:03:38.229552429 -0800
 @@ -828,6 +828,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="Esteu segur que voleu utilitzar qualitat sense pèrdues?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="Advertiment de qualitat sense pèrdues!"
@@ -146,7 +146,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/ca-ES.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="Maquinari (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/cs-CZ.ini obs-studio-31.0.0/UI/data/locale/cs-CZ.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/cs-CZ.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/cs-CZ.ini	2025-01-09 17:57:59.009676899 -0800
++++ obs-studio-31.0.0/UI/data/locale/cs-CZ.ini	2025-01-10 07:03:38.229552429 -0800
 @@ -832,6 +832,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="Opravdu chcete použít tuto kvalitu ?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="Varování nastavené kvality!"
@@ -158,7 +158,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/cs-CZ.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="Hardwarový (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/el-GR.ini obs-studio-31.0.0/UI/data/locale/el-GR.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/el-GR.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/el-GR.ini	2025-01-09 17:57:59.009676899 -0800
++++ obs-studio-31.0.0/UI/data/locale/el-GR.ini	2025-01-10 07:03:38.229552429 -0800
 @@ -798,6 +798,8 @@ Basic.Settings.Output.Simple.Warn.Encode
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="Είστε σίγουρος ότι θέλετε να χρησιμοποιήσετε την επιλογή ποιότητα χωρίς απώλειες;"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="Προειδοποίηση ποιότητας χωρίς απώλειες!"
@@ -170,7 +170,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/el-GR.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="Υλικό (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/en-US.ini obs-studio-31.0.0/UI/data/locale/en-US.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/en-US.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/en-US.ini	2025-01-09 17:57:59.009676899 -0800
++++ obs-studio-31.0.0/UI/data/locale/en-US.ini	2025-01-10 07:03:38.229552429 -0800
 @@ -1035,6 +1035,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="Are you sure you want to use lossless quality?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="Lossless quality warning!"
@@ -182,7 +182,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/en-US.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="Hardware (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/et-EE.ini obs-studio-31.0.0/UI/data/locale/et-EE.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/et-EE.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/et-EE.ini	2025-01-09 17:57:59.009676899 -0800
++++ obs-studio-31.0.0/UI/data/locale/et-EE.ini	2025-01-10 07:03:38.229552429 -0800
 @@ -714,6 +714,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="Kas soovite kindlasti kasutada kadudeta kvaliteeti?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="Kadudeta kvaliteedi hoiatus!"
@@ -194,7 +194,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/et-EE.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="Riistvara (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/eu-ES.ini obs-studio-31.0.0/UI/data/locale/eu-ES.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/eu-ES.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/eu-ES.ini	2025-01-09 17:57:59.009676899 -0800
++++ obs-studio-31.0.0/UI/data/locale/eu-ES.ini	2025-01-10 07:03:38.229552429 -0800
 @@ -841,6 +841,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="Ziur zaude galerarik gabeko kalitatea erabili nahi duzula?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="Galerarik gabeko kalitateaz oharra!"
@@ -206,7 +206,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/eu-ES.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="Komposanteak (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/fa-IR.ini obs-studio-31.0.0/UI/data/locale/fa-IR.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/fa-IR.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/fa-IR.ini	2025-01-09 17:57:59.009676899 -0800
++++ obs-studio-31.0.0/UI/data/locale/fa-IR.ini	2025-01-10 07:03:38.237552371 -0800
 @@ -843,6 +843,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="آیا مطمئن هستید که می‌خواهید از کیفیت بدون افت استفاده کنید؟"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="هشدار کیفیت بدون افت!"
@@ -218,7 +218,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/fa-IR.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="سخت‌افزار (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/fi-FI.ini obs-studio-31.0.0/UI/data/locale/fi-FI.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/fi-FI.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/fi-FI.ini	2025-01-09 17:57:59.009676899 -0800
++++ obs-studio-31.0.0/UI/data/locale/fi-FI.ini	2025-01-10 07:03:38.237552371 -0800
 @@ -827,6 +827,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="Haluatko varmasti käyttää häviötöntä laatua?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="Häviötön laatu!"
@@ -230,7 +230,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/fi-FI.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="Laitteisto (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/fr-FR.ini obs-studio-31.0.0/UI/data/locale/fr-FR.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/fr-FR.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/fr-FR.ini	2025-01-09 17:57:59.009676899 -0800
++++ obs-studio-31.0.0/UI/data/locale/fr-FR.ini	2025-01-10 07:03:38.237552371 -0800
 @@ -813,6 +813,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="Êtes-vous certain de vouloir utiliser la qualité sans perte ?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="Avertissement de qualité sans perte"
@@ -242,7 +242,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/fr-FR.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="Matériel (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/he-IL.ini obs-studio-31.0.0/UI/data/locale/he-IL.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/he-IL.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/he-IL.ini	2025-01-09 17:57:59.009676899 -0800
++++ obs-studio-31.0.0/UI/data/locale/he-IL.ini	2025-01-10 07:03:38.241552343 -0800
 @@ -844,6 +844,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="להשתמש באיכות ללא אובדן איכות?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="אזהרה איכות ללא אובדן איכות!"
@@ -254,7 +254,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/he-IL.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="חומרה (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/hi-IN.ini obs-studio-31.0.0/UI/data/locale/hi-IN.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/hi-IN.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/hi-IN.ini	2025-01-09 17:57:59.009676899 -0800
++++ obs-studio-31.0.0/UI/data/locale/hi-IN.ini	2025-01-10 07:03:38.241552343 -0800
 @@ -829,6 +829,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="क्या आप वाकई दोषरहित गुणवत्ता का उपयोग करना चाहते हैं?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="दोषरहित गुणवत्ता चेतावनी!"
@@ -266,7 +266,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/hi-IN.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="हार्डवेयर (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/hu-HU.ini obs-studio-31.0.0/UI/data/locale/hu-HU.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/hu-HU.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/hu-HU.ini	2025-01-09 17:57:59.013676871 -0800
++++ obs-studio-31.0.0/UI/data/locale/hu-HU.ini	2025-01-10 07:03:38.269552141 -0800
 @@ -835,6 +835,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="Biztos, hogy veszteségmentes minőséget használ?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="Veszteségmentes minőség figyelem!"
@@ -278,7 +278,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/hu-HU.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="Hardveres (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/hy-AM.ini obs-studio-31.0.0/UI/data/locale/hy-AM.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/hy-AM.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/hy-AM.ini	2025-01-09 17:57:59.013676871 -0800
++++ obs-studio-31.0.0/UI/data/locale/hy-AM.ini	2025-01-10 07:03:38.269552141 -0800
 @@ -786,6 +786,8 @@ Basic.Settings.Output.Simple.Warn.Encode
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="Իսկապե՞ս ուզում եք տեսագրել առանց որակի կորստի:"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="Անկորուստ որակի նախազգուշացում:"
@@ -290,7 +290,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/hy-AM.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="Սարքավորում (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/id-ID.ini obs-studio-31.0.0/UI/data/locale/id-ID.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/id-ID.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/id-ID.ini	2025-01-09 17:57:59.013676871 -0800
++++ obs-studio-31.0.0/UI/data/locale/id-ID.ini	2025-01-10 07:03:38.269552141 -0800
 @@ -821,6 +821,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="Apakah Anda yakin ingin menggunakan kualitas lossless?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="Peringatan kualitas lossless!"
@@ -302,7 +302,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/id-ID.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="Perangkat Keras (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/ja-JP.ini obs-studio-31.0.0/UI/data/locale/ja-JP.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/ja-JP.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/ja-JP.ini	2025-01-09 17:57:59.013676871 -0800
++++ obs-studio-31.0.0/UI/data/locale/ja-JP.ini	2025-01-10 07:03:38.269552141 -0800
 @@ -838,6 +838,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="無損失品質を使用してもよろしいですか？"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="無損失品質警告！"
@@ -314,7 +314,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/ja-JP.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="ハードウェア (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/ka-GE.ini obs-studio-31.0.0/UI/data/locale/ka-GE.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/ka-GE.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/ka-GE.ini	2025-01-09 17:57:59.013676871 -0800
++++ obs-studio-31.0.0/UI/data/locale/ka-GE.ini	2025-01-10 07:03:38.325551738 -0800
 @@ -824,6 +824,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="ნამდვილად გსურთ უდანაკარგო ხარისხის მითითება?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="გაფრთხილება უდანაკარგო ხარისხის შესახებ!"
@@ -326,7 +326,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/ka-GE.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="აპარატურული (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/kaa.ini obs-studio-31.0.0/UI/data/locale/kaa.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/kaa.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/kaa.ini	2025-01-09 17:57:59.013676871 -0800
++++ obs-studio-31.0.0/UI/data/locale/kaa.ini	2025-01-10 07:03:38.325551738 -0800
 @@ -606,6 +606,8 @@ Basic.Settings.Output.Simple.RecordingQu
  Basic.Settings.Output.Simple.RecordingQuality.Stream="Esittiriwdegidey"
  Basic.Settings.Output.Simple.RecordingQuality.Small="Joqarı sapa, ortasha fayl kólemi"
@@ -338,7 +338,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/kaa.ini obs-studi
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="Apparatlıq (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/kmr-TR.ini obs-studio-31.0.0/UI/data/locale/kmr-TR.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/kmr-TR.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/kmr-TR.ini	2025-01-09 17:57:59.013676871 -0800
++++ obs-studio-31.0.0/UI/data/locale/kmr-TR.ini	2025-01-10 07:03:38.329551709 -0800
 @@ -763,6 +763,8 @@ Basic.Settings.Output.Simple.Warn.Encode
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="Tu bawer î ku tu dixwazî kalîteya bêkêmasî bi kar bîne?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="Hişyariya kalîteya bêkêmasî!"
@@ -350,7 +350,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/kmr-TR.ini obs-st
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="Reqalav (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/ko-KR.ini obs-studio-31.0.0/UI/data/locale/ko-KR.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/ko-KR.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/ko-KR.ini	2025-01-09 17:57:59.013676871 -0800
++++ obs-studio-31.0.0/UI/data/locale/ko-KR.ini	2025-01-10 07:03:38.333551680 -0800
 @@ -841,6 +841,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="정말로 무손실 품질로 녹화하겠습니까?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="무손실 품질 설정 경고!"
@@ -362,7 +362,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/ko-KR.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="하드웨어 (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/lv-LV.ini obs-studio-31.0.0/UI/data/locale/lv-LV.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/lv-LV.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/lv-LV.ini	2025-01-09 17:57:59.013676871 -0800
++++ obs-studio-31.0.0/UI/data/locale/lv-LV.ini	2025-01-10 07:03:38.333551680 -0800
 @@ -639,6 +639,8 @@ Basic.Settings.Output.Simple.Warn.Encode
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="Tiešām vēlaties izmantot bezzuduma kvalitāti?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="Brīdinājums bezzuduma kvalitātes sakarā!"
@@ -374,7 +374,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/lv-LV.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="Aparatūra (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/ms-MY.ini obs-studio-31.0.0/UI/data/locale/ms-MY.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/ms-MY.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/ms-MY.ini	2025-01-09 17:57:59.013676871 -0800
++++ obs-studio-31.0.0/UI/data/locale/ms-MY.ini	2025-01-10 07:03:38.333551680 -0800
 @@ -820,6 +820,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="Anda pasti mahu guna kualiti tak hilang?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="Amaran kualiti tak hilang!"
@@ -386,7 +386,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/ms-MY.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="Perkakasan (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/nb-NO.ini obs-studio-31.0.0/UI/data/locale/nb-NO.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/nb-NO.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/nb-NO.ini	2025-01-09 17:57:59.013676871 -0800
++++ obs-studio-31.0.0/UI/data/locale/nb-NO.ini	2025-01-10 07:03:38.333551680 -0800
 @@ -776,6 +776,8 @@ Basic.Settings.Output.Simple.Warn.Encode
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="Er du sikker på at du vil bruke tapsfri kvalitet?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="Tapsfri kvalitet advarsel!"
@@ -398,7 +398,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/nb-NO.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="Maskinvare (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/pl-PL.ini obs-studio-31.0.0/UI/data/locale/pl-PL.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/pl-PL.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/pl-PL.ini	2025-01-09 17:57:59.013676871 -0800
++++ obs-studio-31.0.0/UI/data/locale/pl-PL.ini	2025-01-10 07:03:38.333551680 -0800
 @@ -829,6 +829,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="Czy na pewno chcesz użyć bezstratnej jakości?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="Ostrzeżenie o bezstratnej jakości!"
@@ -410,7 +410,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/pl-PL.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="Sprzętowy (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/ru-RU.ini obs-studio-31.0.0/UI/data/locale/ru-RU.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/ru-RU.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/ru-RU.ini	2025-01-09 17:57:59.017676840 -0800
++++ obs-studio-31.0.0/UI/data/locale/ru-RU.ini	2025-01-10 07:03:38.337551651 -0800
 @@ -843,6 +843,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="Уверены, что хотите записывать без потери качества?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="Предупреждение о качестве без потерь!"
@@ -422,7 +422,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/ru-RU.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="Аппаратный (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/si-LK.ini obs-studio-31.0.0/UI/data/locale/si-LK.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/si-LK.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/si-LK.ini	2025-01-09 17:57:59.017676840 -0800
++++ obs-studio-31.0.0/UI/data/locale/si-LK.ini	2025-01-10 07:03:38.341551622 -0800
 @@ -692,6 +692,8 @@ Basic.Settings.Output.Simple.Warn.AudioB
  Basic.Settings.Output.Simple.Warn.CannotPause="අවවාදයයි: පටිගතයේ ගුණත්වය “ප්‍රචාරයට සමාන” ලෙස සකසා ඇත්නම් පටිගතයට විරාම තැබීමට නොහැකියි."
  Basic.Settings.Output.Simple.Warn.Encoder="අවවාදයයි: ඔබ එකවර ප්‍රචාර සහ පටිගත කරන විට දී ප්‍රචාරයට වඩා වෙනස් ගුණත්වයකින් මෘදුකාංග ආකේතකයක් සමඟ පටිගත කරයි නම් අමතර ම.සැ.ඒ. (CPU) භාවිතයක් සිදු වේ."
@@ -434,7 +434,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/si-LK.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="දෘඩාංගය (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/sk-SK.ini obs-studio-31.0.0/UI/data/locale/sk-SK.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/sk-SK.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/sk-SK.ini	2025-01-09 17:57:59.017676840 -0800
++++ obs-studio-31.0.0/UI/data/locale/sk-SK.ini	2025-01-10 07:03:38.341551622 -0800
 @@ -830,6 +830,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="Ste si istí, že chcete použiť bezstratovú kvalitu?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="Varovanie bezstratovej kvality!"
@@ -446,7 +446,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/sk-SK.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="Hardvérový (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/sl-SI.ini obs-studio-31.0.0/UI/data/locale/sl-SI.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/sl-SI.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/sl-SI.ini	2025-01-09 17:57:59.017676840 -0800
++++ obs-studio-31.0.0/UI/data/locale/sl-SI.ini	2025-01-10 07:03:38.345551594 -0800
 @@ -821,6 +821,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="Ali res želite uporabiti brezizgubno kakovost?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="Opozorilo o brezizgubni kakovosti!"
@@ -458,7 +458,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/sl-SI.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="Strojna oprema (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/sr-SP.ini obs-studio-31.0.0/UI/data/locale/sr-SP.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/sr-SP.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/sr-SP.ini	2025-01-09 17:57:59.017676840 -0800
++++ obs-studio-31.0.0/UI/data/locale/sr-SP.ini	2025-01-10 07:03:38.345551594 -0800
 @@ -764,6 +764,8 @@ Basic.Settings.Output.Simple.Warn.Encode
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="Да ли сте сигурни да желите користити квалитет без губитка?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="Упозорење о квалитету без губитка!"
@@ -470,7 +470,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/sr-SP.ini obs-stu
  Basic.Settings.Output.VideoBitrate="Проток видеа"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/sv-SE.ini obs-studio-31.0.0/UI/data/locale/sv-SE.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/sv-SE.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/sv-SE.ini	2025-01-09 17:57:59.017676840 -0800
++++ obs-studio-31.0.0/UI/data/locale/sv-SE.ini	2025-01-10 07:03:38.349551565 -0800
 @@ -823,6 +823,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="Är du säker på att du vill använda förlustfri kvalitet?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="Varning om förlustfri kvalitet!"
@@ -482,7 +482,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/sv-SE.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="Hårdvara (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/th-TH.ini obs-studio-31.0.0/UI/data/locale/th-TH.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/th-TH.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/th-TH.ini	2025-01-09 17:57:59.017676840 -0800
++++ obs-studio-31.0.0/UI/data/locale/th-TH.ini	2025-01-10 07:03:38.349551565 -0800
 @@ -828,6 +828,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="คุณแน่ใจหรือไม่ว่าต้องการใช้คุณภาพแบบไม่สูญเสีย?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="คำเตือนคุณภาพแบบไม่สูญเสีย!"
@@ -494,7 +494,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/th-TH.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="ฮาร์ดแวร์ (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/tr-TR.ini obs-studio-31.0.0/UI/data/locale/tr-TR.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/tr-TR.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/tr-TR.ini	2025-01-09 17:57:59.017676840 -0800
++++ obs-studio-31.0.0/UI/data/locale/tr-TR.ini	2025-01-10 07:03:38.365551450 -0800
 @@ -829,6 +829,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="Kayıpsız kalitede kullanmak istediğinizden emin misiniz?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="Kayıpsız kalite uyarısı!"
@@ -506,7 +506,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/tr-TR.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="Donanım (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/tt-RU.ini obs-studio-31.0.0/UI/data/locale/tt-RU.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/tt-RU.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/tt-RU.ini	2025-01-09 17:57:59.017676840 -0800
++++ obs-studio-31.0.0/UI/data/locale/tt-RU.ini	2025-01-10 07:03:38.365551450 -0800
 @@ -297,6 +297,9 @@ Basic.Settings.Output.Mode.FFmpeg="FFmpe
  Basic.Settings.Output.ReplayBuffer.Suffix="Суффикс"
  Basic.Settings.Output.Simple.SavePath="Яздыру юлы"
@@ -519,7 +519,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/tt-RU.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="Аппаратура (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/ug-CN.ini obs-studio-31.0.0/UI/data/locale/ug-CN.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/ug-CN.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/ug-CN.ini	2025-01-09 17:57:59.017676840 -0800
++++ obs-studio-31.0.0/UI/data/locale/ug-CN.ini	2025-01-10 07:03:38.365551450 -0800
 @@ -841,6 +841,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="سىز راستتىنلا زەخىمسىز سۈپەتنى ئىشلىتەمسىز؟"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="زەخىمسىز سۈپەت ئاگاھلاندۇرۇشى!"
@@ -531,7 +531,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/ug-CN.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="قاتتىق دېتال (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/uk-UA.ini obs-studio-31.0.0/UI/data/locale/uk-UA.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/uk-UA.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/uk-UA.ini	2025-01-09 17:57:59.017676840 -0800
++++ obs-studio-31.0.0/UI/data/locale/uk-UA.ini	2025-01-10 07:03:38.365551450 -0800
 @@ -842,6 +842,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="Справді використовувати настройку «Без втрат якості»?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="Попередження щодо якості без втрат!"
@@ -543,7 +543,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/uk-UA.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="Апаратний (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/vi-VN.ini obs-studio-31.0.0/UI/data/locale/vi-VN.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/vi-VN.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/vi-VN.ini	2025-01-09 17:57:59.021676812 -0800
++++ obs-studio-31.0.0/UI/data/locale/vi-VN.ini	2025-01-10 07:03:38.373551392 -0800
 @@ -826,6 +826,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="Có chắc là bạn muốn sử dụng chất lượng cao không?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="Cảnh báo chất lượng bất tổn"
@@ -555,7 +555,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/vi-VN.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="Phần cứng (QSV, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/zh-CN.ini obs-studio-31.0.0/UI/data/locale/zh-CN.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/zh-CN.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/zh-CN.ini	2025-01-09 17:57:59.021676812 -0800
++++ obs-studio-31.0.0/UI/data/locale/zh-CN.ini	2025-01-10 07:03:38.373551392 -0800
 @@ -843,6 +843,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="你确定你想要使用无损质量?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="无损质量警告!"
@@ -567,7 +567,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/zh-CN.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="硬件 (AMD, H.264)"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/zh-TW.ini obs-studio-31.0.0/UI/data/locale/zh-TW.ini
 --- obs-studio-31.0.0.orig/UI/data/locale/zh-TW.ini	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/data/locale/zh-TW.ini	2025-01-09 17:57:59.021676812 -0800
++++ obs-studio-31.0.0/UI/data/locale/zh-TW.ini	2025-01-10 07:03:38.377551363 -0800
 @@ -843,6 +843,8 @@ Basic.Settings.Output.Simple.Warn.Lossle
  Basic.Settings.Output.Simple.Warn.Lossless.Msg="你確定你想要使用無損畫質?"
  Basic.Settings.Output.Simple.Warn.Lossless.Title="無損畫質警告！"
@@ -579,7 +579,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/data/locale/zh-TW.ini obs-stu
  Basic.Settings.Output.Simple.Encoder.Hardware.AMD.H264="硬體（AMD，H.264）"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/window-basic-auto-config-test.cpp obs-studio-31.0.0/UI/window-basic-auto-config-test.cpp
 --- obs-studio-31.0.0.orig/UI/window-basic-auto-config-test.cpp	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/window-basic-auto-config-test.cpp	2025-01-09 17:57:59.021676812 -0800
++++ obs-studio-31.0.0/UI/window-basic-auto-config-test.cpp	2025-01-10 07:03:38.377551363 -0800
 @@ -192,8 +192,8 @@ void AutoConfigTestPage::TestBandwidthTh
  
  	const char *serverType = wiz->customServer ? "rtmp_custom" : "rtmp_common";
@@ -664,7 +664,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/window-basic-auto-config-test
  		return QTStr(ENCODER_SOFTWARE);
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/window-basic-auto-config.cpp obs-studio-31.0.0/UI/window-basic-auto-config.cpp
 --- obs-studio-31.0.0.orig/UI/window-basic-auto-config.cpp	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/window-basic-auto-config.cpp	2025-01-09 17:57:59.021676812 -0800
++++ obs-studio-31.0.0/UI/window-basic-auto-config.cpp	2025-01-10 07:03:38.377551363 -0800
 @@ -1035,6 +1035,7 @@ AutoConfig::AutoConfig(QWidget *parent)
  		streamPage->ui->key->setText(key.c_str());
  
@@ -705,7 +705,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/window-basic-auto-config.cpp 
  	}
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/window-basic-auto-config.hpp obs-studio-31.0.0/UI/window-basic-auto-config.hpp
 --- obs-studio-31.0.0.orig/UI/window-basic-auto-config.hpp	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/window-basic-auto-config.hpp	2025-01-09 17:57:59.021676812 -0800
++++ obs-studio-31.0.0/UI/window-basic-auto-config.hpp	2025-01-10 07:03:38.377551363 -0800
 @@ -51,6 +51,8 @@ class AutoConfig : public QWizard {
  		AMD,
  		Apple,
@@ -743,7 +743,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/window-basic-auto-config.hpp 
  	virtual void done(int result) override;
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/window-basic-main-outputs.cpp obs-studio-31.0.0/UI/window-basic-main-outputs.cpp
 --- obs-studio-31.0.0.orig/UI/window-basic-main-outputs.cpp	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/window-basic-main-outputs.cpp	2025-01-09 17:57:59.021676812 -0800
++++ obs-studio-31.0.0/UI/window-basic-main-outputs.cpp	2025-01-10 15:40:19.962522752 -0800
 @@ -472,6 +472,8 @@ struct SimpleOutput : BasicOutputHandler
  	int CalcCRF(int crf);
  
@@ -864,7 +864,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/window-basic-main-outputs.cpp
  				    });
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/window-basic-main-profiles.cpp obs-studio-31.0.0/UI/window-basic-main-profiles.cpp
 --- obs-studio-31.0.0.orig/UI/window-basic-main-profiles.cpp	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/window-basic-main-profiles.cpp	2025-01-09 17:57:59.021676812 -0800
++++ obs-studio-31.0.0/UI/window-basic-main-profiles.cpp	2025-01-10 07:03:38.381551334 -0800
 @@ -788,6 +788,12 @@ void OBSBasic::CheckForSimpleModeX264Fal
  {
  	const char *curStreamEncoder = config_get_string(activeConfiguration, "SimpleOutput", "StreamEncoder");
@@ -918,7 +918,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/window-basic-main-profiles.cp
  		return true;
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/window-basic-main.cpp obs-studio-31.0.0/UI/window-basic-main.cpp
 --- obs-studio-31.0.0.orig/UI/window-basic-main.cpp	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/window-basic-main.cpp	2025-01-09 17:57:59.021676812 -0800
++++ obs-studio-31.0.0/UI/window-basic-main.cpp	2025-01-10 07:03:38.381551334 -0800
 @@ -1739,15 +1739,15 @@ bool OBSBasic::InitBasicConfigDefaults()
  	config_set_default_int(activeConfiguration, "SimpleOutput", "RecRBTime", 20);
  	config_set_default_int(activeConfiguration, "SimpleOutput", "RecRBSize", 512);
@@ -981,7 +981,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/window-basic-main.cpp obs-stu
  bool OBSBasic::InitBasicConfig()
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/window-basic-main.hpp obs-studio-31.0.0/UI/window-basic-main.hpp
 --- obs-studio-31.0.0.orig/UI/window-basic-main.hpp	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/window-basic-main.hpp	2025-01-09 17:57:59.021676812 -0800
++++ obs-studio-31.0.0/UI/window-basic-main.hpp	2025-01-10 07:03:38.385551305 -0800
 @@ -68,6 +68,8 @@ class OBSBasicVCamConfig;
  #define AUX_AUDIO_3 Str("AuxAudioDevice3")
  #define AUX_AUDIO_4 Str("AuxAudioDevice4")
@@ -993,7 +993,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/window-basic-main.hpp obs-stu
  #define SIMPLE_ENCODER_QSV "qsv"
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/window-basic-settings-stream.cpp obs-studio-31.0.0/UI/window-basic-settings-stream.cpp
 --- obs-studio-31.0.0.orig/UI/window-basic-settings-stream.cpp	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/window-basic-settings-stream.cpp	2025-01-09 17:57:59.025676782 -0800
++++ obs-studio-31.0.0/UI/window-basic-settings-stream.cpp	2025-01-10 07:03:38.385551305 -0800
 @@ -1459,6 +1459,10 @@ static QString get_adv_fallback(const QS
  		return "com.apple.videotoolbox.videoencoder.ave.avc";
  	if (enc == "obs_qsv11_av1")
@@ -1136,7 +1136,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/window-basic-settings-stream.
  		}
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/window-basic-settings.cpp obs-studio-31.0.0/UI/window-basic-settings.cpp
 --- obs-studio-31.0.0.orig/UI/window-basic-settings.cpp	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/window-basic-settings.cpp	2025-01-09 17:57:59.025676782 -0800
++++ obs-studio-31.0.0/UI/window-basic-settings.cpp	2025-01-10 21:06:17.961376366 -0800
 @@ -1711,6 +1711,8 @@ void OBSBasicSettings::LoadSimpleOutputS
  	const char *nvPreset = config_get_string(main->Config(), "SimpleOutput", "NVENCPreset2");
  	const char *amdPreset = config_get_string(main->Config(), "SimpleOutput", "AMDPreset");
@@ -1215,26 +1215,30 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/window-basic-settings.cpp obs
  
  #undef ADD_QUALITY
  #undef ENCODER_STR
-@@ -4885,6 +4915,16 @@ void OBSBasicSettings::SimpleStreamingEn
+@@ -4885,6 +4915,20 @@ void OBSBasicSettings::SimpleStreamingEn
  
  		defaultPreset = "balanced";
  		preset = curAMDAV1Preset;
-+	} else if (encoder == SIMPLE_ENCODER_SVT_AV1 || encoder == SIMPLE_ENCODER_AOM) {
-+		ui->simpleOutPreset->addItem("Default", "default");
++	} else if (encoder == SIMPLE_ENCODER_SVT_AV1) {
++		ui->simpleOutPreset->addItem("Speed", "12");
++		ui->simpleOutPreset->addItem("Balanced", "8");
++		ui->simpleOutPreset->addItem("Quality", "3");
 +
-+		defaultPreset = "default";
++		defaultPreset = "8";
++		preset = curSVTAOMPreset;
++	} else if (encoder == SIMPLE_ENCODER_AOM) {
++		ui->simpleOutPreset->addItem("Speed", "8");
++		ui->simpleOutPreset->addItem("Balanced", "6");
++		ui->simpleOutPreset->addItem("Quality", "4");
 +
-+		if (encoder == SIMPLE_ENCODER_SVT_AV1)
-+			preset = curSVTAOMPreset;
-+		if (encoder == SIMPLE_ENCODER_AOM)
-+			preset = curAOMPreset;
-+
++		defaultPreset = "6";
++		preset = curAOMPreset;
  	} else {
  
  #define PRESET_STR(val) QString(Str("Basic.Settings.Output.EncoderPreset." val)).arg(val)
 diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/window-basic-settings.hpp obs-studio-31.0.0/UI/window-basic-settings.hpp
 --- obs-studio-31.0.0.orig/UI/window-basic-settings.hpp	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/UI/window-basic-settings.hpp	2025-01-09 17:57:59.025676782 -0800
++++ obs-studio-31.0.0/UI/window-basic-settings.hpp	2025-01-10 07:03:38.389551276 -0800
 @@ -134,6 +134,8 @@ private:
  	QString curNVENCPreset;
  	QString curAMDPreset;
@@ -1246,7 +1250,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/UI/window-basic-settings.hpp obs
  	QString curAdvRecordEncoder;
 diff '--color=auto' -urp obs-studio-31.0.0.orig/libobs/CMakeLists.txt obs-studio-31.0.0/libobs/CMakeLists.txt
 --- obs-studio-31.0.0.orig/libobs/CMakeLists.txt	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/libobs/CMakeLists.txt	2025-01-09 17:57:59.025676782 -0800
++++ obs-studio-31.0.0/libobs/CMakeLists.txt	2025-01-10 07:03:38.389551276 -0800
 @@ -247,6 +247,10 @@ target_compile_definitions(
      $<BUILD_INTERFACE:$<$<BOOL:${ENABLE_FFMPEG_MUX_DEBUG}>:SHOW_SUBPROCESSES>>
  )
@@ -1259,8 +1263,8 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/libobs/CMakeLists.txt obs-studio
    libobs
    PRIVATE
 diff '--color=auto' -urp obs-studio-31.0.0.orig/plugins/CMakeLists.txt obs-studio-31.0.0/plugins/CMakeLists.txt
---- obs-studio-31.0.0.orig/plugins/CMakeLists.txt	2025-01-09 17:57:33.689861882 -0800
-+++ obs-studio-31.0.0/plugins/CMakeLists.txt	2025-01-09 17:57:59.025676782 -0800
+--- obs-studio-31.0.0.orig/plugins/CMakeLists.txt	2025-01-10 07:01:48.974339535 -0800
++++ obs-studio-31.0.0/plugins/CMakeLists.txt	2025-01-10 07:03:38.389551276 -0800
 @@ -1,8 +1,6 @@
  cmake_minimum_required(VERSION 3.28...3.30)
  
@@ -1272,7 +1276,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/plugins/CMakeLists.txt obs-studi
    set_property(GLOBAL APPEND PROPERTY OBS_FEATURES_DISABLED "Plugin Support")
 diff '--color=auto' -urp obs-studio-31.0.0.orig/plugins/obs-ffmpeg/CMakeLists.txt obs-studio-31.0.0/plugins/obs-ffmpeg/CMakeLists.txt
 --- obs-studio-31.0.0.orig/plugins/obs-ffmpeg/CMakeLists.txt	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/plugins/obs-ffmpeg/CMakeLists.txt	2025-01-09 17:59:47.004888891 -0800
++++ obs-studio-31.0.0/plugins/obs-ffmpeg/CMakeLists.txt	2025-01-10 07:03:38.393551248 -0800
 @@ -14,6 +14,16 @@ add_library(OBS::ffmpeg ALIAS obs-ffmpeg
  
  add_subdirectory(ffmpeg-mux)
@@ -1290,9 +1294,164 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/plugins/obs-ffmpeg/CMakeLists.tx
  target_sources(
    obs-ffmpeg
    PRIVATE
+diff '--color=auto' -urp obs-studio-31.0.0.orig/plugins/obs-ffmpeg/obs-ffmpeg-av1.c obs-studio-31.0.0/plugins/obs-ffmpeg/obs-ffmpeg-av1.c
+--- obs-studio-31.0.0.orig/plugins/obs-ffmpeg/obs-ffmpeg-av1.c	2024-12-06 15:21:55.000000000 -0800
++++ obs-studio-31.0.0/plugins/obs-ffmpeg/obs-ffmpeg-av1.c	2025-01-10 21:05:31.665683766 -0800
+@@ -17,6 +17,22 @@
+ 
+ #include "obs-ffmpeg-video-encoders.h"
+ 
++#define AV1_ENCODER_SVT_PRESET_DEFAULT		"8"
++#define AV1_ENCODER_SVT_PRESET_FFMPEG_DEFAULT	"-2"
++#define AV1_ENCODER_SVT_PRESET_LOSSLESS		"0"
++#define AV1_ENCODER_SVT_PRESET_HQ		"3"
++#define AV1_ENCODER_SVT_PRESET_GQ		"8"
++#define AV1_ENCODER_SVT_PRESET_GQ_REALTIME	"7"
++#define AV1_ENCODER_SVT_PRESET_LQ_REALTIME	"12"
++#define AV1_ENCODER_SVT_PRESET_LL_REALTIME	"12"
++#define AV1_ENCODER_AOM_PRESET_DEFAULT		"6"
++#define AV1_ENCODER_AOM_PRESET_FFMPEG_DEFAULT	"1"
++#define AV1_ENCODER_AOM_PRESET_LOSSLESS		"0"
++#define AV1_ENCODER_AOM_PRESET_HQ		"4"
++#define AV1_ENCODER_AOM_PRESET_GQ		"6"
++#define AV1_ENCODER_AOM_PRESET_GQ_REALTIME	"8"
++#define AV1_ENCODER_AOM_PRESET_LL_REALTIME	"8"
++
+ #define do_log(level, format, ...) \
+ 	blog(level, "[AV1 encoder: '%s'] " format, obs_encoder_get_name(enc->ffve.encoder), ##__VA_ARGS__)
+ 
+@@ -63,19 +79,35 @@ static void av1_video_info(void *data, s
+ 	}
+ }
+ 
++static inline int get_av1_rate_control(const char *rc_str)
++{
++	if (astrcmpi(rc_str, "cqp") == 0)
++		return AV1_ENCODER_AV1_RATE_CONTROL_METHOD_CONSTANT_QP;
++	else if (astrcmpi(rc_str, "vbr") == 0)
++		return AV1_ENCODER_AV1_RATE_CONTROL_METHOD_PEAK_CONSTRAINED_VBR;
++	else if (astrcmpi(rc_str, "cbr") == 0)
++		return AV1_ENCODER_AV1_RATE_CONTROL_METHOD_CBR;
++
++	return AV1_ENCODER_AV1_RATE_CONTROL_METHOD_CBR;
++}
++
++
+ static bool av1_update(struct av1_encoder *enc, obs_data_t *settings)
+ {
+ 	const char *rc = obs_data_get_string(settings, "rate_control");
+ 	int bitrate = (int)obs_data_get_int(settings, "bitrate");
+ 	int cqp = (int)obs_data_get_int(settings, "cqp");
+ 	int keyint_sec = (int)obs_data_get_int(settings, "keyint_sec");
+-	int preset = (int)obs_data_get_int(settings, "preset");
++	const char *preset = obs_data_get_string(settings, "preset");
++	int preset_int = atoi(preset);
+ 	AVDictionary *svtav1_opts = NULL;
+ 
+ 	video_t *video = obs_encoder_video(enc->ffve.encoder);
+ 	const struct video_output_info *voi = video_output_get_info(video);
+ 	struct video_scale_info info;
+ 
++	int rc = get_av1_rate_control(rc);
++
+ 	info.format = voi->format;
+ 	info.colorspace = voi->colorspace;
+ 	info.range = voi->range;
+@@ -85,10 +117,10 @@ static bool av1_update(struct av1_encode
+ 	av1_video_info(enc, &info);
+ 
+ 	if (enc->type == AV1_ENCODER_TYPE_SVT) {
+-		av_opt_set_int(enc->ffve.context->priv_data, "preset", preset, 0);
++		av_opt_set_int(enc->ffve.context->priv_data, "preset", preset_int, 0);
+ 		av_dict_set_int(&svtav1_opts, "rc", 1, 0);
+ 	} else if (enc->type == AV1_ENCODER_TYPE_AOM) {
+-		av_opt_set_int(enc->ffve.context->priv_data, "cpu-used", preset, 0);
++		av_opt_set_int(enc->ffve.context->priv_data, "cpu-used", preset_int, 0);
+ 		av_opt_set(enc->ffve.context->priv_data, "usage", "realtime", 0);
+ #if 0
+ 		av_opt_set_int(enc->ffve.context->priv_data, "tile-columns", 4, 0);
+@@ -227,13 +259,22 @@ static bool av1_encode(void *data, struc
+ 	return ffmpeg_video_encode(&enc->ffve, frame, packet, received_packet);
+ }
+ 
+-void av1_defaults(obs_data_t *settings)
++void av1_svt_defaults(obs_data_t *settings)
+ {
+ 	obs_data_set_default_int(settings, "bitrate", 2500);
+ 	obs_data_set_default_int(settings, "keyint_sec", 0);
+ 	obs_data_set_default_int(settings, "cqp", 50);
+ 	obs_data_set_default_string(settings, "rate_control", "CBR");
+-	obs_data_set_default_int(settings, "preset", 8);
++	obs_data_set_default_string(settings, "preset", AV1_ENCODER_SVT_PRESET_DEFAULT);
++}
++
++void av1_aom_defaults(obs_data_t *settings)
++{
++	obs_data_set_default_int(settings, "bitrate", 2500);
++	obs_data_set_default_int(settings, "keyint_sec", 0);
++	obs_data_set_default_int(settings, "cqp", 50);
++	obs_data_set_default_string(settings, "rate_control", "CBR");
++	obs_data_set_default_string(settings, "preset", AV1_ENCODER_AOM_PRESET_DEFAULT);
+ }
+ 
+ static bool rate_control_modified(obs_properties_t *ppts, obs_property_t *p, obs_data_t *settings)
+@@ -274,21 +315,21 @@ obs_properties_t *av1_properties(enum av
+ 	obs_property_int_set_suffix(p, " s");
+ 
+ 	p = obs_properties_add_list(props, "preset", obs_module_text("Preset"), OBS_COMBO_TYPE_LIST,
+-				    OBS_COMBO_FORMAT_INT);
++				    OBS_COMBO_FORMAT_STRING);
+ 
+ 	if (type == AV1_ENCODER_TYPE_SVT) {
+-		obs_property_list_add_int(p, "Very likely too slow (6)", 6);
+-		obs_property_list_add_int(p, "Probably too slow (7)", 7);
+-		obs_property_list_add_int(p, "Seems okay (8)", 8);
+-		obs_property_list_add_int(p, "Might be better (9)", 9);
+-		obs_property_list_add_int(p, "A little bit faster? (10)", 10);
+-		obs_property_list_add_int(p, "Hmm, not bad speed (11)", 11);
+-		obs_property_list_add_int(p, "Whoa, although quality might be not so great (12)", 12);
++		obs_property_list_add_string(p, "Lossless quality (0)", AV1_ENCODER_SVT_PRESET_LOSSLESS);
++		obs_property_list_add_string(p, "High quality (3)", AV1_ENCODER_SVT_PRESET_HQ);
++		obs_property_list_add_string(p, "Good quality (8)", AV1_ENCODER_SVT_PRESET_GQ);
++		obs_property_list_add_string(p, "Good quality realtime (7)", AV1_ENCODER_SVT_PRESET_GQ_REALTIME);
++		obs_property_list_add_string(p, "Low quality realtime (12)", AV1_ENCODER_SVT_PRESET_LQ_REALTIME);
++		obs_property_list_add_string(p, "Low latency realtime (12)", AV1_ENCODER_SVT_PRESET_LL_REALTIME);
+ 	} else if (type == AV1_ENCODER_TYPE_AOM) {
+-		obs_property_list_add_int(p, "Probably too slow (7)", 7);
+-		obs_property_list_add_int(p, "Okay (8)", 8);
+-		obs_property_list_add_int(p, "Fast (9)", 9);
+-		obs_property_list_add_int(p, "Fastest (10)", 10);
++		obs_property_list_add_string(p, "Lossless quality (0)", AV1_ENCODER_AOM_PRESET_LOSSLESS);
++		obs_property_list_add_string(p, "High quality (4)", AV1_ENCODER_AOM_PRESET_HQ);
++		obs_property_list_add_string(p, "Good quality (6)", AV1_ENCODER_AOM_PRESET_GQ);
++		obs_property_list_add_string(p, "Good quality realtime (8)", AV1_ENCODER_AOM_PRESET_REALTIME);
++		obs_property_list_add_string(p, "Low latency realtime (8)", AV1_ENCODER_AOM_PRESET_REALTIME);
+ 	}
+ 
+ 	obs_properties_add_text(props, "ffmpeg_opts", obs_module_text("FFmpegOpts"), OBS_TEXT_DEFAULT);
+@@ -325,7 +366,8 @@ struct obs_encoder_info svt_av1_encoder_
+ 	.create = svt_av1_create,
+ 	.destroy = av1_destroy,
+ 	.encode = av1_encode,
+-	.get_defaults = av1_defaults,
++	.update = av1_update,
++	.get_defaults = av1_svt_defaults,
+ 	.get_properties = svt_av1_properties,
+ 	.get_extra_data = av1_extra_data,
+ 	.get_video_info = av1_video_info,
+@@ -339,7 +381,8 @@ struct obs_encoder_info aom_av1_encoder_
+ 	.create = aom_av1_create,
+ 	.destroy = av1_destroy,
+ 	.encode = av1_encode,
+-	.get_defaults = av1_defaults,
++	.update = av1_update,
++	.get_defaults = av1_svt_defaults,
+ 	.get_properties = aom_av1_properties,
+ 	.get_extra_data = av1_extra_data,
+ 	.get_video_info = av1_video_info,
 diff '--color=auto' -urp obs-studio-31.0.0.orig/plugins/obs-ffmpeg/obs-ffmpeg.c obs-studio-31.0.0/plugins/obs-ffmpeg/obs-ffmpeg.c
 --- obs-studio-31.0.0.orig/plugins/obs-ffmpeg/obs-ffmpeg.c	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/plugins/obs-ffmpeg/obs-ffmpeg.c	2025-01-09 17:58:28.041464907 -0800
++++ obs-studio-31.0.0/plugins/obs-ffmpeg/obs-ffmpeg.c	2025-01-10 07:03:38.393551248 -0800
 @@ -348,10 +348,14 @@ bool obs_module_load(void)
  	obs_register_output(&ffmpeg_mpegts_muxer);
  	obs_register_output(&ffmpeg_hls_muxer);
@@ -1310,7 +1469,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/plugins/obs-ffmpeg/obs-ffmpeg.c 
  	obs_register_encoder(&pcm32_encoder_info);
 diff '--color=auto' -urp obs-studio-31.0.0.orig/plugins/obs-nvenc/CMakeLists.txt obs-studio-31.0.0/plugins/obs-nvenc/CMakeLists.txt
 --- obs-studio-31.0.0.orig/plugins/obs-nvenc/CMakeLists.txt	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/plugins/obs-nvenc/CMakeLists.txt	2025-01-09 17:57:59.025676782 -0800
++++ obs-studio-31.0.0/plugins/obs-nvenc/CMakeLists.txt	2025-01-10 07:03:38.393551248 -0800
 @@ -25,6 +25,10 @@ add_library(OBS::nvenc ALIAS obs-nvenc)
  
  add_subdirectory(obs-nvenc-test)
@@ -1324,7 +1483,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/plugins/obs-nvenc/CMakeLists.txt
    PRIVATE
 diff '--color=auto' -urp obs-studio-31.0.0.orig/plugins/obs-outputs/CMakeLists.txt obs-studio-31.0.0/plugins/obs-outputs/CMakeLists.txt
 --- obs-studio-31.0.0.orig/plugins/obs-outputs/CMakeLists.txt	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/plugins/obs-outputs/CMakeLists.txt	2025-01-09 17:57:59.025676782 -0800
++++ obs-studio-31.0.0/plugins/obs-outputs/CMakeLists.txt	2025-01-10 07:03:38.393551248 -0800
 @@ -16,6 +16,10 @@ endif()
  add_library(obs-outputs MODULE)
  add_library(OBS::outputs ALIAS obs-outputs)
@@ -1338,7 +1497,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/plugins/obs-outputs/CMakeLists.t
    PRIVATE
 diff '--color=auto' -urp obs-studio-31.0.0.orig/plugins/obs-qsv11/CMakeLists.txt obs-studio-31.0.0/plugins/obs-qsv11/CMakeLists.txt
 --- obs-studio-31.0.0.orig/plugins/obs-qsv11/CMakeLists.txt	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/plugins/obs-qsv11/CMakeLists.txt	2025-01-09 17:57:59.025676782 -0800
++++ obs-studio-31.0.0/plugins/obs-qsv11/CMakeLists.txt	2025-01-10 07:03:38.393551248 -0800
 @@ -16,6 +16,10 @@ if(OS_LINUX)
    find_package(Libva REQUIRED)
  endif()
@@ -1352,7 +1511,7 @@ diff '--color=auto' -urp obs-studio-31.0.0.orig/plugins/obs-qsv11/CMakeLists.txt
    PRIVATE
 diff '--color=auto' -urp obs-studio-31.0.0.orig/plugins/obs-webrtc/CMakeLists.txt obs-studio-31.0.0/plugins/obs-webrtc/CMakeLists.txt
 --- obs-studio-31.0.0.orig/plugins/obs-webrtc/CMakeLists.txt	2024-12-06 15:21:55.000000000 -0800
-+++ obs-studio-31.0.0/plugins/obs-webrtc/CMakeLists.txt	2025-01-09 17:57:59.025676782 -0800
++++ obs-studio-31.0.0/plugins/obs-webrtc/CMakeLists.txt	2025-01-10 07:03:38.393551248 -0800
 @@ -12,6 +12,10 @@ find_package(CURL REQUIRED)
  add_library(obs-webrtc MODULE)
  add_library(OBS::webrtc ALIAS obs-webrtc)
