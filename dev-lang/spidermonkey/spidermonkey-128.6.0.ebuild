@@ -3,89 +3,92 @@
 
 EAPI="8"
 
-# For polkit
+# SECURITY:  If firefox ESR gets bumped, this package should be bumped with the same latest ESR version.
+
+# 115.11.0 -> 115.12.0
+# 115.12.0 -> 128.1.0
+# 128.1.0 -> 128.2.0
+# 128.2.0 -> 128.3.0
+# 128.3.1 -> 128.4.0
+# 128.4.0 -> 128.5.0
 
 CPU_FLAGS_ARM=(
 	cpu_flags_arm_neon
 )
 
-# Patch version
-FIREFOX_PATCHSET="firefox-115esr-patches-13.tar.xz"
-SPIDERMONKEY_PATCHSET="spidermonkey-115-patches-02.tar.xz"
-
-LLVM_MAX_SLOT=18
-LLVM_COMPAT=( {18..15} ) # Limited by rust
-
-PYTHON_COMPAT=( "python3_"{10..11} )
-PYTHON_REQ_USE="ncurses,ssl,xml(+)"
-
-MY_PN="mozjs"
-MY_PV="${PV/_pre*}" # Handle Gentoo pre-releases
+LLVM_COMPAT=( 18 17 ) # Limited by rust
 
 MY_MAJOR=$(ver_cut 1)
+MY_PN="mozjs"
+MY_PV="${PV/_pre*}"
 
 # MITIGATION_LAST_UPDATE is the same as firefox esr ebuild
-MITIGATION_DATE="Nov 26, 2024" # Advisory date
-MITIGATION_LAST_UPDATE=1732572180 # From `date +%s -d "2024-11-25 14:03"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2024-65/"
+MITIGATION_DATE="Jan 7, 2025" # Advisory date
+MITIGATION_LAST_UPDATE=1736201880 # From `date +%s -d "2025-01-06 14:18"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-02/"
 MOZ_ESR="yes"
-
-MOZ_PV=${PV}
+MOZ_PN="firefox"
+MOZ_PV="${PV}"
 MOZ_PV_SUFFIX=
-if [[ ${PV} =~ (_(alpha|beta|rc).*)$ ]] ; then
-	MOZ_PV_SUFFIX=${BASH_REMATCH[1]}
-
+if [[ "${PV}" =~ ("_"("alpha"|"beta"|"rc").*)$ ]] ; then
+	MOZ_PV_SUFFIX="${BASH_REMATCH[1]}"
 	# Convert the ebuild version to the upstream Mozilla version
 	MOZ_PV="${MOZ_PV/_alpha/a}" # Handle alpha for SRC_URI
 	MOZ_PV="${MOZ_PV/_beta/b}"  # Handle beta for SRC_URI
 	MOZ_PV="${MOZ_PV%%_rc*}"    # Handle rc for SRC_URI
 fi
-
-if [[ -n ${MOZ_ESR} ]] ; then
+if [[ -n "${MOZ_ESR}" ]] ; then
 	# ESR releases have slightly different version numbers
 	MOZ_PV="${MOZ_PV}esr"
 fi
-
-MOZ_PN="firefox"
 MOZ_P="${MOZ_PN}-${MOZ_PV}"
 MOZ_PV_DISTFILES="${MOZ_PV}${MOZ_PV_SUFFIX}"
 MOZ_P_DISTFILES="${MOZ_PN}-${MOZ_PV_DISTFILES}"
-
 MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/releases/${MOZ_PV}"
-
-if [[ ${PV} == *_rc* ]] ; then
+if [[ "${PV}" == *"_rc"* ]] ; then
 	MOZ_SRC_BASE_URI="https://archive.mozilla.org/pub/${MOZ_PN}/candidates/${MOZ_PV}-candidates/build${PV##*_rc}"
 fi
 
+# Patch version
+FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-08.tar.xz"
+#SPIDERMONKEY_PATCHSET="spidermonkey-${PV%%.*}-patches-01.tar.xz"
+SPIDERMONKEY_PATCHSET="spidermonkey-128-patches-02.tar.xz"
 PATCH_URIS=(
 	https://dev.gentoo.org/~juippis/mozilla/patchsets/${FIREFOX_PATCHSET}
 	https://dev.gentoo.org/~juippis/mozilla/patchsets/${SPIDERMONKEY_PATCHSET}
 )
 
-RUST_MIN_VER="1.65" # Corresponds to llvm 15
+PYTHON_COMPAT=( "python3_"{10..11} )
+PYTHON_REQ_USE="ncurses,ssl,xml(+)"
+
+RUST_MIN_VER="1.76" # Corresponds to llvm 17
 RUST_NEEDS_LLVM=1
 RUST_PV="${RUST_MIN_VER}"
 
 WANT_AUTOCONF="2.1"
 
-inherit autotools check-reqs dhms flag-o-matic llvm multiprocessing prefix python-any-r1 rust toolchain-funcs
+inherit autotools check-reqs dhms flag-o-matic llvm-r1 multiprocessing prefix python-any-r1 rust toolchain-funcs
 
-KEYWORDS="~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
-S="${WORKDIR}/firefox-${MY_PV}/js/src"
+KEYWORDS="~amd64 ~arm ~arm64 ~riscv ~x86"
+S="${WORKDIR}/firefox-${PV%_*}"
 SRC_URI="
 	${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}.source.tar.xz
 	${PATCH_URIS[@]}
 "
 
 DESCRIPTION="A JavaScript engine written in C and C++"
-HOMEPAGE="https://spidermonkey.dev https://firefox-source-docs.mozilla.org/js/index.html "
+HOMEPAGE="
+	https://spidermonkey.dev
+	https://firefox-source-docs.mozilla.org/js/index.html
+"
+LICENSE="MPL-2.0"
 RESTRICT="
+	test
 	!test? (
 		test
 	)
-"
+" # Not tested
 SLOT="$(ver_cut 1)"
-LICENSE="MPL-2.0"
 IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
@@ -94,14 +97,9 @@ clang debug +jit lto rust-simd test
 REQUIRED_USE="
 	rust-simd? (
 		!llvm_slot_18
-		|| (
-			llvm_slot_15
-			llvm_slot_16
-			llvm_slot_17
-		)
+		llvm_slot_17
 	)
 "
-
 gen_clang_bdepend() {
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
@@ -118,30 +116,6 @@ gen_clang_bdepend() {
 
 }
 RUST_CDEPEND="
-	llvm_slot_15? (
-		|| (
-			=dev-lang/rust-1.69*
-			=dev-lang/rust-1.68*
-			=dev-lang/rust-1.67*
-			=dev-lang/rust-1.66*
-			=dev-lang/rust-1.65*
-			=dev-lang/rust-bin-1.69*
-			=dev-lang/rust-bin-1.68*
-			=dev-lang/rust-bin-1.67*
-			=dev-lang/rust-bin-1.66*
-			=dev-lang/rust-bin-1.65*
-		)
-	)
-	llvm_slot_16? (
-		|| (
-			=dev-lang/rust-1.72*
-			=dev-lang/rust-1.71*
-			=dev-lang/rust-1.70*
-			=dev-lang/rust-bin-1.72*
-			=dev-lang/rust-bin-1.71*
-			=dev-lang/rust-bin-1.70*
-		)
-	)
 	llvm_slot_17? (
 		|| (
 			=dev-lang/rust-1.77*
@@ -172,13 +146,17 @@ RUST_CDEPEND="
 		dev-lang/rust:=
 		dev-lang/rust-bin:=
 	)
+
 "
 RDEPEND="
 	${RUST_CDEPEND}
-	>=dev-libs/icu-73.1:=
-	dev-libs/nspr
-	sys-libs/readline:0=
-	sys-libs/zlib
+	>=dev-libs/icu-73.1
+	dev-libs/icu:=
+	>=dev-libs/nspr-4.35
+	sys-libs/readline:0
+	sys-libs/readline:=
+	>=sys-libs/zlib-1.2.13
+	sys-kernel/mitigate-id
 "
 DEPEND="
 	${RDEPEND}
@@ -186,6 +164,7 @@ DEPEND="
 BDEPEND="
 	${PYTHON_DEPS}
 	${RUST_CDEPEND}
+	>=dev-util/cbindgen-0.26.0
 	virtual/pkgconfig
 	!clang? (
 		|| (
@@ -207,14 +186,14 @@ BDEPEND="
 "
 
 llvm_check_deps() {
-	if ! has_version -b "llvm-core/llvm:${LLVM_SLOT}" ; then
-einfo "llvm-core/llvm:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
-		return 1
-	fi
-
 	if use clang ; then
 		if ! has_version -b "llvm-core/clang:${LLVM_SLOT}" ; then
 einfo "llvm-core/clang:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
+			return 1
+		fi
+
+		if ! has_version -b "llvm-core/llvm:${LLVM_SLOT}" ; then
+einfo "llvm-core/llvm:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
 			return 1
 		fi
 
@@ -246,39 +225,9 @@ einfo "llvm-core/clang:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT
 			return 1
 		}
 
-		check_rust_16() {
-			if has_version "=dev-lang/rust-1.72*" || has_version "=dev-lang/rust-bin-1.72*" ; then
-				return 0
-			elif has_version "=dev-lang/rust-1.71*" || has_version "=dev-lang/rust-bin-1.71*" ; then
-				return 0
-			elif has_version "=dev-lang/rust-1.70*" || has_version "=dev-lang/rust-bin-1.70*" ; then
-				return 0
-			fi
-			return 1
-		}
-
-		check_rust_16() {
-			if has_version "=dev-lang/rust-1.69*" || has_version "=dev-lang/rust-bin-1.69*" ; then
-				return 0
-			elif has_version "=dev-lang/rust-1.68*" || has_version "=dev-lang/rust-bin-1.68*" ; then
-				return 0
-			elif has_version "=dev-lang/rust-1.67*" || has_version "=dev-lang/rust-bin-1.67*" ; then
-				return 0
-			elif has_version "=dev-lang/rust-1.66*" || has_version "=dev-lang/rust-bin-1.66*" ; then
-				return 0
-			elif has_version "=dev-lang/rust-1.65*" || has_version "=dev-lang/rust-bin-1.65*" ; then
-				return 0
-			fi
-			return 1
-		}
-
 		if use llvm_slot_18 && check_rust_18 ; then
 			:
 		elif use llvm_slot_17 && check_rust_17 ; then
-			:
-		elif use llvm_slot_16 && check_rust_16 ; then
-			:
-		elif use llvm_slot_15 && check_rust_15 ; then
 			:
 		else
 einfo "Either dev-lang/rust or dev-lang/rust-bin is missing for ${LLVM_SLOT}! Cannot use LLVM slot ${LLVM_SLOT} ..." >&2
@@ -296,6 +245,50 @@ einfo "llvm-core/lld:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT} 
 einfo "Using LLVM slot ${LLVM_SLOT} to build" >&2
 }
 
+
+mozconfig_add_options_ac() {
+	debug-print-function ${FUNCNAME} "$@"
+
+	if (( ${#} < 2 )) ; then
+		die "${FUNCNAME} requires at least two arguments"
+	fi
+
+	local reason="${1}"
+	shift
+
+	local option
+	for option in ${@} ; do
+		echo "ac_add_options ${option} # ${reason}" >>${MOZCONFIG}
+	done
+}
+
+mozconfig_add_options_mk() {
+	debug-print-function ${FUNCNAME} "$@"
+
+	if (( ${#} < 2 )) ; then
+		die "${FUNCNAME} requires at least two arguments"
+	fi
+
+	local reason="${1}"
+	shift
+
+	local option
+	for option in ${@} ; do
+		echo "mk_add_options ${option} # ${reason}" >>${MOZCONFIG}
+	done
+}
+
+mozconfig_use_enable() {
+	debug-print-function ${FUNCNAME} "$@"
+
+	if (( ${#} < 1 )) ; then
+		die "${FUNCNAME} requires at least one arguments"
+	fi
+
+	local flag=$(use_enable "${@}")
+	mozconfig_add_options_ac "$(use ${1} && echo +${1} || echo -${1})" "${flag}"
+}
+
 python_check_deps() {
 	if use test ; then
 		python_has_version "dev-python/six[${PYTHON_USEDEP}]"
@@ -308,13 +301,11 @@ python_check_deps() {
 # https://github.com/gentoo/gentoo/pull/28366 ||
 # https://github.com/gentoo/gentoo/pull/28355
 tc-ld-is-mold() {
-	local out
-
 	# Ensure ld output is in English.
 	local -x LC_ALL=C
 
 	# First check the linker directly.
-	out=$($(tc-getLD "$@") --version 2>&1)
+	local out=$($(tc-getLD "$@") --version 2>&1)
 	if [[ "${out}" == *"mold"* ]] ; then
 		return 0
 	fi
@@ -338,9 +329,9 @@ EOF
 
 pkg_pretend() {
 	if use test ; then
-		CHECKREQS_DISK_BUILD="4000M"
+		CHECKREQS_DISK_BUILD="4400M"
 	else
-		CHECKREQS_DISK_BUILD="3600M"
+		CHECKREQS_DISK_BUILD="4300M"
 	fi
 
 	check-reqs_pkg_pretend
@@ -350,85 +341,123 @@ pkg_setup() {
 	dhms_start
 	if [[ "${MERGE_TYPE}" != "binary" ]] ; then
 		if use test ; then
-			CHECKREQS_DISK_BUILD="4000M"
+			CHECKREQS_DISK_BUILD="4400M"
 		else
-			CHECKREQS_DISK_BUILD="3600M"
+			CHECKREQS_DISK_BUILD="4300M"
 		fi
 
 		check-reqs_pkg_setup
 
-		llvm_pkg_setup
+		llvm-r1_pkg_setup
 		rust_pkg_setup
 
 		if false && use clang && use lto && tc-ld-is-lld ; then
-			local version_lld=$(ld.lld --version 2>/dev/null | awk '{ print $2 }')
-			[[ -n ${version_lld} ]] && version_lld=$(ver_cut 1 "${version_lld}")
-			[[ -z ${version_lld} ]] && die "Failed to read ld.lld version!"
+			local version_lld=$(ld.lld --version 2>/dev/null \
+				| awk '{ print $2 }')
+			if [[ -n "${version_lld}" ]] ; then
+				version_lld=$(ver_cut 1 "${version_lld}")
+			fi
+			if [[ -z "${version_lld}" ]] ; then
+eerror "Failed to read ld.lld version!"
+				die
+			fi
 
-			local version_llvm_rust=$(rustc -Vv 2>/dev/null | grep -F -- 'LLVM version:' | awk '{ print $3 }')
-			[[ -n ${version_llvm_rust} ]] && version_llvm_rust=$(ver_cut 1 "${version_llvm_rust}")
-			[[ -z ${version_llvm_rust} ]] && die "Failed to read used LLVM version from rustc!"
+			local version_llvm_rust=$(rustc -Vv 2>/dev/null \
+				| grep -F -- 'LLVM version:' \
+				| awk '{ print $3 }')
+			if [[ -n "${version_llvm_rust}" ]] ; then
+				version_llvm_rust=$(ver_cut 1 "${version_llvm_rust}")
+			fi
+			if [[ -z "${version_llvm_rust}" ]] ; then
+eerror "Failed to read used LLVM version from rustc!"
+				die
+			fi
 
 			if false && ver_test "${version_lld}" -ne "${version_llvm_rust}" ; then
-eerror "Rust is using LLVM version ${version_llvm_rust} but ld.lld version belongs to LLVM version ${version_lld}."
-eerror "You will be unable to link ${CATEGORY}/${PN}. To proceed you have the following options:"
-eerror "  - Manually switch rust version using 'eselect rust' to match used LLVM version"
-eerror "  - Switch to dev-lang/rust[system-llvm] which will guarantee matching version"
+eerror
+eerror "Rust is using LLVM version ${version_llvm_rust} but ld.lld version"
+eerror "belongs to LLVM version ${version_lld}."
+eerror
+eerror "You will be unable to link ${CATEGORY}/${PN}. To proceed you have the"
+eerror "following options:"
+eerror
+eerror "  - Manually switch rust version using 'eselect rust' to match used"
+eerror "    LLVM version"
+eerror "  - Switch to dev-lang/rust[system-llvm] which will guarantee matching"
+eerror "    version"
 eerror "  - Build ${CATEGORY}/${PN} without USE=lto"
-eerror "  - Rebuild lld with llvm that was used to build rust (may need to rebuild the whole "
-eerror "    llvm/clang/lld/rust chain depending on your @world updates)"
-eerror "LLVM version used by Rust (${version_llvm_rust}) does not match with ld.lld version (${version_lld})!"
+eerror "  - Rebuild lld with llvm that was used to build rust (may need to"
+eerror "    rebuild the whole llvm/clang/lld/rust chain depending on your"
+eerror "    @world updates)"
+eerror
+eerror "LLVM version used by Rust (${version_llvm_rust}) does not match with"
+eerror "ld.lld version (${version_lld})!"
+eerror
 				die
 			fi
 		fi
 
 		python-any-r1_pkg_setup
 
-	# Build system is using /proc/self/oom_score_adj, bug #604394
+		# Build system is using /proc/self/oom_score_adj, bug #604394
 		addpredict "/proc/self/oom_score_adj"
 
-		if ! mountpoint -q "/dev/shm" ; then
-	# If /dev/shm is not available, configure is known to fail with
-	# a traceback report referencing /usr/lib/pythonN.N/multiprocessing/synchronize.py
+		if ! mountpoint -q /dev/shm ; then
+	# If /dev/shm is not available, configure is known to fail with a
+	# traceback report referencing
+	# /usr/lib/pythonN.N/multiprocessing/synchronize.py
 ewarn "/dev/shm is not mounted -- expect build failures!"
 		fi
 
-	# Ensure we use C locale when building, bug #746215
-		export LC_ALL="C"
+		# Ensure we use C locale when building, bug #746215
+		export LC_ALL=C
 	fi
 }
 
 src_prepare() {
-	pushd "../.." &>/dev/null || die
-
-	use lto && rm -v "${WORKDIR}/firefox-patches/"*"-LTO-Only-enable-LTO-"*".patch"
-
-	if ! use ppc64; then
-		rm -v "${WORKDIR}/firefox-patches/"*"ppc64"*".patch" || die
+	if use lto ; then
+		rm -v "${WORKDIR}/firefox-patches/"*"-LTO-Only-enable-LTO-"*".patch" || die
 	fi
 
-	# Workaround for bgo #915651,915651,929013 on musl
+	# Workaround for bgo #915651, 915651, 929013 on musl.
 	if use elibc_glibc ; then
 		rm -v "${WORKDIR}/firefox-patches/"*"bgo-748849-RUST_TARGET_override.patch" || die
 	fi
 
 	eapply "${WORKDIR}/firefox-patches"
-	eapply "${WORKDIR}/spidermonkey-patches"
+
+#	pushd "${WORKDIR}/firefox-${MY_PV}" >/dev/null 2>&1 || die
+#		rm "${WORKDIR}/spidermonkey-patches/0003-tests-Increase-the-test-timeout-for-slower-builds.patch" || die
+#		local x
+#		for x in $(ls "${WORKDIR}/spidermonkey-patches") ; do
+#			if [[ "${x}" =~ "0008" ]] ; then
+#				eapply --fuzz=1 "${FILESDIR}/spidermonkey-128.1.0-0008-spidermonkey-91.5.0-dont-fail-gcc-sanity-checks.patch"
+#				continue
+#			fi
+#			eapply "${WORKDIR}/spidermonkey-patches/${x}"
+#		done
+#	popd >/dev/null 2>&1 || die
 
 	default
 
 	# Make cargo respect MAKEOPTS
 	export CARGO_BUILD_JOBS="$(makeopts_jobs)"
 
-	# Workaround for bgo #915651,915651,929013 on musl
+	# Workaround for bgo #915651, 915651, 929013 on musl.
 	if ! use elibc_glibc ; then
-		if use amd64 ; then
+		  if use amd64 ; then
 			export RUST_TARGET="x86_64-unknown-linux-musl"
 		elif use x86 ; then
 			export RUST_TARGET="i686-unknown-linux-musl"
+		elif use arm64 ; then
+			export RUST_TARGET="aarch64-unknown-linux-musl"
+		elif use ppc64 ; then
+			export RUST_TARGET="powerpc64le-unknown-linux-musl"
 		else
-eerror "Unknown musl chost, please post your rustc -vV along with emerge --info"
-eerror "on Gentoo's bug #915651"
+eerror
+eerror "Unknown musl chost, please post your rustc -vV along with"
+eerror "\`emerge --info\` on Gentoo's bug #915651"
+eerror
 			die
 		fi
 	fi
@@ -438,9 +467,6 @@ eerror "on Gentoo's bug #915651"
 		-e "s/objdump/${CHOST}-objdump/" \
 		"python/mozbuild/mozbuild/configure/check_debug_ranges.py" \
 		|| die "sed failed to set toolchain prefix"
-
-	# use prefix shell in wrapper linker scripts, bug #789660
-	hprefixify "${S}/../../build/cargo-"{"","host-"}"linker"
 
 	einfo "Removing pre-built binaries ..."
 	find "third_party" \
@@ -453,10 +479,12 @@ eerror "on Gentoo's bug #915651"
 		-delete \
 		|| die
 
-	MOZJS_BUILDDIR="${WORKDIR}/build"
-	mkdir "${MOZJS_BUILDDIR}" || die
+	# use prefix shell in wrapper linker scripts, bug #789660
+	hprefixify "${S}/../../build/cargo-"{,host-}"linker"
 
-	popd &>/dev/null || die
+	# Create build dir
+	BUILD_DIR="${WORKDIR}/${PN}_build"
+	mkdir -p "${BUILD_DIR}" || die
 }
 
 check_security_expire() {
@@ -504,13 +532,14 @@ einfo "Time passed since the last security update:  ${dhms_passed}"
 src_configure() {
 	check_security_expire
 	# Show flags set at the beginning
+einfo "Current BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
 einfo "Current CFLAGS:    ${CFLAGS}"
 einfo "Current CXXFLAGS:  ${CXXFLAGS}"
 einfo "Current LDFLAGS:   ${LDFLAGS}"
 einfo "Current RUSTFLAGS: ${RUSTFLAGS}"
 
 	if tc-is-clang && ! use clang ; then
-eerror "Detected clang.  You must set USE=clang."
+eerror "Detected clang.  Set USE=clang."
 		die
 	fi
 
@@ -518,16 +547,19 @@ eerror "Detected clang.  You must set USE=clang."
 	if use clang ; then
 	# Force clang
 einfo "Enforcing the use of clang due to USE=clang ..."
-		local version_clang=$(clang --version 2>/dev/null | grep -F -- 'clang version' | awk '{ print $3 }')
-		if [[ -n ${version_clang} ]] ; then
+
+		local version_clang=$(clang --version 2>/dev/null \
+			| grep -F -- 'clang version' \
+			| awk '{ print $3 }')
+		if [[ -n "${version_clang}" ]] ; then
 			version_clang=$(ver_cut 1 "${version_clang}")
 		fi
-		if [[ -z ${version_clang} ]] ; then
-eerror "Failed to read clang version!"
-			die
+		if [[ -z "${version_clang}" ]] ; then
+			die "Failed to read clang version!"
 		fi
-		if tc-is-gcc ; then
-			have_switched_compiler="yes"
+
+		if tc-is-gcc; then
+			have_switched_compiler=yes
 		fi
 		AR="llvm-ar"
 		CC="${CHOST}-clang-${version_clang}"
@@ -535,6 +567,8 @@ eerror "Failed to read clang version!"
 		CPP="${CC} -E"
 		NM="llvm-nm"
 		RANLIB="llvm-ranlib"
+		READELF="llvm-readelf"
+		OBJDUMP="llvm-objdump"
 	else
 	# Force gcc
 		have_switched_compiler="yes"
@@ -545,6 +579,8 @@ einfo "Enforcing the use of gcc due to USE=-clang ..."
 		CPP="${CC} -E"
 		NM="gcc-nm"
 		RANLIB="gcc-ranlib"
+		READELF="readelf"
+		OBJDUMP="objdump"
 	fi
 
 	if [[ -n "${have_switched_compiler}" ]] ; then
@@ -558,50 +594,66 @@ einfo "Enforcing the use of gcc due to USE=-clang ..."
 	export HOST_CC="$(tc-getBUILD_CC)"
 	export HOST_CXX="$(tc-getBUILD_CXX)"
 	export AS="$(tc-getCC) -c"
-	tc-export CC CXX LD AR AS NM OBJDUMP RANLIB PKG_CONFIG
 
-	cd "${MOZJS_BUILDDIR}" || die
+	tc-export CC CXX LD AR AS NM OBJDUMP RANLIB READELF PKG_CONFIG
+
+	# Pass the correct toolchain paths through cbindgen
+	if tc-is-cross-compiler ; then
+		export BINDGEN_CFLAGS="${SYSROOT:+--sysroot=${ESYSROOT}} --target=${CHOST} ${BINDGEN_CFLAGS-}"
+	fi
 
 	# ../python/mach/mach/mixin/process.py fails to detect SHELL
 	export SHELL="${EPREFIX}/bin/bash"
 
-	local -a myeconfargs=(
-		--host="${CBUILD:-${CHOST}}"
-		--target="${CHOST}"
+	# Forced JIT on for slower computers
+	local nprocs=$(get_nproc)
+	if ! use jit && (( ${nprocs} <= 1 )) ; then
+eerror "JIT must be turned on"
+		die
+	fi
 
-		--disable-ctype
-		--disable-jemalloc
-		--disable-smoosh
-		--disable-strip
+	# Modifications to better support ARM, bug 717344
+	# Tell build system that we want to use LTO
+	# Thumb options aren't supported when using clang, bug 666966
 
-		--enable-project=js
-		--enable-readline
-		--enable-release
-		--enable-shared-js
+	# Set state path
+	export MOZBUILD_STATE_PATH="${BUILD_DIR}"
 
-		--with-intl-api
-		--with-system-icu
-		--with-system-nspr
-		--with-system-zlib
-		--with-toolchain-prefix="${CHOST}-"
+	# Set MOZCONFIG
+	export MOZCONFIG="${S}/.mozconfig"
 
-		$(use_enable debug)
-		$(use_enable jit)
-		$(use_enable test tests)
-	)
+	# Initialize MOZCONFIG
+	mozconfig_add_options_ac '' --enable-project=js
 
-	if use debug; then
-		myeconfargs+=(
-			--disable-optimize
-			--enable-debug-symbols
-			--enable-real-time-tracing
-		)
+	mozconfig_add_options_ac 'Gentoo default' \
+		--host="${CBUILD:-${CHOST}}" \
+		--target="${CHOST}" \
+		--disable-jemalloc \
+		--disable-smoosh \
+		--disable-strip \
+		--enable-readline \
+		--enable-release \
+		--enable-shared-js \
+		--libdir="${EPREFIX}/usr/$(get_libdir)" \
+		--prefix="${EPREFIX}/usr" \
+		--with-intl-api \
+		--with-system-icu \
+		--with-system-nspr \
+		--with-system-zlib \
+		--with-toolchain-prefix="${CHOST}-" \
+		--x-includes="${ESYSROOT}/usr/include" \
+		--x-libraries="${ESYSROOT}/usr/$(get_libdir)"
+
+	mozconfig_use_enable debug
+	mozconfig_use_enable jit
+	mozconfig_use_enable test tests
+
+	if use debug ; then
+		mozconfig_add_options_ac '+debug' --disable-optimize
+		mozconfig_add_options_ac '+debug' --enable-debug-symbols
 	else
-		myeconfargs+=(
-			--enable-optimize
-			--disable-debug-symbols
-			--disable-real-time-tracing
-		)
+		mozconfig_add_options_ac '-debug' --enable-optimize
+		mozconfig_add_options_ac '-debug' --disable-debug-symbols
 	fi
 
 	if use rust-simd ; then
@@ -610,27 +662,20 @@ einfo "Enforcing the use of gcc due to USE=-clang ..."
 eerror "Use eselect to switch rust to < 1.78 or disable the rust-simd USE flag."
 			die
 		fi
-		myeconfargs+=(
-			--enable-rust-simd
-		)
+		mozconfig_add_options_ac '+rust-simd' --enable-rust-simd
 	else
 	# We always end up disabling this at some point due to newer rust versions. bgo#933372
-		myeconfargs+=(
-			--disable-rust-simd
-		)
+		mozconfig_add_options_ac '-rust-simd' --disable-rust-simd
 	fi
 
 	# Modifications to better support ARM, bug 717344
 	if use cpu_flags_arm_neon ; then
-		myeconfargs+=(
-			--with-fpu=neon
-		)
+		mozconfig_add_options_ac '+cpu_flags_arm_neon' --with-fpu=neon
+
 		if ! tc-is-clang ; then
-	# Thumb options aren't supported when using clang, bug 666966
-			myeconfargs+=(
-				--with-thumb=yes
-				--with-thumb-interwork=no
-			)
+			# thumb options aren't supported when using clang, bug 666966
+			mozconfig_add_options_ac '+cpu_flags_arm_neon' --with-thumb=yes
+			mozconfig_add_options_ac '+cpu_flags_arm_neon' --with-thumb-interwork=no
 		fi
 	fi
 
@@ -638,23 +683,15 @@ eerror "Use eselect to switch rust to < 1.78 or disable the rust-simd USE flag."
 	if use lto ; then
 		if use clang ; then
 			if tc-ld-is-mold ; then
-				myeconfargs+=(
-					--enable-linker=mold
-				)
+				mozconfig_add_options_ac '+lto' --enable-linker=mold
 			else
-				myeconfargs+=(
-					--enable-linker=lld
-				)
+				mozconfig_add_options_ac '+lto' --enable-linker=lld
 			fi
-			myeconfargs+=(
-				--enable-lto=cross
-			)
+			mozconfig_add_options_ac '+lto' --enable-lto=cross
 
 		else
-			myeconfargs+=(
-				--enable-linker=bfd
-				--enable-lto=full
-			)
+			mozconfig_add_options_ac '+lto' --enable-linker=bfd
+			mozconfig_add_options_ac '+lto' --enable-lto=full
 		fi
 	fi
 
@@ -665,27 +702,32 @@ eerror "Use eselect to switch rust to < 1.78 or disable the rust-simd USE flag."
 	export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE="none"
 	export PIP_NETWORK_INSTALL_RESTRICTED_VIRTUALENVS="mach"
 
-	# Show flags we will use
-	einfo "Build CFLAGS:    ${CFLAGS}"
-	einfo "Build CXXFLAGS:  ${CXXFLAGS}"
-	einfo "Build LDFLAGS:   ${LDFLAGS}"
-	einfo "Build RUSTFLAGS: ${RUSTFLAGS}"
+	# Disable notification when build system has finished
+	export MOZ_NOSPAM=1
 
-	# Forcing system-icu allows us to skip patching bundled ICU for PPC
-	# and other minor arches
-	ECONF_SOURCE="${S}" \
-	econf \
-		${myeconfargs[@]} \
-		XARGS="${EPREFIX}/usr/bin/xargs"
+	# Portage sets XARGS environment variable to "xargs -r" by default which
+	# breaks build system's check_prog() function which doesn't support arguments
+	mozconfig_add_options_ac 'Gentoo default' "XARGS=${EPREFIX}/usr/bin/xargs"
+
+	# Set build dir
+	mozconfig_add_options_mk 'Gentoo default' "MOZ_OBJDIR=${BUILD_DIR}"
+
+	# Show flags we will use
+einfo "Build BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
+einfo "Build CFLAGS:    ${CFLAGS}"
+einfo "Build CXXFLAGS:  ${CXXFLAGS}"
+einfo "Build LDFLAGS:   ${LDFLAGS}"
+einfo "Build RUSTFLAGS: ${RUSTFLAGS}"
+
+	./mach configure || die
 }
 
 src_compile() {
-	cd "${MOZJS_BUILDDIR}" || die
-	default
+	./mach build --verbose || die
 }
 
 src_test() {
-	if "${MOZJS_BUILDDIR}/js/src/js" -e 'print("Hello world!")'; then
+	if "${BUILD_DIR}/js/src/js" -e 'print("Hello world!")'; then
 einfo "Smoke-test successful, continuing with full test suite"
 	else
 eerror "Smoke-test failed: did interpreter initialization fail?"
@@ -694,80 +736,31 @@ eerror "Smoke-test failed: did interpreter initialization fail?"
 
 	cp \
 		"${FILESDIR}/spidermonkey-${SLOT}-known-test-failures.txt" \
-		"${T}/known_failures.list" \
+		"${T}/known_test_failures.list" \
 		|| die
-
-	if use sparc ; then
-		echo \
-			"non262/Array/regress-157652.js" \
-			>> \
-			"${T}/known_failures.list" \
-			|| die
-		echo \
-			"non262/regress/regress-422348.js" \
-			>> \
-			"${T}/known_failures.list" \
-			|| die
-		echo \
-			"test262/built-ins/TypedArray/prototype/set/typedarray-arg-set-values-same-buffer-other-type.js" \
-			>> \
-			"${T}/known_failures.list" \
-			|| die
-	fi
 
 	if use x86 ; then
 		echo \
-			"non262/Date/timeclip.js" \
+			"non262/Intl/DateTimeFormat/timeZone_version.js" \
 			>> \
-			"${T}/known_failures.list" \
+			"${T}/known_test_failures.list" \
 			|| die
 		echo \
-			"test262/built-ins/Date/UTC/fp-evaluation-order.js" \
+			"test262/intl402/Locale/constructor-non-iana-canon.js" \
 			>> \
-			"${T}/known_failures.list" \
-			|| die
-		echo \
-			"test262/language/types/number/S8.5_A2.1.js" \
-			>> \
-			"${T}/known_failures.list" \
-			|| die
-		echo \
-			"test262/language/types/number/S8.5_A2.2.js" \
-			>> \
-			"${T}/known_failures.list" \
+			"${T}/known_test_failures.list" \
 			|| die
 	fi
 
-	${EPYTHON} "${S}/tests/jstests.py" \
-		-d \
-		-s \
-		-t 1800 \
-		--wpt=disabled \
-		--no-progress \
-		--exclude-file="${T}/known_failures.list" \
-		"${MOZJS_BUILDDIR}/js/src/js" \
-		|| die
-
-	if use jit ; then
-		${EPYTHON} "${S}/tests/jstests.py" \
-			-d \
-			-s \
-			-t 1800 \
-			--wpt=disabled \
-			--no-progress \
-			--exclude-file="${T}/known_failures.list" \
-			"${MOZJS_BUILDDIR}/js/src/js" \
-			"basic" \
-			|| die
-	fi
+	./mach jstests --exclude-file="${T}/known_test_failures.list" || die
 }
 
 src_install() {
-	cd "${MOZJS_BUILDDIR}" || die
+	cd "${BUILD_DIR}" || die
 	default
 
 	# Fix soname links
-	pushd "${ED}"/usr/$(get_libdir) &>/dev/null || die
+	pushd "${ED}/usr/$(get_libdir)" &>/dev/null || die
 		mv \
 			"lib${MY_PN}-${MY_MAJOR}.so" \
 			"lib${MY_PN}-${MY_MAJOR}.so.0.0.0" \
