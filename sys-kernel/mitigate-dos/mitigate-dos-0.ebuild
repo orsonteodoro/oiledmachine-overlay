@@ -689,7 +689,6 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5."
 				_check_kernel_cmdline "spec_rstack_overflow=safe-ret"
 			fi
 			_check_y "SPECULATION_MITIGATIONS"
-			_check_n "SLS"
 		fi
 		_check_y "RETHUNK"
 		_check_y "CPU_IBPB_ENTRY"
@@ -715,6 +714,11 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5."
 	elif ver_test "${KV_MAJOR_MINOR}" -ge "4.14" ; then
 		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
 			_check_kernel_cmdline "retbleed=auto"
+		fi
+	fi
+	if ver_test "${KV_MAJOR_MINOR}" -ge "5.17" ; then
+		if [[ "${arch}" == "x86" || "${arch}" == "x86_64" ]] ; then
+			_check_y "SLS"
 		fi
 	fi
 	if ver_test "${KV_MAJOR_MINOR}" -ge "5.18" ; then
@@ -765,7 +769,7 @@ ewarn "cpu_flags_arm_pac is default ON for ARMv8.5."
 	if ver_test "${KV_MAJOR_MINOR}" -ge "6.9" ; then
 		if [[ "${arch}" == "x86_64" ]] ; then
 			_check_y "MITIGATION_PAGE_TABLE_ISOLATION"
-			_check_n "MITIGATION_SLS"
+			_check_y "MITIGATION_SLS"
 			_check_y "MITIGATION_RETHUNK"
 			if [[ "${firmware_vendor}" == "amd" ]] ; then
 				_check_y "MITIGATION_SRSO"
