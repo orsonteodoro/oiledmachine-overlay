@@ -82,6 +82,10 @@ einfo "DF = Double Free"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "DT" ]] ; then
 einfo "DT = Data Tampering"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "EMT" ]] ; then
+# CVSS 3.1 - AV:L/PR:N/UI:N/C:H
+einfo "EMT = Evil Maid Attack"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ID" ]] ; then
 einfo "ID = Information Disclosure"
 		fi
