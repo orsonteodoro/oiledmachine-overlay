@@ -210,6 +210,7 @@ _setup_gradle_download_dir() {
 	mkdir -p "${GRADLE_CACHE_FOLDER}"
 	rm -rf "${HOME}/caches" || die
 	ln -s "${GRADLE_CACHE_FOLDER}" "${HOME}/caches" || die
+	# TODO fix download issue:  disable parallel downloads.
 }
 
 src_unpack() {
@@ -334,7 +335,9 @@ einfo "PATH:\t\t\t${PATH}"
 		local t
 		for t in ${TG[@]} ; do
 			[[ "${t}" =~ ":grpc-bom" ]] && continue
-			args+=( -x "${t}:javadoc" )
+			args+=(
+				-x "${t}:javadoc"
+			)
 		done
 	fi
 
@@ -342,9 +345,19 @@ einfo "PATH:\t\t\t${PATH}"
 		local t
 		for t in ${TG[@]} ; do
 			[[ "${t}" =~ ":grpc-bom" ]] && continue
-			args+=( -x "${t}:test" )
+			args+=(
+				-x "${t}:test"
+			)
 		done
 	fi
+
+	# Prevent the following
+#Checking for unexpected dependencies ...
+#        libsandbox.so => /usr/lib64/libsandbox.so (0x00007f74a485e000)
+#ERROR: found unexpected dependencies (listed above).
+	args+=(
+		-x ":grpc-compiler:checkArtifacts"
+	)
 
 	export 'GRADLE_OPTS=-Dorg.gradle.jvmargs='\''-Xmx1g'\'''
 	mkdir -p "${WORKDIR}/homedir" || die
@@ -352,12 +365,13 @@ einfo "PATH:\t\t\t${PATH}"
 einfo "GRADLE_OPTS:\t\t\t${GRADLE_OPTS}"
 
 einfo "gradle build ${flags} ${args[@]}"
+# See https://github.com/grpc/grpc-java/blob/v1.54.2/COMPILING.md
 
 	gradle \
 		build \
 		${args[@]} \
 		|| die
-	addpredict /var/lib/portage/home/.java
+	addpredict "/var/lib/portage/home/.java"
 	gradle \
 		publishToMavenLocal \
 		${args[@]} \
