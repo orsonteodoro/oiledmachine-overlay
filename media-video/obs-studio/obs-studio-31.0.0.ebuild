@@ -140,7 +140,6 @@ PATENT_STATUS_REQUIRED_USE="
 		!coreaudio
 		!fdk
 		!hevc
-		!mpegts
 		!nvenc
 		!qsv
 		!vaapi
@@ -166,9 +165,6 @@ PATENT_STATUS_REQUIRED_USE="
 		patent_status_nonfree
 	)
 	hevc? (
-		patent_status_nonfree
-	)
-	mpegts? (
 		patent_status_nonfree
 	)
 	nvenc? (
