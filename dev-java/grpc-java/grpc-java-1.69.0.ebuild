@@ -358,7 +358,7 @@ einfo "Building codegen plugin"
 	fi
 
 	egradle \
-		build \
+		"build" \
 		${args[@]}
 	addpredict "/var/lib/portage/home/.java"
 	if use codegen ; then
@@ -369,7 +369,7 @@ einfo "Building codegen plugin"
 			|| die
 	fi
 	egradle \
-		publishToMavenLocal \
+		"publishToMavenLocal" \
 		${args[@]}
 }
 
