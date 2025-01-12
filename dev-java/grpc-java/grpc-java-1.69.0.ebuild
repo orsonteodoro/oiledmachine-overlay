@@ -254,12 +254,14 @@ einfo "PATH:\t\t\t${PATH}"
 	# Breaks if -j1 or -Dorg.gradle.parallel=false
 	local args=(
 		${arch_flag}
-		-Dgradle.user.home="${USER_HOME}"
-		-Djava.util.prefs.systemRoot="${USER_HOME}/.java"
-		-Djava.util.prefs.userRoot="${USER_HOME}/.java/.userPrefs"
-		-Dmaven.repo.local="${USER_HOME}/.m2/repository"
 		-Dorg.gradle.parallel=true
-		-Duser.home="${WORKDIR}/homedir"
+		-i
+		-Pprotoc="${ESYSROOT}/usr/bin/protoc"
+		-PskipAndroid=$(usex !android "true" "false")
+	)
+	local codegen_plugin_args=(
+		${arch_flag}
+		-Dorg.gradle.parallel=true
 		-i
 		-Pprotoc="${ESYSROOT}/usr/bin/protoc"
 		-PskipAndroid=$(usex !android "true" "false")
@@ -351,7 +353,9 @@ einfo "gradle build ${flags} ${args[@]}"
 	if use codegen ; then
 einfo "Building codegen plugin"
 		cd "compiler" || die
-		egradle "java_pluginExecutable"
+		egradle \
+			"java_pluginExecutable" \
+			${codegen_plugin_args[@]}
 		[[ -e "build/exe/java_plugin/protoc-gen-grpc-java" ]] || die
 	fi
 	#/var/tmp/portage/dev-java/grpc-java-1.54.2/work/grpc-java-1.54.2/compiler/build/artifacts/java_plugin/protoc-gen-grpc-java.exe

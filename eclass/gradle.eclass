@@ -64,7 +64,14 @@ einfo "GRADLE_CACHE_FOLDER:  ${GRADLE_CACHE_FOLDER}"
 }
 
 egradle() {
-	edo gradle "$@"
+	local options=(
+		-Dgradle.user.home="${USER_HOME}"
+		-Djava.util.prefs.systemRoot="${USER_HOME}/.java"
+		-Djava.util.prefs.userRoot="${USER_HOME}/.java/.userPrefs"
+		-Dmaven.repo.local="${USER_HOME}/.m2/repository"
+		-Duser.home="${WORKDIR}/homedir"
+	)
+	edo gradle "$@" ${options[@]}
 }
 
 fi
