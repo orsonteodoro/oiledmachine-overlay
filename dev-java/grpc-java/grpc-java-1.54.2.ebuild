@@ -190,16 +190,6 @@ ewarn
 src_configure() {
 	gradle_src_configure
 
-#
-# Skipped to avoid:
-#
-# FAILURE: Build failed with an exception.
-#
-# * What went wrong:
-# Execution failed for task ':grpc-compiler:publishMavenPublicationToMavenLocal'.
-# > Failed to publish publication 'maven' to repository 'mavenLocal'
-#    > Invalid publication 'maven': artifact file does not exist: '/var/tmp/portage/dev-java/grpc-java-1.54.2/work/grpc-java-1.54.2/compiler/build/artifacts/java_plugin/protoc-gen-grpc-java.exe'
-#
 	# See https://github.com/grpc/grpc-java/blob/v1.54.2/COMPILING.md?plain=1#L9
 	if ! use codegen ; then
 		echo "skipCodegen=true" >> gradle.properties || die
