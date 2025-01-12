@@ -23,7 +23,7 @@ LLVM_SUB_REV="6"
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
 RUST_COMMIT="bca5fdebe0e539d123f33df5f2149d5976392e76"
 RUST_SUB_REV="1"
-RUST_PV="1.81.0" # See https://github.com/rust-lang/rust/blob/f5cd2c5888011d4d80311e5b771c6da507d860dd/RELEASES.md
+RUST_PV="1.82.0" # See https://github.com/rust-lang/rust/blob/bca5fdebe0e539d123f33df5f2149d5976392e76/RELEASES.md
 VENDORED_CLANG_VER="llvmorg-${LLVM_OFFICIAL_SLOT}-init-${LLVM_N_COMMITS}-g${LLVM_COMMIT:0:8}-${LLVM_SUB_REV}"
 VENDORED_RUST_VER="${RUST_COMMIT}-${RUST_SUB_REV}"
 
@@ -167,7 +167,7 @@ LICENSE="
 
 RESTRICT="binchecks mirror strip test"
 SLOT="0/llvm${LLVM_OFFICIAL_SLOT}-rust$(ver_cut 1-2 ${RUST_PV})-gn${GN_PV}"
-IUSE+=" +clang +gn +rust ebuild_revision_3"
+IUSE+=" +clang +gn +rust ebuild_revision_4"
 REQUIRED_USE="
 	gn? (
 		clang
