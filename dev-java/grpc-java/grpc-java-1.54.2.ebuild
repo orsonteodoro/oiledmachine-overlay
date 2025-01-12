@@ -15,10 +15,6 @@ S="${WORKDIR}/${P}"
 SRC_URI+="
 https://github.com/grpc/grpc-java/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
-codegen? (
-https://github.com/protocolbuffers/protobuf/archive/refs/tags/v${PROTOBUF_PV}.tar.gz
-	-> protobuf-${PROTOBUF_PV}.tar.gz
-)
 "
 
 DESCRIPTION="Java libraries for the high performance gRPC framework"
