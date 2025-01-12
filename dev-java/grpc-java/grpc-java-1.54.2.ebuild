@@ -204,16 +204,6 @@ src_configure() {
 }
 
 src_compile() {
-	if use codegen ; then
-	# https://github.com/grpc/grpc-java/blob/v1.54.2/COMPILING.md#build-protobuf
-		cd "${WORKDIR}/protobuf-${PROTOBUF_PV}" || die
-		configure --disable-shared || die
-		emake
-		emake DESTDIR="${WORKDIR}/grpc-root" install
-		export CXXFLAGS="-I${DESTDIR}/grpc-root/include"
-		export LDFLAGS="-L${DESTDIR}/grpc-root/lib"
-	fi
-
 einfo "USER:\t\t\t${USER}"
 einfo "HOME:\t\t\t${HOME}"
 	export USER_HOME="${HOME}"
