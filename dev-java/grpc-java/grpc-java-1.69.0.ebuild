@@ -27,7 +27,6 @@ fi
 DESCRIPTION="Java libraries for the high performance gRPC framework"
 HOMEPAGE="https://grpc.io"
 THIRD_PARTY_LICENSES="
-	custom
 	(
 		all-rights-reserved
 		Apache-2.0
@@ -35,8 +34,8 @@ THIRD_PARTY_LICENSES="
 	(
 		Apache-2.0
 		|| (
-			MIT
 			GPL-2+
+			MIT
 		)
 	)
 	(
@@ -50,6 +49,7 @@ THIRD_PARTY_LICENSES="
 	BSD-4
 	CDDL
 	CDDL-1.1
+	custom
 	EPL-1.0
 	GPL-2-with-classpath-exception
 	ISC
@@ -76,8 +76,8 @@ THIRD_PARTY_LICENSES="
 	)
 "
 LICENSE="
-	Apache-2.0
 	${THIRD_PARTY_LICENSES}
+	Apache-2.0
 "
 
 # Apache-2.0, MIT, BSD - ./repository/com/android/tools/build/builder/4.2.0/builder-4.2.0/LICENSE
@@ -262,7 +262,7 @@ unpack_gradle()
 		local d="${d_base}/${d_rel}"
 		mkdir -p "${d}" || die
 		local s=$(realpath "${DISTDIR}/"$(basename ${x}))
-		einfo "Copying ${s} to ${d}"
+einfo "Copying ${s} to ${d}"
 		cp -a "${s}" "${d}" || die
 
 		if [[ "${s}" =~ ".pom2" ]] ; then
@@ -291,7 +291,7 @@ add_localmaven() {
 			local pos
 			for pos in $(grep -n -e "repositories {" "${path}" | cut -f 1 -d ":" | tac) ; do
 				# Prevent deletion of .m2 with url instead of localMaven()
-				einfo "Editing ${path} at ${pos} for localMaven()"
+einfo "Editing ${path} at ${pos} for localMaven()"
 				sed -i -e "${pos}a maven { url '${WORKDIR}/.m2/repository' }" "${path}" || die
 			done
 		fi
@@ -313,8 +313,8 @@ src_configure() {
 }
 
 src_compile() {
-	einfo "USER:\t\t\t${USER}"
-	einfo "HOME:\t\t\t${HOME}"
+einfo "USER:\t\t\t${USER}"
+einfo "HOME:\t\t\t${HOME}"
 	export USER_HOME="${HOME}"
 	export GRADLE_USER_HOME="${USER_HOME}/.gradle"
 	if use android && [[ -z "${ANDROID_HOME}" ]] ; then
@@ -332,13 +332,13 @@ src_compile() {
 	append-cxxflags -I"${EPREFIX}/usr/include"
 	export LD_LIBRARY_PATH="${EPREFIX}/usr/$(get_libdir)"
 	if use android ; then
-		einfo "ANDROID_HOME:\t\t${ANDROID_HOME}"
-		einfo "ANDROID_SDK_ROOT:\t\t${ANDROID_SDK_ROOT}"
-		einfo "ANDROID_TOOLS:\t\t${ANDROID_TOOLS}"
-		einfo "ANDROID_PLATFORM_TOOLS:\t${ANDROID_PLATFORM_TOOLS}"
+einfo "ANDROID_HOME:\t\t${ANDROID_HOME}"
+einfo "ANDROID_SDK_ROOT:\t\t${ANDROID_SDK_ROOT}"
+einfo "ANDROID_TOOLS:\t\t${ANDROID_TOOLS}"
+einfo "ANDROID_PLATFORM_TOOLS:\t${ANDROID_PLATFORM_TOOLS}"
 	fi
-	einfo "GRADLE_USER_HOME:\t\t${GRADLE_USER_HOME}"
-	einfo "PATH:\t\t\t${PATH}"
+einfo "GRADLE_USER_HOME:\t\t${GRADLE_USER_HOME}"
+einfo "PATH:\t\t\t${PATH}"
 
 # For arches, see
 # https://docs.gradle.org/current/javadoc/org/gradle/nativeplatform/platform/Architecture.html
