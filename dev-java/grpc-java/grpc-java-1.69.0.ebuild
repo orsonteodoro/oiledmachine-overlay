@@ -349,11 +349,12 @@ einfo "gradle build ${flags} ${args[@]}"
 # See https://github.com/grpc/grpc-java/blob/v1.69.0/COMPILING.md
 
 	if use codegen ; then
+einfo "Building codegen plugin"
 		cd "compiler" || die
 		egradle "java_pluginExecutable"
 		[[ -e "build/exe/java_plugin/protoc-gen-grpc-java" ]] || die
 	fi
-	/var/tmp/portage/dev-java/grpc-java-1.54.2/work/grpc-java-1.54.2/compiler/build/artifacts/java_plugin/protoc-gen-grpc-java.exe
+	#/var/tmp/portage/dev-java/grpc-java-1.54.2/work/grpc-java-1.54.2/compiler/build/artifacts/java_plugin/protoc-gen-grpc-java.exe
 
 	egradle \
 		build \
