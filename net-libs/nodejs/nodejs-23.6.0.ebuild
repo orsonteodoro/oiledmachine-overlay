@@ -13,7 +13,7 @@ EAPI=8
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
 
-# Last deps commit date:  Dec 6, 2024
+# Last deps commit date:  Jan 3, 2025
 
 ACORN_PV="8.14.0"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
@@ -25,8 +25,8 @@ TRAINER_TYPES=(
 	buffers
 	child_process
 	cluster
-	crypto
 	custom
+	crypto
 	dgram
 	diagnostics_channel
 	dns
@@ -72,7 +72,8 @@ COREPACK_PV="0.30.0"
 LTO_TYPE="none" # Global var
 MULTIPLEXER_VER="11"
 NGHTTP2_PV="1.64.0"
-NPM_PV="10.9.2" # See https://github.com/nodejs/node/blob/v23.4.0/deps/npm/package.json
+NGHTTP3_PV="1.6.0"
+NPM_PV="10.9.2" # See https://github.com/nodejs/node/blob/v23.6.0/deps/npm/package.json
 PYTHON_COMPAT=( "python3_"{8..12} ) # See configure
 PYTHON_REQ_USE="threads(+)"
 TPGO_CONFIGURE_DONT_SET_FLAGS=1
@@ -161,8 +162,8 @@ RDEPEND+="
 	!net-libs/nodejs:0
 	>=app-arch/brotli-1.1.0
 	>=app-eselect/eselect-nodejs-20230521
-	>=dev-libs/libuv-1.49.1:=
-	>=net-dns/c-ares-1.34.3
+	>=dev-libs/libuv-1.49.2:=
+	>=net-dns/c-ares-1.34.4
 	>=net-libs/nghttp2-${NGHTTP2_PV}
 	>=sys-libs/zlib-1.3
 	sys-kernel/mitigate-id
