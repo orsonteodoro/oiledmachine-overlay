@@ -10,7 +10,7 @@ PROTOBUF_PV="3.21.12"
 
 inherit flag-o-matic gradle java-pkg-2
 
-#KEYWORDS="~amd64" # Unfinished
+KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
 SRC_URI+="
 https://github.com/grpc/grpc-java/archive/refs/tags/v${PV}.tar.gz
@@ -351,18 +351,24 @@ einfo "gradle build ${flags} ${args[@]}"
 
 	if use codegen ; then
 einfo "Building codegen plugin"
-		cd "compiler" || die
-		egradle \
-			"java_pluginExecutable" \
-			${codegen_plugin_args[@]}
-		[[ -e "build/exe/java_plugin/protoc-gen-grpc-java" ]] || die
+		pushd "compiler" >/dev/null 2>&1 || die
+			egradle \
+				"java_pluginExecutable" \
+				${codegen_plugin_args[@]}
+		popd >/dev/null 2>&1 || die
 	fi
-	#/var/tmp/portage/dev-java/grpc-java-1.54.2/work/grpc-java-1.54.2/compiler/build/artifacts/java_plugin/protoc-gen-grpc-java.exe
 
 	egradle \
 		build \
 		${args[@]}
 	addpredict "/var/lib/portage/home/.java"
+	if use codegen ; then
+		mkdir -p "${S}/compiler/build/artifacts/java_plugin" || die
+		cp -a \
+			"${S}/compiler/build/exe/java_plugin/protoc-gen-grpc-java" \
+			"${S}/compiler/build/artifacts/java_plugin/protoc-gen-grpc-java.exe" \
+			|| die
+	fi
 	egradle \
 		publishToMavenLocal \
 		${args[@]}
