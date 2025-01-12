@@ -6,7 +6,7 @@
    ret=$?
 -  if [[ $ret == 0 ]]; then
 +  if true ; then
-+    :;
++    :
 +  elif [[ $ret == 0 ]]; then
      fail "found unexpected dependencies (listed above)."
    elif [[ $ret != 1 ]]; then

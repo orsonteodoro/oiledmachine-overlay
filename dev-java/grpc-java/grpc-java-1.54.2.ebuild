@@ -6,14 +6,19 @@ EAPI=8
 
 GRADLE_PV="7.6" # https://github.com/grpc/grpc-java/blob/v1.54.2/gradle/wrapper/gradle-wrapper.properties
 JAVA_COMPAT=( "java_slot_"{11,1_8} ) # https://github.com/grpc/grpc-java/blob/v1.54.2/.github/workflows/testing.yml#L20
+PROTOBUF_PV="3.21.12"
 
-inherit flag-o-matic java-pkg-2
+inherit flag-o-matic gradle java-pkg-2
 
 #KEYWORDS="~amd64" # Unfinished
 S="${WORKDIR}/${P}"
 SRC_URI+="
 https://github.com/grpc/grpc-java/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
+codegen? (
+https://github.com/protocolbuffers/protobuf/archive/refs/tags/v${PROTOBUF_PV}.tar.gz
+	-> protobuf-${PROTOBUF_PV}.tar.gz
+)
 "
 
 DESCRIPTION="Java libraries for the high performance gRPC framework"
@@ -102,7 +107,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 ${JAVA_COMPAT[@]}
-android doc source test
+android codegen doc source test
 ebuild_revision_1
 "
 # Cannot fix at the moment ANDROID_HOME="/var/lib/portage/home/.android" sandbox violation
@@ -139,7 +144,6 @@ DEPEND+="
 "
 # SDK ver: https://github.com/grpc/grpc-java/blob/v1.54.2/android/build.gradle#L10
 BDEPEND+="
-	dev-java/gradle-bin:${GRADLE_PV}
 	|| (
 		$(gen_jre_rdepend)
 	)
@@ -156,23 +160,6 @@ DOCS=( "AUTHORS" "LICENSE" "NOTICE.txt" "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-1.51.1-allow-sandbox-in-artifact-check.patch"
 )
-
-gradle_check_network_sandbox() {
-# Corepack problems.  Cannot do complete offline install.
-	if has network-sandbox $FEATURES ; then
-eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
-eerror "env to be able to download and cache offline micropackages."
-eerror
-eerror "Contents of /etc/portage/env/no-network-sandbox.conf"
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\""
-eerror
-eerror "Contents of /etc/portage/package.env"
-eerror "${CATEGORY}/${PN} no-network-sandbox.conf"
-eerror
-		die
-	fi
-}
 
 pkg_setup() {
 	gradle_check_network_sandbox
@@ -200,27 +187,26 @@ ewarn
 	use android && ewarn "The android USE flag is still in development"
 }
 
-_setup_gradle_download_dir() {
-	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	export GRADLE_CACHE_FOLDER="${EDISTDIR}/gradle-download-cache-${GRADLE_PV}/${CATEGORY}/${P}"
-	einfo "DEBUG:  Default cache folder:  ${HOME}/caches"
-	einfo "GRADLE_CACHE_FOLDER:  ${GRADLE_CACHE_FOLDER}"
-	addwrite "${EDISTDIR}"
-	addwrite "${GRADLE_CACHE_FOLDER}"
-	mkdir -p "${GRADLE_CACHE_FOLDER}"
-	rm -rf "${HOME}/caches" || die
-	ln -s "${GRADLE_CACHE_FOLDER}" "${HOME}/caches" || die
-	# TODO fix download issue:  disable parallel downloads.
-}
-
-src_unpack() {
-	unpack ${P}.tar.gz
-}
-
 src_configure() {
-	_setup_gradle_download_dir
+	gradle_src_configure
+
+#
+# Skipped to avoid:
+#
+# FAILURE: Build failed with an exception.
+#
+# * What went wrong:
+# Execution failed for task ':grpc-compiler:publishMavenPublicationToMavenLocal'.
+# > Failed to publish publication 'maven' to repository 'mavenLocal'
+#    > Invalid publication 'maven': artifact file does not exist: '/var/tmp/portage/dev-java/grpc-java-1.54.2/work/grpc-java-1.54.2/compiler/build/artifacts/java_plugin/protoc-gen-grpc-java.exe'
+#
+	# See https://github.com/grpc/grpc-java/blob/v1.54.2/COMPILING.md?plain=1#L9
+	if ! use codegen ; then
+		echo "skipCodegen=true" >> gradle.properties || die
+	fi
+
 	if use android ; then
-		echo "android.useAndroidX=true" > gradle.properties || die
+		echo "android.useAndroidX=true" >> gradle.properties || die
 	fi
 	local bn=$(basename $(realpath "${ESYSROOT}/$(get_libdir)/ld-linux-"*".so.2") \
 		| sed  -e 's|[.]|\\.|g')
@@ -228,6 +214,16 @@ src_configure() {
 }
 
 src_compile() {
+	if use codegen ; then
+	# https://github.com/grpc/grpc-java/blob/v1.54.2/COMPILING.md#build-protobuf
+		cd "${WORKDIR}/protobuf-${PROTOBUF_PV}" || die
+		configure --disable-shared || die
+		emake
+		emake DESTDIR="${WORKDIR}/grpc-root" install
+		export CXXFLAGS="-I${DESTDIR}/grpc-root/include"
+		export LDFLAGS="-L${DESTDIR}/grpc-root/lib"
+	fi
+
 einfo "USER:\t\t\t${USER}"
 einfo "HOME:\t\t\t${HOME}"
 	export USER_HOME="${HOME}"
@@ -300,7 +296,6 @@ einfo "PATH:\t\t\t${PATH}"
 		":grpc-benchmarks"
 		":grpc-bom"
 		":grpc-census"
-		":grpc-compiler"
 		":grpc-context"
 		":grpc-core"
 		":grpc-gae-interop-testing-jdk8"
@@ -321,6 +316,11 @@ einfo "PATH:\t\t\t${PATH}"
 		":grpc-testing-proto"
 		":grpc-xds"
 	)
+	if use codegen ; then
+		TG+=(
+			":grpc-compiler"
+		)
+	fi
 
 	if use android ; then
 		TG+=(
@@ -355,9 +355,11 @@ einfo "PATH:\t\t\t${PATH}"
 #Checking for unexpected dependencies ...
 #        libsandbox.so => /usr/lib64/libsandbox.so (0x00007f74a485e000)
 #ERROR: found unexpected dependencies (listed above).
-	args+=(
-		-x ":grpc-compiler:checkArtifacts"
-	)
+	if use codegen ; then
+		args+=(
+			-x ":grpc-compiler:checkArtifacts"
+		)
+	fi
 
 	export 'GRADLE_OPTS=-Dorg.gradle.jvmargs='\''-Xmx1g'\'''
 	mkdir -p "${WORKDIR}/homedir" || die
@@ -367,15 +369,13 @@ einfo "GRADLE_OPTS:\t\t\t${GRADLE_OPTS}"
 einfo "gradle build ${flags} ${args[@]}"
 # See https://github.com/grpc/grpc-java/blob/v1.54.2/COMPILING.md
 
-	gradle \
+	egradle \
 		build \
-		${args[@]} \
-		|| die
+		${args[@]}
 	addpredict "/var/lib/portage/home/.java"
-	gradle \
+	egradle \
 		publishToMavenLocal \
-		${args[@]} \
-		|| die
+		${args[@]}
 }
 
 src_install() {

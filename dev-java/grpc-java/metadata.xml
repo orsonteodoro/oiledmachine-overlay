@@ -9,4 +9,9 @@
   <upstream>
     <remote-id type="github">grpc/grpc-java</remote-id>
   </upstream>
+  <use>
+    <flag name="codegen">
+      Enable the code generation plugin.
+    </flag>
+  </use>
 </pkgmetadata>
