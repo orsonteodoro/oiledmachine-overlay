@@ -4,25 +4,17 @@
 
 EAPI=8
 
-GEN_EBUILD=1 # For generating download links and unpacking lists.
 GRADLE_PV="7.6" # https://github.com/grpc/grpc-java/blob/v1.54.2/gradle/wrapper/gradle-wrapper.properties
-JAVA_SLOTS=( "11" "1.8" ) # https://github.com/grpc/grpc-java/blob/v1.54.2/.github/workflows/testing.yml#L20
+JAVA_COMPAT=( "java_slot_"{11,1_8} ) # https://github.com/grpc/grpc-java/blob/v1.54.2/.github/workflows/testing.yml#L20
 
 inherit flag-o-matic java-pkg-2
 
 #KEYWORDS="~amd64" # Unfinished
 S="${WORKDIR}/${P}"
 SRC_URI+="
-	https://github.com/grpc/grpc-java/archive/refs/tags/v${PV}.tar.gz
-		-> ${P}.tar.gz
+https://github.com/grpc/grpc-java/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
 "
-if [[ "${GEN_EBUILD}" == "1" ]] ; then
-	:
-else
-	SRC_URI+="
-		$(gen_uris)
-	"
-fi
 
 DESCRIPTION="Java libraries for the high performance gRPC framework"
 HOMEPAGE="https://grpc.io"
@@ -109,7 +101,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0"
 IUSE+="
-${JAVA_SLOTS[@]/#/java_slot_}
+${JAVA_COMPAT[@]}
 android doc source test
 ebuild_revision_1
 "
@@ -117,12 +109,12 @@ ebuild_revision_1
 #	!android
 REQUIRED_USE+="
 	^^ (
-		${JAVA_SLOTS[@]/#/java_slot_}
+		${JAVA_COMPAT[@]}
 	)
 "
 gen_jre_rdepend() {
 	local s
-	for s in ${JAVA_SLOTS[@]} ; do
+	for s in ${JAVA_COMPAT[@]} ; do
 		echo "
 			virtual/jre:${s}
 		"
@@ -130,7 +122,7 @@ gen_jre_rdepend() {
 }
 gen_jdk_bdepend() {
 	local s
-	for s in ${JAVA_SLOTS[@]} ; do
+	for s in ${JAVA_COMPAT[@]} ; do
 		echo "
 			virtual/jdk:${s}
 		"
@@ -160,68 +152,40 @@ BDEPEND+="
 	)
 "
 
-GRADLE_PKGS_UNPACK_ANDROID=(
-)
-
-GRADLE_PKGS_UNPACK_NO_ANDROID=(
-)
-GRADLE_PKGS_URIS_ANDROID="
-"
-GRADLE_PKGS_URIS_NO_ANDROID="
-"
-
-gen_uris() {
-	local URIS=""
-	local uri
-
-	if [[ "${USE}" =~ "android" ]] ; then
-		URIS="${GRADLE_PKGS_URIS_ANDROID}"
-		echo " android? ( "
-	else
-		URIS="${GRADLE_PKGS_URIS_NO_ANDROID}"
-		echo " !android? ( "
-	fi
-
-	# Prevent collision same jar names but different namespace/content/hash
-	for uri in ${URIS} ; do
-		if [[ "${uri}" =~ "gradle/plugin" ]] ; then
-			local bn="${uri##*/}"
-			echo " ${uri} -> ${bn}2"
-		else
-			echo " ${uri} "
-		fi
-	done
-		echo " ) "
-}
-
-DOCS=( AUTHORS LICENSE NOTICE.txt README.md )
+DOCS=( "AUTHORS" "LICENSE" "NOTICE.txt" "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-1.51.1-allow-sandbox-in-artifact-check.patch"
 )
 
+gradle_check_network_sandbox() {
+# Corepack problems.  Cannot do complete offline install.
+	if has network-sandbox $FEATURES ; then
+eerror
+eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
+eerror "env to be able to download and cache offline micropackages."
+eerror
+eerror "Contents of /etc/portage/env/no-network-sandbox.conf"
+eerror "FEATURES=\"\${FEATURES} -network-sandbox\""
+eerror
+eerror "Contents of /etc/portage/package.env"
+eerror "${CATEGORY}/${PN} no-network-sandbox.conf"
+eerror
+		die
+	fi
+}
+
 pkg_setup() {
-	if use java_slot_17 ; then
-		export JAVA_PKG_WANT_TARGET="17"
-		export JAVA_PKG_WANT_SOURCE="17"
-		export JAVA_SLOT="17"
-	elif use java_slot_11 ; then
+	gradle_check_network_sandbox
+	if use java_slot_11 ; then
 		export JAVA_PKG_WANT_TARGET="11"
 		export JAVA_PKG_WANT_SOURCE="11"
 		export JAVA_SLOT="11"
-	elif use java_slot_1.8 ; then
+	elif use java_slot_1_8 ; then
 		export JAVA_PKG_WANT_TARGET="1.8"
 		export JAVA_PKG_WANT_SOURCE="1.8"
 		export JAVA_SLOT="1.8"
 	fi
 
-	if ( [[ "${GEN_EBUILD}" == "1" ]] || use android || use doc ) \
-		&& has network-sandbox ${FEATURES} ; then
-eerror
-eerror "Building requires network-sandbox to be disabled in FEATURES on a"
-eerror "per-package level."
-eerror
-		die
-	fi
 	java-pkg-2_pkg_setup
 	java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
 	local java_vendor=$(java-pkg_get-vm-vendor)
@@ -236,74 +200,24 @@ ewarn
 	use android && ewarn "The android USE flag is still in development"
 }
 
-unpack_gradle()
-{
-	local paths=()
-	IFS=$'\n'
-	if use android ; then
-		paths=(
-			${GRADLE_PKGS_UNPACK_ANDROID[@]}
-		)
-	else
-		paths=(
-			${GRADLE_PKGS_UNPACK_NO_ANDROID[@]}
-		)
-	fi
-	for x in ${paths[@]} ; do
-		[[ "${x}" =~ "gradle.plugin." ]] && x="${x}2"
-		d_rel="$(dirname ${x})"
-		local d_rel=$(dirname "${x}" \
-			| sed -r -e "s|/[0-9a-z]{38,40}||g" \
-			| tr "/" "\n" \
-			| sed -e "1s|[.]|/|g" \
-			| tr "\n" "/" \
-			| sed -e "s|/$||g")
-		local d_base="${WORKDIR}/.m2/repository"
-		local d="${d_base}/${d_rel}"
-		mkdir -p "${d}" || die
-		local s=$(realpath "${DISTDIR}/"$(basename ${x}))
-einfo "Copying ${s} to ${d}"
-		cp -a "${s}" "${d}" || die
-
-		if [[ "${s}" =~ ".pom2" ]] ; then
-			mv "${d}"/$(basename "${s}") "${d}"/$(basename "${s/.pom2/.pom}") || die
-		fi
-		if [[ "${s}" =~ ".jar2" ]] ; then
-			mv "${d}"/$(basename "${s}") "${d}"/$(basename "${s/.jar2/.jar}") || die
-		fi
-	done
-	IFS=$' \t\n'
+_setup_gradle_download_dir() {
+	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+	export GRADLE_CACHE_FOLDER="${EDISTDIR}/gradle-download-cache-${GRADLE_PV}/${CATEGORY}/${P}"
+	einfo "DEBUG:  Default cache folder:  ${HOME}/caches"
+	einfo "GRADLE_CACHE_FOLDER:  ${GRADLE_CACHE_FOLDER}"
+	addwrite "${EDISTDIR}"
+	addwrite "${GRADLE_CACHE_FOLDER}"
+	mkdir -p "${GRADLE_CACHE_FOLDER}"
+	rm -rf "${HOME}/caches" || die
+	ln -s "${GRADLE_CACHE_FOLDER}" "${HOME}/caches" || die
 }
 
 src_unpack() {
 	unpack ${P}.tar.gz
-	if [[ "${GEN_EBUILD}" == "1" ]] ; then
-		:
-	else
-		unpack_gradle
-	fi
-}
-
-add_localmaven() {
-	local path
-	for path in $(find "${WORKDIR}" -name "settings.gradle" -o -name "build.gradle") ; do
-		if grep -q -e "repositories {" "${path}" ; then
-			local pos
-			for pos in $(grep -n -e "repositories {" "${path}" | cut -f 1 -d ":" | tac) ; do
-				# Prevent deletion of .m2 with url instead of localMaven()
-einfo "Editing ${path} at ${pos} for localMaven()"
-				sed -i -e "${pos}a maven { url '${WORKDIR}/.m2/repository' }" "${path}" || die
-			done
-		fi
-	done
 }
 
 src_configure() {
-	if [[ "${GEN_EBUILD}" == "1" ]] ; then
-		:
-	else
-		add_localmaven
-	fi
+	_setup_gradle_download_dir
 	if use android ; then
 		echo "android.useAndroidX=true" > gradle.properties || die
 	fi
@@ -443,30 +357,6 @@ einfo "gradle build ${flags} ${args[@]}"
 		build \
 		${args[@]} \
 		|| die
-	if [[ "${GEN_EBUILD}" == "1" ]] ; then
-einfo
-einfo "Update GRADLE_PKGS_URIS:"
-einfo
-		grep -o -E -r -e "http[s]?://.*(\.jar|\.pom|\.signature) " \
-			"${T}/build.log" \
-			| sort \
-			| uniq \
-			| sed -e "s| ||g"
-
-einfo
-einfo "Update GRADLE_PKGS_UNPACK:"
-einfo
-		# For EPREFIX offset adjust 12-
-		find "${HOME}/caches/modules-2/files-2.1/" \
-			-name "*.pom" \
-			-o -name "*.jar" \
-			-o -name "*.signature" \
-			-not -type d \
-			| cut -f 11- -d "/" \
-			| sort \
-			| uniq
-		die
-	fi
 	addpredict /var/lib/portage/home/.java
 	gradle \
 		publishToMavenLocal \
