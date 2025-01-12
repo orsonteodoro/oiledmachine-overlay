@@ -8,7 +8,7 @@ GRADLE_PV="8.10.2" # https://github.com/grpc/grpc-java/blob/v1.69.0/gradle/wrapp
 JAVA_COMPAT=( "java_slot_"{17,11,1_8} ) # https://github.com/grpc/grpc-java/blob/v1.69.0/.github/workflows/testing.yml#L20
 PROTOBUF_PV="29.0"
 
-inherit flag-o-matic cmake gradle java-pkg-2
+inherit flag-o-matic gradle java-pkg-2
 
 #KEYWORDS="~amd64" # Unfinished
 S="${WORKDIR}/${P}"
