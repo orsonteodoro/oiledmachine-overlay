@@ -10,6 +10,8 @@
 # @SUPPORTED_EAPIS: 8
 # @BLURB: gradle offline install for rebuilds
 
+# This eclass is a Work in Progress.  For missing variables or command line options see the grpc-java ebuild.
+
 case ${EAPI} in
 	8) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
