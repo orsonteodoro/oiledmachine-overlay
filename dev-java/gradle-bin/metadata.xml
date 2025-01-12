@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Original ebuild maintainers -->
+    <email>flow@gentoo.org</email>
+    <name>Florian Schmaus</name>
+  </maintainer>
+  <maintainer type="project">
+    <!-- Original ebuild maintainers -->
+    <email>java@gentoo.org</email>
+    <name>Java</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/gradle/gradle/issues</bugs-to>
+    <changelog>https://github.com/gradle/gradle/releases</changelog>
+    <remote-id type="github">gradle/gradle</remote-id>
+  </upstream>
+</pkgmetadata>

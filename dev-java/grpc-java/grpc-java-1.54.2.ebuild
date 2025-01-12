@@ -1,0 +1,504 @@
+# Copyright 2022-2025 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2025 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+GEN_EBUILD=1 # For generating download links and unpacking lists.
+GRADLE_PV="7.6" # https://github.com/grpc/grpc-java/blob/v1.54.2/gradle/wrapper/gradle-wrapper.properties
+JAVA_SLOTS=( "11" "1.8" ) # https://github.com/grpc/grpc-java/blob/v1.54.2/.github/workflows/testing.yml#L20
+
+inherit flag-o-matic java-pkg-2
+
+#KEYWORDS="~amd64" # Unfinished
+S="${WORKDIR}/${P}"
+SRC_URI+="
+	https://github.com/grpc/grpc-java/archive/refs/tags/v${PV}.tar.gz
+		-> ${P}.tar.gz
+"
+if [[ "${GEN_EBUILD}" == "1" ]] ; then
+	:
+else
+	SRC_URI+="
+		$(gen_uris)
+	"
+fi
+
+DESCRIPTION="Java libraries for the high performance gRPC framework"
+HOMEPAGE="https://grpc.io"
+THIRD_PARTY_LICENSES="
+	custom
+	(
+		all-rights-reserved
+		Apache-2.0
+	)
+	(
+		Apache-2.0
+		|| (
+			MIT
+			GPL-2+
+		)
+	)
+	(
+		Apache-1.1
+		custom
+	)
+	Apache-1.0
+	Apache-2.0
+	BSD
+	BSD-2
+	BSD-4
+	CDDL
+	CDDL-1.1
+	EPL-1.0
+	GPL-2-with-classpath-exception
+	ISC
+	LGPL-2.1+
+	minpack
+	MIT
+	openssl
+	W3C
+	W3C-Document-License
+	W3C-Software-Notice-and-License
+	|| (
+		Apache-2.0
+		LGPL-2.1+
+	)
+	|| (
+		(
+			Apache-1.1
+			custom
+		)
+		Apache-1.1
+		Apache-2.0
+		BSD
+		public-domain
+	)
+"
+LICENSE="
+	Apache-2.0
+	${THIRD_PARTY_LICENSES}
+"
+
+# Apache-2.0, MIT, BSD - ./repository/com/android/tools/build/builder/4.2.0/builder-4.2.0/LICENSE
+# Apache-2.0, W3C-Software-Notice-and-License - ./repository/com/google/appengine/appengine-api-1.0-sdk/1.9.59/appengine-api-1.0-sdk-1.9.59/org/apache/geronimo/mail/LICENSE
+# Apache-2.0, LGPL-2.1+ - ./repository/net/java/dev/jna/jna-platform/5.6.0/jna-platform-5.6.0/META-INF/LICENSE
+# Apache-2.0, openssl, ISC - ./repository/io/grpc/grpc-netty-shaded/1.43.2/grpc-netty-shaded-1.43.2/META-INF/NOTICE.txt
+# Apache-2.0 all-rights-reserved - ./repository/org/apache/commons/commons-math3/3.2/commons-math3-3.2/META-INF/NOTICE.txt
+# Apache-2.0, W3C, custom, Apache-1.1, EPL-1.0, SAX-PD, MIT - ./repository/org/jvnet/staxex/stax-ex/1.8.1/stax-ex-1.8.1/META-INF/NOTICE.md
+# Apache-2.0, minpack, BSD, BSD-2 - ./repository/org/apache/commons/commons-math3/3.2/commons-math3-3.2/META-INF/LICENSE.txt
+# Apache-2.0, W3C-Software-Notice-and-License, SAX2-PD - ./repository/org/apache/ant/ant-launcher/1.10.11/ant-launcher-1.10.11/META-INF/LICENSE.txt
+# Apache-1.1 - ./repository/org/codehaus/plexus/plexus-utils/3.4.1/plexus-utils-3.4.1/licenses/extreme.indiana.edu.license.TXT
+# BSD - ./repository/jakarta/xml/bind/jakarta.xml.bind-api/2.3.2/jakarta.xml.bind-api-2.3.2/META-INF/LICENSE.md
+# BSD, (Apache-2.0 W3C-Software-Notice-and-License public-domain), MIT, (custom Apache-1.1), pending [Apache-2.0], (Apache-2.0 || (MIT GPL-1.0+)), SAX-PD, || ( Apache-2.0 Apache-1.1 BSD public-domain (custom Apache-1.1) ) - ./repository/com/sun/istack/istack-commons-runtime/3.0.8/istack-commons-runtime-3.0.8/META-INF/NOTICE.md
+# BSD-2 - ./repository/org/codehaus/plexus/plexus-utils/3.4.1/plexus-utils-3.4.1/licenses/javolution.license.TXT
+# BSD-4 - ./repository/org/jdom/jdom2/2.0.6/jdom2-2.0.6/META-INF/LICENSE.txt
+# CDDL-1.1, GPL-2-with-classpath-exception - ./repository/javax/annotation/javax.annotation-api/1.3.2/javax.annotation-api-1.3.2/META-INF/LICENSE.txt
+# CDDL-1.0 - ./repository/javax/activation/activation/1.1/activation-1.1/META-INF/LICENSE.txt
+# EPL-1.0 - ./repository/junit/junit/4.12/junit-4.12/LICENSE-junit.txt
+# GPL-2-with-classpath-exception, || ( LGPL-2.1 Apache-2.0 ), MIT - ./repository/org/checkerframework/dataflow-errorprone/3.15.0/dataflow-errorprone-3.15.0/META-INF/LICENSE.txt
+# GPL-2-with-classpath-exception - ./repository/org/openjdk/jmh/jmh-generator-asm/1.29/jmh-generator-asm-1.29/LICENSE
+# MIT - ./repository/org/checkerframework/checker-qual/3.8.0/checker-qual-3.8.0/META-INF/LICENSE.txt
+# openssl - ./repository/io/grpc/grpc-netty-shaded/1.43.2/grpc-netty-shaded-1.43.2/META-INF/license/LICENSE.aix-netbsd.txt
+# openssl, BSD, ISC - ./repository/io/grpc/grpc-netty-shaded/1.43.2/grpc-netty-shaded-1.43.2/META-INF/license/LICENSE.boringssl.txt
+# SAX2-PD - ./repository/xml-apis/xml-apis/1.4.01/xml-apis-1.4.01/license/LICENSE.sax.txt
+# W3C-Document-License - ./repository/xml-apis/xml-apis/1.4.01/xml-apis-1.4.01/license/LICENSE.dom-documentation.txt
+# W3C-Software-Notice-and-License - ./repository/xml-apis/xml-apis/1.4.01/xml-apis-1.4.01/license/LICENSE.dom-software.txt
+# Apache-2.0, W3C-Software-Notice-and-License - ./repository/org/apache/ant/ant-launcher/1.10.11/ant-launcher-1.10.11/META-INF/LICENSE.txt
+
+RESTRICT="mirror"
+SLOT="0"
+IUSE+="
+${JAVA_SLOTS[@]/#/java_slot_}
+android doc source test
+ebuild_revision_1
+"
+# Cannot fix at the moment ANDROID_HOME="/var/lib/portage/home/.android" sandbox violation
+#	!android
+REQUIRED_USE+="
+	^^ (
+		${JAVA_SLOTS[@]/#/java_slot_}
+	)
+"
+gen_jre_rdepend() {
+	local s
+	for s in ${JAVA_SLOTS[@]} ; do
+		echo "
+			virtual/jre:${s}
+		"
+	done
+}
+gen_jdk_bdepend() {
+	local s
+	for s in ${JAVA_SLOTS[@]} ; do
+		echo "
+			virtual/jdk:${s}
+		"
+	done
+}
+RDEPEND+="
+	dev-libs/protobuf:0/3.21[static-libs]
+	|| (
+		$(gen_jre_rdepend)
+	)
+"
+DEPEND+="
+	${RDEPEND}
+"
+# SDK ver: https://github.com/grpc/grpc-java/blob/v1.54.2/android/build.gradle#L10
+BDEPEND+="
+	dev-java/gradle-bin:${GRADLE_PV}
+	|| (
+		$(gen_jre_rdepend)
+	)
+	android? (
+		dev-util/android-sdk-update-manager
+		dev-util/android-sdk-platform:29
+		dev-util/android-sdk-platform:30
+		dev-util/android-sdk-build-tools:30.0.2
+		dev-util/android-sdk-commandlinetools
+	)
+"
+
+GRADLE_PKGS_UNPACK_ANDROID=(
+)
+
+GRADLE_PKGS_UNPACK_NO_ANDROID=(
+)
+GRADLE_PKGS_URIS_ANDROID="
+"
+GRADLE_PKGS_URIS_NO_ANDROID="
+"
+
+gen_uris() {
+	local URIS=""
+	local uri
+
+	if [[ "${USE}" =~ "android" ]] ; then
+		URIS="${GRADLE_PKGS_URIS_ANDROID}"
+		echo " android? ( "
+	else
+		URIS="${GRADLE_PKGS_URIS_NO_ANDROID}"
+		echo " !android? ( "
+	fi
+
+	# Prevent collision same jar names but different namespace/content/hash
+	for uri in ${URIS} ; do
+		if [[ "${uri}" =~ "gradle/plugin" ]] ; then
+			local bn="${uri##*/}"
+			echo " ${uri} -> ${bn}2"
+		else
+			echo " ${uri} "
+		fi
+	done
+		echo " ) "
+}
+
+DOCS=( AUTHORS LICENSE NOTICE.txt README.md )
+PATCHES=(
+	"${FILESDIR}/${PN}-1.51.1-allow-sandbox-in-artifact-check.patch"
+)
+
+pkg_setup() {
+	if use java_slot_17 ; then
+		export JAVA_PKG_WANT_TARGET="17"
+		export JAVA_PKG_WANT_SOURCE="17"
+		export JAVA_SLOT="17"
+	elif use java_slot_11 ; then
+		export JAVA_PKG_WANT_TARGET="11"
+		export JAVA_PKG_WANT_SOURCE="11"
+		export JAVA_SLOT="11"
+	elif use java_slot_1.8 ; then
+		export JAVA_PKG_WANT_TARGET="1.8"
+		export JAVA_PKG_WANT_SOURCE="1.8"
+		export JAVA_SLOT="1.8"
+	fi
+
+	if ( [[ "${GEN_EBUILD}" == "1" ]] || use android || use doc ) \
+		&& has network-sandbox ${FEATURES} ; then
+eerror
+eerror "Building requires network-sandbox to be disabled in FEATURES on a"
+eerror "per-package level."
+eerror
+		die
+	fi
+	java-pkg-2_pkg_setup
+	java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
+	local java_vendor=$(java-pkg_get-vm-vendor)
+	if ! [[ "${java_vendor}" =~ "openjdk" ]] ; then
+ewarn
+ewarn "Java vendor mismatch.  Runtime failure or quirks may show."
+ewarn
+ewarn "Actual Java vendor:  ${java_vendor}"
+ewarn "Expected java vendor:  openjdk"
+ewarn
+	fi
+	use android && ewarn "The android USE flag is still in development"
+}
+
+unpack_gradle()
+{
+	local paths=()
+	IFS=$'\n'
+	if use android ; then
+		paths=(
+			${GRADLE_PKGS_UNPACK_ANDROID[@]}
+		)
+	else
+		paths=(
+			${GRADLE_PKGS_UNPACK_NO_ANDROID[@]}
+		)
+	fi
+	for x in ${paths[@]} ; do
+		[[ "${x}" =~ "gradle.plugin." ]] && x="${x}2"
+		d_rel="$(dirname ${x})"
+		local d_rel=$(dirname "${x}" \
+			| sed -r -e "s|/[0-9a-z]{38,40}||g" \
+			| tr "/" "\n" \
+			| sed -e "1s|[.]|/|g" \
+			| tr "\n" "/" \
+			| sed -e "s|/$||g")
+		local d_base="${WORKDIR}/.m2/repository"
+		local d="${d_base}/${d_rel}"
+		mkdir -p "${d}" || die
+		local s=$(realpath "${DISTDIR}/"$(basename ${x}))
+		einfo "Copying ${s} to ${d}"
+		cp -a "${s}" "${d}" || die
+
+		if [[ "${s}" =~ ".pom2" ]] ; then
+			mv "${d}"/$(basename "${s}") "${d}"/$(basename "${s/.pom2/.pom}") || die
+		fi
+		if [[ "${s}" =~ ".jar2" ]] ; then
+			mv "${d}"/$(basename "${s}") "${d}"/$(basename "${s/.jar2/.jar}") || die
+		fi
+	done
+	IFS=$' \t\n'
+}
+
+src_unpack() {
+	unpack ${P}.tar.gz
+	if [[ "${GEN_EBUILD}" == "1" ]] ; then
+		:
+	else
+		unpack_gradle
+	fi
+}
+
+add_localmaven() {
+	local path
+	for path in $(find "${WORKDIR}" -name "settings.gradle" -o -name "build.gradle") ; do
+		if grep -q -e "repositories {" "${path}" ; then
+			local pos
+			for pos in $(grep -n -e "repositories {" "${path}" | cut -f 1 -d ":" | tac) ; do
+				# Prevent deletion of .m2 with url instead of localMaven()
+				einfo "Editing ${path} at ${pos} for localMaven()"
+				sed -i -e "${pos}a maven { url '${WORKDIR}/.m2/repository' }" "${path}" || die
+			done
+		fi
+	done
+}
+
+src_configure() {
+	if [[ "${GEN_EBUILD}" == "1" ]] ; then
+		:
+	else
+		add_localmaven
+	fi
+	if use android ; then
+		echo "android.useAndroidX=true" > gradle.properties || die
+	fi
+	local bn=$(basename $(realpath "${ESYSROOT}/$(get_libdir)/ld-linux-"*".so.2") \
+		| sed  -e 's|[.]|\\.|g')
+	export ARTIFACT_CHECK_EXTRA="${bn}"
+}
+
+src_compile() {
+	einfo "USER:\t\t\t${USER}"
+	einfo "HOME:\t\t\t${HOME}"
+	export USER_HOME="${HOME}"
+	export GRADLE_USER_HOME="${USER_HOME}/.gradle"
+	if use android && [[ -z "${ANDROID_HOME}" ]] ; then
+		die "You need to \`source /etc/profile\`"
+	fi
+	if use android ; then
+		export ANDROID_SDK_ROOT="${ESYSROOT}/${ANDROID_HOME}"
+		export ANDROID_TOOLS="${ESYSROOT}/${ANDROID_HOME}/tools"
+		export ANDROID_PLATFORM_TOOLS="${ESYSROOT}/${ANDROID_HOME}/platform-tools"
+		export ANDROID_SDK_HOME="${HOME}/.android"
+		mkdir -p "${ANDROID_SDK_HOME}" || die
+		export PATH="${ESYSROOT}/usr/share/gradle-bin-${GRADLE_PV}/bin:${ANDROID_TOOLS}:${ANDROID_PLATFORM_TOOLS}:${PATH}"
+	fi
+	append-ldflags -L"${EPREFIX}/usr/$(get_libdir)"
+	append-cxxflags -I"${EPREFIX}/usr/include"
+	export LD_LIBRARY_PATH="${EPREFIX}/usr/$(get_libdir)"
+	if use android ; then
+		einfo "ANDROID_HOME:\t\t${ANDROID_HOME}"
+		einfo "ANDROID_SDK_ROOT:\t\t${ANDROID_SDK_ROOT}"
+		einfo "ANDROID_TOOLS:\t\t${ANDROID_TOOLS}"
+		einfo "ANDROID_PLATFORM_TOOLS:\t${ANDROID_PLATFORM_TOOLS}"
+	fi
+	einfo "GRADLE_USER_HOME:\t\t${GRADLE_USER_HOME}"
+	einfo "PATH:\t\t\t${PATH}"
+
+# For arches, see
+# https://docs.gradle.org/current/javadoc/org/gradle/nativeplatform/platform/Architecture.html
+
+	# See build.gradle
+	local arch_flag
+	if [[ "${ABI}" =~ "amd64" ]] ; then
+		arch_flag="-PtargetAarch=x86_64"
+	elif [[ "${ABI}" =~ "x86" ]] ; then
+		arch_flag="-PtargetAarch=x86_32"
+	elif [[ "${ABI}" =~ "ppc64" ]] ; then
+		arch_flag="-PtargetAarch=ppcle_64"
+	elif [[ "${ABI}" =~ "arm64" ]] ; then
+		arch_flag="-PtargetAarch=aarch_64"
+	elif [[ "${ABI}" =~ "s390" ]] ; then
+		arch_flag="-PtargetAarch=s390_64"
+	elif [[ "${ABI}" =~ "loong" ]] ; then
+		arch_flag="-PtargetAarch=loongarch_64"
+	# else
+	#	autodetect
+	fi
+
+	# Breaks if -j1 or -Dorg.gradle.parallel=false
+	local args=(
+		${arch_flag}
+		-Dgradle.user.home="${USER_HOME}"
+		-Djava.util.prefs.systemRoot="${USER_HOME}/.java"
+		-Djava.util.prefs.userRoot="${USER_HOME}/.java/.userPrefs"
+		-Dmaven.repo.local="${USER_HOME}/.m2/repository"
+		-Dorg.gradle.parallel=true
+		-Duser.home="${WORKDIR}/homedir"
+		-i
+		-Pprotoc="${ESYSROOT}/usr/bin/protoc"
+		-PskipAndroid=$(usex !android "true" "false")
+	)
+
+	# From Included projects: in logs
+	local TG=(
+		":grpc-all"
+		":grpc-alts"
+		":grpc-api"
+		":grpc-auth"
+		":grpc-authz"
+		":grpc-benchmarks"
+		":grpc-bom"
+		":grpc-census"
+		":grpc-compiler"
+		":grpc-context"
+		":grpc-core"
+		":grpc-gae-interop-testing-jdk8"
+		":grpc-gcp-observability"
+		":grpc-googleapis"
+		":grpc-grpclb"
+		":grpc-interop-testing"
+		":grpc-istio-interop-testing"
+		":grpc-netty"
+		":grpc-netty-shaded"
+		":grpc-okhttp"
+		":grpc-protobuf"
+		":grpc-protobuf-lite"
+		":grpc-rls"
+		":grpc-services"
+		":grpc-stub"
+		":grpc-testing"
+		":grpc-testing-proto"
+		":grpc-xds"
+	)
+
+	if use android ; then
+		TG+=(
+			":grpc-android"
+			":grpc-android-interop-testing"
+			":grpc-binder"
+			":grpc-cronet"
+		)
+	fi
+
+	if ! use doc ; then
+		local t
+		for t in ${TG[@]} ; do
+			[[ "${t}" =~ ":grpc-bom" ]] && continue
+			args+=( -x "${t}:javadoc" )
+		done
+	fi
+
+	if ! use test ; then
+		local t
+		for t in ${TG[@]} ; do
+			[[ "${t}" =~ ":grpc-bom" ]] && continue
+			args+=( -x "${t}:test" )
+		done
+	fi
+
+	export 'GRADLE_OPTS=-Dorg.gradle.jvmargs='\''-Xmx1g'\'''
+	mkdir -p "${WORKDIR}/homedir" || die
+
+einfo "GRADLE_OPTS:\t\t\t${GRADLE_OPTS}"
+
+einfo "gradle build ${flags} ${args[@]}"
+
+	gradle \
+		build \
+		${args[@]} \
+		|| die
+	if [[ "${GEN_EBUILD}" == "1" ]] ; then
+einfo
+einfo "Update GRADLE_PKGS_URIS:"
+einfo
+		grep -o -E -r -e "http[s]?://.*(\.jar|\.pom|\.signature) " \
+			"${T}/build.log" \
+			| sort \
+			| uniq \
+			| sed -e "s| ||g"
+
+einfo
+einfo "Update GRADLE_PKGS_UNPACK:"
+einfo
+		# For EPREFIX offset adjust 12-
+		find "${HOME}/caches/modules-2/files-2.1/" \
+			-name "*.pom" \
+			-o -name "*.jar" \
+			-o -name "*.signature" \
+			-not -type d \
+			| cut -f 11- -d "/" \
+			| sort \
+			| uniq
+		die
+	fi
+	addpredict /var/lib/portage/home/.java
+	gradle \
+		publishToMavenLocal \
+		${args[@]} \
+		|| die
+}
+
+src_install() {
+	local modules=(
+		$(ls -1 "${HOME}/.m2/repository/io/grpc")
+	)
+
+	for m in ${modules[@]} ; do
+		if [[ ! -e "${HOME}/.m2/repository/io/grpc/${m}/${PV}/${m}-${PV}.jar" ]] ; then
+ewarn "Skipping ${HOME}/.m2/repository/io/grpc/${m}/${PV}/${m}-${PV}.jar and related jars"
+			continue
+		fi
+		java-pkg_jarinto "/usr/share/${PN}/lib"
+		java-pkg_newjar \
+			"${HOME}/.m2/repository/io/grpc/${m}/${PV}/${m}-${PV}.jar" \
+			"${m}.jar"
+		java-pkg_jarinto "/usr/share/${PN}/html/api"
+		use doc && java-pkg_newjar \
+			"${HOME}/.m2/repository/io/grpc/${m}/${PV}/${m}-${PV}-javadoc.jar" \
+			"${m}-javadoc.jar"
+		java-pkg_jarinto "/usr/share/${PN}/source"
+		use source && java-pkg_newjar \
+			"${HOME}/.m2/repository/io/grpc/${m}/${PV}/${m}-${PV}-sources.jar" \
+			"${m}-sources.jar"
+	done
+
+	einstalldocs
+}
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
