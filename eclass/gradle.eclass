@@ -70,6 +70,7 @@ egradle() {
 		-Djava.util.prefs.userRoot="${USER_HOME}/.java/.userPrefs"
 		-Dmaven.repo.local="${USER_HOME}/.m2/repository"
 		-Duser.home="${WORKDIR}/homedir"
+		-i
 	)
 	edo gradle "$@" ${options[@]}
 }

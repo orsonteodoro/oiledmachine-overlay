@@ -255,14 +255,12 @@ einfo "PATH:\t\t\t${PATH}"
 	local args=(
 		${arch_flag}
 		-Dorg.gradle.parallel=true
-		-i
 		-Pprotoc="${ESYSROOT}/usr/bin/protoc"
 		-PskipAndroid=$(usex !android "true" "false")
 	)
 	local codegen_plugin_args=(
 		${arch_flag}
 		-Dorg.gradle.parallel=true
-		-i
 		-Pprotoc="${ESYSROOT}/usr/bin/protoc"
 		-PskipAndroid=$(usex !android "true" "false")
 	)
