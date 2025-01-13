@@ -222,6 +222,9 @@ src_prepare() {
 
 src_configure() {
 	rocm_set_default_gcc
+	if use system-dyninst ; then
+		append-cppflags -I"${ESYSROOT}/usr/include/dyninst"
+	fi
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DENABLE_DEBUGINFOD=$(usex debuginfod)
