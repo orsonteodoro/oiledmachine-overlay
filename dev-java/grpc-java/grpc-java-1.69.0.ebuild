@@ -10,7 +10,7 @@ PROTOBUF_PV="29.0"
 
 inherit flag-o-matic gradle java-pkg-2
 
-#KEYWORDS="~amd64" # Unfinished
+#KEYWORDS="~amd64" # Build untested
 S="${WORKDIR}/${P}"
 SRC_URI+="
 https://github.com/grpc/grpc-java/archive/refs/tags/v${PV}.tar.gz
