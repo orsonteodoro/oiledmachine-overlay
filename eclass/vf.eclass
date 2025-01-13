@@ -64,7 +64,7 @@ einfo "${id}:  ${vulnerability_classes} (${SEVERITY_LABEL} ${severity})"
 	# or more DoS, DT, ID.
 	#
 einfo
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "CE" ]] ; then
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ ("ACE"|"CE") ]] ; then
 einfo "CE = Code Execution"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "CI" ]] ; then
