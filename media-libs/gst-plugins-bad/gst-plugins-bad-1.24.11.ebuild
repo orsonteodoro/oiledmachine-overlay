@@ -90,13 +90,26 @@ REQUIRED_USE="
 		vulkan
 	)
 "
+PATENT_STATUS_RDEPEND="
+	!patent_status_nonfree? (
+		!media-libs/amf-headers
+		!media-libs/libva
+		!media-libs/libvpl
+		!media-libs/intel-mediasdk
+		!media-libs/oneVPL-cpu
+		!media-libs/vaapi-drivers
+		!media-libs/vpl-gpu-rt
+		!media-video/amdgpu-pro-amf
+	)
+	virtual/patent-status[patent_status_nonfree=]
+"
 RDEPEND="
+	${PATENT_STATUS_RDEPEND}
 	!media-plugins/gst-plugins-va
 	!media-plugins/gst-transcoder
 	>=dev-libs/glib-2.64.0:2[${MULTILIB_USEDEP}]
 	~media-libs/gstreamer-${PV}:${SLOT}[${MULTILIB_USEDEP},introspection?]
 	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP},introspection?]
-	virtual/patent-status[patent_status_nonfree=]
 	amf? (
 		media-libs/amf-headers
 		media-video/amdgpu-pro-amf[video_cards_amdgpu?]
