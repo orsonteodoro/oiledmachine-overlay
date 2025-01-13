@@ -160,9 +160,9 @@ LTO_TYPE="" # Global variable
 MESA_PV="20.3.5"
 MITIGATION_DATE="Jan 7, 2025" # Official annoucement (blog)
 MITIGATION_LAST_UPDATE=1736191860 # From `date +%s -d "2025-01-06 11:31 AM PST"` From tag in GH
-MITIGATION_URI="https://chromereleases.googleblog.com/2024/12/stable-channel-update-for-desktop_10.html"
+MITIGATION_URI="https://chromereleases.googleblog.com/2025/01/stable-channel-update-for-desktop.html"
 VULNERABILITIES_FIXED=(
-	"CVE-2025-0291;CE,DoS,DT,ID;High"
+	"CVE-2025-0291;CE, DoS, DT, ID;High"
 )
 NABIS=0 # Global variable
 NODE_VERSION=20
@@ -1889,7 +1889,7 @@ ewarn "Expected file count:  ${tc_count_expected}"
 ewarn
 	fi
 
-	local sources_count_expected=714617
+	local sources_count_expected=1242463
 	local sources_count_actual=$(find "/usr/share/chromium/sources" -type f | wc -l)
 	if (( ${sources_count_actual} != ${sources_count_expected} )) ; then
 ewarn
