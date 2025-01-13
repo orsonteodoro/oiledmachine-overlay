@@ -82,6 +82,9 @@ MODULES=(
 	webrtc
 	webrtchttp
 )
+PATENT_STATUS_IUSE=(
+	patent_status_nonfree
+)
 PYTHON_COMPAT=( python3_{8..11} )
 
 if [[ "${MY_PV}" =~ "9999" ]] ; then
@@ -746,92 +749,237 @@ SLOT="1.0/$(ver_cut 1-2 ${MY_PV})" # 1.0 is same as media-libs/gstreamer
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${MODULES[@]}
+${PATENT_STATUS_IUSE[@]}
 aom doc nvcodec openh264 qsv rav1e system-libsodium va vaapi vpx vulkan x264 x265
 ebuild_revision_1
 "
 WEBRTC_AV1_ENCODERS_REQUIRED_USE="
-	|| (
-		aom
-		nvcodec
-		rav1e
-		va
+	!patent_status_nonfree? (
+		|| (
+			aom
+			rav1e
+			va
+		)
+		!nvcodec
+	)
+	patent_status_nonfree? (
+		|| (
+			aom
+			nvcodec
+			rav1e
+			va
+		)
 	)
 "
 WEBRTC_H264_ENCODERS_REQUIRED_USE="
-	|| (
-		nvcodec
-		qsv
-		openh264
-		va
-		vaapi
-		x264
+	!patent_status_nonfree? (
+		!nvcodec
+		!qsv
+		!openh264
+		!va
+		!vaapi
+		!x264
+	)
+	patent_status_nonfree? (
+		|| (
+			nvcodec
+			qsv
+			openh264
+			va
+			vaapi
+			x264
+		)
 	)
 "
 WEBRTC_H265_ENCODERS_REQUIRED_USE="
-	|| (
-		nvcodec
-		qsv
-		va
-		vaapi
-		x265
+	!patent_status_nonfree? (
+		!nvcodec
+		!qsv
+		!va
+		!vaapi
+		!x265
+	)
+	patent_status_nonfree? (
+		|| (
+			nvcodec
+			qsv
+			va
+			vaapi
+			x265
+		)
 	)
 "
 WEBRTC_VP8_ENCODERS_REQUIRED_USE="
-	|| (
-		vpx
+	!patent_status_nonfree? (
+		|| (
+			vpx
+		)
+	)
+	patent_status_nonfree? (
+		|| (
+			vpx
+		)
 	)
 "
 WEBRTC_VP9_ENCODERS_REQUIRED_USE="
-	|| (
-		qsv
-		vpx
+	!patent_status_nonfree? (
+		!qsv
+		|| (
+			vpx
+		)
+	)
+	patent_status_nonfree? (
+		|| (
+			qsv
+			vpx
+		)
 	)
 "
 
 WEBRTC_AV1_DECODERS_REQUIRED_USE="
-	|| (
-		aom
-		nvcodec
-		va
-		vaapi
+	!patent_status_nonfree? (
+		!nvcodec
+		!va
+		!vaapi
+		|| (
+			aom
+		)
+	)
+	patent_status_nonfree? (
+		|| (
+			aom
+			nvcodec
+			va
+			vaapi
+		)
 	)
 "
 WEBRTC_H264_DECODERS_REQUIRED_USE="
-	|| (
-		nvcodec
-		openh264
-		qsv
-		va
-		vaapi
-		vulkan
+	!patent_status_nonfree? (
+		!nvcodec
+		!openh264
+		!qsv
+		!va
+		!vaapi
+		!vulkan
+	)
+	patent_status_nonfree? (
+		|| (
+			nvcodec
+			openh264
+			qsv
+			va
+			vaapi
+			vulkan
+		)
 	)
 "
 WEBRTC_H265_DECODERS_REQUIRED_USE="
-	|| (
-		nvcodec
-		qsv
-		va
-		vaapi
-		vulkan
+	!patent_status_nonfree? (
+		!nvcodec
+		!qsv
+		!va
+		!vaapi
+		!vulkan
+	)
+	patent_status_nonfree? (
+		|| (
+			nvcodec
+			qsv
+			va
+			vaapi
+			vulkan
+		)
 	)
 "
 WEBRTC_VP8_DECODERS_REQUIRED_USE="
-	|| (
-		nvcodec
-		va
-		vpx
+	!patent_status_nonfree? (
+		!nvcodec
+		!va
+		|| (
+			vpx
+		)
+	)
+	patent_status_nonfree? (
+		|| (
+			nvcodec
+			va
+			vpx
+		)
 	)
 "
 WEBRTC_VP9_DECODERS_REQUIRED_USE="
-	|| (
-		nvcodec
-		qsv
-		va
-		vaapi
-		vpx
+	!patent_status_nonfree? (
+		!nvcodec
+		!qsv
+		!va
+		!vaapi
+		|| (
+			vpx
+		)
+	)
+	patent_status_nonfree? (
+		|| (
+			nvcodec
+			qsv
+			va
+			vaapi
+			vpx
+		)
+	)
+"
+# The flavors plugin references aac and h264 and no way to hard disable those codepaths.
+# The mp4 plugin references aac and h264 and no way to hard disable those codepaths.
+PATENT_STATUS_REQUIRED_USE="
+	!patent_status_nonfree? (
+		!flavors
+		!fmp4
+		!hlssink3
+		!nvcodec
+		!openh264
+		!qsv
+		!va
+		!vaapi
+		!vulkan
+		!x264
+		!x265
+	)
+	flavors? (
+		patent_status_nonfree
+	)
+	fmp4? (
+		patent_status_nonfree
+	)
+	hlssink3? (
+		patent_status_nonfree
+	)
+	nvcodec? (
+		patent_status_nonfree
+	)
+	openh264? (
+		patent_status_nonfree
+	)
+	qsv? (
+		patent_status_nonfree
+	)
+	va? (
+		patent_status_nonfree
+	)
+	vaapi? (
+		patent_status_nonfree
+	)
+	vulkan? (
+		patent_status_nonfree
+	)
+	x264? (
+		patent_status_nonfree
+	)
+	x265? (
+		patent_status_nonfree
 	)
 "
 REQUIRED_USE+="
+	${PATENT_STATUS_REQUIRED_USE}
 	^^ (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
