@@ -1,0 +1,10 @@
+--- a/compiler/check-artifact.sh.orig	2023-06-29 15:34:21.000000000 -0700
++++ b/compiler/check-artifact.sh	2025-01-12 15:48:26.696165112 -0800
+@@ -122,6 +122,7 @@ checkDependencies ()
+       dump_cmd='powerpc64le-linux-gnu-objdump -x '"$1"' |grep "NEEDED"'
+       white_list="linux-vdso64\.so\.1\|libpthread\.so\.0\|libm\.so\.6\|libc\.so\.6\|ld64\.so\.2"
+     fi
++    white_list+="|libsandbox\.so"
+   elif [[ "$OS" == osx ]]; then
+     dump_cmd='otool -L '"$1"' | fgrep dylib'
+     white_list="libz\.1\.dylib\|libc++.1.dylib\|libstdc++\.6\.dylib\|libSystem\.B\.dylib"

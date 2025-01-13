@@ -104,7 +104,7 @@ SLOT="0"
 IUSE+="
 ${JAVA_COMPAT[@]}
 android codegen doc source test
-ebuild_revision_1
+ebuild_revision_2
 "
 # Cannot fix at the moment ANDROID_HOME="/var/lib/portage/home/.android" sandbox violation
 #	!android
@@ -155,9 +155,11 @@ BDEPEND+="
 DOCS=( "AUTHORS" "LICENSE" "NOTICE.txt" "README.md" )
 PATCHES=(
 	"${FILESDIR}/${PN}-1.51.1-allow-sandbox-in-artifact-check.patch"
+	"${FILESDIR}/${PN}-1.54.2-allow-sandbox-so.patch"
 )
 
 pkg_setup() {
+	gradle_check_network_sandbox
 	if use java_slot_17 ; then
 		export JAVA_PKG_WANT_TARGET="17"
 		export JAVA_PKG_WANT_SOURCE="17"
@@ -184,6 +186,11 @@ ewarn "Expected java vendor:  openjdk"
 ewarn
 	fi
 	use android && ewarn "The android USE flag is still in development"
+}
+
+src_prepare() {
+	default
+	java-pkg-2_src_prepare
 }
 
 src_configure() {
@@ -330,16 +337,6 @@ einfo "PATH:\t\t\t${PATH}"
 		done
 	fi
 
-	# Prevent the following
-#Checking for unexpected dependencies ...
-#        libsandbox.so => /usr/lib64/libsandbox.so (0x00007f74a485e000)
-#ERROR: found unexpected dependencies (listed above).
-	if use codegen ; then
-		args+=(
-			-x ":grpc-compiler:checkArtifacts"
-		)
-	fi
-
 	export 'GRADLE_OPTS=-Dorg.gradle.jvmargs='\''-Xmx1g'\'''
 	mkdir -p "${WORKDIR}/homedir" || die
 
@@ -354,6 +351,12 @@ einfo "Building codegen plugin"
 			egradle \
 				"java_pluginExecutable" \
 				${codegen_plugin_args[@]}
+			egradle \
+				"buildArtifacts" \
+				${codegen_plugin_args[@]}
+			egradle \
+				"publishToMavenLocal" \
+				${args[@]}
 		popd >/dev/null 2>&1 || die
 	fi
 
@@ -361,13 +364,6 @@ einfo "Building codegen plugin"
 		"build" \
 		${args[@]}
 	addpredict "/var/lib/portage/home/.java"
-	if use codegen ; then
-		mkdir -p "${S}/compiler/build/artifacts/java_plugin" || die
-		cp -a \
-			"${S}/compiler/build/exe/java_plugin/protoc-gen-grpc-java" \
-			"${S}/compiler/build/artifacts/java_plugin/protoc-gen-grpc-java.exe" \
-			|| die
-	fi
 	egradle \
 		"publishToMavenLocal" \
 		${args[@]}
@@ -396,6 +392,14 @@ ewarn "Skipping ${HOME}/.m2/repository/io/grpc/${m}/${PV}/${m}-${PV}.jar and rel
 			"${HOME}/.m2/repository/io/grpc/${m}/${PV}/${m}-${PV}-sources.jar" \
 			"${m}-sources.jar"
 	done
+
+	if use codegen ; then
+		exeinto "/usr/bin"
+		doexe "${S}/compiler/build/exe/java_plugin/protoc-gen-grpc-java"
+		dosym \
+			"/usr/bin/protoc-gen-grpc-java" \
+			"/usr/bin/protoc-gen-grpc-java.exe"
+	fi
 
 	einstalldocs
 }
