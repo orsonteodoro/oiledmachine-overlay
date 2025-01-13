@@ -1036,9 +1036,13 @@ CARGO_BINDINGS_DEPENDS_GTK4="
 	>=x11-libs/gdk-pixbuf-2.36.8[introspection]
 "
 
+PATENT_STATUS_RDEPEND="
+	virtual/patent-status[patent_status_nonfree=]
+"
 RDEPEND+="
 	${CARGO_BINDINGS_DEPENDS_GLIB}
 	${GST_PLUGINS_META}
+	${PATENT_STATUS_RDEPEND}
 	>=media-plugins/gst-plugins-meta-${GST_PV}:1.0[${MULTILIB_USEDEP}]
 	aws? (
 		>=dev-libs/openssl-3.0.11[${MULTILIB_USEDEP}]
