@@ -40,7 +40,7 @@
       Build the audio effects plugin using Csound
     </flag>
     <flag name="dav1d">
-      Build the Dav1d Plugin for decoding AV1 video
+      Build the dav1d Plugin for decoding AV1 video
     </flag>
     <flag name="fallback-commit">
       Fallback to the commit snapshot with same dependencies and tested applied
