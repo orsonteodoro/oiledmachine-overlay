@@ -488,6 +488,7 @@ VULNERABILITIES_FIXED=(
 	"CVE-2024-57875;DP;Medium to High"
 	"CVE-2024-52332;DP;Medium to High"
 	"CVE-2024-57880;OOB, MT;Medium to High"
+	"CVE-2024-57879;IF, DoS;Medium to High"
 	"CVE-2024-41932;RC, DoS;Medium" # if panic_on_warn=1 for < 5.14
 	"CVE-2024-53680;UB, UM;?"
 	"CVE-2024-57878;UM;?"
@@ -541,7 +542,6 @@ VULNERABILITIES_FIXED=(
 	"CVE-2024-49569;DoS;Medium"
 	"CVE-2024-48881;DoS;Medium"
 	"CVE-2024-48876;DoS;Medium"
-	"CVE-2024-57879;IF,DoS;Medium to High"
 	"CVE-2024-55639;?;?"
 	"CVE-2024-56786;UAF, DoS;Medium"
 	"CVE-2024-56784;DoS, DT, ID;High"
