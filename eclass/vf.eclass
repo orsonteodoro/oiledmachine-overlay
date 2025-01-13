@@ -85,9 +85,9 @@ einfo "DP = Dangling Pointer"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "DT" ]] ; then
 einfo "DT = Data Tampering"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "EMT" ]] ; then
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ ("EM"|"EMA") ]] ; then
 # CVSS 3.1 - AV:P/PR:N/UI:N/C:H
-einfo "EMT = Evil Maid Attack"
+einfo "EMA = Evil Maid Attack"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ID" ]] ; then
 einfo "ID = Information Disclosure"
