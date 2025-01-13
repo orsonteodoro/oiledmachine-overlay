@@ -496,11 +496,13 @@ eerror "Detected database failure."
 einfo "Generate new SECRET_KEY? [Y/n]"
 		read
 		if [[ "${REPLY^^}" == "Y" || -z "${REPLY}" ]] ; then
-			local pass=$(cat <<EOF | "${EPYTHON}"
+cat <<EOF > "${T}/gen_pass"
 from django.utils.crypto import get_random_string
 chars = 'abcdefghijklmnopqrstuvwxyz0123456789@#%^*(-_=+)' # removed !$& because of bash
 print(get_random_string(50, chars))
-EOF)
+EOF
+			chmod +x "${T}/gen_pass" || die
+			local pass=$("${EPYTHON}" "${T}/gen_pass")
 			sed -i \
 				-e "s|TO_BE_CHANGED_AFTER_INSTALL|${pass}|g" \
 				"/etc/webhashcat/WebHashcat/settings.py" \
