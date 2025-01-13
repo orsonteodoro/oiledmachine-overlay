@@ -90,7 +90,7 @@ set_vhost_config_with_ssl() {
 	WEBHASHCAT_ADDRESS=${WEBHASHCAT_ADDRESS:-"localhost"}
 	WEBHASHCAT_PORT=${WEBHASHCAT_PORT:-8080}
 	insinto "/etc/apache2/vhosts.d"
-cat <<EOF > "${T}/40_webhashcat-2.4.conf" # Apache 2.4
+cat <<EOF > "${T}/40_webhashcat-2.4.conf" || die # Apache 2.4
 Define APACHE_LOG_DIR /var/log/apache2
 Listen ${WEBHASHCAT_PORT}
 
@@ -124,7 +124,7 @@ set_vhost_config_without_ssl() {
 	WEBHASHCAT_ADDRESS=${WEBHASHCAT_ADDRESS:-"localhost"}
 	WEBHASHCAT_PORT=${WEBHASHCAT_PORT:-8080}
 	insinto "/etc/apache2/vhosts.d"
-cat <<EOF > "${T}/40_webhashcat-2.4.conf" # Apache 2.4
+cat <<EOF > "${T}/40_webhashcat-2.4.conf" || die # Apache 2.4
 Define APACHE_LOG_DIR /var/log/apache2
 Listen ${WEBHASHCAT_PORT}
 
@@ -303,7 +303,7 @@ src_install() {
 
 		insinto /etc/systemd/system/
 		doins systemd/hashcatnode.service
-cat <<EOF > "${T}/hashcatnode"
+cat <<EOF > "${T}/hashcatnode" || die
 #!/bin/bash
 cd "/usr/lib/${EPYTHON}/site-packages/HashcatNode/"
 ${EPYTHON} hashcatnode.py \$@
@@ -336,7 +336,7 @@ EOF
 			supervisor/webhashcat_celery.conf \
 			supervisor/webhashcat_celerybeat.conf
 		dodir /usr/bin
-cat <<EOF > "${T}/webhashcat"
+cat <<EOF > "${T}/webhashcat" || die
 #!/bin/bash
 cd "/usr/lib/${EPYTHON}/site-packages/WebHashcat/"
 ./manage.py runserver \$@
@@ -477,7 +477,7 @@ einfo "Clean install webhashcat database and user? [Y/n]"
 		read
 		if [[ "${REPLY^^}" == "Y" || -z "${REPLY}" ]] ; then
 einfo "Creating database and database non-root user webhashcat with SQL server and database user root..."
-mysql -h "127.0.0.1" -u root -p <<EOF
+mysql -h "127.0.0.1" -u root -p <<EOF || die
 DROP DATABASE IF EXISTS webhashcat;
 DROP USER IF EXISTS webhashcat;
 FLUSH PRIVILEGES;
@@ -496,7 +496,7 @@ eerror "Detected database failure."
 einfo "Generate new SECRET_KEY? [Y/n]"
 		read
 		if [[ "${REPLY^^}" == "Y" || -z "${REPLY}" ]] ; then
-cat <<EOF > "${T}/gen_pass"
+cat <<EOF > "${T}/gen_pass" || die
 from django.utils.crypto import get_random_string
 chars = 'abcdefghijklmnopqrstuvwxyz0123456789@#%^*(-_=+)' # removed !$& because of bash
 print(get_random_string(50, chars))
