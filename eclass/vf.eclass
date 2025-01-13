@@ -79,11 +79,14 @@ einfo "DoS = Denial of Service"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "DF" ]] ; then
 einfo "DF = Double Free"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "DP" ]] ; then
+einfo "DP = Dangling Pointer"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "DT" ]] ; then
 einfo "DT = Data Tampering"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "EMT" ]] ; then
-# CVSS 3.1 - AV:L/PR:N/UI:N/C:H
+# CVSS 3.1 - AV:P/PR:N/UI:N/C:H
 einfo "EMT = Evil Maid Attack"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ID" ]] ; then
@@ -118,6 +121,15 @@ einfo "TC = Type Confusion"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ToCToU" ]] ; then
 einfo "ToCToU = Time of Check Time of Use Race Condition"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "UB" ]] ; then
+einfo "UB = Undefined Behavior"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "UM" ]] ; then
+einfo "UM = Uninitialized Memory"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "UV" ]] ; then
+einfo "UV = Uninitialized Value"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "UAF" ]] ; then
 einfo "UAF = Use After Free"
