@@ -65,6 +65,7 @@ einfo "${id}:  ${vulnerability_classes} (${SEVERITY_LABEL} ${severity})"
 	#
 einfo
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ ("ACE"|"CE") ]] ; then
+# Arbitrary Code Execution
 einfo "CE = Code Execution"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "CI" ]] ; then
@@ -92,6 +93,10 @@ einfo "EMA = Evil Maid Attack"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ID" ]] ; then
 einfo "ID = Information Disclosure"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ ("IF"|"IR") ]] ; then
+# Improper Release
+einfo "IF = Improper Free"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "IP" ]] ; then
 einfo "IP = Improper Permissions"
 		fi
@@ -99,7 +104,8 @@ einfo "IP = Improper Permissions"
 einfo "MC = Memory Corruption"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ ("MT"|"US") ]] ; then
-einfo "MT = Missing Terminator Character or Unterminated String"
+# Unterminated String
+einfo "MT = Missing Terminator Character"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "NPD" ]] ; then
 einfo "NPD = Null Pointer Dereference"
@@ -108,6 +114,8 @@ einfo "NPD = Null Pointer Dereference"
 einfo "OOB = Out Of Bounds Access"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ ("PE"|"EP"|"EoP") ]] ; then
+# Escalated Privileges
+# Escalation of Privileges
 einfo "PE = Privilege Escalation"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "PI" ]] ; then
