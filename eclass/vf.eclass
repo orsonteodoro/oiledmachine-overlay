@@ -98,6 +98,9 @@ einfo "IP = Improper Permissions"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "MC" ]] ; then
 einfo "MC = Memory Corruption"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ ("MT"|"US") ]] ; then
+einfo "MT = Missing Terminator Character or Unterminated String"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "NPD" ]] ; then
 einfo "NPD = Null Pointer Dereference"
 		fi
