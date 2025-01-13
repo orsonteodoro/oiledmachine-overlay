@@ -1,0 +1,14 @@
+diff '--color=auto' -urp dyninst-13.0.0.orig/cmake/DyninstLibrarySettings.cmake dyninst-13.0.0/cmake/DyninstLibrarySettings.cmake
+--- dyninst-13.0.0.orig/cmake/DyninstLibrarySettings.cmake	2024-02-29 15:12:39.000000000 -0800
++++ dyninst-13.0.0/cmake/DyninstLibrarySettings.cmake	2025-01-12 19:18:51.750074695 -0800
+@@ -26,8 +26,8 @@ else()
+ endif()
+ 
+ set(DYNINST_INSTALL_BINDIR "bin")
+-set(DYNINST_INSTALL_LIBDIR "lib")
+-set(DYNINST_INSTALL_INCLUDEDIR "include")
++set(DYNINST_INSTALL_LIBDIR "lib" CACHE)
++set(DYNINST_INSTALL_INCLUDEDIR "include" CACHE)
+ set(DYNINST_INSTALL_CMAKEDIR "${DYNINST_INSTALL_LIBDIR}/cmake/Dyninst")
+ 
+ # -- Set up the RPATH ---
