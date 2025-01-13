@@ -7,8 +7,8 @@ diff '--color=auto' -urp dyninst-13.0.0.orig/cmake/DyninstLibrarySettings.cmake 
  set(DYNINST_INSTALL_BINDIR "bin")
 -set(DYNINST_INSTALL_LIBDIR "lib")
 -set(DYNINST_INSTALL_INCLUDEDIR "include")
-+set(DYNINST_INSTALL_LIBDIR "lib" CACHE)
-+set(DYNINST_INSTALL_INCLUDEDIR "include" CACHE)
++set(DYNINST_INSTALL_LIBDIR "lib" CACHE STRING "install path for lib")
++set(DYNINST_INSTALL_INCLUDEDIR "include/dyninst" CACHE STRING "install path for includes")
  set(DYNINST_INSTALL_CMAKEDIR "${DYNINST_INSTALL_LIBDIR}/cmake/Dyninst")
  
  # -- Set up the RPATH ---

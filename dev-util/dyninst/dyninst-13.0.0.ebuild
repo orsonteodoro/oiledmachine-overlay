@@ -27,7 +27,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 -debuginfod +openmp -valgrind
-ebuild_revision_4
+ebuild_revision_6
 "
 REQUIRED_USE="
 "
@@ -54,7 +54,7 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-13.0.0-disable-exact-version-elfutils.patch"
 	"${FILESDIR}/${PN}-13.0.0-use-system-elfutils.patch"
-#	"${FILESDIR}/${PN}-13.0.0-cache-install-paths.patch"
+	"${FILESDIR}/${PN}-13.0.0-cache-install-paths.patch"
 )
 DOCS=( "CHANGELOG.md" )
 
@@ -81,7 +81,6 @@ src_configure() {
 		-DADD_VALGRIND_ANNOTATIONS=$(usex valgrind)
 		-DCMAKE_INSTALL_PREFIX="/usr"
 		-DDYNINST_INSTALL_LIBDIR="$(get_libdir)"
-		-DDYNINST_INSTALL_INCLUDEDIR="${PN}/include" # Prevent breaking gnome-base/gvfs build
 		-DENABLE_DEBUGINFOD=$(usex debuginfod)
 		-DUSE_OpenMP=$(usex openmp)
 	)
