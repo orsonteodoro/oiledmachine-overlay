@@ -61,10 +61,7 @@ RDEPEND_DRIVERS="
 		)
 	)
 	video_cards_nvidia? (
-		|| (
-			>=media-libs/libva-vdpau-driver-0.7.4-r1[${MULTILIB_USEDEP}]
-			media-plugins/nvidia-vaapi-driver
-		)
+		media-plugins/nvidia-vaapi-driver
 		x11-drivers/nvidia-drivers
 	)
 	video_cards_r600? (
