@@ -5,7 +5,6 @@
 EAPI=8
 
 # TODO package:
-# pytorch-triton-rocm
 # tensorrt
 # tensorrt_cu12
 # tensorrt-cu12_libs
@@ -67,6 +66,10 @@ MODELS=(
 	"scunet_color_real_psnr.pth;Apache-2.0"
 )
 MY_PN="${PN}-RVE"
+ROCM_SLOTS=(
+	rocm_6_0
+	rocm_5_7
+)
 
 inherit python-single-r1
 
@@ -172,6 +175,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 # cx-Freeze is currently broken
 IUSE+="
+${ROCM_SLOTS[@]}
 fp16 cuda rocm svt-av1 tensorrt vpx vulkan wayland X x264 x265
 ebuild_revision_13
 "
@@ -182,6 +186,11 @@ REQUIRED_USE="
 	!rocm
 	!tensorrt
 	vulkan
+	rocm? (
+		|| (
+			${ROCM_SLOTS[@]}
+		)
+	)
 	|| (
 		svt-av1
 		vpx
@@ -258,9 +267,12 @@ NCNN_DEPEND="
 "
 ROCM_DEPEND="
 	$(python_gen_cond_dep '
-		>=dev-python/pytorch-triton-rocm-2.3.1[${PYTHON_USEDEP}]
+		|| (
+			=dev-python/triton-2.1*[${PYTHON_USEDEP},rocm,rocm_5_7,rocm_6_0?]
+		)
+		dev-python/triton:=
 	')
-	=sci-libs/pytorch-2.3*[${PYTHON_SINGLE_USEDEP}]
+	=sci-libs/pytorch-2.3*[${PYTHON_SINGLE_USEDEP},rocm_5_7?,rocm_6_0?]
 	sci-libs/pytorch:=
 	=sci-libs/torchvision-0.18*[${PYTHON_SINGLE_USEDEP}]
 	sci-libs/torchvision:=
