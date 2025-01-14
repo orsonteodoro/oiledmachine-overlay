@@ -4,6 +4,9 @@
 EAPI=8
 
 LUA_COMPAT=( "lua5-"{1..2} "luajit" )
+PATENT_STATUS_IUSE=(
+	patent_status_nonfree
+)
 PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit flag-o-matic lua-single meson optfeature pax-utils python-single-r1 xdg
@@ -38,12 +41,30 @@ RESTRICT="
 "
 SLOT="0/2" # soname
 IUSE="
+${PATENT_STATUS_IUSE[@]}
 +X +alsa aqua archive bluray cdda +cli coreaudio debug +drm dvb dvd +egl gamepad
 +iconv jack javascript jpeg lcms libcaca +libmpv +lua network nvenc openal opengl
 pipewire pulseaudio rubberband sdl selinux sixel sndio soc test tools +uchardet
 vaapi vapoursynth vdpau vulkan wayland xv zimg zlib
 "
+PATENT_STATUS_REQUIRED_USE="
+	!patent_status_nonfree? (
+		!nvenc
+		!vdpau
+		!vaapi
+	)
+	nvenc? (
+		patent_status_nonfree
+	)
+	vaapi? (
+		patent_status_nonfree
+	)
+	vdpau? (
+		patent_status_nonfree
+	)
+"
 REQUIRED_USE="
+	${PATENT_STATUS_REQUIRED_USE}
 	${PYTHON_REQUIRED_USE}
 	|| (
 		cli
@@ -102,14 +123,28 @@ REQUIRED_USE="
 	)
 "
 # FFmpeg 6.1
-COMMON_DEPEND="
-	>=media-libs/libplacebo-6.338.2:=[opengl?,vulkan?]
-	>=media-libs/libass-0.12.2:=[fontconfig]
-	|| (
-		media-video/ffmpeg:58.60.60[encode,network?,soc(-)?,threads,vaapi?,vdpau?]
-		media-video/ffmpeg:0/58.60.60[encode,network?,soc(-)?,threads,vaapi?,vdpau?]
+PATENT_STATUS_DEPEND="
+	virtual/patent-status[patent_status_nonfree=]
+	!patent_status_nonfree? (
+		!media-libs/libva
+		!x11-libs/libvdpau
+		|| (
+			media-video/ffmpeg:58.60.60[encode,network?,-patent_status_nonfree,soc(-)?,threads,-vaapi,-vdpau]
+			media-video/ffmpeg:0/58.60.60[encode,network?,-patent_status_nonfree,soc(-)?,threads,-vaapi,-vdpau]
+		)
+	)
+	patent_status_nonfree? (
+		|| (
+			media-video/ffmpeg:58.60.60[encode,network?,patent_status_nonfree,soc(-)?,threads,vaapi?,vdpau?]
+			media-video/ffmpeg:0/58.60.60[encode,network?,patent_status_nonfree,soc(-)?,threads,vaapi?,vdpau?]
+		)
 	)
 	media-video/ffmpeg:=
+"
+COMMON_DEPEND="
+	${PATENT_STATUS_DEPEND}
+	>=media-libs/libplacebo-6.338.2:=[opengl?,vulkan?]
+	>=media-libs/libass-0.12.2:=[fontconfig]
 	alsa? (
 		>=media-libs/alsa-lib-1.0.18
 	)
@@ -195,6 +230,7 @@ COMMON_DEPEND="
 	)
 	vaapi? (
 		>=media-libs/libva-1.1.0:=[X?,drm(+)?,wayland?]
+		media-libs/vaapi-drivers[patent_status_nonfree=]
 	)
 	vapoursynth? (
 		>=media-libs/vapoursynth-56
