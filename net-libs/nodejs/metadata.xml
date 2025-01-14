@@ -111,6 +111,9 @@ https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
     <flag name="acorn">
       Install the acorn JavaScript parser.
     </flag>
+    <flag name="asm">
+      Optimize the cryptographic instructions.
+    </flag>
     <flag name="custom-optimization">
       Override the default -O3 flag.
     </flag>

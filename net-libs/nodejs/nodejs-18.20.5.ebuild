@@ -116,7 +116,7 @@ gen_iuse_pgo() {
 
 IUSE+="
 $(gen_iuse_pgo)
-acorn +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu +jit
+acorn +asm +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu +jit
 inspector npm man mold pax-kernel pgo -pointer-compression +snapshot +ssl system-icu
 +system-ssl systemtap test
 ebuild_revision_12
@@ -161,7 +161,8 @@ RDEPEND+="
 		>=dev-libs/icu-74.2:=
 	)
 	system-ssl? (
-		>=dev-libs/openssl-3.0.15:0=
+		>=dev-libs/openssl-3.0.15:0[asm?]
+		dev-libs/openssl:=
 	)
 "
 DEPEND+="
@@ -530,6 +531,10 @@ ewarn "If moldlto fails for gcc, try clang."
 	if ! use mold && is-flagq '-fuse-ld=mold' && has_version "sys-devel/mold" ; then
 eerror "To use mold, enable the mold USE flag."
 		die
+	fi
+
+	if ! use asm ; then
+		myconf+=( --openssl-no-asm )
 	fi
 
 	use debug && myconf+=( --debug )
