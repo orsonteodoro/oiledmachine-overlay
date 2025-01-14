@@ -200,6 +200,12 @@ PATENT_STATUS_REQUIRED_USE="
 			x265
 		)
 	)
+	x264? (
+		patent_status_nonfree
+	)
+	x265? (
+		patent_status_nonfree
+	)
 "
 # cuda, rocm, tenssort USE flags are missing dependency packages.
 REQUIRED_USE="
