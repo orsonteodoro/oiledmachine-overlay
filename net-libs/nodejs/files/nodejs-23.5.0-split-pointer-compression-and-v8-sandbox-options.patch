@@ -29,16 +29,13 @@ diff '--color=auto' -urp node-v23.6.0.orig/configure.py node-v23.6.0/configure.p
 diff '--color=auto' -urp node-v23.6.0.orig/test/cctest/node_test_fixture.cc node-v23.6.0/test/cctest/node_test_fixture.cc
 --- node-v23.6.0.orig/test/cctest/node_test_fixture.cc	2025-01-07 05:00:24.000000000 -0800
 +++ node-v23.6.0/test/cctest/node_test_fixture.cc	2025-01-14 08:18:39.642549677 -0800
-@@ -20,9 +20,9 @@ void NodeTestEnvironment::SetUp() {
+@@ -20,9 +20,6 @@ void NodeTestEnvironment::SetUp() {
    NodeZeroIsolateTestFixture::platform.reset(
        new node::NodePlatform(kV8ThreadPoolSize, tracing_controller));
    v8::V8::InitializePlatform(NodeZeroIsolateTestFixture::platform.get());
 -#ifdef V8_ENABLE_SANDBOX
 -  ASSERT_TRUE(v8::V8::InitializeSandbox());
 -#endif
-+#ifdef V8_ENABLE_SANDBOX 
-+  ASSERT_TRUE(v8::V8::InitializeSandbox()); 
-+#endif 
    cppgc::InitializeProcess(
        NodeZeroIsolateTestFixture::platform->GetPageAllocator());
  
