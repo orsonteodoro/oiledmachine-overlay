@@ -50,15 +50,7 @@ RDEPEND_DRIVERS="
 		)
 	)
 	video_cards_nouveau? (
-		|| (
-			(
-				media-libs/mesa:=[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi,video_cards_nouveau]
-			)
-			(
-				>=media-libs/libva-vdpau-driver-0.7.4-r3[${MULTILIB_USEDEP}]
-				media-libs/mesa:=[${MULTILIB_USEDEP},patent_status_nonfree=,vdpau,video_cards_nouveau]
-			)
-		)
+		media-libs/mesa:=[${MULTILIB_USEDEP},patent_status_nonfree=,vaapi,video_cards_nouveau]
 	)
 	video_cards_nvidia? (
 		media-plugins/nvidia-vaapi-driver
