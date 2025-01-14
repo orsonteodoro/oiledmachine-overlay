@@ -403,10 +403,8 @@ PATENT_STATUS_FFMPEG_DEPEND="
 		)
 		nvenc? (
 			$(gen_ffmpeg_depend '[nvenc,patent_status_nonfree]')
-			(
-				>=media-libs/nv-codec-headers-12.1.14.0
-				<media-libs/nv-codec-headers-12.2.0.0
-			)
+			>=media-libs/nv-codec-headers-12
+			media-libs/nv-codec-headers:=
 		)
 		vaapi? (
 			$(gen_ffmpeg_depend '[patent_status_nonfree,vaapi]')
