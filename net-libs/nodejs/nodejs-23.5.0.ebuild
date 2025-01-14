@@ -598,7 +598,7 @@ eerror "To use mold, enable the mold USE flag."
 		myconf+=( --gdb )
 	fi
 	use pointer-compression && myconf+=( --experimental-enable-pointer-compression )
-	use v8-sandbox && myconf+=( --experimental-v8-sandbox )
+	use v8-sandbox && myconf+=( --experimental-enable-v8-sandbox )
 	if use kernel_linux && linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
 		myconf+=( --v8-enable-hugepage )
 	fi
