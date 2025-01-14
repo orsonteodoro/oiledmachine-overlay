@@ -16,6 +16,9 @@ EAPI=8
 #CMAKE_MAKEFILE_GENERATOR="emake"
 
 BACKEND_PV="2.1.5"
+PATENT_STATUS_IUSE=(
+	patent_status_nonfree
+)
 PYTHON_COMPAT=( "python3_11" )
 MODELS=(
 	# models_ncnn_interpolate
@@ -175,12 +178,32 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 # cx-Freeze is currently broken
 IUSE+="
+${PATENT_STATUS_IUSE[@]}
 ${ROCM_SLOTS[@]}
 fp16 cuda rocm svt-av1 tensorrt vpx vulkan wayland X x264 x265
 ebuild_revision_13
 "
+PATENT_STATUS_REQUIRED_USE="
+	!patent_status_nonfree? (
+		!x264
+		!x265
+		|| (
+			svt-av1
+			vpx
+		)
+	)
+	patent_status_nonfree? (
+		|| (
+			svt-av1
+			vpx
+			x264
+			x265
+		)
+	)
+"
 # cuda, rocm, tenssort USE flags are missing dependency packages.
 REQUIRED_USE="
+	${PATENT_STATUS_REQUIRED_USE}
 	${PYTHON_REQUIRED_USE}
 	!cuda
 	!rocm
@@ -190,12 +213,6 @@ REQUIRED_USE="
 		|| (
 			${ROCM_SLOTS[@]}
 		)
-	)
-	|| (
-		svt-av1
-		vpx
-		x264
-		x265
 	)
 	|| (
 		${IUSE_MODELS[@]}
@@ -286,8 +303,29 @@ TENSORRT_DEPEND="
 		>=dev-python/torch-tensorrt-2.6.0_pre20241023[${PYTHON_USEDEP}]
 	')
 "
+PATENT_STATUS_RDEPEND="
+	virtual/patent-status[patent_status_nonfree=]
+	!patent_status_nonfree? (
+		|| (
+			=media-video/ffmpeg-6.1*:58.60.60[encode,-patent_status_nonfree,svt-av1?,vpx?,-x264,-x265]
+			=media-video/ffmpeg-6.1*:0/58.60.60[encode,-patent_status_nonfree,svt-av1?,vpx?,-x264,-x265]
+			=media-video/ffmpeg-4*:56.58.58[encode,-patent_status_nonfree,svt-av1?,vpx?,-x264,-x265]
+			=media-video/ffmpeg-4*:0/56.58.58[encode,-patent_status_nonfree,svt-av1?,vpx?,-x264,-x265]
+		)
+	)
+	patent_status_nonfree? (
+		|| (
+			=media-video/ffmpeg-6.1*:58.60.60[encode,patent_status_nonfree,svt-av1?,vpx?,x264?,x265?]
+			=media-video/ffmpeg-6.1*:0/58.60.60[encode,patent_status_nonfree,svt-av1?,vpx?,x264?,x265?]
+			=media-video/ffmpeg-4*:56.58.58[encode,patent_status_nonfree,svt-av1?,vpx?,x264?,x265?]
+			=media-video/ffmpeg-4*:0/56.58.58[encode,patent_status_nonfree,svt-av1?,vpx?,x264?,x265?]
+		)
+	)
+	media-video/ffmpeg:=
+"
 RDEPEND+="
 	${MISSING_DEPEND}
+	${PATENT_STATUS_RDEPEND}
 	$(python_gen_cond_dep '
 		>=dev-python/certifi-2024.12.14[${PYTHON_USEDEP}]
 		>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
@@ -324,13 +362,6 @@ RDEPEND+="
 		${COMMON_DEPEND}
 		${NCNN_DEPEND}
 	)
-	|| (
-		=media-video/ffmpeg-6.1*:58.60.60[encode,svt-av1?,vpx?,x264?,x265?]
-		=media-video/ffmpeg-6.1*:0/58.60.60[encode,svt-av1?,vpx?,x264?,x265?]
-		=media-video/ffmpeg-4*:56.58.58[encode,svt-av1?,vpx?,x264?,x265?]
-		=media-video/ffmpeg-4*:0/56.58.58[encode,svt-av1?,vpx?,x264?,x265?]
-	)
-	media-video/ffmpeg:=
 "
 # Upstream uses FFmpeg 7.0, but changed here for OpenCV
 DEPEND+="
