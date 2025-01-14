@@ -204,6 +204,10 @@ COMMON_DEPEND="
 			sys-libs/glibc[nscd]
 		)
 	)
+	nvenc? (
+		dev-util/nvidia-cuda-toolkit:=
+		x11-drivers/nvidia-drivers
+	)
 	openal? (
 		>=media-libs/openal-1.13
 	)
@@ -279,7 +283,8 @@ DEPEND="
 		sys-kernel/linux-headers
 	)
 	nvenc? (
-		media-libs/nv-codec-headers
+		dev-util/nvidia-cuda-toolkit:=
+		media-libs/nv-codec-headers:=
 	)
 	vulkan? (
 		>=dev-util/vulkan-headers-1.3.238

@@ -165,7 +165,6 @@ MULTILIB_WRAPPED_HEADERS=(
 	"/usr/include/libavutil/avconfig.h"
 )
 N_SAMPLES=1
-NV_CODEC_HEADERS_PV="9.1.23.1"
 PATENT_STATUS=(
 	patent_status_nonfree
 )
@@ -763,7 +762,8 @@ RDEPEND+="
 		media-libs/codec2[${MULTILIB_USEDEP}]
 	)
 	cuda? (
-		>=media-libs/nv-codec-headers-${NV_CODEC_HEADERS_PV}
+		dev-util/nvidia-cuda-toolkit:=
+		x11-drivers/nvidia-drivers
 	)
 	cuda-nvcc? (
 		cuda_targets_sm_60? (
@@ -917,9 +917,6 @@ RDEPEND+="
 			sys-libs/glibc[nscd]
 		)
 	)
-	nvenc? (
-		<media-libs/nv-codec-headers-12
-	)
 	openal? (
 		>=media-libs/openal-1.15.1[${MULTILIB_USEDEP}]
 	)
@@ -1028,6 +1025,10 @@ RDEPEND+="
 DEPEND+="
 	amf? (
 		media-libs/amf-headers
+	)
+	cuda? (
+		dev-util/nvidia-cuda-toolkit:=
+		media-libs/nv-codec-headers:=
 	)
 	ladspa? (
 		>=media-libs/ladspa-sdk-1.13-r2[${MULTILIB_USEDEP}]

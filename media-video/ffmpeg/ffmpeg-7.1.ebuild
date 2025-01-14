@@ -828,7 +828,8 @@ RDEPEND+="
 		media-libs/codec2[${MULTILIB_USEDEP}]
 	)
 	cuda? (
-		media-libs/nv-codec-headers
+		dev-util/nvidia-cuda-toolkit:=
+		x11-drivers/nvidia-drivers
 	)
 	cuda-nvcc? (
 		cuda_targets_sm_60? (
@@ -1067,9 +1068,6 @@ RDEPEND+="
 		gnome-base/librsvg:2=[${MULTILIB_USEDEP}]
 		x11-libs/cairo[${MULTILIB_USEDEP}]
 	)
-	nvenc? (
-		>=media-libs/nv-codec-headers-11.1.5.3
-	)
 	svt-av1? (
 		>=media-libs/svt-av1-0.9.0[${MULTILIB_USEDEP}]
 	)
@@ -1134,6 +1132,10 @@ RDEPEND+="
 DEPEND+="
 	amf? (
 		media-libs/amf-headers
+	)
+	cuda? (
+		dev-util/nvidia-cuda-toolkit:=
+		media-libs/nv-codec-headers:=
 	)
 	ladspa? (
 		>=media-libs/ladspa-sdk-1.13-r2[${MULTILIB_USEDEP}]
