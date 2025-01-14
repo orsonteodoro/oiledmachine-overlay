@@ -98,6 +98,36 @@ https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
     When selecting a nodejs_pgo_trainers_*, only select those that reflect
     typical use.  Choosing trainers that do not reflect typical use may increase
     unwanted binary size or may cause degraded performance.
+
+
+
+    Environment variables
+
+    NODEJS_OPENSSL_DEFAULT_LIST_CORE - A colon separated list of ciphers to use for SSL/TLS.
+    This can be used to tune the cipher list to the regional needs.
+
+    Default:
+
+    For 23, https://github.com/nodejs/node/blob/v23.6.0/src/node_constants.h#L52
+    For 22, https://github.com/nodejs/node/blob/v22.13.0/src/node_constants.h#L52
+    For 20, https://github.com/nodejs/node/blob/v20.18.1/src/node_constants.h#L52
+    For 18, https://github.com/nodejs/node/blob/v18.20.5/src/node_constants.h#L52
+    For 16, https://github.com/nodejs/node/blob/v16.20.2/src/node_constants.h#L52
+    For 14, https://github.com/nodejs/node/blob/v14.21.3/src/node_constants.h#L52
+
+    Acceptable values:
+
+    For 23, see https://github.com/nodejs/node/blob/v23.6.0/deps/openssl/openssl/ssl/t1_trce.c#L107
+    For 22, see https://github.com/nodejs/node/blob/v22.13.0/deps/openssl/openssl/ssl/t1_trce.c#L107
+    For 20, see https://github.com/nodejs/node/blob/v20.18.1/deps/openssl/openssl/ssl/t1_trce.c#L107
+    For 18, see https://github.com/nodejs/node/blob/v18.20.5/deps/openssl/openssl/ssl/t1_trce.c#L107
+    For 16, see https://github.com/nodejs/node/blob/v16.20.2/deps/openssl/openssl/ssl/t1_trce.c#L107
+    For 14, see https://github.com/nodejs/node/blob/v14.21.3/deps/openssl/openssl/ssl/t1_trce.c#L107
+
+    Example:
+
+    NODEJS_OPENSSL_DEFAULT_CIPHER_SUITE="TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384:DHE-RSA-AES256-SHA384:ECDHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA256:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA"
+
   -->
   ]]>
   <upstream>
@@ -119,6 +149,9 @@ https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
     </flag>
     <flag name="doc">
       It installs docs.  It should only be enabled for the highest request slot.
+    </flag>
+    <flag name="fips">
+      Enable FIPS certified ciphers and module
     </flag>
     <flag name="inspector">
       Enable the V8 inspector.
@@ -163,8 +196,8 @@ https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
     <flag name="systemtap">
       Enable SystemTAP/DTrace tracing.
     </flag>
-    <flag name="ebuild-revision-N">
-      Bumped ebuild revision (INTERNAL USE ONLY)
+    <flag name="v8-sandbox">
+      Enable sandboxing the JavaScript engine for increased security.
     </flag>
   </use>
 </pkgmetadata>

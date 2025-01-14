@@ -110,9 +110,3 @@ net-libs/webkit-gtk libwebrtc
 
 # Debugging inference performance issue
 app-misc/ollama mimalloc-secure hardened_malloc sandbox chroot
-
-
-# Build time failure Issue #54531
-=net-libs/nodejs-20* pointer-compression
-=net-libs/nodejs-22* pointer-compression
-=net-libs/nodejs-23* pointer-compression

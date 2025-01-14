@@ -1,0 +1,44 @@
+diff '--color=auto' -urp node-v23.6.0.orig/configure.py node-v23.6.0/configure.py
+--- node-v23.6.0.orig/configure.py	2025-01-14 08:05:55.696152004 -0800
++++ node-v23.6.0/configure.py	2025-01-14 08:15:15.332045441 -0800
+@@ -612,6 +612,12 @@ parser.add_argument('--experimental-enab
+     default=None,
+     help='[Experimental] Enable V8 pointer compression (limits max heap to 4GB and breaks ABI compatibility)')
+ 
++parser.add_argument('--experimental-enable-v8-sandbox',
++    action='store_true',
++    dest='enable_v8_sandbox',
++    default=None,
++    help='[Experimental] Enable V8 sandbox')
++
+ parser.add_argument('--disable-shared-readonly-heap',
+     action='store_true',
+     dest='disable_shared_ro_heap',
+@@ -1702,7 +1708,10 @@ def configure_v8(o, configs):
+   o['variables']['v8_enable_maglev'] = B(not options.v8_disable_maglev and
+                                          o['variables']['target_arch'] in maglev_enabled_architectures)
+   o['variables']['v8_enable_pointer_compression'] = 1 if options.enable_pointer_compression else 0
+-  o['variables']['v8_enable_sandbox'] = 1 if options.enable_pointer_compression else 0
++  if options.enable_v8_sandbox and not options.enable_pointer_compression:
++    raise Exception(
++        '--experimental-enable-v8-sandbox needs --experimental-enable-pointer-compression')
++  o['variables']['v8_enable_sandbox'] = 1 if options.enable_v8_sandbox else 0
+   o['variables']['v8_enable_31bit_smis_on_64bit_arch'] = 1 if options.enable_pointer_compression else 0
+   o['variables']['v8_enable_shared_ro_heap'] = 0 if options.enable_pointer_compression or options.disable_shared_ro_heap else 1
+   o['variables']['v8_enable_extensible_ro_snapshot'] = 0
+diff '--color=auto' -urp node-v23.6.0.orig/test/cctest/node_test_fixture.cc node-v23.6.0/test/cctest/node_test_fixture.cc
+--- node-v23.6.0.orig/test/cctest/node_test_fixture.cc	2025-01-07 05:00:24.000000000 -0800
++++ node-v23.6.0/test/cctest/node_test_fixture.cc	2025-01-14 08:18:39.642549677 -0800
+@@ -20,9 +20,9 @@ void NodeTestEnvironment::SetUp() {
+   NodeZeroIsolateTestFixture::platform.reset(
+       new node::NodePlatform(kV8ThreadPoolSize, tracing_controller));
+   v8::V8::InitializePlatform(NodeZeroIsolateTestFixture::platform.get());
+-#ifdef V8_ENABLE_SANDBOX
+-  ASSERT_TRUE(v8::V8::InitializeSandbox());
+-#endif
++#ifdef V8_ENABLE_SANDBOX 
++  ASSERT_TRUE(v8::V8::InitializeSandbox()); 
++#endif 
+   cppgc::InitializeProcess(
+       NodeZeroIsolateTestFixture::platform->GetPageAllocator());
+ 

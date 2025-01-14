@@ -122,9 +122,9 @@ gen_iuse_pgo() {
 
 IUSE+="
 $(gen_iuse_pgo)
-acorn +asm +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu +jit
+acorn +asm +corepack cpu_flags_x86_sse2 -custom-optimization debug doc fips +icu +jit
 inspector +npm man mold pax-kernel pgo -pointer-compression +snapshot +ssl system-icu
-+system-ssl test
++system-ssl test -v8-sandbox
 ebuild_revision_6
 "
 
@@ -153,6 +153,9 @@ REQUIRED_USE+="
 	system-ssl? (
 		ssl
 	)
+	v8-sandbox? (
+		pointer-compression
+	)
 "
 RDEPEND+="
 	!net-libs/nodejs:0
@@ -167,7 +170,7 @@ RDEPEND+="
 		>=dev-libs/icu-75.1:=
 	)
 	system-ssl? (
-		>=dev-libs/openssl-3.0.15:0[asm?]
+		>=dev-libs/openssl-3.0.15:0[asm?,fips?]
 		dev-libs/openssl:=
 	)
 "
@@ -206,6 +209,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-20.18.0-lto-update.patch"
 	"${FILESDIR}/${PN}-20.1.0-support-clang-pgo.patch"
 	"${FILESDIR}/${PN}-19.3.0-v8-oflags.patch"
+	"${FILESDIR}/${PN}-23.5.0-split-pointer-compression-and-v8-sandbox-options.patch"
 )
 
 _count_useflag_slots() {
@@ -257,6 +261,14 @@ check_kernel_config() {
 		~TRANSPARENT_HUGEPAGE
 	"
 	WARNING_TRANSPARENT_HUGEPAGE="CONFIG_TRANSPARENT_HUGEPAGE could be enabled for V8 [JavaScript engine] memory access time reduction.  For webservers, music production, realtime; it should be kept disabled."
+
+	if use fips ; then
+		CONFIG_CHECK+="
+			~CRYPTO_FIPS
+		"
+		WARNING_CRYPTO_FIPS="CONFIG_CRYPTO_FIPS needs to be enabled for FIPS compliance."
+	fi
+
 	check_extra_config
 }
 
@@ -556,10 +568,17 @@ eerror "To use mold, enable the mold USE flag."
 
 	use snapshot || myconf+=( --without-node-snapshot )
 	if use ssl; then
-		use system-ssl && \
-		myconf+=( --shared-openssl --openssl-use-def-ca-store )
+		if use system-ssl ; then
+			myconf+=( --shared-openssl --openssl-use-def-ca-store )
+		fi
 	else
 		myconf+=( --without-ssl )
+	fi
+	if use fips ; then
+		myconf+=( --openssl-is-fips )
+	fi
+	if [[ -n "${NODEJS_OPENSSL_DEFAULT_LIST_CORE}" ]] ; then
+		myconf+=( --openssl-default-cipher-list=${NODEJS_OPENSSL_DEFAULT_LIST_CORE} )
 	fi
 
 	local nproc=$(get_nproc)
@@ -571,6 +590,7 @@ eerror "To use mold, enable the mold USE flag."
 		myconf+=( --gdb )
 	fi
 	use pointer-compression && myconf+=( --experimental-enable-pointer-compression )
+	use v8-sandbox && myconf+=( --experimental-v8-sandbox )
 	if use kernel_linux && linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
 		myconf+=( --v8-enable-hugepage )
 	fi

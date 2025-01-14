@@ -116,7 +116,7 @@ gen_iuse_pgo() {
 
 IUSE+="
 $(gen_iuse_pgo)
-acorn +asm +corepack cpu_flags_x86_sse2 -custom-optimization debug doc +icu +jit
+acorn +asm +corepack cpu_flags_x86_sse2 -custom-optimization debug doc fips +icu +jit
 inspector npm man mold pax-kernel pgo -pointer-compression +snapshot +ssl system-icu
 +system-ssl systemtap test
 ebuild_revision_12
@@ -161,7 +161,7 @@ RDEPEND+="
 		>=dev-libs/icu-74.2:=
 	)
 	system-ssl? (
-		>=dev-libs/openssl-3.0.15:0[asm?]
+		>=dev-libs/openssl-3.0.15:0[asm?,fips?]
 		dev-libs/openssl:=
 	)
 "
@@ -254,6 +254,14 @@ check_kernel_config() {
 		~TRANSPARENT_HUGEPAGE
 	"
 	WARNING_TRANSPARENT_HUGEPAGE="CONFIG_TRANSPARENT_HUGEPAGE could be enabled for V8 [JavaScript engine] memory access time reduction.  For webservers, music production, realtime; it should be kept disabled."
+
+	if use fips ; then
+		CONFIG_CHECK+="
+			~CRYPTO_FIPS
+		"
+		WARNING_CRYPTO_FIPS="CONFIG_CRYPTO_FIPS needs to be enabled for FIPS compliance."
+	fi
+
 	check_extra_config
 }
 
@@ -553,10 +561,17 @@ eerror "To use mold, enable the mold USE flag."
 
 	use snapshot || myconf+=( --without-node-snapshot )
 	if use ssl; then
-		use system-ssl && \
-		myconf+=( --shared-openssl --openssl-use-def-ca-store )
+		if use system-ssl ; then
+			myconf+=( --shared-openssl --openssl-use-def-ca-store )
+		fi
 	else
 		myconf+=( --without-ssl )
+	fi
+	if use fips ; then
+		myconf+=( --openssl-is-fips )
+	fi
+	if [[ -n "${NODEJS_OPENSSL_DEFAULT_LIST_CORE}" ]] ; then
+		myconf+=( --openssl-default-cipher-list=${NODEJS_OPENSSL_DEFAULT_LIST_CORE} )
 	fi
 
 	local nproc=$(get_nproc)
