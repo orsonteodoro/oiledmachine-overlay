@@ -2,19 +2,16 @@
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+EAPI=8
+
 # This ebuild is just an extension of libva ebuild-package.  The libva package
 # makes no effort to sort out drivers.  I do not prefer to maintain a ebuild
 # fork of libva.
 
-EAPI=8
-
-inherit multilib-build
-
-DESCRIPTION="A metapackage for libva drivers"
-KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv ~x86 ~amd64-linux ~x86-linux" # Same as libva
-SLOT="0"
-
-IUSE_VAAPI=(
+PATENT_STATUS_IUSE=(
+	patent_status_nonfree
+)
+VIDEO_CARDS_IUSE=(
 	video_cards_amdgpu
 	video_cards_intel
 	video_cards_nouveau
@@ -22,20 +19,22 @@ IUSE_VAAPI=(
 	video_cards_r600
 	video_cards_radeonsi
 )
-PATENT_STATUS=(
-	patent_status_nonfree
-)
 
+inherit multilib-build
+
+DESCRIPTION="A metapackage for libva drivers"
+KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv ~x86 ~amd64-linux ~x86-linux" # Same as libva
+SLOT="0"
 IUSE+="
-${IUSE_VAAPI[@]}
-${PATENT_STATUS[@]}
+${PATENT_STATUS_IUSE[@]}
+${VIDEO_CARDS_IUSE[@]}
 custom
 "
 
 REQUIRED_USE+="
 	!custom? (
 		|| (
-			${IUSE_VAAPI[@]}
+			${VIDEO_CARDS_IUSE[@]}
 		)
 	)
 "
