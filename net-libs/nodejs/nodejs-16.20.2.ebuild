@@ -528,7 +528,7 @@ eerror "To use mold, enable the mold USE flag."
 		die
 	fi
 
-	if ! use asm ; then
+	if ! use asm && ! use system-openssl ; then
 		myconf+=( --openssl-no-asm )
 	fi
 
