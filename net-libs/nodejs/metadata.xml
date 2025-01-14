@@ -143,6 +143,9 @@ https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
     </flag>
     <flag name="asm">
       Optimize the cryptographic instructions.
+
+      If enabled, it may bypass automated security hardening in assembly contexts.
+      If disabled, it may increase portability and may apply custom security hardening.
     </flag>
     <flag name="custom-optimization">
       Override the default -O3 flag.
@@ -151,7 +154,7 @@ https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
       It installs docs.  It should only be enabled for the highest request slot.
     </flag>
     <flag name="fips">
-      Enable FIPS certified ciphers and module
+      Enable FIPS certified ciphers and module.
     </flag>
     <flag name="inspector">
       Enable the V8 inspector.
