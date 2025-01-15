@@ -560,7 +560,7 @@ set_jit_level() {
 	_jit_level_6() {
 		# 100% performance
 		myconf+=( $(enable_gdb) )
-		myconf+=( $(usex webassembly "--v8-enable-webassembly" "") ) # Requires it turbofan
+		myconf+=( $(usex webassembly "--v8-enable-webassembly" "") ) # It requires turbofan
 		#myconf+=( --v8-disable-lite-mode )
 	}
 

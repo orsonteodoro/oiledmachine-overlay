@@ -576,7 +576,7 @@ set_jit_level() {
 		myconf+=( --v8-enable-maglev ) # %5 runtime benefit
 		myconf+=( --v8-enable-sparkplug ) # 5% benefit
 		myconf+=( --v8-enable-turbofan ) # Subset of -O1, -O2, -O3; 100% performance
-		myconf+=( $(usex webassembly "--v8-enable-webassembly" "") ) # Requires it turbofan
+		myconf+=( $(usex webassembly "--v8-enable-webassembly" "") ) # It requires turbofan
 		#myconf+=( --v8-disable-lite-mode )
 	}
 
