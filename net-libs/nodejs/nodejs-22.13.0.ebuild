@@ -282,7 +282,7 @@ pkg_setup() {
 
 # See https://github.com/nodejs/release#release-schedule
 # See https://github.com/nodejs/release#end-of-life-releases
-#einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2024-06-01."
+einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2027-04-30."
 
 	# Prevent merge conflicts
 	if use man && (( $(_count_useflag_slots "man") > 1 ))

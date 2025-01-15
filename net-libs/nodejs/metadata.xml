@@ -27,9 +27,12 @@
     More info about EOL versions see:
     https://github.com/nodejs/release#end-of-life-releases
 
-    v16 EOL is 2023-09-11
-    v18 EOL is 2025-04-30
+    v23 EOL is 2025-06-01
+    v22 EOL is 2027-04-30
     v20 EOL is 2026-04-30
+    v18 EOL is 2025-04-30
+    v16 EOL is 2023-09-11
+    v14 EOL is 2023-04-30
 
     The removal cycle is now delayed to better enjoy the product for those with
     longer compile times.  Minor versions before an announced security release
