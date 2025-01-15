@@ -101,7 +101,7 @@ https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
 
 
 
-    Environment variables
+    Build time environment variables
 
     NODEJS_OPENSSL_DEFAULT_LIST_CORE - A colon separated list of ciphers to use for SSL/TLS.
     This can be used to tune the cipher list to the regional needs.
@@ -128,6 +128,23 @@ https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
 
     NODEJS_OPENSSL_DEFAULT_CIPHER_SUITE="TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA384:DHE-RSA-AES256-SHA384:ECDHE-RSA-AES256-SHA256:DHE-RSA-AES256-SHA256:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!SRP:!CAMELLIA"
 
+
+    JIT_LEVEL_OVERRIDE - Control both the compile time and runtime performance
+    of the v8 JavaScript engine.  This build time tunable applies to only
+    Node.js 18 and above.
+
+    Acceptable values:
+    0 = JIT off, equivalent to -O0 worst case runtime performance and build time.  Runtime performance chance is similar to coinflip but is 20-50% impact.
+    1 = JIT on, equivalent to -O0 best case runtime performance and build time.  Runtime performance chance is similar to coinflip but is 28-71% impact.
+    2 = JIT on, equivalent to -O1 runtime performance and build time.  Runtime performance chance is better than coinflip and greater than 75%.
+    3 = JIT on, equivalent to -Oz runtime performance and build time.
+    4 = JIT on, equivalent to -Os runtime performance and build time.
+    5 = JIT on, equivalent to -O2 runtime performance and build time.  75% performance
+    6 = JIT on, equivalent to -O3 runtime performance and build time.  90% performance.
+    7 = JIT on, equivalent to -Ofast runtime performance and build time.  100% performance.
+
+    If using WebAssembly, JIT_LEVEL_OVERRIDE >= 2 is required.
+
   -->
   ]]>
   <upstream>
@@ -153,6 +170,9 @@ https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
     <flag name="doc">
       It installs docs.  It should only be enabled for the highest request slot.
     </flag>
+    <flag name="drumbrake">
+      Run WebAssembly through an interpreter to avoid JIT based class of attacks.
+    </flag>
     <flag name="fips">
       Enable FIPS certified ciphers and module.
     </flag>
@@ -162,9 +182,6 @@ https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
     <flag name="jit">
       Enable JIT compilation for faster runtime performance.
       Disable to mitigate against JIT based vulnerabilities.
-
-      Disabling JIT will disable WebAssembly, which may be needed by some
-      packages.
     </flag>
     <flag name="man">
       It installs man pages.  It should only be enabled for the highest request
@@ -201,6 +218,12 @@ https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
     </flag>
     <flag name="v8-sandbox">
       Enable sandboxing the JavaScript engine for increased security.
+    </flag>
+    <flag name="webassembly">
+      Add support for compiling WebAssembly.
+
+      Disabling WebAssembly is not recommended and may be needed by some
+      packages.  You will have to rebuild Node.js if you guess wrong on requirements.
     </flag>
   </use>
 </pkgmetadata>

@@ -118,7 +118,7 @@ IUSE+="
 $(gen_iuse_pgo)
 acorn +asm +corepack cpu_flags_x86_sse2 -custom-optimization debug doc fips +icu +jit
 inspector npm man mold pax-kernel pgo -pointer-compression +snapshot +ssl system-icu
-+system-ssl systemtap test
++system-ssl systemtap test +webassembly
 ebuild_revision_12
 "
 
@@ -146,6 +146,9 @@ REQUIRED_USE+="
 	)
 	system-ssl? (
 		ssl
+	)
+	webassembly? (
+		jit
 	)
 "
 RDEPEND+="
@@ -203,6 +206,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-16.13.2-lto-update.patch"
 	"${FILESDIR}/${PN}-18.17.0-support-clang-pgo.patch"
 	"${FILESDIR}/${PN}-19.3.0-v8-oflags.patch"
+	"${FILESDIR}/${PN}-18.20.5-add-v8-jit-fine-grained-options.patch"
 )
 
 _count_useflag_slots() {
@@ -320,7 +324,6 @@ ewarn "Consider adding it to the NODEJS_EXCLUDED_TRAINERS."
 ewarn
 	fi
 	uopts_setup
-	use jit || ewarn "Disabling jit will disable WebAssembly in ${CATEGORY}/${PN}"
 }
 
 src_prepare() {
@@ -501,6 +504,146 @@ _src_configure_compiler() {
 	export CPP=$(tc-getCPP)
 }
 
+get_olast() {
+	local olast=$(echo "${CFLAGS}" \
+		| grep -o -E -e "-O(0|1|z|s|2|3|4|fast)" \
+		| tr " " "\n" \
+		| tail -n 1)
+	if [[ -n "${olast}" ]] ; then
+		echo "${olast}"
+	else
+		# Upstream default
+		echo "-O3"
+	fi
+}
+
+enable_gdb() {
+	if use jit && use debug && has_version "dev-debug/gdb" ; then
+		echo "--gdb"
+	fi
+}
+
+# Scale the jit level based on the Oflag.
+set_jit_level() {
+	_jit_level_0() {
+		# ~20%/~50% performance similar to light swap, but a feeling of less progress (20-25%)
+		#myconf+=( --disable-gdb )
+		#myconf+=( --v8-disable-maglev )
+		#myconf+=( --v8-disable-sparkplug )
+		#myconf+=( --v8-disable-turbofan )
+		#myconf+=( --v8-disable-webassembly )
+		myconf+=( --v8-enable-lite-mode )
+	}
+
+	_jit_level_1() {
+		# 28%/71% performance similar to light swap, but a feeling of more progress (33%)
+		myconf+=( $(enable_gdb) )
+		#myconf+=( --v8-disable-maglev ) # Requires turbofan
+		myconf+=( --v8-enable-sparkplug )
+		#myconf+=( --v8-disable-turbofan )
+		#myconf+=( --v8-disable-webassembly )
+		#myconf+=( --v8-disable-lite-mode )
+	}
+
+	_jit_level_2() {
+		# > 75% performance
+		myconf+=( $(enable_gdb) )
+		#myconf+=( --v8-disable-maglev )
+		#myconf+=( --v8-disable-sparkplug )
+		myconf+=( --v8-enable-turbofan )
+		myconf+=( $(usex webassembly "--v8-enable-webassembly" "") )
+		#myconf+=( --v8-disable-lite-mode )
+	}
+
+	_jit_level_5() {
+		# > 90% performance
+		myconf+=( $(enable_gdb) )
+		#myconf+=( --v8-disable-maglev )
+		myconf+=( --v8-enable-sparkplug )
+		myconf+=( --v8-enable-turbofan )
+		myconf+=( $(usex webassembly "--v8-enable-webassembly" "") )
+		#myconf+=( --v8-disable-lite-mode )
+	}
+
+	_jit_level_6() {
+		# 100% performance
+		myconf+=( $(enable_gdb) )
+		myconf+=( --v8-enable-maglev ) # %5 runtime benefit
+		myconf+=( --v8-enable-sparkplug ) # 5% benefit
+		myconf+=( --v8-enable-turbofan ) # Subset of -O1, -O2, -O3; 100% performance
+		myconf+=( $(usex webassembly "--v8-enable-webassembly" "") ) # Requires it turbofan
+		#myconf+=( --v8-disable-lite-mode )
+	}
+
+	local olast=$(get_olast)
+	if [[ "${olast}" =~ "-Ofast" ]] ; then
+		jit_level=7
+	elif [[ "${olast}" =~ "-O3" ]] ; then
+		jit_level=6
+	elif [[ "${olast}" =~ "-O2" ]] ; then
+		jit_level=5
+	elif [[ "${olast}" =~ "-Os" ]] ; then
+		jit_level=4
+	elif [[ "${olast}" =~ "-Oz" ]] ; then
+		jit_level=3
+	elif [[ "${olast}" =~ "-O1" ]] ; then
+		jit_level=2
+	elif [[ "${olast}" =~ "-O0" ]] && use jit ; then
+		jit_level=1
+	elif [[ "${olast}" =~ "-O0" ]] ; then
+		jit_level=0
+	fi
+
+	if use webassembly && (( ${jit_level} < 2 )) ; then
+einfo "Changing jit_level=${jit_level} to jit_level=2 for WebAssembly."
+		jit_level=2
+	fi
+
+	if [[ -n "${JIT_LEVEL_OVERRIDE}" ]] ; then
+		jit_level=${JIT_LEVEL_OVERRIDE}
+	fi
+
+	# Place hardware limits here
+	# Disable the more powerful JIT for older machines to speed up build time.
+	use jit || jit_level=0
+
+	local jit_level_desc
+	if (( ${jit_level} == 7 )) ; then
+		jit_level_desc="fast" # 100%
+	elif (( ${jit_level} == 6 )) ; then
+		jit_level_desc="3" # 95%
+	elif (( ${jit_level} == 5 )) ; then
+		jit_level_desc="2" # 90%
+	elif (( ${jit_level} == 4 )) ; then
+		jit_level_desc="s" # 75%
+	elif (( ${jit_level} == 3 )) ; then
+		jit_level_desc="z"
+	elif (( ${jit_level} == 2 )) ; then
+		jit_level_desc="1" # 60 %
+	elif (( ${jit_level} == 1 )) ; then
+		jit_level_desc="0"
+	elif (( ${jit_level} == 0 )) ; then
+		jit_level_desc="0" # 5%
+	fi
+
+	if (( ${jit_level} >= 6 )) ; then
+einfo "JIT is similar to -O${jit_level_desc}."
+		_jit_level_6
+	elif (( ${jit_level} >= 3 )) ; then
+einfo "JIT is similar to -O${jit_level_desc}."
+		_jit_level_5
+	elif (( ${jit_level} >= 2 )) ; then
+einfo "JIT is similar to -O${jit_level_desc}."
+		_jit_level_2
+	elif (( ${jit_level} >= 1 )) ; then
+einfo "JIT is similar to -O${jit_level_desc} best case."
+		_jit_level_1
+	else
+einfo "JIT off is similar to -O${jit_level_desc} worst case."
+		_jit_level_0
+	fi
+}
+
 _src_configure() {
 	local configuration=$(usex debug "Debug" "Release")
 	export ENINJA_BUILD_DIR="out/${configuration}"
@@ -577,10 +720,6 @@ eerror "To use mold, enable the mold USE flag."
 	local nproc=$(get_nproc)
 	if ! use jit && (( "${nproc}" <= 1 )) ; then
 		die "The jit USE flag must be on."
-	fi
-	use jit || myconf+=( --v8-lite-mode )
-	if use jit && use debug && has_version "dev-debug/gdb" ; then
-		myconf+=( --gdb )
 	fi
 	use pointer-compression && myconf+=( --experimental-enable-pointer-compression )
 	if use kernel_linux && linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then

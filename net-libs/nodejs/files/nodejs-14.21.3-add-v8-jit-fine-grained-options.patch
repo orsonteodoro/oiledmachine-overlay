@@ -1,0 +1,26 @@
+diff '--color=auto' -urp node-14.21.3.orig/configure.py node-14.21.3/configure.py
+--- node-14.21.3.orig/configure.py	2025-01-14 15:52:08.913324158 -0800
++++ node-14.21.3/configure.py	2025-01-14 15:59:22.302237228 -0800
+@@ -699,9 +699,9 @@ parser.add_option('--v8-with-dchecks',
+     default=False,
+     help='compile V8 with debug checks and runtime debugging features enabled')
+ 
+-parser.add_option('--v8-lite-mode',
++parser.add_argument('--v8-enable-lite-mode',
+     action='store_true',
+-    dest='v8_lite_mode',
++    dest='v8_enable_lite_mode',
+     default=False,
+     help='compile V8 in lite mode for constrained environments (lowers V8 '+
+          'memory footprint, but also implies no just-in-time compilation ' +
+@@ -1346,7 +1346,7 @@ def configure_library(lib, output, pkgna
+ 
+ 
+ def configure_v8(o):
+-  o['variables']['v8_enable_lite_mode'] = 1 if options.v8_lite_mode else 0
++  o['variables']['v8_enable_lite_mode'] = 1 if options.v8_enable_lite_mode else 0
+   o['variables']['v8_enable_gdbjit'] = 1 if options.gdb else 0
+   o['variables']['v8_no_strict_aliasing'] = 1  # Work around compiler bugs.
+   o['variables']['v8_optimized_debug'] = 0 if options.v8_non_optimized_debug else 1
+Only in node-14.21.3: configure.py.orig
+Only in node-14.21.3: configure.py.rej
