@@ -648,6 +648,9 @@ _src_configure() {
 		'-fprofile*' \
 		'-fuse-ld*'
 
+	# Already set in src_prepare()
+	filter-flags '-O*'
+
 	if ! use mold && is-flagq '-fuse-ld=mold' && has_version "sys-devel/mold" ; then
 eerror "To use mold, enable the mold USE flag."
 		die
