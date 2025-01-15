@@ -698,6 +698,7 @@ eerror "To use mold, enable the mold USE flag."
 		die "The jit USE flag must be on."
 	fi
 	use pointer-compression && myconf+=( --experimental-enable-pointer-compression )
+	set_jit_level
 
 	local myarch
 	myarch="${ABI/amd64/x64}"

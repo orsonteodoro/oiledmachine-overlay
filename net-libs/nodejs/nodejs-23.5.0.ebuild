@@ -749,9 +749,7 @@ eerror "To use mold, enable the mold USE flag."
 	if use kernel_linux && linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
 		myconf+=( --v8-enable-hugepage )
 	fi
-	if ! use pointer-compression ; then
-ewarn "Disabing USE=pointer-compression will disable the V8 Sandbox."
-	fi
+	set_jit_level
 
 	local myarch
 	myarch="${ABI/amd64/x64}"
