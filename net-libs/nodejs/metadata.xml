@@ -222,8 +222,9 @@ https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
     <flag name="webassembly">
       Add support for compiling WebAssembly.
 
-      Disabling WebAssembly is not recommended and may be needed by some
-      packages.  You will have to rebuild Node.js if you guess wrong on requirements.
+      Disabling WebAssembly is not recommended and may be needed by some node
+      packages (e.g. webassemblyjs).  You will have to rebuild Node.js if you
+      guess wrong on requirements.
     </flag>
   </use>
 </pkgmetadata>
