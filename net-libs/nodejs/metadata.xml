@@ -131,7 +131,8 @@ https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
 
     JIT_LEVEL_OVERRIDE - Control both the compile time and runtime performance
     of the v8 JavaScript engine.  This build time tunable applies to only
-    Node.js 18 and above.
+    Node.js 18 and above.  If this is not set, it will base it off the last
+    -Oflag level.
 
     Acceptable values:
     0 = JIT off, equivalent to -O0 worst case runtime performance and build time.  Runtime performance chance is similar to coinflip but is 20-50% impact.
