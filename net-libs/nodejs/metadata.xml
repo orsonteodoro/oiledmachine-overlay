@@ -204,7 +204,7 @@ https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
     <flag name="pointer-compression">
       Enable pointer compression to gain more free memory but will break ABI
       compatibility.  Enabling pointer compression enables the V8 Sandbox in
-      Node 20+.
+      Node 20+.  Available only on 64-bit ABIs.
 
       Disabling may save battery life.
     </flag>
