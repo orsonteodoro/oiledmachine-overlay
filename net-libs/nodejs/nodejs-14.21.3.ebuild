@@ -697,7 +697,9 @@ eerror "To use mold, enable the mold USE flag."
 	if ! use jit && (( "${nproc}" <= 1 )) ; then
 		die "The jit USE flag must be on."
 	fi
-	use pointer-compression && myconf+=( --experimental-enable-pointer-compression )
+	if use amd64 || use arm64 ; then
+		use pointer-compression && myconf+=( --experimental-enable-pointer-compression )
+	fi
 	set_jit_level
 
 	local myarch

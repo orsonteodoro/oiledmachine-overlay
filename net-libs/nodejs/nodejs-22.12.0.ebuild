@@ -573,7 +573,10 @@ set_jit_level() {
 	_jit_level_6() {
 		# 100% performance
 		myconf+=( $(enable_gdb) )
-		myconf+=( --v8-enable-maglev ) # %5 runtime benefit
+	# https://github.com/nodejs/node/blob/v22.12.0/deps/v8/BUILD.gn#L516
+		if use amd64 || use arm || use arm64 ; then
+			myconf+=( --v8-enable-maglev ) # %5 runtime benefit
+		fi
 		myconf+=( --v8-enable-sparkplug ) # 5% benefit
 		myconf+=( --v8-enable-turbofan ) # Subset of -O1, -O2, -O3; 100% performance
 		myconf+=( $(usex webassembly "--v8-enable-webassembly" "") ) # It requires turbofan
@@ -732,7 +735,9 @@ eerror "To use mold, enable the mold USE flag."
 	if ! use jit && (( "${nproc}" <= 1 )) ; then
 		die "The jit USE flag must be on."
 	fi
-	use pointer-compression && myconf+=( --experimental-enable-pointer-compression )
+	if use amd64 || use arm64 ; then
+		use pointer-compression && myconf+=( --experimental-enable-pointer-compression )
+	fi
 	use v8-sandbox && myconf+=( --experimental-enable-v8-sandbox )
 	if use kernel_linux && linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
 		myconf+=( --v8-enable-hugepage )
