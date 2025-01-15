@@ -40,7 +40,7 @@ diff '--color=auto' -urp node-v22.13.0.orig/configure.py node-v22.13.0/configure
 +    action='store_true',
 +    dest='v8_enable_webassembly',
 +    default=None,
-+    help='Enable V8's WebAssembly support.')
++    help="Enable V8's WebAssembly support.")
  
  parser.add_argument('--v8-enable-short-builtin-calls',
      action='store_true',

@@ -21,7 +21,7 @@ diff '--color=auto' -urp node-16.20.2.orig/configure.py node-16.20.2/configure.p
 +    action='store_true',
 +    dest='v8_enable_webassembly',
 +    default=None,
-+    help='Enable V8's WebAssembly support.')
++    help="Enable V8's WebAssembly support.")
 +
  parser.add_argument('--node-builtin-modules-path',
      action='store',
