@@ -3739,7 +3739,15 @@ ewarn
 			myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
 			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
 			myconf_gn+=" v8_enable_lite_mode=false"
-			myconf_gn+=" v8_enable_maglev=true" # %5 runtime benefit
+			if [[ "${CHOST}" =~ "riscv64" ]] ; then
+				myconf_gn+=" v8_enable_maglev=true" # %5 runtime benefit
+			elif [[ "${CHOST}" =~ "s390x" ]] ; then
+				myconf_gn+=" v8_enable_maglev=true" # %5 runtime benefit
+			elif [[ "${ARCH}" == "amd64" || "${ARCH}" == "arm" || "${ARCH}" == "arm64" ]] ; then
+				myconf_gn+=" v8_enable_maglev=true" # %5 runtime benefit
+			else
+				myconf_gn+=" v8_enable_maglev=false"
+			fi
 			myconf_gn+=" v8_enable_sparkplug=true" # 5% benefit
 			myconf_gn+=" v8_enable_turbofan=true" # Subset of -O1, -O2, -O3; 100% performance
 			myconf_gn+=" v8_enable_webassembly=$(usex webassembly true false)" # Requires it turbofan
