@@ -138,12 +138,12 @@ https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
     -Oflag level.
 
     Acceptable values:
-    0 = JIT off, equivalent to -O0 worst case runtime performance and build time.  Runtime performance chance is similar to coinflip but is 20-50% impact.
-    1 = JIT on, equivalent to -O0 best case runtime performance and build time.  Runtime performance chance is similar to coinflip but is 28-71% impact.
-    2 = JIT on, equivalent to -O1 runtime performance and build time.  Runtime performance chance is better than coinflip and greater than 75% impact.
+    0 = JIT off, equivalent to -O0 worst case runtime performance and build time.  Runtime performance chance is similar to a coinflip but is 20-50% impact.
+    1 = JIT on, equivalent to -O0 best case runtime performance and build time.  Runtime performance chance is similar to a coinflip but is 28-71% impact.
+    2 = JIT on, equivalent to -O1 runtime performance and build time.  Runtime performance chance is typically better than a coinflip and greater than 75% impact.
     3 = JIT on, equivalent to -Oz runtime performance and build time.
     4 = JIT on, equivalent to -Os runtime performance and build time.
-    5 = JIT on, equivalent to -O2 runtime performance and build time.  90% performance
+    5 = JIT on, equivalent to -O2 runtime performance and build time.  90% performance.
     6 = JIT on, equivalent to -O3 runtime performance and build time.  100% performance.
     7 = JIT on, equivalent to -Ofast runtime performance and build time.  100% performance.
 
