@@ -3737,11 +3737,14 @@ ewarn
 			myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
 			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
 			myconf_gn+=" v8_enable_lite_mode=false"
-			if [[ "${CHOST}" =~ "riscv64" ]] ; then
-				myconf_gn+=" v8_enable_maglev=true" # %5 runtime benefit
-			elif [[ "${CHOST}" =~ "s390x" ]] ; then
-				myconf_gn+=" v8_enable_maglev=true" # %5 runtime benefit
-			elif [[ "${ARCH}" == "amd64" || "${ARCH}" == "arm" || "${ARCH}" == "arm64" ]] ; then
+	# See L553 in /usr/share/chromium/sources/v8/BUILD.gn
+			if [[ \
+				   "${ARCH}"  == "amd64" \
+				|| "${ARCH}"  == "arm" \
+				|| "${ARCH}"  == "arm64" \
+				|| "${CHOST}" =~ "riscv64" \
+				|| "${CHOST}" =~ "s390x" \
+			]] ; then
 				myconf_gn+=" v8_enable_maglev=true" # %5 runtime benefit
 			else
 				myconf_gn+=" v8_enable_maglev=false"
@@ -3830,10 +3833,19 @@ einfo "JIT off is similar to -O${jit_level_desc} worst case."
 	fi
 
 	if use official ; then
-		: # Use automagic
+	# Use automagic
+		:
 	else
-		# The V8 Sandbox needs pointer compression.
-		if [[ "${ARCH}" =~ ("amd64"|"arm64") ]] ; then
+	# The V8 Sandbox needs pointer compression.
+	# See L720 in /usr/share/chromium/sources/v8/BUILD.gn
+		if [[ \
+			   "${ARCH}"  == "amd64" \
+			|| "${ARCH}"  == "arm64" \
+			|| "${ARCH}"  == "ppc64" \
+			|| "${CHOST}" =~ "loongarch64" \
+			|| "${CHOST}" =~ "riscv64" \
+			|| "${CHOST}" =~ "s390x" \
+		]] ; then
 			myconf_gn+=" v8_enable_pointer_compression=$(usex pointer-compression true false)"
 			if (( ${total_ram_gib} >= 8 )) ; then
 				myconf_gn+=" v8_enable_pointer_compression_8gb=$(usex pointer-compression true false)"
