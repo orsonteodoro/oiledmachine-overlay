@@ -195,7 +195,7 @@ RDEPEND+="
 	${PYTHON_DEPS}
 	${DEPEND_NOT_USED_IN_CI}
 	>=app-arch/p7zip-16.02
-	>=net-libs/nodejs-${GDEVELOP_JS_NODEJS_PV}:${GDEVELOP_JS_NODEJS_PV%%.*}
+	>=net-libs/nodejs-${GDEVELOP_JS_NODEJS_PV}:${GDEVELOP_JS_NODEJS_PV%%.*}[jit,webassembly]
 "
 DEPEND+="
 	${DEPEND}

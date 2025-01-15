@@ -146,8 +146,8 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+=" ebuild_revision_2"
 BDEPEND+="
-	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
-	>=net-libs/nodejs-${NODE_VERSION}[npm]
+	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}[jit,webassembly]
+	>=net-libs/nodejs-${NODE_VERSION}[jit,npm,webassembly]
 "
 
 src_unpack() {

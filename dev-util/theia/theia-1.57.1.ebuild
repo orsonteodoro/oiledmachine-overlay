@@ -495,7 +495,7 @@ DEPEND+="
 BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-build/make-4.3
-	>=net-libs/nodejs-14.18.0:${NODE_VERSION}[pointer-compression]
+	>=net-libs/nodejs-14.18.0:${NODE_VERSION}[jit,pointer-compression,webassembly]
 	>=sys-apps/yarn-1.22.22:1
 	>=sys-devel/gcc-11.2.0
 	virtual/pkgconfig

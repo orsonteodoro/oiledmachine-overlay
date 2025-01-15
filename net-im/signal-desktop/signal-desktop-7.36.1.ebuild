@@ -94,6 +94,9 @@ RDEPEND+="
 	>=media-fonts/noto-emoji-20231130
 	media-libs/libpulse
 "
+BDEPEND+="
+	net-libs/nodejs:${NODE_VERSION}[jit,webassembly]
+"
 
 gen_git_tag() {
 	local path="${1}"

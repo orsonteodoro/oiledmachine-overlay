@@ -60,8 +60,8 @@ IUSE+="
 	ebuild_revision_8
 "
 BDEPEND+="
-	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
-	>=net-libs/nodejs-16[npm]
+	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}[jit,webassembly]
+	>=net-libs/nodejs-16[jit,npm,webassembly]
 "
 PDEPEND+="
 	firejail? (
