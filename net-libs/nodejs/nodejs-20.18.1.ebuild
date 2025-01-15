@@ -122,9 +122,9 @@ gen_iuse_pgo() {
 
 IUSE+="
 $(gen_iuse_pgo)
-acorn +asm +corepack cpu_flags_x86_sse2 -custom-optimization debug doc fips +icu +jit
+acorn +asm +corepack cpu_flags_x86_sse2 -custom-optimization debug doc fips +icu
 inspector +npm man mold pax-kernel pgo -pointer-compression +snapshot +ssl system-icu
-+system-ssl test -v8-sandbox +webassembly
++system-ssl test -v8-sandbox
 ebuild_revision_6
 "
 
@@ -155,9 +155,6 @@ REQUIRED_USE+="
 	)
 	v8-sandbox? (
 		pointer-compression
-	)
-	webassembly? (
-		jit
 	)
 "
 RDEPEND+="
@@ -388,6 +385,7 @@ src_prepare() {
 	local r2="-O3" # Similar to filter-flags
 	# Upstream does not like -O3 when running sanitizers (aka fuzz-testing)
 	if use custom-optimization ; then
+		replace-flags '-O0' '-O1'
 		r1=""
 		local oflag="-O3"
 		if _is_flagq_last '-O0'; then
@@ -438,7 +436,7 @@ ewarn "Using -Oz with PGO is uncommon"
 		-e "s|__OFLAGS_R1__|${r1}|g" \
 		-e "s|__OFLAGS_A2__|${a2}|g" \
 		-e "s|__OFLAGS_R2__|${r2}|g" \
-		tools/v8_gypfiles/toolchain.gypi \
+		"tools/v8_gypfiles/toolchain.gypi" \
 		|| die
 
 	# debug builds. change install path, remove optimisations and override CONFIGURATION
@@ -458,7 +456,7 @@ ewarn "Using -Oz with PGO is uncommon"
 	# is that there is a newer version of npm available upstream (yes, it does
 	# use the network if available), thus making it a real possibility for this
 	# test to begin failing one day even though it was fine before.
-	rm -f test/parallel/test-release-npm.js
+	rm -f "test/parallel/test-release-npm.js"
 
 	if [[ "${NM}" == "llvm-nm" ]] ; then
 		# llvm-nm: error: : --format value should be one of
@@ -525,7 +523,7 @@ get_olast() {
 }
 
 enable_gdb() {
-	if use jit && use debug && has_version "dev-debug/gdb" ; then
+	if use debug && has_version "dev-debug/gdb" ; then
 		echo "--gdb"
 	fi
 }
@@ -538,7 +536,6 @@ set_jit_level() {
 		#myconf+=( --v8-disable-maglev )
 		#myconf+=( --v8-disable-sparkplug )
 		#myconf+=( --v8-disable-turbofan )
-		#myconf+=( --v8-disable-webassembly )
 		myconf+=( --v8-enable-lite-mode )
 	}
 
@@ -548,7 +545,6 @@ set_jit_level() {
 		#myconf+=( --v8-disable-maglev ) # Requires turbofan
 		myconf+=( --v8-enable-sparkplug )
 		#myconf+=( --v8-disable-turbofan )
-		#myconf+=( --v8-disable-webassembly )
 		#myconf+=( --v8-disable-lite-mode )
 	}
 
@@ -558,7 +554,6 @@ set_jit_level() {
 		#myconf+=( --v8-disable-maglev )
 		#myconf+=( --v8-disable-sparkplug )
 		myconf+=( --v8-enable-turbofan )
-		myconf+=( $(usex webassembly "--v8-enable-webassembly" "") )
 		#myconf+=( --v8-disable-lite-mode )
 	}
 
@@ -568,7 +563,6 @@ set_jit_level() {
 		#myconf+=( --v8-disable-maglev )
 		myconf+=( --v8-enable-sparkplug )
 		myconf+=( --v8-enable-turbofan )
-		myconf+=( $(usex webassembly "--v8-enable-webassembly" "") )
 		#myconf+=( --v8-disable-lite-mode )
 	}
 
@@ -581,7 +575,6 @@ set_jit_level() {
 		fi
 		myconf+=( --v8-enable-sparkplug ) # 5% benefit
 		myconf+=( --v8-enable-turbofan ) # Subset of -O1, -O2, -O3; 100% performance
-		myconf+=( $(usex webassembly "--v8-enable-webassembly" "") ) # It requires turbofan
 		#myconf+=( --v8-disable-lite-mode )
 	}
 
@@ -598,24 +591,20 @@ set_jit_level() {
 		jit_level=3
 	elif [[ "${olast}" =~ "-O1" ]] ; then
 		jit_level=2
-	elif [[ "${olast}" =~ "-O0" ]] && use jit ; then
+	elif [[ "${olast}" =~ "-O0" ]] ; then
 		jit_level=1
 	elif [[ "${olast}" =~ "-O0" ]] ; then
 		jit_level=0
-	fi
-
-	if use webassembly && (( ${jit_level} < 2 )) ; then
-einfo "Changing jit_level=${jit_level} to jit_level=2 for WebAssembly."
-		jit_level=2
 	fi
 
 	if [[ -n "${JIT_LEVEL_OVERRIDE}" ]] ; then
 		jit_level=${JIT_LEVEL_OVERRIDE}
 	fi
 
-	# Place hardware limits here
-	# Disable the more powerful JIT for older machines to speed up build time.
-	use jit || jit_level=0
+	if (( ${jit_level} < 2 )) ; then
+einfo "Changing jit_level=${jit_level} to jit_level=2 for WebAssembly."
+		jit_level=2
+	fi
 
 	local jit_level_desc
 	if (( ${jit_level} == 7 )) ; then
@@ -682,8 +671,7 @@ ewarn "If moldlto fails for gcc, try clang."
 	filter-flags \
 		'-flto*' \
 		'-fprofile*' \
-		'-fuse-ld*' \
-		'-O*'
+		'-fuse-ld*'
 
 	if use mold && [[ "${LTO_TYPE}" == "none" || -z "${LTO_TYPE}" ]] ; then
 		append-ldflags -fuse-ld=mold
@@ -727,10 +715,6 @@ eerror "To use mold, enable the mold USE flag."
 		myconf+=( --openssl-default-cipher-list=${NODEJS_OPENSSL_DEFAULT_LIST_CORE} )
 	fi
 
-	local nproc=$(get_nproc)
-	if ! use jit && (( "${nproc}" <= 1 )) ; then
-		die "The jit USE flag must be on."
-	fi
 	if use amd64 || use arm64 ; then
 		use pointer-compression && myconf+=( --experimental-enable-pointer-compression )
 	fi
@@ -930,7 +914,7 @@ src_install() {
 	local D_BASE="/${REL_D_BASE}"
 	local ED_BASE="${ED}/${REL_D_BASE}"
 
-	${EPYTHON} tools/install.py install \
+	${EPYTHON} "tools/install.py" install \
 		--dest-dir "${D}" \
 		--prefix "${EPREFIX}/usr" \
 		|| die
@@ -946,7 +930,7 @@ src_install() {
 	dodir "${D_INCLUDE_BASE}/deps/"{"v8","uv"}
 	dosym "." "${D_INCLUDE_BASE}/src"
 	local var
-	for var in deps/{uv,v8}/include; do
+	for var in "deps/"{"uv","v8"}"/include" ; do
 		dosym "../.." "${D_INCLUDE_BASE}/${var}"
 	done
 

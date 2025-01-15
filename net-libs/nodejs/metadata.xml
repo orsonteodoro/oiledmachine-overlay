@@ -138,8 +138,6 @@ https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
     -Oflag level.
 
     Acceptable values:
-    0 = JIT off, equivalent to -O0 worst case runtime performance and fastest build time.  Erratic performance between 20-50%.
-    1 = JIT on, equivalent to -O0 best case runtime performance and fast build time.  Erratic performance between 28-71%.
     2 = JIT on, equivalent to -O1 runtime performance and build time.  Mostly consistent performance at 75% but sometimes randomly performs less than 50%.
     3 = JIT on, equivalent to -Oz runtime performance and build time.
     4 = JIT on, equivalent to -Os runtime performance and build time.
@@ -147,7 +145,7 @@ https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
     6 = JIT on, equivalent to -O3 runtime performance and long build time.  Consistently performs at 100%.
     7 = JIT on, equivalent to -Ofast runtime performance and long build time.  Consistenly performs at 100%.
 
-    If using WebAssembly, JIT_LEVEL_OVERRIDE >= 2 is required.
+    JIT_LEVEL_OVERRIDE >= 2 is required for corepack or undici
 
   -->
   ]]>
@@ -182,10 +180,6 @@ https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
     </flag>
     <flag name="inspector">
       Enable the V8 inspector.
-    </flag>
-    <flag name="jit">
-      Enable JIT compilation for faster runtime performance.
-      Disable to mitigate against JIT based vulnerabilities.
     </flag>
     <flag name="man">
       It installs man pages.  It should only be enabled for the highest request
@@ -222,13 +216,6 @@ https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
     </flag>
     <flag name="v8-sandbox">
       Enable sandboxing the JavaScript engine for increased security.
-    </flag>
-    <flag name="webassembly">
-      Add support for compiling WebAssembly.
-
-      Disabling WebAssembly is not recommended and may be needed by some node
-      packages (e.g. webassemblyjs).  You will have to rebuild Node.js if you
-      guess wrong on requirements.
     </flag>
   </use>
 </pkgmetadata>

@@ -634,7 +634,7 @@ DEPEND+="
 "
 BDEPEND+="
 	${RUST_BINDINGS_BDEPEND}
-	=net-libs/nodejs-18*[jit,npm,webassembly]
+	=net-libs/nodejs-18*[npm,webassembly(+)]
 	virtual/pkgconfig
 	|| (
 		(

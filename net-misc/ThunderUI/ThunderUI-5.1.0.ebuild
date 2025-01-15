@@ -38,7 +38,7 @@ IUSE+="
 ebuild_revision_1
 "
 RDEPEND+="
-	net-libs/nodejs:18[jit,webassembly]
+	net-libs/nodejs:18[webassembly(+)]
 "
 DEPEND+="
 	${RDEPEND}

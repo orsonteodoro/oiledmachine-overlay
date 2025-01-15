@@ -495,7 +495,7 @@ DEPEND+="
 BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-build/make-4.3
-	>=net-libs/nodejs-14.18.0:${NODE_VERSION}[jit,pointer-compression,webassembly]
+	>=net-libs/nodejs-14.18.0:${NODE_VERSION}[webassembly(+)]
 	>=sys-apps/yarn-1.22.22:1
 	>=sys-devel/gcc-11.2.0
 	virtual/pkgconfig
@@ -504,6 +504,9 @@ PATCHES=(
 )
 
 pkg_setup() {
+	if has_version "net-libs/nodejs:${NODE_VERSION}[-pointer-compression]" ; then
+ewarn "USE=pointer-compression may be required for 64-bit ABIs."
+	fi
 	einfo "This is the monthly release."
 	python_setup
 	yarn_pkg_setup

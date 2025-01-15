@@ -95,7 +95,7 @@ RDEPEND+="
 	media-libs/libpulse
 "
 BDEPEND+="
-	net-libs/nodejs:${NODE_VERSION}[jit,webassembly]
+	net-libs/nodejs:${NODE_VERSION}[webassembly(+)]
 "
 
 gen_git_tag() {

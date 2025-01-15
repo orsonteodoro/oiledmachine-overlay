@@ -43,7 +43,7 @@ DEPEND+="
 BDEPEND+="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
-	net-libs/nodejs:14[jit,webassembly]
+	net-libs/nodejs:14[webassembly(+)]
 	test? (
 		dev-python/multiprocess[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]

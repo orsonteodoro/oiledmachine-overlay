@@ -43,7 +43,7 @@ BDEPEND+="
 	dev-python/invoke[${PYTHON_USEDEP}]
 	dev-python/semver[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
-	net-libs/nodejs:16[jit,webassembly]
+	net-libs/nodejs:16[webassembly(+)]
 	dev? (
 		>=sci-visualization/dash-2.0.0[${PYTHON_USEDEP},dev(+)]
 		dev-python/build[${PYTHON_USEDEP}]
