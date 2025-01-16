@@ -8,6 +8,7 @@ PNPM_SLOT=9
 NODE_VERSION=20
 NPM_AUDIT_FIX_ARGS=( "--legacy-peer-deps" )
 NPM_INSTALL_ARGS=( "--legacy-peer-deps" )
+NPM_SLOT="3"
 TARBALL="${P}.tar.gz"
 NPM_TARBALL="${TARBALL}"
 VITE_PV="5.4.9"
