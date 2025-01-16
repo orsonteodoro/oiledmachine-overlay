@@ -72,8 +72,11 @@ eerror
 }
 
 pkg_postinst() {
-	if node --help 2>&1 | grep -q -e "dns-result-order" && node --help 2>&1 | grep -q -e "ipv4first" ; then
-		export NODE_OPTIONS="--dns-result-order=ipv4first"
+	local node_slot=$(node --version \
+		| sed -e "s|^v||g" \
+		| cut -f 1 -d ".")
+	if ver_test "${node_slot}" -eq "18" ; then
+		export NODE_OPTIONS+=" --dns-result-order=ipv4first"
 	fi
 
 	corepack enable
