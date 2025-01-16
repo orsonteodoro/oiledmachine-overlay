@@ -215,6 +215,15 @@ eerror
 		fi
 	fi
 	npm_check_network_sandbox
+
+	# Prevent node 18 issue when downloading:
+	local node_slot=$(node --version \
+		| sed -e "s|^v||g" \
+		| cut -f 1 -d ".")
+	if ver_test "${node_slot}" -eq "18" ; then
+		export NODE_OPTIONS+=" --dns-result-order=ipv4first"
+	fi
+
 	_NPM_PKG_SETUP_CALLED=1
 }
 
