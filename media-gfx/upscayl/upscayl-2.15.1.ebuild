@@ -8,13 +8,24 @@ NPM_INSTALL_PATH="/opt/${PN}"
 #ELECTRON_APP_APPIMAGE="1"
 ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${PN}-${PV}-linux.AppImage"
 ELECTRON_APP_MODE="npm"
-ELECTRON_APP_ELECTRON_PV="28.3.2" # cr 120.0.6099.291
+_ELECTRON_DEP_ROUTE="secure" # reproducible or secure
+# See https://releases.electronjs.org/releases.json for version details.
+if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
+	# Ebuild maintainer preference
+	ELECTRON_APP_ELECTRON_PV="34.0.0" # Cr 132.0.6834.83, node 20.18.1
+else
+	# Upstream preference
+	ELECTRON_APP_ELECTRON_PV="27.3.10" # Cr 118.0.5993.159, node 18.17.1
+fi
 ELECTRON_APP_LOCKFILE_EXACT_VERSIONS_ONLY=1
 ELECTRON_APP_REACT_PV="18.3.1"
 ELECTRON_APP_SHARP_PV="0.32.6"
 ELECTRON_APP_VIPS_PV="8.14.5"
 NODE_ENV="development"
 NODE_VERSION="18"
+NPM_INSTALL_ARGS=(
+	"--legacy-peer-deps"
+)
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
@@ -34,7 +45,6 @@ DESCRIPTION="Upscayl is an AI based image upscaler"
 HOMEPAGE="https://upscayl.github.io/"
 # Same sha1sum hash for electron-28.2.10-chromium.html and electron-28.3.2-chromium.html
 THIRD_PARTY_LICENSES="
-	electron-28.2.10-chromium.html
 	(
 		all-rights-reserved
 		Apache-2.0
@@ -90,6 +100,16 @@ THIRD_PARTY_LICENSES="
 		MIT
 	)
 "
+# electron-34.0.0-beta.7-chromium.html has the same fingerprint as electron-34.0.0-chromium.html
+if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
+	THIRD_PARTY_LICENSES+="
+		electron-34.0.0-beta.7-chromium.html
+	"
+else
+	THIRD_PARTY_LICENSES+="
+		electron-27.3.10-chromium.html
+	"
+fi
 LICENSE="
 	${ELECTRON_APP_LICENSES}
 	${THIRD_PARTY_LICENSES}
@@ -223,3 +243,4 @@ ewarn "You need vulkan drivers to use ${PN}."
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.7.5 with runtime black empty preview bug.
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 2.8.6 (20240211)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 2.9.9 (20240211)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20250115, electron 34.0.0)
