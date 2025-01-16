@@ -85,7 +85,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 wayland X
-ebuild-revision-2
+ebuild_revision_2
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -281,4 +281,5 @@ pkg_postinst() {
 }
 # OILEDMACHINE-OVERLAY-TEST:  passed (7.36.1, 20250105, electron 34.0.0-beta.5)
 # OILEDMACHINE-OVERLAY-TEST:  passed (7.36.1, 20250105, electron 34.0.0-beta.14)
+# OILEDMACHINE-OVERLAY-TEST:  passed (7.38.0, 20250116, electron 34.0.0)
 # UI load - pass
