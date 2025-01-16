@@ -490,8 +490,20 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
+BDEPEND+="
+	${PYTHON_DEPS}
+	>=dev-build/make-4.3
+	>=net-libs/nodejs-14.18.0:${NODE_VERSION}[webassembly(+)]
+	>=sys-apps/yarn-1.22.22:1
+	>=sys-devel/gcc-11.2.0
+	virtual/pkgconfig
+"
+PATCHES=(
+)
+
+pkg_setup() {
 # pointer-compression may be needed to avoid:
-_LOG="
+	_LOG="
  * Running:		yarn run browser build
 yarn run v1.22.22
 $ yarn -s --cwd examples/browser build
@@ -543,19 +555,7 @@ Error: webpack exited with an unexpected signal: SIGABRT.
     at ChildProcess._handle.onexit (node:internal/child_process:303:5)
 error Command failed with exit code 1.
 "
-unset _LOG
-BDEPEND+="
-	${PYTHON_DEPS}
-	>=dev-build/make-4.3
-	>=net-libs/nodejs-14.18.0:${NODE_VERSION}[webassembly(+)]
-	>=sys-apps/yarn-1.22.22:1
-	>=sys-devel/gcc-11.2.0
-	virtual/pkgconfig
-"
-PATCHES=(
-)
-
-pkg_setup() {
+	unset _LOG
 	if has_version "net-libs/nodejs:${NODE_VERSION}[-pointer-compression]" ; then
 ewarn "USE=pointer-compression may be required for 64-bit ABIs."
 	fi
