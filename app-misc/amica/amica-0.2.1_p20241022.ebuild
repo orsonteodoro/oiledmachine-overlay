@@ -6,8 +6,9 @@ EAPI=8
 
 # FIXME: Fix ollama /api/chat support
 
-NPM_AUDIT_FIX=0 # Lockfiles are the same as upstream because I'm still fixing the missing microphone dialog permissions prompt window
+#NPM_AUDIT_FIX=0 # Lockfiles are the same as upstream because I'm still fixing the missing microphone dialog permissions prompt window
 
+AT_TYPES_NODE_PV="18.15.10"
 CRATES="
 addr2line-0.21.0
 adler-1.0.2
@@ -392,8 +393,10 @@ x11-dl-2.21.0
 xattr-1.1.3
 "
 EGIT_COMMIT="cf39b01ce92c6fa02dba4ab245e8e97311edd969"
-NODE_VERSION=20
 NODE_ENV="development"
+NODE_VERSION="${AT_TYPES_NODE_PV%%.*}"
+NPM_AUDIT_FIX_ARGS=( "--legacy-peer-deps" )
+NPM_INSTALL_ARGS=( "--legacy-peer-deps" )
 PYTHON_COMPAT=( "python3_"{10..12} )
 WEBKIT_GTK_STABLE=(
 	"2.46"
@@ -634,7 +637,7 @@ DEPEND+="
 "
 BDEPEND+="
 	${RUST_BINDINGS_BDEPEND}
-	=net-libs/nodejs-18*[npm,webassembly(+)]
+	=net-libs/nodejs-${NODE_VERSION}*[npm,webassembly(+)]
 	virtual/pkgconfig
 	|| (
 		(

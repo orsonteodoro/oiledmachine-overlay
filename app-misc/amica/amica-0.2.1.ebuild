@@ -4,8 +4,9 @@
 
 EAPI=8
 
-NPM_AUDIT_FIX=0 # Lockfiles are the same as upstream because I'm still fixing the missing microphone dialog permissions prompt window
+#NPM_AUDIT_FIX=0 # Lockfiles are the same as upstream because I'm still fixing the missing microphone dialog permissions prompt window
 
+AT_TYPES_NODE_PV="18.15.10"
 CRATES="
 addr2line-0.21.0
 adler-1.0.2
@@ -389,8 +390,10 @@ x11-2.21.0
 x11-dl-2.21.0
 xattr-1.1.3
 "
-NODE_VERSION=20
 NODE_ENV="development"
+NODE_VERSION="${AT_TYPES_NODE_PV%%.*}"
+NPM_AUDIT_FIX_ARGS=( "--legacy-peer-deps" )
+NPM_INSTALL_ARGS=( "--legacy-peer-deps" )
 WEBKIT_GTK_STABLE=(
 	"2.46"
 	"2.44"
@@ -608,7 +611,7 @@ DEPEND+="
 "
 BDEPEND+="
 	${RUST_BINDINGS_BDEPEND}
-	=net-libs/nodejs-18*[npm,webassembly(+)]
+	=net-libs/nodejs-${NODE_VERSION}*[npm,webassembly(+)]
 	virtual/pkgconfig
 	|| (
 		(
