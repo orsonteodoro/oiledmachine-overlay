@@ -4,7 +4,7 @@
 
 EAPI=8
 
-NODE_SLOTS=( 20 22 )
+NODE_SLOTS=( 18 20 22 )
 
 # Generated from
 #PV="1.9.14"
@@ -153,22 +153,13 @@ pkg_setup() {
 }
 
 src_unpack() {
-	if [[ "${PV}" =~ "9999" ]] ; then
-		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
-		git-r3_fetch
-		git-r3_checkout
-		grep -q -e "\"version\": \"1.9.14\"," "${S}/setup.py" \
-			|| die "QA:  Bump version"
-	else
-		unpack ${A}
-	fi
-}
-
-src_unpack() {
+	export COREPACK_ENABLE_DOWNLOAD_PROMPT=1
 	npm_src_unpack
 }
 
-src_compile() { :; }
+src_compile() {
+	:
+}
 
 src_install() {
 	npm_src_install
