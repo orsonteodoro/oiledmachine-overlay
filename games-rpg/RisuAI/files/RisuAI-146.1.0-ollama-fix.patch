@@ -1,0 +1,16 @@
+diff '--color=auto' -urp RisuAI-146.1.0.orig/src/ts/process/request.ts RisuAI-146.1.0/src/ts/process/request.ts
+--- RisuAI-146.1.0.orig/src/ts/process/request.ts	2025-01-06 07:07:24.000000000 -0800
++++ RisuAI-146.1.0/src/ts/process/request.ts	2025-01-16 10:28:15.624302567 -0800
+@@ -2039,9 +2039,11 @@ async function requestOllama(arg:Request
+ 
+     const readableStream = new ReadableStream<StreamResponseChunk>({
+         async start(controller){
++            let text = '';
+             for await(const chunk of response){
++                text += chunk.message.content;
+                 controller.enqueue({
+-                    "0": chunk.message.content
++                    "0": text
+                 })
+             }
+             controller.close()

@@ -837,7 +837,7 @@ einfo "Unpacking cargo packages"
 
 src_prepare() {
 	default
-	eapply "${FILESDIR}/${PN}-139.2.0-ollama-fix.patch"
+	eapply "${FILESDIR}/${PN}-146.1.0-ollama-fix.patch"
 }
 
 src_configure() {
