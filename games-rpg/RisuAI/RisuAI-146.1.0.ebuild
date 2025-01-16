@@ -769,7 +769,7 @@ _cargo_src_unpack() {
 
 	cp -a \
 		"${FILESDIR}/${PV}/Cargo."{"lock","toml"} \
-		"${S}/src-tauri" \
+		"${WORKDIR}/${P}/src-tauri" \
 		|| die
 
 	local archive shasum pkg
@@ -807,9 +807,8 @@ _production_unpack() {
 	if [[ -e "${FILESDIR}/${PV}/Cargo.lock" ]] ; then
 einfo "Adding Cargo.lock"
 		cp -a \
-			"${FILESDIR}/${PV}/Cargo.toml" \
-			"${FILESDIR}/${PV}/Cargo.lock" \
-			"${S}/src-tauri" \
+			"${FILESDIR}/${PV}/Cargo."{"lock","toml"} \
+			"${WORKDIR}/${P}/src-tauri" \
 			|| die
 	fi
 	_cargo_src_unpack
