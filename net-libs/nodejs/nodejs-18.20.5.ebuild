@@ -1020,3 +1020,8 @@ einfo
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multislot, pgo
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (18.20.5, 20250115)
+# net-libs/nodejs-18.20.5:18/18.20::oiledmachine-overlay \
+# USE="acorn asm corepack icu inspector npm ssl -bolt -custom-optimization \
+# (-debug) -doc -fips -man -mold -pax-kernel -pgo -pointer-compression \
+# -snapshot -system-icu -system-ssl -systemtap -test"
