@@ -13,7 +13,7 @@ diff '--color=auto' -urp node-v18.20.5.orig/configure.py node-v18.20.5/configure
      default=False,
      help='compile V8 in lite mode for constrained environments (lowers V8 '+
           'memory footprint, but also implies no just-in-time compilation ' +
-@@ -851,6 +851,30 @@ parser.add_argument('--v8-enable-hugepag
+@@ -851,6 +851,24 @@ parser.add_argument('--v8-enable-hugepag
      help='Enable V8 transparent hugepage support. This feature is only '+
           'available on Linux platform.')
  
@@ -34,12 +34,6 @@ diff '--color=auto' -urp node-v18.20.5.orig/configure.py node-v18.20.5/configure
 +    dest='v8_enable_maglev',
 +    default=None,
 +    help="Enable V8's Maglev tier.")
-+
-+parser.add_argument('--v8-enable-webassembly',
-+    action='store_true',
-+    dest='v8_enable_webassembly',
-+    default=None,
-+    help="Enable V8's WebAssembly support.")
 +
  parser.add_argument('--v8-enable-short-builtin-calls',
      action='store_true',
