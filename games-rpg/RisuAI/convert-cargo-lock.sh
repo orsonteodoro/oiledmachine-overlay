@@ -3,7 +3,7 @@
 # Converts cargo.lock to a format used by CRATES variable used by the cargo.eclass.
 # cargo-ebuild is broken
 
-CATEGORY="app-misc"
+CATEGORY="games-rpg"
 PN="RisuAI"
 MY_PN="RisuAI"
 PV="${1}"
