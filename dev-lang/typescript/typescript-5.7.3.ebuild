@@ -5,7 +5,7 @@
 EAPI=8
 
 MY_PN="TypeScript"
-NPM_SECAUDIT_AT_TYPES_NODE_PV="20.4.8"
+NPM_SECAUDIT_AT_TYPES_NODE_PV="22.7.4"
 # Same as package-lock but uses latest always latest.
 # See https://www.npmjs.com/package/@types/node
 NODE_VERSION="${NPM_SECAUDIT_AT_TYPES_NODE_PV%%.*}" # Using nodejs muxer variable name.
@@ -37,10 +37,10 @@ LICENSE="
 # (Apache-2.0 all-rights-reserved) - CopyrightNotice.txt
 # Apache-2.0 is the main
 # Rest of the licenses are third party licenses
-KEYWORDS="~amd64 ~arm64"
+#KEYWORDS="~amd64 ~arm64" # Unfinished
 SLOT="$(ver_cut 1-2 ${PV})/${PV}"
 IUSE+="
-test ebuild_revision_4
+test ebuild_revision_3
 "
 RDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
@@ -91,3 +91,12 @@ pkg_postinst() {
 #  87478 passing (15m)
 #
 #Finished do-runtests-parallel in 15m 11.9s
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (test suite) 5.5.2 (20240620)
+#12 errors
+#Error in lint in 2m 45.1s
+#  [▬▬▬▬▬▬▬▬▬▬] ✔ 94798 passing (24m)
+#
+#
+#  94798 passing (24m)
+

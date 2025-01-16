@@ -40,7 +40,7 @@ LICENSE="
 KEYWORDS="~amd64 ~arm64"
 SLOT="$(ver_cut 1-2 ${PV})/${PV}"
 IUSE+="
-test ebuild_revision_4
+test ebuild_revision_3
 "
 RDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}
@@ -84,5 +84,19 @@ pkg_postinst() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (test suite) 5.0.4 (20230607)
-# 86474 passing (17m)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (test suite) 5.1.3 (20230607)
+# 87465 passing (17m)
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (test suite) 5.1.6 (20230709)
+#  87478 passing (15m)
+#
+#Finished do-runtests-parallel in 15m 11.9s
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (test suite) 5.5.2 (20240620)
+#12 errors
+#Error in lint in 2m 45.1s
+#  [▬▬▬▬▬▬▬▬▬▬] ✔ 94798 passing (24m)
+#
+#
+#  94798 passing (24m)
+
