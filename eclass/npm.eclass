@@ -254,10 +254,14 @@ _npm_src_unpack_default_ebuild() {
 		local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 
 		export NPM_ENABLE_OFFLINE_MODE=1
+		if [[ -z "${NPM_SLOT}" ]] ; then
+eerror "QA:  Add NPM_SLOT"
+			die
+		fi
 		export NPM_CACHE_FOLDER="${EDISTDIR}/npm-download-cache-${NPM_SLOT}/${CATEGORY}/${P}"
-	einfo "DEBUG:  Default cache folder:  ${HOME}/.npm/_cacache"
-	einfo "NPM_ENABLE_OFFLINE_MODE:  ${YARN_ENABLE_OFFLINE_MODE}"
-	einfo "NPM_CACHE_FOLDER:  ${NPM_CACHE_FOLDER}"
+einfo "DEBUG:  Default cache folder:  ${HOME}/.npm/_cacache"
+einfo "NPM_ENABLE_OFFLINE_MODE:  ${YARN_ENABLE_OFFLINE_MODE}"
+einfo "NPM_CACHE_FOLDER:  ${NPM_CACHE_FOLDER}"
 		rm -rf "${HOME}/.npm/_cacache"
 		ln -s "${NPM_CACHE_FOLDER}" "${HOME}/.npm/_cacache" # npm likes to remove the ${HOME}/.npm folder
 		addwrite "${EDISTDIR}"

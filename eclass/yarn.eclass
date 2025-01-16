@@ -325,9 +325,14 @@ _yarn_src_unpack_default_ebuild() {
 	if [[ "${YARN_OFFLINE:-1}" == "1" ]] ; then
 		local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 
+		if [[ -z "${YARN_SLOT}" ]] ; then
+eerror "QA:  Add YARN_SLOT"
+			die
+		fi
+
 		if [[ "${YARN_SLOT}" == "1" ]] ; then
 			export YARN_CACHE_FOLDER="${EDISTDIR}/yarn-download-cache-${YARN_SLOT}/${CATEGORY}/${P}"
-	einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
+einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
 			mkdir -p "${HOME}/.yarn/berry" || die
 			addwrite "${EDISTDIR}"
 			addwrite "${YARN_CACHE_FOLDER}"
@@ -336,9 +341,9 @@ _yarn_src_unpack_default_ebuild() {
 		else
 			export YARN_ENABLE_OFFLINE_MODE=1
 			export YARN_CACHE_FOLDER="${EDISTDIR}/yarn-download-cache-${YARN_SLOT}/${CATEGORY}/${P}"
-	einfo "DEBUG:  Default cache folder:  ${HOME}/.yarn/berry/cache/"
-	einfo "YARN_ENABLE_OFFLINE_MODE:  ${YARN_ENABLE_OFFLINE_MODE}"
-	einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
+einfo "DEBUG:  Default cache folder:  ${HOME}/.yarn/berry/cache/"
+einfo "YARN_ENABLE_OFFLINE_MODE:  ${YARN_ENABLE_OFFLINE_MODE}"
+einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
 			mkdir -p "${HOME}/.yarn/berry" || die
 			ln -s "${YARN_CACHE_FOLDER}" "${HOME}/.yarn/berry/cache"
 			addwrite "${EDISTDIR}"
@@ -409,9 +414,14 @@ _yarn_src_unpack_default_upstream() {
 	if [[ "${YARN_OFFLINE:-1}" == "1" ]] ; then
 		local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 
+		if [[ -z "${YARN_SLOT}" ]] ; then
+eerror "QA:  Add YARN_SLOT"
+			die
+		fi
+
 		if [[ "${YARN_SLOT}" == "1" ]] ; then
 			export YARN_CACHE_FOLDER="${EDISTDIR}/yarn-download-cache-${YARN_SLOT}/${CATEGORY}/${P}"
-	einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
+einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
 			mkdir -p "${HOME}/.yarn/berry" || die
 			addwrite "${EDISTDIR}"
 			addwrite "${YARN_CACHE_FOLDER}"
@@ -420,9 +430,9 @@ _yarn_src_unpack_default_upstream() {
 		else
 			export YARN_ENABLE_OFFLINE_MODE=1
 			export YARN_CACHE_FOLDER="${EDISTDIR}/yarn-download-cache-${YARN_SLOT}/${CATEGORY}/${P}"
-	einfo "DEBUG:  Default cache folder:  ${HOME}/.yarn/berry/cache/"
-	einfo "YARN_ENABLE_OFFLINE_MODE:  ${YARN_ENABLE_OFFLINE_MODE}"
-	einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
+einfo "DEBUG:  Default cache folder:  ${HOME}/.yarn/berry/cache/"
+einfo "YARN_ENABLE_OFFLINE_MODE:  ${YARN_ENABLE_OFFLINE_MODE}"
+einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
 			mkdir -p "${HOME}/.yarn/berry" || die
 			ln -s "${YARN_CACHE_FOLDER}" "${HOME}/.yarn/berry/cache"
 			addwrite "${EDISTDIR}"

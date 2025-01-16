@@ -227,10 +227,14 @@ pnpm_src_unpack() {
 	fi
 
 	mkdir -p "${HOME}/.local/share/pnpm"
+	if [[ -z "${PNPM_SLOT}" ]] ; then
+eerror "QA:  Add PNPM_SLOT"
+		die
+	fi
 	export PNPM_CACHE_FOLDER="${EDISTDIR}/pnpm-download-cache-${PNPM_SLOT}/${CATEGORY}/${P}"
-	einfo "DEBUG:  Default cache folder:  ${HOME}/.local/share/pnpm/store"
-	einfo "PNPM_OFFLINE:  ${PNPM_OFFLINE}"
-	einfo "PNPM_CACHE_FOLDER:  ${PNPM_CACHE_FOLDER}"
+einfo "DEBUG:  Default cache folder:  ${HOME}/.local/share/pnpm/store"
+einfo "PNPM_OFFLINE:  ${PNPM_OFFLINE}"
+einfo "PNPM_CACHE_FOLDER:  ${PNPM_CACHE_FOLDER}"
 	mkdir -p "${HOME}/.local/share/pnpm" || die
 	ln -s "${PNPM_CACHE_FOLDER}" "${HOME}/.local/share/pnpm/store"
 	addwrite "${EDISTDIR}"
