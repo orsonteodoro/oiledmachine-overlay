@@ -44,6 +44,7 @@ _PNPM_ECLASS=1
 EXPORT_FUNCTIONS pkg_setup src_unpack src_compile
 
 _pnpm_set_globals() {
+	export PNPM_SLOT="${PNPM_SLOT:-9}"
 	export PNPM_OFFLINE=${PNPM_OFFLINE:-1}
 	export PNPM_NETWORK_FETCH_RETRIES=${PNPM_NETWORK_FETCH_RETRIES:-7}
 	export PNPM_NETWORK_FETCH_RETRY_MAXTIMEOUT=${PNPM_NETWORK_FETCH_RETRY_MAXTIMEOUT:-300000}
@@ -129,18 +130,17 @@ pnpm_hydrate() {
 	else
 		COREPACK_ENABLE_NETWORK="${COREPACK_ENABLE_NETWORK:-0}"
 	fi
-	local pnpm_slot="${PNPM_SLOT:-8}"
-	if [[ ! -f "${EROOT}/usr/share/pnpm/pnpm-${pnpm_slot}.tgz" ]] ; then
+	if [[ ! -f "${EROOT}/usr/share/pnpm/pnpm-${PNPM_SLOT}.tgz" ]] ; then
 eerror
-eerror "Missing ${EROOT}/usr/share/pnpm/pnpm-${pnpm_slot}.tgz"
+eerror "Missing ${EROOT}/usr/share/pnpm/pnpm-${PNPM_SLOT}.tgz"
 eerror
-eerror "You must install sys-apps/pnpm:${pnpm_slot}::oiledmachine-overlay to"
+eerror "You must install sys-apps/pnpm:${PNPM_SLOT}::oiledmachine-overlay to"
 eerror "continue."
 eerror
 		die
 	fi
 einfo "Hydrating pnpm..."
-	corepack hydrate "${ESYSROOT}/usr/share/pnpm/pnpm-${pnpm_slot}.tgz" || die
+	corepack hydrate "${ESYSROOT}/usr/share/pnpm/pnpm-${PNPM_SLOT}.tgz" || die
 	local pnpm_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/v1/pnpm/"*))
 	export PATH=".:${HOME}/.cache/node/corepack/v1/pnpm/${pnpm_pv}/bin:${PATH}"
 	local pnpm_pv=$(pnpm --version)

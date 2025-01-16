@@ -43,6 +43,7 @@ _npm_set_globals() {
 	NPM_NETWORK_MAX_SOCKETS=${NPM_NETWORK_MAX_SOCKETS:-1}
 	NPM_NETWORK_RETRY_MAXTIMEOUT=${NPM_NETWORK_RETRY_MAXTIMEOUT:-300000}
 	NPM_NETWORK_RETRY_MINTIMEOUT=${NPM_NETWORK_RETRY_MINTIMEOUT:-100000}
+	NPM_SLOT="${NPM_SLOT:-3}"
 	NPM_TRIES=${NPM_TRIES:-10}
 }
 _npm_set_globals
@@ -254,10 +255,6 @@ _npm_src_unpack_default_ebuild() {
 		local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 
 		export NPM_ENABLE_OFFLINE_MODE=1
-		if [[ -z "${NPM_SLOT}" ]] ; then
-eerror "QA:  Add NPM_SLOT"
-			die
-		fi
 		export NPM_CACHE_FOLDER="${EDISTDIR}/npm-download-cache-${NPM_SLOT}/${CATEGORY}/${P}"
 einfo "DEBUG:  Default cache folder:  ${HOME}/.npm/_cacache"
 einfo "NPM_ENABLE_OFFLINE_MODE:  ${YARN_ENABLE_OFFLINE_MODE}"
@@ -419,8 +416,7 @@ einfo "Running:\t\tnpm ${cmd[@]}"
 # @DESCRIPTION:
 # Fix npm, npx wrappers
 __npm_patch() {
-	local npm_slot="${NPM_SLOT:-3}"
-einfo "Running __npm_patch() for NPM_SLOT=${npm_slot}"
+einfo "Running __npm_patch() for NPM_SLOT=${NPM_SLOT}"
 	local npm_pv
 	local bin_path
 	if [[ -e "${HOME}/.cache/node/corepack/v1/npm" ]] ; then
@@ -431,7 +427,7 @@ einfo "Running __npm_patch() for NPM_SLOT=${npm_slot}"
 		bin_path="${HOME}/.cache/node/corepack/npm/${npm_pv}/bin"
 	fi
 
-	if [[ "${npm_slot}" == "1" ]] ; then
+	if [[ "${NPM_SLOT}" == "1" ]] ; then
 		sed -i \
 			-e "s|\$basedir/node_modules/npm/bin|${bin_path}|g" \
 			"${bin_path}/npm" || die
@@ -439,7 +435,7 @@ einfo "Running __npm_patch() for NPM_SLOT=${npm_slot}"
 			-e "s|\$basedir/node_modules/npm/bin|${bin_path}|g" \
 			"${bin_path}/npx" || die
 	fi
-	if [[ "${npm_slot}" == "2"  || "${npm_slot}" == "3" ]] ; then
+	if [[ "${NPM_SLOT}" == "2"  || "${NPM_SLOT}" == "3" ]] ; then
 		sed -i \
 			-e "s|\$CLI_BASEDIR/node_modules/npm/bin|${bin_path}|g" \
 			-e "s|\$NPM_PREFIX/node_modules/npm/bin|${bin_path}|g" \
@@ -475,18 +471,17 @@ npm_hydrate() {
 	else
 		COREPACK_ENABLE_NETWORK="${COREPACK_ENABLE_NETWORK:-0}"
 	fi
-	local npm_slot="${NPM_SLOT:-3}"
-	if [[ ! -f "${EROOT}/usr/share/npm/npm-${npm_slot}.tgz" ]] ; then
+	if [[ ! -f "${EROOT}/usr/share/npm/npm-${NPM_SLOT}.tgz" ]] ; then
 eerror
-eerror "Missing ${EROOT}/usr/share/npm/npm-${npm_slot}.tgz"
+eerror "Missing ${EROOT}/usr/share/npm/npm-${NPM_SLOT}.tgz"
 eerror
-eerror "You must install sys-apps/npm:${npm_slot}::oiledmachine-overlay to"
+eerror "You must install sys-apps/npm:${NPM_SLOT}::oiledmachine-overlay to"
 eerror "continue."
 eerror
 		die
 	fi
 einfo "Hydrating npm..."
-	corepack hydrate "${ESYSROOT}/usr/share/npm/npm-${npm_slot}.tgz" || die
+	corepack hydrate "${ESYSROOT}/usr/share/npm/npm-${NPM_SLOT}.tgz" || die
 	__npm_patch
 
 	if [[ -e "${HOME}/.cache/node/corepack/v1/npm" ]] ; then
