@@ -67,6 +67,13 @@ eerror
 }
 
 pkg_postinst() {
+# Prevent during `corepack prepare` with node 18:
+# Internal Error: Error when performing the request to https://registry.npmjs.org/npm/-/npm-10.9.2.tgz; for troubleshooting help, see https://github.com/nodejs/corepack#troubleshooting
+#    at fetch (/usr/lib64/corepack/node18/dist/lib/corepack.cjs:21609:11)
+	if node --help 2>&1 | grep -q -e "dns-result-order" && node --help 2>&1 | grep -q -e "ipv4first" ; then
+		export NODE_OPTIONS="--dns-result-order=ipv4first"
+	fi
+
 	corepack enable
 	mkdir -p "${EROOT}/usr/share/${PN}"
 	corepack prepare "${PN}@${PV}" -o="${EROOT}/usr/share/${PN}/${PN}-${LOCKFILE_VER}.tgz"

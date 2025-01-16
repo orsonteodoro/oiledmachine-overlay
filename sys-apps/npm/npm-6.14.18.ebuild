@@ -72,6 +72,10 @@ eerror
 }
 
 pkg_postinst() {
+	if node --help 2>&1 | grep -q -e "dns-result-order" && node --help 2>&1 | grep -q -e "ipv4first" ; then
+		export NODE_OPTIONS="--dns-result-order=ipv4first"
+	fi
+
 	corepack enable
 	mkdir -p "${EROOT}/usr/share/${PN}"
 	corepack prepare "${PN}@${PV}" -o="${EROOT}/usr/share/${PN}/${PN}-${LOCKFILE_VER}.tgz"
