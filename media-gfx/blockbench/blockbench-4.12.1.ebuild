@@ -9,10 +9,18 @@ MY_PN="${PN^}"
 export NPM_INSTALL_PATH="/opt/${PN}"
 #ELECTRON_APP_APPIMAGE="1"
 ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${MY_PN}_${PV}.AppImage"
-ELECTRON_APP_ELECTRON_PV="34.0.0-beta.7" # Cr 132.0.6834.15, node 20.18.1
+_ELECTRON_DEP_ROUTE="secure" # reproducible or secure
+if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
+	# Ebuild maintainer preference
+	ELECTRON_APP_ELECTRON_PV="34.0.0" # Cr 132.0.6834.83, node 20.18.1
+else
+	# Upstream preference
+	ELECTRON_APP_ELECTRON_PV="33.3.1" # Cr 130.0.6723.170, node 20.18.1
+fi
+ELECTRON_APP_AT_TYPES_NODE_PV="20.17.10"
 ELECTRON_APP_MODE="npm"
 NODE_ENV="development"
-NODE_VERSION=20 # This corresponds to the node major version in releases.json.
+NODE_VERSION=${ELECTRON_APP_AT_TYPES_NODE_PV%%.*}
 NPM_AUDIT_FIX_ARGS=( "--prefer-offline" )
 NPM_INSTALL_ARGS=( "--prefer-offline" )
 if [[ "${NPM_UPDATE_LOCK}" != "1" ]] ; then
