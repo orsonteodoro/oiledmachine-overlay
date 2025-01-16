@@ -24,11 +24,10 @@ ELECTRON_BUILDER_PV="24.13.3"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
-	ELECTRON_APP_ELECTRON_PV="34.0.0-beta.14" # Cr 132.0.6834.57, node 20.18.1
-#	ELECTRON_APP_ELECTRON_PV="34.0.0-beta.5" # Cr 132.0.6834.6, node 20.18.0
+	ELECTRON_APP_ELECTRON_PV="34.0.0" # Cr 132.0.6834.83, node 20.18.1
 else
 	# Upstream's choice
-	ELECTRON_APP_ELECTRON_PV="33.1.0" # Cr 130.0.6723.91, node 20.18.0
+	ELECTRON_APP_ELECTRON_PV="33.2.1" # Cr 130.0.6723.137, node 20.18.1
 fi
 ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK="1"
 NPM_SLOT=3

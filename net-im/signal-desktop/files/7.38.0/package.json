@@ -1,10 +1,11 @@
 {
+  "$schema": "./package.schema.json",
   "name": "signal-desktop",
   "productName": "Signal",
   "description": "Private messaging from your desktop",
   "desktopName": "signal.desktop",
   "repository": "https://github.com/signalapp/Signal-Desktop.git",
-  "version": "7.36.1",
+  "version": "7.38.0",
   "license": "AGPL-3.0-only",
   "author": {
     "name": "Signal Messenger, LLC",
@@ -35,7 +36,11 @@
     "clean-protobuf": "npm run clean-module-protobuf",
     "prepare-beta-build": "node scripts/prepare_beta_build.js",
     "prepare-alpha-build": "node scripts/prepare_alpha_build.js",
-    "prepare-alpha-version": "node scripts/prepare_alpha_version.js",
+    "prepare-alpha-version": "node scripts/prepare_tagged_version.js alpha",
+    "prepare-axolotl-build": "node scripts/prepare_axolotl_build.js",
+    "prepare-axolotl-version": "node scripts/prepare_tagged_version.js axolotl",
+    "prepare-adhoc-build": "node scripts/prepare_adhoc_build.js",
+    "prepare-adhoc-version": "node scripts/prepare_tagged_version.js adhoc",
     "prepare-staging-build": "node scripts/prepare_staging_build.js",
     "prepare-windows-cert": "node scripts/prepare_windows_cert.js",
     "test": "run-s test-node test-electron test-lint-intl test-eslint",
@@ -106,8 +111,8 @@
     "@react-aria/utils": "3.25.3",
     "@react-spring/web": "9.7.5",
     "@signalapp/better-sqlite3": "9.0.8",
-    "@signalapp/libsignal-client": "0.62.0",
-    "@signalapp/ringrtc": "2.48.7",
+    "@signalapp/libsignal-client": "0.64.1",
+    "@signalapp/ringrtc": "2.49.2",
     "@types/fabric": "4.5.3",
     "backbone": "1.6.0",
     "blob-util": "2.0.2",
@@ -208,7 +213,7 @@
     "@indutny/rezip-electron": "2.0.1",
     "@indutny/symbolicate-mac": "2.3.0",
     "@napi-rs/canvas": "0.1.61",
-    "@signalapp/mock-server": "10.0.1",
+    "@signalapp/mock-server": "10.2.0",
     "@storybook/addon-a11y": "8.4.4",
     "@storybook/addon-actions": "8.4.4",
     "@storybook/addon-controls": "8.4.4",
@@ -278,8 +283,8 @@
     "csv-parse": "5.5.6",
     "danger": "12.3.3",
     "debug": "4.3.7",
-    "electron": "^34.0.0-beta.14",
-    "electron-builder": "24.13.3",
+    "electron": "^34.0.0",
+    "electron-builder": "26.0.0-alpha.8",
     "electron-mocha": "13.0.1",
     "endanger": "7.0.4",
     "enquirer": "2.4.1",
@@ -299,8 +304,8 @@
     "log-symbols": "4.1.0",
     "mini-css-extract-plugin": "2.9.2",
     "mocha": "10.8.2",
-    "node-gyp": "10.2.0",
-    "node-gyp-build": "4.8.3",
+    "node-gyp": "11.0.0",
+    "node-gyp-build": "4.8.4",
     "npm-run-all": "4.1.5",
     "p-limit": "3.1.0",
     "patch-package": "8.0.0",
@@ -354,7 +359,7 @@
     }
   },
   "engines": {
-    "node": "20.18.0"
+    "node": "20.18.1"
   },
   "build": {
     "appId": "org.whispersystems.signal-desktop",
@@ -437,9 +442,6 @@
     },
     "linux": {
       "category": "Network;InstantMessaging;Chat",
-      "desktop": {
-        "StartupWMClass": "Signal"
-      },
       "target": [
         "deb"
       ],
