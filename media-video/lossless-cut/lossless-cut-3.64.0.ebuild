@@ -7,8 +7,14 @@ EAPI=8
 MY_PN="${PN/-/}"
 
 # See https://releases.electronjs.org/releases.json
-ELECTRON_APP_ELECTRON_PV="31.3.1" # Cr 126.0.6478.185, node 20.15.1
-#ELECTRON_APP_ELECTRON_PV="32.0.0-beta.2" # Cr 128.0.6611.0, node 20.15.1
+_ELECTRON_DEP_ROUTE="secure" # reproducible or secure
+if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
+	# Ebuild maintainer preference
+	ELECTRON_APP_ELECTRON_PV="34.0.0" # Cr 132.0.6834.83, node 20.18.1
+else
+	# Upstream preference
+	ELECTRON_APP_ELECTRON_PV="31.3.1" # Cr 126.0.6478.185, node 20.15.1
+fi
 ELECTRON_APP_SHARP_PV="0.32.6"
 NPM_AUDIT_FIX=0
 NODE_GYP_PV="9.3.0"
@@ -46,16 +52,24 @@ HOMEPAGE="
 "
 LICENSE="
 	${ELECTRON_APP_LICENSES}
-	electron-31.3.1-chromium.html
 	CC0-1.0
 	GPL-2
 "
+if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
+	LICENSE+="
+		electron-34.0.0-alpha.7-chromium.html
+	"
+else
+	LICENSE+="
+		electron-31.3.1-chromium.html
+	"
+fi
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${PATENT_STATUS[@]}
 mp3 opus svt-av1 theora vorbis vpx x264
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -99,6 +113,9 @@ pkg_setup() {
 
 src_unpack() {
 	append-cppflags -I"/usr/include/glib-2.0"
+	export ELECTRON_SKIP_BINARY_DOWNLOAD=1
+	export ELECTRON_BUILDER_CACHE="${HOME}/.cache/electron-builder"
+	export ELECTRON_CACHE="${HOME}/.cache/electron"
 	if [[ "${PV}" =~ "9999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
@@ -193,6 +210,7 @@ pkg_postinst() {
 
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20241222)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20250117 with electron 34.0.0)
 # UI load:  pass
 # Load video:  pass
 # Export by segment:  pass
