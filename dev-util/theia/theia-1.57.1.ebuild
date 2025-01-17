@@ -502,63 +502,6 @@ PATCHES=(
 )
 
 pkg_setup() {
-# pointer-compression may be needed to avoid:
-	_LOG="
- * Running:		yarn run browser build
-yarn run v1.22.22
-$ yarn -s --cwd examples/browser build
-$ theia rebuild:browser --cacheRoot ../..
-native node modules are already rebuilt for browser
-
-<--- Last few GCs --->
-
-[675:0x55a3ac60cbb0]    92826 ms: Mark-sweep (reduce) 1938.2 (2034.8) -> 1938.1 (2034.8) MB, 1606.9 / 0.0 ms  (average mu = 0.146, current mu = 0.000) last resort; GC in old space requested
-[675:0x55a3ac60cbb0]    94486 ms: Mark-sweep (reduce) 1938.1 (2034.8) -> 1938.1 (2034.8) MB, 1659.7 / 0.0 ms  (average mu = 0.076, current mu = 0.000) last resort; GC in old space requested
-
-
-<--- JS stacktrace --->
-
-FATAL ERROR: CALL_AND_RETRY_LAST Allocation failed - JavaScript heap out of memory
-
- 1: 0x55a3a8369550 node::Abort() [webpack]
-
- 2: 0x55a3a8231645  [webpack]
-
- 3: 0x55a3a8578f00 v8::Utils::ReportOOMFailure(v8::internal::Isolate*, char const*, bool) [webpack]
-
- 4: 0x55a3a8579196 v8::internal::V8::FatalProcessOutOfMemory(v8::internal::Isolate*, char const*, bool) [webpack]
-
- 5: 0x55a3a876b05a v8::internal::HeapAllocator::AllocateRawWithRetryOrFailSlowPath(int, v8::internal::AllocationType, v8::internal::AllocationOrigin, v8::internal::AllocationAlignment) [webpack]
-
- 6: 0x55a3a8747516 v8::internal::Factory::AllocateRaw(int, v8::internal::AllocationType, v8::internal::AllocationAlignment) [webpack]
-
- 7: 0x55a3a873f5c4 v8::internal::FactoryBase<v8::internal::Factory>::NewRawTwoByteString(int, v8::internal::AllocationType) [webpack]
-
- 8: 0x55a3a8a5ec5d v8::internal::String::SlowFlatten(v8::internal::Isolate*, v8::internal::Handle<v8::internal::ConsString>, v8::internal::AllocationType) [webpack]
-
- 9: 0x55a3a8588110 v8::String::Utf8Length(v8::Isolate*) const [webpack]
-
-10: 0x55a3a8337031  [webpack]
-
-11: 0x55a3a85e1e5f v8::internal::FunctionCallbackArguments::Call(v8::internal::CallHandlerInfo) [webpack]
-
-12: 0x55a3a85e2424  [webpack]
-
-13: 0x55a3a85e2cef v8::internal::Builtin_HandleApiCall(int, unsigned long*, v8::internal::Isolate*) [webpack]
-
-14: 0x55a3a8fa4ab9  [webpack]
-
-Error: webpack exited with an unexpected signal: SIGABRT.
-    at ChildProcess.<anonymous> (/var/tmp/portage/dev-util/theia-1.57.1/work/theia-1.57.1/dev-packages/application-manager/lib/application-process.js:65:28)
-    at ChildProcess.emit (node:events:517:28)
-    at maybeClose (node:internal/child_process:1098:16)
-    at ChildProcess._handle.onexit (node:internal/child_process:303:5)
-error Command failed with exit code 1.
-"
-	unset _LOG
-	if has_version "net-libs/nodejs:${NODE_VERSION}[-pointer-compression]" ; then
-ewarn "USE=pointer-compression may be required for 64-bit ABIs."
-	fi
 	einfo "This is the monthly release."
 	python_setup
 	yarn_pkg_setup
@@ -784,6 +727,63 @@ src_prepare() {
 }
 
 src_compile() {
+	# Prevent error:
+	_LOG="
+ * Running:		yarn run browser build
+yarn run v1.22.22
+$ yarn -s --cwd examples/browser build
+$ theia rebuild:browser --cacheRoot ../..
+native node modules are already rebuilt for browser
+
+<--- Last few GCs --->
+
+[675:0x55a3ac60cbb0]    92826 ms: Mark-sweep (reduce) 1938.2 (2034.8) -> 1938.1 (2034.8) MB, 1606.9 / 0.0 ms  (average mu = 0.146, current mu = 0.000) last resort; GC in old space requested
+[675:0x55a3ac60cbb0]    94486 ms: Mark-sweep (reduce) 1938.1 (2034.8) -> 1938.1 (2034.8) MB, 1659.7 / 0.0 ms  (average mu = 0.076, current mu = 0.000) last resort; GC in old space requested
+
+
+<--- JS stacktrace --->
+
+FATAL ERROR: CALL_AND_RETRY_LAST Allocation failed - JavaScript heap out of memory
+
+ 1: 0x55a3a8369550 node::Abort() [webpack]
+
+ 2: 0x55a3a8231645  [webpack]
+
+ 3: 0x55a3a8578f00 v8::Utils::ReportOOMFailure(v8::internal::Isolate*, char const*, bool) [webpack]
+
+ 4: 0x55a3a8579196 v8::internal::V8::FatalProcessOutOfMemory(v8::internal::Isolate*, char const*, bool) [webpack]
+
+ 5: 0x55a3a876b05a v8::internal::HeapAllocator::AllocateRawWithRetryOrFailSlowPath(int, v8::internal::AllocationType, v8::internal::AllocationOrigin, v8::internal::AllocationAlignment) [webpack]
+
+ 6: 0x55a3a8747516 v8::internal::Factory::AllocateRaw(int, v8::internal::AllocationType, v8::internal::AllocationAlignment) [webpack]
+
+ 7: 0x55a3a873f5c4 v8::internal::FactoryBase<v8::internal::Factory>::NewRawTwoByteString(int, v8::internal::AllocationType) [webpack]
+
+ 8: 0x55a3a8a5ec5d v8::internal::String::SlowFlatten(v8::internal::Isolate*, v8::internal::Handle<v8::internal::ConsString>, v8::internal::AllocationType) [webpack]
+
+ 9: 0x55a3a8588110 v8::String::Utf8Length(v8::Isolate*) const [webpack]
+
+10: 0x55a3a8337031  [webpack]
+
+11: 0x55a3a85e1e5f v8::internal::FunctionCallbackArguments::Call(v8::internal::CallHandlerInfo) [webpack]
+
+12: 0x55a3a85e2424  [webpack]
+
+13: 0x55a3a85e2cef v8::internal::Builtin_HandleApiCall(int, unsigned long*, v8::internal::Isolate*) [webpack]
+
+14: 0x55a3a8fa4ab9  [webpack]
+
+Error: webpack exited with an unexpected signal: SIGABRT.
+    at ChildProcess.<anonymous> (/var/tmp/portage/dev-util/theia-1.57.1/work/theia-1.57.1/dev-packages/application-manager/lib/application-process.js:65:28)
+    at ChildProcess.emit (node:events:517:28)
+    at maybeClose (node:internal/child_process:1098:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:303:5)
+error Command failed with exit code 1.
+	"
+	unset _LOG
+	export NODE_OPTIONS+=" --max_old_space_size=4096"
+einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
+
 	yarn_hydrate
 	eyarn run compile
 	eyarn run browser build
@@ -887,6 +887,7 @@ einfo
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.50.1 (20240620)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.56.0 (20241201)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.57.1 (20241222)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.57.1 (20250116 with electron 30.1.2)
 # launch-test:  passed
 # ai-assistant (ollama with yi-coder:1.5b with Universal agent):  passed
 # Run hello world for python:  fail
