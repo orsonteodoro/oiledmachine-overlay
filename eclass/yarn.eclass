@@ -365,7 +365,7 @@ einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
 
 	yarn_network_settings
 	if [[ "${YARN_SLOT}" == "1" ]] ; then
-		yarn config preferOffline "true"
+		yarn config set preferOffline "true"
 		args+=(
 			--pure-lockfile
 			--verbose
@@ -375,7 +375,7 @@ einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
 			${YARN_INSTALL_ARGS[@]}
 	else
 		if [[ "${YARN_SLOT}" == "8" ]] ; then
-			yarn config enableOfflineMode "true"
+			yarn config set enableOfflineMode "true"
 		fi
 		args+=(
 			--cached
@@ -449,14 +449,14 @@ einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
 
 	yarn_network_settings
 	if [[ "${YARN_SLOT}" == "1" ]] ; then
-		yarn config preferOffline "true"
+		yarn config set preferOffline "true"
 		args+=(
 			--pure-lockfile
 			--verbose
 		)
 	else
 		if [[ "${YARN_SLOT}" == "8" ]] ; then
-			yarn config enableOfflineMode "true"
+			yarn config set enableOfflineMode "true"
 		fi
 		args+=(
 		)
@@ -851,14 +851,14 @@ yarn_src_compile() {
 	grep -q -e "\"${cmd}\"" "package.json" || return
 	local args=()
 	if [[ "${YARN_SLOT}" == "1" ]] ; then
-		yarn config preferOffline "true"
+		yarn config set preferOffline "true"
 		args+=(
 			--pure-lockfile
 			--verbose
 		)
 	else
 		if [[ "${YARN_SLOT}" == "8" ]] ; then
-			yarn config enableOfflineMode "true"
+			yarn config set enableOfflineMode "true"
 		fi
 		args+=(
 		)
