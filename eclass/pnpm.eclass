@@ -217,20 +217,12 @@ eerror
 	_PNPM_PKG_SETUP_CALLED=1
 }
 
-# @FUNCTION: pnpm_src_unpack
+# @FUNCTION: _pnpm_setup_offline_cache
 # @DESCRIPTION:
-# Unpacks a pnpm application.
-pnpm_src_unpack() {
-	pnpm_hydrate
-	if [[ "${PNPM_OFFLINE}" == "1" ]] ; then
-		pnpm config set preferOffline "true" || die
-	fi
-
+# Setup offline cache
+_pnpm_setup_offline_cache() {
+	pnpm config set preferOffline "true" || die
 	mkdir -p "${HOME}/.local/share/pnpm"
-	if [[ -z "${PNPM_SLOT}" ]] ; then
-eerror "QA:  Add PNPM_SLOT"
-		die
-	fi
 	export PNPM_CACHE_FOLDER="${EDISTDIR}/pnpm-download-cache-${PNPM_SLOT}/${CATEGORY}/${P}"
 einfo "DEBUG:  Default cache folder:  ${HOME}/.local/share/pnpm/store"
 einfo "PNPM_OFFLINE:  ${PNPM_OFFLINE}"
@@ -241,7 +233,17 @@ einfo "PNPM_CACHE_FOLDER:  ${PNPM_CACHE_FOLDER}"
 	addwrite "${PNPM_CACHE_FOLDER}"
 	mkdir -p "${PNPM_CACHE_FOLDER}"
 	pnpm config set store-dir "${PNPM_CACHE_FOLDER}" || die
+}
 
+# @FUNCTION: pnpm_src_unpack
+# @DESCRIPTION:
+# Unpacks a pnpm application.
+pnpm_src_unpack() {
+	pnpm_hydrate
+	if [[ "${PNPM_OFFLINE}" == "1" ]] ; then
+		_pnpm_setup_offline_cache
+	fi
+	mkdir -p "${HOME}/.local/share/pnpm"
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	epnpm install ${PNPM_INSTALL_ARGS[@]}
 }

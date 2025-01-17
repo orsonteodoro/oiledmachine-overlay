@@ -228,6 +228,23 @@ eerror
 	_NPM_PKG_SETUP_CALLED=1
 }
 
+# @FUNCTION: _npm_setup_offline_cache
+# @DESCRIPTION:
+# Setup offline cache
+_npm_setup_offline_cache() {
+	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+	export NPM_ENABLE_OFFLINE_MODE=1
+	export NPM_CACHE_FOLDER="${EDISTDIR}/npm-download-cache-${NPM_SLOT}/${CATEGORY}/${P}"
+einfo "DEBUG:  Default cache folder:  ${HOME}/.npm/_cacache"
+einfo "NPM_ENABLE_OFFLINE_MODE:  ${YARN_ENABLE_OFFLINE_MODE}"
+einfo "NPM_CACHE_FOLDER:  ${NPM_CACHE_FOLDER}"
+	rm -rf "${HOME}/.npm/_cacache"
+	ln -s "${NPM_CACHE_FOLDER}" "${HOME}/.npm/_cacache" # npm likes to remove the ${HOME}/.npm folder
+	addwrite "${EDISTDIR}"
+	addwrite "${NPM_CACHE_FOLDER}"
+	mkdir -p "${NPM_CACHE_FOLDER}"
+}
+
 # @FUNCTION: _npm_src_unpack_default_upstream
 # @DESCRIPTION:
 # Use the ebuild lockfiles
@@ -252,19 +269,7 @@ _npm_src_unpack_default_ebuild() {
 		npm_unpack_post
 	fi
 	if [[ "${offline}" == "1" || "${offline}" == "2" ]] ; then
-		local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-
-		export NPM_ENABLE_OFFLINE_MODE=1
-		export NPM_CACHE_FOLDER="${EDISTDIR}/npm-download-cache-${NPM_SLOT}/${CATEGORY}/${P}"
-einfo "DEBUG:  Default cache folder:  ${HOME}/.npm/_cacache"
-einfo "NPM_ENABLE_OFFLINE_MODE:  ${YARN_ENABLE_OFFLINE_MODE}"
-einfo "NPM_CACHE_FOLDER:  ${NPM_CACHE_FOLDER}"
-		rm -rf "${HOME}/.npm/_cacache"
-		ln -s "${NPM_CACHE_FOLDER}" "${HOME}/.npm/_cacache" # npm likes to remove the ${HOME}/.npm folder
-		addwrite "${EDISTDIR}"
-		addwrite "${NPM_CACHE_FOLDER}"
-		mkdir -p "${NPM_CACHE_FOLDER}"
-
+		_npm_setup_offline_cache
 		if [[ -e "${FILESDIR}/${PV}" && -n "${NPM_ROOT}" ]] ; then
 			cp -aT "${FILESDIR}/${PV}" "${NPM_ROOT}" || die
 		elif [[ -e "${FILESDIR}/${PV}" ]] ; then
@@ -319,6 +324,9 @@ _npm_src_unpack_default_upstream() {
 		npm_unpack_install_pre
 	fi
 	local extra_args=()
+	if [[ "${offline}" == "1" || "${offline}" == "2" ]] ; then
+		_npm_setup_offline_cache
+	fi
 	if [[ "${offline}" == "2" ]] ; then
 		extra_args+=(
 			"--no-audit"

@@ -295,6 +295,34 @@ eerror
 	_YARN_PKG_SETUP_CALLED=1
 }
 
+# @FUNCTION: _yarn_setup_offline_cache
+# @DESCRIPTION:
+# Setup offline cache
+_yarn_setup_offline_cache() {
+	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+	if [[ "${YARN_SLOT}" == "1" ]] ; then
+		export YARN_CACHE_FOLDER="${EDISTDIR}/yarn-download-cache-${YARN_SLOT}/${CATEGORY}/${P}"
+einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
+		mkdir -p "${HOME}/.yarn/berry" || die
+		addwrite "${EDISTDIR}"
+		addwrite "${YARN_CACHE_FOLDER}"
+		mkdir -p "${YARN_CACHE_FOLDER}"
+		yarn config set cacheFolder "${YARN_CACHE_FOLDER}" || die
+	else
+		export YARN_ENABLE_OFFLINE_MODE=1
+		export YARN_CACHE_FOLDER="${EDISTDIR}/yarn-download-cache-${YARN_SLOT}/${CATEGORY}/${P}"
+einfo "DEBUG:  Default cache folder:  ${HOME}/.yarn/berry/cache/"
+einfo "YARN_ENABLE_OFFLINE_MODE:  ${YARN_ENABLE_OFFLINE_MODE}"
+einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
+		mkdir -p "${HOME}/.yarn/berry" || die
+		ln -s "${YARN_CACHE_FOLDER}" "${HOME}/.yarn/berry/cache"
+		addwrite "${EDISTDIR}"
+		addwrite "${YARN_CACHE_FOLDER}"
+		mkdir -p "${YARN_CACHE_FOLDER}"
+		yarn config set cacheFolder "${YARN_CACHE_FOLDER}" || die
+	fi
+}
+
 # @FUNCTION: _yarn_src_unpack_default_ebuild
 # @DESCRIPTION:
 # Use the ebuild lockfiles
@@ -323,35 +351,7 @@ _yarn_src_unpack_default_ebuild() {
 	fi
 
 	if [[ "${YARN_OFFLINE:-1}" == "1" ]] ; then
-		local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-
-		if [[ -z "${YARN_SLOT}" ]] ; then
-eerror "QA:  Add YARN_SLOT"
-			die
-		fi
-
-		if [[ "${YARN_SLOT}" == "1" ]] ; then
-			export YARN_CACHE_FOLDER="${EDISTDIR}/yarn-download-cache-${YARN_SLOT}/${CATEGORY}/${P}"
-einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
-			mkdir -p "${HOME}/.yarn/berry" || die
-			addwrite "${EDISTDIR}"
-			addwrite "${YARN_CACHE_FOLDER}"
-			mkdir -p "${YARN_CACHE_FOLDER}"
-			yarn config set cacheFolder "${YARN_CACHE_FOLDER}" || die
-		else
-			export YARN_ENABLE_OFFLINE_MODE=1
-			export YARN_CACHE_FOLDER="${EDISTDIR}/yarn-download-cache-${YARN_SLOT}/${CATEGORY}/${P}"
-einfo "DEBUG:  Default cache folder:  ${HOME}/.yarn/berry/cache/"
-einfo "YARN_ENABLE_OFFLINE_MODE:  ${YARN_ENABLE_OFFLINE_MODE}"
-einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
-			mkdir -p "${HOME}/.yarn/berry" || die
-			ln -s "${YARN_CACHE_FOLDER}" "${HOME}/.yarn/berry/cache"
-			addwrite "${EDISTDIR}"
-			addwrite "${YARN_CACHE_FOLDER}"
-			mkdir -p "${YARN_CACHE_FOLDER}"
-			yarn config set cacheFolder "${YARN_CACHE_FOLDER}" || die
-		fi
-
+		_yarn_setup_offline_cache
 		if [[ -e "${FILESDIR}/${PV}" && -n "${YARN_ROOT}" ]] ; then
 			cp -aT "${FILESDIR}/${PV}" "${YARN_ROOT}" || die
 		elif [[ -e "${FILESDIR}/${PV}" ]] ; then
@@ -365,7 +365,6 @@ einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
 
 	yarn_network_settings
 	if [[ "${YARN_SLOT}" == "1" ]] ; then
-		yarn config set preferOffline "true"
 		args+=(
 			--pure-lockfile
 			--verbose
@@ -374,9 +373,6 @@ einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
 			${args[@]} \
 			${YARN_INSTALL_ARGS[@]}
 	else
-		if [[ "${YARN_SLOT}" == "8" ]] ; then
-			yarn config set enableOfflineMode "true"
-		fi
 		args+=(
 			--cached
 		)
@@ -412,35 +408,7 @@ _yarn_src_unpack_default_upstream() {
 	fi
 
 	if [[ "${YARN_OFFLINE:-1}" == "1" ]] ; then
-		local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-
-		if [[ -z "${YARN_SLOT}" ]] ; then
-eerror "QA:  Add YARN_SLOT"
-			die
-		fi
-
-		if [[ "${YARN_SLOT}" == "1" ]] ; then
-			export YARN_CACHE_FOLDER="${EDISTDIR}/yarn-download-cache-${YARN_SLOT}/${CATEGORY}/${P}"
-einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
-			mkdir -p "${HOME}/.yarn/berry" || die
-			addwrite "${EDISTDIR}"
-			addwrite "${YARN_CACHE_FOLDER}"
-			mkdir -p "${YARN_CACHE_FOLDER}"
-			yarn config set cacheFolder "${YARN_CACHE_FOLDER}" || die
-		else
-			export YARN_ENABLE_OFFLINE_MODE=1
-			export YARN_CACHE_FOLDER="${EDISTDIR}/yarn-download-cache-${YARN_SLOT}/${CATEGORY}/${P}"
-einfo "DEBUG:  Default cache folder:  ${HOME}/.yarn/berry/cache/"
-einfo "YARN_ENABLE_OFFLINE_MODE:  ${YARN_ENABLE_OFFLINE_MODE}"
-einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
-			mkdir -p "${HOME}/.yarn/berry" || die
-			ln -s "${YARN_CACHE_FOLDER}" "${HOME}/.yarn/berry/cache"
-			addwrite "${EDISTDIR}"
-			addwrite "${YARN_CACHE_FOLDER}"
-			mkdir -p "${YARN_CACHE_FOLDER}"
-			yarn config set cacheFolder "${YARN_CACHE_FOLDER}" || die
-		fi
-
+		_yarn_setup_offline_cache
 	fi
 	local args=()
 	if declare -f yarn_unpack_install_pre > /dev/null 2>&1 ; then
@@ -449,15 +417,11 @@ einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
 
 	yarn_network_settings
 	if [[ "${YARN_SLOT}" == "1" ]] ; then
-		yarn config set preferOffline "true"
 		args+=(
 			--pure-lockfile
 			--verbose
 		)
 	else
-		if [[ "${YARN_SLOT}" == "8" ]] ; then
-			yarn config set enableOfflineMode "true"
-		fi
 		args+=(
 		)
 	fi
