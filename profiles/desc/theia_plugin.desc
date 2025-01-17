@@ -1,0 +1,87 @@
+# This file is part of the theia ebuild
+theia_plugin_EditorConfig_EditorConfig - Add plugin for EditorConfig for VS Code
+theia_plugin_dbaeumer_vscodeeslint - Add plugin for ESLint for VS Code
+theia_plugin_eclipsetheia_builtinextensionpack - Add plugin for the Built-in VS Code extension package
+theia_plugin_msvscode_jsdebug - Add plugin for a DAP based JavaScript debugger
+theia_plugin_vscode_bat - Add plugin for batch (.bat) files
+theia_plugin_vscode_builtinnotebookrenderers - Add plugin for built-in notebook output renderers
+theia_plugin_vscode_clojure - Add plugin for Clojure
+theia_plugin_vscode_coffeescript - Add plugin for CoffeeScript
+theia_plugin_vscode_configurationediting - Add plugin for configuration editing
+theia_plugin_vscode_cpp - Add plugin for C/C++
+theia_plugin_vscode_csharp - Add plugin for C#
+theia_plugin_vscode_css - Add plugin for CSS
+theia_plugin_vscode_csslanguagefeatures - Add plugin for CSS language features
+theia_plugin_vscode_dart - Add plugin for Dart
+theia_plugin_vscode_debugautolaunch - Add plugin for Node debug auto-attach
+theia_plugin_vscode_debugserverready - Add plugin for server ready action, opening URI in browser
+theia_plugin_vscode_diff - Add plugin for Diff
+theia_plugin_vscode_docker - Add plugin for Docker
+theia_plugin_vscode_emmet - Add plugin for Emmet
+theia_plugin_vscode_fsharp - Add plugin for F#
+theia_plugin_vscode_git - Add plugin for Git
+theia_plugin_vscode_gitbase - Add plugin for Git Base
+theia_plugin_vscode_go - Add plugin for Go
+theia_plugin_vscode_groovy - Add plugin for Groovy
+theia_plugin_vscode_grunt - Add plugin for Grunt
+theia_plugin_vscode_gulp - Add plugin for Gulp
+theia_plugin_vscode_handlebars - Add plugin for Handlebars
+theia_plugin_vscode_hlsl - Add plugin for HLSL
+theia_plugin_vscode_html - Add plugin for HTML
+theia_plugin_vscode_htmllanguagefeatures - Add plugin for HTML language features
+theia_plugin_vscode_ini - Add plugin for Ini
+theia_plugin_vscode_ipynb - Add plugin for Jupyter
+theia_plugin_vscode_jake - Add plugin for Jake
+theia_plugin_vscode_java - Add plugin for Java
+theia_plugin_vscode_javascript - Add plugin for JavaScript
+theia_plugin_vscode_json - Add plugin for JSON
+theia_plugin_vscode_jsonlanguagefeatures - Add plugin for JSON language features
+theia_plugin_vscode_julia - Add plugin for Julia
+theia_plugin_vscode_latex - Add plugin for LaTeX
+theia_plugin_vscode_less - Add plugin for Less
+theia_plugin_vscode_log - Add plugin for Log
+theia_plugin_vscode_lua - Add plugin for Lua
+theia_plugin_vscode_make - Add plugin for Make
+theia_plugin_vscode_markdown - Add plugin for Markdown
+theia_plugin_vscode_markdownlanguagefeatures - Add plugin for Markdown language features
+theia_plugin_vscode_markdownmath - Add plugin for Markdown Math
+theia_plugin_vscode_mediapreview - Add plugin for media previews of image, audio, video files
+theia_plugin_vscode_mergeconflict - Add plugin for inline merge conflicts
+theia_plugin_vscode_npm - Add plugin for NPM
+theia_plugin_vscode_objectivec - Add plugin for Objective-C
+theia_plugin_vscode_perl - Add plugin for Perl
+theia_plugin_vscode_php - Add plugin for PHP
+theia_plugin_vscode_phplanguagefeatures - Add plugin for PHP language features
+theia_plugin_vscode_powershell - Add plugin for Powershell
+theia_plugin_vscode_pug - Add plugin for Pug
+theia_plugin_vscode_python - Add plugin for Python
+theia_plugin_vscode_r - Add plugin for R
+theia_plugin_vscode_razor - Add plugin for Razor
+theia_plugin_vscode_referencesview - Add plugin for symbol references view
+theia_plugin_vscode_restructuredtext - Add plugin for reStructuredText
+theia_plugin_vscode_ruby - Add plugin for Ruby
+theia_plugin_vscode_rust - Add plugin for Rust
+theia_plugin_vscode_scss - Add plugin for SCSS
+theia_plugin_vscode_searchresult - Add plugin for tabbed search results
+theia_plugin_vscode_shaderlab - Add plugin for Shaderlab
+theia_plugin_vscode_shellscript - Add plugin for the UNIX shell script
+theia_plugin_vscode_simplebrowser - Add plugin for simple-browser
+theia_plugin_vscode_sql - Add plugin for SQL
+theia_plugin_vscode_swift - Add plugin for Swift
+theia_plugin_vscode_themeabyss - Add plugin for for the Abyss color theme
+theia_plugin_vscode_themedefaults - Add plugin for for default themes
+theia_plugin_vscode_themekimbiedark - Add plugin for for the Kimbie Dark color theme
+theia_plugin_vscode_thememonokai - Add plugin for for the Monokai color theme
+theia_plugin_vscode_thememonokaidimmed - Add plugin for for the Monokai Dimmed color theme
+theia_plugin_vscode_themequietlight - Add plugin for for the Quiet Light color theme
+theia_plugin_vscode_themered - Add plugin for for the Red color theme
+theia_plugin_vscode_themesolarizeddark - Add plugin for for the Solarized Dark color theme
+theia_plugin_vscode_themesolarizedlight - Add plugin for for the Solarized Light color theme
+theia_plugin_vscode_themetomorrownightblue - Add plugin for for the Tomorrow Night Blue color theme
+theia_plugin_vscode_tunnelforwarding - Add plugin for local tunnel port forwarding
+theia_plugin_vscode_typescript - Add plugin for TypeScript
+theia_plugin_vscode_typescriptlanguagefeatures - Add plugin for TypeScript and JavaScript language features
+theia_plugin_vscode_vb - Add plugin for Visual Basic
+theia_plugin_vscode_vscodethemeseti - Add plugin for Seti file icon theme
+theia_plugin_vscode_xml - Add plugin for XML
+theia_plugin_vscode_yaml - Add plugin for YAML
