@@ -156,3 +156,5 @@ media-plugins/gst-plugins-x264
 media-plugins/gst-plugins-amr
 media-plugins/gst-plugins-cdio
 
+# Security advisory for GHSA-32xm-jpw6-7frx for dependency tauri-plugin-autostart-api
+gui-apps/windowpet
