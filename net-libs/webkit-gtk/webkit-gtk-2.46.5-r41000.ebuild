@@ -91,6 +91,14 @@ FFMPEG_COMPAT=(
 FONTCONFIG_PV="2.13.0"
 FREETYPE_PV="2.9.0"
 GCC_PV="11.2.0"
+GLIB_VERSIONS=(
+	"2.82.4"
+	"2.80.5"
+	"2.78.6"
+	"2.78.4"
+	"2.78.3"
+	"2.76.4"
+)
 GOBJECT_INTROSPECTION_VERSIONS=(
 	"1.82"
 	"1.80"
@@ -742,7 +750,7 @@ gen_depend_llvm() {
 	done
 }
 
-gen_gobject_introspection_rdepend_pairs() {
+gen_gobject_introspection_rdepend() {
 	local pv
 	for pv in ${GOBJECT_INTROSPECTION_VERSIONS[@]} ; do
 		echo "
@@ -754,19 +762,35 @@ gen_gobject_introspection_rdepend_pairs() {
 	done
 }
 
-gen_glib_rdepend_penta() {
+gen_glib_rdepend() {
+	local pv
+	for pv in ${GLIB_VERSIONS[@]} ; do
+		local minor="${pv#*.}"
+		minor="${minor#.*}"
+		echo "
+			(
+				~dev-util/glib-utils-${pv}
+				~dev-libs/glib-${pv}:2[${MULTILIB_USEDEP}]
+				introspection? (
+					=dev-libs/gobject-introspection-1.${minor}*[${PYTHON_SINGLE_USEDEP}]
+					=dev-libs/gobject-introspection-common-1.${minor}*
+				)
+				geolocation? (
+					~dev-util/gdbus-codegen-${pv}
+				)
+			)
+		"
+	done
+}
+
+gen_gobject_introspection_rdepend() {
 	local pv
 	for pv in ${GOBJECT_INTROSPECTION_VERSIONS[@]} ; do
 		echo "
 			(
-				~dev-util/glib-utils-2.${pv#*.}
-				~dev-libs/glib-2.${pv#*.}:2[${MULTILIB_USEDEP}]
 				introspection? (
 					=dev-libs/gobject-introspection-${pv}*[${PYTHON_SINGLE_USEDEP}]
 					=dev-libs/gobject-introspection-common-${pv}*
-				)
-				geolocation? (
-					~dev-util/gdbus-codegen-2.${pv#*.}
 				)
 			)
 		"
@@ -774,7 +798,6 @@ gen_glib_rdepend_penta() {
 }
 
 RDEPEND+="
-	$(gen_glib_rdepend_penta)
 	${RDEPEND_PATENTS}
 	>=dev-db/sqlite-3.22.0:3=[${MULTILIB_USEDEP}]
 	>=dev-libs/icu-61.2:=[${MULTILIB_USEDEP}]
@@ -858,7 +881,7 @@ RDEPEND+="
 	introspection? (
 		>=dev-libs/gobject-introspection-1.56.1[${PYTHON_SINGLE_USEDEP}]
 		|| (
-			$(gen_gobject_introspection_rdepend_pairs)
+			$(gen_gobject_introspection_rdepend)
 		)
 		dev-libs/gobject-introspection:=
 	)
@@ -929,6 +952,9 @@ RDEPEND+="
 	)
 	X? (
 		>=x11-libs/libX11-1.6.4[${MULTILIB_USEDEP}]
+	)
+	|| (
+		$(gen_glib_rdepend)
 	)
 "
 # For ${OCDM_WV}, \
