@@ -22,7 +22,7 @@ NODE_VERSION="${AT_TYPES_NODE_PV%%.*}"
 NPM_AUDIT_FIX=1
 #NPM_OFFLINE=0 # Build failures if offline
 NPM_SKIP_TARBALL_UNPACK="1"
-PLUGINS_WORKSPACE_COMMIT="6d8188ebfa096fce9fea714b7dad948a98b2c36c"
+PLUGINS_WORKSPACE_COMMIT="890005f9a20379a97a004ebf486a78629a8d290d"
 
 declare -A GIT_CRATES=(
 [tauri-plugin-log]="https://github.com/tauri-apps/plugins-workspace;890005f9a20379a97a004ebf486a78629a8d290d;plugins-workspace-%commit%/plugins/log" # 0.0.0
