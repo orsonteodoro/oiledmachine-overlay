@@ -1097,3 +1097,21 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-MOD-TYPE:  patches, ebuild-changes
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (6.2.1, 20250118)
+# USE="X avif client cython firejail gtk3 rencodeplus server webp -aac -aes
+# -alsa -amf -aom -appindicator -audio -avahi -brotli -cityhash -clipboard
+# -cpu-percent -csc_cython -csc_libyuv -cuda -cuda_rebuild -cups
+# -cups-forwarding -cythonize-more -dbus (-debug) -doc -drm -evdi -flac
+# -gnome-shell -gssapi -html5-client -html5_brotli -html5_gzip -http -ibus -jack
+# -jpeg -kerberos -keyboard-layout -keycloak -lame -ldap -ldap3 -lz4 -lzo
+# -matroska -mdns -mp3 -mysql -netdev -notifications -nvdec -nvenc -nvfbc
+# -nvjpeg -ogg -opengl -openh264 -openrc -opus -osmesa -oss -pam -pinentry -png
+# -proc -proxy -pulseaudio -pyinotify -qrencode -qt6 -quic -rencode -rfb
+# -sd_listen (-selinux) -socks -sound-forwarding -speex -spng -sqlite -ssh
+# -sshpass -ssl -systemd -tcp-wrappers -test -tiff -u2f -uinput -v4l2 -vaapi
+# -vorbis -vpx -vsock -wavpack -wayland -webcam -webcam-forwarding -websockets
+# -x264 -xdg -xinput -yaml -zeroconf -zlib"
+# CUDA_TARGETS="-sm_52 -sm_53 -sm_60 -sm_61 -sm_62 -sm_70 -sm_75 -sm_80 -sm_86
+# -sm_90"
+# EBUILD_REVISION="-2"
+# PATENT_STATUS="-nonfree"
+# PYTHON_TARGETS="python3_10 -python3_12"
