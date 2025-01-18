@@ -829,6 +829,7 @@ src_configure() {
 }
 
 src_compile() {
+	rm -f "${WORKDIR}/${MY_PN}-${PV}/Cargo."{"lock","toml"}
 einfo "Building npm side"
 	S="${WORKDIR}/${MY_PN}-${PV}" \
 	npm_src_compile
