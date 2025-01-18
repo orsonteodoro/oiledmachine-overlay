@@ -57,7 +57,7 @@ SLOT="0"
 # Deps based on their CI
 IUSE+="
 	firejail
-	ebuild_revision_9
+	ebuild_revision_10
 "
 BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}[webassembly(+)]
@@ -141,7 +141,7 @@ src_install() {
 		"${NPM_INSTALL_PATH}/${PN}"
 	newicon "static/Icon.png" "${PN}.png"
 	make_desktop_entry \
-		"/usr/bin/${PN}" \
+		"${PN}" \
 		"${PN^}" \
 		"${PN}.png" \
 		"Network"
