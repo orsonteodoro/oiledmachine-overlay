@@ -28,11 +28,6 @@ declare -A SCUDO_FREE_IMMEDIATE
 declare -A XEPHYR_WH
 declare -A X_BACKEND
 
-declare -A _SCOPE=(
-	["xpra"]="ban" # Causes Authorization required, but no authorization protocol specified
-	["x-terminal-emulator"]="ban"
-)
-
 _PROFILE_GRAPH["_1password"]="electron-common"
 _PROFILE_GRAPH["_7z"]="archiver-common"
 _PROFILE_GRAPH["_7za"]="7z"
@@ -645,6 +640,14 @@ _PROFILE_GRAPH["zstdgrep"]="zstd"
 _PROFILE_GRAPH["zstdless"]="zstd"
 _PROFILE_GRAPH["zstdmt"]="zstd"
 
+declare -A SCOPE=(
+	["X"]="ban"
+	["Xephyr"]="ban" # Breaks --x11=xephyr
+	["xpra"]="ban" # Causes Authorization required, but no authorization protocol specified
+	["Xvfb"]="ban" # Breaks --x11=xvfb
+	["x-terminal-emulator"]="ban"
+)
+
 DOTTED_FILENAMES=(
 blender-2.8
 blender-3.6
@@ -684,59 +687,59 @@ XMind Xephyr Xvfb ZeGrapher abiword abrowser acat adiff agetpkg akonadi_control
 akregator alacarte alienarena alienarena-wrapper alienblaster alpine alpinef
 als amarok amule amuled android-studio ani-cli anki anydesk aosp apack apktool
 apostrophe ar arch-audit archaudit-report archiver-common ardour4 ardour5
-arduino arepack aria2c ark arm armcord artha assogiate asunder atom atom-beta
-atool atril atril-previewer atril-thumbnailer audacious audacity audio-recorder
-aunpack authenticator authenticator-rs autokey-common autokey-gtk autokey-qt
-autokey-run autokey-shell avidemux avidemux3_cli avidemux3_jobs_qt5
-avidemux3_qt5 aweather awesome axel b2sum b3sum ballbuster ballbuster-wrapper
-baloo_file baloo_filemetadata_temp_extractor balsa baobab barrier basilisk
-bcompare beaker bibletime bibtex bijiben bitcoin-qt bitlbee bitwarden
-bitwarden-desktop blackbox bleachbit blender blender-2_8 blender-3_6 bless
-blink-common blink-common-hardened_inc blobby blobwars bluefish bnox bpftop
-brackets brasero brave brave-browser brave-browser-beta brave-browser-dev
-brave-browser-nightly brave-browser-stable brz bsdcat bsdcpio bsdtar
-build-systems-common bundle bunzip2 bzcat bzflag bzip2 bzr cachy-browser caja
-calibre calligra calligraauthor calligraconverter calligraflow calligragemini
-calligraplan calligraplanwork calligrasheets calligrastage calligrawords
-cameramonitor cantata caprine cargo catfish cawbird celluloid chafa chatterino
-checkbashisms cheese cherrytree chromium chromium-browser
-chromium-browser-privacy chromium-common chromium-common-hardened_inc
-chromium-freeworld cin cinelerra cinelerra-gg cksum clac clamav clamdscan
-clamdtop clamscan clamtk claws-mail clawsker clementine clion clion-eap
-clipgrab clipit cliqz clocks cloneit cmake cmus code code-oss codium cointop
-cola colorful colorful-wrapper com_github_bleakgrey_tootle
-com_github_dahenson_agenda com_github_johnfactotum_Foliate
-com_github_phase1geo_minder com_github_tchx84_Flatseal com_gitlab_newsflash
-conkeror conky conplay corebird cower coyim cpio crawl crawl-tiles crow
-cryptocat curl cvlc cyberfox d-feet d-spy daisy darktable dbus-debug-common
-dbus-send dconf dconf-editor ddgr ddgtk deadbeef deadlink default deluge
-desktopeditors devhelp devilspie devilspie2 dex2jar dexios dia dig digikam
-dillo dino dino-im discord discord-canary discord-common discord-ptb display
-display-im6_q16 dnox dnscrypt-proxy dnsmasq dolphin dolphin-emu dooble
-dooble-qt4 dosbox dragon drawio drill dropbox dtui easystroke ebook-convert
-ebook-edit ebook-meta ebook-polish ebook-viewer editorconfiger electron-cash
-electron-common electron-common-hardened_inc electron-mail electrum
-element-desktop elinks emacs email-common empathy enchant enchant-2
-enchant-lsmod enchant-lsmod-2 engrampa enox enpass eo-common eog eom ephemeral
-epiphany equalx erd et etr etr-wrapper evince evince-previewer
-evince-thumbnailer evolution exfalso exiftool falkon fbreader fdns feedreader
-feh feh-network_inc ferdi fetchmail ffmpeg ffmpegthumbnailer ffplay ffprobe
-file file-manager-common file-roller filezilla firedragon firefox firefox-beta
-firefox-common firefox-common-addons firefox-developer-edition firefox-esr
-firefox-nightly firefox-wayland firefox-x11 five-or-more fix-qdf flacsplt
-flameshot flashpeak-slimjet floorp flowblade fluffychat fluxbox foliate
-font-manager fontforge fossamail four-in-a-row fractal franz freecad freecadcmd
-freeciv freeciv-gtk3 freeciv-mp-gtk3 freecol freemind freeoffice-planmaker
-freeoffice-presentations freeoffice-textmaker freetube freshclam frogatto
-frozen-bubble ftp funnyboat gajim gajim-history-manager galculator gallery-dl
-gapplication gcalccmd gcloud gconf gconf-editor gconf-merge-schema
-gconf-merge-tree gconfpkg gconftool-2 gdu geany geary gedit geekbench geeqie
-geki2 geki3 gfeeds gget gh ghb ghostwriter gimp gimp-2_10 gimp-2_8 gist
-gist-paste git git-cola gitg github-desktop gitter gjs gl-117 gl-117-wrapper
-glaxium glaxium-wrapper globaltime gmpc gnome-2048 gnome-books gnome-boxes
-gnome-builder gnome-calculator gnome-calendar gnome-character-map
-gnome-characters gnome-chess gnome-clocks gnome-contacts gnome-documents
-gnome-font-viewer gnome-hexgl gnome-keyring gnome-keyring-3
+arduino arepack aria2c aria2p aria2rpc ark arm armcord artha assogiate asunder
+atom atom-beta atool atril atril-previewer atril-thumbnailer audacious audacity
+audio-recorder aunpack authenticator authenticator-rs autokey-common
+autokey-gtk autokey-qt autokey-run autokey-shell avidemux avidemux3_cli
+avidemux3_jobs_qt5 avidemux3_qt5 aweather awesome axel b2sum b3sum ballbuster
+ballbuster-wrapper baloo_file baloo_filemetadata_temp_extractor balsa baobab
+barrier basilisk bcompare beaker bibletime bibtex bijiben bitcoin-qt bitlbee
+bitwarden bitwarden-desktop blackbox bleachbit blender blender-2_8 blender-3_6
+bless blink-common blink-common-hardened_inc blobby blobwars bluefish bnox
+bpftop brackets brasero brave brave-browser brave-browser-beta
+brave-browser-dev brave-browser-nightly brave-browser-stable brz bsdcat bsdcpio
+bsdtar build-systems-common buku bundle bunzip2 bzcat bzflag bzip2 bzr
+cachy-browser caja calibre calligra calligraauthor calligraconverter
+calligraflow calligragemini calligraplan calligraplanwork calligrasheets
+calligrastage calligrawords cameramonitor cantata caprine cargo catfish cawbird
+celluloid chafa chatterino checkbashisms cheese cherrytree chromium
+chromium-browser chromium-browser-privacy chromium-common
+chromium-common-hardened_inc chromium-freeworld cin cinelerra cinelerra-gg
+cksum clac clamav clamdscan clamdtop clamscan clamtk claws-mail clawsker
+clementine clion clion-eap clipgrab clipit cliqz clocks cloneit cmake cmus code
+code-oss codium cointop cola colorful colorful-wrapper
+com_github_bleakgrey_tootle com_github_dahenson_agenda
+com_github_johnfactotum_Foliate com_github_phase1geo_minder
+com_github_tchx84_Flatseal com_gitlab_newsflash conkeror conky conplay corebird
+cower coyim cpio crawl crawl-tiles crow cryptocat curl cvlc cyberfox d-feet
+d-spy daisy darktable dbus-debug-common dbus-send dconf dconf-editor ddgr ddgtk
+deadbeef deadlink default deluge desktopeditors devhelp devilspie devilspie2
+dex2jar dexios dia dig digikam dillo dino dino-im discord discord-canary
+discord-common discord-ptb display display-im6_q16 dnox dnscrypt-proxy dnsmasq
+dolphin dolphin-emu dooble dooble-qt4 dosbox dragon drawio drill dropbox dtui
+easystroke ebook-convert ebook-edit ebook-meta ebook-polish ebook-viewer
+editorconfiger electron-cash electron-common electron-common-hardened_inc
+electron-mail electrum element-desktop elinks emacs email-common empathy
+enchant enchant-2 enchant-lsmod enchant-lsmod-2 engrampa enox enpass eo-common
+eog eom ephemeral epiphany equalx erd et etr etr-wrapper evince
+evince-previewer evince-thumbnailer evolution exfalso exiftool falkon fbreader
+fdns feedreader feh feh-network_inc ferdi fetchmail ffmpeg ffmpegthumbnailer
+ffplay ffprobe file file-manager-common file-roller filezilla firedragon
+firefox firefox-beta firefox-common firefox-common-addons
+firefox-developer-edition firefox-esr firefox-nightly firefox-wayland
+firefox-x11 five-or-more fix-qdf flacsplt flameshot flashpeak-slimjet floorp
+flowblade fluffychat fluxbox foliate font-manager fontforge fossamail
+four-in-a-row fractal franz freecad freecadcmd freeciv freeciv-gtk3
+freeciv-mp-gtk3 freecol freemind freeoffice-planmaker freeoffice-presentations
+freeoffice-textmaker freetube freshclam frogatto frozen-bubble ftp funnyboat
+gajim gajim-history-manager galculator gallery-dl gapplication gcalccmd gcloud
+gconf gconf-editor gconf-merge-schema gconf-merge-tree gconfpkg gconftool-2 gdu
+geany geary gedit geekbench geeqie geki2 geki3 gfeeds gget gh ghb ghostwriter
+gimp gimp-2_10 gimp-2_8 gist gist-paste git git-cola gitg github-desktop gitter
+gjs gl-117 gl-117-wrapper glaxium glaxium-wrapper globaltime gmpc gnome-2048
+gnome-books gnome-boxes gnome-builder gnome-calculator gnome-calendar
+gnome-character-map gnome-characters gnome-chess gnome-clocks gnome-contacts
+gnome-documents gnome-font-viewer gnome-hexgl gnome-keyring gnome-keyring-3
 gnome-keyring-daemon gnome-klotski gnome-latex gnome-logs gnome-mahjongg
 gnome-maps gnome-mines gnome-mplayer gnome-mpv gnome-music gnome-nettool
 gnome-nibbles gnome-passwordsafe gnome-photos gnome-pie gnome-pomodoro
@@ -776,22 +779,22 @@ mcabber mcomix md5sum mdr mediainfo mediathekview megaglest megaglest_editor
 meld mencoder mendeleydesktop menulibre meson metadata-cleaner meteo-qt
 microsoft-edge microsoft-edge-beta microsoft-edge-dev microsoft-edge-stable
 midori mimetype min mindless minecraft-launcher minetest minitube mirage
-mirrormagic mocp mousepad mov-cli mp3splt mp3splt-gtk mp3wrap mpDris2 mpd
-mpg123 mpg123-alsa mpg123-id3dump mpg123-jack mpg123-nas mpg123-openal
-mpg123-oss mpg123-portaudio mpg123-pulse mpg123-strip mpg123_bin mplayer mpsyt
-mpv mrrescue ms-excel ms-office ms-onenote ms-outlook ms-powerpoint ms-skype
-ms-word mtpaint mullvad-browser multimc multimc5 mumble mupdf mupdf-gl
-mupdf-x11 mupdf-x11-curl mupen64plus muraster musescore musictube musixmatch
-mutool mutt mypaint mypaint-ora-thumbnailer nano natron nautilus ncdu ncdu2
-nemo neochat neomutt netactview nethack nethack-vultures netsurf neverball
-neverball-wrapper neverputt neverputt-wrapper newsbeuter newsboat newsflash
-nextcloud nextcloud-desktop nheko nhex nicotine nitroshare nitroshare-cli
-nitroshare-nmh nitroshare-send nitroshare-ui node node-gyp nodejs-common nomacs
-noprofile notable notify-send npm npx nslookup nuclear nvim nylas nyx obs
-obsidian ocenaudio odt2txt oggsplt okular onboard onionshare onionshare-cli
-onionshare-gui ooffice ooviewdoc open-invaders openarena openarena_ded openbox
-opencity openclonk openmw openmw-launcher openoffice_org openshot openshot-qt
-openstego openttd opera opera-beta opera-developer orage
+mirrormagic mocp monero-wallet-cli mousepad mov-cli mp3splt mp3splt-gtk mp3wrap
+mpDris2 mpd mpg123 mpg123-alsa mpg123-id3dump mpg123-jack mpg123-nas
+mpg123-openal mpg123-oss mpg123-portaudio mpg123-pulse mpg123-strip mpg123_bin
+mplayer mpsyt mpv mrrescue ms-excel ms-office ms-onenote ms-outlook
+ms-powerpoint ms-skype ms-word mtpaint mullvad-browser multimc multimc5 mumble
+mupdf mupdf-gl mupdf-x11 mupdf-x11-curl mupen64plus muraster musescore
+musictube musixmatch mutool mutt mypaint mypaint-ora-thumbnailer nano natron
+nautilus ncdu ncdu2 nemo neochat neomutt netactview nethack nethack-vultures
+netsurf neverball neverball-wrapper neverputt neverputt-wrapper newsbeuter
+newsboat newsflash nextcloud nextcloud-desktop nheko nhex nicotine nitroshare
+nitroshare-cli nitroshare-nmh nitroshare-send nitroshare-ui node node-gyp
+nodejs-common nomacs noprofile notable notify-send npm npx nslookup nuclear
+nvim nylas nyx obs obsidian ocenaudio odt2txt oggsplt okular onboard onionshare
+onionshare-cli onionshare-gui ooffice ooviewdoc open-invaders openarena
+openarena_ded openbox opencity openclonk openmw openmw-launcher openoffice_org
+openshot openshot-qt openstego openttd opera opera-beta opera-developer orage
 org_gnome_NautilusPreviewer ostrichriders otter-browser out123 p7zip palemoon
 pandoc parole parsecd patch pavucontrol pavucontrol-qt pcmanfm pcsxr pdfchain
 pdflatex pdfmod pdfsam pdftotext peek penguin-command photoflare picard pidgin
@@ -842,7 +845,7 @@ tor-browser_tr tor-browser_vi tor-browser_zh-CN tor-browser_zh-TW torbrowser
 torbrowser-launcher torcs totem tqemu tracker transgui transmission-cli
 transmission-common transmission-create transmission-daemon transmission-edit
 transmission-gtk transmission-qt transmission-remote transmission-remote-cli
-transmission-remote-gtk transmission-show tremulous trojita truecraft
+transmission-remote-gtk transmission-show tremc tremulous trojita truecraft
 ts3client_runscript_sh tshark tuir tutanota-desktop tuxguitar tuxtype tvbrowser
 tvnamer twitch typespeed udiskie uefitool uget-gtk unar unbound uncompress unf
 unknown-horizons unlz4 unlzma unrar unxz unzip unzstd upscayl url-eater utox
@@ -865,7 +868,7 @@ zeal zegrep zfgrep zforce zgrep zim zless zlib-flate zmore znew zoom zpaq zstd
 zstdcat zstdgrep zstdless zstdmt zulip
 )
 FIREJAIL_PROFILES_IUSE="${FIREJAIL_PROFILES[@]/#/firejail_profiles_}"
-GEN_EBUILD=0 # Uncomment to regen ebuild parts
+#GEN_EBUILD=1 # Uncomment to regen ebuild parts
 GUI_REQUIRED_USE="
 firejail_profiles_1password? ( || ( xephyr xpra ) )
 firejail_profiles_2048-qt? ( || ( xephyr xpra ) )
@@ -1552,7 +1555,8 @@ if [[ "${PV}" =~ "9999" ]]; then
 	inherit git-r3
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/netblue30/firejail.git"
-	FIREJAIL_FALLBACK_COMMIT="92137f808758cacbd91f876b895ffa681fa79aa0" # Jan 6, 2025
+	FIREJAIL_FALLBACK_COMMIT="1a576d15a9339b8f70ae3056e2413e58931072d5" # Jan 17, 2025
+#	FIREJAIL_FALLBACK_COMMIT="897f12dd88c1add667ecb211b61b6126a49c7065" # Sep 1, 2024 # working
 	IUSE+=" fallback-commit"
 else
 	KEYWORDS="amd64 ~arm ~arm64 ~x86"
@@ -2293,7 +2297,7 @@ PATCHES=(
 	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity.patch"
 	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity-usage.patch"
 	"${FILESDIR}/extra-patches/${PN}-1b2d18e-profile-fixes.patch"
-	"${FILESDIR}/extra-patches/${PN}-3bbc6b5-private-bin-no-local-default-yes.patch" # Fix wrappers and mpv
+	"${FILESDIR}/extra-patches/${PN}-3bbc6b5-private-bin-no-local-default-yes.patch" # Fix all wrappers and mpv
 	"${FILESDIR}/extra-patches/${PN}-1b2d18e-add-rhash-profile.patch"
 	"${FILESDIR}/extra-patches/${PN}-1b2d18e-add-upscayl-profile.patch"
 	"${FILESDIR}/extra-patches/${PN}-1b2d18e-default-1080p.patch"
@@ -2871,9 +2875,9 @@ src_prepare() {
 	fi
 
 	if use xpra ; then
-#		eapply "${FILESDIR}/extra-patches/${PN}-0.9.64-xpra-speaker-override.patch"
+		eapply "${FILESDIR}/extra-patches/${PN}-0.9.64-xpra-speaker-override.patch"
 		eapply "${FILESDIR}/extra-patches/${PN}-009110a-xpra-opengl.patch"
-#		eapply "${FILESDIR}/extra-patches/${PN}-3bbc6b5-disable-xpra-splash.patch"
+		eapply "${FILESDIR}/extra-patches/${PN}-1a576d1-disable-xpra-splash.patch"
 	fi
 
 	# Our toolchain already sets SSP by default but forcing it causes problems
@@ -3932,7 +3936,8 @@ eerror
 eerror "QA:  Try converting u value underscores (_) to a period (.) before"
 eerror "adding to DOTTED_FILENAMES."
 eerror
-			die
+#			die
+			continue
 		fi
 
 		local raw_profile_name="${u}"
