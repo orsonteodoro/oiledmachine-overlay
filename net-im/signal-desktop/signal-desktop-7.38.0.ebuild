@@ -85,7 +85,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_3
+ebuild_revision_4
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -249,10 +249,7 @@ src_install() {
 		fperms 0755 "/opt/${MY_PN2}/${x}"
 	done
 
-	electron-app_gen_wrapper "${MY_PN2,,}" "/opt/${MY_PN2}/signal-desktop"
-	dosym \
-		"/usr/bin/${MY_PN2,,}" \
-		"/usr/bin/signal-desktop"
+	electron-app_gen_wrapper "${PN}" "/opt/${MY_PN2}/signal-desktop"
 	electron-app_set_sandbox_suid "/opt/${MY_PN2}/chrome-sandbox"
 	pax-mark m "opt/${MY_PN2}/electron" "opt/${MY_PN2}/chrome-sandbox" "opt/${MY_PN2}/chrome_crashpad_handler"
 
@@ -273,8 +270,13 @@ src_install() {
 		newicon -s ${x} "build/icons/png/${x}x${x}.png" "${MY_PN2}.png"
 	done
 
+	local path="/usr/bin/${PN}"
+	if use firejail ; then
+		path="/usr/local/bin/${PN}"
+	fi
+
 	make_desktop_entry \
-		"/usr/bin/${MY_PN2,,}" \
+		"${path}" \
 		"${MY_PN2}" \
 		"${MY_PN2}.png" \
 		"Network;InstantMessaging;Chat"
