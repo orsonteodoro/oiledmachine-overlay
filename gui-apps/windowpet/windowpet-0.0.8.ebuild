@@ -830,6 +830,8 @@ src_configure() {
 
 src_compile() {
 	rm -f "${WORKDIR}/${MY_PN}-${PV}/Cargo."{"lock","toml"}
+	grep -q -r -e "tauri-plugin-autostart-api" "${S}" && die "Detected unpatched project (1)"
+	grep -q -r -e "tauri-plugin-autostart" "${S}" && die "Detected unpatched project (2)"
 einfo "Building npm side"
 	S="${WORKDIR}/${MY_PN}-${PV}" \
 	npm_src_compile
