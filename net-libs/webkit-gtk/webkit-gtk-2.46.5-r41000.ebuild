@@ -126,7 +126,7 @@ WK_PAGE_SIZE=64 # global var not const
 
 inherit cflags-depends check-linker check-reqs cmake desktop dhms flag-o-matic
 inherit git-r3 gnome2 lcnr linux-info llvm multilib-minimal multiprocessing
-inherit pax-utils python-any-r1 ruby-single toolchain-funcs vf
+inherit pax-utils python-single-r1 ruby-single toolchain-funcs vf
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~s390 ~sparc ~riscv ~x86"
 #
@@ -820,11 +820,9 @@ RDEPEND+="
 		)
 	)
 	introspection? (
-		>=dev-libs/gobject-introspection-1.56.1
-		$(python_gen_any_dep '
-			=dev-libs/gobject-introspection-1.78*[${PYTHON_SINGLE_USEDEP}]
-			=dev-libs/gobject-introspection-common-1.78*
-		')
+		>=dev-libs/gobject-introspection-1.56.1[${PYTHON_SINGLE_USEDEP}]
+		=dev-libs/gobject-introspection-1.78*[${PYTHON_SINGLE_USEDEP}]
+		=dev-libs/gobject-introspection-common-1.78*
 		dev-libs/gobject-introspection:=
 	)
 	journald? (
@@ -1940,7 +1938,7 @@ einfo "Latest security advisory:  ${MITIGATION_URI}"
 		&& ! is-flagq "-g*0" ; then
 		check-reqs_pkg_setup
 	fi
-	python-any-r1_pkg_setup
+	python-single-r1_pkg_setup
 
 	check_geolocation
 	cflags-depends_check
