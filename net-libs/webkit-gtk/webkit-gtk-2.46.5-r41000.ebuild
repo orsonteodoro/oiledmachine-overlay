@@ -766,7 +766,7 @@ gen_glib_rdepend() {
 	local pv
 	for pv in ${GLIB_VERSIONS[@]} ; do
 		local minor="${pv#*.}"
-		minor="${minor#.*}"
+		minor="${minor%.*}"
 		echo "
 			(
 				~dev-util/glib-utils-${pv}
