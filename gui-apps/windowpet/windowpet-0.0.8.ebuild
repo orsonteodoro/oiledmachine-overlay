@@ -20,7 +20,6 @@ AT_TYPES_NODE_PV="20.12.12"
 MY_PN="WindowPet"
 NODE_VERSION="${AT_TYPES_NODE_PV%%.*}"
 NPM_AUDIT_FIX=1
-#NPM_OFFLINE=0 # Build failures if offline
 NPM_SKIP_TARBALL_UNPACK="1"
 PLUGINS_WORKSPACE_COMMIT="890005f9a20379a97a004ebf486a78629a8d290d"
 
@@ -695,7 +694,7 @@ RDEPEND+="
 	${TYPESCRIPT_DEPEND}
 	>=gnome-base/librsvg-2.52.5:2
 	>=net-libs/nodejs-20.10:20[npm]
-	>=net-libs/webkit-gtk-2.42.3:4.0[wayland?,X?]
+	>=net-libs/webkit-gtk-2.42.3:4[wayland?,X?]
 	>=x11-libs/gtk+-3.24.33:3[wayland?,X?]
 	sys-process/procps
 	X? (
