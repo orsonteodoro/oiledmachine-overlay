@@ -91,7 +91,6 @@ FFMPEG_COMPAT=(
 FONTCONFIG_PV="2.13.0"
 FREETYPE_PV="2.9.0"
 GCC_PV="11.2.0"
-GLIB_PV="2.56.4"
 GOBJECT_INTROSPECTION_VERSIONS=(
 	"1.82"
 	"1.80"
@@ -755,11 +754,30 @@ gen_gobject_introspection_rdepend_pairs() {
 	done
 }
 
+gen_glib_rdepend_penta() {
+	local pv
+	for pv in ${GOBJECT_INTROSPECTION_VERSIONS[@]} ; do
+		echo "
+			(
+				~dev-util/glib-utils-2.${pv#*.}
+				~dev-libs/glib-2.${pv#*.}:2[${MULTILIB_USEDEP}]
+				introspection? (
+					=dev-libs/gobject-introspection-${pv}*[${PYTHON_SINGLE_USEDEP}]
+					=dev-libs/gobject-introspection-common-${pv}*
+				)
+				geolocation? (
+					~dev-util/gdbus-codegen-2.${pv#*.}
+				)
+			)
+		"
+	done
+}
+
 RDEPEND+="
+	$(gen_glib_rdepend_penta)
 	${RDEPEND_PATENTS}
 	>=dev-db/sqlite-3.22.0:3=[${MULTILIB_USEDEP}]
 	>=dev-libs/icu-61.2:=[${MULTILIB_USEDEP}]
-	>=dev-libs/glib-${GLIB_PV}:2[${MULTILIB_USEDEP}]
 	>=dev-libs/gmp-6.1.2[-pgo(-),${MULTILIB_USEDEP}]
 	>=dev-libs/libgcrypt-1.7.0:0=[${MULTILIB_USEDEP}]
 	>=dev-libs/libtasn1-4.13:=[${MULTILIB_USEDEP}]
@@ -929,7 +947,6 @@ BDEPEND+="
 	>=dev-lang/python-2.7
 	>=dev-lang/ruby-1.9
 	>=dev-build/cmake-3.20
-	>=dev-util/glib-utils-${GLIB_PV}
 	>=dev-util/gperf-3.0.1
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
 	>=dev-util/unifdef-2.10
@@ -946,9 +963,6 @@ BDEPEND+="
 	)
 	doc? (
 		dev-util/gi-docgen
-	)
-	geolocation? (
-		>=dev-util/gdbus-codegen-${GLIB_PV}
 	)
 	mold? (
 		>=sys-devel/mold-2.0
