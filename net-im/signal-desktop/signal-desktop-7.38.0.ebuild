@@ -85,7 +85,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_4
+ebuild_revision_5
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -270,13 +270,8 @@ src_install() {
 		newicon -s ${x} "build/icons/png/${x}x${x}.png" "${MY_PN2}.png"
 	done
 
-	local path="/usr/bin/${PN}"
-	if use firejail ; then
-		path="/usr/local/bin/${PN}"
-	fi
-
 	make_desktop_entry \
-		"${path}" \
+		"${PN}" \
 		"${MY_PN2}" \
 		"${MY_PN2}.png" \
 		"Network;InstantMessaging;Chat"
