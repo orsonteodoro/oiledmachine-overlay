@@ -92,6 +92,12 @@ FONTCONFIG_PV="2.13.0"
 FREETYPE_PV="2.9.0"
 GCC_PV="11.2.0"
 GLIB_PV="2.56.4"
+GOBJECT_INTROSPECTION_VERSIONS=(
+	"1.82"
+	"1.80"
+	"1.78"
+	"1.76"
+)
 GSTREAMER_PV="1.20.0" # Upstream min is 1.16.2, but distro only offers 1.20
 HARFBUZZ_PV="1.4.2"
 LANGS=(
@@ -737,6 +743,18 @@ gen_depend_llvm() {
 	done
 }
 
+gen_gobject_introspection_rdepend_pairs() {
+	local pv
+	for pv in ${GOBJECT_INTROSPECTION_VERSIONS[@]} ; do
+		echo "
+			(
+				=dev-libs/gobject-introspection-${pv}*[${PYTHON_SINGLE_USEDEP}]
+				=dev-libs/gobject-introspection-common-${pv}*
+			)
+		"
+	done
+}
+
 RDEPEND+="
 	${RDEPEND_PATENTS}
 	>=dev-db/sqlite-3.22.0:3=[${MULTILIB_USEDEP}]
@@ -821,8 +839,9 @@ RDEPEND+="
 	)
 	introspection? (
 		>=dev-libs/gobject-introspection-1.56.1[${PYTHON_SINGLE_USEDEP}]
-		=dev-libs/gobject-introspection-1.78*[${PYTHON_SINGLE_USEDEP}]
-		=dev-libs/gobject-introspection-common-1.78*
+		|| (
+			$(gen_gobject_introspection_rdepend_pairs)
+		)
 		dev-libs/gobject-introspection:=
 	)
 	journald? (
