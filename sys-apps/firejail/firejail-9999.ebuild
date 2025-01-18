@@ -1576,7 +1576,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
 +suid test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xvfb
-ebuild_revision_16
+ebuild_revision_17
 "
 REQUIRED_USE+="
 	${GUI_REQUIRED_USE}
@@ -2301,7 +2301,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-3f4d6df-firecfg.config.patch"
 	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity.patch"
 	"${FILESDIR}/extra-patches/${PN}-009110a-disable-xcsecurity-usage.patch"
-	"${FILESDIR}/extra-patches/${PN}-1b2d18e-profile-fixes.patch"
+	"${FILESDIR}/extra-patches/${PN}-1a576d1-profile-fixes.patch"
 	"${FILESDIR}/extra-patches/${PN}-3bbc6b5-private-bin-no-local-default-yes.patch" # Fix all wrappers and mpv
 	"${FILESDIR}/extra-patches/${PN}-1b2d18e-add-rhash-profile.patch"
 	"${FILESDIR}/extra-patches/${PN}-1b2d18e-add-upscayl-profile.patch"
