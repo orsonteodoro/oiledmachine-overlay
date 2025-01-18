@@ -763,9 +763,10 @@ _cargo_src_unpack() {
 npm_unpack_post() {
 	pushd "${S}" >/dev/null 2>&1 || die
 		if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-			eapply "${FILESDIR}/windowpet-0.0.8-remove-tauri-plugin-autostart-api.patch"
+			eapply "${FILESDIR}/windowpet-0.0.8-remove-tauri-plugin-autostart-api-from-lockfiles.patch"
+			eapply "${FILESDIR}/windowpet-0.0.8-remove-tauri-plugin-autostart-api-from-code.patch"
 		else
-			eapply "${FILESDIR}/windowpet-0.0.8-remove-tauri-plugin-autostart-api-prod.patch"
+			eapply "${FILESDIR}/windowpet-0.0.8-remove-tauri-plugin-autostart-api-from-code.patch"
 		fi
 	popd >/dev/null 2>&1 || die
 	if [[ -e "${FILESDIR}/${PV}/Cargo.lock" ]] ; then

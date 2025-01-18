@@ -1,0 +1,153 @@
+diff '--color=auto' -urp WindowPet-0.0.8.orig/package-lock.json WindowPet-0.0.8/package-lock.json
+--- WindowPet-0.0.8.orig/package-lock.json	2024-05-23 15:10:28.000000000 -0700
++++ WindowPet-0.0.8/package-lock.json	2025-01-17 15:34:25.985746018 -0800
+@@ -26,7 +26,6 @@
+         "react-query": "^3.39.3",
+         "react-router-dom": "^6.23.1",
+         "remark-gfm": "^4.0.0",
+-        "tauri-plugin-autostart-api": "github:tauri-apps/tauri-plugin-autostart#v1",
+         "tauri-plugin-log-api": "github:tauri-apps/tauri-plugin-log#v1",
+         "tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store#v1",
+         "vite-tsconfig-paths": "^4.3.2",
+@@ -6408,28 +6407,6 @@
+       "optional": true,
+       "peer": true
+     },
+-    "node_modules/tauri-plugin-autostart-api": {
+-      "version": "0.0.0",
+-      "resolved": "git+ssh://git@github.com/tauri-apps/tauri-plugin-autostart.git#ddb8917170309ce52fb9d433f58570b5caf6b27a",
+-      "license": "MIT or APACHE-2.0",
+-      "dependencies": {
+-        "@tauri-apps/api": "1.5.0"
+-      }
+-    },
+-    "node_modules/tauri-plugin-autostart-api/node_modules/@tauri-apps/api": {
+-      "version": "1.5.0",
+-      "resolved": "https://registry.npmjs.org/@tauri-apps/api/-/api-1.5.0.tgz",
+-      "integrity": "sha512-yQY9wpVNuiYhLLuyDlu1nBpqJELT1fGp7OctN4rW9I2W1T2p7A3tqPxsEzQprEwneQRBAlPM9vC8NsnMbct+pg==",
+-      "engines": {
+-        "node": ">= 14.6.0",
+-        "npm": ">= 6.6.0",
+-        "yarn": ">= 1.19.1"
+-      },
+-      "funding": {
+-        "type": "opencollective",
+-        "url": "https://opencollective.com/tauri"
+-      }
+-    },
+     "node_modules/tauri-plugin-log-api": {
+       "version": "0.0.0",
+       "resolved": "git+ssh://git@github.com/tauri-apps/tauri-plugin-log.git#f7142fcf10841cdabab2fbe8650e9adc3f0bb212",
+diff '--color=auto' -urp WindowPet-0.0.8.orig/package.json WindowPet-0.0.8/package.json
+--- WindowPet-0.0.8.orig/package.json	2024-05-23 15:10:28.000000000 -0700
++++ WindowPet-0.0.8/package.json	2025-01-17 15:33:56.097888391 -0800
+@@ -30,7 +30,6 @@
+     "react-query": "^3.39.3",
+     "react-router-dom": "^6.23.1",
+     "remark-gfm": "^4.0.0",
+-    "tauri-plugin-autostart-api": "github:tauri-apps/tauri-plugin-autostart#v1",
+     "tauri-plugin-log-api": "github:tauri-apps/tauri-plugin-log#v1",
+     "tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store#v1",
+     "vite-tsconfig-paths": "^4.3.2",
+diff '--color=auto' -urp WindowPet-0.0.8.orig/src-tauri/Cargo.lock WindowPet-0.0.8/src-tauri/Cargo.lock
+--- WindowPet-0.0.8.orig/src-tauri/Cargo.lock	2024-05-23 15:10:28.000000000 -0700
++++ WindowPet-0.0.8/src-tauri/Cargo.lock	2025-01-17 15:41:15.683757540 -0800
+@@ -279,17 +279,6 @@ source = "registry+https://github.com/ru
+ checksum = "1505bd5d3d116872e7271a6d4e16d81d0c8570876c8de68093a09ac269d8aac0"
+ 
+ [[package]]
+-name = "auto-launch"
+-version = "0.5.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1f012b8cc0c850f34117ec8252a44418f2e34a2cf501de89e29b241ae5f79471"
+-dependencies = [
+- "dirs",
+- "thiserror",
+- "winreg 0.10.1",
+-]
+-
+-[[package]]
+ name = "autocfg"
+ version = "1.3.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+@@ -877,15 +866,6 @@ dependencies = [
+ ]
+ 
+ [[package]]
+-name = "dirs"
+-version = "4.0.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ca3aa72a6f96ea37bbc5aa912f6788242832f75369bdfdadcb0e38423f100059"
+-dependencies = [
+- "dirs-sys",
+-]
+-
+-[[package]]
+ name = "dirs-next"
+ version = "2.0.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+@@ -896,17 +876,6 @@ dependencies = [
+ ]
+ 
+ [[package]]
+-name = "dirs-sys"
+-version = "0.3.7"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1b1d1d91c932ef41c0f2663aa8b0ca0342d444d842c06914aa0a7e352d0bada6"
+-dependencies = [
+- "libc",
+- "redox_users",
+- "winapi",
+-]
+-
+-[[package]]
+ name = "dirs-sys-next"
+ version = "0.1.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+@@ -3900,19 +3869,6 @@ dependencies = [
+ ]
+ 
+ [[package]]
+-name = "tauri-plugin-autostart"
+-version = "0.0.0"
+-source = "git+https://github.com/tauri-apps/plugins-workspace?branch=v1#5e3900e682e13f3759b439116ae2f77a6d389ca2"
+-dependencies = [
+- "auto-launch",
+- "log",
+- "serde",
+- "serde_json",
+- "tauri",
+- "thiserror",
+-]
+-
+-[[package]]
+ name = "tauri-plugin-log"
+ version = "0.0.0"
+ source = "git+https://github.com/tauri-apps/plugins-workspace?branch=v1#5e3900e682e13f3759b439116ae2f77a6d389ca2"
+@@ -5086,15 +5042,6 @@ dependencies = [
+ ]
+ 
+ [[package]]
+-name = "winreg"
+-version = "0.10.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "80d0f4e272c85def139476380b12f9ac60926689dd2e01d4923222f40580869d"
+-dependencies = [
+- "winapi",
+-]
+-
+-[[package]]
+ name = "winreg"
+ version = "0.50.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+diff '--color=auto' -urp WindowPet-0.0.8.orig/src-tauri/Cargo.toml WindowPet-0.0.8/src-tauri/Cargo.toml
+--- WindowPet-0.0.8.orig/src-tauri/Cargo.toml	2024-05-23 15:10:28.000000000 -0700
++++ WindowPet-0.0.8/src-tauri/Cargo.toml	2025-01-17 15:41:19.631738057 -0800
+@@ -20,7 +20,6 @@ mouse_position = "0.1.3"
+ log = "^0.4.20"
+ open = "5.0.1"
+ tokio = "1.35.1"
+-tauri-plugin-autostart = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
+ tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
+ tauri-plugin-single-instance = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
+ tauri-plugin-log = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
