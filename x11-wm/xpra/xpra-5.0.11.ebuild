@@ -782,6 +782,12 @@ eerror
 }
 
 pkg_setup() {
+	if ! use vsock ; then
+ewarn
+ewarn "Disabling USE=vsock may break client attach to xpra server using"
+ewarn "defaults for non firejail USE cases."
+ewarn
+	fi
 	if use nvenc ; then
 einfo
 einfo "The nvenc USE flag has not been tested.  It is left for ebuild"
@@ -1129,3 +1135,25 @@ pkg_postrm() {
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-MOD-TYPE:  patches, ebuild-changes
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (5.0.11, 20250118)
+# firejail can run without vsock
+# vsock is required for maintainer_notes
+# maintainer notes requires `killall -9 Xvfb` before running tests to pass
+# USE="X avif client cython firejail gtk3 rencodeplus server vsock webp -aac
+# -aes -alsa -amf -aom -appindicator -audio -avahi -brotli -clipboard
+# -cpu-percent -csc_cython -csc_libyuv -cuda -cuda_rebuild -cups
+# -cups-forwarding -dbus (-debug) -doc -drm -evdi -ffmpeg -flac -gnome-shell
+# -gssapi -html5-client -html5_brotli -html5_gzip -http -ibus -jack -jpeg
+# -kerberos -keyboard-layout -keycloak -lame -ldap -ldap3 -lz4 -lzo -matroska
+# -mdns -mp3 -mysql -netdev -notifications -nvdec -nvenc -nvfbc -nvjpeg -ogg
+# -opencl -opengl -openh264 -openrc -opus -osmesa -oss -pam -pinentry -png -proc
+# -proxy -pulseaudio -pyinotify -qrencode -qsv -quic -rencode -rfb -sd_listen
+# (-selinux) -socks -sound-forwarding -speex -spng -sqlite -ssh -sshpass -ssl
+# -systemd -tcp-wrappers -test -tiff -u2f -uinput -v4l2 -vaapi -vorbis -vpx
+# -wavpack -wayland -webcam -webcam-forwarding -websockets -x264 -x265 -xdg
+# -xinput -yaml -zeroconf -zlib"
+# CUDA_TARGETS="-sm_52 -sm_53 -sm_60 -sm_61 -sm_62 -sm_70 -sm_75 -sm_80 -sm_86
+# -sm_90"
+# EBUILD_REVISION="-2"
+# PATENT_STATUS="-nonfree"
+# PYTHON_TARGETS="python3_10"
