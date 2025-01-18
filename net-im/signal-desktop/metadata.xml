@@ -14,4 +14,9 @@
   <upstream>
     <remote-id type="github">signalapp/Signal-Desktop</remote-id>
   </upstream>
+  <use>
+    <flag name="firejail">
+      Add support for Firejail sandboxing.
+    </flag>
+  </use>
 </pkgmetadata>
