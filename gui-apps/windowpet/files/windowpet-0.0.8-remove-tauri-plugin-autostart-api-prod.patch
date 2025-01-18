@@ -1,0 +1,134 @@
+diff '--color=auto' -urp WindowPet-0.0.8.orig/src/hooks/useSettingStore.tsx WindowPet-0.0.8/src/hooks/useSettingStore.tsx
+--- WindowPet-0.0.8.orig/src/hooks/useSettingStore.tsx	2024-05-23 15:10:28.000000000 -0700
++++ WindowPet-0.0.8/src/hooks/useSettingStore.tsx	2025-01-17 15:44:52.894676886 -0800
+@@ -18,10 +18,6 @@ export const useSettingStore = create<IS
+     setAllowPetAboveTaskbar: (newBoolean) => {
+         set({ allowPetAboveTaskbar: newBoolean })
+     },
+-    allowAutoStartUp: defaultSettings.allowAutoStartUp ?? false,
+-    setAllowAutoStartUp: (newBoolean) => {
+-        set({ allowAutoStartUp: newBoolean })
+-    },
+     allowPetInteraction: defaultSettings.allowPetInteraction ?? true,
+     setAllowPetInteraction: (newBoolean) => {
+         set({ allowPetInteraction: newBoolean })
+diff '--color=auto' -urp WindowPet-0.0.8.orig/src/hooks/useSettings.tsx WindowPet-0.0.8/src/hooks/useSettings.tsx
+--- WindowPet-0.0.8.orig/src/hooks/useSettings.tsx	2024-05-23 15:10:28.000000000 -0700
++++ WindowPet-0.0.8/src/hooks/useSettings.tsx	2025-01-17 15:44:51.966681541 -0800
+@@ -1,13 +1,12 @@
+ import { useQuery } from "react-query";
+ import { useSettingStore } from "./useSettingStore";
+ import { getAppSettings } from "../utils/settings";
+-import { isEnabled } from "tauri-plugin-autostart-api";
+ import i18next from "i18next";
+ import defaultSettings from "../../src-tauri/src/app/default/settings.json";
+ import { error } from "tauri-plugin-log-api";
+ import { ISettingStoreVariables } from "../types/hooks/type";
+ 
+-const { setLanguage, setTheme, setAllowAutoStartUp, setAllowPetAboveTaskbar, setAllowPetInteraction, setAllowOverridePetScale, setPetScale, setAllowPetClimbing } = useSettingStore.getState();
++const { setLanguage, setTheme, setAllowPetAboveTaskbar, setAllowPetInteraction, setAllowOverridePetScale, setPetScale, setAllowPetClimbing } = useSettingStore.getState();
+ 
+ const getSettings = async () => {
+     let setting: ISettingStoreVariables = await getAppSettings({ configName: "settings.json" });
+@@ -20,7 +19,6 @@ const getSettings = async () => {
+     if (i18next.language !== setting.language) i18next.changeLanguage(setting.language);
+     setLanguage(setting.language ?? defaultSettings.language);
+     setTheme(setting.theme ?? defaultSettings.theme);
+-    setAllowAutoStartUp(await isEnabled());
+     setAllowPetAboveTaskbar(setting.allowPetAboveTaskbar ?? defaultSettings.allowPetAboveTaskbar);
+     setAllowPetInteraction(setting.allowPetInteraction ?? defaultSettings.allowPetInteraction);
+     setAllowPetClimbing(setting.allowPetClimbing ?? defaultSettings.allowPetClimbing);
+diff '--color=auto' -urp WindowPet-0.0.8.orig/src/types/IEvents.ts WindowPet-0.0.8/src/types/IEvents.ts
+--- WindowPet-0.0.8.orig/src/types/IEvents.ts	2024-05-23 15:10:28.000000000 -0700
++++ WindowPet-0.0.8/src/types/IEvents.ts	2025-01-17 15:45:31.566482672 -0800
+@@ -20,7 +20,6 @@ export enum EventType {
+ export enum DispatchType {
+     ChangeAppLanguage = 'Change app language',
+     ChangeAppTheme = 'Change app theme',
+-    SwitchAutoWindowStartUp = 'Switch auto window start up',
+     SwitchPetAboveTaskbar = 'Switch pet above taskbar',
+     SwitchAllowPetInteraction = 'Switch allow pet interaction',
+     SwitchAllowPetClimbing = 'Switch allow pet climbing',
+diff '--color=auto' -urp WindowPet-0.0.8.orig/src/types/hooks/type.ts WindowPet-0.0.8/src/types/hooks/type.ts
+--- WindowPet-0.0.8.orig/src/types/hooks/type.ts	2024-05-23 15:10:28.000000000 -0700
++++ WindowPet-0.0.8/src/types/hooks/type.ts	2025-01-17 15:44:51.070686034 -0800
+@@ -18,7 +18,6 @@ export interface ISettingStoreState exte
+     setLanguage: (newLanguage: string) => void;
+     setTheme: (newTheme: ColorScheme) => void;
+     setAllowPetAboveTaskbar: (newBoolean: boolean) => void;
+-    setAllowAutoStartUp: (newBoolean: boolean) => void;
+     setAllowPetInteraction: (newBoolean: boolean) => void;
+     setAllowPetClimbing: (newBoolean: boolean) => void;
+     setAllowOverridePetScale: (newBoolean: boolean) => void;
+diff '--color=auto' -urp WindowPet-0.0.8.orig/src/ui/setting_tabs/Settings.tsx WindowPet-0.0.8/src/ui/setting_tabs/Settings.tsx
+--- WindowPet-0.0.8.orig/src/ui/setting_tabs/Settings.tsx	2024-05-23 15:10:28.000000000 -0700
++++ WindowPet-0.0.8/src/ui/setting_tabs/Settings.tsx	2025-01-17 15:45:30.158489751 -0800
+@@ -25,12 +25,6 @@ function Settings() {
+ 
+     const settingSwitches: ISettingsContent[] = [
+         {
+-            title: t("Auto start-up"),
+-            description: t("Automatically open WindowPet every time u start the computer"),
+-            checked: allowAutoStartUp,
+-            dispatchType: DispatchType.SwitchAutoWindowStartUp,
+-        },
+-        {
+             title: t("Pet above taskbar"),
+             description: t("Make the pet float above taskbar (For Window User)"),
+             checked: allowPetAboveTaskbar,
+diff '--color=auto' -urp WindowPet-0.0.8.orig/src/utils/handleSettingChange.ts WindowPet-0.0.8/src/utils/handleSettingChange.ts
+--- WindowPet-0.0.8.orig/src/utils/handleSettingChange.ts	2024-05-23 15:10:28.000000000 -0700
++++ WindowPet-0.0.8/src/utils/handleSettingChange.ts	2025-01-17 15:44:50.142690688 -0800
+@@ -1,4 +1,4 @@
+-import { setSettings, toggleAutoStartUp } from "./settings";
++import { setSettings } from "./settings";
+ import { ColorScheme } from "../types/ISetting";
+ import { useSettingStore } from "../hooks/useSettingStore";
+ import { emitUpdatePetsEvent } from "./event";
+@@ -20,7 +20,6 @@ export const handleSettingChange: IHandl
+     const {
+         setLanguage,
+         setTheme,
+-        setAllowAutoStartUp,
+         setAllowPetAboveTaskbar,
+         setAllowPetInteraction,
+         setAllowOverridePetScale,
+@@ -42,11 +41,6 @@ export const handleSettingChange: IHandl
+             setTheme(newValue as ColorScheme);
+             localStorage.setItem("theme", newValue as string);
+             return;
+-        case DispatchType.SwitchAutoWindowStartUp:
+-            // auto start up doesn't need to be saved in settings.json
+-            toggleAutoStartUp(newValue as boolean);
+-            setAllowAutoStartUp(newValue as boolean);
+-            return;
+         case DispatchType.SwitchPetAboveTaskbar:
+             setSettings({ setKey: "allowPetAboveTaskbar", newValue: newValue });
+             setAllowPetAboveTaskbar(newValue as boolean);
+diff '--color=auto' -urp WindowPet-0.0.8.orig/src/utils/settings.ts WindowPet-0.0.8/src/utils/settings.ts
+--- WindowPet-0.0.8.orig/src/utils/settings.ts	2024-05-23 15:10:28.000000000 -0700
++++ WindowPet-0.0.8/src/utils/settings.ts	2025-01-17 15:43:15.311164546 -0800
+@@ -1,4 +1,3 @@
+-import { enable, isEnabled, disable } from "tauri-plugin-autostart-api";
+ import { Store } from "tauri-plugin-store-api";
+ import { DefaultConfigName, IGetAppSetting } from "../types/ISetting";
+ import { invoke } from '@tauri-apps/api/tauri'
+@@ -9,18 +8,6 @@ import { showNotification } from "./noti
+ import i18next from "i18next";
+ import { error, info } from "tauri-plugin-log-api";
+ 
+-export function toggleAutoStartUp(allowAutoStartUp: boolean) {
+-    (async () => {
+-        const hasEnabledStartUp = await isEnabled();
+-
+-        if (allowAutoStartUp) {
+-            if (!hasEnabledStartUp) await enable();
+-        } else if (hasEnabledStartUp) {
+-            await disable();
+-        }
+-    })()
+-};
+-
+ // default will return app settings, if key is provided, will return specific key
+ export async function getAppSettings({ configName = "settings.json", key = "app", withErrorDialog = true }: IGetAppSetting) {
+     const configPath: string = await invoke("combine_config_path", { config_name: configName });
