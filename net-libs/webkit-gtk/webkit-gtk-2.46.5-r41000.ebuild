@@ -748,18 +748,6 @@ gen_depend_llvm() {
 	done
 }
 
-gen_gobject_introspection_rdepend() {
-	local pv
-	for pv in ${GOBJECT_INTROSPECTION_VERSIONS[@]} ; do
-		echo "
-			(
-				=dev-libs/gobject-introspection-${pv}*[${PYTHON_SINGLE_USEDEP}]
-				=dev-libs/gobject-introspection-common-${pv}*
-			)
-		"
-	done
-}
-
 gen_glib_rdepend() {
 	local pv
 	for pv in ${GLIB_VERSIONS[@]} ; do
