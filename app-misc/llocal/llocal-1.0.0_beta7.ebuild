@@ -3,10 +3,25 @@
 
 EAPI=8
 
-ELECTRON_APP_ELECTRON_PV="28.3.1"
+_ELECTRON_DEP_ROUTE="secure" # reproducible or secure
+if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
+	# Ebuild maintainer preference
+	ELECTRON_APP_ELECTRON_PV="34.0.0" # Cr 132.0.6834.83, node 20.18.1
+else
+	# Upstream preference
+	ELECTRON_APP_ELECTRON_PV="28.3.3" # Cr 120.0.6099.291, node 18.18.2
+fi
 MY_PN="LLocal"
 NODE_VERSION=18
-NPM_AUDIT_FIX=0
+#NPM_AUDIT_FIX=0
+NPM_AUDIT_FIX_ARGS=(
+	"--legacy-peer-deps"
+	"--prefer-offline"
+)
+NPM_INSTALL_ARGS=(
+	"--legacy-peer-deps"
+	"--prefer-offline"
+)
 NPM_LOCKFILE_SOURCE="ebuild"
 NPM_EXE_LIST="
 /opt/llocal/libffmpeg.so
@@ -40,15 +55,31 @@ HOMEPAGE="
 # The fingerprint of electron-28.2.10-chromium.html and the electron-28.3.1-chromium.html is the same
 LICENSE="
 	${ELECTRON_APP_LICENSES}
-	electron-28.2.10-chromium.html
 	MIT
 "
+if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
+	LICENSE+="
+		electron-34.0.0-alpha.7-chromium.html
+	"
+else
+	LICENSE+="
+		electron-28.2.10-chromium.html
+	"
+fi
 SLOT="0"
 RDEPEND="
 	app-misc/ollama
 "
 BDEPEND="
 "
+
+npm_update_lock_install_post() {
+	if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
+		enpm install "electron@${ELECTRON_APP_ELECTRON_PV}" -D --prefer-offline
+	fi
+	# Fix breakage
+	enpm install "react-icons@5.2.1" -P --prefer-offline
+}
 
 src_compile() {
 	npm_hydrate
@@ -80,3 +111,5 @@ src_install() {
 	done
 	electron-app_set_sandbox_suid "/opt/${PN}/chrome-sandbox"
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta7 (20250117 with electron 34.0.0)
