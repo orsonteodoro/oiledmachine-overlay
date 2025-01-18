@@ -1555,7 +1555,7 @@ if [[ "${PV}" =~ "9999" ]]; then
 	inherit git-r3
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://github.com/netblue30/firejail.git"
-	FIREJAIL_FALLBACK_COMMIT="1a576d15a9339b8f70ae3056e2413e58931072d5" # Jan 17, 2025
+	FIREJAIL_FALLBACK_COMMIT="1a576d15a9339b8f70ae3056e2413e58931072d5" # Jan 17, 2025 # working
 #	FIREJAIL_FALLBACK_COMMIT="897f12dd88c1add667ecb211b61b6126a49c7065" # Sep 1, 2024 # working
 	IUSE+=" fallback-commit"
 else
@@ -4135,3 +4135,12 @@ ewarn
 # OILEDMACHINE-OVERLAY-META-MOD-TYPE:  patches, ebuild-changes, profile-selection, testing-sections, audio-patch
 # OILEDMACHINE-OVERLAY-META-WIP:  test-USE-flag
 # OILEDMACHINE-OVERLAY-META-DETAILED-NOTES:  The test USE flag was found useful in correcting profile errors and why it kept around; however, it is garbage quality.
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (1a576d1, 20250118)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (897f12d, 20250118)
+
+# Tested for both 1a576d1, 897f12d
+# For sys-apps/firejail
+# USE="X auto chroot clang fallback-commit landlock private-home suid userns
+# wrapper xephyr xpra -apparmor -contrib -dbusproxy -file-transfer -globalcfg
+# -hardened_malloc -mimalloc -network -scudo -selfrando (-selinux) -test
+# -test-profiles -test-x11 -vanilla -xvfb"
