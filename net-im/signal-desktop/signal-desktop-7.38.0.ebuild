@@ -84,14 +84,17 @@ SLOT="0"
 KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
-wayland X
-ebuild_revision_2
+firejail wayland X
+ebuild_revision_3
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
 	!net-im/signal-desktop-bin
 	>=media-fonts/noto-emoji-20231130
 	media-libs/libpulse
+	firejail? (
+		sys-apps/firejail[firejail_profiles_signal-desktop]
+	)
 "
 BDEPEND+="
 	net-libs/nodejs:${NODE_VERSION}[webassembly(+)]
@@ -245,6 +248,9 @@ src_install() {
 	done
 
 	electron-app_gen_wrapper "${MY_PN2,,}" "/opt/${MY_PN2}/signal-desktop"
+	dosym \
+		"/usr/bin/${MY_PN2,,}" \
+		"/usr/bin/signal-desktop"
 	electron-app_set_sandbox_suid "/opt/${MY_PN2}/chrome-sandbox"
 	pax-mark m "opt/${MY_PN2}/electron" "opt/${MY_PN2}/chrome-sandbox" "opt/${MY_PN2}/chrome_crashpad_handler"
 
