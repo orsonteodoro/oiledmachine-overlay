@@ -1636,7 +1636,12 @@ RDEPEND+="
 		x11-base/xorg-server[xvfb?]
 	)
 	xpra? (
-		>=x11-wm/xpra-6.0.2[X,avif,client,cython,firejail,gtk3,jpeg,rencodeplus,server,webp]
+		x11-wm/xpra[X,avif,client,cython,firejail,gtk3,jpeg,rencodeplus,server,webp]
+		|| (
+			=x11-wm/xpra-6*
+			=x11-wm/xpra-5*
+		)
+		x11-wm/xpra:=
 		x11-base/xorg-server
 	)
 	xephyr? (
@@ -4135,7 +4140,7 @@ ewarn
 # OILEDMACHINE-OVERLAY-META-MOD-TYPE:  patches, ebuild-changes, profile-selection, testing-sections, audio-patch
 # OILEDMACHINE-OVERLAY-META-WIP:  test-USE-flag
 # OILEDMACHINE-OVERLAY-META-DETAILED-NOTES:  The test USE flag was found useful in correcting profile errors and why it kept around; however, it is garbage quality.
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (1a576d1, 20250118)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (1a576d1 with xpra 5.0.11 and 6.2.1, 20250118)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (897f12d, 20250118)
 
 # Tested for both 1a576d1, 897f12d
