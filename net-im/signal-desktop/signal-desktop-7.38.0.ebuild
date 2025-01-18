@@ -92,12 +92,14 @@ RDEPEND+="
 	!net-im/signal-desktop-bin
 	>=media-fonts/noto-emoji-20231130
 	media-libs/libpulse
-	firejail? (
-		sys-apps/firejail[firejail_profiles_signal-desktop]
-	)
 "
 BDEPEND+="
 	net-libs/nodejs:${NODE_VERSION}[webassembly(+)]
+"
+PDEPEND+="
+	firejail? (
+		sys-apps/firejail[firejail_profiles_signal-desktop]
+	)
 "
 
 gen_git_tag() {
