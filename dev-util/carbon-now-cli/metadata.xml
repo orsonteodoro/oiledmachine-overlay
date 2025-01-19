@@ -19,24 +19,11 @@
     <remote-id type="github">mixn/carbon-now-cli</remote-id>
   </upstream>
   <use>
-    <flag name="custom-browser">
-      Allow to untether *DEPENDs to use an alternative browser package based
-      on Chromium.
-    </flag>
     <flag name="chromium">
-      Use chromium as the backend.  (Stable)
-    </flag>
-    <flag name="chromium-with-symbols">
-      Use chromium-with-symbols as the backend.  (Stable debug)
-    </flag>
-    <flag name="chromium-tip-of-tree">
-      Use chromium-tip-of-tree as the backend.  (Dev)
+      Use chromium as the backend.
     </flag>
     <flag name="firefox">
       Use firefox as the backend.
-    </flag>
-    <flag name="firefox-beta">
-      Use firefox-beta as the backend.
     </flag>
     <flag name="webkit">
       Use webkit as the backend.

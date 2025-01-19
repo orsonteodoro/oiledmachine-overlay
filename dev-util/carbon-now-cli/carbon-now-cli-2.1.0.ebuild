@@ -18,8 +18,11 @@ declare -A DL_REVISIONS=(
 	["webkit-linux-glibc-amd64-ubuntu-24_04"]="2104"
 )
 EPLAYRIGHT_ALLOW_BROWSERS=(
-	"chromium"
-	"firefox"
+# https://github.com/mixn/carbon-now-cli/blob/v2.1.0/src/views/default.view.ts#L23
+	"chromium"			# EOL
+#	"chromium-tip-of-tree"
+	"firefox"			# EOL
+#	"firefox-beta"			# EOL
 	"webkit"
 )
 MY_PN="${PN//-cli/}"
@@ -189,9 +192,9 @@ LICENSE="
 	MIT
 "
 SLOT="0"
-IUSE+="clipboard ebuild_revision_4"
+IUSE+="+chromium clipboard ebuild_revision_5"
 REQUIRED_USE+="
-	^^ (
+	|| (
 		${PLAYWRIGHT_BROWSERS[@]}
 	)
 "
@@ -217,52 +220,6 @@ einfo "Running:  npx ${@}"
 	npx "${@}" || die
 }
 
-get_ffmpeg_tarball_name() {
-	echo "ffmpeg-linux-${DL_REVISIONS[ffmpeg-linux-glibc-${ABI}]}-${ABI}.zip"
-}
-
-get_browser_tarball_name() {
-	if has chromium ${IUSE} && use chromium ; then
-		echo "chromium-linux-${DL_REVISIONS[chromium-linux-glibc-${ABI}]}-${ABI}.zip"
-	elif has chromium-headless-shell ${IUSE} && use chromium-headless-shell ; then
-		echo "chromium-headless-shell-linux-${DL_REVISIONS[chromium-headless-shell-linux-glibc-${ABI}]}-${ABI}.zip"
-	elif has chromium-tip-of-tree-linux ${IUSE} && use chromium-tip-of-tree-linux ; then
-		echo "chromium-tip-of-tree-linux-${DL_REVISIONS[chromium-tip-of-tree-linux-glibc-${ABI}]}-${ABI}.zip"
-	elif has firefox ${IUSE} && use firefox ; then
-		echo "firefox-ubuntu-24.04-${DL_REVISIONS[firefox-linux-glibc-${ABI}]}-${ABI}.zip"
-	elif has firefox-beta ${IUSE} && use firefox-beta ; then
-		echo "firefox-beta-ubuntu-24.04-${DL_REVISIONS[firefox-beta-linux-glibc-${ABI}]}-${ABI}.zip"
-	elif has webkit ${IUSE} && use webkit ; then
-		echo "webkit-ubuntu-24.04-${DL_REVISIONS[webkit-linux-glibc-${ABI}]}-${ABI}.zip"
-	else
-eerror
-eerror "Browser not supported or not selected"
-eerror
-		die
-	fi
-}
-
-get_browser_folder_name() {
-	if has chromium ${IUSE} && use chromium ; then
-		echo "chromium-${DL_REVISIONS[chromium-linux-glibc-${ABI}]}"
-	elif has chromium-headless-shell ${IUSE} && use chromium-headless-shell ; then
-		echo "chromium_with_symbols-${DL_REVISIONS[chromium-headless-shell-linux-glibc-${ABI}]}"
-	elif has chromium-tip-of-tree-linux ${IUSE} && use chromium-tip-of-tree-linux ; then
-		echo "chromium_tip_of_tree-${DL_REVISIONS[chromium-tip-of-tree-linux-glibc-${ABI}]}"
-	elif has firefox ${IUSE} && use firefox ; then
-		echo "firefox-${DL_REVISIONS[firefox-linux-glibc-${ABI}]}"
-	elif has firefox-beta ${IUSE} && use firefox-beta ; then
-		echo "firefox_beta-${DL_REVISIONS[firefox-beta-linux-glibc-${ABI}]}"
-	elif has webkit ${IUSE} && use webkit ; then
-		echo "webkit-${DL_REVISIONS[webkit-linux-glibc-${ABI}]}"
-	else
-eerror
-eerror "Browser not supported or not selected"
-eerror
-		die
-	fi
-}
-
 npm_update_lock_install_pre() {
 	# This is to prevent the sudden ***untrustworthy*** sudo prompt.
 	sed -i -e "s|npx playwright|true npx playwright|g" package.json || die
@@ -286,61 +243,62 @@ einfo "Applying mitigation"
 	patch_edits
 }
 
+_unpack_playwright() {
+	local u="${1}"
+	local rel_path="${2}"
+	local tarball_name="${3}"
+	has "${u}" ${IUSE} || return
+	use "${u}" || return
+	mkdir -p "${S}/${rel_path}" || die
+	pushd "${S}/${rel_path}" >/dev/null 2>&1 || die
+		touch "INSTALLATION_COMPLETE" || die
+		touch "DEPENDENCIES_VALIDATED" || die
+		unpack "${tarball_name}"
+	popd >/dev/null 2>&1 || die
+}
+
 npm_unpack_install_post() {
 	# See
-	# https://github.com/microsoft/playwright/blob/v1.34.3/packages/playwright-core/src/server/registry/index.ts#L232
-	# https://github.com/microsoft/playwright/blob/v1.34.3/docs/src/browsers.md
-	# https://github.com/microsoft/playwright/blob/v1.34.3/packages/playwright-core/src/server/registry/nativeDeps.ts
-	# https://github.com/microsoft/playwright/blob/v1.34.3/packages/playwright-core/browsers.json
+	# https://github.com/microsoft/playwright/blob/v1.49.1/packages/playwright-core/src/server/registry/index.ts#L232
+	# https://github.com/microsoft/playwright/blob/v1.49.1/docs/src/browsers.md
+	# https://github.com/microsoft/playwright/blob/v1.49.1/packages/playwright-core/src/server/registry/nativeDeps.ts
+	# https://github.com/microsoft/playwright/blob/v1.49.1/packages/playwright-core/browsers.json
 
+	local L=()
 	local choice
 	local x
 	for x in ${PLAYWRIGHT_BROWSERS[@]} ; do
 		if has ${x} ${IUSE} && use "${x}" ; then
-			choice="${x}"
+			L+=( "${x}" )
 			break
 		fi
 	done
 
-	if [[ -z "${choice}" ]] ; then
-eerror "You must choose a web browser."
-		die
-	fi
-einfo "choice: ${choice}"
-
-	if use chromium ; then
-		mkdir -p "node_modules/playwright-core/.local-browsers"
-	fi
-
-	# https://github.com/microsoft/playwright/blob/v1.34.3/docs/src/browsers.md#hermetic-install
+	# https://github.com/microsoft/playwright/blob/v1.49.1/docs/src/browsers.md#hermetic-install
 	export PLAYWRIGHT_BROWSERS_PATH=0
 	cd "${S}" || die
 	# The sandbox doesn't want us to download even though it is permitted.
 	export PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 	export PLAYWRIGHT_SKIP_BROWSER_GC=1
-	local d="node_modules/playwright-core/.local-browsers/$(get_browser_folder_name)"
-	mkdir -p "${d}" || die
-	touch "${d}/INSTALLATION_COMPLETE" || die
+	local d_base="node_modules/playwright-core/.local-browsers"
 
-	cd "${S}/${d}" || die
-	unpack $(get_browser_tarball_name)
-	if use chromium \
-		|| use chromium-headless-shell \
-		|| use chromium-tip-of-tree ; then
-		local d="node_modules/playwright-core/.local-browsers/ffmpeg-${DL_REVISIONS[ffmpeg-linux-glibc-amd64]}"
-		mkdir -p "${d}" || die
-		cd "${d}" || die
-		touch "INSTALLATION_COMPLETE" || die
-		unpack $(get_ffmpeg_tarball_name)
-	fi
+	_unpack_playwright "chromium" "${d_base}/chromium-${DL_REVISIONS[chromium-linux-glibc-${ABI}]}" "chromium-linux-${DL_REVISIONS[chromium-linux-glibc-${ABI}]}-${ABI}.zip"
+	_unpack_playwright "chromium" "${d_base}/chromium_headless_shell-${DL_REVISIONS[chromium-headless-shell-linux-glibc-${ABI}]}" "chromium-headless-shell-linux-${DL_REVISIONS[chromium-headless-shell-linux-glibc-${ABI}]}-${ABI}.zip"
+	_unpack_playwright "chromium" "${d_base}/ffmpeg-${DL_REVISIONS[ffmpeg-linux-glibc-amd64]}" "ffmpeg-linux-${DL_REVISIONS[ffmpeg-linux-glibc-${ABI}]}-${ABI}.zip"
+
+	_unpack_playwright "chromium-tip-of-tree" "chromium_tip_of_tree-${DL_REVISIONS[chromium-tip-of-tree-linux-glibc-${ABI}]}" "chromium-tip-of-tree-linux-${DL_REVISIONS[chromium-tip-of-tree-linux-glibc-${ABI}]}-${ABI}.zip"
+	_unpack_playwright "chromium-tip-of-tree" "${d_base}/ffmpeg-${DL_REVISIONS[ffmpeg-linux-glibc-amd64]}" "ffmpeg-linux-${DL_REVISIONS[ffmpeg-linux-glibc-${ABI}]}-${ABI}.zip"
+
+	_unpack_playwright "firefox" "${d_base}/firefox-${DL_REVISIONS[firefox-linux-glibc-${ABI}]}" "firefox-ubuntu-24.04-${DL_REVISIONS[firefox-linux-glibc-${ABI}]}-${ABI}.zip"
+
+	_unpack_playwright "firefox-beta" "${d_base}/firefox_beta-${DL_REVISIONS[firefox-linux-glibc-${ABI}]}" "firefox-beta-ubuntu-24.04-${DL_REVISIONS[firefox-beta-linux-glibc-${ABI}]}-${ABI}.zip"
+
+	_unpack_playwright "webkit" "${d_base}/webkit_ubuntu24.04_x64_special-${DL_REVISIONS[webkit-linux-glibc-${ABI}]}" "webkit-ubuntu-24.04-${DL_REVISIONS[webkit-linux-glibc-${ABI}]}-${ABI}.zip"
+
 	cd "${S}" || die
-	if [[ ! -e "node_modules/playwright-core/.local-browsers" ]] ; then
-eerror
-eerror "Missing node_modules/playwright-core/.local-browsers"
-eerror
-		die
-	fi
-	enpx playwright install ${choice}
+	for x in ${L[@]} ; do
+		enpx playwright install ${choice}
+	done
 }
 
 pkg_setup() {
@@ -348,6 +306,7 @@ pkg_setup() {
 }
 
 src_compile() {
+	npm_hydrate
 	enpm run build
 }
 
@@ -391,9 +350,7 @@ src_install() {
 	for path in ${NPM_EXE_LIST[@]} ; do
 		fperms 0755 "${NPM_INSTALL_PATH}/${path}"
 	done
-ewarn
-ewarn "This package should be re-installed every week since it uses an old browser."
-ewarn
+ewarn "This package contains EOL browsers, you should uninstall it after use."
 	fperms 0755 "${NPM_INSTALL_PATH}/dist/cli.js"
 }
 
