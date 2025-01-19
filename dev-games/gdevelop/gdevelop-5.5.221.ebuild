@@ -20,8 +20,8 @@ EAPI=8
 MY_PN="GDevelop"
 MY_PV="${PV//_/-}"
 
-CR_LATEST_STABLE="129.0.6668.89"
-CR_LATEST_STABLE_DATE="Oct 1, 2024"
+CR_LATEST_STABLE="132.0.6834.83"
+CR_LATEST_STABLE_DATE="Jan 14, 2025"
 CR_ELECTRON="108.0.5359.215"
 CR_ELECTRON_DATE="Jan 23, 2023"
 
@@ -811,7 +811,7 @@ src_prepare() {
 		eapply "${FILESDIR}/${PN}-5.4.221-disable-analytics.patch"
 	fi
 	eapply "${FILESDIR}/${PN}-5.0.0_beta97-use-emscripten-envvar-for-webidl_binder_py.patch"
-	eapply "${FILESDIR}/${PN}-5.0.0_beta108-unix-make.patch"
+	eapply "${FILESDIR}/${PN}-5.5.221-unix-make.patch"
 #	eapply #"${FILESDIR}/${PN}-5.0.127-fix-cmake-cxx-tests.patch"
 	eapply --binary "${FILESDIR}/${PN}-5.0.127-SFML-define-linux-00.patch"
 	eapply "${FILESDIR}/${PN}-5.0.127-SFML-define-linux-01.patch"
