@@ -83,6 +83,11 @@ unset -f _npm_set_globals
 # This variable is an array.
 # Global arguments to append to `npm audit fix`
 
+# @ECLASS_VARIABLE: NPM_DEDUPE_ARGS
+# @DESCRIPTION:
+# This variable is an array.
+# Global arguments to append to `npm dedupe`
+
 # @ECLASS_VARIABLE: NPM_LOCKFILE_SOURCE
 # @DESCRIPTION:
 # The preferred package-lock.json file source.
@@ -265,11 +270,13 @@ _npm_src_unpack_default_ebuild() {
 		unpack "${P}.tar.gz"
 	fi
 	cd "${S}" || die
+	if [[ "${offline}" == "1" || "${offline}" == "2" ]] ; then
+		_npm_setup_offline_cache
+	fi
 	if declare -f npm_unpack_post >/dev/null 2>&1 ; then
 		npm_unpack_post
 	fi
 	if [[ "${offline}" == "1" || "${offline}" == "2" ]] ; then
-		_npm_setup_offline_cache
 		if [[ -e "${FILESDIR}/${PV}" && -n "${NPM_ROOT}" ]] ; then
 			cp -aT "${FILESDIR}/${PV}" "${NPM_ROOT}" || die
 		elif [[ -e "${FILESDIR}/${PV}" ]] ; then
@@ -316,6 +323,9 @@ _npm_src_unpack_default_upstream() {
 		unpack "${P}.tar.gz"
 	fi
 	cd "${S}" || die
+	if [[ "${offline}" == "1" || "${offline}" == "2" ]] ; then
+		_npm_setup_offline_cache
+	fi
 	if declare -f npm_unpack_post >/dev/null 2>&1 ; then
 		npm_unpack_post
 	fi
@@ -324,9 +334,6 @@ _npm_src_unpack_default_upstream() {
 		npm_unpack_install_pre
 	fi
 	local extra_args=()
-	if [[ "${offline}" == "1" || "${offline}" == "2" ]] ; then
-		_npm_setup_offline_cache
-	fi
 	if [[ "${offline}" == "2" ]] ; then
 		extra_args+=(
 			"--no-audit"
@@ -544,7 +551,7 @@ npm_src_unpack() {
 		fi
 
 		if [[ "${NPM_DEDUPE}" == "1" ]] ; then
-			enpm dedupe
+			enpm dedupe ${NPM_DEDUPE_ARGS[@]}
 		fi
 
 		if declare -f npm_save_lockfiles > /dev/null 2>&1 ; then

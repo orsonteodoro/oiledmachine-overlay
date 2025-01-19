@@ -345,13 +345,15 @@ _yarn_src_unpack_default_ebuild() {
 	yarn_check
 
 	cd "${S}" || die
+	if [[ "${YARN_OFFLINE:-1}" == "1" ]] ; then
+		_yarn_setup_offline_cache
+	fi
 
 	if declare -f yarn_unpack_post > /dev/null 2>&1 ; then
 		yarn_unpack_post
 	fi
 
 	if [[ "${YARN_OFFLINE:-1}" == "1" ]] ; then
-		_yarn_setup_offline_cache
 		if [[ -e "${FILESDIR}/${PV}" && -n "${YARN_ROOT}" ]] ; then
 			cp -aT "${FILESDIR}/${PV}" "${YARN_ROOT}" || die
 		elif [[ -e "${FILESDIR}/${PV}" ]] ; then
@@ -402,14 +404,14 @@ _yarn_src_unpack_default_upstream() {
 	yarn_check
 
 	cd "${S}" || die
+	if [[ "${YARN_OFFLINE:-1}" == "1" ]] ; then
+		_yarn_setup_offline_cache
+	fi
 
 	if declare -f yarn_unpack_post > /dev/null 2>&1 ; then
 		yarn_unpack_post
 	fi
 
-	if [[ "${YARN_OFFLINE:-1}" == "1" ]] ; then
-		_yarn_setup_offline_cache
-	fi
 	local args=()
 	if declare -f yarn_unpack_install_pre > /dev/null 2>&1 ; then
 		yarn_unpack_install_pre
