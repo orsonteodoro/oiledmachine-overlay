@@ -318,7 +318,7 @@ src_install() {
 
 	local path
 	for path in ${NPM_EXE_LIST[@]} ; do
-		fperms 0755 "${path}"
+		fperms 0755 "${NPM_INSTALL_PATH}/${path}"
 	done
 
 	cp "${FILESDIR}/${MY_PN}" "${T}" || die
@@ -334,7 +334,7 @@ src_install() {
 	sed -i -e "1aexport PLAYWRIGHT_BROWSERS_PATH=0" \
 		"${T}/${MY_PN}" \
 		|| die
-	exeinto /usr/bin
+	exeinto "/usr/bin"
 	doexe "${T}/${MY_PN}"
 	local path
 	for path in ${NPM_EXE_LIST[@]} ; do
