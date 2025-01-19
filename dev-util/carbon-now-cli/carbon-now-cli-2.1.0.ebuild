@@ -180,7 +180,7 @@ LICENSE="
 	MIT
 "
 SLOT="0"
-IUSE+="+chromium clipboard ebuild_revision_7"
+IUSE+="+chromium clipboard ebuild_revision_8"
 REQUIRED_USE+="
 	|| (
 		${PLAYWRIGHT_BROWSERS[@]}
@@ -285,7 +285,9 @@ npm_unpack_install_post() {
 
 	cd "${S}" || die
 	for x in ${L[@]} ; do
-		enpx playwright install ${choice}
+		if use "${x}" ; then
+			enpx playwright install ${choice}
+		fi
 	done
 }
 
