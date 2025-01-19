@@ -346,3 +346,4 @@ ewarn "This package contains EOL browsers, you should uninstall it after use."
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.0.0 (20230604)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.1.0 (20250118 with USE=chromium)
