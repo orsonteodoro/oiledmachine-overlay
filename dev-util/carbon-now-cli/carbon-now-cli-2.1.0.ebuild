@@ -192,7 +192,7 @@ LICENSE="
 	MIT
 "
 SLOT="0"
-IUSE+="+chromium clipboard ebuild_revision_5"
+IUSE+="+chromium clipboard ebuild_revision_6"
 REQUIRED_USE+="
 	|| (
 		${PLAYWRIGHT_BROWSERS[@]}
@@ -289,11 +289,11 @@ npm_unpack_install_post() {
 	_unpack_playwright "chromium-tip-of-tree" "chromium_tip_of_tree-${DL_REVISIONS[chromium-tip-of-tree-linux-glibc-${ABI}]}" "chromium-tip-of-tree-linux-${DL_REVISIONS[chromium-tip-of-tree-linux-glibc-${ABI}]}-${ABI}.zip"
 	_unpack_playwright "chromium-tip-of-tree" "${d_base}/ffmpeg-${DL_REVISIONS[ffmpeg-linux-glibc-amd64]}" "ffmpeg-linux-${DL_REVISIONS[ffmpeg-linux-glibc-${ABI}]}-${ABI}.zip"
 
-	_unpack_playwright "firefox" "${d_base}/firefox-${DL_REVISIONS[firefox-linux-glibc-${ABI}]}" "firefox-ubuntu-24.04-${DL_REVISIONS[firefox-linux-glibc-${ABI}]}-${ABI}.zip"
+	_unpack_playwright "firefox" "${d_base}/firefox-${DL_REVISIONS[firefox-linux-glibc-${ABI}-ubuntu-24_04]}" "firefox-ubuntu-24.04-${DL_REVISIONS[firefox-linux-glibc-${ABI}-ubuntu-24_04]}-${ABI}.zip"
 
-	_unpack_playwright "firefox-beta" "${d_base}/firefox_beta-${DL_REVISIONS[firefox-linux-glibc-${ABI}]}" "firefox-beta-ubuntu-24.04-${DL_REVISIONS[firefox-beta-linux-glibc-${ABI}]}-${ABI}.zip"
+	_unpack_playwright "firefox-beta" "${d_base}/firefox_beta-${DL_REVISIONS[firefox-linux-glibc-${ABI}-ubuntu-24_04]}" "firefox-beta-ubuntu-24.04-${DL_REVISIONS[firefox-beta-linux-glibc-${ABI}-ubuntu-24_04]}-${ABI}.zip"
 
-	_unpack_playwright "webkit" "${d_base}/webkit_ubuntu24.04_x64_special-${DL_REVISIONS[webkit-linux-glibc-${ABI}]}" "webkit-ubuntu-24.04-${DL_REVISIONS[webkit-linux-glibc-${ABI}]}-${ABI}.zip"
+	_unpack_playwright "webkit" "${d_base}/webkit_ubuntu24.04_x64_special-${DL_REVISIONS[webkit-linux-glibc-${ABI}-ubuntu-24_04]}" "webkit-ubuntu-24.04-${DL_REVISIONS[webkit-linux-glibc-${ABI}-ubuntu-24_04]}-${ABI}.zip"
 
 	cd "${S}" || die
 	for x in ${L[@]} ; do
