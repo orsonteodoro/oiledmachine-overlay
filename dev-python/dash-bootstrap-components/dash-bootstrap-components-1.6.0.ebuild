@@ -4,8 +4,10 @@
 
 EAPI=8
 
+# We don't bump to avoid pulling numpy 2.x
+
 NPM_TARBALL="${P}.tar.gz"
-NODE_SLOTS=( 16 ) # Upstream uses node 16
+NODE_VERSION=16 # Upstream uses node 16
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} ) # Lists up to 3.12
 
@@ -43,7 +45,7 @@ BDEPEND+="
 	dev-python/invoke[${PYTHON_USEDEP}]
 	dev-python/semver[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
-	net-libs/nodejs:16[webassembly(+)]
+	net-libs/nodejs:${NODE_VERSION}[webassembly(+)]
 	dev? (
 		>=sci-visualization/dash-2.0.0[${PYTHON_USEDEP},dev(+)]
 		dev-python/build[${PYTHON_USEDEP}]
