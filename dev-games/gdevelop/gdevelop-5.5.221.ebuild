@@ -338,8 +338,7 @@ __src_unpack_all_production() {
 	local offline="${NPM_OFFLINE:-1}"
 	if [[ "${offline}" == "1" || "${offline}" == "2" ]] ; then
 		export ELECTRON_SKIP_BINARY_DOWNLOAD=1
-		_npm_cp_tarballs
-
+		_npm_setup_offline_cache
 		if [[ -e "${FILESDIR}/${PV}" ]] ; then
 			cp -aT "${FILESDIR}/${PV}" "${S}" || die
 		fi
