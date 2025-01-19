@@ -58,18 +58,6 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "chromium"( |$) ]] ; then
 					elibc_glibc? (
 https://playwright.azureedge.net/builds/chromium/${DL_REVISIONS[chromium-linux-glibc-amd64]}/chromium-linux.zip
 	-> chromium-linux-${DL_REVISIONS[chromium-linux-glibc-amd64]}-amd64.zip
-					)
-				)
-			)
-		)
-	"
-fi
-if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "chromium-headless-shell"( |$) ]] ; then
-	SRC_URI+="
-		chromium-headless-shell? (
-			amd64? (
-				kernel_linux? (
-					elibc_glibc? (
 https://playwright.azureedge.net/builds/chromium/${DL_REVISIONS[chromium-headless-shell-linux-glibc-amd64]}/chromium-headless-shell-linux.zip
 	-> chromium-headless-shell-linux-${DL_REVISIONS[chromium-headless-shell-linux-glibc-amd64]}-amd64.zip
 					)
@@ -192,7 +180,7 @@ LICENSE="
 	MIT
 "
 SLOT="0"
-IUSE+="+chromium clipboard ebuild_revision_6"
+IUSE+="+chromium clipboard ebuild_revision_7"
 REQUIRED_USE+="
 	|| (
 		${PLAYWRIGHT_BROWSERS[@]}
