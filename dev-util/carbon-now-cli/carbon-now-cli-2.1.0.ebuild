@@ -30,7 +30,7 @@ NODE_ENV="development"
 NODE_VERSION=${AT_TYPES_NODE_PV%%.*} # Using nodejs muxer variable name.
 NPM_INSTALL_PATH="/opt/${PN}"
 
-inherit desktop npm playwright
+inherit desktop edo npm playwright
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${PV}"
@@ -180,7 +180,7 @@ LICENSE="
 	MIT
 "
 SLOT="0"
-IUSE+="+chromium clipboard ebuild_revision_8"
+IUSE+="+chromium clipboard ebuild_revision_9"
 REQUIRED_USE+="
 	|| (
 		${PLAYWRIGHT_BROWSERS[@]}
@@ -286,7 +286,7 @@ npm_unpack_install_post() {
 	cd "${S}" || die
 	for x in ${L[@]} ; do
 		if use "${x}" ; then
-			enpx playwright install ${choice}
+			edo enpx playwright install ${x}
 		fi
 	done
 }
