@@ -7,8 +7,9 @@ EAPI=8
 # Missing:
 # sci-visualization/dash[testing]
 
+NPM_SLOT=2
 NPM_TARBALL="${P}.tar.gz"
-NODE_SLOTS=( 14 ) # Upstream uses node 12.
+NODE_VERSION=14 # Upstream uses node 12.
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} ) # Lists up to 3.12
 REACT_PV="16.14.0" # Supports up to node 14 used for testing
@@ -43,7 +44,7 @@ DEPEND+="
 BDEPEND+="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
-	net-libs/nodejs:14[webassembly(+)]
+	net-libs/nodejs:${NODE_VERSION}[webassembly(+)]
 	test? (
 		dev-python/multiprocess[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]

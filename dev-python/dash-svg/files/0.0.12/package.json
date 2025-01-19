@@ -44,7 +44,7 @@
     "ip": "^1.1.9",
     "loader-utils": "^1.4.2",
     "npm": "^8.12.2",
-    "postcss": "^8.4.47",
+    "postcss": "^8.5.1",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-docgen": "^4.1.1",
