@@ -41,9 +41,9 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "chromium-tip-of-tree"( |$) ]] ; then
 		"chromium-tip-of-tree"
 	)
 fi
-if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "chromium-with-symbols"( |$) ]] ; then
+if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "chromium-headless-shell"( |$) ]] ; then
 	PLAYWRIGHT_BROWSERS+=(
-		"chromium-with-symbols"
+		"chromium-headless-shell"
 	)
 fi
 if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "firefox"( |$) ]] ; then
@@ -221,9 +221,9 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "chromium-tip-of-tree"( |$) ]] ; then
 		)
 	"
 fi
-if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "chromium-with-symbols"( |$) ]] ; then
+if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "chromium-headless-shell"( |$) ]] ; then
 	RDEPEND+="
-		chromium-with-symbols? (
+		chromium-headless-shell? (
 			${CHROMIUM_RDEPEND}
 		)
 	"
@@ -255,5 +255,5 @@ fi
 # Generate URIs for offline cache.
 playwright_gen_uris() {
 	#TODO
-	:;
+	:
 }

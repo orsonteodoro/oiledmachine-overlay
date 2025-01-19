@@ -1,0 +1,101 @@
+{
+  "name": "carbon-now-cli",
+  "version": "2.1.0",
+  "description": "Beautiful images of your code — from right inside your terminal.",
+  "license": "MIT",
+  "repository": "mixn/carbon-now-cli",
+  "author": {
+    "name": "Miloš Sutanovac",
+    "email": "sutanovac.milos@gmail.com",
+    "url": "https://mixn.io"
+  },
+  "type": "module",
+  "main": "dist/cli.js",
+  "exports": "./dist/cli.js",
+  "bin": {
+    "carbon-now": "bundle/cli.js"
+  },
+  "files": [
+    "bundle",
+    "dist",
+    "readme.md"
+  ],
+  "engines": {
+    "node": ">=18.17.0",
+    "npm": ">=9.0.0"
+  },
+  "scripts": {
+    "dev": "npx tsx ./cli.ts test/test-dummies/_unfold.js --start 3 --end 100 --open-in-browser --save-to ~/Desktop --save-as --interactive --preset twitter --from-clipboard",
+    "dev:noflags": "npx tsx ./cli.ts test/test-dummies/_unfold.js",
+    "dev:watch": "npx tsx watch ./cli.ts test/test-dummies/_unfold.js --start 3 --end 100 --open-in-browser",
+    "build": "if [ -d 'dist' ]; then trash dist; fi && tsc && trash dist/coverage && trash dist/test",
+    "build:run": "node dist/cli.js test/test-dummies/_unfold.js --save-to ~/Desktop --save-as buildrun",
+    "build-and-run": "npm run build && npm run build:run",
+    "build:bundle": "if [ -d 'dist' ]; then npx esbuild ./dist/cli.js --outdir=./bundle --bundle --platform=node --target=node18 --packages=external --format=esm --minify; fi",
+    "bundle:run": "node bundle/cli.js test/test-dummies/_unfold.js --save-to ~/Desktop --save-as from-bundle",
+    "build-and-bundle": "npm run build && npm run build:bundle",
+    "typecheck": "tsc --noEmit",
+    "prettier": "npx prettier ./**/* --check",
+    "test:unit": "npx vitest run ./test/**/* --exclude ./test/e2e/** --coverage",
+    "test:e2e": "npx vitest run ./test/e2e/index.test.ts --coverage",
+    "test": "npm run typecheck && npm run prettier && npm run test:unit && npm run test:e2e",
+    "prepare": "husky install",
+    "postinstall": "true npx playwright install --with-deps"
+  },
+  "keywords": [
+    "cli",
+    "cli-app",
+    "carbon-now",
+    "carbon-now-sh",
+    "carbon-now-sh-cli",
+    "carbon",
+    "screenshot",
+    "beautiful"
+  ],
+  "dependencies": {
+    "@playwright/test": "^1.32.3",
+    "chalk": "^5.3.0",
+    "clipboard-sys": "^1.2.0",
+    "clipboardy": "^4.0.0",
+    "file-exists": "^5.0.1",
+    "file-extension": "^4.0.5",
+    "get-stdin": "^9.0.0",
+    "inquirer": "^12.1.0",
+    "jsonfile": "^6.1.0",
+    "listr2": "^8.0.1",
+    "lodash": "^4.17.21",
+    "meow": "^13.2.0",
+    "nanoid": "^5.0.9",
+    "open": "^10.1.0",
+    "phin": "^3.7.1",
+    "playwright": "^1.33.0",
+    "query-string": "^9.1.1",
+    "tempy": "^3.1.0",
+    "terminal-image": "^3.0.0",
+    "update-notifier": "^7.0.0"
+  },
+  "devDependencies": {
+    "@types/child-process-promise": "^2.2.2",
+    "@types/file-exists": "^5.0.0",
+    "@types/inquirer": "^9.0.7",
+    "@types/jsonfile": "^6.1.1",
+    "@types/lodash": "^4.14.191",
+    "@types/mock-fs": "^4.13.1",
+    "@types/update-notifier": "^6.0.2",
+    "@vitest/coverage-v8": "^2.1.8",
+    "child-process-promise": "^2.2.1",
+    "del": "^8.0.0",
+    "execa": "^9.5.1",
+    "husky": "^9.0.11",
+    "mock-fs": "^5.2.0",
+    "mock-os": "^1.0.0",
+    "prettier": "^3.4.1",
+    "trash-cli": "^6.0.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  },
+  "yarn": {
+    "postinstall": "true npx playwright install --with-deps"
+  }
+}

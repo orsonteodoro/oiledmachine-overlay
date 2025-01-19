@@ -4,14 +4,18 @@
 
 EAPI=8
 
+AT_TYPES_NODE_PV="18.16.3"
 declare -A DL_REVISIONS=(
-	["chromium-linux-glibc-amd64"]="1064"
-	["chromium-with-symbols-linux-glibc-amd64"]="1064"
-	["chromium-tip-of-tree-linux-glibc-amd64"]="1111"
-	["ffmpeg-linux-glibc-amd64"]="1009"
-	["firefox-linux-glibc-amd64-ubuntu-20_04"]="1408"
-	["firefox-beta-linux-glibc-amd64-ubuntu-20_04"]="1410"
-	["webkit-linux-glibc-amd64-ubuntu-20_04"]="1848"
+# See lockfile for playwright version
+# See https://github.com/microsoft/playwright/blob/v1.49.1/packages/playwright-core/browsers.json
+# See https://github.com/microsoft/playwright/blob/v1.49.1/packages/playwright-core/src/server/registry/index.ts#L231
+	["chromium-linux-glibc-amd64"]="1148"
+	["chromium-headless-shell-linux-glibc-amd64"]="1148"
+	["chromium-tip-of-tree-linux-glibc-amd64"]="1148"
+	["ffmpeg-linux-glibc-amd64"]="1010"
+	["firefox-linux-glibc-amd64-ubuntu-24_04"]="1466"
+	["firefox-beta-linux-glibc-amd64-ubuntu-24_04"]="1466"
+	["webkit-linux-glibc-amd64-ubuntu-24_04"]="2104"
 )
 EPLAYRIGHT_ALLOW_BROWSERS=(
 	"chromium"
@@ -20,7 +24,7 @@ EPLAYRIGHT_ALLOW_BROWSERS=(
 )
 MY_PN="${PN//-cli/}"
 NODE_ENV="development"
-NODE_VERSION=18 # Using nodejs muxer variable name.
+NODE_VERSION=${AT_TYPES_NODE_PV%%.*} # Using nodejs muxer variable name.
 NPM_INSTALL_PATH="/opt/${PN}"
 
 inherit desktop npm playwright
@@ -57,14 +61,14 @@ https://playwright.azureedge.net/builds/chromium/${DL_REVISIONS[chromium-linux-g
 		)
 	"
 fi
-if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "chromium-with-symbols"( |$) ]] ; then
+if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "chromium-headless-shell"( |$) ]] ; then
 	SRC_URI+="
-		chromium-with-symbols? (
+		chromium-headless-shell? (
 			amd64? (
 				kernel_linux? (
 					elibc_glibc? (
-https://playwright.azureedge.net/builds/chromium/${DL_REVISIONS[chromium-with-symbols-linux-glibc-amd64]}/chromium-with-symbols-linux.zip
-	-> chromium-with-symbols-linux-${DL_REVISIONS[chromium-with-symbols-linux-glibc-amd64]}-amd64.zip
+https://playwright.azureedge.net/builds/chromium/${DL_REVISIONS[chromium-headless-shell-linux-glibc-amd64]}/chromium-headless-shell-linux.zip
+	-> chromium-headless-shell-linux-${DL_REVISIONS[chromium-headless-shell-linux-glibc-amd64]}-amd64.zip
 					)
 				)
 			)
@@ -91,8 +95,8 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "firefox"( |$) ]] ; then
 			amd64? (
 				kernel_linux? (
 					elibc_glibc? (
-https://playwright.azureedge.net/builds/firefox/${DL_REVISIONS[firefox-linux-glibc-amd64-ubuntu-20_04]}/firefox-ubuntu-20.04.zip
-	-> firefox-ubuntu-20.04-${DL_REVISIONS[firefox-linux-glibc-amd64-ubuntu-20_04]}-amd64.zip
+https://playwright.azureedge.net/builds/firefox/${DL_REVISIONS[firefox-linux-glibc-amd64-ubuntu-24_04]}/firefox-ubuntu-24.04.zip
+	-> firefox-ubuntu-24.04-${DL_REVISIONS[firefox-linux-glibc-amd64-ubuntu-24_04]}-amd64.zip
 					)
 				)
 			)
@@ -105,8 +109,8 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "firefox-beta"( |$) ]] ; then
 			amd64? (
 				kernel_linux? (
 					elibc_glibc? (
-https://playwright.azureedge.net/builds/firefox/${DL_REVISIONS[firefox-beta-linux-glibc-amd64-ubuntu-20_04]}/firefox-beta-ubuntu-20.04.zip
-	-> firefox-beta-ubuntu-20.04-${DL_REVISIONS[firefox-beta-linux-glibc-amd64-ubuntu-20_04]}-amd64.zip
+https://playwright.azureedge.net/builds/firefox/${DL_REVISIONS[firefox-beta-linux-glibc-amd64-ubuntu-24_04]}/firefox-beta-ubuntu-24.04.zip
+	-> firefox-beta-ubuntu-24.04-${DL_REVISIONS[firefox-beta-linux-glibc-amd64-ubuntu-24_04]}-amd64.zip
 					)
 				)
 			)
@@ -119,8 +123,8 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "webkit"( |$) ]] ; then
 			amd64? (
 				kernel_linux? (
 					elibc_glibc? (
-https://playwright.azureedge.net/builds/webkit/${DL_REVISIONS[webkit-linux-glibc-amd64-ubuntu-20_04]}/webkit-ubuntu-20.04.zip
-	-> webkit-ubuntu-20.04-${DL_REVISIONS[webkit-linux-glibc-amd64-ubuntu-20_04]}-amd64.zip
+https://playwright.azureedge.net/builds/webkit/${DL_REVISIONS[webkit-linux-glibc-amd64-ubuntu-24_04]}/webkit-ubuntu-24.04.zip
+	-> webkit-ubuntu-24.04-${DL_REVISIONS[webkit-linux-glibc-amd64-ubuntu-24_04]}-amd64.zip
 					)
 				)
 			)
@@ -137,7 +141,7 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "chromium"( |$) ]] ; then
 	THIRD_PARTY_LICENSES+="
 		chromium? (
 			BSD
-			chromium-114.0.5735.x
+			chromium-131.0.6778.x
 		)
 	"
 fi
@@ -145,15 +149,15 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "chromium-tip-of-tree"( |$) ]] ; then
 	THIRD_PARTY_LICENSES+="
 		chromium-tip-of-tree? (
 			BSD
-			chromium-115.0.5750.x
+			chromium-132.0.6834.x
 		)
 	"
 fi
-if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "chromium-with-symbols"( |$) ]] ; then
+if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "chromium-headless-shell"( |$) ]] ; then
 	THIRD_PARTY_LICENSES+="
-		chromium-with-symbols? (
+		chromium-headless-shell? (
 			BSD
-			chromium-114.0.5735.x
+			chromium-131.0.6778.x
 		)
 	"
 fi
@@ -161,7 +165,7 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "firefox"( |$) ]] ; then
 	THIRD_PARTY_LICENSES+="
 		firefox? (
 			BSD
-			FF-113.0-THIRD-PARTY-LICENSES
+			FF-132.0-THIRD-PARTY-LICENSES
 		)
 	"
 fi
@@ -169,7 +173,7 @@ if [[ "${EPLAYRIGHT_ALLOW_BROWSERS[@]}" =~ "firefox-beta"( |$) ]] ; then
 	THIRD_PARTY_LICENSES+="
 		firefox-beta? (
 			BSD
-			FF-114.0-THIRD-PARTY-LICENSES
+			FF-132.0-THIRD-PARTY-LICENSES
 		)
 	"
 fi
@@ -220,16 +224,16 @@ get_ffmpeg_tarball_name() {
 get_browser_tarball_name() {
 	if has chromium ${IUSE} && use chromium ; then
 		echo "chromium-linux-${DL_REVISIONS[chromium-linux-glibc-${ABI}]}-${ABI}.zip"
-	elif has chromium-with-symbols ${IUSE} && use chromium-with-symbols ; then
-		echo "chromium-with-symbols-linux-${DL_REVISIONS[chromium-with-symbols-linux-glibc-${ABI}]}-${ABI}.zip"
+	elif has chromium-headless-shell ${IUSE} && use chromium-headless-shell ; then
+		echo "chromium-headless-shell-linux-${DL_REVISIONS[chromium-headless-shell-linux-glibc-${ABI}]}-${ABI}.zip"
 	elif has chromium-tip-of-tree-linux ${IUSE} && use chromium-tip-of-tree-linux ; then
 		echo "chromium-tip-of-tree-linux-${DL_REVISIONS[chromium-tip-of-tree-linux-glibc-${ABI}]}-${ABI}.zip"
 	elif has firefox ${IUSE} && use firefox ; then
-		echo "firefox-ubuntu-20.04-${DL_REVISIONS[firefox-linux-glibc-${ABI}]}-${ABI}.zip"
+		echo "firefox-ubuntu-24.04-${DL_REVISIONS[firefox-linux-glibc-${ABI}]}-${ABI}.zip"
 	elif has firefox-beta ${IUSE} && use firefox-beta ; then
-		echo "firefox-beta-ubuntu-20.04-${DL_REVISIONS[firefox-beta-linux-glibc-${ABI}]}-${ABI}.zip"
+		echo "firefox-beta-ubuntu-24.04-${DL_REVISIONS[firefox-beta-linux-glibc-${ABI}]}-${ABI}.zip"
 	elif has webkit ${IUSE} && use webkit ; then
-		echo "webkit-ubuntu-20.04-${DL_REVISIONS[webkit-linux-glibc-${ABI}]}-${ABI}.zip"
+		echo "webkit-ubuntu-24.04-${DL_REVISIONS[webkit-linux-glibc-${ABI}]}-${ABI}.zip"
 	else
 eerror
 eerror "Browser not supported or not selected"
@@ -241,8 +245,8 @@ eerror
 get_browser_folder_name() {
 	if has chromium ${IUSE} && use chromium ; then
 		echo "chromium-${DL_REVISIONS[chromium-linux-glibc-${ABI}]}"
-	elif has chromium-with-symbols ${IUSE} && use chromium-with-symbols ; then
-		echo "chromium_with_symbols-${DL_REVISIONS[chromium-with-symbols-linux-glibc-${ABI}]}"
+	elif has chromium-headless-shell ${IUSE} && use chromium-headless-shell ; then
+		echo "chromium_with_symbols-${DL_REVISIONS[chromium-headless-shell-linux-glibc-${ABI}]}"
 	elif has chromium-tip-of-tree-linux ${IUSE} && use chromium-tip-of-tree-linux ; then
 		echo "chromium_tip_of_tree-${DL_REVISIONS[chromium-tip-of-tree-linux-glibc-${ABI}]}"
 	elif has firefox ${IUSE} && use firefox ; then
@@ -268,6 +272,7 @@ npm_update_lock_audit_post() {
 einfo "Applying mitigation"
 	patch_edits() {
 		sed -i -e "s|\"phin\": \"^2.9.1\"|\"phin\": \"^3.7.1\"|g" "package-lock.json" || die
+		sed -i -e "s|\"phin\": \"^2.9.3\"|\"phin\": \"^3.7.1\"|g" "package-lock.json" || die
 	}
 	patch_edits
 
@@ -320,7 +325,7 @@ einfo "choice: ${choice}"
 	cd "${S}/${d}" || die
 	unpack $(get_browser_tarball_name)
 	if use chromium \
-		|| use chromium-with-symbols \
+		|| use chromium-headless-shell \
 		|| use chromium-tip-of-tree ; then
 		local d="node_modules/playwright-core/.local-browsers/ffmpeg-${DL_REVISIONS[ffmpeg-linux-glibc-amd64]}"
 		mkdir -p "${d}" || die
