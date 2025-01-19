@@ -808,7 +808,7 @@ src_prepare() {
 	default
 
 	if ! use analytics ; then
-		eapply "${FILESDIR}/${PN}-5.4.204-disable-analytics.patch"
+		eapply "${FILESDIR}/${PN}-5.4.221-disable-analytics.patch"
 	fi
 	eapply "${FILESDIR}/${PN}-5.0.0_beta97-use-emscripten-envvar-for-webidl_binder_py.patch"
 	eapply "${FILESDIR}/${PN}-5.0.0_beta108-unix-make.patch"
