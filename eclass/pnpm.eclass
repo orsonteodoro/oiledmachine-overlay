@@ -77,6 +77,10 @@ fi
 # Checks if state variables are initalized and network sandbox disabled.
 _PNPM_PKG_SETUP_CALLED=0
 
+# @ECLASS_VARIABLE: PNPM_TARBALL
+# @DESCRIPTION:
+# The main package tarball.
+
 # @FUNCTION: pnpm_check_network_sandbox
 # @DESCRIPTION:
 # Check the network sandbox.
@@ -240,6 +244,15 @@ einfo "PNPM_CACHE_FOLDER:  ${PNPM_CACHE_FOLDER}"
 # Unpacks a pnpm application.
 pnpm_src_unpack() {
 	pnpm_hydrate
+
+	if [[ "${PV}" =~ "9999" ]] ; then
+		:
+	elif [[ -n "${PNPM_TARBALL}" ]] ; then
+		unpack "${PNPM_TARBALL}"
+	else
+		unpack "${P}.tar.gz"
+	fi
+
 	if [[ "${PNPM_OFFLINE}" == "1" ]] ; then
 		_pnpm_setup_offline_cache
 	fi

@@ -578,6 +578,9 @@ einfo "Updating lockfile"
 		fi
 
 		cd "${S}" || die
+		if [[ "${YARN_OFFLINE:-1}" == "1" ]] ; then
+			_yarn_setup_offline_cache
+		fi
 
 		if declare -f yarn_unpack_post > /dev/null 2>&1 ; then
 			yarn_unpack_post
@@ -633,6 +636,9 @@ einfo "Updating lockfile"
 		fi
 
 		cd "${S}" || die
+		if [[ "${YARN_OFFLINE:-1}" == "1" ]] ; then
+			_yarn_setup_offline_cache
+		fi
 
 		if declare -f yarn_unpack_post > /dev/null 2>&1 ; then
 			yarn_unpack_post

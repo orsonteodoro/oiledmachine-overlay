@@ -519,6 +519,7 @@ einfo "Node.js version:  ${node_pv}"
 # Unpacks a npm application.
 npm_src_unpack() {
 	npm_hydrate
+	local offline="${NPM_OFFLINE:-1}"
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		if [[ "${PV}" =~ "9999" ]] ; then
@@ -529,6 +530,9 @@ npm_src_unpack() {
 			unpack "${P}.tar.gz"
 		fi
 		cd "${S}" || die
+		if [[ "${offline}" == "1" || "${offline}" == "2" ]] ; then
+			_npm_setup_offline_cache
+		fi
 		if declare -f npm_unpack_post >/dev/null 2>&1 ; then
 			npm_unpack_post
 		fi
