@@ -884,6 +884,7 @@ einfo "PATH:  ${PATH}"
 	grep -q -e "Failed to compile." "${T}/build.log" && die "Detected error.  Retry."
 	grep -q -e "Compiled successfully." "${T}/build.log" || die "Detected error.  Retry."
 	grep -q -e "react-scripts: command not found" "${T}/build.log" && die "Detected error.  Retry."
+	grep -q -e "Error: Unable to find a place to inject the manifest" "${T}/build.log" && die "Detected error.  Retry."
 }
 
 src_install() {
