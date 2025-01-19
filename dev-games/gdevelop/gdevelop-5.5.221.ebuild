@@ -32,17 +32,23 @@ CMAKE_BUILD_TYPE="Release"
 export NPM_INSTALL_PATH="/opt/${PN}/${SLOT_MAJOR}"
 #ELECTRON_APP_APPIMAGE="1"
 ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${MY_PN}-${PV%%.*}-${PV}.AppImage"
-#ELECTRON_APP_ELECTRON_PV="31.1.0" # Chromium 126.0.6478.114 ; Runtime breakage
-ELECTRON_APP_ELECTRON_PV="22.3.27" # Chromium 108.0.5359.215 ; It works.
-#ELECTRON_APP_ELECTRON_PV="18.2.2" # Chromium 100.0.4896.143 ; It works.
+_ELECTRON_DEP_ROUTE="secure" # reproducible or secure
+if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
+	# Ebuild maintainer preference
+	#ELECTRON_APP_ELECTRON_PV="31.1.0" # Chromium 126.0.6478.114, node 20.14.0 ; Runtime breakage
+	ELECTRON_APP_ELECTRON_PV="22.3.27" # Chromium 108.0.5359.215, node 16.17.1 ; It works.
+else
+	# Upstream preference
+	ELECTRON_APP_ELECTRON_PV="18.2.2" # Chromium 100.0.4896.143, node 16.13.2 ; It works.
+fi
 # For ELECTRON_APP_ELECTRON_PV, see \
-# https://github.com/4ian/GDevelop/blob/v5.4.213/newIDE/electron-app/package-lock.json#L1440 \
+# https://github.com/4ian/GDevelop/blob/v5.5.221/newIDE/electron-app/package-lock.json#L1440 \
 # and \
-# strings /var/tmp/portage/dev-games/gdevelop-5.3.204/work/GDevelop-5.3.204/newIDE/electron-app/dist/linux-unpacked/* | grep -E "Chrome/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
-ELECTRON_APP_REACT_PV="16.14.0" # See \
+# strings /var/tmp/portage/dev-games/gdevelop-5.5.221/work/GDevelop-5.5.221/newIDE/electron-app/dist/linux-unpacked/* | grep -E "Chrome/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
+ELECTRON_APP_REACT_PV="16.14.0" #  \
 # The last supported for react 16.14.0 is node 14.0. \
 # https://github.com/facebook/react/blob/v16.14.0/package.json#L100 \
-# https://github.com/4ian/GDevelop/blob/v5.4.213/newIDE/app/package-lock.json#L27009
+# https://github.com/4ian/GDevelop/blob/v5.5.221/newIDE/app/package-lock.json#L27009
 ELECTRON_APP_REACT_PV="ignore" # The lock file says >=0.10.0 but it is wrong.  We force it because CI tests passed.
 EMBUILD_DIR="${WORKDIR}/build"
 #EMSCRIPTEN_PV="3.1.21" # Based on CI.  EMSCRIPTEN_PV == EMSDK_PV
@@ -161,9 +167,9 @@ REQUIRED_USE+="
 	X
 "
 # Dependency lists:
-# https://github.com/4ian/GDevelop/blob/v5.3.204/.circleci/config.yml#L85
-# https://github.com/4ian/GDevelop/blob/v5.3.204/.travis.yml
-# https://github.com/4ian/GDevelop/blob/v5.3.204/ExtLibs/installDeps.sh
+# https://github.com/4ian/GDevelop/blob/v5.5.221/.circleci/config.yml#L85
+# https://github.com/4ian/GDevelop/blob/v5.5.221/.travis.yml
+# https://github.com/4ian/GDevelop/blob/v5.5.221/ExtLibs/installDeps.sh
 # https://app.travis-ci.com/github/4ian/GDevelop (raw log)
 # U 20.04.6 LTS
 # Dependencies for the native build are not installed in CI
@@ -826,7 +832,7 @@ src_configure() { :; }
 
 build_gdevelop_js() {
 einfo "Compiling ${MY_PN}.js"
-# In https://github.com/4ian/GDevelop/blob/v5.3.204/GDevelop.js/Gruntfile.js#L88
+# In https://github.com/4ian/GDevelop/blob/v5.5.221/GDevelop.js/Gruntfile.js#L88
 	pushd "${WORKDIR}/${MY_PN}-${MY_PV}/${MY_PN}.js" >/dev/null 2>&1 || die
 		enpm run build -- --force --dev
 	popd >/dev/null 2>&1 || die
