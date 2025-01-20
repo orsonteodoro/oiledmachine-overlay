@@ -100,9 +100,7 @@ lcnr_install_files() {
 	if [[ -n "${LCNR_TAG}" ]] ; then
 		message_extension=" for ${LCNR_TAG}"
 	fi
-einfo
 einfo "Copying third party licenses and copyright notices${message_extension}"
-einfo
 	export IFS=$'\n'
 	local f
 	for f in \
@@ -158,9 +156,7 @@ lcnr_install_readmes() {
 	if [[ -n "${LCNR_TAG}" ]] ; then
 		message_extension=" for ${LCNR_TAG}"
 	fi
-einfo
 einfo "Copying readmes${message_extension}"
-einfo
 
 	local extra_args=()
 	if [[ "${LCNR_ADD_GH_DEV_FILES}" == "1" ]] ; then
