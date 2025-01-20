@@ -51,8 +51,7 @@ ELECTRON_APP_REACT_PV="16.14.0" #  \
 # https://github.com/4ian/GDevelop/blob/v5.5.221/newIDE/app/package-lock.json#L27009
 ELECTRON_APP_REACT_PV="ignore" # The lock file says >=0.10.0 but it is wrong.  We force it because CI tests passed.
 EMBUILD_DIR="${WORKDIR}/build"
-#EMSCRIPTEN_PV="3.1.21" # Based on CI.  EMSCRIPTEN_PV == EMSDK_PV
-EMSCRIPTEN_PV="1.39.20" # Temporary until 3.1.30 ebuild is fixed.
+EMSCRIPTEN_PV="1.39.20"
 # Emscripten 3.1.21 requires llvm 16 for wasm, 4.1.1 nodejs
 # For LLVM_COMPAT; 9, 8, and 7 was deleted because asm.js support was dropped.
 #LLVM_COMPAT=( 16 ) # For Emscripten 3.1.30.
@@ -71,11 +70,16 @@ NPM_MULTI_LOCKFILE=1
 NPM_OFFLINE=1 # Completely offline (2) is broken.
 # If missing tarball, the misdiagnosed error gets produced:
 # tarball data for ... seems to be corrupted. Trying again.
-NPM_AUDIT_FIX=0 # Audit fix is broken
+NPM_AUDIT_FIX=0 # Audit fix is broken.  Triage conditionally.
 NPM_AUDIT_FIX_ARGS=(
+	"--legacy-peer-deps"
 	"--prefer-offline"
 )
+NPM_DEDUPE_ARGS=(
+	"--legacy-peer-deps"
+)
 NPM_INSTALL_ARGS=(
+	"--legacy-peer-deps"
 	"--prefer-offline"
 )
 PYTHON_COMPAT=( python3_{10,11} ) # CI uses 3.8, 3.9
@@ -158,7 +162,7 @@ SLOT="${SLOT_MAJOR}/${PV}"
 IUSE+="
 	${LLVM_COMPAT[@]/#/llvm_slot_}
 	-analytics
-	ebuild_revision_4
+	ebuild_revision_5
 "
 REQUIRED_USE+="
 	!wayland
@@ -323,6 +327,7 @@ evar_dump "NPM_PROJECT_ROOT" "${NPM_PROJECT_ROOT}"
 # @DESCRIPTION:
 # Unpacks a npm application.
 __src_unpack_all_production() {
+	local offline="${NPM_OFFLINE:-1}"
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	export ELECTRON_BUILDER_CACHE="${HOME}/.cache/electron-builder"
 	export ELECTRON_CACHE="${HOME}/.cache/electron"
@@ -335,7 +340,6 @@ __src_unpack_all_production() {
 		unpack "${P}.tar.gz"
 	fi
 
-	local offline="${NPM_OFFLINE:-1}"
 	if [[ "${offline}" == "1" || "${offline}" == "2" ]] ; then
 		export ELECTRON_SKIP_BINARY_DOWNLOAD=1
 		_npm_setup_offline_cache
@@ -368,12 +372,12 @@ _dedupe_lockfiles() {
 	if [[ "${NPM_DEDUPE}" != "1" ]] ; then
 		return
 	fi
-einfo "Running \`npm dedupe ${NPM_AUDIT_FIX_ARGS[@]}\` per each lockfile"
+einfo "Running \`npm dedupe ${NPM_DEDUPE_ARGS[@]}\` per each lockfile"
 	local lockfile
 	for lockfile in ${lockfiles[@]} ; do
 		local d="$(dirname ${lockfile})"
 		pushd "${S}/${d}" >/dev/null 2>&1 || die
-			enpm dedupe
+			enpm dedupe ${NPM_DEDUPE_ARGS[@]}
 		popd >/dev/null 2>&1 || die
 	done
 }
@@ -390,13 +394,16 @@ einfo "Running \`npm install ${NPM_INSTALL_ARGS[@]}\` per each lockfile"
 		popd >/dev/null 2>&1 || die
 	done
 einfo "Running \`npm audit fix ${NPM_AUDIT_FIX_ARGS[@]}\` per each lockfile"
+	if [[ "${NPM_DEDUPE}" == "1" ]] ; then
+einfo "Running \`npm dedupe ${NPM_DEDUPE_ARGS[@]}\` per each lockfile"
+	fi
 	local lockfile
 	for lockfile in ${lockfiles[@]} ; do
 		local d="$(dirname ${lockfile})"
 		pushd "${S}/${d}" >/dev/null 2>&1 || die
 			enpm audit fix ${NPM_AUDIT_FIX_ARGS[@]}
 			if [[ "${NPM_DEDUPE}" == "1" ]] ; then
-				enpm dedupe
+				enpm dedupe ${NPM_DEDUPE_ARGS[@]}
 			fi
 		popd >/dev/null 2>&1 || die
 	done
@@ -488,6 +495,7 @@ evar_dump "PATH" "${PATH}"
 einfo "Building ${MY_PN}.js"
 
 	npm_hydrate
+	local offline="${NPM_OFFLINE:-1}"
 	if [[ -n "${NPM_UPDATE_LOCK}" ]] ; then
 		if [[ "${PV}" =~ "9999" ]] ; then
 			:
@@ -495,6 +503,10 @@ einfo "Building ${MY_PN}.js"
 			unpack "${NPM_TARBALL}"
 		else
 			unpack "${P}.tar.gz"
+		fi
+
+		if [[ "${offline}" == "1" || "${offline}" == "2" ]] ; then
+			_npm_setup_offline_cache
 		fi
 
 		mkdir -p "${WORKDIR}/lockfile-image" || die
@@ -516,7 +528,7 @@ einfo "Building ${MY_PN}.js"
 			pkgs=(
 				"@lingui/core@2.7.3"
 			)
-			enpm install ${pkgs[@]} -P
+			enpm install ${pkgs[@]} -P ${NPM_INSTALL_ARGS[@]}
 		popd || die
 
 		if [[ "${NPM_AUDIT_FIX}" == 0 ]] ; then
@@ -584,7 +596,8 @@ einfo "Fixing vulnerabilities"
 					sed -i -e "s|\"semver\": \"^7.3.7\"|\"semver\": \"^7.5.2\"|g" "package-lock.json" || die
 					sed -i -e "s|\"semver\": \"^7.3.8\"|\"semver\": \"^7.5.2\"|g" "package-lock.json" || die
 					sed -i -e "s|\"yargs-parser\": \"^7.0.0\"|\"yargs-parser\": \"^13.1.2\"|g" "package-lock.json" || die
-					sed -i -e "s|\"workbox-build\": \"^4.3.1\"|\"workbox-build\": \"^7.1.1\"|g" "package-lock.json" || die
+					sed -i -e "s|\"workbox-webpack-plugin\": \"^6.4.1\"|\"workbox-webpack-plugin\": \"7.1.0\"|g" "package-lock.json" || die
+					sed -i -e "s|\"workbox-build\": \"^4.3.1\"|\"workbox-build\": \"7.1.1\"|g" "package-lock.json" || die
 				popd || die
 
 				pushd "${S}/newIDE/electron-app/app" || die
@@ -653,7 +666,7 @@ einfo "Fixing vulnerabilities"
 					"tar@4.4.18"				# DT, ID		# CVE-2021-37713, CVE-2021-32804, CVE-2021-32803, CVE-2018-20834
 					"tough-cookie@4.1.3"			# DT, ID		# CVE-2023-26136
 				)
-				enpm install ${pkgs[@]} -D
+				enpm install ${pkgs[@]} -D ${NPM_INSTALL_ARGS[@]}
 			popd || die
 			pushd "${S}/GDJS" || die
 				pkgs=(
@@ -662,7 +675,7 @@ einfo "Fixing vulnerabilities"
 					"minimist@1.2.6"			# DoS, DT, ID		# CVE-2021-44906
 					"shelljs@0.8.5"				# DoS, ID		# CVE-2022-0144, GHSA-64g7-mvw6-v9qj
 				)
-				enpm install ${pkgs[@]} -D
+				enpm install ${pkgs[@]} -D ${NPM_INSTALL_ARGS[@]}
 			popd || die
 			pushd "${S}/newIDE/app" || die
 				pkgs=(
@@ -687,11 +700,14 @@ einfo "Fixing vulnerabilities"
 					"minimist@1.2.6"			# DoS, DT, ID		# CVE-2021-44906, CVE-2020-7598
 					"postcss@8.4.31"			# DT			# CVE-2023-44270
 					"shelljs@0.8.5"				# DoS, ID		# CVE-2022-0144, GHSA-64g7-mvw6-v9qj
+					"workbox-webpack-plugin@7.1.0"																# Updated for version correspondance with workbox-build
 					"workbox-build@7.1.1"			# DoS, DT, ID													# [7 contained in lodash.template dep]
 					"ws@7.5.10"				# DoS			# CVE-2024-37890
 					"yargs-parser@13.1.2"			# DoS, DT, ID		# CVE-2020-7608
+
+					"babel-plugin-macros@^3.1.0"																# Missing
 				)
-				enpm install ${pkgs[@]} -D
+				enpm install ${pkgs[@]} -D ${NPM_INSTALL_ARGS[@]}
 				pkgs=(
 					"@grpc/grpc-js@1.8.22"			# DoS			# CVE-2024-37168
 					"axios@0.28.0"				# DoS, ID		# CVE-2021-3749, CVE-2023-45857, CVE-2020-28168
@@ -703,7 +719,7 @@ einfo "Fixing vulnerabilities"
 					"semver@7.5.2"				# DoS			# CVE-2022-25883
 					"ua-parser-js@0.7.33"			# DoS			# CVE-2022-25927, CVE-2020-7793, CVE-2021-27292
 				)
-				enpm install ${pkgs[@]} -P
+				enpm install ${pkgs[@]} -P ${NPM_INSTALL_ARGS[@]}
 				# [24]
 			popd || die
 			pushd "${S}/newIDE/electron-app" || die
@@ -714,18 +730,17 @@ einfo "Fixing vulnerabilities"
 					"http-cache-semantics@4.1.1"		# DoS			# CVE-2022-25881									# Depends on electron
 					"shelljs@0.8.5"				# DoS, ID		# CVE-2022-0144, GHSA-64g7-mvw6-v9qj
 				)
-				enpm install ${pkgs[@]} -D
+				enpm install ${pkgs[@]} -D ${NPM_INSTALL_ARGS[@]}
 
 			popd || die
 
 			pushd "${S}/newIDE/electron-app/app" || die
 				pkgs=(
 					"bl@1.2.3"				# DoS, ID		# CVE-2020-8244
-					"electron-updater@6.3.0-alpha.6"	# DoS, DT, ID		# CVE-2024-39698
 					"electron@${ELECTRON_APP_ELECTRON_PV}"	# DoS, DT, ID		# CVE-2023-5217, CVE-2023-44402, CVE-2023-39956, CVE-2023-29198
 					"http-cache-semantics@4.1.1"		# DT, ID		# CVE-2022-25881									# Depends on electron
 				)
-				enpm install ${pkgs[@]} -D
+				enpm install ${pkgs[@]} -D ${NPM_INSTALL_ARGS[@]}
 				pkgs=(
 					"async@2.6.4"				# DoS, DT, ID		# CVE-2021-43138
 					"axios@0.28.0"				# DoS, ID		# CVE-2021-3749, CVE-2020-28168
@@ -733,6 +748,7 @@ einfo "Fixing vulnerabilities"
 					"braces@3.0.3"				# DoS			# CVE-2018-1109, GHSA-g95f-p29q-9xw4
 					"debug@2.6.9"				# DoS			# CVE-2017-20165, CVE-2017-16137
 					"decode-uri-component@0.2.1"		# DoS			# CVE-2022-38900
+					"electron-updater@6.3.0-alpha.6"	# DoS, DT, ID		# CVE-2024-39698
 					"follow-redirects@1.14.8"		# DoS, DT, ID		# CVE-2022-0155, CVE-2022-0536
 					"follow-redirects@1.15.6"		# DoS, DT, ID		# CVE-2022-0155, CVE-2022-0536
 					"glob-parent@5.1.2"			# DoS														# [8]
@@ -743,7 +759,7 @@ einfo "Fixing vulnerabilities"
 					"websocket-extensions@0.1.4"		# DT, ID		# CVE-2020-7662
 					"ws@7.5.10"				# ID			# CVE-2021-32640
 				)
-				enpm install ${pkgs[@]} -P
+				enpm install ${pkgs[@]} -P ${NPM_INSTALL_ARGS[@]}
 			popd || die
 
 			patch_edits
@@ -816,6 +832,7 @@ src_prepare() {
 	eapply --binary "${FILESDIR}/${PN}-5.0.127-SFML-define-linux-00.patch"
 	eapply "${FILESDIR}/${PN}-5.0.127-SFML-define-linux-01.patch"
 	eapply "${FILESDIR}/${PN}-5.3.198-electron-builder-placeholder.patch"
+	eapply "${FILESDIR}/${PN}-5.5.221-change-to-wb_manifest.patch"
 
 	gen_electron_builder_config
 
@@ -892,7 +909,7 @@ src_install() {
 	doins -r "newIDE/electron-app/dist/linux-unpacked/"*
 	electron-app_gen_wrapper \
 		"${PN}" \
-		"${NPM_INSTALL_PATH}/${PN}"
+		"${PN}"
 
 	#
 	# We can't use .ico because of XDG icon standards.  .ico is not
@@ -981,6 +998,7 @@ ewarn
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.1.198 (20240408) platformer prototype only
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.4.204 (20240620) platformer prototype only (emscripten 3.1.30)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.4.204 (20240627) platformer demo, car-coin demo (emscripten 1.39.20)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.5.221 (20250119) platformer demo (emscripten 1.39.20, electron 22.3.27)
 # wayland:                    failed
 # X:                          passed
 # command-line wrapper:       passed

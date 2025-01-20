@@ -21,6 +21,7 @@
     "electron-editor-context-menu": "^1.1.1",
     "electron-is-dev": "^2.0.0",
     "electron-log": "^4.1.1",
+    "electron-updater": "^6.3.0-alpha.6",
     "follow-redirects": "^1.15.6",
     "fs-extra": "^3.0.1",
     "glob-parent": "^5.1.2",
@@ -38,7 +39,6 @@
   "devDependencies": {
     "bl": "^1.2.3",
     "electron": "^22.3.27",
-    "electron-updater": "^6.3.0-alpha.6",
     "http-cache-semantics": "^4.1.1"
   }
 }
