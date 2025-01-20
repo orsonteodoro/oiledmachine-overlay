@@ -79,7 +79,7 @@ camino-1.1.9
 cargo-platform-0.1.9
 cargo_metadata-0.19.1
 cargo_toml-0.21.0
-cc-1.2.9
+cc-1.2.10
 cesu8-1.1.0
 cfb-0.7.3
 cfg-expr-0.15.8
@@ -138,8 +138,8 @@ embed-resource-2.5.1
 embed_plist-1.2.2
 encoding_rs-0.8.35
 endi-1.1.0
-enumflags2-0.7.10
-enumflags2_derive-0.7.10
+enumflags2-0.7.11
+enumflags2_derive-0.7.11
 equivalent-1.0.1
 erased-serde-0.4.5
 errno-0.3.10
@@ -218,6 +218,7 @@ hyper-rustls-0.24.2
 hyper-rustls-0.27.5
 hyper-timeout-0.4.1
 hyper-tls-0.5.0
+hyper-tls-0.6.0
 hyper-util-0.1.10
 iana-time-zone-0.1.61
 iana-time-zone-haiku-0.1.2
@@ -236,10 +237,10 @@ ident_case-1.0.1
 idna-1.0.3
 idna_adapter-1.2.0
 indexmap-1.9.3
-indexmap-2.7.0
+indexmap-2.7.1
 infer-0.16.0
 inout-0.1.3
-ipnet-2.10.1
+ipnet-2.11.0
 is-docker-0.2.0
 is-wsl-0.4.0
 itoa-0.4.8
@@ -412,12 +413,12 @@ sct-0.7.1
 security-framework-2.11.1
 security-framework-sys-2.14.0
 selectors-0.22.0
-semver-1.0.24
+semver-1.0.25
 serde-1.0.217
 serde-untagged-0.1.6
 serde_derive-1.0.217
 serde_derive_internals-0.29.1
-serde_json-1.0.135
+serde_json-1.0.137
 serde_repr-0.1.19
 serde_spanned-0.6.8
 serde_urlencoded-0.7.1
@@ -463,7 +464,7 @@ tao-0.31.1
 tao-macros-0.1.3
 tar-0.4.43
 target-lexicon-0.12.16
-tauri-2.2.2
+tauri-2.2.3
 tauri-build-2.0.5
 tauri-codegen-2.0.4
 tauri-macros-2.0.4
@@ -670,7 +671,7 @@ LICENSE="
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 ollama tray wayland X
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	|| (
@@ -823,6 +824,7 @@ eerror "Switch rust to ${rust_pv%.*} via \`eselect rust\`"
 		die
 	fi
 	unpack ${A}
+#	die
 	npm_src_unpack
 
 einfo "Unpacking cargo packages"
@@ -914,12 +916,14 @@ eerror "Unsupported ARCH=${ARCH} ABI=${ABI}"
 }
 
 src_compile() {
+	rm -f "${S}/Cargo."{"toml","lock"}
 	npm_hydrate
 	enpm --version
 #	enpm install -D "vite@${VITE_PV}" ${NPM_INSTALL_ARGS[@]}
 	enpm run build
 	local chost=$(get_rustc_target)
 	enpm run tauri build -- --target "${chost}"
+	grep -e "failed to build app" "${T}/build.log" && die "Detected error"
 }
 
 src_install() {
