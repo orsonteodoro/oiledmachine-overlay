@@ -564,6 +564,23 @@ einfo "Running:\t\tyarn ${cmd[@]}"
 	_yarn_check_errors
 }
 
+# @FUNCTION: _npm_setup_offline_cache
+# @DESCRIPTION:
+# Setup offline cache
+_npm_setup_offline_cache() {
+	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+	export NPM_ENABLE_OFFLINE_MODE=1
+	export NPM_CACHE_FOLDER="${EDISTDIR}/npm-download-cache-${NPM_SLOT}/${CATEGORY}/${P}"
+einfo "DEBUG:  Default cache folder:  ${HOME}/.npm/_cacache"
+einfo "NPM_ENABLE_OFFLINE_MODE:  ${YARN_ENABLE_OFFLINE_MODE}"
+einfo "NPM_CACHE_FOLDER:  ${NPM_CACHE_FOLDER}"
+	rm -rf "${HOME}/.npm/_cacache"
+	ln -s "${NPM_CACHE_FOLDER}" "${HOME}/.npm/_cacache" # npm likes to remove the ${HOME}/.npm folder
+	addwrite "${EDISTDIR}"
+	addwrite "${NPM_CACHE_FOLDER}"
+	mkdir -p "${NPM_CACHE_FOLDER}"
+}
+
 # @FUNCTION: _yarn_src_unpack_update_ebuild
 # @DESCRIPTION:
 # Use the default ebuild updater
@@ -595,7 +612,25 @@ einfo "Updating lockfile"
 			yarn_update_lock_install_pre > /dev/null 2>&1 ; then
 			yarn_update_lock_install_pre
 		fi
-		enpm install ${NPM_INSTALL_ARGS[@]}
+
+		local offline="${NPM_OFFLINE:-1}"
+		local extra_args=()
+		if [[ "${offline}" == "2" ]] ; then
+			extra_args+=(
+				"--offline"
+			)
+		elif [[ "${offline}" == "1" ]] ; then
+			extra_args+=(
+				"--prefer-offline"
+			)
+		fi
+
+	# npm is used for audit fix which yarn lacks
+		_npm_setup_offline_cache
+		enpm install \
+			${extra_args[@]} \
+			${NPM_INSTALL_ARGS[@]}
+
 		if declare -f \
 			yarn_update_lock_install_post > /dev/null 2>&1 ; then
 			yarn_update_lock_install_post
@@ -614,6 +649,8 @@ einfo "Updating lockfile"
 			yarn_update_lock_yarn_import_pre > /dev/null 2>&1 ; then
 			yarn_update_lock_yarn_import_pre
 		fi
+
+	# Converts package-lock.json to yarn.lock
 		yarn import || die
 		if declare -f \
 			yarn_update_lock_yarn_import_post > /dev/null 2>&1 ; then
