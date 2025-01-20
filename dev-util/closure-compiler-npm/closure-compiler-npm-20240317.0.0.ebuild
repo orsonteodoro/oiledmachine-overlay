@@ -94,7 +94,7 @@ MAVEN_TARBALLS=(
 "${HOME}/.m2/repository/com/google/truth/extensions/truth-liteproto-extension/1.4.0/truth-liteproto-extension-1.4.0.jar"
 )
 NODE_ENV="development"
-NODE_VERSION=14 # Upstream uses 14 on linux but others 16, 18
+NODE_VERSION=18
 #OPENJDK_PV="17.0.10"
 OPENJDK_PV="11"
 OSS7_PV="7"									# https://github.com/google/guava-beta-checker/blob/v1.0/pom.xml#L24
