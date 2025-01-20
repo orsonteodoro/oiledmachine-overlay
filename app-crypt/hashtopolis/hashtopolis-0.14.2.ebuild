@@ -8,6 +8,7 @@ EAPI=8
 # PATH="${OILEDMACHINE_OVERLAY_PATH}/scripts:${PATH}"
 # NPM_UPDATER_PROJECT_ROOT="web-ui-0.14.2" NPM_UPDATER_VERSIONS="0.14.2" npm_updater_update_locks.sh
 
+ANGULAR_SUPPORT=0
 PYTHON_COMPAT=( "python3_"{10..11} )
 HASTOPOLIS_WEBUI_PV="${PV}"
 MY_ETCDIR="/etc/webapps/${PF}"
@@ -17,7 +18,10 @@ NPM_AUDIT_FIX_ARGS=( "--prefer-offline" )
 NPM_INSTALL_ARGS=( "--prefer-offline" )
 WEBAPP_MANUAL_SLOT="yes"
 
-inherit lcnr npm webapp
+if [[ "${ANGULAR_SUPPORT}" == "1" ]] ; then
+	inherit npm
+fi
+inherit lcnr webapp
 
 if [[ "${PV}" == "9999" ]]; then
 	inherit git-r3
@@ -28,11 +32,15 @@ else
 	KEYWORDS="~amd64" # Unfinished
 	SRC_URI="
 https://github.com/hashtopolis/server/archive/v${PV}.tar.gz -> hashtopolis-server-${PV}.tar.gz
-		angular? (
+	"
+	if [[ "${ANGULAR_SUPPORT}" == "1" ]] ; then
+		SRC_URI+="
+			angular? (
 https://github.com/hashtopolis/web-ui/archive/refs/tags/v${HASTOPOLIS_WEBUI_PV}.tar.gz
 	-> hashtopolis-webui-${HASTOPOLIS_WEBUI_PV}.tar.gz
-		)
-	"
+			)
+		"
+	fi
 	S="${WORKDIR}/server-${PV}"
 	S_WEBUI="${WORKDIR}/web-ui-${HASTOPOLIS_WEBUI_PV}"
 fi
@@ -108,22 +116,26 @@ THIRD_PARTY_LICENSES="
 	BSD
 	MIT
 	OFL-1.1
-	angular? (
-		${WEB_UI_NODE_MODULES_LICENSES}
-		(
-			CC-BY-4.0
-			MIT
-		)
-		0BSD
-		Apache-2.0
-		BSD
-		CC0-1.0
-		CC-BY-4.0
-		GPL-3
-		MIT
-		OFL-1.1
-	)
 "
+if [[ "${ANGULAR_SUPPORT}" == "1" ]] ; then
+	THIRD_PARTY_LICENSES+="
+		angular? (
+			${WEB_UI_NODE_MODULES_LICENSES}
+			(
+				CC-BY-4.0
+				MIT
+			)
+			0BSD
+			Apache-2.0
+			BSD
+			CC0-1.0
+			CC-BY-4.0
+			GPL-3
+			MIT
+			OFL-1.1
+		)
+	"
+fi
 # The PSF-2.2 is similar to PSF-2.4 but shorter list
 # static/7zr.bin - All Rights Reserved, GPL-2+
 # web-ui-0.14.2/node_modules/@angular/localize/node_modules/convert-source-map/LICENSE - all-rights-reserved MIT
@@ -149,11 +161,11 @@ LICENSE="
 	GPL-3
 "
 SLOT="0"
-IUSE+=" agent angular ssl"
-# USE=angular is broken
-REQUIRED_USE="
-	!angular
-"
+IUSE+=" agent ssl"
+if [[ "${ANGULAR_SUPPORT}" == "1" ]] ; then
+	# angular support is broken
+	IUSE+=" angular"
+fi
 RESTRICT="test"
 # apache optional: apache2_modules_env, apache2_modules_log_config
 RDEPEND="
@@ -169,11 +181,13 @@ DEPEND="
 	${RDEPEND}
 	>=app-arch/unzip-6.0
 "
-BDEPEND="
-	angular? (
-		>=net-libs/nodejs-18.15:18
-	)
-"
+if [[ "${ANGULAR_SUPPORT}" == "1" ]] ; then
+	BDEPEND+="
+		angular? (
+			>=net-libs/nodejs-18.15:18
+		)
+	"
+fi
 PDEPEND="
 	agent? (
 		>=app-crypt/hashtopolis-python-agent-0.7.1
@@ -193,7 +207,7 @@ ewarn "Apache is not configured for PHP.  Add \"-D PHP\" to APACHE2_OPTS in /etc
 pkg_setup() {
 	check_php_support_in_apache
 	webapp_pkg_setup
-	if use angular ; then
+	if has angular ${IUSE} && use angular ; then
 ewarn "The angular USE flag is currently broken."
 		npm_pkg_setup
 	fi
@@ -216,7 +230,9 @@ src_unpack() {
 		git-r3_checkout
 	else
 		unpack "hashtopolis-server-${PV}.tar.gz"
-		use angular && unpack "hashtopolis-webui-${HASTOPOLIS_WEBUI_PV}.tar.gz"
+		if has angular ${IUSE} && use angular ; then
+			unpack "hashtopolis-webui-${HASTOPOLIS_WEBUI_PV}.tar.gz"
+		fi
 	fi
 
 	if [[ -n "${NPM_UPDATE_LOCK}" ]] ; then
@@ -229,10 +245,17 @@ src_unpack() {
 	fi
 
 	if [[ -n "${NPM_UPDATE_LOCK}" ]] ; then
-		use angular || die "Enable the angular USE flag before updating lockfile"
+		if has angular ${IUSE} ; then
+			if use angular ; then
+				:
+			else
+eerror "Enable the angular USE flag before updating lockfile"
+				die
+			fi
+		fi
 	fi
 
-	if use angular ; then
+	if has angular ${IUSE} && use angular ; then
 		npm_hydrate
 		cd "${S_WEBUI}" || die
 		if [[ -n "${NPM_UPDATE_LOCK}" ]] ; then
@@ -478,7 +501,7 @@ einfo "MY_HTDOCSDIR_VHOST:  ${MY_HTDOCSDIR_VHOST}"
 einfo "MY_HTDOCSDIR_VHOST_BACKEND:  ${MY_HTDOCSDIR_VHOST_BACKEND}"
 einfo "MY_HTDOCSDIR_VHOST_FRONTEND:  ${MY_HTDOCSDIR_VHOST_FRONTEND}"
 
-	if use angular ; then
+	if has angular ${IUSE} && use angular ; then
 		cd "${S_WEBUI}" || die
 		sed -i \
 			-e 's/localhost:8080/${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_BACKEND_PORT}/g' \
@@ -522,7 +545,7 @@ einfo "MY_HTDOCSDIR_VHOST_FRONTEND:  ${MY_HTDOCSDIR_VHOST_FRONTEND}"
 }
 
 src_compile() {
-	if use angular ; then
+	if has angular ${IUSE} && use angular ; then
 		cd "${S_WEBUI}" || die
 
 	# Avoid fatal: not a git repository
@@ -552,7 +575,7 @@ src_install() {
 	insinto "${MY_HTDOCSDIR}/hashtopolis-backend"
 	doins -r src/*
 
-	if use angular ; then
+	if has angular ${IUSE} && use angular ; then
 		pushd "${S_WEBUI}" || die
 			insinto "${MY_HTDOCSDIR}/hashtopolis-frontend"
 			doins -r dist/*
@@ -597,7 +620,7 @@ src_install() {
 		"${MY_ETCDIR}/backend/php/inc/conf.php" \
 		"${MY_HTDOCSDIR}/hashtopolis-backend/inc/conf.php"
 
-	if use angular ; then
+	if has angular ${IUSE} && use angular ; then
 		LCNR_SOURCE="${S_WEBUI}"
 		LCNR_TAG="web-ui-node_modules-third-party-licenses"
 		lcnr_install_files
@@ -614,7 +637,7 @@ print_usage() {
 	local HASHTOPOLIS_ADDRESS=${HASHTOPOLIS_ADDRESS:-"localhost"}
 	local HASHTOPOLIS_BACKEND_PORT=${HASHTOPOLIS_BACKEND_PORT:-8080}
 	local HASHTOPOLIS_FRONTEND_PORT=${HASHTOPOLIS_FRONTEND_PORT:-4200}
-	if use angular ; then
+	if has angular ${IUSE} && use angular ; then
 einfo
 		if use ssl ; then
 einfo "To add an admin, use https://${HASHTOPOLIS_ADDRESS}:${HASHTOPOLIS_BACKEND_PORT}/install"
