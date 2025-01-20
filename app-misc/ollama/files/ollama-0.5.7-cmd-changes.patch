@@ -1,6 +1,6 @@
 diff '--color=auto' -urp ollama-0.5.7.orig/cmd/cmd.go ollama-0.5.7/cmd/cmd.go
 --- ollama-0.5.7.orig/cmd/cmd.go	2025-01-16 01:14:04.000000000 -0800
-+++ ollama-0.5.7/cmd/cmd.go	2025-01-20 01:06:42.614450102 -0800
++++ ollama-0.5.7/cmd/cmd.go	2025-01-20 09:04:29.827069648 -0800
 @@ -15,9 +15,12 @@ import (
  	"net"
  	"net/http"
@@ -2532,7 +2532,7 @@ diff '--color=auto' -urp ollama-0.5.7.orig/cmd/cmd.go ollama-0.5.7/cmd/cmd.go
  	}
  
  	req := api.ShowRequest{Name: args[0]}
-@@ -774,6 +3255,138 @@ func PullHandler(cmd *cobra.Command, arg
+@@ -774,6 +3255,142 @@ func PullHandler(cmd *cobra.Command, arg
  	return nil
  }
  
@@ -2579,17 +2579,19 @@ diff '--color=auto' -urp ollama-0.5.7.orig/cmd/cmd.go ollama-0.5.7/cmd/cmd.go
 +	if s != nil {
 +		_requestedSize, err := strconv.ParseFloat(s[0], 64)
 +		if err != nil {
-+			return errors.New("You need to add the memory size in GB or MB for the preferred size.  Examples:  4GB, 500MB")
++			return errors.New("You need to add the memory size in TB, GB, or MB for the preferred size.  Examples:  1TB, 4GB, 500MB")
 +		}
 +		if strings.Contains(requestedSizeRaw, "GB") {
 +			requestedSize = int(_requestedSize * 1000)
 +		} else if strings.Contains(requestedSizeRaw, "MB") {
 +			requestedSize = int(_requestedSize)
++		} else if strings.Contains(requestedSizeRaw, "TB") {
++			requestedSize = int(_requestedSize * 1000 * 1000)
 +		} else {
-+			return errors.New("You need to add GB or MB to your number.  Examples:  4GB, 500MB")
++			return errors.New("You need to add TB, GB, or MB to your number.  Examples:  1TB, 4GB, 500MB")
 +		}
 +	} else {
-+		return errors.New("You need to add a number as an arg.  Examples:  4GB, 500MB")
++		return errors.New("You need to add a number as an arg.  Examples:  1TB, 4GB, 500MB")
 +	}
 +
 +	var results []*FindModelSizeResult
@@ -2611,6 +2613,8 @@ diff '--color=auto' -urp ollama-0.5.7.orig/cmd/cmd.go ollama-0.5.7/cmd/cmd.go
 +			value = int(_value * 1000)
 +		} else if strings.Contains(valueRaw, "MB") {
 +			value = int(_value)
++		} else if strings.Contains(valueRaw, "TB") {
++			value = int(_value * 1000 * 1000)
 +		}
 +		if value <= requestedSize {
 +			result := &FindModelSizeResult{key, value, valueRaw}
@@ -2671,7 +2675,7 @@ diff '--color=auto' -urp ollama-0.5.7.orig/cmd/cmd.go ollama-0.5.7/cmd/cmd.go
  type generateContextKey string
  
  type runOptions struct {
-@@ -1187,6 +3800,8 @@ func NewCLI() *cobra.Command {
+@@ -1187,6 +3804,8 @@ func NewCLI() *cobra.Command {
  	showCmd.Flags().Bool("parameters", false, "Show parameters of a model")
  	showCmd.Flags().Bool("template", false, "Show template of a model")
  	showCmd.Flags().Bool("system", false, "Show system message of a model")
@@ -2680,7 +2684,7 @@ diff '--color=auto' -urp ollama-0.5.7.orig/cmd/cmd.go ollama-0.5.7/cmd/cmd.go
  
  	runCmd := &cobra.Command{
  		Use:     "run MODEL [PROMPT]",
-@@ -1282,6 +3897,30 @@ func NewCLI() *cobra.Command {
+@@ -1282,6 +3901,30 @@ func NewCLI() *cobra.Command {
  		_ = runner.Execute(args[1:])
  	})
  
@@ -2711,7 +2715,7 @@ diff '--color=auto' -urp ollama-0.5.7.orig/cmd/cmd.go ollama-0.5.7/cmd/cmd.go
  	envVars := envconfig.AsMap()
  
  	envs := []envconfig.EnvVar{envVars["OLLAMA_HOST"]}
-@@ -1298,6 +3937,9 @@ func NewCLI() *cobra.Command {
+@@ -1298,6 +3941,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		serveCmd,
@@ -2721,7 +2725,7 @@ diff '--color=auto' -urp ollama-0.5.7.orig/cmd/cmd.go ollama-0.5.7/cmd/cmd.go
  	} {
  		switch cmd {
  		case runCmd:
-@@ -1339,6 +3981,9 @@ func NewCLI() *cobra.Command {
+@@ -1339,6 +3985,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		runnerCmd,
@@ -2731,4 +2735,3 @@ diff '--color=auto' -urp ollama-0.5.7.orig/cmd/cmd.go ollama-0.5.7/cmd/cmd.go
  	)
  
  	return rootCmd
-Only in ollama-0.5.7/cmd: cmd.go.orig

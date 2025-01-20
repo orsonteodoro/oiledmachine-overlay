@@ -2571,7 +2571,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
-sandbox systemd unrestrict video_cards_intel ebuild_revision_44
+sandbox systemd unrestrict video_cards_intel ebuild_revision_45
 "
 gen_rocm_required_use() {
 	local s
@@ -2914,7 +2914,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.5.4-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-0.5.4-rename-CUDA_ARCHITECTURES.patch"
 	"${FILESDIR}/${PN}-0.5.4-gpu-libs-path.patch"
-	"${FILESDIR}/${PN}-0.5.7-cmd-changes.patch"
+	"A${FILESDIR}/${PN}-0.5.7-cmd-changes.patch"
 	"${FILESDIR}/${PN}-0.5.4-config-cuda-slot.patch"
 	"${FILESDIR}/${PN}-0.5.4-nvcc-flags.patch"
 )
