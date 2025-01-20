@@ -309,10 +309,8 @@ einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
 		mkdir -p "${YARN_CACHE_FOLDER}"
 		yarn config set cacheFolder "${YARN_CACHE_FOLDER}" || die
 	else
-		export YARN_ENABLE_OFFLINE_MODE=1
 		export YARN_CACHE_FOLDER="${EDISTDIR}/yarn-download-cache-${YARN_SLOT}/${CATEGORY}/${P}"
 einfo "DEBUG:  Default cache folder:  ${HOME}/.yarn/berry/cache/"
-einfo "YARN_ENABLE_OFFLINE_MODE:  ${YARN_ENABLE_OFFLINE_MODE}"
 einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
 		mkdir -p "${HOME}/.yarn/berry" || die
 		ln -s "${YARN_CACHE_FOLDER}" "${HOME}/.yarn/berry/cache"
@@ -569,10 +567,8 @@ einfo "Running:\t\tyarn ${cmd[@]}"
 # Setup offline cache
 _npm_setup_offline_cache() {
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	export NPM_ENABLE_OFFLINE_MODE=1
 	export NPM_CACHE_FOLDER="${EDISTDIR}/npm-download-cache-${NPM_SLOT}/${CATEGORY}/${P}"
 einfo "DEBUG:  Default cache folder:  ${HOME}/.npm/_cacache"
-einfo "NPM_ENABLE_OFFLINE_MODE:  ${YARN_ENABLE_OFFLINE_MODE}"
 einfo "NPM_CACHE_FOLDER:  ${NPM_CACHE_FOLDER}"
 	rm -rf "${HOME}/.npm/_cacache"
 	ln -s "${NPM_CACHE_FOLDER}" "${HOME}/.npm/_cacache" # npm likes to remove the ${HOME}/.npm folder
