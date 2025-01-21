@@ -53,7 +53,7 @@ https://github.com/open-webui/open-webui/archive/refs/tags/v${PV}.tar.gz
 	"
 fi
 
-DESCRIPTION="A user-friendly AI interface with Web RAG and document RAG support"
+DESCRIPTION="A user-friendly AI interface with web search RAG, document RAG, AI image generation, Ollama, OpenAI API support"
 HOMEPAGE="
 	https://openwebui.com/
 	https://github.com/open-webui/open-webui
