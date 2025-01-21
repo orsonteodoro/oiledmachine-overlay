@@ -8,6 +8,7 @@ EAPI=8
 # chromadb
 # colbert-ai
 # duckduckgo-search
+# extract-msg
 # faster-whisper
 # fpdf2
 # langchain
@@ -161,7 +162,7 @@ RDEPEND+="
 	>=dev-python/pytube-15.0.0[${PYTHON_USEDEP}]
 
 	>=dev-python/duckduckgo-search-6.3.5[${PYTHON_USEDEP}]
-	dev-python/extract_msg[${PYTHON_USEDEP}]
+	dev-python/extract-msg[${PYTHON_USEDEP}]
 	dev-python/pydub[${PYTHON_USEDEP}]
 
 	>=dev-python/docker-7.1.0[${PYTHON_USEDEP}]
