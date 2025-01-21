@@ -3689,8 +3689,10 @@ build_new_runner_cpu() {
 
 	if use cpu_flags_x86_f16c || use cpu_flags_x86_fma ; then
 		cpu_flag_args="${cpu_flag_args:1}"
-		edo go env -w "CGO_CFLAGS_ALLOW=${cpu_flag_args}"
-		edo go env -w "CGO_CXXFLAGS_ALLOW=${cpu_flags_args}"
+		go env -w "CGO_CFLAGS_ALLOW=${cpu_flag_args}"
+		go env -w "CGO_CXXFLAGS_ALLOW=${cpu_flags_args}"
+		export CGO_CFLAGS_ALLOW=${cpu_flag_args}
+		export CGO_CXXFLAGS_ALLOW=${cpu_flag_args}
 	fi
 
 	if use cpu_flags_arm_sve ; then
@@ -3761,8 +3763,10 @@ build_new_runner_gpu() {
 
 	if use cpu_flags_x86_f16c || use cpu_flags_x86_fma ; then
 		cpu_flag_args="${cpu_flag_args:1}"
-		edo go env -w "CGO_CFLAGS_ALLOW=${cpu_flag_args}"
-		edo go env -w "CGO_CXXFLAGS_ALLOW=${cpu_flags_args}"
+		go env -w "CGO_CFLAGS_ALLOW=${cpu_flag_args}"
+		go env -w "CGO_CXXFLAGS_ALLOW=${cpu_flags_args}"
+		export CGO_CFLAGS_ALLOW=${cpu_flag_args}
+		export CGO_CXXFLAGS_ALLOW=${cpu_flag_args}
 	fi
 
 	local cuda_impl=""

@@ -2571,7 +2571,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
-sandbox systemd unrestrict video_cards_intel ebuild_revision_45
+sandbox systemd unrestrict video_cards_intel ebuild_revision_46
 "
 gen_rocm_required_use() {
 	local s
@@ -2914,9 +2914,10 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.5.4-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-0.5.4-rename-CUDA_ARCHITECTURES.patch"
 	"${FILESDIR}/${PN}-0.5.4-gpu-libs-path.patch"
-	"A${FILESDIR}/${PN}-0.5.7-cmd-changes.patch"
+	"${FILESDIR}/${PN}-0.5.7-cmd-changes.patch"
 	"${FILESDIR}/${PN}-0.5.4-config-cuda-slot.patch"
 	"${FILESDIR}/${PN}-0.5.4-nvcc-flags.patch"
+	"${FILESDIR}/${PN}-0.5.7-change-make-custom-flags.patch"
 )
 
 pkg_pretend() {
@@ -3734,6 +3735,10 @@ build_new_runner_cpu() {
 	export OLLAMA_SKIP_CUDA_GENERATE=1
 	export OLLAMA_SKIP_ROCM_GENERATE=1
 	export OLLAMA_SKIP_ONEAPI_GENERATE=1
+	unset OLLAMA_SKIP_CPU_RUNNER
+	export OLLAMA_SKIP_CPU_RUNNER_GENERIC=1
+	export OLLAMA_SKIP_CPU_RUNNER_AVX=1
+	export OLLAMA_SKIP_CPU_RUNNER_AVX2=1
 
 	# See also
 	# https://github.com/ollama/ollama/blob/v0.5.7/llama/llama.go
@@ -3756,8 +3761,10 @@ build_new_runner_cpu() {
 
 	if use cpu_flags_x86_f16c || use cpu_flags_x86_fma ; then
 		cpu_flag_args="${cpu_flag_args:1}"
-		edo go env -w "CGO_CFLAGS_ALLOW=${cpu_flag_args}"
-		edo go env -w "CGO_CXXFLAGS_ALLOW=${cpu_flags_args}"
+		go env -w "CGO_CFLAGS_ALLOW=${cpu_flag_args}"
+		go env -w "CGO_CXXFLAGS_ALLOW=${cpu_flags_args}"
+		export CGO_CFLAGS_ALLOW=${cpu_flag_args}
+		export CGO_CXXFLAGS_ALLOW=${cpu_flag_args}
 	fi
 
 	if use cpu_flags_arm_sve ; then
@@ -3765,18 +3772,25 @@ build_new_runner_cpu() {
 			-tags sve
 		)
 		cpu_flags="sve"
+		unset OLLAMA_SKIP_CPU_RUNNER_GENERIC
 	elif use cpu_flags_x86_avx2 ; then
 		args+=(
 			-tags avx,avx2
 		)
 		cpu_flags="avx2,avx"
+		unset OLLAMA_SKIP_CPU_RUNNER_AVX
+		unset OLLAMA_SKIP_CPU_RUNNER_AVX2
 	elif use cpu_flags_x86_avx ; then
 		args+=(
 			-tags avx
 		)
 		cpu_flags="avx"
+		unset OLLAMA_SKIP_CPU_RUNNER_AVX
+	else
+		unset OLLAMA_SKIP_CPU_RUNNER_GENERIC
 	fi
 	export CUSTOM_CPU_FLAGS="${cpu_flags}"
+einfo "CUSTOM_CPU_FLAGS:  ${CUSTOM_CPU_FLAGS}"
 
 	if ! tc-enables-pie ; then
 		args+=(
@@ -3789,7 +3803,7 @@ build_new_runner_cpu() {
 	export USE_CUDA=0
 
 einfo "Building CPU runner"
-	emake
+	emake cpu
 
 	edo go build ${args[@]} .
 }
@@ -3814,6 +3828,7 @@ build_new_runner_gpu() {
 	if use video_cards_intel ; then
 		unset OLLAMA_SKIP_ONEAPI_GENERATE
 	fi
+	export OLLAMA_SKIP_CPU_RUNNER=1
 
 	# See also
 	# https://github.com/ollama/ollama/blob/v0.5.7/llama/llama.go
@@ -3836,8 +3851,10 @@ build_new_runner_gpu() {
 
 	if use cpu_flags_x86_f16c || use cpu_flags_x86_fma ; then
 		cpu_flag_args="${cpu_flag_args:1}"
-		edo go env -w "CGO_CFLAGS_ALLOW=${cpu_flag_args}"
-		edo go env -w "CGO_CXXFLAGS_ALLOW=${cpu_flags_args}"
+		go env -w "CGO_CFLAGS_ALLOW=${cpu_flag_args}"
+		go env -w "CGO_CXXFLAGS_ALLOW=${cpu_flags_args}"
+		export CGO_CFLAGS_ALLOW=${cpu_flag_args}
+		export CGO_CXXFLAGS_ALLOW=${cpu_flag_args}
 	fi
 
 	local cuda_impl=""
