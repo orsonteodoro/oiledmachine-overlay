@@ -179,9 +179,8 @@ DEPEND+="
 "
 BDEPEND+="
 	net-libs/nodejs:${NODE_VERSION}[npm]
-	sys-apps/npm
 "
-DOCS=( "CHANGELOG" "README.md" )
+DOCS=( "CHANGELOG.md" "README.md" )
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
