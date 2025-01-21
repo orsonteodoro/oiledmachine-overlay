@@ -90,6 +90,12 @@ _PNPM_PKG_SETUP_CALLED=0
 # This variable is an array.
 # Global arguments to append to `pnpm audit --fix`
 
+# @ECLASS_VARIABLE: PNPM_ROOT
+# @DESCRIPTION:
+# The project root containing the pnpm-lock.yaml file.
+
+PNPM_ROOT
+
 # @FUNCTION: pnpm_check_network_sandbox
 # @DESCRIPTION:
 # Check the network sandbox.
@@ -266,6 +272,11 @@ pnpm_src_unpack() {
 	cd "${S}" || die
 	if [[ "${PNPM_OFFLINE}" == "1" ]] ; then
 		_pnpm_setup_offline_cache
+		if [[ -e "${FILESDIR}/${PV}" && -n "${PNPM_ROOT}" ]] ; then
+			cp -aT "${FILESDIR}/${PV}" "${PNPM_ROOT}" || die
+		elif [[ -e "${FILESDIR}/${PV}" ]] ; then
+			cp -aT "${FILESDIR}/${PV}" "${S}" || die
+		fi
 	fi
 	mkdir -p "${HOME}/.local/share/pnpm"
 	export PATH="${S}/node_modules/.bin:${PATH}"
