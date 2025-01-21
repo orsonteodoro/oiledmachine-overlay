@@ -81,6 +81,15 @@ _PNPM_PKG_SETUP_CALLED=0
 # @DESCRIPTION:
 # The main package tarball.
 
+# @ECLASS_VARIABLE: PNPM_AUDIT_FIX
+# @DESCRIPTION:
+# Allow audit fix
+
+# @ECLASS_VARIABLE: PNPM_AUDIT_FIX_ARGS
+# @DESCRIPTION:
+# This variable is an array.
+# Global arguments to append to `pnpm audit --fix`
+
 # @FUNCTION: pnpm_check_network_sandbox
 # @DESCRIPTION:
 # Check the network sandbox.
@@ -227,6 +236,7 @@ eerror
 _pnpm_setup_offline_cache() {
 	pnpm config set preferOffline "true" || die
 	mkdir -p "${HOME}/.local/share/pnpm"
+	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	export PNPM_CACHE_FOLDER="${EDISTDIR}/pnpm-download-cache-${PNPM_SLOT}/${CATEGORY}/${P}"
 einfo "DEBUG:  Default cache folder:  ${HOME}/.local/share/pnpm/store"
 einfo "PNPM_OFFLINE:  ${PNPM_OFFLINE}"
@@ -253,12 +263,28 @@ pnpm_src_unpack() {
 		unpack "${P}.tar.gz"
 	fi
 
+	cd "${S}" || die
 	if [[ "${PNPM_OFFLINE}" == "1" ]] ; then
 		_pnpm_setup_offline_cache
 	fi
 	mkdir -p "${HOME}/.local/share/pnpm"
 	export PATH="${S}/node_modules/.bin:${PATH}"
+	if declare -f pnpm_install_pre >/dev/null 2>&1 ; then
+		pnpm_install_pre
+	fi
 	epnpm install ${PNPM_INSTALL_ARGS[@]}
+	if declare -f pnpm_install_post >/dev/null 2>&1 ; then
+		pnpm_install_post
+	fi
+	if declare -f pnpm_audit_pre >/dev/null 2>&1 ; then
+		pnpm_audit_pre
+	fi
+	if [[ "${PNPM_AUDIT_FIX:-1}" == "1" ]] ; then
+		pnpm audit --fix ${PNPM_AUDIT_FIX_ARGS[@]} || die
+	fi
+	if declare -f pnpm_audit_post >/dev/null 2>&1 ; then
+		pnpm_audit_post
+	fi
 }
 
 # @FUNCTION: pnpm_src_compile
