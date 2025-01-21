@@ -55,6 +55,7 @@ fi
 
 DESCRIPTION="User-friendly AI Interface (Supports Ollama, OpenAI API, ...)"
 HOMEPAGE="
+	https://openwebui.com/
 	https://github.com/open-webui/open-webui
 	https://pypi.org/project/open-webui
 "
