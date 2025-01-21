@@ -57,6 +57,7 @@ BDEPEND+="
 DOCS=( "CHANGELOG.md" "README.md" )
 
 pkg_setup() {
+	export NEXT_TELEMETRY_DISABLED=1
 	npm_pkg_setup
 }
 
@@ -71,7 +72,6 @@ src_unpack() {
 }
 
 src_compile() {
-	export NEXT_TELEMETRY_DISABLED=1
 
 	# Fix:
 	# FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
