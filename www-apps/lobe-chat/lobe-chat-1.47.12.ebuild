@@ -57,7 +57,11 @@ BDEPEND+="
 DOCS=( "CHANGELOG.md" "README.md" )
 
 pkg_setup() {
+	# If a "next" package is found in package.json, this should be added.
+	# Otherwise, the license variable should be updated with additional
+	# legal text.
 	export NEXT_TELEMETRY_DISABLED=1
+
 	npm_pkg_setup
 }
 
