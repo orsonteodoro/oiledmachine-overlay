@@ -71,6 +71,8 @@ src_unpack() {
 }
 
 src_compile() {
+	export NEXT_TELEMETRY_DISABLED=1
+
 	# Fix:
 	# FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
 	export NODE_OPTIONS+=" --max_old_space_size=4096"
