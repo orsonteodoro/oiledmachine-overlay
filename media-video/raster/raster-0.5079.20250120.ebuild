@@ -6,14 +6,8 @@ EAPI=8
 
 # Versioning based on include/build_number.h and latest commit.
 
-# Package about:
-# Video editor
-
-# TODO:
-# Finish or drop ebuild
-
-FALLBACK_COMMIT="27eb31c3d4e899b1836de02003171ab0a97aacf5" # Jan 20, 2024
 DISTUTILS_USE_PEP517="standalone"
+FALLBACK_COMMIT="27eb31c3d4e899b1836de02003171ab0a97aacf5" # Jan 20, 2024
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1
