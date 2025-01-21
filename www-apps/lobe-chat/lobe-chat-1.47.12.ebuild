@@ -75,8 +75,15 @@ src_unpack() {
 	fi
 }
 
-src_compile() {
+src_prepare() {
+	default
+	sed -i \
+		-e "s|bun run|npm run|g" \
+		"${S}/package.json" \
+		|| die
+}
 
+src_compile() {
 	# Fix:
 	# FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
 	export NODE_OPTIONS+=" --max_old_space_size=4096"
