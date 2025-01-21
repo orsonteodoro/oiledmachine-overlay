@@ -28,7 +28,9 @@ EAPI=8
 # unstructured
 # youtube-transcript-api
 
+AT_TYPES_NODE_PV="20.11.30"
 DISTUTILS_USE_PEP517="hatchling"
+NODE_VERSION="${AT_TYPES_NODE_PV%%.*}"
 PYTHON_COMPAT=( "python3_"{11..12} )
 
 inherit distutils-r1 pypi
@@ -174,7 +176,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	net-libs/nodejs[npm]
+	net-libs/nodejs:${NODE_VERSION}[npm]
 	sys-apps/npm
 "
 DOCS=( "CHANGELOG" "README.md" )
