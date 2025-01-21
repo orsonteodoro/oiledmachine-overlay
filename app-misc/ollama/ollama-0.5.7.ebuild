@@ -2571,7 +2571,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
-sandbox systemd unrestrict video_cards_intel ebuild_revision_46
+sandbox systemd unrestrict video_cards_intel ebuild_revision_47
 "
 gen_rocm_required_use() {
 	local s
@@ -3972,17 +3972,16 @@ eerror "ARCH=${ARCH} ABI=${ABI} is not supported"
 
 install_cpu_runner() {
 	local runner_path1
-	local runner_path2="${S}/dist/linux-$(get_arch)/lib/ollama"
 
 	local name
 	if use cpu_flags_x86_avx2 ; then
-		runner_path1="${S}/dist/linux-$(get_arch)/lib/ollama/runners/cpu_avx2"
+		runner_path1="${S}/llama/build/linux-$(get_arch)/runners/cpu_avx2"
 		name="cpu_avx2"
 	elif use cpu_flags_x86_avx ; then
-		runner_path1="${S}/dist/linux-$(get_arch)/lib/ollama/runners/cpu_avx"
+		runner_path1="${S}/llama/build/linux-$(get_arch)/runners/cpu_avx"
 		name="cpu_avx"
 	else
-		runner_path1="${S}/dist/linux-$(get_arch)/lib/ollama/runners/cpu"
+		runner_path1="${S}/llama/build/linux-$(get_arch)/runners/cpu"
 		name="cpu"
 	fi
 
@@ -4000,17 +3999,16 @@ install_cpu_runner() {
 
 install_gpu_runner() {
 	local runner_path1
-	local runner_path2="${S}/dist/linux-$(get_arch)/lib/ollama"
 
 	local name=""
 	if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
-		runner_path1="${S}/dist/linux-$(get_arch)/lib/ollama/runners/cuda_v12"
+		runner_path1="${S}/llama/build/linux-$(get_arch)/runners/cuda_v12"
 		name="cuda_v12"
 	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
-		runner_path1="${S}/dist/linux-$(get_arch)/lib/ollama/runners/cuda_v11"
+		runner_path1="${S}/llama/build/linux-$(get_arch)/runners/cuda_v11"
 		name="cuda_v11"
 	elif use rocm ; then
-		runner_path1="${S}/dist/linux-$(get_arch)/lib/ollama/runners/rocm"
+		runner_path1="${S}/llama/build/linux-$(get_arch)/runners/rocm"
 		name="rocm"
 	fi
 
@@ -4022,7 +4020,7 @@ install_gpu_runner() {
 		doexe "ollama_llama_server"
 	popd >/dev/null 2>&1 || die
 
-	pushd "${runner_path2}" >/dev/null 2>&1 || die
+	pushd "${runner_path1}" >/dev/null 2>&1 || die
 		if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
 			doexe "libggml_cuda_v12.so"
 		elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
