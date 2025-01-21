@@ -94,8 +94,6 @@ _PNPM_PKG_SETUP_CALLED=0
 # @DESCRIPTION:
 # The project root containing the pnpm-lock.yaml file.
 
-PNPM_ROOT
-
 # @FUNCTION: pnpm_check_network_sandbox
 # @DESCRIPTION:
 # Check the network sandbox.
