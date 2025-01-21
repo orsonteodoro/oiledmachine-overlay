@@ -270,7 +270,9 @@ pnpm_src_unpack() {
 	cd "${S}" || die
 	if [[ "${PNPM_OFFLINE}" == "1" ]] ; then
 		_pnpm_setup_offline_cache
-		if [[ -e "${FILESDIR}/${PV}" && -n "${PNPM_ROOT}" ]] ; then
+		if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+			:
+		elif [[ -e "${FILESDIR}/${PV}" && -n "${PNPM_ROOT}" ]] ; then
 			cp -aT "${FILESDIR}/${PV}" "${PNPM_ROOT}" || die
 		elif [[ -e "${FILESDIR}/${PV}" ]] ; then
 			cp -aT "${FILESDIR}/${PV}" "${S}" || die
