@@ -5,7 +5,7 @@
 EAPI=8
 
 NODE_VERSION=22
-NPM_AUDIT_ARGS=(
+NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 )
 NPM_DEDUPE_ARGS=(
