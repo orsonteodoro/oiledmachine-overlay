@@ -6,6 +6,11 @@ EAPI=8
 
 # U22, D12
 
+# system-vips is required to avoid the following message
+#  ⨯ Static worker exited with code: null and signal: SIGILL
+# SIGILL is associated with illegal instruction which is usually caused by
+# unsupported CPU instruction in older arches.
+
 CPU_FLAGS_X86=(
 	cpu_flags_x86_sse4_2
 )
