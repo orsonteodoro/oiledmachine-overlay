@@ -100,9 +100,9 @@ npm_unpack_post() {
 			-e "s|bun run|npm run|g" \
 			"${S}/package.json" \
 			|| die
-		enpm add "sharp@0.33.5" ${NPM_INSTALL_ARGS[@]}
-		enpm add "pg@8.13.1" ${NPM_INSTALL_ARGS[@]}
-		enpm add "drizzle-orm@0.38.2" ${NPM_INSTALL_ARGS[@]}
+		enpm add "sharp@0.33.5" --prefer-offline ${NPM_INSTALL_ARGS[@]}
+		enpm add "pg@8.13.1" --prefer-offline ${NPM_INSTALL_ARGS[@]}
+		enpm add "drizzle-orm@0.38.2" --prefer-offline ${NPM_INSTALL_ARGS[@]}
 	fi
 }
 

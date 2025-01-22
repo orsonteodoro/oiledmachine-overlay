@@ -243,9 +243,9 @@ _pnpm_setup_offline_cache() {
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	if [[ -z "${PNPM_CACHE_FOLDER}" ]] ; then
 		export PNPM_CACHE_FOLDER="${EDISTDIR}/pnpm-download-cache-${PNPM_SLOT}/${CATEGORY}/${P}"
+	fi
 einfo "DEBUG:  Default cache folder:  ${HOME}/.local/share/pnpm/store"
 einfo "PNPM_CACHE_FOLDER:  ${PNPM_CACHE_FOLDER}"
-	fi
 	mkdir -p "${HOME}/.local/share/pnpm" || die
 	ln -s "${PNPM_CACHE_FOLDER}" "${HOME}/.local/share/pnpm/store"
 	addwrite "${EDISTDIR}"

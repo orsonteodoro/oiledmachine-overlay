@@ -302,9 +302,9 @@ _yarn_setup_offline_cache() {
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	if [[ -z "${YARN_CACHE_FOLDER}" ]] ; then
 		export YARN_CACHE_FOLDER="${EDISTDIR}/yarn-download-cache-${YARN_SLOT}/${CATEGORY}/${P}"
+	fi
 einfo "DEBUG:  Default cache folder:  ${HOME}/.yarn/berry/cache/"
 einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
-	fi
 	if [[ "${YARN_SLOT}" == "1" ]] ; then
 		mkdir -p "${HOME}/.yarn/berry" || die
 		addwrite "${EDISTDIR}"
