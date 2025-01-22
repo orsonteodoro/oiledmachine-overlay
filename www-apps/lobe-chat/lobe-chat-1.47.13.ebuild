@@ -108,10 +108,6 @@ src_unpack() {
 	else
 		npm_src_unpack
 	fi
-	if ! use postgres ; then
-		enpm uninstall pg ${NPM_UNINSTALL_ARGS[@]}
-		enpm uninstall drizzle-orm ${NPM_UNINSTALL_ARGS[@]}
-	fi
 }
 
 src_prepare() {
@@ -141,12 +137,10 @@ _install_webapp_v1() {
 	doins -r "${S}/node_modules"
 	doins "${S}/scripts/serverLauncher/startServer.js"
 
-	if use postgres ; then
-		insinto "${_PREFIX}"
-		doins -r "${S}/src/database/migrations"
-		doins "${S}/scripts/migrateServerDB/docker.cjs"
-		doins "${S}/scripts/migrateServerDB/errorHint.js"
-	fi
+	insinto "${_PREFIX}"
+	doins -r "${S}/src/database/migrations"
+	doins "${S}/scripts/migrateServerDB/docker.cjs"
+	doins "${S}/scripts/migrateServerDB/errorHint.js"
 
 	fowners -R "${PN}:${PN}" "${_PREFIX}"
 }
@@ -164,11 +158,9 @@ _install_webapp_v2() {
 	mv "${S}/node_modules" "${ED}${_PREFIX}" || die
 	mv "${S}/scripts/serverLauncher/startServer.js" "${ED}${_PREFIX}" || die
 
-	if use postgres ; then
-		mv "${S}/src/database/migrations" "${ED}${_PREFIX}" || die
-		mv "${S}/scripts/migrateServerDB/docker.cjs" "${ED}${_PREFIX}" || die
-		mv "${S}/scripts/migrateServerDB/errorHint.js" "${ED}${_PREFIX}" || die
-	fi
+	mv "${S}/src/database/migrations" "${ED}${_PREFIX}" || die
+	mv "${S}/scripts/migrateServerDB/docker.cjs" "${ED}${_PREFIX}" || die
+	mv "${S}/scripts/migrateServerDB/errorHint.js" "${ED}${_PREFIX}" || die
 
 	# Sanitize permissions
 	chown -R "${PN}:${PN}" "${ED}${_PREFIX}" || die
