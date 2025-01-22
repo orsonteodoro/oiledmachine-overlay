@@ -241,10 +241,11 @@ _pnpm_setup_offline_cache() {
 	pnpm config set preferOffline "true" || die
 	mkdir -p "${HOME}/.local/share/pnpm"
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	export PNPM_CACHE_FOLDER="${EDISTDIR}/pnpm-download-cache-${PNPM_SLOT}/${CATEGORY}/${P}"
+	if [[ -z "${PNPM_CACHE_FOLDER}" ]] ; then
+		export PNPM_CACHE_FOLDER="${EDISTDIR}/pnpm-download-cache-${PNPM_SLOT}/${CATEGORY}/${P}"
 einfo "DEBUG:  Default cache folder:  ${HOME}/.local/share/pnpm/store"
-einfo "PNPM_OFFLINE:  ${PNPM_OFFLINE}"
 einfo "PNPM_CACHE_FOLDER:  ${PNPM_CACHE_FOLDER}"
+	fi
 	mkdir -p "${HOME}/.local/share/pnpm" || die
 	ln -s "${PNPM_CACHE_FOLDER}" "${HOME}/.local/share/pnpm/store"
 	addwrite "${EDISTDIR}"

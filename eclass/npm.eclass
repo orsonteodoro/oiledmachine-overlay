@@ -238,9 +238,11 @@ eerror
 # Setup offline cache
 _npm_setup_offline_cache() {
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	export NPM_CACHE_FOLDER="${EDISTDIR}/npm-download-cache-${NPM_SLOT}/${CATEGORY}/${P}"
+	if [[ -z "${NPM_CACHE_FOLDER}" ]] ; then
+		export NPM_CACHE_FOLDER="${EDISTDIR}/npm-download-cache-${NPM_SLOT}/${CATEGORY}/${P}"
 einfo "DEBUG:  Default cache folder:  ${HOME}/.npm/_cacache"
 einfo "NPM_CACHE_FOLDER:  ${NPM_CACHE_FOLDER}"
+	fi
 	rm -rf "${HOME}/.npm/_cacache"
 	ln -s "${NPM_CACHE_FOLDER}" "${HOME}/.npm/_cacache" # npm likes to remove the ${HOME}/.npm folder
 	addwrite "${EDISTDIR}"
