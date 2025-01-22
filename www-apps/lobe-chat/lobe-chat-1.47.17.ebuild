@@ -6,6 +6,9 @@ EAPI=8
 
 # U22, D12
 
+CPU_FLAGS_X86=(
+	cpu_flags_x86_sse4_2
+)
 NODE_VERSION=22
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
@@ -19,6 +22,7 @@ NPM_INSTALL_ARGS=(
 NPM_UNINSTALL_ARGS=(
 	"--legacy-peer-deps"
 )
+VIPS_PV="8.14.5"
 
 inherit edo npm
 
@@ -50,8 +54,14 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" +indexdb +openrc postgres systemd"
+IUSE+="
+${CPU_FLAGS_X86[@]}
++indexdb +openrc postgres systemd +system-vips
+"
 REQUIRED_USE="
+	!cpu_flags_x86_sse4_2? (
+		system-vips
+	)
 	^^ (
 		indexdb
 		postgres
@@ -61,7 +71,20 @@ REQUIRED_USE="
 		systemd
 	)
 "
+VIPS_RDEPEND="
+	>=net-libs/nodejs-14.15.0
+	elibc_glibc? (
+		>=sys-libs/glibc-2.17
+	)
+	elibc_musl? (
+		>=sys-libs/musl-1.1.24
+	)
+	system-vips? (
+		>=media-libs/vips-${VIPS_PV}
+	)
+"
 RDEPEND+="
+	${VIPS_RDEPEND}
 	acct-group/lobe-chat
 	acct-user/lobe-chat
 	>=app-misc/ca-certificates-20240203
@@ -75,11 +98,28 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
+VIPS_BDEPEND="
+	virtual/pkgconfig
+"
 BDEPEND+="
+	${VIPS_BDEPEND}
 	net-libs/nodejs:${NODE_VERSION}[corepack,npm]
 	sys-apps/npm
 "
 DOCS=( "CHANGELOG.md" "README.md" )
+
+# @FUNCTION: electron-app_set_sharp_env
+# @DESCRIPTION:
+# sharp env
+electron-app_set_sharp_env() {
+	export SHARP_IGNORE_GLOBAL_LIBVIPS=1
+	if use system-vips ; then
+		export SHARP_IGNORE_GLOBAL_LIBVIPS=0
+einfo "Using system vips for sharp"
+	else
+einfo "Using vendored vips for sharp"
+	fi
+}
 
 pkg_setup() {
 	# If a "next" package is found in package.json, this should be added.
