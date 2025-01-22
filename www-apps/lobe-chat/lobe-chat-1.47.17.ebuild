@@ -80,7 +80,7 @@ VIPS_RDEPEND="
 		>=sys-libs/musl-1.1.24
 	)
 	system-vips? (
-		>=media-libs/vips-${VIPS_PV}
+		>=media-libs/vips-${VIPS_PV}[gif,webp]
 	)
 "
 RDEPEND+="
