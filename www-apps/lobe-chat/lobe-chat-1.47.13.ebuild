@@ -124,7 +124,7 @@ src_compile() {
 	export NODE_OPTIONS+=" --max_old_space_size=4096"
 
 	npm_hydrate
-	enpm run "build"
+	enpm run "build:docker"
 }
 
 # Slow
