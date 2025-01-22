@@ -143,9 +143,10 @@ _install_webapp_v1() {
 	doins -r "${S}/.next/static"
 
 	if [[ -e "${S}/.next/standalone" ]] ; then
-ewarn "${S}/.next/standalone does not exist"
 		insinto "${_PREFIX}"
-		doins -r "${S}/.next/standalone"
+		doins -r "${S}/.next/standalone/"*
+	else
+ewarn "${S}/.next/standalone does not exist"
 	fi
 
 	insinto "${_PREFIX}"
@@ -172,8 +173,9 @@ _install_webapp_v2() {
 	mv "${S}/.next/static" "${ED}${_PREFIX}/.next" || die
 
 	if [[ -e "${S}/.next/standalone" ]] ; then
+		mv "${S}/.next/standalone/"* "${ED}${_PREFIX}" || die
+	else
 ewarn "${S}/.next/standalone does not exist"
-		mv "${S}/.next/standalone" "${ED}${_PREFIX}" || die
 	fi
 
 	mv "${S}/node_modules" "${ED}${_PREFIX}" || die
@@ -448,6 +450,7 @@ ZHIPU_API_KEY=""
 ZHIPU_MODEL_LIST=""
 EOF
 	insinto "/etc/${PN}"
+	doins "${T}/${PN}.conf"
 	fperms 0660 "/etc/${PN}/lobe-chat.conf"
 }
 
