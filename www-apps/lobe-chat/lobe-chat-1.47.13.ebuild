@@ -45,7 +45,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" indexdb openrc postgres systemd"
+IUSE+=" +indexdb +openrc postgres systemd"
 REQUIRED_USE="
 	^^ (
 		indexdb
