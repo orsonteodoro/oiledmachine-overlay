@@ -533,4 +533,10 @@ src_install() {
 	dhms_end
 }
 
+pkg_postrm() {
+	if [[ -z "${REPLACED_BY_VERSION}" ]] ; then
+		rm -rf "/opt/${PN}"
+	fi
+}
+
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
