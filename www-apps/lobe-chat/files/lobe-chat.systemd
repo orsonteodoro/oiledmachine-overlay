@@ -1,0 +1,27 @@
+[Unit]
+Description=Lobe Chat Service
+After=network-online.target
+
+[Service]
+User=lobe-chat
+Group=lobe-chat
+ExecStart=/usr/bin/lobe-chat-start-server
+Restart=always
+RestartSec=3
+Environment="LD_LIBRARY_PATH=@LD_LIBRARY_PATH@"
+Environment="PATH=$PATH"
+#
+# TODO: test settings
+#
+# ID = Information Disclosure
+# DoS = Denial of Service
+# DT = Data Tampering
+#
+# ProtectHome=true # ID
+# ProtectSystem=full # ID
+# ProtectProc=noaccess # ID
+# PrivateDevices=true # ID
+# RestrictRealtime=true # DoS
+
+[Install]
+WantedBy=default.target

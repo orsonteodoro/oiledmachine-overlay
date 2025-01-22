@@ -1,0 +1,282 @@
+#!/sbin/openrc-run
+
+real_command="/usr/bin/lobe-chat-start-server"
+real_command_args=""
+command_user="lobe-chat"
+command_group="lobe-chat"
+command_background="yes"
+pidfile="/run/lobe-chat.pid"
+log="/var/log/lobe-chat/lobechat.log"
+
+# AC = Access Control
+# CE = Code Execution
+# ID = Information Disclosure
+# DoS = Denial of Service
+# DT = Data Tampering
+
+# CWE-653 mitigation
+LOBE_CHAT_CHROOT=${LOBE_CHAT_CHROOT:-0}
+
+# CWE-653 mitigation
+LOBE_CHAT_SANDBOX_PROVIDER=${LOBE_CHAT_SANDBOX_PROVIDER:-""}
+
+_LOBE_CHAT_DEBUG=${_LOBE_CHAT_DEBUG:-"0"}
+
+# 0 back of the line OOM kill list
+# <500 back of the OOM kill list
+# >=500 front of the OOM kill list
+# 1000 front of the line OOM kill
+LOBE_CHAT_OOM=${LOBE_CHAT_OOM:-500}
+
+depend() {
+	after net
+	use dns logger
+}
+
+prepare_chroot() {
+	[[ -e "/var/lib/lobe-chat" ]] || exit 1
+	[[ -e "/var/lib/lobe-chat" ]] || return
+	pushd "/var/lib/lobe-chat" >/dev/null 2>&1 || exit 1
+		paths=(
+			"lib64"
+			"bin"
+			"usr"
+			"var"
+			"etc"
+			"tmp"
+		)
+		rm -rf ${paths[@]}
+
+		umount -l "proc" >/dev/null 2>&1
+		umount -l "sys" >/dev/null 2>&1
+		umount -l "dev" >/dev/null 2>&1
+		umount -l "run" >/dev/null 2>&1
+
+		mkdir -p "proc"
+		mkdir -p "sys"
+		mkdir -p "dev"
+		mkdir -p "run"
+
+		local gcc_slot=$(ldd "/usr/lib64/lobe-chat/lobe-chat" \
+			| grep "libstdc++.so" \
+			| grep -E -o -e "/[0-9]+/" \
+			| sed -e "s|/||g")
+		local chost=$(cat "/var/db/pkg/www-apps/lobe-chat"*"/CHOST")
+
+		mkdir -p "var/log/lobe-chat"
+		mkdir -p "var/lib/lobe-chat"
+		touch "var/log/lobe-chat/lobe-chat.log"
+		chown -R "lobe-chat:lobe-chat" "var/log/lobe-chat"
+		chown "lobe-chat:lobe-chat" "var/lib/lobe-chat"
+		chmod 0755 "var/lib"
+		chmod 0700 "var/lib/lobe-chat"
+		chmod 0755 "/var/lib/lobe-chat"
+		mkdir -p "tmp"
+		chmod 1777 "tmp"
+
+		if [[ "${LOBE_CHAT_SANDBOX_PROVIDER}" != "bwrap" ]] ; then
+			mount --types "proc" "/proc" "proc"
+			mount --rbind "/sys" "sys"
+			mount --make-rslave "sys"
+			mount --rbind "/dev" "dev"
+			mount --make-rslave "dev"
+			mount --bind "/run" "run"
+			mount --make-slave "run"
+		fi
+
+		local paths=()
+		paths=(
+			"/etc/ld.so.cache"
+			"/etc/ld.so.preload"
+			"/bin/bash;libs"
+			"/bin/sh"
+			"/usr/bin/lobe-chat"
+			"/usr/lib64/lobe-chat"
+			"/usr/lib64/lobe-chat;libs-recursive"
+			"/bin/mkdir"
+		)
+
+		if [[ "${LOBE_CHAT_SANDBOX_PROVIDER}" == "bwrap" ]] ; then
+			paths+=(
+				"/usr/bin/bwrap;libs"
+			)
+		elif [[ "${LOBE_CHAT_SANDBOX_PROVIDER}" == "sandbox" ]] ; then
+			paths+=(
+				"/etc/sandbox.conf"
+				"/usr/share/sandbox"
+				"/usr/lib64/libsandbox.so"
+				"/usr/bin/sandbox"
+				"/usr/bin/unshare"
+			)
+		fi
+
+	# For debugging only
+		if [[ "${_LOBE_CHAT_DEBUG}" == "1" ]] ; then
+			paths+=(
+				"/bin/ls"
+				"/bin/cat"
+				"/bin/grep"
+				"/bin/echo"
+				"/bin/pwd"
+				"/usr/bin/top;libs"
+				"/bin/ps;libs"
+				"/usr/bin/id"
+				"/usr/bin/ping"
+			)
+		fi
+
+		paths+=(
+			"/bin/getcwd;libs"
+		)
+
+		local path
+		for path in ${paths[@]} ; do
+			if [[ "${path}" =~ ";libs-recursive" ]] ; then
+	# Copy ldd libs recursively without copying folder
+				local src="${path%;*}"
+				IFS=$'\n'
+				local pair
+				for pair in $(ldd $(find "${src}" -executable -type f)) ; do
+					[[ "${pair}" =~ "=>" ]] || continue
+					local lib_path=$(echo "${pair}" \
+						| cut -f 2 -d ">" \
+						| cut -f 1 -d '(' \
+						| sed -r -e "s|^[ ]+||g" -e "s|[ ]+$||g")
+					local dir_path=$(dirname "${lib_path}")
+					dir_path="${dir_path:1}"
+					[[ -z "${dir_path}" ]] && continue
+					[[ "${dir_path}" =~ "opt/rocm" ]] && continue
+					[[ "${dir_path}" =~ "opt/cuda" ]] && continue
+					mkdir -p "${dir_path}"
+					cp -a "${lib_path}" "${dir_path}"
+					if [[ -L "${lib_path}" ]] ; then
+						local path2=$(realpath "${lib_path}")
+						if [[ -f "${path2}" ]] ; then
+							cp -a "${path2}" "${dir_path}"
+						fi
+					fi
+				done
+
+				local row
+				for row in $(ldd $(find "${src}" -executable -type f)) ; do
+					[[ "${pair}" =~ "(" ]] || continue
+					[[ "${pair}" =~ "=>" ]] && continue
+					local lib_path=$(echo "${row}" \
+						| cut -f 1 -d "(" \
+						| sed -r -e "s|^[[:space:]]+||g" -e "s|[[:space:]]+$||g")
+					local dir_path=$(dirname "${lib_path}")
+					dir_path="${dir_path:1}"
+					if [[ -e "${lib_path}" ]] ; then
+						mkdir -p "${dir_path}"
+						cp -a "${lib_path}" "${dir_path}"
+					fi
+				done
+
+				IFS=$' \t\n'
+			elif [[ "${path}" =~ ";libs" ]] ; then
+	# Direct copy with copy ldd libs
+				local src="${path%;*}"
+
+	# Direct copy
+				local dest
+				dest=$(dirname "${src}")
+				dest="${dest:1}"
+				mkdir -p "${dest}"
+				cp -a "${src}" "${dest}"
+
+	# Copy libs depends
+				IFS=$'\n'
+				local pair
+				for pair in $(ldd "${src}") ; do
+					[[ "${pair}" =~ "=>" ]] || continue
+					local lib_path=$(echo "${pair}" \
+						| cut -f 2 -d ">" \
+						| cut -f 1 -d '(' \
+						| sed -r -e "s|^[ ]+||g" -e "s|[ ]+$||g")
+					local dir_path=$(dirname "${lib_path}")
+					dir_path="${dir_path:1}"
+					[[ -z "${dir_path}" ]] && continue
+					[[ "${dir_path}" =~ "opt/rocm" ]] && continue
+					[[ "${dir_path}" =~ "opt/cuda" ]] && continue
+					mkdir -p "${dir_path}"
+					cp -a "${lib_path}" "${dir_path}"
+					if [[ -L "${lib_path}" ]] ; then
+						local path2=$(realpath "${lib_path}")
+						if [[ -f "${path2}" ]] ; then
+							cp -a "${path2}" "${dir_path}"
+						fi
+					fi
+				done
+
+				local row
+				for row in $(ldd $(find "${src}" -executable -type f)) ; do
+					[[ "${pair}" =~ "(" ]] || continue
+					[[ "${pair}" =~ "=>" ]] && continue
+					local lib_path=$(echo "${row}" \
+						| cut -f 1 -d "(" \
+						| sed -r -e "s|^[[:space:]]+||g" -e "s|[[:space:]]+$||g")
+					local dir_path=$(dirname "${lib_path}")
+					dir_path="${dir_path:1}"
+					if [[ -e "${lib_path}" ]] ; then
+						mkdir -p "${dir_path}"
+						cp -a "${lib_path}" "${dir_path}"
+					fi
+				done
+
+				IFS=$' \t\n'
+			else
+	# Direct copy
+				local dest
+				dest=$(dirname "${path}")
+				dest="${dest:1}"
+				mkdir -p "${dest}"
+				cp -a "${path}" "${dest}"
+			fi
+		done
+
+	popd >/dev/null 2>&1
+}
+
+stop_chroot() {
+	[[ -e "/var/lib/lobe-chat" ]] || exit 1
+	[[ -e "/var/lib/lobe-chat" ]] || return
+	pushd "/var/lib/lobe-chat" >/dev/null 2>&1 || exit 1
+		if [[ "${LOBE_CHAT_SANDBOX_PROVIDER}" == "sandbox" ]] ; then
+			umount -l "proc" >/dev/null 2>&1
+			umount -l "sys" >/dev/null 2>&1
+			umount -l "dev" >/dev/null 2>&1
+			umount -l "run" >/dev/null 2>&1
+		fi
+	popd >/dev/null 2>&1
+}
+
+start() {
+	ebegin "Starting lobe-chat"
+
+	local args=()
+
+	if [[ "${LOBE_CHAT_SANDBOX_PROVIDER}" == "sandbox" ]] ; then
+	# CWE-653 mitigation
+		sandbox_command="/usr/bin/sandbox"
+		sandbox_args=""
+		args+=(
+	# CWE-653 mitigation, ID
+			-e SANDBOX_DENY="/proc:/dev/input:/root:/home:/dev/mem:/dev/kmem:/proc/kcore:/mnt:/etc/passwd:/etc/groups:${LOBE_CHAT_SANDBOX_BLACKLISTED_PATHS}"
+			--exec $sandbox_command -- $sandbox_args $real_command $real_command_args
+		)
+	else
+		args+=(
+			--exec $real_command -- $real_command_args
+		)
+	fi
+
+	start-stop-daemon \
+		--start \
+		--make-pidfile \
+		--pidfile "$pidfile" \
+		--user "$command_user" \
+		--group "$command_group" \
+		${args[@]}
+
+	eend $? "Failed to start lobe-chat"
+}
