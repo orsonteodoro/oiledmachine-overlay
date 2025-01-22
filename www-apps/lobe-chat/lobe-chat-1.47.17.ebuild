@@ -89,7 +89,7 @@ pkg_setup() {
 
 	# Prevent redownloads because they unusually bump more than once a day.
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	export NPM_CACHE_FOLDER="${EDISTDIR}/npm-download-cache-${NPM_SLOT}/${CATEGORY}/${PN}"
+	export NPM_CACHE_FOLDER="${EDISTDIR}/npm-download-cache-${NPM_SLOT}/${CATEGORY}/${PN}-${PV%.*}"
 
 	npm_pkg_setup
 }
