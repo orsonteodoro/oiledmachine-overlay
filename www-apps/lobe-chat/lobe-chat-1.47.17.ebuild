@@ -185,7 +185,6 @@ ewarn "${S}/.next/standalone does not exist"
 
 	# Sanitize permissions
 	chown -R "${PN}:${PN}" "${ED}${_PREFIX}" || die
-	chmod -R "${PN}:${PN}" "${ED}${_PREFIX}" || die
 	find "${ED}" -type f -print0 | xargs -0 chmod 0644 || die
 	find "${ED}" -type d -print0 | xargs -0 chmod 0755 || die
 }
