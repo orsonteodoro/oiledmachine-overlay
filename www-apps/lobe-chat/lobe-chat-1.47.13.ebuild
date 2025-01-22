@@ -139,9 +139,48 @@ _install_standalone() {
 }
 
 gen_config() {
+	local next_public_service_mode="client"
+	if use postgres ; then
+		next_public_service_mode="server"
+	fi
+
 cat <<EOF > "${T}/${PN}.conf" || die
 
 NODEJS_VERSION="${NODE_VERSION}"
+
+# Server-Side Database support
+# See https://lobehub.com/docs/self-hosting/server-database
+NEXT_PUBLIC_SERVICE_MODE=${next_public_service_mode} # client or server
+DATABASE_URL="postgres://username:password@host:port/database"
+DATABASE_DRIVER="node" # node for docker image or neon for vercel
+KEY_VAULTS_SECRET="" # Obtained from `openssl rand -base64 32`
+
+# Auth support for client id via Clerk or NextAuth
+
+# Clerk (SaaS based)
+# See https://lobehub.com/docs/self-hosting/server-database#clerk
+#
+# NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=""
+# CLERK_SECRET_KEY=""
+# CLERK_WEBHOOK_SECRET=""
+
+# NextAuth (recommended)
+# See https://lobehub.com/docs/self-hosting/server-database#next-auth
+#
+# NEXT_AUTH_SECRET="" # Required
+# NEXTAUTH_URL="" # Required
+# NEXT_AUTH_SSO_PROVIDERS="" # Optional
+
+# S3 storage
+# See https://lobehub.com/docs/self-hosting/advanced/s3
+# S3_ACCESS_KEY_ID=""
+# S3_SECRET_ACCESS_KEY=""
+# S3_ENDPOINT=""
+# S3_BUCKET=""
+# S3_REGION=""
+# S3_SET_ACL=""
+# S3_PUBLIC_DOMAIN=""
+# S3_ENABLE_PATH_STYLE=""
 
 USE_CN_MIRROR=\${USE_CN_MIRROR:-}
 NEXT_PUBLIC_BASE_PATH=\${NEXT_PUBLIC_BASE_PATH:-}
