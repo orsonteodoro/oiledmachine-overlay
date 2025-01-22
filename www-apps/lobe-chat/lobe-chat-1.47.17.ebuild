@@ -526,6 +526,8 @@ src_install() {
 	fi
 
 	# Bypass normal merge to speed up merge using OS tricks
+	# Essentially portage does a k*O(n) problem with copy, scanelf, md5,
+	# etc. versus a simple pointer change with the code below.
 	addwrite "/opt/${PN}"
 	mv "${ED}/opt/${PN}/"* "/opt/${PN}"
 	mv "${ED}/opt/${PN}/.next" "/opt/${PN}"
