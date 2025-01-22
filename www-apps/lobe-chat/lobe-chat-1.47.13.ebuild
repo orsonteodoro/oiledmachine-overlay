@@ -86,11 +86,13 @@ pkg_setup() {
 }
 
 npm_unpack_post() {
-	sed -i \
-		-e "s|bun run|npm run|g" \
-		"${S}/package.json" \
-		|| die
-	enpm add sharp ${NPM_INSTALL_ARGS[@]}
+	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+		sed -i \
+			-e "s|bun run|npm run|g" \
+			"${S}/package.json" \
+			|| die
+		enpm add "sharp@0.33.5" ${NPM_INSTALL_ARGS[@]}
+	fi
 }
 
 src_unpack() {
