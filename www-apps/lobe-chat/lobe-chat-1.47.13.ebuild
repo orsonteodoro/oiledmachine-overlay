@@ -117,26 +117,24 @@ src_compile() {
 }
 
 _install_webapp_common() {
-	insinto "${_PREFIX}/${PN}"
+	insinto "${_PREFIX}"
 	doins -r "${S}/public"
 
-	insinto "${_PREFIX}/${PN}/.next"
+	insinto "${_PREFIX}/.next"
 	doins -r "${S}/.next/static"
 
-	insinto "${_PREFIX}/${PN}"
+	insinto "${_PREFIX}"
 	doins -r "${S}/node_modules"
-
-	insinto "${_PREFIX}/${PN}"
 	doins "${S}/scripts/serverLauncher/startServer.js"
-	fowners "${PN}:${PN}" "${_PREFIX}/${PN}"
+	fowners -R "${PN}:${PN}" "${_PREFIX}"
 }
 
 _install_standalone() {
-	_PREFIX="/usr/share/${PN}"
+	_PREFIX="/opt/${PN}"
 
 	_install_webapp_common
 
-	insinto "${_PREFIX}/${PN}/.next"
+	insinto "${_PREFIX}/.next"
 	doins -r "${S}/.next/standalone"
 }
 
@@ -370,7 +368,7 @@ cat <<EOF > "${T}/${PN}-start-server" || die
 NODE_VERSION=${NODE_VERSION}
 main() {
 	source "/etc/${PN}/${PN}.conf"
-	node "/usr/share/${PN}/startServer.js"
+	node "/opt/${PN}/startServer.js"
 }
 main
 EOF
