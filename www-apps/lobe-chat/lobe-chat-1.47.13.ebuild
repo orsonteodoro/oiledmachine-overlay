@@ -92,6 +92,8 @@ npm_unpack_post() {
 			"${S}/package.json" \
 			|| die
 		enpm add "sharp@0.33.5" ${NPM_INSTALL_ARGS[@]}
+		enpm add "pg@8.13.1" ${NPM_INSTALL_ARGS[@]}
+		enpm add "drizzle-orm@0.39.0-19ccabb" ${NPM_INSTALL_ARGS[@]}
 	fi
 }
 
@@ -102,6 +104,10 @@ src_unpack() {
 		git-r3_checkout
 	else
 		npm_src_unpack
+	fi
+	if ! use postgres ; then
+		enpm uninstall pg
+		enpm uninstall drizzle-orm
 	fi
 }
 
@@ -132,6 +138,13 @@ _install_webapp_v1() {
 	doins -r "${S}/node_modules"
 	doins "${S}/scripts/serverLauncher/startServer.js"
 
+	if use postgres ; then
+		insinto "${_PREFIX}"
+		doins -r "${S}/src/database/migrations"
+		doins "${S}/scripts/migrateServerDB/docker.cjs"
+		doins "${S}/scripts/migrateServerDB/errorHint.js"
+	fi
+
 	fowners -R "${PN}:${PN}" "${_PREFIX}"
 }
 
@@ -147,6 +160,12 @@ _install_webapp_v2() {
 
 	mv "${S}/node_modules" "${ED}${_PREFIX}" || die
 	mv "${S}/scripts/serverLauncher/startServer.js" "${ED}${_PREFIX}" || die
+
+	if use postgres ; then
+		mv "${S}/src/database/migrations" "${ED}${_PREFIX}" || die
+		mv "${S}/scripts/migrateServerDB/docker.cjs" "${ED}${_PREFIX}" || die
+		mv "${S}/scripts/migrateServerDB/errorHint.js" "${ED}${_PREFIX}" || die
+	fi
 
 	# Sanitize permissions
 	chown -R "${PN}:${PN}" "${ED}${_PREFIX}" || die
@@ -171,33 +190,33 @@ NEXT_PUBLIC_SERVICE_MODE=${next_public_service_mode} # client or server
 DATABASE_URL="postgres://username:password@host:port/database"
 DATABASE_DRIVER="node" # node for docker image or neon for vercel
 KEY_VAULTS_SECRET="" # Obtained from `openssl rand -base64 32`
+APP_URL="" # Example:  http://app.com
 
 # Auth support for client id via Clerk or NextAuth
 
 # Clerk (SaaS based)
 # See https://lobehub.com/docs/self-hosting/server-database#clerk
-#
-# NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=""
-# CLERK_SECRET_KEY=""
-# CLERK_WEBHOOK_SECRET=""
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=""
+CLERK_SECRET_KEY=""
+CLERK_WEBHOOK_SECRET=""
 
 # NextAuth (recommended)
 # See https://lobehub.com/docs/self-hosting/server-database#next-auth
-#
-# NEXT_AUTH_SECRET="" # Required
-# NEXTAUTH_URL="" # Required
-# NEXT_AUTH_SSO_PROVIDERS="" # Optional
+NEXT_AUTH_SECRET="" # Required
+NEXTAUTH_URL="" # Required
+NEXT_AUTH_SSO_PROVIDERS="" # Optional
 
 # S3 storage
 # See https://lobehub.com/docs/self-hosting/advanced/s3
-# S3_ACCESS_KEY_ID=""
-# S3_SECRET_ACCESS_KEY=""
-# S3_ENDPOINT=""
-# S3_BUCKET=""
-# S3_REGION=""
-# S3_SET_ACL=""
-# S3_PUBLIC_DOMAIN=""
-# S3_ENABLE_PATH_STYLE=""
+NEXT_PUBLIC_S3_DOMAIN=""
+S3_ACCESS_KEY_ID=""
+S3_SECRET_ACCESS_KEY=""
+S3_ENDPOINT=""
+S3_BUCKET=""
+S3_REGION=""
+S3_SET_ACL=""
+S3_PUBLIC_DOMAIN=""
+S3_ENABLE_PATH_STYLE=""
 
 USE_CN_MIRROR=\${USE_CN_MIRROR:-}
 NEXT_PUBLIC_BASE_PATH=\${NEXT_PUBLIC_BASE_PATH:-}
@@ -418,7 +437,6 @@ EOF
 }
 
 gen_standalone_wrapper() {
-
 cat <<EOF > "${T}/${PN}-start-server" || die
 #!/bin/bash
 NODE_VERSION=${NODE_VERSION}
