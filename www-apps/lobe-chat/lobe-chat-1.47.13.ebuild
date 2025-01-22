@@ -118,26 +118,41 @@ src_compile() {
 	enpm run "build"
 }
 
-_install_webapp_common() {
+# Slow
+_install_webapp_v1() {
+	local _PREFIX="/opt/${PN}"
 	insinto "${_PREFIX}"
 	doins -r "${S}/public"
 
 	insinto "${_PREFIX}/.next"
 	doins -r "${S}/.next/static"
+	doins -r "${S}/.next/standalone"
 
 	insinto "${_PREFIX}"
 	doins -r "${S}/node_modules"
 	doins "${S}/scripts/serverLauncher/startServer.js"
+
 	fowners -R "${PN}:${PN}" "${_PREFIX}"
 }
 
-_install_standalone() {
-	_PREFIX="/opt/${PN}"
+# Use OS tricks
+_install_webapp_v2() {
+	local _PREFIX="/opt/${PN}"
+	dodir "${_PREFIX}"
+	mv "${S}/public" "${ED}${_PREFIX}" || die
 
-	_install_webapp_common
+	mkdir -p "${ED}${_PREFIX}/.next" || die
+	mv "${S}/.next/static" "${ED}${_PREFIX}" || die
+	mv "${S}/.next/standalone" "${ED}${_PREFIX}" || die
 
-	insinto "${_PREFIX}/.next"
-	doins -r "${S}/.next/standalone"
+	mv "${S}/node_modules" "${ED}${_PREFIX}" || die
+	mv "${S}/scripts/serverLauncher/startServer.js" "${ED}${_PREFIX}" || die
+
+	# Sanitize permissions
+	chown -R "${PN}:${PN}" "${ED}${_PREFIX}" || die
+	chmod -R "${PN}:${PN}" "${ED}${_PREFIX}" || die
+	find "${ED}" -type f -print0 | xargs -0 chmod 0644 || die
+	find "${ED}" -type d -print0 | xargs -0 chmod 0755 || die
 }
 
 gen_config() {
@@ -422,7 +437,7 @@ EOF
 src_install() {
 	docinto "licenses"
 	dodoc "LICENSE"
-	_install_standalone
+	_install_webapp_v2
 	gen_config
 	gen_standalone_wrapper
 	if use openrc ; then
