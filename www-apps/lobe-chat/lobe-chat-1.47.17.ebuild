@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# U22, D12
+
 NODE_VERSION=22
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
@@ -18,7 +20,7 @@ NPM_UNINSTALL_ARGS=(
 	"--legacy-peer-deps"
 )
 
-inherit npm
+inherit edo npm
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -62,12 +64,12 @@ REQUIRED_USE="
 RDEPEND+="
 	acct-group/lobe-chat
 	acct-user/lobe-chat
-	app-misc/ca-certificates
+	>=app-misc/ca-certificates-20240203
+	>=net-misc/proxychains-3.1
+	>=sys-devel/gcc-12.2.0
 	net-libs/nodejs:${NODE_VERSION}[corepack,npm]
-	net-misc/proxychains
-	sys-devel/gcc
 	postgres? (
-		dev-db/postgresql
+		>=dev-db/postgresql-16.4
 	)
 "
 DEPEND+="
@@ -85,6 +87,10 @@ pkg_setup() {
 	# legal text.
 	export NEXT_TELEMETRY_DISABLED=1
 
+	# Prevent redownloads because they unusually bump more than once a day.
+	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+	export NPM_CACHE_FOLDER="${EDISTDIR}/npm-download-cache-${NPM_SLOT}/${CATEGORY}/${PN}"
+
 	npm_pkg_setup
 }
 
@@ -96,7 +102,7 @@ npm_unpack_post() {
 			|| die
 		enpm add "sharp@0.33.5" ${NPM_INSTALL_ARGS[@]}
 		enpm add "pg@8.13.1" ${NPM_INSTALL_ARGS[@]}
-		enpm add "drizzle-orm@0.39.0-19ccabb" ${NPM_INSTALL_ARGS[@]}
+		enpm add "drizzle-orm@0.38.2" ${NPM_INSTALL_ARGS[@]}
 	fi
 }
 
@@ -118,8 +124,10 @@ src_compile() {
 	# Fix:
 	# FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
 	export NODE_OPTIONS+=" --max_old_space_size=4096"
-
 	npm_hydrate
+# China users need to fork ebuild.  See Dockerfile for China contexts.
+
+	# This one looks broken because the .next/standalone folder is missing.
 	enpm run "build:docker"
 }
 
@@ -127,11 +135,18 @@ src_compile() {
 _install_webapp_v1() {
 	local _PREFIX="/opt/${PN}"
 	insinto "${_PREFIX}"
+	doins -r "${S}/package.json"
+	doins -r "${S}/.npmrc"
 	doins -r "${S}/public"
 
 	insinto "${_PREFIX}/.next"
 	doins -r "${S}/.next/static"
-	doins -r "${S}/.next/standalone"
+
+	if [[ -e "${S}/.next/standalone" ]] ; then
+ewarn "${S}/.next/standalone does not exist"
+		insinto "${_PREFIX}"
+		doins -r "${S}/.next/standalone"
+	fi
 
 	insinto "${_PREFIX}"
 	doins -r "${S}/node_modules"
@@ -149,11 +164,17 @@ _install_webapp_v1() {
 _install_webapp_v2() {
 	local _PREFIX="/opt/${PN}"
 	dodir "${_PREFIX}"
+	mv "${S}/package.json" "${ED}${_PREFIX}" || die
+	mv "${S}/.npmrc" "${ED}${_PREFIX}" || die
 	mv "${S}/public" "${ED}${_PREFIX}" || die
 
 	mkdir -p "${ED}${_PREFIX}/.next" || die
-	mv "${S}/.next/static" "${ED}${_PREFIX}" || die
-	mv "${S}/.next/standalone" "${ED}${_PREFIX}" || die
+	mv "${S}/.next/static" "${ED}${_PREFIX}/.next" || die
+
+	if [[ -e "${S}/.next/standalone" ]] ; then
+ewarn "${S}/.next/standalone does not exist"
+		mv "${S}/.next/standalone" "${ED}${_PREFIX}" || die
+	fi
 
 	mv "${S}/node_modules" "${ED}${_PREFIX}" || die
 	mv "${S}/scripts/serverLauncher/startServer.js" "${ED}${_PREFIX}" || die
