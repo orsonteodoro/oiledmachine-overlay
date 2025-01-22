@@ -85,12 +85,12 @@ pkg_setup() {
 	npm_pkg_setup
 }
 
-npm_install_pre() {
+npm_unpack_post() {
 	sed -i \
 		-e "s|bun run|npm run|g" \
 		"${S}/package.json" \
 		|| die
-	enpm add sharp
+	enpm add sharp ${NPM_INSTALL_ARGS[@]}
 }
 
 src_unpack() {

@@ -30,7 +30,7 @@
     "build:analyze": "ANALYZE=true next build",
     "build:docker": "DOCKER=true next build && npm run build-sitemap",
     "postbuild": "npm run build-sitemap && npm run build-migrate-db",
-    "build-migrate-db": "bun run db:migrate",
+    "build-migrate-db": "npm run db:migrate",
     "build-sitemap": "tsx ./scripts/buildSitemapIndex/index.ts",
     "db:generate": "drizzle-kit generate && npm run db:generate-client",
     "db:generate-client": "tsx ./scripts/migrateClientDB/compile-migrations.ts",
