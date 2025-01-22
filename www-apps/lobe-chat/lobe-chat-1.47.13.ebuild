@@ -14,6 +14,9 @@ NPM_DEDUPE_ARGS=(
 NPM_INSTALL_ARGS=(
 	"--legacy-peer-deps"
 )
+NPM_UNINSTALL_ARGS=(
+	"--legacy-peer-deps"
+)
 
 inherit npm
 
@@ -106,8 +109,8 @@ src_unpack() {
 		npm_src_unpack
 	fi
 	if ! use postgres ; then
-		enpm uninstall pg
-		enpm uninstall drizzle-orm
+		enpm uninstall pg ${NPM_UNINSTALL_ARGS[@]}
+		enpm uninstall drizzle-orm ${NPM_UNINSTALL_ARGS[@]}
 	fi
 }
 
