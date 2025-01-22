@@ -24,7 +24,7 @@ NPM_UNINSTALL_ARGS=(
 )
 VIPS_PV="8.14.5"
 
-inherit edo npm
+inherit dhms edo npm
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -122,6 +122,7 @@ einfo "Using vendored vips for sharp"
 }
 
 pkg_setup() {
+	dhms_start
 	# If a "next" package is found in package.json, this should be added.
 	# Otherwise, the license variable should be updated with additional
 	# legal text.
@@ -523,6 +524,13 @@ src_install() {
 		insinto "/usr/lib/systemd/system"
 		newins "${FILESDIR}/${PN}.systemd" "${PN}.service"
 	fi
+
+	# Bypass normal merge to speed up merge using OS tricks
+	addwrite "/opt/${PN}"
+	mv "${ED}/opt/${PN}/"* "/opt/${PN}"
+	mv "${ED}/opt/${PN}/.next" "/opt/${PN}"
+	mv "${ED}/opt/${PN}/.npmrc" "/opt/${PN}"
+	dhms_end
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
