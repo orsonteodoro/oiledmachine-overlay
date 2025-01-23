@@ -57,7 +57,7 @@ HOMEPAGE="
 LICENSE="
 	Apache-2.0
 "
-RESTRICT="mirror"
+RESTRICT="binchecks mirror strip test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
@@ -534,6 +534,7 @@ src_install() {
 	# Essentially portage does a k*O(n) problem with copy, scanelf, md5,
 	# etc. versus a simple pointer change with the code below.
 	addwrite "/opt/${PN}"
+	rm -rf "/opt/${PN}/"*
 	mv "${ED}/opt/${PN}/"* "/opt/${PN}"
 	mv "${ED}/opt/${PN}/.next" "/opt/${PN}"
 	mv "${ED}/opt/${PN}/.npmrc" "/opt/${PN}"
