@@ -6,6 +6,9 @@ EAPI=8
 
 # U22, D12
 
+# FIXME:
+# ⨯ Static worker exited with code: null and signal: SIGSEGV
+
 # system-vips is required to avoid the following message
 #  ⨯ Static worker exited with code: null and signal: SIGILL
 # SIGILL is associated with illegal instruction which is usually caused by
@@ -15,21 +18,21 @@ CPU_FLAGS_X86=(
 	cpu_flags_x86_sse4_2
 )
 NODE_VERSION=22
-NPM_AUDIT_FIX_ARGS=(
-	"--legacy-peer-deps"
+PNPM_AUDIT_FIX_ARGS=(
+#	"--legacy-peer-deps"
 )
-NPM_DEDUPE_ARGS=(
-	"--legacy-peer-deps"
+PNPM_DEDUPE_ARGS=(
+#	"--legacy-peer-deps"
 )
-NPM_INSTALL_ARGS=(
-	"--legacy-peer-deps"
+PNPM_INSTALL_ARGS=(
+#	"--legacy-peer-deps"
 )
-NPM_UNINSTALL_ARGS=(
-	"--legacy-peer-deps"
+PNPM_UNINSTALL_ARGS=(
+#	"--legacy-peer-deps"
 )
 VIPS_PV="8.14.5"
 
-inherit dhms edo npm
+inherit dhms edo pnpm
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -135,20 +138,24 @@ pkg_setup() {
 
 	# Prevent redownloads because they unusually bump more than once a day.
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	export NPM_CACHE_FOLDER="${EDISTDIR}/npm-download-cache-${NPM_SLOT}/${CATEGORY}/${PN}-${PV%.*}"
+	export PNPM_CACHE_FOLDER="${EDISTDIR}/pnpm-download-cache-${PNPM_SLOT}/${CATEGORY}/${PN}-${PV%.*}"
 
-	npm_pkg_setup
+	pnpm_pkg_setup
 }
 
-npm_unpack_post() {
-	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+pnpm_unpack_post() {
+	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		sed -i \
-			-e "s|bun run|npm run|g" \
+			-e "s|npm run|pnpm run|g" \
+			-e "s|bun run|pnpm run|g" \
 			"${S}/package.json" \
 			|| die
-		enpm add "sharp@0.33.5" --prefer-offline ${NPM_INSTALL_ARGS[@]}
-		enpm add "pg@8.13.1" --prefer-offline ${NPM_INSTALL_ARGS[@]}
-		enpm add "drizzle-orm@0.38.2" --prefer-offline ${NPM_INSTALL_ARGS[@]}
+	else
+		if use postgres ; then
+			epnpm add "sharp@0.33.5" ${PNPM_INSTALL_ARGS[@]}
+			epnpm add "pg@8.13.1" ${PNPM_INSTALL_ARGS[@]}
+			epnpm add "drizzle-orm@0.38.2" ${PNPM_INSTALL_ARGS[@]}
+		fi
 	fi
 	eapply "${FILESDIR}/${PN}-1.47.17-hardcoded-paths.patch"
 }
@@ -159,7 +166,7 @@ src_unpack() {
 		git-r3_fetch
 		git-r3_checkout
 	else
-		npm_src_unpack
+		pnpm_src_unpack
 	fi
 }
 
@@ -182,13 +189,13 @@ src_compile() {
 	# Fix:
 	# FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
 	export NODE_OPTIONS+=" --max-old-space-size=8192"
-	npm_hydrate
+	pnpm_hydrate
 # China users need to fork ebuild.  See Dockerfile for China contexts.
 
 	setup_env
 
 	# This one looks broken because the .next/standalone folder is missing.
-	enpm run "build:docker"
+	epnpm run "build:docker"
 }
 
 # Slow
@@ -215,10 +222,12 @@ eerror "${S}/.next/standalone does not exist"
 	doins -r "${S}/node_modules"
 	doins "${S}/scripts/serverLauncher/startServer.js"
 
-	insinto "${_PREFIX}"
-	doins -r "${S}/src/database/migrations"
-	doins "${S}/scripts/migrateServerDB/docker.cjs"
-	doins "${S}/scripts/migrateServerDB/errorHint.js"
+	if use postgres ; then
+		insinto "${_PREFIX}"
+		doins -r "${S}/src/database/migrations"
+		doins "${S}/scripts/migrateServerDB/docker.cjs"
+		doins "${S}/scripts/migrateServerDB/errorHint.js"
+	fi
 
 	fowners -R "${PN}:${PN}" "${_PREFIX}"
 }

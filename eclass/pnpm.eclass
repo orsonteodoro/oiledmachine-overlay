@@ -41,6 +41,8 @@ esac
 if [[ -z "${_PNPM_ECLASS}" ]]; then
 _PNPM_ECLASS=1
 
+inherit edo
+
 EXPORT_FUNCTIONS pkg_setup src_unpack src_compile
 
 _pnpm_set_globals() {
@@ -300,7 +302,7 @@ pnpm_src_unpack() {
 		pnpm_audit_pre
 	fi
 	if [[ "${PNPM_AUDIT_FIX:-1}" == "1" ]] ; then
-		pnpm audit --fix ${PNPM_AUDIT_FIX_ARGS[@]} || die
+		edo pnpm audit --fix ${PNPM_AUDIT_FIX_ARGS[@]}
 	fi
 	if declare -f pnpm_audit_post >/dev/null 2>&1 ; then
 		pnpm_audit_post
