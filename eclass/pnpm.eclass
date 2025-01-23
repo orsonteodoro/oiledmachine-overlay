@@ -284,7 +284,15 @@ pnpm_src_unpack() {
 	if declare -f pnpm_install_pre >/dev/null 2>&1 ; then
 		pnpm_install_pre
 	fi
+	if [[ -e ".npmrc" ]] ; then
+		sed -i \
+			-e "s|lockfile=false|lockfile=true|g" \
+			".npmrc" \
+			|| die
+	fi
+	pnpm config set lockfile true || die
 	epnpm install ${PNPM_INSTALL_ARGS[@]}
+	epnpm install --lockfile-only
 	if declare -f pnpm_install_post >/dev/null 2>&1 ; then
 		pnpm_install_post
 	fi
