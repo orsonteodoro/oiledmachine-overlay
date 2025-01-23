@@ -167,12 +167,25 @@ src_prepare() {
 	default
 }
 
+setup_env() {
+	if use postgres ; then
+		export DATABASE_TEST_URL="postgresql://postgres:postgres@localhost:5432/postgres"
+		export DATABASE_DRIVER="node"
+		export NEXT_PUBLIC_SERVICE_MODE="server"
+		export KEY_VAULTS_SECRET="LA7n9k3JdEcbSgml2sxfw+4TV1AzaaFU5+R176aQz4s="
+		export S3_PUBLIC_DOMAIN="https://example.com"
+		export APP_URL="https://home.com"
+	fi
+}
+
 src_compile() {
 	# Fix:
 	# FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
-	export NODE_OPTIONS+=" --max_old_space_size=4096"
+	export NODE_OPTIONS+=" --max-old-space-size=8192"
 	npm_hydrate
 # China users need to fork ebuild.  See Dockerfile for China contexts.
+
+	setup_env
 
 	# This one looks broken because the .next/standalone folder is missing.
 	enpm run "build:docker"
@@ -193,7 +206,9 @@ _install_webapp_v1() {
 		insinto "${_PREFIX}"
 		doins -r "${S}/.next/standalone/"*
 	else
-ewarn "${S}/.next/standalone does not exist"
+# Needs server.js
+eerror "${S}/.next/standalone does not exist"
+		die
 	fi
 
 	insinto "${_PREFIX}"
@@ -222,7 +237,9 @@ _install_webapp_v2() {
 	if [[ -e "${S}/.next/standalone" ]] ; then
 		mv "${S}/.next/standalone/"* "${ED}${_PREFIX}" || die
 	else
-ewarn "${S}/.next/standalone does not exist"
+# Needs server.js
+eerror "${S}/.next/standalone does not exist"
+		die
 	fi
 
 	mv "${S}/node_modules" "${ED}${_PREFIX}" || die
@@ -244,273 +261,29 @@ gen_config() {
 		next_public_service_mode="server"
 	fi
 
-cat <<EOF > "${T}/${PN}.conf" || die
-
-NODEJS_VERSION="${NODE_VERSION}"
-
-# Server-Side Database support
-# See https://lobehub.com/docs/self-hosting/server-database
-NEXT_PUBLIC_SERVICE_MODE=${next_public_service_mode} # client or server
-DATABASE_URL="postgres://username:password@host:port/database"
-DATABASE_DRIVER="node" # node for docker image or neon for vercel
-KEY_VAULTS_SECRET="" # Obtained from `openssl rand -base64 32`
-APP_URL="" # Example:  http://app.com
-
-# Auth support for client id via Clerk or NextAuth
-
-# Clerk (SaaS based)
-# See https://lobehub.com/docs/self-hosting/server-database#clerk
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=""
-CLERK_SECRET_KEY=""
-CLERK_WEBHOOK_SECRET=""
-
-# NextAuth (recommended)
-# See https://lobehub.com/docs/self-hosting/server-database#next-auth
-NEXT_AUTH_SECRET="" # Required
-NEXTAUTH_URL="" # Required
-NEXT_AUTH_SSO_PROVIDERS="" # Optional
-
-# S3 storage
-# See https://lobehub.com/docs/self-hosting/advanced/s3
-NEXT_PUBLIC_S3_DOMAIN=""
-S3_ACCESS_KEY_ID=""
-S3_SECRET_ACCESS_KEY=""
-S3_ENDPOINT=""
-S3_BUCKET=""
-S3_REGION=""
-S3_SET_ACL=""
-S3_PUBLIC_DOMAIN=""
-S3_ENABLE_PATH_STYLE=""
-
-USE_CN_MIRROR=\${USE_CN_MIRROR:-}
-NEXT_PUBLIC_BASE_PATH=\${NEXT_PUBLIC_BASE_PATH:-}
-NEXT_PUBLIC_SENTRY_DSN=\${NEXT_PUBLIC_SENTRY_DSN:-}
-NEXT_PUBLIC_ANALYTICS_POSTHOG=\${NEXT_PUBLIC_ANALYTICS_POSTHOG:-}
-NEXT_PUBLIC_POSTHOG_HOST=\${NEXT_PUBLIC_POSTHOG_HOST:-}
-NEXT_PUBLIC_POSTHOG_KEY=\${NEXT_PUBLIC_POSTHOG_KEY:-}
-NEXT_PUBLIC_ANALYTICS_UMAMI=\${NEXT_PUBLIC_ANALYTICS_UMAMI:-}
-NEXT_PUBLIC_UMAMI_SCRIPT_URL=\${NEXT_PUBLIC_UMAMI_SCRIPT_URL:-}
-NEXT_PUBLIC_UMAMI_WEBSITE_ID=\${NEXT_PUBLIC_UMAMI_WEBSITE_ID:-}
-
-NEXT_PUBLIC_BASE_PATH="\${NEXT_PUBLIC_BASE_PATH}"
-
-# Sentry
-NEXT_PUBLIC_SENTRY_DSN="\${NEXT_PUBLIC_SENTRY_DSN}"
-SENTRY_ORG=""
-SENTRY_PROJECT=""
-
-# Posthog
-NEXT_PUBLIC_ANALYTICS_POSTHOG="\${NEXT_PUBLIC_ANALYTICS_POSTHOG}"
-NEXT_PUBLIC_POSTHOG_HOST="\${NEXT_PUBLIC_POSTHOG_HOST}"
-NEXT_PUBLIC_POSTHOG_KEY="\${NEXT_PUBLIC_POSTHOG_KEY}"
-
-# Umami
-NEXT_PUBLIC_ANALYTICS_UMAMI="\${NEXT_PUBLIC_ANALYTICS_UMAMI}"
-NEXT_PUBLIC_UMAMI_SCRIPT_URL="\${NEXT_PUBLIC_UMAMI_SCRIPT_URL}"
-NEXT_PUBLIC_UMAMI_WEBSITE_ID="\${NEXT_PUBLIC_UMAMI_WEBSITE_ID}"
-
-# Node
-NODE_OPTIONS="--max-old-space-size=8192"
-
-NODE_ENV="production"
-NODE_OPTIONS="--dns-result-order=ipv4first --use-openssl-ca"
-NODE_EXTRA_CA_CERTS=""
-NODE_TLS_REJECT_UNAUTHORIZED=""
-SSL_CERT_DIR="/etc/ssl/certs/ca-certificates.crt"
-
-# Set hostname to localhost
-HOSTNAME="0.0.0.0"
-PORT="3210"
-
-# General Variables
-ACCESS_CODE=""
-API_KEY_SELECT_MODE=""
-DEFAULT_AGENT_CONFIG=""
-SYSTEM_AGENT=""
-FEATURE_FLAGS=""
-PROXY_URL=""
-
-# AI21
-AI21_API_KEY=""
-AI21_MODEL_LIST=""
-
-# Ai360
-AI360_API_KEY=""
-AI360_MODEL_LIST=""
-
-# Anthropic
-ANTHROPIC_API_KEY=""
-ANTHROPIC_MODEL_LIST=""
-ANTHROPIC_PROXY_URL=""
-
-# Amazon Bedrock
-AWS_ACCESS_KEY_ID=""
-AWS_SECRET_ACCESS_KEY=""
-AWS_REGION=""
-AWS_BEDROCK_MODEL_LIST=""
-
-# Azure OpenAI
-AZURE_API_KEY=""
-AZURE_API_VERSION=""
-AZURE_ENDPOINT=""
-AZURE_MODEL_LIST=""
-
-# Baichuan
-BAICHUAN_API_KEY=""
-BAICHUAN_MODEL_LIST=""
-
-# Cloudflare
-CLOUDFLARE_API_KEY=""
-CLOUDFLARE_BASE_URL_OR_ACCOUNT_ID=""
-CLOUDFLARE_MODEL_LIST=""
-
-# DeepSeek
-DEEPSEEK_API_KEY=""
-DEEPSEEK_MODEL_LIST=""
-
-# Fireworks AI
-FIREWORKSAI_API_KEY=""
-FIREWORKSAI_MODEL_LIST=""
-
-# Gitee AI
-GITEE_AI_API_KEY=""
-GITEE_AI_MODEL_LIST=""
-
-# GitHub
-GITHUB_TOKEN=""
-GITHUB_MODEL_LIST=""
-
-# Google
-GOOGLE_API_KEY=""
-GOOGLE_MODEL_LIST=""
-GOOGLE_PROXY_URL=""
-
-# Groq
-GROQ_API_KEY=""
-GROQ_MODEL_LIST=""
-GROQ_PROXY_URL=""
-
-# Higress
-HIGRESS_API_KEY=""
-HIGRESS_MODEL_LIST=""
-HIGRESS_PROXY_URL=""
-
-# HuggingFace
-HUGGINGFACE_API_KEY=""
-HUGGINGFACE_MODEL_LIST=""
-HUGGINGFACE_PROXY_URL=""
-
-# Hunyuan
-HUNYUAN_API_KEY=""
-HUNYUAN_MODEL_LIST=""
-
-# InternLM
-INTERNLM_API_KEY=""
-INTERNLM_MODEL_LIST=""
-
-# Minimax
-MINIMAX_API_KEY=""
-MINIMAX_MODEL_LIST=""
-
-# Mistral
-MISTRAL_API_KEY=""
-MISTRAL_MODEL_LIST=""
-
-# Moonshot
-MOONSHOT_API_KEY=""
-MOONSHOT_MODEL_LIST=""
-MOONSHOT_PROXY_URL=""
-
-# Novita
-NOVITA_API_KEY=""
-NOVITA_MODEL_LIST=""
-
-# Ollama
-ENABLED_OLLAMA=""
-OLLAMA_MODEL_LIST=""
-OLLAMA_PROXY_URL=""
-
-# OpenAI
-OPENAI_API_KEY=""
-OPENAI_MODEL_LIST=""
-OPENAI_PROXY_URL=""
-
-# OpenRouter
-OPENROUTER_API_KEY=""
-OPENROUTER_MODEL_LIST=""
-
-# Perplexity
-PERPLEXITY_API_KEY=""
-PERPLEXITY_MODEL_LIST=""
-PERPLEXITY_PROXY_URL=""
-
-# Qwen
-QWEN_API_KEY=""
-QWEN_MODEL_LIST=""
-QWEN_PROXY_URL=""
-
-# SenseNova
-SENSENOVA_API_KEY=""
-SENSENOVA_MODEL_LIST=""
-
-# SiliconCloud
-SILICONCLOUD_API_KEY=""
-SILICONCLOUD_MODEL_LIST=""
-SILICONCLOUD_PROXY_URL=""
-
-# Spark
-SPARK_API_KEY=""
-SPARK_MODEL_LIST=""
-
-# Stepfun
-STEPFUN_API_KEY=""
-STEPFUN_MODEL_LIST=""
-
-# Taichu
-TAICHU_API_KEY=""
-TAICHU_MODEL_LIST=""
-
-# TogetherAI
-TOGETHERAI_API_KEY=""
-TOGETHERAI_MODEL_LIST=""
-
-# Upstage
-UPSTAGE_API_KEY=""
-UPSTAGE_MODEL_LIST=""
-
-# Wenxin
-WENXIN_ACCESS_KEY=""
-WENXIN_SECRET_KEY=""
-WENXIN_MODEL_LIST=""
-
-# xAI
-XAI_API_KEY=""
-XAI_MODEL_LIST=""
-XAI_PROXY_URL=""
-
-# 01.AI
-ZEROONE_API_KEY=""
-ZEROONE_MODEL_LIST=""
-
-# Zhipu
-ZHIPU_API_KEY=""
-ZHIPU_MODEL_LIST=""
-EOF
+	cat \
+		"${FILESDIR}/${PN}.conf" \
+		"${T}/${PN}.conf" \
+		|| die
+	sed -i \
+		-e "s|@NODE_VERSION@|${NODE_VERSION}|g" \
+		-e "s|@NEXT_PUBLIC_SERVICE_MODE@|${next_public_service_mode}|g" \
+		"${T}/${PN}.conf" \
+		|| die
 	insinto "/etc/${PN}"
 	doins "${T}/${PN}.conf"
 	fperms 0660 "/etc/${PN}/lobe-chat.conf"
 }
 
 gen_standalone_wrapper() {
-cat <<EOF > "${T}/${PN}-start-server" || die
-#!/bin/bash
-NODE_VERSION=${NODE_VERSION}
-main() {
-	source "/etc/${PN}/${PN}.conf"
-	node "/opt/${PN}/startServer.js"
-}
-main
-EOF
+	cat \
+		"${FILESDIR}/${PN}-start-server" \
+		"${T}/${PN}-start-server" \
+		|| die
+	sed -i \
+		-e "s|@NODE_VERSION@|${NODE_VERSION}|g" \
+		"${T}/${PN}-start-server" \
+		|| die
 
 	exeinto "/usr/bin"
 	doexe "${T}/${PN}-start-server"
