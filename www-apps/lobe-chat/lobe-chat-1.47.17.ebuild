@@ -150,6 +150,7 @@ npm_unpack_post() {
 		enpm add "pg@8.13.1" --prefer-offline ${NPM_INSTALL_ARGS[@]}
 		enpm add "drizzle-orm@0.38.2" --prefer-offline ${NPM_INSTALL_ARGS[@]}
 	fi
+	eapply "${FILESDIR}/${PN}-1.47.17-hardcoded-paths.patch"
 }
 
 src_unpack() {
