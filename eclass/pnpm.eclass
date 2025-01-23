@@ -283,6 +283,9 @@ pnpm_src_unpack() {
 	fi
 	mkdir -p "${HOME}/.local/share/pnpm"
 	export PATH="${S}/node_modules/.bin:${PATH}"
+	if declare -f pnpm_unpack_post >/dev/null 2>&1 ; then
+		pnpm_unpack_post
+	fi
 	if declare -f pnpm_install_pre >/dev/null 2>&1 ; then
 		pnpm_install_pre
 	fi
