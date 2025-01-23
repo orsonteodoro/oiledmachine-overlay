@@ -294,7 +294,9 @@ pnpm_src_unpack() {
 	fi
 	pnpm config set lockfile true || die
 	epnpm install ${PNPM_INSTALL_ARGS[@]}
-	epnpm install --lockfile-only
+	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+		epnpm install --lockfile-only
+	fi
 	if declare -f pnpm_install_post >/dev/null 2>&1 ; then
 		pnpm_install_post
 	fi
