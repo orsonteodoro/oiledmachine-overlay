@@ -41,7 +41,7 @@ LICENSE="
 	LGPL-2
 "
 RESTRICT="mirror"
-SLOT="${LOCKFILE_VER}"
+SLOT="${LOCKFILE_VER}-${WEBKIT_PV%%.*}"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
