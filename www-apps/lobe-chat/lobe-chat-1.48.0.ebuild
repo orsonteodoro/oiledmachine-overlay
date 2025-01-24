@@ -19,22 +19,23 @@ EAPI=8
 CPU_FLAGS_X86=(
 	cpu_flags_x86_sse4_2
 )
-NODE_VERSION=20
-PNPM_AUDIT_FIX_ARGS=(
+NODE_VERSION=18
+BUN_SLOT="1.2"
+BUN_AUDIT_FIX_ARGS=(
 #	"--legacy-peer-deps"
 )
-PNPM_DEDUPE_ARGS=(
+BUN_DEDUPE_ARGS=(
 #	"--legacy-peer-deps"
 )
-PNPM_INSTALL_ARGS=(
+BUN_INSTALL_ARGS=(
 #	"--legacy-peer-deps"
 )
-PNPM_UNINSTALL_ARGS=(
+BUN_UNINSTALL_ARGS=(
 #	"--legacy-peer-deps"
 )
 VIPS_PV="8.14.5"
 
-inherit dhms edo pnpm
+inherit bun dhms edo
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -113,8 +114,9 @@ VIPS_BDEPEND="
 "
 BDEPEND+="
 	${VIPS_BDEPEND}
+	>=sys-apps/npm-10.8.2
 	net-libs/nodejs:${NODE_VERSION}[corepack,npm]
-	sys-apps/npm
+	sys-apps/bun:${BUN_SLOT}
 "
 DOCS=( "CHANGELOG.md" "README.md" )
 
@@ -140,23 +142,23 @@ pkg_setup() {
 
 	# Prevent redownloads because they unusually bump more than once a day.
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	export PNPM_CACHE_FOLDER="${EDISTDIR}/pnpm-download-cache-${PNPM_SLOT}/${CATEGORY}/${PN}-${PV%.*}"
+	export BUN_CACHE_FOLDER="${EDISTDIR}/bun-download-cache-${BUN_SLOT}/${CATEGORY}/${PN}-${PV%.*}"
 
-	pnpm_pkg_setup
+	bun_pkg_setup
 }
 
-pnpm_unpack_post() {
-	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+bun_unpack_post() {
+	if [[ "${BUN_UPDATE_LOCK}" == "1" ]] ; then
 		sed -i \
-			-e "s|npm run|pnpm run|g" \
-			-e "s|bun run|pnpm run|g" \
+			-e "s|npm run|bun run|g" \
+			-e "s|bun run|bun run|g" \
 			"${S}/package.json" \
 			|| die
 	else
 		if use postgres ; then
-			epnpm add "sharp@0.33.5" ${PNPM_INSTALL_ARGS[@]}
-			epnpm add "pg@8.13.1" ${PNPM_INSTALL_ARGS[@]}
-			epnpm add "drizzle-orm@0.38.2" ${PNPM_INSTALL_ARGS[@]}
+			ebun add ${BUN_INSTALL_ARGS[@]} "sharp@0.33.5"
+			ebun add ${BUN_INSTALL_ARGS[@]} "pg@8.13.1"
+			ebun add ${BUN_INSTALL_ARGS[@]} "drizzle-orm@0.38.2"
 		fi
 	fi
 	eapply "${FILESDIR}/${PN}-1.47.17-hardcoded-paths.patch"
@@ -168,7 +170,7 @@ src_unpack() {
 		git-r3_fetch
 		git-r3_checkout
 	else
-		pnpm_src_unpack
+		bun_src_unpack
 	fi
 }
 
@@ -185,19 +187,50 @@ setup_env() {
 		export S3_PUBLIC_DOMAIN="https://example.com"
 		export APP_URL="https://home.com"
 	fi
+
+	local next_public_service_mode="client"
+	if use postgres ; then
+		next_public_service_mode="server"
+	fi
+	cat "${FILESDIR}/lobe-chat.conf" > "${T}/lobe-chat.conf"
+	sed -i \
+		-e "s|@NODE_VERSION@|${NODE_VERSION}|g" \
+		-e "s|@NEXT_PUBLIC_SERVICE_MODE@|${next_public_service_mode}|g" \
+		"${T}/lobe-chat.conf" \
+		|| die
+	source "${T}/lobe-chat.conf"
 }
 
 src_compile() {
+	if [[ -e "${S}/.next" ]] ; then
+ewarn "Removing ${S}/.next"
+		rm -rf "${S}/.next"
+	fi
 	# Fix:
 	# FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
 	export NODE_OPTIONS+=" --max-old-space-size=8192"
-	pnpm_hydrate
+
+	if [[ "${NODE_VERSION}" == "18" ]] ; then
+		export NODE_OPTIONS+=" --dns-result-order=ipv4first"
+	fi
+
+	export NODE_OPTIONS+=" --use-openssl-ca"
+
+	npm_hydrate
+einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 # China users need to fork ebuild.  See Dockerfile for China contexts.
 
 	setup_env
 
 	# This one looks broken because the .next/standalone folder is missing.
-	epnpm run "build:docker"
+	#npm run "build:docker"
+
+	export NODE_ENV=development
+	export DOCKER=true
+	edo next build --debug
+	edo bun run build-sitemap
+	edo bun run build-sitemap
+	edo bun run build-migrate-db
 }
 
 # Slow
