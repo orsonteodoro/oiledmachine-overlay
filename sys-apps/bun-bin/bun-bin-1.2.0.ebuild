@@ -90,13 +90,6 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 doc ebuild_revision_1
 "
-CDEPEND+="
-	!sys-apps/npm:0
-	|| (
-		>=net-libs/nodejs-20.17.0:20[corepack,ssl?]
-		>=net-libs/nodejs-22.9.0[corepack,ssl?]
-	)
-"
 RDEPEND+="
 "
 DEPEND+="
