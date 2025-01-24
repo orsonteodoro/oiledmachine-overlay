@@ -4,7 +4,9 @@
 
 EAPI=8
 
-# U22, D12
+# U22, U24, D12
+# U24 - node 20 (release - live, debug - live)
+# U22 - node 18 (check - live)
 
 # FIXME:
 # ⨯ Static worker exited with code: null and signal: SIGSEGV
@@ -17,7 +19,7 @@ EAPI=8
 CPU_FLAGS_X86=(
 	cpu_flags_x86_sse4_2
 )
-NODE_VERSION=22
+NODE_VERSION=20
 PNPM_AUDIT_FIX_ARGS=(
 #	"--legacy-peer-deps"
 )
