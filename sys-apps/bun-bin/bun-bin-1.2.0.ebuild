@@ -73,8 +73,11 @@ LICENSE="
 	MIT
 	ZLIB
 	|| (
-		perl
 		MIT
+		|| (
+			Artistic
+			GPL-1+
+		)
 	)
 	|| (
 		BSD
