@@ -4,11 +4,17 @@
 
 EAPI=8
 
+# D12, U22, U24
+# D12 llvm:14, gcc:12, icu-72.1
+# U22 llvm:14, gcc:11, icu-70.1
+# U24 llvm:18, gcc:13, icu-74.2
+
 # For versioning, see
+# https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/DependenciesPolicy.html
 # https://github.com/oven-sh/bun/blob/bun-v1.2.0/cmake/tools/SetupWebKit.cmake#L5
 # https://github.com/oven-sh/WebKit/blob/9e3b60e4a6438d20ee6f8aa5bec6b71d2b7d213f/Configurations/Version.xcconfig#L26
 
-LLVM_COMPAT=( {19..13} )
+LLVM_COMPAT=( 18 14 13 ) # Only allow tested LTS versions, bun upstream uses llvm:13
 WEBKIT_PV="621.1.11"
 LOCKFILE_VER="1.2"
 CPU_FLAGS_X86=(
@@ -47,7 +53,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
-	>=dev-libs/icu-66.1[static-libs]
+	>=dev-libs/icu-70.1[static-libs]
 "
 DEPEND+="
 	${RDEPEND}
