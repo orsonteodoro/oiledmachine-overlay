@@ -56,7 +56,7 @@ gen_llvm_bdepend() {
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
 		echo "
-			(
+			llvm_slot_${s}? (
 				llvm-core/llvm:${s}
 				llvm-core/clang:${s}
 				llvm-core/lld:${s}
@@ -67,9 +67,7 @@ gen_llvm_bdepend() {
 BDEPEND+="
 	>=dev-build/cmake-3.20
 	sys-devel/gcc
-	|| (
-		$(gen_llvm_bdepend)
-	)
+	$(gen_llvm_bdepend)
 	llvm-core/llvm:=
 	llvm-core/clang:=
 	llvm-core/lld:=
