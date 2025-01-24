@@ -5,6 +5,9 @@
 EAPI=8
 
 LOCKFILE_VER="1.2"
+CPU_FLAGS_X86=(
+	cpu_flags_x86_avx2
+)
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}"
@@ -12,18 +15,32 @@ SRC_URI="
 	https://github.com/oven-sh/bun/archive/refs/tags/bun-v${PV}.tar.gz
 	arm64? (
 		elibc_glibc? (
+			cpu_flags_x86_avx2? (
 https://github.com/oven-sh/bun/releases/download/bun-v${PV}/bun-linux-aarch64.zip
+			)
 		)
 		elibc_musl? (
+			cpu_flags_x86_avx2? (
 https://github.com/oven-sh/bun/releases/download/bun-v${PV}/bun-linux-aarch64-musl.zip
+			)
 		)
 	)
 	amd64? (
 		elibc_glibc? (
+			!cpu_flags_x86_avx2? (
+https://github.com/oven-sh/bun/releases/download/bun-v${PV}/bun-linux-x64-baseline.zip
+			)
+			cpu_flags_x86_avx2? (
 https://github.com/oven-sh/bun/releases/download/bun-v${PV}/bun-linux-x64.zip
+			)
 		)
 		elibc_musl? (
+			!cpu_flags_x86_avx2? (
+https://github.com/oven-sh/bun/releases/download/bun-v${PV}/bun-linux-x64-musl-baseline.zip
+			)
+			cpu_flags_x86_avx2? (
 https://github.com/oven-sh/bun/releases/download/bun-v${PV}/bun-linux-x64-musl.zip
+			)
 		)
 	)
 "
@@ -66,7 +83,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="${LOCKFILE_VER}"
-IUSE+=" doc ebuild_revision_1"
+IUSE+="
+${CPU_FLAGS_X86[@]}
+doc ebuild_revision_1
+"
 CDEPEND+="
 	!sys-apps/npm:0
 	|| (
@@ -91,10 +111,14 @@ get_dir() {
 		echo "bun-linux-aarch64-musl"
 	elif [[ "${ABI}" == "arm64" && "${ELIBC}" == "glibc" ]] ; then
 		echo "bun-linux-aarch64"
-	elif [[ "${ABI}" == "amd64" && "${ELIBC}" == "musl" ]] ; then
+	elif [[ "${ABI}" == "amd64" && "${ELIBC}" == "musl" ]] && use cpu_flags_x86_avx2 ; then
 		echo "bun-linux-x64-musl"
-	elif [[ "${ABI}" == "amd64" && "${ELIBC}" == "glibc" ]] ; then
+	elif [[ "${ABI}" == "amd64" && "${ELIBC}" == "musl" ]] && ! use cpu_flags_x86_avx2 ; then
+		echo "bun-linux-x64-musl-baseline"
+	elif [[ "${ABI}" == "amd64" && "${ELIBC}" == "glibc" ]] && use cpu_flags_x86_avx2 ; then
 		echo "bun-linux-x64"
+	elif [[ "${ABI}" == "amd64" && "${ELIBC}" == "glibc" ]] && ! use cpu_flags_x86_avx2 ; then
+		echo "bun-linux-x64-baseline"
 	else
 eerror "ABI=${ABI} and ELIBC=${ELIBC} not supported"
 		die
