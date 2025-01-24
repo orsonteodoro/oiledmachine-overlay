@@ -11,6 +11,7 @@ LOCKFILE_VER="1.2"
 CPU_FLAGS_X86=(
 	cpu_flags_x86_avx2
 )
+WEBKIT_PV="621.1.11"
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}"
@@ -64,7 +65,7 @@ ${CPU_FLAGS_X86[@]}
 doc ebuild_revision_1
 "
 RDEPEND+="
-	sys-apps/bun-webkit:${LOCKFILE_VER}
+	sys-apps/bun-webkit:${LOCKFILE_VER}-${WEBKIT_PV%%.*}
 	sys-apps/bun-webkit:=
 "
 DEPEND+="
@@ -84,7 +85,7 @@ src_prepare() {
 
 src_configure() {
 	local mycmakeargs=(
-		-DWEBKIT_PATH="/usr/share/bun-webkit/${LOCKFILE_VER}"
+		-DWEBKIT_PATH="/usr/share/bun-webkit/${LOCKFILE_VER}-${WEBKIT_PV%%.*}"
 	)
 	ARCH="${arch}" cmake_src_configure
 }
