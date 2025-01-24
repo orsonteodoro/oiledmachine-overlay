@@ -17,9 +17,6 @@ EAPI=8
 LLVM_COMPAT=( 18 14 ) # Only allow tested LTS versions, bun upstream uses llvm:18
 WEBKIT_PV="621.1.11"
 LOCKFILE_VER="1.2"
-CPU_FLAGS_X86=(
-	cpu_flags_x86_avx2
-)
 EGIT_COMMIT="9e3b60e4a6438d20ee6f8aa5bec6b71d2b7d213f"
 
 inherit cmake flag-o-matic
@@ -43,7 +40,6 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="${LOCKFILE_VER}-${WEBKIT_PV%%.*}"
 IUSE+="
-${CPU_FLAGS_X86[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ebuild_revision_1
 "
