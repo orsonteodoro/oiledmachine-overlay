@@ -35,8 +35,23 @@ https://github.com/oven-sh/WebKit
 "
 LICENSE="
 	BSD
-	LGPL-2
+	BSD-2
+	ISC
+	LGPL-2+
+	LGPL-2.1+
+	MIT
+	|| (
+		GPL-2+
+		LGPL-2+
+		MPL-1.1
+	)
 "
+# BSD - Source/JavaScriptCore/debugger/DebuggerCallFrame.cpp
+# BSD-2 - Source/JavaScriptCore/debugger/Breakpoint.cpp
+# ISC - Source/bmalloc/bmalloc/CryptoRandom.cpp
+# LGPL-2+ - Source/JavaScriptCore/heap/MarkedSpace.h
+# MIT - Source/bmalloc/bmalloc/uv_get_constrained_memory.cpp
+# || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) - Source/JavaScriptCore/runtime/JSDateMath.h
 RESTRICT="mirror"
 SLOT="${LOCKFILE_VER}-${WEBKIT_PV%%.*}"
 IUSE+="
