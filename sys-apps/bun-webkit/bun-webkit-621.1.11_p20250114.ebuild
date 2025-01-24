@@ -14,7 +14,7 @@ EAPI=8
 # https://github.com/oven-sh/bun/blob/bun-v1.2.0/cmake/tools/SetupWebKit.cmake#L5
 # https://github.com/oven-sh/WebKit/blob/9e3b60e4a6438d20ee6f8aa5bec6b71d2b7d213f/Configurations/Version.xcconfig#L26
 
-LLVM_COMPAT=( 18 14 13 ) # Only allow tested LTS versions, bun upstream uses llvm:13
+LLVM_COMPAT=( 18 14 ) # Only allow tested LTS versions, bun upstream uses llvm:18
 WEBKIT_PV="621.1.11"
 LOCKFILE_VER="1.2"
 CPU_FLAGS_X86=(
