@@ -19,23 +19,23 @@ EAPI=8
 CPU_FLAGS_X86=(
 	cpu_flags_x86_sse4_2
 )
-NODE_VERSION=18
-BUN_SLOT="1.2"
-BUN_AUDIT_FIX_ARGS=(
-#	"--legacy-peer-deps"
+NODE_VERSION=20
+NPM_SLOT="3"
+NPM_AUDIT_FIX_ARGS=(
+	"--legacy-peer-deps"
 )
-BUN_DEDUPE_ARGS=(
-#	"--legacy-peer-deps"
+NPM_DEDUPE_ARGS=(
+	"--legacy-peer-deps"
 )
-BUN_INSTALL_ARGS=(
-#	"--legacy-peer-deps"
+NPM_INSTALL_ARGS=(
+	"--legacy-peer-deps"
 )
-BUN_UNINSTALL_ARGS=(
-#	"--legacy-peer-deps"
+NPM_UNINSTALL_ARGS=(
+	"--legacy-peer-deps"
 )
 VIPS_PV="8.14.5"
 
-inherit bun dhms edo
+inherit dhms edo npm
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -116,7 +116,7 @@ BDEPEND+="
 	${VIPS_BDEPEND}
 	>=sys-apps/npm-10.8.2
 	net-libs/nodejs:${NODE_VERSION}[corepack,npm]
-	sys-apps/bun:${BUN_SLOT}
+	sys-apps/npm:${NPM_SLOT}
 "
 DOCS=( "CHANGELOG.md" "README.md" )
 
@@ -142,23 +142,23 @@ pkg_setup() {
 
 	# Prevent redownloads because they unusually bump more than once a day.
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	export BUN_CACHE_FOLDER="${EDISTDIR}/bun-download-cache-${BUN_SLOT}/${CATEGORY}/${PN}-${PV%.*}"
+	export NPM_CACHE_FOLDER="${EDISTDIR}/npm-download-cache-${NPM_SLOT}/${CATEGORY}/${PN}-${PV%.*}"
 
-	bun_pkg_setup
+	npm_pkg_setup
+einfo "PATH:  ${PATH}"
 }
 
-bun_unpack_post() {
-	if [[ "${BUN_UPDATE_LOCK}" == "1" ]] ; then
+npm_unpack_post() {
+	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		sed -i \
-			-e "s|npm run|bun run|g" \
-			-e "s|bun run|bun run|g" \
+			-e "s|bun run|npm run|g" \
 			"${S}/package.json" \
 			|| die
 	else
 		if use postgres ; then
-			ebun add ${BUN_INSTALL_ARGS[@]} "sharp@0.33.5"
-			ebun add ${BUN_INSTALL_ARGS[@]} "pg@8.13.1"
-			ebun add ${BUN_INSTALL_ARGS[@]} "drizzle-orm@0.38.2"
+			enpm add "sharp@0.33.5" ${NPM_INSTALL_ARGS[@]}
+			enpm add "pg@8.13.1" ${NPM_INSTALL_ARGS[@]}
+			enpm add "drizzle-orm@0.38.2" ${NPM_INSTALL_ARGS[@]}
 		fi
 	fi
 	eapply "${FILESDIR}/${PN}-1.47.17-hardcoded-paths.patch"
@@ -170,7 +170,7 @@ src_unpack() {
 		git-r3_fetch
 		git-r3_checkout
 	else
-		bun_src_unpack
+		npm_src_unpack
 	fi
 }
 
@@ -201,6 +201,10 @@ setup_env() {
 	source "${T}/lobe-chat.conf"
 }
 
+src_configure() {
+	enpm --version
+}
+
 src_compile() {
 	if [[ -e "${S}/.next" ]] ; then
 ewarn "Removing ${S}/.next"
@@ -228,9 +232,9 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 	export NODE_ENV=development
 	export DOCKER=true
 	edo next build --debug
-	edo bun run build-sitemap
-	edo bun run build-sitemap
-	edo bun run build-migrate-db
+	edo npm run build-sitemap
+	edo npm run build-sitemap
+	edo npm run build-migrate-db
 }
 
 # Slow
