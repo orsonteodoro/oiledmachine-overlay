@@ -5,21 +5,23 @@
 EAPI=8
 
 # D12, U22, U24
-# D12 llvm:14, gcc:12, icu-72.1
-# U22 llvm:14, gcc:11, icu-70.1
-# U24 llvm:18, gcc:13, icu-74.2
+# D12 llvm:14, gcc:12, icu-72.1, python:3.11, ruby 3.1
+# U22 llvm:14, gcc:11, icu-70.1, python:3.10, ruby 3.0
+# U24 llvm:18, gcc:13, icu-74.2, python:3.12, ruby 3.2
 
 # For versioning, see
 # https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/DependenciesPolicy.html
 # https://github.com/oven-sh/bun/blob/bun-v1.2.0/cmake/tools/SetupWebKit.cmake#L5
 # https://github.com/oven-sh/WebKit/blob/9e3b60e4a6438d20ee6f8aa5bec6b71d2b7d213f/Configurations/Version.xcconfig#L26
 
+PYTHON_COMPAT=( "python3_"{10..12} )
 LLVM_COMPAT=( 18 14 ) # Only allow tested LTS versions, bun upstream uses llvm:18
 WEBKIT_PV="621.1.11"
 LOCKFILE_VER="1.2"
+USE_RUBY=" ruby31 ruby32"
 EGIT_COMMIT="9e3b60e4a6438d20ee6f8aa5bec6b71d2b7d213f"
 
-inherit cmake flag-o-matic
+inherit cmake flag-o-matic python-single-r1 ruby-single
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/WebKit-autobuild-${EGIT_COMMIT}"
@@ -82,12 +84,14 @@ gen_llvm_bdepend() {
 	done
 }
 BDEPEND+="
-	>=dev-build/cmake-3.20
-	sys-devel/gcc
+	${PYTHON_DEPS}
+	${RUBY_DEPS}
 	$(gen_llvm_bdepend)
+	>=dev-build/cmake-3.20
 	llvm-core/llvm:=
 	llvm-core/clang:=
 	llvm-core/lld:=
+	sys-devel/gcc
 "
 
 setup_llvm_path() {
@@ -108,6 +112,7 @@ einfo "PATH=${PATH} (after)"
 }
 
 pkg_setup() {
+	python-single-r1_pkg_setup
 	setup_llvm_path
 	export CC="${CHOST}-clang-${LLVM_SLOT}"
 	export CXX="${CHOST}-clang++-${LLVM_SLOT}"
@@ -140,7 +145,25 @@ src_configure() {
 einfo "CFLAGS:  ${CFLAGS}"
 einfo "CXXFLAGS:  ${CXXFLAGS}"
 
+	# Ruby situation is a bit complicated. See bug 513888
+	local rubyimpl
+	local ruby_interpreter=""
+	for rubyimpl in ${USE_RUBY}; do
+		if has_version -b "virtual/rubygems[ruby_targets_${rubyimpl}]"; then
+			ruby_interpreter="-DRUBY_EXECUTABLE=$(type -P ${rubyimpl})"
+		fi
+	done
+	# This will rarely occur. Only a couple of corner cases could lead us to
+	# that failure. See bug 513888
+	if [[ -z $ruby_interpreter ]] ; then
+eerror
+eerror "No suitable ruby interpreter found"
+eerror
+		die
+	fi
+
 	local mycmakeargs=(
+		${ruby_interpreter}
 		-DCMAKE_INSTALL_PREFIX="/usr/share/${PN}/${LOCKFILE_VER}-${WEBKIT_PV%%.*}"
 		-DPORT="JSCOnly"
 		-DENABLE_STATIC_JSC=ON
