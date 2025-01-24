@@ -9,20 +9,21 @@ LOCKFILE_VER="1.2"
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}"
 SRC_URI="
+	https://github.com/oven-sh/bun/archive/refs/tags/bun-v${PV}.tar.gz
 	arm64? (
 		elibc_glibc? (
-https://github.com/oven-sh/bun/releases/download/bun-v1.2.0/bun-linux-aarch64.zip
+https://github.com/oven-sh/bun/releases/download/bun-v${PV}/bun-linux-aarch64.zip
 		)
 		elibc_musl? (
-https://github.com/oven-sh/bun/releases/download/bun-v1.2.0/bun-linux-aarch64-musl.zip
+https://github.com/oven-sh/bun/releases/download/bun-v${PV}/bun-linux-aarch64-musl.zip
 		)
 	)
 	amd64? (
 		elibc_glibc? (
-https://github.com/oven-sh/bun/releases/download/bun-v1.2.0/bun-linux-x64.zip
+https://github.com/oven-sh/bun/releases/download/bun-v${PV}/bun-linux-x64.zip
 		)
 		elibc_musl? (
-https://github.com/oven-sh/bun/releases/download/bun-v1.2.0/bun-linux-x64-musl.zip
+https://github.com/oven-sh/bun/releases/download/bun-v${PV}/bun-linux-x64-musl.zip
 		)
 	)
 "
@@ -65,7 +66,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="${LOCKFILE_VER}"
-IUSE+=" +ssl ebuild_revision_1"
+IUSE+=" doc ebuild_revision_1"
 CDEPEND+="
 	!sys-apps/npm:0
 	|| (
@@ -105,7 +106,17 @@ src_install() {
 	pushd "${d}" >/dev/null 2>&1 || die
 		exeinto "/opt/bun"
 		doexe "bun"
-	popd || die
+	popd >/dev/null 2>&1 || die
+	pushd "${WORKDIR}/bun-bun-v${PV}" >/dev/null 2>&1 || die
+		docinto "licenses"
+		dodoc "LICENSE.md"
+		if use doc ; then
+			docinto "readmes"
+			dodoc "README.md"
+			insinto "/usr/share/${PN}"
+			doins -r "docs"
+		fi
+	popd >/dev/null 2>&1 || die
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
