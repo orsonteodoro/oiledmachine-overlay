@@ -10,4 +10,12 @@
     <remote-id type="github">oven-sh/bun</remote-id>
     <bugs-to>https://github.com/oven-sh/bun/issues</bugs-to>
   </upstream>
+  <use>
+    <flag name="npm">
+      Use npm to initially bootstrap bun.
+    </flag>
+    <flag name="yarn">
+      Use yarn to initially bootstrap bun.
+    </flag>
+  </use>
 </pkgmetadata>

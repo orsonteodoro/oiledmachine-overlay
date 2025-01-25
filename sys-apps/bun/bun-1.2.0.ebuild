@@ -22,6 +22,7 @@ LOLHTML_COMMIT="4f8becea13a0021c8b71abd2dcc5899384973b66"
 LS_HPACK_COMMIT="32e96f10593c7cb8553cd8c9c12721100ae9e924"
 MIMALLOC_COMMIT="82b2c2277a4d570187c07b376557dc5bde81d848"
 NODE_VERSION="20"
+NPM_SLOT="3"
 PICOHTTPPARSER_COMMIT="066d2b1e9ab820703db0837a7255d92d30f0c9f5"
 RUST_COMPAT=(
 	"1.81.0" # llvm 18
@@ -33,11 +34,11 @@ TINYCC_COMMIT="29985a3b59898861442fa3b43f663fc1af2591d7"
 ZIG_COMMIT="131a009ba2eb127a3447d05b9e12f710429aa5ee"
 ZLIB_COMMIT="886098f3f339617b4243b286f5ed364b9989e245"
 ZSTD_COMMIT="794ea1b0afca0f020f4e57b6732332231fb23c70"
+YARN_SLOT="1"
 WEBKIT_COMMIT="9e3b60e4a6438d20ee6f8aa5bec6b71d2b7d213f"
 WEBKIT_PV="621.1.11"
-YARN_SLOT="1"
 
-inherit cmake dep-prepare yarn
+inherit cmake dep-prepare npm yarn
 
 #KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${PN}-${PN}-v${PV}"
@@ -128,7 +129,14 @@ RESTRICT="mirror"
 SLOT="${LOCKFILE_VER}"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
-doc ebuild_revision_1
+doc npm yarn
+ebuild_revision_1
+"
+REQUIRED_USE="
+	^^ (
+		npm
+		yarn
+	)
 "
 gen_rust_depend() {
 	local s
@@ -162,7 +170,12 @@ DEPEND+="
 "
 BOOTSTRAP_BDEPEND="
 	net-libs/nodejs:${NODE_VERSION}[corepack]
-	sys-apps/yarn:${YARN_SLOT}
+	npm? (
+		sys-apps/npm:${NPM_SLOT}
+	)
+	yarn? (
+		sys-apps/yarn:${YARN_SLOT}
+	)
 "
 BDEPEND+="
 	${BOOTSTRAP_BDEPEND}
@@ -179,7 +192,11 @@ PATCHES=(
 )
 
 pkg_setup() {
-	yarn_pkg_setup
+	if use npm ; then
+		npm_pkg_setup
+	elif use yarn ; then
+		yarn_pkg_setup
+	fi
 }
 
 src_unpack() {
@@ -189,6 +206,14 @@ ewarn "Ebuild is in development"
 }
 
 emulate_bun() {
+	local pm
+
+	if use npm ; then
+		pm="npm"
+	elif use yarn ; then
+		pm="yarn"
+	fi
+
 	# Emulate bun because the baseline builds are all broken and produce
 	# illegal instruction.
 	mkdir -p "${HOME}/.bun/bin"
@@ -200,7 +225,7 @@ ARGS=( "${ARGS[@]:1}" )
 if [[ "${COMMAND}" == "x" ]] ; then
 	npx "${ARGS[@]}"
 else
-	yarn "${ARGS[@]}"
+	${pm} "${ARGS[@]}"
 fi
 EOF
 	chmod +x "${HOME}/.bun/bin/bun" || die
@@ -222,9 +247,24 @@ src_prepare() {
 	dep_prepare_mv "${WORKDIR}/zstd-${ZSTD_COMMIT}" "${S}/vendor/zstd"
 
 	cmake_src_prepare
-	yarn_hydrate
-	_yarn_setup_offline_cache
-	yarn add npx
+
+	if use npm ; then
+		sed -i \
+			-e "/frozen-lockfile/d" \
+			"${S}/cmake/Globals.cmake" \
+			"${S}/cmake/analysis/RunPrettier.cmake" \
+			"${S}/cmake/tools/SetupEsbuild.cmake" \
+			|| die
+	fi
+
+	if use npm ; then
+		npm_hydrate
+		_npm_setup_offline_cache
+	elif use yarn ; then
+		yarn_hydrate
+		_yarn_setup_offline_cache
+	fi
+	npm add npx
 	emulate_bun
 	bun --version || die
 	bun x --version || die
@@ -273,7 +313,11 @@ eerror
 }
 
 src_configure() {
-	yarn_hydrate
+	if use npm ; then
+		npm_hydrate
+	elif use yarn ; then
+		yarn_hydrate
+	fi
 	emulate_bun
 	check_rust
 	export CARGO_HOME="${ESYSROOT}/usr/bin"
@@ -288,7 +332,11 @@ src_configure() {
 }
 
 src_compile() {
-	yarn_hydrate
+	if use npm ; then
+		npm_hydrate
+	elif use yarn ; then
+		yarn_hydrate
+	fi
 	cmake_src_compile
 }
 
