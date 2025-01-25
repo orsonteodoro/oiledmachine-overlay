@@ -49,12 +49,19 @@ LICENSE="
 		openssl
 		SSLeay
 	)
+	(
+		Apache-2.0-with-LLVM-exceptions
+		custom
+		GPL-2+
+		LGPL-2+
+		LGPL-2.1
+		MIT
+	)
 	Apache-2.0
 	BSD
 	BSD-2
 	icu-72.1
-	LGPL-2
-	LGPL-2.1
+	LGPL-2+
 	MIT
 	ZLIB
 	|| (
@@ -69,6 +76,11 @@ LICENSE="
 		GPL-2
 	)
 "
+# Apache-2.0-with-LLVM-exceptions - tinycc/include/stdatomic.h
+# custom - tinycc/lib/lib-arm64.c
+# GPL-2+ - tinycc/lib/libtcc1.c
+# LGPL-2+ - tinycc/lib/bcheck.c
+# MIT - tinycc
 RESTRICT="mirror"
 SLOT="${LOCKFILE_VER}"
 IUSE+="
