@@ -58,7 +58,7 @@ RESTRICT="mirror"
 SLOT="${LOCKFILE_VER}-${WEBKIT_PV%%.*}"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	^^ (
@@ -218,7 +218,13 @@ src_compile() {
 
 src_install() {
 	insinto "/usr/share/${PN}/${PV}"
-	cmake_src_install
+	mv "${WORKDIR}/WebKit-autobuild-${EGIT_COMMIT}_build/"* "${ED}/usr/share/${PN}"
+	mv "${WORKDIR}/WebKit-autobuild-${EGIT_COMMIT}_build/.ninja"* "${ED}/usr/share/${PN}"
+
+	# Sanitize permissions
+	chown -R "portage:portage" "${ED}/usr/share/${PN}/${PV}" || die
+	find "${ED}" -type f -print0 | xargs -0 chmod 0644 || die
+	find "${ED}" -type d -print0 | xargs -0 chmod 0755 || die
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
