@@ -54,7 +54,7 @@ LICENSE="
 # LGPL-2+ - Source/JavaScriptCore/heap/MarkedSpace.h
 # MIT - Source/bmalloc/bmalloc/uv_get_constrained_memory.cpp
 # || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) - Source/JavaScriptCore/runtime/JSDateMath.h
-RESTRICT="mirror"
+RESTRICT="binchecks mirror strip test"
 SLOT="${LOCKFILE_VER}-${WEBKIT_PV%%.*}"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
@@ -217,12 +217,12 @@ src_compile() {
 }
 
 src_install() {
-	insinto "/usr/share/${PN}/${PV}"
-	mv "${WORKDIR}/WebKit-autobuild-${EGIT_COMMIT}_build/"* "${ED}/usr/share/${PN}"
-	mv "${WORKDIR}/WebKit-autobuild-${EGIT_COMMIT}_build/.ninja"* "${ED}/usr/share/${PN}"
+	dodir "/usr/share/${PN}/${SLOT}"
+	mv "${WORKDIR}/WebKit-autobuild-${EGIT_COMMIT}_build/"* "${ED}/usr/share/${PN}/${SLOT}" || die
+	mv "${WORKDIR}/WebKit-autobuild-${EGIT_COMMIT}_build/.ninja"* "${ED}/usr/share/${PN}/${SLOT}" || die
 
 	# Sanitize permissions
-	chown -R "portage:portage" "${ED}/usr/share/${PN}/${PV}" || die
+	chown -R "portage:portage" "${ED}/usr/share/${PN}/${SLOT}" || die
 	find "${ED}" -type f -print0 | xargs -0 chmod 0644 || die
 	find "${ED}" -type d -print0 | xargs -0 chmod 0755 || die
 }
