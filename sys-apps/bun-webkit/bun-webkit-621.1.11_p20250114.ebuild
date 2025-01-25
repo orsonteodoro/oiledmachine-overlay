@@ -228,8 +228,8 @@ src_install() {
 	cp "${webkit_out_dir}/"*".h" "${output_dir}/include" || die
 	cp -r "${webkit_out_dir}/bin" "${output_dir}/bin" || die
 	cp "${webkit_out_dir}/"*".json" "${output_dir}" || die
-	find "${webkit_out_dir}/JavaScriptCore/DerivedSources/" -name "*.h" -exec sh -c 'cp "$1" "${output_dir}/include/JavaScriptCore/$(basename "$1")"' sh {} \; || die
-	find "${webkit_out_dir}/JavaScriptCore/DerivedSources/" -name "*.json" -exec sh -c 'cp "$1" "${output_dir}/$(basename "$1")"' sh {} \; || die
+	find "${webkit_out_dir}/JavaScriptCore/DerivedSources/" -name "*.h" -exec sh -c 'cp "$1" "'"${output_dir}"'/include/JavaScriptCore/$(basename "$1")"' sh {} \; || die
+	find "${webkit_out_dir}/JavaScriptCore/DerivedSources/" -name "*.json" -exec sh -c 'cp "$1" "'"${output_dir}"'/$(basename "$1")"' sh {} \; || die
 	find "${webkit_out_dir}/JavaScriptCore/Headers/JavaScriptCore/" -name "*.h" -exec cp {} "${output_dir}/include/JavaScriptCore/" \; || die
 	find "${webkit_out_dir}/JavaScriptCore/PrivateHeaders/JavaScriptCore/" -name "*.h" -exec cp {} "${output_dir}/include/JavaScriptCore/" \; || die
 	cp -r "${webkit_out_dir}/WTF/Headers/wtf/" "${output_dir}/include" || die
