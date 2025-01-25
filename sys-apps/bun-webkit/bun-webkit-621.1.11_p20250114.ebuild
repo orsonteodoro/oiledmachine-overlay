@@ -58,7 +58,7 @@ RESTRICT="binchecks mirror strip test"
 SLOT="${LOCKFILE_VER}-${WEBKIT_PV%%.*}"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	^^ (
@@ -242,6 +242,18 @@ src_install() {
 	chown -R "portage:portage" "${ED}/usr/share/${PN}/${SLOT}" || die
 	find "${ED}" -type f -print0 | xargs -0 chmod 0644 || die
 	find "${ED}" -type d -print0 | xargs -0 chmod 0755 || die
+
+	local L=(
+		"LLIntOffsetsExtractor"
+		"TestWebKitAPI/TestWTF"
+		"TestWebKitAPI/TestJavaScriptCore"
+		"LLIntSettingsExtractor"
+		"jsc"
+	)
+
+	for x in ${L[@]} ; do
+		chmod 0755 "${output_dir}/bin/${x}" || die
+	done
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
