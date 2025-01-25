@@ -217,12 +217,12 @@ src_compile() {
 }
 
 src_install() {
-	insinto "/usr/share/${PN}/${PV}"
-	mv "${WORKDIR}/WebKit-autobuild-${EGIT_COMMIT}_build/"* "${ED}/usr/share/${PN}"
-	mv "${WORKDIR}/WebKit-autobuild-${EGIT_COMMIT}_build/.ninja"* "${ED}/usr/share/${PN}"
+	dodir "/usr/share/${PN}/${SLOT}"
+	mv "${WORKDIR}/WebKit-autobuild-${EGIT_COMMIT}_build/"* "${ED}/usr/share/${PN}/${SLOT}" || die
+	mv "${WORKDIR}/WebKit-autobuild-${EGIT_COMMIT}_build/.ninja"* "${ED}/usr/share/${PN}/${SLOT}" || die
 
 	# Sanitize permissions
-	chown -R "portage:portage" "${ED}/usr/share/${PN}/${PV}" || die
+	chown -R "portage:portage" "${ED}/usr/share/${PN}/${SLOT}" || die
 	find "${ED}" -type f -print0 | xargs -0 chmod 0644 || die
 	find "${ED}" -type d -print0 | xargs -0 chmod 0755 || die
 }
