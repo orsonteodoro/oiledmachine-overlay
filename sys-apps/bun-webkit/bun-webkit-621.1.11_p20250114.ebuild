@@ -94,6 +94,9 @@ BDEPEND+="
 	llvm-core/lld:=
 	sys-devel/gcc
 "
+PATCHES=(
+	"${FILESDIR}/${PN}-621.1.11_p20250114-disable-tests.patch"
+)
 
 setup_llvm_path() {
 	local llvm_slot
@@ -134,15 +137,9 @@ src_prepare() {
 }
 
 src_configure() {
-# Prevent
-# Tools/TestWebKitAPI/Tests/WTF/StringImpl.cpp:761:51: error: no matching function for call to 'WTF::ExternalStringImpl::create(<brace-enclosed initializer list>, TestWebKitAPI::WTF_ExternalStringImplCreate8bit_Test::TestBody()::<lambda(WTF::ExternalStringImpl*, void*, unsigned int)>)'
-#   761 |         auto external = ExternalStringImpl::create({ buffer, bufferStringLength }, [&freeFunctionCalled](ExternalStringImpl* externalStringImpl, void* buffer, unsigned bufferSize) mutable {
-#       |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#   762 |             freeFunctionCalled = true;
-#       |             ~~~~~~~~~~~~~~~~~~~~~~~~~~             
-#   763 |         });
-#       |         ~~
+	# To delete in next update cycle.
 	append-cxxflags $(test-flags-CXX -fno-c++-static-destructors)
+
 einfo "CFLAGS:  ${CFLAGS}"
 einfo "CXXFLAGS:  ${CXXFLAGS}"
 
