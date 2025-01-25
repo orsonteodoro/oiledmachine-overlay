@@ -21,6 +21,7 @@ CPU_FLAGS_X86=(
 )
 NODE_VERSION=20
 NPM_SLOT="3"
+NPM_AUDIT_FIX=0
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 )
@@ -114,9 +115,8 @@ VIPS_BDEPEND="
 "
 BDEPEND+="
 	${VIPS_BDEPEND}
-	>=sys-apps/npm-10.8.2
+	>=sys-apps/npm-10.8.2:${NPM_SLOT}
 	net-libs/nodejs:${NODE_VERSION}[corepack,npm]
-	sys-apps/npm:${NPM_SLOT}
 "
 DOCS=( "CHANGELOG.md" "README.md" )
 
@@ -229,8 +229,12 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 	# This one looks broken because the .next/standalone folder is missing.
 	#npm run "build:docker"
 
-	export NODE_ENV=development
+	export NODE_ENV=production
 	export DOCKER=true
+
+	tsc --version || die
+	tsc next.config.ts --module commonjs --outDir . || die
+
 	edo next build --debug
 	edo npm run build-sitemap
 	edo npm run build-sitemap
