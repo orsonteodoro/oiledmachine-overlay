@@ -5,9 +5,9 @@
 EAPI=8
 
 # D12, U22, U24
-# D12 llvm:14, gcc:12, icu-72.1, python:3.11, ruby 3.1
-# U22 llvm:14, gcc:11, icu-70.1, python:3.10, ruby 3.0
-# U24 llvm:18, gcc:13, icu-74.2, python:3.12, ruby 3.2
+# D12 llvm:14, gcc:12, icu-72.1, python:3.11, ruby 3.1, perl 5.36
+# U22 llvm:14, gcc:11, icu-70.1, python:3.10, ruby 3.0, perl 5.34
+# U24 llvm:18, gcc:13, icu-74.2, python:3.12, ruby 3.2, perl 5.38
 
 # For versioning, see
 # https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/DependenciesPolicy.html
@@ -88,6 +88,7 @@ BDEPEND+="
 	${RUBY_DEPS}
 	$(gen_llvm_bdepend)
 	>=dev-build/cmake-3.20
+	>=dev-lang/perl-5.34
 	llvm-core/llvm:=
 	llvm-core/clang:=
 	llvm-core/lld:=
