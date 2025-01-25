@@ -449,6 +449,8 @@ src_prepare() {
 
 	cmake_src_prepare
 
+	replace-flags '-march=barcelona' '-march=amdfam10'
+
 	local compiler_flags="-march=nehalem"
 	local zig_target_aarch64="cortex_a35"
 	local zig_target_x86="nehalem"
