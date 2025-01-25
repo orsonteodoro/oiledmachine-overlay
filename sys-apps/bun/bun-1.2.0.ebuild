@@ -218,7 +218,7 @@ cat <<EOF > "${HOME}/.bun/bin/bun"
 ARGS=( "\$@" )
 COMMAND="\${ARGS[0]}"
 ARGS=( "\${ARGS[@]:1}" )
-if [[ "${COMMAND}" == "x" ]] ; then
+if [[ "\${COMMAND}" == "x" ]] ; then
 	npx "\${ARGS[@]}"
 else
 	${pm} "\${ARGS[@]}"
