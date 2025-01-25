@@ -257,7 +257,7 @@ src_prepare() {
 		npm_hydrate
 		_npm_setup_offline_cache
 		enpm add npx --legacy-peer-deps
-		enpm audit fix
+		enpm audit fix --legacy-peer-deps
 	elif use yarn ; then
 		yarn_hydrate
 		_yarn_setup_offline_cache
