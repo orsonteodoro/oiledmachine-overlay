@@ -218,7 +218,7 @@ gcc_mcpu() {
 		"apple-m2"
 	)
 
-	# For ARM, see https://github.com/ziglang/zig/blob/master/lib/std/zig/system/arm.zig#L24
+	# For ARM, see https://github.com/ziglang/zig/blob/131a009ba2eb127a3447d05b9e12f710429aa5ee/lib/std/zig/system/arm.zig#L24
 
 	local found=""
 	local x
@@ -298,7 +298,7 @@ gcc_march() {
 		"znver2"
 		"znver3"
 		"znver4"
-		"znver5"
+		#"znver5"
 
 		"core2"
 		"penryn"
@@ -309,40 +309,40 @@ gcc_march() {
 		"haswell"
 		"broadwell"
 		"skylake"
-		"rocketlake"
+		#"rocketlake"
 		"cooperlake"
 		"cascadelake"
 		"skylake-avx512"
 		"cannonlake"
 		"icelake-client"
 		"icelake-server"
-		"tigerlake"
-		"alderlake"
-		"gracemont"
-		"raptorlake"
-		"meteorlake"
-		"arrowlake"
-		"arrowlake-s"
-		"lunarlake"
-		"pantherlake"
-		"graniterapids"
-		"graniterapids-d"
-		"emeraldrapids"
-		"sapphirerapids"
+		#"tigerlake"
+		#"alderlake"
+		#"gracemont"
+		#"raptorlake"
+		#"meteorlake"
+		#"arrowlake"
+		#"arrowlake-s"
+		#"lunarlake"
+		#"pantherlake"
+		#"graniterapids"
+		#"graniterapids-d"
+		#"emeraldrapids"
+		#"sapphirerapids"
 		"bonnell"
 		"silvermont"
 		"goldmont"
 		"goldmont-plus"
 		"tremont"
-		"sierraforest"
-		"grandridge"
-		"clearwaterforest"
+		#"sierraforest"
+		#"grandridge"
+		#"clearwaterforest"
 		"knl"
 		"knm"
 	)
 
-	# For AMD, see https://github.com/ziglang/zig/blob/master/lib/std/zig/system/x86.zig#L295
-	# For Intel, see https://github.com/ziglang/zig/blob/master/lib/std/zig/system/x86.zig#L77
+	# For AMD, see https://github.com/ziglang/zig/blob/131a009ba2eb127a3447d05b9e12f710429aa5ee/lib/std/zig/system/x86.zig#L227
+	# For Intel, see https://github.com/ziglang/zig/blob/131a009ba2eb127a3447d05b9e12f710429aa5ee/lib/std/zig/system/x86.zig#L77
 
 	local found=""
 	local x
@@ -403,7 +403,6 @@ gcc_mtune() {
 		"carmel"
 
 		"emag"
-
 		"xgene1"
 
 		"kryo"
@@ -411,7 +410,7 @@ gcc_mtune() {
 		"saphira"
 	)
 
-	# For ARM, see https://github.com/ziglang/zig/blob/master/lib/std/zig/system/arm.zig#L24
+	# For ARM, see https://github.com/ziglang/zig/blob/131a009ba2eb127a3447d05b9e12f710429aa5ee/lib/std/zig/system/arm.zig#L24
 
 	local found=""
 	local x
@@ -468,6 +467,9 @@ src_prepare() {
 		compiler_flags="-march="$(gcc_march)
 		zig_target_x86=$(gcc_march)
 		zig_cpu_target=$(gcc_march)
+	else
+eerror "ARCH=${ARCH} ABI=${ABI} is not supported."
+		die
 	fi
 
 	zig_target_aarch64="${zig_target_aarch64/-/_}"
