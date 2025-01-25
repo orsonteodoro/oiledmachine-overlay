@@ -58,7 +58,7 @@ RESTRICT="binchecks mirror strip test"
 SLOT="${LOCKFILE_VER}-${WEBKIT_PV%%.*}"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	^^ (
@@ -218,8 +218,25 @@ src_compile() {
 
 src_install() {
 	dodir "/usr/share/${PN}/${SLOT}"
-	mv "${WORKDIR}/WebKit-autobuild-${EGIT_COMMIT}_build/"* "${ED}/usr/share/${PN}/${SLOT}" || die
-	mv "${WORKDIR}/WebKit-autobuild-${EGIT_COMMIT}_build/.ninja"* "${ED}/usr/share/${PN}/${SLOT}" || die
+
+	local webkit_out_dir="${WORKDIR}/WebKit-autobuild-${EGIT_COMMIT}_build"
+	local output_dir="${ED}/usr/share/${PN}/${SLOT}"
+	local source_dir="${S}"
+
+	mkdir -p "${output_dir}/lib" "${output_dir}/include" "${output_dir}/include/JavaScriptCore" "${output_dir}/include/glibc" "${output_dir}/include/wtf" "${output_dir}/include/bmalloc" "${output_dir}/include/unicode" || die
+	cp -r "${webkit_out_dir}/lib/"*".a" "${output_dir}/lib" || die
+	cp "${webkit_out_dir}/"*".h" "${output_dir}/include" || die
+	cp -r "${webkit_out_dir}/bin" "${output_dir}/bin" || die
+	cp "${webkit_out_dir}/"*".json" "${output_dir}" || die
+	find "${webkit_out_dir}/JavaScriptCore/DerivedSources/" -name "*.h" -exec sh -c 'cp "$1" "${output_dir}/include/JavaScriptCore/$(basename "$1")"' sh {} \; || die
+	find "${webkit_out_dir}/JavaScriptCore/DerivedSources/" -name "*.json" -exec sh -c 'cp "$1" "${output_dir}/$(basename "$1")"' sh {} \; || die
+	find "${webkit_out_dir}/JavaScriptCore/Headers/JavaScriptCore/" -name "*.h" -exec cp {} "${output_dir}/include/JavaScriptCore/" \; || die
+	find "${webkit_out_dir}/JavaScriptCore/PrivateHeaders/JavaScriptCore/" -name "*.h" -exec cp {} "${output_dir}/include/JavaScriptCore/" \; || die
+	cp -r "${webkit_out_dir}/WTF/Headers/wtf/" "${output_dir}/include" || die
+	cp -r "${webkit_out_dir}/bmalloc/Headers/bmalloc/" "${output_dir}/include" || die
+	mkdir -p "${output_dir}/Source/JavaScriptCore" || die
+	cp -r "${source_dir}/Source/JavaScriptCore/Scripts" "${output_dir}/Source/JavaScriptCore" || die
+	cp "${source_dir}/Source/JavaScriptCore/create_hash_table" "${output_dir}/Source/JavaScriptCore" || die
 
 	# Sanitize permissions
 	chown -R "portage:portage" "${ED}/usr/share/${PN}/${SLOT}" || die
