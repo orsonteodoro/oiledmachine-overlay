@@ -187,7 +187,6 @@ pkg_setup() {
 src_unpack() {
 ewarn "Ebuild is in development"
 	unpack ${A}
-	die
 }
 
 emulate_bun() {
@@ -230,10 +229,13 @@ gcc_mcpu() {
 	done
 
 	if [[ -z "${found}" ]] ; then
-eerror
-eerror "You must set or change -mcpu to supported arch"
+		local flag=$(echo "${CFLAGS}" \
+			| grep -E -e "-mcpu=[a-zA-Z0-9-]+")
 eerror
 eerror "Unsupported -mcpu= detected"
+eerror "You must set or change -mcpu to supported arch"
+eerror
+eerror "Actual -mcpu=?:  ${flag}"
 eerror "Supported arches:  ${ARCHES[@]}"
 eerror
 		die
@@ -274,10 +276,13 @@ gcc_march_arm64() {
 	done
 
 	if [[ -z "${found}" ]] ; then
-eerror
-eerror "You must set or change -march to supported arch"
+		local flag=$(echo "${CFLAGS}" \
+			| grep -E -e "-march=[a-zA-Z0-9-]+")
 eerror
 eerror "Unsupported -march= detected"
+eerror "You must set or change -march to supported arch"
+eerror
+eerror "Actual -march=?:  ${flag}"
 eerror "Supported arches:  ${ARCHES[@]}"
 eerror
 		die
@@ -354,10 +359,13 @@ gcc_march() {
 	done
 
 	if [[ -z "${found}" ]] ; then
-eerror
-eerror "You must set or change -march to supported arch"
+		local flag=$(echo "${CFLAGS}" \
+			| grep -E -e "-march=[a-zA-Z0-9-]+")
 eerror
 eerror "Unsupported -march= detected"
+eerror "You must set or change -march to supported arch"
+eerror
+eerror "Actual -march=?:  ${flag}"
 eerror "Supported arches:  ${ARCHES[@]}"
 eerror
 		die
@@ -422,10 +430,13 @@ gcc_mtune() {
 	done
 
 	if [[ -z "${found}" ]] ; then
-eerror
-eerror "You must set or change -mtune to supported arch"
+		local flag=$(echo "${CFLAGS}" \
+			| grep -E -e "-mtune=[a-zA-Z0-9-]+")
 eerror
 eerror "Unsupported -mtune= detected"
+eerror "You must set or change -mtune to supported arch"
+eerror
+eerror "Actual -mtune=?:  ${flag}"
 eerror "Supported arches:  ${ARCHES[@]}"
 eerror
 		die
@@ -449,6 +460,9 @@ src_prepare() {
 	cmake_src_prepare
 
 	replace-flags '-march=barcelona' '-march=amdfam10'
+
+einfo "CFLAGS:  ${CFLAGS}"
+einfo "CXXFLAGS:  ${CXXFLAGS}"
 
 	local compiler_flags="-march=nehalem"
 	local zig_target_aarch64="cortex_a35"
@@ -475,11 +489,6 @@ eerror "ARCH=${ARCH} ABI=${ABI} is not supported."
 	zig_target_aarch64="${zig_target_aarch64/-/_}"
 	zig_target_x86="${zig_target_x86/-/_}"
 	zig_cpu_target="${zig_cpu_target/-/_}"
-
-einfo "compiler_flags: ${compiler_flags}"
-einfo "zig_target_aarch64: ${zig_target_aarch64}"
-einfo "zig_target_x86: ${zig_target_x86}"
-einfo "zig_cpu_target: ${zig_cpu_target}"
 
 	sed -i \
 		-e "s|@ZIG_TARGET_AARCH64@|${zig_target_aarch64}|g" \
