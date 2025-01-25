@@ -250,7 +250,7 @@ src_prepare() {
 
 	if use npm ; then
 		sed -i \
-			-e "/frozen-lockfile/d" \
+			-e "s|--frozen-lockfile||g" \
 			"${S}/cmake/Globals.cmake" \
 			"${S}/cmake/analysis/RunPrettier.cmake" \
 			"${S}/cmake/tools/SetupEsbuild.cmake" \
