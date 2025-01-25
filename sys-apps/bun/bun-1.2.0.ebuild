@@ -223,6 +223,7 @@ src_prepare() {
 
 	cmake_src_prepare
 	yarn_hydrate
+	_yarn_setup_offline_cache
 	yarn add npx
 	emulate_bun
 	bun --version || die
