@@ -7,18 +7,22 @@ EAPI=8
 # See also
 # https://github.com/oven-sh/bun/blob/bun-v1.2.0/cmake/tools/SetupWebKit.cmake#L5
 
-LLVM_COMPAT=( 18 )
-LOCKFILE_VER="1.2"
 CPU_FLAGS_X86=(
 	cpu_flags_x86_avx2
 )
-WEBKIT_PV="621.1.11"
+LLVM_COMPAT=( 18 )
+LOCKFILE_VER="1.2"
+NODE_VERSION="20"
 RUST_COMPAT=(
 	"1.81.0" # llvm 18
 	"1.80.0" # llvm 18
 	"1.79.0" # llvm 18
 	"1.78.0" # llvm 18
 )
+WEBKIT_PV="621.1.11"
+YARN_SLOT="1"
+
+inherit cmake yarn
 
 #KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${PN}-${PN}-v${PV}"
@@ -101,7 +105,12 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
+BOOTSTRAP_BDEPEND="
+	net-libs/nodejs:${NODE_VERSION}[corepack]
+	sys-apps/yarn:${YARN_SLOT}
+"
 BDEPEND+="
+	${BOOTSTRAP_BDEPEND}
 	$(gen_llvm_depend)
 	$(gen_rust_depend)
 	dev-build/cmake
@@ -110,16 +119,46 @@ BDEPEND+="
 	llvm-core/lld:=
 "
 PATCHES=(
-	"${FILESDIR}/bun-1.2.0-llvm-path.patch"
+	"${FILESDIR}/${PN}-1.2.0-llvm-path.patch"
+	"${FILESDIR}/${PN}-1.2.0-webkit-path.patch"
 )
+
+pkg_setup() {
+	yarn_pkg_setup
+}
 
 src_unpack() {
 ewarn "Ebuild is in development"
 	unpack ${A}
 }
 
+emulate_bun() {
+	# Emulate bun because the baseline builds are all broken and produce
+	# illegal instruction.
+	mkdir -p "${HOME}/.bun/bin"
+cat <<EOF > "${HOME}/.bun/bin/bun"
+#!/bin/bash
+ARGS=( "$@" )
+COMMAND="${ARGS[0]}"
+ARGS=( "${ARGS[@]:1}" )
+if [[ "${COMMAND}" == "x" ]] ; then
+	npx "${ARGS[@]}"
+else
+	yarn "${ARGS[@]}"
+fi
+EOF
+	chmod +x "${HOME}/.bun/bin/bun" || die
+	export PATH="${HOME}/.bun/bin:${PATH}"
+	bun --version || die
+}
+
 src_prepare() {
 	cmake_src_prepare
+	yarn_hydrate
+	yarn add npx
+	emulate_bun
+	bun --version || die
+	bun x --version || die
 }
 
 get_bun_arch() {
@@ -135,7 +174,7 @@ eerror "ELIBC=${ELIBC} is not supported"
 
 check_rust() {
 	local rust_pv=$(rustc --version \
-		| cut -f 1 -d " ")
+		| cut -f 2 -d " ")
 	local installed_pkgs=()
 	local found=0
 	local s
@@ -154,7 +193,7 @@ check_rust() {
 	done
 	if (( ${found} == 0 )) ; then
 eerror
-eerror "You need to see \`eselect rust\` to switch to a llvm 18 compatible"
+eerror "You need to see \`eselect rust\` to switch to a llvm ${LLVM_COMPAT[@]} compatible"
 eerror "Rust build."
 eerror
 eerror "Actual rustc:  ${rust_pv}"
@@ -165,8 +204,12 @@ eerror
 }
 
 src_configure() {
+	yarn_hydrate
+	emulate_bun
 	check_rust
+	export CARGO_HOME="${ESYSROOT}/usr/bin"
 	local mycmakeargs=(
+		-DWEBKIT_LOCAL=ON
 		-DWEBKIT_PATH="/usr/share/bun-webkit/${LOCKFILE_VER}-${WEBKIT_PV%%.*}"
 	)
 	ABI="${arch}" \
@@ -174,6 +217,7 @@ src_configure() {
 }
 
 src_compile() {
+	yarn_hydrate
 	cmake_src_compile
 }
 
