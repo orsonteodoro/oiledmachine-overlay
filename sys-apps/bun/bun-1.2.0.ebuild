@@ -173,6 +173,7 @@ BDEPEND+="
 PATCHES=(
 	"${FILESDIR}/${PN}-1.2.0-llvm-path.patch"
 	"${FILESDIR}/${PN}-1.2.0-webkit-path.patch"
+	"${FILESDIR}/${PN}-1.2.0-symbolize-arch-targets.patch"
 )
 
 pkg_setup() {
@@ -182,14 +183,14 @@ pkg_setup() {
 src_unpack() {
 ewarn "Ebuild is in development"
 	unpack ${A}
-#	die
+	die
 }
 
 emulate_bun() {
 	local pm
 
 	# Emulate bun because the baseline builds are all broken and produce
-	# illegal instruction.
+	# illegal instruction.  The reason why because of vendor lock-in.
 	mkdir -p "${HOME}/.bun/bin"
 cat <<EOF > "${HOME}/.bun/bin/bun"
 #!/bin/bash
@@ -207,6 +208,179 @@ EOF
 	bun --version || die
 }
 
+gcc_mcpu() {
+	local ARCHES=(
+		"apple-m1"
+		"apple-m2"
+	)
+
+	# For AMD, see https://github.com/ziglang/zig/blob/master/lib/std/zig/system/x86.zig#L295
+	# For Intel, see https://github.com/ziglang/zig/blob/master/lib/std/zig/system/x86.zig#L77
+
+	local found=""
+	local x
+	for x in ${ARCHES[@]} ; do
+		if [[ "${CFLAGS}" =~ "-march=${x}"(" "|$) ]] ; then
+			found="${x}"
+			break
+		fi
+	done
+
+	if [[ -z "${found}" ]] ; then
+eerror
+eerror "You must set or change -mcpu to supported arch"
+eerror
+eerror "Unsupported -mcpu= detected"
+eerror "Supported arches:  ${ARCHES[@]}"
+eerror
+		die
+	fi
+}
+
+gcc_march() {
+	local ARCHES=(
+		"amdfam10"
+		"btver1"
+		"btver2"
+		"znver1"
+		"znver2"
+		"znver3"
+		"znver4"
+		"znver5"
+
+		"core2"
+		"penryn"
+		"nehalem"
+		"westmere"
+		"sandybridge"
+		"ivybridge"
+		"haswell"
+		"broadwell"
+		"skylake"
+		"rocketlake"
+		"cooperlake"
+		"cascadelake"
+		"skylake-avx512"
+		"cannonlake"
+		"icelake-client"
+		"icelake-server"
+		"tigerlake"
+		"alderlake"
+		"gracemont"
+		"raptorlake"
+		"meteorlake"
+		"arrowlake"
+		"arrowlake-s"
+		"lunarlake"
+		"pantherlake"
+		"graniterapids"
+		"graniterapids-d"
+		"emeraldrapids"
+		"sapphirerapids"
+		"bonnell"
+		"silvermont"
+		"goldmont"
+		"goldmont-plus"
+		"tremont"
+		"sierraforest"
+		"grandridge"
+		"clearwaterforest"
+		"knl"
+		"knm"
+	)
+
+	# For AMD, see https://github.com/ziglang/zig/blob/master/lib/std/zig/system/x86.zig#L295
+	# For Intel, see https://github.com/ziglang/zig/blob/master/lib/std/zig/system/x86.zig#L77
+
+	local found=""
+	local x
+	for x in ${ARCHES[@]} ; do
+		if [[ "${CFLAGS}" =~ "-march=${x}"(" "|$) ]] ; then
+			found="${x}"
+			break
+		fi
+	done
+
+	if [[ -z "${found}" ]] ; then
+eerror
+eerror "You must set or change -march to supported arch"
+eerror
+eerror "Unsupported -march= detected"
+eerror "Supported arches:  ${ARCHES[@]}"
+eerror
+		die
+	fi
+}
+
+gcc_mtune() {
+	local ARCHES=(
+		"apple-m1"
+		"apple-m2"
+
+		"cortex-a34"
+		"cortex-a35"
+		"cortex-a53"
+		"cortex-a55"
+		"cortex-a57"
+		"cortex-a65"
+		"cortex-a65ae"
+		"cortex-a72"
+		"cortex-a73"
+		"cortex-a75"
+		"cortex-a76"
+		"cortex-a77"
+		"cortex-a78"
+		"cortex-a78c"
+		"cortex-x1c"
+		"cortex-x1"
+		"neoverse-n1"
+
+		"thunderx2t99"
+
+		"thunderx"
+		"thunderxt81"
+		"thunderxt83"
+		"thunderxt88"
+		"thunderx2t99"
+
+		"a64fx"
+
+		"tsv110"
+
+		"carmel"
+
+		"emag"
+
+		"xgene1"
+
+		"kryo"
+		"falkor"
+		"saphira"
+	)
+
+	# For AMD, see https://github.com/ziglang/zig/blob/master/lib/std/zig/system/x86.zig#L295
+	# For Intel, see https://github.com/ziglang/zig/blob/master/lib/std/zig/system/x86.zig#L77
+
+	local found=""
+	local x
+	for x in ${ARCHES[@]} ; do
+		if [[ "${CFLAGS}" =~ "-mtune=${x}"(" "|$) ]] ; then
+			found="${x}"
+			break
+		fi
+	done
+
+	if [[ -z "${found}" ]] ; then
+eerror
+eerror "You must set or change -mtune to supported arch"
+eerror
+eerror "Unsupported -mtune= detected"
+eerror "Supported arches:  ${ARCHES[@]}"
+eerror
+		die
+	fi
+}
+
 src_prepare() {
 	dep_prepare_mv "${WORKDIR}/boringssl-${BORINGSSL_COMMIT}" "${S}/vendor/boringssl"
 	dep_prepare_mv "${WORKDIR}/brotli-${BROTLI_PV}" "${S}/vendor/brotli"
@@ -221,6 +395,45 @@ src_prepare() {
 	dep_prepare_mv "${WORKDIR}/zstd-${ZSTD_COMMIT}" "${S}/vendor/zstd"
 
 	cmake_src_prepare
+
+	local compiler_flags="-march=nehalem"
+	local zig_target_aarch64="cortex_a35"
+	local zig_target_x86="nehalem"
+	local zig_cpu_target="nehalem"
+
+	if [[ "${ARCH}" == "arm64-macos" ]] ; then
+		compiler_flags="-mcpu="$(gcc_mcpu)
+		zig_target_aarch64=$(gcc_mcpu)
+		zig_cpu_target=$(gcc_mcpu)
+	elif [[ "${ARCH}" == "arm64" ]] ; then
+		compiler_flags="-mtune="$(gcc_mtune)
+		zig_target_aarch64=$(gcc_mtune)
+		zig_cpu_target=$(gcc_mtune)
+	elif [[ "${ARCH}" == "amd64" ]] ; then
+		compiler_flags="-march="$(gcc_march)
+		zig_target_x86=$(gcc_march)
+		zig_cpu_target=$(gcc_march)
+	fi
+
+	zig_target_aarch64="${zig_target_aarch64/-/_}"
+	zig_target_x86="${zig_target_x86/-/_}"
+	zig_cpu_target="${zig_cpu_target/-/_}"
+
+einfo "compiler_flags: ${compiler_flags}"
+einfo "zig_target_aarch64: ${zig_target_aarch64}"
+einfo "zig_target_x86: ${zig_target_x86}"
+einfo "zig_cpu_target: ${zig_cpu_target}"
+
+	sed -i \
+		-e "s|@ZIG_TARGET_AARCH64@|${zig_target_aarch64}|g" \
+		-e "s|@ZIG_TARGET_X86@|${zig_target_x86}|g" \
+		-e "s|@COMPILER_FLAGS@|${compiler_flags}|g" \
+		-e "s|@ZIG_CPU_TARGET@|${zig_cpu_target}|g" \
+		"${S}/Makefile" \
+		"${S}/build.zig" \
+		"${S}/cmake/CompilerFlags.cmake" \
+		"${S}/cmake/targets/BuildBun.cmake" \
+		|| die
 
 	yarn_hydrate
 	_yarn_setup_offline_cache
