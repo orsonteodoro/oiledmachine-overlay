@@ -21,7 +21,7 @@ LOCKFILE_VER="1.2"
 USE_RUBY=" ruby31 ruby32"
 EGIT_COMMIT="9e3b60e4a6438d20ee6f8aa5bec6b71d2b7d213f"
 
-inherit cmake flag-o-matic python-single-r1 ruby-single
+inherit cmake flag-o-matic python-single-r1 ruby-single toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/WebKit-autobuild-${EGIT_COMMIT}"
@@ -160,6 +160,40 @@ eerror
 eerror "No suitable ruby interpreter found"
 eerror
 		die
+	fi
+
+	filter-flags '-ffast-math'
+	replace-flags '-Ofast' '-O3'
+	replace-flags '-O0' '-O1'
+
+	# CE - Code Execution
+	# DoS - Denial of Service
+	# DT - Data Tamperint
+	# ID - Information Disclosure
+
+	# Prevent the sys-devel/gcc[vanilla] unintended consequences.
+	if tc-enables-ssp ; then
+einfo "SSP is already enabled."
+	else
+	# As a precaution mitigate CE, DT, ID, DoS
+einfo "Adding SSP protection"
+		append-flags -fstack-protector
+	fi
+
+	if tc-enables-fortify-source ; then
+einfo "_FORITIFY_SOURCE is already enabled."
+	else
+	# A precaution to mitigate CE, DT, ID, DoS (CWE-121).
+einfo "Adding _FORITIFY_SOURCE=2"
+		append-flags -D_FORTIFY_SOURCE=2
+	fi
+
+	if tc-enables-pie ; then
+einfo "PIC is already enabled."
+	else
+	# ASLR (buffer overflow mitigation)
+einfo "Adding -fPIC"
+		append-flags -fPIC
 	fi
 
 	local mycmakeargs=(
