@@ -223,7 +223,7 @@ gcc_mcpu() {
 	local found=""
 	local x
 	for x in ${ARCHES[@]} ; do
-		if [[ "${CFLAGS}" =~ "-march=${x}"(" "|$) ]] ; then
+		if [[ "${CFLAGS}" =~ "-mcpu=${x}"(" "|$) ]] ; then
 			found="${x}"
 			break
 		fi
