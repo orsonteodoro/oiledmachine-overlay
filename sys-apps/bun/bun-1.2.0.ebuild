@@ -219,13 +219,13 @@ emulate_bun() {
 	mkdir -p "${HOME}/.bun/bin"
 cat <<EOF > "${HOME}/.bun/bin/bun"
 #!/bin/bash
-ARGS=( "$@" )
-COMMAND="${ARGS[0]}"
-ARGS=( "${ARGS[@]:1}" )
+ARGS=( "\$@" )
+COMMAND="\${ARGS[0]}"
+ARGS=( "\${ARGS[@]:1}" )
 if [[ "${COMMAND}" == "x" ]] ; then
-	npx "${ARGS[@]}"
+	npx "\${ARGS[@]}"
 else
-	${pm} "${ARGS[@]}"
+	${pm} "\${ARGS[@]}"
 fi
 EOF
 	chmod +x "${HOME}/.bun/bin/bun" || die
