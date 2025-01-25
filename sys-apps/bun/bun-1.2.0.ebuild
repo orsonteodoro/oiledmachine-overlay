@@ -260,11 +260,12 @@ src_prepare() {
 	if use npm ; then
 		npm_hydrate
 		_npm_setup_offline_cache
+		npm add npx --legacy-peer-deps
 	elif use yarn ; then
 		yarn_hydrate
 		_yarn_setup_offline_cache
+		npm add npx
 	fi
-	npm add npx
 	emulate_bun
 	bun --version || die
 	bun x --version || die
