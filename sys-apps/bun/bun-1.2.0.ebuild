@@ -10,6 +10,9 @@ EAPI=8
 BORINGSSL_COMMIT="914b005ef3ece44159dca0ffad74eb42a9f6679f"
 BROTLI_PV="1.1.0"
 C_ARES_COMMIT="b82840329a4081a1f1b125e6e6b760d4e1237b52"
+CPU_FLAGS_ARM=(
+	cpu_flags_arm_crc
+)
 LIBARCHIVE_COMMIT="898dc8319355b7e985f68a9819f182aaed61b53a"
 LIBDEFLATE_COMMIT="78051988f96dc8d8916310d8b24021f01bd9e102"
 LIBUV_COMMIT="da527d8d2a908b824def74382761566371439003"
@@ -124,6 +127,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="${LOCKFILE_VER}"
 IUSE+="
+${CPU_FLAGS_ARM[@]}
 doc
 ebuild_revision_1
 "
@@ -214,8 +218,7 @@ gcc_mcpu() {
 		"apple-m2"
 	)
 
-	# For AMD, see https://github.com/ziglang/zig/blob/master/lib/std/zig/system/x86.zig#L295
-	# For Intel, see https://github.com/ziglang/zig/blob/master/lib/std/zig/system/x86.zig#L77
+	# For ARM, see https://github.com/ziglang/zig/blob/master/lib/std/zig/system/arm.zig#L24
 
 	local found=""
 	local x
@@ -235,6 +238,55 @@ eerror "Supported arches:  ${ARCHES[@]}"
 eerror
 		die
 	fi
+	echo "${found}"
+}
+
+gcc_march_arm64() {
+	local ARCHES=(
+		"armv8-a"
+		"armv8.1-a"
+		"armv8.2-a"
+		"armv8.3-a"
+		"armv8.4-a"
+		"armv8.5-a"
+		"armv8.6-a"
+		"armv8.7-a"
+		"armv8.8-a"
+		"armv8.9-a"
+		"armv9-a"
+		"armv9.1-a"
+		"armv9.2-a"
+		"armv9.3-a"
+		"armv9.4-a"
+		"armv9.5-a"
+		"armv8-r"
+	)
+
+	# For ARM, see https://gcc.gnu.org/onlinedocs/gcc/AArch64-Options.html#index-march
+
+	local found=""
+	local x
+	for x in ${ARCHES[@]} ; do
+		if [[ "${CFLAGS}" =~ "-march=${x}"(" "|$) ]] ; then
+			found="${x}"
+			break
+		fi
+	done
+
+	if [[ -z "${found}" ]] ; then
+eerror
+eerror "You must set or change -march to supported arch"
+eerror
+eerror "Unsupported -march= detected"
+eerror "Supported arches:  ${ARCHES[@]}"
+eerror
+		die
+	fi
+
+	if use cpu_flags_arm_crc ; then
+		found+="+crc"
+	fi
+	echo "${found}"
 }
 
 gcc_march() {
@@ -310,6 +362,7 @@ eerror "Supported arches:  ${ARCHES[@]}"
 eerror
 		die
 	fi
+	echo "${found}"
 }
 
 gcc_mtune() {
@@ -358,8 +411,7 @@ gcc_mtune() {
 		"saphira"
 	)
 
-	# For AMD, see https://github.com/ziglang/zig/blob/master/lib/std/zig/system/x86.zig#L295
-	# For Intel, see https://github.com/ziglang/zig/blob/master/lib/std/zig/system/x86.zig#L77
+	# For ARM, see https://github.com/ziglang/zig/blob/master/lib/std/zig/system/arm.zig#L24
 
 	local found=""
 	local x
@@ -379,6 +431,7 @@ eerror "Supported arches:  ${ARCHES[@]}"
 eerror
 		die
 	fi
+	echo "${found}"
 }
 
 src_prepare() {
@@ -406,7 +459,7 @@ src_prepare() {
 		zig_target_aarch64=$(gcc_mcpu)
 		zig_cpu_target=$(gcc_mcpu)
 	elif [[ "${ARCH}" == "arm64" ]] ; then
-		compiler_flags="-mtune="$(gcc_mtune)
+		compiler_flags="-march="$(gcc_march_arm64)" -mtune="$(gcc_mtune)
 		zig_target_aarch64=$(gcc_mtune)
 		zig_cpu_target=$(gcc_mtune)
 	elif [[ "${ARCH}" == "amd64" ]] ; then
