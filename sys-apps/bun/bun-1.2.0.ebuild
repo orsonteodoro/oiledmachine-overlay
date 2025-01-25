@@ -173,7 +173,7 @@ src_prepare() {
 	bun x --version || die
 }
 
-get_bun_arch() {
+get_bun_abi() {
 	if [[ "${ELIBC}" == "gnu" ]] ; then
 		echo "gnu"
 	elif [[ "${ELIBC}" == "musl" ]] ; then
@@ -224,7 +224,8 @@ src_configure() {
 		-DWEBKIT_LOCAL=ON
 		-DWEBKIT_PATH="/usr/share/bun-webkit/${LOCKFILE_VER}-${WEBKIT_PV%%.*}"
 	)
-	ABI="${arch}" \
+	local abi=$(get_bun_abi)
+	ABI="${abi}" \
 	cmake_src_configure
 }
 
