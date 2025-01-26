@@ -5,7 +5,7 @@
 EAPI=8
 
 # See also
-# https://github.com/oven-sh/bun/blob/bun-v1.2.0/cmake/tools/SetupWebKit.cmake#L5
+# https://github.com/oven-sh/bun/blob/bun-v1.1.45/cmake/tools/SetupWebKit.cmake#L5
 
 BORINGSSL_COMMIT="914b005ef3ece44159dca0ffad74eb42a9f6679f"
 BROTLI_PV="1.1.0"
