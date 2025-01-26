@@ -21,7 +21,6 @@ CPU_FLAGS_X86=(
 )
 NODE_VERSION=20
 NPM_SLOT="3"
-NPM_AUDIT_FIX=0
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 )
@@ -34,6 +33,7 @@ NPM_INSTALL_ARGS=(
 NPM_UNINSTALL_ARGS=(
 	"--legacy-peer-deps"
 )
+NPM_AUDIT_FIX=0
 VIPS_PV="8.14.5"
 
 inherit dhms edo npm
@@ -161,6 +161,7 @@ npm_unpack_post() {
 			enpm add "drizzle-orm@0.38.2" ${NPM_INSTALL_ARGS[@]}
 		fi
 	fi
+	enpm uninstall "unplugin" ${NPM_INSTALL_ARGS[@]}
 	eapply "${FILESDIR}/${PN}-1.47.17-hardcoded-paths.patch"
 }
 
@@ -170,6 +171,7 @@ src_unpack() {
 		git-r3_fetch
 		git-r3_checkout
 	else
+		_npm_setup_offline_cache
 		npm_src_unpack
 	fi
 }

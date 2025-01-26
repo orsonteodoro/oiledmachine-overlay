@@ -257,8 +257,9 @@ _pnpm_setup_offline_cache() {
 	fi
 einfo "DEBUG:  Default cache folder:  ${HOME}/.local/share/pnpm/store"
 einfo "PNPM_CACHE_FOLDER:  ${PNPM_CACHE_FOLDER}"
+	rm -rf "${HOME}/.local/share/pnpm/store"
 	mkdir -p "${HOME}/.local/share/pnpm" || die
-	ln -s "${PNPM_CACHE_FOLDER}" "${HOME}/.local/share/pnpm/store"
+	ln -sf "${PNPM_CACHE_FOLDER}" "${HOME}/.local/share/pnpm/store"
 	addwrite "${EDISTDIR}"
 	addwrite "${PNPM_CACHE_FOLDER}"
 	mkdir -p "${PNPM_CACHE_FOLDER}"

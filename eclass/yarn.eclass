@@ -304,22 +304,22 @@ _yarn_setup_offline_cache() {
 	if [[ -z "${YARN_CACHE_FOLDER}" ]] ; then
 		export YARN_CACHE_FOLDER="${EDISTDIR}/yarn-download-cache-${YARN_SLOT}/${CATEGORY}/${P}"
 	fi
-einfo "DEBUG:  Default cache folder:  ${HOME}/.yarn/berry/cache/"
-einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
 	if [[ "${YARN_SLOT}" == "1" ]] ; then
-		mkdir -p "${HOME}/.yarn/berry" || die
 		addwrite "${EDISTDIR}"
 		addwrite "${YARN_CACHE_FOLDER}"
 		mkdir -p "${YARN_CACHE_FOLDER}"
 		yarn config set cacheFolder "${YARN_CACHE_FOLDER}" || die
 	else
+einfo "DEBUG:  Default cache folder:  ${HOME}/.yarn/berry/cache/"
+		rm -rf "${HOME}/.yarn/berry/cache"
 		mkdir -p "${HOME}/.yarn/berry" || die
-		ln -s "${YARN_CACHE_FOLDER}" "${HOME}/.yarn/berry/cache"
+		ln -sf "${YARN_CACHE_FOLDER}" "${HOME}/.yarn/berry/cache"
 		addwrite "${EDISTDIR}"
 		addwrite "${YARN_CACHE_FOLDER}"
 		mkdir -p "${YARN_CACHE_FOLDER}"
 		yarn config set cacheFolder "${YARN_CACHE_FOLDER}" || die
 	fi
+einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
 }
 
 # @FUNCTION: _yarn_src_unpack_default_ebuild
