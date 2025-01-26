@@ -154,6 +154,7 @@ npm_unpack_post() {
 			-e "s|bun run|npm run|g" \
 			"${S}/package.json" \
 			|| die
+		enpm uninstall "unplugin" ${NPM_INSTALL_ARGS[@]}
 	else
 		if use postgres ; then
 			enpm add "sharp@0.33.5" ${NPM_INSTALL_ARGS[@]}
@@ -161,7 +162,6 @@ npm_unpack_post() {
 			enpm add "drizzle-orm@0.38.2" ${NPM_INSTALL_ARGS[@]}
 		fi
 	fi
-	enpm uninstall "unplugin" ${NPM_INSTALL_ARGS[@]}
 	eapply "${FILESDIR}/${PN}-1.47.17-hardcoded-paths.patch"
 }
 
@@ -173,6 +173,7 @@ src_unpack() {
 	else
 		_npm_setup_offline_cache
 		npm_src_unpack
+		enpm uninstall "unplugin" ${NPM_INSTALL_ARGS[@]}
 	fi
 }
 
