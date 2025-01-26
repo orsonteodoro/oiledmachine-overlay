@@ -126,7 +126,7 @@ LICENSE="
 # LGPL-2+ - tinycc/lib/bcheck.c
 # MIT - tinycc
 RESTRICT="mirror"
-SLOT="${LOCKFILE_VER}"
+SLOT="${LOCKFILE_VER}-${NODE_VERSION}"
 IUSE+="
 ${CPU_FLAGS_ARM[@]}
 doc
@@ -588,7 +588,7 @@ src_compile() {
 src_install() {
 	local d=$(get_dir)
 	pushd "${d}" >/dev/null 2>&1 || die
-		exeinto "/usr/bin"
+		exeinto "/opt/bun/${SLOT}"
 		doexe "bun"
 	popd >/dev/null 2>&1 || die
 	pushd "${WORKDIR}/bun-bun-v${PV}" >/dev/null 2>&1 || die
