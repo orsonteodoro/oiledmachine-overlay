@@ -1,0 +1,15 @@
+#!/bin/bash
+ARGS=( "$@" )
+COMMAND="${ARGS[0]}"
+ARGS=( "${ARGS[@]:1}" )
+if [[ "${COMMAND}" == "x" ]] ; then
+        npx "${ARGS[@]}"
+elif [[ "${COMMAND}" == "run" ]] ; then
+        if [[ -e "${ARGS[0]}" && "${ARGS[0]}" =~ ".ts"$ ]] ; then
+                npx tsx "${ARGS[@]}"
+        else
+                npx "${ARGS[@]}"
+        fi
+else
+        yarn "${ARGS[@]}"
+fi

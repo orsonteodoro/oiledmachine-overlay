@@ -76,6 +76,7 @@ _yarn_set_globals() {
 	NPM_NETWORK_RETRY_MAXTIMEOUT=${NPM_NETWORK_RETRY_MAXTIMEOUT:-"300000"}
 	NPM_NETWORK_MAX_SOCKETS=${NPM_NETWORK_MAX_SOCKETS:-"1"}
 
+	export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 }
 _yarn_set_globals
 unset -f _yarn_set_globals

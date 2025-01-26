@@ -10,6 +10,7 @@ EAPI=8
 BORINGSSL_COMMIT="914b005ef3ece44159dca0ffad74eb42a9f6679f"
 BROTLI_PV="1.1.0"
 C_ARES_COMMIT="b82840329a4081a1f1b125e6e6b760d4e1237b52"
+CMAKE_MAKEFILE_GENERATOR="emake"
 CPU_FLAGS_ARM=(
 	cpu_flags_arm_crc
 )
@@ -197,17 +198,10 @@ emulate_bun() {
 	# Emulate bun because the baseline builds are all broken and produce
 	# illegal instruction.  The reason why because of vendor lock-in.
 	mkdir -p "${HOME}/.bun/bin"
-cat <<EOF > "${HOME}/.bun/bin/bun"
-#!/bin/bash
-ARGS=( "\$@" )
-COMMAND="\${ARGS[0]}"
-ARGS=( "\${ARGS[@]:1}" )
-if [[ "\${COMMAND}" == "x" ]] ; then
-	npx "\${ARGS[@]}"
-else
-	yarn "\${ARGS[@]}"
-fi
-EOF
+	cp -a \
+		"${FILESDIR}/bun-stage0" \
+		"${HOME}/.bun/bin/bun" \
+		|| die
 	chmod +x "${HOME}/.bun/bin/bun" || die
 	export PATH="${HOME}/.bun/bin:${PATH}"
 	bun --version || die
@@ -506,6 +500,7 @@ eerror "ARCH=${ARCH} ABI=${ABI} is not supported."
 	yarn_hydrate
 	_yarn_setup_offline_cache
 	eyarn add npx
+	eyarn add tsx
 	emulate_bun
 	bun --version || die
 	bun x --version || die
@@ -558,14 +553,23 @@ src_configure() {
 	emulate_bun
 	check_rust
 	export MAKEOPTS="-j1"
+
+	export CC="${CHOST}-clang-18"
+	export CXX="${CHOST}-clang++-18"
+	export CPP="${CHOST}-clang-18 -E"
+	append-flags -fuse-ld=lld
+	strip-unsupported-flags
+
 	export CARGO_HOME="${ESYSROOT}/usr/bin"
 	local mycmakeargs=(
+		-DENABLE_LLVM=ON
 		-DOFFLINE=ON
 		-DNODEJS_HEADERS_PATH="${ESYSROOT}/usr"
 		-DUSE_SYSTEM_ICU=ON
 		-DWEBKIT_LOCAL=ON
 		-DWEBKIT_PATH="/usr/share/bun-webkit/${LOCKFILE_VER}-${WEBKIT_PV%%.*}"
 	)
+
 	local abi=$(get_bun_abi)
 	ABI="${abi}" \
 	cmake_src_configure

@@ -45,6 +45,7 @@ _npm_set_globals() {
 	NPM_NETWORK_RETRY_MINTIMEOUT=${NPM_NETWORK_RETRY_MINTIMEOUT:-100000}
 	NPM_SLOT="${NPM_SLOT:-3}"
 	NPM_TRIES=${NPM_TRIES:-10}
+	export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 }
 _npm_set_globals
 unset -f _npm_set_globals
