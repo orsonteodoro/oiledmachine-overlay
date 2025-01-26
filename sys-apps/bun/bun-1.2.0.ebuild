@@ -499,11 +499,12 @@ eerror "ARCH=${ARCH} ABI=${ABI} is not supported."
 
 	yarn_hydrate
 	_yarn_setup_offline_cache
-	eyarn add npx
-	eyarn add tsx
+	eyarn add npx --ignore-workspace-root-check
+	eyarn add tsx -D --ignore-workspace-root-check
 	emulate_bun
 	bun --version || die
-	bun x --version || die
+	[[ -e "node_modules/.bin/npx" ]] || die
+	[[ -e "node_modules/.bin/tsx" ]] || die
 }
 
 get_bun_abi() {
