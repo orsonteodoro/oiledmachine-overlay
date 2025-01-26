@@ -55,7 +55,7 @@ LICENSE="
 # MIT - Source/bmalloc/bmalloc/uv_get_constrained_memory.cpp
 # || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) - Source/JavaScriptCore/runtime/JSDateMath.h
 RESTRICT="binchecks mirror strip test"
-SLOT="${LOCKFILE_VER}-${WEBKIT_PV%%.*}"
+SLOT="${WEBKIT_PV%%.*}"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ebuild_revision_4
@@ -196,7 +196,7 @@ einfo "Adding -fPIC"
 
 	local mycmakeargs=(
 		${ruby_interpreter}
-		-DCMAKE_INSTALL_PREFIX="/usr/share/${PN}/${LOCKFILE_VER}-${WEBKIT_PV%%.*}"
+		-DCMAKE_INSTALL_PREFIX="/usr/share/${PN}/${WEBKIT_PV%%.*}"
 		-DPORT="JSCOnly"
 		-DENABLE_STATIC_JSC=ON
 		-DENABLE_BUN_SKIP_FAILING_ASSERTIONS=ON
