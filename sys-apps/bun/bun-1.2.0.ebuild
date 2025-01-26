@@ -21,7 +21,7 @@ LOCKFILE_VER="1.2"
 LOLHTML_COMMIT="4f8becea13a0021c8b71abd2dcc5899384973b66"
 LS_HPACK_COMMIT="32e96f10593c7cb8553cd8c9c12721100ae9e924"
 MIMALLOC_COMMIT="82b2c2277a4d570187c07b376557dc5bde81d848"
-NODE_VERSION="20"
+NODE_VERSION="22"
 PICOHTTPPARSER_COMMIT="066d2b1e9ab820703db0837a7255d92d30f0c9f5"
 RUST_COMPAT=(
 	"1.81.0" # llvm 18
@@ -178,6 +178,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.2.0-llvm-path.patch"
 	"${FILESDIR}/${PN}-1.2.0-webkit-path.patch"
 	"${FILESDIR}/${PN}-1.2.0-symbolize-arch-targets.patch"
+	"${FILESDIR}/${PN}-1.2.0-offline-install-changes.patch"
 )
 
 pkg_setup() {
@@ -187,6 +188,7 @@ pkg_setup() {
 src_unpack() {
 ewarn "Ebuild is in development"
 	unpack ${A}
+#die
 }
 
 emulate_bun() {
@@ -555,8 +557,11 @@ src_configure() {
 	yarn_hydrate
 	emulate_bun
 	check_rust
+	export MAKEOPTS="-j1"
 	export CARGO_HOME="${ESYSROOT}/usr/bin"
 	local mycmakeargs=(
+		-DOFFLINE=ON
+		-DNODEJS_HEADERS_PATH="${ESYSROOT}/usr"
 		-DUSE_SYSTEM_ICU=ON
 		-DWEBKIT_LOCAL=ON
 		-DWEBKIT_PATH="/usr/share/bun-webkit/${LOCKFILE_VER}-${WEBKIT_PV%%.*}"

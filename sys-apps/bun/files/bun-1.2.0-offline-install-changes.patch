@@ -1,0 +1,167 @@
+diff '--color=auto' -urp bun-bun-v1.2.0.orig/CMakeLists.txt bun-bun-v1.2.0/CMakeLists.txt
+--- bun-bun-v1.2.0.orig/CMakeLists.txt	2025-01-21 22:09:23.000000000 -0800
++++ bun-bun-v1.2.0/CMakeLists.txt	2025-01-25 18:14:04.590661022 -0800
+@@ -1,5 +1,6 @@
+ cmake_minimum_required(VERSION 3.24)
+ message(STATUS "Configuring Bun")
++option(OFFLINE "Offline install?" ON)
+ 
+ list(APPEND CMAKE_MODULE_PATH
+   ${CMAKE_SOURCE_DIR}/cmake
+diff '--color=auto' -urp bun-bun-v1.2.0.orig/cmake/Globals.cmake bun-bun-v1.2.0/cmake/Globals.cmake
+--- bun-bun-v1.2.0.orig/cmake/Globals.cmake	2025-01-21 22:09:23.000000000 -0800
++++ bun-bun-v1.2.0/cmake/Globals.cmake	2025-01-25 18:14:04.610660883 -0800
+@@ -643,6 +643,7 @@ function(register_repository)
+         -DGIT_COMMIT=${GIT_COMMIT}
+         -DGIT_TAG=${GIT_TAG}
+         -DGIT_BRANCH=${GIT_BRANCH}
++        -DOFFLINE=${OFFLINE}
+         -P ${CWD}/cmake/scripts/GitClone.cmake
+     OUTPUTS
+       ${GIT_PATH}
+diff '--color=auto' -urp bun-bun-v1.2.0.orig/cmake/scripts/DownloadUrl.cmake bun-bun-v1.2.0/cmake/scripts/DownloadUrl.cmake
+--- bun-bun-v1.2.0.orig/cmake/scripts/DownloadUrl.cmake	2025-01-21 22:09:23.000000000 -0800
++++ bun-bun-v1.2.0/cmake/scripts/DownloadUrl.cmake	2025-01-25 18:14:04.618660826 -0800
+@@ -1,3 +1,6 @@
++if(OFFLINE)
++  return()
++endif()
+ get_filename_component(SCRIPT_NAME ${CMAKE_CURRENT_LIST_FILE} NAME)
+ message(STATUS "Running script: ${SCRIPT_NAME}")
+ 
+diff '--color=auto' -urp bun-bun-v1.2.0.orig/cmake/scripts/DownloadZig.cmake bun-bun-v1.2.0/cmake/scripts/DownloadZig.cmake
+--- bun-bun-v1.2.0.orig/cmake/scripts/DownloadZig.cmake	2025-01-21 22:09:23.000000000 -0800
++++ bun-bun-v1.2.0/cmake/scripts/DownloadZig.cmake	2025-01-25 18:14:04.618660826 -0800
+@@ -1,3 +1,6 @@
++if(OFFLINE)
++  return()
++endif()
+ get_filename_component(SCRIPT_NAME ${CMAKE_CURRENT_LIST_FILE} NAME)
+ message(STATUS "Running script: ${SCRIPT_NAME}")
+ 
+@@ -45,6 +48,7 @@ execute_process(
+     ${CMAKE_COMMAND}
+       -DDOWNLOAD_URL=${ZIG_DOWNLOAD_URL}
+       -DDOWNLOAD_PATH=${ZIG_PATH}
++      -DOFFLINE=${OFFLINE}
+       -P ${CMAKE_CURRENT_LIST_DIR}/DownloadUrl.cmake
+   ERROR_STRIP_TRAILING_WHITESPACE
+   ERROR_VARIABLE
+@@ -53,7 +57,7 @@ execute_process(
+     ZIG_DOWNLOAD_RESULT
+ )
+ 
+-if(NOT ZIG_DOWNLOAD_RESULT EQUAL 0)
++if(NOT ZIG_DOWNLOAD_RESULT EQUAL 0 AND NOT OFFLINE)
+   message(FATAL_ERROR "Download failed: ${ZIG_DOWNLOAD_ERROR}")
+ endif()
+ 
+@@ -75,6 +79,7 @@ execute_process(
+       -DGIT_PATH=${ZIG_REPOSITORY_PATH}
+       -DGIT_REPOSITORY=oven-sh/zig
+       -DGIT_COMMIT=${ZIG_COMMIT}
++      -DOFFLINE=${OFFLINE}
+       -P ${CMAKE_CURRENT_LIST_DIR}/GitClone.cmake
+   ERROR_STRIP_TRAILING_WHITESPACE
+   ERROR_VARIABLE
+@@ -83,7 +88,7 @@ execute_process(
+     ZIG_REPOSITORY_RESULT
+ )
+ 
+-if(NOT ZIG_REPOSITORY_RESULT EQUAL 0)
++if(NOT ZIG_REPOSITORY_RESULT EQUAL 0 AND NOT OFFLINE)
+   message(FATAL_ERROR "Download failed: ${ZIG_REPOSITORY_ERROR}")
+ endif()
+ 
+diff '--color=auto' -urp bun-bun-v1.2.0.orig/cmake/scripts/GitClone.cmake bun-bun-v1.2.0/cmake/scripts/GitClone.cmake
+--- bun-bun-v1.2.0.orig/cmake/scripts/GitClone.cmake	2025-01-21 22:09:23.000000000 -0800
++++ bun-bun-v1.2.0/cmake/scripts/GitClone.cmake	2025-01-25 18:14:04.618660826 -0800
+@@ -1,3 +1,6 @@
++if(OFFLINE)
++  return()
++endif()
+ get_filename_component(SCRIPT_NAME ${CMAKE_CURRENT_LIST_FILE} NAME)
+ message(STATUS "Running script: ${SCRIPT_NAME}")
+ 
+@@ -22,13 +25,18 @@ endif()
+ 
+ set(GIT_DOWNLOAD_URL https://github.com/${GIT_REPOSITORY}/archive/${GIT_REF}.tar.gz)
+ 
+-message(STATUS "Cloning ${GIT_REPOSITORY} at ${GIT_REF}...")
++if(NOT OFFLINE)
++  message(STATUS "Cloning ${GIT_REPOSITORY} at ${GIT_REF}...")
++else()
++  message(STATUS "Skipped cloning ${GIT_REPOSITORY} at ${GIT_REF}...")
++endif()
+ execute_process(
+   COMMAND
+     ${CMAKE_COMMAND}
+       -DDOWNLOAD_URL=${GIT_DOWNLOAD_URL}
+       -DDOWNLOAD_PATH=${GIT_PATH}
+       -DDOWNLOAD_FILTERS=${GIT_FILTERS}
++      -DOFFLINE=${OFFLINE}
+       -P ${CMAKE_CURRENT_LIST_DIR}/DownloadUrl.cmake
+   ERROR_STRIP_TRAILING_WHITESPACE
+   ERROR_VARIABLE
+@@ -37,7 +45,7 @@ execute_process(
+     GIT_RESULT
+ )
+ 
+-if(NOT GIT_RESULT EQUAL 0)
++if(NOT GIT_RESULT EQUAL 0 AND NOT OFFLINE)
+   message(FATAL_ERROR "Clone failed: ${GIT_ERROR}")
+ endif()
+ 
+diff '--color=auto' -urp bun-bun-v1.2.0.orig/cmake/targets/BuildBun.cmake bun-bun-v1.2.0/cmake/targets/BuildBun.cmake
+--- bun-bun-v1.2.0.orig/cmake/targets/BuildBun.cmake	2025-01-21 22:09:23.000000000 -0800
++++ bun-bun-v1.2.0/cmake/targets/BuildBun.cmake	2025-01-25 18:15:12.574188517 -0800
+@@ -615,21 +615,23 @@ register_repository(
+     picohttpparser.c
+ )
+ 
+-set(NODEJS_HEADERS_PATH ${VENDOR_PATH}/nodejs)
+-
+-register_command(
+-  TARGET
+-    bun-node-headers
+-  COMMENT
+-    "Download node ${NODEJS_VERSION} headers"
+-  COMMAND
+-    ${CMAKE_COMMAND}
+-      -DDOWNLOAD_PATH=${NODEJS_HEADERS_PATH}
+-      -DDOWNLOAD_URL=https://nodejs.org/dist/v${NODEJS_VERSION}/node-v${NODEJS_VERSION}-headers.tar.gz
+-      -P ${CWD}/cmake/scripts/DownloadUrl.cmake
+-  OUTPUTS
+-    ${NODEJS_HEADERS_PATH}/include/node/node_version.h
+-)
++option(NODEJS_HEADERS_PATH "Base path for Node.js containing include folder" "${VENDOR_PATH}/nodejs")
++if(NOT OFFLINE)
++  register_command(
++    TARGET
++      bun-node-headers
++    COMMENT
++      "Download node ${NODEJS_VERSION} headers"
++    COMMAND
++      ${CMAKE_COMMAND}
++        -DDOWNLOAD_PATH=${NODEJS_HEADERS_PATH}
++        -DDOWNLOAD_URL=https://nodejs.org/dist/v${NODEJS_VERSION}/node-v${NODEJS_VERSION}-headers.tar.gz
++        -DOFFLINE=${OFFLINE}
++        -P ${CWD}/cmake/scripts/DownloadUrl.cmake
++    OUTPUTS
++      ${NODEJS_HEADERS_PATH}/include/node/node_version.h
++  )
++endif()
+ 
+ list(APPEND BUN_CPP_SOURCES
+   ${BUN_C_SOURCES}
+diff '--color=auto' -urp bun-bun-v1.2.0.orig/cmake/tools/SetupZig.cmake bun-bun-v1.2.0/cmake/tools/SetupZig.cmake
+--- bun-bun-v1.2.0.orig/cmake/tools/SetupZig.cmake	2025-01-21 22:09:23.000000000 -0800
++++ bun-bun-v1.2.0/cmake/tools/SetupZig.cmake	2025-01-25 18:14:04.630660744 -0800
+@@ -79,6 +79,7 @@ register_command(
+       -DZIG_PATH=${ZIG_PATH}
+       -DZIG_VERSION=${ZIG_VERSION}
+       -DZIG_COMMIT=${ZIG_COMMIT}
++      -DOFFLINE=${OFFLINE}
+       -P ${CWD}/cmake/scripts/DownloadZig.cmake
+   SOURCES
+     ${CWD}/cmake/scripts/DownloadZig.cmake
