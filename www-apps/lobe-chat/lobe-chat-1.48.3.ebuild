@@ -16,11 +16,14 @@ EAPI=8
 # SIGILL is associated with illegal instruction which is usually caused by
 # unsupported CPU instruction in older arches.
 
+# @serwist/next needs pnpm workspaces
+
 CPU_FLAGS_X86=(
 	cpu_flags_x86_sse4_2
 )
 NODE_VERSION=20
 NPM_SLOT="3"
+PNPM_SLOT="9"
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 )
@@ -33,10 +36,10 @@ NPM_INSTALL_ARGS=(
 NPM_UNINSTALL_ARGS=(
 	"--legacy-peer-deps"
 )
-NPM_AUDIT_FIX=0
+PNPM_AUDIT_FIX=0
 VIPS_PV="8.14.5"
 
-inherit dhms edo npm
+inherit dhms edo npm pnpm
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -115,6 +118,7 @@ VIPS_BDEPEND="
 "
 BDEPEND+="
 	${VIPS_BDEPEND}
+	>=sys-apps/pnpm-9.14.4:${PNPM_SLOT}
 	>=sys-apps/npm-10.8.2:${NPM_SLOT}
 	net-libs/nodejs:${NODE_VERSION}[corepack,npm]
 "
@@ -142,24 +146,25 @@ pkg_setup() {
 
 	# Prevent redownloads because they unusually bump more than once a day.
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	export NPM_CACHE_FOLDER="${EDISTDIR}/npm-download-cache-${NPM_SLOT}/${CATEGORY}/${PN}-${PV%.*}"
+	export PNPM_CACHE_FOLDER="${EDISTDIR}/pnpm-download-cache-${PNPM_SLOT}/${CATEGORY}/${PN}-${PV%.*}"
 
-	npm_pkg_setup
+	pnpm_pkg_setup
 einfo "PATH:  ${PATH}"
 }
 
-npm_unpack_post() {
-	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+pnpm_unpack_post() {
+	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		sed -i \
-			-e "s|bun run|npm run|g" \
+			-e "s|npm run|pnpm run|g" \
+			-e "s|bun run|pnpm run|g" \
 			"${S}/package.json" \
 			|| die
-		enpm uninstall "unplugin" ${NPM_INSTALL_ARGS[@]}
+		epnpm uninstall "unplugin" ${PNPM_INSTALL_ARGS[@]}
 	else
 		if use postgres ; then
-			enpm add "sharp@0.33.5" ${NPM_INSTALL_ARGS[@]}
-			enpm add "pg@8.13.1" ${NPM_INSTALL_ARGS[@]}
-			enpm add "drizzle-orm@0.38.2" ${NPM_INSTALL_ARGS[@]}
+			epnpm add "sharp@0.33.5" ${PNPM_INSTALL_ARGS[@]}
+			epnpm add "pg@8.13.1" ${PNPM_INSTALL_ARGS[@]}
+			epnpm add "drizzle-orm@0.38.2" ${PNPM_INSTALL_ARGS[@]}
 		fi
 	fi
 	eapply "${FILESDIR}/${PN}-1.47.17-hardcoded-paths.patch"
@@ -172,8 +177,9 @@ src_unpack() {
 		git-r3_checkout
 	else
 		_npm_setup_offline_cache
-		npm_src_unpack
-		enpm uninstall "unplugin" ${NPM_INSTALL_ARGS[@]}
+		_pnpm_setup_offline_cache
+		pnpm_src_unpack
+		epnpm uninstall "unplugin" ${PNPM_INSTALL_ARGS[@]}
 	fi
 }
 
@@ -205,7 +211,7 @@ setup_env() {
 }
 
 src_configure() {
-	enpm --version
+	epnpm --version
 }
 
 src_compile() {
@@ -223,14 +229,14 @@ ewarn "Removing ${S}/.next"
 
 	export NODE_OPTIONS+=" --use-openssl-ca"
 
-	npm_hydrate
+	pnpm_hydrate
 einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 # China users need to fork ebuild.  See Dockerfile for China contexts.
 
 	setup_env
 
 	# This one looks broken because the .next/standalone folder is missing.
-	#npm run "build:docker"
+	#pnpm run "build:docker"
 
 	export NODE_ENV=production
 	export DOCKER=true
@@ -239,9 +245,9 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 	tsc next.config.ts --module commonjs --outDir . || die
 
 	edo next build --debug
-	edo npm run build-sitemap
-	edo npm run build-sitemap
-	edo npm run build-migrate-db
+	edo pnpm run build-sitemap
+	edo pnpm run build-sitemap
+	edo pnpm run build-migrate-db
 }
 
 # Slow
