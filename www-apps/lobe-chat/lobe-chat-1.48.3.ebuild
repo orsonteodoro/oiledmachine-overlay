@@ -140,20 +140,6 @@ einfo "Using vendored vips for sharp"
 	fi
 }
 
-check_tsc() {
-	[[ -e "${ESYSROOT}/usr/bin/tsc" ]] || return
-	# Fix:
-	# error TS2304: Cannot find name 'HeadersIterator'
-	# There is a bug where it bypasses the node_modules version.
-	local tsc_pv=$("${ESYSROOT}/usr/bin/tsc" --version | cut -f 2 -d " ")
-	if ver_test "${tsc_pv%.*}" -ne "5.7" ; then
-eerror "You must \`emerge =dev-lang/typescript-5.7*\` to continue."
-eerror "Switch \`eselect typescript\` to == 5.7.x"
-		die
-	fi
-einfo "tsc version:  ${tsc_pv}"
-}
-
 pkg_setup() {
 	dhms_start
 	# If a "next" package is found in package.json, this should be added.
@@ -249,7 +235,6 @@ setup_env() {
 src_configure() {
 	# Checks to see if toolchain is working or meets requirements
 	epnpm --version
-	check_tsc
 }
 
 src_compile() {
@@ -272,7 +257,6 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 # China users need to fork ebuild.  See Dockerfile for China contexts.
 
 	setup_env
-	check_tsc
 
 	# This one looks broken because the .next/standalone folder is missing.
 	#pnpm run "build:docker"
