@@ -146,7 +146,7 @@ check_tsc() {
 	# error TS2304: Cannot find name 'HeadersIterator'
 	# There is a bug where it bypasses the node_modules version.
 	local tsc_pv=$("${ESYSROOT}/usr/bin/tsc" --version | cut -f 2 -d " ")
-	if ver_test "${tsc_pv}" -ne "5.7" ; then
+	if ver_test "${tsc_pv%.*}" -ne "5.7" ; then
 eerror "You must \`emerge =dev-lang/typescript-5.7*\` to continue."
 eerror "Switch \`eselect typescript\` to == 5.7.x"
 		die
