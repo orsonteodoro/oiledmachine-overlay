@@ -322,6 +322,7 @@ pnpm_src_unpack() {
 	if declare -f pnpm_audit_post >/dev/null 2>&1 ; then
 		pnpm_audit_post
 	fi
+	grep -e "ERR_PNPM_FETCH_404" "${T}/build.log" && die "Detected error.  Check pnpm add"
 }
 
 # @FUNCTION: pnpm_src_compile

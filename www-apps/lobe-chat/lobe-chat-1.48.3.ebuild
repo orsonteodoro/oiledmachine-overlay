@@ -37,6 +37,7 @@ NPM_UNINSTALL_ARGS=(
 	"--legacy-peer-deps"
 )
 PNPM_AUDIT_FIX=0
+SERWIST_CHOICE="remove" # update or remove
 VIPS_PV="8.14.5"
 
 inherit dhms edo npm pnpm
@@ -55,6 +56,8 @@ else
 	SRC_URI="
 https://github.com/lobehub/lobe-chat/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
+https://github.com/lobehub/lobe-chat/commit/7e3aa09510e733ce7c53c2e961dca97dbc06a91e.patch
+	-> lobe-chat-commit-7e3aa09.patch
 	"
 fi
 
@@ -137,6 +140,20 @@ einfo "Using vendored vips for sharp"
 	fi
 }
 
+check_tsc() {
+	[[ -e "${ESYSROOT}/usr/bin/tsc" ]] || return
+	# Fix:
+	# error TS2304: Cannot find name 'HeadersIterator'
+	# There is a bug where it bypasses the node_modules version.
+	local tsc_pv=$("${ESYSROOT}/usr/bin/tsc" --version | cut -f 2 -d " ")
+	if ver_test "${tsc_pv}" -ne "5.7" ; then
+eerror "You must \`emerge =dev-lang/typescript-5.7*\` to continue."
+eerror "Switch \`eselect typescript\` to == 5.7.x"
+		die
+	fi
+einfo "tsc version:  ${tsc_pv}"
+}
+
 pkg_setup() {
 	dhms_start
 	# If a "next" package is found in package.json, this should be added.
@@ -148,6 +165,7 @@ pkg_setup() {
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	export PNPM_CACHE_FOLDER="${EDISTDIR}/pnpm-download-cache-${PNPM_SLOT}/${CATEGORY}/${PN}-${PV%.*}"
 
+	npm_pkg_setup
 	pnpm_pkg_setup
 einfo "PATH:  ${PATH}"
 }
@@ -155,11 +173,11 @@ einfo "PATH:  ${PATH}"
 pnpm_unpack_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		sed -i \
-			-e "s|npm run|pnpm run|g" \
-			-e "s|bun run|pnpm run|g" \
+			-e "s|bun run|npm run|g" \
 			"${S}/package.json" \
 			|| die
 		epnpm uninstall "unplugin" ${PNPM_INSTALL_ARGS[@]}
+		grep -e "ERR_PNPM_FETCH_404" "${T}/build.log" && die "Detected error.  Check pnpm add"
 	else
 		if use postgres ; then
 			epnpm add "sharp@0.33.5" ${PNPM_INSTALL_ARGS[@]}
@@ -168,6 +186,24 @@ pnpm_unpack_post() {
 		fi
 	fi
 	eapply "${FILESDIR}/${PN}-1.47.17-hardcoded-paths.patch"
+
+	if [[ "${SERWIST_CHOICE}" == "remove" ]] ; then
+		# Remove serwist, missing stable @serwist/utils
+		eapply "${FILESDIR}/${PN}-1.48.3-drop-serwist.patch"
+		if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+			epnpm uninstall "@serwist/next"
+			epnpm uninstall "serwist"
+			epnpm add "@ducanh2912/next-pwa@^10.2.8"
+		fi
+	else
+		epnpm add "@serwist/utils@9.0.0-preview.26"
+		epnpm add "@serwist/next@9.0.0-preview.26"
+		epnpm add "serwist@9.0.0-preview.26"
+	fi
+}
+
+pnpm_install_post() {
+	epnpm uninstall "unplugin" ${PNPM_INSTALL_ARGS[@]}
 }
 
 src_unpack() {
@@ -211,7 +247,9 @@ setup_env() {
 }
 
 src_configure() {
+	# Checks to see if toolchain is working or meets requirements
 	epnpm --version
+	check_tsc
 }
 
 src_compile() {
@@ -234,6 +272,7 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 # China users need to fork ebuild.  See Dockerfile for China contexts.
 
 	setup_env
+	check_tsc
 
 	# This one looks broken because the .next/standalone folder is missing.
 	#pnpm run "build:docker"
@@ -248,6 +287,7 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 	edo pnpm run build-sitemap
 	edo pnpm run build-sitemap
 	edo pnpm run build-migrate-db
+	grep -q -e "Build failed because of webpack errors" "${T}/build.log" && die "Detected error"
 }
 
 # Slow
