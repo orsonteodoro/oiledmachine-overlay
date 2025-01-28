@@ -162,7 +162,7 @@ pkg_setup() {
 einfo "PATH:  ${PATH}"
 	local node_pv=$(node --version \
 		| sed -e "s|v||g")
-	if ver_test "${node_pv%.*}" -ne "${_NODE_VERSION}" ; then
+	if ver_test "${node_pv%.*}" -ne "${_NODE_VERSION%.*}" ; then
 eerror
 eerror "You must switch to node ${_NODE_VERSION%.*}.x to build/use ${PN}."
 eerror "See \`eselect nodejs\` for details."
