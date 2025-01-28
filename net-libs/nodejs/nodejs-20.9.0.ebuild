@@ -69,7 +69,7 @@ COREPACK_PV="0.29.3"
 LTO_TYPE="none" # Global var
 MULTIPLEXER_VER="11"
 NGHTTP2_PV="1.60.0"
-NPM_PV="10.8.2" # See https://github.com/nodejs/node/blob/v20.18.0/deps/npm/package.json
+NPM_PV="10.8.2" # See https://github.com/nodejs/node/blob/v20.9.0/deps/npm/package.json
 PYTHON_COMPAT=( "python3_"{8..11} ) # See configure
 PYTHON_REQ_USE="threads(+)"
 TPGO_CONFIGURE_DONT_SET_FLAGS=1
@@ -569,7 +569,7 @@ set_jit_level() {
 	_jit_level_6() {
 		# 100% performance
 		myconf+=( $(enable_gdb) )
-	# https://github.com/nodejs/node/blob/v20.18.0/deps/v8/BUILD.gn#L485
+	# https://github.com/nodejs/node/blob/v20.9.0/deps/v8/BUILD.gn#L485
 		if use amd64 || use arm64 ; then
 			use pointer-compression && myconf+=( --v8-enable-maglev ) # %5 runtime benefit
 		fi
@@ -920,8 +920,8 @@ src_install() {
 	local ED_BASE="${ED}/${REL_D_BASE}"
 
 	${EPYTHON} "tools/install.py" install \
-		--dest-dir "${D}" \
-		--prefix "${EPREFIX}/usr" \
+		"${D}" \
+		"${EPREFIX}/usr" \
 		|| die
 
 	mv "${ED}/usr/bin/node"{"","${SLOT_MAJOR}"} || die
