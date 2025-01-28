@@ -123,7 +123,8 @@ BDEPEND+="
 	${VIPS_BDEPEND}
 	>=sys-apps/pnpm-9.14.4:${PNPM_SLOT}
 	>=sys-apps/npm-10.8.2:${NPM_SLOT}
-	net-libs/nodejs:${NODE_VERSION}[corepack,npm]
+	=net-libs/nodejs-20.9:${NODE_VERSION}[corepack,npm]
+	net-libs/nodejs:=
 "
 DOCS=( "CHANGELOG.md" "README.md" )
 
