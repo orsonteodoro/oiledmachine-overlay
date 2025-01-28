@@ -194,16 +194,16 @@ LLVM_MIN_LTO=17
 LLVM_MIN_PGO=13
 LLVM_MIN_PGO_S390=15
 LLVM_MIN_SHADOWCALLSTACK_ARM64=10
-PATCH_ALLOW_O3_COMMIT="1fc1195e784540ad1966b57267fc927a87c5d21d" # id from zen repo
+PATCH_ALLOW_O3_COMMIT="1ab0facb6ae236af57bbcd06956a74fcf0599311" # id from zen repo
 PATCH_BBRV2_COMMIT_A_PARENT="f428e49b8cb1fbd9b4b4b29ea31b6991d2ff7de1" # 5.13.12
 PATCH_BBRV2_COMMIT_A="1ca5498fa4c6d4d8d634b1245d41f1427482824f" # ancestor ~ oldest
 PATCH_BBRV2_COMMIT_D="a23c4bb59e0c5a505fc0f5cc84c4d095a64ed361" # descendant ~ newest
-PATCH_BFQ_DEFAULT="d2f0a5801471b5f67344b2c92a2aa29f1aed626a" # id from zen repo
-PATCH_KCP_COMMIT="421120bda34d994c5e0e07a89e2f9c40c53e8e87" # id from zen repo ; aka more-uarches
-PATCH_KYBER_DEFAULT="346251fa257245b3a06e37de863a1dbafbf2bbc2" # id from zen repo
+PATCH_BFQ_DEFAULT="4c491da6a5df0d77108f45dfddd76b8436f0bc8b" # id from zen repo
+PATCH_KCP_COMMIT="a9e5dbc8e772f528abd66ec63dbdcbff2eda7e13" # id from zen repo ; aka more-uarches
+PATCH_KYBER_DEFAULT="d51fa3bd07f666a3232a3a1d0c8e26154eadb9c3" # id from zen repo
 PATCH_OPENRGB_COMMIT="" # id from zen repo
 PATCH_TRESOR_VER="3.18.5"
-PATCH_ZEN_SAUCE_BRANDING="88cd408941e797da40a7500c868968bb5699dae2" # id from zen repo
+PATCH_ZEN_SAUCE_BRANDING="9d4ab749fd832cdc98ff642c44c85a418b711f81" # id from zen repo
 
 PATCH_ZEN_SAUCE_BLACKLISTED_COMMITS=(
 # Avoid merge conflict or duplicates with already upstreamed.
@@ -213,42 +213,42 @@ PATCH_ZEN_SAUCE_BLACKLISTED_COMMITS=(
 )
 
 PATCH_ZEN_SAUCE_COMMITS=(
-# From https://github.com/torvalds/linux/compare/v6.12...zen-kernel:zen-kernel:6.12/zen-sauce
+# From https://github.com/torvalds/linux/compare/v6.13...zen-kernel:zen-kernel:6.13/zen-sauce
 #
 # Generated from:
-# wget -q -O - https://github.com/torvalds/linux/compare/88cd408941e797da40a7500c868968bb5699dae2^..40de9c08129e2d8e182a166df2f1e823f70fa31d.patch \
+# wget -q -O - https://github.com/torvalds/linux/compare/9d4ab749fd832cdc98ff642c44c85a418b711f81^..ae96db84281e1b10aee61ef832aabd0941743e99.patch \
 #	| grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
-88cd408941e797da40a7500c868968bb5699dae2
-95490afcba944883e7f911214391a1a1e2fa3261
-8a6a60b5a71d7f85351a9350eb651c4ce15b8f00
-33b2838eace19febdb8984de224fa2fcf8892185
-421120bda34d994c5e0e07a89e2f9c40c53e8e87
-1cdff301de6db901bc2bfd7ce78016d9b824d667
-1fc1195e784540ad1966b57267fc927a87c5d21d
-87b0cab8d8701db7754e5778b93ff83ffc64c7ae
-95b7981ba2e5c86529de0e895c2d9e428aa3f7dc
-48d2ea8801ccf8bd9cd48c12fce79040bbcae363
-2f3e9fbc48151e4499f9cbd810d9467ac34b0a3b
-354cf73505a4830b9565e001f96a279f467acf5a
-51026b78d015797e216aadc4e80158181c2c2bb4
-48c8812a4cea0190a037757589443f3103c610ba
-bbc56fdeaa2017d0bbed05e1e832e6d7e4bdd6e0
-eb48a41a698991ed5963c75a945d070c078d29af
-2cceda3c699f19f9c2f287614db2fe5dd009f73a
-530ee9b20cf436bcbb3a632cb19fb5e13a29dde7
-d2f0a5801471b5f67344b2c92a2aa29f1aed626a
-346251fa257245b3a06e37de863a1dbafbf2bbc2
-26fcaf58616b8cb3ce042e31c640594ea2fb5987
-635a1af14cd98977246dabd090ea8d3a9be4658a
-9e5b04df7190ab4750ae3c67714fd537ef4d79f5
-f654ea11471f81ac7dd68467f552db25722df25e
-f138e9762fd03612db5593f4c267c8f8b5799159
-5637f0a8a440750176af7b21636b73dc44a64e63
-76960c3806e7dfb618f49677cc84dafbfe48e4c4
-fc3e794cecb686d4e05c6ed86fdf9b2dbd725ea9
-be57a2710aef65116767d26930dd1251ff6e060f
-41fe25c2e4e89c6afd35e3feb720e5a6797857d3
-40de9c08129e2d8e182a166df2f1e823f70fa31d
+9d4ab749fd832cdc98ff642c44c85a418b711f81
+f9b71a07f5071c27d40a84a19588128df45565c7
+c75db894f194988b0d816eb31654003195509e59
+32c0fe4807507ceb1933659d17ef3aadd3fc6f2b
+a9e5dbc8e772f528abd66ec63dbdcbff2eda7e13
+5d011d56a251d34b662ab84ce3ce22a317f396e6
+1ab0facb6ae236af57bbcd06956a74fcf0599311
+532c154f9710e705de5a6085c4aff795c7e65f59
+da321c67514fcb2db6a51e7a8375bfac1afb74b3
+da4bd5fb45b97dbaf4b35d38c412411d36684a72
+281ab99c77ba3ab068d6e00987061a88180c67f7
+27e364f45eeba61fdbe7f20c366ce66711b1fb77
+bcc5ad06f2a682760ffd9ce527b0cf382b07fe3e
+7615df7eef33384a757eecde11f87ae96ac6f171
+57577aeb0de8d889f17a18bd6189aa2c004407ff
+2a0989819c550ec9e1d449fe6b19321b74bb315b
+b62b757eb74f0550cba1939c657a188cde5c1718
+0ed0d2b7aae94dd4708428de5416caac24c5edcb
+e628a3cab4b9573c6865914152a563383a58065c
+0469f352e9d625fb7b3dd06e3a176d99bea160ae
+4c491da6a5df0d77108f45dfddd76b8436f0bc8b
+d51fa3bd07f666a3232a3a1d0c8e26154eadb9c3
+b8e5ee6cd6c63e9be304782fb8c3ab4b4840222f
+d6cc4be38adc852a36cfa0e6a3c6a31906450111
+18bb31dac7bebf2acf83ccc2dfd7e613f9169d1d
+656c9f9f59c8def85dc29ea7a0b3f43fac5cbe1d
+71dedbe6eb6662dabefa2fe45a189c4c68686492
+326644df0a86327bd11ff7b1c988f35db888ed38
+2e0bcda4333434c234e6944ba463b1cc669ac726
+d2285e787430316a679309a2db5d3fdb16ce3354
+ae96db84281e1b10aee61ef832aabd0941743e99
 )
 
 # FIXME:
@@ -263,22 +263,20 @@ PATCH_ZEN_TUNE_COMMITS_DEPS_ZEN_SAUCE=(
 # Message marked with INTERACTIVE:
 PATCH_ZEN_TUNE_COMMITS=(
 # Semi generated from and copy and paste:
-# wget -q -O - https://github.com/torvalds/linux/compare/530ee9b20cf436bcbb3a632cb19fb5e13a29dde7^..40de9c08129e2d8e182a166df2f1e823f70fa31d.patch \
+# wget -q -O - https://github.com/torvalds/linux/compare/0469f352e9d625fb7b3dd06e3a176d99bea160ae^..ae96db84281e1b10aee61ef832aabd0941743e99.patch \
 #	| grep -E -o -e "From [0-9a-z]{40}" | cut -f 2 -d " "
-530ee9b20cf436bcbb3a632cb19fb5e13a29dde7
-d2f0a5801471b5f67344b2c92a2aa29f1aed626a
-346251fa257245b3a06e37de863a1dbafbf2bbc2
-26fcaf58616b8cb3ce042e31c640594ea2fb5987
-635a1af14cd98977246dabd090ea8d3a9be4658a
-9e5b04df7190ab4750ae3c67714fd537ef4d79f5
-f654ea11471f81ac7dd68467f552db25722df25e
-f138e9762fd03612db5593f4c267c8f8b5799159
-5637f0a8a440750176af7b21636b73dc44a64e63
-76960c3806e7dfb618f49677cc84dafbfe48e4c4
-fc3e794cecb686d4e05c6ed86fdf9b2dbd725ea9
-be57a2710aef65116767d26930dd1251ff6e060f
-41fe25c2e4e89c6afd35e3feb720e5a6797857d3
-40de9c08129e2d8e182a166df2f1e823f70fa31d
+0469f352e9d625fb7b3dd06e3a176d99bea160ae
+4c491da6a5df0d77108f45dfddd76b8436f0bc8b
+d51fa3bd07f666a3232a3a1d0c8e26154eadb9c3
+b8e5ee6cd6c63e9be304782fb8c3ab4b4840222f
+d6cc4be38adc852a36cfa0e6a3c6a31906450111
+18bb31dac7bebf2acf83ccc2dfd7e613f9169d1d
+656c9f9f59c8def85dc29ea7a0b3f43fac5cbe1d
+71dedbe6eb6662dabefa2fe45a189c4c68686492
+326644df0a86327bd11ff7b1c988f35db888ed38
+2e0bcda4333434c234e6944ba463b1cc669ac726
+d2285e787430316a679309a2db5d3fdb16ce3354
+ae96db84281e1b10aee61ef832aabd0941743e99
 )
 PPC_FLAGS=(
 	cpu_flags_ppc_476fpe
@@ -312,7 +310,7 @@ X86_FLAGS=(
 	cpu_flags_x86_vaes # kernel 6.10
 	cpu_flags_x86_vpclmulqdq # (CRYPTO_POLYVAL_CLMUL_NI) vpclmulqdq - kernel 6.0, gcc 8.1, llvm 6 ; 2017
 )
-ZEN_KV="6.12.0"
+ZEN_KV="6.13.0"
 
 if ! [[ "${PV}" =~ "9999" ]] ; then
 	KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
@@ -325,7 +323,7 @@ IUSE+="
 "
 fi
 # CET default ON based on CI.
-# clang is default OFF based on https://github.com/torvalds/linux/blob/v6.12/Documentation/process/changes.rst
+# clang is default OFF based on https://github.com/torvalds/linux/blob/v6.13/Documentation/process/changes.rst
 # kcfi default OFF based on CI using clang 17.
 IUSE+="
 ${ARM_FLAGS[@]}

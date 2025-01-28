@@ -324,7 +324,6 @@ fi
 if [[ "${PV}" =~ "9999" ]] ; then
 	:
 else
-#clear
 IUSE+="
 "
 fi
@@ -336,7 +335,7 @@ ${ARM_FLAGS[@]}
 ${PPC_FLAGS[@]}
 ${RISCV_FLAGS[@]}
 ${X86_FLAGS[@]}
-bbrv2 bbrv3 build c2tcp +cet +cfs -clang deepcc -debug -dwarf4 -dwarf5
+bbrv2 bbrv3 build c2tcp +cet +cfs -clang clear deepcc -debug -dwarf4 -dwarf5
 -dwarf-auto -exfat -expoline -gdb +genpatches -genpatches_1510 -kcfi -lto nest
 orca pgo prjc qt5 qt6 +retpoline rt -rust shadowcallstack symlink tresor tresor_prompt
 tresor_sysfs zen-sauce
@@ -986,11 +985,11 @@ elif [[ "${PV}" =~ "9999" ]] ; then
 		)
 	"
 elif [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
-#		${CLEAR_LINUX_PATCHES_URI}
 	SRC_URI+="
 		${BBRV2_SRC_URIS}
 		${BBRV3_SRC_URIS}
 		${C2TCP_URIS}
+		${CLEAR_LINUX_PATCHES_URI}
 		${GENPATCHES_URI}
 		${KCP_SRC_4_9_URI}
 		${KCP_SRC_8_1_URI}
@@ -1005,10 +1004,10 @@ elif [[ "${UPDATE_MANIFEST:-0}" == "1" ]] ; then
 		${TRESOR_RESEARCH_PDF_SRC_URI}
 		${TRESOR_SYSFS_SRC_URI}
 		${ZEN_SAUCE_URIS}
+		clear? (
+			${CLEAR_LINUX_PATCHES_URI}
+		)
 	"
-#		clear? (
-#			${CLEAR_LINUX_PATCHES_URI}
-#		)
 else
 	SRC_URI+="
 		${KCP_SRC_4_9_URI}
