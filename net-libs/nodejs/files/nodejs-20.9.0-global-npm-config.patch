@@ -1,0 +1,14 @@
+diff '--color=auto' -urp node-v20.9.0.orig/deps/npm/node_modules/@npmcli/config/lib/index.js node-v20.9.0/deps/npm/node_modules/@npmcli/config/lib/index.js
+--- node-v20.9.0.orig/deps/npm/node_modules/@npmcli/config/lib/index.js	2023-10-23 17:37:05.000000000 -0700
++++ node-v20.9.0/deps/npm/node_modules/@npmcli/config/lib/index.js	2025-01-28 04:18:53.107551680 -0800
+@@ -329,7 +329,7 @@ class Config {
+     // default the globalconfig file to that location, instead of the default
+     // global prefix.  It's weird that `npm get globalconfig --prefix=/foo`
+     // returns `/foo/etc/npmrc`, but better to not change it at this point.
+-    settableGetter(data, 'globalconfig', () => resolve(this.#get('prefix'), 'etc/npmrc'))
++    settableGetter(data, 'globalconfig', () => resolve('/etc', 'npmrc'))
+   }
+ 
+   loadHome () {
+Only in node-v20.9.0/deps/npm/node_modules/@npmcli/config/lib: index.js.orig
+Only in node-v20.9.0/deps/npm/node_modules/@npmcli/config/lib: index.js.rej
