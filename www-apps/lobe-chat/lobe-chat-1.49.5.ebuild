@@ -23,6 +23,7 @@ CPU_FLAGS_X86=(
 )
 # See also https://github.com/vercel/next.js/blob/v15.1.6/.github/workflows/build_and_test.yml#L328
 NODE_VERSION=20 # See .nvmrc
+_NODE_VERSION="20.9.0"
 NPM_SLOT="3"
 PNPM_SLOT="9"
 NPM_AUDIT_FIX_ARGS=(
@@ -107,7 +108,7 @@ RDEPEND+="
 	>=app-misc/ca-certificates-20240203
 	>=net-misc/proxychains-3.1
 	>=sys-devel/gcc-12.2.0
-	=net-libs/nodejs-20.9*:${NODE_VERSION}[corepack,npm]
+	=net-libs/nodejs-${_NODE_VERSION%.*}*:${NODE_VERSION}[corepack,npm]
 	net-libs/nodejs:=
 	postgres? (
 		>=dev-db/postgresql-16.4
@@ -123,7 +124,7 @@ BDEPEND+="
 	${VIPS_BDEPEND}
 	>=sys-apps/pnpm-9.14.4:${PNPM_SLOT}
 	>=sys-apps/npm-10.8.2:${NPM_SLOT}
-	=net-libs/nodejs-20.9:${NODE_VERSION}[corepack,npm]
+	=net-libs/nodejs-${_NODE_VERSION%.*}:${NODE_VERSION}[corepack,npm]
 	net-libs/nodejs:=
 "
 DOCS=( "CHANGELOG.md" "README.md" )
@@ -159,6 +160,18 @@ pkg_setup() {
 	yarn_pkg_setup
 	pnpm_pkg_setup
 einfo "PATH:  ${PATH}"
+	local node_pv=$(node --version \
+		| sed -e "s|v||g")
+	if ver_test "${node_pv%.*}" -ne "${_NODE_VERSION}" ; then
+eerror
+eerror "You must switch to node ${_NODE_VERSION%.*}.x to build/use ${PN}."
+eerror "See \`eselect nodejs\` for details."
+eerror
+eerror "Actual node version:  ${node_pv}"
+eerror "Expected node version:  ${_NODE_VERSION%.*}.x"
+eerror
+die
+	fi
 }
 
 pnpm_unpack_post() {
