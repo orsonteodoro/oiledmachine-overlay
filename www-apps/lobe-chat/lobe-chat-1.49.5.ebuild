@@ -22,7 +22,7 @@ CPU_FLAGS_X86=(
 	cpu_flags_x86_sse4_2
 )
 # See also https://github.com/vercel/next.js/blob/v15.1.6/.github/workflows/build_and_test.yml#L328
-NODE_VERSION=20 # Limited by next.js.  Only 18, 20 allowed.
+NODE_VERSION=20 # See .nvmrc
 NPM_SLOT="3"
 PNPM_SLOT="9"
 NPM_AUDIT_FIX_ARGS=(
