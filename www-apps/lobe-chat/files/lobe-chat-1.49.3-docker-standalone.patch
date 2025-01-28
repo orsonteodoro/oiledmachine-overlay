@@ -1,0 +1,11 @@
+--- a/next.config.ts.orig	2025-01-27 03:50:46.000000000 -0800
++++ b/next.config.ts	2025-01-27 19:50:30.636102447 -0800
+@@ -104,7 +104,7 @@ const nextConfig: NextConfig = {
+       },
+     ];
+   },
+-  output: buildWithDocker ? 'standalone' : undefined,
++  output: 'standalone',
+   reactStrictMode: true,
+   redirects: async () => [
+     {

@@ -21,7 +21,8 @@ EAPI=8
 CPU_FLAGS_X86=(
 	cpu_flags_x86_sse4_2
 )
-NODE_VERSION=22
+# See also https://github.com/vercel/next.js/blob/v15.1.6/.github/workflows/build_and_test.yml#L328
+NODE_VERSION=20 # Limited by next.js.  Only 18, 20 allowed.
 NPM_SLOT="3"
 PNPM_SLOT="9"
 NPM_AUDIT_FIX_ARGS=(
@@ -37,7 +38,7 @@ NPM_UNINSTALL_ARGS=(
 	"--legacy-peer-deps"
 )
 PNPM_AUDIT_FIX=0
-SERWIST_CHOICE="no-change" # update, remove, no-change
+SERWIST_CHOICE="remove" # update, remove, no-change
 VIPS_PV="8.14.5"
 
 inherit dhms edo npm pnpm yarn
@@ -106,7 +107,8 @@ RDEPEND+="
 	>=app-misc/ca-certificates-20240203
 	>=net-misc/proxychains-3.1
 	>=sys-devel/gcc-12.2.0
-	net-libs/nodejs:${NODE_VERSION}[corepack,npm]
+	=net-libs/nodejs-20.9*:${NODE_VERSION}[corepack,npm]
+	net-libs/nodejs:=
 	postgres? (
 		>=dev-db/postgresql-16.4
 	)
@@ -151,6 +153,7 @@ pkg_setup() {
 	export YARN_CACHE_FOLDER="${EDISTDIR}/yarn-download-cache-${YARN_SLOT}/${CATEGORY}/${PN}-${PV%.*}"
 	export PNPM_CACHE_FOLDER="${EDISTDIR}/pnpm-download-cache-${PNPM_SLOT}/${CATEGORY}/${PN}-${PV%.*}"
 
+	addwrite "${EDISTDIR}"
 	npm_pkg_setup
 	yarn_pkg_setup
 	pnpm_pkg_setup
@@ -172,6 +175,7 @@ pnpm_unpack_post() {
 		fi
 	fi
 	eapply "${FILESDIR}/${PN}-1.47.17-hardcoded-paths.patch"
+	eapply "${FILESDIR}/${PN}-1.49.3-docker-standalone.patch"
 
 	if [[ "${SERWIST_CHOICE}" == "no-change" ]] ; then
 		:
@@ -266,32 +270,36 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 
 	setup_env
 
-	# This one looks broken because the .next/standalone folder is missing.
-	#pnpm run "build:docker"
-
 	export NODE_ENV=production
 	export DOCKER=true
+	ulimit -a
 
 	tsc --version || die
 
 	# tsc will ignore tsconfig.json, so it must be explicit.
-#einfo "Building next.config.js"
-#	tsc \
-#		next.config.ts \
-#		--esModuleInterop "true" \
-#		--jsx "preserve" \
-#		--lib "dom,dom.iterable,esnext,webworker" \
-#		--module "esnext" \
-#		--moduleResolution "bundler" \
-#		--outDir "." \
-#		--skipDefaultLibCheck \
-#		--target "esnext" \
-#		--typeRoots "./node_modules/@types" \
-#		--types "react,react-dom" \
-#		|| die
-#einfo "End build of next.config.js"
+einfo "Building next.config.js"
+	tsc \
+		next.config.ts \
+		--allowJs \
+		--esModuleInterop "true" \
+		--jsx "preserve" \
+		--lib "dom,dom.iterable,esnext,webworker" \
+		--module "esnext" \
+		--moduleResolution "bundler" \
+		--outDir "." \
+		--skipDefaultLibCheck \
+		--target "esnext" \
+		--typeRoots "./node_modules/@types" \
+		--types "react,react-dom" \
+		|| die
+	mv "next.config."{"js","mjs"} || die
+
+einfo "End build of next.config.js"
 	#grep -q -E -e "Found [0-9]+ error." "${T}/build.log" && die "Detected error"
 	#grep -q -E -e "error TS[0-9]+" "${T}/build.log" && die "Detected error"
+
+	# This one looks broken because the .next/standalone folder is missing.
+#	pnpm run "build:docker"
 
 	edo next build --debug
 	grep -q -E -e "Failed to load next.config.js" "${T}/build.log" && die "Detected error"
