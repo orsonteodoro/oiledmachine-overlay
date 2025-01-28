@@ -70,7 +70,7 @@ LTO_TYPE="none" # Global var
 MULTIPLEXER_VER="11"
 NGHTTP2_PV="1.60.0"
 NPM_PV="10.8.2" # See https://github.com/nodejs/node/blob/v20.18.0/deps/npm/package.json
-PYTHON_COMPAT=( "python3_"{8..12} ) # See configure
+PYTHON_COMPAT=( "python3_"{8..11} ) # See configure
 PYTHON_REQ_USE="threads(+)"
 TPGO_CONFIGURE_DONT_SET_FLAGS=1
 UOPTS_SUPPORT_EBOLT=0
@@ -732,6 +732,8 @@ eerror "To use mold, enable the mold USE flag."
 	myarch="${myarch/x86/ia32}"
 	[[ "${ARCH}:${ABI}" =~ "loong:lp64" ]] && myarch="loong64"
 	[[ "${ARCH}:${ABI}" =~ "riscv:lp64" ]] && myarch="riscv64"
+
+einfo "EPYTHON:  ${EPYTHON}"
 
 	GYP_DEFINES="linux_use_gold_flags=0
 		linux_use_bundled_binutils=0
