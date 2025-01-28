@@ -21,7 +21,7 @@ EAPI=8
 CPU_FLAGS_X86=(
 	cpu_flags_x86_sse4_2
 )
-NODE_VERSION=20
+NODE_VERSION=22
 NPM_SLOT="3"
 PNPM_SLOT="9"
 NPM_AUDIT_FIX_ARGS=(
@@ -37,10 +37,10 @@ NPM_UNINSTALL_ARGS=(
 	"--legacy-peer-deps"
 )
 PNPM_AUDIT_FIX=0
-SERWIST_CHOICE="remove" # update or remove
+SERWIST_CHOICE="no-change" # update, remove, no-change
 VIPS_PV="8.14.5"
 
-inherit dhms edo npm pnpm
+inherit dhms edo npm pnpm yarn
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -56,8 +56,6 @@ else
 	SRC_URI="
 https://github.com/lobehub/lobe-chat/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
-https://github.com/lobehub/lobe-chat/commit/7e3aa09510e733ce7c53c2e961dca97dbc06a91e.patch
-	-> lobe-chat-commit-7e3aa09.patch
 	"
 fi
 
@@ -149,9 +147,12 @@ pkg_setup() {
 
 	# Prevent redownloads because they unusually bump more than once a day.
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+	export NPM_CACHE_FOLDER="${EDISTDIR}/npm-download-cache-${NPM_SLOT}/${CATEGORY}/${PN}-${PV%.*}"
+	export YARN_CACHE_FOLDER="${EDISTDIR}/yarn-download-cache-${YARN_SLOT}/${CATEGORY}/${PN}-${PV%.*}"
 	export PNPM_CACHE_FOLDER="${EDISTDIR}/pnpm-download-cache-${PNPM_SLOT}/${CATEGORY}/${PN}-${PV%.*}"
 
 	npm_pkg_setup
+	yarn_pkg_setup
 	pnpm_pkg_setup
 einfo "PATH:  ${PATH}"
 }
@@ -162,7 +163,6 @@ pnpm_unpack_post() {
 			-e "s|bun run|npm run|g" \
 			"${S}/package.json" \
 			|| die
-		epnpm uninstall "unplugin" ${PNPM_INSTALL_ARGS[@]}
 		grep -e "ERR_PNPM_FETCH_404" "${T}/build.log" && die "Detected error.  Check pnpm add"
 	else
 		if use postgres ; then
@@ -173,23 +173,29 @@ pnpm_unpack_post() {
 	fi
 	eapply "${FILESDIR}/${PN}-1.47.17-hardcoded-paths.patch"
 
-	if [[ "${SERWIST_CHOICE}" == "remove" ]] ; then
+	if [[ "${SERWIST_CHOICE}" == "no-change" ]] ; then
+		:
+	elif [[ "${SERWIST_CHOICE}" == "remove" ]] ; then
 		# Remove serwist, missing stable @serwist/utils
 		eapply "${FILESDIR}/${PN}-1.48.3-drop-serwist.patch"
 		if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 			epnpm uninstall "@serwist/next"
 			epnpm uninstall "serwist"
-			epnpm add "@ducanh2912/next-pwa@^10.2.8"
+			epnpm add -D "@ducanh2912/next-pwa@^10.2.8"
 		fi
 	else
 		epnpm add "@serwist/utils@9.0.0-preview.26"
 		epnpm add "@serwist/next@9.0.0-preview.26"
-		epnpm add "serwist@9.0.0-preview.26"
+		epnpm add -D "serwist@9.0.0-preview.26"
 	fi
+#	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+#		epnpm add "@types/react@^19.0.3"
+#		epnpm add -D "webpack@^5.97.1"
+#	fi
 }
 
 pnpm_install_post() {
-	epnpm uninstall "unplugin" ${PNPM_INSTALL_ARGS[@]}
+	:
 }
 
 src_unpack() {
@@ -199,9 +205,9 @@ src_unpack() {
 		git-r3_checkout
 	else
 		_npm_setup_offline_cache
+		_yarn_setup_offline_cache
 		_pnpm_setup_offline_cache
 		pnpm_src_unpack
-		epnpm uninstall "unplugin" ${PNPM_INSTALL_ARGS[@]}
 	fi
 }
 
@@ -252,6 +258,8 @@ ewarn "Removing ${S}/.next"
 
 	export NODE_OPTIONS+=" --use-openssl-ca"
 
+	npm_hydrate
+	yarn_hydrate
 	pnpm_hydrate
 einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 # China users need to fork ebuild.  See Dockerfile for China contexts.
@@ -265,13 +273,34 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 	export DOCKER=true
 
 	tsc --version || die
-	tsc next.config.ts --module commonjs --outDir . || die
+
+	# tsc will ignore tsconfig.json, so it must be explicit.
+#einfo "Building next.config.js"
+#	tsc \
+#		next.config.ts \
+#		--esModuleInterop "true" \
+#		--jsx "preserve" \
+#		--lib "dom,dom.iterable,esnext,webworker" \
+#		--module "esnext" \
+#		--moduleResolution "bundler" \
+#		--outDir "." \
+#		--skipDefaultLibCheck \
+#		--target "esnext" \
+#		--typeRoots "./node_modules/@types" \
+#		--types "react,react-dom" \
+#		|| die
+#einfo "End build of next.config.js"
+	#grep -q -E -e "Found [0-9]+ error." "${T}/build.log" && die "Detected error"
+	#grep -q -E -e "error TS[0-9]+" "${T}/build.log" && die "Detected error"
 
 	edo next build --debug
-	edo pnpm run build-sitemap
-	edo pnpm run build-sitemap
-	edo pnpm run build-migrate-db
+	grep -q -E -e "Failed to load next.config.js" "${T}/build.log" && die "Detected error"
+	edo npm run build-sitemap
+	edo npm run build-sitemap
+	edo npm run build-migrate-db
 	grep -q -e "Build failed because of webpack errors" "${T}/build.log" && die "Detected error"
+	grep -q -e "Failed to compile" "${T}/build.log" && die "Detected error"
+	#grep -q -E -e "error TS[0-9]+" "${T}/build.log" && die "Detected error"
 }
 
 # Slow

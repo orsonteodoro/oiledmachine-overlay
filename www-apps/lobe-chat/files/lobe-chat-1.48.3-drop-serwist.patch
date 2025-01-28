@@ -1,7 +1,7 @@
 # Partial revert of 7e3aa09510e733ce7c53c2e961dca97dbc06a91e
-diff '--color=auto' -urpN lobe-chat-1.48.3.orig/.gitignore lobe-chat-1.48.3/.gitignore
---- lobe-chat-1.48.3.orig/.gitignore	2025-01-26 04:50:06.000000000 -0800
-+++ lobe-chat-1.48.3/.gitignore	2025-01-26 16:00:59.064236833 -0800
+diff '--color=auto' -urpN lobe-chat-1.49.3.orig/.gitignore lobe-chat-1.49.3/.gitignore
+--- lobe-chat-1.49.3.orig/.gitignore	2025-01-27 03:50:46.000000000 -0800
++++ lobe-chat-1.49.3/.gitignore	2025-01-27 10:03:14.943957843 -0800
 @@ -61,10 +61,6 @@ bun.lockb
  sitemap*.xml
  robots.txt
@@ -13,9 +13,9 @@ diff '--color=auto' -urpN lobe-chat-1.48.3.orig/.gitignore lobe-chat-1.48.3/.git
  *.patch
  *.pdf
  vertex-ai-key.json
-diff '--color=auto' -urpN lobe-chat-1.48.3.orig/next.config.ts lobe-chat-1.48.3/next.config.ts
---- lobe-chat-1.48.3.orig/next.config.ts	2025-01-26 04:50:06.000000000 -0800
-+++ lobe-chat-1.48.3/next.config.ts	2025-01-26 16:00:13.384634309 -0800
+diff '--color=auto' -urpN lobe-chat-1.49.3.orig/next.config.ts lobe-chat-1.49.3/next.config.ts
+--- lobe-chat-1.49.3.orig/next.config.ts	2025-01-27 03:50:46.000000000 -0800
++++ lobe-chat-1.49.3/next.config.ts	2025-01-27 10:03:14.943957843 -0800
 @@ -1,6 +1,6 @@
 +import nextPWA from '@ducanh2912/next-pwa';
  import analyzer from '@next/bundle-analyzer';
@@ -24,7 +24,7 @@ diff '--color=auto' -urpN lobe-chat-1.48.3.orig/next.config.ts lobe-chat-1.48.3/
  import type { NextConfig } from 'next';
  import ReactComponentName from 'react-scan/react-component-name/webpack';
  
-@@ -204,11 +204,13 @@ const noWrapper = (config: NextConfig) =
+@@ -204,10 +204,12 @@ const noWrapper = (config: NextConfig) =
  const withBundleAnalyzer = process.env.ANALYZE === 'true' ? analyzer() : noWrapper;
  
  const withPWA = isProd
@@ -32,20 +32,18 @@ diff '--color=auto' -urpN lobe-chat-1.48.3.orig/next.config.ts lobe-chat-1.48.3/
 -      register: false,
 -      swDest: 'public/sw.js',
 -      swSrc: 'src/app/sw.ts',
--    })
 +  ? nextPWA({
 +      dest: 'public',
 +      register: true,
 +      workboxOptions: {
 +        skipWaiting: true,
 +      },
-+    })
+     })
    : noWrapper;
  
- const hasSentry = !!process.env.NEXT_PUBLIC_SENTRY_DSN;
-diff '--color=auto' -urpN lobe-chat-1.48.3.orig/src/app/sw.ts lobe-chat-1.48.3/src/app/sw.ts
---- lobe-chat-1.48.3.orig/src/app/sw.ts	2025-01-26 04:50:06.000000000 -0800
-+++ lobe-chat-1.48.3/src/app/sw.ts	1969-12-31 16:00:00.000000000 -0800
+diff '--color=auto' -urpN lobe-chat-1.49.3.orig/src/app/sw.ts lobe-chat-1.49.3/src/app/sw.ts
+--- lobe-chat-1.49.3.orig/src/app/sw.ts	2025-01-27 03:50:46.000000000 -0800
++++ lobe-chat-1.49.3/src/app/sw.ts	1969-12-31 16:00:00.000000000 -0800
 @@ -1,26 +0,0 @@
 -import { defaultCache } from '@serwist/next/worker';
 -import type { PrecacheEntry, SerwistGlobalConfig } from 'serwist';
@@ -73,9 +71,9 @@ diff '--color=auto' -urpN lobe-chat-1.48.3.orig/src/app/sw.ts lobe-chat-1.48.3/s
 -});
 -
 -serwist.addEventListeners();
-diff '--color=auto' -urpN lobe-chat-1.48.3.orig/src/features/PWAInstall/Install.tsx lobe-chat-1.48.3/src/features/PWAInstall/Install.tsx
---- lobe-chat-1.48.3.orig/src/features/PWAInstall/Install.tsx	2025-01-26 04:50:06.000000000 -0800
-+++ lobe-chat-1.48.3/src/features/PWAInstall/Install.tsx	1969-12-31 16:00:00.000000000 -0800
+diff '--color=auto' -urpN lobe-chat-1.49.3.orig/src/features/PWAInstall/Install.tsx lobe-chat-1.49.3/src/features/PWAInstall/Install.tsx
+--- lobe-chat-1.49.3.orig/src/features/PWAInstall/Install.tsx	2025-01-27 03:50:46.000000000 -0800
++++ lobe-chat-1.49.3/src/features/PWAInstall/Install.tsx	1969-12-31 16:00:00.000000000 -0800
 @@ -1,80 +0,0 @@
 -'use client';
 -
@@ -157,18 +155,100 @@ diff '--color=auto' -urpN lobe-chat-1.48.3.orig/src/features/PWAInstall/Install.
 -});
 -
 -export default PWAInstall;
-diff '--color=auto' -urpN lobe-chat-1.48.3.orig/tsconfig.json lobe-chat-1.48.3/tsconfig.json
---- lobe-chat-1.48.3.orig/tsconfig.json	2025-01-26 04:50:06.000000000 -0800
-+++ lobe-chat-1.48.3/tsconfig.json	2025-01-26 16:04:38.114338388 -0800
-@@ -2,7 +2,7 @@
-   "$schema": "https://json.schemastore.org/tsconfig",
-   "compilerOptions": {
-     "target": "ESNext",
--    "lib": ["dom", "dom.iterable", "esnext", "webworker"],
-+    "lib": ["dom", "dom.iterable", "esnext"],
-     "allowJs": true,
-     "skipLibCheck": true,
-     "strict": true,
+diff '--color=auto' -urpN lobe-chat-1.49.3.orig/src/features/PWAInstall/index.tsx lobe-chat-1.49.3/src/features/PWAInstall/index.tsx
+--- lobe-chat-1.49.3.orig/src/features/PWAInstall/index.tsx	2025-01-27 03:50:46.000000000 -0800
++++ lobe-chat-1.49.3/src/features/PWAInstall/index.tsx	2025-01-27 10:10:10.429256572 -0800
+@@ -1,24 +1,79 @@
+ 'use client';
+ 
+ import dynamic from 'next/dynamic';
+-import { memo } from 'react';
++import { memo, useEffect, useLayoutEffect } from 'react';
++import { useTranslation } from 'react-i18next';
+ 
++import { BRANDING_NAME } from '@/const/branding';
++import { PWA_INSTALL_ID } from '@/const/layoutTokens';
++import { usePWAInstall } from '@/hooks/usePWAInstall';
+ import { usePlatform } from '@/hooks/usePlatform';
++import { useGlobalStore } from '@/store/global';
++import { systemStatusSelectors } from '@/store/global/selectors';
+ import { useUserStore } from '@/store/user';
+ 
+-const Install: any = dynamic(() => import('./Install'), {
++// @ts-ignore
++const PWA: any = dynamic(() => import('@khmyznikov/pwa-install/dist/pwa-install.react.js'), {
+   ssr: false,
+ });
+ 
+ const PWAInstall = memo(() => {
+-  const { isPWA, isSupportInstallPWA } = usePlatform();
+-  const isShowPWAGuide = useUserStore((s) => s.isShowPWAGuide);
++  const { t } = useTranslation('metadata');
++  const { isPWA } = usePlatform();
+ 
+-  if (isPWA || !isShowPWAGuide || !isSupportInstallPWA) return null;
++  const { install, canInstall } = usePWAInstall();
+ 
+-  // only when the user is suitable for the pwa install and not install the pwa
+-  // then show the installation guide
+-  return <Install />;
++  const isShowPWAGuide = useUserStore((s) => s.isShowPWAGuide);
++  const [hidePWAInstaller, updateSystemStatus] = useGlobalStore((s) => [
++    systemStatusSelectors.hidePWAInstaller(s),
++    s.updateSystemStatus,
++  ]);
++
++  // we need to make the pwa installer hidden by default
++  useLayoutEffect(() => {
++    sessionStorage.setItem('pwa-hide-install', 'true');
++  }, []);
++
++  const pwaInstall =
++    // eslint-disable-next-line unicorn/prefer-query-selector
++    typeof window === 'undefined' ? undefined : document.getElementById(PWA_INSTALL_ID);
++
++  // add an event listener to control the user close installer action
++  useEffect(() => {
++    if (!pwaInstall) return;
++
++    const handler = (e: Event) => {
++      const event = e as CustomEvent;
++
++      // it means user hide installer
++      if (event.detail.message === 'dismissed') {
++        updateSystemStatus({ hidePWAInstaller: true });
++      }
++    };
++
++    pwaInstall.addEventListener('pwa-user-choice-result-event', handler);
++    return () => {
++      pwaInstall.removeEventListener('pwa-user-choice-result-event', handler);
++    };
++  }, [pwaInstall]);
++
++  // trigger the PWA guide on demand
++  useEffect(() => {
++    if (!canInstall || hidePWAInstaller) return;
++
++    if (isShowPWAGuide) {
++      install();
++    }
++  }, [canInstall, hidePWAInstaller, isShowPWAGuide]);
++
++  if (isPWA) return null;
++  return (
++    <PWA
++      description={t('chat.description', { appName: BRANDING_NAME })}
++      id={PWA_INSTALL_ID}
++      manifest-url={'/manifest.webmanifest'}
++    />
++  );
+ });
+ 
+ export default PWAInstall;
+diff '--color=auto' -urpN lobe-chat-1.49.3.orig/tsconfig.json lobe-chat-1.49.3/tsconfig.json
+--- lobe-chat-1.49.3.orig/tsconfig.json	2025-01-27 03:50:46.000000000 -0800
++++ lobe-chat-1.49.3/tsconfig.json	2025-01-27 10:03:14.943957843 -0800
 @@ -16,7 +16,7 @@
      "jsx": "preserve",
      "incremental": true,

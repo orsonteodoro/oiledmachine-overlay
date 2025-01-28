@@ -245,8 +245,8 @@ _npm_setup_offline_cache() {
 einfo "DEBUG:  Default cache folder:  ${HOME}/.npm/_cacache"
 einfo "NPM_CACHE_FOLDER:  ${NPM_CACHE_FOLDER}"
 	rm -rf "${HOME}/.npm/_cacache"
-	mkdir -p "${HOME}/.npm/"
-	ln -sf "${NPM_CACHE_FOLDER}" "${HOME}/.npm/_cacache" # npm likes to remove the ${HOME}/.npm folder
+	mkdir -p "${HOME}/.npm/" || die
+	ln -sf "${NPM_CACHE_FOLDER}" "${HOME}/.npm/_cacache"
 	addwrite "${EDISTDIR}"
 	addwrite "${NPM_CACHE_FOLDER}"
 	mkdir -p "${NPM_CACHE_FOLDER}"
