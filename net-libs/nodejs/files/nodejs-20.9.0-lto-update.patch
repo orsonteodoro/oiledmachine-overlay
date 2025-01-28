@@ -1,7 +1,7 @@
 diff '--color=auto' -urp node-v20.9.0.orig/common.gypi node-v20.9.0/common.gypi
 --- node-v20.9.0.orig/common.gypi	2023-10-23 17:37:04.000000000 -0700
 +++ node-v20.9.0/common.gypi	2025-01-28 04:22:04.494171324 -0800
-@@ -173,11 +173,20 @@
+@@ -173,11 +173,21 @@
              }, {
                'MSVC_runtimeType': 2   # MultiThreadedDLL (/MD)
              }],
@@ -23,6 +23,7 @@ diff '--color=auto' -urp node-v20.9.0.orig/common.gypi node-v20.9.0/common.gypi
              }],
 +            ['clang!=1', {
 +              'lto': ' -flto=4 -fuse-linker-plugin -ffat-lto-objects ', # GCC
++            }],
            ],
          },
          'cflags': [ '-O3' ],
