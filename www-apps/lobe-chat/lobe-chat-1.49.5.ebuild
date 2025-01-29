@@ -39,7 +39,7 @@ NPM_UNINSTALL_ARGS=(
 	"--legacy-peer-deps"
 )
 PNPM_AUDIT_FIX=0
-SERWIST_CHOICE="remove" # update, remove, no-change
+SERWIST_CHOICE="no-change" # update, remove, no-change
 VIPS_PV="8.14.5"
 
 inherit dhms edo npm pnpm yarn
@@ -189,7 +189,7 @@ pnpm_unpack_post() {
 		fi
 	fi
 	eapply "${FILESDIR}/${PN}-1.47.17-hardcoded-paths.patch"
-	eapply "${FILESDIR}/${PN}-1.49.3-docker-standalone.patch"
+#	eapply "${FILESDIR}/${PN}-1.49.3-docker-standalone.patch"
 
 	if [[ "${SERWIST_CHOICE}" == "no-change" ]] ; then
 		:
@@ -270,9 +270,9 @@ ewarn "Removing ${S}/.next"
 	# FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
 	export NODE_OPTIONS+=" --max-old-space-size=8192"
 
-	if [[ "${NODE_VERSION}" == "18" ]] ; then
+#	if [[ "${NODE_VERSION}" == "18" ]] ; then
 		export NODE_OPTIONS+=" --dns-result-order=ipv4first"
-	fi
+#	fi
 
 	export NODE_OPTIONS+=" --use-openssl-ca"
 
@@ -286,40 +286,39 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 
 	export NODE_ENV=production
 	export DOCKER=true
-	ulimit -a
 
 	tsc --version || die
 
 	# tsc will ignore tsconfig.json, so it must be explicit.
-einfo "Building next.config.js"
-	tsc \
-		next.config.ts \
-		--allowJs \
-		--esModuleInterop "true" \
-		--jsx "preserve" \
-		--lib "dom,dom.iterable,esnext,webworker" \
-		--module "esnext" \
-		--moduleResolution "bundler" \
-		--outDir "." \
-		--skipDefaultLibCheck \
-		--target "esnext" \
-		--typeRoots "./node_modules/@types" \
-		--types "react,react-dom" \
-		|| die
-	mv "next.config."{"js","mjs"} || die
+#einfo "Building next.config.js"
+#	tsc \
+#		next.config.ts \
+#		--allowJs \
+#		--esModuleInterop "true" \
+#		--jsx "preserve" \
+#		--lib "dom,dom.iterable,esnext,webworker" \
+#		--module "esnext" \
+#		--moduleResolution "bundler" \
+#		--outDir "." \
+#		--skipDefaultLibCheck \
+#		--target "esnext" \
+#		--typeRoots "./node_modules/@types" \
+#		--types "react,react-dom" \
+#		|| die
+#	mv "next.config."{"js","mjs"} || die
 
-einfo "End build of next.config.js"
+#einfo "End build of next.config.js"
 	#grep -q -E -e "Found [0-9]+ error." "${T}/build.log" && die "Detected error"
 	#grep -q -E -e "error TS[0-9]+" "${T}/build.log" && die "Detected error"
 
 	# This one looks broken because the .next/standalone folder is missing.
-#	pnpm run "build:docker"
+	pnpm run "build:docker"
 
-	edo next build --debug
+#	edo next build --debug
 	grep -q -E -e "Failed to load next.config.js" "${T}/build.log" && die "Detected error"
-	edo npm run build-sitemap
-	edo npm run build-sitemap
-	edo npm run build-migrate-db
+#	edo npm run build-sitemap
+#	edo npm run build-sitemap
+#	edo npm run build-migrate-db
 	grep -q -e "Build failed because of webpack errors" "${T}/build.log" && die "Detected error"
 	grep -q -e "Failed to compile" "${T}/build.log" && die "Detected error"
 	#grep -q -E -e "error TS[0-9]+" "${T}/build.log" && die "Detected error"
