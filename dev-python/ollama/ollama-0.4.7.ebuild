@@ -45,7 +45,7 @@ RDEPEND+="
 	>=dev-python/exceptiongroup-1.2.2[${PYTHON_USEDEP}]
 	>=dev-python/h11-0.14.0[${PYTHON_USEDEP}]
 	>=dev-python/httpcore-1.0.6[${PYTHON_USEDEP}]
-	>=dev-python/httpx-0.27.2[${PYTHON_USEDEP}]
+	>=dev-python/httpx-0.28.1[${PYTHON_USEDEP}]
 	>=dev-python/idna-3.10[${PYTHON_USEDEP}]
 	>=dev-python/pydantic-2.9.2[${PYTHON_USEDEP}]
 	>=dev-python/sniffio-1.3.1[${PYTHON_USEDEP}]
@@ -60,8 +60,7 @@ BDEPEND+="
 		>=dev-python/pytest-asyncio-0.24.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-cov-5.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-httpserver-1.1.0[${PYTHON_USEDEP}]
-		>=dev-util/ruff-0.7.4
-		>=virtual/pillow-10.4.0[${PYTHON_USEDEP}]
+		>=dev-util/ruff-0.9.1
 	)
 "
 DOCS=( "README.md" )
