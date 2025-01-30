@@ -190,6 +190,7 @@ pnpm_unpack_post() {
 	fi
 	eapply "${FILESDIR}/${PN}-1.47.17-hardcoded-paths.patch"
 #	eapply "${FILESDIR}/${PN}-1.49.3-docker-standalone.patch"
+	eapply "${FILESDIR}/${PN}-1.49.5-disable-memory-optimizations.patch"
 
 	if [[ "${SERWIST_CHOICE}" == "no-change" ]] ; then
 		:
