@@ -21,7 +21,6 @@ EAPI=8
 # pytest-docker
 # pyxlsb
 # qdrant-client
-# rank-bm25
 # rapidocr-onnxruntime
 # sentence-transformers
 # unstructured

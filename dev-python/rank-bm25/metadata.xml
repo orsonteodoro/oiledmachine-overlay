@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/dorianbrown/rank_bm25/issues</bugs-to>
+    <remote-id type="github">dorianbrown/rank_bm25</remote-id>
+    <remote-id type="pypi">rank-bm25</remote-id>
+  </upstream>
+</pkgmetadata>
