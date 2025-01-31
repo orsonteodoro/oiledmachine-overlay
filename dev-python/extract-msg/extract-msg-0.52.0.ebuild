@@ -7,7 +7,6 @@ EAPI=8
 # PN is the same as pypi name
 
 # TODO package:
-# compressed-rtf
 # ebcdic
 # RTFDE
 
