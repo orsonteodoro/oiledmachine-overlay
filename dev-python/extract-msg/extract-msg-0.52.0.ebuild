@@ -8,7 +8,6 @@ EAPI=8
 
 # TODO package:
 # ebcdic
-# RTFDE
 
 MY_PN="msg-extractor"
 
@@ -51,7 +50,7 @@ RDEPEND+="
 	>=dev-python/compressed-rtf-1.0.6[${PYTHON_USEDEP}]
 	>=dev-python/ebcdic-1.1.1[${PYTHON_USEDEP}]
 	>=dev-python/beautifulsoup4-4.11.1[${PYTHON_USEDEP}]
-	>=dev-python/RTFDE-0.1.1[${PYTHON_USEDEP}]
+	>=dev-python/RTFDE-0.1.1[${PYTHON_USEDEP},msg_parse]
 	>=dev-python/red-black-tree-mod-1.20[${PYTHON_USEDEP}]
 	encoding? (
 		dev-python/chardet[${PYTHON_USEDEP}]
