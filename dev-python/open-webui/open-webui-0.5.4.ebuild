@@ -26,7 +26,6 @@ EAPI=8
 # sentence-transformers
 # sentencepiece
 # unstructured
-# youtube-transcript-api
 
 AT_TYPES_NODE_PV="20.11.30"
 DISTUTILS_USE_PEP517="hatchling"
