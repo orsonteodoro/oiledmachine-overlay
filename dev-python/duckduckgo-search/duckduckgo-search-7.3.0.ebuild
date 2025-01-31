@@ -5,7 +5,6 @@
 EAPI=8
 
 # TODO package:
-# primp
 # pytest-dependency
 
 DISTUTILS_USE_PEP517="setuptools"
@@ -38,9 +37,14 @@ HOMEPAGE="
 LICENSE="
 	MIT
 "
-RESTRICT="mirror"
+RESTRICT="mirror test" # Missing dev package
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" dev"
+IUSE+=" dev test"
+REQUIRED_USE="
+	test? (
+		dev
+	)
+"
 RDEPEND+="
 	>=dev-python/click-8.1.8[${PYTHON_USEDEP}]
 	>=dev-python/lxml-5.3.0[${PYTHON_USEDEP}]
