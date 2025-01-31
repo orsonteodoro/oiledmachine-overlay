@@ -24,7 +24,6 @@ EAPI=8
 # rank-bm25
 # rapidocr-onnxruntime
 # sentence-transformers
-# sentencepiece
 # unstructured
 
 AT_TYPES_NODE_PV="20.11.30"
