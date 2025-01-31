@@ -10,7 +10,6 @@ EAPI=8
 # compressed-rtf
 # ebcdic
 # RTFDE
-# red-black-tree-mod
 
 MY_PN="msg-extractor"
 
