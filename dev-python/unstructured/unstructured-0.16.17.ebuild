@@ -5,13 +5,12 @@
 EAPI=8
 
 # TODO package:
-# google-cloud-vision
-# python-iso639
+# google-cloud-vision (optional)
 # python-oxmsg
 # unstructured-client
-# unstructured-inference
-# unstructured-pytesseract
-# sacremoses
+# unstructured-inference (optional)
+# unstructured-pytesseract (optional)
+# sacremoses (optional)
 # weaviate-client
 
 DISTUTILS_SINGLE_IMPL=1
@@ -135,8 +134,8 @@ HUGGINGFACE_RDEPEND="
 		dev-python/sacremoses[${PYTHON_USEDEP}]
 		dev-python/sentencepiece[${PYTHON_USEDEP}]
 	')
-	sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
 	sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+	sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
 "
 IMAGE_RDEPEND="
 	$(python_gen_cond_dep '
