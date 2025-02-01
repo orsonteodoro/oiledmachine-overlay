@@ -40,7 +40,7 @@ ZSTD_COMMIT="794ea1b0afca0f020f4e57b6732332231fb23c70"
 
 inherit cmake dep-prepare yarn
 
-#KEYWORDS="~amd64 ~arm64"
+#KEYWORDS="~amd64 ~arm64" # Ebuild unfinished
 S="${WORKDIR}/${PN}-${PN}-v${PV}"
 SRC_URI="
 https://github.com/c-ares/c-ares/archive/${C_ARES_COMMIT}.tar.gz

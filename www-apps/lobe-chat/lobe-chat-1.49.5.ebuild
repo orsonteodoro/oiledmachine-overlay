@@ -53,7 +53,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	KEYWORDS="~amd64"
+	#KEYWORDS="~amd64" # Ebuild unfinished
 	S="${WORKDIR}/${PN}-${PV}"
 	SRC_URI="
 https://github.com/lobehub/lobe-chat/archive/refs/tags/v${PV}.tar.gz
