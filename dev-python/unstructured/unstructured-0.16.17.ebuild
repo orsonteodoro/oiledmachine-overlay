@@ -10,7 +10,6 @@ EAPI=8
 # unstructured-inference (optional)
 # unstructured-pytesseract (optional)
 # sacremoses (optional)
-# weaviate-client
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
