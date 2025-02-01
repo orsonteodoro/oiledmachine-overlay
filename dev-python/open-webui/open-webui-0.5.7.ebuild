@@ -14,7 +14,6 @@ EAPI=8
 # pgvector-python
 # psycopg2-binary
 # pymilvus
-# pytest-docker
 # pyxlsb
 # qdrant-client
 # rapidocr-onnxruntime
