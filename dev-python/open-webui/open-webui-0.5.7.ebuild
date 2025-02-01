@@ -9,7 +9,6 @@ EAPI=8
 # faster-whisper
 # langchain
 # langchain-community
-# langfuse
 # peewee-migrate
 # pgvector-python
 # psycopg2-binary
