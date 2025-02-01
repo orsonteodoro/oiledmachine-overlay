@@ -35,7 +35,7 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/bitarray[${PYTHON_USEDEP}]
 		dev-python/flask[${PYTHON_USEDEP}]
-		dev-python/GitPython[${PYTHON_USEDEP}]
+		dev-python/gitpython[${PYTHON_USEDEP}]
 		dev-python/python-dotenv[${PYTHON_USEDEP}]
 		dev-python/scipy[${PYTHON_USEDEP}]
 		dev-python/tqdm[${PYTHON_USEDEP}]
