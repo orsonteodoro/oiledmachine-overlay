@@ -4,9 +4,6 @@
 
 EAPI=8
 
-# TODO package:
-# omegaconf
-
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_10" ) # Upstream tests up to 3.10
@@ -39,8 +36,8 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/pycocotools-2.0.2[${PYTHON_USEDEP}]
 		>=dev-python/omegaconf-2.0[${PYTHON_USEDEP}]
+		>=dev-python/pycocotools-2.0.2[${PYTHON_USEDEP}]
 		>=dev-python/timm-0.9.2[${PYTHON_USEDEP}]
 	')
 	>=sci-libs/pytorch-1.12.1[${PYTHON_SINGLE_USEDEP}]
