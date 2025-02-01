@@ -6,9 +6,6 @@ EAPI=8
 
 # PN is the same as pypi name
 
-# TODO package:
-# ebcdic
-
 MY_PN="msg-extractor"
 
 DISTUTILS_USE_PEP517="setuptools"

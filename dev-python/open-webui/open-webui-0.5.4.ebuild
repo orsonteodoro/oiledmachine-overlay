@@ -7,7 +7,6 @@ EAPI=8
 # TODO package:
 # chromadb
 # colbert-ai
-# extract-msg
 # faster-whisper
 # fpdf2
 # langchain
