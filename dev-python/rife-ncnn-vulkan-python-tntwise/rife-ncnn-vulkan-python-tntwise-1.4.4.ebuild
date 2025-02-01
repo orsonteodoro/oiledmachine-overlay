@@ -381,7 +381,6 @@ src_unpack() {
 		dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT}" "${S}/rife_ncnn_vulkan_python/rife-ncnn-vulkan/src/ncnn/python/pybind11"
 		dep_prepare_mv "${WORKDIR}/libwebp-${LIBWEBP_COMMIT}" "${S}/rife_ncnn_vulkan_python/rife-ncnn-vulkan/src/libwebp"
 
-rife-ncnn-vulkan-python-tntwise-1.4.4/rife_ncnn_vulkan_python/rife-ncnn-vulkan
 		gen_git_tag "${S}/rife_ncnn_vulkan_python" "v${PV}"
 	fi
 }
