@@ -58,7 +58,7 @@ DEPEND+="
 BDEPEND+="
 	>=dev-python/setuptools-65[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.38.1[${PYTHON_USEDEP}]
-	>dev-python/setuptools-scm-6.2[${PYTHON_USEDEP},toml]
+	>dev-python/setuptools-scm-6.2[${PYTHON_USEDEP},toml(+)]
 	dev? (
 		>=dev-python/requests-2.32.2[${PYTHON_USEDEP}]
 		>=dev-python/validators-0.21.2[${PYTHON_USEDEP}]
