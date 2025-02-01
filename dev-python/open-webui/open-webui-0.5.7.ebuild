@@ -7,7 +7,6 @@ EAPI=8
 # TODO package:
 # chromadb
 # faster-whisper
-# gcp-storage-emulator
 # langchain
 # langchain-community
 # langfuse
