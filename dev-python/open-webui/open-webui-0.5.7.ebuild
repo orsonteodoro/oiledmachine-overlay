@@ -8,13 +8,14 @@ EAPI=8
 # chromadb
 # colbert-ai
 # faster-whisper
+# gcp-storage-emulator
 # langchain
-# langchain-chroma
 # langchain-community
 # langfuse
 # peewee-migrate
 # pgvector-python
 # psycopg2-binary
+# py-partiql-parser
 # pymilvus
 # pytest-docker
 # pyxlsb
@@ -68,6 +69,11 @@ UVICORN_RDEPEND="
 PYJWT_RDEPEND="
 	dev-python/cryptography[${PYTHON_USEDEP}]
 "
+# For missing dev-python/moto[s3] rdepends
+MOTO_RDEPEND="
+	>=dev-python/moto-5.0.26[s3(+)]
+	>=dev-python/py-partiql-parser-0.6.1
+"
 RDEPEND+="
 	${UVICORN_RDEPEND}
 	>=dev-python/fastapi-0.111.0[${PYTHON_USEDEP}]
@@ -110,10 +116,9 @@ RDEPEND+="
 
 	>=dev-python/langchain-0.3.7[${PYTHON_USEDEP}]
 	>=dev-python/langchain-community-0.3.7[${PYTHON_USEDEP}]
-	>=dev-python/langchain-chroma-0.1.4[${PYTHON_USEDEP}]
 
 	>=dev-python/fake-useragent-1.5.1[${PYTHON_USEDEP}]
-	>=dev-python/chromadb-0.5.15[${PYTHON_USEDEP}]
+	>=dev-python/chromadb-0.6.2[${PYTHON_USEDEP}]
 	>=dev-python/pymilvus-2.5.0[${PYTHON_USEDEP}]
 	>=dev-python/qdrant-client-1.12.0[${PYTHON_USEDEP}]
 	>=dev-python/opensearch-py-2.7.1[${PYTHON_USEDEP}]
@@ -121,6 +126,7 @@ RDEPEND+="
 	>=dev-python/sentence-transformers-3.3.1[${PYTHON_USEDEP}]
 	>=dev-python/colbert-ai-0.2.21[${PYTHON_USEDEP}]
 	>=dev-python/einops-0.8.0[${PYTHON_USEDEP}]
+	sci-libs/transformers[${PYTHON_USEDEP}]
 
 	>=dev-python/ftfy-6.2.3[${PYTHON_USEDEP}]
 	>=dev-python/pyPdf-4.3.1[${PYTHON_USEDEP}]
@@ -156,17 +162,24 @@ RDEPEND+="
 	>=dev-python/youtube-transcript-api-0.6.3[${PYTHON_USEDEP}]
 	>=dev-python/pytube-15.0.0[${PYTHON_USEDEP}]
 
-	>=dev-python/duckduckgo-search-6.3.5[${PYTHON_USEDEP}]
+	>=dev-python/duckduckgo-search-7.2.1[${PYTHON_USEDEP}]
 	dev-python/extract-msg[${PYTHON_USEDEP}]
 	dev-python/pydub[${PYTHON_USEDEP}]
+
+	dev-python/google-api-python-client
+	dev-python/google-auth-httplib2
+	dev-python/google-auth-oauthlib
 
 	>=dev-python/docker-7.1.0[${PYTHON_USEDEP}]
 	>=dev-python/pytest-8.3.2[${PYTHON_USEDEP}]
 	>=dev-python/pytest-docker-3.1.1[${PYTHON_USEDEP}]
 
+	${MOTO_RDEPEND}
+
 	>=dev-python/googleapis-common-protos-1.63.2[${PYTHON_USEDEP}]
 
 	>=dev-python/ldap3-2.9.1[${PYTHON_USEDEP}]
+	>=dev-python/gcp-storage-emulator-2024.8.3[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
