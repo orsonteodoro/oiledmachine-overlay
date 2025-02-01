@@ -6,6 +6,7 @@ EAPI=8
 
 # U 22.04
 
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} "pypy3" )
 
@@ -23,7 +24,7 @@ HOMEPAGE="https://github.com/breezy-team/patiencediff"
 LICENSE="GPL-2+"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" test"
+IUSE+=" test ebuild_revision_1"
 RDEPEND+="
 "
 DEPEND+="
