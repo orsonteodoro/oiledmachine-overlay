@@ -8,7 +8,6 @@ EAPI=8
 # chromadb
 # colbert-ai
 # faster-whisper
-# fpdf2
 # langchain
 # langchain-chroma
 # langchain-community
