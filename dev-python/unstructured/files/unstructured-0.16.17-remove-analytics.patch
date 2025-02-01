@@ -1,0 +1,100 @@
+diff '--color=auto' -urp unstructured-0.16.17.orig/unstructured/logger.py unstructured-0.16.17/unstructured/logger.py
+--- unstructured-0.16.17.orig/unstructured/logger.py	2025-01-29 04:49:49.000000000 -0800
++++ unstructured-0.16.17/unstructured/logger.py	2025-02-01 09:46:51.778557525 -0800
+@@ -1,7 +1,5 @@
+ import logging
+ 
+-from unstructured.utils import scarf_analytics
+-
+ logger = logging.getLogger("unstructured")
+ trace_logger = logging.getLogger("unstructured.trace")
+ 
+@@ -16,9 +14,5 @@ def detail(self, message, *args, **kws):
+         self._log(DETAIL, message, args, **kws)
+ 
+ 
+-# Note(Trevor,Crag): to opt out of scarf analytics, set the environment variable:
+-# SCARF_NO_ANALYTICS=true. See the README for more info.
+-scarf_analytics()
+-
+ # Add the custom log method to the logging.Logger class
+ logging.Logger.detail = detail  # type: ignore
+diff '--color=auto' -urp unstructured-0.16.17.orig/unstructured/utils.py unstructured-0.16.17/unstructured/utils.py
+--- unstructured-0.16.17.orig/unstructured/utils.py	2025-01-29 04:49:49.000000000 -0800
++++ unstructured-0.16.17/unstructured/utils.py	2025-02-01 09:46:53.026549910 -0800
+@@ -268,75 +268,6 @@ def only(it: Iterable[Any]) -> Any:
+     return out
+ 
+ 
+-def scarf_analytics():
+-    try:
+-        subprocess.check_output("nvidia-smi")
+-        gpu_present = True
+-    except Exception:
+-        gpu_present = False
+-
+-    python_version = ".".join(platform.python_version().split(".")[:2])
+-
+-    try:
+-        if os.getenv("SCARF_NO_ANALYTICS") != "true" and os.getenv("DO_NOT_TRACK") != "true":
+-            if "dev" in __version__:
+-                requests.get(
+-                    "https://packages.unstructured.io/python-telemetry?version="
+-                    + __version__
+-                    + "&platform="
+-                    + platform.system()
+-                    + "&python"
+-                    + python_version
+-                    + "&arch="
+-                    + platform.machine()
+-                    + "&gpu="
+-                    + str(gpu_present)
+-                    + "&dev=true",
+-                )
+-                requests.get(
+-                    "https://packages2.unstructured.io/python-telemetry?version="
+-                    + __version__
+-                    + "&platform="
+-                    + platform.system()
+-                    + "&python"
+-                    + python_version
+-                    + "&arch="
+-                    + platform.machine()
+-                    + "&gpu="
+-                    + str(gpu_present)
+-                    + "&dev=true",
+-                )
+-            else:
+-                requests.get(
+-                    "https://packages.unstructured.io/python-telemetry?version="
+-                    + __version__
+-                    + "&platform="
+-                    + platform.system()
+-                    + "&python"
+-                    + python_version
+-                    + "&arch="
+-                    + platform.machine()
+-                    + "&gpu="
+-                    + str(gpu_present)
+-                    + "&dev=false",
+-                )
+-                requests.get(
+-                    "https://packages2.unstructured.io/python-telemetry?version="
+-                    + __version__
+-                    + "&platform="
+-                    + platform.system()
+-                    + "&python"
+-                    + python_version
+-                    + "&arch="
+-                    + platform.machine()
+-                    + "&gpu="
+-                    + str(gpu_present)
+-                    + "&dev=false",
+-                )
+-    except Exception:
+-        pass
+-
+-
+ def ngrams(s: list[str], n: int) -> list[tuple[str, ...]]:
+     """Generate n-grams from a list of strings where `n` (int) is the size of each n-gram."""
+ 

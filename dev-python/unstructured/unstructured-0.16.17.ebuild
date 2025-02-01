@@ -4,11 +4,7 @@
 
 EAPI=8
 
-# TODO:
-# Hard disable telemetry - see README.md
-
 # TODO package:
-# effdet
 # google-cloud-vision
 # python-iso639
 # python-oxmsg
@@ -60,6 +56,7 @@ huggingface local-inference paddleocr
 IUSE+="
 ${DOCS_IUSE}
 ${LEGACY_IUSE}
+-analytics
 "
 REQUIRED_USE="
 	local-inference? (
@@ -312,6 +309,18 @@ src_unpack() {
 	else
 		unpack ${A}
 	fi
+}
+
+python_prepare_all() {
+	if ! use analytics ; then
+		eapply "${FILESDIR}/${PN}-0.16.17-remove-analytics.patch"
+	fi
+	distutils-r1_python_prepare_all
+}
+
+src_prepare() {
+	default
+	distutils-r1_src_prepare
 }
 
 src_install() {

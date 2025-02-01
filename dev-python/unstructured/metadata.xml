@@ -12,4 +12,9 @@
     <remote-id type="github">Unstructured-IO/unstructured</remote-id>
     <remote-id type="pypi">unstructured</remote-id>
   </upstream>
+  <use>
+    <flag name="analytics">
+      Opt-in to sending data to developers
+    </flag>
+  </use>
 </pkgmetadata>
