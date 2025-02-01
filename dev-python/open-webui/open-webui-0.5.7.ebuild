@@ -14,7 +14,6 @@ EAPI=8
 # peewee-migrate
 # pgvector-python
 # psycopg2-binary
-# py-partiql-parser
 # pymilvus
 # pytest-docker
 # pyxlsb
