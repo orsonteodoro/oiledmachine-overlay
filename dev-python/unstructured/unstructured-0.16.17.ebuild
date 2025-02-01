@@ -4,6 +4,9 @@
 
 EAPI=8
 
+# TODO:
+# Hard disable telemetry - see README.md
+
 # TODO package:
 # effdet
 # google-cloud-vision
