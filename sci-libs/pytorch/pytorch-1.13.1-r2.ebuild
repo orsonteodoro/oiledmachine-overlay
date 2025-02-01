@@ -216,9 +216,9 @@ src_prepare() {
 		|| die
 
 	if [[ -n "${ROCM_VERSION}" ]] ; then
-		sed -i -e "s|@ROCM_VERSION@|${ROCM_VERSION}|g" $(grep -l "@ROCM_VERSION@" "${WORKDIR}") || die
+		sed -i -e "s|@ROCM_VERSION@|${ROCM_VERSION}|g" $(grep -r -l "@ROCM_VERSION@" "${WORKDIR}") || die
 	else
-		sed -i -e "s|@ROCM_VERSION@|${HIP_5_2_VERSION}|g" $(grep -l "@ROCM_VERSION@" "${WORKDIR}") || die
+		sed -i -e "s|@ROCM_VERSION@|${HIP_5_2_VERSION}|g" $(grep -r -l "@ROCM_VERSION@" "${WORKDIR}") || die
 	fi
 
 	distutils-r1_src_prepare

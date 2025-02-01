@@ -177,11 +177,11 @@ DEPEND="
 BDEPEND="
 "
 _PATCHES=(
-	"${FILESDIR}/${PN}-2.4.0-dontbuildagain.patch"
+	"${FILESDIR}/${PN}-2.5.1-dontbuildagain.patch"
 	"${FILESDIR}/${PN}-1.9.0-Change-library-directory-according-to-CMake-build.patch"
 	"${FILESDIR}/${PN}-2.4.0-global-dlopen.patch"
-	"${FILESDIR}/${PN}-2.4.0-torch_shm_manager.patch"
-	"${FILESDIR}/${PN}-1.13.0-setup.patch"
+	"${FILESDIR}/${PN}-2.5.1-torch_shm_manager.patch"
+	"${FILESDIR}/${PN}-2.5.1-setup.patch"
 	"${FILESDIR}/${PN}-2.2.1-emptyso.patch"
 	"${FILESDIR}/caffe2-2.4.0-cuda-hardcoded-paths.patch"
 	"${FILESDIR}/caffe2-2.4.0-rocm-hardcoded-paths.patch"
@@ -224,9 +224,9 @@ src_prepare() {
 	distutils-r1_src_prepare
 
 	if [[ -n "${ROCM_VERSION}" ]] ; then
-		sed -i -e "s|@ROCM_VERSION@|${ROCM_VERSION}|g" $(grep -l "@ROCM_VERSION@" "${WORKDIR}") || die
+		sed -i -e "s|@ROCM_VERSION@|${ROCM_VERSION}|g" $(grep -r -l "@ROCM_VERSION@" "${WORKDIR}") || die
 	else
-		sed -i -e "s|@ROCM_VERSION@|${HIP_6_1_VERSION}|g" $(grep -l "@ROCM_VERSION@" "${WORKDIR}") || die
+		sed -i -e "s|@ROCM_VERSION@|${HIP_6_1_VERSION}|g" $(grep -r -l "@ROCM_VERSION@" "${WORKDIR}") || die
 	fi
 
 	hprefixify "tools/setup_helpers/env.py"

@@ -219,9 +219,9 @@ src_prepare() {
 	distutils-r1_src_prepare
 
 	if [[ -n "${ROCM_VERSION}" ]] ; then
-		sed -i -e "s|@ROCM_VERSION@|${ROCM_VERSION}|g" $(grep -l "@ROCM_VERSION@" "${WORKDIR}") || die
+		sed -i -e "s|@ROCM_VERSION@|${ROCM_VERSION}|g" $(grep -r -l "@ROCM_VERSION@" "${WORKDIR}") || die
 	else
-		sed -i -e "s|@ROCM_VERSION@|${HIP_5_4_VERSION}|g" $(grep -l "@ROCM_VERSION@" "${WORKDIR}") || die
+		sed -i -e "s|@ROCM_VERSION@|${HIP_5_4_VERSION}|g" $(grep -r -l "@ROCM_VERSION@" "${WORKDIR}") || die
 	fi
 
 	hprefixify "tools/setup_helpers/env.py"
