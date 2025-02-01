@@ -6,7 +6,6 @@ EAPI=8
 
 # TODO package:
 # chromadb
-# colbert-ai
 # faster-whisper
 # gcp-storage-emulator
 # langchain
