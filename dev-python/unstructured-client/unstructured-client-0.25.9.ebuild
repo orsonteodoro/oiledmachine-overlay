@@ -6,9 +6,6 @@ EAPI=8
 
 MY_PN="unstructured-python-client"
 
-# TODO package:
-# jsonpath-python
-
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
