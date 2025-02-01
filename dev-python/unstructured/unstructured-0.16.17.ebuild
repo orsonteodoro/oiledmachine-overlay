@@ -6,7 +6,6 @@ EAPI=8
 
 # TODO package:
 # google-cloud-vision (optional)
-# unstructured-client
 # unstructured-inference (optional)
 # unstructured-pytesseract (optional)
 # sacremoses (optional)
