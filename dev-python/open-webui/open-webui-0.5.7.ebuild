@@ -139,7 +139,6 @@ RDEPEND+="
 		>=dev-python/pymdown-extensions-10.11.2[${PYTHON_USEDEP}]
 		>=dev-python/docx2txt-0.8[${PYTHON_USEDEP}]
 		>=dev-python/python-pptx-1.0.0[${PYTHON_USEDEP}]
-		>=dev-python/unstructured-0.15.9[${PYTHON_USEDEP}]
 		>=dev-python/nltk-3.9.1[${PYTHON_USEDEP}]
 		>=dev-python/markdown-3.7[${PYTHON_USEDEP}]
 		>=dev-python/pypandoc-1.13[${PYTHON_USEDEP}]
@@ -185,6 +184,7 @@ RDEPEND+="
 		>=dev-python/gcp-storage-emulator-2024.8.3[${PYTHON_USEDEP}]
 	')
 	>=dev-python/colbert-ai-0.2.21[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/unstructured-0.15.9[${PYTHON_SINGLE_USEDEP}]
 	sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
