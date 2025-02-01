@@ -134,7 +134,7 @@ RDEPEND+="
 		>=dev-python/einops-0.8.0[${PYTHON_USEDEP}]
 
 		>=dev-python/ftfy-6.2.3[${PYTHON_USEDEP}]
-		>=dev-python/pyPdf-4.3.1[${PYTHON_USEDEP}]
+		>=dev-python/pypdf-4.3.1[${PYTHON_USEDEP}]
 		>=dev-python/fpdf2-2.8.2[${PYTHON_USEDEP}]
 		>=dev-python/pymdown-extensions-10.11.2[${PYTHON_USEDEP}]
 		>=dev-python/docx2txt-0.8[${PYTHON_USEDEP}]
