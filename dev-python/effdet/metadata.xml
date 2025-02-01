@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/rwightman/efficientdet-pytorch/issues</bugs-to>
+    <remote-id type="github">rwightman/efficientdet-pytorch</remote-id>
+    <remote-id type="pypi">effdet</remote-id>
+  </upstream>
+</pkgmetadata>
