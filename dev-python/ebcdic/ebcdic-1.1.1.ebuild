@@ -43,7 +43,7 @@ src_unpack() {
 src_compile() {
 	install_impl() {
 		local d="${WORKDIR}/build-${EPYTHON/./_}/install"
-		local wheel_path=$(realpath "${DISTDIR}/ebcdic-1.1.1-py2.py3-none-any.whl")
+		local wheel_path=$(realpath "${DISTDIR}/ebcdic-${PV}-py2.py3-none-any.whl")
 		distutils_wheel_install "${d}" \
 			"${wheel_path}"
 

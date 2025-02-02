@@ -69,6 +69,14 @@ python_prepare_all() {
 src_prepare() {
 	default
 	distutils-r1_src_prepare
+
+	sed -i \
+		-e "s|@VERSION_NUM@|${PV}|g" \
+		"${S_PYTHON}/setup_openvino.py" \
+		"${S_PYTHON}/setup_onnxruntime.py" \
+		"${S_PYTHON}/setup_paddle.py" \
+		|| die
+
 	cp \
 		"${S_RES}/resources/models/"*".onnx" \
 		"${S_PROJ}/python/rapidocr_onnxruntime/models/" \
