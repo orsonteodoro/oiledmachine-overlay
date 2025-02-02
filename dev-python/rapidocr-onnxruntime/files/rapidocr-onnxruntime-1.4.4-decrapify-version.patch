@@ -1,0 +1,96 @@
+diff '--color=auto' -urp RapidOCR-1.4.4.orig/python/setup_onnxruntime.py RapidOCR-1.4.4/python/setup_onnxruntime.py
+--- RapidOCR-1.4.4.orig/python/setup_onnxruntime.py	2025-01-16 17:43:51.000000000 -0800
++++ RapidOCR-1.4.4/python/setup_onnxruntime.py	2025-02-01 23:40:09.683853467 -0800
+@@ -6,7 +6,6 @@ from pathlib import Path
+ from typing import List, Union
+ 
+ import setuptools
+-from get_pypi_latest_version import GetPyPiLatestVersion
+ 
+ 
+ def read_txt(txt_path: Union[Path, str]) -> List[str]:
+@@ -25,17 +24,8 @@ def get_readme():
+ 
+ 
+ MODULE_NAME = "rapidocr_onnxruntime"
+-
+-obtainer = GetPyPiLatestVersion()
+-latest_version = obtainer(MODULE_NAME)
+-VERSION_NUM = obtainer.version_add_one(latest_version, add_patch=True)
+-
+-if len(sys.argv) > 2:
+-    match_str = " ".join(sys.argv[2:])
+-    matched_versions = obtainer.extract_version(match_str)
+-    if matched_versions:
+-        VERSION_NUM = matched_versions
+-sys.argv = sys.argv[:2]
++sys.argv = sys.argv[:2]
++VERSION_NUM = '1.4.4'
+ 
+ project_urls = {
+     "Documentation": "https://rapidai.github.io/RapidOCRDocs",
+diff '--color=auto' -urp RapidOCR-1.4.4.orig/python/setup_openvino.py RapidOCR-1.4.4/python/setup_openvino.py
+--- RapidOCR-1.4.4.orig/python/setup_openvino.py	2025-01-16 17:43:51.000000000 -0800
++++ RapidOCR-1.4.4/python/setup_openvino.py	2025-02-01 23:40:14.819818835 -0800
+@@ -6,7 +6,6 @@ from pathlib import Path
+ from typing import List, Union
+ 
+ import setuptools
+-from get_pypi_latest_version import GetPyPiLatestVersion
+ 
+ 
+ def read_txt(txt_path: Union[Path, str]) -> List[str]:
+@@ -25,17 +24,8 @@ def get_readme():
+ 
+ 
+ MODULE_NAME = "rapidocr_openvino"
+-
+-obtainer = GetPyPiLatestVersion()
+-latest_version = obtainer(MODULE_NAME)
+-VERSION_NUM = obtainer.version_add_one(latest_version, add_patch=True)
+-
+-if len(sys.argv) > 2:
+-    match_str = " ".join(sys.argv[2:])
+-    matched_versions = obtainer.extract_version(match_str)
+-    if matched_versions:
+-        VERSION_NUM = matched_versions
+-sys.argv = sys.argv[:2]
++sys.argv = sys.argv[:2]
++VERSION_NUM = '1.4.4'
+ 
+ setuptools.setup(
+     name=MODULE_NAME,
+diff '--color=auto' -urp RapidOCR-1.4.4.orig/python/setup_paddle.py RapidOCR-1.4.4/python/setup_paddle.py
+--- RapidOCR-1.4.4.orig/python/setup_paddle.py	2025-01-16 17:43:51.000000000 -0800
++++ RapidOCR-1.4.4/python/setup_paddle.py	2025-02-01 23:40:41.475639104 -0800
+@@ -6,7 +6,6 @@ from pathlib import Path
+ from typing import List, Union
+ 
+ import setuptools
+-from get_pypi_latest_version import GetPyPiLatestVersion
+ 
+ 
+ def read_txt(txt_path: Union[Path, str]) -> List[str]:
+@@ -25,20 +24,8 @@ def get_readme():
+ 
+ 
+ MODULE_NAME = "rapidocr_paddle"
+-
+-obtainer = GetPyPiLatestVersion()
+-try:
+-    latest_version = obtainer(MODULE_NAME)
+-    VERSION_NUM = obtainer.version_add_one(latest_version, add_patch=True)
+-except:
+-    VERSION_NUM = "0.0.1"
+-
+-if len(sys.argv) > 2:
+-    match_str = " ".join(sys.argv[2:])
+-    matched_versions = obtainer.extract_version(match_str)
+-    if matched_versions:
+-        VERSION_NUM = matched_versions
+-sys.argv = sys.argv[:2]
++sys.argv = sys.argv[:2]
++VERSION_NUM = '1.4.4'
+ 
+ setuptools.setup(
+     name=MODULE_NAME,

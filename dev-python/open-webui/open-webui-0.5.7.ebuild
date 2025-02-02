@@ -14,7 +14,6 @@ EAPI=8
 # pymilvus
 # pyxlsb
 # qdrant-client
-# rapidocr-onnxruntime
 
 AT_TYPES_NODE_PV="20.11.30"
 DISTUTILS_SINGLE_IMPL=1
