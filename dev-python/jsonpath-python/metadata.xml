@@ -10,6 +10,6 @@
     <bugs-to>https://github.com/sean2077/jsonpath-python/issues</bugs-to>
     <changelog>https://github.com/sean2077/jsonpath-python/blob/main/CHANGELOG</changelog>
     <remote-id type="github">sean2077/jsonpath-python</remote-id>
-    <remote-id type="pypi">tdir</remote-id>
+    <remote-id type="pypi">jsonpath-python</remote-id>
   </upstream>
 </pkgmetadata>

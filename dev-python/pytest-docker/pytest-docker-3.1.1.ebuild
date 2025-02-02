@@ -32,7 +32,7 @@ https://github.com/avast/pytest-docker/archive/refs/tags/v${PV}.tar.gz
 	"
 fi
 
-DESCRIPTION="Create, fill a temporary directory"
+DESCRIPTION="Simple pytest fixtures for Docker and Docker Compose based tests"
 HOMEPAGE="
 	https://github.com/avast/pytest-docker
 	https://pypi.org/project/pytest-docker

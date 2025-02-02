@@ -26,10 +26,10 @@ https://github.com/sean2077/jsonpath-python/archive/${FALLBACK_COMMIT}.tar.gz
 	"
 fi
 
-DESCRIPTION="Create, fill a temporary directory"
+DESCRIPTION="A more powerful JSONPath implementation in modern python"
 HOMEPAGE="
 	https://github.com/sean2077/jsonpath-python
-	https://pypi.org/project/tdir
+	https://pypi.org/project/jsonpath-python
 "
 LICENSE="
 	MIT

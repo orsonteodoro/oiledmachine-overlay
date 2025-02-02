@@ -18,7 +18,7 @@ inherit distutils-r1 pypi
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${PV}"
 
-DESCRIPTION="Create, fill a temporary directory"
+DESCRIPTION="Client library to connect to the LangSmith LLM Tracing and Evaluation Platform"
 HOMEPAGE="
 	https://github.com/langchain-ai/langsmith-sdk
 	https://pypi.org/project/langsmith
