@@ -6,7 +6,6 @@ EAPI=8
 
 # TODO package:
 # chromadb
-# langchain-community
 # peewee-migrate
 # pgvector-python
 # psycopg2-binary
