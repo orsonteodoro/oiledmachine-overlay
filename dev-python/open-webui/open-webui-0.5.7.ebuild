@@ -6,7 +6,6 @@ EAPI=8
 
 # TODO package:
 # chromadb
-# faster-whisper
 # langchain
 # langchain-community
 # peewee-migrate
@@ -150,8 +149,6 @@ RDEPEND+="
 		>=dev-python/rapidocr-onnxruntime-1.3.24[${PYTHON_USEDEP}]
 		>=dev-python/rank-bm25-0.2.2[${PYTHON_USEDEP}]
 
-		>=dev-python/faster-whisper-1.0.3[${PYTHON_USEDEP}]
-
 		>=dev-python/pyjwt-2.10.1[${PYTHON_USEDEP},crypto(+)]
 		>=dev-python/Authlib-1.3.2[${PYTHON_USEDEP}]
 
@@ -179,6 +176,7 @@ RDEPEND+="
 		>=dev-python/gcp-storage-emulator-2024.8.3[${PYTHON_USEDEP}]
 	')
 	>=dev-python/colbert-ai-0.2.21[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/faster-whisper-1.0.3[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/unstructured-0.15.9[${PYTHON_SINGLE_USEDEP}]
 	sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
 "
