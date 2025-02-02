@@ -15,7 +15,6 @@ EAPI=8
 # pyxlsb
 # qdrant-client
 # rapidocr-onnxruntime
-# sentence-transformers
 
 AT_TYPES_NODE_PV="20.11.30"
 DISTUTILS_SINGLE_IMPL=1
@@ -124,7 +123,6 @@ RDEPEND+="
 		>=dev-python/qdrant-client-1.12.0[${PYTHON_USEDEP}]
 		>=dev-python/opensearch-py-2.7.1[${PYTHON_USEDEP}]
 
-		>=dev-python/sentence-transformers-3.3.1[${PYTHON_USEDEP}]
 		>=dev-python/einops-0.8.0[${PYTHON_USEDEP}]
 
 		>=dev-python/ftfy-6.2.3[${PYTHON_USEDEP}]
@@ -177,6 +175,7 @@ RDEPEND+="
 	')
 	>=dev-python/colbert-ai-0.2.21[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/faster-whisper-1.0.3[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/sentence-transformers-3.3.1[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/unstructured-0.15.9[${PYTHON_SINGLE_USEDEP}]
 	sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
 "
