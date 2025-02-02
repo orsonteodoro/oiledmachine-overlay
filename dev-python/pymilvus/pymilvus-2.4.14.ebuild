@@ -45,13 +45,13 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" bulk_writer dev model"
 RDEPEND+="
-	>dev-python/setuptools-69[${PYTHON_USEDEP}]
-	>=dev-python/grpcio-1.49.1[${PYTHON_USEDEP}]
 	=dev-python/milvus-lite-2.4*[${PYTHON_USEDEP}]
+	>=dev-python/grpcio-1.49.1[${PYTHON_USEDEP}]
 	>=dev-python/pandas-1.2.4[${PYTHON_USEDEP}]
 	>=dev-python/protobuf-3.20.0[${PYTHON_USEDEP}]
 	>=dev-python/python-dotenv-1.0.1[${PYTHON_USEDEP}]
 	>=dev-python/ujson-2.0.0[${PYTHON_USEDEP}]
+	>dev-python/setuptools-69[${PYTHON_USEDEP}]
 	bulk_writer? (
 		>=dev-python/minio-7.0.0[${PYTHON_USEDEP}]
 		>=dev-python/pyarrow-12.0.0[${PYTHON_USEDEP}]
