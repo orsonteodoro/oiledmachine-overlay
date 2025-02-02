@@ -9,7 +9,6 @@ EAPI=8
 # peewee-migrate
 # psycopg2-binary
 # pymilvus
-# pyxlsb
 # qdrant-client
 
 AT_TYPES_NODE_PV="20.11.30"
