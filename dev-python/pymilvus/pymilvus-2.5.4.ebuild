@@ -6,7 +6,6 @@ EAPI=8
 
 # TODO package:
 # milvus-lite
-# milvus-model
 
 # TODO package (optional):
 # m2r

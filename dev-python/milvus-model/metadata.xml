@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/milvus-io/milvus-model/issues</bugs-to>
+    <changelog>https://github.com/milvus-io/milvus-model/blob/main/CHANGELOG</changelog>
+    <remote-id type="github">milvus-io/milvus-model</remote-id>
+    <remote-id type="pypi">milvus-model</remote-id>
+  </upstream>
+</pkgmetadata>
