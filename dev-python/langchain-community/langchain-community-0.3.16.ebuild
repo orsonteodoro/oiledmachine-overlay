@@ -5,12 +5,10 @@
 EAPI=8
 
 # TODO package (required):
-# langchain-core
-# langsmith
+# httpx-sse
 
 # TODO package (optional):
 # duckdb-engine
-# httpx-sse
 # langsmith
 # mypy-protobuf
 # pytest-dotenv
