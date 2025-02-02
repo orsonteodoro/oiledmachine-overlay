@@ -35,15 +35,15 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev lint test typing"
 RDEPEND+="
 	!=dev-python/tenacity-8.4.0[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		>=dev-python/pydantic-2.7.4[${PYTHON_USEDEP}]
+	' python3_13)
 	>=dev-python/jsonpatch-1.33[${PYTHON_USEDEP}]
 	>=dev-python/langsmith-0.1.125[${PYTHON_USEDEP}]
 	>=dev-python/pyyaml-5.3[${PYTHON_USEDEP}]
 	>=dev-python/packaging-23.2[${PYTHON_USEDEP}]
 	>=dev-python/tenacity-8.1.0[${PYTHON_USEDEP}]
 	>=dev-python/typing-extensions-4.7[${PYTHON_USEDEP}]
-	$(python_gen_cond_dep '
-		>=dev-python/pydantic-2.7.4[${PYTHON_USEDEP}]
-	' python3_13)
 	lint? (
 		>=dev-util/ruff-0.9.2
 	)
