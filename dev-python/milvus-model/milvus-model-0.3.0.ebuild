@@ -27,7 +27,7 @@ https://github.com/milvus-io/milvus-model/archive/refs/tags/v${PV}.tar.gz
 	"
 fi
 
-DESCRIPTION="A library provides the integration with common embedding and reranker models for Milvus, a high performance open-source vector database built for AI applications"
+DESCRIPTION="A library that provides the integration with common embedding and reranker models for Milvus, a high performance open-source vector database built for AI applications"
 HOMEPAGE="
 	https://github.com/milvus-io/milvus-model
 	https://pypi.org/project/milvus-model
