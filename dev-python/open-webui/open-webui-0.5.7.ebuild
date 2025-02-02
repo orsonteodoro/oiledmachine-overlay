@@ -7,7 +7,6 @@ EAPI=8
 # TODO package:
 # chromadb
 # peewee-migrate
-# psycopg2-binary
 # pymilvus
 # qdrant-client
 
