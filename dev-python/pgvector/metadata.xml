@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/pgvector/pgvector-python/issues</bugs-to>
+    <changelog>https://github.com/pgvector/pgvector-python/blob/master/CHANGELOG.md</changelog>
+    <remote-id type="github">pgvector/pgvector-python</remote-id>
+    <remote-id type="pypi">pgvector</remote-id>
+  </upstream>
+</pkgmetadata>

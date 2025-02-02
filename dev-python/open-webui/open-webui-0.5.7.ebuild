@@ -7,7 +7,6 @@ EAPI=8
 # TODO package:
 # chromadb
 # peewee-migrate
-# pgvector-python
 # psycopg2-binary
 # pymilvus
 # pyxlsb
