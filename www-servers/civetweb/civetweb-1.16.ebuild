@@ -100,9 +100,9 @@ DEPEND+="
 		$(gen_lua_targets)
 		${LUA_DEPS}
 		>=dev-db/sqlite-0.1.2[static-libs?]
-		>=dev-lua/luafilesystem-1.6.3[${LUA_USEDEP},static-libs(-)]
+		>=dev-lua/luafilesystem-1.6.3[${LUA_USEDEP}]
 		>=dev-lua/luasqlite3-0.9.3[${LUA_USEDEP},static-libs?]
-		>=dev-lua/luaxml-1.8[${LUA_USEDEP},static-libs?]
+		>=dev-lua/luaxml-1.8[${LUA_USEDEP}]
 	)
 "
 BDEPEND+="
