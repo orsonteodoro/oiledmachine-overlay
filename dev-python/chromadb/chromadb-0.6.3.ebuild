@@ -688,7 +688,10 @@ RDEPEND+="
 	>=dev-python/numpy-1.22.5[${PYTHON_USEDEP}]
 	>=dev-python/onnxruntime-1.14.1[${PYTHON_USEDEP}]
 	>=dev-python/opentelemetry-api-1.24.0[${PYTHON_USEDEP}]
-	>=dev-python/opentelemetry-exporter-otlp-proto-grpc-1.24.0[${PYTHON_USEDEP}]
+	(
+		>=dev-python/opentelemetry-exporter-otlp-proto-grpc-1.24.0[${PYTHON_USEDEP}]
+		<dev-python/opentelemetry-exporter-otlp-proto-grpc-1.28.0[${PYTHON_USEDEP}]
+	)
 	>=dev-python/opentelemetry-instrumentation-fastapi-0.41_beta0[${PYTHON_USEDEP}]
 	>=dev-python/opentelemetry-sdk-1.24.0[${PYTHON_USEDEP}]
 	>=dev-python/orjson-3.9.12[${PYTHON_USEDEP}]
