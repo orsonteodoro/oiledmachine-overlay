@@ -12,7 +12,7 @@ diff '--color=auto' -urp milvus-lite-2.4.11.orig/conanfile.py milvus-lite-2.4.11
          "xz_utils/5.4.5",
          "zlib/1.2.13",
 -        "glog/0.6.0",
-+        "glog/0.7.1",
++        "glog/0.6.1",
          # protobuf
          "protobuf/3.21.12",
          # folly
@@ -20,7 +20,6 @@ diff '--color=auto' -urp milvus-lite-2.4.11.orig/conanfile.py milvus-lite-2.4.11
 -        "folly/2023.10.30.09@milvus/dev",
 +        "fmt/10.2.1",
 +        "folly/2024.08.12.00",
-+        "boost/1.85.0",
          # antlr
          "antlr4-cppruntime/4.13.1",
          # sqlite
@@ -28,6 +27,7 @@ diff '--color=auto' -urp milvus-lite-2.4.11.orig/conanfile.py milvus-lite-2.4.11
          "onetbb/2021.9.0",
          "nlohmann_json/3.11.2",
 -        "boost/1.82.0",
++        "boost/1.85.0",
 -        "fmt/9.1.0",
          "openssl/1.1.1t",
          "libcurl/7.86.0",

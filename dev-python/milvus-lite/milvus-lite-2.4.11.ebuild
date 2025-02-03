@@ -13,7 +13,7 @@ MILVUS_COMMIT="15b78749a6fdc5258bf3d3824ea13477bc7c1f76"
 MILVUS_PROTO_COMMIT="fb716450bed2ccac4dec2ab731ca888d39be8826"
 MILVUS_STORAGE_COMMIT="c23ba736d7e6dcd21f7e6288525f706746329e8e"
 
-inherit dep-prepare distutils-r1 pypi
+inherit dep-prepare distutils-r1 edo pypi
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -54,14 +54,32 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev"
 RDEPEND+="
+	<net-libs/grpc-1.55
+	>=dev-cpp/antlr4-runtime-4.13.1
+	>=dev-cpp/folly-2023.10.30.09
+	>=dev-cpp/glog-0.6.0
+	>=dev-cpp/nlohmann_json-3.11.2
+	>=dev-cpp/prometheus-cpp-1.1.0
+	>=dev-cpp/sqlitecpp-3.3.1
+	>=dev-cpp/tbb-2021.9.0
+	>=dev-cpp/yaml-cpp-0.7.0
+	>=dev-libs/apache-arrow-12.0.1
+	>=dev-libs/boost-1.82.0
+	dev-libs/boost:=
+	>=dev-libs/double-conversion-3.2.1
+	>=dev-libs/libfmt-9.1.0
+	>=dev-libs/marisa-0.2.6
+	>=dev-libs/re2-0.2023.03.01:0/10
+	dev-cpp/gflags
+	dev-libs/protobuf:0/3.21
 	dev-python/tqdm[${PYTHON_USEDEP}]
+
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
 	>=dev-python/setuptools-64.0[${PYTHON_USEDEP}]
-	>=dev-util/conan-2[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
 "
 DOCS=( "README.md" )
@@ -80,21 +98,6 @@ pkg_setup() {
 ewarn "The package manager may randomly delete tags."
 ewarn "Report unresolved dependencies (or missing tagged versions) to repo."
 	check_network_sandbox_permissions
-}
-
-_conan_setup_offline_cache() {
-	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	export CONAN_SLOT="2" # Version 2
-	if [[ -z "${CONAN_CACHE_FOLDER}" ]] ; then
-		export CONAN_CACHE_FOLDER="${EDISTDIR}/conan-download-cache-${CONAN_SLOT}/${CATEGORY}/${P}"
-	fi
-einfo "DEBUG:  Default cache folder:  ${HOME}/.conan2"
-einfo "CONAN_CACHE_FOLDER:  ${CONAN_CACHE_FOLDER}"
-	rm -rf "${HOME}/.conan2"
-	ln -sf "${CONAN_CACHE_FOLDER}" "${HOME}/.conan2"
-	addwrite "${EDISTDIR}"
-	addwrite "${CONAN_CACHE_FOLDER}"
-	mkdir -p "${CONAN_CACHE_FOLDER}"
 }
 
 src_unpack() {
@@ -116,14 +119,14 @@ src_prepare() {
 
 	default
 	eapply "${FILESDIR}/${PN}-2.4.11-conan2.patch"
+	eapply "${FILESDIR}/${PN}-2.4.11-conan-changes.patch"
 	export S="${S_PYTHON}"
 	cd "${S_PYTHON}" || die
 	distutils-r1_src_prepare
 }
 
 src_compile() {
-	_conan_setup_offline_cache
-	conan profile detect || die
+	export OFFLINE=1
 	distutils-r1_src_compile
 }
 
