@@ -26,7 +26,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
 RDEPEND+="
-	>=dev-python/opentelemetry-proto-1.27.0[${PYTHON_USEDEP}]
+	~dev-python/opentelemetry-proto-1.27.0[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
