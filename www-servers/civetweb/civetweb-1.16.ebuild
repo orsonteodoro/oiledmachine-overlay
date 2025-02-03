@@ -257,7 +257,7 @@ _configure() {
 		-DCIVETWEB_ENABLE_ASAN=$(usex asan)
 		-DCIVETWEB_ENABLE_CXX=$(usex cxx)
 		-DCIVETWEB_ENABLE_DUKTAPE=$(usex duktape)
-		-DCIVETWEB_ENABLE_LTO=$(usex lto)
+		-DCIVETWEB_ENABLE_LTO=$(_usex_lto)
 		-DCIVETWEB_ENABLE_LUA=$(usex lua)
 		-DCIVETWEB_ENABLE_IPV6=$(usex ipv6)
 		-DCIVETWEB_ENABLE_SERVER_EXECUTABLE=$(usex server_executable)
