@@ -15,10 +15,12 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="cc82115a4e7f53d71d9d905caa2c2dfa4da58899" # Aug 3, 2024
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}/runtime/Cpp"
+	S_PROJ="${WORKDIR}/${P}"
 	inherit git-r3
 else
 	KEYWORDS="~amd64 ~amd64-linux ~arm64 ~arm64-macos"
 	S="${WORKDIR}/${MY_PN}-${PV}/runtime/Cpp"
+	S_PROJ="${WORKDIR}/${MY_PN}-${PV}"
 	SRC_URI="
 https://github.com/antlr/antlr4/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -43,7 +45,7 @@ DEPEND+="
 BDEPEND+="
 	>=dev-build/cmake-3.15
 "
-DOCS=( "CHANGES.txt" "README.md" )
+DOCS=( "${S_PROJ}/CHANGES.txt" "${S_PROJ}/README.md" )
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
@@ -67,7 +69,7 @@ src_configure() {
 src_install() {
 	cmake_src_install
 	docinto "licenses"
-	dodoc "LICENSE.txt"
+	dodoc "${S_PROJ}/LICENSE.txt"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
