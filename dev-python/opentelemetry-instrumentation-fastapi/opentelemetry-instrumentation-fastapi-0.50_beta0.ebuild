@@ -4,11 +4,6 @@
 
 EAPI=8
 
-# TODO package:
-# opentelemetry-instrumentation
-# opentelemetry-instrumentation-asgi
-# opentelemetry-util-http
-
 MY_PN="opentelemetry_instrumentation_fastapi"
 MY_PV="${PV/_beta/b}"
 
