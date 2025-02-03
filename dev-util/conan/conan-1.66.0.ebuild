@@ -23,7 +23,7 @@ LICENSE="MIT"
 # versions and cannot be managable outside of a pure CI environment.
 RESTRICT="test"
 SLOT="0/${PV%%.*}" # Version 1
-KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux"
+#KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux" # Broken
 IUSE="dev server test"
 REQUIRED_USE="
 	test? (
