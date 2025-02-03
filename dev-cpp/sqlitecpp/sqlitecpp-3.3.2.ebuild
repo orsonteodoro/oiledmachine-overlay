@@ -71,6 +71,10 @@ src_install() {
 	cmake_src_install
 	docinto "licenses"
 	dodoc "LICENSE.txt"
+
+	# Collisions
+	rm -rf "${ED}/usr/include/sqlite3.h"
+	rm -rf "${ED}/usr/$(get_libdir)/libsqlite3.so"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
