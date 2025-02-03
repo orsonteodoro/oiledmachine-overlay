@@ -90,6 +90,7 @@ _conan_setup_offline_cache() {
 	fi
 einfo "DEBUG:  Default cache folder:  ${HOME}/.conan2"
 einfo "CONAN_CACHE_FOLDER:  ${CONAN_CACHE_FOLDER}"
+	rm -rf "${HOME}/.conan2"
 	ln -sf "${CONAN_CACHE_FOLDER}" "${HOME}/.conan2"
 	addwrite "${EDISTDIR}"
 	addwrite "${CONAN_CACHE_FOLDER}"
@@ -97,7 +98,6 @@ einfo "CONAN_CACHE_FOLDER:  ${CONAN_CACHE_FOLDER}"
 }
 
 src_unpack() {
-	_conan_setup_offline_cache
 	if [[ "${PV}" =~ "9999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
@@ -122,6 +122,7 @@ src_prepare() {
 }
 
 src_compile() {
+	_conan_setup_offline_cache
 	conan profile detect || die
 	distutils-r1_src_compile
 }
