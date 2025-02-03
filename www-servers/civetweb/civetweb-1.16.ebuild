@@ -10,19 +10,19 @@ LUA_5_2_MIN="5.2.4"
 LUA_5_3_MIN="5.3.6"
 LUA_5_4_MIN="5.4.3"
 # Building with 5.1 is broken.
-LUA_COMPAT=( lua5-{1..4} )
+LUA_COMPAT=( "lua5-"{1..4} )
 # CI uses U 14.04
 LUA_IMPLS=(
-	5.1
-	5.2
-	5.3
-	5.4
+	"5.1"
+	"5.2"
+	"5.3"
+	"5.4"
 )
 LUA_PV_SUPPORTED=(
-	5.1.5
-	5.2.4
-	5.3.5
-	5.4.0
+	"5.1.5"
+	"5.2.4"
+	"5.3.5"
+	"5.4.0"
 ) # Upstream supported specifically
 
 inherit cmake flag-o-matic lua multilib-minimal
@@ -124,14 +124,10 @@ PATCHES=(
 
 pkg_setup() {
 	if use lua_targets_lua5-3 || use lua_targets_lua5-4 ; then
-ewarn
 ewarn "Lua >=5.3 support is for testing only."
-ewarn
 	fi
 	if use test ; then
-ewarn
 ewarn "The test USE flag has not been tested yet."
-ewarn
 		if has network-sandbox $FEATURES ; then
 eerror
 eerror "${PN} requires network-sandbox to be disabled in FEATURES in order to"
@@ -187,20 +183,20 @@ src_prepare() {
 	cd "${CMAKE_USE_DIR}" || die
 	cmake_src_prepare
 	if use lua ; then
-		sed -i -e 's|"lauxlib.h"|<lauxlib.h>|' \
-			src/third_party/civetweb_lua.h || die
-		sed -i -e 's|"lua.h"|<lua.h>|' \
-			src/third_party/civetweb_lua.h || die
-		sed -i -e 's|"lualib.h"|<lualib.h>|' \
-			src/third_party/civetweb_lua.h || die
-		rm -rf src/third_party/lua-* || die
+		sed -i \
+			-e 's|"lauxlib.h"|<lauxlib.h>|' \
+			-e 's|"lua.h"|<lua.h>|' \
+			-e 's|"lualib.h"|<lualib.h>|' \
+			"src/third_party/civetweb_lua.h" \
+			|| die
+		rm -rf "src/third_party/lua-"* || die
 	fi
 	local nabis=0
 	prepare_abi() {
 		nabis=$((${nabis} + 1))
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
-			if use lua ; then
+			if multilib_is_native_abi && use lua ; then
 				prepare_lua() {
 					cp -a \
 						"${S}" \
@@ -236,6 +232,10 @@ _configure() {
 	# CIVETWEB_LUA_VERSION is either 5.1.5 5.2.4 5.3.5 5.4.0 based
 	#   on src/third_party/lua-<PV>
 
+	export PKG_CONFIG_LIBDIR="${ESYSROOT}/usr/$(get_libdir)/pkgconfig"
+	export PKG_CONFIG="$(tc-getPKG_CONFIG)"
+	export PKG_CONFIG_PATH="${ESYSROOT}/usr/share/pkgconfig"
+
 	local mycmakeargs=(
 		-D_GET_LIBDIR=$(get_libdir)
 		-DCIVETWEB_BUILD_TESTING=$(usex test)
@@ -258,7 +258,6 @@ _configure() {
 		-DCIVETWEB_ENABLE_CXX=$(usex cxx)
 		-DCIVETWEB_ENABLE_DUKTAPE=$(usex duktape)
 		-DCIVETWEB_ENABLE_LTO=$(_usex_lto)
-		-DCIVETWEB_ENABLE_LUA=$(usex lua)
 		-DCIVETWEB_ENABLE_IPV6=$(usex ipv6)
 		-DCIVETWEB_ENABLE_SERVER_EXECUTABLE=$(usex server_executable)
 		-DCIVETWEB_ENABLE_SERVER_STATS=$(usex server_stats)
@@ -266,6 +265,17 @@ _configure() {
 		-DCIVETWEB_ENABLE_ZLIB=$(usex zlib)
 		-DCIVETWEB_SERVE_NO_FILES=$(usex serve_no_files)
 	)
+
+	if multilib_is_native_abi ; then
+		mycmakeargs+=(
+			-DCIVETWEB_ENABLE_LUA=$(usex lua)
+		)
+	else
+		mycmakeargs+=(
+			-DCIVETWEB_ENABLE_LUA=OFF
+		)
+	fi
+
 	filter-flags '-flto*'
 	if has_version "dev-libs/openssl:0/3" ; then
 		mycmakeargs+=(
@@ -303,13 +313,20 @@ _configure() {
 			-DCIVETWEB_LUA_STATIC=ON
 		)
 	fi
-	if use lua ; then
+	if multilib_is_native_abi && use lua ; then
+		local lua_pv=$(lua_get_version)
+		local lua_pv2=${lua_pv%.*}
+		local cdir=$(lua_get_cmod_dir)
+		local inc=$(lua_get_include_dir)
 		mycmakeargs+=(
-			-DCIVETWEB_LUA_VERSION=$(lua_get_version)
-			-DCIVETWEB_LUA_VERSION_MAJOR_MINOR=$(ver_cut 1-2 $(lua_get_version))
-			-DLUA_CDIR="$(lua_get_cmod_dir)"
-			-DLUA_INC="$(lua_get_include_dir)"
+			-DCIVETWEB_LUA_VERSION=${lua_pv}
+			-DCIVETWEB_LUA_VERSION_MAJOR_MINOR=${lua_pv2}
+			-DLUA_CDIR="${cdir}"
+			-DLUA_INC="${inc}"
 		)
+einfo "LUA:  ON (ABI=${ABI})"
+	else
+einfo "LUA:  OFF (ABI=${ABI})"
 	fi
 	cmake_src_configure
 }
@@ -318,7 +335,7 @@ src_configure() {
 	configure_abi() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
-			if use lua ; then
+			if multilib_is_native_abi && use lua ; then
 				configure_lua() {
 					export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${ELUA}"
 					export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${ELUA}_build"
@@ -340,7 +357,7 @@ src_configure() {
 _compile() {
 	cd "${BUILD_DIR}" || die
 	SUFFIX="_${ABI}_${ESTSH_LIB_TYPE}"
-	if use lua ; then
+	if multilib_is_native_abi && use lua ; then
 		SUFFIX+="_${ELUA}"
 	fi
 }
@@ -349,7 +366,7 @@ src_compile() {
 	compile_abi() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
-			if use lua ; then
+			if multilib_is_native_abi && use lua ; then
 				compile_lua() {
 					export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${ELUA}"
 					export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${ELUA}_build"
@@ -372,7 +389,7 @@ src_install() {
 	install_abi() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
-			if use lua ; then
+			if multilib_is_native_abi && use lua ; then
 				install_lua() {
 					export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${ELUA}"
 					export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_${ELUA}_build"
