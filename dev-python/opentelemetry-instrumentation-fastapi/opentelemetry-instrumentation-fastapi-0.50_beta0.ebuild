@@ -49,13 +49,7 @@ BDEPEND+="
 DOCS=( "README.rst" )
 
 src_unpack() {
-	if [[ "${PV}" =~ "9999" ]] ; then
-		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
-		git-r3_fetch
-		git-r3_checkout
-	else
-		unpack ${A}
-	fi
+	unpack ${A}
 }
 
 src_install() {
