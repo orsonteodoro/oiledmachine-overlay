@@ -6,11 +6,12 @@ EAPI=8
 
 # TODO package:
 # chroma-hnswlib
-# mypy-protobuf (low priority)
 # opentelemetry-exporter-otlp-proto-grpc
 # opentelemetry-instrumentation-fastapi
 # posthog
-# pypika
+
+# TODO package (optional):
+# mypy-protobuf
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
