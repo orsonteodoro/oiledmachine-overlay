@@ -6,7 +6,6 @@ EAPI=8
 
 # TODO package:
 # opentelemetry-exporter-otlp-proto-common
-# opentelemetry-proto
 
 MY_PN="opentelemetry_exporter_otlp_proto_grpc"
 
