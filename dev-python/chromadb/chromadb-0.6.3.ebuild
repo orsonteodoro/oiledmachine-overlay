@@ -4,9 +4,6 @@
 
 EAPI=8
 
-# TODO package:
-# opentelemetry-exporter-otlp-proto-grpc
-
 # TODO package (optional):
 # mypy-protobuf
 
