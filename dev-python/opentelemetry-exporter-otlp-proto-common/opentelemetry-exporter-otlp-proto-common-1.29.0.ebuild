@@ -4,7 +4,7 @@
 
 EAPI=8
 
-MY_PN="opentelemetry_exporter_otlp_proto_grpc"
+MY_PN="opentelemetry_exporter_otlp_proto_common"
 
 DISTUTILS_USE_PEP517="hatchling"
 PYTHON_COMPAT=( "python3_"{10..12} )
@@ -14,25 +14,19 @@ inherit distutils-r1 pypi
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MY_PN}-${PV}"
 
-DESCRIPTION="OpenTelemetry Collector Protobuf over gRPC Exporter"
+DESCRIPTION="OpenTelemetry Collector Protobuf over HTTP Exporter"
 HOMEPAGE="
-	https://github.com/open-telemetry/opentelemetry-python/tree/main/exporter/opentelemetry-exporter-otlp-proto-grpc
-	https://pypi.org/project/opentelemetry-exporter-otlp-proto-grpc
+	https://github.com/open-telemetry/opentelemetry-python/tree/main/exporter/opentelemetry-exporter-otlp-proto-http
+	https://pypi.org/project/opentelemetry-exporter-otlp-proto-common
 "
 LICENSE="
 	MIT
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" dev"
+IUSE+=" "
 RDEPEND+="
-	>=dev-python/deprecated-1.2.6[${PYTHON_USEDEP}]
-	>=dev-python/googleapis-common-protos-1.52[${PYTHON_USEDEP}]
-	>=dev-python/grpcio-1.63.2[${PYTHON_USEDEP}]
-	>=dev-python/opentelemetry-api-1.15[${PYTHON_USEDEP}]
-	>=dev-python/opentelemetry-exporter-otlp-proto-common-1.29.0[${PYTHON_USEDEP}]
 	>=dev-python/opentelemetry-proto-1.29.0[${PYTHON_USEDEP}]
-	>=dev-python/opentelemetry-sdk-1.29.0[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
