@@ -8,7 +8,6 @@ EAPI=8
 # chroma-hnswlib
 # opentelemetry-exporter-otlp-proto-grpc
 # opentelemetry-instrumentation-fastapi
-# posthog
 
 # TODO package (optional):
 # mypy-protobuf
