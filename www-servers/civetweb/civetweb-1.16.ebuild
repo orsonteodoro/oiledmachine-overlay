@@ -153,10 +153,12 @@ eerror
 				if ver_test ${best_pv} -ne ${s} ; then
 eerror
 eerror "The system's Lua is not ${s}.  Disable the lua dep or emerge with same"
-eerror "point release."
+eerror "point release.  The package's supported version must be exact with the"
+eerror "the installed version."
 eerror
-eerror "Installed version:  ${best_pv}"
-eerror "Package supported version:  ${s}"
+eerror "LUA slot:  ${s%.*}"
+eerror "Installed version for slot:  ${best_pv}"
+eerror "Package supported version for slot:  ${s}"
 eerror
 					die
 				fi
