@@ -4,12 +4,9 @@
 
 EAPI=8
 
-DISTUTILS_USE_PEP517="poetry"
-PYTHON_COMPAT=( "python3_"{10..12} )
+MY_PN="SQLiteCpp"
 
 inherit cmake
-
-MY_PN="SQLiteCpp"
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
