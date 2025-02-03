@@ -144,15 +144,19 @@ eerror
 	if use lua ; then
 		local s
 		for s in ${LUA_PV_SUPPORTED[@]} ; do
-			if has_version "dev-lang/lua:$(ver_cut 1-2 ${s})" ; then
-				local best_v
-				best_v=$(best_version "dev-lang/lua:$(ver_cut 1-2 ${s})")
-				best_v=$(echo "${best_v}" | cut -f 3- -d '-')
-				best_v=$(ver_cut 1-3 ${best_v})
-				if ver_test ${best_v} -ne ${s} ; then
+			local _s="${s%.*}"
+			if use "lua_targets_lua${_s/./-}" && has_version "dev-lang/lua:$(ver_cut 1-2 ${s})" ; then
+				local best_pv
+				best_pv=$(best_version "dev-lang/lua:$(ver_cut 1-2 ${s})")
+				best_pv=$(echo "${best_pv}" | cut -f 3- -d '-')
+				best_pv=$(ver_cut 1-3 ${best_pv})
+				if ver_test ${best_pv} -ne ${s} ; then
 eerror
 eerror "The system's Lua is not ${s}.  Disable the lua dep or emerge with same"
 eerror "point release."
+eerror
+eerror "Installed version:  ${best_pv}"
+eerror "Package supported version:  ${s}"
 eerror
 					die
 				fi
