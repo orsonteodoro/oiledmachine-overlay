@@ -5,7 +5,6 @@
 EAPI=8
 
 # TODO package:
-# chroma-hnswlib
 # opentelemetry-exporter-otlp-proto-grpc
 # opentelemetry-instrumentation-fastapi
 
