@@ -7,7 +7,6 @@ EAPI=8
 # TODO package:
 # chromadb
 # peewee-migrate
-# qdrant-client
 
 AT_TYPES_NODE_PV="20.11.30"
 DISTUTILS_SINGLE_IMPL=1
