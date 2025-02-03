@@ -55,7 +55,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev"
 RDEPEND+="
 	<net-libs/grpc-1.55
-	>=dev-cpp/antlr4-runtime-4.13.1
+	>=dev-cpp/antlr4-4.13.1
 	>=dev-cpp/folly-2023.10.30.09
 	>=dev-cpp/glog-0.6.0
 	>=dev-cpp/nlohmann_json-3.11.2
