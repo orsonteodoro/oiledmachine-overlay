@@ -5,7 +5,6 @@
 EAPI=8
 
 # TODO package:
-# monotonic
 # flake8-print
 # langchain-anthropic
 # langchain-openai
@@ -46,7 +45,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev langchain sentry test"
 RDEPEND+="
 	>=dev-python/backoff-1.10.0[${PYTHON_USEDEP}]
-	>=dev-python/monotonic-1.5[${PYTHON_USEDEP}]
+	>=dev-python/monotonic-1.5.0[${PYTHON_USEDEP}]
 	>=dev-python/requests-2.7[${PYTHON_USEDEP}]
 	>=dev-python/six-1.5[${PYTHON_USEDEP}]
 	>dev-python/python-dateutil-2.1[${PYTHON_USEDEP}]
