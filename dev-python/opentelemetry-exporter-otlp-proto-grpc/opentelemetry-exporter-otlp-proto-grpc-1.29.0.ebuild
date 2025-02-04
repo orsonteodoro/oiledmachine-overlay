@@ -29,10 +29,10 @@ RDEPEND+="
 	>=dev-python/deprecated-1.2.6[${PYTHON_USEDEP}]
 	>=dev-python/googleapis-common-protos-1.52[${PYTHON_USEDEP}]
 	>=dev-python/grpcio-1.63.2[${PYTHON_USEDEP}]
-	>=dev-python/opentelemetry-api-1.15[${PYTHON_USEDEP}]
-	~dev-python/opentelemetry-exporter-otlp-proto-common-1.29.0[${PYTHON_USEDEP}]
-	~dev-python/opentelemetry-proto-1.29.0[${PYTHON_USEDEP}]
-	~dev-python/opentelemetry-sdk-1.29.0[${PYTHON_USEDEP}]
+	~dev-python/opentelemetry-api-${PV}[${PYTHON_USEDEP}]
+	~dev-python/opentelemetry-exporter-otlp-proto-common-${PV}[${PYTHON_USEDEP}]
+	~dev-python/opentelemetry-proto-${PV}[${PYTHON_USEDEP}]
+	~dev-python/opentelemetry-sdk-${PV}[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
