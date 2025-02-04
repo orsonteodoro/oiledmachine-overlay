@@ -51,6 +51,8 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev"
+# Both grpc and opentelemetry-cpp are limited to avoid multiple instances single
+# slot issues with emerging protobuf and grpc.
 RDEPEND+="
 	<net-libs/grpc-1.55
 	>=dev-cpp/antlr4-4.13.1
@@ -63,7 +65,7 @@ RDEPEND+="
 	>=dev-cpp/yaml-cpp-0.7.0
 	>=dev-libs/apache-arrow-12.0.1
 	>=dev-libs/boost-1.82.0
-	dev-cpp/opentelemetry-cpp
+	<dev-cpp/opentelemetry-cpp-1.16
 	dev-libs/boost:=
 	>=dev-libs/double-conversion-3.2.1
 	>=dev-libs/libfmt-9.1.0
