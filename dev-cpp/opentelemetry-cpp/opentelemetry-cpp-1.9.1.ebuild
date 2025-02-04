@@ -98,6 +98,7 @@ src_configure() {
 		-DWITH_OTLP_GRPC=$(usex otlp-grpc)
 		-DWITH_OTLP_HTTP=$(usex otlp-http)
 		-DWITH_PROMETHEUS:BOOL=$(usex prometheus)
+		-DWITH_STL=ON
 	)
 	if use otlp-grpc || use otlp-http ; then
 		mycmakeargs+=(
