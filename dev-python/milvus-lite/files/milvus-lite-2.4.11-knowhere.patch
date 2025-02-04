@@ -1,0 +1,24 @@
+diff '--color=auto' -urp milvus-lite-2.4.11.orig/thirdparty/knowhere/CMakeLists.txt milvus-lite-2.4.11/thirdparty/knowhere/CMakeLists.txt
+--- milvus-lite-2.4.11.orig/thirdparty/knowhere/CMakeLists.txt	2024-04-24 02:39:20.000000000 -0700
++++ milvus-lite-2.4.11/thirdparty/knowhere/CMakeLists.txt	2025-02-04 13:35:49.333054253 -0800
+@@ -172,15 +172,15 @@ endif()
+ list(APPEND KNOWHERE_LINKER_LIBS fmt::fmt-header-only)
+ list(APPEND KNOWHERE_LINKER_LIBS Folly::folly)
+ if(NOT WITH_LIGHT)
+-  list(APPEND KNOWHERE_LINKER_LIBS opentelemetry-cpp::opentelemetry_trace)
++  list(APPEND KNOWHERE_LINKER_LIBS opentelemetry-cpp::trace)
+   list(APPEND KNOWHERE_LINKER_LIBS
+-       opentelemetry-cpp::opentelemetry_exporter_ostream_span)
++       opentelemetry-cpp::ostream_span_exporter)
+   list(APPEND KNOWHERE_LINKER_LIBS
+-       opentelemetry-cpp::opentelemetry_exporter_jaeger_trace)
++       opentelemetry-cpp::jaeger_trace_exporter)
+   list(APPEND KNOWHERE_LINKER_LIBS
+-       opentelemetry-cpp::opentelemetry_exporter_otlp_grpc)
++       opentelemetry-cpp::otlp_grpc_exporter)
+   list(APPEND KNOWHERE_LINKER_LIBS
+-       opentelemetry-cpp::opentelemetry_exporter_otlp_http)
++       opentelemetry-cpp::otlp_http_exporter)
+ endif()
+ 
+ add_library(knowhere SHARED ${KNOWHERE_SRCS})
