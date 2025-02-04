@@ -104,7 +104,9 @@ www-misc/rainbowstream
 =llvm-runtimes/libcxxabi-13*
 =llvm-runtimes/openmp-13*
 
-# Too early.  Avoid multiple instances single slot issues.
+# Too early.  Avoid:
+# !!! Multiple package instances within a single package slot have been pulled
+# !!! into the dependency graph, resulting in a slot conflict:
 #>=dev-libs/protobuf-22
 #>=dev-cpp/abseil-cpp-20230125
 #>=dev-python/protobuf-4.22
@@ -132,8 +134,11 @@ www-misc/rainbowstream
 dev-db/mysql
 dev-db/mariadb
 
-# Prevent multiple instances of protobuf/abseil merged
-# jax,tensorflow has a higher importance over eager bumps of dependencies
+# Avoided the following with protobuf and abseil:
+# !!! Multiple package instances within a single package slot have been pulled
+# !!! into the dependency graph, resulting in a slot conflict:
+# AI/ML libraries (jax and tensorflow) has a higher precidence than eager bumps
+# of dependencies for non AI/ML packages.
 >=dev-cpp/abseil-cpp-20230126
 >=dev-libs/protobuf-22
 >=net-libs/grpc-1.55
