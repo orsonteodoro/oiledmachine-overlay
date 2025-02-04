@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild originators -->
+    <email>chutzpah@gentoo.org</email>
+    <name>Patrick McLean</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="github">open-telemetry/opentelemetry-cpp</remote-id>
+  </upstream>
+  <use>
+    <flag name="jaeger">Include the jaeger exporter</flag>
+    <flag name="prometheus">include the Prometheus Client in the SDK</flag>
+  </use>
+</pkgmetadata>
