@@ -94,7 +94,7 @@ src_configure() {
 		-DBUILD_SHARED_LIBS:BOOL=ON
 		-DBUILD_TESTING:BOOL=$(usex test)
 		-DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
-		-DWITH_JAEGER=$(usex jaeger)
+		-DWITH_JAEGER:BOOL=$(usex jaeger)
 		-DWITH_OTLP_GRPC=$(usex otlp-grpc)
 		-DWITH_OTLP_HTTP=$(usex otlp-http)
 		-DWITH_PROMETHEUS:BOOL=$(usex prometheus)
