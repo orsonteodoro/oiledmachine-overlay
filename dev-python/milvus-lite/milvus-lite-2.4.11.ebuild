@@ -59,10 +59,11 @@ RDEPEND+="
 	>=dev-cpp/nlohmann_json-3.11.2
 	>=dev-cpp/prometheus-cpp-1.1.0
 	>=dev-cpp/sqlitecpp-3.3.1
-	>=dev-cpp/tbb-2021.9.0
+	>=dev-cpp/tbb-2021.9.0:0
 	>=dev-cpp/yaml-cpp-0.7.0
 	>=dev-libs/apache-arrow-12.0.1
 	>=dev-libs/boost-1.82.0
+	dev-cpp/opentelemetry-cpp
 	dev-libs/boost:=
 	>=dev-libs/double-conversion-3.2.1
 	>=dev-libs/libfmt-9.1.0
@@ -82,20 +83,21 @@ BDEPEND+="
 "
 DOCS=( "README.md" )
 
-check_network_sandbox_permissions() {
-	if has network-sandbox $FEATURES ; then
-eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
-eerror "env to be able to download dependencies."
-eerror
-		die
-	fi
-}
-
-pkg_setup() {
-ewarn "The package manager may randomly delete tags."
-ewarn "Report unresolved dependencies (or missing tagged versions) to repo."
-	check_network_sandbox_permissions
+gen_git_tag() {
+	local path="${1}"
+	local tag_name="${2}"
+einfo "Generating tag start for ${path}"
+	pushd "${path}" >/dev/null 2>&1 || die
+		git init || die
+		git config user.email "name@example.com" || die
+		git config user.name "John Doe" || die
+		touch dummy || die
+		git add dummy || die
+		#git add -f * || die
+		git commit -m "Dummy" || die
+		git tag ${tag_name} || die
+	popd >/dev/null 2>&1 || die
+einfo "Generating tag done"
 }
 
 src_unpack() {
@@ -107,6 +109,7 @@ src_unpack() {
 			|| die "QA:  Bump version"
 	else
 		unpack ${A}
+		gen_git_tag "${S}" "v${PV}"
 	fi
 }
 
@@ -118,6 +121,7 @@ src_prepare() {
 	default
 	eapply "${FILESDIR}/${PN}-2.4.11-conan2.patch"
 	eapply "${FILESDIR}/${PN}-2.4.11-conan-changes.patch"
+	eapply "${FILESDIR}/${PN}-2.4.11-package-checks.patch"
 	export S="${S_PYTHON}"
 	cd "${S_PYTHON}" || die
 	distutils-r1_src_prepare

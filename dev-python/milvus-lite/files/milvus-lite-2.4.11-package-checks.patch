@@ -1,0 +1,49 @@
+diff '--color=auto' -urp milvus-lite-2.4.11.orig/CMakeLists.txt milvus-lite-2.4.11/CMakeLists.txt
+--- milvus-lite-2.4.11.orig/CMakeLists.txt	2024-12-24 19:32:57.000000000 -0800
++++ milvus-lite-2.4.11/CMakeLists.txt	2025-02-04 07:41:19.700000178 -0800
+@@ -76,7 +76,15 @@ set(CONAN_LIBS "${CONAN_LIBS};marisa::ma
+ find_package(SQLiteCpp REQUIRED)
+ include_directories(${SQLiteCpp_INCLUDE_DIRS})
+ 
+-find_package(antlr4-runtime REQUIRED)
++find_path(antlr4-cppruntime_INCLUDES
++	NAMES "antlr4-runtime.h"
++	PATHS "/usr/include/antlr4-runtime"
++	REQUIRED)
++if(antlr4-cppruntime_INCLUDES-NOTFOUND)
++  message(FATAL_ERROR "Missing antlr4-runtime")
++else()
++  message(STATUS "antlr4-cppruntime_INCLUDES: ${antlr4-cppruntime_INCLUDES}")
++endif()
+ include_directories(${antlr4-cppruntime_INCLUDES})
+ 
+ find_package(Protobuf REQUIRED)
+@@ -119,7 +127,15 @@ include_directories(${double-conversion_
+ find_package(prometheus-cpp REQUIRED)
+ include_directories(${prometheus-cpp_INCLUDE_DIRS})
+ 
+-find_package(marisa REQUIRED)
++find_path(marisa_INCLUDE_DIRS
++	NAMES "marisa.h"
++	PATHS "/usr/include"
++	REQUIRED)
++if(marisa_INCLUDE_DIRS-NOTFOUND)
++  message(FATAL_ERROR "Missing marisa")
++else()
++  message(STATUS "marisa_INCLUDE_DIRS: ${marisa_INCLUDE_DIRS}")
++endif()
+ include_directories(${marisa_INCLUDE_DIRS})
+ 
+ find_package(yaml-cpp REQUIRED)
+diff '--color=auto' -urp milvus-lite-2.4.11.orig/python/setup.py milvus-lite-2.4.11/python/setup.py
+--- milvus-lite-2.4.11.orig/python/setup.py	2025-02-04 07:38:40.001090360 -0800
++++ milvus-lite-2.4.11/python/setup.py	2025-02-04 07:38:55.096987278 -0800
+@@ -108,7 +108,7 @@ class CMakeBuild(_bdist_wheel):
+                 # macos
+                 subprocess.check_call(['conan', 'install', extdir, '--build=missing', '-s', 'build_type=Release'], cwd=build_temp, env=env)
+         # build
+-        subprocess.check_call(['cmake', extdir, '-DENABLE_UNIT_TESTS=OFF'], cwd=build_temp, env=env)
++        subprocess.check_call(['cmake', extdir, '-DENABLE_UNIT_TESTS=OFF', '-DTBB_DIR=/usr/lib64/cmake/TBB'], cwd=build_temp, env=env)
+         subprocess.check_call(['cmake', '--build', '.', '--', '-j4'],
+                               cwd=build_temp,
+                               env=env,
