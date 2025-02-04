@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="project">
+    <!-- Ebuild originators -->
+    <email>python@gentoo.org</email>
+  </maintainer>
+  <maintainer type="person">
+    <!-- Ebuild originators -->
+    <email>parona@protonmail.com</email>
+    <name>Alfred Wingate</name>
+  </maintainer>
+  <maintainer type="project" proxied="proxy">
+    <!-- Ebuild originators -->
+    <email>proxy-maint@gentoo.org</email>
+    <name>Proxy Maintainers</name>
+  </maintainer>
+  <stabilize-allarches/>
+  <upstream>
+    <remote-id type="github">open-telemetry/opentelemetry-python</remote-id>
+    <remote-id type="pypi">opentelemetry-sdk</remote-id>
+  </upstream>
+</pkgmetadata>
