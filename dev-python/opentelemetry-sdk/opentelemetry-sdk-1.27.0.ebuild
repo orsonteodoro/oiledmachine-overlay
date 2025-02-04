@@ -20,11 +20,11 @@ HOMEPAGE="
 	https://github.com/open-telemetry/opentelemetry-python/
 "
 LICENSE="Apache-2.0"
-SLOT="0"
+SLOT="0/${PV}"
 RDEPEND="
 	>=dev-python/typing-extensions-3.7.4[${PYTHON_USEDEP}]
 	~dev-python/opentelemetry-api-${PV}[${PYTHON_USEDEP}]
-	~dev-python/opentelemetry-semantic-conventions-0.48_beta0[${PYTHON_USEDEP}]
+	~dev-python/opentelemetry-semantic-conventions-0.48_beta0:${SLOT}[${PYTHON_USEDEP}]
 "
 BDEPEND="
 	test? (

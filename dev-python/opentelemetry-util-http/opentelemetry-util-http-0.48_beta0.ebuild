@@ -8,7 +8,7 @@ MY_PN="opentelemetry_util_http"
 MY_PV="${PV/_beta/b}"
 
 DISTUTILS_USE_PEP517="hatchling"
-OPENTELEMETRY_PV="1.29.0"
+OPENTELEMETRY_PV="1.27.0"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 pypi

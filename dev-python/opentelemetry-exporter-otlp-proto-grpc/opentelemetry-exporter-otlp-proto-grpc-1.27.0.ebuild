@@ -23,8 +23,8 @@ LICENSE="
 	MIT
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" dev"
+SLOT="0/${PV}"
+IUSE+=" "
 RDEPEND+="
 	>=dev-python/deprecated-1.2.6[${PYTHON_USEDEP}]
 	>=dev-python/googleapis-common-protos-1.52[${PYTHON_USEDEP}]

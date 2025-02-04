@@ -19,7 +19,7 @@ HOMEPAGE="
 	https://github.com/open-telemetry/opentelemetry-python/
 "
 LICENSE="Apache-2.0"
-SLOT="0"
+SLOT="0/${PV}"
 KEYWORDS="~amd64"
 RDEPEND="
 	>=dev-python/deprecated-1.2.6[${PYTHON_USEDEP}]

@@ -8,7 +8,7 @@ MY_PN="opentelemetry_instrumentation_asgi"
 MY_PV="${PV/_beta/b}"
 
 DISTUTILS_USE_PEP517="hatchling"
-OPENTELEMETRY_PV="1.29.0"
+OPENTELEMETRY_PV="1.27.0"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 pypi
@@ -30,9 +30,9 @@ IUSE+=" instruments"
 RDEPEND+="
 	>=dev-python/asgiref-3.0[${PYTHON_USEDEP}]
 	>=dev-python/opentelemetry-api-${OPENTELEMETRY_PV}[${PYTHON_USEDEP}]
-	>=dev-python/opentelemetry-instrumentation-0.50_beta0:${SLOT}[${PYTHON_USEDEP}]
-	>=dev-python/opentelemetry-semantic-conventions-0.50_beta0:${SLOT}[${PYTHON_USEDEP}]
-	>=dev-python/opentelemetry-util-http-0.50_beta0:${SLOT}[${PYTHON_USEDEP}]
+	>=dev-python/opentelemetry-instrumentation-0.48_beta0:${SLOT}[${PYTHON_USEDEP}]
+	>=dev-python/opentelemetry-semantic-conventions-0.48_beta0:${SLOT}[${PYTHON_USEDEP}]
+	>=dev-python/opentelemetry-util-http-0.48_beta0:${SLOT}[${PYTHON_USEDEP}]
 	instruments? (
 		>=dev-python/asgiref-3.0[${PYTHON_USEDEP}]
 	)

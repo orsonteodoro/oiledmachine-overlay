@@ -8,6 +8,7 @@ MY_PN="opentelemetry_instrumentation"
 MY_PV="${PV/_beta/b}"
 
 DISTUTILS_USE_PEP517="hatchling"
+OPENTELEMETRY_PV="1.29.0"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 pypi
@@ -24,11 +25,11 @@ LICENSE="
 	Apache-2.0
 "
 RESTRICT="mirror"
-SLOT="0/$(ver_cut 1-2 ${PV})"
+SLOT="0/${OPENTELEMETRY_PV}"
 IUSE+=" dev"
 RDEPEND+="
-	>=dev-python/opentelemetry-api-1.4[${PYTHON_USEDEP}]
-	>=dev-python/opentelemetry-semantic-conventions-0.50_beta0[${PYTHON_USEDEP}]
+	~dev-python/opentelemetry-api-${OPENTELEMETRY_PV}[${PYTHON_USEDEP}]
+	~dev-python/opentelemetry-semantic-conventions-0.50_beta0:${SLOT}[${PYTHON_USEDEP}]
 	>=dev-python/packaging-18.0[${PYTHON_USEDEP}]
 	>=dev-python/wrapt-1.0.0[${PYTHON_USEDEP}]
 "
