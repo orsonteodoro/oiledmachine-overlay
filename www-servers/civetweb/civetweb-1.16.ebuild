@@ -3,6 +3,7 @@
 
 EAPI=8
 
+CMAKE_MAKEFILE_GENERATOR="emake"
 # CMakeLists.txt lists versions
 # See https://github.com/civetweb/civetweb/tree/v1.15/src/third_party
 LUA_5_1_MIN="5.1.5"
