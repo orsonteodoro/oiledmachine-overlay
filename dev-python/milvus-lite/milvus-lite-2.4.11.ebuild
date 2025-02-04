@@ -4,8 +4,6 @@
 
 EAPI=8
 
-# SECURITY:  Check conan dependencies twice a month (1st/30th and 10th of the month)
-
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
