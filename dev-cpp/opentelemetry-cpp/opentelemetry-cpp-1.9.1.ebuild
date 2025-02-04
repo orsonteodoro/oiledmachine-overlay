@@ -3,7 +3,7 @@
 
 EAPI=8
 
-OPENTELEMETRY_PROTO_PV="1.2.0"
+OPENTELEMETRY_PROTO_PV="0.19.0"
 
 inherit cmake dep-prepare
 
@@ -27,9 +27,13 @@ RESTRICT="
 	)
 "
 SLOT="0"
-IUSE="-otlp-file -otlp-grpc -otlp-http -prometheus test -zlib"
+IUSE="-jaeger -otlp-grpc -otlp-http -prometheus test"
 RDEPEND="
-	dev-libs/boost:=
+	jaeger? (
+		>=dev-libs/thrift-0.14.1
+		dev-libs/thrift:=
+		dev-libs/boost:=
+	)
 	otlp-grpc? (
 		|| (
 			=net-libs/grpc-1.49*
@@ -41,19 +45,13 @@ RDEPEND="
 		dev-libs/protobuf:0/3.21
 		net-libs/grpc:=
 	)
-	otlp-file? (
-		>=dev-cpp/nlohmann_json-3.11.3
-	)
 	otlp-http? (
-		>=dev-cpp/nlohmann_json-3.11.3
-		>=net-misc/curl-8.4.0
+		>=dev-cpp/nlohmann_json-3.11.2
+		>=net-misc/curl-7.73.0
 		net-misc/curl:=
 	)
 	prometheus? (
-		>=dev-cpp/prometheus-cpp-1.2.4
-	)
-	zlib? (
-		>=sys-libs/zlib-1.2.13
+		>=dev-cpp/prometheus-cpp-1.1.0
 	)
 "
 DEPEND="
@@ -96,11 +94,15 @@ src_configure() {
 		-DBUILD_SHARED_LIBS:BOOL=ON
 		-DBUILD_TESTING:BOOL=$(usex test)
 		-DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
-		-DWITH_OTLP_FILE=$(usex otlp-file)
+		-DWITH_JAEGER=$(usex jaeger)
 		-DWITH_OTLP_GRPC=$(usex otlp-grpc)
 		-DWITH_OTLP_HTTP=$(usex otlp-http)
-		-DWITH_OTLP_HTTP_COMPRESSION=$(usex zlib)
 		-DWITH_PROMETHEUS:BOOL=$(usex prometheus)
 	)
+	if use otlp-grpc || use otlp-http ; then
+		mycmakeargs+=(
+			-DWITH_OTLP=ON
+		)
+	fi
 	cmake_src_configure
 }

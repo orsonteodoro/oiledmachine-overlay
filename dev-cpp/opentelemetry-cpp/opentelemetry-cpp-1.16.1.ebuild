@@ -27,7 +27,7 @@ RESTRICT="
 	)
 "
 SLOT="0"
-IUSE="otlp-file otlp-grpc otlp-http prometheus test zlib"
+IUSE="-otlp-file -otlp-grpc -otlp-http -prometheus test -zlib"
 RDEPEND="
 	dev-libs/boost:=
 	otlp-grpc? (
@@ -62,7 +62,7 @@ DEPEND="
 	)
 "
 PATCHES=(
-	# remove tests the need network
+	# Remove tests.  They need network.
 	"${FILESDIR}/opentelemetry-cpp-1.5.0-tests.patch"
 )
 
@@ -91,9 +91,9 @@ src_unpack() {
 
 src_configure() {
 	local mycmakeargs=(
-		-DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
 		-DBUILD_SHARED_LIBS:BOOL=ON
 		-DBUILD_TESTING:BOOL=$(usex test)
+		-DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON
 		-DWITH_OTLP_FILE=$(usex otlp-file)
 		-DWITH_OTLP_GRPC=$(usex otlp-grpc)
 		-DWITH_OTLP_HTTP=$(usex otlp-http)
