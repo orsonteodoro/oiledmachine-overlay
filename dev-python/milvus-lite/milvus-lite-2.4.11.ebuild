@@ -55,6 +55,10 @@ IUSE+=" dev"
 # !!! Multiple package instances within a single package slot have been pulled
 # !!! into the dependency graph, resulting in a slot conflict:
 RDEPEND+="
+	(
+		>=dev-libs/boost-1.82.0
+		dev-libs/boost:=
+	)
 	<dev-cpp/opentelemetry-cpp-1.16
 	<net-libs/grpc-1.55
 	>=dev-cpp/antlr4-4.13.1
@@ -66,8 +70,6 @@ RDEPEND+="
 	>=dev-cpp/tbb-2021.9.0:0
 	>=dev-cpp/yaml-cpp-0.7.0
 	>=dev-libs/apache-arrow-12.0.1
-	>=dev-libs/boost-1.82.0
-	dev-libs/boost:=
 	>=dev-libs/double-conversion-3.2.1
 	>=dev-libs/libfmt-9.1.0
 	>=dev-libs/marisa-0.2.6
