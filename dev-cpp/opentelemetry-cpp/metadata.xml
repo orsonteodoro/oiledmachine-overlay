@@ -10,7 +10,20 @@
     <remote-id type="github">open-telemetry/opentelemetry-cpp</remote-id>
   </upstream>
   <use>
-    <flag name="jaeger">Include the jaeger exporter</flag>
-    <flag name="prometheus">include the Prometheus Client in the SDK</flag>
+    <flag name="otlp-file">
+      Include the OTLP file exporter
+    </flag>
+    <flag name="otlp-grpc">
+      Include the OTLP gRPC exporter
+    </flag>
+    <flag name="otlp-http">
+      Include the OTLP HTTP exporter
+    </flag>
+    <flag name="prometheus">
+      Include the Prometheus Client in the SDK
+    </flag>
+    <flag name="zlib">
+      Enable GZIP compression for the HTTP exporter
+    </flag>
   </use>
 </pkgmetadata>

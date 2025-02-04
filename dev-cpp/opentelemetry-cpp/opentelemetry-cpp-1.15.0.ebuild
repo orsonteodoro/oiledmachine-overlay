@@ -3,7 +3,7 @@
 
 EAPI=8
 
-OPENTELEMETRY_PROTO_PV="1.3.1"
+OPENTELEMETRY_PROTO_PV="1.2.0"
 
 inherit cmake dep-prepare
 
@@ -32,11 +32,13 @@ RDEPEND="
 	dev-libs/boost:=
 	otlp-grpc? (
 		|| (
-			=net-libs/grpc-1.60*
-			=net-libs/grpc-1.61*
-			=net-libs/grpc-1.62*
+			=net-libs/grpc-1.49*
+			=net-libs/grpc-1.52*
+			=net-libs/grpc-1.53*
+			=net-libs/grpc-1.54*
+
 		)
-		dev-libs/protobuf:0/4.25
+		dev-libs/protobuf:0/3.21
 		net-libs/grpc:=
 	)
 	otlp-file? (
