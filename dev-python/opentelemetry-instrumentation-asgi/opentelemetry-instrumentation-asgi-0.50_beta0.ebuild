@@ -29,10 +29,10 @@ SLOT="0/${OPENTELEMETRY_PV}"
 IUSE+=" instruments"
 RDEPEND+="
 	>=dev-python/asgiref-3.0[${PYTHON_USEDEP}]
-	>=dev-python/opentelemetry-api-${OPENTELEMETRY_PV}[${PYTHON_USEDEP}]
-	>=dev-python/opentelemetry-instrumentation-0.50_beta0:${SLOT}[${PYTHON_USEDEP}]
-	>=dev-python/opentelemetry-semantic-conventions-0.50_beta0:${SLOT}[${PYTHON_USEDEP}]
-	>=dev-python/opentelemetry-util-http-0.50_beta0:${SLOT}[${PYTHON_USEDEP}]
+	~dev-python/opentelemetry-api-${OPENTELEMETRY_PV}[${PYTHON_USEDEP}]
+	~dev-python/opentelemetry-instrumentation-${PV}:${SLOT}[${PYTHON_USEDEP}]
+	~dev-python/opentelemetry-semantic-conventions-${PV}:${SLOT}[${PYTHON_USEDEP}]
+	~dev-python/opentelemetry-util-http-${PV}:${SLOT}[${PYTHON_USEDEP}]
 	instruments? (
 		>=dev-python/asgiref-3.0[${PYTHON_USEDEP}]
 	)
