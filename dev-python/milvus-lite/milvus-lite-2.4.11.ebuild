@@ -65,7 +65,7 @@ RDEPEND+="
 		>=dev-libs/boost-1.82.0
 		dev-libs/boost:=
 	)
-	<dev-cpp/opentelemetry-cpp-1.16[jaeger,otlp-grpc,otlp-http]
+	<dev-cpp/opentelemetry-cpp-1.10.0[jaeger,otlp-grpc,otlp-http]
 	<net-libs/grpc-1.55
 	>=dev-cpp/antlr4-4.13.1
 	>=dev-cpp/folly-2023.10.30.09
@@ -138,6 +138,7 @@ src_prepare() {
 	eapply "${FILESDIR}/${PN}-2.4.11-package-checks.patch"
 	eapply "${FILESDIR}/${PN}-2.4.11-offline-simdjson.patch"
 	eapply "${FILESDIR}/${PN}-2.4.11-offline-knowhere.patch"
+	die
 	export S="${S_PYTHON}"
 	cd "${S_PYTHON}" || die
 	distutils-r1_src_prepare
