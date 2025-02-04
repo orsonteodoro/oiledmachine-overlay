@@ -51,8 +51,9 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev"
-# Both grpc and opentelemetry-cpp are limited to avoid multiple instances single
-# slot issues with emerging protobuf and grpc.
+# Both grpc and opentelemetry-cpp are limited to avoid:
+# !!! Multiple package instances within a single package slot have been pulled
+# !!! into the dependency graph, resulting in a slot conflict:
 RDEPEND+="
 	<dev-cpp/opentelemetry-cpp-1.16
 	<net-libs/grpc-1.55
