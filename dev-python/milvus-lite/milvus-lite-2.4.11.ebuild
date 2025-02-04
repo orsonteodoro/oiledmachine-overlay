@@ -54,6 +54,7 @@ IUSE+=" dev"
 # Both grpc and opentelemetry-cpp are limited to avoid multiple instances single
 # slot issues with emerging protobuf and grpc.
 RDEPEND+="
+	<dev-cpp/opentelemetry-cpp-1.16
 	<net-libs/grpc-1.55
 	>=dev-cpp/antlr4-4.13.1
 	>=dev-cpp/folly-2023.10.30.09
@@ -65,7 +66,6 @@ RDEPEND+="
 	>=dev-cpp/yaml-cpp-0.7.0
 	>=dev-libs/apache-arrow-12.0.1
 	>=dev-libs/boost-1.82.0
-	<dev-cpp/opentelemetry-cpp-1.16
 	dev-libs/boost:=
 	>=dev-libs/double-conversion-3.2.1
 	>=dev-libs/libfmt-9.1.0
@@ -74,7 +74,6 @@ RDEPEND+="
 	dev-cpp/gflags
 	dev-libs/protobuf:0/3.21
 	dev-python/tqdm[${PYTHON_USEDEP}]
-
 "
 DEPEND+="
 	${RDEPEND}
