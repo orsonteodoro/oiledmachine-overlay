@@ -7,9 +7,11 @@ EAPI=8
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
+KNOWHERE_PV="2.3.1"
 MILVUS_COMMIT="15b78749a6fdc5258bf3d3824ea13477bc7c1f76"
 MILVUS_PROTO_COMMIT="fb716450bed2ccac4dec2ab731ca888d39be8826"
-MILVUS_STORAGE_COMMIT="c23ba736d7e6dcd21f7e6288525f706746329e8e"
+MILVUS_STORAGE_COMMIT="9d1ad9c4359fb287fc3f1f0893bd314c8c45760a"
+SIMDJSON_PV="3.1.7"
 
 inherit dep-prepare distutils-r1 edo pypi
 
@@ -37,6 +39,10 @@ https://github.com/milvus-io/milvus-proto/archive/${MILVUS_PROTO_COMMIT}.tar.gz
 	-> milvus-proto-${MILVUS_PROTO_COMMIT:0:7}.tar.gz
 https://github.com/milvus-io/milvus-storage/archive/${MILVUS_STORAGE_COMMIT}.tar.gz
 	-> milvus-storage-${MILVUS_STORAGE_COMMIT:0:7}.tar.gz
+https://github.com/zilliztech/knowhere/archive/refs/tags/v${KNOWHERE_PV}.tar.gz
+	-> knowhere-${KNOWHERE_PV}.tar.gz
+https://github.com/simdjson/simdjson/archive/refs/tags/v${SIMDJSON_PV}.tar.gz
+	-> simdjson-${SIMDJSON_PV}.tar.gz
 	"
 fi
 
@@ -59,7 +65,7 @@ RDEPEND+="
 		>=dev-libs/boost-1.82.0
 		dev-libs/boost:=
 	)
-	<dev-cpp/opentelemetry-cpp-1.16
+	<dev-cpp/opentelemetry-cpp-1.16[jaeger,otlp-grpc,otlp-http]
 	<net-libs/grpc-1.55
 	>=dev-cpp/antlr4-4.13.1
 	>=dev-cpp/folly-2023.10.30.09
@@ -74,6 +80,7 @@ RDEPEND+="
 	>=dev-libs/libfmt-9.1.0
 	>=dev-libs/marisa-0.2.6
 	>=dev-libs/re2-0.2023.03.01:0/10
+	>=dev-libs/simdjson-3.1.7
 	dev-cpp/gflags
 	dev-libs/protobuf:0/3.21
 	dev-python/tqdm[${PYTHON_USEDEP}]
@@ -84,6 +91,7 @@ DEPEND+="
 BDEPEND+="
 	>=dev-python/setuptools-64.0[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
+	dev-vcs/git
 "
 DOCS=( "README.md" )
 
@@ -121,11 +129,15 @@ src_prepare() {
 	dep_prepare_mv "${WORKDIR}/milvus-${MILVUS_COMMIT}" "${S}/thirdparty/milvus"
 	dep_prepare_mv "${WORKDIR}/milvus-proto-${MILVUS_PROTO_COMMIT}" "${S}/thirdparty/milvus-proto"
 	dep_prepare_mv "${WORKDIR}/milvus-storage-${MILVUS_STORAGE_COMMIT}" "${S}/thirdparty/milvus-storage"
+	dep_prepare_mv "${WORKDIR}/knowhere-${KNOWHERE_PV}" "${S}/thirdparty/knowhere"
+	dep_prepare_mv "${WORKDIR}/simdjson-${SIMDJSON_PV}" "${S}/thirdparty/simdjson"
 
 	default
 	eapply "${FILESDIR}/${PN}-2.4.11-conan2.patch"
 	eapply "${FILESDIR}/${PN}-2.4.11-conan-changes.patch"
 	eapply "${FILESDIR}/${PN}-2.4.11-package-checks.patch"
+	eapply "${FILESDIR}/${PN}-2.4.11-offline-simdjson.patch"
+	eapply "${FILESDIR}/${PN}-2.4.11-offline-knowhere.patch"
 	export S="${S_PYTHON}"
 	cd "${S_PYTHON}" || die
 	distutils-r1_src_prepare

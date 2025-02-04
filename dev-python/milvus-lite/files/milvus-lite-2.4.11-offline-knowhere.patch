@@ -1,0 +1,35 @@
+diff '--color=auto' -urp milvus-lite-2.4.11.orig/thirdparty/milvus/internal/core/thirdparty/knowhere/CMakeLists.txt milvus-lite-2.4.11/thirdparty/milvus/internal/core/thirdparty/knowhere/CMakeLists.txt
+--- milvus-lite-2.4.11.orig/thirdparty/milvus/internal/core/thirdparty/knowhere/CMakeLists.txt	2024-04-30 05:41:27.000000000 -0700
++++ milvus-lite-2.4.11/thirdparty/milvus/internal/core/thirdparty/knowhere/CMakeLists.txt	2025-02-04 09:35:26.560940019 -0800
+@@ -37,13 +37,24 @@ if ( MILVUS_GPU_VERSION STREQUAL "ON" )
+ endif ()
+ 
+ set( CMAKE_PREFIX_PATH ${CONAN_BOOST_ROOT} )
+-FetchContent_Declare(
+-        knowhere
+-        GIT_REPOSITORY  ${GIT_REPOSITORY}
+-        GIT_TAG         ${KNOWHERE_VERSION}
+-        SOURCE_DIR      ${CMAKE_CURRENT_BINARY_DIR}/knowhere-src
+-        BINARY_DIR      ${CMAKE_CURRENT_BINARY_DIR}/knowhere-build
+-        DOWNLOAD_DIR    ${THIRDPARTY_DOWNLOAD_PATH} )
++option(OFFLINE "Run in offline mode?" ON)
++if(OFFLINE)
++  message(STATUS "Building knowhere offline B")
++  FetchContent_Declare(
++          knowhere
++          SOURCE_DIR      ${CMAKE_SOURCE_DIR}/thirdparty/knowhere
++          BINARY_DIR      ${CMAKE_CURRENT_BINARY_DIR}/knowhere-build
++  )
++else()
++  message(STATUS "Downloading knowhere online A")
++  FetchContent_Declare(
++          knowhere
++          GIT_REPOSITORY  ${GIT_REPOSITORY}
++          GIT_TAG         ${KNOWHERE_VERSION}
++          SOURCE_DIR      ${CMAKE_CURRENT_BINARY_DIR}/knowhere-src
++          BINARY_DIR      ${CMAKE_CURRENT_BINARY_DIR}/knowhere-build
++          DOWNLOAD_DIR    ${THIRDPARTY_DOWNLOAD_PATH} )
++endif()
+ 
+ FetchContent_GetProperties( knowhere )
+ if ( NOT knowhere_POPULATED )
