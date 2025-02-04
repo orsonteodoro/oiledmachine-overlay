@@ -23,7 +23,10 @@ DESCRIPTION="A minimal set of XML processing funcs & simple XML<->Tables mapping
 HOMEPAGE="http://viremo.eludi.net/LuaXML/"
 LICENSE="MIT"
 SLOT="0"
-IUSE+=" ${LUA_COMPAT[@]/#/lua_targets_}"
+IUSE+="
+${LUA_COMPAT[@]/#/lua_targets_}
+ebuild_revision_1
+"
 REQUIRED_USE+=" ${LUA_REQUIRED_USE}"
 DEPEND="${LUA_DEPS}"
 RDEPEND="${DEPEND}"
@@ -82,6 +85,12 @@ lua_src_install() {
 	cd "${BUILD_DIR}" || die
 	exeinto $(lua_get_cmod_dir)
 	doexe "LuaXML_lib.so"
+	local lua_pv=$(lua_get_version)
+
+	# Fix linking issues
+	dosym \
+		"/usr/$(get_libdir)/lua/${lua_pv%.*}/LuaXML_lib.so" \
+		"/usr/$(get_libdir)/lua/${lua_pv%.*}/libLuaXML_lib.so"
 }
 
 src_install() {

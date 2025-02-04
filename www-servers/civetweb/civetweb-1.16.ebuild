@@ -44,6 +44,7 @@ ${LUA_COMPAT[@]/#/lua_targets_}
 +asan +c11 c89 c99 cxx98 cxx11 +cxx14 +cgi gnu17 -cxx +caching debug doc
 -duktape +ipv6 -lua -serve_no_files +server_executable -server_stats +ssl
 static-libs -test -websockets -zlib
+ebuild_revision_1
 "
 REQUIRED_USE+="
 	lua? (
@@ -73,6 +74,12 @@ REQUIRED_USE+="
 		cxx11
 		cxx14
 		cxx98
+	)
+	?? (
+		lua_targets_lua5-1
+		lua_targets_lua5-2
+		lua_targets_lua5-3
+		lua_targets_lua5-4
 	)
 "
 gen_lua_targets() {
@@ -409,6 +416,35 @@ src_install() {
 		multilib_check_headers
 	}
 	multilib_foreach_abi install_abi
+
+	if use lua ; then
+		local libdir=$(get_libdir)
+		local s
+		if use lua_targets_lua5-1 ; then
+			s="5.1"
+		elif use lua_targets_lua5-2 ; then
+			s="5.2"
+		elif use lua_targets_lua5-3 ; then
+			s="5.3"
+		elif use lua_targets_lua5-4 ; then
+			s="5.4"
+		fi
+	einfo "Fixing ${ED}/usr/${libdir}/cmake/civetweb/civetweb-targets.cmake"
+		sed \
+			-i \
+			-e "s|;lua5.1|;lua5.1|g" \
+			-e "s|;lfs_lib|;lfs|g" \
+			-e "s|;lsqlite3_lib|;lsqlite3|g" \
+			-e "s|;luaxml_lib|;LuaXML_lib|g" \
+			-e "s|;sqlite_lib|;sqlite3|g" \
+			"${ED}/usr/${libdir}/cmake/civetweb/civetweb-targets.cmake" \
+			|| die
+		sed \
+			-i \
+			-e "73i\ \ INTERFACE_LINK_DIRECTORIES \"/usr/lib64/lua/${s}\"" \
+			"${ED}/usr/${libdir}/cmake/civetweb/civetweb-targets.cmake" \
+			|| die
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multilib, lua-support, static-libs

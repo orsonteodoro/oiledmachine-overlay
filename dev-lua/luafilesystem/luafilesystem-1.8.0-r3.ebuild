@@ -132,6 +132,12 @@ src_install() {
 		export BUILD_DIR="${S}_${ELUA}"
 		cd "${BUILD_DIR}" || die
 		emake DESTDIR="${D}" install
+		local lua_pv=$(lua_get_version)
+
+	# Fix linking errors
+		dosym \
+			"/usr/$(get_libdir)/lua/${lua_pv%.*}/lfs.so" \
+			"/usr/$(get_libdir)/lua/${lua_pv%.*}/liblfs.so"
 	}
 	lua_foreach_impl lua_src_install
 

@@ -132,6 +132,12 @@ src_install() {
 				insinto $(lua_get_cmod_dir)
 				doins "static/lsqlite3complete.a"
 			fi
+
+	# Fix linking
+			local lua_pv=$(lua_get_version)
+			dosym \
+				"/usr/lib64/lua/${lua_pv%.*}/lsqlite3.so" \
+				"/usr/lib64/lua/${lua_pv%.*}/liblsqlite3.so"
 		}
 		lua_foreach_impl lua_src_install
 		dodoc "doc/lsqlite3.wiki"
