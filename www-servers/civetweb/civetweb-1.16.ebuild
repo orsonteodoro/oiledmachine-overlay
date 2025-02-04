@@ -46,6 +46,7 @@ static-libs -test -websockets -zlib
 "
 REQUIRED_USE+="
 	lua? (
+		!static-libs
 		${LUA_REQUIRED_USE}
 		gnu17
 	)
