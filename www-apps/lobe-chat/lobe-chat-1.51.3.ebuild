@@ -184,6 +184,7 @@ pnpm_unpack_post() {
 			|| die
 		grep -e "ERR_PNPM_FETCH_404" "${T}/build.log" && die "Detected error.  Check pnpm add"
 
+	# CVE-2025-24964; DoS, DT, ID; High
 		sed -i -e "s|\"vitest\": \"~1.2.2\"|\"vitest\": \"1.6.1\"|g" "package.json" || die
 		epnpm add -D "vitest@1.6.1" ${PNPM_INSTALL_ARGS[@]}
 	else
