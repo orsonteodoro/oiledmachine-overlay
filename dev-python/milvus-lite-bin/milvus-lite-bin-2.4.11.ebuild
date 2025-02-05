@@ -36,11 +36,11 @@ RDEPEND+="
 	>=dev-cpp/glog-0.6.0
 	>=dev-cpp/tbb-2021.9.0:0
 	>=dev-libs/double-conversion-3.2.1
-	>=dev-python/tqdm[${PYTHON_USEDEP}]
 	>=sci-libs/openblas-0.3.27
 	>=sys-devel/gcc-9.3.0[cxx]
-	>=sys-libs/zlib-1.2.13
 	>=sys-libs/glibc-2.31
+	>=sys-libs/zlib-1.2.13
+	dev-python/tqdm[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
