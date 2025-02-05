@@ -663,7 +663,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" tray wayland X ebuild_revision_3"
+IUSE+=" tray wayland X ebuild_revision_4"
 gen_webkit_depend() {
 	local s
 	for s in ${WEBKIT_GTK_STABLE[@]} ; do
@@ -801,6 +801,16 @@ pkg_setup() {
 ewarn "Do not emerge ${CATEGORY}/${PN} package directly.  Emerge sys-apps/coolercontrol instead."
 	npm_pkg_setup
 	rust_pkg_setup
+}
+
+npm_unpack_post() {
+	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+	# CVE-2025-24964; DoS, DT, ID; Critical
+		pushd "${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui" >/dev/null 2>&1 || die
+			sed -i -e "s|\"vitest\": \"^2.1.8\"|\"vitest\": \"^2.1.9\"|" "package.json" || die
+			enpm install "vitest@2.1.9" -D --prefer-offline
+		popd >/dev/null 2>&1 || die
+	fi
 }
 
 src_unpack() {
