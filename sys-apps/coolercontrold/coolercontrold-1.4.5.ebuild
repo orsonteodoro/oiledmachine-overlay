@@ -616,6 +616,15 @@ ewarn "Do not emerge ${CATEGORY}/${PN} package directly.  Emerge sys-apps/cooler
 	rust_pkg_setup
 }
 
+npm_unpack_post() {
+	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+	# CVE-2025-24964; DoS, DT, ID; Critical
+		pushd "${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui" >/dev/null 2>&1 || die
+			enpm install "vitest@2.1.9" -D
+		popd >/dev/null 2>&1 || die
+	fi
+}
+
 src_unpack() {
 	S="${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui" \
 	npm_src_unpack
