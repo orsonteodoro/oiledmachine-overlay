@@ -12,11 +12,13 @@ inherit distutils-r1
 
 S="${WORKDIR}"
 SRC_URI="
-	arm64? (
+	kernel_linux? (
+		arm64? (
 https://files.pythonhosted.org/packages/ed/85/feb5ef0d92ab4b62c20a5a91fdfc8515f1038d9947a41f5e8ba357724c28/milvus_lite-2.4.11-py3-none-manylinux2014_aarch64.whl
-	)
-	amd64? (
+		)
+		amd64? (
 https://files.pythonhosted.org/packages/8d/c2/b294a7699ef097d7b0ab89f95f34fb0710726f12d7da912734e18c2558eb/milvus_lite-2.4.11-py3-none-manylinux2014_x86_64.whl
+		)
 	)
 "
 
