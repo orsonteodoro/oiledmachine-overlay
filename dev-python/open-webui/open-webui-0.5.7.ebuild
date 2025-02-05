@@ -91,8 +91,8 @@ RDEPEND+="
 		>=dev-python/alembic-1.14.0[${PYTHON_USEDEP}]
 		>=dev-python/peewee-3.17.8[${PYTHON_USEDEP}]
 		>=dev-python/peewee-migrate-1.12.2[${PYTHON_USEDEP}]
-		>=dev-python/psycopg2-binary-2.9.9[${PYTHON_USEDEP}]
 		>=dev-python/pgvector-0.3.5[${PYTHON_USEDEP}]
+		>=dev-python/psycopg-2.9.9:2[${PYTHON_USEDEP}]
 		>=dev-python/pymysql-1.1.1[${PYTHON_USEDEP}]
 		>=dev-python/bcrypt-4.2.0[${PYTHON_USEDEP}]
 
