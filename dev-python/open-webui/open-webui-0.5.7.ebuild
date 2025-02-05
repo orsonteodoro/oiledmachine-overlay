@@ -72,11 +72,14 @@ RDEPEND+="
 		>=dev-python/pydantic-2.9.2[${PYTHON_USEDEP}]
 		>=dev-python/python-multipart-0.0.18[${PYTHON_USEDEP}]
 
+		(
+			>=dev-python/passlib-1.7.4[bcrypt(+)]
+			dev-python/bcrypt[${PYTHON_USEDEP}]
+		)
 		>=dev-python/flask-3.1.0[${PYTHON_USEDEP}]
 		>=dev-python/flask-cors-5.0.0[${PYTHON_USEDEP}]
 		>=dev-python/python-socketio-5.11.3[${PYTHON_USEDEP}]
 		>=dev-python/python-jose-3.3.0[${PYTHON_USEDEP}]
-		>=dev-python/passlib-1.7.4[bcrypt]
 
 		>=dev-python/requests-2.32.3[${PYTHON_USEDEP}]
 		>=dev-python/aiohttp-3.11.8[${PYTHON_USEDEP}]
