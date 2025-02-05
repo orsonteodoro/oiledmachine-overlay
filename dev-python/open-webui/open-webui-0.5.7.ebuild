@@ -49,6 +49,13 @@ MOTO_RDEPEND="
 	>=dev-python/moto-5.0.26[s3(+)]
 	>=dev-python/py-partiql-parser-0.6.1
 "
+# For missing >=dev-python/passlib-1.7.4[bcrypt(+)] rdepends
+PASSLIB_RDEPEND="
+	$(python_gen_cond_dep '
+		>=dev-python/passlib-1.7.4[bcrypt(+)]
+		dev-python/bcrypt[${PYTHON_USEDEP}]
+	')
+"
 # For missing dev-python/pyjwt[crypto] rdepends
 PYJWT_RDEPEND="
 	$(python_gen_cond_dep '
@@ -64,14 +71,11 @@ UVICORN_RDEPEND="
 "
 # Relaxed pymilvus
 RDEPEND+="
-	${UVICORN_RDEPEND}
+	${PASSLIB_RDEPEND}
 	${PYJWT_RDEPEND}
 	${MOTO_RDEPEND}
+	${UVICORN_RDEPEND}
 	$(python_gen_cond_dep '
-		(
-			>=dev-python/passlib-1.7.4[bcrypt(+)]
-			dev-python/bcrypt[${PYTHON_USEDEP}]
-		)
 		>=dev-python/aiohttp-3.11.8[${PYTHON_USEDEP}]
 		>=dev-python/alembic-1.14.0[${PYTHON_USEDEP}]
 		>=dev-python/apscheduler-3.10.4[${PYTHON_USEDEP}]
