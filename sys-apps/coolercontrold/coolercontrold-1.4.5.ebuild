@@ -516,7 +516,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" hwmon video_cards_nvidia openrc systemd ebuild_revision_1"
+IUSE+=" hwmon video_cards_nvidia openrc systemd ebuild_revision_2"
 RDEPEND+="
 	~sys-apps/coolercontrol-liqctld-${PV}
 	hwmon? (
@@ -620,7 +620,8 @@ npm_unpack_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 	# CVE-2025-24964; DoS, DT, ID; Critical
 		pushd "${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui" >/dev/null 2>&1 || die
-			enpm install "vitest@2.1.9" -D
+			sed -i -e "s|\"vitest\": \"^2.1.8\"|\"vitest\": \"^2.1.9\"|" "package.json" || die
+			enpm install "vitest@2.1.9" -D --prefer-offline
 		popd >/dev/null 2>&1 || die
 	fi
 }

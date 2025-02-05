@@ -12,30 +12,30 @@
         "type-check": "vue-tsc --noEmit --composite false"
     },
     "dependencies": {
+        "@jamescoyle/vue-icon": "^0.1.2",
+        "@mdi/js": "^7.4.47",
+        "@tauri-apps/api": "2.1.1",
+        "@types/uuid": "^10.0.0",
         "axios": "^1.7.9",
         "axios-retry": "^4.5.0",
         "class-transformer": "^0.5.1",
         "d3-scale": "^4.0.2",
         "d3-scale-chromatic": "^3.1.0",
         "echarts": "^5.5.1",
+        "element-plus": "^2.9.0",
+        "lodash.debounce": "^4.0.8",
         "pinia": "2.2.4",
         "primeflex": "^3.3.1",
         "primeicons": "^7.0.0",
         "primevue": "3.44.0",
         "reflect-metadata": "^0.2.2",
+        "ts-enum-util": "^4.1.0",
         "uplot": "^1.6.31",
+        "uuid": "^11.0.3",
         "vite-plugin-package-version": "^1.1.0",
         "vue": "^3.5.13",
         "vue-echarts": "^7.0.3",
-        "vue-router": "^4.5.0",
-        "element-plus": "^2.9.0",
-        "@mdi/js": "^7.4.47",
-        "@jamescoyle/vue-icon": "^0.1.2",
-        "uuid": "^11.0.3",
-        "@types/uuid": "^10.0.0",
-        "ts-enum-util": "^4.1.0",
-        "@tauri-apps/api": "2.1.1",
-        "lodash.debounce": "^4.0.8"
+        "vue-router": "^4.5.0"
     },
     "devDependencies": {
         "@tsconfig/node18": "^18.2.4",
@@ -51,7 +51,7 @@
         "typescript": "5.6.3",
         "vite": "^6.0.3",
         "vite-svg-loader": "^5.1.0",
-        "vitest": "^2.1.8",
+        "vitest": "^2.1.9",
         "vue-tsc": "^2.1.10"
     }
 }
