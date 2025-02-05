@@ -62,6 +62,7 @@ MOTO_RDEPEND="
 	>=dev-python/moto-5.0.26[s3(+)]
 	>=dev-python/py-partiql-parser-0.6.1
 "
+# Relaxed pymilvus
 RDEPEND+="
 	${UVICORN_RDEPEND}
 	${PYJWT_RDEPEND}
@@ -113,7 +114,7 @@ RDEPEND+="
 
 		>=dev-python/fake-useragent-1.5.1[${PYTHON_USEDEP}]
 		>=dev-python/chromadb-0.6.2[${PYTHON_USEDEP}]
-		>=dev-python/pymilvus-2.5.0[${PYTHON_USEDEP}]
+		>=dev-python/pymilvus-2.4.0[${PYTHON_USEDEP}]
 		>=dev-python/qdrant-client-1.12.0[${PYTHON_USEDEP}]
 		>=dev-python/opensearch-py-2.7.1[${PYTHON_USEDEP}]
 
