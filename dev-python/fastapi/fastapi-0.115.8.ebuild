@@ -48,6 +48,28 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" all dev doc standard test translations"
+# Missing standard USE flag for uvicorn.
+UVICORN_RDEPEND="
+	(
+		(
+			!=dev-python/uvloop-0.15.0
+			!=dev-python/uvloop-0.15.1
+			>=dev-python/uvloop-0.14.0[${PYTHON_USEDEP}]
+		)
+		>=dev-python/httptools-0.6.3[${PYTHON_USEDEP}]
+		>=dev-python/python-dotenv-0.13[${PYTHON_USEDEP}]
+		>=dev-python/pyyaml-5.1[${PYTHON_USEDEP}]
+		>=dev-python/uvicorn-0.12.0[${PYTHON_USEDEP},standard(+)]
+		>=dev-python/watchfiles-0.13[${PYTHON_USEDEP}]
+		>=dev-python/websockets-10.4[${PYTHON_USEDEP}]
+	)
+"
+FASTAPI_CLI_RDEPEND="
+	(
+		${UVICORN_RDEPEND}
+		>=dev-python/fastapi-cli-0.0.5[${PYTHON_USEDEP},standard(+)]
+	)
+"
 RDEPEND+="
 	(
 		!=dev-python/pydantic-1.8
@@ -61,6 +83,8 @@ RDEPEND+="
 	>=dev-python/starlette-0.40.0[${PYTHON_USEDEP}]
 	>=dev-python/typing-extensions-4.8.0[${PYTHON_USEDEP}]
 	all? (
+		${FASTAPI_CLI_RDEPEND}
+		${UVICORN_RDEPEND}
 		(
 			>=dev-python/ujson-4.0.1[${PYTHON_USEDEP}]
 			!=dev-python/ujson-4.0.2[${PYTHON_USEDEP}]
@@ -71,7 +95,6 @@ RDEPEND+="
 			!=dev-python/ujson-5.1.0[${PYTHON_USEDEP}]
 		)
 		>=dev-python/email-validator-2.0.0[${PYTHON_USEDEP}]
-		>=dev-python/fastapi-cli-0.0.5[${PYTHON_USEDEP},standard]
 		>=dev-python/httpx-0.23.0[${PYTHON_USEDEP}]
 		>=dev-python/itsdangerous-1.1.0[${PYTHON_USEDEP}]
 		>=dev-python/jinja2-3.1.5[${PYTHON_USEDEP}]
@@ -80,16 +103,14 @@ RDEPEND+="
 		>=dev-python/pydantic-settings-2.0.0[${PYTHON_USEDEP}]
 		>=dev-python/python-multipart-0.0.18[${PYTHON_USEDEP}]
 		>=dev-python/pyyaml-5.3.1[${PYTHON_USEDEP}]
-		>=dev-python/uvicorn-0.12.0[${PYTHON_USEDEP},standard]
-
 	)
 	standard? (
+		${FASTAPI_CLI_RDEPEND}
+		${UVICORN_RDEPEND}
 		>=dev-python/email-validator-2.0.0[${PYTHON_USEDEP}]
-		>=dev-python/fastapi-cli-0.0.5[${PYTHON_USEDEP},standard]
 		>=dev-python/httpx-0.23.0[${PYTHON_USEDEP}]
 		>=dev-python/jinja2-3.1.5[${PYTHON_USEDEP}]
 		>=dev-python/python-multipart-0.0.18[${PYTHON_USEDEP}]
-		>=dev-python/uvicorn-0.12.0[${PYTHON_USEDEP},standard]
 	)
 	translations? (
 		>=dev-python/pydantic-ai-0.0.15[${PYTHON_USEDEP}]
@@ -104,6 +125,10 @@ BDEPEND+="
 		dev-python/playwright-bin
 	)
 	doc? (
+		(
+			>=dev-python/mkdocstrings-0.26.1[${PYTHON_USEDEP},python(+)]
+			>=dev-python/mkdocstrings-python-0.5.2[${PYTHON_USEDEP}]
+		)
 		>=dev-python/black-24.10.0[${PYTHON_USEDEP}]
 		>=dev-python/griffe-typingdoc-0.2.7[${PYTHON_USEDEP}]
 		>=dev-python/jieba-0.42.1[${PYTHON_USEDEP}]
@@ -112,20 +137,25 @@ BDEPEND+="
 		>=dev-python/mkdocs-macros-plugin-1.3.7[${PYTHON_USEDEP}]
 		>=dev-python/mkdocs-material-9.5.18[${PYTHON_USEDEP}]
 		>=dev-python/mkdocs-redirects-1.2.1[${PYTHON_USEDEP}]
-		>=dev-python/mkdocstrings-0.26.1[${PYTHON_USEDEP},python]
 		>=dev-python/pyyaml-5.3.1[${PYTHON_USEDEP}]
 		>=dev-python/typer-0.12.5[${PYTHON_USEDEP}]
 		>=media-gfx/cairosvg-2.7.1[${PYTHON_USEDEP}]
 		>=virtual/pillow-11.0.0[${PYTHON_USEDEP}]
 	)
 	test? (
-		>=dev-python/anyio-3.2.1[${PYTHON_USEDEP},trio]
-		>=dev-python/coverage-6.5.0[${PYTHON_USEDEP},toml]
+		(
+			>=dev-python/passlib-1.7.2[${PYTHON_USEDEP},bcrypt(+)]
+			dev-python/bcrypt[${PYTHON_USEDEP}]
+		)
+		(
+			>=dev-python/anyio-3.2.1[${PYTHON_USEDEP},trio(+)]
+			>=dev-python/trio-0.26.1[${PYTHON_USEDEP}]
+		)
+		>=dev-python/coverage-6.5.0[${PYTHON_USEDEP},toml(+)]
 		>=dev-python/dirty-equals-0.8.0[${PYTHON_USEDEP}]
 		>=dev-python/flask-1.1.2[${PYTHON_USEDEP}]
 		>=dev-python/inline-snapshot-0.18.1[${PYTHON_USEDEP}]
 		>=dev-python/mypy-1.8.0[${PYTHON_USEDEP}]
-		>=dev-python/passlib-1.7.2[${PYTHON_USEDEP},bcrypt]
 		>=dev-python/pytest-7.1.3[${PYTHON_USEDEP}]
 		>=dev-python/pyjwt-2.8.0[${PYTHON_USEDEP}]
 		>=dev-python/pyyaml-5.3.1[${PYTHON_USEDEP}]
