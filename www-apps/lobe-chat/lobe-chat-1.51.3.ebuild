@@ -18,6 +18,8 @@ EAPI=8
 
 # @serwist/next needs pnpm workspaces
 
+# Use `PNPM_UPDATER_VERSIONS="1.51.3" pnpm_updater_update_locks.sh` to update lockfile
+
 CPU_FLAGS_X86=(
 	cpu_flags_x86_sse4_2
 )
