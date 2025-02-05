@@ -4,9 +4,6 @@
 
 EAPI=8
 
-# TODO package:
-# milvus-lite
-
 # TODO package (optional):
 # m2r
 # sphinxcontrib-prettyspecialmethods
