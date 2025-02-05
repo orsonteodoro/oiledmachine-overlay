@@ -36,7 +36,7 @@ HOMEPAGE="
 	https://pypi.org/project/extract-msg
 "
 LICENSE="
-	GPL-3.0
+	GPL-3
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
