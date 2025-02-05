@@ -4,9 +4,6 @@
 
 EAPI=8
 
-# TODO package:
-# tiktoken
-
 # TODO fix:
 # protobuf4 with grpc in chromadb conflict with tensorflow and protobuf3
 
