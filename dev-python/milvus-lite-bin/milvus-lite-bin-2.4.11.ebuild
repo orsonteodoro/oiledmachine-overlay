@@ -11,6 +11,7 @@ PYTHON_COMPAT=( "python3_"{10..12} )
 inherit distutils-r1
 
 S="${WORKDIR}"
+KEYWORDS="~amd64 ~arm64"
 SRC_URI="
 	kernel_linux? (
 		arm64? (
