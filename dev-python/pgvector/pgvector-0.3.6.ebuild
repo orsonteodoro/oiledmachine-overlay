@@ -48,13 +48,13 @@ SQLALCHEMY_RDEPEND="
 "
 RDEPEND+="
 	${SQLALCHEMY_RDEPEND}
+	=dev-python/psycopg-2*[${PYTHON_USEDEP},native-extensions]
 	>=dev-python/sqlalchemy-2[${PYTHON_USEDEP},asyncio(+)]
 	>=dev-python/sqlmodel-0.0.12[${PYTHON_USEDEP}]
 	dev-python/asyncpg[${PYTHON_USEDEP}]
 	dev-python/django[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/peewee[${PYTHON_USEDEP}]
-	dev-python/psycopg[${PYTHON_USEDEP},native-extensions]
 	dev-python/pytest[${PYTHON_USEDEP}]
 	dev-python/pytest-asyncio[${PYTHON_USEDEP}]
 	dev-python/scipy[${PYTHON_USEDEP}]
