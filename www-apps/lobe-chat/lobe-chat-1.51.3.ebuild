@@ -183,6 +183,9 @@ pnpm_unpack_post() {
 			"${S}/package.json" \
 			|| die
 		grep -e "ERR_PNPM_FETCH_404" "${T}/build.log" && die "Detected error.  Check pnpm add"
+
+		sed -i -e "s|\"vitest\": \"~1.2.2\"|\"vitest\": \"1.6.1\"|g" "package.json" || die
+		epnpm add -D "vitest@1.6.1" ${PNPM_INSTALL_ARGS[@]}
 	else
 		if use postgres ; then
 			epnpm add "sharp@0.33.5" ${PNPM_INSTALL_ARGS[@]}
