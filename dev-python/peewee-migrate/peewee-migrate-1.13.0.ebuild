@@ -52,7 +52,7 @@ DEPEND+="
 BDEPEND+="
 	>=dev-python/poetry-core-1.0[${PYTHON_USEDEP}]
 	dev? (
-		>=dev-python/psycopg-2.9.5[${PYTHON_USEDEP},native-extensions]
+		>=dev-python/psycopg-2.9.5:2[${PYTHON_USEDEP}]
 		dev-python/black[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-mypy[${PYTHON_USEDEP}]
