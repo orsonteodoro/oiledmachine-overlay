@@ -7,19 +7,19 @@ EAPI=8
 AT_TYPES_NODE_PV="18.16.3"
 declare -A DL_REVISIONS=(
 # See lockfile for playwright version
-# See https://github.com/microsoft/playwright/blob/v1.49.1/packages/playwright-core/browsers.json
-# See https://github.com/microsoft/playwright/blob/v1.49.1/packages/playwright-core/src/server/registry/index.ts#L231
-	["chromium-linux-glibc-amd64"]="1148"
-	["chromium-headless-shell-linux-glibc-amd64"]="1148"
-	["chromium-tip-of-tree-linux-glibc-amd64"]="1148"
-	["ffmpeg-linux-glibc-amd64"]="1010"
-	["firefox-linux-glibc-amd64-ubuntu-24_04"]="1466"
-	["firefox-beta-linux-glibc-amd64-ubuntu-24_04"]="1466"
-	["webkit-linux-glibc-amd64-ubuntu-24_04"]="2104"
+# See https://github.com/microsoft/playwright/blob/v1.50.1/packages/playwright-core/browsers.json
+# See https://github.com/microsoft/playwright/blob/v1.50.1/packages/playwright-core/src/server/registry/index.ts#L231
+	["chromium-linux-glibc-amd64"]="1155"
+	["chromium-headless-shell-linux-glibc-amd64"]="1155"
+	["chromium-tip-of-tree-linux-glibc-amd64"]="1293"
+	["ffmpeg-linux-glibc-amd64"]="1011"
+	["firefox-linux-glibc-amd64-ubuntu-24_04"]="1471"
+	["firefox-beta-linux-glibc-amd64-ubuntu-24_04"]="1467"
+	["webkit-linux-glibc-amd64-ubuntu-24_04"]="2092"
 )
 EPLAYRIGHT_ALLOW_BROWSERS=(
 # https://github.com/mixn/carbon-now-cli/blob/v2.1.0/src/views/default.view.ts#L23
-	"chromium"			# EOL
+	"chromium"			#
 #	"chromium-tip-of-tree"
 	"firefox"			# EOL
 #	"firefox-beta"			# EOL
@@ -247,10 +247,10 @@ _unpack_playwright() {
 
 npm_unpack_install_post() {
 	# See
-	# https://github.com/microsoft/playwright/blob/v1.49.1/packages/playwright-core/src/server/registry/index.ts#L232
-	# https://github.com/microsoft/playwright/blob/v1.49.1/docs/src/browsers.md
-	# https://github.com/microsoft/playwright/blob/v1.49.1/packages/playwright-core/src/server/registry/nativeDeps.ts
-	# https://github.com/microsoft/playwright/blob/v1.49.1/packages/playwright-core/browsers.json
+	# https://github.com/microsoft/playwright/blob/v1.50.1/packages/playwright-core/src/server/registry/index.ts#L232
+	# https://github.com/microsoft/playwright/blob/v1.50.1/docs/src/browsers.md
+	# https://github.com/microsoft/playwright/blob/v1.50.1/packages/playwright-core/src/server/registry/nativeDeps.ts
+	# https://github.com/microsoft/playwright/blob/v1.50.1/packages/playwright-core/browsers.json
 
 	local L=()
 	local choice
@@ -262,7 +262,7 @@ npm_unpack_install_post() {
 		fi
 	done
 
-	# https://github.com/microsoft/playwright/blob/v1.49.1/docs/src/browsers.md#hermetic-install
+	# https://github.com/microsoft/playwright/blob/v1.50.1/docs/src/browsers.md#hermetic-install
 	export PLAYWRIGHT_BROWSERS_PATH=0
 	cd "${S}" || die
 	# The sandbox doesn't want us to download even though it is permitted.
