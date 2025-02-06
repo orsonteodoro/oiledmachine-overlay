@@ -110,7 +110,7 @@ RDEPEND+="
 	>=app-misc/ca-certificates-20240203
 	>=net-misc/proxychains-3.1
 	>=sys-devel/gcc-12.2.0
-	=net-libs/nodejs-${_NODE_VERSION%.*}*:${NODE_VERSION}[corepack,npm]
+	net-libs/nodejs:${NODE_VERSION}[corepack,npm]
 	net-libs/nodejs:=
 	postgres? (
 		>=dev-db/postgresql-16.4

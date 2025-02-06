@@ -41,6 +41,8 @@ esac
 if [[ -z "${_YARN_ECLASS}" ]]; then
 _YARN_ECLASS=1
 
+inherit edo
+
 # @ECLASS_VARIABLE: _YARN_PKG_SETUP_CALLED
 # @INTERNAL
 # @DESCRIPTION:
@@ -77,6 +79,9 @@ _yarn_set_globals() {
 	NPM_NETWORK_MAX_SOCKETS=${NPM_NETWORK_MAX_SOCKETS:-"1"}
 
 	export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+	unset updateLock
+	unset updaterPkgFolder
+	unset updaterVersions
 }
 _yarn_set_globals
 unset -f _yarn_set_globals
@@ -172,6 +177,30 @@ unset -f _yarn_set_globals
 # @DESCRIPTION:
 # This variable is an array.
 # Global arguments to append to `npm audit fix`
+
+# @FUNCTION: yarn_env_push
+# @DESCRIPTION:
+# Save environment variables
+yarn_env_push() {
+	_YARN_UPDATE_LOCK=${YARN_UPDATE_LOCK}
+	_YARN_CACHE_FOLDER=${YARN_CACHE_FOLDER}
+	_YARN_UPDATER_PKG_FOLDER=${YARN_UPDATER_PKG_FOLDER}
+	_YARN_UPDATER_VERSIONS=${YARN_UPDATER_VERSIONS}
+	unset YARN_UPDATE_LOCK
+	unset YARN_CACHE_FOLDER
+	unset YARN_UPDATER_PKG_FOLDER
+	unset YARN_UPDATER_VERSIONS
+}
+
+# @FUNCTION: yarn_env_pop
+# @DESCRIPTION:
+# Restore environment variables
+yarn_env_pop() {
+	YARN_UPDATE_LOCK=${_YARN_UPDATE_LOCK}
+	YARN_CACHE_FOLDER=${_YARN_CACHE_FOLDER}
+	YARN_UPDATER_PKG_FOLDER=${_YARN_UPDATER_PKG_FOLDER}
+	YARN_UPDATER_VERSIONS=${_YARN_UPDATER_VERSIONS}
+}
 
 # @FUNCTION: yarn_check_network_sandbox
 # @DESCRIPTION:
@@ -317,7 +346,6 @@ einfo "DEBUG:  Default cache folder:  ${HOME}/.yarn/berry/cache/"
 		addwrite "${EDISTDIR}"
 		addwrite "${YARN_CACHE_FOLDER}"
 		mkdir -p "${YARN_CACHE_FOLDER}"
-		yarn config set cacheFolder "${YARN_CACHE_FOLDER}" || die
 	fi
 einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
 }
@@ -545,7 +573,9 @@ einfo "Running:\tyarn ${cmd[@]}"
 einfo "Current directory:\t${PWD}"
 einfo "Tries:\t\t${tries}"
 einfo "Running:\t\tyarn ${cmd[@]}"
+		yarn_env_push
 		yarn "${cmd[@]}" || die
+		yarn_env_pop
 		if ! grep -q -E -e "(ETIMEDOUT|EAI_AGAIN|ECONNRESET)" "${T}/build.log" ; then
 			break
 		fi
@@ -649,12 +679,26 @@ einfo "Updating lockfile"
 		fi
 
 	# Converts package-lock.json to yarn.lock
-		yarn import || die
+einfo "Generating yarn lockfile"
+		if [[ "${YARN_SLOT}" == "1" ]] ; then
+			edo yarn import
+		else
+			eyarn install
+		fi
+		[[ -e "yarn.lock" ]] || ewarn "Missing generated yarn.lock file"
 		if declare -f \
 			yarn_update_lock_yarn_import_post > /dev/null 2>&1 ; then
 			yarn_update_lock_yarn_import_post
 		fi
 
+		if grep -q -e "Unrecognized or legacy configuration settings found" "${T}/build.log" ; then
+einfo "DEBUG:"
+# Yarn 4.x doesn't like when you touch YARN_ environment variables.
+# If they exist, add them to the yarn_env_push and yarn_env_pop section.
+printenv | grep '^YARN_' | cut -d= -f1
+einfo "DEBUG:"
+			yarn config -v
+		fi
 }
 
 # @FUNCTION: _yarn_src_unpack_update_upstream
@@ -802,6 +846,10 @@ einfo "Yarn version:  ${yarn_pv}"
 einfo "Node.js version:  ${node_pv}"
 
 	npm_network_settings
+
+	yarn_env_push
+	yarn config set --home enableTelemetry 0
+	yarn_env_pop
 }
 
 # @FUNCTION: _yarn_src_unpack

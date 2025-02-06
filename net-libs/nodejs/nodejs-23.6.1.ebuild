@@ -4,15 +4,18 @@
 
 EAPI=8
 
+# FIXME:
+# ../../deps/v8/src/heap/memory-chunk.h:361:2: error: #error The global metadata pointer table requires a single external code space.
+
 # IMPORTANT:  The ${FILESDIR}/node-multiplexer-v* must be updated each time a new major version is introduced.
-# For ebuild delayed removal safety track "security release" : https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V20.md
+# For ebuild delayed removal safety track "security release" : https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V22.md
 
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
 
-# Last deps commit date:  Oct 2, 2024
+# Last deps commit date:  Jan 20, 2025
 
-ACORN_PV="8.12.1"
+ACORN_PV="8.14.0"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 TRAINER_TYPES=(
 	abort_controller
@@ -22,8 +25,8 @@ TRAINER_TYPES=(
 	buffers
 	child_process
 	cluster
-	crypto
 	custom
+	crypto
 	dgram
 	diagnostics_channel
 	dns
@@ -45,7 +48,6 @@ TRAINER_TYPES=(
 	path
 	perf_hooks
 	permission
-	policy
 	process
 	querystring
 	readline
@@ -61,16 +63,18 @@ TRAINER_TYPES=(
 	validators
 	vm
 	websocket
+	webstorage
 	webstreams
 	worker
 	zlib
 )
-COREPACK_PV="0.29.3"
+COREPACK_PV="0.30.0"
 LTO_TYPE="none" # Global var
 MULTIPLEXER_VER="11"
-NGHTTP2_PV="1.60.0"
-NPM_PV="10.8.2" # See https://github.com/nodejs/node/blob/v20.9.0/deps/npm/package.json
-PYTHON_COMPAT=( "python3_"{8..11} ) # See configure
+NGHTTP2_PV="1.64.0"
+NGHTTP3_PV="1.6.0"
+NPM_PV="10.9.2" # See https://github.com/nodejs/node/blob/v23.6.1/deps/npm/package.json
+PYTHON_COMPAT=( "python3_"{8..12} ) # See configure
 PYTHON_REQ_USE="threads(+)"
 TPGO_CONFIGURE_DONT_SET_FLAGS=1
 UOPTS_SUPPORT_EBOLT=0
@@ -122,9 +126,9 @@ gen_iuse_pgo() {
 
 IUSE+="
 $(gen_iuse_pgo)
-acorn +asm +corepack cpu_flags_x86_sse2 -custom-optimization debug doc fips +icu
-inspector +npm man mold pax-kernel pgo -pointer-compression +snapshot +ssl system-icu
-+system-ssl test -v8-sandbox
+acorn +asm +corepack cpu_flags_x86_sse2 -custom-optimization debug doc -drumbrake fips +icu
+inspector +npm man mold pax-kernel pgo +snapshot +ssl system-icu
++system-ssl test
 ebuild_revision_13
 "
 
@@ -153,24 +157,21 @@ REQUIRED_USE+="
 	system-ssl? (
 		ssl
 	)
-	v8-sandbox? (
-		pointer-compression
-	)
 "
 RDEPEND+="
 	!net-libs/nodejs:0
 	>=app-arch/brotli-1.1.0
 	>=app-eselect/eselect-nodejs-20230521
-	>=dev-libs/libuv-1.47.0:=
-	>=net-dns/c-ares-1.33.1
+	>=dev-libs/libuv-1.49.2:=
+	>=net-dns/c-ares-1.34.4
 	>=net-libs/nghttp2-${NGHTTP2_PV}
 	>=sys-libs/zlib-1.3
 	sys-kernel/mitigate-id
 	system-icu? (
-		>=dev-libs/icu-75.1:=
+		>=dev-libs/icu-76.1:=
 	)
 	system-ssl? (
-		>=dev-libs/openssl-3.0.13:0[asm?,fips?]
+		>=dev-libs/openssl-3.0.15:0[asm?,fips?]
 		dev-libs/openssl:=
 	)
 "
@@ -205,12 +206,12 @@ PDEPEND+="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-12.22.5-shared_c-ares_nameser_h.patch"
-	"${FILESDIR}/${PN}-20.9.0-global-npm-config.patch"
-	"${FILESDIR}/${PN}-20.9.0-lto-update.patch"
+	"${FILESDIR}/${PN}-22.2.0-global-npm-config.patch"
+	"${FILESDIR}/${PN}-22.2.0-lto-update.patch"
 	"${FILESDIR}/${PN}-20.1.0-support-clang-pgo.patch"
 	"${FILESDIR}/${PN}-19.3.0-v8-oflags.patch"
-	"${FILESDIR}/${PN}-20.9.0-split-pointer-compression-and-v8-sandbox-options.patch"
-	"${FILESDIR}/${PN}-20.9.0-add-v8-jit-fine-grained-options.patch"
+	"${FILESDIR}/${PN}-23.5.0-split-pointer-compression-and-v8-sandbox-options.patch"
+	"${FILESDIR}/${PN}-23.6.0-add-v8-jit-fine-grained-options.patch"
 )
 
 _count_useflag_slots() {
@@ -279,7 +280,7 @@ pkg_setup() {
 
 # See https://github.com/nodejs/release#release-schedule
 # See https://github.com/nodejs/release#end-of-life-releases
-einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2026-04-30."
+einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2025-06-01."
 
 	# Prevent merge conflicts
 	if use man && (( $(_count_useflag_slots "man") > 1 ))
@@ -481,9 +482,7 @@ src_configure() { :; }
 
 __pgo_configure() {
 	if [[ "${CC}" =~ "clang" ]] ; then
-ewarn
 ewarn "PGO clang support is experimental"
-ewarn
 	fi
 	export PGO_PROFILE_DIR="${T}/pgo-${ABI}"
 	export PGO_PROFILE_PROFDATA="${PGO_PROFILE_DIR}/pgo-custom.profdata"
@@ -532,6 +531,7 @@ enable_gdb() {
 set_jit_level() {
 	_jit_level_0() {
 		# ~20%/~50% performance similar to light swap, but a feeling of less progress (20-25%)
+		#myconf+=( --v8-disable-drumbrake )
 		#myconf+=( --disable-gdb )
 		#myconf+=( --v8-disable-maglev )
 		#myconf+=( --v8-disable-sparkplug )
@@ -541,6 +541,7 @@ set_jit_level() {
 
 	_jit_level_1() {
 		# 28%/71% performance similar to light swap, but a feeling of more progress (33%)
+		myconf+=( $(usex drumbrake "--v8-enable-drumbrake" "") )
 		myconf+=( $(enable_gdb) )
 		#myconf+=( --v8-disable-maglev ) # Requires turbofan
 		myconf+=( --v8-enable-sparkplug )
@@ -550,6 +551,7 @@ set_jit_level() {
 
 	_jit_level_2() {
 		# > 75% performance
+		myconf+=( $(usex drumbrake "--v8-enable-drumbrake" "") )
 		myconf+=( $(enable_gdb) )
 		#myconf+=( --v8-disable-maglev )
 		#myconf+=( --v8-disable-sparkplug )
@@ -559,6 +561,7 @@ set_jit_level() {
 
 	_jit_level_5() {
 		# > 90% performance
+		myconf+=( $(usex drumbrake "--v8-enable-drumbrake" "") )
 		myconf+=( $(enable_gdb) )
 		#myconf+=( --v8-disable-maglev )
 		myconf+=( --v8-enable-sparkplug )
@@ -568,10 +571,11 @@ set_jit_level() {
 
 	_jit_level_6() {
 		# 100% performance
+		myconf+=( $(usex drumbrake "--v8-enable-drumbrake" "") )
 		myconf+=( $(enable_gdb) )
-	# https://github.com/nodejs/node/blob/v20.9.0/deps/v8/BUILD.gn#L485
-		if use amd64 || use arm64 ; then
-			use pointer-compression && myconf+=( --v8-enable-maglev ) # %5 runtime benefit
+	# https://github.com/nodejs/node/blob/v23.6.0/deps/v8/BUILD.gn#L542
+		if use amd64 || use arm || use arm64 ; then
+			myconf+=( --v8-enable-maglev ) # %5 runtime benefit
 		fi
 		myconf+=( --v8-enable-sparkplug ) # 5% benefit
 		myconf+=( --v8-enable-turbofan ) # Subset of -O1, -O2, -O3; 100% performance
@@ -654,7 +658,13 @@ _src_configure() {
 		--shared-brotli
 		--shared-cares
 		--shared-libuv
-		--shared-nghttp2
+
+# Commenting out fixes:
+# ld: obj/deps/ngtcp2/nghttp3/lib/nghttp3.nghttp3_http.o: in function `nghttp3_http_parse_priority':
+# nghttp3_http.c:(.text+0x30): undefined reference to `sf_parser_init'
+# ld: nghttp3_http.c:(.text+0x42): undefined reference to `sf_parser_dict'
+		#--shared-nghttp2
+
 		--shared-zlib
 	)
 
@@ -718,10 +728,6 @@ eerror "To use mold, enable the mold USE flag."
 		myconf+=( --openssl-default-cipher-list=${NODEJS_OPENSSL_DEFAULT_LIST_CORE} )
 	fi
 
-	if use amd64 || use arm64 ; then
-		use pointer-compression && myconf+=( --experimental-enable-pointer-compression )
-	fi
-	use v8-sandbox && myconf+=( --experimental-enable-v8-sandbox )
 	if use kernel_linux && linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
 		myconf+=( --v8-enable-hugepage )
 	fi
@@ -732,8 +738,6 @@ eerror "To use mold, enable the mold USE flag."
 	myarch="${myarch/x86/ia32}"
 	[[ "${ARCH}:${ABI}" =~ "loong:lp64" ]] && myarch="loong64"
 	[[ "${ARCH}:${ABI}" =~ "riscv:lp64" ]] && myarch="riscv64"
-
-einfo "EPYTHON:  ${EPYTHON}"
 
 	GYP_DEFINES="linux_use_gold_flags=0
 		linux_use_bundled_binutils=0
@@ -920,8 +924,8 @@ src_install() {
 	local ED_BASE="${ED}/${REL_D_BASE}"
 
 	${EPYTHON} "tools/install.py" install \
-		"${D}" \
-		"${EPREFIX}/usr" \
+		--dest-dir "${D}" \
+		--prefix "${EPREFIX}/usr" \
 		|| die
 
 	mv "${ED}/usr/bin/node"{"","${SLOT_MAJOR}"} || die
