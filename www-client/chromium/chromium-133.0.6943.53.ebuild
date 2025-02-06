@@ -1853,7 +1853,7 @@ pkg_setup() {
 	# uses the mv merge technique with sandbox disabled.
 
 	local tc_count_expected=4692
-	local tc_count_actual=$(find "/usr/share/chromium/toolchain" -type f | wc -l)
+	local tc_count_actual=$(cat "/usr/share/chromium/toolchain/file-count")
 	if (( ${tc_count_actual} != ${tc_count_expected} )) ; then
 ewarn
 ewarn "The emerge package system may have overpruned."
@@ -1865,7 +1865,7 @@ ewarn
 	fi
 
 	local sources_count_expected=714617
-	local sources_count_actual=$(find "/usr/share/chromium/sources" -type f | wc -l)
+	local sources_count_actual=$(cat "/usr/share/chromium/sources/file-count")
 	if (( ${sources_count_actual} != ${sources_count_expected} )) ; then
 ewarn
 ewarn "The emerge package system may have overpruned."
