@@ -23,9 +23,9 @@ MY_PN="mozjs"
 MY_PV="${PV/_pre*}"
 
 # MITIGATION_LAST_UPDATE is the same as firefox esr ebuild
-MITIGATION_DATE="Jan 7, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1736201880 # From `date +%s -d "2025-01-06 14:18"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-02/"
+MITIGATION_DATE="Feb 4, 2025" # Advisory date
+MITIGATION_LAST_UPDATE=1738617660 # From `date +%s -d "2025-02-03 13:21"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-09/#CVE-2024-11704"
 MOZ_ESR="yes"
 MOZ_PN="firefox"
 MOZ_PV="${PV}"
