@@ -160,7 +160,7 @@ LICENSE="
 #Apache-2.0-with-LLVM-exceptions - clang/lib/clang/19/include/__stdarg_va_copy.h
 
 RESTRICT="binchecks mirror strip test"
-SLOT="0/llvm${LLVM_OFFICIAL_SLOT}-rust$(ver_cut 1-2 ${RUST_PV})-gn${GN_COMMIT:0:7}"
+SLOT="0/${PV%.*}.x"
 IUSE+=" +clang +gn +rust ebuild_revision_4"
 REQUIRED_USE="
 	gn? (
