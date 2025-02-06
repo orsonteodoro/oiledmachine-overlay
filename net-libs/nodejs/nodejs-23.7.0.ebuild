@@ -575,7 +575,7 @@ set_jit_level() {
 		myconf+=( $(enable_gdb) )
 	# https://github.com/nodejs/node/blob/v23.6.0/deps/v8/BUILD.gn#L542
 		if use amd64 || use arm || use arm64 ; then
-			myconf+=( --v8-disable-maglev ) # %5 runtime benefit
+			myconf+=( --v8-enable-maglev ) # %5 runtime benefit
 		fi
 		myconf+=( --v8-enable-sparkplug ) # 5% benefit
 		myconf+=( --v8-enable-turbofan ) # Subset of -O1, -O2, -O3; 100% performance

@@ -567,7 +567,7 @@ set_jit_level() {
 		# 100% performance
 		myconf+=( $(enable_gdb) )
 	# https://github.com/nodejs/node/blob/v20.18.1/deps/v8/BUILD.gn#L485
-		#myconf+=( --v8-disable-maglev ) # %5 runtime benefit
+		#myconf+=( --v8-disable-maglev ) # %5 runtime benefit; disabled because of pointer-compression conditional
 		myconf+=( --v8-enable-sparkplug ) # 5% benefit
 		myconf+=( --v8-enable-turbofan ) # Subset of -O1, -O2, -O3; 100% performance
 		#myconf+=( --v8-disable-lite-mode )
