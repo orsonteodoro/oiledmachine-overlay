@@ -4,8 +4,6 @@
 
 EAPI=8
 
-# Last update:  2024-08-26
-
 # EPGO (custom pgo training) disabled for simplification reasons.
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_EBOLT=0
@@ -88,6 +86,12 @@ else
 	"
 fi
 
+PATCHES=(
+	"${FILESDIR}/${PN}-3.45.1-ppc64-ptr.patch"
+	"${FILESDIR}/${PN}-3.47.1-buildtclext.patch"
+	"${FILESDIR}/${PN}-3.47.2-hwtime.h-Don-t-use-rdtsc-on-i486.patch"
+)
+
 erun() {
 	einfo "${@}"
 	${@}
@@ -121,7 +125,10 @@ eerror
 				|| die
 			echo
 		else
-			cp -p "${distdir}/fossil-src/${repo_id}/${repo_id}.fossil" . || die
+			cp -p \
+				"${distdir}/fossil-src/${repo_id}/${repo_id}.fossil" \
+				. \
+				|| die
 			erun \
 			fossil pull \
 				--repository \
@@ -157,7 +164,7 @@ _fossil_checkout() {
 eerror
 eerror "Clone of repository missing:"
 eerror
-eerror  "  \"${distdir}/fossil-src/${repo_id}/${repo_id}.fossil\""
+eerror "  \"${distdir}/fossil-src/${repo_id}/${repo_id}.fossil\""
 eerror
 		die
 	fi
@@ -477,7 +484,7 @@ _src_compile() {
 		emake ${tools[@]}
 	fi
 
-	if [[ "${PV}" == "9999" ]] && use doc && multilib_is_native_abi ; then
+	if [[ ${PV} == 9999 ]] && use doc && multilib_is_native_abi ; then
 		emake tclsqlite3.c
 
 		local build_directory="$(pwd)"
@@ -533,7 +540,7 @@ ewarn "Skipping tests due to root permissions"
 	elif [[ "${mode}" == "pgo" ]] ; then
 # With PGO, only common the common use cases are used.
 # This is to prevent increasing junk or wasted space in the cache.
-		emake -Onone HAVE_TCL=$(usex tcl 1 "") quicktest
+		emake -Onone quicktest
 	fi
 }
 
