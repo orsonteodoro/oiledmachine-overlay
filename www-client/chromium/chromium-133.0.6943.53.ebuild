@@ -1286,7 +1286,7 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	dev-util/patchutils
 	www-client/chromium-sources:0/${PV}
-	www-client/chromium-toolchain:0/${PV%.*}.x[clang,gn,rust]
+	www-client/chromium-toolchain:0/${PV%.*}.x
 	>=app-arch/gzip-1.7
 	>=dev-build/ninja-1.7.2
 	>=dev-util/gperf-3.0.3

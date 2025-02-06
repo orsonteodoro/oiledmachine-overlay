@@ -26,22 +26,14 @@ inherit edo flag-o-matic ninja-utils
 KEYWORDS="~amd64"
 S="${WORKDIR}"
 SRC_URI="
-	clang? (
-		amd64? (
-			https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/clang-${VENDORED_CLANG_VER}.tar.xz
-				-> chromium-${PV%%\.*}-${LLVM_COMMIT:0:7}-${LLVM_SUB_REV}-clang-linux-x64.tar.xz
-		)
+	amd64? (
+		https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/clang-${VENDORED_CLANG_VER}.tar.xz
+			-> chromium-${PV%%\.*}-${LLVM_COMMIT:0:7}-${LLVM_SUB_REV}-clang-linux-x64.tar.xz
+		https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/rust-toolchain-${VENDORED_RUST_VER}-${VENDORED_CLANG_VER%??}.tar.xz
+			-> chromium-${PV%%\.*}-${RUST_COMMIT:0:7}-${RUST_SUB_REV}-rust-linux-x64.tar.xz
 	)
-	gn? (
-		https://gn.googlesource.com/gn/+archive/${GN_COMMIT}.tar.gz
-			-> gn-${GN_COMMIT:0:7}.tar.gz
-	)
-	rust? (
-		amd64? (
-			https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/rust-toolchain-${VENDORED_RUST_VER}-${VENDORED_CLANG_VER%??}.tar.xz
-				-> chromium-${PV%%\.*}-${RUST_COMMIT:0:7}-${RUST_SUB_REV}-rust-linux-x64.tar.xz
-		)
-	)
+	https://gn.googlesource.com/gn/+archive/${GN_COMMIT}.tar.gz
+		-> gn-${GN_COMMIT:0:7}.tar.gz
 "
 
 DESCRIPTION="The Chromium toolchain (Clang + Rust + gn)"
@@ -161,16 +153,8 @@ LICENSE="
 
 RESTRICT="binchecks mirror strip test"
 SLOT="0/${PV%.*}.x"
-IUSE+=" +clang +gn +rust ebuild_revision_4"
+IUSE+=" ebuild_revision_4"
 REQUIRED_USE="
-	gn? (
-		clang
-	)
-	|| (
-		clang
-		gn
-		rust
-	)
 "
 RDEPEND+="
 "
@@ -186,31 +170,27 @@ pkg_setup() {
 }
 
 src_unpack() {
-	if use gn ; then
-		mkdir -p "${WORKDIR}/gn" || die
-		pushd "${WORKDIR}/gn" >/dev/null 2>&1 || die
-			unpack "gn-${GN_COMMIT:0:7}.tar.gz"
-			echo "${GN_PV}-${GN_COMMIT}" > gn-ver.txt || die
-		popd >/dev/null 2>&1 || die
-	fi
-	if use clang ; then
-		mkdir -p "${WORKDIR}/clang" || die
-		pushd "${WORKDIR}/clang" >/dev/null 2>&1 || die
-			if [[ "${ARCH}" == "amd64" ]] ; then
-				unpack "chromium-${PV%%\.*}-${LLVM_COMMIT:0:7}-${LLVM_SUB_REV}-clang-linux-x64.tar.xz"
-			fi
-			echo "${VENDORED_CLANG_VER}" > clang-ver.txt || die
-		popd >/dev/null 2>&1 || die
-	fi
-	if use rust ; then
-		mkdir -p "${WORKDIR}/rust" || die
-		pushd "${WORKDIR}/rust" >/dev/null 2>&1 || die
-			if [[ "${ARCH}" == "amd64" ]] ; then
-				unpack "chromium-${PV%%\.*}-${RUST_COMMIT:0:7}-${RUST_SUB_REV}-rust-linux-x64.tar.xz"
-			fi
-			echo "${VENDORED_RUST_VER}" > rust-ver.txt || die
-		popd >/dev/null 2>&1 || die
-	fi
+	mkdir -p "${WORKDIR}/gn" || die
+	pushd "${WORKDIR}/gn" >/dev/null 2>&1 || die
+		unpack "gn-${GN_COMMIT:0:7}.tar.gz"
+		echo "${GN_PV}-${GN_COMMIT}" > gn-ver.txt || die
+	popd >/dev/null 2>&1 || die
+
+	mkdir -p "${WORKDIR}/clang" || die
+	pushd "${WORKDIR}/clang" >/dev/null 2>&1 || die
+		if [[ "${ARCH}" == "amd64" ]] ; then
+			unpack "chromium-${PV%%\.*}-${LLVM_COMMIT:0:7}-${LLVM_SUB_REV}-clang-linux-x64.tar.xz"
+		fi
+		echo "${VENDORED_CLANG_VER}" > clang-ver.txt || die
+	popd >/dev/null 2>&1 || die
+
+	mkdir -p "${WORKDIR}/rust" || die
+	pushd "${WORKDIR}/rust" >/dev/null 2>&1 || die
+		if [[ "${ARCH}" == "amd64" ]] ; then
+			unpack "chromium-${PV%%\.*}-${RUST_COMMIT:0:7}-${RUST_SUB_REV}-rust-linux-x64.tar.xz"
+		fi
+		echo "${VENDORED_RUST_VER}" > rust-ver.txt || die
+	popd >/dev/null 2>&1 || die
 }
 
 build_gn() {
@@ -264,28 +244,24 @@ einfo "Building gn"
 }
 
 src_compile() {
-	if use gn ; then
-		export PATH="${WORKDIR}/clang/bin:${PATH}"
-		export CC="clang"
-		export CXX="clang++"
-		export CPP="${CC} -E"
-		build_gn
-	fi
-	if use clang ; then
-		cd "${WORKDIR}/clang" || die
-		echo \
-			"${VENDORED_CLANG_VER}" \
-			> \
-			"cr_build_revision" \
-			|| die "Failed to set clang version"
-	fi
-	if use rust ; then
-		cd "${WORKDIR}/rust" || die
-		cp \
-			"VERSION" \
-			"INSTALLED_VERSION" \
-			|| die "Failed to set rust version"
-	fi
+	export PATH="${WORKDIR}/clang/bin:${PATH}"
+	export CC="clang"
+	export CXX="clang++"
+	export CPP="${CC} -E"
+	build_gn
+
+	cd "${WORKDIR}/clang" || die
+	echo \
+		"${VENDORED_CLANG_VER}" \
+		> \
+		"cr_build_revision" \
+		|| die "Failed to set clang version"
+
+	cd "${WORKDIR}/rust" || die
+	cp \
+		"VERSION" \
+		"INSTALLED_VERSION" \
+		|| die "Failed to set rust version"
 }
 
 _method1() {
