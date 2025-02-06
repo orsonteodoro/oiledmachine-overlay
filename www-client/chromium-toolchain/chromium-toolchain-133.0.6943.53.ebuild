@@ -6,24 +6,18 @@ EAPI=8
 
 inherit dhms
 
-# https://github.com/chromium/chromium/blob/131.0.6778.69/DEPS#L512
-# grep 'CLANG_REVISION = ' ${S}/tools/clang/scripts/update.py -A1 | cut -c 18- # \
-#   git clone https://gn.googlesource.com/gn
-#   git checkout <commit-id>
-#   v=$(git describe HEAD --abbrev=12 | cut -f 3 -d "-")
-#   python -c "print(${v}/10000)" or echo "0.${v}"
-GN_PV="0.22"
-GN_COMMIT="20806f79c6b4ba295274e3a589d85db41a02fdaa"
-# https://github.com/chromium/chromium/blob/131.0.6778.69/tools/clang/scripts/update.py#L38 \
-LLVM_COMMIT="3dbd929e"
-LLVM_N_COMMITS="6794"
+# https://github.com/chromium/chromium/blob/133.0.6943.53/DEPS#L486
+GN_COMMIT="c97a86a72105f3328a540f5a5ab17d11989ab7dd"
+# https://github.com/chromium/chromium/blob/133.0.6943.53/tools/clang/scripts/update.py#L38 \
+LLVM_COMMIT="091448e3"
+LLVM_N_COMMITS="16062"
 LLVM_OFFICIAL_SLOT="20" # Cr official slot
 LLVM_SUB_REV="1"
-# https://github.com/chromium/chromium/blob/131.0.6778.69/tools/rust/update_rust.py#L37 \
+# https://github.com/chromium/chromium/blob/133.0.6943.53/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
-RUST_COMMIT="f5cd2c5888011d4d80311e5b771c6da507d860dd"
-RUST_SUB_REV="2"
-RUST_PV="1.81.0" # See https://github.com/rust-lang/rust/blob/f5cd2c5888011d4d80311e5b771c6da507d860dd/RELEASES.md
+RUST_COMMIT="8a1f8039a7ded79d3d4fe97b110016d89f2b11e2"
+RUST_SUB_REV="1"
+RUST_PV="1.83.0" # See https://github.com/rust-lang/rust/blob/8a1f8039a7ded79d3d4fe97b110016d89f2b11e2/RELEASES.md
 VENDORED_CLANG_VER="llvmorg-${LLVM_OFFICIAL_SLOT}-init-${LLVM_N_COMMITS}-g${LLVM_COMMIT:0:8}-${LLVM_SUB_REV}"
 VENDORED_RUST_VER="${RUST_COMMIT}-${RUST_SUB_REV}"
 
@@ -166,8 +160,8 @@ LICENSE="
 #Apache-2.0-with-LLVM-exceptions - clang/lib/clang/19/include/__stdarg_va_copy.h
 
 RESTRICT="binchecks mirror strip test"
-SLOT="0/llvm${LLVM_OFFICIAL_SLOT}-rust$(ver_cut 1-2 ${RUST_PV})-gn${GN_PV}"
-IUSE+=" +clang +gn +rust ebuild_revision_3"
+SLOT="0/llvm${LLVM_OFFICIAL_SLOT}-rust$(ver_cut 1-2 ${RUST_PV})-gn${GN_COMMIT:0:7}"
+IUSE+=" +clang +gn +rust ebuild_revision_4"
 REQUIRED_USE="
 	gn? (
 		clang
