@@ -1852,7 +1852,7 @@ pkg_setup() {
 	# The emerge package system will over prune when it should not when it
 	# uses the mv merge technique with sandbox disabled.
 
-	local tc_count_expected=4665
+	local tc_count_expected=4692
 	local tc_count_actual=$(find "/usr/share/chromium/toolchain" -type f | wc -l)
 	if (( ${tc_count_actual} != ${tc_count_expected} )) ; then
 ewarn
