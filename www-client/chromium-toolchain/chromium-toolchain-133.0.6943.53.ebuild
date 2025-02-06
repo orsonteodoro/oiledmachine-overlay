@@ -8,6 +8,7 @@ inherit dhms
 
 # https://github.com/chromium/chromium/blob/133.0.6943.53/DEPS#L486
 GN_COMMIT="c97a86a72105f3328a540f5a5ab17d11989ab7dd"
+GN_PV="0.2206" # See get_gn_ver.sh
 # https://github.com/chromium/chromium/blob/133.0.6943.53/tools/clang/scripts/update.py#L38 \
 LLVM_COMMIT="091448e3"
 LLVM_N_COMMITS="16062"
