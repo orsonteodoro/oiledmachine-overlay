@@ -27,14 +27,14 @@ inherit edo flag-o-matic ninja-utils
 KEYWORDS="~amd64"
 S="${WORKDIR}"
 SRC_URI="
-	amd64? (
-		https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/clang-${VENDORED_CLANG_VER}.tar.xz
-			-> chromium-${PV%%\.*}-${LLVM_COMMIT:0:7}-${LLVM_SUB_REV}-clang-linux-x64.tar.xz
-		https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/rust-toolchain-${VENDORED_RUST_VER}-${VENDORED_CLANG_VER%??}.tar.xz
-			-> chromium-${PV%%\.*}-${RUST_COMMIT:0:7}-${RUST_SUB_REV}-rust-linux-x64.tar.xz
-	)
-	https://gn.googlesource.com/gn/+archive/${GN_COMMIT}.tar.gz
-		-> gn-${GN_COMMIT:0:7}.tar.gz
+amd64? (
+	https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/clang-${VENDORED_CLANG_VER}.tar.xz
+		-> chromium-${PV%%\.*}-${LLVM_COMMIT:0:7}-${LLVM_SUB_REV}-clang-linux-x64.tar.xz
+	https://commondatastorage.googleapis.com/chromium-browser-clang/Linux_x64/rust-toolchain-${VENDORED_RUST_VER}-${VENDORED_CLANG_VER%??}.tar.xz
+		-> chromium-${PV%%\.*}-${RUST_COMMIT:0:7}-${RUST_SUB_REV}-rust-linux-x64.tar.xz
+)
+https://gn.googlesource.com/gn/+archive/${GN_COMMIT}.tar.gz
+	-> gn-${GN_COMMIT:0:7}.tar.gz
 "
 
 DESCRIPTION="The Chromium toolchain (Clang + Rust + gn)"
@@ -154,7 +154,7 @@ LICENSE="
 
 RESTRICT="binchecks mirror strip test"
 SLOT="0/${PV%.*}.x"
-IUSE+=" ebuild_revision_4"
+IUSE+=" ebuild_revision_5"
 REQUIRED_USE="
 "
 RDEPEND+="
@@ -295,6 +295,7 @@ pkg_preinst() {
 	dhms_end
 	local count=$(find "/usr/share/chromium/toolchain/" -type f | wc -l)
 einfo "QA:  Update chromium ebuild with tc_count_expected=${count}"
+	echo "${count}" >> "/usr/share/chromium/toolchain/file-count"
 }
 
 pkg_postrm() {
