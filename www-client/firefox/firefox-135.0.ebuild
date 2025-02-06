@@ -26,29 +26,29 @@ EAPI=8
 #
 # For dependency versioning, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
-# https://www.mozilla.org/en-US/firefox/134.0/system-requirements/
-# /var/tmp/portage/www-client/firefox-134.0/work/firefox-134.0/moz.configure
-# /var/tmp/portage/www-client/firefox-134.0/work/firefox-134.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41 [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
-# /var/tmp/portage/www-client/firefox-134.0/work/firefox-134.0/build/moz.configure/nss.configure L12
-# /var/tmp/portage/www-client/firefox-134.0/work/firefox-134.0/gfx/graphite2/include/graphite2/Font.h L31
-# /var/tmp/portage/www-client/firefox-134.0/work/firefox-134.0/gfx/harfbuzz/moz.yaml
-# /var/tmp/portage/www-client/firefox-134.0/work/firefox-134.0/intl/icu/source/common/unicode/uvernum.h L63
-# /var/tmp/portage/www-client/firefox-134.0/work/firefox-134.0/ipc/chromium/src/third_party/libevent/configure.ac L8
-# /var/tmp/portage/www-client/firefox-134.0/work/firefox-134.0/media/libaom/config/aom_version.h L7 [old]
-# /var/tmp/portage/www-client/firefox-134.0/work/firefox-134.0/media/libjpeg/jconfig.h L7
-# /var/tmp/portage/www-client/firefox-134.0/work/firefox-134.0/media/libpng/png.h L281
-# /var/tmp/portage/www-client/firefox-134.0/work/firefox-134.0/media/libvpx/config/vpx_version.h L8
-# /var/tmp/portage/www-client/firefox-134.0/work/firefox-134.0/media/libwebp/moz.yaml L16
-# /var/tmp/portage/www-client/firefox-134.0/work/firefox-134.0/modules/freetype2/include/freetype/freetype.h L5175
-# /var/tmp/portage/www-client/firefox-134.0/work/firefox-134.0/nsprpub/pr/include/prinit.h L35
-# /var/tmp/portage/www-client/firefox-134.0/work/firefox-134.0/third_party/dav1d/meson.build L26
-# /var/tmp/portage/www-client/firefox-134.0/work/firefox-134.0/third_party/pipewire/pipewire/version.h L49
-# /var/tmp/portage/www-client/firefox-134.0/work/firefox-134.0/taskcluster/kinds/toolchain/nasm.yml
-# /var/tmp/portage/www-client/firefox-134.0/work/firefox-134.0/taskcluster/kinds/toolchain/node.yml
-# /var/tmp/portage/www-client/firefox-134.0/work/firefox-134.0/taskcluster/kinds/toolchain/rust.yml
-# /var/tmp/portage/www-client/firefox-134.0/work/firefox-134.0/taskcluster/kinds/fetch/toolchains.yml
+# https://www.mozilla.org/en-US/firefox/135.0/system-requirements/
+# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/moz.configure
+# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41 [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
+# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/build/moz.configure/nss.configure L12
+# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/gfx/graphite2/include/graphite2/Font.h L31
+# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/gfx/harfbuzz/moz.yaml
+# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/intl/icu/source/common/unicode/uvernum.h L63
+# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/ipc/chromium/src/third_party/libevent/configure.ac L8
+# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/media/libaom/config/aom_version.h L7 [old]
+# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/media/libjpeg/jconfig.h L7
+# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/media/libpng/png.h L281
+# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/media/libvpx/config/vpx_version.h L8
+# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/media/libwebp/moz.yaml L16
+# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/modules/freetype2/include/freetype/freetype.h L5175
+# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/nsprpub/pr/include/prinit.h L35
+# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/third_party/dav1d/meson.build L26
+# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/third_party/pipewire/pipewire/version.h L49
+# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/taskcluster/kinds/toolchain/nasm.yml
+# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/taskcluster/kinds/toolchain/node.yml
+# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/taskcluster/kinds/toolchain/rust.yml
+# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/taskcluster/kinds/fetch/toolchains.yml
 #   Keyword searches:  cbindgen-, llvm-, pkgconf-, zlib
-# /var/tmp/portage/www-client/firefox-134.0/work/firefox-134.0/taskcluster
+# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/taskcluster
 #   Keyword search:  gtk
 
 # Track http://ftp.mozilla.org/pub/firefox/releases/ for version updates.
@@ -70,7 +70,7 @@ unset __
 
 # To check every minor version or update MOZ_LANGS use the code below:
 __='
-PV="134.0"
+PV="135.0"
 wget -q -O - "http://ftp.mozilla.org/pub/firefox/releases/${PV}/linux-x86_64/xpi/" \
 	| grep "href.*linux-x86_64"  \
 	| cut -f 3 -d ">" \
@@ -87,7 +87,7 @@ unset __
 
 __='
 # For dependency versions, scan also with:
-SRC="/var/tmp/portage/www-client/firefox-134.0/work/firefox-134.0"
+SRC="/var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0"
 grep -E \
 	-e "[0-9]+\.[0-9]+(\.[0-9]+)?" \
 	-e "dependency" \
@@ -121,7 +121,7 @@ declare -A CFLAGS_RDEPEND=(
 )
 EBUILD_MAINTAINER_MODE=0
 FFMPEG_COMPAT=(
-	"0/59.61.61" # 7.0
+	"0/59.61.61" # 7.0, 7.1
 	"0/58.60.60" # 6.0
 	"0/57.59.59" # 5.0
 	"0/56.58.58" # 4.0
@@ -139,10 +139,10 @@ GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 GTK3_PV="3.14.5"
 LICENSE_FILE_NAME="FF-$(ver_cut 1-2 ${PV})-THIRD-PARTY-LICENSES.html"
 LICENSE_FINGERPRINT="\
-896855e640d87a943eba993b0e73278a3696e8071e9dbf62ab5e0d87542ba327\
-51fff5197fcbaf233a7fa851b90bf5fb217aab4c355acd68fdda54c4ee765194\
+129a54beb78aac24a748eaac3fe4ff2b3cd1188474502ce06de04509d2846b4b\
+d9a4c8a9e54bf7d9dd409913cb2c689c1d68e76dbbef1e437f173bfb72ae8989\
 " # SHA512
-LLVM_COMPAT=( 19 18 ) # Limited based on rust
+LLVM_COMPAT=( 19 ) # Limited based on rust
 LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
 MITIGATION_DATE="Feb 4, 2025" # Advisory date
@@ -204,9 +204,9 @@ NODE_VERSION=18
 OFLAG="" # Global variable
 PYTHON_COMPAT=( "python3_"{10..11} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
-RUST_MIN_VER="1.78" # Corresponds to 18
+RUST_MIN_VER="1.82" # Corresponds to 19
 RUST_NEEDS_LLVM=1
-RUST_PV="${RUST_MIN_VER}" # Min required for llvm 18
+RUST_PV="${RUST_MIN_VER}" # Min required for llvm 19
 SPEECH_DISPATCHER_PV="0.11.4-r1"
 WANT_AUTOCONF="2.71"
 XKBCOMMON_PV="0.4.1"
@@ -525,7 +525,7 @@ REQUIRED_USE="
 		X
 	)
 	rust-simd? (
-		!llvm_slot_18
+		!llvm_slot_19
 	)
 	vaapi? (
 		wayland
@@ -630,16 +630,11 @@ PATENT_CDEPENDS="
 "
 # ZLIB relaxed
 RUST_CDEPEND="
-	llvm_slot_18? (
+	llvm_slot_19? (
 		|| (
-			=dev-lang/rust-1.81*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.80*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.79*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.78*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.81*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.80*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.79*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.78*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.84*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.83*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.82*[${MULTILIB_USEDEP}]
 		)
 	)
 	|| (
@@ -653,9 +648,9 @@ CDEPEND="
 	>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.42:2[${MULTILIB_USEDEP}]
 	>=dev-libs/nss-3.107[${MULTILIB_USEDEP}]
-	>=dev-libs/nspr-4.35[${MULTILIB_USEDEP}]
+	>=dev-libs/nspr-4.36[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.7.0[${MULTILIB_USEDEP}]
-	>=media-libs/freetype-2.13.2[${MULTILIB_USEDEP}]
+	>=media-libs/freetype-2.13.3[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.3.1[${MULTILIB_USEDEP}]
 	>=x11-libs/pango-1.22.0[${MULTILIB_USEDEP}]
 	>=x11-libs/pixman-0.40.0[${MULTILIB_USEDEP}]
@@ -687,30 +682,30 @@ CDEPEND="
 		>=media-sound/sndio-1.8.0-r1[${MULTILIB_USEDEP}]
 	)
 	system-av1? (
-		>=media-libs/dav1d-1.4.2:=[${MULTILIB_USEDEP},8bit]
+		>=media-libs/dav1d-1.5.0:=[${MULTILIB_USEDEP},8bit]
 		>=media-libs/libaom-1.0.0:=[${MULTILIB_USEDEP}]
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-9.0.0:0=[${MULTILIB_USEDEP}]
+		>=media-libs/harfbuzz-10.1.0:0=[${MULTILIB_USEDEP}]
 		!wasm-sandbox? (
 			>=media-gfx/graphite2-1.3.14[${MULTILIB_USEDEP}]
 		)
 	)
 	system-icu? (
-		>=dev-libs/icu-73.1:=[${MULTILIB_USEDEP}]
+		>=dev-libs/icu-76.1:=[${MULTILIB_USEDEP}]
 	)
 	system-jpeg? (
-		>=media-libs/libjpeg-turbo-3.0.3[${MULTILIB_USEDEP}]
+		>=media-libs/libjpeg-turbo-3.0.4[${MULTILIB_USEDEP}]
 		media-libs/libjpeg-turbo:=
 	)
 	system-libevent? (
 		>=dev-libs/libevent-2.1.12:0=[${MULTILIB_USEDEP},threads(+)]
 	)
 	system-libvpx? (
-		>=media-libs/libvpx-1.14.1:0=[${MULTILIB_USEDEP},postproc]
+		>=media-libs/libvpx-1.15.0:0=[${MULTILIB_USEDEP},postproc]
 	)
 	system-png? (
-		>=media-libs/libpng-1.6.43:0=[${MULTILIB_USEDEP},apng]
+		>=media-libs/libpng-1.6.44:0=[${MULTILIB_USEDEP},apng]
 	)
 	system-webp? (
 		>=media-libs/libwebp-1.4.0:0=[${MULTILIB_USEDEP}]
