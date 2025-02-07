@@ -124,6 +124,11 @@ append_all() {
 }
 
 src_configure() {
+	# -Werror=odr
+	# https://bugs.gentoo.org/866947
+	# https://unicode-org.atlassian.net/browse/ICU-22001
+	#
+	# Only present in testsuite, but unfortunately that means we cannot...
 	# test... LTO support.
 	filter-lto
 

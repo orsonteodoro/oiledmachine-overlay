@@ -11,7 +11,7 @@ MY_PV="${MY_PV//./_}"
 MULTILIB_CHOST_TOOLS=(
 	"/usr/bin/icu-config"
 )
-PYTHON_COMPAT=( python3_{10..11} )
+PYTHON_COMPAT=( python3_{10..13} )
 VERIFY_SIG_OPENPGP_KEY_PATH="${BROOT}/usr/share/openpgp-keys/icu.asc"
 
 inherit autotools flag-o-matic flag-o-matic-om llvm multilib-minimal
@@ -53,7 +53,7 @@ RESTRICT="
 		test
 	)
 "
-SLOT="0/${PV%.*}.1"
+SLOT="0/${PV%.*}"
 IUSE="debug doc examples static-libs test ebuild_revision_1"
 BDEPEND+="
 	${PYTHON_DEPS}
@@ -63,13 +63,17 @@ BDEPEND+="
 		app-text/doxygen[dot]
 	)
 	verify-sig? (
-		>=sec-keys/openpgp-keys-icu-20221020
+		>=sec-keys/openpgp-keys-icu-20241110
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-65.1-remove-bashisms.patch"
+	"${FILESDIR}/${PN}-76.1-remove-bashisms.patch"
 	"${FILESDIR}/${PN}-64.2-darwin.patch"
 	"${FILESDIR}/${PN}-68.1-nonunicode.patch"
+	# Undo change for now which exposes underlinking in consumers;
+	# revisit when things are a bit quieter and tinderbox its removal.
+	"${FILESDIR}/${PN}-76.1-undo-pkgconfig-change-for-now.patch"
+
 	"${FILESDIR}/extra/${PN}-69.1-extra-so-flags.patch" # oiledmachine-overlay added
 )
 
@@ -81,12 +85,19 @@ get_lib_types() {
 src_prepare() {
 	default
 
+	# TODO: switch uconfig.h hacks to use uconfig_local
+	#
 	# Disable renaming as it assumes stable ABI and that consumers
 	# won't use unofficial APIs. We need this despite the configure argument.
 	sed -i \
 		-e "s/#define U_DISABLE_RENAMING 0/#define U_DISABLE_RENAMING 1/" \
 		"common/unicode/uconfig.h" \
 		|| die
+
+	# ODR violations, experimental API
+	sed -i \
+		-e "s/#   define UCONFIG_NO_MF2 0/#define UCONFIG_NO_MF2 1/" \
+		common/unicode/uconfig.h || die
 
 	# Fix linking of icudata
 	sed -i \
@@ -109,10 +120,7 @@ src_prepare() {
 			einfo "Build type is ${lib_type}"
 			export S="${S_ORIG}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			einfo "Copying to ${S}"
-			cp -a \
-				"${S_ORIG}" \
-				"${S}" \
-				|| die
+			cp -a "${S_ORIG}" "${S}" || die
 		done
 	}
 	multilib_foreach_abi prepare_abi
@@ -124,12 +132,7 @@ append_all() {
 }
 
 src_configure() {
-	# ICU tries to append -std=c++11 without this, so as of 71.1,
-	# despite GCC 9+ using c++14 (or gnu++14) and GCC 11+ using gnu++17,
-	# we still need this.
-	append-cxxflags -std=c++14
-
-	if tc-is-cross-compiler; then
+	if tc-is-cross-compiler ; then
 		mkdir "${WORKDIR}/host" || die
 		pushd "${WORKDIR}/host" >/dev/null || die
 
@@ -259,7 +262,7 @@ src_compile() {
 
 			default
 
-			if multilib_is_native_abi && use doc; then
+			if multilib_is_native_abi && use doc ; then
 				doxygen -u "Doxyfile" || die
 				doxygen "Doxyfile" || die
 			fi
