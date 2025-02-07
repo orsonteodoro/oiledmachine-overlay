@@ -5,7 +5,7 @@
 EAPI="8"
 
 JAVA_PKG_OPT_USE="jdbc"
-PATCHSET_VER="10.6.16:01"
+PATCHSET_VER="11.4.2:01"
 SUBSLOT="18"
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
@@ -20,12 +20,13 @@ KEYWORDS="~amd64 ~arm64 ~arm64-macos"
 # and we will run a mysql server during test phase
 S="${WORKDIR}/mysql"
 SRC_URI="
-	mirror://mariadb/${PN}-${PV}/source/${P}.tar.gz
-	https://github.com/hydrapolic/gentoo-dist/raw/main/mariadb/mariadb-${PATCHSET_VER%:*}-patches-${PATCHSET_VER#*:}.tar.xz
+	mirror://mariadb/${P}/source/${P}.tar.gz
+	https://dev.gentoo.org/~arkamar/distfiles/${P}-patches-01.tar.xz
 "
 
-HOMEPAGE="https://mariadb.org/"
 DESCRIPTION="An enhanced, drop-in replacement for MySQL"
+
+HOMEPAGE="https://mariadb.org/"
 LICENSE="GPL-2 LGPL-2.1+"
 RESTRICT="
 	!bindist? (
@@ -60,12 +61,20 @@ REQUIRED_USE="
 		extraengine
 	)
 "
+#
 # Be warned, *DEPEND are version-dependant
-# These are used for both runtime and compiletime
+# These are used for both runtime and compile time.
+#
+# libfmt-10 contains a bug which was fixed in libfmt-11, see
+# https://jira.mariadb.org/browse/MDEV-32815, bug 946074
+# libfmt-11.1 works with FMT_STATIC_THOUSANDS_SEPARATOR
+# differently, bug 946924
+#
 COMMON_DEPEND="
 	>=dev-libs/libpcre2-10.34:=
 	>=sys-apps/texinfo-4.7-r1
 	>=sys-libs/zlib-1.2.3:0=
+	dev-libs/libfmt:=
 	sys-libs/ncurses:0=
 	virtual/libcrypt:=
 	!bindist? (
@@ -147,6 +156,10 @@ COMMON_DEPEND="
 	yassl? (
 		net-libs/gnutls:0=
 	)
+	|| (
+		<dev-libs/libfmt-10
+		=dev-libs/libfmt-11.0*
+	)
 "
 BDEPEND="
 	app-alternatives/yacc
@@ -160,8 +173,7 @@ DEPEND="
 			)
 		)
 		test? (
-			acct-group/mysql
-			acct-user/mysql
+			acct-group/mysql acct-user/mysql
 		)
 	)
 	static? (
@@ -170,28 +182,19 @@ DEPEND="
 "
 RDEPEND="
 	${COMMON_DEPEND}
-	!<virtual/mysql-5.6-r11
-	!<virtual/libmysqlclient-18-r1
-	!dev-db/mariadb-galera
-	!dev-db/mariadb:0
-	!dev-db/mariadb:5.5
-	!dev-db/mariadb:10.1
-	!dev-db/mariadb:10.2
 	!dev-db/mariadb:10.3
 	!dev-db/mariadb:10.4
 	!dev-db/mariadb:10.5
+	!dev-db/mariadb:10.6
 	!dev-db/mariadb:10.7
 	!dev-db/mariadb:10.8
 	!dev-db/mariadb:10.9
 	!dev-db/mariadb:10.10
-	!dev-db/mariadb:10.11
 	!dev-db/mariadb:11.0
 	!dev-db/mariadb:11.1
 	!dev-db/mariadb:11.2
 	!dev-db/mariadb:11.3
-	!dev-db/mariadb:11.4
 	!dev-db/mysql
-	!dev-db/mysql-cluster
 	!dev-db/percona-server
 	sys-kernel/mitigate-id
 	selinux? (
@@ -214,24 +217,22 @@ RDEPEND="
 		galera? (
 			=sys-cluster/galera-26*
 			sys-apps/iproute2
-			sst-rsync? (
-				sys-process/lsof
-			)
 			sst-mariabackup? (
 				net-misc/socat[ssl]
+			)
+			sst-rsync? (
+				sys-process/lsof
 			)
 		)
 	)
 "
 # For other stuff to bring us in
 # dev-perl/DBD-MariaDB is needed by some scripts installed by MySQL
-PDEPEND="perl? ( dev-perl/DBD-MariaDB )"
-
-QA_CONFIG_IMPL_DECL_SKIP=(
-	# These don't exist on Linux
-	pthread_threadid_np
-	getthrid
-)
+PDEPEND="
+	perl? (
+		dev-perl/DBD-MariaDB
+	)
+"
 
 mysql_init_vars() {
 	MY_SHAREDSTATEDIR=${MY_SHAREDSTATEDIR="${EPREFIX}/usr/share/mariadb"}
@@ -277,8 +278,7 @@ elog "A new one will not be created."
 
 			if [[ ( -n "${new_MY_DATADIR}" ) && ( "${new_MY_DATADIR}" != "${MY_DATADIR}" ) ]]; then
 ewarn
-ewarn "MySQL MY_DATADIR has changed"
-ewarn
+ewarn "The MySQL MY_DATADIR has changed"
 ewarn "from ${MY_DATADIR}"
 ewarn "to ${new_MY_DATADIR}"
 ewarn
@@ -399,12 +399,15 @@ _src_configure() {
 	# bug #855233 (MDEV-11914, MDEV-25633) at least
 	filter-lto
 	# bug 508724 mariadb cannot use ld.gold
-	tc-ld-disable-gold
+	tc-ld-is-gold && tc-ld-force-bfd
 	# Bug #114895, bug #110149
 	filter-flags "-O" "-O[01]"
 
 	# It fails on alpha without this
 	use alpha && append-ldflags "-Wl,--no-relax"
+
+	# bug #945352
+	append-cflags -std=gnu17
 
 	append-cxxflags -felide-constructors
 
@@ -416,9 +419,9 @@ _src_configure() {
 	# debug hack wrt #497532
 	local mycmakeargs=(
 		-DAUTH_GSSAPI_PLUGIN_TYPE=$(usex kerberos DYNAMIC OFF)
-		-DCLIENT_PLUGIN_DIALOG=OFF
 		-DCLIENT_PLUGIN_AUTH_GSSAPI_CLIENT=OFF
-		-DCLIENT_PLUGIN_CLIENT_ED25519=OFF
+		-DCLIENT_PLUGIN_CLIENT_ED25519=$(usex test DYNAMIC OFF)
+		-DCLIENT_PLUGIN_DIALOG=$(usex test DYNAMIC OFF)
 		-DCLIENT_PLUGIN_MYSQL_CLEAR_PASSWORD=STATIC
 		-DCLIENT_PLUGIN_CACHING_SHA2_PASSWORD=OFF
 		-DCMAKE_C_FLAGS_RELWITHDEBINFO="$(usex debug '' '-DNDEBUG')"
@@ -444,8 +447,8 @@ _src_configure() {
 		-DMYSQL_UNIX_ADDR="${EPREFIX}/var/run/mysqld/mysqld.sock"
 		-DPLUGIN_AUTH_GSSAPI=$(usex kerberos DYNAMIC NO)
 		-DPKG_CONFIG_EXECUTABLE="${EPREFIX}/usr/bin/$(tc-getPKG_CONFIG)"
-		# The build forces this to be defined when cross-compiling.  We pass it \
-		# all the time for simplicity and to make sure it is actually correct. \
+	# The build forces this to be defined when cross-compiling.  We pass it \
+	# all the time for simplicity and to make sure it is actually correct. \
 		-DSTACK_DIRECTION=$(tc-stack-grows-down && echo -1 || echo 1)
 		-DSUFFIX_INSTALL_DIR=""
 		-DSYSCONFDIR="${EPREFIX}/etc/mysql"
@@ -456,6 +459,7 @@ _src_configure() {
 		-DWITH_DEFAULT_FEATURE_SET=0
 		-DWITH_EXTERNAL_ZLIB=YES
 		-DWITH_LIBEDIT=0
+		-DWITH_LIBFMT="system"
 		-DWITH_UNIT_TESTS=$(usex test ON OFF)
 		-DWITH_UNITTEST=OFF
 		-DWITH_ZLIB=system
@@ -470,6 +474,12 @@ _src_configure() {
 		mycmakeargs+=( -DWITH_SSL=system -DCLIENT_PLUGIN_SHA256_PASSWORD=STATIC )
 	else
 		mycmakeargs+=( -DWITH_SSL=bundled )
+	fi
+
+	if use systemtap && has_version "dev-debug/systemtap[-dtrace-symlink(+)]" ; then
+		mycmakeargs+=(
+			-DDTRACE="${BROOT}/usr/bin/stap-dtrace"
+		)
 	fi
 
 	# bfd.h is only used starting with 10.1 and can be controlled by NOT_FOR_DISTRIBUTION
@@ -711,12 +721,12 @@ einfo "MTR_PARALLEL is set to '${MTR_PARALLEL}'"
 	disabled_tests+=( "perfschema.nesting;23458;Known to be broken" )
 	disabled_tests+=( "perfschema.prepared_statements;0;Broken test suite" )
 	disabled_tests+=( "perfschema.privilege_table_io;27045;Sporadically failing test" )
-	disabled_tests+=( "plugins.auth_ed25519;0;Needs client libraries built" )
 	disabled_tests+=( "plugins.cracklib_password_check;0;False positive due to varying policies" )
 	disabled_tests+=( "plugins.two_password_validations;0;False positive due to varying policies" )
 	disabled_tests+=( "roles.acl_statistics;0;False positive due to a user count mismatch caused by previous test" )
 	disabled_tests+=( "spider.*;0;Fails with network sandbox" )
 	disabled_tests+=( "sys_vars.wsrep_on_without_provider;25625;Known to be broken" )
+	disabled_tests+=( "sysschema.v_privileges_by_table_by_level;0;Fails with network sandbox, see MDEV-36030")
 
 	if ! use latin1 ; then
 		disabled_tests+=( "funcs_1.is_columns_mysql;0;Requires USE=latin1" )
@@ -1006,7 +1016,7 @@ pkg_config() {
 		local n_X
 		let n_X=${#template}-${#template_wo_X}
 		if [[ ${n_X} -lt 3 ]] ; then
-			echo "${FUNCNAME[0]}: too few X's in template ‘${template}’" >&2
+			echo "${FUNCNAME[0]}: too few X's in template '${template}'" >&2
 			return
 		fi
 

@@ -5,7 +5,7 @@
 EAPI="8"
 
 JAVA_PKG_OPT_USE="jdbc"
-PATCHSET_VER="11.4.2:01"
+PATCHSET_VER="10.6.16:01"
 SUBSLOT="18"
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
@@ -20,12 +20,12 @@ KEYWORDS="~amd64 ~arm64 ~arm64-macos"
 # and we will run a mysql server during test phase
 S="${WORKDIR}/mysql"
 SRC_URI="
-	mirror://mariadb/${PN}-${PV}/source/${P}.tar.gz
-	https://github.com/hydrapolic/gentoo-dist/raw/main/mariadb/mariadb-${PATCHSET_VER%:*}-patches-${PATCHSET_VER#*:}.tar.xz
+	mirror://mariadb/${P}/source/${P}.tar.gz
+	https://dev.gentoo.org/~arkamar/distfiles/${PN}-10.6.20-patches-01.tar.xz
 "
 
-HOMEPAGE="https://mariadb.org/"
 DESCRIPTION="An enhanced, drop-in replacement for MySQL"
+HOMEPAGE="https://mariadb.org/"
 LICENSE="GPL-2 LGPL-2.1+"
 RESTRICT="
 	!bindist? (
@@ -66,12 +66,14 @@ COMMON_DEPEND="
 	>=dev-libs/libpcre2-10.34:=
 	>=sys-apps/texinfo-4.7-r1
 	>=sys-libs/zlib-1.2.3:0=
-	dev-libs/libfmt:=
 	sys-libs/ncurses:0=
 	virtual/libcrypt:=
 	!bindist? (
 		>=sys-libs/readline-4.1:0=
 		sys-libs/binutils-libs:0=
+	)
+	!yassl? (
+		>=dev-libs/openssl-1.0.0:0=
 	)
 	jemalloc? (
 		dev-libs/jemalloc:0=
@@ -145,9 +147,6 @@ COMMON_DEPEND="
 	yassl? (
 		net-libs/gnutls:0=
 	)
-	!yassl? (
-		>=dev-libs/openssl-1.0.0:0=
-	)
 "
 BDEPEND="
 	app-alternatives/yacc
@@ -161,7 +160,8 @@ DEPEND="
 			)
 		)
 		test? (
-			acct-group/mysql acct-user/mysql
+			acct-group/mysql
+			acct-user/mysql
 		)
 	)
 	static? (
@@ -170,19 +170,28 @@ DEPEND="
 "
 RDEPEND="
 	${COMMON_DEPEND}
+	!<virtual/mysql-5.6-r11
+	!<virtual/libmysqlclient-18-r1
+	!dev-db/mariadb-galera
+	!dev-db/mariadb:0
+	!dev-db/mariadb:5.5
+	!dev-db/mariadb:10.1
+	!dev-db/mariadb:10.2
 	!dev-db/mariadb:10.3
 	!dev-db/mariadb:10.4
 	!dev-db/mariadb:10.5
-	!dev-db/mariadb:10.6
 	!dev-db/mariadb:10.7
 	!dev-db/mariadb:10.8
 	!dev-db/mariadb:10.9
 	!dev-db/mariadb:10.10
+	!dev-db/mariadb:10.11
 	!dev-db/mariadb:11.0
 	!dev-db/mariadb:11.1
 	!dev-db/mariadb:11.2
 	!dev-db/mariadb:11.3
+	!dev-db/mariadb:11.4
 	!dev-db/mysql
+	!dev-db/mysql-cluster
 	!dev-db/percona-server
 	sys-kernel/mitigate-id
 	selinux? (
@@ -205,22 +214,24 @@ RDEPEND="
 		galera? (
 			=sys-cluster/galera-26*
 			sys-apps/iproute2
-			sst-mariabackup? (
-				net-misc/socat[ssl]
-			)
 			sst-rsync? (
 				sys-process/lsof
+			)
+			sst-mariabackup? (
+				net-misc/socat[ssl]
 			)
 		)
 	)
 "
 # For other stuff to bring us in
 # dev-perl/DBD-MariaDB is needed by some scripts installed by MySQL
-PDEPEND="
-	perl? (
-		dev-perl/DBD-MariaDB
-	)
-"
+PDEPEND="perl? ( dev-perl/DBD-MariaDB )"
+
+QA_CONFIG_IMPL_DECL_SKIP=(
+	# These don't exist on Linux
+	pthread_threadid_np
+	getthrid
+)
 
 mysql_init_vars() {
 	MY_SHAREDSTATEDIR=${MY_SHAREDSTATEDIR="${EPREFIX}/usr/share/mariadb"}
@@ -266,7 +277,8 @@ elog "A new one will not be created."
 
 			if [[ ( -n "${new_MY_DATADIR}" ) && ( "${new_MY_DATADIR}" != "${MY_DATADIR}" ) ]]; then
 ewarn
-ewarn "The MySQL MY_DATADIR has changed"
+ewarn "MySQL MY_DATADIR has changed"
+ewarn
 ewarn "from ${MY_DATADIR}"
 ewarn "to ${new_MY_DATADIR}"
 ewarn
@@ -387,12 +399,15 @@ _src_configure() {
 	# bug #855233 (MDEV-11914, MDEV-25633) at least
 	filter-lto
 	# bug 508724 mariadb cannot use ld.gold
-	tc-ld-disable-gold
+	tc-ld-is-gold && tc-ld-force-bfd
 	# Bug #114895, bug #110149
 	filter-flags "-O" "-O[01]"
 
 	# It fails on alpha without this
 	use alpha && append-ldflags "-Wl,--no-relax"
+
+	# bug #945352
+	append-cflags -std=gnu17
 
 	append-cxxflags -felide-constructors
 
@@ -432,8 +447,8 @@ _src_configure() {
 		-DMYSQL_UNIX_ADDR="${EPREFIX}/var/run/mysqld/mysqld.sock"
 		-DPLUGIN_AUTH_GSSAPI=$(usex kerberos DYNAMIC NO)
 		-DPKG_CONFIG_EXECUTABLE="${EPREFIX}/usr/bin/$(tc-getPKG_CONFIG)"
-		# The build forces this to be defined when cross-compiling.  We pass it \
-		# all the time for simplicity and to make sure it is actually correct. \
+	# The build forces this to be defined when cross-compiling.  We pass it \
+	# all the time for simplicity and to make sure it is actually correct. \
 		-DSTACK_DIRECTION=$(tc-stack-grows-down && echo -1 || echo 1)
 		-DSUFFIX_INSTALL_DIR=""
 		-DSYSCONFDIR="${EPREFIX}/etc/mysql"
@@ -994,7 +1009,7 @@ pkg_config() {
 		local n_X
 		let n_X=${#template}-${#template_wo_X}
 		if [[ ${n_X} -lt 3 ]] ; then
-			echo "${FUNCNAME[0]}: too few X's in template ‘${template}’" >&2
+			echo "${FUNCNAME[0]}: too few X's in template '${template}'" >&2
 			return
 		fi
 

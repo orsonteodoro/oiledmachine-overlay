@@ -20,12 +20,12 @@ KEYWORDS="~amd64 ~arm64 ~arm64-macos"
 # and we will run a mysql server during test phase
 S="${WORKDIR}/mysql"
 SRC_URI="
-	mirror://mariadb/${PN}-${PV}/source/${P}.tar.gz
-	https://github.com/hydrapolic/gentoo-dist/raw/main/mariadb/mariadb-${PATCHSET_VER%:*}-patches-${PATCHSET_VER#*:}.tar.xz
+	mirror://mariadb/${P}/source/${P}.tar.gz
+	https://dev.gentoo.org/~arkamar/distfiles/${PN}-10.11.10-patches-01.tar.xz
 "
 
-HOMEPAGE="https://mariadb.org/"
 DESCRIPTION="An enhanced, drop-in replacement for MySQL"
+HOMEPAGE="https://mariadb.org/"
 LICENSE="GPL-2 LGPL-2.1+"
 RESTRICT="
 	!bindist? (
@@ -60,8 +60,15 @@ REQUIRED_USE="
 		extraengine
 	)
 "
+#
 # Be warned, *DEPEND are version-dependant
 # These are used for both runtime and compiletime
+#
+# libfmt-10 contains a bug which was fixed in libfmt-11, see
+# https://jira.mariadb.org/browse/MDEV-32815, bug 946074
+# libfmt-11.1 works with # FMT_STATIC_THOUSANDS_SEPARATOR
+# differently, bug 946924
+#
 COMMON_DEPEND="
 	>=dev-libs/libpcre2-10.34:=
 	>=sys-apps/texinfo-4.7-r1
@@ -72,6 +79,9 @@ COMMON_DEPEND="
 	!bindist? (
 		>=sys-libs/readline-4.1:0=
 		sys-libs/binutils-libs:0=
+	)
+	!yassl? (
+		>=dev-libs/openssl-1.0.0:0=
 	)
 	jemalloc? (
 		dev-libs/jemalloc:0=
@@ -145,8 +155,9 @@ COMMON_DEPEND="
 	yassl? (
 		net-libs/gnutls:0=
 	)
-	!yassl? (
-		>=dev-libs/openssl-1.0.0:0=
+	|| (
+		<dev-libs/libfmt-10
+		=dev-libs/libfmt-11.0*
 	)
 "
 BDEPEND="
@@ -388,12 +399,15 @@ _src_configure() {
 	# bug #855233 (MDEV-11914, MDEV-25633) at least
 	filter-lto
 	# bug 508724 mariadb cannot use ld.gold
-	tc-ld-disable-gold
+	tc-ld-is-gold && tc-ld-force-bfd
 	# Bug #114895, bug #110149
 	filter-flags "-O" "-O[01]"
 
 	# It fails on alpha without this
 	use alpha && append-ldflags "-Wl,--no-relax"
+
+	# bug #945352
+	append-cflags -std=gnu17
 
 	append-cxxflags -felide-constructors
 
@@ -445,6 +459,7 @@ _src_configure() {
 		-DWITH_DEFAULT_FEATURE_SET=0
 		-DWITH_EXTERNAL_ZLIB=YES
 		-DWITH_LIBEDIT=0
+		-DWITH_LIBFMT="system"
 		-DWITH_UNIT_TESTS=$(usex test ON OFF)
 		-DWITH_UNITTEST=OFF
 		-DWITH_ZLIB=system
@@ -459,6 +474,12 @@ _src_configure() {
 		mycmakeargs+=( -DWITH_SSL=system -DCLIENT_PLUGIN_SHA256_PASSWORD=STATIC )
 	else
 		mycmakeargs+=( -DWITH_SSL=bundled )
+	fi
+
+	if use systemtap && has_version "dev-debug/systemtap[-dtrace-symlink(+)]" ; then
+		mycmakeargs+=(
+			-DDTRACE="${BROOT}/usr/bin/stap-dtrace"
+		)
 	fi
 
 	# bfd.h is only used starting with 10.1 and can be controlled by NOT_FOR_DISTRIBUTION
@@ -995,7 +1016,7 @@ pkg_config() {
 		local n_X
 		let n_X=${#template}-${#template_wo_X}
 		if [[ ${n_X} -lt 3 ]] ; then
-			echo "${FUNCNAME[0]}: too few X's in template ‘${template}’" >&2
+			echo "${FUNCNAME[0]}: too few X's in template '${template}'" >&2
 			return
 		fi
 
