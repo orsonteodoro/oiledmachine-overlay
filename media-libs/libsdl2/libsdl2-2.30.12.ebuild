@@ -121,10 +121,10 @@ ${LOONG_CPU_FLAGS[@]}
 ${PPC_CPU_FLAGS[@]}
 ${VIDEO_CARDS_FLAGS[@]}
 ${X86_CPU_FLAGS[@]}
-+alsa aqua custom-cflags +dbus doc fcitx4 +gles1 +gles2 +haptic +hidapi
++alsa aqua custom-cflags +dbus doc fcitx +gles1 +gles2 +haptic +hidapi
 +hidapi-joystick -hidapi-libusb +ibus +jack +joystick +kms +libdecor
 +libsamplerate +nas +nls +opengl +openurl oss +pipewire +pulseaudio
-+sndio +sound +static-libs test +threads +udev +video +vulkan +wayland +X
++sndio +sound +static-libs test +udev +video +vulkan +wayland +X
 +xscreensaver
 "
 # libdecor is not in main repo but in community repos
@@ -132,7 +132,7 @@ REQUIRED_USE="
 	alsa? (
 		sound
 	)
-	fcitx4? (
+	fcitx? (
 		dbus
 	)
 	gles1? (
@@ -262,8 +262,8 @@ CDEPEND="
 "
 RDEPEND="
 	${CDEPEND}
-	fcitx4? (
-		>=app-i18n/fcitx-4.2.9.8:4
+	fcitx? (
+		>=app-i18n/fcitx-4.2.9.8:*
 	)
 	gles1? (
 		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},gles1(+)]
@@ -379,7 +379,6 @@ multilib_src_configure() {
 		-DSDL_PIPEWIRE=$(usex pipewire)
 		-DSDL_PIPEWIRE_SHARED="OFF"
 		-DSDL_POWER="ON"
-		-DSDL_PTHREADS=$(usex threads)
 		-DSDL_PULSEAUDIO=$(usex pulseaudio)
 		-DSDL_PULSEAUDIO_SHARED="OFF"
 		-DSDL_RENDER="ON"
