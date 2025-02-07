@@ -25,7 +25,7 @@ UOPTS_SUPPORT_TPGO=1
 inherit meson
 inherit flag-o-matic multilib-minimal toolchain-funcs uopts virtualx
 
-if [[ ${PV} == *9999* ]]; then
+if [[ "${PV}" == *"9999"* ]] ; then
 	inherit git-r3
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/cairo/cairo.git"
 	SRC_URI=""
@@ -50,7 +50,10 @@ LICENSE="
 #	test
 #"
 SLOT="0"
-IUSE="X aqua debug gles2-only gles3 +glib gtk-doc opengl spectre test"
+IUSE="
+X aqua debug gles2-only gles3 +glib gtk-doc opengl spectre test
+ebuild_revision_1
+"
 REQUIRED_USE="
 	gles2-only? (
 		!opengl
@@ -107,6 +110,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-respect-fontconfig.patch"
+	"${FILESDIR}/${P}-cups.patch"
 )
 
 TEST_READY="1"
