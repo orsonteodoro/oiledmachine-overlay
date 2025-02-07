@@ -168,7 +168,7 @@ RDEPEND="
 	opencl? (
 		>=virtual/opencl-3
 		>=dev-util/spirv-tools-1.3.231.0
-		dev-libs/libclc[spirv(-)]
+		llvm-core/libclc[spirv(-)]
 		virtual/libelf:0=
 	)
 	selinux? (
@@ -186,7 +186,7 @@ RDEPEND="
 	vulkan? (
 		video_cards_intel? (
 			amd64? (
-				dev-libs/libclc[spirv(-)]
+				llvm-core/libclc[spirv(-)]
 				>=dev-util/spirv-tools-1.3.231.0
 			)
 		)

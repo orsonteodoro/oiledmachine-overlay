@@ -22,7 +22,7 @@ video_cards_vc4?,\
 video_cards_vivante?,\
 video_cards_vmware?,\
 "
-LLVM_COMPAT=( {18..15} )
+LLVM_COMPAT=( {19..15} )
 MY_P="${P/_/-}"
 PATENT_STATUS=(
 	patent_status_nonfree
@@ -34,6 +34,9 @@ RADEON_CARDS=(
 	radeon
 	radeonsi
 )
+RUST_MIN_VER="1.74.1"
+RUST_MULTILIB=1
+RUST_OPTIONAL=1
 UOPTS_BOLT_EXCLUDE_BINS="libglapi.so.0.0.0"
 UOPTS_BOLT_EXCLUDE_FLAGS=( -hugify ) # Broken
 UOPTS_SUPPORT_EBOLT=1
@@ -108,7 +111,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 cpu_flags_x86_sse2 d3d9 debug +llvm lm-sensors opencl +opengl
 osmesa selinux test unwind vaapi valgrind vdpau vulkan
-vulkan-overlay wayland +X xa +zstd
+wayland +X xa +zstd
 "
 REQUIRED_USE="
 	d3d9? (
@@ -123,9 +126,6 @@ REQUIRED_USE="
 			video_cards_vmware
 			video_cards_zink
 		)
-	)
-	vulkan-overlay? (
-		vulkan
 	)
 	video_cards_lavapipe? (
 		llvm
@@ -167,6 +167,7 @@ REQUIRED_USE="
 RDEPEND="
 	${LIBDRM_DEPSTRING}[${LIBDRM_USEDEP}${MULTILIB_USEDEP}]
 	>=dev-libs/expat-2.1.0-r3[${MULTILIB_USEDEP}]
+	>=dev-util/spirv-tools-1.3.231.0[${MULTILIB_USEDEP}]
 	>=media-libs/libglvnd-1.3.2[X?,${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.9[${MULTILIB_USEDEP}]
 	virtual/patent-status[patent_status_nonfree=]
@@ -182,9 +183,8 @@ RDEPEND="
 		sys-apps/lm-sensors:=[${MULTILIB_USEDEP}]
 	)
 	opencl? (
-		>=dev-util/spirv-tools-1.3.231.0
 		>=virtual/opencl-3
-		dev-libs/libclc[spirv(-)]
+		llvm-core/libclc[spirv(-)]
 		virtual/libelf:0=
 	)
 	selinux? (
@@ -277,10 +277,10 @@ DEPEND="
 		dev-debug/valgrind
 	)
 	video_cards_d3d12? (
-		>=dev-util/directx-headers-1.613.0[${MULTILIB_USEDEP}]
+		>=dev-util/directx-headers-1.614.1[${MULTILIB_USEDEP}]
 	)
 	wayland? (
-		>=dev-libs/wayland-protocols-1.34
+		>=dev-libs/wayland-protocols-1.38
 	)
 	X? (
 		x11-base/xorg-proto
@@ -350,6 +350,16 @@ BDEPEND="
 				=dev-lang/rust-bin-1.78*
 			)
 		)
+		llvm_slot_19? (
+			|| (
+				=dev-lang/rust-1.82*
+				=dev-lang/rust-1.83*
+				=dev-lang/rust-1.84*
+				=dev-lang/rust-bin-1.82*
+				=dev-lang/rust-bin-1.83*
+				=dev-lang/rust-bin-1.84*
+			)
+		)
 		|| (
 			dev-lang/rust:=
 			dev-lang/rust-bin:=
@@ -359,7 +369,7 @@ BDEPEND="
 		$(python_gen_any_dep "
 			dev-python/ply[\${PYTHON_USEDEP}]
 		")
-		dev-libs/libclc[spirv(-)]
+		llvm-core/libclc[spirv(-)]
 		~dev-util/intel_clc-${PV}
 	)
 	vulkan? (
@@ -552,7 +562,10 @@ einfo "PATH=${PATH} (after)"
 	fi
 	python-any-r1_pkg_setup
 	uopts_setup
-	rust_pkg_setup
+
+	if use opencl || ( use vulkan && use video_cards_nvk ) ; then
+		rust_pkg_setup
+	fi
 }
 
 src_unpack() {
@@ -749,19 +762,15 @@ _src_configure() {
 				)
 			fi
 		fi
+		emesonargs+=(
+			-Dvulkan-layers=device-select,overlay
+		)
 	fi
 
 	driver_list() {
 		local drivers="$(sort -u <<< "${1// /$'\n'}")"
 		echo "${drivers//$'\n'/,}"
 	}
-
-	local vulkan_layers
-	use vulkan && vulkan_layers+="device-select"
-	use vulkan-overlay && vulkan_layers+=",overlay"
-	emesonargs+=(
-		-Dvulkan-layers=${vulkan_layers#,}
-	)
 
 	if use opengl && use X ; then
 		emesonargs+=(
@@ -797,10 +806,10 @@ _src_configure() {
 		$(meson_use selinux)
 		$(meson_use test build-tests)
 		-Db_ndebug=$(usex debug false true)
-		-Ddri3=enabled
 		-Dexpat=enabled
 		-Dgallium-drivers=$(driver_list "${GALLIUM_DRIVERS[*]}")
 		-Dintel-clc=$(usex video_cards_intel system auto)
+		-Dlegacy-x11=dri2
 		-Dshared-glapi=enabled
 		-Dvalgrind=$(usex valgrind auto disabled)
 		-Dvideo-codecs=$(usex patent_status_nonfree "all" "all_free")
@@ -817,7 +826,13 @@ _src_configure() {
 }
 
 _src_compile() {
-	meson_src_compile
+	if [[ "${ABI}" == "x86" ]] ; then
+		# Bug 939803
+		BINDGEN_EXTRA_CLANG_ARGS="-m32" \
+		meson_src_compile
+	else
+		meson_src_compile
+	fi
 }
 
 src_compile() {

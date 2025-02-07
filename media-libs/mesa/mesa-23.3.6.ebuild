@@ -168,7 +168,7 @@ RDEPEND="
 	opencl? (
 		>=dev-util/spirv-tools-1.3.231.0
 		>=virtual/opencl-3
-		dev-libs/libclc[spirv(-)]
+		llvm-core/libclc[spirv(-)]
 		virtual/libelf:0=
 	)
 	selinux? (
@@ -331,7 +331,7 @@ BDEPEND="
 					$(python_gen_any_dep "
 						dev-python/ply[\${PYTHON_USEDEP}]
 					")
-					dev-libs/libclc[spirv(-)]
+					llvm-core/libclc[spirv(-)]
 					~dev-util/intel_clc-${PV}
 				)
 			)

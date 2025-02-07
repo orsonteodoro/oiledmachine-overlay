@@ -163,7 +163,7 @@ RDEPEND="
 	)
 	opencl? (
 		>=virtual/opencl-3[${MULTILIB_USEDEP}]
-		dev-libs/libclc
+		llvm-core/libclc
 		virtual/libelf:0=[${MULTILIB_USEDEP}]
 	)
 	selinux? (
