@@ -683,7 +683,7 @@ einfo "Generating yarn lockfile"
 		if [[ "${YARN_SLOT}" == "1" ]] ; then
 			edo yarn import
 		else
-			eyarn install
+			eyarn install --mode=update-lockfile
 		fi
 		[[ -e "yarn.lock" ]] || ewarn "Missing generated yarn.lock file"
 		if declare -f \

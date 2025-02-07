@@ -4,19 +4,24 @@
 
 EAPI=8
 
+# Using npm breaks
+# Avoid "npm error code EUNSUPPORTEDPROTOCOL" when "patch:file-type@npm%3A19.4.1#~/.yarn/patches/file-type-npm-19.4.1-d18086444c.patch" encountered
+
 MY_PN="${PN/-/}"
 
 # See https://releases.electronjs.org/releases.json
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="34.0.0" # Cr 132.0.6834.83, node 20.18.1
+	ELECTRON_APP_ELECTRON_PV="34.1.1" # Cr 132.0.6834.194, node 20.18.1
+	#ELECTRON_APP_ELECTRON_PV="35.0.0-beta.2" # Cr 134.0.6968.0, node 22.9.0 ; breaks
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="31.3.1" # Cr 126.0.6478.185, node 20.15.1
 fi
 ELECTRON_APP_SHARP_PV="0.32.6"
-NPM_AUDIT_FIX=0
+NPM_AUDIT_FIX=1
+YARN_AUDIT_FIX=1
 NODE_GYP_PV="9.3.0"
 NODE_VERSION="20"
 PATENT_STATUS=(
@@ -25,6 +30,12 @@ PATENT_STATUS=(
 YARN_INSTALL_PATH="/opt/${MY_PN}"
 YARN_LOCKFILE_SOURCE="ebuild"
 YARN_SLOT=8
+NPM_INSTALL_ARGS=(
+	"--legacy-peer-deps"
+)
+NPM_AUDIT_FIX_ARGS=(
+	"--legacy-peer-deps"
+)
 
 inherit edo electron-app flag-o-matic lcnr optfeature xdg yarn
 
@@ -57,7 +68,7 @@ LICENSE="
 "
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	LICENSE+="
-		electron-34.0.0-alpha.7-chromium.html
+		electron-34.0.0-beta.7-chromium.html
 	"
 else
 	LICENSE+="
@@ -69,7 +80,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${PATENT_STATUS[@]}
 mp3 opus svt-av1 theora vorbis vpx x264
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -103,12 +114,31 @@ DEPEND+="
 "
 BDEPEND+="
 	>=media-libs/vips-${ELECTRON_APP_VIPS_PV}[cxx,png,svg]
-	>=sys-apps/yarn-4:${YARN_SLOT}
+	sys-apps/yarn:${YARN_SLOT}
 "
 DOCS=( "README.md" )
 
 pkg_setup() {
 	yarn_pkg_setup
+}
+
+yarn_unpack_post() {
+	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
+einfo "Removing file-type patch"
+		sed -i -e "s|\"file-type\": \"patch:file-type@npm%3A19.4.1#~/.yarn/patches/file-type-npm-19.4.1-d18086444c.patch\"|\"file-type\": \"19.4.1\"|g" "package.json" || die
+
+		enpm install "electron@${ELECTRON_APP_ELECTRON_PV}" -D --prefer-offline ${NPM_INSTALL_ARGS}
+	fi
+}
+
+yarn_update_lock_yarn_import_post() {
+	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
+	# Unbreak build
+		eyarn add "sweetalert2@11.11.0" -D
+
+einfo "Adding file-type patch"
+		sed -i -e "s|\"file-type\": \"19.4.1\"|\"file-type\": \"patch:file-type@npm%3A19.4.1#~/.yarn/patches/file-type-npm-19.4.1-d18086444c.patch\"|g" "package.json" || die
+	fi
 }
 
 src_unpack() {
