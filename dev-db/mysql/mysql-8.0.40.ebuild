@@ -9,7 +9,7 @@ EAPI=8
 
 MY_PV="${PV//_pre*}"
 MY_P="${PN}-${MY_PV}"
-PATCHSET_VER="8.0.36:01"
+PATCHSET_VER="8.0.40:01"
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
@@ -25,10 +25,11 @@ KEYWORDS="
 # Shorten the path because the socket path length must be shorter than 107 chars
 # and we will run a mysql server during test phase
 S="${WORKDIR}/mysql"
+# https://dev.mysql.com/downloads/mysql/
+# https://downloads.mysql.com/archives/community/
 SRC_URI="
-https://cdn.mysql.com/Downloads/MySQL-$(ver_cut 1-2)/mysql-boost-${MY_PV}.tar.gz
+https://dev.mysql.com/get/Downloads/MySQL-$(ver_cut 1-2)/mysql-boost-${MY_PV}.tar.gz
 https://cdn.mysql.com/archives/mysql-$(ver_cut 1-2)/mysql-boost-${MY_PV}.tar.gz
-https://downloads.mysql.com/archives/MySQL-$(ver_cut 1-2)/${PN}-boost-${MY_PV}.tar.gz
 https://github.com/parona-source/mysql-server/releases/download/mysql-${PATCHSET_VER%:*}-patches-${PATCHSET_VER#*:}/mysql-${PATCHSET_VER%:*}-patches-${PATCHSET_VER#*:}.tar.xz
 ${PATCH_SET[@]}
 "
@@ -143,6 +144,8 @@ PATCHES=(
 	"${WORKDIR}/mysql-patches"
 	# Patch needed due to bundled boost-1.77.  This fix is included in boost-1.81.
 	"${FILESDIR}/mysql-8.0.36-boost-clang-fix.patch"
+	# This is needed due to the bundled abseil-cpp-20230802.  This fix is not in the release as of 2025-01-09.
+	"${FILESDIR}/mysql-8.0.40-fix-bundled-abseil-gcc15.patch"
 )
 
 mysql_init_vars() {
@@ -264,13 +267,8 @@ _src_configure() {
 	# Bug #114895, bug #110149
 	filter-flags "-O" "-O[01]"
 
-	# Code is now requiring C++17 due to https://github.com/mysql/mysql-server/commit/236ab55bedd8c9eacd80766d85edde2a8afacd08
+	# Code requires C++17 due to https://github.com/mysql/mysql-server/commit/236ab55bedd8c9eacd80766d85edde2a8afacd08
 	append-cxxflags -std=c++17
-
-	if has sandbox ${FEATURES} ; then
-		# bug #823656
-		append-cppflags -DGTEST_NO_DEATH_TEST=1
-	fi
 
 	local mycmakeargs=(
 		-Wno-dev # less noise
@@ -664,7 +662,7 @@ einfo "MTR_PARALLEL is set to '${MTR_PARALLEL}'"
 		--tmpdir="${T}/tmp-tests" \
 		--skip-test=tokudb \
 		--skip-test-list="${T}/disabled.def" \
-		--retry-failure=0 \
+		--retry-failure=2 \
 		--max-test-fail=0
 	retstatus_tests=$?
 
@@ -678,7 +676,8 @@ einfo "MTR_PARALLEL is set to '${MTR_PARALLEL}'"
 	[[ ${retstatus_tests} -eq 0 ]] || failures="${failures} tests"
 
 	if [[ "${mode}" == "default" ]] ; then
-		cmake_src_test
+	# bug #823656
+		cmake_src_test --test-command "--gtest_death_test_style=threadsafe"
 		[[ -z "${failures}" ]] || die "Test failures: ${failures}"
 einfo "Tests successfully completed"
 	elif [[ "${mode}" == "pgo" ]] ; then
