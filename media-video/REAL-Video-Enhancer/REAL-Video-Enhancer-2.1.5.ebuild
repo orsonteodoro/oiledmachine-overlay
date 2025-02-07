@@ -342,7 +342,7 @@ RDEPEND+="
 		dev-python/psutil[${PYTHON_USEDEP}]
 		dev-python/py-cpuinfo[${PYTHON_USEDEP}]
 		dev-python/pyinstaller[${PYTHON_USEDEP}]
-		dev-python/pyside6[${PYTHON_USEDEP},gui,network,qml,quick,widgets]
+		dev-python/pyside:6[${PYTHON_USEDEP},gui,network,qml,quick,widgets]
 		dev-python/validators[${PYTHON_USEDEP}]
 		net-misc/yt-dlp[${PYTHON_USEDEP}]
 		|| (
