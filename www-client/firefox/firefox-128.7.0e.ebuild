@@ -153,15 +153,15 @@ MITIGATION_LAST_UPDATE=1738617660 # From `date +%s -d "2025-02-03 13:21"` from f
 MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-09/#CVE-2024-11704"
 SEVERITY_LABEL="Severity:"
 VULNERABILITIES_FIXED=(
+	"CVE-2025-1017;ZC, CE, DoS, DT, ID;Critical"
+	"CVE-2025-1016;ZC, CE, DoS, DT, ID;Critical"
 	"CVE-2025-1009;ZC, DoS, DT, ID;Critical"
 	"CVE-2025-1010;ZC, DoS, DT, ID;Critical"
 	"CVE-2025-1011;ZC, DoS, DT, ID;Critical"
 	"CVE-2025-1012;ZC, DoS, DT, ID;Critical"
 	"CVE-2024-11704;ZC, DoS, DT, ID;Critical"
+	"CVE-2025-1014;DoS, DT, ID;High"
 	"CVE-2025-1013;DT, ID;Medium"
-	"CVE-2025-1014;;"
-	"CVE-2025-1016;;"
-	"CVE-2025-1017;;"
 )
 MOZ_ESR="yes"
 MOZ_LANGS=(
