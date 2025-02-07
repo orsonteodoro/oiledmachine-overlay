@@ -13,7 +13,7 @@ UOPTS_SUPPORT_TPGO=1
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/madler.asc"
 
 inherit autotools edo flag-o-matic flag-o-matic-om multilib-minimal
-inherit toolchain-funcs uopts usr-ldscript verify-sig
+inherit toolchain-funcs uopts verify-sig
 
 KEYWORDS="~amd64  ~arm ~arm-linux ~arm64 ~arm64-linux ~arm64-macos ~ppc ~ppc64 ~ppc64-linux ~s390"
 S="${WORKDIR}/${P}"
@@ -63,6 +63,7 @@ IUSE+="
 	zlib_trainers_zlib_text_max
 	zlib_trainers_zlib_text_min
 	zlib_trainers_zlib_text_random
+	ebuild_revision_1
 "
 REQUIRED_USE="
 	pgo? (
@@ -218,6 +219,9 @@ PATCHES=(
 
 	# Fix building on sparc with older binutils, we pass it in ebuild instead
 	"${FILESDIR}/${PN}-1.3.1-Revert-Turn-off-RWX-segment-warnings-on-sparc-system.patch"
+
+	# On Darwin, don't force /usr/bin/libtool as AR. bug #924839
+	"${FILESDIR}/${PN}-1.3.1-configure-fix-AR-libtool-on-darwin.patch"
 )
 
 _seq() {
@@ -1129,7 +1133,6 @@ _install() {
 
 	*)
 		emake install DESTDIR="${D}" LDCONFIG=:
-		[[ "${lib_type}" == "shared" ]] && gen_usr_ldscript -a z
 		;;
 	esac
 
