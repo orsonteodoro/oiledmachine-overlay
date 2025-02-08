@@ -18,7 +18,7 @@ EAPI=8
 
 # @serwist/next needs pnpm workspaces
 
-# Use `PNPM_UPDATER_VERSIONS="1.51.3" pnpm_updater_update_locks.sh` to update lockfile
+# Use `PNPM_UPDATER_VERSIONS="1.52.4" pnpm_updater_update_locks.sh` to update lockfile
 
 CPU_FLAGS_X86=(
 	cpu_flags_x86_sse4_2
@@ -144,24 +144,7 @@ einfo "Using vendored vips for sharp"
 	fi
 }
 
-pkg_setup() {
-	dhms_start
-	# If a "next" package is found in package.json, this should be added.
-	# Otherwise, the license variable should be updated with additional
-	# legal text.
-	export NEXT_TELEMETRY_DISABLED=1
-
-	# Prevent redownloads because they unusually bump more than once a day.
-	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	export NPM_CACHE_FOLDER="${EDISTDIR}/npm-download-cache-${NPM_SLOT}/${CATEGORY}/${PN}-${PV%.*}"
-	export YARN_CACHE_FOLDER="${EDISTDIR}/yarn-download-cache-${YARN_SLOT}/${CATEGORY}/${PN}-${PV%.*}"
-	export PNPM_CACHE_FOLDER="${EDISTDIR}/pnpm-download-cache-${PNPM_SLOT}/${CATEGORY}/${PN}-${PV%.*}"
-
-	addwrite "${EDISTDIR}"
-	npm_pkg_setup
-	yarn_pkg_setup
-	pnpm_pkg_setup
-einfo "PATH:  ${PATH}"
+check_exact_node_version() {
 	local node_pv=$(node --version \
 		| sed -e "s|v||g")
 	if ver_test "${node_pv%.*}" -ne "${_NODE_VERSION%.*}" ; then
@@ -176,6 +159,27 @@ die
 	fi
 }
 
+pkg_setup() {
+	dhms_start
+	# If a "next" package is found in package.json, this should be added.
+	# Otherwise, the license variable should be updated with additional
+	# legal text.
+	export NEXT_TELEMETRY_DISABLED=1
+
+	# Prevent redownloads because they unusually bump more than once a day.
+	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+	export NPM_CACHE_FOLDER="${EDISTDIR}/npm-download-cache-${NPM_SLOT}/${CATEGORY}/${PN}"
+	export YARN_CACHE_FOLDER="${EDISTDIR}/yarn-download-cache-${YARN_SLOT}/${CATEGORY}/${PN}"
+	export PNPM_CACHE_FOLDER="${EDISTDIR}/pnpm-download-cache-${PNPM_SLOT}/${CATEGORY}/${PN}"
+
+	addwrite "${EDISTDIR}"
+	npm_pkg_setup
+	yarn_pkg_setup
+	pnpm_pkg_setup
+einfo "PATH:  ${PATH}"
+	#check_exact_node_version
+}
+
 pnpm_unpack_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		sed -i \
@@ -184,9 +188,9 @@ pnpm_unpack_post() {
 			|| die
 		grep -e "ERR_PNPM_FETCH_404" "${T}/build.log" && die "Detected error.  Check pnpm add"
 
-	# CVE-2025-24964; DoS, DT, ID; Critical
 		sed -i -e "s|\"vitest\": \"~1.2.2\"|\"vitest\": \"1.6.1\"|g" "package.json" || die
-		epnpm add -D "vitest@1.6.1" ${PNPM_INSTALL_ARGS[@]}
+		epnpm add -D "vitest@1.6.1" ${PNPM_INSTALL_ARGS[@]}						# CVE-2025-24964; DoS, DT, ID; Critical
+		epnpm add "@apidevtools/json-schema-ref-parser@11.2.0" ${PNPM_INSTALL_ARGS[@]}			# CVE-2024-29651; DoS, DT, ID; High
 	else
 		if use postgres ; then
 			epnpm add "sharp@0.33.5" ${PNPM_INSTALL_ARGS[@]}
