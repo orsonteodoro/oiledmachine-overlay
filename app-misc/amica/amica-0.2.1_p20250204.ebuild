@@ -712,7 +712,7 @@ _cargo_src_unpack() {
 
 	cp -a \
 		"${FILESDIR}/${PV}/Cargo."{"lock","toml"} \
-		"${S}/src-tauri" \
+		"${S}" \
 		|| die
 
 	local archive shasum pkg
@@ -797,6 +797,7 @@ src_configure() {
 }
 
 src_compile() {
+	rm -f "${S}/Cargo."* || true
 	npm_hydrate
 	if use debug ; then
 		enpm run tauri dev
