@@ -219,13 +219,24 @@ pnpm_unpack_post() {
 #	fi
 }
 
-pnpm_install_post() {
+patch_lockfile() {
+	sed -i -e "s|'@apidevtools/json-schema-ref-parser': 11.1.0|'@apidevtools/json-schema-ref-parser': 11.2.0|g" "pnpm-lock.yaml" || die
+}
+
+pnpm_audit_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		sed -i -e "s|\"vitest\": \"~1.2.2\"|\"vitest\": \"1.6.1\"|g" "package.json" || die
 		epnpm add -D "vitest@1.6.1" ${PNPM_INSTALL_ARGS[@]}						# CVE-2025-24964; DoS, DT, ID; Critical
 
-		sed -i -e "s|'@apidevtools/json-schema-ref-parser': 11.1.0|'@apidevtools/json-schema-ref-parser': 11.2.0|g" "pnpm-lock.yaml" || die
+		patch_lockfile
 		epnpm add "@apidevtools/json-schema-ref-parser@11.2.0" ${PNPM_INSTALL_ARGS[@]}			# CVE-2024-29651; DoS, DT, ID; High
+		patch_lockfile
+	fi
+}
+
+pnpm_dedupe_post() {
+	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+		patch_lockfile
 	fi
 }
 

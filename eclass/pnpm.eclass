@@ -93,6 +93,11 @@ _PNPM_PKG_SETUP_CALLED=0
 # This variable is an array.
 # Global arguments to append to `pnpm audit --fix`
 
+# @ECLASS_VARIABLE: PNPM_DEDUPE_ARGS
+# @DESCRIPTION:
+# This variable is an array.
+# Global arguments to append to `pnpm dedupe`
+
 # @ECLASS_VARIABLE: PNPM_ROOT
 # @DESCRIPTION:
 # The project root containing the pnpm-lock.yaml file.
@@ -327,6 +332,12 @@ pnpm_src_unpack() {
 	fi
 	if declare -f pnpm_audit_post >/dev/null 2>&1 ; then
 		pnpm_audit_post
+	fi
+	if [[ "${PNPM_DEDUPE:-1}" == "1" ]] ; then
+		edo pnpm dedupe ${PNPM_DEDUPE_ARGS[@]}
+	fi
+	if declare -f pnpm_dedupe_post >/dev/null 2>&1 ; then
+		pnpm_dedupe_post
 	fi
 	grep -e "ERR_PNPM_FETCH_404" "${T}/build.log" && die "Detected error.  Check pnpm add"
 }
