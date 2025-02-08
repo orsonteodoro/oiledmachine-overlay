@@ -290,6 +290,7 @@ _npm_src_unpack_default_ebuild() {
 		npm_unpack_install_pre
 	fi
 	local extra_args=()
+
 	if [[ "${offline}" == "2" ]] ; then
 		extra_args+=(
 			"--no-audit"
@@ -301,6 +302,7 @@ _npm_src_unpack_default_ebuild() {
 			"--prefer-offline"
 		)
 	fi
+
 	enpm install \
 		${extra_args[@]} \
 		${NPM_INSTALL_ARGS[@]}
@@ -336,6 +338,7 @@ _npm_src_unpack_default_upstream() {
 		npm_unpack_install_pre
 	fi
 	local extra_args=()
+
 	if [[ "${offline}" == "2" ]] ; then
 		extra_args+=(
 			"--no-audit"
@@ -347,6 +350,7 @@ _npm_src_unpack_default_upstream() {
 			"--prefer-offline"
 		)
 	fi
+
 	enpm install \
 		${extra_args[@]} \
 		${NPM_INSTALL_ARGS[@]}
@@ -403,6 +407,7 @@ einfo "Skipping audit fix."
 		network_sandbox=1
 	fi
 
+	mkdir -p "${HOME}/.npm/_logs" || true
 	local tries
 	tries=0
 	while (( ${tries} < ${NPM_TRIES} )) ; do
@@ -538,14 +543,19 @@ npm_src_unpack() {
 		if declare -f npm_unpack_post >/dev/null 2>&1 ; then
 			npm_unpack_post
 		fi
+		if [[ "${NPM_KEEP_LOCKFILE}" == "1" ]] ; then
+			:
+		else
 	einfo "Deleting $(pwd)/package-lock.json to generate a new one."
-		rm -f "package-lock.json"
+			rm -f "package-lock.json"
+		fi
 
 		if declare -f npm_update_lock_install_pre > /dev/null 2>&1 ; then
 			npm_update_lock_install_pre
 		fi
 
 		local extra_args=()
+
 		if [[ "${offline}" == "2" ]] ; then
 			extra_args+=(
 				"--offline"

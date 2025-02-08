@@ -4,27 +4,35 @@
 
 EAPI=8
 
-# Upstream uses U22
-
 # ELECTRON_APP_ELECTRON_PV is limited by nan
 ELECTRON_APP_ELECTRON_PV="30.1.2" # Cr 124.0.6367.243, node 20.14.0.  Original
 
 #ELECTRON_APP_LOCKFILE_EXACT_VERSIONS_ONLY="1"
-ELECTRON_APP_MODE="yarn"
+ELECTRON_APP_MODE="npm"
 ELECTRON_APP_REACT_PV="18.2.0"
 NODE_GYP_PV="10.2.0" # Same as CI
 NODE_ENV="development"
 NODE_VERSION=18 # Upstream uses in CI 16-20 but 18 is used in release.  Limited by openai-node
-NPM_AUDIT_FIX=0
+NPM_AUDIT_FIX=0 # Manually fix
 NPM_AUDIT_FIX_ARGS=(
+	"--prefer-offline"
 	"--legacy-peer-deps"
 )
 NPM_INSTALL_ARGS=(
+	"--prefer-offline"
 	"--legacy-peer-deps"
 )
+if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+	NPM_INSTALL_ARGS+=(
+		"--workspaces"
+		"--ignore-scripts"
+	)
+fi
+NPM_KEEP_LOCKFILE=1
 PYTHON_COMPAT=( "python3_11" ) # Upstream uses python 3.11, but node-gyp 10 requests py3.12.
-YARN_ELECTRON_OFFLINE=1
-YARN_EXE_LIST="
+NPM_ELECTRON_OFFLINE=1
+NPM_SLOT=3
+NPM_EXE_LIST="
 /usr/bin/theia
 /opt/theia/chrome-sandbox
 /opt/theia/electron
@@ -42,11 +50,11 @@ YARN_EXE_LIST="
 /opt/theia/libvulkan.so.1
 /opt/theia/chrome_crashpad_handler
 "
-YARN_INSTALL_PATH="/opt/${PN}"
-YARN_LOCKFILE_SOURCE="ebuild" # originally upstream
-YARN_MULTI_LOCKFILE=1
-YARN_OFFLINE=1
-YARN_TEST_SCRIPT="test:theia"
+NPM_INSTALL_PATH="/opt/${PN}"
+NPM_LOCKFILE_SOURCE="ebuild" # originally upstream
+NPM_MULTI_LOCKFILE=1
+NPM_OFFLINE=1
+NPM_TEST_SCRIPT="test:theia"
 declare -A THEIA_PLUGINS=(
 ["theia_plugin_EditorConfig_EditorConfig"]="EditorConfig.EditorConfig"
 ["theia_plugin_vscode_css"]="vscode.css"
@@ -136,7 +144,7 @@ declare -A THEIA_PLUGINS=(
 ["theia_plugin_vscode_theme-solarized-dark"]="vscode.theme-solarized-dark"
 )
 
-inherit desktop edo electron-app python-single-r1 yarn xdg
+inherit desktop edo electron-app npm python-single-r1 xdg
 
 KEYWORDS="~amd64"
 SLOT="0/monthly"
@@ -145,7 +153,7 @@ if [[ "${SLOT}" =~ "community" ]] ; then
 fi
 SRC_URI="
 $(electron-app_gen_electron_uris)
-${YARN_EXTERNAL_URIS}
+${NPM_EXTERNAL_URIS}
 https://github.com/eclipse-theia/theia/archive/refs/tags/v${PV}${SUFFIX}.tar.gz
 	-> ${P}${SUFFIX}.tar.gz
 "
@@ -494,17 +502,33 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-build/make-4.3
 	>=net-libs/nodejs-14.18.0:${NODE_VERSION}[webassembly(+)]
-	>=sys-apps/yarn-1.22.22:1
 	>=sys-devel/gcc-11.2.0
+	sys-apps/npm:3
 	virtual/pkgconfig
 "
 PATCHES=(
 )
 
+_puppeteer_setup_offline_cache() {
+	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+	if [[ -z "${NPM_CACHE_FOLDER}" ]] ; then
+		export PUPPETEER_CACHE_FOLDER="${EDISTDIR}/puppeteer-download-cache/${CATEGORY}/${P}"
+	fi
+einfo "DEBUG:  Default cache folder:  ${HOME}/.cache/puppeteer"
+einfo "PUPPETEER_CACHE_FOLDER:  ${PUPPETEER_CACHE_FOLDER}"
+	rm -rf "${HOME}/.cache/puppeteer"
+	mkdir -p "${HOME}/.cache" || die
+	ln -sf "${PUPPETEER_CACHE_FOLDER}" "${HOME}/.cache/puppeteer"
+	addwrite "${EDISTDIR}"
+	addwrite "${PUPPETEER_CACHE_FOLDER}"
+	mkdir -p "${PUPPETEER_CACHE_FOLDER}"
+
+}
+
 pkg_setup() {
 	einfo "This is the monthly release."
 	python_setup
-	yarn_pkg_setup
+	npm_pkg_setup
 }
 
 get_plugins() {
@@ -512,8 +536,8 @@ get_plugins() {
 	cd "${S}" || die
 
 	local tries=0
-	while (( ${tries} < ${YARN_TRIES} )) ; do
-		eyarn download:plugins
+	while (( ${tries} < ${NPM_TRIES} )) ; do
+		enpm run "download:plugins"
 		if ! grep -q -E -r -e "Errors downloading some plugins" "${T}/build.log" ; then
 			break
 		fi
@@ -549,48 +573,75 @@ gen_plugin_array() {
 	done
 }
 
-yarn_unpack_install_pre() {
-	[[ "${YARN_UPDATE_LOCK}" == "1" ]] && return
-einfo "Called yarn_unpack_install_pre()"
+npm_update_lock_install_pre() {
+	npm config set install-strategy nested
+}
+
+npm_unpack_post() {
 einfo "Adding dependencies"
 	local pkgs
-	pkgs=(
-		"node-gyp@^${NODE_GYP_PV}"
-	)
-	eyarn add ${pkgs[@]} -D -W
+	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+		:
+		#enpm install --workspaces ${NPM_INSTALL_ARGS[@]}
+	else
+		pkgs=(
+			"node-gyp@^${NODE_GYP_PV}"
+		)
+		enpm add ${pkgs[@]} -D -W
+	fi
+	chmod +x $(realpath "${HOME}/.cache/node/corepack/v1/npm/"*"/bin/npx")
+	edo npx --version
 }
 
-yarn_unpack_post() {
-	:
+npm_update_lock_install_post() {
+	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+		:
+	fi
 }
 
-yarn_src_unpack_update_ebuild_custom() {
-einfo "Updating lockfile from _yarn_src_unpack_update_ebuild_custom()"
+fix_vulnerabilities() {
+einfo "Fixing vulnerabilities"
+	sed -i -e "s|path-to-regexp \"0.1.10\"|path-to-regexp \"0.1.12\"|g" "package-lock.json" || die		# CVE-2024-52798; DoS, High
+	pushd "packages/core" >/dev/null 2>&1 || die
+		enpm add "path-to-regexp@0.1.12"
+	popd >/dev/null 2>&1 || die
+
+}
+
+npm_src_unpack_update_ebuild_custom() {
+einfo "Updating lockfile from _npm_src_unpack_update_ebuild_custom()"
 	if [[ "${PV}" =~ "9999" ]] ; then
                         :
-	elif [[ -n "${YARN_TARBALL}" ]] ; then
-		unpack "${YARN_TARBALL}"
+	elif [[ -n "${NPM_TARBALL}" ]] ; then
+		unpack "${NPM_TARBALL}"
 	else
 		unpack "${P}.tar.gz"
 	fi
 
-	if declare -f yarn_unpack_post >/dev/null 2>&1 ; then
-		yarn_unpack_post
+	if declare -f npm_unpack_post >/dev/null 2>&1 ; then
+		npm_unpack_post
 	fi
 
 	export PATH="${S}/node_modules/.bin:${PATH}"
-	export PATH="${HOME}/.config/yarn/global/node_modules/.bin:${PATH}" # For npx
-	export PATH="${HOME}/.cache/node/corepack/v1/npm/9.8.0/bin:${PATH}" # For npx
+	export PATH=$(realpath "${HOME}/.cache/node/corepack/v1/npm/"*"/bin")":${PATH}" # For npx
+	export PATH="${S}/node_modules/.bin:${PATH}"
+
+	export PATH="${S}/dev-packages/cli/bin:${PATH}"
+
 	edo npx --version
 	cd "${S}" || die
 
-einfo "Generating yarn.lock"
-	eyarn install
+einfo "Generating package-lock.json"
+	#rm package-lock.json
+	enpm install ${NPM_INSTALL_ARGS[@]}
+	[[ -e "package-lock.json" ]] || ewarn "Missing package-lock.json"
 
-	# yarn.lock
+	#fix_vulnerabilities
+
+	# package-lock.json
 	mkdir -p "${WORKDIR}/lockfile-image"
 	cp -a \
-		"${S}/yarn.lock" \
+		"${S}/package-lock.json" \
 		"${WORKDIR}/lockfile-image" \
 		|| die
 
@@ -691,12 +742,18 @@ examples/api-provider-sample/package.json
 }
 
 src_unpack() {
-einfo "YARN_UPDATE_LOCK=${YARN_UPDATE_LOCK}"
-	yarn_src_unpack
-	export PATH="${HOME}/.config/yarn/global/node_modules/.bin:${PATH}" # For npx
-	export PATH="${HOME}/.cache/node/corepack/v1/npm/9.8.0/bin:${PATH}" # For npx
+einfo "NPM_UPDATE_LOCK=${NPM_UPDATE_LOCK}"
+	_puppeteer_setup_offline_cache
+
+	mkdir -p "${WORKDIR}/bin"
+	ln -s "${S}/dev-packages/cli/bin/theia-patch.js" "${WORKDIR}/bin/theia-patch" || die
+	export PATH="${WORKDIR}/bin:${PATH}"
+
+	npm_src_unpack
+	export PATH=$(realpath "${HOME}/.cache/node/corepack/v1/npm/"*"/bin")":${PATH}" # For npx
+	export PATH="${S}/node_modules/.bin:${PATH}"
 	edo npx --version
-	if [[ -z "${YARN_UPDATE_LOCK}" ]] ; then
+	if [[ -z "${NPM_UPDATE_LOCK}" ]] ; then
 		user_wants_plugin && get_plugins
 	fi
 	local path="${S}/node_modules/electron/dist"
@@ -784,15 +841,15 @@ error Command failed with exit code 1.
 	export NODE_OPTIONS+=" --max_old_space_size=4096"
 einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 
-	yarn_hydrate
-	eyarn run compile
-	eyarn run browser build
-	eyarn run electron build
-	eyarn run browser-only build
+	npm_hydrate
+	enpm run "compile"
+	enpm run "build:browser"
+	enpm run "build:electron"
+	enpm run "build:browser-only"
 
 	# Fix for issue #10246
-	eyarn browser rebuild
-	eyarn electron rebuild
+	enpm run "rebuild:browser"
+	enpm run "rebuild:electron"
 
 	grep -q \
 		-e "Error: ENOENT: no such file or directory, open '${S}/node_modules/electron/dist/version'" \
@@ -818,7 +875,7 @@ _install() {
 	cat "${FILESDIR}/${PN}-v2" > "${T}/${PN}" || die
 
 	local path
-	for path in ${YARN_EXE_LIST} ; do
+	for path in ${NPM_EXE_LIST} ; do
 		if [[ -e "${ED}/${path}" ]] ; then
 			fperms 0755 "${path}"
 		fi
@@ -859,7 +916,7 @@ src_install() {
 	sed -i \
 		-e "s|\${NODE_VERSION}|${NODE_VERSION}|g" \
 		-e "s|\${NODE_ENV}|${NODE_ENV}|g" \
-		-e "s|\${INSTALL_PATH}|${YARN_INSTALL_PATH}|g" \
+		-e "s|\${INSTALL_PATH}|${NPM_INSTALL_PATH}|g" \
 		"${T}/${PN}" \
 		|| die
 	exeinto "/usr/bin"
@@ -888,6 +945,7 @@ einfo
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.56.0 (20241201)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.57.1 (20241222)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.57.1 (20250116 with electron 30.1.2)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED  (interactive) 1.58.1 (20250207 with electron 30.1.2)
 # launch-test:  passed
 # ai-assistant (ollama with yi-coder:1.5b with Universal agent):  passed
 # Run hello world for python:  fail
