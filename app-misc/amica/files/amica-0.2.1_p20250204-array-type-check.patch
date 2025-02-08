@@ -1,0 +1,27 @@
+--- a/src/utils/blobFix.ts.orig	2025-02-04 13:05:45.000000000 -0800
++++ b/src/utils/blobFix.ts	2025-02-08 07:38:07.213698949 -0800
+@@ -316,8 +316,12 @@ class WebmFloat extends WebmBase<number>
+   updateBySource() {
+     const byteArray = this.source!.reverse();
+     const floatArrayType = this.getFloatArrayType();
+-    const floatArray = new floatArrayType(byteArray.buffer);
+-    this.data! = floatArray[0];
++    if ( !(byteArray.buffer instanceof ArrayBuffer) ) {
++      throw new Error("Invalid buffer type: Expected ArrayBuffer");
++    } else {
++      const floatArray = new floatArrayType(byteArray.buffer);
++      this.data! = floatArray[0];
++    }
+   }
+   updateByData() {
+     const floatArrayType = this.getFloatArrayType();
+@@ -509,7 +509,8 @@ class WebmFile extends WebmContainer {
+   }
+ 
+   toBlob(type = "video/webm") {
+-    return new Blob([this.source!.buffer], { type });
++    const t:Uint8Array = new Uint8Array(this.source!.buffer);
++    return new Blob([t], { type });
+   }
+ }
+ 

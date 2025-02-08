@@ -791,6 +791,8 @@ src_prepare() {
 	eapply "${FILESDIR}/${PN}-0.2.1_p20241022-ollama.patch"
 #	eapply -R "${DISTDIR}/${PN}-commit-da5a390.patch"
 #	eapply "${FILESDIR}/${PN}-0.2.1_p20241022-coqui-local.patch"
+	eapply "${FILESDIR}/${PN}-0.2.1_p20250204-array-type-check.patch"
+	eapply "${FILESDIR}/${PN}-0.2.1_p20250204-nextjs-config.patch"
 }
 
 src_configure() {
@@ -868,5 +870,6 @@ pkg_postinst() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  Passed (0.2.1_p20250204 [c5829dd], 20250208)
 # OILEDMACHINE-OVERLAY-TEST:  Passed (0.2.1_p20241022, 20241117)
 # ollama support - passed (with smollm:135m)
