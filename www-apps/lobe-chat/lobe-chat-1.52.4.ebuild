@@ -187,10 +187,6 @@ pnpm_unpack_post() {
 			"${S}/package.json" \
 			|| die
 		grep -e "ERR_PNPM_FETCH_404" "${T}/build.log" && die "Detected error.  Check pnpm add"
-
-		sed -i -e "s|\"vitest\": \"~1.2.2\"|\"vitest\": \"1.6.1\"|g" "package.json" || die
-		epnpm add -D "vitest@1.6.1" ${PNPM_INSTALL_ARGS[@]}						# CVE-2025-24964; DoS, DT, ID; Critical
-		epnpm add "@apidevtools/json-schema-ref-parser@11.2.0" ${PNPM_INSTALL_ARGS[@]}			# CVE-2024-29651; DoS, DT, ID; High
 	else
 		if use postgres ; then
 			epnpm add "sharp@0.33.5" ${PNPM_INSTALL_ARGS[@]}
@@ -224,7 +220,13 @@ pnpm_unpack_post() {
 }
 
 pnpm_install_post() {
-	:
+	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+		sed -i -e "s|\"vitest\": \"~1.2.2\"|\"vitest\": \"1.6.1\"|g" "package.json" || die
+		epnpm add -D "vitest@1.6.1" ${PNPM_INSTALL_ARGS[@]}						# CVE-2025-24964; DoS, DT, ID; Critical
+
+		sed -i -e "s|'@apidevtools/json-schema-ref-parser': 11.1.0|'@apidevtools/json-schema-ref-parser': 11.2.0|g" "pnpm-lock.yaml" || die
+		epnpm add "@apidevtools/json-schema-ref-parser@11.2.0" ${PNPM_INSTALL_ARGS[@]}			# CVE-2024-29651; DoS, DT, ID; High
+	fi
 }
 
 src_unpack() {
