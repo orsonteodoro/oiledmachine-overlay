@@ -4914,7 +4914,6 @@ dependencies = [
  "serde_json",
  "tauri",
  "tauri-build",
- "tauri-plugin-autostart",
  "tauri-plugin-log",
  "tauri-plugin-single-instance",
  "tauri-plugin-store",
