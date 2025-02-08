@@ -73,6 +73,26 @@ RDEPEND="
 BDEPEND="
 "
 
+_puppeteer_setup_offline_cache() {
+	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+	if [[ -z "${NPM_CACHE_FOLDER}" ]] ; then
+		export PUPPETEER_CACHE_FOLDER="${EDISTDIR}/puppeteer-download-cache/${CATEGORY}/${P}"
+	fi
+einfo "DEBUG:  Default cache folder:  ${HOME}/.cache/puppeteer"
+einfo "PUPPETEER_CACHE_FOLDER:  ${PUPPETEER_CACHE_FOLDER}"
+	rm -rf "${HOME}/.cache/puppeteer"
+	mkdir -p "${HOME}/.cache" || die
+	ln -sf "${PUPPETEER_CACHE_FOLDER}" "${HOME}/.cache/puppeteer"
+	addwrite "${EDISTDIR}"
+	addwrite "${PUPPETEER_CACHE_FOLDER}"
+	mkdir -p "${PUPPETEER_CACHE_FOLDER}"
+
+}
+
+npm_unpack_post() {
+	_puppeteer_setup_offline_cache
+}
+
 npm_update_lock_install_post() {
 	if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 		enpm install "electron@${ELECTRON_APP_ELECTRON_PV}" -D --prefer-offline
