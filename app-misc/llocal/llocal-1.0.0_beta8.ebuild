@@ -145,5 +145,5 @@ src_install() {
 	electron-app_set_sandbox_suid "/opt/${PN}/chrome-sandbox"
 }
 
-# OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta7 (20250208 with electron 34.1.1)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta8 (20250208 with electron 34.1.1)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta7 (20250117 with electron 34.0.0)
