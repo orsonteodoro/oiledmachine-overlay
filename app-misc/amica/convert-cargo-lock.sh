@@ -5,9 +5,9 @@
 
 CATEGORY="app-misc"
 PN="amica"
-MY_PN="amica-app" # amica-app for stable, amica for unstable
+MY_PN="amica" # amica-app for stable, amica for unstable
 PV="${1}"
-MY_PV="v${2}" # Prefix with v if stable
+MY_PV="${2}" # Prefix with v if stable
 
 # - has ambiguous means
 declare -A CARGO_PATHS=(
