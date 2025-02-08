@@ -34,7 +34,7 @@
     "@electron-toolkit/preload": "^3.0.0",
     "@electron-toolkit/utils": "^3.0.0",
     "@hookform/resolvers": "^3.6.0",
-    "@langchain/community": "^0.2.25",
+    "@langchain/community": "^0.3.3",
     "@swc/core": "^1.5.7",
     "@types/react-syntax-highlighter": "^15.5.13",
     "axios": "^1.6.8",
@@ -72,6 +72,7 @@
     "shell-path": "^3.0.0",
     "sonner": "^1.4.41",
     "tailwind-merge": "^2.3.0",
+    "ws": "^8.17.1",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -83,7 +84,7 @@
     "@types/react-dom": "^18.2.18",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.19",
-    "electron": "^28.2.0",
+    "electron": "^34.1.1",
     "electron-builder": "^24.9.1",
     "electron-updater": "^6.1.7",
     "electron-vite": "^2.0.0",
@@ -96,6 +97,6 @@
     "react-dom": "^18.2.0",
     "tailwindcss": "^3.4.3",
     "typescript": "^5.3.3",
-    "vite": "^5.0.12"
+    "vite": "^5.4.12"
   }
 }
