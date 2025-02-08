@@ -6,7 +6,7 @@ EAPI=8
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="34.0.0" # Cr 132.0.6834.83, node 20.18.1
+	ELECTRON_APP_ELECTRON_PV="34.1.1" # Cr 132.0.6834.194, node 20.18.1
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="28.3.3" # Cr 120.0.6099.291, node 18.18.2
@@ -76,6 +76,19 @@ BDEPEND="
 npm_update_lock_install_post() {
 	if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 		enpm install "electron@${ELECTRON_APP_ELECTRON_PV}" -D --prefer-offline
+
+		patch_lockfile() {
+			sed -i -e "s|\"@langchain/community\": \"^0.2.25\"|\"@langchain/community\": \"0.3.3\"|g" "package-lock.json" || die		# CVE-2024-7042; DoS, DT, ID; Critical
+			sed -i -e "s|\"ws\": \"^8.14.2\"|\"ws\": \"^8.17.1\"|g" "package-lock.json" || die						# CVE-2024-37890; DoS; High
+			sed -i -e "s|\"ws\": \"8.13.0\"|\"ws\": \"^8.17.1\"|g" "package-lock.json" || die
+			sed -i -e "s|\"vite\": \"^5.0.12\"|\"vite\": \"5.4.12\"|g" "package-lock.json" || die						# CVE-2025-24010; ID; Medium
+			sed -i -e "s|\"vite\": \"^4.0.0 || ^5.0.0\"|\"vite\": \"5.4.12\"|g" "package-lock.json" || die
+		}
+		patch_lockfile
+
+		enpm install "ws@8.17.1" -P
+		enpm install "@langchain/community@0.3.3" -P
+		enpm install "vite@5.4.12" -D
 	fi
 	# Fix breakage
 	enpm install "react-icons@5.2.1" -P --prefer-offline
