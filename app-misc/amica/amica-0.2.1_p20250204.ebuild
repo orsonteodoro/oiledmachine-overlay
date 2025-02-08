@@ -758,6 +758,12 @@ einfo "Adding Cargo.lock"
 	_cargo_src_unpack
 }
 
+npm_update_lock_install_post() {
+	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+		enpm install eslint -D
+	fi
+}
+
 src_unpack() {
 	unpack "${TARBALL}"
 #die # debug / fixme
