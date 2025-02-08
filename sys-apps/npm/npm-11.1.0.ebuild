@@ -36,7 +36,6 @@ RDEPEND+="
 "
 BDEPEND+="
 	${CDEPEND}
-	app-misc/jq
 "
 
 src_configure() {

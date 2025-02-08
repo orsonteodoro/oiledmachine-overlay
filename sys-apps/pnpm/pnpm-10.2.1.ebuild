@@ -31,7 +31,6 @@ RDEPEND+="
 "
 BDEPEND+="
 	${CDEPEND}
-	app-misc/jq
 "
 
 pkg_postinst() {
