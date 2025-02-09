@@ -581,9 +581,6 @@ npm_unpack_post() {
 einfo "Adding dependencies"
 	local pkgs
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-		:
-		#enpm install --workspaces ${NPM_INSTALL_ARGS[@]}
-	else
 		pkgs=(
 			"node-gyp@^${NODE_GYP_PV}"
 		)
