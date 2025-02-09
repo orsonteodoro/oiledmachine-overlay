@@ -592,6 +592,10 @@ npm_src_unpack() {
 			enpm dedupe ${NPM_DEDUPE_ARGS[@]}
 		fi
 
+		if declare -f npm_dedupe_post > /dev/null 2>&1 ; then
+			npm_dedupe_post
+		fi
+
 		if declare -f npm_save_lockfiles > /dev/null 2>&1 ; then
 			npm_save_lockfiles
 		fi

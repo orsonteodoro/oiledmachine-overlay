@@ -596,7 +596,7 @@ einfo "Adding dependencies"
 fix_vulnerabilities() {
 einfo "Fixing vulnerabilities"
 	patch_lockfile() {
-		sed -i -e "s|\"cookie\": \"^0.4.0\"|\"cookie\": \"^0.7.0\"|g" "package.json" || die		# CVE-2024-47764; DT; Medium
+		sed -i -e "s|\"cookie\": \"^0.4.0\"|\"cookie\": \"^0.7.0\"|g" "package-lock.json" || die		# CVE-2024-47764; DT; Medium
 	}
 	patch_lockfile
 
@@ -604,7 +604,7 @@ einfo "Fixing vulnerabilities"
 	patch_lockfile
 }
 
-npm_update_lock_install_post() {
+npm_update_lock_audit_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		fix_vulnerabilities
 	fi
@@ -613,6 +613,7 @@ npm_update_lock_install_post() {
 npm_save_lockfiles() {
 # Generated from:
 # find /var/tmp/portage/dev-util/theia-1.58.1/work/theia-1.58.1 -name "package.json" | cut -f 9- -d "/" | sort | sed -e "/node_modules/d"
+# Manually add package-lock.json to the list below.
 	local L=(
 dev-packages/application-manager/package.json
 dev-packages/application-package/package.json
@@ -633,6 +634,7 @@ examples/browser/package.json
 examples/electron/package.json
 examples/playwright/package.json
 package.json
+package-lock.json
 packages/ai-anthropic/package.json
 packages/ai-chat-ui/package.json
 packages/ai-chat/package.json
