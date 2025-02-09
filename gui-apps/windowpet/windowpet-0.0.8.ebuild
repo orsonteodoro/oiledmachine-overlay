@@ -783,10 +783,9 @@ ewarn "Missing security updated Cargo.lock"
 }
 
 src_unpack() {
-#	if [[ "${NPM_UPDATE_LOCK}" != "1" ]] ; then
+	if [[ "${NPM_UPDATE_LOCK}" != "1" ]] ; then
 		unpack ${P}.tar.gz
-#	fi
-	die
+	fi
 einfo "Unpacking npm side"
 	S="${WORKDIR}/${MY_PN}-${PV}" \
 	npm_src_unpack
