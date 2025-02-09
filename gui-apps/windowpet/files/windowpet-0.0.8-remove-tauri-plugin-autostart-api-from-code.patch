@@ -1,6 +1,6 @@
 diff '--color=auto' -urp WindowPet-0.0.8.orig/src/hooks/useSettingStore.tsx WindowPet-0.0.8/src/hooks/useSettingStore.tsx
 --- WindowPet-0.0.8.orig/src/hooks/useSettingStore.tsx	2024-05-23 15:10:28.000000000 -0700
-+++ WindowPet-0.0.8/src/hooks/useSettingStore.tsx	2025-01-17 17:48:28.699557951 -0800
++++ WindowPet-0.0.8/src/hooks/useSettingStore.tsx	2025-02-08 16:52:45.657615377 -0800
 @@ -18,10 +18,6 @@ export const useSettingStore = create<IS
      setAllowPetAboveTaskbar: (newBoolean) => {
          set({ allowPetAboveTaskbar: newBoolean })
@@ -14,7 +14,7 @@ diff '--color=auto' -urp WindowPet-0.0.8.orig/src/hooks/useSettingStore.tsx Wind
          set({ allowPetInteraction: newBoolean })
 diff '--color=auto' -urp WindowPet-0.0.8.orig/src/hooks/useSettings.tsx WindowPet-0.0.8/src/hooks/useSettings.tsx
 --- WindowPet-0.0.8.orig/src/hooks/useSettings.tsx	2024-05-23 15:10:28.000000000 -0700
-+++ WindowPet-0.0.8/src/hooks/useSettings.tsx	2025-01-17 17:48:28.699557951 -0800
++++ WindowPet-0.0.8/src/hooks/useSettings.tsx	2025-02-08 16:52:45.657615377 -0800
 @@ -1,13 +1,12 @@
  import { useQuery } from "react-query";
  import { useSettingStore } from "./useSettingStore";
@@ -40,7 +40,7 @@ diff '--color=auto' -urp WindowPet-0.0.8.orig/src/hooks/useSettings.tsx WindowPe
      setAllowPetClimbing(setting.allowPetClimbing ?? defaultSettings.allowPetClimbing);
 diff '--color=auto' -urp WindowPet-0.0.8.orig/src/types/IEvents.ts WindowPet-0.0.8/src/types/IEvents.ts
 --- WindowPet-0.0.8.orig/src/types/IEvents.ts	2024-05-23 15:10:28.000000000 -0700
-+++ WindowPet-0.0.8/src/types/IEvents.ts	2025-01-17 17:48:28.699557951 -0800
++++ WindowPet-0.0.8/src/types/IEvents.ts	2025-02-08 16:52:45.657615377 -0800
 @@ -20,7 +20,6 @@ export enum EventType {
  export enum DispatchType {
      ChangeAppLanguage = 'Change app language',
@@ -51,7 +51,7 @@ diff '--color=auto' -urp WindowPet-0.0.8.orig/src/types/IEvents.ts WindowPet-0.0
      SwitchAllowPetClimbing = 'Switch allow pet climbing',
 diff '--color=auto' -urp WindowPet-0.0.8.orig/src/types/hooks/type.ts WindowPet-0.0.8/src/types/hooks/type.ts
 --- WindowPet-0.0.8.orig/src/types/hooks/type.ts	2024-05-23 15:10:28.000000000 -0700
-+++ WindowPet-0.0.8/src/types/hooks/type.ts	2025-01-17 17:48:56.031386918 -0800
++++ WindowPet-0.0.8/src/types/hooks/type.ts	2025-02-08 16:52:45.657615377 -0800
 @@ -5,7 +5,6 @@ export interface ISettingStoreVariables
      language: string;
      theme: ColorScheme;
@@ -77,7 +77,7 @@ diff '--color=auto' -urp WindowPet-0.0.8.orig/src/types/hooks/type.ts WindowPet-
 +}
 diff '--color=auto' -urp WindowPet-0.0.8.orig/src/ui/setting_tabs/Settings.tsx WindowPet-0.0.8/src/ui/setting_tabs/Settings.tsx
 --- WindowPet-0.0.8.orig/src/ui/setting_tabs/Settings.tsx	2024-05-23 15:10:28.000000000 -0700
-+++ WindowPet-0.0.8/src/ui/setting_tabs/Settings.tsx	2025-01-17 17:49:02.223348174 -0800
++++ WindowPet-0.0.8/src/ui/setting_tabs/Settings.tsx	2025-02-08 16:52:45.657615377 -0800
 @@ -21,16 +21,10 @@ interface ISettingsContent {
  
  function Settings() {
@@ -105,7 +105,7 @@ diff '--color=auto' -urp WindowPet-0.0.8.orig/src/ui/setting_tabs/Settings.tsx W
 +export default memo(Settings);
 diff '--color=auto' -urp WindowPet-0.0.8.orig/src/utils/handleSettingChange.ts WindowPet-0.0.8/src/utils/handleSettingChange.ts
 --- WindowPet-0.0.8.orig/src/utils/handleSettingChange.ts	2024-05-23 15:10:28.000000000 -0700
-+++ WindowPet-0.0.8/src/utils/handleSettingChange.ts	2025-01-17 17:48:28.699557951 -0800
++++ WindowPet-0.0.8/src/utils/handleSettingChange.ts	2025-02-08 16:52:45.657615377 -0800
 @@ -1,4 +1,4 @@
 -import { setSettings, toggleAutoStartUp } from "./settings";
 +import { setSettings } from "./settings";
@@ -134,7 +134,7 @@ diff '--color=auto' -urp WindowPet-0.0.8.orig/src/utils/handleSettingChange.ts W
              setAllowPetAboveTaskbar(newValue as boolean);
 diff '--color=auto' -urp WindowPet-0.0.8.orig/src/utils/settings.ts WindowPet-0.0.8/src/utils/settings.ts
 --- WindowPet-0.0.8.orig/src/utils/settings.ts	2024-05-23 15:10:28.000000000 -0700
-+++ WindowPet-0.0.8/src/utils/settings.ts	2025-01-17 17:48:28.699557951 -0800
++++ WindowPet-0.0.8/src/utils/settings.ts	2025-02-08 16:52:45.657615377 -0800
 @@ -1,4 +1,3 @@
 -import { enable, isEnabled, disable } from "tauri-plugin-autostart-api";
  import { Store } from "tauri-plugin-store-api";
@@ -161,7 +161,7 @@ diff '--color=auto' -urp WindowPet-0.0.8.orig/src/utils/settings.ts WindowPet-0.
      const configPath: string = await invoke("combine_config_path", { config_name: configName });
 diff '--color=auto' -urp WindowPet-0.0.8.orig/src-tauri/src/app/default/settings.json WindowPet-0.0.8/src-tauri/src/app/default/settings.json
 --- WindowPet-0.0.8.orig/src-tauri/src/app/default/settings.json	2024-05-23 15:10:28.000000000 -0700
-+++ WindowPet-0.0.8/src-tauri/src/app/default/settings.json	2025-01-17 17:48:51.919412647 -0800
++++ WindowPet-0.0.8/src-tauri/src/app/default/settings.json	2025-02-08 16:52:45.657615377 -0800
 @@ -4,7 +4,6 @@
      "allowPetAboveTaskbar": false,
      "allowPetInteraction": true,
@@ -172,3 +172,25 @@ diff '--color=auto' -urp WindowPet-0.0.8.orig/src-tauri/src/app/default/settings
 -}
 \ No newline at end of file
 +}
+diff '--color=auto' -urp WindowPet-0.0.8.orig/src-tauri/src/main.rs WindowPet-0.0.8/src-tauri/src/main.rs
+--- WindowPet-0.0.8.orig/src-tauri/src/main.rs	2024-05-23 15:10:28.000000000 -0700
++++ WindowPet-0.0.8/src-tauri/src/main.rs	2025-02-08 16:53:47.721178486 -0800
+@@ -5,7 +5,6 @@ mod app;
+ use app::{cmd, conf, tray, utils};
+ use log::info;
+ use tauri::Manager;
+-use tauri_plugin_autostart::MacosLauncher;
+ use tauri_plugin_log::LogTarget;
+ 
+ #[derive(Clone, serde::Serialize)]
+@@ -16,10 +15,6 @@ struct Payload {
+ 
+ fn build_app() {
+     tauri::Builder::default()
+-        .plugin(tauri_plugin_autostart::init(
+-            MacosLauncher::LaunchAgent,
+-            Some(vec!["--flag1", "--flag2"]), /* arbitrary number of args to pass to your app */
+-        ))
+         .plugin(tauri_plugin_store::Builder::default().build())
+         .plugin(tauri_plugin_log::Builder::default()
+         .targets([
