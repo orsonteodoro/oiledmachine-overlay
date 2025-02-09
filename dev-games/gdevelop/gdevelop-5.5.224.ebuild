@@ -166,7 +166,7 @@ SLOT="${SLOT_MAJOR}/${PV}"
 IUSE+="
 	${LLVM_COMPAT[@]/#/llvm_slot_}
 	-analytics
-	ebuild_revision_5
+	ebuild_revision_6
 "
 REQUIRED_USE+="
 	!wayland
@@ -965,7 +965,7 @@ src_install() {
 	doins -r "newIDE/electron-app/dist/linux-unpacked/"*
 	electron-app_gen_wrapper \
 		"${PN}" \
-		"${PN}"
+		"/opt/${PN}/${PN}"
 
 	#
 	# We can't use .ico because of XDG icon standards.  .ico is not
@@ -1055,6 +1055,7 @@ ewarn
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.4.204 (20240620) platformer prototype only (emscripten 3.1.30)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.4.204 (20240627) platformer demo, car-coin demo (emscripten 1.39.20)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.5.221 (20250119) platformer demo (emscripten 1.39.20, electron 22.3.27)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.5.224 (20250208) platformer demo (emscripten 1.39.20, electron 22.3.27)
 # wayland:                    failed
 # X:                          passed
 # command-line wrapper:       passed
