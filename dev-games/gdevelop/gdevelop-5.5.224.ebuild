@@ -82,6 +82,10 @@ NPM_INSTALL_ARGS=(
 	"--legacy-peer-deps"
 	"--prefer-offline"
 )
+NPM_UNINSTALL_ARGS=(
+	"--legacy-peer-deps"
+	"--prefer-offline"
+)
 PYTHON_COMPAT=( python3_{10,11} ) # CI uses 3.8, 3.9
 
 # Using yarn results in failures.
@@ -676,7 +680,7 @@ einfo "Fixing vulnerabilities"
 				pkgs=(
 					"cryptiles"				# DoS, DT, ID           # CVE-2018-1000620
 				)
-				enpm uninstall ${pkgs[@]}
+				enpm uninstall ${pkgs[@]} ${NPM_UNINSTALL_ARGS[@]}
 				pkgs=(
 					"@hapi/cryptiles@5.1.0"
 					"bl@1.2.3"				# DoS, ID		# CVE-2020-8244
@@ -721,7 +725,7 @@ einfo "Fixing vulnerabilities"
 				pkgs=(
 					"cryptiles"
 				)
-				enpm uninstall ${pkgs[@]}
+				enpm uninstall ${pkgs[@]} ${NPM_UNINSTALL_ARGS[@]}
 				pkgs=(
 					"@babel/traverse@7.23.2"		# DoS, DT, ID		# CVE-2023-45133
 					"@hapi/cryptiles@5.1.0"			# DoS, DT, ID													# [11]
