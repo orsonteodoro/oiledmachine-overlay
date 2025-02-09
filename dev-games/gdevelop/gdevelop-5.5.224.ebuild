@@ -615,6 +615,7 @@ einfo "Fixing vulnerabilities"
 					sed -i -e "s|\"send\": \"0.18.0\"|\"send\": \"0.19.0\"|g" "package-lock.json" || die
 					sed -i -e "s|\"serve-static\": \"1.15.0\"|\"serve-static\": \"1.16.0\"|g" "package-lock.json" || die
 					sed -i -e "s|\"store2\": \"^2.14.2\"|\"store2\": \"^2.14.4\"|g" "package-lock.json" || die
+					sed -i -e "s|\"undici\": \"5.28.3\"|\"undici\": \"5.28.5\"|g" "package-lock.json" || die
 					sed -i -e "s|\"webpack\": \">=4.43.0 <6.0.0\"|\"webpack\": \"^5.94.0\"|g" "package-lock.json" || die
 					sed -i -e "s#\"webpack\": \"^4.0.0 || ^5.0.0\"#\"webpack\": \"^5.94.0\"#g" "package-lock.json" || die
 					sed -i -e "s#\"webpack\": \"^4.4.0 || ^5.91.0\"#\"webpack\": \"^5.94.0\"#g" "package-lock.json" || die
@@ -771,6 +772,7 @@ einfo "Fixing vulnerabilities"
 					"protobufjs@6.11.4"			# DoS, DT, ID		# CVE-2023-36665, CVE-2022-25878
 					"semver@7.5.2"				# DoS			# CVE-2022-25883
 					"ua-parser-js@0.7.33"			# DoS			# CVE-2022-25927, CVE-2020-7793, CVE-2021-27292
+					"undici@5.28.5"				# DoS, DT, ID		# CVE-2025-22150, CVE-2024-30261, CVE-2024-30260
 				)
 				enpm install ${pkgs[@]} -P ${NPM_INSTALL_ARGS[@]}
 				# [24]

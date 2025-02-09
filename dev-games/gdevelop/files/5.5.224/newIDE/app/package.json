@@ -65,7 +65,6 @@
     "@blueprintjs/core": "file:src/Utils/BlueprintJsPlaceholder",
     "@blueprintjs/icons": "file:src/Utils/BlueprintJsPlaceholder",
     "@grpc/grpc-js": "^1.8.22",
-    "@lingui/core": "^2.7.3",
     "@lingui/react": "github:4ian/lingui-react#master",
     "@material-ui/core": "4.11.0",
     "@material-ui/icons": "4.9.1",
@@ -123,6 +122,7 @@
     "source-map-explorer": "^2.0.1",
     "three": "0.160.0",
     "ua-parser-js": "^0.7.33",
+    "undici": "^5.28.5",
     "url-search-params": "^1.0.2",
     "wavesurfer.js": "^7.8.6",
     "xxhashjs": "^0.2.2"
