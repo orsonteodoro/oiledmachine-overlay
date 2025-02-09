@@ -479,7 +479,7 @@ LICENSE="
 RESTRICT="mirror"
 IUSE+="
 ${!THEIA_PLUGINS[@]}
-git ollama ebuild_revision_6
+git ollama ebuild_revision_7
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -593,141 +593,115 @@ einfo "Adding dependencies"
 	edo npx --version
 }
 
-npm_update_lock_install_post() {
-	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-		:
-	fi
-}
-
 fix_vulnerabilities() {
 einfo "Fixing vulnerabilities"
-	sed -i -e "s|path-to-regexp \"0.1.10\"|path-to-regexp \"0.1.12\"|g" "package-lock.json" || die		# CVE-2024-52798; DoS, High
-	pushd "packages/core" >/dev/null 2>&1 || die
-		enpm add "path-to-regexp@0.1.12"
-	popd >/dev/null 2>&1 || die
+	patch_lockfile() {
+		sed -i -e "s|\"cookie\": \"^0.4.0\"|\"cookie\": \"^0.7.0\"|g" "package-lock.json" || die		# CVE-2024-47764; DT; Medium
+	}
+	patch_lockfile
 
+	enpm add "cookie@^0.7.0" -w "packages/core"
+	patch_lockfile
 }
 
-npm_src_unpack_update_ebuild_custom() {
-einfo "Updating lockfile from _npm_src_unpack_update_ebuild_custom()"
-	if [[ "${PV}" =~ "9999" ]] ; then
-                        :
-	elif [[ -n "${NPM_TARBALL}" ]] ; then
-		unpack "${NPM_TARBALL}"
-	else
-		unpack "${P}.tar.gz"
+npm_update_lock_install_post() {
+	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+		fix_vulnerabilities
 	fi
+}
 
-	if declare -f npm_unpack_post >/dev/null 2>&1 ; then
-		npm_unpack_post
-	fi
-
-	export PATH="${S}/node_modules/.bin:${PATH}"
-	export PATH=$(realpath "${HOME}/.cache/node/corepack/v1/npm/"*"/bin")":${PATH}" # For npx
-	export PATH="${S}/node_modules/.bin:${PATH}"
-
-	export PATH="${S}/dev-packages/cli/bin:${PATH}"
-
-	edo npx --version
-	cd "${S}" || die
-
-einfo "Generating package-lock.json"
-	#rm package-lock.json
-	enpm install ${NPM_INSTALL_ARGS[@]}
-	[[ -e "package-lock.json" ]] || ewarn "Missing package-lock.json"
-
-	#fix_vulnerabilities
-
-	# package-lock.json
-	mkdir -p "${WORKDIR}/lockfile-image"
-	cp -a \
-		"${S}/package-lock.json" \
-		"${WORKDIR}/lockfile-image" \
-		|| die
-
+npm_save_lockfiles() {
+# Generated from:
+# find /var/tmp/portage/dev-util/theia-1.58.1/work/theia-1.58.1 -name "package.json" | cut -f 9- -d "/" | sort | sed -e "/node_modules/d"
 	local L=(
-sample-plugins/sample-namespace/plugin-a/package.json
-sample-plugins/sample-namespace/plugin-b/package.json
-sample-plugins/sample-namespace/plugin-gotd/package.json
-dev-packages/private-eslint-plugin/package.json
-dev-packages/native-webpack-plugin/package.json
-dev-packages/private-ext-scripts/package.json
+dev-packages/application-manager/package.json
+dev-packages/application-package/package.json
+dev-packages/cli/package.json
 dev-packages/ffmpeg/package.json
 dev-packages/localization-manager/package.json
-dev-packages/request/package.json
-dev-packages/application-package/package.json
+dev-packages/native-webpack-plugin/package.json
 dev-packages/ovsx-client/package.json
+dev-packages/private-eslint-plugin/package.json
+dev-packages/private-ext-scripts/package.json
 dev-packages/private-re-exports/package.json
-dev-packages/application-manager/package.json
-dev-packages/cli/package.json
-packages/file-search/package.json
-packages/secondary-window/package.json
-packages/callhierarchy/package.json
-packages/monaco/package.json
-packages/navigator/package.json
-packages/ai-openai/package.json
-packages/dev-container/package.json
-packages/electron/package.json
-packages/ai-terminal/package.json
-packages/userstorage/package.json
-packages/editor-preview/package.json
-packages/ai-core/package.json
-packages/test/package.json
-packages/git/package.json
-packages/preferences/package.json
-packages/getting-started/package.json
-packages/ai-ollama/package.json
-packages/core/package.json
-packages/search-in-workspace/package.json
-packages/vsx-registry/package.json
-packages/metrics/package.json
-packages/ai-chat-ui/package.json
-packages/plugin-dev/package.json
-packages/scm/package.json
-packages/ai-history/package.json
-packages/outline-view/package.json
-packages/property-view/package.json
-packages/timeline/package.json
-packages/mini-browser/package.json
-packages/memory-inspector/package.json
-packages/plugin-ext-vscode/package.json
-packages/scm-extra/package.json
-packages/task/package.json
-packages/debug/package.json
-packages/ai-chat/package.json
-packages/keymaps/package.json
-packages/preview/package.json
-packages/output/package.json
-packages/editor/package.json
-packages/plugin-ext-headless/package.json
-packages/workspace/package.json
-packages/collaboration/package.json
-packages/toolbar/package.json
-packages/remote/package.json
-packages/variable-resolver/package.json
-packages/filesystem/package.json
-packages/process/package.json
-packages/messages/package.json
-packages/terminal/package.json
-packages/plugin-ext/package.json
-packages/notebook/package.json
-packages/markers/package.json
-packages/console/package.json
-packages/plugin-metrics/package.json
-packages/plugin/package.json
-packages/external-terminal/package.json
-packages/ai-workspace-agent/package.json
-packages/bulk-edit/package.json
-packages/ai-code-completion/package.json
-packages/typehierarchy/package.json
-package.json
-examples/electron/package.json
-examples/playwright/package.json
-examples/browser/package.json
+dev-packages/request/package.json
+examples/api-provider-sample/package.json
 examples/api-samples/package.json
 examples/api-tests/package.json
 examples/browser-only/package.json
-examples/api-provider-sample/package.json
+examples/browser/package.json
+examples/electron/package.json
+examples/playwright/package.json
+package.json
+packages/ai-anthropic/package.json
+packages/ai-chat-ui/package.json
+packages/ai-chat/package.json
+packages/ai-code-completion/package.json
+packages/ai-core/package.json
+packages/ai-history/package.json
+packages/ai-hugging-face/package.json
+packages/ai-llamafile/package.json
+packages/ai-mcp/package.json
+packages/ai-ollama/package.json
+packages/ai-openai/package.json
+packages/ai-scanoss/package.json
+packages/ai-terminal/package.json
+packages/ai-workspace-agent/package.json
+packages/bulk-edit/package.json
+packages/callhierarchy/package.json
+packages/collaboration/package.json
+packages/console/package.json
+packages/core/package.json
+packages/debug/package.json
+packages/dev-container/package.json
+packages/editor-preview/package.json
+packages/editor/package.json
+packages/electron/package.json
+packages/external-terminal/package.json
+packages/file-search/package.json
+packages/filesystem/package.json
+packages/getting-started/package.json
+packages/git/package.json
+packages/keymaps/package.json
+packages/markers/package.json
+packages/memory-inspector/package.json
+packages/messages/package.json
+packages/metrics/package.json
+packages/mini-browser/package.json
+packages/monaco/package.json
+packages/navigator/package.json
+packages/notebook/package.json
+packages/outline-view/package.json
+packages/output/package.json
+packages/plugin-dev/package.json
+packages/plugin-ext-headless/package.json
+packages/plugin-ext-vscode/package.json
+packages/plugin-ext/package.json
+packages/plugin-metrics/package.json
+packages/plugin/package.json
+packages/preferences/package.json
+packages/preview/package.json
+packages/process/package.json
+packages/property-view/package.json
+packages/remote/package.json
+packages/scanoss/package.json
+packages/scm-extra/package.json
+packages/scm/package.json
+packages/search-in-workspace/package.json
+packages/secondary-window/package.json
+packages/task/package.json
+packages/terminal/package.json
+packages/test/package.json
+packages/timeline/package.json
+packages/toolbar/package.json
+packages/typehierarchy/package.json
+packages/userstorage/package.json
+packages/variable-resolver/package.json
+packages/vsx-registry/package.json
+packages/workspace/package.json
+sample-plugins/sample-namespace/plugin-a/package.json
+sample-plugins/sample-namespace/plugin-b/package.json
+sample-plugins/sample-namespace/plugin-gotd/package.json
 	)
 
 	local x
