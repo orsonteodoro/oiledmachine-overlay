@@ -596,7 +596,7 @@ einfo "Adding dependencies"
 fix_vulnerabilities() {
 einfo "Fixing vulnerabilities"
 	patch_lockfile() {
-		sed -i -e "s|\"cookie\": \"^0.4.0\"|\"cookie\": \"^0.7.0\"|g" "package-lock.json" || die		# CVE-2024-47764; DT; Medium
+		sed -i -e "s|\"cookie\": \"^0.4.0\"|\"cookie\": \"^0.7.0\"|g" "package.json" || die		# CVE-2024-47764; DT; Medium
 	}
 	patch_lockfile
 
