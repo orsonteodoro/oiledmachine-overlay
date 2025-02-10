@@ -9,7 +9,7 @@ EAPI=8
 
 NPM_SLOT=2
 NPM_TARBALL="${P}.tar.gz"
-NODE_VERSION=14 # Upstream uses node 12.
+NODE_VERSION=18 # Upstream uses node 12.  14 works
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} ) # Lists up to 3.12
 REACT_PV="16.14.0" # Supports up to node 14 used for testing
@@ -78,22 +78,24 @@ npm_update_lock_audit_post() {
 		sed -i -e "s|\"postcss\": \"^7.0.5\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
 		sed -i -e "s|\"postcss\": \"^7.0.6\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
 
-		sed -i -e "s|\"tough-cookie\": \"~2.5.0\"|\"tough-cookie\": \"^4.1.3\"|g" "package-lock.json" || die
-		sed -i -e "s|\"tough-cookie\": \"^2.3.3\"|\"tough-cookie\": \"^4.1.3\"|g" "package-lock.json" || die
+#		sed -i -e "s|\"tough-cookie\": \"~2.5.0\"|\"tough-cookie\": \"^4.1.3\"|g" "package-lock.json" || die
+#		sed -i -e "s|\"tough-cookie\": \"^2.3.3\"|\"tough-cookie\": \"^4.1.3\"|g" "package-lock.json" || die
 
-		sed -i -e "s|\"got\": \"^6.7.1\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die
+#		sed -i -e "s|\"got\": \"^6.7.1\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die
 
 		# Use v8 which is backwards compatible with v1 lockfile
 		sed -i -e "s|\"npm\": \"^6.1.0\"|\"npm\": \"8.12.2\"|g" "package-lock.json" || die
 
-		sed -i -e "s|\"ip\": \"1.1.5\"|\"ip\": \"1.1.9\"|g" "package-lock.json" || die
-		sed -i -e "s|\"ip\": \"^1.1.5\"|\"ip\": \"1.1.9\"|g" "package-lock.json" || die
+#		sed -i -e "s|\"ip\": \"1.1.5\"|\"ip\": \"1.1.9\"|g" "package-lock.json" || die
+#		sed -i -e "s|\"ip\": \"^1.1.5\"|\"ip\": \"1.1.9\"|g" "package-lock.json" || die
 	}
 	localfile_edits
 
 	# DoS = Denial of Service
 	# DT = Data Tampering
 	# ID = Information Disclosure
+
+	enpm uninstall npm -D --prefer-offline
 
 	# webpack
 	enpm install "loader-utils@^1.4.2" -D --prefer-offline	# CVE-2022-37601	# DoS, DT, ID
@@ -102,11 +104,11 @@ npm_update_lock_audit_post() {
 	enpm install "braces@^3.0.3" -D --prefer-offline	# CVE-2024-4068		# DoS
 
 	# npm
-	enpm install "ansi-regex@^4.1.1" -D --prefer-offline	# CVE-2021-3807		# DoS
-	enpm install "tough-cookie@^4.1.3" -D --prefer-offline	# CVE-2023-26136	# DT, ID
-	enpm install "got@^11.8.5" -D --prefer-offline		# CVE-2022-33987	# DT
-	enpm install "ip@^1.1.9" -D --prefer-offline		# CVE-2023-42282	# DoS, DT, ID # For npm
-	# request EOL						# CVE-2023-28155	# DT, ID
+#	enpm install "ansi-regex@^4.1.1" -D --prefer-offline	# CVE-2021-3807		# DoS
+#	enpm install "tough-cookie@^4.1.3" -D --prefer-offline	# CVE-2023-26136	# DT, ID
+#	enpm install "got@^11.8.5" -D --prefer-offline		# CVE-2022-33987	# DT
+#	enpm install "ip@^1.1.9" -D --prefer-offline		# CVE-2023-42282	# DoS, DT, ID # For npm
+#	# request EOL						# CVE-2023-28155	# DT, ID
 
 	# css loader
 	enpm install "postcss@^8.4.31" -D --prefer-offline	# CVE-2023-44270	# DT
@@ -115,8 +117,9 @@ npm_update_lock_audit_post() {
 	# lodash.pick						# CVE-2020-8203		# DT, ID
 
 	# Bump parent packages to remove vulnerable dependencies while node 14.x compatible
-	enpm install "npm@8.12.2" -D --prefer-offline
-	enpm install "webpack@^4.47.0" -D --prefer-offline
+#	enpm install "npm@8.12.2" -D --prefer-offline
+
+	enpm install "webpack@^4.47.0" -D --prefer-offline		# 4.x series
 	enpm install "webpack-cli@^4.10.0" -D --prefer-offline
 	enpm install "webpack-serve@^4.0.0" -D --prefer-offline
 
