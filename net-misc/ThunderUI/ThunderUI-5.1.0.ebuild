@@ -47,6 +47,15 @@ BDEPEND+="
 "
 DOCS=( "readme.md" )
 
+npm_update_lock_install_post() {
+	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+		sed -i -e "s|\"braces\": \"~3.0.2\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die
+		sed -i -e "s|\"braces\": \"^2.3.1\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die
+		sed -i -e "s|\"braces\": \"^2.3.2\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die
+		enpm add "braces@3.0.3" -D --prefer-offline # CVE-2024-4068; DoS; High
+	fi
+}
+
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
