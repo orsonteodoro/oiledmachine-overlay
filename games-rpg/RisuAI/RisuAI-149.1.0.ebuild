@@ -4,6 +4,7 @@
 
 EAPI=8
 
+RUST_PV="1.82.0"
 PNPM_SLOT=9
 NODE_VERSION=20
 NPM_AUDIT_FIX_ARGS=( "--legacy-peer-deps" )
@@ -47,7 +48,7 @@ async-process-2.3.0
 async-recursion-1.1.1
 async-signal-0.2.10
 async-task-4.7.1
-async-trait-0.1.85
+async-trait-0.1.86
 atk-0.18.2
 atk-sys-0.18.2
 atomic-waker-1.1.2
@@ -62,15 +63,17 @@ bitflags-1.3.2
 bitflags-2.8.0
 block-0.1.6
 block-buffer-0.10.4
+block-sys-0.2.1
+block2-0.4.0
 block2-0.5.1
 blocking-1.6.1
 brotli-7.0.0
-brotli-decompressor-4.0.1
+brotli-decompressor-4.0.2
 bstr-1.11.3
-bumpalo-3.16.0
+bumpalo-3.17.0
 bytemuck-1.21.0
 byteorder-1.5.0
-bytes-1.9.0
+bytes-1.10.0
 bzip2-0.4.4
 bzip2-sys-0.1.11+1.0.8
 cairo-rs-0.18.5
@@ -79,7 +82,7 @@ camino-1.1.9
 cargo-platform-0.1.9
 cargo_metadata-0.19.1
 cargo_toml-0.21.0
-cc-1.2.10
+cc-1.2.13
 cesu8-1.1.0
 cfb-0.7.3
 cfg-expr-0.15.8
@@ -102,11 +105,11 @@ core-foundation-0.9.4
 core-foundation-sys-0.8.7
 core-graphics-0.24.0
 core-graphics-types-0.2.0
-cpufeatures-0.2.16
+cpufeatures-0.2.17
 crc32fast-1.4.2
 crossbeam-channel-0.5.14
 crossbeam-utils-0.8.21
-crunchy-0.2.2
+crunchy-0.2.3
 crypto-common-0.1.6
 cssparser-0.27.2
 cssparser-macros-0.6.1
@@ -117,10 +120,12 @@ darling_macro-0.20.10
 data-url-0.3.1
 deranged-0.3.11
 derive_arbitrary-1.4.1
-derive_more-0.99.18
+derive_more-0.99.19
 digest-0.10.7
 dirs-5.0.1
+dirs-6.0.0
 dirs-sys-0.4.1
+dirs-sys-0.5.0
 dispatch-0.2.0
 displaydoc-0.2.5
 dlib-0.5.2
@@ -133,7 +138,7 @@ dpi-0.1.1
 dtoa-1.0.9
 dtoa-short-0.3.5
 dunce-1.0.5
-dyn-clone-1.0.17
+dyn-clone-1.0.18
 embed-resource-2.5.1
 embed_plist-1.2.2
 encoding_rs-0.8.35
@@ -182,6 +187,7 @@ generic-array-0.14.7
 gethostname-0.5.0
 getrandom-0.1.16
 getrandom-0.2.15
+getrandom-0.3.1
 gimli-0.31.1
 gio-0.18.4
 gio-sys-0.18.1
@@ -210,19 +216,19 @@ http-body-0.4.6
 http-body-1.0.1
 http-body-util-0.1.2
 http-range-0.1.5
-httparse-1.9.5
+httparse-1.10.0
 httpdate-1.0.3
 hyper-0.14.32
-hyper-1.5.2
+hyper-1.6.0
 hyper-rustls-0.24.2
 hyper-rustls-0.27.5
 hyper-timeout-0.4.1
 hyper-tls-0.5.0
-hyper-tls-0.6.0
 hyper-util-0.1.10
 iana-time-zone-0.1.61
 iana-time-zone-haiku-0.1.2
 ico-0.3.0
+icrate-0.1.2
 icu_collections-1.5.0
 icu_locid-1.5.0
 icu_locid_transform-1.5.0
@@ -278,7 +284,7 @@ minisign-verify-0.2.3
 miniz_oxide-0.8.3
 mio-1.0.3
 muda-0.15.3
-native-tls-0.2.12
+native-tls-0.2.13
 ndk-0.9.0
 ndk-context-0.1.1
 ndk-sys-0.6.0+11769913
@@ -298,10 +304,11 @@ objc2-contacts-0.2.2
 objc2-core-data-0.2.2
 objc2-core-image-0.2.2
 objc2-core-location-0.2.2
-objc2-encode-4.0.3
+objc2-encode-4.1.0
 objc2-foundation-0.2.2
 objc2-link-presentation-0.2.2
 objc2-metal-0.2.2
+objc2-osa-kit-0.2.2
 objc2-quartz-core-0.2.2
 objc2-symbols-0.2.2
 objc2-ui-kit-0.2.2
@@ -309,17 +316,18 @@ objc2-uniform-type-identifiers-0.2.2
 objc2-user-notifications-0.2.2
 objc2-web-kit-0.2.2
 object-0.36.7
-once_cell-1.20.2
+once_cell-1.20.3
 open-5.3.2
-openssl-0.10.68
+openssl-0.10.70
 openssl-macros-0.1.1
-openssl-probe-0.1.5
-openssl-sys-0.9.104
+openssl-probe-0.1.6
+openssl-sys-0.9.105
 option-ext-0.2.0
 ordered-multimap-0.7.3
 ordered-stream-0.2.0
-os_info-3.9.2
+os_info-3.10.0
 os_pipe-1.2.1
+osakit-0.3.0
 pango-0.18.3
 pango-sys-0.18.0
 parking-2.2.1
@@ -342,8 +350,7 @@ phf_macros-0.8.0
 phf_shared-0.10.0
 phf_shared-0.11.3
 phf_shared-0.8.0
-pin-project-1.1.8
-pin-project-internal-1.1.8
+pin-project-1.1.9
 pin-project-lite-0.2.16
 pin-utils-0.1.0
 piper-0.2.4
@@ -364,7 +371,7 @@ proc-macro2-1.0.93
 psl-types-2.0.11
 publicsuffix-2.3.0
 quick-xml-0.32.0
-quick-xml-0.36.2
+quick-xml-0.37.2
 quinn-0.11.6
 quinn-proto-0.11.9
 quinn-udp-0.5.9
@@ -380,6 +387,7 @@ rand_pcg-0.2.1
 raw-window-handle-0.6.2
 redox_syscall-0.5.8
 redox_users-0.4.6
+redox_users-0.5.0
 regex-1.11.1
 regex-automata-0.4.9
 regex-syntax-0.8.5
@@ -390,19 +398,19 @@ ring-0.17.8
 rust-ini-0.21.1
 rustc-demangle-0.1.24
 rustc-hash-1.1.0
-rustc-hash-2.1.0
+rustc-hash-2.1.1
 rustc_version-0.4.1
-rustix-0.38.43
+rustix-0.38.44
 rustls-0.21.12
-rustls-0.23.21
+rustls-0.23.22
 rustls-native-certs-0.6.3
 rustls-pemfile-1.0.4
 rustls-pemfile-2.2.0
-rustls-pki-types-1.10.1
+rustls-pki-types-1.11.0
 rustls-webpki-0.101.7
 rustls-webpki-0.102.8
 rustversion-1.0.19
-ryu-1.0.18
+ryu-1.0.19
 same-file-1.0.6
 schannel-0.1.27
 schemars-0.8.21
@@ -418,7 +426,7 @@ serde-1.0.217
 serde-untagged-0.1.6
 serde_derive-1.0.217
 serde_derive_internals-0.29.1
-serde_json-1.0.137
+serde_json-1.0.138
 serde_repr-0.1.19
 serde_spanned-0.6.8
 serde_urlencoded-0.7.1
@@ -444,13 +452,13 @@ soup3-sys-0.5.0
 spin-0.9.8
 stable_deref_trait-1.2.0
 static_assertions-1.1.0
-string_cache-0.8.7
-string_cache_codegen-0.5.2
+string_cache-0.8.8
+string_cache_codegen-0.5.3
 strsim-0.11.1
 subtle-2.6.1
 swift-rs-1.0.7
 syn-1.0.109
-syn-2.0.96
+syn-2.0.98
 sync_wrapper-0.1.2
 sync_wrapper-1.0.2
 synstructure-0.13.1
@@ -464,7 +472,7 @@ tao-0.31.1
 tao-macros-0.1.3
 tar-0.4.43
 target-lexicon-0.12.16
-tauri-2.2.3
+tauri-2.2.5
 tauri-build-2.0.5
 tauri-codegen-2.0.4
 tauri-macros-2.0.4
@@ -472,17 +480,17 @@ tauri-plugin-2.0.4
 tauri-plugin-deep-link-2.2.0
 tauri-plugin-dialog-2.2.0
 tauri-plugin-fs-2.2.0
-tauri-plugin-http-2.2.0
+tauri-plugin-http-2.3.0
 tauri-plugin-os-2.2.0
 tauri-plugin-process-2.2.0
 tauri-plugin-shell-2.2.0
 tauri-plugin-single-instance-2.2.1
-tauri-plugin-updater-2.3.1
+tauri-plugin-updater-2.5.0
 tauri-runtime-2.3.0
 tauri-runtime-wry-2.3.0
 tauri-utils-2.1.1
 tauri-winres-0.1.1
-tempfile-3.15.0
+tempfile-3.16.0
 tendril-0.4.3
 thin-slice-0.1.1
 thiserror-1.0.69
@@ -505,11 +513,11 @@ tokio-rustls-0.24.1
 tokio-rustls-0.26.1
 tokio-util-0.7.13
 toml-0.7.8
-toml-0.8.19
+toml-0.8.20
 toml_datetime-0.6.8
 toml_edit-0.19.15
 toml_edit-0.20.7
-toml_edit-0.22.22
+toml_edit-0.22.23
 tower-0.5.2
 tower-layer-0.3.3
 tower-service-0.3.3
@@ -527,7 +535,7 @@ unic-char-range-0.9.0
 unic-common-0.9.0
 unic-ucd-ident-0.9.0
 unic-ucd-version-0.9.0
-unicode-ident-1.0.14
+unicode-ident-1.0.16
 unicode-segmentation-1.12.0
 untrusted-0.9.0
 url-2.5.4
@@ -535,7 +543,7 @@ urlpattern-0.3.0
 utf-8-0.7.6
 utf16_iter-1.0.5
 utf8_iter-1.0.4
-uuid-1.12.0
+uuid-1.13.1
 vcpkg-0.2.15
 version-compare-0.2.0
 version_check-0.9.5
@@ -544,6 +552,7 @@ vswhom-sys-0.1.2
 walkdir-2.5.0
 want-0.3.1
 wasi-0.11.0+wasi-snapshot-preview1
+wasi-0.13.3+wasi-0.2.2
 wasi-0.9.0+wasi-snapshot-preview1
 wasm-bindgen-0.2.100
 wasm-bindgen-backend-0.2.100
@@ -552,16 +561,16 @@ wasm-bindgen-macro-0.2.100
 wasm-bindgen-macro-support-0.2.100
 wasm-bindgen-shared-0.2.100
 wasm-streams-0.4.2
-wayland-backend-0.3.7
-wayland-client-0.31.7
-wayland-protocols-0.32.5
-wayland-scanner-0.31.5
-wayland-sys-0.31.5
+wayland-backend-0.3.8
+wayland-client-0.31.8
+wayland-protocols-0.32.6
+wayland-scanner-0.31.6
+wayland-sys-0.31.6
 web-sys-0.3.77
 web-time-1.1.0
 webkit2gtk-2.0.1
 webkit2gtk-sys-2.0.1
-webpki-roots-0.26.7
+webpki-roots-0.26.8
 webview2-com-0.34.0
 webview2-com-macros-0.8.0
 webview2-com-sys-0.34.0
@@ -620,9 +629,10 @@ windows_x86_64_msvc-0.48.5
 windows_x86_64_msvc-0.52.6
 windows_x86_64_msvc-0.53.0
 winnow-0.5.40
-winnow-0.6.24
+winnow-0.7.1
 winreg-0.50.0
 winreg-0.52.0
+wit-bindgen-rt-0.33.0
 write16-1.0.0
 writeable-0.5.5
 wry-0.48.1
@@ -632,9 +642,9 @@ xattr-1.4.0
 xdg-home-1.3.0
 yoke-0.7.5
 yoke-derive-0.7.5
-zbus-5.3.0
-zbus_macros-5.3.0
-zbus_names-4.1.1
+zbus-5.5.0
+zbus_macros-5.5.0
+zbus_names-4.2.0
 zerocopy-0.7.35
 zerocopy-derive-0.7.35
 zerofrom-0.1.5
@@ -647,9 +657,9 @@ zip-2.2.2
 zstd-0.11.2+zstd.1.5.2
 zstd-safe-5.0.2+zstd.1.5.2
 zstd-sys-2.0.13+zstd.1.5.6
-zvariant-5.2.0
-zvariant_derive-5.2.0
-zvariant_utils-3.1.0
+zvariant-5.4.0
+zvariant_derive-5.4.0
+zvariant_utils-3.2.0
 "
 
 inherit cargo edo electron-app lcnr npm xdg
@@ -722,11 +732,11 @@ TAURI_RDEPEND="
 	${RUST_BINDINGS_DEPEND}
 	|| (
 		(
-			=dev-lang/rust-bin-1.82*
+			=dev-lang/rust-bin-${RUST_PV%.*}*
 			dev-lang/rust-bin:=
 		)
 		(
-			=dev-lang/rust-1.82*
+			=dev-lang/rust-${RUST_PV%.*}*
 			dev-lang/rust:=
 		)
 	)
@@ -752,7 +762,7 @@ ewarn "This ebuild is still in development"
 	rust_pkg_setup
 }
 
-pnpm_unpack_post() {
+pnpm_install_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		enpm add -D "vite@${VITE_PV}" ${NPM_INSTALL_ARGS[@]}
 	fi
@@ -817,10 +827,20 @@ einfo "Adding Cargo.lock"
 
 src_unpack() {
 einfo "Unpacking npm packages"
+	if has_version "dev-lang/rust:${RUST_PV}" ; then
+		rust_prepend_path "${RUST_PV}" "source"
+	elif has_version "dev-lang/rust-bin:${RUST_PV}" ; then
+		rust_prepend_path "${RUST_PV}" "binary"
+	fi
+einfo "PATH: ${PATH}"
+	rustc --version
 	local rust_pv=$(rustc --version \
 		| cut -f 2 -d " ")
-	if ver_test "${rust_pv%.*}" -ne "1.82" ; then
-eerror "Switch rust to ${rust_pv%.*} via \`eselect rust\`"
+
+	if ver_test "${rust_pv%.*}" -ne "${RUST_PV%.*}" ; then
+eerror "Switch rust to ${RUST_PV%.*} via \`eselect rust\`"
+eerror "rust_pv: ${rust_pv%.*}"
+eerror "RUST_PV: ${RUST_PV%.*}"
 		die
 	fi
 	unpack ${A}
