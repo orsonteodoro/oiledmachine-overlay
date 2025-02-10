@@ -89,6 +89,8 @@ npm_update_lock_audit_post() {
 
 #		sed -i -e "s|\"ip\": \"1.1.5\"|\"ip\": \"1.1.9\"|g" "package-lock.json" || die
 #		sed -i -e "s|\"ip\": \"^1.1.5\"|\"ip\": \"1.1.9\"|g" "package-lock.json" || die
+
+		sed -i -e "s|\"cheerio\": \"^0.22.0\"|\"cheerio\": \"1.0.0\"|g" "package-lock.json" || die
 	}
 	localfile_edits
 
@@ -117,6 +119,7 @@ npm_update_lock_audit_post() {
 
 	# cheerio, parent webpack
 	# lodash.pick						# CVE-2020-8203		# DT, ID
+	enpm install "cheerio@1.0.0" -D --prefer-offline	# Bump version to prune lodash.pick
 
 	# Bump parent packages to remove vulnerable dependencies while node 14.x compatible
 #	enpm install "npm@8.12.2" -D --prefer-offline
