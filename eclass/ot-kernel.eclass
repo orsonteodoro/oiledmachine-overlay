@@ -474,6 +474,19 @@ VULNERABILITIES_FIXED=(
 # High and critical are noted and only those that are fixed on this release day
 # Medium and low are shown optionally.
 
+	"CVE-2025-21687;;"
+	"CVE-2025-21693;;"
+	"CVE-2025-21692;;"
+	"CVE-2025-21691;;"
+	"CVE-2025-21690;;"
+	"CVE-2025-21689;;"
+	"CVE-2025-21688;;"
+	"CVE-2024-57950;;"
+	"CVE-2025-21686;;"
+	"CVE-2025-21685;;"
+	"CVE-2024-57949;;"
+	"CVE-2025-21684;;"
+
 	"CVE-2025-21671;DoS, DT, ID;High"
 	"CVE-2025-21680;DoS, DT, ID;High"
 	"CVE-2025-21673;DoS;Medium"

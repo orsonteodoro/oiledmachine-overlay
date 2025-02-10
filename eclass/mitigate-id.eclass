@@ -228,7 +228,7 @@ IUSE+="
 	+enforce
 	firmware
 	kvm
-	zero-tolerance
+	+zero-tolerance
 	ebuild_revision_9
 "
 # The !custom-kernel is required for RDEPEND to work properly to download the

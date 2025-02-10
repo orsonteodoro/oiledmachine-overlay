@@ -3,25 +3,25 @@
 
 EAPI=8
 
-GENPATCHES_FALLBACK_COMMIT="048b8bf91f9c66c86e37d33b654cc9a92b087322" # 2024-10-21 09:33:31 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="	f66d6acccbc08b4146f4c2cf9445241f70f5517d" # 2024-11-17 09:35:51 -0800
-RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
+GENPATCHES_FALLBACK_COMMIT="7847c71705cc92ba9e9b1d8728fa8692270170e8" # 2024-11-30 12:29:45 -0500
+LINUX_SOURCES_FALLBACK_COMMIT="595523945be0a5a2f12a1c04772383293fbc04a1" # 2025-01-17 15:01:24 -0800
+RC_PV="rc7" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
-# https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.12
+# https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.13
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-CLEAR_LINUX_PATCHES_VER="6.12.11-1537"
+CLEAR_LINUX_PATCHES_VER="6.13.1-1540"
 EBUILD_REV="ebuild_revision_6"
-GENPATCHES_VER="15" # can be live only when 9999
-PATCH_PROJC_VER="6.12-r1"
-PATCH_RT_VER="6.12.8-rt8"
+GENPATCHES_VER="3" # can be live only when 9999
+PATCH_PROJC_VER="6.13-r0"
+PATCH_RT_VER="6.13-rt5"
 
-inherit ot-kernel-v6.12
+inherit ot-kernel-v6.13
 
 # See also,
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel.eclass
-# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v6.12.eclass
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v6.13.eclass
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  modularize-ebuild-as-milestone-eclasses

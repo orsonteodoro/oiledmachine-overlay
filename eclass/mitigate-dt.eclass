@@ -114,7 +114,7 @@ IUSE+="
 	+enforce
 	firmware
 	kvm
-	zero-tolerance
+	+zero-tolerance
 	ebuild_revision_0
 "
 REQUIRED_USE="

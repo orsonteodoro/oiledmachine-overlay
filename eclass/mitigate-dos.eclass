@@ -116,7 +116,7 @@ IUSE+="
 	+enforce
 	firmware
 	xen
-	zero-tolerance
+	+zero-tolerance
 	ebuild_revision_3
 "
 REQUIRED_USE="
