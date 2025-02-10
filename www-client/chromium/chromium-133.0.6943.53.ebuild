@@ -50,17 +50,17 @@ EAPI=8
 # /var/tmp/portage/www-client/chromium-133.0.6943.53/work/chromium-133.0.6943.53/third_party/flac/BUILD.gn			L122	; newer than generated_package_lists
 # /var/tmp/portage/www-client/chromium-133.0.6943.53/work/chromium-133.0.6943.53/third_party/fontconfig/src/fontconfig/fontconfig.h L54 ; newer than generated_package_lists
 # /var/tmp/portage/www-client/chromium-133.0.6943.53/work/chromium-133.0.6943.53/third_party/freetype/src/CMakeLists.txt	L165	; newer than generated_package_lists *
-# /var/tmp/portage/www-client/chromium-133.0.6943.53/work/chromium-133.0.6943.53/third_party/harfbuzz-ng/src/configure.ac	L3	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-133.0.6943.53/work/chromium-133.0.6943.53/third_party/third_party/harfbuzz-ng/README.chromium	; newer than generated_package_lists *
 # /var/tmp/portage/www-client/chromium-133.0.6943.53/work/chromium-133.0.6943.53/third_party/icu/source/configure		L585	; newer than generated_package_lists
 # /var/tmp/portage/www-client/chromium-133.0.6943.53/work/chromium-133.0.6943.53/third_party/libdrm/src/meson.build		L24	; newer than generated_package_lists *
 # /var/tmp/portage/www-client/chromium-133.0.6943.53/work/chromium-133.0.6943.53/third_party/libjpeg_turbo/jconfig.h		L7	; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-133.0.6943.53/work/chromium-133.0.6943.53/third_party/libwebp/src/configure.ac		L1	; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-133.0.6943.53/work/chromium-133.0.6943.53/third_party/libwebp/src/configure.ac		L1	; newer than generated_package_lists *
 # /var/tmp/portage/www-client/chromium-133.0.6943.53/work/chromium-133.0.6943.53/third_party/openh264/src/meson.build		L2
 # /var/tmp/portage/www-client/chromium-133.0.6943.53/work/chromium-133.0.6943.53/third_party/opus/README.chromium		L3	; newer than generated_package_lists, live
 #   https://gitlab.xiph.org/xiph/opus/-/commit/8cf872a186b96085b1bb3a547afd598354ebeb87							; see tag
-# /var/tmp/portage/www-client/chromium-133.0.6943.53/work/chromium-133.0.6943.53/third_party/zstd/README.chromium			; live version
-#   https://github.com/facebook/zstd/commit/0ff651dd876823b99fa5c5f53292be28381aee9b							; check if commit part of tag
-#   https://github.com/facebook/zstd/blob/0ff651dd876823b99fa5c5f53292be28381aee9b/lib/zstd.h#L107					; version
+# /var/tmp/portage/www-client/chromium-133.0.6943.53/work/chromium-133.0.6943.53/third_party/zstd/README.chromium			; live version *
+#   https://github.com/facebook/zstd/commit/b0a179d469680276adbd4007435989a6b7fd8b4f							; check if commit part of tag
+#   https://github.com/facebook/zstd/blob/b0a179d469680276adbd4007435989a6b7fd8b4f/lib/zstd.h#L107					; version
 # https://github.com/chromium/chromium/blob/133.0.6943.53/DEPS#L512									; live
 
 CFI_CAST=0 # Global variable
@@ -1066,7 +1066,7 @@ COMMON_SNAPSHOT_DEPEND="
 		media-libs/freetype:=
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-8.5.0:0[${MULTILIB_USEDEP},icu(-)]
+		>=media-libs/harfbuzz-10.1.0:0[${MULTILIB_USEDEP},icu(-)]
 		media-libs/harfbuzz:=
 	)
 	system-icu? (
@@ -1086,7 +1086,7 @@ COMMON_SNAPSHOT_DEPEND="
 		media-libs/libpng:=
 	)
 	system-libwebp? (
-		>=media-libs/libwebp-1.4.0[${MULTILIB_USEDEP}]
+		>=media-libs/libwebp-1.5.0[${MULTILIB_USEDEP}]
 		media-libs/libwebp:=
 	)
 	system-libxml? (
@@ -1106,7 +1106,7 @@ COMMON_SNAPSHOT_DEPEND="
 		sys-libs/zlib:=
 	)
 	system-zstd? (
-		>=app-arch/zstd-1.5.6[${MULTILIB_USEDEP}]
+		>=app-arch/zstd-1.5.7[${MULTILIB_USEDEP}]
 		app-arch/zstd:=
 	)
 "
