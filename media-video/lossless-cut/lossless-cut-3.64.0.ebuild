@@ -14,7 +14,7 @@ _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
 	ELECTRON_APP_ELECTRON_PV="34.1.1" # Cr 132.0.6834.194, node 20.18.1
-	#ELECTRON_APP_ELECTRON_PV="35.0.0-beta.2" # Cr 134.0.6968.0, node 22.9.0 ; breaks
+	#ELECTRON_APP_ELECTRON_PV="35.0.0-beta.4" # Cr 134.0.6968.0, node 22.9.0 ; breaks
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="31.3.1" # Cr 126.0.6478.185, node 20.15.1
@@ -123,18 +123,28 @@ pkg_setup() {
 }
 
 yarn_unpack_post() {
+#	die
 	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
 einfo "Removing file-type patch"
 		sed -i -e "s|\"file-type\": \"patch:file-type@npm%3A19.4.1#~/.yarn/patches/file-type-npm-19.4.1-d18086444c.patch\"|\"file-type\": \"19.4.1\"|g" "package.json" || die
+	fi
+	eapply "${FILESDIR}/${PN}-3.64.0-sweetalert2-scss.patch"
+}
 
-		enpm install "electron@${ELECTRON_APP_ELECTRON_PV}" -D --prefer-offline ${NPM_INSTALL_ARGS}
+yarn_update_lock_install_post() {
+	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
+		:
 	fi
 }
 
 yarn_update_lock_yarn_import_post() {
 	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
-	# Unbreak build
-		eyarn add "sweetalert2@11.11.0" -D
+		eyarn add "typescript@5.5.4" -D									# Fix runtime breakage
+
+		sed -i -e "s|node-fetch: \"npm:^1.0.1\"|node-fetch: \"npm:^2.6.7\"|g" "yarn.lock" || die	# CVE-2022-0235, GHSA-r683-j2x4-v87g; DoS, DT, ID; High
+		eyarn add "node-fetch@2.6.7" -D
+
+		eyarn add "electron@${ELECTRON_APP_ELECTRON_PV}" -D
 
 einfo "Adding file-type patch"
 		sed -i -e "s|\"file-type\": \"19.4.1\"|\"file-type\": \"patch:file-type@npm%3A19.4.1#~/.yarn/patches/file-type-npm-19.4.1-d18086444c.patch\"|g" "package.json" || die
@@ -176,11 +186,10 @@ src_compile() {
 	yarn --version || die
 	electron-app_cp_electron
 
-	electron-vite build || die
-        electron-builder \
-                $(electron-app_get_electron_platarch_args) \
-                -l dir \
-                || die
+	edo electron-vite build
+	edo electron-builder \
+		$(electron-app_get_electron_platarch_args) \
+		-l dir
 	grep -q -e "failedTask" "${T}/build.log" && die "Detected error"
 	grep -q -e "Error:" "${T}/build.log" && die "Detected error"
 	grep -q -e "Failed with errors" "${T}/build.log" && die "Detected error"

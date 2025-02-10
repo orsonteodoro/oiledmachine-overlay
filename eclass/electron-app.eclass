@@ -1043,20 +1043,20 @@ EOF
 	doexe "${T}/${name}"
 }
 
-#https://github.com/electron/electron/releases/tag/v21.4.4
+# https://github.com/electron/electron/releases/tag/v21.4.4
 # @FUNCTION: electron-app_get_electron_platarch
 # @DESCRIPTION:
 # Gets the platform and architecture for electron tarballs.
 electron-app_get_electron_platarch() {
-	if use kernel_linux && use arm64 ; then
+	if use kernel_linux && [[ "${ARCH}" == "arm64" ]] ; then
 		echo "linux-arm64"
-	elif use kernel_linux && use arm ; then
+	elif use kernel_linux && [[ "${ARCH}" == "arm" ]] ; then
 		echo "linux-armv7l"
-	elif use kernel_linux && use amd64 ; then
+	elif use kernel_linux && [[ "${ARCH}" == "amd64" ]] ; then
 		echo "linux-x64"
-	elif use kernel_Darwin && use arm64-macos ; then
+	elif use kernel_Darwin && [[ "${ARCH}" == "arm64-macos" ]] ; then
 		echo "darwin-arm64"
-	elif use kernel_Darwin && use x64-macos ; then
+	elif use kernel_Darwin && [[ "${ARCH}" == "x64-macos" ]] ; then
 		echo "darwin-x64"
 	fi
 }
@@ -1151,27 +1151,28 @@ electron-app_get_electron_platarch_args() {
 			--linux
 		)
 	fi
-	if use kernel_linux && use arm64 ; then
+	if use kernel_linux && [[ "${ARCH}" == "arm64" ]] ; then
 		args+=(
 			--arm64
 		)
-	elif use kernel_linux && use arm ; then
+	elif use kernel_linux && [[ "${ARCH}" == "arm" ]] ; then
 		args+=(
 			--armv7l
 		)
-	elif use kernel_linux && use amd64 ; then
+	elif use kernel_linux && [[ "${ARCH}" == "amd64" ]] ; then
+		args+=(
+			--x64
+		)
+	elif use kernel_Darwin && [[ "${ARCH}" == "arm64-macos" ]] ; then
 		args+=(
 			--arm64
 		)
-	elif use kernel_Darwin && use arm64-macos ; then
-		args+=(
-			--arm64
-		)
-	elif use kernel_Darwin && use x64-macos ; then
+	elif use kernel_Darwin && [[ "${ARCH}" == "x64-macos" ]] ; then
 		args+=(
 			--x64
 		)
 	fi
+	echo ${args[@]}
 }
 
 # @FUNCTION: electron-app_set_sharp_env
