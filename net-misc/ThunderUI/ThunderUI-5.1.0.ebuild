@@ -35,7 +35,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND+="
 	net-libs/nodejs:18[webassembly(+)]
