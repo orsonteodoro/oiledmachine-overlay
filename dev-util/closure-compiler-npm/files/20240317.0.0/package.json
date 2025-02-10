@@ -30,7 +30,9 @@
     "url": "https://github.com/google/closure-compiler/issues"
   },
   "homepage": "https://developers.google.com/closure/compiler/",
-  "dependencies": {},
+  "dependencies": {
+    "braces": "^3.0.3"
+  },
   "devDependencies": {
     "glob": "7.x",
     "graphlib": "2.x",

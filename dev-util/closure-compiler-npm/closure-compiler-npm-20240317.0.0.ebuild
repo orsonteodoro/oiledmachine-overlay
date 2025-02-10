@@ -614,6 +614,16 @@ eerror
 	bazel_setup_bazelrc
 }
 
+npm_update_lock_audit_post() {
+	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+einfo "Fixing vulnerabilities"
+		sed -i -e "s|\"braces\": \"^2.3.1\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die
+		sed -i -e "s|\"braces\": \"^2.3.2\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die
+		sed -i -e "s|\"braces\": \"~3.0.2\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die
+		enpm install "braces@3.0.3"			# CVE-2024-4068; DoS, High
+	fi
+}
+
 src_unpack() {
 	unpack ${FN_DEST}
 	unpack ${FN_DEST2}
