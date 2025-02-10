@@ -351,6 +351,7 @@ phf_shared-0.10.0
 phf_shared-0.11.3
 phf_shared-0.8.0
 pin-project-1.1.9
+pin-project-internal-1.1.9
 pin-project-lite-0.2.16
 pin-utils-0.1.0
 piper-0.2.4
