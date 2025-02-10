@@ -402,7 +402,7 @@ IUSE+="
 	doc
 	java
 	test
-	r1
+	ebuild_revision_2
 "
 REQUIRED_USE+="
 	java
