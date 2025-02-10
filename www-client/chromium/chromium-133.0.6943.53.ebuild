@@ -143,8 +143,8 @@ GTK4_PV="4.8.3"
 LIBVA_PV="2.17.0"
 # SHA512 about_credits.html fingerprint: \
 LICENSE_FINGERPRINT="\
-ef3da89b70818be764547428bdffc233f222d739400529e6e76d8123d67e8c2c\
-8903a30587f81f5a169e9d7319a7dc0a68d01c562cff753d681dc31e973b3e59\
+df359517f82d909f7525d5b76f9dc06ee267a9a45d33970a6f4b93db2738625d\
+b04a0ce23544c94147c65c6c696e3b1fae837fb37b67f06565649c3f858f7632\
 "
 LLVM_COMPAT=( 20 19 ) # [inclusive, inclusive] high to low ; LLVM_OFFICIAL_SLOT+1 or LLVM_OFFICIAL_SLOT-1 major version allowed.
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}" # Max is the same slot listed in https://github.com/chromium/chromium/blob/133.0.6943.53/tools/clang/scripts/update.py#L42
@@ -157,9 +157,9 @@ MITIGATION_DATE="Feb 4, 2025" # Official annoucement (blog)
 MITIGATION_LAST_UPDATE=1738609320 # From `date +%s -d "2025-02-03 11:02 AM PST"` From tag in GH
 MITIGATION_URI="https://chromereleases.googleblog.com/2025/02/stable-channel-update-for-desktop.html"
 VULNERABILITIES_FIXED=(
-	"CVE-2025-0444;UAF;"
-	"CVE-2025-0445;;"
-	"CVE-2025-0451;;"
+	"CVE-2025-0444;DoS, DT, ID;Medium"
+	"CVE-2025-0451;DoS, DT, ID;Medium"
+	"CVE-2025-0445;DT, ID;Medium"
 )
 NABIS=0 # Global variable
 NODE_VERSION=22
@@ -579,7 +579,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 +accessibility bindist bluetooth +bundled-libcxx +cfi -cet +cups
 +css-hyphen -debug +drumbrake +encode +extensions ffmpeg-chromium firejail
--gtk4 -hangouts -headless +hidpi +jit +js-type-check +kerberos +mdns +ml mold
+-gtk4 -hangouts -headless +hidpi +jit +js-type-check +kerberos +mdns mold
 +mpris -official +partitionalloc pax-kernel +pdf pic +pgo +plugins +pointer-compression
 +pre-check-vaapi
 +pulseaudio +reporting-api qt6 +screencast selinux
@@ -703,6 +703,12 @@ DISTRO_REQUIRE_USE="
 #
 #	extensions
 #	!partitionalloc
+#
+# Dawn needs partition alloc
+#ERROR Unresolved dependencies.
+#//third_party/dawn/src/dawn/partition_alloc:partition_alloc(//build/toolchain/linux:clang_x64)
+#  needs //base/allocator/partition_allocator:partition_alloc(//build/toolchain/linux:clang_x64)
+#
 REQUIRED_USE+="
 	${PATENT_USE_FLAGS}
 	!headless (
@@ -717,6 +723,7 @@ REQUIRED_USE+="
 	^^ (
 		${IUSE_LIBCXX[@]}
 	)
+	partitionalloc
 	cfi? (
 		!mold
 		!system-dav1d
@@ -791,7 +798,6 @@ REQUIRED_USE+="
 		libaom
 		llvm_slot_19
 		mdns
-		ml
 		mpris
 		openh264
 		opus
@@ -876,7 +882,6 @@ if is_cromite_compatible ; then
 			!official
 			!openh264
 			!mdns
-			!ml
 			!reporting-api
 			!system-toolchain
 			!widevine
@@ -899,7 +904,6 @@ if [[ "${UNGOOGLED_CHROMIUM_PV%-*}" == "${PV}" ]] ; then
 		ungoogled-chromium? (
 			!hangouts
 			!mdns
-			!ml
 			!pgo
 			!reporting-api
 		)
@@ -2218,8 +2222,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 
 	PATCHES+=(
 		"${FILESDIR}/extra-patches/${PN}-123.0.6312.58-zlib-selective-simd.patch"
-		"${FILESDIR}/extra-patches/${PN}-129.0.6668.70-qt6-split.patch"
-		"${FILESDIR}/extra-patches/${PN}-129.0.6668.58-disable-speech.patch"
+		"${FILESDIR}/extra-patches/${PN}-133.0.6943.53-disable-speech.patch"
 	)
 
 	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
@@ -2233,8 +2236,6 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		)
 	else
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-numeric_h-for-iota.patch"
-			"${FILESDIR}/extra-patches/${PN}-129.0.6668.58-include-thread-pool.patch"
 			"${FILESDIR}/extra-patches/${PN}-130.0.6723.91-mold.patch"
 		)
 	fi
@@ -2273,20 +2274,10 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	fi
 
 	PATCHES+=(
-		"${FILESDIR}/extra-patches/${PN}-130.0.6723.91-custom-optimization-level.patch"
+		"${FILESDIR}/extra-patches/${PN}-133.0.6943.53-custom-optimization-level.patch"
 	)
 	if ! use official ; then
 	# This section contains significant changes.  The above sections contains minor changes.
-
-		if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
-			PATCHES+=(
-				"${FILESDIR}/extra-patches/${PN}-131.0.6778.69-disable-tflite-ungoogled-chromium.patch"
-			)
-		else
-			PATCHES+=(
-				"${FILESDIR}/extra-patches/${PN}-131.0.6778.69-disable-tflite.patch"
-			)
-		fi
 
 		PATCHES+=(
 			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-perfetto.patch"
@@ -2307,7 +2298,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		fi
 		if ! use partitionalloc ; then
 			PATCHES+=(
-				"${FILESDIR}/extra-patches/${PN}-129.0.6668.58-partitionalloc-false.patch"
+				"${FILESDIR}/extra-patches/${PN}-133.0.6943.53-partitionalloc-false.patch"
 			)
 		fi
 	fi
@@ -3870,7 +3861,6 @@ ewarn "The new V8 Sandbox [for the JavaScript engine] (2024) will be automagic o
 	myconf_gn+=" enable_screen_ai_service=true" # Required by chrome/renderer:renderer
 
 	if use headless ; then
-		myconf_gn+=" build_with_tflite_lib=false"
 		myconf_gn+=" enable_extensions=false"
 		myconf_gn+=" enable_pdf=false"
 		myconf_gn+=" use_atk=false"
@@ -3881,7 +3871,6 @@ ewarn "The new V8 Sandbox [for the JavaScript engine] (2024) will be automagic o
 		myconf_gn+=" rtc_use_pipewire=false"
 		myconf_gn+=" toolkit_views=false"
 	else
-		myconf_gn+=" build_with_tflite_lib=$(usex ml true false)"
 		myconf_gn+=" enable_extensions=$(usex extensions true false)"
 		myconf_gn+=" enable_pdf=true" # required by chrome/browser/ui/lens:browser_tests and toolkit_views=true
 		myconf_gn+=" gtk_version=$(usex gtk4 4 3)"
@@ -4355,7 +4344,6 @@ einfo "Configuring bundled ffmpeg..."
 		else
 			myconf_gn+=" use_qt6=false"
 		fi
-		myconf_gn+=" use_qt5=$(usex qt5 true false)"
 		myconf_gn+=" use_qt6=$(usex qt6 true false)"
 		myconf_gn+=" ozone_platform_x11=$(usex X true false)"
 		myconf_gn+=" ozone_platform_wayland=$(usex wayland true false)"
