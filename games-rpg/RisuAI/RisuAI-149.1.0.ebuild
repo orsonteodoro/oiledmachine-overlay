@@ -732,11 +732,11 @@ TAURI_RDEPEND="
 	${RUST_BINDINGS_DEPEND}
 	|| (
 		(
-			=dev-lang/rust-bin-${RUST_PV%.*}*
+			=dev-lang/rust-bin-${RUST_PV}
 			dev-lang/rust-bin:=
 		)
 		(
-			=dev-lang/rust-${RUST_PV%.*}*
+			=dev-lang/rust-${RUST_PV}
 			dev-lang/rust:=
 		)
 	)
@@ -837,10 +837,13 @@ einfo "PATH: ${PATH}"
 	local rust_pv=$(rustc --version \
 		| cut -f 2 -d " ")
 
-	if ver_test "${rust_pv%.*}" -ne "${RUST_PV%.*}" ; then
-eerror "Switch rust to ${RUST_PV%.*} via \`eselect rust\`"
-eerror "rust_pv: ${rust_pv%.*}"
-eerror "RUST_PV: ${RUST_PV%.*}"
+	if ver_test "${rust_pv}" -ne "${RUST_PV}" ; then
+eerror
+eerror "Switch rust to ${RUST_PV} via \`eselect rust\`"
+eerror
+eerror "Current Rust version: ${rust_pv}"
+eerror "Expected Rust version: ${RUST_PV}"
+eerror
 		die
 	fi
 	unpack ${A}
