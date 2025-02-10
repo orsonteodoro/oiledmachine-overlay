@@ -51,6 +51,7 @@
     "style-loader": "^0.23.1",
     "styled-jsx": "^3.2.1",
     "terser-webpack-plugin": "^2.3.0",
+    "tough-cookie": "^4.1.4",
     "webpack": "^4.47.0",
     "webpack-cli": "^4.10.0",
     "webpack-serve": "^4.0.0"
