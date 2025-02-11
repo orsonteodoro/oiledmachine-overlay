@@ -85,7 +85,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_5
+ebuild_revision_7
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -160,21 +160,27 @@ src_unpack() {
 
 		patch_edits() {
 			pushd "sticker-creator" >/dev/null 2>&1 || die
-				sed -i -e "s|\"happy-dom\": \"8.9.0\"|\"happy-dom\": \"15.10.2\"|g" "package-lock.json" || die		# CVE-2024-51757; DoS, DT, ID; Critical
-				sed -i -e "s|\"rollup\": \"^3.27.1\"|\"rollup\": \"^3.29.5\"|g" "package-lock.json" || die		# CVE-2024-47068; DT, ID; Medium
-				sed -i -e "s|\"vite\": \"4.5.3\"|\"vite\": \"4.5.6\"|g" "package-lock.json" || die			# CVE-2025-24010; ID; Medium
-																	# CVE-2024-45812; DoS, DT, ID; Medium
-																	# CVE-2024-45811; ID; Medium
-				sed -i -e "s|\"cross-spawn\": \"^6.0.5\"|\"cross-spawn\": \"^6.0.6\"|g" "package-lock.json" || die	# CVE-2024-21538; DoS; High
+				sed -i -e "s|\"cross-spawn\": \"^6.0.5\"|\"cross-spawn\": \"^6.0.6\"|g" "package-lock.json" || die								# CVE-2024-21538; DoS; High
+				sed -i -e "s|\"esbuild\": \"^0.18.10\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die									# GHSA-67mh-4wv8-2f99; ID; Moderate
+				sed -i -e "s|\"happy-dom\": \"8.9.0\"|\"happy-dom\": \"15.10.2\"|g" "package-lock.json" || die									# CVE-2024-51757; DoS, DT, ID; Critical
+				sed -i -e "s|\"rollup\": \"^3.27.1\"|\"rollup\": \"^3.29.5\"|g" "package-lock.json" || die									# CVE-2024-47068; DT, ID; Medium
+				sed -i -e "s|\"vite\": \"4.5.3\"|\"vite\": \"4.5.6\"|g" "package-lock.json" || die										# CVE-2025-24010; ID; Medium
+																								# CVE-2024-45812; DoS, DT, ID; Medium
+																								# CVE-2024-45811; ID; Medium
 			popd >/dev/null 2>&1 || die
 			pushd "danger" >/dev/null 2>&1 || die
-				sed -i -e "s|\"cross-spawn\": \"^7.0.3\"|\"cross-spawn\": \"^7.0.5\"|g" "package-lock.json" || die	# CVE-2024-21538; DoS; High
-				sed -i -e "s|\"micromatch\": \"^4.0.2\"|\"micromatch\": \"^4.0.8\"|g" "package-lock.json" || die	# CVE-2024-4067; DoS; Medium
-				sed -i -e "s|\"micromatch\": \"^4.0.4\"|\"micromatch\": \"^4.0.8\"|g" "package-lock.json" || die	# CVE-2024-4067; DoS; Medium
+				sed -i -e "s|\"cross-spawn\": \"^7.0.3\"|\"cross-spawn\": \"^7.0.5\"|g" "package-lock.json" || die								# CVE-2024-21538; DoS; High
+				sed -i -e "s|\"micromatch\": \"^4.0.2\"|\"micromatch\": \"^4.0.8\"|g" "package-lock.json" || die								# CVE-2024-4067; DoS; Medium
+				sed -i -e "s|\"micromatch\": \"^4.0.4\"|\"micromatch\": \"^4.0.8\"|g" "package-lock.json" || die								# CVE-2024-4067; DoS; Medium
 			popd >/dev/null 2>&1 || die
-			sed -i -e "s|\"got\": \"^11.7.0\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die				# CVE-2022-33987; DT; Medium
-			sed -i -e "s|\"got\": \"^11.8.2\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die				# CVE-2022-33987; DT; Medium
-			sed -i -e "s|\"got\": \"^6.7.1\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die				# CVE-2022-33987; DT; Medium
+			sed -i -e "s|\"electron\": \"^23.1.2\"|\"electron\": \"^${ELECTRON_APP_ELECTRON_PV}\"|g" "package-lock.json" || die							# CVE-2023-44402; DoS, DT, ID; High
+			sed -i -e "s|\"esbuild\": \"0.24.0\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die										# GHSA-67mh-4wv8-2f99; ID; Moderate
+			sed -i -e "s#\"esbuild\": \"^0.18.0 || ^0.19.0 || ^0.20.0 || ^0.21.0 || ^0.22.0 || ^0.23.0 || ^0.24.0\"#\"esbuild\": \"^0.25.0\"#g" "package-lock.json" || die		# GHSA-67mh-4wv8-2f99; ID; Moderate
+			sed -i -e "s#\"esbuild\": \"^0.18.0 || ^0.19.0 || ^0.20.0\"#\"esbuild\": \"^0.25.0\"#g" "package-lock.json" || die							# GHSA-67mh-4wv8-2f99; ID; Moderate
+			sed -i -e "s#\"esbuild\": \">=0.12 <1\"#\"esbuild\": \"^0.25.0\"#g" "package-lock.json" || die										# GHSA-67mh-4wv8-2f99; ID; Moderate
+			sed -i -e "s|\"got\": \"^11.7.0\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die											# CVE-2022-33987; DT; Medium
+			sed -i -e "s|\"got\": \"^11.8.2\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die											# CVE-2022-33987; DT; Medium
+			sed -i -e "s|\"got\": \"^6.7.1\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die											# CVE-2022-33987; DT; Medium
 		}
 		patch_edits
 
@@ -182,6 +188,7 @@ src_unpack() {
 		pushd "sticker-creator" >/dev/null 2>&1 || die
 			deps=(
 				"cross-spawn@6.0.6"
+				"esbuild@0.25.0"
 				"happy-dom@15.10.2"
 				"rollup@3.29.5"
 				"vite@4.5.6"
@@ -198,6 +205,7 @@ src_unpack() {
 		popd >/dev/null 2>&1 || die
 
 		deps=(
+			"esbuild@0.25.0"
 			"got@11.8.5"
 		)
 		enpm install ${deps[@]} -P ${NPM_INSTALL_ARGS[@]}
@@ -205,9 +213,12 @@ src_unpack() {
 		enpm audit fix ${NPM_AUDIT_FIX_ARGS[@]}
 
 	# Required for custom version bump
+ewarn "QA:  Manually remove node_modules/react-devtools/node_modules/electron from package-lock.json"												# CVE-2023-44402
 		enpm install "electron@${ELECTRON_APP_ELECTRON_PV}" -D --prefer-offline
 
+		patch_edits
 		enpm dedupe
+		patch_edits
 
 		sed -i -e "s|disabled_postinstall|postinstall|g" "package.json" || die
 
