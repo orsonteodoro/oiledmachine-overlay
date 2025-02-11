@@ -542,8 +542,8 @@ einfo "Building ${MY_PN}.js"
 		if [[ "${NPM_AUDIT_FIX}" == 0 ]] ; then
 einfo "Fixing vulnerabilities"
 			patch_edits() {
-ewarn "QA:  node_modules/cheerio/node_modules/tough-cookie must be manually removed in lockfile."
-ewarn "QA:  node_modules/micromatch/node_modules/braces must be manually removed in lockfile."
+ewarn "QA:  node_modules/cheerio/node_modules/tough-cookie must be manually removed in ${S}/GDevelop.js/package-lock.json."
+ewarn "QA:  node_modules/micromatch/node_modules/braces must be manually removed in ${S}/GDevelop.js/package-lock.json."
 				pushd "${S}/GDevelop.js" || die
 					sed -i -e "s|\"bl\": \"^1.0.0\"|\"bl\": \"^1.0.0\"|g" "package-lock.json" || die
 					sed -i -e "s|\"braces\": \"^1.8.2\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die
