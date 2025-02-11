@@ -88,6 +88,7 @@
     "electron-builder": "^24.9.1",
     "electron-updater": "^6.1.7",
     "electron-vite": "^2.0.0",
+    "esbuild": "^0.25.0",
     "eslint": "^8.56.0",
     "eslint-plugin-react": "^7.33.2",
     "postcss": "^8.4.38",
