@@ -19,7 +19,8 @@
   "author": "Steve Jones <jonesst2608@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "ramda": "^0.26.1"
+    "ramda": "^0.26.1",
+    "serialize-javascript": "^6.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.5.4",

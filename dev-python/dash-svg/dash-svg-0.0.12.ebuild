@@ -32,7 +32,7 @@ https://pypi.org/project/dash-svg/
 LICENSE="MIT" # https://github.com/stevej2608/dash-svg/blob/0.0.12/DESCRIPTION#L8
 RESTRICT="mirror test" # Missing sci-visualization/dash[testing]
 SLOT="0"
-IUSE="test ebuild_revision_3"
+IUSE="test ebuild_revision_4"
 RDEPEND+="
 	>=dev-python/twine-3.7.1[${PYTHON_USEDEP}]
 	>=dev-python/keyrings-alt-4.1.0[${PYTHON_USEDEP}]
@@ -97,6 +97,8 @@ npm_update_lock_audit_post() {
 #		sed -i -e "s|\"ip\": \"^1.1.5\"|\"ip\": \"1.1.9\"|g" "package-lock.json" || die
 
 		sed -i -e "s|\"cheerio\": \"^0.22.0\"|\"cheerio\": \"1.0.0\"|g" "package-lock.json" || die
+
+		sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
 	}
 	localfile_edits
 
@@ -118,7 +120,6 @@ npm_update_lock_audit_post() {
 #	enpm install "ansi-regex@^4.1.1" -D --prefer-offline	# CVE-2021-3807		# DoS
 #	enpm install "got@^11.8.5" -D --prefer-offline		# CVE-2022-33987	# DT
 #	enpm install "ip@^1.1.9" -D --prefer-offline		# CVE-2023-42282	# DoS, DT, ID # For npm
-#	# request EOL						# CVE-2023-28155	# DT, ID
 
 	# css loader
 	enpm install "postcss@^8.4.31" -D --prefer-offline	# CVE-2023-44270	# DT
@@ -134,8 +135,11 @@ npm_update_lock_audit_post() {
 	enpm install "webpack-cli@^4.10.0" -D --prefer-offline
 	enpm install "webpack-serve@^4.0.0" -D --prefer-offline
 
+	# request EOL						# CVE-2023-28155	# DT, ID
 	enpm uninstall "request" -D --prefer-offline		# CVE-2023-28155	# DT, ID
 	enpm uninstall "request-promise" -D --prefer-offline
+
+	enpm install "serialize-javascript@6.0.2"		# CVE-2024-11831	# DT, ID
 
 	# Reapply
 
