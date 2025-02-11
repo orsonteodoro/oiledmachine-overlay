@@ -166,7 +166,7 @@ SLOT="${SLOT_MAJOR}/${PV}"
 IUSE+="
 	${LLVM_COMPAT[@]/#/llvm_slot_}
 	-analytics
-	ebuild_revision_6
+	ebuild_revision_7
 "
 REQUIRED_USE+="
 	!wayland
@@ -570,6 +570,9 @@ einfo "Fixing vulnerabilities"
 					sed -i -e "s|\"cookie\": \"0.6.0\"|\"cookie\": \"0.7.0\"|g" "package-lock.json" || die
 					sed -i -e "s|\"body-parser\": \"1.20.2\"|\"body-parser\": \"1.20.3\"|g" "package-lock.json" || die
 					sed -i -e "s|\"d3-color\": \"1 - 2\"|\"d3-color\": \"^3.1.0\"|g" "package-lock.json" || die
+					sed -i -e "s|\"esbuild\": \"^0.18.0\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
+					sed -i -e "s|\"esbuild\": \">=0.10.0\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
+					sed -i -e "s|\"esbuild\": \">=0.12 <1\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
 					sed -i -e "s|\"express\": \"^4.17.3\"|\"express\": \"^4.20.0\"|g" "package-lock.json" || die
 					sed -i -e "s|\"firebase\": \"9.0.0-beta.2\"|\"firebase\": \"^10.9.0\"|g" "package-lock.json" || die
 					sed -i -e "s|\"follow-redirects\": \"^1.0.0\"|\"follow-redirects\": \"^1.15.6\"|g" "package-lock.json" || die
@@ -734,6 +737,7 @@ einfo "Fixing vulnerabilities"
 					"body-parser@1.20.3"			# DoS			# CVE-2024-45590
 					"cookie@0.7.0"				# DT			# CVE-2024-47764
 					"ejs@3.1.10"				# DoS			# CVE-2024-33883
+					"esbuild@0.25.0"			# ID			# GHSA-67mh-4wv8-2f99
 					"express@4.20.0"			# DoS, DT, ID		# CVE-2024-43796, CVE-2024-29041
 					"follow-redirects@1.14.8"		# DoS, DT, ID		# CVE-2022-0155, CVE-2024-28849, CVE-2023-26159, CVE-2022-0536
 					"getobject@1.0.0"
