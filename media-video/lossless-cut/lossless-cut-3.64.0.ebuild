@@ -13,7 +13,8 @@ MY_PN="${PN/-/}"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="34.1.1" # Cr 132.0.6834.194, node 20.18.1
+	ELECTRON_APP_ELECTRON_PV="32.0.0-beta.2" # Cr 128.0.6611.0, node 20.15.1
+	#ELECTRON_APP_ELECTRON_PV="34.1.1" # Cr 132.0.6834.194, node 20.18.1
 	#ELECTRON_APP_ELECTRON_PV="35.0.0-beta.4" # Cr 134.0.6968.0, node 22.9.0 ; breaks
 else
 	# Upstream preference
@@ -145,6 +146,14 @@ yarn_update_lock_yarn_import_post() {
 		eyarn add "node-fetch@2.6.7" -D
 
 		eyarn add "electron@${ELECTRON_APP_ELECTRON_PV}" -D
+
+		sed -i -e "s|esbuild: \"npm:^0.21.5\"|esbuild: \"npm:^0.25.0\"|g" "yarn.lock" || die		# GHSA-67mh-4wv8-2f99; ID
+		sed -i -e "s|esbuild: \"npm:^0.24.0\"|esbuild: \"npm:^0.25.0\"|g" "yarn.lock" || die		# GHSA-67mh-4wv8-2f99; ID
+		sed -i -e "s|esbuild: \"npm:~0.23.0\"|esbuild: \"npm:^0.25.0\"|g" "yarn.lock" || die		# GHSA-67mh-4wv8-2f99; ID
+		sed -i -e "s|esbuild: \"npm:^0.21.3\"|esbuild: \"npm:^0.25.0\"|g" "yarn.lock" || die		# GHSA-67mh-4wv8-2f99; ID
+		eyarn add "esbuild@0.25.0" -D
+
+		eyarn add "sweetalert2@11.6.13" -D								# GHSA-mrr8-v49w-3333; Low
 
 einfo "Adding file-type patch"
 		sed -i -e "s|\"file-type\": \"19.4.1\"|\"file-type\": \"patch:file-type@npm%3A19.4.1#~/.yarn/patches/file-type-npm-19.4.1-d18086444c.patch\"|g" "package.json" || die

@@ -73,6 +73,7 @@ _yarn_set_globals() {
 
 	YARN_NETWORK_CONCURRENT_CONNECTIONS=${YARN_NETWORK_CONCURRENT_CONNECTIONS:-"1"}
 	YARN_NETWORK_TIMEOUT=${YARN_NETWORK_TIMEOUT:-"300000"}
+	YARN_TASK_POOL_CONCURRENCY=${YARN_TASK_POOL_CONCURRENCY:-"1"}
 	NPM_NETWORK_FETCH_RETRIES=${NPM_NETWORK_FETCH_RETRIES:-"7"}
 	NPM_NETWORK_RETRY_MINTIMEOUT=${NPM_NETWORK_RETRY_MINTIMEOUT:-"100000"}
 	NPM_NETWORK_RETRY_MAXTIMEOUT=${NPM_NETWORK_RETRY_MAXTIMEOUT:-"300000"}
@@ -350,6 +351,31 @@ einfo "DEBUG:  Default cache folder:  ${HOME}/.yarn/berry/cache/"
 einfo "YARN_CACHE_FOLDER:  ${YARN_CACHE_FOLDER}"
 }
 
+# @FUNCTION: yarn_check_vendored_yarn_default
+# @DESCRIPTION:
+# Check and remove vendored yarn
+yarn_check_vendored_yarn_default() {
+	local d=""
+	if [[ -n "${YARN_ROOT}" ]] ; then
+		d="${YARN_ROOT}"
+	else
+		d="${S}"
+	fi
+	if [[ -e "${d}/package.json" ]] ; then
+		local yarn_pv=$(best_version "sys-apps/yarn:${YARN_SLOT}" | sed -e "s|sys-apps/yarn-||g")
+einfo "Editing packageManager for yarn@${yarn_pv}"
+		sed -i -r -e "s|\"packageManager\": \"yarn@[0-9.]+\"|\"packageManager\": \"yarn@${yarn_pv}\"|g" "${d}/package.json" || die
+	fi
+	if [[ -e "${d}/.yarn/releases" ]] ; then
+ewarn "Detected vendored yarn in ${d}/.yarn/releases.  Removing..."
+		rm -rf "${d}/.yarn/releases"
+	fi
+	if [[ -e "${d}/.yarnrc.yml" ]] && grep -F -q -e "yarnPath" "${d}/.yarnrc.yml" ; then
+ewarn "Detected yarnPath in ${d}/.yarnrc.yml.  Removing..."
+		sed -i -e "/yarnPath/d" "${d}/.yarnrc.yml" || die
+	fi
+}
+
 # @FUNCTION: _yarn_src_unpack_default_ebuild
 # @DESCRIPTION:
 # Use the ebuild lockfiles
@@ -374,6 +400,12 @@ _yarn_src_unpack_default_ebuild() {
 	cd "${S}" || die
 	if [[ "${YARN_OFFLINE:-1}" == "1" ]] ; then
 		_yarn_setup_offline_cache
+	fi
+
+	if declare -f yarn_check_vendored_yarn > /dev/null 2>&1 ; then
+		yarn_check_vendored_yarn
+	else
+		yarn_check_vendored_yarn_default
 	fi
 
 	if declare -f yarn_unpack_post > /dev/null 2>&1 ; then
@@ -433,6 +465,12 @@ _yarn_src_unpack_default_upstream() {
 	cd "${S}" || die
 	if [[ "${YARN_OFFLINE:-1}" == "1" ]] ; then
 		_yarn_setup_offline_cache
+	fi
+
+	if declare -f yarn_check_vendored_yarn > /dev/null 2>&1 ; then
+		yarn_check_vendored_yarn
+	else
+		yarn_check_vendored_yarn_default
 	fi
 
 	if declare -f yarn_unpack_post > /dev/null 2>&1 ; then
@@ -629,6 +667,12 @@ einfo "Updating lockfile"
 			_yarn_setup_offline_cache
 		fi
 
+		if declare -f yarn_check_vendored_yarn > /dev/null 2>&1 ; then
+			yarn_check_vendored_yarn
+		else
+			yarn_check_vendored_yarn_default
+		fi
+
 		if declare -f yarn_unpack_post > /dev/null 2>&1 ; then
 			yarn_unpack_post
 		fi
@@ -721,6 +765,12 @@ einfo "Updating lockfile"
 			_yarn_setup_offline_cache
 		fi
 
+		if declare -f yarn_check_vendored_yarn > /dev/null 2>&1 ; then
+			yarn_check_vendored_yarn
+		else
+			yarn_check_vendored_yarn_default
+		fi
+
 		if declare -f yarn_unpack_post > /dev/null 2>&1 ; then
 			yarn_unpack_post
 		fi
@@ -789,6 +839,9 @@ yarn_network_settings() {
 		yarn config set httpTimeout ${YARN_NETWORK_TIMEOUT} || die # 1 min -> 5 min
 # https://github.com/yarnpkg/berry/blob/%40yarnpkg/types/4.0.0/packages/yarnpkg-core/sources/Configuration.ts#L399
 		yarn config set networkConcurrency ${YARN_NETWORK_CONCURRENT_CONNECTIONS} || die # 50 -> 1 ; smoother network multitasking
+
+# https://github.com/yarnpkg/berry/blob/%40yarnpkg/types/4.0.0/packages/yarnpkg-core/sources/Configuration.ts#L404
+		yarn config set taskPoolConcurrency ${YARN_TASK_POOL_CONCURRENCY} || die
 	fi
 }
 
@@ -824,6 +877,7 @@ einfo "Hydrating npm..."
 	corepack hydrate --activate "${ESYSROOT}/usr/share/npm/npm-${NPM_SLOT}.tgz" || die
 einfo "Hydrating yarn..."
 	corepack hydrate --activate "${ESYSROOT}/usr/share/yarn/yarn-${YARN_SLOT}.tgz" || die
+
 	__npm_patch
 	local npm_pv
 	local yarn_pv
@@ -837,6 +891,7 @@ einfo "Hydrating yarn..."
 
 	if [[ -e "${HOME}/.cache/node/corepack/v1/yarn" ]] ; then
 		yarn_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/v1/yarn/"*))
+		export PATH="${HOME}/.cache/node/corepack/v1/yarn/${yarn_pv}:${PATH}"
 		export PATH="${HOME}/.cache/node/corepack/v1/yarn/${yarn_pv}/bin:${PATH}"
 	else
 		yarn_pv=$(basename $(realpath "${HOME}/.cache/node/corepack/yarn/"*))
