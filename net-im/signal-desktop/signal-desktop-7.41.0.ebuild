@@ -251,6 +251,7 @@ einfo "Updating lockfile done."
 		export ELECTRON_SKIP_BINARY_DOWNLOAD=1
 		export ELECTRON_BUILDER_CACHE="${HOME}/.cache/electron-builder"
 		export ELECTRON_CACHE="${HOME}/.cache/electron"
+		export ELECTRON_CUSTOM_DIR="v${ELECTRON_APP_ELECTRON_PV}"
 		npm_src_unpack
 		get_deps
 	fi

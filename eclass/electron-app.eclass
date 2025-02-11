@@ -1126,7 +1126,21 @@ electron-app_cp_electron() {
 	mkdir -p "${ELECTRON_CACHE}" || die
 	local fn="electron-v${ELECTRON_APP_ELECTRON_PV}-$(electron-app_get_electron_platarch).zip"
 	export ELECTRON_CUSTOM_FILENAME="${fn}"
+
+#
+#                                                                                                    fn
+#                                                                      ELECTRON_CUSTOM_DIR            |
+#                                                                               |                     |
+#                                                                               v                     v
+#   ⨯ cannot resolve https://github.com/electron/electron/releases/download/35.0.0-beta.3/electron-v35.0.0-beta.3-linux-x64.zip: status code 404
+#
+# Prefix with v to look like:
+# [build:release     ]   • downloading     url=https://github.com/electron/electron/releases/download/v35.0.0-beta.3/electron-v35.0.0-beta.3-linux-x64.zip size=109 MB parts=8
+#
+# See also URIs in https://github.com/electron/electron/releases/
+#
 	export ELECTRON_CUSTOM_DIR=${ELECTRON_CUSTOM_DIR:-"${ELECTRON_APP_ELECTRON_PV}"}
+
 	cp -a \
 		"${DISTDIR}/${fn}" \
 		"${ELECTRON_CACHE}/${fn}" \
