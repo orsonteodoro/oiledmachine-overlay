@@ -166,7 +166,7 @@ SLOT="${SLOT_MAJOR}/${PV}"
 IUSE+="
 	${LLVM_COMPAT[@]/#/llvm_slot_}
 	-analytics
-	ebuild_revision_7
+	ebuild_revision_8
 "
 REQUIRED_USE+="
 	!wayland
@@ -663,6 +663,10 @@ einfo "Fixing vulnerabilities"
 				pushd "${S}/newIDE/electron-app" || die
 					sed -i -e "s|\"app-builder-lib\": \"24.9.1\"|\"app-builder-lib\": \"^24.13.2\"|g" "package-lock.json" || die
 				popd || die
+
+				pushd "${S}/GDJS" || die
+					sed -i -e "s|\"esbuild\": \"^0.13.12\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
+				popd || die
 			}
 			patch_edits
 
@@ -719,6 +723,7 @@ einfo "Fixing vulnerabilities"
 			pushd "${S}/GDJS" || die
 				pkgs=(
 					"braces@3.0.3"				# DoS			# CVE-2024-4068
+					"esbuild@0.25.0"			# ID			# GHSA-67mh-4wv8-2f99
 					"lodash@4.17.21"			# DoS, DT, ID		# CVE-2021-23337, CVE-2020-28500
 					"minimist@1.2.6"			# DoS, DT, ID		# CVE-2021-44906
 					"shelljs@0.8.5"				# DoS, ID		# CVE-2022-0144, GHSA-64g7-mvw6-v9qj

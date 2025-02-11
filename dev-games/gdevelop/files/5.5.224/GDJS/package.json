@@ -12,7 +12,7 @@
     "@types/sinon": "^10.0.13",
     "@types/three": "0.160.0",
     "braces": "^3.0.3",
-    "esbuild": "^0.13.12",
+    "esbuild": "^0.25.0",
     "lebab": "^3.1.0",
     "lodash": "^4.17.21",
     "minimist": "^1.2.6",
