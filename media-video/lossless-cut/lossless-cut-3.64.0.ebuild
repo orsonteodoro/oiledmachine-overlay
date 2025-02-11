@@ -153,7 +153,7 @@ yarn_update_lock_yarn_import_post() {
 		sed -i -e "s|esbuild: \"npm:^0.21.3\"|esbuild: \"npm:^0.25.0\"|g" "yarn.lock" || die		# GHSA-67mh-4wv8-2f99; ID
 		eyarn add "esbuild@0.25.0" -D
 
-		eyarn add "sweetalert2@11.6.13" -D								# GHSA-mrr8-v49w-3333; Low
+		eyarn add "sweetalert2@11.4.8" -D								# GHSA-mrr8-v49w-3333; Low
 
 einfo "Adding file-type patch"
 		sed -i -e "s|\"file-type\": \"19.4.1\"|\"file-type\": \"patch:file-type@npm%3A19.4.1#~/.yarn/patches/file-type-npm-19.4.1-d18086444c.patch\"|g" "package.json" || die
