@@ -60,6 +60,12 @@ pkg_setup() {
 	npm_pkg_setup
 }
 
+npm_unpack_post() {
+	pushd "${S}" >/dev/null 2>&1 || die
+		eapply "${FILESDIR}/dash-svg-0.0.12-use-fetch-api.patch"	# Untested patch
+	popd >/dev/null 2>&1 || die
+}
+
 npm_update_lock_audit_post() {
 	localfile_edits() {
 		sed -i -e "s|\"loader-utils\": \"^1.1.0\"|\"loader-utils\": \"^1.4.2\"|g" "package-lock.json" || die
@@ -128,6 +134,8 @@ npm_update_lock_audit_post() {
 	enpm install "webpack-cli@^4.10.0" -D --prefer-offline
 	enpm install "webpack-serve@^4.0.0" -D --prefer-offline
 
+	enpm uninstall "request" -D --prefer-offline		# CVE-2023-28155	# DT, ID
+	enpm uninstall "request-promise" -D --prefer-offline
 
 	# Reapply
 

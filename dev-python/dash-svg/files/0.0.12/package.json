@@ -45,8 +45,6 @@
     "react": "^16.8.6",
     "react-docgen": "^4.1.1",
     "react-dom": "^16.8.6",
-    "request": "^2.88.2",
-    "request-promise": "^4.2.6",
     "string": "^3.3.3",
     "style-loader": "^0.23.1",
     "styled-jsx": "^3.2.1",

@@ -1,0 +1,31 @@
+Untested patch
+
+diff '--color=auto' -urp dash-svg-0.0.12.orig/scripts/extract-attributes.js dash-svg-0.0.12/scripts/extract-attributes.js
+--- dash-svg-0.0.12.orig/scripts/extract-attributes.js	2023-02-27 00:03:54.000000000 -0800
++++ dash-svg-0.0.12/scripts/extract-attributes.js	2025-02-11 07:41:00.767808542 -0800
+@@ -3,7 +3,6 @@
+ const fs = require('fs');
+ const path = require('path')
+ const cheerio = require('cheerio');
+-const request = require('request-promise');
+ const str = require('string');
+ const flatCache = require('flat-cache');
+ 
+@@ -59,7 +58,7 @@ const CACHE_TIMEOUT = 1000 * 7 * 24 * 60
+ 
+ const cacheSave = function(key, page) {
+   const timeStamp = Date.now() + CACHE_TIMEOUT;
+-  const value = {timeStamp, page}
++  const value = {timeStamp, page.text()}
+   pageCache.setKey(key, value)
+   pageCache.save(true)
+ }
+@@ -82,7 +81,7 @@ const fetchPage = async function(pageURL
+   if (! page) {
+     console.log('Fetching %s', pageURL)
+     try {
+-      page = await request(pageURL)
++      page = await fetch(pageURL)
+     } catch (error) {
+       console.log("Error loading %s", pageURL)
+       page = "?????"
