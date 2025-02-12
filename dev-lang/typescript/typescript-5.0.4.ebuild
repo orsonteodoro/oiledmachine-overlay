@@ -62,7 +62,15 @@ S="${WORKDIR}/${MY_PN}-${PV}"
 RESTRICT="mirror"
 
 npm_update_lock_install_pre() {
-	enpm install "@types/node@${NPM_SECAUDIT_AT_TYPES_NODE_PV}" --prefer-offline
+	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+		enpm install "@types/node@${NPM_SECAUDIT_AT_TYPES_NODE_PV}" --prefer-offline
+	fi
+}
+
+npm_update_lock_install_post() {
+	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+		enpm install "esbuild@^0.25.0" # GHSA-67mh-4wv8-2f99
+	fi
 }
 
 src_install() {
