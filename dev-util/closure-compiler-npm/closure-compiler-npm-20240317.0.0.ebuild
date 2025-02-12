@@ -360,7 +360,7 @@ https://github.com/bazelbuild/bazelisk/releases/download/v${BAZELISK_PV}/bazelis
 	done
 }
 
-KEYWORDS="~amd64 ~arm64"
+#KEYWORDS="~amd64 ~arm64" # Ebuild is broken
 S="${WORKDIR}/${PN}-${PV}"
 S_CLOSURE_COMPILER="${WORKDIR}/closure-compiler-${CLOSURE_COMPILER_MAJOR_VER}"
 SRC_URI="
@@ -615,7 +615,6 @@ eerror
 }
 
 npm_update_lock_audit_post() {
-	return
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 einfo "Fixing vulnerabilities"
 		patch_lockfiles() {
