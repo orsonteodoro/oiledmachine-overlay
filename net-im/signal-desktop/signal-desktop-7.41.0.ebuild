@@ -86,7 +86,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_8
+ebuild_revision_9
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -183,6 +183,8 @@ ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and all 0.18.
 			sed -i -e "s|\"got\": \"^11.7.0\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die											# CVE-2022-33987; DT; Medium
 			sed -i -e "s|\"got\": \"^11.8.2\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die											# CVE-2022-33987; DT; Medium
 			sed -i -e "s|\"got\": \"^6.7.1\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die											# CVE-2022-33987; DT; Medium
+
+			sed -i -e "s|\"quill\": \"1.3.7\"|\"quill\": \"^2.0.0\"|g" "package-lock.json" || die											# CVE-2021-3163; DT, ID; Medium; See quill issue #3364
 		}
 		patch_edits
 
@@ -209,6 +211,7 @@ ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and all 0.18.
 		deps=(
 			"esbuild@0.25.0"
 			"got@11.8.5"
+			"quill@^2.0.0"
 		)
 		enpm install ${deps[@]} -P ${NPM_INSTALL_ARGS[@]}
 
