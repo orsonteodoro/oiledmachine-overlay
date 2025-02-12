@@ -628,6 +628,7 @@ einfo "Fixing vulnerabilities"
 		patch_lockfiles
 
 		enpm install "braces@3.0.3" -D -w "packages/google-closure-compiler" --prefer-offline			# CVE-2024-4068; DoS; High
+ewarn "QA:  Manually remove node_modules/gulp-mocha/node_modules/nanoid in ${S}/package-lock.json"
 		enpm install "nanoid@3.1.31" -D -w "packages/google-closure-compiler" --prefer-offline			# CVE-2021-23566; ID; Medium
 		enpm install "serialize-javascript@^6.0.2" -D --prefer-offline						# CVE-2024-11831; DT, ID; Medium
 		patch_lockfiles
