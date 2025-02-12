@@ -241,7 +241,9 @@ pnpm_dedupe_post() {
 		}
 
 		patch_lockfile
+ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/pnpm-lock.yaml"
 		epnpm add "@apidevtools/json-schema-ref-parser@11.2.0" ${PNPM_INSTALL_ARGS[@]}		# CVE-2024-29651; DoS, DT, ID; High
+ewarn "QA:  Manually remove esbuild and earlier from ${S}/pnpm-lock.yaml"
 		epnpm add "esbuild@0.25.0"								# GHSA-67mh-4wv8-2f99
 		patch_lockfile
 	fi
