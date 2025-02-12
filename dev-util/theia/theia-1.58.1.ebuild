@@ -22,6 +22,10 @@ NPM_INSTALL_ARGS=(
 	"--prefer-offline"
 	"--legacy-peer-deps"
 )
+NPM_INSTALL_SINGLE_ARGS=(
+	"--prefer-offline"
+	"--legacy-peer-deps"
+)
 if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 	NPM_INSTALL_ARGS+=(
 		"--workspaces"
@@ -584,7 +588,7 @@ einfo "Adding dependencies"
 		pkgs=(
 			"node-gyp@^${NODE_GYP_PV}"
 		)
-		enpm add ${pkgs[@]} -D -W
+		enpm add ${pkgs[@]} -D -W ${NPM_INSTALL_SINGLE_ARGS[@]}
 	fi
 	chmod +x $(realpath "${HOME}/.cache/node/corepack/v1/npm/"*"/bin/npx")
 	edo npx --version
@@ -593,11 +597,22 @@ einfo "Adding dependencies"
 fix_vulnerabilities() {
 einfo "Fixing vulnerabilities"
 	patch_lockfile() {
-		sed -i -e "s|\"cookie\": \"^0.4.0\"|\"cookie\": \"^0.7.0\"|g" "package-lock.json" || die		# CVE-2024-47764; DT; Medium
+		sed -i -e "s|\"cookie\": \"^0.4.0\"|\"cookie\": \"^0.7.0\"|g" "package-lock.json" || die
+		sed -i -e "s|\"serialize-javascript\": \"^5.0.1\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
+		sed -i -e "s|\"serialize-javascript\": \"6.0.0\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
+		sed -i -e "s|\"serialize-javascript\": \"^6.0.0\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
 	}
 	patch_lockfile
 
-	enpm add "cookie@^0.7.0" -w "packages/core"
+	enpm add "cookie@^0.7.0" -w "packages/core" ${NPM_INSTALL_SINGLE_ARGS[@]}									# CVE-2024-47764; DT; Medium
+
+	# False positive since lockfile didn't add it and marked optional
+	#enpm add "esbuild@6.0.2" -w "dev-packages/application-manager"	${NPM_INSTALL_SINGLE_ARGS[@]}							# CVE-2024-11831; DT, ID; Medium
+	#enpm add "esbuild@6.0.2" -w "dev-packages/native-webpack-plugin" ${NPM_INSTALL_SINGLE_ARGS[@]}							# CVE-2024-11831; DT, ID; Medium
+
+	enpm add "serialize-javascript@^6.0.2" -w "dev-packages/application-manager" ${NPM_INSTALL_SINGLE_ARGS[@]}					# CVE-2024-11831; DT, ID; Medium
+	enpm add "serialize-javascript@^6.0.2" ${NPM_INSTALL_SINGLE_ARGS[@]}										# CVE-2024-11831; DT, ID; Medium
+
 	patch_lockfile
 }
 

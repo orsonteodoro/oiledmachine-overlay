@@ -121,5 +121,8 @@
     "vscode.microsoft-authentication",
     "ms-vscode.references-view",
     "ms-python.vscode-pylance"
-  ]
+  ],
+  "dependencies": {
+    "serialize-javascript": "^6.0.2"
+  }
 }
