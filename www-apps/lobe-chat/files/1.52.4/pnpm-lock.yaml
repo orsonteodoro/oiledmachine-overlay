@@ -78,7 +78,7 @@ importers:
         version: 0.3.9
       '@langchain/community':
         specifier: ^0.3.22
-        version: 0.3.29(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/client-bedrock-runtime@3.744.0)(@aws-sdk/client-s3@3.744.0)(@aws-sdk/credential-provider-node@3.744.0)(@browserbasehq/sdk@2.2.0(encoding@0.1.13))(@browserbasehq/stagehand@1.12.0(@playwright/test@1.50.1)(deepmerge@4.3.1)(dotenv@16.4.7)(encoding@0.1.13)(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))(zod@3.24.1))(@huggingface/inference@2.8.1)(@ibm-cloud/watsonx-ai@1.4.0(@langchain/core@0.2.36(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))))(@langchain/core@0.2.36(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1)))(@neondatabase/serverless@0.10.4)(@smithy/util-utf8@2.3.0)(axios@1.7.9(debug@4.4.0))(crypto-js@4.2.0)(encoding@0.1.13)(fast-xml-parser@4.4.1)(handlebars@4.7.8)(ibm-cloud-sdk-core@5.1.2)(ignore@5.3.2)(jsonwebtoken@9.0.2)(lodash@4.17.21)(mammoth@1.9.0)(officeparser@5.1.1)(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))(pdf-parse@1.1.1)(pg@8.13.1)(playwright@1.50.1)(ws@8.18.0)
+        version: 0.3.29(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/client-bedrock-runtime@3.744.0)(@aws-sdk/client-s3@3.744.0)(@aws-sdk/credential-provider-node@3.744.0)(@browserbasehq/sdk@2.3.0(encoding@0.1.13))(@browserbasehq/stagehand@1.12.0(@playwright/test@1.50.1)(deepmerge@4.3.1)(dotenv@16.4.7)(encoding@0.1.13)(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))(zod@3.24.1))(@huggingface/inference@2.8.1)(@ibm-cloud/watsonx-ai@1.4.0(@langchain/core@0.2.36(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))))(@langchain/core@0.2.36(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1)))(@neondatabase/serverless@0.10.4)(@smithy/util-utf8@2.3.0)(axios@1.7.9(debug@4.4.0))(crypto-js@4.2.0)(encoding@0.1.13)(fast-xml-parser@4.4.1)(handlebars@4.7.8)(ibm-cloud-sdk-core@5.1.2)(ignore@5.3.2)(jsonwebtoken@9.0.2)(lodash@4.17.21)(mammoth@1.9.0)(officeparser@5.1.1)(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))(pdf-parse@1.1.1)(pg@8.13.1)(playwright@1.50.1)(ws@8.18.0)
       '@lobehub/charts':
         specifier: ^1.12.0
         version: 1.12.0(@babel/core@7.26.8)(@types/react@19.0.8)(acorn@8.14.0)(antd@5.23.4(date-fns@3.6.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -120,16 +120,16 @@ importers:
         version: 5.66.0(react@19.0.0)
       '@trpc/client':
         specifier: next
-        version: 11.0.0-rc.747(@trpc/server@11.0.0-rc.747(typescript@5.7.3))(typescript@5.7.3)
+        version: 11.0.0-rc.761(@trpc/server@11.0.0-rc.761(typescript@5.7.3))(typescript@5.7.3)
       '@trpc/next':
         specifier: next
-        version: 11.0.0-rc.747(@tanstack/react-query@5.66.0(react@19.0.0))(@trpc/client@11.0.0-rc.747(@trpc/server@11.0.0-rc.747(typescript@5.7.3))(typescript@5.7.3))(@trpc/react-query@11.0.0-rc.747(@tanstack/react-query@5.66.0(react@19.0.0))(@trpc/client@11.0.0-rc.747(@trpc/server@11.0.0-rc.747(typescript@5.7.3))(typescript@5.7.3))(@trpc/server@11.0.0-rc.747(typescript@5.7.3))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3))(@trpc/server@11.0.0-rc.747(typescript@5.7.3))(next@15.1.6(@babel/core@7.26.8)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3)
+        version: 11.0.0-rc.761(@tanstack/react-query@5.66.0(react@19.0.0))(@trpc/client@11.0.0-rc.761(@trpc/server@11.0.0-rc.761(typescript@5.7.3))(typescript@5.7.3))(@trpc/react-query@11.0.0-rc.761(@tanstack/react-query@5.66.0(react@19.0.0))(@trpc/client@11.0.0-rc.761(@trpc/server@11.0.0-rc.761(typescript@5.7.3))(typescript@5.7.3))(@trpc/server@11.0.0-rc.761(typescript@5.7.3))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3))(@trpc/server@11.0.0-rc.761(typescript@5.7.3))(next@15.1.6(@babel/core@7.26.8)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3)
       '@trpc/react-query':
         specifier: next
-        version: 11.0.0-rc.747(@tanstack/react-query@5.66.0(react@19.0.0))(@trpc/client@11.0.0-rc.747(@trpc/server@11.0.0-rc.747(typescript@5.7.3))(typescript@5.7.3))(@trpc/server@11.0.0-rc.747(typescript@5.7.3))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3)
+        version: 11.0.0-rc.761(@tanstack/react-query@5.66.0(react@19.0.0))(@trpc/client@11.0.0-rc.761(@trpc/server@11.0.0-rc.761(typescript@5.7.3))(typescript@5.7.3))(@trpc/server@11.0.0-rc.761(typescript@5.7.3))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3)
       '@trpc/server':
         specifier: next
-        version: 11.0.0-rc.747(typescript@5.7.3)
+        version: 11.0.0-rc.761(typescript@5.7.3)
       '@vercel/analytics':
         specifier: ^1.4.1
         version: 1.4.1(next@15.1.6(@babel/core@7.26.8)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)(svelte@5.19.9)(vue@3.5.13(typescript@5.7.3))
@@ -439,13 +439,13 @@ importers:
         version: 0.13.17
       '@lobehub/i18n-cli':
         specifier: ^1.20.3
-        version: 1.20.3(@aws-sdk/client-s3@3.744.0)(@aws-sdk/credential-provider-node@3.744.0)(@browserbasehq/sdk@2.2.0(encoding@0.1.13))(@types/react@19.0.8)(axios@1.7.9(debug@4.4.0))(encoding@0.1.13)(fast-xml-parser@4.4.1)(handlebars@4.7.8)(ignore@5.3.2)(immer@10.1.1)(mammoth@1.9.0)(officeparser@5.1.1)(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))(pdf-parse@1.1.1)(playwright@1.50.1)(typescript@5.7.3)(ws@8.18.0)
+        version: 1.20.3(@aws-sdk/client-s3@3.744.0)(@aws-sdk/credential-provider-node@3.744.0)(@browserbasehq/sdk@2.3.0(encoding@0.1.13))(@types/react@19.0.8)(axios@1.7.9(debug@4.4.0))(encoding@0.1.13)(fast-xml-parser@4.4.1)(handlebars@4.7.8)(ignore@5.3.2)(immer@10.1.1)(mammoth@1.9.0)(officeparser@5.1.1)(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))(pdf-parse@1.1.1)(playwright@1.50.1)(typescript@5.7.3)(ws@8.18.0)
       '@lobehub/lint':
         specifier: ^1.25.5
         version: 1.25.7(@octokit/core@5.2.0)(@vue/compiler-sfc@3.5.13)(encoding@0.1.13)(eslint@8.57.1)(postcss@8.5.1)(prettier@3.4.2)(semantic-release@21.1.2(typescript@5.7.3))(stylelint@15.11.0(typescript@5.7.3))(svelte@5.19.9)(typescript@5.7.3)
       '@lobehub/seo-cli':
         specifier: ^1.4.3
-        version: 1.4.3(@aws-sdk/client-s3@3.744.0)(@aws-sdk/credential-provider-node@3.744.0)(@browserbasehq/sdk@2.2.0(encoding@0.1.13))(@types/react@19.0.8)(axios@1.7.9(debug@4.4.0))(encoding@0.1.13)(fast-xml-parser@4.4.1)(handlebars@4.7.8)(ignore@5.3.2)(immer@10.1.1)(mammoth@1.9.0)(officeparser@5.1.1)(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))(pdf-parse@1.1.1)(playwright@1.50.1)(typescript@5.7.3)(ws@8.18.0)
+        version: 1.4.3(@aws-sdk/client-s3@3.744.0)(@aws-sdk/credential-provider-node@3.744.0)(@browserbasehq/sdk@2.3.0(encoding@0.1.13))(@types/react@19.0.8)(axios@1.7.9(debug@4.4.0))(encoding@0.1.13)(fast-xml-parser@4.4.1)(handlebars@4.7.8)(ignore@5.3.2)(immer@10.1.1)(mammoth@1.9.0)(officeparser@5.1.1)(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))(pdf-parse@1.1.1)(playwright@1.50.1)(typescript@5.7.3)(ws@8.18.0)
       '@next/bundle-analyzer':
         specifier: ^15.1.4
         version: 15.1.6
@@ -1222,8 +1222,8 @@ packages:
   '@braintree/sanitize-url@7.1.1':
     resolution: {integrity: sha512-i1L7noDNxtFyL5DmZafWy1wRVhGehQmzZaz1HiN5e7iylJMSZR7ekOV7NsIqa5qBldlLrsKv4HbgFUVlQrz8Mw==}
 
-  '@browserbasehq/sdk@2.2.0':
-    resolution: {integrity: sha512-CWusIff7KenGfMwg/kNnrdOi+1JUIYpj8ZtEciuEUOEQVp3BEYqbaXk4FxCoQPvyO0h4eUVE5Banc9b3GQU01Q==}
+  '@browserbasehq/sdk@2.3.0':
+    resolution: {integrity: sha512-H2nu46C6ydWgHY+7yqaP8qpfRJMJFVGxVIgsuHe1cx9HkfJHqzkuIqaK/k8mU4ZeavQgV5ZrJa0UX6MDGYiT4w==}
 
   '@browserbasehq/stagehand@1.12.0':
     resolution: {integrity: sha512-RWhdGxs2tUKyNpUh710ct/1Wwhv4jsEc1Qs8lz8Qngm3y7onRu0WYH0Cf3mnFZqYLTf3ni9x17VNju8YJACa5Q==}
@@ -4467,19 +4467,19 @@ packages:
       svelte:
         optional: true
 
-  '@trpc/client@11.0.0-rc.747':
-    resolution: {integrity: sha512-xTOY5i/sH+cxVnHhPvudrNAKs8Uw3e0wX2WgWYJ0+dGDobMG8zqd/Tb+u4nvVHioVcUOLZomu5bRRhbrNT0GLg==}
+  '@trpc/client@11.0.0-rc.761':
+    resolution: {integrity: sha512-1Tm4pwdUi7mZbr1tkZMN4BSD2FhcWkh0oe0Hdg2HBgqUqQs9DcWdtearXp9xajed7oh0kjZ/ITZgTgtwczXcwA==}
     peerDependencies:
-      '@trpc/server': 11.0.0-rc.747+64714681c
+      '@trpc/server': 11.0.0-rc.761+b7174a4f2
       typescript: '>=5.7.2'
 
-  '@trpc/next@11.0.0-rc.747':
-    resolution: {integrity: sha512-Q9pUHDaCy0/lwMp9ZCKo+PO+9xDwIqwOi8f5LCDgzBTztMPUZotLSoslQ9fc2ritao4jSKT5kn3hZ/2K4LOcUQ==}
+  '@trpc/next@11.0.0-rc.761':
+    resolution: {integrity: sha512-eqJ84ISco2Co5xGpVW0svil/RRmAWCaI8rkPPsVUXcLB/iEq8TRFcyyNnq2yqctCz8lYSbTm2DKbmrAmEKvebQ==}
     peerDependencies:
       '@tanstack/react-query': ^5.59.15
-      '@trpc/client': 11.0.0-rc.747+64714681c
-      '@trpc/react-query': 11.0.0-rc.747+64714681c
-      '@trpc/server': 11.0.0-rc.747+64714681c
+      '@trpc/client': 11.0.0-rc.761+b7174a4f2
+      '@trpc/react-query': 11.0.0-rc.761+b7174a4f2
+      '@trpc/server': 11.0.0-rc.761+b7174a4f2
       next: '*'
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
@@ -4490,18 +4490,18 @@ packages:
       '@trpc/react-query':
         optional: true
 
-  '@trpc/react-query@11.0.0-rc.747':
-    resolution: {integrity: sha512-hVsbHmNMtbW5ylUVU/KkvVR2lwRkhPPELPf2/ukA6Z72zdHE1zwGu4sCiDBM7csbZjba8uQquDiUfIaaHZPoOg==}
+  '@trpc/react-query@11.0.0-rc.761':
+    resolution: {integrity: sha512-ORquqFCJcqfg6TPGccXf/0bWX/wgQQ4SEP7iyzlVTafbH7HGWG40A9fXRE9jB0761v9G1zbh59Qot9F8w0Py7Q==}
     peerDependencies:
       '@tanstack/react-query': ^5.62.8
-      '@trpc/client': 11.0.0-rc.747+64714681c
-      '@trpc/server': 11.0.0-rc.747+64714681c
+      '@trpc/client': 11.0.0-rc.761+b7174a4f2
+      '@trpc/server': 11.0.0-rc.761+b7174a4f2
       react: '>=18.2.0'
       react-dom: '>=18.2.0'
       typescript: '>=5.7.2'
 
-  '@trpc/server@11.0.0-rc.747':
-    resolution: {integrity: sha512-uPhKUirYbaViNBwY/lvEhmCxlRAxWPYaMcH+lm2REIpbj7TPycwh2rI4bNJwiMoktplLriiEWVQflnid9zdC1w==}
+  '@trpc/server@11.0.0-rc.761':
+    resolution: {integrity: sha512-VY2BV0ygS5QZUMELQagIs+HrUBRtE5BcwMWvvbBhLOUj2PqfFHUAOrlsrW24+Ic8pMxC+vf5mScy6XP3+GZvjA==}
     peerDependencies:
       typescript: '>=5.7.2'
 
@@ -6871,8 +6871,8 @@ packages:
     resolution: {integrity: sha512-ca9pw9fomFcKPvFLXhBKUK90ZvGibiGOvRJNbjljY7s7uq/5YO4BOzcYtJqExdx99rF6aAcnRxHmcUHcz6sQsg==}
     engines: {node: '>=0.10'}
 
-  esrap@1.4.3:
-    resolution: {integrity: sha512-Xddc1RsoFJ4z9nR7W7BFaEPIp4UXoeQ0+077UdWLxbafMQFyU79sQJMk7kxNgRwQ9/aVgaKacCHC2pUACGwmYw==}
+  esrap@1.4.4:
+    resolution: {integrity: sha512-tDN6xP/r/b3WmdpWm7LybrD252hY52IokcycPnO+WHfhFF0+n5AWtcLLK7VNV6m0uYgVRhGVs8OkZwRyfC7HzQ==}
 
   esrecurse@4.3.0:
     resolution: {integrity: sha512-KmfKL3b6G+RXvP8N1vr3Tq1kL/oCFgn2NYXEtqP8/L3pKapUA4G8cFVaoF3SU323CD4XypR/ffioHmkti6/Tag==}
@@ -14157,7 +14157,7 @@ snapshots:
 
   '@braintree/sanitize-url@7.1.1': {}
 
-  '@browserbasehq/sdk@2.2.0(encoding@0.1.13)':
+  '@browserbasehq/sdk@2.3.0(encoding@0.1.13)':
     dependencies:
       '@types/node': 18.19.75
       '@types/node-fetch': 2.6.12
@@ -14172,7 +14172,7 @@ snapshots:
   '@browserbasehq/stagehand@1.12.0(@playwright/test@1.50.1)(deepmerge@4.3.1)(dotenv@16.4.7)(encoding@0.1.13)(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))(zod@3.24.1)':
     dependencies:
       '@anthropic-ai/sdk': 0.27.3(encoding@0.1.13)
-      '@browserbasehq/sdk': 2.2.0(encoding@0.1.13)
+      '@browserbasehq/sdk': 2.3.0(encoding@0.1.13)
       '@playwright/test': 1.50.1
       deepmerge: 4.3.1
       dotenv: 16.4.7
@@ -15388,7 +15388,7 @@ snapshots:
     dependencies:
       lit: 3.2.1
 
-  '@langchain/community@0.3.29(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/client-bedrock-runtime@3.744.0)(@aws-sdk/client-s3@3.744.0)(@aws-sdk/credential-provider-node@3.744.0)(@browserbasehq/sdk@2.2.0(encoding@0.1.13))(@browserbasehq/stagehand@1.12.0(@playwright/test@1.50.1)(deepmerge@4.3.1)(dotenv@16.4.7)(encoding@0.1.13)(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))(zod@3.24.1))(@huggingface/inference@2.8.1)(@ibm-cloud/watsonx-ai@1.4.0(@langchain/core@0.2.36(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))))(@langchain/core@0.2.36(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1)))(@neondatabase/serverless@0.10.4)(@smithy/util-utf8@2.3.0)(axios@1.7.9(debug@4.4.0))(crypto-js@4.2.0)(encoding@0.1.13)(fast-xml-parser@4.4.1)(handlebars@4.7.8)(ibm-cloud-sdk-core@5.1.2)(ignore@5.3.2)(jsonwebtoken@9.0.2)(lodash@4.17.21)(mammoth@1.9.0)(officeparser@5.1.1)(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))(pdf-parse@1.1.1)(pg@8.13.1)(playwright@1.50.1)(ws@8.18.0)':
+  '@langchain/community@0.3.29(@aws-crypto/sha256-js@5.2.0)(@aws-sdk/client-bedrock-runtime@3.744.0)(@aws-sdk/client-s3@3.744.0)(@aws-sdk/credential-provider-node@3.744.0)(@browserbasehq/sdk@2.3.0(encoding@0.1.13))(@browserbasehq/stagehand@1.12.0(@playwright/test@1.50.1)(deepmerge@4.3.1)(dotenv@16.4.7)(encoding@0.1.13)(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))(zod@3.24.1))(@huggingface/inference@2.8.1)(@ibm-cloud/watsonx-ai@1.4.0(@langchain/core@0.2.36(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))))(@langchain/core@0.2.36(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1)))(@neondatabase/serverless@0.10.4)(@smithy/util-utf8@2.3.0)(axios@1.7.9(debug@4.4.0))(crypto-js@4.2.0)(encoding@0.1.13)(fast-xml-parser@4.4.1)(handlebars@4.7.8)(ibm-cloud-sdk-core@5.1.2)(ignore@5.3.2)(jsonwebtoken@9.0.2)(lodash@4.17.21)(mammoth@1.9.0)(officeparser@5.1.1)(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))(pdf-parse@1.1.1)(pg@8.13.1)(playwright@1.50.1)(ws@8.18.0)':
     dependencies:
       '@browserbasehq/stagehand': 1.12.0(@playwright/test@1.50.1)(deepmerge@4.3.1)(dotenv@16.4.7)(encoding@0.1.13)(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))(zod@3.24.1)
       '@ibm-cloud/watsonx-ai': 1.4.0(@langchain/core@0.2.36(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1)))
@@ -15410,7 +15410,7 @@ snapshots:
       '@aws-sdk/client-bedrock-runtime': 3.744.0
       '@aws-sdk/client-s3': 3.744.0
       '@aws-sdk/credential-provider-node': 3.744.0
-      '@browserbasehq/sdk': 2.2.0(encoding@0.1.13)
+      '@browserbasehq/sdk': 2.3.0(encoding@0.1.13)
       '@huggingface/inference': 2.8.1
       '@neondatabase/serverless': 0.10.4
       '@smithy/util-utf8': 2.3.0
@@ -15610,7 +15610,7 @@ snapshots:
       - acorn
       - supports-color
 
-  '@lobehub/i18n-cli@1.20.3(@aws-sdk/client-s3@3.744.0)(@aws-sdk/credential-provider-node@3.744.0)(@browserbasehq/sdk@2.2.0(encoding@0.1.13))(@types/react@19.0.8)(axios@1.7.9(debug@4.4.0))(encoding@0.1.13)(fast-xml-parser@4.4.1)(handlebars@4.7.8)(ignore@5.3.2)(immer@10.1.1)(mammoth@1.9.0)(officeparser@5.1.1)(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))(pdf-parse@1.1.1)(playwright@1.50.1)(typescript@5.7.3)(ws@8.18.0)':
+  '@lobehub/i18n-cli@1.20.3(@aws-sdk/client-s3@3.744.0)(@aws-sdk/credential-provider-node@3.744.0)(@browserbasehq/sdk@2.3.0(encoding@0.1.13))(@types/react@19.0.8)(axios@1.7.9(debug@4.4.0))(encoding@0.1.13)(fast-xml-parser@4.4.1)(handlebars@4.7.8)(ignore@5.3.2)(immer@10.1.1)(mammoth@1.9.0)(officeparser@5.1.1)(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))(pdf-parse@1.1.1)(playwright@1.50.1)(typescript@5.7.3)(ws@8.18.0)':
     dependencies:
       '@inkjs/ui': 1.0.0(ink@4.4.1(@types/react@19.0.8)(react@19.0.0))
       '@langchain/core': 0.2.36(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))
@@ -15630,7 +15630,7 @@ snapshots:
       ink: 4.4.1(@types/react@19.0.8)(react@18.3.1)
       json-stable-stringify: 1.2.1
       just-diff: 6.0.2
-      langchain: 0.2.20(@aws-sdk/client-s3@3.744.0)(@aws-sdk/credential-provider-node@3.744.0)(@browserbasehq/sdk@2.2.0(encoding@0.1.13))(axios@1.7.9(debug@4.4.0))(encoding@0.1.13)(fast-xml-parser@4.4.1)(handlebars@4.7.8)(ignore@5.3.2)(mammoth@1.9.0)(officeparser@5.1.1)(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))(pdf-parse@1.1.1)(playwright@1.50.1)(ws@8.18.0)
+      langchain: 0.2.20(@aws-sdk/client-s3@3.744.0)(@aws-sdk/credential-provider-node@3.744.0)(@browserbasehq/sdk@2.3.0(encoding@0.1.13))(axios@1.7.9(debug@4.4.0))(encoding@0.1.13)(fast-xml-parser@4.4.1)(handlebars@4.7.8)(ignore@5.3.2)(mammoth@1.9.0)(officeparser@5.1.1)(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))(pdf-parse@1.1.1)(playwright@1.50.1)(ws@8.18.0)
       lodash-es: 4.17.21
       p-map: 7.0.3
       pangu: 4.0.7
@@ -15817,7 +15817,7 @@ snapshots:
       - typescript
       - vue-tsc
 
-  '@lobehub/seo-cli@1.4.3(@aws-sdk/client-s3@3.744.0)(@aws-sdk/credential-provider-node@3.744.0)(@browserbasehq/sdk@2.2.0(encoding@0.1.13))(@types/react@19.0.8)(axios@1.7.9(debug@4.4.0))(encoding@0.1.13)(fast-xml-parser@4.4.1)(handlebars@4.7.8)(ignore@5.3.2)(immer@10.1.1)(mammoth@1.9.0)(officeparser@5.1.1)(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))(pdf-parse@1.1.1)(playwright@1.50.1)(typescript@5.7.3)(ws@8.18.0)':
+  '@lobehub/seo-cli@1.4.3(@aws-sdk/client-s3@3.744.0)(@aws-sdk/credential-provider-node@3.744.0)(@browserbasehq/sdk@2.3.0(encoding@0.1.13))(@types/react@19.0.8)(axios@1.7.9(debug@4.4.0))(encoding@0.1.13)(fast-xml-parser@4.4.1)(handlebars@4.7.8)(ignore@5.3.2)(immer@10.1.1)(mammoth@1.9.0)(officeparser@5.1.1)(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))(pdf-parse@1.1.1)(playwright@1.50.1)(typescript@5.7.3)(ws@8.18.0)':
     dependencies:
       '@inkjs/ui': 1.0.0(ink@4.4.1(@types/react@19.0.8)(react@19.0.0))
       '@langchain/core': 0.2.36(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))
@@ -15836,7 +15836,7 @@ snapshots:
       ink: 4.4.1(@types/react@19.0.8)(react@18.3.1)
       json-stable-stringify: 1.2.1
       just-diff: 6.0.2
-      langchain: 0.2.20(@aws-sdk/client-s3@3.744.0)(@aws-sdk/credential-provider-node@3.744.0)(@browserbasehq/sdk@2.2.0(encoding@0.1.13))(axios@1.7.9(debug@4.4.0))(encoding@0.1.13)(fast-xml-parser@4.4.1)(handlebars@4.7.8)(ignore@5.3.2)(mammoth@1.9.0)(officeparser@5.1.1)(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))(pdf-parse@1.1.1)(playwright@1.50.1)(ws@8.18.0)
+      langchain: 0.2.20(@aws-sdk/client-s3@3.744.0)(@aws-sdk/credential-provider-node@3.744.0)(@browserbasehq/sdk@2.3.0(encoding@0.1.13))(axios@1.7.9(debug@4.4.0))(encoding@0.1.13)(fast-xml-parser@4.4.1)(handlebars@4.7.8)(ignore@5.3.2)(mammoth@1.9.0)(officeparser@5.1.1)(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))(pdf-parse@1.1.1)(playwright@1.50.1)(ws@8.18.0)
       lodash-es: 4.17.21
       p-map: 7.0.3
       pangu: 4.0.7
@@ -17902,33 +17902,33 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@trpc/client@11.0.0-rc.747(@trpc/server@11.0.0-rc.747(typescript@5.7.3))(typescript@5.7.3)':
+  '@trpc/client@11.0.0-rc.761(@trpc/server@11.0.0-rc.761(typescript@5.7.3))(typescript@5.7.3)':
     dependencies:
-      '@trpc/server': 11.0.0-rc.747(typescript@5.7.3)
+      '@trpc/server': 11.0.0-rc.761(typescript@5.7.3)
       typescript: 5.7.3
 
-  '@trpc/next@11.0.0-rc.747(@tanstack/react-query@5.66.0(react@19.0.0))(@trpc/client@11.0.0-rc.747(@trpc/server@11.0.0-rc.747(typescript@5.7.3))(typescript@5.7.3))(@trpc/react-query@11.0.0-rc.747(@tanstack/react-query@5.66.0(react@19.0.0))(@trpc/client@11.0.0-rc.747(@trpc/server@11.0.0-rc.747(typescript@5.7.3))(typescript@5.7.3))(@trpc/server@11.0.0-rc.747(typescript@5.7.3))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3))(@trpc/server@11.0.0-rc.747(typescript@5.7.3))(next@15.1.6(@babel/core@7.26.8)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3)':
+  '@trpc/next@11.0.0-rc.761(@tanstack/react-query@5.66.0(react@19.0.0))(@trpc/client@11.0.0-rc.761(@trpc/server@11.0.0-rc.761(typescript@5.7.3))(typescript@5.7.3))(@trpc/react-query@11.0.0-rc.761(@tanstack/react-query@5.66.0(react@19.0.0))(@trpc/client@11.0.0-rc.761(@trpc/server@11.0.0-rc.761(typescript@5.7.3))(typescript@5.7.3))(@trpc/server@11.0.0-rc.761(typescript@5.7.3))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3))(@trpc/server@11.0.0-rc.761(typescript@5.7.3))(next@15.1.6(@babel/core@7.26.8)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3)':
     dependencies:
-      '@trpc/client': 11.0.0-rc.747(@trpc/server@11.0.0-rc.747(typescript@5.7.3))(typescript@5.7.3)
-      '@trpc/server': 11.0.0-rc.747(typescript@5.7.3)
+      '@trpc/client': 11.0.0-rc.761(@trpc/server@11.0.0-rc.761(typescript@5.7.3))(typescript@5.7.3)
+      '@trpc/server': 11.0.0-rc.761(typescript@5.7.3)
       next: 15.1.6(@babel/core@7.26.8)(@opentelemetry/api@1.9.0)(@playwright/test@1.50.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
       typescript: 5.7.3
     optionalDependencies:
       '@tanstack/react-query': 5.66.0(react@19.0.0)
-      '@trpc/react-query': 11.0.0-rc.747(@tanstack/react-query@5.66.0(react@19.0.0))(@trpc/client@11.0.0-rc.747(@trpc/server@11.0.0-rc.747(typescript@5.7.3))(typescript@5.7.3))(@trpc/server@11.0.0-rc.747(typescript@5.7.3))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3)
+      '@trpc/react-query': 11.0.0-rc.761(@tanstack/react-query@5.66.0(react@19.0.0))(@trpc/client@11.0.0-rc.761(@trpc/server@11.0.0-rc.761(typescript@5.7.3))(typescript@5.7.3))(@trpc/server@11.0.0-rc.761(typescript@5.7.3))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3)
 
-  '@trpc/react-query@11.0.0-rc.747(@tanstack/react-query@5.66.0(react@19.0.0))(@trpc/client@11.0.0-rc.747(@trpc/server@11.0.0-rc.747(typescript@5.7.3))(typescript@5.7.3))(@trpc/server@11.0.0-rc.747(typescript@5.7.3))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3)':
+  '@trpc/react-query@11.0.0-rc.761(@tanstack/react-query@5.66.0(react@19.0.0))(@trpc/client@11.0.0-rc.761(@trpc/server@11.0.0-rc.761(typescript@5.7.3))(typescript@5.7.3))(@trpc/server@11.0.0-rc.761(typescript@5.7.3))(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(typescript@5.7.3)':
     dependencies:
       '@tanstack/react-query': 5.66.0(react@19.0.0)
-      '@trpc/client': 11.0.0-rc.747(@trpc/server@11.0.0-rc.747(typescript@5.7.3))(typescript@5.7.3)
-      '@trpc/server': 11.0.0-rc.747(typescript@5.7.3)
+      '@trpc/client': 11.0.0-rc.761(@trpc/server@11.0.0-rc.761(typescript@5.7.3))(typescript@5.7.3)
+      '@trpc/server': 11.0.0-rc.761(typescript@5.7.3)
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
       typescript: 5.7.3
 
-  '@trpc/server@11.0.0-rc.747(typescript@5.7.3)':
+  '@trpc/server@11.0.0-rc.761(typescript@5.7.3)':
     dependencies:
       typescript: 5.7.3
 
@@ -20775,7 +20775,7 @@ snapshots:
     dependencies:
       estraverse: 5.3.0
 
-  esrap@1.4.3:
+  esrap@1.4.4:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.0
 
@@ -22198,7 +22198,7 @@ snapshots:
 
   ky@1.7.4: {}
 
-  langchain@0.2.20(@aws-sdk/client-s3@3.744.0)(@aws-sdk/credential-provider-node@3.744.0)(@browserbasehq/sdk@2.2.0(encoding@0.1.13))(axios@1.7.9(debug@4.4.0))(encoding@0.1.13)(fast-xml-parser@4.4.1)(handlebars@4.7.8)(ignore@5.3.2)(mammoth@1.9.0)(officeparser@5.1.1)(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))(pdf-parse@1.1.1)(playwright@1.50.1)(ws@8.18.0):
+  langchain@0.2.20(@aws-sdk/client-s3@3.744.0)(@aws-sdk/credential-provider-node@3.744.0)(@browserbasehq/sdk@2.3.0(encoding@0.1.13))(axios@1.7.9(debug@4.4.0))(encoding@0.1.13)(fast-xml-parser@4.4.1)(handlebars@4.7.8)(ignore@5.3.2)(mammoth@1.9.0)(officeparser@5.1.1)(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))(pdf-parse@1.1.1)(playwright@1.50.1)(ws@8.18.0):
     dependencies:
       '@langchain/core': 0.2.36(openai@4.83.0(encoding@0.1.13)(ws@8.18.0)(zod@3.24.1))
       '@langchain/openai': 0.2.11(encoding@0.1.13)(ws@8.18.0)
@@ -22217,7 +22217,7 @@ snapshots:
     optionalDependencies:
       '@aws-sdk/client-s3': 3.744.0
       '@aws-sdk/credential-provider-node': 3.744.0
-      '@browserbasehq/sdk': 2.2.0(encoding@0.1.13)
+      '@browserbasehq/sdk': 2.3.0(encoding@0.1.13)
       axios: 1.7.9(debug@4.4.0)
       fast-xml-parser: 4.4.1
       handlebars: 4.7.8
@@ -25580,7 +25580,7 @@ snapshots:
 
   remark-lint-frontmatter-schema@3.15.4:
     dependencies:
-      '@apidevtools/json-schema-ref-parser': 11.2.0
+      '@apidevtools/json-schema-ref-parser': 11.1.0
       ajv: 8.12.0
       ajv-formats: 2.1.1(ajv@8.12.0)
       find-up: 6.3.0
@@ -27118,7 +27118,7 @@ snapshots:
       axobject-query: 4.1.0
       clsx: 2.1.1
       esm-env: 1.2.2
-      esrap: 1.4.3
+      esrap: 1.4.4
       is-reference: 3.0.3
       locate-character: 3.0.0
       magic-string: 0.30.17
