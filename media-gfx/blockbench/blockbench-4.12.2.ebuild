@@ -12,7 +12,7 @@ ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${MY_PN}_${PV}.AppImage"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="34.0.0" # Cr 132.0.6834.83, node 20.18.1
+	ELECTRON_APP_ELECTRON_PV="34.1.1" # Cr 132.0.6834.194, node 20.18.1
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="33.3.1" # Cr 130.0.6723.170, node 20.18.1
@@ -158,6 +158,18 @@ BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}[npm,webassembly(+)]
 "
 
+npm_update_lock_install_post() {
+	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+		fix_lockfile() {
+			sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
+		}
+		fix_lockfile
+		enpm install "electron-builder@25.1.8" ${NPM_INSTALL_ARGS[@]}
+		enpm install "serialize-javascript@^6.0.2" -D ${NPM_INSTALL_ARGS[@]}
+		fix_lockfile
+	fi
+}
+
 src_unpack() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		npm_hydrate
@@ -167,7 +179,7 @@ src_unpack() {
 		rm -vf package-lock.json
 		enpm install ${NPM_INSTALL_ARGS[@]}
 
-		enpm install "electron-builder@25.1.8" ${NPM_INSTALL_ARGS[@]}
+		npm_update_lock_install_post
 
 		enpm audit fix ${NPM_AUDIT_FIX_ARGS[@]}
 
