@@ -767,9 +767,17 @@ ewarn "This ebuild is still in development"
 npm_update_lock_install_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		enpm add -D "vite@${VITE_PV}" ${NPM_INSTALL_ARGS[@]}
+	fi
+}
 
-		sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
+npm_update_lock_audit_post() {
+	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+		fix_lockfile() {
+			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
+		}
+		fix_lockfile
 		enpm add -D "esbuild@^0.25.0" --legacy-peer-deps
+		fix_lockfile
 	fi
 }
 
