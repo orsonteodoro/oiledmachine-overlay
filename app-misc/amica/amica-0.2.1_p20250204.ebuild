@@ -587,7 +587,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 coqui debug ollama tray voice-recognition wayland whisper-cpp X
-ebuild_revision_1
+ebuild_revision_4
 "
 REQUIRED_USE="
 	voice-recognition
@@ -760,7 +760,10 @@ einfo "Adding Cargo.lock"
 
 npm_update_lock_install_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-		enpm install eslint -D
+		sed -i -e "s|\"esbuild\": \"^0.24.0\"|\"esbuild\": \"^0.25.0\"|g" "package.json" || die
+		sed -i -e "s|\"esbuild\": \"^0.24.0\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
+		enpm install "esbuild@^0.25.0" -D		# GHSA-67mh-4wv8-2f99		# ID		# --prefer-offline is broken
+		enpm install "eslint" -D --prefer-offline
 	fi
 }
 
