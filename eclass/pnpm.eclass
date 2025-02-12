@@ -324,20 +324,22 @@ pnpm_src_unpack() {
 	if declare -f pnpm_install_post >/dev/null 2>&1 ; then
 		pnpm_install_post
 	fi
-	if declare -f pnpm_audit_pre >/dev/null 2>&1 ; then
-		pnpm_audit_pre
-	fi
-	if [[ "${PNPM_AUDIT_FIX:-1}" == "1" ]] ; then
-		edo pnpm audit --fix ${PNPM_AUDIT_FIX_ARGS[@]}
-	fi
-	if declare -f pnpm_audit_post >/dev/null 2>&1 ; then
-		pnpm_audit_post
-	fi
-	if [[ "${PNPM_DEDUPE:-1}" == "1" ]] ; then
-		edo pnpm dedupe ${PNPM_DEDUPE_ARGS[@]}
-	fi
-	if declare -f pnpm_dedupe_post >/dev/null 2>&1 ; then
-		pnpm_dedupe_post
+	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+		if declare -f pnpm_audit_pre >/dev/null 2>&1 ; then
+			pnpm_audit_pre
+		fi
+		if [[ "${PNPM_AUDIT_FIX:-1}" == "1" ]] ; then
+			edo pnpm audit --fix ${PNPM_AUDIT_FIX_ARGS[@]}
+		fi
+		if declare -f pnpm_audit_post >/dev/null 2>&1 ; then
+			pnpm_audit_post
+		fi
+		if [[ "${PNPM_DEDUPE:-1}" == "1" ]] ; then
+			edo pnpm dedupe ${PNPM_DEDUPE_ARGS[@]}
+		fi
+		if declare -f pnpm_dedupe_post >/dev/null 2>&1 ; then
+			pnpm_dedupe_post
+		fi
 	fi
 	grep -e "ERR_PNPM_FETCH_404" "${T}/build.log" && die "Detected error.  Check pnpm add"
 }
