@@ -516,7 +516,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" hwmon video_cards_nvidia openrc systemd ebuild_revision_3"
+IUSE+=" hwmon video_cards_nvidia openrc systemd ebuild_revision_4"
 RDEPEND+="
 	~sys-apps/coolercontrol-liqctld-${PV}
 	hwmon? (
@@ -623,7 +623,8 @@ npm_update_lock_install_post() {
 			sed -i -e "s|\"vitest\": \"^2.1.8\"|\"vitest\": \"^2.1.9\"|" "package.json" || die
 			enpm install "vitest@2.1.9" -D --prefer-offline
 
-			sed -i -e "s|\"esbuild\": \"^0.24.2\"|\"esbuild\": \"^0.25.0\"|g" "package.json" || die # Must follow vitest
+			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die # Must follow vitest
+			sed -i -e "s|\"esbuild\": \"^0.24.2\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die # Must follow vitest
 			enpm install "esbuild@^0.25.0" -D
 		popd >/dev/null 2>&1 || die
 	fi
