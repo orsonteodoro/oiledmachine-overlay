@@ -180,7 +180,7 @@ LICENSE="
 	MIT
 "
 SLOT="0"
-IUSE+="+chromium clipboard ebuild_revision_9"
+IUSE+="+chromium clipboard ebuild_revision_11"
 REQUIRED_USE+="
 	|| (
 		${PLAYWRIGHT_BROWSERS[@]}
@@ -216,12 +216,16 @@ npm_update_lock_install_pre() {
 npm_update_lock_audit_post() {
 einfo "Applying mitigation"
 	patch_edits() {
+		sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
+		sed -i -e "s|\"esbuild\": \"~0.23.0\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
+
 		sed -i -e "s|\"phin\": \"^2.9.1\"|\"phin\": \"^3.7.1\"|g" "package-lock.json" || die
 		sed -i -e "s|\"phin\": \"^2.9.3\"|\"phin\": \"^3.7.1\"|g" "package-lock.json" || die
 	}
 	patch_edits
 
 	# ID = Information Disclosure
+	enpm install "esbuild@^0.25.0" -D --prefer-offline	# ID		# GHSA-67mh-4wv8-2f99
 	enpm install "phin@^3.7.1" -P --prefer-offline		# ID		# GHSA-x565-32qp-m3vf
 
 	patch_edits
