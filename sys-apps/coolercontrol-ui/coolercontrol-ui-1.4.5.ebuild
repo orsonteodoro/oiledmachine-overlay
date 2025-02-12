@@ -663,7 +663,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" tray wayland X ebuild_revision_7"
+IUSE+=" tray wayland X ebuild_revision_8"
 gen_webkit_depend() {
 	local s
 	for s in ${WEBKIT_GTK_STABLE[@]} ; do
@@ -810,7 +810,8 @@ npm_update_lock_install_post() {
 			sed -i -e "s|\"vitest\": \"^2.1.8\"|\"vitest\": \"^2.1.9\"|" "package.json" || die
 			enpm install "vitest@2.1.9" -D --prefer-offline
 
-			sed -i -e "s|\"esbuild\": \"^0.24.2\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" # Must follow vitest
+			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die # Must follow vite
+			sed -i -e "s|\"esbuild\": \"^0.24.2\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die # Must follow vite
 			enpm install "esbuild@^0.25.0" -D
 		popd >/dev/null 2>&1 || die
 	fi
