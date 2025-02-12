@@ -622,7 +622,7 @@ LICENSE="
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 tray wayland +X
-ebuild_revision_3
+ebuild_revision_5
 "
 REQUIRED_USE="
 	|| (
@@ -779,6 +779,14 @@ npm_unpack_post() {
 			|| die
 	else
 ewarn "Missing security updated Cargo.lock"
+	fi
+}
+
+npm_update_lock_install_post() {
+	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+ewarn "QA:  Remove node_modules/esbuild in ${S}/package-lock.json"
+		sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
+		enpm install "esbuild@^0.25.0" -D # GHSA-67mh-4wv8-2f99; ID		# --prefer-offline is broken
 	fi
 }
 
