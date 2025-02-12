@@ -683,7 +683,7 @@ LICENSE="
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 ollama tray wayland X
-ebuild_revision_2
+ebuild_revision_4
 "
 REQUIRED_USE="
 	|| (
@@ -764,9 +764,12 @@ ewarn "This ebuild is still in development"
 	rust_pkg_setup
 }
 
-pnpm_install_post() {
+npm_update_lock_install_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		enpm add -D "vite@${VITE_PV}" ${NPM_INSTALL_ARGS[@]}
+
+		sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
+		enpm add -D "esbuild@^0.25.0" --legacy-peer-deps
 	fi
 }
 
