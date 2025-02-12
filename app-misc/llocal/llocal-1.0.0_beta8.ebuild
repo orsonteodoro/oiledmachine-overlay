@@ -67,7 +67,7 @@ else
 	"
 fi
 SLOT="0"
-IUSE+=" ebuild_revision_2"
+IUSE+=" ebuild_revision_3"
 RDEPEND="
 	app-misc/ollama
 "
@@ -110,8 +110,8 @@ npm_update_lock_install_post() {
 		patch_lockfile
 
 		enpm install "@langchain/community@0.3.3" -P ${NPM_INSTALL_ARGS[@]}
-		enpm install "esbuild@0.25.0" -D ${NPM_INSTALL_ARGS[@]}
 		enpm install "vite@5.4.12" -D ${NPM_INSTALL_ARGS[@]}
+		enpm install "esbuild@0.25.0" -D # --prefer-offline is bugged, must follow vite
 		enpm install "ws@8.17.1" -P ${NPM_INSTALL_ARGS[@]}
 	fi
 	# Fix breakage
