@@ -615,6 +615,7 @@ eerror
 }
 
 npm_update_lock_audit_post() {
+	return
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 einfo "Fixing vulnerabilities"
 		patch_lockfiles() {
@@ -622,11 +623,14 @@ einfo "Fixing vulnerabilities"
 			sed -i -e "s|\"braces\": \"^2.3.2\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die
 			sed -i -e "s|\"braces\": \"~3.0.2\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die
 			sed -i -e "s|\"nanoid\": \"3.1.20\"|\"nanoid\": \"^3.1.31\"|g" "package-lock.json" || die
+			sed -i -e "s|\"serialize-javascript\": \"5.0.1\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
+			sed -i -e "s|\"serialize-javascript\": \"6.0.0\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
 		}
 		patch_lockfiles
 
-		enpm install "braces@3.0.3" -D -w "packages/google-closure-compiler" --prefer-offline			# CVE-2024-4068; DoS, High
-		enpm install "nanoid@3.1.31" -D -w "packages/google-closure-compiler" --prefer-offline			# CVE-2021-23566; ID, Medium
+		enpm install "braces@3.0.3" -D -w "packages/google-closure-compiler" --prefer-offline			# CVE-2024-4068; DoS; High
+		enpm install "nanoid@3.1.31" -D -w "packages/google-closure-compiler" --prefer-offline			# CVE-2021-23566; ID; Medium
+		enpm install "serialize-javascript@^6.0.2" -D --prefer-offline						# CVE-2024-11831; DT, ID; Medium
 		patch_lockfiles
 	fi
 }
