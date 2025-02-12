@@ -70,8 +70,14 @@ HOMEPAGE="
 	https://pypi.org/project/tdir
 "
 LICENSE="
-	Apache-2.0
+	(
+		all-rights-reserved
+		Apache-2.0
+		custom
+	)
 "
+# The distro's Apache-2.0 license file does not contain all rights reserved
+# custom - See https://github.com/lobehub/lobe-chat/blob/main/LICENSE
 RESTRICT="binchecks mirror strip test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
