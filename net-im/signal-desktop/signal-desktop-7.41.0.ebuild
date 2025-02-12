@@ -86,7 +86,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_11
+ebuild_revision_12
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -160,6 +160,7 @@ src_unpack() {
 		enpm install ${NPM_INSTALL_ARGS[@]}
 
 ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and all 0.18.10 associated packages from ${S}/sticker-creator/package-lock.json"
+ewarn "QA:  Manually remove node_modules/react-quill/node_modules/quill from ${S}/package-lock.json"
 		patch_edits() {
 			pushd "sticker-creator" >/dev/null 2>&1 || die
 				sed -i -e "s|\"cross-spawn\": \"^6.0.5\"|\"cross-spawn\": \"^6.0.6\"|g" "package-lock.json" || die								# CVE-2024-21538; DoS; High
