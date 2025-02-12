@@ -152,7 +152,7 @@ LICENSE="
 
 RESTRICT="mirror"
 SLOT="0"
-IUSE+=" ebuild_revision_2"
+IUSE+=" ebuild_revision_3"
 BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}[webassembly(+)]
 	>=net-libs/nodejs-${NODE_VERSION}[npm,webassembly(+)]
@@ -165,6 +165,7 @@ npm_update_lock_install_post() {
 		}
 		fix_lockfile
 		enpm install "electron-builder@25.1.8" ${NPM_INSTALL_ARGS[@]}
+		enpm install "electron@${ELECTRON_APP_ELECTRON_PV}" -D ${NPM_INSTALL_ARGS[@]}
 		enpm install "serialize-javascript@^6.0.2" -D ${NPM_INSTALL_ARGS[@]}
 		fix_lockfile
 	fi
@@ -175,6 +176,8 @@ src_unpack() {
 		npm_hydrate
 		unpack ${P}.tar.gz
 		cd "${S}" || die
+
+		_npm_setup_offline_cache
 
 		rm -vf package-lock.json
 		enpm install ${NPM_INSTALL_ARGS[@]}
