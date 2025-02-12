@@ -38,6 +38,7 @@
     "http-server": "^0.12.1",
     "husky": "^4.2.3",
     "postcss": "^8.4.31",
+    "serialize-javascript": "^6.0.2",
     "style-loader": "^1.1.3",
     "ThunderJS": "github:rdkcentral/ThunderJS#v1.2.4",
     "webpack": "^4.42.1",

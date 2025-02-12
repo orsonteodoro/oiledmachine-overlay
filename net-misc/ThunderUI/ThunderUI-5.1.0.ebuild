@@ -35,7 +35,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND+="
 	net-libs/nodejs:18[webassembly(+)]
@@ -57,11 +57,13 @@ npm_update_lock_install_post() {
 			sed -i -e "s|\"postcss\": \"^7.0.6\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
 			sed -i -e "s|\"postcss\": \"^7.0.14\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
 			sed -i -e "s|\"postcss\": \"^7.0.32\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
+			sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
 		}
 		patch_lockfile
 
-		enpm add "braces@3.0.3" -D --prefer-offline		# CVE-2024-4068; DoS; High
-		enpm add "postcss@8.4.31" -D --prefer-offline		# CVE-2023-44270; DT; Medium
+		enpm add "braces@3.0.3" -D --prefer-offline			# CVE-2024-4068; DoS; High
+		enpm add "postcss@8.4.31" -D --prefer-offline			# CVE-2023-44270; DT; Medium
+		enpm add "serialize-javascript@^6.0.2" -D --prefer-offline	# CVE-2024-11831; DT, ID; Medium
 		patch_lockfile
 	fi
 }
