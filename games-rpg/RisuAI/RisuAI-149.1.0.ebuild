@@ -683,7 +683,7 @@ LICENSE="
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 ollama tray wayland X
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	|| (
