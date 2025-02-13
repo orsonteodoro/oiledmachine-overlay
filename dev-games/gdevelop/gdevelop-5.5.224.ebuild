@@ -567,6 +567,7 @@ ewarn "QA:  node_modules/micromatch/node_modules/braces must be manually removed
 					sed -i -e "s|\"tough-cookie\": \"^4.0.0\"|\"tough-cookie\": \"^4.1.3\"|g" "package-lock.json" || die
 				popd || die
 
+	# storybook (7.4.6) -> @storybook/core-server (7.4.6) -> ip (CVE-2024-29415; DoS, DT, ID; High).  The fix relies on bumping storybook to >= 8.1.6 which is Node >= 18.  Node 16 is a hard dependency.
 				pushd "${S}/newIDE/app" || die
 					sed -i -e "s|\"@grpc/grpc-js\": \"^1.0.0\"|\"@grpc/grpc-js\": \"^1.8.22\"|g" "package-lock.json" || die
 					sed -i -e "s|\"axios\": \"^0.21.2\"|\"axios\": \"^0.28.0\"|g" "package-lock.json" || die
