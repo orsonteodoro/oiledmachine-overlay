@@ -701,10 +701,14 @@ EOF
 	done
 	local path
 	for path in ${NPM_EXE_LIST} ; do
-		if [[ -e "${ED}/${path}" ]] ; then
-			fperms 0755 "${path}" || die
+		local _path=$(echo "${path}" \
+			| sed -r \
+				-e "s|^[[:space:]]+||g" \
+				-e "s|[[:space:]]+$||g")
+		if [[ -e "${ED}/${_path}" ]] ; then
+			fperms 0755 "${_path}" || die
 		else
-eerror "Skipping fperms 0755 ${path}.  Missing file."
+eerror "Skipping fperms 0755 ${_path}.  Missing file."
 		fi
 	done
 	IFS=$' \t\n'
