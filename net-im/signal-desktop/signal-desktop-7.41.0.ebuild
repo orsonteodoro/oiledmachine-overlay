@@ -136,6 +136,10 @@ npm_unpack_post() {
 	sed -i -e "s|postinstall|disabled_postinstall|g" "${S}/package.json" || die
 }
 
+npm_unpack_install_post() {
+	die
+}
+
 src_unpack() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		npm_hydrate
@@ -160,7 +164,6 @@ src_unpack() {
 		enpm install ${NPM_INSTALL_ARGS[@]}
 
 ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and all 0.18.10 associated packages from ${S}/sticker-creator/package-lock.json"
-#ewarn "QA:  Manually remove node_modules/react-quill/node_modules/quill from ${S}/package-lock.json"
 		patch_edits() {
 			pushd "sticker-creator" >/dev/null 2>&1 || die
 				sed -i -e "s|\"cross-spawn\": \"^6.0.5\"|\"cross-spawn\": \"^6.0.6\"|g" "package-lock.json" || die								# CVE-2024-21538; DoS; High
@@ -184,8 +187,6 @@ ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and all 0.18.
 			sed -i -e "s|\"got\": \"^11.7.0\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die											# CVE-2022-33987; DT; Medium
 			sed -i -e "s|\"got\": \"^11.8.2\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die											# CVE-2022-33987; DT; Medium
 			sed -i -e "s|\"got\": \"^6.7.1\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die											# CVE-2022-33987; DT; Medium
-
-#			sed -i -e "s|\"quill\": \"1.3.7\"|\"quill\": \"^2.0.0\"|g" "package-lock.json" || die											# CVE-2021-3163; DT, ID; Medium; See quill issue #3364
 		}
 		patch_edits
 
@@ -212,7 +213,6 @@ ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and all 0.18.
 		deps=(
 			"esbuild@0.25.0"
 			"got@11.8.5"
-#			"quill@^2.0.0"																				# Breaks?
 		)
 		enpm install ${deps[@]} -P ${NPM_INSTALL_ARGS[@]}
 
