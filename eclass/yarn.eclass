@@ -612,7 +612,7 @@ einfo "Current directory:\t${PWD}"
 einfo "Tries:\t\t${tries}"
 einfo "Running:\t\tyarn ${cmd[@]}"
 		yarn_env_push
-		yarn "${cmd[@]}" || die
+		yarn "${cmd[@]}" 2>&1 || die
 		yarn_env_pop
 		if ! grep -q -E -e "(ETIMEDOUT|EAI_AGAIN|ECONNRESET)" "${T}/build.log" ; then
 			break
@@ -729,6 +729,7 @@ einfo "Generating yarn lockfile"
 		if [[ "${YARN_SLOT}" == "1" ]] ; then
 			edo yarn import
 		else
+			rm -rf "node_modules"
 			eyarn install --mode=update-lockfile
 		fi
 		[[ -e "yarn.lock" ]] || ewarn "Missing generated yarn.lock file"
