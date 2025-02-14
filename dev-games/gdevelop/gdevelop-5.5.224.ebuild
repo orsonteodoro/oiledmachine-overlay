@@ -331,6 +331,12 @@ evar_dump "NPM_PROJECT_ROOT" "${NPM_PROJECT_ROOT}"
 	# Audit fix already done with NPM_UPDATE_LOCK=1
 }
 
+npm_unpack_post() {
+einfo "Copying custom patches"
+	mkdir -p "${S}/newIDE/app/patches" || die
+	cp -a "${FILESDIR}/storybook-core-server-7.4.6.patch" "${S}/newIDE/app/patches/@storybook-core-server+7.4.6.patch" || die
+}
+
 # @FUNCTION: __src_unpack_all_production
 # @DESCRIPTION:
 # Unpacks a npm application.
@@ -346,6 +352,10 @@ __src_unpack_all_production() {
 		unpack "${NPM_TARBALL}"
 	else
 		unpack "${P}.tar.gz"
+	fi
+
+	if declare -f npm_unpack_post >/dev/null 2>&1 ; then
+		npm_unpack_post
 	fi
 
 	if [[ "${offline}" == "1" || "${offline}" == "2" ]] ; then
@@ -511,6 +521,10 @@ einfo "Building ${MY_PN}.js"
 			unpack "${NPM_TARBALL}"
 		else
 			unpack "${P}.tar.gz"
+		fi
+
+		if declare -f npm_unpack_post >/dev/null 2>&1 ; then
+			npm_unpack_post
 		fi
 
 		if [[ "${offline}" == "1" || "${offline}" == "2" ]] ; then
@@ -717,6 +731,8 @@ ewarn "QA:  node_modules/micromatch/node_modules/braces must be manually removed
 					"shelljs@0.8.5"				# DoS, ID		# CVE-2022-0144, GHSA-64g7-mvw6-v9qj
 					"tar@4.4.18"				# DT, ID		# CVE-2021-37713, CVE-2021-32804, CVE-2021-32803, CVE-2018-20834
 					"tough-cookie@4.1.3"			# DT, ID		# CVE-2023-26136
+
+					"patch-package@^6.4.7"																	# For fixing vulnerability
 				)
 				enpm install ${pkgs[@]} -D ${NPM_INSTALL_ARGS[@]}
 				pkgs=(
@@ -737,6 +753,7 @@ ewarn "QA:  node_modules/micromatch/node_modules/braces must be manually removed
 			pushd "${S}/newIDE/app" || die
 				pkgs=(
 					"cryptiles"
+					"ip"					# DoS, DT, ID		# CVE-2024-29415, CVE-2023-42282, GHSA-2p57-rm9w-gvfp					# Backported patch from storybook pull request #27529
 				)
 				enpm uninstall ${pkgs[@]} ${NPM_UNINSTALL_ARGS[@]}
 				pkgs=(
@@ -751,7 +768,6 @@ ewarn "QA:  node_modules/micromatch/node_modules/braces must be manually removed
 					"follow-redirects@1.14.8"		# DoS, DT, ID		# CVE-2022-0155, CVE-2024-28849, CVE-2023-26159, CVE-2022-0536
 					"getobject@1.0.0"
 					"ini@1.3.6"				# DoS, DT, ID		# CVE-2020-7788
-					"ip@2.0.1"				# DoS, DT, ID		# CVE-2024-29415, CVE-2023-42282							# Still broken
 					"jsdom@16.6.0"				# DoS, DT, ID													# [12]
 					"json-schema@0.4.0"
 					#"lodash@4.17.21"			# DoS, DT, ID													# * [7] ; No fix for lodash.template
@@ -772,6 +788,8 @@ ewarn "QA:  node_modules/micromatch/node_modules/braces must be manually removed
 					"yargs-parser@13.1.2"			# DoS, DT, ID		# CVE-2020-7608
 
 					"babel-plugin-macros@^3.1.0"																# Missing
+
+					"patch-package@^6.4.7"																	# For fixing vulnerability
 				)
 				enpm install ${pkgs[@]} -D ${NPM_INSTALL_ARGS[@]}
 				pkgs=(

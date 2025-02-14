@@ -44,6 +44,7 @@
     "json-schema": "^0.4.0",
     "lodash": "^4.17.21",
     "minimist": "^1.2.6",
+    "patch-package": "^6.5.1",
     "prettier": "^3.2.2",
     "shelljs": "^0.8.5",
     "tar": "^4.4.18",
