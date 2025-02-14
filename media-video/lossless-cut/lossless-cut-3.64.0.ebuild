@@ -10,7 +10,7 @@ EAPI=8
 MY_PN="${PN/-/}"
 
 # See https://releases.electronjs.org/releases.json
-_ELECTRON_DEP_ROUTE="secure" # reproducible or secure
+_ELECTRON_DEP_ROUTE="reproducible" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
 	ELECTRON_APP_ELECTRON_PV="32.0.0-beta.2" # Cr 128.0.6611.0, node 20.15.1
@@ -21,8 +21,8 @@ else
 	ELECTRON_APP_ELECTRON_PV="31.3.1" # Cr 126.0.6478.185, node 20.15.1
 fi
 ELECTRON_APP_SHARP_PV="0.32.6"
-NPM_AUDIT_FIX=1
-YARN_AUDIT_FIX=1
+NPM_AUDIT_FIX=0 # Breaks build
+YARN_AUDIT_FIX=0
 NODE_GYP_PV="9.3.0"
 NODE_VERSION="20"
 PATENT_STATUS=(
@@ -81,7 +81,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${PATENT_STATUS[@]}
 mp3 opus svt-av1 theora vorbis vpx x264
-ebuild_revision_4
+ebuild_revision_6
 "
 REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -139,21 +139,97 @@ yarn_update_lock_install_post() {
 }
 
 yarn_update_lock_yarn_import_post() {
+# Bugged
 	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
-		eyarn add "typescript@5.5.4" -D									# Fix runtime breakage
+#		eyarn remove "typescript"
+#ewarn "QA:  modify lockfile to replace typescript@5.7.x with typescript@5.5.4"
+#		eyarn add "typescript@5.5.4" -D -E								# Fix runtime breakage
 
-		sed -i -e "s|node-fetch: \"npm:^1.0.1\"|node-fetch: \"npm:^2.6.7\"|g" "yarn.lock" || die	# CVE-2022-0235, GHSA-r683-j2x4-v87g; DoS, DT, ID; High
-		eyarn add "node-fetch@2.6.7" -D
+#		eyarn add "react@18.2.0" -D -E
+#		eyarn add "react-dom@18.2.0" -D -E
+#		eyarn add "i18next-parser@9.0.1" -D -E
+#		eyarn add "ky@0.33.1" -D -E
 
-		eyarn add "electron@${ELECTRON_APP_ELECTRON_PV}" -D
+#		eyarn add "sweetalert2-react-content@5.0.7" -D -E
+#		eyarn add "sweetalert2@11.11.0" -D -E
 
-		sed -i -e "s|esbuild: \"npm:^0.21.5\"|esbuild: \"npm:^0.25.0\"|g" "yarn.lock" || die		# GHSA-67mh-4wv8-2f99; ID
-		sed -i -e "s|esbuild: \"npm:^0.24.0\"|esbuild: \"npm:^0.25.0\"|g" "yarn.lock" || die		# GHSA-67mh-4wv8-2f99; ID
-		sed -i -e "s|esbuild: \"npm:~0.23.0\"|esbuild: \"npm:^0.25.0\"|g" "yarn.lock" || die		# GHSA-67mh-4wv8-2f99; ID
-		sed -i -e "s|esbuild: \"npm:^0.21.3\"|esbuild: \"npm:^0.25.0\"|g" "yarn.lock" || die		# GHSA-67mh-4wv8-2f99; ID
-		eyarn add "esbuild@0.25.0" -D
+#		eyarn add "@octokit/core@5.1.0" -E
+#		eyarn add "@tsconfig/vite-react@3.0.0" -D -E
+#		eyarn add "vite@5.4.8" -D -E
+#		eyarn add "vitest@2.0.3" -D -E
 
-		eyarn add "sweetalert2@11.4.8" -D								# GHSA-mrr8-v49w-3333; Low
+#		eyarn add "express@4.21.0" -E
+
+#		eyarn add "i18next-fs-backend@2.3.2" -E
+#		eyarn add "i18next@23.12.2" -E
+
+#		eyarn add "winston@3.8.1" -E
+#		eyarn add "zod@3.22.5" -E
+
+#		eyarn add "evergreen-ui@6.13.1" -D -E
+#		eyarn add "@types/react@18.2.66" -D -E
+#		eyarn add "@types/node@20.14.14" -D -E
+#		eyarn add "react-i18next@15.0.0" -D -E
+#		eyarn add "nanoid@3.3.7" -D -E
+#		eyarn add "react-lottie-player@1.5.0" -D -E
+#		eyarn add "react-use@17.4.0" -D -E
+#		eyarn add "react-syntax-highlighter@15.4.5" -D -E
+#		eyarn add "sortablejs@1.14.0" -D -E
+#		eyarn add "@tsconfig/node18@18.2.2" -D -E
+#		eyarn add "@adamscybot/react-leaflet-component-marker@2.0.0" -D -E
+#		eyarn add "@vitejs/plugin-react@4.3.1" -D -E
+
+#		eyarn add "@radix-ui/colors@0.1.8" -D -E
+#		eyarn add "@radix-ui/react-checkbox@1.0.4" -D -E
+#		eyarn add "@radix-ui/react-switch@1.0.1" -D -E
+#		eyarn add "@types/leaflet@1.9.12" -D -E
+#		eyarn add "@types/lodash@4.17.7" -D -E
+#		eyarn add "@types/sortablejs@1.15.0" -D -E
+
+#		eyarn add "sass@1.77.2" -D -E
+
+#		eyarn add "p-retry@6.2.0" -D -E
+#		eyarn add "pretty-bytes@6.0.0" -D -E
+#		eyarn add "scroll-into-view-if-needed@2.2.28" -D -E
+#		eyarn add "smpte-timecode@1.2.3" -D -E
+#		eyarn add "tsx@4.7.1" -D -E
+#		eyarn add "use-trace-update@1.3.2" -D -E
+#		eyarn add "immer@10.0.2" -D -E
+
+#		eyarn add "luxon@3.3.0" -D -E
+#		eyarn add "mkdirp@0.5.5" -D -E
+#		eyarn add "react-icons@4.3.1" -D -E
+
+#		eyarn add "@tsconfig/strictest@2.0.2" -D -E
+#		eyarn add "@tsconfig/vite-react@2.0.2" -D -E
+#		eyarn add "@types/eslint@8.56.2" -D -E
+#		eyarn add "@types/lodash@4.17.7" -D -E
+#		eyarn add "@types/react-dom@18.2.22" -D -E
+#		eyarn add "data-uri-to-buffer@4.0.0" -D -E
+#		eyarn add "electron-devtools-installer@3.2.0" -D -E
+#		eyarn add "eslint@8.56.0" -D -E
+#		eyarn add "eslint-plugin-import@2.29.1" -D -E
+#		eyarn add "eslint-plugin-jsx-a11y@6.8.0" -D -E
+#		eyarn add "eslint-plugin-react@7.33.2" -D -E
+#		eyarn add "eslint-plugin-react-hooks@4.6.0" -D -E
+#		eyarn add "eslint-plugin-react-hooks@4.6.0" -D -E
+
+#		eyarn add "fast-xml-parser@4.4.1" -D -E
+#		eyarn add "framer-motion@9.0.3" -D -E
+
+#		sed -i -e "s|node-fetch: \"npm:^1.0.1\"|node-fetch: \"npm:^2.6.7\"|g" "yarn.lock" || die	# CVE-2022-0235, GHSA-r683-j2x4-v87g; DoS, DT, ID; High
+#		eyarn add "node-fetch@2.6.7" -D
+
+		eyarn add "electron@${ELECTRON_APP_ELECTRON_PV}" -D -E
+
+#		sed -i -e "s|esbuild: \"npm:^0.21.5\"|esbuild: \"npm:^0.25.0\"|g" "yarn.lock" || die		# GHSA-67mh-4wv8-2f99; ID
+#		sed -i -e "s|esbuild: \"npm:^0.24.0\"|esbuild: \"npm:^0.25.0\"|g" "yarn.lock" || die		# GHSA-67mh-4wv8-2f99; ID
+#		sed -i -e "s|esbuild: \"npm:~0.23.0\"|esbuild: \"npm:^0.25.0\"|g" "yarn.lock" || die		# GHSA-67mh-4wv8-2f99; ID
+#		sed -i -e "s|esbuild: \"npm:^0.21.3\"|esbuild: \"npm:^0.25.0\"|g" "yarn.lock" || die		# GHSA-67mh-4wv8-2f99; ID
+#		eyarn add "esbuild@0.25.0" -D
+
+#		eyarn add "sweetalert2@11.4.8" -D								# GHSA-mrr8-v49w-3333; Low
+
 
 einfo "Adding file-type patch"
 		sed -i -e "s|\"file-type\": \"19.4.1\"|\"file-type\": \"patch:file-type@npm%3A19.4.1#~/.yarn/patches/file-type-npm-19.4.1-d18086444c.patch\"|g" "package.json" || die
@@ -172,9 +248,11 @@ src_unpack() {
 	else
 		yarn_src_unpack
 	fi
-	eyarn add "node-gyp@${NODE_GYP_PV}"
+
+	eyarn add "node-gyp@${NODE_GYP_PV}" -D -E
 	export SHARP_IGNORE_GLOBAL_LIBVIPS=1 # First download prebuilt vips lib
-	eyarn add "sharp@${ELECTRON_APP_SHARP_PV}"
+	eyarn add "sharp@${ELECTRON_APP_SHARP_PV}" -E
+
 	electron-app_set_sharp_env # Disabled vips lib
 	if grep -q -E -e "sharp: Installation error: aborted" "${T}/xfs-"*"/build.log" 2>/dev/null ; then
 		eyarn rebuild sharp
