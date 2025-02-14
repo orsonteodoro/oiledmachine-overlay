@@ -166,7 +166,7 @@ SLOT="${SLOT_MAJOR}/${PV}"
 IUSE+="
 	${LLVM_COMPAT[@]/#/llvm_slot_}
 	-analytics
-	ebuild_revision_9
+	ebuild_revision_10
 "
 REQUIRED_USE+="
 	!wayland
@@ -334,7 +334,7 @@ evar_dump "NPM_PROJECT_ROOT" "${NPM_PROJECT_ROOT}"
 npm_unpack_post() {
 einfo "Copying custom patches"
 	mkdir -p "${S}/newIDE/app/patches" || die
-	cp -a "${FILESDIR}/storybook-core-server-7.4.6.patch" "${S}/newIDE/app/patches/@storybook-core-server+7.4.6.patch" || die
+	cp -a "${FILESDIR}/storybook-core-server-7.4.6.patch" "${S}/newIDE/app/patches/@storybook+core-server+7.4.6.patch" || die
 }
 
 # @FUNCTION: __src_unpack_all_production
