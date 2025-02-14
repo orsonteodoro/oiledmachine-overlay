@@ -166,7 +166,7 @@ SLOT="${SLOT_MAJOR}/${PV}"
 IUSE+="
 	${LLVM_COMPAT[@]/#/llvm_slot_}
 	-analytics
-	ebuild_revision_8
+	ebuild_revision_9
 "
 REQUIRED_USE+="
 	!wayland
@@ -751,6 +751,7 @@ ewarn "QA:  node_modules/micromatch/node_modules/braces must be manually removed
 				enpm install ${pkgs[@]} -D ${NPM_INSTALL_ARGS[@]}
 			popd || die
 			pushd "${S}/newIDE/app" || die
+ewarn "QA:  Manually remove ip references in ${S}/newIDE/app/package-lock.json"
 				pkgs=(
 					"cryptiles"
 					"ip"					# DoS, DT, ID		# CVE-2024-29415, CVE-2023-42282, GHSA-2p57-rm9w-gvfp					# Backported patch from storybook pull request #27529
