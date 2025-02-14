@@ -140,8 +140,8 @@ yarn_update_lock_install_post() {
 
 yarn_update_lock_yarn_import_post() {
 	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
-ewarn "QA:  modify lockfile to remove typescript@5.7.x and move associated version ranges to typescript@5.5.4"
-ewarn "QA:  modify lockfile to associate typescript:* with typescript 20 in lockfile"
+ewarn "QA:  Manually modify lockfile to remove typescript@5.7.x and move associated version ranges from typescript 5.7.x to typescript@5.5.4"
+ewarn "QA:  Manually modify lockfile to associate @types/node:* with @types/node 20 in lockfile and drop @types/node 22"
 		eyarn add "typescript@5.5.4" -D
 		eyarn add "@types/node@20.14.14" -D
 		eyarn add "@types/node@18.19.21" -D
