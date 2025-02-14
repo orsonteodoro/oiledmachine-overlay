@@ -26,7 +26,9 @@ _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
 	#ELECTRON_APP_ELECTRON_PV="35.0.0-beta.3" # Cr 134.0.6968.0, node 22.9.0 # Broken
-	ELECTRON_APP_ELECTRON_PV="34.1.1" # Cr 132.0.6834.194, node 20.18.1
+#	ELECTRON_APP_ELECTRON_PV="34.1.1" # Cr 132.0.6834.194, node 20.18.1
+#	ELECTRON_APP_ELECTRON_PV="34.2.0" # Cr 132.0.6834.196, node 20.18.2
+	ELECTRON_APP_ELECTRON_PV="35.0.0-beta.6" # Cr 134.0.6990.0, node 22.9.0
 else
 	# Upstream's choice
 	ELECTRON_APP_ELECTRON_PV="33.3.1" # Cr 130.0.6723.170, node 20.18.1
@@ -86,7 +88,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_13
+ebuild_revision_15
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -137,7 +139,8 @@ npm_unpack_post() {
 }
 
 npm_unpack_install_post() {
-	die
+	:
+	#die
 }
 
 src_unpack() {
@@ -348,6 +351,7 @@ pkg_postinst() {
 	elog "For using the tray icon on compatible desktop environments, start Signal with"
 	elog " '--start-in-tray' or '--use-tray-icon'."
 }
+# OILEDMACHINE-OVERLAY-TEST:  passed (7.42.0, 20250214, electron 35.0.0-beta.6)
 # OILEDMACHINE-OVERLAY-TEST:  passed (7.41.0, 20250116, electron 34.1.1)
 # OILEDMACHINE-OVERLAY-TEST:  passed (7.41.0, 20250207, electron 35.0.0-beta.3)
 # OILEDMACHINE-OVERLAY-TEST:  passed (7.40.1, 20250205, electron 35.0.0-beta.2)
