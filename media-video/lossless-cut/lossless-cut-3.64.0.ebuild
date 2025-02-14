@@ -80,7 +80,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${PATENT_STATUS[@]}
 mp3 opus svt-av1 theora vorbis vpx x264
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -149,6 +149,7 @@ ewarn "QA:  Manually modify lockfile to associate @types/node:* with @types/node
 		eyarn add "electron@${ELECTRON_APP_ELECTRON_PV}" -D						# Enable for offline cache speed up
 
 		eyarn add "node-gyp@${NODE_GYP_PV}" -D
+		eyarn add "sharp@${ELECTRON_APP_SHARP_PV}"
 
 		sed -i -e "s|node-fetch: \"npm:^1.0.1\"|node-fetch: \"npm:^2.6.7\"|g" "yarn.lock" || die	# CVE-2022-0235, GHSA-r683-j2x4-v87g; DoS, DT, ID; High
 		eyarn add "node-fetch@2.6.7" -D
@@ -179,9 +180,7 @@ src_unpack() {
 		yarn_src_unpack
 	fi
 
-#	eyarn add "node-gyp@${NODE_GYP_PV}" -D
 	export SHARP_IGNORE_GLOBAL_LIBVIPS=1 # First download prebuilt vips lib
-	eyarn add "sharp@${ELECTRON_APP_SHARP_PV}"
 
 	electron-app_set_sharp_env # Disabled vips lib
 	if grep -q -E -e "sharp: Installation error: aborted" "${T}/xfs-"*"/build.log" 2>/dev/null ; then
