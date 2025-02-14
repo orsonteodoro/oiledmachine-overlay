@@ -247,7 +247,7 @@ src_install() {
 		"${ED}/usr/share/applications/no.mifi.losslesscut.desktop" \
 		|| die
 
-#	lcnr_install_files
+	lcnr_install_files
 	electron-app_set_sandbox_suid "/opt/${MY_PN}/chrome-sandbox"
 
 	if has_version "media-video/ffmpeg:58.60.60" ; then
