@@ -1088,6 +1088,7 @@ ewarn
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.4.204 (20240627) platformer demo, car-coin demo (emscripten 1.39.20)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.5.221 (20250119) platformer demo (emscripten 1.39.20, electron 22.3.27)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.5.224 (20250208) platformer demo (emscripten 1.39.20, electron 22.3.27)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 5.5.224 (20250214) platformer demo (emscripten 1.39.20, electron 22.3.27)
 # wayland:                    failed
 # X:                          passed
 # command-line wrapper:       passed
