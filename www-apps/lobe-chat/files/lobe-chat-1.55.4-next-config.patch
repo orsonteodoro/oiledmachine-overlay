@@ -6,7 +6,7 @@
 -    webpackMemoryOptimizations: true,
 +    webpackMemoryOptimizations: true,
 +    workerThreads: false,
-+    cpus: 1,
++    cpus: 1, // For more settings, see also https://github.com/vercel/next.js/blob/v15.1.7/packages/next/src/server/config-shared.ts#L306
    },
    async headers() {
      return [
