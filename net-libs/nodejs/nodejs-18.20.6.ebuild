@@ -711,9 +711,14 @@ eerror "To use mold, enable the mold USE flag."
 		myconf+=( --openssl-default-cipher-list=${NODEJS_OPENSSL_DEFAULT_LIST_CORE} )
 	fi
 
+	local pointer_compression_msg="Disabling pointer compression.  If out of memory (OOM) use Node.js 20 or later."
 	if use amd64 || use arm64 ; then
-		use pointer-compression && myconf+=( --experimental-enable-pointer-compression )
+		if use pointer-compression ; then
+			pointer_compression_msg="Enabling 4 GB pointer compression"
+			myconf+=( --experimental-enable-pointer-compression )
+		fi
 	fi
+einfo "${pointer_compression_msg}"
 	if use kernel_linux && linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
 		myconf+=( --v8-enable-hugepage )
 	fi
