@@ -717,6 +717,14 @@ eerror "To use mold, enable the mold USE flag."
 
 	if use amd64 || use arm64 ; then
 		use pointer-compression && myconf+=( --experimental-enable-pointer-compression )
+		local total_ram=$(free \
+			| grep "Mem:" \
+			| sed -r -e "s|[[:space:]]+| |g" \
+			| cut -f 2 -d " ")
+		local total_ram_gib=$(python -c "import math;print(round(${total_ram}/1024/1024))")
+		if (( ${total_ram_gib} >= 8 )) ; then
+			myconf+=( --experimental-enable-pointer-compression-8gb )
+		fi
 	fi
 	if use kernel_linux && linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
 		myconf+=( --v8-enable-hugepage )
