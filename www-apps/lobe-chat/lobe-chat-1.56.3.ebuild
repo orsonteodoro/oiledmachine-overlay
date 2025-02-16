@@ -202,7 +202,6 @@ pkg_setup() {
 	pnpm_pkg_setup
 einfo "PATH:  ${PATH}"
 	#check_exact_node_version
-	electron-app_set_sharp_env
 }
 
 pnpm_unpack_post() {
@@ -366,6 +365,9 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 
 	tsc --version || die
 
+	electron-app_set_sharp_env # Disabled vips lib
+	enpm rebuild sharp # Force rebuild to prevent illegal instruction
+
 	# tsc will ignore tsconfig.json, so it must be explicit.
 #einfo "Building next.config.js"
 #	tsc \
@@ -387,6 +389,7 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 #einfo "End build of next.config.js"
 	#grep -q -E -e "Found [0-9]+ error." "${T}/build.log" && die "Detected error"
 	#grep -q -E -e "error TS[0-9]+" "${T}/build.log" && die "Detected error"
+
 
 	# This one looks broken because the .next/standalone folder is missing.
 #	edo npm run "build:docker"
