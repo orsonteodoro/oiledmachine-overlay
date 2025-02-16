@@ -3,8 +3,9 @@
 @@ -27,6 +27,7 @@ const nextConfig: NextConfig = {
      ],
      webVitalsAttribution: ['CLS', 'LCP'],
-     webpackMemoryOptimizations: false,
-+    workerThreads: true,
+-    webpackMemoryOptimizations: true,
++    webpackMemoryOptimizations: true,
++    workerThreads: false,
    },
    async headers() {
      return [

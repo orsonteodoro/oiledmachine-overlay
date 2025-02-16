@@ -24,8 +24,8 @@ CPU_FLAGS_X86=(
 	cpu_flags_x86_sse4_2
 )
 # See also https://github.com/vercel/next.js/blob/v15.1.6/.github/workflows/build_and_test.yml#L328
-NODE_VERSION=18 # See .nvmrc
-_NODE_VERSION="20.9.0"
+NODE_VERSION=20 # See .nvmrc
+_NODE_VERSION="20.15.1"
 NPM_SLOT="3"
 PNPM_SLOT="9"
 NPM_AUDIT_FIX_ARGS=(
@@ -117,7 +117,7 @@ RDEPEND+="
 	>=app-misc/ca-certificates-20240203
 	>=net-misc/proxychains-3.1
 	>=sys-devel/gcc-12.2.0
-	net-libs/nodejs:${NODE_VERSION}[corepack,npm,pointer-compression]
+	net-libs/nodejs:${NODE_VERSION}[corepack,npm]
 	net-libs/nodejs:=
 	postgres? (
 		>=dev-db/postgresql-16.4
@@ -133,7 +133,7 @@ BDEPEND+="
 	${VIPS_BDEPEND}
 	>=sys-apps/pnpm-9.14.4:${PNPM_SLOT}
 	>=sys-apps/npm-10.8.2:${NPM_SLOT}
-	=net-libs/nodejs-${_NODE_VERSION%.*}:${NODE_VERSION}[corepack,npm]
+	=net-libs/nodejs-${_NODE_VERSION}:${NODE_VERSION}[corepack,npm,pointer-compression]
 	net-libs/nodejs:=
 "
 DOCS=( "CHANGELOG.md" "README.md" )
@@ -201,7 +201,7 @@ pkg_setup() {
 #	yarn_pkg_setup
 	pnpm_pkg_setup
 einfo "PATH:  ${PATH}"
-	#check_exact_node_version
+	check_exact_node_version
 }
 
 pnpm_unpack_post() {
@@ -221,7 +221,6 @@ pnpm_unpack_post() {
 	fi
 	eapply "${FILESDIR}/${PN}-1.47.17-hardcoded-paths.patch"
 #	eapply "${FILESDIR}/${PN}-1.49.3-docker-standalone.patch"
-	eapply "${FILESDIR}/${PN}-1.49.5-disable-memory-optimizations.patch"
 	eapply "${FILESDIR}/${PN}-1.55.4-next-config.patch"
 
 	# Not compatiable with Next.js 14
