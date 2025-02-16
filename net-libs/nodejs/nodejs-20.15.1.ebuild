@@ -207,7 +207,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-20.1.0-support-clang-pgo.patch"
 	"${FILESDIR}/${PN}-19.3.0-v8-oflags.patch"
 	"${FILESDIR}/${PN}-20.15.1-split-pointer-compression-and-v8-sandbox-options.patch"
-	"${FILESDIR}/${PN}-20.18.1-add-v8-jit-fine-grained-options.patch"
+	"${FILESDIR}/${PN}-20.15.1-add-v8-jit-fine-grained-options.patch"
 )
 
 _count_useflag_slots() {
@@ -717,8 +717,8 @@ eerror "To use mold, enable the mold USE flag."
 
 	if use amd64 || use arm64 ; then
 		use pointer-compression && myconf+=( --experimental-enable-pointer-compression )
-		local total_ram=$(free \
-			| grep "Mem:" \
+		local total_ram=$(free -t \
+			| grep "Total:" \
 			| sed -r -e "s|[[:space:]]+| |g" \
 			| cut -f 2 -d " ")
 		local total_ram_gib=$(python -c "import math;print(round(${total_ram}/1024/1024))")
