@@ -1,11 +1,12 @@
 --- a/next.config.ts.orig	2025-02-15 14:41:35.344055715 -0800
 +++ b/next.config.ts	2025-02-15 14:42:28.579710084 -0800
-@@ -27,6 +27,7 @@ const nextConfig: NextConfig = {
+@@ -27,6 +27,8 @@ const nextConfig: NextConfig = {
      ],
      webVitalsAttribution: ['CLS', 'LCP'],
 -    webpackMemoryOptimizations: true,
 +    webpackMemoryOptimizations: true,
 +    workerThreads: false,
++    cpus: 1,
    },
    async headers() {
      return [
