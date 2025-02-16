@@ -44,7 +44,7 @@ PNPM_AUDIT_FIX=0
 SERWIST_CHOICE="no-change" # update, remove, no-change
 VIPS_PV="8.14.5"
 
-inherit dhms edo npm pnpm yarn
+inherit dhms edo npm pnpm #yarn
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -138,6 +138,23 @@ BDEPEND+="
 "
 DOCS=( "CHANGELOG.md" "README.md" )
 
+gen_git_tag() {
+	local path="${1}"
+	local tag_name="${2}"
+einfo "Generating tag start for ${path}"
+	pushd "${path}" >/dev/null 2>&1 || die
+		git init || die
+		git config user.email "name@example.com" || die
+		git config user.name "John Doe" || die
+		touch dummy || die
+		git add dummy || die
+		#git add -f * || die
+		git commit -m "Dummy" || die
+		git tag ${tag_name} || die
+	popd >/dev/null 2>&1 || die
+einfo "Generating tag done"
+}
+
 # @FUNCTION: electron-app_set_sharp_env
 # @DESCRIPTION:
 # sharp env
@@ -176,18 +193,19 @@ pkg_setup() {
 	# Prevent redownloads because they unusually bump more than once a day.
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	export NPM_CACHE_FOLDER="${EDISTDIR}/npm-download-cache-${NPM_SLOT}/${CATEGORY}/${PN}"
-	export YARN_CACHE_FOLDER="${EDISTDIR}/yarn-download-cache-${YARN_SLOT}/${CATEGORY}/${PN}"
+#	export YARN_CACHE_FOLDER="${EDISTDIR}/yarn-download-cache-${YARN_SLOT}/${CATEGORY}/${PN}"
 	export PNPM_CACHE_FOLDER="${EDISTDIR}/pnpm-download-cache-${PNPM_SLOT}/${CATEGORY}/${PN}"
 
 	addwrite "${EDISTDIR}"
 	npm_pkg_setup
-	yarn_pkg_setup
+#	yarn_pkg_setup
 	pnpm_pkg_setup
 einfo "PATH:  ${PATH}"
 	#check_exact_node_version
 }
 
 pnpm_unpack_post() {
+	gen_git_tag "${S}" "v${PV}"
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		sed -i \
 			-e "s|bun run|npm run|g" \
@@ -204,6 +222,13 @@ pnpm_unpack_post() {
 	eapply "${FILESDIR}/${PN}-1.47.17-hardcoded-paths.patch"
 #	eapply "${FILESDIR}/${PN}-1.49.3-docker-standalone.patch"
 	eapply "${FILESDIR}/${PN}-1.49.5-disable-memory-optimizations.patch"
+	eapply "${FILESDIR}/${PN}-1.55.4-next-config.patch"
+
+	# Not compatiable with Next.js 14
+	sed -i -e "/webpackMemoryOptimizations/d" "next.config.ts" || die
+	sed -i -e "/hmrRefreshes/d" "next.config.ts" || die
+	sed -i -e "/serverExternalPackages/d" "next.config.ts" || die
+	sed -i -e "/@ts-expect-error/d" "src/features/MobileSwitchLoading/index.tsx" || die
 
 	if [[ "${SERWIST_CHOICE}" == "no-change" ]] ; then
 		:
@@ -220,10 +245,14 @@ pnpm_unpack_post() {
 		epnpm add "@serwist/next@9.0.0-preview.26"
 		epnpm add -D "serwist@9.0.0-preview.26"
 	fi
-#	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 #		epnpm add "@types/react@^19.0.3"
 #		epnpm add -D "webpack@^5.97.1"
-#	fi
+
+# Still broken with:
+# ⨯ Static worker exited with code: null and signal: SIGSEGV
+		epnpm add "next@14.2.23"
+	fi
 }
 
 pnpm_audit_post() {
@@ -249,7 +278,7 @@ pnpm_dedupe_post() {
 		patch_lockfile
 ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/pnpm-lock.yaml"
 		epnpm add "@apidevtools/json-schema-ref-parser@11.2.0" ${PNPM_INSTALL_ARGS[@]}		# CVE-2024-29651; DoS, DT, ID; High
-ewarn "QA:  Manually remove esbuild and earlier from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/pnpm-lock.yaml"
 		epnpm add "esbuild@0.25.0"								# GHSA-67mh-4wv8-2f99
 		patch_lockfile
 	fi
@@ -262,7 +291,7 @@ src_unpack() {
 		git-r3_checkout
 	else
 		_npm_setup_offline_cache
-		_yarn_setup_offline_cache
+#		_yarn_setup_offline_cache
 		_pnpm_setup_offline_cache
 		pnpm_src_unpack
 	fi
@@ -273,6 +302,10 @@ src_prepare() {
 }
 
 setup_env() {
+	export COREPACK_ENABLE_STRICT=1
+	export PUPPETEER_SKIP_DOWNLOAD="true"
+	export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+
 	if use postgres ; then
 		export DATABASE_TEST_URL="postgresql://postgres:postgres@localhost:5432/postgres"
 		export DATABASE_DRIVER="node"
@@ -305,6 +338,7 @@ src_compile() {
 ewarn "Removing ${S}/.next"
 		rm -rf "${S}/.next"
 	fi
+
 	# Fix:
 	# FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
 	export NODE_OPTIONS+=" --max-old-space-size=8192"
@@ -316,48 +350,49 @@ ewarn "Removing ${S}/.next"
 	export NODE_OPTIONS+=" --use-openssl-ca"
 
 	npm_hydrate
-	yarn_hydrate
+#	yarn_hydrate
 	pnpm_hydrate
 einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 # China users need to fork ebuild.  See Dockerfile for China contexts.
 
 	setup_env
 
-	export NODE_ENV=production
-	export DOCKER=true
+	export NODE_ENV="production"
+	export DOCKER="true"
 
 	tsc --version || die
 
 	# tsc will ignore tsconfig.json, so it must be explicit.
-#einfo "Building next.config.js"
-#	tsc \
-#		next.config.ts \
-#		--allowJs \
-#		--esModuleInterop "true" \
-#		--jsx "preserve" \
-#		--lib "dom,dom.iterable,esnext,webworker" \
-#		--module "esnext" \
-#		--moduleResolution "bundler" \
-#		--outDir "." \
-#		--skipDefaultLibCheck \
-#		--target "esnext" \
-#		--typeRoots "./node_modules/@types" \
-#		--types "react,react-dom" \
-#		|| die
-#	mv "next.config."{"js","mjs"} || die
+einfo "Building next.config.js"
+	tsc \
+		next.config.ts \
+		--allowJs \
+		--esModuleInterop "true" \
+		--jsx "preserve" \
+		--lib "dom,dom.iterable,esnext,webworker" \
+		--module "esnext" \
+		--moduleResolution "bundler" \
+		--outDir "." \
+		--skipDefaultLibCheck \
+		--target "esnext" \
+		--typeRoots "./node_modules/@types" \
+		--types "react,react-dom" \
+		|| die
+	mv "next.config."{"js","mjs"} || die
 
 #einfo "End build of next.config.js"
 	#grep -q -E -e "Found [0-9]+ error." "${T}/build.log" && die "Detected error"
 	#grep -q -E -e "error TS[0-9]+" "${T}/build.log" && die "Detected error"
 
 	# This one looks broken because the .next/standalone folder is missing.
-	pnpm run "build:docker"
+#	edo npm run "build:docker"
 
-#	edo next build --debug
+	edo next build --debug
 	grep -q -E -e "Failed to load next.config.js" "${T}/build.log" && die "Detected error"
-#	edo npm run build-sitemap
-#	edo npm run build-sitemap
-#	edo npm run build-migrate-db
+	edo npm run build-sitemap
+	edo npm run build-sitemap
+	edo npm run build-migrate-db
+
 	grep -q -e "Build failed because of webpack errors" "${T}/build.log" && die "Detected error"
 	grep -q -e "Failed to compile" "${T}/build.log" && die "Detected error"
 	#grep -q -E -e "error TS[0-9]+" "${T}/build.log" && die "Detected error"
