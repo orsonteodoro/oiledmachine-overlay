@@ -192,6 +192,23 @@ die
 	fi
 }
 
+check_virtual_mem() {
+	local total_mem=$(free -t \
+		| grep "Total:" \
+		| sed -r -e "s|[[:space:]]+| |g" \
+		| cut -f 2 -d " ")
+	local total_mem_gib=$(python -c "import math;print(round(${total_mem}/1024/1024))")
+	if (( ${total_mem_gib} < 8 )) ; then
+ewarn
+ewarn "Please add more swap."
+ewarn
+ewarn "Current total memory:  ${total_mem_gib} GiB"
+ewarn "Minimum total memory:  8 GiB"
+ewarn "Tested total memory:  30 GiB"
+ewarn
+	fi
+}
+
 pkg_setup() {
 	dhms_start
 	# If a "next" package is found in package.json, this should be added.
@@ -211,6 +228,7 @@ pkg_setup() {
 	pnpm_pkg_setup
 einfo "PATH:  ${PATH}"
 	check_exact_node_version
+	check_virtual_mem
 }
 
 pnpm_unpack_post() {
