@@ -24,7 +24,7 @@ CPU_FLAGS_X86=(
 	cpu_flags_x86_sse4_2
 )
 # See also https://github.com/vercel/next.js/blob/v15.1.6/.github/workflows/build_and_test.yml#L328
-NODE_VERSION=20 # See .nvmrc
+NODE_VERSION=18 # See .nvmrc
 _NODE_VERSION="20.9.0"
 NPM_SLOT="3"
 PNPM_SLOT="9"
@@ -225,10 +225,10 @@ pnpm_unpack_post() {
 	eapply "${FILESDIR}/${PN}-1.55.4-next-config.patch"
 
 	# Not compatiable with Next.js 14
-	sed -i -e "/webpackMemoryOptimizations/d" "next.config.ts" || die
-	sed -i -e "/hmrRefreshes/d" "next.config.ts" || die
-	sed -i -e "/serverExternalPackages/d" "next.config.ts" || die
-	sed -i -e "/@ts-expect-error/d" "src/features/MobileSwitchLoading/index.tsx" || die
+#	sed -i -e "/webpackMemoryOptimizations/d" "next.config.ts" || die
+#	sed -i -e "/hmrRefreshes/d" "next.config.ts" || die
+#	sed -i -e "/serverExternalPackages/d" "next.config.ts" || die
+#	sed -i -e "/@ts-expect-error/d" "src/features/MobileSwitchLoading/index.tsx" || die
 
 	if [[ "${SERWIST_CHOICE}" == "no-change" ]] ; then
 		:
@@ -251,7 +251,8 @@ pnpm_unpack_post() {
 
 # Still broken with:
 # ⨯ Static worker exited with code: null and signal: SIGSEGV
-		epnpm add "next@14.2.23"
+		#epnpm add "next@14.2.23"
+		:
 	fi
 }
 
@@ -363,22 +364,22 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 	tsc --version || die
 
 	# tsc will ignore tsconfig.json, so it must be explicit.
-einfo "Building next.config.js"
-	tsc \
-		next.config.ts \
-		--allowJs \
-		--esModuleInterop "true" \
-		--jsx "preserve" \
-		--lib "dom,dom.iterable,esnext,webworker" \
-		--module "esnext" \
-		--moduleResolution "bundler" \
-		--outDir "." \
-		--skipDefaultLibCheck \
-		--target "esnext" \
-		--typeRoots "./node_modules/@types" \
-		--types "react,react-dom" \
-		|| die
-	mv "next.config."{"js","mjs"} || die
+#einfo "Building next.config.js"
+#	tsc \
+#		next.config.ts \
+#		--allowJs \
+#		--esModuleInterop "true" \
+#		--jsx "preserve" \
+#		--lib "dom,dom.iterable,esnext,webworker" \
+#		--module "esnext" \
+#		--moduleResolution "bundler" \
+#		--outDir "." \
+#		--skipDefaultLibCheck \
+#		--target "esnext" \
+#		--typeRoots "./node_modules/@types" \
+#		--types "react,react-dom" \
+#		|| die
+#	mv "next.config."{"js","mjs"} || die
 
 #einfo "End build of next.config.js"
 	#grep -q -E -e "Found [0-9]+ error." "${T}/build.log" && die "Detected error"
@@ -408,6 +409,11 @@ _install_webapp_v1() {
 
 	insinto "${_PREFIX}/.next"
 	doins -r "${S}/.next/static"
+
+	if ! [[ -e "${S}/.next/standalone/server.js" ]] ; then
+eerror "Build failure.  Missing ${S}/.next/standalone/server.js"
+		die
+	fi
 
 	if [[ -e "${S}/.next/standalone" ]] ; then
 		insinto "${_PREFIX}"
@@ -442,6 +448,11 @@ _install_webapp_v2() {
 
 	mkdir -p "${ED}${_PREFIX}/.next" || die
 	mv "${S}/.next/static" "${ED}${_PREFIX}/.next" || die
+
+	if ! [[ -e "${S}/.next/standalone/server.js" ]] ; then
+eerror "Build failure.  Missing ${S}/.next/standalone/server.js"
+		die
+	fi
 
 	if [[ -e "${S}/.next/standalone" ]] ; then
 		mv "${S}/.next/standalone/"* "${ED}${_PREFIX}" || die
