@@ -117,7 +117,7 @@ RDEPEND+="
 	>=app-misc/ca-certificates-20240203
 	>=net-misc/proxychains-3.1
 	>=sys-devel/gcc-12.2.0
-	net-libs/nodejs:${NODE_VERSION}[corepack,npm]
+	net-libs/nodejs:${NODE_VERSION}[corepack,npm,pointer-compression]
 	net-libs/nodejs:=
 	postgres? (
 		>=dev-db/postgresql-16.4
@@ -202,6 +202,7 @@ pkg_setup() {
 	pnpm_pkg_setup
 einfo "PATH:  ${PATH}"
 	#check_exact_node_version
+	electron-app_set_sharp_env
 }
 
 pnpm_unpack_post() {
@@ -344,11 +345,13 @@ ewarn "Removing ${S}/.next"
 	# FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
 	export NODE_OPTIONS+=" --max-old-space-size=8192"
 
-#	if [[ "${NODE_VERSION}" == "18" ]] ; then
+#	if ver_test "${NODE_VERSION}" -eq "18" ;  then
 		export NODE_OPTIONS+=" --dns-result-order=ipv4first"
 #	fi
 
-	export NODE_OPTIONS+=" --use-openssl-ca"
+	if ver_test "${NODE_VERSION}" -ge "20" ;  then
+		export NODE_OPTIONS+=" --use-openssl-ca"
+	fi
 
 	npm_hydrate
 #	yarn_hydrate
