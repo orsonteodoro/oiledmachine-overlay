@@ -713,7 +713,12 @@ eerror "To use mold, enable the mold USE flag."
 		myconf+=( --openssl-default-cipher-list=${NODEJS_OPENSSL_DEFAULT_LIST_CORE} )
 	fi
 
-ewarn "Disabling pointer compression.  Use --max-old-space-size=4096 or --max-old-space-size=8192 if out of memory (OOM)."
+ewarn
+ewarn "Disabling pointer compression."
+ewarn
+ewarn "Use --max-old-space-size=4096 or --max-old-space-size=8192 to"
+ewarn "NODE_OPTIONS environment variable if out of memory (OOM)."
+ewarn
 	if use kernel_linux && linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
 		myconf+=( --v8-enable-hugepage )
 	fi
