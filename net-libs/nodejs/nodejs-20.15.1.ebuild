@@ -715,6 +715,9 @@ eerror "To use mold, enable the mold USE flag."
 		myconf+=( --openssl-default-cipher-list=${NODEJS_OPENSSL_DEFAULT_LIST_CORE} )
 	fi
 
+	if use amd64 || use arm64 ; then
+		use pointer-compression && myconf+=( --experimental-enable-pointer-compression )
+	fi
 	if use kernel_linux && linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
 		myconf+=( --v8-enable-hugepage )
 	fi
