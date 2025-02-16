@@ -366,7 +366,7 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 	tsc --version || die
 
 	electron-app_set_sharp_env # Disabled vips lib
-	epnpm rebuild sharp # Force rebuild to prevent illegal instruction
+	edo npm rebuild sharp # Force rebuild to prevent illegal instruction
 
 	# tsc will ignore tsconfig.json, so it must be explicit.
 #einfo "Building next.config.js"
