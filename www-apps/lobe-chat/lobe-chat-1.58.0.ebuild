@@ -168,6 +168,15 @@ einfo "Using vendored vips for sharp"
 	fi
 }
 
+#
+# It needs the exact version for reproducible build and to avoid
+#
+#   ⨯ Static worker exited with code: null and signal: SIGSEGV
+#
+# It needs --max-old-space-size=8192 which is available in >=net-libs/nodejs-20, and
+# it probably needs pointer-compression which was working up to 20.15.1 but broken
+# in later releases.
+#
 check_exact_node_version() {
 	local node_pv=$(node --version \
 		| sed -e "s|v||g")
@@ -402,6 +411,11 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 	grep -q -e "Build failed because of webpack errors" "${T}/build.log" && die "Detected error"
 	grep -q -e "Failed to compile" "${T}/build.log" && die "Detected error"
 	#grep -q -E -e "error TS[0-9]+" "${T}/build.log" && die "Detected error"
+
+	if ! [[ -e "${S}/.next/standalone/server.js" ]] ; then
+eerror "Build failure.  Missing ${S}/.next/standalone/server.js"
+		die
+	fi
 }
 
 # Slow
@@ -415,19 +429,8 @@ _install_webapp_v1() {
 	insinto "${_PREFIX}/.next"
 	doins -r "${S}/.next/static"
 
-	if ! [[ -e "${S}/.next/standalone/server.js" ]] ; then
-eerror "Build failure.  Missing ${S}/.next/standalone/server.js"
-		die
-	fi
-
-	if [[ -e "${S}/.next/standalone" ]] ; then
-		insinto "${_PREFIX}"
-		doins -r "${S}/.next/standalone/"*
-	else
-# Needs server.js
-eerror "${S}/.next/standalone does not exist"
-		die
-	fi
+	insinto "${_PREFIX}"
+	doins -r "${S}/.next/standalone/"*
 
 	insinto "${_PREFIX}"
 	doins -r "${S}/node_modules"
@@ -454,18 +457,7 @@ _install_webapp_v2() {
 	mkdir -p "${ED}${_PREFIX}/.next" || die
 	mv "${S}/.next/static" "${ED}${_PREFIX}/.next" || die
 
-	if ! [[ -e "${S}/.next/standalone/server.js" ]] ; then
-eerror "Build failure.  Missing ${S}/.next/standalone/server.js"
-		die
-	fi
-
-	if [[ -e "${S}/.next/standalone" ]] ; then
-		mv "${S}/.next/standalone/"* "${ED}${_PREFIX}" || die
-	else
-# Needs server.js
-eerror "${S}/.next/standalone does not exist"
-		die
-	fi
+	mv "${S}/.next/standalone/"* "${ED}${_PREFIX}" || die
 
 	mv "${S}/node_modules" "${ED}${_PREFIX}" || die
 	mv "${S}/scripts/serverLauncher/startServer.js" "${ED}${_PREFIX}" || die
