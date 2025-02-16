@@ -1,0 +1,38 @@
+--- a/configure.py.orig	2025-02-16 07:19:01.534178815 -0800
++++ b/configure.py	2025-02-16 07:20:04.645745131 -0800
+@@ -558,6 +558,12 @@ parser.add_argument('--experimental-enab
+     default=None,
+     help='[Experimental] Enable V8 pointer compression (limits max heap to 4GB and breaks ABI compatibility)')
+ 
++parser.add_argument('--experimental-enable-v8-sandbox',
++    action='store_true',
++    dest='enable_v8_sandbox',
++    default=None,
++    help='[Experimental] Enable V8 sandbox')
++
+ parser.add_argument('--disable-shared-readonly-heap',
+     action='store_true',
+     dest='disable_shared_ro_heap',
+@@ -1615,6 +1621,10 @@ def configure_v8(o):
+   o['variables']['v8_use_siphash'] = 0 if options.without_siphash else 1
+   o['variables']['v8_enable_maglev'] = 1 if options.v8_enable_maglev else 0
+   o['variables']['v8_enable_pointer_compression'] = 1 if options.enable_pointer_compression else 0
++  if options.enable_v8_sandbox and not options.enable_pointer_compression:
++    raise Exception(
++        '--experimental-enable-v8-sandbox needs --experimental-enable-pointer-compression')
++  o['variables']['v8_enable_sandbox'] = 1 if options.enable_v8_sandbox else 0
+   o['variables']['v8_enable_31bit_smis_on_64bit_arch'] = 1 if options.enable_pointer_compression else 0
+   o['variables']['v8_enable_shared_ro_heap'] = 0 if options.enable_pointer_compression or options.disable_shared_ro_heap else 1
+   o['variables']['v8_enable_extensible_ro_snapshot'] = 0
+--- a/test/cctest/node_test_fixture.cc.orig	2024-07-08 05:10:12.000000000 -0700
++++ b/test/cctest/node_test_fixture.cc	2025-02-16 07:20:39.573505135 -0800
+@@ -20,9 +20,6 @@ void NodeTestEnvironment::SetUp() {
+   NodeZeroIsolateTestFixture::platform.reset(
+       new node::NodePlatform(kV8ThreadPoolSize, tracing_controller));
+   v8::V8::InitializePlatform(NodeZeroIsolateTestFixture::platform.get());
+-#ifdef V8_ENABLE_SANDBOX
+-  ASSERT_TRUE(v8::V8::InitializeSandbox());
+-#endif
+   cppgc::InitializeProcess(
+       NodeZeroIsolateTestFixture::platform->GetPageAllocator());
+ 
