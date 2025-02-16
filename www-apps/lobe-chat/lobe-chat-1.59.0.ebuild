@@ -228,7 +228,7 @@ pkg_setup() {
 #	yarn_pkg_setup
 	pnpm_pkg_setup
 einfo "PATH:  ${PATH}"
-#	check_exact_node_version
+	check_exact_node_version
 	check_virtual_mem
 }
 
