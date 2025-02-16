@@ -27,6 +27,7 @@ CPU_FLAGS_X86=(
 NODE_VERSION=20 # See .nvmrc
 _NODE_VERSION="20.15.1"
 NPM_SLOT="3"
+PNPM_DEDUPE=0 # Still debugging
 PNPM_SLOT="9"
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
@@ -227,7 +228,7 @@ pkg_setup() {
 #	yarn_pkg_setup
 	pnpm_pkg_setup
 einfo "PATH:  ${PATH}"
-	check_exact_node_version
+#	check_exact_node_version
 	check_virtual_mem
 }
 
