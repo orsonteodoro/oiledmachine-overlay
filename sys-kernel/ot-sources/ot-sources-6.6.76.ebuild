@@ -26,20 +26,23 @@ inherit ot-kernel-v6.6
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.6.1 (20231109) with builder profile with -O2 and -march=generic (stable flags) and no PGI/PGO
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.6.76 (20250216) with builder profile with -O2 and -march=generic (stable flags) and no PGI/PGO
 
+# 6.6.76 USE flags:
+# USE="build cfs genpatches linux-firmware ncurses openssl symlink zen-sauce
+# zstd -bbrv2 -bbrv3 (-big-endian) -bzip2 -c2tcp -cet -clang -clear
+# -cpu_flags_riscv_rvv (-debug) -deepcc -dwarf4 -dwarf5 -dwarf-auto -exfat
+# -expoline -gdb -genpatches_1510 -gost -graphicsmagick -gtk -gzip -imagemagick
+# -intel-microcode -kcfi -lto -lz4 -lzma -lzo -nest -orca -pcc -pgo -prjc (-qt5)
+# -qt6 -reiserfs -retpoline -rt -rust -shadowcallstack -tresor -tresor_prompt
+# -tresor_sysfs -xz"
+# CPU_FLAGS_X86="redacted"
+# OT_KERNEL_TRAINERS="-2d -3d -crypto_chn -crypto_common -crypto_deprecated
+# -crypto_kor -crypto_less_common -crypto_rus -crypto_std -custom -emerge1
+# -emerge2 -filesystem -memory -network -p2p -webcam -yt"
+# PYTHON_TARGETS="python3_10 -python3_11"
+
 #
 # Some USE or OT_KERNEL_USE may be ignored in eclasses.
 #
-# USE="build cfs disable_debug genpatches kpgo-utils ncurses openssl pgo symlink
-# zen-sauce zstd -bbrv2 bbrv3 -bzip2 (-c2tcp) -clang (-deepcc) -exfat
-# -fallback-commit -genpatches_1510 -graphicsmagick -gtk -gzip -imagemagick
-# -intel-microcode -kcfi -linux-firmware -lto -lz4 -lzma -lzo (-orca) -pcc -prjc
-# (-qt5) -reiserfs -rt -rust -shadowcallstack -tresor -tresor_aesni -tresor_i686
-# -tresor_prompt -tresor_sysfs -tresor_x86_64 -tresor_x86_64-256-bit-key-support
-# -xz"
-# OT_KERNEL_PGT="-2d -3d -crypto_chn -crypto_common -crypto_deprecated
-# -crypto_kor -crypto_less_common -crypto_rus -crypto_std -custom -emerge1
-# -emerge2 -filesystem -memory -network -p2p -webcam -yt"
-# PYTHON_TARGETS="python3_10 -python3_11" 0 KiB
 
 # boot time test - pass
 # emerge/compile test - pass
@@ -85,55 +88,17 @@ inherit ot-kernel-v6.6
 # OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
 
 
-# USE="build cfs clear disable_debug genpatches linux-firmware ncurses openssl
-# symlink tresor tresor_prompt tresor_sysfs tresor_x86_64 zen-sauce zstd -bbrv2
-# -bbrv3 -bzip2 (-c2tcp) -clang (-deepcc) -exfat -genpatches_1510
-# -graphicsmagick -gtk -gzip -imagemagick -intel-microcode -kcfi -kpgo-utils
-# -lto -lz4 -lzma -lzo -nest (-orca) -pcc -pgo -prjc (-qt5) -reiserfs -rt -rust
-# -shadowcallstack -tresor_aesni -tresor_i686 -tresor_x86_64-256-bit-key-support
-# -xz"
-# CPU_FLAGS_X86="-aes -avx -avx2 -avx512vl -sha -sse2 -sse4_2 -ssse3"
-# OT_KERNEL_PGT="-2d -3d -crypto_chn -crypto_common -crypto_deprecated
-# -crypto_kor -crypto_less_common -crypto_rus -crypto_std -custom -emerge1
-# -emerge2 -filesystem -memory -network -p2p -webcam -yt"
-# PYTHON_TARGETS="python3_10 -python3_11"
-# OILEDMACHINE-OVERLAY-TEST:  passed (6.6.15, 20240205)
 # tresor prompt - passed
 # tresor self test from /proc/crypto for tresor-cbc (128 bit key size) - passed
 # tresor self test from /proc/crypto for tresor-ecb (128 bit key size) - passed
 # tresor self test from /proc/crypto for tresor-ctr (128 bit key size) - unknown (unsupported until pass)
 
-# USE="build cfs clear disable_debug genpatches linux-firmware ncurses openssl
-# symlink tresor tresor_prompt tresor_sysfs tresor_x86_64
-# tresor_x86_64-256-bit-key-support zen-sauce zstd -bbrv2 -bbrv3 -bzip2 (-c2tcp)
-# -clang (-deepcc) -exfat -genpatches_1510 -graphicsmagick -gtk -gzip
-# -imagemagick -intel-microcode -kcfi -kpgo-utils -lto -lz4 -lzma -lzo -nest
-# (-orca) -pcc -pgo -prjc (-qt5) -reiserfs -rt -rust -shadowcallstack
-# -tresor_aesni -tresor_i686 -xz"
-# CPU_FLAGS_X86="-aes -avx -avx2 -avx512vl -sha -sse2 -sse4_2 -ssse3"
-# OT_KERNEL_PGT="-2d -3d -crypto_chn -crypto_common -crypto_deprecated
-# -crypto_kor -crypto_less_common -crypto_rus -crypto_std -custom -emerge1
-# -emerge2 -filesystem -memory -network -p2p -webcam -yt"
-# PYTHON_TARGETS="python3_10 -python3_11"
-# OILEDMACHINE-OVERLAY-TEST:  passed (6.6.16, 20240208)
 # tresor prompt - passed
 # tresor self test from /proc/crypto for tresor-cbc skcipher (128-256 bit key size) - passed
 # tresor self test from /proc/crypto for tresor-ecb skcipher (128-256 bit key size) - passed
 # tresor self test from /proc/crypto for tresor-ctr skcipher (128-256 bit key size) - passed
 # tresor self test from /proc/crypto for tresor cipher (128-256 bit key size) - passed
 
-# USE="build cfs clear genpatches linux-firmware ncurses openssl symlink tresor
-# tresor_aesni tresor_prompt tresor_sysfs zen-sauce zstd -bbrv2 -bbrv3 -bzip2
-# (-c2tcp) -clang (-deepcc) -disable_debug -exfat -genpatches_1510
-# -graphicsmagick -gtk -gzip -imagemagick -intel-microcode -kcfi -kpgo-utils
-# -lto -lz4 -lzma -lzo -nest (-orca) -pcc -pgo -prjc (-qt5) -reiserfs -rt -rust
-# -shadowcallstack -tresor_i686 -tresor_x86_64
-# -tresor_x86_64-256-bit-key-support -xz"
-# CPU_FLAGS_X86="-aes -avx -avx2 -avx512vl -sha -sse2 -sse4_2 -ssse3"
-# OT_KERNEL_PGT="-2d -3d -crypto_chn -crypto_common -crypto_deprecated
-# -crypto_kor -crypto_less_common -crypto_rus -crypto_std -custom -emerge1
-# -emerge2 -filesystem -memory -network -p2p -webcam -yt"
-# PYTHON_TARGETS="python3_10 -python3_11"
 # OILEDMACHINE-OVERLAY-TEST:  (6.6.16, 20240210)
 # tresor prompt - passed (missing press any key message)
 # tresor self test from /proc/crypto for tresor-cbc skcipher (128-256 bit key size) - passed
