@@ -10,7 +10,10 @@ EAPI=8
 # Definitions and ideal bootstrap:
 #
 #   Stage 1:  node + yarn + bun wrapper -> bun stage 1 (generic) for portable build
-#   ( The bun wrapper is supposed to emulate bun native. )
+#   ( The bun wrapper is supposed to emulate bun native.  Typically, the new
+#     compiler or build tool is designated stage 0 not stage 1.  The number is
+#     changed to make it less confusing for distro users who may associate
+#     stage 3 as native. )
 #   Stage 1 xor 2:  node + yarn + bun wrapper -> either bun stage 1 or bun stage 3
 #   Stage 2:  bun stage 1 (generic) -> bun stage 2 (native) for optimized build
 #   Stage 3:  bun stage 2 (native) -> bun stage 3 (native) for build verification
