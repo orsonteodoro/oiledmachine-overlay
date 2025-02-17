@@ -242,9 +242,12 @@ pnpm_unpack_post() {
 		grep -e "ERR_PNPM_FETCH_404" "${T}/build.log" && die "Detected error.  Check pnpm add"
 	else
 		if use postgres ; then
-			#epnpm add "sharp@0.33.5" ${PNPM_INSTALL_ARGS[@]}
-			epnpm add "pg@8.13.1" ${PNPM_INSTALL_ARGS[@]}
-			epnpm add "drizzle-orm@0.38.2" ${PNPM_INSTALL_ARGS[@]}
+			local pkgs=(
+				#"sharp@0.33.5"
+				"pg@8.13.1"
+				"drizzle-orm@0.38.2"
+			)
+			epnpm add ${PNPM_INSTALL_ARGS[@]} ${pkgs[@]}
 		fi
 	fi
 
@@ -390,6 +393,9 @@ ewarn "Removing ${S}/.next"
 		rm -rf "${S}/.next"
 	fi
 
+	_npm_setup_offline_cache
+	_pnpm_setup_offline_cache
+
 	# Fix:
 	# FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
 	export NODE_OPTIONS+=" --max-old-space-size=8192"
@@ -419,13 +425,15 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 	export SHARP_IGNORE_GLOBAL_LIBVIPS=1 # First download prebuilt vips lib
 
 	# Rebuild sharp without prebuilt vips.
-	# Prebuilt vips is built with sse4 which breaks older processors.
-	electron-app_set_sharp_env # Disabled vips lib
-	local pkgs=(
+	# Prebuilt vips is built with sse4.2 which breaks on older processors.
+	# Reference:  https://sharp.pixelplumbing.com/install#prebuilt-binaries
+	electron-app_set_sharp_env # Disabled vendored vips lib
+	local pkgs
+	pkgs=(
 		"sharp@0.33.5"
 		"plaiceholder@3.0.0"							# Parent package that depends on sharp
 	)
-	epnpm add ${pkgs[@]} ${PNPM_INSTALL_ARGS[@]}
+	epnpm add ${PNPM_INSTALL_ARGS[@]} ${pkgs[@]}
 	# Force rebuild to prevent illegal instruction
 	edo npm rebuild sharp
 
