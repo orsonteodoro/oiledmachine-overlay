@@ -718,14 +718,15 @@ eerror "To use mold, enable the mold USE flag."
 	local pointer_compression_msg="disabled"
 	if use amd64 || use arm64 ; then
 		if use pointer-compression ; then
-			myconf+=( --experimental-enable-pointer-compression )
+#			myconf+=( --experimental-enable-pointer-compression )
 
 			local total_mem=$(free -t \
 				| grep "Total:" \
 				| sed -r -e "s|[[:space:]]+| |g" \
 				| cut -f 2 -d " ")
 			local total_mem_gib=$(python -c "import math;print(round(${total_mem}/1024/1024))")
-			if (( ${total_mem_gib} >= 8 )) ; then
+			if false && (( ${total_mem_gib} >= 8 )) ; then
+# Broken?  It is not adding -DV8_COMPRESS_POINTERS_8GB
 				pointer_compression_msg="Enabling pointer compression for 8 GB heaps"
 				myconf+=( --experimental-enable-pointer-compression-8gb )
 			else
