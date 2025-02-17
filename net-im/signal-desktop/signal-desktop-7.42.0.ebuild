@@ -181,6 +181,9 @@ ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and all 0.18.
 				sed -i -e "s|\"cross-spawn\": \"^7.0.3\"|\"cross-spawn\": \"^7.0.5\"|g" "package-lock.json" || die								# CVE-2024-21538; DoS; High
 				sed -i -e "s|\"micromatch\": \"^4.0.2\"|\"micromatch\": \"^4.0.8\"|g" "package-lock.json" || die								# CVE-2024-4067; DoS; Medium
 				sed -i -e "s|\"micromatch\": \"^4.0.4\"|\"micromatch\": \"^4.0.8\"|g" "package-lock.json" || die								# CVE-2024-4067; DoS; Medium
+
+
+				sed -i -e "s|||g" || die
 			popd >/dev/null 2>&1 || die
 			sed -i -e "s|\"electron\": \"^23.1.2\"|\"electron\": \"^${ELECTRON_APP_ELECTRON_PV}\"|g" "package-lock.json" || die							# CVE-2023-44402; DoS, DT, ID; High
 			sed -i -e "s|\"esbuild\": \"0.24.0\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die										# GHSA-67mh-4wv8-2f99; ID; Moderate
