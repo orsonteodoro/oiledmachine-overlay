@@ -1,5 +1,5 @@
---- configure.py.orig	2025-02-16 16:22:03.589904552 -0800
-+++ configure.py	2025-02-16 16:58:51.727064677 -0800
+--- a/configure.py.orig	2025-02-16 16:22:03.589904552 -0800
++++ b/configure.py	2025-02-16 16:58:51.727064677 -0800
 @@ -558,6 +558,24 @@ parser.add_argument('--experimental-enab
      default=None,
      help='[Experimental] Enable V8 pointer compression (limits max heap to 4GB and breaks ABI compatibility)')
@@ -8,7 +8,7 @@
 +    action='store_true',
 +    dest='enable_pointer_compression_8gb',
 +    default=None,
-+    help='[Experimental] Enable V8 pointer compression for 8 GB heaps')
++    help='[Experimental] Enable V8 pointer compression for 8GB heaps')
 +
 +parser.add_argument('--experimental-enable-pointer-compression-shared-cage',
 +    action='store_true',
@@ -38,3 +38,15 @@
    o['variables']['v8_enable_31bit_smis_on_64bit_arch'] = 1 if options.enable_pointer_compression else 0
    o['variables']['v8_enable_shared_ro_heap'] = 0 if options.enable_pointer_compression or options.disable_shared_ro_heap else 1
    o['variables']['v8_enable_extensible_ro_snapshot'] = 0
+--- a/test/cctest/node_test_fixture.cc.orig	2024-07-08 05:10:12.000000000 -0700
++++ b/test/cctest/node_test_fixture.cc	2025-02-16 16:22:36.289745332 -0800
+@@ -20,9 +20,6 @@ void NodeTestEnvironment::SetUp() {
+   NodeZeroIsolateTestFixture::platform.reset(
+       new node::NodePlatform(kV8ThreadPoolSize, tracing_controller));
+   v8::V8::InitializePlatform(NodeZeroIsolateTestFixture::platform.get());
+-#ifdef V8_ENABLE_SANDBOX
+-  ASSERT_TRUE(v8::V8::InitializeSandbox());
+-#endif
+   cppgc::InitializeProcess(
+       NodeZeroIsolateTestFixture::platform->GetPageAllocator());
+ 
