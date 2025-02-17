@@ -719,7 +719,7 @@ eerror "To use mold, enable the mold USE flag."
 	local pointer_compression_msg="disabled"
 	if use amd64 || use arm64 ; then
 		if use pointer-compression ; then
-#			myconf+=( --experimental-enable-pointer-compression )
+			myconf+=( --experimental-enable-pointer-compression )
 
 			local total_mem=$(free -t \
 				| grep "Total:" \
