@@ -1,5 +1,5 @@
---- deps/v8/BUILD.gn.orig	2025-02-17 01:42:50.402051961 -0800
-+++ deps/v8/BUILD.gn	2025-02-17 01:46:29.985103993 -0800
+--- a/deps/v8/BUILD.gn.orig	2025-02-17 01:42:50.402051961 -0800
++++ b/deps/v8/BUILD.gn	2025-02-17 01:46:29.985103993 -0800
 @@ -804,6 +804,7 @@ config("external_startup_data") {
  external_v8_defines = [
    "V8_ENABLE_CHECKS",
