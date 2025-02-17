@@ -298,7 +298,7 @@ ewarn "QA:  Remove sharp and @img/sharp* packages from ${S}/pnpm-lock.yaml"
 			"sharp"
 			"plaiceholder"									# Parent package that depends on sharp
 		)
-		enpm remove ${pkgs[@]}
+		epnpm remove ${pkgs[@]}
 	fi
 }
 
