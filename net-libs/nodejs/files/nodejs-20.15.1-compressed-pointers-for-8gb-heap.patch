@@ -1,0 +1,18 @@
+--- deps/v8/BUILD.gn.orig	2025-02-17 01:42:50.402051961 -0800
++++ deps/v8/BUILD.gn	2025-02-17 01:46:29.985103993 -0800
+@@ -804,6 +804,7 @@ config("external_startup_data") {
+ external_v8_defines = [
+   "V8_ENABLE_CHECKS",
+   "V8_COMPRESS_POINTERS",
++  "V8_COMPRESS_POINTERS_8GB",
+   "V8_COMPRESS_POINTERS_IN_SHARED_CAGE",
+   "V8_COMPRESS_POINTERS_IN_ISOLATE_CAGE",
+   "V8_31BIT_SMIS_ON_64BIT_ARCH",
+@@ -2422,6 +2423,7 @@ action("v8_dump_build_config") {
+     "v8_enable_lite_mode=$v8_enable_lite_mode",
+     "v8_enable_maglev=$v8_enable_maglev",
+     "v8_enable_pointer_compression=$v8_enable_pointer_compression",
++    "v8_enable_pointer_compression_8gb=$v8_enable_pointer_compression_8gb",
+     "v8_enable_pointer_compression_shared_cage=" +
+         "$v8_enable_pointer_compression_shared_cage",
+     "v8_enable_runtime_call_stats=$v8_enable_runtime_call_stats",

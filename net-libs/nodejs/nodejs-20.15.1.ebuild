@@ -208,6 +208,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-19.3.0-v8-oflags.patch"
 	"${FILESDIR}/${PN}-20.15.1-split-pointer-compression-and-v8-sandbox-options.patch"
 	"${FILESDIR}/${PN}-20.15.1-add-v8-jit-fine-grained-options.patch"
+	"${FILESDIR}/${PN}-20.15.1-compressed-pointers-for-8gb-heap.patch"
 )
 
 _count_useflag_slots() {
@@ -725,8 +726,7 @@ eerror "To use mold, enable the mold USE flag."
 				| sed -r -e "s|[[:space:]]+| |g" \
 				| cut -f 2 -d " ")
 			local total_mem_gib=$(python -c "import math;print(round(${total_mem}/1024/1024))")
-			if false && (( ${total_mem_gib} >= 8 )) ; then
-# Broken?  It is not adding -DV8_COMPRESS_POINTERS_8GB
+			if (( ${total_mem_gib} >= 8 )) ; then
 				pointer_compression_msg="Enabling pointer compression for 8 GB heaps"
 				myconf+=( --experimental-enable-pointer-compression-8gb )
 			else
