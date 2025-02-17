@@ -4,6 +4,28 @@
 
 EAPI=8
 
+#
+# Ebuild design note
+#
+# Definitions:
+#
+#   Stage 1:  node + yarn + bun wrapper -> bun stage 1 (generic) for portable build
+#   ( The bun wrapper is supposed to emulate bun native. )
+#   Stage 1 xor 2:  node + yarn + bun wrapper -> either bun stage 1 or bun stage 3
+#   Stage 2:  bun stage 1 (generic) -> bun stage 2 (native) for optimized build
+#   Stage 3:  bun stage 2 (native) -> bun stage 3 (native) for build verification
+#
+# Upstream assumptions:
+#
+#   bun stage 3 [haswell] -> bun stage 3 [haswell] ;  This is broken for pre haswell.
+#
+# Ebuild assumptions:
+#
+#   node + yarn + bun wrapper -> either bun stage 1 or bun stage 3 based on user choice
+#
+
+# Status:  Broken bun wrapper
+
 # See also
 # https://github.com/oven-sh/bun/blob/bun-v1.1.45/cmake/tools/SetupWebKit.cmake#L5
 
