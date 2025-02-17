@@ -726,7 +726,7 @@ eerror "To use mold, enable the mold USE flag."
 				| sed -r -e "s|[[:space:]]+| |g" \
 				| cut -f 2 -d " ")
 			local total_mem_gib=$(python -c "import math;print(round(${total_mem}/1024/1024))")
-			if (( ${total_mem_gib} >= 8 )) ; then
+			if (( ${total_mem_gib} >= 8 )) && use pointer-compression-in-shared-cage ; then
 				pointer_compression_msg="Enabling pointer compression for 8 GB heaps"
 				myconf+=( --experimental-enable-pointer-compression-8gb )
 			else
