@@ -158,7 +158,7 @@
 		    TRESOR (x86-64) [5]			D
 		    zen-sauce				A
 
-    6.13 (Mainline / Live / Master)			A
+    6.13 (Stable)					A
 		    -rt	(RT_PREEMPT)			D
 		    Clang PGO				D
 		    Clear Linux patchset		D (point releases only, not live)
@@ -172,6 +172,22 @@
 		    TRESOR (x86) [5]			D
 		    TRESOR (x86-64) [5]			D
 		    zen-sauce				A
+
+    6.14 (Mainline / Live / Master)			A
+		    -rt	(RT_PREEMPT)			D
+		    Clang PGO				D
+		    Clear Linux patchset		D (point releases only, not live)
+		    genpatches				D
+		    kernel_compiler_patch		D
+		    Nest				D
+		    Project C				D
+		    TCP BBR v2 [5]			D
+		    TCP BBR v3 [5]			D
+		    TRESOR (AES-NI) [5]			D
+		    TRESOR (x86) [5]			D
+		    TRESOR (x86-64) [5]			D
+		    zen-sauce				D
+
 
     [1] Kernel LTS provides security updates and bugfixes, but doesn't extend to
         third party patchsets
@@ -1065,7 +1081,8 @@ OT_KERNEL_WORK_PROFILE="http-server-busy"
       6.1: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
       6.6: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, nest, prjc, prjc-bmq, prjc-pds
       6.12: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
-      6.13: cfs, cfs-throughput, cfs-interactive, cfs-autogroup
+      6.13: cfs, cfs-throughput, cfs-interactive, cfs-autogroup, prjc, prjc-bmq, prjc-pds
+      6.14: cfs, cfs-throughput, cfs-interactive, cfs-autogroup
 
       The reason why for this flexibility is to allow for multiple
       configurations that are not mutual exclusive, meaning you can use the rt
@@ -4251,6 +4268,10 @@ unset OT_KERNEL_PRIVATE_KEY
     For 6.12, see:
 
       https://github.com/torvalds/linux/compare/v6.12...zen-kernel:6.12/zen-sauce
+
+    For 6.13, see:
+
+      https://github.com/torvalds/linux/compare/v6.13...zen-kernel:6.13/zen-sauce
 
     Use the zen-sauce USE flags instead of passing their Zen commit IDs
     equivalents.
