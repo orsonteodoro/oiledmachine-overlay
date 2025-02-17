@@ -1070,6 +1070,10 @@ _lockfile_gen_unpack() {
 einfo "Generating lockfile"
 	rm Cargo.lock
 	cargo generate-lockfile || die "Failed to update Cargo.lock"
+
+einfo "Fixing vulnerabilities"
+	cargo install "glib@0.20.0"						# GHSA-wrw7-89jp-8q8g; ZC, DT; Moderate
+
 	die
 }
 
