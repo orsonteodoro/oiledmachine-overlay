@@ -7,7 +7,7 @@ EAPI=8
 #
 # Ebuild design note
 #
-# Definitions:
+# Definitions and ideal bootstrap:
 #
 #   Stage 1:  node + yarn + bun wrapper -> bun stage 1 (generic) for portable build
 #   ( The bun wrapper is supposed to emulate bun native. )
