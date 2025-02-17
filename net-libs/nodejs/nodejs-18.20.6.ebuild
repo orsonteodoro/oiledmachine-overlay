@@ -714,7 +714,7 @@ eerror "To use mold, enable the mold USE flag."
 	local pointer_compression_msg="Disabling pointer compression.  If out of memory (OOM) use Node.js 20 or later."
 	if use amd64 || use arm64 ; then
 		if use pointer-compression ; then
-			pointer_compression_msg="Enabling 4 GB pointer compression"
+			pointer_compression_msg="Enabling pointer compression for 4 GB heaps"
 			myconf+=( --experimental-enable-pointer-compression )
 		fi
 	fi
