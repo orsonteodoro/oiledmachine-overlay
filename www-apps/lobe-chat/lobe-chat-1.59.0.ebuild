@@ -242,11 +242,16 @@ pnpm_unpack_post() {
 		grep -e "ERR_PNPM_FETCH_404" "${T}/build.log" && die "Detected error.  Check pnpm add"
 	else
 		if use postgres ; then
-			epnpm add "sharp@0.33.5" ${PNPM_INSTALL_ARGS[@]}
+			#epnpm add "sharp@0.33.5" ${PNPM_INSTALL_ARGS[@]}
 			epnpm add "pg@8.13.1" ${PNPM_INSTALL_ARGS[@]}
 			epnpm add "drizzle-orm@0.38.2" ${PNPM_INSTALL_ARGS[@]}
 		fi
 	fi
+
+# The prebuilt vips could be causing the segfault.  The sharp package need to
+# reference the system's vips package not the prebuilt one.
+ewarn "QA:  Remove sharp and @img/sharp* packages from ${S}/pnpm-lock.yaml"
+
 	eapply "${FILESDIR}/${PN}-1.47.17-hardcoded-paths.patch"
 #	eapply "${FILESDIR}/${PN}-1.49.3-docker-standalone.patch"
 	eapply "${FILESDIR}/${PN}-1.55.4-next-config.patch"
@@ -370,12 +375,13 @@ ewarn "Removing ${S}/.next"
 	# Fix:
 	# FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
 	export NODE_OPTIONS+=" --max-old-space-size=8192"
+#	export NODE_OPTIONS+=" --max-old-space-size=4096"
 
 #	if ver_test "${NODE_VERSION}" -eq "18" ;  then
 		export NODE_OPTIONS+=" --dns-result-order=ipv4first"
 #	fi
 
-	if ver_test "${NODE_VERSION}" -ge "20" ;  then
+	if ver_test "${NODE_VERSION}" -ge "22" ;  then
 		export NODE_OPTIONS+=" --use-openssl-ca"
 	fi
 
@@ -392,8 +398,13 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 
 	tsc --version || die
 
+	export SHARP_IGNORE_GLOBAL_LIBVIPS=1 # First download prebuilt vips lib
+
+	# Rebuild sharp without prebuilt vips.
 	electron-app_set_sharp_env # Disabled vips lib
-	edo npm rebuild sharp # Force rebuild to prevent illegal instruction
+	epnpm add "sharp@0.33.5" ${PNPM_INSTALL_ARGS[@]}
+	# Force rebuild to prevent illegal instruction
+	edo npm rebuild sharp
 
 	# tsc will ignore tsconfig.json, so it must be explicit.
 #einfo "Building next.config.js"
