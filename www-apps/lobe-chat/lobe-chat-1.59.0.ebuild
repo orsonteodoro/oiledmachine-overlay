@@ -262,36 +262,54 @@ ewarn "QA:  Remove sharp and @img/sharp* packages from ${S}/pnpm-lock.yaml"
 #	sed -i -e "/serverExternalPackages/d" "next.config.ts" || die
 #	sed -i -e "/@ts-expect-error/d" "src/features/MobileSwitchLoading/index.tsx" || die
 
+	local pkgs
 	if [[ "${SERWIST_CHOICE}" == "no-change" ]] ; then
 		:
 	elif [[ "${SERWIST_CHOICE}" == "remove" ]] ; then
 		# Remove serwist, missing stable @serwist/utils
 		eapply "${FILESDIR}/${PN}-1.48.3-drop-serwist.patch"
 		if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
-			epnpm uninstall "@serwist/next"
-			epnpm uninstall "serwist"
-			epnpm add -D "@ducanh2912/next-pwa@^10.2.8"
+			pkgs=(
+				"@serwist/next"
+				"serwist"
+			)
+			epnpm uninstall ${pkgs[@]}
+
+			pkgs=(
+				"@ducanh2912/next-pwa@^10.2.8"
+			)
+			epnpm add -D ${pkgs[@]}
 		fi
 	else
-		epnpm add "@serwist/utils@9.0.0-preview.26"
-		epnpm add "@serwist/next@9.0.0-preview.26"
-		epnpm add -D "serwist@9.0.0-preview.26"
+		pkgs=(
+			"@serwist/utils@9.0.0-preview.26"
+			"@serwist/next@9.0.0-preview.26"
+		)
+		epnpm add ${pkgs[@]}
+
+		pkgs=(
+			"serwist@9.0.0-preview.26"
+		)
+		epnpm add -D ${pkgs[@]}
 	fi
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
-#		epnpm add "@types/react@^19.0.3"
-#		epnpm add -D "webpack@^5.97.1"
-
-# Still broken with:
-# ⨯ Static worker exited with code: null and signal: SIGSEGV
-		#epnpm add "next@14.2.23"
-		:
+		local pkgs
+		pkgs=(
+			"sharp"
+			"plaiceholder"									# Parent package that depends on sharp
+		)
+		enpm remove ${pkgs[@]}
 	fi
 }
 
 pnpm_audit_post() {
+	local pkgs
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		sed -i -e "s|\"vitest\": \"~1.2.2\"|\"vitest\": \"1.6.1\"|g" "package.json" || die
-		epnpm add -D "vitest@1.6.1" ${PNPM_INSTALL_ARGS[@]}						# CVE-2025-24964; DoS, DT, ID; Critical
+		pkgs=(
+			"vitest@1.6.1"
+		)
+		epnpm add -D ${pkgs[@]} ${PNPM_INSTALL_ARGS[@]}						# CVE-2025-24964; DoS, DT, ID; Critical
 	fi
 }
 
@@ -403,10 +421,13 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 	# Rebuild sharp without prebuilt vips.
 	# Prebuilt vips is built with sse4 which breaks older processors.
 	electron-app_set_sharp_env # Disabled vips lib
-	epnpm add "sharp@0.33.5" ${PNPM_INSTALL_ARGS[@]}
+	local pkgs=(
+		"sharp@0.33.5"
+		"plaiceholder@3.0.0"							# Parent package that depends on sharp
+	)
+	epnpm add ${pkgs[@]} ${PNPM_INSTALL_ARGS[@]}
 	# Force rebuild to prevent illegal instruction
 	edo npm rebuild sharp
-	epnpm add "plaiceholder@3.0.0" ${PNPM_INSTALL_ARGS[@]} # Parent package that depends on sharp
 
 	# tsc will ignore tsconfig.json, so it must be explicit.
 #einfo "Building next.config.js"
