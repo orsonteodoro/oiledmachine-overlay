@@ -343,6 +343,14 @@ src_unpack() {
 #		_yarn_setup_offline_cache
 		_pnpm_setup_offline_cache
 		pnpm_src_unpack
+
+		export SHARP_IGNORE_GLOBAL_LIBVIPS=1 # First download prebuilt vips lib
+
+		# Rebuild sharp without prebuilt vips.
+		# Prebuilt vips is built with sse4.2 which breaks on older processors.
+		# Reference:  https://sharp.pixelplumbing.com/install#prebuilt-binaries
+		electron-app_set_sharp_env # Disabled vendored vips lib
+		epnpm add "sharp@0.33.5"
 	fi
 }
 
@@ -425,11 +433,6 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 	electron-app_set_sharp_env # Disabled vendored vips lib
 	local pkgs
 
-#	pkgs=(
-#		"sharp@0.33.5"
-#		"plaiceholder@3.0.0"							# Parent package that depends on sharp
-#	)
-#	epnpm add ${PNPM_INSTALL_ARGS[@]} ${pkgs[@]}
 	# Force rebuild to prevent illegal instruction
 	edo npm rebuild sharp
 
