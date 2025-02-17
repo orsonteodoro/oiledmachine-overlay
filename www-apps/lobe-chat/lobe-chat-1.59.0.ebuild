@@ -296,12 +296,7 @@ ewarn "QA:  Remove sharp and @img/sharp* packages from ${S}/pnpm-lock.yaml"
 		epnpm add -D ${pkgs[@]}
 	fi
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
-		local pkgs
-		pkgs=(
-			"sharp"
-			"plaiceholder"									# Parent package that depends on sharp
-		)
-		epnpm remove ${pkgs[@]}
+		:
 	fi
 }
 
@@ -393,8 +388,8 @@ ewarn "Removing ${S}/.next"
 		rm -rf "${S}/.next"
 	fi
 
-	_npm_setup_offline_cache
-	_pnpm_setup_offline_cache
+	#_npm_setup_offline_cache
+	#_pnpm_setup_offline_cache
 
 	# Fix:
 	# FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
@@ -429,11 +424,12 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 	# Reference:  https://sharp.pixelplumbing.com/install#prebuilt-binaries
 	electron-app_set_sharp_env # Disabled vendored vips lib
 	local pkgs
-	pkgs=(
-		"sharp@0.33.5"
-		"plaiceholder@3.0.0"							# Parent package that depends on sharp
-	)
-	epnpm add ${PNPM_INSTALL_ARGS[@]} ${pkgs[@]}
+
+#	pkgs=(
+#		"sharp@0.33.5"
+#		"plaiceholder@3.0.0"							# Parent package that depends on sharp
+#	)
+#	epnpm add ${PNPM_INSTALL_ARGS[@]} ${pkgs[@]}
 	# Force rebuild to prevent illegal instruction
 	edo npm rebuild sharp
 
@@ -458,7 +454,6 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 #einfo "End build of next.config.js"
 	#grep -q -E -e "Found [0-9]+ error." "${T}/build.log" && die "Detected error"
 	#grep -q -E -e "error TS[0-9]+" "${T}/build.log" && die "Detected error"
-
 
 	# This one looks broken because the .next/standalone folder is missing.
 #	edo npm run "build:docker"
