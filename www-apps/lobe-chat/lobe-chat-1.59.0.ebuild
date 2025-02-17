@@ -401,10 +401,12 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 	export SHARP_IGNORE_GLOBAL_LIBVIPS=1 # First download prebuilt vips lib
 
 	# Rebuild sharp without prebuilt vips.
+	# Prebuilt vips is built with sse2 which breaks older processors.
 	electron-app_set_sharp_env # Disabled vips lib
 	epnpm add "sharp@0.33.5" ${PNPM_INSTALL_ARGS[@]}
 	# Force rebuild to prevent illegal instruction
 	edo npm rebuild sharp
+	epnpm add "plaiceholder@3.0.0" ${PNPM_INSTALL_ARGS[@]} # Parent package that depends on sharp
 
 	# tsc will ignore tsconfig.json, so it must be explicit.
 #einfo "Building next.config.js"
