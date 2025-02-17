@@ -16,7 +16,7 @@ EAPI=8
 #     stage 3 as native. )
 #   Stage 1 xor 2:  node + yarn + bun wrapper -> either bun stage 1 or bun stage 3
 #   Stage 2:  bun stage 1 (generic) -> bun stage 2 (native) for optimized build
-#   Stage 3:  bun stage 2 (native) -> bun stage 3 (native) for build verification
+#   Stage 3:  bun stage 2 (native) -> bun stage 3 (native) for build verification or correctness testing
 #
 # Upstream assumptions:
 #
