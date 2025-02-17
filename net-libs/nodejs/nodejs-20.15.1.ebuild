@@ -123,7 +123,7 @@ gen_iuse_pgo() {
 IUSE+="
 $(gen_iuse_pgo)
 acorn +asm +corepack cpu_flags_x86_sse2 -custom-optimization debug doc fips +icu
-inspector +npm man mold pax-kernel pgo -pointer-compression +snapshot +ssl system-icu
+inspector +npm man mold pax-kernel pgo -pointer-compression -pointer-compression-in-shared-cage +snapshot +ssl system-icu
 +system-ssl test
 ebuild_revision_13
 "
@@ -730,6 +730,13 @@ eerror "To use mold, enable the mold USE flag."
 				myconf+=( --experimental-enable-pointer-compression-8gb )
 			else
 				pointer_compression_msg="Enabling pointer compression for 4 GB heaps"
+			fi
+
+			if use pointer-compression-in-shared-cage ; then
+einfo "Using pointer compression in shared cage (EXPERIMENTAL)"
+				myconf+=( --experimental-enable-pointer-compression-shared-cage )
+			else
+einfo "Using pointer compression in isolate cage"
 			fi
 		fi
 	fi
