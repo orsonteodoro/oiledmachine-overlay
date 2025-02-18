@@ -25,7 +25,6 @@ CPU_FLAGS_X86=(
 )
 # See also https://github.com/vercel/next.js/blob/v15.1.6/.github/workflows/build_and_test.yml#L328
 NODE_VERSION=20 # See .nvmrc
-_NODE_VERSION="20.15.1"
 NPM_SLOT="3"
 PNPM_DEDUPE=0 # Still debugging
 PNPM_SLOT="9"
@@ -45,7 +44,7 @@ PNPM_AUDIT_FIX=0
 SERWIST_CHOICE="no-change" # update, remove, no-change
 VIPS_PV="8.14.5"
 
-inherit dhms edo npm pnpm #yarn
+inherit dhms edo npm pnpm
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -134,7 +133,7 @@ BDEPEND+="
 	${VIPS_BDEPEND}
 	>=sys-apps/pnpm-9.14.4:${PNPM_SLOT}
 	>=sys-apps/npm-10.8.2:${NPM_SLOT}
-	=net-libs/nodejs-${_NODE_VERSION}:${NODE_VERSION}[corepack,npm,pointer-compression]
+	net-libs/nodejs:${NODE_VERSION}[corepack,npm,pointer-compression]
 	net-libs/nodejs:=
 "
 DOCS=( "CHANGELOG.md" "README.md" )
@@ -169,30 +168,6 @@ einfo "Using vendored vips for sharp"
 	fi
 }
 
-#
-# It needs the exact version for reproducible build and to avoid
-#
-#   ⨯ Static worker exited with code: null and signal: SIGSEGV
-#
-# It needs --max-old-space-size=8192 which is available in >=net-libs/nodejs-20, and
-# it probably needs pointer-compression which was working up to 20.15.1 but broken
-# in later releases.
-#
-check_exact_node_version() {
-	local node_pv=$(node --version \
-		| sed -e "s|v||g")
-	if ver_test "${node_pv%.*}" -ne "${_NODE_VERSION%.*}" ; then
-eerror
-eerror "You must switch to node ${_NODE_VERSION%.*}.x to build/use ${PN}."
-eerror "See \`eselect nodejs\` for details."
-eerror
-eerror "Actual node version:  ${node_pv}"
-eerror "Expected node version:  ${_NODE_VERSION%.*}.x"
-eerror
-die
-	fi
-}
-
 check_virtual_mem() {
 	local total_mem=$(free -t \
 		| grep "Total:" \
@@ -220,15 +195,12 @@ pkg_setup() {
 	# Prevent redownloads because they unusually bump more than once a day.
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	export NPM_CACHE_FOLDER="${EDISTDIR}/npm-download-cache-${NPM_SLOT}/${CATEGORY}/${PN}"
-#	export YARN_CACHE_FOLDER="${EDISTDIR}/yarn-download-cache-${YARN_SLOT}/${CATEGORY}/${PN}"
 	export PNPM_CACHE_FOLDER="${EDISTDIR}/pnpm-download-cache-${PNPM_SLOT}/${CATEGORY}/${PN}"
 
 	addwrite "${EDISTDIR}"
 	npm_pkg_setup
-#	yarn_pkg_setup
 	pnpm_pkg_setup
 einfo "PATH:  ${PATH}"
-	check_exact_node_version
 	check_virtual_mem
 }
 
@@ -340,7 +312,6 @@ src_unpack() {
 		git-r3_checkout
 	else
 		_npm_setup_offline_cache
-#		_yarn_setup_offline_cache
 		_pnpm_setup_offline_cache
 		pnpm_src_unpack
 
@@ -396,9 +367,6 @@ ewarn "Removing ${S}/.next"
 		rm -rf "${S}/.next"
 	fi
 
-	#_npm_setup_offline_cache
-	#_pnpm_setup_offline_cache
-
 	# Fix:
 	# FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
 	export NODE_OPTIONS+=" --max-old-space-size=8192"
@@ -413,7 +381,6 @@ ewarn "Removing ${S}/.next"
 	fi
 
 	npm_hydrate
-#	yarn_hydrate
 	pnpm_hydrate
 einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 # China users need to fork ebuild.  See Dockerfile for China contexts.
