@@ -24,7 +24,7 @@ CPU_FLAGS_X86=(
 	cpu_flags_x86_sse4_2
 )
 # See also https://github.com/vercel/next.js/blob/v15.1.6/.github/workflows/build_and_test.yml#L328
-NODE_VERSION=22 # Same as Dockerfile
+NODE_VERSION=20
 NPM_SLOT="3"
 PNPM_DEDUPE=0 # Still debugging
 PNPM_SLOT="9"
@@ -42,6 +42,7 @@ NPM_UNINSTALL_ARGS=(
 )
 PNPM_AUDIT_FIX=0
 SERWIST_CHOICE="no-change" # update, remove, no-change
+SHARP_PV="0.32.6" # 0.32.6 (working), 0.33.5 (upstream, possible segfault)
 VIPS_PV="8.14.5"
 
 inherit dhms edo npm pnpm
@@ -159,12 +160,14 @@ einfo "Generating tag done"
 # @DESCRIPTION:
 # sharp env
 electron-app_set_sharp_env() {
-	export SHARP_IGNORE_GLOBAL_LIBVIPS=1
+	unset SHARP_IGNORE_GLOBAL_LIBVIPS
+	unset SHARP_FORCE_GLOBAL_LIBVIPS
 	if use system-vips ; then
-		export SHARP_IGNORE_GLOBAL_LIBVIPS=0
 einfo "Using system vips for sharp"
+		export SHARP_FORCE_GLOBAL_LIBVIPS=1
 	else
 einfo "Using vendored vips for sharp"
+		export SHARP_IGNORE_GLOBAL_LIBVIPS=1
 	fi
 }
 
@@ -220,7 +223,7 @@ pnpm_unpack_post() {
 	else
 		if use postgres ; then
 			local pkgs=(
-				#"sharp@0.33.5"
+				"sharp@${SHARP_PV}"
 				"pg@8.13.1"
 				"drizzle-orm@0.38.2"
 			)
@@ -303,6 +306,7 @@ ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}
 		epnpm add "@apidevtools/json-schema-ref-parser@11.2.0" ${PNPM_INSTALL_ARGS[@]}		# CVE-2024-29651; DoS, DT, ID; High
 ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/pnpm-lock.yaml"
 		epnpm add "esbuild@0.25.0"								# GHSA-67mh-4wv8-2f99
+		epnpm add "sharp@${SHARP_PV}"
 		patch_lockfile
 	fi
 }
@@ -316,7 +320,7 @@ src_unpack() {
 		_npm_setup_offline_cache
 		_pnpm_setup_offline_cache
 		pnpm_src_unpack
-		epnpm add "sharp@0.33.5"
+		epnpm add "sharp@${SHARP_PV}"
 	fi
 }
 
