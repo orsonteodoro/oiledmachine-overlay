@@ -24,7 +24,7 @@ CPU_FLAGS_X86=(
 	cpu_flags_x86_sse4_2
 )
 # See also https://github.com/vercel/next.js/blob/v15.1.6/.github/workflows/build_and_test.yml#L328
-NODE_VERSION=22 # See .nvmrc
+NODE_VERSION=22 # Same as Dockerfile
 NPM_SLOT="3"
 PNPM_DEDUPE=0 # Still debugging
 PNPM_SLOT="9"
