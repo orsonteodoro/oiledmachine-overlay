@@ -367,9 +367,27 @@ ewarn "Removing ${S}/.next"
 	fi
 
 	# Fix:
-	# FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
-	export NODE_OPTIONS+=" --max-old-space-size=8192"
-#	export NODE_OPTIONS+=" --max-old-space-size=4096"
+#<--- Last few GCs --->
+#
+#[1358:0x56512381a000]   779656 ms: Mark-Compact 3463.9 (4143.6) -> 3463.6 (4139.6) MB, pooled: 18 MB, 3813.95 / 0.00 ms  (average mu = 0.085, current mu = 0.009) allocation failure; GC in old space requested
+#[1358:0x56512381a000]   783649 ms: Mark-Compact 3484.5 (4141.6) -> 3470.1 (4139.6) MB, pooled: 18 MB, 3859.23 / 0.00 ms  (average mu = 0.060, current mu = 0.033) allocation failure; scavenge might not succeed
+#
+#
+#<--- JS stacktrace --->
+#
+#FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
+#----- Native stack trace -----
+#
+# 1: 0x565121987504 node::DumpNativeBacktrace(_IO_FILE*) [/usr/bin/node22]
+# 2: 0x565121a39d3d node::OOMErrorHandler(char const*, v8::OOMDetails const&) [/usr/bin/node22]
+# 3: 0x565121cd60e4 v8::Utils::ReportOOMFailure(v8::internal::Isolate*, char const*, v8::OOMDetails const&) [/usr/bin/node22]
+# 4: 0x565121cd634d v8::internal::V8::FatalProcessOutOfMemory(v8::internal::Isolate*, char const*, v8::OOMDetails const&) [/usr/bin/node22]
+# 5: 0x565121e954c5  [/usr/bin/node22]
+# 6: 0x565121e954f4 v8::internal::Heap::ReportIneffectiveMarkCompactIfNeeded() [/usr/bin/node22]
+# 7: 0x565121ea9c0e  [/usr/bin/node22]
+# 8: 0x565121eabb8d  [/usr/bin/node22]
+# 9: 0x5651226cd425  [/usr/bin/node22]
+	export NODE_OPTIONS+=" --max-old-space-size=8192" # Breaks with 4096
 
 #	if ver_test "${NODE_VERSION}" -eq "18" ;  then
 		export NODE_OPTIONS+=" --dns-result-order=ipv4first"
