@@ -15171,12 +15171,22 @@ ewarn "ID - Information Disclosure"
 ewarn "DT - Data Tampering"
 ewarn "PE - Privilege Escalation"
 ewarn
-ewarn "Recent vulnerabilities:"
+ewarn "Recent CPU vulnerabilities for 2025 Q1:"
 ewarn
-ewarn "Use After Free (UAF) - DoS, ID, DT	# observed in the previous point release, fixed in this release"
-ewarn "Null Pointer Dereference (NPD) - DoS	# observed in the previous point release, fixed in this release"
-ewarn "Sinkclose - CE, DoS, ID, DT		# this year to 2000s era, requires BIOS firmware update"
-ewarn "CVE-2024-23918 - PE, DoS, DT, ID		# this year, requires microcode update"
+ewarn "CVE-2024-31068 - DoS                     # Firmware update required for Intel CPUs"
+ewarn "CVE-2024-36293 - DoS                     # Firmware update required for Intel CPUs"
+ewarn "CVE-2023-43758 - PE, DoS, DT, ID         # Firmware update required for Intel CPUs"
+ewarn "CVE-2023-34440 - PE, DoS, DT, ID         # Firmware update required for Intel CPUs"
+ewarn "CVE-2024-24582 - PE, DoS, DT, ID         # Firmware update required for Intel CPUs"
+ewarn "CVE-2024-29214 - PE, DoS, DT, ID         # Firmware update required for Intel CPUs"
+ewarn "CVE-2024-28127 - PE, DoS, DT, ID         # Firmware update required for Intel CPUs"
+ewarn "CVE-2024-39279 - DoS                     # Firmware update required for Intel CPUs"
+ewarn "CVE-2024-31157 - ID                      # Firmware update required for Intel CPUs"
+ewarn "CVE-2024-28047 - ID                      # Firmware update required for Intel CPUs"
+ewarn "CVE-2024-39355 - DoS                     # Firmware update required for Intel CPUs"
+ewarn "CVE-2024-37020 - DoS                     # Firmware update required for Intel CPUs"
+ewarn "CVE-2024-0179 - CE, DoS, DT, ID          # BIOS firmware update required for AMD CPUs"
+ewarn "CVE-2024-21925 - CE, DoS, DT, ID         # BIOS firmware update required for AMD CPUs"
 ewarn
 }
 
