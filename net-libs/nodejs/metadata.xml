@@ -202,13 +202,6 @@ https://github.com/nodejs/node/tree/master/benchmark#nodejs-core-benchmarks
 
       Disabling may save battery life.
     </flag>
-    <flag name="pointer-compression-in-shared-cage">
-      Use pointer compression in a shared cage.  Otherwise, use pointer
-      compression in a more secure isolate cage which is the default.
-
-      Using a shared cage may allow for 8 GB heap size with a tradeoff
-      of lowered security. (EXPERIMENTAL)
-    </flag>
     <flag name="pgo">
       Enable profile guided optimization.  It will double build times.
     </flag>
