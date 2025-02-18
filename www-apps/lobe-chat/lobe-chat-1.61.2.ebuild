@@ -24,7 +24,7 @@ CPU_FLAGS_X86=(
 	cpu_flags_x86_sse4_2
 )
 # See also https://github.com/vercel/next.js/blob/v15.1.6/.github/workflows/build_and_test.yml#L328
-NODE_VERSION=20 # See .nvmrc
+NODE_VERSION=22 # See .nvmrc
 NPM_SLOT="3"
 PNPM_DEDUPE=0 # Still debugging
 PNPM_SLOT="9"
@@ -202,6 +202,11 @@ pkg_setup() {
 	pnpm_pkg_setup
 einfo "PATH:  ${PATH}"
 	check_virtual_mem
+
+	# Rebuild sharp without prebuilt vips.
+	# Prebuilt vips is built with sse4.2 which breaks on older processors.
+	# Reference:  https://sharp.pixelplumbing.com/install#prebuilt-binaries
+	electron-app_set_sharp_env # Disabled vendored vips lib
 }
 
 pnpm_unpack_post() {
@@ -225,10 +230,7 @@ pnpm_unpack_post() {
 
 # The prebuilt vips could be causing the segfault.  The sharp package need to
 # reference the system's vips package not the prebuilt one.
-ewarn "QA:  Remove sharp and @img/sharp* packages from ${S}/pnpm-lock.yaml"
-
 	eapply "${FILESDIR}/${PN}-1.47.17-hardcoded-paths.patch"
-#	eapply "${FILESDIR}/${PN}-1.49.3-docker-standalone.patch"
 	eapply "${FILESDIR}/${PN}-1.55.4-next-config.patch"
 
 	# Not compatiable with Next.js 14
@@ -314,13 +316,6 @@ src_unpack() {
 		_npm_setup_offline_cache
 		_pnpm_setup_offline_cache
 		pnpm_src_unpack
-
-		export SHARP_IGNORE_GLOBAL_LIBVIPS=1 # First download prebuilt vips lib
-
-		# Rebuild sharp without prebuilt vips.
-		# Prebuilt vips is built with sse4.2 which breaks on older processors.
-		# Reference:  https://sharp.pixelplumbing.com/install#prebuilt-binaries
-		electron-app_set_sharp_env # Disabled vendored vips lib
 		epnpm add "sharp@0.33.5"
 	fi
 }
@@ -391,14 +386,6 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 	export DOCKER="true"
 
 	tsc --version || die
-
-	export SHARP_IGNORE_GLOBAL_LIBVIPS=1 # First download prebuilt vips lib
-
-	# Rebuild sharp without prebuilt vips.
-	# Prebuilt vips is built with sse4.2 which breaks on older processors.
-	# Reference:  https://sharp.pixelplumbing.com/install#prebuilt-binaries
-	electron-app_set_sharp_env # Disabled vendored vips lib
-	local pkgs
 
 	# Force rebuild to prevent illegal instruction
 	edo npm rebuild sharp
