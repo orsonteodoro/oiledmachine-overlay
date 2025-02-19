@@ -3221,6 +3221,10 @@ src_configure() {
 		export CPP="${CC} -E"
 		export CUDA_SLOT=12
 		export CMAKE_CUDA_ARCHITECTURES="$(get_cuda_flags)"
+		sed -i \
+			-e "s|60;61;62;70;72;75;80;86;87;89;90;90a|${CMAKE_CUDA_ARCHITECTURES}|g" \
+			"CMakePresets.json" \
+			|| die
 		check_libstdcxx "13"
 	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11.8*" ; then
 		export CC="${CHOST}-gcc-11"
@@ -3228,6 +3232,10 @@ src_configure() {
 		export CPP="${CC} -E"
 		export CUDA_SLOT=11
 		export CMAKE_CUDA_ARCHITECTURES="$(get_cuda_flags)"
+		sed -i \
+			-e "s|50;52;53;60;61;62;70;72;75;80;86|${CMAKE_CUDA_ARCHITECTURES}|g" \
+			"CMakePresets.json" \
+			|| die
 		check_libstdcxx "11"
 	elif use rocm ; then
 		local _gcc_slot="HIP_${ROCM_SLOT/./_}_GCC_SLOT"
@@ -3236,6 +3244,10 @@ src_configure() {
 		export CXX="${CHOST}-g++-${gcc_slot}"
 		export CPP="${CC} -E"
 		export AMDGPU_TARGETS="$(get_amdgpu_flags)"
+		sed -i \
+			-e "s|gfx900;gfx940;gfx941;gfx942;gfx1010;gfx1012;gfx1030;gfx1100;gfx1101;gfx1102;gfx906:xnack-;gfx908:xnack-;gfx90a:xnack+;gfx90a:xnack-|${AMDGPU_TARGETS}|g" \
+			"CMakePresets.json" \
+			|| die
 		check_libstdcxx "${gcc_slot}"
 		local libs=(
 			"amd_comgr:dev-libs/rocm-comgr"
