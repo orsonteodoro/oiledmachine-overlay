@@ -3437,13 +3437,13 @@ einfo "PIE is already enabled."
 	if (( ${#CPU_FEATURES[@]} > 0 )) ; then
 		sed -i \
 			-e "s|@GGML_CPU_ALL_VARIANTS@|ON|g" \
-			-e "s|@CPU_FEATURES@|${CPU_FEATURES}|g" \
+			-e "s|@CPU_FEATURES@|${CPU_FEATURES[@]}|g" \
 			"${S}/ml/backend/ggml/ggml/src/CMakeLists.txt" \
 			|| die
 	else
 		sed -i \
 			-e "s|@GGML_CPU_ALL_VARIANTS@|OFF|g" \
-			-e "s|@CPU_FEATURES@|${CPU_FEATURES}|g" \
+			-e "s|@CPU_FEATURES@|${CPU_FEATURES[@]}|g" \
 			"${S}/ml/backend/ggml/ggml/src/CMakeLists.txt" \
 			|| die
 	fi
