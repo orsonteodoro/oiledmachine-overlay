@@ -1,0 +1,14 @@
+--- a/ml/backend/ggml/ggml/src/ggml-cpu/CMakeLists.txt.orig	2025-02-13 22:38:23.000000000 -0800
++++ b/ml/backend/ggml/ggml/src/ggml-cpu/CMakeLists.txt	2025-02-19 00:18:16.292683636 -0800
+@@ -210,9 +210,10 @@ function(ggml_add_cpu_backend_variant_im
+             elseif (GGML_AVX)
+                 list(APPEND ARCH_FLAGS /arch:AVX)
+                 list(APPEND ARCH_DEFINITIONS GGML_AVX)
+-            else ()
++            else (GGML_SSE42)
+                 list(APPEND ARCH_FLAGS /arch:SSE4.2)
+                 list(APPEND ARCH_DEFINITIONS GGML_SSE42)
++            else ()
+             endif()
+             if (GGML_AVX_VNNI)
+                 list(APPEND ARCH_DEFINITIONS __AVXVNNI__ GGML_AVX_VNNI)

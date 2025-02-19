@@ -93,6 +93,7 @@ CPU_FLAGS_X86=(
 	cpu_flags_x86_sse2
 	cpu_flags_x86_sse3
 	cpu_flags_x86_ssse3
+	cpu_flags_x86_sse4_2
 	cpu_flags_x86_amx
 )
 CUDA_FATTN_TARGETS_COMPAT=(
@@ -2651,6 +2652,7 @@ REQUIRED_USE="
 	)
 	cpu_flags_x86_avx? (
 		cpu_flags_x86_sse2
+		cpu_flags_x86_sse4_2
 	)
 	cpu_flags_x86_avx2? (
 		cpu_flags_x86_avx
@@ -2665,6 +2667,9 @@ REQUIRED_USE="
 	)
 	cpu_flags_x86_ssse3? (
 		cpu_flags_x86_sse3
+	)
+	cpu_flags_x86_sse4_2? (
+		cpu_flags_x86_ssse3
 	)
 	cpu_flags_x86_avx512vnni? (
 		cpu_flags_x86_avx512vl
@@ -2934,6 +2939,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.5.11-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-0.5.7-cmd-changes.patch"
 	"${FILESDIR}/${PN}-0.5.11-custom-cpu-features.patch"
+	"${FILESDIR}/${PN}-0.5.11-sse42.patch"
 )
 
 pkg_pretend() {
@@ -3357,6 +3363,10 @@ einfo "PIE is already enabled."
 	if use cpu_flags_x86_ssse3 ; then
 		append-flags -mssse3
 		_NVCC_FLAGS+=" -Xcompiler -mssse3"
+	fi
+
+	if use cpu_flags_x86_sse4_2 ; then
+		CPU_FEATURES+=( "SSE42" )
 	fi
 
 	if use cpu_flags_x86_f16c ; then
