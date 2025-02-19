@@ -3445,15 +3445,17 @@ einfo "PIE is already enabled."
 	fi
 
 	if (( ${#CPU_FEATURES[@]} > 0 )) ; then
+		local cpu_features="${CPU_FEATURES[@]}"
 		sed -i \
 			-e "s|@GGML_CPU_ALL_VARIANTS@|ON|g" \
-			-e "s|@CPU_FEATURES@|${CPU_FEATURES[@]}|g" \
+			-e "s|@CPU_FEATURES@|${cpu_features}|g" \
 			"${S}/ml/backend/ggml/ggml/src/CMakeLists.txt" \
 			|| die
 	else
+		local cpu_features="${CPU_FEATURES[@]}"
 		sed -i \
 			-e "s|@GGML_CPU_ALL_VARIANTS@|OFF|g" \
-			-e "s|@CPU_FEATURES@|${CPU_FEATURES[@]}|g" \
+			-e "s|@CPU_FEATURES@|${cpu_features}|g" \
 			"${S}/ml/backend/ggml/ggml/src/CMakeLists.txt" \
 			|| die
 	fi
@@ -4114,14 +4116,11 @@ install_cpu_runner() {
 	local runner_path1
 
 	local name
-	if use cpu_flags_x86_avx2 ; then
-		runner_path1="${S}/llama/build/linux-$(get_arch)/runners/cpu_avx2"
-		name="cpu_avx2"
-	elif use cpu_flags_x86_avx ; then
-		runner_path1="${S}/llama/build/linux-$(get_arch)/runners/cpu_avx"
-		name="cpu_avx"
+	if [[ -e "${S}/dist/lib/ollama/libggml-cpu-custom.so" ]] ; then
+		runner_path1="${S}/dist/lib/ollama"
+		name="custom"
 	else
-		runner_path1="${S}/llama/build/linux-$(get_arch)/runners/cpu"
+		runner_path1="${S}/dist/lib/ollama"
 		name="cpu"
 	fi
 
@@ -4129,11 +4128,12 @@ install_cpu_runner() {
 
 	exeinto "/usr/$(get_libdir)/${PN}/${name}"
 	pushd "${runner_path1}" >/dev/null 2>&1 || die
-		doexe "ollama_llama_server"
+		doexe "libggml-base.so"
+		doexe "libggml-${name}.so"
 	popd >/dev/null 2>&1 || die
 	patchelf \
 		--add-rpath '$ORIGIN' \
-		"${ED}/usr/$(get_libdir)/${PN}/${name}/ollama_llama_server" \
+		"${ED}/usr/$(get_libdir)/${PN}/${name}/libggml-${name}.so" \
 		|| die
 }
 
