@@ -389,21 +389,20 @@ src_prepare() {
 		replace-flags '-O0' '-O1'
 		r1=""
 		local oflag="-O3"
-		if _is_flagq_last '-O0'; then
-ewarn "Using -O0 may disable _FORITIFY_SOURCE lowering security"
-			oflag="-O1"
-			replace-flags '-O0' '-O1'
-ewarn "Changing -O0 -> -O1 to avoid always_inline build error."
+		if _is_flagq_last '-O0' || _is_flagq_last '-O1' ; then
+			oflag="-O2"
+			replace-flags '-O0' '-O2'
+			replace-flags '-O1' '-O2'
+# With -O1:
+#../../deps/ada/ada.cpp:10664:34: error: inlining failed in call to 'always_inline' 'constexpr bool ada::unicode::is_alnum_plus(char) noexcept': indirect function call with a yet undetermined callee
+#10664 | ada_really_inline constexpr bool is_alnum_plus(const char c) noexcept {
+#      |                                  ^~~~~~~~~~~~~
+ewarn "Changing -O0 or -O1 -> -O2 to avoid always_inline build error."
 		elif _is_flagq_last '-Og'; then
 			if use pgo ; then
 ewarn "Using -Og with PGO is uncommon"
 			fi
 			oflag="-Og"
-		elif _is_flagq_last '-O1'; then
-			if use pgo ; then
-ewarn "Using -O1 with PGO is uncommon"
-			fi
-			oflag="-O1"
 		elif _is_flagq_last '-O2'; then
 			if use pgo ; then
 ewarn "Using -O2 with PGO is uncommon"
