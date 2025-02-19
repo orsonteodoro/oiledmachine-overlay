@@ -5,6 +5,7 @@
 EAPI=8
 
 # 0.5.4 -> 0.5.7
+# 0.5.7 -> 0.5.11
 
 # Hardened because of CVE-2024-37032 implications of similar attacks.
 
@@ -142,8 +143,8 @@ captainkyd-whiterabbitneo7b
 chatgph-70b-instruct
 chatgph-gph-main chatgph-medix-ph codebooga
 codegeex4 codegemma codellama codeqwen codestral codeup command-r
-command-r-plus command-r7b dbrx deepseek-coder deepseek-coder-v2
-deepseek-llm deepseek-v2 deepseek-v2.5 deepseek-v3 disinfozone-telos dolphin-llama3
+command-r-plus command-r7b dbrx deepscaler deepseek-coder deepseek-coder-v2
+deepseek-llm deepseek-r1 deepseek-v2 deepseek-v2.5 deepseek-v3 disinfozone-telos dolphin-llama3
 dolphin-mistral dolphin-mixtral dolphin-phi dolphin3 dolphincoder duckdb-nsql
 ehartford-theprofessor
 eramax-aura_v3 everythinglm falcon falcon2 falcon3 firefunction-v2 gemma gemma2 glm4
@@ -178,7 +179,7 @@ moondream
 mxbai-embed-large nemotron nemotron-mini
 neural-chat nexusraven nomic-embed-text notus notux nous-hermes nous-hermes2
 nous-hermes2-mixtral nqduc-gemsura nqduc-mixsura nqduc-mixsura-sft nuextract olmo2
-open-orca-platypus2 openchat opencoder openhermes orca-mini
+open-orca-platypus2 openchat opencoder openhermes openthinker orca-mini
 orca2 paraphrase-multilingual partai-dorna-llama3 phi phi3 phi3.5 phi4
 phind-codellama qwen qwen2
 qwen2-math qwen2.5 qwen2.5-coder qwq reader-lm reefer-her2 reefer-minimonica reefer-monica
@@ -232,7 +233,7 @@ if ! [[ "${PV}" =~ "9999" ]] ; then
 	export S_GO="${WORKDIR}/go-mod"
 fi
 
-inherit dep-prepare edo flag-o-matic go-module lcnr multiprocessing optfeature rocm
+inherit cmake dep-prepare edo flag-o-matic go-module lcnr multiprocessing optfeature rocm
 
 
 # protobuf-go 1.34.1 tests with protobuf 5.27.0-rc1
@@ -245,377 +246,10 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
 	inherit git-r3
 else
-	KEYWORDS="~amd64 ~arm64"
+#	KEYWORDS="~amd64 ~arm64" # Ebuild is still in development
 	S="${WORKDIR}/${P}"
 
 	EGO_SUM=(
-		"cloud.google.com/go v0.26.0/go.mod"
-		"cloud.google.com/go v0.34.0/go.mod"
-		"dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod"
-		"gioui.org v0.0.0-20210308172011-57750fc8a0a6/go.mod"
-		"github.com/BurntSushi/toml v0.3.1/go.mod"
-		"github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod"
-		"github.com/agnivade/levenshtein v1.1.1"
-		"github.com/agnivade/levenshtein v1.1.1/go.mod"
-		"github.com/ajstarks/svgo v0.0.0-20180226025133-644b8db467af/go.mod"
-		"github.com/antihax/optional v1.0.0/go.mod"
-		"github.com/apache/arrow/go/arrow v0.0.0-20211112161151-bc219186db40"
-		"github.com/apache/arrow/go/arrow v0.0.0-20211112161151-bc219186db40/go.mod"
-		"github.com/arbovm/levenshtein v0.0.0-20160628152529-48b4e1c0c4d0"
-		"github.com/arbovm/levenshtein v0.0.0-20160628152529-48b4e1c0c4d0/go.mod"
-		"github.com/boombuler/barcode v1.0.0/go.mod"
-		"github.com/bytedance/sonic v1.11.6"
-		"github.com/bytedance/sonic v1.11.6/go.mod"
-		"github.com/bytedance/sonic/loader v0.1.1"
-		"github.com/bytedance/sonic/loader v0.1.1/go.mod"
-		"github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod"
-		"github.com/chewxy/hm v1.0.0"
-		"github.com/chewxy/hm v1.0.0/go.mod"
-		"github.com/chewxy/math32 v1.0.0/go.mod"
-		"github.com/chewxy/math32 v1.11.0"
-		"github.com/chewxy/math32 v1.11.0/go.mod"
-		"github.com/client9/misspell v0.3.4/go.mod"
-		"github.com/cloudwego/base64x v0.1.4"
-		"github.com/cloudwego/base64x v0.1.4/go.mod"
-		"github.com/cloudwego/iasm v0.2.0"
-		"github.com/cloudwego/iasm v0.2.0/go.mod"
-		"github.com/cncf/udpa/go v0.0.0-20191209042840-269d4d468f6f/go.mod"
-		"github.com/cncf/udpa/go v0.0.0-20201120205902-5459f2c99403/go.mod"
-		"github.com/cncf/xds/go v0.0.0-20210312221358-fbca930ec8ed/go.mod"
-		"github.com/containerd/console v1.0.3"
-		"github.com/containerd/console v1.0.3/go.mod"
-		"github.com/cpuguy83/go-md2man/v2 v2.0.2/go.mod"
-		"github.com/creack/pty v1.1.9/go.mod"
-		"github.com/d4l3k/go-bfloat16 v0.0.0-20211005043715-690c3bdd05f1"
-		"github.com/d4l3k/go-bfloat16 v0.0.0-20211005043715-690c3bdd05f1/go.mod"
-		"github.com/davecgh/go-spew v1.1.0/go.mod"
-		"github.com/davecgh/go-spew v1.1.1"
-		"github.com/davecgh/go-spew v1.1.1/go.mod"
-		"github.com/dgryski/trifles v0.0.0-20200323201526-dd97f9abfb48"
-		"github.com/dgryski/trifles v0.0.0-20200323201526-dd97f9abfb48/go.mod"
-		"github.com/emirpasic/gods/v2 v2.0.0-alpha"
-		"github.com/emirpasic/gods/v2 v2.0.0-alpha/go.mod"
-		"github.com/envoyproxy/go-control-plane v0.9.0/go.mod"
-		"github.com/envoyproxy/go-control-plane v0.9.1-0.20191026205805-5f8ba28d4473/go.mod"
-		"github.com/envoyproxy/go-control-plane v0.9.4/go.mod"
-		"github.com/envoyproxy/go-control-plane v0.9.9-0.20201210154907-fd9021fe5dad/go.mod"
-		"github.com/envoyproxy/go-control-plane v0.9.9-0.20210217033140-668b12f5399d/go.mod"
-		"github.com/envoyproxy/go-control-plane v0.9.9-0.20210512163311-63b5d3c536b0/go.mod"
-		"github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod"
-		"github.com/fogleman/gg v1.2.1-0.20190220221249-0403632d5b90/go.mod"
-		"github.com/fogleman/gg v1.3.0/go.mod"
-		"github.com/gabriel-vasile/mimetype v1.4.3"
-		"github.com/gabriel-vasile/mimetype v1.4.3/go.mod"
-		"github.com/ghodss/yaml v1.0.0/go.mod"
-		"github.com/gin-contrib/cors v1.7.2"
-		"github.com/gin-contrib/cors v1.7.2/go.mod"
-		"github.com/gin-contrib/sse v0.1.0"
-		"github.com/gin-contrib/sse v0.1.0/go.mod"
-		"github.com/gin-gonic/gin v1.10.0"
-		"github.com/gin-gonic/gin v1.10.0/go.mod"
-		"github.com/go-fonts/dejavu v0.1.0/go.mod"
-		"github.com/go-fonts/latin-modern v0.2.0/go.mod"
-		"github.com/go-fonts/liberation v0.1.1/go.mod"
-		"github.com/go-fonts/stix v0.1.0/go.mod"
-		"github.com/go-gl/glfw v0.0.0-20190409004039-e6da0acd62b1/go.mod"
-		"github.com/go-latex/latex v0.0.0-20210118124228-b3d85cf34e07/go.mod"
-		"github.com/go-playground/assert/v2 v2.2.0"
-		"github.com/go-playground/assert/v2 v2.2.0/go.mod"
-		"github.com/go-playground/locales v0.14.1"
-		"github.com/go-playground/locales v0.14.1/go.mod"
-		"github.com/go-playground/universal-translator v0.18.1"
-		"github.com/go-playground/universal-translator v0.18.1/go.mod"
-		"github.com/go-playground/validator/v10 v10.20.0"
-		"github.com/go-playground/validator/v10 v10.20.0/go.mod"
-		"github.com/goccy/go-json v0.10.2"
-		"github.com/goccy/go-json v0.10.2/go.mod"
-		"github.com/gogo/protobuf v1.3.2"
-		"github.com/gogo/protobuf v1.3.2/go.mod"
-		"github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0/go.mod"
-		"github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b/go.mod"
-		"github.com/golang/mock v1.1.1/go.mod"
-		"github.com/golang/protobuf v1.2.0/go.mod"
-		"github.com/golang/protobuf v1.3.2/go.mod"
-		"github.com/golang/protobuf v1.3.3/go.mod"
-		"github.com/golang/protobuf v1.4.0-rc.1/go.mod"
-		"github.com/golang/protobuf v1.4.0-rc.1.0.20200221234624-67d41d38c208/go.mod"
-		"github.com/golang/protobuf v1.4.0-rc.2/go.mod"
-		"github.com/golang/protobuf v1.4.0-rc.4.0.20200313231945-b860323f09d0/go.mod"
-		"github.com/golang/protobuf v1.4.0/go.mod"
-		"github.com/golang/protobuf v1.4.1/go.mod"
-		"github.com/golang/protobuf v1.4.2/go.mod"
-		"github.com/golang/protobuf v1.4.3/go.mod"
-		"github.com/golang/protobuf v1.5.0/go.mod"
-		"github.com/golang/protobuf v1.5.2/go.mod"
-		"github.com/golang/protobuf v1.5.4"
-		"github.com/golang/protobuf v1.5.4/go.mod"
-		"github.com/golang/snappy v0.0.3"
-		"github.com/golang/snappy v0.0.3/go.mod"
-		"github.com/google/flatbuffers v2.0.0+incompatible/go.mod"
-		"github.com/google/flatbuffers v24.3.25+incompatible"
-		"github.com/google/flatbuffers v24.3.25+incompatible/go.mod"
-		"github.com/google/go-cmp v0.2.0/go.mod"
-		"github.com/google/go-cmp v0.3.0/go.mod"
-		"github.com/google/go-cmp v0.3.1/go.mod"
-		"github.com/google/go-cmp v0.4.0/go.mod"
-		"github.com/google/go-cmp v0.5.0/go.mod"
-		"github.com/google/go-cmp v0.5.5/go.mod"
-		"github.com/google/go-cmp v0.5.6/go.mod"
-		"github.com/google/go-cmp v0.6.0"
-		"github.com/google/go-cmp v0.6.0/go.mod"
-		"github.com/google/gofuzz v1.0.0/go.mod"
-		"github.com/google/uuid v1.1.2/go.mod"
-		"github.com/google/uuid v1.6.0"
-		"github.com/google/uuid v1.6.0/go.mod"
-		"github.com/grpc-ecosystem/grpc-gateway v1.16.0/go.mod"
-		"github.com/inconshreveable/mousetrap v1.1.0"
-		"github.com/inconshreveable/mousetrap v1.1.0/go.mod"
-		"github.com/json-iterator/go v1.1.12"
-		"github.com/json-iterator/go v1.1.12/go.mod"
-		"github.com/jung-kurt/gofpdf v1.0.0/go.mod"
-		"github.com/jung-kurt/gofpdf v1.0.3-0.20190309125859-24315acbbda5/go.mod"
-		"github.com/kisielk/errcheck v1.5.0/go.mod"
-		"github.com/kisielk/gotool v1.0.0/go.mod"
-		"github.com/klauspost/compress v1.13.1"
-		"github.com/klauspost/compress v1.13.1/go.mod"
-		"github.com/klauspost/cpuid/v2 v2.0.9/go.mod"
-		"github.com/klauspost/cpuid/v2 v2.2.7"
-		"github.com/klauspost/cpuid/v2 v2.2.7/go.mod"
-		"github.com/knz/go-libedit v1.10.1/go.mod"
-		"github.com/kr/pretty v0.3.0"
-		"github.com/kr/pretty v0.3.0/go.mod"
-		"github.com/kr/text v0.2.0"
-		"github.com/kr/text v0.2.0/go.mod"
-		"github.com/leodido/go-urn v1.4.0"
-		"github.com/leodido/go-urn v1.4.0/go.mod"
-		"github.com/mattn/go-isatty v0.0.20"
-		"github.com/mattn/go-isatty v0.0.20/go.mod"
-		"github.com/mattn/go-runewidth v0.0.9/go.mod"
-		"github.com/mattn/go-runewidth v0.0.14"
-		"github.com/mattn/go-runewidth v0.0.14/go.mod"
-		"github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421/go.mod"
-		"github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd"
-		"github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd/go.mod"
-		"github.com/modern-go/reflect2 v1.0.2"
-		"github.com/modern-go/reflect2 v1.0.2/go.mod"
-		"github.com/nlpodyssey/gopickle v0.3.0"
-		"github.com/nlpodyssey/gopickle v0.3.0/go.mod"
-		"github.com/olekukonko/tablewriter v0.0.5"
-		"github.com/olekukonko/tablewriter v0.0.5/go.mod"
-		"github.com/pdevine/tensor v0.0.0-20240510204454-f88f4562727c"
-		"github.com/pdevine/tensor v0.0.0-20240510204454-f88f4562727c/go.mod"
-		"github.com/pelletier/go-toml/v2 v2.2.2"
-		"github.com/pelletier/go-toml/v2 v2.2.2/go.mod"
-		"github.com/phpdave11/gofpdf v1.4.2/go.mod"
-		"github.com/phpdave11/gofpdi v1.0.12/go.mod"
-		"github.com/pierrec/lz4/v4 v4.1.8"
-		"github.com/pierrec/lz4/v4 v4.1.8/go.mod"
-		"github.com/pkg/errors v0.8.1/go.mod"
-		"github.com/pkg/errors v0.9.1"
-		"github.com/pkg/errors v0.9.1/go.mod"
-		"github.com/pmezard/go-difflib v1.0.0"
-		"github.com/pmezard/go-difflib v1.0.0/go.mod"
-		"github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod"
-		"github.com/rivo/uniseg v0.2.0"
-		"github.com/rivo/uniseg v0.2.0/go.mod"
-		"github.com/rogpeppe/fastuuid v1.2.0/go.mod"
-		"github.com/rogpeppe/go-internal v1.8.0"
-		"github.com/rogpeppe/go-internal v1.8.0/go.mod"
-		"github.com/russross/blackfriday/v2 v2.1.0/go.mod"
-		"github.com/ruudk/golang-pdf417 v0.0.0-20181029194003-1af4ab5afa58/go.mod"
-		"github.com/spf13/cobra v1.7.0"
-		"github.com/spf13/cobra v1.7.0/go.mod"
-		"github.com/spf13/pflag v1.0.5"
-		"github.com/spf13/pflag v1.0.5/go.mod"
-		"github.com/stretchr/objx v0.1.0/go.mod"
-		"github.com/stretchr/objx v0.4.0/go.mod"
-		"github.com/stretchr/objx v0.5.0/go.mod"
-		"github.com/stretchr/objx v0.5.2/go.mod"
-		"github.com/stretchr/testify v1.1.4/go.mod"
-		"github.com/stretchr/testify v1.2.2/go.mod"
-		"github.com/stretchr/testify v1.3.0/go.mod"
-		"github.com/stretchr/testify v1.5.1/go.mod"
-		"github.com/stretchr/testify v1.7.0/go.mod"
-		"github.com/stretchr/testify v1.7.1/go.mod"
-		"github.com/stretchr/testify v1.8.0/go.mod"
-		"github.com/stretchr/testify v1.8.1/go.mod"
-		"github.com/stretchr/testify v1.8.4/go.mod"
-		"github.com/stretchr/testify v1.9.0"
-		"github.com/stretchr/testify v1.9.0/go.mod"
-		"github.com/twitchyliquid64/golang-asm v0.15.1"
-		"github.com/twitchyliquid64/golang-asm v0.15.1/go.mod"
-		"github.com/ugorji/go/codec v1.2.12"
-		"github.com/ugorji/go/codec v1.2.12/go.mod"
-		"github.com/x448/float16 v0.8.4"
-		"github.com/x448/float16 v0.8.4/go.mod"
-		"github.com/xtgo/set v1.0.0"
-		"github.com/xtgo/set v1.0.0/go.mod"
-		"github.com/yuin/goldmark v1.1.27/go.mod"
-		"github.com/yuin/goldmark v1.2.1/go.mod"
-		"github.com/yuin/goldmark v1.3.5/go.mod"
-		"go.opentelemetry.io/proto/otlp v0.7.0/go.mod"
-		"go4.org/unsafe/assume-no-moving-gc v0.0.0-20231121144256-b99613f794b6"
-		"go4.org/unsafe/assume-no-moving-gc v0.0.0-20231121144256-b99613f794b6/go.mod"
-		"golang.org/x/arch v0.0.0-20210923205945-b76863e36670/go.mod"
-		"golang.org/x/arch v0.8.0"
-		"golang.org/x/arch v0.8.0/go.mod"
-		"golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod"
-		"golang.org/x/crypto v0.0.0-20190510104115-cbcb75029529/go.mod"
-		"golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod"
-		"golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod"
-		"golang.org/x/crypto v0.31.0"
-		"golang.org/x/crypto v0.31.0/go.mod"
-		"golang.org/x/exp v0.0.0-20180321215751-8460e604b9de/go.mod"
-		"golang.org/x/exp v0.0.0-20180807140117-3d87b88a115f/go.mod"
-		"golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod"
-		"golang.org/x/exp v0.0.0-20190125153040-c74c464bbbf2/go.mod"
-		"golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8/go.mod"
-		"golang.org/x/exp v0.0.0-20191002040644-a1355ae1e2c3/go.mod"
-		"golang.org/x/exp v0.0.0-20231110203233-9a3e6036ecaa"
-		"golang.org/x/exp v0.0.0-20231110203233-9a3e6036ecaa/go.mod"
-		"golang.org/x/image v0.0.0-20180708004352-c73c2afc3b81/go.mod"
-		"golang.org/x/image v0.0.0-20190227222117-0694c2d4d067/go.mod"
-		"golang.org/x/image v0.0.0-20190802002840-cff245a6509b/go.mod"
-		"golang.org/x/image v0.0.0-20190910094157-69e4b8554b2a/go.mod"
-		"golang.org/x/image v0.0.0-20200119044424-58c23975cae1/go.mod"
-		"golang.org/x/image v0.0.0-20200430140353-33d19683fad8/go.mod"
-		"golang.org/x/image v0.0.0-20200618115811-c13761719519/go.mod"
-		"golang.org/x/image v0.0.0-20201208152932-35266b937fa6/go.mod"
-		"golang.org/x/image v0.0.0-20210216034530-4410531fe030/go.mod"
-		"golang.org/x/image v0.22.0"
-		"golang.org/x/image v0.22.0/go.mod"
-		"golang.org/x/lint v0.0.0-20181026193005-c67002cb31c3/go.mod"
-		"golang.org/x/lint v0.0.0-20190227174305-5b3e6a55c961/go.mod"
-		"golang.org/x/lint v0.0.0-20190313153728-d0100b6bd8b3/go.mod"
-		"golang.org/x/lint v0.0.0-20210508222113-6edffad5e616/go.mod"
-		"golang.org/x/mobile v0.0.0-20190719004257-d2bd2a29d028/go.mod"
-		"golang.org/x/mod v0.1.0/go.mod"
-		"golang.org/x/mod v0.1.1-0.20191105210325-c90efee705ee/go.mod"
-		"golang.org/x/mod v0.2.0/go.mod"
-		"golang.org/x/mod v0.3.0/go.mod"
-		"golang.org/x/mod v0.4.2/go.mod"
-		"golang.org/x/net v0.0.0-20180724234803-3673e40ba225/go.mod"
-		"golang.org/x/net v0.0.0-20180826012351-8a410e7b638d/go.mod"
-		"golang.org/x/net v0.0.0-20190108225652-1e06a53dbb7e/go.mod"
-		"golang.org/x/net v0.0.0-20190213061140-3a22650c66bd/go.mod"
-		"golang.org/x/net v0.0.0-20190311183353-d8887717615a/go.mod"
-		"golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod"
-		"golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod"
-		"golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod"
-		"golang.org/x/net v0.0.0-20200822124328-c89045814202/go.mod"
-		"golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod"
-		"golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4/go.mod"
-		"golang.org/x/net v0.0.0-20210614182718-04defd469f4e/go.mod"
-		"golang.org/x/net v0.25.0"
-		"golang.org/x/net v0.25.0/go.mod"
-		"golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod"
-		"golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d/go.mod"
-		"golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f/go.mod"
-		"golang.org/x/sync v0.0.0-20181108010431-42b317875d0f/go.mod"
-		"golang.org/x/sync v0.0.0-20181221193216-37e7f081c4d4/go.mod"
-		"golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod"
-		"golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod"
-		"golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod"
-		"golang.org/x/sync v0.0.0-20210220032951-036812b2e83c/go.mod"
-		"golang.org/x/sync v0.10.0"
-		"golang.org/x/sync v0.10.0/go.mod"
-		"golang.org/x/sys v0.0.0-20180830151530-49385e6e1522/go.mod"
-		"golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod"
-		"golang.org/x/sys v0.0.0-20190312061237-fead79001313/go.mod"
-		"golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod"
-		"golang.org/x/sys v0.0.0-20200323222414-85ca7c5b95cd/go.mod"
-		"golang.org/x/sys v0.0.0-20200930185726-fdedc70b468f/go.mod"
-		"golang.org/x/sys v0.0.0-20201119102817-f84b799fce68/go.mod"
-		"golang.org/x/sys v0.0.0-20210124154548-22da62e12c0c/go.mod"
-		"golang.org/x/sys v0.0.0-20210304124612-50617c2ba197/go.mod"
-		"golang.org/x/sys v0.0.0-20210330210617-4fbd30eecc44/go.mod"
-		"golang.org/x/sys v0.0.0-20210423082822-04245dca01da/go.mod"
-		"golang.org/x/sys v0.0.0-20210510120138-977fb7262007/go.mod"
-		"golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c/go.mod"
-		"golang.org/x/sys v0.5.0/go.mod"
-		"golang.org/x/sys v0.6.0/go.mod"
-		"golang.org/x/sys v0.28.0"
-		"golang.org/x/sys v0.28.0/go.mod"
-		"golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod"
-		"golang.org/x/term v0.27.0"
-		"golang.org/x/term v0.27.0/go.mod"
-		"golang.org/x/text v0.3.0/go.mod"
-		"golang.org/x/text v0.3.3/go.mod"
-		"golang.org/x/text v0.3.5/go.mod"
-		"golang.org/x/text v0.3.6/go.mod"
-		"golang.org/x/text v0.21.0"
-		"golang.org/x/text v0.21.0/go.mod"
-		"golang.org/x/tools v0.0.0-20180525024113-a5b4c53f6e8b/go.mod"
-		"golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod"
-		"golang.org/x/tools v0.0.0-20190114222345-bf090417da8b/go.mod"
-		"golang.org/x/tools v0.0.0-20190206041539-40960b6deb8e/go.mod"
-		"golang.org/x/tools v0.0.0-20190226205152-f727befe758c/go.mod"
-		"golang.org/x/tools v0.0.0-20190311212946-11955173bddd/go.mod"
-		"golang.org/x/tools v0.0.0-20190524140312-2c0ae7006135/go.mod"
-		"golang.org/x/tools v0.0.0-20190927191325-030b2cf1153e/go.mod"
-		"golang.org/x/tools v0.0.0-20191119224855-298f0cb1881e/go.mod"
-		"golang.org/x/tools v0.0.0-20200130002326-2f3ba24bd6e7/go.mod"
-		"golang.org/x/tools v0.0.0-20200619180055-7c47624df98f/go.mod"
-		"golang.org/x/tools v0.0.0-20210106214847-113979e3529a/go.mod"
-		"golang.org/x/tools v0.1.4/go.mod"
-		"golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7/go.mod"
-		"golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898/go.mod"
-		"golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod"
-		"golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1"
-		"golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1/go.mod"
-		"gonum.org/v1/gonum v0.0.0-20180816165407-929014505bf4/go.mod"
-		"gonum.org/v1/gonum v0.8.2/go.mod"
-		"gonum.org/v1/gonum v0.9.3/go.mod"
-		"gonum.org/v1/gonum v0.15.0"
-		"gonum.org/v1/gonum v0.15.0/go.mod"
-		"gonum.org/v1/netlib v0.0.0-20190313105609-8cb42192e0e0/go.mod"
-		"gonum.org/v1/plot v0.0.0-20190515093506-e2840ee46a6b/go.mod"
-		"gonum.org/v1/plot v0.9.0/go.mod"
-		"google.golang.org/appengine v1.1.0/go.mod"
-		"google.golang.org/appengine v1.4.0/go.mod"
-		"google.golang.org/genproto v0.0.0-20180817151627-c66870c02cf8/go.mod"
-		"google.golang.org/genproto v0.0.0-20190819201941-24fa4b261c55/go.mod"
-		"google.golang.org/genproto v0.0.0-20200513103714-09dca8ec2884/go.mod"
-		"google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013/go.mod"
-		"google.golang.org/genproto v0.0.0-20210630183607-d20f26d13c79/go.mod"
-		"google.golang.org/grpc v1.19.0/go.mod"
-		"google.golang.org/grpc v1.23.0/go.mod"
-		"google.golang.org/grpc v1.25.1/go.mod"
-		"google.golang.org/grpc v1.27.0/go.mod"
-		"google.golang.org/grpc v1.33.1/go.mod"
-		"google.golang.org/grpc v1.36.0/go.mod"
-		"google.golang.org/grpc v1.38.0/go.mod"
-		"google.golang.org/grpc v1.39.0/go.mod"
-		"google.golang.org/protobuf v0.0.0-20200109180630-ec00e32a8dfd/go.mod"
-		"google.golang.org/protobuf v0.0.0-20200221191635-4d8936d0db64/go.mod"
-		"google.golang.org/protobuf v0.0.0-20200228230310-ab0ca4ff8a60/go.mod"
-		"google.golang.org/protobuf v1.20.1-0.20200309200217-e05f789c0967/go.mod"
-		"google.golang.org/protobuf v1.21.0/go.mod"
-		"google.golang.org/protobuf v1.22.0/go.mod"
-		"google.golang.org/protobuf v1.23.0/go.mod"
-		"google.golang.org/protobuf v1.23.1-0.20200526195155-81db48ad09cc/go.mod"
-		"google.golang.org/protobuf v1.25.0/go.mod"
-		"google.golang.org/protobuf v1.26.0-rc.1/go.mod"
-		"google.golang.org/protobuf v1.26.0/go.mod"
-		"google.golang.org/protobuf v1.27.1/go.mod"
-		"google.golang.org/protobuf v1.34.1"
-		"google.golang.org/protobuf v1.34.1/go.mod"
-		"gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod"
-		"gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c"
-		"gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c/go.mod"
-		"gopkg.in/yaml.v2 v2.2.2/go.mod"
-		"gopkg.in/yaml.v2 v2.2.3/go.mod"
-		"gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c/go.mod"
-		"gopkg.in/yaml.v3 v3.0.1"
-		"gopkg.in/yaml.v3 v3.0.1/go.mod"
-		"gorgonia.org/vecf32 v0.9.0"
-		"gorgonia.org/vecf32 v0.9.0/go.mod"
-		"gorgonia.org/vecf64 v0.9.0"
-		"gorgonia.org/vecf64 v0.9.0/go.mod"
-		"honnef.co/go/tools v0.0.0-20190102054323-c2f93a96b099/go.mod"
-		"honnef.co/go/tools v0.0.0-20190523083050-ea95bdfd59fc/go.mod"
-		"nullprogram.com/x/optparse v1.0.0/go.mod"
-		"rsc.io/pdf v0.1.1/go.mod"
 		"github.com/golang/protobuf v1.5.0"
 		"github.com/golang/protobuf v1.5.0/go.mod"
 		"github.com/google/go-cmp v0.5.5"
@@ -1749,6 +1383,373 @@ else
 		"github.com/stretchr/objx v0.1.0/go.mod"
 		"github.com/stretchr/testify v1.3.0"
 		"github.com/stretchr/testify v1.3.0/go.mod"
+		"cloud.google.com/go v0.26.0/go.mod"
+		"cloud.google.com/go v0.34.0/go.mod"
+		"dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod"
+		"gioui.org v0.0.0-20210308172011-57750fc8a0a6/go.mod"
+		"github.com/BurntSushi/toml v0.3.1/go.mod"
+		"github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod"
+		"github.com/agnivade/levenshtein v1.1.1"
+		"github.com/agnivade/levenshtein v1.1.1/go.mod"
+		"github.com/ajstarks/svgo v0.0.0-20180226025133-644b8db467af/go.mod"
+		"github.com/antihax/optional v1.0.0/go.mod"
+		"github.com/apache/arrow/go/arrow v0.0.0-20211112161151-bc219186db40"
+		"github.com/apache/arrow/go/arrow v0.0.0-20211112161151-bc219186db40/go.mod"
+		"github.com/arbovm/levenshtein v0.0.0-20160628152529-48b4e1c0c4d0"
+		"github.com/arbovm/levenshtein v0.0.0-20160628152529-48b4e1c0c4d0/go.mod"
+		"github.com/boombuler/barcode v1.0.0/go.mod"
+		"github.com/bytedance/sonic v1.11.6"
+		"github.com/bytedance/sonic v1.11.6/go.mod"
+		"github.com/bytedance/sonic/loader v0.1.1"
+		"github.com/bytedance/sonic/loader v0.1.1/go.mod"
+		"github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod"
+		"github.com/chewxy/hm v1.0.0"
+		"github.com/chewxy/hm v1.0.0/go.mod"
+		"github.com/chewxy/math32 v1.0.0/go.mod"
+		"github.com/chewxy/math32 v1.11.0"
+		"github.com/chewxy/math32 v1.11.0/go.mod"
+		"github.com/client9/misspell v0.3.4/go.mod"
+		"github.com/cloudwego/base64x v0.1.4"
+		"github.com/cloudwego/base64x v0.1.4/go.mod"
+		"github.com/cloudwego/iasm v0.2.0"
+		"github.com/cloudwego/iasm v0.2.0/go.mod"
+		"github.com/cncf/udpa/go v0.0.0-20191209042840-269d4d468f6f/go.mod"
+		"github.com/cncf/udpa/go v0.0.0-20201120205902-5459f2c99403/go.mod"
+		"github.com/cncf/xds/go v0.0.0-20210312221358-fbca930ec8ed/go.mod"
+		"github.com/containerd/console v1.0.3"
+		"github.com/containerd/console v1.0.3/go.mod"
+		"github.com/cpuguy83/go-md2man/v2 v2.0.2/go.mod"
+		"github.com/creack/pty v1.1.9/go.mod"
+		"github.com/d4l3k/go-bfloat16 v0.0.0-20211005043715-690c3bdd05f1"
+		"github.com/d4l3k/go-bfloat16 v0.0.0-20211005043715-690c3bdd05f1/go.mod"
+		"github.com/davecgh/go-spew v1.1.0/go.mod"
+		"github.com/davecgh/go-spew v1.1.1"
+		"github.com/davecgh/go-spew v1.1.1/go.mod"
+		"github.com/dgryski/trifles v0.0.0-20200323201526-dd97f9abfb48"
+		"github.com/dgryski/trifles v0.0.0-20200323201526-dd97f9abfb48/go.mod"
+		"github.com/emirpasic/gods/v2 v2.0.0-alpha"
+		"github.com/emirpasic/gods/v2 v2.0.0-alpha/go.mod"
+		"github.com/envoyproxy/go-control-plane v0.9.0/go.mod"
+		"github.com/envoyproxy/go-control-plane v0.9.1-0.20191026205805-5f8ba28d4473/go.mod"
+		"github.com/envoyproxy/go-control-plane v0.9.4/go.mod"
+		"github.com/envoyproxy/go-control-plane v0.9.9-0.20201210154907-fd9021fe5dad/go.mod"
+		"github.com/envoyproxy/go-control-plane v0.9.9-0.20210217033140-668b12f5399d/go.mod"
+		"github.com/envoyproxy/go-control-plane v0.9.9-0.20210512163311-63b5d3c536b0/go.mod"
+		"github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod"
+		"github.com/fogleman/gg v1.2.1-0.20190220221249-0403632d5b90/go.mod"
+		"github.com/fogleman/gg v1.3.0/go.mod"
+		"github.com/gabriel-vasile/mimetype v1.4.3"
+		"github.com/gabriel-vasile/mimetype v1.4.3/go.mod"
+		"github.com/ghodss/yaml v1.0.0/go.mod"
+		"github.com/gin-contrib/cors v1.7.2"
+		"github.com/gin-contrib/cors v1.7.2/go.mod"
+		"github.com/gin-contrib/sse v0.1.0"
+		"github.com/gin-contrib/sse v0.1.0/go.mod"
+		"github.com/gin-gonic/gin v1.10.0"
+		"github.com/gin-gonic/gin v1.10.0/go.mod"
+		"github.com/go-fonts/dejavu v0.1.0/go.mod"
+		"github.com/go-fonts/latin-modern v0.2.0/go.mod"
+		"github.com/go-fonts/liberation v0.1.1/go.mod"
+		"github.com/go-fonts/stix v0.1.0/go.mod"
+		"github.com/go-gl/glfw v0.0.0-20190409004039-e6da0acd62b1/go.mod"
+		"github.com/go-latex/latex v0.0.0-20210118124228-b3d85cf34e07/go.mod"
+		"github.com/go-playground/assert/v2 v2.2.0"
+		"github.com/go-playground/assert/v2 v2.2.0/go.mod"
+		"github.com/go-playground/locales v0.14.1"
+		"github.com/go-playground/locales v0.14.1/go.mod"
+		"github.com/go-playground/universal-translator v0.18.1"
+		"github.com/go-playground/universal-translator v0.18.1/go.mod"
+		"github.com/go-playground/validator/v10 v10.20.0"
+		"github.com/go-playground/validator/v10 v10.20.0/go.mod"
+		"github.com/goccy/go-json v0.10.2"
+		"github.com/goccy/go-json v0.10.2/go.mod"
+		"github.com/gogo/protobuf v1.3.2"
+		"github.com/gogo/protobuf v1.3.2/go.mod"
+		"github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0/go.mod"
+		"github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b/go.mod"
+		"github.com/golang/mock v1.1.1/go.mod"
+		"github.com/golang/protobuf v1.2.0/go.mod"
+		"github.com/golang/protobuf v1.3.2/go.mod"
+		"github.com/golang/protobuf v1.3.3/go.mod"
+		"github.com/golang/protobuf v1.4.0-rc.1/go.mod"
+		"github.com/golang/protobuf v1.4.0-rc.1.0.20200221234624-67d41d38c208/go.mod"
+		"github.com/golang/protobuf v1.4.0-rc.2/go.mod"
+		"github.com/golang/protobuf v1.4.0-rc.4.0.20200313231945-b860323f09d0/go.mod"
+		"github.com/golang/protobuf v1.4.0/go.mod"
+		"github.com/golang/protobuf v1.4.1/go.mod"
+		"github.com/golang/protobuf v1.4.2/go.mod"
+		"github.com/golang/protobuf v1.4.3/go.mod"
+		"github.com/golang/protobuf v1.5.0/go.mod"
+		"github.com/golang/protobuf v1.5.2/go.mod"
+		"github.com/golang/protobuf v1.5.4"
+		"github.com/golang/protobuf v1.5.4/go.mod"
+		"github.com/golang/snappy v0.0.3"
+		"github.com/golang/snappy v0.0.3/go.mod"
+		"github.com/google/flatbuffers v2.0.0+incompatible/go.mod"
+		"github.com/google/flatbuffers v24.3.25+incompatible"
+		"github.com/google/flatbuffers v24.3.25+incompatible/go.mod"
+		"github.com/google/go-cmp v0.2.0/go.mod"
+		"github.com/google/go-cmp v0.3.0/go.mod"
+		"github.com/google/go-cmp v0.3.1/go.mod"
+		"github.com/google/go-cmp v0.4.0/go.mod"
+		"github.com/google/go-cmp v0.5.0/go.mod"
+		"github.com/google/go-cmp v0.5.5/go.mod"
+		"github.com/google/go-cmp v0.5.6/go.mod"
+		"github.com/google/go-cmp v0.6.0"
+		"github.com/google/go-cmp v0.6.0/go.mod"
+		"github.com/google/gofuzz v1.0.0/go.mod"
+		"github.com/google/uuid v1.1.2/go.mod"
+		"github.com/google/uuid v1.6.0"
+		"github.com/google/uuid v1.6.0/go.mod"
+		"github.com/grpc-ecosystem/grpc-gateway v1.16.0/go.mod"
+		"github.com/inconshreveable/mousetrap v1.1.0"
+		"github.com/inconshreveable/mousetrap v1.1.0/go.mod"
+		"github.com/json-iterator/go v1.1.12"
+		"github.com/json-iterator/go v1.1.12/go.mod"
+		"github.com/jung-kurt/gofpdf v1.0.0/go.mod"
+		"github.com/jung-kurt/gofpdf v1.0.3-0.20190309125859-24315acbbda5/go.mod"
+		"github.com/kisielk/errcheck v1.5.0/go.mod"
+		"github.com/kisielk/gotool v1.0.0/go.mod"
+		"github.com/klauspost/compress v1.13.1"
+		"github.com/klauspost/compress v1.13.1/go.mod"
+		"github.com/klauspost/cpuid/v2 v2.0.9/go.mod"
+		"github.com/klauspost/cpuid/v2 v2.2.7"
+		"github.com/klauspost/cpuid/v2 v2.2.7/go.mod"
+		"github.com/knz/go-libedit v1.10.1/go.mod"
+		"github.com/kr/pretty v0.3.0"
+		"github.com/kr/pretty v0.3.0/go.mod"
+		"github.com/kr/text v0.2.0"
+		"github.com/kr/text v0.2.0/go.mod"
+		"github.com/leodido/go-urn v1.4.0"
+		"github.com/leodido/go-urn v1.4.0/go.mod"
+		"github.com/mattn/go-isatty v0.0.20"
+		"github.com/mattn/go-isatty v0.0.20/go.mod"
+		"github.com/mattn/go-runewidth v0.0.9/go.mod"
+		"github.com/mattn/go-runewidth v0.0.14"
+		"github.com/mattn/go-runewidth v0.0.14/go.mod"
+		"github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421/go.mod"
+		"github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd"
+		"github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd/go.mod"
+		"github.com/modern-go/reflect2 v1.0.2"
+		"github.com/modern-go/reflect2 v1.0.2/go.mod"
+		"github.com/nlpodyssey/gopickle v0.3.0"
+		"github.com/nlpodyssey/gopickle v0.3.0/go.mod"
+		"github.com/olekukonko/tablewriter v0.0.5"
+		"github.com/olekukonko/tablewriter v0.0.5/go.mod"
+		"github.com/pdevine/tensor v0.0.0-20240510204454-f88f4562727c"
+		"github.com/pdevine/tensor v0.0.0-20240510204454-f88f4562727c/go.mod"
+		"github.com/pelletier/go-toml/v2 v2.2.2"
+		"github.com/pelletier/go-toml/v2 v2.2.2/go.mod"
+		"github.com/phpdave11/gofpdf v1.4.2/go.mod"
+		"github.com/phpdave11/gofpdi v1.0.12/go.mod"
+		"github.com/pierrec/lz4/v4 v4.1.8"
+		"github.com/pierrec/lz4/v4 v4.1.8/go.mod"
+		"github.com/pkg/errors v0.8.1/go.mod"
+		"github.com/pkg/errors v0.9.1"
+		"github.com/pkg/errors v0.9.1/go.mod"
+		"github.com/pmezard/go-difflib v1.0.0"
+		"github.com/pmezard/go-difflib v1.0.0/go.mod"
+		"github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod"
+		"github.com/rivo/uniseg v0.2.0"
+		"github.com/rivo/uniseg v0.2.0/go.mod"
+		"github.com/rogpeppe/fastuuid v1.2.0/go.mod"
+		"github.com/rogpeppe/go-internal v1.8.0"
+		"github.com/rogpeppe/go-internal v1.8.0/go.mod"
+		"github.com/russross/blackfriday/v2 v2.1.0/go.mod"
+		"github.com/ruudk/golang-pdf417 v0.0.0-20181029194003-1af4ab5afa58/go.mod"
+		"github.com/spf13/cobra v1.7.0"
+		"github.com/spf13/cobra v1.7.0/go.mod"
+		"github.com/spf13/pflag v1.0.5"
+		"github.com/spf13/pflag v1.0.5/go.mod"
+		"github.com/stretchr/objx v0.1.0/go.mod"
+		"github.com/stretchr/objx v0.4.0/go.mod"
+		"github.com/stretchr/objx v0.5.0/go.mod"
+		"github.com/stretchr/objx v0.5.2/go.mod"
+		"github.com/stretchr/testify v1.1.4/go.mod"
+		"github.com/stretchr/testify v1.2.2/go.mod"
+		"github.com/stretchr/testify v1.3.0/go.mod"
+		"github.com/stretchr/testify v1.5.1/go.mod"
+		"github.com/stretchr/testify v1.7.0/go.mod"
+		"github.com/stretchr/testify v1.7.1/go.mod"
+		"github.com/stretchr/testify v1.8.0/go.mod"
+		"github.com/stretchr/testify v1.8.1/go.mod"
+		"github.com/stretchr/testify v1.8.4/go.mod"
+		"github.com/stretchr/testify v1.9.0"
+		"github.com/stretchr/testify v1.9.0/go.mod"
+		"github.com/twitchyliquid64/golang-asm v0.15.1"
+		"github.com/twitchyliquid64/golang-asm v0.15.1/go.mod"
+		"github.com/ugorji/go/codec v1.2.12"
+		"github.com/ugorji/go/codec v1.2.12/go.mod"
+		"github.com/x448/float16 v0.8.4"
+		"github.com/x448/float16 v0.8.4/go.mod"
+		"github.com/xtgo/set v1.0.0"
+		"github.com/xtgo/set v1.0.0/go.mod"
+		"github.com/yuin/goldmark v1.1.27/go.mod"
+		"github.com/yuin/goldmark v1.2.1/go.mod"
+		"github.com/yuin/goldmark v1.3.5/go.mod"
+		"go.opentelemetry.io/proto/otlp v0.7.0/go.mod"
+		"go4.org/unsafe/assume-no-moving-gc v0.0.0-20231121144256-b99613f794b6"
+		"go4.org/unsafe/assume-no-moving-gc v0.0.0-20231121144256-b99613f794b6/go.mod"
+		"golang.org/x/arch v0.0.0-20210923205945-b76863e36670/go.mod"
+		"golang.org/x/arch v0.8.0"
+		"golang.org/x/arch v0.8.0/go.mod"
+		"golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod"
+		"golang.org/x/crypto v0.0.0-20190510104115-cbcb75029529/go.mod"
+		"golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod"
+		"golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod"
+		"golang.org/x/crypto v0.31.0"
+		"golang.org/x/crypto v0.31.0/go.mod"
+		"golang.org/x/exp v0.0.0-20180321215751-8460e604b9de/go.mod"
+		"golang.org/x/exp v0.0.0-20180807140117-3d87b88a115f/go.mod"
+		"golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod"
+		"golang.org/x/exp v0.0.0-20190125153040-c74c464bbbf2/go.mod"
+		"golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8/go.mod"
+		"golang.org/x/exp v0.0.0-20191002040644-a1355ae1e2c3/go.mod"
+		"golang.org/x/exp v0.0.0-20231110203233-9a3e6036ecaa"
+		"golang.org/x/exp v0.0.0-20231110203233-9a3e6036ecaa/go.mod"
+		"golang.org/x/image v0.0.0-20180708004352-c73c2afc3b81/go.mod"
+		"golang.org/x/image v0.0.0-20190227222117-0694c2d4d067/go.mod"
+		"golang.org/x/image v0.0.0-20190802002840-cff245a6509b/go.mod"
+		"golang.org/x/image v0.0.0-20190910094157-69e4b8554b2a/go.mod"
+		"golang.org/x/image v0.0.0-20200119044424-58c23975cae1/go.mod"
+		"golang.org/x/image v0.0.0-20200430140353-33d19683fad8/go.mod"
+		"golang.org/x/image v0.0.0-20200618115811-c13761719519/go.mod"
+		"golang.org/x/image v0.0.0-20201208152932-35266b937fa6/go.mod"
+		"golang.org/x/image v0.0.0-20210216034530-4410531fe030/go.mod"
+		"golang.org/x/image v0.22.0"
+		"golang.org/x/image v0.22.0/go.mod"
+		"golang.org/x/lint v0.0.0-20181026193005-c67002cb31c3/go.mod"
+		"golang.org/x/lint v0.0.0-20190227174305-5b3e6a55c961/go.mod"
+		"golang.org/x/lint v0.0.0-20190313153728-d0100b6bd8b3/go.mod"
+		"golang.org/x/lint v0.0.0-20210508222113-6edffad5e616/go.mod"
+		"golang.org/x/mobile v0.0.0-20190719004257-d2bd2a29d028/go.mod"
+		"golang.org/x/mod v0.1.0/go.mod"
+		"golang.org/x/mod v0.1.1-0.20191105210325-c90efee705ee/go.mod"
+		"golang.org/x/mod v0.2.0/go.mod"
+		"golang.org/x/mod v0.3.0/go.mod"
+		"golang.org/x/mod v0.4.2/go.mod"
+		"golang.org/x/net v0.0.0-20180724234803-3673e40ba225/go.mod"
+		"golang.org/x/net v0.0.0-20180826012351-8a410e7b638d/go.mod"
+		"golang.org/x/net v0.0.0-20190108225652-1e06a53dbb7e/go.mod"
+		"golang.org/x/net v0.0.0-20190213061140-3a22650c66bd/go.mod"
+		"golang.org/x/net v0.0.0-20190311183353-d8887717615a/go.mod"
+		"golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod"
+		"golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod"
+		"golang.org/x/net v0.0.0-20200226121028-0de0cce0169b/go.mod"
+		"golang.org/x/net v0.0.0-20200822124328-c89045814202/go.mod"
+		"golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod"
+		"golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4/go.mod"
+		"golang.org/x/net v0.0.0-20210614182718-04defd469f4e/go.mod"
+		"golang.org/x/net v0.25.0"
+		"golang.org/x/net v0.25.0/go.mod"
+		"golang.org/x/oauth2 v0.0.0-20180821212333-d2e6202438be/go.mod"
+		"golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d/go.mod"
+		"golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f/go.mod"
+		"golang.org/x/sync v0.0.0-20181108010431-42b317875d0f/go.mod"
+		"golang.org/x/sync v0.0.0-20181221193216-37e7f081c4d4/go.mod"
+		"golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod"
+		"golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod"
+		"golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod"
+		"golang.org/x/sync v0.0.0-20210220032951-036812b2e83c/go.mod"
+		"golang.org/x/sync v0.10.0"
+		"golang.org/x/sync v0.10.0/go.mod"
+		"golang.org/x/sys v0.0.0-20180830151530-49385e6e1522/go.mod"
+		"golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod"
+		"golang.org/x/sys v0.0.0-20190312061237-fead79001313/go.mod"
+		"golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod"
+		"golang.org/x/sys v0.0.0-20200323222414-85ca7c5b95cd/go.mod"
+		"golang.org/x/sys v0.0.0-20200930185726-fdedc70b468f/go.mod"
+		"golang.org/x/sys v0.0.0-20201119102817-f84b799fce68/go.mod"
+		"golang.org/x/sys v0.0.0-20210124154548-22da62e12c0c/go.mod"
+		"golang.org/x/sys v0.0.0-20210304124612-50617c2ba197/go.mod"
+		"golang.org/x/sys v0.0.0-20210330210617-4fbd30eecc44/go.mod"
+		"golang.org/x/sys v0.0.0-20210423082822-04245dca01da/go.mod"
+		"golang.org/x/sys v0.0.0-20210510120138-977fb7262007/go.mod"
+		"golang.org/x/sys v0.0.0-20210630005230-0f9fa26af87c/go.mod"
+		"golang.org/x/sys v0.5.0/go.mod"
+		"golang.org/x/sys v0.6.0/go.mod"
+		"golang.org/x/sys v0.28.0"
+		"golang.org/x/sys v0.28.0/go.mod"
+		"golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod"
+		"golang.org/x/term v0.27.0"
+		"golang.org/x/term v0.27.0/go.mod"
+		"golang.org/x/text v0.3.0/go.mod"
+		"golang.org/x/text v0.3.3/go.mod"
+		"golang.org/x/text v0.3.5/go.mod"
+		"golang.org/x/text v0.3.6/go.mod"
+		"golang.org/x/text v0.21.0"
+		"golang.org/x/text v0.21.0/go.mod"
+		"golang.org/x/tools v0.0.0-20180525024113-a5b4c53f6e8b/go.mod"
+		"golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod"
+		"golang.org/x/tools v0.0.0-20190114222345-bf090417da8b/go.mod"
+		"golang.org/x/tools v0.0.0-20190206041539-40960b6deb8e/go.mod"
+		"golang.org/x/tools v0.0.0-20190226205152-f727befe758c/go.mod"
+		"golang.org/x/tools v0.0.0-20190311212946-11955173bddd/go.mod"
+		"golang.org/x/tools v0.0.0-20190524140312-2c0ae7006135/go.mod"
+		"golang.org/x/tools v0.0.0-20190927191325-030b2cf1153e/go.mod"
+		"golang.org/x/tools v0.0.0-20191119224855-298f0cb1881e/go.mod"
+		"golang.org/x/tools v0.0.0-20200130002326-2f3ba24bd6e7/go.mod"
+		"golang.org/x/tools v0.0.0-20200619180055-7c47624df98f/go.mod"
+		"golang.org/x/tools v0.0.0-20210106214847-113979e3529a/go.mod"
+		"golang.org/x/tools v0.1.4/go.mod"
+		"golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7/go.mod"
+		"golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898/go.mod"
+		"golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod"
+		"golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1"
+		"golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1/go.mod"
+		"gonum.org/v1/gonum v0.0.0-20180816165407-929014505bf4/go.mod"
+		"gonum.org/v1/gonum v0.8.2/go.mod"
+		"gonum.org/v1/gonum v0.9.3/go.mod"
+		"gonum.org/v1/gonum v0.15.0"
+		"gonum.org/v1/gonum v0.15.0/go.mod"
+		"gonum.org/v1/netlib v0.0.0-20190313105609-8cb42192e0e0/go.mod"
+		"gonum.org/v1/plot v0.0.0-20190515093506-e2840ee46a6b/go.mod"
+		"gonum.org/v1/plot v0.9.0/go.mod"
+		"google.golang.org/appengine v1.1.0/go.mod"
+		"google.golang.org/appengine v1.4.0/go.mod"
+		"google.golang.org/genproto v0.0.0-20180817151627-c66870c02cf8/go.mod"
+		"google.golang.org/genproto v0.0.0-20190819201941-24fa4b261c55/go.mod"
+		"google.golang.org/genproto v0.0.0-20200513103714-09dca8ec2884/go.mod"
+		"google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013/go.mod"
+		"google.golang.org/genproto v0.0.0-20210630183607-d20f26d13c79/go.mod"
+		"google.golang.org/grpc v1.19.0/go.mod"
+		"google.golang.org/grpc v1.23.0/go.mod"
+		"google.golang.org/grpc v1.25.1/go.mod"
+		"google.golang.org/grpc v1.27.0/go.mod"
+		"google.golang.org/grpc v1.33.1/go.mod"
+		"google.golang.org/grpc v1.36.0/go.mod"
+		"google.golang.org/grpc v1.38.0/go.mod"
+		"google.golang.org/grpc v1.39.0/go.mod"
+		"google.golang.org/protobuf v0.0.0-20200109180630-ec00e32a8dfd/go.mod"
+		"google.golang.org/protobuf v0.0.0-20200221191635-4d8936d0db64/go.mod"
+		"google.golang.org/protobuf v0.0.0-20200228230310-ab0ca4ff8a60/go.mod"
+		"google.golang.org/protobuf v1.20.1-0.20200309200217-e05f789c0967/go.mod"
+		"google.golang.org/protobuf v1.21.0/go.mod"
+		"google.golang.org/protobuf v1.22.0/go.mod"
+		"google.golang.org/protobuf v1.23.0/go.mod"
+		"google.golang.org/protobuf v1.23.1-0.20200526195155-81db48ad09cc/go.mod"
+		"google.golang.org/protobuf v1.25.0/go.mod"
+		"google.golang.org/protobuf v1.26.0-rc.1/go.mod"
+		"google.golang.org/protobuf v1.26.0/go.mod"
+		"google.golang.org/protobuf v1.27.1/go.mod"
+		"google.golang.org/protobuf v1.34.1"
+		"google.golang.org/protobuf v1.34.1/go.mod"
+		"gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod"
+		"gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c"
+		"gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c/go.mod"
+		"gopkg.in/yaml.v2 v2.2.2/go.mod"
+		"gopkg.in/yaml.v2 v2.2.3/go.mod"
+		"gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c/go.mod"
+		"gopkg.in/yaml.v3 v3.0.1"
+		"gopkg.in/yaml.v3 v3.0.1/go.mod"
+		"gorgonia.org/vecf32 v0.9.0"
+		"gorgonia.org/vecf32 v0.9.0/go.mod"
+		"gorgonia.org/vecf64 v0.9.0"
+		"gorgonia.org/vecf64 v0.9.0/go.mod"
+		"honnef.co/go/tools v0.0.0-20190102054323-c2f93a96b099/go.mod"
+		"honnef.co/go/tools v0.0.0-20190523083050-ea95bdfd59fc/go.mod"
+		"nullprogram.com/x/optparse v1.0.0/go.mod"
+		"rsc.io/pdf v0.1.1/go.mod"
 	)
 	go-module_set_globals
 
@@ -1947,6 +1948,9 @@ LLM_LICENSES="
 		Databricks-Open-Model-License
 		Databricks-Open-Model-Acceptable-Use-Policy
 	)
+	ollama_llms_deepscaler? (
+		MIT
+	)
 	ollama_llms_deepseek-coder? (
 		DEEPSEEK-LICENSE-AGREEMENT-1.0
 	)
@@ -1965,6 +1969,18 @@ LLM_LICENSES="
 	)
 	ollama_llms_deepseek-llm? (
 		DEEPSEEK-LICENSE-AGREEMENT-1.0
+	)
+	ollama_llms_deepseek-r1? (
+		(
+			llama3_1-LICENSE
+			llama3_1-USE_POLICY.md
+		)
+		(
+			llama3_3-LICENSE
+			llama3_3-USE_POLICY.md
+		)
+		Apache-2.0
+		MIT
 	)
 	ollama_llms_disinfozone-telos? (
 		all-rights-reserved
@@ -2281,6 +2297,9 @@ LLM_LICENSES="
 		OpenCoder-20240716
 	)
 	ollama_llms_openhermes? (
+		Apache-2.0
+	)
+	ollama_llms_openthinker? (
 		Apache-2.0
 	)
 	ollama_llms_orca-mini? (
@@ -2911,13 +2930,8 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-0.5.4-hardcoded-paths.patch"
-	"${FILESDIR}/${PN}-0.5.4-rename-CUDA_ARCHITECTURES.patch"
-	"${FILESDIR}/${PN}-0.5.4-gpu-libs-path.patch"
+	"${FILESDIR}/${PN}-0.5.11-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-0.5.7-cmd-changes.patch"
-	"${FILESDIR}/${PN}-0.5.4-config-cuda-slot.patch"
-	"${FILESDIR}/${PN}-0.5.4-nvcc-flags.patch"
-	"${FILESDIR}/${PN}-0.5.7-change-make-custom-flags.patch"
 )
 
 pkg_pretend() {
@@ -3103,10 +3117,10 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 			-e "s|RAGEL := ragel|RAGEL := ragel-go|g" \
 			"${WORKDIR}/go-mod/github.com/leodido/go-urn@"*"/makefile" \
 			|| die
-		sed -i \
-			-e "s|\"ragel\"|\"ragel-go\"|g" \
-			"${WORKDIR}/go-mod/github.com/dgryski/trifles@"*"/matcher/main.go" \
-			|| die
+#		sed -i \
+#			-e "s|\"ragel\"|\"ragel-go\"|g" \
+#			"${WORKDIR}/go-mod/github.com/dgryski/trifles@"*"/matcher/main.go" \
+#			|| die
 	fi
 
 	if [[ "${CFLAGS}" =~ "-march=armv8.6-a" ]] ; then
@@ -3116,28 +3130,28 @@ einfo "Editing ${x} for ragel -Z -> ragel-go"
 			|| die
 	fi
 
-	if ! use cpu_flags_x86_f16c ; then
-		sed -i \
-			-e "s|-mf16c||g" \
-			"make/Makefile.rocm" \
-			|| die
-	fi
+#	if ! use cpu_flags_x86_f16c ; then
+#		sed -i \
+#			-e "s|-mf16c||g" \
+#			"make/Makefile.rocm" \
+#			|| die
+#	fi
 
-	if ! use cpu_flags_x86_fma ; then
-		sed -i \
-			-e "s|-mfma||g" \
-			"make/Makefile.rocm" \
-			|| die
-	fi
+#	if ! use cpu_flags_x86_fma ; then
+#		sed -i \
+#			-e "s|-mfma||g" \
+#			"make/Makefile.rocm" \
+#			|| die
+#	fi
 
 	if ! use cpu_flags_x86_avx ; then
 		if use amd64 || use x86 ; then
 			export GPU_RUNNER_CPU_FLAGS="no-avx"
 		fi
-		sed -i \
-			-e "s|-mfma||g" \
-			"make/Makefile.rocm" \
-			|| die
+#		sed -i \
+#			-e "s|-mfma||g" \
+#			"make/Makefile.rocm" \
+#			|| die
 	fi
 
 	# Allow to use GPU without AVX.
@@ -3240,12 +3254,12 @@ src_configure() {
 
 		# Speed up build
 		local gpus="${AMDGPU_TARGETS}"
-		sed -i -e "s|HIP_ARCHS_COMMON := gfx900 gfx940 gfx941 gfx942 gfx1010 gfx1012 gfx1030 gfx1100 gfx1101 gfx1102|HIP_ARCHS_COMMON := ${gpus//;/ }|g" \
-			"make/Makefile.rocm" \
-			|| die
-		sed -i -e "s|HIP_ARCHS_LINUX := gfx906:xnack- gfx908:xnack- gfx90a:xnack+ gfx90a:xnack-|HIP_ARCHS_LINUX := |g" \
-			"make/Makefile.rocm" \
-			|| die
+#		sed -i -e "s|HIP_ARCHS_COMMON := gfx900 gfx940 gfx941 gfx942 gfx1010 gfx1012 gfx1030 gfx1100 gfx1101 gfx1102|HIP_ARCHS_COMMON := ${gpus//;/ }|g" \
+#			"make/Makefile.rocm" \
+#			|| die
+#		sed -i -e "s|HIP_ARCHS_LINUX := gfx906:xnack- gfx908:xnack- gfx90a:xnack+ gfx90a:xnack-|HIP_ARCHS_LINUX := |g" \
+#			"make/Makefile.rocm" \
+#			|| die
 	fi
 
 	# Use similar hardening flags like TF for community generated LLMs.
@@ -3446,9 +3460,9 @@ eerror "You need to set -march= to one of ${SVE_ARCHES[@]}"
 		-e "s|-O2|${olast}|g" \
 		-e "s|-O3|${olast}|g" \
 		"llama/llama.go" \
-		"make/cuda.make" \
-		"make/Makefile.rocm" \
 		|| die
+#		"make/cuda.make" \
+#		"make/Makefile.rocm" \
 
 	replace-flags "-O*" "${olast}"
 
@@ -3803,7 +3817,21 @@ einfo "CUSTOM_CPU_FLAGS:  ${CUSTOM_CPU_FLAGS}"
 	export USE_CUDA=0
 
 einfo "Building CPU runner"
-	emake cpu
+	#emake cpu
+	cmake \
+		--preset 'CPU' \
+		|| die
+	cmake \
+		--build \
+		--parallel \
+		--preset 'CPU' \
+		|| die
+	cmake \
+		--install build \
+		--component CPU \
+		--strip \
+		--parallel $(get_makeopts_jobs) \
+		|| die
 
 	edo go build ${args[@]} .
 }
@@ -3922,14 +3950,56 @@ einfo "LDFLAGS: ${LDFLAGS}"
 		unset OLLAMA_SKIP_CUDA_GENERATE
 		if has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
 einfo "Building for CUDA v12"
-			emake cuda_v12
+#			emake cuda_v12
+			cmake \
+				--preset 'CUDA 12' \
+				|| die
+			cmake \
+				--build \
+				--parallel \
+				--preset 'CUDA 12' \
+				|| die
+			cmake \
+				--install build \
+				--component CUDA \
+				--strip \
+				--parallel $(get_makeopts_jobs) \
+				|| die
 		elif has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
 einfo "Building for CUDA v11"
-			emake cuda_v11
+#			emake cuda_v11
+			cmake \
+				--preset 'CUDA 11' \
+				|| die
+			cmake \
+				--build \
+				--parallel \
+				--preset 'CUDA 11' \
+				|| die
+			cmake \
+				--install build \
+				--component CUDA \
+				--strip \
+				--parallel $(get_makeopts_jobs) \
+				|| die
 		fi
 	elif use rocm ; then
 einfo "Building for ROCm"
-		emake rocm
+#		emake rocm
+		cmake \
+			--preset 'ROCm 6' \
+			|| die
+		cmake \
+			--build \
+			--parallel \
+			--preset 'ROCm 6' \
+			|| die
+		cmake \
+			--install build \
+			--component HIP \
+			--strip \
+			--parallel $(get_makeopts_jobs) \
+			|| die
 	fi
 
 	export CUSTOM_CPU_FLAGS="${cpu_flags}"

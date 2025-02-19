@@ -15,7 +15,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
  	"strconv"
  	"strings"
  	"sync/atomic"
-@@ -47,6 +49,2006 @@ import (
+@@ -47,6 +49,2007 @@ import (
  	"github.com/ollama/ollama/version"
  )
  
@@ -1926,7 +1926,7 @@ diff '--color=auto' -urp ollama-0.3.13.orig/cmd/cmd.go ollama-0.3.13/cmd/cmd.go
 +	"medllama2": "medical qa",
 +	"megadolphin": "uncensored common-sense empathy advice detailed-reponse fine-tunable-alignment nsfw-content detailed-roleplay",
 +	"minicpm-v": "text-to-speech ocr optical-character-recognition code-screenshot-bugfixes how-to-generator translating-screenshots translation",
-+	"mistral": "multilingual function-calling fine-tuneable",
++	"mistral": "multilingual function-calling fine-tuneable made-in-france european",
 +	"mistral-large": "multilingual french german spanish italian dutch portuguese russian japanese chinese coding code-generation solving-basic-programming-problems math-word-problems function-calling json",
 +	"mistral-nemo": "multilingual english french german spanish italian portuguese chinese korean arabic hindi common-sense trivia function-calling",
 +	"mistral-openorca": "common-sense",
