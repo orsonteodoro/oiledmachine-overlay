@@ -93,6 +93,7 @@ CPU_FLAGS_X86=(
 	cpu_flags_x86_sse2
 	cpu_flags_x86_sse3
 	cpu_flags_x86_ssse3
+	cpu_flags_x86_amx
 )
 CUDA_FATTN_TARGETS_COMPAT=(
 	sm_60
@@ -2932,6 +2933,7 @@ BDEPEND="
 PATCHES=(
 	"${FILESDIR}/${PN}-0.5.11-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-0.5.7-cmd-changes.patch"
+	"${FILESDIR}/${PN}-0.5.11-custom-cpu-features.patch"
 )
 
 pkg_pretend() {
@@ -3334,6 +3336,9 @@ einfo "PIE is already enabled."
 
 	# For sgemm.cpp, ggml.c
 
+	# omt
+	local CPU_FEATURES=()
+
 	if use cpu_flags_x86_sse ; then
 		append-flags -msse
 		_NVCC_FLAGS+=" -Xcompiler -msse"
@@ -3357,16 +3362,27 @@ einfo "PIE is already enabled."
 	if use cpu_flags_x86_f16c ; then
 		append-flags -mf16c
 		_NVCC_FLAGS+=" -Xcompiler -mf16c"
+		CPU_FEATURES+=( "F16C" )
 	fi
 
 	if use cpu_flags_x86_fma ; then
 		append-flags -mfma
 		_NVCC_FLAGS+=" -Xcompiler -mfma"
+		CPU_FEATURES+=( "FMA" )
+	fi
+
+	if use cpu_flags_x86_avx ; then
+		CPU_FEATURES+=( "AVX" )
+	fi
+
+	if use cpu_flags_x86_avx2 ; then
+		CPU_FEATURES+=( "AVX2" )
 	fi
 
 	if use cpu_flags_x86_avxvnni ; then
 		append-flags -mavxvnni
 		_NVCC_FLAGS+=" -Xcompiler -mavxvnni"
+		CPU_FEATURES+=( "AVX_VNNI" )
 	fi
 
 	if use cpu_flags_x86_avxvnniint8 ; then
@@ -3389,19 +3405,47 @@ einfo "PIE is already enabled."
 		_NVCC_FLAGS+=" -Xcompiler -mavx512vl"
 	fi
 
+	if use cpu_flags_x86_avx512f && use cpu_flags_x86_avx512vl && use cpu_flags_x86_avx512dq && use cpu_flags_x86_avx512bw ; then
+		CPU_FEATURES+=( "AVX512" )
+	fi
+
 	if use cpu_flags_x86_avx512bf16 ; then
 		append-flags -mavx512bf16
 		_NVCC_FLAGS+=" -Xcompiler -mavx512bf16"
+		CPU_FEATURES+=( "AVX512_BF16" )
 	fi
 
 	if use cpu_flags_x86_avx512vbmi ; then
 		append-flags -mavx512vbmi
 		_NVCC_FLAGS+=" -Xcompiler -mavx512vbmi"
+		CPU_FEATURES+=( "AVX512_VBMI" )
 	fi
 
 	if use cpu_flags_x86_avx512vnni ; then
 		append-flags -mavx512vnni
 		_NVCC_FLAGS+=" -Xcompiler -mavx512vnni"
+		CPU_FEATURES+=( "AVX512_VNNI" )
+	fi
+
+	if use cpu_flags_x86_amx ; then
+		CPU_FEATURES+=(
+			"AMX_TILE"
+			"AMX_INT8"
+		)
+	fi
+
+	if (( ${#CPU_FEATURES[@]} > 0 )) ; then
+		sed -i \
+			-e "s|@GGML_CPU_ALL_VARIANTS@|ON|g" \
+			-e "s|@CPU_FEATURES@|${CPU_FEATURES}|g" \
+			"${S}/ml/backend/ggml/ggml/src/CMakeLists.txt" \
+			|| die
+	else
+		sed -i \
+			-e "s|@GGML_CPU_ALL_VARIANTS@|OFF|g" \
+			-e "s|@CPU_FEATURES@|${CPU_FEATURES}|g" \
+			"${S}/ml/backend/ggml/ggml/src/CMakeLists.txt" \
+			|| die
 	fi
 
 	local arm_ext=""
@@ -3832,17 +3876,18 @@ einfo "Building CPU runner"
 	#emake cpu
 	cmake \
 		--preset 'CPU' \
+		-DCMAKE_VERBOSE_MAKEFILE=ON \
 		|| die
 	cmake \
 		--build \
 		--parallel \
 		--preset 'CPU' \
+		-DCMAKE_VERBOSE_MAKEFILE=ON \
 		|| die
 	cmake \
 		--install build \
 		--component CPU \
 		--strip \
-		--parallel $(get_makeopts_jobs) \
 		|| die
 
 	edo go build ${args[@]} .
@@ -3965,34 +4010,36 @@ einfo "Building for CUDA v12"
 #			emake cuda_v12
 			cmake \
 				--preset 'CUDA 12' \
+				-DCMAKE_VERBOSE_MAKEFILE=ON \
 				|| die
 			cmake \
 				--build \
 				--parallel \
 				--preset 'CUDA 12' \
+				-DCMAKE_VERBOSE_MAKEFILE=ON \
 				|| die
 			cmake \
 				--install build \
 				--component CUDA \
 				--strip \
-				--parallel $(get_makeopts_jobs) \
 				|| die
 		elif has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
 einfo "Building for CUDA v11"
 #			emake cuda_v11
 			cmake \
 				--preset 'CUDA 11' \
+				-DCMAKE_VERBOSE_MAKEFILE=ON \
 				|| die
 			cmake \
 				--build \
 				--parallel \
 				--preset 'CUDA 11' \
+				-DCMAKE_VERBOSE_MAKEFILE=ON \
 				|| die
 			cmake \
 				--install build \
 				--component CUDA \
 				--strip \
-				--parallel $(get_makeopts_jobs) \
 				|| die
 		fi
 	elif use rocm ; then
@@ -4000,17 +4047,18 @@ einfo "Building for ROCm"
 #		emake rocm
 		cmake \
 			--preset 'ROCm 6' \
+			-DCMAKE_VERBOSE_MAKEFILE=ON \
 			|| die
 		cmake \
 			--build \
 			--parallel \
 			--preset 'ROCm 6' \
+			-DCMAKE_VERBOSE_MAKEFILE=ON \
 			|| die
 		cmake \
 			--install build \
 			--component HIP \
 			--strip \
-			--parallel $(get_makeopts_jobs) \
 			|| die
 	fi
 
