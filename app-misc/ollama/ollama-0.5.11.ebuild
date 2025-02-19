@@ -28,9 +28,9 @@ EAPI=8
 # U20
 # For depends see
 # https://github.com/ollama/ollama/blob/main/docs/development.md
-# ROCm:  https://github.com/ollama/ollama/blob/v0.5.7/.github/workflows/test.yaml
-# CUDA:  https://github.com/ollama/ollama/blob/v0.5.7/.github/workflows/release.yaml#L194
-# Hardware support:  https://github.com/ollama/ollama/blob/v0.5.7/docs/gpu.md
+# ROCm:  https://github.com/ollama/ollama/blob/v0.5.11/.github/workflows/test.yaml
+# CUDA:  https://github.com/ollama/ollama/blob/v0.5.11/.github/workflows/release.yaml#L194
+# Hardware support:  https://github.com/ollama/ollama/blob/v0.5.11/docs/gpu.md
 AMDGPU_TARGETS_COMPAT=(
 	gfx900
 	gfx906_xnack_minus
@@ -2693,6 +2693,9 @@ REQUIRED_USE="
 		|| (
 			${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 		)
+		^^ (
+			${ROCM_IUSE[@]}
+		)
 	)
 	sandbox? (
 		openrc
@@ -2994,10 +2997,6 @@ ewarn "If the prebuilt LLM is marked all-rights-reserved, it is a placeholder an
 			export ROCM_SLOT="6.0"
 			export LLVM_SLOT=17
 			export ROCM_VERSION="${HIP_6_0_VERSION}"
-		elif use rocm_5_7 ; then
-			export ROCM_SLOT="5.7"
-			export LLVM_SLOT=17
-			export ROCM_VERSION="${HIP_5_7_VERSION}"
 		fi
 		rocm_pkg_setup
 	else
@@ -3248,6 +3247,8 @@ src_configure() {
 	elif use rocm ; then
 		local _gcc_slot="HIP_${ROCM_SLOT/./_}_GCC_SLOT"
 		local gcc_slot="${!_gcc_slot}"
+einfo "ROCM_SLOT: ${ROCM_SLOT}"
+einfo "gcc_slot: ${gcc_slot}"
 		export CC="${CHOST}-gcc-${gcc_slot}"
 		export CXX="${CHOST}-g++-${gcc_slot}"
 		export CPP="${CC} -E"
@@ -3823,7 +3824,7 @@ build_new_runner_cpu() {
 	export OLLAMA_SKIP_CPU_RUNNER_AVX2=1
 
 	# See also
-	# https://github.com/ollama/ollama/blob/v0.5.7/llama/llama.go
+	# https://github.com/ollama/ollama/blob/v0.5.11/llama/llama.go
 	local args=(
 		-p $(get_makeopts_jobs)
 		-x
@@ -3928,7 +3929,7 @@ build_new_runner_gpu() {
 	export OLLAMA_SKIP_CPU_RUNNER=1
 
 	# See also
-	# https://github.com/ollama/ollama/blob/v0.5.7/llama/llama.go
+	# https://github.com/ollama/ollama/blob/v0.5.11/llama/llama.go
 	local args=(
 		-p $(get_makeopts_jobs)
 		-x
@@ -4115,86 +4116,97 @@ eerror "ARCH=${ARCH} ABI=${ABI} is not supported"
 install_cpu_runner() {
 	local runner_path1
 
-	local name
+	local flavor_name
+	local dir_name="cpu"
 	if [[ -e "${S}/dist/lib/ollama/libggml-cpu-custom.so" ]] ; then
 		runner_path1="${S}/dist/lib/ollama"
-		name="custom"
+		flavor_name="custom"
 	else
 		runner_path1="${S}/dist/lib/ollama"
-		name="cpu"
+		flavor_name="cpu"
 	fi
 
 	[[ -e "${runner_path1}" ]] || return
 
-	exeinto "/usr/$(get_libdir)/${PN}/${name}"
+	exeinto "/usr/$(get_libdir)/${PN}/${dir_name}"
 	pushd "${runner_path1}" >/dev/null 2>&1 || die
 		doexe "libggml-base.so"
-		doexe "libggml-${name}.so"
+		doexe "libggml-${flavor_name}.so"
 	popd >/dev/null 2>&1 || die
 	patchelf \
 		--add-rpath '$ORIGIN' \
-		"${ED}/usr/$(get_libdir)/${PN}/${name}/libggml-${name}.so" \
+		"${ED}/usr/$(get_libdir)/${PN}/${dir_name}/libggml-${flavor_name}.so" \
 		|| die
 }
 
 install_gpu_runner() {
 	local runner_path1
 
-	local name=""
+	local flavor_name=""
 	if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
-		runner_path1="${S}/llama/build/linux-$(get_arch)/runners/cuda_v12"
-		name="cuda_v12"
+		runner_path1="${S}/dist/lib/ollama/cuda_v12"
+		dir_name="cuda_v12"
+		flavor_name="cuda"
 	elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
-		runner_path1="${S}/llama/build/linux-$(get_arch)/runners/cuda_v11"
-		name="cuda_v11"
+		runner_path1="${S}/dist/lib/ollama/cuda_v11"
+		dir_name="cuda_v11"
+		flavor_name="cuda"
 	elif use rocm ; then
-		runner_path1="${S}/llama/build/linux-$(get_arch)/runners/rocm"
-		name="rocm"
+		runner_path1="${S}/dist/lib/ollama/rocm"
+		dir_name="rocm"
+		flavor_name="hip"
 	fi
 
-	[[ -z "${name}" ]] && return
+	[[ -z "${flavor_name}" ]] && return
 	[[ -e "${runner_path1}" ]] || return
 
-	exeinto "/usr/$(get_libdir)/${PN}/${name}"
+	exeinto "/usr/$(get_libdir)/${PN}/${dir_name}"
 	pushd "${runner_path1}" >/dev/null 2>&1 || die
 		doexe "ollama_llama_server"
 	popd >/dev/null 2>&1 || die
 
 	pushd "${runner_path1}" >/dev/null 2>&1 || die
 		if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
-			doexe "libggml_cuda_v12.so"
+			doexe "libggml-cuda.so"
 		elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
-			doexe "libggml_cuda_v11.so"
+			doexe "libggml-cuda.so"
 		elif use rocm ; then
-			doexe "libggml_rocm.so"
+			doexe "libggml-hip.so"
 		fi
 	popd >/dev/null 2>&1 || die
 
 	local list=(
-		"libggml_${name}.so"
-		"ollama_llama_server"
+		"libggml-${flavor_name}.so"
 	)
 	local n
 	if use cuda ; then
 		for n in ${list[@]} ; do
 			patchelf \
+				--add-rpath "/usr/$(get_libdir)/${PN}/cpu" \
+				"${ED}/usr/$(get_libdir)/${PN}/${dir_name}/${n}" \
+				|| die
+			patchelf \
 				--add-rpath '$ORIGIN' \
-				"${ED}/usr/$(get_libdir)/${PN}/${name}/${n}" \
+				"${ED}/usr/$(get_libdir)/${PN}/${dir_name}/${n}" \
 				|| die
 			patchelf \
 				--add-rpath "/opt/cuda/$(get_libdir)" \
-				"${ED}/usr/$(get_libdir)/${PN}/${name}/${n}" \
+				"${ED}/usr/$(get_libdir)/${PN}/${dir_name}/${n}" \
 				|| die
 		done
 	elif use rocm ; then
 		for n in ${list[@]} ; do
 			patchelf \
+				--add-rpath "/usr/$(get_libdir)/${PN}/cpu" \
+				"${ED}/usr/$(get_libdir)/${PN}/${dir_name}/${n}" \
+				|| die
+			patchelf \
 				--add-rpath '$ORIGIN' \
-				"${ED}/usr/$(get_libdir)/${PN}/${name}/${n}" \
+				"${ED}/usr/$(get_libdir)/${PN}/${dir_name}/${n}" \
 				|| die
 			patchelf \
 				--add-rpath "/opt/rocm-${ROCM_VERSION}/lib" \
-				"${ED}/usr/$(get_libdir)/${PN}/${name}/${n}" \
+				"${ED}/usr/$(get_libdir)/${PN}/${dir_name}/${n}" \
 				|| die
 		done
 	fi
@@ -4206,29 +4218,29 @@ src_install() {
 
 	local ld_library_path=""
 	if use cuda ; then
-		local name=""
+		local dir_name=""
 		if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
-			name="cuda_v12"
+			dir_name="cuda_v12"
 		elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
-			name="cuda_v11"
+			dir_name="cuda_v11"
 		fi
 		patchelf \
 			--add-rpath "/opt/cuda/$(get_libdir)" \
 			"${ED}/usr/$(get_libdir)/${PN}/${PN}" \
 			|| die
 		patchelf \
-			--add-rpath "/usr/$(get_libdir)/${PN}/${name}" \
+			--add-rpath "/usr/$(get_libdir)/${PN}/${dir_name}" \
 			"${ED}/usr/$(get_libdir)/${PN}/${PN}" \
 			|| die
 		ld_library_path+="/opt/cuda/$(get_libdir):/usr/$(get_libdir)"
 	elif use rocm ; then
-		local name="rocm"
+		local dir_name="rocm"
 		patchelf \
 			--add-rpath "/opt/rocm-${ROCM_VERSION}/lib" \
 			"${ED}/usr/$(get_libdir)/${PN}/${PN}" \
 			|| die
 		patchelf \
-			--add-rpath "/usr/$(get_libdir)/${PN}/${name}" \
+			--add-rpath "/usr/$(get_libdir)/${PN}/${dir_name}" \
 			"${ED}/usr/$(get_libdir)/${PN}/${PN}" \
 			|| die
 	elif use video_cards_intel ; then
@@ -4325,11 +4337,11 @@ src_install() {
 
 	LCNR_SOURCE="${WORKDIR}/go-mod"
 	LCNR_TAG="third_party"
-	lcnr_install_files
+#	lcnr_install_files
 
 	LCNR_SOURCE="${S}"
 	LCNR_TAG="ollama"
-	lcnr_install_files
+#	lcnr_install_files
 }
 
 pkg_preinst() {

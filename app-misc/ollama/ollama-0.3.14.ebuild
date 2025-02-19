@@ -2599,6 +2599,9 @@ REQUIRED_USE="
 		|| (
 			${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 		)
+		^^ (
+			${ROCM_IUSE[@]}
+		)
 	)
 	sandbox? (
 		openrc
@@ -2903,10 +2906,6 @@ ewarn "If the prebuilt LLM is marked all-rights-reserved, it is a placeholder an
 			export ROCM_SLOT="6.0"
 			export LLVM_SLOT=17
 			export ROCM_VERSION="${HIP_6_0_VERSION}"
-		elif use rocm_5_7 ; then
-			export ROCM_SLOT="5.7"
-			export LLVM_SLOT=17
-			export ROCM_VERSION="${HIP_5_7_VERSION}"
 		fi
 		rocm_pkg_setup
 	else
