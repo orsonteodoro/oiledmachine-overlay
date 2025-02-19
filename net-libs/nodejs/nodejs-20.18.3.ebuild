@@ -427,6 +427,7 @@ ewarn "Using -Oz with PGO is uncommon"
 		sed -i -e "s|-O3|${oflag}|g" ${FP[@]} || die
 		a1="${oflag}"
 		a2="${oflag}"
+		sed -i -e "s|-O3|${oflag}|g" "common.gypi" || die
 	fi
 	sed -i \
 		-e "s|__OFLAGS_A1__|${a1}|g" \
@@ -719,9 +720,9 @@ ewarn
 ewarn "Use --max-old-space-size=4096 or --max-old-space-size=8192 to"
 ewarn "NODE_OPTIONS environment variable if out of memory (OOM)."
 ewarn
-	if use kernel_linux && linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
-		myconf+=( --v8-enable-hugepage )
-	fi
+#	if use kernel_linux && linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
+#		myconf+=( --v8-enable-hugepage )
+#	fi
 	set_jit_level
 
 	local myarch

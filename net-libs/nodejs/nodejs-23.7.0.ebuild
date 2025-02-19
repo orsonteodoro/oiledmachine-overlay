@@ -431,6 +431,7 @@ ewarn "Using -Oz with PGO is uncommon"
 		sed -i -e "s|-O3|${oflag}|g" ${FP[@]} || die
 		a1="${oflag}"
 		a2="${oflag}"
+		sed -i -e "s|-O3|${oflag}|g" "common.gypi" || die
 	fi
 	sed -i \
 		-e "s|__OFLAGS_A1__|${a1}|g" \
