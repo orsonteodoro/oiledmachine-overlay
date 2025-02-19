@@ -4,7 +4,7 @@
      ],
      webVitalsAttribution: ['CLS', 'LCP'],
 -    webpackMemoryOptimizations: true,
-+    webpackMemoryOptimizations: true,
++    webpackMemoryOptimizations: false,
 +//
 +// # Setting workerThreads=false causes:
 +//

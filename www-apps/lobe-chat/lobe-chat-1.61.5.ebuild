@@ -24,7 +24,7 @@ CPU_FLAGS_X86=(
 	cpu_flags_x86_sse4_2
 )
 # See also https://github.com/vercel/next.js/blob/v15.1.6/.github/workflows/build_and_test.yml#L328
-NODE_VERSION=20
+NODE_VERSION=22
 NPM_SLOT="3"
 PNPM_DEDUPE=0 # Still debugging
 PNPM_SLOT="9"
@@ -237,10 +237,10 @@ pnpm_unpack_post() {
 	eapply "${FILESDIR}/${PN}-1.55.4-next-config.patch"
 
 	# Not compatiable with Next.js 14
-#	sed -i -e "/webpackMemoryOptimizations/d" "next.config.ts" || die
-#	sed -i -e "/hmrRefreshes/d" "next.config.ts" || die
-#	sed -i -e "/serverExternalPackages/d" "next.config.ts" || die
-#	sed -i -e "/@ts-expect-error/d" "src/features/MobileSwitchLoading/index.tsx" || die
+	sed -i -e "/webpackMemoryOptimizations/d" "next.config.ts" || die
+	sed -i -e "/hmrRefreshes/d" "next.config.ts" || die
+	sed -i -e "/serverExternalPackages/d" "next.config.ts" || die
+	sed -i -e "/@ts-expect-error/d" "src/features/MobileSwitchLoading/index.tsx" || die
 
 	local pkgs
 	if [[ "${SERWIST_CHOICE}" == "no-change" ]] ; then
@@ -273,7 +273,13 @@ pnpm_unpack_post() {
 		epnpm add -D ${pkgs[@]}
 	fi
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
-		:
+		pkgs=(
+	# Testing section
+	# Downgrade to working copy to avoid possible webpack error
+	# next.js issue 69096
+			"next@14.2.23"
+		)
+		epnpm add ${pkgs[@]}
 	fi
 }
 
