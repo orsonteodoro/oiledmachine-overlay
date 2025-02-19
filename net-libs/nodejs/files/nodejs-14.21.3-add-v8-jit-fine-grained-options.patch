@@ -6,7 +6,7 @@ diff '--color=auto' -urp node-14.21.3.orig/configure.py node-14.21.3/configure.p
      help='compile V8 with debug checks and runtime debugging features enabled')
  
 -parser.add_option('--v8-lite-mode',
-+parser.add_argument('--v8-enable-lite-mode',
++parser.add_option('--v8-enable-lite-mode',
      action='store_true',
 -    dest='v8_lite_mode',
 +    dest='v8_enable_lite_mode',
