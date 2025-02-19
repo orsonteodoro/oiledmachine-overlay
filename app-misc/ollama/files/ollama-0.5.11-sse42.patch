@@ -5,7 +5,7 @@
                  list(APPEND ARCH_FLAGS /arch:AVX)
                  list(APPEND ARCH_DEFINITIONS GGML_AVX)
 -            else ()
-+            else (GGML_SSE42)
++            elseif (GGML_SSE42)
                  list(APPEND ARCH_FLAGS /arch:SSE4.2)
                  list(APPEND ARCH_DEFINITIONS GGML_SSE42)
 +            else ()
