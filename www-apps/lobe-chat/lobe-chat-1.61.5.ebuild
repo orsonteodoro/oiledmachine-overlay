@@ -419,22 +419,23 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 	edo npm rebuild sharp
 
 	# tsc will ignore tsconfig.json, so it must be explicit.
-#einfo "Building next.config.js"
-#	tsc \
-#		next.config.ts \
-#		--allowJs \
-#		--esModuleInterop "true" \
-#		--jsx "preserve" \
-#		--lib "dom,dom.iterable,esnext,webworker" \
-#		--module "esnext" \
-#		--moduleResolution "bundler" \
-#		--outDir "." \
-#		--skipDefaultLibCheck \
-#		--target "esnext" \
-#		--typeRoots "./node_modules/@types" \
-#		--types "react,react-dom" \
-#		|| die
-#	mv "next.config."{"js","mjs"} || die
+einfo "Building next.config.js"
+	tsc \
+		next.config.ts \
+		--allowJs \
+		--esModuleInterop "true" \
+		--jsx "preserve" \
+		--lib "dom,dom.iterable,esnext,webworker" \
+		--module "esnext" \
+		--moduleResolution "bundler" \
+		--noCheck \
+		--outDir "." \
+		--skipDefaultLibCheck \
+		--target "esnext" \
+		--typeRoots "./node_modules/@types" \
+		--types "react,react-dom" \
+		|| die
+	mv "next.config."{"js","mjs"} || die
 
 #einfo "End build of next.config.js"
 	#grep -q -E -e "Found [0-9]+ error." "${T}/build.log" && die "Detected error"
