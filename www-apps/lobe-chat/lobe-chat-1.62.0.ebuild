@@ -129,6 +129,7 @@ NODE_VERSION=22
 NPM_SLOT="3"
 PNPM_DEDUPE=0 # Still debugging
 PNPM_SLOT="9"
+NEXTJS_PV="14.2.23" # 15.1.7 (upstream), or 14.2.23 (known working in other projects/ebuilds)
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 )
@@ -145,7 +146,6 @@ PNPM_AUDIT_FIX=0
 SERWIST_CHOICE="no-change" # update, remove, no-change
 SHARP_PV="0.32.6" # 0.32.6 (working), 0.33.5 (upstream, possible segfault)
 VIPS_PV="8.14.5"
-NEXTJS_PV="15.1.7" # 15.1.7 (upstream), or 14.2.23 (known working in other projects/ebuilds)
 
 inherit dhms edo npm pnpm
 
@@ -294,6 +294,38 @@ setup_build_env() {
 	export NEXT_PUBLIC_ANALYTICS_UMAMI="${NEXT_PUBLIC_ANALYTICS_UMAMI}"
 	export NEXT_PUBLIC_UMAMI_SCRIPT_URL="${NEXT_PUBLIC_UMAMI_SCRIPT_URL}"
 	export NEXT_PUBLIC_UMAMI_WEBSITE_ID="${NEXT_PUBLIC_UMAMI_WEBSITE_ID}"
+
+	if [[ -z "${APP_URL}" ]] ; then
+		export APP_URL="http://localhost:3210"
+ewarn "APP_URL:  ${APP_URL} (Using fallback.  This environment variable is configurable.)"
+	fi
+	if [[ -z "${NEXTAUTH_URL}" ]] ; then
+		export NEXTAUTH_URL="http://localhost:3210/api/auth"
+ewarn "NEXTAUTH_URL:  ${NEXTAUTH_URL} (Using fallback.  This environment variable is configurable.)"
+	fi
+	if [[ -z "${NEXT_AUTH_SSO_PROVIDERS}" ]] ; then
+# It should be explicit for reproducible build.
+eerror
+eerror "Missing NEXT_AUTH_SSO_PROVIDERS.  For possible values, see"
+eerror
+eerror "  https://lobehub.com/docs/self-hosting/advanced/auth#next-auth"
+eerror "  https://lobehub.com/docs/self-hosting/advanced/auth#advanced-configuration"
+eerror "  https://next-auth.js.org/providers"
+eerror
+eerror "This environment variable is configurable."
+eerror
+		die
+	fi
+	if [[ -z "${NEXT_AUTH_SECRET}" ]] ; then
+eerror
+eerror "Missing NEXT_AUTH_SECRET.  To generate a secret, see"
+eerror
+eerror "  https://lobehub.com/docs/self-hosting/advanced/auth#next-auth"
+eerror
+eerror "This environment variable is configurable."
+eerror
+		die
+	fi
 }
 
 # Placeholders
