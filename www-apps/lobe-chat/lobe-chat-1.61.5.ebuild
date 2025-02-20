@@ -222,6 +222,102 @@ BDEPEND+="
 "
 DOCS=( "CHANGELOG.md" "README.md" )
 
+setup_cn_mirror_env() {
+	if [[ "${USE_CN_MIRROR:-false}" == "true" ]] ; then
+		export SENTRYCLI_CDNURL="https://npmmirror.com/mirrors/sentry-cli"
+		npm config set registry "https://registry.npmmirror.com/"
+		echo 'canvas_binary_host_mirror=https://npmmirror.com/mirrors/canvas' >> ".npmrc" || die
+	fi
+}
+
+setup_build_env() {
+	export DOCKER="true"
+
+	export COREPACK_ENABLE_STRICT=1
+	export PUPPETEER_SKIP_DOWNLOAD="true"
+	export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+
+	export NODEJS_VERSION="${NODE_VERSION}"
+
+	# Fix:
+#<--- Last few GCs --->
+#
+#[1358:0x56512381a000]   779656 ms: Mark-Compact 3463.9 (4143.6) -> 3463.6 (4139.6) MB, pooled: 18 MB, 3813.95 / 0.00 ms  (average mu = 0.085, current mu = 0.009) allocation failure; GC in old space requested
+#[1358:0x56512381a000]   783649 ms: Mark-Compact 3484.5 (4141.6) -> 3470.1 (4139.6) MB, pooled: 18 MB, 3859.23 / 0.00 ms  (average mu = 0.060, current mu = 0.033) allocation failure; scavenge might not succeed
+#
+#
+#<--- JS stacktrace --->
+#
+#FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
+#----- Native stack trace -----
+#
+# 1: 0x565121987504 node::DumpNativeBacktrace(_IO_FILE*) [/usr/bin/node22]
+# 2: 0x565121a39d3d node::OOMErrorHandler(char const*, v8::OOMDetails const&) [/usr/bin/node22]
+# 3: 0x565121cd60e4 v8::Utils::ReportOOMFailure(v8::internal::Isolate*, char const*, v8::OOMDetails const&) [/usr/bin/node22]
+# 4: 0x565121cd634d v8::internal::V8::FatalProcessOutOfMemory(v8::internal::Isolate*, char const*, v8::OOMDetails const&) [/usr/bin/node22]
+# 5: 0x565121e954c5  [/usr/bin/node22]
+# 6: 0x565121e954f4 v8::internal::Heap::ReportIneffectiveMarkCompactIfNeeded() [/usr/bin/node22]
+# 7: 0x565121ea9c0e  [/usr/bin/node22]
+# 8: 0x565121eabb8d  [/usr/bin/node22]
+# 9: 0x5651226cd425  [/usr/bin/node22]
+	export NODE_OPTIONS=" --max-old-space-size=8192" # Breaks with 4096
+
+	export NEXT_PUBLIC_BASE_PATH="${NEXT_PUBLIC_BASE_PATH}"
+
+	# Sentry (debug, session replay, performance monitoring)
+	export NEXT_PUBLIC_SENTRY_DSN="${NEXT_PUBLIC_SENTRY_DSN}"
+	export SENTRY_ORG=""
+	export SENTRY_PROJECT=""
+
+	# Posthog (analytics)
+	export NEXT_PUBLIC_ANALYTICS_POSTHOG="${NEXT_PUBLIC_ANALYTICS_POSTHOG}"
+	export NEXT_PUBLIC_POSTHOG_HOST="${NEXT_PUBLIC_POSTHOG_HOST}"
+	export NEXT_PUBLIC_POSTHOG_KEY="${NEXT_PUBLIC_POSTHOG_KEY}"
+
+	# Umami (analytics)
+	export NEXT_PUBLIC_ANALYTICS_UMAMI="${NEXT_PUBLIC_ANALYTICS_UMAMI}"
+	export NEXT_PUBLIC_UMAMI_SCRIPT_URL="${NEXT_PUBLIC_UMAMI_SCRIPT_URL}"
+	export NEXT_PUBLIC_UMAMI_WEBSITE_ID="${NEXT_PUBLIC_UMAMI_WEBSITE_ID}"
+}
+
+# Placeholders
+setup_ci_test_env() {
+	if use postgres ; then
+		export DATABASE_TEST_URL="postgresql://postgres:postgres@localhost:5432/postgres"
+		export DATABASE_DRIVER="node"
+		export NEXT_PUBLIC_SERVICE_MODE="server"
+		export KEY_VAULTS_SECRET="LA7n9k3JdEcbSgml2sxfw+4TV1AzaaFU5+R176aQz4s="
+		export S3_PUBLIC_DOMAIN="https://example.com"
+		export APP_URL="https://home.com"
+	fi
+}
+
+# For test or production env
+setup_test_env() {
+	export NODE_ENV="production"
+
+	export NODE_OPTIONS=""
+#	if ver_test "${NODE_VERSION}" -eq "18" ;  then
+		export NODE_OPTIONS+=" --dns-result-order=ipv4first"
+#	fi
+
+	if ver_test "${NODE_VERSION}" -ge "22" ;  then
+		export NODE_OPTIONS+=" --use-openssl-ca"
+	fi
+
+	local next_public_service_mode="client"
+	if use postgres ; then
+		next_public_service_mode="server"
+	fi
+	cat "${FILESDIR}/lobe-chat.conf" > "${T}/lobe-chat.conf"
+	sed -i \
+		-e "s|@NODE_VERSION@|${NODE_VERSION}|g" \
+		-e "s|@NEXT_PUBLIC_SERVICE_MODE@|${next_public_service_mode}|g" \
+		"${T}/lobe-chat.conf" \
+		|| die
+	#source "${T}/lobe-chat.conf"
+}
+
 gen_git_tag() {
 	local path="${1}"
 	local tag_name="${2}"
@@ -297,6 +393,9 @@ einfo "PATH:  ${PATH}"
 
 pnpm_unpack_post() {
 	gen_git_tag "${S}" "v${PV}"
+
+	setup_cn_mirror_env
+
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 		sed -i \
 			-e "s|bun run|npm run|g" \
@@ -415,100 +514,6 @@ src_unpack() {
 
 src_prepare() {
 	default
-}
-
-setup_build_env() {
-	export DOCKER="true"
-
-	export COREPACK_ENABLE_STRICT=1
-	export PUPPETEER_SKIP_DOWNLOAD="true"
-	export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
-
-	export NODEJS_VERSION="${NODE_VERSION}"
-
-	# Fix:
-#<--- Last few GCs --->
-#
-#[1358:0x56512381a000]   779656 ms: Mark-Compact 3463.9 (4143.6) -> 3463.6 (4139.6) MB, pooled: 18 MB, 3813.95 / 0.00 ms  (average mu = 0.085, current mu = 0.009) allocation failure; GC in old space requested
-#[1358:0x56512381a000]   783649 ms: Mark-Compact 3484.5 (4141.6) -> 3470.1 (4139.6) MB, pooled: 18 MB, 3859.23 / 0.00 ms  (average mu = 0.060, current mu = 0.033) allocation failure; scavenge might not succeed
-#
-#
-#<--- JS stacktrace --->
-#
-#FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
-#----- Native stack trace -----
-#
-# 1: 0x565121987504 node::DumpNativeBacktrace(_IO_FILE*) [/usr/bin/node22]
-# 2: 0x565121a39d3d node::OOMErrorHandler(char const*, v8::OOMDetails const&) [/usr/bin/node22]
-# 3: 0x565121cd60e4 v8::Utils::ReportOOMFailure(v8::internal::Isolate*, char const*, v8::OOMDetails const&) [/usr/bin/node22]
-# 4: 0x565121cd634d v8::internal::V8::FatalProcessOutOfMemory(v8::internal::Isolate*, char const*, v8::OOMDetails const&) [/usr/bin/node22]
-# 5: 0x565121e954c5  [/usr/bin/node22]
-# 6: 0x565121e954f4 v8::internal::Heap::ReportIneffectiveMarkCompactIfNeeded() [/usr/bin/node22]
-# 7: 0x565121ea9c0e  [/usr/bin/node22]
-# 8: 0x565121eabb8d  [/usr/bin/node22]
-# 9: 0x5651226cd425  [/usr/bin/node22]
-	export NODE_OPTIONS=" --max-old-space-size=8192" # Breaks with 4096
-
-	export NEXT_PUBLIC_BASE_PATH="${NEXT_PUBLIC_BASE_PATH}"
-
-	# Sentry (debug, session replay, performance monitoring)
-	export NEXT_PUBLIC_SENTRY_DSN="${NEXT_PUBLIC_SENTRY_DSN}"
-	export SENTRY_ORG=""
-	export SENTRY_PROJECT=""
-
-	# Posthog (analytics)
-	export NEXT_PUBLIC_ANALYTICS_POSTHOG="${NEXT_PUBLIC_ANALYTICS_POSTHOG}"
-	export NEXT_PUBLIC_POSTHOG_HOST="${NEXT_PUBLIC_POSTHOG_HOST}"
-	export NEXT_PUBLIC_POSTHOG_KEY="${NEXT_PUBLIC_POSTHOG_KEY}"
-
-	# Umami (analytics)
-	export NEXT_PUBLIC_ANALYTICS_UMAMI="${NEXT_PUBLIC_ANALYTICS_UMAMI}"
-	export NEXT_PUBLIC_UMAMI_SCRIPT_URL="${NEXT_PUBLIC_UMAMI_SCRIPT_URL}"
-	export NEXT_PUBLIC_UMAMI_WEBSITE_ID="${NEXT_PUBLIC_UMAMI_WEBSITE_ID}"
-
-	if [[ "${USE_CN_MIRROR:-false}" == "true" ]] ; then
-		export SENTRYCLI_CDNURL="https://npmmirror.com/mirrors/sentry-cli"
-		npm config set registry "https://registry.npmmirror.com/"
-		echo 'canvas_binary_host_mirror=https://npmmirror.com/mirrors/canvas' >> ".npmrc" || die
-	fi
-}
-
-# Placeholders
-setup_ci_test_env() {
-	if use postgres ; then
-		export DATABASE_TEST_URL="postgresql://postgres:postgres@localhost:5432/postgres"
-		export DATABASE_DRIVER="node"
-		export NEXT_PUBLIC_SERVICE_MODE="server"
-		export KEY_VAULTS_SECRET="LA7n9k3JdEcbSgml2sxfw+4TV1AzaaFU5+R176aQz4s="
-		export S3_PUBLIC_DOMAIN="https://example.com"
-		export APP_URL="https://home.com"
-	fi
-}
-
-# For test or production env
-setup_test_env() {
-	export NODE_ENV="production"
-
-	export NODE_OPTIONS=""
-#	if ver_test "${NODE_VERSION}" -eq "18" ;  then
-		export NODE_OPTIONS+=" --dns-result-order=ipv4first"
-#	fi
-
-	if ver_test "${NODE_VERSION}" -ge "22" ;  then
-		export NODE_OPTIONS+=" --use-openssl-ca"
-	fi
-
-	local next_public_service_mode="client"
-	if use postgres ; then
-		next_public_service_mode="server"
-	fi
-	cat "${FILESDIR}/lobe-chat.conf" > "${T}/lobe-chat.conf"
-	sed -i \
-		-e "s|@NODE_VERSION@|${NODE_VERSION}|g" \
-		-e "s|@NEXT_PUBLIC_SERVICE_MODE@|${next_public_service_mode}|g" \
-		"${T}/lobe-chat.conf" \
-		|| die
-	#source "${T}/lobe-chat.conf"
 }
 
 src_configure() {
