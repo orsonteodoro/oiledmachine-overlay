@@ -44,6 +44,7 @@ PNPM_AUDIT_FIX=0
 SERWIST_CHOICE="no-change" # update, remove, no-change
 SHARP_PV="0.32.6" # 0.32.6 (working), 0.33.5 (upstream, possible segfault)
 VIPS_PV="8.14.5"
+NEXTJS_PV="15.1.7" # 15.1.7 (upstream), or 14.2.23 (known working in other projects/ebuilds)
 
 inherit dhms edo npm pnpm
 
@@ -277,7 +278,7 @@ pnpm_unpack_post() {
 	# Testing section
 	# Downgrade to working copy to avoid possible webpack error
 	# next.js issue 69096
-			"next@14.2.23"
+			"next@${NEXTJS_PV}"
 		)
 		epnpm add ${pkgs[@]}
 	fi
@@ -334,43 +335,14 @@ src_prepare() {
 	default
 }
 
-setup_env() {
+setup_build_env() {
+	export DOCKER="true"
+
 	export COREPACK_ENABLE_STRICT=1
 	export PUPPETEER_SKIP_DOWNLOAD="true"
 	export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 
-	if use postgres ; then
-		export DATABASE_TEST_URL="postgresql://postgres:postgres@localhost:5432/postgres"
-		export DATABASE_DRIVER="node"
-		export NEXT_PUBLIC_SERVICE_MODE="server"
-		export KEY_VAULTS_SECRET="LA7n9k3JdEcbSgml2sxfw+4TV1AzaaFU5+R176aQz4s="
-		export S3_PUBLIC_DOMAIN="https://example.com"
-		export APP_URL="https://home.com"
-	fi
-
-	local next_public_service_mode="client"
-	if use postgres ; then
-		next_public_service_mode="server"
-	fi
-	cat "${FILESDIR}/lobe-chat.conf" > "${T}/lobe-chat.conf"
-	sed -i \
-		-e "s|@NODE_VERSION@|${NODE_VERSION}|g" \
-		-e "s|@NEXT_PUBLIC_SERVICE_MODE@|${next_public_service_mode}|g" \
-		"${T}/lobe-chat.conf" \
-		|| die
-	source "${T}/lobe-chat.conf"
-}
-
-src_configure() {
-	# Checks to see if toolchain is working or meets requirements
-	epnpm --version
-}
-
-src_compile() {
-	if [[ -e "${S}/.next" ]] ; then
-ewarn "Removing ${S}/.next"
-		rm -rf "${S}/.next"
-	fi
+	export NODEJS_VERSION="${NODE_VERSION}"
 
 	# Fix:
 #<--- Last few GCs --->
@@ -395,6 +367,47 @@ ewarn "Removing ${S}/.next"
 # 9: 0x5651226cd425  [/usr/bin/node22]
 	export NODE_OPTIONS+=" --max-old-space-size=8192" # Breaks with 4096
 
+	export NEXT_PUBLIC_BASE_PATH="${NEXT_PUBLIC_BASE_PATH}"
+
+	# Sentry (debug, session replay, performance monitoring)
+	export NEXT_PUBLIC_SENTRY_DSN="${NEXT_PUBLIC_SENTRY_DSN}"
+	export SENTRY_ORG=""
+	export SENTRY_PROJECT=""
+
+	# Posthog (analytics)
+	export NEXT_PUBLIC_ANALYTICS_POSTHOG="${NEXT_PUBLIC_ANALYTICS_POSTHOG}"
+	export NEXT_PUBLIC_POSTHOG_HOST="${NEXT_PUBLIC_POSTHOG_HOST}"
+	export NEXT_PUBLIC_POSTHOG_KEY="${NEXT_PUBLIC_POSTHOG_KEY}"
+
+	# Umami (analytics)
+	export NEXT_PUBLIC_ANALYTICS_UMAMI="${NEXT_PUBLIC_ANALYTICS_UMAMI}"
+	export NEXT_PUBLIC_UMAMI_SCRIPT_URL="${NEXT_PUBLIC_UMAMI_SCRIPT_URL}"
+	export NEXT_PUBLIC_UMAMI_WEBSITE_ID="${NEXT_PUBLIC_UMAMI_WEBSITE_ID}"
+
+	if [[ "${USE_CN_MIRROR:-false}" == "true" ]] ; then
+		export SENTRYCLI_CDNURL="https://npmmirror.com/mirrors/sentry-cli"
+		npm config set registry "https://registry.npmmirror.com/"
+		echo 'canvas_binary_host_mirror=https://npmmirror.com/mirrors/canvas' >> ".npmrc" || die
+	fi
+}
+
+# Placeholders
+setup_ci_env() {
+	if use postgres ; then
+		export DATABASE_TEST_URL="postgresql://postgres:postgres@localhost:5432/postgres"
+		export DATABASE_DRIVER="node"
+		export NEXT_PUBLIC_SERVICE_MODE="server"
+		export KEY_VAULTS_SECRET="LA7n9k3JdEcbSgml2sxfw+4TV1AzaaFU5+R176aQz4s="
+		export S3_PUBLIC_DOMAIN="https://example.com"
+		export APP_URL="https://home.com"
+	fi
+}
+
+# For test or production env
+setup_test_env() {
+	export NODE_ENV="production"
+
+	export NODE_OPTIONS=""
 #	if ver_test "${NODE_VERSION}" -eq "18" ;  then
 		export NODE_OPTIONS+=" --dns-result-order=ipv4first"
 #	fi
@@ -403,45 +416,65 @@ ewarn "Removing ${S}/.next"
 		export NODE_OPTIONS+=" --use-openssl-ca"
 	fi
 
+	local next_public_service_mode="client"
+	if use postgres ; then
+		next_public_service_mode="server"
+	fi
+	cat "${FILESDIR}/lobe-chat.conf" > "${T}/lobe-chat.conf"
+	sed -i \
+		-e "s|@NODE_VERSION@|${NODE_VERSION}|g" \
+		-e "s|@NEXT_PUBLIC_SERVICE_MODE@|${next_public_service_mode}|g" \
+		"${T}/lobe-chat.conf" \
+		|| die
+	#source "${T}/lobe-chat.conf"
+}
+
+src_configure() {
+	# Checks to see if toolchain is working or meets requirements
+	epnpm --version
+}
+
+src_compile() {
+	if [[ -e "${S}/.next" ]] ; then
+ewarn "Removing ${S}/.next"
+		rm -rf "${S}/.next"
+	fi
+
 	npm_hydrate
 	pnpm_hydrate
 einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
-# China users need to fork ebuild.  See Dockerfile for China contexts.
 
-	setup_env
-
-	export NODE_ENV="production"
-	export DOCKER="true"
+	setup_build_env
 
 	tsc --version || die
 
 	# Force rebuild to prevent illegal instruction
 	edo npm rebuild sharp
 
+	if ver_test "${NEXTJS_PV%%.*}" -lt 15 ; then
 	# tsc will ignore tsconfig.json, so it must be explicit.
 einfo "Building next.config.js"
-	tsc \
-		next.config.ts \
-		--allowJs \
-		--esModuleInterop "true" \
-		--jsx "preserve" \
-		--lib "dom,dom.iterable,esnext,webworker" \
-		--module "esnext" \
-		--moduleResolution "bundler" \
-		--noCheck \
-		--outDir "." \
-		--skipDefaultLibCheck \
-		--target "esnext" \
-		--typeRoots "./node_modules/@types" \
-		--types "react,react-dom" \
-		|| die
-	mv "next.config."{"js","mjs"} || die
-
+		tsc \
+			next.config.ts \
+			--allowJs \
+			--esModuleInterop "true" \
+			--jsx "preserve" \
+			--lib "dom,dom.iterable,esnext,webworker" \
+			--module "esnext" \
+			--moduleResolution "bundler" \
+			--noCheck \
+			--outDir "." \
+			--skipDefaultLibCheck \
+			--target "esnext" \
+			--typeRoots "./node_modules/@types" \
+			--types "react,react-dom" \
+			|| die
+		mv "next.config."{"js","mjs"} || die
 #einfo "End build of next.config.js"
-	#grep -q -E -e "Found [0-9]+ error." "${T}/build.log" && die "Detected error"
-	#grep -q -E -e "error TS[0-9]+" "${T}/build.log" && die "Detected error"
+		#grep -q -E -e "Found [0-9]+ error." "${T}/build.log" && die "Detected error"
+		#grep -q -E -e "error TS[0-9]+" "${T}/build.log" && die "Detected error"
+	fi
 
-	# This one looks broken because the .next/standalone folder is missing.
 #	edo npm run "build:docker"
 
 	edo next build --debug
