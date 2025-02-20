@@ -131,7 +131,8 @@ NODE_VERSION=22
 NPM_SLOT="3"
 PNPM_DEDUPE=0 # Still debugging
 PNPM_SLOT="9"
-NEXTJS_PV="15.1.7" # 15.1.7 (upstream), or 14.2.23 (known working in other projects/ebuilds)
+#NEXTJS_PV="15.1.7" # 15.1.7 (upstream), or 14.2.23 (known working in other projects/ebuilds).  See also next.js issue 69096
+NEXTJS_PV="14.0.3" # Limit for nuqs
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 )
@@ -146,7 +147,8 @@ NPM_UNINSTALL_ARGS=(
 )
 PNPM_AUDIT_FIX=0
 SERWIST_CHOICE="no-change" # update, remove, no-change
-SHARP_PV="0.32.6" # 0.32.6 (working), 0.33.5 (upstream, possible segfault)
+#SHARP_PV="0.32.6" # 0.32.6 (working), 0.33.5 (upstream, possible segfault)
+SHARP_PV="0.33.5" # 0.32.6 (working), 0.33.5 (upstream, possible segfault)
 VIPS_PV="8.14.5"
 
 inherit dhms edo npm pnpm
@@ -532,13 +534,26 @@ pnpm_unpack_post() {
 		epnpm add -D ${pkgs[@]}
 	fi
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+	# Fixes to unmet peer or missing references
 		pkgs=(
-	# Testing section
-	# Downgrade to working copy to avoid possible webpack error
-	# next.js issue 69096
+			"@langchain/core@0.3.39"
 			"next@${NEXTJS_PV}"
+			"officeparser@4.0.4"
+			"react@18.3.1"
+			"react-dom@18.3.1"
+			"svix@1.45.1"
+			"tree-sitter@^0.21.1"
+			"zustand-utils@1.3.2"
 		)
 		epnpm add ${pkgs[@]}
+		pkgs=(
+			"@octokit/core@4.2.4"
+			"@octokit/plugin-paginate-rest@7.1.2"	# octokit 4
+			"@octokit/plugin-throttling@6.1.0"	# octokit 4
+			"stylelint@14.16.1"
+			"stylelint@16.1.0"
+		)
+		epnpm add -D ${pkgs[@]}
 	fi
 }
 
@@ -586,7 +601,7 @@ src_unpack() {
 		_pnpm_setup_offline_cache
 		pnpm_src_unpack
 		epnpm add "sharp@${SHARP_PV}"
-		epnpm add "svix@1.45.1"
+#		epnpm add "svix@1.45.1"
 	fi
 }
 
