@@ -252,8 +252,6 @@ setup_cn_mirror_env() {
 setup_build_env() {
 	export DOCKER="true"
 
-	export NODEJS_VERSION="${NODE_VERSION}"
-
 	# Fix:
 #<--- Last few GCs --->
 #
