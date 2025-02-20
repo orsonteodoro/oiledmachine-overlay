@@ -298,14 +298,17 @@ setup_build_env() {
 	export NEXT_PUBLIC_UMAMI_WEBSITE_ID="${NEXT_PUBLIC_UMAMI_WEBSITE_ID}"
 
 einfo "Inspecting per-package environment variables."
-einfo "To set up per-package environment variables see https://wiki.gentoo.org/wiki//etc/portage/package.env"
+einfo
+einfo "To set up per-package environment variables see"
+einfo "https://wiki.gentoo.org/wiki//etc/portage/package.env"
+einfo
 	if [[ -z "${APP_URL}" ]] ; then
 		export APP_URL="http://localhost:3210"
-ewarn "APP_URL:  ${APP_URL} (Using fallback.  This per-package environment variable is configurable.)"
+ewarn "APP_URL:  ${APP_URL} (fallback, user-definable)"
 	fi
 	if [[ -z "${NEXTAUTH_URL}" ]] ; then
 		export NEXTAUTH_URL="http://localhost:3210/api/auth"
-ewarn "NEXTAUTH_URL:  ${NEXTAUTH_URL} (Using fallback.  This per-package environment variable is configurable.)"
+ewarn "NEXTAUTH_URL:  ${NEXTAUTH_URL} (fallback, user-definable)"
 	fi
 	if [[ -z "${NEXT_AUTH_SSO_PROVIDERS}" ]] ; then
 # It should be explicit for a reproducible build.
