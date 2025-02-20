@@ -434,11 +434,13 @@ pnpm_unpack_post() {
 	eapply "${FILESDIR}/${PN}-1.47.17-hardcoded-paths.patch"
 	eapply "${FILESDIR}/${PN}-1.55.4-next-config.patch"
 
-	# Not compatiable with Next.js 14
-	sed -i -e "/webpackMemoryOptimizations/d" "next.config.ts" || die
-	sed -i -e "/hmrRefreshes/d" "next.config.ts" || die
-	sed -i -e "/serverExternalPackages/d" "next.config.ts" || die
-	sed -i -e "/@ts-expect-error/d" "src/features/MobileSwitchLoading/index.tsx" || die
+	if ver_test "${NEXTJS_PV%%.*}" -lt "15" ; then
+		# Not compatiable with Next.js 14
+		sed -i -e "/webpackMemoryOptimizations/d" "next.config.ts" || die
+		sed -i -e "/hmrRefreshes/d" "next.config.ts" || die
+		sed -i -e "/serverExternalPackages/d" "next.config.ts" || die
+		sed -i -e "/@ts-expect-error/d" "src/features/MobileSwitchLoading/index.tsx" || die
+	fi
 
 	local pkgs
 	if [[ "${SERWIST_CHOICE}" == "no-change" ]] ; then
@@ -554,7 +556,7 @@ einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 	# Force rebuild to prevent illegal instruction
 	edo npm rebuild sharp
 
-	if ver_test "${NEXTJS_PV%%.*}" -lt 15 ; then
+	if ver_test "${NEXTJS_PV%%.*}" -lt "15" ; then
 	# tsc will ignore tsconfig.json, so it must be explicit.
 einfo "Building next.config.js"
 		tsc \
