@@ -474,8 +474,8 @@ importers:
         specifier: 4.2.4
         version: 4.2.4(encoding@0.1.13)
       '@octokit/plugin-paginate-rest':
-        specifier: 7.1.2
-        version: 7.1.2(@octokit/core@4.2.4(encoding@0.1.13))
+        specifier: 9.2.2
+        version: 9.2.2(@octokit/core@4.2.4(encoding@0.1.13))
       '@octokit/plugin-throttling':
         specifier: 6.1.0
         version: 6.1.0(@octokit/core@4.2.4(encoding@0.1.13))
@@ -3395,12 +3395,6 @@ packages:
     peerDependencies:
       '@octokit/core': '>=4'
 
-  '@octokit/plugin-paginate-rest@7.1.2':
-    resolution: {integrity: sha512-Jx8KuKqEAVRsK6fMzZKv3h6UH9/NRDHsDRtUAROqqmZlCptM///Uef7A1ViZ/cbDplekz7VbDWdFLAZ/mpuDww==}
-    engines: {node: '>= 18'}
-    peerDependencies:
-      '@octokit/core': '>=4'
-
   '@octokit/plugin-paginate-rest@9.2.2':
     resolution: {integrity: sha512-u3KYkGF7GcZnSD/3UP0S7K5XUFT2FkOQdcfXZGZQPGv3lm4F2Xbf71lvjldr8c1H3nNbF+33cLEkWYbokGWqiQ==}
     engines: {node: '>= 18'}
@@ -3466,9 +3460,6 @@ packages:
 
   '@octokit/tsconfig@1.0.2':
     resolution: {integrity: sha512-I0vDR0rdtP8p2lGMzvsJzbhdOWy405HcGovrspJ8RRibHnyRgggUSNO5AIox5LmqiwmatHKYsvj6VGFHkqS7lA==}
-
-  '@octokit/tsconfig@2.0.0':
-    resolution: {integrity: sha512-tWnrai3quGt8+gRN2edzo9fmraWekeryXPeXDomMw2oFSpu/lH3VSWGn/q4V+rwjTRMeeXk/ci623/01Zet4VQ==}
 
   '@octokit/types@10.0.0':
     resolution: {integrity: sha512-Vm8IddVmhCgU1fxC1eyinpwqzXPEYu0NrYzD3YZjlGjyftdLBTeqNblRC0jmJmgxbJIsQlyogVeGnrNaaMVzIg==}
@@ -16423,11 +16414,10 @@ snapshots:
       '@octokit/tsconfig': 1.0.2
       '@octokit/types': 9.3.2
 
-  '@octokit/plugin-paginate-rest@7.1.2(@octokit/core@4.2.4(encoding@0.1.13))':
+  '@octokit/plugin-paginate-rest@9.2.2(@octokit/core@4.2.4(encoding@0.1.13))':
     dependencies:
       '@octokit/core': 4.2.4(encoding@0.1.13)
-      '@octokit/tsconfig': 2.0.0
-      '@octokit/types': 9.3.2
+      '@octokit/types': 12.6.0
 
   '@octokit/plugin-paginate-rest@9.2.2(@octokit/core@5.2.0)':
     dependencies:
@@ -16513,8 +16503,6 @@ snapshots:
       - encoding
 
   '@octokit/tsconfig@1.0.2': {}
-
-  '@octokit/tsconfig@2.0.0': {}
 
   '@octokit/types@10.0.0':
     dependencies:
