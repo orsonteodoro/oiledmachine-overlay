@@ -319,9 +319,11 @@ eerror "possible values, see"
 eerror
 eerror "  https://lobehub.com/docs/self-hosting/advanced/auth#next-auth"
 eerror "  https://lobehub.com/docs/self-hosting/advanced/auth#advanced-configuration"
+eerror "  https://lobehub.com/docs/self-hosting/advanced/auth/next-auth/github"
 eerror "  https://next-auth.js.org/providers"
 eerror
 eerror "This per-package environment variable is configurable."
+eerror "Ebuild development uses github as the SSO (Single Sign-On) provider."
 eerror
 		die
 	fi
