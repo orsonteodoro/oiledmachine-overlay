@@ -297,36 +297,50 @@ setup_build_env() {
 	export NEXT_PUBLIC_UMAMI_SCRIPT_URL="${NEXT_PUBLIC_UMAMI_SCRIPT_URL}"
 	export NEXT_PUBLIC_UMAMI_WEBSITE_ID="${NEXT_PUBLIC_UMAMI_WEBSITE_ID}"
 
+einfo "Inspecting per-package environment variables."
+einfo "To set up per-package environment variables see https://wiki.gentoo.org/wiki//etc/portage/package.env"
 	if [[ -z "${APP_URL}" ]] ; then
 		export APP_URL="http://localhost:3210"
-ewarn "APP_URL:  ${APP_URL} (Using fallback.  This environment variable is configurable.)"
+ewarn "APP_URL:  ${APP_URL} (Using fallback.  This per-package environment variable is configurable.)"
 	fi
 	if [[ -z "${NEXTAUTH_URL}" ]] ; then
 		export NEXTAUTH_URL="http://localhost:3210/api/auth"
-ewarn "NEXTAUTH_URL:  ${NEXTAUTH_URL} (Using fallback.  This environment variable is configurable.)"
+ewarn "NEXTAUTH_URL:  ${NEXTAUTH_URL} (Using fallback.  This per-package environment variable is configurable.)"
 	fi
 	if [[ -z "${NEXT_AUTH_SSO_PROVIDERS}" ]] ; then
-# It should be explicit for reproducible build.
+# It should be explicit for a reproducible build.
 eerror
-eerror "Missing NEXT_AUTH_SSO_PROVIDERS.  For possible values, see"
+eerror "Missing NEXT_AUTH_SSO_PROVIDERS per-package environment variable.  For"
+eerror "possible values, see"
 eerror
 eerror "  https://lobehub.com/docs/self-hosting/advanced/auth#next-auth"
 eerror "  https://lobehub.com/docs/self-hosting/advanced/auth#advanced-configuration"
 eerror "  https://next-auth.js.org/providers"
 eerror
-eerror "This environment variable is configurable."
+eerror "This per-package environment variable is configurable."
 eerror
 		die
 	fi
 	if [[ -z "${NEXT_AUTH_SECRET}" ]] ; then
 eerror
-eerror "Missing NEXT_AUTH_SECRET.  To generate a secret, see"
+eerror "Missing NEXT_AUTH_SECRET per-package environment variable.  To generate"
+eerror "a secret, see"
 eerror
 eerror "  https://lobehub.com/docs/self-hosting/advanced/auth#next-auth"
 eerror
-eerror "This environment variable is configurable."
+eerror "This per-package environment variable is configurable."
 eerror
 		die
+	fi
+	if [[ -z "${AUTH_GITHUB_ID}" ]] ; then
+ewarn
+ewarn "Missing AUTH_GITHUB_ID per-package environment variable."
+ewarn
+ewarn "You may use another provider, but the github provider is the primary"
+ewarn "OAuth provider used for developing this ebuild."
+ewarn
+ewarn "See https://lobehub.com/docs/self-hosting/advanced/auth/next-auth/github"
+ewarn
 	fi
 }
 
