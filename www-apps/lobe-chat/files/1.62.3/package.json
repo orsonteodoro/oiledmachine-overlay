@@ -337,11 +337,7 @@
           "react": "^18"
         }
       }
-    },
-    "patchedDependencies": {
-      "@types/mdx@2.0.13": "patches/@types__mdx@2.0.13.patch"
-    },
-    "allowNonAppliedPatches": true
+    }
   },
   "overrides": {
     "mdast-util-gfm-autolink-literal": "2.0.0"

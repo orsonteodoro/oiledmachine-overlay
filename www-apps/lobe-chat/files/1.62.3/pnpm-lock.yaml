@@ -9,11 +9,6 @@ overrides:
 
 packageExtensionsChecksum: 9c84777966705c22dd0932aca4ebb283
 
-patchedDependencies:
-  '@types/mdx@2.0.13':
-    hash: cjdzvtpnwnseindw3quxmr4gzq
-    path: patches/@types__mdx@2.0.13.patch
-
 importers:
 
   .:
@@ -392,7 +387,7 @@ importers:
         version: 2.2.2
       svix:
         specifier: ^1.45.1
-        version: 1.57.0(encoding@0.1.13)
+        version: 1.59.0(encoding@0.1.13)
       swr:
         specifier: ^2.3.0
         version: 2.3.2(react@19.0.0)
@@ -12052,8 +12047,8 @@ packages:
   svix-fetch@3.0.0:
     resolution: {integrity: sha512-rcADxEFhSqHbraZIsjyZNh4TF6V+koloX1OzZ+AQuObX9mZ2LIMhm1buZeuc5BIZPftZpJCMBsSiBaeszo9tRw==}
 
-  svix@1.57.0:
-    resolution: {integrity: sha512-3UIXFV6PiIfHi9kgbO1uUPnC3xnd9ex6wiBGxIGBI/7x3yJL0fz4afVkWgp4sw9tcUbiEZb3gOwc4z7RpySTcA==}
+  svix@1.59.0:
+    resolution: {integrity: sha512-OY6WoqIaObTOBahDBaAohqwgGRggBgKCjbfRW2EgvjN3YETLdWEB6skPQTmaKyQnDASnC+ZmYl8xTWK2I3/owQ==}
 
   swagger-client@3.34.1:
     resolution: {integrity: sha512-aqk315C959936kijVpR28Q07eugElW9vp77a57hdFlQDF8Kuln7SeB1MwXnTCOQEM6/pIWYN00QlvIEwHqQkqw==}
@@ -16170,7 +16165,7 @@ snapshots:
       '@types/estree': 1.0.6
       '@types/estree-jsx': 1.0.5
       '@types/hast': 3.0.4
-      '@types/mdx': 2.0.13(patch_hash=cjdzvtpnwnseindw3quxmr4gzq)
+      '@types/mdx': 2.0.13
       collapse-white-space: 2.1.0
       devlop: 1.1.0
       estree-util-is-identifier-name: 3.0.0
@@ -16197,7 +16192,7 @@ snapshots:
 
   '@mdx-js/react@3.1.0(@types/react@19.0.10)(react@19.0.0)':
     dependencies:
-      '@types/mdx': 2.0.13(patch_hash=cjdzvtpnwnseindw3quxmr4gzq)
+      '@types/mdx': 2.0.13
       '@types/react': 19.0.10
       react: 19.0.0
 
@@ -18292,7 +18287,7 @@ snapshots:
     dependencies:
       '@types/unist': 3.0.3
 
-  '@types/mdx@2.0.13(patch_hash=cjdzvtpnwnseindw3quxmr4gzq)': {}
+  '@types/mdx@2.0.13': {}
 
   '@types/minimist@1.2.5': {}
 
@@ -27413,7 +27408,7 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  svix@1.57.0(encoding@0.1.13):
+  svix@1.59.0(encoding@0.1.13):
     dependencies:
       '@stablelib/base64': 1.0.1
       '@types/node': 22.13.4
