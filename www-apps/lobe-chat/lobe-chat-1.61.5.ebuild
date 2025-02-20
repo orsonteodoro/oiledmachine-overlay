@@ -4,6 +4,25 @@
 
 EAPI=8
 
+#
+# China distro users, fork ebuild and regenerate the pnpm lockfile.
+#
+# Contents of /etc/portage/env/lobe-chat.conf:
+#
+#   USE_CN_MIRROR=true
+#
+# Contents of /etc/portage/package.env:
+#
+#   www-apps/lobe-chat lobe-chat.conf
+#
+# Generate the lockfile as follows:
+#
+#   OILEDMACHINE_OVERLAY_DIR="/usr/local/oiledmachine-overlay"
+#   PATH="${OILEDMACHINE_OVERLAY_DIR}/scripts:${PATH}"
+#   cd "${OILEDMACHINE_OVERLAY_DIR}/www-apps/lobe-chat"
+#   PNPM_UPDATER_VERSIONS="1.61.5" pnpm_updater_update_locks.sh
+#
+
 # U22, U24, D12
 # U24 - node 20 (release - live, debug - live)
 # U22 - node 18 (check - live)
