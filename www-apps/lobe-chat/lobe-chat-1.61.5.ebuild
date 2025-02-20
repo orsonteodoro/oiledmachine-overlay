@@ -252,10 +252,6 @@ setup_cn_mirror_env() {
 setup_build_env() {
 	export DOCKER="true"
 
-	export COREPACK_ENABLE_STRICT=1
-	export PUPPETEER_SKIP_DOWNLOAD="true"
-	export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
-
 	export NODEJS_VERSION="${NODE_VERSION}"
 
 	# Fix:
