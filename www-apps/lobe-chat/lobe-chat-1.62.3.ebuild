@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# node_modules/.pnpm/@types+mdx@2.0.13/node_modules/@types/mdx/index.d.ts
+
 #
 # China distro users, fork ebuild and regenerate the pnpm lockfile.
 #
@@ -129,7 +131,7 @@ NODE_VERSION=22
 NPM_SLOT="3"
 PNPM_DEDUPE=0 # Still debugging
 PNPM_SLOT="9"
-NEXTJS_PV="14.2.23" # 15.1.7 (upstream), or 14.2.23 (known working in other projects/ebuilds)
+NEXTJS_PV="15.1.7" # 15.1.7 (upstream), or 14.2.23 (known working in other projects/ebuilds)
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 )
@@ -465,6 +467,10 @@ pnpm_unpack_post() {
 # reference the system's vips package not the prebuilt one.
 	eapply "${FILESDIR}/${PN}-1.47.17-hardcoded-paths.patch"
 	eapply "${FILESDIR}/${PN}-1.55.4-next-config.patch"
+
+#	eapply "${FILESDIR}/lobe-chat-1.62.0-pnpm-patches.patch"
+#	mkdir -p "${S}/patches" || die
+#	cat "${FILESDIR}/types__mdx-2.0.13.patch" > "${S}/patches/@types__mdx@2.0.13.patch" || die
 
 	if ver_test "${NEXTJS_PV%%.*}" -lt "15" ; then
 		# Not compatiable with Next.js 14

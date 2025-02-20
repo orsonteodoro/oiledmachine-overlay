@@ -1,0 +1,14 @@
+--- a/package.json.orig	2025-02-19 21:30:39.627806344 -0800
++++ b/package.json	2025-02-20 08:20:31.963723130 -0800
+@@ -338,6 +338,10 @@
+         }
+       }
+-    }
++    },
++    "patchedDependencies": {
++      "@types/mdx@2.0.13": "patches/@types__mdx@2.0.13.patch"
++    },
++    "allowNonAppliedPatches": true
+   },
+   "overrides": {
+     "mdast-util-gfm-autolink-literal": "2.0.0"

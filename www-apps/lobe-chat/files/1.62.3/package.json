@@ -1,6 +1,6 @@
 {
   "name": "@lobehub/chat",
-  "version": "1.62.0",
+  "version": "1.62.3",
   "description": "Lobe Chat - an open-source, high-performance chatbot framework that supports speech synthesis, multimodal, and extensible Function Call plugin system. Supports one-click free deployment of your private ChatGPT/LLM web application.",
   "keywords": [
     "framework",
@@ -161,7 +161,7 @@
     "drizzle-zod": "^0.5.1",
     "esbuild": "0.25.0",
     "fast-deep-equal": "^3.1.3",
-    "file-type": "^19.6.0",
+    "file-type": "^20.0.0",
     "framer-motion": "^11.16.0",
     "gpt-tokenizer": "^2.8.1",
     "i18next": "^24.2.1",
@@ -181,7 +181,7 @@
     "mdast-util-to-markdown": "^2.1.2",
     "modern-screenshot": "^4.5.5",
     "nanoid": "^5.0.9",
-    "next": "^14.2.23",
+    "next": "^15.1.7",
     "next-auth": "beta",
     "next-mdx-remote": "^5.0.0",
     "nextjs-toploader": "^3.7.15",
@@ -337,7 +337,11 @@
           "react": "^18"
         }
       }
-    }
+    },
+    "patchedDependencies": {
+      "@types/mdx@2.0.13": "patches/@types__mdx@2.0.13.patch"
+    },
+    "allowNonAppliedPatches": true
   },
   "overrides": {
     "mdast-util-gfm-autolink-literal": "2.0.0"

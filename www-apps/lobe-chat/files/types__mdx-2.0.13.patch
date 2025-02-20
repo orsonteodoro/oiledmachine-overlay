@@ -1,0 +1,12 @@
+diff --git a/index.d.ts b/index.d.ts
+index 113a0201475d50d0823aad883a36003c4a54ac0a..b0bf4acc9d8fe0e7057b90f4d5f28aae1e3a4f51 100644
+--- a/index.d.ts
++++ b/index.d.ts
+@@ -50,6 +50,7 @@
+  *
+  * It should now be possible to import both the MDX component and the exported constant `message`.
+  */
++'use server';
+ declare module "*.mdx" {
+     // eslint-disable-next-line @definitelytyped/no-self-import
+     import { Element, MDXProps } from "mdx/types";
