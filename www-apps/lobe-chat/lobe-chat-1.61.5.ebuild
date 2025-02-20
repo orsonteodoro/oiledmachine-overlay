@@ -275,6 +275,9 @@ setup_build_env() {
 # 9: 0x5651226cd425  [/usr/bin/node22]
 	export NODE_OPTIONS=" --max-old-space-size=8192" # Breaks with 4096
 
+	# The build variables below can be set in /etc/portage/env/lobe-chat.conf
+	# Then referenced in /etc/portage/package.env with a `www-apps/lobe-chat lobe-chat.conf` line.
+
 	export NEXT_PUBLIC_BASE_PATH="${NEXT_PUBLIC_BASE_PATH}"
 
 	# Sentry (debug, session replay, performance monitoring)
