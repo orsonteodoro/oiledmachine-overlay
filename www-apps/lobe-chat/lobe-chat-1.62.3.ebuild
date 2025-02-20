@@ -276,6 +276,7 @@ setup_build_env() {
 # 8: 0x565121eabb8d  [/usr/bin/node22]
 # 9: 0x5651226cd425  [/usr/bin/node22]
 	export NODE_OPTIONS=" --max-old-space-size=8192" # Breaks with 4096
+einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 
 	# The build variables below can be set in /etc/portage/env/lobe-chat.conf
 	# Then referenced in /etc/portage/package.env with a `www-apps/lobe-chat lobe-chat.conf` line.
@@ -371,6 +372,7 @@ setup_test_env() {
 	if ver_test "${NODE_VERSION}" -ge "22" ;  then
 		export NODE_OPTIONS+=" --use-openssl-ca"
 	fi
+einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 
 	local next_public_service_mode="client"
 	if use postgres ; then
@@ -582,6 +584,7 @@ src_unpack() {
 		_pnpm_setup_offline_cache
 		pnpm_src_unpack
 		epnpm add "sharp@${SHARP_PV}"
+		epnpm add "svix@1.45.1"
 	fi
 }
 
@@ -602,7 +605,6 @@ ewarn "Removing ${S}/.next"
 
 	npm_hydrate
 	pnpm_hydrate
-einfo "NODE_OPTIONS:  ${NODE_OPTIONS}"
 
 	setup_build_env
 
