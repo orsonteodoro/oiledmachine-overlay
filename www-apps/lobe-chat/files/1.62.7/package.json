@@ -342,9 +342,6 @@
           "react": "^18"
         }
       }
-    },
-    "patchedDependencies": {
-      "pdf-parse@1.1.1": "patches/pdf-parse@1.1.1.patch"
     }
   },
   "overrides": {
