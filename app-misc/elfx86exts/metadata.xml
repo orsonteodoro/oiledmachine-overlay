@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild originators -->
+    <name>Gabriel Linder</name>
+    <email>linder.gabriel@gmail.com</email>
+  </maintainer>
+  <!--
+
+  Ebuild notes
+
+  Ebuild from dargor overlay.
+
+  -->
+  <upstream>
+    <remote-id type="github">pkgw/elfx86exts</remote-id>
+  </upstream>
+</pkgmetadata>
