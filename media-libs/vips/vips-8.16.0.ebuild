@@ -13,6 +13,9 @@ EAPI=8
 # Going with the CI tested interpretation.
 # CI disables deprecated but enabled by default in meson_options.txt
 
+CPU_FLAGS_X86=(
+	cpu_flags_x86_avx
+)
 GCC_PV="14"
 LIBJPEG_TURBO_V="2.1.2"
 LLVM_COMPAT=( 18 ) # CI uses 14
@@ -41,6 +44,7 @@ LICENSE="LGPL-2.1+"
 RESTRICT="mirror"
 SLOT="0/${SO_MAJOR}"
 IUSE+="
+${CPU_FLAGS_X86[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS_IUSE[@]}
 +analyze +archive +aom +cairo +cgif +cxx debug +deprecated -doxygen +examples
@@ -49,7 +53,7 @@ ${PATENT_STATUS_IUSE[@]}
 +lcms +libde265 +matio -minimal -nifti +openexr +openslide +orc +pangocairo +png
 +poppler +python -rav1e +ppm -spng +svg test +tiff +vala +webp +x265
 +zlib
-ebuild_revision_1
+ebuild_revision_2
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -66,6 +70,9 @@ PATENT_STATUS_REQUIRED_USE="
 REQUIRED_USE="
 	${PATENT_STATUS_REQUIRED_USE}
 	${PYTHON_REQUIRED_USE}
+	!cpu_flags_x86_avx? (
+		!highway
+	)
 	?? (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
