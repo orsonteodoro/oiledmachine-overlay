@@ -62,7 +62,9 @@ ${NPM_INSTALL_PATH}/node_modules/.bin/teru-esm
 ${NPM_INSTALL_PATH}/node_modules/.bin/esbuild
 "
 NPM_TEST_SCRIPT="test"
-inherit npm
+RUST_PV="1.80.0" # llvm-18.1, required by @swc/core
+
+inherit npm rust
 
 DESCRIPTION="JSON/CJSON/JSON5 parser, syntax & schema validator and pretty-printer with a command-line client, written in pure JavaScript."
 HOMEPAGE="
@@ -81,6 +83,10 @@ RDEPEND+="
 "
 BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}
+	|| (
+		dev-lang/rust:${RUST_PV}
+		dev-lang/rust-bin:${RUST_PV}
+	)
 "
 SRC_URI="
 https://github.com/prantlf/jsonlint/archive/refs/tags/v${PV}.tar.gz
@@ -88,6 +94,16 @@ https://github.com/prantlf/jsonlint/archive/refs/tags/v${PV}.tar.gz
 "
 S="${WORKDIR}/${P}"
 RESTRICT="mirror test" # Missing dev dependencies
+
+pkg_setup() {
+	npm_pkg_setup
+	rust_pkg_setup
+	if has_version "dev-lang/rust-bin:${RUST_PV}" ; then
+		rust_prepend_path "${RUST_PV}" "binary"
+	elif has_version "dev-lang/rust:${RUST_PV}" ; then
+		rust_prepend_path "${RUST_PV}" "source"
+	fi
+}
 
 npm_update_lock_audit_post() {
 einfo "Applying mitigation"
