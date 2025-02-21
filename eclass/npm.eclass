@@ -17,8 +17,17 @@
 #
 # Hidden Rust dependency:
 #
-# If the lockfile contains reference to @swc/core, Rust BDEPEND and Rust path
-# preappend should be added.  See the dev-util/jsonlint package for details.
+# If the lockfile contains reference to @swc/core specifically
+#
+#   @swc/core-linux-arm-gnueabihf
+#   @swc/core-linux-arm64-gnu
+#   @swc/core-linux-arm64-musl
+#   @swc/core-linux-x64-gnu
+#   @swc/core-linux-x64-musl
+#   or similar,
+#
+# Rust BDEPEND and Rust path preappend should be added.  See the
+# dev-util/jsonlint package for details.
 #
 
 case ${EAPI:-0} in
