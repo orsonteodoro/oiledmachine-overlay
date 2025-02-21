@@ -146,6 +146,7 @@ NPM_UNINSTALL_ARGS=(
 	"--legacy-peer-deps"
 )
 PNPM_AUDIT_FIX=0
+RUST_PV="1.68.0" # dependency graph:  next-14.0.3 -> @swc/core-1.3.85 -> >=rust-1.68.0 (llvm 15.x) or rust nightly-2023-07-03
 SERWIST_CHOICE="no-change" # update, remove, no-change
 #SHARP_PV="0.32.6" # 0.32.6 (working), 0.33.5 (upstream, possible segfault)
 SHARP_PV="0.33.5" # 0.32.6 (working), 0.33.5 (upstream, possible segfault)
@@ -242,6 +243,10 @@ BDEPEND+="
 	>=sys-apps/npm-10.8.2:${NPM_SLOT}
 	net-libs/nodejs:${NODE_VERSION}[corepack,npm,pointer-compression]
 	net-libs/nodejs:=
+	|| (
+		>=dev-lang/rust-${RUST_PV}
+		>=dev-lang/rust-bin-${RUST_PV}
+	)
 "
 DOCS=( "CHANGELOG.md" "README.md" )
 
@@ -255,6 +260,8 @@ setup_cn_mirror_env() {
 
 setup_build_env() {
 	export DOCKER="true"
+
+	export RUST_BACKTRACE="full"
 
 	# Fix:
 #<--- Last few GCs --->
@@ -539,8 +546,8 @@ pnpm_unpack_post() {
 			"@langchain/core@0.3.39"
 			"next@${NEXTJS_PV}"
 			"officeparser@4.0.4"
-			"react@18.3.1"
-			"react-dom@18.3.1"
+			"react@19.0.0"		# 18 is broken
+			"react-dom@19.0.0"	# 18 is broken
 			"svix@1.45.1"
 			"tree-sitter@^0.21.1"
 			"zustand-utils@1.3.2"
