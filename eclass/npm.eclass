@@ -14,6 +14,13 @@
 
 # For additional slot availability send issue request.
 
+#
+# Hidden Rust dependency:
+#
+# If the lockfile contains reference to @swc/core, Rust BDEPEND and Rust path
+# preappend should be added.  See the dev-util/jsonlint package for details.
+#
+
 case ${EAPI:-0} in
 	[78]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;

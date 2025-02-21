@@ -20,6 +20,13 @@ esac
 
 inherit chromium-2 desktop
 
+#
+# Hidden Rust dependency:
+#
+# If the lockfile contains reference to @swc/core, Rust BDEPEND and Rust path
+# preappend should be added.  See the dev-util/jsonlint package for details.
+#
+
 # ############## START Per-package environmental variables #####################
 
 # Some of these environmental variables manage the degree of consent for
