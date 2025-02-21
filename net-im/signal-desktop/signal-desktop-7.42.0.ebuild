@@ -40,6 +40,7 @@ NODE_ENV="development"
 if [[ "${NPM_UPDATE_LOCK}" != "1" ]] ; then
 	NPM_INSTALL_ARGS+=( "--force" )
 fi
+RUST_PV="1.81.0" # Corresponds to llvm-18.1. Rust is required for @swc/core
 QA_PREBUILT="
 	opt/Signal/chrome_crashpad_handler
 	opt/Signal/chrome-sandbox
@@ -54,7 +55,7 @@ QA_PREBUILT="
 	opt/Signal/swiftshader/libGLESv2.so
 "
 
-inherit electron-app lcnr npm pax-utils unpacker xdg
+inherit electron-app lcnr npm pax-utils rust unpacker xdg
 
 S="${WORKDIR}/${MY_PN}-${PV}"
 SRC_URI="
@@ -98,6 +99,10 @@ RDEPEND+="
 "
 BDEPEND+="
 	net-libs/nodejs:${NODE_VERSION}[webassembly(+)]
+	|| (
+		dev-lang/rust:${RUST_PV}
+		dev-lang/rust-bin:${RUST_PV}
+	)
 "
 PDEPEND+="
 	firejail? (
@@ -132,6 +137,14 @@ get_deps() {
 
 pkg_setup() {
 	npm_pkg_setup
+	if has_version "dev-lang/rust-bin:${RUST_PV}" ; then
+		rust_prepend_path "${RUST_PV}" "binary"
+	elif has_version "dev-lang/rust:${RUST_PV}" ; then
+		rust_prepend_path "${RUST_PV}" "source"
+	else
+eerror "Rust ${RUST_PV} required for @swc/core"
+		die
+	fi
 }
 
 npm_unpack_post() {
