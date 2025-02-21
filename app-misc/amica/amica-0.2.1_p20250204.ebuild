@@ -843,7 +843,6 @@ src_install() {
 	docinto "licenses"
 	dodoc "LICENSE"
 
-if false ; then
 	LCNR_SOURCE="${WORKDIR}/cargo_home/gentoo"
 	LCNR_TAG="third_party_cargo"
 	lcnr_install_files
@@ -851,7 +850,6 @@ if false ; then
 	LCNR_SOURCE="${S_PROJECT}/node_modules"
 	LCNR_TAG="third_party_npm"
 	lcnr_install_files
-fi
 
 	USE_COQUI=$(usex coqui "1" "0")
 
