@@ -18,34 +18,34 @@ LLVM_COMPAT=( {16..13} )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MY_P="${P/_/-}"
 PATENT_STATUS=(
-	patent_status_nonfree
+	"patent_status_nonfree"
 )
-PYTHON_COMPAT=( python3_{9..11} )
+PYTHON_COMPAT=( "python3_"{9..11} )
 RADEON_CARDS=(
-	r300
-	r600
-	radeon
-	radeonsi
+	"r300"
+	"r600"
+	"radeon"
+	"radeonsi"
 )
 UOPTS_BOLT_EXCLUDE_BINS="libglapi.so.0.0.0"
-UOPTS_BOLT_EXCLUDE_FLAGS=( -hugify ) # Broken
+UOPTS_BOLT_EXCLUDE_FLAGS=( "-hugify" ) # Broken
 UOPTS_SUPPORT_EBOLT=1
 UOPTS_SUPPORT_EPGO=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 VIDEO_CARDS=(
 	${RADEON_CARDS[@]}
-	d3d12
-	freedreno
-	intel
-	lima
-	nouveau
-	panfrost
-	v3d
-	vc4
-	virgl
-	vivante
-	vmware
+	"d3d12"
+	"freedreno"
+	"intel"
+	"lima"
+	"nouveau"
+	"panfrost"
+	"v3d"
+	"vc4"
+	"virgl"
+	"vivante"
+	"vmware"
 )
 
 inherit flag-o-matic linux-info llvm meson multilib-build python-any-r1 toolchain-funcs uopts

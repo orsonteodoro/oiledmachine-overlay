@@ -17,37 +17,37 @@ video_cards_vmware?,\
 LLVM_COMPAT=( {17..15} )
 MY_P="${P/_/-}"
 PATENT_STATUS=(
-	patent_status_nonfree
+	"patent_status_nonfree"
 )
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 RADEON_CARDS=(
-	r300
-	r600
-	radeon
-	radeonsi
+	"r300"
+	"r600"
+	"radeon"
+	"radeonsi"
 )
 RUST_MAX_VER="1.78.0" # Excludes
 RUST_MIN_VER="1.71.1"
 UOPTS_BOLT_EXCLUDE_BINS="libglapi.so.0.0.0"
-UOPTS_BOLT_EXCLUDE_FLAGS=( -hugify ) # Broken
+UOPTS_BOLT_EXCLUDE_FLAGS=( "-hugify" ) # Broken
 UOPTS_SUPPORT_EBOLT=1
 UOPTS_SUPPORT_EPGO=1
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 VIDEO_CARDS=(
 	${RADEON_CARDS[@]}
-	d3d12
-	freedreno
-	intel
-	lavapipe
-	lima
-	nouveau
-	panfrost
-	v3d
-	vc4
-	virgl
-	vivante
-	vmware
+	"d3d12"
+	"freedreno"
+	"intel"
+	"lavapipe"
+	"lima"
+	"nouveau"
+	"panfrost"
+	"v3d"
+	"vc4"
+	"virgl"
+	"vivante"
+	"vmware"
 )
 
 # Bug
