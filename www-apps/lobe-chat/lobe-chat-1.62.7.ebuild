@@ -150,8 +150,8 @@ RUST_MAX_VER="1.71.1" # Inclusive
 RUST_MIN_VER="1.76.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0 for next.js 14.2.24 dependency of @swc/core 1.4.4
 RUST_PV="${RUST_MIN_VER}"
 SERWIST_CHOICE="no-change" # update, remove, no-change
-#SHARP_PV="0.32.6" # 0.32.6 (working), 0.33.5 (upstream, possible segfault)
-SHARP_PV="0.33.5" # 0.32.6 (working), 0.33.5 (upstream, possible segfault)
+SHARP_PV="0.32.6" # 0.32.6 (working), 0.33.5 (upstream, possible segfault)
+#SHARP_PV="0.33.5" # 0.32.6 (working), 0.33.5 (upstream, possible segfault)
 VIPS_PV="8.14.5"
 
 inherit dhms edo npm pnpm rust
@@ -679,10 +679,12 @@ einfo "Building next.config.js"
 #	edo npm run "build:docker"
 
 	edo next build --debug
-	grep -q -E -e "Failed to load next.config.js" "${T}/build.log" && die "Detected error"
+	grep -q -e "Next.js build worker exited with code" "${T}/build.log" && die "Detected error"
+	grep -q -e "Failed to load next.config.js" "${T}/build.log" && die "Detected error"
 	edo npm run build-sitemap
 	edo npm run build-sitemap
 	edo npm run build-migrate-db
+
 
 	grep -q -e "Build failed because of webpack errors" "${T}/build.log" && die "Detected error"
 	grep -q -e "Failed to compile" "${T}/build.log" && die "Detected error"
