@@ -29,6 +29,11 @@
 # Rust BDEPEND and Rust path preappend should be added.  See the
 # dev-util/jsonlint package for details.
 #
+# Use github search with commiter-date:YYYY-MM-DD to search for an
+# approximation.
+#
+# Dependency graph:  Next.js -> @swc/core -> Rust
+#
 
 # Requirements:  yarn.lock or package.json -> package-lock.json -> yarn.lock
 # For the URI generator, see the scripts/yarn_updater_transform_uris.sh and

@@ -29,6 +29,11 @@
 # Rust BDEPEND and Rust path preappend should be added.  See the
 # dev-util/jsonlint package for details.
 #
+# Use github search with commiter-date:YYYY-MM-DD to search for an
+# approximation.
+#
+# Dependency graph:  Next.js -> @swc/core -> Rust
+#
 
 # @ECLASS_VARIABLE: PNPM_OFFLINE
 # @DESCRIPTION:
