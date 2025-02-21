@@ -562,7 +562,7 @@ pnpm_unpack_post() {
 			"react-dom@19.0.0"	# 18 is broken
 			"svix@1.45.1"
 			"tree-sitter@^0.21.1"
-			"zustand-utils@1.3.2"
+#			"zustand-utils@1.3.2"	# Breaks build
 		)
 		epnpm add ${pkgs[@]}
 		pkgs=(
