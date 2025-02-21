@@ -87,10 +87,11 @@ NPM_UNINSTALL_ARGS=(
 	"--prefer-offline"
 )
 PYTHON_COMPAT=( python3_{10,11} ) # CI uses 3.8, 3.9
+RUST_PV="1.71.1" # rust 1.70.0, llvm 16.0, required by @swc/core.  Distro does not have 1.70.0 so rust bumped to 1.71.1 with same corresponding llvm.
 
 # Using yarn results in failures.
 inherit check-reqs desktop electron-app evar_dump flag-o-matic llvm npm
-inherit python-r1 toolchain-funcs xdg
+inherit python-r1 rust toolchain-funcs xdg
 
 SRC_URI="
 $(electron-app_gen_electron_uris)
@@ -234,6 +235,10 @@ BDEPEND+="
 		>=media-gfx/graphicsmagick-1.4[png]
 		>=media-gfx/imagemagick-6.9.10.23[png]
 	)
+	|| (
+		dev-lang/rust:${RUST_PV}
+		dev-lang/rust-bin:${RUST_PV}
+	)
 "
 RESTRICT="mirror"
 
@@ -293,6 +298,13 @@ pkg_setup() {
 	python_setup
 
 	llvm_pkg_setup
+
+	rust_pkg_setup
+	if has_version "dev-lang/rust-bin:${RUST_PV}" ; then
+		rust_prepend_path "${RUST_PV}" "binary"
+	elif has_version "dev-lang/rust:${RUST_PV}" ; then
+		rust_prepend_path "${RUST_PV}" "source"
+	fi
 
 # Addresses:
 # FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
