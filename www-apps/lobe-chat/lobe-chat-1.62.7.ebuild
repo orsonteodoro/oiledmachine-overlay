@@ -131,8 +131,8 @@ NODE_VERSION=22
 NPM_SLOT="3"
 PNPM_DEDUPE=0 # Still debugging
 PNPM_SLOT="9"
-#NEXTJS_PV="15.1.7" # 15.1.7 (upstream), or 14.2.23 (known working in other projects/ebuilds).  See also next.js issue 69096
-NEXTJS_PV="14.2.24" # Limit for nuqs
+NEXTJS_PV="15.1.7" # 15.1.7 (upstream, to fix process.emit), or 14.2.23 (known working in other projects/ebuilds).  See also next.js issue 69096
+#NEXTJS_PV="14.2.24" # Limit for nuqs
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 )
