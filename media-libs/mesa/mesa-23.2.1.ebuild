@@ -26,7 +26,7 @@ RADEON_CARDS=(
 	"radeon"
 	"radeonsi"
 )
-RUST_MAX_VER="1.73.0" # Excludes
+RUST_MAX_VER="1.72.1" # inclusive
 RUST_MIN_VER="1.71.1"
 UOPTS_BOLT_EXCLUDE_BINS="libglapi.so.0.0.0"
 UOPTS_BOLT_EXCLUDE_FLAGS=( "-hugify" ) # Broken

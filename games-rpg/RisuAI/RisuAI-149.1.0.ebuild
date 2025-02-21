@@ -9,7 +9,7 @@ EAPI=8
 # U24, rust 1.75.0, llvm 17.0
 # @swc/core, rust 1.77.1, llvm 18.0
 
-RUST_MAX_VER="1.77.2" # Excludes
+RUST_MAX_VER="1.77.1" # Inclusive
 RUST_MIN_VER="1.77.1" # llvm-18.0, required by @swc/core
 RUST_PV="${RUST_MIN_VER}"
 PNPM_SLOT=9

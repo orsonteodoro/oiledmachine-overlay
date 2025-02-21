@@ -34,7 +34,7 @@ RADEON_CARDS=(
 	"radeon"
 	"radeonsi"
 )
-RUST_MAX_VER="1.85.0" # Excludes
+RUST_MAX_VER="1.85.0" # Inclusive
 RUST_MIN_VER="1.71.1"
 RUST_MULTILIB=1
 RUST_OPTIONAL=1
@@ -356,9 +356,11 @@ BDEPEND="
 				=dev-lang/rust-1.82*
 				=dev-lang/rust-1.83*
 				=dev-lang/rust-1.84*
+				=dev-lang/rust-1.85*
 				=dev-lang/rust-bin-1.82*
 				=dev-lang/rust-bin-1.83*
 				=dev-lang/rust-bin-1.84*
+				=dev-lang/rust-bin-1.85*
 			)
 		)
 		|| (

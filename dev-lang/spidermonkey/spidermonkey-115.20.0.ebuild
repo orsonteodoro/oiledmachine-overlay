@@ -63,7 +63,7 @@ PATCH_URIS=(
 )
 
 RUST_NEEDS_LLVM=1
-RUST_MAX_VER="1.82.0" # Excludes
+RUST_MAX_VER="1.81.0" # Inclusive
 RUST_MIN_VER="1.65.0" # Corresponds to llvm 15
 
 WANT_AUTOCONF="2.1"

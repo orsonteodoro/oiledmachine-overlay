@@ -40,7 +40,7 @@ NODE_ENV="development"
 if [[ "${NPM_UPDATE_LOCK}" != "1" ]] ; then
 	NPM_INSTALL_ARGS+=( "--force" )
 fi
-RUST_MAX_VER="1.81.1" # Excludes
+RUST_MAX_VER="1.81.0" # Inclusive
 RUST_MIN_VER="1.81.0" # Corresponds to llvm-18.1.  Rust is required for @swc/core
 RUST_PV="${RUST_MIN_VER}"
 QA_PREBUILT="

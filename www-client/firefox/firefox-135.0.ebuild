@@ -204,7 +204,7 @@ NODE_VERSION=18
 OFLAG="" # Global variable
 PYTHON_COMPAT=( "python3_"{10..11} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
-RUST_MAX_VER="1.85.0" # Excludes
+RUST_MAX_VER="1.85.0" # Inclusive
 RUST_MIN_VER="1.82.0" # Corresponds to llvm 19, rust min required for llvm 19
 RUST_NEEDS_LLVM=1
 RUST_PV="${RUST_MIN_VER}"
@@ -633,6 +633,7 @@ PATENT_CDEPENDS="
 RUST_CDEPEND="
 	llvm_slot_19? (
 		|| (
+			=dev-lang/rust-1.85*[${MULTILIB_USEDEP}]
 			=dev-lang/rust-1.84*[${MULTILIB_USEDEP}]
 			=dev-lang/rust-1.83*[${MULTILIB_USEDEP}]
 			=dev-lang/rust-1.82*[${MULTILIB_USEDEP}]
