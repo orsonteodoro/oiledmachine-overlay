@@ -224,6 +224,8 @@ d4e6f69ec4407163efcfd23e0dac5f9571b6ade1
 810361c77f4dd8dfb3c95fd998d120075122f171
 )
 RUST_PV="1.62.0"
+RUST_MAX_VER="1.62.1" # Excludes
+RUST_MIN_VER="${RUST_PV}"
 PPC_FLAGS=(
 	cpu_flags_ppc_476fpe
 	cpu_flags_ppc_altivec

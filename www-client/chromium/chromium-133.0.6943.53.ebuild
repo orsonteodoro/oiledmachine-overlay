@@ -191,6 +191,9 @@ TEST_FONT="f26f29c9d3bfae588207bbc9762de8d142e58935c62a86f67332819b15203b35"
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
 RUST_NEEDS_LLVM="yes please"
 RUSTC_VER="" # Global variable
+RUST_MAX_VER="1.83.1" # Excludes
+RUST_MIN_VER="1.83.0" # Corresponds to llvm-19.1
+RUST_PV="${RUST_MIN_VER}"
 SHADOW_CALL_STACK=0 # Global variable
 S_CROMITE="${WORKDIR}/cromite-${CROMITE_COMMIT}"
 S_UNGOOGLED_CHROMIUM="${WORKDIR}/ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}"
@@ -1270,8 +1273,8 @@ CLANG_BDEPEND="
 RUST_BDEPEND="
 	llvm_slot_19? (
 		|| (
-			=dev-lang/rust-1.83.0*
-			=dev-lang/rust-bin-1.83.0*
+			dev-lang/rust:${RUST_PV}
+			dev-lang/rust-bin:${RUST_PV}
 		)
 	)
 	|| (

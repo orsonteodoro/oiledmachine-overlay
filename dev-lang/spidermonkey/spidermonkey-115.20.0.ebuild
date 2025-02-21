@@ -62,9 +62,9 @@ PATCH_URIS=(
 	https://dev.gentoo.org/~juippis/mozilla/patchsets/${SPIDERMONKEY_PATCHSET}
 )
 
-RUST_MIN_VER="1.65" # Corresponds to llvm 15
 RUST_NEEDS_LLVM=1
-RUST_PV="${RUST_MIN_VER}"
+RUST_MAX_VER="1.82.0" # Excludes
+RUST_MIN_VER="1.65.0" # Corresponds to llvm 15
 
 WANT_AUTOCONF="2.1"
 

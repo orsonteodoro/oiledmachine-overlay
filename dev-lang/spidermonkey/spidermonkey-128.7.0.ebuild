@@ -61,9 +61,9 @@ PATCH_URIS=(
 PYTHON_COMPAT=( "python3_"{10..11} )
 PYTHON_REQ_USE="ncurses,ssl,xml(+)"
 
-RUST_MIN_VER="1.76" # Corresponds to llvm 17
 RUST_NEEDS_LLVM=1
-RUST_PV="${RUST_MIN_VER}"
+RUST_MAX_VER="1.82.0" # Excludes
+RUST_MIN_VER="1.76.0" # Corresponds to llvm 17
 
 WANT_AUTOCONF="2.1"
 

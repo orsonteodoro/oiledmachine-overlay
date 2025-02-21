@@ -41,6 +41,8 @@ if [[ "${NPM_UPDATE_LOCK}" != "1" ]] ; then
 	NPM_INSTALL_ARGS+=( "--force" )
 fi
 RUST_PV="1.81.0" # Corresponds to llvm-18.1. Rust is required for @swc/core
+RUST_MAX_VER="1.81.1" # Excludes
+RUST_MIN_VER="${RUST_PV}"
 QA_PREBUILT="
 	opt/Signal/chrome_crashpad_handler
 	opt/Signal/chrome-sandbox
