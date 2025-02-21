@@ -510,9 +510,10 @@ pnpm_unpack_post() {
 	eapply "${FILESDIR}/${PN}-1.47.17-hardcoded-paths.patch"
 	eapply "${FILESDIR}/${PN}-1.55.4-next-config.patch"
 
-#	eapply "${FILESDIR}/lobe-chat-1.62.0-pnpm-patches.patch"
-#	mkdir -p "${S}/patches" || die
+	eapply "${FILESDIR}/lobe-chat-1.62.4-pnpm-patches.patch"
+	mkdir -p "${S}/patches" || die
 #	cat "${FILESDIR}/types__mdx-2.0.13.patch" > "${S}/patches/@types__mdx@2.0.13.patch" || die
+	cat "${FILESDIR}/pdf-parse-1.1.1.patch" > "${S}/patches/pdf-parse@1.1.1.patch" || die
 
 	if ver_test "${NEXTJS_PV%%.*}" -lt "15" ; then
 		# Not compatiable with Next.js 14

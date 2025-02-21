@@ -1,0 +1,12 @@
+--- a/package.json.orig	2025-02-21 00:01:46.954424179 -0800
++++ b/package.json	2025-02-21 06:41:39.238134899 -0800
+@@ -342,6 +342,9 @@
+           "react": "^18"
+         }
+       }
++    },
++    "patchedDependencies": {
++      "pdf-parse@1.1.1": "patches/pdf-parse@1.1.1.patch"
+     }
+   },
+   "overrides": {

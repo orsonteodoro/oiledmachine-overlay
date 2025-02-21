@@ -1,6 +1,18 @@
---- a/next.config.ts.orig	2025-02-15 14:41:35.344055715 -0800
-+++ b/next.config.ts	2025-02-15 14:42:28.579710084 -0800
-@@ -27,6 +27,27 @@ const nextConfig: NextConfig = {
+--- a/next.config.ts.orig	2025-02-20 11:19:11.000000000 -0800
++++ b/next.config.ts	2025-02-21 07:53:05.123907184 -0800
+@@ -14,8 +14,10 @@ const isUsePglite = process.env.NEXT_PUB
+ const basePath = process.env.NEXT_PUBLIC_BASE_PATH;
+ 
+ const nextConfig: NextConfig = {
++  // For more settings, see also https://github.com/vercel/next.js/blob/v15.1.7/packages/next/src/server/config-shared.ts#L306
+   basePath,
+   compress: isProd,
++  staticPageGenerationTimeout: 120,
+   experimental: {
+     optimizePackageImports: [
+       'emoji-mart',
+@@ -26,7 +28,27 @@ const nextConfig: NextConfig = {
+       'gpt-tokenizer',
      ],
      webVitalsAttribution: ['CLS', 'LCP'],
 -    webpackMemoryOptimizations: true,
@@ -25,7 +37,6 @@
 +//
 +    workerThreads: false,
 +    cpus: 1,
-+    // For more settings, see also https://github.com/vercel/next.js/blob/v15.1.7/packages/next/src/server/config-shared.ts#L306
    },
    async headers() {
      return [
