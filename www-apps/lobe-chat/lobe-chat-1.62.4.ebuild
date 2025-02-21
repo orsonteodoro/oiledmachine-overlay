@@ -146,7 +146,9 @@ NPM_UNINSTALL_ARGS=(
 	"--legacy-peer-deps"
 )
 PNPM_AUDIT_FIX=0
-RUST_PV="1.68.0" # dependency graph:  next-14.0.3 -> @swc/core-1.3.85 -> >=rust-1.68.0 (llvm 15.x) or rust nightly-2023-07-03
+RUST_PV="1.71.1" # dependency graph:  next-14.0.3 -> @swc/core-1.3.85 -> >=rust-1.68.0 (llvm 15.x) or rust nightly-2023-07-03.  Bumped to 1.71.1 since distro does not have 1.68.0
+RUST_MAX_VER="${RUST_PV}"
+RUST_MIN_VER="${RUST_PV}"
 SERWIST_CHOICE="no-change" # update, remove, no-change
 #SHARP_PV="0.32.6" # 0.32.6 (working), 0.33.5 (upstream, possible segfault)
 SHARP_PV="0.33.5" # 0.32.6 (working), 0.33.5 (upstream, possible segfault)
