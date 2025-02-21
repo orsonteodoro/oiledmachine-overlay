@@ -431,6 +431,7 @@ NODE_VERSION="${AT_TYPES_NODE_PV%%.*}"
 NPM_AUDIT_FIX_ARGS=( "--legacy-peer-deps" )
 NPM_INSTALL_ARGS=( "--legacy-peer-deps" )
 PYTHON_COMPAT=( "python3_"{10..12} )
+RUST_PV="1.80.0" # llvm-18.1, required by @swc/core
 WEBKIT_GTK_STABLE=(
 	"2.46"
 	"2.44"
@@ -444,7 +445,7 @@ WEBKIT_GTK_STABLE=(
 	"2.28"
 )
 
-inherit cargo desktop lcnr npm python-single-r1 xdg
+inherit cargo desktop lcnr npm python-single-r1 rust xdg
 
 KEYWORDS="~amd64 ~arm64"
 SRC_URI="
@@ -673,14 +674,8 @@ BDEPEND+="
 	=net-libs/nodejs-${NODE_VERSION}*[npm,webassembly(+)]
 	virtual/pkgconfig
 	|| (
-		(
-			>=dev-lang/rust-1.75
-			dev-lang/rust:=
-		)
-		(
-			>=dev-lang/rust-bin-1.75
-			dev-lang/rust-bin:=
-		)
+		dev-lang/rust:${RUST_PV}
+		dev-lang/rust-bin:${RUST_PV}
 	)
 "
 DOCS=( "README.md" )
@@ -690,6 +685,11 @@ pkg_setup() {
 	export NEXT_TELEMETRY_DISABLED=1
 	python_setup
 	rust_pkg_setup
+	if has_version "dev-lang/rust-bin:${RUST_PV}" ; then
+		rust_prepend_path "${RUST_PV}" "binary"
+	elif has_version "dev-lang/rust:${RUST_PV}" ; then
+		rust_prepend_path "${RUST_PV}" "source"
+	fi
 }
 
 _lockfile_gen_unpack() {

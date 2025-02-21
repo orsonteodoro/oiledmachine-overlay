@@ -761,6 +761,11 @@ pkg_setup() {
 ewarn "This ebuild is still in development"
 	npm_pkg_setup
 	rust_pkg_setup
+	if has_version "dev-lang/rust-bin:${RUST_PV}" ; then
+		rust_prepend_path "${RUST_PV}" "binary"
+	elif has_version "dev-lang/rust:${RUST_PV}" ; then
+		rust_prepend_path "${RUST_PV}" "source"
+	fi
 }
 
 npm_update_lock_install_post() {
@@ -839,11 +844,6 @@ einfo "Adding Cargo.lock"
 
 src_unpack() {
 einfo "Unpacking npm packages"
-	if has_version "dev-lang/rust-bin:${RUST_PV}" ; then
-		rust_prepend_path "${RUST_PV}" "binary"
-	elif has_version "dev-lang/rust:${RUST_PV}" ; then
-		rust_prepend_path "${RUST_PV}" "source"
-	fi
 einfo "PATH: ${PATH}"
 	rustc --version
 	local rust_pv=$(rustc --version \
