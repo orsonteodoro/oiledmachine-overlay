@@ -4,7 +4,12 @@
 
 EAPI=8
 
-RUST_PV="1.82.0"
+# U24
+
+# U24, rust 1.75.0, llvm 17.0
+# @swc/core, rust 1.77.1, llvm 18.0
+
+RUST_PV="1.77.1" # llvm-18.0, required by @swc/core
 PNPM_SLOT=9
 NODE_VERSION=20
 NPM_AUDIT_FIX_ARGS=( "--legacy-peer-deps" )
@@ -733,14 +738,8 @@ RUST_BINDINGS_BDEPEND="
 TAURI_RDEPEND="
 	${RUST_BINDINGS_DEPEND}
 	|| (
-		(
-			=dev-lang/rust-bin-${RUST_PV}
-			dev-lang/rust-bin:=
-		)
-		(
-			=dev-lang/rust-${RUST_PV}
-			dev-lang/rust:=
-		)
+		dev-lang/rust-bin:${RUST_PV}
+		dev-lang/rust:${RUST_PV}
 	)
 "
 RDEPEND+="
@@ -840,10 +839,10 @@ einfo "Adding Cargo.lock"
 
 src_unpack() {
 einfo "Unpacking npm packages"
-	if has_version "dev-lang/rust:${RUST_PV}" ; then
-		rust_prepend_path "${RUST_PV}" "source"
-	elif has_version "dev-lang/rust-bin:${RUST_PV}" ; then
+	if has_version "dev-lang/rust-bin:${RUST_PV}" ; then
 		rust_prepend_path "${RUST_PV}" "binary"
+	elif has_version "dev-lang/rust:${RUST_PV}" ; then
+		rust_prepend_path "${RUST_PV}" "source"
 	fi
 einfo "PATH: ${PATH}"
 	rustc --version
