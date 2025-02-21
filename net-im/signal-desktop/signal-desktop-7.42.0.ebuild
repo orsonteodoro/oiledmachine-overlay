@@ -137,6 +137,7 @@ get_deps() {
 
 pkg_setup() {
 	npm_pkg_setup
+	rust_pkg_setup
 	if has_version "dev-lang/rust-bin:${RUST_PV}" ; then
 		rust_prepend_path "${RUST_PV}" "binary"
 	elif has_version "dev-lang/rust:${RUST_PV}" ; then
