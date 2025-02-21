@@ -3,6 +3,9 @@
 
 EAPI=8
 
+MY_PN="LLocal"
+MY_PV="${PV/_beta/-beta.}"
+
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
@@ -11,7 +14,6 @@ else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="28.3.3" # Cr 120.0.6099.291, node 18.18.2
 fi
-MY_PN="LLocal"
 NODE_VERSION=18
 #NPM_AUDIT_FIX=0
 NPM_AUDIT_FIX_ARGS=(
@@ -34,10 +36,9 @@ NPM_EXE_LIST="
 /opt/llocal/chrome_crashpad_handler
 "
 NPM_INSTALL_PATH="/opt/${PN}"
+RUST_PV="1.81.0" # llvm-18.1, required by @swc/core
 
-MY_PV="${PV/_beta/-beta.}"
-
-inherit electron-app npm lcnr
+inherit electron-app npm lcnr rust
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${MY_PV}"
@@ -72,6 +73,10 @@ RDEPEND="
 	app-misc/ollama
 "
 BDEPEND="
+	|| (
+		dev-lang/rust:${RUST_PV}
+		dev-lang/rust-bin:${RUST_PV}
+	)
 "
 
 _puppeteer_setup_offline_cache() {
@@ -88,6 +93,16 @@ einfo "PUPPETEER_CACHE_FOLDER:  ${PUPPETEER_CACHE_FOLDER}"
 	addwrite "${PUPPETEER_CACHE_FOLDER}"
 	mkdir -p "${PUPPETEER_CACHE_FOLDER}"
 
+}
+
+pkg_setup() {
+	npm_pkg_setup
+	rust_pkg_setup
+	if has_version "dev-lang/rust-bin:${RUST_PV}" ; then
+		rust_prepend_path "${RUST_PV}" "binary"
+	elif has_version "dev-lang/rust:${RUST_PV}" ; then
+		rust_prepend_path "${RUST_PV}" "source"
+	fi
 }
 
 npm_unpack_post() {
