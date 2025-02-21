@@ -132,7 +132,7 @@ NPM_SLOT="3"
 PNPM_DEDUPE=0 # Still debugging
 PNPM_SLOT="9"
 #NEXTJS_PV="15.1.7" # 15.1.7 (upstream), or 14.2.23 (known working in other projects/ebuilds).  See also next.js issue 69096
-NEXTJS_PV="14.0.3" # Limit for nuqs
+NEXTJS_PV="14.2.24" # Limit for nuqs
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 )
@@ -152,7 +152,7 @@ SERWIST_CHOICE="no-change" # update, remove, no-change
 SHARP_PV="0.33.5" # 0.32.6 (working), 0.33.5 (upstream, possible segfault)
 VIPS_PV="8.14.5"
 
-inherit dhms edo npm pnpm
+inherit dhms edo npm pnpm rust
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -241,11 +241,11 @@ BDEPEND+="
 	${VIPS_BDEPEND}
 	>=sys-apps/pnpm-9.14.4:${PNPM_SLOT}
 	>=sys-apps/npm-10.8.2:${NPM_SLOT}
-	net-libs/nodejs:${NODE_VERSION}[corepack,npm,pointer-compression]
+	net-libs/nodejs:${NODE_VERSION}[corepack,npm]
 	net-libs/nodejs:=
 	|| (
-		>=dev-lang/rust-${RUST_PV}
-		>=dev-lang/rust-bin-${RUST_PV}
+		dev-lang/rust:${RUST_PV}
+		dev-lang/rust-bin:${RUST_PV}
 	)
 "
 DOCS=( "CHANGELOG.md" "README.md" )
@@ -469,6 +469,16 @@ einfo "PATH:  ${PATH}"
 	# Prebuilt vips is built with sse4.2 which breaks on older processors.
 	# Reference:  https://sharp.pixelplumbing.com/install#prebuilt-binaries
 	electron-app_set_sharp_env # Disabled vendored vips lib
+
+	rust_pkg_setup
+	if has_version "dev-lang/rust-bin:${RUST_PV}" ; then
+		rust_prepend_path "${RUST_PV}" "binary"
+	elif has_version "dev-lang/rust:${RUST_PV}" ; then
+		rust_prepend_path "${RUST_PV}" "source"
+	else
+eerror "Rust ${RUST_PV} required for @swc/core"
+		die
+	fi
 }
 
 pnpm_unpack_post() {
