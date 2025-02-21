@@ -18,9 +18,9 @@ LLVM_SUB_REV="1"
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
 RUST_COMMIT="8a1f8039a7ded79d3d4fe97b110016d89f2b11e2"
 RUST_SUB_REV="1"
-RUST_PV="1.83.0" # See https://github.com/rust-lang/rust/blob/8a1f8039a7ded79d3d4fe97b110016d89f2b11e2/RELEASES.md
 RUST_MAX_VER="1.83.1" # Excludes
-RUST_MIN_VER="${RUST_PV}" # Corresponds to llvm-19.1
+RUST_MIN_VER="1.83.0" # Corresponds to llvm-19.1, see https://github.com/rust-lang/rust/blob/8a1f8039a7ded79d3d4fe97b110016d89f2b11e2/RELEASES.md
+RUST_PV="${RUST_MIN_VER}"
 VENDORED_CLANG_VER="llvmorg-${LLVM_OFFICIAL_SLOT}-init-${LLVM_N_COMMITS}-g${LLVM_COMMIT:0:8}-${LLVM_SUB_REV}"
 VENDORED_RUST_VER="${RUST_COMMIT}-${RUST_SUB_REV}"
 

@@ -276,9 +276,9 @@ QT6_PV="6.4"
 RISCV_FLAGS=(
 	+cpu_flags_riscv_rvv
 )
-RUST_PV="1.71.1"
 RUST_MAX_VER="1.71.2" # Excludes
-RUST_MIN_VER="${RUST_PV}"
+RUST_MIN_VER="1.71.1"
+RUST_PV="${RUST_MIN_VER}"
 X86_FLAGS=(
 # See also
 # arch/x86/Kconfig.assembler

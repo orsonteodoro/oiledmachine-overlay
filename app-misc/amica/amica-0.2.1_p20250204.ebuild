@@ -431,9 +431,9 @@ NODE_VERSION="${AT_TYPES_NODE_PV%%.*}"
 NPM_AUDIT_FIX_ARGS=( "--legacy-peer-deps" )
 NPM_INSTALL_ARGS=( "--legacy-peer-deps" )
 PYTHON_COMPAT=( "python3_"{10..12} )
-RUST_PV="1.80.0" # llvm-18.1, required by @swc/core
 RUST_MAX_VER="1.80.1" # Excludes
-RUST_MIN_VER="${RUST_PV}"
+RUST_MIN_VER="1.80.0" # llvm-18.1, required by @swc/core
+RUST_PV="${RUST_MIN_VER}"
 WEBKIT_GTK_STABLE=(
 	"2.46"
 	"2.44"

@@ -62,9 +62,9 @@ ${NPM_INSTALL_PATH}/node_modules/.bin/teru-esm
 ${NPM_INSTALL_PATH}/node_modules/.bin/esbuild
 "
 NPM_TEST_SCRIPT="test"
-RUST_PV="1.80.0" # llvm-18.1, required by @swc/core
 RUST_MAX_VER="1.80.1" # Excludes
-RUST_MIN_VER="${RUST_PV}"
+RUST_MIN_VER="1.80.0" # llvm-18.1, required by @swc/core
+RUST_PV="${RUST_MIN_VER}"
 
 inherit npm rust
 

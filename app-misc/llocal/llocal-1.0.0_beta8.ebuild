@@ -36,9 +36,9 @@ NPM_EXE_LIST="
 /opt/llocal/chrome_crashpad_handler
 "
 NPM_INSTALL_PATH="/opt/${PN}"
-RUST_PV="1.81.0" # llvm-18.1, required by @swc/core
 RUST_MAX_VER="1.81.1" # Excludes
-RUST_MIN_VER="${RUST_PV}"
+RUST_MIN_VER="1.81.0" # llvm-18.1, required by @swc/core
+RUST_PV="${RUST_MIN_VER}"
 
 inherit electron-app npm lcnr rust
 

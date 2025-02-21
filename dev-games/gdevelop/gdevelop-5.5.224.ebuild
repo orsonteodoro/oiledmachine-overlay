@@ -87,9 +87,9 @@ NPM_UNINSTALL_ARGS=(
 	"--prefer-offline"
 )
 PYTHON_COMPAT=( python3_{10,11} ) # CI uses 3.8, 3.9
-RUST_PV="1.71.1" # rust 1.70.0, llvm 16.0, required by @swc/core.  Distro does not have 1.70.0 so rust bumped to 1.71.1 with same corresponding llvm.
 RUST_MAX_VER="1.71.2" # Excludes
-RUST_MIN_VER="${RUST_PV}"
+RUST_MIN_VER="1.71.1" # rust 1.70.0, llvm 16.0, required by @swc/core.  Distro does not have 1.70.0 so rust bumped to 1.71.1 with the same corresponding llvm slot.
+RUST_PV="${RUST_MIN_VER}"
 
 # Using yarn results in failures.
 inherit check-reqs desktop electron-app evar_dump flag-o-matic llvm npm
