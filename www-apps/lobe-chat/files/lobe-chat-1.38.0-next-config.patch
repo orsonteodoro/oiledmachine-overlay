@@ -1,0 +1,41 @@
+diff '--color=auto' -urp lobe-chat-1.38.0.orig/next.config.mjs lobe-chat-1.38.0/next.config.mjs
+--- lobe-chat-1.38.0.orig/next.config.mjs	2024-12-23 00:44:29.000000000 -0800
++++ lobe-chat-1.38.0/next.config.mjs	2025-02-22 12:30:38.976163783 -0800
+@@ -15,8 +15,10 @@ const basePath = process.env.NEXT_PUBLIC
+ 
+ /** @type {import('next').NextConfig} */
+ const nextConfig = {
++  // For more settings, see also https://github.com/vercel/next.js/blob/v14.2.8/packages/next/src/server/config-shared.ts#L306
+   basePath,
+   compress: isProd,
++  staticPageGenerationTimeout: 120,
+   experimental: {
+     optimizePackageImports: [
+       'emoji-mart',
+@@ -29,6 +31,26 @@ const nextConfig = {
+     ],
+     serverComponentsExternalPackages: ['@electric-sql/pglite'],
+     webVitalsAttribution: ['CLS', 'LCP'],
++//
++// # Setting workerThreads=false causes:
++//
++//     munmap_chunk(): invalid pointer
++//     # but shows progress bar
++//
++// # Setting workerThreads=true causes:
++//
++//     > Build error occurred
++//     Error [DataCloneError]: webpack (config, options) {
++//                     const webpack = options.webpack;
++//                     const { dev } = op...<omitted>... } could not be cloned.
++//         at new Promise (<anonymous>) {
++//       code: 25,
++//       [...]
++//       DATA_CLONE_ERR: 25
++//     # without progress bar
++//
++    workerThreads: false,
++    cpus: 1,
+   },
+ 
+   async headers() {

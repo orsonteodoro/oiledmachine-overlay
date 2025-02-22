@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# Ebuild for react 19
+
 # node_modules/.pnpm/@types+mdx@2.0.13/node_modules/@types/mdx/index.d.ts
 
 #
@@ -22,7 +24,7 @@ EAPI=8
 #   OILEDMACHINE_OVERLAY_DIR="/usr/local/oiledmachine-overlay"
 #   PATH="${OILEDMACHINE_OVERLAY_DIR}/scripts:${PATH}"
 #   cd "${OILEDMACHINE_OVERLAY_DIR}/www-apps/lobe-chat"
-#   PNPM_UPDATER_VERSIONS="1.61.5" pnpm_updater_update_locks.sh
+#   PNPM_UPDATER_VERSIONS="1.62.10" pnpm_updater_update_locks.sh
 #
 
 # U22, U24, D12
@@ -121,7 +123,7 @@ EAPI=8
 
 # @serwist/next needs pnpm workspaces
 
-# Use `PNPM_UPDATER_VERSIONS="1.52.4" pnpm_updater_update_locks.sh` to update lockfile
+# Use `PNPM_UPDATER_VERSIONS="1.62.10" pnpm_updater_update_locks.sh` to update lockfile
 
 CPU_FLAGS_X86=(
 	cpu_flags_x86_sse4_2
@@ -150,8 +152,8 @@ RUST_MAX_VER="1.71.1" # Inclusive
 RUST_MIN_VER="1.76.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0 for next.js 14.2.24 dependency of @swc/core 1.4.4
 RUST_PV="${RUST_MIN_VER}"
 SERWIST_CHOICE="no-change" # update, remove, no-change
-#SHARP_PV="0.32.6" # 0.32.6 (working), 0.33.5 (upstream, possible segfault)
-SHARP_PV="0.33.5" # 0.32.6 (working), 0.33.5 (upstream, possible segfault)
+SHARP_PV="0.32.6" # 0.32.6 (working), 0.33.5 (upstream, possible segfault)
+#SHARP_PV="0.33.5" # 0.32.6 (working), 0.33.5 (upstream, possible segfault)
 VIPS_PV="8.15.3"
 
 inherit dhms edo npm pnpm rust
@@ -558,13 +560,13 @@ pnpm_unpack_post() {
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
 	# Fixes to unmet peer or missing references
 		pkgs=(
-			"@langchain/core@0.3.39"
+#			"@langchain/core@0.3.39"
 			"next@${NEXTJS_PV}"
-			"officeparser@4.0.4"
-			"react@19.0.0"		# 18 is broken
-			"react-dom@19.0.0"	# 18 is broken
+#			"officeparser@4.0.4"
+			"react@19.0.0"
+			"react-dom@19.0.0"
 			"svix@1.45.1"
-			"tree-sitter@^0.21.1"
+#			"tree-sitter@^0.21.1"
 #			"zustand-utils@1.3.2"	# Breaks build
 		)
 		epnpm add ${pkgs[@]}
@@ -575,7 +577,7 @@ pnpm_unpack_post() {
 			"stylelint@14.16.1"
 			"stylelint@16.1.0"
 		)
-		epnpm add -D ${pkgs[@]}
+#		epnpm add -D ${pkgs[@]}
 	fi
 }
 
@@ -586,7 +588,7 @@ pnpm_audit_post() {
 		pkgs=(
 			"vitest@1.6.1"
 		)
-		epnpm add -D ${pkgs[@]} ${PNPM_INSTALL_ARGS[@]}						# CVE-2025-24964; DoS, DT, ID; Critical
+#		epnpm add -D ${pkgs[@]} ${PNPM_INSTALL_ARGS[@]}						# CVE-2025-24964; DoS, DT, ID; Critical
 	fi
 }
 
@@ -603,11 +605,11 @@ pnpm_dedupe_post() {
 			sed -i -e "s|esbuild: '>=0.12 <1'|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die
 		}
 
-		patch_lockfile
+#		patch_lockfile
 ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/pnpm-lock.yaml"
-		epnpm add "@apidevtools/json-schema-ref-parser@11.2.0" ${PNPM_INSTALL_ARGS[@]}		# CVE-2024-29651; DoS, DT, ID; High
+#		epnpm add "@apidevtools/json-schema-ref-parser@11.2.0" ${PNPM_INSTALL_ARGS[@]}		# CVE-2024-29651; DoS, DT, ID; High
 ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/pnpm-lock.yaml"
-		epnpm add "esbuild@0.25.0"								# GHSA-67mh-4wv8-2f99
+#		epnpm add "esbuild@0.25.0"								# GHSA-67mh-4wv8-2f99
 		epnpm add "sharp@${SHARP_PV}"
 		patch_lockfile
 	fi

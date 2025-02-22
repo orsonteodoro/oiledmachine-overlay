@@ -1,0 +1,25 @@
+diff '--color=auto' -urp lobe-chat-1.38.0.orig/scripts/serverLauncher/startServer.js lobe-chat-1.38.0/scripts/serverLauncher/startServer.js
+--- lobe-chat-1.38.0.orig/scripts/serverLauncher/startServer.js	2024-12-23 00:44:29.000000000 -0800
++++ lobe-chat-1.38.0/scripts/serverLauncher/startServer.js	2025-02-22 12:25:02.226047190 -0800
+@@ -3,8 +3,8 @@ const fs = require('fs').promises;
+ const { spawn } = require('child_process');
+ 
+ // Set file paths
+-const DB_MIGRATION_SCRIPT_PATH = '/app/docker.cjs';
+-const SERVER_SCRIPT_PATH = '/app/server.js';
++const DB_MIGRATION_SCRIPT_PATH = '/opt/lobe-chat/docker.cjs';
++const SERVER_SCRIPT_PATH = '/opt/lobe-chat/server.js';
+ const PROXYCHAINS_CONF_PATH = '/etc/proxychains4.conf';
+ 
+ // Function to check if a string is a valid IP address
+@@ -82,7 +82,7 @@ ${protocol} ${ip} ${port}
+ 
+ // Function to execute a script with child process spawn
+ const runScript = (scriptPath, useProxy = false) => {
+-  const command = useProxy ? ['/bin/proxychains', '-q', '/bin/node', scriptPath] : ['/bin/node', scriptPath];
++  const command = useProxy ? ['/usr/bin/proxychains', '-q', '/usr/bin/node', scriptPath] : ['/usr/bin/node', scriptPath];
+   return new Promise((resolve, reject) => {
+     const process = spawn(command.shift(), command, { stdio: 'inherit' });
+     process.on('close', (code) => (code === 0 ? resolve() : reject(new Error(`🔴 Process exited with code ${code}`))));
+Only in lobe-chat-1.38.0/scripts/serverLauncher: startServer.js.orig
+Only in lobe-chat-1.38.0/scripts/serverLauncher: startServer.js.rej
