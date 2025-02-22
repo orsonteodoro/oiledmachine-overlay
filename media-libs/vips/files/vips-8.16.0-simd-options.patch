@@ -1,7 +1,7 @@
 diff '--color=auto' -urp libvips-8.16.0.orig/meson.build libvips-8.16.0/meson.build
 --- libvips-8.16.0.orig/meson.build	2024-10-27 09:45:36.000000000 -0700
-+++ libvips-8.16.0/meson.build	2025-02-21 16:45:57.052307076 -0800
-@@ -483,12 +483,22 @@ if libhwy_dep.found()
++++ libvips-8.16.0/meson.build	2025-02-21 18:06:59.474398848 -0800
+@@ -483,13 +483,20 @@ if libhwy_dep.found()
      if libhwy_dep.version().version_compare('>=1.1.0')
          cfg_var.set('HAVE_HWY_1_1_0', '1')
      endif
@@ -11,12 +11,10 @@ diff '--color=auto' -urp libvips-8.16.0.orig/meson.build libvips-8.16.0/meson.bu
 -    #disabled_targets += ['HWY_AVX3']
 -    #disabled_targets += ['HWY_AVX3_ZEN4']
 -    #disabled_targets += ['HWY_AVX3_SPR']
+-    add_project_arguments('-DHWY_DISABLED_TARGETS=@0@'.format('|'.join(disabled_targets)), language: ['cpp'])
 +    disabled_targets = []
 +    if not get_option('ssse3')
 +        disabled_targets += ['HWY_SSSE3']
-+    endif
-+    if not get_option('avx')
-+        disabled_targets += ['HWY_AVX']
 +    endif
 +    if not get_option('avx512bw')
 +        disabled_targets += ['HWY_AVX3']
@@ -27,12 +25,13 @@ diff '--color=auto' -urp libvips-8.16.0.orig/meson.build libvips-8.16.0/meson.bu
 +    if not get_option('bf16_spr')
 +        disabled_targets += ['HWY_AVX3_SPR']
 +    endif
-     add_project_arguments('-DHWY_DISABLED_TARGETS=@0@'.format('|'.join(disabled_targets)), language: ['cpp'])
++    add_project_arguments('-DHWY_DISABLED_TARGETS=(@0@)'.format('|'.join(disabled_targets)), language: ['cpp'])
      simd_package = libhwy_dep
  endif
+ 
 diff '--color=auto' -urp libvips-8.16.0.orig/meson_options.txt libvips-8.16.0/meson_options.txt
 --- libvips-8.16.0.orig/meson_options.txt	2024-10-27 09:45:36.000000000 -0700
-+++ libvips-8.16.0/meson_options.txt	2025-02-21 16:45:42.716419821 -0800
++++ libvips-8.16.0/meson_options.txt	2025-02-21 18:06:31.686798407 -0800
 @@ -262,3 +262,31 @@ option('fuzzing_engine',
  option('fuzzer_ldflags',
      type: 'string',

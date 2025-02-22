@@ -14,18 +14,18 @@ EAPI=8
 # CI disables deprecated but enabled by default in meson_options.txt
 
 CPU_FLAGS_X86=(
-	cpu_flags_x86_avx
-	cpu_flags_x86_avx512bw
-	cpu_flags_x86_bf16_spr
-	cpu_flags_x86_bf16_zen4
-	cpu_flags_x86_ssse3
+	"cpu_flags_x86_avx"
+	"cpu_flags_x86_avx512bw"
+	"cpu_flags_x86_bf16_spr"
+	"cpu_flags_x86_bf16_zen4"
+	"cpu_flags_x86_ssse3"
 )
 GCC_PV="14"
 LIBJPEG_TURBO_V="2.1.2"
 LLVM_COMPAT=( 18 ) # CI uses 14
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 PATENT_STATUS_IUSE=(
-	patent_status_nonfree
+	"patent_status_nonfree"
 )
 PYTHON_COMPAT=( "python3_"{8..11} )
 SO_C=60
