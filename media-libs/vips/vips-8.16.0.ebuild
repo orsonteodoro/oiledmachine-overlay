@@ -15,6 +15,10 @@ EAPI=8
 
 CPU_FLAGS_X86=(
 	cpu_flags_x86_avx
+	cpu_flags_x86_avx3
+	cpu_flags_x86_avx3_spr
+	cpu_flags_x86_avx3_zen
+	cpu_flags_x86_ssse3
 )
 GCC_PV="14"
 LIBJPEG_TURBO_V="2.1.2"
@@ -53,7 +57,7 @@ ${PATENT_STATUS_IUSE[@]}
 +lcms +libde265 +matio -minimal -nifti +openexr +openslide +orc +pangocairo +png
 +poppler +python -rav1e +ppm -spng +svg test +tiff +vala +webp +x265
 +zlib
-ebuild_revision_2
+ebuild_revision_3
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -147,7 +151,7 @@ RDEPEND+="
 		media-libs/libnsgif[${MULTILIB_USEDEP}]
 	)
 	highway? (
-		>=dev-cpp/highway-0.16.0[${MULTILIB_USEDEP},cpu_flags_x86_avx?]
+		>=dev-cpp/highway-0.16.0[${MULTILIB_USEDEP},cpu_flags_x86_avx=,cpu_flags_x86_avx3_spr=,cpu_flags_x86_avx3_zen=,cpu_flags_x86_ssse3=]
 	)
 	imagemagick? (
 		!graphicsmagick? (
@@ -212,6 +216,9 @@ RDEPEND+="
 		>=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}]
 	)
 "
+PATCHES=(
+	"${FILESDIR}/${PN}-8.16.0-simd-options.patch"
+)
 
 get_configurations() {
 	use test && echo "test"
