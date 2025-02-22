@@ -18,13 +18,13 @@ diff '--color=auto' -urp libvips-8.16.0.orig/meson.build libvips-8.16.0/meson.bu
 +    if not get_option('avx')
 +        disabled_targets += ['HWY_AVX']
 +    endif
-+    if not get_option('avx3')
++    if not get_option('avx512bw')
 +        disabled_targets += ['HWY_AVX3']
 +    endif
-+    if not get_option('avx3_zen4')
++    if not get_option('bf16_zen4')
 +        disabled_targets += ['HWY_AVX3_ZEN4']
 +    endif
-+    if not get_option('avx3_spr')
++    if not get_option('bf16_spr')
 +        disabled_targets += ['HWY_AVX3_SPR']
 +    endif
      add_project_arguments('-DHWY_DISABLED_TARGETS=@0@'.format('|'.join(disabled_targets)), language: ['cpp'])
@@ -43,25 +43,25 @@ diff '--color=auto' -urp libvips-8.16.0.orig/meson_options.txt libvips-8.16.0/me
 +option('ssse3',
 +  type: 'boolean',
 +  value: true,
-+  description: 'Build with ssse3')
++  description: 'Build with SSSE3')
 +
 +option('avx',
 +  type: 'boolean',
 +  value: true,
-+  description: 'Build with avx')
++  description: 'Build with AVX')
 +
-+option('avx3',
++option('avx512bw',
 +  type: 'boolean',
 +  value: true,
-+  description: 'Build with avx3 (aka AVX512)')
++  description: 'Build with AVX512')
 +
-+option('avx3_zen4',
++option('bf16_zen4',
 +  type: 'boolean',
 +  value: true,
-+  description: 'Build with avx3-zen4 (aka AVX512 + BF16 + CompressStore workaround on ZEN4)')
++  description: 'Build with AVX512 + BF16 + CompressStore workaround on Zen 4')
 +
-+option('avx3_spr',
++option('bf16_spr',
 +  type: 'boolean',
 +  value: true,
-+  description: 'Build with avx3-spr (aka AVX512 + BF16 for Sapphire Rapids)')
++  description: 'Build with AVX512 + BF16 for Sapphire Rapids')
 +

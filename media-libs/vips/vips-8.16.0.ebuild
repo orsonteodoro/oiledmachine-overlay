@@ -57,7 +57,7 @@ ${PATENT_STATUS_IUSE[@]}
 +lcms +libde265 +matio -minimal -nifti +openexr +openslide +orc +pangocairo +png
 +poppler +python -rav1e +ppm -spng +svg test +tiff +vala +webp +x265
 +zlib
-ebuild_revision_3
+ebuild_revision_4
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -593,6 +593,11 @@ ewarn "Please use the dev-cpp/highway::oiledmachine-overlay ebuild instead."
 		$(meson_native_use_bool gtk-doc gtk_doc)
 		$(meson_native_use_feature introspection)
 		$(meson_use analyze)
+		$(meson_use cpu_flags_x86_avx avx)
+		$(meson_use cpu_flags_x86_avx512bw avx512bw)
+		$(meson_use cpu_flags_x86_bf16_spr bf16_spr)
+		$(meson_use cpu_flags_x86_bf16_zen4 bf16_zen4)
+		$(meson_use cpu_flags_x86_ssse3 ssse3)
 		$(meson_use cxx cplusplus)
 		$(meson_use debug)
 		$(meson_use deprecated)
