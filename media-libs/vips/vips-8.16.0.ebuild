@@ -70,9 +70,6 @@ PATENT_STATUS_REQUIRED_USE="
 REQUIRED_USE="
 	${PATENT_STATUS_REQUIRED_USE}
 	${PYTHON_REQUIRED_USE}
-	!cpu_flags_x86_avx? (
-		!highway
-	)
 	?? (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
@@ -542,6 +539,15 @@ eerror
 				| ${CC} -shared -xc -o "${BUILD_DIR}/dlclose.so" - || die
 		fi
 		_apply_env 0
+	fi
+
+	if use highway ; then
+# The highway automagic for cpu flags could be broken.
+ewarn "Please use the dev-cpp/highway::oiledmachine-overlay ebuild instead."
+	fi
+
+	if ! use cpu_flags_x86_avx ; then
+		append-flags -mno-avx
 	fi
 
 	local emesonargs=(
