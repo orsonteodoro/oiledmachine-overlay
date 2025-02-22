@@ -57,7 +57,7 @@ ${PATENT_STATUS_IUSE[@]}
 +lcms +libde265 +matio -minimal -nifti +openexr +openslide +orc +pangocairo +png
 +poppler +python -rav1e +ppm -spng +svg test +tiff +vala +webp +x265
 +zlib
-ebuild_revision_4
+ebuild_revision_6
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -371,9 +371,21 @@ eerror
 	fi
 }
 
+_remove_avx() {
+	if ! use cpu_flags_x86_avx ; then
+		local x
+		for x in $(grep -r -l "default,avx" "${S}") ; do
+einfo "Patching ${x} without AVX"
+			sed -i -e "s|default,avx|default|g" "${x}" || die
+		done
+	fi
+}
+
 src_prepare() {
 	default
 	cd "${S}" || die
+
+	_remove_avx
 
 	local configuration
 	for configuration in $(get_configurations) ; do

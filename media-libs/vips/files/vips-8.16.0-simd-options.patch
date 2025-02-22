@@ -1,6 +1,15 @@
 diff '--color=auto' -urp libvips-8.16.0.orig/meson.build libvips-8.16.0/meson.build
 --- libvips-8.16.0.orig/meson.build	2024-10-27 09:45:36.000000000 -0700
-+++ libvips-8.16.0/meson.build	2025-02-21 18:06:59.474398848 -0800
++++ libvips-8.16.0/meson.build	2025-02-21 19:18:26.553507631 -0800
+@@ -169,7 +169,7 @@ int main(void) {
+     return func();
+ }
+ '''
+-if meson.can_run_host_binaries()
++if meson.can_run_host_binaries() and get_option('avx')
+     rres = cc.run(target_clones_check, args: '-Werror', name: 'Has target_clones attribute')
+     have_target_clones = rres.compiled() and rres.returncode() == 0
+ else
 @@ -483,13 +483,20 @@ if libhwy_dep.found()
      if libhwy_dep.version().version_compare('>=1.1.0')
          cfg_var.set('HAVE_HWY_1_1_0', '1')
@@ -31,7 +40,7 @@ diff '--color=auto' -urp libvips-8.16.0.orig/meson.build libvips-8.16.0/meson.bu
  
 diff '--color=auto' -urp libvips-8.16.0.orig/meson_options.txt libvips-8.16.0/meson_options.txt
 --- libvips-8.16.0.orig/meson_options.txt	2024-10-27 09:45:36.000000000 -0700
-+++ libvips-8.16.0/meson_options.txt	2025-02-21 18:06:31.686798407 -0800
++++ libvips-8.16.0/meson_options.txt	2025-02-21 19:17:21.980926420 -0800
 @@ -262,3 +262,31 @@ option('fuzzing_engine',
  option('fuzzer_ldflags',
      type: 'string',
