@@ -621,8 +621,8 @@ _install_webapp_v1() {
 	insinto "${_PREFIX}"
 	doins -r "${S}/.next/standalone/"*
 
-	insinto "${_PREFIX}"
-	doins -r "${S}/node_modules"
+	insinto "${_PREFIX}/node_modules"
+	doins -r "${S}/node_modules/.pnpm"
 	doins "${S}/scripts/serverLauncher/startServer.js"
 
 	if use postgres ; then
@@ -648,7 +648,7 @@ _install_webapp_v2() {
 
 	mv "${S}/.next/standalone/"* "${ED}${_PREFIX}" || die
 
-	cp -aT "${S}/node_modules" "${ED}${_PREFIX}/node_modules" || die
+	cp -aT "${S}/node_modules/.pnpm" "${ED}${_PREFIX}/node_modules/.pnpm" || die
 	mv "${S}/scripts/serverLauncher/startServer.js" "${ED}${_PREFIX}" || die
 
 	mv "${S}/src/database/migrations" "${ED}${_PREFIX}" || die
