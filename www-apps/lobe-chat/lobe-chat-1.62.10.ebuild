@@ -195,7 +195,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 +indexdb +openrc postgres systemd +system-vips
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	!cpu_flags_x86_sse4_2? (
@@ -740,7 +740,7 @@ _install_webapp_v2() {
 
 	mv "${S}/.next/standalone/"* "${ED}${_PREFIX}" || die
 
-	cp -aT "${S}/node_modules/.pnpm" "${ED}${_PREFIX}/node_modules/.pnpm" || die
+	cp -aT "${S}/node_modules" "${ED}${_PREFIX}/node_modules" || die
 	mv "${S}/scripts/serverLauncher/startServer.js" "${ED}${_PREFIX}" || die
 
 	mv "${S}/src/database/migrations" "${ED}${_PREFIX}" || die
@@ -809,6 +809,7 @@ src_install() {
 	# etc. versus a simple pointer change with the code below.
 	addwrite "/opt/${PN}"
 	rm -rf "/opt/${PN}/"*
+	rm -rf "/opt/${PN}/.next"
 	mv "${ED}/opt/${PN}/"* "/opt/${PN}"
 	mv "${ED}/opt/${PN}/.next" "/opt/${PN}"
 	mv "${ED}/opt/${PN}/.npmrc" "/opt/${PN}"
