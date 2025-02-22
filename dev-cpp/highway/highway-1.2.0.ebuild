@@ -41,7 +41,6 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_bf16_zen4"
 
 	"cpu_flags_x86_avx"
-	"cpu_flags_x86_pclmul"
 
 	"cpu_flags_x86_avx512f"
 	"cpu_flags_x86_avx512cd"
@@ -119,6 +118,9 @@ REQUIRED_USE="
 
 	cpu_flags_x86_sse4? (
 		cpu_flags_x86_sse4_2
+	)
+	cpu_flags_x86_avx2? (
+		cpu_flags_x86_avx
 	)
 	cpu_flags_x86_avx512f? (
 		cpu_flags_x86_avx2

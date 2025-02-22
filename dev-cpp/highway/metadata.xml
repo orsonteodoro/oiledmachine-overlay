@@ -96,9 +96,6 @@
     <flag name="cpu_flags_x86_gfni">
       Optimize with GFNI
     </flag>
-    <flag name="cpu_flags_x86_pclmul">
-      Optimize with PCLMUL
-    </flag>
     <flag name="cpu_flags_x86_sse4">
       Optimize with SSE4
     </flag>
