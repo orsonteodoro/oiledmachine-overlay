@@ -87,7 +87,7 @@
     <flag name="cpu_flags_x86_avx512vl">
       Optimize with AVX512VL
     </flag>
-    <flag name="cpu_flags_x86_bf16_zen">
+    <flag name="cpu_flags_x86_bf16_zen4">
       Optimize with BF16 for Zen 4 or later
     </flag>
     <flag name="cpu_flags_x86_bf16_spr">
