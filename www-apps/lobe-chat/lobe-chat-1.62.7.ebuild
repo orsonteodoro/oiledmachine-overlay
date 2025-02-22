@@ -152,7 +152,7 @@ RUST_PV="${RUST_MIN_VER}"
 SERWIST_CHOICE="no-change" # update, remove, no-change
 #SHARP_PV="0.32.6" # 0.32.6 (working), 0.33.5 (upstream, possible segfault)
 SHARP_PV="0.33.5" # 0.32.6 (working), 0.33.5 (upstream, possible segfault)
-VIPS_PV="8.14.5"
+VIPS_PV="8.15.3"
 
 inherit dhms edo npm pnpm rust
 
