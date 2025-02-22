@@ -761,6 +761,7 @@ gen_config() {
 
 	cat \
 		"${FILESDIR}/${PN}.conf" \
+		> \
 		"${T}/${PN}.conf" \
 		|| die
 	sed -i \
@@ -776,6 +777,7 @@ gen_config() {
 gen_standalone_wrapper() {
 	cat \
 		"${FILESDIR}/${PN}-start-server" \
+		> \
 		"${T}/${PN}-start-server" \
 		|| die
 	sed -i \
