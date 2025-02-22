@@ -25,25 +25,28 @@ CPU_FLAGS_RISCV=(
 	"cpu_flags_riscv_rvv"
 )
 CPU_FLAGS_X86=(
-	"cpu_flags_x86_bmi"
-	"cpu_flags_x86_bmi2"
-	"cpu_flags_x86_pclmul"
 	"cpu_flags_x86_sse2"
 	"cpu_flags_x86_ssse3"
 	"cpu_flags_x86_sse4"
 	"cpu_flags_x86_sse4_2"
-	"cpu_flags_x86_f16c"
-	"cpu_flags_x86_fma"
-	"cpu_flags_x86_aes"
 	"cpu_flags_x86_avx2"
-	"cpu_flags_x86_avx3"
-	"cpu_flags_x86_avx3_dl"
-	"cpu_flags_x86_avx3_spr"
-	"cpu_flags_x86_avx3_zen4"
+
+	"cpu_flags_x86_gfni"
+	"cpu_flags_x86_vaes"
+	"cpu_flags_x86_vbmi"
+	"cpu_flags_x86_vbmi2"
+	"cpu_flags_x86_vnni"
+
+	"cpu_flags_x86_bf16_spr"
+	"cpu_flags_x86_bf16_zen4"
+
+	"cpu_flags_x86_avx"
+	"cpu_flags_x86_pclmul"
+
 	"cpu_flags_x86_avx512f"
-	"cpu_flags_x86_avx512bw"
 	"cpu_flags_x86_avx512cd"
 	"cpu_flags_x86_avx512dq"
+	"cpu_flags_x86_avx512bw"
 	"cpu_flags_x86_avx512vl"
 )
 
@@ -73,23 +76,75 @@ ${CPU_FLAGS_X86[@]}
 test
 "
 REQUIRED_USE="
+	cpu_flags_x86_gfni? (
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_vbmi
+		cpu_flags_x86_vbmi2
+		cpu_flags_x86_vaes
+		cpu_flags_x86_vnni
+	)
+	cpu_flags_x86_vbmi? (
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_gfni
+		cpu_flags_x86_vbmi2
+		cpu_flags_x86_vaes
+		cpu_flags_x86_vnni
+	)
+	cpu_flags_x86_vbmi2? (
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_gfni
+		cpu_flags_x86_vbmi
+		cpu_flags_x86_vaes
+		cpu_flags_x86_vnni
+	)
+	cpu_flags_x86_vaes? (
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_gfni
+		cpu_flags_x86_vbmi
+		cpu_flags_x86_vbmi2
+		cpu_flags_x86_vnni
+	)
+	cpu_flags_x86_vnni? (
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_gfni
+		cpu_flags_x86_vbmi
+		cpu_flags_x86_vbmi2
+		cpu_flags_x86_vaes
+	)
+
 	cpu_flags_x86_sse4? (
-		cpu_flags_x86_aes
-		cpu_flags_x86_pclmul
 		cpu_flags_x86_sse4_2
 	)
-	cpu_flags_x86_avx2? (
-		cpu_flags_x86_bmi2
-		cpu_flags_x86_f16c
-		cpu_flags_x86_fma
+	cpu_flags_x86_avx512f? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512cd
 	)
-	cpu_flags_x86_avx3? (
+	cpu_flags_x86_avx512cd? (
 		cpu_flags_x86_avx2
 		cpu_flags_x86_avx512f
+	)
+	cpu_flags_x86_avx512dq? (
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avx512bw? (
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avx512vl? (
 		cpu_flags_x86_avx512bw
 		cpu_flags_x86_avx512cd
 		cpu_flags_x86_avx512dq
-		cpu_flags_x86_avx512vl
+		cpu_flags_x86_avx512f
 	)
 "
 DEPEND="
@@ -195,22 +250,22 @@ _configure_cpu_flags_x86() {
 			"HWY_AVX2"
 		)
 	fi
-	if ! use cpu_flags_x86_avx3 ; then
+	if ! use cpu_flags_x86_avx512bw ; then
 		disabled_cpu_flags+=(
 			"HWY_AVX3"
 		)
 	fi
-	if ! use cpu_flags_x86_avx3_dl ; then
+	if ! use cpu_flags_x86_gfni ; then
 		disabled_cpu_flags+=(
 			"HWY_AVX3_DL"
 		)
 	fi
-	if ! use cpu_flags_x86_avx3_spr ; then
+	if ! use cpu_flags_x86_bf16_spr ; then
 		disabled_cpu_flags+=(
 			"HWY_AVX3_SPR"
 		)
 	fi
-	if ! use cpu_flags_x86_avx3_zen4 ; then
+	if ! use cpu_flags_x86_bf16_zen4 ; then
 		disabled_cpu_flags+=(
 			"HWY_AVX3_ZEN4"
 		)

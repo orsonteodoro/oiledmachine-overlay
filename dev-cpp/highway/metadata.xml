@@ -26,4 +26,99 @@
   <upstream>
     <remote-id type="github">google/highway</remote-id>
   </upstream>
+  <use>
+    <flag name="cpu_flags_arm_neon">
+      Optimize for ARM NEON
+    </flag>
+    <flag name="cpu_flags_arm_neon_bf16">
+      Optimize for ARM NEON with BF16
+    </flag>
+    <flag name="cpu_flags_arm_neon_without_aes">
+      Optimize for ARM NEON without AES
+    </flag>
+    <flag name="cpu_flags_arm_sve">
+      Optimize for ARM SVE
+    </flag>
+    <flag name="cpu_flags_arm_sve_256">
+      Optimize for ARM SVE 256-bit vectors
+    </flag>
+    <flag name="cpu_flags_arm_sve2">
+      Optimize for ARM SVE2
+    </flag>
+    <flag name="cpu_flags_arm_sve2_128">
+      Optimize for ARM SVE2 128-bit vectors
+    </flag>
+    <flag name="cpu_flags_ppc_ppc8">
+      Optimize for POWER8
+    </flag>
+    <flag name="cpu_flags_ppc_ppc9">
+      Optimize for POWER9
+    </flag>
+    <flag name="cpu_flags_ppc_ppc10">
+      Optimize for POWER10
+    </flag>
+    <flag name="cpu_flags_riscv_rvv">
+      Optimize with RVV
+    </flag>
+    <flag name="cpu_flags_s390_z14">
+      Optimize for z14
+    </flag>
+    <flag name="cpu_flags_s390_z15">
+      Optimize for z15
+    </flag>
+    <flag name="cpu_flags_x86_avx">
+      Optimize with AVX
+    </flag>
+    <flag name="cpu_flags_x86_avx2">
+      Optimize with AVX2
+    </flag>
+    <flag name="cpu_flags_x86_avx512bw">
+      Optimize with AVX512BW
+    </flag>
+    <flag name="cpu_flags_x86_avx512cd">
+      Optimize with AVX512CD
+    </flag>
+    <flag name="cpu_flags_x86_avx512dq">
+      Optimize with AVX512DQ
+    </flag>
+    <flag name="cpu_flags_x86_avx512f">
+      Optimize with AVX512F
+    </flag>
+    <flag name="cpu_flags_x86_avx512vl">
+      Optimize with AVX512VL
+    </flag>
+    <flag name="cpu_flags_x86_bf16_zen">
+      Optimize with BF16 for ZEN 4 or later
+    </flag>
+    <flag name="cpu_flags_x86_bf16_spr">
+      Optimize with BF16 for Sapphire Rapids or later
+    </flag>
+    <flag name="cpu_flags_x86_gfni">
+      Optimize with GFNI
+    </flag>
+    <flag name="cpu_flags_x86_pclmul">
+      Optimize with PCLMUL
+    </flag>
+    <flag name="cpu_flags_x86_sse4">
+      Optimize with SSE4
+    </flag>
+    <flag name="cpu_flags_x86_sse4.2">
+      Optimize with SSE4.2
+    </flag>
+    <flag name="cpu_flags_x86_ssse3">
+      Optimize with SSSE3
+    </flag>
+    <flag name="cpu_flags_x86_vaes">
+      Optimize with VAES
+    </flag>
+    <flag name="cpu_flags_x86_vbmi">
+      Optimize with VBMI
+    </flag>
+    <flag name="cpu_flags_x86_vbmi2">
+      Optimize with VBMI2
+    </flag>
+    <flag name="cpu_flags_x86_vnni">
+      Optimize with VNNI
+    </flag>
+  </use>
 </pkgmetadata>
