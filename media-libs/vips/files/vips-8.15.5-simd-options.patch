@@ -1,0 +1,79 @@
+diff '--color=auto' -urp libvips-8.15.5.orig/meson.build libvips-8.15.5/meson.build
+--- libvips-8.15.5.orig/meson.build	2024-10-05 04:22:41.000000000 -0700
++++ libvips-8.15.5/meson.build	2025-02-21 23:23:56.544500522 -0800
+@@ -147,7 +147,7 @@ int main(void) {
+     return func();
+ }
+ '''
+-if meson.can_run_host_binaries()
++if meson.can_run_host_binaries() and get_option('avx')
+     rres = cc.run(target_clones_check, args: '-Werror', name: 'Has target_clones attribute')
+     have_target_clones = rres.compiled() and rres.returncode() == 0
+ else
+@@ -461,13 +461,20 @@ libhwy_dep = dependency('libhwy', versio
+ if libhwy_dep.found()
+     libvips_deps += libhwy_dep
+     cfg_var.set('HAVE_HWY', '1')
+-    # Always disable SSSE3 since it is rare to have SSSE3 but not SSE4
+-    disabled_targets = ['HWY_SSSE3']
+-    # Optionally, build without AVX512 support (helps to reduce binary size at the cost of performance)
+-    #disabled_targets += ['HWY_AVX3']
+-    #disabled_targets += ['HWY_AVX3_ZEN4']
+-    #disabled_targets += ['HWY_AVX3_SPR']
+-    add_project_arguments('-DHWY_DISABLED_TARGETS=@0@'.format('|'.join(disabled_targets)), language: ['cpp'])
++    disabled_targets = []
++    if not get_option('ssse3')
++        disabled_targets += ['HWY_SSSE3']
++    endif
++    if not get_option('avx512bw')
++        disabled_targets += ['HWY_AVX3']
++    endif
++    if not get_option('bf16_zen4')
++        disabled_targets += ['HWY_AVX3_ZEN4']
++    endif
++    if not get_option('bf16_spr')
++        disabled_targets += ['HWY_AVX3_SPR']
++    endif
++    add_project_arguments('-DHWY_DISABLED_TARGETS=(@0@)'.format('|'.join(disabled_targets)), language: ['cpp'])
+ endif
+ 
+ # only if highway not found
+Only in libvips-8.15.5: meson.build.orig
+Only in libvips-8.15.5: meson.build.rej
+diff '--color=auto' -urp libvips-8.15.5.orig/meson_options.txt libvips-8.15.5/meson_options.txt
+--- libvips-8.15.5.orig/meson_options.txt	2024-10-05 04:22:41.000000000 -0700
++++ libvips-8.15.5/meson_options.txt	2025-02-21 23:24:27.168302281 -0800
+@@ -250,3 +250,31 @@ option('radiance',
+   type: 'boolean', 
+   value: true, 
+   description: 'Build with radiance')
++
++# SIMD
++
++option('ssse3',
++  type: 'boolean',
++  value: true,
++  description: 'Build with SSSE3')
++
++option('avx',
++  type: 'boolean',
++  value: true,
++  description: 'Build with AVX')
++
++option('avx512bw',
++  type: 'boolean',
++  value: true,
++  description: 'Build with AVX512')
++
++option('bf16_zen4',
++  type: 'boolean',
++  value: true,
++  description: 'Build with AVX512 + BF16 + CompressStore workaround on Zen 4')
++
++option('bf16_spr',
++  type: 'boolean',
++  value: true,
++  description: 'Build with AVX512 + BF16 for Sapphire Rapids')
++
+Only in libvips-8.15.5: meson_options.txt.orig
+Only in libvips-8.15.5: meson_options.txt.rej

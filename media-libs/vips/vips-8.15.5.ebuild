@@ -57,7 +57,7 @@ ${PATENT_STATUS_IUSE[@]}
 +lcms +libde265 +matio -minimal -nifti +openexr +openslide +orc +pangocairo +png
 +poppler +python -rav1e +ppm -spng +svg test +tiff +vala +webp +x265
 +zlib
-ebuild_revision_2
+ebuild_revision_3
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -216,6 +216,9 @@ RDEPEND+="
 		>=sys-libs/zlib-1.2.11[${MULTILIB_USEDEP}]
 	)
 "
+PATCHES=(
+	"${FILESDIR}/${PN}-8.15.5-simd-options.patch"
+)
 
 get_configurations() {
 	use test && echo "test"
