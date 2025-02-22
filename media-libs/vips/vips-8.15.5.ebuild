@@ -147,7 +147,7 @@ RDEPEND+="
 		media-libs/libnsgif[${MULTILIB_USEDEP}]
 	)
 	highway? (
-		>=dev-cpp/highway-0.16.0[${MULTILIB_USEDEP}]
+		>=dev-cpp/highway-0.16.0[${MULTILIB_USEDEP},cpu_flags_x86_avx?]
 	)
 	imagemagick? (
 		!graphicsmagick? (
