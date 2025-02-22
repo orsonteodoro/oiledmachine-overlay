@@ -740,7 +740,7 @@ _install_webapp_v2() {
 
 	mv "${S}/.next/standalone/"* "${ED}${_PREFIX}" || die
 
-	mv -f "${S}/node_modules" "${ED}${_PREFIX}" || die
+	cp -aT "${S}/node_modules" "${ED}${_PREFIX}/node_modules" || die
 	mv "${S}/scripts/serverLauncher/startServer.js" "${ED}${_PREFIX}" || die
 
 	mv "${S}/src/database/migrations" "${ED}${_PREFIX}" || die
