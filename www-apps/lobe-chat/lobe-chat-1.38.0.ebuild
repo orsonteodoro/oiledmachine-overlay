@@ -76,7 +76,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	#KEYWORDS="~amd64" # Ebuild unfinished
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/${PN}-${PV}"
 	SRC_URI="
 https://github.com/lobehub/lobe-chat/archive/refs/tags/v${PV}.tar.gz
@@ -648,7 +648,7 @@ _install_webapp_v2() {
 
 	mv "${S}/.next/standalone/"* "${ED}${_PREFIX}" || die
 
-	mv "${S}/node_modules" "${ED}${_PREFIX}" || die
+	mv -f "${S}/node_modules" "${ED}${_PREFIX}" || die
 	mv "${S}/scripts/serverLauncher/startServer.js" "${ED}${_PREFIX}" || die
 
 	mv "${S}/src/database/migrations" "${ED}${_PREFIX}" || die

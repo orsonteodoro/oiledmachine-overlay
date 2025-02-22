@@ -167,7 +167,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	#KEYWORDS="~amd64" # Ebuild unfinished
+	#KEYWORDS="~amd64" # The release cannot be built.
 	S="${WORKDIR}/${PN}-${PV}"
 	SRC_URI="
 https://github.com/lobehub/lobe-chat/archive/refs/tags/v${PV}.tar.gz
@@ -452,6 +452,7 @@ ewarn
 }
 
 pkg_setup() {
+ewarn "This release does not build.  Use 1.38.0 instead."
 	dhms_start
 	# If a "next" package is found in package.json, this should be added.
 	# Otherwise, the license variable should be updated with additional
@@ -739,7 +740,7 @@ _install_webapp_v2() {
 
 	mv "${S}/.next/standalone/"* "${ED}${_PREFIX}" || die
 
-	mv "${S}/node_modules" "${ED}${_PREFIX}" || die
+	mv -f "${S}/node_modules" "${ED}${_PREFIX}" || die
 	mv "${S}/scripts/serverLauncher/startServer.js" "${ED}${_PREFIX}" || die
 
 	mv "${S}/src/database/migrations" "${ED}${_PREFIX}" || die
