@@ -104,7 +104,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 +indexdb +openrc postgres systemd +system-vips
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	!cpu_flags_x86_sse4_2? (
@@ -128,7 +128,7 @@ VIPS_RDEPEND="
 		>=sys-libs/musl-1.1.24
 	)
 	system-vips? (
-		>=media-libs/vips-${VIPS_PV}[gif,webp]
+		>=media-libs/vips-${VIPS_PV}[cxx,exif,lcms,webp]
 	)
 "
 RDEPEND+="
