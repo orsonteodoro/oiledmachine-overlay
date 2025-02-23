@@ -723,6 +723,7 @@ src_install() {
 	mv "${ED}/opt/${PN}/"* "/opt/${PN}"
 	mv "${ED}/opt/${PN}/.next" "/opt/${PN}"
 	mv "${ED}/opt/${PN}/.npmrc" "/opt/${PN}"
+	keepdir "/opt/${PN}"
 ewarn "An install speed up trick is used."
 ewarn "You may need to emerge again if missing /opt/lobe-chat/startServer.js"
 	dhms_end
