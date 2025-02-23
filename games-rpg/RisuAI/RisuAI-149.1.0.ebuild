@@ -17,8 +17,12 @@ NODE_VERSION=20
 NPM_AUDIT_FIX_ARGS=( "--legacy-peer-deps" )
 NPM_INSTALL_ARGS=( "--legacy-peer-deps" )
 NPM_SLOT="3"
+CPU_FLAGS_X86=(
+	cpu_flags_x86_sse4_2
+)
 TARBALL="${P}.tar.gz"
 NPM_TARBALL="${TARBALL}"
+SHARP_PV="0.33.5"
 VITE_PV="5.4.9"
 WEBKIT_GTK_STABLE=(
 	"2.46"
@@ -689,10 +693,14 @@ LICENSE="
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
-ollama tray wayland X
+${CPU_FLAGS_X86[@]}
+ollama +system-vips tray wayland X
 ebuild_revision_5
 "
 REQUIRED_USE="
+	!cpu_flags_x86_sse4_2? (
+		system-vips
+	)
 	|| (
 		X
 		wayland
@@ -744,6 +752,18 @@ TAURI_RDEPEND="
 		dev-lang/rust:${RUST_PV}
 	)
 "
+VIPS_RDEPEND="
+	>=net-libs/nodejs-14.15.0
+	elibc_glibc? (
+		>=sys-libs/glibc-2.17
+	)
+	elibc_musl? (
+		>=sys-libs/musl-1.1.24
+	)
+	system-vips? (
+		>=media-libs/vips-8.15.3[cxx,exif,lcms,jpeg,png,svg]
+	)
+"
 RDEPEND+="
 	${TAURI_RDEPEND}
 	ollama? (
@@ -753,8 +773,12 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
+VIPS_BDEPEND="
+	virtual/pkgconfig
+"
 BDEPEND+="
 	${RUST_BINDINGS_BDEPEND}
+	${VIPS_BDEPEND}
 	net-libs/nodejs:${NODE_VERSION}
 	sys-apps/npm
 "
@@ -762,6 +786,7 @@ BDEPEND+="
 pkg_setup() {
 ewarn "This ebuild is still in development"
 	npm_pkg_setup
+	electron-app_set_sharp_env
 	rust_pkg_setup
 	if has_version "dev-lang/rust-bin:${RUST_PV}" ; then
 		rust_prepend_path "${RUST_PV}" "binary"
@@ -783,6 +808,7 @@ npm_update_lock_audit_post() {
 		}
 		fix_lockfile
 		enpm add -D "esbuild@^0.25.0" --legacy-peer-deps
+		enpm add "sharp@${SHARP_PV}" --legacy-peer-deps
 		fix_lockfile
 	fi
 }
@@ -956,6 +982,10 @@ src_compile() {
 	rm -f "${S}/Cargo."{"toml","lock"}
 	npm_hydrate
 	enpm --version
+
+	# Force rebuild to prevent illegal instruction
+	edo npm rebuild sharp
+
 #	enpm install -D "vite@${VITE_PV}" ${NPM_INSTALL_ARGS[@]}
 	enpm run build
 	local chost=$(get_rustc_target)
