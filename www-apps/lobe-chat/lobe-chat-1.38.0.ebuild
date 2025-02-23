@@ -61,8 +61,7 @@ RUST_MAX_VER="1.71.1" # Inclusive
 RUST_MIN_VER="1.76.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0 for next.js 14.2.8 dependency of @swc/core 1.4.4
 RUST_PV="${RUST_MIN_VER}"
 SERWIST_CHOICE="no-change" # update, remove, no-change
-#SHARP_PV="0.32.6" # 0.32.6 (working), 0.33.5 (upstream, possible segfault)
-SHARP_PV="0.33.5" # 0.32.6 (working), 0.33.5 (upstream, possible segfault)
+SHARP_PV="0.33.5"
 VIPS_PV="8.15.3"
 
 inherit dhms edo npm pnpm rust
@@ -326,21 +325,6 @@ einfo "Generating tag start for ${path}"
 		git tag ${tag_name} || die
 	popd >/dev/null 2>&1 || die
 einfo "Generating tag done"
-}
-
-# @FUNCTION: electron-app_set_sharp_env
-# @DESCRIPTION:
-# sharp env
-electron-app_set_sharp_env() {
-	unset SHARP_IGNORE_GLOBAL_LIBVIPS
-	unset SHARP_FORCE_GLOBAL_LIBVIPS
-	if use system-vips ; then
-einfo "Using system vips for sharp"
-		export SHARP_FORCE_GLOBAL_LIBVIPS=1
-	else
-einfo "Using vendored vips for sharp"
-		export SHARP_IGNORE_GLOBAL_LIBVIPS=1
-	fi
 }
 
 check_virtual_mem() {
