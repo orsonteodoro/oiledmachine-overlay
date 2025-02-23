@@ -103,7 +103,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 +indexdb +openrc postgres systemd +system-vips
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	!cpu_flags_x86_sse4_2? (
@@ -647,7 +647,7 @@ _install_webapp_v2() {
 	mv "${S}/public" "${ED}${_PREFIX}" || die
 
 	mkdir -p "${ED}${_PREFIX}/.next" || die
-	cp -aT "${S}/.next/static" "${ED}${_PREFIX}/.next" || die
+	mv "${S}/.next/static" "${ED}${_PREFIX}/.next" || die
 
 	cp -aT "${S}/.next/standalone" "${ED}${_PREFIX}" || die # contains node_modules, .next, server.js
 
