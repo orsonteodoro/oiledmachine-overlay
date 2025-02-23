@@ -86,7 +86,7 @@ SRC_URI="
 	$(cargo_crate_uris)
 "
 
-DESCRIPTION="Disassemble an x86 binary and print out used instruction sets"
+DESCRIPTION="Disassemble a x86 binary and print out used instruction sets"
 HOMEPAGE="https://github.com/pkgw/elfx86exts"
 LICENSE="
 	0BSD
