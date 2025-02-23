@@ -438,6 +438,7 @@ RUST_MAX_VER="1.80.0" # Inclusive
 RUST_MIN_VER="1.80.0" # llvm-18.1, required by @swc/core
 RUST_PV="${RUST_MIN_VER}"
 SHARP_PV="0.32.6"
+VIPS_PV="8.14.5"
 WEBKIT_GTK_STABLE=(
 	"2.46"
 	"2.44"
@@ -670,7 +671,7 @@ VIPS_RDEPEND="
 		>=sys-libs/musl-1.1.24
 	)
 	system-vips? (
-		>=media-libs/vips-8.14.5[cxx,exif,jpeg]
+		>=media-libs/vips-${VIPS_PV}[cxx,exif,jpeg]
 	)
 "
 RDEPEND+="
