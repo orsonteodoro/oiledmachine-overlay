@@ -340,6 +340,7 @@ einfo
 einfo "To set up per-package environment variables see"
 einfo "https://wiki.gentoo.org/wiki//etc/portage/package.env"
 einfo
+if false ; then
 	if [[ -z "${APP_URL}" ]] ; then
 		export APP_URL="http://localhost:3210"
 ewarn "APP_URL:  ${APP_URL} (user-definable, per-package environment variable)"
@@ -395,6 +396,7 @@ ewarn
 	else
 		export AUTH_GITHUB_ID
 	fi
+fi
 }
 
 # Placeholders
@@ -529,6 +531,7 @@ pnpm_unpack_post() {
 # reference the system's vips package not the prebuilt one.
 	eapply "${FILESDIR}/${PN}-1.47.17-hardcoded-paths.patch"
 	eapply "${FILESDIR}/${PN}-1.55.4-next-config.patch"
+	eapply "${FILESDIR}/${PN}-1.63.1-segfault-handler.patch"
 
 	if [[ "${PNPM_UPDATE_LOCK}" != "1" ]] ; then
 		eapply "${FILESDIR}/lobe-chat-1.62.4-pnpm-patches.patch"
@@ -596,6 +599,7 @@ pnpm_unpack_post() {
 			"stylelint@16.1.0"
 		)
 #		epnpm add -D ${pkgs[@]}
+		epnpm add "segfault-handler"
 	fi
 }
 
