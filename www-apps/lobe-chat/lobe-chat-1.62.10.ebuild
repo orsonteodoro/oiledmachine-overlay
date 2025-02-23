@@ -4,7 +4,8 @@
 
 EAPI=8
 
-# Ebuild for react 19
+# Ebuild using React 19
+# This one may be bugged because the npm dependencies still refer to React 18.
 
 # node_modules/.pnpm/@types+mdx@2.0.13/node_modules/@types/mdx/index.d.ts
 
@@ -125,6 +126,8 @@ EAPI=8
 
 # Use `PNPM_UPDATER_VERSIONS="1.62.10" pnpm_updater_update_locks.sh` to update lockfile
 
+MY_PN="LobeChat"
+
 CPU_FLAGS_X86=(
 	cpu_flags_x86_sse4_2
 )
@@ -155,7 +158,7 @@ SERWIST_CHOICE="no-change" # update, remove, no-change
 SHARP_PV="0.33.5"
 VIPS_PV="8.15.3"
 
-inherit dhms edo npm pnpm rust
+inherit dhms desktop edo npm pnpm rust xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -221,6 +224,7 @@ VIPS_RDEPEND="
 		>=media-libs/vips-${VIPS_PV}[cxx,exif,lcms,webp]
 	)
 "
+# xdg-open is from x11-misc/xdg-utils
 RDEPEND+="
 	${VIPS_RDEPEND}
 	acct-group/lobe-chat
@@ -230,6 +234,7 @@ RDEPEND+="
 	>=sys-devel/gcc-12.2.0
 	net-libs/nodejs:${NODE_VERSION}[corepack,npm]
 	net-libs/nodejs:=
+	x11-misc/xdg-utils
 	postgres? (
 		>=dev-db/postgresql-16.4
 	)
@@ -333,11 +338,15 @@ einfo "https://wiki.gentoo.org/wiki//etc/portage/package.env"
 einfo
 	if [[ -z "${APP_URL}" ]] ; then
 		export APP_URL="http://localhost:3210"
-ewarn "APP_URL:  ${APP_URL} (fallback, user-definable)"
+ewarn "APP_URL:  ${APP_URL} (user-definable, per-package environment variable)"
+	else
+		export APP_URL
 	fi
 	if [[ -z "${NEXTAUTH_URL}" ]] ; then
 		export NEXTAUTH_URL="http://localhost:3210/api/auth"
-ewarn "NEXTAUTH_URL:  ${NEXTAUTH_URL} (fallback, user-definable)"
+ewarn "NEXTAUTH_URL:  ${NEXTAUTH_URL} (user-definable, per-package environment variable)"
+	else
+		export NEXTAUTH_URL
 	fi
 	if [[ -z "${NEXT_AUTH_SSO_PROVIDERS}" ]] ; then
 # It should be explicit for a reproducible build.
@@ -354,6 +363,8 @@ eerror "This per-package environment variable is configurable."
 eerror "Ebuild development uses github as the SSO (Single Sign-On) provider."
 eerror
 		die
+	else
+		export NEXT_AUTH_SSO_PROVIDERS
 	fi
 	if [[ -z "${NEXT_AUTH_SECRET}" ]] ; then
 eerror
@@ -365,6 +376,8 @@ eerror
 eerror "This per-package environment variable is configurable."
 eerror
 		die
+	else
+		export NEXT_AUTH_SECRET
 	fi
 	if [[ -z "${AUTH_GITHUB_ID}" ]] ; then
 ewarn
@@ -375,6 +388,8 @@ ewarn "OAuth provider used for developing this ebuild."
 ewarn
 ewarn "See https://lobehub.com/docs/self-hosting/advanced/auth/next-auth/github"
 ewarn
+	else
+		export AUTH_GITHUB_ID
 	fi
 }
 
@@ -770,6 +785,8 @@ gen_config() {
 	sed -i \
 		-e "s|@NODE_VERSION@|${NODE_VERSION}|g" \
 		-e "s|@NEXT_PUBLIC_SERVICE_MODE@|${next_public_service_mode}|g" \
+		-e "s|@HOSTNAME@|${lobechat_hostname}|g" \
+		-e "s|@PORT@|${lobechat_port}|g" \
 		"${T}/${PN}.conf" \
 		|| die
 	insinto "/etc/${PN}"
@@ -803,6 +820,12 @@ src_install() {
 	addwrite "/opt/${PN}"
 	rm -rf "/opt/${PN}/"*
 
+	local lobechat_hostname=${LOBECHAT_HOSTNAME:-3210}
+	local lobechat_port=${LOBECHAT_PORT:-"localhost"}
+
+einfo "LOBECHAT_HOSTNAME:  ${lobechat_hostname} (user-definable, per-package environment variable)"
+einfo "LOBECHAT_PORT:  ${lobechat_port} (user-definable, per-package environment variable)"
+
 	_install_webapp_v2
 	gen_config
 	gen_standalone_wrapper
@@ -825,13 +848,50 @@ ewarn "You may need to emerge again if missing /opt/lobe-chat/startServer.js"
 	# Exclude hidden files/dirs with *
 	shopt -u dotglob
 
+	exeinto "/usr/bin"
+	cat \
+		"${FILESDIR}/${PN}" \
+		> \
+		"${T}/${PN}" \
+		|| die
+
+	local lobechat_uri=${LOBECHAT_URI:-"http://${lobechat_hostname}:${lobechat_port}"}
+einfo "LOBECHAT_URI:  ${lobechat_uri}"
+	sed -i \
+		-e "s|@LOBECHAT_URI@|${lobechat_uri}|g" \
+		|| die
+	doexe "${T}/${PN}"
+
+	newicon \
+		"/opt/lobe-chat/public/icons/icon-512x512.png" \
+		"${PN}.png"
+
+	make_desktop_entry \
+		"${PN}" \
+		"${MY_PN}" \
+		"${PN}.png" \
+		"Education;ArtificialIntelligence"
+
+	keepdir "/opt/lobe-chat/.next/cache"
+	fowners "${PN}:${PN}" "/opt/lobe-chat/.next/cache"
+
 	dhms_end
 }
 
+pkg_preinst() {
+	xdg_pkg_preinst
+}
+
+pkg_postinst() {
+	xdg_pkg_postinst
+}
+
 pkg_postrm() {
+	xdg_pkg_postrm
 	if [[ -z "${REPLACED_BY_VERSION}" ]] ; then
 		rm -rf "/opt/${PN}"
 	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  FAIL 1.62.0 build time failure
