@@ -51,8 +51,6 @@ DEPEND+="
 "
 BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}[npm]
-	dev-util/synp
-	media-libs/vips
 "
 SRC_URI="
 https://github.com/microsoft/TypeScript/archive/refs/tags/v${PV}.tar.gz
