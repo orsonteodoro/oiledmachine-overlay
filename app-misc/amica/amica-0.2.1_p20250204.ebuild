@@ -670,7 +670,7 @@ VIPS_RDEPEND="
 		>=sys-libs/musl-1.1.24
 	)
 	system-vips? (
-		>=media-libs/vips-8.14.5[cxx,jpeg]
+		>=media-libs/vips-8.14.5[cxx,exif,jpeg]
 	)
 "
 RDEPEND+="
