@@ -442,14 +442,6 @@ pnpm_unpack_post() {
 #		cat "${FILESDIR}/pdf-parse-1.1.1.patch" > "${S}/patches/pdf-parse@1.1.1.patch" || die
 #	fi
 
-#	if ver_test "${NEXTJS_PV%%.*}" -lt "15" ; then
-		# Not compatiable with Next.js 14
-#		sed -i -e "/webpackMemoryOptimizations/d" "next.config.ts" || die
-#		sed -i -e "/hmrRefreshes/d" "next.config.ts" || die
-#		sed -i -e "/serverExternalPackages/d" "next.config.ts" || die
-#		sed -i -e "/@ts-expect-error/d" "src/features/MobileSwitchLoading/index.tsx" || die
-#	fi
-
 	local pkgs
 	if [[ "${SERWIST_CHOICE}" == "no-change" ]] ; then
 		:
@@ -577,32 +569,6 @@ ewarn "Removing ${S}/.next"
 	# Force rebuild to prevent illegal instruction
 	edo npm rebuild sharp
 
-#	if ver_test "${NEXTJS_PV%%.*}" -lt "15" ; then
-#	# tsc will ignore tsconfig.json, so it must be explicit.
-#einfo "Building next.config.js"
-#		tsc \
-#			next.config.ts \
-#			--allowJs \
-#			--esModuleInterop "true" \
-#			--jsx "preserve" \
-#			--lib "dom,dom.iterable,esnext,webworker" \
-#			--module "esnext" \
-#			--moduleResolution "bundler" \
-#			--noCheck \
-#			--outDir "." \
-#			--skipDefaultLibCheck \
-#			--target "esnext" \
-#			--typeRoots "./node_modules/@types" \
-#			--types "react,react-dom" \
-#			|| die
-#		mv "next.config."{"js","mjs"} || die
-#einfo "End build of next.config.js"
-		#grep -q -E -e "Found [0-9]+ error." "${T}/build.log" && die "Detected error"
-		#grep -q -E -e "error TS[0-9]+" "${T}/build.log" && die "Detected error"
-#	fi
-
-#	edo npm run "build:docker"
-
 	edo next build --debug
 	grep -q -e "Next.js build worker exited with code" "${T}/build.log" && die "Detected error"
 	grep -q -e "Failed to load next.config.js" "${T}/build.log" && die "Detected error"
@@ -610,6 +576,7 @@ ewarn "Removing ${S}/.next"
 	edo npm run build-sitemap
 	edo npm run build-migrate-db
 
+	unset NEXT_AUTH_SECRET
 
 	grep -q -e "Build failed because of webpack errors" "${T}/build.log" && die "Detected error"
 	grep -q -e "Failed to compile" "${T}/build.log" && die "Detected error"

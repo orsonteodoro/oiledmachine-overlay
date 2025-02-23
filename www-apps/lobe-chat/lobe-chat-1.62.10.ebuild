@@ -694,8 +694,6 @@ einfo "Building next.config.js"
 		#grep -q -E -e "error TS[0-9]+" "${T}/build.log" && die "Detected error"
 	fi
 
-#	edo npm run "build:docker"
-
 	edo next build --debug
 	grep -q -e "Next.js build worker exited with code" "${T}/build.log" && die "Detected error"
 	grep -q -e "Failed to load next.config.js" "${T}/build.log" && die "Detected error"
@@ -703,6 +701,7 @@ einfo "Building next.config.js"
 	edo npm run build-sitemap
 	edo npm run build-migrate-db
 
+	unset NEXT_AUTH_SECRET
 
 	grep -q -e "Build failed because of webpack errors" "${T}/build.log" && die "Detected error"
 	grep -q -e "Failed to compile" "${T}/build.log" && die "Detected error"
