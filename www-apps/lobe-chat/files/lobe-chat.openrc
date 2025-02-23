@@ -276,6 +276,7 @@ start() {
 		--pidfile "$pidfile" \
 		--user "$command_user" \
 		--group "$command_group" \
+		--background \
 		${args[@]}
 
 	eend $? "Failed to start lobe-chat"
