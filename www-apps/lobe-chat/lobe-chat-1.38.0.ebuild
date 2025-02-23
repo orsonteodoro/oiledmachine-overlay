@@ -145,6 +145,7 @@ RDEPEND+="
 	x11-misc/xdg-utils
 	openrc? (
 		sys-apps/openrc[bash]
+		sys-process/procps[kill]
 	)
 	postgres? (
 		>=dev-db/postgresql-16.4
