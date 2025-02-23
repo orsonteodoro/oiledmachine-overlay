@@ -1214,12 +1214,14 @@ electron-app_get_electron_platarch_args() {
 # @DESCRIPTION:
 # sharp env
 electron-app_set_sharp_env() {
-	export SHARP_IGNORE_GLOBAL_LIBVIPS=1
+	unset SHARP_IGNORE_GLOBAL_LIBVIPS
+	unset SHARP_FORCE_GLOBAL_LIBVIPS
 	if use system-vips ; then
-		export SHARP_IGNORE_GLOBAL_LIBVIPS=0
 einfo "Using system vips for sharp"
+		export SHARP_FORCE_GLOBAL_LIBVIPS=1
 	else
 einfo "Using vendored vips for sharp"
+		export SHARP_IGNORE_GLOBAL_LIBVIPS=1
 	fi
 }
 

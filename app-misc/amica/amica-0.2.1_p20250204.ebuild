@@ -8,6 +8,9 @@ EAPI=8
 # ./convert-cargo-lock.sh 0.2.1_p20250204 c5829dd25a4ad93cc26bc01b4c8520fd3ef51916
 
 AT_TYPES_NODE_PV="18.15.10"
+CPU_FLAGS_X86=(
+	cpu_flags_x86_sse4_2
+)
 CRATES="
 addr2line-0.24.2
 adler2-2.0.0
@@ -434,6 +437,7 @@ PYTHON_COMPAT=( "python3_"{10..12} )
 RUST_MAX_VER="1.80.0" # Inclusive
 RUST_MIN_VER="1.80.0" # llvm-18.1, required by @swc/core
 RUST_PV="${RUST_MIN_VER}"
+SHARP_PV="0.32.6"
 WEBKIT_GTK_STABLE=(
 	"2.46"
 	"2.44"
@@ -447,7 +451,7 @@ WEBKIT_GTK_STABLE=(
 	"2.28"
 )
 
-inherit cargo desktop lcnr npm python-single-r1 rust xdg
+inherit cargo desktop edo lcnr npm python-single-r1 rust xdg
 
 KEYWORDS="~amd64 ~arm64"
 SRC_URI="
@@ -589,10 +593,14 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0"
 IUSE+="
-coqui debug ollama tray voice-recognition wayland whisper-cpp X
+${CPU_FLAGS_X86[@]}
+coqui debug ollama +system-vips tray voice-recognition wayland whisper-cpp X
 ebuild_revision_4
 "
 REQUIRED_USE="
+	!cpu_flags_x86_sse4_2? (
+		system-vips
+	)
 	voice-recognition
 	whisper-cpp? (
 		voice-recognition
@@ -653,8 +661,21 @@ RUST_BINDINGS_DEPEND="
 RUST_BINDINGS_BDEPEND="
 	virtual/pkgconfig
 "
+VIPS_RDEPEND="
+	>=net-libs/nodejs-14.15.0
+	elibc_glibc? (
+		>=sys-libs/glibc-2.17
+	)
+	elibc_musl? (
+		>=sys-libs/musl-1.1.24
+	)
+	system-vips? (
+		>=media-libs/vips-8.14.5[cxx,jpeg]
+	)
+"
 RDEPEND+="
 	${RUST_BINDINGS_DEPEND}
+	${VIPS_RDEPEND}
 	coqui? (
 		$(python_gen_cond_dep '
 			dev-python/coqui-tts[${PYTHON_USEDEP}]
@@ -671,8 +692,12 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
+VIPS_BDEPEND="
+	virtual/pkgconfig
+"
 BDEPEND+="
 	${RUST_BINDINGS_BDEPEND}
+	${VIPS_BDEPEND}
 	=net-libs/nodejs-${NODE_VERSION}*[npm,webassembly(+)]
 	virtual/pkgconfig
 	|| (
@@ -686,6 +711,7 @@ pkg_setup() {
 	npm_pkg_setup
 	export NEXT_TELEMETRY_DISABLED=1
 	python_setup
+	electron-app_set_sharp_env
 	rust_pkg_setup
 	if has_version "dev-lang/rust-bin:${RUST_PV}" ; then
 		rust_prepend_path "${RUST_PV}" "binary"
@@ -766,6 +792,7 @@ npm_update_lock_install_post() {
 		sed -i -e "s|\"esbuild\": \"^0.24.0\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
 		enpm install "esbuild@^0.25.0" -D		# GHSA-67mh-4wv8-2f99		# ID		# --prefer-offline is broken
 		enpm install "eslint" -D --prefer-offline
+		enpm install "sharp@${SHARP_PV}"
 	fi
 }
 
@@ -812,6 +839,10 @@ src_configure() {
 src_compile() {
 	rm -f "${S}/Cargo."* || true
 	npm_hydrate
+
+	# Force rebuild to prevent illegal instruction
+	edo npm rebuild sharp
+
 	if use debug ; then
 		enpm run tauri dev
 	else
