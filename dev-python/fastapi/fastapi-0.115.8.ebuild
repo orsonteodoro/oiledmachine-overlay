@@ -37,7 +37,7 @@ https://github.com/fastapi/fastapi/archive/refs/tags/${PV}.tar.gz
 	"
 fi
 
-DESCRIPTION=""
+DESCRIPTION="A modern, fast (high-performance), web framework for building APIs with Python"
 HOMEPAGE="
 	https://github.com/fastapi/fastapi
 	https://pypi.org/project/fastapi
