@@ -120,6 +120,7 @@ DOCS=( "README.md" )
 
 pkg_setup() {
 	yarn_pkg_setup
+	electron-app_set_sharp_env
 }
 
 yarn_unpack_post() {
@@ -180,12 +181,7 @@ src_unpack() {
 		yarn_src_unpack
 	fi
 
-	export SHARP_IGNORE_GLOBAL_LIBVIPS=1 # First download prebuilt vips lib
-
-	electron-app_set_sharp_env # Disabled vips lib
-	if grep -q -E -e "sharp: Installation error: aborted" "${T}/xfs-"*"/build.log" 2>/dev/null ; then
-		eyarn rebuild sharp
-	fi
+	eyarn add "sharp@${ELECTRON_APP_SHARP_PV}" -D
 
 	edo mkdirp "icon-build" "build-resources/appx"
 	edo tsx --version
@@ -201,6 +197,9 @@ src_compile() {
 	yarn_hydrate
 	yarn --version || die
 	electron-app_cp_electron
+
+	# Rebuild to prevent segfault
+	eyarn rebuild sharp
 
 	edo electron-vite build
 	edo electron-builder \
