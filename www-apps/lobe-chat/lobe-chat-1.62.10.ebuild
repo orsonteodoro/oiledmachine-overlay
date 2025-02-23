@@ -858,6 +858,7 @@ ewarn "You may need to emerge again if missing /opt/lobe-chat/startServer.js"
 einfo "LOBECHAT_URI:  ${lobechat_uri}"
 	sed -i \
 		-e "s|@LOBECHAT_URI@|${lobechat_uri}|g" \
+		"${T}/${PN}" \
 		|| die
 	doexe "${T}/${PN}"
 
