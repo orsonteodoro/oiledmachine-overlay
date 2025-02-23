@@ -194,7 +194,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 +indexdb +openrc postgres systemd +system-vips
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	!cpu_flags_x86_sse4_2? (
@@ -697,6 +697,9 @@ einfo "Building next.config.js"
 eerror "Build failure.  Missing ${S}/.next/standalone/server.js"
 		die
 	fi
+
+	# Change hardcoded paths
+	sed -i -e "s|${S}|/opt/${PN}|g" $(grep -l -r -e "${S}" "${S}/.next") || die
 }
 
 # Slow
@@ -711,7 +714,7 @@ _install_webapp_v1() {
 	doins -r "${S}/.next/static"
 
 	insinto "${_PREFIX}"
-	doins -r "${S}/.next/standalone/"*
+	doins -r "${S}/.next/standalone/"* # contains node_modules, .next, server.js
 
 	insinto "${_PREFIX}/node_modules"
 	doins -r "${S}/node_modules/.pnpm"
@@ -736,9 +739,9 @@ _install_webapp_v2() {
 	mv "${S}/public" "${ED}${_PREFIX}" || die
 
 	mkdir -p "${ED}${_PREFIX}/.next" || die
-	mv "${S}/.next/static" "${ED}${_PREFIX}/.next" || die
+	cp -aT "${S}/.next/static" "${ED}${_PREFIX}/.next" || die
 
-	mv "${S}/.next/standalone/"* "${ED}${_PREFIX}" || die
+	mv "${S}/.next/standalone/"* "${ED}${_PREFIX}" || die # contains node_modules, .next, server.js
 
 	cp -aT "${S}/node_modules" "${ED}${_PREFIX}/node_modules" || die
 	mv "${S}/scripts/serverLauncher/startServer.js" "${ED}${_PREFIX}" || die
@@ -794,9 +797,11 @@ src_install() {
 	docinto "licenses"
 	dodoc "LICENSE"
 
+	# Include hidden files/dirs with *
+	shopt -s dotglob
+
 	addwrite "/opt/${PN}"
 	rm -rf "/opt/${PN}/"*
-	rm -rf "/opt/${PN}/.next"
 
 	_install_webapp_v2
 	gen_config
@@ -813,11 +818,13 @@ src_install() {
 	# Essentially portage does a k*O(n) problem with copy, scanelf, md5,
 	# etc. versus a simple pointer change with the code below.
 	mv "${ED}/opt/${PN}/"* "/opt/${PN}"
-	mv "${ED}/opt/${PN}/.next" "/opt/${PN}"
-	mv "${ED}/opt/${PN}/.npmrc" "/opt/${PN}"
 	keepdir "/opt/${PN}"
 ewarn "An install speed up trick is used."
 ewarn "You may need to emerge again if missing /opt/lobe-chat/startServer.js"
+
+	# Exclude hidden files/dirs with *
+	shopt -u dotglob
+
 	dhms_end
 }
 
