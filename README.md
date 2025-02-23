@@ -1255,7 +1255,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-gfx/openvdb | Library for the efficient manipulation of volumetric data |
 | media-gfx/upscayl | Upscayl is an AI based image upscaler |
 | media-gfx/upscayl-custom-models | Extra custom models for Upscayl. |
-| media-gfx/voltaml-fast-stable-diffusion | A beautiful and easy to use Stable Diffusion web user interface |
+| media-gfx/voltaml-fast-stable-diffusion | (WIP) A beautiful and easy to use Stable Diffusion web user interface |
 | media-libs/HIPRT | HIP RT is a ray tracing library in HIP |
 | media-libs/alure | The OpenAL Utility Toolkit |
 | media-libs/assimp | Importer library to import assets from 3D files |
