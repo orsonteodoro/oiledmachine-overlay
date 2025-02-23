@@ -6,7 +6,7 @@ command_user="lobe-chat"
 command_group="lobe-chat"
 command_background="yes"
 pidfile="/run/lobe-chat.pid"
-log="/var/log/lobe-chat/lobechat.log"
+log="/var/log/lobe-chat/lobe-chat.log"
 
 # AC = Access Control
 # CE = Code Execution

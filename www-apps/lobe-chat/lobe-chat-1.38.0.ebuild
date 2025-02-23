@@ -104,7 +104,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 +indexdb +openrc postgres systemd +system-vips
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	!cpu_flags_x86_sse4_2? (
@@ -701,6 +701,11 @@ gen_standalone_wrapper() {
 src_install() {
 	docinto "licenses"
 	dodoc "LICENSE"
+
+	addwrite "/opt/${PN}"
+	rm -rf "/opt/${PN}/"*
+	rm -rf "/opt/${PN}/.next"
+
 	_install_webapp_v2
 	gen_config
 	gen_standalone_wrapper
@@ -715,9 +720,6 @@ src_install() {
 	# Bypass normal merge to speed up merge using OS tricks
 	# Essentially portage does a k*O(n) problem with copy, scanelf, md5,
 	# etc. versus a simple pointer change with the code below.
-	addwrite "/opt/${PN}"
-	rm -rf "/opt/${PN}/"*
-	rm -rf "/opt/${PN}/.next"
 	mv "${ED}/opt/${PN}/"* "/opt/${PN}"
 	mv "${ED}/opt/${PN}/.next" "/opt/${PN}"
 	mv "${ED}/opt/${PN}/.npmrc" "/opt/${PN}"

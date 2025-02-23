@@ -1,7 +1,8 @@
 #!/bin/bash
 NODE_VERSION=@NODE_VERSION@
 main() {
-	source "/etc/lobe-chat/lobechat.conf"
+	cd "/opt/lobe-chat"
+	source "/etc/lobe-chat/lobe-chat.conf"
 	node "/opt/lobe-chat/startServer.js"
 }
 main
