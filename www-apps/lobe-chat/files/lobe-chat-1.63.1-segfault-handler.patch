@@ -1,9 +1,0 @@
---- a/scripts/serverLauncher/startServer.js.orig	2025-02-23 11:53:59.159822714 -0800
-+++ b/scripts/serverLauncher/startServer.js	2025-02-23 11:53:55.176282692 -0800
-@@ -1,3 +1,6 @@
-+const SegfaultHandler = require('segfault-handler');
-+SegfaultHandler.registerHandler('crash.log');
-+
- const dns = require('node:dns').promises;
- const fs = require('node:fs').promises;
- const { spawn } = require('node:child_process');

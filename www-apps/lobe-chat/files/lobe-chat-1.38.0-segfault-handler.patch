@@ -1,9 +1,0 @@
---- lobe-chat-1.38.0/scripts/serverLauncher/startServer.js.orig	2025-02-23 11:43:56.001935646 -0800
-+++ lobe-chat-1.38.0/scripts/serverLauncher/startServer.js	2025-02-23 11:49:51.849559768 -0800
-@@ -1,3 +1,6 @@
-+const SegfaultHandler = require('segfault-handler');
-+SegfaultHandler.registerHandler('crash.log');
-+
- const dns = require('dns').promises;
- const fs = require('fs').promises;
- const { spawn } = require('child_process');

@@ -438,7 +438,6 @@ pnpm_unpack_post() {
 # reference the system's vips package not the prebuilt one.
 	eapply "${FILESDIR}/${PN}-1.38.0-hardcoded-paths.patch"
 	eapply "${FILESDIR}/${PN}-1.38.0-next-config.patch"
-	eapply "${FILESDIR}/${PN}-1.38.0-segfault-handler.patch"
 
 #	if [[ "${PNPM_UPDATE_LOCK}" != "1" ]] ; then
 #		eapply "${FILESDIR}/lobe-chat-1.62.4-pnpm-patches.patch" # undo
@@ -559,6 +558,19 @@ src_configure() {
 	epnpm --version
 }
 
+attach_segfault_handler() {
+cat <<EOF > "${S}/.next/standalone/server.js.t"
+const SegfaultHandler = require('segfault-handler');
+SegfaultHandler.registerHandler('crash.log');
+EOF
+	cat \
+		"${S}/.next/standalone/server.js" \
+		>> \
+		"${S}/.next/standalone/server.js.t" \
+		|| die
+	mv "${S}/.next/standalone/server.js"{".t",""} || die
+}
+
 src_compile() {
 	if [[ -e "${S}/.next" ]] ; then
 ewarn "Removing ${S}/.next"
@@ -595,6 +607,7 @@ eerror "Build failure.  Missing ${S}/.next/standalone/server.js"
 
 	# Change hardcoded paths
 	sed -i -e "s|${S}|/opt/${PN}|g" $(grep -l -r -e "${S}" "${S}/.next") || die
+	attach_segfault_handler
 }
 
 # Slow
