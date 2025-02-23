@@ -770,7 +770,7 @@ einfo "LOBECHAT_URI:  ${lobechat_uri}"
 	doexe "${T}/${PN}"
 
 	newicon \
-		"/opt/lobe-chat/public/icons/icon-512x512.png" \
+		"/opt/${PN}/public/icons/icon-512x512.png" \
 		"${PN}.png"
 
 	make_desktop_entry \
@@ -782,10 +782,10 @@ einfo "LOBECHAT_URI:  ${lobechat_uri}"
 	keepdir "/var/cache/${PN}"
 	fowners "${PN}:${PN}" "/var/cache/${PN}"
 
-	keepdir "/opt/lobe-chat/.next"
+	keepdir "/opt/${PN}/.next"
 	dosym \
 		"/var/cache/${PN}" \
-		"/opt/lobe-chat/.next/cache"
+		"/opt/${PN}/.next/cache"
 
 	dhms_end
 }
