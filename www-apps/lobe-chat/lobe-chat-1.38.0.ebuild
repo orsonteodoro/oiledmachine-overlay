@@ -747,9 +747,9 @@ einfo "LOBECHAT_URI:  ${lobechat_uri}"
 		"${PN}.png" \
 		"Education;ArtificialIntelligence"
 
-	keepdir "/opt/${PN}/.next/cache"
+	keepdir "/opt/${PN}/.next/cache/fetch-cache"
+	fowners "${PN}:${PN}" "/opt/${PN}/.next/cache/fetch-cache"
 	fowners "${PN}:${PN}" "/opt/${PN}/.next/cache"
-	fowners "${PN}:${PN}" "/opt/${PN}/.next"
 
 	dhms_end
 }
