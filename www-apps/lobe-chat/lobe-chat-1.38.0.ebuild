@@ -322,9 +322,7 @@ setup_test_env() {
 	export NODE_ENV="production"
 
 	export NODE_OPTIONS=""
-#	if ver_test "${NODE_VERSION}" -eq "18" ;  then
-		export NODE_OPTIONS+=" --dns-result-order=ipv4first"
-#	fi
+	export NODE_OPTIONS+=" --dns-result-order=ipv4first"
 
 	if ver_test "${NODE_VERSION}" -ge "22" ;  then
 		export NODE_OPTIONS+=" --use-openssl-ca"
