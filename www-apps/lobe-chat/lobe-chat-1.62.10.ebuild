@@ -741,7 +741,7 @@ _install_webapp_v2() {
 	mkdir -p "${ED}${_PREFIX}/.next" || die
 	cp -aT "${S}/.next/static" "${ED}${_PREFIX}/.next" || die
 
-	cp -aT "${S}/.next/standalone/"* "${ED}${_PREFIX}" || die # contains node_modules, .next, server.js
+	cp -aT "${S}/.next/standalone" "${ED}${_PREFIX}" || die # contains node_modules, .next, server.js
 
 	cp -aT "${S}/node_modules" "${ED}${_PREFIX}/node_modules" || die
 	mv "${S}/scripts/serverLauncher/startServer.js" "${ED}${_PREFIX}" || die
