@@ -530,7 +530,6 @@ ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}
 ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/pnpm-lock.yaml"
 #		epnpm add "esbuild@0.25.0"								# GHSA-67mh-4wv8-2f99
 		epnpm add "sharp@${SHARP_PV}"
-		epnpm add "ahooks@3.7.8"								# Fix for settings crash, pr #1178
 		patch_lockfile
 	fi
 }
