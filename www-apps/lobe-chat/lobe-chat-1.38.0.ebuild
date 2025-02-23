@@ -105,7 +105,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 +indexdb +openrc postgres systemd +system-vips
-ebuild_revision_14
+ebuild_revision_15
 "
 REQUIRED_USE="
 	!cpu_flags_x86_sse4_2? (
@@ -656,6 +656,8 @@ gen_config() {
 		next_public_service_mode="server"
 	fi
 
+	local deployment=$(usex postgres "database" "docker")
+
 	cat \
 		"${FILESDIR}/${PN}.conf" \
 		> \
@@ -666,6 +668,7 @@ gen_config() {
 		-e "s|@NEXT_PUBLIC_SERVICE_MODE@|${next_public_service_mode}|g" \
 		-e "s|@HOSTNAME@|${lobechat_hostname}|g" \
 		-e "s|@PORT@|${lobechat_port}|g" \
+		-e "s|@DEPLOYMENT@|${deployment}|g" \
 		"${T}/${PN}.conf" \
 		|| die
 	insinto "/etc/${PN}"
