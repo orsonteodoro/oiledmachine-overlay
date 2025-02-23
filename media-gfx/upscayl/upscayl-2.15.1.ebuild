@@ -19,8 +19,6 @@ else
 fi
 ELECTRON_APP_LOCKFILE_EXACT_VERSIONS_ONLY=1
 ELECTRON_APP_REACT_PV="18.3.1"
-ELECTRON_APP_SHARP_PV="0.32.6"
-ELECTRON_APP_VIPS_PV="8.14.5"
 NODE_ENV="development"
 NODE_VERSION="18"
 NPM_INSTALL_ARGS=(
@@ -123,7 +121,6 @@ IUSE+="
 "
 # Upstream uses U 18.04.6 for CI
 RDEPEND+="
-	>=media-libs/vips-${ELECTRON_APP_VIPS_PV}[cxx,lcms,jpeg,png,webp]
 	media-libs/vulkan-drivers
 	media-libs/vulkan-loader
 	custom-models? (
@@ -146,12 +143,6 @@ PDEPEND+="
 
 pkg_setup() {
 	export NEXT_TELEMETRY_DISABLED=1
-	if ! use system-vips ; then
-# Vendored vips requires SSE 4.2.
-ewarn
-ewarn "You need a CPU with SSE 4.2 to use system-vips USE flag disabled."
-ewarn
-	fi
 	npm_pkg_setup
 }
 
@@ -168,7 +159,6 @@ npm_update_lock_audit_post() {
 
 src_compile() {
 ewarn "Using pgo with x11-libs/cairo with an old pgo profile may produce artifacts or missing tiles."
-	electron-app_set_sharp_env
 	export NEXT_TELEMETRY_DISABLED=1
 	export PATH="${S}/node_modules/.bin:${PATH}"
 	cd "${S}" || die
@@ -214,9 +204,6 @@ src_install() {
 	done
 	lcnr_install_files
 
-	if use system-vips ; then
-		find "${ED}" -name "libvips-cpp.so*" -delete
-	fi
 	electron-app_set_sandbox_suid "/opt/upscayl/chrome-sandbox"
 }
 
