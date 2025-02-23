@@ -284,12 +284,9 @@ start() {
 
 stop() {
 	# Broken
-	start-stop-daemon \
-		--stop \
-		--pidfile "$pidfile"
+	#start-stop-daemon \
+	#	--stop \
+	#	--pidfile "$pidfile"
 
-	sleep 1
 	pkill -G "lobe-chat"
-
-	eend $? "Failed to start lobe-chat"
 }
