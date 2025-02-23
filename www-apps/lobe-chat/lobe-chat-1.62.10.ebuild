@@ -604,7 +604,7 @@ pnpm_unpack_post() {
 pnpm_audit_post() {
 	local pkgs
 	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
-		sed -i -e "s|\"vitest\": \"~1.2.2\"|\"vitest\": \"1.6.1\"|g" "package.json" || die
+#		sed -i -e "s|\"vitest\": \"~1.2.2\"|\"vitest\": \"1.6.1\"|g" "package.json" || die
 		pkgs=(
 			"vitest@1.6.1"
 		)
@@ -631,6 +631,7 @@ ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}
 ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/pnpm-lock.yaml"
 #		epnpm add "esbuild@0.25.0"								# GHSA-67mh-4wv8-2f99
 		epnpm add "sharp@${SHARP_PV}"
+		epnpm add "ahooks@3.7.8"								# Fix for settings crash, pr #1178
 		patch_lockfile
 	fi
 }
@@ -880,6 +881,8 @@ einfo "LOBECHAT_URI:  ${lobechat_uri}"
 	keepdir "/opt/${PN}/.next"
 	dosym "/var/cache/${PN}" "/opt/${PN}/.next/cache"
 	fowners "${PN}:${PN}" "/var/cache/${PN}"
+
+	fowners "${PN}:${PN}" "/etc/lobe-chat/lobe-chat.conf"
 
 	dhms_end
 }
