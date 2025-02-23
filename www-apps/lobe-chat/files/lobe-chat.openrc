@@ -289,4 +289,5 @@ stop() {
 	#	--pidfile "$pidfile"
 
 	pkill -G "lobe-chat"
+	eend 0
 }
