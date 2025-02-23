@@ -281,3 +281,15 @@ start() {
 
 	eend $? "Failed to start lobe-chat"
 }
+
+stop() {
+	# Broken
+	start-stop-daemon \
+		--stop \
+		--pidfile "$pidfile"
+
+	sleep 1
+	pkill -G "lobe-chat"
+
+	eend $? "Failed to start lobe-chat"
+}

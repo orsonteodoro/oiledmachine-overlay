@@ -197,7 +197,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 +indexdb +openrc postgres systemd +system-vips
-ebuild_revision_12
+ebuild_revision_13
 "
 REQUIRED_USE="
 	!cpu_flags_x86_sse4_2? (
@@ -235,6 +235,9 @@ RDEPEND+="
 	net-libs/nodejs:${NODE_VERSION}[corepack,npm]
 	net-libs/nodejs:=
 	x11-misc/xdg-utils
+	openrc? (
+		sys-apps/openrc[bash]
+	)
 	postgres? (
 		>=dev-db/postgresql-16.4
 	)
