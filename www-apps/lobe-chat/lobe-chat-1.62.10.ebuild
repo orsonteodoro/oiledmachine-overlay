@@ -197,7 +197,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 +indexdb +openrc postgres systemd +system-vips
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE="
 	!cpu_flags_x86_sse4_2? (
@@ -819,8 +819,8 @@ src_install() {
 	addwrite "/opt/${PN}"
 	rm -rf "/opt/${PN}/"*
 
-	local lobechat_hostname=${LOBECHAT_HOSTNAME:-3210}
-	local lobechat_port=${LOBECHAT_PORT:-"localhost"}
+	local lobechat_hostname=${LOBECHAT_HOSTNAME:-"localhost"}
+	local lobechat_port=${LOBECHAT_PORT:-3210}
 
 einfo "LOBECHAT_HOSTNAME:  ${lobechat_hostname} (user-definable, per-package environment variable)"
 einfo "LOBECHAT_PORT:  ${lobechat_port} (user-definable, per-package environment variable)"
