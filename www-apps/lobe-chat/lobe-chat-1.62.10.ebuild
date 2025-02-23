@@ -253,6 +253,22 @@ BDEPEND+="
 "
 DOCS=( "CHANGELOG.md" "README.md" )
 
+# Do not remove function.
+# @FUNCTION: _set_sharp_env
+# @DESCRIPTION:
+# sharp env
+_set_sharp_env() {
+	unset SHARP_IGNORE_GLOBAL_LIBVIPS
+	unset SHARP_FORCE_GLOBAL_LIBVIPS
+	if use system-vips ; then
+einfo "Using system vips for sharp"
+		export SHARP_FORCE_GLOBAL_LIBVIPS=1
+	else
+einfo "Using vendored vips for sharp"
+		export SHARP_IGNORE_GLOBAL_LIBVIPS=1
+	fi
+}
+
 setup_cn_mirror_env() {
 	if [[ "${USE_CN_MIRROR:-false}" == "true" ]] ; then
 		export SENTRYCLI_CDNURL="https://npmmirror.com/mirrors/sentry-cli"
@@ -457,7 +473,7 @@ einfo "PATH:  ${PATH}"
 	# Rebuild sharp without prebuilt vips.
 	# Prebuilt vips is built with sse4.2 which breaks on older processors.
 	# Reference:  https://sharp.pixelplumbing.com/install#prebuilt-binaries
-	electron-app_set_sharp_env
+	_set_sharp_env
 
 	rust_pkg_setup
 	if has_version "dev-lang/rust-bin:${RUST_PV}" ; then

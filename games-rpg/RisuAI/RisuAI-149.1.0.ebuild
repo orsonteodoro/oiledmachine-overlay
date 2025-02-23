@@ -9,6 +9,8 @@ EAPI=8
 # U24, rust 1.75.0, llvm 17.0
 # @swc/core, rust 1.77.1, llvm 18.0
 
+ELECTRON_APP_SHARP_PV="0.33.5"
+ELECTRON_APP_VIPS_PV="8.15.3"
 RUST_MAX_VER="1.77.1" # Inclusive
 RUST_MIN_VER="1.77.1" # llvm-18.0, required by @swc/core
 RUST_PV="${RUST_MIN_VER}"
@@ -22,7 +24,6 @@ CPU_FLAGS_X86=(
 )
 TARBALL="${P}.tar.gz"
 NPM_TARBALL="${TARBALL}"
-SHARP_PV="0.33.5"
 VITE_PV="5.4.9"
 WEBKIT_GTK_STABLE=(
 	"2.46"
@@ -761,7 +762,7 @@ VIPS_RDEPEND="
 		>=sys-libs/musl-1.1.24
 	)
 	system-vips? (
-		>=media-libs/vips-8.15.3[cxx,exif,lcms,jpeg,png,svg]
+		>=media-libs/vips-${ELECTRON_APP_VIPS_PV}[cxx,exif,lcms,jpeg,png,svg]
 	)
 "
 RDEPEND+="
@@ -808,7 +809,7 @@ npm_update_lock_audit_post() {
 		}
 		fix_lockfile
 		enpm add -D "esbuild@^0.25.0" --legacy-peer-deps
-		enpm add "sharp@${SHARP_PV}" --legacy-peer-deps
+		enpm add "sharp@${ELECTRON_APP_SHARP_PV}" --legacy-peer-deps
 		fix_lockfile
 	fi
 }
