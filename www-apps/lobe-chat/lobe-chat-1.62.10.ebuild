@@ -197,7 +197,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 +indexdb +openrc postgres systemd +system-vips
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE="
 	!cpu_flags_x86_sse4_2? (
@@ -872,8 +872,13 @@ einfo "LOBECHAT_URI:  ${lobechat_uri}"
 		"${PN}.png" \
 		"Education;ArtificialIntelligence"
 
-	keepdir "/opt/lobe-chat/.next/cache"
-	fowners "${PN}:${PN}" "/opt/lobe-chat/.next/cache"
+	keepdir "/var/cache/${PN}"
+	fowners "${PN}:${PN}" "/var/cache/${PN}"
+
+	keepdir "/opt/lobe-chat/.next"
+	dosym \
+		"/var/cache/${PN}" \
+		"/opt/lobe-chat/.next/cache"
 
 	dhms_end
 }
