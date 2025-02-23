@@ -365,7 +365,7 @@ einfo "PATH:  ${PATH}"
 	# Rebuild sharp without prebuilt vips.
 	# Prebuilt vips is built with sse4.2 which breaks on older processors.
 	# Reference:  https://sharp.pixelplumbing.com/install#prebuilt-binaries
-	electron-app_set_sharp_env # Disabled vendored vips lib
+	electron-app_set_sharp_env
 
 	rust_pkg_setup
 	if has_version "dev-lang/rust-bin:${RUST_PV}" ; then
