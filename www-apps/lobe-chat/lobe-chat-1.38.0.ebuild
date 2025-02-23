@@ -761,6 +761,13 @@ pkg_preinst() {
 
 pkg_postinst() {
 	xdg_pkg_postinst
+einfo
+einfo "The documentation for /etc/${PN}/lobe-chat.conf can be found at"
+einfo
+einfo "https://lobehub.com/docs/self-hosting/advanced/auth"
+einfo "https://lobehub.com/docs/self-hosting/environment-variables/model-provider"
+einfo "https://lobehub.com/docs/self-hosting/advanced/s3"
+einfo
 }
 
 pkg_postrm() {
