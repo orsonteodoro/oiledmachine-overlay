@@ -12,6 +12,9 @@
 # @DESCRIPTION:
 # The node-sharp eclass is used to manage sharp in node packages.
 
+# Security warning, if sharp is not added or built correctly it can cause a
+# crash (aka DoS) during either build time or runtime.
+
 case ${EAPI:-0} in
 	[78]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
