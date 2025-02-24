@@ -253,63 +253,6 @@ einfo
 einfo "To set up per-package environment variables see"
 einfo "https://wiki.gentoo.org/wiki//etc/portage/package.env"
 einfo
-if false ; then
-	if [[ -z "${APP_URL}" ]] ; then
-		export APP_URL="http://localhost:3210"
-ewarn "APP_URL:  ${APP_URL} (user-definable, per-package environment variable)"
-	else
-		export APP_URL
-	fi
-	if [[ -z "${NEXTAUTH_URL}" ]] ; then
-		export NEXTAUTH_URL="http://localhost:3210/api/auth"
-ewarn "NEXTAUTH_URL:  ${NEXTAUTH_URL} (user-definable, per-package environment variable)"
-	else
-		export NEXTAUTH_URL
-	fi
-	if [[ -z "${NEXT_AUTH_SSO_PROVIDERS}" ]] ; then
-# It should be explicit for a reproducible build.
-eerror
-eerror "Missing NEXT_AUTH_SSO_PROVIDERS per-package environment variable.  For"
-eerror "possible values, see"
-eerror
-eerror "  https://lobehub.com/docs/self-hosting/advanced/auth#next-auth"
-eerror "  https://lobehub.com/docs/self-hosting/advanced/auth#advanced-configuration"
-eerror "  https://lobehub.com/docs/self-hosting/advanced/auth/next-auth/github"
-eerror "  https://next-auth.js.org/providers"
-eerror
-eerror "This per-package environment variable is configurable."
-eerror "Ebuild development uses github as the SSO (Single Sign-On) provider."
-eerror
-		die
-	else
-		export NEXT_AUTH_SSO_PROVIDERS
-	fi
-	if [[ -z "${NEXT_AUTH_SECRET}" ]] ; then
-eerror
-eerror "Missing NEXT_AUTH_SECRET per-package environment variable.  To generate"
-eerror "a secret, see"
-eerror
-eerror "  https://lobehub.com/docs/self-hosting/advanced/auth#next-auth"
-eerror
-eerror "This per-package environment variable is configurable."
-eerror
-		die
-	else
-		export NEXT_AUTH_SECRET
-	fi
-	if [[ -z "${AUTH_GITHUB_ID}" ]] ; then
-ewarn
-ewarn "Missing AUTH_GITHUB_ID per-package environment variable."
-ewarn
-ewarn "You may use another provider, but the github provider is the primary"
-ewarn "OAuth provider used for developing this ebuild."
-ewarn
-ewarn "See https://lobehub.com/docs/self-hosting/advanced/auth/next-auth/github"
-ewarn
-	else
-		export AUTH_GITHUB_ID
-	fi
-fi
 }
 
 # Placeholders
