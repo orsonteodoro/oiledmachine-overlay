@@ -174,4 +174,38 @@ node-sharp_npm_lockfile_add_sharp() {
 }
 
 
+# @FUNCTION: node-sharp_yarn_rebuild_sharp
+# @DESCRIPTION:
+# Rebuild sharp with yarn
+node-sharp_yarn_rebuild_sharp() {
+	if [[ "${SHARP_ADD_DEPS:-0}" == "1" ]] ; then
+		eyarn add "node-addon-api" ${NODE_ADDON_API_INSTALL_ARGS[@]}
+		eyarn add "node-gyp" ${NODE_GYP_INSTALL_ARGS[@]}
+	fi
+	export npm_config_build_from_source="true"
+	eyarn add "sharp@${SHARP_PV}" \
+		${YARN_INSTALL_ARGS[@]} \
+		${SHARP_INSTALL_ARGS[@]}
+	unset npm_config_build_from_source
+# TODO:  verify rebuilt.  For an example, see node-sharp_npm_rebuild_sharp.
+}
+
+# @FUNCTION: node-sharp_yarn_lockfile_add_sharp
+# @DESCRIPTION:
+# Add sharp to yarn lockfile
+node-sharp_yarn_lockfile_add_sharp() {
+	if [[ -n "${NODE_ADDON_API_PV}" ]] ; then
+		eyarn add "node-addon-api@${NODE_ADDON_API_PV}" ${YARN_INSTALL_ARGS[@]} ${NODE_ADDON_API_INSTALL_ARGS[@]}
+	else
+		eyarn add "node-addon-api" ${YARN_INSTALL_ARGS[@]} ${NODE_ADDON_API_INSTALL_ARGS[@]}
+	fi
+	if [[ -n "${NODE_GYP_PV}" ]] ; then
+		eyarn add "node-gyp@${NODE_GYP_PV}" ${YARN_INSTALL_ARGS[@]} ${NODE_GYP_INSTALL_ARGS[@]}
+	else
+		eyarn add "node-gyp" ${YARN_INSTALL_ARGS[@]} ${NODE_GYP_INSTALL_ARGS[@]}
+	fi
+	eyarn add "sharp@${SHARP_PV}" ${YARN_INSTALL_ARGS[@]} ${SHARP_INSTALL_ARGS[@]}
+}
+
+
 fi
