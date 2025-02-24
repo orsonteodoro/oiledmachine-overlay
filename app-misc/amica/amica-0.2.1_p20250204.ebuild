@@ -452,7 +452,7 @@ WEBKIT_GTK_STABLE=(
 	"2.28"
 )
 
-inherit cargo desktop edo lcnr npm python-single-r1 rust xdg
+inherit cargo desktop edo lcnr npm python-single-r1 rust node-sharp xdg
 
 KEYWORDS="~amd64 ~arm64"
 SRC_URI="
@@ -662,21 +662,8 @@ RUST_BINDINGS_DEPEND="
 RUST_BINDINGS_BDEPEND="
 	virtual/pkgconfig
 "
-VIPS_RDEPEND="
-	>=net-libs/nodejs-14.15.0
-	elibc_glibc? (
-		>=sys-libs/glibc-2.17
-	)
-	elibc_musl? (
-		>=sys-libs/musl-1.1.24
-	)
-	system-vips? (
-		>=media-libs/vips-${VIPS_PV}[cxx,exif,jpeg]
-	)
-"
 RDEPEND+="
 	${RUST_BINDINGS_DEPEND}
-	${VIPS_RDEPEND}
 	coqui? (
 		$(python_gen_cond_dep '
 			dev-python/coqui-tts[${PYTHON_USEDEP}]
@@ -686,6 +673,9 @@ RDEPEND+="
 	ollama? (
 		app-misc/ollama
 	)
+	system-vips? (
+		>=media-libs/vips-${VIPS_PV}[cxx,exif,jpeg]
+	)
 	whisper-cpp? (
 		app-accessibility/whisper-cpp
 	)
@@ -693,12 +683,8 @@ RDEPEND+="
 DEPEND+="
 	${RDEPEND}
 "
-VIPS_BDEPEND="
-	virtual/pkgconfig
-"
 BDEPEND+="
 	${RUST_BINDINGS_BDEPEND}
-	${VIPS_BDEPEND}
 	=net-libs/nodejs-${NODE_VERSION}*[npm,webassembly(+)]
 	virtual/pkgconfig
 	|| (
@@ -712,7 +698,7 @@ pkg_setup() {
 	npm_pkg_setup
 	export NEXT_TELEMETRY_DISABLED=1
 	python_setup
-	electron-app_set_sharp_env
+	node-sharp_set_sharp_env
 	rust_pkg_setup
 	if has_version "dev-lang/rust-bin:${RUST_PV}" ; then
 		rust_prepend_path "${RUST_PV}" "binary"
@@ -793,7 +779,7 @@ npm_update_lock_install_post() {
 		sed -i -e "s|\"esbuild\": \"^0.24.0\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
 		enpm install "esbuild@^0.25.0" -D		# GHSA-67mh-4wv8-2f99		# ID		# --prefer-offline is broken
 		enpm install "eslint" -D --prefer-offline
-		enpm install "sharp@${SHARP_PV}"
+		node-sharp_npm_lockfile_add_sharp
 	fi
 }
 
@@ -815,6 +801,7 @@ einfo "Unpacking cargo packages"
 	else
 		S="${S_PROJECT}/src-tauri" \
 		_production_unpack
+		node-sharp_npm_rebuild_sharp
 	fi
 }
 
@@ -840,9 +827,6 @@ src_configure() {
 src_compile() {
 	rm -f "${S}/Cargo."* || true
 	npm_hydrate
-
-	# Force rebuild to prevent illegal instruction
-	edo npm rebuild sharp
 
 	if use debug ; then
 		enpm run tauri dev

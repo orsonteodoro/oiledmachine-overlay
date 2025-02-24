@@ -19,8 +19,6 @@ else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="31.3.1" # Cr 126.0.6478.185, node 20.15.1
 fi
-ELECTRON_APP_SHARP_PV="0.32.6"
-ELECTRON_APP_VIPS_PV="8.14.5"
 NPM_AUDIT_FIX=0 # Breaks build
 YARN_AUDIT_FIX=0
 NODE_GYP_PV="9.3.0"
@@ -37,8 +35,10 @@ NPM_INSTALL_ARGS=(
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 )
+SHARP_PV="0.32.6"
+VIPS_PV="8.14.5"
 
-inherit edo electron-app flag-o-matic lcnr optfeature xdg yarn
+inherit edo electron-app flag-o-matic lcnr node-sharp optfeature xdg yarn
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -114,14 +114,14 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=media-libs/vips-${ELECTRON_APP_VIPS_PV}[cxx,png,svg]
+	>=media-libs/vips-${VIPS_PV}[cxx,png,svg]
 	sys-apps/yarn:${YARN_SLOT}
 "
 DOCS=( "README.md" )
 
 pkg_setup() {
 	yarn_pkg_setup
-	electron-app_set_sharp_env
+	node-sharp_set_sharp_env
 }
 
 yarn_unpack_post() {
@@ -150,8 +150,8 @@ ewarn "QA:  Manually modify lockfile to associate @types/node:* with @types/node
 
 		eyarn add "electron@${ELECTRON_APP_ELECTRON_PV}" -D						# Enable for offline cache speed up
 
-		eyarn add "node-gyp@${NODE_GYP_PV}" -D
-		eyarn add "sharp@${ELECTRON_APP_SHARP_PV}"
+		NODE_GYP_INSTALL_ARGS=( "-D" )
+		node-sharp_yarn_lockfile_add_sharp
 
 		sed -i -e "s|node-fetch: \"npm:^1.0.1\"|node-fetch: \"npm:^2.6.7\"|g" "yarn.lock" || die	# CVE-2022-0235, GHSA-r683-j2x4-v87g; DoS, DT, ID; High
 		eyarn add "node-fetch@2.6.7" -D
@@ -182,7 +182,8 @@ src_unpack() {
 		yarn_src_unpack
 	fi
 
-	eyarn add "sharp@${ELECTRON_APP_SHARP_PV}" -D
+	SHARP_INSTALL_ARGS=( "-D" )
+	node-sharp_yarn_rebuild_sharp
 
 	edo mkdirp "icon-build" "build-resources/appx"
 	edo tsx --version
@@ -198,9 +199,6 @@ src_compile() {
 	yarn_hydrate
 	yarn --version || die
 	electron-app_cp_electron
-
-	# Rebuild to prevent segfault
-	eyarn rebuild sharp
 
 	edo electron-vite build
 	edo electron-builder \

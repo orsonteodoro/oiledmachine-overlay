@@ -66,10 +66,10 @@ RUST_MAX_VER="1.71.1" # Inclusive
 RUST_MIN_VER="1.76.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0 for next.js 14.2.8 dependency of @swc/core 1.4.4
 RUST_PV="${RUST_MIN_VER}"
 SERWIST_CHOICE="no-change" # update, remove, no-change
-SHARP_PV="0.32.6"
+SHARP_PV="0.32.6" # Minor version same as Next.js dep, cannot rebuild if not the same
 VIPS_PV="8.15.3"
 
-inherit dhms desktop edo npm pnpm rust xdg
+inherit dhms desktop edo node-sharp npm pnpm rust xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -123,21 +123,8 @@ REQUIRED_USE="
 		systemd
 	)
 "
-VIPS_RDEPEND="
-	>=net-libs/nodejs-14.15.0
-	elibc_glibc? (
-		>=sys-libs/glibc-2.17
-	)
-	elibc_musl? (
-		>=sys-libs/musl-1.1.24
-	)
-	system-vips? (
-		>=media-libs/vips-${VIPS_PV}[cxx,exif,lcms,webp]
-	)
-"
 # xdg-open is from x11-misc/xdg-utils
 RDEPEND+="
-	${VIPS_RDEPEND}
 	acct-group/lobe-chat
 	acct-user/lobe-chat
 	>=app-misc/ca-certificates-20240203
@@ -153,15 +140,14 @@ RDEPEND+="
 	postgres? (
 		>=dev-db/postgresql-16.4
 	)
+	system-vips? (
+		>=media-libs/vips-${VIPS_PV}[cxx,exif,lcms,webp]
+	)
 "
 DEPEND+="
 	${RDEPEND}
 "
-VIPS_BDEPEND="
-	virtual/pkgconfig
-"
 BDEPEND+="
-	${VIPS_BDEPEND}
 	>=sys-apps/pnpm-9.14.4:${PNPM_SLOT}
 	>=sys-apps/npm-10.8.2:${NPM_SLOT}
 	net-libs/nodejs:${NODE_VERSION}[corepack,npm]
@@ -172,22 +158,6 @@ BDEPEND+="
 	)
 "
 DOCS=( "CHANGELOG.md" "README.md" )
-
-# Do not remove function.
-# @FUNCTION: _set_sharp_env
-# @DESCRIPTION:
-# sharp env
-_set_sharp_env() {
-	unset SHARP_IGNORE_GLOBAL_LIBVIPS
-	unset SHARP_FORCE_GLOBAL_LIBVIPS
-	if use system-vips ; then
-einfo "Using system vips for sharp"
-		export SHARP_FORCE_GLOBAL_LIBVIPS="true"
-	else
-einfo "Using vendored vips for sharp"
-		export SHARP_IGNORE_GLOBAL_LIBVIPS="true"
-	fi
-}
 
 setup_cn_mirror_env() {
 	if [[ "${USE_CN_MIRROR:-false}" == "true" ]] ; then
@@ -342,10 +312,7 @@ pkg_setup() {
 einfo "PATH:  ${PATH}"
 	check_virtual_mem
 
-	# Rebuild sharp without prebuilt vips.
-	# Prebuilt vips is built with sse4.2 which breaks on older processors.
-	# Reference:  https://sharp.pixelplumbing.com/install#prebuilt-binaries
-	_set_sharp_env
+	node-sharp_set_sharp_env
 
 	rust_pkg_setup
 	if has_version "dev-lang/rust-bin:${RUST_PV}" ; then
@@ -482,9 +449,9 @@ npm_dedupe_post() {
 #		enpm add "@apidevtools/json-schema-ref-parser@11.2.0" ${NPM_INSTALL_ARGS[@]}		# CVE-2024-29651; DoS, DT, ID; High
 #ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/pnpm-lock.yaml"
 #		enpm add "esbuild@0.25.0" ${NPM_INSTALL_ARGS[@]}					# GHSA-67mh-4wv8-2f99
-		enpm install "node-addon-api" -P ${NPM_INSTALL_ARGS[@]}
-		enpm install "node-gyp" -D ${NPM_INSTALL_ARGS[@]}
-		enpm add "sharp@${SHARP_PV}" ${NPM_INSTALL_ARGS[@]}
+		NODE_ADDON_API_INSTALL_ARGS=( "-P" )
+		NODE_GYP_INSTALL_ARGS=( "-D" )
+		node-sharp_npm_lockfile_add_sharp
 #		pnpm_patch_lockfile
 	fi
 }
@@ -498,7 +465,7 @@ src_unpack() {
 		_npm_setup_offline_cache
 		_pnpm_setup_offline_cache
 		npm_src_unpack
-		enpm add "sharp@${SHARP_PV}" ${NPM_INSTALL_ARGS[@]} $(usex system-vips "--build-from-source" "") --ignore-scripts=false --foreground-scripts --verbose
+		node-sharp_npm_rebuild_sharp
 #		enpm add "svix@1.45.1" ${NPM_INSTALL_ARGS[@]}
 	fi
 }

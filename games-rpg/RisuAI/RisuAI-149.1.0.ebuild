@@ -678,7 +678,7 @@ WEBKIT_GTK_STABLE=(
 	"2.28"
 )
 
-inherit cargo edo electron-app lcnr npm xdg
+inherit cargo edo electron-app lcnr node-sharp npm xdg
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
@@ -755,56 +755,28 @@ TAURI_RDEPEND="
 		dev-lang/rust:${RUST_PV}
 	)
 "
-VIPS_RDEPEND="
-	>=net-libs/nodejs-14.15.0
-	elibc_glibc? (
-		>=sys-libs/glibc-2.17
-	)
-	elibc_musl? (
-		>=sys-libs/musl-1.1.24
-	)
-	system-vips? (
-		>=media-libs/vips-${VIPS_PV}[cxx,exif,lcms,jpeg,png,svg]
-	)
-"
 RDEPEND+="
 	${TAURI_RDEPEND}
 	ollama? (
 		app-misc/ollama
 	)
+	system-vips? (
+		>=media-libs/vips-${VIPS_PV}[cxx,exif,lcms,jpeg,png,svg]
+	)
 "
 DEPEND+="
 	${RDEPEND}
 "
-VIPS_BDEPEND="
-	virtual/pkgconfig
-"
 BDEPEND+="
 	${RUST_BINDINGS_BDEPEND}
-	${VIPS_BDEPEND}
 	net-libs/nodejs:${NODE_VERSION}
 	sys-apps/npm
 "
 
-# @FUNCTION: _set_sharp_env
-# @DESCRIPTION:
-# sharp env
-_set_sharp_env() {
-	unset SHARP_IGNORE_GLOBAL_LIBVIPS
-	unset SHARP_FORCE_GLOBAL_LIBVIPS
-	if use system-vips ; then
-einfo "Using system vips for sharp"
-		export SHARP_FORCE_GLOBAL_LIBVIPS="true"
-	else
-einfo "Using vendored vips for sharp"
-		export SHARP_IGNORE_GLOBAL_LIBVIPS="true"
-	fi
-}
-
 pkg_setup() {
 ewarn "This ebuild is still in development"
 	npm_pkg_setup
-	_set_sharp_env
+	node-sharp_set_sharp_env
 	rust_pkg_setup
 	if has_version "dev-lang/rust-bin:${RUST_PV}" ; then
 		rust_prepend_path "${RUST_PV}" "binary"
@@ -826,7 +798,7 @@ npm_update_lock_audit_post() {
 		}
 		fix_lockfile
 		enpm add -D "esbuild@^0.25.0" --legacy-peer-deps
-		enpm add "sharp@${SHARP_PV}" --legacy-peer-deps
+		node-sharp_npm_lockfile_add_sharp
 		fix_lockfile
 	fi
 }
@@ -907,6 +879,7 @@ eerror
 	unpack ${A}
 #	die
 	npm_src_unpack
+	node-sharp_npm_rebuild_sharp
 
 einfo "Unpacking cargo packages"
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
@@ -1000,9 +973,6 @@ src_compile() {
 	rm -f "${S}/Cargo."{"toml","lock"}
 	npm_hydrate
 	enpm --version
-
-	# Force rebuild to prevent illegal instruction
-	edo npm rebuild sharp
 
 #	enpm install -D "vite@${VITE_PV}" ${NPM_INSTALL_ARGS[@]}
 	enpm run build

@@ -1,0 +1,177 @@
+# Copyright 2019-2025 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2025 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+# @ECLASS: node-sharp.eclass
+# @MAINTAINER:
+# Orson Teodoro <orsonteodoro@hotmail.com>
+# @AUTHOR:
+# Orson Teodoro <orsonteodoro@hotmail.com>
+# @SUPPORTED_EAPIS: 7 8
+# @BLURB: Eclass for the sharp node packages
+# @DESCRIPTION:
+# The node-sharp eclass is used to manage sharp in node packages.
+
+case ${EAPI:-0} in
+	[78]) ;;
+	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
+esac
+
+if [[ -z "${_NODE_SHARP_ECLASS}" ]] ; then
+_NODE_SHARP_ECLASS=1
+
+_node_sharp_set_globals() {
+	if [[ -z "${SHARP_PV}" ]] ; then
+eerror "QA:  SHARP_PV needs to be defined"
+		die
+	fi
+	if [[ -z "${VIPS_PV}" ]] ; then
+eerror "QA:  VIPS_PV needs to be defined"
+		die
+	fi
+	local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
+	if ver_test "${sharp_pv}" -eq "0.33" ; then
+# See https://github.com/lovell/sharp/blob/v0.33.5/docs/install.md#prebuilt-binaries
+		NODE_SHARP_GLIBC_PV="2.31"
+		NODE_SHARP_MUSL_PV="1.2.2"
+		NODE_SHARP_NODEJS_CDEPEND="
+			|| (
+				>=net-libs/nodejs-18.17.0:18
+				>=net-libs/nodejs-20.3.0
+			)
+		"
+		NODE_SHARP_NODE_PV="14.15.0"
+		if [[ "${ARCH}" == "amd64" ]] ; then
+			NODE_SHARP_GLIBC_PV="2.26"
+			NODE_SHARP_MUSL_PV="1.2.2"
+		elif [[ "${ARCH}" == "arm" ]] ; then
+			NODE_SHARP_GLIBC_PV="2.28"
+		elif [[ "${ARCH}" == "arm64" ]] ; then
+			NODE_SHARP_GLIBC_PV="2.26"
+			NODE_SHARP_MUSL_PV="1.2.2"
+		elif [[ "${ARCH}" == "s390x" ]] ; then
+			NODE_SHARP_GLIBC_PV="2.31"
+		fi
+	elif ver_test "${sharp_pv}" -eq "0.32" ; then
+# See https://github.com/lovell/sharp/blob/v0.32.6/docs/install.md#prebuilt-binaries
+		NODE_SHARP_GLIBC_PV="2.27"
+		NODE_SHARP_MUSL_PV="1.1.24"
+		NODE_SHARP_NODE_PV="14.15.0"
+		NODE_SHARP_NODEJS_CDEPEND="
+			>=net-libs/nodejs-14.15.0
+		"
+		if [[ "${ARCH}" == "amd64" ]] ; then
+			NODE_SHARP_GLIBC_PV="2.17"
+			NODE_SHARP_MUSL_PV="1.1.24"
+		elif [[ "${ARCH}" == "arm" ]] ; then
+			NODE_SHARP_GLIBC_PV="2.27"
+		elif [[ "${ARCH}" == "arm64" ]] ; then
+			NODE_SHARP_GLIBC_PV="2.17"
+			NODE_SHARP_MUSL_PV="1.1.24"
+		fi
+	else
+einfo "QA:  Update _node_sharp_set_globals for sharp_pv=${sharp_pv}"
+einfo "sharp_pv=${sharp_pv} is currently not supported."
+		die
+	fi
+}
+_node_sharp_set_globals
+unset -f _node_sharp_set_globals
+
+# See also node-sharp_set_sharp_env().
+if [[ -n "${SHARP_PV}" ]] ; then
+	IUSE+=" +system-vips"
+	if ver_test "${SHARP_PV}" -ge "0.30" ; then
+		IUSE+=" cpu_flags_x86_sse4_2"
+		REQUIRED_USE+="
+			!cpu_flags_x86_sse4_2? (
+				system-vips
+			)
+		"
+	fi
+	NODE_SHARP_CDEPEND+="
+		${NODE_SHARP_NODEJS_CDEPEND}
+		elibc_glibc? (
+			>=sys-libs/glibc-${NODE_SHARP_GLIBC_PV}
+		)
+		elibc_musl? (
+			>=sys-libs/musl-${NODE_SHARP_MUSL_PV}
+		)
+		system-vips? (
+			>=media-libs/vips-${VIPS_PV}
+		)
+	"
+	RDEPEND+="
+		${NODE_SHARP_CDEPEND}
+	"
+	DEPEND+="
+		${NODE_SHARP_CDEPEND}
+	"
+	BDEPEND+="
+		virtual/pkgconfig
+	"
+fi
+
+# @FUNCTION: node-sharp_set_sharp_env
+# @DESCRIPTION:
+# Sets up the sharp build environment variables.
+node-sharp_set_sharp_env() {
+# Rebuild sharp without prebuilt vips.
+# Prebuilt vips is built with sse4.2 which breaks on older processors.
+# Reference:  https://sharp.pixelplumbing.com/install#prebuilt-binaries
+	unset SHARP_IGNORE_GLOBAL_LIBVIPS
+	unset SHARP_FORCE_GLOBAL_LIBVIPS
+	if use system-vips ; then
+einfo "Using system vips for sharp"
+		export SHARP_FORCE_GLOBAL_LIBVIPS="true"
+	else
+einfo "Using vendored vips for sharp"
+		export SHARP_IGNORE_GLOBAL_LIBVIPS="true"
+	fi
+}
+
+# @FUNCTION: node-sharp_npm_rebuild_sharp
+# @DESCRIPTION:
+# Rebuild sharp with npm
+node-sharp_npm_rebuild_sharp() {
+	if [[ "${SHARP_ADD_DEPS:-0}" == "1" ]] ; then
+		enpm add "node-addon-api" ${NODE_ADDON_API_INSTALL_ARGS[@]}
+		enpm add "node-gyp" ${NODE_GYP_INSTALL_ARGS[@]}
+	fi
+	enpm add "sharp@${SHARP_PV}" \
+		${NPM_INSTALL_ARGS[@]} \
+		${SHARP_INSTALL_ARGS[@]} \
+		$(usex system-vips "--build-from-source" "") \
+		--ignore-scripts=false \
+		--foreground-scripts \
+		--verbose
+	if use system-vips ; then
+		grep -q \
+			-e "sharp: Attempting to build" \
+			"${T}/build.log" \
+			|| die "Did not build sharp@${SHARP_PV}"
+		grep -q \
+			-e "compilation terminated" \
+			&& die "Detected error"
+	fi
+}
+
+# @FUNCTION: node-sharp_npm_lockfile_add_sharp
+# @DESCRIPTION:
+# Add sharp to npm lockfile
+node-sharp_npm_lockfile_add_sharp() {
+	if [[ -n "${NODE_ADDON_API_PV}" ]] ; then
+		enpm install "node-addon-api@${NODE_ADDON_API_PV}" ${NPM_INSTALL_ARGS[@]} ${NODE_ADDON_API_INSTALL_ARGS[@]}
+	else
+		enpm install "node-addon-api" ${NPM_INSTALL_ARGS[@]} ${NODE_ADDON_API_INSTALL_ARGS[@]}
+	fi
+	if [[ -n "${NODE_GYP_PV}" ]] ; then
+		enpm install "node-gyp@${NODE_GYP_PV}" ${NPM_INSTALL_ARGS[@]} ${NODE_GYP_INSTALL_ARGS[@]}
+	else
+		enpm install "node-gyp" ${NPM_INSTALL_ARGS[@]} ${NODE_GYP_INSTALL_ARGS[@]}
+	fi
+	enpm add "sharp@${SHARP_PV}" ${NPM_INSTALL_ARGS[@]} ${SHARP_INSTALL_ARGS[@]}
+}
+
+
+fi
