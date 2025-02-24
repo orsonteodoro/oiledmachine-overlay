@@ -1218,10 +1218,10 @@ electron-app_set_sharp_env() {
 	unset SHARP_FORCE_GLOBAL_LIBVIPS
 	if use system-vips ; then
 einfo "Using system vips for sharp"
-		export SHARP_FORCE_GLOBAL_LIBVIPS=1
+		export SHARP_FORCE_GLOBAL_LIBVIPS="true"
 	else
 einfo "Using vendored vips for sharp"
-		export SHARP_IGNORE_GLOBAL_LIBVIPS=1
+		export SHARP_IGNORE_GLOBAL_LIBVIPS="true"
 	fi
 }
 

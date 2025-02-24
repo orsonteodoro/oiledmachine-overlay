@@ -4,13 +4,15 @@
 
 EAPI=8
 
+# This ebuild use npm to unbreak sharp.
+
 # Ebuild using React 19
 # This one may be bugged because the npm dependencies still refer to React 18.
 
 # node_modules/.pnpm/@types+mdx@2.0.13/node_modules/@types/mdx/index.d.ts
 
 #
-# China distro users, fork ebuild and regenerate the pnpm lockfile.
+# China distro users, fork ebuild and regenerate the npm lockfile.
 #
 # Contents of /etc/portage/env/lobe-chat.conf:
 #
@@ -25,7 +27,7 @@ EAPI=8
 #   OILEDMACHINE_OVERLAY_DIR="/usr/local/oiledmachine-overlay"
 #   PATH="${OILEDMACHINE_OVERLAY_DIR}/scripts:${PATH}"
 #   cd "${OILEDMACHINE_OVERLAY_DIR}/www-apps/lobe-chat"
-#   PNPM_UPDATER_VERSIONS="1.62.10" pnpm_updater_update_locks.sh
+#   NPM_UPDATER_VERSIONS="1.62.10" npm_updater_update_locks.sh
 #
 
 # U22, U24, D12
@@ -124,7 +126,7 @@ EAPI=8
 
 # @serwist/next needs pnpm workspaces
 
-# Use `PNPM_UPDATER_VERSIONS="1.62.10" pnpm_updater_update_locks.sh` to update lockfile
+# Use `NPM_UPDATER_VERSIONS="1.62.10" npm_updater_update_locks.sh` to update lockfile
 
 MY_PN="LobeChat"
 
@@ -271,10 +273,10 @@ _set_sharp_env() {
 	unset SHARP_FORCE_GLOBAL_LIBVIPS
 	if use system-vips ; then
 einfo "Using system vips for sharp"
-		export SHARP_FORCE_GLOBAL_LIBVIPS=1
+		export SHARP_FORCE_GLOBAL_LIBVIPS="true"
 	else
 einfo "Using vendored vips for sharp"
-		export SHARP_IGNORE_GLOBAL_LIBVIPS=1
+		export SHARP_IGNORE_GLOBAL_LIBVIPS="true"
 	fi
 }
 
@@ -505,12 +507,12 @@ eerror "Rust ${RUST_PV} required for @swc/core"
 	fi
 }
 
-pnpm_unpack_post() {
+npm_unpack_post() {
 	gen_git_tag "${S}" "v${PV}"
 
 	setup_cn_mirror_env
 
-	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		sed -i \
 			-e "s|bun run|npm run|g" \
 			"${S}/package.json" \
@@ -523,7 +525,7 @@ pnpm_unpack_post() {
 				"pg@8.13.1"
 				"drizzle-orm@0.38.2"
 			)
-			epnpm add ${PNPM_INSTALL_ARGS[@]} ${pkgs[@]}
+			enpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 		fi
 	fi
 
@@ -532,7 +534,7 @@ pnpm_unpack_post() {
 	eapply "${FILESDIR}/${PN}-1.47.17-hardcoded-paths.patch"
 	eapply "${FILESDIR}/${PN}-1.55.4-next-config.patch"
 
-	if [[ "${PNPM_UPDATE_LOCK}" != "1" ]] ; then
+	if [[ "${NPM_UPDATE_LOCK}" != "1" ]] ; then
 		eapply "${FILESDIR}/lobe-chat-1.62.4-pnpm-patches.patch"
 		mkdir -p "${S}/patches" || die
 #		cat "${FILESDIR}/types__mdx-2.0.13.patch" > "${S}/patches/@types__mdx@2.0.13.patch" || die
@@ -553,31 +555,31 @@ pnpm_unpack_post() {
 	elif [[ "${SERWIST_CHOICE}" == "remove" ]] ; then
 		# Remove serwist, missing stable @serwist/utils
 		eapply "${FILESDIR}/${PN}-1.48.3-drop-serwist.patch"
-		if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+		if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 			pkgs=(
 				"@serwist/next"
 				"serwist"
 			)
-			epnpm uninstall ${pkgs[@]}
+			enpm uninstall ${pkgs[@]} ${NPM_UNINSTALL_ARGS[@]}
 
 			pkgs=(
 				"@ducanh2912/next-pwa@^10.2.8"
 			)
-			epnpm add -D ${pkgs[@]}
+			enpm add ${pkgs[@]} -D ${NPM_INSTALL_ARGS[@]}
 		fi
 	else
 		pkgs=(
 			"@serwist/utils@9.0.0-preview.26"
 			"@serwist/next@9.0.0-preview.26"
 		)
-		epnpm add ${pkgs[@]}
+		enpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 
 		pkgs=(
 			"serwist@9.0.0-preview.26"
 		)
-		epnpm add -D ${pkgs[@]}
+		enpm add ${pkgs[@]} -D ${NPM_INSTALL_ARGS[@]}
 	fi
-	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 	# Fixes to unmet peer or missing references
 		pkgs=(
 #			"@langchain/core@0.3.39"
@@ -589,7 +591,7 @@ pnpm_unpack_post() {
 #			"tree-sitter@^0.21.1"
 #			"zustand-utils@1.3.2"	# Breaks build
 		)
-		epnpm add ${pkgs[@]}
+		enpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 		pkgs=(
 			"@octokit/core@4.2.4"
 			"@octokit/plugin-paginate-rest@7.1.2"	# octokit 4
@@ -597,25 +599,25 @@ pnpm_unpack_post() {
 			"stylelint@14.16.1"
 			"stylelint@16.1.0"
 		)
-#		epnpm add -D ${pkgs[@]}
-		epnpm add "segfault-handler"
+#		enpm add ${pkgs[@]} -D ${NPM_INSTALL_ARGS[@]}
+		enpm add "segfault-handler" ${NPM_INSTALL_ARGS[@]}
 	fi
 }
 
-pnpm_audit_post() {
+npm_audit_post() {
 	local pkgs
-	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
+	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 #		sed -i -e "s|\"vitest\": \"~1.2.2\"|\"vitest\": \"1.6.1\"|g" "package.json" || die
 		pkgs=(
 			"vitest@1.6.1"
 		)
-#		epnpm add -D ${pkgs[@]} ${PNPM_INSTALL_ARGS[@]}						# CVE-2025-24964; DoS, DT, ID; Critical
+#		enpm add ${pkgs[@]} -D ${NPM_INSTALL_ARGS[@]}						# CVE-2025-24964; DoS, DT, ID; Critical
 	fi
 }
 
-pnpm_dedupe_post() {
-	if [[ "${PNPM_UPDATE_LOCK}" == "1" ]] ; then
-		patch_lockfile() {
+npm_dedupe_post() {
+	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+		pnpm_patch_lockfile() {
 			sed -i -e "s|'@apidevtools/json-schema-ref-parser': 11.1.0|'@apidevtools/json-schema-ref-parser': 11.2.0|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|esbuild: 0.18.20|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|esbuild: 0.19.12|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die
@@ -626,12 +628,12 @@ pnpm_dedupe_post() {
 			sed -i -e "s|esbuild: '>=0.12 <1'|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die
 		}
 
-#		patch_lockfile
+#		pnpm_patch_lockfile
 ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/pnpm-lock.yaml"
-#		epnpm add "@apidevtools/json-schema-ref-parser@11.2.0" ${PNPM_INSTALL_ARGS[@]}		# CVE-2024-29651; DoS, DT, ID; High
+#		enpm add "@apidevtools/json-schema-ref-parser@11.2.0" ${NPM_INSTALL_ARGS[@]}		# CVE-2024-29651; DoS, DT, ID; High
 ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/pnpm-lock.yaml"
-#		epnpm add "esbuild@0.25.0"								# GHSA-67mh-4wv8-2f99
-		epnpm add "sharp@${SHARP_PV}"
+#		enpm add "esbuild@0.25.0" ${NPM_INSTALL_ARGS[@]}					# GHSA-67mh-4wv8-2f99
+		enpm add "sharp@${SHARP_PV}" ${NPM_INSTALL_ARGS[@]}
 		patch_lockfile
 	fi
 }
@@ -644,9 +646,9 @@ src_unpack() {
 	else
 		_npm_setup_offline_cache
 		_pnpm_setup_offline_cache
-		pnpm_src_unpack
-		epnpm add "sharp@${SHARP_PV}"
-#		epnpm add "svix@1.45.1"
+		npm_src_unpack
+		enpm add "sharp@${SHARP_PV}" ${NPM_INSTALL_ARGS[@]}
+#		enpm add "svix@1.45.1" ${NPM_INSTALL_ARGS[@]}
 	fi
 }
 
