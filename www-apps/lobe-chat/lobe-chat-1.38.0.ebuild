@@ -8,8 +8,6 @@ EAPI=8
 
 # Ebuild using React 18
 
-# node_modules/.pnpm/@types+mdx@2.0.13/node_modules/@types/mdx/index.d.ts
-
 #
 # China distro users, fork ebuild and regenerate the npm lockfile.
 #
