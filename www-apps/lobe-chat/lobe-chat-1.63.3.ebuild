@@ -141,15 +141,18 @@ PNPM_SLOT="9"
 NEXTJS_PV="15.1.7" # 15.1.7 (upstream, to fix process.emit), or 14.2.23 (known working in other projects/ebuilds).  See also next.js issue 69096
 #NEXTJS_PV="14.2.24" # Limit for nuqs
 NPM_AUDIT_FIX_ARGS=(
+	"--prefer-offline"
 	"--legacy-peer-deps"
 )
 NPM_DEDUPE_ARGS=(
 	"--legacy-peer-deps"
 )
 NPM_INSTALL_ARGS=(
+	"--prefer-offline"
 	"--legacy-peer-deps"
 )
 NPM_UNINSTALL_ARGS=(
+	"--prefer-offline"
 	"--legacy-peer-deps"
 )
 PNPM_AUDIT_FIX=0
@@ -510,6 +513,12 @@ eerror "Rust ${RUST_PV} required for @swc/core"
 npm_unpack_post() {
 	gen_git_tag "${S}" "v${PV}"
 
+	local npm_pv=$(npm --version)
+	sed -i \
+		-e "s|npm@11.1.0|npm@${npm_pv}|g" \
+		"package.json" \
+		|| die
+
 	setup_cn_mirror_env
 
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
@@ -634,7 +643,7 @@ ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}
 ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/pnpm-lock.yaml"
 #		enpm add "esbuild@0.25.0" ${NPM_INSTALL_ARGS[@]}					# GHSA-67mh-4wv8-2f99
 		enpm add "sharp@${SHARP_PV}" ${NPM_INSTALL_ARGS[@]}
-		patch_lockfile
+#		pnpm_patch_lockfile
 	fi
 }
 
@@ -647,7 +656,7 @@ src_unpack() {
 		_npm_setup_offline_cache
 		_pnpm_setup_offline_cache
 		npm_src_unpack
-		enpm add "sharp@${SHARP_PV}" ${NPM_INSTALL_ARGS[@]}
+		enpm add "sharp@${SHARP_PV}" ${NPM_INSTALL_ARGS[@]} $(usex system-vips "--build-from-source" "") -ddd
 #		enpm add "svix@1.45.1" ${NPM_INSTALL_ARGS[@]}
 	fi
 }
@@ -658,7 +667,8 @@ src_prepare() {
 
 src_configure() {
 	# Checks to see if toolchain is working or meets requirements
-	epnpm --version
+	edo npm --version
+	edo pnpm --version
 }
 
 attach_segfault_handler() {
@@ -688,7 +698,7 @@ ewarn "Removing ${S}/.next"
 	tsc --version || die
 
 	# Force rebuild to prevent illegal instruction
-	edo npm rebuild sharp
+	edo npm rebuild "sharp" -ddd
 
 	if ver_test "${NEXTJS_PV%%.*}" -lt "15" ; then
 	# tsc will ignore tsconfig.json, so it must be explicit.
@@ -752,7 +762,9 @@ _install_webapp_v1() {
 	doins -r "${S}/.next/standalone/"* # contains node_modules, .next, server.js
 
 	insinto "${_PREFIX}/node_modules"
-	doins -r "${S}/node_modules/.pnpm"
+	doins -r "${S}/node_modules/"*
+
+	insinto "${_PREFIX}"
 	doins "${S}/scripts/serverLauncher/startServer.js"
 
 	if use postgres ; then
@@ -776,9 +788,10 @@ _install_webapp_v2() {
 	mkdir -p "${ED}${_PREFIX}/.next" || die
 	mv "${S}/.next/static" "${ED}${_PREFIX}/.next" || die
 
+	mv "${S}/node_modules" "${ED}${_PREFIX}" || die
+
 	cp -aT "${S}/.next/standalone" "${ED}${_PREFIX}" || die # contains node_modules, .next, server.js
 
-	cp -aT "${S}/node_modules" "${ED}${_PREFIX}/node_modules" || die
 	mv "${S}/scripts/serverLauncher/startServer.js" "${ED}${_PREFIX}" || die
 
 	mv "${S}/src/database/migrations" "${ED}${_PREFIX}" || die
