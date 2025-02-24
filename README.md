@@ -1464,7 +1464,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-plugins/gst-plugins-ximagesrc | X11 video capture stream plugin for GStreamer |
 | media-plugins/gst-plugins-zbar | Bar codes detection in video streams for GStreamer |
 | media-plugins/gst-plugins-zxing | Barcode image scanner plugin using zxing-cpp for GStreamer |
-| media-plugins/openvino-ai-plugins-gimp | GIMP AI plugins with OpenVINO Backend |
+| media-plugins/openvino-ai-plugins-gimp | (WIP) GIMP AI plugins with OpenVINO Backend |
 | media-radio/codecserver | Modular audio codec server |
 | media-radio/csdr | A simple DSP library and command-line tool for Software Defined Radio. |
 | media-radio/digiham | Tools for decoding digital ham communication |
