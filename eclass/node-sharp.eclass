@@ -185,12 +185,20 @@ node-sharp_yarn_rebuild_sharp() {
 		eyarn add "node-addon-api" ${NODE_ADDON_API_INSTALL_ARGS[@]}
 		eyarn add "node-gyp" ${NODE_GYP_INSTALL_ARGS[@]}
 	fi
-	export npm_config_build_from_source="true"
-	eyarn add "sharp@${SHARP_PV}" \
-		${YARN_INSTALL_ARGS[@]} \
-		${SHARP_INSTALL_ARGS[@]}
-	unset npm_config_build_from_source
+	if use system-vips ; then
+		export npm_config_build_from_source="true"
+		eyarn add "sharp@${SHARP_PV}" \
+			${YARN_INSTALL_ARGS[@]} \
+			${SHARP_INSTALL_ARGS[@]}
+		unset npm_config_build_from_source
 # TODO:  verify rebuilt.  For an example, see node-sharp_npm_rebuild_sharp.
+ewarn "QA:  You must manually verify sharp@${SHARP_PV} rebuild correctness"
+	else
+		unset npm_config_build_from_source
+		eyarn add "sharp@${SHARP_PV}" \
+			${YARN_INSTALL_ARGS[@]} \
+			${SHARP_INSTALL_ARGS[@]}
+	fi
 }
 
 # @FUNCTION: node-sharp_yarn_lockfile_add_sharp
