@@ -35,88 +35,6 @@ EAPI=8
 # U22 - node 18 (check - live)
 
 # FIXME:
-#
-# ✓ Linting and checking validity of types    
-#   Collecting page data  ..{
-#  allowDangerousEmailAccountLinking: true,
-#  clientId: undefined,
-#  clientSecret: undefined,
-#  platformType: 'WebsiteApp',
-#  profile: [Function: profile]
-#}
-# ⚠ Using edge runtime on a page currently disables static generation for that page
-# ✓ Collecting page data    
-#   Generating static pages (8/802)  [  ==]TypeError: Failed to parse URL from http://localhost:undefined?key=undefined&method=revalidateTag&args=%5B%5B%5D%5D
-#    at new Request (node:internal/deps/undici/undici:9580:19)
-#    at /var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/.next/server/chunks/65192.js:2:2056
-#    ... 6 lines matching cause stack trace ...
-#    at /var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/node_modules/.pnpm/next@14.2.23_@babel+core@7.26.9_@opentelemetry+api@1.9.0_@playwright+test@1.50.1_react-dom@19_n3tz2fn6v354t4irxbujgxfa5u/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38842
-#    at async e_.execute (/var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/node_modules/.pnpm/next@14.2.23_@babel+core@7.26.9_@opentelemetry+api@1.9.0_@playwright+test@1.50.1_react-dom@19_n3tz2fn6v354t4irxbujgxfa5u/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:27880) {
-#  [cause]: TypeError: Invalid URL
-#      at new URL (node:internal/url:818:25)
-#      at new Request (node:internal/deps/undici/undici:9578:25)
-#      at /var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/.next/server/chunks/65192.js:2:2056
-#      at /var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/.next/server/chunks/65192.js:2:6126
-#      at h.trace (/var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/.next/server/chunks/65192.js:2:17611)
-#      at c (/var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/.next/server/chunks/65192.js:2:5806)
-#      at invokeRequest (/var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/node_modules/.pnpm/next@14.2.23_@babel+core@7.26.9_@opentelemetry+api@1.9.0_@playwright+test@1.50.1_react-dom@19_n3tz2fn6v354t4irxbujgxfa5u/node_modules/next/dist/server/lib/server-ipc/invoke-request.js:17:18)
-#      at invokeIpcMethod (/var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/node_modules/.pnpm/next@14.2.23_@babel+core@7.26.9_@opentelemetry+api@1.9.0_@playwright+test@1.50.1_react-dom@19_n3tz2fn6v354t4irxbujgxfa5u/node_modules/next/dist/server/lib/server-ipc/request-utils.js:45:60)
-#      at IncrementalCache.revalidateTag (/var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/node_modules/.pnpm/next@14.2.23_@babel+core@7.26.9_@opentelemetry+api@1.9.0_@playwright+test@1.50.1_react-dom@19_n3tz2fn6v354t4irxbujgxfa5u/node_modules/next/dist/server/lib/incremental-cache/index.js:174:20)
-#      at /var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/node_modules/.pnpm/next@14.2.23_@babel+core@7.26.9_@opentelemetry+api@1.9.0_@playwright+test@1.50.1_react-dom@19_n3tz2fn6v354t4irxbujgxfa5u/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38842 {
-#    code: 'ERR_INVALID_URL',
-#    input: 'http://localhost:undefined?key=undefined&method=revalidateTag&args=%5B%5B%5D%5D'
-#  }
-#}
-#   Generating static pages (10/802)  [    ]TypeError: Failed to parse URL from http://localhost:undefined?key=undefined&method=revalidateTag&args=%5B%5B%5D%5D
-#    at new Request (node:internal/deps/undici/undici:9580:19)
-#    at /var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/.next/server/chunks/65192.js:2:2056
-#    ... 6 lines matching cause stack trace ...
-#    at /var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/node_modules/.pnpm/next@14.2.23_@babel+core@7.26.9_@opentelemetry+api@1.9.0_@playwright+test@1.50.1_react-dom@19_n3tz2fn6v354t4irxbujgxfa5u/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38842
-#    at async e_.execute (/var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/node_modules/.pnpm/next@14.2.23_@babel+core@7.26.9_@opentelemetry+api@1.9.0_@playwright+test@1.50.1_react-dom@19_n3tz2fn6v354t4irxbujgxfa5u/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:27880) {
-#  [cause]: TypeError: Invalid URL
-#      at new URL (node:internal/url:818:25)
-#      at new Request (node:internal/deps/undici/undici:9578:25)
-#      at /var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/.next/server/chunks/65192.js:2:2056
-#      at /var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/.next/server/chunks/65192.js:2:6126
-#      at h.trace (/var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/.next/server/chunks/65192.js:2:17611)
-#      at c (/var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/.next/server/chunks/65192.js:2:5806)
-#      at invokeRequest (/var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/node_modules/.pnpm/next@14.2.23_@babel+core@7.26.9_@opentelemetry+api@1.9.0_@playwright+test@1.50.1_react-dom@19_n3tz2fn6v354t4irxbujgxfa5u/node_modules/next/dist/server/lib/server-ipc/invoke-request.js:17:18)
-#      at invokeIpcMethod (/var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/node_modules/.pnpm/next@14.2.23_@babel+core@7.26.9_@opentelemetry+api@1.9.0_@playwright+test@1.50.1_react-dom@19_n3tz2fn6v354t4irxbujgxfa5u/node_modules/next/dist/server/lib/server-ipc/request-utils.js:45:60)
-#      at IncrementalCache.revalidateTag (/var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/node_modules/.pnpm/next@14.2.23_@babel+core@7.26.9_@opentelemetry+api@1.9.0_@playwright+test@1.50.1_react-dom@19_n3tz2fn6v354t4irxbujgxfa5u/node_modules/next/dist/server/lib/incremental-cache/index.js:174:20)
-#      at /var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/node_modules/.pnpm/next@14.2.23_@babel+core@7.26.9_@opentelemetry+api@1.9.0_@playwright+test@1.50.1_react-dom@19_n3tz2fn6v354t4irxbujgxfa5u/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:38842 {
-#    code: 'ERR_INVALID_URL',
-#    input: 'http://localhost:undefined?key=undefined&method=revalidateTag&args=%5B%5B%5D%5D'
-#  }
-#}
-# [...]
-#Error getting changelog lists: TypeError: Failed to parse URL from http://localhost:undefined?key=undefined&method=lock&args=%5B%22458c78d7a9eb27dc9351c988985bd97c20e088d465d2c121d1c645693f7bf59f%22%5D
-#    at new Request (node:internal/deps/undici/undici:9580:19)
-#    at /var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/.next/server/chunks/65192.js:2:2056
-#    ... 6 lines matching cause stack trace ...
-#    at /var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/.next/server/chunks/65192.js:2:9681
-#    at runNextTicks (node:internal/process/task_queues:65:5) {
-#  [cause]: TypeError: Invalid URL
-#      at new URL (node:internal/url:818:25)
-#      at new Request (node:internal/deps/undici/undici:9578:25)
-#      at /var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/.next/server/chunks/65192.js:2:2056
-#      at /var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/.next/server/chunks/65192.js:2:6126
-#      at h.trace (/var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/.next/server/chunks/65192.js:2:17611)
-#      at c (/var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/.next/server/chunks/65192.js:2:5806)
-#      at invokeRequest (/var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/node_modules/.pnpm/next@14.2.23_@babel+core@7.26.9_@opentelemetry+api@1.9.0_@playwright+test@1.50.1_react-dom@19_n3tz2fn6v354t4irxbujgxfa5u/node_modules/next/dist/server/lib/server-ipc/invoke-request.js:17:18)
-#      at invokeIpcMethod (/var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/node_modules/.pnpm/next@14.2.23_@babel+core@7.26.9_@opentelemetry+api@1.9.0_@playwright+test@1.50.1_react-dom@19_n3tz2fn6v354t4irxbujgxfa5u/node_modules/next/dist/server/lib/server-ipc/request-utils.js:45:60)
-#      at IncrementalCache.lock (/var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/node_modules/.pnpm/next@14.2.23_@babel+core@7.26.9_@opentelemetry+api@1.9.0_@playwright+test@1.50.1_react-dom@19_n3tz2fn6v354t4irxbujgxfa5u/node_modules/next/dist/server/lib/incremental-cache/index.js:136:19)
-#      at /var/tmp/portage/www-apps/lobe-chat-1.61.5/work/lobe-chat-1.61.5/.next/server/chunks/65192.js:2:9681 {
-#    code: 'ERR_INVALID_URL',
-#    input: 'http://localhost:undefined?key=undefined&method=lock&args=%5B%22458c78d7a9eb27dc9351c988985bd97c20e088d465d2c121d1c645693f7bf59f%22%5D'
-#  }
-#}
-#
-# The port and key are undefined.  The documentation is not helping.  Check the:
-# https://github.com/lobehub/lobe-chat/blob/v1.61.5/docker-compose/local/zitadel/.env.zh-CN.example
-
-
-
-# FIXME:
 # ⨯ Static worker exited with code: null and signal: SIGSEGV
 
 # system-vips is required to avoid the following message
@@ -581,9 +499,9 @@ npm_dedupe_post() {
 		}
 
 #		pnpm_patch_lockfile
-ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/pnpm-lock.yaml"
 #		enpm add "@apidevtools/json-schema-ref-parser@11.2.0" ${NPM_INSTALL_ARGS[@]}		# CVE-2024-29651; DoS, DT, ID; High
-ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/pnpm-lock.yaml"
+#ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/pnpm-lock.yaml"
 #		enpm add "esbuild@0.25.0" ${NPM_INSTALL_ARGS[@]}					# GHSA-67mh-4wv8-2f99
 		enpm add "sharp@${SHARP_PV}" ${NPM_INSTALL_ARGS[@]}
 #		pnpm_patch_lockfile
