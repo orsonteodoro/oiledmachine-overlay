@@ -402,20 +402,20 @@ npm_unpack_post() {
 	eapply "${FILESDIR}/${PN}-1.47.17-hardcoded-paths.patch"
 	eapply "${FILESDIR}/${PN}-1.55.4-next-config.patch"
 
-	if [[ "${NPM_UPDATE_LOCK}" != "1" ]] ; then
-		eapply "${FILESDIR}/lobe-chat-1.62.4-pnpm-patches.patch"
-		mkdir -p "${S}/patches" || die
+#	if [[ "${NPM_UPDATE_LOCK}" != "1" ]] ; then
+#		eapply "${FILESDIR}/lobe-chat-1.62.4-pnpm-patches.patch"
+#		mkdir -p "${S}/patches" || die
 #		cat "${FILESDIR}/types__mdx-2.0.13.patch" > "${S}/patches/@types__mdx@2.0.13.patch" || die
-		cat "${FILESDIR}/pdf-parse-1.1.1.patch" > "${S}/patches/pdf-parse@1.1.1.patch" || die
-	fi
+#		cat "${FILESDIR}/pdf-parse-1.1.1.patch" > "${S}/patches/pdf-parse@1.1.1.patch" || die
+#	fi
 
-	if ver_test "${NEXTJS_PV%%.*}" -lt "15" ; then
-		# Not compatiable with Next.js 14
-		sed -i -e "/webpackMemoryOptimizations/d" "next.config.ts" || die
-		sed -i -e "/hmrRefreshes/d" "next.config.ts" || die
-		sed -i -e "/serverExternalPackages/d" "next.config.ts" || die
-		sed -i -e "/@ts-expect-error/d" "src/features/MobileSwitchLoading/index.tsx" || die
-	fi
+#	if ver_test "${NEXTJS_PV%%.*}" -lt "15" ; then
+#		# Not compatiable with Next.js 14
+#		sed -i -e "/webpackMemoryOptimizations/d" "next.config.ts" || die
+#		sed -i -e "/hmrRefreshes/d" "next.config.ts" || die
+#		sed -i -e "/serverExternalPackages/d" "next.config.ts" || die
+#		sed -i -e "/@ts-expect-error/d" "src/features/MobileSwitchLoading/index.tsx" || die
+#	fi
 
 	local pkgs
 	if [[ "${SERWIST_CHOICE}" == "no-change" ]] ; then
@@ -501,6 +501,12 @@ npm_dedupe_post() {
 #		enpm add "@apidevtools/json-schema-ref-parser@11.2.0" ${NPM_INSTALL_ARGS[@]}		# CVE-2024-29651; DoS, DT, ID; High
 #ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/pnpm-lock.yaml"
 #		enpm add "esbuild@0.25.0" ${NPM_INSTALL_ARGS[@]}					# GHSA-67mh-4wv8-2f99
+		enpm install "node-addon-api" -P ${NPM_INSTALL_ARGS[@]}
+		enpm install "node-gyp" -D ${NPM_INSTALL_ARGS[@]}
+
+	# It can lead to a type of path or package confusion.
+	# When you try to build sharp@0.32.6 with --build-from-source, it builds sharp@0.33.5 instead.
+ewarn "QA:  Remove sharp@0.33.5 from package-lock.json"
 		enpm add "sharp@${SHARP_PV}" ${NPM_INSTALL_ARGS[@]}
 #		pnpm_patch_lockfile
 	fi
@@ -515,9 +521,7 @@ src_unpack() {
 		_npm_setup_offline_cache
 		_pnpm_setup_offline_cache
 		npm_src_unpack
-		enpm install "node-addon-api" -P ${NPM_INSTALL_ARGS[@]}
-		enpm install "node-gyp" -D ${NPM_INSTALL_ARGS[@]}
-		enpm add "sharp@${SHARP_PV}" ${NPM_INSTALL_ARGS[@]} $(usex system-vips "--build-from-source" "") -ddd
+		enpm add "sharp@${SHARP_PV}" ${NPM_INSTALL_ARGS[@]} $(usex system-vips "--build-from-source" "") --ignore-scripts=false --foreground-scripts --verbose
 #		enpm add "svix@1.45.1" ${NPM_INSTALL_ARGS[@]}
 	fi
 }
@@ -559,7 +563,7 @@ ewarn "Removing ${S}/.next"
 	tsc --version || die
 
 	# Force rebuild to prevent illegal instruction
-	#edo npm rebuild "sharp" -ddd
+	#edo npm rebuild "sharp"
 
 	if ver_test "${NEXTJS_PV%%.*}" -lt "15" ; then
 	# tsc will ignore tsconfig.json, so it must be explicit.

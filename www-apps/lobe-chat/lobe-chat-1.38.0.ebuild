@@ -482,6 +482,8 @@ npm_dedupe_post() {
 #		enpm add "@apidevtools/json-schema-ref-parser@11.2.0" ${NPM_INSTALL_ARGS[@]}		# CVE-2024-29651; DoS, DT, ID; High
 #ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/pnpm-lock.yaml"
 #		enpm add "esbuild@0.25.0" ${NPM_INSTALL_ARGS[@]}					# GHSA-67mh-4wv8-2f99
+		enpm install "node-addon-api" -P ${NPM_INSTALL_ARGS[@]}
+		enpm install "node-gyp" -D ${NPM_INSTALL_ARGS[@]}
 		enpm add "sharp@${SHARP_PV}" ${NPM_INSTALL_ARGS[@]}
 #		pnpm_patch_lockfile
 	fi
@@ -496,9 +498,7 @@ src_unpack() {
 		_npm_setup_offline_cache
 		_pnpm_setup_offline_cache
 		npm_src_unpack
-		enpm install "node-addon-api" -P ${NPM_INSTALL_ARGS[@]}
-		enpm install "node-gyp" -D ${NPM_INSTALL_ARGS[@]}
-		enpm add "sharp@${SHARP_PV}" ${NPM_INSTALL_ARGS[@]} $(usex system-vips "--build-from-source" "") -ddd
+		enpm add "sharp@${SHARP_PV}" ${NPM_INSTALL_ARGS[@]} $(usex system-vips "--build-from-source" "") --ignore-scripts=false --foreground-scripts --verbose
 #		enpm add "svix@1.45.1" ${NPM_INSTALL_ARGS[@]}
 	fi
 }
@@ -540,7 +540,7 @@ ewarn "Removing ${S}/.next"
 	tsc --version || die
 
 	# Force rebuild to prevent illegal instruction
-	#edo npm rebuild "sharp" -ddd
+	#edo npm rebuild "sharp"
 
 	edo next build --debug
 	grep -q -e "Next.js build worker exited with code" "${T}/build.log" && die "Detected error"
