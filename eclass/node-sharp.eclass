@@ -15,6 +15,9 @@
 # Security warning, if sharp is not added or built correctly it can cause a
 # crash (aka DoS) during either build time or runtime.
 
+# pnpm rebuild with sharp is not supported.  Switch package to npm for
+# reproducibility.  sharp issue #4304
+
 case ${EAPI:-0} in
 	[78]) ;;
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
@@ -217,6 +220,5 @@ node-sharp_yarn_lockfile_add_sharp() {
 	fi
 	eyarn add "sharp@${SHARP_PV}" ${YARN_INSTALL_ARGS[@]} ${SHARP_INSTALL_ARGS[@]}
 }
-
 
 fi
