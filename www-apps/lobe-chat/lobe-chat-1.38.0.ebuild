@@ -668,6 +668,10 @@ src_install() {
 	docinto "licenses"
 	dodoc "LICENSE"
 
+	newicon \
+		"${S}/public/icons/icon-512x512.png" \
+		"${PN}.png"
+
 	# Include hidden files/dirs with *
 	shopt -s dotglob
 
@@ -716,10 +720,6 @@ einfo "LOBECHAT_URI:  ${lobechat_uri}"
 		"${T}/${PN}" \
 		|| die
 	doexe "${T}/${PN}"
-
-	newicon \
-		"/opt/${PN}/public/icons/icon-512x512.png" \
-		"${PN}.png"
 
 	make_desktop_entry \
 		"${PN}" \
