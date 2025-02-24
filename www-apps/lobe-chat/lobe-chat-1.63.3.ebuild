@@ -656,6 +656,8 @@ src_unpack() {
 		_npm_setup_offline_cache
 		_pnpm_setup_offline_cache
 		npm_src_unpack
+		enpm install "node-addon-api" -P ${NPM_INSTALL_ARGS[@]}
+		enpm install "node-gyp" -D ${NPM_INSTALL_ARGS[@]}
 		enpm add "sharp@${SHARP_PV}" ${NPM_INSTALL_ARGS[@]} $(usex system-vips "--build-from-source" "") -ddd
 #		enpm add "svix@1.45.1" ${NPM_INSTALL_ARGS[@]}
 	fi
