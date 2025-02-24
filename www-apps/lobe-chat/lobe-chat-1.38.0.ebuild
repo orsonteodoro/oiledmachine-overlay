@@ -819,6 +819,6 @@ pkg_postrm() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
-# OILEDMACHINE-OVERLAY-TEST:  FAIL 1.38.0 20240223
+# OILEDMACHINE-OVERLAY-TEST:  Passed 1.38.0 20240224
 # Browser load test: passed
-# Stability: fail, segfault on settings -> system assistant
+# Stability:  passed
