@@ -138,22 +138,6 @@ einfo "Using vendored vips for sharp"
 	fi
 }
 
-# @FUNCTION: node-sharp_remove_offline_flags
-# @DESCRIPTION:
-# Strip npm offline flags
-node-sharp_remove_offline_flags() {
-	local x
-	for x in ${NPM_INSTALL_ARGS[@]} ; do
-		if [[ "${x}" == "--prefer-offline" ]] ; then
-			:
-		elif [[ "${x}" == "--offline" ]] ; then
-			:
-		else
-			echo "${x}"
-		fi
-	done
-}
-
 # @FUNCTION: node-sharp_npm_rebuild_sharp
 # @DESCRIPTION:
 # Rebuild sharp with npm
@@ -167,11 +151,11 @@ node-sharp_npm_rebuild_sharp() {
 		rm -rf "node_modules/@img/sharp"*
 		rm -rf "${HOME}/.cache/node-gyp"
 		rm -rf "node_modules/sharp"
-		export npm_config_build_from_source=1
+		export npm_config_build_from_source="true"
 	fi
 
 	edo npm add "sharp@${SHARP_PV}" \
-		$(node-sharp_remove_offline_flags) \
+		${NPM_INSTALL_ARGS[@]}
 		${SHARP_INSTALL_ARGS[@]} \
 		--ignore-scripts=false \
 		--foreground-scripts \
@@ -237,7 +221,7 @@ node-sharp_yarn_rebuild_sharp() {
 		rm -rf "node_modules/@img/sharp"*
 		rm -rf "${HOME}/.cache/node-gyp"
 		rm -rf "node_modules/sharp"
-		export npm_config_build_from_source=1
+		export npm_config_build_from_source="true"
 
 		edo yarn add "sharp@${SHARP_PV}" \
 			${YARN_INSTALL_ARGS[@]} \
