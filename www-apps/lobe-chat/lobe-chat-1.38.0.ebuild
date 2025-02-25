@@ -66,7 +66,7 @@ RUST_MAX_VER="1.71.1" # Inclusive
 RUST_MIN_VER="1.76.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0 for next.js 14.2.8 dependency of @swc/core 1.4.4
 RUST_PV="${RUST_MIN_VER}"
 SERWIST_CHOICE="no-change" # update, remove, no-change
-SHARP_PV="0.33.5"
+SHARP_PV="0.32.6" # 0.33.5 is bugged
 VIPS_PV="8.15.3"
 
 inherit dhms desktop edo node-sharp npm pnpm rust xdg
