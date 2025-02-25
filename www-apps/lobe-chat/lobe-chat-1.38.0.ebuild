@@ -66,7 +66,7 @@ RUST_MAX_VER="1.71.1" # Inclusive
 RUST_MIN_VER="1.76.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0 for next.js 14.2.8 dependency of @swc/core 1.4.4
 RUST_PV="${RUST_MIN_VER}"
 SERWIST_CHOICE="no-change" # update, remove, no-change
-SHARP_PV="0.32.6" # 0.33.5 is bugged
+SHARP_PV="0.29.3" # 0.32.6, 0.33.5 are bugged
 VIPS_PV="8.15.3"
 
 inherit dhms desktop edo node-sharp npm pnpm rust xdg
@@ -108,7 +108,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 +indexdb +openrc postgres systemd +system-vips
-ebuild_revision_15
+ebuild_revision_16
 "
 REQUIRED_USE="
 	!cpu_flags_x86_sse4_2? (
@@ -729,5 +729,6 @@ pkg_postrm() {
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-TEST:  Passed 1.38.0 20240224
+# OILEDMACHINE-OVERLAY-TEST:  Passed 1.38.0 20240225 with sharp 0.29.3
 # Browser load test: passed
 # Stability:  passed

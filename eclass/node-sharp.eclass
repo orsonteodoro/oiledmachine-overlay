@@ -48,7 +48,6 @@ eerror "QA:  VIPS_PV needs to be defined"
 				>=net-libs/nodejs-20.3.0
 			)
 		"
-		NODE_SHARP_NODE_PV="14.15.0"
 		if [[ "${ARCH}" == "amd64" ]] ; then
 			NODE_SHARP_GLIBC_PV="2.26"
 			NODE_SHARP_MUSL_PV="1.2.2"
@@ -62,9 +61,8 @@ eerror "QA:  VIPS_PV needs to be defined"
 		fi
 	elif ver_test "${sharp_pv}" -eq "0.32" ; then
 # See https://github.com/lovell/sharp/blob/v0.32.6/docs/install.md#prebuilt-binaries
-		NODE_SHARP_GLIBC_PV="2.27"
+		NODE_SHARP_GLIBC_PV="2.28"
 		NODE_SHARP_MUSL_PV="1.1.24"
-		NODE_SHARP_NODE_PV="14.15.0"
 		NODE_SHARP_NODEJS_CDEPEND="
 			>=net-libs/nodejs-14.15.0
 		"
@@ -72,9 +70,25 @@ eerror "QA:  VIPS_PV needs to be defined"
 			NODE_SHARP_GLIBC_PV="2.17"
 			NODE_SHARP_MUSL_PV="1.1.24"
 		elif [[ "${ARCH}" == "arm" ]] ; then
-			NODE_SHARP_GLIBC_PV="2.27"
+			NODE_SHARP_GLIBC_PV="2.28"
 		elif [[ "${ARCH}" == "arm64" ]] ; then
 			NODE_SHARP_GLIBC_PV="2.17"
+			NODE_SHARP_MUSL_PV="1.1.24"
+		fi
+	elif ver_test "${sharp_pv}" -eq "0.29" ; then
+# See https://github.com/lovell/sharp/blob/v0.29.3/docs/install.md#prebuilt-binaries
+		NODE_SHARP_GLIBC_PV="2.29"
+		NODE_SHARP_MUSL_PV="1.1.24"
+		NODE_SHARP_NODEJS_CDEPEND="
+			>=net-libs/nodejs-12.13.0
+		"
+		if [[ "${ARCH}" == "amd64" ]] ; then
+			NODE_SHARP_GLIBC_PV="2.17"
+			NODE_SHARP_MUSL_PV="1.1.24"
+		elif [[ "${ARCH}" == "arm" ]] ; then
+			NODE_SHARP_GLIBC_PV="2.28"
+		elif [[ "${ARCH}" == "arm64" ]] ; then
+			NODE_SHARP_GLIBC_PV="2.29"
 			NODE_SHARP_MUSL_PV="1.1.24"
 		fi
 	else
@@ -167,7 +181,7 @@ node-sharp_npm_rebuild_sharp() {
 			local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
 			if ver_test "${sharp_pv}" -eq "0.33" ; then
 				edo node "install/check"
-			elif ver_test "${sharp_pv}" -eq "0.32" ; then
+			elif ver_test "${sharp_pv}" -lt "0.33" ; then
 	# The --build-from-source is not deterministic.
 	# The sharp install in package.json does short circuit and bypasses native build.
 				edo node "install/can-compile"
@@ -232,7 +246,7 @@ node-sharp_yarn_rebuild_sharp() {
 			local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
 			if ver_test "${sharp_pv}" -eq "0.33" ; then
 				edo node "install/check"
-			elif ver_test "${sharp_pv}" -eq "0.32" ; then
+			elif ver_test "${sharp_pv}" -lt "0.33"  ; then
 	# The --build-from-source is not deterministic.
 	# The sharp install in package.json does short circuit and bypasses native build.
 				edo node "install/can-compile"
