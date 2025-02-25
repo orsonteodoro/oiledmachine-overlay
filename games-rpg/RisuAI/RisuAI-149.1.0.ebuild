@@ -776,7 +776,7 @@ BDEPEND+="
 pkg_setup() {
 ewarn "This ebuild is still in development"
 	npm_pkg_setup
-	node-sharp_set_sharp_env
+	node-sharp_pkg_setup
 	rust_pkg_setup
 	if has_version "dev-lang/rust-bin:${RUST_PV}" ; then
 		rust_prepend_path "${RUST_PV}" "binary"

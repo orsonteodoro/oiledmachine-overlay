@@ -54,8 +54,8 @@ NODE_VERSION=22
 NPM_SLOT="3"
 PNPM_DEDUPE=0 # Still debugging
 PNPM_SLOT="9"
-NEXTJS_PV="15.1.7" # 15.1.7 (upstream, to fix process.emit), or 14.2.23 (known working in other projects/ebuilds).  See also next.js issue 69096
-#NEXTJS_PV="14.2.24" # Limit for nuqs
+#NEXTJS_PV="15.1.7" # 15.1.7 (upstream, to fix process.emit), or 14.2.23 (known working in other projects/ebuilds).  See also next.js issue 69096
+NEXTJS_PV="14.2.24" # Downgraded to avoid crash in sharp
 NPM_AUDIT_FIX_ARGS=(
 	"--prefer-offline"
 	"--legacy-peer-deps"
@@ -76,7 +76,7 @@ RUST_MAX_VER="1.71.1" # Inclusive
 RUST_MIN_VER="1.76.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0 for next.js 14.2.24 dependency of @swc/core 1.4.4
 RUST_PV="${RUST_MIN_VER}"
 SERWIST_CHOICE="no-change" # update, remove, no-change
-SHARP_PV="0.33.3" # Minor version same as Next.js dep, cannot rebuild if not the same
+SHARP_PV="0.32.6" # 0.33.x is bugged
 VIPS_PV="8.15.3"
 
 inherit dhms desktop edo node-sharp npm pnpm rust xdg
@@ -324,7 +324,7 @@ ewarn "This release does not build.  Use 1.38.0 instead."
 einfo "PATH:  ${PATH}"
 	check_virtual_mem
 
-	node-sharp_set_sharp_env
+	node-sharp_pkg_setup
 
 	rust_pkg_setup
 	if has_version "dev-lang/rust-bin:${RUST_PV}" ; then
@@ -485,6 +485,7 @@ src_unpack() {
 		_npm_setup_offline_cache
 		_pnpm_setup_offline_cache
 		npm_src_unpack
+		rm -rf "${S}/node_modules/sharp/src/build"
 		node-sharp_npm_rebuild_sharp
 #		enpm add "svix@1.45.1" ${NPM_INSTALL_ARGS[@]}
 	fi

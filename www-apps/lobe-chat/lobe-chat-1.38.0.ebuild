@@ -66,7 +66,7 @@ RUST_MAX_VER="1.71.1" # Inclusive
 RUST_MIN_VER="1.76.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0 for next.js 14.2.8 dependency of @swc/core 1.4.4
 RUST_PV="${RUST_MIN_VER}"
 SERWIST_CHOICE="no-change" # update, remove, no-change
-SHARP_PV="0.32.6" # Minor version same as Next.js dep, cannot rebuild if not the same
+SHARP_PV="0.33.5"
 VIPS_PV="8.15.3"
 
 inherit dhms desktop edo node-sharp npm pnpm rust xdg
@@ -312,7 +312,7 @@ pkg_setup() {
 einfo "PATH:  ${PATH}"
 	check_virtual_mem
 
-	node-sharp_set_sharp_env
+	node-sharp_pkg_setup
 
 	rust_pkg_setup
 	if has_version "dev-lang/rust-bin:${RUST_PV}" ; then
@@ -465,6 +465,7 @@ src_unpack() {
 		_npm_setup_offline_cache
 		_pnpm_setup_offline_cache
 		npm_src_unpack
+		rm -rf "${S}/node_modules/sharp/src/build"
 		node-sharp_npm_rebuild_sharp
 #		enpm add "svix@1.45.1" ${NPM_INSTALL_ARGS[@]}
 	fi

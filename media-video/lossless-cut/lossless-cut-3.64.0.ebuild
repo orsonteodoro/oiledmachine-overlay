@@ -121,7 +121,7 @@ DOCS=( "README.md" )
 
 pkg_setup() {
 	yarn_pkg_setup
-	node-sharp_set_sharp_env
+	node-sharp_pkg_setup
 }
 
 yarn_unpack_post() {

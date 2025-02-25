@@ -26,6 +26,8 @@ esac
 if [[ -z "${_NODE_SHARP_ECLASS}" ]] ; then
 _NODE_SHARP_ECLASS=1
 
+inherit edo
+
 _node_sharp_set_globals() {
 	if [[ -z "${SHARP_PV}" ]] ; then
 eerror "QA:  SHARP_PV needs to be defined"
@@ -84,7 +86,7 @@ einfo "sharp_pv=${sharp_pv} is currently not supported."
 _node_sharp_set_globals
 unset -f _node_sharp_set_globals
 
-# See also node-sharp_set_sharp_env().
+# See also node-sharp_pkg_setup().
 if [[ -n "${SHARP_PV}" ]] ; then
 	IUSE+=" +system-vips"
 	if ver_test "${SHARP_PV}" -ge "0.30" ; then
@@ -118,10 +120,10 @@ if [[ -n "${SHARP_PV}" ]] ; then
 	"
 fi
 
-# @FUNCTION: node-sharp_set_sharp_env
+# @FUNCTION: node-sharp_pkg_setup
 # @DESCRIPTION:
 # Sets up the sharp build environment variables.
-node-sharp_set_sharp_env() {
+node-sharp_pkg_setup() {
 # Rebuild sharp without prebuilt vips.
 # Prebuilt vips is built with sse4.2 which breaks on older processors.
 # Reference:  https://sharp.pixelplumbing.com/install#prebuilt-binaries
@@ -136,26 +138,68 @@ einfo "Using vendored vips for sharp"
 	fi
 }
 
+# @FUNCTION: node-sharp_remove_offline_flags
+# @DESCRIPTION:
+# Strip npm offline flags
+node-sharp_remove_offline_flags() {
+	local x
+	for x in ${NPM_INSTALL_ARGS[@]} ; do
+		if [[ "${x}" == "--prefer-offline" ]] ; then
+			:
+		elif [[ "${x}" == "--offline" ]] ; then
+			:
+		else
+			echo "${x}"
+		fi
+	done
+}
+
 # @FUNCTION: node-sharp_npm_rebuild_sharp
 # @DESCRIPTION:
 # Rebuild sharp with npm
 node-sharp_npm_rebuild_sharp() {
 	if [[ "${SHARP_ADD_DEPS:-0}" == "1" ]] ; then
-		enpm add "node-addon-api" ${NODE_ADDON_API_INSTALL_ARGS[@]}
-		enpm add "node-gyp" ${NODE_GYP_INSTALL_ARGS[@]}
+		enpm add "node-addon-api" ${NODE_ADDON_API_INSTALL_ARGS[@]} ${NPM_INSTALL_ARGS[@]}
+		enpm add "node-gyp" ${NODE_GYP_INSTALL_ARGS[@]} ${NPM_INSTALL_ARGS[@]}
 	fi
-	enpm add "sharp@${SHARP_PV}" \
-		${NPM_INSTALL_ARGS[@]} \
+
+	if use system-vips ; then
+		rm -rf "node_modules/@img/sharp"*
+		rm -rf "${HOME}/.cache/node-gyp"
+		rm -rf "node_modules/sharp"
+		export npm_config_build_from_source=1
+	fi
+
+	edo npm add "sharp@${SHARP_PV}" \
+		$(node-sharp_remove_offline_flags) \
 		${SHARP_INSTALL_ARGS[@]} \
-		$(usex system-vips "--build-from-source" "") \
 		--ignore-scripts=false \
 		--foreground-scripts \
 		--verbose
+
+	if use system-vips ; then
+		rm -rf "node_modules/sharp/build"
+		pushd "${S}/node_modules/sharp" >/dev/null 2>&1 || die
+			local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
+			if ver_test "${sharp_pv}" -eq "0.33" ; then
+				edo node "install/check"
+			elif ver_test "${sharp_pv}" -eq "0.32" ; then
+	# The --build-from-source is not deterministic.
+	# The sharp install in package.json does short circuit and bypasses native build.
+				edo node "install/can-compile"
+				edo node-gyp rebuild
+				edo node "install/dll-copy"
+			fi
+		popd >/dev/null 2>&1 || die
+	fi
+
+	unset npm_config_build_from_source
+
 	if use system-vips ; then
 		grep -q \
-			-e "sharp: Attempting to build" \
+			-e "SOLINK_MODULE.*sharp-.*.node" \
 			"${T}/build.log" \
-			|| die "Did not build sharp@${SHARP_PV}"
+			|| die "Did not build sharp@${SHARP_PV} with node-gyp"
 		grep -q \
 			-e "compilation terminated" \
 			&& die "Detected error"
@@ -185,20 +229,40 @@ node-sharp_npm_lockfile_add_sharp() {
 # Rebuild sharp with yarn
 node-sharp_yarn_rebuild_sharp() {
 	if [[ "${SHARP_ADD_DEPS:-0}" == "1" ]] ; then
-		eyarn add "node-addon-api" ${NODE_ADDON_API_INSTALL_ARGS[@]}
-		eyarn add "node-gyp" ${NODE_GYP_INSTALL_ARGS[@]}
+		eyarn add "node-addon-api" ${NODE_ADDON_API_INSTALL_ARGS[@]} ${YARN_INSTALL_ARGS[@]}
+		eyarn add "node-gyp" ${NODE_GYP_INSTALL_ARGS[@]} ${YARN_INSTALL_ARGS[@]}
 	fi
+
 	if use system-vips ; then
-		export npm_config_build_from_source="true"
-		eyarn add "sharp@${SHARP_PV}" \
+		rm -rf "node_modules/@img/sharp"*
+		rm -rf "${HOME}/.cache/node-gyp"
+		rm -rf "node_modules/sharp"
+		export npm_config_build_from_source=1
+
+		edo yarn add "sharp@${SHARP_PV}" \
 			${YARN_INSTALL_ARGS[@]} \
 			${SHARP_INSTALL_ARGS[@]}
+
+		rm -rf "node_modules/sharp/build"
+		pushd "${S}/node_modules/sharp" >/dev/null 2>&1 || die
+			local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
+			if ver_test "${sharp_pv}" -eq "0.33" ; then
+				edo node "install/check"
+			elif ver_test "${sharp_pv}" -eq "0.32" ; then
+	# The --build-from-source is not deterministic.
+	# The sharp install in package.json does short circuit and bypasses native build.
+				edo node "install/can-compile"
+				edo node-gyp rebuild
+				edo node "install/dll-copy"
+			fi
+		popd >/dev/null 2>&1 || die
+
 		unset npm_config_build_from_source
 # TODO:  verify rebuilt.  For an example, see node-sharp_npm_rebuild_sharp.
 ewarn "QA:  You must manually verify sharp@${SHARP_PV} rebuild correctness"
 	else
 		unset npm_config_build_from_source
-		eyarn add "sharp@${SHARP_PV}" \
+		edo yarn add "sharp@${SHARP_PV}" \
 			${YARN_INSTALL_ARGS[@]} \
 			${SHARP_INSTALL_ARGS[@]}
 	fi
