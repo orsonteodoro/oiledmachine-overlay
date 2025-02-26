@@ -61,6 +61,7 @@ ebuild_revision_6
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
+		!heic
 		!libde265
 		!x265
 	)
