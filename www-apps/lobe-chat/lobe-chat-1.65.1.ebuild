@@ -302,6 +302,8 @@ ewarn
 
 pkg_setup() {
 ewarn
+ewarn "${CATEGORY}/${PN} build warning."
+ewarn
 ewarn "The kernel or browser OOM manager may inadvertantly prevent access to"
 ewarn "browser tabs after high memory pressure during build time which may"
 ewarn "result in data loss."
