@@ -11,11 +11,14 @@
     <changelog>https://github.com/lobehub/lobe-chat/blob/main/CHANGELOG.md</changelog>
   </upstream>
   <use>
+    <flag name="file-management">
+      Add support for file management.
+    </flag>
     <flag name="indexdb">
-      Store information locally in IndexDB
+      Store information locally in IndexDB.
     </flag>
     <flag name="postgres">
-      Store information server-side in PostgresDB
+      Store information server-side in PostgresDB.
     </flag>
   </use>
 </pkgmetadata>
