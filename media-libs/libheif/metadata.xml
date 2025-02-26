@@ -44,7 +44,7 @@
       Support decoding HEIC images.
     </flag>
     <flag name="rav1e">
-      Support for encoding AVIF with secure memory safe lanugage.
+      Support for encoding AVIF with secure memory safe language.
     </flag>
     <flag name="svt-av1">
       Support for optimized encoding for AVIF images.
