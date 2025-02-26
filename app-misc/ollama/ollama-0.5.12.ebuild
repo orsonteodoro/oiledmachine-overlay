@@ -1429,6 +1429,8 @@ else
 		"github.com/davecgh/go-spew v1.1.1/go.mod"
 		"github.com/dgryski/trifles v0.0.0-20200323201526-dd97f9abfb48"
 		"github.com/dgryski/trifles v0.0.0-20200323201526-dd97f9abfb48/go.mod"
+		"github.com/dlclark/regexp2 v1.11.4"
+		"github.com/dlclark/regexp2 v1.11.4/go.mod"
 		"github.com/emirpasic/gods/v2 v2.0.0-alpha"
 		"github.com/emirpasic/gods/v2 v2.0.0-alpha/go.mod"
 		"github.com/envoyproxy/go-control-plane v0.9.0/go.mod"
@@ -2940,8 +2942,8 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-0.5.11-hardcoded-paths.patch"
-	"${FILESDIR}/${PN}-0.5.7-cmd-changes.patch"
-	"${FILESDIR}/${PN}-0.5.11-custom-cpu-features.patch"
+	"${FILESDIR}/${PN}-0.5.12-cmd-changes.patch"
+	"${FILESDIR}/${PN}-0.5.12-custom-cpu-features.patch"
 	"${FILESDIR}/${PN}-0.5.11-sse42.patch"
 )
 

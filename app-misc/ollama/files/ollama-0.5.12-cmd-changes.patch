@@ -1,6 +1,6 @@
-diff '--color=auto' -urp ollama-0.5.11.orig/cmd/cmd.go ollama-0.5.11/cmd/cmd.go
---- ollama-0.5.11.orig/cmd/cmd.go	2025-02-13 22:38:23.000000000 -0800
-+++ ollama-0.5.11/cmd/cmd.go	2025-02-18 18:27:29.843857093 -0800
+diff '--color=auto' -urp ollama-0.5.12.orig/cmd/cmd.go ollama-0.5.12/cmd/cmd.go
+--- ollama-0.5.12.orig/cmd/cmd.go	2025-02-23 19:13:53.000000000 -0800
++++ ollama-0.5.12/cmd/cmd.go	2025-02-26 12:35:50.696446302 -0800
 @@ -15,9 +15,12 @@ import (
  	"net"
  	"net/http"
@@ -14,7 +14,7 @@ diff '--color=auto' -urp ollama-0.5.11.orig/cmd/cmd.go ollama-0.5.11/cmd/cmd.go
  	"strconv"
  	"strings"
  	"sync/atomic"
-@@ -65,6 +68,2226 @@ func getModelfileName(cmd *cobra.Command
+@@ -65,6 +68,2234 @@ func getModelfileName(cmd *cobra.Command
  	return absName, nil
  }
  
@@ -1250,6 +1250,12 @@ diff '--color=auto' -urp ollama-0.5.11.orig/cmd/cmd.go ollama-0.5.11/cmd/cmd.go
 +	"qwq:32b": "20GB",
 +	"qwq:32b-preview-fp16": "66GB",
 +	"qwq:32b-preview-q8_0": "35GB",
++	"r1-1776:70b": "43GB",
++	"r1-1776:70b-distill-llama-fp16": "141GB",
++	"r1-1776:70b-distill-llama-q8_0": "75GB",
++	"r1-1776:671b": "404GB",
++	"r1-1776:671b-fp16": "1.3TB",
++	"r1-1776:671b-q8_0": "713GB",
 +	"reader-lm:0.5b": "352MB",
 +	"reader-lm:1.5b": "935MB",
 +	"reader-lm:0.5b-q5_1": "419MB",
@@ -1939,6 +1945,7 @@ diff '--color=auto' -urp ollama-0.5.11.orig/cmd/cmd.go ollama-0.5.11/cmd/cmd.go
 +	"qwen2.5": 1,
 +	"qwen2.5-coder": 1,
 +	"qwq": 1,
++	"r1-1776": 1,
 +	"reader-lm": 1,
 +	"reefer/her2": 1,
 +	"reefer/minimonica": 1,
@@ -2049,11 +2056,11 @@ diff '--color=auto' -urp ollama-0.5.11.orig/cmd/cmd.go ollama-0.5.11/cmd/cmd.go
 +	"command-r-plus": "rag tool-use enterprise english french spanish italian german brazilian portuguese japanese korean chinese arabic",
 +	"command-r7b": "tool-use ai-applications for-gpus for-edge-devices reasoning qa coding rag  multilingual english french spanish italian german portuguese japanese korean arabic chinese russian polish turkish vietnamese dutch czech indonesian ukrainian romanian greek hindi hebrew persian",
 +	"dbrx": "coding code-generation math-word-problems general-purpose common-sense",
-+	"deepscaler": "math-word-problems calculus statistics",
++	"deepscaler": "math-word-problems calculus statistics fine-tuned-deepseek-r1-distilled-qwen",
 +	"deepseek-coder": "coding english chinese code-completion fim fill-in-the-middle python",
 +	"deepseek-coder-v2": "coding code-completion code-insertion code-generator",
 +	"deepseek-llm": "bilingual common-sense basic-reasoning trivia chinese english general-knowledge china-alignment china-bias",
-+	"deepseek-r1": "math-word-problems graduate-level-stem general-knowledge calculus statistics china-alignment china-bias",
++	"deepseek-r1": "math-word-problems graduate-level-stem general-knowledge calculus statistics china-alignment china-bias china-censorship",
 +	"deepseek-v2": "bilinugual chinese english common-sense reasoning general-knowledge trivia math-word-problems china-alignment china-bias",
 +	"deepseek-v2:236b": "bilinugual chinese english common-sense reasoning general-knowledge trivia math-word-problems china-alignment china-bias",
 +	"deepseek-v2.5": "chat coding code-generator python common-sense reasoning instruction-following general-knowledge trivia math-word-problems chinese china-alignment china-bias",
@@ -2159,9 +2166,9 @@ diff '--color=auto' -urp ollama-0.5.11.orig/cmd/cmd.go ollama-0.5.11/cmd/cmd.go
 +	"openchat": "math-word-problems",
 +	"opencoder": "coding code-generation multilingual chinese english",
 +	"openhermes": "chat cooking-recipes coding-by-example college-level-response",
-+	"openthinker": "math-word-problems calculus statistics fully-open-sourced",
-+	"openthinker:32b": "math-word-problems calculus statistics fully-open-sourced",
-+	"openthinker:7b": "math-word-problems calculus statistics fully-open-sourced",
++	"openthinker": "math-word-problems calculus statistics fully-open-sourced deepseek-r1-distilled",
++	"openthinker:32b": "math-word-problems calculus statistics fully-open-sourced deepseek-r1-distilled",
++	"openthinker:7b": "math-word-problems calculus statistics fully-open-sourced deepseek-r1-distilled",
 +	"orca-mini": "general-purpose writing-letters",
 +	"orca2": "assistant summaries abstract-reasoning",
 +	"paraphrase-multilingual": "embedding clustering semantic-search",
@@ -2179,6 +2186,7 @@ diff '--color=auto' -urp ollama-0.5.11.orig/cmd/cmd.go ollama-0.5.11/cmd/cmd.go
 +	"qwen2.5:72b": "china-alignment china-bias multilingual chat roleplay general-knowledge math-word-problems college-level-math calculus statistics coding code-generation python parsing json instruction-following chinese english french spanish portuguese german italian russian japanese korean vietnamese thai arabic",
 +	"qwen2.5-coder": "china-alignment china-bias coding code-generation documentation fixing-bugs",
 +	"qwq": "math-word-problems reasoning graduate-level-reasoning graduate-level-stem graduate-level-science biology physics chemistry college-level-math calculus statistics",
++	"r1-1776": "deepseek-r1-with-additional-post-training american-bias american-alignment uncensored general-knowledge math-word-problems calculus statistics reasoning",
 +	"reader-lm": "html-to-markdown",
 +	"reefer/her2": "erotica assistant adult-content ai-girlfriend girlfriend chat",
 +	"reefer/minimonica": "erotica assistant adult-content ai-girlfriend girlfriend chat",
@@ -2241,7 +2249,7 @@ diff '--color=auto' -urp ollama-0.5.11.orig/cmd/cmd.go ollama-0.5.11/cmd/cmd.go
  func CreateHandler(cmd *cobra.Command, args []string) error {
  	p := progress.NewProgress(os.Stderr)
  	defer p.Stop()
-@@ -263,6 +2486,25 @@ func StopHandler(cmd *cobra.Command, arg
+@@ -263,6 +2494,25 @@ func StopHandler(cmd *cobra.Command, arg
  func RunHandler(cmd *cobra.Command, args []string) error {
  	interactive := true
  
@@ -2267,7 +2275,7 @@ diff '--color=auto' -urp ollama-0.5.11.orig/cmd/cmd.go ollama-0.5.11/cmd/cmd.go
  	opts := runOptions{
  		Model:    args[0],
  		WordWrap: os.Getenv("TERM") == "xterm-256color",
-@@ -558,9 +2800,11 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -561,9 +2811,11 @@ func ShowHandler(cmd *cobra.Command, arg
  	modelfile, errModelfile := cmd.Flags().GetBool("modelfile")
  	parameters, errParams := cmd.Flags().GetBool("parameters")
  	system, errSystem := cmd.Flags().GetBool("system")
@@ -2280,7 +2288,7 @@ diff '--color=auto' -urp ollama-0.5.11.orig/cmd/cmd.go ollama-0.5.11/cmd/cmd.go
  		if boolErr != nil {
  			return errors.New("error retrieving flags")
  		}
-@@ -589,13 +2833,300 @@ func ShowHandler(cmd *cobra.Command, arg
+@@ -592,13 +2844,302 @@ func ShowHandler(cmd *cobra.Command, arg
  		showType = "system"
  	}
  
@@ -2486,6 +2494,8 @@ diff '--color=auto' -urp ollama-0.5.11.orig/cmd/cmd.go ollama-0.5.11/cmd/cmd.go
 +		"qwen2.5": "Apache-2.0",
 +		"qwen2.5-coder": "Apache-2.0",
 +		"qwq": "Apache-2.0",
++		"r1-1776": "MIT Apache-2.0",
++		"r1-1776:70b": "MIT LLAMA 3.3 COMMUNITY LICENSE AGREEMENT, Llama 3.3 Acceptable Use Policy",
 +		"reader-lm": "CC-BY-NC-4.0",
 +		"reefer/her2": "META LLAMA 3 COMMUNITY LICENSE AGREEMENT, Meta Llama 3 Acceptable Use Policy,",
 +		"reefer/minimonica": "",
@@ -2582,7 +2592,7 @@ diff '--color=auto' -urp ollama-0.5.11.orig/cmd/cmd.go ollama-0.5.11/cmd/cmd.go
  	}
  
  	req := api.ShowRequest{Name: args[0]}
-@@ -774,6 +3305,142 @@ func PullHandler(cmd *cobra.Command, arg
+@@ -777,6 +3318,142 @@ func PullHandler(cmd *cobra.Command, arg
  	return nil
  }
  
@@ -2725,7 +2735,7 @@ diff '--color=auto' -urp ollama-0.5.11.orig/cmd/cmd.go ollama-0.5.11/cmd/cmd.go
  type generateContextKey string
  
  type runOptions struct {
-@@ -1187,6 +3854,8 @@ func NewCLI() *cobra.Command {
+@@ -1190,6 +3867,8 @@ func NewCLI() *cobra.Command {
  	showCmd.Flags().Bool("parameters", false, "Show parameters of a model")
  	showCmd.Flags().Bool("template", false, "Show template of a model")
  	showCmd.Flags().Bool("system", false, "Show system message of a model")
@@ -2734,7 +2744,7 @@ diff '--color=auto' -urp ollama-0.5.11.orig/cmd/cmd.go ollama-0.5.11/cmd/cmd.go
  
  	runCmd := &cobra.Command{
  		Use:     "run MODEL [PROMPT]",
-@@ -1282,6 +3951,30 @@ func NewCLI() *cobra.Command {
+@@ -1285,6 +3964,30 @@ func NewCLI() *cobra.Command {
  		_ = runner.Execute(args[1:])
  	})
  
@@ -2765,7 +2775,7 @@ diff '--color=auto' -urp ollama-0.5.11.orig/cmd/cmd.go ollama-0.5.11/cmd/cmd.go
  	envVars := envconfig.AsMap()
  
  	envs := []envconfig.EnvVar{envVars["OLLAMA_HOST"]}
-@@ -1298,6 +3991,9 @@ func NewCLI() *cobra.Command {
+@@ -1301,6 +4004,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		serveCmd,
@@ -2775,7 +2785,7 @@ diff '--color=auto' -urp ollama-0.5.11.orig/cmd/cmd.go ollama-0.5.11/cmd/cmd.go
  	} {
  		switch cmd {
  		case runCmd:
-@@ -1339,6 +4035,9 @@ func NewCLI() *cobra.Command {
+@@ -1342,6 +4048,9 @@ func NewCLI() *cobra.Command {
  		copyCmd,
  		deleteCmd,
  		runnerCmd,
@@ -2785,3 +2795,4 @@ diff '--color=auto' -urp ollama-0.5.11.orig/cmd/cmd.go ollama-0.5.11/cmd/cmd.go
  	)
  
  	return rootCmd
+Only in ollama-0.5.12/cmd: cmd.go.orig
