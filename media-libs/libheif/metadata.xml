@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <!-- Distro request:  maintainer-needed -->
+  <!--
+
+  oiledmachine-overlay notes:
+
+  Ebuild forked for patent status.
+
+  -->
+  <use>
+    <flag name="avc">
+      Support for decoding H.264 videos.
+    </flag>
+    <flag name="aom">
+      Support for encoding/decoding AVIF images.
+    </flag>
+    <flag name="dav1d">
+      Support optimized decoding for AVIF images.
+    </flag>
+    <flag name="gdk-pixbuf">
+      Enable the <pkg>x11-libs/gdk-pixbuf</pkg> plugin
+    </flag>
+    <flag name="go">
+      Enable building <pkg>dev-lang/go</pkg> code/examples
+    </flag>
+    <flag name="htj2k">
+      Support lossless JPEG 2000 images.
+    </flag>
+    <flag name="jpeg">
+      Support encoding/decoding JPEG images.
+    </flag>
+    <flag name="jpeg2k">
+      Support encoding/decoding JPEG 2000 images.
+    </flag>
+    <flag name="ffmpeg">
+      Support hardware accelerated decoding of HEIC images.
+    </flag>
+    <flag name="kvazaar">
+      Support encoding HEIC images.
+    </flag>
+    <flag name="libde265">
+      Support decoding HEIC images.
+    </flag>
+    <flag name="rav1e">
+      Support for encoding AVIF with secure memory safe lanugage.
+    </flag>
+    <flag name="svt-av1">
+      Support for optimized encoding for AVIF images.
+    </flag>
+    <flag name="libsharpyuv">
+      Enable sharp edge improvements for RGB to YUV420 conversions for 8-bit
+      images.
+    </flag>
+    <flag name="uvg266">
+      Support encoding VVC images.
+    </flag>
+    <flag name="vvc">
+      Support the VVC image format.
+    </flag>
+    <flag name="vvdec">
+      Support decoding VVC videos.
+    </flag>
+    <flag name="vvenc">
+      Support encoding VVC video.
+    </flag>
+    <flag name="x265">
+      Support for encoding HEIC images
+    </flag>
+
+    <flag name="amf">
+      Support for hardware accelerated decoding for HEIC images
+      using AMF backend for AMD GPUs with FFMPEG.
+    </flag>
+    <flag name="cuda">
+      Support for hardware accelerated decoding for HEIC images
+      using CUDA backend for NVIDIA GPUs with FFMPEG.
+    </flag>
+    <flag name="mmal">
+      Support for hardware accelerated decoding for HEIC images
+      using MMAL backend for Raspberry Pis with FFMPEG.
+    </flag>
+    <flag name="nvdec">
+      Support for hardware accelerated decoding for HEIC images
+      using NVDEC backend for NVIDIA GPUs with FFMPEG.
+    </flag>
+    <flag name="qsv">
+      Support for hardware accelerated decoding for HEIC images
+      using QSV backend for Intel CPUs/IGPs/GPUs with FFMPEG.
+    </flag>
+    <flag name="vaapi">
+      Support for hardware accelerated decoding for HEIC images
+      using VA-API backend with FFMPEG.
+    </flag>
+    <flag name="vdpau">
+      Support for hardware accelerated decoding for HEIC images
+      using VDPAU backend with FFMPEG.
+    </flag>
+    <flag name="vulkan">
+      Support for hardware accelerated decoding for HEIC images
+      using Vulkan backend for GPUs with FFMPEG.
+    </flag>
+  </use>
+  <upstream>
+    <bugs-to>https://github.com/strukturag/libheif/issues</bugs-to>
+    <remote-id type="github">strukturag/libheif</remote-id>
+  </upstream>
+</pkgmetadata>
