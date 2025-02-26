@@ -2357,13 +2357,13 @@ LLM_LICENSES="
 	)
 	ollama_llms_r1-1776? (
 		(
-			MIT
 			Apache-2.0
+			MIT
 		)
 		(
-			MIT
 			llama3_3-LICENSE
 			llama3_3-USE_POLICY.md
+			MIT
 		)
 	)
 	ollama_llms_reader-lm? (
