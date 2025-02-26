@@ -70,30 +70,11 @@ REQUIRED_USE="
 	?? (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
-	avif? (
-		|| (
-			aom
-			dav1d
-		)
-		|| (
-			aom
-			rav1e
-			svt-av1
-		)
-	)
 	cgif? (
 		imagequant
 	)
 	fuzz-testing? (
 		test
-	)
-	heic? (
-		|| (
-			libde265
-		)
-		|| (
-			x265
-		)
 	)
 	imagequant? (
 		png
@@ -114,26 +95,18 @@ PATENT_STATUS_RDEPEND="
 	virtual/patent-status[patent_status_nonfree=]
 	!patent_status_nonfree? (
 		avif? (
-			!media-libs/libde265
-			>=media-libs/libheif-1.12.0[${MULTILIB_USEDEP},aom?,dav1d?,-libde265,rav1e?,svt-av1?,-x265]
+			>=media-libs/libheif-1.12.0[${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
 		)
 		heic? (
-			!media-libs/libde265
-			>=media-libs/libheif-1.12.0[${MULTILIB_USEDEP},aom?,dav1d?,-libde265,rav1e?,svt-av1?,-x265]
+			>=media-libs/libheif-1.12.0[${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
 		)
 	)
 	patent_status_nonfree? (
 		avif? (
-			>=media-libs/libheif-1.12.0[${MULTILIB_USEDEP},aom?,dav1d?,libde265?,rav1e?,svt-av1?,x265?]
-			libde265? (
-				>=media-libs/libde265-1.0.8[${MULTILIB_USEDEP}]
-			)
+			>=media-libs/libheif-1.12.0[${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
 		)
 		heic? (
-			>=media-libs/libheif-1.12.0[${MULTILIB_USEDEP},aom?,dav1d?,libde265?,rav1e?,svt-av1?,x265?]
-			libde265? (
-				>=media-libs/libde265-1.0.8[${MULTILIB_USEDEP}]
-			)
+			>=media-libs/libheif-1.12.0[${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
 		)
 	)
 "
