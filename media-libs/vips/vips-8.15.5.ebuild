@@ -51,11 +51,11 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS_IUSE[@]}
-+analyze +archive +aom avif +cairo +cgif +cxx dav1d debug +deprecated -doxygen
-+examples +exif +fftw +fits fuzz-testing +gif -graphicsmagick -gtk-doc heic
++analyze +archive +aom +avif +cairo +cgif +cxx +dav1d debug +deprecated -doxygen
++examples +exif +fftw +fits fuzz-testing +gif -graphicsmagick -gtk-doc +heic
 +fontconfig +hdr -highway +imagemagick +imagequant -introspection +jpeg
 +jpeg2k -jxl +lcms +libde265 +matio -minimal -nifti +openexr +openslide +orc
-+pangocairo +png +poppler +python -rav1e +ppm -spng +svg svt-av1 test +tiff
++pangocairo +png +poppler +python -rav1e +ppm -spng +svg -svt-av1 test +tiff
 +vala +webp +x265 +zlib
 ebuild_revision_3
 "
