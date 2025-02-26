@@ -301,7 +301,14 @@ ewarn
 }
 
 pkg_setup() {
-ewarn "This release does not build.  Use 1.38.0 instead."
+ewarn
+ewarn "The kernel or browser OOM manager may inadvertantly prevent access to"
+ewarn "browser tabs after high memory pressure during build time which may"
+ewarn "result in data loss."
+ewarn
+ewarn "Save work immediately."
+ewarn
+	sleep 15
 	dhms_start
 	# If a "next" package is found in package.json, this should be added.
 	# Otherwise, the license variable should be updated with additional
