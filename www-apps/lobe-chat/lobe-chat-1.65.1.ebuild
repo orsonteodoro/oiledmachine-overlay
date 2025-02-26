@@ -98,7 +98,9 @@ LICENSE="
 	(
 		all-rights-reserved
 		Apache-2.0
-		custom
+		LobeChat-20240617
+		LobeHub-Privacy-Policy
+		LobeHub-Terms-of-Service
 	)
 "
 # The distro's Apache-2.0 license file does not contain all rights reserved
