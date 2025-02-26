@@ -52,8 +52,8 @@ ${CPU_FLAGS_X86[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS_IUSE[@]}
 +analyze +archive +aom avif +cairo +cgif +cxx dav1d debug +deprecated -doxygen
-+examples +exif +fftw +fits fuzz-testing +gif -graphicsmagick -gtk-doc
-+fontconfig +hdr +heif -highway +imagemagick +imagequant -introspection +jpeg
++examples +exif +fftw +fits fuzz-testing +gif -graphicsmagick -gtk-doc heic
++fontconfig +hdr -highway +imagemagick +imagequant -introspection +jpeg
 +jpeg2k -jxl +lcms +libde265 +matio -minimal -nifti +openexr +openslide +orc
 +pangocairo +png +poppler +python -rav1e +ppm -spng +svg svt-av1 test +tiff
 +vala +webp +x265 +zlib
@@ -65,7 +65,6 @@ PATENT_STATUS_REQUIRED_USE="
 		!x265
 	)
 	avif? (
-		heif
 		|| (
 			dav1d
 			aom
@@ -74,6 +73,14 @@ PATENT_STATUS_REQUIRED_USE="
 			aom
 			svt-av1
 			rav1e
+		)
+	)
+	heic? (
+		|| (
+			libde265
+		)
+		|| (
+			x265
 		)
 	)
 	libde265? (
@@ -113,13 +120,23 @@ REQUIRED_USE="
 PATENT_STATUS_RDEPEND="
 	virtual/patent-status[patent_status_nonfree=]
 	!patent_status_nonfree? (
-		heif? (
+		avif? (
+			!media-libs/libde265
+			>=media-libs/libheif-1.12.0[${MULTILIB_USEDEP},aom?,dav1d?,-libde265,rav1e?,svt-av1?,-x265]
+		)
+		heic? (
 			!media-libs/libde265
 			>=media-libs/libheif-1.12.0[${MULTILIB_USEDEP},aom?,dav1d?,-libde265,rav1e?,svt-av1?,-x265]
 		)
 	)
 	patent_status_nonfree? (
-		heif? (
+		avif? (
+			>=media-libs/libheif-1.12.0[${MULTILIB_USEDEP},aom?,dav1d?,libde265?,rav1e?,svt-av1?,x265?]
+			libde265? (
+				>=media-libs/libde265-1.0.8[${MULTILIB_USEDEP}]
+			)
+		)
+		heic? (
 			>=media-libs/libheif-1.12.0[${MULTILIB_USEDEP},aom?,dav1d?,libde265?,rav1e?,svt-av1?,x265?]
 			libde265? (
 				>=media-libs/libde265-1.0.8[${MULTILIB_USEDEP}]
@@ -590,7 +607,6 @@ ewarn "Please use the dev-cpp/highway::oiledmachine-overlay ebuild instead."
 		$(meson_feature exif)
 		$(meson_feature fftw)
 		$(meson_feature fontconfig)
-		$(meson_feature heif)
 #		$(meson_feature heif-module)
 		$(meson_feature imagequant)
 		$(meson_feature highway)
@@ -632,6 +648,17 @@ ewarn "Please use the dev-cpp/highway::oiledmachine-overlay ebuild instead."
 		$(meson_use vala vapi)
 		$(usex nifti '-Dnifti-prefix-dir=/usr' '')
 	)
+
+	if use avif || use heic ; then
+		emesonargs+=(
+			-Dheif=enabled
+		)
+	else
+		emesonargs+=(
+			-Dheif=disabled
+		)
+	fi
+
 	if use imagemagick ; then
 		emesonargs+=(
 			-Dmagick-package="MagickCore"

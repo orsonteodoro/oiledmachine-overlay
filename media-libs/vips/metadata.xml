@@ -43,6 +43,9 @@
     <flag name="exif">
       Enables support for saving and loading JPEG and HEIF EXIF image metadata.
     </flag>
+    <flag name="heic">
+      Add support for HEIC images.
+    </flag>
     <flag name="fftw">
       Enables image transform operations with FFTW.
     </flag>
@@ -91,7 +94,7 @@
       Enables import and export of JPEG images.
     </flag>
     <flag name="libde265">
-      Enables HEIF encoding.
+      Enables HEIF decoding.
     </flag>
     <flag name="lcms">
       Enables ICC profile support.
