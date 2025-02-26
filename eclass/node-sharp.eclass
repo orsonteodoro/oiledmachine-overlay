@@ -75,6 +75,22 @@ eerror "QA:  VIPS_PV needs to be defined"
 			NODE_SHARP_GLIBC_PV="2.17"
 			NODE_SHARP_MUSL_PV="1.1.24"
 		fi
+	elif ver_test "${sharp_pv}" -eq "0.30" ; then
+# See https://github.com/lovell/sharp/blob/v0.30.7/docs/install.md#prebuilt-binaries
+		NODE_SHARP_GLIBC_PV="2.28"
+		NODE_SHARP_MUSL_PV="1.1.24"
+		NODE_SHARP_NODEJS_CDEPEND="
+			>=net-libs/nodejs-12.13.0
+		"
+		if [[ "${ARCH}" == "amd64" ]] ; then
+			NODE_SHARP_GLIBC_PV="2.17"
+			NODE_SHARP_MUSL_PV="1.1.24"
+		elif [[ "${ARCH}" == "arm" ]] ; then
+			NODE_SHARP_GLIBC_PV="2.28"
+		elif [[ "${ARCH}" == "arm64" ]] ; then
+			NODE_SHARP_GLIBC_PV="2.17"
+			NODE_SHARP_MUSL_PV="1.1.24"
+		fi
 	elif ver_test "${sharp_pv}" -eq "0.29" ; then
 # See https://github.com/lovell/sharp/blob/v0.29.3/docs/install.md#prebuilt-binaries
 		NODE_SHARP_GLIBC_PV="2.29"

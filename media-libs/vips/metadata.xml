@@ -19,14 +19,20 @@
       Enables support for reading Analyze 7.5 file format used in biomedical
       imaging.
     </flag>
+    <flag name="avif">
+      Add support for AVIF images.
+    </flag>
     <flag name="aom">
-      Enables AVIF encoding.
+      Enables AVIF encoding or decoding.
     </flag>
     <flag name="cairo">
       Enables displaying of PDF.
     </flag>
     <flag name="cxx">
       Enables the creation of C++ bindings.
+    </flag>
+    <flag name="dav1d">
+      Enables AVIF decoding.
     </flag>
     <flag name="debug">
       Enables debug
@@ -136,6 +142,9 @@
     </flag>
     <flag name="static-libs">
       Builds static libraries
+    </flag>
+    <flag name="svt-av1">
+      Enables AVIF encoding.
     </flag>
     <flag name="svg">
       Enables SVG vector images import.

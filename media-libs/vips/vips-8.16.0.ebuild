@@ -51,12 +51,12 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS_IUSE[@]}
-+analyze +archive +aom +cairo +cgif +cxx debug +deprecated -doxygen +examples
-+exif +fftw +fits fuzz-testing +gif -graphicsmagick -gtk-doc +fontconfig
-+hdr +heif -highway +imagemagick +imagequant -introspection +jpeg +jpeg2k +jxl
-+lcms +libde265 +matio -minimal -nifti +openexr +openslide +orc +pangocairo +png
-+poppler +python -rav1e +ppm -spng +svg test +tiff +vala +webp +x265
-+zlib
++analyze +archive +aom avif +cairo +cgif +cxx dav1d debug +deprecated -doxygen
++examples +exif +fftw +fits fuzz-testing +gif -graphicsmagick -gtk-doc
++fontconfig +hdr +heif -highway +imagemagick +imagequant -introspection +jpeg
++jpeg2k +jxl +lcms +libde265 +matio -minimal -nifti +openexr +openslide +orc
++pangocairo +png +poppler +python -rav1e +ppm -spng +svg svt-av1 test +tiff
++vala +webp +x265 +zlib
 ebuild_revision_6
 "
 PATENT_STATUS_REQUIRED_USE="
@@ -92,6 +92,18 @@ REQUIRED_USE="
 	svg? (
 		cairo
 	)
+	avif? (
+		heif
+		|| (
+			dav1d
+			aom
+		)
+		|| (
+			aom
+			svt-av1
+			rav1e
+		)
+	)
 	test? (
 		|| (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
@@ -103,12 +115,12 @@ PATENT_STATUS_RDEPEND="
 	!patent_status_nonfree? (
 		heif? (
 			!media-libs/libde265
-			>=media-libs/libheif-1.12.0[${MULTILIB_USEDEP},aom?,-libde265,rav1e?,-x265]
+			>=media-libs/libheif-1.12.0[${MULTILIB_USEDEP},aom?,dav1d?,-libde265,rav1e?,svt-av1?,-x265]
 		)
 	)
 	patent_status_nonfree? (
 		heif? (
-			>=media-libs/libheif-1.12.0[${MULTILIB_USEDEP},aom?,libde265?,rav1e?,x265?]
+			>=media-libs/libheif-1.12.0[${MULTILIB_USEDEP},aom?,dav1d?,libde265?,rav1e?,svt-av1?,x265?]
 			libde265? (
 				>=media-libs/libde265-1.0.8[${MULTILIB_USEDEP}]
 			)
