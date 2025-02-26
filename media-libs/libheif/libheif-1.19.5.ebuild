@@ -215,7 +215,7 @@ multilib_src_configure() {
 		-DWITH_SvtEnc=$(usex svt-av1)
 		-DWITH_UVG266_ENCODER=$(usex uvg266)
 		-DWITH_VVENC=$(usex vvenc)
-		-DWITH_VVDEC=$(usex vvdec)
+		-DWITH_VVDEC=$(usex vvc)
 		-DWITH_X265=$(usex x265)
 	)
 
