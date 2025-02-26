@@ -31,9 +31,6 @@
     <flag name="cxx">
       Enables the creation of C++ bindings.
     </flag>
-    <flag name="dav1d">
-      Enables optimized AVIF decoding.
-    </flag>
     <flag name="debug">
       Enables debug
     </flag>
@@ -93,9 +90,6 @@
     <flag name="jpeg">
       Enables import and export of JPEG images.
     </flag>
-    <flag name="libde265">
-      Enables HEIF decoding.
-    </flag>
     <flag name="lcms">
       Enables ICC profile support.
     </flag>
@@ -137,17 +131,11 @@
     <flag name="python">
       Enables the creation of Python bindings.
     </flag>
-    <flag name="rav1e">
-      Enables AVIF encoding using the secure memory safe implementation.
-    </flag>
     <flag name="spng">
       Enables use of the faster libspng for reading or loading.
     </flag>
     <flag name="static-libs">
       Builds static libraries
-    </flag>
-    <flag name="svt-av1">
-      Enables AVIF encoding.
     </flag>
     <flag name="svg">
       Enables SVG vector images import.
@@ -160,9 +148,6 @@
     </flag>
     <flag name="webp">
       Enables importing and exporting of WebP images.
-    </flag>
-    <flag name="x265">
-      Enables HEIF encoding.
     </flag>
     <flag name="zlib">
       Enables SVGZ, or compressed SVG files.
