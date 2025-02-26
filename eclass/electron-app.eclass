@@ -760,35 +760,6 @@ elif [[ -n "${ELECTRON_APP_REACT_NATIVE_PV}" ]] && ( \
 	"
 fi
 
-# See also electron-set_sharp_env().
-if [[ -n "${ELECTRON_APP_SHARP_PV}" ]] ; then
-	ELECTRON_APP_VIPS_PV=${ELECTRON_APP_VIPS_PV:-"8.14.5"}
-	IUSE+=" +system-vips"
-	if ver_test "${ELECTRON_APP_SHARP_PV}" -ge "0.30" ; then
-		IUSE+=" cpu_flags_x86_sse4_2"
-		REQUIRED_USE+="
-			!cpu_flags_x86_sse4_2? (
-				system-vips
-			)
-		"
-	fi
-	COMMON_DEPEND+="
-		>=net-libs/nodejs-14.15.0
-		elibc_glibc? (
-			>=sys-libs/glibc-2.17
-		)
-		elibc_musl? (
-			>=sys-libs/musl-1.1.24
-		)
-		system-vips? (
-			>=media-libs/vips-${ELECTRON_APP_VIPS_PV}
-		)
-	"
-	BDEPEND+="
-		virtual/pkgconfig
-	"
-fi
-
 # See https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/node
 # in the v13/index.d.ts, where v13 is a particular node version.
 # For @types/node
@@ -1208,21 +1179,6 @@ electron-app_get_electron_platarch_args() {
 		)
 	fi
 	echo ${args[@]}
-}
-
-# @FUNCTION: electron-app_set_sharp_env
-# @DESCRIPTION:
-# sharp env
-electron-app_set_sharp_env() {
-	unset SHARP_IGNORE_GLOBAL_LIBVIPS
-	unset SHARP_FORCE_GLOBAL_LIBVIPS
-	if use system-vips ; then
-einfo "Using system vips for sharp"
-		export SHARP_FORCE_GLOBAL_LIBVIPS="true"
-	else
-einfo "Using vendored vips for sharp"
-		export SHARP_IGNORE_GLOBAL_LIBVIPS="true"
-	fi
 }
 
 # @FUNCTION: electron-app_set_sandbox_suid
