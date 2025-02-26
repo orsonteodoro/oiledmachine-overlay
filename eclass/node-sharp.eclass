@@ -168,8 +168,8 @@ node-sharp_npm_rebuild_sharp() {
 		export npm_config_build_from_source="true"
 	fi
 
-	edo npm add "sharp@${SHARP_PV}" \
-		${NPM_INSTALL_ARGS[@]}
+	enpm add "sharp@${SHARP_PV}" \
+		${NPM_INSTALL_ARGS[@]} \
 		${SHARP_INSTALL_ARGS[@]} \
 		--ignore-scripts=false \
 		--foreground-scripts \
@@ -237,7 +237,7 @@ node-sharp_yarn_rebuild_sharp() {
 		rm -rf "node_modules/sharp"
 		export npm_config_build_from_source="true"
 
-		edo yarn add "sharp@${SHARP_PV}" \
+		eyarn add "sharp@${SHARP_PV}" \
 			${YARN_INSTALL_ARGS[@]} \
 			${SHARP_INSTALL_ARGS[@]}
 
@@ -260,7 +260,7 @@ node-sharp_yarn_rebuild_sharp() {
 ewarn "QA:  You must manually verify sharp@${SHARP_PV} rebuild correctness"
 	else
 		unset npm_config_build_from_source
-		edo yarn add "sharp@${SHARP_PV}" \
+		eyarn add "sharp@${SHARP_PV}" \
 			${YARN_INSTALL_ARGS[@]} \
 			${SHARP_INSTALL_ARGS[@]}
 	fi
