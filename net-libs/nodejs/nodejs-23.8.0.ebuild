@@ -734,9 +734,9 @@ ewarn
 ewarn "Use --max-old-space-size=4096 or --max-old-space-size=8192 to"
 ewarn "NODE_OPTIONS environment variable if out of memory (OOM)."
 ewarn
-#	if use kernel_linux && linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
-#		myconf+=( --v8-enable-hugepage )
-#	fi
+	if use kernel_linux && linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
+		myconf+=( --v8-enable-hugepage )
+	fi
 	set_jit_level
 
 	local myarch
