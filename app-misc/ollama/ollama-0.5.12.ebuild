@@ -184,7 +184,7 @@ nous-hermes2-mixtral nqduc-gemsura nqduc-mixsura nqduc-mixsura-sft nuextract olm
 open-orca-platypus2 openchat opencoder openhermes openthinker orca-mini
 orca2 paraphrase-multilingual partai-dorna-llama3 phi phi3 phi3.5 phi4
 phind-codellama qwen qwen2
-qwen2-math qwen2.5 qwen2.5-coder qwq reader-lm reefer-her2 reefer-minimonica reefer-monica
+qwen2-math qwen2.5 qwen2.5-coder qwq r1-1776 reader-lm reefer-her2 reefer-minimonica reefer-monica
 reflection
 rfc-whiterabbitneo
 rouge-replete-coder-qwen2-1.5b
@@ -2354,6 +2354,17 @@ LLM_LICENSES="
 	)
 	ollama_llms_qwq? (
 		Apache-2.0
+	)
+	ollama_llms_r1-1776? (
+		(
+			MIT
+			Apache-2.0
+		)
+		(
+			MIT
+			llama3_3-LICENSE
+			llama3_3-USE_POLICY.md
+		)
 	)
 	ollama_llms_reader-lm? (
 		CC-BY-NC-4.0
