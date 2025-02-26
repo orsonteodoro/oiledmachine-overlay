@@ -219,16 +219,16 @@ multilib_src_configure() {
 		-DWITH_X265=$(usex x265)
 	)
 
-	if use jpeg2k ; then
-		mycmakeargs+=(
-			-DWITH_OpenJPEG_DECODER="true"
-			-DWITH_OpenJPEG_ENCODER="true"
-		)
-	fi
 	if use htj2k ; then
 		mycmakeargs+=(
 			-DWITH_OpenJPEG_DECODER="true"
 			-DWITH_OPENJPH_ENCODER="true"
+		)
+	fi
+	if use jpeg2k ; then
+		mycmakeargs+=(
+			-DWITH_OpenJPEG_DECODER="true"
+			-DWITH_OpenJPEG_ENCODER="true"
 		)
 	fi
 
