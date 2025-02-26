@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# This ebuild use npm to unbreak sharp.
+# This ebuild uses npm to unbreak sharp.
 
 # Ebuild using React 18
 
@@ -62,11 +62,11 @@ NPM_UNINSTALL_ARGS=(
 	"--legacy-peer-deps"
 )
 PNPM_AUDIT_FIX=0
-RUST_MAX_VER="1.71.1" # Inclusive
+mRUST_MAX_VER="1.71.1" # Inclusive
 RUST_MIN_VER="1.76.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0 for next.js 14.2.8 dependency of @swc/core 1.4.4
 RUST_PV="${RUST_MIN_VER}"
 SERWIST_CHOICE="no-change" # update, remove, no-change
-SHARP_PV="0.29.3" # 0.32.6, 0.33.5 are bugged
+SHARP_PV="0.29.3" # 0.32.6, 0.33.5 both crash during runtime
 VIPS_PV="8.15.3"
 
 inherit dhms desktop edo node-sharp npm pnpm rust xdg
@@ -108,7 +108,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 +indexdb +openrc postgres systemd +system-vips
-ebuild_revision_16
+ebuild_revision_17
 "
 REQUIRED_USE="
 	!cpu_flags_x86_sse4_2? (
@@ -416,7 +416,7 @@ npm_unpack_post() {
 			"stylelint@16.1.0"
 		)
 #		enpm add ${pkgs[@]} -D ${NPM_INSTALL_ARGS[@]}
-		enpm add "segfault-handler" ${NPM_INSTALL_ARGS[@]}
+#		enpm add "segfault-handler" ${NPM_INSTALL_ARGS[@]}
 	fi
 }
 
@@ -510,7 +510,7 @@ ewarn "Removing ${S}/.next"
 	# Force rebuild to prevent illegal instruction
 	#edo npm rebuild "sharp"
 
-	edo next build --debug
+	edo next build #--debug
 	grep -q -e "Next.js build worker exited with code" "${T}/build.log" && die "Detected error"
 	grep -q -e "Failed to load next.config.js" "${T}/build.log" && die "Detected error"
 	edo npm run build-sitemap
@@ -530,7 +530,7 @@ eerror "Build failure.  Missing ${S}/.next/standalone/server.js"
 
 	# Change hardcoded paths
 	sed -i -e "s|${S}|/opt/${PN}|g" $(grep -l -r -e "${S}" "${S}/.next") || die
-	attach_segfault_handler
+	#attach_segfault_handler
 }
 
 # Slow

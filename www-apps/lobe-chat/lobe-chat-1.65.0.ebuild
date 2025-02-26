@@ -4,33 +4,7 @@
 
 EAPI=8
 
-# FIXME:
-# With Sharp 0.29.3:
-# [rewrite] / -> http://127.0.0.1:3210/en-US__0__dark
-# [rewrite] /chat -> http://127.0.0.1:3210/en-US__0__dark/chat
-# [rewrite] /files -> http://127.0.0.1:3210/en-US__0__dark/files
-# [rewrite] /discover -> http://127.0.0.1:3210/en-US__0__dark/discover
-# [rewrite] /profile -> http://127.0.0.1:3210/en-US__0__dark/profile
-# [rewrite] /settings/common -> http://127.0.0.1:3210/en-US__0__dark/settings/common
-# [rewrite] /changelog/modal -> http://127.0.0.1:3210/en-US__0__dark/changelog/modal
-# [rewrite] /discover/assistant/crontab-generate -> http://127.0.0.1:3210/en-US__0__dark/discover/assistant/crontab-generate
-# [rewrite] /discover/assistant/xiao-zhi-french-translation-asst-v-1 -> http://127.0.0.1:3210/en-US__0__dark/discover/assistant/xiao-zhi-french-translation-asst-v-1
-# [rewrite] /discover/assistant/bad-language-helper -> http://127.0.0.1:3210/en-US__0__dark/discover/assistant/bad-language-helper
-# [rewrite] /discover/assistant/fate-researcher -> http://127.0.0.1:3210/en-US__0__dark/discover/assistant/fate-researcher
-# [rewrite] /settings/system-agent -> http://127.0.0.1:3210/en-US__0__dark/settings/system-agent
-# [rewrite] /settings/llm -> http://127.0.0.1:3210/en-US__0__dark/settings/llm
-# [rewrite] /settings/tts -> http://127.0.0.1:3210/en-US__0__dark/settings/tts
-# [rewrite] /settings/agent -> http://127.0.0.1:3210/en-US__0__dark/settings/agent
-# [rewrite] /settings/about -> http://127.0.0.1:3210/en-US__0__dark/settings/about
-# PID 32279 received SIGSEGV for address: 0x32
-# /opt/lobe-chat/node_modules/segfault-handler/build/Release/segfault-handler.node(+0x27fe) [0x7fbbe0e467fe]
-# /lib64/libc.so.6(+0x3df40) [0x7fbbe07d4f40]
-# /opt/lobe-chat/node_modules/next/node_modules/sharp/src/build/Release/sharp-linux-x64.node(_Z6formatRKN4Napi12CallbackInfoE+0x98b) [0x7fbbc59ef95b]
-# /opt/lobe-chat/node_modules/next/node_modules/sharp/src/build/Release/sharp-linux-x64.node(_ZN4Napi7details12CallbackDataIPFNS_5ValueERKNS_12CallbackInfoEES2_E7WrapperEP10napi_env__P20napi_callback_info__+0xcc) [0x7fbbc59f0dbc]
-# next-server (v15.1.7)(+0xe9692d) [0x55769229692d]
-# [0x557632f8f6e2]
-
-# This ebuild use npm to unbreak sharp.
+# This ebuild uses npm to unbreak sharp.
 
 # Ebuild using React 19
 
@@ -92,7 +66,7 @@ RUST_MAX_VER="1.71.1" # Inclusive
 RUST_MIN_VER="1.76.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0 for next.js 14.2.24 dependency of @swc/core 1.4.4
 RUST_PV="${RUST_MIN_VER}"
 SERWIST_CHOICE="no-change" # update, remove, no-change
-SHARP_PV="0.29.3" # 0.33.x is bugged
+SHARP_PV="0.30.7" # 0.33.5 segfaults during build time and runtime
 VIPS_PV="8.15.3"
 
 inherit dhms desktop edo node-sharp npm pnpm rust xdg
@@ -106,7 +80,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	#KEYWORDS="~amd64" # The release cannot be built.
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/${PN}-${PV}"
 	SRC_URI="
 https://github.com/lobehub/lobe-chat/archive/refs/tags/v${PV}.tar.gz
@@ -134,7 +108,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 +indexdb +openrc postgres systemd +system-vips
-ebuild_revision_15
+ebuild_revision_17
 "
 REQUIRED_USE="
 	!cpu_flags_x86_sse4_2? (
@@ -453,7 +427,7 @@ npm_unpack_post() {
 			"stylelint@16.1.0"
 		)
 #		enpm add ${pkgs[@]} -D ${NPM_INSTALL_ARGS[@]}
-		enpm add "segfault-handler" ${NPM_INSTALL_ARGS[@]}
+#		enpm add "segfault-handler" ${NPM_INSTALL_ARGS[@]}
 	fi
 }
 
@@ -504,6 +478,7 @@ src_unpack() {
 		_pnpm_setup_offline_cache
 		npm_src_unpack
 		rm -rf "${S}/node_modules/sharp/src/build"
+ewarn "QA: Dedupe and remove sharp@0.33.5.  Change reference of sharp@0.33.5 to sharp@0.30.7"
 		node-sharp_npm_rebuild_sharp
 #		enpm add "svix@1.45.1" ${NPM_INSTALL_ARGS[@]}
 	fi
@@ -572,7 +547,7 @@ einfo "Building next.config.js"
 		#grep -q -E -e "error TS[0-9]+" "${T}/build.log" && die "Detected error"
 	fi
 
-	edo next build --debug
+	edo next build #--debug
 	grep -q -e "Next.js build worker exited with code" "${T}/build.log" && die "Detected error"
 	grep -q -e "Failed to load next.config.js" "${T}/build.log" && die "Detected error"
 	edo npm run build-sitemap
@@ -592,7 +567,7 @@ eerror "Build failure.  Missing ${S}/.next/standalone/server.js"
 
 	# Change hardcoded paths
 	sed -i -e "s|${S}|/opt/${PN}|g" $(grep -l -r -e "${S}" "${S}/.next") || die
-	attach_segfault_handler
+	#attach_segfault_handler
 }
 
 # Slow
@@ -793,5 +768,6 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 1.62.0 (20250222).  Build time failure
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 1.63.1 (20250223).  Build time failure.  Next.js build worker exited with code: null and signal: SIGSEGV
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 1.65.1 (20250225).  Runtime time failure when selecting categories in Settings section.
+# OILEDMACHINE-OVERLAY-TEST:  PASS 1.65.1 (20250226) with sharp 0.30.7.
 # Browser load test: passed
 # Stability:  failed
