@@ -3859,7 +3859,7 @@ src_compile() {
 	fi
 	build_new_runner_cpu
 	build_new_runner_gpu
-	grep -q -e "undefined reference" "${T}/build.log" && die
+	grep -q -e "undefined reference" "${T}/build.log" && die "Detected error"
 }
 
 get_arch() {
