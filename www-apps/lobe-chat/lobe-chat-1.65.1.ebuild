@@ -65,7 +65,6 @@ PNPM_AUDIT_FIX=0
 RUST_MAX_VER="1.71.1" # Inclusive
 RUST_MIN_VER="1.76.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0 for next.js 14.2.24 dependency of @swc/core 1.4.4
 RUST_PV="${RUST_MIN_VER}"
-SERWIST_CHOICE="no-change" # update, remove, no-change
 SHARP_PV="0.30.7" # 0.33.5 segfaults during build time and runtime
 VIPS_PV="8.15.3"
 
@@ -390,36 +389,6 @@ npm_unpack_post() {
 #		sed -i -e "/@ts-expect-error/d" "src/features/MobileSwitchLoading/index.tsx" || die
 #	fi
 
-	local pkgs
-	if [[ "${SERWIST_CHOICE}" == "no-change" ]] ; then
-		:
-	elif [[ "${SERWIST_CHOICE}" == "remove" ]] ; then
-		# Remove serwist, missing stable @serwist/utils
-		eapply "${FILESDIR}/${PN}-1.48.3-drop-serwist.patch"
-		if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-			pkgs=(
-				"@serwist/next"
-				"serwist"
-			)
-			enpm uninstall ${pkgs[@]} ${NPM_UNINSTALL_ARGS[@]}
-
-			pkgs=(
-				"@ducanh2912/next-pwa@^10.2.8"
-			)
-			enpm add ${pkgs[@]} -D ${NPM_INSTALL_ARGS[@]}
-		fi
-	else
-		pkgs=(
-			"@serwist/utils@9.0.0-preview.26"
-			"@serwist/next@9.0.0-preview.26"
-		)
-		enpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
-
-		pkgs=(
-			"serwist@9.0.0-preview.26"
-		)
-		enpm add ${pkgs[@]} -D ${NPM_INSTALL_ARGS[@]}
-	fi
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 	# Fixes to unmet peer or missing references
 		pkgs=(
