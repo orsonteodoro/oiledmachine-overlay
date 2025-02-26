@@ -23,7 +23,7 @@
       Add support for AVIF images.
     </flag>
     <flag name="aom">
-      Enables AVIF encoding or decoding.
+      Enables AVIF encoding or decoding using the slower reference implementation.
     </flag>
     <flag name="cairo">
       Enables displaying of PDF.
@@ -32,7 +32,7 @@
       Enables the creation of C++ bindings.
     </flag>
     <flag name="dav1d">
-      Enables AVIF decoding.
+      Enables optimized AVIF decoding.
     </flag>
     <flag name="debug">
       Enables debug
@@ -138,7 +138,7 @@
       Enables the creation of Python bindings.
     </flag>
     <flag name="rav1e">
-      Enables AVIF encoding.
+      Enables AVIF encoding using the secure memory safe implementation.
     </flag>
     <flag name="spng">
       Enables use of the faster libspng for reading or loading.

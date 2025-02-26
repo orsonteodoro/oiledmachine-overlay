@@ -67,13 +67,13 @@ PATENT_STATUS_REQUIRED_USE="
 	)
 	avif? (
 		|| (
-			dav1d
 			aom
+			dav1d
 		)
 		|| (
 			aom
-			svt-av1
 			rav1e
+			svt-av1
 		)
 	)
 	heic? (
