@@ -108,7 +108,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 +indexdb +openrc postgres systemd +system-vips
-ebuild_revision_18
+ebuild_revision_19
 "
 REQUIRED_USE="
 	!cpu_flags_x86_sse4_2? (
@@ -419,17 +419,20 @@ npm_unpack_post() {
 	fi
 }
 
-npm_audit_post() {
+npm_update_lock_audit_post() {
 	local pkgs
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		npm_patch_lockfile() {
+			sed -i -e "s|\"vitest\": \"^1.0.0\"|\"vitest\": \"1.6.1\"|g" "package-lock.json" || die
 			sed -i -e "s|\"vitest\": \"~1.2.2\"|\"vitest\": \"1.6.1\"|g" "package.json" || die
+			sed -i -e "s|\"vitest\": \"~1.2.2\"|\"vitest\": \"1.6.1\"|g" "package-lock.json" || die
 		}
 		npm_patch_lockfile
 		pkgs=(
 			"vitest@1.6.1"
 		)
 		enpm add ${pkgs[@]} -D ${NPM_INSTALL_ARGS[@]}						# CVE-2025-24964; DoS, DT, ID; Critical
+		npm_patch_lockfile
 	fi
 }
 
