@@ -38,7 +38,7 @@
       Generates documentation
     </flag>
     <flag name="exif">
-      Enables support for saving and loading JPEG and HEIF EXIF image metadata.
+      Enables support for saving and loading EXIF image metadata.
     </flag>
     <flag name="heic">
       Add support for HEIC images.
