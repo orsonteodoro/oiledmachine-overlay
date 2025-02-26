@@ -110,7 +110,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 file-management +indexdb +openrc postgres systemd +system-vips
-ebuild_revision_19
+ebuild_revision_20
 "
 REQUIRED_USE="
 	!cpu_flags_x86_sse4_2? (
@@ -644,7 +644,7 @@ gen_config() {
 		next_public_service_mode="server"
 	fi
 
-	local deployment=$(usex postgres "database" "docker")
+	local database_mode=$(usex postgres "server" "client")
 
 	cat \
 		"${FILESDIR}/${PN}.conf" \
@@ -656,7 +656,7 @@ gen_config() {
 		-e "s|@NEXT_PUBLIC_SERVICE_MODE@|${next_public_service_mode}|g" \
 		-e "s|@HOSTNAME@|${lobechat_hostname}|g" \
 		-e "s|@PORT@|${lobechat_port}|g" \
-		-e "s|@DEPLOYMENT@|${deployment}|g" \
+		-e "s|@DATABASE_MODE@|${database_mode}|g" \
 		"${T}/${PN}.conf" \
 		|| die
 	insinto "/etc/${PN}"
@@ -779,6 +779,8 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 1.62.0 (20250222).  Build time failure
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 1.63.1 (20250223).  Build time failure.  Next.js build worker exited with code: null and signal: SIGSEGV
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 1.65.1 (20250225).  Runtime time failure when selecting categories in Settings section.
-# OILEDMACHINE-OVERLAY-TEST:  PASS 1.65.1 (20250226) with sharp 0.30.7.
+# OILEDMACHINE-OVERLAY-TEST:  PASS 1.65.1 (20250226) with sharp 0.30.7.    Client side database mode.
 # Browser load test: passed
 # Stability:  failed
+# Client side database mode:  passed
+# Server side database mode:  untested
