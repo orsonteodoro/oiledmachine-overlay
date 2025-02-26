@@ -47,12 +47,13 @@ HOMEPAGE="https://jcupitt.github.io/libvips/"
 LICENSE="LGPL-2.1+"
 RESTRICT="mirror"
 SLOT="0/${SO_MAJOR}"
+# Upstream has heic indirectly default on
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS_IUSE[@]}
 +analyze +archive +avif +cairo +cgif +cxx debug +deprecated -doxygen
-+examples +exif +fftw +fits fuzz-testing +gif -graphicsmagick -gtk-doc +heic
++examples +exif +fftw +fits fuzz-testing +gif -graphicsmagick -gtk-doc -heic
 +fontconfig +hdr -highway +imagemagick +imagequant -introspection +jpeg
 +jpeg2k +jxl +lcms +matio -minimal -nifti +openexr +openslide +orc
 +pangocairo +png +poppler +python +ppm -spng +svg test +tiff
