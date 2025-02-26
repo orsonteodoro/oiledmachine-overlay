@@ -108,7 +108,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 +indexdb +openrc postgres systemd +system-vips
-ebuild_revision_17
+ebuild_revision_18
 "
 REQUIRED_USE="
 	!cpu_flags_x86_sse4_2? (
@@ -398,24 +398,11 @@ npm_unpack_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 	# Fixes to unmet peer or missing references
 		pkgs=(
-#			"@langchain/core@0.3.39"
 			"next@${NEXTJS_PV}"
-#			"officeparser@4.0.4"
 			"react@18.3.1"
 			"react-dom@18.3.1"
-#			"svix@1.45.1"
-#			"tree-sitter@^0.21.1"
-#			"zustand-utils@1.3.2"	# Breaks build
 		)
 		enpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
-		pkgs=(
-			"@octokit/core@4.2.4"
-			"@octokit/plugin-paginate-rest@7.1.2"	# octokit 4
-			"@octokit/plugin-throttling@6.1.0"	# octokit 4
-			"stylelint@14.16.1"
-			"stylelint@16.1.0"
-		)
-#		enpm add ${pkgs[@]} -D ${NPM_INSTALL_ARGS[@]}
 #		enpm add "segfault-handler" ${NPM_INSTALL_ARGS[@]}
 	fi
 }
@@ -423,17 +410,21 @@ npm_unpack_post() {
 npm_audit_post() {
 	local pkgs
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-#		sed -i -e "s|\"vitest\": \"~1.2.2\"|\"vitest\": \"1.6.1\"|g" "package.json" || die
+		npm_patch_lockfile() {
+			sed -i -e "s|\"vitest\": \"~1.2.2\"|\"vitest\": \"1.6.1\"|g" "package.json" || die
+		}
+		npm_patch_lockfile
 		pkgs=(
 			"vitest@1.6.1"
 		)
-#		enpm add ${pkgs[@]} -D ${NPM_INSTALL_ARGS[@]}						# CVE-2025-24964; DoS, DT, ID; Critical
+		enpm add ${pkgs[@]} -D ${NPM_INSTALL_ARGS[@]}						# CVE-2025-24964; DoS, DT, ID; Critical
 	fi
 }
 
 npm_dedupe_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		pnpm_patch_lockfile() {
+	# TODO: update
 			sed -i -e "s|'@apidevtools/json-schema-ref-parser': 11.1.0|'@apidevtools/json-schema-ref-parser': 11.2.0|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|esbuild: 0.18.20|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|esbuild: 0.19.12|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die
@@ -444,15 +435,26 @@ npm_dedupe_post() {
 			sed -i -e "s|esbuild: '>=0.12 <1'|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die
 		}
 
-#		pnpm_patch_lockfile
-#ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/pnpm-lock.yaml"
-#		enpm add "@apidevtools/json-schema-ref-parser@11.2.0" ${NPM_INSTALL_ARGS[@]}		# CVE-2024-29651; DoS, DT, ID; High
-#ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/pnpm-lock.yaml"
-#		enpm add "esbuild@0.25.0" ${NPM_INSTALL_ARGS[@]}					# GHSA-67mh-4wv8-2f99
+		npm_patch_lockfile() {
+			sed -i -e "s|\"@apidevtools/json-schema-ref-parser\": \"11.1.0\"|\"@apidevtools/json-schema-ref-parser\": \"11.2.0\"|g" "package-lock.json" || die
+			sed -i -e "s|\"esbuild\": \"~0.18.20\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die
+			sed -i -e "s|\"esbuild\": \"^0.19.7\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die
+			sed -i -e "s|\"esbuild\": \"0.21.4\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die
+			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die
+			sed -i -e "s|\"esbuild\": \"^0.24.0\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die
+			sed -i -e "s|\"esbuild\": \"~0.25.0\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die
+			sed -i -e "s|\"esbuild\": \">=0.12 <1\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die
+		}
+		npm_patch_lockfile
+
+ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+		enpm add "@apidevtools/json-schema-ref-parser@11.2.0" ${NPM_INSTALL_ARGS[@]}		# CVE-2024-29651; DoS, DT, ID; High
+ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+		enpm add "esbuild@0.25.0" ${NPM_INSTALL_ARGS[@]}					# GHSA-67mh-4wv8-2f99
 		NODE_ADDON_API_INSTALL_ARGS=( "-P" )
 		NODE_GYP_INSTALL_ARGS=( "-D" )
 		node-sharp_npm_lockfile_add_sharp
-#		pnpm_patch_lockfile
+		npm_patch_lockfile
 	fi
 }
 
