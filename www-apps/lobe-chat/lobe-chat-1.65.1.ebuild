@@ -778,7 +778,6 @@ pkg_postrm() {
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 1.62.0 (20250222).  Build time failure
 # OILEDMACHINE-OVERLAY-TEST:  FAIL 1.63.1 (20250223).  Build time failure.  Next.js build worker exited with code: null and signal: SIGSEGV
-# OILEDMACHINE-OVERLAY-TEST:  FAIL 1.65.1 (20250225).  Runtime time failure when selecting categories in Settings section.
 # OILEDMACHINE-OVERLAY-TEST:  PASS 1.65.1 (20250226) with sharp 0.30.7.    Client side database mode.
 # Browser load test: passed
 # Stability:  failed
