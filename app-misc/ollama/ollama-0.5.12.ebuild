@@ -4189,10 +4189,6 @@ install_gpu_runner() {
 
 	exeinto "/usr/$(get_libdir)/${PN}/${dir_name}"
 	pushd "${runner_path1}" >/dev/null 2>&1 || die
-		doexe "ollama_llama_server"
-	popd >/dev/null 2>&1 || die
-
-	pushd "${runner_path1}" >/dev/null 2>&1 || die
 		if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
 			doexe "libggml-cuda.so"
 		elif use cuda && has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
