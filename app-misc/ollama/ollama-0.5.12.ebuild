@@ -3557,6 +3557,10 @@ eerror "You need to set -march= to one of ${SVE_ARCHES[@]}"
 		export NVCC_FLAGS=""
 	fi
 
+#	append-cppflags -DGGML_LLAMAFILE
+#	append-cppflags -I"${S}/llama/llama.cpp/include"
+#	append-ldflags -Wl,-L"${S}/dist/lib/ollama" -Wl,-lggml-base -Wl,-lggml-common
+
 	# Allow custom -Oflag
 	export CMAKE_BUILD_TYPE=" "
 
@@ -3906,7 +3910,6 @@ einfo "Building CPU runner"
 		|| die
 	cmake \
 		--build \
-		--parallel \
 		--preset 'CPU' \
 		-DCMAKE_VERBOSE_MAKEFILE=ON \
 		|| die
@@ -3916,7 +3919,7 @@ einfo "Building CPU runner"
 		--strip \
 		|| die
 
-	edo go build ${args[@]} .
+#	edo go build ${args[@]} .
 }
 
 build_new_runner_gpu() {
@@ -4040,7 +4043,6 @@ einfo "Building for CUDA v12"
 				|| die
 			cmake \
 				--build \
-				--parallel \
 				--preset 'CUDA 12' \
 				-DCMAKE_VERBOSE_MAKEFILE=ON \
 				|| die
@@ -4058,7 +4060,6 @@ einfo "Building for CUDA v11"
 				|| die
 			cmake \
 				--build \
-				--parallel \
 				--preset 'CUDA 11' \
 				-DCMAKE_VERBOSE_MAKEFILE=ON \
 				|| die
@@ -4077,7 +4078,6 @@ einfo "Building for ROCm"
 			|| die
 		cmake \
 			--build \
-			--parallel \
 			--preset 'ROCm 6' \
 			-DCMAKE_VERBOSE_MAKEFILE=ON \
 			|| die
@@ -4089,7 +4089,19 @@ einfo "Building for ROCm"
 	fi
 
 	export CUSTOM_CPU_FLAGS="${cpu_flags}"
-	edo go build ${args[@]} .
+#	edo go build ${args[@]} .
+}
+
+build_ollama() {
+	cd "${S}" || die
+	#GOFLAGS="'-ldflags=-w -s'"
+	CGO_ENABLED=1
+	local args=(
+		-p $(get_makeopts_jobs)
+#		-x # You can see a lot of undefined references when this is enabled, but it still works with basic cpu build.
+		-v
+	)
+	edo go build -trimpath -buildmode=pie ${args[@]} .
 }
 
 src_compile() {
@@ -4113,6 +4125,7 @@ src_compile() {
 	fi
 	build_new_runner_cpu
 	build_new_runner_gpu
+	build_ollama
 	grep -q -e "undefined reference" "${T}/build.log" && die "Detected error"
 }
 
@@ -4453,4 +4466,5 @@ ewarn "The chroot and sandbox mitigation edits has not been implemented for syst
 
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.3.13, 20241020)
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.5.7, 20250120)
+# OILEDMACHINE-OVERLAY-TEST:  passed (0.5.12, 20250127) cpu test only with smollm:135m
 # cpu test: passed

@@ -362,6 +362,11 @@ stop() {
 		stop_chroot
 	fi
 	exec >> >(logger -t "$RC_SVCNAME Stop daemon" -p daemon.info)
-	start-stop-daemon --stop --pidfile "$pidfile"
+
+#	start-stop-daemon --stop --pidfile "$pidfile"
+
+	# The start-stop-daemon line is bugged
+	pkill -9 -G ollama
+
 	eend $?
 }
