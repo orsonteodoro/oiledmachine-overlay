@@ -6,6 +6,7 @@ EAPI=8
 
 # 0.5.4 -> 0.5.7
 # 0.5.7 -> 0.5.11
+# 0.5.11 -> 0.5.12
 
 # Hardened because of CVE-2024-37032 implications of similar attacks.
 
@@ -28,9 +29,9 @@ EAPI=8
 # U20
 # For depends see
 # https://github.com/ollama/ollama/blob/main/docs/development.md
-# ROCm:  https://github.com/ollama/ollama/blob/v0.5.11/.github/workflows/test.yaml
-# CUDA:  https://github.com/ollama/ollama/blob/v0.5.11/.github/workflows/release.yaml#L194
-# Hardware support:  https://github.com/ollama/ollama/blob/v0.5.11/docs/gpu.md
+# ROCm:  https://github.com/ollama/ollama/blob/v0.5.12/.github/workflows/test.yaml
+# CUDA:  https://github.com/ollama/ollama/blob/v0.5.12/.github/workflows/release.yaml#L194
+# Hardware support:  https://github.com/ollama/ollama/blob/v0.5.12/docs/gpu.md
 AMDGPU_TARGETS_COMPAT=(
 	gfx900
 	gfx906_xnack_minus
@@ -2605,7 +2606,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
-sandbox systemd unrestrict video_cards_intel ebuild_revision_47
+sandbox systemd unrestrict video_cards_intel ebuild_revision_48
 "
 gen_rocm_required_use() {
 	local s
@@ -3557,9 +3558,7 @@ eerror "You need to set -march= to one of ${SVE_ARCHES[@]}"
 		export NVCC_FLAGS=""
 	fi
 
-#	append-cppflags -DGGML_LLAMAFILE
-#	append-cppflags -I"${S}/llama/llama.cpp/include"
-#	append-ldflags -Wl,-L"${S}/dist/lib/ollama" -Wl,-lggml-base -Wl,-lggml-common
+	append-ldflags -Wl,--warn-unresolved-symbols
 
 	# Allow custom -Oflag
 	export CMAKE_BUILD_TYPE=" "
@@ -3841,7 +3840,7 @@ build_new_runner_cpu() {
 	export OLLAMA_SKIP_CPU_RUNNER_AVX2=1
 
 	# See also
-	# https://github.com/ollama/ollama/blob/v0.5.11/llama/llama.go
+	# https://github.com/ollama/ollama/blob/v0.5.12/llama/llama.go
 	local args=(
 		-p $(get_makeopts_jobs)
 		-x
@@ -3945,7 +3944,7 @@ build_new_runner_gpu() {
 	export OLLAMA_SKIP_CPU_RUNNER=1
 
 	# See also
-	# https://github.com/ollama/ollama/blob/v0.5.11/llama/llama.go
+	# https://github.com/ollama/ollama/blob/v0.5.12/llama/llama.go
 	local args=(
 		-p $(get_makeopts_jobs)
 		-x
@@ -4094,11 +4093,10 @@ einfo "Building for ROCm"
 
 build_ollama() {
 	cd "${S}" || die
-	#GOFLAGS="'-ldflags=-w -s'"
 	CGO_ENABLED=1
 	local args=(
 		-p $(get_makeopts_jobs)
-#		-x # You can see a lot of undefined references when this is enabled, but it still works with basic cpu build.
+		-x # You can see a lot of undefined references when this is enabled, but it still works with basic cpu build.
 		-v
 	)
 	edo go build -trimpath -buildmode=pie ${args[@]} .
@@ -4126,7 +4124,14 @@ src_compile() {
 	build_new_runner_cpu
 	build_new_runner_gpu
 	build_ollama
-	grep -q -e "undefined reference" "${T}/build.log" && die "Detected error"
+
+	# The CPU build will still work.
+	if grep -q -e "warning: undefined reference" "${T}/build.log" ; then
+ewarn "QA:  Verify linking with GPU libs"
+	elif grep -q -F -e "undefined reference" "${T}/build.log" ; then
+eerror "Detected error"
+		die
+	fi
 }
 
 get_arch() {

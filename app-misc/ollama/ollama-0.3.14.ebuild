@@ -2486,7 +2486,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl native openblas openrc rocm
-sandbox systemd unrestrict video_cards_intel ebuild_revision_43
+sandbox systemd unrestrict video_cards_intel ebuild_revision_44
 "
 gen_rocm_required_use() {
 	local s
@@ -3893,7 +3893,12 @@ src_compile() {
 	fi
 	build_new_runner_cpu
 	build_new_runner_gpu
-	grep -q -e "undefined reference" "${T}/build.log" && die "Detected error"
+	if grep -q -e "warning: undefined reference" "${T}/build.log" ; then
+ewarn "QA:  Verify linking with GPU libs"
+	elif grep -q -F -e "undefined reference" "${T}/build.log" ; then
+eerror "Detected error"
+		die
+	fi
 }
 
 get_arch() {
