@@ -4128,7 +4128,8 @@ src_compile() {
 	# The CPU build will still work.
 	if grep -q -e "warning: undefined reference" "${T}/build.log" ; then
 ewarn "QA:  Verify linking with GPU libs"
-	elif grep -q -F -e "undefined reference" "${T}/build.log" ; then
+	fi
+	if grep -q -F -e "): undefined reference" "${T}/build.log" ; then
 eerror "Detected error"
 		die
 	fi
