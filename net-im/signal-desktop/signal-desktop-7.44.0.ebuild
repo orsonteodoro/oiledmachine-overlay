@@ -94,7 +94,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_16
+ebuild_revision_17
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -391,6 +391,7 @@ pkg_postinst() {
 	elog "For using the tray icon on compatible desktop environments, start Signal with"
 	elog " '--start-in-tray' or '--use-tray-icon'."
 }
+# OILEDMACHINE-OVERLAY-TEST:  passed (7.44.0, 20250227, electron 35.0.0-beta.11)
 # OILEDMACHINE-OVERLAY-TEST:  passed (7.42.0, 20250214, electron 35.0.0-beta.6)
 # OILEDMACHINE-OVERLAY-TEST:  passed (7.41.0, 20250116, electron 34.1.1)
 # OILEDMACHINE-OVERLAY-TEST:  passed (7.41.0, 20250207, electron 35.0.0-beta.3)
