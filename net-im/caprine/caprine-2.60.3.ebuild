@@ -25,8 +25,12 @@ fi
 ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK="1"
 ELECTRON_APP_TYPESCRIPT_PV="5.4.4"
 NODE_ENV="development"
-NPM_AUDIT_FIX_ARGS=( "--prefer-offline" )
-NPM_INSTALL_ARGS=( "--prefer-offline" )
+NPM_AUDIT_FIX_ARGS=(
+	"--prefer-offline"
+)
+NPM_INSTALL_ARGS=(
+	"--prefer-offline"
+)
 NPM_INSTALL_PATH="/opt/${PN}"
 if [[ "${NPM_UPDATE_LOCK}" != "1" ]] ; then
 	NPM_INSTALL_ARGS+=( "--force" )
@@ -104,8 +108,8 @@ einfo "Applying mitigation"
 		patch_edits
 
 	# DT = Data Tampering
-		enpm install "got@^11.8.5" -P --prefer-offline					# DT		# CVE-2022-33987
-		enpm install "electron@${ELECTRON_APP_ELECTRON_PV}" -D --prefer-offline
+		enpm install "got@^11.8.5" -P ${NPM_INSTALL_ARGS[@]}					# DT		# CVE-2022-33987
+		enpm install "electron@${ELECTRON_APP_ELECTRON_PV}" -D ${NPM_INSTALL_ARGS[@]}
 
 		patch_edits
 
