@@ -18,6 +18,8 @@ NPM_INSTALL_ARGS=(
 NPM_AUDIT_FIX_ARGS=(
 	"--prefer-offline"
 )
+NPM_DEDUPE_ARGS=(
+)
 
 # See
 # https://releases.electronjs.org/releases.json
@@ -184,11 +186,12 @@ src_unpack() {
 		enpm install ${NPM_INSTALL_ARGS[@]}
 
 ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and all 0.18.* associated packages from ${S}/sticker-creator/package-lock.json"
+ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/core from ${S}/danger/package-lock.json"
+ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/plugin-paginate-rest from ${S}/danger/package-lock.json"
+ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/plugin-request-log from ${S}/danger/package-lock.json"
 ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/request from ${S}/danger/package-lock.json"
 ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/request-error from ${S}/danger/package-lock.json"
-ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/plugin-paginate-rest from ${S}/danger/package-lock.json"
-ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/core from ${S}/danger/package-lock.json"
-ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/plugin-request-log from ${S}/danger/package-lock.json"
+ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/rest from ${S}/danger/package-lock.json"
 		patch_edits() {
 			pushd "sticker-creator" >/dev/null 2>&1 || die
 				sed -i -e "s|\"cross-spawn\": \"^6.0.5\"|\"cross-spawn\": \"^6.0.6\"|g" "package-lock.json" || die								# CVE-2024-21538; DoS; High
@@ -249,15 +252,18 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 		deps=(
 			"esbuild@0.25.0"
 			"got@11.8.5"
-			"@octokit/rest@20.1.2"
 		)
 		enpm install ${deps[@]} -P ${NPM_INSTALL_ARGS[@]}
+		deps=(
+			"@octokit/rest@20.1.2"
+		)
+		enpm install ${deps[@]} -D ${NPM_INSTALL_ARGS[@]}
 
 		enpm audit fix ${NPM_AUDIT_FIX_ARGS[@]}
 
 	# Required for custom version bump
 ewarn "QA:  Manually remove node_modules/react-devtools/node_modules/electron from package-lock.json"												# CVE-2023-44402
-		enpm install "electron@${ELECTRON_APP_ELECTRON_PV}" -D --prefer-offline
+		enpm install "electron@${ELECTRON_APP_ELECTRON_PV}" -D ${NPM_INSTALL_ARGS[@]}
 
 		patch_edits
 		enpm dedupe
