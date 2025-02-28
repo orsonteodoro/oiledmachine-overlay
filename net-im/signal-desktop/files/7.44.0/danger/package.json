@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@octokit/rest": "^20.1.2",
     "cross-spawn": "^7.0.5",
     "danger": "12.3.3",
     "endanger": "7.0.4",

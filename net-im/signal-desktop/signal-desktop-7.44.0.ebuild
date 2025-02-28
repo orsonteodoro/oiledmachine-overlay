@@ -198,6 +198,11 @@ ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and all 0.18.
 				sed -i -e "s|\"cross-spawn\": \"^7.0.3\"|\"cross-spawn\": \"^7.0.5\"|g" "package-lock.json" || die								# CVE-2024-21538; DoS; High
 				sed -i -e "s|\"micromatch\": \"^4.0.2\"|\"micromatch\": \"^4.0.8\"|g" "package-lock.json" || die								# CVE-2024-4067; DoS; Medium
 				sed -i -e "s|\"micromatch\": \"^4.0.4\"|\"micromatch\": \"^4.0.8\"|g" "package-lock.json" || die								# CVE-2024-4067; DoS; Medium
+				sed -i -e "s|\"@octokit/rest\": \"^18.12.0\"|\"@octokit/rest\": \"^20.1.2\"|g" "package-lock.json" || die							# Bump for
+																								#   @octokit/request
+																								#   @octokit/plugin-paginate-rest
+																								#   @octokit/request-error
+																								# CVE-2025-25289, CVE-2025-25288, CVE-2025-25290; DoS; Low
 			popd >/dev/null 2>&1 || die
 			sed -i -e "s|\"electron\": \"^23.1.2\"|\"electron\": \"^${ELECTRON_APP_ELECTRON_PV}\"|g" "package-lock.json" || die							# CVE-2023-44402; DoS, DT, ID; High
 			sed -i -e "s|\"esbuild\": \"0.24.0\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die										# GHSA-67mh-4wv8-2f99; ID; Moderate
@@ -207,6 +212,11 @@ ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and all 0.18.
 			sed -i -e "s|\"got\": \"^11.7.0\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die											# CVE-2022-33987; DT; Medium
 			sed -i -e "s|\"got\": \"^11.8.2\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die											# CVE-2022-33987; DT; Medium
 			sed -i -e "s|\"got\": \"^6.7.1\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die											# CVE-2022-33987; DT; Medium
+			sed -i -e "s|\"@octokit/rest\": \"^18.12.0\"|\"@octokit/rest\": \"^20.1.2\"|g" "package-lock.json" || die								# Bump for
+																								#   @octokit/request
+																								#   @octokit/plugin-paginate-rest
+																								#   @octokit/request-error
+																								# CVE-2025-25289, CVE-2025-25288, CVE-2025-25290; DoS; Low
 		}
 		patch_edits
 
@@ -226,6 +236,7 @@ ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and all 0.18.
 			deps=(
 				"cross-spawn@7.0.5"
 				"micromatch@4.0.8"
+				"@octokit/rest@20.1.2"
 			)
 			enpm install ${deps[@]} -P ${NPM_INSTALL_ARGS[@]}
 		popd >/dev/null 2>&1 || die
@@ -233,6 +244,7 @@ ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and all 0.18.
 		deps=(
 			"esbuild@0.25.0"
 			"got@11.8.5"
+			"@octokit/rest@20.1.2"
 		)
 		enpm install ${deps[@]} -P ${NPM_INSTALL_ARGS[@]}
 
