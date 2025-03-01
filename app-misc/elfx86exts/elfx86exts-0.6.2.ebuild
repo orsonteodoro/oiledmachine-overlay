@@ -161,3 +161,5 @@ src_install() {
 	LCNR_TAG="third_party_cargo"
 	lcnr_install_files
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (0.6.2, 20250228)
