@@ -431,8 +431,21 @@ zerovec-derive-0.10.3
 EGIT_COMMIT="c5829dd25a4ad93cc26bc01b4c8520fd3ef51916"
 NODE_ENV="development"
 NODE_VERSION="${AT_TYPES_NODE_PV%%.*}"
-NPM_AUDIT_FIX_ARGS=( "--legacy-peer-deps" )
-NPM_INSTALL_ARGS=( "--legacy-peer-deps" )
+NPM_AUDIT_FIX_ARGS=(
+	"--legacy-peer-deps"
+	"--prefer-offline"
+)
+NPM_DEDUPE_ARGS=(
+	"--legacy-peer-deps"
+)
+NPM_INSTALL_ARGS=(
+	"--legacy-peer-deps"
+	"--prefer-offline"
+)
+NPM_UNINSTALL_ARGS=(
+	"--legacy-peer-deps"
+	"--prefer-offline"
+)
 PYTHON_COMPAT=( "python3_"{10..12} )
 RUST_MAX_VER="1.80.0" # Inclusive
 RUST_MIN_VER="1.80.0" # llvm-18.1, required by @swc/core
@@ -775,10 +788,12 @@ einfo "Adding Cargo.lock"
 
 npm_update_lock_install_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+		sed -i -e "s|\"dompurify\": \"2.5.7\"|\"dompurify\": \"3.2.4\"|g" "package-lock.json" || die
 		sed -i -e "s|\"esbuild\": \"^0.24.0\"|\"esbuild\": \"^0.25.0\"|g" "package.json" || die
 		sed -i -e "s|\"esbuild\": \"^0.24.0\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
-		enpm install "esbuild@^0.25.0" -D		# GHSA-67mh-4wv8-2f99		# ID		# --prefer-offline is broken
-		enpm install "eslint" -D --prefer-offline
+		enpm install "dompurify@3.2.4" -P ${NPM_INSTALL_ARGS[@]}
+		enpm install "esbuild@^0.25.0" -D ${NPM_INSTALL_ARGS[@]}					# GHSA-67mh-4wv8-2f99		# ID		# --prefer-offline is broken
+		enpm install "eslint" -D ${NPM_INSTALL_ARGS[@]}
 		node-sharp_npm_lockfile_add_sharp
 	fi
 }
