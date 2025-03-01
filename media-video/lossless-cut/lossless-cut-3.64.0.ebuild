@@ -35,7 +35,10 @@ NPM_INSTALL_ARGS=(
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 )
-SHARP_PV="0.32.6"
+SHARP_PV="0.29.3"
+#SHARP_PV="0.32.6"
+#SHARP_PV="0.33.5"
+#SHARP_PV="0.30.7"
 VIPS_PV="8.14.5"
 
 inherit edo electron-app flag-o-matic lcnr node-sharp optfeature xdg yarn
@@ -132,6 +135,7 @@ einfo "Temporarily disabling file-type patch"
 		sed -i -e "s|\"file-type\": \"patch:file-type@npm%3A19.4.1#~/.yarn/patches/file-type-npm-19.4.1-d18086444c.patch\"|\"file-type\": \"19.4.1\"|g" "package.json" || die
 	fi
 	eapply "${FILESDIR}/${PN}-3.64.0-sweetalert2-scss.patch"
+#	eapply "${FILESDIR}/${PN}-3.64.0-icon-gen-revert.patch"
 }
 
 yarn_update_lock_install_post() {
@@ -164,6 +168,9 @@ ewarn "QA:  Manually modify lockfile to associate @types/node:* with @types/node
 
 		eyarn add "sweetalert2@11.4.8" -D								# GHSA-mrr8-v49w-3333; Low
 
+		sed -i -e "s|\"@octokit/core\": \"5\"|\"@octokit/core\": \"6\"|g" "package.json" || die
+		eyarn add "@octokit/core@6"									# CVE-2025-25290, CVE-2025-25289, CVE-2025-25285; DoS
+
 einfo "Adding file-type patch"
 		sed -i -e "s|\"file-type\": \"19.4.1\"|\"file-type\": \"patch:file-type@npm%3A19.4.1#~/.yarn/patches/file-type-npm-19.4.1-d18086444c.patch\"|g" "package.json" || die
 	fi
@@ -185,12 +192,31 @@ src_unpack() {
 	SHARP_INSTALL_ARGS=( "-D" )
 	node-sharp_yarn_rebuild_sharp
 
-	edo mkdirp "icon-build" "build-resources/appx"
-	edo tsx --version
+#	eyarn add "segfault-handler"
+#	eyarn add "@types/sharp" -D
 
-	# Broken
-	edo tsx "script/icon-gen.mts"
-	ls "icon-build/app-512.png" || ewarn "Missing generated icon"
+	if false && [[ "${YARN_UPDATE_LOCK}" != "1" ]] ; then
+		edo mkdirp "icon-build" "build-resources/appx"
+		edo tsx --version
+
+		# Broken
+		#edo tsx "script/icon-gen.mts"
+	# See https://github.com/microsoft/TypeScript/wiki/Node-Target-Mapping
+		edo tsc "script/icon-gen.mts" \
+			--module "node16" \
+			--target "es2017" \
+			--moduleResolution "node16"
+
+#cat <<EOF > "script/icon-gen.mjs.t" || die
+#var SegfaultHandler = require('segfault-handler');
+#SegfaultHandler.registerHandler("crash.log");
+#EOF
+		cat "script/icon-gen.mjs" >> "script/icon-gen.mjs.t" || die
+		mv "script/icon-gen.mjs"{".t",""} || die
+
+		edo node "script/icon-gen.mjs"
+		ls "icon-build/app-512.png" || die "Missing generated icon"
+	fi
 
 	grep -q -e "Something went wrong" "${T}/build.log" && die "Detected error"
 }
