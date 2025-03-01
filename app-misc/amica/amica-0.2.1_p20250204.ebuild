@@ -9,7 +9,7 @@ EAPI=8
 
 AT_TYPES_NODE_PV="18.15.10"
 CPU_FLAGS_X86=(
-	cpu_flags_x86_sse4_2
+	"cpu_flags_x86_sse4_2"
 )
 CRATES="
 addr2line-0.24.2
@@ -609,7 +609,7 @@ SLOT="0"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 coqui debug ollama +system-vips tray voice-recognition wayland whisper-cpp X
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	!cpu_flags_x86_sse4_2? (
