@@ -147,7 +147,7 @@ _cargo_src_unpack() {
 
 src_unpack() {
 	unpack "${P}.tar.gz"
-die
+#die
 	S="${WORKDIR}/${P}" \
 	_cargo_src_unpack
 }
