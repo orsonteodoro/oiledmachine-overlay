@@ -79,7 +79,7 @@ windows_x86_64_msvc-0.52.6
 inherit cargo lcnr
 
 KEYWORDS="~amd64"
-S="${WORKDIR}/${PN}-${P}"
+S="${WORKDIR}/${PN}-${PN}-${PV}"
 SRC_URI="
 	https://github.com/pkgw/${PN}/archive/${PN}@${PV}.tar.gz -> ${P}.tar.gz
 	$(cargo_crate_uris)
@@ -148,7 +148,7 @@ _cargo_src_unpack() {
 src_unpack() {
 	unpack "${P}.tar.gz"
 #die
-	S="${WORKDIR}/${P}" \
+	S="${WORKDIR}/${PN}-${PN}-${PV}" \
 	_cargo_src_unpack
 }
 
