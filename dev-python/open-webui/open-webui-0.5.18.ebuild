@@ -24,7 +24,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	#KEYWORDS="~amd64" # New packages are missing, TODO incomplete
+	#KEYWORDS="~amd64" # Still need to fix multiple instance of slot conflict in TODO.
 	S="${WORKDIR}/${PN}-${PV}"
 	SRC_URI="
 https://github.com/open-webui/open-webui/archive/refs/tags/v${PV}.tar.gz
