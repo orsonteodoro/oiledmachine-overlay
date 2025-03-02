@@ -26,6 +26,7 @@ EAPI=8
 #
 #   node + yarn + bun wrapper -> either bun stage 1 or bun stage 3 based on user choice
 #
+# See also issue #6887
 
 # Status:  Broken bun wrapper
 
@@ -205,6 +206,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.2.0-webkit-path.patch"
 	"${FILESDIR}/${PN}-1.2.0-symbolize-arch-targets.patch"
 	"${FILESDIR}/${PN}-1.2.0-offline-install-changes.patch"
+	"${FILESDIR}/${PN}-1.2.0-type-module.patch"
 )
 
 pkg_setup() {

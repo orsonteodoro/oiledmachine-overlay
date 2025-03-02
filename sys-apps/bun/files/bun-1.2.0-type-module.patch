@@ -1,0 +1,10 @@
+--- a/package.json.orig	2025-03-02 07:49:11.971659256 -0800
++++ b/package.json	2025-03-02 13:10:29.967110142 -0800
+@@ -2,6 +2,7 @@
+   "private": true,
+   "name": "bun",
+   "version": "1.2.0",
++  "type": "module",
+   "workspaces": [
+     "./packages/bun-types"
+   ],
