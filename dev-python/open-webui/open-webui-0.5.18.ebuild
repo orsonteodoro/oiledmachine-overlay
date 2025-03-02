@@ -4,9 +4,6 @@
 
 EAPI=8
 
-# TODO package:
-# azure-ai-documentintelligence
-
 # TODO fix:
 # protobuf4 with grpc in chromadb conflict with tensorflow and protobuf3
 
