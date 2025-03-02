@@ -47,19 +47,19 @@ PNPM_DEDUPE=0 # Still debugging
 PNPM_SLOT="9"
 NEXTJS_PV="15.1.7"
 NPM_AUDIT_FIX_ARGS=(
-	"--prefer-offline"
 	"--legacy-peer-deps"
+	"--prefer-offline"
 )
 NPM_DEDUPE_ARGS=(
 	"--legacy-peer-deps"
 )
 NPM_INSTALL_ARGS=(
-	"--prefer-offline"
 	"--legacy-peer-deps"
+	"--prefer-offline"
 )
 NPM_UNINSTALL_ARGS=(
-	"--prefer-offline"
 	"--legacy-peer-deps"
+	"--prefer-offline"
 )
 PNPM_AUDIT_FIX=0
 RUST_MAX_VER="1.71.1" # Inclusive
@@ -357,15 +357,6 @@ npm_unpack_post() {
 			"${S}/package.json" \
 			|| die
 		grep -e "ERR_PNPM_FETCH_404" "${T}/build.log" && die "Detected error.  Check pnpm add"
-	else
-		if use postgres ; then
-			local pkgs=(
-				"sharp@${SHARP_PV}"
-				"pg@8.13.1"
-				"drizzle-orm@0.38.2"
-			)
-			enpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
-		fi
 	fi
 
 # The prebuilt vips could be causing the segfault.  The sharp package need to
@@ -392,6 +383,10 @@ npm_unpack_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 	# Fixes to unmet peer or missing references
 		pkgs=(
+			"@next/bundle-analyzer@^15.2.0"
+		)
+		enpm add ${pkgs[@]} -D --legacy-peer-deps
+		pkgs=(
 			"next@${NEXTJS_PV}"
 			"react@19.0.0"
 			"react-dom@19.0.0"
@@ -400,6 +395,25 @@ npm_unpack_post() {
 		enpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 #		enpm add "segfault-handler" ${NPM_INSTALL_ARGS[@]}
 	fi
+}
+
+npm_unpack_install_post() {
+	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+		:
+	else
+		if use postgres ; then
+			local pkgs=(
+				"sharp@${SHARP_PV}"
+				"pg@8.13.1"
+				"drizzle-orm@0.38.2"
+			)
+			enpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
+		fi
+	fi
+}
+
+npm_update_lock_install_post() {
+	:
 }
 
 npm_update_lock_audit_post() {
