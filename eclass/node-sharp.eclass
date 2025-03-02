@@ -26,7 +26,7 @@ esac
 if [[ -z "${_NODE_SHARP_ECLASS}" ]] ; then
 _NODE_SHARP_ECLASS=1
 
-inherit edo
+inherit edo flag-o-matic
 
 _node_sharp_set_globals() {
 	if [[ -z "${SHARP_PV}" ]] ; then
@@ -178,9 +178,9 @@ node-sharp_npm_rebuild_sharp() {
 	fi
 
 	if use system-vips ; then
-		rm -rf "node_modules/@img/sharp"*
-		rm -rf "${HOME}/.cache/node-gyp"
-		rm -rf "node_modules/sharp"
+		edo rm -vrf "node_modules/@img/sharp"*
+		edo rm -vrf "${HOME}/.cache/node-gyp"
+		edo rm -vrf "node_modules/sharp"
 		export npm_config_build_from_source="true"
 	fi
 
@@ -192,7 +192,9 @@ node-sharp_npm_rebuild_sharp() {
 		--verbose
 
 	if use system-vips ; then
-		rm -rf "node_modules/sharp/build"
+		append-flags $(pkg-config --cflags "glib-2.0")
+		edo rm -vrf "node_modules/sharp/build"
+		edo rm -vrf "node_modules/@img/sharp"*
 		pushd "${S}/node_modules/sharp" >/dev/null 2>&1 || die
 			local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
 			if ver_test "${sharp_pv}" -eq "0.33" ; then
@@ -216,6 +218,11 @@ node-sharp_npm_rebuild_sharp() {
 			|| die "Did not build sharp@${SHARP_PV} with node-gyp"
 		grep -q \
 			-e "compilation terminated" \
+			"${T}/build.log" \
+			&& die "Detected error"
+		grep -q \
+			-e "build error" \
+			"${T}/build.log" \
 			&& die "Detected error"
 	fi
 }
@@ -248,16 +255,19 @@ node-sharp_yarn_rebuild_sharp() {
 	fi
 
 	if use system-vips ; then
-		rm -rf "node_modules/@img/sharp"*
-		rm -rf "${HOME}/.cache/node-gyp"
-		rm -rf "node_modules/sharp"
+		append-flags $(pkg-config --cflags "glib-2.0")
+		edo rm -vrf "node_modules/@img/sharp"*
+		edo rm -vrf "${HOME}/.cache/node-gyp"
+		edo rm -vrf "node_modules/sharp"
 		export npm_config_build_from_source="true"
 
 		eyarn add "sharp@${SHARP_PV}" \
+			-E \
 			${YARN_INSTALL_ARGS[@]} \
 			${SHARP_INSTALL_ARGS[@]}
 
-		rm -rf "node_modules/sharp/build"
+		edo rm -vrf "node_modules/sharp/build"
+		edo rm -vrf "node_modules/@img/sharp"*
 		pushd "${S}/node_modules/sharp" >/dev/null 2>&1 || die
 			local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
 			if ver_test "${sharp_pv}" -eq "0.33" ; then
@@ -270,6 +280,19 @@ node-sharp_yarn_rebuild_sharp() {
 				edo node "install/dll-copy"
 			fi
 		popd >/dev/null 2>&1 || die
+
+		grep -q \
+			-e "SOLINK_MODULE.*sharp-.*.node" \
+			"${T}/build.log" \
+			|| die "Did not build sharp@${SHARP_PV} with node-gyp"
+		grep -q \
+			-e "compilation terminated" \
+			"${T}/build.log" \
+			&& die "Detected error"
+		grep -q \
+			-e "build error" \
+			"${T}/build.log" \
+			&& die "Detected error"
 
 		unset npm_config_build_from_source
 # TODO:  verify rebuilt.  For an example, see node-sharp_npm_rebuild_sharp.
