@@ -89,7 +89,7 @@
     "framer-motion": "^9.0.3",
     "got": "^14.4.2",
     "i18next-parser": "^9.0.1",
-    "icon-gen": "^4.0.0",
+    "icon-gen": "3.0.1",
     "immer": "^10.0.2",
     "ky": "^0.33.1",
     "leaflet": "^1.9.4",
