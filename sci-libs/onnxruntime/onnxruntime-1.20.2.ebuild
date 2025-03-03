@@ -3,6 +3,13 @@
 
 EAPI=8
 
+# TODO:
+# Review and add missing FETCHCONTENT_SOURCE_DIR_*
+# Review and add vendored python packages.
+# dawn .gitmodules, review removal of neural_speed
+
+# 1.20.0 -> 1.20.2
+
 # TODO package:
 # clang-format
 # lintrunner-adapters
@@ -13,15 +20,15 @@ EAPI=8
 # torch-ort
 
 # For deps versioning, see
-# https://github.com/microsoft/onnxruntime/blob/v1.20.0/cmake/deps.txt
-# https://github.com/microsoft/onnxruntime/blob/v1.20.0/tools/ci_build/github/linux/docker/scripts/manylinux/requirements.txt
-# https://github.com/microsoft/onnxruntime/blob/v1.20.0/onnxruntime/python/tools/transformers/requirements.txt
-# https://github.com/microsoft/onnxruntime/blob/v1.20.0/cmake/external/dnnl.cmake#L5
-# https://github.com/microsoft/onnxruntime/blob/v1.20.0/requirements.txt
-# https://github.com/microsoft/onnxruntime/blob/v1.20.0/requirements-dev.txt
-# https://github.com/microsoft/onnxruntime/blob/v1.20.0/requirements-doc.txt
-# https://github.com/microsoft/onnxruntime/blob/v1.20.0/requirements-lintrunner.txt
-# https://github.com/microsoft/onnxruntime/blob/v1.20.0/requirements-training.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.20.2/cmake/deps.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.20.2/tools/ci_build/github/linux/docker/scripts/manylinux/requirements.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.20.2/onnxruntime/python/tools/transformers/requirements.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.20.2/cmake/external/dnnl.cmake#L5
+# https://github.com/microsoft/onnxruntime/blob/v1.20.2/requirements.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.20.2/requirements-dev.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.20.2/requirements-doc.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.20.2/requirements-lintrunner.txt
+# https://github.com/microsoft/onnxruntime/blob/v1.20.2/requirements-training.txt
 # https://github.com/apache/tvm/blob/2379917985919ed3918dc12cad47f469f245be7a/python/gen_requirements.py#L65
 
 # clog has same version as cpuinfo
@@ -32,7 +39,7 @@ ABSEIL_CPP_COMMIT_2="4a2c63365eff8823a5221db86ef490e828306f9d" # protobuf dep
 ABSEIL_CPP_COMMIT_3="f81f6c011baf9b0132a5594c034fe0060820711d" # dawn dep
 ABSEIL_CPP_PV="20230125.3" # From cmake/external/onnx/CMakeLists.txt
 AMDGPU_TARGETS_COMPAT=(
-# See https://github.com/microsoft/onnxruntime/blob/v1.20.0/cmake/CMakeLists.txt#L299
+# See https://github.com/microsoft/onnxruntime/blob/v1.20.2/cmake/CMakeLists.txt#L299
 	gfx906
 	gfx908
 	gfx90a # ck
@@ -45,12 +52,14 @@ ANGLE_COMMIT="f25948774f7c24ef4d28c42cb0fee0e69aac0489"
 BENCHMARK_PV="1.8.5" # onnxruntime dep
 BENCHMARK_COMMIT_1="2dd015dfef425c866d9a43f2c67d8b52d709acb6" # onnx dep
 BENCHMARK_COMMIT_2="0d98dba29d66e93259db7daa53a9327df767a415" # flatbuffers dep, from cmake/external/flatbuffers/benchmarks/CMakeLists.txt
-BUILD_COMMIT="a6c1c751fd8c18d9e051b12600aec2753c1712c3"
-BUILDTOOLS_COMMIT="9cac81256beb5d4d36c8801afeae38fea34b8486"
+BENCHMARK_COMMIT_3="5b7683f49e1e9223cf9927b24f6fd3d6bd82e3f8" # protobuf dep
+BUILD_COMMIT="a6c1c751fd8c18d9e051b12600aec2753c1712c3" # dawn dep
+BUILDTOOLS_COMMIT="9cac81256beb5d4d36c8801afeae38fea34b8486" # dawn dep
 CATAPULT_COMMIT="b9db9201194440dc91d7f73d4c939a8488994f60"
 CLANG_FORMAT_SCRIPT_COMMIT="95c834f3753e65ce6daa74e345c879566c1491d0"
 CMAKE_IN_SOURCE_BUILD=1
 COMPOSABLE_KERNEL_COMMIT="204da9c522cebec5220bba52cd3542ebcaf99e7a" # From cmake/deps.txt, >= rocm-6.2.0
+COREMLTOOLS_PV="7.1"
 CPU_FLAGS="
 	cpu_flags_x86_avx
 	cpu_flags_x86_avx2
@@ -65,15 +74,17 @@ DATE_PV_1="3.0.1" # From cmake/deps.txt
 DATE_PV_2="3.0.0" # From cmake/external/date/CMakeLists.txt
 DAWN_COMMIT="511eb80847afe6bded34ec491a38d5d78ba2d604"
 DEPOT_TOOLS_COMMIT="f5e10923392588205925c036948e111f72b80271"
+DIRECTX_HEADERS_PV="1.613.1"
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
-DLPACK_COMMIT="ddeb264880a1fa7e7be238ab3901a810324fbe5f" # tvm dep
+DLPACK_COMMIT_1="ddeb264880a1fa7e7be238ab3901a810324fbe5f" # tvm dep
+DLPACK_COMMIT_2="277508879878e0a5b5b43599b1bea11f66eb3c6c"
 DMLC_CORE_COMMIT="09511cf9fe5ff103900a5eafb50870dc84cc17c8" # tvm dep
 DXC_COMMIT="0e7591a6ee94c8c8eb0d536ce7815fd56a776451"
 DXHEADERS_COMMIT="980971e835876dc0cde415e8f9bc646e64667bf7"
 CUDA_TARGETS_COMPAT=(
-# See https://github.com/microsoft/onnxruntime/blob/v1.20.0/cmake/CMakeLists.txt#L1453
+# See https://github.com/microsoft/onnxruntime/blob/v1.20.2/cmake/CMakeLists.txt#L1453
 	sm_30
 	sm_37
 	sm_50
@@ -100,6 +111,7 @@ GOOGLETEST_COMMIT_1="ff233bdd4cac0a0bf6e5cd45bda3406814cb2796" # flatbuffers dep
 GOOGLETEST_COMMIT_2="4c9a3bb62bf3ba1f1010bf96f9c8ed767b363774" # protobuf dep
 GOOGLETEST_COMMIT_3="e2239ee6043f73722e7aa812a459f54a28552929" # From cmake/external/flatbuffers/benchmarks/CMakeLists.txt
 GOOGLETEST_COMMIT_4="7a7231c442484be389fdf01594310349ca0e42a8" # dawn dep
+GOOGLETEST_COMMIT_5="5ec7f0c4a113e2f18ac2c6cc7df51ad6afc24081" # protobuf dep
 GPUWEB_COMMIT="23db3e47ed3b3c7ab2c3638bcde7c7f76324457d"
 GSL_PV="4.0.0" # From cmake/deps.txt
 JINJA2_COMMIT="e2d024354e11cc6b041b0cff032d73f0c7e43a07"
@@ -114,7 +126,7 @@ MARKUPSAFE_COMMIT="0bad08bb207bbfc1d6f3bbc82b9242b0c50e5794"
 MP11_PV="1.82.0"
 NODE_ADDON_API_COMMIT="1e26dcb52829a74260ec262edb41fc22998669b6"
 NSYNC_PV="1.26.0" # From cmake/deps.txt
-ONNX_COMMIT_1="595228d99e3977ac27cb79d5963adda262af99ad" # onnxruntime dep
+ONNX_COMMIT_1="595228d99e3977ac27cb79d5963adda262af99ad" # same as 1.16.1.  onnxruntime dep
 ONNX_COMMIT_2="990217f043af7222348ca8f0301e17fa7b841781" # onnx-tensorrt dep
 PSIMD_COMMIT="072586a71b55b7f8c584153d223e95687148a900" # From cmake/deps.txt
 ROCM_SLOTS=(
@@ -152,7 +164,7 @@ RE2_PV="2024-07-02" # From cmake/deps.txt
 SAFEINT_PV="3.0.28" # From cmake/deps.txt
 SWIFTSHADER_COMMIT="3c4bdf66d81d01a215b88bfea3ac4cc8ca507779"
 TENSORBOARD_COMMIT="373eb09e4c5d2b3cc2493f0949dc4be6b6a45e81" # From cmake/deps.txt
-TESTING_COMMIT="1bd0da6657e330cf26ed0702b3f456393587ad7c"
+TESTING_COMMIT="1bd0da6657e330cf26ed0702b3f456393587ad7c" # dawn dep
 TVM_COMMIT="2379917985919ed3918dc12cad47f469f245be7a" # From cmake/external/tvm.cmake
 TVM_VTA_COMMIT="36a91576edf633479c78649e050f18dd2ddc8103" # tvm dep
 UTF8_RANGE_COMMIT="72c943dea2b9240cd09efde15191e144bc7c7d38" # From cmake/deps.txt, protobuf dep
@@ -160,17 +172,16 @@ WEBGPU_CTS_COMMIT="9cf0129e51b25c16310830dc040adb444fede64e"
 WEBGPU_HEADERS="8049c324dc7b3c09dc96ea04cb02860f272c8686"
 VULKANMEMORYALLOCATOR_COMMIT="52dc220fb326e6ae132b7f262133b37b0dc334a3"
 VULKAN_DEPS_COMMIT="23ed8d76c58a57c4f14b0aba6197d5631a844f00"
+WIL_PV="1.0.230629.1"
 XNNPACK_COMMIT="309b75c9e56e0a674bf78d59872ce131f814dfb6" # From cmake/deps.txt
 ZLIB_COMMIT="209717dd69cd62f24cbacc4758261ae2dd78cfac"
 
 
 inherit cmake cuda dep-prepare distutils-r1 flag-o-matic llvm-r1 rocm toolchain-funcs
 
-DESCRIPTION="Cross-platform inference and training machine-learning accelerator."
-HOMEPAGE="
-	https://onnxruntime.ai
-	https://github.com/microsoft/onnxruntime
-"
+# Vendored packages need to be added or reviewed for compleness.
+# The reason for delay is too many hidden vendored packages.
+#KEYWORDS="~amd64"
 SRC_URI="
 https://chromium.googlesource.com/angle/angle/+archive/${ANGLE_COMMIT:0:7}.tar.gz
 	-> angle-${ANGLE_COMMIT:0:7}.tar.gz
@@ -218,16 +229,18 @@ https://chromium.googlesource.com/vulkan-deps/+archive/${VULKAN_DEPS_COMMIT:0:7}
 	-> vulkan-deps-${VULKAN_DEPS_COMMIT:0:7}.tar.gz
 
 
-https://github.com/microsoft/${PN}/archive/refs/tags/v${PV}.tar.gz
-	-> ${P}.tar.gz
 https://github.com/abseil/abseil-cpp/archive/refs/tags/${ABSEIL_CPP_PV}.tar.gz
 	-> abseil-cpp-${ABSEIL_CPP_PV}.tar.gz
 https://github.com/abseil/abseil-cpp/archive/${ABSEIL_CPP_COMMIT_2}.tar.gz
 	-> abseil-cpp-${ABSEIL_CPP_COMMIT_2:0:7}.tar.gz
+https://github.com/apple/coremltools/archive/refs/tags/${COREMLTOOLS_PV}.tar.gz
+	-> coremltools-${COREMLTOOLS_PV}.tar.gz
 https://github.com/boostorg/mp11/archive/refs/tags/boost-${MP11_PV}.tar.gz
 	-> mp11-${MP11_PV}.tar.gz
 https://github.com/dcleblanc/SafeInt/archive/${SAFEINT_PV}.tar.gz
 	-> SafeInt-${SAFEINT_PV}.tar.gz
+https://github.com/dmlc/dlpack/archive/${DLPACK_COMMIT_2}.tar.gz
+	-> dlpack-${DLPACK_COMMIT_2:0:7}.tar.gz
 https://github.com/emscripten-core/emsdk/archive/${EMSDK_COMMIT}.tar.gz
 	-> emsdk-${EMSDK_COMMIT:0:7}.tar.gz
 https://github.com/google/benchmark/archive/${BENCHMARK_COMMIT_1}.tar.gz
@@ -250,10 +263,16 @@ https://github.com/HowardHinnant/date/archive/v${DATE_PV_1}.tar.gz
 	-> HowardHinnant-date-${DATE_PV_1}.tar.gz
 https://github.com/HowardHinnant/date/archive/v${DATE_PV_2}.tar.gz
 	-> HowardHinnant-date-${DATE_PV_2}.tar.gz
-https://github.com/nlohmann/json/archive/refs/tags/v${JSON_PV}.tar.gz
-	-> nlohmann-json-${JSON_PV}.tar.gz
+https://github.com/microsoft/${PN}/archive/refs/tags/v${PV}.tar.gz
+	-> ${P}.tar.gz
+https://github.com/microsoft/DirectX-Headers/archive/refs/tags/v${DIRECTX_HEADERS_PV}.tar.gz
+	-> DirectX-Headers-${DIRECTX_HEADERS_PV}.tar.gz
 https://github.com/microsoft/GSL/archive/refs/tags/v${GSL_PV}.tar.gz
 	-> microsoft-gsl-${GSL_PV}.tar.gz
+https://github.com/microsoft/wil/archive/refs/tags/v${WIL_PV}.tar.gz
+	-> microsoft-wil-${WIL_PV}.tar.gz
+https://github.com/nlohmann/json/archive/refs/tags/v${JSON_PV}.tar.gz
+	-> nlohmann-json-${JSON_PV}.tar.gz
 https://github.com/nodejs/node-addon-api/archive/${NODE_ADDON_API_COMMIT}.tar.gz
 	-> node-addon-api-${NODE_ADDON_API_COMMIT:0:7}.tar.gz
 https://github.com/onnx/onnx/archive/${ONNX_COMMIT_1}.tar.gz
@@ -268,6 +287,12 @@ https://github.com/protocolbuffers/protobuf/archive/refs/tags/v${PROTOBUF_PV_1}.
 	-> protobuf-${PROTOBUF_PV_1}.tar.gz
 https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOBUF_PV_2}/protobuf-${PROTOBUF_PV_2}.tar.gz
 	-> protobuf-${PROTOBUF_PV_2}.tar.gz
+https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOBUF_PV_1}/protoc-${PROTOBUF_PV_1}-win64.zip
+https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOBUF_PV_1}/protoc-${PROTOBUF_PV_1}-win32.zip
+https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOBUF_PV_1}/protoc-${PROTOBUF_PV_1}-linux-x86_64.zip
+https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOBUF_PV_1}/protoc-${PROTOBUF_PV_1}-linux-x86_32.zip
+https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOBUF_PV_1}/protoc-${PROTOBUF_PV_1}-linux-aarch_64.zip
+https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOBUF_PV_1}/protoc-${PROTOBUF_PV_1}-osx-universal_binary.zip
 https://github.com/protocolbuffers/utf8_range/archive/${UTF8_RANGE_COMMIT}.tar.gz
 	-> utf8_range-${UTF8_RANGE_COMMIT:0:7}.tar.gz
 https://github.com/pybind/pybind11/archive/${PYBIND11_COMMIT_1}.tar.gz
@@ -291,6 +316,8 @@ https://github.com/google/benchmark/archive/refs/tags/v${BENCHMARK_PV}.tar.gz
 	-> benchmark-${BENCHMARK_PV}.tar.gz
 https://github.com/google/benchmark/archive/${BENCHMARK_COMMIT_2}.tar.gz
 	-> benchmark-${BENCHMAR_COMMIT_2:0:7}.tar.gz
+https://github.com/google/benchmark/archive/${BENCHMARK_COMMIT_3}.tar.gz
+	-> benchmark-${BENCHMAR_COMMIT_3:0:7}.tar.gz
 	)
 	cuda? (
 https://github.com/NVIDIA/cudnn-frontend/archive/refs/tags/v${CUDNN_FRONTEND_PV}.tar.gz
@@ -335,6 +362,8 @@ https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT_2}.tar.gz
 	-> googletest-${GOOGLETEST_COMMIT_2:0:7}.tar.gz
 https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT_4}.tar.gz
 	-> googletest-${GOOGLETEST_COMMIT_4:0:7}.tar.gz
+https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT_5}.tar.gz
+	-> googletest-${GOOGLETEST_COMMIT_5:0:7}.tar.gz
 https://github.com/google/googletest/archive/refs/tags/v${GOOGLETEST_PV}.tar.gz
 	-> googletest-${GOOGLETEST_PV}.tar.gz
 	)
@@ -349,8 +378,8 @@ https://github.com/apache/tvm/archive/${TVM_COMMIT}.tar.gz
 	-> tvm-${TVM_COMMIT:0:7}.tar.gz
 https://github.com/apache/tvm-vta/archive/${TVM_VTA_COMMIT}.tar.gz
 	-> tvm-vta-${TVM_VTA_COMMIT:0:7}.tar.gz
-https://github.com/dmlc/dlpack/archive/${DLPACK_COMMIT}.tar.gz
-	-> dlpack-${DLPACK_COMMIT:0:7}.tar.gz
+https://github.com/dmlc/dlpack/archive/${DLPACK_COMMIT_1}.tar.gz
+	-> dlpack-${DLPACK_COMMIT_1:0:7}.tar.gz
 https://github.com/dmlc/dmlc-core/archive/${DMLC_CORE_COMMIT}.tar.gz
 	-> dmlc-core-${DMLC_CORE_COMMIT:0:7}.tar.gz
 https://github.com/tlc-pack/libbacktrace/archive/${LIBBACKTRACE_COMMIT}.tar.gz
@@ -376,7 +405,11 @@ https://github.com/google/XNNPACK/archive/${XNNPACK_COMMIT}.tar.gz
 
 "
 
-
+DESCRIPTION="Cross-platform inference and training machine-learning accelerator."
+HOMEPAGE="
+	https://onnxruntime.ai
+	https://github.com/microsoft/onnxruntime
+"
 LICENSE="
 	(
 		all-rights-reserved
@@ -441,14 +474,12 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="mirror test" # Untested
 SLOT="0"
-#KEYWORDS="~amd64" # TODO dawn .gitmodules, review removal of neural_speed
 IUSE="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${CPU_FLAGS}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${OPENVINO_TARGETS[@]/#/openvino_targets_}
 ${ROCM_SLOTS[@]}
-onnxruntime_USE_EXTENSIONS
 -abseil-cpp -benchmark -composable-kernel cpu -cuda cudnn debug doc -extensions
 -javascript -llvm -lto -migraphx -mimalloc -mpi -neural-speed -onednn -openvino
 +python -quant -rocm -system-eigen -system-composable-kernel test -tensorrt
@@ -479,7 +510,7 @@ gen_rocm_required_use() {
 		"
 	done
 }
-# For providers, see also https://github.com/microsoft/onnxruntime/blob/v1.20.0/onnxruntime/test/perftest/command_args_parser.cc#L40
+# For providers, see also https://github.com/microsoft/onnxruntime/blob/v1.20.2/onnxruntime/test/perftest/command_args_parser.cc#L40
 # abseil-cpp is required for protobuf and still links to it if disabled.
 REQUIRED_USE="
 	$(gen_cuda_required_use)
@@ -811,6 +842,7 @@ _PATCHES=(
 )
 
 pkg_setup() {
+ewarn "This ebuild is under construction"
 	use python && python-single-r1_pkg_setup
 	use llvm && llvm-r1_pkg_setup
 
@@ -829,6 +861,16 @@ pkg_setup() {
 
 _unpack() {
 	local ARGS=( ${A} )
+
+	local PROTOC_TARBALLS=(
+		"protoc-${PROTOBUF_PV_1}-win64.zip;protoc_win64-${PROTOBUF_PV_1}"
+		"protoc-${PROTOBUF_PV_1}-win32.zip;protoc_win32-${PROTOBUF_PV_1}"
+		"protoc-${PROTOBUF_PV_1}-linux-x86_64.zip;protoc_linux_x64-${PROTOBUF_PV_1}"
+		"protoc-${PROTOBUF_PV_1}-linux-x86_32.zip;protoc_linux_x86-${PROTOBUF_PV_1}"
+		"protoc-${PROTOBUF_PV_1}-linux-aarch_64.zip;protoc_linux_aarch64-${PROTOBUF_PV_1}"
+		"protoc-${PROTOBUF_PV_1}-osx-universal_binary.zip;protoc_mac_universal-${PROTOBUF_PV_1}"
+	)
+
 	local DAWN_TARBALLS=(
 		"angle-${ANGLE_COMMIT:0:7}.tar.gz;angle-${ANGLE_COMMIT}"
 		"abseil-cpp-${ABSEIL_CPP_COMMIT_3:0:7}.tar.gz;abseil-cpp-${ABSEIL_CPP_COMMIT_3}"
@@ -870,7 +912,20 @@ _unpack() {
 				break
 			fi
 		done
-		if (( ${is_dawn_submodule} == 0 )) ; then
+		local is_protoc_submodule=0
+		for row in ${PROTOC_TARBALLS[@]} ; do
+			local f2="${row%;*}"
+			local path="${row#*;}"
+			if [[ "${f}" == "${f2}" ]] ; then
+				mkdir -p "${WORKDIR}/${path}" || die
+				pushd "${WORKDIR}/${path}" >/dev/null 2>&1 || die
+					unpack "${f}"
+				popd >/dev/null 2>&1 || die
+				is_protoc_submodule=1
+				break
+			fi
+		done
+		if (( ${is_dawn_submodule} == 0 && ${is_protoc_submodule} == 0 )) ; then
 			unpack "${f}"
 		fi
 	done
@@ -885,27 +940,46 @@ src_unpack() {
 	dep_prepare_mv "${WORKDIR}/onnx-${ONNX_COMMIT_1}" "${S}/cmake/external/onnx"
 	dep_prepare_cp "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_1}" "${S}/cmake/external/onnx/third_party/benchmark"
 	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1}" "${S}/cmake/external/onnx/third_party/pybind11"
+
 	dep_prepare_mv "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_PV}" "${S}/cmake/external/onnx/third_party/abseil"
 	dep_prepare_mv "${WORKDIR}/protobuf-${PROTOBUF_PV_2}" "${S}/cmake/external/onnx/third_party/protobuf"
 	dep_prepare_mv "${WORKDIR}/jsoncpp-${JSONCPP_COMMIT_1}" "${S}/cmake/external/onnx/third_party/protobuf/third_party/jsoncpp"
 
+	dep_prepare_mv "${WORKDIR}/coremltools-${COREMLTOOLS_PV}" "${S}/cmake/external/coremltools"
 	dep_prepare_mv "${WORKDIR}/cpuinfo-${CPUINFO_COMMIT}" "${S}/cmake/external/pytorch_cpuinfo"
 	dep_prepare_mv "${WORKDIR}/date-${DATE_PV_1}" "${S}/cmake/external/date-1"
 	dep_prepare_mv "${WORKDIR}/date-${DATE_PV_2}" "${S}/cmake/external/date-2"
+	dep_prepare_mv "${WORKDIR}/DirectX-Headers-${DIRECTX_HEADERS_PV}" "${S}/cmake/external/directx_headers"
+	dep_prepare_mv "${WORKDIR}/dlpack-${DLPACK_COMMIT_2}" "${S}/cmake/external/dlpack"
 	dep_prepare_mv "${WORKDIR}/flatbuffers-${FLATBUFFERS_PV}" "${S}/cmake/external/flatbuffers"
 	dep_prepare_mv "${WORKDIR}/GSL-${GSL_PV}" "${S}/cmake/external/microsoft_gsl"
 	dep_prepare_mv "${WORKDIR}/json-${JSON_PV}" "${S}/cmake/external/json"
 	dep_prepare_mv "${WORKDIR}/nsync-${NSYNC_PV}" "${S}/cmake/external/google_nsync"
+
 	dep_prepare_mv "${WORKDIR}/protobuf-${PROTOBUF_PV_1}" "${S}/cmake/external/protobuf"
+	if use benchmark ; then
+		dep_prepare_mv "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_3}" "${S}/cmake/external/protobuf/third_party/benchmark"
+	fi
+
+	dep_prepare_mv "${WORKDIR}/protoc_win64-${PROTOBUF_PV_1}" "${S}/cmake/external/protoc_win64"
+	dep_prepare_mv "${WORKDIR}/protoc_win32-${PROTOBUF_PV_1}" "${S}/cmake/external/protoc_win32"
+	dep_prepare_mv "${WORKDIR}/protoc_linux_x64-${PROTOBUF_PV_1}" "${S}/cmake/external/protoc_linux_x64"
+	dep_prepare_mv "${WORKDIR}/protoc_linux_x86-${PROTOBUF_PV_1}" "${S}/cmake/external/protoc_linux_x86"
+	dep_prepare_mv "${WORKDIR}/protoc_linux_aarch64-${PROTOBUF_PV_1}" "${S}/cmake/external/protoc_linux_aarch64"
+	dep_prepare_mv "${WORKDIR}/protoc_mac_universal-${PROTOBUF_PV_1}" "${S}/cmake/external/protoc_mac_universal"
+
 	dep_prepare_mv "${WORKDIR}/re2-${RE2_PV}" "${S}/cmake/external/re2"
 	dep_prepare_mv "${WORKDIR}/SafeInt-${SAFEINT_PV}" "${S}/cmake/external/safeint"
 	dep_prepare_mv "${WORKDIR}/mp11-boost-${MP11_PV}" "${S}/cmake/external/mp11"
 	dep_prepare_mv "${WORKDIR}/utf8_range-${UTF8_RANGE_COMMIT}" "${S}/cmake/external/utf8_range"
+	dep_prepare_mv "${WORKDIR}/wil-${WIL_PV}" "${S}/cmake/external/microsoft_wil"
+
 
 	dep_prepare_mv "${WORKDIR}/dawn-${DAWN_COMMIT}" "${S}/cmake/external/dawn"
 	dep_prepare_mv "${WORKDIR}/build-${BUILD_COMMIT}" "${S}/cmake/external/dawn/build"
 	dep_prepare_mv "${WORKDIR}/buildtools-${BUILDTOOLS_COMMIT}" "${S}/cmake/external/dawn/buildtools"
 	dep_prepare_mv "${WORKDIR}/testing-${TESTING_COMMIT}" "${S}/cmake/external/dawn/testing"
+
 	dep_prepare_mv "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_COMMIT_3}" "${S}/cmake/external/dawn/third_party/abseil-cpp"
 	dep_prepare_mv "${WORKDIR}/angle-${ANGLE_COMMIT}" "${S}/cmake/external/dawn/third_party/angle"
 	dep_prepare_mv "${WORKDIR}/catapult-${CATAPULT_COMMIT}" "${S}/cmake/external/dawn/third_party/catapult"
@@ -930,6 +1004,7 @@ src_unpack() {
 	dep_prepare_mv "${WORKDIR}/vulkan-deps-${VULKAN_DEPS_COMMIT}" "${S}/cmake/external/dawn/third_party/vulkan-deps"
 	dep_prepare_mv "${WORKDIR}/zlib-${ZLIB_COMMIT}" "${S}/cmake/external/dawn/third_party/zlib"
 	dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT}" "${S}/cmake/external/dawn/third_party/glslang/src"
+
 
 	dep_prepare_mv "${WORKDIR}/kleidiai-v${KLEIDIAI_PV}" "${S}/cmake/external/kleidiai"
 
@@ -968,21 +1043,24 @@ src_unpack() {
 	if use tensorrt-oss-parser ; then
 		dep_prepare_mv "${WORKDIR}/onnx-tensorrt-${ONNX_TENSORRT_COMMIT}" "${S}/cmake/external/onnx_tensorrt"
 		dep_prepare_mv "${WORKDIR}/onnx-${ONNX_COMMIT_2}" "${S}/cmake/external/onnx_tensorrt/third_party/onnx"
-		dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1}" "${S}/cmake/external/onnx_tensorrt/third_party/onnx/third_party/pybind11"
+		dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1}" "${S}/cmake/external/onnx_tensorrt/third_party/onnx/third_party/pybind11"
 		dep_prepare_cp "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_1}" "${S}/cmake/external/onnx_tensorrt/third_party/onnx/third_party/benchmark"
 	fi
 	if use test ; then
 		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_PV}" "${S}/cmake/external/googletest" # For onnxruntime_external_deps.cmake
 		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_1}" "${S}/cmake/external/flatbuffers/third_party/googletest"
 		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_4}" "${S}/cmake/external/dawn/third_party/googletest"
-		dep_prepare_mv "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_2}" "${S}/cmake/external/flatbuffers/third_party/googlebenchmark"
+		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_5}" "${S}/cmake/external/protobuf/third_party/googletest"
+		if use benchmark ; then
+			dep_prepare_mv "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_2}" "${S}/cmake/external/flatbuffers/third_party/googlebenchmark"
+		fi
 	fi
 	if use test || use training ; then
 		dep_prepare_mv "${WORKDIR}/cxxopts-${CXXOPTS_COMMIT}" "${S}/cmake/external/cxxopts"
 	fi
 	if use tvm ; then
 		dep_prepare_mv "${WORKDIR}/cutlass-${CUTLASS_COMMIT}" "${S}/cmake/external/tvm/3rdparty/cutlass"
-		dep_prepare_mv "${WORKDIR}/dlpack-${DLPACK_COMMIT}" "${S}/cmake/external/tvm/3rdparty/dlpack"
+		dep_prepare_mv "${WORKDIR}/dlpack-${DLPACK_COMMIT_1}" "${S}/cmake/external/tvm/3rdparty/dlpack"
 		dep_prepare_mv "${WORKDIR}/dmlc-core-${DMLC_CORE_COMMIT}" "${S}/cmake/external/tvm/3rdparty/dmlc-core"
 		dep_prepare_mv "${WORKDIR}/libbacktrace-${LIBBACKTRACE_COMMIT}" "${S}/cmake/external/tvm/3rdparty/libbacktrace"
 		dep_prepare_mv "${WORKDIR}/rang-${RANG_COMMIT}" "${S}/cmake/external/tvm/3rdparty/rang"
