@@ -22,7 +22,7 @@ HOMEPAGE="
 LICENSE="
 	(
 		all-rights-reserved
-		MIt
+		MIT
 	)
 	MIT
 "
