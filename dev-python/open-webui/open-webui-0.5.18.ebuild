@@ -142,7 +142,7 @@ RDEPEND+="
 		>=dev-python/validators-0.34.0[${PYTHON_USEDEP}]
 		>=dev-python/xlrd-2.0.1[${PYTHON_USEDEP}]
 		>=dev-python/youtube-transcript-api-0.6.3[${PYTHON_USEDEP}]
-		>=media-libs/opencv-4.11.0.86[${PYTHON_USEDEP},python]
+		>=media-libs/opencv-4.11.0[${PYTHON_USEDEP},python]
 		dev-python/aiocache[${PYTHON_USEDEP}]
 		dev-python/aiofiles[${PYTHON_USEDEP}]
 		dev-python/anthropic[${PYTHON_USEDEP}]
