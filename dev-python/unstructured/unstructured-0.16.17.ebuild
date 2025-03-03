@@ -59,10 +59,9 @@ REQUIRED_USE="
 		all-docs
 	)
 "
-# For CONSTRAINTS_RDEPEND\
-#		<dev-python/urllib3-1.27[${PYTHON_USEDEP}]
-#		>=dev-python/grpcio-1.65.5[${PYTHON_USEDEP}]
 CONSTRAINTS_RDEPEND="
+"
+DISABLED_CONSTRAINTS_RDEPEND="
 	$(python_gen_cond_dep '
 		(
 			>=dev-python/unstructured-client-0.23.0[${PYTHON_USEDEP}]
@@ -73,6 +72,8 @@ CONSTRAINTS_RDEPEND="
 			<dev-python/weaviate-client-4.0.0[${PYTHON_USEDEP}]
 		)
 		<dev-python/botocore-1.34.132[${PYTHON_USEDEP}]
+		<dev-python/urllib3-1.27[${PYTHON_USEDEP}]
+		>=dev-python/grpcio-1.65.5[${PYTHON_USEDEP}]
 		>=dev-python/importlib-metadata-8.5.0[${PYTHON_USEDEP}]
 	')
 	(
