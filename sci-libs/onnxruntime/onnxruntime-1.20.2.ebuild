@@ -863,37 +863,37 @@ _unpack() {
 	local ARGS=( ${A} )
 
 	local PROTOC_TARBALLS=(
-		"protoc-${PROTOBUF_PV_1}-win64.zip;protoc_win64-${PROTOBUF_PV_1}"
 		"protoc-${PROTOBUF_PV_1}-win32.zip;protoc_win32-${PROTOBUF_PV_1}"
-		"protoc-${PROTOBUF_PV_1}-linux-x86_64.zip;protoc_linux_x64-${PROTOBUF_PV_1}"
-		"protoc-${PROTOBUF_PV_1}-linux-x86_32.zip;protoc_linux_x86-${PROTOBUF_PV_1}"
+		"protoc-${PROTOBUF_PV_1}-win64.zip;protoc_win64-${PROTOBUF_PV_1}"
 		"protoc-${PROTOBUF_PV_1}-linux-aarch_64.zip;protoc_linux_aarch64-${PROTOBUF_PV_1}"
+		"protoc-${PROTOBUF_PV_1}-linux-x86_32.zip;protoc_linux_x86-${PROTOBUF_PV_1}"
+		"protoc-${PROTOBUF_PV_1}-linux-x86_64.zip;protoc_linux_x64-${PROTOBUF_PV_1}"
 		"protoc-${PROTOBUF_PV_1}-osx-universal_binary.zip;protoc_mac_universal-${PROTOBUF_PV_1}"
 	)
 
 	local DAWN_TARBALLS=(
-		"angle-${ANGLE_COMMIT:0:7}.tar.gz;angle-${ANGLE_COMMIT}"
 		"abseil-cpp-${ABSEIL_CPP_COMMIT_3:0:7}.tar.gz;abseil-cpp-${ABSEIL_CPP_COMMIT_3}"
-		"catapult-${CATAPULT_COMMIT:0:7}.tar.gz;catapult-${CATAPULT_COMMIT}"
-		"partition_allocator-${PARTITION_ALLOCATOR_COMMIT:0:7}.tar.gz;partition_allocator-${PARTITION_ALLOCATOR_COMMIT}"
+		"angle-${ANGLE_COMMIT:0:7}.tar.gz;angle-${ANGLE_COMMIT}"
 		"build-${BUILD_COMMIT:0:7}.tar.gz;build-${BUILD_COMMIT}"
 		"buildtools-${BUILDTOOLS_COMMIT:0:7}.tar.gz;buildtools-${BUILDTOOLS_COMMIT}"
+		"catapult-${CATAPULT_COMMIT:0:7}.tar.gz;catapult-${CATAPULT_COMMIT}"
+		"clang-format-script-${CLANG_FORMAT_SCRIPT_COMMIT:0:7}.tar.gz;clang-format-script-${CLANG_FORMAT_SCRIPT_COMMIT}"
+		"depot_tools-${DEPOT_TOOLS_COMMIT:0:7}.tar.gz;depot_tools-${DEPOT_TOOLS_COMMIT}"
+		"dxc-${DXC_COMMIT:0:7}.tar.gz;dxc-${DXC_COMMIT}"
+		"dxheaders-${DXHEADERS_COMMIT:0:7}.tar.gz;dxheaders-${DXHEADERS_COMMIT}"
+		"glfw-${GLFW_COMMIT:0:7}.tar.gz;glfw-${GLFW_COMMIT}"
+		"glslang-${GLSLANG_COMMIT:0:7}.tar.gz;glslang-${GLSLANG_COMMIT}"
 		"jinja2-${JINJA2_COMMIT:0:7}.tar.gz;jinja2-${JINJA2_COMMIT}"
 		"markupsafe-${MARKUPSAFE_COMMIT:0:7}.tar.gz;markupsafe-${MARKUPSAFE_COMMIT}"
+		"partition_allocator-${PARTITION_ALLOCATOR_COMMIT:0:7}.tar.gz;partition_allocator-${PARTITION_ALLOCATOR_COMMIT}"
 		"protobuf-${PROTOBUF_COMMIT:0:7}.tar.gz;protobuf-${PROTOBUF_COMMIT}"
-		"zlib-${ZLIB_COMMIT:0:7}.tar.gz;zlib-${ZLIB_COMMIT}"
+		"swiftshader-${SWIFTSHADER_COMMIT:0:7}.tar.gz;swiftshader-${SWIFTSHADER_COMMIT}"
 		"testing-${TESTING_COMMIT:0:7}.tar.gz;testing-${TESTING_COMMIT}"
-		"depot_tools-${DEPOT_TOOLS_COMMIT:0:7}.tar.gz;depot_tools-${DEPOT_TOOLS_COMMIT}"
-		"glfw-${GLFW_COMMIT:0:7}.tar.gz;glfw-${GLFW_COMMIT}"
+		"vulkan-deps-${VULKAN_DEPS_COMMIT:0:7}.tar.gz;vulkan-deps-${VULKAN_DEPS_COMMIT}"
 		"VulkanMemoryAllocator-${VULKANMEMORYALLOCATOR_COMMIT:0:7}.tar.gz;VulkanMemoryAllocator-${VULKANMEMORYALLOCATOR_COMMIT}"
 		"webgpu-cts-${WEBGPU_CTS_COMMIT:0:7}.tar.gz;webgpu-cts-${WEBGPU_CTS_COMMIT}"
-		"glslang-${GLSLANG_COMMIT:0:7}.tar.gz;glslang-${GLSLANG_COMMIT}"
-		"clang-format-script-${CLANG_FORMAT_SCRIPT_COMMIT:0:7}.tar.gz;clang-format-script-${CLANG_FORMAT_SCRIPT_COMMIT}"
-		"dxheaders-${DXHEADERS_COMMIT:0:7}.tar.gz;dxheaders-${DXHEADERS_COMMIT}"
-		"dxc-${DXC_COMMIT:0:7}.tar.gz;dxc-${DXC_COMMIT}"
 		"webgpu-headers-${WEBGPU_HEADERS:0:7}.tar.gz;webgpu-headers-${WEBGPU_HEADERS}"
-		"swiftshader-${SWIFTSHADER_COMMIT:0:7}.tar.gz;swiftshader-${SWIFTSHADER_COMMIT}"
-		"vulkan-deps-${VULKAN_DEPS_COMMIT:0:7}.tar.gz;vulkan-deps-${VULKAN_DEPS_COMMIT}"
+		"zlib-${ZLIB_COMMIT:0:7}.tar.gz;zlib-${ZLIB_COMMIT}"
 	)
 
 	local f
