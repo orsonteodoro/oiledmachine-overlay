@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <!--
+
+  oiledmachine-overlay notes:
+
+  This ebuild came from the science overlay.
+
+  -->
+  <upstream>
+    <bugs-to>https://github.com/bastibe/python-soundfile/issues</bugs-to>
+    <remote-id type="github">bastibe/python-soundfile</remote-id>
+    <remote-id type="pypi">soundfile</remote-id>
+  </upstream>
+</pkgmetadata>
