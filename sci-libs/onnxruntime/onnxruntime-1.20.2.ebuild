@@ -5,18 +5,6 @@ EAPI=8
 
 # TODO list:
 _TODO='
-[submodule "third_party/libdrm/src"]
-	path = third_party/libdrm/src
-	url = https://chromium.googlesource.com/chromiumos/third_party/libdrm
-	gclient-condition = dawn_standalone and host_os == "linux"
-[submodule "third_party/libFuzzer/src"]
-	path = third_party/libFuzzer/src
-	url = https://chromium.googlesource.com/external/github.com/llvm/llvm-project/compiler-rt/lib/fuzzer
-	gclient-condition = dawn_standalone
-[submodule "third_party/googletest"]
-	path = third_party/googletest
-	url = https://chromium.googlesource.com/external/github.com/google/googletest
-	gclient-condition = dawn_standalone
 [submodule "third_party/angle"] # many dependencies
 	path = third_party/angle
 	url = https://chromium.googlesource.com/angle/angle
@@ -29,38 +17,6 @@ _TODO='
 	path = third_party/vulkan-deps
 	url = https://chromium.googlesource.com/vulkan-deps
 	gclient-condition = dawn_standalone
-[submodule "third_party/spirv-cross/src"]
-	path = third_party/spirv-cross/src
-	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/SPIRV-Cross
-	gclient-condition = dawn_standalone
-[submodule "third_party/spirv-headers/src"]
-	path = third_party/spirv-headers/src
-	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/SPIRV-Headers
-	gclient-condition = dawn_standalone
-[submodule "third_party/spirv-tools/src"]
-	path = third_party/spirv-tools/src
-	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/SPIRV-Tools
-	gclient-condition = dawn_standalone
-[submodule "third_party/vulkan-headers/src"]
-	path = third_party/vulkan-headers/src
-	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Headers
-	gclient-condition = dawn_standalone
-[submodule "third_party/vulkan-loader/src"]
-	path = third_party/vulkan-loader/src
-	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Loader
-	gclient-condition = dawn_standalone
-[submodule "third_party/vulkan-tools/src"]
-	path = third_party/vulkan-tools/src
-	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Tools
-	gclient-condition = dawn_standalone
-[submodule "third_party/vulkan-utility-libraries/src"]
-	path = third_party/vulkan-utility-libraries/src
-	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Utility-Libraries
-	gclient-condition = dawn_standalone
-[submodule "third_party/vulkan-validation-layers/src"]
-	path = third_party/vulkan-validation-layers/src
-	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-ValidationLayers
-	gclient-condition = dawn_standalone
 [submodule "third_party/dxc"] # many deps
 	path = third_party/dxc
 	url = https://chromium.googlesource.com/external/github.com/microsoft/DirectXShaderCompiler
@@ -68,9 +24,6 @@ _TODO='
 	path = third_party/langsvr
 	url = https://github.com/google/langsvr
 	gclient-condition = dawn_standalone
-[submodule "third_party/llvm-libc/src"]
-	path = third_party/llvm-libc/src
-	url = https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libc.git
 '
 
 # TODO:
@@ -100,6 +53,7 @@ _TODO='
 # https://github.com/microsoft/onnxruntime/blob/v1.20.2/requirements-lintrunner.txt
 # https://github.com/microsoft/onnxruntime/blob/v1.20.2/requirements-training.txt
 # https://github.com/apache/tvm/blob/2379917985919ed3918dc12cad47f469f245be7a/python/gen_requirements.py#L65 ; commit from https://github.com/microsoft/onnxruntime/blob/v1.20.2/cmake/external/tvm.cmake
+# https://github.com/google/dawn/blob/511eb80847afe6bded34ec491a38d5d78ba2d604/DEPS
 
 # clog has same version as cpuinfo
 
@@ -199,8 +153,10 @@ JSONCPP_COMMIT_2="69098a18b9af0c47549d9a271c054d13ca92b006" # dawn dep
 KLEIDIAI_PV="0.2.0"
 LIBCXX_COMMIT="450ae0d29766e87ea12148e8c6c3352053f78e15" # dawn dep
 LIBCXXABI_COMMIT="e5b130d5dc3058457ea0658a55ae6bb968f75f0e" # dawn dep
+LIBDRM_COMMIT="ad78bb591d02162d3b90890aa4d0a238b2a37cde"
 LANGSVR_COMMIT="303c526231a90049a3e384549720f3fbd453cf66" # dawn dep
 LIBBACKTRACE_COMMIT="08f7c7e69f8ea61a0c4151359bc8023be8e9217b" # tvm dep
+LIBFUZZER_COMMIT="26cc39e59b2bf5cbc20486296248a842c536878d" # dawn dep
 LIBPROTOBUF_MUTATOR_COMMIT="a304ec48dcf15d942607032151f7e9ee504b5dcf" # dawn dep
 MARKUPSAFE_COMMIT="0bad08bb207bbfc1d6f3bbc82b9242b0c50e5794" # dawn dep
 MP11_PV="1.82.0"
@@ -214,7 +170,9 @@ ROCM_SLOTS=(
 	rocm_6_0
 	rocm_5_7
 )
+LIBDIR_COMMIT="ad78bb591d02162d3b90890aa4d0a238b2a37cde"
 LLVM_COMPAT=( 17 18 )
+LLVM_LIBC_COMMIT="a485ddbbb2ffe528c3ebf82b9d72a7297916531f"
 LLVM_OPTIONAL=1
 MIMALLOC_PV="2.1.1" # From cmake/deps.txt
 NODE_API_HEADERS_COMMIT="d5cfe19da8b974ca35764dd1c73b91d57cd3c4ce" # dawn dep
@@ -243,6 +201,9 @@ RANG_COMMIT="cabe04d6d6b05356fa8f9741704924788f0dd762" # tvm dep
 RUST_COMMIT="a69a8ecdbf7a19fb129ae57650cac9f704cb7cf9" # dawn dep
 RE2_PV="2024-07-02" # From cmake/deps.txt
 SAFEINT_PV="3.0.28" # From cmake/deps.txt
+SPIRV_CROSS_COMMIT="b8fcf307f1f347089e3c46eb4451d27f32ebc8d3" # dawn dep
+SPIRV_HEADERS_COMMIT="69ab0f32dc6376d74b3f5b0b7161c6681478badd" # dawn dep
+SPIRV_TOOLS_COMMIT="edc68950bf725edc89b3e1974c533454cf2ae37c" # dawn dep
 SWIFTSHADER_COMMIT="3c4bdf66d81d01a215b88bfea3ac4cc8ca507779" # dawn dep
 TENSORBOARD_COMMIT="373eb09e4c5d2b3cc2493f0949dc4be6b6a45e81" # From cmake/deps.txt
 TESTING_COMMIT="1bd0da6657e330cf26ed0702b3f456393587ad7c" # dawn dep
@@ -253,6 +214,11 @@ WEBGPU_CTS_COMMIT="9cf0129e51b25c16310830dc040adb444fede64e"
 WEBGPU_HEADERS="8049c324dc7b3c09dc96ea04cb02860f272c8686"
 VULKANMEMORYALLOCATOR_COMMIT="52dc220fb326e6ae132b7f262133b37b0dc334a3"
 VULKAN_DEPS_COMMIT="23ed8d76c58a57c4f14b0aba6197d5631a844f00" # dawn dep
+VULKAN_HEADERS_COMMIT="a6a5dc0d078ade9bde75bd78404462509cbdce99" # dawn dep
+VULKAN_LOADER_COMMIT="2761c159b9325baa5980e028ac081963b5d5dd9c" # dawn dep
+VULKAN_TOOLS_COMMIT="7e82aea5fc1394d417a0df6a5680a4cce5c37286" # dawn dep
+VULKAN_UTILITY_LIBRARIES_COMMIT="7ea05992a52e96426bd4c56ea12d208e0d6c9a5f" # dawn dep
+VULKAN_VALIDATION_LAYERS_COMMIT="13c0c4dc619d165b05061702a3c8eb604d21efa4" # dawn dep
 WIL_PV="1.0.230629.1"
 XNNPACK_COMMIT="309b75c9e56e0a674bf78d59872ce131f814dfb6" # From cmake/deps.txt
 ZLIB_COMMIT="209717dd69cd62f24cbacc4758261ae2dd78cfac"
@@ -294,24 +260,46 @@ https://chromium.googlesource.com/chromium/src/tools/rust/+archive/${RUST_COMMIT
 	-> rust-${RUST_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/chromium/tools/depot_tools/+archive/${DEPOT_TOOLS_COMMIT:0:7}.tar.gz
 	-> depot_tools-${DEPOT_TOOLS_COMMIT:0:7}.tar.gz
+https://chromium.googlesource.com/chromiumos/third_party/libdrm/+archive/${LIBDIR_COMMIT:0:7}.tar.gz
+	-> libdrm-${LIBDIR_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/external/github.com/glfw/glfw/+archive/${GLFW_COMMIT:0:7}.tar.gz
 	-> glfw-${GLFW_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/external/github.com/KhronosGroup/EGL-Registry/+archive/${EGL_REGISTRY_COMMIT:0:7}.tar.gz
 	-> egl-registry-${EGL_REGISTRY_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/external/github.com/KhronosGroup/OpenGL-Registry/+archive/${OPENGL_REGISTRY_COMMIT:0:7}.tar.gz
 	-> opengl-registry-${OPENGL_REGISTRY_COMMIT:0:7}.tar.gz
+https://chromium.googlesource.com/external/github.com/KhronosGroup/SPIRV-Cross/+archive/${SPIRV_CROSS_COMMIT:0:7}.tar.gz
+	-> spirv-cross-${SPIRV_CROSS_COMMIT:0:7}.tar.gz
+https://chromium.googlesource.com/external/github.com/KhronosGroup/SPIRV-Headers/+archive/${SPIRV_HEADERS_COMMIT:0:7}.tar.gz
+	-> spirv-headers-${SPIRV_HEADERS_COMMIT:0:7}.tar.gz
+https://chromium.googlesource.com/external/github.com/KhronosGroup/SPIRV-Tools/+archive/${SPIRV_TOOLS_COMMIT:0:7}.tar.gz
+	-> spirv-tools-${SPIRV_TOOLS_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/external/github.com/llvm/llvm-project/clang/tools/clang-format/+archive/${CLANG_FORMAT_COMMIT:0:7}.tar.gz
 	-> clang-format-${CLANG_FORMAT_COMMIT:0:7}.tar.gz
+https://chromium.googlesource.com/external/github.com/llvm/llvm-project/compiler-rt/lib/fuzzer/+archive/${LIBFUZZER_COMMIT:0:7}.tar.gz
+	-> libfuzzer-${LIBFUZZER_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxx/+archive/${LIBCXX_COMMIT:0:7}.tar.gz
 	-> libcxx-${LIBCXX_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxxabi/+archive/${LIBCXXABI_COMMIT:0:7}.tar.gz
 	-> libcxxabi-${LIBCXXABI_COMMIT:0:7}.tar.gz
+https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libc.git/+archive/${LLVM_LIBC_COMMIT:0:7}.tar.gz
+	-> llvm-libc-${LLVM_LIBC_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/external/github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/+archive/${VULKANMEMORYALLOCATOR_COMMIT:0:7}.tar.gz
 	-> VulkanMemoryAllocator-${VULKANMEMORYALLOCATOR_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/external/github.com/gpuweb/cts/+archive/${WEBGPU_CTS_COMMIT:0:7}.tar.gz
 	-> webgpu-cts-${WEBGPU_CTS_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/external/github.com/KhronosGroup/glslang/+archive/${GLSLANG_COMMIT:0:7}.tar.gz
 	-> glslang-${GLSLANG_COMMIT:0:7}.tar.gz
+https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Headers/+archive/${VULKAN_HEADERS_COMMIT:0:7}.tar.gz
+	-> vulkan-headers-${VULKAN_HEADERS_COMMIT:0:7}.tar.gz
+https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Loader/+archive/${VULKAN_LOADER_COMMIT:0:7}.tar.gz
+	-> vulkan-loader-${VULKAN_LOADER_COMMIT:0:7}.tar.gz
+https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Tools/+archive/${VULKAN_TOOLS_COMMIT:0:7}.tar.gz
+	-> vulkan-tools-${VULKAN_TOOLS_COMMIT:0:7}.tar.gz
+https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Utility-Libraries/+archive/${VULKAN_UTILITY_LIBRARIES_COMMIT:0:7}.tar.gz
+	-> vulkan-utility-libraries-${VULKAN_UTILITY_LIBRARIES_COMMIT:0:7}.tar.gz
+https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-ValidationLayers/+archive/${VULKAN_VALIDATION_LAYERS_COMMIT:0:7}.tar.gz
+	-> vulkan-validation-layers-${VULKAN_VALIDATION_LAYERS_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/external/github.com/microsoft/DirectX-Headers/+archive/${DXHEADERS_COMMIT:0:7}.tar.gz
 	-> dxheaders-${DXHEADERS_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/external/github.com/microsoft/DirectXShaderCompiler/+archive/${DXC_COMMIT:0:7}.tar.gz
@@ -320,8 +308,12 @@ https://chromium.googlesource.com/external/github.com/webgpu-native/webgpu-heade
 	-> webgpu-headers-${WEBGPU_HEADERS:0:7}.tar.gz
 https://chromium.googlesource.com/vulkan-deps/+archive/${VULKAN_DEPS_COMMIT:0:7}.tar.gz
 	-> vulkan-deps-${VULKAN_DEPS_COMMIT:0:7}.tar.gz
+
+
+
 https://swiftshader.googlesource.com/SwiftShader/+archive/${SWIFTSHADER_COMMIT:0:7}.tar.gz
 	-> swiftshader-${SWIFTSHADER_COMMIT:0:7}.tar.gz
+
 
 https://github.com/abseil/abseil-cpp/archive/refs/tags/${ABSEIL_CPP_PV}.tar.gz
 	-> abseil-cpp-${ABSEIL_CPP_PV}.tar.gz
@@ -985,15 +977,24 @@ _unpack() {
 		"jinja2-${JINJA2_COMMIT:0:7}.tar.gz;jinja2-${JINJA2_COMMIT}"
 		"libcxx-${LIBCXX_COMMIT:0:7}.tar.gz;libcxx-${LIBCXX_COMMIT}"
 		"libcxxabi-${LIBCXXABI_COMMIT:0:7}.tar.gz;libcxxabi-${LIBCXXABI_COMMIT}"
+		"libfuzzer-${LIBFUZZER_COMMIT:0:7}.tar.gz;libfuzzer-${LIBFUZZER_COMMIT}"
 		"markupsafe-${MARKUPSAFE_COMMIT:0:7}.tar.gz;markupsafe-${MARKUPSAFE_COMMIT}"
 		"opengl-registry-${OPENGL_REGISTRY_COMMIT:0:7}.tar.gz;egl-registry-${OPENGL_REGISTRY_COMMIT}"
 		"partition_allocator-${PARTITION_ALLOCATOR_COMMIT:0:7}.tar.gz;partition_allocator-${PARTITION_ALLOCATOR_COMMIT}"
 		"protobuf-${PROTOBUF_COMMIT:0:7}.tar.gz;protobuf-${PROTOBUF_COMMIT}"
 		"protoc_wrapper-${PROTOC_WRAPPER_COMMIT:0:7}.tar.gz;protoc_wrapper-${PROTOC_WRAPPER_COMMIT}"
 		"rust-${RUST_COMMIT:0:7}.tar.gz;rust-${RUST_COMMIT}"
+		"spirv-cross-${SPIRV_CROSS_COMMIT:0:7}.tar.gz;spirv-cross-${SPIRV_CROSS_COMMIT}"
+		"spirv-headers-${SPIRV_HEADERS_COMMIT:0:7}.tar.gz;spirv-headers-${SPIRV_HEADERS_COMMIT}"
+		"spirv-tools-${SPIRV_TOOLS_COMMIT:0:7}.tar.gz;spirv-tools-${SPIRV_TOOLS_COMMIT}"
 		"swiftshader-${SWIFTSHADER_COMMIT:0:7}.tar.gz;swiftshader-${SWIFTSHADER_COMMIT}"
 		"testing-${TESTING_COMMIT:0:7}.tar.gz;testing-${TESTING_COMMIT}"
 		"vulkan-deps-${VULKAN_DEPS_COMMIT:0:7}.tar.gz;vulkan-deps-${VULKAN_DEPS_COMMIT}"
+		"vulkan-headers-${VULKAN_HEADERS_COMMIT:0:7}.tar.gz;vulkan-headers-${VULKAN_HEADERS_COMMIT}"
+		"vulkan-loader-${VULKAN_LOADER_COMMIT:0:7}.tar.gz;vulkan-loader-${VULKAN_LOADER_COMMIT}"
+		"vulkan-tools-${VULKAN_TOOLS_COMMIT:0:7}.tar.gz;vulkan-tools-${VULKAN_TOOLS_COMMIT}"
+		"vulkan-utility-libraries-${VULKAN_UTILITY_LIBRARIES_COMMIT:0:7}.tar.gz;vulkan-utility-libraries-${VULKAN_UTILITY_LIBRARIES_COMMIT}"
+		"vulkan-validation-layers-${VULKAN_VALIDATION_LAYERS_COMMIT:0:7}.tar.gz;vulkan-validation-layers-${VULKAN_VALIDATION_LAYERS_COMMIT}"
 		"VulkanMemoryAllocator-${VULKANMEMORYALLOCATOR_COMMIT:0:7}.tar.gz;VulkanMemoryAllocator-${VULKANMEMORYALLOCATOR_COMMIT}"
 		"webgpu-cts-${WEBGPU_CTS_COMMIT:0:7}.tar.gz;webgpu-cts-${WEBGPU_CTS_COMMIT}"
 		"webgpu-headers-${WEBGPU_HEADERS:0:7}.tar.gz;webgpu-headers-${WEBGPU_HEADERS}"
@@ -1100,13 +1101,15 @@ src_unpack() {
 	dep_prepare_mv "${WORKDIR}/langsvr-${LANGSVR_COMMIT}" "${S}/cmake/external/dawn/third_party/langsvr"
 	dep_prepare_mv "${WORKDIR}/libcxx-${LIBCXX_COMMIT}" "${S}/cmake/external/dawn/third_party/libc++/src"
 	dep_prepare_mv "${WORKDIR}/libcxxabi-${LIBCXXABI_COMMIT}" "${S}/cmake/external/dawn/third_party/libc++abi/src"
+	dep_prepare_mv "${WORKDIR}/libdrm-${LIBDIR_COMMIT}" "${S}/cmake/external/dawn/third_party/libdrm/src"
+	dep_prepare_mv "${WORKDIR}/libfuzzer-${LIBFUZZER_COMMIT}" "${S}/cmake/external/dawn/third_party/libFuzzer/src"
 	dep_prepare_mv "${WORKDIR}/libprotobuf-mutator-${LIBPROTOBUF_MUTATOR_COMMIT}" "${S}/cmake/external/dawn/third_party/libprotobuf-mutator/src"
+	dep_prepare_mv "${WORKDIR}/llvm-libc-${LLVM_LIBC_COMMIT}" "${S}/cmake/external/dawn/third_party/llvm-libc/src"
 	dep_prepare_mv "${WORKDIR}/markupsafe-${MARKUPSAFE_COMMIT}" "${S}/cmake/external/dawn/third_party/markupsafe"
 	dep_prepare_mv "${WORKDIR}/node-addon-api-${NODE_ADDON_API_COMMIT}" "${S}/cmake/external/dawn/third_party/node-addon-api"
 	dep_prepare_mv "${WORKDIR}/node-api-headers-${NODE_API_HEADERS_COMMIT}" "${S}/cmake/external/dawn/third_party/node-api-headers"
 	dep_prepare_mv "${WORKDIR}/opengl-registry-${OPENGL_REGISTRY_COMMIT}" "${S}/cmake/external/dawn/third_party/khronos/OpenGL-Registry"
 	dep_prepare_mv "${WORKDIR}/partition_allocator-${PARTITION_ALLOCATOR_COMMIT}" "${S}/cmake/external/dawn/third_party/partition_alloc"
-
 	dep_prepare_mv "${WORKDIR}/protobuf-${PROTOBUF_COMMIT}" "${S}/cmake/external/dawn/third_party/protobuf"
 	if use benchmark ; then
 		dep_prepare_mv "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_4}" "${S}/cmake/external/dawn/third_party/protobuf/third_party/benchmark"
@@ -1117,13 +1120,20 @@ src_unpack() {
 
 	dep_prepare_mv "${WORKDIR}/protoc_wrapper-${PROTOC_WRAPPER_COMMIT}" "${S}/cmake/external/dawn/tools/protoc_wrapper"
 	dep_prepare_mv "${WORKDIR}/rust-${RUST_COMMIT}" "${S}/cmake/external/dawn/tools/rust"
+	dep_prepare_mv "${WORKDIR}/spirv-cross-${SPIRV_CROSS_COMMIT}" "${S}/cmake/external/dawn/third_party/spirv-cross/src"
+	dep_prepare_mv "${WORKDIR}/spirv-headers-${SPIRV_HEADERS_COMMIT}" "${S}/cmake/external/dawn/third_party/spirv-headers/src"
+	dep_prepare_mv "${WORKDIR}/spirv-tools-${SPIRV_TOOLS_COMMIT}" "${S}/cmake/external/dawn/third_party/spirv-tools/src"
 	dep_prepare_mv "${WORKDIR}/swiftshader-${SWIFTSHADER_COMMIT}" "${S}/cmake/external/dawn/third_party/swiftshader"
 	dep_prepare_mv "${WORKDIR}/webgpu-cts-${WEBGPU_CTS_COMMIT}" "${S}/cmake/external/dawn/third_party/webgpu-cts"
 	dep_prepare_mv "${WORKDIR}/webgpu-headers-${WEBGPU_HEADERS}" "${S}/cmake/external/dawn/third_party/webgpu-headers"
 	dep_prepare_mv "${WORKDIR}/VulkanMemoryAllocator-${VULKANMEMORYALLOCATOR_COMMIT}" "${S}/cmake/external/dawn/third_party/vulkan_memory_allocator"
 	dep_prepare_mv "${WORKDIR}/vulkan-deps-${VULKAN_DEPS_COMMIT}" "${S}/cmake/external/dawn/third_party/vulkan-deps"
+	dep_prepare_mv "${WORKDIR}/vulkan-headers-${VULKAN_HEADERS_COMMIT}" "${S}/cmake/external/dawn/third_party/vulkan-headers/src"
+	dep_prepare_mv "${WORKDIR}/vulkan-loader-${VULKAN_LOADER_COMMIT}" "${S}/cmake/external/dawn/third_party/vulkan-loader/src"
+	dep_prepare_mv "${WORKDIR}/vulkan-tools-${VULKAN_TOOLS_COMMIT}" "${S}/cmake/external/dawn/third_party/vulkan-tools/src"
+	dep_prepare_mv "${WORKDIR}/vulkan-utility-libraries-${VULKAN_UTILITY_LIBRARIES_COMMIT}" "${S}/cmake/external/dawn/third_party/vulkan-utility-libraries/src"
+	dep_prepare_mv "${WORKDIR}/vulkan-validation-layers-${VULKAN_VALIDATION_LAYERS_COMMIT}" "${S}/cmake/external/dawn/third_party/vulkan-validation-layers/src"
 	dep_prepare_mv "${WORKDIR}/zlib-${ZLIB_COMMIT}" "${S}/cmake/external/dawn/third_party/zlib"
-
 
 	if use benchmark ; then
 		dep_prepare_mv "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_5}" "${S}/cmake/external/dawn/third_party/google_benchmark/src"
