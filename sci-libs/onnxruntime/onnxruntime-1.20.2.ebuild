@@ -12,7 +12,6 @@ _TODO='
 '
 
 # TODO:
-# Review and add missing FETCHCONTENT_SOURCE_DIR_*
 # Review and add vendored python packages.
 # dawn .gitmodules
 
