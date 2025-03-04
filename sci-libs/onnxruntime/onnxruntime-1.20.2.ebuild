@@ -495,7 +495,7 @@ ZLIB_COMMIT="209717dd69cd62f24cbacc4758261ae2dd78cfac"
 inherit cmake cuda dep-prepare distutils-r1 flag-o-matic llvm-r1 rocm toolchain-funcs
 
 # Vendored packages need to be added or reviewed for compleness.
-# The reason for delay is too many hidden vendored packages.
+# The reason for delay is submodule hell (the analog of dll hell).
 #KEYWORDS="~amd64"
 SRC_URI="
 
