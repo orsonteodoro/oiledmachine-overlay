@@ -17,13 +17,6 @@ _TODO='
 	path = third_party/vulkan-deps
 	url = https://chromium.googlesource.com/vulkan-deps
 	gclient-condition = dawn_standalone
-[submodule "third_party/dxc"] # many deps
-	path = third_party/dxc
-	url = https://chromium.googlesource.com/external/github.com/microsoft/DirectXShaderCompiler
-[submodule "third_party/langsvr"] # 3 modules
-	path = third_party/langsvr
-	url = https://github.com/google/langsvr
-	gclient-condition = dawn_standalone
 '
 
 # TODO:
@@ -143,6 +136,8 @@ GOOGLETEST_COMMIT_2="4c9a3bb62bf3ba1f1010bf96f9c8ed767b363774" # protobuf dep
 GOOGLETEST_COMMIT_3="e2239ee6043f73722e7aa812a459f54a28552929" # From cmake/external/flatbuffers/benchmarks/CMakeLists.txt
 GOOGLETEST_COMMIT_4="7a7231c442484be389fdf01594310349ca0e42a8" # dawn dep
 GOOGLETEST_COMMIT_5="5ec7f0c4a113e2f18ac2c6cc7df51ad6afc24081" # protobuf dep
+GOOGLETEST_COMMIT_6="dddb219c3eb96d7f9200f09b0a381f016e6b4562" # dawn/langsvr dep
+GOOGLETEST_COMMIT_7="440527a61e1c91188195f7de212c63c77e8f0a45" # dawn/dxc dep
 GOOGLETEST_PV_2="1.10.0" # dawn/protobuf dep
 GPUWEB_COMMIT="23db3e47ed3b3c7ab2c3638bcde7c7f76324457d" # dawn dep
 GSL_PV="4.0.0" # From cmake/deps.txt
@@ -151,13 +146,14 @@ JSON_PV="3.10.5" # From cmake/deps.txt
 JSONCPP_COMMIT_1="9059f5cad030ba11d37818847443a53918c327b1" # protobuf 22.3 dep
 JSONCPP_COMMIT_2="69098a18b9af0c47549d9a271c054d13ca92b006" # dawn dep
 KLEIDIAI_PV="0.2.0"
+LANGSVR_COMMIT="303c526231a90049a3e384549720f3fbd453cf66" # dawn dep
 LIBCXX_COMMIT="450ae0d29766e87ea12148e8c6c3352053f78e15" # dawn dep
 LIBCXXABI_COMMIT="e5b130d5dc3058457ea0658a55ae6bb968f75f0e" # dawn dep
 LIBDRM_COMMIT="ad78bb591d02162d3b90890aa4d0a238b2a37cde"
-LANGSVR_COMMIT="303c526231a90049a3e384549720f3fbd453cf66" # dawn dep
 LIBBACKTRACE_COMMIT="08f7c7e69f8ea61a0c4151359bc8023be8e9217b" # tvm dep
 LIBFUZZER_COMMIT="26cc39e59b2bf5cbc20486296248a842c536878d" # dawn dep
 LIBPROTOBUF_MUTATOR_COMMIT="a304ec48dcf15d942607032151f7e9ee504b5dcf" # dawn dep
+LSPROTOCOL_COMMIT="4a296ecf01c50008c9fbf07d48d15a1a4e97fded" # dawn/langsvr dep
 MARKUPSAFE_COMMIT="0bad08bb207bbfc1d6f3bbc82b9242b0c50e5794" # dawn dep
 MP11_PV="1.82.0"
 NODE_ADDON_API_COMMIT="1e26dcb52829a74260ec262edb41fc22998669b6" # dawn dep
@@ -202,8 +198,10 @@ RUST_COMMIT="a69a8ecdbf7a19fb129ae57650cac9f704cb7cf9" # dawn dep
 RE2_PV="2024-07-02" # From cmake/deps.txt
 SAFEINT_PV="3.0.28" # From cmake/deps.txt
 SPIRV_CROSS_COMMIT="b8fcf307f1f347089e3c46eb4451d27f32ebc8d3" # dawn dep
-SPIRV_HEADERS_COMMIT="69ab0f32dc6376d74b3f5b0b7161c6681478badd" # dawn dep
-SPIRV_TOOLS_COMMIT="edc68950bf725edc89b3e1974c533454cf2ae37c" # dawn dep
+SPIRV_HEADERS_COMMIT_1="69ab0f32dc6376d74b3f5b0b7161c6681478badd" # dawn dep
+SPIRV_HEADERS_COMMIT_2="db5a00f8cebe81146cafabf89019674a3c4bf03d" # dawn/dxc dep
+SPIRV_TOOLS_COMMIT_1="edc68950bf725edc89b3e1974c533454cf2ae37c" # dawn dep
+SPIRV_TOOLS_COMMIT_2="72c291332a0558ab4121eff9db97e428b574b58b" # dawn/dxc dep
 SWIFTSHADER_COMMIT="3c4bdf66d81d01a215b88bfea3ac4cc8ca507779" # dawn dep
 TENSORBOARD_COMMIT="373eb09e4c5d2b3cc2493f0949dc4be6b6a45e81" # From cmake/deps.txt
 TESTING_COMMIT="1bd0da6657e330cf26ed0702b3f456393587ad7c" # dawn dep
@@ -270,10 +268,10 @@ https://chromium.googlesource.com/external/github.com/KhronosGroup/OpenGL-Regist
 	-> opengl-registry-${OPENGL_REGISTRY_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/external/github.com/KhronosGroup/SPIRV-Cross/+archive/${SPIRV_CROSS_COMMIT:0:7}.tar.gz
 	-> spirv-cross-${SPIRV_CROSS_COMMIT:0:7}.tar.gz
-https://chromium.googlesource.com/external/github.com/KhronosGroup/SPIRV-Headers/+archive/${SPIRV_HEADERS_COMMIT:0:7}.tar.gz
-	-> spirv-headers-${SPIRV_HEADERS_COMMIT:0:7}.tar.gz
-https://chromium.googlesource.com/external/github.com/KhronosGroup/SPIRV-Tools/+archive/${SPIRV_TOOLS_COMMIT:0:7}.tar.gz
-	-> spirv-tools-${SPIRV_TOOLS_COMMIT:0:7}.tar.gz
+https://chromium.googlesource.com/external/github.com/KhronosGroup/SPIRV-Headers/+archive/${SPIRV_HEADERS_COMMIT_1:0:7}.tar.gz
+	-> spirv-headers-${SPIRV_HEADERS_COMMIT_1:0:7}.tar.gz
+https://chromium.googlesource.com/external/github.com/KhronosGroup/SPIRV-Tools/+archive/${SPIRV_TOOLS_COMMIT_1:0:7}.tar.gz
+	-> spirv-tools-${SPIRV_TOOLS_COMMIT_1:0:7}.tar.gz
 https://chromium.googlesource.com/external/github.com/llvm/llvm-project/clang/tools/clang-format/+archive/${CLANG_FORMAT_COMMIT:0:7}.tar.gz
 	-> clang-format-${CLANG_FORMAT_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/external/github.com/llvm/llvm-project/compiler-rt/lib/fuzzer/+archive/${LIBFUZZER_COMMIT:0:7}.tar.gz
@@ -349,6 +347,10 @@ https://github.com/HowardHinnant/date/archive/v${DATE_PV_1}.tar.gz
 	-> HowardHinnant-date-${DATE_PV_1}.tar.gz
 https://github.com/HowardHinnant/date/archive/v${DATE_PV_2}.tar.gz
 	-> HowardHinnant-date-${DATE_PV_2}.tar.gz
+https://github.com/KhronosGroup/SPIRV-Headers/archive/${SPIRV_HEADERS_COMMIT_2}.tar.gz
+	-> spirv-headers-${SPIRV_HEADERS_COMMIT_2:0:7}.tar.gz
+https://github.com/KhronosGroup/SPIRV-Tools/archive/${SPIRV_TOOLS_COMMIT_2}.tar.gz
+	-> spirv-tools-${SPIRV_TOOLS_COMMIT_2}.tar.gz
 https://github.com/microsoft/${PN}/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 https://github.com/microsoft/DirectX-Headers/archive/refs/tags/v${DIRECTX_HEADERS_PV}.tar.gz
@@ -361,6 +363,7 @@ https://github.com/nlohmann/json/archive/refs/tags/v${JSON_PV}.tar.gz
 	-> nlohmann-json-${JSON_PV}.tar.gz
 https://github.com/nodejs/node-addon-api/archive/${NODE_ADDON_API_COMMIT}.tar.gz
 	-> node-addon-api-${NODE_ADDON_API_COMMIT:0:7}.tar.gz
+
 
 
 https://github.com/onnx/onnx/archive/${ONNX_COMMIT_1}.tar.gz
@@ -450,6 +453,8 @@ https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT_4}.tar.gz
 	-> googletest-${GOOGLETEST_COMMIT_4:0:7}.tar.gz
 https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT_5}.tar.gz
 	-> googletest-${GOOGLETEST_COMMIT_5:0:7}.tar.gz
+https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT_6}.tar.gz
+	-> googletest-${GOOGLETEST_COMMIT_6:0:7}.tar.gz
 https://github.com/google/googletest/archive/refs/tags/v${GOOGLETEST_PV_1}.tar.gz
 	-> googletest-${GOOGLETEST_PV_1}.tar.gz
 https://github.com/google/googletest/archive/release-${GOOGLETEST_PV_2}.tar.gz
@@ -959,6 +964,7 @@ _unpack() {
 		"protoc-${PROTOBUF_PV_1}-osx-universal_binary.zip;protoc_mac_universal-${PROTOBUF_PV_1}"
 	)
 
+	# Only for tarballs from chromium.googlesource.com which do not have a root folder.
 	local DAWN_TARBALLS=(
 		"abseil-cpp-${ABSEIL_CPP_COMMIT_3:0:7}.tar.gz;abseil-cpp-${ABSEIL_CPP_COMMIT_3}"
 		"angle-${ANGLE_COMMIT:0:7}.tar.gz;angle-${ANGLE_COMMIT}"
@@ -985,8 +991,8 @@ _unpack() {
 		"protoc_wrapper-${PROTOC_WRAPPER_COMMIT:0:7}.tar.gz;protoc_wrapper-${PROTOC_WRAPPER_COMMIT}"
 		"rust-${RUST_COMMIT:0:7}.tar.gz;rust-${RUST_COMMIT}"
 		"spirv-cross-${SPIRV_CROSS_COMMIT:0:7}.tar.gz;spirv-cross-${SPIRV_CROSS_COMMIT}"
-		"spirv-headers-${SPIRV_HEADERS_COMMIT:0:7}.tar.gz;spirv-headers-${SPIRV_HEADERS_COMMIT}"
-		"spirv-tools-${SPIRV_TOOLS_COMMIT:0:7}.tar.gz;spirv-tools-${SPIRV_TOOLS_COMMIT}"
+		"spirv-headers-${SPIRV_HEADERS_COMMIT_1:0:7}.tar.gz;spirv-headers-${SPIRV_HEADERS_COMMIT_1}"
+		"spirv-tools-${SPIRV_TOOLS_COMMIT_1:0:7}.tar.gz;spirv-tools-${SPIRV_TOOLS_COMMIT_1}"
 		"swiftshader-${SWIFTSHADER_COMMIT:0:7}.tar.gz;swiftshader-${SWIFTSHADER_COMMIT}"
 		"testing-${TESTING_COMMIT:0:7}.tar.gz;testing-${TESTING_COMMIT}"
 		"vulkan-deps-${VULKAN_DEPS_COMMIT:0:7}.tar.gz;vulkan-deps-${VULKAN_DEPS_COMMIT}"
@@ -1090,15 +1096,26 @@ src_unpack() {
 	dep_prepare_mv "${WORKDIR}/clang-${CLANG_COMMIT}" "${S}/cmake/external/dawn/tools/clang"
 	dep_prepare_mv "${WORKDIR}/clang-format-${CLANG_FORMAT_COMMIT}" "${S}/cmake/external/dawn/third_party/clang-format/script"
 	dep_prepare_mv "${WORKDIR}/depot_tools-${DEPOT_TOOLS_COMMIT}" "${S}/cmake/external/dawn/third_party/depot_tools"
+
 	dep_prepare_mv "${WORKDIR}/dxc-${DXC_COMMIT}" "${S}/cmake/external/dawn/third_party/dxc"
+	dep_prepare_mv "${WORKDIR}/spirv-headers-${SPIRV_HEADERS_COMMIT_2}" "${S}/cmake/external/dawn/third_party/dxc/external/SPIRV-Headers"
+	dep_prepare_mv "${WORKDIR}/spirv-tools-${SPIRV_TOOLS_COMMIT_2}" "${S}/cmake/external/dawn/third_party/dxc/external/SPIRV-Tools"
+	dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_7}" "${S}/cmake/external/dawn/third_party/dxc/external/googletest"
+	dep_prepare_cp "${WORKDIR}/dxheaders-${DXHEADERS_COMMIT}" "${S}/cmake/external/dawn/third_party/dxc/external/DirectX-Headers"
+
 	dep_prepare_mv "${WORKDIR}/dxheaders-${DXHEADERS_COMMIT}" "${S}/cmake/external/dawn/third_party/dxheaders"
 	dep_prepare_mv "${WORKDIR}/egl-registry-${EGL_REGISTRY_COMMIT}" "${S}/cmake/external/dawn/third_party/khronos/EGL-Registry"
 	dep_prepare_mv "${WORKDIR}/glfw-${GLFW_COMMIT}" "${S}/cmake/external/dawn/third_party/glfw"
 	dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT}" "${S}/cmake/external/dawn/third_party/glslang/src"
 	dep_prepare_mv "${WORKDIR}/gpuweb-${GPUWEB_COMMIT}" "${S}/cmake/external/dawn/third_party/gpuweb"
 	dep_prepare_mv "${WORKDIR}/jinja2-${JINJA2_COMMIT}" "${S}/cmake/external/dawn/third_party/jinja2"
-	dep_prepare_mv "${WORKDIR}/jsoncpp-${JSONCPP_COMMIT_2}" "${S}/cmake/external/dawn/third_party/jsoncpp"
+	dep_prepare_cp "${WORKDIR}/jsoncpp-${JSONCPP_COMMIT_2}" "${S}/cmake/external/dawn/third_party/jsoncpp"
+
 	dep_prepare_mv "${WORKDIR}/langsvr-${LANGSVR_COMMIT}" "${S}/cmake/external/dawn/third_party/langsvr"
+	dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_6}" "${S}/cmake/external/dawn/third_party/langsvr/third_party/googletest"
+	dep_prepare_mv "${WORKDIR}/jsoncpp-${JSONCPP_COMMIT_2}" "${S}/cmake/external/dawn/third_party/langsvr/third_party/jsoncpp"
+	dep_prepare_mv "${WORKDIR}/lsprotocol-${LSPROTOCOL_COMMIT}" "${S}/cmake/external/dawn/third_party/langsvr/third_party/lsprotocol"
+
 	dep_prepare_mv "${WORKDIR}/libcxx-${LIBCXX_COMMIT}" "${S}/cmake/external/dawn/third_party/libc++/src"
 	dep_prepare_mv "${WORKDIR}/libcxxabi-${LIBCXXABI_COMMIT}" "${S}/cmake/external/dawn/third_party/libc++abi/src"
 	dep_prepare_mv "${WORKDIR}/libdrm-${LIBDIR_COMMIT}" "${S}/cmake/external/dawn/third_party/libdrm/src"
@@ -1121,8 +1138,8 @@ src_unpack() {
 	dep_prepare_mv "${WORKDIR}/protoc_wrapper-${PROTOC_WRAPPER_COMMIT}" "${S}/cmake/external/dawn/tools/protoc_wrapper"
 	dep_prepare_mv "${WORKDIR}/rust-${RUST_COMMIT}" "${S}/cmake/external/dawn/tools/rust"
 	dep_prepare_mv "${WORKDIR}/spirv-cross-${SPIRV_CROSS_COMMIT}" "${S}/cmake/external/dawn/third_party/spirv-cross/src"
-	dep_prepare_mv "${WORKDIR}/spirv-headers-${SPIRV_HEADERS_COMMIT}" "${S}/cmake/external/dawn/third_party/spirv-headers/src"
-	dep_prepare_mv "${WORKDIR}/spirv-tools-${SPIRV_TOOLS_COMMIT}" "${S}/cmake/external/dawn/third_party/spirv-tools/src"
+	dep_prepare_mv "${WORKDIR}/spirv-headers-${SPIRV_HEADERS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/spirv-headers/src"
+	dep_prepare_mv "${WORKDIR}/spirv-tools-${SPIRV_TOOLS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/spirv-tools/src"
 	dep_prepare_mv "${WORKDIR}/swiftshader-${SWIFTSHADER_COMMIT}" "${S}/cmake/external/dawn/third_party/swiftshader"
 	dep_prepare_mv "${WORKDIR}/webgpu-cts-${WEBGPU_CTS_COMMIT}" "${S}/cmake/external/dawn/third_party/webgpu-cts"
 	dep_prepare_mv "${WORKDIR}/webgpu-headers-${WEBGPU_HEADERS}" "${S}/cmake/external/dawn/third_party/webgpu-headers"
