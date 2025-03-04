@@ -29,7 +29,7 @@ EAPI=8
 # https://github.com/microsoft/onnxruntime/blob/v1.20.2/requirements-doc.txt
 # https://github.com/microsoft/onnxruntime/blob/v1.20.2/requirements-lintrunner.txt
 # https://github.com/microsoft/onnxruntime/blob/v1.20.2/requirements-training.txt
-# https://github.com/apache/tvm/blob/2379917985919ed3918dc12cad47f469f245be7a/python/gen_requirements.py#L65
+# https://github.com/apache/tvm/blob/2379917985919ed3918dc12cad47f469f245be7a/python/gen_requirements.py#L65 ; commit from https://github.com/microsoft/onnxruntime/blob/v1.20.2/cmake/external/tvm.cmake
 
 # clog has same version as cpuinfo
 
@@ -1059,6 +1059,7 @@ src_unpack() {
 		dep_prepare_mv "${WORKDIR}/cxxopts-${CXXOPTS_COMMIT}" "${S}/cmake/external/cxxopts"
 	fi
 	if use tvm ; then
+		dep_prepare_mv "${WORKDIR}/tvm-${TVM_COMMIT}" "${S}/cmake/external/tvm"
 		dep_prepare_mv "${WORKDIR}/cutlass-${CUTLASS_COMMIT}" "${S}/cmake/external/tvm/3rdparty/cutlass"
 		dep_prepare_mv "${WORKDIR}/dlpack-${DLPACK_COMMIT_1}" "${S}/cmake/external/tvm/3rdparty/dlpack"
 		dep_prepare_mv "${WORKDIR}/dmlc-core-${DMLC_CORE_COMMIT}" "${S}/cmake/external/tvm/3rdparty/dmlc-core"
@@ -1162,12 +1163,14 @@ src_configure() {
 		-DCMAKE_INSTALL_INCLUDEDIR="include"
 		-DFETCHCONTENT_FULLY_DISCONNECTED=ON
 		-DFETCHCONTENT_QUIET=OFF
+		-DFETCHCONTENT_SOURCE_DIR_CXXOPTS="${S}/cmake/external/flatbuffers/third_party/cxxopts"
 		-DFETCHCONTENT_SOURCE_DIR_DATE="${S}/cmake/external/date-1"
 		-DFETCHCONTENT_SOURCE_DIR_DATE_SRC="${S}/cmake/external/date-2"
 		-DFETCHCONTENT_SOURCE_DIR_FLATBUFFERS="${S}/cmake/external/flatbuffers"
 		-DFETCHCONTENT_SOURCE_DIR_GOOGLE_NSYNC="${S}/cmake/external/google_nsync"
 		-DFETCHCONTENT_SOURCE_DIR_GSL="${S}/cmake/external/microsoft_gsl"
 		-DFETCHCONTENT_SOURCE_DIR_MP11="${S}/cmake/external/mp11"
+		-DFETCHCONTENT_SOURCE_DIR_MICROSOFT_WIL="${S}/cmake/external/microsoft_wil"
 		-DFETCHCONTENT_SOURCE_DIR_NLOHMANN_JSON="${S}/cmake/external/json"
 		-DFETCHCONTENT_SOURCE_DIR_ONNX="${S}/cmake/external/onnx"
 		-DFETCHCONTENT_SOURCE_DIR_ABSEIL="${S}/cmake/external/onnx/third_party/abseil" # For cmake/external/onnx/CMakeLists.txt
@@ -1176,7 +1179,7 @@ src_configure() {
 		#-DFETCHCONTENT_SOURCE_DIR_PROTOBUF="${S}/cmake/external/onnx/third_party/protobuf" # For cmake/external/onnx/CMakeLists.txt # Disabled because it is ambiguous.
 		-DFETCHCONTENT_SOURCE_DIR_PROTOBUF="${S}/cmake/external/protobuf"
 		-DFETCHCONTENT_SOURCE_DIR_PYBIND11_PROJECT="${S}/cmake/external/pybind11"
-		-DFETCHCONTENT_SOURCE_DIR_PYTORCH_CLOG="${S}/cmake/external/pytorch_cpuinfo"
+		-DFETCHCONTENT_SOURCE_DIR_PYTORCH_CLOG="${S}/cmake/external/pytorch_clog"
 		-DFETCHCONTENT_SOURCE_DIR_PYTORCH_CPUINFO="${S}/cmake/external/pytorch_cpuinfo"
 		-DFETCHCONTENT_SOURCE_DIR_RE2="${S}/cmake/external/re2"
 		-DFETCHCONTENT_SOURCE_DIR_SAFEINT="${S}/cmake/external/safeint"
@@ -1410,7 +1413,6 @@ src_configure() {
 
 	if use test || use training ; then
 		mycmakeargs+=(
-			-DFETCHCONTENT_SOURCE_DIR_CXXOPTS="${S}/cmake/external/flatbuffers/third_party/cxxopts"
 		)
 	fi
 

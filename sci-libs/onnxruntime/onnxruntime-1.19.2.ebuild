@@ -22,7 +22,7 @@ EAPI=8
 # https://github.com/microsoft/onnxruntime/blob/v1.19.2/requirements-doc.txt
 # https://github.com/microsoft/onnxruntime/blob/v1.19.2/requirements-lintrunner.txt
 # https://github.com/microsoft/onnxruntime/blob/v1.19.2/requirements-training.txt
-# https://github.com/apache/tvm/blob/2379917985919ed3918dc12cad47f469f245be7a/python/gen_requirements.py#L65
+# https://github.com/apache/tvm/blob/2379917985919ed3918dc12cad47f469f245be7a/python/gen_requirements.py#L65 ; commit from https://github.com/microsoft/onnxruntime/blob/v1.19.2/cmake/external/tvm.cmake
 
 # clog has same version as cpuinfo
 
@@ -799,6 +799,7 @@ src_unpack() {
 		dep_prepare_mv "${WORKDIR}/cxxopts-${CXXOPTS_COMMIT}" "${S}/cmake/external/cxxopts"
 	fi
 	if use tvm ; then
+		dep_prepare_mv "${WORKDIR}/tvm-${TVM_COMMIT}" "${S}/cmake/external/tvm"
 		dep_prepare_mv "${WORKDIR}/cutlass-${CUTLASS_COMMIT}" "${S}/cmake/external/tvm/3rdparty/cutlass"
 		dep_prepare_mv "${WORKDIR}/dlpack-${DLPACK_COMMIT}" "${S}/cmake/external/tvm/3rdparty/dlpack"
 		dep_prepare_mv "${WORKDIR}/dmlc-core-${DMLC_CORE_COMMIT}" "${S}/cmake/external/tvm/3rdparty/dmlc-core"
@@ -913,7 +914,7 @@ src_configure() {
 		#-DFETCHCONTENT_SOURCE_DIR_PROTOBUF="${S}/cmake/external/onnx/third_party/protobuf" # For cmake/external/onnx/CMakeLists.txt # Disabled because it is ambiguous.
 		-DFETCHCONTENT_SOURCE_DIR_PROTOBUF="${S}/cmake/external/protobuf"
 		-DFETCHCONTENT_SOURCE_DIR_PYBIND11_PROJECT="${S}/cmake/external/pybind11"
-		-DFETCHCONTENT_SOURCE_DIR_PYTORCH_CLOG="${S}/cmake/external/pytorch_cpuinfo"
+		-DFETCHCONTENT_SOURCE_DIR_PYTORCH_CLOG="${S}/cmake/external/pytorch_clog"
 		-DFETCHCONTENT_SOURCE_DIR_PYTORCH_CPUINFO="${S}/cmake/external/pytorch_cpuinfo"
 		-DFETCHCONTENT_SOURCE_DIR_RE2="${S}/cmake/external/re2"
 		-DFETCHCONTENT_SOURCE_DIR_SAFEINT="${S}/cmake/external/safeint"
