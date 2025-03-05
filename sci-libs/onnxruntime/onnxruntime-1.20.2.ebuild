@@ -51,10 +51,6 @@ _TODO='
 	path = third_party/dawn
 	url = https://dawn.googlesource.com/dawn
 	gclient-condition = not build_with_chromium
-[submodule "third_party/depot_tools"]
-	path = third_party/depot_tools
-	url = https://chromium.googlesource.com/chromium/tools/depot_tools
-	gclient-condition = not build_with_chromium
 [submodule "third_party/EGL-Registry/src"]
 	path = third_party/EGL-Registry/src
 	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/EGL-Registry
@@ -70,30 +66,6 @@ _TODO='
 [submodule "third_party/glmark2/src"]
 	path = third_party/glmark2/src
 	url = https://chromium.googlesource.com/external/github.com/glmark2/glmark2
-[submodule "third_party/googletest"]
-	path = third_party/googletest
-	url = https://chromium.googlesource.com/chromium/src/third_party/googletest
-	gclient-condition = not build_with_chromium
-[submodule "third_party/ijar"]
-	path = third_party/ijar
-	url = https://chromium.googlesource.com/chromium/src/third_party/ijar
-	gclient-condition = checkout_android and not build_with_chromium
-[submodule "third_party/libdrm"]
-	path = third_party/libdrm
-	url = https://chromium.googlesource.com/chromiumos/third_party/libdrm
-	gclient-condition = checkout_angle_mesa or not build_with_chromium
-[submodule "third_party/libjpeg_turbo"]
-	path = third_party/libjpeg_turbo
-	url = https://chromium.googlesource.com/chromium/deps/libjpeg_turbo
-	gclient-condition = not build_with_chromium
-[submodule "third_party/libpng/src"]
-	path = third_party/libpng/src
-	url = https://android.googlesource.com/platform/external/libpng
-	gclient-condition = not build_with_chromium
-[submodule "third_party/llvm/src"]
-	path = third_party/llvm/src
-	url = https://chromium.googlesource.com/external/github.com/llvm/llvm-project
-	gclient-condition = not build_with_chromium
 [submodule "third_party/jinja2"]
 	path = third_party/jinja2
 	url = https://chromium.googlesource.com/chromium/src/third_party/jinja2
@@ -117,18 +89,6 @@ _TODO='
 [submodule "third_party/markupsafe"]
 	path = third_party/markupsafe
 	url = https://chromium.googlesource.com/chromium/src/third_party/markupsafe
-	gclient-condition = not build_with_chromium
-[submodule "third_party/mesa/src"]
-	path = third_party/mesa/src
-	url = https://chromium.googlesource.com/external/github.com/Mesa3D/mesa
-	gclient-condition = checkout_angle_mesa
-[submodule "third_party/meson"]
-	path = third_party/meson
-	url = https://chromium.googlesource.com/external/github.com/mesonbuild/meson
-	gclient-condition = checkout_angle_mesa
-[submodule "third_party/nasm"]
-	path = third_party/nasm
-	url = https://chromium.googlesource.com/chromium/deps/nasm
 	gclient-condition = not build_with_chromium
 [submodule "third_party/OpenCL-CTS/src"]
 	path = third_party/OpenCL-CTS/src
@@ -158,9 +118,6 @@ _TODO='
 	path = third_party/Python-Markdown
 	url = https://chromium.googlesource.com/chromium/src/third_party/Python-Markdown
 	gclient-condition = not build_with_chromium
-[submodule "third_party/rapidjson/src"]
-	path = third_party/rapidjson/src
-	url = https://chromium.googlesource.com/external/github.com/Tencent/rapidjson
 [submodule "third_party/requests/src"]
 	path = third_party/requests/src
 	url = https://chromium.googlesource.com/external/github.com/kennethreitz/requests
@@ -179,10 +136,6 @@ _TODO='
 [submodule "third_party/vulkan-deps"]
 	path = third_party/vulkan-deps
 	url = https://chromium.googlesource.com/vulkan-deps
-	gclient-condition = not build_with_chromium
-[submodule "third_party/glslang/src"]
-	path = third_party/glslang/src
-	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/glslang
 	gclient-condition = not build_with_chromium
 [submodule "third_party/lunarg-vulkantools/src"]
 	path = third_party/lunarg-vulkantools/src
@@ -224,54 +177,10 @@ _TODO='
 	path = third_party/vulkan_memory_allocator
 	url = https://chromium.googlesource.com/external/github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
 	gclient-condition = not build_with_chromium
-[submodule "third_party/wayland"]
-	path = third_party/wayland
-	url = https://chromium.googlesource.com/external/anongit.freedesktop.org/git/wayland/wayland
-	gclient-condition = not build_with_chromium and host_os == "linux"
-[submodule "third_party/zlib"]
-	path = third_party/zlib
-	url = https://chromium.googlesource.com/chromium/src/third_party/zlib
-	gclient-condition = not build_with_chromium
 [submodule "tools/android"]
 	path = tools/android
 	url = https://chromium.googlesource.com/chromium/src/tools/android
 	gclient-condition = checkout_android and not build_with_chromium
-[submodule "tools/clang"]
-	path = tools/clang
-	url = https://chromium.googlesource.com/chromium/src/tools/clang
-	gclient-condition = not build_with_chromium
-[submodule "tools/mb"]
-	path = tools/mb
-	url = https://chromium.googlesource.com/chromium/src/tools/mb
-	gclient-condition = not build_with_chromium
-[submodule "tools/md_browser"]
-	path = tools/md_browser
-	url = https://chromium.googlesource.com/chromium/src/tools/md_browser
-	gclient-condition = not build_with_chromium
-[submodule "tools/memory"]
-	path = tools/memory
-	url = https://chromium.googlesource.com/chromium/src/tools/memory
-	gclient-condition = not build_with_chromium
-[submodule "tools/perf"]
-	path = tools/perf
-	url = https://chromium.googlesource.com/chromium/src/tools/perf
-	gclient-condition = not build_with_chromium
-[submodule "tools/protoc_wrapper"]
-	path = tools/protoc_wrapper
-	url = https://chromium.googlesource.com/chromium/src/tools/protoc_wrapper
-	gclient-condition = not build_with_chromium
-[submodule "tools/python"]
-	path = tools/python
-	url = https://chromium.googlesource.com/chromium/src/tools/python
-	gclient-condition = checkout_android and not build_with_chromium
-[submodule "tools/rust"]
-	path = tools/rust
-	url = https://chromium.googlesource.com/chromium/src/tools/rust
-	gclient-condition = not build_with_chromium
-[submodule "tools/valgrind"]
-	path = tools/valgrind
-	url = https://chromium.googlesource.com/chromium/src/tools/valgrind
-	gclient-condition = not build_with_chromium
 '
 
 # TODO:
@@ -335,8 +244,8 @@ BUILD_COMMIT_2="162c225df12d17ca67ce48c578af2d0946820119" # angle dep
 BUILDTOOLS_COMMIT_1="9cac81256beb5d4d36c8801afeae38fea34b8486" # dawn dep
 BUILDTOOLS_COMMIT_2="f8f6777fcf684dd891658ff32b195589e88fe2d8" # angle dep
 CATAPULT_COMMIT="b9db9201194440dc91d7f73d4c939a8488994f60" # dawn dep
-CLANG_COMMIT="06a29b5bbf392c68d73dc8df9015163cc5a98c40" # dawn dep
-
+CLANG_COMMIT_1="06a29b5bbf392c68d73dc8df9015163cc5a98c40" # dawn dep
+CLANG_COMMIT_2="fb801f8a4b25776becf0119b8b578d9b5a096285" # angle dep
 CLANG_FORMAT_COMMIT_1="95c834f3753e65ce6daa74e345c879566c1491d0"
 CLANG_FORMAT_COMMIT_2="3c0acd2d4e73dd911309d9e970ba09d58bf23a62" # angle dep
 CMAKE_IN_SOURCE_BUILD=1
@@ -356,7 +265,8 @@ CXXOPTS_COMMIT="3c73d91c0b04e2b59462f0a741be8c07024c1bc0"
 DATE_PV_1="3.0.1" # From cmake/deps.txt
 DATE_PV_2="3.0.0" # From cmake/external/date/CMakeLists.txt
 DAWN_COMMIT="511eb80847afe6bded34ec491a38d5d78ba2d604"
-DEPOT_TOOLS_COMMIT="f5e10923392588205925c036948e111f72b80271" # dawn dep
+DEPOT_TOOLS_COMMIT_1="f5e10923392588205925c036948e111f72b80271" # dawn dep
+DEPOT_TOOLS_COMMIT_2="1f6ef165b726ed7316b8e88666390e90a82e8e50" # depot dep
 DIRECTX_HEADERS_PV="1.613.1"
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
@@ -392,6 +302,7 @@ GIT_HOOKS_COMMIT="6d91964d33adee28dda9c7faf9ffd6f4672c381c" # swiftshader dep
 GLFW_COMMIT="b35641f4a3c62aa86a0b3c983d163bc0fe36026d" # dawn dep
 GLSLANG_COMMIT_1="df3398078fab37b50ab33192af01cbc5b5d5b377" # dawn dep
 GLSLANG_COMMIT_2="2b2523fb951f63f072cfba514c26f2feea5f4329" # swiftshader dep
+GLSLANG_COMMIT_3="df3398078fab37b50ab33192af01cbc5b5d5b377" # angle dep
 GOOGLETEST_PV_1="1.15.0" # From cmake/deps.txt
 GOOGLETEST_COMMIT_1="ff233bdd4cac0a0bf6e5cd45bda3406814cb2796" # flatbuffers dep, from cmake/external/flatbuffers/benchmarks/CMakeLists.txt
 GOOGLETEST_COMMIT_2="4c9a3bb62bf3ba1f1010bf96f9c8ed767b363774" # protobuf dep
@@ -401,9 +312,12 @@ GOOGLETEST_COMMIT_5="5ec7f0c4a113e2f18ac2c6cc7df51ad6afc24081" # protobuf dep
 GOOGLETEST_COMMIT_6="dddb219c3eb96d7f9200f09b0a381f016e6b4562" # dawn/langsvr dep
 GOOGLETEST_COMMIT_7="440527a61e1c91188195f7de212c63c77e8f0a45" # dawn/dxc dep
 GOOGLETEST_COMMIT_8="0a03480824b4fc7883255dbd2fd8940c9f81e22e" # cppdap dep
+GOOGLETEST_COMMIT_9="17bbed2084d3127bd7bcd27283f18d7a5861bea8" # angle dep
+GOOGLETEST_COMMIT_10="ba96d0b1161f540656efdaed035b3c062b60e006" # angle/rapidjson dep
 GOOGLETEST_PV_2="1.10.0" # dawn/protobuf dep
 GPUWEB_COMMIT="23db3e47ed3b3c7ab2c3638bcde7c7f76324457d" # dawn dep
 GSL_PV="4.0.0" # From cmake/deps.txt
+IJAR_COMMIT="3bd143299ed5b7a04fce3883ac52d7a0afdaf0a7" # angle dep
 JINJA2_COMMIT="e2d024354e11cc6b041b0cff032d73f0c7e43a07" # dawn dep
 JSON_PV="3.10.5" # From cmake/deps.txt
 JSON_COMMIT_1="f272ad533d32a40a3b2154a76f1ae9a45eacd6d3" # cppdap dep
@@ -416,30 +330,37 @@ LIBBACKTRACE_COMMIT_1="08f7c7e69f8ea61a0c4151359bc8023be8e9217b" # tvm dep
 LIBBACKTRACE_COMMIT_2="5a99ff7fed66b8ea8f09c9805c138524a7035ece" # swiftshader dep
 LIBCXX_COMMIT="450ae0d29766e87ea12148e8c6c3352053f78e15" # dawn dep
 LIBCXXABI_COMMIT="e5b130d5dc3058457ea0658a55ae6bb968f75f0e" # dawn dep
-LIBDRM_COMMIT="ad78bb591d02162d3b90890aa4d0a238b2a37cde"
+LIBDRM_COMMIT_1="ad78bb591d02162d3b90890aa4d0a238b2a37cde"
+LIBDRM_COMMIT_2="474894ed17a037a464e5bd845a0765a50f647898" # angle dep
 LIBFUZZER_COMMIT="26cc39e59b2bf5cbc20486296248a842c536878d" # dawn dep
+LIBJPEG_TURBO_COMMIT="4426a8da65e8d1eb652210d0c5b3a339e05aec01" # angle dep
+LIBPNG_COMMIT="d2ece84bd73af1cd5fae5e7574f79b40e5de4fba" # angle dep
 LIBPROTOBUF_MUTATOR_COMMIT="a304ec48dcf15d942607032151f7e9ee504b5dcf" # dawn dep
+LUNARG_VULKANTOOLS_COMMIT_1="a24a94aa0d1fc4e5556bdf9c6b2afe8eacc55326" # dawn/vulkan-deps dep
+LLVM_COMMIT="d222fa4521531cc4ac14b8e157d231c108c003be" # angle dep
+LLVM_COMPAT=( 17 18 )
+LLVM_LIBC_COMMIT="a485ddbbb2ffe528c3ebf82b9d72a7297916531f"
+LLVM_OPTIONAL=1
 LLVM_PROJECT_COMMIT="fc3b34c50803274b8ba3b8a30df9177b7d29063c" # swiftshader dep
 LSPROTOCOL_COMMIT="4a296ecf01c50008c9fbf07d48d15a1a4e97fded" # dawn/langsvr dep
 MARKUPSAFE_COMMIT="0bad08bb207bbfc1d6f3bbc82b9242b0c50e5794" # dawn dep
+MEMORY_COMMIT="bd3ae34fa1ef7cf9510cae571bd27dd09600f321" # angle dep
+MESA_COMMIT="0a6aa58acae2a5b27ef783c22e976ec9b0d33ddc" # angle dep
 MP11_PV="1.82.0"
 NODE_ADDON_API_COMMIT="1e26dcb52829a74260ec262edb41fc22998669b6" # dawn dep
 NSYNC_PV="1.26.0" # From cmake/deps.txt
 ONNX_COMMIT_1="595228d99e3977ac27cb79d5963adda262af99ad" # same as 1.16.1.  onnxruntime dep
 ONNX_COMMIT_2="990217f043af7222348ca8f0301e17fa7b841781" # onnx-tensorrt dep
 OPENGL_REGISTRY_COMMIT="5bae8738b23d06968e7c3a41308568120943ae77" # dawn dep
+PERFETTO_COMMIT="d06bef7807a8b90de9bce77132e188f68459a714" # angle dep
+PERF_COMMIT="04e8da746a4fffd3a20ff54872dcf234f0264155" # angle dep
 POWERVR_EXAMPLES_COMMIT="409c9d54fdaffe68565283e38dcbbe6c58535925" # swiftshader dep
 PSIMD_COMMIT="072586a71b55b7f8c584153d223e95687148a900" # From cmake/deps.txt
-ROCM_SLOTS=(
-	rocm_6_0
-	rocm_5_7
-)
-LIBDIR_COMMIT="ad78bb591d02162d3b90890aa4d0a238b2a37cde"
-LLVM_COMPAT=( 17 18 )
-LLVM_LIBC_COMMIT="a485ddbbb2ffe528c3ebf82b9d72a7297916531f"
-LLVM_OPTIONAL=1
-LUNARG_VULKANTOOLS_COMMIT_1="a24a94aa0d1fc4e5556bdf9c6b2afe8eacc55326" # dawn/vulkan-deps dep
+MB_COMMIT="bd684abf569033d9aae4c28c95ecb78e77db7bbb" # angle dep
+MD_BROWSER_COMMIT="6cc8e58a83412dc31de6fb7614fadb0b51748d4b" # angle dep
+MESON_COMMIT="9fd5eb605674067ce6f8876dc27e5e116024e8a6" # angle dep
 MIMALLOC_PV="2.1.1" # From cmake/deps.txt
+NASM_COMMIT="f477acb1049f5e043904b87b825c5915084a9a29" # angle dep
 NODE_API_HEADERS_COMMIT="d5cfe19da8b974ca35764dd1c73b91d57cd3c4ce" # dawn dep
 ONNX_TENSORRT_COMMIT="9f98e2ebe7507fe0774d06a44bbf4b0e82cc9ce7" # From cmake/deps.txt
 ONNXRUNTIME_EXTENSIONS_COMMIT="94142d8391c9791ec71c38336436319a2d4ac7a0" # From cmake/deps.txt
@@ -456,14 +377,22 @@ PROTOBUF_PV_1="21.12" # From cmake/deps.txt
 PROTOBUF_PV_2="22.3" # From cmake/external/onnx/CMakeLists.txt
 PARTITION_ALLOCATOR_COMMIT="2e6b2efb6f435aa3dd400cb3bdcead2a601f8f9a" # dawn dep
 PROTOBUF_COMMIT="da2fe725b80ac0ba646fbf77d0ce5b4ac236f823" # dawn dep
-PROTOC_WRAPPER_COMMIT="b5ea227bd88235ab3ccda964d5f3819c4e2d8032" # dawn dep
+PROTOC_WRAPPER_COMMIT_1="b5ea227bd88235ab3ccda964d5f3819c4e2d8032" # dawn dep
+PROTOC_WRAPPER_COMMIT_2="dbcbea90c20ae1ece442d8ef64e61c7b10e2b013" # angle dep
 PSMID_COMMIT="072586a71b55b7f8c584153d223e95687148a900" # From cmake/deps.txt
 PTHREADPOOL_COMMIT="4fe0e1e183925bf8cfa6aae24237e724a96479b8" # From cmake/deps.txt
 PYBIND11_COMMIT_1="5b0a6fc2017fcc176545afe3e09c9f9885283242" # onnx dep
 PYBIND11_PV="2.13.1" # From cmake/deps.txt, onnxruntime dep
+PYTHON_COMMIT="64dd0e593f8e438764ced983a9f3f96061df748c" # angle dep
 PYTHON_COMPAT=( "python3_"{10..12} )
 RANG_COMMIT="cabe04d6d6b05356fa8f9741704924788f0dd762" # tvm dep
-RUST_COMMIT="a69a8ecdbf7a19fb129ae57650cac9f704cb7cf9" # dawn dep
+RAPIDJSON_COMMIT="781a4e667d84aeedbeb8184b7b62425ea66ec59f" # angle dep
+ROCM_SLOTS=(
+	rocm_6_0
+	rocm_5_7
+)
+RUST_COMMIT_1="a69a8ecdbf7a19fb129ae57650cac9f704cb7cf9" # dawn dep
+RUST_COMMIT_2="b732825d28c8cc3277ef03713cc7e71b0db9c782" # angle dep
 RE2_PV="2024-07-02" # From cmake/deps.txt
 SAFEINT_PV="3.0.28" # From cmake/deps.txt
 SPIRV_CROSS_COMMIT_1="b8fcf307f1f347089e3c46eb4451d27f32ebc8d3" # dawn dep
@@ -480,6 +409,7 @@ TVM_VTA_COMMIT="36a91576edf633479c78649e050f18dd2ddc8103" # tvm dep
 UTF8_RANGE_COMMIT="72c943dea2b9240cd09efde15191e144bc7c7d38" # From cmake/deps.txt, protobuf dep
 WEBGPU_CTS_COMMIT="9cf0129e51b25c16310830dc040adb444fede64e"
 WEBGPU_HEADERS="8049c324dc7b3c09dc96ea04cb02860f272c8686"
+VALGRIND_COMMIT="f9f02d66abacbb6b1bf00573b7426ec6dc767b38" # angle dep
 VULKANMEMORYALLOCATOR_COMMIT="52dc220fb326e6ae132b7f262133b37b0dc334a3"
 VULKAN_DEPS_COMMIT="23ed8d76c58a57c4f14b0aba6197d5631a844f00" # dawn dep
 VULKAN_HEADERS_COMMIT_1="a6a5dc0d078ade9bde75bd78404462509cbdce99" # dawn dep
@@ -487,9 +417,11 @@ VULKAN_LOADER_COMMIT_1="2761c159b9325baa5980e028ac081963b5d5dd9c" # dawn dep
 VULKAN_TOOLS_COMMIT_1="7e82aea5fc1394d417a0df6a5680a4cce5c37286" # dawn dep
 VULKAN_UTILITY_LIBRARIES_COMMIT_1="7ea05992a52e96426bd4c56ea12d208e0d6c9a5f" # dawn dep
 VULKAN_VALIDATION_LAYERS_COMMIT_1="13c0c4dc619d165b05061702a3c8eb604d21efa4" # dawn dep
+WAYLAND_COMMIT="75c1a93e2067220fa06208f20f8f096bb463ec08" # angle dep
 WIL_PV="1.0.230629.1"
 XNNPACK_COMMIT="309b75c9e56e0a674bf78d59872ce131f814dfb6" # From cmake/deps.txt
-ZLIB_COMMIT="209717dd69cd62f24cbacc4758261ae2dd78cfac"
+ZLIB_COMMIT_1="209717dd69cd62f24cbacc4758261ae2dd78cfac"
+ZLIB_COMMIT_2="d3aea2341cdeaf7e717bc257a59aa7a9407d318a" # angle dep
 
 
 inherit cmake cuda dep-prepare distutils-r1 flag-o-matic llvm-r1 rocm toolchain-funcs
@@ -498,13 +430,18 @@ inherit cmake cuda dep-prepare distutils-r1 flag-o-matic llvm-r1 rocm toolchain-
 # The reason for delay is submodule hell (the analog of dll hell).
 #KEYWORDS="~amd64"
 SRC_URI="
-
-
-
+https://android.googlesource.com/platform/external/libpng/+archive/${LIBPNG_COMMIT:0:7}.tar.gz
+	-> libpng-${LIBPNG_COMMIT:0:7}.tar.gz
+https://android.googlesource.com/platform/external/perfetto/+archive/${PERFETTO_COMMIT:0:7}.tar.gz
+	-> perfetto-${PERFETTO_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/angle/angle/+archive/${ANGLE_COMMIT:0:7}.tar.gz
 	-> angle-${ANGLE_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/catapult/+archive/${CATAPULT_COMMIT:0:7}.tar.gz
 	-> catapult-${CATAPULT_COMMIT:0:7}.tar.gz
+https://chromium.googlesource.com/chromium/deps/libjpeg_turbo/+archive/${LIBJPEG_TURBO_COMMIT:0:7}.tar.gz
+	-> libjpeg_turbo-${LIBJPEG_TURBO_COMMIT:0:7}.tar.gz
+https://chromium.googlesource.com/chromium/deps/nasm/+archive/${NASM_COMMIT:0:7}.tar.gz
+	-> nasm-${NASM_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/chromium/src/base/allocator/partition_allocator/+archive/${PARTITION_ALLOCATOR_COMMIT:0:7}.tar.gz
 	-> partition_allocator-${PARTITION_ALLOCATOR_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/chromium/src/build/+archive/${BUILD_COMMIT_1:0:7}.tar.gz
@@ -519,28 +456,64 @@ https://chromium.googlesource.com/chromium/src/third_party/abseil-cpp/+archive/$
 	-> abseil-cpp-${ABSEIL_CPP_COMMIT_3:0:7}.tar.gz
 https://chromium.googlesource.com/chromium/src/third_party/abseil-cpp/+archive/${ABSEIL_CPP_COMMIT_4:0:7}.tar.gz
 	-> abseil-cpp-${ABSEIL_CPP_COMMIT_4:0:7}.tar.gz
+https://chromium.googlesource.com/chromium/src/third_party/googletest/+archive/${GOOGLETEST_COMMIT_9:0:7}.tar.gz
+	-> googletest-${GOOGLETEST_COMMIT_9:0:7}.tar.gz
+https://chromium.googlesource.com/chromium/src/third_party/ijar/+archive/${IJAR_COMMIT:0:7}.tar.gz
+	-> ijar-${IJAR_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/chromium/src/third_party/jinja2/+archive/${JINJA2_COMMIT:0:7}.tar.gz
 	-> jinja2-${JINJA2_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/chromium/src/third_party/markupsafe/+archive/${MARKUPSAFE_COMMIT:0:7}.tar.gz
 	-> markupsafe-${MARKUPSAFE_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/chromium/src/third_party/protobuf/+archive/${PROTOBUF_COMMIT:0:7}.tar.gz
 	-> protobuf-${PROTOBUF_COMMIT:0:7}.tar.gz
-https://chromium.googlesource.com/chromium/src/third_party/zlib/+archive/${ZLIB_COMMIT:0:7}.tar.gz
-	-> zlib-${ZLIB_COMMIT:0:7}.tar.gz
+https://chromium.googlesource.com/chromium/src/third_party/zlib/+archive/${ZLIB_COMMIT_1:0:7}.tar.gz
+	-> zlib-${ZLIB_COMMIT_1:0:7}.tar.gz
+https://chromium.googlesource.com/chromium/src/third_party/zlib/+archive/${ZLIB_COMMIT_2:0:7}.tar.gz
+	-> zlib-${ZLIB_COMMIT_2:0:7}.tar.gz
+
+
+
 https://chromium.googlesource.com/chromium/src/testing/+archive/${TESTING_COMMIT_1:0:7}.tar.gz
 	-> testing-${TESTING_COMMIT_1:0:7}.tar.gz
 https://chromium.googlesource.com/chromium/src/testing/+archive/${TESTING_COMMIT_2:0:7}.tar.gz
 	-> testing-${TESTING_COMMIT_2:0:7}.tar.gz
-https://chromium.googlesource.com/chromium/src/tools/clang/+archive/${CLANG_COMMIT:0:7}.tar.gz
-	-> clang-${CLANG_COMMIT:0:7}.tar.gz
-https://chromium.googlesource.com/chromium/src/tools/protoc_wrapper/+archive/${PROTOC_WRAPPER_COMMIT:0:7}.tar.gz
-	-> protoc_wrapper-${PROTOC_WRAPPER_COMMIT:0:7}.tar.gz
-https://chromium.googlesource.com/chromium/src/tools/rust/+archive/${RUST_COMMIT:0:7}.tar.gz
-	-> rust-${RUST_COMMIT:0:7}.tar.gz
-https://chromium.googlesource.com/chromium/tools/depot_tools/+archive/${DEPOT_TOOLS_COMMIT:0:7}.tar.gz
-	-> depot_tools-${DEPOT_TOOLS_COMMIT:0:7}.tar.gz
-https://chromium.googlesource.com/chromiumos/third_party/libdrm/+archive/${LIBDIR_COMMIT:0:7}.tar.gz
-	-> libdrm-${LIBDIR_COMMIT:0:7}.tar.gz
+https://chromium.googlesource.com/chromium/src/tools/clang/+archive/${CLANG_COMMIT_1:0:7}.tar.gz
+	-> clang-${CLANG_COMMIT_1:0:7}.tar.gz
+https://chromium.googlesource.com/chromium/src/tools/clang/+archive/${CLANG_COMMIT_2:0:7}.tar.gz
+	-> clang-${CLANG_COMMIT_2:0:7}.tar.gz
+
+https://chromium.googlesource.com/chromium/src/tools/mb/+archive/${MB_COMMIT:0:7}.tar.gz
+	-> mb-${MB_COMMIT:0:7}.tar.gz
+https://chromium.googlesource.com/chromium/src/tools/md_browser/+archive/${MD_BROWSER_COMMIT:0:7}.tar.gz
+	-> md_browser-${MD_BROWSER_COMMIT:0:7}.tar.gz
+https://chromium.googlesource.com/chromium/src/tools/memory/+archive/${MEMORY_COMMIT:0:7}.tar.gz
+	-> memory-${MEMORY_COMMIT:0:7}.tar.gz
+https://chromium.googlesource.com/chromium/src/tools/perf/+archive/${PERF_COMMIT:0:7}.tar.gz
+	-> perf-${PERF_COMMIT:0:7}.tar.gz
+https://chromium.googlesource.com/chromium/src/tools/protoc_wrapper/+archive/${PROTOC_WRAPPER_COMMIT_1:0:7}.tar.gz
+	-> protoc_wrapper-${PROTOC_WRAPPER_COMMIT_1:0:7}.tar.gz
+https://chromium.googlesource.com/chromium/src/tools/protoc_wrapper/+archive/${PROTOC_WRAPPER_COMMIT_2:0:7}.tar.gz
+	-> protoc_wrapper-${PROTOC_WRAPPER_COMMIT_2:0:7}.tar.gz
+https://chromium.googlesource.com/chromium/src/tools/python/+archive/${PYTHON_COMMIT:0:7}.tar.gz
+	-> python-${PYTHON_COMMIT:0:7}.tar.gz
+https://chromium.googlesource.com/chromium/src/tools/rust/+archive/${RUST_COMMIT_1:0:7}.tar.gz
+	-> rust-${RUST_COMMIT_1:0:7}.tar.gz
+https://chromium.googlesource.com/chromium/src/tools/rust/+archive/${RUST_COMMIT_2:0:7}.tar.gz
+	-> rust-${RUST_COMMIT_2:0:7}.tar.gz
+https://chromium.googlesource.com/chromium/src/tools/valgrind/+archive/${VALGRIND_COMMIT:0:7}.tar.gz
+	-> valgrind-${VALGRIND_COMMIT:0:7}.tar.gz
+
+
+https://chromium.googlesource.com/chromium/tools/depot_tools/+archive/${DEPOT_TOOLS_COMMIT_1:0:7}.tar.gz
+	-> depot_tools-${DEPOT_TOOLS_COMMIT_1:0:7}.tar.gz
+https://chromium.googlesource.com/chromium/tools/depot_tools/+archive/${DEPOT_TOOLS_COMMIT_2:0:7}.tar.gz
+	-> depot_tools-${DEPOT_TOOLS_COMMIT_2:0:7}.tar.gz
+https://chromium.googlesource.com/chromiumos/third_party/libdrm/+archive/${LIBDRM_COMMIT_1:0:7}.tar.gz
+	-> libdrm-${LIBDRM_COMMIT_1:0:7}.tar.gz
+https://chromium.googlesource.com/chromiumos/third_party/libdrm/+archive/${LIBDRM_COMMIT_2:0:7}.tar.gz
+	-> libdrm-${LIBDRM_COMMIT_2:0:7}.tar.gz
+https://chromium.googlesource.com/external/anongit.freedesktop.org/git/wayland/wayland/+archive/${WAYLAND_COMMIT:0:7}.tar.gz
+	-> wayland-${WAYLAND_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/external/github.com/glfw/glfw/+archive/${GLFW_COMMIT:0:7}.tar.gz
 	-> glfw-${GLFW_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/external/github.com/KhronosGroup/EGL-Registry/+archive/${EGL_REGISTRY_COMMIT:0:7}.tar.gz
@@ -553,6 +526,26 @@ https://chromium.googlesource.com/external/github.com/KhronosGroup/SPIRV-Headers
 	-> spirv-headers-${SPIRV_HEADERS_COMMIT_1:0:7}.tar.gz
 https://chromium.googlesource.com/external/github.com/KhronosGroup/SPIRV-Tools/+archive/${SPIRV_TOOLS_COMMIT_1:0:7}.tar.gz
 	-> spirv-tools-${SPIRV_TOOLS_COMMIT_1:0:7}.tar.gz
+https://chromium.googlesource.com/external/github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/+archive/${VULKANMEMORYALLOCATOR_COMMIT:0:7}.tar.gz
+	-> VulkanMemoryAllocator-${VULKANMEMORYALLOCATOR_COMMIT:0:7}.tar.gz
+https://chromium.googlesource.com/external/github.com/gpuweb/cts/+archive/${WEBGPU_CTS_COMMIT:0:7}.tar.gz
+	-> webgpu-cts-${WEBGPU_CTS_COMMIT:0:7}.tar.gz
+https://chromium.googlesource.com/external/github.com/KhronosGroup/glslang/+archive/${GLSLANG_COMMIT_1:0:7}.tar.gz
+	-> glslang-${GLSLANG_COMMIT_1:0:7}.tar.gz
+https://chromium.googlesource.com/external/github.com/KhronosGroup/glslang/+archive/${GLSLANG_COMMIT_3:0:7}.tar.gz
+	-> glslang-${GLSLANG_COMMIT_3:0:7}.tar.gz
+https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Headers/+archive/${VULKAN_HEADERS_COMMIT_1:0:7}.tar.gz
+	-> vulkan-headers-${VULKAN_HEADERS_COMMIT_1:0:7}.tar.gz
+https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Loader/+archive/${VULKAN_LOADER_COMMIT_1:0:7}.tar.gz
+	-> vulkan-loader-${VULKAN_LOADER_COMMIT_1:0:7}.tar.gz
+https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Tools/+archive/${VULKAN_TOOLS_COMMIT_1:0:7}.tar.gz
+	-> vulkan-tools-${VULKAN_TOOLS_COMMIT_1:0:7}.tar.gz
+https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Utility-Libraries/+archive/${VULKAN_UTILITY_LIBRARIES_COMMIT_1:0:7}.tar.gz
+	-> vulkan-utility-libraries-${VULKAN_UTILITY_LIBRARIES_COMMIT_1:0:7}.tar.gz
+https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-ValidationLayers/+archive/${VULKAN_VALIDATION_LAYERS_COMMIT_1:0:7}.tar.gz
+	-> vulkan-validation-layers-${VULKAN_VALIDATION_LAYERS_COMMIT_1:0:7}.tar.gz
+https://chromium.googlesource.com/external/github.com/llvm/llvm-project/+archive/${LLVM_COMMIT:0:7}.tar.gz
+	-> llvm-${LLVM_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/external/github.com/llvm/llvm-project/clang/tools/clang-format/+archive/${CLANG_FORMAT_COMMIT_1:0:7}.tar.gz
 	-> clang-format-${CLANG_FORMAT_COMMIT_1:0:7}.tar.gz
 https://chromium.googlesource.com/external/github.com/llvm/llvm-project/clang/tools/clang-format/+archive/${CLANG_FORMAT_COMMIT_2:0:7}.tar.gz
@@ -565,38 +558,29 @@ https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxxab
 	-> libcxxabi-${LIBCXXABI_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libc.git/+archive/${LLVM_LIBC_COMMIT:0:7}.tar.gz
 	-> llvm-libc-${LLVM_LIBC_COMMIT:0:7}.tar.gz
-https://chromium.googlesource.com/external/github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator/+archive/${VULKANMEMORYALLOCATOR_COMMIT:0:7}.tar.gz
-	-> VulkanMemoryAllocator-${VULKANMEMORYALLOCATOR_COMMIT:0:7}.tar.gz
-https://chromium.googlesource.com/external/github.com/gpuweb/cts/+archive/${WEBGPU_CTS_COMMIT:0:7}.tar.gz
-	-> webgpu-cts-${WEBGPU_CTS_COMMIT:0:7}.tar.gz
-https://chromium.googlesource.com/external/github.com/KhronosGroup/glslang/+archive/${GLSLANG_COMMIT_1:0:7}.tar.gz
-	-> glslang-${GLSLANG_COMMIT_1:0:7}.tar.gz
-https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Headers/+archive/${VULKAN_HEADERS_COMMIT_1:0:7}.tar.gz
-	-> vulkan-headers-${VULKAN_HEADERS_COMMIT_1:0:7}.tar.gz
-https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Loader/+archive/${VULKAN_LOADER_COMMIT_1:0:7}.tar.gz
-	-> vulkan-loader-${VULKAN_LOADER_COMMIT_1:0:7}.tar.gz
-https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Tools/+archive/${VULKAN_TOOLS_COMMIT_1:0:7}.tar.gz
-	-> vulkan-tools-${VULKAN_TOOLS_COMMIT_1:0:7}.tar.gz
-https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Utility-Libraries/+archive/${VULKAN_UTILITY_LIBRARIES_COMMIT_1:0:7}.tar.gz
-	-> vulkan-utility-libraries-${VULKAN_UTILITY_LIBRARIES_COMMIT_1:0:7}.tar.gz
-https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-ValidationLayers/+archive/${VULKAN_VALIDATION_LAYERS_COMMIT_1:0:7}.tar.gz
-	-> vulkan-validation-layers-${VULKAN_VALIDATION_LAYERS_COMMIT_1:0:7}.tar.gz
 https://chromium.googlesource.com/external/github.com/LunarG/VulkanTools/+archive/${LUNARG_VULKANTOOLS_COMMIT_1:0:7}.tar.gz
 	-> lunarg-vulkantools-${LUNARG_VULKANTOOLS_COMMIT_1:0:7}.tar.gz
+https://chromium.googlesource.com/external/github.com/Mesa3D/mesa/+archive/${MESA_COMMIT:0:7}.tar.gz
+	-> mesa-${MESA_COMMIT:0:7}.tar.gz
+https://chromium.googlesource.com/external/github.com/mesonbuild/meson/+archive/${MESON_COMMIT:0:7}.tar.gz
+	-> meson-${MESON_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/external/github.com/microsoft/DirectX-Headers/+archive/${DXHEADERS_COMMIT:0:7}.tar.gz
 	-> dxheaders-${DXHEADERS_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/external/github.com/microsoft/DirectXShaderCompiler/+archive/${DXC_COMMIT:0:7}.tar.gz
 	-> dxc-${DXC_COMMIT:0:7}.tar.gz
+https://chromium.googlesource.com/external/github.com/Tencent/rapidjson/+archive/${RAPIDJSON_COMMIT:0:7}.tar.gz
+	-> rapidjson-${RAPIDJSON_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/external/github.com/webgpu-native/webgpu-headers/+archive/${WEBGPU_HEADERS:0:7}.tar.gz
 	-> webgpu-headers-${WEBGPU_HEADERS:0:7}.tar.gz
 https://chromium.googlesource.com/vulkan-deps/+archive/${VULKAN_DEPS_COMMIT:0:7}.tar.gz
 	-> vulkan-deps-${VULKAN_DEPS_COMMIT:0:7}.tar.gz
 
+
+
 https://swiftshader.googlesource.com/git-hooks/+archive/${GIT_HOOKS_COMMIT:0:7}.tar.gz
 	-> git-hooks-${GIT_HOOKS_COMMIT:0:7}.tar.gz
 https://swiftshader.googlesource.com/SwiftShader/+archive/${SWIFTSHADER_COMMIT:0:7}.tar.gz
 	-> swiftshader-${SWIFTSHADER_COMMIT:0:7}.tar.gz
-
 
 https://github.com/abseil/abseil-cpp/archive/refs/tags/${ABSEIL_CPP_PV}.tar.gz
 	-> abseil-cpp-${ABSEIL_CPP_PV}.tar.gz
@@ -754,6 +738,8 @@ https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT_7}.tar.gz
 	-> googletest-${GOOGLETEST_COMMIT_7:0:7}.tar.gz
 https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT_8}.tar.gz
 	-> googletest-${GOOGLETEST_COMMIT_8:0:7}.tar.gz
+https://github.com/google/googletest/archive/${GOOGLETEST_COMMIT_10}.tar.gz
+	-> googletest-${GOOGLETEST_COMMIT_10:0:7}.tar.gz
 https://github.com/google/googletest/archive/refs/tags/v${GOOGLETEST_PV_1}.tar.gz
 	-> googletest-${GOOGLETEST_PV_1}.tar.gz
 https://github.com/google/googletest/archive/release-${GOOGLETEST_PV_2}.tar.gz
@@ -1264,7 +1250,7 @@ _unpack() {
 	)
 
 	# Only for tarballs from chromium.googlesource.com which do not have a root folder.
-	local DAWN_TARBALLS=(
+	local NO_ROOT_DIR_TARBALLS=(
 		"abseil-cpp-${ABSEIL_CPP_COMMIT_3:0:7}.tar.gz;abseil-cpp-${ABSEIL_CPP_COMMIT_3}"
 		"abseil-cpp-${ABSEIL_CPP_COMMIT_4:0:7}.tar.gz;abseil-cpp-${ABSEIL_CPP_COMMIT_4}"
 		"angle-${ANGLE_COMMIT:0:7}.tar.gz;angle-${ANGLE_COMMIT}"
@@ -1274,33 +1260,56 @@ _unpack() {
 		"buildtools-${BUILDTOOLS_COMMIT_1:0:7}.tar.gz;buildtools-${BUILDTOOLS_COMMIT_1}"
 		"buildtools-${BUILDTOOLS_COMMIT_2:0:7}.tar.gz;buildtools-${BUILDTOOLS_COMMIT_2}"
 		"catapult-${CATAPULT_COMMIT:0:7}.tar.gz;catapult-${CATAPULT_COMMIT}"
-		"clang-${CLANG_COMMIT:0:7}.tar.gz;clang-${CLANG_COMMIT}"
+		"clang-${CLANG_COMMIT_1:0:7}.tar.gz;clang-${CLANG_COMMIT_1}"
+		"clang-${CLANG_COMMIT_2:0:7}.tar.gz;clang-${CLANG_COMMIT_2}"
 		"clang-format-${CLANG_FORMAT_COMMIT_1:0:7}.tar.gz;clang-format-${CLANG_FORMAT_COMMIT_1}"
 		"clang-format-${CLANG_FORMAT_COMMIT_2:0:7}.tar.gz;clang-format-${CLANG_FORMAT_COMMIT_2}"
-		"depot_tools-${DEPOT_TOOLS_COMMIT:0:7}.tar.gz;depot_tools-${DEPOT_TOOLS_COMMIT}"
+		"depot_tools-${DEPOT_TOOLS_COMMIT_1:0:7}.tar.gz;depot_tools-${DEPOT_TOOLS_COMMIT_1}"
+		"depot_tools-${DEPOT_TOOLS_COMMIT_2:0:7}.tar.gz;depot_tools-${DEPOT_TOOLS_COMMIT_2}"
 		"dxc-${DXC_COMMIT:0:7}.tar.gz;dxc-${DXC_COMMIT}"
 		"dxheaders-${DXHEADERS_COMMIT:0:7}.tar.gz;dxheaders-${DXHEADERS_COMMIT}"
 		"egl-registry-${EGL_REGISTRY_COMMIT:0:7}.tar.gz;egl-registry-${EGL_REGISTRY_COMMIT}"
 		"git-hooks-${GIT_HOOKS_COMMIT:0:7}.tar.gz;git-hooks-${GIT_HOOKS_COMMIT}"
 		"glfw-${GLFW_COMMIT:0:7}.tar.gz;glfw-${GLFW_COMMIT}"
 		"glslang-${GLSLANG_COMMIT_1:0:7}.tar.gz;glslang-${GLSLANG_COMMIT_1}"
+		"glslang-${GLSLANG_COMMIT_3:0:7}.tar.gz;glslang-${GLSLANG_COMMIT_3}"
+		"googletest-${GOOGLETEST_COMMIT_9:0:7}.tar.gz;googletest-${GOOGLETEST_COMMIT_9}"
+		"ijar-${IJAR_COMMIT:0:7}.tar.gz;ijar-${IJAR_COMMIT}"
 		"jinja2-${JINJA2_COMMIT:0:7}.tar.gz;jinja2-${JINJA2_COMMIT}"
 		"libcxx-${LIBCXX_COMMIT:0:7}.tar.gz;libcxx-${LIBCXX_COMMIT}"
 		"libcxxabi-${LIBCXXABI_COMMIT:0:7}.tar.gz;libcxxabi-${LIBCXXABI_COMMIT}"
+		"libdrm-${LIBDRM_COMMIT_1:0:7}.tar.gz;libdrm-${LIBDRM_COMMIT_1}"
+		"libdrm-${LIBDRM_COMMIT_2:0:7}.tar.gz;libdrm-${LIBDRM_COMMIT_2}"
 		"libfuzzer-${LIBFUZZER_COMMIT:0:7}.tar.gz;libfuzzer-${LIBFUZZER_COMMIT}"
+		"libjpeg_turbo-${LIBJPEG_TURBO_COMMIT:0:7}.tar.gz;libjpeg_turbo-${LIBJPEG_TURBO_COMMIT}"
+		"libpng-${LIBPNG_COMMIT:0:7}.tar.gz;libpng-${LIBPNG_COMMIT}"
+		"llvm-${LLVM_COMMIT:0:7}.tar.gz;llvm-${LLVM_COMMIT}"
 		"lunarg-vulkantools-${LUNARG_VULKANTOOLS_COMMIT_1:0:7};lunarg-vulkantools-${LUNARG_VULKANTOOLS_COMMIT_1}"
 		"markupsafe-${MARKUPSAFE_COMMIT:0:7}.tar.gz;markupsafe-${MARKUPSAFE_COMMIT}"
+		"mb-${MB_COMMIT:0:7}.tar.gz;mb-${MB_COMMIT}"
+		"md_browser-${MD_BROWSER_COMMIT:0:7}.tar.gz;md_browser-${MD_BROWSER_COMMIT}"
+		"memory-${MEMORY_COMMIT:0:7}.tar.gz;memory-${MEMORY_COMMIT}"
+		"mesa-${MESA_COMMIT:0:7}.tar.gz;mesa-${MESA_COMMIT}"
+		"meson-${MESON_COMMIT:0:7}.tar.gz;meson-${MESON_COMMIT}"
+		"nasm-${NASM_COMMIT:0:7}.tar.gz;nasm-${NASM_COMMIT}"
 		"opengl-registry-${OPENGL_REGISTRY_COMMIT:0:7}.tar.gz;egl-registry-${OPENGL_REGISTRY_COMMIT}"
 		"partition_allocator-${PARTITION_ALLOCATOR_COMMIT:0:7}.tar.gz;partition_allocator-${PARTITION_ALLOCATOR_COMMIT}"
+		"perf-${PERF_COMMIT:0:7}.tar.gz;perf-${PERF_COMMIT}"
+		"perfetto-${PERFETTO_COMMIT:0:7}.tar.gz;perfetto-${PERFETTO_COMMIT}"
 		"protobuf-${PROTOBUF_COMMIT:0:7}.tar.gz;protobuf-${PROTOBUF_COMMIT}"
-		"protoc_wrapper-${PROTOC_WRAPPER_COMMIT:0:7}.tar.gz;protoc_wrapper-${PROTOC_WRAPPER_COMMIT}"
-		"rust-${RUST_COMMIT:0:7}.tar.gz;rust-${RUST_COMMIT}"
+		"protoc_wrapper-${PROTOC_WRAPPER_COMMIT_1:0:7}.tar.gz;protoc_wrapper-${PROTOC_WRAPPER_COMMIT_1}"
+		"protoc_wrapper-${PROTOC_WRAPPER_COMMIT_2:0:7}.tar.gz;protoc_wrapper-${PROTOC_WRAPPER_COMMIT_2}"
+		"python-${PYTHON_COMMIT:0:7}.tar.gz;python-${PYTHON_COMMIT}"
+		"rapidjson-${RAPIDJSON_COMMIT:0:7}.tar.gz;rapidjson-${RAPIDJSON_COMMIT}"
+		"rust-${RUST_COMMIT_1:0:7}.tar.gz;rust-${RUST_COMMIT_1}"
+		"rust-${RUST_COMMIT_2:0:7}.tar.gz;rust-${RUST_COMMIT_2}"
 		"spirv-cross-${SPIRV_CROSS_COMMIT_1:0:7}.tar.gz;spirv-cross-${SPIRV_CROSS_COMMIT_1}"
 		"spirv-headers-${SPIRV_HEADERS_COMMIT_1:0:7}.tar.gz;spirv-headers-${SPIRV_HEADERS_COMMIT_1}"
 		"spirv-tools-${SPIRV_TOOLS_COMMIT_1:0:7}.tar.gz;spirv-tools-${SPIRV_TOOLS_COMMIT_1}"
 		"swiftshader-${SWIFTSHADER_COMMIT:0:7}.tar.gz;swiftshader-${SWIFTSHADER_COMMIT}"
 		"testing-${TESTING_COMMIT_1:0:7}.tar.gz;testing-${TESTING_COMMIT_1}"
 		"testing-${TESTING_COMMIT_2:0:7}.tar.gz;testing-${TESTING_COMMIT_2}"
+		"valgrind-${VALGRIND_COMMIT:0:7}.tar.gz;valgrind-${VALGRIND_COMMIT}"
 		"vulkan-deps-${VULKAN_DEPS_COMMIT:0:7}.tar.gz;vulkan-deps-${VULKAN_DEPS_COMMIT}"
 		"vulkan-headers-${VULKAN_HEADERS_COMMIT_1:0:7}.tar.gz;vulkan-headers-${VULKAN_HEADERS_COMMIT_1}"
 		"vulkan-loader-${VULKAN_LOADER_COMMIT_1:0:7}.tar.gz;vulkan-loader-${VULKAN_LOADER_COMMIT_1}"
@@ -1308,16 +1317,18 @@ _unpack() {
 		"vulkan-utility-libraries-${VULKAN_UTILITY_LIBRARIES_COMMIT_1:0:7}.tar.gz;vulkan-utility-libraries-${VULKAN_UTILITY_LIBRARIES_COMMIT_1}"
 		"vulkan-validation-layers-${VULKAN_VALIDATION_LAYERS_COMMIT_1:0:7}.tar.gz;vulkan-validation-layers-${VULKAN_VALIDATION_LAYERS_COMMIT_1}"
 		"VulkanMemoryAllocator-${VULKANMEMORYALLOCATOR_COMMIT:0:7}.tar.gz;VulkanMemoryAllocator-${VULKANMEMORYALLOCATOR_COMMIT}"
+		"wayland-${WAYLAND_COMMIT:0:7}.tar.gz;wayland-${WAYLAND_COMMIT}"
 		"webgpu-cts-${WEBGPU_CTS_COMMIT:0:7}.tar.gz;webgpu-cts-${WEBGPU_CTS_COMMIT}"
 		"webgpu-headers-${WEBGPU_HEADERS:0:7}.tar.gz;webgpu-headers-${WEBGPU_HEADERS}"
-		"zlib-${ZLIB_COMMIT:0:7}.tar.gz;zlib-${ZLIB_COMMIT}"
+		"zlib-${ZLIB_COMMIT_1:0:7}.tar.gz;zlib-${ZLIB_COMMIT_1}"
+		"zlib-${ZLIB_COMMIT_2:0:7}.tar.gz;zlib-${ZLIB_COMMIT_2}"
 	)
 
 	local f
 	for f in ${ARGS[@]} ; do
-		local is_dawn_submodule=0
+		local is_no_root_submodule=0
 		local row
-		for row in ${DAWN_TARBALLS[@]} ; do
+		for row in ${NO_ROOT_DIR_TARBALLS[@]} ; do
 			local f2="${row%;*}"
 			local path="${row#*;}"
 			if [[ "${f}" == "${f2}" ]] ; then
@@ -1325,7 +1336,7 @@ _unpack() {
 				pushd "${WORKDIR}/${path}" >/dev/null 2>&1 || die
 					unpack "${f}"
 				popd >/dev/null 2>&1 || die
-				is_dawn_submodule=1
+				is_no_root_submodule=1
 				break
 			fi
 		done
@@ -1342,7 +1353,7 @@ _unpack() {
 				break
 			fi
 		done
-		if (( ${is_dawn_submodule} == 0 && ${is_protoc_submodule} == 0 )) ; then
+		if (( ${is_no_root_submodule} == 0 && ${is_protoc_submodule} == 0 )) ; then
 			unpack "${f}"
 		fi
 	done
@@ -1416,40 +1427,45 @@ src_unpack() {
 	dep_prepare_mv "${WORKDIR}/clspv-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/clspv/src"
 	dep_prepare_mv "${WORKDIR}/cpu_features-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/cpu_features/src"
 	dep_prepare_mv "${WORKDIR}/dawn-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn"
-	dep_prepare_mv "${WORKDIR}/depot_tools-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/depot_tools"
+	dep_prepare_mv "${WORKDIR}/depot_tools-${DEPOT_TOOLS_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/depot_tools"
 	dep_prepare_mv "${WORKDIR}/egl-registry-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/EGL-Registry/src"
 	dep_prepare_mv "${WORKDIR}/flatbuffers-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/flatbuffers/src"
 	dep_prepare_mv "${WORKDIR}/gles1_conform-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/gles1_conform"
 	dep_prepare_mv "${WORKDIR}/glmark2-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/glmark2/src"
-	dep_prepare_mv "${WORKDIR}/googletest-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/googletest"
-	dep_prepare_mv "${WORKDIR}/ijar-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/ijar"
-	dep_prepare_mv "${WORKDIR}/libdrm-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/libdrm"
-	dep_prepare_mv "${WORKDIR}/libjpeg_turbo-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/libjpeg_turbo"
-	dep_prepare_mv "${WORKDIR}/libpng-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/libpng/src"
-	dep_prepare_mv "${WORKDIR}/llvm-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/llvm/src"
+	if use test ; then
+		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_9}" "${S}/cmake/external/dawn/third_party/angle/third_party/googletest"
+	fi
+	dep_prepare_mv "${WORKDIR}/ijar-${IJAR_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/ijar"
+	dep_prepare_mv "${WORKDIR}/libdrm-${LIBDRM_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/libdrm"
+	dep_prepare_mv "${WORKDIR}/libjpeg_turbo-${LIBJPEG_TURBO_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/libjpeg_turbo"
+	dep_prepare_mv "${WORKDIR}/libpng-${LIBPNG_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/libpng/src"
+	dep_prepare_mv "${WORKDIR}/llvm-${LLVM_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/llvm/src"
 	dep_prepare_mv "${WORKDIR}/jinja2-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/jinja2"
 	dep_prepare_mv "${WORKDIR}/jsoncpp-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/jsoncpp"
 	dep_prepare_mv "${WORKDIR}/libc++-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/libc++/src"
 	dep_prepare_mv "${WORKDIR}/libc++abi-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/libc++abi/src"
 	dep_prepare_mv "${WORKDIR}/libunwind-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/libunwind/src"
 	dep_prepare_mv "${WORKDIR}/markupsafe-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/markupsafe"
-	dep_prepare_mv "${WORKDIR}/mesa-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/mesa/src"
-	dep_prepare_mv "${WORKDIR}/meson-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/meson"
-	dep_prepare_mv "${WORKDIR}/nasm-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/nasm"
+	dep_prepare_mv "${WORKDIR}/mesa-${MESA_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/mesa/src"
+	dep_prepare_mv "${WORKDIR}/meson-${MESON_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/meson"
+	dep_prepare_mv "${WORKDIR}/nasm-${NASM_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/nasm"
 	dep_prepare_mv "${WORKDIR}/OpenCL-CTS-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/OpenCL-CTS/src"
 	dep_prepare_mv "${WORKDIR}/OpenCL-Docs-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/OpenCL-Docs/src"
 	dep_prepare_mv "${WORKDIR}/OpenCL-ICD-Loader-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/OpenCL-ICD-Loader/src"
 	dep_prepare_mv "${WORKDIR}/OpenGL-Registry-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/OpenGL-Registry/src"
-	dep_prepare_mv "${WORKDIR}/perfetto-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/perfetto"
+	dep_prepare_mv "${WORKDIR}/perfetto-${PERFETTO_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/perfetto"
 	dep_prepare_mv "${WORKDIR}/protobuf-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/protobuf"
 	dep_prepare_mv "${WORKDIR}/Python-Markdown-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/Python-Markdown"
-	dep_prepare_mv "${WORKDIR}/rapidjson-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/rapidjson/src"
+	dep_prepare_mv "${WORKDIR}/rapidjson-${RAPIDJSON_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/rapidjson/src"
+	if use test ; then
+		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_10}" "${S}/cmake/external/dawn/third_party/angle/third_party/rapidjson/src/thirdparty/gtest"
+	fi
 	dep_prepare_mv "${WORKDIR}/requests-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/requests/src"
 	dep_prepare_mv "${WORKDIR}/six-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/six"
 	dep_prepare_mv "${WORKDIR}/SwiftShader-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/SwiftShader"
 	dep_prepare_mv "${WORKDIR}/VK-GL-CTS-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/VK-GL-CTS/src"
 	dep_prepare_mv "${WORKDIR}/vulkan-deps-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/vulkan-deps"
-	dep_prepare_mv "${WORKDIR}/glslang-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/glslang/src"
+	dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT_3}" "${S}/cmake/external/dawn/third_party/angle/third_party/glslang/src"
 	dep_prepare_mv "${WORKDIR}/lunarg-vulkantools-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/lunarg-vulkantools/src"
 	dep_prepare_mv "${WORKDIR}/spirv-cross-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/spirv-cross/src"
 	dep_prepare_mv "${WORKDIR}/spirv-headers-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/spirv-headers/src"
@@ -1460,23 +1476,23 @@ src_unpack() {
 	dep_prepare_mv "${WORKDIR}/vulkan-utility-libraries-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/vulkan-utility-libraries/src"
 	dep_prepare_mv "${WORKDIR}/vulkan-validation-layers-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/vulkan-validation-layers/src"
 	dep_prepare_mv "${WORKDIR}/VulkanMemoryAllocator-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/vulkan_memory_allocator"
-	dep_prepare_mv "${WORKDIR}/wayland-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/wayland"
-	dep_prepare_mv "${WORKDIR}/zlib-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/zlib"
+	dep_prepare_mv "${WORKDIR}/wayland-${WAYLAND_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/wayland"
+	dep_prepare_mv "${WORKDIR}/zlib-${ZLIB_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/zlib"
 	dep_prepare_mv "${WORKDIR}/android-${}" "${S}/cmake/external/dawn/third_party/angle/tools/android"
-	dep_prepare_mv "${WORKDIR}/clang-${}" "${S}/cmake/external/dawn/third_party/angle/tools/clang"
-	dep_prepare_mv "${WORKDIR}/mb-${}" "${S}/cmake/external/dawn/third_party/angle/tools/mb"
-	dep_prepare_mv "${WORKDIR}/md_browser-${}" "${S}/cmake/external/dawn/third_party/angle/tools/md_browser"
-	dep_prepare_mv "${WORKDIR}/memory-${}" "${S}/cmake/external/dawn/third_party/angle/tools/memory"
-	dep_prepare_mv "${WORKDIR}/perf-${}" "${S}/cmake/external/dawn/third_party/angle/tools/perf"
-	dep_prepare_mv "${WORKDIR}/protoc_wrapper-${}" "${S}/cmake/external/dawn/third_party/angle/tools/protoc_wrapper"
-	dep_prepare_mv "${WORKDIR}/python-${}" "${S}/cmake/external/dawn/third_party/angle/tools/python"
-	dep_prepare_mv "${WORKDIR}/rust-${}" "${S}/cmake/external/dawn/third_party/angle/tools/rust"
-	dep_prepare_mv "${WORKDIR}/valgrind-${}" "${S}/cmake/external/dawn/third_party/angle/tools/valgrind"
+	dep_prepare_mv "${WORKDIR}/clang-${CLANG_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/tools/clang"
+	dep_prepare_mv "${WORKDIR}/mb-${MB_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/tools/mb"
+	dep_prepare_mv "${WORKDIR}/md_browser-${MD_BROWSER_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/tools/md_browser"
+	dep_prepare_mv "${WORKDIR}/memory-${MEMORY_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/tools/memory"
+	dep_prepare_mv "${WORKDIR}/perf-${PERF_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/tools/perf"
+	dep_prepare_mv "${WORKDIR}/protoc_wrapper-${PROTOC_WRAPPER_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/tools/protoc_wrapper"
+	dep_prepare_mv "${WORKDIR}/python-${PYTHON_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/tools/python"
+	dep_prepare_mv "${WORKDIR}/rust-${RUST_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/tools/rust"
+	dep_prepare_mv "${WORKDIR}/valgrind-${VALGRIND_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/tools/valgrind"
 
 	dep_prepare_mv "${WORKDIR}/catapult-${CATAPULT_COMMIT}" "${S}/cmake/external/dawn/third_party/catapult"
-	dep_prepare_mv "${WORKDIR}/clang-${CLANG_COMMIT}" "${S}/cmake/external/dawn/tools/clang"
+	dep_prepare_mv "${WORKDIR}/clang-${CLANG_COMMIT_1}" "${S}/cmake/external/dawn/tools/clang"
 	dep_prepare_mv "${WORKDIR}/clang-format-${CLANG_FORMAT_COMMIT_1}" "${S}/cmake/external/dawn/third_party/clang-format/script"
-	dep_prepare_mv "${WORKDIR}/depot_tools-${DEPOT_TOOLS_COMMIT}" "${S}/cmake/external/dawn/third_party/depot_tools"
+	dep_prepare_mv "${WORKDIR}/depot_tools-${DEPOT_TOOLS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/depot_tools"
 
 	dep_prepare_mv "${WORKDIR}/dxc-${DXC_COMMIT}" "${S}/cmake/external/dawn/third_party/dxc"
 	dep_prepare_mv "${WORKDIR}/spirv-headers-${SPIRV_HEADERS_COMMIT_2}" "${S}/cmake/external/dawn/third_party/dxc/external/SPIRV-Headers"
@@ -1499,7 +1515,7 @@ src_unpack() {
 
 	dep_prepare_mv "${WORKDIR}/libcxx-${LIBCXX_COMMIT}" "${S}/cmake/external/dawn/third_party/libc++/src"
 	dep_prepare_mv "${WORKDIR}/libcxxabi-${LIBCXXABI_COMMIT}" "${S}/cmake/external/dawn/third_party/libc++abi/src"
-	dep_prepare_mv "${WORKDIR}/libdrm-${LIBDIR_COMMIT}" "${S}/cmake/external/dawn/third_party/libdrm/src"
+	dep_prepare_mv "${WORKDIR}/libdrm-${LIBDRM_COMMIT_1}" "${S}/cmake/external/dawn/third_party/libdrm/src"
 	dep_prepare_mv "${WORKDIR}/libfuzzer-${LIBFUZZER_COMMIT}" "${S}/cmake/external/dawn/third_party/libFuzzer/src"
 	dep_prepare_mv "${WORKDIR}/libprotobuf-mutator-${LIBPROTOBUF_MUTATOR_COMMIT}" "${S}/cmake/external/dawn/third_party/libprotobuf-mutator/src"
 	dep_prepare_mv "${WORKDIR}/llvm-libc-${LLVM_LIBC_COMMIT}" "${S}/cmake/external/dawn/third_party/llvm-libc/src"
@@ -1516,8 +1532,8 @@ src_unpack() {
 		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_PV_2}" "${S}/cmake/external/dawn/third_party/protobuf/third_party/googletest"
 	fi
 
-	dep_prepare_mv "${WORKDIR}/protoc_wrapper-${PROTOC_WRAPPER_COMMIT}" "${S}/cmake/external/dawn/tools/protoc_wrapper"
-	dep_prepare_mv "${WORKDIR}/rust-${RUST_COMMIT}" "${S}/cmake/external/dawn/tools/rust"
+	dep_prepare_mv "${WORKDIR}/protoc_wrapper-${PROTOC_WRAPPER_COMMIT_1}" "${S}/cmake/external/dawn/tools/protoc_wrapper"
+	dep_prepare_mv "${WORKDIR}/rust-${RUST_COMMIT_1}" "${S}/cmake/external/dawn/tools/rust"
 	dep_prepare_cp "${WORKDIR}/spirv-cross-${SPIRV_CROSS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/spirv-cross/src"
 	dep_prepare_cp "${WORKDIR}/spirv-headers-${SPIRV_HEADERS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/spirv-headers/src"
 	dep_prepare_cp "${WORKDIR}/spirv-tools-${SPIRV_TOOLS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/spirv-tools/src"
@@ -1558,7 +1574,7 @@ src_unpack() {
 	dep_prepare_mv "${WORKDIR}/vulkan-tools-${VULKAN_TOOLS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/vulkan-tools/src"
 	dep_prepare_mv "${WORKDIR}/vulkan-utility-libraries-${VULKAN_UTILITY_LIBRARIES_COMMIT_1}" "${S}/cmake/external/dawn/third_party/vulkan-utility-libraries/src"
 	dep_prepare_mv "${WORKDIR}/vulkan-validation-layers-${VULKAN_VALIDATION_LAYERS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/vulkan-validation-layers/src"
-	dep_prepare_mv "${WORKDIR}/zlib-${ZLIB_COMMIT}" "${S}/cmake/external/dawn/third_party/zlib"
+	dep_prepare_mv "${WORKDIR}/zlib-${ZLIB_COMMIT_1}" "${S}/cmake/external/dawn/third_party/zlib"
 
 	if use benchmark ; then
 		dep_prepare_mv "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_5}" "${S}/cmake/external/dawn/third_party/google_benchmark/src"
