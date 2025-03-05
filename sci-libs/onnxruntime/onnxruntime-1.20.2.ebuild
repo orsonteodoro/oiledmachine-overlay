@@ -7,14 +7,191 @@ EAPI=8
 _TODO='
 
 # From angle:
-[submodule "third_party/dawn"] # many vendored deps
-	path = third_party/dawn
-	url = https://dawn.googlesource.com/dawn
-	gclient-condition = not build_with_chromium
 [submodule "third_party/gles1_conform"] # private
 	path = third_party/gles1_conform
 	url = https://chrome-internal.googlesource.com/angle/es-cts
 	gclient-condition = checkout_angle_internal
+
+# From dawn (1eca38f)
+[submodule "buildtools"]
+	path = buildtools
+	url = https://chromium.googlesource.com/chromium/src/buildtools
+	gclient-condition = dawn_standalone
+[submodule "third_party/clang-format/script"]
+	path = third_party/clang-format/script
+	url = https://chromium.googlesource.com/external/github.com/llvm/llvm-project/clang/tools/clang-format
+	gclient-condition = dawn_standalone
+[submodule "third_party/depot_tools"]
+	path = third_party/depot_tools
+	url = https://chromium.googlesource.com/chromium/tools/depot_tools
+	gclient-condition = dawn_standalone
+[submodule "third_party/libc++/src"]
+	path = third_party/libc++/src
+	url = https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxx
+	gclient-condition = dawn_standalone
+[submodule "third_party/libc++abi/src"]
+	path = third_party/libc++abi/src
+	url = https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxxabi
+	gclient-condition = dawn_standalone
+[submodule "build"]
+	path = build
+	url = https://chromium.googlesource.com/chromium/src/build
+	gclient-condition = dawn_standalone
+[submodule "tools/clang"]
+	path = tools/clang
+	url = https://chromium.googlesource.com/chromium/src/tools/clang
+	gclient-condition = dawn_standalone
+[submodule "tools/rust"]
+	path = tools/rust
+	url = https://chromium.googlesource.com/chromium/src/tools/rust
+	gclient-condition = dawn_standalone and checkout_rust
+[submodule "testing"]
+	path = testing
+	url = https://chromium.googlesource.com/chromium/src/testing
+	gclient-condition = dawn_standalone
+[submodule "third_party/libFuzzer/src"]
+	path = third_party/libFuzzer/src
+	url = https://chromium.googlesource.com/external/github.com/llvm/llvm-project/compiler-rt/lib/fuzzer
+	gclient-condition = dawn_standalone
+[submodule "third_party/googletest"]
+	path = third_party/googletest
+	url = https://chromium.googlesource.com/external/github.com/google/googletest
+	gclient-condition = dawn_standalone
+[submodule "third_party/catapult"]
+	path = third_party/catapult
+	url = https://chromium.googlesource.com/catapult
+	gclient-condition = dawn_standalone
+[submodule "third_party/google_benchmark/src"]
+	path = third_party/google_benchmark/src
+	url = https://chromium.googlesource.com/external/github.com/google/benchmark
+	gclient-condition = dawn_standalone
+[submodule "third_party/jinja2"]
+	path = third_party/jinja2
+	url = https://chromium.googlesource.com/chromium/src/third_party/jinja2
+	gclient-condition = dawn_standalone
+[submodule "third_party/markupsafe"]
+	path = third_party/markupsafe
+	url = https://chromium.googlesource.com/chromium/src/third_party/markupsafe
+	gclient-condition = dawn_standalone
+[submodule "third_party/glfw"]
+	path = third_party/glfw
+	url = https://chromium.googlesource.com/external/github.com/glfw/glfw
+[submodule "third_party/vulkan_memory_allocator"]
+	path = third_party/vulkan_memory_allocator
+	url = https://chromium.googlesource.com/external/github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
+	gclient-condition = dawn_standalone
+[submodule "third_party/angle"]
+	path = third_party/angle
+	url = https://chromium.googlesource.com/angle/angle
+	gclient-condition = dawn_standalone
+[submodule "third_party/swiftshader"]
+	path = third_party/swiftshader
+	url = https://swiftshader.googlesource.com/SwiftShader
+	gclient-condition = dawn_standalone
+[submodule "third_party/vulkan-deps"]
+	path = third_party/vulkan-deps
+	url = https://chromium.googlesource.com/vulkan-deps
+	gclient-condition = dawn_standalone
+[submodule "third_party/glslang/src"]
+	path = third_party/glslang/src
+	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/glslang
+	gclient-condition = dawn_standalone
+[submodule "third_party/spirv-cross/src"]
+	path = third_party/spirv-cross/src
+	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/SPIRV-Cross
+	gclient-condition = dawn_standalone
+[submodule "third_party/spirv-headers/src"]
+	path = third_party/spirv-headers/src
+	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/SPIRV-Headers
+	gclient-condition = dawn_standalone
+[submodule "third_party/spirv-tools/src"]
+	path = third_party/spirv-tools/src
+	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/SPIRV-Tools
+	gclient-condition = dawn_standalone
+[submodule "third_party/vulkan-headers/src"]
+	path = third_party/vulkan-headers/src
+	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Headers
+	gclient-condition = dawn_standalone
+[submodule "third_party/vulkan-loader/src"]
+	path = third_party/vulkan-loader/src
+	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Loader
+	gclient-condition = dawn_standalone
+[submodule "third_party/vulkan-tools/src"]
+	path = third_party/vulkan-tools/src
+	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Tools
+	gclient-condition = dawn_standalone
+[submodule "third_party/vulkan-utility-libraries/src"]
+	path = third_party/vulkan-utility-libraries/src
+	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-Utility-Libraries
+	gclient-condition = dawn_standalone
+[submodule "third_party/vulkan-validation-layers/src"]
+	path = third_party/vulkan-validation-layers/src
+	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/Vulkan-ValidationLayers
+	gclient-condition = dawn_standalone
+[submodule "third_party/zlib"]
+	path = third_party/zlib
+	url = https://chromium.googlesource.com/chromium/src/third_party/zlib
+	gclient-condition = dawn_standalone
+[submodule "third_party/abseil-cpp"]
+	path = third_party/abseil-cpp
+	url = https://chromium.googlesource.com/chromium/src/third_party/abseil-cpp
+	gclient-condition = dawn_standalone
+[submodule "third_party/dxc"]
+	path = third_party/dxc
+	url = https://chromium.googlesource.com/external/github.com/microsoft/DirectXShaderCompiler
+[submodule "third_party/dxheaders"]
+	path = third_party/dxheaders
+	url = https://chromium.googlesource.com/external/github.com/microsoft/DirectX-Headers
+	gclient-condition = host_os != "win"
+[submodule "third_party/webgpu-headers"]
+	path = third_party/webgpu-headers
+	url = https://chromium.googlesource.com/external/github.com/webgpu-native/webgpu-headers
+[submodule "third_party/khronos/OpenGL-Registry"]
+	path = third_party/khronos/OpenGL-Registry
+	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/OpenGL-Registry
+[submodule "third_party/khronos/EGL-Registry"]
+	path = third_party/khronos/EGL-Registry
+	url = https://chromium.googlesource.com/external/github.com/KhronosGroup/EGL-Registry
+[submodule "third_party/webgpu-cts"]
+	path = third_party/webgpu-cts
+	url = https://chromium.googlesource.com/external/github.com/gpuweb/cts
+	gclient-condition = build_with_chromium
+[submodule "third_party/node-api-headers"]
+	path = third_party/node-api-headers
+	url = https://github.com/nodejs/node-api-headers
+	gclient-condition = dawn_node
+[submodule "third_party/node-addon-api"]
+	path = third_party/node-addon-api
+	url = https://github.com/nodejs/node-addon-api
+	gclient-condition = dawn_node
+[submodule "third_party/gpuweb"]
+	path = third_party/gpuweb
+	url = https://github.com/gpuweb/gpuweb
+	gclient-condition = dawn_node
+[submodule "third_party/protobuf"]
+	path = third_party/protobuf
+	url = https://chromium.googlesource.com/chromium/src/third_party/protobuf
+	gclient-condition = dawn_standalone
+[submodule "tools/protoc_wrapper"]
+	path = tools/protoc_wrapper
+	url = https://chromium.googlesource.com/chromium/src/tools/protoc_wrapper
+	gclient-condition = dawn_standalone
+[submodule "third_party/libprotobuf-mutator/src"]
+	path = third_party/libprotobuf-mutator/src
+	url = https://chromium.googlesource.com/external/github.com/google/libprotobuf-mutator
+	gclient-condition = dawn_standalone
+[submodule "third_party/jsoncpp"]
+	path = third_party/jsoncpp
+	url = https://github.com/open-source-parsers/jsoncpp
+	gclient-condition = dawn_standalone
+[submodule "third_party/langsvr"]
+	path = third_party/langsvr
+	url = https://github.com/google/langsvr
+	gclient-condition = dawn_standalone
+[submodule "third_party/partition_alloc"]
+	path = third_party/partition_alloc
+	url = https://chromium.googlesource.com/chromium/src/base/allocator/partition_allocator
+	gclient-condition = dawn_standalone
 '
 
 # TODO:
@@ -50,11 +227,11 @@ _TODO='
 
 
 # https://github.com/abseil/abseil-cpp/releases/download/20240722.0/abseil-cpp-20240722.0.tar.gz
-ABSEIL_CPP_PV2="20240722.0" # From cmake/deps.txt
+ABSEIL_CPP_PV_1="20230125.3" # From cmake/external/onnx/CMakeLists.txt
+ABSEIL_CPP_PV_2="20240722.0" # From cmake/deps.txt
 ABSEIL_CPP_COMMIT_2="4a2c63365eff8823a5221db86ef490e828306f9d" # protobuf dep
 ABSEIL_CPP_COMMIT_3="f81f6c011baf9b0132a5594c034fe0060820711d" # dawn dep
 ABSEIL_CPP_COMMIT_4="1b7ed5a1932647009b72fdad8e0e834d55cf40d8" # angle dep
-ABSEIL_CPP_PV="20230125.3" # From cmake/external/onnx/CMakeLists.txt
 AMDGPU_TARGETS_COMPAT=(
 # See https://github.com/microsoft/onnxruntime/blob/v1.20.2/cmake/CMakeLists.txt#L299
 	gfx906
@@ -109,7 +286,8 @@ CUTLASS_COMMIT="c2ee13a0fe99241b0e798ce647acf98e237f1d0c" # tvm dep
 CXXOPTS_COMMIT="3c73d91c0b04e2b59462f0a741be8c07024c1bc0"
 DATE_PV_1="3.0.1" # From cmake/deps.txt
 DATE_PV_2="3.0.0" # From cmake/external/date/CMakeLists.txt
-DAWN_COMMIT="511eb80847afe6bded34ec491a38d5d78ba2d604"
+DAWN_COMMIT_1="511eb80847afe6bded34ec491a38d5d78ba2d604"
+DAWN_COMMIT_2="1eca38fa52364bf66c0d288a0537a2813d72b39b" # angle dep
 DEPOT_TOOLS_COMMIT_1="f5e10923392588205925c036948e111f72b80271" # dawn dep
 DEPOT_TOOLS_COMMIT_2="1f6ef165b726ed7316b8e88666390e90a82e8e50" # depot dep
 DIRECTX_HEADERS_PV="1.613.1"
@@ -496,7 +674,8 @@ https://chromium.googlesource.com/external/github.com/webgpu-native/webgpu-heade
 https://chromium.googlesource.com/vulkan-deps/+archive/${VULKAN_DEPS_COMMIT:0:7}.tar.gz
 	-> vulkan-deps-${VULKAN_DEPS_COMMIT:0:7}.tar.gz
 
-
+https://dawn.googlesource.com/dawn/+archive/${DAWN_COMMIT_2:0:7}.tar.gz
+	-> dawn-${DAWN_COMMIT_2:0:7}.tar.gz
 
 
 https://swiftshader.googlesource.com/git-hooks/+archive/${GIT_HOOKS_COMMIT:0:7}.tar.gz
@@ -504,8 +683,8 @@ https://swiftshader.googlesource.com/git-hooks/+archive/${GIT_HOOKS_COMMIT:0:7}.
 https://swiftshader.googlesource.com/SwiftShader/+archive/${SWIFTSHADER_COMMIT:0:7}.tar.gz
 	-> swiftshader-${SWIFTSHADER_COMMIT:0:7}.tar.gz
 
-https://github.com/abseil/abseil-cpp/archive/refs/tags/${ABSEIL_CPP_PV}.tar.gz
-	-> abseil-cpp-${ABSEIL_CPP_PV}.tar.gz
+https://github.com/abseil/abseil-cpp/archive/refs/tags/${ABSEIL_CPP_PV_1}.tar.gz
+	-> abseil-cpp-${ABSEIL_CPP_PV_1}.tar.gz
 https://github.com/abseil/abseil-cpp/archive/${ABSEIL_CPP_COMMIT_2}.tar.gz
 	-> abseil-cpp-${ABSEIL_CPP_COMMIT_2:0:7}.tar.gz
 https://github.com/apple/coremltools/archive/refs/tags/${COREMLTOOLS_PV}.tar.gz
@@ -522,8 +701,8 @@ https://github.com/google/benchmark/archive/${BENCHMARK_COMMIT_1}.tar.gz
 	-> benchmark-${BENCHMARK_COMMIT_1:0:7}.tar.gz
 https://github.com/google/cppdap/archive/${CPPDAP_COMMIT}.tar.gz
 	-> cppdap-${CPPDAP_COMMIT}.tar.gz
-https://github.com/google/dawn/archive/${DAWN_COMMIT}.tar.gz
-	-> dawn-${DAWN_COMMIT}.tar.gz
+https://github.com/google/dawn/archive/${DAWN_COMMIT_1}.tar.gz
+	-> dawn-${DAWN_COMMIT_1}.tar.gz
 https://github.com/google/flatbuffers/archive/v${FLATBUFFERS_PV}.tar.gz
 	-> flatbuffers-${FLATBUFFERS_PV}.tar.gz
 https://github.com/google/langsvr/archive/${LANGSVR_COMMIT}.tar.gz
@@ -599,8 +778,8 @@ https://gitlab.com/libeigen/eigen/-/archive/${EIGEN_COMMIT}/eigen-${EIGEN_COMMIT
 	-> eigen-${EIGEN_COMMIT:0:7}.tar.gz
 	)
 	abseil-cpp? (
-https://github.com/abseil/abseil-cpp/archive/${ABSEIL_CPP_PV2}.tar.gz
-	-> abseil-cpp-${ABSEIL_CPP_PV2}.tar.gz
+https://github.com/abseil/abseil-cpp/archive/${ABSEIL_CPP_PV_2}.tar.gz
+	-> abseil-cpp-${ABSEIL_CPP_PV_2}.tar.gz
 	)
 	benchmark? (
 https://github.com/google/benchmark/archive/refs/tags/v${BENCHMARK_PV}.tar.gz
@@ -1200,6 +1379,7 @@ _unpack() {
 		"clspv-${CLSPV_COMMIT:0:7}.tar.gz;clspv-${CLSPV_COMMIT}.tar.gz"
 		"colorama-${COLORAMA_COMMIT:0:7}.tar.gz;colorama-${COLORAMA_COMMIT}"
 		"cpu_features-${CPU_FEATURES_COMMIT:0:7}.tar.gz;cpu_features-${CPU_FEATURES_COMMIT}"
+		"dawn-${DAWN_COMMIT_2:0:7}.tar.gz;dawn-${DAWN_COMMIT_2}"
 		"depot_tools-${DEPOT_TOOLS_COMMIT_1:0:7}.tar.gz;depot_tools-${DEPOT_TOOLS_COMMIT_1}"
 		"depot_tools-${DEPOT_TOOLS_COMMIT_2:0:7}.tar.gz;depot_tools-${DEPOT_TOOLS_COMMIT_2}"
 		"dxc-${DXC_COMMIT:0:7}.tar.gz;dxc-${DXC_COMMIT}"
@@ -1320,7 +1500,7 @@ src_unpack() {
 	dep_prepare_cp "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_1}" "${S}/cmake/external/onnx/third_party/benchmark"
 	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1}" "${S}/cmake/external/onnx/third_party/pybind11"
 
-	dep_prepare_mv "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_PV}" "${S}/cmake/external/onnx/third_party/abseil"
+	dep_prepare_mv "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_PV_1}" "${S}/cmake/external/onnx/third_party/abseil"
 	dep_prepare_mv "${WORKDIR}/protobuf-${PROTOBUF_PV_2}" "${S}/cmake/external/onnx/third_party/protobuf"
 	dep_prepare_mv "${WORKDIR}/jsoncpp-${JSONCPP_COMMIT_1}" "${S}/cmake/external/onnx/third_party/protobuf/third_party/jsoncpp"
 
@@ -1354,7 +1534,7 @@ src_unpack() {
 	dep_prepare_mv "${WORKDIR}/wil-${WIL_PV}" "${S}/cmake/external/microsoft_wil"
 
 
-	dep_prepare_mv "${WORKDIR}/dawn-${DAWN_COMMIT}" "${S}/cmake/external/dawn"
+	dep_prepare_mv "${WORKDIR}/dawn-${DAWN_COMMIT_1}" "${S}/cmake/external/dawn"
 	dep_prepare_mv "${WORKDIR}/build-${BUILD_COMMIT_1}" "${S}/cmake/external/dawn/build"
 	dep_prepare_mv "${WORKDIR}/buildtools-${BUILDTOOLS_COMMIT_1}" "${S}/cmake/external/dawn/buildtools"
 	dep_prepare_mv "${WORKDIR}/testing-${TESTING_COMMIT_1}" "${S}/cmake/external/dawn/testing"
@@ -1381,7 +1561,56 @@ src_unpack() {
 	dep_prepare_mv "${WORKDIR}/colorama-${COLORAMA_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/colorama/src"
 	dep_prepare_mv "${WORKDIR}/clspv-${CLSPV_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/clspv/src"
 	dep_prepare_mv "${WORKDIR}/cpu_features-${CPU_FEATURES_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/cpu_features/src"
-	dep_prepare_mv "${WORKDIR}/dawn-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn"
+
+	dep_prepare_mv "${WORKDIR}/dawn-${DAWN_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn"
+	dep_prepare_mv "${WORKDIR}/buildtools-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/buildtools"
+	dep_prepare_mv "${WORKDIR}/clang-format-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/clang-format/script"
+	dep_prepare_mv "${WORKDIR}/depot_tools-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/depot_tools"
+	dep_prepare_mv "${WORKDIR}/libc++-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/libc++/src"
+	dep_prepare_mv "${WORKDIR}/libc++abi-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/libc++abi/src"
+	dep_prepare_mv "${WORKDIR}/build-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/build"
+	dep_prepare_mv "${WORKDIR}/clang-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/tools/clang"
+	dep_prepare_mv "${WORKDIR}/rust-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/tools/rust"
+	dep_prepare_mv "${WORKDIR}/testing-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/testing"
+	dep_prepare_mv "${WORKDIR}/libfuzzer-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/libFuzzer/src"
+	dep_prepare_mv "${WORKDIR}/googletest-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/googletest"
+	dep_prepare_mv "${WORKDIR}/catapult-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/catapult"
+	dep_prepare_mv "${WORKDIR}/benchmark-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/google_benchmark/src"
+	dep_prepare_mv "${WORKDIR}/jinja2-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/jinja2"
+	dep_prepare_mv "${WORKDIR}/markupsafe-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/markupsafe"
+	dep_prepare_mv "${WORKDIR}/glfw-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/glfw"
+	dep_prepare_mv "${WORKDIR}/vulkan_memory_allocator-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/vulkan_memory_allocator"
+	dep_prepare_mv "${WORKDIR}/angle-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/angle"
+	dep_prepare_mv "${WORKDIR}/swiftshader-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/swiftshader"
+	dep_prepare_mv "${WORKDIR}/vulkan-deps-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/vulkan-deps"
+	dep_prepare_mv "${WORKDIR}/glslang-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/glslang/src"
+	dep_prepare_mv "${WORKDIR}/spirv-cross-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/spirv-cross/src"
+	dep_prepare_mv "${WORKDIR}/spirv-headers-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/spirv-headers/src"
+	dep_prepare_mv "${WORKDIR}/spirv-tools-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/spirv-tools/src"
+	dep_prepare_mv "${WORKDIR}/vulkan-headers-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/vulkan-headers/src"
+	dep_prepare_mv "${WORKDIR}/vulkan-loader-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/vulkan-loader/src"
+	dep_prepare_mv "${WORKDIR}/vulkan-tools-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/vulkan-tools/src"
+	dep_prepare_mv "${WORKDIR}/vulkan-utility-libraries-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/vulkan-utility-libraries/src"
+	dep_prepare_mv "${WORKDIR}/vulkan-validation-layers-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/vulkan-validation-layers/src"
+	dep_prepare_mv "${WORKDIR}/zlib-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/zlib"
+	dep_prepare_mv "${WORKDIR}/abseil-cpp-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/abseil-cpp"
+	dep_prepare_mv "${WORKDIR}/dxc-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/dxc"
+	dep_prepare_mv "${WORKDIR}/dxheaders-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/dxheaders"
+	dep_prepare_mv "${WORKDIR}/webgpu-headers-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/webgpu-headers"
+	dep_prepare_mv "${WORKDIR}/opengl-registry-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/khronos/OpenGL-Registry"
+	dep_prepare_mv "${WORKDIR}/egl-registry-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/khronos/EGL-Registry"
+	dep_prepare_mv "${WORKDIR}/webgpu-cts-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/webgpu-cts"
+	dep_prepare_mv "${WORKDIR}/node-api-headers-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/node-api-headers"
+	dep_prepare_mv "${WORKDIR}/node-addon-api-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/node-addon-api"
+	dep_prepare_mv "${WORKDIR}/gpuweb-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/gpuweb"
+	dep_prepare_mv "${WORKDIR}/protobuf-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/protobuf"
+	dep_prepare_mv "${WORKDIR}/protoc_wrapper-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/tools/protoc_wrapper"
+	dep_prepare_mv "${WORKDIR}/libprotobuf-mutator-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/libprotobuf-mutator/src"
+	dep_prepare_mv "${WORKDIR}/jsoncpp-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/jsoncpp"
+	dep_prepare_mv "${WORKDIR}/langsvr-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/langsvr"
+	dep_prepare_mv "${WORKDIR}/partition_alloc-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/partition_alloc"
+
+
 	dep_prepare_mv "${WORKDIR}/depot_tools-${DEPOT_TOOLS_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/depot_tools"
 	dep_prepare_cp "${WORKDIR}/egl-registry-${EGL_REGISTRY_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/EGL-Registry/src"
 	dep_prepare_mv "${WORKDIR}/flatbuffers-${FLATBUFFERS_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/flatbuffers/src"
@@ -1573,7 +1802,7 @@ src_unpack() {
 	dep_prepare_mv "${WORKDIR}/kleidiai-v${KLEIDIAI_PV}" "${S}/cmake/external/kleidiai"
 
 	if use abseil-cpp ; then
-		dep_prepare_mv "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_PV2}" "${S}/cmake/external/abseil_cpp"
+		dep_prepare_mv "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_PV_2}" "${S}/cmake/external/abseil_cpp"
 	fi
 	if use benchmark ; then
 		dep_prepare_mv "${WORKDIR}/benchmark-${BENCHMARK_PV}" "${S}/cmake/external/google_benchmark"
