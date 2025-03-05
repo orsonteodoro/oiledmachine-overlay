@@ -467,7 +467,7 @@ ZLIB_COMMIT_2="d3aea2341cdeaf7e717bc257a59aa7a9407d318a" # angle dep
 inherit cmake cuda dep-prepare distutils-r1 flag-o-matic llvm-r1 rocm toolchain-funcs
 
 # Vendored packages need to be added or reviewed for compleness.
-# The reason for delay is submodule hell (the analog of dll hell).
+# The reason for delay is submodule hell (the analog of dll hell or dependency hell).
 #KEYWORDS="~amd64"
 SRC_URI="
 
