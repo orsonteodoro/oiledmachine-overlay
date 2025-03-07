@@ -1608,7 +1608,7 @@ src_unpack() {
 		dep_prepare_cp "${WORKDIR}/googletest-${GOOGLETEST_PV_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/protobuf/third_party/googletest"
 	fi
 
-	dep_prepare_mv "${WORKDIR}/Python-Markdown-${PYTHON_MARKDOWN_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/Python-Markdown"
+	dep_prepare_mv "${WORKDIR}/python-markdown-${PYTHON_MARKDOWN_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/Python-Markdown"
 	dep_prepare_mv "${WORKDIR}/rapidjson-${RAPIDJSON_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/rapidjson/src"
 	if use test ; then
 		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_10}" "${S}/cmake/external/dawn/third_party/angle/third_party/rapidjson/src/thirdparty/gtest"
