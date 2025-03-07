@@ -26,13 +26,15 @@ _TODO='
 # 1.20.0 -> 1.20.2
 
 # TODO package:
-# clang-format
+# synr
+# tensorrt
+
+# TODO package (optional):
 # lintrunner-adapters
 # onnxmltools
 # pydocstyle
-# synr
-# tensorrt
 # torch-ort
+
 
 # For deps versioning, see
 # https://github.com/microsoft/onnxruntime/blob/v1.20.2/cmake/deps.txt
@@ -72,7 +74,8 @@ ANDROID_COMMIT="4f3ee3fd09733fd1514f18140419bf8d5924f55e" # angle dep
 ANDROID_DEPS_COMMIT="4c82e77bef70cc86a43dc6fa40fdcd19823a5507" # angle dep
 ANDROID_PLATFORM_COMMIT="6337c445f9963ec3914e7e0c5787941d07b46509" # angle dep
 ANDROID_SDK_COMMIT="783f19f6e1217c42a31cd1d41de9a19f2664994c" # angle dep
-ANGLE_COMMIT="f25948774f7c24ef4d28c42cb0fee0e69aac0489" # dawn dep
+ANGLE_COMMIT_1="f25948774f7c24ef4d28c42cb0fee0e69aac0489" # dawn dep
+ANGLE_COMMIT_2="f8fc8ac36280440cd34dae318e0d492e3af42bab" # angle/dawn dep
 ASTC_ENCODER_COMMIT="573c475389bf51d16a5c3fc8348092e094e50e8f" # angle dep
 BENCHMARK_PV="1.8.5" # onnxruntime dep
 BENCHMARK_COMMIT_1="2dd015dfef425c866d9a43f2c67d8b52d709acb6" # onnx dep
@@ -319,8 +322,10 @@ https://android.googlesource.com/platform/external/libpng/+archive/${LIBPNG_COMM
 	-> libpng-${LIBPNG_COMMIT:0:7}.tar.gz
 https://android.googlesource.com/platform/external/perfetto/+archive/${PERFETTO_COMMIT:0:7}.tar.gz
 	-> perfetto-${PERFETTO_COMMIT:0:7}.tar.gz
-https://chromium.googlesource.com/angle/angle/+archive/${ANGLE_COMMIT:0:7}.tar.gz
-	-> angle-${ANGLE_COMMIT:0:7}.tar.gz
+https://chromium.googlesource.com/angle/angle/+archive/${ANGLE_COMMIT_1:0:7}.tar.gz
+	-> angle-${ANGLE_COMMIT_1:0:7}.tar.gz
+https://chromium.googlesource.com/angle/angle/+archive/${ANGLE_COMMIT_2:0:7}.tar.gz
+	-> angle-${ANGLE_COMMIT_2:0:7}.tar.gz
 https://chromium.googlesource.com/catapult/+archive/${CATAPULT_COMMIT_1}.tar.gz
 	-> catapult-${CATAPULT_COMMIT_1:0:7}.tar.gz
 https://chromium.googlesource.com/catapult/+archive/${CATAPULT_COMMIT_2}.tar.gz
@@ -557,6 +562,9 @@ https://swiftshader.googlesource.com/SwiftShader/+archive/${SWIFTSHADER_COMMIT_1
 https://swiftshader.googlesource.com/SwiftShader/+archive/${SWIFTSHADER_COMMIT_2:0:7}.tar.gz
 	-> swiftshader-${SWIFTSHADER_COMMIT_2:0:7}.tar.gz
 
+https://github.com/powervr-graphics/Native_SDK/archive/${POWERVR_EXAMPLES_COMMIT}.tar.gz
+	-> Native_SDK-${POWERVR_EXAMPLES_COMMIT:0:7}.tar.gz
+
 https://github.com/abseil/abseil-cpp/archive/refs/tags/${ABSEIL_CPP_PV_1}.tar.gz
 	-> abseil-cpp-${ABSEIL_CPP_PV_1}.tar.gz
 https://github.com/abseil/abseil-cpp/archive/${ABSEIL_CPP_COMMIT_2}.tar.gz
@@ -617,6 +625,8 @@ https://github.com/nlohmann/json/archive/refs/tags/v${JSON_PV}.tar.gz
 	-> nlohmann-json-${JSON_PV}.tar.gz
 https://github.com/nlohmann/json/archive/${JSON_COMMIT_1}.tar.gz
 	-> nlohmann-json-${JSON_COMMIT_1:0:7}.tar.gz
+https://github.com/nlohmann/json/archive/${JSON_COMMIT_2}.tar.gz
+	-> nlohmann-json-${JSON_COMMIT_2:0:7}.tar.gz
 https://github.com/nodejs/node-addon-api/archive/${NODE_ADDON_API_COMMIT}.tar.gz
 	-> node-addon-api-${NODE_ADDON_API_COMMIT:0:7}.tar.gz
 
@@ -667,7 +677,7 @@ https://github.com/google/benchmark/archive/${BENCHMARK_COMMIT_3}.tar.gz
 https://github.com/google/benchmark/archive/${BENCHMARK_COMMIT_4}.tar.gz
 	-> benchmark-${BENCHMARK_COMMIT_4:0:7}.tar.gz
 https://chromium.googlesource.com/external/github.com/google/benchmark/+archive/${BENCHMARK_COMMIT_5:0:7}.tar.gz
-	-> benchmark-${BENCHMARK_COMMIT_5:0:7}
+	-> benchmark-${BENCHMARK_COMMIT_5:0:7}.tar.gz
 https://github.com/google/benchmark/archive/${BENCHMARK_COMMIT_6}.tar.gz
 	-> benchmark-${BENCHMARK_COMMIT_6:0:7}.tar.gz
 	)
@@ -1234,12 +1244,13 @@ _unpack() {
 		"abseil-cpp-${ABSEIL_CPP_COMMIT_3:0:7}.tar.gz;abseil-cpp-${ABSEIL_CPP_COMMIT_3}"
 		"abseil-cpp-${ABSEIL_CPP_COMMIT_4:0:7}.tar.gz;abseil-cpp-${ABSEIL_CPP_COMMIT_4}"
 		"android-${ANDROID_COMMIT:0:7}.tar.gz;android-${ANDROID_COMMIT}"
-		"android-deps-${ANDROID_DEPS_COMMIT:0:7}.tar.gz;andorid-deps-${ANDROID_DEPS_COMMIT}"
+		"android-deps-${ANDROID_DEPS_COMMIT:0:7}.tar.gz;android-deps-${ANDROID_DEPS_COMMIT}"
 		"android_build_tools-${ANDROID_BUILD_TOOLS_COMMIT:0:7}.tar.gz;android_build_tools-${ANDROID_BUILD_TOOLS_COMMIT}"
 		"android_platform-${ANDROID_PLATFORM_COMMIT:0:7}.tar.gz;android_platform-${ANDROID_PLATFORM_COMMIT}"
 		"android_sdk-${ANDROID_SDK_COMMIT:0:7}.tar.gz;android_sdk-${ANDROID_SDK_COMMIT}"
+		"angle-${ANGLE_COMMIT_1:0:7}.tar.gz;angle-${ANGLE_COMMIT_1}"
+		"angle-${ANGLE_COMMIT_2:0:7}.tar.gz;angle-${ANGLE_COMMIT_2}"
 		"astc-encoder-${ASTC_ENCODER_COMMIT:0:7}.tar.gz;astc-encoder-${ASTC_ENCODER_COMMIT}"
-		"angle-${ANGLE_COMMIT:0:7}.tar.gz;angle-${ANGLE_COMMIT}"
 		"benchmark-${BENCHMARK_COMMIT_5:0:7}.tar.gz;benchmark-${BENCHMARK_COMMIT_5}"
 		"build-${BUILD_COMMIT_1:0:7}.tar.gz;build-${BUILD_COMMIT_1}"
 		"build-${BUILD_COMMIT_2:0:7}.tar.gz;build-${BUILD_COMMIT_2}"
@@ -1254,7 +1265,7 @@ _unpack() {
 		"clang-${CLANG_COMMIT_3:0:7}.tar.gz;clang-${CLANG_COMMIT_3}"
 		"clang-format-${CLANG_FORMAT_COMMIT_1:0:7}.tar.gz;clang-format-${CLANG_FORMAT_COMMIT_1}"
 		"clang-format-${CLANG_FORMAT_COMMIT_2:0:7}.tar.gz;clang-format-${CLANG_FORMAT_COMMIT_2}"
-		"clspv-${CLSPV_COMMIT:0:7}.tar.gz;clspv-${CLSPV_COMMIT}.tar.gz"
+		"clspv-${CLSPV_COMMIT:0:7}.tar.gz;clspv-${CLSPV_COMMIT}"
 		"colorama-${COLORAMA_COMMIT:0:7}.tar.gz;colorama-${COLORAMA_COMMIT}"
 		"cpu_features-${CPU_FEATURES_COMMIT:0:7}.tar.gz;cpu_features-${CPU_FEATURES_COMMIT}"
 		"dawn-${DAWN_COMMIT_2:0:7}.tar.gz;dawn-${DAWN_COMMIT_2}"
@@ -1288,8 +1299,8 @@ _unpack() {
 		"libpng-${LIBPNG_COMMIT:0:7}.tar.gz;libpng-${LIBPNG_COMMIT}"
 		"libunwind-${LIBUNWIND_COMMIT:0:7}.tar.gz;libunwind-${LIBUNWIND_COMMIT}"
 		"llvm-${LLVM_COMMIT:0:7}.tar.gz;llvm-${LLVM_COMMIT}"
-		"lunarg-vulkantools-${LUNARG_VULKANTOOLS_COMMIT_1:0:7};lunarg-vulkantools-${LUNARG_VULKANTOOLS_COMMIT_1}"
-		"lunarg-vulkantools-${LUNARG_VULKANTOOLS_COMMIT_2:0:7};lunarg-vulkantools-${LUNARG_VULKANTOOLS_COMMIT_2}"
+		"lunarg-vulkantools-${LUNARG_VULKANTOOLS_COMMIT_1:0:7}.tar.gz;lunarg-vulkantools-${LUNARG_VULKANTOOLS_COMMIT_1}"
+		"lunarg-vulkantools-${LUNARG_VULKANTOOLS_COMMIT_2:0:7}.tar.gz;lunarg-vulkantools-${LUNARG_VULKANTOOLS_COMMIT_2}"
 		"markupsafe-${MARKUPSAFE_COMMIT_1:0:7}.tar.gz;markupsafe-${MARKUPSAFE_COMMIT_1}"
 		"markupsafe-${MARKUPSAFE_COMMIT_2:0:7}.tar.gz;markupsafe-${MARKUPSAFE_COMMIT_2}"
 		"mb-${MB_COMMIT:0:7}.tar.gz;mb-${MB_COMMIT}"
@@ -1301,7 +1312,7 @@ _unpack() {
 		"opencl-cts-${OPENCL_CTS_COMMIT:0:7}.tar.gz;opencl-cts-${OPENCL_CTS_COMMIT}"
 		"opencl-docs-${OPENCL_DOCS_COMMIT:0:7}.tar.gz;opencl-docs-${OPENCL_DOCS_COMMIT}"
 		"opencl-icd-loader-${OPENCL_ICD_LOADER_COMMIT:0:7}.tar.gz;opencl-icd-loader-${OPENCL_ICD_LOADER_COMMIT}"
-		"opengl-registry-${OPENGL_REGISTRY_COMMIT:0:7}.tar.gz;egl-registry-${OPENGL_REGISTRY_COMMIT}"
+		"opengl-registry-${OPENGL_REGISTRY_COMMIT:0:7}.tar.gz;opengl-registry-${OPENGL_REGISTRY_COMMIT}"
 		"partition_allocator-${PARTITION_ALLOCATOR_COMMIT:0:7}.tar.gz;partition_allocator-${PARTITION_ALLOCATOR_COMMIT}"
 		"perf-${PERF_COMMIT:0:7}.tar.gz;perf-${PERF_COMMIT}"
 		"perfetto-${PERFETTO_COMMIT:0:7}.tar.gz;perfetto-${PERFETTO_COMMIT}"
@@ -1317,10 +1328,10 @@ _unpack() {
 		"rust-${RUST_COMMIT_3:0:7}.tar.gz;rust-${RUST_COMMIT_3}"
 		"six-${SIX_COMMIT:0:7}.tar.gz;six-${SIX_COMMIT}"
 		"spirv-cross-${SPIRV_CROSS_COMMIT_1:0:7}.tar.gz;spirv-cross-${SPIRV_CROSS_COMMIT_1}"
-		"spirv-headers-${SPIRV_HEADERS_COMMIT_1:0:7}.tar.gz;spirv-headers-${SPIRV_HEADERS_COMMIT_1}"
-		"spirv-headers-${SPIRV_HEADERS_COMMIT_3:0:7}.tar.gz;spirv-headers-${SPIRV_HEADERS_COMMIT_3}"
-		"spirv-tools-${SPIRV_TOOLS_COMMIT_1:0:7}.tar.gz;spirv-tools-${SPIRV_TOOLS_COMMIT_1}"
-		"spirv-tools-${SPIRV_TOOLS_COMMIT_3:0:7}.tar.gz;spirv-tools-${SPIRV_TOOLS_COMMIT_3}"
+		"spirv-headers-${SPIRV_HEADERS_COMMIT_1:0:7}.tar.gz;SPIRV-Headers-${SPIRV_HEADERS_COMMIT_1}"
+		"spirv-headers-${SPIRV_HEADERS_COMMIT_3:0:7}.tar.gz;SPIRV-Headers-${SPIRV_HEADERS_COMMIT_3}"
+		"spirv-tools-${SPIRV_TOOLS_COMMIT_1:0:7}.tar.gz;SPIRV-Tools-${SPIRV_TOOLS_COMMIT_1}"
+		"spirv-tools-${SPIRV_TOOLS_COMMIT_3:0:7}.tar.gz;SPIRV-Tools-${SPIRV_TOOLS_COMMIT_3}"
 		"swiftshader-${SWIFTSHADER_COMMIT_1:0:7}.tar.gz;swiftshader-${SWIFTSHADER_COMMIT_1}"
 		"swiftshader-${SWIFTSHADER_COMMIT_2:0:7}.tar.gz;swiftshader-${SWIFTSHADER_COMMIT_2}"
 		"testing-${TESTING_COMMIT_1:0:7}.tar.gz;testing-${TESTING_COMMIT_1}"
@@ -1379,6 +1390,10 @@ _unpack() {
 		done
 		if (( ${is_no_root_submodule} == 0 && ${is_protoc_submodule} == 0 )) ; then
 			unpack "${f}"
+			if [[ -e "${S}/AOR_v20.02/string/aarch64/stpcpy-sve.S" ]] ; then
+eerror "AOR from ${f}"
+				die
+			fi
 		fi
 	done
 }
@@ -1389,7 +1404,9 @@ src_unpack() {
 	dep_prepare_mv "${WORKDIR}/emsdk-${EMSDK_COMMIT}" "${S}/cmake/external/emsdk"
 
 	dep_prepare_mv "${WORKDIR}/onnx-${ONNX_COMMIT_1}" "${S}/cmake/external/onnx"
-	dep_prepare_cp "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_1}" "${S}/cmake/external/onnx/third_party/benchmark"
+	if use benchmark ; then
+		dep_prepare_cp "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_1}" "${S}/cmake/external/onnx/third_party/benchmark"
+	fi
 	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1}" "${S}/cmake/external/onnx/third_party/pybind11"
 
 	dep_prepare_mv "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_PV_1}" "${S}/cmake/external/onnx/third_party/abseil"
@@ -1431,17 +1448,17 @@ src_unpack() {
 	dep_prepare_cp "${WORKDIR}/buildtools-${BUILDTOOLS_COMMIT_1}" "${S}/cmake/external/dawn/buildtools"
 	dep_prepare_cp "${WORKDIR}/testing-${TESTING_COMMIT_1}" "${S}/cmake/external/dawn/testing"
 
-	dep_prepare_mv "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_COMMIT_3}" "${S}/cmake/external/dawn/third_party/abseil-cpp"
+	dep_prepare_cp "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_COMMIT_3}" "${S}/cmake/external/dawn/third_party/abseil-cpp"
 
-	dep_prepare_mv "${WORKDIR}/angle-${ANGLE_COMMIT}" "${S}/cmake/external/dawn/third_party/angle"
+	dep_prepare_mv "${WORKDIR}/angle-${ANGLE_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle"
 	dep_prepare_mv "${WORKDIR}/build-${BUILD_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/build"
 	dep_prepare_mv "${WORKDIR}/buildtools-${BUILDTOOLS_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/buildtools"
-	dep_prepare_mv "${WORKDIR}/script-${CLANG_FORMAT_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/clang-format/script"
+	dep_prepare_mv "${WORKDIR}/clang-format-${CLANG_FORMAT_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/clang-format/script"
 	dep_prepare_mv "${WORKDIR}/testing-${TESTING_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/testing"
 	dep_prepare_mv "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_COMMIT_4}" "${S}/cmake/external/dawn/third_party/angle/third_party/abseil-cpp"
 
+	dep_prepare_mv "${WORKDIR}/android-deps-${ANDROID_DEPS_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/android_deps"
 	dep_prepare_mv "${WORKDIR}/android_build_tools-${ANDROID_BUILD_TOOLS_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/android_build_tools"
-	dep_prepare_mv "${WORKDIR}/android_deps-${ANDROID_DEPS_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/android_deps"
 	dep_prepare_mv "${WORKDIR}/android_platform-${ANDROID_PLATFORM_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/android_platform"
 	dep_prepare_mv "${WORKDIR}/android_sdk-${ANDROID_SDK_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/android_sdk"
 
@@ -1471,12 +1488,14 @@ src_unpack() {
 		dep_prepare_cp "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_4}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/googletest"
 	fi
 	dep_prepare_cp "${WORKDIR}/catapult-${CATAPULT_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/catapult"
-	dep_prepare_mv "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_5}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/google_benchmark/src"
+	if use benchmark ; then
+		dep_prepare_cp "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_5}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/google_benchmark/src"
+	fi
 	dep_prepare_cp "${WORKDIR}/jinja2-${JINJA2_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/jinja2"
 	dep_prepare_mv "${WORKDIR}/markupsafe-${MARKUPSAFE_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/markupsafe"
 	dep_prepare_mv "${WORKDIR}/glfw-${GLFW_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/glfw"
 	dep_prepare_cp "${WORKDIR}/VulkanMemoryAllocator-${VULKAN_MEMORY_ALLOCATOR_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/vulkan_memory_allocator"
-	dep_prepare_mv "${WORKDIR}/angle-${}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/angle"
+	dep_prepare_mv "${WORKDIR}/angle-${ANGLE_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/angle"
 
 	dep_prepare_mv "${WORKDIR}/swiftshader-${SWIFTSHADER_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/swiftshader"
 	if use benchmark ; then
@@ -1493,14 +1512,14 @@ src_unpack() {
 	dep_prepare_cp "${WORKDIR}/json-${JSON_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/swiftshader/third_party/json"
 	dep_prepare_cp "${WORKDIR}/libbacktrace-${LIBBACKTRACE_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/swiftshader/third_party/libbacktrace/src"
 	dep_prepare_cp "${WORKDIR}/llvm-project-${LLVM_PROJECT_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/swiftshader/third_party/llvm-project"
-	dep_prepare_cp "${WORKDIR}/powervr_examples-${POWERVR_EXAMPLES_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/swiftshader/third_party/PowerVR_Examples"
+	dep_prepare_cp "${WORKDIR}/Native_SDK-${POWERVR_EXAMPLES_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/swiftshader/third_party/PowerVR_Examples"
 
 	dep_prepare_mv "${WORKDIR}/vulkan-deps-${VULKAN_DEPS_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/vulkan-deps"
 	dep_prepare_cp "${WORKDIR}/glslang-${GLSLANG_COMMIT_4}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/vulkan-deps/glslang/src"
 	dep_prepare_cp "${WORKDIR}/lunarg-vulkantools-${LUNARG_VULKANTOOLS_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/vulkan-deps/lunarg-vulkantools/src"
 	dep_prepare_cp "${WORKDIR}/spirv-cross-${SPIRV_CROSS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/vulkan-deps/spirv-cross/src"
-	dep_prepare_cp "${WORKDIR}/spirv-headers-${SPIRV_HEADERS_COMMIT_3}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/vulkan-deps/spirv-headers/src"
-	dep_prepare_cp "${WORKDIR}/spirv-tools-${SPIRV_TOOLS_COMMIT_3}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/vulkan-deps/spirv-tools/src"
+	dep_prepare_cp "${WORKDIR}/SPIRV-Headers-${SPIRV_HEADERS_COMMIT_3}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/vulkan-deps/spirv-headers/src"
+	dep_prepare_cp "${WORKDIR}/SPIRV-Tools-${SPIRV_TOOLS_COMMIT_3}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/vulkan-deps/spirv-tools/src"
 	dep_prepare_cp "${WORKDIR}/vulkan-headers-${VULKAN_HEADERS_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/vulkan-deps/vulkan-headers/src"
 	dep_prepare_cp "${WORKDIR}/vulkan-loader-${VULKAN_LOADER_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/vulkan-deps/vulkan-loader/src"
 	dep_prepare_cp "${WORKDIR}/vulkan-tools-${VULKAN_TOOLS_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/vulkan-deps/vulkan-tools/src"
@@ -1509,8 +1528,8 @@ src_unpack() {
 
 	dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT_4}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/glslang/src"
 	dep_prepare_mv "${WORKDIR}/spirv-cross-${SPIRV_CROSS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/spirv-cross/src"
-	dep_prepare_mv "${WORKDIR}/spirv-headers-${SPIRV_HEADERS_COMMIT_3}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/spirv-headers/src"
-	dep_prepare_mv "${WORKDIR}/spirv-tools-${SPIRV_TOOLS_COMMIT_3}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/spirv-tools/src"
+	dep_prepare_mv "${WORKDIR}/SPIRV-Headers-${SPIRV_HEADERS_COMMIT_3}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/spirv-headers/src"
+	dep_prepare_mv "${WORKDIR}/SPIRV-Tools-${SPIRV_TOOLS_COMMIT_3}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/spirv-tools/src"
 	dep_prepare_mv "${WORKDIR}/vulkan-headers-${VULKAN_HEADERS_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/vulkan-headers/src"
 	dep_prepare_mv "${WORKDIR}/vulkan-loader-${VULKAN_LOADER_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/vulkan-loader/src"
 	dep_prepare_mv "${WORKDIR}/vulkan-tools-${VULKAN_TOOLS_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/vulkan-tools/src"
@@ -1521,7 +1540,7 @@ src_unpack() {
 	dep_prepare_mv "${WORKDIR}/dxc-${DXC_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/dxc"
 	dep_prepare_mv "${WORKDIR}/dxheaders-${DXHEADERS_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/dxheaders"
 	dep_prepare_cp "${WORKDIR}/webgpu-headers-${WEBGPU_HEADERS}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/webgpu-headers"
-	dep_prepare_mv "${WORKDIR}/opengl-registry-${OPENGL_REGISTRY_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/khronos/OpenGL-Registry"
+	dep_prepare_cp "${WORKDIR}/opengl-registry-${OPENGL_REGISTRY_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/khronos/OpenGL-Registry"
 	dep_prepare_cp "${WORKDIR}/egl-registry-${EGL_REGISTRY_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/khronos/EGL-Registry"
 	dep_prepare_cp "${WORKDIR}/webgpu-cts-${WEBGPU_CTS_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/webgpu-cts"
 	dep_prepare_mv "${WORKDIR}/node-api-headers-${NODE_API_HEADERS_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/node-api-headers"
@@ -1542,7 +1561,7 @@ src_unpack() {
 
 	dep_prepare_mv "${WORKDIR}/langsvr-${LANGSVR_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/langsvr"
 	if use test ; then
-		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_6}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/langsvr/third_party/googletest"
+		dep_prepare_cp "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_6}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/langsvr/third_party/googletest"
 	fi
 	dep_prepare_mv "${WORKDIR}/jsoncpp-${JSONCPP_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/langsvr/third_party/jsoncpp"
 	dep_prepare_mv "${WORKDIR}/lsprotocol-${LSPROTOCOL_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/langsvr/third_party/lsprotocol"
@@ -1609,7 +1628,7 @@ src_unpack() {
 	dep_prepare_cp "${WORKDIR}/json-${JSON_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/SwiftShader/third_party/json"
 	dep_prepare_cp "${WORKDIR}/libbacktrace-${LIBBACKTRACE_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/SwiftShader/third_party/libbacktrace/src"
 	dep_prepare_cp "${WORKDIR}/llvm-project-${LLVM_PROJECT_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/SwiftShader/third_party/llvm-project"
-	dep_prepare_cp "${WORKDIR}/powervr_examples-${POWERVR_EXAMPLES_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/SwiftShader/third_party/PowerVR_Examples"
+	dep_prepare_cp "${WORKDIR}/Native_SDK-${POWERVR_EXAMPLES_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/SwiftShader/third_party/PowerVR_Examples"
 
 	dep_prepare_mv "${WORKDIR}/VK-GL-CTS-${VK_GL_CTS_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/VK-GL-CTS/src"
 
@@ -1617,8 +1636,8 @@ src_unpack() {
 	dep_prepare_cp "${WORKDIR}/glslang-${GLSLANG_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/vulkan-deps/glslang/src"
 	dep_prepare_cp "${WORKDIR}/lunarg-vulkantools-${LUNARG_VULKANTOOLS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/vulkan-deps/lunarg-vulkantools/src"
 	dep_prepare_cp "${WORKDIR}/spirv-cross-${SPIRV_CROSS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/vulkan-deps/spirv-cross/src"
-	dep_prepare_cp "${WORKDIR}/spirv-headers-${SPIRV_HEADERS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/vulkan-deps/spirv-headers/src"
-	dep_prepare_cp "${WORKDIR}/spirv-tools-${SPIRV_TOOLS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/vulkan-deps/spirv-tools/src"
+	dep_prepare_cp "${WORKDIR}/SPIRV-Headers-${SPIRV_HEADERS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/vulkan-deps/spirv-headers/src"
+	dep_prepare_cp "${WORKDIR}/SPIRV-Tools-${SPIRV_TOOLS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/vulkan-deps/spirv-tools/src"
 	dep_prepare_cp "${WORKDIR}/vulkan-headers-${VULKAN_HEADERS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/vulkan-deps/vulkan-headers/src"
 	dep_prepare_cp "${WORKDIR}/vulkan-loader-${VULKAN_LOADER_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/vulkan-deps/vulkan-loader/src"
 	dep_prepare_cp "${WORKDIR}/vulkan-tools-${VULKAN_TOOLS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/vulkan-deps/vulkan-tools/src"
@@ -1628,8 +1647,8 @@ src_unpack() {
 	dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT_3}" "${S}/cmake/external/dawn/third_party/angle/third_party/glslang/src"
 	dep_prepare_cp "${WORKDIR}/lunarg-vulkantools-${LUNARG_VULKANTOOLS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/lunarg-vulkantools/src"
 	dep_prepare_cp "${WORKDIR}/spirv-cross-${SPIRV_CROSS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/spirv-cross/src"
-	dep_prepare_cp "${WORKDIR}/spirv-headers-${SPIRV_HEADERS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/spirv-headers/src"
-	dep_prepare_cp "${WORKDIR}/spirv-tools-${SPIRV_TOOLS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/spirv-tools/src"
+	dep_prepare_cp "${WORKDIR}/SPIRV-Headers-${SPIRV_HEADERS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/spirv-headers/src"
+	dep_prepare_cp "${WORKDIR}/SPIRV-Tools-${SPIRV_TOOLS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/spirv-tools/src"
 	dep_prepare_cp "${WORKDIR}/vulkan-headers-${VULKAN_HEADERS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/vulkan-headers/src"
 	dep_prepare_cp "${WORKDIR}/vulkan-loader-${VULKAN_LOADER_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/vulkan-loader/src"
 	dep_prepare_cp "${WORKDIR}/vulkan-tools-${VULKAN_TOOLS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/vulkan-tools/src"
@@ -1655,8 +1674,8 @@ src_unpack() {
 	dep_prepare_mv "${WORKDIR}/depot_tools-${DEPOT_TOOLS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/depot_tools"
 
 	dep_prepare_mv "${WORKDIR}/dxc-${DXC_COMMIT_1}" "${S}/cmake/external/dawn/third_party/dxc"
-	dep_prepare_mv "${WORKDIR}/spirv-headers-${SPIRV_HEADERS_COMMIT_2}" "${S}/cmake/external/dawn/third_party/dxc/external/SPIRV-Headers"
-	dep_prepare_mv "${WORKDIR}/spirv-tools-${SPIRV_TOOLS_COMMIT_2}" "${S}/cmake/external/dawn/third_party/dxc/external/SPIRV-Tools"
+	dep_prepare_mv "${WORKDIR}/SPIRV-Headers-${SPIRV_HEADERS_COMMIT_2}" "${S}/cmake/external/dawn/third_party/dxc/external/SPIRV-Headers"
+	dep_prepare_mv "${WORKDIR}/SPIRV-Tools-${SPIRV_TOOLS_COMMIT_2}" "${S}/cmake/external/dawn/third_party/dxc/external/SPIRV-Tools"
 	if use test ; then
 		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_7}" "${S}/cmake/external/dawn/third_party/dxc/external/googletest"
 	fi
@@ -1699,8 +1718,8 @@ src_unpack() {
 	dep_prepare_mv "${WORKDIR}/protoc_wrapper-${PROTOC_WRAPPER_COMMIT_1}" "${S}/cmake/external/dawn/tools/protoc_wrapper"
 	dep_prepare_mv "${WORKDIR}/rust-${RUST_COMMIT_1}" "${S}/cmake/external/dawn/tools/rust"
 	dep_prepare_cp "${WORKDIR}/spirv-cross-${SPIRV_CROSS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/spirv-cross/src"
-	dep_prepare_cp "${WORKDIR}/spirv-headers-${SPIRV_HEADERS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/spirv-headers/src"
-	dep_prepare_cp "${WORKDIR}/spirv-tools-${SPIRV_TOOLS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/spirv-tools/src"
+	dep_prepare_cp "${WORKDIR}/SPIRV-Headers-${SPIRV_HEADERS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/spirv-headers/src"
+	dep_prepare_cp "${WORKDIR}/SPIRV-Tools-${SPIRV_TOOLS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/spirv-tools/src"
 
 	dep_prepare_mv "${WORKDIR}/swiftshader-${SWIFTSHADER_COMMIT_1}" "${S}/cmake/external/dawn/third_party/swiftshader"
 	if use benchmark ; then
@@ -1717,7 +1736,7 @@ src_unpack() {
 	dep_prepare_mv "${WORKDIR}/json-${JSON_COMMIT_2}" "${S}/cmake/external/dawn/third_party/swiftshader/third_party/json"
 	dep_prepare_mv "${WORKDIR}/libbacktrace-${LIBBACKTRACE_COMMIT_2}" "${S}/cmake/external/dawn/third_party/swiftshader/third_party/libbacktrace/src"
 	dep_prepare_mv "${WORKDIR}/llvm-project-${LLVM_PROJECT_COMMIT}" "${S}/cmake/external/dawn/third_party/swiftshader/third_party/llvm-project"
-	dep_prepare_mv "${WORKDIR}/powervr_examples-${POWERVR_EXAMPLES_COMMIT}" "${S}/cmake/external/dawn/third_party/swiftshader/third_party/PowerVR_Examples"
+	dep_prepare_mv "${WORKDIR}/Native_SDK-${POWERVR_EXAMPLES_COMMIT}" "${S}/cmake/external/dawn/third_party/swiftshader/third_party/PowerVR_Examples"
 
 	dep_prepare_mv "${WORKDIR}/webgpu-cts-${WEBGPU_CTS_COMMIT}" "${S}/cmake/external/dawn/third_party/webgpu-cts"
 	dep_prepare_mv "${WORKDIR}/webgpu-headers-${WEBGPU_HEADERS}" "${S}/cmake/external/dawn/third_party/webgpu-headers"
@@ -1727,8 +1746,8 @@ src_unpack() {
 	dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT_1}" "${S}/cmake/external/dawn/third_party/vulkan-deps/glslang/src"
 	dep_prepare_mv "${WORKDIR}/lunarg-vulkantools-${LUNARG_VULKANTOOLS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/vulkan-deps/lunarg-vulkantools/src"
 	dep_prepare_mv "${WORKDIR}/spirv-cross-${SPIRV_CROSS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/vulkan-deps/spirv-cross/src"
-	dep_prepare_mv "${WORKDIR}/spirv-headers-${SPIRV_HEADERS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/vulkan-deps/spirv-headers/src"
-	dep_prepare_mv "${WORKDIR}/spirv-tools-${SPIRV_TOOLS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/vulkan-deps/spirv-tools/src"
+	dep_prepare_mv "${WORKDIR}/SPIRV-Headers-${SPIRV_HEADERS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/vulkan-deps/spirv-headers/src"
+	dep_prepare_mv "${WORKDIR}/SPIRV-Tools-${SPIRV_TOOLS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/vulkan-deps/spirv-tools/src"
 	dep_prepare_cp "${WORKDIR}/vulkan-headers-${VULKAN_HEADERS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/vulkan-deps/vulkan-headers/src"
 	dep_prepare_cp "${WORKDIR}/vulkan-loader-${VULKAN_LOADER_COMMIT_1}" "${S}/cmake/external/dawn/third_party/vulkan-deps/vulkan-loader/src"
 	dep_prepare_cp "${WORKDIR}/vulkan-tools-${VULKAN_TOOLS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/vulkan-deps/vulkan-tools/src"
@@ -1780,7 +1799,7 @@ src_unpack() {
 		dep_prepare_mv "${WORKDIR}/onnx-tensorrt-${ONNX_TENSORRT_COMMIT}" "${S}/cmake/external/onnx_tensorrt"
 		dep_prepare_mv "${WORKDIR}/onnx-${ONNX_COMMIT_2}" "${S}/cmake/external/onnx_tensorrt/third_party/onnx"
 		dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT_1}" "${S}/cmake/external/onnx_tensorrt/third_party/onnx/third_party/pybind11"
-		dep_prepare_cp "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_1}" "${S}/cmake/external/onnx_tensorrt/third_party/onnx/third_party/benchmark"
+		dep_prepare_mv "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_1}" "${S}/cmake/external/onnx_tensorrt/third_party/onnx/third_party/benchmark"
 	fi
 	if use test ; then
 		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_PV_1}" "${S}/cmake/external/googletest" # For onnxruntime_external_deps.cmake
