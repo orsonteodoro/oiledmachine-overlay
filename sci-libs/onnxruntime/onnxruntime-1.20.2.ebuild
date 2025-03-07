@@ -1575,7 +1575,7 @@ src_unpack() {
 	if use test ; then
 		dep_prepare_cp "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_6}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/langsvr/third_party/googletest"
 	fi
-	dep_prepare_mv "${WORKDIR}/jsoncpp-${JSONCPP_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/langsvr/third_party/jsoncpp"
+	dep_prepare_cp "${WORKDIR}/jsoncpp-${JSONCPP_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/langsvr/third_party/jsoncpp"
 	dep_prepare_mv "${WORKDIR}/lsprotocol-${LSPROTOCOL_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/langsvr/third_party/lsprotocol"
 
 	dep_prepare_cp "${WORKDIR}/partition_allocator-${PARTITION_ALLOCATOR_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/partition_alloc"
