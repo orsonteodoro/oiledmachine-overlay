@@ -1302,6 +1302,7 @@ _unpack() {
 		"libpng-${LIBPNG_COMMIT:0:7}.tar.gz;libpng-${LIBPNG_COMMIT}"
 		"libunwind-${LIBUNWIND_COMMIT:0:7}.tar.gz;libunwind-${LIBUNWIND_COMMIT}"
 		"llvm-${LLVM_COMMIT:0:7}.tar.gz;llvm-${LLVM_COMMIT}"
+		"llvm-libc-${LLVM_LIBC_COMMIT:0:7}.tar.gz;llvm-libc-${LLVM_LIBC_COMMIT}"
 		"lunarg-vulkantools-${LUNARG_VULKANTOOLS_COMMIT_1:0:7}.tar.gz;lunarg-vulkantools-${LUNARG_VULKANTOOLS_COMMIT_1}"
 		"lunarg-vulkantools-${LUNARG_VULKANTOOLS_COMMIT_2:0:7}.tar.gz;lunarg-vulkantools-${LUNARG_VULKANTOOLS_COMMIT_2}"
 		"markupsafe-${MARKUPSAFE_COMMIT_1:0:7}.tar.gz;markupsafe-${MARKUPSAFE_COMMIT_1}"
@@ -1393,8 +1394,20 @@ _unpack() {
 		done
 		if (( ${is_no_root_submodule} == 0 && ${is_protoc_submodule} == 0 )) ; then
 			unpack "${f}"
-			if [[ -e "${S}/AOR_v20.02/string/aarch64/stpcpy-sve.S" ]] ; then
-eerror "AOR from ${f}"
+			if [[ -e "${WORKDIR}/AOR_v20.02/string/aarch64/stpcpy-sve.S" ]] ; then
+eerror "detected unpack error:  AOR from ${f}"
+				die
+			elif [[ -e "${WORKDIR}/fuzzing" ]] ; then
+eerror "detected unpack error:  fuzzing from ${f}"
+				die
+			elif [[ -e "${WORKDIR}/LICENSE.TXT" ]] ; then
+eerror "detected unpack error:  LICENSE.TXT from ${f}"
+				die
+			elif [[ -e "${WORKDIR}/hdr" ]] ; then
+eerror "detected unpack error:  hdr from ${f}"
+				die
+			elif [[ -e "${WORKDIR}/benchmarks" ]] ; then
+eerror "detected unpack error:  benchmarks from ${f}"
 				die
 			fi
 		fi
@@ -1530,7 +1543,7 @@ src_unpack() {
 	dep_prepare_cp "${WORKDIR}/vulkan-validation-layers-${VULKAN_VALIDATION_LAYERS_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/vulkan-deps/vulkan-validation-layers/src"
 
 	dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT_4}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/glslang/src"
-	dep_prepare_mv "${WORKDIR}/spirv-cross-${SPIRV_CROSS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/spirv-cross/src"
+	dep_prepare_cp "${WORKDIR}/spirv-cross-${SPIRV_CROSS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/spirv-cross/src"
 	dep_prepare_mv "${WORKDIR}/SPIRV-Headers-${SPIRV_HEADERS_COMMIT_3}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/spirv-headers/src"
 	dep_prepare_mv "${WORKDIR}/SPIRV-Tools-${SPIRV_TOOLS_COMMIT_3}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/spirv-tools/src"
 	dep_prepare_mv "${WORKDIR}/vulkan-headers-${VULKAN_HEADERS_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/vulkan-headers/src"
@@ -1541,7 +1554,7 @@ src_unpack() {
 	dep_prepare_cp "${WORKDIR}/zlib-${ZLIB_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/zlib"
 	dep_prepare_mv "${WORKDIR}/abseil-cpp-${ABSEIL_CPP_COMMIT_3}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/abseil-cpp"
 	dep_prepare_mv "${WORKDIR}/dxc-${DXC_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/dxc"
-	dep_prepare_mv "${WORKDIR}/dxheaders-${DXHEADERS_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/dxheaders"
+	dep_prepare_cp "${WORKDIR}/dxheaders-${DXHEADERS_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/dxheaders"
 	dep_prepare_cp "${WORKDIR}/webgpu-headers-${WEBGPU_HEADERS}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/webgpu-headers"
 	dep_prepare_cp "${WORKDIR}/opengl-registry-${OPENGL_REGISTRY_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/khronos/OpenGL-Registry"
 	dep_prepare_cp "${WORKDIR}/egl-registry-${EGL_REGISTRY_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/khronos/EGL-Registry"
@@ -1633,7 +1646,7 @@ src_unpack() {
 	dep_prepare_cp "${WORKDIR}/llvm-project-${LLVM_PROJECT_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/SwiftShader/third_party/llvm-project"
 	dep_prepare_cp "${WORKDIR}/Native_SDK-${POWERVR_EXAMPLES_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/SwiftShader/third_party/PowerVR_Examples"
 
-	dep_prepare_mv "${WORKDIR}/VK-GL-CTS-${VK_GL_CTS_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/VK-GL-CTS/src"
+	dep_prepare_mv "${WORKDIR}/vk-gl-cts-${VK_GL_CTS_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/VK-GL-CTS/src"
 
 	dep_prepare_cp "${WORKDIR}/vulkan-deps-${VULKAN_DEPS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/vulkan-deps"
 	dep_prepare_cp "${WORKDIR}/glslang-${GLSLANG_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/vulkan-deps/glslang/src"
