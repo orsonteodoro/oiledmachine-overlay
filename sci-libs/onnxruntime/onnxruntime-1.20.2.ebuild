@@ -565,6 +565,7 @@ https://swiftshader.googlesource.com/SwiftShader/+archive/${SWIFTSHADER_COMMIT_2
 https://github.com/powervr-graphics/Native_SDK/archive/${POWERVR_EXAMPLES_COMMIT}.tar.gz
 	-> Native_SDK-${POWERVR_EXAMPLES_COMMIT:0:7}.tar.gz
 
+
 https://github.com/abseil/abseil-cpp/archive/refs/tags/${ABSEIL_CPP_PV_1}.tar.gz
 	-> abseil-cpp-${ABSEIL_CPP_PV_1}.tar.gz
 https://github.com/abseil/abseil-cpp/archive/${ABSEIL_CPP_COMMIT_2}.tar.gz
@@ -619,6 +620,8 @@ https://github.com/microsoft/DirectX-Headers/archive/refs/tags/v${DIRECTX_HEADER
 	-> DirectX-Headers-${DIRECTX_HEADERS_PV}.tar.gz
 https://github.com/microsoft/GSL/archive/refs/tags/v${GSL_PV}.tar.gz
 	-> microsoft-gsl-${GSL_PV}.tar.gz
+https://github.com/microsoft/lsprotocol/archive/${LSPROTOCOL_COMMIT}.tar.gz
+	-> lsprotocol-${LSPROTOCOL_COMMIT}.tar.gz
 https://github.com/microsoft/wil/archive/refs/tags/v${WIL_PV}.tar.gz
 	-> microsoft-wil-${WIL_PV}.tar.gz
 https://github.com/nlohmann/json/archive/refs/tags/v${JSON_PV}.tar.gz
@@ -1566,7 +1569,7 @@ src_unpack() {
 	dep_prepare_mv "${WORKDIR}/jsoncpp-${JSONCPP_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/langsvr/third_party/jsoncpp"
 	dep_prepare_mv "${WORKDIR}/lsprotocol-${LSPROTOCOL_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/langsvr/third_party/lsprotocol"
 
-	dep_prepare_mv "${WORKDIR}/partition_alloc-${PARTITION_ALLOCATOR_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/partition_alloc"
+	dep_prepare_cp "${WORKDIR}/partition_allocator-${PARTITION_ALLOCATOR_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/partition_alloc"
 
 
 	dep_prepare_mv "${WORKDIR}/depot_tools-${DEPOT_TOOLS_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/depot_tools"
@@ -1591,10 +1594,10 @@ src_unpack() {
 	dep_prepare_mv "${WORKDIR}/mesa-${MESA_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/mesa/src"
 	dep_prepare_mv "${WORKDIR}/meson-${MESON_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/meson"
 	dep_prepare_mv "${WORKDIR}/nasm-${NASM_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/nasm"
-	dep_prepare_mv "${WORKDIR}/OpenCL-CTS-${OPENCL_CTS_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/OpenCL-CTS/src"
-	dep_prepare_mv "${WORKDIR}/OpenCL-Docs-${OPENCL_DOCS_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/OpenCL-Docs/src"
-	dep_prepare_mv "${WORKDIR}/OpenCL-ICD-Loader-${OPENCL_ICD_LOADER_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/OpenCL-ICD-Loader/src"
-	dep_prepare_cp "${WORKDIR}/OpenGL-Registry-${OPENGL_REGISTRY_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/OpenGL-Registry/src"
+	dep_prepare_mv "${WORKDIR}/opencl-cts-${OPENCL_CTS_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/OpenCL-CTS/src"
+	dep_prepare_mv "${WORKDIR}/opencl-docs-${OPENCL_DOCS_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/OpenCL-Docs/src"
+	dep_prepare_mv "${WORKDIR}/opencl-icd-loader-${OPENCL_ICD_LOADER_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/OpenCL-ICD-Loader/src"
+	dep_prepare_cp "${WORKDIR}/opengl-registry-${OPENGL_REGISTRY_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/OpenGL-Registry/src"
 	dep_prepare_mv "${WORKDIR}/perfetto-${PERFETTO_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/perfetto"
 
 	dep_prepare_cp "${WORKDIR}/protobuf-${PROTOBUF_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/protobuf"
