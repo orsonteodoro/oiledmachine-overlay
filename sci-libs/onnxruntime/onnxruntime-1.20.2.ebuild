@@ -157,9 +157,8 @@ FXDIV_COMMIT="63058eff77e11aa15bf531df5dd34395ec3017c8" # From cmake/deps.txt
 GIT_HOOKS_COMMIT="6d91964d33adee28dda9c7faf9ffd6f4672c381c" # swiftshader dep
 GLFW_COMMIT="b35641f4a3c62aa86a0b3c983d163bc0fe36026d" # dawn dep
 GLMARK2_COMMIT="ca8de51fedb70bace5351c6b002eb952c747e889" # angle dep
-GLSLANG_COMMIT_1="df3398078fab37b50ab33192af01cbc5b5d5b377" # dawn dep
+GLSLANG_COMMIT_1="df3398078fab37b50ab33192af01cbc5b5d5b377" # dawn or angle dep
 GLSLANG_COMMIT_2="2b2523fb951f63f072cfba514c26f2feea5f4329" # swiftshader dep
-GLSLANG_COMMIT_3="df3398078fab37b50ab33192af01cbc5b5d5b377" # angle dep
 GLSLANG_COMMIT_4="7c4d91e7819a1d27213aa3499953d54ae1a00e8f" # angle/dawn dep
 GOOGLETEST_PV_1="1.15.0" # From cmake/deps.txt
 GOOGLETEST_COMMIT_1="ff233bdd4cac0a0bf6e5cd45bda3406814cb2796" # flatbuffers dep, from cmake/external/flatbuffers/benchmarks/CMakeLists.txt
@@ -476,8 +475,6 @@ https://chromium.googlesource.com/external/github.com/gpuweb/cts/+archive/${WEBG
 	-> webgpu-cts-${WEBGPU_CTS_COMMIT:0:7}.tar.gz
 https://chromium.googlesource.com/external/github.com/KhronosGroup/glslang/+archive/${GLSLANG_COMMIT_1:0:7}.tar.gz
 	-> glslang-${GLSLANG_COMMIT_1:0:7}.tar.gz
-https://chromium.googlesource.com/external/github.com/KhronosGroup/glslang/+archive/${GLSLANG_COMMIT_3:0:7}.tar.gz
-	-> glslang-${GLSLANG_COMMIT_3:0:7}.tar.gz
 https://chromium.googlesource.com/external/github.com/KhronosGroup/glslang/+archive/${GLSLANG_COMMIT_4:0:7}.tar.gz
 	-> glslang-${GLSLANG_COMMIT_4:0:7}.tar.gz
 
@@ -1284,7 +1281,6 @@ _unpack() {
 		"glfw-${GLFW_COMMIT:0:7}.tar.gz;glfw-${GLFW_COMMIT}"
 		"glmark2-${GLMARK2_COMMIT:0:7}.tar.gz;glmark2-${GLMARK2_COMMIT}"
 		"glslang-${GLSLANG_COMMIT_1:0:7}.tar.gz;glslang-${GLSLANG_COMMIT_1}"
-		"glslang-${GLSLANG_COMMIT_3:0:7}.tar.gz;glslang-${GLSLANG_COMMIT_3}"
 		"glslang-${GLSLANG_COMMIT_4:0:7}.tar.gz;glslang-${GLSLANG_COMMIT_4}"
 		"googletest-${GOOGLETEST_COMMIT_9:0:7}.tar.gz;googletest-${GOOGLETEST_COMMIT_9}"
 		"ijar-${IJAR_COMMIT:0:7}.tar.gz;ijar-${IJAR_COMMIT}"
@@ -1509,7 +1505,7 @@ src_unpack() {
 	fi
 	dep_prepare_cp "${WORKDIR}/jinja2-${JINJA2_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/jinja2"
 	dep_prepare_mv "${WORKDIR}/markupsafe-${MARKUPSAFE_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/markupsafe"
-	dep_prepare_mv "${WORKDIR}/glfw-${GLFW_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/glfw"
+	dep_prepare_cp "${WORKDIR}/glfw-${GLFW_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/glfw"
 	dep_prepare_cp "${WORKDIR}/VulkanMemoryAllocator-${VULKAN_MEMORY_ALLOCATOR_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/vulkan_memory_allocator"
 	dep_prepare_mv "${WORKDIR}/angle-${ANGLE_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/angle"
 
@@ -1660,7 +1656,7 @@ src_unpack() {
 	dep_prepare_cp "${WORKDIR}/vulkan-utility-libraries-${VULKAN_UTILITY_LIBRARIES_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/vulkan-deps/vulkan-utility-libraries/src"
 	dep_prepare_cp "${WORKDIR}/vulkan-validation-layers-${VULKAN_VALIDATION_LAYERS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/vulkan-deps/vulkan-validation-layers/src"
 
-	dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT_3}" "${S}/cmake/external/dawn/third_party/angle/third_party/glslang/src"
+	dep_prepare_cp "${WORKDIR}/glslang-${GLSLANG_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/glslang/src"
 	dep_prepare_cp "${WORKDIR}/lunarg-vulkantools-${LUNARG_VULKANTOOLS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/lunarg-vulkantools/src"
 	dep_prepare_cp "${WORKDIR}/spirv-cross-${SPIRV_CROSS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/spirv-cross/src"
 	dep_prepare_cp "${WORKDIR}/SPIRV-Headers-${SPIRV_HEADERS_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/spirv-headers/src"
