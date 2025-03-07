@@ -1616,7 +1616,7 @@ src_unpack() {
 	dep_prepare_mv "${WORKDIR}/requests-${REQUESTS_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/requests/src"
 	dep_prepare_mv "${WORKDIR}/six-${SIX_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/six"
 
-	dep_prepare_cp "${WORKDIR}/SwiftShader-${SWIFTSHADER_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/SwiftShader"
+	dep_prepare_cp "${WORKDIR}/swiftshader-${SWIFTSHADER_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/SwiftShader"
 	if use benchmark ; then
 		dep_prepare_cp "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_6}" "${S}/cmake/external/dawn/third_party/angle/third_party/SwiftShader/third_party/benchmark"
 	fi
