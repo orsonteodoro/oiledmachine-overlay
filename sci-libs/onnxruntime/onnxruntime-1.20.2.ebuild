@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# U22 - GCC 12.2
+
 # TODO list:
 _TODO='
 
@@ -1168,6 +1170,7 @@ DEPEND+="
 BDEPEND+="
 	${PYTHON_DEPS}
 	dev-util/patchelf
+	sys-devel/gcc:12
 	$(python_gen_cond_dep '
 		>=dev-python/setuptools-68.2.2[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
@@ -1892,6 +1895,11 @@ src_configure() {
 	PYTHON_EXECUTABLE="/usr/bin/${EPYTHON}"
 	PYTHON_INCLUDE_DIR="$(python_get_includedir)"
 	PYTHON_LIBRARY="$(python_get_library_path)"
+
+	export MAKEOPTS="-j1"
+	export CC="${CHOST}-gcc-12"
+	export CXX="${CHOST}-g++-12"
+	export CPP="${CC}"
 
 	strip-unsupported-flags
 
