@@ -1206,6 +1206,7 @@ _PATCHES=(
 	"${FILESDIR}/${PN}-1.20.0-use-system-composable-kernel.patch"
 	"${FILESDIR}/${PN}-1.20.0-drop-nsync.patch"
 	"${FILESDIR}/${PN}-1.19.2-onnx_proto-visibility.patch"
+	"${FILESDIR}/${PN}-1.20.2-fix-eigen-external-deps.patch"
 )
 
 pkg_setup() {
