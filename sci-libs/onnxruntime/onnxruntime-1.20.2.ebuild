@@ -1907,11 +1907,13 @@ src_configure() {
 		append-cppflags "-I/usr/include/eigen3"
 	fi
 
+#		$(test-flags-CXX -Wno-dangling-reference) \
 	append-cxxflags \
 		$(test-flags-CXX -Wno-c++20-compat) \
-		$(test-flags-CXX -Wno-dangling-reference) \
 		$(test-flags-CXX -Wno-error=unused-parameter) \
-		$(test-flags-CXX -Wno-error=maybe-uninitialized)
+		$(test-flags-CXX -Wno-error=maybe-uninitialized) \
+		$(test-flags-CXX -Wno-array-bounds) \
+		$(test-flags-CXX -Wno-stringop-overread)
 
 	local mycmakeargs=(
 		-DABSL_ENABLE_INSTALL=ON
