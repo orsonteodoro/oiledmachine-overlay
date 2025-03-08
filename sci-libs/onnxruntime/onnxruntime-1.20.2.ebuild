@@ -1504,7 +1504,7 @@ src_unpack() {
 		dep_prepare_cp "${WORKDIR}/benchmark-${BENCHMARK_COMMIT_5}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/google_benchmark/src"
 	fi
 	dep_prepare_cp "${WORKDIR}/jinja2-${JINJA2_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/jinja2"
-	dep_prepare_mv "${WORKDIR}/markupsafe-${MARKUPSAFE_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/markupsafe"
+	dep_prepare_cp "${WORKDIR}/markupsafe-${MARKUPSAFE_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/markupsafe"
 	dep_prepare_cp "${WORKDIR}/glfw-${GLFW_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/glfw"
 	dep_prepare_cp "${WORKDIR}/VulkanMemoryAllocator-${VULKAN_MEMORY_ALLOCATOR_COMMIT_1}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/vulkan_memory_allocator"
 	dep_prepare_mv "${WORKDIR}/angle-${ANGLE_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/angle"
@@ -1555,8 +1555,8 @@ src_unpack() {
 	dep_prepare_cp "${WORKDIR}/opengl-registry-${OPENGL_REGISTRY_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/khronos/OpenGL-Registry"
 	dep_prepare_cp "${WORKDIR}/egl-registry-${EGL_REGISTRY_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/khronos/EGL-Registry"
 	dep_prepare_cp "${WORKDIR}/webgpu-cts-${WEBGPU_CTS_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/webgpu-cts"
-	dep_prepare_mv "${WORKDIR}/node-api-headers-${NODE_API_HEADERS_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/node-api-headers"
-	dep_prepare_mv "${WORKDIR}/node-addon-api-${NODE_ADDON_API_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/node-addon-api"
+	dep_prepare_cp "${WORKDIR}/node-api-headers-${NODE_API_HEADERS_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/node-api-headers"
+	dep_prepare_cp "${WORKDIR}/node-addon-api-${NODE_ADDON_API_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/node-addon-api"
 	dep_prepare_mv "${WORKDIR}/gpuweb-${GPUWEB_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/gpuweb"
 
 	dep_prepare_cp "${WORKDIR}/protobuf-${PROTOBUF_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/protobuf"
@@ -1571,12 +1571,12 @@ src_unpack() {
 	dep_prepare_cp "${WORKDIR}/libprotobuf-mutator-${LIBPROTOBUF_MUTATOR_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/libprotobuf-mutator/src"
 	dep_prepare_cp "${WORKDIR}/jsoncpp-${JSONCPP_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/jsoncpp"
 
-	dep_prepare_mv "${WORKDIR}/langsvr-${LANGSVR_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/langsvr"
+	dep_prepare_cp "${WORKDIR}/langsvr-${LANGSVR_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/langsvr"
 	if use test ; then
 		dep_prepare_cp "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_6}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/langsvr/third_party/googletest"
 	fi
 	dep_prepare_cp "${WORKDIR}/jsoncpp-${JSONCPP_COMMIT_2}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/langsvr/third_party/jsoncpp"
-	dep_prepare_mv "${WORKDIR}/lsprotocol-${LSPROTOCOL_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/langsvr/third_party/lsprotocol"
+	dep_prepare_cp "${WORKDIR}/lsprotocol-${LSPROTOCOL_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/langsvr/third_party/lsprotocol"
 
 	dep_prepare_cp "${WORKDIR}/partition_allocator-${PARTITION_ALLOCATOR_COMMIT}" "${S}/cmake/external/dawn/third_party/angle/third_party/dawn/third_party/partition_alloc"
 
@@ -1701,12 +1701,12 @@ src_unpack() {
 	dep_prepare_mv "${WORKDIR}/jinja2-${JINJA2_COMMIT_1}" "${S}/cmake/external/dawn/third_party/jinja2"
 	dep_prepare_cp "${WORKDIR}/jsoncpp-${JSONCPP_COMMIT_2}" "${S}/cmake/external/dawn/third_party/jsoncpp"
 
-	dep_prepare_mv "${WORKDIR}/langsvr-${LANGSVR_COMMIT}" "${S}/cmake/external/dawn/third_party/langsvr"
+	dep_prepare_cp "${WORKDIR}/langsvr-${LANGSVR_COMMIT}" "${S}/cmake/external/dawn/third_party/langsvr"
 	if use test ; then
 		dep_prepare_mv "${WORKDIR}/googletest-${GOOGLETEST_COMMIT_6}" "${S}/cmake/external/dawn/third_party/langsvr/third_party/googletest"
 	fi
 	dep_prepare_mv "${WORKDIR}/jsoncpp-${JSONCPP_COMMIT_2}" "${S}/cmake/external/dawn/third_party/langsvr/third_party/jsoncpp"
-	dep_prepare_mv "${WORKDIR}/lsprotocol-${LSPROTOCOL_COMMIT}" "${S}/cmake/external/dawn/third_party/langsvr/third_party/lsprotocol"
+	dep_prepare_cp "${WORKDIR}/lsprotocol-${LSPROTOCOL_COMMIT}" "${S}/cmake/external/dawn/third_party/langsvr/third_party/lsprotocol"
 
 	dep_prepare_mv "${WORKDIR}/libc++-${LIBCXX_COMMIT_1}" "${S}/cmake/external/dawn/third_party/libc++/src"
 	dep_prepare_mv "${WORKDIR}/libc++abi-${LIBCXXABI_COMMIT_1}" "${S}/cmake/external/dawn/third_party/libc++abi/src"
