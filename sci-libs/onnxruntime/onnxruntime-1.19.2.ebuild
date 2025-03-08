@@ -28,7 +28,7 @@ EAPI=8
 
 # https://github.com/abseil/abseil-cpp/releases/download/20240722.0/abseil-cpp-20240722.0.tar.gz
 ABSEIL_CPP_COMMIT_1="f46495ea96f68fc3f6c394f099b2992743f6ff7f" # From cmake/deps.txt
-ABSEIL_CPP_COMMIT_2="4a2c63365eff8823a5221db86ef490e828306f9d" # # protobuf dep
+ABSEIL_CPP_COMMIT_2="78be63686ba732b25052be15f8d6dee891c05749" # # protobuf (PROTOBUF_PV_2) dep
 ABSEIL_CPP_PV="20230125.3" # From cmake/external/onnx/CMakeLists.txt
 AMDGPU_TARGETS_COMPAT=(
 # See https://github.com/microsoft/onnxruntime/blob/v1.19.2/cmake/CMakeLists.txt#L299
@@ -88,7 +88,7 @@ GOOGLETEST_COMMIT_2="4c9a3bb62bf3ba1f1010bf96f9c8ed767b363774" # protobuf dep
 GOOGLETEST_COMMIT_3="e2239ee6043f73722e7aa812a459f54a28552929" # From cmake/external/flatbuffers/benchmarks/CMakeLists.txt
 GSL_PV="4.0.0" # From cmake/deps.txt
 JSON_PV="3.10.5" # From cmake/deps.txt
-JSONCPP_COMMIT="9059f5cad030ba11d37818847443a53918c327b1" # protobuf 22.3 dep
+JSONCPP_COMMIT="9059f5cad030ba11d37818847443a53918c327b1" # protobuf (PROTOBUF_PV_2) dep
 LIBBACKTRACE_COMMIT="08f7c7e69f8ea61a0c4151359bc8023be8e9217b" # tvm dep
 LIBPROTOBUF_MUTATOR_COMMIT="7a2ed51a6b682a83e345ff49fc4cfd7ca47550db"
 MP11_PV="1.82.0"

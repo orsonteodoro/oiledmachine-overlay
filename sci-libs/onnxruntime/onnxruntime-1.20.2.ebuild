@@ -25,16 +25,12 @@ _TODO='
 
 # 1.20.0 -> 1.20.2
 
-# TODO package:
-# synr
-# tensorrt
-
 # TODO package (optional):
 # lintrunner-adapters
 # onnxmltools
 # pydocstyle
+# tensorrt
 # torch-ort
-
 
 # For deps versioning, see
 # https://github.com/microsoft/onnxruntime/blob/v1.20.2/cmake/deps.txt
@@ -56,7 +52,7 @@ _TODO='
 # https://github.com/abseil/abseil-cpp/releases/download/20240722.0/abseil-cpp-20240722.0.tar.gz
 ABSEIL_CPP_PV_1="20230125.3" # From cmake/external/onnx/CMakeLists.txt
 ABSEIL_CPP_PV_2="20240722.0" # From cmake/deps.txt
-ABSEIL_CPP_COMMIT_2="4a2c63365eff8823a5221db86ef490e828306f9d" # protobuf dep
+ABSEIL_CPP_COMMIT_2="78be63686ba732b25052be15f8d6dee891c05749" # protobuf (PROTOBUF_PV_2) dep
 ABSEIL_CPP_COMMIT_3="f81f6c011baf9b0132a5594c034fe0060820711d" # dawn dep
 ABSEIL_CPP_COMMIT_4="1b7ed5a1932647009b72fdad8e0e834d55cf40d8" # angle dep
 AMDGPU_TARGETS_COMPAT=(
@@ -182,7 +178,7 @@ JINJA2_COMMIT_2="2f6f2ff5e4c1d727377f5e1b9e1903d871f41e74" # angle dep
 JSON_PV="3.10.5" # From cmake/deps.txt
 JSON_COMMIT_1="f272ad533d32a40a3b2154a76f1ae9a45eacd6d3" # cppdap dep
 JSON_COMMIT_2="ed5541440a36bf7dc1a544f9a84fa3e5ae97b71f" # swiftshader dep
-JSONCPP_COMMIT_1="9059f5cad030ba11d37818847443a53918c327b1" # protobuf 22.3 dep
+JSONCPP_COMMIT_1="9059f5cad030ba11d37818847443a53918c327b1" # protobuf (PROTOBUF_PV_2) dep
 JSONCPP_COMMIT_2="69098a18b9af0c47549d9a271c054d13ca92b006" # dawn dep
 JSONCPP_COMMIT_3="f62d44704b4da6014aa231cfc116e7fd29617d2a" # angle dep
 KLEIDIAI_PV="0.2.0"
@@ -1390,22 +1386,6 @@ _unpack() {
 		done
 		if (( ${is_no_root_submodule} == 0 && ${is_protoc_submodule} == 0 )) ; then
 			unpack "${f}"
-			if [[ -e "${WORKDIR}/AOR_v20.02/string/aarch64/stpcpy-sve.S" ]] ; then
-eerror "detected unpack error:  AOR from ${f}"
-				die
-			elif [[ -e "${WORKDIR}/fuzzing" ]] ; then
-eerror "detected unpack error:  fuzzing from ${f}"
-				die
-			elif [[ -e "${WORKDIR}/LICENSE.TXT" ]] ; then
-eerror "detected unpack error:  LICENSE.TXT from ${f}"
-				die
-			elif [[ -e "${WORKDIR}/hdr" ]] ; then
-eerror "detected unpack error:  hdr from ${f}"
-				die
-			elif [[ -e "${WORKDIR}/benchmarks" ]] ; then
-eerror "detected unpack error:  benchmarks from ${f}"
-				die
-			fi
 		fi
 	done
 }
@@ -1900,7 +1880,7 @@ src_prepare() {
 }
 
 src_configure() {
-	die "This ebuild is still in development.  Use the 1.19.x series instead."
+	ewarn "This ebuild is still in development.  Use the 1.19.x series instead."
 	export ROCM_PATH="${ESYSROOT}/${EROCM_PATH}"
 	export MIOPEN_PATH="${ESYSROOT}/${EROCM_PATH}"
 	#export ROCM_VERSION="${ROCM_VERSION}"-
