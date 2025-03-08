@@ -892,10 +892,10 @@ src_configure() {
 	fi
 
 	append-cxxflags \
-		-Wno-c++20-compat \
-		-Wno-dangling-reference \
-		-Wno-error=unused-parameter \
-		-Wno-error=maybe-uninitialized
+		$(test-flags-CXX -Wno-c++20-compat) \
+		$(test-flags-CXX -Wno-dangling-reference) \
+		$(test-flags-CXX -Wno-error=unused-parameter) \
+		$(test-flags-CXX -Wno-error=maybe-uninitialized)
 
 	local mycmakeargs=(
 		-DABSL_ENABLE_INSTALL=ON
