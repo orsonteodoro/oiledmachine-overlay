@@ -23,6 +23,14 @@ EAPI=8
 # https://github.com/microsoft/onnxruntime/blob/v1.19.2/requirements-lintrunner.txt
 # https://github.com/microsoft/onnxruntime/blob/v1.19.2/requirements-training.txt
 # https://github.com/apache/tvm/blob/2379917985919ed3918dc12cad47f469f245be7a/python/gen_requirements.py#L65 ; commit from https://github.com/microsoft/onnxruntime/blob/v1.19.2/cmake/external/tvm.cmake
+# https://github.com/microsoft/onnxruntime/blob/v1.19.2/dockerfiles/Dockerfile.cuda
+# https://github.com/microsoft/onnxruntime/blob/v1.19.2/dockerfiles/Dockerfile.openvino
+# https://github.com/microsoft/onnxruntime/blob/v1.19.2/dockerfiles/Dockerfile.rocm
+# https://github.com/microsoft/onnxruntime/blob/v1.19.2/dockerfiles/Dockerfile.tensorrt
+# https://github.com/microsoft/onnxruntime/blob/v1.19.2/dockerfiles/README.md#cuda
+# https://github.com/microsoft/onnxruntime/blob/v1.19.2/dockerfiles/README.md#openvino
+# https://github.com/microsoft/onnxruntime/blob/v1.19.2/dockerfiles/README.md#rocm
+# https://github.com/microsoft/onnxruntime/blob/v1.19.2/dockerfiles/README.md#tensorrt
 
 # clog has same version as cpuinfo
 
@@ -98,7 +106,6 @@ ONNX_COMMIT_2="990217f043af7222348ca8f0301e17fa7b841781" # onnx-tensorrt dep
 PSIMD_COMMIT="072586a71b55b7f8c584153d223e95687148a900" # From cmake/deps.txt
 ROCM_SLOTS=(
 	rocm_6_0
-	rocm_5_7
 )
 LLVM_COMPAT=( 17 18 )
 LLVM_OPTIONAL=1
@@ -348,7 +355,6 @@ ${CPU_FLAGS}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${OPENVINO_TARGETS[@]/#/openvino_targets_}
 ${ROCM_SLOTS[@]}
-onnxruntime_USE_EXTENSIONS
 -abseil-cpp -benchmark -composable-kernel cpu -cuda cudnn debug doc -extensions
 -javascript -llvm -lto -migraphx -mimalloc -mpi -neural-speed -onednn -openvino
 +python -quant -rocm -system-eigen -system-composable-kernel test -tensorrt
@@ -554,12 +560,12 @@ RDEPEND="
 				)
 			)
 			(
-				=dev-util/nvidia-cuda-toolkit-12.3*
+				=dev-util/nvidia-cuda-toolkit-12.1*
 				!python? (
 					>=sci-libs/pytorch-2.1.0[${PYTHON_SINGLE_USEDEP}]
 				)
 				cudnn? (
-					=dev-libs/cudnn-8.6*
+					=dev-libs/cudnn-8.8*
 				)
 				python? (
 					>=sci-libs/pytorch-2.1.0[${PYTHON_SINGLE_USEDEP}]
@@ -591,20 +597,6 @@ RDEPEND="
 	)
 	rocm? (
 		$(gen_rocm_rdepend)
-		rocm_5_7? (
-			!python? (
-				|| (
-					=sci-libs/pytorch-2.3*[${PYTHON_SINGLE_USEDEP}]
-					=sci-libs/pytorch-2.2*[${PYTHON_SINGLE_USEDEP}]
-				)
-			)
-			python? (
-				|| (
-					=sci-libs/pytorch-2.3*[${PYTHON_SINGLE_USEDEP}]
-					=sci-libs/pytorch-2.2*[${PYTHON_SINGLE_USEDEP}]
-				)
-			)
-		)
 		rocm_6_0? (
 			!python? (
 				|| (
@@ -623,6 +615,8 @@ RDEPEND="
 		dev-cpp/eigen:=
 	)
 	tensorrt? (
+		>=dev-util/tensorrt-8.5.1
+		=dev-util/nvidia-cuda-toolkit-11.8*
 		dev-util/tensorrt:=
 	)
 	tvm? (
@@ -718,10 +712,6 @@ pkg_setup() {
 		LLVM_SLOT="17"
 		ROCM_SLOT="6.0"
 		export ROCM_VERSION="${HIP_6_0_VERSION}"
-	elif use rocm_6_0 ; then
-		LLVM_SLOT="17"
-		ROCM_SLOT="5.7"
-		export ROCM_VERSION="${HIP_5_7_VERSION}"
 	fi
 
 	use rocm && rocm_pkg_setup

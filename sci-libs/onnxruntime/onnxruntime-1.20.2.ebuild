@@ -46,6 +46,15 @@ _TODO='
 # https://github.com/microsoft/onnxruntime/blob/v1.20.2/requirements-training.txt
 # https://github.com/apache/tvm/blob/2379917985919ed3918dc12cad47f469f245be7a/python/gen_requirements.py#L65 ; commit from https://github.com/microsoft/onnxruntime/blob/v1.20.2/cmake/external/tvm.cmake
 # https://github.com/google/dawn/blob/511eb80847afe6bded34ec491a38d5d78ba2d604/DEPS
+# https://github.com/microsoft/onnxruntime/blob/v1.20.2/dockerfiles/Dockerfile.cuda
+# https://github.com/microsoft/onnxruntime/blob/v1.20.2/dockerfiles/Dockerfile.openvino
+# https://github.com/microsoft/onnxruntime/blob/v1.20.2/dockerfiles/Dockerfile.rocm
+# https://github.com/microsoft/onnxruntime/blob/v1.20.2/dockerfiles/Dockerfile.tensorrt
+# https://github.com/microsoft/onnxruntime/blob/v1.20.2/onnxruntime/python/tools/transformers/models/llama/requirements-cuda.txt#L2
+# https://github.com/microsoft/onnxruntime/blob/v1.20.2/dockerfiles/README.md#cuda
+# https://github.com/microsoft/onnxruntime/blob/v1.20.2/dockerfiles/README.md#openvino
+# https://github.com/microsoft/onnxruntime/blob/v1.20.2/dockerfiles/README.md#tensorrt
+# https://github.com/microsoft/onnxruntime/blob/v1.20.2/dockerfiles/README.md#rocm
 
 # clog has same version as cpuinfo
 
@@ -232,7 +241,7 @@ NASM_COMMIT="f477acb1049f5e043904b87b825c5915084a9a29" # angle dep
 NODE_API_HEADERS_COMMIT="d5cfe19da8b974ca35764dd1c73b91d57cd3c4ce" # dawn dep
 ONNX_TENSORRT_COMMIT="9f98e2ebe7507fe0774d06a44bbf4b0e82cc9ce7" # From cmake/deps.txt
 ONNXRUNTIME_EXTENSIONS_COMMIT="94142d8391c9791ec71c38336436319a2d4ac7a0" # From cmake/deps.txt
-OPENVINO_PV="2024.0"
+OPENVINO_PV="2024.2.0"
 OPENVINO_TARGETS=(
 	cpu
 	cpu_np
@@ -258,7 +267,6 @@ RAPIDJSON_COMMIT="781a4e667d84aeedbeb8184b7b62425ea66ec59f" # angle dep
 REQUESTS_COMMIT="c7e0fc087ceeadb8b4c84a0953a422c474093d6d" # angle dep
 ROCM_SLOTS=(
 	rocm_6_0
-	rocm_5_7
 )
 RUST_COMMIT_1="a69a8ecdbf7a19fb129ae57650cac9f704cb7cf9" # dawn dep
 RUST_COMMIT_2="b732825d28c8cc3277ef03713cc7e71b0db9c782" # angle dep
@@ -1051,15 +1059,27 @@ RDEPEND="
 				)
 			)
 			(
-				=dev-util/nvidia-cuda-toolkit-12.3*
+				=dev-util/nvidia-cuda-toolkit-11.8*
 				!python? (
-					>=sci-libs/pytorch-2.1.0[${PYTHON_SINGLE_USEDEP}]
+					>=sci-libs/pytorch-2.6.0[${PYTHON_SINGLE_USEDEP}]
 				)
 				cudnn? (
-					=dev-libs/cudnn-8.6*
+					=dev-libs/cudnn-9.1*
 				)
 				python? (
-					>=sci-libs/pytorch-2.1.0[${PYTHON_SINGLE_USEDEP}]
+					>=sci-libs/pytorch-2.6.0[${PYTHON_SINGLE_USEDEP}]
+				)
+			)
+			(
+				=dev-util/nvidia-cuda-toolkit-12.6*
+				!python? (
+					>=sci-libs/pytorch-2.6.0[${PYTHON_SINGLE_USEDEP}]
+				)
+				cudnn? (
+					=dev-libs/cudnn-9.5*
+				)
+				python? (
+					>=sci-libs/pytorch-2.6.0[${PYTHON_SINGLE_USEDEP}]
 				)
 			)
 		)
@@ -1088,20 +1108,6 @@ RDEPEND="
 	)
 	rocm? (
 		$(gen_rocm_rdepend)
-		rocm_5_7? (
-			!python? (
-				|| (
-					=sci-libs/pytorch-2.3*[${PYTHON_SINGLE_USEDEP}]
-					=sci-libs/pytorch-2.2*[${PYTHON_SINGLE_USEDEP}]
-				)
-			)
-			python? (
-				|| (
-					=sci-libs/pytorch-2.3*[${PYTHON_SINGLE_USEDEP}]
-					=sci-libs/pytorch-2.2*[${PYTHON_SINGLE_USEDEP}]
-				)
-			)
-		)
 		rocm_6_0? (
 			!python? (
 				|| (
@@ -1120,6 +1126,8 @@ RDEPEND="
 		dev-cpp/eigen:=
 	)
 	tensorrt? (
+		>=dev-util/tensorrt-8.5.1
+		=dev-util/nvidia-cuda-toolkit-11.8*
 		dev-util/tensorrt:=
 	)
 	tvm? (
@@ -1210,7 +1218,6 @@ _PATCHES=(
 )
 
 pkg_setup() {
-ewarn "This ebuild is under construction"
 	use python && python-single-r1_pkg_setup
 	use llvm && llvm-r1_pkg_setup
 
@@ -1218,10 +1225,6 @@ ewarn "This ebuild is under construction"
 		LLVM_SLOT="17"
 		ROCM_SLOT="6.0"
 		export ROCM_VERSION="${HIP_6_0_VERSION}"
-	elif use rocm_6_0 ; then
-		LLVM_SLOT="17"
-		ROCM_SLOT="5.7"
-		export ROCM_VERSION="${HIP_5_7_VERSION}"
 	fi
 
 	use rocm && rocm_pkg_setup
@@ -2214,140 +2217,140 @@ src_install() {
 	fi
 
 # Generated from
-# find /var/tmp/portage/sci-libs/onnxruntime-1.19.2/work/onnxruntime-1.19.2/cmake/_deps/ -name "*.so*" | cut -f 9- -d "/"
+# find /var/tmp/portage/sci-libs/onnxruntime-1.20.2/work/onnxruntime-1.20.2/cmake/_deps -name "*.so*" | cut -f 9- -d "/"
 	local LIBS=(
 cmake/_deps/pytorch_cpuinfo-build/libcpuinfo.so
 cmake/_deps/re2-build/libre2.so.11
 cmake/_deps/re2-build/libre2.so.11.0.0
 cmake/_deps/re2-build/libre2.so
-cmake/_deps/abseil_cpp-build/absl/types/libabsl_bad_variant_access.so.0
-cmake/_deps/abseil_cpp-build/absl/types/libabsl_bad_optional_access.so.0
+cmake/_deps/abseil_cpp-build/absl/types/libabsl_bad_optional_access.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/types/libabsl_bad_optional_access.so
+cmake/_deps/abseil_cpp-build/absl/types/libabsl_bad_variant_access.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/types/libabsl_bad_variant_access.so
 cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_sink.so
-cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_format.so.0
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_message.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_proto.so
-cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_sink.so.0
-cmake/_deps/abseil_cpp-build/absl/log/libabsl_vlog_config_internal.so.0
-cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_check_op.so.0
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_nullguard.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_check_op.so
-cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_log_sink_set.so.0
-cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_globals.so.0
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_log_sink_set.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_proto.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_globals.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_log_sink_set.so
-cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_nullguard.so.0
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_globals.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/log/libabsl_vlog_config_internal.so
-cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_globals.so.0
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_format.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_fnmatch.so
 cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_format.so
-cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_fnmatch.so.0
 cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_entry.so
 cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_globals.so
 cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_globals.so
-cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_message.so.0
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_sink.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_check_op.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_vlog_config_internal.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_message.so
-cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_entry.so.0
-cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_conditions.so.0
-cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_proto.so.0
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_entry.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_fnmatch.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_nullguard.so
 cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_conditions.so
+cmake/_deps/abseil_cpp-build/absl/log/libabsl_log_internal_conditions.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/strings/libabsl_cord.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/strings/libabsl_strings_internal.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/strings/libabsl_cord_internal.so
 cmake/_deps/abseil_cpp-build/absl/strings/libabsl_cordz_handle.so
-cmake/_deps/abseil_cpp-build/absl/strings/libabsl_cord_internal.so.0
 cmake/_deps/abseil_cpp-build/absl/strings/libabsl_cord.so
-cmake/_deps/abseil_cpp-build/absl/strings/libabsl_cordz_handle.so.0
-cmake/_deps/abseil_cpp-build/absl/strings/libabsl_cord.so.0
-cmake/_deps/abseil_cpp-build/absl/strings/libabsl_string_view.so.0
-cmake/_deps/abseil_cpp-build/absl/strings/libabsl_strings.so.0
 cmake/_deps/abseil_cpp-build/absl/strings/libabsl_strings_internal.so
 cmake/_deps/abseil_cpp-build/absl/strings/libabsl_str_format_internal.so
 cmake/_deps/abseil_cpp-build/absl/strings/libabsl_string_view.so
-cmake/_deps/abseil_cpp-build/absl/strings/libabsl_cordz_functions.so.0
-cmake/_deps/abseil_cpp-build/absl/strings/libabsl_str_format_internal.so.0
+cmake/_deps/abseil_cpp-build/absl/strings/libabsl_cord_internal.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/strings/libabsl_strings.so
+cmake/_deps/abseil_cpp-build/absl/strings/libabsl_string_view.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/strings/libabsl_cordz_info.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/strings/libabsl_cordz_functions.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/strings/libabsl_cordz_info.so
-cmake/_deps/abseil_cpp-build/absl/strings/libabsl_strings_internal.so.0
-cmake/_deps/abseil_cpp-build/absl/strings/libabsl_cordz_info.so.0
+cmake/_deps/abseil_cpp-build/absl/strings/libabsl_cordz_handle.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/strings/libabsl_str_format_internal.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/strings/libabsl_strings.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/strings/libabsl_cordz_functions.so
-cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_marshalling.so.0
 cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_commandlineflag.so
 cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_program_name.so
-cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_commandlineflag_internal.so.0
 cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_private_handle_accessor.so
+cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_config.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_config.so
 cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_internal.so
-cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_config.so.0
+cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_private_handle_accessor.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_program_name.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_marshalling.so
-cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_reflection.so.0
+cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_marshalling.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_commandlineflag_internal.so
-cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_program_name.so.0
-cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_internal.so.0
+cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_commandlineflag_internal.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_reflection.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_reflection.so
-cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_private_handle_accessor.so.0
-cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_commandlineflag.so.0
-cmake/_deps/abseil_cpp-build/absl/time/libabsl_time_zone.so.0
-cmake/_deps/abseil_cpp-build/absl/time/libabsl_time.so.0
+cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_internal.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/flags/libabsl_flags_commandlineflag.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/time/libabsl_civil_time.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/time/libabsl_time.so
-cmake/_deps/abseil_cpp-build/absl/time/libabsl_civil_time.so.0
+cmake/_deps/abseil_cpp-build/absl/time/libabsl_time.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/time/libabsl_time_zone.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/time/libabsl_civil_time.so
 cmake/_deps/abseil_cpp-build/absl/time/libabsl_time_zone.so
 cmake/_deps/abseil_cpp-build/absl/synchronization/libabsl_synchronization.so
+cmake/_deps/abseil_cpp-build/absl/synchronization/libabsl_graphcycles_internal.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/synchronization/libabsl_graphcycles_internal.so
-cmake/_deps/abseil_cpp-build/absl/synchronization/libabsl_synchronization.so.0
 cmake/_deps/abseil_cpp-build/absl/synchronization/libabsl_kernel_timeout_internal.so
-cmake/_deps/abseil_cpp-build/absl/synchronization/libabsl_kernel_timeout_internal.so.0
-cmake/_deps/abseil_cpp-build/absl/synchronization/libabsl_graphcycles_internal.so.0
+cmake/_deps/abseil_cpp-build/absl/synchronization/libabsl_kernel_timeout_internal.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/synchronization/libabsl_synchronization.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/container/libabsl_raw_hash_set.so
-cmake/_deps/abseil_cpp-build/absl/container/libabsl_hashtablez_sampler.so.0
+cmake/_deps/abseil_cpp-build/absl/container/libabsl_raw_hash_set.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/container/libabsl_hashtablez_sampler.so
-cmake/_deps/abseil_cpp-build/absl/container/libabsl_raw_hash_set.so.0
-cmake/_deps/abseil_cpp-build/absl/hash/libabsl_low_level_hash.so.0
-cmake/_deps/abseil_cpp-build/absl/hash/libabsl_city.so.0
-cmake/_deps/abseil_cpp-build/absl/hash/libabsl_hash.so.0
+cmake/_deps/abseil_cpp-build/absl/container/libabsl_hashtablez_sampler.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/hash/libabsl_low_level_hash.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/hash/libabsl_hash.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/hash/libabsl_city.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/hash/libabsl_hash.so
 cmake/_deps/abseil_cpp-build/absl/hash/libabsl_low_level_hash.so
 cmake/_deps/abseil_cpp-build/absl/hash/libabsl_city.so
-cmake/_deps/abseil_cpp-build/absl/base/libabsl_strerror.so.0
 cmake/_deps/abseil_cpp-build/absl/base/libabsl_spinlock_wait.so
+cmake/_deps/abseil_cpp-build/absl/base/libabsl_spinlock_wait.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/base/libabsl_base.so
+cmake/_deps/abseil_cpp-build/absl/base/libabsl_strerror.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/base/libabsl_raw_logging_internal.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/base/libabsl_throw_delegate.so
-cmake/_deps/abseil_cpp-build/absl/base/libabsl_log_severity.so.0
+cmake/_deps/abseil_cpp-build/absl/base/libabsl_malloc_internal.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/base/libabsl_throw_delegate.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/base/libabsl_log_severity.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/base/libabsl_malloc_internal.so
-cmake/_deps/abseil_cpp-build/absl/base/libabsl_raw_logging_internal.so.0
 cmake/_deps/abseil_cpp-build/absl/base/libabsl_strerror.so
 cmake/_deps/abseil_cpp-build/absl/base/libabsl_raw_logging_internal.so
-cmake/_deps/abseil_cpp-build/absl/base/libabsl_spinlock_wait.so.0
-cmake/_deps/abseil_cpp-build/absl/base/libabsl_throw_delegate.so.0
 cmake/_deps/abseil_cpp-build/absl/base/libabsl_log_severity.so
-cmake/_deps/abseil_cpp-build/absl/base/libabsl_malloc_internal.so.0
-cmake/_deps/abseil_cpp-build/absl/base/libabsl_base.so.0
-cmake/_deps/abseil_cpp-build/absl/numeric/libabsl_int128.so.0
+cmake/_deps/abseil_cpp-build/absl/base/libabsl_base.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/numeric/libabsl_int128.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/numeric/libabsl_int128.so
 cmake/_deps/abseil_cpp-build/absl/crc/libabsl_crc_cord_state.so
 cmake/_deps/abseil_cpp-build/absl/crc/libabsl_crc_internal.so
 cmake/_deps/abseil_cpp-build/absl/crc/libabsl_crc32c.so
-cmake/_deps/abseil_cpp-build/absl/crc/libabsl_crc_internal.so.0
-cmake/_deps/abseil_cpp-build/absl/crc/libabsl_crc_cpu_detect.so.0
+cmake/_deps/abseil_cpp-build/absl/crc/libabsl_crc_cord_state.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/crc/libabsl_crc_cpu_detect.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/crc/libabsl_crc_cpu_detect.so
-cmake/_deps/abseil_cpp-build/absl/crc/libabsl_crc32c.so.0
-cmake/_deps/abseil_cpp-build/absl/crc/libabsl_crc_cord_state.so.0
-cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_utf8_for_code_point.so.0
+cmake/_deps/abseil_cpp-build/absl/crc/libabsl_crc32c.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/crc/libabsl_crc_internal.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_examine_stack.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_utf8_for_code_point.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_demangle_rust.so
-cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_decode_rust_punycode.so.0
-cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_demangle_rust.so.0
-cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_debugging_internal.so.0
-cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_demangle_internal.so.0
+cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_symbolize.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_stacktrace.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_demangle_internal.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_stacktrace.so
-cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_examine_stack.so.0
 cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_debugging_internal.so
 cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_utf8_for_code_point.so
+cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_demangle_rust.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_symbolize.so
 cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_decode_rust_punycode.so
+cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_decode_rust_punycode.so.2407.0.0
+cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_debugging_internal.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_demangle_internal.so
-cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_stacktrace.so.0
 cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_examine_stack.so
-cmake/_deps/abseil_cpp-build/absl/debugging/libabsl_symbolize.so.0
+cmake/_deps/abseil_cpp-build/absl/profiling/libabsl_exponential_biased.so.2407.0.0
 cmake/_deps/abseil_cpp-build/absl/profiling/libabsl_exponential_biased.so
-cmake/_deps/abseil_cpp-build/absl/profiling/libabsl_exponential_biased.so.0
 cmake/_deps/onnx-build/libonnx_proto.so
 cmake/_deps/onnx-build/libonnx.so
 cmake/_deps/protobuf-build/libprotobuf.so.32
