@@ -41,9 +41,9 @@ IUSE+=" "
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/scipy-1.10.0[${PYTHON_USEDEP}]
-		dev-python/onnxruntime[${PYTHON_USEDEP}]
 		dev-python/protobuf[${PYTHON_USEDEP}]
 		dev-python/numpy[${PYTHON_USEDEP}]
+		sci-libs/onnxruntime[${PYTHON_USEDEP},python]
 	')
 	>=sci-libs/transformers-4.36.0[${PYTHON_SINGLE_USEDEP}]
 "
