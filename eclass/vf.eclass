@@ -139,6 +139,9 @@ einfo "ToCToU = Time of Check Time of Use Race Condition"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "UB" ]] ; then
 einfo "UB = Undefined Behavior"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "UI" ]] ; then
+einfo "UI = UI Spoofing"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "UM" ]] ; then
 einfo "UM = Uninitialized Memory"
 		fi
