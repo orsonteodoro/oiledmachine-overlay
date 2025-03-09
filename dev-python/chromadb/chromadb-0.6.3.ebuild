@@ -678,6 +678,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev"
 RDEPEND+="
 	$(python_gen_any_dep '
+		>=sci-libs/onnxruntime-1.14.1[${PYTHON_SINGLE_USEDEP},python]
 		>=sci-libs/tokenizers-0.13.2[${PYTHON_SINGLE_USEDEP}]
 	')
 	>=dev-python/bcrypt-4.0.1[${PYTHON_USEDEP}]
@@ -700,7 +701,6 @@ RDEPEND+="
 	>=dev-python/typer-0.9.0[${PYTHON_USEDEP}]
 	>=dev-python/typing-extensions-4.5.0[${PYTHON_USEDEP}]
 	>=dev-python/uvicorn-0.18.3[${PYTHON_USEDEP},standard(+)]
-	>=sci-libs/onnxruntime-1.14.1[${PYTHON_USEDEP},python]
 	~dev-python/opentelemetry-api-${OPENTELEMETRY_PV}[${PYTHON_USEDEP}]
 	~dev-python/opentelemetry-exporter-otlp-proto-grpc-${OPENTELEMETRY_PV}[${PYTHON_USEDEP}]
 	~dev-python/opentelemetry-instrumentation-fastapi-0.48_beta0:${OPENTELEMETRY_SLOT}[${PYTHON_USEDEP}]

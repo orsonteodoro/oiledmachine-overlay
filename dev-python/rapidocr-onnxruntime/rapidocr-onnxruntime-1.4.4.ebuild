@@ -35,12 +35,14 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
 RDEPEND+="
+	$(python_gen_any_dep '
+		>=sci-libs/onnxruntime-1.7.0[${PYTHON_SINGLE_USEDEP}]
+	')
 	>=dev-python/pyclipper-1.2.0[${PYTHON_USEDEP}]
 	>=media-libs/opencv-4.5.1.48[${PYTHON_USEDEP},python]
 	>=dev-python/numpy-1.19.5[${PYTHON_USEDEP}]
 	>=dev-python/six-1.15.0[${PYTHON_USEDEP}]
 	>=dev-python/shapely-1.7.1[${PYTHON_USEDEP}]
-	>=sci-libs/onnxruntime-1.7.0[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	dev-python/tqdm[${PYTHON_USEDEP}]
 	virtual/pillow[${PYTHON_USEDEP}]
