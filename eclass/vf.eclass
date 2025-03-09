@@ -127,6 +127,9 @@ einfo "PP = Prototype Pollution"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "RC" ]] ; then
 einfo "RC = Race Condition"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "SE" ]] ; then
+einfo "SE = Social Engineering Attack"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "TC" ]] ; then
 einfo "TC = Type Confusion"
 		fi

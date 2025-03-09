@@ -12,6 +12,7 @@ EAPI=8
 # 128.4.1 -> 128.5.0
 # 128.5.0 -> 128.6.0
 # 128.6.0 -> 128.7.0
+# 128.7.0 -> 128.8.0
 
 # SECURITY:  If this gets bumped, then dev-lang/spidermonkey should be bumped too with the same ESR version.
 
@@ -31,29 +32,29 @@ EAPI=8
 #
 # For dependency versioning, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
-# https://www.mozilla.org/en-US/firefox/128.7.0/system-requirements/
-# /var/tmp/portage/www-client/firefox-128.7.0e/work/firefox-128.7.0/moz.configure
-# /var/tmp/portage/www-client/firefox-128.7.0e/work/firefox-128.7.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41  [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
-# /var/tmp/portage/www-client/firefox-128.7.0e/work/firefox-128.7.0/build/moz.configure/nss.configure L12
-# /var/tmp/portage/www-client/firefox-128.7.0e/work/firefox-128.7.0/gfx/graphite2/include/graphite2/Font.h L31
-# /var/tmp/portage/www-client/firefox-128.7.0e/work/firefox-128.7.0/gfx/harfbuzz/configure.ac L3
-# /var/tmp/portage/www-client/firefox-128.7.0e/work/firefox-128.7.0/intl/icu/source/common/unicode/uvernum.h L63
-# /var/tmp/portage/www-client/firefox-128.7.0e/work/firefox-128.7.0/ipc/chromium/src/third_party/libevent/configure.ac L8
-# /var/tmp/portage/www-client/firefox-128.7.0e/work/firefox-128.7.0/media/libaom/config/aom_version.h L7 [old]
-# /var/tmp/portage/www-client/firefox-128.7.0e/work/firefox-128.7.0/media/libjpeg/jconfig.h L7
-# /var/tmp/portage/www-client/firefox-128.7.0e/work/firefox-128.7.0/media/libpng/png.h L281
-# /var/tmp/portage/www-client/firefox-128.7.0e/work/firefox-128.7.0/media/libvpx/config/vpx_version.h L8
-# /var/tmp/portage/www-client/firefox-128.7.0e/work/firefox-128.7.0/media/libwebp/moz.yaml L16
-# /var/tmp/portage/www-client/firefox-128.7.0e/work/firefox-128.7.0/modules/freetype2/include/freetype/freetype.h L5223
-# /var/tmp/portage/www-client/firefox-128.7.0e/work/firefox-128.7.0/nsprpub/pr/include/prinit.h L35
-# /var/tmp/portage/www-client/firefox-128.7.0e/work/firefox-128.7.0/third_party/dav1d/meson.build L26
-# /var/tmp/portage/www-client/firefox-128.7.0e/work/firefox-128.7.0/third_party/pipewire/pipewire/version.h L49
-# /var/tmp/portage/www-client/firefox-128.7.0e/work/firefox-128.7.0/taskcluster/kinds/toolchain/nasm.yml
-# /var/tmp/portage/www-client/firefox-128.7.0e/work/firefox-128.7.0/taskcluster/kinds/toolchain/node.yml
-# /var/tmp/portage/www-client/firefox-128.7.0e/work/firefox-128.7.0/taskcluster/kinds/toolchain/rust.yml
-# /var/tmp/portage/www-client/firefox-128.7.0e/work/firefox-128.7.0/taskcluster/kinds/fetch/toolchains.yml
+# https://www.mozilla.org/en-US/firefox/128.8.0/system-requirements/
+# /var/tmp/portage/www-client/firefox-128.8.0e/work/firefox-128.8.0/moz.configure
+# /var/tmp/portage/www-client/firefox-128.8.0e/work/firefox-128.8.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41  [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
+# /var/tmp/portage/www-client/firefox-128.8.0e/work/firefox-128.8.0/build/moz.configure/nss.configure L12
+# /var/tmp/portage/www-client/firefox-128.8.0e/work/firefox-128.8.0/gfx/graphite2/include/graphite2/Font.h L31
+# /var/tmp/portage/www-client/firefox-128.8.0e/work/firefox-128.8.0/gfx/harfbuzz/configure.ac L3
+# /var/tmp/portage/www-client/firefox-128.8.0e/work/firefox-128.8.0/intl/icu/source/common/unicode/uvernum.h L63
+# /var/tmp/portage/www-client/firefox-128.8.0e/work/firefox-128.8.0/ipc/chromium/src/third_party/libevent/configure.ac L8
+# /var/tmp/portage/www-client/firefox-128.8.0e/work/firefox-128.8.0/media/libaom/config/aom_version.h L7 [old]
+# /var/tmp/portage/www-client/firefox-128.8.0e/work/firefox-128.8.0/media/libjpeg/jconfig.h L7
+# /var/tmp/portage/www-client/firefox-128.8.0e/work/firefox-128.8.0/media/libpng/png.h L281
+# /var/tmp/portage/www-client/firefox-128.8.0e/work/firefox-128.8.0/media/libvpx/config/vpx_version.h L8
+# /var/tmp/portage/www-client/firefox-128.8.0e/work/firefox-128.8.0/media/libwebp/moz.yaml L16
+# /var/tmp/portage/www-client/firefox-128.8.0e/work/firefox-128.8.0/modules/freetype2/include/freetype/freetype.h L5223
+# /var/tmp/portage/www-client/firefox-128.8.0e/work/firefox-128.8.0/nsprpub/pr/include/prinit.h L35
+# /var/tmp/portage/www-client/firefox-128.8.0e/work/firefox-128.8.0/third_party/dav1d/meson.build L26
+# /var/tmp/portage/www-client/firefox-128.8.0e/work/firefox-128.8.0/third_party/pipewire/pipewire/version.h L49
+# /var/tmp/portage/www-client/firefox-128.8.0e/work/firefox-128.8.0/taskcluster/kinds/toolchain/nasm.yml
+# /var/tmp/portage/www-client/firefox-128.8.0e/work/firefox-128.8.0/taskcluster/kinds/toolchain/node.yml
+# /var/tmp/portage/www-client/firefox-128.8.0e/work/firefox-128.8.0/taskcluster/kinds/toolchain/rust.yml
+# /var/tmp/portage/www-client/firefox-128.8.0e/work/firefox-128.8.0/taskcluster/kinds/fetch/toolchains.yml
 #   Keyword searches:  cbindgen-, llvm-, pkgconf-, zlib
-# /var/tmp/portage/www-client/firefox-128.7.0e/work/firefox-128.7.0/taskcluster
+# /var/tmp/portage/www-client/firefox-128.8.0e/work/firefox-128.8.0/taskcluster
 #   Keyword search:  gtk
 
 # Due to versioning conflicts and ebuild assumptions, you cannot have stable and esr be the same version
@@ -72,7 +73,7 @@ unset __
 
 # To check every minor version or update MOZ_LANGS use the code below:
 __='
-PV="128.7.0"
+PV="128.8.0"
 wget -q -O - "http://ftp.mozilla.org/pub/firefox/releases/${PV}esr/linux-x86_64/xpi/" \
 	| grep "href.*linux-x86_64"  \
 	| cut -f 3 -d ">" \
@@ -89,7 +90,7 @@ unset __
 
 __='
 # For dependency versions, scan also with:
-SRC="/var/tmp/portage/www-client/firefox-128.7.0e/work/firefox-128.7.0"
+SRC="/var/tmp/portage/www-client/firefox-128.8.0e/work/firefox-128.8.0"
 grep -E \
 	-e "[0-9]+\.[0-9]+(\.[0-9]+)?" \
 	-e "dependency" \
@@ -136,7 +137,7 @@ FFMPEG_COMPAT=(
 	"0/51.53.53" # 0.10
 	"0/50.53.53" # 0.8
 )
-FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-08.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-09.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 GTK3_PV="3.14.5"
@@ -148,20 +149,21 @@ dcda5b12dce8c42c9a09e28f5320679d1d6bb506a0c429005046b5606a341ab2\
 LLVM_COMPAT=( 18 17 ) # Limited based on rust
 LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
-MITIGATION_DATE="Feb 4, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1738617660 # From `date +%s -d "2025-02-03 13:21"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-09/#CVE-2024-11704"
+MITIGATION_DATE="Mar 4, 2025" # Advisory date
+MITIGATION_LAST_UPDATE=1741038480 # From `date +%s -d "2025-03-03 13:48"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-16/"
 SEVERITY_LABEL="Severity:"
 VULNERABILITIES_FIXED=(
-	"CVE-2025-1017;ZC, CE, DoS, DT, ID;Critical"
-	"CVE-2025-1016;ZC, CE, DoS, DT, ID;Critical"
-	"CVE-2025-1009;ZC, DoS, DT, ID;Critical"
-	"CVE-2025-1010;ZC, DoS, DT, ID;Critical"
-	"CVE-2025-1011;ZC, DoS, DT, ID;Critical"
-	"CVE-2025-1012;ZC, DoS, DT, ID;Critical"
-	"CVE-2024-11704;ZC, DoS, DT, ID;Critical"
-	"CVE-2025-1014;DoS, DT, ID;High"
-	"CVE-2025-1013;DT, ID;Medium"
+	"CVE-2025-1932;ZC, DoS, DT, ID;Critical"
+	"CVE-2025-1937;CE, MC;"
+	"CVE-2024-43097;EP, DoS, DT, ID;High"
+	"CVE-2025-1938;ZC, CE, DT, ID;Medium"
+	"CVE-2025-1934;ZC, DT, ID;Medium"
+	"CVE-2025-1930;DoS, DT, ID;High"
+	"CVE-2025-1933;DoS, DT;High"
+	"CVE-2025-1935;DT;Medium"
+	"CVE-2025-1931;DoS;"
+	"CVE-2025-1936;;"
 )
 MOZ_ESR="yes"
 MOZ_LANGS=(
@@ -2241,7 +2243,7 @@ einfo
 	# Set update channel
 	local update_channel=release
 	[[ -n ${MOZ_ESR} ]] && update_channel=esr
-	mozconfig_add_options_ac '' --update-channel=${update_channel}
+	mozconfig_add_options_ac '' --enable-update-channel=${update_channel}
 
 	if use rust-simd ; then
 		local rust_pv=$(rustc --version | cut -f 2 -d " ")
@@ -2249,7 +2251,11 @@ einfo
 eerror "Use eselect to switch rust to < 1.78 or disable the rust-simd USE flag."
 			die
 		fi
-		mozconfig_add_options_ac '+rust-simd' --enable-rust-simd
+		if use amd64 || use arm64 || use ppc64 || use riscv ; then
+			mozconfig_add_options_ac '+rust-simd' --enable-rust-simd
+		else
+			mozconfig_add_options_ac '-rust-simd' --disable-rust-simd
+		fi
 	else
 		mozconfig_add_options_ac '-rust-simd' --disable-rust-simd
 	fi

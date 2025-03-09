@@ -12,6 +12,7 @@ EAPI=8
 # 132.0.3 -> 133.0
 # 133.0 -> 134.0
 # 134.0 -> 135.0
+# 135.0 -> 136.0
 
 # Originally based on the firefox-89.0.ebuild from the gentoo-overlay,
 # with update sync updated to this version of the ebuild.
@@ -26,29 +27,29 @@ EAPI=8
 #
 # For dependency versioning, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
-# https://www.mozilla.org/en-US/firefox/135.0/system-requirements/
-# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/moz.configure
-# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41 [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
-# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/build/moz.configure/nss.configure L12
-# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/gfx/graphite2/include/graphite2/Font.h L31
-# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/gfx/harfbuzz/moz.yaml
-# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/intl/icu/source/common/unicode/uvernum.h L63
-# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/ipc/chromium/src/third_party/libevent/configure.ac L8
-# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/media/libaom/config/aom_version.h L7 [old]
-# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/media/libjpeg/jconfig.h L7
-# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/media/libpng/png.h L281
-# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/media/libvpx/config/vpx_version.h L8
-# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/media/libwebp/moz.yaml L16
-# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/modules/freetype2/include/freetype/freetype.h L5175
-# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/nsprpub/pr/include/prinit.h L35
-# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/third_party/dav1d/meson.build L26
-# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/third_party/pipewire/pipewire/version.h L49
-# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/taskcluster/kinds/toolchain/nasm.yml
-# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/taskcluster/kinds/toolchain/node.yml
-# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/taskcluster/kinds/toolchain/rust.yml
-# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/taskcluster/kinds/fetch/toolchains.yml
+# https://www.mozilla.org/en-US/firefox/136.0/system-requirements/
+# /var/tmp/portage/www-client/firefox-136.0/work/firefox-136.0/moz.configure
+# /var/tmp/portage/www-client/firefox-136.0/work/firefox-136.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41 [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
+# /var/tmp/portage/www-client/firefox-136.0/work/firefox-136.0/build/moz.configure/nss.configure L12
+# /var/tmp/portage/www-client/firefox-136.0/work/firefox-136.0/gfx/graphite2/include/graphite2/Font.h L31
+# /var/tmp/portage/www-client/firefox-136.0/work/firefox-136.0/gfx/harfbuzz/moz.yaml
+# /var/tmp/portage/www-client/firefox-136.0/work/firefox-136.0/intl/icu/source/common/unicode/uvernum.h L63
+# /var/tmp/portage/www-client/firefox-136.0/work/firefox-136.0/ipc/chromium/src/third_party/libevent/configure.ac L8
+# /var/tmp/portage/www-client/firefox-136.0/work/firefox-136.0/media/libaom/config/aom_version.h L7 [old]
+# /var/tmp/portage/www-client/firefox-136.0/work/firefox-136.0/media/libjpeg/jconfig.h L7
+# /var/tmp/portage/www-client/firefox-136.0/work/firefox-136.0/media/libpng/png.h L281
+# /var/tmp/portage/www-client/firefox-136.0/work/firefox-136.0/media/libvpx/config/vpx_version.h L8
+# /var/tmp/portage/www-client/firefox-136.0/work/firefox-136.0/media/libwebp/moz.yaml L16
+# /var/tmp/portage/www-client/firefox-136.0/work/firefox-136.0/modules/freetype2/include/freetype/freetype.h L5175
+# /var/tmp/portage/www-client/firefox-136.0/work/firefox-136.0/nsprpub/pr/include/prinit.h L35
+# /var/tmp/portage/www-client/firefox-136.0/work/firefox-136.0/third_party/dav1d/meson.build L26
+# /var/tmp/portage/www-client/firefox-136.0/work/firefox-136.0/third_party/pipewire/pipewire/version.h L49
+# /var/tmp/portage/www-client/firefox-136.0/work/firefox-136.0/taskcluster/kinds/toolchain/nasm.yml
+# /var/tmp/portage/www-client/firefox-136.0/work/firefox-136.0/taskcluster/kinds/toolchain/node.yml
+# /var/tmp/portage/www-client/firefox-136.0/work/firefox-136.0/taskcluster/kinds/toolchain/rust.yml
+# /var/tmp/portage/www-client/firefox-136.0/work/firefox-136.0/taskcluster/kinds/fetch/toolchains.yml
 #   Keyword searches:  cbindgen-, llvm-, pkgconf-, zlib
-# /var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0/taskcluster
+# /var/tmp/portage/www-client/firefox-136.0/work/firefox-136.0/taskcluster
 #   Keyword search:  gtk
 
 # Track http://ftp.mozilla.org/pub/firefox/releases/ for version updates.
@@ -70,7 +71,7 @@ unset __
 
 # To check every minor version or update MOZ_LANGS use the code below:
 __='
-PV="135.0"
+PV="136.0"
 wget -q -O - "http://ftp.mozilla.org/pub/firefox/releases/${PV}/linux-x86_64/xpi/" \
 	| grep "href.*linux-x86_64"  \
 	| cut -f 3 -d ">" \
@@ -87,7 +88,7 @@ unset __
 
 __='
 # For dependency versions, scan also with:
-SRC="/var/tmp/portage/www-client/firefox-135.0/work/firefox-135.0"
+SRC="/var/tmp/portage/www-client/firefox-136.0/work/firefox-136.0"
 grep -E \
 	-e "[0-9]+\.[0-9]+(\.[0-9]+)?" \
 	-e "dependency" \
@@ -134,32 +135,38 @@ FFMPEG_COMPAT=(
 	"0/50.53.53" # 0.8
 )
 FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-02.tar.xz"
+FIREFOX_LOONG_PATCHSET="firefox-${PV%%.*}-loong-patches-01.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 GTK3_PV="3.14.5"
 LICENSE_FILE_NAME="FF-$(ver_cut 1-2 ${PV})-THIRD-PARTY-LICENSES.html"
 LICENSE_FINGERPRINT="\
-129a54beb78aac24a748eaac3fe4ff2b3cd1188474502ce06de04509d2846b4b\
-d9a4c8a9e54bf7d9dd409913cb2c689c1d68e76dbbef1e437f173bfb72ae8989\
+187e3aee7d62a2c01a4bec8076abc9fcf24b28af1444614f9e454c589a7cea5f\
+a8fb1d2e34f83f4d3bd2fff4164f7d83a65e24e2ae4b63b4a2395acea0c673b6\
 " # SHA512
 LLVM_COMPAT=( 19 ) # Limited based on rust
 LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
-MITIGATION_DATE="Feb 4, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1738617780 # From `date +%s -d "2025-02-03 13:23"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-07/"
+MITIGATION_DATE="Mar 4, 2025" # Advisory date
+MITIGATION_LAST_UPDATE=1741038420 # From `date +%s -d "2025-03-03 13:47"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-14/"
 SEVERITY_LABEL="Severity:"
 VULNERABILITIES_FIXED=(
-	"CVE-2025-1017;ZC, CE, DoS, DT, ID;Critical"
-	"CVE-2025-1020;ZC, CE, DoS, DT, ID;Critical"
-	"CVE-2025-1016;ZC, CE, DoS, DT, ID;Critical"
-	"CVE-2025-1009;ZC, DoS, DT, ID;Critical"
-	"CVE-2025-1011;ZC, DoS, DT, ID;Critical"
-	"CVE-2025-1012;ZC, DoS, DT, ID;Critical"
-	"CVE-2025-1018;DoS, DT, ID;High"
-	"CVE-2025-1014;DoS, DT, ID;High"
-	"CVE-2025-1013;DT, ID;Medium"
-	"CVE-2025-1019;DT;Medium"
+	"CVE-2025-1932;ZC, DoS, DT, ID;Critical"
+	"CVE-2025-1941;ZC, DT, ID;Critical"
+	"CVE-2025-1943;ZC, CE, DoS, DT;High"
+	"CVE-2025-1937;CE, MC;"
+	"CVE-2025-1938;ZC, CE, DT, ID;Medium"
+	"CVE-2025-1934;ZC, DT, ID;Medium"
+	"CVE-2025-1942;ZC; DT, ID;Medium"
+	"CVE-2025-1930;DoS, DT, ID;High"
+	"CVE-2024-9956;PE, DoS, DT, ID;High"
+	"CVE-2025-1939;SE, DT, ID;Low"
+	"CVE-2025-1940;SE, DT, ID;High"
+	"CVE-2025-1933;DoS, DT;High"
+	"CVE-2025-1935;DT;Medium"
+	"CVE-2025-1931;DoS;"
+	"CVE-2025-1936;;"
 )
 MOZ_ESR=
 MOZ_LANGS=(
@@ -209,7 +216,6 @@ RUST_MIN_VER="1.82.0" # Corresponds to llvm 19, rust min required for llvm 19
 RUST_NEEDS_LLVM=1
 RUST_PV="${RUST_MIN_VER}"
 SPEECH_DISPATCHER_PV="0.11.4-r1"
-WANT_AUTOCONF="2.71"
 XKBCOMMON_PV="0.4.1"
 VIRTUALX_REQUIRED="pgo"
 # Information about the bundled wasi toolchain from
@@ -236,6 +242,9 @@ PATCH_URIS=(
 SRC_URI="
 	${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}.source.tar.xz
 	${PATCH_URIS[@]}
+	loong? (
+		https://dev.gentoo.org/~xen0n/distfiles/www-client/${MOZ_PN}/${FIREFOX_LOONG_PATCHSET}
+	)
 	wasm-sandbox? (
 		amd64? (
 			https://github.com/WebAssembly/wasi-sdk/releases/download/wasi-sdk-${WASI_SDK_VER/.*/}/wasi-sdk-${WASI_SDK_VER}-x86_64-linux.tar.gz
@@ -649,7 +658,7 @@ CDEPEND="
 	${PATENT_CDEPENDS}
 	>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.42:2[${MULTILIB_USEDEP}]
-	>=dev-libs/nss-3.107[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.108[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.36[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.7.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.13.3[${MULTILIB_USEDEP}]
@@ -707,7 +716,7 @@ CDEPEND="
 		>=media-libs/libvpx-1.15.0:0=[${MULTILIB_USEDEP},postproc]
 	)
 	system-png? (
-		>=media-libs/libpng-1.6.44:0=[${MULTILIB_USEDEP},apng]
+		>=media-libs/libpng-1.6.45:0=[${MULTILIB_USEDEP},apng]
 	)
 	system-webp? (
 		>=media-libs/libwebp-1.4.0:0=[${MULTILIB_USEDEP}]
@@ -2165,7 +2174,7 @@ einfo
 	# Set update channel
 	local update_channel=release
 	[[ -n ${MOZ_ESR} ]] && update_channel=esr
-	mozconfig_add_options_ac '' --update-channel=${update_channel}
+	mozconfig_add_options_ac '' --enable-update-channel=${update_channel}
 
 	if use rust-simd ; then
 		local rust_pv=$(rustc --version | cut -f 2 -d " ")
@@ -2173,7 +2182,12 @@ einfo
 eerror "Use eselect to switch rust to < 1.78 or disable the rust-simd USE flag."
 			die
 		fi
-		mozconfig_add_options_ac '+rust-simd' --enable-rust-simd
+	# Whitelist to allow unkeyworded arches to build with "--disable-rust-simd" by default.
+		if use amd64 || use arm64 || use ppc64 || use loong || use riscv ; then
+			mozconfig_add_options_ac '+rust-simd' --enable-rust-simd
+		else
+			mozconfig_add_options_ac '-rust-simd' --disable-rust-simd
+		fi
 	else
 		mozconfig_add_options_ac '-rust-simd' --disable-rust-simd
 	fi
@@ -2887,11 +2901,7 @@ EOF
 	# Add telemetry config prefs, just in case something happens in future and telemetry build
 	# options stop working.
 	if ! use telemetry ; then
-		cat >>"${GENTOO_PREFS}" <<-EOF || die "failed to set telemetry prefs"
-		sticky_pref("toolkit.telemetry.dap_enabled", false);
-		pref("toolkit.telemetry.dap_helper", "");
-		pref("toolkit.telemetry.dap_leader", "");
-		EOF
+		cat "${FILESDIR}/gentoo-telemetry-prefs.js" >>"${GENTOO_PREFS}" || die "failed to set telemetry prefs"
 	fi
 
 	# Install icons
