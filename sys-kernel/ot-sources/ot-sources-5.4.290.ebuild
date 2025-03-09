@@ -7,7 +7,7 @@ EBUILD_REV="ebuild_revision_4"
 PATCH_BMQ_VER="5.4-r2"
 BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch"
 GENPATCHES_VER="264"
-PATCH_RT_VER="5.4.288-rt94"
+PATCH_RT_VER="5.4.290-rt96-rc1"
 
 inherit ot-kernel-v5.4
 
