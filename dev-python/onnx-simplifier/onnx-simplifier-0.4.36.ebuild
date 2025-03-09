@@ -211,7 +211,7 @@ IUSE+=" test"
 RDEPEND+="
 	!~dev-python/rich-12.1.0
 	$(python_gen_any_dep '
-		>=sci-libs/onnxruntime-1.6.0[${PYTHON_USEDEP},python]
+		>=sci-libs/onnxruntime-1.6.0[${PYTHON_SINGLE_USEDEP},python]
 	')
 	>=dev-python/onnxoptimizer-0.2.5[${PYTHON_USEDEP}]
 	>=dev-python/protobuf-3.7.0:0/3.21[${PYTHON_USEDEP}]

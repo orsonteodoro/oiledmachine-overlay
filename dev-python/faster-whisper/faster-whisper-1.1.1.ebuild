@@ -42,10 +42,10 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/ctranslate2-4.0[${PYTHON_USEDEP}]
 		>=sci-libs/huggingface_hub-0.13[${PYTHON_USEDEP}]
-		>=sci-libs/onnxruntime-1.14[${PYTHON_USEDEP},python]
 		>=dev-python/av-11[${PYTHON_USEDEP}]
 		dev-python/tqdm[${PYTHON_USEDEP}]
 	')
+	>=sci-libs/onnxruntime-1.14[${PYTHON_SINGLE_USEDEP},python]
 	>=sci-libs/tokenizers-0.13[${PYTHON_SINGLE_USEDEP}]
 	conversion? (
 		>=sci-libs/transformers-4.23[${PYTHON_SINGLE_USEDEP},pytorch]
