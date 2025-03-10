@@ -1740,7 +1740,7 @@ BDEPEND="
 		dev-go/protoc-gen-go-grpc:=
 	)
 	>=dev-build/cmake-3.24
-	>=dev-lang/go-1.23.4
+	>=dev-lang/go-1.24.0
 	>=sys-devel/gcc-11.4.0
 	app-arch/pigz
 	app-shells/bash
