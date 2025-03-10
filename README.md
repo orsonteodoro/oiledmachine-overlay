@@ -1578,21 +1578,21 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sci-visualization/tensorboardx | TensorBoardX lets you watch tensors flow without TensorFlow |
 | sys-apps/bun | (WIP) Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one |
 | sys-apps/bun-webkit | WebKit with patches |
-| sys-apps/c2tcp | C2TCP: A Flexible Cellular TCP to Meet Stringent Delay Requirements. |
+| sys-apps/c2tcp | (WIP) C2TCP: A Flexible Cellular TCP to Meet Stringent Delay Requirements. |
 | sys-apps/cellular-traces-nyc | Cellular Traces Collected in New York City for different scenarios |
 | sys-apps/cellular-traces-y2018 | Cellular Traces Collected in New York City for different scenarios |
 | sys-apps/coolercontrol | Cooling device control for Linux |
 | sys-apps/coolercontrol-liqctld | A daemon for interacting with liquidctl |
 | sys-apps/coolercontrol-ui | A new user interface for CoolerControl using Tauri, GTK 3, Rust, Vue 3, WebKitGTK |
 | sys-apps/coolercontrold | The main daemon containing the core logic for interfacing with devices |
-| sys-apps/deepcc | DeepCC: A Deep Reinforcement Learning Plug-in to Boost the performance of your TCP scheme in Cellular Networks! |
+| sys-apps/deepcc | (WIP) DeepCC: A Deep Reinforcement Learning Plug-in to Boost the performance of your TCP scheme in Cellular Networks! |
 | sys-apps/finit | Fast init for Linux. Cookies included |
 | sys-apps/finit-d | finit.d/*.conf files for the Finit init system |
 | sys-apps/firejail | Security sandbox for any type of processes |
 | sys-apps/lact | Linux AMDGPU Controller |
 | sys-apps/npm | The package manager for JavaScript |
 | sys-apps/oomd | A customizable Out-Of-Memory (OOM) killer for userspace |
-| sys-apps/orca | Orca: Towards Mastering Congestion Control In the Internet |
+| sys-apps/orca | (WIP) Orca: Towards Mastering Congestion Control In the Internet |
 | sys-apps/pnpm | Fast, disk space efficient package manager |
 | sys-apps/yarn | Fast, reliable, and secure dependency management. |
 | sys-auth/pam-python | Enables PAM modules to be written in Python |
