@@ -1,0 +1,33 @@
+[workspace]
+members = [
+    "crates/jiter",
+    "crates/jiter-python",
+    "crates/fuzz",
+]
+resolver = "2"
+
+[workspace.package]
+authors = ["Samuel Colvin <samuel@pydantic.dev>"]
+version = "0.8.2"
+edition = "2021"
+license = "MIT"
+keywords = ["JSON", "parsing", "deserialization", "iter"]
+categories = ["parser-implementations", "parsing"]
+homepage = "https://github.com/pydantic/jiter/"
+repository = "https://github.com/pydantic/jiter/"
+# MSRV should match pydantic-core
+rust-version = "1.75"
+
+[profile.bench]
+debug = true
+lto = true
+opt-level = 3
+codegen-units = 1
+
+[profile.profiling]
+inherits = "release"
+debug = true
+
+[workspace.dependencies]
+pyo3 = { version = "0.23" }
+pyo3-build-config = { version = "0.23" }
