@@ -532,19 +532,19 @@ VULNERABILITIES_FIXED=(
         "CVE-2024-58061;;"
         "CVE-2024-58051;;"
         "CVE-2024-58052;;"
-        "CVE-2022-49614;;REJECTED"
+        "CVE-2022-49614;;Rejected"
         "CVE-2022-49623;;"
 
 	# 20250303
-        "CVE-2021-47469;;REJECTED"
-        "CVE-2024-50181;;REJECTED"
-        "CVE-2024-56741;;REJECTED"
-        "CVE-2023-52917;;REJECTED"
+        "CVE-2021-47469;;Rejected"
+        "CVE-2024-50181;;Rejected"
+        "CVE-2024-56741;;Rejected"
+        "CVE-2023-52917;;Rejected"
 
 	# 20250302
         "CVE-2022-49733;;"
-        "CVE-2022-49045;;REJECTED"
-        "CVE-2025-21818;;REJECTED"
+        "CVE-2022-49045;;Rejected"
+        "CVE-2025-21818;;Rejected"
 
 	# 20250227
 	"CVE-2025-21824;;"
@@ -1486,7 +1486,7 @@ VULNERABILITIES_FIXED=(
 	"CVE-2024-57952;DoS;Medium"
 	"CVE-2025-21697;DoS;Medium"
 	"CVE-2025-21696;DoS;Medium"
-	"CVE-2025-21695;DoS;Meidum"
+	"CVE-2025-21695;DoS;Medium"
 	"CVE-2025-21694;DoS;Medium"
 	"CVE-2025-21698;;Rejected"
 
