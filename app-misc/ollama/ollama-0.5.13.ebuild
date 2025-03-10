@@ -4329,9 +4329,10 @@ src_install() {
 	install_gpu_runner
 
 	local chroot=$(usex chroot "1" "0")
+	local context_length=${OLLAMA_CONTEXT_LENGTH:-2048}
 	local flash_attention=$(usex flash "1" "0")
-	local sandbox=$(usex sandbox "sandbox" "")
 	local kv_cache_type=${OLLAMA_KV_CACHE_TYPE:-"f16"}
+	local sandbox=$(usex sandbox "sandbox" "")
 
 	if use openrc ; then
 		doinitd "${FILESDIR}/${PN}"
@@ -4344,6 +4345,7 @@ src_install() {
 		sed -i \
 			-e "s|@OLLAMA_BACKEND@|${backend}|g" \
 			-e "s|@OLLAMA_CHROOT@|${chroot}|g" \
+			-e "s|@OLLAMA_CONTEXT_LENGTH@|${context_length}|g" \
 			-e "s|@OLLAMA_FLASH_ATTENTION@|${flash_attention}|g" \
 			-e "s|@OLLAMA_KV_CACHE_TYPE@|${kv_cache_type}|g" \
 			-e "s|@OLLAMA_SANDBOX_PROVIDER@|${sandbox}|g" \
@@ -4360,6 +4362,7 @@ src_install() {
 				|| die
 		fi
 		sed -i \
+			-e "s|@OLLAMA_CONTEXT_LENGTH@|${context_length}|g" \
 			-e "s|@OLLAMA_FLASH_ATTENTION@|${flash_attention}|g" \
 			-e "s|@OLLAMA_KV_CACHE_TYPE@|${kv_cache_type}|g" \
 			-e "s|@LD_LIBRARY_PATH@|${ld_library_path}|g" \

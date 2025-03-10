@@ -4061,6 +4061,7 @@ src_install() {
 				|| die
 		fi
 		sed -i \
+			-e "/@OLLAMA_CONTEXT_LENGTH@/d" \
 			-e "s|@OLLAMA_BACKEND@|${backend}|g" \
 			-e "s|@OLLAMA_CHROOT@|${chroot}|g" \
 			-e "s|@OLLAMA_FLASH_ATTENTION@|${flash_attention}|g" \
@@ -4082,6 +4083,7 @@ src_install() {
 				|| die
 		fi
 		sed -i \
+			-e "/@OLLAMA_CONTEXT_LENGTH@/d" \
 			-e "s|@OLLAMA_FLASH_ATTENTION@|${flash_attention}|g" \
 			-e "s|@LD_LIBRARY_PATH@|${ld_library_path}|g" \
 			"${ED}/usr/lib/systemd/system/${PN}.service" \

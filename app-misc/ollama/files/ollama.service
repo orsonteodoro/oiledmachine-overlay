@@ -9,6 +9,7 @@ ExecStart=/usr/bin/ollama serve
 Restart=always
 RestartSec=3
 Environment="LD_LIBRARY_PATH=@LD_LIBRARY_PATH@"
+Environment="OLLAMA_CONTEXT_LENGTH=@OLLAMA_CONTEXT_LENGTH@"
 Environment="OLLAMA_FLASH_ATTENTION=@OLLAMA_FLASH_ATTENTION@"
 Environment="OLLAMA_KV_CACHE_TYPE=@OLLAMA_KV_CACHE_TYPE@"
 Environment="PATH=$PATH"
