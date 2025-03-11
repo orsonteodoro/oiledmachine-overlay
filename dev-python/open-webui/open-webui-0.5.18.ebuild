@@ -46,13 +46,15 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
 # For missing dev-python/moto[s3] rdepends
 MOTO_RDEPEND="
-	>=dev-python/moto-5.0.26[s3(+)]
-	>=dev-python/py-partiql-parser-0.6.1
+	$(python_gen_cond_dep '
+		>=dev-python/moto-5.0.26[${PYTHON_USEDEP},s3(+)]
+		>=dev-python/py-partiql-parser-0.6.1[${PYTHON_USEDEP}]
+	')
 "
 # For missing >=dev-python/passlib-1.7.4[bcrypt(+)] rdepends
 PASSLIB_RDEPEND="
 	$(python_gen_cond_dep '
-		>=dev-python/passlib-1.7.4[bcrypt(+)]
+		>=dev-python/passlib-1.7.4[${PYTHON_USEDEP},bcrypt(+)]
 		dev-python/bcrypt[${PYTHON_USEDEP}]
 	')
 "
@@ -148,9 +150,9 @@ RDEPEND+="
 		dev-python/anthropic[${PYTHON_USEDEP}]
 		dev-python/async-timeout[${PYTHON_USEDEP}]
 		dev-python/extract-msg[${PYTHON_USEDEP}]
-		dev-python/google-api-python-client
-		dev-python/google-auth-httplib2
-		dev-python/google-auth-oauthlib
+		dev-python/google-api-python-client[${PYTHON_USEDEP}]
+		dev-python/google-auth-httplib2[${PYTHON_USEDEP}]
+		dev-python/google-auth-oauthlib[${PYTHON_USEDEP}]
 		dev-python/openai[${PYTHON_USEDEP}]
 		dev-python/psutil[${PYTHON_USEDEP}]
 		dev-python/pydub[${PYTHON_USEDEP}]
