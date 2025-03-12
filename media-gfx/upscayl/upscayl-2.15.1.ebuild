@@ -12,7 +12,8 @@ _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 # See https://releases.electronjs.org/releases.json for version details.
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="34.1.1" # Cr 132.0.6834.194, node 20.18.1
+#	ELECTRON_APP_ELECTRON_PV="34.1.1" # Cr 132.0.6834.194, node 20.18.1
+	ELECTRON_APP_ELECTRON_PV="34.3.2" # Cr 132.0.6834.210, node 20.18.3
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="27.3.10" # Cr 118.0.5993.159, node 18.17.1
@@ -25,13 +26,14 @@ NPM_INSTALL_ARGS=(
 	"--legacy-peer-deps"
 )
 
-KEYWORDS="~amd64"
-S="${WORKDIR}/${P}"
 inherit desktop electron-app git-r3 lcnr npm
+
 if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 	IUSE+=" fallback-commit"
 else
+	KEYWORDS="~amd64"
+	S="${WORKDIR}/${P}"
 	SRC_URI="
 $(electron-app_gen_electron_uris)
 https://github.com/upscayl/upscayl/archive/refs/tags/v${PV}.tar.gz
@@ -100,7 +102,7 @@ THIRD_PARTY_LICENSES="
 "
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	THIRD_PARTY_LICENSES+="
-		electron-34.0.0-beta.7-chromium.html
+		electron-34.3.2-chromium.html
 	"
 else
 	THIRD_PARTY_LICENSES+="
@@ -116,7 +118,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 	custom-models
-	ebuild_revision_6
+	ebuild_revision_7
 	firejail
 "
 # Upstream uses U 18.04.6 for CI
@@ -151,7 +153,8 @@ npm_update_lock_install_post() {
 }
 
 npm_update_lock_audit_post() {
-	enpm install -D "electron@${ELECTRON_APP_ELECTRON_PV}" --prefer-offline
+	# --prefer-offline is broken
+	enpm install -D "electron@${ELECTRON_APP_ELECTRON_PV}"
 
 	sed -i -e "s|\"undici\": \"6.19.7\"|\"undici\": \"6.21.1\"|g" "package-lock.json" || die # CVE-2025-22150; DT, ID; Medium
 	enpm install -D "undici@6.21.1" --prefer-offline
