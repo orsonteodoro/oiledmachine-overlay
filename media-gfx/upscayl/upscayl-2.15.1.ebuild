@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# Upstream uses U 18.04.6 for CI
+
 NPM_INSTALL_PATH="/opt/${PN}"
 #ELECTRON_APP_APPIMAGE="1"
 ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${PN}-${PV}-linux.AppImage"
@@ -12,7 +14,6 @@ _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 # See https://releases.electronjs.org/releases.json for version details.
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-#	ELECTRON_APP_ELECTRON_PV="34.1.1" # Cr 132.0.6834.194, node 20.18.1
 	ELECTRON_APP_ELECTRON_PV="34.3.2" # Cr 132.0.6834.210, node 20.18.3
 else
 	# Upstream preference
@@ -118,10 +119,9 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 	custom-models
-	ebuild_revision_7
+	ebuild_revision_8
 	firejail
 "
-# Upstream uses U 18.04.6 for CI
 RDEPEND+="
 	media-libs/vulkan-drivers
 	media-libs/vulkan-loader
@@ -236,3 +236,4 @@ ewarn "You need vulkan drivers to use ${PN}."
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 2.8.6 (20240211)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 2.9.9 (20240211)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20250115, electron 34.0.0)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20250312, electron 34.3.2)
