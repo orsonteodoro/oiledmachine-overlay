@@ -7,17 +7,18 @@ EAPI=8
 AT_TYPES_NODE_PV="18.16.3"
 declare -A DL_REVISIONS=(
 # See lockfile for playwright version
-# See https://github.com/microsoft/playwright/blob/v1.50.1/packages/playwright-core/browsers.json
-# See https://github.com/microsoft/playwright/blob/v1.50.1/packages/playwright-core/src/server/registry/index.ts#L231
-	["chromium-linux-glibc-amd64"]="1155"
-	["chromium-headless-shell-linux-glibc-amd64"]="1155"
-	["chromium-tip-of-tree-linux-glibc-amd64"]="1293"
+# See https://github.com/microsoft/playwright/blob/v1.51.0/packages/playwright-core/browsers.json
+# See https://github.com/microsoft/playwright/blob/v1.51.0/packages/playwright-core/src/server/registry/index.ts#L231
+	["chromium-linux-glibc-amd64"]="1161"
+	["chromium-headless-shell-linux-glibc-amd64"]="1161"
+	["chromium-tip-of-tree-linux-glibc-amd64"]="1304"
 	["ffmpeg-linux-glibc-amd64"]="1011"
-	["firefox-linux-glibc-amd64-ubuntu-24_04"]="1471"
-	["firefox-beta-linux-glibc-amd64-ubuntu-24_04"]="1467"
-	["webkit-linux-glibc-amd64-ubuntu-24_04"]="2092"
+	["firefox-linux-glibc-amd64-ubuntu-24_04"]="1475"
+	["firefox-beta-linux-glibc-amd64-ubuntu-24_04"]="1471"
+	["webkit-linux-glibc-amd64-ubuntu-24_04"]="2140"
 )
 EPLAYRIGHT_ALLOW_BROWSERS=(
+# Allowed engines that are used by project.
 # https://github.com/mixn/carbon-now-cli/blob/v2.1.0/src/views/default.view.ts#L23
 	"chromium"			#
 #	"chromium-tip-of-tree"
@@ -29,6 +30,7 @@ MY_PN="${PN//-cli/}"
 NODE_ENV="development"
 NODE_VERSION=${AT_TYPES_NODE_PV%%.*} # Using nodejs muxer variable name.
 NPM_INSTALL_PATH="/opt/${PN}"
+PLAYWRIGHT_PV="1.51.0"
 
 inherit desktop edo npm playwright
 
@@ -180,7 +182,7 @@ LICENSE="
 	MIT
 "
 SLOT="0"
-IUSE+="+chromium clipboard ebuild_revision_11"
+IUSE+="+chromium clipboard ebuild_revision_12"
 REQUIRED_USE+="
 	|| (
 		${PLAYWRIGHT_BROWSERS[@]}
@@ -228,6 +230,11 @@ einfo "Applying mitigation"
 	enpm install "esbuild@^0.25.0" -D --prefer-offline	# ID		# GHSA-67mh-4wv8-2f99
 	enpm install "phin@^3.7.1" -P --prefer-offline		# ID		# GHSA-x565-32qp-m3vf
 
+	# Explicit version required for corresponding cache update.
+	# --prefer-offline is broken
+	enpm install "playwright@${PLAYWRIGHT_PV}" -P
+	enpm install "@playwright/test@${PLAYWRIGHT_PV}" -P
+
 	patch_edits
 
 	enpm dedupe
@@ -251,10 +258,10 @@ _unpack_playwright() {
 
 npm_unpack_install_post() {
 	# See
-	# https://github.com/microsoft/playwright/blob/v1.50.1/packages/playwright-core/src/server/registry/index.ts#L232
-	# https://github.com/microsoft/playwright/blob/v1.50.1/docs/src/browsers.md
-	# https://github.com/microsoft/playwright/blob/v1.50.1/packages/playwright-core/src/server/registry/nativeDeps.ts
-	# https://github.com/microsoft/playwright/blob/v1.50.1/packages/playwright-core/browsers.json
+	# https://github.com/microsoft/playwright/blob/v1.51.0/packages/playwright-core/src/server/registry/index.ts#L232
+	# https://github.com/microsoft/playwright/blob/v1.51.0/docs/src/browsers.md
+	# https://github.com/microsoft/playwright/blob/v1.51.0/packages/playwright-core/src/server/registry/nativeDeps.ts
+	# https://github.com/microsoft/playwright/blob/v1.51.0/packages/playwright-core/browsers.json
 
 	local L=()
 	local choice
@@ -266,7 +273,7 @@ npm_unpack_install_post() {
 		fi
 	done
 
-	# https://github.com/microsoft/playwright/blob/v1.50.1/docs/src/browsers.md#hermetic-install
+	# https://github.com/microsoft/playwright/blob/v1.51.0/docs/src/browsers.md#hermetic-install
 	export PLAYWRIGHT_BROWSERS_PATH=0
 	cd "${S}" || die
 	# The sandbox doesn't want us to download even though it is permitted.
@@ -351,3 +358,4 @@ ewarn "This package contains EOL browsers, you should uninstall it after use."
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.0.0 (20230604)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.1.0 (20250118 with USE=chromium)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 2.1.0 (20250312 with USE=chromium and playwright 1.51.0)

@@ -176,7 +176,7 @@ eerror
 
 # @FUNCTION: _npm_check_errors
 # @DESCRIPTION:
-# Check for build errors
+# Check for errors that should be fatal.
 _npm_check_errors() {
 	grep -q -e "ENOENT" "${T}/build.log" && die "Retry"
 	grep -q -e " ERR! Invalid Version" "${T}/build.log" && die "Detected error."
@@ -187,6 +187,7 @@ _npm_check_errors() {
 	grep -q -e "error during build:" "${T}/build.log" && die "Detected error"
 	grep -q -e "FATAL ERROR:" "${T}/build.log" && die "Detected error"
 	grep -q -e "Unknown command:" "${T}/build.log" && die "Detected error"
+	grep -q -e "ETARGET" "${T}/build.log" && die "Detected error"
 }
 
 # @FUNCTION: npm_pkg_setup
