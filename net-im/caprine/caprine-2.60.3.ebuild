@@ -17,8 +17,7 @@ ELECTRON_APP_SNAP_ARCHIVE_NAME="${PN}_${PV}_amd64.snap"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	#ELECTRON_APP_ELECTRON_PV="34.0.0" # Cr 132.0.6834.83, node 20.18.1
-	ELECTRON_APP_ELECTRON_PV="35.0.0-beta.11" # Cr 134.0.6998.23, node 22.14.0
+	ELECTRON_APP_ELECTRON_PV="35.0.1" # Cr 134.0.6998.44, node 22.14.0
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="29.0.1" # Cr 122.0.6261.57, node 20.9.0
@@ -52,7 +51,7 @@ DESCRIPTION="Elegant Facebook Messenger desktop app"
 HOMEPAGE="https://github.com/sindresorhus/caprine"
 LICENSE="
 	MIT
-	electron-35.0.0-beta.11-chromium.html
+	electron-35.0.1-chromium.html
 	${ELECTRON_APP_LICENSES}
 "
 # For ELECTRON_APP_LICENSES, see
@@ -177,3 +176,4 @@ einfo
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (2.60.3, 20241206 with Electron 34.0.0-beta.14)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (2.60.3, 20250116 with Electron 34.0.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (2.60.3, 20250228 with Electron 35.0.0-beta.11)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (2.60.3, 20250311 with Electron 35.0.1)
