@@ -13,8 +13,7 @@ MY_PN="${PN/-/}"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="34.1.1" # Cr 132.0.6834.194, node 20.18.1
-	#ELECTRON_APP_ELECTRON_PV="35.0.0-beta.4" # Cr 134.0.6968.0, node 22.9.0 ; breaks
+	ELECTRON_APP_ELECTRON_PV="34.3.2" # Cr 132.0.6834.210, node 20.18.3
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="31.3.1" # Cr 126.0.6478.185, node 20.15.1
@@ -69,7 +68,7 @@ LICENSE="
 "
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	LICENSE+="
-		electron-34.0.0-beta.7-chromium.html
+		electron-34.3.2-chromium.html
 	"
 else
 	LICENSE+="
@@ -144,8 +143,10 @@ yarn_update_lock_install_post() {
 
 yarn_update_lock_yarn_import_post() {
 	if [[ "${YARN_UPDATE_LOCK}" == "1" ]] ; then
-ewarn "QA:  Manually modify lockfile to remove typescript@5.7.x and move associated version ranges from typescript 5.7.x to typescript@5.5.4"
-ewarn "QA:  Manually modify lockfile to associate @types/node:* with @types/node 20 in lockfile and drop @types/node 22"
+# Doesn't break build
+#ewarn "QA:  Manually modify lockfile to remove typescript@5.7.x and move associated version ranges from typescript 5.7.x to typescript@5.5.4"
+#ewarn "QA:  Manually modify lockfile to associate @types/node:* with @types/node 20 in lockfile and drop @types/node 22"
+
 		eyarn add "typescript@5.5.4" -D
 		eyarn add "@types/node@20.14.14" -D
 		eyarn add "@types/node@18.19.21" -D
@@ -166,8 +167,9 @@ ewarn "QA:  Manually modify lockfile to associate @types/node:* with @types/node
 
 		eyarn add "sweetalert2@11.4.8" -D								# GHSA-mrr8-v49w-3333; Low
 
-		sed -i -e "s|\"@octokit/core\": \"5\"|\"@octokit/core\": \"6\"|g" "package.json" || die
-		eyarn add "@octokit/core@6"									# CVE-2025-25290, CVE-2025-25289, CVE-2025-25285; DoS
+		# Breaks during runtime
+#		sed -i -e "s|\"@octokit/core\": \"5\"|\"@octokit/core\": \"6\"|g" "package.json" || die
+#		eyarn add "@octokit/core@6"									# CVE-2025-25290, CVE-2025-25289, CVE-2025-25285; DoS
 
 		eyarn add "icon-gen@3.0.1" -D # Must go before node-sharp_yarn_rebuild_sharp
 
@@ -295,6 +297,7 @@ pkg_postinst() {
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20241222)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20250117 with electron 34.0.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20250214 with electron 34.1.1)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20250312 with electron 34.3.2)
 # UI load:  pass
 # Load video:  pass
 # Export by segment:  pass
