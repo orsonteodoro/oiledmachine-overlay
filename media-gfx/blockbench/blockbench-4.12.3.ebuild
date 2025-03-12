@@ -74,7 +74,6 @@ LICENSE="
 	)
 	GPL-3+
 "
-#		electron-34.0.0-beta.7-chromium.html
 
 # For ELECTRON_APP_LICENSES, see
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/electron-app.eclass#L67
