@@ -12,7 +12,7 @@ ELECTRON_APP_APPIMAGE_ARCHIVE_NAME="${MY_PN}_${PV}.AppImage"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="34.1.1" # Cr 132.0.6834.194, node 20.18.1
+	ELECTRON_APP_ELECTRON_PV="35.0.1" # Cr 134.0.6998.44, node 22.14.0
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="33.3.1" # Cr 130.0.6723.170, node 20.18.1
@@ -21,10 +21,16 @@ ELECTRON_APP_AT_TYPES_NODE_PV="20.17.10"
 ELECTRON_APP_MODE="npm"
 NODE_ENV="development"
 NODE_VERSION=${ELECTRON_APP_AT_TYPES_NODE_PV%%.*}
-NPM_AUDIT_FIX_ARGS=( "--prefer-offline" )
-NPM_INSTALL_ARGS=( "--prefer-offline" )
+NPM_AUDIT_FIX_ARGS=(
+	"--prefer-offline"
+)
+NPM_INSTALL_ARGS=(
+	"--prefer-offline"
+)
 if [[ "${NPM_UPDATE_LOCK}" != "1" ]] ; then
-	NPM_INSTALL_ARGS+=( "--force" )
+	NPM_INSTALL_ARGS+=(
+		"--force"
+	)
 fi
 # See https://releases.electronjs.org/releases.json
 
@@ -64,10 +70,11 @@ LICENSE="
 	(
 		${ELECTRON_APP_LICENSES}
 		Artistic-2
-		electron-34.0.0-beta.7-chromium.html
+		electron-35.0.1-chromium.html
 	)
 	GPL-3+
 "
+#		electron-34.0.0-beta.7-chromium.html
 
 # For ELECTRON_APP_LICENSES, see
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/electron-app.eclass#L67
@@ -243,6 +250,7 @@ src_install() {
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.12.3 (20250311 with electron 35.0.1)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.12.2 (20250211 with electron 34.1.1)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.11.2 (20241130)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 4.7.4 (20230528)
