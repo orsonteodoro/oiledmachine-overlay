@@ -9,7 +9,8 @@ MY_PV="${PV/_beta/-beta.}"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="34.1.1" # Cr 132.0.6834.194, node 20.18.1
+#	ELECTRON_APP_ELECTRON_PV="34.1.1" # Cr 132.0.6834.194, node 20.18.1
+	ELECTRON_APP_ELECTRON_PV="35.0.1" # Cr 134.0.6998.44, node 22.14.0
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="28.3.3" # Cr 120.0.6099.291, node 18.18.2
@@ -62,7 +63,7 @@ LICENSE="
 "
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	LICENSE+="
-		electron-34.0.0-alpha.7-chromium.html
+		electron-35.0.1-chromium.html
 	"
 else
 	LICENSE+="
@@ -113,7 +114,7 @@ npm_unpack_post() {
 
 npm_update_lock_install_post() {
 	if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
-		enpm install "electron@${ELECTRON_APP_ELECTRON_PV}" -D --prefer-offline
+		enpm install "electron@${ELECTRON_APP_ELECTRON_PV}" -D
 	fi
 	patch_lockfile() {
 		sed -i -e "s|\"@langchain/community\": \"^0.2.25\"|\"@langchain/community\": \"0.3.3\"|g" "package-lock.json" || die		# CVE-2024-7042; DoS, DT, ID; Critical
@@ -129,7 +130,13 @@ npm_update_lock_install_post() {
 	enpm install "ws@8.17.1" -P ${NPM_INSTALL_ARGS[@]}
 
 	# Fix breakage
-	enpm install "react-icons@5.2.1" -P --prefer-offline ${NPM_INSTALL_ARGS[@]}
+	enpm install "react-icons@5.2.1" -P ${NPM_INSTALL_ARGS[@]}
+
+	# Still broken.  Still works with error:
+	# UnhandledPromiseRejectionWarning: Error: Cannot find package '/opt/llocal/resources/app.asar/node_modules/execa/index.js' imported from /opt/llocal/resources/app.asar/node_modules/shell-env/index.js
+#	enpm install "shell-env@4.0.1" -P ${NPM_INSTALL_ARGS[@]}
+#	enpm install "execa@5.1.1" -P ${NPM_INSTALL_ARGS[@]} # for shell-env
+
 	patch_lockfile
 }
 
