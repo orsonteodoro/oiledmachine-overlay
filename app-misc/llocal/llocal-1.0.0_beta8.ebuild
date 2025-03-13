@@ -59,7 +59,9 @@ HOMEPAGE="
 LICENSE="
 	${ELECTRON_APP_LICENSES}
 	MIT
+	OFL-1.1
 "
+# OFL-1.1 - Poppins-*.ttf
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	LICENSE+="
 		electron-35.0.1-chromium.html
