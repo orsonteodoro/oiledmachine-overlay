@@ -9,7 +9,6 @@ MY_PV="${PV/_beta/-beta.}"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-#	ELECTRON_APP_ELECTRON_PV="34.1.1" # Cr 132.0.6834.194, node 20.18.1
 	ELECTRON_APP_ELECTRON_PV="35.0.1" # Cr 134.0.6998.44, node 22.14.0
 else
 	# Upstream preference
@@ -71,7 +70,7 @@ else
 	"
 fi
 SLOT="0"
-IUSE+=" ebuild_revision_4"
+IUSE+=" ebuild_revision_5"
 RDEPEND="
 	app-misc/ollama
 "
@@ -179,5 +178,6 @@ src_install() {
 	electron-app_set_sandbox_suid "/opt/${PN}/chrome-sandbox"
 }
 
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta8 (20250312 with electron 35.0.1)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta8 (20250208 with electron 34.1.1)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta7 (20250117 with electron 34.0.0)
