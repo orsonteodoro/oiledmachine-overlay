@@ -38,7 +38,7 @@
     "@langchain/community": "^0.3.3",
     "@swc/core": "^1.5.7",
     "@types/react-syntax-highlighter": "^15.5.13",
-    "axios": "^1.6.8",
+    "axios": "^1.8.3",
     "cheerio": "^1.0.0-rc.12",
     "cheminfo-types": "^1.7.3",
     "class-variance-authority": "^0.7.0",
