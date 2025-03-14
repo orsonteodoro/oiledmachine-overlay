@@ -848,16 +848,15 @@ ewarn "Do not emerge ${CATEGORY}/${PN} package directly.  Emerge sys-apps/cooler
 
 npm_update_lock_install_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-	# CVE-2025-24964; DoS, DT, ID; Critical
 		pushd "${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui" >/dev/null 2>&1 || die
-			sed -i -e "s|\"vitest\": \"^2.1.8\"|\"vitest\": \"^2.1.9\"|" "package.json" || die
+			sed -i -e "s|\"vitest\": \"^2.1.8\"|\"vitest\": \"^2.1.9\"|" "package.json" || die		# CVE-2025-24964; DoS, DT, ID; Critical
 			enpm install "vitest@2.1.9" -D ${NPM_INSTALL_ARGS[@]}
 
-			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die # Must follow vite
-			sed -i -e "s|\"esbuild\": \"^0.24.2\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die # Must follow vite
+			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die	# Must follow vite
+			sed -i -e "s|\"esbuild\": \"^0.24.2\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die	# Must follow vite
 			enpm install "esbuild@^0.25.0" -D
 
-			enpm install "axios@1.8.2" -P				# CVE-2025-27152; ID; High
+			enpm install "axios@1.8.2" -P									# CVE-2025-27152; ID; High
 		popd >/dev/null 2>&1 || die
 	fi
 }
