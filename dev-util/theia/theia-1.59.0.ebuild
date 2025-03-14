@@ -486,7 +486,7 @@ LICENSE="
 RESTRICT="mirror"
 IUSE+="
 ${!THEIA_PLUGINS[@]}
-git ollama ebuild_revision_8
+git ollama ebuild_revision_9
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -600,6 +600,8 @@ einfo "Adding dependencies"
 fix_vulnerabilities() {
 einfo "Fixing vulnerabilities"
 	patch_lockfile() {
+		sed -i -e "s|\"axios\": \"^1.7.4\"|\"axios\": \"^1.8.2\"|g" "package-lock.json" || die
+		sed -i -e "s|\"axios\": \"^1.0.0\"|\"axios\": \"^1.8.2\"|g" "package-lock.json" || die
 		sed -i -e "s|\"cookie\": \"^0.4.0\"|\"cookie\": \"^0.7.0\"|g" "package-lock.json" || die
 		sed -i -e "s|\"dompurify\": \"^2.2.9\"|\"dompurify\": \"^3.2.4\"|g" "package-lock.json" || die
 		sed -i -e "s|\"dompurify\": \"^2.2.9\"|\"dompurify\": \"^3.2.4\"|g" "packages/core/package.json" || die
@@ -619,6 +621,9 @@ einfo "Fixing vulnerabilities"
 
 	enpm add "serialize-javascript@^6.0.2" -w "dev-packages/application-manager" ${NPM_INSTALL_SINGLE_ARGS[@]}					# CVE-2024-11831; DT, ID; Medium
 	enpm add "serialize-javascript@^6.0.2" ${NPM_INSTALL_SINGLE_ARGS[@]}										# CVE-2024-11831; DT, ID; Medium
+
+	enpm add "axios@^1.8.2" -P -w "dev-packages/application-package"										# CVE-2025-27152; ID; High
+	enpm add "axios@^1.8.2" -D															# CVE-2025-27152; ID; High
 
 	patch_lockfile
 }
