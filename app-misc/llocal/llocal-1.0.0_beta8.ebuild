@@ -72,7 +72,7 @@ else
 	"
 fi
 SLOT="0"
-IUSE+=" ebuild_revision_5"
+IUSE+=" ebuild_revision_6"
 RDEPEND="
 	app-misc/ollama
 "
