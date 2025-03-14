@@ -4917,11 +4917,6 @@ packages:
   electron-window@0.8.1:
     resolution: {integrity: sha512-W1i9LfnZJozk3MXE8VgsL2E5wOUHSgyCvcg1H2vQQjj+gqhO9lVudgY3z3SF7LJAmi+0vy3CJkbMqsynWB49EA==}
 
-  electron@23.3.13:
-    resolution: {integrity: sha512-BaXtHEb+KYKLouUXlUVDa/lj9pj4F5kiE0kwFdJV84Y2EU7euIDgPthfKtchhr5MVHmjtavRMIV/zAwEiSQ9rQ==}
-    engines: {node: '>= 12.20.55'}
-    hasBin: true
-
   electron@35.0.1:
     resolution: {integrity: sha512-iQonj6lnPhqfqha2KXx6LzV1dnu6UPTCWK+b7f9Zvg828umGemi22DKbcJ3/q+Opn7iUVTWyqp9z1JQqkIi6OA==}
     engines: {node: '>= 12.20.55'}
@@ -15244,14 +15239,6 @@ snapshots:
   electron-window@0.8.1:
     dependencies:
       is-electron-renderer: 2.0.1
-
-  electron@23.3.13:
-    dependencies:
-      '@electron/get': 2.0.3
-      '@types/node': 16.18.126
-      extract-zip: 2.0.1
-    transitivePeerDependencies:
-      - supports-color
 
   electron@35.0.1:
     dependencies:
