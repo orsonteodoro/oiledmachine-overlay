@@ -143,12 +143,19 @@ npm_update_lock_install_post() {
 
 npm_update_lock_audit_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.0 from package-lock.json"
 		patch_lockfile() {
+			sed -i -e "s|\"@babel/runtime\": \"^7.3.1\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die			# CVE-2025-27789; DoS; Medium
+
 			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die					# GHSA-67mh-4wv8-2f99
 			sed -i -e "s|\"esbuild\": \"^0.21.5\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die					# GHSA-67mh-4wv8-2f99
+			sed -i -e "s|\"prismjs\": \"^1.27.0\"|\"prismjs\": \"^1.30.0\"|g" "package-lock.json" || die					# CVE-2024-53382; DT, ID; Medium
+			sed -i -e "s|\"prismjs\": \"~1.27.0\"|\"prismjs\": \"^1.30.0\"|g" "package-lock.json" || die					# CVE-2024-53382; DT, ID; Medium
 		}
 		patch_lockfile
+		enpm install "@babel/runtime@^7.26.10" -P
 		enpm install "esbuild@^0.25.0" -D # --prefer-offline is bugged, must follow vite
+		enpm install "prismjs@^1.30.0" -P
 		patch_lockfile
 	fi
 }
