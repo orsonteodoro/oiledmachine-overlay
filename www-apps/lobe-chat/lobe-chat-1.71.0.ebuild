@@ -24,7 +24,7 @@ EAPI=8
 #   OILEDMACHINE_OVERLAY_DIR="/usr/local/oiledmachine-overlay"
 #   PATH="${OILEDMACHINE_OVERLAY_DIR}/scripts:${PATH}"
 #   cd "${OILEDMACHINE_OVERLAY_DIR}/www-apps/lobe-chat"
-#   NPM_UPDATER_VERSIONS="1.62.10" npm_updater_update_locks.sh
+#   NPM_UPDATER_VERSIONS="1.71.10" npm_updater_update_locks.sh
 #
 
 # U22, U24, D12
@@ -460,8 +460,8 @@ npm_dedupe_post() {
 		npm_patch_lockfile
 
 ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-		enpm add "@apidevtools/json-schema-ref-parser@11.2.0" ${NPM_INSTALL_ARGS[@]}		# CVE-2024-29651; DoS, DT, ID; High
 ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+		enpm add "@apidevtools/json-schema-ref-parser@11.2.0"					# CVE-2024-29651; DoS, DT, ID; High
 		enpm add "esbuild@0.25.0" ${NPM_INSTALL_ARGS[@]}					# GHSA-67mh-4wv8-2f99
 		NODE_ADDON_API_INSTALL_ARGS=( "-P" )
 		NODE_GYP_INSTALL_ARGS=( "-D" )

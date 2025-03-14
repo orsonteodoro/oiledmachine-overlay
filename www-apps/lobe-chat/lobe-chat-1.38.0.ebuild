@@ -434,6 +434,11 @@ npm_dedupe_post() {
 
 		npm_patch_lockfile() {
 			sed -i -e "s|\"@apidevtools/json-schema-ref-parser\": \"11.1.0\"|\"@apidevtools/json-schema-ref-parser\": \"11.2.0\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime-corejs3\": \"^7.20.7\"|\"@babel/runtime-corejs3\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime-corejs3\": \"^7.22.15\"|\"@babel/runtime-corejs3\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/helpers\": \"^7.23.6\"|\"@babel/helpers\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/helpers\": \"^7.26.9\"|\"@babel/helpers\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"axios\": \"^1.7.4\"|\"axios\": \"1.8.2\"|g" "package-lock.json" || die
 			sed -i -e "s|\"esbuild\": \"~0.18.20\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die
 			sed -i -e "s|\"esbuild\": \"^0.19.7\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die
 			sed -i -e "s|\"esbuild\": \"0.21.4\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die
@@ -445,9 +450,14 @@ npm_dedupe_post() {
 		npm_patch_lockfile
 
 ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-		enpm add "@apidevtools/json-schema-ref-parser@11.2.0" ${NPM_INSTALL_ARGS[@]}		# CVE-2024-29651; DoS, DT, ID; High
 ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+		enpm add "@apidevtools/json-schema-ref-parser@11.2.0"					# CVE-2024-29651; DoS, DT, ID; High
 		enpm add "esbuild@0.25.0" ${NPM_INSTALL_ARGS[@]}					# GHSA-67mh-4wv8-2f99
+
+		enpm add "@babel/runtime-corejs3@7.26.10" ${NPM_INSTALL_ARGS[@]}			# CVE-2025-27789; DoS; Medium
+		enpm add "@babel/helpers@7.26.10" ${NPM_INSTALL_ARGS[@]}				# CVE-2025-27789; DoS; Medium
+		enpm add "axios@1.8.2" ${NPM_INSTALL_ARGS[@]}						# CVE-2025-27152; ID; High
+
 		NODE_ADDON_API_INSTALL_ARGS=( "-P" )
 		NODE_GYP_INSTALL_ARGS=( "-D" )
 		node-sharp_npm_lockfile_add_sharp
