@@ -4,7 +4,7 @@
 EAPI=8
 
 # To update use:
-# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-7.45.0" pnpm_updater_update_locks.sh
+# PNPM_UPDATER_PROJECT_ROOT="Signal-Desktop-7.46.0" pnpm_updater_update_locks.sh
 
 # Ignore if error:
 # Could not detect abi for version ' + target + ' and runtime ' + runtime + '.  Updating "node-abi" might help solve this issue if it is a new release of ' + runtime)
@@ -169,7 +169,7 @@ src_unpack() {
 		unpack ${P}.tar.gz
 		cd "${S}" || die
 
-	# The package contains multiple package-lock.json.
+	# The package contains multiple pnpm-lock.yaml.
 		local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 		export PNPM_ENABLE_OFFLINE_MODE=1
 		export PNPM_CACHE_FOLDER="${EDISTDIR}/npm-download-cache-${PNPM_SLOT}/${CATEGORY}/${P}"
@@ -186,15 +186,15 @@ src_unpack() {
 
 		epnpm install ${PNPM_INSTALL_ARGS[@]}
 
-ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and all 0.18.* associated packages from ${S}/sticker-creator/package-lock.json"
-ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/core from ${S}/danger/package-lock.json"
-ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/plugin-paginate-rest from ${S}/danger/package-lock.json"
-ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/plugin-request-log from ${S}/danger/package-lock.json"
-ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/request from ${S}/danger/package-lock.json"
-ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/request-error from ${S}/danger/package-lock.json"
-ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/rest from ${S}/danger/package-lock.json"
+ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and all 0.18.* associated packages from ${S}/sticker-creator/pnpm-lock.yaml"
+ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/core from ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/plugin-paginate-rest from ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/plugin-request-log from ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/request from ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/request-error from ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/rest from ${S}/danger/pnpm-lock.yaml"
 		patch_edits_npm() {
-#			pushd "sticker-creator" >/dev/null 2>&1 || die
+			pushd "sticker-creator" >/dev/null 2>&1 || die
 				sed -i -e "s|\"cross-spawn\": \"^6.0.5\"|\"cross-spawn\": \"^6.0.6\"|g" "package-lock.json" || die								# CVE-2024-21538; DoS; High
 				sed -i -e "s|\"esbuild\": \"^0.18.10\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die									# GHSA-67mh-4wv8-2f99; ID; Moderate
 				sed -i -e "s|\"happy-dom\": \"8.9.0\"|\"happy-dom\": \"15.10.2\"|g" "package-lock.json" || die									# CVE-2024-51757; DoS, DT, ID; Critical
@@ -202,8 +202,8 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 				sed -i -e "s|\"vite\": \"4.5.3\"|\"vite\": \"4.5.6\"|g" "package-lock.json" || die										# CVE-2025-24010; ID; Medium
 																								# CVE-2024-45812; DoS, DT, ID; Medium
 																								# CVE-2024-45811; ID; Medium
-#			popd >/dev/null 2>&1 || die
-#			pushd "danger" >/dev/null 2>&1 || die
+			popd >/dev/null 2>&1 || die
+			pushd "danger" >/dev/null 2>&1 || die
 				sed -i -e "s|\"cross-spawn\": \"^7.0.3\"|\"cross-spawn\": \"^7.0.5\"|g" "package-lock.json" || die								# CVE-2024-21538; DoS; High
 				sed -i -e "s|\"micromatch\": \"^4.0.2\"|\"micromatch\": \"^4.0.8\"|g" "package-lock.json" || die								# CVE-2024-4067; DoS; Medium
 				sed -i -e "s|\"micromatch\": \"^4.0.4\"|\"micromatch\": \"^4.0.8\"|g" "package-lock.json" || die								# CVE-2024-4067; DoS; Medium
@@ -212,7 +212,7 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 																								#   @octokit/plugin-paginate-rest
 																								#   @octokit/request-error
 																								# CVE-2025-25289, CVE-2025-25288, CVE-2025-25290; DoS; Low
-#			popd >/dev/null 2>&1 || die
+			popd >/dev/null 2>&1 || die
 			sed -i -e "s|\"electron\": \"^23.1.2\"|\"electron\": \"^${ELECTRON_APP_ELECTRON_PV}\"|g" "package-lock.json" || die							# CVE-2023-44402; DoS, DT, ID; High
 			sed -i -e "s|\"esbuild\": \"0.24.0\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die										# GHSA-67mh-4wv8-2f99; ID; Moderate
 			sed -i -e "s#\"esbuild\": \"^0.18.0 || ^0.19.0 || ^0.20.0 || ^0.21.0 || ^0.22.0 || ^0.23.0 || ^0.24.0\"#\"esbuild\": \"^0.25.0\"#g" "package-lock.json" || die		# GHSA-67mh-4wv8-2f99; ID; Moderate
@@ -227,10 +227,66 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 																								#   @octokit/request-error
 																								# CVE-2025-25289, CVE-2025-25288, CVE-2025-25290; DoS; Low
 		}
-		#patch_edits_npm
+
+		patch_edits_pnpm() {
+			pushd "sticker-creator" >/dev/null 2>&1 || die
+				sed -i -e "s|'@babel/runtime': 7.26.7|'@babel/runtime': 7.26.10|g" "pnpm-lock.yaml" || die									# CVE-2025-27789, DoS, Moderate
+				sed -i -e "s|cross-spawn: 6.0.5|cross-spawn: 6.0.6|g" "pnpm-lock.yaml" || die											# CVE-2024-21538; DoS; High
+				sed -i -e "s|esbuild: 0.18.10|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die											# GHSA-67mh-4wv8-2f99; ID; Moderate
+				sed -i -e "s|esbuild: 0.18.20|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die											# GHSA-67mh-4wv8-2f99; ID; Moderate
+				sed -i -e "s|happy-dom: 8.9.0|happy-dom: 15.10.2|g" "pnpm-lock.yaml" || die											# CVE-2024-51757; DoS, DT, ID; Critical
+				sed -i -e "s|rollup: 3.27.1|rollup: 3.29.5|g" "pnpm-lock.yaml" || die												# CVE-2024-47068; DT, ID; Medium
+
+				sed -i -e "s|vite: 4.5.3|vite: 4.5.6|g" "pnpm-lock.yaml" || die													# CVE-2025-24010; ID; Medium
+																								# CVE-2024-45812; DoS, DT, ID; Medium
+																								# CVE-2024-45811; ID; Medium
+
+				sed -i -e "s|vite: ^4.1.0-beta.0|vite: 4.5.6|g" "pnpm-lock.yaml" || die												# CVE-2025-24010; ID; Medium
+																								# CVE-2024-45812; DoS, DT, ID; Medium
+																								# CVE-2024-45811; ID; Medium
+			popd >/dev/null 2>&1 || die
+			pushd "danger" >/dev/null 2>&1 || die
+				sed -i -e "s|'@octokit/plugin-paginate-rest': 2.21.3|'@octokit/plugin-paginate-rest': 9.2.2|g" "pnpm-lock.yaml" || die						# CVE-2025-25288, DoS, Moderate
+				sed -i -e "s|'@octokit/request': 5.6.3|'@octokit/request': 8.4.1|g" "pnpm-lock.yaml" || die									# CVE-2025-25290, DoS, Moderate
+				sed -i -e "s|'@octokit/request-error': 2.1.0|'@octokit/request-error': 2.1.0|g" "pnpm-lock.yaml" || die								# CVE-2025-25289, DoS, Moderate
+				sed -i -e "s|cross-spawn: 7.0.3|cross-spawn: 7.0.5|g" "pnpm-lock.yaml" || die											# CVE-2024-21538; DoS; High
+				sed -i -e "s|micromatch: 4.0.2|micromatch: 4.0.8|g" "pnpm-lock.yaml" || die											# CVE-2024-4067; DoS; Medium
+				sed -i -e "s|micromatch: 4.0.4|micromatch: 4.0.8|g" "pnpm-lock.yaml" || die											# CVE-2024-4067; DoS; Medium
+				sed -i -e "s|'@octokit/rest': 18.12.0|'@octokit/rest': 20.1.2|g" "pnpm-lock.yaml" || die									# Bump for
+																								#   @octokit/request
+																								#   @octokit/plugin-paginate-rest
+																								#   @octokit/request-error
+																								# CVE-2025-25289, CVE-2025-25288, CVE-2025-25290; DoS; Low
+			popd >/dev/null 2>&1 || die
+			sed -i -e "s|'@octokit/plugin-paginate-rest': 2.21.3|'@octokit/plugin-paginate-rest': 9.2.2|g" "pnpm-lock.yaml" || die							# CVE-2025-25288, DoS, Moderate
+			sed -i -e "s|'@octokit/request': 5.6.3|'@octokit/request': 8.4.1|g" "pnpm-lock.yaml" || die										# CVE-2025-25290, DoS, Moderate
+			sed -i -e "s|'@octokit/request-error': 2.1.0|'@octokit/request-error': 5.1.1|g" "pnpm-lock.yaml" || die									# CVE-2025-25289, DoS, Moderate
+			sed -i -e "s|axios: 1.7.9|axios: 1.8.2|g" "pnpm-lock.yaml" || die													# CVE-2025-27152, ID, High
+			sed -i -e "s|cross-spawn: 5.1.0|cross-spawn: 6.0.6|g" "pnpm-lock.yaml" || die												# CVE-2024-21538, DoS, High
+			sed -i -e "s|electron: 23.1.2|electron: ${ELECTRON_APP_ELECTRON_PV}|g" "pnpm-lock.yaml" || die										# CVE-2023-44402; DoS, DT, ID; High
+			sed -i -e "s|electron: 23.3.13|electron: ${ELECTRON_APP_ELECTRON_PV}|g" "pnpm-lock.yaml" || die										# CVE-2023-44402; DoS, DT, ID; High
+			sed -i -e "s|esbuild: 0.24.0|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die													# GHSA-67mh-4wv8-2f99; ID; Moderate
+			sed -i -e "s#esbuild: 0.18.0 || ^0.19.0 || ^0.20.0 || ^0.21.0 || ^0.22.0 || ^0.23.0 || ^0.24.0#esbuild: 0.25.0#g" "pnpm-lock.yaml" || die				# GHSA-67mh-4wv8-2f99; ID; Moderate
+			sed -i -e "s#esbuild: 0.18.0 || ^0.19.0 || ^0.20.0#esbuild: 0.25.0#g" "pnpm-lock.yaml" || die										# GHSA-67mh-4wv8-2f99; ID; Moderate
+			sed -i -e "s#esbuild: 0.24.0#esbuild: 0.25.0#g" "pnpm-lock.yaml" || die													# GHSA-67mh-4wv8-2f99; ID; Moderate
+			sed -i -e "s#esbuild: '>=0.12 <1'#esbuild: 0.25.0#g" "pnpm-lock.yaml" || die												# GHSA-67mh-4wv8-2f99; ID; Moderate
+			sed -i -e "s|got: 11.7.0|got: 11.8.5|g" "pnpm-lock.yaml" || die														# CVE-2022-33987; DT; Medium
+			sed -i -e "s|got: 11.8.2|got: 11.8.5|g" "pnpm-lock.yaml" || die														# CVE-2022-33987; DT; Medium
+			sed -i -e "s|got: 6.7.1|got: 11.8.5|g" "pnpm-lock.yaml" || die														# CVE-2022-33987; DT; Medium
+			sed -i -e "s|@octokit/rest: 18.12.0|@octokit/rest: 20.1.2|g" "pnpm-lock.yaml" || die											# Bump for
+																								#   @octokit/request
+																								#   @octokit/plugin-paginate-rest
+																								#   @octokit/request-error
+																								# CVE-2025-25289, CVE-2025-25288, CVE-2025-25290; DoS; Low
+		}
+		patch_edits_pnpm
 
 		local deps=()
 		pushd "sticker-creator" >/dev/null 2>&1 || die
+			deps=(
+				"@babel/runtime@7.26.10"
+			)
+			epnpm install ${deps[@]} -P ${PNPM_INSTALL_ARGS[@]}
 			deps=(
 				"cross-spawn@6.0.6"
 				"esbuild@0.25.0"
@@ -243,6 +299,9 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 
 		pushd "danger" >/dev/null 2>&1 || die
 			deps=(
+				"@octokit/plugin-paginate-rest@9.2.2"
+				"@octokit/request@8.4.1"
+				"@octokit/request-error@2.1.0"
 				"cross-spawn@7.0.5"
 				"micromatch@4.0.8"
 				"@octokit/rest@20.1.2"
@@ -256,14 +315,18 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 		)
 		epnpm install ${deps[@]} -P ${PNPM_INSTALL_ARGS[@]}
 		deps=(
+			"@octokit/plugin-paginate-rest@9.2.2"
+			"@octokit/request@8.4.1"
+			"@octokit/request-error@5.1.1"
 			"@octokit/rest@20.1.2"
+			"axios@1.8.2"
 			"patch-package@8.0.0"
 		)
 		epnpm install ${deps[@]} -D ${PNPM_INSTALL_ARGS[@]}
 
 		epnpm audit fix ${PNPM_AUDIT_FIX_ARGS[@]}
 
-ewarn "QA:  Manually remove node_modules/react-devtools/node_modules/electron from package-lock.json"												# CVE-2023-44402
+ewarn "QA:  Manually remove node_modules/react-devtools/node_modules/electron from pnpm-lock.yaml"												# CVE-2023-44402
 
 		deps=(
 	# Required for custom version bump
@@ -271,9 +334,9 @@ ewarn "QA:  Manually remove node_modules/react-devtools/node_modules/electron fr
 		)
 		epnpm install ${deps[@]} -D ${PNPM_INSTALL_ARGS[@]}
 
-		#patch_edits_npm
+		patch_edits_pnpm
 		epnpm dedupe
-		#patch_edits_npm
+		patch_edits_pnpm
 
 
 		sed -i -e "s|disabled_postinstall|postinstall|g" "package.json" || die
@@ -403,6 +466,7 @@ pkg_postinst() {
 	elog "For using the tray icon on compatible desktop environments, start Signal with"
 	elog " '--start-in-tray' or '--use-tray-icon'."
 }
+# OILEDMACHINE-OVERLAY-TEST:  passed (7.46.0, 20250313, electron 35.0.1)
 # OILEDMACHINE-OVERLAY-TEST:  passed (7.45.1, 20250311, electron 35.0.1)
 # OILEDMACHINE-OVERLAY-TEST:  passed (7.44.0, 20250227, electron 35.0.0-beta.11)
 # OILEDMACHINE-OVERLAY-TEST:  passed (7.42.0, 20250214, electron 35.0.0-beta.6)
