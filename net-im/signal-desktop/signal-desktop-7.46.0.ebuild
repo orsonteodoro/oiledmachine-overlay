@@ -186,6 +186,7 @@ src_unpack() {
 
 		epnpm install ${PNPM_INSTALL_ARGS[@]}
 
+ewarn "QA:  Manually remove cross-spawn 5.x from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and all 0.18.* associated packages from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/core from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/plugin-paginate-rest from ${S}/danger/pnpm-lock.yaml"
