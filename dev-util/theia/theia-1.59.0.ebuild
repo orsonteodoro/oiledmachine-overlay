@@ -486,7 +486,7 @@ LICENSE="
 RESTRICT="mirror"
 IUSE+="
 ${!THEIA_PLUGINS[@]}
-git ollama ebuild_revision_9
+git ollama ebuild_revision_10
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -600,6 +600,15 @@ einfo "Adding dependencies"
 fix_vulnerabilities() {
 einfo "Fixing vulnerabilities"
 	patch_lockfile() {
+		sed -i -e "s|\"@babel/core\": \"^7.0.0\"|\"@babel/core\": \"^7.26.10\"|g" "package-lock.json" || die
+		sed -i -e "s|\"@babel/core\": \"^7.0.0-0\"|\"@babel/core\": \"^7.26.10\"|g" "package-lock.json" || die
+		sed -i -e "s|\"@babel/core\": \"^7.7.5\"|\"@babel/core\": \"^7.26.10\"|g" "package-lock.json" || die
+		sed -i -e "s|\"@babel/core\": \"^7.10.0\"|\"@babel/core\": \"^7.26.10\"|g" "package-lock.json" || die
+		sed -i -e "s|\"@babel/core\": \"^7.12.0\"|\"@babel/core\": \"^7.26.10\"|g" "package-lock.json" || die
+		sed -i -e "s|\"@babel/core\": \"^7.13.0\"|\"@babel/core\": \"^7.26.10\"|g" "package-lock.json" || die
+		sed -i -e "s#\"@babel/core\": \"^7.4.0 || ^8.0.0-0 <8.0.0\"#\"@babel/core\": \"^7.26.10\"#g" "package-lock.json" || die
+		sed -i -e "s#\"@babel/core\": \"^7.0.0-0 || ^8.0.0-0 <8.0.0\"#\"@babel/core\": \"^7.26.10\"#g" "package-lock.json" || die
+		sed -i -e "s|\"@babel/helpers\": \"^7.26.0\"|\"@babel/helpers\": \"^7.26.10\"|g" "package-lock.json" || die
 		sed -i -e "s|\"axios\": \"^1.7.4\"|\"axios\": \"^1.8.2\"|g" "package-lock.json" || die
 		sed -i -e "s|\"axios\": \"^1.0.0\"|\"axios\": \"^1.8.2\"|g" "package-lock.json" || die
 		sed -i -e "s|\"cookie\": \"^0.4.0\"|\"cookie\": \"^0.7.0\"|g" "package-lock.json" || die
@@ -624,6 +633,9 @@ einfo "Fixing vulnerabilities"
 
 	enpm add "axios@^1.8.2" -P -w "dev-packages/application-package"										# CVE-2025-27152; ID; High
 	enpm add "axios@^1.8.2" -D															# CVE-2025-27152; ID; High
+
+	enpm add "@babel/core@^7.26.10" -P -w "dev-packages/application-manager"									# CVE-2025-27789; DoS; Medium
+	enpm add "@babel/helpers@^7.26.10" -P -w "dev-packages/application-manager"									# CVE-2025-27789; DoS; Medium
 
 	patch_lockfile
 }
