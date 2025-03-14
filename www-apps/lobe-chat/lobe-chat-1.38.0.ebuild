@@ -438,6 +438,32 @@ npm_dedupe_post() {
 			sed -i -e "s|\"@babel/runtime-corejs3\": \"^7.22.15\"|\"@babel/runtime-corejs3\": \"^7.26.10\"|g" "package-lock.json" || die
 			sed -i -e "s|\"@babel/helpers\": \"^7.23.6\"|\"@babel/helpers\": \"^7.26.10\"|g" "package-lock.json" || die
 			sed -i -e "s|\"@babel/helpers\": \"^7.26.9\"|\"@babel/helpers\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.10.1\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.10.4\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.13.10\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.11.1\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.11.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.12.5\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.16.3\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.16.7\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.17.8\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.18.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.18.3\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.20.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.20.7\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.21.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.22.5\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.23.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.23.6\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.23.9\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.24.1\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.24.4\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.24.7\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.24.8\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.25.7\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.26.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.26.9\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
 			sed -i -e "s|\"axios\": \"^1.7.4\"|\"axios\": \"1.8.2\"|g" "package-lock.json" || die
 			sed -i -e "s|\"esbuild\": \"~0.18.20\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die
 			sed -i -e "s|\"esbuild\": \"^0.19.7\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die
@@ -456,6 +482,7 @@ ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/package-lock.json or ${S}/
 
 		enpm add "@babel/runtime-corejs3@7.26.10" ${NPM_INSTALL_ARGS[@]}			# CVE-2025-27789; DoS; Medium
 		enpm add "@babel/helpers@7.26.10" ${NPM_INSTALL_ARGS[@]}				# CVE-2025-27789; DoS; Medium
+		enpm add "@babel/runtime@7.26.10" ${NPM_INSTALL_ARGS[@]}				# CVE-2025-27789; DoS; Medium
 		enpm add "axios@1.8.2" ${NPM_INSTALL_ARGS[@]}						# CVE-2025-27152; ID; High
 
 		NODE_ADDON_API_INSTALL_ARGS=( "-P" )
