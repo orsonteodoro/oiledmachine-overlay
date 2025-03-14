@@ -609,6 +609,9 @@ einfo "Fixing vulnerabilities"
 		sed -i -e "s#\"@babel/core\": \"^7.4.0 || ^8.0.0-0 <8.0.0\"#\"@babel/core\": \"^7.26.10\"#g" "package-lock.json" || die
 		sed -i -e "s#\"@babel/core\": \"^7.0.0-0 || ^8.0.0-0 <8.0.0\"#\"@babel/core\": \"^7.26.10\"#g" "package-lock.json" || die
 		sed -i -e "s|\"@babel/helpers\": \"^7.26.0\"|\"@babel/helpers\": \"^7.26.10\"|g" "package-lock.json" || die
+		sed -i -e "s|\"@babel/runtime\": \"^7.8.4\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+		sed -i -e "s|\"@babel/runtime\": \"^7.10.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+		sed -i -e "s|\"@babel/runtime\": \"^7.20.13\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
 		sed -i -e "s|\"axios\": \"^1.7.4\"|\"axios\": \"^1.8.2\"|g" "package-lock.json" || die
 		sed -i -e "s|\"axios\": \"^1.0.0\"|\"axios\": \"^1.8.2\"|g" "package-lock.json" || die
 		sed -i -e "s|\"cookie\": \"^0.4.0\"|\"cookie\": \"^0.7.0\"|g" "package-lock.json" || die
@@ -636,6 +639,7 @@ einfo "Fixing vulnerabilities"
 
 	enpm add "@babel/core@^7.26.10" -P -w "dev-packages/application-manager"									# CVE-2025-27789; DoS; Medium
 	enpm add "@babel/helpers@^7.26.10" -P -w "dev-packages/application-manager"									# CVE-2025-27789; DoS; Medium
+	enpm add "@babel/runtime@^7.26.10" -P -w "packages/core"											# CVE-2025-27789; DoS; Medium
 
 	patch_lockfile
 }
