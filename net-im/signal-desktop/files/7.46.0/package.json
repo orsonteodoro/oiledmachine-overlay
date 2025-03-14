@@ -104,6 +104,8 @@
     "fs-xattr": "0.3.0"
   },
   "dependencies": {
+    "@babel/helpers": "7.26.10",
+    "@babel/runtime": "7.26.10",
     "@electron/asar": "3.3.1",
     "@formatjs/fast-memoize": "2.2.3",
     "@formatjs/icu-messageformat-parser": "2.9.3",

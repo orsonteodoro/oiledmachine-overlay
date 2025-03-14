@@ -21,6 +21,7 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@babel/helpers": "7.26.10",
     "@babel/runtime": "7.26.10",
     "@formatjs/fast-memoize": "1.2.8",
     "@indutny/emoji-picker-react": "4.10.0",

@@ -187,6 +187,7 @@ src_unpack() {
 		epnpm install ${PNPM_INSTALL_ARGS[@]}
 
 ewarn "QA:  Manually remove cross-spawn 5.x from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove electron 23.x from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and all 0.18.* associated packages from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/core from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/plugin-paginate-rest from ${S}/danger/pnpm-lock.yaml"
@@ -232,6 +233,7 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 		patch_edits_pnpm() {
 			pushd "sticker-creator" >/dev/null 2>&1 || die
 				sed -i -e "s|'@babel/runtime': 7.26.7|'@babel/runtime': 7.26.10|g" "pnpm-lock.yaml" || die									# CVE-2025-27789, DoS, Moderate
+				sed -i -e "s|'@babel/helpers': 7.26.7|'@babel/helpers': 7.26.10|g" "pnpm-lock.yaml" || die									# CVE-2025-27789, DoS, Moderate
 				sed -i -e "s|cross-spawn: 6.0.5|cross-spawn: 6.0.6|g" "pnpm-lock.yaml" || die											# CVE-2024-21538; DoS; High
 				sed -i -e "s|esbuild: 0.18.10|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die											# GHSA-67mh-4wv8-2f99; ID; Moderate
 				sed -i -e "s|esbuild: 0.18.20|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die											# GHSA-67mh-4wv8-2f99; ID; Moderate
@@ -259,6 +261,8 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 																								#   @octokit/request-error
 																								# CVE-2025-25289, CVE-2025-25288, CVE-2025-25290; DoS; Low
 			popd >/dev/null 2>&1 || die
+			sed -i -e "s|'@babel/runtime': 7.26.7|'@babel/runtime': 7.26.10|g" "pnpm-lock.yaml" || die										# CVE-2025-27789, DoS, Moderate
+			sed -i -e "s|'@babel/helpers': 7.26.7|'@babel/helpers': 7.26.10|g" "pnpm-lock.yaml" || die										# CVE-2025-27789, DoS, Moderate
 			sed -i -e "s|'@octokit/plugin-paginate-rest': 2.21.3|'@octokit/plugin-paginate-rest': 9.2.2|g" "pnpm-lock.yaml" || die							# CVE-2025-25288, DoS, Moderate
 			sed -i -e "s|'@octokit/request': 5.6.3|'@octokit/request': 8.4.1|g" "pnpm-lock.yaml" || die										# CVE-2025-25290, DoS, Moderate
 			sed -i -e "s|'@octokit/request-error': 2.1.0|'@octokit/request-error': 5.1.1|g" "pnpm-lock.yaml" || die									# CVE-2025-25289, DoS, Moderate
@@ -286,6 +290,7 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 		pushd "sticker-creator" >/dev/null 2>&1 || die
 			deps=(
 				"@babel/runtime@7.26.10"
+				"@babel/helpers@7.26.10"
 			)
 			epnpm install ${deps[@]} -P ${PNPM_INSTALL_ARGS[@]}
 			deps=(
@@ -311,6 +316,8 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 		popd >/dev/null 2>&1 || die
 
 		deps=(
+			"@babel/runtime@7.26.10"
+			"@babel/helpers@7.26.10"
 			"esbuild@0.25.0"
 			"got@11.8.5"
 		)
