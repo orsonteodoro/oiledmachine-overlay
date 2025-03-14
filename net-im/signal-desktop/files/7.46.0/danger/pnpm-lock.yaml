@@ -15,8 +15,8 @@ importers:
         specifier: 8.4.1
         version: 8.4.1
       '@octokit/request-error':
-        specifier: 2.1.0
-        version: 2.1.0
+        specifier: 5.1.1
+        version: 5.1.1
       '@octokit/rest':
         specifier: 20.1.2
         version: 20.1.2
@@ -856,7 +856,7 @@ snapshots:
     dependencies:
       '@octokit/auth-token': 2.5.0
       '@octokit/graphql': 4.8.0
-      '@octokit/request': 8.4.1
+      '@octokit/request': 5.6.3
       '@octokit/request-error': 2.1.0
       '@octokit/types': 6.41.0
       before-after-hook: 2.2.3
@@ -887,7 +887,7 @@ snapshots:
 
   '@octokit/graphql@4.8.0':
     dependencies:
-      '@octokit/request': 8.4.1
+      '@octokit/request': 5.6.3
       '@octokit/types': 6.41.0
       universal-user-agent: 6.0.1
     transitivePeerDependencies:
@@ -972,7 +972,7 @@ snapshots:
   '@octokit/rest@18.12.0':
     dependencies:
       '@octokit/core': 3.6.0
-      '@octokit/plugin-paginate-rest': 9.2.2(@octokit/core@3.6.0)
+      '@octokit/plugin-paginate-rest': 2.21.3(@octokit/core@3.6.0)
       '@octokit/plugin-request-log': 1.0.4(@octokit/core@3.6.0)
       '@octokit/plugin-rest-endpoint-methods': 5.16.2(@octokit/core@3.6.0)
     transitivePeerDependencies:
@@ -1076,7 +1076,7 @@ snapshots:
   danger@12.3.3:
     dependencies:
       '@gitbeaker/rest': 38.12.1
-      '@octokit/rest': 20.1.2
+      '@octokit/rest': 18.12.0
       async-retry: 1.2.3
       chalk: 2.4.2
       commander: 2.20.3
@@ -1411,7 +1411,7 @@ snapshots:
 
   memfs-or-file-map-to-github-branch@1.2.1:
     dependencies:
-      '@octokit/rest': 20.1.2
+      '@octokit/rest': 18.12.0
     transitivePeerDependencies:
       - encoding
 
