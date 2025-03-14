@@ -25,18 +25,18 @@ declare -A GIT_CRATES=(
 
 CRATES="
 actix-codec-0.5.2
-actix-cors-0.7.0
-actix-http-3.9.0
+actix-cors-0.7.1
+actix-http-3.10.0
 actix-macros-0.2.4
 actix-multipart-0.7.2
 actix-multipart-derive-0.7.0
 actix-router-0.5.3
 actix-rt-2.10.0
-actix-server-2.5.0
-actix-service-2.0.2
+actix-server-2.5.1
+actix-service-2.0.3
 actix-session-0.10.1
 actix-utils-3.0.1
-actix-web-4.9.0
+actix-web-4.10.2
 actix-web-codegen-4.3.0
 actix-web-static-files-4.0.1
 addr2line-0.24.2
@@ -57,47 +57,46 @@ anstyle-1.0.10
 anstyle-parse-0.2.6
 anstyle-query-1.1.2
 anstyle-wincon-3.0.7
-anyhow-1.0.95
+anyhow-1.0.97
 arbitrary-1.4.1
 arg_enum_proc_macro-0.3.4
 arrayref-0.3.9
 arrayvec-0.7.6
 async-broadcast-0.7.2
 async-recursion-1.1.1
-async-trait-0.1.85
+async-trait-0.1.87
 atomic-0.6.0
 autocfg-1.4.0
 av1-grain-0.2.3
-avif-serialize-0.8.2
+avif-serialize-0.8.3
 backtrace-0.3.74
 base64-0.20.0
 base64-0.22.1
 bitflags-1.3.2
-bitflags-2.8.0
+bitflags-2.9.0
 bitstream-io-2.6.0
 block-buffer-0.10.4
-brotli-6.0.0
-brotli-decompressor-4.0.1
-built-0.7.5
-bumpalo-3.16.0
-bytemuck-1.21.0
+brotli-7.0.0
+brotli-decompressor-4.0.2
+built-0.7.7
+bumpalo-3.17.0
+bytemuck-1.22.0
 bytemuck_derive-1.8.1
-byteorder-1.5.0
 byteorder-lite-0.1.0
-bytes-1.9.0
+bytes-1.10.1
 bytestring-1.4.0
 cached-0.54.0
 cached_proc_macro-0.23.0
 cached_proc_macro_types-0.1.1
-cc-1.2.10
+cc-1.2.16
 cfg-expr-0.15.8
 cfg-if-1.0.0
 cfg_aliases-0.2.1
-chrono-0.4.39
+chrono-0.4.40
 cipher-0.4.4
-clap-4.5.26
-clap_builder-4.5.26
-clap_derive-4.5.24
+clap-4.5.32
+clap_builder-4.5.32
+clap_derive-4.5.32
 clap_lex-0.7.4
 color_quant-1.1.0
 colorchoice-1.0.3
@@ -107,7 +106,7 @@ const_format_proc_macros-0.2.34
 convert_case-0.4.0
 cookie-0.16.2
 core-foundation-sys-0.8.7
-cpufeatures-0.2.16
+cpufeatures-0.2.17
 crc32fast-1.4.2
 crossbeam-channel-0.5.14
 crossbeam-deque-0.8.6
@@ -119,26 +118,29 @@ darling-0.20.10
 darling_core-0.20.10
 darling_macro-0.20.10
 deranged-0.3.11
-derive_more-0.99.18
+derive_more-0.99.19
 derive_more-1.0.0
+derive_more-2.0.1
 derive_more-impl-1.0.0
+derive_more-impl-2.0.1
 digest-0.10.7
 displaydoc-0.2.5
-either-1.13.0
+either-1.15.0
 encoding_rs-0.8.35
 endi-1.1.0
 enumflags2-0.7.11
 enumflags2_derive-0.7.11
 env_filter-0.1.3
-env_logger-0.11.6
-equivalent-1.0.1
+env_logger-0.11.7
+equivalent-1.0.2
 errno-0.3.10
 event-listener-5.4.0
 event-listener-strategy-0.5.3
 fastrand-2.3.0
 fdeflate-0.3.7
-flate2-1.0.35
+flate2-1.1.0
 fnv-1.0.7
+foldhash-0.1.4
 fontdue-0.7.3
 form_urlencoded-1.2.1
 futures-0.3.31
@@ -146,12 +148,14 @@ futures-channel-0.3.31
 futures-core-0.3.31
 futures-executor-0.3.31
 futures-io-0.3.31
+futures-lite-2.6.0
 futures-macro-0.3.31
 futures-sink-0.3.31
 futures-task-0.3.31
 futures-util-0.3.31
 generic-array-0.14.7
 getrandom-0.2.15
+getrandom-0.3.1
 ghash-0.5.1
 gif-0.13.1
 gif-dispose-5.0.1
@@ -168,14 +172,13 @@ hex-0.4.3
 hkdf-0.12.4
 hmac-0.12.1
 http-0.2.12
-http-1.2.0
+http-1.3.1
 http-auth-basic-0.3.5
 http-body-1.0.1
-http-body-util-0.1.2
-httparse-1.9.5
+http-body-util-0.1.3
+httparse-1.10.1
 httpdate-1.0.3
-humantime-2.1.0
-hyper-1.5.2
+hyper-1.6.0
 hyper-util-0.1.10
 iana-time-zone-0.1.61
 iana-time-zone-haiku-0.1.2
@@ -194,41 +197,44 @@ idna-1.0.3
 idna_adapter-1.2.0
 image-0.25.5
 image-webp-0.2.1
-imagequant-4.3.3
+imagequant-4.3.4
 imgref-1.11.0
 impl-more-0.1.9
-indexmap-2.7.0
-inout-0.1.3
+indexmap-2.8.0
+inout-0.1.4
 interpolate_name-0.2.4
 is_terminal_polyfill-1.70.1
 itertools-0.12.1
-itoa-1.0.14
+itoa-1.0.15
+jiff-0.2.4
+jiff-static-0.2.4
 jobserver-0.1.32
 jpeg-decoder-0.3.1
 js-sys-0.3.77
 language-tags-0.3.2
 lazy_static-1.5.0
-libc-0.2.169
+libc-0.2.171
 libdrm_amdgpu_sys-0.7.7
-libfuzzer-sys-0.4.8
+libfuzzer-sys-0.4.9
 libloading-0.8.6
 linux-raw-sys-0.4.15
-litemap-0.7.4
+linux-raw-sys-0.9.3
+litemap-0.7.5
 local-channel-0.1.5
 local-waker-0.1.4
 lock_api-0.4.12
-log-0.4.25
+log-0.4.26
 loop9-0.1.5
 mach2-0.4.2
 maybe-rayon-0.1.1
 memchr-2.7.4
 memoffset-0.9.1
-miette-7.4.0
-miette-derive-7.4.0
+miette-7.5.0
+miette-derive-7.5.0
 mime-0.3.17
 mime_guess-2.0.5
 minimal-lexical-0.2.1
-miniz_oxide-0.8.3
+miniz_oxide-0.8.5
 mio-1.0.3
 new_debug_unreachable-1.0.6
 nix-0.24.3
@@ -245,9 +251,9 @@ num-rational-0.4.2
 num-traits-0.2.19
 num_cpus-1.16.0
 object-0.36.7
-once_cell-1.20.2
+once_cell-1.21.1
 opaque-debug-0.3.1
-ordered-channel-1.1.0
+ordered-channel-1.2.0
 ordered-stream-0.2.0
 parking-2.2.1
 parking_lot-0.12.3
@@ -259,26 +265,31 @@ pciid-parser-0.7.2
 percent-encoding-2.3.1
 pin-project-lite-0.2.16
 pin-utils-0.1.0
-pkg-config-0.3.31
+pkg-config-0.3.32
 png-0.17.16
 polyval-0.6.2
+portable-atomic-1.11.0
+portable-atomic-util-0.2.4
 powerfmt-0.2.0
-ppv-lite86-0.2.20
-proc-macro-crate-3.2.0
-proc-macro2-1.0.93
+ppv-lite86-0.2.21
+proc-macro-crate-3.3.0
+proc-macro2-1.0.94
 profiling-1.0.16
 profiling-procmacros-1.0.16
 psutil-3.3.0
 quick-error-2.0.1
-quote-1.0.38
+quote-1.0.40
 rand-0.8.5
+rand-0.9.0
 rand_chacha-0.3.1
+rand_chacha-0.9.0
 rand_core-0.6.4
+rand_core-0.9.3
 rav1e-0.7.1
 ravif-0.11.11
 rayon-1.10.0
 rayon-core-1.12.1
-redox_syscall-0.5.8
+redox_syscall-0.5.10
 regex-1.11.1
 regex-automata-0.4.9
 regex-lite-0.1.6
@@ -288,16 +299,17 @@ rgb-0.8.50
 ril-0.10.3
 rustc-demangle-0.1.24
 rustc_version-0.4.1
-rustix-0.38.43
-rustversion-1.0.19
-ryu-1.0.18
+rustix-0.38.44
+rustix-1.0.2
+rustversion-1.0.20
+ryu-1.0.20
 scopeguard-1.2.0
-semver-1.0.24
-serde-1.0.217
-serde_derive-1.0.217
-serde_json-1.0.136
+semver-1.0.26
+serde-1.0.219
+serde_derive-1.0.219
+serde_json-1.0.140
 serde_plain-1.0.2
-serde_repr-0.1.19
+serde_repr-0.1.20
 serde_spanned-0.6.8
 serde_urlencoded-0.7.1
 sha1-0.10.6
@@ -308,7 +320,7 @@ signal-hook-registry-1.4.2
 simd-adler32-0.3.7
 simd_helpers-0.1.0
 slab-0.4.9
-smallvec-1.13.2
+smallvec-1.14.0
 socket2-0.5.8
 stable_deref_trait-1.2.0
 static-files-0.2.4
@@ -318,44 +330,44 @@ strsim-0.11.1
 strum-0.26.3
 strum_macros-0.26.4
 subtle-2.6.1
-syn-2.0.96
+syn-2.0.100
 synstructure-0.13.1
 sysinfo-0.33.1
 system-deps-6.2.2
 systemd-journal-logger-2.2.0
 target-lexicon-0.12.16
-tempfile-3.15.0
+tempfile-3.19.0
 test-context-0.3.0
 test-context-macros-0.3.0
 thiserror-1.0.69
-thiserror-2.0.11
+thiserror-2.0.12
 thiserror-impl-1.0.69
-thiserror-impl-2.0.11
+thiserror-impl-2.0.12
 thread_local-1.1.8
 tiff-0.9.1
-time-0.3.37
-time-core-0.1.2
-time-macros-0.2.19
+time-0.3.39
+time-core-0.1.3
+time-macros-0.2.20
 tiny-skia-0.11.4
 tiny-skia-path-0.11.4
 tinystr-0.7.6
-tokio-1.43.0
-tokio-graceful-shutdown-0.15.3
+tokio-1.44.1
+tokio-graceful-shutdown-0.15.4
 tokio-macros-2.5.0
-tokio-util-0.7.13
-toml-0.8.19
+tokio-util-0.7.14
+toml-0.8.20
 toml_datetime-0.6.8
-toml_edit-0.22.22
+toml_edit-0.22.24
 tower-service-0.3.3
 tracing-0.1.41
 tracing-attributes-0.1.28
 tracing-core-0.1.33
 try-lock-0.2.5
 ttf-parser-0.15.2
-typenum-1.17.0
+typenum-1.18.0
 uds_windows-1.1.0
 unicase-2.8.1
-unicode-ident-1.0.14
+unicode-ident-1.0.18
 unicode-width-0.1.14
 unicode-xid-0.2.6
 universal-hash-0.5.1
@@ -363,12 +375,13 @@ url-2.5.4
 utf16_iter-1.0.5
 utf8_iter-1.0.4
 utf8parse-0.2.2
-uuid-1.12.0
+uuid-1.16.0
 v_frame-0.3.8
 version-compare-0.2.0
 version_check-0.9.5
 want-0.3.1
 wasi-0.11.0+wasi-snapshot-preview1
+wasi-0.13.3+wasi-0.2.2
 wasm-bindgen-0.2.100
 wasm-bindgen-backend-0.2.100
 wasm-bindgen-macro-0.2.100
@@ -384,6 +397,7 @@ windows-core-0.52.0
 windows-core-0.57.0
 windows-implement-0.57.0
 windows-interface-0.57.0
+windows-link-0.1.0
 windows-result-0.1.2
 windows-sys-0.52.0
 windows-sys-0.59.0
@@ -396,7 +410,8 @@ windows_i686_msvc-0.52.6
 windows_x86_64_gnu-0.52.6
 windows_x86_64_gnullvm-0.52.6
 windows_x86_64_msvc-0.52.6
-winnow-0.6.24
+winnow-0.7.4
+wit-bindgen-rt-0.33.0
 wrapcenum-derive-0.4.1
 write16-1.0.0
 writeable-0.5.5
@@ -404,23 +419,25 @@ xdg-home-1.3.0
 yata-0.7.0
 yoke-0.7.5
 yoke-derive-0.7.5
-zbus-5.3.0
-zbus_macros-5.3.0
-zbus_names-4.1.1
+zbus-5.5.0
+zbus_macros-5.5.0
+zbus_names-4.2.0
 zerocopy-0.7.35
+zerocopy-0.8.23
 zerocopy-derive-0.7.35
-zerofrom-0.1.5
-zerofrom-derive-0.1.5
+zerocopy-derive-0.8.23
+zerofrom-0.1.6
+zerofrom-derive-0.1.6
 zerovec-0.10.4
 zerovec-derive-0.10.3
-zstd-0.13.2
-zstd-safe-7.2.1
-zstd-sys-2.0.13+zstd.1.5.6
+zstd-0.13.3
+zstd-safe-7.2.3
+zstd-sys-2.0.14+zstd.1.5.7
 zune-core-0.4.12
 zune-jpeg-0.4.14
-zvariant-5.2.0
-zvariant_derive-5.2.0
-zvariant_utils-3.1.0
+zvariant-5.4.0
+zvariant_derive-5.4.0
+zvariant_utils-3.2.0
 "
 
 NPM_TARBALL="coolercontrol-${PV}.tar.bz2"
@@ -516,7 +533,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" hwmon video_cards_nvidia openrc systemd ebuild_revision_4"
+IUSE+=" hwmon video_cards_nvidia openrc systemd ebuild_revision_5"
 RDEPEND+="
 	~sys-apps/coolercontrol-liqctld-${PV}
 	hwmon? (
@@ -618,19 +635,24 @@ ewarn "Do not emerge ${CATEGORY}/${PN} package directly.  Emerge sys-apps/cooler
 
 npm_update_lock_install_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-	# CVE-2025-24964; DoS, DT, ID; Critical
 		pushd "${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui" >/dev/null 2>&1 || die
 			sed -i -e "s|\"vitest\": \"^2.1.8\"|\"vitest\": \"^2.1.9\"|" "package.json" || die
-			enpm install "vitest@2.1.9" -D --prefer-offline
+			enpm install "vitest@2.1.9" -D ${NPM_INSTALL_ARGS[@]}						# CVE-2025-24964; DoS, DT, ID; Critical
 
-			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die # Must follow vitest
-			sed -i -e "s|\"esbuild\": \"^0.24.2\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die # Must follow vitest
+			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die	# Must follow vitest
+			sed -i -e "s|\"esbuild\": \"^0.24.2\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die	# Must follow vitest
 			enpm install "esbuild@^0.25.0" -D
+
+			enpm install "axios@^1.8.2" -P									# CVE-2025-27152; ID; High
 		popd >/dev/null 2>&1 || die
 	fi
 }
 
 src_unpack() {
+	# For updating lockfile
+	#unpack "coolercontrol-${PV}.tar.bz2"
+	#die
+
 	S="${WORKDIR}/coolercontrol-${PV}/coolercontrol-ui" \
 	npm_src_unpack
 	S="${WORKDIR}/coolercontrol-${PV}/coolercontrold" \
