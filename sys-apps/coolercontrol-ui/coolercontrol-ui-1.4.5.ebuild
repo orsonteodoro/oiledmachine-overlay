@@ -706,7 +706,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" tray wayland X ebuild_revision_9"
+IUSE+=" tray wayland X ebuild_revision_10"
 gen_webkit_depend() {
 	local s
 	for s in ${WEBKIT_GTK_STABLE[@]} ; do
