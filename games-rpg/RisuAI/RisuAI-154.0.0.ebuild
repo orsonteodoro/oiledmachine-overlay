@@ -866,7 +866,6 @@ eerror
 		die
 	fi
 	unpack ${A}
-#	die
 	npm_src_unpack
 	node-sharp_npm_rebuild_sharp
 
