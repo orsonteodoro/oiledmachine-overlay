@@ -203,6 +203,7 @@ hyper-rustls-0.24.2
 hyper-rustls-0.27.5
 hyper-timeout-0.4.1
 hyper-tls-0.5.0
+hyper-tls-0.6.0
 hyper-util-0.1.10
 iana-time-zone-0.1.61
 iana-time-zone-haiku-0.1.2
@@ -687,7 +688,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 ollama +system-vips tray wayland X
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	!cpu_flags_x86_sse4_2? (
