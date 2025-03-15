@@ -647,8 +647,8 @@ NPM_INSTALL_ARGS=(
 	"--legacy-peer-deps"
 )
 NPM_SLOT="3"
-RUST_MAX_VER="1.77.1" # Inclusive
-RUST_MIN_VER="1.77.1" # llvm-18.0, required by @swc/core
+RUST_MAX_VER="1.78.0" # Inclusive
+RUST_MIN_VER="1.78.0" # llvm-18.0, required by @swc/core
 RUST_PV="${RUST_MIN_VER}"
 SHARP_PV="0.33.5"
 TARBALL="${P}.tar.gz"
