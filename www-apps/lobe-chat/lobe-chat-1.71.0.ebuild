@@ -109,7 +109,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 file-management +indexdb +openrc postgres systemd +system-vips
-ebuild_revision_20
+ebuild_revision_21
 "
 REQUIRED_USE="
 	!cpu_flags_x86_sse4_2? (
@@ -456,13 +456,15 @@ npm_dedupe_post() {
 			sed -i -e "s|\"esbuild\": \"^0.24.0\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die
 			sed -i -e "s|\"esbuild\": \"~0.25.0\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die
 			sed -i -e "s|\"esbuild\": \">=0.12 <1\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die
+			sed -i -e "s|\"snowflake-sdk\": \"^1.12.0\"|\"snowflake-sdk\": \"^2.0.2\"|g" "package-lock.json" || die
 		}
 		npm_patch_lockfile
 
 ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-		enpm add "@apidevtools/json-schema-ref-parser@11.2.0"					# CVE-2024-29651; DoS, DT, ID; High
+		enpm add "@apidevtools/json-schema-ref-parser@11.2.0" --legacy-peer-deps		# CVE-2024-29651; DoS, DT, ID; High
 		enpm add "esbuild@0.25.0" ${NPM_INSTALL_ARGS[@]}					# GHSA-67mh-4wv8-2f99
+		enpm add "snowflake-sdk@2.0.2" -D --legacy-peer-deps					# CVE-2025-24791; DT, ID; Medium
 		NODE_ADDON_API_INSTALL_ARGS=( "-P" )
 		NODE_GYP_INSTALL_ARGS=( "-D" )
 		enpm add "@types/sharp" -D ${NPM_INSTALL_ARGS[@]}

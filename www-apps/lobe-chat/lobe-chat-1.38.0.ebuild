@@ -477,7 +477,7 @@ npm_dedupe_post() {
 
 ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-		enpm add "@apidevtools/json-schema-ref-parser@11.2.0"					# CVE-2024-29651; DoS, DT, ID; High
+		enpm add "@apidevtools/json-schema-ref-parser@11.2.0" --legacy-peer-deps		# CVE-2024-29651; DoS, DT, ID; High
 		enpm add "esbuild@0.25.0" ${NPM_INSTALL_ARGS[@]}					# GHSA-67mh-4wv8-2f99
 
 		enpm add "@babel/runtime-corejs3@7.26.10" ${NPM_INSTALL_ARGS[@]}			# CVE-2025-27789; DoS; Medium
