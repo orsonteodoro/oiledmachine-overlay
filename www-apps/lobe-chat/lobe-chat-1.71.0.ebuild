@@ -462,9 +462,23 @@ npm_dedupe_post() {
 
 ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-		enpm add "@apidevtools/json-schema-ref-parser@11.2.0" --legacy-peer-deps		# CVE-2024-29651; DoS, DT, ID; High
-		enpm add "esbuild@0.25.0" ${NPM_INSTALL_ARGS[@]}					# GHSA-67mh-4wv8-2f99
-		enpm add "snowflake-sdk@2.0.2" -D --legacy-peer-deps					# CVE-2025-24791; DT, ID; Medium
+
+		local pkgs
+		pkgs=(
+			"@apidevtools/json-schema-ref-parser@11.2.0"					# CVE-2024-29651; DoS, DT, ID; High
+		)
+		enpm add ${pkgs[@]} --legacy-peer-deps
+
+		pkgs=(
+			"esbuild@0.25.0"								# GHSA-67mh-4wv8-2f99
+		)
+		enpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
+
+		pkgs=(
+			"snowflake-sdk@2.0.2"								# CVE-2025-24791; DT, ID; Medium
+		)
+		enpm add ${pkgs[@]} -D --legacy-peer-deps
+
 		NODE_ADDON_API_INSTALL_ARGS=( "-P" )
 		NODE_GYP_INSTALL_ARGS=( "-D" )
 		enpm add "@types/sharp" -D ${NPM_INSTALL_ARGS[@]}

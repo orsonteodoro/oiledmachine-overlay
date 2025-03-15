@@ -477,13 +477,22 @@ npm_dedupe_post() {
 
 ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
-		enpm add "@apidevtools/json-schema-ref-parser@11.2.0" --legacy-peer-deps		# CVE-2024-29651; DoS, DT, ID; High
-		enpm add "esbuild@0.25.0" ${NPM_INSTALL_ARGS[@]}					# GHSA-67mh-4wv8-2f99
 
-		enpm add "@babel/runtime-corejs3@7.26.10" ${NPM_INSTALL_ARGS[@]}			# CVE-2025-27789; DoS; Medium
-		enpm add "@babel/helpers@7.26.10" ${NPM_INSTALL_ARGS[@]}				# CVE-2025-27789; DoS; Medium
-		enpm add "@babel/runtime@7.26.10" ${NPM_INSTALL_ARGS[@]}				# CVE-2025-27789; DoS; Medium
-		enpm add "axios@1.8.2" ${NPM_INSTALL_ARGS[@]}						# CVE-2025-27152; ID; High
+		local pkgs
+
+		pkgs=(
+			"@apidevtools/json-schema-ref-parser@11.2.0"					# CVE-2024-29651; DoS, DT, ID; High
+		)
+		enpm add ${pkgs[@]} --legacy-peer-deps
+
+		pkgs=(
+			"esbuild@0.25.0"								# GHSA-67mh-4wv8-2f99
+			"@babel/runtime-corejs3@7.26.10"						# CVE-2025-27789; DoS; Medium
+			"@babel/helpers@7.26.10"							# CVE-2025-27789; DoS; Medium
+			"@babel/runtime@7.26.10"							# CVE-2025-27789; DoS; Medium
+			"axios@1.8.2"									# CVE-2025-27152; ID; High
+		)
+		enpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 
 		NODE_ADDON_API_INSTALL_ARGS=( "-P" )
 		NODE_GYP_INSTALL_ARGS=( "-D" )
