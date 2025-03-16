@@ -47,12 +47,12 @@ EAPI=8
 # https://github.com/chromium/chromium/blob/134.0.6998.88/third_party/node/update_node_binaries#L18					; *
 # https://github.com/chromium/chromium/blob/134.0.6998.88/third_party/re2/README.chromium#L4						; newer than generated_package_lists, (live) [rounded in ebuild]
 # https://github.com/chromium/chromium/blob/134.0.6998.88/third_party/zlib/zlib.h#L40
-# https://github.com/chromium/chromium/blob/134.0.6998.88/tools/rust/update_rust.py#L35							; commit
-#   https://github.com/rust-lang/rust/blob/8a1f8039a7ded79d3d4fe97b110016d89f2b11e2/src/version						; live version
+# https://github.com/chromium/chromium/blob/134.0.6998.88/tools/rust/update_rust.py#L35							; commit *
+#   https://github.com/rust-lang/rust/blob/ad211ced81509462cdfe4c29ed10f97279a0acae/src/version						; live version
 # /var/tmp/portage/www-client/chromium-134.0.6998.88/work/chromium-134.0.6998.88/third_party/flac/BUILD.gn			L122	; newer than generated_package_lists
 # /var/tmp/portage/www-client/chromium-134.0.6998.88/work/chromium-134.0.6998.88/third_party/fontconfig/src/fontconfig/fontconfig.h L54 ; newer than generated_package_lists
 # /var/tmp/portage/www-client/chromium-134.0.6998.88/work/chromium-134.0.6998.88/third_party/freetype/src/CMakeLists.txt	L165	; newer than generated_package_lists *
-# /var/tmp/portage/www-client/chromium-134.0.6998.88/work/chromium-134.0.6998.88/third_party/third_party/harfbuzz-ng/README.chromium	; newer than generated_package_lists *
+# /var/tmp/portage/www-client/chromium-134.0.6998.88/work/chromium-134.0.6998.88/third_party/harfbuzz-ng/README.chromium		; newer than generated_package_lists *
 # /var/tmp/portage/www-client/chromium-134.0.6998.88/work/chromium-134.0.6998.88/third_party/icu/source/configure		L585	; newer than generated_package_lists
 # /var/tmp/portage/www-client/chromium-134.0.6998.88/work/chromium-134.0.6998.88/third_party/libdrm/src/meson.build		L24	; newer than generated_package_lists *
 # /var/tmp/portage/www-client/chromium-134.0.6998.88/work/chromium-134.0.6998.88/third_party/libjpeg_turbo/jconfig.h		L7	; newer than generated_package_lists
@@ -61,8 +61,8 @@ EAPI=8
 # /var/tmp/portage/www-client/chromium-134.0.6998.88/work/chromium-134.0.6998.88/third_party/opus/README.chromium		L3	; newer than generated_package_lists, live
 #   https://gitlab.xiph.org/xiph/opus/-/commit/8cf872a186b96085b1bb3a547afd598354ebeb87							; see tag
 # /var/tmp/portage/www-client/chromium-134.0.6998.88/work/chromium-134.0.6998.88/third_party/zstd/README.chromium			; live version *
-#   https://github.com/facebook/zstd/commit/b0a179d469680276adbd4007435989a6b7fd8b4f							; check if commit part of tag
-#   https://github.com/facebook/zstd/blob/b0a179d469680276adbd4007435989a6b7fd8b4f/lib/zstd.h#L107					; version
+#   https://github.com/facebook/zstd/commit/ea0aa030cdf31f7897c5bfc153f0d36e92768095							; check if commit part of tag
+#   https://github.com/facebook/zstd/blob/ea0aa030cdf31f7897c5bfc153f0d36e92768095/lib/zstd.h#L107					; version
 # https://github.com/chromium/chromium/blob/134.0.6998.88/DEPS#L512									; live
 
 CFI_CAST=0 # Global variable
@@ -196,8 +196,8 @@ TEST_FONT="f26f29c9d3bfae588207bbc9762de8d142e58935c62a86f67332819b15203b35"
 RUST_NEEDS_LLVM="yes please"
 RUST_OPTIONAL="yes" # Not actually optional, but we don't need system Rust (or LLVM) with USE=bundled-toolchain
 RUSTC_VER="" # Global variable
-RUST_MAX_VER="1.84.0" # Inclusive
-RUST_MIN_VER="1.84.0" # Corresponds to llvm-19.1
+RUST_MAX_VER="1.86.0" # Inclusive
+RUST_MIN_VER="1.86.0" # Corresponds to llvm-19.1
 RUST_PV="${RUST_MIN_VER}"
 SHADOW_CALL_STACK=0 # Global variable
 S_CROMITE="${WORKDIR}/cromite-${CROMITE_COMMIT}"
@@ -601,7 +601,7 @@ ${PATENT_STATUS[@]}
 -system-libxslt -system-openh264 -system-opus -system-re2 -system-toolchain
 -system-zlib +system-zstd systemd test +wayland +webassembly
 -widevine +X
-ebuild_revision_1
+ebuild_revision_2
 "
 
 # What is considered a proprietary codec can be found at:
@@ -1061,12 +1061,12 @@ COMMON_SNAPSHOT_DEPEND="
 	media-libs/mesa:=
 	patent_status_nonfree? (
 		system-openh264? (
-			>=media-libs/openh264-2.4.1[${MULTILIB_USEDEP}]
+			>=media-libs/openh264-2.5.0[${MULTILIB_USEDEP}]
 			media-libs/openh264:=
 		)
 	)
 	system-dav1d? (
-		>=media-libs/dav1d-1.5.0[${MULTILIB_USEDEP},8bit]
+		>=media-libs/dav1d-1.5.1[${MULTILIB_USEDEP},8bit]
 		media-libs/dav1d:=
 	)
 	system-fontconfig? (
@@ -1078,7 +1078,7 @@ COMMON_SNAPSHOT_DEPEND="
 		media-libs/freetype:=
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-10.1.0:0[${MULTILIB_USEDEP},icu(-)]
+		>=media-libs/harfbuzz-10.2.0:0[${MULTILIB_USEDEP},icu(-)]
 		media-libs/harfbuzz:=
 	)
 	system-icu? (
@@ -1307,7 +1307,7 @@ BDEPEND+="
 	>=app-arch/gzip-1.7
 	>=dev-util/gperf-3.0.3
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	>=net-libs/nodejs-20.11.0:${NODE_VERSION}[inspector]
+	>=net-libs/nodejs-22.11.0:${NODE_VERSION}[inspector]
 	>=sys-devel/bison-2.4.3
 	app-alternatives/lex
 	app-eselect/eselect-nodejs
