@@ -56,6 +56,7 @@
     "webpack-dev-server": "^4.7.4"
   },
   "dependencies": {
+    "@babel/runtime": "^7.26.10",
     "@plotly/dash-component-plugins": "^1.2.0",
     "classnames": "^2.2.6",
     "fast-isnumeric": "^1.1.3",
