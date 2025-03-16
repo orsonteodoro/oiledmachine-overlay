@@ -10,8 +10,8 @@ inherit dhms
 
 KEYWORDS="~amd64 ~arm64 ~ppc64"
 S="${WORKDIR}"
-# https://gsdview.appspot.com/chromium-browser-official/?marker=chromium-131.0.6778.0.tar.x%40
-# https://commondatastorage.googleapis.com/chromium-browser-official/chromium-131.0.6778.264.tar.xz
+# https://gsdview.appspot.com/chromium-browser-official/?marker=chromium-134.0.6998.0.tar.x%40
+# https://commondatastorage.googleapis.com/chromium-browser-official/chromium-134.0.6998.264.tar.xz
 SRC_URI="
 	https://gsdview.appspot.com/chromium-browser-official/chromium-${PV}.tar.xz
 "
