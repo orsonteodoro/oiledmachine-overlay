@@ -89,7 +89,7 @@
     "node-require-function": "^1.2.0",
     "path-browserify": "^1.0.1",
     "pixi-spine": "4.0.4",
-    "pixi.js-legacy": "7.3.0",
+    "pixi.js-legacy": "7.4.2",
     "posthog-js": "^1.57.2",
     "prop-types": "^15.5.10",
     "protobufjs": "^6.11.4",
@@ -130,13 +130,13 @@
   },
   "overrides": {
     "pixi-spine": {
-      "@pixi/assets": "7.3.0",
-      "@pixi/core": "7.3.0",
-      "@pixi/display": "7.3.0",
-      "@pixi/graphics": "7.3.0",
-      "@pixi/mesh": "7.3.0",
-      "@pixi/mesh-extras": "7.3.0",
-      "@pixi/sprite": "7.3.0"
+      "@pixi/assets": "7.4.2",
+      "@pixi/core": "7.4.2",
+      "@pixi/display": "7.4.2",
+      "@pixi/graphics": "7.4.2",
+      "@pixi/mesh": "7.4.2",
+      "@pixi/mesh-extras": "7.4.2",
+      "@pixi/sprite": "7.4.2"
     }
   },
   "scripts": {

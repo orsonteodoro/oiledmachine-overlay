@@ -42,13 +42,13 @@ else
 	ELECTRON_APP_ELECTRON_PV="18.2.2" # Chromium 100.0.4896.143, node 16.13.2 ; It works.
 fi
 # For ELECTRON_APP_ELECTRON_PV, see \
-# https://github.com/4ian/GDevelop/blob/v5.5.221/newIDE/electron-app/package-lock.json#L1440 \
+# https://github.com/4ian/GDevelop/blob/v5.5.226/newIDE/electron-app/package-lock.json#L1440 \
 # and \
-# strings /var/tmp/portage/dev-games/gdevelop-5.5.221/work/GDevelop-5.5.221/newIDE/electron-app/dist/linux-unpacked/* | grep -E "Chrome/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
+# strings /var/tmp/portage/dev-games/gdevelop-5.5.226/work/GDevelop-5.5.226/newIDE/electron-app/dist/linux-unpacked/* | grep -E "Chrome/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
 ELECTRON_APP_REACT_PV="16.14.0" #  \
 # The last supported for react 16.14.0 is node 14.0. \
 # https://github.com/facebook/react/blob/v16.14.0/package.json#L100 \
-# https://github.com/4ian/GDevelop/blob/v5.5.221/newIDE/app/package-lock.json#L27009
+# https://github.com/4ian/GDevelop/blob/v5.5.226/newIDE/app/package-lock.json#L27009
 ELECTRON_APP_REACT_PV="ignore" # The lock file says >=0.10.0 but it is wrong.  We force it because CI tests passed.
 EMBUILD_DIR="${WORKDIR}/build"
 EMSCRIPTEN_PV="1.39.20"
@@ -178,9 +178,9 @@ REQUIRED_USE+="
 	X
 "
 # Dependency lists:
-# https://github.com/4ian/GDevelop/blob/v5.5.221/.circleci/config.yml#L85
-# https://github.com/4ian/GDevelop/blob/v5.5.221/.travis.yml
-# https://github.com/4ian/GDevelop/blob/v5.5.221/ExtLibs/installDeps.sh
+# https://github.com/4ian/GDevelop/blob/v5.5.226/.circleci/config.yml#L85
+# https://github.com/4ian/GDevelop/blob/v5.5.226/.travis.yml
+# https://github.com/4ian/GDevelop/blob/v5.5.226/ExtLibs/installDeps.sh
 # https://app.travis-ci.com/github/4ian/GDevelop (raw log)
 # U 20.04.6 LTS
 # Dependencies for the native build are not installed in CI
@@ -950,7 +950,7 @@ src_configure() { :; }
 
 build_gdevelop_js() {
 einfo "Compiling ${MY_PN}.js"
-# In https://github.com/4ian/GDevelop/blob/v5.5.221/GDevelop.js/Gruntfile.js#L88
+# In https://github.com/4ian/GDevelop/blob/v5.5.226/GDevelop.js/Gruntfile.js#L88
 	pushd "${WORKDIR}/${MY_PN}-${MY_PV}/${MY_PN}.js" >/dev/null 2>&1 || die
 		enpm run build -- --force --dev
 	popd >/dev/null 2>&1 || die
