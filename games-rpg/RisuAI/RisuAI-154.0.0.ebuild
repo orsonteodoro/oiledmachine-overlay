@@ -647,8 +647,8 @@ NPM_INSTALL_ARGS=(
 	"--legacy-peer-deps"
 )
 NPM_SLOT="3"
-RUST_MAX_VER="1.78.0" # Inclusive
-RUST_MIN_VER="1.78.0" # llvm-18.0, required by @swc/core
+RUST_MAX_VER="1.81.0" # Inclusive
+RUST_MIN_VER="1.81.0" # llvm-18.0, required by @swc/core
 RUST_PV="${RUST_MIN_VER}"
 SHARP_PV="0.33.5"
 TARBALL="${P}.tar.gz"
@@ -1013,4 +1013,5 @@ einfo
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (139.2.0, 20241125)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (146.1.0, 20250120)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (149.1.0, 20250209)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (154.1.0, 20250209) with rust 1.81.0
 # ollama support - passed
