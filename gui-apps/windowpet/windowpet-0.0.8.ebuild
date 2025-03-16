@@ -622,7 +622,7 @@ LICENSE="
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 tray wayland +X
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	|| (
