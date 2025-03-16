@@ -598,7 +598,9 @@ ewarn "QA:  node_modules/micromatch/node_modules/braces must be manually removed
 	# storybook (7.4.6) -> @storybook/core-server (7.4.6) -> ip (CVE-2024-29415; DoS, DT, ID; High).  The fix relies on bumping storybook to >= 8.1.6 which is Node >= 18.  Node 16 is a hard dependency.
 				pushd "${S}/newIDE/app" || die
 					sed -i -e "s|\"@grpc/grpc-js\": \"^1.0.0\"|\"@grpc/grpc-js\": \"^1.8.22\"|g" "package-lock.json" || die
-					sed -i -e "s|\"axios\": \"^0.21.2\"|\"axios\": \"^0.28.0\"|g" "package-lock.json" || die
+					sed -i -e "s|\"axios\": \"^0.21.2\"|\"axios\": \"^1.8.2\"|g" "package-lock.json" || die
+					sed -i -e "s|\"axios\": \"^0.28.0\"|\"axios\": \"^1.8.2\"|g" "package-lock.json" || die
+					sed -i -e "s|\"axios\": \">= 0.17.0\"|\"axios\": \"^1.8.2\"|g" "package-lock.json" || die
 					sed -i -e "s|\"cookie\": \"0.6.0\"|\"cookie\": \"0.7.0\"|g" "package-lock.json" || die
 					sed -i -e "s|\"body-parser\": \"1.20.2\"|\"body-parser\": \"1.20.3\"|g" "package-lock.json" || die
 					sed -i -e "s|\"d3-color\": \"1 - 2\"|\"d3-color\": \"^3.1.0\"|g" "package-lock.json" || die
@@ -670,10 +672,28 @@ ewarn "QA:  node_modules/micromatch/node_modules/braces must be manually removed
 					sed -i -e "s|\"yargs-parser\": \"^7.0.0\"|\"yargs-parser\": \"^13.1.2\"|g" "package-lock.json" || die
 					sed -i -e "s|\"workbox-webpack-plugin\": \"^6.4.1\"|\"workbox-webpack-plugin\": \"7.1.0\"|g" "package-lock.json" || die
 					sed -i -e "s|\"workbox-build\": \"^4.3.1\"|\"workbox-build\": \"7.1.1\"|g" "package-lock.json" || die
+
+					sed -i -e "s|\"@babel/runtime\": \"^7.0.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+					sed -i -e "s|\"@babel/runtime\": \"^7.1.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+					sed -i -e "s|\"@babel/runtime\": \"^7.2.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+					sed -i -e "s|\"@babel/runtime\": \"^7.3.1\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+					sed -i -e "s|\"@babel/runtime\": \"^7.4.4\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+					sed -i -e "s|\"@babel/runtime\": \"^7.5.5\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+					sed -i -e "s|\"@babel/runtime\": \"^7.7.6\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+					sed -i -e "s|\"@babel/runtime\": \"^7.8.3\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+					sed -i -e "s|\"@babel/runtime\": \"^7.8.4\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+					sed -i -e "s|\"@babel/runtime\": \"^7.8.7\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+					sed -i -e "s|\"@babel/runtime\": \"^7.11.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+					sed -i -e "s|\"@babel/runtime\": \"^7.12.5\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+					sed -i -e "s|\"@babel/runtime\": \"^7.13.10\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+					sed -i -e "s|\"@babel/runtime\": \"^7.16.3\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+					sed -i -e "s|\"@babel/runtime\": \"^7.17.8\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+					sed -i -e "s|\"@babel/runtime\": \"^7.20.7\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
 				popd || die
 
 				pushd "${S}/newIDE/electron-app/app" || die
-					sed -i -e "s|\"axios\": \"^0.21.2\"|\"axios\": \"^0.28.0\"|g" "package-lock.json" || die
+					sed -i -e "s|\"axios\": \"^0.21.2\"|\"axios\": \"^1.8.2\"|g" "package-lock.json" || die
+					sed -i -e "s|\"axios\": \"^0.28.0\"|\"axios\": \"^1.8.2\"|g" "package-lock.json" || die
 					sed -i -e "s|\"bl\": \"^1.0.0\"|\"bl\": \"^1.0.0\"|g" "package-lock.json" || die
 					sed -i -e "s|\"braces\": \"^1.8.2\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die
 					sed -i -e "s|\"braces\": \"^2.3.1\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die
@@ -770,9 +790,11 @@ ewarn "QA:  Manually remove ip references in ${S}/newIDE/app/package-lock.json"
 					"cryptiles"
 					"ip"					# DoS, DT, ID		# CVE-2024-29415, CVE-2023-42282, GHSA-2p57-rm9w-gvfp					# Backported patch from storybook pull request #27529
 				)
-				enpm uninstall ${pkgs[@]} ${NPM_UNINSTALL_ARGS[@]}
+				# --prefer-offline is bugged
+				enpm uninstall ${pkgs[@]} --legacy-peer-deps #${NPM_UNINSTALL_ARGS[@]}
 				pkgs=(
 					"@babel/traverse@7.23.2"		# DoS, DT, ID		# CVE-2023-45133
+					"@babel/runtime@7.26.10"		# DoS			# CVE-2025-27789
 					"@hapi/cryptiles@5.1.0"			# DoS, DT, ID													# [11]
 					"braces@3.0.3"				# DoS			# CVE-2024-4068, CVE-2024-4067
 					"body-parser@1.20.3"			# DoS			# CVE-2024-45590
@@ -809,7 +831,7 @@ ewarn "QA:  Manually remove ip references in ${S}/newIDE/app/package-lock.json"
 				enpm install ${pkgs[@]} -D ${NPM_INSTALL_ARGS[@]}
 				pkgs=(
 					"@grpc/grpc-js@1.8.22"			# DoS			# CVE-2024-37168
-					"axios@0.28.0"				# DoS, ID		# CVE-2021-3749, CVE-2023-45857, CVE-2020-28168
+					"axios@1.8.2"				# DoS, ID		# CVE-2021-3749, CVE-2023-45857, CVE-2020-28168, CVE-2025-27152
 					"d3-color@3.1.0"			# DoS			# GHSA-36jr-mh4h-2g58
 					"firebase@10.9.0"			# DoS, DT, ID		# CVE-2024-11023
 					"follow-redirects@1.15.6"		# DoS, DT, ID		# CVE-2022-0155, CVE-2024-28849, CVE-2023-26159, CVE-2022-0536
@@ -844,7 +866,7 @@ ewarn "QA:  Manually remove ip references in ${S}/newIDE/app/package-lock.json"
 				enpm install ${pkgs[@]} -D ${NPM_INSTALL_ARGS[@]}
 				pkgs=(
 					"async@2.6.4"				# DoS, DT, ID		# CVE-2021-43138
-					"axios@0.28.0"				# DoS, ID		# CVE-2021-3749, CVE-2020-28168
+					"axios@1.8.2"				# DoS, ID		# CVE-2021-3749, CVE-2020-28168, CVE-2025-27152
 					"braces@3.0.3"				# DoS			# CVE-2018-1109, GHSA-g95f-p29q-9xw4
 					"debug@2.6.9"				# DoS			# CVE-2017-20165, CVE-2017-16137
 					"decode-uri-component@0.2.1"		# DoS			# CVE-2022-38900
