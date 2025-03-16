@@ -224,6 +224,7 @@
     "undici": "^6.21.1"
   },
   "dependencies": {
+    "@babel/runtime": "^7.26.10",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-popover": "^1.0.7",
     "@radix-ui/react-scroll-area": "^1.2.0",

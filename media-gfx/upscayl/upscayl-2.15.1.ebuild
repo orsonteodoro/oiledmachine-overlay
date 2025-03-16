@@ -156,8 +156,18 @@ npm_update_lock_audit_post() {
 	# --prefer-offline is broken
 	enpm install -D "electron@${ELECTRON_APP_ELECTRON_PV}"
 
-	sed -i -e "s|\"undici\": \"6.19.7\"|\"undici\": \"6.21.1\"|g" "package-lock.json" || die # CVE-2025-22150; DT, ID; Medium
-	enpm install -D "undici@6.21.1" --prefer-offline
+	patch_lockfile() {
+		sed -i -e "s|\"@babel/runtime\": \"^7.5.5\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die	# CVE-2025-27789; DoS; Medium
+		sed -i -e "s|\"@babel/runtime\": \"^7.8.7\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die	# CVE-2025-27789; DoS; Medium
+		sed -i -e "s|\"@babel/runtime\": \"^7.12.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die	# CVE-2025-27789; DoS; Medium
+		sed -i -e "s|\"@babel/runtime\": \"^7.12.5\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die	# CVE-2025-27789; DoS; Medium
+		sed -i -e "s|\"@babel/runtime\": \"^7.18.3\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die	# CVE-2025-27789; DoS; Medium
+		sed -i -e "s|\"undici\": \"6.19.7\"|\"undici\": \"6.21.1\"|g" "package-lock.json" || die			# CVE-2025-22150; DT, ID; Medium
+	}
+	patch_lockfile
+	enpm install -D "undici@6.21.1"
+	enpm install -P "@babel/runtime@7.26.10" --prefer-offline
+	patch_lockfile
 }
 
 src_compile() {
