@@ -571,6 +571,7 @@ einfo "Building ${MY_PN}.js"
 einfo "Fixing vulnerabilities"
 			patch_edits() {
 	# 4ian/webidl-tools (vendored) -> cheerio -> requests (CVE-2023-28155; DT, ID; Medium).  It can't be bumped because Node 16 is a hard dependency.  Node 16 is EOL.
+ewarn "QA:  ip must be manually removed in ${S}/newIDE/app/package-lock.json"
 ewarn "QA:  node_modules/cheerio/node_modules/tough-cookie must be manually removed in ${S}/GDevelop.js/package-lock.json."
 ewarn "QA:  node_modules/micromatch/node_modules/braces must be manually removed in ${S}/GDevelop.js/package-lock.json."
 				pushd "${S}/GDevelop.js" || die
