@@ -1,7 +1,7 @@
 #!/bin/bash
 
 main() {
-	# Commit from https://github.com/chromium/chromium/blob/134.0.6998.35/DEPS#L506
+	# Commit from https://github.com/chromium/chromium/blob/134.0.6998.88/DEPS#L506
 	GN_COMMIT=${GN_COMMIT:-"ed1abc107815210dc66ec439542bee2f6cbabc00"}
 	echo "GN_COMMIT: ${GN_COMMIT}"
 
