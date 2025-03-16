@@ -785,8 +785,23 @@ ewarn "Missing security updated Cargo.lock"
 npm_update_lock_install_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 ewarn "QA:  Remove node_modules/esbuild in ${S}/package-lock.json"
-		sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
-		enpm install "esbuild@^0.25.0" -D # GHSA-67mh-4wv8-2f99; ID		# --prefer-offline is broken
+		patch_lockfile() {
+			sed -i -e "s|\"@babel/runtime\": \"^7.5.5\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.6.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.7.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.8.7\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.12.5\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.20.13\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.23.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.23.8\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.23.9\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
+		}
+
+		patch_lockfile
+		enpm install "@babel/runtime@7.26.10" -P		# CVE-2025-27789; DoS
+		enpm install "esbuild@^0.25.0" -D			# GHSA-67mh-4wv8-2f99; ID		# --prefer-offline is broken
+		patch_lockfile
 	fi
 }
 
