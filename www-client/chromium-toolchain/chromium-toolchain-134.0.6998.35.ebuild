@@ -289,6 +289,7 @@ _method3() {
 }
 
 src_install() {
+	keepdir "/usr/share/chromium/toolchain"
 	addwrite "/usr/share/chromium/toolchain"
 	_method1
 }
