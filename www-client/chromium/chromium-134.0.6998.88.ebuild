@@ -68,13 +68,13 @@ EAPI=8
 CFI_CAST=0 # Global variable
 CFI_ICALL=0 # Global variable
 CFI_VCALL=0 # Global variable
-CHROMIUM_EBUILD_MAINTAINER=1 # See also GEN_ABOUT_CREDITS
+CHROMIUM_EBUILD_MAINTAINER=0 # See also GEN_ABOUT_CREDITS
 
 #
 # Set to 1 below to generate an about_credits.html including bundled internal
 # dependencies.
 #
-GEN_ABOUT_CREDITS=1
+GEN_ABOUT_CREDITS=0
 #
 
 # One of the major sources of lag comes from dependencies
@@ -145,8 +145,8 @@ GTK4_PV="4.8.3"
 LIBVA_PV="2.17.0"
 # SHA512 about_credits.html fingerprint: \
 LICENSE_FINGERPRINT="\
-df359517f82d909f7525d5b76f9dc06ee267a9a45d33970a6f4b93db2738625d\
-b04a0ce23544c94147c65c6c696e3b1fae837fb37b67f06565649c3f858f7632\
+3b75594581b07f7494691ff5e19bd35ebf2e88ad6c4700d61b4941d1bc864aa1\
+3d18117d17306e46007a463bf26fb344ea1db94fbbadab7e53172a6cb79c9768\
 "
 LLVM_COMPAT=( 20 19 ) # [inclusive, inclusive] high to low ; LLVM_OFFICIAL_SLOT+1 or LLVM_OFFICIAL_SLOT-1 major version allowed.
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}" # Max is the same slot listed in https://github.com/chromium/chromium/blob/134.0.6998.88/tools/clang/scripts/update.py#L42
@@ -2296,7 +2296,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	fi
 
 	PATCHES+=(
-		"${FILESDIR}/extra-patches/${PN}-133.0.6943.53-custom-optimization-level.patch"
+		"${FILESDIR}/extra-patches/${PN}-134.0.6998.88-custom-optimization-level.patch"
 	)
 	if ! use official ; then
 	# This section contains significant changes.  The above sections contains minor changes.
