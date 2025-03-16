@@ -486,7 +486,7 @@ LICENSE="
 RESTRICT="mirror"
 IUSE+="
 ${!THEIA_PLUGINS[@]}
-git ollama ebuild_revision_11
+git ollama ebuild_revision_12
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -640,6 +640,7 @@ einfo "Fixing vulnerabilities"
 	enpm add "@babel/core@^7.26.10" -P -w "dev-packages/application-manager"									# CVE-2025-27789; DoS; Medium
 	enpm add "@babel/helpers@^7.26.10" -P -w "dev-packages/application-manager"									# CVE-2025-27789; DoS; Medium
 	enpm add "@babel/runtime@^7.26.10" -P -w "packages/core"											# CVE-2025-27789; DoS; Medium
+	enpm add "@babel/runtime@^7.26.10" -P														# CVE-2025-27789; DoS; Medium
 
 	patch_lockfile
 }
