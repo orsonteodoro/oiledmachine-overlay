@@ -68,13 +68,13 @@ EAPI=8
 CFI_CAST=0 # Global variable
 CFI_ICALL=0 # Global variable
 CFI_VCALL=0 # Global variable
-CHROMIUM_EBUILD_MAINTAINER=0 # See also GEN_ABOUT_CREDITS
+CHROMIUM_EBUILD_MAINTAINER=1 # See also GEN_ABOUT_CREDITS
 
 #
 # Set to 1 below to generate an about_credits.html including bundled internal
 # dependencies.
 #
-GEN_ABOUT_CREDITS=0
+GEN_ABOUT_CREDITS=1
 #
 
 # One of the major sources of lag comes from dependencies
@@ -1868,7 +1868,7 @@ pkg_setup() {
 	# The emerge package system will over prune when it should not when it
 	# uses the mv merge technique with sandbox disabled.
 
-	local tc_count_expected=4692
+	local tc_count_expected=4644
 	local tc_count_actual=$(cat "/usr/share/chromium/toolchain/file-count")
 	if (( ${tc_count_actual} != ${tc_count_expected} )) ; then
 ewarn
@@ -1880,7 +1880,7 @@ ewarn "Expected file count:  ${tc_count_expected}"
 ewarn
 	fi
 
-	local sources_count_expected=926748
+	local sources_count_expected=938133
 	local sources_count_actual=$(cat "/usr/share/chromium/sources/file-count")
 	if (( ${sources_count_actual} != ${sources_count_expected} )) ; then
 ewarn

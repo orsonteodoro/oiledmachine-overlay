@@ -297,6 +297,7 @@ _method1() {
 }
 
 src_install() {
+	keepdir "/usr/share/chromium/sources"
 	addwrite "/usr/share/chromium/sources"
 	_method1
 }
