@@ -1,0 +1,86 @@
+diff '--color=auto' -urp webkitgtk-2.48.0.orig/Source/JavaScriptCore/CMakeLists.txt webkitgtk-2.48.0/Source/JavaScriptCore/CMakeLists.txt
+--- webkitgtk-2.48.0.orig/Source/JavaScriptCore/CMakeLists.txt	2025-03-16 20:44:02.854106357 -0700
++++ webkitgtk-2.48.0/Source/JavaScriptCore/CMakeLists.txt	2025-03-16 20:44:25.785215214 -0700
+@@ -1467,8 +1467,8 @@ endif ()
+ 
+ if (COMPILER_IS_GCC_OR_CLANG)
+     # Prevent segfaults with -Ofast
+-    WEBKIT_ADD_TARGET_CXX_FLAGS(LowLevelInterpreterLib -O3 -fno-strict-aliasing -fno-fast-math)
+-    WEBKIT_ADD_TARGET_CXX_FLAGS(JavaScriptCore -O3 -fno-strict-aliasing -fno-fast-math)
++    WEBKIT_ADD_TARGET_CXX_FLAGS(LowLevelInterpreterLib -O$ENV{OSHIT_OPT_LEVEL_JSC} -fno-strict-aliasing -fno-fast-math)
++    WEBKIT_ADD_TARGET_CXX_FLAGS(JavaScriptCore -O$ENV{OSHIT_OPT_LEVEL_JSC} -fno-strict-aliasing -fno-fast-math)
+ 
+     # Avoid using fused multiply-add instructions since this could give different results
+     # for e.g. parseInt depending on the platform and compilation flags.
+Only in webkitgtk-2.48.0/Source/JavaScriptCore: CMakeLists.txt.orig
+diff '--color=auto' -urp webkitgtk-2.48.0.orig/Source/ThirdParty/ANGLE/CMakeLists.txt webkitgtk-2.48.0/Source/ThirdParty/ANGLE/CMakeLists.txt
+--- webkitgtk-2.48.0.orig/Source/ThirdParty/ANGLE/CMakeLists.txt	2025-02-25 00:25:37.899307700 -0800
++++ webkitgtk-2.48.0/Source/ThirdParty/ANGLE/CMakeLists.txt	2025-03-16 20:44:25.785521812 -0700
+@@ -244,6 +244,12 @@ if (ENABLE_WEBGL)
+     add_dependencies(GLESv2Framework ANGLE-webgl-headers)
+ endif ()
+ 
++WEBKIT_ADD_TARGET_CXX_FLAGS(ANGLE -O$ENV{OSHIT_OPT_LEVEL_ANGLE} $ENV{GCC_FLAGS})
++
++set_source_files_properties(src/common/third_party/xxhash/xxhash.c PROPERTIES
++    COMPILE_FLAGS "-O$ENV{OSHIT_OPT_LEVEL_XXHASH} $ENV{GCC_FLAGS}"
++)
++
+ if (COMPILER_IS_GCC_OR_CLANG)
+     foreach (angle_target ANGLE EGL GLESv2)
+         if (TARGET ${angle_target})
+diff '--color=auto' -urp webkitgtk-2.48.0.orig/Source/ThirdParty/skia/CMakeLists.txt webkitgtk-2.48.0/Source/ThirdParty/skia/CMakeLists.txt
+--- webkitgtk-2.48.0.orig/Source/ThirdParty/skia/CMakeLists.txt	2025-02-25 00:25:39.803353300 -0800
++++ webkitgtk-2.48.0/Source/ThirdParty/skia/CMakeLists.txt	2025-03-16 20:44:25.793541849 -0700
+@@ -950,6 +950,7 @@ target_link_libraries(Skia PRIVATE
+ )
+ 
+ WEBKIT_ADD_TARGET_CXX_FLAGS(Skia
++    -O$ENV{OSHIT_OPT_LEVEL_SKIA} $ENV{GCC_FLAGS}
+     -ffp-contract=off
+     -fstrict-aliasing
+ 
+Only in webkitgtk-2.48.0/Source/ThirdParty/skia: CMakeLists.txt.orig
+diff '--color=auto' -urp webkitgtk-2.48.0.orig/Source/WTF/wtf/CMakeLists.txt webkitgtk-2.48.0/Source/WTF/wtf/CMakeLists.txt
+--- webkitgtk-2.48.0.orig/Source/WTF/wtf/CMakeLists.txt	2025-02-25 00:25:40.539371000 -0800
++++ webkitgtk-2.48.0/Source/WTF/wtf/CMakeLists.txt	2025-03-16 20:44:25.793787203 -0700
+@@ -776,6 +776,10 @@ WEBKIT_COPY_FILES(WTF_CopyHeaders
+ 
+ WEBKIT_FRAMEWORK(WTF)
+ 
++set_source_files_properties(SHA1.cpp PROPERTIES
++    COMPILE_FLAGS "-O$ENV{OSHIT_OPT_LEVEL_SHA1} $ENV{GCC_FLAGS}"
++)
++
+ if (MSVC)
+     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /SUBSYSTEM:WINDOWS")
+     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS")
+Only in webkitgtk-2.48.0/Source/WTF/wtf: CMakeLists.txt.orig
+diff '--color=auto' -urp webkitgtk-2.48.0.orig/Source/WebCore/CMakeLists.txt webkitgtk-2.48.0/Source/WebCore/CMakeLists.txt
+--- webkitgtk-2.48.0.orig/Source/WebCore/CMakeLists.txt	2025-03-16 20:44:02.865048853 -0700
++++ webkitgtk-2.48.0/Source/WebCore/CMakeLists.txt	2025-03-16 20:44:25.794372290 -0700
+@@ -2977,6 +2977,8 @@ if (APPLE)
+     set_target_properties(WebCore PROPERTIES LINK_FLAGS "-weak-lxslt -sub_library libobjc -umbrella WebKit -allowable_client WebCoreTestSupport -allowable_client WebKit2 -allowable_client WebKitLegacy")
+ endif ()
+ 
++WEBKIT_ADD_TARGET_CXX_FLAGS(WebCore -O$ENV{OSHIT_OPT_LEVEL_WEBCORE})
++
+ # Prevent tables from collapsing too much with -Ofast and possible ofast.
+ # It also prevents element alignment errors with -Ofast.
+ if (COMPILER_IS_CLANG)
+Only in webkitgtk-2.48.0/Source/WebCore: CMakeLists.txt.orig
+diff '--color=auto' -urp webkitgtk-2.48.0.orig/Source/bmalloc/CMakeLists.txt webkitgtk-2.48.0/Source/bmalloc/CMakeLists.txt
+--- webkitgtk-2.48.0.orig/Source/bmalloc/CMakeLists.txt	2025-02-25 00:25:42.327414000 -0800
++++ webkitgtk-2.48.0/Source/bmalloc/CMakeLists.txt	2025-03-16 20:46:01.810064492 -0700
+@@ -717,6 +717,9 @@ if (MSVC)
+ endif ()
+ 
+ WEBKIT_FRAMEWORK_DECLARE(bmalloc)
++WEBKIT_ADD_TARGET_CXX_FLAGS(bmalloc
++    -findirect-inlining
++)
+ WEBKIT_INCLUDE_CONFIG_FILES_IF_EXISTS()
+ 
+ WEBKIT_COPY_FILES(bmalloc_CopyHeaders
+Only in webkitgtk-2.48.0/Source/bmalloc: CMakeLists.txt.orig
+Only in webkitgtk-2.48.0/Source/bmalloc: CMakeLists.txt.rej

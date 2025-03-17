@@ -221,6 +221,9 @@
     <flag name="examples">
       Install the MiniBrowser example application.
     </flag>
+    <flag name="flite">
+      Enable FLITE speech synthesis support.
+    </flag>
     <flag name="gamepad">
       Enable gamepad input support via <pkg>dev-libs/libmanette</pkg>.
     </flag>

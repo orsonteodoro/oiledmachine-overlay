@@ -1,0 +1,97 @@
+diff '--color=auto' -urp webkitgtk-2.48.0.orig/Source/cmake/OptionsCommon.cmake webkitgtk-2.48.0/Source/cmake/OptionsCommon.cmake
+--- webkitgtk-2.48.0.orig/Source/cmake/OptionsCommon.cmake	2025-02-25 00:25:42.367415000 -0800
++++ webkitgtk-2.48.0/Source/cmake/OptionsCommon.cmake	2025-03-16 20:52:32.787152264 -0700
+@@ -37,12 +37,52 @@ endif ()
+ # Use ld.lld when building with LTO, or for debug builds, if available.
+ # FIXME: With CMake 3.22+ full conditional syntax can be used in
+ #        cmake_dependent_option()
+-if (LTO_MODE OR DEVELOPER_MODE)
++if (DEVELOPER_MODE)
+     set(TRY_USE_LD_LLD ON)
+ endif ()
+-CMAKE_DEPENDENT_OPTION(USE_LD_LLD "Use LLD linker" ON
+-                       "TRY_USE_LD_LLD;NOT WIN32" OFF)
++#CMAKE_DEPENDENT_OPTION(USE_LD_BFD "Use BFD linker" OFF
++#                       "TRY_USE_LD_BFD;NOT WIN32" OFF)
++#CMAKE_DEPENDENT_OPTION(USE_LD_GOLD "Use gold linker" OFF
++#                       "TRY_USE_LD_GOLD;NOT WIN32" OFF)
++#CMAKE_DEPENDENT_OPTION(USE_LD_LLD "Use LLD linker" OFF
++#                       "TRY_USE_LD_LLD;NOT WIN32" OFF)
++#CMAKE_DEPENDENT_OPTION(USE_LD_MOLD "Use mold linker" OFF
++#                       "TRY_USE_LD_MOLD;NOT WIN32" OFF)
++if (USE_LD_BFD)
++    message(STATUS "Checking USE_LD_BFD")
++    execute_process(COMMAND ${CMAKE_C_COMPILER} -fuse-ld=bfd -Wl,--version ERROR_QUIET OUTPUT_VARIABLE LD_VERSION)
++    if (LD_VERSION MATCHES "^GNU ld ")
++        string(APPEND CMAKE_EXE_LINKER_FLAGS " -fuse-ld=bfd")
++        string(APPEND CMAKE_SHARED_LINKER_FLAGS " -fuse-ld=bfd")
++        string(APPEND CMAKE_MODULE_LINKER_FLAGS " -fuse-ld=bfd")
++    else()
++        set(USE_LD_BFD OFF)
++    endif ()
++endif()
++if (USE_LD_GOLD)
++    message(STATUS "Checking USE_LD_GOLD")
++    execute_process(COMMAND ${CMAKE_C_COMPILER} -fuse-ld=gold -Wl,--version ERROR_QUIET OUTPUT_VARIABLE LD_VERSION)
++    if (LD_VERSION MATCHES "^GNU gold ")
++        string(APPEND CMAKE_EXE_LINKER_FLAGS " -fuse-ld=gold")
++        string(APPEND CMAKE_SHARED_LINKER_FLAGS " -fuse-ld=gold")
++        string(APPEND CMAKE_MODULE_LINKER_FLAGS " -fuse-ld=gold")
++    else()
++        set(USE_LD_GOLD OFF)
++    endif ()
++endif()
++if (USE_LD_MOLD)
++    message(STATUS "Checking USE_LD_MOLD")
++    execute_process(COMMAND ${CMAKE_C_COMPILER} -fuse-ld=mold -Wl,--version ERROR_QUIET OUTPUT_VARIABLE LD_VERSION)
++    if (LD_VERSION MATCHES "^mold ")
++        string(APPEND CMAKE_EXE_LINKER_FLAGS " -fuse-ld=mold")
++        string(APPEND CMAKE_SHARED_LINKER_FLAGS " -fuse-ld=mold")
++        string(APPEND CMAKE_MODULE_LINKER_FLAGS " -fuse-ld=mold")
++    else()
++        set(USE_LD_MOLD OFF)
++    endif ()
++endif()
+ if (USE_LD_LLD)
++    message(STATUS "Checking USE_LD_LLD")
+     execute_process(COMMAND ${CMAKE_C_COMPILER} -fuse-ld=lld -Wl,--version ERROR_QUIET OUTPUT_VARIABLE LD_VERSION)
+     if (LD_VERSION MATCHES "(^|[ \t])LLD ")
+         string(APPEND CMAKE_EXE_LINKER_FLAGS " -fuse-ld=lld")
+@@ -53,6 +93,8 @@ if (USE_LD_LLD)
+     endif ()
+ endif ()
+ 
++
++
+ # Determine which linker is being used with the chosen linker flags.
+ separate_arguments(LD_VERSION_COMMAND UNIX_COMMAND
+     "${CMAKE_C_COMPILER} ${CMAKE_EXE_LINKER_FLAGS} -Wl,--version"
+Only in webkitgtk-2.48.0/Source/cmake: OptionsCommon.cmake.orig
+diff '--color=auto' -urp webkitgtk-2.48.0.orig/Source/cmake/WebKitCompilerFlags.cmake webkitgtk-2.48.0/Source/cmake/WebKitCompilerFlags.cmake
+--- webkitgtk-2.48.0.orig/Source/cmake/WebKitCompilerFlags.cmake	2025-02-25 00:25:42.367415000 -0800
++++ webkitgtk-2.48.0/Source/cmake/WebKitCompilerFlags.cmake	2025-03-16 20:54:52.559126371 -0700
+@@ -246,14 +246,15 @@ if (CMAKE_GENERATOR STREQUAL "Ninja")
+ endif ()
+ 
+ 
+-string(TOLOWER ${CMAKE_HOST_SYSTEM_PROCESSOR} LOWERCASE_CMAKE_HOST_SYSTEM_PROCESSOR)
+-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND NOT "${LOWERCASE_CMAKE_HOST_SYSTEM_PROCESSOR}" MATCHES "x86_64")
+-    # To avoid out of memory when building with debug option in 32bit system.
+-    # See https://bugs.webkit.org/show_bug.cgi?id=77327
+-    set(CMAKE_SHARED_LINKER_FLAGS_DEBUG "-Wl,--no-keep-memory ${CMAKE_SHARED_LINKER_FLAGS_DEBUG}")
+-endif ()
++if (LTO_MODE STREQUAL "full" AND CMAKE_CXX_COMPILER_ID MATCHES "GNU")
++    set(CMAKE_C_FLAGS "-flto ${CMAKE_C_FLAGS}")
++    set(CMAKE_CXX_FLAGS "-flto ${CMAKE_CXX_FLAGS}")
++    set(CMAKE_EXE_LINKER_FLAGS "-flto ${CMAKE_EXE_LINKER_FLAGS}")
++    set(CMAKE_SHARED_LINKER_FLAGS "-flto ${CMAKE_SHARED_LINKER_FLAGS}")
++    set(CMAKE_MODULE_LINKER_FLAGS "-flto ${CMAKE_MODULE_LINKER_FLAGS}")
++endif()
+ 
+-if (LTO_MODE AND COMPILER_IS_CLANG AND NOT MSVC)
++if ((LTO_MODE STREQUAL "full" OR LTO_MODE STREQUAL "thin") AND COMPILER_IS_CLANG AND NOT MSVC)
+     set(CMAKE_C_FLAGS "-flto=${LTO_MODE} ${CMAKE_C_FLAGS}")
+     set(CMAKE_CXX_FLAGS "-flto=${LTO_MODE} ${CMAKE_CXX_FLAGS}")
+     set(CMAKE_EXE_LINKER_FLAGS "-flto=${LTO_MODE} ${CMAKE_EXE_LINKER_FLAGS}")
+Only in webkitgtk-2.48.0/Source/cmake: WebKitCompilerFlags.cmake.orig
+Only in webkitgtk-2.48.0/Source/cmake: WebKitCompilerFlags.cmake.rej
