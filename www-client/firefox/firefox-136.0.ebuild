@@ -211,8 +211,8 @@ NODE_VERSION=18
 OFLAG="" # Global variable
 PYTHON_COMPAT=( "python3_"{10..11} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
-RUST_MAX_VER="1.85.0" # Inclusive
-RUST_MIN_VER="1.82.0" # Corresponds to llvm 19, rust min required for llvm 19
+RUST_MAX_VER="1.86.0" # Inclusive
+RUST_MIN_VER="1.83.0" # Corresponds to llvm 19, rust min required for llvm 19
 RUST_NEEDS_LLVM=1
 RUST_PV="${RUST_MIN_VER}"
 SPEECH_DISPATCHER_PV="0.11.4-r1"
@@ -642,10 +642,14 @@ PATENT_CDEPENDS="
 RUST_CDEPEND="
 	llvm_slot_19? (
 		|| (
+			=dev-lang/rust-1.86*[${MULTILIB_USEDEP}]
 			=dev-lang/rust-1.85*[${MULTILIB_USEDEP}]
 			=dev-lang/rust-1.84*[${MULTILIB_USEDEP}]
 			=dev-lang/rust-1.83*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.82*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.86*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.85*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.84*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.83*[${MULTILIB_USEDEP}]
 		)
 	)
 	|| (
@@ -659,7 +663,7 @@ CDEPEND="
 	>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.42:2[${MULTILIB_USEDEP}]
 	>=dev-libs/nss-3.108[${MULTILIB_USEDEP}]
-	>=dev-libs/nspr-4.36[${MULTILIB_USEDEP}]
+	>=dev-libs/nspr-4.36.0[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.7.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.13.3[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.3.1[${MULTILIB_USEDEP}]
@@ -697,7 +701,7 @@ CDEPEND="
 		>=media-libs/libaom-1.0.0:=[${MULTILIB_USEDEP}]
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-10.1.0:0=[${MULTILIB_USEDEP}]
+		>=media-libs/harfbuzz-10.2.0:0=[${MULTILIB_USEDEP}]
 		!wasm-sandbox? (
 			>=media-gfx/graphite2-1.3.14[${MULTILIB_USEDEP}]
 		)
@@ -719,7 +723,7 @@ CDEPEND="
 		>=media-libs/libpng-1.6.45:0=[${MULTILIB_USEDEP},apng]
 	)
 	system-webp? (
-		>=media-libs/libwebp-1.4.0:0=[${MULTILIB_USEDEP}]
+		>=media-libs/libwebp-1.5.0:0=[${MULTILIB_USEDEP}]
 	)
 	valgrind? (
 		dev-debug/valgrind
@@ -727,7 +731,6 @@ CDEPEND="
 	wayland? (
 		>=media-libs/libepoxy-1.5.10-r1[${MULTILIB_USEDEP}]
 		>=x11-libs/gtk+-${GTK3_PV}:3[${MULTILIB_USEDEP},wayland]
-		>=x11-libs/libdrm-2.4[${MULTILIB_USEDEP}]
 	)
 	wifi? (
 		kernel_linux? (
@@ -748,7 +751,8 @@ CDEPEND="
 		x11-libs/libXdamage[${MULTILIB_USEDEP}]
 		x11-libs/libXext[${MULTILIB_USEDEP}]
 		x11-libs/libXfixes[${MULTILIB_USEDEP}]
-		x11-libs/libxcb:=[${MULTILIB_USEDEP}]
+		x11-libs/libxcb[${MULTILIB_USEDEP}]
+		x11-libs/libxcb:=
 	)
 "
 

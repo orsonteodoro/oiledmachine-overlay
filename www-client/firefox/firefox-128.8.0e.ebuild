@@ -208,8 +208,8 @@ NODE_VERSION=18
 OFLAG="" # Global variable
 PYTHON_COMPAT=( "python3_"{10..11} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
-RUST_MAX_VER="1.81.0" # Inclusive
-RUST_MIN_VER="1.73.0" # Corresponds to llvm 17
+RUST_MAX_VER="1.81.0" # Inclusive.  Corresponds to llvm 18
+RUST_MIN_VER="1.76.0" # Corresponds to llvm 17
 RUST_NEEDS_LLVM=1
 RUST_PV="${RUST_MIN_VER}"
 SPEECH_DISPATCHER_PV="0.11.4-r1"
@@ -628,14 +628,8 @@ RUST_CDEPEND="
 		|| (
 			=dev-lang/rust-1.77*[${MULTILIB_USEDEP}]
 			=dev-lang/rust-1.76*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.75*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.74*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.73*[${MULTILIB_USEDEP}]
 			=dev-lang/rust-bin-1.77*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.75*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.75*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.74*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.73*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.76*[${MULTILIB_USEDEP}]
 		)
 	)
 	llvm_slot_18? (
