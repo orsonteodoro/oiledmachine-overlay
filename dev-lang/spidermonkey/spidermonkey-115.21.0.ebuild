@@ -5,16 +5,20 @@ EAPI="8"
 
 # For polkit
 
+# DEPENDS:
+# /var/tmp/portage/dev-lang/spidermonkey-115.21.0/work/firefox-115.21.0/taskcluster/ci/toolchain/rust.yml
+# /var/tmp/portage/dev-lang/spidermonkey-115.21.0/work/firefox-115.21.0/taskcluster/ci/fetch/toolchains.yml
+
 CPU_FLAGS_ARM=(
-	cpu_flags_arm_neon
+	"cpu_flags_arm_neon"
 )
 
 # Patch version
 FIREFOX_PATCHSET="firefox-115esr-patches-13.tar.xz"
 SPIDERMONKEY_PATCHSET="spidermonkey-115-patches-02.tar.xz"
 
-LLVM_MAX_SLOT=18
-LLVM_COMPAT=( {18..15} ) # Limited by rust
+LLVM_MAX_SLOT=16
+LLVM_COMPAT=( 16 ) # Limited by rust
 
 PYTHON_COMPAT=( "python3_"{10..11} )
 PYTHON_REQ_USE="ncurses,ssl,xml(+)"
@@ -25,9 +29,9 @@ MY_PV="${PV/_pre*}" # Handle Gentoo pre-releases
 MY_MAJOR=$(ver_cut 1)
 
 # MITIGATION_LAST_UPDATE is the same as firefox esr ebuild
-MITIGATION_DATE="Feb 4, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1738617660 # From `date +%s -d "2025-02-03 13:21"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-08/"
+MITIGATION_DATE="Mar 4, 2025" # Advisory date
+MITIGATION_LAST_UPDATE=1741038420 # From `date +%s -d "2025-03-03 13:47"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-15/"
 MOZ_ESR="yes"
 
 MOZ_PV=${PV}
@@ -63,7 +67,7 @@ PATCH_URIS=(
 )
 
 RUST_NEEDS_LLVM=1
-RUST_MAX_VER="1.81.0" # Inclusive
+RUST_MAX_VER="1.81.0" # Inclusive.  Corresponds to llvm 16
 RUST_MIN_VER="1.65.0" # Corresponds to llvm 15
 
 WANT_AUTOCONF="2.1"
@@ -93,11 +97,8 @@ clang debug +jit lto rust-simd test
 "
 REQUIRED_USE="
 	rust-simd? (
-		!llvm_slot_18
 		|| (
-			llvm_slot_15
 			llvm_slot_16
-			llvm_slot_17
 		)
 	)
 "
@@ -118,20 +119,6 @@ gen_clang_bdepend() {
 
 }
 RUST_CDEPEND="
-	llvm_slot_15? (
-		|| (
-			=dev-lang/rust-1.69*
-			=dev-lang/rust-1.68*
-			=dev-lang/rust-1.67*
-			=dev-lang/rust-1.66*
-			=dev-lang/rust-1.65*
-			=dev-lang/rust-bin-1.69*
-			=dev-lang/rust-bin-1.68*
-			=dev-lang/rust-bin-1.67*
-			=dev-lang/rust-bin-1.66*
-			=dev-lang/rust-bin-1.65*
-		)
-	)
 	llvm_slot_16? (
 		|| (
 			=dev-lang/rust-1.72*
@@ -140,32 +127,6 @@ RUST_CDEPEND="
 			=dev-lang/rust-bin-1.72*
 			=dev-lang/rust-bin-1.71*
 			=dev-lang/rust-bin-1.70*
-		)
-	)
-	llvm_slot_17? (
-		|| (
-			=dev-lang/rust-1.77*
-			=dev-lang/rust-1.76*
-			=dev-lang/rust-1.75*
-			=dev-lang/rust-1.74*
-			=dev-lang/rust-1.73*
-			=dev-lang/rust-bin-1.77*
-			=dev-lang/rust-bin-1.75*
-			=dev-lang/rust-bin-1.75*
-			=dev-lang/rust-bin-1.74*
-			=dev-lang/rust-bin-1.73*
-		)
-	)
-	llvm_slot_18? (
-		|| (
-			=dev-lang/rust-1.81*
-			=dev-lang/rust-1.80*
-			=dev-lang/rust-1.79*
-			=dev-lang/rust-1.78*
-			=dev-lang/rust-bin-1.81*
-			=dev-lang/rust-bin-1.80*
-			=dev-lang/rust-bin-1.79*
-			=dev-lang/rust-bin-1.78*
 		)
 	)
 	|| (
@@ -218,34 +179,6 @@ einfo "llvm-core/clang:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT
 			return 1
 		fi
 
-		check_rust_18() {
-			if has_version "=dev-lang/rust-1.81*" || has_version "=dev-lang/rust-bin-1.81*" ; then
-				return 0
-			elif has_version "=dev-lang/rust-1.80*" || has_version "=dev-lang/rust-bin-1.80*" ; then
-				return 0
-			elif has_version "=dev-lang/rust-1.79*" || has_version "=dev-lang/rust-bin-1.79*" ; then
-				return 0
-			elif has_version "=dev-lang/rust-1.78*" || has_version "=dev-lang/rust-bin-1.78*" ; then
-				return 0
-			fi
-			return 1
-		}
-
-		check_rust_17() {
-			if has_version "=dev-lang/rust-1.77*" || has_version "=dev-lang/rust-bin-1.77*" ; then
-				return 0
-			elif has_version "=dev-lang/rust-1.76*" || has_version "=dev-lang/rust-bin-1.76*" ; then
-				return 0
-			elif has_version "=dev-lang/rust-1.75*" || has_version "=dev-lang/rust-bin-1.75*" ; then
-				return 0
-			elif has_version "=dev-lang/rust-1.74*" || has_version "=dev-lang/rust-bin-1.74*" ; then
-				return 0
-			elif has_version "=dev-lang/rust-1.73*" || has_version "=dev-lang/rust-bin-1.73*" ; then
-				return 0
-			fi
-			return 1
-		}
-
 		check_rust_16() {
 			if has_version "=dev-lang/rust-1.72*" || has_version "=dev-lang/rust-bin-1.72*" ; then
 				return 0
@@ -257,7 +190,7 @@ einfo "llvm-core/clang:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT
 			return 1
 		}
 
-		check_rust_16() {
+		check_rust_15() {
 			if has_version "=dev-lang/rust-1.69*" || has_version "=dev-lang/rust-bin-1.69*" ; then
 				return 0
 			elif has_version "=dev-lang/rust-1.68*" || has_version "=dev-lang/rust-bin-1.68*" ; then
@@ -272,11 +205,7 @@ einfo "llvm-core/clang:${LLVM_SLOT} is missing! Cannot use LLVM slot ${LLVM_SLOT
 			return 1
 		}
 
-		if use llvm_slot_18 && check_rust_18 ; then
-			:
-		elif use llvm_slot_17 && check_rust_17 ; then
-			:
-		elif use llvm_slot_16 && check_rust_16 ; then
+		if use llvm_slot_16 && check_rust_16 ; then
 			:
 		elif use llvm_slot_15 && check_rust_15 ; then
 			:

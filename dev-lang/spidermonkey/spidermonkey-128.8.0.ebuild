@@ -11,9 +11,10 @@ EAPI="8"
 # 128.2.0 -> 128.3.0
 # 128.3.1 -> 128.4.0
 # 128.4.0 -> 128.5.0
+# 128.7.0 -> 128.8.0
 
 CPU_FLAGS_ARM=(
-	cpu_flags_arm_neon
+	"cpu_flags_arm_neon"
 )
 
 LLVM_COMPAT=( 18 17 ) # Limited by rust
@@ -23,9 +24,9 @@ MY_PN="mozjs"
 MY_PV="${PV/_pre*}"
 
 # MITIGATION_LAST_UPDATE is the same as firefox esr ebuild
-MITIGATION_DATE="Feb 4, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1738617660 # From `date +%s -d "2025-02-03 13:21"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-09/#CVE-2024-11704"
+MITIGATION_DATE="Mar 4, 2025" # Advisory date
+MITIGATION_LAST_UPDATE=1741038480 # From `date +%s -d "2025-03-03 13:48"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-16/"
 MOZ_ESR="yes"
 MOZ_PN="firefox"
 MOZ_PV="${PV}"
@@ -50,9 +51,9 @@ if [[ "${PV}" == *"_rc"* ]] ; then
 fi
 
 # Patch version
-FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-08.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-09.tar.xz"
 #SPIDERMONKEY_PATCHSET="spidermonkey-${PV%%.*}-patches-01.tar.xz"
-SPIDERMONKEY_PATCHSET="spidermonkey-128-patches-02.tar.xz"
+SPIDERMONKEY_PATCHSET="spidermonkey-128-patches-03.tar.xz"
 PATCH_URIS=(
 	https://dev.gentoo.org/~juippis/mozilla/patchsets/${FIREFOX_PATCHSET}
 	https://dev.gentoo.org/~juippis/mozilla/patchsets/${SPIDERMONKEY_PATCHSET}
@@ -120,14 +121,8 @@ RUST_CDEPEND="
 		|| (
 			=dev-lang/rust-1.77*
 			=dev-lang/rust-1.76*
-			=dev-lang/rust-1.75*
-			=dev-lang/rust-1.74*
-			=dev-lang/rust-1.73*
 			=dev-lang/rust-bin-1.77*
-			=dev-lang/rust-bin-1.75*
-			=dev-lang/rust-bin-1.75*
-			=dev-lang/rust-bin-1.74*
-			=dev-lang/rust-bin-1.73*
+			=dev-lang/rust-bin-1.76*
 		)
 	)
 	llvm_slot_18? (
@@ -339,7 +334,23 @@ pkg_pretend() {
 
 pkg_setup() {
 	dhms_start
+
+	# Get LTO from environment; export after this phase for use in src_configure (etc)
+	use_lto=no
+
 	if [[ "${MERGE_TYPE}" != "binary" ]] ; then
+		if tc-is-lto; then
+			use_lto=yes
+			# LTO is handled via configure
+			filter-lto
+		fi
+
+		if [[ ${use_lto} = yes ]]; then
+			# -Werror=lto-type-mismatch -Werror=odr are going to fail with GCC,
+			# bmo#1516758, bgo#942288
+			filter-flags -Werror=lto-type-mismatch -Werror=odr
+		fi
+
 		if use test ; then
 			CHECKREQS_DISK_BUILD="4400M"
 		else
@@ -373,28 +384,6 @@ eerror "Failed to read used LLVM version from rustc!"
 				die
 			fi
 
-			if false && ver_test "${version_lld}" -ne "${version_llvm_rust}" ; then
-eerror
-eerror "Rust is using LLVM version ${version_llvm_rust} but ld.lld version"
-eerror "belongs to LLVM version ${version_lld}."
-eerror
-eerror "You will be unable to link ${CATEGORY}/${PN}. To proceed you have the"
-eerror "following options:"
-eerror
-eerror "  - Manually switch rust version using 'eselect rust' to match used"
-eerror "    LLVM version"
-eerror "  - Switch to dev-lang/rust[system-llvm] which will guarantee matching"
-eerror "    version"
-eerror "  - Build ${CATEGORY}/${PN} without USE=lto"
-eerror "  - Rebuild lld with llvm that was used to build rust (may need to"
-eerror "    rebuild the whole llvm/clang/lld/rust chain depending on your"
-eerror "    @world updates)"
-eerror
-eerror "LLVM version used by Rust (${version_llvm_rust}) does not match with"
-eerror "ld.lld version (${version_lld})!"
-eerror
-				die
-			fi
 		fi
 
 		python-any-r1_pkg_setup
@@ -412,10 +401,12 @@ ewarn "/dev/shm is not mounted -- expect build failures!"
 		# Ensure we use C locale when building, bug #746215
 		export LC_ALL=C
 	fi
+
+	export use_lto
 }
 
 src_prepare() {
-	if use lto ; then
+	if [[ "${use_lto}" == "yes" ]]; then
 		rm -v "${WORKDIR}/firefox-patches/"*"-LTO-Only-enable-LTO-"*".patch" || die
 	fi
 
@@ -680,7 +671,7 @@ eerror "Use eselect to switch rust to < 1.78 or disable the rust-simd USE flag."
 	fi
 
 	# Tell build system that we want to use LTO
-	if use lto ; then
+	if [[ "${use_lto}" == "yes" ]] ; then
 		if use clang ; then
 			if tc-ld-is-mold ; then
 				mozconfig_add_options_ac '+lto' --enable-linker=mold
