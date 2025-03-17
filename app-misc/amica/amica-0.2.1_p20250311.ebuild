@@ -603,7 +603,7 @@ SLOT="0"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 coqui debug ollama +system-vips tray voice-recognition wayland whisper-cpp X
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	!cpu_flags_x86_sse4_2? (
@@ -782,13 +782,34 @@ einfo "Adding Cargo.lock"
 
 npm_update_lock_install_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-		sed -i -e "s|\"dompurify\": \"2.5.7\"|\"dompurify\": \"3.2.4\"|g" "package-lock.json" || die
-		sed -i -e "s|\"esbuild\": \"^0.24.0\"|\"esbuild\": \"^0.25.0\"|g" "package.json" || die
-		sed -i -e "s|\"esbuild\": \"^0.24.0\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
-		enpm install "dompurify@3.2.4" -P ${NPM_INSTALL_ARGS[@]}
-		enpm install "esbuild@^0.25.0" -D ${NPM_INSTALL_ARGS[@]}					# GHSA-67mh-4wv8-2f99		# ID		# --prefer-offline is broken
-		enpm install "eslint" -D ${NPM_INSTALL_ARGS[@]}
-		node-sharp_npm_lockfile_add_sharp
+		patch_lockfile() {
+			sed -i -e "s|\"@babel/runtime\": \"^7.8.4\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.11.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.12.5\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.17.8\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.21.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.23.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.25.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.26.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"dompurify\": \"2.5.7\"|\"dompurify\": \"3.2.4\"|g" "package-lock.json" || die
+			sed -i -e "s|\"esbuild\": \"^0.24.0\"|\"esbuild\": \"^0.25.0\"|g" "package.json" || die
+			sed -i -e "s|\"esbuild\": \"^0.24.0\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
+		}
+
+		local pkgs
+		patch_lockfile
+		pkgs=(
+			"@babel/runtime@7.26.10"								# CVE-2025-27789				# DoS
+			"dompurify@3.2.4"									# CVE-2024-47875, CVE-2024-45801		# DoS, DT, ID
+		)
+		enpm install ${pkgs[@]} -P ${NPM_INSTALL_ARGS[@]}
+
+		pkgs=(
+			"esbuild@^0.25.0"									# GHSA-67mh-4wv8-2f99				# ID            # --prefer-offline is broken
+			"eslint"
+		)
+		enpm install ${pkgs[@]} -D ${NPM_INSTALL_ARGS[@]}
+		patch_lockfile
 	fi
 }
 
