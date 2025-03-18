@@ -868,6 +868,7 @@ eerror
 	fi
 
 	# For manual lockfile creation
+ewarn "Ebuild dev QA:  Manually \`cargo add \"hyper-tls@^0.6\"\` for the cargo lockfile."
 	#unpack ${A}
 	#die
 
