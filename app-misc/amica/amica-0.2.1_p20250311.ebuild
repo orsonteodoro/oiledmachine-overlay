@@ -605,7 +605,7 @@ SLOT="0"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 coqui debug ollama +system-vips tray voice-recognition wayland whisper-cpp X
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE="
 	!cpu_flags_x86_sse4_2? (
@@ -785,37 +785,33 @@ einfo "Adding Cargo.lock"
 npm_update_lock_install_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		patch_lockfile() {
-#			sed -i -e "s|\"@babel/runtime\": \"^7.8.4\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-#			sed -i -e "s|\"@babel/runtime\": \"^7.11.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-#			sed -i -e "s|\"@babel/runtime\": \"^7.12.5\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-#			sed -i -e "s|\"@babel/runtime\": \"^7.17.8\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-#			sed -i -e "s|\"@babel/runtime\": \"^7.21.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-#			sed -i -e "s|\"@babel/runtime\": \"^7.23.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-#			sed -i -e "s|\"@babel/runtime\": \"^7.25.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-#			sed -i -e "s|\"@babel/runtime\": \"^7.26.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-#			sed -i -e "s|\"dompurify\": \"2.5.7\"|\"dompurify\": \"3.2.4\"|g" "package-lock.json" || die
-#			sed -i -e "s|\"esbuild\": \"^0.24.0\"|\"esbuild\": \"^0.25.0\"|g" "package.json" || die
-#			sed -i -e "s|\"esbuild\": \"^0.24.0\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
-			:
+			sed -i -e "s|\"@babel/runtime\": \"^7.8.4\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.11.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.12.5\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.17.8\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.21.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.23.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.25.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"@babel/runtime\": \"^7.26.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+			sed -i -e "s|\"dompurify\": \"2.5.7\"|\"dompurify\": \"3.2.4\"|g" "package-lock.json" || die
+			sed -i -e "s|\"esbuild\": \"^0.24.0\"|\"esbuild\": \"^0.25.0\"|g" "package.json" || die
+			sed -i -e "s|\"esbuild\": \"^0.24.0\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
 		}
 
 		local pkgs
 		patch_lockfile
 		pkgs=(
-#			"@babel/runtime@7.26.10"								# CVE-2025-27789				# DoS
-#			"dompurify@3.2.4"									# CVE-2024-47875, CVE-2024-45801		# DoS, DT, ID
-#			"next@14.2.15"										# Fix build breakage
-#			"terser@5.34.1"										# Fix build breakage
+			"@babel/runtime@7.26.10"								# CVE-2025-27789				# DoS
+			"dompurify@3.2.4"									# CVE-2024-47875, CVE-2024-45801		# DoS, DT, ID
+			"onnxruntime-web@1.14.0"								# Fix build breakage
 		)
 		enpm install ${pkgs[@]} -P ${NPM_INSTALL_ARGS[@]}
 
 		pkgs=(
 			"@types/node@${AT_TYPES_NODE_PV}"
-#			"esbuild@^0.25.0"									# GHSA-67mh-4wv8-2f99				# ID            # --prefer-offline is broken
-#			"eslint"
+			"esbuild@^0.25.0"									# GHSA-67mh-4wv8-2f99				# ID            # --prefer-offline is broken
+			"eslint"
 			"node-gyp@11.1.0"
-			"typescript@5.6.3"									# Fix build breakage
-#			"webpack@5.95.0"									# Fix build breakage
 		)
 		enpm install ${pkgs[@]} -D ${NPM_INSTALL_ARGS[@]}
 		patch_lockfile
@@ -852,7 +848,7 @@ src_prepare() {
 #	eapply -R "${DISTDIR}/${PN}-commit-da5a390.patch"
 #	eapply "${FILESDIR}/${PN}-0.2.1_p20241022-coqui-local.patch"
 	eapply "${FILESDIR}/${PN}-0.2.1_p20250204-array-type-check.patch"
-	eapply "${FILESDIR}/${PN}-0.2.1_p20250311-nextjs-config.patch"
+#	eapply "${FILESDIR}/${PN}-0.2.1_p20250311-nextjs-config.patch"
 #	eapply "${FILESDIR}/${PN}-0.2.1_p20250311-deleteSourcemapsAfterUpload.patch"
 #	eapply "${FILESDIR}/${PN}-0.2.1_p20250311-transpile-import-meta.patch"
 }
@@ -932,6 +928,7 @@ pkg_postinst() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  Passed (0.2.1_p20250311, 20250318)
 # OILEDMACHINE-OVERLAY-TEST:  Passed (0.2.1_p20250204 [c5829dd], 20250211)
 # OILEDMACHINE-OVERLAY-TEST:  Passed (0.2.1_p20250204 [c5829dd], 20250208)
 # OILEDMACHINE-OVERLAY-TEST:  Passed (0.2.1_p20241022, 20241117)
