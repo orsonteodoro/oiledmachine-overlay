@@ -1,0 +1,10 @@
+--- a/next.config.js.orig	2025-03-11 15:39:45.000000000 -0700
++++ b/next.config.js	2025-03-17 21:56:01.688284390 -0700
+@@ -16,6 +16,7 @@ const nextConfig = {
+     root: process.env.BASE_PATH || "",
+   },
+   optimizeFonts: false,
++  productionBrowserSourceMaps: false,
+   webpack: (config, { webpack, buildId }) => {
+     // See https://webpack.js.org/configuration/resolve/#resolvealias
+     config.resolve.alias = {

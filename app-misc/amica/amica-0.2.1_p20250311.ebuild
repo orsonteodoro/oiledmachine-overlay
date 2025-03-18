@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# U24
+
 # To generate crates:
 # ./convert-cargo-lock.sh 0.2.1_p20250311 1f1578b1630cec5aef8256d9a84d0e3bb5cefa1d
 
@@ -424,7 +426,7 @@ zerovec-derive-0.10.3
 "
 EGIT_COMMIT="1f1578b1630cec5aef8256d9a84d0e3bb5cefa1d"
 NODE_ENV="development"
-NODE_VERSION="${AT_TYPES_NODE_PV%%.*}"
+NODE_VERSION=18
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 	"--prefer-offline"
@@ -783,30 +785,37 @@ einfo "Adding Cargo.lock"
 npm_update_lock_install_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		patch_lockfile() {
-			sed -i -e "s|\"@babel/runtime\": \"^7.8.4\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"@babel/runtime\": \"^7.11.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"@babel/runtime\": \"^7.12.5\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"@babel/runtime\": \"^7.17.8\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"@babel/runtime\": \"^7.21.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"@babel/runtime\": \"^7.23.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"@babel/runtime\": \"^7.25.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"@babel/runtime\": \"^7.26.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
-			sed -i -e "s|\"dompurify\": \"2.5.7\"|\"dompurify\": \"3.2.4\"|g" "package-lock.json" || die
-			sed -i -e "s|\"esbuild\": \"^0.24.0\"|\"esbuild\": \"^0.25.0\"|g" "package.json" || die
-			sed -i -e "s|\"esbuild\": \"^0.24.0\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
+#			sed -i -e "s|\"@babel/runtime\": \"^7.8.4\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+#			sed -i -e "s|\"@babel/runtime\": \"^7.11.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+#			sed -i -e "s|\"@babel/runtime\": \"^7.12.5\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+#			sed -i -e "s|\"@babel/runtime\": \"^7.17.8\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+#			sed -i -e "s|\"@babel/runtime\": \"^7.21.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+#			sed -i -e "s|\"@babel/runtime\": \"^7.23.2\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+#			sed -i -e "s|\"@babel/runtime\": \"^7.25.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+#			sed -i -e "s|\"@babel/runtime\": \"^7.26.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die
+#			sed -i -e "s|\"dompurify\": \"2.5.7\"|\"dompurify\": \"3.2.4\"|g" "package-lock.json" || die
+#			sed -i -e "s|\"esbuild\": \"^0.24.0\"|\"esbuild\": \"^0.25.0\"|g" "package.json" || die
+#			sed -i -e "s|\"esbuild\": \"^0.24.0\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
+			:
 		}
 
 		local pkgs
 		patch_lockfile
 		pkgs=(
-			"@babel/runtime@7.26.10"								# CVE-2025-27789				# DoS
-			"dompurify@3.2.4"									# CVE-2024-47875, CVE-2024-45801		# DoS, DT, ID
+#			"@babel/runtime@7.26.10"								# CVE-2025-27789				# DoS
+#			"dompurify@3.2.4"									# CVE-2024-47875, CVE-2024-45801		# DoS, DT, ID
+#			"next@14.2.15"										# Fix build breakage
+#			"terser@5.34.1"										# Fix build breakage
 		)
 		enpm install ${pkgs[@]} -P ${NPM_INSTALL_ARGS[@]}
 
 		pkgs=(
-			"esbuild@^0.25.0"									# GHSA-67mh-4wv8-2f99				# ID            # --prefer-offline is broken
-			"eslint"
+			"@types/node@${AT_TYPES_NODE_PV}"
+#			"esbuild@^0.25.0"									# GHSA-67mh-4wv8-2f99				# ID            # --prefer-offline is broken
+#			"eslint"
+			"node-gyp@11.1.0"
+			"typescript@5.6.3"									# Fix build breakage
+#			"webpack@5.95.0"									# Fix build breakage
 		)
 		enpm install ${pkgs[@]} -D ${NPM_INSTALL_ARGS[@]}
 		patch_lockfile
@@ -831,6 +840,7 @@ einfo "Unpacking cargo packages"
 	else
 		S="${S_PROJECT}/src-tauri" \
 		_production_unpack
+		enpm install "node-gyp@11.1.0" -D ${NPM_INSTALL_ARGS[@]}
 		node-sharp_npm_rebuild_sharp
 	fi
 }
@@ -842,7 +852,9 @@ src_prepare() {
 #	eapply -R "${DISTDIR}/${PN}-commit-da5a390.patch"
 #	eapply "${FILESDIR}/${PN}-0.2.1_p20241022-coqui-local.patch"
 	eapply "${FILESDIR}/${PN}-0.2.1_p20250204-array-type-check.patch"
-	eapply "${FILESDIR}/${PN}-0.2.1_p20250204-nextjs-config.patch"
+	eapply "${FILESDIR}/${PN}-0.2.1_p20250311-nextjs-config.patch"
+#	eapply "${FILESDIR}/${PN}-0.2.1_p20250311-deleteSourcemapsAfterUpload.patch"
+#	eapply "${FILESDIR}/${PN}-0.2.1_p20250311-transpile-import-meta.patch"
 }
 
 src_configure() {
@@ -858,6 +870,7 @@ src_compile() {
 	rm -f "${S}/Cargo."* || true
 	npm_hydrate
 
+	mkdir -p "out" || die
 	if use debug ; then
 		enpm run tauri dev
 	else

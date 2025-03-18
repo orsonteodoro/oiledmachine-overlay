@@ -370,6 +370,7 @@ pnpm_src_unpack() {
 # Builds a pnpm application.
 pnpm_src_compile() {
 	epnpm run build
+	grep -q -e "Failed to compile" "${T}/build.log" && die "Detected error"
 }
 
 fi
