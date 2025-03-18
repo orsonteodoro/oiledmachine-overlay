@@ -100,7 +100,7 @@ darling-0.20.10
 darling_core-0.20.10
 darling_macro-0.20.10
 data-url-0.3.1
-deranged-0.3.11
+deranged-0.4.0
 derive_arbitrary-1.4.1
 derive_more-0.99.19
 digest-0.10.7
@@ -166,7 +166,7 @@ generic-array-0.14.7
 gethostname-1.0.0
 getrandom-0.1.16
 getrandom-0.2.15
-getrandom-0.3.1
+getrandom-0.3.2
 gimli-0.31.1
 gio-0.18.4
 gio-sys-0.18.1
@@ -203,7 +203,6 @@ hyper-rustls-0.24.2
 hyper-rustls-0.27.5
 hyper-timeout-0.4.1
 hyper-tls-0.5.0
-hyper-tls-0.6.0
 hyper-util-0.1.10
 iana-time-zone-0.1.61
 iana-time-zone-haiku-0.1.2
@@ -350,10 +349,11 @@ proc-macro2-1.0.94
 psl-types-2.0.11
 publicsuffix-2.3.0
 quick-xml-0.32.0
-quinn-0.11.6
-quinn-proto-0.11.9
+quinn-0.11.7
+quinn-proto-0.11.10
 quinn-udp-0.5.10
 quote-1.0.40
+r-efi-5.2.0
 rand-0.7.3
 rand-0.8.5
 rand-0.9.0
@@ -372,7 +372,7 @@ regex-1.11.1
 regex-automata-0.4.9
 regex-syntax-0.8.5
 reqwest-0.11.27
-reqwest-0.12.14
+reqwest-0.12.15
 rfd-0.15.3
 ring-0.17.14
 rust-ini-0.21.1
@@ -381,15 +381,15 @@ rustc-hash-1.1.0
 rustc-hash-2.1.1
 rustc_version-0.4.1
 rustix-0.38.44
-rustix-1.0.2
+rustix-1.0.3
 rustls-0.21.12
-rustls-0.23.23
+rustls-0.23.25
 rustls-native-certs-0.6.3
 rustls-pemfile-1.0.4
 rustls-pemfile-2.2.0
 rustls-pki-types-1.11.0
 rustls-webpki-0.101.7
-rustls-webpki-0.102.8
+rustls-webpki-0.103.0
 rustversion-1.0.20
 ryu-1.0.20
 same-file-1.0.6
@@ -459,12 +459,12 @@ tauri-plugin-2.0.5
 tauri-plugin-deep-link-2.2.0
 tauri-plugin-dialog-2.2.0
 tauri-plugin-fs-2.2.0
-tauri-plugin-http-2.4.1
+tauri-plugin-http-2.4.2
 tauri-plugin-os-2.2.1
 tauri-plugin-process-2.2.0
 tauri-plugin-shell-2.2.0
 tauri-plugin-single-instance-2.2.2
-tauri-plugin-updater-2.6.0
+tauri-plugin-updater-2.6.1
 tauri-runtime-2.4.0
 tauri-runtime-wry-2.4.1
 tauri-utils-2.2.0
@@ -477,9 +477,9 @@ thiserror-2.0.12
 thiserror-impl-1.0.69
 thiserror-impl-2.0.12
 tiktoken-rs-0.4.5
-time-0.3.39
-time-core-0.1.3
-time-macros-0.2.20
+time-0.3.40
+time-core-0.1.4
+time-macros-0.2.21
 tiny-keccak-2.0.2
 tinystr-0.7.6
 tinyvec-1.9.0
@@ -530,7 +530,7 @@ vswhom-sys-0.1.3
 walkdir-2.5.0
 want-0.3.1
 wasi-0.11.0+wasi-snapshot-preview1
-wasi-0.13.3+wasi-0.2.2
+wasi-0.14.2+wasi-0.2.4
 wasi-0.9.0+wasi-snapshot-preview1
 wasm-bindgen-0.2.100
 wasm-bindgen-backend-0.2.100
@@ -558,13 +558,13 @@ windows-core-0.52.0
 windows-core-0.60.1
 windows-future-0.1.1
 windows-implement-0.59.0
-windows-interface-0.59.0
-windows-link-0.1.0
+windows-interface-0.59.1
+windows-link-0.1.1
 windows-numerics-0.1.1
 windows-registry-0.3.0
 windows-registry-0.4.0
 windows-result-0.2.0
-windows-result-0.3.1
+windows-result-0.3.2
 windows-strings-0.2.0
 windows-strings-0.3.1
 windows-sys-0.45.0
@@ -575,7 +575,7 @@ windows-targets-0.42.2
 windows-targets-0.48.5
 windows-targets-0.52.6
 windows-targets-0.53.0
-windows-version-0.1.3
+windows-version-0.1.4
 windows_aarch64_gnullvm-0.42.2
 windows_aarch64_gnullvm-0.48.5
 windows_aarch64_gnullvm-0.52.6
@@ -610,10 +610,10 @@ winnow-0.5.40
 winnow-0.7.4
 winreg-0.50.0
 winreg-0.52.0
-wit-bindgen-rt-0.33.0
+wit-bindgen-rt-0.39.0
 write16-1.0.0
 writeable-0.5.5
-wry-0.50.4
+wry-0.50.5
 x11-2.21.0
 x11-dl-2.21.0
 xattr-1.5.0
@@ -631,7 +631,7 @@ zeroize-1.8.1
 zerovec-0.10.4
 zerovec-derive-0.10.3
 zip-0.6.6
-zip-2.2.3
+zip-2.4.1
 zstd-0.11.2+zstd.1.5.2
 zstd-safe-5.0.2+zstd.1.5.2
 zstd-sys-2.0.14+zstd.1.5.7
@@ -866,7 +866,11 @@ eerror "Expected Rust version: ${RUST_PV}"
 eerror
 		die
 	fi
-	unpack ${A}
+
+	# For manual lockfile creation
+	#unpack ${A}
+	#die
+
 	npm_src_unpack
 	node-sharp_npm_rebuild_sharp
 
