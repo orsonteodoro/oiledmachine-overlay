@@ -848,9 +848,6 @@ src_prepare() {
 #	eapply -R "${DISTDIR}/${PN}-commit-da5a390.patch"
 #	eapply "${FILESDIR}/${PN}-0.2.1_p20241022-coqui-local.patch"
 	eapply "${FILESDIR}/${PN}-0.2.1_p20250204-array-type-check.patch"
-#	eapply "${FILESDIR}/${PN}-0.2.1_p20250311-nextjs-config.patch"
-#	eapply "${FILESDIR}/${PN}-0.2.1_p20250311-deleteSourcemapsAfterUpload.patch"
-#	eapply "${FILESDIR}/${PN}-0.2.1_p20250311-transpile-import-meta.patch"
 }
 
 src_configure() {
