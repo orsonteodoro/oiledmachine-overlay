@@ -59,7 +59,8 @@ eerror "QA:  VIPS_PV needs to be defined"
 		elif [[ "${ARCH}" == "s390x" ]] ; then
 			NODE_SHARP_GLIBC_PV="2.31"
 		fi
-	elif ver_test "${sharp_pv}" -eq "0.32" ; then
+	elif ver_test "${sharp_pv}" -eq "0.32" || ver_test "${sharp_pv}" -eq "0.31" ; then
+# See https://github.com/lovell/sharp/blob/v0.31.3/docs/install.md#prebuilt-binaries
 # See https://github.com/lovell/sharp/blob/v0.32.6/docs/install.md#prebuilt-binaries
 		NODE_SHARP_GLIBC_PV="2.28"
 		NODE_SHARP_MUSL_PV="1.1.24"

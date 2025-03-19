@@ -151,10 +151,10 @@ RDEPEND+="
 	)
 	imagemagick? (
 		!graphicsmagick? (
-			>=media-gfx/imagemagick-6.9.11.60
+			>=media-gfx/imagemagick-6.9.11.60[cxx?]
 		)
 		graphicsmagick? (
-			>=media-gfx/graphicsmagick-1.4
+			>=media-gfx/graphicsmagick-1.4[cxx?]
 		)
 	)
 	imagequant? (
