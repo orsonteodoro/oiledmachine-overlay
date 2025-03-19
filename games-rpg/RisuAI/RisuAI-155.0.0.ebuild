@@ -203,6 +203,7 @@ hyper-rustls-0.24.2
 hyper-rustls-0.27.5
 hyper-timeout-0.4.1
 hyper-tls-0.5.0
+hyper-tls-0.6.0
 hyper-util-0.1.10
 iana-time-zone-0.1.61
 iana-time-zone-haiku-0.1.2
@@ -631,13 +632,14 @@ zeroize-1.8.1
 zerovec-0.10.4
 zerovec-derive-0.10.3
 zip-0.6.6
-zip-2.4.1
+zip-2.4.2
 zstd-0.11.2+zstd.1.5.2
 zstd-safe-5.0.2+zstd.1.5.2
 zstd-sys-2.0.14+zstd.1.5.7
 zvariant-5.4.0
 zvariant_derive-5.4.0
 zvariant_utils-3.2.0
+
 "
 NODE_VERSION=20
 NPM_AUDIT_FIX_ARGS=(
@@ -869,8 +871,8 @@ eerror
 
 	# For manual lockfile creation
 ewarn "Ebuild dev QA:  Manually \`cargo add \"hyper-tls@^0.6\"\` for the cargo lockfile."
-	#unpack ${A}
-	#die
+#	unpack ${A}
+#	die
 
 	npm_src_unpack
 	node-sharp_npm_rebuild_sharp
