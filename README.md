@@ -868,6 +868,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/Levenshtein | The Levenshtein Python C extension module contains functions for fast computation of Levenshtein distance and string similarity |
 | dev-python/RTFDE | RTFDE: RTF De-Encapsulator - A python3 library for extracting encapsulated `HTML ` & `plain text ` content from the `RTF ` bodies of .msg files |
 | dev-python/RapidFuzz | Rapid fuzzy string matching in Python using various string metrics |
+| dev-python/RestrictedPython | A subset of Python which allows program input into a trusted environment |
 | dev-python/SciencePlots | Matplotlib styles for scientific plotting |
 | dev-python/aafigure | ASCII art to image converter |
 | dev-python/aioquic | QUIC and HTTP/3 implementation in Python |
@@ -878,6 +879,9 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/astunparse | An Abstract Syntax Tree (AST) unparser for Python |
 | dev-python/autorom | A tool to automate installing Atari ROMs for the Arcade Learning Environment |
 | dev-python/autorom-accept-rom-license | AutoROM ROMs |
+| dev-python/azure-ai-documentintelligence | Microsoft Azure AI Document Intelligence Client Library for Python |
+| dev-python/azure-identity | Microsoft Azure Identity Library for Python |
+| dev-python/azure-storage-blob | Microsoft Azure Blob Storage Client Library for Python |
 | dev-python/backcall | Backwards compatible callback APIs |
 | dev-python/barectf | Generator of ANSI C tracers which output CTF data streams |
 | dev-python/basicsr | An open source image and video super-resolution toolbox |
@@ -950,6 +954,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/fastbencode | Fast implementation of bencode |
 | dev-python/faster-whisper | Faster Whisper transcription with CTranslate2 |
 | dev-python/filterpy | Kalman filters filtering optimal estimation tracking |
+| dev-python/firecrawl-py | Python SDK for Firecrawl API |
 | dev-python/flake8-colors | ANSI colors highlight for Flake8 |
 | dev-python/flake8-docstrings | Integration of pydocstyle and flake8 for combined linting and reporting |
 | dev-python/flake8-future-import | Flake8 extension to check imports |
@@ -985,6 +990,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/jax | Differentiate, compile, and transform Numpy code |
 | dev-python/jaxlib | Support library for JAX |
 | dev-python/jaxtyping | Type annotations and runtime checking for shape and dtype of JAX/NumPy/PyTorch/etc. arrays. |
+| dev-python/jiter | Fast iterable JSON parser |
 | dev-python/js8py | Python module for parsing messages from the 'js8' command line decoder |
 | dev-python/jsonpath-python | A more powerful JSONPath implementation in modern python |
 | dev-python/jumpy | On-the-fly conversions between Jax and NumPy tensors |
@@ -1048,6 +1054,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/open-spiel | OpenSpiel is a collection of environments and algorithms for research in general reinforcement learning and search/planning in games. |
 | dev-python/open-webui | (WIP) A user-friendly AI interface with web search RAG, document RAG, AI image generation, Ollama, OpenAI API support |
 | dev-python/openai | The official Python library for the OpenAI API |
+| dev-python/opensearch-py | Python client for OpenSearch |
 | dev-python/opentelemetry-api | OpenTelemetry Python API |
 | dev-python/opentelemetry-exporter-otlp-proto-common | OpenTelemetry Protobuf encoding |
 | dev-python/opentelemetry-exporter-otlp-proto-grpc | OpenTelemetry Collector Protobuf over gRPC Exporter |
@@ -1070,6 +1077,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/pettingzoo | A standard API for multi-agent reinforcement learning environments, with popular reference environments and related utilities |
 | dev-python/pgvector | pgvector support for Python |
 | dev-python/pillow-simd | The friendly PIL fork |
+| dev-python/playwright-bin | Automate Chromium, Firefox and WebKit browsers with a single API |
 | dev-python/plotille | Plot in the terminal using braille dots. |
 | dev-python/plotnine | A Grammar of Graphics for Python |
 | dev-python/pocket | A Python wrapper for the Pocket API |
@@ -1133,11 +1141,11 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | dev-python/scenedetect | 🎥 Python and OpenCV-based scene cut/transition detection program & library |
 | dev-python/scipy | Scientific algorithms library for Python |
 | dev-python/sentence-transformers | State-of-the-Art Text Embeddings |
-| dev-python/sentencepiece | Unsupervised text tokenizer for neural network based text generation |
 | dev-python/setuptools-gettext | A setuptools plugin for building multilingual MO files |
 | dev-python/setuptools-git-versioning | Use git repo data (latest tag, current commit hash, etc) for building a version number according PEP-440 |
 | dev-python/shimmy | An API conversion tool for popular external reinforcement learning environments |
 | dev-python/simple-parsing | A small utility for simplifying and cleaning up argument parsing scripts. |
+| dev-python/soundfile | SoundFile is an audio library based on libsndfile, CFFI, and NumPy |
 | dev-python/spacy | 💫 Industrial-strength Natural Language Processing (NLP) in Python |
 | dev-python/spacy-legacy | 🕸️ Legacy architectures and other registered spaCy v3.x functions for backwards-compatibility |
 | dev-python/spacy-loggers | 📟 Logging utilities for spaCy |
@@ -1272,7 +1280,9 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-libs/gstreamer | Open source multimedia framework |
 | media-libs/libaom | Alliance for Open Media AV1 Codec SDK |
 | media-libs/libcaca | A library that creates colored ASCII-art graphics |
+| media-libs/libdicom | C library for reading DICOM files |
 | media-libs/libfishsound | Simple programming interface to decode and encode audio with vorbis or speex |
+| media-libs/libheif | A HEIF and AVIF file format decoder and encoder |
 | media-libs/libjpeg-turbo | MMX, SSE, and SSE2 SIMD accelerated JPEG library |
 | media-libs/libmediainfo | MediaInfo libraries |
 | media-libs/libsdl2 | Simple Direct Media Layer |
@@ -1291,6 +1301,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | media-libs/openexr | ILM's OpenEXR high dynamic-range image file format libraries |
 | media-libs/openimageio | A library for reading and writing images |
 | media-libs/openpgl | Implements a set of representations and training algorithms needed to integrate path guiding into a renderer |
+| media-libs/openslide | C library with simple interface to read virtual slides |
 | media-libs/opensubdiv | A subdivision surface library |
 | media-libs/opentimelineio | An interchange format for editorial timeline information |
 | media-libs/openusd | Universal Scene Description is a system for 3D scene interexchange between apps |
@@ -1515,11 +1526,8 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | net-misc/ThunderTools | Thunder (aka WPEFramework) |
 | net-misc/ThunderUI | ThunderUI is the development and test UI that runs on top of Thunder |
 | sci-geosciences/google-earth-pro | A 3D interface to the planet |
-| sci-libs/FBGEMM | Facebook GEneral Matrix Multiplication |
 | sci-libs/MIGraphX | AMD's graph optimization engine |
 | sci-libs/MIVisionX | MIVisionX toolkit is a set of comprehensive computer vision and machine intelligence libraries, utilities, and applications bundled into a single toolkit. |
-| sci-libs/XNNPACK | library of floating-point neural network inference operators |
-| sci-libs/caffe2 | A deep learning framework |
 | sci-libs/composable_kernel | Composable Kernel: Performance Portable Programming Model for Machine Learning Tensor Operators |
 | sci-libs/ctranslate2 | Fast inference engine for Transformer models |
 | sci-libs/dlib | Numerical and networking C++ library |
@@ -1532,13 +1540,9 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sci-libs/hipSPARSE | ROCm SPARSE marshalling library |
 | sci-libs/hipSPARSELt | hipSPARSELt is a SPARSE marshalling library, with multiple supported backends. |
 | sci-libs/hipTensor | AMD’s C++ library for accelerating tensor primitives |
-| sci-libs/intel-extension-for-pytorch | A Python package for extending the official PyTorch that can easily obtain performance on Intel platform |
 | sci-libs/miopen | AMD's Machine Intelligence Library |
 | sci-libs/miopengemm | An OpenCL general matrix multiplication (GEMM) API and kernel generator |
 | sci-libs/miopenkernels | Prebuilt kernels to reduce startup latency |
-| sci-ml/onnxruntime | Cross-platform inference and training machine-learning accelerator. |
-| sci-libs/openvino | OpenVINO™ is an open-source toolkit for optimizing and deploying AI inference |
-| sci-ml/pytorch | Tensors and dynamic neural networks in Python |
 | sci-libs/rocAL | The AMD rocAL is designed to efficiently decode and process images and videos from a variety of storage formats and modify them through a processing graph programmable by the user. |
 | sci-libs/rocALUTION | Next generation library for iterative sparse solvers for ROCm platform |
 | sci-libs/rocBLAS | AMD's library for BLAS on ROCm |
@@ -1552,23 +1556,31 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sci-libs/rocThrust | A ported Thrust parallel library for AMD GPUs |
 | sci-libs/rocWMMA | AMD's C++ library for accelerating mixed-precision matrix multiply-accumulate (MMA) operations leveraging AMD GPU hardware |
 | sci-libs/rpp | AMD ROCm Performance Primitives (RPP) library is a comprehensive high-performance computer vision library for AMD processors with HIP/OpenCL/CPU back-ends. |
-| sci-libs/tensorflow | Computation framework using data flow graphs for scalable machine learning |
-| sci-libs/tensorflow-estimator | A high-level TensorFlow API that greatly simplifies machine learning programming |
-| sci-libs/tensorflow-hub | Clean up the public namespace of your package! |
-| sci-libs/tensorflow-io | Dataset, streaming, and file system extensions maintained by TensorFlow SIG-IO |
-| sci-libs/tensorflow-metadata | Utilities for passing TensorFlow related metadata between tools |
-| sci-libs/tensorflow-probability | Probabilistic reasoning and statistical analysis in TensorFlow |
-| sci-libs/tensorflow-text | Text processing in TensorFlow |
 | sci-libs/tensorstore | Library for reading and writing large multi-dimensional arrays |
-| sci-libs/tf-slim | TensorFlow-Slim: A lightweight library for defining, training and evaluating complex models in TensorFlow |
-| sci-libs/torchaudio | Data manipulation and transformation for audio signal processing, powered by PyTorch |
-| sci-libs/torchmetrics | PyTorch native Metrics |
-| sci-libs/torchvision | Datasets, transforms and models to specific to computer vision |
-| sci-libs/transformers | State-of-the-art Machine Learning for JAX, PyTorch and TensorFlow |
-| sci-misc/kineto | A CPU+GPU Profiling library that provides access to timeline traces and hardware performance counters |
-| sci-misc/nnef-models | A collection of neural network NNEF models for image recognition and classification |
-| sci-misc/tensorflow-datasets | TFDS is a collection of datasets ready to use with TensorFlow, Jax, ... |
-| sci-misc/tf-models-official | Models and examples built with TensorFlow |
+| sci-ml/FBGEMM | Facebook GEneral Matrix Multiplication |
+| sci-ml/XNNPACK | library of floating-point neural network inference operators |
+| sci-ml/caffe2 | A deep learning framework |
+| sci-ml/intel-extension-for-pytorch | A Python package for extending the official PyTorch that can easily obtain performance on Intel platform |
+| sci-ml/kineto | A CPU+GPU Profiling library that provides access to timeline traces and hardware performance counters |
+| sci-ml/nnef-models | A collection of neural network NNEF models for image recognition and classification |
+| sci-ml/onnxruntime | Cross-platform inference and training machine-learning accelerator. |
+| sci-ml/openvino | OpenVINO™ is an open-source toolkit for optimizing and deploying AI inference |
+| sci-ml/pytorch | Tensors and dynamic neural networks in Python |
+| sci-ml/sentencepiece | Unsupervised text tokenizer for neural network based text generation |
+| sci-ml/tensorflow | Computation framework using data flow graphs for scalable machine learning |
+| sci-ml/tensorflow-datasets | TFDS is a collection of datasets ready to use with TensorFlow, Jax, ... |
+| sci-ml/tensorflow-estimator | A high-level TensorFlow API that greatly simplifies machine learning programming |
+| sci-ml/tensorflow-hub | Clean up the public namespace of your package! |
+| sci-ml/tensorflow-io | Dataset, streaming, and file system extensions maintained by TensorFlow SIG-IO |
+| sci-ml/tensorflow-metadata | Utilities for passing TensorFlow related metadata between tools |
+| sci-ml/tensorflow-probability | Probabilistic reasoning and statistical analysis in TensorFlow |
+| sci-ml/tensorflow-text | Text processing in TensorFlow |
+| sci-ml/tf-models-official | Models and examples built with TensorFlow |
+| sci-ml/tf-slim | TensorFlow-Slim: A lightweight library for defining, training and evaluating complex models in TensorFlow |
+| sci-ml/torchaudio | Data manipulation and transformation for audio signal processing, powered by PyTorch |
+| sci-ml/torchmetrics | PyTorch native Metrics |
+| sci-ml/torchvision | Datasets, transforms and models to specific to computer vision |
+| sci-ml/transformers | State-of-the-art Machine Learning for JAX, PyTorch and TensorFlow |
 | sci-physics/bullet | Continuous Collision Detection and Physics Library |
 | sci-physics/mujoco | MuJoCo (Multi-Joint dynamics with Contact) is a general purpose physics simulator. |
 | sci-visualization/tensorboard | TensorFlow's Visualization Toolkit |
@@ -1576,8 +1588,6 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sci-visualization/tensorboard-plugin-profile | Clean up the public namespace of your package! |
 | sci-visualization/tensorboard-plugin-wit | What-If Tool TensorBoard plugin |
 | sci-visualization/tensorboardx | TensorBoardX lets you watch tensors flow without TensorFlow |
-| sys-apps/bun | (WIP) Incredibly fast JavaScript runtime, bundler, test runner, and package manager – all in one |
-| sys-apps/bun-webkit | WebKit with patches |
 | sys-apps/c2tcp | (WIP) C2TCP: A Flexible Cellular TCP to Meet Stringent Delay Requirements. |
 | sys-apps/cellular-traces-nyc | Cellular Traces Collected in New York City for different scenarios |
 | sys-apps/cellular-traces-y2018 | Cellular Traces Collected in New York City for different scenarios |
