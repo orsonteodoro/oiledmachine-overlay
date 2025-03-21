@@ -165,7 +165,7 @@ RDEPEND+="
 	>=dev-python/faster-whisper-1.1.1[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/sentence-transformers-3.3.1[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/unstructured-0.16.17[${PYTHON_SINGLE_USEDEP}]
-	sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/transformers[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
