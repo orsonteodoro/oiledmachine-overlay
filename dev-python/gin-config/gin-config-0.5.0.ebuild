@@ -47,7 +47,7 @@ RDEPEND+="
 		')
 	)
 	tensorflow? (
-		>=sci-libs/tensorflow-1.13.0[${PYTHON_USEDEP},cuda?]
+		>=sci-ml/tensorflow-1.13.0[${PYTHON_USEDEP},cuda?]
 	)
 "
 DEPEND+="
