@@ -904,7 +904,7 @@ RDEPEND="
 			>=sci-ml/FBGEMM-2023.12.04
 		)
 		gloo? (
-			>=sci-libs/gloo-0.5.0[cuda?,mpi?,ssl?]
+			>=sci-ml/gloo-0.5.0[cuda?,mpi?,ssl?]
 		)
 		mkl? (
 			sci-libs/mkl
