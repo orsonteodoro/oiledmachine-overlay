@@ -42,11 +42,11 @@ RDEPEND+="
 	>=dev-python/chex-0.1.8[${PYTHON_USEDEP}]
 	>=dev-python/jax-0.1.55[${PYTHON_USEDEP}]
 	>=dev-python/jaxlib-0.1.67[${PYTHON_USEDEP}]
-	>=sci-libs/tensorflow-probability-0.15.0[${PYTHON_USEDEP},jax]
+	>=sci-ml/tensorflow-probability-0.15.0[${PYTHON_USEDEP},jax]
 	examples? (
 		>=dev-python/dm-haiku-0.0.3[${PYTHON_USEDEP}]
 		>=dev-python/optax-0.0.6[${PYTHON_USEDEP}]
-		>=sci-libs/tensorflow-2.4.0[${PYTHON_USEDEP}]
+		>=sci-ml/tensorflow-2.4.0[${PYTHON_USEDEP}]
 		>=sci-misc/tensorflow-datasets-4.2.0[${PYTHON_USEDEP}]
 	)
 "
