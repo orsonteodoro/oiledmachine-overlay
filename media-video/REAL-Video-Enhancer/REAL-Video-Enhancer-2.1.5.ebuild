@@ -276,7 +276,7 @@ CUDA_DEPEND="
 		sci-ml/safetensors[${PYTHON_USEDEP}]
 	')
 	>=sci-ml/pytorch-9999[${PYTHON_SINGLE_USEDEP}]
-	>=sci-libs/torchvision-9999[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/torchvision-9999[${PYTHON_SINGLE_USEDEP}]
 "
 NCNN_DEPEND="
 	$(python_gen_cond_dep '
@@ -297,8 +297,8 @@ ROCM_DEPEND="
 	')
 	=sci-ml/pytorch-2.3*[${PYTHON_SINGLE_USEDEP},rocm_5_7?,rocm_6_0?]
 	sci-ml/pytorch:=
-	=sci-libs/torchvision-0.18*[${PYTHON_SINGLE_USEDEP}]
-	sci-libs/torchvision:=
+	=sci-ml/torchvision-0.18*[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/torchvision:=
 "
 TENSORRT_DEPEND="
 	$(python_gen_cond_dep '
