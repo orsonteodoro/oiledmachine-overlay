@@ -80,7 +80,7 @@ RDEPEND+="
 	)
 	other? (
 		$(python_gen_any_dep '
-			>=sci-libs/pytorch-1.0.0[${PYTHON_SINGLE_USEDEP}]
+			>=sci-ml/pytorch-1.0.0[${PYTHON_SINGLE_USEDEP}]
 		')
 		>=dev-python/lz4-3.1.0[${PYTHON_USEDEP}]
 		>=dev-python/matplotlib-3.0[${PYTHON_USEDEP}]
