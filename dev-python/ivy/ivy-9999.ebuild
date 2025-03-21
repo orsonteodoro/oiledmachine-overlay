@@ -97,7 +97,7 @@ RDEPEND+="
 			media-libs/opencv[${PYTHON_USEDEP},python]
 			sci-libs/tensorflow[${PYTHON_USEDEP}]
 		')
-		sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
 	)
 	cuda? (
@@ -124,7 +124,7 @@ RDEPEND+="
 			media-libs/opencv[${PYTHON_USEDEP},python]
 			sci-libs/tensorflow[${PYTHON_USEDEP}]
 		')
-		sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
 	)
 "
