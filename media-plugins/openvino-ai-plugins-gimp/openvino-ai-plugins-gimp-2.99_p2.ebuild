@@ -50,8 +50,8 @@ STABLE_DIFFUSION_MODEL_RDEPEND="
 		dev-python/pytorch-lightning[${PYTHON_SINGLE_USEDEP}]
 	')
 	(
-		>=sci-libs/tensorflow-2.5[${PYTHON_USEDEP}]
-		<sci-libs/tensorflow-2.12[${PYTHON_USEDEP}]
+		>=sci-ml/tensorflow-2.5[${PYTHON_USEDEP}]
+		<sci-ml/tensorflow-2.12[${PYTHON_USEDEP}]
 	)
 	>=sci-libs/nncf-2.4.0[${PYTHON_USEDEP}]
 	>=sci-ml/onnx-1.13.0[${PYTHON_USEDEP}]
