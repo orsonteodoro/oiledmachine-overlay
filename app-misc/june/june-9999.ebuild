@@ -77,7 +77,7 @@ RDEPEND+="
 		>=dev-python/pygame-2.5.2[${PYTHON_USEDEP}]
 	')
 	>=dev-python/coqui-tts-0.24.1[${PYTHON_SINGLE_USEDEP}]
-	>=sci-libs/pytorch-2.3.1[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/pytorch-2.3.1[${PYTHON_SINGLE_USEDEP}]
 	>=sci-libs/torchaudio-2.3.1[${PYTHON_SINGLE_USEDEP}]
 	>=sci-libs/transformers-4.40.2[${PYTHON_SINGLE_USEDEP}]
 	app-misc/ollama
