@@ -46,7 +46,7 @@ RDEPEND+="
 		dev-python/tqdm[${PYTHON_USEDEP}]
 	')
 	>=sci-ml/onnxruntime-1.14[${PYTHON_SINGLE_USEDEP},python]
-	>=sci-libs/tokenizers-0.13[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/tokenizers-0.13[${PYTHON_SINGLE_USEDEP}]
 	conversion? (
 		>=sci-libs/transformers-4.23[${PYTHON_SINGLE_USEDEP},pytorch]
 	)
