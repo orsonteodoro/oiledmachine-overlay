@@ -86,7 +86,7 @@ RDEPEND+="
 	pytorch? (
 		>=dev-python/accelerate-0.29.3[${PYTHON_USEDEP}]
 		$(python_gen_any_dep '
-			>=sci-libs/pytorch-1.4[${PYTHON_SINGLE_USEDEP}]
+			>=sci-ml/pytorch-1.4[${PYTHON_SINGLE_USEDEP}]
 			dev-python/torchsde[${PYTHON_SINGLE_USEDEP}]
 		')
 	)
