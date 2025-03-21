@@ -48,7 +48,7 @@ RDEPEND+="
 	dev-python/nnef-parser[${PYTHON_USEDEP}]
 	caffe? (
 		$(python_gen_any_dep '
-			sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+			sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 		')
 		dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
 	)
