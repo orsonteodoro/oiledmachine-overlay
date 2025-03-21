@@ -383,7 +383,7 @@ BDEPEND_MODEL_HUB_TESTS_PYTORCH_SECONDARY="
 BDEPEND_LAYER_TESTS="
 	${BDEPEND_TEST_CONSTRAINTS}
 	$(python_gen_any_dep '
-		sci-libs/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
+		sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
 		sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
