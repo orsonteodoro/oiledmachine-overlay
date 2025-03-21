@@ -57,7 +57,7 @@ BDEPEND+="
 	test? (
 		$(python_gen_any_dep '
 			sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
-			sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
+			sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 		')
 		>=dev-python/imageio-2.27[${PYTHON_USEDEP}]
 		>=dev-python/protobuf-4.22.3[${PYTHON_USEDEP}]
