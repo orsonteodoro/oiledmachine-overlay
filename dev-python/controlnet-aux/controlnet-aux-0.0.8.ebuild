@@ -49,7 +49,7 @@ RDEPEND+="
 	dev-python/scipy[${PYTHON_USEDEP}]
 	dev-python/scikit-image[${PYTHON_USEDEP}]
 	media-libs/opencv[${PYTHON_USEDEP},python]
-	sci-libs/huggingface_hub[${PYTHON_USEDEP}]
+	sci-ml/huggingface_hub[${PYTHON_USEDEP}]
 	$(python_gen_any_dep '
 		sci-libs/torch[${PYTHON_SINGLE_USEDEP}]
 		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
