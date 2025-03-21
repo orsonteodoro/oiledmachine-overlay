@@ -93,9 +93,9 @@ PYTORCH_BASE_RDEPEND="
 		)
 	)
 	(
-		>=sci-libs/torchmetrics-0.7.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/torchmetrics-0.7.0[${PYTHON_SINGLE_USEDEP}]
 		strict? (
-			<sci-libs/torchmetrics-0.12.0[${PYTHON_SINGLE_USEDEP}]
+			<sci-ml/torchmetrics-0.12.0[${PYTHON_SINGLE_USEDEP}]
 		)
 	)
 "
@@ -112,9 +112,9 @@ PYTORCH_EXAMPLES_RDEPEND="
 		)
 	')
 	(
-		>=sci-libs/torchmetrics-0.10.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/torchmetrics-0.10.0[${PYTHON_SINGLE_USEDEP}]
 		strict? (
-			<sci-libs/torchmetrics-0.12.0[${PYTHON_SINGLE_USEDEP}]
+			<sci-ml/torchmetrics-0.12.0[${PYTHON_SINGLE_USEDEP}]
 		)
 	)
 	(
