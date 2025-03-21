@@ -50,8 +50,8 @@ DEPEND+="
 	${RDEPEND}
 "
 TENSORFLOW_BDEPEND="
-	>=sci-libs/tensorflow-2.12.0_rc0
-	>=sci-libs/tensorflow-probability-0.12.2
+	>=sci-ml/tensorflow-2.12.0_rc0
+	>=sci-ml/tensorflow-probability-0.12.2
 "
 BDEPEND+="
 	dev-python/setuptools[${PYTHON_USEDEP}]
