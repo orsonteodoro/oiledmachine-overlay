@@ -958,7 +958,7 @@ DEPEND="
 			>=dev-python/pybind11-2.12.0[${PYTHON_USEDEP}]
 		')
 		>=dev-libs/flatbuffers-23.3.3
-		>=dev-libs/FP16-2020.05.14
+		>=sci-ml/FP16-2020.05.14
 		>=dev-libs/FXdiv-2020.04.17
 		>=dev-libs/pocketfft-2023.12.30
 		>=dev-libs/psimd-2020.05.17
