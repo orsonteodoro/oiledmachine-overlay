@@ -108,7 +108,7 @@ BDEPEND+="
 		>=dev-python/tiktoken-0.7.0[${PYTHON_USEDEP}]
 		>=dev-util/ruff-0.1.8[${PYTHON_USEDEP}]
 		>=dev-vcs/pre-commit-3.2.2[${PYTHON_USEDEP}]
-		>=sci-libs/huggingface_hub-0.16.4[${PYTHON_USEDEP}]
+		>=sci-ml/huggingface_hub-0.16.4[${PYTHON_USEDEP}]
 	)
 	doc? (
 		>=dev-python/pdoc-14.4.0[${PYTHON_USEDEP}]
