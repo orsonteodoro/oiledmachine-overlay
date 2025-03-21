@@ -380,7 +380,7 @@ BDEPEND_MODEL_HUB_TESTS_PYTORCH="
 	dev-python/soundfile[${PYTHON_USEDEP}]
 	dev-python/super-image[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
-	sci-libs/datasets[${PYTHON_USEDEP}]
+	sci-ml/datasets[${PYTHON_USEDEP}]
 	dev-python/sentencepiece[${PYTHON_USEDEP},python]
 	dev-python/timm[${PYTHON_USEDEP}]
 "
