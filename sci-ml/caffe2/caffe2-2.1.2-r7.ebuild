@@ -849,7 +849,7 @@ RDEPEND="
 		>=dev-libs/pthreadpool-2021.04.13
 		>=dev-libs/sleef-3.6.0[cpu_flags_x86_avx?,cpu_flags_x86_avx2?,cpu_flags_x86_avx512f?,cpu_flags_x86_fma4?,cpu_flags_x86_sse2?,cpu_flags_x86_sse4_1?]
 		>=sci-libs/foxi-2021.05.26
-		>=sci-libs/onnx-1.14.1
+		>=sci-ml/onnx-1.14.1
 		cuda? (
 			>=dev-libs/cudnn-frontend-0.9.2:0/8
 		)
