@@ -99,7 +99,7 @@ RDEPEND="
 		~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
 	)
 	composable-kernel? (
-		sci-libs/composable_kernel:${ROCM_SLOT}[${COMPOSABLE_KERNEL_5_6_AMDGPU_USEDEP}]
+		sci-libs/composable-kernel:${ROCM_SLOT}[${COMPOSABLE_KERNEL_5_6_AMDGPU_USEDEP}]
 	)
 	kernels? (
 		~sci-libs/miopenkernels-${PV}:${ROCM_SLOT}[${MIOPENKERNELS_5_6_AMDGPU_USEDEP}]
