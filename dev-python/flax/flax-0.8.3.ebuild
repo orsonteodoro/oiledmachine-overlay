@@ -104,7 +104,7 @@ BDEPEND+="
 		dev-python/scikit-learn[${PYTHON_USEDEP}]
 		dev-python/sphinx_design[${PYTHON_USEDEP}]
 		dev-python/sphinx-book-theme[${PYTHON_USEDEP}]
-		sci-libs/tensorflow[${PYTHON_USEDEP}]
+		sci-ml/tensorflow[${PYTHON_USEDEP}]
 		sci-misc/tensorflow-datasets[${PYTHON_USEDEP}]
 	)
 	test? (
@@ -116,7 +116,7 @@ BDEPEND+="
 		>=dev-python/jraph-0.0.6_pre0[${PYTHON_USEDEP}]
 		>=dev-python/pyink-23.5.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-xdist-1.34.0[${PYTHON_USEDEP}]
-		>=sci-libs/tensorflow-text-2.11.0[${PYTHON_USEDEP}]
+		>=sci-ml/tensorflow-text-2.11.0[${PYTHON_USEDEP}]
 		dev-python/clu[${PYTHON_USEDEP}]
 		dev-python/einops[${PYTHON_USEDEP}]
 		dev-python/jaxlib[${PYTHON_USEDEP}]
@@ -129,7 +129,7 @@ BDEPEND+="
 		dev-python/pytype[${PYTHON_USEDEP}]
 		dev-python/sentencepiece[${PYTHON_USEDEP},python]
 		media-libs/opencv[${PYTHON_USEDEP},python]
-		sci-libs/tensorflow[${PYTHON_USEDEP},python]
+		sci-ml/tensorflow[${PYTHON_USEDEP},python]
 		sci-misc/tensorflow-datasets[${PYTHON_USEDEP}]
 	)
 "
