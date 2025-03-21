@@ -108,7 +108,7 @@ BDEPEND+="
 	)
 	test? (
 		$(python_gen_any_dep '
-			sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+			sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 		')
 		>=dev-python/black-23.7.0[${PYTHON_USEDEP}]
 		>=dev-python/jraph-0.0.6_pre0[${PYTHON_USEDEP}]
