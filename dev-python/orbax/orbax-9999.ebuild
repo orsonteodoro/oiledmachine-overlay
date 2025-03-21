@@ -98,7 +98,7 @@ BDEPEND+="
 # Avoid circular depends with tensorflow \
 PDEPEND+="
 	tensorflow? (
-		>=sci-libs/tensorflow-2.15.0[${PYTHON_USEDEP}]
+		>=sci-ml/tensorflow-2.15.0[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "CHANGELOG.md" "README.md" )
