@@ -79,7 +79,7 @@ RDEPEND+="
 	>=dev-python/coqui-tts-0.24.1[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/pytorch-2.3.1[${PYTHON_SINGLE_USEDEP}]
 	>=sci-libs/torchaudio-2.3.1[${PYTHON_SINGLE_USEDEP}]
-	>=sci-libs/transformers-4.40.2[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/transformers-4.40.2[${PYTHON_SINGLE_USEDEP}]
 	app-misc/ollama
 	media-libs/portaudio[alsa?,jack?,oss?]
 	media-libs/sdl2-mixer[wav]
