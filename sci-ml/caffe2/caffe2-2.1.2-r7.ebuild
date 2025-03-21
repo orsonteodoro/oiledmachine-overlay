@@ -895,7 +895,7 @@ DEPEND="
 		')
 		>=dev-cpp/eigen-3.4.0
 		>=dev-libs/flatbuffers-23.3.3
-		>=dev-libs/FP16-2020.05.14
+		>=sci-ml/FP16-2020.05.14
 		>=dev-libs/FXdiv-2020.04.17
 		>=dev-libs/pocketfft-2021.03.12
 		>=dev-libs/psimd-2020.05.17
