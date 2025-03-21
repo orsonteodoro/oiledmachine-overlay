@@ -110,7 +110,7 @@ PYTORCH_DEPENDS="
 		>=dev-python/timm-0.9.10[${PYTHON_USEDEP}]
 		>=dev-python/tomesd-0.1.3[${PYTHON_USEDEP}]
 		>=media-libs/opencv-4.7.0.72[${PYTHON_USEDEP},imgproc,png,python]
-		>=sci-libs/safetensors-0.4.0[${PYTHON_USEDEP}]
+		>=sci-ml/safetensors-0.4.0[${PYTHON_USEDEP}]
 	')
 	>=dev-python/invisible-watermark-0.2.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/pytorch-lightning-2.1.1[${PYTHON_SINGLE_USEDEP}]
