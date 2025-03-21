@@ -58,7 +58,7 @@ BDEPEND+="
 	test? (
 		>=sci-ml/pytorch-2.0.0[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
-		sci-libs/tensorflow[${PYTHON_USEDEP}]
+		sci-ml/tensorflow[${PYTHON_USEDEP}]
 		sci-misc/tensorflow-datasets[${PYTHON_USEDEP}]
 	)
 "
