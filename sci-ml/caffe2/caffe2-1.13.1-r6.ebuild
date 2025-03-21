@@ -825,7 +825,7 @@ RDEPEND="
 			>=dev-libs/cudnn-frontend-0.7.1:0/8
 		)
 		fbgemm? (
-			>=sci-libs/FBGEMM-2022.09.28
+			>=sci-ml/FBGEMM-2022.09.28
 		)
 		gloo? (
 			>=sci-libs/gloo-0.5.0[cuda?,mpi?,ssl?]
