@@ -32,7 +32,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc tensorflow-io-gcs-filesystem test"
 # See https://github.com/tensorflow/io/blob/v0.37.0/README.md#tensorflow-version-compatibility
 RDEPEND+="
-	=sci-libs/tensorflow-2.16*[${PYTHON_USEDEP}]
+	=sci-ml/tensorflow-2.16*[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
