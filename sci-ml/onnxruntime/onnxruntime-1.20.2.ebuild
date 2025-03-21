@@ -1014,7 +1014,7 @@ DISABLED_RDEPEND="
 		>=dev-libs/protobuf-21.12:0/3.21
 		dev-libs/protobuf:=
 	)
-	>=dev-libs/FP16-2021.03.16
+	>=sci-ml/FP16-2021.03.16
 	>=dev-libs/FXdiv-2020.12.08
 	>=dev-libs/re2-0.2024.07.02:0/11
 	benchmark? (
