@@ -165,7 +165,7 @@ BDEPEND+="
 	test? (
 		>=sci-libs/intel-extension-for-pytorch-1.10[${PYTHON_SINGLE_USEDEP}]
 		>=sci-ml/onnxruntime-1.17.1[${PYTHON_SINGLE_USEDEP},python]
-		>=sci-libs/torchvision-0.17.1[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/torchvision-0.17.1[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	)
 "
