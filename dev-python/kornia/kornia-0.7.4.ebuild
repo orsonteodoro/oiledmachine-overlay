@@ -83,7 +83,7 @@ BDEPEND+="
 			dev-python/pytest-timeout[${PYTHON_USEDEP}]
 			dev-python/requests[${PYTHON_USEDEP}]
 			dev-python/types-requests[${PYTHON_USEDEP}]
-			sci-libs/transformers[${PYTHON_USEDEP}]
+			sci-ml/transformers[${PYTHON_USEDEP}]
 			virtual/pillow[${PYTHON_USEDEP}]
 		')
 		>=dev-python/ivy-9999[${PYTHON_SINGLE_USEDEP}]
