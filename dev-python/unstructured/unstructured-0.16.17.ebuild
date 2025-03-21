@@ -147,7 +147,7 @@ IMAGE_RDEPEND="
 		dev-python/pikepdf[${PYTHON_USEDEP}]
 		dev-python/pi_heif[${PYTHON_USEDEP}]
 		dev-python/pypdf[${PYTHON_USEDEP}]
-		sci-libs/onnx[${PYTHON_USEDEP}]
+		sci-ml/onnx[${PYTHON_USEDEP}]
 	')
 "
 MARKDOWN_RDEPEND="
