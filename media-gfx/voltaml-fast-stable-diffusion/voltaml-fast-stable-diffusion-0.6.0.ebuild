@@ -130,7 +130,7 @@ gen_pytorch_rdepend() {
 		local torchvision_pv="${row#*;}"
 		echo "
 			(
-				~sci-libs/pytorch-${torch_pv}[${PYTHON_SINGLE_USEDEP},cuda?,rocm?]
+				~sci-ml/pytorch-${torch_pv}[${PYTHON_SINGLE_USEDEP},cuda?,rocm?]
 				~sci-libs/torchaudio-${torch_pv}[${PYTHON_SINGLE_USEDEP}]
 				~sci-libs/torchvision-${torchvision_pv}[${PYTHON_SINGLE_USEDEP}]
 			)
@@ -156,7 +156,7 @@ RDEPEND+="
 	|| (
 		$(gen_pytorch_rdepend)
 	)
-	sci-libs/pytorch:=
+	sci-ml/pytorch:=
 	sci-libs/torchaudio:=
 	sci-libs/torchvision:=
 	aitemplate? (
