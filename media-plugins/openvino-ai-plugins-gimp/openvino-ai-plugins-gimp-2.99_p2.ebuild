@@ -90,10 +90,10 @@ STABLE_DIFFUSION_MODEL_RDEPEND="
 	>=dev-python/scikit-image-0.19.2[${PYTHON_USEDEP}]
 
 	>=dev-python/diffusers-0.9.0[${PYTHON_USEDEP}]
-	>=sci-libs/huggingface_hub-0.9.1[${PYTHON_USEDEP}]
+	>=sci-ml/huggingface_hub-0.9.1[${PYTHON_USEDEP}]
 
 	>=dev-python/diffusers-0.23.0[${PYTHON_USEDEP}]
-	>=sci-libs/huggingface_hub-0.9.1[${PYTHON_USEDEP}]
+	>=sci-ml/huggingface_hub-0.9.1[${PYTHON_USEDEP}]
 
 	>=dev-python/controlnet-aux-0.0.6[${PYTHON_USEDEP}]
 "
@@ -109,7 +109,7 @@ PLUGIN_RDEPEND="
 	>=dev-python/watchdog-2.1.9[${PYTHON_USEDEP}]
 	>=sci-libs/safetensors-0.4.1[${PYTHON_USEDEP}]
 	dev-python/accelerate[${PYTHON_USEDEP}]
-	sci-libs/huggingface_hub[${PYTHON_USEDEP}]
+	sci-ml/huggingface_hub[${PYTHON_USEDEP}]
 	sci-libs/openvino[${PYTHON_USEDEP}]
 "
 #	${STABLE_DIFFUSION_MODEL_RDEPEND}
