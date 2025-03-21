@@ -68,7 +68,7 @@ RDEPEND+="
 	)
 	pytorch? (
 		$(python_gen_any_dep '
-			=sci-libs/pytorch-1.13.0*[${PYTHON_SINGLE_USEDEP}]
+			=sci-ml/pytorch-1.13.0*[${PYTHON_SINGLE_USEDEP}]
 		')
 	)
 	rust? (
