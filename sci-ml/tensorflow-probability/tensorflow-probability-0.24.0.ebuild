@@ -29,7 +29,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 			=dev-python/tf-keras-9999[${PYTHON_USEDEP}]
 		)
 		tfds? (
-			=sci-misc/tensorflow-datasets-9999[${PYTHON_USEDEP}]
+			=sci-ml/tensorflow-datasets-9999[${PYTHON_USEDEP}]
 		)
 	"
 else
@@ -49,7 +49,7 @@ https://github.com/tensorflow/probability/archive/refs/tags/v${PV}.tar.gz
 			>=dev-python/tf-keras-2.16[${PYTHON_USEDEP}]
 		)
 		tfds? (
-			>=sci-misc/tensorflow-datasets-2.2.0[${PYTHON_USEDEP}]
+			>=sci-ml/tensorflow-datasets-2.2.0[${PYTHON_USEDEP}]
 		)
 	"
 fi
