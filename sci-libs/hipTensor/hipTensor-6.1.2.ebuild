@@ -63,7 +63,7 @@ RESTRICT="
 "
 RDEPEND="
 	~dev-util/hip-${PV}:${ROCM_SLOT}[rocm]
-	~sci-libs/composable_kernel-${PV}:${ROCM_SLOT}[${COMPOSABLE_KERNEL_6_1_AMDGPU_USEDEP}]
+	~sci-libs/composable-kernel-${PV}:${ROCM_SLOT}[${COMPOSABLE_KERNEL_6_1_AMDGPU_USEDEP}]
 	cuda? (
 		${HIP_CUDA_DEPEND}
 	)
