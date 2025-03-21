@@ -114,7 +114,7 @@ RDEPEND+="
 	)
 	ort? (
 		>=sci-ml/onnxruntime-1.17.1[${PYTHON_SINGLE_USEDEP},extensions,python,training-ort]
-		>=sci-libs/transformers-4.34.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/transformers-4.34.0[${PYTHON_SINGLE_USEDEP}]
 	)
 	pytorch? (
 		>=sci-ml/pytorch-2.2.1[${PYTHON_SINGLE_USEDEP}]
@@ -124,7 +124,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=sci-libs/transformers-4.30.2[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/transformers-4.30.2[${PYTHON_SINGLE_USEDEP}]
 	$(python_gen_cond_dep '
 		dev-python/setuptools[${PYTHON_USEDEP}]
 		doc? (
