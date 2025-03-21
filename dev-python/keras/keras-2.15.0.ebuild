@@ -45,7 +45,7 @@ RDEPEND="
 		>=dev-python/numpy-1.24.3[${PYTHON_USEDEP}]
 		<dev-python/numpy-2[${PYTHON_USEDEP}]
 	)
-	=sci-libs/tensorflow-${PV%.*}*[${PYTHON_USEDEP},python]
+	=sci-ml/tensorflow-${PV%.*}*[${PYTHON_USEDEP},python]
 	>=dev-python/scipy-1.9.2[${PYTHON_USEDEP}]
 	>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
 	>=dev-python/keras-preprocessing-1.1.2[${PYTHON_USEDEP}]
