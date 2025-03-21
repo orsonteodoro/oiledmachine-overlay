@@ -219,7 +219,7 @@ RDEPEND="
 			dev-python/tf2onnx[${PYTHON_USEDEP}]
 		)
 		onnxruntime? (
-			>=sci-libs/onnxruntime-1.4.0[${PYTHON_SINGLE_USEDEP},python]
+			>=sci-ml/onnxruntime-1.4.0[${PYTHON_SINGLE_USEDEP},python]
 			>=sci-misc/onnxruntime-tools-1.4.2[${PYTHON_USEDEP}]
 		)
 		optuna? (
