@@ -98,7 +98,7 @@ RDEPEND+="
 			sci-libs/tensorflow[${PYTHON_USEDEP}]
 		')
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
-		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 	)
 	cuda? (
 		$(python_gen_cond_dep '
@@ -125,7 +125,7 @@ RDEPEND+="
 			sci-libs/tensorflow[${PYTHON_USEDEP}]
 		')
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
-		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="
