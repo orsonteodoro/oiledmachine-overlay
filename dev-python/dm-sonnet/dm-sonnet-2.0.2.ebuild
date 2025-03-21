@@ -69,8 +69,8 @@ BDEPEND+="
 	)
 	test? (
 		(
-			>=sci-misc/tensorflow-datasets-1[${PYTHON_USEDEP}]
-			<sci-misc/tensorflow-datasets-4[${PYTHON_USEDEP}]
+			>=sci-ml/tensorflow-datasets-1[${PYTHON_USEDEP}]
+			<sci-ml/tensorflow-datasets-4[${PYTHON_USEDEP}]
 		)
 		${TENSORFLOW_BDEPEND}
 		>=dev-python/mock-3.0.5[${PYTHON_USEDEP}]
