@@ -55,7 +55,7 @@ RDEPEND+="
 		dev-libs/protobuf:=
 	)
 	torchvision? (
-		>=sci-libs/torchvision-0.8.2[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/torchvision-0.8.2[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="
