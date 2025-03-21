@@ -872,7 +872,7 @@ RDEPEND="
 			>=sci-libs/QNNPACK-2019.08.28
 		)
 		tensorpipe? (
-			>=sci-libs/tensorpipe-2021.12.27[cuda?]
+			>=sci-ml/tensorpipe-2021.12.27[cuda?]
 		)
 		xnnpack? (
 			>=sci-ml/XNNPACK-2022.12.21[jit?,memopt,sparse]
