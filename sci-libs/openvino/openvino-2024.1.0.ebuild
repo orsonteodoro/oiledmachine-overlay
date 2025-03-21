@@ -341,7 +341,7 @@ BDEPEND_MODEL_HUB_TESTS_PYTORCH="
 	$(python_gen_any_dep '
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 		sci-libs/torchaudio[${PYTHON_SINGLE_USEDEP}]
-		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 		sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
 	')
 	>=dev-python/auto-gptq-0.5.1[${PYTHON_USEDEP}]
@@ -376,7 +376,7 @@ BDEPEND_LAYER_TESTS="
 	$(python_gen_any_dep '
 		sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
-		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 		sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
 	')
 	dev-python/numpy[${PYTHON_USEDEP}]
