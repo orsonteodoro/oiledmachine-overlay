@@ -846,10 +846,10 @@ RDEPEND="
 			>=sci-libs/tensorpipe-2021.12.27[cuda?]
 		)
 		xnnpack? (
-			>=sci-libs/XNNPACK-2022.02.16[jit?,memopt,sparse]
+			>=sci-ml/XNNPACK-2022.02.16[jit?,memopt,sparse]
 			cpu_flags_arm_dotprod? (
 				cpu_flags_arm_fp16? (
-					>=sci-libs/XNNPACK-2022.02.16[assembly]
+					>=sci-ml/XNNPACK-2022.02.16[assembly]
 				)
 			)
 		)
