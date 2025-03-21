@@ -60,7 +60,7 @@ RDEPEND+="
 			>=sci-ml/pytorch-2.0[${PYTHON_USEDEP}]
 			dev-python/fsspec[${PYTHON_USEDEP}]
 			dev-python/pandas[${PYTHON_USEDEP}]
-			sci-libs/transformers[${PYTHON_SINGLE_USEDEP},sentencepiece]
+			sci-ml/transformers[${PYTHON_SINGLE_USEDEP},sentencepiece]
 		)
 	')
 	>=sci-ml/pytorch-1.9.0[${PYTHON_SINGLE_USEDEP}]
