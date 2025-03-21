@@ -117,7 +117,7 @@ RDEPEND+="
 		>=sci-libs/transformers-4.34.0[${PYTHON_SINGLE_USEDEP}]
 	)
 	pytorch? (
-		>=sci-libs/pytorch-2.2.1[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/pytorch-2.2.1[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="
@@ -166,6 +166,6 @@ BDEPEND+="
 		>=sci-libs/intel-extension-for-pytorch-1.10[${PYTHON_SINGLE_USEDEP}]
 		>=sci-libs/onnxruntime-1.17.1[${PYTHON_SINGLE_USEDEP},python]
 		>=sci-libs/torchvision-0.17.1[${PYTHON_SINGLE_USEDEP}]
-		sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	)
 "
