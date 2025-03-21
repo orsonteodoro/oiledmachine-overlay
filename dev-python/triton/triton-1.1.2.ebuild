@@ -149,7 +149,7 @@ gen_llvm_rdepend() {
 #
 RDEPEND+="
 	$(python_gen_any_dep '
-		sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	')
 	dev-python/filelock[${PYTHON_USEDEP}]
 	!rocm? (
@@ -188,7 +188,7 @@ RDEPEND+="
 	)
 	tutorials? (
 		$(python_gen_any_dep '
-			sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+			sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 		')
 		dev-python/tabulate[${PYTHON_USEDEP}]
 	)
@@ -207,7 +207,7 @@ BDEPEND+="
 	)
 	test? (
 		$(python_gen_any_dep '
-			sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+			sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 		')
 		dev-python/pandas[${PYTHON_USEDEP}]
 		dev-python/scipy[${PYTHON_USEDEP}]
