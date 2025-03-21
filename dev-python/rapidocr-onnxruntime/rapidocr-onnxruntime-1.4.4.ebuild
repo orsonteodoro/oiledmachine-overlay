@@ -36,7 +36,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
 RDEPEND+="
 	$(python_gen_any_dep '
-		>=sci-libs/onnxruntime-1.7.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/onnxruntime-1.7.0[${PYTHON_SINGLE_USEDEP}]
 	')
 	>=dev-python/pyclipper-1.2.0[${PYTHON_USEDEP}]
 	>=media-libs/opencv-4.5.1.48[${PYTHON_USEDEP},python]
