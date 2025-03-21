@@ -62,7 +62,7 @@ RDEPEND+="
 	dev-python/kornia[${PYTHON_SINGLE_USEDEP}]
 	dev-python/torchdiffeq[${PYTHON_SINGLE_USEDEP}]
 	dev-python/torchsde[${PYTHON_SINGLE_USEDEP}]
-	sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
