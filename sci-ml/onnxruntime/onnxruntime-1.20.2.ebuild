@@ -1143,7 +1143,7 @@ RDEPEND="
 		')
 	)
 	python? (
-		>=sci-libs/transformers-4.18.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/transformers-4.18.0[${PYTHON_SINGLE_USEDEP}]
 		$(python_gen_cond_dep '
 			quant? (
 				dev-python/neural-compressor[${PYTHON_USEDEP}]
