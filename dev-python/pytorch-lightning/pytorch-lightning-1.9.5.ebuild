@@ -340,10 +340,10 @@ PYTORCH_TEST_BDEPEND="
 	')
 	>=dev-vcs/pre-commit-2.20.0[${PYTHON_SINGLE_USEDEP}]
 	!strict? (
-		sci-libs/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
+		sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
 	)
 	strict? (
-		<sci-libs/onnxruntime-1.14.0[${PYTHON_SINGLE_USEDEP},python]
+		<sci-ml/onnxruntime-1.14.0[${PYTHON_SINGLE_USEDEP},python]
 	)
 "
 BDEPEND="
