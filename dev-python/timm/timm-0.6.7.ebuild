@@ -36,7 +36,7 @@ RDEPEND+="
 			>=dev-python/jinja2-2.11.3[${PYTHON_USEDEP}]
 		)
 	')
-	>=sci-libs/pytorch-1.4.0[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/pytorch-1.4.0[${PYTHON_SINGLE_USEDEP}]
 	>=sci-libs/torchvision-0.5.0[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
