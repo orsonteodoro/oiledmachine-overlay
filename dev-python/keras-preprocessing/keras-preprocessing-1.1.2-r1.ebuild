@@ -43,7 +43,7 @@ BDEPEND+="
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-xdist[${PYTHON_USEDEP}]
 		dev-python/pytest-cov[${PYTHON_USEDEP}]
-		sci-libs/tensorflow[${PYTHON_USEDEP}]
+		sci-ml/tensorflow[${PYTHON_USEDEP}]
 		virtual/pillow[${PYTHON_USEDEP}]
 	)
 "
