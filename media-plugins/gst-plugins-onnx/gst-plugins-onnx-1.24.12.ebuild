@@ -14,7 +14,7 @@ DESCRIPTION="ONNX neural network plugin for GStreamer"
 IUSE+=" ebuild_revision_1"
 RDEPEND="
 	$(python_gen_any_dep '
-		>=sci-libs/onnxruntime-1.16.1[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/onnxruntime-1.16.1[${PYTHON_SINGLE_USEDEP}]
 	')
 	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP}]
 "
