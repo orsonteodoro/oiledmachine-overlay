@@ -117,7 +117,7 @@ HUGGINGFACE_RDEPEND="
 	sci-libs/tensorflow-metadata[${PYTHON_USEDEP}]
 	virtual/pillow[${PYTHON_USEDEP}]
 
-	sci-libs/datasets[${PYTHON_USEDEP}]
+	sci-ml/datasets[${PYTHON_USEDEP}]
 "
 
 RDEPEND+="
