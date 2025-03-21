@@ -32,7 +32,7 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
-	>=dev-libs/FP16-2021.03.20
+	>=sci-ml/FP16-2021.03.20
 	>=dev-libs/FXdiv-2020.04.17
 "
 BDEPEND="
