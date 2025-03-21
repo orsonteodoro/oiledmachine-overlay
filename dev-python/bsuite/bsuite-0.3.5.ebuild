@@ -57,8 +57,8 @@ RDEPEND+="
 		dev-python/tqdm[${PYTHON_USEDEP}]
 		dev-python/dm-sonnet[${PYTHON_USEDEP}]
 		dev-python/dm-tree[${PYTHON_USEDEP}]
-		sci-libs/tensorflow[${PYTHON_USEDEP}]
-		sci-libs/tensorflow-probability[${PYTHON_USEDEP}]
+		sci-ml/tensorflow[${PYTHON_USEDEP}]
+		sci-ml/tensorflow-probability[${PYTHON_USEDEP}]
 		dev-python/trfl[${PYTHON_USEDEP}]
 	)
 	baselines-jax? (
@@ -72,7 +72,7 @@ RDEPEND+="
 		dev-python/rlax[${PYTHON_USEDEP}]
 	)
 	baselines-third-party? (
-		>=sci-libs/tensorflow-1.15[${PYTHON_USEDEP}]
+		>=sci-ml/tensorflow-1.15[${PYTHON_USEDEP}]
 		dev-python/dopamine-rl[${PYTHON_USEDEP}]
 		sci-libs/baselines[${PYTHON_USEDEP}]
 	)
@@ -85,7 +85,7 @@ BDEPEND+="
 	dev-python/wheel[${PYTHON_USEDEP}]
 	test? (
 		>=dev-python/gym-0.20.0[${PYTHON_USEDEP}]
-		>=sci-libs/tensorflow-probability-0.14.1[${PYTHON_USEDEP}]
+		>=sci-ml/tensorflow-probability-0.14.1[${PYTHON_USEDEP}]
 		dev-python/mock[${PYTHON_USEDEP}]
 		dev-python/pytest-xdist[${PYTHON_USEDEP}]
 		dev-python/pytype[${PYTHON_USEDEP}]
