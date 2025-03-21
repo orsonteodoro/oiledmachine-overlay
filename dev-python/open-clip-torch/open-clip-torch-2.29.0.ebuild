@@ -52,7 +52,7 @@ RDEPEND+="
 		dev-python/ftfy[${PYTHON_USEDEP}]
 		dev-python/tqdm[${PYTHON_USEDEP}]
 		dev-python/timm[${PYTHON_USEDEP}]
-		sci-libs/huggingface_hub[${PYTHON_USEDEP}]
+		sci-ml/huggingface_hub[${PYTHON_USEDEP}]
 		sci-libs/safetensors[${PYTHON_USEDEP}]
 		training? (
 			>=dev-python/timm-1.0.10[${PYTHON_USEDEP}]
