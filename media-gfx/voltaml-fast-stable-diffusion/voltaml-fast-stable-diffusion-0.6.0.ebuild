@@ -115,7 +115,7 @@ PYTORCH_DEPENDS="
 	>=dev-python/invisible-watermark-0.2.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/pytorch-lightning-2.1.1[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/tokenizers-0.15.0[${PYTHON_SINGLE_USEDEP}]
-	>=sci-libs/transformers-4.36.1[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/transformers-4.36.1[${PYTHON_SINGLE_USEDEP}]
 "
 INTERROGATION_DEPENDS="
 	$(python_gen_cond_dep '
