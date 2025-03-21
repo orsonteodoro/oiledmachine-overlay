@@ -44,7 +44,7 @@ IUSE+=" test"
 STABLE_DIFFUSION_MODEL_RDEPEND="
 	$(python_gen_any_dep '
 		>=sci-ml/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
-		>=sci-libs/torchmetrics-0.11.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/torchmetrics-0.11.0[${PYTHON_SINGLE_USEDEP}]
 		>=sci-ml/torchvision-0.14.1[${PYTHON_SINGLE_USEDEP}]
 		>=sci-ml/transformers-4.38.0[${PYTHON_SINGLE_USEDEP}]
 		dev-python/pytorch-lightning[${PYTHON_SINGLE_USEDEP}]
