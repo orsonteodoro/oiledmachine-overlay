@@ -36,7 +36,7 @@ _ROCM_TARGETS_COMPAT_ECLASS=1
 # COMPOSABLE_KERNEL_USEDEP=$(gen_x_usedep COMPOSABLE_KERNEL_5_1_TARGETS_COMPAT)
 # RDEPEND="
 #	sci-libs/rocBLAS[ROCBLAS_USEDEP]
-#	sci-libs/composable_kernel[ROCBLAS_USEDEP]
+#	sci-libs/composable-kernel[ROCBLAS_USEDEP]
 # "
 #
 gen_x_usedep() {

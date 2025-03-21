@@ -1528,7 +1528,7 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sci-geosciences/google-earth-pro | A 3D interface to the planet |
 | sci-libs/MIGraphX | AMD's graph optimization engine |
 | sci-libs/MIVisionX | MIVisionX toolkit is a set of comprehensive computer vision and machine intelligence libraries, utilities, and applications bundled into a single toolkit. |
-| sci-libs/composable_kernel | Composable Kernel: Performance Portable Programming Model for Machine Learning Tensor Operators |
+| sci-libs/composable-kernel | Composable Kernel: Performance Portable Programming Model for Machine Learning Tensor Operators |
 | sci-libs/ctranslate2 | Fast inference engine for Transformer models |
 | sci-libs/dlib | Numerical and networking C++ library |
 | sci-libs/hipBLAS | ROCm BLAS marshalling library |
