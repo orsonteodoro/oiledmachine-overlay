@@ -65,7 +65,7 @@ RDEPEND+="
 	>=dev-python/py-cpuinfo-3.3.0[${PYTHON_USEDEP}]
 	>=dev-python/scipy-0.19.1[${PYTHON_USEDEP}]
 	>=sci-ml/tensorflow-model-optimization-0.4.1[${PYTHON_USEDEP}]
-	>=sci-libs/tf-slim-1.1.0[${PYTHON_USEDEP}]
+	>=sci-ml/tf-slim-1.1.0[${PYTHON_USEDEP}]
 	dev-python/cython[${PYTHON_USEDEP}]
 	dev-python/immutabledict[${PYTHON_USEDEP}]
 	dev-python/matplotlib[${PYTHON_USEDEP}]
