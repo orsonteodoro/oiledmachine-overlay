@@ -287,10 +287,10 @@ RDEPEND="
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	)
 	speech? (
-		sci-libs/torchaudio[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/torchaudio[${PYTHON_SINGLE_USEDEP}]
 	)
 	torch-speech? (
-		sci-libs/torchaudio[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/torchaudio[${PYTHON_SINGLE_USEDEP}]
 	)
 	torch-vision? (
 		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
