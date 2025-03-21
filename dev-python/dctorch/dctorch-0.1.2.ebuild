@@ -28,7 +28,7 @@ RDEPEND+="
 		>=dev-python/numpy-1.22.3[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.8.0[${PYTHON_USEDEP}]
 	')
-	>=sci-libs/pytorch-1.11.0[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/pytorch-1.11.0[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
