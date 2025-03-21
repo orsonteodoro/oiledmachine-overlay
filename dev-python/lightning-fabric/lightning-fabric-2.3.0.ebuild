@@ -70,9 +70,9 @@ FABRIC_BASE_RDEPEND="
 		)
 	')
 	(
-		>=sci-libs/pytorch-2.0.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/pytorch-2.0.0[${PYTHON_SINGLE_USEDEP}]
 		strict? (
-			<sci-libs/pytorch-2.4.0[${PYTHON_SINGLE_USEDEP}]
+			<sci-ml/pytorch-2.4.0[${PYTHON_SINGLE_USEDEP}]
 		)
 	)
 "
