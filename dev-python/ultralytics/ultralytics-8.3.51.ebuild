@@ -86,7 +86,7 @@ RDEPEND+="
 		$(python_gen_cond_dep '
 			>=dev-python/onnx-1.12.0[${PYTHON_USEDEP}]
 			>=dev-python/openvino-2024.0.0[${PYTHON_USEDEP}]
-			>=sci-libs/tensorflow-2.0.0[${PYTHON_USEDEP}]
+			>=sci-ml/tensorflow-2.0.0[${PYTHON_USEDEP}]
 			>=dev-python/tensorflowjs-3.9.0[${PYTHON_USEDEP}]
 			dev-python/keras[${PYTHON_USEDEP}]
 			arm64? (
