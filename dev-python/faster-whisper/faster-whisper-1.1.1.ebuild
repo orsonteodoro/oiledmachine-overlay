@@ -41,7 +41,7 @@ IUSE+=" conversion dev"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/ctranslate2-4.0[${PYTHON_USEDEP}]
-		>=sci-libs/huggingface_hub-0.13[${PYTHON_USEDEP}]
+		>=sci-ml/huggingface_hub-0.13[${PYTHON_USEDEP}]
 		>=dev-python/av-11[${PYTHON_USEDEP}]
 		dev-python/tqdm[${PYTHON_USEDEP}]
 	')
