@@ -341,9 +341,9 @@ PYTORCH_TEST_BDEPEND="
 		dev-python/uvicorn[${PYTHON_USEDEP}]
 	')
 	(
-		>=sci-libs/onnxruntime-0.15.0[${PYTHON_SINGLE_USEDEP},python]
+		>=sci-ml/onnxruntime-0.15.0[${PYTHON_SINGLE_USEDEP},python]
 		strict? (
-			<sci-libs/onnxruntime-1.17.0[${PYTHON_SINGLE_USEDEP},python]
+			<sci-ml/onnxruntime-1.17.0[${PYTHON_SINGLE_USEDEP},python]
 		)
 	)
 "
