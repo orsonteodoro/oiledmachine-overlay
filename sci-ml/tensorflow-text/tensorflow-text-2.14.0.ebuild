@@ -158,7 +158,7 @@ RDEPEND_PROTOBUF_3_21="
 "
 RDEPEND+="
 	${RDEPEND_PROTOBUF_3_21}
-	=sci-libs/tensorflow-${PV%.*}*[${PYTHON_USEDEP},big-endian=,python=]
+	=sci-ml/tensorflow-${PV%.*}*[${PYTHON_USEDEP},big-endian=,python=]
 "
 DEPEND+="
 	${RDEPEND}
