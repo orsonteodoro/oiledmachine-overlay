@@ -56,7 +56,7 @@ RDEPEND+="
 		sci-libs/safetensors[${PYTHON_USEDEP}]
 		virtual/pillow[${PYTHON_USEDEP}]
 	')
-	>=sci-libs/pytorch-2.0[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/pytorch-2.0[${PYTHON_SINGLE_USEDEP}]
 	dev-python/clean-fid[${PYTHON_SINGLE_USEDEP}]
 	dev-python/clip-anytorch[${PYTHON_SINGLE_USEDEP}]
 	dev-python/kornia[${PYTHON_SINGLE_USEDEP}]
