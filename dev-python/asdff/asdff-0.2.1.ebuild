@@ -42,7 +42,7 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/diffusers-0.19.0[${PYTHON_USEDEP},pytorch]
 	')
-	>=sci-libs/transformers-4.25.1[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/transformers-4.25.1[${PYTHON_SINGLE_USEDEP}]
 	dev-python/ultralytics[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
