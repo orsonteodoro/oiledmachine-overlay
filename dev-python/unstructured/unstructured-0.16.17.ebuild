@@ -134,7 +134,7 @@ HUGGINGFACE_RDEPEND="
 		dev-python/sentencepiece[${PYTHON_USEDEP}]
 	')
 	sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
-	sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/transformers[${PYTHON_SINGLE_USEDEP}]
 "
 IMAGE_RDEPEND="
 	$(python_gen_cond_dep '
