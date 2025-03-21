@@ -147,7 +147,7 @@ BDEPEND+="
 			sci-libs/peft[${PYTHON_USEDEP}]
 			sci-ml/tensorflow-addons[${PYTHON_USEDEP}]
 			sci-libs/tf2onnx[${PYTHON_USEDEP}]
-			sci-libs/tf-slim[${PYTHON_USEDEP}]
+			sci-ml/tf-slim[${PYTHON_USEDEP}]
 			dev-python/xgboost[${PYTHON_USEDEP}]
 
 			dev-python/isort[${PYTHON_USEDEP}]
