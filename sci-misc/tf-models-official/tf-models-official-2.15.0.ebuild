@@ -73,7 +73,7 @@ RDEPEND+="
 	nlp? (
 		dev-python/sacrebleu[${PYTHON_USEDEP}]
 		dev-python/sentencepiece[${PYTHON_USEDEP},python]
-		sci-libs/seqeval[${PYTHON_USEDEP}]
+		sci-ml/seqeval[${PYTHON_USEDEP}]
 		sci-libs/tensorflow-text:0/${PV%.*}[${PYTHON_USEDEP}]
 	)
 "
