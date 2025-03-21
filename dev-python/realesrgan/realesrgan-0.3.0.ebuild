@@ -49,7 +49,7 @@ RDEPEND+="
 	>=dev-python/basicsr-1.4.2[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/facexlib-0.2.5[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/gfpgan-1.3.5[${PYTHON_SINGLE_USEDEP}]
-	>=sci-libs/pytorch-1.7[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/pytorch-1.7[${PYTHON_SINGLE_USEDEP}]
 	sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
