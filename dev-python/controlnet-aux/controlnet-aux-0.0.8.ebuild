@@ -52,7 +52,7 @@ RDEPEND+="
 	sci-ml/huggingface_hub[${PYTHON_USEDEP}]
 	$(python_gen_any_dep '
 		sci-libs/torch[${PYTHON_SINGLE_USEDEP}]
-		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 	')
 "
 DEPEND+="
