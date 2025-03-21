@@ -105,7 +105,7 @@ RDEPEND+="
 		dev-python/typer[${PYTHON_USEDEP}]
 		dev-python/cohere[${PYTHON_USEDEP}]
 		dev-python/trafilatura[${PYTHON_USEDEP}]
-		sci-libs/datasets[${PYTHON_USEDEP}]
+		sci-ml/datasets[${PYTHON_USEDEP}]
 	)
 	fastapi? (
 		>=dev-python/fastapi-0.109.2[${PYTHON_USEDEP}]
@@ -149,7 +149,7 @@ RDEPEND+="
 		>=dev-python/sqlmodel-0.0.22[${PYTHON_USEDEP}]
 		>=dev-python/trafilatura-1.12.2[${PYTHON_USEDEP}]
 		>=dev-python/pydub-0.25.1[${PYTHON_USEDEP}]
-		>=sci-libs/datasets-3.0.1[${PYTHON_USEDEP}]
+		>=sci-ml/datasets-3.0.1[${PYTHON_USEDEP}]
 	)
 	xmltodict? (
 		>=dev-python/xmltodict-0.13.0[${PYTHON_USEDEP}]
