@@ -80,10 +80,10 @@ RDEPEND+="
 	)
 	tensorflow? (
 		=dev-python/keras-2.14*[${PYTHON_USEDEP}]
-		=sci-libs/tensorflow-0.14*[${PYTHON_USEDEP},python]
+		=sci-ml/tensorflow-0.14*[${PYTHON_USEDEP},python]
 		>=dev-python/numpy-1.26.1[${PYTHON_USEDEP}]
 		>=sci-misc/tensorflow-datasets-4.9.2[${PYTHON_USEDEP}]
-		>=sci-libs/tensorflow-probability-0.22.1[${PYTHON_USEDEP}]
+		>=sci-ml/tensorflow-probability-0.22.1[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="
