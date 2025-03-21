@@ -132,7 +132,7 @@ gen_pytorch_rdepend() {
 			(
 				~sci-ml/pytorch-${torch_pv}[${PYTHON_SINGLE_USEDEP},cuda?,rocm?]
 				~sci-libs/torchaudio-${torch_pv}[${PYTHON_SINGLE_USEDEP}]
-				~sci-libs/torchvision-${torchvision_pv}[${PYTHON_SINGLE_USEDEP}]
+				~sci-ml/torchvision-${torchvision_pv}[${PYTHON_SINGLE_USEDEP}]
 			)
 		"
 	done
@@ -158,7 +158,7 @@ RDEPEND+="
 	)
 	sci-ml/pytorch:=
 	sci-libs/torchaudio:=
-	sci-libs/torchvision:=
+	sci-ml/torchvision:=
 	aitemplate? (
 		$(python_gen_cond_dep '
 			dev-python/AITemplate[${PYTHON_USEDEP},cuda?,rocm?]
