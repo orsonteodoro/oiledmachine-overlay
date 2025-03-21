@@ -1168,7 +1168,7 @@ RDEPEND="
 		')
 		training? (
 			>=sci-ml/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
-			sci-ml/pytorch-ort[${PYTHON_SINGLE_USEDEP}]
+			sci-libs/pytorch-ort[${PYTHON_SINGLE_USEDEP}]
 		)
 	)
 "

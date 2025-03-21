@@ -1536,9 +1536,9 @@ for x in $(grep -l -e "^DESCRIPTION" $(find . -name "*ebuild")) ; do d=$(cat "${
 | sci-libs/miopen | AMD's Machine Intelligence Library |
 | sci-libs/miopengemm | An OpenCL general matrix multiplication (GEMM) API and kernel generator |
 | sci-libs/miopenkernels | Prebuilt kernels to reduce startup latency |
-| sci-libs/onnxruntime | Cross-platform inference and training machine-learning accelerator. |
+| sci-ml/onnxruntime | Cross-platform inference and training machine-learning accelerator. |
 | sci-libs/openvino | OpenVINO™ is an open-source toolkit for optimizing and deploying AI inference |
-| sci-libs/pytorch | Tensors and dynamic neural networks in Python |
+| sci-ml/pytorch | Tensors and dynamic neural networks in Python |
 | sci-libs/rocAL | The AMD rocAL is designed to efficiently decode and process images and videos from a variety of storage formats and modify them through a processing graph programmable by the user. |
 | sci-libs/rocALUTION | Next generation library for iterative sparse solvers for ROCm platform |
 | sci-libs/rocBLAS | AMD's library for BLAS on ROCm |
