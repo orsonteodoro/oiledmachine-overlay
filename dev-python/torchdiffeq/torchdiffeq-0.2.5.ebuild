@@ -28,7 +28,7 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/scipy-1.4.0[${PYTHON_USEDEP}]
 	')
-	>=sci-libs/pytorch-1.5.0[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/pytorch-1.5.0[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
