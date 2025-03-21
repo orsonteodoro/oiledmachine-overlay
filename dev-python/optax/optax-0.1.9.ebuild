@@ -54,7 +54,7 @@ RDEPEND+="
 	examples? (
 		>=dev-python/dm-haiku-0.0.3[${PYTHON_USEDEP}]
 		>=sci-ml/tensorflow-${TENSORFLOW_PV}[${PYTHON_USEDEP}]
-		>=sci-misc/tensorflow-datasets-${TENSORFLOW_DATASETS_PV}[${PYTHON_USEDEP}]
+		>=sci-ml/tensorflow-datasets-${TENSORFLOW_DATASETS_PV}[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="
@@ -95,7 +95,7 @@ BDEPEND+="
 PDEPEND+="
 	doc? (
 		>=sci-ml/tensorflow-${TENSORFLOW_PV}[${PYTHON_USEDEP}]
-		>=sci-misc/tensorflow-datasets-${TENSORFLOW_DATASETS_PV}[${PYTHON_USEDEP}]
+		>=sci-ml/tensorflow-datasets-${TENSORFLOW_DATASETS_PV}[${PYTHON_USEDEP}]
 	)
 	test? (
 		>=dev-python/flax-0.5.3[${PYTHON_USEDEP}]
