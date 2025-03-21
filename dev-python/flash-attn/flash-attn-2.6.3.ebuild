@@ -145,13 +145,13 @@ RDEPEND+="
 	')
 	(
 		|| (
-			=sci-libs/pytorch-2.4*[${PYTHON_SINGLE_USEDEP}]
-			=sci-libs/pytorch-2.3*[${PYTHON_SINGLE_USEDEP}]
-			=sci-libs/pytorch-2.2*[${PYTHON_SINGLE_USEDEP}]
-			=sci-libs/pytorch-2.1*[${PYTHON_SINGLE_USEDEP}]
-			=sci-libs/pytorch-2.0*[${PYTHON_SINGLE_USEDEP}]
+			=sci-ml/pytorch-2.4*[${PYTHON_SINGLE_USEDEP}]
+			=sci-ml/pytorch-2.3*[${PYTHON_SINGLE_USEDEP}]
+			=sci-ml/pytorch-2.2*[${PYTHON_SINGLE_USEDEP}]
+			=sci-ml/pytorch-2.1*[${PYTHON_SINGLE_USEDEP}]
+			=sci-ml/pytorch-2.0*[${PYTHON_SINGLE_USEDEP}]
 		)
-		sci-libs/pytorch:=
+		sci-ml/pytorch:=
 	)
 	cuda? (
 		|| (
@@ -164,10 +164,10 @@ RDEPEND+="
 		$(gen_rocm_rdepend)
 	)
 	rocm_6_0? (
-		=sci-libs/pytorch-2.3*[${PYTHON_SINGLE_USEDEP},rocm_6_0]
+		=sci-ml/pytorch-2.3*[${PYTHON_SINGLE_USEDEP},rocm_6_0]
 	)
 	rocm_6_1? (
-		=sci-libs/pytorch-2.4*[${PYTHON_SINGLE_USEDEP},rocm_6_1]
+		=sci-ml/pytorch-2.4*[${PYTHON_SINGLE_USEDEP},rocm_6_1]
 	)
 	training? (
 		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
