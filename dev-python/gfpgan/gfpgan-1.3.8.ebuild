@@ -53,7 +53,7 @@ RDEPEND+="
 	>=dev-python/facexlib-0.2.5[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/pytorch-1.7[${PYTHON_SINGLE_USEDEP}]
 	>=sci-visualization/tensorboard-2.10.0[${PYTHON_SINGLE_USEDEP}]
-	sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
