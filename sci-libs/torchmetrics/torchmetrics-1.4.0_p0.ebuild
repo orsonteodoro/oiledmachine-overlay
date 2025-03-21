@@ -91,9 +91,9 @@ AUDIO_RDEPEND="
 		dev-python/pesq[${PYTHON_USEDEP}]
 	')
 	(
-		>=sci-libs/torchaudio-0.10.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/torchaudio-0.10.0[${PYTHON_SINGLE_USEDEP}]
 		strict? (
-			<sci-libs/torchaudio-2.4.0[${PYTHON_SINGLE_USEDEP}]
+			<sci-ml/torchaudio-2.4.0[${PYTHON_SINGLE_USEDEP}]
 		)
 	)
 "
