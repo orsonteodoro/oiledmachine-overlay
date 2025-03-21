@@ -85,7 +85,7 @@ DEPEND+="
 BDEPEND+="
 	doc? (
 		$(python_gen_any_dep '
-			sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
+			sci-ml/transformers[${PYTHON_SINGLE_USEDEP}]
 		')
 		>=dev-python/docutils-0.16[${PYTHON_USEDEP}]
 		>=dev-python/jupytext-1.13.8[${PYTHON_USEDEP}]
