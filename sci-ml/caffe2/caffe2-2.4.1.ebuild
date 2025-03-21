@@ -920,7 +920,7 @@ RDEPEND="
 			>=dev-cpp/gemmlowp-2018.11.26
 		)
 		tensorpipe? (
-			>=sci-libs/tensorpipe-2021.12.27[cuda?]
+			>=sci-ml/tensorpipe-2021.12.27[cuda?]
 		)
 		xnnpack? (
 			>=sci-ml/XNNPACK-2024.02.29[jit?,memopt,sparse]
