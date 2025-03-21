@@ -47,21 +47,21 @@ RDEPEND+="
 	|| (
 		(
 			$(python_gen_cond_dep '
-				=sci-libs/tensorflow-2.14*[${PYTHON_USEDEP},python]
+				=sci-ml/tensorflow-2.14*[${PYTHON_USEDEP},python]
 				=dev-python/keras-2.14*[${PYTHON_USEDEP}]
 			')
 			=sci-visualization/tensorboard-2.14*[${PYTHON_SINGLE_USEDEP}]
 		)
 		(
 			$(python_gen_cond_dep '
-				=sci-libs/tensorflow-2.15*[${PYTHON_USEDEP},python]
+				=sci-ml/tensorflow-2.15*[${PYTHON_USEDEP},python]
 				=dev-python/keras-2.15[${PYTHON_USEDEP}]
 			')
 			=sci-visualization/tensorboard-2.15*[${PYTHON_SINGLE_USEDEP}]
 		)
 		(
 			$(python_gen_cond_dep '
-				=sci-libs/tensorflow-2.16*[${PYTHON_USEDEP},python]
+				=sci-ml/tensorflow-2.16*[${PYTHON_USEDEP},python]
 				>=dev-python/keras-3.1[${PYTHON_USEDEP}]
 			')
 			=sci-visualization/tensorboard-2.16*[${PYTHON_SINGLE_USEDEP}]
