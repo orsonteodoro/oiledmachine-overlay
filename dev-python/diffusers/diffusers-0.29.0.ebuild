@@ -110,7 +110,7 @@ BDEPEND+="
 	test? (
 		$(python_gen_any_dep '
 			>=dev-python/invisible-watermark-0.2.0[${PYTHON_SINGLE_USEDEP}]
-			sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
+			sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 		')
 		(
 			>=dev-python/sentencepiece-0.1.91[${PYTHON_USEDEP}]
