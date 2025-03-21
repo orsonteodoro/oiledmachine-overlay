@@ -61,10 +61,10 @@ RDEPEND+="
 	)
 	tensorflow-lite? (
 		dev-python/flatbuffers[${PYTHON_USEDEP}]
-		sci-libs/tensorflow[${PYTHON_USEDEP}]
+		sci-ml/tensorflow[${PYTHON_USEDEP}]
 	)
 	tensorflow-protobuf? (
-		sci-libs/tensorflow[${PYTHON_USEDEP}]
+		sci-ml/tensorflow[${PYTHON_USEDEP}]
 	)
 	visualization? (
 		media-gfx/graphviz[${PYTHON_USEDEP}]
