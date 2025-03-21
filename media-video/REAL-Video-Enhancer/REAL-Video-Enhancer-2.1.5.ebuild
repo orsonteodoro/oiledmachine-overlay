@@ -275,7 +275,7 @@ CUDA_DEPEND="
 		dev-python/einops[${PYTHON_USEDEP}]
 		sci-libs/safetensors[${PYTHON_USEDEP}]
 	')
-	>=sci-libs/pytorch-9999[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/pytorch-9999[${PYTHON_SINGLE_USEDEP}]
 	>=sci-libs/torchvision-9999[${PYTHON_SINGLE_USEDEP}]
 "
 NCNN_DEPEND="
@@ -295,8 +295,8 @@ ROCM_DEPEND="
 		)
 		dev-python/triton:=
 	')
-	=sci-libs/pytorch-2.3*[${PYTHON_SINGLE_USEDEP},rocm_5_7?,rocm_6_0?]
-	sci-libs/pytorch:=
+	=sci-ml/pytorch-2.3*[${PYTHON_SINGLE_USEDEP},rocm_5_7?,rocm_6_0?]
+	sci-ml/pytorch:=
 	=sci-libs/torchvision-0.18*[${PYTHON_SINGLE_USEDEP}]
 	sci-libs/torchvision:=
 "
