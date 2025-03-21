@@ -583,8 +583,8 @@ RDEPEND="
 		)
 	)
 	onednn? (
-		>=dev-libs/oneDNN-3.0.1
-		dev-libs/oneDNN:=
+		>=sci-ml/oneDNN-3.0.1
+		sci-ml/oneDNN:=
 	)
 	openvino? (
 		>=sci-libs/openvino-${OPENVINO_PV}
