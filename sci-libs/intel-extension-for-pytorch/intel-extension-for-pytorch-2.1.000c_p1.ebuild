@@ -59,7 +59,7 @@ RDEPEND+="
 		dev-python/packaging[${PYTHON_USEDEP}]
 		dev-python/psutil[${PYTHON_USEDEP}]
 	')
-	=sci-libs/pytorch-2.1*[${PYTHON_SINGLE_USEDEP}]
+	=sci-ml/pytorch-2.1*[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
