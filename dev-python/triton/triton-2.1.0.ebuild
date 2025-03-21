@@ -215,7 +215,7 @@ RDEPEND+="
 	)
 	tutorials? (
 		$(python_gen_any_dep '
-			sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+			sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 		')
 		dev-python/matplotlib[${PYTHON_USEDEP}]
 		dev-python/tabulate[${PYTHON_USEDEP}]
@@ -232,7 +232,7 @@ BDEPEND+="
 	dev-python/wheel[${PYTHON_USEDEP}]
 	test? (
 		$(python_gen_any_dep '
-			sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+			sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 		')
 		>=dev-python/scipy-1.7.1[${PYTHON_USEDEP}]
 		dev-python/autopep8[${PYTHON_USEDEP}]
