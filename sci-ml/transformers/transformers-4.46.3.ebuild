@@ -296,7 +296,7 @@ RDEPEND="
 		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 	)
 	tokenizers? (
-		=sci-libs/tokenizers-0.20*[${PYTHON_SINGLE_USEDEP}]
+		=sci-ml/tokenizers-0.20*[${PYTHON_SINGLE_USEDEP}]
 	)
 	torchhub? (
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
