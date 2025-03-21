@@ -110,7 +110,7 @@ RDEPEND+="
 		)
 	')
 	ipex? (
-		>sci-libs/intel-extension-for-pytorch-1.10[${PYTHON_SINGLE_USEDEP}]
+		>sci-ml/intel-extension-for-pytorch-1.10[${PYTHON_SINGLE_USEDEP}]
 	)
 	ort? (
 		>=sci-ml/onnxruntime-1.17.1[${PYTHON_SINGLE_USEDEP},extensions,python,training-ort]
@@ -163,7 +163,7 @@ BDEPEND+="
 		)
 	' python3_10)
 	test? (
-		>=sci-libs/intel-extension-for-pytorch-1.10[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/intel-extension-for-pytorch-1.10[${PYTHON_SINGLE_USEDEP}]
 		>=sci-ml/onnxruntime-1.17.1[${PYTHON_SINGLE_USEDEP},python]
 		>=sci-ml/torchvision-0.17.1[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
