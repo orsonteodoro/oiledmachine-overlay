@@ -54,15 +54,15 @@ RDEPEND+="
 	media-libs/opencv[${PYTHON_USEDEP},contribdnn,ffmpeg?,gstreamer?,gtk3?,imgproc,python,qt5?,qt6?,wayland?]
 	cuda? (
 		$(python_gen_any_dep '
-			sci-libs/onnxruntime[${PYTHON_SINGLE_USEDEP},python,cuda]
+			sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python,cuda]
 		')
-		sci-libs/onnx[${PYTHON_USEDEP}]
+		sci-ml/onnx[${PYTHON_USEDEP}]
 	)
 	openvino? (
 		$(python_gen_any_dep '
-			sci-libs/onnxruntime[${PYTHON_SINGLE_USEDEP},python,openvino]
+			sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python,openvino]
 		')
-		sci-libs/onnx[${PYTHON_USEDEP}]
+		sci-ml/onnx[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="
