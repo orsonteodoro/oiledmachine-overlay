@@ -967,7 +967,7 @@ DEPEND="
 			>=dev-libs/cutlass-3.4.1
 		)
 		onednn? (
-			>=sci-libs/ideep-3.3.6
+			>=sci-ml/ideep-3.3.6
 		)
 	)
 "
