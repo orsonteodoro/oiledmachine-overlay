@@ -909,7 +909,7 @@ DEPEND="
 			>=dev-libs/cutlass-2.10.0
 		)
 		onednn? (
-			>=sci-libs/ideep-0.8.0
+			>=sci-ml/ideep-0.8.0
 		)
 	)
 "
