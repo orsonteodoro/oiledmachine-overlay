@@ -867,7 +867,7 @@ RDEPEND="
 			sci-libs/mkl
 		)
 		nnpack? (
-			>=sci-libs/NNPACK-2020.12.21
+			>=sci-ml/NNPACK-2020.12.21
 		)
 		onednn? (
 			>=dev-libs/oneDNN-3.3.2
