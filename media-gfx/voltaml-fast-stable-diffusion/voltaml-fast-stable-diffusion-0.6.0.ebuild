@@ -166,9 +166,9 @@ RDEPEND+="
 	)
 	onnx? (
 		$(python_gen_cond_dep '
-			sci-libs/onnx[${PYTHON_USEDEP}]
+			sci-ml/onnx[${PYTHON_USEDEP}]
 		')
-		sci-libs/onnxruntime[${PYTHON_SINGLE_USEDEP},cuda?,python,rocm?]
+		sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},cuda?,python,rocm?]
 	)
 	xformers? (
 		$(python_gen_cond_dep '
