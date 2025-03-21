@@ -117,9 +117,9 @@ DETECTION_RDEPEND="
 		)
 	')
 	(
-		>=sci-libs/torchvision-0.8[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/torchvision-0.8[${PYTHON_SINGLE_USEDEP}]
 		strict? (
-			<sci-libs/torchvision-0.19.0[${PYTHON_SINGLE_USEDEP}]
+			<sci-ml/torchvision-0.19.0[${PYTHON_SINGLE_USEDEP}]
 		)
 	)
 "
@@ -139,9 +139,9 @@ IMAGE_RDEPEND="
 		)
 	')
 	(
-		>=sci-libs/torchvision-0.8[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/torchvision-0.8[${PYTHON_SINGLE_USEDEP}]
 		strict? (
-			<sci-libs/torchvision-0.19.0[${PYTHON_SINGLE_USEDEP}]
+			<sci-ml/torchvision-0.19.0[${PYTHON_SINGLE_USEDEP}]
 		)
 	)
 "
