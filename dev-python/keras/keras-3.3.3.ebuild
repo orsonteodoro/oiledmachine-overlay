@@ -96,7 +96,7 @@ PDEPEND="
 		)
 		pytorch? (
 			$(python_gen_any_dep '
-				>=sci-libs/pytorch-2.1.0[${PYTHON_SINGLE_USEDEP}]
+				>=sci-ml/pytorch-2.1.0[${PYTHON_SINGLE_USEDEP}]
 				>=sci-libs/torchvision-0.16.0[${PYTHON_SINGLE_USEDEP}]
 			')
 		)
@@ -110,8 +110,8 @@ PDEPEND="
 			test? (
 				$(python_gen_any_dep '
 					(
-						>=sci-libs/pytorch-2.1.0[${PYTHON_SINGLE_USEDEP}]
-						<sci-libs/pytorch-2.3.0[${PYTHON_SINGLE_USEDEP}]
+						>=sci-ml/pytorch-2.1.0[${PYTHON_SINGLE_USEDEP}]
+						<sci-ml/pytorch-2.3.0[${PYTHON_SINGLE_USEDEP}]
 					)
 					>=sci-libs/torchvision-0.16.0[${PYTHON_SINGLE_USEDEP}]
 				')
@@ -123,8 +123,8 @@ PDEPEND="
 			test? (
 				$(python_gen_any_dep '
 					(
-						>=sci-libs/pytorch-2.1.0[${PYTHON_SINGLE_USEDEP}]
-						<sci-libs/pytorch-2.3.0[${PYTHON_SINGLE_USEDEP}]
+						>=sci-ml/pytorch-2.1.0[${PYTHON_SINGLE_USEDEP}]
+						<sci-ml/pytorch-2.3.0[${PYTHON_SINGLE_USEDEP}]
 					)
 					>=sci-libs/torchvision-0.16.0[${PYTHON_SINGLE_USEDEP}]
 				')
@@ -133,7 +133,7 @@ PDEPEND="
 		)
 		pytorch? (
 			$(python_gen_any_dep '
-				>=sci-libs/pytorch-2.2.1[${PYTHON_SINGLE_USEDEP}]
+				>=sci-ml/pytorch-2.2.1[${PYTHON_SINGLE_USEDEP}]
 				>=sci-libs/torchvision-0.17.1[${PYTHON_SINGLE_USEDEP}]
 			')
 			test? (
