@@ -69,7 +69,7 @@ RDEPEND="
 	>=dev-python/pybind11-2.6.0[${PYTHON_USEDEP}]
 	dev-libs/msgpack
 	composable-kernel? (
-		~sci-libs/composable_kernel-${PV}:${ROCM_SLOT}[${COMPOSABLE_KERNEL_6_2_AMDGPU_USEDEP}]
+		~sci-libs/composable-kernel-${PV}:${ROCM_SLOT}[${COMPOSABLE_KERNEL_6_2_AMDGPU_USEDEP}]
 	)
 	cpu? (
 		sci-ml/oneDNN
