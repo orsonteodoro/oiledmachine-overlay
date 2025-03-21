@@ -107,7 +107,7 @@ RDEPEND+="
 		)
 	')
 	>=dev-python/encodec-0.1.1[${PYTHON_SINGLE_USEDEP}]
-	>=sci-libs/pytorch-2.1[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/pytorch-2.1[${PYTHON_SINGLE_USEDEP}]
 	sci-libs/torchaudio[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
