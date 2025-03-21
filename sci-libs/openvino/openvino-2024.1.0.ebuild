@@ -315,7 +315,7 @@ BDEPEND_E2E_TESTS="
 # model_hub_tests/tensorflow/requirements.txt \
 BDEPEND_MODEL_HUB_TENSORFLOW_TESTS="
 	$(python_gen_any_dep '
-		sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/transformers[${PYTHON_SINGLE_USEDEP}]
 	')
 	${BDEPEND_TEST_CONSTRAINTS}
 	dev-python/numpy[${PYTHON_USEDEP}]
@@ -342,7 +342,7 @@ BDEPEND_MODEL_HUB_TESTS_PYTORCH="
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 		sci-libs/torchaudio[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
-		sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/transformers[${PYTHON_SINGLE_USEDEP}]
 	')
 	>=dev-python/auto-gptq-0.5.1[${PYTHON_USEDEP}]
 	dev-python/av[${PYTHON_USEDEP}]
@@ -377,7 +377,7 @@ BDEPEND_LAYER_TESTS="
 		sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
-		sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/transformers[${PYTHON_SINGLE_USEDEP}]
 	')
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/packaging[${PYTHON_USEDEP}]
