@@ -40,7 +40,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
 RDEPEND+="
 	$(python_gen_any_dep '
-		sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
 	')
 	dev-python/munch[${PYTHON_USEDEP}]
