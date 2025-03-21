@@ -101,7 +101,7 @@ RDEPEND+="
 			dev-python/pydantic[${PYTHON_USEDEP}]
 		)
 		tensorflow? (
-			>=sci-libs/tensorflow-2.15.0[${PYTHON_USEDEP}]
+			>=sci-ml/tensorflow-2.15.0[${PYTHON_USEDEP}]
 			dev-python/prettytable[${PYTHON_USEDEP}]
 			dev-python/psutil[${PYTHON_USEDEP}]
 			dev-python/py-cpuinfo[${PYTHON_USEDEP}]
@@ -145,7 +145,7 @@ BDEPEND+="
 			sci-libs/mxnet-mkl[${PYTHON_USEDEP}]
 			sci-libs/optimum[${PYTHON_USEDEP}]
 			sci-libs/peft[${PYTHON_USEDEP}]
-			sci-libs/tensorflow-addons[${PYTHON_USEDEP}]
+			sci-ml/tensorflow-addons[${PYTHON_USEDEP}]
 			sci-libs/tf2onnx[${PYTHON_USEDEP}]
 			sci-libs/tf-slim[${PYTHON_USEDEP}]
 			dev-python/xgboost[${PYTHON_USEDEP}]
