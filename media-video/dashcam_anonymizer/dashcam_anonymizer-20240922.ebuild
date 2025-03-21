@@ -77,7 +77,7 @@ RDEPEND+="
 		dev-python/rich[${PYTHON_USEDEP}]
 	')
 	>=dev-python/ultralytics-8.0.144[${PYTHON_SINGLE_USEDEP}]
-	sci-libs/pytorch[${PYTHON_SINGLE_USEDEP},cuda?,rocm?]
+	sci-ml/pytorch[${PYTHON_SINGLE_USEDEP},cuda?,rocm?]
 	ffmpeg? (
 		media-video/ffmpeg[openh264]
 	)
