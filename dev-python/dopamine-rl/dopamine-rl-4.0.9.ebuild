@@ -89,14 +89,14 @@ REQUIREMENTS_RDEPEND="
 	>=dev-python/jax-0.3.16[${PYTHON_USEDEP}]
 	>=dev-python/jaxlib-0.3.15[${PYTHON_USEDEP}]
 	>=dev-python/flax-0.5.3[${PYTHON_USEDEP}]
-	>=sci-libs/tensorflow-probability-0.13.0[${PYTHON_USEDEP}]
+	>=sci-ml/tensorflow-probability-0.13.0[${PYTHON_USEDEP}]
 	>=sci-libs/tf-slim-1.1.0[${PYTHON_USEDEP}]
-	sci-libs/tensorflow-estimator[${PYTHON_USEDEP}]
-	sci-libs/tensorflow[${PYTHON_USEDEP}]
+	sci-ml/tensorflow-estimator[${PYTHON_USEDEP}]
+	sci-ml/tensorflow[${PYTHON_USEDEP}]
 	sci-visualization/tensorboard[${PYTHON_USEDEP}]
 	sci-visualization/tensorboard-plugin-wit[${PYTHON_USEDEP}]
 	keras2? (
-		<sci-libs/tensorflow-2.16[${PYTHON_USEDEP}]
+		<sci-ml/tensorflow-2.16[${PYTHON_USEDEP}]
 		=dev-python/tf-keras-2*
 		>=dev-python/keras-preprocessing-1.1.2[${PYTHON_USEDEP}]
 	)
@@ -115,8 +115,8 @@ RDEPEND+="
 	>=dev-python/flax-0.2.0[${PYTHON_USEDEP}]
 	>=dev-python/jax-0.1.72[${PYTHON_USEDEP}]
 	>=dev-python/jaxlib-0.1.51[${PYTHON_USEDEP}]
-	>=sci-libs/tensorflow-2.2.0[${PYTHON_USEDEP}]
-	>=sci-libs/tensorflow-probability-0.13.0[${PYTHON_USEDEP}]
+	>=sci-ml/tensorflow-2.2.0[${PYTHON_USEDEP}]
+	>=sci-ml/tensorflow-probability-0.13.0[${PYTHON_USEDEP}]
 	>=sci-libs/tf-slim-1.0[${PYTHON_USEDEP}]
 "
 DEPEND+="
