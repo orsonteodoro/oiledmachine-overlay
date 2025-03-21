@@ -52,7 +52,7 @@ RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
 RDEPEND+="
-	sci-libs/onnx[${PYTHON_USEDEP}]
+	sci-ml/onnx[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
