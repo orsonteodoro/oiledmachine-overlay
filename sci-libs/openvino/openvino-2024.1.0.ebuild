@@ -340,7 +340,7 @@ BDEPEND_MODEL_HUB_TESTS_PYTORCH="
 	${BDEPEND_TEST_CONSTRAINTS}
 	$(python_gen_any_dep '
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
-		sci-libs/torchaudio[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/torchaudio[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/transformers[${PYTHON_SINGLE_USEDEP}]
 	')
