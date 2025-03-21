@@ -46,7 +46,7 @@ RDEPEND+="
 		dev-python/numpy[${PYTHON_USEDEP}]
 		media-libs/opencv[${PYTHON_USEDEP},contribdnn,ffmpeg,jpeg,python]
 	')
-	sci-libs/onnxruntime[${PYTHON_SINGLE_USEDEP},cuda?,migraphx?,python,rocm?,tensorrt?]
+	sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},cuda?,migraphx?,python,rocm?,tensorrt?]
 	media-video/ffmpeg[encode,gpl,x264]
 "
 DEPEND+="
