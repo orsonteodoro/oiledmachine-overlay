@@ -51,7 +51,7 @@ RDEPEND+="
 	torch? (
 		$(python_gen_any_dep '
 			sci-ml/caffe2[${PYTHON_SINGLE_USEDEP},numpy]
-			sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+			sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 		')
 		>=dev-python/gitdb-2[${PYTHON_USEDEP}]
 		dev-python/GitPython[${PYTHON_USEDEP}]
