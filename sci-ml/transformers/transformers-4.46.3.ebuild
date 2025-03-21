@@ -293,7 +293,7 @@ RDEPEND="
 		sci-libs/torchaudio[${PYTHON_SINGLE_USEDEP}]
 	)
 	torch-vision? (
-		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 	)
 	tokenizers? (
 		=sci-libs/tokenizers-0.20*[${PYTHON_SINGLE_USEDEP}]
