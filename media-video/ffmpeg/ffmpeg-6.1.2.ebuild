@@ -981,8 +981,8 @@ RDEPEND+="
 		>=dev-libs/openssl-3.0.0_beta2:0=[${MULTILIB_USEDEP}]
 	)
 	openvino? (
-		>=sci-libs/openvino-2020.1
-		<sci-libs/openvino-2022
+		>=sci-ml/openvino-2020.1
+		<sci-ml/openvino-2022
 	)
 	opus? (
 		>=media-libs/opus-1.0.2-r2[${MULTILIB_USEDEP}]
