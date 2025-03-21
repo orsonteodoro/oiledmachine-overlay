@@ -68,7 +68,7 @@ RDEPEND+="
 	dev-python/oauth2client[${PYTHON_USEDEP}]
 	dev-python/pycocotools[${PYTHON_USEDEP}]
 	dev-python/six[${PYTHON_USEDEP}]
-	sci-misc/tensorflow-datasets[${PYTHON_USEDEP}]
+	sci-ml/tensorflow-datasets[${PYTHON_USEDEP}]
 	virtual/pillow[${PYTHON_USEDEP}]
 	nlp? (
 		dev-python/sacrebleu[${PYTHON_USEDEP}]
