@@ -54,7 +54,7 @@ ${LANGS[@]/#/l10n_}
 ebuild_revision_4
 "
 RDEPEND+="
-	>=sci-libs/transformers-4.42.0[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/transformers-4.42.0[${PYTHON_SINGLE_USEDEP}]
 	$(python_gen_cond_dep '
 		>=dev-python/anyascii-0.3.0[${PYTHON_USEDEP}]
 		>=dev-python/coqui-tts-trainer-0.1.4[${PYTHON_USEDEP}]
