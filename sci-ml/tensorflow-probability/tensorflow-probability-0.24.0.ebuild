@@ -25,7 +25,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 			dev-python/jaxlib[${PYTHON_USEDEP}]
 		)
 		tensorflow? (
-			=sci-libs/tensorflow-9999[${PYTHON_USEDEP}]
+			=sci-ml/tensorflow-9999[${PYTHON_USEDEP}]
 			=dev-python/tf-keras-9999[${PYTHON_USEDEP}]
 		)
 		tfds? (
@@ -45,7 +45,7 @@ https://github.com/tensorflow/probability/archive/refs/tags/v${PV}.tar.gz
 			dev-python/jaxlib[${PYTHON_USEDEP}]
 		)
 		tensorflow? (
-			>=sci-libs/tensorflow-2.16[${PYTHON_USEDEP}]
+			>=sci-ml/tensorflow-2.16[${PYTHON_USEDEP}]
 			>=dev-python/tf-keras-2.16[${PYTHON_USEDEP}]
 		)
 		tfds? (
