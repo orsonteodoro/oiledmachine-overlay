@@ -69,10 +69,10 @@ BDEPEND+="
 	dev-python/typing-extensions[${PYTHON_USEDEP}]
 	dev? (
 		$(python_gen_cond_dep '
-			sci-libs/tensorflow[${PYTHON_USEDEP}]
+			sci-ml/tensorflow[${PYTHON_USEDEP}]
 		' python3_12)
 		$(python_gen_cond_dep '
-			<sci-libs/tensorflow-2.14[${PYTHON_USEDEP}]
+			<sci-ml/tensorflow-2.14[${PYTHON_USEDEP}]
 		' python3_{10,11})
 		dev-python/hypothesis[${PYTHON_USEDEP}]
 		dev-python/hypothesis-fspaths[${PYTHON_USEDEP}]
