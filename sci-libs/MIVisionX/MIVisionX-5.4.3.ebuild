@@ -133,7 +133,7 @@ RDEPEND="
 	onnx? (
 		>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
 		$(python_gen_cond_dep '
-			sci-libs/onnx[${PYTHON_USEDEP}]
+			sci-ml/onnx[${PYTHON_USEDEP}]
 		')
 	)
 	opencl? (
