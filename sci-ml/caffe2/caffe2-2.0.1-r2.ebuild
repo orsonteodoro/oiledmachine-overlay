@@ -871,7 +871,7 @@ RDEPEND="
 			>=sci-ml/NNPACK-2020.12.21
 		)
 		onednn? (
-			>=dev-libs/oneDNN-0.8.0
+			>=sci-ml/oneDNN-0.8.0
 		)
 		qnnpack? (
 			>=sci-libs/QNNPACK-2019.08.28
