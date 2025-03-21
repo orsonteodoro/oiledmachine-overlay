@@ -273,7 +273,7 @@ CUDA_DEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/cupy-13.3.0[${PYTHON_USEDEP},cuda]
 		dev-python/einops[${PYTHON_USEDEP}]
-		sci-libs/safetensors[${PYTHON_USEDEP}]
+		sci-ml/safetensors[${PYTHON_USEDEP}]
 	')
 	>=sci-ml/pytorch-9999[${PYTHON_SINGLE_USEDEP}]
 	>=sci-libs/torchvision-9999[${PYTHON_SINGLE_USEDEP}]
