@@ -278,13 +278,13 @@ RDEPEND="
 		)
 	')
 	agents? (
-		sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	)
 	accelerate? (
 		>=dev-python/accelerate-0.26.0[${PYTHON_SINGLE_USEDEP}]
 	)
 	pytorch? (
-		sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	)
 	speech? (
 		sci-libs/torchaudio[${PYTHON_SINGLE_USEDEP}]
@@ -299,7 +299,7 @@ RDEPEND="
 		=sci-libs/tokenizers-0.20*[${PYTHON_SINGLE_USEDEP}]
 	)
 	torchhub? (
-		sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 BDEPEND="
