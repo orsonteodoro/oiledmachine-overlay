@@ -64,7 +64,7 @@ RDEPEND+="
 		)
 	')
 	>=sci-ml/pytorch-1.9.0[${PYTHON_SINGLE_USEDEP}]
-	sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
