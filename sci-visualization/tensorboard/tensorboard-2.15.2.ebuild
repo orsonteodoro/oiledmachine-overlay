@@ -133,7 +133,7 @@ BDEPEND="
 "
 PDEPEND="
 	$(python_gen_cond_dep '
-		=sci-libs/tensorflow-'$(ver_cut 1-2 ${PV})'*[${PYTHON_USEDEP},python]
+		=sci-ml/tensorflow-'$(ver_cut 1-2 ${PV})'*[${PYTHON_USEDEP},python]
 	')
 "
 PATCHES=(
