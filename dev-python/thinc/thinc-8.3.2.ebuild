@@ -63,7 +63,7 @@ RDEPEND+="
 		')
 	)
 	tensorflow? (
-		>=sci-libs/tensorflow-2.0.0[${PYTHON_USEDEP}]
+		>=sci-ml/tensorflow-2.0.0[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="
