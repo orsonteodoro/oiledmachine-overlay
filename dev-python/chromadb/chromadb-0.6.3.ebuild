@@ -679,7 +679,7 @@ IUSE+=" dev"
 RDEPEND+="
 	$(python_gen_any_dep '
 		>=sci-ml/onnxruntime-1.14.1[${PYTHON_SINGLE_USEDEP},python]
-		>=sci-libs/tokenizers-0.13.2[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/tokenizers-0.13.2[${PYTHON_SINGLE_USEDEP}]
 	')
 	>=dev-python/bcrypt-4.0.1[${PYTHON_USEDEP}]
 	>=dev-python/chroma-hnswlib-0.7.6[${PYTHON_USEDEP}]
