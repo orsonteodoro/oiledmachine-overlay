@@ -86,7 +86,7 @@ RDEPEND+="
 			>=sci-libs/mxnet-1.9.1[${PYTHON_USEDEP}]
 		)
 		ort? (
-			>=sci-libs/onnx-1.15.0[${PYTHON_USEDEP}]
+			>=sci-ml/onnx-1.15.0[${PYTHON_USEDEP}]
 			dev-python/numpy[${PYTHON_USEDEP}]
 			dev-python/py-cpuinfo[${PYTHON_USEDEP}]
 			dev-python/psutil[${PYTHON_USEDEP}]
@@ -113,7 +113,7 @@ RDEPEND+="
 		>sci-libs/intel-extension-for-pytorch-1.10[${PYTHON_SINGLE_USEDEP}]
 	)
 	ort? (
-		>=sci-libs/onnxruntime-1.17.1[${PYTHON_SINGLE_USEDEP},extensions,python,training-ort]
+		>=sci-ml/onnxruntime-1.17.1[${PYTHON_SINGLE_USEDEP},extensions,python,training-ort]
 		>=sci-libs/transformers-4.34.0[${PYTHON_SINGLE_USEDEP}]
 	)
 	pytorch? (
@@ -139,7 +139,7 @@ BDEPEND+="
 			>=dev-python/accelerate-0.21.0[${PYTHON_USEDEP}]
 			>=sci-libs/dynast-1.6.0_rc1[${PYTHON_USEDEP}]
 			>=sci-libs/intel-tensorflow-2.12.0[${PYTHON_USEDEP}]
-			>=sci-libs/onnx-1.15.0[${PYTHON_USEDEP}]
+			>=sci-ml/onnx-1.15.0[${PYTHON_USEDEP}]
 			sci-libs/auto-round[${PYTHON_USEDEP}]
 			sci-libs/horovod[${PYTHON_USEDEP}]
 			sci-libs/mxnet-mkl[${PYTHON_USEDEP}]
@@ -164,7 +164,7 @@ BDEPEND+="
 	' python3_10)
 	test? (
 		>=sci-libs/intel-extension-for-pytorch-1.10[${PYTHON_SINGLE_USEDEP}]
-		>=sci-libs/onnxruntime-1.17.1[${PYTHON_SINGLE_USEDEP},python]
+		>=sci-ml/onnxruntime-1.17.1[${PYTHON_SINGLE_USEDEP},python]
 		>=sci-libs/torchvision-0.17.1[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	)
