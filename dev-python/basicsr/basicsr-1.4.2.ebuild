@@ -58,7 +58,7 @@ RDEPEND+="
 		virtual/pillow[${PYTHON_USEDEP}]
 	')
 	>=sci-visualization/tensorboard-2.10.0[${PYTHON_SINGLE_USEDEP}]
-	>=sci-libs/pytorch-1.7[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/pytorch-1.7[${PYTHON_SINGLE_USEDEP}]
 	sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
@@ -83,7 +83,7 @@ BDEPEND+="
 			dev-python/pytest[${PYTHON_USEDEP}]
 		)
 	')
-	sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 "
 DOCS=( "README.md" )
 
