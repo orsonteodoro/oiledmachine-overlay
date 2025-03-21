@@ -104,7 +104,7 @@ BDEPEND+="
 		dev-python/jaxlib[${PYTHON_USEDEP}]
 		dev-python/ml-collections[${PYTHON_USEDEP}]
 		sci-ml/tensorflow[${PYTHON_USEDEP}]
-		sci-misc/tensorflow-datasets[${PYTHON_USEDEP}]
+		sci-ml/tensorflow-datasets[${PYTHON_USEDEP}]
 	)
 	test? (
 		$(python_gen_any_dep '
@@ -129,7 +129,7 @@ BDEPEND+="
 		dev-python/sentencepiece[${PYTHON_USEDEP},python]
 		media-libs/opencv[${PYTHON_USEDEP},python]
 		sci-ml/tensorflow[${PYTHON_USEDEP},python]
-		sci-misc/tensorflow-datasets[${PYTHON_USEDEP}]
+		sci-ml/tensorflow-datasets[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "CHANGELOG.md" "README.md" )
