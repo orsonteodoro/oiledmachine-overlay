@@ -33,7 +33,7 @@ RDEPEND+="
 		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/einops[${PYTHON_USEDEP}]
 	')
-	sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	sci-libs/torchaudio[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
