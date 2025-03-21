@@ -240,9 +240,9 @@ BASE_RDEPEND="
 		)
 	')
 	(
-		>=sci-libs/pytorch-1.10.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/pytorch-1.10.0[${PYTHON_SINGLE_USEDEP}]
 		strict? (
-			<sci-libs/pytorch-2.4.0[${PYTHON_SINGLE_USEDEP}]
+			<sci-ml/pytorch-2.4.0[${PYTHON_SINGLE_USEDEP}]
 		)
 	)
 "
@@ -411,12 +411,12 @@ IMAGE_TEST_BDEPEND="
 		!strict? (
 			dev-python/lpips[${PYTHON_USEDEP}]
 			dev-python/numpy[${PYTHON_USEDEP}]
-			sci-libs/pytorch-msssim[${PYTHON_SINGLE_USEDEP}]
+			sci-ml/pytorch-msssim[${PYTHON_SINGLE_USEDEP}]
 		)
 		strict? (
 			<dev-python/lpips-0.1.5[${PYTHON_USEDEP}]
 			<dev-python/numpy-1.27.0[${PYTHON_USEDEP}]
-			>=sci-libs/pytorch-msssim-1.0.0[${PYTHON_SINGLE_USEDEP}]
+			>=sci-ml/pytorch-msssim-1.0.0[${PYTHON_SINGLE_USEDEP}]
 		)
 	')
 "
