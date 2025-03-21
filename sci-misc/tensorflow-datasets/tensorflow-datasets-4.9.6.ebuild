@@ -111,10 +111,10 @@ HUGGINGFACE_RDEPEND="
 	dev-python/dm-tree[${PYTHON_USEDEP}]
 	media-libs/opencv[${PYTHON_USEDEP},python]
 	sci-libs/gcld3[${PYTHON_USEDEP}]
-	sci-libs/tensorflow[${PYTHON_USEDEP}]
-	sci-libs/tensorflow-data-validation[${PYTHON_USEDEP}]
-	sci-libs/tensorflow-io[${PYTHON_USEDEP}]
-	sci-libs/tensorflow-metadata[${PYTHON_USEDEP}]
+	sci-ml/tensorflow[${PYTHON_USEDEP}]
+	sci-ml/tensorflow-data-validation[${PYTHON_USEDEP}]
+	sci-ml/tensorflow-io[${PYTHON_USEDEP}]
+	sci-ml/tensorflow-metadata[${PYTHON_USEDEP}]
 	virtual/pillow[${PYTHON_USEDEP}]
 
 	sci-ml/datasets[${PYTHON_USEDEP}]
@@ -143,7 +143,7 @@ RDEPEND+="
 	dev-python/tqdm[${PYTHON_USEDEP}]
 	dev-python/wrapt[${PYTHON_USEDEP}]
 	dev-python/dm-tree[${PYTHON_USEDEP}]
-	sci-libs/tensorflow-metadata[${PYTHON_USEDEP}]
+	sci-ml/tensorflow-metadata[${PYTHON_USEDEP}]
 	aflw2k3d? (
 		dev-python/scipy[${PYTHON_USEDEP}]
 	)
@@ -205,7 +205,7 @@ RDEPEND+="
 		' python3_10)
 	)
 	lsun? (
-		sci-libs/tensorflow-io[${PYTHON_USEDEP}]
+		sci-ml/tensorflow-io[${PYTHON_USEDEP}]
 	)
 	matplotlib? (
 		dev-python/matplotlib[${PYTHON_USEDEP}]
@@ -240,10 +240,10 @@ RDEPEND+="
 		dev-python/scipy[${PYTHON_USEDEP}]
 	)
 	tensorflow? (
-		sci-libs/tensorflow[${PYTHON_USEDEP}]
+		sci-ml/tensorflow[${PYTHON_USEDEP}]
 	)
 	tensorflow-data-validation? (
-		sci-libs/tensorflow-data-validation[${PYTHON_USEDEP}]
+		sci-ml/tensorflow-data-validation[${PYTHON_USEDEP}]
 	)
 	the300w_lp? (
 		dev-python/scipy[${PYTHON_USEDEP}]
@@ -274,7 +274,7 @@ BDEPEND+="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	test? (
 		$(python_gen_cond_dep '
-			sci-libs/tensorflow-io[${PYTHON_USEDEP}]
+			sci-ml/tensorflow-io[${PYTHON_USEDEP}]
 		' python3_{10,11})
 		dev-db/apache-beam[${PYTHON_USEDEP}]
 		dev-python/conllu[${PYTHON_USEDEP}]
