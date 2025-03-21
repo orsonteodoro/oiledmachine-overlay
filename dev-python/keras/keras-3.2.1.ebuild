@@ -97,7 +97,7 @@ PDEPEND="
 		pytorch? (
 			$(python_gen_any_dep '
 				>=sci-ml/pytorch-2.1.0[${PYTHON_SINGLE_USEDEP}]
-				>=sci-libs/torchvision-0.16.0[${PYTHON_SINGLE_USEDEP}]
+				>=sci-ml/torchvision-0.16.0[${PYTHON_SINGLE_USEDEP}]
 			')
 		)
 		tensorflow? (
@@ -110,7 +110,7 @@ PDEPEND="
 			test? (
 				$(python_gen_any_dep '
 					>=sci-ml/pytorch-2.1.0[${PYTHON_SINGLE_USEDEP}]
-					>=sci-libs/torchvision-0.16.0[${PYTHON_SINGLE_USEDEP}]
+					>=sci-ml/torchvision-0.16.0[${PYTHON_SINGLE_USEDEP}]
 				')
 				>=sci-libs/tensorflow-${TENSORFLOW_PV}
 				dev-python/flax
@@ -121,7 +121,7 @@ PDEPEND="
 			test? (
 				$(python_gen_any_dep '
 					>=sci-ml/pytorch-2.1.0[${PYTHON_SINGLE_USEDEP}]
-					>=sci-libs/torchvision-0.16.0[${PYTHON_SINGLE_USEDEP}]
+					>=sci-ml/torchvision-0.16.0[${PYTHON_SINGLE_USEDEP}]
 				')
 				dev-python/jax[${PYTHON_USEDEP},cpu]
 			)
@@ -129,7 +129,7 @@ PDEPEND="
 		pytorch? (
 			$(python_gen_any_dep '
 				>=sci-ml/pytorch-2.2.1[${PYTHON_SINGLE_USEDEP}]
-				>=sci-libs/torchvision-0.17.1[${PYTHON_SINGLE_USEDEP}]
+				>=sci-ml/torchvision-0.17.1[${PYTHON_SINGLE_USEDEP}]
 			')
 			test? (
 				>=sci-libs/tensorflow-${TENSORFLOW_PV}
