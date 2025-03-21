@@ -178,7 +178,7 @@ if [[ "${MAINTAINER_MODE}" == "1" ]] ; then
 	NOT_PRETRAINED_DEPENDS="
 		$(python_gen_cond_dep '
 			(
-				>=sci-libs/tensorflow-2[${PYTHON_USEDEP},python]
+				>=sci-ml/tensorflow-2[${PYTHON_USEDEP},python]
 			)
 			dev-python/tf-keras[${PYTHON_USEDEP}]
 		')
@@ -187,8 +187,8 @@ else
 	NOT_PRETRAINED_DEPENDS="
 		$(python_gen_cond_dep '
 			(
-				>=sci-libs/tensorflow-2[${PYTHON_USEDEP},python]
-				<sci-libs/tensorflow-2.16[${PYTHON_USEDEP},python]
+				>=sci-ml/tensorflow-2[${PYTHON_USEDEP},python]
+				<sci-ml/tensorflow-2.16[${PYTHON_USEDEP},python]
 			)
 			<dev-python/tf-keras-3[${PYTHON_USEDEP}]
 		')
