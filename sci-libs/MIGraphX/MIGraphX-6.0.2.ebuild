@@ -69,7 +69,7 @@ RDEPEND="
 	>=dev-python/pybind11-2.6.0[${PYTHON_USEDEP}]
 	dev-libs/msgpack
 	cpu? (
-		dev-libs/oneDNN
+		sci-ml/oneDNN
 		~dev-libs/rocm-opencl-runtime-${PV}:${ROCM_SLOT}
 		~sys-libs/llvm-roc-libomp-${PV}:${ROCM_SLOT}[${LLVM_ROC_LIBOMP_6_0_AMDGPU_USEDEP}]
 	)
