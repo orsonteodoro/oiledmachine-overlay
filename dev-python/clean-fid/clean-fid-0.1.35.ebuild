@@ -47,7 +47,7 @@ RDEPEND+="
 		dev-python/requests[${PYTHON_USEDEP}]
 	')
 	sci-libs/torch[${PYTHON_SINGLE_USEDEP}]
-	sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
