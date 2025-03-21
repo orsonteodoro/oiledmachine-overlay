@@ -56,7 +56,7 @@ BDEPEND+="
 				>=sci-ml/pytorch-2.0[${PYTHON_SINGLE_USEDEP}]
 				<sci-ml/pytorch-2.1.0_alpha0[${PYTHON_SINGLE_USEDEP}]
 			)
-			sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
+			sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 		')
 		(
 			>=dev-python/jax-0.4.6[${PYTHON_USEDEP},cpu]
