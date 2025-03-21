@@ -59,7 +59,7 @@ RDEPEND+="
 		media-video/ffmpeg:0/56.58.58
 	)
 	media-video/ffmpeg:=
-	~sci-libs/pytorch-${PV}[${PYTHON_SINGLE_USEDEP}]
+	~sci-ml/pytorch-${PV}[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
