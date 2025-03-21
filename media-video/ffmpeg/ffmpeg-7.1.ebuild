@@ -1072,7 +1072,7 @@ RDEPEND+="
 		>=media-libs/svt-av1-0.9.0[${MULTILIB_USEDEP}]
 	)
 	tensorflow? (
-		>=sci-libs/tensorflow-2
+		>=sci-ml/tensorflow-2
 	)
 	torch? (
 		|| (
