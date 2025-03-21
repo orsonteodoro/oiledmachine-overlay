@@ -80,7 +80,7 @@ CHECKPOINT_TEST_BDEPEND="
 	dev-python/flax[${PYTHON_USEDEP}]
 "
 ORBAX_EXPORT_TEST_BDEPEND="
-	=sci-libs/tensorflow-9999[${PYTHON_USEDEP}]
+	=sci-ml/tensorflow-9999[${PYTHON_USEDEP}]
 	dev-libs/pytest[${PYTHON_USEDEP}]
 	dev-libs/pytest-xdist[${PYTHON_USEDEP}]
 	dev-python/requests[${PYTHON_USEDEP}]
@@ -97,7 +97,7 @@ BDEPEND+="
 # Avoid circular depends with tensorflow \
 PDEPEND+="
 	tensorflow? (
-		>=sci-libs/tensorflow-2.15.0[${PYTHON_USEDEP}]
+		>=sci-ml/tensorflow-2.15.0[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "README.md" )
