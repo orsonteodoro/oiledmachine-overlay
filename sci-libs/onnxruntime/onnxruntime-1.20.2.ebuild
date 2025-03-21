@@ -1042,44 +1042,44 @@ RDEPEND="
 		sys-cluster/openmpi:=
 	)
 	>=dev-python/numpy-1.21.6
-	>=sci-libs/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
 	app-admin/chrpath
 	cuda? (
 		|| (
 			(
 				=dev-util/nvidia-cuda-toolkit-11.8*
 				!python? (
-					>=sci-libs/pytorch-2.0.0[${PYTHON_SINGLE_USEDEP}]
+					>=sci-ml/pytorch-2.0.0[${PYTHON_SINGLE_USEDEP}]
 				)
 				cudnn? (
 					=dev-libs/cudnn-8.8*
 				)
 				python? (
-					>=sci-libs/pytorch-2.0.0[${PYTHON_SINGLE_USEDEP}]
+					>=sci-ml/pytorch-2.0.0[${PYTHON_SINGLE_USEDEP}]
 				)
 			)
 			(
 				=dev-util/nvidia-cuda-toolkit-11.8*
 				!python? (
-					>=sci-libs/pytorch-2.6.0[${PYTHON_SINGLE_USEDEP}]
+					>=sci-ml/pytorch-2.6.0[${PYTHON_SINGLE_USEDEP}]
 				)
 				cudnn? (
 					=dev-libs/cudnn-9.1*
 				)
 				python? (
-					>=sci-libs/pytorch-2.6.0[${PYTHON_SINGLE_USEDEP}]
+					>=sci-ml/pytorch-2.6.0[${PYTHON_SINGLE_USEDEP}]
 				)
 			)
 			(
 				=dev-util/nvidia-cuda-toolkit-12.6*
 				!python? (
-					>=sci-libs/pytorch-2.6.0[${PYTHON_SINGLE_USEDEP}]
+					>=sci-ml/pytorch-2.6.0[${PYTHON_SINGLE_USEDEP}]
 				)
 				cudnn? (
 					=dev-libs/cudnn-9.5*
 				)
 				python? (
-					>=sci-libs/pytorch-2.6.0[${PYTHON_SINGLE_USEDEP}]
+					>=sci-ml/pytorch-2.6.0[${PYTHON_SINGLE_USEDEP}]
 				)
 			)
 		)
@@ -1111,12 +1111,12 @@ RDEPEND="
 		rocm_6_0? (
 			!python? (
 				|| (
-					=sci-libs/pytorch-2.3*[${PYTHON_SINGLE_USEDEP}]
+					=sci-ml/pytorch-2.3*[${PYTHON_SINGLE_USEDEP}]
 				)
 			)
 			python? (
 				|| (
-					=sci-libs/pytorch-2.3*[${PYTHON_SINGLE_USEDEP}]
+					=sci-ml/pytorch-2.3*[${PYTHON_SINGLE_USEDEP}]
 				)
 			)
 		)
@@ -1167,8 +1167,8 @@ RDEPEND="
 			>=dev-python/sympy-1.12[${PYTHON_USEDEP}]
 		')
 		training? (
-			>=sci-libs/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
-			sci-libs/pytorch-ort[${PYTHON_SINGLE_USEDEP}]
+			>=sci-ml/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
+			sci-ml/pytorch-ort[${PYTHON_SINGLE_USEDEP}]
 		)
 	)
 "
