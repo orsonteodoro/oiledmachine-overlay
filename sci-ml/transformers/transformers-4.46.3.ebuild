@@ -259,12 +259,12 @@ RDEPEND="
 		)
 		tf? (
 			>=dev-python/keras-nlp-0.3.1[${PYTHON_USEDEP}]
-			>=sci-libs/tensorflow-2.9[${PYTHON_USEDEP}]
-			sci-libs/tensorflow-text[${PYTHON_USEDEP}]
+			>=sci-ml/tensorflow-2.9[${PYTHON_USEDEP}]
+			sci-ml/tensorflow-text[${PYTHON_USEDEP}]
 		)
 		tf-cpu? (
 			>=dev-python/keras-2.9[${PYTHON_USEDEP}]
-			sci-libs/tensorflow-probability[${PYTHON_USEDEP}]
+			sci-ml/tensorflow-probability[${PYTHON_USEDEP}]
 		)
 		timm? (
 			dev-python/timm[${PYTHON_USEDEP}]
