@@ -90,7 +90,7 @@ REQUIREMENTS_RDEPEND="
 	>=dev-python/jaxlib-0.3.15[${PYTHON_USEDEP}]
 	>=dev-python/flax-0.5.3[${PYTHON_USEDEP}]
 	>=sci-ml/tensorflow-probability-0.13.0[${PYTHON_USEDEP}]
-	>=sci-libs/tf-slim-1.1.0[${PYTHON_USEDEP}]
+	>=sci-ml/tf-slim-1.1.0[${PYTHON_USEDEP}]
 	sci-ml/tensorflow-estimator[${PYTHON_USEDEP}]
 	sci-ml/tensorflow[${PYTHON_USEDEP}]
 	sci-visualization/tensorboard[${PYTHON_USEDEP}]
@@ -117,7 +117,7 @@ RDEPEND+="
 	>=dev-python/jaxlib-0.1.51[${PYTHON_USEDEP}]
 	>=sci-ml/tensorflow-2.2.0[${PYTHON_USEDEP}]
 	>=sci-ml/tensorflow-probability-0.13.0[${PYTHON_USEDEP}]
-	>=sci-libs/tf-slim-1.0[${PYTHON_USEDEP}]
+	>=sci-ml/tf-slim-1.0[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
