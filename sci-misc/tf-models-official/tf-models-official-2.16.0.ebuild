@@ -46,7 +46,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	RDEPEND+="
 		>=dev-python/wrapt-1.15[${PYTHON_USEDEP}]
 		>=dev-python/tf-keras-9999[${PYTHON_USEDEP}]
-		>=sci-libs/tensorflow-hub-9999[${PYTHON_USEDEP}]
+		>=sci-ml/tensorflow-hub-9999[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 		media-libs/opencv[${PYTHON_USEDEP},python]
 	"
@@ -54,7 +54,7 @@ else
 	RDEPEND+="
 		>=dev-python/pyyaml-6.0.0[${PYTHON_USEDEP}]
 		>=dev-python/tf-keras-2.16.0[${PYTHON_USEDEP}]
-		>=sci-libs/tensorflow-hub-0.6.0[${PYTHON_USEDEP}]
+		>=sci-ml/tensorflow-hub-0.6.0[${PYTHON_USEDEP}]
 		media-libs/opencv[${PYTHON_USEDEP},python]
 	"
 fi
@@ -66,7 +66,7 @@ RDEPEND+="
 	>=dev-python/psutil-5.4.3[${PYTHON_USEDEP}]
 	>=dev-python/py-cpuinfo-3.3.0[${PYTHON_USEDEP}]
 	>=dev-python/scipy-0.19.1[${PYTHON_USEDEP}]
-	>=sci-libs/tensorflow-model-optimization-0.4.1[${PYTHON_USEDEP}]
+	>=sci-ml/tensorflow-model-optimization-0.4.1[${PYTHON_USEDEP}]
 	>=sci-libs/tf-slim-1.1.0[${PYTHON_USEDEP}]
 	dev-python/cython[${PYTHON_USEDEP}]
 	dev-python/immutabledict[${PYTHON_USEDEP}]
@@ -80,7 +80,7 @@ RDEPEND+="
 		dev-python/sacrebleu[${PYTHON_USEDEP}]
 		dev-python/sentencepiece[${PYTHON_USEDEP},python]
 		sci-ml/seqeval[${PYTHON_USEDEP}]
-		sci-libs/tensorflow-text:0/${PV%.*}[${PYTHON_USEDEP}]
+		sci-ml/tensorflow-text:0/${PV%.*}[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="
