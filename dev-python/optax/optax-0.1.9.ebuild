@@ -53,7 +53,7 @@ RDEPEND+="
 	)
 	examples? (
 		>=dev-python/dm-haiku-0.0.3[${PYTHON_USEDEP}]
-		>=sci-libs/tensorflow-${TENSORFLOW_PV}[${PYTHON_USEDEP}]
+		>=sci-ml/tensorflow-${TENSORFLOW_PV}[${PYTHON_USEDEP}]
 		>=sci-misc/tensorflow-datasets-${TENSORFLOW_DATASETS_PV}[${PYTHON_USEDEP}]
 	)
 "
@@ -94,7 +94,7 @@ BDEPEND+="
 # Avoid circular depends with tensorflow \
 PDEPEND+="
 	doc? (
-		>=sci-libs/tensorflow-${TENSORFLOW_PV}[${PYTHON_USEDEP}]
+		>=sci-ml/tensorflow-${TENSORFLOW_PV}[${PYTHON_USEDEP}]
 		>=sci-misc/tensorflow-datasets-${TENSORFLOW_DATASETS_PV}[${PYTHON_USEDEP}]
 	)
 	test? (
