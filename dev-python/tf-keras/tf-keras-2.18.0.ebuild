@@ -71,7 +71,7 @@ RDEPEND+="
 	>=dev-python/black-22.3.0[${PYTHON_USEDEP}]
 	>=dev-python/isort-5.10.1[${PYTHON_USEDEP}]
 	>=dev-python/flake8-4.0.1[${PYTHON_USEDEP}]
-	=sci-libs/tensorflow-${PV%.*}*[${PYTHON_USEDEP}]
+	=sci-ml/tensorflow-${PV%.*}*[${PYTHON_USEDEP}]
 	dev-python/pandas[${PYTHON_USEDEP}]
 	dev-python/portpicker[${PYTHON_USEDEP}]
 	dev-python/pydot[${PYTHON_USEDEP}]
