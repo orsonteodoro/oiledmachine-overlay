@@ -87,9 +87,9 @@ PYTORCH_BASE_RDEPEND="
 		)
 	')
 	(
-		>=sci-libs/pytorch-1.10.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/pytorch-1.10.0[${PYTHON_SINGLE_USEDEP}]
 		strict? (
-			<sci-libs/pytorch-2.0.1[${PYTHON_SINGLE_USEDEP}]
+			<sci-ml/pytorch-2.0.1[${PYTHON_SINGLE_USEDEP}]
 		)
 	)
 	(
