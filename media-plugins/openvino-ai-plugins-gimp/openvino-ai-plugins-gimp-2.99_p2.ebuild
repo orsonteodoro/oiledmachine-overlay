@@ -54,7 +54,7 @@ STABLE_DIFFUSION_MODEL_RDEPEND="
 		<sci-libs/tensorflow-2.12[${PYTHON_USEDEP}]
 	)
 	>=sci-libs/nncf-2.4.0[${PYTHON_USEDEP}]
-	>=sci-libs/onnx-1.13.0[${PYTHON_USEDEP}]
+	>=sci-ml/onnx-1.13.0[${PYTHON_USEDEP}]
 	>=sci-libs/openvino-2022.2.0[${PYTHON_USEDEP}]
 	>=sci-misc/tensorflow-datasets-4.2.0[${PYTHON_USEDEP}]
 
