@@ -66,7 +66,7 @@ RDEPEND+="
 	dev-python/numpy[${PYTHON_USEDEP}]
 	virtual/pillow[${PYTHON_USEDEP}]
 	dev-python/requests[${PYTHON_USEDEP}]
-	sci-libs/onnx[${PYTHON_USEDEP}]
+	sci-ml/onnx[${PYTHON_USEDEP}]
 	flax? (
 		>=dev-python/flax-0.4.1[${PYTHON_USEDEP}]
 		>=dev-python/jax-0.4.1[${PYTHON_USEDEP}]
