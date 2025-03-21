@@ -56,7 +56,7 @@ BDEPEND+="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
 	test? (
-		>=sci-libs/pytorch-2.0.0[${PYTHON_USEDEP}]
+		>=sci-ml/pytorch-2.0.0[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		sci-libs/tensorflow[${PYTHON_USEDEP}]
 		sci-misc/tensorflow-datasets[${PYTHON_USEDEP}]
