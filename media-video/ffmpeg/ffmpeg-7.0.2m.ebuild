@@ -784,7 +784,7 @@ gen_pytorch_rdepend() {
 		echo "
 			(
 				sys-devel/gcc[cxx]
-				~sci-libs/pytorch-${ver}
+				~sci-ml/pytorch-${ver}
 				~sci-ml/caffe2-${ver}
 			)
 		"
