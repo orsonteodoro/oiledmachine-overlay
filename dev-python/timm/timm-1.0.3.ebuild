@@ -30,7 +30,7 @@ SLOT="0"
 IUSE="doc modelindex"
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=sci-libs/safetensors-0.2[${PYTHON_USEDEP}]
+		>=sci-ml/safetensors-0.2[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 		sci-ml/huggingface_hub[${PYTHON_USEDEP}]
 		modelindex? (
