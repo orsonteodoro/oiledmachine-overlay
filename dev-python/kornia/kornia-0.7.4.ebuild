@@ -57,7 +57,7 @@ RDEPEND+="
 			dev-python/accelerate[${PYTHON_USEDEP}]
 		)
 	')
-	>=sci-libs/pytorch-1.9.1[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/pytorch-1.9.1[${PYTHON_SINGLE_USEDEP}]
 	x? (
 		>=sci-libs/onnxruntime-1.16[${PYTHON_SINGLE_USEDEP},cuda?,python]
 	)
