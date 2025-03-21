@@ -522,7 +522,7 @@ DISABLED_RDEPEND="
 		>=dev-cpp/benchmark-1.8.5
 	)
 	xnnpack? (
-		>=sci-libs/XNNPACK-2023.10.19
+		>=sci-ml/XNNPACK-2023.10.19
 	)
 "
 RDEPEND="
