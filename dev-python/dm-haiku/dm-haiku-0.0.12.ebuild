@@ -60,7 +60,7 @@ BDEPEND+="
 		>=dev-python/chex-0.0.4[${PYTHON_USEDEP}]
 		>=dev-python/dm-tree-0.1.1[${PYTHON_USEDEP}]
 		>=dev-python/optax-0.0.1[${PYTHON_USEDEP}]
-		>=sci-libs/tensorflow-2.16.0[${PYTHON_USEDEP},python]
+		>=sci-ml/tensorflow-2.16.0[${PYTHON_USEDEP},python]
 		dev-python/dill[${PYTHON_USEDEP}]
 		dev-python/pytest-xdist[${PYTHON_USEDEP}]
 		dev-python/virtualenv[${PYTHON_USEDEP}]
