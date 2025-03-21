@@ -81,7 +81,7 @@ RDEPEND+="
 		=dev-python/keras-2.12*[${PYTHON_USEDEP}]
 		=sci-ml/tensorflow-0.12*[${PYTHON_USEDEP},python]
 		>=dev-python/numpy-1.23.5[${PYTHON_USEDEP}]
-		>=sci-misc/tensorflow-datasets-4.9.2[${PYTHON_USEDEP}]
+		>=sci-ml/tensorflow-datasets-4.9.2[${PYTHON_USEDEP}]
 		>=sci-ml/tensorflow-probability-0.19.0[${PYTHON_USEDEP}]
 	)
 "
