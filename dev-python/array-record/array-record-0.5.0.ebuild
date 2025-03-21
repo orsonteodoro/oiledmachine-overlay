@@ -100,7 +100,7 @@ RDEPEND+="
 	beam? (
 		>=dev-db/apache-beam-2.50.0[${PYTHON_USEDEP},gcp]
 		>=dev-python/google-cloud-storage-2.11.0[${PYTHON_USEDEP}]
-		>=sci-libs/tensorflow-2.14.0[${PYTHON_USEDEP}]
+		>=sci-ml/tensorflow-2.14.0[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="
