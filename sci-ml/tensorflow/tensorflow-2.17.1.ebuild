@@ -735,8 +735,8 @@ PDEPEND="
 	python? (
 		$(python_gen_cond_dep '
 			|| (
-				=sci-libs/tensorflow-io-9999[${PYTHON_USEDEP},tensorflow-io-gcs-filesystem]
-				=sci-libs/tensorflow-io-0.37.0[${PYTHON_USEDEP},tensorflow-io-gcs-filesystem]
+				=sci-ml/tensorflow-io-9999[${PYTHON_USEDEP},tensorflow-io-gcs-filesystem]
+				=sci-ml/tensorflow-io-0.37.0[${PYTHON_USEDEP},tensorflow-io-gcs-filesystem]
 			)
 		' python3_{10,11})
 		>=dev-python/keras-3.2.0[${PYTHON_USEDEP}]
