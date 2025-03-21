@@ -45,7 +45,7 @@ NODE_VERSION=22
 NPM_SLOT="3"
 PNPM_DEDUPE=0 # Still debugging
 PNPM_SLOT="9"
-NEXTJS_PV="15.1.7"
+NEXTJS_PV="15.2.3"
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 	"--prefer-offline"
