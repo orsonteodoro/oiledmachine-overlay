@@ -77,8 +77,8 @@ DISABLED_CONSTRAINTS_RDEPEND="
 		>=dev-python/importlib-metadata-8.5.0[${PYTHON_USEDEP}]
 	')
 	(
-		>=sci-libs/tokenizers-0.19[${PYTHON_SINGLE_USEDEP}]
-		<sci-libs/tokenizers-0.20[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/tokenizers-0.19[${PYTHON_SINGLE_USEDEP}]
+		<sci-ml/tokenizers-0.20[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 BASE_RDEPEND="
