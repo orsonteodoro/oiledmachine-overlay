@@ -43,7 +43,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
 STABLE_DIFFUSION_MODEL_RDEPEND="
 	$(python_gen_any_dep '
-		>=sci-libs/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
 		>=sci-libs/torchmetrics-0.11.0[${PYTHON_SINGLE_USEDEP}]
 		>=sci-libs/torchvision-0.14.1[${PYTHON_SINGLE_USEDEP}]
 		>=sci-libs/transformers-4.38.0[${PYTHON_SINGLE_USEDEP}]
