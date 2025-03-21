@@ -47,7 +47,7 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/protobuf-3.12.4[${PYTHON_USEDEP}]
 	')
-	>=sci-libs/pytorch-1.8.1[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/pytorch-1.8.1[${PYTHON_SINGLE_USEDEP}]
 	onnxruntime? (
 		sci-libs/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
 	)
@@ -86,7 +86,7 @@ src_unpack() {
 src_prepare() {
 	cmake_src_prepare
 
-	if has_version ">=sci-libs/pytorch-2" ; then
+	if has_version ">=sci-ml/pytorch-2" ; then
 		# -std=gnu++14 Breaks pytorch's c10
 		sed -i \
 			-e "s|CMAKE_CXX_STANDARD 14|CMAKE_CXX_STANDARD 17|g" \
