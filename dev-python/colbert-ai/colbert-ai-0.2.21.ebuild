@@ -50,7 +50,7 @@ RDEPEND+="
 		>=dev-python/faiss-gpu-1.7.0[${PYTHON_SINGLE_USEDEP}]
 	)
 	torch? (
-		~sci-libs/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
+		~sci-ml/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="
