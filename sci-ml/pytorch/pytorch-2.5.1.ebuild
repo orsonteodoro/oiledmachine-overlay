@@ -166,7 +166,7 @@ RDEPEND="
 		dev-python/typing-extensions[${PYTHON_USEDEP}]
 	')
 	${PYTHON_DEPS}
-	~sci-libs/caffe2-${PV}[${AMDGPU_TARGETS_USEDEP},${CUDA_TARGETS_USEDEP},${PYTHON_SINGLE_USEDEP},cuda=,rocm=]
+	~sci-ml/caffe2-${PV}[${AMDGPU_TARGETS_USEDEP},${CUDA_TARGETS_USEDEP},${PYTHON_SINGLE_USEDEP},cuda=,rocm=]
 "
 DEPEND="
 	$(python_gen_cond_dep '
