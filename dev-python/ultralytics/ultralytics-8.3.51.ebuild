@@ -71,7 +71,7 @@ RDEPEND+="
 		dev-python/py-cpuinfo[${PYTHON_USEDEP}]
 	')
 	>=dev-python/ultralytics-thop-2.0.0[${PYTHON_SINGLE_USEDEP}]
-	>=sci-libs/pytorch-1.8.0[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/pytorch-1.8.0[${PYTHON_SINGLE_USEDEP}]
 	>=sci-libs/torchvision-0.9.0[${PYTHON_SINGLE_USEDEP}]
 	export? (
 		$(python_gen_cond_dep '
