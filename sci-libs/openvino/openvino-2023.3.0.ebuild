@@ -242,8 +242,8 @@ BDEPEND_TEST_CONSTRAINTS="
 		<dev-python/numpy-1.27[${PYTHON_USEDEP}]
 	)
 	(
-		>=sci-libs/tensorflow-2.5[${PYTHON_USEDEP}]
-		<sci-libs/tensorflow-2.15.0[${PYTHON_USEDEP}]
+		>=sci-ml/tensorflow-2.5[${PYTHON_USEDEP}]
+		<sci-ml/tensorflow-2.15.0[${PYTHON_USEDEP}]
 	)
 	(
 		>=dev-python/pytest-5.0[${PYTHON_USEDEP}]
@@ -337,9 +337,9 @@ BDEPEND_MODEL_HUB_TESTS_TF_HUB_TESTS="
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/pytest[${PYTHON_USEDEP}]
 	dev-python/pytest-html[${PYTHON_USEDEP}]
-	sci-libs/tensorflow[${PYTHON_USEDEP}]
-	sci-libs/tensorflow-hub[${PYTHON_USEDEP}]
-	sci-libs/tensorflow-text[${PYTHON_USEDEP}]
+	sci-ml/tensorflow[${PYTHON_USEDEP}]
+	sci-ml/tensorflow-hub[${PYTHON_USEDEP}]
+	sci-ml/tensorflow-text[${PYTHON_USEDEP}]
 "
 # tests/model_hub_tests/performance_tests/requirements.txt \
 BDEPEND_MODEL_HUB_TESTS_PERFORMANCE_TESTS="
@@ -348,7 +348,7 @@ BDEPEND_MODEL_HUB_TESTS_PERFORMANCE_TESTS="
 	dev-python/py[${PYTHON_USEDEP}]
 	dev-python/pytest[${PYTHON_USEDEP}]
 	dev-python/pytest-html[${PYTHON_USEDEP}]
-	sci-libs/tensorflow-hub[${PYTHON_USEDEP}]
+	sci-ml/tensorflow-hub[${PYTHON_USEDEP}]
 "
 # tests/layer_tests/requirements.txt \
 BDEPEND_LAYER_TESTS="
@@ -360,7 +360,7 @@ BDEPEND_LAYER_TESTS="
 		sci-ml/transformers[${PYTHON_SINGLE_USEDEP}]
 	')
 	$(python_gen_cond_dep '
-		sci-libs/tensorflow-addons[${PYTHON_USEDEP}]
+		sci-ml/tensorflow-addons[${PYTHON_USEDEP}]
 	' python3_10)
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/pytest[${PYTHON_USEDEP}]
