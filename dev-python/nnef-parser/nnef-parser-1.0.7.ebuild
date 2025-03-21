@@ -97,7 +97,7 @@ einfo "Installing libnnef"
 }
 
 pkg_postinst() {
-	optfeature "prebuilt models" "sci-misc/nnef-models"
+	optfeature "prebuilt models" "sci-ml/nnef-models"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
