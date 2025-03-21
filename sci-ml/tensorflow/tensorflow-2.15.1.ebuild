@@ -649,7 +649,7 @@ RDEPEND="
 		)
 		>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
 		>=dev-python/astunparse-1.6.0[${PYTHON_USEDEP}]
-		>=-13.0.0[${PYTHON_USEDEP}]
+		>=dev-python/clang-13.0.0[${PYTHON_USEDEP}]
 		>=dev-python/flatbuffers-${FLATBUFFERS_PV}[${PYTHON_USEDEP}]
 		>=dev-python/gast-0.5.3[${PYTHON_USEDEP}]
 		>=dev-python/google-pasta-0.1.1[${PYTHON_USEDEP}]
