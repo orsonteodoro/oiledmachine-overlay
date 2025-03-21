@@ -45,7 +45,7 @@ RDEPEND+="
 		dev-python/numpy[${PYTHON_USEDEP}]
 		sci-ml/onnxruntime[${PYTHON_USEDEP},python]
 	')
-	>=sci-libs/transformers-4.36.0[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/transformers-4.36.0[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
