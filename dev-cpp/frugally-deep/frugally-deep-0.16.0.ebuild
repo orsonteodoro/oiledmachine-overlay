@@ -33,7 +33,7 @@ BDEPEND="
 	>=dev-build/cmake-3.22.1
 	test? (
 		>=dev-cpp/doctest-2.4.11
-		>=sci-libs/tensorflow-2.16.1
+		>=sci-ml/tensorflow-2.16.1
 	)
 	|| (
 		>=sys-devel/gcc-4.9
