@@ -48,7 +48,7 @@ RDEPEND+="
 		virtual/pillow[${PYTHON_USEDEP}]
 	')
 	>=sci-ml/pytorch-1.6[${PYTHON_SINGLE_USEDEP}]
-	>=sci-libs/transformers-4.25.1[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/transformers-4.25.1[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
