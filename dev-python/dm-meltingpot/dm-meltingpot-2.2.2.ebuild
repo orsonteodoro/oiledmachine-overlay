@@ -59,7 +59,7 @@ RDEPEND+="
 	dev-python/dm-tree[${PYTHON_USEDEP}]
 	dev-python/dm-env[${PYTHON_USEDEP}]
 	dev-python/ml-collections[${PYTHON_USEDEP}]
-	sci-libs/tensorflow[${PYTHON_USEDEP}]
+	sci-ml/tensorflow[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
