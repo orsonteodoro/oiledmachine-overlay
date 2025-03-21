@@ -74,7 +74,7 @@ BDEPEND+="
 		$(python_gen_cond_dep '
 			>=sci-ml/tensorflow-2.3.1[${PYTHON_USEDEP}]
 			>=sci-ml/tensorflow-text-2.7.3[${PYTHON_USEDEP}]
-			>=sci-misc/tensorflow-datasets-4.0.1[${PYTHON_USEDEP}]
+			>=sci-ml/tensorflow-datasets-4.0.1[${PYTHON_USEDEP}]
 			dev-python/submitit[${PYTHON_USEDEP}]
 			dev-python/fvcore[${PYTHON_USEDEP}]
 		')
