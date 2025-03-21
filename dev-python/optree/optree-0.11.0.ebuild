@@ -38,7 +38,7 @@ RDEPEND+="
 	)
 	pytorch? (
 		$(python_gen_any_dep '
-			sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+			sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 		')
 	)
 "
@@ -53,8 +53,8 @@ BDEPEND+="
 	benchmark? (
 		$(python_gen_any_dep '
 			(
-				>=sci-libs/pytorch-2.0[${PYTHON_SINGLE_USEDEP}]
-				<sci-libs/pytorch-2.1.0_alpha0[${PYTHON_SINGLE_USEDEP}]
+				>=sci-ml/pytorch-2.0[${PYTHON_SINGLE_USEDEP}]
+				<sci-ml/pytorch-2.1.0_alpha0[${PYTHON_SINGLE_USEDEP}]
 			)
 			sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
 		')
@@ -82,7 +82,7 @@ BDEPEND+="
 		dev-python/docutils[${PYTHON_USEDEP}]
 		dev-python/numpy[${PYTHON_USEDEP}]
 		$(python_gen_any_dep '
-			sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+			sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 		')
 	)
 	test? (
