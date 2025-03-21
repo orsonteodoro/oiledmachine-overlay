@@ -50,7 +50,7 @@ RDEPEND="
 			<dev-python/numpy-2[${PYTHON_USEDEP}]
 		)
 	' python3_12)
-	>=sci-libs/tensorflow-${TENSORFLOW_PV}[${PYTHON_USEDEP},python]
+	>=sci-ml/tensorflow-${TENSORFLOW_PV}[${PYTHON_USEDEP},python]
 	>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
 	>=dev-python/namex-0.0.8[${PYTHON_USEDEP}]
 	>=sys-libs/zlib-1.2.13
@@ -101,7 +101,7 @@ PDEPEND="
 			')
 		)
 		tensorflow? (
-			>=sci-libs/tensorflow-${TENSORFLOW_PV}
+			>=sci-ml/tensorflow-${TENSORFLOW_PV}
 		)
 	)
 	cuda? (
@@ -115,11 +115,11 @@ PDEPEND="
 					)
 					>=sci-ml/torchvision-0.16.0[${PYTHON_SINGLE_USEDEP}]
 				')
-				>=sci-libs/tensorflow-${TENSORFLOW_PV}
+				>=sci-ml/tensorflow-${TENSORFLOW_PV}
 			)
 		)
 		tensorflow? (
-			>=sci-libs/tensorflow-${TENSORFLOW_PV}[cuda]
+			>=sci-ml/tensorflow-${TENSORFLOW_PV}[cuda]
 			test? (
 				$(python_gen_any_dep '
 					(
@@ -137,7 +137,7 @@ PDEPEND="
 				>=sci-ml/torchvision-0.17.1[${PYTHON_SINGLE_USEDEP}]
 			')
 			test? (
-				>=sci-libs/tensorflow-${TENSORFLOW_PV}
+				>=sci-ml/tensorflow-${TENSORFLOW_PV}
 				dev-python/jax[${PYTHON_USEDEP},cpu]
 			)
 		)
