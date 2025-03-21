@@ -109,7 +109,7 @@ BDEPEND+="
 	)
 	test? (
 		$(python_gen_any_dep '
-			sci-libs/pytorch[${PYTHON_USEDEP}]
+			sci-ml/pytorch[${PYTHON_USEDEP}]
 		')
 		>=dev-python/black-23.7.0[${PYTHON_USEDEP}]
 		>=dev-python/gymnasium-0.18.3[${PYTHON_USEDEP},atari,accept-rom-license]
