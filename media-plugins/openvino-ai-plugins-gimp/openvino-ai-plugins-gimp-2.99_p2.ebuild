@@ -81,7 +81,7 @@ STABLE_DIFFUSION_MODEL_RDEPEND="
 		>=dev-python/monai-0.9.1[${PYTHON_USEDEP}]
 		<dev-python/monai-1.0.0[${PYTHON_USEDEP}]
 	)
-	>=sci-libs/safetensors-0.3.2[${PYTHON_USEDEP}]
+	>=sci-ml/safetensors-0.3.2[${PYTHON_USEDEP}]
 
 	>=dev-python/jedi-0.17.2[${PYTHON_USEDEP}]
 	>=dev-python/pygments-2.7.4[${PYTHON_USEDEP}]
@@ -107,7 +107,7 @@ PLUGIN_RDEPEND="
 	>=dev-python/streamlit-1.30.0[${PYTHON_USEDEP}]
 	>=dev-python/tqdm-4.64.0[${PYTHON_USEDEP}]
 	>=dev-python/watchdog-2.1.9[${PYTHON_USEDEP}]
-	>=sci-libs/safetensors-0.4.1[${PYTHON_USEDEP}]
+	>=sci-ml/safetensors-0.4.1[${PYTHON_USEDEP}]
 	dev-python/accelerate[${PYTHON_USEDEP}]
 	sci-ml/huggingface_hub[${PYTHON_USEDEP}]
 	sci-libs/openvino[${PYTHON_USEDEP}]
