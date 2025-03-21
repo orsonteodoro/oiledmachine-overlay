@@ -55,7 +55,7 @@ STABLE_DIFFUSION_MODEL_RDEPEND="
 	)
 	>=sci-libs/nncf-2.4.0[${PYTHON_USEDEP}]
 	>=sci-ml/onnx-1.13.0[${PYTHON_USEDEP}]
-	>=sci-libs/openvino-2022.2.0[${PYTHON_USEDEP}]
+	>=sci-ml/openvino-2022.2.0[${PYTHON_USEDEP}]
 	>=sci-ml/tensorflow-datasets-4.2.0[${PYTHON_USEDEP}]
 
 	(
@@ -110,7 +110,7 @@ PLUGIN_RDEPEND="
 	>=sci-ml/safetensors-0.4.1[${PYTHON_USEDEP}]
 	dev-python/accelerate[${PYTHON_USEDEP}]
 	sci-ml/huggingface_hub[${PYTHON_USEDEP}]
-	sci-libs/openvino[${PYTHON_USEDEP}]
+	sci-ml/openvino[${PYTHON_USEDEP}]
 "
 #	${STABLE_DIFFUSION_MODEL_RDEPEND}
 RDEPEND+="
@@ -131,7 +131,7 @@ RDEPEND+="
 	media-libs/opencv[${PYTHON_USEDEP},python]
 	media-gfx/gimp:0/3
 	net-misc/gdown[${PYTHON_USEDEP}]
-	sci-libs/openvino[${PYTHON_USEDEP}]
+	sci-ml/openvino[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
