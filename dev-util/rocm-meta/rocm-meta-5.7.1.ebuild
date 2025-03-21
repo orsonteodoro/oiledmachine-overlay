@@ -151,7 +151,7 @@ RDEPEND="
 		)
 	)
 	ml? (
-		~sci-libs/composable_kernel-${PV}:${ROCM_SLOT}$(get_rocm_usedep COMPOSABLE_KERNEL)
+		~sci-libs/composable-kernel-${PV}:${ROCM_SLOT}$(get_rocm_usedep COMPOSABLE_KERNEL)
 		~sci-libs/MIGraphX-${PV}:${ROCM_SLOT}$(get_rocm_usedep MIGRAPHX)
 		~sci-libs/miopen-${PV}:${ROCM_SLOT}$(get_rocm_usedep MIOPEN)
 	)
