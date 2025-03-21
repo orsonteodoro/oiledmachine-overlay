@@ -145,7 +145,7 @@ RDEPEND+="
 		dev-python/jax[${PYTHON_USEDEP},cpu]
 	)
 	etree-tf? (
-		sci-libs/tensorflow[${PYTHON_USEDEP}]
+		sci-ml/tensorflow[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="
