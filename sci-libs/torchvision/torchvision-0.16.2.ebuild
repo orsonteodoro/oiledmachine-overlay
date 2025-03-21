@@ -48,7 +48,7 @@ RDEPEND="
 		>=virtual/pillow-5.3[${PYTHON_USEDEP}]
 	')
 	media-video/ffmpeg:=
-	sci-libs/caffe2[cuda?,rocm?]
+	sci-ml/caffe2[cuda?,rocm?]
 	=sci-libs/pytorch-2.1*[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND="
