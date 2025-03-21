@@ -86,9 +86,9 @@ FABRIC_EXAMPLES_RDEPEND="
 		)
 	')
 	(
-		>=sci-libs/torchmetrics-0.10.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/torchmetrics-0.10.0[${PYTHON_SINGLE_USEDEP}]
 		strict? (
-			<sci-libs/torchmetrics-1.3.0[${PYTHON_SINGLE_USEDEP}]
+			<sci-ml/torchmetrics-1.3.0[${PYTHON_SINGLE_USEDEP}]
 		)
 	)
 	(
@@ -224,9 +224,9 @@ FABRIC_TEST_BDEPEND="
 		>=dev-python/pytest-timeout-2.1.0[${PYTHON_USEDEP}]
 	')
 	(
-		>=sci-libs/torchmetrics-0.7.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/torchmetrics-0.7.0[${PYTHON_SINGLE_USEDEP}]
 		strict? (
-			<sci-libs/torchmetrics-1.3.0[${PYTHON_SINGLE_USEDEP}]
+			<sci-ml/torchmetrics-1.3.0[${PYTHON_SINGLE_USEDEP}]
 		)
 	)
 "
