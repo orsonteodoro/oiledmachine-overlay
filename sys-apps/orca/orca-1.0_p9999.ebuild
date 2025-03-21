@@ -47,7 +47,7 @@ REQUIRED_USE+="
 RDEPEND+="
 	${PYTHON_DEPS}
 	$(python_gen_cond_dep '
-		>=sci-libs/tensorflow-2[${PYTHON_USEDEP},python]
+		>=sci-ml/tensorflow-2[${PYTHON_USEDEP},python]
 		dev-python/sysv-ipc[${PYTHON_USEDEP}]
 		dev-python/gym[${PYTHON_USEDEP}]
 	')
