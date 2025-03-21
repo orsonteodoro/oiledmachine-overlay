@@ -647,10 +647,10 @@ PDEPEND="
 	)
 	python? (
 		$(python_gen_cond_dep '
-			=sci-libs/tensorflow-io-0.35.0[${PYTHON_USEDEP},tensorflow-io-gcs-filesystem]
+			=sci-ml/tensorflow-io-0.35.0[${PYTHON_USEDEP},tensorflow-io-gcs-filesystem]
 		' python3_{10,11})
 		>=dev-python/keras-2.5[${PYTHON_USEDEP}]
-		=sci-libs/tensorflow-estimator-${DEP_VER}*[${PYTHON_USEDEP}]
+		=sci-ml/tensorflow-estimator-${DEP_VER}*[${PYTHON_USEDEP}]
 	)
 "
 gen_llvm_bdepend() {
