@@ -41,7 +41,7 @@ IUSE+=" test"
 RDEPEND+="
 	$(python_gen_any_dep '
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
-		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 	')
 	dev-python/munch[${PYTHON_USEDEP}]
 	dev-python/scipy[${PYTHON_USEDEP}]
