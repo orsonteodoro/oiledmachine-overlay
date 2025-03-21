@@ -43,7 +43,7 @@ IUSE+=" cuda pytorch tensorflow test"
 RDEPEND+="
 	pytorch? (
 		$(python_gen_any_dep '
-			>=sci-libs/pytorch-1.3.0[${PYTHON_SINGLE_USEDEP}]
+			>=sci-ml/pytorch-1.3.0[${PYTHON_SINGLE_USEDEP}]
 		')
 	)
 	tensorflow? (
