@@ -59,7 +59,7 @@ RDEPEND+="
 	')
 	>=sci-ml/pytorch-1.9.1[${PYTHON_SINGLE_USEDEP}]
 	x? (
-		>=sci-libs/onnxruntime-1.16[${PYTHON_SINGLE_USEDEP},cuda?,python]
+		>=sci-ml/onnxruntime-1.16[${PYTHON_SINGLE_USEDEP},cuda?,python]
 	)
 "
 DEPEND+="
@@ -88,7 +88,7 @@ BDEPEND+="
 		')
 		>=dev-python/ivy-9999[${PYTHON_SINGLE_USEDEP}]
 		>=dev-vcs/pre-commit-2[${PYTHON_SINGLE_USEDEP}]
-		sci-libs/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
+		sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
 	)
 	doc? (
 		$(python_gen_cond_dep '
@@ -109,7 +109,7 @@ BDEPEND+="
 			media-libs/opencv[${PYTHON_USEDEP},python]
 		')
 		>=dev-python/ivy-9999[${PYTHON_SINGLE_USEDEP}]
-		sci-libs/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
+		sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
 	)
 "
 DOCS=( "CHANGELOG.md" "README.md" "README_zh-CN.md" )
