@@ -177,7 +177,8 @@ pkg_postinst() {
 einfo
 einfo "Hotkeys cheat sheet"
 einfo
-einfo "Alt t        - tiled mode (aka split screen)"
+einfo "Alt r        - tile vertically (aka split screen)"
+einfo "Alt t        - tile horizontally"
 einfo "Alt m        - monocle mode (aka full screen)"
 einfo "Alt j        - focus clockwise"
 einfo "Alt k        - focus counter clockwise"
