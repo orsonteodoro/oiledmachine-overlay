@@ -48,7 +48,7 @@ RDEPEND+="
 	>=sci-ml/onnxruntime-1.14[${PYTHON_SINGLE_USEDEP},python]
 	>=sci-ml/tokenizers-0.13[${PYTHON_SINGLE_USEDEP}]
 	conversion? (
-		>=sci-libs/transformers-4.23[${PYTHON_SINGLE_USEDEP},pytorch]
+		>=sci-ml/transformers-4.23[${PYTHON_SINGLE_USEDEP},pytorch]
 	)
 "
 DEPEND+="
