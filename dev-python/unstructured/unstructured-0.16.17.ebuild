@@ -133,7 +133,7 @@ HUGGINGFACE_RDEPEND="
 		dev-python/sacremoses[${PYTHON_USEDEP}]
 		dev-python/sentencepiece[${PYTHON_USEDEP}]
 	')
-	sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
 "
 IMAGE_RDEPEND="
