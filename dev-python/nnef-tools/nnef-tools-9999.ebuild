@@ -54,7 +54,7 @@ RDEPEND+="
 	)
 	onnx? (
 		$(python_gen_any_dep '
-			sci-libs/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
+			sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
 		')
 		dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
 		dev-python/onnx-simplifier[${PYTHON_USEDEP}]
