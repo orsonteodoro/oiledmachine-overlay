@@ -57,13 +57,13 @@ RDEPEND+="
 		training? (
 			>=dev-python/timm-1.0.10[${PYTHON_USEDEP}]
 			>=dev-python/webdataset-0.2.5[${PYTHON_USEDEP}]
-			>=sci-libs/pytorch-2.0[${PYTHON_USEDEP}]
+			>=sci-ml/pytorch-2.0[${PYTHON_USEDEP}]
 			dev-python/fsspec[${PYTHON_USEDEP}]
 			dev-python/pandas[${PYTHON_USEDEP}]
 			sci-libs/transformers[${PYTHON_SINGLE_USEDEP},sentencepiece]
 		)
 	')
-	>=sci-libs/pytorch-1.9.0[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/pytorch-1.9.0[${PYTHON_SINGLE_USEDEP}]
 	sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
