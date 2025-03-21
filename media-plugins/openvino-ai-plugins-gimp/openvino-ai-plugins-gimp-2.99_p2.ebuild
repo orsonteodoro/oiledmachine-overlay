@@ -46,7 +46,7 @@ STABLE_DIFFUSION_MODEL_RDEPEND="
 		>=sci-ml/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
 		>=sci-libs/torchmetrics-0.11.0[${PYTHON_SINGLE_USEDEP}]
 		>=sci-ml/torchvision-0.14.1[${PYTHON_SINGLE_USEDEP}]
-		>=sci-libs/transformers-4.38.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/transformers-4.38.0[${PYTHON_SINGLE_USEDEP}]
 		dev-python/pytorch-lightning[${PYTHON_SINGLE_USEDEP}]
 	')
 	(
@@ -99,7 +99,7 @@ STABLE_DIFFUSION_MODEL_RDEPEND="
 "
 PLUGIN_RDEPEND="
 	$(python_gen_any_dep '
-		>=sci-libs/transformers-4.38.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/transformers-4.38.0[${PYTHON_SINGLE_USEDEP}]
 	')
 	>=dev-python/controlnet-aux-0.0.6[${PYTHON_USEDEP}]
 	>=dev-python/diffusers-0.22.0[${PYTHON_USEDEP}]
@@ -115,7 +115,7 @@ PLUGIN_RDEPEND="
 #	${STABLE_DIFFUSION_MODEL_RDEPEND}
 RDEPEND+="
 	$(python_gen_any_dep '
-		sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/transformers[${PYTHON_SINGLE_USEDEP}]
 	')
 	${PLUGIN_RDEPEND}
 	>=dev-python/controlnet-aux-0.0.6[${PYTHON_USEDEP}]
