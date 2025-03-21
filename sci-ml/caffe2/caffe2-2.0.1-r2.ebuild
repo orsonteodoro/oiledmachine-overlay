@@ -859,7 +859,7 @@ RDEPEND="
 			>=dev-libs/cudnn-frontend-0.7:0/8
 		)
 		fbgemm? (
-			>=sci-libs/FBGEMM-2023.02.10
+			>=sci-ml/FBGEMM-2023.02.10
 		)
 		gloo? (
 			>=sci-libs/gloo-0.5.0[cuda?,mpi?,ssl?]
