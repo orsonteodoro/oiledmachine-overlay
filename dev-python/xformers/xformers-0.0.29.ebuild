@@ -68,7 +68,7 @@ BDEPEND+="
 			>=dev-python/seaborn-0.13.2[${PYTHON_USEDEP}]
 		')
 		>=dev-python/pytorch-lightning-1.3[${PYTHON_SINGLE_USEDEP}]
-		>=sci-libs/torchmetrics-0.7.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/torchmetrics-0.7.0[${PYTHON_SINGLE_USEDEP}]
 	)
 	lra-benchmark? (
 		$(python_gen_cond_dep '
