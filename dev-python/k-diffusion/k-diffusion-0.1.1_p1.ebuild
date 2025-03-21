@@ -53,7 +53,7 @@ RDEPEND+="
 		dev-python/scipy[${PYTHON_USEDEP}]
 		dev-python/tqdm[${PYTHON_USEDEP}]
 		dev-python/wandb[${PYTHON_USEDEP}]
-		sci-libs/safetensors[${PYTHON_USEDEP}]
+		sci-ml/safetensors[${PYTHON_USEDEP}]
 		virtual/pillow[${PYTHON_USEDEP}]
 	')
 	>=sci-ml/pytorch-2.0[${PYTHON_SINGLE_USEDEP}]
