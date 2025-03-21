@@ -529,14 +529,14 @@ RDEPEND="
 	${PYTHON_DEPS}
 	(
 		!python? (
-			>=sci-libs/onnx-1.16.1[disableStaticReg]
+			>=sci-ml/onnx-1.16.1[disableStaticReg]
 		)
 		python? (
 			$(python_gen_cond_dep '
-				>=sci-libs/onnx-1.16.1[${PYTHON_USEDEP},disableStaticReg]
+				>=sci-ml/onnx-1.16.1[${PYTHON_USEDEP},disableStaticReg]
 			')
 		)
-		sci-libs/onnx:=
+		sci-ml/onnx:=
 	)
 	(
 		>=sys-cluster/openmpi-4.0.0[cuda?]
@@ -644,7 +644,7 @@ RDEPEND="
 				>=dev-python/numpy-1.16.6[${PYTHON_USEDEP}]
 				dev-python/cerberus[${PYTHON_USEDEP}]
 				dev-python/h5py[${PYTHON_USEDEP}]
-				sci-libs/onnx[${PYTHON_USEDEP}]
+				sci-ml/onnx[${PYTHON_USEDEP}]
 			)
 			>=dev-python/flatbuffers-23.5.26[${PYTHON_USEDEP}]
 			>=dev-python/numpy-1.21.6[${PYTHON_USEDEP}]
@@ -1191,7 +1191,7 @@ src_install() {
 	fi
 
 # Generated from
-# find /var/tmp/portage/sci-libs/onnxruntime-1.19.2/work/onnxruntime-1.19.2/cmake/_deps/ -name "*.so*" | cut -f 9- -d "/"
+# find /var/tmp/portage/sci-ml/onnxruntime-1.19.2/work/onnxruntime-1.19.2/cmake/_deps/ -name "*.so*" | cut -f 9- -d "/"
 	local LIBS=(
 cmake/_deps/pytorch_cpuinfo-build/libcpuinfo.so
 cmake/_deps/re2-build/libre2.so.11
