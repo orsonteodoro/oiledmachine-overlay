@@ -507,9 +507,9 @@ TEXT_TEST_BDEPEND="
 			)
 		)
 		(
-			>=sci-libs/jiwer-2.3.0[${PYTHON_USEDEP}]
+			>=sci-ml/jiwer-2.3.0[${PYTHON_USEDEP}]
 			strict? (
-				<sci-libs/jiwer-3.1.0[${PYTHON_USEDEP}]
+				<sci-ml/jiwer-3.1.0[${PYTHON_USEDEP}]
 			)
 		)
 		(
