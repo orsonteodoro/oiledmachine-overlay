@@ -198,7 +198,7 @@ BDEPEND+="
 		)
 	')
 	test? (
-		sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/transformers[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DOCS=( "AUTHORS" "usage.md" )
