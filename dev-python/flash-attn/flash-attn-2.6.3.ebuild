@@ -170,7 +170,7 @@ RDEPEND+="
 		=sci-ml/pytorch-2.4*[${PYTHON_SINGLE_USEDEP},rocm_6_1]
 	)
 	training? (
-		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 		$(python_gen_cond_dep '
 			dev-python/einops[${PYTHON_USEDEP}]
 			dev-python/hydra-colorlog[${PYTHON_USEDEP}]
