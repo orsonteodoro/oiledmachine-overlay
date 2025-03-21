@@ -49,7 +49,7 @@ RDEPEND+="
 		dev-python/regex[${PYTHON_USEDEP}]
 		dev-python/tqdm[${PYTHON_USEDEP}]
 	')
-	sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
