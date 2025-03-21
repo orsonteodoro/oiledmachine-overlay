@@ -105,7 +105,7 @@ USE_FILENAMES=(
 
 link_geneator_example() {
 	uris=( \
-		$(grep -o -E -r -e "\[NNEF\](.*)" "/var/tmp/portage/sci-misc/nnef-models-1.0.7/work/NNEF-Tools-nnef-v1.0.7/models" \
+		$(grep -o -E -r -e "\[NNEF\](.*)" "/var/tmp/portage/sci-ml/nnef-models-1.0.7/work/NNEF-Tools-nnef-v1.0.7/models" \
 		| cut -f 2- -d ":" \
 		| sed -e "s|\[NNEF\](||g" -e "s|)||g" \
 		| sort \
