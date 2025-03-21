@@ -41,7 +41,7 @@ RDEPEND+="
 		dev-python/tqdm[${PYTHON_USEDEP}]
 		dev-python/ujson[${PYTHON_USEDEP}]
 	')
-	sci-libs/datasets[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/datasets[${PYTHON_SINGLE_USEDEP}]
 	sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
 	faiss-cpu? (
 		>=dev-python/faiss-cpu-1.7.0[${PYTHON_SINGLE_USEDEP}]
