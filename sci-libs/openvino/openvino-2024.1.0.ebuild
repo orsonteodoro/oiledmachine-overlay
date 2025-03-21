@@ -226,8 +226,8 @@ DEPEND+="
 BDEPEND_TEST_CONSTRAINTS="
 	$(python_gen_any_dep '
 		(
-			>=sci-libs/pytorch-1.13[${PYTHON_SINGLE_USEDEP}]
-			<sci-libs/pytorch-2.3[${PYTHON_SINGLE_USEDEP}]
+			>=sci-ml/pytorch-1.13[${PYTHON_SINGLE_USEDEP}]
+			<sci-ml/pytorch-2.3[${PYTHON_SINGLE_USEDEP}]
 		)
 	')
 	(
@@ -339,7 +339,7 @@ BDEPEND_MODEL_HUB_TESTS_PERFORMANCE_TESTS="
 BDEPEND_MODEL_HUB_TESTS_PYTORCH="
 	${BDEPEND_TEST_CONSTRAINTS}
 	$(python_gen_any_dep '
-		sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 		sci-libs/torchaudio[${PYTHON_SINGLE_USEDEP}]
 		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
 		sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
@@ -375,7 +375,7 @@ BDEPEND_LAYER_TESTS="
 	${BDEPEND_TEST_CONSTRAINTS}
 	$(python_gen_any_dep '
 		sci-libs/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
-		sci-libs/pytorch[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 		sci-libs/torchvision[${PYTHON_SINGLE_USEDEP}]
 		sci-libs/transformers[${PYTHON_SINGLE_USEDEP}]
 	')
