@@ -325,7 +325,7 @@ BDEPEND="
 			!=dev-python/rouge-score-0.1.1[${PYTHON_USEDEP}]
 			>=dev-python/pytest-7.2.0[${PYTHON_USEDEP}]
 			>=dev-python/sacrebleu-1.4.12[${PYTHON_USEDEP}]
-			>=sci-libs/evaluate-0.2.0[${PYTHON_USEDEP}]
+			>=sci-ml/evaluate-0.2.0[${PYTHON_USEDEP}]
 			dev-python/beautifulsoup4[${PYTHON_USEDEP}]
 			dev-python/datasets[${PYTHON_USEDEP}]
 			dev-python/dill[${PYTHON_USEDEP}]
