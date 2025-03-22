@@ -3,7 +3,7 @@
 
 EAPI=8
 
-GST_ORG_MODULE="gst-plugins-ugly"
+GST_ORG_MODULE="gst-plugins-good"
 GST_PLUGINS_BUILD_DIR="amrnb amrwbdec"
 GST_PLUGINS_ENABLED="amrnb amrwbdec"
 
