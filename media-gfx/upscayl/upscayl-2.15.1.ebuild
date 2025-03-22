@@ -163,10 +163,20 @@ npm_update_lock_audit_post() {
 		sed -i -e "s|\"@babel/runtime\": \"^7.12.5\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die	# CVE-2025-27789; DoS; Medium
 		sed -i -e "s|\"@babel/runtime\": \"^7.18.3\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die	# CVE-2025-27789; DoS; Medium
 		sed -i -e "s|\"undici\": \"6.19.7\"|\"undici\": \"6.21.1\"|g" "package-lock.json" || die			# CVE-2025-22150; DT, ID; Medium
+		sed -i -e "s|\"next\": \"^14.2.10\"|\"next\": \"^14.2.25\"|g" "package-lock.json" || die			# CVE-2025-29927; DT, ID; Critical
 	}
 	patch_lockfile
-	enpm install -D "undici@6.21.1"
-	enpm install -P "@babel/runtime@7.26.10" --prefer-offline
+	local pkgs
+	pkgs=(
+		"undici@6.21.1"
+		"next@14.2.25"
+	)
+	enpm install -D ${pkgs[@]}
+
+	pkgs=(
+		"@babel/runtime@7.26.10"
+	)
+	enpm install -P ${pkgs[@]} --prefer-offline
 	patch_lockfile
 }
 

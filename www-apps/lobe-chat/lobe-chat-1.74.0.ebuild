@@ -387,7 +387,7 @@ npm_unpack_post() {
 		)
 		enpm add ${pkgs[@]} -D --legacy-peer-deps
 		pkgs=(
-			"next@${NEXTJS_PV}"
+			"next@${NEXTJS_PV}"								# CVE-2025-29927; DT, ID; Critical
 			"react@19.0.0"
 			"react-dom@19.0.0"
 			"svix@1.45.1"
