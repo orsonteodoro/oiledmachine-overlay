@@ -10,9 +10,25 @@ inherit gstreamer-meson
 KEYWORDS="~amd64 ~arm64"
 
 DESCRIPTION="Adaptive demuxer plugins for GStreamer"
+IUSE="libgcrypt nettle openssl"
+REQUIRED_USE="
+	|| (
+		libgcrypt
+		nettle
+		openssl
+	)
+"
 RDEPEND="
 	>=dev-libs/libxml2-2.8[${MULTILIB_USEDEP}]
-	dev-libs/nettle:0=[${MULTILIB_USEDEP}]
+	libgcrypt? (
+		dev-libs/libgcrypt:=[${MULTILIB_USEDEP}]
+	)
+	nettle? (
+		>=dev-libs/nettle-3.0:0=[${MULTILIB_USEDEP}]
+	)
+	openssl? (
+		dev-libs/openssl:=[${MULTILIB_USEDEP}]
+	)
 "
 DEPEND="
 	${RDEPEND}
