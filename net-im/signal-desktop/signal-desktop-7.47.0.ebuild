@@ -95,7 +95,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_21
+ebuild_revision_22
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -188,6 +188,7 @@ src_unpack() {
 
 ewarn "QA:  Manually remove cross-spawn 5.x from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove electron 23.x from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove got 6.7.1 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and all 0.18.* associated packages from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/core from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/plugin-paginate-rest from ${S}/danger/pnpm-lock.yaml"
