@@ -18,6 +18,8 @@ else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="31.3.1" # Cr 126.0.6478.185, node 20.15.1
 fi
+# TODO:  Fix newer sharp with ICON_TYPE="png"
+ICON_TYPE=${ICON_TYPE:-"svg"} # svg or png.  png is used by upstream and is broken for newer sharp.
 NPM_AUDIT_FIX=0 # Breaks build
 YARN_AUDIT_FIX=0
 NODE_GYP_PV="9.3.0"
@@ -80,7 +82,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${PATENT_STATUS[@]}
 mp3 opus svt-av1 theora vorbis vpx x264
-ebuild_revision_10
+ebuild_revision_11
 "
 REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -172,11 +174,40 @@ ewarn "QA:  Change prismjs ~x.xx to ^1.30.0 in lockfile"							# CVE-2024-53382;
 #		sed -i -e "s|\"@octokit/core\": \"5\"|\"@octokit/core\": \"6\"|g" "package.json" || die
 #		eyarn add "@octokit/core@6"									# CVE-2025-25290, CVE-2025-25289, CVE-2025-25285; DoS
 
-		eyarn add "icon-gen@3.0.1" -D # Must go before node-sharp_yarn_rebuild_sharp
+		if [[ "${ICON_TYPE}" == "png" ]] ; then
+			eyarn add "icon-gen@3.0.1" -D # Must go before node-sharp_yarn_rebuild_sharp
+		else
+			eyarn remove "icon-gen"
+			eyarn remove "sharp"
+		fi
 
 einfo "Adding file-type patch"
 		sed -i -e "s|\"file-type\": \"19.4.1\"|\"file-type\": \"patch:file-type@npm%3A19.4.1#~/.yarn/patches/file-type-npm-19.4.1-d18086444c.patch\"|g" "package.json" || die
 	fi
+}
+
+gen_icon() {
+	# Broken
+	#edo tsx "script/icon-gen.mts"
+	# See https://github.com/microsoft/TypeScript/wiki/Node-Target-Mapping
+	# fail: module=node16, target=es2017, moduleResolution=node16; segfault
+	# fail: module=node16, target=es2019, moduleResolution=node16; segfault
+	# fail: module=node16, target=es2020, moduleResolution=node16; segfault
+	# fail: module=node16, target=es2021, moduleResolution=node16; segfault
+	# fail: module=node16, target=es2022, moduleResolution=node16; segfault
+	# fail: module=node16, target=es2023, moduleResolution=node16; segfault
+	edo tsc "script/icon-gen.mts" \
+		--module "node16" \
+		--target "es2017" \
+		--moduleResolution "node16" \
+		--typeRoots "./src/types" \
+		--lib "es2017"
+
+	cat "script/icon-gen.mjs" >> "script/icon-gen.mjs.t" || die
+	mv "script/icon-gen.mjs"{".t",""} || die
+
+	edo node "script/icon-gen.mjs"
+	ls "icon-build/app-512.png" || die "Missing generated icon"
 }
 
 src_unpack() {
@@ -192,37 +223,20 @@ src_unpack() {
 		yarn_src_unpack
 	fi
 
-	eyarn add "@types/sharp" -D # Must go before node-sharp_yarn_rebuild_sharp
-	eyarn add "icon-gen@3.0.1" -D # Must go before node-sharp_yarn_rebuild_sharp
+	if [[ "${ICON_TYPE}" == "png" ]] ; then
+		eyarn add "@types/sharp" -D # Must go before node-sharp_yarn_rebuild_sharp
+		eyarn add "icon-gen@3.0.1" -D # Must go before node-sharp_yarn_rebuild_sharp
 
-	SHARP_INSTALL_ARGS=( "-D" )
-	node-sharp_yarn_rebuild_sharp
+		SHARP_INSTALL_ARGS=( "-D" )
+		node-sharp_yarn_rebuild_sharp
+	fi
 
 	if [[ "${YARN_UPDATE_LOCK}" != "1" ]] ; then
 		edo mkdirp "icon-build" "build-resources/appx"
 		edo tsx --version
-
-		# Broken
-		#edo tsx "script/icon-gen.mts"
-	# See https://github.com/microsoft/TypeScript/wiki/Node-Target-Mapping
-	# fail: module=node16, target=es2017, moduleResolution=node16; segfault
-	# fail: module=node16, target=es2019, moduleResolution=node16; segfault
-	# fail: module=node16, target=es2020, moduleResolution=node16; segfault
-	# fail: module=node16, target=es2021, moduleResolution=node16; segfault
-	# fail: module=node16, target=es2022, moduleResolution=node16; segfault
-	# fail: module=node16, target=es2023, moduleResolution=node16; segfault
-		edo tsc "script/icon-gen.mts" \
-			--module "node16" \
-			--target "es2017" \
-			--moduleResolution "node16" \
-			--typeRoots "./src/types" \
-			--lib "es2017"
-
-		cat "script/icon-gen.mjs" >> "script/icon-gen.mjs.t" || die
-		mv "script/icon-gen.mjs"{".t",""} || die
-
-		edo node "script/icon-gen.mjs"
-		ls "icon-build/app-512.png" || die "Missing generated icon"
+		if [[ "${ICON_TYPE}" == "png" ]] ; then
+			gen_icon
+		fi
 	fi
 
 	grep -q -e "Something went wrong" "${T}/build.log" && die "Detected error"
@@ -250,7 +264,11 @@ src_install() {
 	electron-app_gen_wrapper \
 		"${MY_PN}" \
 		"${YARN_INSTALL_PATH}/${MY_PN}"
-	newicon "icon-build/app-512.png" "no.mifi.losslesscut.png"
+	if [[ "${ICON_TYPE}" == "svg" ]] ; then
+		newicon "src/renderer/src/icon.svg" "no.mifi.losslesscut.svg"
+	else
+		newicon "icon-build/app-512.png" "no.mifi.losslesscut.png"
+	fi
 	insinto "/usr/share/applications"
 	doins "no.mifi.losslesscut.desktop"
 	insinto "${YARN_INSTALL_PATH}"
