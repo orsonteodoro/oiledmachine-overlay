@@ -13,6 +13,7 @@ DESCRIPTION="ATSC A/52 audio decoder plugin for GStreamer"
 IUSE="+orc"
 RDEPEND="
 	media-libs/a52dec[${MULTILIB_USEDEP}]
+	media-libs/gst-plugins-ugly:1.0[${MULTILIB_USEDEP},orc?]
 	orc? (
 		>=dev-lang/orc-0.4.16[${MULTILIB_USEDEP}]
 	)
