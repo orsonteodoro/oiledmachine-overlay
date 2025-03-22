@@ -16,6 +16,7 @@ RDEPEND="
 	x11-libs/libXdamage[${MULTILIB_USEDEP}]
 	x11-libs/libXext[${MULTILIB_USEDEP}]
 	x11-libs/libXfixes[${MULTILIB_USEDEP}]
+	x11-libs/libXtst[${MULTILIB_USEDEP}]
 	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP}]
 "
 DEPEND="
@@ -26,6 +27,7 @@ DEPEND="
 multilib_src_configure() {
 	local emesonargs=(
 		-Dximagesrc=enabled
+		-Dximagesrc-navigation=enabled
 		-Dximagesrc-xshm=enabled
 		-Dximagesrc-xfixes=enabled
 		-Dximagesrc-xdamage=enabled
