@@ -8,7 +8,7 @@ EAPI=8
 
 # Ignore if error:
 # Could not detect abi for version ' + target + ' and runtime ' + runtime + '.  Updating "node-abi" might help solve this issue if it is a new release of ' + runtime)
-# https://github.com/signalapp/Signal-Desktop/blob/v7.44.0/CONTRIBUTING.md#known-issues
+# https://github.com/signalapp/Signal-Desktop/blob/v7.47.0/CONTRIBUTING.md#known-issues
 
 MY_PN="Signal-Desktop"
 MY_PN2="Signal"
@@ -31,7 +31,7 @@ ELECTRON_BUILDER_PV="24.13.3"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
-	ELECTRON_APP_ELECTRON_PV="35.0.1" # Cr 134.0.6998.44, node 22.14.0
+	ELECTRON_APP_ELECTRON_PV="35.0.3" # Cr 134.0.6998.88, node 22.14.0
 else
 	# Upstream's choice
 	ELECTRON_APP_ELECTRON_PV="34.2.0" # Cr 132.0.6834.196, node 20.18.2

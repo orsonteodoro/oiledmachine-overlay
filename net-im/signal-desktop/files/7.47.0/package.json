@@ -5,7 +5,7 @@
   "description": "Private messaging from your desktop",
   "desktopName": "signal.desktop",
   "repository": "https://github.com/signalapp/Signal-Desktop.git",
-  "version": "7.46.0",
+  "version": "7.47.0",
   "license": "AGPL-3.0-only",
   "author": {
     "name": "Signal Messenger, LLC",
@@ -120,9 +120,9 @@
     "@react-aria/utils": "3.25.3",
     "@react-spring/web": "9.7.5",
     "@signalapp/better-sqlite3": "9.0.13",
-    "@signalapp/libsignal-client": "0.67.0",
+    "@signalapp/libsignal-client": "0.67.3",
     "@signalapp/quill-cjs": "2.1.2",
-    "@signalapp/ringrtc": "2.50.1",
+    "@signalapp/ringrtc": "2.50.2",
     "@tanstack/react-virtual": "3.11.2",
     "@types/fabric": "4.5.3",
     "backbone": "1.6.0",
@@ -300,7 +300,7 @@
     "csv-parse": "5.5.6",
     "danger": "12.3.3",
     "debug": "4.3.7",
-    "electron": "35.0.1",
+    "electron": "35.0.3",
     "electron-builder": "26.0.0-alpha.8",
     "electron-mocha": "13.0.1",
     "endanger": "7.0.4",
@@ -656,5 +656,5 @@
       "sticker-creator/dist/**"
     ]
   },
-  "packageManager": "pnpm@10.6.3+sha512.bb45e34d50a9a76e858a95837301bfb6bd6d35aea2c5d52094fa497a467c43f5c440103ce2511e9e0a2f89c3d6071baac3358fc68ac6fb75e2ceb3d2736065e6"
+  "packageManager": "pnpm@10.6.5+sha512.cdf928fca20832cd59ec53826492b7dc25dc524d4370b6b4adbf65803d32efaa6c1c88147c0ae4e8d579a6c9eec715757b50d4fa35eea179d868eada4ed043af"
 }
