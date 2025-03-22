@@ -44,12 +44,15 @@ KEYWORDS="
 DESCRIPTION="A set of good plugins that meet licensing, code quality, and support needs of GStreamer"
 HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="LGPL-2.1+"
-IUSE="+orc"
+IUSE="nls +orc"
 RDEPEND="
 	>=dev-libs/glib-2.64.0[${MULTILIB_USEDEP}]
 	app-arch/bzip2[${MULTILIB_USEDEP}]
 	sys-libs/zlib[${MULTILIB_USEDEP}]
 	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP}]
+	nls? (
+		sys-devel/gettext[${MULTILIB_USEDEP}]
+	)
 	orc? (
 		>=dev-lang/orc-0.4.17[${MULTILIB_USEDEP}]
 	)
