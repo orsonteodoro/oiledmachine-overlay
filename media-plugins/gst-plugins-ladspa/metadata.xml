@@ -11,4 +11,9 @@
     <email>prometheanfire@gentoo.org</email>
     <name>Matthew Thode</name>
   </maintainer>
+  <use>
+    <flag name="rdf">
+      Add RDF plugin metadata support
+    </flag>
+  </use>
 </pkgmetadata>
