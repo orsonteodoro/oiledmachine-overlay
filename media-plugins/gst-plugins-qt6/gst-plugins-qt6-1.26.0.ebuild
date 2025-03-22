@@ -7,9 +7,14 @@ EAPI=8
 GST_ORG_MODULE="gst-plugins-good"
 GST_PLUGINS_ENABLED="qt6"
 QT6_SUBSLOTS=(
+	"6.9.0"
+	"6.8.2"
+	"6.8.1"
 	"6.8.0"
 	"6.7.3"
 	"6.7.2"
+	"6.7.1"
+	"6.7.0"
 )
 
 inherit gstreamer-meson
