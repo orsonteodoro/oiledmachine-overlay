@@ -16,14 +16,24 @@ inherit gstreamer-meson
 DESCRIPTION="A set of ugly plugins that may have patent or licensing issues for GStreamer and distributors"
 HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="LGPL-2+" # Some split plugins are LGPL but combining with a GPL library.
-IUSE+=" nls"
+IUSE+=" nls orc"
 RDEPEND="
 	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP}]
 	nls? (
 		sys-devel/gettext[${MULTILIB_USEDEP}]
+	)
+	orc? (
+		>=dev-lang/orc-0.4.16
 	)
 "
 DEPEND="
 	${RDEPEND}
 "
 DOCS=( "AUTHORS" "ChangeLog" "NEWS" "README.md" "RELEASE" )
+
+multilib_src_configure() {
+	local emesonargs=(
+		 $(meson_feature "orc")
+	)
+	gstreamer_multilib_src_configure
+}
