@@ -605,7 +605,7 @@ SLOT="0"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 coqui debug ollama +system-vips tray voice-recognition wayland whisper-cpp X
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	!cpu_flags_x86_sse4_2? (
@@ -806,6 +806,10 @@ npm_update_lock_install_post() {
 			"onnxruntime-web@1.14.0"								# Fix build breakage
 		)
 		enpm install ${pkgs[@]} -P ${NPM_INSTALL_ARGS[@]}
+		pkgs=(
+			"next@14.2.25"										# CVE-2025-29927				# DT, ID	# --prefer-offline is broken
+		)
+		enpm install ${pkgs[@]} -P --legacy-peer-deps
 
 		pkgs=(
 			"@types/node@${AT_TYPES_NODE_PV}"
