@@ -16,6 +16,9 @@
     <flag name="av1">
       Fallback to CPU based AV1 video support
     </flag>
+    <flag name="aalib">
+      aalib output support
+    </flag>
     <flag name="aom">
       Fallback to the slower CPU based reference AV1 codec
     </flag>
@@ -81,6 +84,9 @@
     </flag>
     <flag name="libass">
       SSA/ASS subtitle support
+    </flag>
+    <flag name="libcaca">
+      libcaca output support
     </flag>
     <flag name="libvisual">
       Enable visualization effects via <pkg>media-libs/libvisual</pkg>

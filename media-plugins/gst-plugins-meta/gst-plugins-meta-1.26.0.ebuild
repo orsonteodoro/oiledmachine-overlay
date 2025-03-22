@@ -46,11 +46,11 @@ SLOT="1.0"
 IUSE="
 ${PATENT_STATUS[@]}
 ${VIDEO_CARDS[@]}
-a52 aac alsa aom av1 cdda dash dav1d dts dv dvb dvd fdk ffmpeg flac fluidsynth
-gme gsm hls http jack jpeg jpeg2k lame libass libvisual midi mp3 modplug mpeg
-nvcodec ogg openal openh264 opus oss speex png pulseaudio qsv rav1e rtmp sndio
-sndfile svg taglib theora v4l va vaapi vcd vorbis vpx vulkan wavpack wildmidi
-webp X x264 x265
+a52 aac aalib alsa aom av1 cdda dash dav1d dts dv dvb dvd fdk ffmpeg flac
+fluidsynth gme gsm hls http jack jpeg jpeg2k lame libass libcaca libvisual midi
+mp3 modplug mpeg nvcodec ogg openal openh264 opus oss speex png pulseaudio qsv
+rav1e rtmp sndio sndfile svg taglib theora v4l va vaapi vcd vorbis vpx vulkan
+wavpack wildmidi webp X x264 x265
 "
 PATENT_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -147,6 +147,9 @@ RDEPEND="
 	a52? (
 		~media-plugins/gst-plugins-a52dec-${PV}:1.0[${MULTILIB_USEDEP}]
         )
+	aalib? (
+		~media-plugins/gst-plugins-aalib-${PV}:1.0[${MULTILIB_USEDEP}]
+	)
 	aac? (
 		~media-plugins/gst-plugins-faac-${PV}:1.0[${MULTILIB_USEDEP}]
 		~media-plugins/gst-plugins-faad-${PV}:1.0[${MULTILIB_USEDEP}]
@@ -215,6 +218,9 @@ RDEPEND="
 	)
 	libass? (
 		~media-plugins/gst-plugins-assrender-${PV}:1.0[${MULTILIB_USEDEP}]
+	)
+	libcaca? (
+		~media-plugins/gst-plugins-libcaca-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
 	libvisual? (
 		~media-plugins/gst-plugins-libvisual-${PV}:1.0[${MULTILIB_USEDEP}]
