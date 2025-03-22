@@ -13,6 +13,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 DESCRIPTION="SVG overlay and decoder plugin for GStreamer"
 RDEPEND="
 	>=gnome-base/librsvg-2.36.2[${MULTILIB_USEDEP}]
+	>=x11-libs/cairo-1.16.0[${MULTILIB_USEDEP}]
 	~media-libs/gst-plugins-base-${PV}:1.0[${MULTILIB_USEDEP}]
 "
 DEPEND="
