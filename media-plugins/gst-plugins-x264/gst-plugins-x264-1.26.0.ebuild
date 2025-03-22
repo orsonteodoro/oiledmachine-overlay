@@ -10,9 +10,9 @@ inherit gstreamer-meson
 #KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
 
 DESCRIPTION="H.264 encoder plugin for GStreamer"
-# 20111220 ensures us X264_BUILD >= 120
+# 20180806 ensures us X264_BUILD >= 156
 RDEPEND="
-	>=media-libs/x264-0.0.20130506:=[${MULTILIB_USEDEP}]
+	>=media-libs/x264-0.0.20180806:=[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
