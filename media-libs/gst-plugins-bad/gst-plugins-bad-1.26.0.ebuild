@@ -3,6 +3,13 @@
 
 EAPI=8
 
+# TODO package:
+# lcevcdecoder
+# svtjpegxs
+# nvdswrapper
+# teletextdec
+# zxing
+
 # X11 is no longer automagic which complicates vulkan configure.
 # Upstream issue #709530 - x11 is only used by librfb USE=vnc plugin.
 

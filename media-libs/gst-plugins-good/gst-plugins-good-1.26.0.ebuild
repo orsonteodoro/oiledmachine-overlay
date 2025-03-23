@@ -5,13 +5,6 @@ EAPI=8
 
 # Old media-libs/gst-plugins-ugly is a blocker for xingmux moving from ugly->good.
 
-# TODO package:
-# lcevcdecoder
-# svtjpegxs
-# nvdswrapper
-# teletextdec
-# zxing
-
 GST_ORG_MODULE="gst-plugins-good"
 MITIGATION_DATE="Dec 3, 2024" # Advisory date
 MITIGATION_URI="https://gstreamer.freedesktop.org/security/"
