@@ -93,6 +93,9 @@
     <flag name="mp4">
       Build a non-fragmented MP4 plugin
     </flag>
+    <flag name="hlsmultivariantsink">
+      Build the HTTP Live Streaming (HLS) sink
+    </flag>
     <flag name="mpegtslive">
       Build a plugin to playback content at the same rate and timestamps as the
       remote provider using an existing mpeg-ts source
@@ -135,6 +138,9 @@
     <flag name="raptorq">
       Build support for Forward Error Correction (FEC) using the RaptorQ codes
       to protect against packet loss.
+    </flag>
+    <flag name="relationmeta">
+      Build support to convert relation metadata to and from ONVIF
     </flag>
     <flag name="rusoto">
       Build the Amazon Web Services source and sink plugin
@@ -182,11 +188,20 @@
     <flag name="version-helper">
       Build the build.rs helper function for GStreamer plugin metadata
     </flag>
+    <flag name="vvdec">
+      Build support for decoding H.266/VVC video
+    </flag>
     <flag name="webp">
       Build the WebP decoder plugin
     </flag>
     <flag name="webrtc">
       Build support for WebRTC
+    </flag>
+    <flag name="webrtc-aws">
+      Build support for WebRTC AWS
+    </flag>
+    <flag name="webrtc-livekit">
+      Build support for WebRTC livekit
     </flag>
     <flag name="webrtchttp">
       Build a plugin that uses simple HTTP (WHIP/WHEP) elements

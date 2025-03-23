@@ -42,7 +42,9 @@ MODULES=(
 	flavors
 	fmp4
 	gif
+	gopbuffer
 	gtk4
+	hlsmultivariantsink
 	hlssink3
 	hsv
 	inter
@@ -50,17 +52,23 @@ MODULES=(
 	lewton
 	livesync
 	mp4
+	mpegtslive
 	ndi
 	onvif
+	originalbuffer
 	png
+	quinn
 	raptorq
 	rav1e
 	regex
+	relationmeta
 	reqwest
 	rtp
 	rtsp
+	speechmatics
 	spotify
 	sodium
+	streamgrouper
 #	test
 	textahead
 	textwrap
@@ -69,6 +77,7 @@ MODULES=(
 	tracers
 	uriplaylistbin
 	videofx
+	vvdec
 	webp
 	webrtc
 	webrtchttp
@@ -907,6 +916,8 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${MODULES[@]}
 ${PATENT_STATUS_IUSE[@]}
 aom doc nvcodec qsv openh264 rav1e system-libsodium va vaapi vpx vulkan x264 x265
+webrtc-aws
+webrtc-livekit
 ebuild_revision_4
 "
 WEBRTC_AV1_ENCODERS_REQUIRED_USE="
@@ -1097,6 +1108,7 @@ PATENT_STATUS_REQUIRED_USE="
 		!va
 		!vaapi
 		!vulkan
+		!vvdec
 		!x264
 		!x265
 	)
@@ -1127,6 +1139,9 @@ PATENT_STATUS_REQUIRED_USE="
 	vulkan? (
 		patent_status_nonfree
 	)
+	vvdec? (
+		patent_status_nonfree
+	)
 	x264? (
 		patent_status_nonfree
 	)
@@ -1150,9 +1165,16 @@ REQUIRED_USE+="
 		${WEBRTC_VP8_DECODERS_REQUIRED_USE}
 		${WEBRTC_VP9_DECODERS_REQUIRED_USE}
 	)
+	webrtc-aws? (
+		webrtc
+	)
+	webrtc-livekit? (
+		webrtc
+	)
 	webrtchttp? (
 		reqwest
 	)
+
 	|| (
 		${MODULES[@]}
 	)
@@ -1211,8 +1233,7 @@ RDEPEND+="
 		>=media-sound/csound-6.18.1[${MULTILIB_USEDEP}]
 	)
 	dav1d? (
-		>=media-libs/dav1d-1.0.0[${MULTILIB_USEDEP}]
-		<media-libs/dav1d-1.3[${MULTILIB_USEDEP}]
+		>=media-libs/dav1d-1.3[${MULTILIB_USEDEP}]
 		media-libs/dav1d:=[${MULTILIB_USEDEP}]
 	)
 	gtk4? (
@@ -1270,6 +1291,9 @@ RDEPEND+="
 	)
 	webrtchttp? (
 		~media-plugins/gst-plugins-webrtc-${GST_PV}:1.0[${MULTILIB_USEDEP}]
+	)
+	vvdec? (
+		media-libs/vvdec[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND+="
