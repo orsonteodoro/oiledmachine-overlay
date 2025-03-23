@@ -28,7 +28,7 @@
       Build support for Amazon AWS
     </flag>
     <flag name="cdg">
-      Build the CD+G Plugin for parsing and rendering karakoe data
+      Build the CD+G Plugin for parsing and rendering karaoke data
     </flag>
     <flag name="claxon">
       Build the Claxon FLAC Decoder Plugin
