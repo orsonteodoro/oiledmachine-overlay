@@ -41,7 +41,7 @@ LICENSE="LGPL-2"
 IUSE="
 ${PATENT_STATUS}
 ${VIDEO_CARDS[@]}
-amf bzip2 +introspection msdk nvcodec onevpl +orc qsv udev vaapi vnc vulkan
+amf bzip2 +introspection msdk nls nvcodec onevpl +orc qsv udev vaapi vnc vulkan
 vulkan-video wayland X
 ebuild_revision_1
 "
@@ -127,6 +127,9 @@ RDEPEND="
 	introspection? (
 		dev-libs/gobject-introspection:=
 	)
+	nls? (
+		sys-devel/gettext[${MULTILIB_USEDEP}]
+	)
 	nvcodec? (
 		dev-libs/glib:2[${MULTILIB_USEDEP}]
 		dev-util/nvidia-cuda-toolkit:=
@@ -185,6 +188,7 @@ RDEPEND="
 	)
 	X? (
 		>=x11-libs/libxcb-1.10[${MULTILIB_USEDEP}]
+		x11-libs/libX11[${MULTILIB_USEDEP}]
 		x11-libs/libxkbcommon[${MULTILIB_USEDEP}]
 	)
 "
