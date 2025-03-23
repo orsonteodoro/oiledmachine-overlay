@@ -59,7 +59,7 @@ DESCRIPTION="A based set of plugins meeting code quality and support needs of GS
 HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="GPL-2+ LGPL-2+"
 IUSE="
-alsa +egl gbm +gles2 +introspection ivorbis +ogg opengl +orc +pango theora
+alsa +egl gbm +gles2 +introspection ivorbis nls +ogg opengl +orc +pango theora
 +vorbis wayland +X
 "
 GL_REQUIRED_USE="
@@ -142,6 +142,9 @@ RDEPEND="
 	ivorbis? (
 		>=media-libs/tremor-0_pre20180316[${MULTILIB_USEDEP}]
 	)
+	nls? (
+		sys-devel/gettext[${MULTILIB_USEDEP}]
+	)
 	ogg? (
 		>=media-libs/libogg-1.0[${MULTILIB_USEDEP}]
 	)
@@ -195,15 +198,16 @@ multilib_src_configure() {
 	GST_PLUGINS_NOAUTO="alsa gl ogg pango theora tremor vorbis x11 xshm xvideo"
 
 	local emesonargs=(
-		$(meson_feature alsa)
-		$(meson_feature ivorbis tremor)
-		$(meson_feature ogg)
-		$(meson_feature pango)
-		$(meson_feature theora)
-		$(meson_feature vorbis)
-		$(meson_feature X x11)
-		$(meson_feature X xshm)
-		$(meson_feature X xvideo)
+		$(meson_feature "alsa")
+		$(meson_feature "ivorbis" "tremor")
+		$(meson_feature "nls")
+		$(meson_feature "ogg")
+		$(meson_feature "pango")
+		$(meson_feature "theora")
+		$(meson_feature "vorbis")
+		$(meson_feature "X" "x11")
+		$(meson_feature "X" "xshm")
+		$(meson_feature "X" "xvideo")
 		-Dtools=enabled
 	)
 

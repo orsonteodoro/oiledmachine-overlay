@@ -80,6 +80,7 @@ multilib_src_configure() {
 	# gst/matroska can use bzip2
 	GST_PLUGINS_NOAUTO="bz2"
 	local emesonargs=(
+		$(meson_feature "nls")
 		-Dbz2=enabled
 	)
 	gstreamer_multilib_src_configure

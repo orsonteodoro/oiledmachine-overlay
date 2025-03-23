@@ -30,7 +30,7 @@ DESCRIPTION="Open source multimedia framework"
 HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="LGPL-2+"
 SLOT="1.0"
-IUSE="+caps +introspection unwind"
+IUSE="+caps +introspection nls unwind"
 RDEPEND="
 	>=dev-libs/glib-2.64.0:2[${MULTILIB_USEDEP}]
 	caps? (
@@ -38,6 +38,9 @@ RDEPEND="
 	)
 	introspection? (
 		dev-libs/gobject-introspection:=
+	)
+	nls? (
+		sys-devel/gettext[${MULTILIB_USEDEP}]
 	)
 	unwind? (
 		sys-libs/libunwind[${MULTILIB_USEDEP}]
@@ -48,6 +51,8 @@ DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
+	>=sys-devel/bison-2.4
+	>=sys-devel/flex-2.5.31[${MULTILIB_USEDEP}]
 	dev-util/glib-utils
 	app-alternatives/yacc
 	app-alternatives/lex

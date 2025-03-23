@@ -217,6 +217,7 @@ multilib_src_configure() {
 	local emesonargs=(
 		$(meson_feature "amf" "amfcodec")
 		$(meson_feature "bzip2" "bz2")
+		$(meson_feature "nls")
 		$(meson_feature "qsv")
 		$(meson_feature "vaapi" "va")
 		$(meson_feature "vnc" "librfb")

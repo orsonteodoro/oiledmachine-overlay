@@ -33,6 +33,7 @@ DOCS=( "AUTHORS" "ChangeLog" "NEWS" "README.md" "RELEASE" )
 
 multilib_src_configure() {
 	local emesonargs=(
+		 $(meson_feature "nls")
 		 $(meson_feature "orc")
 	)
 	gstreamer_multilib_src_configure
