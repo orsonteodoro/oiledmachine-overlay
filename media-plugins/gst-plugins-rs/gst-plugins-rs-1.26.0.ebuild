@@ -1238,10 +1238,14 @@ RDEPEND+="
 	)
 	gtk4? (
 		${CARGO_BINDINGS_DEPENDS_GTK4}
+		>=media-libs/gst-plugins-base-${GST_PV}:1.0[${MULTILIB_USEDEP},opengl]
 	)
 	onvif? (
 		${CARGO_BINDINGS_DEPENDS_CAIRO}
 		${CARGO_BINDINGS_DEPENDS_PANGO}
+	)
+	relationmeta? (
+		>=media-plugins/gst-plugins-analyticsoverlay-${GST_PV}:1.0[${MULTILIB_USEDEP}]
 	)
 	system-libsodium? (
 		>=dev-libs/libsodium-1.0.18[${MULTILIB_USEDEP}]
