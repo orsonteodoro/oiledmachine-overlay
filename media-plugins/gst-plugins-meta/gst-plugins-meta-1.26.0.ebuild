@@ -50,7 +50,7 @@ a52 aac aalib alsa aom av1 cdda dash dav1d dts dv dvb dvd fdk ffmpeg flac
 fluidsynth gme gsm hls http jack jpeg jpeg2k lame libass libcaca libvisual midi
 mp3 modplug mpeg nvcodec ogg openal openh264 opus oss speex png pulseaudio qsv
 rav1e rtmp sndio sndfile svg taglib theora v4l va vaapi vcd vorbis vpx vulkan
-wavpack wildmidi webp X x264 x265
+vvc wavpack wildmidi webp X x264 x265
 "
 PATENT_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -63,6 +63,7 @@ PATENT_REQUIRED_USE="
 		!va
 		!vaapi
 		!vulkan
+		!vvc
 		!x264
 		!x265
 	)
@@ -94,6 +95,9 @@ PATENT_REQUIRED_USE="
 		patent_status_nonfree
 	)
 	vulkan? (
+		patent_status_nonfree
+	)
+	vvc? (
 		patent_status_nonfree
 	)
 	x264? (
@@ -307,6 +311,9 @@ RDEPEND="
 	)
 	vulkan? (
 		~media-libs/gst-plugins-bad-${PV}:1.0[vulkan,vulkan-video]
+	)
+	vvc? (
+		~media-plugins/gst-plugins-vvdec-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
 	wavpack? (
 		~media-plugins/gst-plugins-wavpack-${PV}:1.0[${MULTILIB_USEDEP}]

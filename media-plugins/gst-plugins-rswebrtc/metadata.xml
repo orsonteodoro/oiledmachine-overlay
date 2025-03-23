@@ -51,6 +51,12 @@
     <flag name="vpx">
       Fallback to CPU based VP8/VP9 support.
     </flag>
+    <flag name="webrtc-aws">
+      Add support for AWS KVS.
+    </flag>
+    <flag name="webrtc-livekit">
+      Add support for LiveKit.
+    </flag>
     <flag name="x264">
       Fallback to CPU based H.264 support.
     </flag>

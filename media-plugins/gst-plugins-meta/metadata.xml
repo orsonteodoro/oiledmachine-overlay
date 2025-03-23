@@ -198,6 +198,9 @@
     <flag name="webp">
       WebP Image support
     </flag>
+    <flag name="vvc">
+      Add support for decoding VVC (H.266) videos.
+    </flag>
     <flag name="wildmidi">
       Use WildMIDI for MIDI decode.
     </flag>
