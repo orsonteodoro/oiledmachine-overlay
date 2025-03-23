@@ -12,7 +12,7 @@ EAPI=8
 
 _gst_plugins_rs_globals() {
 	LOCKFILE_SOURCE="ebuild" # ebuild or upstream
-	GENERATE_LOCKFILE=${GENERATE_LOCKFILE:-1} # Set to 1 if generating lockfile
+	GENERATE_LOCKFILE=${GENERATE_LOCKFILE:-0} # Set to 1 if generating lockfile
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
 einfo "Generating lockfile"
 	fi
