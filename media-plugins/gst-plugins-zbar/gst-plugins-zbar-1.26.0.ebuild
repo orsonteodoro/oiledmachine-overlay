@@ -11,7 +11,7 @@ KEYWORDS="~amd64 ~arm64"
 
 DESCRIPTION="Bar codes detection in video streams for GStreamer"
 RDEPEND="
-	>=media-gfx/zbar-0.9[${MULTILIB_USEDEP}]
+	>=media-gfx/zbar-0.23.1[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
