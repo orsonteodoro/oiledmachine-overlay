@@ -90,13 +90,13 @@ RDEPEND="
 		$(python_gen_cond_dep '
 			(
 				>=dev-python/grpcio-status-1.33.2[${PYTHON_USEDEP}]
-				<dev-python/grpcio-status-2.0.0[${PYTHON_USEDEP}]
+				<dev-python/grpcio-status-1.55.0[${PYTHON_USEDEP}]
 			)
 		' python3_10)
 		$(python_gen_cond_dep '
 			(
 				>=dev-python/grpcio-status-1.49.1[${PYTHON_USEDEP}]
-				<dev-python/grpcio-status-2.0.0[${PYTHON_USEDEP}]
+				<dev-python/grpcio-status-1.55.0[${PYTHON_USEDEP}]
 			)
 		' python3_{11,12,13})
 	)
