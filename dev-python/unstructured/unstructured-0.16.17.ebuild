@@ -131,7 +131,7 @@ HUGGINGFACE_RDEPEND="
 	$(python_gen_cond_dep '
 		dev-python/langdetect[${PYTHON_USEDEP}]
 		dev-python/sacremoses[${PYTHON_USEDEP}]
-		dev-python/sentencepiece[${PYTHON_USEDEP}]
+		sci-ml/sentencepiece[${PYTHON_USEDEP}]
 	')
 	sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/transformers[${PYTHON_SINGLE_USEDEP}]
