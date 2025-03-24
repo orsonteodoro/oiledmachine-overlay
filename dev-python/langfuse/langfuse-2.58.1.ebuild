@@ -57,7 +57,6 @@ RDEPEND+="
 	>=dev-python/idna-3.7[${PYTHON_USEDEP}]
 	>=dev-python/packaging-23.2[${PYTHON_USEDEP}]
 	>=dev-python/pydantic-1.10.7[${PYTHON_USEDEP}]
-	>=dev-python/python-3.9
 	>=dev-python/requests-2[${PYTHON_USEDEP}]
 	>=dev-python/wrapt-1.14[${PYTHON_USEDEP}]
 	langchain? (
