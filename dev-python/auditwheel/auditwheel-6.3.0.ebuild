@@ -24,7 +24,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" coverage test"
 RDEPEND+="
-	>=dev-util/patchelf-0.14[${PYTHON_USEDEP}]
+	>=dev-util/patchelf-0.14
 "
 DEPEND+="
 	${RDEPEND}
@@ -37,7 +37,7 @@ BDEPEND+="
 	)
 	test? (
 		>=dev-python/pytest-3.4[${PYTHON_USEDEP}]
-		>=dev-util/patchelf-0.14[${PYTHON_USEDEP}]
+		>=dev-util/patchelf-0.14
 		dev-python/jsonschema[${PYTHON_USEDEP}]
 		dev-python/pretend[${PYTHON_USEDEP}]
 		dev-python/docker[${PYTHON_USEDEP}]
