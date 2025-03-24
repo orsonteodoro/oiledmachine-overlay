@@ -166,8 +166,8 @@ media-plugins/gst-plugins-hls
 media-plugins/gst-plugins-hlsmultivariantsink
 media-plugins/gst-plugins-hlssink3
 media-plugins/gst-plugins-libde265
-media-plugins/gst-plugins-mpeg2dec
 media-plugins/gst-plugins-mp4
+media-plugins/gst-plugins-mpeg2dec
 media-plugins/gst-plugins-openh264
 media-plugins/gst-plugins-sidplay
 media-plugins/gst-plugins-uvch264
