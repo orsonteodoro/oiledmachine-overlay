@@ -154,12 +154,22 @@ dev-python/autorom-accept-rom-license
 # Upstream claims patent or license status issues in some
 media-libs/gst-plugins-ugly
 media-plugins/gst-plugins-a52dec
-media-plugins/gst-plugins-sidplay
-media-plugins/gst-plugins-dvdread
-media-plugins/gst-plugins-mpeg2dec
-media-plugins/gst-plugins-x264
 media-plugins/gst-plugins-amr
 media-plugins/gst-plugins-cdio
+media-plugins/gst-plugins-dash
+media-plugins/gst-plugins-dvdread
+media-plugins/gst-plugins-faac
+media-plugins/gst-plugins-faad
+media-plugins/gst-plugins-fdkaac
+media-plugins/gst-plugins-hls
+media-plugins/gst-plugins-hlsmultivariantsink
+media-plugins/gst-plugins-hlssink3
+media-plugins/gst-plugins-mpeg2dec
+media-plugins/gst-plugins-openh264
+media-plugins/gst-plugins-sidplay
+media-plugins/gst-plugins-vvdec
+media-plugins/gst-plugins-x264
+media-plugins/gst-plugins-x265
 
 # Project needs code review or code audit
 gui-apps/windowpet
