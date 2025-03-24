@@ -113,8 +113,8 @@ BDEPEND+="
 			sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 		')
 		(
-			>=dev-python/sentencepiece-0.1.91[${PYTHON_USEDEP}]
-			!~dev-python/sentencepiece-0.1.92[${PYTHON_USEDEP}]
+			>=sci-ml/sentencepiece-0.1.91[${PYTHON_USEDEP}]
+			!~sci-ml/sentencepiece-0.1.92[${PYTHON_USEDEP}]
 		)
 		<dev-python/GitPython-3.1.19[${PYTHON_USEDEP}]
 		>=dev-python/compel-0.1.8[${PYTHON_USEDEP}]
