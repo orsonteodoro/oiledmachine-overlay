@@ -126,7 +126,7 @@ BDEPEND+="
 		dev-python/pytest-cov[${PYTHON_USEDEP}]
 		dev-python/pytest-custom_exit_code[${PYTHON_USEDEP}]
 		dev-python/pytype[${PYTHON_USEDEP}]
-		dev-python/sentencepiece[${PYTHON_USEDEP},python]
+		sci-ml/sentencepiece[${PYTHON_USEDEP},python]
 		media-libs/opencv[${PYTHON_USEDEP},python]
 		sci-ml/tensorflow[${PYTHON_USEDEP},python]
 		sci-ml/tensorflow-datasets[${PYTHON_USEDEP}]
