@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <maintainer type="person">
+    <!-- Ebuild originator -->
+    <email>parona@protonmail.com</email>
+    <name>Alfred Wingate</name>
+  </maintainer>
+  <stabilize-allarches/>
+  <upstream>
+    <remote-id type="github">fastapi/sqlmodel</remote-id>
+    <remote-id type="pypi">sqlmodel</remote-id>
+  </upstream>
+</pkgmetadata>
