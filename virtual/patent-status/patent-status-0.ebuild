@@ -51,6 +51,7 @@ RDEPEND+="
 		!media-libs/vaapi-drivers
 		!media-libs/vo-aacenc
 		!media-libs/vpl-gpu-rt
+		!media-libs/vvdec
 		!media-libs/x264
 		!media-libs/x265
 		!media-plugins/gst-plugins-dash
