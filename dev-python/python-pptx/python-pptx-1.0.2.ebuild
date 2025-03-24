@@ -39,7 +39,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev doc test"
 RDEPEND+="
 	>=dev-python/lxml-3.1.0[${PYTHON_USEDEP}]
-	>=dev-python/typing_extensions-4.9.0[${PYTHON_USEDEP}]
+	>=dev-python/typing-extensions-4.9.0[${PYTHON_USEDEP}]
 	>=dev-python/xlsxwriter-0.5.7[${PYTHON_USEDEP}]
 	>=virtual/pillow-3.3.2[${PYTHON_USEDEP}]
 "
