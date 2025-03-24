@@ -66,7 +66,7 @@ RDEPEND="
 		!=dev-python/protobuf-4.21.4
 		!=dev-python/protobuf-4.21.5
 		>=dev-python/protobuf-3.19.5:0/3.21[${PYTHON_USEDEP}]
-		<dev-python/protobuf-7.0.0:0/3.21[${PYTHON_USEDEP}]
+		<dev-python/protobuf-3.22.0:0/3.21[${PYTHON_USEDEP}]
 	)
 	async-rest? (
 		(
@@ -78,13 +78,13 @@ RDEPEND="
 		$(python_gen_cond_dep '
 			(
 				>=dev-python/grpcio-1.33.2:0/3.21[${PYTHON_USEDEP}]
-				<dev-python/grpcio-2.0:0/3.21[${PYTHON_USEDEP}]
+				<dev-python/grpcio-1.55.0:0/3.21[${PYTHON_USEDEP}]
 			)
 		' python3_10)
 		$(python_gen_cond_dep '
 			(
 				>=dev-python/grpcio-1.49.1:0/3.21[${PYTHON_USEDEP}]
-				<dev-python/grpcio-2.0:0/3.21[${PYTHON_USEDEP}]
+				<dev-python/grpcio-1.55.0:0/3.21[${PYTHON_USEDEP}]
 			)
 		' python3_{11,12,13})
 		$(python_gen_cond_dep '
