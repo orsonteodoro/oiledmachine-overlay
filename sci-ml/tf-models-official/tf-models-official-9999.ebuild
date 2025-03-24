@@ -76,7 +76,7 @@ RDEPEND+="
 	virtual/pillow[${PYTHON_USEDEP}]
 	nlp? (
 		dev-python/sacrebleu[${PYTHON_USEDEP}]
-		dev-python/sentencepiece[${PYTHON_USEDEP},python]
+		sci-ml/sentencepiece[${PYTHON_USEDEP},python]
 		sci-ml/seqeval[${PYTHON_USEDEP}]
 		sci-ml/tensorflow-text:0/${PV%.*}[${PYTHON_USEDEP}]
 	)
