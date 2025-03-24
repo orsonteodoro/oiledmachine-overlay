@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/pypa/auditwheel/issues</bugs-to>
+    <remote-id type="github">pypa/auditwheel</remote-id>
+    <remote-id type="pypi">auditwheel</remote-id>
+  </upstream>
+</pkgmetadata>
