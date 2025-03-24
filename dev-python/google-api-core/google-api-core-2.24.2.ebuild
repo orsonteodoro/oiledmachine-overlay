@@ -106,7 +106,7 @@ RDEPEND="
 	)
 	grpcio-gcp? (
 		>=dev-python/grpcio-gcpgrpcio-gcp-0.2.2[${PYTHON_USEDEP}]
-		<dev-python/grpcio-gcp-1.0[${PYTHON_USEDEP}]
+		<dev-python/grpcio-gcpgrpcio-gcp-1.0[${PYTHON_USEDEP}]
 	)
 "
 BDEPEND="
