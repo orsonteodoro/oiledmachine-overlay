@@ -14,7 +14,7 @@ inherit distutils-r1
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${MY_PN}-${PV}"
 SRC_URI="
-	https://files.pythonhosted.org/packages/e6/aa/809e7de6af007e36d456d9a5361250bc906a3f3a6dfc9babebb0de146641/google_ai_generativelanguage-0.6.17.tar.gz
+	https://files.pythonhosted.org/packages/11/d1/48fe5d7a43d278e9f6b5ada810b0a3530bbeac7ed7fcbcd366f932f05316/google_ai_generativelanguage-0.6.15.tar.gz
 "
 
 DESCRIPTION="Google AI Generative Language API client library"
@@ -74,7 +74,7 @@ RDEPEND="
 		!=dev-python/protobuf-4.21.4
 		!=dev-python/protobuf-4.21.5
 		>=dev-python/protobuf-3.20.2[${PYTHON_USEDEP}]
-		<dev-python/protobuf-7.0.0[${PYTHON_USEDEP}]
+		<dev-python/protobuf-6.0.0[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "README.rst" )
