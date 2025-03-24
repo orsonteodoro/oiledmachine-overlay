@@ -158,7 +158,7 @@ RDEPEND+="
 		dev-python/pydub[${PYTHON_USEDEP}]
 		dev-python/pymongo[${PYTHON_USEDEP}]
 		dev-python/redis[${PYTHON_USEDEP}]
-		dev-python/sentencepiece[${PYTHON_USEDEP}]
+		sci-ml/sentencepiece[${PYTHON_USEDEP}]
 		dev-python/tiktoken[${PYTHON_USEDEP}]
 	')
 	>=dev-python/colbert-ai-0.2.21[${PYTHON_SINGLE_USEDEP}]
