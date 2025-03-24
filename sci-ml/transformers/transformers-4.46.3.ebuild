@@ -237,8 +237,8 @@ RDEPEND="
 			>=dev-python/sagemaker-2.31.0[${PYTHON_USEDEP}]
 		)
 		sentencepiece? (
-			!=dev-python/sentencepiece-0.1.92[${PYTHON_USEDEP}]
-			>=dev-python/sentencepiece-0.1.91[${PYTHON_USEDEP}]
+			!=sci-ml/sentencepiece-0.1.92[${PYTHON_USEDEP}]
+			>=sci-ml/sentencepiece-0.1.91[${PYTHON_USEDEP}]
 			dev-python/protobuf[${PYTHON_USEDEP}]
 		)
 		serving? (
