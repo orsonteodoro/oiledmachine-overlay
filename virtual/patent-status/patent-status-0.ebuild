@@ -18,13 +18,13 @@ ${PATENT_STATUS[@]}
 
 # The libva, libvdpau are blacklisted because drivers/packages typically do not
 # have a conditional choice between free and nonfree like in the mesa package.
-# Many packages make the patented package unconditonal.  We want to prevent
-# inadvertant conversion or contamination of content wrapped in nonfree.  These
-# restrictions can be removed once the packages are properly fixed to
-# prune/disable nonfree support.  Sometimes, app developers do not give you a
-# choice to select the codec.  The disabled patent_status_nonfree USE flag can
-# help encourage packagers to mod for free codec/containers supported
-# configurations.
+# Many packages make the patented features unconditonally accessible or forced
+# on as the only choice.  We want to prevent inadvertant conversion or
+# contamination of content wrapped in nonfree.  These restrictions can be
+# removed once the packages are properly fixed to prune/disable nonfree support.
+# Sometimes, app developers do not give you a choice to select the codec.  The
+# disabled patent_status_nonfree USE flag can help encourage packagers to mod
+# for only free codec/containers allowed configurations.
 
 # The ffmpeg-chromium is blacklisted because it is misconfigured to
 # unconditionally enable patented codecs (aac, h264).
