@@ -62,12 +62,14 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
+# protobuf requirement relaxed
 RDEPEND+="
 	(
 		>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
 		<dev-python/numpy-2.1.0[${PYTHON_USEDEP}]
 	)
-	>=dev-python/protobuf-3.20.3:0/3.21[${PYTHON_USEDEP}]
+	>=dev-python/protobuf-3.20.3[${PYTHON_USEDEP}]
+	dev-python/protobuf:=
 	>=dev-python/black-22.3.0[${PYTHON_USEDEP}]
 	>=dev-python/isort-5.10.1[${PYTHON_USEDEP}]
 	>=dev-python/flake8-4.0.1[${PYTHON_USEDEP}]
