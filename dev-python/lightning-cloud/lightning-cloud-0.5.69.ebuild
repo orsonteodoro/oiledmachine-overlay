@@ -28,7 +28,7 @@ RDEPEND+="
 	dev-python/boto3
 	dev-python/click
 	dev-python/fastapi
-	dev-python/protobuf:0/3.21
+	dev-python/protobuf:=
 	dev-python/pyjwt
 	dev-python/python-multipart
 	dev-python/requests
