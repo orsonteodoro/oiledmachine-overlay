@@ -61,7 +61,6 @@ RDEPEND+="
 		$(gen_protobuf_rdepend)
 	)
 	dev-python/protobuf:=
-	>=dev-python/protobuf-3.19.6:0/3.21[${PYTHON_USEDEP}]
 	>=dev-python/six-1.10.0[${PYTHON_USEDEP}]
 	>=dev-python/werkzeug-0.11.15[${PYTHON_USEDEP}]
 "
