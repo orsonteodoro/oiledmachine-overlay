@@ -36,6 +36,7 @@ RDEPEND="
 	dev-python/google-api-core[${PYTHON_USEDEP}]
 	dev-python/google-api-python-client[${PYTHON_USEDEP}]
 	dev-python/protobuf[${PYTHON_USEDEP}]
+	dev-python/protobuf:=
 	dev-python/pydantic[${PYTHON_USEDEP}]
 	dev-python/tqdm[${PYTHON_USEDEP}]
 	dev-python/typing-extensions[${PYTHON_USEDEP}]
