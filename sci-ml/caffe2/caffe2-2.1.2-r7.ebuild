@@ -846,6 +846,7 @@ RDEPEND="
 		>=dev-libs/cpuinfo-2023.01.13
 		>=dev-libs/libfmt-10.1.0
 		>=dev-libs/protobuf-3.13.1:0/3.21
+		dev-libs/protobuf:=
 		>=dev-libs/pthreadpool-2021.04.13
 		>=dev-libs/sleef-3.6.0[cpu_flags_x86_avx?,cpu_flags_x86_avx2?,cpu_flags_x86_avx512f?,cpu_flags_x86_fma4?,cpu_flags_x86_sse2?,cpu_flags_x86_sse4_1?]
 		>=sci-ml/foxi-2021.05.26
