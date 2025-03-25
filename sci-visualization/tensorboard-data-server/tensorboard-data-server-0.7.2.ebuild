@@ -308,37 +308,103 @@ RDEPEND="
 		>=dev-python/werkzeug-1.0.1[${PYTHON_USEDEP}]
 		>=sci-visualization/tensorboard-plugin-wit-1.6.0[${PYTHON_USEDEP}]
 		>dev-python/six-1.9[${PYTHON_USEDEP}]
-		dev-python/protobuf:'${PROTOBUF_SLOT}'[${PYTHON_USEDEP}]
 
 		|| (
 			(
-				=dev-python/grpcio-1.49*[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.49*[${PYTHON_USEDEP},python]
+				=dev-python/grpcio-1.62*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.62*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/4.25[${PYTHON_USEDEP}]
+				test? (
+					=dev-python/grpcio-testing-1.62*[${PYTHON_USEDEP}]
+				)
 			)
 			(
-				=dev-python/grpcio-1.50*[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.50*[${PYTHON_USEDEP},python]
+				=dev-python/grpcio-1.61*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.61*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/4.25[${PYTHON_USEDEP}]
+				test? (
+					=dev-python/grpcio-testing-1.61*[${PYTHON_USEDEP}]
+				)
 			)
 			(
-				=dev-python/grpcio-1.51*[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.51*[${PYTHON_USEDEP},python]
+				=dev-python/grpcio-1.60*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.60*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/4.25[${PYTHON_USEDEP}]
+				test? (
+					=dev-python/grpcio-testing-1.60*[${PYTHON_USEDEP}]
+				)
 			)
 			(
-				=dev-python/grpcio-1.52*[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.52*[${PYTHON_USEDEP},python]
+				=dev-python/grpcio-1.59*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.59*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/4.24[${PYTHON_USEDEP}]
+				test? (
+					=dev-python/grpcio-testing-1.59*[${PYTHON_USEDEP}]
+				)
 			)
 			(
-				=dev-python/grpcio-1.53*[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.53*[${PYTHON_USEDEP},python]
+				=dev-python/grpcio-1.58*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.58*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/4.23[${PYTHON_USEDEP}]
+				test? (
+					=dev-python/grpcio-testing-1.58*[${PYTHON_USEDEP}]
+				)
+			)
+			(
+				=dev-python/grpcio-1.57*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.57*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/4.23[${PYTHON_USEDEP}]
+				test? (
+					=dev-python/grpcio-testing-1.57*[${PYTHON_USEDEP}]
+				)
+			)
+			(
+				=dev-python/grpcio-1.56*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.56*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/4.23[${PYTHON_USEDEP}]
+				test? (
+					=dev-python/grpcio-testing-1.56*[${PYTHON_USEDEP}]
+				)
+			)
+			(
+				=dev-python/grpcio-1.55*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.55*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/4.23[${PYTHON_USEDEP}]
+				test? (
+					=dev-python/grpcio-testing-1.55*[${PYTHON_USEDEP}]
+				)
 			)
 			(
 				=dev-python/grpcio-1.54*[${PYTHON_USEDEP}]
 				=net-libs/grpc-1.54*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
+				test? (
+					=dev-python/grpcio-testing-1.54*[${PYTHON_USEDEP}]
+				)
+			)
+			(
+				=dev-python/grpcio-1.53*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.53*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
+				test? (
+					=dev-python/grpcio-testing-1.53*[${PYTHON_USEDEP}]
+				)
+			)
+			(
+				=dev-python/grpcio-1.49*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.49*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
+				test? (
+					=dev-python/grpcio-testing-1.49*[${PYTHON_USEDEP}]
+				)
 			)
 		)
-		dev-python/grpcio:=[${PYTHON_USEDEP}]
-		net-libs/grpc:=[${PYTHON_USEDEP},python]
+		dev-python/grpcio:=
+		net-libs/grpc:=
 	')
+"
+DEPEND="
+	${RDEPEND}
 "
 BDEPEND="
 	${PYTHON_DEPS}
@@ -356,14 +422,6 @@ BDEPEND="
 			>=dev-python/moto-1.3.7[${PYTHON_USEDEP}]
 			>=dev-python/pandas-1.0[${PYTHON_USEDEP}]
 
-			|| (
-				=dev-python/grpcio-testing-1.49*[${PYTHON_USEDEP}]
-				=dev-python/grpcio-testing-1.50*[${PYTHON_USEDEP}]
-				=dev-python/grpcio-testing-1.51*[${PYTHON_USEDEP}]
-				=dev-python/grpcio-testing-1.52*[${PYTHON_USEDEP}]
-				=dev-python/grpcio-testing-1.53*[${PYTHON_USEDEP}]
-				=dev-python/grpcio-testing-1.54*[${PYTHON_USEDEP}]
-			)
 			dev-python/grpcio-testing:=[${PYTHON_USEDEP}]
 		)
 		|| (
