@@ -400,6 +400,7 @@ RDEPEND="
 			)
 		)
 		dev-python/grpcio:=
+		dev-python/protobuf:=
 		net-libs/grpc:=
 	')
 "
