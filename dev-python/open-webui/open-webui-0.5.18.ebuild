@@ -90,7 +90,11 @@ RDEPEND+="
 		>=dev-python/bcrypt-4.2.0[${PYTHON_USEDEP}]
 		>=dev-python/black-24.8.0[${PYTHON_USEDEP}]
 		>=dev-python/boto3-1.35.53[${PYTHON_USEDEP}]
-		>=dev-python/chromadb-0.6.2[${PYTHON_USEDEP}]
+		(
+			>=dev-python/chromadb-0.6.2[${PYTHON_USEDEP}]
+			>=dev-python/protobuf-4.23[${PYTHON_USEDEP}]
+			>=dev-python/grpcio-1.58.0[${PYTHON_USEDEP}]
+		)
 		>=dev-python/docker-7.1.0[${PYTHON_USEDEP}]
 		>=dev-python/docx2txt-0.8[${PYTHON_USEDEP}]
 		>=dev-python/duckduckgo-search-7.3.2[${PYTHON_USEDEP}]
