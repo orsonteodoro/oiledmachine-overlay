@@ -11,6 +11,25 @@ EAPI=8
 
 DISTUTILS_USE_PEP517="poetry"
 PYTHON_COMPAT=( "python3_"{10..12} )
+GRPC_SLOTS=(
+	"1.49"
+	"1.52"
+	"1.53"
+	"1.54"
+	"1.55"
+	"1.56"
+	"1.57"
+	"1.58"
+	"1.59"
+	"1.60"
+	"1.61"
+	"1.62"
+	"1.63"
+	"1.64"
+	"1.65"
+	"1.66"
+	"1.67"
+)
 
 inherit distutils-r1 pypi
 
@@ -47,6 +66,17 @@ REQUIRED_USE="
 		dev
 	)
 "
+gen_grpcio_rdepend() {
+	local s
+	for s in ${GRPC_SLOTS[@]} ; do
+		echo "
+			(
+				=dev-python/grpcio-${s}*[${PYTHON_USEDEP}]
+				=dev-python/grpcio-tools-${s}*[${PYTHON_USEDEP}]
+			)
+		"
+	done
+}
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.21[${PYTHON_USEDEP}]
@@ -59,24 +89,6 @@ RDEPEND+="
 	' python3_13)
 	>=dev-python/httpx-0.20.0[http2(+)]
 	>=dev-python/pydantic-1.10.8[${PYTHON_USEDEP}]
-	|| (
-		(
-			=dev-python/grpcio-1.49*[${PYTHON_USEDEP}]
-			=dev-python/grpcio-tools-1.49*[${PYTHON_USEDEP}]
-		)
-		(
-			=dev-python/grpcio-1.52*[${PYTHON_USEDEP}]
-			=dev-python/grpcio-tools-1.52*[${PYTHON_USEDEP}]
-		)
-		(
-			=dev-python/grpcio-1.53*[${PYTHON_USEDEP}]
-			=dev-python/grpcio-tools-1.53*[${PYTHON_USEDEP}]
-		)
-		(
-			=dev-python/grpcio-1.54*[${PYTHON_USEDEP}]
-			=dev-python/grpcio-tools-1.54*[${PYTHON_USEDEP}]
-		)
-	)
 	>=dev-python/urllib3-1.26.14[${PYTHON_USEDEP}]
 	>=dev-python/portalocker-2.7.0[${PYTHON_USEDEP}]
 	fastembed? (
@@ -84,6 +96,9 @@ RDEPEND+="
 	)
 	fastembed-gpu? (
 		>=dev-python/fastembed-gpu-0.5.1[${PYTHON_USEDEP}]
+	)
+	|| (
+		$(gen_grpcio_rdepend)
 	)
 "
 DEPEND+="
