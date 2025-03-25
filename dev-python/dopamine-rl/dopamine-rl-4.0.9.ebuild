@@ -67,6 +67,7 @@ REQUIREMENTS_RDEPEND="
 	>=dev-python/pandas-1.0.5[${PYTHON_USEDEP}]
 	>=virtual/pillow-7.2.0[${PYTHON_USEDEP}]
 	>=dev-python/protobuf-3.12.2[${PYTHON_USEDEP}]
+	dev-python/protobuf:=
 	>=dev-python/pyasn1-0.4.8[${PYTHON_USEDEP}]
 	>=dev-python/pyasn1-modules-0.2.8[${PYTHON_USEDEP}]
 	>=dev-python/pygame-1.9.6[${PYTHON_USEDEP}]
