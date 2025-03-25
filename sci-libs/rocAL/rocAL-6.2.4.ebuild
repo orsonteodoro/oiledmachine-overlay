@@ -48,7 +48,7 @@ ebuild_revision_2
 RDEPEND="
 	${PYTHON_DEPS}
 	>=dev-libs/half-1.12.0
-	>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
+	dev-libs/protobuf:=
 	$(python_gen_cond_dep '
 		>=dev-python/pybind11-2.10.4[${PYTHON_USEDEP}]
 	')
