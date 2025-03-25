@@ -105,6 +105,7 @@ RDEPEND="
 	~dev-util/hip-${PV}:${ROCM_SLOT}
 	caffe? (
 		>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
+		dev-libs/protobuf:=
 		$(python_gen_cond_dep '
 			dev-python/google[${PYTHON_USEDEP}]
 		')
