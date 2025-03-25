@@ -12,6 +12,44 @@ EAPI=8
 
 MY_PN="${PN/b/B}"
 
+declare -A GRPC_TO_PROTOBUF=(
+	["1.49"]="3.21"
+	["1.52"]="3.21"
+	["1.53"]="3.21"
+	["1.54"]="3.21"
+	["1.55"]="4.23"
+	["1.56"]="4.23"
+	["1.57"]="4.23"
+	["1.58"]="4.23"
+	["1.59"]="4.24"
+	["1.60"]="4.25"
+	["1.61"]="4.25"
+	["1.62"]="4.25"
+	["1.63"]="5.26"
+	["1.64"]="5.26"
+	["1.65"]="5.26"
+	["1.66"]="5.27"
+	["1.67"]="5.27"
+)
+GRPC_SLOTS=(
+	"1.49"
+	"1.52"
+	"1.53"
+	"1.54"
+	"1.55"
+	"1.56"
+	"1.57"
+	"1.58"
+	"1.59"
+	"1.60"
+	"1.61"
+	"1.62"
+	"1.63"
+	"1.64"
+	"1.65"
+	"1.66"
+	"1.67"
+)
 PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit cmake-multilib python-any-r1
@@ -30,14 +68,24 @@ LICENSE="GPL-3+"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
+gen_grpcio_cdepend() {
+	local s1
+	local s2
+	for s1 in ${GRPC_SLOTS[@]} ; do
+		s2="${GRPC_TO_PROTOBUF[${s1}]}"
+		echo "
+			(
+				dev-libs/protobuf:0/${s2}[${MULTILIB_USEDEP}]
+				=net-libs/grpc-${s1}*[${MULTILIB_USEDEP}]
+			)
+		"
+	done
+}
 CDEPEND="
-	>=dev-libs/protobuf-3.11:0/3.21[${MULTILIB_USEDEP}]
 	|| (
-		=net-libs/grpc-1.49*[${MULTILIB_USEDEP}]
-		=net-libs/grpc-1.52*[${MULTILIB_USEDEP}]
-		=net-libs/grpc-1.53*[${MULTILIB_USEDEP}]
-		=net-libs/grpc-1.54*[${MULTILIB_USEDEP}]
+		$(gen_grpcio_cdepend)
 	)
+	dev-libs/protobuf:=
 	net-libs/grpc:=
 "
 RDEPEND+="
