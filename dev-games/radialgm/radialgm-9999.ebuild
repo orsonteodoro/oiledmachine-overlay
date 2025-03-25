@@ -4,9 +4,48 @@
 
 EAPI=8
 
+MY_PN="RadialGM"
+
 CMAKE_BUILD_TYPE="Release"
 ENIGMA_COMMIT="f30646f"
-MY_PN="RadialGM"
+declare -A GRPC_TO_PROTOBUF=(
+	["1.49"]="3.21"
+	["1.52"]="3.21"
+	["1.53"]="3.21"
+	["1.54"]="3.21"
+	["1.55"]="4.23"
+	["1.56"]="4.23"
+	["1.57"]="4.23"
+	["1.58"]="4.23"
+	["1.59"]="4.24"
+	["1.60"]="4.25"
+	["1.61"]="4.25"
+	["1.62"]="4.25"
+	["1.63"]="5.26"
+	["1.64"]="5.26"
+	["1.65"]="5.26"
+	["1.66"]="5.27"
+	["1.67"]="5.27"
+)
+GRPC_SLOTS=(
+	"1.49"
+	"1.52"
+	"1.53"
+	"1.54"
+	"1.55"
+	"1.56"
+	"1.57"
+	"1.58"
+	"1.59"
+	"1.60"
+	"1.61"
+	"1.62"
+	"1.63"
+	"1.64"
+	"1.65"
+	"1.66"
+	"1.67"
+)
 QT_PV="5.15.2"
 
 inherit cmake desktop git-r3 toolchain-funcs xdg
@@ -31,21 +70,31 @@ HOMEPAGE="https://github.com/enigma-dev/RadialGM"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 doc
-r1
+ebuild_revision_2
 "
 # See CI for *DEPENDs
 # Upstream uses gcc 12.1.0 but relaxed in this ebuild
 # Upstream uses protobuf 3.17.3
 # Originally >=net-libs/grpc-1.39.1
+gen_grpc_cdepend() {
+	local s1
+	local s2
+	for s1 in ${GRPC_SLOTS} ; do
+		s2="${GRPC_TO_PROTOBUF[${s1}]}"
+		echo "
+			(
+				dev-libs/protobuf:0/${s2}
+				=net-libs/grpc-${s1}*
+			)
+		"
+	done
+}
 CDEPEND="
-	>=dev-libs/protobuf-3.17.3:0/3.21
 	>=sys-devel/gcc-11.1.0
 	|| (
-		=net-libs/grpc-1.49*
-		=net-libs/grpc-1.52*
-		=net-libs/grpc-1.53*
-		=net-libs/grpc-1.54*
+		$(gen_grpc_cdepend)
 	)
+	dev-libs/protobuf:=
 	net-libs/grpc:=
 "
 # Upstream uses qscintilla 2.13.3.  Downgraded because no ebuild available yet.
