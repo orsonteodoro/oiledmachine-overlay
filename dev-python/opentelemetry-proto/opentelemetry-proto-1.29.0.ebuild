@@ -7,6 +7,9 @@ EAPI=8
 MY_PN="opentelemetry_proto"
 
 DISTUTILS_USE_PEP517="hatchling"
+PROTOBUF_SLOTS=(
+	"5.26"
+)
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 pypi
@@ -25,8 +28,18 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/${PV}"
 IUSE+=" dev"
+gen_protobuf_rdepend() {
+	local s
+	for s in ${PROTOBUF_SLOTS[@]} ; do
+		echo "
+			dev-python/protobuf:0/${s}
+		"
+	done
+}
 RDEPEND+="
-	=dev-python/protobuf-5*
+	|| (
+		$(gen_protobuf_rdepend)
+	)
 	dev-python/protobuf:=
 "
 DEPEND+="
