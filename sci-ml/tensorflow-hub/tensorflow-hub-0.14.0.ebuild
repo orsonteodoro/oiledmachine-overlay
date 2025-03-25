@@ -61,12 +61,15 @@ IUSE+=" "
 RDEPEND+="
 	>=dev-python/numpy-1.12.0[${PYTHON_USEDEP}]
 	>=dev-python/protobuf-3.19.6[${PYTHON_USEDEP}]
+	dev-libs/protobuf:=
 	>=sci-ml/tensorflow-${TENSORFLOW_PV}
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	>=dev-python/protobuf-3.19.6[${PYTHON_USEDEP}]
+	dev-libs/protobuf:=
 	dev-build/bazel:${BAZEL_SLOT}
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]

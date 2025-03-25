@@ -62,6 +62,7 @@ IUSE+=" "
 RDEPEND+="
 	>=dev-python/numpy-1.12.0[${PYTHON_USEDEP}]
 	>=dev-python/protobuf-3.19.6[${PYTHON_USEDEP}]
+	dev-libs/protobuf:=
 	>=sci-libs/tf-keras-2.14.1[${PYTHON_USEDEP}]
 	>=sci-ml/tensorflow-${TENSORFLOW_PV}
 "
@@ -69,7 +70,8 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
+	>=dev-python/protobuf-3.19.6[${PYTHON_USEDEP}]
+	dev-libs/protobuf:=
 	dev-build/bazel:${BAZEL_SLOT}
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
