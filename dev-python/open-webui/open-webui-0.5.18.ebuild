@@ -78,11 +78,6 @@ RDEPEND+="
 	${MOTO_RDEPEND}
 	${UVICORN_RDEPEND}
 	$(python_gen_cond_dep '
-		(
-			>=dev-python/chromadb-0.6.2[${PYTHON_USEDEP}]
-			>=dev-python/grpcio-1.58.0[${PYTHON_USEDEP}]
-			>=dev-python/protobuf-4.23[${PYTHON_USEDEP}]
-		)
 		>=dev-python/aiohttp-3.11.11[${PYTHON_USEDEP}]
 		>=dev-python/alembic-1.14.0[${PYTHON_USEDEP}]
 		>=dev-python/apscheduler-3.10.4[${PYTHON_USEDEP}]
@@ -95,6 +90,7 @@ RDEPEND+="
 		>=dev-python/bcrypt-4.2.0[${PYTHON_USEDEP}]
 		>=dev-python/black-24.8.0[${PYTHON_USEDEP}]
 		>=dev-python/boto3-1.35.53[${PYTHON_USEDEP}]
+		>=dev-python/chromadb-0.6.2[${PYTHON_USEDEP}]
 		>=dev-python/docker-7.1.0[${PYTHON_USEDEP}]
 		>=dev-python/docx2txt-0.8[${PYTHON_USEDEP}]
 		>=dev-python/duckduckgo-search-7.3.2[${PYTHON_USEDEP}]
