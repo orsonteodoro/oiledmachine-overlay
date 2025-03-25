@@ -10,6 +10,33 @@ EAPI=8
 MY_P="python-api-core-${PV}"
 
 DISTUTILS_USE_PEP517="setuptools"
+PROTOBUF_SLOTS=(
+	"3.21"
+	"4.23"
+	"4.24"
+	"4.25"
+	"5.26"
+	"5.27"
+)
+declare -A GRPC_TO_PROTOBUF=(
+	["1.49"]="3.21"
+	["1.52"]="3.21"
+	["1.53"]="3.21"
+	["1.54"]="3.21"
+	["1.55"]="4.23"
+	["1.56"]="4.23"
+	["1.57"]="4.23"
+	["1.58"]="4.23"
+	["1.59"]="4.24"
+	["1.60"]="4.25"
+	["1.61"]="4.25"
+	["1.62"]="4.25"
+	["1.63"]="5.26"
+	["1.64"]="5.26"
+	["1.65"]="5.26"
+	["1.66"]="5.27"
+	["1.67"]="5.27"
+)
 GRPC_SLOTS=(
 	"1.49"
 	"1.52"
@@ -55,13 +82,24 @@ REQUIRED_USE="
 	)
 "
 gen_grpcio_rdepend() {
-	local s
-	for s in ${GRPC_SLOTS[@]} ; do
+	local s1
+	local s2
+	for s1 in ${GRPC_SLOTS[@]} ; do
+		s2=${GRPC_TO_PROTOBUF[${s1}]}
 		echo "
 			(
-				=dev-python/grpcio-${s}*[${PYTHON_USEDEP}]
-				=dev-python/grpcio-sstatus-${s}*[${PYTHON_USEDEP}]
+				=dev-python/grpcio-${s1}*[${PYTHON_USEDEP}]
+				=dev-python/grpcio-status-${s1}*[${PYTHON_USEDEP}]
+				dev-python/protobuf:0/${s2}[${PYTHON_USEDEP}]
 			)
+		"
+	done
+}
+gen_protobuf_rdepend() {
+	local s
+	for s in ${PROTOBUF_SLOTS[@]} ; do
+		echo  "
+			dev-python/protobuf:0/${s}[${PYTHON_USEDEP}]
 		"
 	done
 }
@@ -95,8 +133,10 @@ RDEPEND="
 		!=dev-python/protobuf-4.21.3
 		!=dev-python/protobuf-4.21.4
 		!=dev-python/protobuf-4.21.5
-		>=dev-python/protobuf-3.19.5:0/3.21[${PYTHON_USEDEP}]
-		<dev-python/protobuf-3.22.0:0/3.21[${PYTHON_USEDEP}]
+		|| (
+			$(gen_protobuf_rdepend)
+		)
+		dev-python/protobuf:=
 	)
 	async-rest? (
 		(
@@ -108,6 +148,9 @@ RDEPEND="
 		|| (
 			$(gen_grpcio_rdepend)
 		)
+		dev-python/grpcio:=
+		dev-python/grpcio-status:=
+		dev-python/protobuf:=
 	)
 	grpcgcp? (
 		>=dev-python/grpcio-gcp-0.2.2[${PYTHON_USEDEP}]
