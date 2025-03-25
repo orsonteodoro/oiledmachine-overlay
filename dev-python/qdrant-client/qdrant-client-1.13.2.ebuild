@@ -100,6 +100,8 @@ RDEPEND+="
 	|| (
 		$(gen_grpcio_rdepend)
 	)
+	dev-python/grpcio:=
+	dev-python/grpcio-tools:=
 "
 DEPEND+="
 	${RDEPEND}
