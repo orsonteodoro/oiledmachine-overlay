@@ -90,6 +90,7 @@ BDEPEND+="
 			>=dev-python/pyre-extensions-0.0.29[${PYTHON_USEDEP}]
 			>=dev-python/click-8.0.4[${PYTHON_USEDEP}]
 			>=dev-python/protobuf-3.20.2[${PYTHON_USEDEP}]
+			dev-python/protobuf:=
 			dev-python/flake8-copyright[${PYTHON_USEDEP}]
 
 			>=dev-python/pytest-7.2.0[${PYTHON_USEDEP}]
