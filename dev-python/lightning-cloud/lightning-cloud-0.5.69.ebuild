@@ -25,18 +25,19 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
 RDEPEND+="
-	dev-python/boto3
-	dev-python/click
-	dev-python/fastapi
+	dev-python/boto3[${PYTHON_USEDEP}]
+	dev-python/click[${PYTHON_USEDEP}]
+	dev-python/fastapi[${PYTHON_USEDEP}]
+	dev-python/protobuf[${PYTHON_USEDEP}]
 	dev-python/protobuf:=
-	dev-python/pyjwt
-	dev-python/python-multipart
-	dev-python/requests
-	dev-python/rich
-	dev-python/six
-	dev-python/urllib3
-	dev-python/uvicorn
-	dev-python/websocket-client
+	dev-python/pyjwt[${PYTHON_USEDEP}]
+	dev-python/python-multipart[${PYTHON_USEDEP}]
+	dev-python/requests[${PYTHON_USEDEP}]
+	dev-python/rich[${PYTHON_USEDEP}]
+	dev-python/six[${PYTHON_USEDEP}]
+	dev-python/urllib3[${PYTHON_USEDEP}]
+	dev-python/uvicorn[${PYTHON_USEDEP}]
+	dev-python/websocket-client[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
