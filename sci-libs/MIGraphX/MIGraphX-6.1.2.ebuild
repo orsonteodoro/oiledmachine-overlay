@@ -66,6 +66,7 @@ RDEPEND="
 	>=dev-cpp/nlohmann_json-3.8.0
 	>=dev-libs/half-1.12.0
 	>=dev-libs/protobuf-3.11:0/3.21
+	dev-libs/protobuf:=
 	>=dev-python/pybind11-2.6.0[${PYTHON_USEDEP}]
 	dev-libs/msgpack
 	composable-kernel? (
