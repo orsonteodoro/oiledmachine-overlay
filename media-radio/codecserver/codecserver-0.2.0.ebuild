@@ -31,8 +31,8 @@ REQUIRED_USE="
 	)
 "
 DEPEND+="
-	>=dev-libs/protobuf-3.12.4:0/3.21
 	acct-group/dialout
+	dev-libs/protobuf:=
 	virtual/udev
 	openrc? (
 		sys-apps/openrc
