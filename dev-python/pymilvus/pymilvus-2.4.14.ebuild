@@ -147,6 +147,7 @@ REQUIREMENTS_PKGS="
 	>=dev-python/packaging-20.9[${PYTHON_USEDEP}]
 	>=dev-python/pep517-0.10.0[${PYTHON_USEDEP}]
 	>=dev-python/protobuf-4.25.2[${PYTHON_USEDEP}]
+	dev-python/protobuf:=
 	>=dev-python/pyarrow-12.0.0[${PYTHON_USEDEP}]
 	>=dev-python/pyparsing-2.4.7[${PYTHON_USEDEP}]
 	>=dev-python/pytest-5.3.4[${PYTHON_USEDEP}]
