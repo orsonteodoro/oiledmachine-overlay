@@ -173,6 +173,7 @@ RDEPEND="
 			)
 		)
 		dev-python/grpcio:=
+		dev-python/protobuf:=
 		net-libs/grpc:=
 	')
 	=sci-visualization/tensorboard-data-server-0.7*[${PYTHON_SINGLE_USEDEP}]
