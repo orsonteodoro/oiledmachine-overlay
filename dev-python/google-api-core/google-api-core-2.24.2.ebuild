@@ -10,6 +10,25 @@ EAPI=8
 MY_P="python-api-core-${PV}"
 
 DISTUTILS_USE_PEP517="setuptools"
+GRPC_SLOTS=(
+	"1.49"
+	"1.52"
+	"1.53"
+	"1.54"
+	"1.55"
+	"1.56"
+	"1.57"
+	"1.58"
+	"1.59"
+	"1.60"
+	"1.61"
+	"1.62"
+	"1.63"
+	"1.64"
+	"1.65"
+	"1.66"
+	"1.67"
+)
 PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit distutils-r1
@@ -35,6 +54,17 @@ REQUIRED_USE="
 		grpc
 	)
 "
+gen_grpcio_rdepend() {
+	local s
+	for s in ${GRPC_SLOTS[@]} ; do
+		echo "
+			(
+				=dev-python/grpcio-${s}*[${PYTHON_USEDEP}]
+				=dev-python/grpcio-sstatus-${s}*[${PYTHON_USEDEP}]
+			)
+		"
+	done
+}
 RDEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/proto-plus-1.22.3[${PYTHON_USEDEP}]
@@ -76,22 +106,7 @@ RDEPEND="
 	)
 	grpc? (
 		|| (
-			(
-				=dev-python/grpcio-1.49*[${PYTHON_USEDEP}]
-				=dev-python/grpcio-status-1.49*[${PYTHON_USEDEP}]
-			)
-			(
-				=dev-python/grpcio-1.52*[${PYTHON_USEDEP}]
-				=dev-python/grpcio-status-1.52*[${PYTHON_USEDEP}]
-			)
-			(
-				=dev-python/grpcio-1.53*[${PYTHON_USEDEP}]
-				=dev-python/grpcio-status-1.53*[${PYTHON_USEDEP}]
-			)
-			(
-				=dev-python/grpcio-1.54*[${PYTHON_USEDEP}]
-				=dev-python/grpcio-status-1.54*[${PYTHON_USEDEP}]
-			)
+			$(gen_grpcio_rdepend)
 		)
 	)
 	grpcgcp? (

@@ -10,7 +10,6 @@ EAPI=8
 # qdrant-sphinx-theme
 
 DISTUTILS_USE_PEP517="poetry"
-PYTHON_COMPAT=( "python3_"{10..12} )
 GRPC_SLOTS=(
 	"1.49"
 	"1.52"
@@ -30,6 +29,7 @@ GRPC_SLOTS=(
 	"1.66"
 	"1.67"
 )
+PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 pypi
 
