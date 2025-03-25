@@ -74,6 +74,7 @@ DISABLED_CONSTRAINTS_RDEPEND="
 		<dev-python/botocore-1.34.132[${PYTHON_USEDEP}]
 		<dev-python/urllib3-1.27[${PYTHON_USEDEP}]
 		>=dev-python/grpcio-1.65.5[${PYTHON_USEDEP}]
+		dev-python/grpcio:=
 		>=dev-python/importlib-metadata-8.5.0[${PYTHON_USEDEP}]
 	')
 	(
