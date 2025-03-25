@@ -34,7 +34,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" python test"
 RDEPEND+="
-	>=dev-libs/protobuf-3.14:0/3.21
+	dev-libs/protobuf:=
 "
 DEPEND+="
 	${RDEPEND}
