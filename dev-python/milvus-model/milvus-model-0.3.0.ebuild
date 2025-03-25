@@ -42,6 +42,7 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/scipy-1.10.0[${PYTHON_USEDEP}]
 		dev-python/protobuf[${PYTHON_USEDEP}]
+		dev-python/protobuf:=
 		dev-python/numpy[${PYTHON_USEDEP}]
 		sci-ml/onnxruntime[${PYTHON_USEDEP},python]
 	')
