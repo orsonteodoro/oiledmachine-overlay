@@ -22,6 +22,25 @@ EPYTEST_IGNORE=(
 	# disable them to unblock removal of that package
 	"tests/test__oauth2client.py"
 )
+GRPC_SLOTS=(
+	"1.49"
+	"1.52"
+	"1.53"
+	"1.54"
+	"1.55"
+	"1.56"
+	"1.57"
+	"1.58"
+	"1.59"
+	"1.60"
+	"1.61"
+	"1.62"
+	"1.63"
+	"1.64"
+	"1.65"
+	"1.66"
+	"1.67"
+)
 PYPI_NO_NORMALIZE=1
 PYTHON_COMPAT=( "python3_"{10..12} )
 
@@ -81,7 +100,17 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 "
-# Uses PROTOBUF_SLOT=0/3.20 ; 3.20.3
+gen_grpc_test_bdepend() {
+	local s
+	for s in ${GRPC_SLOTS[@]} ; do
+		echo "
+			(
+				=dev-python/grpcio-${s}*[${PYTHON_USEDEP}]
+				=net-libs/grpc-${s}*[${PYTHON_USEDEP},python]
+			)
+		"
+	done
+}
 BDEPEND="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
@@ -127,22 +156,7 @@ BDEPEND="
 		dev-python/urllib3[${PYTHON_USEDEP}]
 
 		|| (
-			(
-				=dev-python/grpcio-1.54*[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.54*[${PYTHON_USEDEP},python]
-			)
-			(
-				=dev-python/grpcio-1.53*[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.53*[${PYTHON_USEDEP},python]
-			)
-			(
-				=dev-python/grpcio-1.52*[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.52*[${PYTHON_USEDEP},python]
-			)
-			(
-				=dev-python/grpcio-1.49*[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.49*[${PYTHON_USEDEP},python]
-			)
+			$(gen_grpc_test_bdepend)
 		)
 		dev-python/grpcio:=[${PYTHON_USEDEP}]
 		net-libs/grpc:=[${PYTHON_USEDEP},python]
