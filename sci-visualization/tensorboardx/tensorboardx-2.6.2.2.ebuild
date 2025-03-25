@@ -7,6 +7,21 @@ EAPI=8
 MY_PN="tensorboardX"
 
 DISTUTILS_USE_PEP517="setuptools"
+PROTOBUF_SLOTS_REL=(
+	"3.21"
+	"4.23"
+	"4.24"
+	"4.25"
+	"5.26"
+	"5.27"
+)
+PROTOBUF_SLOTS_DEV=(
+	"4.23"
+	"4.24"
+	"4.25"
+	"5.26"
+	"5.27"
+)
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 pypi
@@ -39,8 +54,27 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
+gen_protobuf_rdepends() {
+	local s
+	for s in ${PROTOBUF_SLOTS_REL[@]} ; do
+		echo "
+			dev-python/protobuf:0/${s}[${PYTHON_USEDEP}]
+		"
+	done
+}
+gen_protobuf_bdepends() {
+	local s
+	for s in ${PROTOBUF_SLOTS_DEV[@]} ; do
+		echo "
+			dev-python/protobuf:0/${s}[${PYTHON_USEDEP}]
+		"
+	done
+}
 RDEPEND+="
-	>=dev-python/protobuf-3.20:0/3.21[${PYTHON_USEDEP}]
+	|| (
+		$(gen_protobuf_rdepends)
+	)
+	dev-python/protobuf:=
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/packaging[${PYTHON_USEDEP}]
 "
@@ -60,7 +94,6 @@ BDEPEND+="
 			sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 		')
 		>=dev-python/imageio-2.27[${PYTHON_USEDEP}]
-		>=dev-python/protobuf-4.22.3[${PYTHON_USEDEP}]
 		dev-python/boto3[${PYTHON_USEDEP}]
 		dev-python/flake8[${PYTHON_USEDEP}]
 		dev-python/numpy[${PYTHON_USEDEP}]
@@ -72,6 +105,10 @@ BDEPEND+="
 		dev-python/pytest-cov[${PYTHON_USEDEP}]
 		dev-python/soundfile[${PYTHON_USEDEP}]
 		dev-python/visdom[${PYTHON_USEDEP}]
+		|| (
+			$(gen_protobuf_bdepends)
+		)
+		dev-python/protobuf:=
 	)
 "
 DOCS=( "HISTORY.rst" "README.md" )
