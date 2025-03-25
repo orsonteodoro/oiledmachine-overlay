@@ -729,12 +729,8 @@ PATENT_STATUS_RDEPEND="
 "
 RDEPEND="
 	${PATENT_STATUS_RDEPEND}
-	(
-		|| (
-			>=dev-libs/protobuf-3.19.1:0/3.21[${MULTILIB_USEDEP}]
-		)
-		dev-libs/protobuf:=[${MULTILIB_USEDEP}]
-	)
+	dev-libs/protobuf[${MULTILIB_USEDEP}]
+	dev-libs/protobuf:=
 	>=app-arch/bzip2-1.0.8[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.3.0[${MULTILIB_USEDEP}]
 	atlas? (
