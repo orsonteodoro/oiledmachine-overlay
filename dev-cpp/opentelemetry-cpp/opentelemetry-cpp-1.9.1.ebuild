@@ -3,6 +3,21 @@
 
 EAPI=8
 
+declare -A GRPC_TO_PROTOBUF=(
+	["1.49"]="3.21"
+	["1.52"]="3.21"
+	["1.53"]="3.21"
+	["1.54"]="3.21"
+)
+GRPC_SLOTS=(
+	"1.49"
+	"1.52"
+	"1.53"
+	"1.54"
+)
+PROTOBUF_SLOTS=(
+	"3.21"
+)
 OPENTELEMETRY_PROTO_PV="0.19.0"
 
 inherit cmake dep-prepare
@@ -28,6 +43,19 @@ RESTRICT="
 "
 SLOT="0"
 IUSE="-jaeger -otlp-grpc -otlp-http -prometheus test"
+gen_otlp_grpc_rdepend() {
+	local s1
+	local s2
+	for s1 in ${GRPC_SLOTS[@]} ; do
+		s2="${GRPC_TO_PROTOBUF[${s1}]}"
+		echo  "
+			(
+				=net-libs/grpc-${s1}*
+				dev-libs/protobuf:0/${s2}
+			)
+		"
+	done
+}
 RDEPEND="
 	jaeger? (
 		>=dev-libs/thrift-0.14.1
@@ -36,13 +64,9 @@ RDEPEND="
 	)
 	otlp-grpc? (
 		|| (
-			=net-libs/grpc-1.49*
-			=net-libs/grpc-1.52*
-			=net-libs/grpc-1.53*
-			=net-libs/grpc-1.54*
-
+			$(gen_otlp_grpc_rdepend)
 		)
-		dev-libs/protobuf:0/3.21
+		dev-libs/protobuf:=
 		net-libs/grpc:=
 	)
 	otlp-http? (

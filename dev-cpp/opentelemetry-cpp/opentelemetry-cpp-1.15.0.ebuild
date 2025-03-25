@@ -3,6 +3,30 @@
 
 EAPI=8
 
+declare -A GRPC_TO_PROTOBUF=(
+	["1.49"]="3.21"
+	["1.52"]="3.21"
+	["1.53"]="3.21"
+	["1.54"]="3.21"
+	["1.55"]="4.23"
+	["1.56"]="4.23"
+	["1.57"]="4.23"
+	["1.58"]="4.23"
+)
+GRPC_SLOTS=(
+	"1.49"
+	"1.52"
+	"1.53"
+	"1.54"
+	"1.55"
+	"1.56"
+	"1.57"
+	"1.58"
+)
+PROTOBUF_SLOTS=(
+	"3.21"
+	"4.23"
+)
 OPENTELEMETRY_PROTO_PV="1.2.0"
 
 inherit cmake dep-prepare
@@ -28,17 +52,26 @@ RESTRICT="
 "
 SLOT="0"
 IUSE="-otlp-file -otlp-grpc -otlp-http -prometheus test -zlib"
+gen_otlp_grpc_rdepend() {
+	local s1
+	local s2
+	for s1 in ${GRPC_SLOTS[@]} ; do
+		s2="${GRPC_TO_PROTOBUF[${s1}]}"
+		echo  "
+			(
+				=net-libs/grpc-${s1}*
+				dev-libs/protobuf:0/${s2}
+			)
+		"
+	done
+}
 RDEPEND="
 	dev-libs/boost:=
 	otlp-grpc? (
 		|| (
-			=net-libs/grpc-1.49*
-			=net-libs/grpc-1.52*
-			=net-libs/grpc-1.53*
-			=net-libs/grpc-1.54*
-
+			$(gen_otlp_grpc_rdepend)
 		)
-		dev-libs/protobuf:0/3.21
+		dev-libs/protobuf:=
 		net-libs/grpc:=
 	)
 	otlp-file? (
