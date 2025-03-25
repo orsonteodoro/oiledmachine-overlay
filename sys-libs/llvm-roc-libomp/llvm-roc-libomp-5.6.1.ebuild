@@ -3,6 +3,44 @@
 
 EAPI=8
 
+declare -A GRPC_TO_PROTOBUF=(
+	["1.49"]="3.21"
+	["1.52"]="3.21"
+	["1.53"]="3.21"
+	["1.54"]="3.21"
+	["1.55"]="4.23"
+	["1.56"]="4.23"
+	["1.57"]="4.23"
+	["1.58"]="4.23"
+	["1.59"]="4.24"
+	["1.60"]="4.25"
+	["1.61"]="4.25"
+	["1.62"]="4.25"
+	["1.63"]="5.26"
+	["1.64"]="5.26"
+	["1.65"]="5.26"
+	["1.66"]="5.27"
+	["1.67"]="5.27"
+)
+GRPC_SLOTS=(
+	"1.49"
+	"1.52"
+	"1.53"
+	"1.54"
+	"1.55"
+	"1.56"
+	"1.57"
+	"1.58"
+	"1.59"
+	"1.60"
+	"1.61"
+	"1.62"
+	"1.63"
+	"1.64"
+	"1.65"
+	"1.66"
+	"1.67"
+)
 LLVM_TARGETS_CPU_COMPAT=(
 	llvm_targets_X86
 )
@@ -176,6 +214,19 @@ REQUIRED_USE="
 		${LLVM_TARGETS_CPU_COMPAT[@]}
 	)
 "
+gen_grpc_rdepend() {
+	local s1
+	local s2
+	for s1 in ${GRPC_SLOTS} ; do
+		s2="${GRPC_TO_PROTOBUF[${s1}]}"
+		echo "
+			(
+				dev-libs/protobuf:0/${s2}
+				=net-libs/grpc-${s1}*[cxx]
+			)
+		"
+	done
+}
 RDEPEND="
 	~dev-libs/rocm-device-libs-${PV}:${ROCM_SLOT}
 	~sys-devel/llvm-roc-${PV}:${ROCM_SLOT}[${LLVM_TARGETS_USEDEP}]
@@ -261,13 +312,10 @@ RDEPEND="
 		virtual/libelf:=
 	)
 	rpc? (
-		dev-libs/protobuf:0/3.21
 		|| (
-			=net-libs/grpc-1.49*[cxx]
-			=net-libs/grpc-1.52*[cxx]
-			=net-libs/grpc-1.53*[cxx]
-			=net-libs/grpc-1.54*[cxx]
+			$(gen_grpc_rdepend)
 		)
+		dev-libs/protobuf:=
 		net-libs/grpc:=
 	)
 "
