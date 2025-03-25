@@ -11,7 +11,7 @@ BAZEL_SKYLIB_PV="1.0.2"							# https://github.com/tensorflow/metadata/blob/v1.1
 BAZEL_SLOT="5.3"							# https://github.com/tensorflow/metadata/blob/v1.14.0/WORKSPACE#L52
 DISTUTILS_USE_PEP517="setuptools"
 PROTOBUF_PV="3.21.9"							# https://github.com/tensorflow/metadata/blob/v1.14.0/WORKSPACE#L14
-PYTHON_COMPAT=( "python3_"{10..12} ) # 3.9 listed only
+PYTHON_COMPAT=( "python3_"{10..11} ) # 3.9 listed only
 RULES_CC_COMMIT="818289e5613731ae410efb54218a4077fb9dbb03"		# https://github.com/protocolbuffers/protobuf/blob/v3.21.9/protobuf_deps.bzl#L63
 RULES_JAVA_COMMIT="981f06c3d2bd10225e85209904090eb7b5fb26bd"		# https://github.com/protocolbuffers/protobuf/blob/v3.21.9/protobuf_deps.bzl#L71
 RULES_PKG_PV="0.7.0"							# https://github.com/protocolbuffers/protobuf/blob/v3.21.9/protobuf_deps.bzl#L103
@@ -73,7 +73,13 @@ BDEPEND+="
 		>=dev-python/googleapis-common-protos-1.52.0[${PYTHON_USEDEP}]
 		<dev-python/googleapis-common-protos-2[${PYTHON_USEDEP}]
 	)
-	>=dev-python/protobuf-3.20.3:0/3.21[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		>=dev-python/protobuf-3.20.3[${PYTHON_USEDEP}]
+	' python3_10)
+	$(python_gen_cond_dep '
+		>=dev-python/protobuf-4.25.2[${PYTHON_USEDEP}]
+	' python3_11)
+	dev-python/protobuf:=
 	>=dev-build/bazel-5.3.0:${BAZEL_SLOT}
 	dev-python/setuptools[${PYTHON_USEDEP}]
 "
