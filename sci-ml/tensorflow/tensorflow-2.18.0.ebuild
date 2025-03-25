@@ -198,6 +198,14 @@ OPENMP_PV="10.0.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.18.0
 #PLATFORMS_PV="0.0.6"		# From https://github.com/tensorflow/runtime/blob/4e088077c6e455610a39ed8d2a18fe195ada6137/third_party/rules_cuda/cuda/dependencies.bzl#L66 with EGIT_COMMIT_TF_RUNTIME
 PROTOBUF_PV="3.21.9"		# From https://github.com/tensorflow/tensorflow/blob/v2.18.0/tensorflow/workspace2.bzl
 PROTOBUF_SLOT="0/${PROTOBUF_PV%.*}"
+PROTOBUF_SLOTS=(
+	"3.21"
+	"4.23"
+	"4.24"
+	"4.25"
+	"5.26"
+	"5.27"
+)
 RULES_ANDROID_PV="0.1.1"	# From https://github.com/tensorflow/tensorflow/blob/v2.18.0/tensorflow/workspace2.bzl
 RULES_APPLE_PV="2.3.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.18.0/tensorflow/workspace2.bzl
 RULES_CC_PV="0.0.2"		# From https://github.com/bazelbuild/rules_swift/blob/1.5.0/MODULE.bazel#L13
@@ -580,14 +588,110 @@ gen_rocm_rdepend() {
 	done
 }
 
-RDEPEND_PROTOBUF_3_21="
+RDEPEND_PROTOBUF="
 	|| (
 		(
 			!big-endian? (
-				=net-libs/grpc-1.53*[${PYTHON_USEDEP},python]
+				=net-libs/grpc-1.67*[${PYTHON_USEDEP},python]
 			)
 			big-endian? (
-				=net-libs/grpc-1.53*[-python]
+				=net-libs/grpc-1.67*[-python]
+			)
+		)
+		(
+			!big-endian? (
+				=net-libs/grpc-1.66*[${PYTHON_USEDEP},python]
+			)
+			big-endian? (
+				=net-libs/grpc-1.66*[-python]
+			)
+		)
+		(
+			!big-endian? (
+				=net-libs/grpc-1.65*[${PYTHON_USEDEP},python]
+			)
+			big-endian? (
+				=net-libs/grpc-1.65*[-python]
+			)
+		)
+		(
+			!big-endian? (
+				=net-libs/grpc-1.64*[${PYTHON_USEDEP},python]
+			)
+			big-endian? (
+				=net-libs/grpc-1.64*[-python]
+			)
+		)
+		(
+			!big-endian? (
+				=net-libs/grpc-1.63*[${PYTHON_USEDEP},python]
+			)
+			big-endian? (
+				=net-libs/grpc-1.63*[-python]
+			)
+		)
+		(
+			!big-endian? (
+				=net-libs/grpc-1.62*[${PYTHON_USEDEP},python]
+			)
+			big-endian? (
+				=net-libs/grpc-1.62*[-python]
+			)
+		)
+		(
+			!big-endian? (
+				=net-libs/grpc-1.61*[${PYTHON_USEDEP},python]
+			)
+			big-endian? (
+				=net-libs/grpc-1.61*[-python]
+			)
+		)
+		(
+			!big-endian? (
+				=net-libs/grpc-1.60*[${PYTHON_USEDEP},python]
+			)
+			big-endian? (
+				=net-libs/grpc-1.60*[-python]
+			)
+		)
+		(
+			!big-endian? (
+				=net-libs/grpc-1.59*[${PYTHON_USEDEP},python]
+			)
+			big-endian? (
+				=net-libs/grpc-1.59*[-python]
+			)
+		)
+		(
+			!big-endian? (
+				=net-libs/grpc-1.58*[${PYTHON_USEDEP},python]
+			)
+			big-endian? (
+				=net-libs/grpc-1.58*[-python]
+			)
+		)
+		(
+			!big-endian? (
+				=net-libs/grpc-1.57*[${PYTHON_USEDEP},python]
+			)
+			big-endian? (
+				=net-libs/grpc-1.57*[-python]
+			)
+		)
+		(
+			!big-endian? (
+				=net-libs/grpc-1.56*[${PYTHON_USEDEP},python]
+			)
+			big-endian? (
+				=net-libs/grpc-1.56*[-python]
+			)
+		)
+		(
+			!big-endian? (
+				=net-libs/grpc-1.55*[${PYTHON_USEDEP},python]
+			)
+			big-endian? (
+				=net-libs/grpc-1.55*[-python]
 			)
 		)
 		(
@@ -598,22 +702,138 @@ RDEPEND_PROTOBUF_3_21="
 				=net-libs/grpc-1.54*[-python]
 			)
 		)
+		(
+			!big-endian? (
+				=net-libs/grpc-1.53*[${PYTHON_USEDEP},python]
+			)
+			big-endian? (
+				=net-libs/grpc-1.53*[-python]
+			)
+		)
+		(
+			!big-endian? (
+				=net-libs/grpc-1.52*[${PYTHON_USEDEP},python]
+			)
+			big-endian? (
+				=net-libs/grpc-1.52*[-python]
+			)
+		)
+		(
+			!big-endian? (
+				=net-libs/grpc-1.49*[${PYTHON_USEDEP},python]
+			)
+			big-endian? (
+				=net-libs/grpc-1.49*[-python]
+			)
+		)
 	)
 	net-libs/grpc:=
 "
 
-RDEPEND_GRPCIO_LITTLE_ENDIAN_PROTOBUF_3_21="
+RDEPEND_GRPCIO="
 	$(python_gen_cond_dep '
 		|| (
 			(
-				=dev-python/grpcio-1.53*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-tools-1.53*:=[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.53*[${PYTHON_USEDEP},python]
+				=dev-python/grpcio-1.67*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-tools-1.67*:=[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.67*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/5.27[${PYTHON_USEDEP}]
+			)
+			(
+				=dev-python/grpcio-1.66*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-tools-1.66*:=[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.66*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/5.27[${PYTHON_USEDEP}]
+			)
+			(
+				=dev-python/grpcio-1.65*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-tools-1.65*:=[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.65*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/5.26[${PYTHON_USEDEP}]
+			)
+			(
+				=dev-python/grpcio-1.64*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-tools-1.64*:=[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.64*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/5.26[${PYTHON_USEDEP}]
+			)
+			(
+				=dev-python/grpcio-1.63*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-tools-1.63*:=[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.63*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/5.26[${PYTHON_USEDEP}]
+			)
+			(
+				=dev-python/grpcio-1.62*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-tools-1.62*:=[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.62*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/4.25[${PYTHON_USEDEP}]
+			)
+			(
+				=dev-python/grpcio-1.61*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-tools-1.61*:=[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.61*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/4.25[${PYTHON_USEDEP}]
+			)
+			(
+				=dev-python/grpcio-1.60*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-tools-1.60*:=[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.60*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/4.25[${PYTHON_USEDEP}]
+			)
+			(
+				=dev-python/grpcio-1.59*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-tools-1.59*:=[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.59*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/4.24[${PYTHON_USEDEP}]
+			)
+			(
+				=dev-python/grpcio-1.58*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-tools-1.58*:=[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.58*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/4.23[${PYTHON_USEDEP}]
+			)
+			(
+				=dev-python/grpcio-1.57*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-tools-1.57*:=[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.57*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/4.23[${PYTHON_USEDEP}]
+			)
+			(
+				=dev-python/grpcio-1.56*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-tools-1.56*:=[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.56*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/4.23[${PYTHON_USEDEP}]
+			)
+			(
+				=dev-python/grpcio-1.55*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-tools-1.55*:=[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.55*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/4.23[${PYTHON_USEDEP}]
 			)
 			(
 				=dev-python/grpcio-1.54*:=[${PYTHON_USEDEP}]
 				=dev-python/grpcio-tools-1.54*:=[${PYTHON_USEDEP}]
 				=net-libs/grpc-1.54*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
+			)
+			(
+				=dev-python/grpcio-1.53*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-tools-1.53*:=[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.53*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
+			)
+			(
+				=dev-python/grpcio-1.52*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-tools-1.52*:=[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.52*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
+			)
+			(
+				=dev-python/grpcio-1.49*:=[${PYTHON_USEDEP}]
+				=dev-python/grpcio-tools-1.49*:=[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.49*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
 			)
 		)
 	' python3_{10..11})
@@ -628,9 +848,22 @@ RDEPEND_GRPCIO_LITTLE_ENDIAN_PROTOBUF_3_21="
 # abseil-cpp version and same major-minor of protobuf without multiple
 # slot conflict.
 #
+gen_protobuf_rdepend() {
+	local s
+	for s in ${PROTOBUF_SLOTS[@]} ; do
+		echo "
+			(
+				dev-libs/protobuf:0/${s}
+				python? (
+					dev-python/protobuf:0/${s}[${PYTHON_USEDEP}]
+				)
+			)
+		"
+	done
+}
+# The abseil-cpp rdepends is handled by protobuf package.
 RDEPEND="
-	${RDEPEND_PROTOBUF_3_21}
-	>=dev-cpp/abseil-cpp-20230125.2:0/20230125
+	${RDEPEND_PROTOBUF}
 	>=dev-db/sqlite-3.43.0
 	>=dev-libs/double-conversion-3.2.0
 	>=dev-libs/icu-69.1:=
@@ -643,7 +876,10 @@ RDEPEND="
 	>=net-misc/curl-8.6.0
 	>=sys-apps/hwloc-2.7.1:=
 	>=sys-libs/zlib-1.3.1
-	dev-libs/protobuf:${PROTOBUF_SLOT}
+	|| (
+		$(gen_protobuf_rdepend)
+	)
+	dev-libs/protobuf:=
 	!alt-ssl? (
 		>=dev-libs/openssl-3:0=
 	)
@@ -672,15 +908,6 @@ RDEPEND="
 			)
 		' python3_12)
 		(
-			!~dev-python/protobuf-4.21.0[${PYTHON_USEDEP}]
-			!~dev-python/protobuf-4.21.1[${PYTHON_USEDEP}]
-			!~dev-python/protobuf-4.21.2[${PYTHON_USEDEP}]
-			!~dev-python/protobuf-4.21.3[${PYTHON_USEDEP}]
-			!~dev-python/protobuf-4.21.4[${PYTHON_USEDEP}]
-			!~dev-python/protobuf-4.21.5[${PYTHON_USEDEP}]
-			dev-python/protobuf:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
-		)
-		(
 			>=dev-python/wrapt-1.14.1[${PYTHON_USEDEP}]
 		)
 		>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
@@ -694,7 +921,7 @@ RDEPEND="
 
 		>=dev-python/opt-einsum-3.3.0[${PYTHON_USEDEP}]
 		!big-endian? (
-			${RDEPEND_GRPCIO_LITTLE_ENDIAN_PROTOBUF_3_21}
+			${RDEPEND_GRPCIO}
 		)
 		>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
 		>=dev-python/termcolor-2.2.1[${PYTHON_USEDEP}]
@@ -785,7 +1012,6 @@ BDEPEND="
 	app-arch/pigz
 	app-arch/unzip
 	dev-java/java-config
-	dev-libs/protobuf:${PROTOBUF_SLOT}
 	dev-util/patchelf
 	!clang? (
 		!cuda? (
@@ -806,7 +1032,7 @@ BDEPEND="
 	)
 	python? (
 		!big-endian? (
-			${RDEPEND_GRPCIO_LITTLE_ENDIAN_PROTOBUF_3_21}
+			${RDEPEND_GRPCIO}
 		)
 		>=dev-python/cython-3.0.3[${PYTHON_USEDEP}]
 		>=dev-python/packaging-23.2[${PYTHON_USEDEP}]
