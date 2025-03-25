@@ -53,6 +53,7 @@ DEPEND+="
 	dev-python/opt-einsum[${PYTHON_USEDEP}]
 	australis? (
 		dev-libs/protobuf:0/3.21
+		dev-libs/protobuf:=
 	)
 	cuda? (
 		=dev-libs/cudnn-8.6*
