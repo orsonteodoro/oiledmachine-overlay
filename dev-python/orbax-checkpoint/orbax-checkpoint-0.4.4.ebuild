@@ -12,7 +12,14 @@ EAPI=8
 # google-cloud-logging
 
 DISTUTILS_USE_PEP517="flit"
-PROTOBUF_PV="3.21.11"
+PROTOBUF_SLOTS=(
+	"3.21"
+	"4.23"
+	"4.24"
+	"4.25"
+	"5.26"
+	"5.27"
+)
 PYTHON_COMPAT=( "python3_"{10,11} ) # Upstream only tests up to 3.11.
 
 inherit distutils-r1
@@ -44,23 +51,35 @@ tensorflow test
 "
 REQUIRED_USE="
 "
+gen_protobuf_checkpoint_rdepend() {
+	local s
+	for s in ${PROTOBUF_SLOTS[@]} ; do
+		echo "
+			dev-libs/protobuf:0/${s}
+			dev-python/protobuf:0/${s}[${PYTHON_USEDEP}]
+		"
+	done
+}
 CHECKPOINT_RDEPEND="
 	(
 		>=sci-libs/tensorstore-0.1.35[${PYTHON_USEDEP}]
 		<sci-libs/tensorstore-0.1.38[${PYTHON_USEDEP}]
 	)
-	>=dev-libs/protobuf-${PROTOBUF_PV}:0/${PROTOBUF_PV%.*}
 	>=dev-python/jax-0.4.9[${PYTHON_USEDEP}]
 	dev-python/absl-py[${PYTHON_USEDEP}]
 	dev-python/etils[${PYTHON_USEDEP},epath,epy]
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/nest-asyncio[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/protobuf:0/${PROTOBUF_PV%.*}[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 	dev-python/typing-extensions[${PYTHON_USEDEP}]
 	dev-python/jaxlib[${PYTHON_USEDEP}]
 	dev-python/jaxtyping[${PYTHON_USEDEP}]
+	|| (
+		$(gen_protobuf_checkpoint_rdepend)
+	)
+	dev-libs/protobuf:=
+	dev-python/protobuf:=
 "
 ORBAX_EXPORT_RDEPEND="
 	dev-python/absl-py[${PYTHON_USEDEP}]
