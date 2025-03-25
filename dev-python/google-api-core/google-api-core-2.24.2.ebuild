@@ -75,30 +75,24 @@ RDEPEND="
 		)
 	)
 	grpc? (
-		$(python_gen_cond_dep '
+		|| (
 			(
-				>=dev-python/grpcio-1.33.2:0/3.21[${PYTHON_USEDEP}]
-				<dev-python/grpcio-1.55.0:0/3.21[${PYTHON_USEDEP}]
+				=dev-python/grpcio-1.49*[${PYTHON_USEDEP}]
+				=dev-python/grpcio-status-1.49*[${PYTHON_USEDEP}]
 			)
-		' python3_10)
-		$(python_gen_cond_dep '
 			(
-				>=dev-python/grpcio-1.49.1:0/3.21[${PYTHON_USEDEP}]
-				<dev-python/grpcio-1.55.0:0/3.21[${PYTHON_USEDEP}]
+				=dev-python/grpcio-1.52*[${PYTHON_USEDEP}]
+				=dev-python/grpcio-status-1.52*[${PYTHON_USEDEP}]
 			)
-		' python3_{11,12,13})
-		$(python_gen_cond_dep '
 			(
-				>=dev-python/grpcio-status-1.33.2[${PYTHON_USEDEP}]
-				<dev-python/grpcio-status-1.55.0[${PYTHON_USEDEP}]
+				=dev-python/grpcio-1.53*[${PYTHON_USEDEP}]
+				=dev-python/grpcio-status-1.53*[${PYTHON_USEDEP}]
 			)
-		' python3_10)
-		$(python_gen_cond_dep '
 			(
-				>=dev-python/grpcio-status-1.49.1[${PYTHON_USEDEP}]
-				<dev-python/grpcio-status-1.55.0[${PYTHON_USEDEP}]
+				=dev-python/grpcio-1.54*[${PYTHON_USEDEP}]
+				=dev-python/grpcio-status-1.54*[${PYTHON_USEDEP}]
 			)
-		' python3_{11,12,13})
+		)
 	)
 	grpcgcp? (
 		>=dev-python/grpcio-gcp-0.2.2[${PYTHON_USEDEP}]
