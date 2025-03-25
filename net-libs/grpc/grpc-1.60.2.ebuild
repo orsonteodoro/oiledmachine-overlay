@@ -87,6 +87,7 @@ RDEPEND+="
 	>=net-dns/c-ares-1.19.1:=[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.13:=[${MULTILIB_USEDEP}]
 	dev-libs/protobuf:0/4.25[${MULTILIB_USEDEP}]
+	dev-libs/protobuf:=
 "
 # See also
 # third_party/boringssl-with-bazel/src/include/openssl/crypto.h: OPENSSL_VERSION_TEXT
