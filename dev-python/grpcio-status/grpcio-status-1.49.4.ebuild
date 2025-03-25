@@ -27,9 +27,9 @@ HOMEPAGE="
 LICENSE="Apache-2.0"
 SLOT="0"
 RDEPEND="
-	>=dev-python/grpcio-${PV}[${PYTHON_USEDEP}]
+	~dev-python/grpcio-${PV}[${PYTHON_USEDEP}]
 	>=dev-python/googleapis-common-protos-1.5.5[${PYTHON_USEDEP}]
-	>=dev-python/protobuf-4.21.3:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
+	dev-python/protobuf:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 "
 BDEPEND="
 	test? (
