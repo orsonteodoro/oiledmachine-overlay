@@ -557,9 +557,55 @@ gen_rocm_rdepend() {
 	done
 }
 
+GOOGLE_CLOUD_CPP_PROTOBUF_5_26="
+	python? (
+		|| (
+			=net-libs/google-cloud-cpp-2.24*
+			=net-libs/google-cloud-cpp-2.23*
+		)
+	)
+"
+GOOGLE_CLOUD_CPP_PROTOBUF_4_25="
+	python? (
+		|| (
+			=net-libs/google-cloud-cpp-2.22*
+			=net-libs/google-cloud-cpp-2.21*
+			=net-libs/google-cloud-cpp-2.19*
+		)
+	)
+"
+GOOGLE_CLOUD_CPP_PROTOBUF_4_24="
+	python? (
+		|| (
+			=net-libs/google-cloud-cpp-2.18*
+			=net-libs/google-cloud-cpp-2.17*
+			=net-libs/google-cloud-cpp-2.16*
+			=net-libs/google-cloud-cpp-2.15*
+		)
+	)
+"
+GOOGLE_CLOUD_CPP_PROTOBUF_4_23="
+	python? (
+		|| (
+			=net-libs/google-cloud-cpp-2.14*
+			=net-libs/google-cloud-cpp-2.13*
+			=net-libs/google-cloud-cpp-2.12*
+			=net-libs/google-cloud-cpp-2.11*
+		)
+	)
+"
+GOOGLE_CLOUD_CPP_PROTOBUF_3_21="
+	python? (
+		|| (
+			=net-libs/google-cloud-cpp-2.10*
+			=net-libs/google-cloud-cpp-2.9*
+		)
+	)
+"
 RDEPEND_PROTOBUF="
 	|| (
 		(
+			${GOOGLE_CLOUD_CPP_PROTOBUF_4_25}
 			!big-endian? (
 				=net-libs/grpc-1.62*[${PYTHON_USEDEP},python]
 			)
@@ -568,6 +614,7 @@ RDEPEND_PROTOBUF="
 			)
 		)
 		(
+			${GOOGLE_CLOUD_CPP_PROTOBUF_4_25}
 			!big-endian? (
 				=net-libs/grpc-1.61*[${PYTHON_USEDEP},python]
 			)
@@ -576,6 +623,7 @@ RDEPEND_PROTOBUF="
 			)
 		)
 		(
+			${GOOGLE_CLOUD_CPP_PROTOBUF_4_25}
 			!big-endian? (
 				=net-libs/grpc-1.60*[${PYTHON_USEDEP},python]
 			)
@@ -584,6 +632,7 @@ RDEPEND_PROTOBUF="
 			)
 		)
 		(
+			${GOOGLE_CLOUD_CPP_PROTOBUF_4_24}
 			!big-endian? (
 				=net-libs/grpc-1.59*[${PYTHON_USEDEP},python]
 			)
@@ -592,6 +641,7 @@ RDEPEND_PROTOBUF="
 			)
 		)
 		(
+			${GOOGLE_CLOUD_CPP_PROTOBUF_4_23}
 			!big-endian? (
 				=net-libs/grpc-1.58*[${PYTHON_USEDEP},python]
 			)
@@ -600,6 +650,7 @@ RDEPEND_PROTOBUF="
 			)
 		)
 		(
+			${GOOGLE_CLOUD_CPP_PROTOBUF_4_23}
 			!big-endian? (
 				=net-libs/grpc-1.57*[${PYTHON_USEDEP},python]
 			)
@@ -608,6 +659,7 @@ RDEPEND_PROTOBUF="
 			)
 		)
 		(
+			${GOOGLE_CLOUD_CPP_PROTOBUF_4_23}
 			!big-endian? (
 				=net-libs/grpc-1.56*[${PYTHON_USEDEP},python]
 			)
@@ -616,6 +668,7 @@ RDEPEND_PROTOBUF="
 			)
 		)
 		(
+			${GOOGLE_CLOUD_CPP_PROTOBUF_4_23}
 			!big-endian? (
 				=net-libs/grpc-1.55*[${PYTHON_USEDEP},python]
 			)
@@ -624,6 +677,7 @@ RDEPEND_PROTOBUF="
 			)
 		)
 		(
+			${GOOGLE_CLOUD_CPP_PROTOBUF_3_21}
 			!big-endian? (
 				=net-libs/grpc-1.54*[${PYTHON_USEDEP},python]
 			)
@@ -632,6 +686,7 @@ RDEPEND_PROTOBUF="
 			)
 		)
 		(
+			${GOOGLE_CLOUD_CPP_PROTOBUF_3_21}
 			!big-endian? (
 				=net-libs/grpc-1.53*[${PYTHON_USEDEP},python]
 			)
@@ -640,6 +695,7 @@ RDEPEND_PROTOBUF="
 			)
 		)
 		(
+			${GOOGLE_CLOUD_CPP_PROTOBUF_3_21}
 			!big-endian? (
 				=net-libs/grpc-1.52*[${PYTHON_USEDEP},python]
 			)
@@ -648,6 +704,7 @@ RDEPEND_PROTOBUF="
 			)
 		)
 		(
+			${GOOGLE_CLOUD_CPP_PROTOBUF_3_21}
 			!big-endian? (
 				=net-libs/grpc-1.49*[${PYTHON_USEDEP},python]
 			)
@@ -655,6 +712,9 @@ RDEPEND_PROTOBUF="
 				=net-libs/grpc-1.49*[-python]
 			)
 		)
+	)
+	python? (
+		net-libs/google-cloud-cpp:=
 	)
 	net-libs/grpc:=
 "
@@ -825,11 +885,6 @@ RDEPEND="
 		system-flatbuffers? (
 			~dev-libs/flatbuffers-${FLATBUFFERS_PV}
 		)
-		|| (
-			=net-libs/google-cloud-cpp-2.10*
-			=net-libs/google-cloud-cpp-2.9*
-		)
-		net-libs/google-cloud-cpp:=
 	)
 	rocm? (
 		$(gen_rocm_rdepend)
