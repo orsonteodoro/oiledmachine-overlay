@@ -194,7 +194,7 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	dev-cpp/tbb
-	dev-libs/protobuf
+	dev-libs/protobuf:=
 	mlas? (
 		>=sci-libs/mlas-20240118
 	)
@@ -208,6 +208,7 @@ RDEPEND+="
 	)
 	system-protobuf? (
 		>=dev-libs/protobuf-3.20.3:0/3.21
+		dev-libs/protobuf:=
 	)
 	system-pugixml? (
 		>=dev-libs/pugixml-1.14
@@ -254,6 +255,7 @@ BDEPEND_TEST_CONSTRAINTS="
 	>=dev-python/paddlepaddle-2.5.0[${PYTHON_USEDEP}]
 	>=dev-python/pandas-1.3.5[${PYTHON_USEDEP}]
 	>=dev-python/protobuf-3.18.1:0/3.21[${PYTHON_USEDEP}]
+	dev-python/protobuf:=
 	>=dev-python/py-1.9.0[${PYTHON_USEDEP}]
 	>=dev-python/pymongo-3.12.0[${PYTHON_USEDEP}]
 	>=dev-python/pytest-dependency-0.5.1[${PYTHON_USEDEP}]
@@ -354,6 +356,7 @@ BDEPEND_MODEL_HUB_TESTS_PYTORCH="
 	dev-python/packaging[${PYTHON_USEDEP}]
 	dev-python/pandas[${PYTHON_USEDEP}]
 	dev-python/protobuf[${PYTHON_USEDEP}]
+	dev-python/protobuf:=
 	dev-python/pyctcdecode[${PYTHON_USEDEP}]
 	dev-python/pytest[${PYTHON_USEDEP}]
 	dev-python/pytest-html[${PYTHON_USEDEP}]
@@ -432,6 +435,7 @@ BDEPEND_CONDITIONAL_COMPILATION="
 	${BDEPEND_TEST_CONSTRAINTS}
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/protobuf[${PYTHON_USEDEP}]
+	dev-python/protobuf:=
 	dev-python/py[${PYTHON_USEDEP}]
 	dev-python/pytest[${PYTHON_USEDEP}]
 	dev-python/pytest-dependency[${PYTHON_USEDEP}]
