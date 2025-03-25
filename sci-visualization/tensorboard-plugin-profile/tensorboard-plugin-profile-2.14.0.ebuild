@@ -7,6 +7,12 @@ EAPI=8
 MY_PN="${PN/-/_}"
 
 DISTUTILS_USE_PEP517="setuptools"
+PROTOBUF_SLOTS=(
+	"3.21"
+	"4.23"
+	"4.24"
+	"4.25"
+)
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 pypi
@@ -40,9 +46,21 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
+gen_protobuf_rdepend() {
+	local s
+	for s in ${PROTOBUF_SLOTS[@]} ; do
+		echo "
+			dev-python/protobuf:0/${s}[${PYTHON_USEDEP}]
+		"
+	done
+}
 RDEPEND+="
 	>=dev-python/absl-py-0.4[${PYTHON_USEDEP}]
 	>=dev-python/gviz-api-1.9.0[${PYTHON_USEDEP}]
+	|| (
+		$(gen_protobuf_rdepend)
+	)
+	dev-python/protobuf:=
 	>=dev-python/protobuf-3.19.6:0/3.21[${PYTHON_USEDEP}]
 	>=dev-python/six-1.10.0[${PYTHON_USEDEP}]
 	>=dev-python/werkzeug-0.11.15[${PYTHON_USEDEP}]
