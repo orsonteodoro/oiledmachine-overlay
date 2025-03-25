@@ -30,6 +30,7 @@ RDEPEND="
 	~dev-python/grpcio-${PV}[${PYTHON_USEDEP}]
 	>=dev-python/googleapis-common-protos-1.5.5[${PYTHON_USEDEP}]
 	dev-python/protobuf:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
+	dev-python/protobuf:=
 "
 BDEPEND="
 	test? (
