@@ -8,7 +8,6 @@ DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="standalone"
 GCC_SLOT=12
 LLVM_COMPAT=( {17..15} )
-PROTOBUF_SLOT="0/3.21"
 PYTHON_COMPAT=( "python3_"{10..11} )
 YARN_SLOT="1"
 
@@ -70,16 +69,62 @@ RDEPEND="
 		>dev-python/six-1.9[${PYTHON_USEDEP}]
 		dev-python/bleach[${PYTHON_USEDEP}]
 		dev-python/html5lib[${PYTHON_USEDEP}]
-		dev-python/protobuf:'${PROTOBUF_SLOT}'[${PYTHON_USEDEP}]
 
 		|| (
 			(
+				=dev-python/grpcio-1.62*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.62*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/4.25[${PYTHON_USEDEP}]
+			)
+			(
+				=dev-python/grpcio-1.61*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.61*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/4.25[${PYTHON_USEDEP}]
+			)
+			(
+				=dev-python/grpcio-1.60*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.60*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/4.25[${PYTHON_USEDEP}]
+			)
+			(
+				=dev-python/grpcio-1.59*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.59*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/4.24[${PYTHON_USEDEP}]
+			)
+			(
+				=dev-python/grpcio-1.58*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.58*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/4.23[${PYTHON_USEDEP}]
+			)
+			(
+				=dev-python/grpcio-1.57*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.57*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/4.23[${PYTHON_USEDEP}]
+			)
+			(
+				=dev-python/grpcio-1.56*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.56*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/4.23[${PYTHON_USEDEP}]
+			)
+			(
+				=dev-python/grpcio-1.55*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.55*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/4.23[${PYTHON_USEDEP}]
+			)
+			(
 				=dev-python/grpcio-1.54*[${PYTHON_USEDEP}]
 				=net-libs/grpc-1.54*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
 			)
 			(
 				=dev-python/grpcio-1.53*[${PYTHON_USEDEP}]
 				=net-libs/grpc-1.53*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
+			)
+			(
+				=dev-python/grpcio-1.49*[${PYTHON_USEDEP}]
+				=net-libs/grpc-1.49*[${PYTHON_USEDEP},python]
+				dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
 			)
 		)
 		dev-python/grpcio:=
