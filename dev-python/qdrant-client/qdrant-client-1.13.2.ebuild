@@ -59,8 +59,24 @@ RDEPEND+="
 	' python3_13)
 	>=dev-python/httpx-0.20.0[http2(+)]
 	>=dev-python/pydantic-1.10.8[${PYTHON_USEDEP}]
-	>=dev-python/grpcio-1.41.0[${PYTHON_USEDEP}]
-	>=dev-python/grpcio-tools-1.41.0[${PYTHON_USEDEP}]
+	|| (
+		(
+			=dev-python/grpcio-1.49*[${PYTHON_USEDEP}]
+			=dev-python/grpcio-tools-1.49*[${PYTHON_USEDEP}]
+		)
+		(
+			=dev-python/grpcio-1.52*[${PYTHON_USEDEP}]
+			=dev-python/grpcio-tools-1.52*[${PYTHON_USEDEP}]
+		)
+		(
+			=dev-python/grpcio-1.53*[${PYTHON_USEDEP}]
+			=dev-python/grpcio-tools-1.53*[${PYTHON_USEDEP}]
+		)
+		(
+			=dev-python/grpcio-1.54*[${PYTHON_USEDEP}]
+			=dev-python/grpcio-tools-1.54*[${PYTHON_USEDEP}]
+		)
+	)
 	>=dev-python/urllib3-1.26.14[${PYTHON_USEDEP}]
 	>=dev-python/portalocker-2.7.0[${PYTHON_USEDEP}]
 	fastembed? (
@@ -76,12 +92,6 @@ DEPEND+="
 BDEPEND+="
 	>=dev-python/poetry-core-1.0.0[${PYTHON_USEDEP}]
 	dev? (
-		$(python_gen_cond_dep '
-			>=dev-python/grpcio-tools-1.48.2[${PYTHON_USEDEP}]
-		' python3_10)
-		$(python_gen_cond_dep '
-			>=dev-python/grpcio-tools-1.46[${PYTHON_USEDEP}]
-		' python3_{11..13})
 		>=dev-python/autoflake-2.2.1[${PYTHON_USEDEP}]
 		>=dev-python/coverage-6.3.3[${PYTHON_USEDEP}]
 		>=dev-python/pytest-7.1[${PYTHON_USEDEP}]
