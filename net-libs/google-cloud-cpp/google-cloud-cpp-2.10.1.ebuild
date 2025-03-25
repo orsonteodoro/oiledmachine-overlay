@@ -69,7 +69,7 @@ gen_grpc_rdepend() {
 		echo "
 			(
 				dev-libs/protobuf:0/${s2}
-				=net-libs/grpc-${s1}*
+				=net-libs/grpc-${s1}*[cxx]
 			)
 		"
 	done
