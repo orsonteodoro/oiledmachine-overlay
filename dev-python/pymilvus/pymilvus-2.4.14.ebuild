@@ -9,6 +9,33 @@ EAPI=8
 # sphinxcontrib-prettyspecialmethods
 
 DISTUTILS_USE_PEP517="setuptools"
+GRPC_SLOTS_REL=(
+	"1.49"
+	"1.52"
+	"1.53"
+	"1.54"
+	"1.55"
+	"1.56"
+	"1.57"
+	"1.58"
+	"1.59"
+	"1.60"
+	"1.61"
+	"1.62"
+	"1.63"
+	"1.64"
+	"1.65"
+	"1.66"
+	"1.67"
+)
+GRPC_SLOTS_DEV=(
+	"1.62"
+	"1.63"
+	"1.64"
+	"1.65"
+	"1.66"
+	"1.67"
+)
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 pypi
@@ -41,9 +68,28 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" bulk_writer dev model"
+gen_grpcio_dev() {
+	local s
+	for s in ${GRPC_SLOTS_DEV[@]} ; do
+		echo "
+			(
+				=dev-python/grpcio-${s}*[${PYTHON_USEDEP}]
+				=dev-python/grpcio-testing-${s}*[${PYTHON_USEDEP}]
+				=dev-python/grpcio-tools-${s}*[${PYTHON_USEDEP}]
+			)
+		"
+	done
+}
+gen_grpcio_rel() {
+	local s
+	for s in ${GRPC_SLOTS_REL[@]} ; do
+		echo "
+			=dev-python/grpcio-${s}*[${PYTHON_USEDEP}]
+		"
+	done
+}
 RDEPEND+="
 	=dev-python/milvus-lite-bin-2.4*[${PYTHON_USEDEP}]
-	>=dev-python/grpcio-1.49.1[${PYTHON_USEDEP}]
 	>=dev-python/pandas-1.2.4[${PYTHON_USEDEP}]
 	>=dev-python/protobuf-3.20.0[${PYTHON_USEDEP}]
 	>=dev-python/python-dotenv-1.0.1[${PYTHON_USEDEP}]
@@ -58,6 +104,9 @@ RDEPEND+="
 	model? (
 		>=dev-python/milvus-model-0.1.0[${PYTHON_USEDEP}]
 	)
+	|| (
+		$(gen_grpcio_rel)
+	)
 "
 DEPEND+="
 	${RDEPEND}
@@ -66,9 +115,6 @@ REQUIREMENTS_PKGS="
 	>=dev-python/build-0.4.0[${PYTHON_USEDEP}]
 	>=dev-python/certifi-2024.7.4[${PYTHON_USEDEP}]
 	>=dev-python/chardet-4.0.0[${PYTHON_USEDEP}]
-	>=dev-python/grpcio-1.62.2[${PYTHON_USEDEP}]
-	>=dev-python/grpcio-testing-1.62.2[${PYTHON_USEDEP}]
-	>=dev-python/grpcio-tools-1.62.2[${PYTHON_USEDEP}]
 	>=dev-python/idna-2.10[${PYTHON_USEDEP}]
 	>=dev-python/m2r-0.3.1[${PYTHON_USEDEP}]
 	>=dev-python/milvus-lite-2.4.0[${PYTHON_USEDEP}]
@@ -103,6 +149,9 @@ REQUIREMENTS_PKGS="
 	dev-python/sphinxcontrib-prettyspecialmethods[${PYTHON_USEDEP}]
 	dev-python/sphinxcontrib-qthelp[${PYTHON_USEDEP}]
 	dev-python/sphinxcontrib-serializinghtml[${PYTHON_USEDEP}]
+	|| (
+		$(gen_grpcio_dev)
+	)
 "
 BDEPEND+="
 	>=dev-python/setuptools-67[${PYTHON_USEDEP}]
@@ -111,9 +160,9 @@ BDEPEND+="
 	dev-python/gitpython[${PYTHON_USEDEP}]
 	dev? (
 		${REQUIREMENTS_PKGS}
-		>=dev-python/grpcio-1.62.2[${PYTHON_USEDEP}]
-		>=dev-python/grpcio-tools-1.62.2[${PYTHON_USEDEP}]
-		>=dev-python/grpcio-testing-1.62.2[${PYTHON_USEDEP}]
+		|| (
+			$(gen_grpcio_dev)
+		)
 		>=dev-python/pytest-5.3.4[${PYTHON_USEDEP}]
 		>=dev-python/pytest-cov-2.8.1[${PYTHON_USEDEP}]
 		>=dev-python/pytest-timeout-1.3.4[${PYTHON_USEDEP}]
