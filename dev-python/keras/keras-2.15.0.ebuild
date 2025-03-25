@@ -37,10 +37,29 @@ RESTRICT=""
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE=" test ebuild_revision_3"
-PROTOBUF_PV="3.21.9" # From WORKSPACE which differs from requirements.txt
-PROTOBUF_SLOT="0/${PROTOBUF_PV%.*}"
-# TensorFlow 2.15.0 needs numpy 1.x
+PROTOBUF_SLOTS=(
+	"3.21"
+	"4.23"
+	"4.24"
+	"4.25"
+	"5.26"
+	"5.27"
+	"5.27"
+)
+# TensorFlow needs numpy 1.x
+gen_rdepend_protobuf() {
+	local s
+	for s in ${PROTOBUF_SLOTS[@]} ; do
+		echo  "
+			dev-libs/protobuf:0/${s}
+			dev-libs/protobuf:=
+			dev-python/protobuf:0/${s}[${PYTHON_USEDEP}]
+			dev-python/protobuf:=
+		"
+	done
+}
 RDEPEND="
+	$(gen_rdepend_protobuf)
 	(
 		>=dev-python/numpy-1.24.3[${PYTHON_USEDEP}]
 		<dev-python/numpy-2[${PYTHON_USEDEP}]
@@ -50,12 +69,10 @@ RDEPEND="
 	>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
 	>=dev-python/keras-preprocessing-1.1.2[${PYTHON_USEDEP}]
 	>=sys-libs/zlib-1.2.13
-	dev-libs/protobuf:${PROTOBUF_SLOT}
 	dev-python/absl-py[${PYTHON_USEDEP}]
 	dev-python/h5py[${PYTHON_USEDEP}]
 	dev-python/pandas[${PYTHON_USEDEP}]
 	virtual/pillow[${PYTHON_USEDEP}]
-	dev-python/protobuf:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 	dev-python/pydot[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
 "
