@@ -90,7 +90,7 @@ JRE_DEPEND="
 "
 RDEPEND+="
 	${JRE_DEPEND}
-	>=dev-libs/protobuf-${PROTOBUF_PV}:0/3.21
+	dev-libs/protobuf:=
 	>=dev-python/numpy-1.16.0[${PYTHON_USEDEP}]
 	>=media-libs/libjpeg-turbo-2.1.4
 	>=media-libs/libpng-1.6.37
