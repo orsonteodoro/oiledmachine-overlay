@@ -85,7 +85,7 @@ gen_grpcio_rdepend() {
 	local s1
 	local s2
 	for s1 in ${GRPC_SLOTS[@]} ; do
-		s2=${GRPC_TO_PROTOBUF[${s1}]}
+		s2="${GRPC_TO_PROTOBUF[${s1}]}"
 		echo "
 			(
 				=dev-python/grpcio-${s1}*[${PYTHON_USEDEP}]
