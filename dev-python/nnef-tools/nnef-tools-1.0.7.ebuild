@@ -50,13 +50,15 @@ RDEPEND+="
 		$(python_gen_any_dep '
 			sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 		')
-		dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
+		dev-python/protobuf[${PYTHON_USEDEP}]
+		dev-python/protobuf:=
 	)
 	onnx? (
 		$(python_gen_any_dep '
 			sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
 		')
-		dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
+		dev-python/protobuf[${PYTHON_USEDEP}]
+		dev-python/protobuf:=
 		dev-python/onnx-simplifier[${PYTHON_USEDEP}]
 	)
 	tensorflow-lite? (
