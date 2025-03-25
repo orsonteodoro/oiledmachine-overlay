@@ -240,6 +240,7 @@ RDEPEND="
 			!=sci-ml/sentencepiece-0.1.92[${PYTHON_USEDEP}]
 			>=sci-ml/sentencepiece-0.1.91[${PYTHON_USEDEP}]
 			dev-python/protobuf[${PYTHON_USEDEP}]
+			dev-python/protobuf:=
 		)
 		serving? (
 			dev-python/fastapi[${PYTHON_USEDEP}]
@@ -272,6 +273,7 @@ RDEPEND="
 		torchhub? (
 			dev-python/importlib-metadata[${PYTHON_USEDEP}]
 			dev-python/protobuf[${PYTHON_USEDEP}]
+			dev-python/protobuf:=
 		)
 		vision? (
 			virtual/pillow[${PYTHON_USEDEP}]
