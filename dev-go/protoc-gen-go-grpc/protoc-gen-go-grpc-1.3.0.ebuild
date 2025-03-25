@@ -520,7 +520,7 @@ RDEPEND="
 "
 DEPEND="
 	test? (
-		dev-libs/protobuf
+		dev-libs/protobuf:=
 	)
 "
 RDEPEND=""
