@@ -214,7 +214,8 @@ RDEPEND+="
 		>=sci-ml/onnxruntime-1.6.0[${PYTHON_SINGLE_USEDEP},python]
 	')
 	>=dev-python/onnxoptimizer-0.2.5[${PYTHON_USEDEP}]
-	>=dev-python/protobuf-3.7.0:0/3.21[${PYTHON_USEDEP}]
+	>=dev-python/protobuf-3.7.0[${PYTHON_USEDEP}]
+	dev-python/protobuf:=
 	dev-python/rich[${PYTHON_USEDEP}]
 	sci-ml/onnx[${PYTHON_USEDEP}]
 "
