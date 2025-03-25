@@ -131,6 +131,7 @@ gen_jdk_bdepend() {
 }
 RDEPEND+="
 	dev-libs/protobuf:0/3.21[static-libs]
+	dev-libs/protobuf:=
 	|| (
 		$(gen_jre_rdepend)
 	)
