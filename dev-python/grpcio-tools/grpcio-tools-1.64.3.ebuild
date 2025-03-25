@@ -33,6 +33,7 @@ IUSE+=" ebuild_revision_1"
 RDEPEND="
 	>=dev-python/cython-0.29.35:0[${PYTHON_USEDEP}]
 	dev-python/protobuf:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
+	dev-python/protobuf:=
 	~dev-python/grpcio-${PV}[${PYTHON_USEDEP}]
 "
 DEPEND="
