@@ -320,17 +320,17 @@ PYTORCH_TEST_BDEPEND="
 		!strict? (
 			dev-python/fastapi[${PYTHON_USEDEP}]
 			dev-python/onnx[${PYTHON_USEDEP}]
-			>=dev-python/protobuf-3.20.2:0/3.21[${PYTHON_USEDEP}]
 			dev-python/psutil[${PYTHON_USEDEP}]
 			dev-python/uvicorn[${PYTHON_USEDEP}]
 		)
 		strict? (
 			<dev-python/fastapi-0.87.0[${PYTHON_USEDEP}]
 			<dev-python/onnx-1.14.0[${PYTHON_USEDEP}]
-			<dev-python/protobuf-3.20.2:0/3.21[${PYTHON_USEDEP}]
 			<dev-python/psutil-5.9.5[${PYTHON_USEDEP}]
 			<dev-python/uvicorn-0.19.1[${PYTHON_USEDEP}]
 		)
+		dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
+		dev-python/protobuf:=
 		>=dev-python/codecov-2.1.12[${PYTHON_USEDEP}]
 		>=dev-python/coverage-6.5.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-7.2.0[${PYTHON_USEDEP}]
