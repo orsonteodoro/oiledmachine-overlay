@@ -9,6 +9,14 @@ EAPI=8
 MY_PN="${PN/-/_}"
 
 DISTUTILS_USE_PEP517="setuptools"
+PROTOBUF_SLOTS=(
+	"3.21"
+	"4.23"
+	"4.24"
+	"4.25"
+	"5.26"
+	"5.27"
+)
 PYTHON_COMPAT=( "python3_"{8..11} ) # CI tests with 3.10
 
 inherit distutils-r1
@@ -32,13 +40,19 @@ IUSE+="
 hdf5 test
 ebuild_revision_1
 "
-
+gen_protobuf_rdepend() {
+	local s
+	for s in ${PROTOBUF_SLOTS[@]} ; do
+		echo "
+			dev-python/protobuf:0/${s}[${PYTHON_USEDEP}]
+		"
+	done
+}
 RDEPEND+="
 	>=dev-python/absl-py-2.1.0[${PYTHON_USEDEP}]
 	>=dev-python/lxml-5.2.1[${PYTHON_USEDEP}]
 	>=dev-python/mujoco-3.1.5[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
-	>=dev-python/protobuf-3.19.4:0/3.21[${PYTHON_USEDEP}]
 	>=dev-python/pyglfw-1.12.0[${PYTHON_USEDEP}]
 	>=dev-python/pyopengl-3.1.7[${PYTHON_USEDEP}]
 	>=dev-python/pyparsing-3.1.2[${PYTHON_USEDEP}]
@@ -51,6 +65,10 @@ RDEPEND+="
 	hdf5? (
 		>=dev-python/h5py-3.11.0[${PYTHON_USEDEP}]
 	)
+	|| (
+		$(gen_protobuf_rdepend)
+	)
+	dev-python/protobuf:=
 "
 DEPEND+="
 	${RDEPEND}
