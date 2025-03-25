@@ -47,6 +47,7 @@ IUSE+=" ebuild_revision_1"
 RDEPEND="
 	${PYTHON_DEPS}
 	dev-libs/protobuf:${SLOT}
+	dev-libs/protobuf:=
 "
 DEPEND="
 	${RDEPEND}
