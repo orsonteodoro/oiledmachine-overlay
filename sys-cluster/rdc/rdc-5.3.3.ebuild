@@ -11,6 +11,18 @@ EAPI=8
 # See commit 52a3463 for details
 
 CMAKE_MAKEFILE_GENERATOR="emake"
+declare -A GRPC_TO_PROTOBUF=(
+	["1.49"]="3.21"
+	["1.52"]="3.21"
+	["1.53"]="3.21"
+	["1.54"]="3.21"
+)
+GRPC_SLOTS=(
+	"1.49"
+	"1.52"
+	"1.53"
+	"1.54"
+)
 LLVM_SLOT=15
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
@@ -51,6 +63,19 @@ REQUIRED_USE="
 "
 # abseil-cpp needs >=c++11
 # Originally >=net-libs/grpc-1.28.1:= but relaxed
+gen_standalone_rdepend() {
+	local s1
+	local s2
+	for s1 in ${GRPC_SLOTS[@]} ; do
+		s2="${GRPC_TO_PROTOBUF[${s1}]}"
+		echo "
+			(
+				=net-libs/grpc-${s1}*
+				dev-libs/protobuf:0/${s2}
+			)
+		"
+	done
+}
 RDEPEND="
 	sys-libs/libcap
 	~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
@@ -58,13 +83,10 @@ RDEPEND="
 		~dev-libs/roct-thunk-interface-${PV}:${ROCM_SLOT}
 	)
 	standalone? (
-		>=dev-libs/protobuf-3.11.2:0/3.21
 		|| (
-			=net-libs/grpc-1.49*
-			=net-libs/grpc-1.52*
-			=net-libs/grpc-1.53*
-			=net-libs/grpc-1.54*
+			$(gen_standalone_rdepend)
 		)
+		dev-libs/protobuf:=
 		net-libs/grpc:=
 	)
 	systemd? (
