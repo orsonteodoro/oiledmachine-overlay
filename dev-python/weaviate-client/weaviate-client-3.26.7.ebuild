@@ -11,6 +11,20 @@ MY_PN="weaviate-python-client"
 # types-urllib3
 
 DISTUTILS_USE_PEP517="setuptools"
+GRPC_SLOTS=(
+	"1.57"
+	"1.58"
+	"1.59"
+	"1.60"
+	"1.61"
+	"1.62"
+	"1.63"
+	"1.64"
+	"1.65"
+	"1.66"
+	"1.67"
+	# < 2.0
+)
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1 pypi
@@ -43,13 +57,28 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev grpc"
+REQUIRED_USE="
+	dev? (
+		grpc
+	)
+"
+gen_grpcio_rdepend() {
+	local s
+	for s in ${GRPC_SLOTS[@]} ; do
+		echo "
+			=dev-python/grpcio-${s}*[${PYTHON_USEDEP}]
+			=dev-python/grpcio-tools-${s}*[${PYTHON_USEDEP}]
+		"
+	done
+}
 RDEPEND+="
 	>=dev-python/Authlib-1.3.1
 	>=dev-python/requests-2.32.2
 	>=dev-python/validators-0.21.2
 	grpc? (
-		>=dev-python/grpcio-1.57.0
-		>=dev-python/grpcio-tools-1.57.0
+		|| (
+			$(gen_grpcio_rdepend)
+		)
 	)
 "
 DEPEND+="
@@ -63,16 +92,12 @@ BDEPEND+="
 		>=dev-python/requests-2.32.2[${PYTHON_USEDEP}]
 		>=dev-python/validators-0.21.2[${PYTHON_USEDEP}]
 		>=dev-python/Authlib-1.3.1[${PYTHON_USEDEP}]
-		>=dev-python/grpcio-1.57.0[${PYTHON_USEDEP}]
-		>=dev-python/grpcio-tools-1.57.0[${PYTHON_USEDEP}]
 
 		dev-python/build[${PYTHON_USEDEP}]
 		dev-python/twine[${PYTHON_USEDEP}]
 		dev-python/wheel[${PYTHON_USEDEP}]
 		dev-python/setuptools-scm[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-7.0.0[${PYTHON_USEDEP}]
-
-		dev-python/grpcio-tools[${PYTHON_USEDEP}]
 
 		>=dev-python/pytest-7.4.4[${PYTHON_USEDEP}]
 		>=dev-python/pytest-cov-4.1.0[${PYTHON_USEDEP}]
