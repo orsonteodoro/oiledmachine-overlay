@@ -73,10 +73,8 @@ RDEPEND+="
 		>=dev-python/jaxlib-0.4.1[${PYTHON_USEDEP}]
 	)
 	training? (
-		(
-			>=dev-python/protobuf-3.20.3[${PYTHON_USEDEP}]
-			<dev-python/protobuf-4[${PYTHON_USEDEP}]
-		)
+		dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
+		dev-python/protobuf:=
 		>=dev-python/accelerate-0.29.3[${PYTHON_USEDEP}]
 		>=dev-python/peft-0.6.0[${PYTHON_USEDEP}]
 		dev-python/datasets[${PYTHON_USEDEP}]
