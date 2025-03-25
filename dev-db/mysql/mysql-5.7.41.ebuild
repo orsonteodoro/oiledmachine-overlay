@@ -91,7 +91,7 @@ COMMON_DEPEND="
 "
 DEPEND="
 	${COMMON_DEPEND}
-	dev-libs/protobuf
+	dev-libs/protobuf:=
 	app-alternatives/yacc
 	server? (
 		dev-libs/libevent:=[ssl]
