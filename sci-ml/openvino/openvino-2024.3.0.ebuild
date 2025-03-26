@@ -820,7 +820,7 @@ src_configure() {
 		-DCMAKE_INSTALL_PREFIX="/usr/$(get_libdir)/openvino"
 		-DENABLE_CPP_API=ON
 		-DENABLE_PYTHON_API=OFF
-		-DENABLE_PYTHON=OFF
+		-DENABLE_PYTHON=$(usex python)
 		-DENABLE_SAMPLES=$(usex samples)
 		-DENABLE_WHEEL=OFF
 	)
