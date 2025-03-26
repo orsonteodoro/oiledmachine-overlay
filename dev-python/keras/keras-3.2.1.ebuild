@@ -47,15 +47,14 @@ gen_rdepend_protobuf() {
 	local s
 	for s in ${PROTOBUF_SLOTS[@]} ; do
 		echo  "
-			dev-libs/protobuf:0/${s}
-			dev-libs/protobuf:=
-			dev-python/protobuf:0/${s}[${PYTHON_USEDEP}]
-			dev-python/protobuf:=
+			(
+				dev-libs/protobuf:0/${s}
+				dev-python/protobuf:0/${s}[${PYTHON_USEDEP}]
+			)
 		"
 	done
 }
 RDEPEND="
-	$(gen_rdepend_protobuf)
 	$(python_gen_cond_dep '
 		(
 			>=dev-python/numpy-1.23.5[${PYTHON_USEDEP}]
@@ -84,6 +83,11 @@ RDEPEND="
 	dev-python/scipy[${PYTHON_USEDEP}]
 	dev-python/ml-dtypes[${PYTHON_USEDEP}]
 	sci-visualization/tensorboard-plugin-profile[${PYTHON_USEDEP}]
+	|| (
+		$(gen_rdepend_protobuf)
+	)
+	dev-libs/protobuf:=
+	dev-python/protobuf:=
 "
 DEPEND="
 	${RDEPEND}

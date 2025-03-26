@@ -51,15 +51,14 @@ gen_rdepend_protobuf() {
 	local s
 	for s in ${PROTOBUF_SLOTS[@]} ; do
 		echo  "
-			dev-libs/protobuf:0/${s}
-			dev-libs/protobuf:=
-			dev-python/protobuf:0/${s}[${PYTHON_USEDEP}]
-			dev-python/protobuf:=
+			(
+				dev-libs/protobuf:0/${s}
+				dev-python/protobuf:0/${s}[${PYTHON_USEDEP}]
+			)
 		"
 	done
 }
 RDEPEND="
-	$(gen_rdepend_protobuf)
 	(
 		>=dev-python/numpy-1.24.3[${PYTHON_USEDEP}]
 		<dev-python/numpy-2[${PYTHON_USEDEP}]
@@ -75,6 +74,11 @@ RDEPEND="
 	virtual/pillow[${PYTHON_USEDEP}]
 	dev-python/pydot[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
+	|| (
+		$(gen_rdepend_protobuf)
+	)
+	dev-libs/protobuf:=
+	dev-python/protobuf:=
 "
 DEPEND="
 	${RDEPEND}
