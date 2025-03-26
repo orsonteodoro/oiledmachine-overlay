@@ -7,7 +7,7 @@ MY_P="grpc-${PV}"
 
 DISTUTILS_USE_PEP517="setuptools"
 PROTOBUF_SLOT="0/5.26"
-PYTHON_COMPAT=( "python3_"{10..11} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1
 
