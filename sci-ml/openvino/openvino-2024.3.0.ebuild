@@ -17,6 +17,7 @@ EAPI=8
 # mlas
 # natten
 # omegaconf
+# openvino-telemetry
 # optimum
 # paddlepaddle
 # pyctcdecode
@@ -180,11 +181,11 @@ LICENSE="
 RESTRICT="mirror test" # Missing test dependencies
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-	${CPU_FLAGS_X86[@]}
-	development-tools doc -lto +mlas +npu -openmp runtime +samples
-	-system-flatbuffers system-opencl system-protobuf system-pugixml
-	system-snappy system-tbb -telemetry test +tbb video_cards_intel
-	ebuild_revision_5
+${CPU_FLAGS_X86[@]}
+development-tools doc -lto +mlas +npu -openmp python runtime +samples
+-system-flatbuffers system-opencl system-protobuf system-pugixml system-snappy
+system-tbb -telemetry test +tbb video_cards_intel
+ebuild_revision_5
 "
 REQUIRED_USE="
 	?? (
@@ -199,12 +200,64 @@ REQUIRED_USE="
 		development-tools
 	)
 "
+# src/bindings/python/constraints.txt
+RDEPEND_CONSTRAINTS="
+	(
+		>=dev-python/numpy-1.16.6[${PYTHON_USEDEP}]
+		<dev-python/numpy-1.27[${PYTHON_USEDEP}]
+	)
+
+	(
+		>=dev-python/pytest-5.0[${PYTHON_USEDEP}]
+		<dev-python/pytest-8.3[${PYTHON_USEDEP}]
+	)
+	>=dev-python/pytest-dependency-0.6.0[${PYTHON_USEDEP}]
+	>=dev-python/pytest-html-4.1.1[${PYTHON_USEDEP}]
+	>=dev-python/pytest-timeout-2.2.0[${PYTHON_USEDEP}]
+
+	>=dev-python/py-1.9.0[${PYTHON_USEDEP}]
+	>=dev-python/pygments-2.8.1[${PYTHON_USEDEP}]
+	>=dev-python/setuptools-65.6.1[${PYTHON_USEDEP}]
+	>=dev-python/sympy-1.10[${PYTHON_USEDEP}]
+	>=dev-python/wheel-0.38.1[${PYTHON_USEDEP}]
+
+	(
+		>=dev-python/h5py-3.1.0[${PYTHON_USEDEP}]
+		<dev-python/h5py-3.12.0[${PYTHON_USEDEP}]
+	)
+	>=dev-python/docopt-0.6.2[${PYTHON_USEDEP}]
+	>=dev-python/paddlepaddle-2.6.0[${PYTHON_USEDEP}]
+	(
+		>=dev-ml/tensorflow-1.15.5[${PYTHON_USEDEP},python]
+		<dev-ml/tensorflow-2.17.0[${PYTHON_USEDEP},python]
+	)
+	>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
+	(
+		dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
+		dev-python/protobuf:=
+	)
+	>=dev-python/onnx-1.15.0[${PYTHON_USEDEP}]
+"
+# src/bindings/python/requirements.txt
+RDEPEND_PYTHON_BINDINGS="
+	(
+		>=dev-python/numpy-1.16.6[${PYTHON_USEDEP}]
+		<dev-python/numpy-2.0.0[${PYTHON_USEDEP}]
+	)
+	>=dev-python/openvino-telemetry-2023.2.1[${PYTHON_USEDEP}]
+	dev-python/packaging[${PYTHON_USEDEP}]
+"
+# TODO:  src/bindings/python/requirements_test.txt
 RDEPEND+="
 	dev-cpp/tbb
 	dev-libs/protobuf:0/3.21
 	dev-libs/protobuf:=
 	mlas? (
 		>=sci-libs/mlas-20240118
+	)
+	python? (
+		${RDEPEND_CONSTRAINTS}
+		${RDEPEND_PYTHON_BINDINGS}
 	)
 	system-flatbuffers? (
 		>=dev-libs/flatbuffers-24.3.25

@@ -17,6 +17,7 @@ EAPI=8
 # mlas
 # natten
 # omegaconf
+# openvino-telemetry
 # optimum
 # paddlepaddle
 # pyctcdecode
@@ -173,11 +174,11 @@ LICENSE="
 RESTRICT="mirror test" # Missing test dependencies
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-	${CPU_FLAGS_X86[@]}
-	development-tools doc -lto +mlas +npu -openmp python runtime +samples
-	-system-flatbuffers system-opencl system-protobuf system-pugixml
-	system-snappy system-tbb -telemetry test +tbb video_cards_intel
-	ebuild_revision_5
+${CPU_FLAGS_X86[@]}
+development-tools doc -lto +mlas +npu -openmp python runtime +samples
+-system-flatbuffers system-opencl system-protobuf system-pugixml system-snappy
+system-tbb -telemetry test +tbb video_cards_intel
+ebuild_revision_5
 "
 REQUIRED_USE="
 	?? (
@@ -212,7 +213,6 @@ RDEPEND_CONSTRAINTS="
 	>=dev-python/setuptools-65.6.1[${PYTHON_USEDEP}]
 	>=dev-python/sympy-1.10[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.38.1[${PYTHON_USEDEP}]
-	<dev-python/patchelf-0.17.2.2
 
 	>=dev-python/docopt-0.6.2[${PYTHON_USEDEP}]
 	>=dev-python/paddlepaddle-2.5.2[${PYTHON_USEDEP}]
@@ -236,6 +236,7 @@ RDEPEND_PYTHON_BINDINGS="
 	>=dev-python/openvino-telemetry-2023.2.1[${PYTHON_USEDEP}]
 	dev-python/packaging[${PYTHON_USEDEP}]
 "
+# TODO:  src/bindings/python/requirements_test.txt
 RDEPEND+="
 	dev-cpp/tbb
 	dev-libs/protobuf:0/3.21

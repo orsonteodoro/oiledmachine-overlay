@@ -11,6 +11,7 @@ EAPI=8
 # facexlib
 # mlas
 # natten
+# openvino-telemetry
 # optimum
 # paddlepaddle
 # pyctcdecode
@@ -181,11 +182,11 @@ LICENSE="
 RESTRICT="mirror test" # Missing test dependencies
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-	${CPU_FLAGS_X86[@]}
-	development-tools doc gna -lto +mlas -openmp python runtime +samples
-	-system-flatbuffers system-opencl system-protobuf system-pugixml
-	system-snappy system-tbb test +tbb video_cards_intel
-	ebuild_revision_5
+${CPU_FLAGS_X86[@]}
+development-tools doc gna -lto +mlas -openmp python runtime +samples
+-system-flatbuffers system-opencl system-protobuf system-pugixml system-snappy
+system-tbb test +tbb video_cards_intel
+ebuild_revision_5
 "
 REQUIRED_USE="
 	?? (
@@ -221,7 +222,6 @@ RDEPEND_CONSTRAINTS="
 	>=dev-python/setuptools-65.6.1[${PYTHON_USEDEP}]
 	>=dev-python/sympy-1.10[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.38.1[${PYTHON_USEDEP}]
-	<dev-python/patchelf-0.17.2.2[${PYTHON_USEDEP}]
 
 	# Frontends
 	>=dev-python/docopt-0.6.2[${PYTHON_USEDEP}]
@@ -242,6 +242,7 @@ RDEPEND_PYTHON_BINDINGS="
 	>=dev-python/numpy-1.16.6[${PYTHON_USEDEP}]
 	>=dev-python/openvino-telemetry-2023.2.1[${PYTHON_USEDEP}]
 "
+# TODO:  src/bindings/python/requirements_test.txt
 RDEPEND+="
 	dev-cpp/tbb
 	mlas? (
