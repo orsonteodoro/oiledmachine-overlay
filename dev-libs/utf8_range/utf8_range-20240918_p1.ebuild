@@ -14,10 +14,10 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/protocolbuffers/protobuf.git"
 	EGIT_SUBMODULES=()
-	FALLBACK_COMMIT="548d34f4620a21d218ec56944beb36dbfbaa7df8" # Sep 18, 2024
+	FALLBACK_COMMIT="9fff46d7327c699ef970769d5c9fd0e44df08fc7" # Sep 18, 2024
 	S="${WORKDIR}/protobuf-9999/third_party/utf8_range"
 else
-	EGIT_COMMIT="548d34f4620a21d218ec56944beb36dbfbaa7df8" # Sep 18, 2024
+	EGIT_COMMIT="9fff46d7327c699ef970769d5c9fd0e44df08fc7" # Sep 18, 2024
 	SRC_URI="
 https://github.com/protocolbuffers/protobuf/archive/${EGIT_COMMIT}.tar.gz -> protobuf-${EGIT_COMMIT:0:7}.tar.gz
 	"
@@ -28,7 +28,7 @@ DESCRIPTION="Fast UTF-8 validation with Range algorithm (NEON+SSE4+AVX2)"
 HOMEPAGE="https://github.com/protocolbuffers/protobuf/tree/main/third_party/utf8_range"
 LICENSE="MIT"
 KEYWORDS="~amd64 ~arm64"
-SLOT="0/5.27" # Subslot is protobuf slot.
+SLOT="0/5.28" # Subslot is protobuf slot.
 IUSE+=" fallback-commit test"
 # See https://github.com/protocolbuffers/utf8_range/blob/main/.github/workflows/cmake_tests.yml#L14
 # For abseil version see MODULE.bazel
