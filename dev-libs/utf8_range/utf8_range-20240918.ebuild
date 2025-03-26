@@ -4,19 +4,20 @@
 
 EAPI=8
 
-# fallback commit is same as protobuf 5.28 (head)
+# Snapshots are done because of abseil-cpp.  We try to prevent a multiple instances conflict.
+# The tarball is same as protobuf 26.1.
 
 inherit cmake-multilib
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
-	FALLBACK_COMMIT="4ec9170bcdfaba23c15fbbc90917e6316a99cc86" # Dec 28, 2023
 	EGIT_BRANCH="main"
 	EGIT_REPO_URI="https://github.com/protocolbuffers/protobuf.git"
 	EGIT_SUBMODULES=()
+	FALLBACK_COMMIT="548d34f4620a21d218ec56944beb36dbfbaa7df8" # Sep 18, 2024
 	S="${WORKDIR}/protobuf-9999/third_party/utf8_range"
 else
-	EGIT_COMMIT=""
+	EGIT_COMMIT="548d34f4620a21d218ec56944beb36dbfbaa7df8" # Sep 18, 2024
 	SRC_URI="
 https://github.com/protocolbuffers/protobuf/archive/${EGIT_COMMIT}.tar.gz -> protobuf-${EGIT_COMMIT:0:7}.tar.gz
 	"
@@ -27,12 +28,12 @@ DESCRIPTION="Fast UTF-8 validation with Range algorithm (NEON+SSE4+AVX2)"
 HOMEPAGE="https://github.com/protocolbuffers/protobuf/tree/main/third_party/utf8_range"
 LICENSE="MIT"
 KEYWORDS="~amd64 ~arm64"
-SLOT="0/5.28" # Subslot is protobuf slot.
+SLOT="0/5.26" # Subslot is protobuf slot.
 IUSE+=" fallback-commit test"
 # See https://github.com/protocolbuffers/utf8_range/blob/main/.github/workflows/cmake_tests.yml#L14
 # For abseil version see MODULE.bazel
 RDEPEND+="
-	>=dev-cpp/abseil-cpp-20240116.0:0/20240116.0
+	>=dev-cpp/abseil-cpp-20240116_rc2:0/20240116
 "
 BDEPEND+="
 	>=dev-build/cmake-3.10
