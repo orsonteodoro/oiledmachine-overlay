@@ -778,6 +778,10 @@ RDEPEND_GRPCIO="
 				dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
 			)
 		)
+		dev-python/grpcio:=
+		dev-python/grpcio-tools:=
+		dev-python/protobuf:=
+		net-libs/grpc:=
 	' python3_{10..11})
 "
 
