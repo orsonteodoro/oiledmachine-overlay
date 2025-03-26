@@ -196,6 +196,7 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	dev-cpp/tbb
+	dev-libs/protobuf:0/3.21
 	dev-libs/protobuf:=
 	mlas? (
 		>=sci-libs/mlas-20240118

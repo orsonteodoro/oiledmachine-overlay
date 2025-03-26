@@ -182,7 +182,7 @@ RESTRICT="mirror test" # Missing test dependencies
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 	${CPU_FLAGS_X86[@]}
-	development-tools doc gna -lto +mlas -openmp runtime +samples
+	development-tools doc gna -lto +mlas -openmp python runtime +samples
 	-system-flatbuffers system-opencl system-protobuf system-pugixml
 	system-snappy system-tbb test +tbb video_cards_intel
 	ebuild_revision_5
@@ -200,10 +200,56 @@ REQUIRED_USE="
 		development-tools
 	)
 "
+# src/bindings/python/constraints.txt
+RDEPEND_CONSTRAINTS="
+	(
+		>=dev-python/numpy-1.16.6[${PYTHON_USEDEP}]
+		<dev-python/numpy-1.27[${PYTHON_USEDEP}]
+	)
+
+	(
+		>=dev-python/pytest-5.0[${PYTHON_USEDEP}]
+		<dev-python/pytest-7.5[${PYTHON_USEDEP}]
+	)
+	>=dev-python/pytest-dependency-0.5.1[${PYTHON_USEDEP}]
+	>=dev-python/pytest-html-4.1.1[${PYTHON_USEDEP}]
+	>=dev-python/pytest-timeout-2.2.0[${PYTHON_USEDEP}]
+
+	# Python bindings
+	>=dev-python/py-1.9.0[${PYTHON_USEDEP}]
+	>=dev-python/pygments-2.8.1[${PYTHON_USEDEP}]
+	>=dev-python/setuptools-65.6.1[${PYTHON_USEDEP}]
+	>=dev-python/sympy-1.10[${PYTHON_USEDEP}]
+	>=dev-python/wheel-0.38.1[${PYTHON_USEDEP}]
+	<dev-python/patchelf-0.17.2.2[${PYTHON_USEDEP}]
+
+	# Frontends
+	>=dev-python/docopt-0.6.2[${PYTHON_USEDEP}]
+	>=dev-python/paddlepaddle-2.5.2[${PYTHON_USEDEP}]
+	(
+		>=sci-ml/tensorflow-1.15.5[${PYTHON_USEDEP},python]
+		<sci-ml/tensorflow-2.15.0[${PYTHON_USEDEP},python]
+	)
+	>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
+	(
+		dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
+		dev-python/protobuf:=
+	)
+	>=dev-python/onnx-1.15.0[${PYTHON_USEDEP}]
+"
+# src/bindings/python/requirements.txt
+RDEPEND_PYTHON_BINDINGS="
+	>=dev-python/numpy-1.16.6[${PYTHON_USEDEP}]
+	>=dev-python/openvino-telemetry-2023.2.1[${PYTHON_USEDEP}]
+"
 RDEPEND+="
 	dev-cpp/tbb
 	mlas? (
 		>=sci-libs/mlas-20231105
+	)
+	python? (
+		${RDEPEND_CONSTRAINTS}
+		${RDEPEND_PYTHON_BINDINGS}
 	)
 	system-flatbuffers? (
 		>=dev-libs/flatbuffers-23.3.3
