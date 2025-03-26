@@ -158,8 +158,8 @@ BDEPEND="
 		|| (
 			$(gen_grpc_test_bdepend)
 		)
-		dev-python/grpcio:=[${PYTHON_USEDEP}]
-		net-libs/grpc:=[${PYTHON_USEDEP},python]
+		dev-python/grpcio:=
+		net-libs/grpc:=
 
 		dev-python/black[${PYTHON_USEDEP}]
 		dev-python/click[${PYTHON_USEDEP}]
