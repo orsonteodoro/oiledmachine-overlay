@@ -6,6 +6,9 @@ EAPI=8
 
 # D9, U18, U20, U22
 
+# TODO:
+# verify/complete python USE flag.
+
 # TODO package:
 # basicsr
 # facexlib

@@ -9,6 +9,9 @@ EAPI=8
 # FIXME:
 # dev-python/openvino-dev in DEPEND vs development-tools USE
 
+# TODO:
+# verify/complete python USE flag.
+
 # TODO package:
 # deepctr-torch
 # facexlib
