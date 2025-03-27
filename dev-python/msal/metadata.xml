@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/AzureAD/microsoft-authentication-library-for-python/issues</bugs-to>
+    <changelog>https://github.com/AzureAD/microsoft-authentication-library-for-python/releases</changelog>
+    <remote-id type="github">AzureAD/microsoft-authentication-library-for-python</remote-id>
+    <remote-id type="pypi">msal</remote-id>
+  </upstream>
+</pkgmetadata>
