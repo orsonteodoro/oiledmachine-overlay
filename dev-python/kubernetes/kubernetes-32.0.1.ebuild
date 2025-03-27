@@ -36,7 +36,7 @@ HOMEPAGE="
 	https://pypi.org/project/kubernetes
 "
 LICENSE="
-	MIT
+	Apache-2.0
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
