@@ -47,7 +47,7 @@ RDEPEND+="
 		<dev-python/requests-3[${PYTHON_USEDEP}]
 	)
 	(
-		>=dev-python/pyjwt-1.0.0[${PYTHON_USEDEP},crypto]
+		>=dev-python/pyjwt-1.0.0[${PYTHON_USEDEP},crypto(+)]
 		<dev-python/pyjwt-3[${PYTHON_USEDEP}]
 	)
 	(
