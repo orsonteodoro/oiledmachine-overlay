@@ -39,9 +39,6 @@ IUSE+=" dev msg_parse"
 RDEPEND+="
 	>=app-forensics/oletools-0.56[${PYTHON_USEDEP}]
 	>=dev-python/lark-1.1.8[${PYTHON_USEDEP}]
-	msg_parse? (
-		>=dev-python/extract-msg-0.27[${PYTHON_USEDEP}]
-	)
 "
 DEPEND+="
 	${RDEPEND}
@@ -52,6 +49,11 @@ BDEPEND+="
 		>=dev-python/lxml-4.6[${PYTHON_USEDEP}]
 		>=dev-python/mypy-1.1[${PYTHON_USEDEP}]
 		>=dev-python/pdoc3-0.10.0[${PYTHON_USEDEP}]
+	)
+"
+PDEPEND+="
+	msg_parse? (
+		>=dev-python/extract-msg-0.27[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "README.md" )
