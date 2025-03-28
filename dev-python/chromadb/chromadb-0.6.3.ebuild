@@ -781,6 +781,7 @@ DEPEND+="
 BDEPEND+="
 	>=dev-python/setuptools-61.0[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-scm-6.2[${PYTHON_USEDEP},toml(+)]
+	dev-python/setuptools-git-versioning[${PYTHON_USEDEP}]
 	dev? (
 		>=dev-python/black-23.3.0[${PYTHON_USEDEP}]
 		>=dev-python/hypothesis-6.112.2[${PYTHON_USEDEP},numpy(+)]
