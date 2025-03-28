@@ -57,15 +57,15 @@ ZLIB_PV="1.3"
 inherit desktop flag-o-matic git-r3 grpc-ver multilib-minimal toolchain-funcs
 
 GRPC_SLOTS=(
-	"1.67"
-	"1.66"
-	"1.65"
-	"1.64"
-	"1.63"
-	"1.62"
-	"1.61"
-	"1.60"
 	"1.59"
+	"1.60"
+	"1.61"
+	"1.62"
+	"1.63"
+	"1.64"
+	"1.65"
+	"1.66"
+	"1.67"
 )
 
 if [[ "${PV}" =~ "m" ]] ; then
