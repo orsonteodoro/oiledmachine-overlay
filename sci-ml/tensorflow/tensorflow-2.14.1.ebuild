@@ -186,10 +186,10 @@ PLATFORMS_PV="0.0.6"		# From https://github.com/tensorflow/runtime/blob/769f5cc9
 PROTOBUF_PV="3.21.9"		# From https://github.com/tensorflow/tensorflow/blob/v2.14.1/tensorflow/workspace2.bzl
 PROTOBUF_SLOT="0/${PROTOBUF_PV%.*}"
 PROTOBUF_SLOTS=(
-	"3.21"
-	"4.23"
-	"4.24"
 	"4.25"
+	"4.24"
+	"4.23"
+	"3.21"
 )
 RULES_ANDROID_PV="0.1.1"	# From https://github.com/tensorflow/tensorflow/blob/v2.14.1/tensorflow/workspace2.bzl
 RULES_APPLE_PV="2.3.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.14.1/tensorflow/workspace2.bzl
