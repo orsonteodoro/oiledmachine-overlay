@@ -1,5 +1,3 @@
-DEPENDs support on this overlay
-
 # Ebuild *DEPENDs support matrix
 
 | Support level        | Quality      | Meaning                                                                        |
