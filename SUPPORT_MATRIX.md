@@ -60,7 +60,7 @@ exist in build files.
 | Protobuf 3        | Fully supported                          |
 | Protobuf 4        | Available                                |
 | Protobuf 5        | Available                                |
-| Pytorch           | Fully supported                          |
+| PyTorch           | Fully supported                          |
 | Qt 5.x            | Available                                |
 | Qt 6.x            | Fully supported                          |
 | ROCm              | Available                                |
