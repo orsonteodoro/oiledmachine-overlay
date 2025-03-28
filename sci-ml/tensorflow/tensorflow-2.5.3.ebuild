@@ -154,6 +154,8 @@ inherit rocm toolchain-funcs
 # The same results can be obtained by observing the console logs.
 # URIs provided for verification and faster future updates.
 
+inherit protobuf-ver
+
 ABSEIL_PY_PV="0.9.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace2.bzl
 CUDA_PV="11.0"			# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/tools/pip_package/setup.py#L171
 BAZEL_SKYLIB_PV="1.0.3"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace2.bzl
@@ -170,10 +172,8 @@ OPENMP_PV="10.0.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/
 PROTOBUF_PV="3.9.2"		# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace2.bzl
 PROTOBUF_SLOT="0/${PROTOBUF_PV%.*}"
 PROTOBUF_SLOTS=(
-	"3.21"
-	"4.23"
-	"4.24"
-	"4.25"
+	${PROTOBUF_3_SLOTS[@]}
+	${PROTOBUF_4_SLOTS[@]}
 )
 RULES_ANDROID_PV="0.1.1"	# From https://github.com/tensorflow/tensorflow/blob/v2.5.3/tensorflow/workspace2.bzl
 #RULES_FOREIGN_CC_PV="0.7.1"	# From https://github.com/google/benchmark/blob/f7547e29ccaed7b64ef4f7495ecfff1c9f6f3d03/bazel/benchmark_deps.bzl#L22 with EGIT_COMMIT_BENCHMARK *recheck

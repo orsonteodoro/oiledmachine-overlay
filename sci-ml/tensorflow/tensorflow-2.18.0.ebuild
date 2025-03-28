@@ -180,6 +180,8 @@ inherit prefix rocm toolchain-funcs
 # The same results can be obtained by observing the console logs.
 # URIs provided for verification and faster future updates.
 
+inherit protobuf-ver
+
 ABSEIL_PY_PV="1.0.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.18.0/tensorflow/workspace2.bzl
 APPLE_SUPPORT_PV="1.6.0"	# From https://github.com/tensorflow/tensorflow/blob/v2.18.0/tensorflow/workspace2.bzl
 CUDA_PV="12.5"			# From https://github.com/tensorflow/tensorflow/blob/v2.18.0/tensorflow/tools/pip_package/setup.py#L176
@@ -199,12 +201,9 @@ OPENMP_PV="10.0.1"		# From https://github.com/tensorflow/tensorflow/blob/v2.18.0
 PROTOBUF_PV="3.21.9"		# From https://github.com/tensorflow/tensorflow/blob/v2.18.0/tensorflow/workspace2.bzl
 PROTOBUF_SLOT="0/${PROTOBUF_PV%.*}"
 PROTOBUF_SLOTS=(
-	"3.21"
-	"4.23"
-	"4.24"
-	"4.25"
-	"5.26"
-	"5.27"
+	${PROTOBUF_3_SLOTS[@]}
+	${PROTOBUF_4_SLOTS[@]}
+	${PROTOBUF_5_SLOTS[@]}
 )
 RULES_ANDROID_PV="0.1.1"	# From https://github.com/tensorflow/tensorflow/blob/v2.18.0/tensorflow/workspace2.bzl
 RULES_APPLE_PV="2.3.0"		# From https://github.com/tensorflow/tensorflow/blob/v2.18.0/tensorflow/workspace2.bzl
