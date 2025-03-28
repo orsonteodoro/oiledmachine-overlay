@@ -42,12 +42,12 @@ SLOT="0/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 # 23 : 4.23 From CMakeLists.txt's protobuf_VERSION_STRING
 # 22.5 : 4.22 From CMakeLists.txt's protobuf_VERSION_STRING
 # 22.0 : 4.22 From CMakeLists.txt's protobuf_VERSION_STRING
-# 21.12 : 3.21 From AC_INIT
-# 21.0 : 3.21 From AC_INIT
-# 20.2 : 3.20 From AC_INIT
-# 19.5 : 3.19 From AC_INIT
-# 18.3 : 3.18 From AC_INIT
-# 16.2 : 3.16 From AC_INIT
+# 21.12 : 3.21 From configure.ac's AC_INIT
+# 21.0 : 3.21 From configure.ac's AC_INIT
+# 20.2 : 3.20 From configure.ac's AC_INIT
+# 19.5 : 3.19 From configure.ac's AC_INIT
+# 18.3 : 3.18 From configure.ac's AC_INIT
+# 16.2 : 3.16 From configure.ac's AC_INIT
 
 IUSE="emacs examples static-libs test zlib ebuild_revision_1"
 RDEPEND="
