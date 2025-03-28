@@ -55,7 +55,7 @@
 | Prefix            | Not supported                            |
 | Protobuf 3        | Fully supported                          |
 | Protobuf 4        | Available                                |
-| Protobuf 5        | Not supported                            |
+| Protobuf 5        | Available                                |
 | Qt 5.x            | Not supported                            |
 | Qt 6.x            | Fully supported                          |
 | ROCm              | Available                                |
