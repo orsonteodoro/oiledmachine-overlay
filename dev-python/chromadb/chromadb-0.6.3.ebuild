@@ -725,6 +725,7 @@ gen_grpcio_rdepend_rel() {
 		"
 	done
 }
+# hyperframe-6.1.0 needs python 3.11.  httpx needs httpcore which needs hyperframe.
 RDEPEND+="
 	$(python_gen_any_dep '
 		>=sci-ml/onnxruntime-1.14.1[${PYTHON_SINGLE_USEDEP},python]
