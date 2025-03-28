@@ -3,6 +3,9 @@
 
 EAPI=8
 
+MY_PN="${PN/-/_}"
+MY_PV=$(ver_cut 1-2)
+
 AMDGPU_TARGETS_COMPAT=(
 # https://github.com/ROCm/composable_kernel/blob/0a8dac4ef1a232abd8f6896a5b016f9e76192ddd/include/ck/ck.hpp#L31
 	gfx803
@@ -26,7 +29,6 @@ LLVM_SLOT=16
 ROCM_SLOT="5.6"
 ROCM_VERSION="${HIP_5_6_VERSION}"
 COMPOSABLE_KERNEL_COMMIT="0a8dac4ef1a232abd8f6896a5b016f9e76192ddd" # Same as MIOpen's requirements.txt
-MY_PV=$(ver_cut 1-2)
 
 inherit cmake dhms flag-o-matic rocm
 
@@ -38,10 +40,10 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 else
 	KEYWORDS="~amd64"
-	S="${WORKDIR}/${PN}-${COMPOSABLE_KERNEL_COMMIT}"
+	S="${WORKDIR}/${MY_PN}-${COMPOSABLE_KERNEL_COMMIT}"
 	SRC_URI="
 https://github.com/ROCmSoftwarePlatform/composable_kernel/archive/${COMPOSABLE_KERNEL_COMMIT}.tar.gz
-	-> ${PN}-${MY_PV}-${COMPOSABLE_KERNEL_COMMIT:0:7}.tar.gz
+	-> ${MY_PN}-${MY_PV}-${COMPOSABLE_KERNEL_COMMIT:0:7}.tar.gz
 	"
 fi
 
@@ -77,18 +79,18 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-0.2.0_p50601-fix-missing-libstdcxx-expf.patch"
-	"${FILESDIR}/${PN}-1.0.0_p9999-hip_runtime-header.patch"
-	"${FILESDIR}/${PN}-1.0.0_p9999-fix-missing-libstdcxx-sqrtf.patch"
-	"${FILESDIR}/${PN}-0.2.0_p50403-hardcoded-paths.patch"
+	"${FILESDIR}/${MY_PN}-0.2.0_p50601-fix-missing-libstdcxx-expf.patch"
+	"${FILESDIR}/${MY_PN}-1.0.0_p9999-hip_runtime-header.patch"
+	"${FILESDIR}/${MY_PN}-1.0.0_p9999-fix-missing-libstdcxx-sqrtf.patch"
+	"${FILESDIR}/${MY_PN}-0.2.0_p50403-hardcoded-paths.patch"
 )
 if [[ "${EGIT_BRANCH}" == "develop" ]] ; then
 	PATCHES+=(
-		"${FILESDIR}/${PN}-1.0.0_p9999-optional-tests.patch"
+		"${FILESDIR}/${MY_PN}-1.0.0_p9999-optional-tests.patch"
 	)
 else
 	PATCHES+=(
-		"${FILESDIR}/${PN}-0.2.0_p50601-optional-tests.patch"
+		"${FILESDIR}/${MY_PN}-0.2.0_p50601-optional-tests.patch"
 	)
 fi
 

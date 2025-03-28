@@ -3,6 +3,8 @@
 
 EAPI=8
 
+MY_PN="${PN/-/_}"
+
 AMDGPU_TARGETS_COMPAT=(
 # https://github.com/ROCm/composable_kernel/blob/rocm-6.0.2/include/ck/ck.hpp#L48
 	gfx803
@@ -40,10 +42,10 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 else
 	KEYWORDS="~amd64"
-	S="${WORKDIR}/${PN}-rocm-${PV}"
+	S="${WORKDIR}/${MY_PN}-rocm-${PV}"
 	SRC_URI="
 https://github.com/ROCmSoftwarePlatform/composable_kernel/archive/refs/tags/rocm-${PV}.tar.gz
-	-> ${PN}-rocm-${PV}.tar.gz
+	-> ${MY_PN}-rocm-${PV}.tar.gz
 	"
 fi
 
@@ -80,19 +82,19 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-1.0.0_p9999-fix-missing-libstdcxx-expf.patch"
-	"${FILESDIR}/${PN}-1.0.0_p9999-hip_runtime-header.patch"
-	"${FILESDIR}/${PN}-1.0.0_p9999-fix-missing-libstdcxx-sqrtf.patch"
-	"${FILESDIR}/${PN}-6.0.2-example-libs.patch"
-	"${FILESDIR}/${PN}-6.0.2-hardcoded-paths.patch"
+	"${FILESDIR}/${MY_PN}-1.0.0_p9999-fix-missing-libstdcxx-expf.patch"
+	"${FILESDIR}/${MY_PN}-1.0.0_p9999-hip_runtime-header.patch"
+	"${FILESDIR}/${MY_PN}-1.0.0_p9999-fix-missing-libstdcxx-sqrtf.patch"
+	"${FILESDIR}/${MY_PN}-6.0.2-example-libs.patch"
+	"${FILESDIR}/${MY_PN}-6.0.2-hardcoded-paths.patch"
 )
 if [[ "${EGIT_BRANCH}" == "develop" ]] ; then
 	PATCHES+=(
-		"${FILESDIR}/${PN}-1.0.0_p9999-optional-tests.patch"
+		"${FILESDIR}/${MY_PN}-1.0.0_p9999-optional-tests.patch"
 	)
 else
 	PATCHES+=(
-		"${FILESDIR}/${PN}-6.0.2-optional-tests.patch"
+		"${FILESDIR}/${MY_PN}-6.0.2-optional-tests.patch"
 	)
 fi
 
