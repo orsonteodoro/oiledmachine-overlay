@@ -3,20 +3,13 @@
 
 EAPI=8
 
-declare -A GRPC_TO_PROTOBUF=(
-	["1.49"]="3.21"
-	["1.52"]="3.21"
-	["1.53"]="3.21"
-	["1.54"]="3.21"
-)
+inherit grpc-ver protobuf-ver
+
 GRPC_SLOTS=(
-	"1.49"
-	"1.52"
-	"1.53"
-	"1.54"
+	${GRPC_PROTOBUF_3_SLOTS[@]}
 )
 PROTOBUF_SLOTS=(
-	"3.21"
+	${PROTOBUF_3_SLOTS[@]}
 )
 OPENTELEMETRY_PROTO_PV="0.19.0"
 
@@ -47,7 +40,7 @@ gen_otlp_grpc_rdepend() {
 	local s1
 	local s2
 	for s1 in ${GRPC_SLOTS[@]} ; do
-		s2="${GRPC_TO_PROTOBUF[${s1}]}"
+		s2=$(grpc_get_protobuf_slot "${s1}")
 		echo  "
 			(
 				=net-libs/grpc-${s1}*
