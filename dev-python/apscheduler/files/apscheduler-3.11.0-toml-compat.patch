@@ -1,0 +1,20 @@
+diff '--color=auto' -urp apscheduler-3.11.0.orig/pyproject.toml apscheduler-3.11.0/pyproject.toml
+--- apscheduler-3.11.0.orig/pyproject.toml	2024-11-24 11:38:57.000000000 -0800
++++ apscheduler-3.11.0/pyproject.toml	2025-03-28 14:31:25.354139355 -0700
+@@ -129,16 +129,3 @@ ignore = [
+ 
+ [tool.ruff.lint.isort]
+ known-first-party = ["apscheduler"]
+-
+-[tool.tox]
+-env_list = ["py38", "py39", "py310", "py311", "py312", "py313", "py314", "pypy3"]
+-skip_missing_interpreters = true
+-
+-[tool.tox.env_run_base]
+-commands = [["pytest", { replace = "posargs", extend = true }]]
+-package = "editable"
+-extras = ["test"]
+-
+-[tool.tox.env.docs]
+-commands = [["sphinx-build", "docs", "build/sphinx"]]
+-extras = ["doc"]
