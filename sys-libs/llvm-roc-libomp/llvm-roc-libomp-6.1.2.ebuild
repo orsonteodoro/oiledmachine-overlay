@@ -3,44 +3,6 @@
 
 EAPI=8
 
-declare -A GRPC_TO_PROTOBUF=(
-	["1.49"]="3.21"
-	["1.52"]="3.21"
-	["1.53"]="3.21"
-	["1.54"]="3.21"
-	["1.55"]="4.23"
-	["1.56"]="4.23"
-	["1.57"]="4.23"
-	["1.58"]="4.23"
-	["1.59"]="4.24"
-	["1.60"]="4.25"
-	["1.61"]="4.25"
-	["1.62"]="4.25"
-	["1.63"]="5.26"
-	["1.64"]="5.26"
-	["1.65"]="5.26"
-	["1.66"]="5.27"
-	["1.67"]="5.27"
-)
-GRPC_SLOTS=(
-	"1.49"
-	"1.52"
-	"1.53"
-	"1.54"
-	"1.55"
-	"1.56"
-	"1.57"
-	"1.58"
-	"1.59"
-	"1.60"
-	"1.61"
-	"1.62"
-	"1.63"
-	"1.64"
-	"1.65"
-	"1.66"
-	"1.67"
-)
 LLVM_TARGETS_CPU_COMPAT=(
 	llvm_targets_X86
 )
@@ -125,7 +87,7 @@ PYTHON_COMPAT=( "python3_"{10..12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_USE_LLVM_ROC=1
 
-inherit cmake flag-o-matic python-single-r1 rocm
+inherit cmake flag-o-matic grpc-ver python-single-r1 rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/llvm-project-rocm-${PV}/openmp"
@@ -220,8 +182,8 @@ REQUIRED_USE="
 gen_grpc_rdepend() {
 	local s1
 	local s2
-	for s1 in ${GRPC_SLOTS} ; do
-		s2="${GRPC_TO_PROTOBUF[${s1}]}"
+	for s1 in ${GRPC_SLOTS[@]} ; do
+		s2=$(grpc_get_protobuf_slot "${s1}")
 		echo "
 			(
 				dev-libs/protobuf:0/${s2}

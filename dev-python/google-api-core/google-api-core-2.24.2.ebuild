@@ -10,55 +10,9 @@ EAPI=8
 MY_P="python-api-core-${PV}"
 
 DISTUTILS_USE_PEP517="setuptools"
-PROTOBUF_SLOTS=(
-	"3.21"
-	"4.23"
-	"4.24"
-	"4.25"
-	"5.26"
-	"5.27"
-)
-declare -A GRPC_TO_PROTOBUF=(
-	["1.49"]="3.21"
-	["1.52"]="3.21"
-	["1.53"]="3.21"
-	["1.54"]="3.21"
-	["1.55"]="4.23"
-	["1.56"]="4.23"
-	["1.57"]="4.23"
-	["1.58"]="4.23"
-	["1.59"]="4.24"
-	["1.60"]="4.25"
-	["1.61"]="4.25"
-	["1.62"]="4.25"
-	["1.63"]="5.26"
-	["1.64"]="5.26"
-	["1.65"]="5.26"
-	["1.66"]="5.27"
-	["1.67"]="5.27"
-)
-GRPC_SLOTS=(
-	"1.49"
-	"1.52"
-	"1.53"
-	"1.54"
-	"1.55"
-	"1.56"
-	"1.57"
-	"1.58"
-	"1.59"
-	"1.60"
-	"1.61"
-	"1.62"
-	"1.63"
-	"1.64"
-	"1.65"
-	"1.66"
-	"1.67"
-)
 PYTHON_COMPAT=( "python3_"{10..13} )
 
-inherit distutils-r1
+inherit distutils-r1 grpc-ver protobuf-ver
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${MY_P}"
@@ -85,7 +39,7 @@ gen_grpcio_rdepend() {
 	local s1
 	local s2
 	for s1 in ${GRPC_SLOTS[@]} ; do
-		s2="${GRPC_TO_PROTOBUF[${s1}]}"
+		s2=$(grpc_get_protobuf_slot "${s1}")
 		echo "
 			(
 				=dev-python/grpcio-${s1}*[${PYTHON_USEDEP}]

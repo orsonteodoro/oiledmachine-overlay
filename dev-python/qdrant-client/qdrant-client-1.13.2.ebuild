@@ -10,28 +10,9 @@ EAPI=8
 # qdrant-sphinx-theme
 
 DISTUTILS_USE_PEP517="poetry"
-GRPC_SLOTS=(
-	"1.49"
-	"1.52"
-	"1.53"
-	"1.54"
-	"1.55"
-	"1.56"
-	"1.57"
-	"1.58"
-	"1.59"
-	"1.60"
-	"1.61"
-	"1.62"
-	"1.63"
-	"1.64"
-	"1.65"
-	"1.66"
-	"1.67"
-)
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit distutils-r1 pypi
+inherit distutils-r1 grpc-ver pypi
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"

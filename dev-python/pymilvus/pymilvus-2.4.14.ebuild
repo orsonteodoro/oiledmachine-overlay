@@ -9,25 +9,6 @@ EAPI=8
 # sphinxcontrib-prettyspecialmethods
 
 DISTUTILS_USE_PEP517="setuptools"
-declare -A GRPC_TO_PROTOBUF=(
-	["1.49"]="3.21"
-	["1.52"]="3.21"
-	["1.53"]="3.21"
-	["1.54"]="3.21"
-	["1.55"]="4.23"
-	["1.56"]="4.23"
-	["1.57"]="4.23"
-	["1.58"]="4.23"
-	["1.59"]="4.24"
-	["1.60"]="4.25"
-	["1.61"]="4.25"
-	["1.62"]="4.25"
-	["1.63"]="5.26"
-	["1.64"]="5.26"
-	["1.65"]="5.26"
-	["1.66"]="5.27"
-	["1.67"]="5.27"
-)
 GRPC_SLOTS_REL=(
 	"1.49"
 	"1.52"
@@ -57,7 +38,7 @@ GRPC_SLOTS_DEV=(
 )
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit distutils-r1 pypi
+inherit distutils-r1 grpc-ver pypi
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -103,7 +84,7 @@ gen_grpcio_rel() {
 	local s1
 	local s2
 	for s1 in ${GRPC_SLOTS_REL[@]} ; do
-		s2="${GRPC_TO_PROTOBUF[${s1}]}"
+		s2=$(grpc_get_protobuf_slot "${s1}")
 		echo "
 			(
 				=dev-python/grpcio-${s1}*[${PYTHON_USEDEP}]

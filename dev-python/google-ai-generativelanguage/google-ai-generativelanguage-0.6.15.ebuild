@@ -6,18 +6,10 @@ EAPI=8
 MY_PN="${PN//-/_}"
 
 DISTUTILS_USE_PEP517="setuptools"
-PROTOBUF_SLOTS=(
-	"3.21"
-	"4.23"
-	"4.24"
-	"4.25"
-	"5.26"
-	"5.27"
-)
 PYPI_NO_NORMALIZE=1
 PYTHON_COMPAT=( "python3_"{10..13} )
 
-inherit distutils-r1
+inherit distutils-r1 protobuf-ver
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${MY_PN}-${PV}"

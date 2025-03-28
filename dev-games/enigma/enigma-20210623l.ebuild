@@ -30,44 +30,6 @@ GCC_PV="11.1.0"
 GLEW_PV="2.1.0" # missing in CI
 GLM_PV="0.9.9.7" # missing in CI
 GME_PV="0.6.2" # missing in CI
-declare -A GRPC_TO_PROTOBUF=(
-	["1.49"]="3.21"
-	["1.52"]="3.21"
-	["1.53"]="3.21"
-	["1.54"]="3.21"
-	["1.55"]="4.23"
-	["1.56"]="4.23"
-	["1.57"]="4.23"
-	["1.58"]="4.23"
-	["1.59"]="4.24"
-	["1.60"]="4.25"
-	["1.61"]="4.25"
-	["1.62"]="4.25"
-	["1.63"]="5.26"
-	["1.64"]="5.26"
-	["1.65"]="5.26"
-	["1.66"]="5.27"
-	["1.67"]="5.27"
-)
-GRPC_SLOTS=(
-	"1.49"
-	"1.52"
-	"1.53"
-	"1.54"
-	"1.55"
-	"1.56"
-	"1.57"
-	"1.58"
-	"1.59"
-	"1.60"
-	"1.61"
-	"1.62"
-	"1.63"
-	"1.64"
-	"1.65"
-	"1.66"
-	"1.67"
-)
 GTEST_PV="1.10.0" # missing in CI
 GTK2_PV="2.24.32" # missing in CI
 LIBFFI_PV="3.3" # missing in CI
@@ -92,7 +54,7 @@ WINE_STAGING_PV="${WINE_PV}"
 WINE_VANILLA_PV="${WINE_PV}"
 ZLIB_PV="1.2.11"
 
-inherit desktop flag-o-matic git-r3 multilib-minimal toolchain-funcs
+inherit desktop flag-o-matic git-r3 grpc-ver multilib-minimal toolchain-funcs
 
 if [[ "${PV}" =~ "l" ]] ; then
 	# From https://github.com/enigma-dev/enigma-dev/commits/master@{2021-06-24}
@@ -204,8 +166,8 @@ REQUIRED_USE+="
 gen_grpc_cdepend() {
 	local s1
 	local s2
-	for s1 in ${GRPC_SLOTS} ; do
-		s2="${GRPC_TO_PROTOBUF[${s1}]}"
+	for s1 in ${GRPC_SLOTS[@]} ; do
+		s2=$(grpc_get_protobuf_slot "${s1}")
 		echo "
 			(
 				dev-libs/protobuf:0/${s2}[${MULTILIB_USEDEP}]

@@ -11,22 +11,10 @@ EAPI=8
 # See commit 52a3463 for details
 
 CMAKE_MAKEFILE_GENERATOR="emake"
-declare -A GRPC_TO_PROTOBUF=(
-	["1.49"]="3.21"
-	["1.52"]="3.21"
-	["1.53"]="3.21"
-	["1.54"]="3.21"
-)
-GRPC_SLOTS=(
-	"1.49"
-	"1.52"
-	"1.53"
-	"1.54"
-)
 LLVM_SLOT=15
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake rocm
+inherit cmake grpc-ver rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/rdc/"
@@ -68,7 +56,7 @@ gen_standalone_rdepend() {
 	local s1
 	local s2
 	for s1 in ${GRPC_SLOTS[@]} ; do
-		s2="${GRPC_TO_PROTOBUF[${s1}]}"
+		s2=$(grpc_get_protobuf_slot "${s1}")
 		echo "
 			(
 				=net-libs/grpc-${s1}*

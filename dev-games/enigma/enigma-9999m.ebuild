@@ -30,28 +30,6 @@ GCC_PV="13.2.1" # Upstream uses 12.1.0 for Linux.  This has been relaxed in this
 GLEW_PV="2.2.0" # missing in CI
 GLM_PV="0.9.9.8" # missing in CI
 GME_PV="0.6.3" # missing in CI
-declare -A GRPC_TO_PROTOBUF=(
-	["1.59"]="4.24"
-	["1.60"]="4.25"
-	["1.61"]="4.25"
-	["1.62"]="4.25"
-	["1.63"]="5.26"
-	["1.64"]="5.26"
-	["1.65"]="5.26"
-	["1.66"]="5.27"
-	["1.67"]="5.27"
-)
-GRPC_SLOTS=(
-	"1.59"
-	"1.60"
-	"1.61"
-	"1.62"
-	"1.63"
-	"1.64"
-	"1.65"
-	"1.66"
-	"1.67"
-)
 GTEST_PV="1.10.0" # missing in CI
 GTK2_PV="2.24.33" # missing in CI
 LIBFFI_PV="3.4.2" # missing in CI
@@ -76,7 +54,19 @@ WINE_STAGING_PV="${WINE_PV}"
 WINE_VANILLA_PV="${WINE_PV}"
 ZLIB_PV="1.3"
 
-inherit desktop flag-o-matic git-r3 multilib-minimal toolchain-funcs
+inherit desktop flag-o-matic git-r3 grpc-ver multilib-minimal toolchain-funcs
+
+GRPC_SLOTS=(
+	"1.59"
+	"1.60"
+	"1.61"
+	"1.62"
+	"1.63"
+	"1.64"
+	"1.65"
+	"1.66"
+	"1.67"
+)
 
 if [[ "${PV}" =~ "m" ]] ; then
 	EGIT_BRANCH="master"
@@ -192,8 +182,8 @@ REQUIRED_USE+="
 gen_grpc_cdepend() {
 	local s1
 	local s2
-	for s1 in ${GRPC_SLOTS} ; do
-		s2="${GRPC_TO_PROTOBUF[${s1}]}"
+	for s1 in ${GRPC_SLOTS[@]} ; do
+		s2=$(grpc_get_protobuf_slot "${s1}")
 		echo "
 			(
 				dev-libs/protobuf:0/${s2}[${MULTILIB_USEDEP}]

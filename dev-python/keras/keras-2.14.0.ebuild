@@ -10,7 +10,7 @@ EAPI=8
 
 PYTHON_COMPAT=( "python3_"{9..11} )
 
-inherit bazel distutils-r1
+inherit bazel distutils-r1 protobuf-ver
 
 # Versions and hashes are obtained by console and removing items below.
 # They do not appear in the tarball.
@@ -36,14 +36,6 @@ RESTRICT=""
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE=" test ebuild_revision_3"
-PROTOBUF_SLOTS=(
-	"3.21"
-	"4.23"
-	"4.24"
-	"4.25"
-	"5.26"
-	"5.27"
-)
 # TensorFlow needs numpy 1.x
 gen_rdepend_protobuf() {
 	local s

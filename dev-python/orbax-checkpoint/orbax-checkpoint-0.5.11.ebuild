@@ -9,17 +9,9 @@ EAPI=8
 # See https://github.com/google/orbax/blob/main/.github/workflows/build.yml for supported python
 
 DISTUTILS_USE_PEP517="flit"
-PROTOBUF_SLOTS=(
-	"3.21"
-	"4.23"
-	"4.24"
-	"4.25"
-	"5.26"
-	"5.27"
-)
 PYTHON_COMPAT=( "python3_"{10,11} ) # Upstream only tests up to 3.11.
 
-inherit distutils-r1
+inherit distutils-r1 protobuf-ver
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"

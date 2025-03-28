@@ -10,7 +10,7 @@ EAPI=8
 PYTHON_COMPAT=( "python3_"{9..11} )
 TENSORFLOW_PV="2.16.1"
 
-inherit distutils-r1
+inherit distutils-r1 protobuf-ver
 
 SRC_URI="
 https://github.com/keras-team/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz
@@ -34,14 +34,6 @@ REQUIRED_USE="
 		tensorflow
 	)
 "
-PROTOBUF_SLOTS=(
-	"3.21"
-	"4.23"
-	"4.24"
-	"4.25"
-	"5.26"
-	"5.27"
-)
 # TensorFlow needs numpy 1.x
 gen_rdepend_protobuf() {
 	local s
