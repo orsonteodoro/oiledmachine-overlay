@@ -30,6 +30,9 @@ RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev codespell dev doc lint test test-integration typing"
 RDEPEND+="
+	$(python_gen_cond_dep '
+		>=dev-python/async-timeout-4.0.0[${PYTHON_USEDEP}]
+	' python3_10)
 	>=dev-python/langchain-core-0.3.45[${PYTHON_USEDEP}]
 	>=dev-python/langchain-text-splitters-0.3.7[${PYTHON_USEDEP}]
 	>=dev-python/langsmith-0.1.17[${PYTHON_USEDEP}]
