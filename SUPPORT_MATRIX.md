@@ -36,7 +36,7 @@
 | glibc             | riscv   | Available but not supported    |
 | glibc             | sparc   | Not supported                  |
 | glibc             | x86     | Not supported                  |
-| musl              | *       | Not supported                  |
+| musl              | *       | Available                      |
 
 | Platform          | Level of support                         |
 | ---               | ---                                      |
