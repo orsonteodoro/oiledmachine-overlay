@@ -21,8 +21,9 @@
 | pypy3             | Available                                |
 | pypy3_11          | Not supported                            |
 
-The LIBC support below reflects upstream CI (Continuous Integration) images, but
-it may change if microarchitecture references exist in build files.
+The LIBC support below reflects the upstream projects CI (Continuous
+Integration) images trend, but it may change if microarchitecture references
+exist in build files.
 
 | LIBC              | Arch    | Level of support               |
 | ---               | ----    | ---                            |
