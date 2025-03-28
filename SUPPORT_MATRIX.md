@@ -52,7 +52,7 @@
 | OpenGL <= 4.6     | Fully supported                          |
 | OpenCL <= 2.0     | Fully supported                          |
 | Ollama            | Fully supported                          |
-| Prefix            | Not supported                            |
+| Prefix            | Deprecated                               |
 | Protobuf 3        | Fully supported                          |
 | Protobuf 4        | Available                                |
 | Protobuf 5        | Available                                |
