@@ -7,6 +7,8 @@ EAPI=8
 # TODO package (optional):
 # mypy-protobuf
 
+inherit grpc-ver
+
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 GRPC_SLOTS_DEV=(
@@ -17,18 +19,8 @@ GRPC_SLOTS_DEV=(
 )
 GRPC_SLOTS_REL=(
 # Based on protobuf requirement for opentelemetry-proto 1.27.0
-	"1.49" # protobuf 3.21
-	"1.52" # protobuf 3.21
-	"1.53" # protobuf 3.21
-	"1.54" # protobuf 3.21
-	"1.55" # protobuf 4.23
-	"1.56" # protobuf 4.23
-	"1.57" # protobuf 4.23
-	"1.58" # protobuf 4.23
-	"1.59" # protobuf 4.24
-	"1.60" # protobuf 4.25
-	"1.61" # protobuf 4.25
-	"1.62" # protobuf 4.25
+	${GRPC_PROTOBUF_3_SLOTS[@]}
+	${GRPC_PROTOBUF_4_SLOTS[@]}
 )
 OPENTELEMETRY_PV_DEV="1.29.0"
 OPENTELEMETRY_PV_REL="1.27.0"
@@ -678,7 +670,7 @@ zstd-sys-2.0.9+zstd.1.5.5
 "
 
 # Cargo must go after distutils-r1
-inherit distutils-r1 cargo grpc-ver pypi
+inherit distutils-r1 cargo pypi
 
 #KEYWORDS="~amd64" # Missing dependencies
 S="${WORKDIR}/${PN}-${PV}"
