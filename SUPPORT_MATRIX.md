@@ -1,4 +1,4 @@
-# Ebuild *DEPENDs support matrix
+# Ebuild *DEPENDs support matrix for this overlay
 
 | Support level        | Quality      | Meaning                                                                        |
 | ---                  | ---          | ---                                                                            |
