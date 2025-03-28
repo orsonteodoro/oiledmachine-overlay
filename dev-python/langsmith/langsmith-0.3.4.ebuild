@@ -83,7 +83,7 @@ BDEPEND+="
 		>=dev-python/types-tqdm-4.66.0.20240106[${PYTHON_USEDEP}]
 		>=dev-python/uvicorn-0.29.0[${PYTHON_USEDEP}]
 		>=dev-python/vcrpy-6.0.1[${PYTHON_USEDEP}]
-		>=dev-util/ruff-0.6.9[${PYTHON_USEDEP}]
+		>=dev-util/ruff-0.6.9
 	)
 	test? (
 		>=dev-python/rich-13.9.4[${PYTHON_USEDEP}]

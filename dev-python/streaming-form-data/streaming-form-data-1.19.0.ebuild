@@ -54,7 +54,7 @@ BDEPEND+="
 		>=dev-python/mypy-1.13.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-8.3.3[${PYTHON_USEDEP}]
 		>=dev-python/requests-toolbelt-1.0.0[${PYTHON_USEDEP}]
-		>=dev-python/ruff-0.7.1
+		>=dev-util/ruff-0.7.1
 	)
 "
 DOCS=( "README.md" )

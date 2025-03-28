@@ -56,7 +56,7 @@ BDEPEND+="
 		dev-python/black[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-mypy[${PYTHON_USEDEP}]
-		dev-util/ruff[${PYTHON_USEDEP}]
+		dev-util/ruff
 		$(python_gen_any_dep '
 			dev-vcs/pre-commit[${PYTHON_SINGLE_USEDEP}]
 		')

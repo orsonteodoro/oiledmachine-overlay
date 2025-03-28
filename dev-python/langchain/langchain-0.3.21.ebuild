@@ -30,6 +30,13 @@ RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev codespell dev doc lint test test-integration typing"
 RDEPEND+="
+	>=dev-python/langchain-core-0.3.45[${PYTHON_USEDEP}]
+	>=dev-python/langchain-text-splitters-0.3.7[${PYTHON_USEDEP}]
+	>=dev-python/langsmith-0.1.17[${PYTHON_USEDEP}]
+	>=dev-python/pydantic-2.7.4[${PYTHON_USEDEP}]
+	>=dev-python/pyyaml-5.3[${PYTHON_USEDEP}]
+	>=dev-python/requests-2[${PYTHON_USEDEP}]
+	>=dev-python/sqlalchemy-1.4[${PYTHON_USEDEP}]
 	codespell? (
 		>=dev-python/codespell-2.2.0[${PYTHON_USEDEP}]
 	)
@@ -46,7 +53,7 @@ BDEPEND+="
 		dev-python/langchain-text-splitters[${PYTHON_USEDEP}]
 	)
 	lint? (
-		>=dev-util/ruff-0.9.2[${PYTHON_USEDEP}]
+		>=dev-util/ruff-0.9.2
 		dev-python/cffi[${PYTHON_USEDEP}]
 	)
 	test? (

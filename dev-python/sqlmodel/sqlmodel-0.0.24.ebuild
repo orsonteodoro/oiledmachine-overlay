@@ -71,7 +71,7 @@ BDEPEND="
 		>=dev-python/jinja2-3.1.4[${PYTHON_USEDEP}]
 		>=dev-python/mypy-1.4.1[${PYTHON_USEDEP}]
 		>=dev-python/pytest-7.0.1[${PYTHON_USEDEP}]
-		>=dev-python/ruff-0.9.6[${PYTHON_USEDEP}]
+		>=dev-util/ruff-0.9.6
 		>=dev-python/typing-extensions-4.12.2[${PYTHON_USEDEP}]
 	)
 "
