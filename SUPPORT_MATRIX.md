@@ -46,7 +46,7 @@
 | Electron (x86)    | Not supported                            |
 | gRPC 1.49 - 1.54  | Fully supported                          |
 | gRPC 1.55 - 1.62  | Available                                |
-| gRPC >= 1.63      | Not supported                            |
+| gRPC >= 1.63      | Available                                |
 | GTK+3             | Fully supported                          |
 | GTK 4             | Fully supported                          |
 | OpenGL <= 4.6     | Fully supported                          |
