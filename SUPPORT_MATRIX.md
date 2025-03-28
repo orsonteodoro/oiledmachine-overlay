@@ -56,9 +56,11 @@
 | Protobuf 3        | Fully supported                          |
 | Protobuf 4        | Available                                |
 | Protobuf 5        | Available                                |
+| Pytorch           | Fully supported                          |
 | Qt 5.x            | Not supported                            |
 | Qt 6.x            | Fully supported                          |
 | ROCm              | Available                                |
+| TensorFlow        | Available                                |
 | Vulkan            | Fully supported                          |
 | Wayland           | Fully supported                          |
 | X                 | Fully supported                          |
