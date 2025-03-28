@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/huggingface/huggingface_hub/issues</bugs-to>
+    <remote-id type="github">huggingface/huggingface_hub</remote-id>
+    <remote-id type="pypi">huggingface-hub</remote-id>
+  </upstream>
+</pkgmetadata>
