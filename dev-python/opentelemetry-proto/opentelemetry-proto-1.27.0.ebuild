@@ -8,10 +8,10 @@ MY_PN="opentelemetry_proto"
 
 DISTUTILS_USE_PEP517="hatchling"
 PROTOBUF_SLOTS=(
-	"3.21"
-	"4.23"
-	"4.24"
 	"4.25"
+	"4.24"
+	"4.23"
+	"3.21"
 )
 PYTHON_COMPAT=( "python3_"{10..12} )
 
