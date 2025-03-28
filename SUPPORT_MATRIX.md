@@ -51,7 +51,7 @@ DEPENDs support on this overlay
 | gRPC >= 1.63      | Not supported                            |
 | GTK+3             | Fully supported                          |
 | GTK 4             | Fully supported                          |
-| OpenGL <= 4.6     | Mostly supported                         |
+| OpenGL <= 4.6     | Fully supported                          |
 | OpenCL <= 2.0     | Fully supported                          |
 | Ollama            | Fully supported                          |
 | Prefix            | Not supported                            |
