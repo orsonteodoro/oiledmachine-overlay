@@ -60,7 +60,7 @@
 | Qt 5.x            | Not supported                            |
 | Qt 6.x            | Fully supported                          |
 | ROCm              | Available                                |
-| TensorFlow        | Available                                |
+| TensorFlow        | Partially supported                      |
 | Vulkan            | Fully supported                          |
 | Wayland           | Fully supported                          |
 | X                 | Fully supported                          |
