@@ -56,7 +56,7 @@ exist in build files.
 | OpenGL <= 4.6     | Fully supported                          |
 | OpenCL <= 2.0     | Fully supported                          |
 | Ollama            | Fully supported                          |
-| Prefix            | Deprecated                               |
+| OpenRC            | Fully supported                          |
 | Protobuf 3        | Fully supported                          |
 | Protobuf 4        | Available                                |
 | Protobuf 5        | Available                                |
@@ -64,6 +64,7 @@ exist in build files.
 | Qt 5.x            | Available                                |
 | Qt 6.x            | Fully supported                          |
 | ROCm              | Available                                |
+| systemd           | Partially supported                      |
 | TensorFlow        | Available                                |
 | Vulkan            | Fully supported                          |
 | Wayland           | Fully supported                          |
