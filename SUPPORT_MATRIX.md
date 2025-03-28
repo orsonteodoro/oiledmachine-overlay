@@ -38,6 +38,8 @@
 | glibc             | x86     | Not supported                  |
 | musl              | *       | Available                      |
 
+LIBC support depends on upstream CI images on this overlay.
+
 | Platform          | Level of support                         |
 | ---               | ---                                      |
 | CUDA              | Available                                |
