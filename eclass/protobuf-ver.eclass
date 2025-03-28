@@ -24,12 +24,12 @@ _PROTOBUF_VER_ECLASS=1
 # @DESCRIPTION:
 # All active protobuf slots
 export PROTOBUF_SLOTS=(
-	"5.27"
-	"5.26"
-	"4.25"
-	"4.24"
-	"4.23"
 	"3.21"
+	"4.23"
+	"4.24"
+	"4.25"
+	"5.26"
+	"5.27"
 )
 
 # @ECLASS_VARIABLE: PROTOBUF_3_SLOTS
@@ -43,17 +43,17 @@ export PROTOBUF_3_SLOTS=(
 # @DESCRIPTION:
 # Protobuf 4 slots only
 export PROTOBUF_4_SLOTS=(
-	"4.25"
-	"4.24"
 	"4.23"
+	"4.24"
+	"4.25"
 )
 
 # @ECLASS_VARIABLE: PROTOBUF_5_SLOTS
 # @DESCRIPTION:
 # Protobuf 5 slots only
 export PROTOBUF_5_SLOTS=(
-	"5.27"
 	"5.26"
+	"5.27"
 )
 
 fi
