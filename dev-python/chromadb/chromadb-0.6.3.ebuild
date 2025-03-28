@@ -714,6 +714,7 @@ gen_grpcio_bdepend_dev() {
 }
 gen_grpcio_rdepend_rel() {
 	local s1
+	local s2
 	for s1 in ${GRPC_SLOTS_REL[@]} ; do
 		s2=$(grpc_get_protobuf_slot "${s1}")
 		echo "
