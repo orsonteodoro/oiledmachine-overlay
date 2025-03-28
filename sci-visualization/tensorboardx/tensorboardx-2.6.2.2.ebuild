@@ -8,19 +8,19 @@ MY_PN="tensorboardX"
 
 DISTUTILS_USE_PEP517="setuptools"
 PROTOBUF_SLOTS_REL=(
-	"3.21"
-	"4.23"
-	"4.24"
-	"4.25"
-	"5.26"
 	"5.27"
+	"5.26"
+	"4.25"
+	"4.24"
+	"4.23"
+	"3.21"
 )
 PROTOBUF_SLOTS_DEV=(
-	"4.23"
-	"4.24"
-	"4.25"
-	"5.26"
 	"5.27"
+	"5.26"
+	"4.25"
+	"4.24"
+	"4.23"
 )
 PYTHON_COMPAT=( "python3_"{10..12} )
 
