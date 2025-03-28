@@ -650,7 +650,7 @@ RDEPEND="
 			>=dev-python/numpy-1.21.6[${PYTHON_USEDEP}]
 			dev-python/coloredlogs[${PYTHON_USEDEP}]
 			dev-python/packaging[${PYTHON_USEDEP}]
-			dev-python/protobuf[${PYTHON_USEDEP}]
+			dev-python/protobuf:=[${PYTHON_USEDEP}]
 			dev-python/psutil[${PYTHON_USEDEP}]
 			dev-python/py-cpuinfo[${PYTHON_USEDEP}]
 			>=dev-python/sympy-1.12[${PYTHON_USEDEP}]
