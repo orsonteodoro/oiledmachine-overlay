@@ -162,7 +162,7 @@ REQUIRED_USE+="
 		X
 	)
 "
-# The GRPC requirement has been relaxed
+# The gRPC requirement has been relaxed.
 gen_grpc_cdepend() {
 	local s1
 	local s2
