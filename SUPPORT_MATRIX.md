@@ -38,7 +38,7 @@
 | glibc             | x86     | Not supported                  |
 | musl              | *       | Available                      |
 
-LIBC support depends on upstream CI images.
+LIBC support depends on upstream CI images or on arch references in build files.
 
 | Platform          | Level of support                         |
 | ---               | ---                                      |
