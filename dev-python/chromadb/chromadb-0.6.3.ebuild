@@ -11,24 +11,24 @@ DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 GRPC_SLOTS_DEV=(
 # Based on protobuf requirement for opentelemetry-proto 1.29.0
-	"1.65"
-	"1.64"
-	"1.63"
+	"1.65" # protobuf 5.26
+	"1.64" # protobuf 5.26
+	"1.63" # protobuf 5.26
 )
 GRPC_SLOTS_REL=(
 # Based on protobuf requirement for opentelemetry-proto 1.27.0
-	"1.62"
-	"1.61"
-	"1.60"
-	"1.59"
-	"1.58"
-	"1.57"
-	"1.56"
-	"1.55"
-	"1.54"
-	"1.53"
-	"1.52"
-	"1.49"
+	"1.62" # protobuf 4.25
+	"1.61" # protobuf 4.25
+	"1.60" # protobuf 4.25
+	"1.59" # protobuf 4.24
+	"1.58" # protobuf 4.23
+	"1.57" # protobuf 4.23
+	"1.56" # protobuf 4.23
+	"1.55" # protobuf 4.23
+	"1.54" # protobuf 3.21
+	"1.53" # protobuf 3.21
+	"1.52" # protobuf 3.21
+	"1.49" # protobuf 3.21
 
 )
 OPENTELEMETRY_PV_DEV="1.29.0"
