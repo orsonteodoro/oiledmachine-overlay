@@ -6,21 +6,15 @@ EAPI=8
 
 MY_PN="tensorboardX"
 
+inherit protobuf-ver
+
 DISTUTILS_USE_PEP517="setuptools"
 PROTOBUF_SLOTS_REL=(
-	"3.21"
-	"4.23"
-	"4.24"
-	"4.25"
-	"5.26"
-	"5.27"
+	${PROTOBUF_SLOTS[@]}
 )
 PROTOBUF_SLOTS_DEV=(
-	"4.23"
-	"4.24"
-	"4.25"
-	"5.26"
-	"5.27"
+	${PROTOBUF_4_SLOTS[@]}
+	${PROTOBUF_5_SLOTS[@]}
 )
 PYTHON_COMPAT=( "python3_"{10..12} )
 

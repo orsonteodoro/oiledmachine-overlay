@@ -6,12 +6,12 @@ EAPI=8
 
 MY_PN="${PN/-/_}"
 
+inherit protobuf-ver
+
 DISTUTILS_USE_PEP517="setuptools"
 PROTOBUF_SLOTS=(
-	"3.21"
-	"4.23"
-	"4.24"
-	"4.25"
+	${PROTOBUF_3_SLOTS[@]}
+	${PROTOBUF_4_SLOTS[@]}
 )
 PYTHON_COMPAT=( "python3_"{10..12} )
 
