@@ -16,6 +16,18 @@ ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake grpc-ver rocm
 
+GRPC_SLOTS=(
+	"1.59"
+	"1.60"
+	"1.61"
+	"1.62"
+	"1.63"
+	"1.64"
+	"1.65"
+	"1.66"
+	"1.67"
+)
+
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/rdc/"
 	inherit git-r3
