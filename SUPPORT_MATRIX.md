@@ -6,7 +6,7 @@
 | Deprecated           | Best to poor | Phased out for removal and may be actively removed, may have security issues   |
 | Fully supported      | Best         | Tested, fully compatible                                                       |
 | Mostly supported     | Better       | Tested and partially compatible                                                |
-| Partially supported  | Good to poor | May be tested and partially compatible                                         |
+| Partially supported  | Good         | May be tested and partially compatible                                         |
 | Available            | Good to poor | Not tested, partially compatible, ebuild may be unfinished                     |
 
 | Python            | Level of support                         |
@@ -60,7 +60,7 @@
 | Qt 5.x            | Available                                |
 | Qt 6.x            | Fully supported                          |
 | ROCm              | Available                                |
-| TensorFlow        | Partially supported                      |
+| TensorFlow        | Available                                |
 | Vulkan            | Fully supported                          |
 | Wayland           | Fully supported                          |
 | X                 | Fully supported                          |
