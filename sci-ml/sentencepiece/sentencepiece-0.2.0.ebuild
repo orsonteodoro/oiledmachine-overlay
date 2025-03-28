@@ -34,6 +34,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" python test"
 RDEPEND+="
+	dev-libs/protobuf:=
 "
 DEPEND+="
 	${RDEPEND}
@@ -41,9 +42,6 @@ DEPEND+="
 BDEPEND+="
 	>=dev-build/cmake-3.8.0
 	virtual/pkgconfig
-"
-PDEPEND+="
-	dev-libs/protobuf:=
 "
 DOCS=( "README.md" )
 
