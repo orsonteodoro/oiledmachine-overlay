@@ -57,7 +57,7 @@
 | Protobuf 4        | Available                                |
 | Protobuf 5        | Available                                |
 | Pytorch           | Fully supported                          |
-| Qt 5.x            | Not supported                            |
+| Qt 5.x            | Available                                |
 | Qt 6.x            | Fully supported                          |
 | ROCm              | Available                                |
 | TensorFlow        | Partially supported                      |
