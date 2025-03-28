@@ -735,9 +735,6 @@ RDEPEND+="
 	>=dev-python/chroma-hnswlib-0.7.6[${PYTHON_USEDEP}]
 	>=dev-python/fastapi-0.95.2[${PYTHON_USEDEP}]
 	>=dev-python/httpx-0.27.0[${PYTHON_USEDEP}]
-	$(python_gen_cond_dep '
-		<dev-python/hyperframe-6.1.0[${PYTHON_USEDEP}]
-	' python3_10)
 	>=dev-python/kubernetes-28.1.0[${PYTHON_USEDEP}]
 	>=dev-python/mmh3-4.0.1[${PYTHON_USEDEP}]
 	>=dev-python/numpy-1.22.5[${PYTHON_USEDEP}]
