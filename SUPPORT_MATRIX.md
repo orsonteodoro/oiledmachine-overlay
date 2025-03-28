@@ -21,6 +21,9 @@
 | pypy3             | Available                                |
 | pypy3_11          | Not supported                            |
 
+The LIBC support below reflects upstream CI (Continuous Integration) images, but
+it may change if microarchitecture references exist in build files.
+
 | LIBC              | Arch    | Level of support               |
 | ---               | ----    | ---                            |
 | glibc             | 64-bit  | Generally supported            |
@@ -37,8 +40,6 @@
 | glibc             | sparc   | Available                      |
 | glibc             | x86     | Not supported                  |
 | musl              | *       | Available                      |
-
-LIBC support depends on upstream CI images or on arch references in build files.
 
 | Platform          | Level of support                         |
 | ---               | ---                                      |
