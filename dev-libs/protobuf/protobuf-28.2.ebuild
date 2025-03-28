@@ -32,6 +32,9 @@ RESTRICT="
 "
 SLOT="0/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 # version : slot
+# 30 : 6.30 From CMakeLists.txt's protobuf_VERSION_STRING
+# 29 : 5.29 From CMakeLists.txt's protobuf_VERSION_STRING
+# 28 : 5.28 From CMakeLists.txt's protobuf_VERSION_STRING
 # 27 : 5.27 From CMakeLists.txt's protobuf_VERSION_STRING
 # 26 : 5.26 From CMakeLists.txt's protobuf_VERSION_STRING
 # 25 : 4.25 From CMakeLists.txt's protobuf_VERSION_STRING
