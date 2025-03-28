@@ -4,9 +4,6 @@
 
 EAPI=8
 
-# TODO fix:
-# protobuf4 with grpc in chromadb conflict with tensorflow and protobuf3
-
 AT_TYPES_NODE_PV="20.11.30"
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="hatchling"
