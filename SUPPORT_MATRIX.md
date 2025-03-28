@@ -18,7 +18,7 @@
 | 3.13              | Partially supported                      |
 | 3.13t             | Not supported                            |
 | 3.14 and later    | Not supported                            |
-| pypy3             | Available but not supported              |
+| pypy3             | Available                                |
 | pypy3_11          | Not supported                            |
 
 | LIBC              | Arch    | Level of support               |
@@ -28,13 +28,13 @@
 | glibc             | alpha   | Not supported                  |
 | glibc >= 3.38     | amd64   | Fully supported                |
 | glibc             | arm     | Not supported                  |
-| glibc             | arm64   | Available but not supported    |
+| glibc             | arm64   | Available                      |
 | glibc             | hppa    | Not supported                  |
-| glibc             | loong   | Available but not supported    |
+| glibc             | loong   | Available                      |
 | glibc             | ppc     | Not supported                  |
-| glibc             | ppc64   | Available but not supported    |
-| glibc             | riscv   | Available but not supported    |
-| glibc             | sparc   | Not supported                  |
+| glibc             | ppc64   | Available                      |
+| glibc             | riscv   | Available                      |
+| glibc             | sparc   | Available                      |
 | glibc             | x86     | Not supported                  |
 | musl              | *       | Available                      |
 
