@@ -36,6 +36,12 @@ REQUIRED_USE+="
 	classic-control? (
 		pygame
 	)
+	other? (
+		^^ (
+			python_targets_python3_10
+			python_targets_python3_11
+		)
+	)
 	toy-text? (
 		pygame
 	)
