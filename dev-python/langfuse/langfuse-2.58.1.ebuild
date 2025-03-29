@@ -75,7 +75,9 @@ DEPEND+="
 BDEPEND+="
 	>=dev-python/poetry-core-1.0.0[${PYTHON_USEDEP}]
 	dev? (
-
+		$(python_gen_any_dep '
+			>=sci-ml/huggingface_hub-0.16.4[${PYTHON_SINGLE_USEDEP}]
+		')
 		>=dev-python/anthropic-0.17.0[${PYTHON_USEDEP}]
 		>=dev-python/boto3-1.28.59[${PYTHON_USEDEP}]
 		>=dev-python/bson-0.5.10[${PYTHON_USEDEP}]
@@ -107,7 +109,6 @@ BDEPEND+="
 		>=dev-python/tiktoken-0.7.0[${PYTHON_USEDEP}]
 		>=dev-util/ruff-0.1.8
 		>=dev-vcs/pre-commit-3.2.2[${PYTHON_USEDEP}]
-		>=sci-ml/huggingface_hub-0.16.4[${PYTHON_USEDEP}]
 	)
 	doc? (
 		>=dev-python/pdoc-14.4.0[${PYTHON_USEDEP}]

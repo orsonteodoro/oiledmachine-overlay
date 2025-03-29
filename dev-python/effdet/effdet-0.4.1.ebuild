@@ -38,8 +38,8 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/omegaconf-2.0[${PYTHON_USEDEP}]
 		>=dev-python/pycocotools-2.0.2[${PYTHON_USEDEP}]
-		>=dev-python/timm-0.9.2[${PYTHON_USEDEP}]
 	')
+	>=dev-python/timm-0.9.2[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/pytorch-1.12.1[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 "

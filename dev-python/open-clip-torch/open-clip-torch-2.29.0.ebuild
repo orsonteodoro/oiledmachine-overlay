@@ -51,20 +51,22 @@ RDEPEND+="
 		dev-python/regex[${PYTHON_USEDEP}]
 		dev-python/ftfy[${PYTHON_USEDEP}]
 		dev-python/tqdm[${PYTHON_USEDEP}]
-		dev-python/timm[${PYTHON_USEDEP}]
-		sci-ml/huggingface_hub[${PYTHON_USEDEP}]
 		sci-ml/safetensors[${PYTHON_USEDEP}]
 		training? (
-			>=dev-python/timm-1.0.10[${PYTHON_USEDEP}]
 			>=dev-python/webdataset-0.2.5[${PYTHON_USEDEP}]
 			>=sci-ml/pytorch-2.0[${PYTHON_USEDEP}]
 			dev-python/fsspec[${PYTHON_USEDEP}]
 			dev-python/pandas[${PYTHON_USEDEP}]
-			sci-ml/transformers[${PYTHON_SINGLE_USEDEP},sentencepiece]
 		)
 	')
 	>=sci-ml/pytorch-1.9.0[${PYTHON_SINGLE_USEDEP}]
+	dev-python/timm[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/huggingface_hub[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
+	training? (
+		>=dev-python/timm-1.0.10[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/transformers[${PYTHON_SINGLE_USEDEP},sentencepiece]
+	)
 "
 DEPEND+="
 	${RDEPEND}

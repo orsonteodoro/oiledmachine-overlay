@@ -77,7 +77,6 @@ BDEPEND+="
 			>=dev-python/setuptools-61.2[${PYTHON_USEDEP}]
 			dev-python/accelerate[${PYTHON_USEDEP}]
 			dev-python/coverage[${PYTHON_USEDEP}]
-			dev-python/diffusers[${PYTHON_USEDEP}]
 			dev-python/mypy[${PYTHON_USEDEP}]
 			dev-python/onnx[${PYTHON_USEDEP}]
 			dev-python/pytest-timeout[${PYTHON_USEDEP}]
@@ -88,6 +87,7 @@ BDEPEND+="
 		')
 		>=dev-python/ivy-9999[${PYTHON_SINGLE_USEDEP}]
 		>=dev-vcs/pre-commit-2[${PYTHON_SINGLE_USEDEP}]
+		dev-python/diffusers[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
 	)
 	doc? (

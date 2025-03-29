@@ -12,6 +12,7 @@ EAPI=8
 # peft
 # torchsde		*
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
@@ -56,78 +57,82 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
-	!~dev-python/regex-2019.12.17[${PYTHON_USEDEP}]
-	>=dev-python/python-3.8.0[${PYTHON_USEDEP}]
-	>=sci-ml/huggingface_hub-0.23.2[${PYTHON_USEDEP}]
-	>=sci-ml/safetensors-0.3.1[${PYTHON_USEDEP}]
-	dev-python/filelock[${PYTHON_USEDEP}]
-	dev-python/importlib-metadata[${PYTHON_USEDEP}]
-	dev-python/note_seq[${PYTHON_USEDEP}]
-	dev-python/numpy[${PYTHON_USEDEP}]
-	virtual/pillow[${PYTHON_USEDEP}]
-	dev-python/requests[${PYTHON_USEDEP}]
-	sci-ml/onnx[${PYTHON_USEDEP}]
-	flax? (
-		>=dev-python/flax-0.4.1[${PYTHON_USEDEP}]
-		>=dev-python/jax-0.4.1[${PYTHON_USEDEP}]
-		>=dev-python/jaxlib-0.4.1[${PYTHON_USEDEP}]
-	)
-	training? (
-		dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
-		dev-python/protobuf:=
-		>=dev-python/accelerate-0.29.3[${PYTHON_USEDEP}]
-		>=dev-python/peft-0.6.0[${PYTHON_USEDEP}]
-		dev-python/datasets[${PYTHON_USEDEP}]
-		dev-python/jinja2[${PYTHON_USEDEP}]
-		sci-visualization/tensorboard[${PYTHON_USEDEP}]
-	)
+	$(python_gen_cond_dep '
+		!~dev-python/regex-2019.12.17[${PYTHON_USEDEP}]
+		>=dev-python/python-3.8.0[${PYTHON_USEDEP}]
+		>=sci-ml/safetensors-0.3.1[${PYTHON_USEDEP}]
+		dev-python/filelock[${PYTHON_USEDEP}]
+		dev-python/importlib-metadata[${PYTHON_USEDEP}]
+		dev-python/note_seq[${PYTHON_USEDEP}]
+		dev-python/numpy[${PYTHON_USEDEP}]
+		virtual/pillow[${PYTHON_USEDEP}]
+		dev-python/requests[${PYTHON_USEDEP}]
+		sci-ml/onnx[${PYTHON_USEDEP}]
+		flax? (
+			>=dev-python/flax-0.4.1[${PYTHON_USEDEP}]
+			>=dev-python/jax-0.4.1[${PYTHON_USEDEP}]
+			>=dev-python/jaxlib-0.4.1[${PYTHON_USEDEP}]
+		)
+		training? (
+			>=dev-python/accelerate-0.29.3[${PYTHON_USEDEP}]
+			>=dev-python/peft-0.6.0[${PYTHON_USEDEP}]
+			dev-python/datasets[${PYTHON_USEDEP}]
+			dev-python/jinja2[${PYTHON_USEDEP}]
+			dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
+			dev-python/protobuf:=
+			sci-visualization/tensorboard[${PYTHON_USEDEP}]
+		)
+		pytorch? (
+			>=dev-python/accelerate-0.29.3[${PYTHON_USEDEP}]
+		)
+	')
+	>=sci-ml/huggingface_hub-0.23.2[${PYTHON_SINGLE_USEDEP}]
 	pytorch? (
-		>=dev-python/accelerate-0.29.3[${PYTHON_USEDEP}]
-		$(python_gen_any_dep '
-			>=sci-ml/pytorch-1.4[${PYTHON_SINGLE_USEDEP}]
-			dev-python/torchsde[${PYTHON_SINGLE_USEDEP}]
-		')
+		>=sci-ml/pytorch-1.4[${PYTHON_SINGLE_USEDEP}]
+		dev-python/torchsde[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	dev-python/setuptools[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
-	quality? (
-		<dev-python/urllib3-2.0.1[${PYTHON_USEDEP}]
-		>=dev-python/hf-doc-builder-0.3.0[${PYTHON_USEDEP}]
-		>=dev-python/isort-5.5.4[${PYTHON_USEDEP}]
-		>=dev-util/ruff-0.1.5
-		dev-python/black[${PYTHON_USEDEP}]
-	)
-	doc? (
-		>=dev-python/hf-doc-builder-0.3.0[${PYTHON_USEDEP}]
-	)
-	test? (
-		$(python_gen_any_dep '
-			>=dev-python/invisible-watermark-0.2.0[${PYTHON_SINGLE_USEDEP}]
-			sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
-		')
-		(
-			>=sci-ml/sentencepiece-0.1.91[${PYTHON_USEDEP}]
-			!~sci-ml/sentencepiece-0.1.92[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/setuptools[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+		quality? (
+			<dev-python/urllib3-2.0.1[${PYTHON_USEDEP}]
+			>=dev-python/hf-doc-builder-0.3.0[${PYTHON_USEDEP}]
+			>=dev-python/isort-5.5.4[${PYTHON_USEDEP}]
+			>=dev-util/ruff-0.1.5
+			dev-python/black[${PYTHON_USEDEP}]
 		)
-		<dev-python/GitPython-3.1.19[${PYTHON_USEDEP}]
-		>=dev-python/compel-0.1.8[${PYTHON_USEDEP}]
-		>=dev-python/k-diffusion-0.0.12[${PYTHON_USEDEP}]
-		>=dev-python/requests-mock-1.10.0[${PYTHON_USEDEP}]
-		>=sci-ml/safetensors-0.3.1[${PYTHON_USEDEP}]
-		>=sci-ml/transformers-4.25.1[${PYTHON_USEDEP}]
-		dev-python/datasets[${PYTHON_USEDEP}]
-		dev-python/jinja2[${PYTHON_USEDEP}]
-		dev-python/librosa[${PYTHON_USEDEP}]
-		dev-python/parameterized[${PYTHON_USEDEP}]
-		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/pytest-timeout[${PYTHON_USEDEP}]
-		dev-python/pytest-xdist[${PYTHON_USEDEP}]
-		dev-python/scipy[${PYTHON_USEDEP}]
+		doc? (
+			>=dev-python/hf-doc-builder-0.3.0[${PYTHON_USEDEP}]
+		)
+		test? (
+			(
+				>=sci-ml/sentencepiece-0.1.91[${PYTHON_USEDEP}]
+				!~sci-ml/sentencepiece-0.1.92[${PYTHON_USEDEP}]
+			)
+			<dev-python/GitPython-3.1.19[${PYTHON_USEDEP}]
+			>=dev-python/compel-0.1.8[${PYTHON_USEDEP}]
+			>=dev-python/k-diffusion-0.0.12[${PYTHON_USEDEP}]
+			>=dev-python/requests-mock-1.10.0[${PYTHON_USEDEP}]
+			>=sci-ml/safetensors-0.3.1[${PYTHON_USEDEP}]
+			>=sci-ml/transformers-4.25.1[${PYTHON_USEDEP}]
+			dev-python/datasets[${PYTHON_USEDEP}]
+			dev-python/jinja2[${PYTHON_USEDEP}]
+			dev-python/librosa[${PYTHON_USEDEP}]
+			dev-python/parameterized[${PYTHON_USEDEP}]
+			dev-python/pytest[${PYTHON_USEDEP}]
+			dev-python/pytest-timeout[${PYTHON_USEDEP}]
+			dev-python/pytest-xdist[${PYTHON_USEDEP}]
+			dev-python/scipy[${PYTHON_USEDEP}]
+		)
+	')
+	test? (
+		>=dev-python/invisible-watermark-0.2.0[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DOCS=( "README.md" )

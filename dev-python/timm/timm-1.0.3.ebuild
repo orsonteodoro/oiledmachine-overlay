@@ -32,7 +32,6 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=sci-ml/safetensors-0.2[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
-		sci-ml/huggingface_hub[${PYTHON_USEDEP}]
 		modelindex? (
 			>=dev-python/model-index-0.1.10[${PYTHON_USEDEP}]
 			>=dev-python/jinja2-2.11.3[${PYTHON_USEDEP}]
@@ -40,6 +39,7 @@ RDEPEND+="
 	')
 	>=sci-ml/pytorch-1.7[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/torchvision-0.5.0[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/huggingface_hub[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}

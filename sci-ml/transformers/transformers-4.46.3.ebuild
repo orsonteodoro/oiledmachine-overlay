@@ -164,7 +164,6 @@ RDEPEND="
 		>=dev-python/packaging-20.0[${PYTHON_USEDEP}]
 		>=dev-python/pyyaml-5.1[${PYTHON_USEDEP}]
 		>=dev-python/tqdm-4.27[${PYTHON_USEDEP}]
-		>=sci-ml/huggingface_hub-0.23.2[${PYTHON_USEDEP}]
 		>=sci-ml/safetensors-0.4.1[${PYTHON_USEDEP}]
 		dev-python/filelock[${PYTHON_USEDEP}]
 		dev-python/regex[${PYTHON_USEDEP}]
@@ -177,7 +176,6 @@ RDEPEND="
 		)
 		agents? (
 			dev-python/datasets[${PYTHON_USEDEP}]
-			dev-python/diffusers[${PYTHON_USEDEP}]
 			media-libs/opencv[${PYTHON_USEDEP},python]
 		)
 		av? (
@@ -267,9 +265,6 @@ RDEPEND="
 			>=dev-python/keras-2.9[${PYTHON_USEDEP}]
 			sci-ml/tensorflow-probability[${PYTHON_USEDEP}]
 		)
-		timm? (
-			dev-python/timm[${PYTHON_USEDEP}]
-		)
 		torchhub? (
 			dev-python/importlib-metadata[${PYTHON_USEDEP}]
 			dev-python/protobuf[${PYTHON_USEDEP}]
@@ -279,7 +274,9 @@ RDEPEND="
 			virtual/pillow[${PYTHON_USEDEP}]
 		)
 	')
+	>=sci-ml/huggingface_hub-0.23.2[${PYTHON_SINGLE_USEDEP}]
 	agents? (
+		dev-python/diffusers[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	)
 	accelerate? (
@@ -290,6 +287,9 @@ RDEPEND="
 	)
 	speech? (
 		sci-ml/torchaudio[${PYTHON_SINGLE_USEDEP}]
+	)
+	timm? (
+		dev-python/timm[${PYTHON_SINGLE_USEDEP}]
 	)
 	torch-speech? (
 		sci-ml/torchaudio[${PYTHON_SINGLE_USEDEP}]

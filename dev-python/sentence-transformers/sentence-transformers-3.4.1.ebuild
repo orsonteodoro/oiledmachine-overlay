@@ -40,12 +40,12 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc"
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=sci-ml/huggingface_hub-0.20.0[${PYTHON_USEDEP}]
 		dev-python/scikit-learn[${PYTHON_USEDEP}]
 		dev-python/scipy[${PYTHON_USEDEP}]
 		dev-python/tqdm[${PYTHON_USEDEP}]
 		virtual/pillow[${PYTHON_USEDEP}]
 	')
+	>=sci-ml/huggingface_hub-0.20.0[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/transformers-4.41.0[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/pytorch-1.11.0[${PYTHON_SINGLE_USEDEP}]
 "

@@ -6,6 +6,7 @@ EAPI=8
 
 MY_PN="${PN/-/_}"
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} ) # Lists up to 3.9
 
@@ -40,27 +41,29 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
 RDEPEND+="
-	<dev-python/timm-0.6.8[${PYTHON_USEDEP}]
-	dev-python/einops[${PYTHON_USEDEP}]
-	dev-python/filelock[${PYTHON_USEDEP}]
-	virtual/pillow[${PYTHON_USEDEP}]
-	dev-python/importlib-metadata[${PYTHON_USEDEP}]
-	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/scipy[${PYTHON_USEDEP}]
-	dev-python/scikit-image[${PYTHON_USEDEP}]
-	media-libs/opencv[${PYTHON_USEDEP},python]
-	sci-ml/huggingface_hub[${PYTHON_USEDEP}]
-	$(python_gen_any_dep '
-		sci-libs/torch[${PYTHON_SINGLE_USEDEP}]
-		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/einops[${PYTHON_USEDEP}]
+		dev-python/filelock[${PYTHON_USEDEP}]
+		dev-python/importlib-metadata[${PYTHON_USEDEP}]
+		dev-python/numpy[${PYTHON_USEDEP}]
+		dev-python/scipy[${PYTHON_USEDEP}]
+		dev-python/scikit-image[${PYTHON_USEDEP}]
+		media-libs/opencv[${PYTHON_USEDEP},python]
+		virtual/pillow[${PYTHON_USEDEP}]
 	')
+	<dev-python/timm-0.6.8[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/huggingface_hub[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	dev-python/setuptools[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/setuptools[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+	')
 "
 DOCS=( "README.md" )
 

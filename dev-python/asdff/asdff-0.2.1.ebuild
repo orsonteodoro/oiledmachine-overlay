@@ -39,9 +39,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev test"
 RDEPEND+="
-	$(python_gen_cond_dep '
-		>=dev-python/diffusers-0.19.0[${PYTHON_USEDEP},pytorch]
-	')
+	>=dev-python/diffusers-0.19.0[${PYTHON_SINGLE_USEDEP},pytorch]
 	>=sci-ml/transformers-4.25.1[${PYTHON_SINGLE_USEDEP}]
 	dev-python/ultralytics[${PYTHON_SINGLE_USEDEP}]
 "

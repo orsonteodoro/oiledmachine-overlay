@@ -340,6 +340,7 @@ BDEPEND_STRESS_TESTS="
 BDEPEND_MODEL_HUB_TESTS_TORCH_TESTS="
 	${BDEPEND_TEST_CONSTRAINTS}
 	$(python_gen_any_dep '
+		dev-python/timm[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/torchaudio[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
@@ -363,7 +364,6 @@ BDEPEND_MODEL_HUB_TESTS_TORCH_TESTS="
 	dev-python/wheel[${PYTHON_USEDEP}]
 	sci-ml/datasets[${PYTHON_USEDEP}]
 	sci-ml/sentencepiece[${PYTHON_USEDEP},python]
-	dev-python/timm[${PYTHON_USEDEP}]
 "
 # tests/model_hub_tests/torch_tests/requirements_secondary.txt \
 BDEPEND_MODEL_HUB_TESTS_TORCH_TESTS_SECONDARY="

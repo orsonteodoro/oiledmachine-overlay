@@ -349,6 +349,9 @@ BDEPEND_STRESS_TESTS="
 "
 # tests/e2e_tests/requirements.txt \
 BDEPEND_E2E_TESTS="
+	$(python_gen_any_dep '
+		>=dev-python/timm-0.9.2[${PYTHON_SINGLE_USEDEP}]
+	')
 	(
 		>=dev-python/scipy-1.5.4[${PYTHON_USEDEP}]
 		<dev-python/scipy-1.12[${PYTHON_USEDEP}]
@@ -373,7 +376,6 @@ BDEPEND_E2E_TESTS="
 	>=dev-python/unittest-xml-reporting-3.0.4[${PYTHON_USEDEP}]
 	>=media-libs/opencv-4.5[${PYTHON_USEDEP},python]
 	>=dev-python/pretrainedmodels-0.7.4[${PYTHON_USEDEP}]
-	>=dev-python/timm-0.9.2[${PYTHON_USEDEP}]
 	dev-python/deepctr-torch[${PYTHON_USEDEP}]
 	dev-python/openvino-dev[${PYTHON_USEDEP}]
 	dev-python/pytest-html[${PYTHON_USEDEP}]
@@ -407,6 +409,7 @@ BDEPEND_MODEL_HUB_TESTS_PERFORMANCE_TESTS="
 BDEPEND_MODEL_HUB_TESTS_PYTORCH="
 	${BDEPEND_TEST_CONSTRAINTS}
 	$(python_gen_any_dep '
+		dev-python/timm[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/torchaudio[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
@@ -433,7 +436,6 @@ BDEPEND_MODEL_HUB_TESTS_PYTORCH="
 	dev-python/wheel[${PYTHON_USEDEP}]
 	sci-ml/datasets[${PYTHON_USEDEP}]
 	sci-ml/sentencepiece[${PYTHON_USEDEP},python]
-	dev-python/timm[${PYTHON_USEDEP}]
 "
 # tests/model_hub_tests/pytorch/requirements_secondary.txt \
 BDEPEND_MODEL_HUB_TESTS_PYTORCH_SECONDARY="

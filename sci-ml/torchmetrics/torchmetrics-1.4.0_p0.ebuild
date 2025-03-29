@@ -536,13 +536,13 @@ TEXT_TEST_BDEPEND="
 				>=dev-python/sacrebleu-2.5.0[${PYTHON_USEDEP}]
 			)
 		)
-		!strict? (
-			sci-ml/huggingface_hub[${PYTHON_USEDEP}]
-		)
-		strict? (
-			<sci-ml/huggingface_hub-0.23[${PYTHON_USEDEP}]
-		)
 	')
+	!strict? (
+		sci-ml/huggingface_hub[${PYTHON_SINGLE_USEDEP}]
+	)
+	strict? (
+		<sci-ml/huggingface_hub-0.23[${PYTHON_SINGLE_USEDEP}]
+	)
 "
 BDEPEND+="
 	$(python_gen_cond_dep '
