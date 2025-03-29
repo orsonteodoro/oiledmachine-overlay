@@ -29,7 +29,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" faiss-cpu faiss-gpu torch"
+IUSE+=" faiss-cpu faiss-gpu pytorch"
 # Upstream lists ninja (a pypi package), but cannot find reference.
 RDEPEND+="
 	$(python_gen_cond_dep '
@@ -49,7 +49,7 @@ RDEPEND+="
 	faiss-gpu? (
 		>=dev-python/faiss-gpu-1.7.0[${PYTHON_SINGLE_USEDEP}]
 	)
-	torch? (
+	pytorch? (
 		~sci-ml/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
 	)
 "
