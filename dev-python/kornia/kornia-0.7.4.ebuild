@@ -82,13 +82,13 @@ BDEPEND+="
 			dev-python/pytest-timeout[${PYTHON_USEDEP}]
 			dev-python/requests[${PYTHON_USEDEP}]
 			dev-python/types-requests[${PYTHON_USEDEP}]
-			sci-ml/transformers[${PYTHON_USEDEP}]
 			virtual/pillow[${PYTHON_USEDEP}]
 		')
 		>=dev-python/ivy-9999[${PYTHON_SINGLE_USEDEP}]
 		>=dev-vcs/pre-commit-2[${PYTHON_SINGLE_USEDEP}]
 		dev-python/diffusers[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
+		sci-ml/transformers[${PYTHON_SINGLE_USEDEP}]
 	)
 	doc? (
 		$(python_gen_cond_dep '
