@@ -73,6 +73,7 @@ BDEPEND+="
 	dev? (
 		$(python_gen_cond_dep '
 			<dev-python/numpy-2[${PYTHON_USEDEP}]
+			>=dev-python/ivy-9999[${PYTHON_USEDEP}]
 			>=dev-python/pytest-8.3.3[${PYTHON_USEDEP}]
 			>=dev-python/setuptools-61.2[${PYTHON_USEDEP}]
 			dev-python/accelerate[${PYTHON_USEDEP}]
@@ -84,7 +85,6 @@ BDEPEND+="
 			dev-python/types-requests[${PYTHON_USEDEP}]
 			virtual/pillow[${PYTHON_USEDEP}]
 		')
-		>=dev-python/ivy-9999[${PYTHON_SINGLE_USEDEP}]
 		>=dev-vcs/pre-commit-2[${PYTHON_SINGLE_USEDEP}]
 		dev-python/diffusers[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
