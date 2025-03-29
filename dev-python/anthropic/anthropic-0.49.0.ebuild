@@ -53,7 +53,7 @@ BDEPEND="
 		>=dev-python/respx-0.22.0[${PYTHON_USEDEP}]
 		>=dev-python/rich-13.7.1[${PYTHON_USEDEP}]
 		>=dev-python/time-machine-2.9.0[${PYTHON_USEDEP}]
-		>=dev-util/ruff-0.9.4[${PYTHON_USEDEP}]
+		>=dev-util/ruff-0.9.4
 	)
 "
 DOCS=( "README.md" )
