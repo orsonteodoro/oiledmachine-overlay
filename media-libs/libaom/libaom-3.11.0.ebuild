@@ -10,7 +10,7 @@ CMAKE_ECLASS="cmake"
 GCC_MIN_SLOT=6
 CLANG_MIN_SLOT=7
 N_SAMPLES=1
-PYTHON_COMPAT=( "python3_"{8..13} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
@@ -23,7 +23,7 @@ UOPTS_BOLT_INST_ARGS=(
 	"libaom_av1_rc.so:--skip-funcs=.text/1"
 )
 
-inherit aocc cmake-multilib flag-o-matic flag-o-matic-om multiprocessing python-any-r1
+inherit aocc cmake-multilib flag-o-matic flag-o-matic-om multiprocessing python-single-r1
 inherit toolchain-funcs uopts
 
 if [[ ${PV} == *9999* ]]; then
@@ -250,6 +250,7 @@ check_video() {
 }
 
 pkg_setup() {
+	python_setup
 	if use aocc ; then
 		aocc_pkg_setup
 	fi
@@ -712,9 +713,9 @@ _trainer_plan_constrained_quality_training_session() {
 
 	# Formula based on point slope linear curve fitting.  Drop 1000 for Mbps.
 	# Yes 30 for 30 fps is not a mistake, so we scale it later with m60fps.
-	local avgrate=$(python -c "import math;print(abs(4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${m60fps} * 1000)")
-	local maxrate=$(python -c "print(${avgrate}*1.45)") # moving
-	local minrate=$(python -c "print(${avgrate}*0.5)") # stationary
+	local avgrate=$(${EPYTHON} -c "import math;print(abs(4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${m60fps} * 1000)")
+	local maxrate=$(${EPYTHON} -c "print(${avgrate}*1.45)") # moving
+	local minrate=$(${EPYTHON} -c "print(${avgrate}*0.5)") # stationary
 
 	local cmd
 	local cheight=$(_cheight "${height}")
@@ -736,7 +737,7 @@ _trainer_plan_constrained_quality_training_session() {
 	local len=$(ffprobe -i "${video_asset_path}" -show_entries format=duration -v quiet -of csv="p=0" | cut -f 1 -d ".")
 	(( len < 0 )) && len=0
 	for i in $(seq 1 ${N_SAMPLES}) ; do
-		local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
+		local pos=$(${EPYTHON} -c "print(int(${i}/${N_SAMPLES} * ${len}))")
 		einfo "Seek:  ${i} / ${N_SAMPLES}"
 		einfo "Position / Length:  ${pos} / ${len}"
 		local cmdt=(${cmd[@]} -ss ${pos})
@@ -836,9 +837,9 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 
 	# Formula based on point slope linear curve fitting.  Drop 1000 for Mbps.
 	# Yes 30 for 30 fps is not a mistake, so we scale it later with m60fps.
-	local avgrate=$(python -c "import math;print(abs(4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${mhdr} * ${m60fps} * 1000)")
-	local maxrate=$(python -c "print(${avgrate}*1.45)") # moving
-	local minrate=$(python -c "print(${avgrate}*0.5)") # stationary
+	local avgrate=$(${EPYTHON} -c "import math;print(abs(4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${mhdr} * ${m60fps} * 1000)")
+	local maxrate=$(${EPYTHON} -c "print(${avgrate}*1.45)") # moving
+	local minrate=$(${EPYTHON} -c "print(${avgrate}*0.5)") # stationary
 
 	local cmd
 	local cheight=$(_cheight "${height}")
@@ -877,7 +878,7 @@ _trainer_plan_2_pass_constrained_quality_training_session() {
 	local len=$(ffprobe -i "${video_asset_path}" -show_entries format=duration -v quiet -of csv="p=0" | cut -f 1 -d ".")
 	(( len < 0 )) && len=0
 	for i in $(seq 1 ${N_SAMPLES}) ; do
-		local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
+		local pos=$(${EPYTHON} -c "print(int(${i}/${N_SAMPLES} * ${len}))")
 		einfo "Seek:  ${i} / ${N_SAMPLES}"
 		einfo "Position / Length:  ${pos} / ${len}"
 		local cmdt
@@ -951,7 +952,7 @@ _trainer_plan_lossless() {
 			local len=$(ffprobe -i "${video_asset_path}" -show_entries format=duration -v quiet -of csv="p=0" | cut -f 1 -d ".")
 			(( len < 0 )) && len=0
 			for i in $(seq 1 ${N_SAMPLES}) ; do
-				local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
+				local pos=$(${EPYTHON} -c "print(int(${i}/${N_SAMPLES} * ${len}))")
 				einfo "Seek:  ${i} / ${N_SAMPLES}"
 				einfo "Position / Length:  ${pos} / ${len}"
 				local cmdt=(${cmd[@]} -ss ${pos})
