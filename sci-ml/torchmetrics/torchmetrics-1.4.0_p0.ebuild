@@ -537,10 +537,10 @@ TEXT_TEST_BDEPEND="
 			)
 		)
 		!strict? (
-			sci-ml/huggingface_hub[${PYTHON_USEDEP}]
+			sci-ml/huggingface-hub[${PYTHON_USEDEP}]
 		)
 		strict? (
-			<sci-ml/huggingface_hub-0.23[${PYTHON_USEDEP}]
+			<sci-ml/huggingface-hub-0.23[${PYTHON_USEDEP}]
 		)
 	')
 "
