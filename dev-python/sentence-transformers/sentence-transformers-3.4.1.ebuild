@@ -40,7 +40,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc"
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=sci-ml/huggingface_hub-0.20.0[${PYTHON_USEDEP}]
+		>=sci-ml/huggingface-hub-0.20.0[${PYTHON_USEDEP}]
 		dev-python/scikit-learn[${PYTHON_USEDEP}]
 		dev-python/scipy[${PYTHON_USEDEP}]
 		dev-python/tqdm[${PYTHON_USEDEP}]
