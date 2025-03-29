@@ -119,7 +119,6 @@ RDEPEND+="
 		>=dev-python/pydantic-2.10.6[${PYTHON_USEDEP}]
 		>=dev-python/pyjwt-2.10.1[${PYTHON_USEDEP},crypto(+)]
 		>=dev-python/pymdown-extensions-10.14.2[${PYTHON_USEDEP}]
-		>=dev-python/pymilvus-2.4.0[${PYTHON_USEDEP}]
 		>=dev-python/pymysql-1.1.1[${PYTHON_USEDEP}]
 		>=dev-python/pypandoc-1.13[${PYTHON_USEDEP}]
 		>=dev-python/pypdf-4.3.1[${PYTHON_USEDEP}]
@@ -161,6 +160,7 @@ RDEPEND+="
 	')
 	>=dev-python/colbert-ai-0.2.21[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/faster-whisper-1.1.1[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/pymilvus-2.4.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/sentence-transformers-3.3.1[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/unstructured-0.16.17[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/transformers[${PYTHON_SINGLE_USEDEP}]

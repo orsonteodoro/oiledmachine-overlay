@@ -390,12 +390,6 @@ DETECTION_TEST_BDEPEND="
 IMAGE_TEST_BDEPEND="
 	$(python_gen_cond_dep '
 		(
-			>=dev-python/kornia-0.6.7[${PYTHON_USEDEP}]
-			strict? (
-				<dev-python/kornia-0.8.0[${PYTHON_USEDEP}]
-			)
-		)
-		(
 			>=dev-python/scikit-image-0.19.0[${PYTHON_USEDEP}]
 			strict? (
 				<dev-python/scikit-image-0.23.3[${PYTHON_USEDEP}]
@@ -419,6 +413,12 @@ IMAGE_TEST_BDEPEND="
 			>=sci-ml/pytorch-msssim-1.0.0[${PYTHON_SINGLE_USEDEP}]
 		)
 	')
+	(
+		>=dev-python/kornia-0.6.7[${PYTHON_SINGLE_USEDEP}]
+		strict? (
+			<dev-python/kornia-0.8.0[${PYTHON_SINGLE_USEDEP}]
+		)
+	)
 "
 NOMINAL_TEST_BDEPEND="
 	$(python_gen_cond_dep '

@@ -319,12 +319,6 @@ PYTORCH_TEST_BDEPEND="
 				<dev-python/scikit-learn-1.4.0[${PYTHON_USEDEP}]
 			)
 		)
-		(
-			>=sci-visualization/tensorboard-2.9.1[${PYTHON_USEDEP}]
-			strict? (
-				<sci-visualization/tensorboard-2.15.0[${PYTHON_USEDEP}]
-			)
-		)
 		!strict? (
 			dev-python/psutil[${PYTHON_USEDEP}]
 		)
@@ -344,6 +338,12 @@ PYTORCH_TEST_BDEPEND="
 		>=sci-ml/onnxruntime-0.15.0[${PYTHON_SINGLE_USEDEP},python]
 		strict? (
 			<sci-ml/onnxruntime-1.17.0[${PYTHON_SINGLE_USEDEP},python]
+		)
+	)
+	(
+		>=sci-visualization/tensorboard-2.9.1[${PYTHON_SINGLE_USEDEP}]
+		strict? (
+			<sci-visualization/tensorboard-2.15.0[${PYTHON_SINGLE_USEDEP}]
 		)
 	)
 "

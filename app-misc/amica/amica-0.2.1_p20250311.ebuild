@@ -674,9 +674,7 @@ RUST_BINDINGS_BDEPEND="
 RDEPEND+="
 	${RUST_BINDINGS_DEPEND}
 	coqui? (
-		$(python_gen_cond_dep '
-			dev-python/coqui-tts[${PYTHON_USEDEP}]
-		')
+		dev-python/coqui-tts[${PYTHON_SINGLE_USEDEP}]
 		sys-process/procps
 	)
 	ollama? (

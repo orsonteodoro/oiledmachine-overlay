@@ -283,6 +283,7 @@ BDEPEND_TEST_CONSTRAINTS="
 			>=sci-ml/pytorch-1.13[${PYTHON_SINGLE_USEDEP}]
 			<sci-ml/pytorch-2.3[${PYTHON_SINGLE_USEDEP}]
 		)
+		>=dev-python/kornia-0.7.0[${PYTHON_SINGLE_USEDEP}]
 	')
 	(
 		>=dev-python/numpy-1.16.6[${PYTHON_USEDEP}]
@@ -302,7 +303,6 @@ BDEPEND_TEST_CONSTRAINTS="
 	>=dev-python/defusedxml-0.7.1[${PYTHON_USEDEP}]
 	>=dev-python/distro-1.9.0[${PYTHON_USEDEP}]
 	>=dev-python/fastjsonschema-2.17.1[${PYTHON_USEDEP}]
-	>=dev-python/kornia-0.7.0[${PYTHON_USEDEP}]
 	>=dev-python/h5py-3.1.0[${PYTHON_USEDEP}]
 	>=dev-python/jinja2-2.11.2[${PYTHON_USEDEP}]
 	>=dev-python/paddlepaddle-2.5.0[${PYTHON_USEDEP}]
@@ -396,6 +396,9 @@ BDEPEND_MODEL_HUB_TESTS_PERFORMANCE_TESTS="
 BDEPEND_MODEL_HUB_TESTS_PYTORCH="
 	${BDEPEND_TEST_CONSTRAINTS}
 	$(python_gen_any_dep '
+		dev-python/basicsr[${PYTHON_SINGLE_USEDEP}]
+		dev-python/facexlib[${PYTHON_SINGLE_USEDEP}]
+		dev-python/kornia[${PYTHON_SINGLE_USEDEP}]
 		dev-python/timm[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/torchaudio[${PYTHON_SINGLE_USEDEP}]
@@ -404,9 +407,6 @@ BDEPEND_MODEL_HUB_TESTS_PYTORCH="
 	')
 	>=dev-python/auto-gptq-0.5.1[${PYTHON_USEDEP}]
 	dev-python/av[${PYTHON_USEDEP}]
-	dev-python/basicsr[${PYTHON_USEDEP}]
-	dev-python/facexlib[${PYTHON_USEDEP}]
-	dev-python/kornia[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/optimum[${PYTHON_USEDEP}]
 	dev-python/packaging[${PYTHON_USEDEP}]

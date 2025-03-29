@@ -90,7 +90,6 @@ BOT_DEPENDS="
 PYTORCH_DEPENDS="
 	$(python_gen_cond_dep '
 		>=dev-python/accelerate-0.24.1[${PYTHON_USEDEP}]
-		>=dev-python/asdff-0.2.1[${PYTHON_USEDEP}]
 		>=dev-python/boto3-1.28.83[${PYTHON_USEDEP}]
 		>=dev-python/coloredlogs-15.0.1[${PYTHON_USEDEP}]
 		>=dev-python/cpufeature-0.2.1[${PYTHON_USEDEP}]
@@ -102,25 +101,24 @@ PYTORCH_DEPENDS="
 		>=dev-python/omegaconf-2.3.0[${PYTHON_USEDEP}]
 		>=dev-python/piexif-1.1.3[${PYTHON_USEDEP}]
 		>=dev-python/pyamdgpuinfo-2.1.6[${PYTHON_USEDEP}]
-		>=dev-python/realesrgan-0.3.0[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.10.1[${PYTHON_USEDEP}]
-		>=dev-python/tomesd-0.1.3[${PYTHON_USEDEP}]
 		>=media-libs/opencv-4.7.0.72[${PYTHON_USEDEP},imgproc,png,python]
 		>=sci-ml/safetensors-0.4.0[${PYTHON_USEDEP}]
 	')
+	>=dev-python/asdff-0.2.1[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/controlnet-aux-0.0.7[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/timm-0.9.10[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/diffusers-0.24.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/invisible-watermark-0.2.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/pytorch-lightning-2.1.1[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/realesrgan-0.3.0[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/tomesd-0.1.3[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/huggingface_hub-0.19.4[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/tokenizers-0.15.0[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/transformers-4.36.1[${PYTHON_SINGLE_USEDEP}]
 "
 INTERROGATION_DEPENDS="
-	$(python_gen_cond_dep '
-		>=dev-python/flamingo-mini-0.0.2_p9999[${PYTHON_USEDEP}]
-	')
+	>=dev-python/flamingo-mini-0.0.2_p9999[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/open-clip-torch-2.23.0[${PYTHON_SINGLE_USEDEP}]
 "
 gen_pytorch_rdepend() {
@@ -171,9 +169,7 @@ RDEPEND+="
 		sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},cuda?,python,rocm?]
 	)
 	xformers? (
-		$(python_gen_cond_dep '
-			dev-python/xformers[${PYTHON_USEDEP}]
-		')
+		dev-python/xformers[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="

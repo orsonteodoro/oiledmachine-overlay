@@ -1145,9 +1145,6 @@ RDEPEND="
 	python? (
 		>=sci-ml/transformers-4.18.0[${PYTHON_SINGLE_USEDEP}]
 		$(python_gen_cond_dep '
-			quant? (
-				dev-python/neural-compressor[${PYTHON_USEDEP}]
-			)
 			triton? (
 				dev-python/triton[${PYTHON_USEDEP}]
 			)
@@ -1166,6 +1163,9 @@ RDEPEND="
 			dev-python/py-cpuinfo[${PYTHON_USEDEP}]
 			>=dev-python/sympy-1.12[${PYTHON_USEDEP}]
 		')
+		quant? (
+			dev-python/neural-compressor[${PYTHON_SINGLE_USEDEP}]
+		)
 		training? (
 			>=sci-ml/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
 			sci-ml/pytorch-ort[${PYTHON_SINGLE_USEDEP}]

@@ -80,7 +80,6 @@ RDEPEND+="
 			dev-python/jinja2[${PYTHON_USEDEP}]
 			dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
 			dev-python/protobuf:=
-			sci-visualization/tensorboard[${PYTHON_USEDEP}]
 		)
 		pytorch? (
 			>=dev-python/accelerate-0.29.3[${PYTHON_USEDEP}]
@@ -90,6 +89,9 @@ RDEPEND+="
 	pytorch? (
 		>=sci-ml/pytorch-1.4[${PYTHON_SINGLE_USEDEP}]
 		dev-python/torchsde[${PYTHON_SINGLE_USEDEP}]
+	)
+	training? (
+		sci-visualization/tensorboard[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="
@@ -116,7 +118,6 @@ BDEPEND+="
 			)
 			<dev-python/GitPython-3.1.19[${PYTHON_USEDEP}]
 			>=dev-python/compel-0.1.8[${PYTHON_USEDEP}]
-			>=dev-python/k-diffusion-0.0.12[${PYTHON_USEDEP}]
 			>=dev-python/requests-mock-1.10.0[${PYTHON_USEDEP}]
 			>=sci-ml/safetensors-0.3.1[${PYTHON_USEDEP}]
 			>=sci-ml/transformers-4.25.1[${PYTHON_USEDEP}]
@@ -132,6 +133,7 @@ BDEPEND+="
 	')
 	test? (
 		>=dev-python/invisible-watermark-0.2.0[${PYTHON_SINGLE_USEDEP}]
+		>=dev-python/k-diffusion-0.0.12[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 	)
 "

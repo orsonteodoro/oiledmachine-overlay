@@ -46,7 +46,7 @@ RDEPEND+="
 		>=virtual/pillow-8.1[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
 	')
-	sci-libs/torch[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="

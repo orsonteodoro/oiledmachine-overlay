@@ -311,12 +311,6 @@ PYTORCH_TEST_BDEPEND="
 				<dev-python/scikit-learn-1.2.1[${PYTHON_USEDEP}]
 			)
 		)
-		(
-			>=sci-visualization/tensorboard-2.9.1[${PYTHON_USEDEP}]
-			strict? (
-				<sci-visualization/tensorboard-2.12.0[${PYTHON_USEDEP}]
-			)
-		)
 		!strict? (
 			dev-python/fastapi[${PYTHON_USEDEP}]
 			dev-python/onnx[${PYTHON_USEDEP}]
@@ -340,6 +334,12 @@ PYTORCH_TEST_BDEPEND="
 		>=dev-python/pytest-forked-1.4.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-rerunfailures-10.3[${PYTHON_USEDEP}]
 	')
+	(
+		>=sci-visualization/tensorboard-2.9.1[${PYTHON_SINGLE_USEDEP}]
+		strict? (
+			<sci-visualization/tensorboard-2.12.0[${PYTHON_SINGLE_USEDEP}]
+		)
+	)
 	>=dev-vcs/pre-commit-2.20.0[${PYTHON_SINGLE_USEDEP}]
 	!strict? (
 		sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python]

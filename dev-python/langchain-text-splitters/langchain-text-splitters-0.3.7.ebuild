@@ -56,8 +56,8 @@ BDEPEND+="
 		' python3_{10,11,12})
 		>=dev-python/nltk-3.9.1[${PYTHON_USEDEP}]
 		>=dev-python/transformers-4.47.0[${PYTHON_USEDEP}]
-		$(python_gen_cond_dep '
-			>=dev-python/sentence-transformers-2.6.0[${PYTHON_USEDEP}]
+		$(python_gen_any_dep '
+			>=dev-python/sentence-transformers-2.6.0[${PYTHON_SINGLE_USEDEP}]
 		' python3_{10,11,12})
 	)
 	typing? (

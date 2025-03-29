@@ -94,7 +94,9 @@ REQUIREMENTS_RDEPEND="
 	>=sci-ml/tf-slim-1.1.0[${PYTHON_USEDEP}]
 	sci-ml/tensorflow-estimator[${PYTHON_USEDEP}]
 	sci-ml/tensorflow[${PYTHON_USEDEP}]
-	sci-visualization/tensorboard[${PYTHON_USEDEP}]
+	$(python_gen_any_dep '
+		sci-visualization/tensorboard[${PYTHON_SINGLE_USEDEP}]
+	')
 	sci-visualization/tensorboard-plugin-wit[${PYTHON_USEDEP}]
 	keras2? (
 		<sci-ml/tensorflow-2.16[${PYTHON_USEDEP}]

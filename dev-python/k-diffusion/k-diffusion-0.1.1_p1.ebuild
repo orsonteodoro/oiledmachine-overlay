@@ -46,7 +46,6 @@ IUSE+=" dev"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/accelerate[${PYTHON_USEDEP}]
-		dev-python/dctorch[${PYTHON_USEDEP}]
 		dev-python/einops[${PYTHON_USEDEP}]
 		dev-python/jsonmerge[${PYTHON_USEDEP}]
 		dev-python/scikit-image[${PYTHON_USEDEP}]
@@ -59,6 +58,7 @@ RDEPEND+="
 	>=sci-ml/pytorch-2.0[${PYTHON_SINGLE_USEDEP}]
 	dev-python/clean-fid[${PYTHON_SINGLE_USEDEP}]
 	dev-python/clip-anytorch[${PYTHON_SINGLE_USEDEP}]
+	dev-python/dctorch[${PYTHON_SINGLE_USEDEP}]
 	dev-python/kornia[${PYTHON_SINGLE_USEDEP}]
 	dev-python/torchdiffeq[${PYTHON_SINGLE_USEDEP}]
 	dev-python/torchsde[${PYTHON_SINGLE_USEDEP}]

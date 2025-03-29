@@ -219,14 +219,12 @@ RDEPEND_CONSTRAINTS="
 	>=dev-python/pytest-html-4.1.1[${PYTHON_USEDEP}]
 	>=dev-python/pytest-timeout-2.2.0[${PYTHON_USEDEP}]
 
-	# Python bindings
 	>=dev-python/py-1.9.0[${PYTHON_USEDEP}]
 	>=dev-python/pygments-2.8.1[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-65.6.1[${PYTHON_USEDEP}]
 	>=dev-python/sympy-1.10[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.38.1[${PYTHON_USEDEP}]
 
-	# Frontends
 	>=dev-python/docopt-0.6.2[${PYTHON_USEDEP}]
 	>=dev-python/paddlepaddle-2.5.2[${PYTHON_USEDEP}]
 	(
@@ -340,6 +338,8 @@ BDEPEND_STRESS_TESTS="
 BDEPEND_MODEL_HUB_TESTS_TORCH_TESTS="
 	${BDEPEND_TEST_CONSTRAINTS}
 	$(python_gen_any_dep '
+		dev-python/basicsr[${PYTHON_SINGLE_USEDEP}]
+		dev-python/facexlib[${PYTHON_SINGLE_USEDEP}]
 		dev-python/timm[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/torchaudio[${PYTHON_SINGLE_USEDEP}]
@@ -348,8 +348,6 @@ BDEPEND_MODEL_HUB_TESTS_TORCH_TESTS="
 	')
 	>=dev-python/auto-gptq-0.5.1[${PYTHON_USEDEP}]
 	dev-python/av[${PYTHON_USEDEP}]
-	dev-python/basicsr[${PYTHON_USEDEP}]
-	dev-python/facexlib[${PYTHON_USEDEP}]
 	dev-python/numpy[${PYTHON_USEDEP}]
 	dev-python/optimum[${PYTHON_USEDEP}]
 	dev-python/pandas[${PYTHON_USEDEP}]
