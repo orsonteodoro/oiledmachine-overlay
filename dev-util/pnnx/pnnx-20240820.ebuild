@@ -8,8 +8,8 @@ EAPI=8
 
 CMAKE_MAKEFILE_GENERATOR="emake"
 #DISTUTILS_OPTIONAL=1
-DISTUTILS_USE_PEP517="setuptools"
 DISTUTILS_SINGLE_IMPL=1
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..1} )
 
 inherit cmake distutils-r1 pypi
