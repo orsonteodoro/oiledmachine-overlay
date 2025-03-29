@@ -65,7 +65,7 @@ RDEPEND="
 	>=sys-libs/zlib-1.2.13
 	dev-python/absl-py[${PYTHON_USEDEP}]
 	dev-python/h5py[${PYTHON_USEDEP}]
-	dev-python/optree[${PYTHON_USEDEP}]
+	dev-python/optree[${PYTHON_USEDEP},jax?,pytorch?]
 	dev-python/pandas[${PYTHON_USEDEP}]
 	virtual/pillow[${PYTHON_USEDEP}]
 	dev-python/pydot[${PYTHON_USEDEP}]
