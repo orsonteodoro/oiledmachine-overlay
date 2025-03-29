@@ -141,7 +141,6 @@ IMAGE_RDEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/unstructured-inference-0.8.6[${PYTHON_USEDEP}]
 		>=dev-python/unstructured-pytesseract-0.3.12[${PYTHON_USEDEP}]
-		dev-python/effdet[${PYTHON_USEDEP}]
 		dev-python/google-cloud-vision[${PYTHON_USEDEP}]
 		dev-python/pdf2image[${PYTHON_USEDEP}]
 		dev-python/pdfminer-six[${PYTHON_USEDEP}]
@@ -150,6 +149,7 @@ IMAGE_RDEPEND="
 		dev-python/pypdf[${PYTHON_USEDEP}]
 		sci-ml/onnx[${PYTHON_USEDEP}]
 	')
+	dev-python/effdet[${PYTHON_SINGLE_USEDEP}]
 "
 MARKDOWN_RDEPEND="
 	$(python_gen_cond_dep '
@@ -178,7 +178,6 @@ PDF_RDEPEND="
 	$(python_gen_cond_dep '
 		>=dev-python/unstructured-inference-0.8.6[${PYTHON_USEDEP}]
 		>=dev-python/unstructured-pytesseract-0.3.12[${PYTHON_USEDEP}]
-		dev-python/effdet[${PYTHON_USEDEP}]
 		dev-python/google-cloud-vision[${PYTHON_USEDEP}]
 		dev-python/onnx[${PYTHON_USEDEP}]
 		dev-python/pdf2image[${PYTHON_USEDEP}]
@@ -187,6 +186,7 @@ PDF_RDEPEND="
 		dev-python/pi-heif[${PYTHON_USEDEP}]
 		dev-python/pypdf[${PYTHON_USEDEP}]
 	')
+	dev-python/effdet[${PYTHON_SINGLE_USEDEP}]
 "
 PPT_RDEPEND="
 	$(python_gen_cond_dep '
