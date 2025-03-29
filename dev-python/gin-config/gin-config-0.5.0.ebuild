@@ -40,6 +40,15 @@ LICENSE="
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" cuda pytorch tensorflow test"
+REQUIRED_USE="
+	pytorch? (
+		^^ (
+			python_targets_python3_10
+			python_targets_python3_11
+			python_targets_python3_12
+		)
+	)
+"
 RDEPEND+="
 	pytorch? (
 		$(python_gen_any_dep '
