@@ -168,6 +168,7 @@ N_SAMPLES=1
 PATENT_STATUS=(
 	patent_status_nonfree
 )
+PYTHON_COMPAT=( "python3_"{10..12} )
 SCM=""
 TRAINERS=(
 	"ffmpeg_trainers_audio_cbr"
@@ -361,7 +362,8 @@ CPU_REQUIRED_USE="
 
 # +re-codecs is based on unpatched behavior to prevent breaking changes.
 
-inherit cuda flag-o-matic multilib multilib-minimal toolchain-funcs ${SCM}
+inherit cuda flag-o-matic multilib multilib-minimal python-single-r1
+inherit toolchain-funcs ${SCM}
 inherit flag-o-matic-om llvm uopts
 
 if [[ "${MY_PV#9999}" == "${MY_PV}" ]] ; then
@@ -1340,6 +1342,7 @@ ewarn "You are installing a multislot ${PN} designed for indirect use."
 ewarn "For direct use with /usr/bin/${PN} use the unislot version."
 ewarn
 	fi
+	python_setup
 	FFMPEG_TRAINING_MAX_ASSETS_PER_TYPE=${FFMPEG_TRAINING_MAX_ASSETS_PER_TYPE:-100} # You must update gen_autosample_suffix
 	if use pgo && has_version "media-video/ffmpeg" ; then
 ewarn "The PGO use flag is a Work In Progress (WIP)"
@@ -2414,9 +2417,9 @@ _trainer_plan_video_constrained_quality_training_session() {
 
 	# Formula based on point slope linear curve fitting.  Drop 1000 for Mbps.
 	# Yes 30 for 30 fps is not a mistake, so we scale it later with m60fps.
-	local avgrate=$(python -c "import math;print(abs(4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${m60fps} * 1000)")
-	local maxrate=$(python -c "print(${avgrate}*1.45)") # moving
-	local minrate=$(python -c "print(${avgrate}*0.5)") # stationary
+	local avgrate=$(${EPYTHON} -c "import math;print(abs(4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${m60fps} * 1000)")
+	local maxrate=$(${EPYTHON} -c "print(${avgrate}*1.45)") # moving
+	local minrate=$(${EPYTHON} -c "print(${avgrate}*0.5)") # stationary
 
 	local cheight=$(_cheight "${height}")
 einfo "Encoding as ${cheight} for ${duration} sec, ${fps} fps"
@@ -2443,7 +2446,7 @@ einfo "Encoding as ${cheight} for ${duration} sec, ${fps} fps"
 	(( len < 0 )) && len=0
 	local i
 	for i in $(seq 1 ${N_SAMPLES}) ; do
-		local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
+		local pos=$(${EPYTHON} -c "print(int(${i}/${N_SAMPLES} * ${len}))")
 eprintf "Seek" "${i} / ${N_SAMPLES}"
 eprintf "Position" "${pos}"
 eprintf "Length" "${len}"
@@ -2655,9 +2658,9 @@ _trainer_plan_video_2_pass_constrained_quality_training_session() {
 
 	# Formula based on point slope linear curve fitting.  Drop 1000 for Mbps.
 	# Yes 30 for 30 fps is not a mistake, so we scale it later with m60fps.
-	local avgrate=$(python -c "import math;print(abs(4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${mhdr} * ${m60fps} * 1000)")
-	local maxrate=$(python -c "print(${avgrate}*1.45)") # moving
-	local minrate=$(python -c "print(${avgrate}*0.5)") # stationary
+	local avgrate=$(${EPYTHON} -c "import math;print(abs(4.95*pow(10,-8)*(30*${width}*${height})-0.2412601555) * ${mhdr} * ${m60fps} * 1000)")
+	local maxrate=$(${EPYTHON} -c "print(${avgrate}*1.45)") # moving
+	local minrate=$(${EPYTHON} -c "print(${avgrate}*0.5)") # stationary
 
 	local cmd
 	local cheight=$(_cheight "${height}")
@@ -2701,7 +2704,7 @@ einfo "Encoding as ${cheight} for ${duration} sec, ${fps} fps"
 	(( len < 0 )) && len=0
 	local i
 	for i in $(seq 1 ${N_SAMPLES}) ; do
-		local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
+		local pos=$(${EPYTHON} -c "print(int(${i}/${N_SAMPLES} * ${len}))")
 eprintf "Seek" "${i} / ${N_SAMPLES}"
 eprintf "Position" "${pos}"
 eprintf "Length" "${len}"
@@ -2829,7 +2832,7 @@ einfo "Encoding for lossless audio"
 			(( len < 0 )) && len=0
 			local i
 			for i in $(seq 1 ${N_SAMPLES}) ; do
-				local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
+				local pos=$(${EPYTHON} -c "print(int(${i}/${N_SAMPLES} * ${len}))")
 eprintf "Seek" "${i} / ${N_SAMPLES}"
 eprintf "Position" "${pos}"
 eprintf "Length" "${len}"
@@ -2895,7 +2898,7 @@ einfo "Encoding for lossless video"
 			(( len < 0 )) && len=0
 			local i
 			for i in $(seq 1 ${N_SAMPLES}) ; do
-				local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
+				local pos=$(${EPYTHON} -c "print(int(${i}/${N_SAMPLES} * ${len}))")
 eprintf "Seek" "${i} / ${N_SAMPLES}"
 eprintf "Position" "${pos}"
 eprintf "Length" "${len}"
@@ -3102,17 +3105,17 @@ eerror
 
 	# Formula based on point slope linear curve fitting.  Drop 1000 for Mbps.
 	# Yes 30 for 30 fps is not a mistake, so we scale it later with m60fps.
-	local lq_avgrate=$(python -c "import math;print((4.66*pow(10,-8)*(30*${width}*${height})+0.2780469436) * ${m60fps} * 1000)")
-	local hq_avgrate=$(python -c "import math;print((7.3*pow(10,-8)*(30*${width}*${height})+1.4952679804) * ${m60fps} * 1000)")
-	local mq_avgrate=$(python -c "import math;print((${lq_avgrate}+${hq_avgrate})/2)")
+	local lq_avgrate=$(${EPYTHON} -c "import math;print((4.66*pow(10,-8)*(30*${width}*${height})+0.2780469436) * ${m60fps} * 1000)")
+	local hq_avgrate=$(${EPYTHON} -c "import math;print((7.3*pow(10,-8)*(30*${width}*${height})+1.4952679804) * ${m60fps} * 1000)")
+	local mq_avgrate=$(${EPYTHON} -c "import math;print((${lq_avgrate}+${hq_avgrate})/2)")
 
-	local bandwidth_limit=$(python -c "print(${FFMPEG_TRAINING_STREAMING_UPLOAD_BANDWIDTH:-1.05} * 1000)")
+	local bandwidth_limit=$(${EPYTHON} -c "print(${FFMPEG_TRAINING_STREAMING_UPLOAD_BANDWIDTH:-1.05} * 1000)")
 
 	if [[ "${mic}" =~ ("1") ]] ; then
 		aextra_args+=(
 			-c:a ${aencoding_codec}
 			-b:a ${abitrate}k
-			-ar $(python -c "print(int(${asample_rate}*1000))")
+			-ar $(${EPYTHON} -c "print(int(${asample_rate}*1000))")
 		)
 	else
 		aextra_args+=(
@@ -3253,7 +3256,7 @@ ewarn
 
 	local vquality_i=1
 	for avgrate in ${lq_avgrate} ${mq_avgrate} ${hq_avgrate} ; do
-		local total_bitrate=$(python -c "print(${avgrate} + ${abitrate})")
+		local total_bitrate=$(${EPYTHON} -c "print(${avgrate} + ${abitrate})")
 		(( ${vquality_i} == 1 )) && msg_quality="low quality"
 		(( ${vquality_i} == 2 )) && msg_quality="mid quality"
 		(( ${vquality_i} == 3 )) && msg_quality="high quality"
@@ -3360,7 +3363,7 @@ ewarn "VA-API training is WIP"
 			)
 		fi
 
-		if ! python -c "if ${total_bitrate} > ${bandwidth_limit}: exit(1)" ; then
+		if ! ${EPYTHON} -c "if ${total_bitrate} > ${bandwidth_limit}: exit(1)" ; then
 ewarn
 ewarn "Rejected encoder settings exceeding upload rate limits (total_bitrate: ${total_bitrate} kbps, ${bandwidth_limit} kbps)"
 ewarn
@@ -3406,7 +3409,7 @@ eerror
 			2>/dev/null \
 			| grep "nb_read_frames.*" \
 			| cut -f 2 -d "=")
-		local expected_frames=$(python -c "print(int(${fps} * ${duration} * (25/30)))")
+		local expected_frames=$(${EPYTHON} -c "print(int(${fps} * ${duration} * (25/30)))")
 
 		# You can change this as a weighted linear combo so that
 		# you prioritize the preference of image quality or FPS.
@@ -3420,9 +3423,9 @@ eerror
 		local score
 		if [[ -n "${FFMPEG_TRAINING_AV_STREAMING_WS}" ]] ; then
 			local t=$(eval "echo ${FFMPEG_TRAINING_AV_STREAMING_WS}")
-			score=$(python -c "print(int(${t}))")
+			score=$(${EPYTHON} -c "print(int(${t}))")
 		else
-			score=$(python -c "print(int(${total_bitrate}))")
+			score=$(${EPYTHON} -c "print(int(${total_bitrate}))")
 		fi
 
 		if (( ${actual_frames} >= ${expected_frames}  )) ; then
@@ -3577,7 +3580,7 @@ einfo "Encoding as CBR for 3 sec, ${bitrate} kbps for ${audio_sample_path}"
 			(( len < 0 )) && len=0
 			local i
 			for i in $(seq 1 ${N_SAMPLES}) ; do
-				local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
+				local pos=$(${EPYTHON} -c "print(int(${i}/${N_SAMPLES} * ${len}))")
 eprintf "Seek" "${i} / ${N_SAMPLES}"
 eprintf "Position" "${pos}"
 eprintf "Length" "${len}"
@@ -3670,7 +3673,7 @@ einfo "Encoding as VBR for 3 sec with ${setting} setting for ${audio_sample_path
 			(( len < 0 )) && len=0
 			local i
 			for i in $(seq 1 ${N_SAMPLES}) ; do
-				local pos=$(python -c "print(int(${i}/${N_SAMPLES} * ${len}))")
+				local pos=$(${EPYTHON} -c "print(int(${i}/${N_SAMPLES} * ${len}))")
 eprintf "Seek" "${i} / ${N_SAMPLES}"
 eprintf "Position" "${pos}"
 eprintf "Length" "${len}"
