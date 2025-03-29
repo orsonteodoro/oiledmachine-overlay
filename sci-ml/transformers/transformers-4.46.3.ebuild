@@ -164,7 +164,7 @@ RDEPEND="
 		>=dev-python/packaging-20.0[${PYTHON_USEDEP}]
 		>=dev-python/pyyaml-5.1[${PYTHON_USEDEP}]
 		>=dev-python/tqdm-4.27[${PYTHON_USEDEP}]
-		>=sci-ml/huggingface_hub-0.23.2[${PYTHON_USEDEP}]
+		>=sci-ml/huggingface-hub-0.23.2[${PYTHON_USEDEP}]
 		>=sci-ml/safetensors-0.4.1[${PYTHON_USEDEP}]
 		dev-python/filelock[${PYTHON_USEDEP}]
 		dev-python/regex[${PYTHON_USEDEP}]
