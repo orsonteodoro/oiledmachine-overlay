@@ -4,6 +4,7 @@
 
 EAPI=8
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{8..11} )
 
@@ -41,35 +42,37 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
-	dev-python/future[${PYTHON_USEDEP}]
-	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/six[${PYTHON_USEDEP}]
-	dev-python/typing[${PYTHON_USEDEP}]
-	dev-python/nnef-parser[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/future[${PYTHON_USEDEP}]
+		dev-python/numpy[${PYTHON_USEDEP}]
+		dev-python/six[${PYTHON_USEDEP}]
+		dev-python/typing[${PYTHON_USEDEP}]
+		dev-python/nnef-parser[${PYTHON_USEDEP}]
+		caffe? (
+			dev-python/protobuf[${PYTHON_USEDEP}]
+			dev-python/protobuf:=
+		)
+		onnx? (
+			dev-python/protobuf[${PYTHON_USEDEP}]
+			dev-python/protobuf:=
+			dev-python/onnx-simplifier[${PYTHON_USEDEP}]
+		)
+		tensorflow-lite? (
+			dev-python/flatbuffers[${PYTHON_USEDEP}]
+			sci-ml/tensorflow[${PYTHON_USEDEP}]
+		)
+		tensorflow-protobuf? (
+			sci-ml/tensorflow[${PYTHON_USEDEP}]
+		)
+		visualization? (
+			media-gfx/graphviz[${PYTHON_USEDEP}]
+		)
+	')
 	caffe? (
-		$(python_gen_any_dep '
-			sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
-		')
-		dev-python/protobuf[${PYTHON_USEDEP}]
-		dev-python/protobuf:=
+		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	)
 	onnx? (
-		$(python_gen_any_dep '
-			sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
-		')
-		dev-python/protobuf[${PYTHON_USEDEP}]
-		dev-python/protobuf:=
-		dev-python/onnx-simplifier[${PYTHON_USEDEP}]
-	)
-	tensorflow-lite? (
-		dev-python/flatbuffers[${PYTHON_USEDEP}]
-		sci-ml/tensorflow[${PYTHON_USEDEP}]
-	)
-	tensorflow-protobuf? (
-		sci-ml/tensorflow[${PYTHON_USEDEP}]
-	)
-	visualization? (
-		media-gfx/graphviz[${PYTHON_USEDEP}]
+		sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
 	)
 "
 DEPEND+="
