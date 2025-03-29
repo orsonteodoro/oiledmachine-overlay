@@ -1145,9 +1145,6 @@ RDEPEND="
 	python? (
 		>=sci-ml/transformers-4.18.0[${PYTHON_SINGLE_USEDEP}]
 		$(python_gen_cond_dep '
-			triton? (
-				dev-python/triton[${PYTHON_USEDEP}]
-			)
 			training? (
 				>=dev-python/numpy-1.16.6[${PYTHON_USEDEP}]
 				dev-python/cerberus[${PYTHON_USEDEP}]
@@ -1169,6 +1166,9 @@ RDEPEND="
 		training? (
 			>=sci-ml/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
 			sci-ml/pytorch-ort[${PYTHON_SINGLE_USEDEP}]
+		)
+		triton? (
+			dev-python/triton[${PYTHON_SINGLE_USEDEP}]
 		)
 	)
 "

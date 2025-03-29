@@ -7,6 +7,7 @@ EAPI=8
 # Check pypi also for version update.
 
 DISTUTILS_EXT=1
+DISTUTILS_SINGLE_IMPL=1
 PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream only tests up to 3.6 for this release.
 
 inherit dep-prepare distutils-r1 flag-o-matic
@@ -148,10 +149,10 @@ gen_llvm_rdepend() {
 #   11.5:  https://gitweb.gentoo.org/repo/gentoo.git/tree/dev-util/nvidia-cuda-toolkit/nvidia-cuda-toolkit-11.5.1-r1.ebuild?id=e51ca099bec28c5a27a7eb070e7c77a06790a30d
 #
 RDEPEND+="
-	$(python_gen_any_dep '
-		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/filelock[${PYTHON_USEDEP}]
 	')
-	dev-python/filelock[${PYTHON_USEDEP}]
+	sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	!rocm? (
 		$(gen_llvm_rdepend)
 	)
@@ -187,30 +188,32 @@ RDEPEND+="
 		)
 	)
 	tutorials? (
-		$(python_gen_any_dep '
-			sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
+		$(python_gen_cond_dep '
+			dev-python/tabulate[${PYTHON_USEDEP}]
 		')
-		dev-python/tabulate[${PYTHON_USEDEP}]
+		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-build/cmake-3.18
-	>=dev-build/ninja-1.11.1
-	dev-python/setuptools[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
-	bench? (
-		dev-python/matplotlib[${PYTHON_USEDEP}]
-		dev-python/pandas[${PYTHON_USEDEP}]
-	)
+	$(python_gen_cond_dep '
+		>=dev-build/cmake-3.18
+		>=dev-build/ninja-1.11.1
+		dev-python/setuptools[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+		bench? (
+			dev-python/matplotlib[${PYTHON_USEDEP}]
+			dev-python/pandas[${PYTHON_USEDEP}]
+		)
+		test? (
+			dev-python/pandas[${PYTHON_USEDEP}]
+			dev-python/scipy[${PYTHON_USEDEP}]
+		)
+	')
 	test? (
-		$(python_gen_any_dep '
-			sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
-		')
-		dev-python/pandas[${PYTHON_USEDEP}]
-		dev-python/scipy[${PYTHON_USEDEP}]
+		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DOCS=( "README.md" )

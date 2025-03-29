@@ -10,6 +10,7 @@ EAPI=8
 # Check pypi also for version update.
 
 DISTUTILS_EXT=1
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 GOOGLETEST_PV="1.12.1"
 PYBIND11_PV="2.11.1"
@@ -166,33 +167,35 @@ RDEPEND+="
 		)
 	)
 	tutorials? (
-		$(python_gen_any_dep '
-			sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
+		$(python_gen_cond_dep '
+			dev-python/matplotlib[${PYTHON_USEDEP}]
+			dev-python/tabulate[${PYTHON_USEDEP}]
 		')
-		dev-python/matplotlib[${PYTHON_USEDEP}]
-		dev-python/tabulate[${PYTHON_USEDEP}]
+		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-build/cmake-3.18
-	>=dev-build/ninja-1.11.1
-	dev-python/lit[${PYTHON_USEDEP}]
-	dev-python/setuptools[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		>=dev-build/cmake-3.18
+		>=dev-build/ninja-1.11.1
+		dev-python/lit[${PYTHON_USEDEP}]
+		dev-python/setuptools[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+		test? (
+			>=dev-python/scipy-1.7.1[${PYTHON_USEDEP}]
+			dev-python/autopep8[${PYTHON_USEDEP}]
+			dev-python/flake8[${PYTHON_USEDEP}]
+			dev-python/isort[${PYTHON_USEDEP}]
+			dev-python/numpy[${PYTHON_USEDEP}]
+			dev-python/pandas[${PYTHON_USEDEP}]
+			dev-python/pytest[${PYTHON_USEDEP}]
+		)
+	')
 	test? (
-		$(python_gen_any_dep '
-			sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
-		')
-		>=dev-python/scipy-1.7.1[${PYTHON_USEDEP}]
-		dev-python/autopep8[${PYTHON_USEDEP}]
-		dev-python/flake8[${PYTHON_USEDEP}]
-		dev-python/isort[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
-		dev-python/pandas[${PYTHON_USEDEP}]
-		dev-python/pytest[${PYTHON_USEDEP}]
+		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DOCS=( "README.md" )

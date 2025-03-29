@@ -170,16 +170,16 @@ RDEPEND+="
 		=sci-ml/pytorch-2.4*[${PYTHON_SINGLE_USEDEP},rocm_6_1]
 	)
 	training? (
-		dev-python/timm[${PYTHON_SINGLE_USEDEP}]
-		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 		$(python_gen_cond_dep '
 			dev-python/einops[${PYTHON_USEDEP}]
 			dev-python/hydra-colorlog[${PYTHON_USEDEP}]
 			dev-python/hydra-core[${PYTHON_USEDEP}]
 			dev-python/python-dotenv[${PYTHON_USEDEP}]
 			dev-python/rich[${PYTHON_USEDEP}]
-			dev-python/triton[${PYTHON_USEDEP}]
 		')
+		dev-python/timm[${PYTHON_SINGLE_USEDEP}]
+		dev-python/triton[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="

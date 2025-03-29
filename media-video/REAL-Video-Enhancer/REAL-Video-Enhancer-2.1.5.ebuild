@@ -289,12 +289,10 @@ NCNN_DEPEND="
 	')
 "
 ROCM_DEPEND="
-	$(python_gen_cond_dep '
-		|| (
-			=dev-python/triton-2.1*[${PYTHON_USEDEP},rocm,rocm_5_7,rocm_6_0?]
-		)
-		dev-python/triton:=
-	')
+	|| (
+		=dev-python/triton-2.1*[${PYTHON_SINGLE_USEDEP},rocm,rocm_5_7,rocm_6_0?]
+	)
+	dev-python/triton:=
 	=sci-ml/pytorch-2.3*[${PYTHON_SINGLE_USEDEP},rocm_5_7?,rocm_6_0?]
 	sci-ml/pytorch:=
 	=sci-ml/torchvision-0.18*[${PYTHON_SINGLE_USEDEP}]
