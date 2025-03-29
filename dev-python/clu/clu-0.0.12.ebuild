@@ -37,6 +37,15 @@ LICENSE="
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
+REQUIRED_USE="
+	test? (
+		^^ (
+			python_targets_python3_10
+			python_targets_python3_11
+			python_targets_python3_12
+		)
+	)
+"
 RDEPEND+="
 	dev-python/absl-py[${PYTHON_USEDEP}]
 	dev-python/etils[${PYTHON_USEDEP},epath]
@@ -56,7 +65,9 @@ BDEPEND+="
 	dev-python/setuptools[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
 	test? (
-		>=sci-ml/pytorch-2.0.0[${PYTHON_USEDEP}]
+		$(python_gen_any_dep '
+			>=sci-ml/pytorch-2.0.0[${PYTHON_SINGLE_USEDEP}]
+		')
 		dev-python/pytest[${PYTHON_USEDEP}]
 		sci-ml/tensorflow[${PYTHON_USEDEP}]
 		sci-ml/tensorflow-datasets[${PYTHON_USEDEP}]
