@@ -43,6 +43,11 @@ IUSE+=" dev test"
 REQUIRED_USE="
 	dev? (
 		test
+		^^ (
+			python_targets_python3_10
+			python_targets_python3_11
+			python_targets_python3_12
+		)
 	)
 "
 RDEPEND+="
