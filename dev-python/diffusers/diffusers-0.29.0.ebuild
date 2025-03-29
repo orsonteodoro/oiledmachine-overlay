@@ -58,7 +58,7 @@ REQUIRED_USE="
 RDEPEND+="
 	!~dev-python/regex-2019.12.17[${PYTHON_USEDEP}]
 	>=dev-python/python-3.8.0[${PYTHON_USEDEP}]
-	>=sci-ml/huggingface-hub-0.23.2[${PYTHON_USEDEP}]
+	>=sci-ml/huggingface_hub-0.23.2[${PYTHON_USEDEP}]
 	>=sci-ml/safetensors-0.3.1[${PYTHON_USEDEP}]
 	dev-python/filelock[${PYTHON_USEDEP}]
 	dev-python/importlib-metadata[${PYTHON_USEDEP}]
