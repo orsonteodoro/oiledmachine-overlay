@@ -164,14 +164,14 @@ APP_COMPONENTS_RDEPEND="
 				<dev-python/aiohttp-3.8.4[${PYTHON_USEDEP}]
 			)
 		)
-		(
-			>dev-python/pytorch-lightning-1.8.0[${PYTHON_USEDEP}]
-			strict? (
-				<dev-python/pytorch-lightning-2.0.0[${PYTHON_USEDEP}]
-			)
-		)
 		>=dev-python/lightning-api-access-0.0.3[${PYTHON_USEDEP}]
 	')
+	(
+		>dev-python/pytorch-lightning-1.8.0[${PYTHON_SINGLE_USEDEP}]
+		strict? (
+			<dev-python/pytorch-lightning-2.0.0[${PYTHON_SINGLE_USEDEP}]
+		)
+	)
 "
 APP_UI_RDEPEND="
 	$(python_gen_cond_dep '
