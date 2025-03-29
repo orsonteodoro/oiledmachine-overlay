@@ -99,7 +99,7 @@ RDEPEND="
 		)
 	)
 	qt6? (
-		>=dev-qt/qt5compat-${QT6_PV}:6
+		>=dev-qt/qt5compat-${QT6_PV}:6[gui]
 		>=dev-qt/qtbase-${QT6_PV}:6[concurrent,dbus,gui,network,wayland?,X?]
 		>=dev-qt/qtsvg-${QT6_PV}:6
 		wayland? (
