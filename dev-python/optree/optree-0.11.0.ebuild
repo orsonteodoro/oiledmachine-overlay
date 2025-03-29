@@ -9,7 +9,7 @@ EAPI=8
 
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{8..12} )
+PYTHON_COMPAT=( "python3_"{10..12} )
 
 inherit distutils-r1
 
@@ -28,7 +28,28 @@ LICENSE="
 RESTRICT="mirror test" # Not tested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" benchmark doc jax numpy test pytorch ebuild_revision_2"
+REQUIRED_USE="
+	benchmark? (
+		^^ (
+			python_targets_python3_10
+			python_targets_python3_11
+			python_targets_python3_12
+		)
+	)
+	doc? (
+		^^ (
+			python_targets_python3_10
+			python_targets_python3_11
+			python_targets_python3_12
+		)
+	)
+"
 RDEPEND+="
+	$(python_gen_any_dep '
+		pytorch? (
+			sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
+		)
+	')
 	dev-python/typing-extensions[${PYTHON_USEDEP}]
 	jax? (
 		dev-python/jax[${PYTHON_USEDEP}]
@@ -36,28 +57,30 @@ RDEPEND+="
 	numpy? (
 		dev-python/numpy[${PYTHON_USEDEP}]
 	)
-	pytorch? (
-		$(python_gen_any_dep '
-			sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
-		')
-	)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	dev-python/setuptools[${PYTHON_USEDEP}]
-	dev-python/pybind11[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
-
-	benchmark? (
-		$(python_gen_any_dep '
+	$(python_gen_any_dep '
+		benchmark? (
 			(
 				>=sci-ml/pytorch-2.0[${PYTHON_SINGLE_USEDEP}]
 				<sci-ml/pytorch-2.1.0_alpha0[${PYTHON_SINGLE_USEDEP}]
 			)
 			sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
-		')
+		)
+		doc? (
+			sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
+		)
+		test? (
+			dev-vcs/pre-commit[${PYTHON_SINGLE_USEDEP}]
+		)
+	')
+	dev-python/setuptools[${PYTHON_USEDEP}]
+	dev-python/pybind11[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
+	benchmark? (
 		(
 			>=dev-python/jax-0.4.6[${PYTHON_USEDEP},cpu]
 			<dev-python/jax-0.5.0_alpha0[${PYTHON_USEDEP},cpu]
@@ -81,9 +104,6 @@ BDEPEND+="
 		dev-python/sphinxcontrib-bibtex[${PYTHON_USEDEP}]
 		dev-python/docutils[${PYTHON_USEDEP}]
 		dev-python/numpy[${PYTHON_USEDEP}]
-		$(python_gen_any_dep '
-			sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
-		')
 	)
 	test? (
 		dev-python/pytest[${PYTHON_USEDEP}]
@@ -106,9 +126,6 @@ BDEPEND+="
 		dev-python/pyenchant[${PYTHON_USEDEP}]
 		dev-python/xdoctest[${PYTHON_USEDEP}]
 		dev-util/ruff
-		$(python_gen_any_dep '
-			dev-vcs/pre-commit[${PYTHON_SINGLE_USEDEP}]
-		')
 	)
 "
 DOCS=( "README.md" )
