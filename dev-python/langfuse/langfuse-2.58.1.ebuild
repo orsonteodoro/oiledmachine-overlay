@@ -100,7 +100,6 @@ BDEPEND+="
 			>=dev-python/respx-0.20.2[${PYTHON_USEDEP}]
 			>=dev-python/tiktoken-0.7.0[${PYTHON_USEDEP}]
 			>=dev-util/ruff-0.1.8
-			>=dev-vcs/pre-commit-3.2.2[${PYTHON_USEDEP}]
 		)
 		doc? (
 			>=dev-python/pdoc-14.4.0[${PYTHON_USEDEP}]
@@ -117,6 +116,7 @@ BDEPEND+="
 		>=dev-python/langchain-mistralai-0.0.1[${PYTHON_SINGLE_USEDEP}]
 		>=dev-python/langchain-ollama-0.2.0[${PYTHON_SINGLE_USEDEP}]
 		>=dev-python/langchain-openai-0.0.5[${PYTHON_SINGLE_USEDEP}]
+		>=dev-vcs/pre-commit-3.2.2[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DOCS=( "CHANGELOG" "README.md" )

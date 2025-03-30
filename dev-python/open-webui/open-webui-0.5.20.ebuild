@@ -134,7 +134,6 @@ RDEPEND+="
 		>=dev-python/uvicorn-0.34.0[${PYTHON_USEDEP},standard(+)]
 		>=dev-python/requests-2.32.3[${PYTHON_USEDEP}]
 		>=dev-python/sqlalchemy-2.0.38[${PYTHON_USEDEP}]
-		>=dev-python/unstructured-0.16.17[${PYTHON_USEDEP}]
 		>=dev-python/validators-0.34.0[${PYTHON_USEDEP}]
 		>=dev-python/xlrd-2.0.1[${PYTHON_USEDEP}]
 		>=dev-python/youtube-transcript-api-0.6.3[${PYTHON_USEDEP}]
@@ -162,6 +161,7 @@ RDEPEND+="
 	>=dev-python/pymilvus-2.4.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/rapidocr-onnxruntime-1.3.24[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/sentence-transformers-3.3.1[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/unstructured-0.16.17[${PYTHON_SINGLE_USEDEP}]
 	>=media-libs/opencv-4.11.0[${PYTHON_SINGLE_USEDEP},python]
 	sci-ml/transformers[${PYTHON_SINGLE_USEDEP}]
 "
