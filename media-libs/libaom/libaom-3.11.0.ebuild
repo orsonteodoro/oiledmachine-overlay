@@ -15,7 +15,6 @@ UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
-YASM_PV="1.3.0"
 UOPTS_BOLT_INST_ARGS=(
 	"libaom_version.so:--skip-funcs=.text/1"
 	"libaom_pc.so:--skip-funcs=.text/1"
@@ -129,13 +128,13 @@ REQUIRED_USE="
 BDEPEND+="
 	>=dev-build/cmake-3.7
 	abi_x86_32? (
-		>=dev-lang/yasm-${YASM_PV}
+		dev-lang/yasm
 	)
 	abi_x86_64? (
-		>=dev-lang/yasm-${YASM_PV}
+		dev-lang/yasm
 	)
 	abi_x86_x32? (
-		>=dev-lang/yasm-${YASM_PV}
+		dev-lang/yasm
 	)
 	chromium? (
 		>=dev-lang/nasm-2.14
