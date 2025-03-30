@@ -62,8 +62,8 @@ SLOT="0"
 IUSE="
 ${LANGS[@]/#/l10n_}
 accelerate agents audio av benchmark codecarbon deepspeed deepspeed-testing
-dev-tensorflow dev-torch flax flax-speech ftfy integrations modelcreation natten
-onnx onnxruntime optuna pillow pytorch quality ray retrieval ruff sentencepiece
+dev-tensorflow dev-pytorch flax flax-speech ftfy hub-kernels integrations modelcreation natten
+num2words onnx onnxruntime optuna pillow pytorch quality ray retrieval ruff sentencepiece
 serving sagemaker sigopt sklearn speech test tf tf-cpu tf-speech tiktoken timm
 torch-speech torch-vision torchhub tokenizers vision
 "
@@ -82,23 +82,12 @@ REQUIRED_USE="
 		sentencepiece
 		test
 	)
-	dev-tensorflow? (
-		modelcreation
-		onnx
-		quality
-		sentencepiece
-		sklearn
-		test
-		tf
-		tf-speech
-		tokenizers
-		vision
-	)
-	dev-torch? (
+	dev-pytorch? (
 		codecarbon
 		integrations
 		l10n_ja
 		modelcreation
+		num2words
 		onnxruntime
 		pytorch
 		quality
@@ -111,10 +100,23 @@ REQUIRED_USE="
 		torch-vision
 		vision
 	)
+	dev-tensorflow? (
+		modelcreation
+		onnx
+		quality
+		sentencepiece
+		sklearn
+		test
+		tf
+		tf-speech
+		tokenizers
+		vision
+	)
 	flax-speech? (
 		audio
 	)
 	integrations? (
+		hub-kernels
 		optuna
 		ray
 		sigopt
@@ -164,7 +166,7 @@ RDEPEND="
 		>=dev-python/packaging-20.0[${PYTHON_USEDEP}]
 		>=dev-python/pyyaml-5.1[${PYTHON_USEDEP}]
 		>=dev-python/tqdm-4.27[${PYTHON_USEDEP}]
-		>=sci-ml/safetensors-0.4.1[${PYTHON_USEDEP}]
+		>=sci-ml/safetensors-0.4.3[${PYTHON_USEDEP}]
 		dev-python/filelock[${PYTHON_USEDEP}]
 		dev-python/regex[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
@@ -178,10 +180,10 @@ RDEPEND="
 			dev-python/datasets[${PYTHON_USEDEP}]
 		)
 		av? (
-			>=dev-python/av-9.2.0[${PYTHON_USEDEP}]
+			dev-python/av[${PYTHON_USEDEP}]
 		)
 		codecarbon? (
-			>=dev-python/codecarbon-1.2.0[${PYTHON_USEDEP}]
+			>=dev-python/codecarbon-2.8.1[${PYTHON_USEDEP}]
 		)
 		deepspeed? (
 			>=dev-python/deepspeed-0.9.3[${PYTHON_USEDEP}]
@@ -191,6 +193,10 @@ RDEPEND="
 		)
 		ftfy? (
 			dev-python/ftfy[${PYTHON_USEDEP}]
+		)
+		hub-kernels? (
+			>=dev-python/kernels-0.3.2[${PYTHON_USEDEP}]
+			<dev-python/kernels-4[${PYTHON_USEDEP}]
 		)
 		l10n_ja? (
 			>=dev-python/fugashi-1.0[${PYTHON_USEDEP}]
@@ -206,6 +212,9 @@ RDEPEND="
 		)
 		natten? (
 			>=dev-python/natten-0.14.6[${PYTHON_USEDEP}]
+		)
+		num2words? (
+			dev-python/num2words[${PYTHON_USEDEP}]
 		)
 		onnx? (
 			dev-python/onnxconverter-common[${PYTHON_USEDEP}]
@@ -260,7 +269,7 @@ RDEPEND="
 			virtual/pillow[${PYTHON_USEDEP}]
 		)
 	')
-	>=sci-ml/huggingface_hub-0.23.2[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/huggingface_hub-0.26.0[${PYTHON_SINGLE_USEDEP}]
 	agents? (
 		dev-python/diffusers[${PYTHON_SINGLE_USEDEP}]
 		media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
@@ -270,7 +279,7 @@ RDEPEND="
 		>=sci-ml/accelerate-0.26.0[${PYTHON_SINGLE_USEDEP}]
 	)
 	pytorch? (
-		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/pytorch-2.0[${PYTHON_SINGLE_USEDEP}]
 	)
 	speech? (
 		sci-ml/torchaudio[${PYTHON_SINGLE_USEDEP}]
@@ -291,7 +300,7 @@ RDEPEND="
 		sci-ml/tensorflow-probability[${PYTHON_SINGLE_USEDEP}]
 	)
 	timm? (
-		dev-python/timm[${PYTHON_SINGLE_USEDEP}]
+		<dev-python/timm-1.0.12[${PYTHON_SINGLE_USEDEP}]
 	)
 	torch-speech? (
 		sci-ml/torchaudio[${PYTHON_SINGLE_USEDEP}]
@@ -300,7 +309,7 @@ RDEPEND="
 		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 	)
 	tokenizers? (
-		=sci-ml/tokenizers-0.20*[${PYTHON_SINGLE_USEDEP}]
+		=sci-ml/tokenizers-0.21*[${PYTHON_SINGLE_USEDEP}]
 	)
 	torchhub? (
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
@@ -334,9 +343,12 @@ BDEPEND="
 			dev-python/datasets[${PYTHON_USEDEP}]
 			dev-python/dill[${PYTHON_USEDEP}]
 			dev-python/GitPython[${PYTHON_USEDEP}]
-			dev-python/nltk[${PYTHON_USEDEP}]
+			<dev-python/nltk-3.8.2[${PYTHON_USEDEP}]
 			dev-python/parameterized[${PYTHON_USEDEP}]
 			dev-python/psutil[${PYTHON_USEDEP}]
+			dev-python/pytest-asyncio[${PYTHON_USEDEP}]
+			dev-python/pytest-order[${PYTHON_USEDEP}]
+			dev-python/pytest-rerunfailures[${PYTHON_USEDEP}]
 			dev-python/pytest-rich[${PYTHON_USEDEP}]
 			dev-python/pytest-timeout[${PYTHON_USEDEP}]
 			dev-python/pytest-xdist[${PYTHON_USEDEP}]
