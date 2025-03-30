@@ -10,6 +10,7 @@ EAPI=8
 # cibuildwheel
 
 DISTUTILS_EXT=1
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_{10..11} ) # Upstream tests up to 3.11
 
@@ -34,8 +35,10 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/typing-extensions[${PYTHON_USEDEP}]
 	' python3_10 )
-	>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
-	dev-python/importlib-resources[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
+		dev-python/importlib-resources[${PYTHON_USEDEP}]
+	')
 	media-libs/libsdl2
 	sys-libs/zlib
 "
@@ -44,19 +47,21 @@ DEPEND+="
 "
 BDEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/pybind11-2.10.0
+		>=dev-python/pybind11-2.10.0[${PYTHON_USEDEP}]
+		>=dev-python/setuptools-61[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+		cibuildwheel? (
+			dev-python/cibuildwheel[${PYTHON_USEDEP}]
+		)
+		test? (
+			>=dev-python/pytest-7.0[${PYTHON_USEDEP}]
+		)
 	')
-	>=dev-python/setuptools-61[${PYTHON_USEDEP}]
 	>=dev-build/cmake-3.22
 	dev-build/ninja
-	dev-python/wheel[${PYTHON_USEDEP}]
 	dev-vcs/git
-	cibuildwheel? (
-		dev-python/cibuildwheel[${PYTHON_USEDEP}]
-	)
 	test? (
-		>=dev-python/pytest-7.0[${PYTHON_USEDEP}]
-		>=dev-python/gym-0.23[${PYTHON_USEDEP}]
+		>=dev-python/gym-0.23[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 PATCHES=(

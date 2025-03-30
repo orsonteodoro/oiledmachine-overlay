@@ -47,12 +47,12 @@ RDEPEND+="
 		dev-python/scipy[${PYTHON_USEDEP}]
 		dev-python/tqdm[${PYTHON_USEDEP}]
 		dev-python/yapf[${PYTHON_USEDEP}]
-		media-libs/opencv[${PYTHON_USEDEP},python]
 	')
 	>=dev-python/basicsr-1.4.2[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/facexlib-0.2.5[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/pytorch-1.7[${PYTHON_SINGLE_USEDEP}]
 	>=sci-visualization/tensorboard-2.10.0[${PYTHON_SINGLE_USEDEP}]
+	media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
 	sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="

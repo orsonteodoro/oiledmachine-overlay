@@ -4,6 +4,7 @@
 
 EAPI=8
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_10" )
 
@@ -48,43 +49,45 @@ REQUIRED_USE+="
 "
 RDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-python/cloudpickle-1.2.0[${PYTHON_USEDEP}]
-	>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
-	>=dev-python/ale-py-0.8.0[${PYTHON_USEDEP}]
-	>=dev-python/gym-notices-0.0.4[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		>=dev-python/cloudpickle-1.2.0[${PYTHON_USEDEP}]
+		>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
+		>=dev-python/gym-notices-0.0.4[${PYTHON_USEDEP}]
 
-	>=dev-python/lz4-3.1.0[${PYTHON_USEDEP}]
-	>=dev-python/matplotlib-3.0[${PYTHON_USEDEP}]
-	>=dev-python/moviepy-1.0.0[${PYTHON_USEDEP}]
-	>=media-libs/opencv-3.0[${PYTHON_USEDEP},python]
+		>=dev-python/lz4-3.1.0[${PYTHON_USEDEP}]
+		>=dev-python/matplotlib-3.0[${PYTHON_USEDEP}]
 
+		mujoco? (
+			|| (
+				(
+					(
+						>=dev-python/mujoco-2.2.0[${PYTHON_USEDEP}]
+						<dev-python/mujoco-2.3.0[${PYTHON_USEDEP}]
+					)
+					>=dev-python/imageio-2.14.1[${PYTHON_USEDEP}]
+				)
+				(
+					>=dev-python/mujoco-py-2.1[${PYTHON_USEDEP}]
+					<dev-python/mujoco-py-2.2[${PYTHON_USEDEP}]
+				)
+			)
+		)
+		pygame? (
+			>=dev-python/pygame-2.1.0[${PYTHON_USEDEP}]
+		)
+	')
+	>=dev-python/ale-py-0.8.0[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/moviepy-1.0.0[${PYTHON_SINGLE_USEDEP}]
+	>=media-libs/opencv-3.0[${PYTHON_SINGLE_USEDEP},python]
 	atari? (
-		>=dev-python/ale-py-0.8.0[${PYTHON_USEDEP}]
+		>=dev-python/ale-py-0.8.0[${PYTHON_SINGLE_USEDEP}]
 	)
 	accept-rom-license? (
-		>=dev-python/autorom-accept-rom-license-0.4.2[${PYTHON_USEDEP}]
+		>=dev-python/autorom-accept-rom-license-0.4.2[${PYTHON_SINGLE_USEDEP}]
 	)
 	box2d? (
 		>=dev-lang/swig-4
-		>=dev-python/box2d-py-2.3.5[${PYTHON_USEDEP}]
-	)
-	mujoco? (
-		|| (
-			(
-				(
-					>=dev-python/mujoco-2.2.0[${PYTHON_USEDEP}]
-					<dev-python/mujoco-2.3.0[${PYTHON_USEDEP}]
-				)
-				>=dev-python/imageio-2.14.1[${PYTHON_USEDEP}]
-			)
-			(
-				>=dev-python/mujoco-py-2.1[${PYTHON_USEDEP}]
-				<dev-python/mujoco-py-2.2[${PYTHON_USEDEP}]
-			)
-		)
-	)
-	pygame? (
-		>=dev-python/pygame-2.1.0[${PYTHON_USEDEP}]
+		>=dev-python/box2d-py-2.3.5[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="
@@ -92,19 +95,23 @@ DEPEND+="
 "
 BDEPEND+="
 	${PYTHON_DEPS}
-	test? (
-		(
-			>=dev-python/mujoco-py-2.1[${PYTHON_USEDEP}]
-			<dev-python/mujoco-py-2.2[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		test? (
+			(
+				>=dev-python/mujoco-py-2.1[${PYTHON_USEDEP}]
+				<dev-python/mujoco-py-2.2[${PYTHON_USEDEP}]
+			)
+			>=dev-python/imageio-2.14.1[${PYTHON_USEDEP}]
+			>=dev-python/lz4-3.1.0[${PYTHON_USEDEP}]
+			>=dev-python/matplotlib-3.0[${PYTHON_USEDEP}]
+			>=dev-python/mujoco-2.2.0[${PYTHON_USEDEP}]
+			>=dev-python/pygame-2.1.0[${PYTHON_USEDEP}]
+			>=dev-python/pytest-7.0.1[${PYTHON_USEDEP}]
 		)
-		>=dev-python/imageio-2.14.1[${PYTHON_USEDEP}]
-		>=dev-python/lz4-3.1.0[${PYTHON_USEDEP}]
-		>=dev-python/matplotlib-3.0[${PYTHON_USEDEP}]
-		>=dev-python/mujoco-2.2.0[${PYTHON_USEDEP}]
-		>=dev-python/pygame-2.1.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-7.0.1[${PYTHON_USEDEP}]
-		>=dev-python/box2d-py-2.3.5[${PYTHON_USEDEP}]
-		>=media-libs/opencv-3.0[${PYTHON_USEDEP},python]
+	')
+	test? (
+		>=dev-python/box2d-py-2.3.5[${PYTHON_SINGLE_USEDEP}]
+		>=media-libs/opencv-3.0[${PYTHON_SINGLE_USEDEP},python]
 	)
 "
 

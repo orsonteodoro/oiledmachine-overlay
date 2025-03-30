@@ -80,7 +80,6 @@ RDEPEND+="
 		dev-python/requests[${PYTHON_USEDEP}]
 		dev-python/schema[${PYTHON_USEDEP}]
 		dev-python/scikit-learn[${PYTHON_USEDEP}]
-		media-libs/opencv[${PYTHON_USEDEP},python]
 		virtual/pillow[${PYTHON_USEDEP}]
 		mxnet? (
 			>=sci-libs/mxnet-1.9.1[${PYTHON_USEDEP}]
@@ -108,6 +107,7 @@ RDEPEND+="
 			dev-python/pyyaml[${PYTHON_USEDEP}]
 		)
 	')
+	media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
 	ipex? (
 		>sci-ml/intel-extension-for-pytorch-1.10[${PYTHON_SINGLE_USEDEP}]
 	)

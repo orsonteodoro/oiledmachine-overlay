@@ -70,13 +70,13 @@ REQUIRED_USE="
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.25.1[${PYTHON_USEDEP}]
-		>=media-libs/opencv-4.6.0[${PYTHON_USEDEP},ffmpeg?,gstreamer?,imgproc,jpeg,openh264?,png,python]
 		dev-python/natsort[${PYTHON_USEDEP}]
 		dev-python/pybboxes[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 		dev-python/rich[${PYTHON_USEDEP}]
 	')
 	>=dev-python/ultralytics-8.0.144[${PYTHON_SINGLE_USEDEP}]
+	>=media-libs/opencv-4.6.0[${PYTHON_SINGLE_USEDEP},ffmpeg?,gstreamer?,imgproc,jpeg,openh264?,png,python]
 	sci-ml/pytorch[${PYTHON_SINGLE_USEDEP},cuda?,rocm?]
 	ffmpeg? (
 		media-video/ffmpeg[openh264]

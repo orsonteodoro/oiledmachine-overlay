@@ -106,9 +106,9 @@ BDEPEND+="
 			dev-python/sphinxcontrib-bibtex[${PYTHON_USEDEP}]
 			dev-python/sphinxcontrib-gtagjs[${PYTHON_USEDEP}]
 			dev-python/sphinxcontrib-youtube[${PYTHON_USEDEP}]
-			media-libs/opencv[${PYTHON_USEDEP},python]
 		')
 		>=dev-python/ivy-9999[${PYTHON_SINGLE_USEDEP}]
+		media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
 		sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
 	)
 "

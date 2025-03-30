@@ -65,12 +65,12 @@ RDEPEND+="
 		>=dev-python/scipy-1.4.1[${PYTHON_USEDEP}]
 		>=dev-python/seaborn-0.11.0[${PYTHON_USEDEP}]
 		>=dev-python/tqdm-4.64.0[${PYTHON_USEDEP}]
-		>=media-libs/opencv-4.6.0[${PYTHON_USEDEP},python]
 		>=virtual/pillow-7.1.2[${PYTHON_USEDEP}]
 		dev-python/psutil[${PYTHON_USEDEP}]
 		dev-python/py-cpuinfo[${PYTHON_USEDEP}]
 	')
 	>=dev-python/ultralytics-thop-2.0.0[${PYTHON_SINGLE_USEDEP}]
+	>=media-libs/opencv-4.6.0[${PYTHON_SINGLE_USEDEP},python]
 	>=sci-ml/pytorch-1.8.0[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/torchvision-0.9.0[${PYTHON_SINGLE_USEDEP}]
 	export? (

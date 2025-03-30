@@ -112,7 +112,6 @@ BDEPEND+="
 	test? (
 		$(python_gen_cond_dep '
 			>=dev-python/black-23.7.0[${PYTHON_USEDEP}]
-			>=dev-python/gymnasium-0.18.3[${PYTHON_USEDEP},atari,accept-rom-license]
 			>=dev-python/jraph-0.0.6_pre0[${PYTHON_USEDEP}]
 			>=dev-python/pyink-23.5.0[${PYTHON_USEDEP}]
 			>=dev-python/pytest-xdist-1.34.0[${PYTHON_USEDEP}]
@@ -126,6 +125,7 @@ BDEPEND+="
 			dev-python/pytype[${PYTHON_USEDEP}]
 			sci-ml/sentencepiece[${PYTHON_USEDEP},python]
 		')
+		>=dev-python/gymnasium-0.18.3[${PYTHON_SINGLE_USEDEP},atari,accept-rom-license]
 		>=sci-ml/tensorflow-text-2.11.0[${PYTHON_SINGLE_USEDEP}]
 		dev-python/clu[${PYTHON_SINGLE_USEDEP}]
 		dev-python/jax[${PYTHON_SINGLE_USEDEP}]

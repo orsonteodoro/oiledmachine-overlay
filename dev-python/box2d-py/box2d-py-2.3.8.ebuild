@@ -4,6 +4,7 @@
 
 EAPI=8
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( python3_10 ) # Upstream tested up to 3.7 for this release
 
@@ -30,11 +31,29 @@ RDEPEND+="
 	>=dev-lang/swig-4
 	examples? (
 		|| (
-			dev-python/pygame[${PYTHON_USEDEP}]
-			dev-python/pygame_sdl2[${PYTHON_USEDEP}]
-			dev-python/pyglet[${PYTHON_USEDEP}]
-			dev-python/PyQt4[${PYTHON_USEDEP}]
-			media-libs/opencv[${PYTHON_USEDEP},python]
+			(
+				$(python_gen_cond_dep '
+					dev-python/pygame[${PYTHON_USEDEP}]
+				')
+			)
+			(
+				$(python_gen_cond_dep '
+					dev-python/pygame_sdl2[${PYTHON_USEDEP}]
+				')
+			)
+			(
+				$(python_gen_cond_dep '
+					dev-python/pyglet[${PYTHON_USEDEP}]
+				')
+			)
+			(
+				$(python_gen_cond_dep '
+					dev-python/PyQt4[${PYTHON_USEDEP}]
+				')
+			)
+			(
+				media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
+			)
 		)
 	)
 "

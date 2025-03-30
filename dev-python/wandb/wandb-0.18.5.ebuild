@@ -87,7 +87,6 @@ BDEPEND+="
 			virtual/pillow[${PYTHON_USEDEP}]
 			dev-python/pandas[${PYTHON_USEDEP}]
 			dev-python/polars[${PYTHON_USEDEP}]
-			dev-python/moviepy[${PYTHON_USEDEP}]
 			dev-python/imageio[${PYTHON_USEDEP},ffmpeg]
 			dev-python/matplotlib[${PYTHON_USEDEP}]
 			dev-python/soundfile[${PYTHON_USEDEP}]
@@ -116,16 +115,17 @@ BDEPEND+="
 			dev-python/docker[${PYTHON_USEDEP}]
 			dev-python/catboost[${PYTHON_USEDEP}]
 			dev-python/openai[${PYTHON_USEDEP}]
-			<dev-python/gymnasium-1.0.0[${PYTHON_USEDEP}]
 			dev-python/stable_baselines3[${PYTHON_USEDEP}]
 
 			dev-python/responses[${PYTHON_USEDEP}]
 			dev-python/prometheus-client[${PYTHON_USEDEP}]
 			dev-python/google-cloud-aiplatform[${PYTHON_USEDEP}]
 		')
+		<dev-python/gymnasium-1.0.0[${PYTHON_SINGLE_USEDEP}]
+		dev-python/jax[${PYTHON_SINGLE_USEDEP},cpu]
+		dev-python/moviepy[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
-		dev-python/jax[${PYTHON_SINGLE_USEDEP},cpu]
 	)
 	test? (
 		$(python_gen_cond_dep '

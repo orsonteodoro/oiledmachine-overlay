@@ -4,6 +4,7 @@
 
 EAPI=8
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
@@ -46,35 +47,39 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
-	>=dev-python/imageio-2.25[${PYTHON_USEDEP}]
-	>=dev-python/imageio-ffmpeg-0.4.6[${PYTHON_USEDEP}]
-	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/tqdm[${PYTHON_USEDEP}]
-	dev-python/scikit-image[${PYTHON_USEDEP}]
-	media-libs/opencv[${PYTHON_USEDEP},contribdnn,ffmpeg?,gstreamer?,gtk3?,imgproc,python,qt5?,qt6?,wayland?]
+	$(python_gen_cond_dep '
+		>=dev-python/imageio-2.25[${PYTHON_USEDEP}]
+		>=dev-python/imageio-ffmpeg-0.4.6[${PYTHON_USEDEP}]
+		dev-python/numpy[${PYTHON_USEDEP}]
+		dev-python/tqdm[${PYTHON_USEDEP}]
+		dev-python/scikit-image[${PYTHON_USEDEP}]
+		cuda? (
+			sci-ml/onnx[${PYTHON_USEDEP}]
+		)
+		openvino? (
+			sci-ml/onnx[${PYTHON_USEDEP}]
+		)
+	')
+	media-libs/opencv[${PYTHON_SINGLE_USEDEP},contribdnn,ffmpeg?,gstreamer?,gtk3?,imgproc,python,qt5?,qt6?,wayland?]
 	cuda? (
-		$(python_gen_any_dep '
-			sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python,cuda]
-		')
-		sci-ml/onnx[${PYTHON_USEDEP}]
+		sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python,cuda]
 	)
 	openvino? (
-		$(python_gen_any_dep '
-			sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python,openvino]
-		')
-		sci-ml/onnx[${PYTHON_USEDEP}]
+		sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python,openvino]
 	)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/setuptools-67.6[${PYTHON_USEDEP}]
-	>=dev-python/setuptools-scm-7.1[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
-	dev? (
-		dev-util/ruff
-	)
+	$(python_gen_cond_dep '
+		>=dev-python/setuptools-67.6[${PYTHON_USEDEP}]
+		>=dev-python/setuptools-scm-7.1[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+		dev? (
+			dev-util/ruff
+		)
+	')
 "
 DOCS=( "README.md" )
 

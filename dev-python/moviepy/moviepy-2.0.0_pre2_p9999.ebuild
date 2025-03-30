@@ -10,6 +10,7 @@ EAPI=8
 # flake8-rst-docstrings
 # flake8-implicit-str-concat
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream listed only up to 3.11
 
@@ -46,72 +47,76 @@ IUSE+="
 doc imagemagick lint matplotlib opencv pygame scipy scikit test youtube-dl
 "
 RDEPEND+="
-	(
-		>=dev-python/decorator-4.0.2[${PYTHON_USEDEP}]
-		<dev-python/decorator-6[${PYTHON_USEDEP}]
-	)
-	(
-		>=dev-python/imageio-2.5[${PYTHON_USEDEP}]
-		<dev-python/imageio-3[${PYTHON_USEDEP}]
-	)
-	>=dev-python/imageio-ffmpeg-0.2.0[${PYTHON_USEDEP}]
-	>=dev-python/numpy-1.17.3[${PYTHON_USEDEP}]
-	<dev-python/proglog-1.0.1[${PYTHON_USEDEP}]
-	matplotlib? (
-		dev-python/matplotlib[${PYTHON_USEDEP}]
-	)
-	pygame? (
-		>=dev-python/pygame-1.9.3[${PYTHON_USEDEP}]
-	)
+	$(python_gen_cond_dep '
+		(
+			>=dev-python/decorator-4.0.2[${PYTHON_USEDEP}]
+			<dev-python/decorator-6[${PYTHON_USEDEP}]
+		)
+		(
+			>=dev-python/imageio-2.5[${PYTHON_USEDEP}]
+			<dev-python/imageio-3[${PYTHON_USEDEP}]
+		)
+		>=dev-python/imageio-ffmpeg-0.2.0[${PYTHON_USEDEP}]
+		>=dev-python/numpy-1.17.3[${PYTHON_USEDEP}]
+		<dev-python/proglog-1.0.1[${PYTHON_USEDEP}]
+		matplotlib? (
+			dev-python/matplotlib[${PYTHON_USEDEP}]
+		)
+		pygame? (
+			>=dev-python/pygame-1.9.3[${PYTHON_USEDEP}]
+		)
+		scipy? (
+			dev-python/scipy[${PYTHON_USEDEP}]
+		)
+		scikit? (
+			dev-python/scikit-image[${PYTHON_USEDEP}]
+			dev-python/scikit-learn[${PYTHON_USEDEP}]
+		)
+		youtube-dl? (
+			net-misc/yt-dlp
+		)
+	')
 	opencv? (
-		media-libs/opencv[${PYTHON_USEDEP},python]
-	)
-	scipy? (
-		dev-python/scipy[${PYTHON_USEDEP}]
-	)
-	scikit? (
-		dev-python/scikit-image[${PYTHON_USEDEP}]
-		dev-python/scikit-learn[${PYTHON_USEDEP}]
-	)
-	youtube-dl? (
-		net-misc/yt-dlp
+		media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
 	)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	doc? (
-		<dev-python/numpydoc-2[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-3.4.3[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-rtd-theme-0.5.1[${PYTHON_USEDEP}]
-	)
+	$(python_gen_cond_dep '
+		doc? (
+			<dev-python/numpydoc-2[${PYTHON_USEDEP}]
+			>=dev-python/sphinx-3.4.3[${PYTHON_USEDEP}]
+			>=dev-python/sphinx-rtd-theme-0.5.1[${PYTHON_USEDEP}]
+		)
+		lint? (
+			>=dev-python/black-22.3.0[${PYTHON_USEDEP}]
+			>=dev-python/flake8-4.0.1[${PYTHON_USEDEP}]
+			>=dev-python/flake8-absolute-import-1.0[${PYTHON_USEDEP}]
+			>=dev-python/flake8-docstrings-0.2.5[${PYTHON_USEDEP}]
+			>=dev-python/flake8-rst-docstrings-0.2.5[${PYTHON_USEDEP}]
+			>=dev-python/flake8-implicit-str-concat-0.3.0[${PYTHON_USEDEP}]
+			>=dev-python/isort-5.10.1[${PYTHON_USEDEP}]
+		)
+		test? (
+			(
+				>=dev-python/coveralls-3[${PYTHON_USEDEP}]
+				<dev-python/coveralls-4[${PYTHON_USEDEP}]
+			)
+			(
+				>=dev-python/pytest-3[${PYTHON_USEDEP}]
+				<dev-python/pytest-7[${PYTHON_USEDEP}]
+			)
+			(
+				>=dev-python/pytest-cov-2.5.1[${PYTHON_USEDEP}]
+				<dev-python/pytest-cov-3[${PYTHON_USEDEP}]
+			)
+			>=dev-python/python-dotenv-0.10[${PYTHON_USEDEP}]
+		)
+	')
 	lint? (
-		$(python_gen_any_dep '
-			>=dev-vcs/pre-commit-2.19.0[${PYTHON_SINGLE_USEDEP}]
-		')
-		>=dev-python/black-22.3.0[${PYTHON_USEDEP}]
-		>=dev-python/flake8-4.0.1[${PYTHON_USEDEP}]
-		>=dev-python/flake8-absolute-import-1.0[${PYTHON_USEDEP}]
-		>=dev-python/flake8-docstrings-0.2.5[${PYTHON_USEDEP}]
-		>=dev-python/flake8-rst-docstrings-0.2.5[${PYTHON_USEDEP}]
-		>=dev-python/flake8-implicit-str-concat-0.3.0[${PYTHON_USEDEP}]
-		>=dev-python/isort-5.10.1[${PYTHON_USEDEP}]
-	)
-	test? (
-		(
-			>=dev-python/coveralls-3[${PYTHON_USEDEP}]
-			<dev-python/coveralls-4[${PYTHON_USEDEP}]
-		)
-		(
-			>=dev-python/pytest-3[${PYTHON_USEDEP}]
-			<dev-python/pytest-7[${PYTHON_USEDEP}]
-		)
-		(
-			>=dev-python/pytest-cov-2.5.1[${PYTHON_USEDEP}]
-			<dev-python/pytest-cov-3[${PYTHON_USEDEP}]
-		)
-		>=dev-python/python-dotenv-0.10[${PYTHON_USEDEP}]
+		>=dev-vcs/pre-commit-2.19.0[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 

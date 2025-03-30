@@ -48,9 +48,9 @@ RDEPEND+="
 	${PYTHON_DEPS}
 	$(python_gen_cond_dep '
 		dev-python/sysv-ipc[${PYTHON_USEDEP}]
-		dev-python/gym[${PYTHON_USEDEP}]
 	')
 	>=sci-ml/tensorflow-2[${PYTHON_SINGLE_USEDEP},python]
+	dev-python/gym[${PYTHON_SINGLE_USEDEP}]
 	app-alternatives/sh
 	sys-process/procps
 	sys-process/psmisc

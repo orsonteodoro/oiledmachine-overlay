@@ -6,6 +6,7 @@ EAPI=8
 
 MY_PN="face_morpher"
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 FALLBACK_COMMIT="7a30611cd9d33469e843cec9cfa23ccf819386a8" # Jun 30, 2019
 PYTHON_COMPAT=( "python3_"{10..12} )
@@ -59,14 +60,16 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
-	dev-python/docopt[${PYTHON_USEDEP}]
-	dev-python/matplotlib[${PYTHON_USEDEP}]
-	dev-python/numpy[${PYTHON_USEDEP}]
-	media-libs/opencv[${PYTHON_USEDEP},ffmpeg?,gstreamer?,python]
-	dev-python/scipy[${PYTHON_USEDEP}]
-	sci-libs/dlib[${PYTHON_USEDEP},jpeg?,png?]
+	$(python_gen_cond_dep '
+		dev-python/docopt[${PYTHON_USEDEP}]
+		dev-python/matplotlib[${PYTHON_USEDEP}]
+		dev-python/numpy[${PYTHON_USEDEP}]
+		dev-python/scipy[${PYTHON_USEDEP}]
+		sci-libs/dlib[${PYTHON_USEDEP},jpeg?,png?]
+	')
+	media-libs/opencv[${PYTHON_SINGLE_USEDEP},ffmpeg?,gstreamer?,python]
 	stasm? (
-		dev-python/stasm[${PYTHON_USEDEP}]
+		dev-python/stasm[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="

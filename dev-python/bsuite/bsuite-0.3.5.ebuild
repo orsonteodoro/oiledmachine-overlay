@@ -94,13 +94,13 @@ BDEPEND+="
 		dev-python/setuptools[${PYTHON_USEDEP}]
 		dev-python/wheel[${PYTHON_USEDEP}]
 		test? (
-			>=dev-python/gym-0.20.0[${PYTHON_USEDEP}]
 			dev-python/mock[${PYTHON_USEDEP}]
 			dev-python/pytest-xdist[${PYTHON_USEDEP}]
 			dev-python/pytype[${PYTHON_USEDEP}]
 		)
 	')
 	test? (
+		>=dev-python/gym-0.20.0[${PYTHON_SINGLE_USEDEP}]
 		>=sci-ml/tensorflow-probability-0.14.1[${PYTHON_SINGLE_USEDEP}]
 	)
 "

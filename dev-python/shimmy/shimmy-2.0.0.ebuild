@@ -34,13 +34,6 @@ IUSE+=" bsuite dm-control dm-control-multi-agent doc gym meltingpot openspiel te
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
-		>=dev-python/gymnasium-1.0.0_alpha1[${PYTHON_USEDEP}]
-		gym? (
-			>=dev-python/gym-0.26.2[${PYTHON_USEDEP}]
-		)
-		meltingpot? (
-			>=dev-python/pettingzoo-'${PETTINGZOO_PV}'[${PYTHON_USEDEP}]
-		)
 		dm-control? (
 			>=dev-python/h5py-3.7.0[${PYTHON_USEDEP}]
 			>=dev-python/dm-control-1.0.10[${PYTHON_USEDEP}]
@@ -49,21 +42,28 @@ RDEPEND+="
 		dm-control-multi-agent? (
 			>=dev-python/h5py-3.7.0[${PYTHON_USEDEP}]
 			>=dev-python/dm-control-1.0.10[${PYTHON_USEDEP}]
-			>=dev-python/pettingzoo-'${PETTINGZOO_PV}'[${PYTHON_USEDEP}]
 			dev-python/imageio[${PYTHON_USEDEP}]
 		)
-		openspiel? (
-			>=dev-python/open-spiel-1.2[${PYTHON_USEDEP}]
-			>=dev-python/pettingzoo-'${PETTINGZOO_PV}'[${PYTHON_USEDEP}]
-		)
 	')
+	>=dev-python/gymnasium-1.0.0_alpha1[${PYTHON_SINGLE_USEDEP}]
 	bsuite? (
 		>=dev-python/bsuite-0.3.5[${PYTHON_SINGLE_USEDEP}]
+	)
+	dm-control-multi-agent? (
+		>=dev-python/pettingzoo-${PETTINGZOO_PV}[${PYTHON_SINGLE_USEDEP}]
+	)
+	gym? (
+		>=dev-python/gym-0.26.2[${PYTHON_SINGLE_USEDEP}]
 	)
 	meltingpot? (
 		$(python_gen_cond_dep '
 			>=dev-python/dm-meltingpot-2.2.2[${PYTHON_SINGLE_USEDEP}]
 		' python3_11)
+		>=dev-python/pettingzoo-${PETTINGZOO_PV}[${PYTHON_SINGLE_USEDEP}]
+	)
+	openspiel? (
+		>=dev-python/open-spiel-1.2[${PYTHON_SINGLE_USEDEP}]
+		>=dev-python/pettingzoo-${PETTINGZOO_PV}[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="
@@ -76,7 +76,6 @@ BDEPEND+="
 			>=dev-python/pygame-2.3.0[${PYTHON_USEDEP}]
 			dev-python/celshast[${PYTHON_USEDEP}]
 			dev-python/myst-parser[${PYTHON_USEDEP}]
-			dev-python/moviepy[${PYTHON_USEDEP}]
 			dev-python/sphinx[${PYTHON_USEDEP}]
 			dev-python/sphinx-autobuild[${PYTHON_USEDEP}]
 			dev-python/sphinx_github_changelog[${PYTHON_USEDEP}]
@@ -87,6 +86,9 @@ BDEPEND+="
 			>=dev-python/pytest-7.1.3[${PYTHON_USEDEP}]
 		)
 	')
+	doc? (
+		dev-python/moviepy[${PYTHON_SINGLE_USEDEP}]
+	)
 "
 
 distutils_enable_sphinx "docs"

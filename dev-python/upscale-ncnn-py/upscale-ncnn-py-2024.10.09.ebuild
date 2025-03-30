@@ -6,6 +6,7 @@ EAPI=8
 
 MY_PN="Universal-NCNN-upscaler-python"
 MY_PV="${PV//./-}"
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="pdm-backend"
 PYTHON_COMPAT=( "python3_"{10..13} )
 
@@ -73,27 +74,31 @@ dev test
 ebuild_revision_1
 "
 RDEPEND+="
-	media-libs/opencv[${PYTHON_USEDEP},python]
+	$(python_gen_cond_dep '
+		virtual/pillow[${PYTHON_USEDEP}]
+	')
+	media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
 	media-libs/vulkan-drivers
 	media-libs/vulkan-loader
-	virtual/pillow[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
 	dev-util/vulkan-headers
 "
 BDEPEND+="
+	$(python_gen_cond_dep '
+		dev? (
+			dev-python/mypy[${PYTHON_USEDEP}]
+			dev-util/ruff
+		)
+		test? (
+			dev-python/pytest[${PYTHON_USEDEP}]
+			dev-python/pytest-cov[${PYTHON_USEDEP}]
+			dev-python/scikit-image[${PYTHON_USEDEP}]
+		)
+	')
 	dev? (
-		$(python_gen_any_dep '
-			dev-vcs/pre-commit[${PYTHON_SINGLE_USEDEP}]
-		')
-		dev-python/mypy[${PYTHON_USEDEP}]
-		dev-util/ruff
-	)
-	test? (
-		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/pytest-cov[${PYTHON_USEDEP}]
-		dev-python/scikit-image[${PYTHON_USEDEP}]
+		dev-vcs/pre-commit[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DOCS=( "README.md" )

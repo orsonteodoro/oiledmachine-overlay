@@ -58,7 +58,6 @@ RDEPEND+="
 		sisl? (
 			>=dev-python/pygame-'${PYGAME_PV}'[${PYTHON_USEDEP}]
 			>=dev-python/scipy-1.4.1[${PYTHON_USEDEP}]
-			>=dev-python/box2d-py-2.3.5[${PYTHON_USEDEP}]
 			>=dev-python/pymunk-'${PYMUNK_PV}'[${PYTHON_USEDEP}]
 		)
 		other? (
@@ -68,6 +67,9 @@ RDEPEND+="
 	>=dev-python/gymnasium-0.28.0[${PYTHON_SINGLE_USEDEP}]
 	classic? (
 		>=dev-python/shimmy-1.2.0[${PYTHON_SINGLE_USEDEP},openspiel]
+	)
+	sisl? (
+		>=dev-python/box2d-py-2.3.5[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="
@@ -89,11 +91,11 @@ BDEPEND+="
 			>=dev-python/pytest-cov-4.1.0[${PYTHON_USEDEP}]
 			>=dev-python/pytest-markdown-docs-0.5.0[${PYTHON_USEDEP}]
 			>=dev-python/pytest-xdist-3.5.0[${PYTHON_USEDEP}]
-			>=dev-python/autorom-0.6.1[${PYTHON_USEDEP}]
 			dev-python/black[${PYTHON_USEDEP}]
 		)
 	')
 	test? (
+		>=dev-python/autorom-0.6.1[${PYTHON_SINGLE_USEDEP}]
 		>=dev-vcs/pre-commit-3.5.0[${PYTHON_SINGLE_USEDEP}]
 	)
 "

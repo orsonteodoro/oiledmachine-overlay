@@ -101,16 +101,16 @@ PYTORCH_BASE_RDEPEND="
 "
 PYTORCH_EXAMPLES_RDEPEND="
 	$(python_gen_cond_dep '
-		(
-			>=dev-python/gym-0.17.0[${PYTHON_USEDEP},classic_control(+)]
-			strict? (
-				<dev-python/gym-0.26.3[${PYTHON_USEDEP},classic_control(+)]
-			)
-		)
 		strict? (
 			<dev-python/ipython-8.7.1[${PYTHON_USEDEP},all(-)]
 		)
 	')
+	(
+		>=dev-python/gym-0.17.0[${PYTHON_SINGLE_USEDEP},classic_control(+)]
+		strict? (
+			<dev-python/gym-0.26.3[${PYTHON_SINGLE_USEDEP},classic_control(+)]
+		)
+	)
 	(
 		>=sci-ml/torchmetrics-0.10.0[${PYTHON_SINGLE_USEDEP}]
 		strict? (

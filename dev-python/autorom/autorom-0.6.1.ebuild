@@ -4,7 +4,8 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_10 ) # Upstream tested up to 3.10
+DISTUTILS_SINGLE_IMPL=1
+PYTHON_COMPAT=( "python3_10" ) # Upstream tested up to 3.10
 
 inherit distutils-r1
 
@@ -29,28 +30,34 @@ REQUIRED_USE+="
 "
 RDEPEND+="
 	${PYTHON_DEPS}
-	dev-python/click[${PYTHON_USEDEP}]
-	dev-python/requests[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/click[${PYTHON_USEDEP}]
+		dev-python/requests[${PYTHON_USEDEP}]
+	')
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
 	${PYTHON_DEPS}
-	dev-python/click[${PYTHON_USEDEP}]
-	dev-python/requests[${PYTHON_USEDEP}]
-	dev-python/setuptools[${PYTHON_USEDEP}]
-	dev-python/tqdm[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
-	dev-python/Farama-Notifications[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/click[${PYTHON_USEDEP}]
+		dev-python/requests[${PYTHON_USEDEP}]
+		dev-python/setuptools[${PYTHON_USEDEP}]
+		dev-python/tqdm[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+		dev-python/Farama-Notifications[${PYTHON_USEDEP}]
+		test? (
+			dev-python/multi-agent-ale-py[${PYTHON_USEDEP}]
+		)
+	')
 	test? (
-		dev-python/ale-py[${PYTHON_USEDEP}]
-		dev-python/multi-agent-ale-py[${PYTHON_USEDEP}]
+		dev-python/ale-py[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 PDEPEND+="
 	accept-rom-license? (
-		>=dev-python/autorom-accept-rom-license-${PV}:${SLOT}[${PYTHON_USEDEP}]
+		>=dev-python/autorom-accept-rom-license-${PV}:${SLOT}[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 

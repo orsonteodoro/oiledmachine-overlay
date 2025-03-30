@@ -8,6 +8,7 @@ EAPI=8
 # https://github.com/Farama-Foundation/AutoROM/blob/v0.6.1/src/AutoROM.py#L146
 
 export AUTOROM_DOWNLOAD_METHOD="offline"
+DISTUTILS_SINGLE_IMPL=1
 ID1="61b22aefce4456920ba99f2c36906eda"
 ID2="00046ac3403768bfe45857610a3d333b8e35e026"
 TARBALL_SHA1SUM="f31ebce83a2e17d845edb5a585722479c361811a"
@@ -207,24 +208,30 @@ REQUIRED_USE+="
 "
 RDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-python/autorom-${PV}:${SLOT}[${PYTHON_USEDEP}]
-	dev-python/click[${PYTHON_USEDEP}]
-	dev-python/requests[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/click[${PYTHON_USEDEP}]
+		dev-python/requests[${PYTHON_USEDEP}]
+	')
+	>=dev-python/autorom-${PV}:${SLOT}[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
 	${PYTHON_DEPS}
-	dev-python/click[${PYTHON_USEDEP}]
-	dev-python/requests[${PYTHON_USEDEP}]
-	dev-python/setuptools[${PYTHON_USEDEP}]
-	dev-python/tqdm[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
-	dev-python/Farama-Notifications[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/click[${PYTHON_USEDEP}]
+		dev-python/requests[${PYTHON_USEDEP}]
+		dev-python/setuptools[${PYTHON_USEDEP}]
+		dev-python/tqdm[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+		dev-python/Farama-Notifications[${PYTHON_USEDEP}]
+		test? (
+			dev-python/multi-agent-ale-py[${PYTHON_USEDEP}]
+		)
+	')
 	test? (
-		dev-python/ale-py[${PYTHON_USEDEP}]
-		dev-python/multi-agent-ale-py[${PYTHON_USEDEP}]
+		dev-python/ale-py[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 _PATCHES=(

@@ -51,13 +51,6 @@ RDEPEND+="
 		>=dev-python/typing-extensions-4.3.0[${PYTHON_USEDEP}]
 		>=dev-python/jumpy-0.2.0[${PYTHON_USEDEP}]
 
-		accept-rom-license? (
-			>=dev-python/autorom-accept-rom-license-0.4.2[${PYTHON_USEDEP}]
-		)
-		box2d? (
-			>=dev-lang/swig-4
-			>=dev-python/box2d-py-2.3.5[${PYTHON_USEDEP}]
-		)
 		mujoco? (
 			|| (
 				(
@@ -76,7 +69,6 @@ RDEPEND+="
 		other? (
 			>=dev-python/lz4-3.1.0[${PYTHON_USEDEP}]
 			>=dev-python/matplotlib-3.0[${PYTHON_USEDEP}]
-			>=dev-python/moviepy-1.0.0[${PYTHON_USEDEP}]
 		)
 		pygame? (
 			>=dev-python/pygame-2.1.3[${PYTHON_USEDEP}]
@@ -86,13 +78,21 @@ RDEPEND+="
 		>=dev-python/shimmy-0.1.0[${PYTHON_SINGLE_USEDEP}]
 		<dev-python/shimmy-1.0[${PYTHON_SINGLE_USEDEP}]
 	)
+	accept-rom-license? (
+		>=dev-python/autorom-accept-rom-license-0.4.2[${PYTHON_SINGLE_USEDEP}]
+	)
+	box2d? (
+		>=dev-lang/swig-4
+		>=dev-python/box2d-py-2.3.5[${PYTHON_SINGLE_USEDEP}]
+	)
 	jax? (
 		>=dev-python/jax-0.4.0[${PYTHON_SINGLE_USEDEP}]
 		>=dev-python/jaxlib-0.4.0[${PYTHON_SINGLE_USEDEP}]
 	)
 	other? (
-		>=sci-ml/pytorch-1.0.0[${PYTHON_SINGLE_USEDEP}]
+		>=dev-python/moviepy-1.0.0[${PYTHON_SINGLE_USEDEP}]
 		>=media-libs/opencv-3.0[${PYTHON_SINGLE_USEDEP},python]
+		>=sci-ml/pytorch-1.0.0[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="

@@ -48,10 +48,10 @@ RDEPEND+="
 		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/scipy[${PYTHON_USEDEP}]
 		dev-python/scikit-image[${PYTHON_USEDEP}]
-		media-libs/opencv[${PYTHON_USEDEP},python]
 		virtual/pillow[${PYTHON_USEDEP}]
 	')
 	<dev-python/timm-0.6.8[${PYTHON_SINGLE_USEDEP}]
+	media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
 	sci-ml/huggingface_hub[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]

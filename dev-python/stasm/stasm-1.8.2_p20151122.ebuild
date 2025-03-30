@@ -7,6 +7,7 @@ EAPI=8
 MY_PN="PyStasm"
 
 DISTUTILS_EXT=1
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 FALLBACK_COMMIT="696fca9a4c12207ef175a8c3bdd122b11ae0552b" # Nov 22, 2015
 PYTHON_COMPAT=( "python3_"{10..12} )
@@ -43,8 +44,10 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
 RDEPEND+="
-	>=dev-python/numpy-1.7[${PYTHON_USEDEP}]
-	media-libs/opencv[${PYTHON_USEDEP},python]
+	$(python_gen_cond_dep '
+		>=dev-python/numpy-1.7[${PYTHON_USEDEP}]
+	')
+	media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
 "
 DEPEND+="
 	${RDEPEND}

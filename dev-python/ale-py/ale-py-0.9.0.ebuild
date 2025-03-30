@@ -34,7 +34,9 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/typing-extensions[${PYTHON_USEDEP}]
 	' python3_10 )
-	>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
+	')
 	media-libs/libsdl2
 	sys-libs/zlib
 "
@@ -43,17 +45,19 @@ DEPEND+="
 "
 BDEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/pybind11-2.10.0
+		>=dev-python/pybind11-2.10.0[${PYTHON_USEDEP}]
+		>=dev-python/setuptools-61[${PYTHON_USEDEP}]
+		cibuildwheel? (
+			dev-python/cibuildwheel[${PYTHON_USEDEP}]
+		)
+		test? (
+			>=dev-python/pytest-7.0[${PYTHON_USEDEP}]
+		)
 	')
-	>=dev-python/setuptools-61[${PYTHON_USEDEP}]
 	>=dev-build/cmake-3.22
 	dev-build/ninja
-	cibuildwheel? (
-		dev-python/cibuildwheel[${PYTHON_USEDEP}]
-	)
 	test? (
-		>=dev-python/pytest-7.0[${PYTHON_USEDEP}]
-		>=dev-python/gymnasium-1.0.0_alpha1[${PYTHON_USEDEP}]
+		>=dev-python/gymnasium-1.0.0_alpha1[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 PATCHES=(

@@ -259,14 +259,14 @@ COMMON_DEPEND="
 		>=dev-python/packaging-24.2[${PYTHON_USEDEP}]
 		>=dev-python/pypresence-4.3.0[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.32.3[${PYTHON_USEDEP}]
-		>=dev-python/scenedetect-0.6.5[${PYTHON_USEDEP}]
 		>=dev-python/sympy-1.13.1[${PYTHON_USEDEP}]
 		>=dev-python/tqdm-4.67.1[${PYTHON_USEDEP}]
 		>=dev-python/testresources-2.0.1[${PYTHON_USEDEP}]
 		>=dev-python/typing-extensions-4.12.2[${PYTHON_USEDEP}]
-		>=media-libs/opencv-4.10.0[${PYTHON_USEDEP},ffmpeg,python]
 		>=virtual/pillow-11.0.0[${PYTHON_USEDEP}]
 	')
+	>=dev-python/scenedetect-0.6.5[${PYTHON_SINGLE_USEDEP}]
+	>=media-libs/opencv-4.10.0[${PYTHON_SINGLE_USEDEP},ffmpeg,python]
 "
 # Upstream uses pytorch 2.6.0 with cuda 12.6
 CUDA_DEPEND="
@@ -285,8 +285,8 @@ NCNN_DEPEND="
 		>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
 		>=dev-python/rife-ncnn-vulkan-python-tntwise-1.4.4[${PYTHON_USEDEP}]
 		>=dev-python/sympy-1.13.1[${PYTHON_USEDEP}]
-		>=dev-python/upscale-ncnn-py-1.2.0[${PYTHON_USEDEP}]
 	')
+	>=dev-python/upscale-ncnn-py-1.2.0[${PYTHON_SINGLE_USEDEP}]
 "
 ROCM_DEPEND="
 	|| (

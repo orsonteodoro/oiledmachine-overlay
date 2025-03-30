@@ -43,13 +43,13 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/tqdm[${PYTHON_USEDEP}]
-		media-libs/opencv[${PYTHON_USEDEP},python]
 		virtual/pillow[${PYTHON_USEDEP}]
 	')
 	>=dev-python/basicsr-1.4.2[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/facexlib-0.2.5[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/gfpgan-1.3.5[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/pytorch-1.7[${PYTHON_SINGLE_USEDEP}]
+	media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
 	sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="

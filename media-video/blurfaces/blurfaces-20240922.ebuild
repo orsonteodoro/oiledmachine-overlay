@@ -7,7 +7,7 @@ EAPI=8
 FALLBACK_COMMIT="a2f2a08d47f387a50fcbc18786837e9b8741d74b" # Sep 22, 2024
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit python-r1 python-utils-r1
+inherit python-single-r1 python-utils-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -36,39 +36,41 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
 RDEPEND+="
-	>=dev-python/asttokens-2.0.8[${PYTHON_USEDEP}]
-	>=dev-python/backcall-0.2.0[${PYTHON_USEDEP}]
-	>=dev-python/click-8.1.3[${PYTHON_USEDEP}]
-	>=dev-python/decorator-5.1.1[${PYTHON_USEDEP}]
-	>=dev-python/executing-1.0.0[${PYTHON_USEDEP}]
-	>=dev-python/face-recognition-1.3.0[${PYTHON_USEDEP}]
-	>=dev-python/face_recognition_models-0.3.0[${PYTHON_USEDEP}]
-	>=dev-python/ffmpeg-python-0.2.0[${PYTHON_USEDEP}]
-	>=dev-python/flake8-5.0.4[${PYTHON_USEDEP}]
-	>=dev-python/future-0.18.3[${PYTHON_USEDEP}]
-	>=dev-python/ipython-8.10.0[${PYTHON_USEDEP}]
-	>=dev-python/jedi-0.18.1[${PYTHON_USEDEP}]
-	>=dev-python/matplotlib-inline-0.1.6[${PYTHON_USEDEP}]
-	>=dev-python/mccabe-0.7.0[${PYTHON_USEDEP}]
-	>=dev-python/numpy-1.23.3[${PYTHON_USEDEP}]
-	>=dev-python/parso-0.8.3[${PYTHON_USEDEP}]
-	>=dev-python/pexpect-4.8.0[${PYTHON_USEDEP}]
-	>=dev-python/pickleshare-0.7.5[${PYTHON_USEDEP}]
-	>=dev-python/prompt-toolkit-3.0.31[${PYTHON_USEDEP}]
-	>=dev-python/ptyprocess-0.7.0[${PYTHON_USEDEP}]
-	>=dev-python/pure-eval-0.2.2[${PYTHON_USEDEP}]
-	>=dev-python/pycodestyle-2.9.1[${PYTHON_USEDEP}]
-	>=dev-python/pyflakes-2.5.0[${PYTHON_USEDEP}]
-	>=dev-python/pygments-2.15.0[${PYTHON_USEDEP}]
-	>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
-	>=dev-python/stack-data-0.5.0[${PYTHON_USEDEP}]
-	>=dev-python/tqdm-4.66.3[${PYTHON_USEDEP}]
-	>=dev-python/traitlets-5.4.0[${PYTHON_USEDEP}]
-	>=dev-python/wcwidth-0.2.5[${PYTHON_USEDEP}]
-	>=media-libs/opencv-4.8.1.78[${PYTHON_USEDEP},ffmpeg,imgproc,python]
-	>=sci-libs/dlib-19.24.0[${PYTHON_USEDEP}]
-	>=virtual/pillow-10.3.0[${PYTHON_USEDEP}]
-	media-video/ffmpeg[encode]
+	$(python_gen_cond_dep '
+		>=dev-python/asttokens-2.0.8[${PYTHON_USEDEP}]
+		>=dev-python/backcall-0.2.0[${PYTHON_USEDEP}]
+		>=dev-python/click-8.1.3[${PYTHON_USEDEP}]
+		>=dev-python/decorator-5.1.1[${PYTHON_USEDEP}]
+		>=dev-python/executing-1.0.0[${PYTHON_USEDEP}]
+		>=dev-python/face-recognition-1.3.0[${PYTHON_USEDEP}]
+		>=dev-python/face_recognition_models-0.3.0[${PYTHON_USEDEP}]
+		>=dev-python/ffmpeg-python-0.2.0[${PYTHON_USEDEP}]
+		>=dev-python/flake8-5.0.4[${PYTHON_USEDEP}]
+		>=dev-python/future-0.18.3[${PYTHON_USEDEP}]
+		>=dev-python/ipython-8.10.0[${PYTHON_USEDEP}]
+		>=dev-python/jedi-0.18.1[${PYTHON_USEDEP}]
+		>=dev-python/matplotlib-inline-0.1.6[${PYTHON_USEDEP}]
+		>=dev-python/mccabe-0.7.0[${PYTHON_USEDEP}]
+		>=dev-python/numpy-1.23.3[${PYTHON_USEDEP}]
+		>=dev-python/parso-0.8.3[${PYTHON_USEDEP}]
+		>=dev-python/pexpect-4.8.0[${PYTHON_USEDEP}]
+		>=dev-python/pickleshare-0.7.5[${PYTHON_USEDEP}]
+		>=dev-python/prompt-toolkit-3.0.31[${PYTHON_USEDEP}]
+		>=dev-python/ptyprocess-0.7.0[${PYTHON_USEDEP}]
+		>=dev-python/pure-eval-0.2.2[${PYTHON_USEDEP}]
+		>=dev-python/pycodestyle-2.9.1[${PYTHON_USEDEP}]
+		>=dev-python/pyflakes-2.5.0[${PYTHON_USEDEP}]
+		>=dev-python/pygments-2.15.0[${PYTHON_USEDEP}]
+		>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
+		>=dev-python/stack-data-0.5.0[${PYTHON_USEDEP}]
+		>=dev-python/tqdm-4.66.3[${PYTHON_USEDEP}]
+		>=dev-python/traitlets-5.4.0[${PYTHON_USEDEP}]
+		>=dev-python/wcwidth-0.2.5[${PYTHON_USEDEP}]
+		>=sci-libs/dlib-19.24.0[${PYTHON_USEDEP}]
+		>=virtual/pillow-10.3.0[${PYTHON_USEDEP}]
+		media-video/ffmpeg[encode]
+	')
+	>=media-libs/opencv-4.8.1.78[${PYTHON_SINGLE_USEDEP},ffmpeg,imgproc,python]
 "
 DEPEND+="
 	${RDEPEND}

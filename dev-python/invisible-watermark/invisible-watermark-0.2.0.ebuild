@@ -46,11 +46,11 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=media-libs/opencv-4.1.0.25[${PYTHON_USEDEP},ffmpeg?,gstreamer?,jpeg,png,python]
 		>=dev-python/pywavelets-1.1.1[${PYTHON_USEDEP}]
 		>=dev-python/numpy-1.17.0[${PYTHON_USEDEP}]
 		>=virtual/pillow-6.0.0[${PYTHON_USEDEP}]
 	')
+	>=media-libs/opencv-4.1.0.25[${PYTHON_SINGLE_USEDEP},ffmpeg?,gstreamer?,jpeg,png,python]
 	dev-python/pytorch[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
