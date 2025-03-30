@@ -34,9 +34,6 @@ IUSE+=" atari bsuite dm-control dm-control-multi-agent doc gym meltingpot opensp
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
-		atari? (
-			>=dev-python/ale-py-0.8.1[${PYTHON_USEDEP}]
-		)
 		dm-control? (
 			>=dev-python/h5py-3.7.0[${PYTHON_USEDEP}]
 			>=dev-python/dm-control-1.0.10[${PYTHON_USEDEP}]
@@ -49,6 +46,9 @@ RDEPEND+="
 		)
 	')
 	>=dev-python/gymnasium-0.27.0[${PYTHON_SINGLE_USEDEP}]
+	atari? (
+		>=dev-python/ale-py-0.8.1[${PYTHON_SINGLE_USEDEP}]
+	)
 	bsuite? (
 		>=dev-python/bsuite-0.3.5[${PYTHON_SINGLE_USEDEP}]
 	)
