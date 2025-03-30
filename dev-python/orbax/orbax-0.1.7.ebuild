@@ -47,7 +47,6 @@ RDEPEND+="
 		>=sci-libs/tensorstore-0.1.20[${PYTHON_USEDEP}]
 		dev-python/absl-py[${PYTHON_USEDEP}]
 		dev-python/cached-property[${PYTHON_USEDEP}]
-		dev-python/etils[${PYTHON_USEDEP}]
 		dev-python/importlib-resources[${PYTHON_USEDEP}]
 		dev-python/msgpack[${PYTHON_USEDEP}]
 		dev-python/nest-asyncio[${PYTHON_USEDEP}]
@@ -56,6 +55,7 @@ RDEPEND+="
 		dev-python/typing-extensions[${PYTHON_USEDEP}]
 	')
 	>=dev-python/jax-0.4.6[${PYTHON_SINGLE_USEDEP}]
+	dev-python/etils[${PYTHON_SINGLE_USEDEP}]
 	dev-python/jaxlib[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="

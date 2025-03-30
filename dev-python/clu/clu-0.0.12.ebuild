@@ -41,13 +41,13 @@ IUSE+=" test"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/absl-py[${PYTHON_USEDEP}]
-		dev-python/etils[${PYTHON_USEDEP},epath]
 		dev-python/ml-collections[${PYTHON_USEDEP}]
 		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
 		dev-python/typing-extensions[${PYTHON_USEDEP}]
 		dev-python/wrapt[${PYTHON_USEDEP}]
 	')
+	dev-python/etils[${PYTHON_SINGLE_USEDEP},epath]
 	dev-python/flax[${PYTHON_SINGLE_USEDEP}]
 	dev-python/jax[${PYTHON_SINGLE_USEDEP}]
 	dev-python/jaxlib[${PYTHON_SINGLE_USEDEP}]

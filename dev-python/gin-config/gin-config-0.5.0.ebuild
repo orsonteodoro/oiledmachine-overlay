@@ -6,6 +6,7 @@ EAPI=8
 
 MY_PN="${PN/-/_}"
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} ) # Upstream list up to 3.7
 
@@ -40,36 +41,27 @@ LICENSE="
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" cuda pytorch tensorflow test"
-REQUIRED_USE="
-	pytorch? (
-		^^ (
-			python_targets_python3_10
-			python_targets_python3_11
-			python_targets_python3_12
-		)
-	)
-"
 RDEPEND+="
 	pytorch? (
-		$(python_gen_any_dep '
-			>=sci-ml/pytorch-1.3.0[${PYTHON_SINGLE_USEDEP}]
-		')
+		>=sci-ml/pytorch-1.3.0[${PYTHON_SINGLE_USEDEP}]
 	)
 	tensorflow? (
-		>=sci-ml/tensorflow-1.13.0[${PYTHON_USEDEP},cuda?]
+		>=sci-ml/tensorflow-1.13.0[${PYTHON_SINGLE_USEDEP},cuda?]
 	)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	dev-python/setuptools[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
-	test? (
-		>=dev-python/absl-py-0.1.6[${PYTHON_USEDEP}]
-		>=dev-python/mock-3.0.5[${PYTHON_USEDEP}]
-		dev-python/nose[${PYTHON_USEDEP}]
-	)
+	$(python_gen_cond_dep '
+		dev-python/setuptools[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+		test? (
+			>=dev-python/absl-py-0.1.6[${PYTHON_USEDEP}]
+			>=dev-python/mock-3.0.5[${PYTHON_USEDEP}]
+			dev-python/nose[${PYTHON_USEDEP}]
+		)
+	')
 "
 DOCS=( "README.md" )
 

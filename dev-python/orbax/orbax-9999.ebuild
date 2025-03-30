@@ -54,9 +54,9 @@ ORBAX_EXPORT_DEPEND="
 	$(python_gen_cond_dep '
 		dev-python/absl-py[${PYTHON_USEDEP}]
 		dev-python/dataclasses-json[${PYTHON_USEDEP}]
-		dev-python/etils[${PYTHON_USEDEP}]
 		dev-python/numpy[${PYTHON_USEDEP}]
 	')
+	dev-python/etils[${PYTHON_SINGLE_USEDEP}]
 	dev-python/jax[${PYTHON_SINGLE_USEDEP}]
 	dev-python/jaxlib[${PYTHON_SINGLE_USEDEP}]
 	dev-python/jaxtyping[${PYTHON_SINGLE_USEDEP}]
@@ -103,7 +103,7 @@ BDEPEND+="
 # Avoid circular depends with tensorflow \
 PDEPEND+="
 	tensorflow? (
-		>=sci-ml/tensorflow-2.15.0[${PYTHON_USEDEP}]
+		>=sci-ml/tensorflow-2.15.0[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DOCS=( "CHANGELOG.md" "README.md" )

@@ -62,8 +62,6 @@ RDEPEND+="
 		>=dev-python/pydantic-1.7.4[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.13.0[${PYTHON_USEDEP}]
 		>=dev-python/srsly-2.4.3[${PYTHON_USEDEP}]
-		>=dev-python/thinc-8.2.2[${PYTHON_USEDEP}]
-		=dev-python/thinc-8*[${PYTHON_USEDEP}]
 		>=dev-python/tqdm-4.38.0[${PYTHON_USEDEP}]
 		>=dev-python/typer-0.3.0[${PYTHON_USEDEP}]
 		>=dev-python/wasabi-0.9.1[${PYTHON_USEDEP}]
@@ -90,6 +88,8 @@ RDEPEND+="
 			>=dev-python/spacy-transformers-1.1.2[${PYTHON_USEDEP}]
 		)
 	')
+	>=dev-python/thinc-8.2.2[${PYTHON_SINGLE_USEDEP}]
+	=dev-python/thinc-8*[${PYTHON_SINGLE_USEDEP}]
 	dev-python/spacy-legacy[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
@@ -102,7 +102,6 @@ BDEPEND+="
 		>=dev-python/preshed-3.0.2[${PYTHON_USEDEP}]
 		>=dev-python/murmurhash-0.28.0[${PYTHON_USEDEP}]
 		>=dev-python/numpy-1.19.0[${PYTHON_USEDEP}]
-		>=dev-python/thinc-8.3.0[${PYTHON_USEDEP}]
 		dev-python/setuptools[${PYTHON_USEDEP}]
 		dev? (
 			!~dev-python/pytest-7.1.0
@@ -123,6 +122,7 @@ BDEPEND+="
 			)
 		)
 	')
+	>=dev-python/thinc-8.3.0[${PYTHON_SINGLE_USEDEP}]
 	dev? (
 		>=dev-vcs/pre-commit-2.13.0[${PYTHON_SINGLE_USEDEP}]
 	)

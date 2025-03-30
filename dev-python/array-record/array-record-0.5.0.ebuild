@@ -13,6 +13,7 @@ BAZEL_SLOT="5.4"								# https://github.com/google/array_record/blob/v0.5.0/oss
 BROTLI_COMMIT="3914999fcc1fda92e750ef9190aa6db9bf7bdb07"			# https://github.com/google/array_record/blob/v0.5.0/WORKSPACE#L26
 COVERAGE_OUTPUT_GENERATOR_PV="2.5"						# https://github.com/bazelbuild/bazel/blob/5.4.1/distdir_deps.bzl#L274
 DISTUTILS_EXT=1
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 EIGEN_PV="3.4.0"								# https://github.com/google/array_record/blob/v0.5.0/WORKSPACE#L41
 GOOGLETEST_COMMIT="9bb354fa8325fa31faa1e12627b25ab445e6eed3"			# Based on committer-date:<=2023-10-20 gh search   https://github.com/google/array_record/blob/v0.5.0/WORKSPACE#L31
@@ -95,21 +96,27 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" beam"
 RDEPEND+="
-	dev-python/absl-py[${PYTHON_USEDEP}]
-	dev-python/etils[${PYTHON_USEDEP},epath]
+	$(python_gen_cond_dep '
+		dev-python/absl-py[${PYTHON_USEDEP}]
+		beam? (
+			>=dev-db/apache-beam-2.50.0[${PYTHON_USEDEP},gcp]
+			>=dev-python/google-cloud-storage-2.11.0[${PYTHON_USEDEP}]
+		)
+	')
+	dev-python/etils[${PYTHON_SINGLE_USEDEP},epath]
 	beam? (
-		>=dev-db/apache-beam-2.50.0[${PYTHON_USEDEP},gcp]
-		>=dev-python/google-cloud-storage-2.11.0[${PYTHON_USEDEP}]
-		>=sci-ml/tensorflow-2.14.0[${PYTHON_USEDEP}]
+		>=sci-ml/tensorflow-2.14.0[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	$(python_gen_cond_dep '
+		dev-python/setuptools[${PYTHON_USEDEP}]
+		net-misc/rsync
+	')
 	>=dev-build/bazel-5.4.0:${BAZEL_SLOT}
-	dev-python/setuptools[${PYTHON_USEDEP}]
-	net-misc/rsync
 "
 DOCS=( "README.md" )
 

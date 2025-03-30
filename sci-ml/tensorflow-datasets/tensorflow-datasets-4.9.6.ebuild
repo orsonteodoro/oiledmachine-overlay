@@ -63,16 +63,15 @@ wsc273 youtube_vis
 # Same as RDEPEND without conditionals and apache-beam
 HUGGINGFACE_RDEPEND="
 	$(python_gen_cond_dep '
-		>=dev-python/etils-1.6.0[${PYTHON_USEDEP},enp,epath,epy,etree]
+		>=dev-python/etils-1.6.0[${PYTHON_SINGLE_USEDEP},enp,epath,epy,etree]
 	' python3_10)
 	$(python_gen_cond_dep '
-		>=dev-python/etils-1.9.1[${PYTHON_USEDEP},enp,epath,epy,etree]
+		>=dev-python/etils-1.9.1[${PYTHON_SINGLE_USEDEP},enp,epath,epy,etree]
 	' python3_{11,12})
 	$(python_gen_cond_dep '
 		dev-python/envlogger[${PYTHON_USEDEP}]
 	' python3_10)
 	$(python_gen_cond_dep '
-		>=dev-python/array-record-0.5.0[${PYTHON_USEDEP}]
 		>=dev-python/protobuf-3.20[${PYTHON_USEDEP}]
 		dev-python/protobuf:=
 		>=dev-python/requests-2.19.0[${PYTHON_USEDEP}]
@@ -117,6 +116,7 @@ HUGGINGFACE_RDEPEND="
 		sci-ml/datasets[${PYTHON_USEDEP}]
 		virtual/pillow[${PYTHON_USEDEP}]
 	')
+	>=dev-python/array-record-0.5.0[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/tensorflow[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/tensorflow-data-validation[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/tensorflow-io[${PYTHON_SINGLE_USEDEP}]
@@ -125,13 +125,12 @@ HUGGINGFACE_RDEPEND="
 
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/etils-1.6.0[${PYTHON_USEDEP},enp,epath,epy,etree]
+		>=dev-python/etils-1.6.0[${PYTHON_SINGLE_USEDEP},enp,epath,epy,etree]
 	' python3_10)
 	$(python_gen_cond_dep '
-		>=dev-python/etils-1.9.1[${PYTHON_USEDEP},enp,epath,epy,etree]
+		>=dev-python/etils-1.9.1[${PYTHON_SINGLE_USEDEP},enp,epath,epy,etree]
 	' python3_{11,12})
 	$(python_gen_cond_dep '
-		>=dev-python/array-record-0.5.0[${PYTHON_USEDEP}]
 		>=dev-python/protobuf-3.20[${PYTHON_USEDEP}]
 		dev-python/protobuf:=
 		>=dev-python/requests-2.19.0[${PYTHON_USEDEP}]
@@ -249,6 +248,7 @@ RDEPEND+="
 			dev-python/pycocotools[${PYTHON_USEDEP}]
 		)
 	')
+	>=dev-python/array-record-0.5.0[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/tensorflow-metadata[${PYTHON_SINGLE_USEDEP}]
 	huggingface? (
 		${HUGGINGFACE_RDEPEND}

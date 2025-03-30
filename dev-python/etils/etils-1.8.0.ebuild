@@ -12,6 +12,7 @@ EAPI=8
 # s3
 # sphinx-apitree
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="flit"
 PYTHON_COMPAT=( "python3_11" ) # Upstream only tests 3.11
 
@@ -106,71 +107,75 @@ REQUIRED_USE+="
 	)
 "
 RDEPEND+="
-	eapp? (
-		dev-python/absl-py[${PYTHON_USEDEP}]
-		dev-python/simple-parsing[${PYTHON_USEDEP}]
-	)
-	ecolab? (
-		dev-python/jupyter[${PYTHON_USEDEP}]
-		dev-python/mediapy[${PYTHON_USEDEP}]
-		dev-python/packaging[${PYTHON_USEDEP}]
-		dev-python/python-protobuf[${PYTHON_USEDEP}]
-	)
-	enp? (
-		dev-python/numpy[${PYTHON_USEDEP}]
-	)
-	epath? (
-		dev-python/fsspec[${PYTHON_USEDEP}]
-		dev-python/importlib-resources[${PYTHON_USEDEP}]
-		dev-python/typing-extensions[${PYTHON_USEDEP}]
-		dev-python/zipp[${PYTHON_USEDEP}]
-	)
-	epath-gcs? (
-		dev-python/gcsfs[${PYTHON_USEDEP}]
-	)
-	epath-s3? (
-		dev-python/s3[${PYTHON_USEDEP}]
-	)
-	epy? (
-		dev-python/typing-extensions[${PYTHON_USEDEP}]
-	)
-	etqdm? (
-		dev-python/absl-py[${PYTHON_USEDEP}]
-		dev-python/tqdm[${PYTHON_USEDEP}]
-	)
-	etree-dm? (
-		dev-python/dm-tree[${PYTHON_USEDEP}]
-	)
+	$(python_gen_cond_dep '
+		eapp? (
+			dev-python/absl-py[${PYTHON_USEDEP}]
+			dev-python/simple-parsing[${PYTHON_USEDEP}]
+		)
+		ecolab? (
+			dev-python/jupyter[${PYTHON_USEDEP}]
+			dev-python/mediapy[${PYTHON_USEDEP}]
+			dev-python/packaging[${PYTHON_USEDEP}]
+			dev-python/python-protobuf[${PYTHON_USEDEP}]
+		)
+		enp? (
+			dev-python/numpy[${PYTHON_USEDEP}]
+		)
+		epath? (
+			dev-python/fsspec[${PYTHON_USEDEP}]
+			dev-python/importlib-resources[${PYTHON_USEDEP}]
+			dev-python/typing-extensions[${PYTHON_USEDEP}]
+			dev-python/zipp[${PYTHON_USEDEP}]
+		)
+		epath-gcs? (
+			dev-python/gcsfs[${PYTHON_USEDEP}]
+		)
+		epath-s3? (
+			dev-python/s3[${PYTHON_USEDEP}]
+		)
+		epy? (
+			dev-python/typing-extensions[${PYTHON_USEDEP}]
+		)
+		etqdm? (
+			dev-python/absl-py[${PYTHON_USEDEP}]
+			dev-python/tqdm[${PYTHON_USEDEP}]
+		)
+		etree-dm? (
+			dev-python/dm-tree[${PYTHON_USEDEP}]
+		)
+	')
 	etree-jax? (
-		dev-python/jax[${PYTHON_USEDEP},cpu]
+		dev-python/jax[${PYTHON_SINGLE_USEDEP},cpu]
 	)
 	etree-tf? (
-		sci-ml/tensorflow[${PYTHON_USEDEP}]
+		sci-ml/tensorflow[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	(
-		>=dev-python/flit-core-3.8[${PYTHON_USEDEP}]
-		<dev-python/flit-core-4[${PYTHON_USEDEP}]
-	)
-	doc? (
-		dev-python/sphinx-apitree[${PYTHON_USEDEP}]
-	)
+	$(python_gen_cond_dep '
+		(
+			>=dev-python/flit-core-3.8[${PYTHON_USEDEP}]
+			<dev-python/flit-core-4[${PYTHON_USEDEP}]
+		)
+		doc? (
+			dev-python/sphinx-apitree[${PYTHON_USEDEP}]
+		)
+		test? (
+			>=dev-python/pylint-2.6.0[${PYTHON_USEDEP}]
+			dev-python/dataclass-array[${PYTHON_USEDEP}]
+			dev-python/optree[${PYTHON_USEDEP}]
+			dev-python/pyink[${PYTHON_USEDEP}]
+			dev-python/pytest[${PYTHON_USEDEP}]
+			dev-python/pytest-subtests[${PYTHON_USEDEP}]
+			dev-python/pytest-xdist[${PYTHON_USEDEP}]
+			dev-python/chex[${PYTHON_USEDEP}]
+		)
+	')
 	test? (
-		>=dev-python/pylint-2.6.0[${PYTHON_USEDEP}]
-		dev-python/dataclass-array[${PYTHON_USEDEP}]
-		dev-python/optree[${PYTHON_USEDEP}]
-		dev-python/pyink[${PYTHON_USEDEP}]
-		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/pytest-subtests[${PYTHON_USEDEP}]
-		dev-python/pytest-xdist[${PYTHON_USEDEP}]
-		dev-python/chex[${PYTHON_USEDEP}]
-		$(python_gen_any_dep '
-			sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
-		')
+		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DOCS=( "CHANGELOG.md" "README.md" )

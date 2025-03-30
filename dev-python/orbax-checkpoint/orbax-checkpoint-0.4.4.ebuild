@@ -64,7 +64,6 @@ CHECKPOINT_RDEPEND="
 			<sci-libs/tensorstore-0.1.38[${PYTHON_USEDEP}]
 		)
 		dev-python/absl-py[${PYTHON_USEDEP}]
-		dev-python/etils[${PYTHON_USEDEP},epath,epy]
 		dev-python/msgpack[${PYTHON_USEDEP}]
 		dev-python/nest-asyncio[${PYTHON_USEDEP}]
 		dev-python/numpy[${PYTHON_USEDEP}]
@@ -77,6 +76,7 @@ CHECKPOINT_RDEPEND="
 		dev-python/protobuf:=
 	')
 	>=dev-python/jax-0.4.9[${PYTHON_SINGLE_USEDEP}]
+	dev-python/etils[${PYTHON_SINGLE_USEDEP},epath,epy]
 	dev-python/jaxlib[${PYTHON_SINGLE_USEDEP}]
 	dev-python/jaxtyping[${PYTHON_SINGLE_USEDEP}]
 "
@@ -84,9 +84,9 @@ ORBAX_EXPORT_RDEPEND="
 	$(python_gen_cond_dep '
 		dev-python/absl-py[${PYTHON_USEDEP}]
 		dev-python/dataclasses-json[${PYTHON_USEDEP}]
-		dev-python/etils[${PYTHON_USEDEP}]
 		dev-python/numpy[${PYTHON_USEDEP}]
 	')
+	dev-python/etils[${PYTHON_SINGLE_USEDEP}]
 	dev-python/jax[${PYTHON_SINGLE_USEDEP}]
 	dev-python/jaxlib[${PYTHON_SINGLE_USEDEP}]
 	dev-python/jaxtyping[${PYTHON_SINGLE_USEDEP}]
@@ -106,10 +106,10 @@ CHECKPOINT_TEST_BDEPEND="
 "
 ORBAX_EXPORT_TEST_BDEPEND="
 	$(python_gen_cond_dep '
-		=sci-ml/tensorflow-9999[${PYTHON_USEDEP}]
 		dev-libs/pytest[${PYTHON_USEDEP}]
 		dev-libs/pytest-xdist[${PYTHON_USEDEP}]
 	')
+	=sci-ml/tensorflow-9999[${PYTHON_SINGLE_USEDEP}]
 "
 BDEPEND+="
 	$(python_gen_cond_dep '
