@@ -102,7 +102,7 @@ PLUGIN_RDEPEND="
 		>=dev-python/tqdm-4.64.0[${PYTHON_USEDEP}]
 		>=dev-python/watchdog-2.1.9[${PYTHON_USEDEP}]
 		>=sci-ml/safetensors-0.4.1[${PYTHON_USEDEP}]
-		dev-python/accelerate[${PYTHON_USEDEP}]
+		sci-ml/accelerate[${PYTHON_USEDEP}]
 		sci-ml/huggingface_hub[${PYTHON_USEDEP}]
 	')
 	>=dev-python/controlnet-aux-0.0.6[${PYTHON_SINGLE_USEDEP}]
