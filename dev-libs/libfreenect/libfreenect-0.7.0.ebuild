@@ -5,6 +5,7 @@ EAPI=8
 
 CMAKE_BUILD_TYPE=Release
 PYTHON_COMPAT=( python3_{8..11} )
+
 inherit cmake-multilib flag-o-matic multilib-minimal python-single-r1
 
 DESCRIPTION="Drivers and libraries for the Xbox Kinect device"
@@ -48,7 +49,9 @@ RDEPEND+="
 	)
 	python? (
 		${PYTHON_DEPS}
-		$(python_gen_cond_dep 'dev-python/numpy[${PYTHON_USEDEP}]')
+		$(python_gen_cond_dep '
+			dev-python/numpy[${PYTHON_USEDEP}]
+		')
 	)
 "
 DEPEND+="
