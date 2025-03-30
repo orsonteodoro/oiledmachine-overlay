@@ -62,12 +62,6 @@ PYTORCH_BASE_RDEPEND="
 			)
 		)
 		(
-			>=dev-python/lightning-utilities-0.6.0_p0[${PYTHON_USEDEP}]
-			strict? (
-				<dev-python/lightning-utilities-0.7.0[${PYTHON_USEDEP}]
-			)
-		)
-		(
 			>=dev-python/packaging-17.1[${PYTHON_USEDEP}]
 			strict? (
 				<dev-python/packaging-23.0.1[${PYTHON_USEDEP}]
@@ -86,6 +80,12 @@ PYTORCH_BASE_RDEPEND="
 			)
 		)
 	')
+	(
+		>=dev-python/lightning-utilities-0.6.0_p0[${PYTHON_SINGLE_USEDEP}]
+		strict? (
+			<dev-python/lightning-utilities-0.7.0[${PYTHON_SINGLE_USEDEP}]
+		)
+	)
 	(
 		>=sci-ml/pytorch-1.10.0[${PYTHON_SINGLE_USEDEP}]
 		strict? (

@@ -48,12 +48,6 @@ PYTORCH_BASE_RDEPEND="
 			)
 		)
 		(
-			>=dev-python/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
-			strict? (
-				<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
-			)
-		)
-		(
 			>=dev-python/numpy-1.17.2[${PYTHON_USEDEP}]
 			strict? (
 				<dev-python/numpy-1.27.0[${PYTHON_USEDEP}]
@@ -85,6 +79,12 @@ PYTORCH_BASE_RDEPEND="
 		)
 	')
 	(
+		>=dev-python/lightning-utilities-0.8.0[${PYTHON_SINGLE_USEDEP}]
+		strict? (
+			<dev-python/lightning-utilities-0.12.0[${PYTHON_SINGLE_USEDEP}]
+		)
+	)
+	(
 		>=sci-ml/pytorch-2.0.0[${PYTHON_SINGLE_USEDEP}]
 		strict? (
 			<sci-ml/pytorch-2.4.0[${PYTHON_SINGLE_USEDEP}]
@@ -99,12 +99,6 @@ PYTORCH_BASE_RDEPEND="
 "
 PYTORCH_EXAMPLES_RDEPEND="
 	$(python_gen_cond_dep '
-		(
-			>=dev-python/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
-			strict? (
-				<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
-			)
-		)
 		!strict? (
 			dev-python/ipython[${PYTHON_USEDEP},all(-)]
 			dev-python/requests[${PYTHON_USEDEP}]
@@ -114,6 +108,12 @@ PYTORCH_EXAMPLES_RDEPEND="
 			<dev-python/requests-2.32.0[${PYTHON_USEDEP}]
 		)
 	')
+	(
+		>=dev-python/lightning-utilities-0.8.0[${PYTHON_SINGLE_USEDEP}]
+		strict? (
+			<dev-python/lightning-utilities-0.12.0[${PYTHON_SINGLE_USEDEP}]
+		)
+	)
 	(
 		>=sci-ml/torchmetrics-0.10.0[${PYTHON_SINGLE_USEDEP}]
 		strict? (
@@ -194,12 +194,6 @@ DOCS_BDEPEND="
 			)
 		)
 		(
-			>=dev-python/lightning-utilities-0.11.1[${PYTHON_USEDEP}]
-			strict? (
-				<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
-			)
-		)
-		(
 			>=dev-python/myst-parser-0.18.1[${PYTHON_USEDEP}]
 			strict? (
 				<dev-python/myst-parser-3.0.0[${PYTHON_USEDEP}]
@@ -264,6 +258,12 @@ DOCS_BDEPEND="
 		dev-python/sphinx-rtd-dark-mode[${PYTHON_USEDEP}]
 		dev-python/sphinxcontrib-mockautodoc[${PYTHON_USEDEP}]
 	')
+	(
+		>=dev-python/lightning-utilities-0.11.1[${PYTHON_SINGLE_USEDEP}]
+		strict? (
+			<dev-python/lightning-utilities-0.12.0[${PYTHON_SINGLE_USEDEP}]
+		)
+	)
 "
 PYTORCH_DOCS_BDEPEND="
 	${DOCS_BDEPEND}

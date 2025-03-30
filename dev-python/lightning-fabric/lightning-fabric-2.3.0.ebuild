@@ -12,8 +12,8 @@ EAPI=8
 # sphinxcontrib-mockautodoc
 # sphinxcontrib-video
 
-DISTUTILS_USE_PEP517="setuptools"
 DISTUTILS_SINGLE_IMPL=1
+DISTUTILS_USE_PEP517="setuptools"
 export PACKAGE_NAME="fabric"
 PYPI_NO_NORMALIZE=1
 PYTHON_COMPAT=( "python3_"{10..11} )
@@ -45,12 +45,6 @@ FABRIC_BASE_RDEPEND="
 			)
 		)
 		(
-			>=dev-python/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
-			strict? (
-				<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
-			)
-		)
-		(
 			>=dev-python/numpy-1.17.2[${PYTHON_USEDEP}]
 			strict? (
 				<dev-python/numpy-1.27.0[${PYTHON_USEDEP}]
@@ -70,6 +64,12 @@ FABRIC_BASE_RDEPEND="
 		)
 	')
 	(
+		>=dev-python/lightning-utilities-0.8.0[${PYTHON_SINGLE_USEDEP}]
+		strict? (
+			<dev-python/lightning-utilities-0.12.0[${PYTHON_SINGLE_USEDEP}]
+		)
+	)
+	(
 		>=sci-ml/pytorch-2.0.0[${PYTHON_SINGLE_USEDEP}]
 		strict? (
 			<sci-ml/pytorch-2.4.0[${PYTHON_SINGLE_USEDEP}]
@@ -77,14 +77,12 @@ FABRIC_BASE_RDEPEND="
 	)
 "
 FABRIC_EXAMPLES_RDEPEND="
-	$(python_gen_cond_dep '
-		(
-			>=dev-python/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
-			strict? (
-				<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
-			)
+	(
+		>=dev-python/lightning-utilities-0.8.0[${PYTHON_SINGLE_USEDEP}]
+		strict? (
+			<dev-python/lightning-utilities-0.12.0[${PYTHON_SINGLE_USEDEP}]
 		)
-	')
+	)
 	(
 		>=sci-ml/torchmetrics-0.10.0[${PYTHON_SINGLE_USEDEP}]
 		strict? (
@@ -113,12 +111,6 @@ DOCS_BDEPEND="
 			>=dev-python/docutils-0.16[${PYTHON_USEDEP}]
 			strict? (
 				<dev-python/docutils-0.21[${PYTHON_USEDEP}]
-			)
-		)
-		(
-			>=dev-python/lightning-utilities-0.11.1[${PYTHON_USEDEP}]
-			strict? (
-				<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
 			)
 		)
 		(
@@ -186,6 +178,12 @@ DOCS_BDEPEND="
 		dev-python/sphinx-rtd-dark-mode[${PYTHON_USEDEP}]
 		dev-python/sphinxcontrib-mockautodoc[${PYTHON_USEDEP}]
 	')
+	(
+		>=dev-python/lightning-utilities-0.11.1[${PYTHON_SINGLE_USEDEP}]
+		strict? (
+			<dev-python/lightning-utilities-0.12.0[${PYTHON_SINGLE_USEDEP}]
+		)
+	)
 "
 FABRIC_DOCS_BDEPEND="
 	${DOCS_BDEPEND}

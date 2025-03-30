@@ -43,12 +43,6 @@ FABRIC_BASE_RDEPEND="
 			)
 		)
 		(
-			>=dev-python/lightning-utilities-0.6.0_p0[${PYTHON_USEDEP}]
-			strict? (
-				<dev-python/lightning-utilities-0.7.0[${PYTHON_USEDEP}]
-			)
-		)
-		(
 			>=dev-python/numpy-1.17.2[${PYTHON_USEDEP}]
 			strict? (
 				<dev-python/numpy-1.24.2[${PYTHON_USEDEP}]
@@ -67,6 +61,12 @@ FABRIC_BASE_RDEPEND="
 			)
 		)
 	')
+	(
+		>=dev-python/lightning-utilities-0.6.0_p0[${PYTHON_SINGLE_USEDEP}]
+		strict? (
+			<dev-python/lightning-utilities-0.7.0[${PYTHON_SINGLE_USEDEP}]
+		)
+	)
 	(
 		>=sci-ml/pytorch-1.10.0[${PYTHON_SINGLE_USEDEP}]
 		strict? (
