@@ -54,7 +54,7 @@ RDEPEND+="
 		>=dev-python/kornia-rs-0.1.0[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
 		x? (
-			dev-python/accelerate[${PYTHON_USEDEP}]
+			sci-ml/accelerate[${PYTHON_USEDEP}]
 		)
 	')
 	>=sci-ml/pytorch-1.9.1[${PYTHON_SINGLE_USEDEP}]
@@ -75,7 +75,7 @@ BDEPEND+="
 			<dev-python/numpy-2[${PYTHON_USEDEP}]
 			>=dev-python/pytest-8.3.3[${PYTHON_USEDEP}]
 			>=dev-python/setuptools-61.2[${PYTHON_USEDEP}]
-			dev-python/accelerate[${PYTHON_USEDEP}]
+			sci-ml/accelerate[${PYTHON_USEDEP}]
 			dev-python/coverage[${PYTHON_USEDEP}]
 			dev-python/mypy[${PYTHON_USEDEP}]
 			dev-python/onnx[${PYTHON_USEDEP}]
