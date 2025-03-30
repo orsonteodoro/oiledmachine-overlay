@@ -53,13 +53,11 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/kornia-rs-0.1.0[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
-		x? (
-			sci-ml/accelerate[${PYTHON_USEDEP}]
-		)
 	')
 	>=sci-ml/pytorch-1.9.1[${PYTHON_SINGLE_USEDEP}]
 	x? (
 		>=sci-ml/onnxruntime-1.16[${PYTHON_SINGLE_USEDEP},cuda?,python]
+		sci-ml/accelerate[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="
@@ -75,7 +73,6 @@ BDEPEND+="
 			<dev-python/numpy-2[${PYTHON_USEDEP}]
 			>=dev-python/pytest-8.3.3[${PYTHON_USEDEP}]
 			>=dev-python/setuptools-61.2[${PYTHON_USEDEP}]
-			sci-ml/accelerate[${PYTHON_USEDEP}]
 			dev-python/coverage[${PYTHON_USEDEP}]
 			dev-python/mypy[${PYTHON_USEDEP}]
 			dev-python/onnx[${PYTHON_USEDEP}]
@@ -87,6 +84,7 @@ BDEPEND+="
 		>=dev-python/ivy-9999[${PYTHON_SINGLE_USEDEP}]
 		>=dev-vcs/pre-commit-2[${PYTHON_SINGLE_USEDEP}]
 		dev-python/diffusers[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/accelerate[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
 		sci-ml/transformers[${PYTHON_SINGLE_USEDEP}]
 	)

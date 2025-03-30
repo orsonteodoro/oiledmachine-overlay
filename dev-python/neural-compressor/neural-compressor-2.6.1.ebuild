@@ -18,9 +18,6 @@ EAPI=8
 # peft
 # onnxruntime-extensions
 
-# TODO cat rename:
-# sci-ml/accelerate to sci-libs/accelerate
-
 # For versioning see also
 # https://github.com/intel/neural-compressor/blob/v2.6.1/.azure-pipelines/scripts/fwk_version.sh
 
@@ -138,7 +135,6 @@ BDEPEND+="
 			dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}]
 		)
 		test? (
-			>=sci-ml/accelerate-0.21.0[${PYTHON_USEDEP}]
 			>=sci-libs/dynast-1.6.0_rc1[${PYTHON_USEDEP}]
 			>=sci-ml/onnx-1.15.0[${PYTHON_USEDEP}]
 			sci-libs/auto-round[${PYTHON_USEDEP}]
@@ -162,6 +158,7 @@ BDEPEND+="
 		)
 	' python3_10)
 	test? (
+		>=sci-ml/accelerate-0.21.0[${PYTHON_SINGLE_USEDEP}]
 		>=sci-ml/intel-extension-for-pytorch-1.10[${PYTHON_SINGLE_USEDEP}]
 		>=sci-ml/intel-tensorflow-2.12.0[${PYTHON_SINGLE_USEDEP}]
 		>=sci-ml/onnxruntime-1.17.1[${PYTHON_SINGLE_USEDEP},python]

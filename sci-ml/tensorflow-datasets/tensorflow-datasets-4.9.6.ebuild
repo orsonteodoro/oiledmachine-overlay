@@ -112,11 +112,11 @@ HUGGINGFACE_RDEPEND="
 		dev-python/zarr[${PYTHON_USEDEP}]
 		dev-python/dm-tree[${PYTHON_USEDEP}]
 		sci-libs/gcld3[${PYTHON_USEDEP}]
-		sci-ml/datasets[${PYTHON_USEDEP}]
 		virtual/pillow[${PYTHON_USEDEP}]
 	')
 	>=dev-python/array-record-0.5.0[${PYTHON_SINGLE_USEDEP}]
 	media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
+	sci-ml/datasets[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/tensorflow[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/tensorflow-data-validation[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/tensorflow-io[${PYTHON_SINGLE_USEDEP}]

@@ -69,15 +69,10 @@ RDEPEND+="
 		dev-python/requests[${PYTHON_USEDEP}]
 		sci-ml/onnx[${PYTHON_USEDEP}]
 		training? (
-			>=sci-ml/accelerate-0.29.3[${PYTHON_USEDEP}]
 			>=dev-python/peft-0.6.0[${PYTHON_USEDEP}]
-			dev-python/datasets[${PYTHON_USEDEP}]
 			dev-python/jinja2[${PYTHON_USEDEP}]
 			dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
 			dev-python/protobuf:=
-		)
-		pytorch? (
-			>=sci-ml/accelerate-0.29.3[${PYTHON_USEDEP}]
 		)
 	')
 	>=sci-ml/huggingface_hub-0.23.2[${PYTHON_SINGLE_USEDEP}]
@@ -90,7 +85,12 @@ RDEPEND+="
 		>=sci-ml/pytorch-1.4[${PYTHON_SINGLE_USEDEP}]
 		dev-python/torchsde[${PYTHON_SINGLE_USEDEP}]
 	)
+	pytorch? (
+		>=sci-ml/accelerate-0.29.3[${PYTHON_SINGLE_USEDEP}]
+	)
 	training? (
+		>=sci-ml/accelerate-0.29.3[${PYTHON_SINGLE_USEDEP}]
+		dev-python/datasets[${PYTHON_SINGLE_USEDEP}]
 		sci-visualization/tensorboard[${PYTHON_SINGLE_USEDEP}]
 	)
 "

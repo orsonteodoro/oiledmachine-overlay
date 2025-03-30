@@ -357,12 +357,12 @@ BDEPEND_MODEL_HUB_TESTS_TORCH_TESTS="
 		dev-python/soundfile[${PYTHON_USEDEP}]
 		dev-python/super-image[${PYTHON_USEDEP}]
 		dev-python/wheel[${PYTHON_USEDEP}]
-		sci-ml/datasets[${PYTHON_USEDEP}]
 		sci-ml/sentencepiece[${PYTHON_USEDEP},python]
 	')
 	dev-python/basicsr[${PYTHON_SINGLE_USEDEP}]
 	dev-python/facexlib[${PYTHON_SINGLE_USEDEP}]
 	dev-python/timm[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/datasets[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/torchaudio[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]

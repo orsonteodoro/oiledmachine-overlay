@@ -45,7 +45,6 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev"
 RDEPEND+="
 	$(python_gen_cond_dep '
-		sci-ml/accelerate[${PYTHON_USEDEP}]
 		dev-python/einops[${PYTHON_USEDEP}]
 		dev-python/jsonmerge[${PYTHON_USEDEP}]
 		dev-python/scikit-image[${PYTHON_USEDEP}]
@@ -62,6 +61,7 @@ RDEPEND+="
 	dev-python/torchdiffeq[${PYTHON_SINGLE_USEDEP}]
 	dev-python/torchsde[${PYTHON_SINGLE_USEDEP}]
 	dev-python/wandb[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/accelerate[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
