@@ -8,6 +8,7 @@ EAPI=8
 # mknotebooks
 # pytkdocs_tweaks
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="hatchling"
 PYTHON_COMPAT=( python3_11 ) # CI only tests 3.11
 
@@ -32,26 +33,32 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc test"
 DEPEND+="
-	>=dev-python/numpy-1.20.0[${PYTHON_USEDEP}]
-	>=dev-python/typeguard-2.13.3[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		>=dev-python/numpy-1.20.0[${PYTHON_USEDEP}]
+		>=dev-python/typeguard-2.13.3[${PYTHON_USEDEP}]
+	')
 "
 RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	dev-python/hatchling[${PYTHON_USEDEP}]
-	dev-python/typing-extensions[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/hatchling[${PYTHON_USEDEP}]
+		dev-python/typing-extensions[${PYTHON_USEDEP}]
+		doc? (
+			>=dev-python/jinja2-3.0.3[${PYTHON_USEDEP}]
+			>=dev-python/mkdocs-1.3.0[${PYTHON_USEDEP}]
+			>=dev-python/mkdocs-material-7.3.6[${PYTHON_USEDEP}]
+			>=dev-python/mkdocs_include_exclude_files-0.0.1[${PYTHON_USEDEP}]
+			>=dev-python/mkdocstrings-0.17.0[${PYTHON_USEDEP}]
+			>=dev-python/mknotebooks-0.7.1[${PYTHON_USEDEP}]
+			>=dev-python/pymdown-extensions-9.4[${PYTHON_USEDEP}]
+			>=dev-python/pytkdocs_tweaks-0.0.8[${PYTHON_USEDEP}]
+			>=dev-python/pygments-2.14.0[${PYTHON_USEDEP}]
+		)
+	')
 	doc? (
-		>=dev-python/jinja2-3.0.3[${PYTHON_USEDEP}]
-		>=dev-python/mkdocs-1.3.0[${PYTHON_USEDEP}]
-		>=dev-python/mkdocs-material-7.3.6[${PYTHON_USEDEP}]
-		>=dev-python/mkdocs_include_exclude_files-0.0.1[${PYTHON_USEDEP}]
-		>=dev-python/mkdocstrings-0.17.0[${PYTHON_USEDEP}]
-		>=dev-python/mknotebooks-0.7.1[${PYTHON_USEDEP}]
-		>=dev-python/pymdown-extensions-9.4[${PYTHON_USEDEP}]
-		>=dev-python/pytkdocs_tweaks-0.0.8[${PYTHON_USEDEP}]
-		>=dev-python/pygments-2.14.0[${PYTHON_USEDEP}]
-		dev-python/jax[${PYTHON_USEDEP}]
+		dev-python/jax[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DOCS=( "README.md" )

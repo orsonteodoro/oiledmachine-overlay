@@ -8,6 +8,7 @@ EAPI=8
 # stanza
 # blingfire
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 MY_PN="pySBD"
 PYTHON_COMPAT=( "python3_"{10..12} ) # Upstream listed up to 3.8
@@ -38,16 +39,20 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	$(python_gen_cond_dep '
+		benchmark? (
+			>=dev-python/nltk-3.5[${PYTHON_USEDEP}]
+			>=dev-python/stanza-1.0.1[${PYTHON_USEDEP}]
+			>=dev-python/syntok-1.3.1[${PYTHON_USEDEP}]
+			>=dev-python/blingfire-0.1.2[${PYTHON_USEDEP}]
+		)
+		dev? (
+			>=dev-python/pytest-5.4.3[${PYTHON_USEDEP}]
+			>=dev-python/pytest-cov-2.10.0[${PYTHON_USEDEP}]
+		)
+	')
 	benchmark? (
-		>=dev-python/nltk-3.5[${PYTHON_USEDEP}]
-		>=dev-python/spacy-2.1.8[${PYTHON_USEDEP}]
-		>=dev-python/stanza-1.0.1[${PYTHON_USEDEP}]
-		>=dev-python/syntok-1.3.1[${PYTHON_USEDEP}]
-		>=dev-python/blingfire-0.1.2[${PYTHON_USEDEP}]
-	)
-	dev? (
-		>=dev-python/pytest-5.4.3[${PYTHON_USEDEP}]
-		>=dev-python/pytest-cov-2.10.0[${PYTHON_USEDEP}]
+		>=dev-python/spacy-2.1.8[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DOCS=( "README.md" )

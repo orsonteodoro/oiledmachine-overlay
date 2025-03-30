@@ -4,6 +4,7 @@
 
 EAPI=8
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} ) # Upstream listed up to 3.7
 
@@ -40,25 +41,29 @@ RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" cuda tensorflow test"
 RDEPEND+="
-	dev-python/absl-py[${PYTHON_USEDEP}]
-	dev-python/dm-tree[${PYTHON_USEDEP}]
-	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/six[${PYTHON_USEDEP}]
-	dev-python/wrapt[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/absl-py[${PYTHON_USEDEP}]
+		dev-python/dm-tree[${PYTHON_USEDEP}]
+		dev-python/numpy[${PYTHON_USEDEP}]
+		dev-python/six[${PYTHON_USEDEP}]
+		dev-python/wrapt[${PYTHON_USEDEP}]
+	')
 	tensorflow? (
-		>=sci-ml/tensorflow-1.15[${PYTHON_USEDEP},cuda?]
-		>=sci-ml/tensorflow-probability-0.8[${PYTHON_USEDEP}]
+		>=sci-ml/tensorflow-1.15[${PYTHON_SINGLE_USEDEP},cuda?]
+		>=sci-ml/tensorflow-probability-0.8[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	dev-python/setuptools[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
-	test? (
-		dev-python/nose[${PYTHON_USEDEP}]
-	)
+	$(python_gen_cond_dep '
+		dev-python/setuptools[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+		test? (
+			dev-python/nose[${PYTHON_USEDEP}]
+		)
+	')
 "
 DOCS=( "README.md" )
 

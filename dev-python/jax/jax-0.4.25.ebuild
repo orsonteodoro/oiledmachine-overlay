@@ -6,6 +6,7 @@ EAPI=8
 
 MY_PN="${PN/-/_}"
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..11} )
 # Limited by flax
@@ -48,34 +49,38 @@ DEPEND+="
 		>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.11.1[${PYTHON_USEDEP}]
 	' python3_12)
-	>=dev-python/jaxlib-${PV}[${PYTHON_USEDEP},cpu=,cuda=,rocm=]
-	>=dev-python/ml-dtypes-0.2.0[${PYTHON_USEDEP}]
-	dev-python/opt-einsum[${PYTHON_USEDEP}]
-	australis? (
-		dev-libs/protobuf:0/3.21
-		dev-libs/protobuf:=
-	)
-	cuda? (
-		=dev-libs/cudnn-8.6*
-		=dev-util/nvidia-cuda-toolkit-11.8*
-	)
+	$(python_gen_cond_dep '
+		>=dev-python/ml-dtypes-0.2.0[${PYTHON_USEDEP}]
+		dev-python/opt-einsum[${PYTHON_USEDEP}]
+		australis? (
+			dev-libs/protobuf:0/3.21
+			dev-libs/protobuf:=
+		)
+		cuda? (
+			=dev-libs/cudnn-8.6*
+			=dev-util/nvidia-cuda-toolkit-11.8*
+		)
+	')
+	>=dev-python/jaxlib-${PV}[${PYTHON_SINGLE_USEDEP},cpu=,cuda=,rocm=]
 "
 RDEPEND+="
 	${DEPEND}
 "
 BDEPEND+="
-	dev-libs/protobuf:0/3.21
-	dev-libs/protobuf:=
-	dev-python/build[${PYTHON_USEDEP}]
-	dev-python/flake8[${PYTHON_USEDEP}]
-	test? (
-		dev-python/pytest[${PYTHON_USEDEP}]
-	)
+	$(python_gen_cond_dep '
+		dev-libs/protobuf:0/3.21
+		dev-libs/protobuf:=
+		dev-python/build[${PYTHON_USEDEP}]
+		dev-python/flake8[${PYTHON_USEDEP}]
+		test? (
+			dev-python/pytest[${PYTHON_USEDEP}]
+		)
+	')
 "
 # Avoid circular depends \
 PDEPEND+="
 	experimental? (
-		dev-python/flax[${PYTHON_USEDEP}]
+		dev-python/flax[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DOCS=( "CHANGELOG.md" "CITATION.bib" "README.md" )

@@ -4,6 +4,20 @@
 
 EAPI=8
 
+# FIXME:
+#sci-ml/tensorflow/tensorflow-2.15.1.ebuild: line 929: no match: python?
+#sci-ml/tensorflow/tensorflow-2.15.1.ebuild: line 957: no match: python_single_target_python3_10?
+#sci-ml/tensorflow/tensorflow-2.5.3.ebuild: line 878: no match: python?
+#sci-ml/tensorflow/tensorflow-2.5.3.ebuild: line 906: no match: python_single_target_python3_10?
+#sci-ml/tensorflow/tensorflow-2.14.1.ebuild: line 912: no match: python?
+#sci-ml/tensorflow/tensorflow-2.14.1.ebuild: line 940: no match: python_single_target_python3_10?
+#sci-ml/tensorflow/tensorflow-2.16.1.ebuild: line 965: no match: python?
+#sci-ml/tensorflow/tensorflow-2.16.1.ebuild: line 989: no match: python_single_target_python3_10?
+#sci-ml/tensorflow/tensorflow-2.17.1.ebuild: line 966: no match: python?
+#sci-ml/tensorflow/tensorflow-2.17.1.ebuild: line 990: no match: python_single_target_python3_10?
+#sci-ml/tensorflow/tensorflow-2.18.0.ebuild: line 1061: no match: python?
+#sci-ml/tensorflow/tensorflow-2.18.0.ebuild: line 1085: no match: python_single_target_python3_10?
+
 # TODO:
 # Make protobuf internal dependency
 
@@ -40,6 +54,7 @@ AMDGPU_TARGETS_COMPAT=(
 )
 BAZEL_PV="6.5.0"
 DISTUTILS_OPTIONAL=1
+DISTUTILS_SINGLE_IMPL=1
 CHECKREQS_DISK_BUILD="19G"
 CHECKREQS_DISK_USR="5G"
 CHECKREQS_MEMORY="11G" # Linking goes above 10 GiB
@@ -635,7 +650,9 @@ RDEPEND_PROTOBUF="
 		(
 			${GOOGLE_CLOUD_CPP_PROTOBUF_4_25}
 			!big-endian? (
-				=net-libs/grpc-1.62*[${PYTHON_USEDEP},python]
+				$(python_gen_cond_dep '
+					=net-libs/grpc-1.62*[${PYTHON_USEDEP},python]
+				')
 			)
 			big-endian? (
 				=net-libs/grpc-1.62*[-python]
@@ -644,7 +661,9 @@ RDEPEND_PROTOBUF="
 		(
 			${GOOGLE_CLOUD_CPP_PROTOBUF_4_25}
 			!big-endian? (
-				=net-libs/grpc-1.61*[${PYTHON_USEDEP},python]
+				$(python_gen_cond_dep '
+					=net-libs/grpc-1.61*[${PYTHON_USEDEP},python]
+				')
 			)
 			big-endian? (
 				=net-libs/grpc-1.61*[-python]
@@ -653,7 +672,9 @@ RDEPEND_PROTOBUF="
 		(
 			${GOOGLE_CLOUD_CPP_PROTOBUF_4_25}
 			!big-endian? (
-				=net-libs/grpc-1.60*[${PYTHON_USEDEP},python]
+				$(python_gen_cond_dep '
+					=net-libs/grpc-1.60*[${PYTHON_USEDEP},python]
+				')
 			)
 			big-endian? (
 				=net-libs/grpc-1.60*[-python]
@@ -662,7 +683,9 @@ RDEPEND_PROTOBUF="
 		(
 			${GOOGLE_CLOUD_CPP_PROTOBUF_4_24}
 			!big-endian? (
-				=net-libs/grpc-1.59*[${PYTHON_USEDEP},python]
+				$(python_gen_cond_dep '
+					=net-libs/grpc-1.59*[${PYTHON_USEDEP},python]
+				')
 			)
 			big-endian? (
 				=net-libs/grpc-1.59*[-python]
@@ -671,7 +694,9 @@ RDEPEND_PROTOBUF="
 		(
 			${GOOGLE_CLOUD_CPP_PROTOBUF_4_23}
 			!big-endian? (
-				=net-libs/grpc-1.58*[${PYTHON_USEDEP},python]
+				$(python_gen_cond_dep '
+					=net-libs/grpc-1.58*[${PYTHON_USEDEP},python]
+				')
 			)
 			big-endian? (
 				=net-libs/grpc-1.58*[-python]
@@ -680,7 +705,9 @@ RDEPEND_PROTOBUF="
 		(
 			${GOOGLE_CLOUD_CPP_PROTOBUF_4_23}
 			!big-endian? (
-				=net-libs/grpc-1.57*[${PYTHON_USEDEP},python]
+				$(python_gen_cond_dep '
+					=net-libs/grpc-1.57*[${PYTHON_USEDEP},python]
+				')
 			)
 			big-endian? (
 				=net-libs/grpc-1.57*[-python]
@@ -689,7 +716,9 @@ RDEPEND_PROTOBUF="
 		(
 			${GOOGLE_CLOUD_CPP_PROTOBUF_4_23}
 			!big-endian? (
-				=net-libs/grpc-1.56*[${PYTHON_USEDEP},python]
+				$(python_gen_cond_dep '
+					=net-libs/grpc-1.56*[${PYTHON_USEDEP},python]
+				')
 			)
 			big-endian? (
 				=net-libs/grpc-1.56*[-python]
@@ -698,7 +727,9 @@ RDEPEND_PROTOBUF="
 		(
 			${GOOGLE_CLOUD_CPP_PROTOBUF_4_23}
 			!big-endian? (
-				=net-libs/grpc-1.55*[${PYTHON_USEDEP},python]
+				$(python_gen_cond_dep '
+					=net-libs/grpc-1.55*[${PYTHON_USEDEP},python]
+				')
 			)
 			big-endian? (
 				=net-libs/grpc-1.55*[-python]
@@ -707,7 +738,9 @@ RDEPEND_PROTOBUF="
 		(
 			${GOOGLE_CLOUD_CPP_PROTOBUF_3_21}
 			!big-endian? (
-				=net-libs/grpc-1.54*[${PYTHON_USEDEP},python]
+				$(python_gen_cond_dep '
+					=net-libs/grpc-1.54*[${PYTHON_USEDEP},python]
+				')
 			)
 			big-endian? (
 				=net-libs/grpc-1.54*[-python]
@@ -716,7 +749,9 @@ RDEPEND_PROTOBUF="
 		(
 			${GOOGLE_CLOUD_CPP_PROTOBUF_3_21}
 			!big-endian? (
-				=net-libs/grpc-1.53*[${PYTHON_USEDEP},python]
+				$(python_gen_cond_dep '
+					=net-libs/grpc-1.53*[${PYTHON_USEDEP},python]
+				')
 			)
 			big-endian? (
 				=net-libs/grpc-1.53*[-python]
@@ -725,7 +760,9 @@ RDEPEND_PROTOBUF="
 		(
 			${GOOGLE_CLOUD_CPP_PROTOBUF_3_21}
 			!big-endian? (
-				=net-libs/grpc-1.52*[${PYTHON_USEDEP},python]
+				$(python_gen_cond_dep '
+					=net-libs/grpc-1.52*[${PYTHON_USEDEP},python]
+				')
 			)
 			big-endian? (
 				=net-libs/grpc-1.52*[-python]
@@ -734,7 +771,9 @@ RDEPEND_PROTOBUF="
 		(
 			${GOOGLE_CLOUD_CPP_PROTOBUF_3_21}
 			!big-endian? (
-				=net-libs/grpc-1.49*[${PYTHON_USEDEP},python]
+				$(python_gen_cond_dep '
+					=net-libs/grpc-1.49*[${PYTHON_USEDEP},python]
+				')
 			)
 			big-endian? (
 				=net-libs/grpc-1.49*[-python]
@@ -842,14 +881,14 @@ RDEPEND_GRPCIO="
 gen_protobuf_rdepend() {
 	local s
 	for s in ${PROTOBUF_SLOTS[@]} ; do
-		echo "
+		echo '
 			(
-				dev-libs/protobuf:0/${s}
+				dev-libs/protobuf:0/'${s}'
 				python? (
-					dev-python/protobuf:0/${s}[${PYTHON_USEDEP}]
+					dev-python/protobuf:0/'${s}'[${PYTHON_USEDEP}]
 				)
 			)
-		"
+		'
 	done
 }
 # The abseil-cpp rdepends is handled by protobuf package.
@@ -867,9 +906,11 @@ RDEPEND="
 	>=net-misc/curl-8.4.0
 	>=sys-apps/hwloc-2.7.1:=
 	>=sys-libs/zlib-1.2.13
-	|| (
-		$(gen_protobuf_rdepend)
-	)
+	$(python_gen_cond_dep '
+		|| (
+			'$(gen_protobuf_rdepend)'
+		)
+	')
 	dev-libs/protobuf:=
 	!alt-ssl? (
 		>=dev-libs/openssl-3:0=
@@ -882,9 +923,6 @@ RDEPEND="
 		virtual/mpi
 	)
 	python? (
-		$(python_gen_any_dep '
-			=sci-visualization/tensorboard-'${DEP_VER}'*[${PYTHON_SINGLE_USEDEP}]
-		')
 		${PYTHON_DEPS}
 		$(python_gen_cond_dep '
 			(
@@ -898,33 +936,36 @@ RDEPEND="
 				<dev-python/numpy-2[${PYTHON_USEDEP}]
 			)
 		' python3_12)
-		(
-			>=dev-python/wrapt-1.11.1[${PYTHON_USEDEP}]
-		)
-		>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
-		>=dev-python/astunparse-1.6.0[${PYTHON_USEDEP}]
-		>=dev-python/clang-13.0.0[${PYTHON_USEDEP}]
-		>=dev-python/flatbuffers-${FLATBUFFERS_PV}[${PYTHON_USEDEP}]
-		>=dev-python/gast-0.5.3[${PYTHON_USEDEP}]
-		>=dev-python/google-pasta-0.2.0[${PYTHON_USEDEP}]
-		>=dev-python/h5py-3.10.0[${PYTHON_USEDEP}]
-		>=dev-python/ml-dtypes-0.3.1[${PYTHON_USEDEP}]
+		$(python_gen_cond_dep '
+			(
+				>=dev-python/wrapt-1.11.1[${PYTHON_USEDEP}]
+			)
+			>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
+			>=dev-python/astunparse-1.6.0[${PYTHON_USEDEP}]
+			>=dev-python/clang-13.0.0[${PYTHON_USEDEP}]
+			>=dev-python/flatbuffers-'${FLATBUFFERS_PV}'[${PYTHON_USEDEP}]
+			>=dev-python/gast-0.5.3[${PYTHON_USEDEP}]
+			>=dev-python/google-pasta-0.2.0[${PYTHON_USEDEP}]
+			>=dev-python/h5py-3.10.0[${PYTHON_USEDEP}]
+			>=dev-python/ml-dtypes-0.3.1[${PYTHON_USEDEP}]
 
-		>=dev-python/opt-einsum-3.3.0[${PYTHON_USEDEP}]
-		!big-endian? (
-			${RDEPEND_GRPCIO}
-		)
-		>=dev-python/six-1.12.0[${PYTHON_USEDEP}]
-		>=dev-python/termcolor-1.1.0[${PYTHON_USEDEP}]
-		>=dev-python/typing-extensions-3.6.6[${PYTHON_USEDEP}]
+			>=dev-python/opt-einsum-3.3.0[${PYTHON_USEDEP}]
+			!big-endian? (
+				'${RDEPEND_GRPCIO}'
+			)
+			>=dev-python/six-1.12.0[${PYTHON_USEDEP}]
+			>=dev-python/termcolor-1.1.0[${PYTHON_USEDEP}]
+			>=dev-python/typing-extensions-3.6.6[${PYTHON_USEDEP}]
 
-		>=dev-python/astor-0.7.1[${PYTHON_USEDEP}]
-		>=dev-python/dill-0.3.7[${PYTHON_USEDEP}]
-		>=dev-python/pybind11-2.10.4[${PYTHON_USEDEP}]
-		>=dev-python/tblib-2.0.0[${PYTHON_USEDEP}]
-		system-flatbuffers? (
-			~dev-libs/flatbuffers-${FLATBUFFERS_PV}
-		)
+			>=dev-python/astor-0.7.1[${PYTHON_USEDEP}]
+			>=dev-python/dill-0.3.7[${PYTHON_USEDEP}]
+			>=dev-python/pybind11-2.10.4[${PYTHON_USEDEP}]
+			>=dev-python/tblib-2.0.0[${PYTHON_USEDEP}]
+			system-flatbuffers? (
+				~dev-libs/flatbuffers-${FLATBUFFERS_PV}
+			)
+		')
+		=sci-visualization/tensorboard-${DEP_VER}*[${PYTHON_SINGLE_USEDEP}]
 	)
 	rocm? (
 		$(gen_rocm_rdepend)
@@ -934,25 +975,29 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 	python? (
-		dev-python/setuptools[${PYTHON_USEDEP}]
+		$(python_gen_cond_dep '
+			dev-python/setuptools[${PYTHON_USEDEP}]
+			test? (
+				dev-python/mock[${PYTHON_USEDEP}]
+			)
+		')
 		test? (
-			>=dev-python/jax-0.4.7[${PYTHON_USEDEP}]
-			dev-python/mock[${PYTHON_USEDEP}]
+			>=dev-python/jax-0.4.7[${PYTHON_SINGLE_USEDEP}]
 		)
 	)
 "
 PDEPEND="
 	models? (
-		sci-misc/tf-models-official:0/${PV%.*}[${PYTHON_USEDEP}]
+		sci-misc/tf-models-official:0/${PV%.*}[${PYTHON_SINGLE_USEDEP}]
 	)
 	python? (
 		$(python_gen_cond_dep '
 			|| (
-				=sci-ml/tensorflow-io-9999[${PYTHON_USEDEP},tensorflow-io-gcs-filesystem]
-				=sci-ml/tensorflow-io-0.37.0[${PYTHON_USEDEP},tensorflow-io-gcs-filesystem]
+				=sci-ml/tensorflow-io-9999[${PYTHON_SINGLE_USEDEP},tensorflow-io-gcs-filesystem]
+				=sci-ml/tensorflow-io-0.37.0[${PYTHON_SINGLE_USEDEP},tensorflow-io-gcs-filesystem]
 			)
 		' python3_{10,11})
-		>=dev-python/keras-3.0.0[${PYTHON_USEDEP}]
+		>=dev-python/keras-3.0.0[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 gen_llvm_bdepend() {
@@ -1020,15 +1065,17 @@ BDEPEND="
 		!big-endian? (
 			${RDEPEND_GRPCIO}
 		)
-		>=dev-python/cython-3.0.3[${PYTHON_USEDEP}]
-		>=dev-python/packaging-23.2[${PYTHON_USEDEP}]
-		>=dev-python/requests-2.31.0[${PYTHON_USEDEP}]
-		>=dev-python/setuptools-68.2.2[${PYTHON_USEDEP}]
-		test? (
-			>=dev-python/lit-17.0.2[${PYTHON_USEDEP}]
-			>=dev-python/scipy-1.11.3[${PYTHON_USEDEP}]
-			dev-python/mock[${PYTHON_USEDEP}]
-		)
+		$(python_gen_cond_dep '
+			>=dev-python/cython-3.0.3[${PYTHON_USEDEP}]
+			>=dev-python/packaging-23.2[${PYTHON_USEDEP}]
+			>=dev-python/requests-2.31.0[${PYTHON_USEDEP}]
+			>=dev-python/setuptools-68.2.2[${PYTHON_USEDEP}]
+			test? (
+				>=dev-python/lit-17.0.2[${PYTHON_USEDEP}]
+				>=dev-python/scipy-1.11.3[${PYTHON_USEDEP}]
+				dev-python/mock[${PYTHON_USEDEP}]
+			)
+		')
 	)
 	rocm? (
 		rocm_5_3? (
@@ -1402,13 +1449,11 @@ einfo "QA:  Calling rocm_pkg_setup()"
 
 	local num_pythons_enabled
 	num_pythons_enabled=0
-	count_impls() {
+	count_py_impls() {
 		num_pythons_enabled=$((${num_pythons_enabled} + 1))
 	}
-	if use python ; then
-		python_setup
-		python_foreach_impl count_impls
-	fi
+	python_setup
+	python_foreach_impl count_py_impls
 
 	# 10G to build C/C++ libs, 6G per python impl
 	CHECKREQS_DISK_BUILD="$((10 + 6 * ${num_pythons_enabled}))G"

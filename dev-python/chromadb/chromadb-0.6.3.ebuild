@@ -4,11 +4,16 @@
 
 EAPI=8
 
+# FIXME:
+#dev-python/chromadb/chromadb-0.6.3.ebuild: line 818: no match: =dev-python/grpcio-1.49*[${PYTHON_USEDEP}]
+#dev-python/chromadb/chromadb-0.6.3.ebuild: line 831: no match: =dev-python/grpcio-tools-1.63*[${PYTHON_USEDEP}]
+
 # TODO package (optional):
 # mypy-protobuf
 
 inherit grpc-ver
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 GRPC_SLOTS_DEV=(
@@ -704,12 +709,12 @@ gen_grpcio_bdepend_dev() {
 	local s2
 	for s1 in ${GRPC_SLOTS_DEV[@]} ; do
 		s2=$(grpc_get_protobuf_slot "${s1}")
-		echo "
+		echo '
 			(
-				=dev-python/grpcio-tools-${s1}*[${PYTHON_USEDEP}]
-				dev-python/protobuf:0/${s2}[${PYTHON_USEDEP}]
+				=dev-python/grpcio-tools-'${s1}'*[${PYTHON_USEDEP}]
+				dev-python/protobuf:0/'${s2}'[${PYTHON_USEDEP}]
 			)
-		"
+		'
 	done
 }
 gen_grpcio_rdepend_rel() {
@@ -717,61 +722,61 @@ gen_grpcio_rdepend_rel() {
 	local s2
 	for s1 in ${GRPC_SLOTS_REL[@]} ; do
 		s2=$(grpc_get_protobuf_slot "${s1}")
-		echo "
+		echo '
 			(
-				=dev-python/grpcio-${s1}*[${PYTHON_USEDEP}]
-				dev-python/protobuf:0/${s2}[${PYTHON_USEDEP}]
+				=dev-python/grpcio-'${s1}'*[${PYTHON_USEDEP}]
+				dev-python/protobuf:0/'${s2}'[${PYTHON_USEDEP}]
 			)
-		"
+		'
 	done
 }
 RDEPEND+="
-	$(python_gen_any_dep '
-		>=sci-ml/onnxruntime-1.14.1[${PYTHON_SINGLE_USEDEP},python]
-		>=sci-ml/tokenizers-0.13.2[${PYTHON_SINGLE_USEDEP}]
+	$(python_gen_cond_dep '
+		>=dev-python/bcrypt-4.0.1[${PYTHON_USEDEP}]
+		>=dev-python/chroma-hnswlib-0.7.6[${PYTHON_USEDEP}]
+		>=dev-python/fastapi-0.95.2[${PYTHON_USEDEP}]
+		>=dev-python/httpx-0.27.0[${PYTHON_USEDEP}]
+		>=dev-python/kubernetes-28.1.0[${PYTHON_USEDEP}]
+		>=dev-python/mmh3-4.0.1[${PYTHON_USEDEP}]
+		>=dev-python/numpy-1.22.5[${PYTHON_USEDEP}]
+		>=dev-python/orjson-3.9.12[${PYTHON_USEDEP}]
+		>=dev-python/overrides-7.3.1[${PYTHON_USEDEP}]
+		>=dev-python/pydantic-1.9[${PYTHON_USEDEP}]
+		>=dev-python/pypika-0.48.9[${PYTHON_USEDEP}]
+		>=dev-python/pyyaml-6.0.0[${PYTHON_USEDEP}]
+		>=dev-python/rich-10.11.0[${PYTHON_USEDEP}]
+		>=dev-python/tenacity-8.2.3[${PYTHON_USEDEP}]
+		>=dev-python/tqdm-4.65.0[${PYTHON_USEDEP}]
+		>=dev-python/typer-0.9.0[${PYTHON_USEDEP}]
+		>=dev-python/typing-extensions-4.5.0[${PYTHON_USEDEP}]
+		>=dev-python/uvicorn-0.18.3[${PYTHON_USEDEP},standard(+)]
+		dev-python/importlib-resources[${PYTHON_USEDEP}]
+		!dev? (
+			|| (
+				'$(gen_grpcio_rdepend_rel)'
+			)
+			dev-python/grpcio:=
+			dev-python/protobuf:=
+			~dev-python/opentelemetry-api-${OPENTELEMETRY_PV_REL}[${PYTHON_USEDEP}]
+			~dev-python/opentelemetry-exporter-otlp-proto-grpc-${OPENTELEMETRY_PV_REL}[${PYTHON_USEDEP}]
+			~dev-python/opentelemetry-instrumentation-fastapi-0.48_beta0:${OPENTELEMETRY_SLOT_REL}[${PYTHON_USEDEP}]
+			~dev-python/opentelemetry-sdk-${OPENTELEMETRY_PV_REL}[${PYTHON_USEDEP}]
+		)
+		dev? (
+			|| (
+				'$(gen_grpcio_rdepend_dev)'
+			)
+			dev-python/grpcio-tools:=
+			dev-python/protobuf:=
+			~dev-python/opentelemetry-api-${OPENTELEMETRY_PV_DEV}[${PYTHON_USEDEP}]
+			~dev-python/opentelemetry-exporter-otlp-proto-grpc-${OPENTELEMETRY_PV_DEV}[${PYTHON_USEDEP}]
+			~dev-python/opentelemetry-instrumentation-fastapi-0.50_beta0:${OPENTELEMETRY_SLOT_DEV}[${PYTHON_USEDEP}]
+			~dev-python/opentelemetry-sdk-${OPENTELEMETRY_PV_DEV}[${PYTHON_USEDEP}]
+		)
 	')
-	>=dev-python/bcrypt-4.0.1[${PYTHON_USEDEP}]
-	>=dev-python/chroma-hnswlib-0.7.6[${PYTHON_USEDEP}]
-	>=dev-python/fastapi-0.95.2[${PYTHON_USEDEP}]
-	>=dev-python/httpx-0.27.0[${PYTHON_USEDEP}]
-	>=dev-python/kubernetes-28.1.0[${PYTHON_USEDEP}]
-	>=dev-python/mmh3-4.0.1[${PYTHON_USEDEP}]
-	>=dev-python/numpy-1.22.5[${PYTHON_USEDEP}]
-	>=dev-python/orjson-3.9.12[${PYTHON_USEDEP}]
-	>=dev-python/overrides-7.3.1[${PYTHON_USEDEP}]
-	>=dev-python/posthog-2.4.0[${PYTHON_USEDEP}]
-	>=dev-python/pydantic-1.9[${PYTHON_USEDEP}]
-	>=dev-python/pypika-0.48.9[${PYTHON_USEDEP}]
-	>=dev-python/pyyaml-6.0.0[${PYTHON_USEDEP}]
-	>=dev-python/rich-10.11.0[${PYTHON_USEDEP}]
-	>=dev-python/tenacity-8.2.3[${PYTHON_USEDEP}]
-	>=dev-python/tqdm-4.65.0[${PYTHON_USEDEP}]
-	>=dev-python/typer-0.9.0[${PYTHON_USEDEP}]
-	>=dev-python/typing-extensions-4.5.0[${PYTHON_USEDEP}]
-	>=dev-python/uvicorn-0.18.3[${PYTHON_USEDEP},standard(+)]
-	dev-python/importlib-resources[${PYTHON_USEDEP}]
-	!dev? (
-		|| (
-			$(gen_grpcio_rdepend_rel)
-		)
-		dev-python/grpcio:=
-		dev-python/protobuf:=
-		~dev-python/opentelemetry-api-${OPENTELEMETRY_PV_REL}[${PYTHON_USEDEP}]
-		~dev-python/opentelemetry-exporter-otlp-proto-grpc-${OPENTELEMETRY_PV_REL}[${PYTHON_USEDEP}]
-		~dev-python/opentelemetry-instrumentation-fastapi-0.48_beta0:${OPENTELEMETRY_SLOT_REL}[${PYTHON_USEDEP}]
-		~dev-python/opentelemetry-sdk-${OPENTELEMETRY_PV_REL}[${PYTHON_USEDEP}]
-	)
-	dev? (
-		|| (
-			$(gen_grpcio_rdepend_dev)
-		)
-		dev-python/grpcio-tools:=
-		dev-python/protobuf:=
-		~dev-python/opentelemetry-api-${OPENTELEMETRY_PV_DEV}[${PYTHON_USEDEP}]
-		~dev-python/opentelemetry-exporter-otlp-proto-grpc-${OPENTELEMETRY_PV_DEV}[${PYTHON_USEDEP}]
-		~dev-python/opentelemetry-instrumentation-fastapi-0.50_beta0:${OPENTELEMETRY_SLOT_DEV}[${PYTHON_USEDEP}]
-		~dev-python/opentelemetry-sdk-${OPENTELEMETRY_PV_DEV}[${PYTHON_USEDEP}]
-	)
+	>=dev-python/posthog-2.4.0[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/onnxruntime-1.14.1[${PYTHON_SINGLE_USEDEP},python]
+	>=sci-ml/tokenizers-0.13.2[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
@@ -779,27 +784,31 @@ DEPEND+="
 # grpcio-tools version range was relaxed
 # dev? ( protobuf ) requirement changed for opentelemetry-proto 1.29.0
 BDEPEND+="
-	>=dev-python/setuptools-61.0[${PYTHON_USEDEP}]
-	>=dev-python/setuptools-scm-6.2[${PYTHON_USEDEP},toml(+)]
-	dev-python/setuptools-git-versioning[${PYTHON_USEDEP}]
-	dev? (
-		>=dev-python/black-23.3.0[${PYTHON_USEDEP}]
-		>=dev-python/hypothesis-6.112.2[${PYTHON_USEDEP},numpy(+)]
-		dev-python/build[${PYTHON_USEDEP}]
-		dev-python/httpx[${PYTHON_USEDEP}]
-		dev-python/mypy-protobuf[${PYTHON_USEDEP}]
-		dev-python/psutil[${PYTHON_USEDEP}]
-		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/pytest-asyncio[${PYTHON_USEDEP}]
-		dev-python/pytest-xdist[${PYTHON_USEDEP}]
-		dev-python/setuptools-scm[${PYTHON_USEDEP}]
-		dev-python/types-protobuf[${PYTHON_USEDEP}]
-		dev-vcs/pre-commit[${PYTHON_USEDEP}]
-		|| (
-			$(gen_grpcio_bdepend_dev)
+	$(python_gen_cond_dep '
+		>=dev-python/setuptools-61.0[${PYTHON_USEDEP}]
+		>=dev-python/setuptools-scm-6.2[${PYTHON_USEDEP},toml(+)]
+		dev-python/setuptools-git-versioning[${PYTHON_USEDEP}]
+		dev? (
+			>=dev-python/black-23.3.0[${PYTHON_USEDEP}]
+			>=dev-python/hypothesis-6.112.2[${PYTHON_USEDEP},numpy(+)]
+			dev-python/build[${PYTHON_USEDEP}]
+			dev-python/httpx[${PYTHON_USEDEP}]
+			dev-python/mypy-protobuf[${PYTHON_USEDEP}]
+			dev-python/psutil[${PYTHON_USEDEP}]
+			dev-python/pytest[${PYTHON_USEDEP}]
+			dev-python/pytest-asyncio[${PYTHON_USEDEP}]
+			dev-python/pytest-xdist[${PYTHON_USEDEP}]
+			dev-python/setuptools-scm[${PYTHON_USEDEP}]
+			dev-python/types-protobuf[${PYTHON_USEDEP}]
+			|| (
+				'$(gen_grpcio_bdepend_dev)'
+			)
+			dev-python/grpcio-tools:=
+			dev-python/protobuf:=
 		)
-		dev-python/grpcio-tools:=
-		dev-python/protobuf:=
+	')
+	dev? (
+		dev-vcs/pre-commit[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DOCS=( "README.md" )

@@ -7,6 +7,7 @@ EAPI=8
 # TODO package:
 # baselines
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} ) # Upstream only tests up to 3.7
 
@@ -42,53 +43,65 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" baselines-jax baselines-tensorflow baselines-third-party test"
 RDEPEND+="
-	dev-python/absl-py[${PYTHON_USEDEP}]
-	dev-python/immutabledict[${PYTHON_USEDEP}]
-	dev-python/matplotlib[${PYTHON_USEDEP}]
-	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/pandas[${PYTHON_USEDEP}]
-	dev-python/plotnine[${PYTHON_USEDEP}]
-	dev-python/scipy[${PYTHON_USEDEP}]
-	dev-python/scikit-image[${PYTHON_USEDEP}]
-	dev-python/six[${PYTHON_USEDEP}]
-	dev-python/termcolor[${PYTHON_USEDEP}]
-	dev-python/dm-env[${PYTHON_USEDEP}]
-	baselines-tensorflow? (
-		dev-python/tqdm[${PYTHON_USEDEP}]
-		dev-python/dm-sonnet[${PYTHON_USEDEP}]
-		dev-python/dm-tree[${PYTHON_USEDEP}]
-		sci-ml/tensorflow[${PYTHON_USEDEP}]
-		sci-ml/tensorflow-probability[${PYTHON_USEDEP}]
-		dev-python/trfl[${PYTHON_USEDEP}]
-	)
+	$(python_gen_cond_dep '
+		dev-python/absl-py[${PYTHON_USEDEP}]
+		dev-python/immutabledict[${PYTHON_USEDEP}]
+		dev-python/matplotlib[${PYTHON_USEDEP}]
+		dev-python/numpy[${PYTHON_USEDEP}]
+		dev-python/pandas[${PYTHON_USEDEP}]
+		dev-python/plotnine[${PYTHON_USEDEP}]
+		dev-python/scipy[${PYTHON_USEDEP}]
+		dev-python/scikit-image[${PYTHON_USEDEP}]
+		dev-python/six[${PYTHON_USEDEP}]
+		dev-python/termcolor[${PYTHON_USEDEP}]
+		dev-python/dm-env[${PYTHON_USEDEP}]
+		baselines-tensorflow? (
+			dev-python/dm-tree[${PYTHON_USEDEP}]
+		)
+		baselines-jax? (
+			dev-python/dataclasses[${PYTHON_USEDEP}]
+			dev-python/tqdm[${PYTHON_USEDEP}]
+			dev-python/dm-tree[${PYTHON_USEDEP}]
+		)
+		baselines-third-party? (
+			sci-libs/baselines[${PYTHON_USEDEP}]
+		)
+	')
 	baselines-jax? (
-		dev-python/dataclasses[${PYTHON_USEDEP}]
-		dev-python/tqdm[${PYTHON_USEDEP}]
-		dev-python/dm-haiku[${PYTHON_USEDEP}]
-		dev-python/dm-tree[${PYTHON_USEDEP}]
-		dev-python/jax[${PYTHON_USEDEP}]
-		dev-python/jaxlib[${PYTHON_USEDEP}]
-		dev-python/optax[${PYTHON_USEDEP}]
-		dev-python/rlax[${PYTHON_USEDEP}]
+		dev-python/dm-haiku[${PYTHON_SINGLE_USEDEP}]
+		dev-python/jax[${PYTHON_SINGLE_USEDEP}]
+		dev-python/jaxlib[${PYTHON_SINGLE_USEDEP}]
+		dev-python/optax[${PYTHON_SINGLE_USEDEP}]
+		dev-python/rlax[${PYTHON_SINGLE_USEDEP}]
+	)
+	baselines-tensorflow? (
+		dev-python/dm-sonnet[${PYTHON_SINGLE_USEDEP}]
+		dev-python/tqdm[${PYTHON_SINGLE_USEDEP}]
+		dev-python/trfl[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/tensorflow[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/tensorflow-probability[${PYTHON_SINGLE_USEDEP}]
 	)
 	baselines-third-party? (
-		>=sci-ml/tensorflow-1.15[${PYTHON_USEDEP}]
-		dev-python/dopamine-rl[${PYTHON_USEDEP}]
-		sci-libs/baselines[${PYTHON_USEDEP}]
+		>=sci-ml/tensorflow-1.15[${PYTHON_SINGLE_USEDEP}]
+		dev-python/dopamine-rl[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	dev-python/setuptools[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/setuptools[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+		test? (
+			>=dev-python/gym-0.20.0[${PYTHON_USEDEP}]
+			dev-python/mock[${PYTHON_USEDEP}]
+			dev-python/pytest-xdist[${PYTHON_USEDEP}]
+			dev-python/pytype[${PYTHON_USEDEP}]
+		)
+	')
 	test? (
-		>=dev-python/gym-0.20.0[${PYTHON_USEDEP}]
-		>=sci-ml/tensorflow-probability-0.14.1[${PYTHON_USEDEP}]
-		dev-python/mock[${PYTHON_USEDEP}]
-		dev-python/pytest-xdist[${PYTHON_USEDEP}]
-		dev-python/pytype[${PYTHON_USEDEP}]
+		>=sci-ml/tensorflow-probability-0.14.1[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DOCS=( "README.md" )

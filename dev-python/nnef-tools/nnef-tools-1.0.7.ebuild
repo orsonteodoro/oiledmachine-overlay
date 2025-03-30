@@ -59,10 +59,6 @@ RDEPEND+="
 		)
 		tensorflow-lite? (
 			dev-python/flatbuffers[${PYTHON_USEDEP}]
-			sci-ml/tensorflow[${PYTHON_USEDEP}]
-		)
-		tensorflow-protobuf? (
-			sci-ml/tensorflow[${PYTHON_USEDEP}]
 		)
 		visualization? (
 			media-gfx/graphviz[${PYTHON_USEDEP}]
@@ -73,6 +69,12 @@ RDEPEND+="
 	)
 	onnx? (
 		sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
+	)
+	tensorflow-lite? (
+		sci-ml/tensorflow[${PYTHON_SINGLE_USEDEP}]
+	)
+	tensorflow-protobuf? (
+		sci-ml/tensorflow[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="

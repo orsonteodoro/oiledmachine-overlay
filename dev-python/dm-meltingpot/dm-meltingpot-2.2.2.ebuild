@@ -10,6 +10,7 @@ EAPI=8
 # pytype
 
 MELTING_POT_ASSETS_PV="2.1.0"
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
@@ -46,38 +47,42 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev"
 RDEPEND+="
-	<media-libs/opencv-4.7[${PYTHON_USEDEP},python]
-	dev-python/absl-py[${PYTHON_USEDEP}]
-	dev-python/immutabledict[${PYTHON_USEDEP}]
-	dev-python/networkx[${PYTHON_USEDEP}]
-	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/pandas[${PYTHON_USEDEP}]
-	dev-python/pygame[${PYTHON_USEDEP}]
-	dev-python/reactivex[${PYTHON_USEDEP}]
-	dev-python/chex[${PYTHON_USEDEP}]
-	dev-python/dmlab2d[${PYTHON_USEDEP}]
-	dev-python/dm-tree[${PYTHON_USEDEP}]
-	dev-python/dm-env[${PYTHON_USEDEP}]
-	dev-python/ml-collections[${PYTHON_USEDEP}]
-	sci-ml/tensorflow[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/absl-py[${PYTHON_USEDEP}]
+		dev-python/immutabledict[${PYTHON_USEDEP}]
+		dev-python/networkx[${PYTHON_USEDEP}]
+		dev-python/numpy[${PYTHON_USEDEP}]
+		dev-python/pandas[${PYTHON_USEDEP}]
+		dev-python/pygame[${PYTHON_USEDEP}]
+		dev-python/reactivex[${PYTHON_USEDEP}]
+		dev-python/chex[${PYTHON_USEDEP}]
+		dev-python/dmlab2d[${PYTHON_USEDEP}]
+		dev-python/dm-tree[${PYTHON_USEDEP}]
+		dev-python/dm-env[${PYTHON_USEDEP}]
+		dev-python/ml-collections[${PYTHON_USEDEP}]
+	')
+	<media-libs/opencv-4.7[${PYTHON_SINGLE_USEDEP},python]
+	sci-ml/tensorflow[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/setuptools-42[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
-	dev? (
-		dev-python/build[${PYTHON_USEDEP}]
-		dev-python/isort[${PYTHON_USEDEP}]
-		dev-python/pipreqs[${PYTHON_USEDEP}]
-		dev-python/pip-tools[${PYTHON_USEDEP}]
-		dev-python/pyink[${PYTHON_USEDEP}]
-		dev-python/pylint[${PYTHON_USEDEP}]
-		dev-python/pytest-xdist[${PYTHON_USEDEP}]
-		dev-python/pytype[${PYTHON_USEDEP}]
-		dev-python/twine[${PYTHON_USEDEP}]
-	)
+	$(python_gen_cond_dep '
+		>=dev-python/setuptools-42[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+		dev? (
+			dev-python/build[${PYTHON_USEDEP}]
+			dev-python/isort[${PYTHON_USEDEP}]
+			dev-python/pipreqs[${PYTHON_USEDEP}]
+			dev-python/pip-tools[${PYTHON_USEDEP}]
+			dev-python/pyink[${PYTHON_USEDEP}]
+			dev-python/pylint[${PYTHON_USEDEP}]
+			dev-python/pytest-xdist[${PYTHON_USEDEP}]
+			dev-python/pytype[${PYTHON_USEDEP}]
+			dev-python/twine[${PYTHON_USEDEP}]
+		)
+	')
 "
 DOCS=( "README.md" )
 

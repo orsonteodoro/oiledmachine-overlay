@@ -218,7 +218,7 @@ QT5_PV="5.12.8"
 QT6_PV="6.2.4"
 
 inherit cuda java-pkg-opt-2 cmake-multilib flag-o-matic hip-versions
-inherit python-r1 toolchain-funcs virtualx
+inherit python-single-r1 toolchain-funcs virtualx
 
 if [[ "${PV}" == *"9999"* ]] ; then
 	inherit git-r3
@@ -842,7 +842,7 @@ RDEPEND="
 		virtual/glu[${MULTILIB_USEDEP}]
 	)
 	openvino? (
-		=sci-ml/openvino-2024.4.2[${PYTHON_USEDEP}]
+		=sci-ml/openvino-2024.4.2
 	)
 	png? (
 		>=media-libs/libpng-1.6.37:0[${MULTILIB_USEDEP}]
@@ -850,8 +850,13 @@ RDEPEND="
 	)
 	python? (
 		${PYTHON_DEPS}
-		>=dev-python/numpy-1.16.5:0[${PYTHON_USEDEP}]
-		dev-python/numpy:=[${PYTHON_USEDEP}]
+		$(python_gen_cond_dep '
+			>=dev-python/numpy-1.16.5:0[${PYTHON_USEDEP}]
+			dev-python/numpy:=[${PYTHON_USEDEP}]
+		')
+		openvino? (
+			=sci-ml/openvino-2024.4.2[${PYTHON_SINGLE_USEDEP}]
+		)
 	)
 	qt5? (
 		>=dev-qt/qtgui-${QT5_PV}:5
@@ -949,7 +954,9 @@ BDEPEND="
 	doc? (
 		>=app-text/doxygen-1.8.17[dot]
 		python? (
-			>=dev-python/beautifulsoup4-4.8.2[${PYTHON_USEDEP}]
+			$(python_gen_cond_dep '
+				>=dev-python/beautifulsoup4-4.8.2[${PYTHON_USEDEP}]
+			')
 		)
 	)
 "

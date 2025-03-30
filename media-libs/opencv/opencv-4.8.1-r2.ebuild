@@ -240,7 +240,7 @@ CPU_FEATURES_MAP=(
 )
 
 inherit cuda java-pkg-opt-2 cmake-multilib flag-o-matic hip-versions
-inherit python-r1 toolchain-funcs
+inherit python-single-r1 toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64"
 SRC_URI="
@@ -808,7 +808,7 @@ RDEPEND="
 		virtual/glu[${MULTILIB_USEDEP}]
 	)
 	openvino? (
-		=sci-ml/openvino-2021.4.2[${PYTHON_USEDEP}]
+		=sci-ml/openvino-2021.4.2
 	)
 	png? (
 		>=media-libs/libpng-1.6.37:0[${MULTILIB_USEDEP}]
@@ -816,8 +816,13 @@ RDEPEND="
 	)
 	python? (
 		${PYTHON_DEPS}
-		>=dev-python/numpy-1.16.5:0[${PYTHON_USEDEP}]
-		dev-python/numpy:=[${PYTHON_USEDEP}]
+		$(python_gen_cond_dep '
+			>=dev-python/numpy-1.16.5:0[${PYTHON_USEDEP}]
+			dev-python/numpy:=[${PYTHON_USEDEP}]
+		')
+		openvino? (
+			=sci-ml/openvino-2021.4.2[${PYTHON_SINGLE_USEDEP}]
+		)
 	)
 	qt5? (
 		>=dev-qt/qtgui-${QT5_PV}:5

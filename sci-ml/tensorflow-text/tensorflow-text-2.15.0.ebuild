@@ -14,6 +14,7 @@ CPPITERTOOLS_PV="2.0"							# https://github.com/tensorflow/text/blob/v2.15.0/WO
 DARTS_CLONE_COMMIT="e40ce4627526985a7767444b6ed6893ab6ff8983"		# https://github.com/tensorflow/text/blob/v2.15.0/WORKSPACE#L43
 DATA_PLANE_API_COMMIT="c83ed7ea9eb5fb3b93d1ad52b59750f1958b8bde"	# https://github.com/grpc/grpc/blob/b54a5b338637f92bfcf4b0bc05e0f57a5fd8fadd/bazel/grpc_deps.bzl#L239
 DISTUTILS_EXT=1
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="no"
 DOUBLE_CONVERSION_PV="3.2.0"						# https://github.com/tensorflow/tensorflow/blob/v2.15.0/tensorflow/workspace2.bzl#L634
 EIGEN_COMMIT="66e8f38891841bf88ee976a316c0c78a52f0cee5"			# https://github.com/tensorflow/tensorflow/blob/v2.15.0/third_party/eigen3/workspace.bzl#L10
@@ -139,7 +140,9 @@ RDEPEND_PROTOBUF_3_21="
 	|| (
 		(
 			!big-endian? (
-				=net-libs/grpc-1.53*[${PYTHON_USEDEP},python]
+				$(python_gen_cond_dep '
+					=net-libs/grpc-1.53*[${PYTHON_USEDEP},python]
+				')
 			)
 			big-endian? (
 				=net-libs/grpc-1.53*[-python]
@@ -147,7 +150,9 @@ RDEPEND_PROTOBUF_3_21="
 		)
 		(
 			!big-endian? (
-				=net-libs/grpc-1.54*[${PYTHON_USEDEP},python]
+				$(python_gen_cond_dep '
+					=net-libs/grpc-1.54*[${PYTHON_USEDEP},python]
+				')
 			)
 			big-endian? (
 				=net-libs/grpc-1.54*[-python]
@@ -158,7 +163,7 @@ RDEPEND_PROTOBUF_3_21="
 "
 RDEPEND+="
 	${RDEPEND_PROTOBUF_3_21}
-	=sci-ml/tensorflow-${PV%.*}*[${PYTHON_USEDEP},big-endian=,python=]
+	=sci-ml/tensorflow-${PV%.*}*[${PYTHON_SINGLE_USEDEP},big-endian=,python=]
 "
 DEPEND+="
 	${RDEPEND}

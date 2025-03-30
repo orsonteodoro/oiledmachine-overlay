@@ -17,6 +17,7 @@ EAPI=8
 # paddlepaddle
 # pyvis
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="poetry"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
@@ -50,104 +51,92 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" cuda optional"
-REQUIRED_USE="
-	cuda? (
-		^^ (
-			python_targets_python3_10
-			python_targets_python3_11
-			python_targets_python3_12
-		)
-	)
-	optional? (
-		^^ (
-			python_targets_python3_10
-			python_targets_python3_11
-			python_targets_python3_12
-		)
-	)
-"
 RDEPEND+="
-	>=dev-python/cryptography-40.0.0[${PYTHON_USEDEP}]
-	dev-python/astor[${PYTHON_USEDEP}]
-	dev-python/dill[${PYTHON_USEDEP}]
-	dev-python/einops[${PYTHON_USEDEP}]
-	dev-python/gast[${PYTHON_USEDEP}]
-	dev-python/networkx[${PYTHON_USEDEP}]
-	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/packaging[${PYTHON_USEDEP}]
-	dev-python/psutil[${PYTHON_USEDEP}]
-	dev-python/requests[${PYTHON_USEDEP}]
-	dev-python/tqdm[${PYTHON_USEDEP}]
-	dev-util/ruff
-	optional? (
-		$(python_gen_any_dep '
-			sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
-			sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
-		')
-		>=dev-python/hypothesis-6.98.10[${PYTHON_USEDEP}]
-		dev-python/astunparse[${PYTHON_USEDEP}]
-		dev-python/autoflake[${PYTHON_USEDEP}]
-		dev-python/black[${PYTHON_USEDEP}]
-		dev-python/coverage[${PYTHON_USEDEP}]
-		dev-python/dm-haiku[${PYTHON_USEDEP}]
-		dev-python/flax[${PYTHON_USEDEP}]
-		dev-python/h5py[${PYTHON_USEDEP}]
-		dev-python/jax[${PYTHON_USEDEP}]
-		dev-python/jaxlib[${PYTHON_USEDEP}]
-		dev-python/matplotlib[${PYTHON_USEDEP}]
-		dev-python/ml-dtypes[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		>=dev-python/cryptography-40.0.0[${PYTHON_USEDEP}]
+		dev-python/astor[${PYTHON_USEDEP}]
+		dev-python/dill[${PYTHON_USEDEP}]
+		dev-python/einops[${PYTHON_USEDEP}]
+		dev-python/gast[${PYTHON_USEDEP}]
 		dev-python/networkx[${PYTHON_USEDEP}]
-		dev-python/pynvml[${PYTHON_USEDEP}]
-		dev-python/paddlepaddle[${PYTHON_USEDEP}]
-		dev-python/pandas[${PYTHON_USEDEP}]
-		dev-python/pydriller[${PYTHON_USEDEP}]
-		dev-python/pymongo[${PYTHON_USEDEP}]
-		dev-python/pyspark[${PYTHON_USEDEP}]
-		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/pyvis[${PYTHON_USEDEP}]
-		dev-python/redis[${PYTHON_USEDEP}]
-		dev-python/scikit-learn[${PYTHON_USEDEP}]
-		dev-python/scipy[${PYTHON_USEDEP}]
-		dev-python/snakeviz[${PYTHON_USEDEP}]
-		dev-python/xgboost[${PYTHON_USEDEP}]
-		media-libs/opencv[${PYTHON_USEDEP},python]
-		sci-ml/tensorflow[${PYTHON_USEDEP}]
-	)
+		dev-python/numpy[${PYTHON_USEDEP}]
+		dev-python/packaging[${PYTHON_USEDEP}]
+		dev-python/psutil[${PYTHON_USEDEP}]
+		dev-python/requests[${PYTHON_USEDEP}]
+		dev-python/tqdm[${PYTHON_USEDEP}]
+		dev-util/ruff
+		cuda? (
+			dev-python/autoflake[${PYTHON_USEDEP}]
+			dev-python/coverage[${PYTHON_USEDEP}]
+			dev-python/h5py[${PYTHON_USEDEP}]
+			dev-python/hypothesis[${PYTHON_USEDEP}]
+			dev-python/matplotlib[${PYTHON_USEDEP}]
+			dev-python/networkx[${PYTHON_USEDEP}]
+			dev-python/pandas[${PYTHON_USEDEP}]
+			dev-python/pydriller[${PYTHON_USEDEP}]
+			dev-python/pymongo[${PYTHON_USEDEP}]
+			dev-python/pyspark[${PYTHON_USEDEP}]
+			dev-python/pytest[${PYTHON_USEDEP}]
+			dev-python/redis[${PYTHON_USEDEP}]
+			dev-python/scikit-learn[${PYTHON_USEDEP}]
+			dev-python/scipy[${PYTHON_USEDEP}]
+			dev-python/snakeviz[${PYTHON_USEDEP}]
+		)
+		optional? (
+			>=dev-python/hypothesis-6.98.10[${PYTHON_USEDEP}]
+			dev-python/astunparse[${PYTHON_USEDEP}]
+			dev-python/autoflake[${PYTHON_USEDEP}]
+			dev-python/black[${PYTHON_USEDEP}]
+			dev-python/coverage[${PYTHON_USEDEP}]
+			dev-python/h5py[${PYTHON_USEDEP}]
+			dev-python/matplotlib[${PYTHON_USEDEP}]
+			dev-python/ml-dtypes[${PYTHON_USEDEP}]
+			dev-python/networkx[${PYTHON_USEDEP}]
+			dev-python/pynvml[${PYTHON_USEDEP}]
+			dev-python/paddlepaddle[${PYTHON_USEDEP}]
+			dev-python/pandas[${PYTHON_USEDEP}]
+			dev-python/pydriller[${PYTHON_USEDEP}]
+			dev-python/pymongo[${PYTHON_USEDEP}]
+			dev-python/pyspark[${PYTHON_USEDEP}]
+			dev-python/pytest[${PYTHON_USEDEP}]
+			dev-python/pyvis[${PYTHON_USEDEP}]
+			dev-python/redis[${PYTHON_USEDEP}]
+			dev-python/scikit-learn[${PYTHON_USEDEP}]
+			dev-python/scipy[${PYTHON_USEDEP}]
+			dev-python/snakeviz[${PYTHON_USEDEP}]
+			dev-python/xgboost[${PYTHON_USEDEP}]
+		)
+	')
 	cuda? (
-		$(python_gen_any_dep '
-			sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
-			sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
-		')
-		dev-python/autoflake[${PYTHON_USEDEP}]
-		dev-python/coverage[${PYTHON_USEDEP}]
-		dev-python/dm-haiku[${PYTHON_USEDEP}]
-		dev-python/flax[${PYTHON_USEDEP}]
-		dev-python/h5py[${PYTHON_USEDEP}]
-		dev-python/hypothesis[${PYTHON_USEDEP}]
-		dev-python/jax[${PYTHON_USEDEP},cuda]
-		dev-python/jaxlib[${PYTHON_USEDEP},cuda]
-		dev-python/matplotlib[${PYTHON_USEDEP}]
-		dev-python/networkx[${PYTHON_USEDEP}]
-		dev-python/pandas[${PYTHON_USEDEP}]
-		dev-python/pydriller[${PYTHON_USEDEP}]
-		dev-python/pymongo[${PYTHON_USEDEP}]
-		dev-python/pyspark[${PYTHON_USEDEP}]
-		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/redis[${PYTHON_USEDEP}]
-		dev-python/scikit-learn[${PYTHON_USEDEP}]
-		dev-python/scipy[${PYTHON_USEDEP}]
-		dev-python/snakeviz[${PYTHON_USEDEP}]
-		media-libs/opencv[${PYTHON_USEDEP},python]
-		sci-ml/tensorflow[${PYTHON_USEDEP}]
+		dev-python/dm-haiku[${PYTHON_SINGLE_USEDEP}]
+		dev-python/flax[${PYTHON_SINGLE_USEDEP}]
+		dev-python/jax[${PYTHON_SINGLE_USEDEP},cuda]
+		dev-python/jaxlib[${PYTHON_SINGLE_USEDEP},cuda]
+		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
+		media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
+		sci-ml/tensorflow[${PYTHON_SINGLE_USEDEP}]
+	)
+	optional? (
+		dev-python/dm-haiku[${PYTHON_SINGLE_USEDEP}]
+		dev-python/flax[${PYTHON_SINGLE_USEDEP}]
+		dev-python/jax[${PYTHON_SINGLE_USEDEP}]
+		dev-python/jaxlib[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
+		media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
+		sci-ml/tensorflow[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/setuptools-42[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
-	dev-python/pip[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		>=dev-python/setuptools-42[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+		dev-python/pip[${PYTHON_USEDEP}]
+	')
 "
 DOCS=( "README.md" )
 

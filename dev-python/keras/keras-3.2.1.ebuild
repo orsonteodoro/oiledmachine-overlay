@@ -3,11 +3,16 @@
 
 EAPI=8
 
+# FIXME:
+#dev-python/keras/keras-3.3.3.ebuild: line 106: no match: dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
+#dev-python/keras/keras-3.2.1.ebuild: line 106: no match: dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
+
 # For dep versions, see
 # https://github.com/keras-team/keras/blob/v3.1.0/requirements.txt
 # https://github.com/keras-team/keras/blob/v3.1.0/WORKSPACE
 
-PYTHON_COMPAT=( "python3_"{9..11} )
+DISTUTILS_SINGLE_IMPL=1
+PYTHON_COMPAT=( "python3_"{10..11} )
 TENSORFLOW_PV="2.16.1"
 
 inherit distutils-r1 protobuf-ver
@@ -38,12 +43,12 @@ REQUIRED_USE="
 gen_rdepend_protobuf() {
 	local s
 	for s in ${PROTOBUF_SLOTS[@]} ; do
-		echo  "
+		echo  '
 			(
-				dev-libs/protobuf:0/${s}
-				dev-python/protobuf:0/${s}[${PYTHON_USEDEP}]
+				dev-libs/protobuf:0/'${s}'
+				dev-python/protobuf:0/'${s}'[${PYTHON_USEDEP}]
 			)
-		"
+		'
 	done
 }
 RDEPEND="
@@ -59,43 +64,49 @@ RDEPEND="
 			<dev-python/numpy-2[${PYTHON_USEDEP}]
 		)
 	' python3_12)
-	>=sci-ml/tensorflow-${TENSORFLOW_PV}[${PYTHON_USEDEP},python]
-	>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
-	>=sys-libs/zlib-1.2.13
-	dev-python/absl-py[${PYTHON_USEDEP}]
-	dev-python/h5py[${PYTHON_USEDEP}]
-	dev-python/namex[${PYTHON_USEDEP}]
-	dev-python/optree[${PYTHON_USEDEP},jax?,pytorch?]
-	dev-python/pandas[${PYTHON_USEDEP}]
-	virtual/pillow[${PYTHON_USEDEP}]
-	dev-python/pydot[${PYTHON_USEDEP}]
-	dev-python/pyyaml[${PYTHON_USEDEP}]
-	dev-python/requests[${PYTHON_USEDEP}]
-	dev-python/rich[${PYTHON_USEDEP}]
-	dev-python/scipy[${PYTHON_USEDEP}]
-	dev-python/ml-dtypes[${PYTHON_USEDEP}]
-	sci-visualization/tensorboard-plugin-profile[${PYTHON_USEDEP}]
-	|| (
-		$(gen_rdepend_protobuf)
-	)
-	dev-libs/protobuf:=
-	dev-python/protobuf:=
+	$(python_gen_cond_dep '
+		>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
+		>=sys-libs/zlib-1.2.13
+		dev-python/absl-py[${PYTHON_USEDEP}]
+		dev-python/h5py[${PYTHON_USEDEP}]
+		dev-python/namex[${PYTHON_USEDEP}]
+		dev-python/pandas[${PYTHON_USEDEP}]
+		dev-python/pydot[${PYTHON_USEDEP}]
+		dev-python/pyyaml[${PYTHON_USEDEP}]
+		dev-python/requests[${PYTHON_USEDEP}]
+		dev-python/rich[${PYTHON_USEDEP}]
+		dev-python/scipy[${PYTHON_USEDEP}]
+		dev-python/ml-dtypes[${PYTHON_USEDEP}]
+		sci-visualization/tensorboard-plugin-profile[${PYTHON_USEDEP}]
+		virtual/pillow[${PYTHON_USEDEP}]
+		|| (
+			'$(gen_rdepend_protobuf)'
+		)
+		dev-libs/protobuf:=
+		dev-python/protobuf:=
+	')
+	>=sci-ml/tensorflow-${TENSORFLOW_PV}[${PYTHON_SINGLE_USEDEP},python]
+	dev-python/optree[${PYTHON_SINGLE_USEDEP},jax?,pytorch?]
 "
 DEPEND="
 	${RDEPEND}
-	dev-python/setuptools[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/setuptools[${PYTHON_USEDEP}]
+	')
 "
 BDEPEND="
-	app-arch/unzip
-	dev-java/java-config
-	dev-python/build[${PYTHON_USEDEP}]
-	test? (
-		>=dev-python/black-22[${PYTHON_USEDEP}]
-		dev-python/flake8[${PYTHON_USEDEP}]
-		dev-python/isort[${PYTHON_USEDEP}]
-		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/pytest-cov[${PYTHON_USEDEP}]
-	)
+	$(python_gen_cond_dep '
+		app-arch/unzip
+		dev-java/java-config
+		dev-python/build[${PYTHON_USEDEP}]
+		test? (
+			>=dev-python/black-22[${PYTHON_USEDEP}]
+			dev-python/flake8[${PYTHON_USEDEP}]
+			dev-python/isort[${PYTHON_USEDEP}]
+			dev-python/pytest[${PYTHON_USEDEP}]
+			dev-python/pytest-cov[${PYTHON_USEDEP}]
+		)
+	')
 "
 # Possible circular depends:
 # Upstream uses jax-0.4.23 for cuda but we corrected for >=jax-0.4.26 for cuda12
@@ -104,48 +115,40 @@ BDEPEND="
 PDEPEND="
 	cpu? (
 		jax? (
-			dev-python/jax[${PYTHON_USEDEP}]
+			dev-python/jax[${PYTHON_SINGLE_USEDEP}]
 		)
 		pytorch? (
-			$(python_gen_any_dep '
-				>=sci-ml/pytorch-2.1.0[${PYTHON_SINGLE_USEDEP}]
-				>=sci-ml/torchvision-0.16.0[${PYTHON_SINGLE_USEDEP}]
-			')
+			>=sci-ml/pytorch-2.1.0[${PYTHON_SINGLE_USEDEP}]
+			>=sci-ml/torchvision-0.16.0[${PYTHON_SINGLE_USEDEP}]
 		)
 		tensorflow? (
-			>=sci-ml/tensorflow-${TENSORFLOW_PV}
+			>=sci-ml/tensorflow-${TENSORFLOW_PV}[${PYTHON_SINGLE_USEDEP},python]
 		)
 	)
 	cuda? (
 		jax? (
-			>=dev-python/jax-0.4.26[${PYTHON_USEDEP},cuda]
+			>=dev-python/jax-0.4.26[${PYTHON_SINGLE_USEDEP},cuda]
 			test? (
-				$(python_gen_any_dep '
-					>=sci-ml/pytorch-2.1.0[${PYTHON_SINGLE_USEDEP}]
-					>=sci-ml/torchvision-0.16.0[${PYTHON_SINGLE_USEDEP}]
-				')
-				>=sci-ml/tensorflow-${TENSORFLOW_PV}
-				dev-python/flax
+				dev-python/flax[${PYTHON_SINGLE_USEDEP}]
+				>=sci-ml/pytorch-2.1.0[${PYTHON_SINGLE_USEDEP}]
+				>=sci-ml/tensorflow-${TENSORFLOW_PV}[${PYTHON_SINGLE_USEDEP},python]
+				>=sci-ml/torchvision-0.16.0[${PYTHON_SINGLE_USEDEP}]
 			)
 		)
 		tensorflow? (
-			>=sci-ml/tensorflow-${TENSORFLOW_PV}[cuda]
+			>=sci-ml/tensorflow-${TENSORFLOW_PV}[${PYTHON_SINGLE_USEDEP},cuda,python]
 			test? (
-				$(python_gen_any_dep '
-					>=sci-ml/pytorch-2.1.0[${PYTHON_SINGLE_USEDEP}]
-					>=sci-ml/torchvision-0.16.0[${PYTHON_SINGLE_USEDEP}]
-				')
-				dev-python/jax[${PYTHON_USEDEP},cpu]
+				>=sci-ml/pytorch-2.1.0[${PYTHON_SINGLE_USEDEP}]
+				>=sci-ml/torchvision-0.16.0[${PYTHON_SINGLE_USEDEP}]
+				dev-python/jax[${PYTHON_SINGLE_USEDEP},cpu]
 			)
 		)
 		pytorch? (
-			$(python_gen_any_dep '
-				>=sci-ml/pytorch-2.2.1[${PYTHON_SINGLE_USEDEP}]
-				>=sci-ml/torchvision-0.17.1[${PYTHON_SINGLE_USEDEP}]
-			')
+			>=sci-ml/pytorch-2.2.1[${PYTHON_SINGLE_USEDEP}]
+			>=sci-ml/torchvision-0.17.1[${PYTHON_SINGLE_USEDEP}]
 			test? (
-				>=sci-ml/tensorflow-${TENSORFLOW_PV}
-				dev-python/jax[${PYTHON_USEDEP},cpu]
+				>=sci-ml/tensorflow-${TENSORFLOW_PV}[${PYTHON_SINGLE_USEDEP},python]
+				dev-python/jax[${PYTHON_SINGLE_USEDEP},cpu]
 			)
 		)
 	)

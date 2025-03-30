@@ -8,6 +8,7 @@ EAPI=8
 # flake8-pyi
 
 DISTUTILS_EXT=1
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
@@ -31,104 +32,89 @@ IUSE+="
 benchmark doc jax numpy pytorch test
 ebuild_revision_2
 "
-REQUIRED_USE="
-	benchmark? (
-		^^ (
-			python_targets_python3_10
-			python_targets_python3_11
-			python_targets_python3_12
-		)
-	)
-	doc? (
-		^^ (
-			python_targets_python3_10
-			python_targets_python3_11
-			python_targets_python3_12
-		)
-	)
-"
 RDEPEND+="
-	$(python_gen_any_dep '
-		pytorch? (
-			sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/typing-extensions[${PYTHON_USEDEP}]
+		jax? (
+			dev-python/jax[${PYTHON_USEDEP}]
+		)
+		numpy? (
+			dev-python/numpy[${PYTHON_USEDEP}]
 		)
 	')
-	dev-python/typing-extensions[${PYTHON_USEDEP}]
-	jax? (
-		dev-python/jax[${PYTHON_USEDEP}]
+	pytorch? (
+		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	)
-	numpy? (
-		dev-python/numpy[${PYTHON_USEDEP}]
-	)
+
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	$(python_gen_any_dep '
+	$(python_gen_cond_dep '
+		dev-python/setuptools[${PYTHON_USEDEP}]
+		dev-python/pybind11[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
 		benchmark? (
 			(
-				>=sci-ml/pytorch-2.0[${PYTHON_SINGLE_USEDEP}]
-				<sci-ml/pytorch-2.1.0_alpha0[${PYTHON_SINGLE_USEDEP}]
+				>=dev-python/jax-0.4.6[${PYTHON_USEDEP},cpu]
+				<dev-python/jax-0.5.0_alpha0[${PYTHON_USEDEP},cpu]
 			)
-			sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
+			(
+				>=dev-python/dm-tree-0.1[${PYTHON_USEDEP}]
+				<dev-python/dm-tree-0.2.0_alpha0[${PYTHON_USEDEP}]
+			)
+			dev-python/pandas[${PYTHON_USEDEP}]
+			dev-python/tabulate[${PYTHON_USEDEP}]
+			dev-python/termcolor[${PYTHON_USEDEP}]
 		)
 		doc? (
-			sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
+			>=dev-python/sphinx-5.2.1[${PYTHON_USEDEP}]
+			>=dev-python/sphinx-autodoc-typehints-1.19.2[${PYTHON_USEDEP}]
+			>=dev-python/jax-0.3[${PYTHON_USEDEP},cpu]
+			dev-python/sphinx-autoapi[${PYTHON_USEDEP}]
+			dev-python/sphinx-autobuild[${PYTHON_USEDEP}]
+			dev-python/sphinx-copybutton[${PYTHON_USEDEP}]
+			dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}]
+			dev-python/sphinxcontrib-bibtex[${PYTHON_USEDEP}]
+			dev-python/docutils[${PYTHON_USEDEP}]
+			dev-python/numpy[${PYTHON_USEDEP}]
 		)
 		test? (
-			dev-vcs/pre-commit[${PYTHON_SINGLE_USEDEP}]
+			dev-python/pytest[${PYTHON_USEDEP}]
+			dev-python/pytest-cov[${PYTHON_USEDEP}]
+			dev-python/pytest-xdist[${PYTHON_USEDEP}]
+
+			<dev-python/doc8-1.0.0_alpha0
+			>=dev-python/black-22.6.0[${PYTHON_USEDEP}]
+			>=dev-python/isort-5.11.0[${PYTHON_USEDEP}]
+			>=dev-python/mypy-0.990[${PYTHON_USEDEP}]
+			>=dev-python/pylint-2.15.0[${PYTHON_USEDEP}]
+			dev-cpp/cpplint[${PYTHON_USEDEP}]
+			dev-python/flake8[${PYTHON_USEDEP}]
+			dev-python/flake8-bugbear[${PYTHON_USEDEP}]
+			dev-python/flake8-comprehensions[${PYTHON_USEDEP}]
+			dev-python/flake8-docstrings[${PYTHON_USEDEP}]
+			dev-python/flake8-pyi[${PYTHON_USEDEP}]
+			dev-python/flake8-simplify[${PYTHON_USEDEP}]
+			dev-python/pydocstyle[${PYTHON_USEDEP}]
+			dev-python/pyenchant[${PYTHON_USEDEP}]
+			dev-python/xdoctest[${PYTHON_USEDEP}]
+			dev-util/ruff
 		)
 	')
-	dev-python/setuptools[${PYTHON_USEDEP}]
-	dev-python/pybind11[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
 	benchmark? (
 		(
-			>=dev-python/jax-0.4.6[${PYTHON_USEDEP},cpu]
-			<dev-python/jax-0.5.0_alpha0[${PYTHON_USEDEP},cpu]
+			>=sci-ml/pytorch-2.0[${PYTHON_SINGLE_USEDEP}]
+			<sci-ml/pytorch-2.1.0_alpha0[${PYTHON_SINGLE_USEDEP}]
 		)
-		(
-			>=dev-python/dm-tree-0.1[${PYTHON_USEDEP}]
-			<dev-python/dm-tree-0.2.0_alpha0[${PYTHON_USEDEP}]
-		)
-		dev-python/pandas[${PYTHON_USEDEP}]
-		dev-python/tabulate[${PYTHON_USEDEP}]
-		dev-python/termcolor[${PYTHON_USEDEP}]
+		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 	)
 	doc? (
-		>=dev-python/sphinx-5.2.1[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-autodoc-typehints-1.19.2[${PYTHON_USEDEP}]
-		>=dev-python/jax-0.3[${PYTHON_USEDEP},cpu]
-		dev-python/sphinx-autoapi[${PYTHON_USEDEP}]
-		dev-python/sphinx-autobuild[${PYTHON_USEDEP}]
-		dev-python/sphinx-copybutton[${PYTHON_USEDEP}]
-		dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}]
-		dev-python/sphinxcontrib-bibtex[${PYTHON_USEDEP}]
-		dev-python/docutils[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
+		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	)
 	test? (
-		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/pytest-cov[${PYTHON_USEDEP}]
-		dev-python/pytest-xdist[${PYTHON_USEDEP}]
-
-		<dev-python/doc8-1.0.0_alpha0
-		>=dev-python/black-22.6.0[${PYTHON_USEDEP}]
-		>=dev-python/isort-5.11.0[${PYTHON_USEDEP}]
-		>=dev-python/mypy-0.990[${PYTHON_USEDEP}]
-		>=dev-python/pylint-2.15.0[${PYTHON_USEDEP}]
-		dev-cpp/cpplint[${PYTHON_USEDEP}]
-		dev-python/flake8[${PYTHON_USEDEP}]
-		dev-python/flake8-bugbear[${PYTHON_USEDEP}]
-		dev-python/flake8-comprehensions[${PYTHON_USEDEP}]
-		dev-python/flake8-docstrings[${PYTHON_USEDEP}]
-		dev-python/flake8-pyi[${PYTHON_USEDEP}]
-		dev-python/flake8-simplify[${PYTHON_USEDEP}]
-		dev-python/pydocstyle[${PYTHON_USEDEP}]
-		dev-python/pyenchant[${PYTHON_USEDEP}]
-		dev-python/xdoctest[${PYTHON_USEDEP}]
-		dev-util/ruff
+		dev-vcs/pre-commit[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DOCS=( "README.md" )

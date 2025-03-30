@@ -6,6 +6,7 @@ EAPI=8
 
 MY_PN="${PN/-/_}"
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
@@ -21,15 +22,15 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 	PDEPEND+="
 		jax? (
-			dev-python/jax[${PYTHON_USEDEP}]
-			dev-python/jaxlib[${PYTHON_USEDEP}]
+			dev-python/jax[${PYTHON_SINGLE_USEDEP}]
+			dev-python/jaxlib[${PYTHON_SINGLE_USEDEP}]
 		)
 		tensorflow? (
-			=sci-ml/tensorflow-9999[${PYTHON_USEDEP}]
-			=dev-python/tf-keras-9999[${PYTHON_USEDEP}]
+			=sci-ml/tensorflow-9999[${PYTHON_SINGLE_USEDEP}]
+			=dev-python/tf-keras-9999[${PYTHON_SINGLE_USEDEP}]
 		)
 		tfds? (
-			=sci-ml/tensorflow-datasets-9999[${PYTHON_USEDEP}]
+			=sci-ml/tensorflow-datasets-9999[${PYTHON_SINGLE_USEDEP}]
 		)
 	"
 else
@@ -41,15 +42,15 @@ https://github.com/tensorflow/probability/archive/refs/tags/v${PV}.tar.gz
 	"
 	PDEPEND+="
 		jax? (
-			dev-python/jax[${PYTHON_USEDEP}]
-			dev-python/jaxlib[${PYTHON_USEDEP}]
+			dev-python/jax[${PYTHON_SINGLE_USEDEP}]
+			dev-python/jaxlib[${PYTHON_SINGLE_USEDEP}]
 		)
 		tensorflow? (
-			>=sci-ml/tensorflow-2.16[${PYTHON_USEDEP}]
-			>=dev-python/tf-keras-2.16[${PYTHON_USEDEP}]
+			>=sci-ml/tensorflow-2.16[${PYTHON_SINGLE_USEDEP}]
+			>=dev-python/tf-keras-2.16[${PYTHON_SINGLE_USEDEP}]
 		)
 		tfds? (
-			>=sci-ml/tensorflow-datasets-2.2.0[${PYTHON_USEDEP}]
+			>=sci-ml/tensorflow-datasets-2.2.0[${PYTHON_SINGLE_USEDEP}]
 		)
 	"
 fi
@@ -66,20 +67,24 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" jax tensorflow tfds"
 RDEPEND+="
-	>=dev-python/cloudpickle-1.3[${PYTHON_USEDEP}]
-	>=dev-python/gast-0.3.2[${PYTHON_USEDEP}]
-	>=dev-python/numpy-1.13.3[${PYTHON_USEDEP}]
-	>=dev-python/six-1.10.0[${PYTHON_USEDEP}]
-	dev-python/absl-py[${PYTHON_USEDEP}]
-	dev-python/decorator[${PYTHON_USEDEP}]
-	dev-python/dm-tree[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		>=dev-python/cloudpickle-1.3[${PYTHON_USEDEP}]
+		>=dev-python/gast-0.3.2[${PYTHON_USEDEP}]
+		>=dev-python/numpy-1.13.3[${PYTHON_USEDEP}]
+		>=dev-python/six-1.10.0[${PYTHON_USEDEP}]
+		dev-python/absl-py[${PYTHON_USEDEP}]
+		dev-python/decorator[${PYTHON_USEDEP}]
+		dev-python/dm-tree[${PYTHON_USEDEP}]
+	')
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	dev-python/setuptools[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/setuptools[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+	')
 "
 DOCS=( "README.md" )
 

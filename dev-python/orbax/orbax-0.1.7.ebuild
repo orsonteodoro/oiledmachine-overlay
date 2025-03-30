@@ -6,6 +6,7 @@ EAPI=8
 
 # See https://github.com/google/orbax/blob/v0.1.7/.github/workflows/build.yml for supported python
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="flit"
 PYTHON_COMPAT=( "python3_10" ) # Upstream only tests up to 3.9.  3.10 is an untested ebuild modificiation and may break.
 
@@ -42,31 +43,37 @@ doc test
 REQUIRED_USE="
 "
 RDEPEND+="
-	>=dev-python/jax-0.4.6[${PYTHON_USEDEP}]
-	>=sci-libs/tensorstore-0.1.20[${PYTHON_USEDEP}]
-	dev-python/absl-py[${PYTHON_USEDEP}]
-	dev-python/cached-property[${PYTHON_USEDEP}]
-	dev-python/etils[${PYTHON_USEDEP}]
-	dev-python/importlib-resources[${PYTHON_USEDEP}]
-	dev-python/msgpack[${PYTHON_USEDEP}]
-	dev-python/nest-asyncio[${PYTHON_USEDEP}]
-	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/pyyaml[${PYTHON_USEDEP}]
-	dev-python/typing-extensions[${PYTHON_USEDEP}]
-	dev-python/jaxlib[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		>=sci-libs/tensorstore-0.1.20[${PYTHON_USEDEP}]
+		dev-python/absl-py[${PYTHON_USEDEP}]
+		dev-python/cached-property[${PYTHON_USEDEP}]
+		dev-python/etils[${PYTHON_USEDEP}]
+		dev-python/importlib-resources[${PYTHON_USEDEP}]
+		dev-python/msgpack[${PYTHON_USEDEP}]
+		dev-python/nest-asyncio[${PYTHON_USEDEP}]
+		dev-python/numpy[${PYTHON_USEDEP}]
+		dev-python/pyyaml[${PYTHON_USEDEP}]
+		dev-python/typing-extensions[${PYTHON_USEDEP}]
+	')
+	>=dev-python/jax-0.4.6[${PYTHON_SINGLE_USEDEP}]
+	dev-python/jaxlib[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	(
-		>=dev-python/flit-core-3.5[${PYTHON_USEDEP}]
-		<dev-python/flit-core-4[${PYTHON_USEDEP}]
-	)
+	$(python_gen_cond_dep '
+		(
+			>=dev-python/flit-core-3.5[${PYTHON_USEDEP}]
+			<dev-python/flit-core-4[${PYTHON_USEDEP}]
+		)
+		test? (
+			dev-python/pytest[${PYTHON_USEDEP}]
+			dev-python/pytest-xdist[${PYTHON_USEDEP}]
+		)
+	')
 	test? (
-		dev-python/flax[${PYTHON_USEDEP}]
-		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/pytest-xdist[${PYTHON_USEDEP}]
+		dev-python/flax[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DOCS=( "CHANGELOG.md" "README.md" )

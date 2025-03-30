@@ -68,11 +68,6 @@ RDEPEND+="
 		virtual/pillow[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
 		sci-ml/onnx[${PYTHON_USEDEP}]
-		flax? (
-			>=dev-python/flax-0.4.1[${PYTHON_USEDEP}]
-			>=dev-python/jax-0.4.1[${PYTHON_USEDEP}]
-			>=dev-python/jaxlib-0.4.1[${PYTHON_USEDEP}]
-		)
 		training? (
 			>=dev-python/accelerate-0.29.3[${PYTHON_USEDEP}]
 			>=dev-python/peft-0.6.0[${PYTHON_USEDEP}]
@@ -86,6 +81,11 @@ RDEPEND+="
 		)
 	')
 	>=sci-ml/huggingface_hub-0.23.2[${PYTHON_SINGLE_USEDEP}]
+	flax? (
+		>=dev-python/flax-0.4.1[${PYTHON_SINGLE_USEDEP}]
+		>=dev-python/jax-0.4.1[${PYTHON_SINGLE_USEDEP}]
+		>=dev-python/jaxlib-0.4.1[${PYTHON_SINGLE_USEDEP}]
+	)
 	pytorch? (
 		>=sci-ml/pytorch-1.4[${PYTHON_SINGLE_USEDEP}]
 		dev-python/torchsde[${PYTHON_SINGLE_USEDEP}]

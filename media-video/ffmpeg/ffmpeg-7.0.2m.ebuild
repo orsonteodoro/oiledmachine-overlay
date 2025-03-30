@@ -1018,8 +1018,8 @@ RDEPEND+="
 		>=dev-libs/openssl-3.0.0_beta2:0=[${MULTILIB_USEDEP}]
 	)
 	openvino? (
-		>=sci-ml/openvino-2020.1
-		<sci-ml/openvino-2022
+		>=sci-ml/openvino-2020.1[${PYTHON_SINGLE_USEDEP}]
+		<sci-ml/openvino-2022[${PYTHON_SINGLE_USEDEP}]
 	)
 	opus? (
 		>=media-libs/opus-1.0.2-r2[${MULTILIB_USEDEP}]
@@ -1068,7 +1068,7 @@ RDEPEND+="
 		>=media-libs/svt-av1-0.9.0[${MULTILIB_USEDEP}]
 	)
 	tensorflow? (
-		>=sci-ml/tensorflow-2
+		>=sci-ml/tensorflow-2[${PYTHON_SINGLE_USEDEP}]
 	)
 	torch? (
 		|| (

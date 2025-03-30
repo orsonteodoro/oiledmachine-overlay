@@ -6,6 +6,7 @@ EAPI=8
 
 BAZEL_SKYLIB_PV="1.2.1"							# https://github.com/tensorflow/hub/blob/v0.15.0/WORKSPACE#L66
 BAZEL_SLOT="6.1"							# Undocumented version
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PROTOBUF_PV="3.19.6"							# https://github.com/tensorflow/hub/blob/v0.15.0/WORKSPACE#L36
 PYTHON_COMPAT=( "python3_10" )
@@ -59,20 +60,24 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
 RDEPEND+="
-	>=dev-python/numpy-1.12.0[${PYTHON_USEDEP}]
-	>=dev-python/protobuf-3.19.6[${PYTHON_USEDEP}]
-	dev-libs/protobuf:=
-	>=sci-ml/tensorflow-${TENSORFLOW_PV}
+	$(python_gen_cond_dep '
+		>=dev-python/numpy-1.12.0[${PYTHON_USEDEP}]
+		>=dev-python/protobuf-3.19.6[${PYTHON_USEDEP}]
+		dev-libs/protobuf:=
+	')
+	>=sci-ml/tensorflow-${TENSORFLOW_PV}[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/protobuf-3.19.6[${PYTHON_USEDEP}]
-	dev-libs/protobuf:=
-	dev-build/bazel:${BAZEL_SLOT}
-	dev-python/setuptools[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		>=dev-python/protobuf-3.19.6[${PYTHON_USEDEP}]
+		dev-libs/protobuf:=
+		dev-build/bazel:'${BAZEL_SLOT}'
+		dev-python/setuptools[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+	')
 "
 DOCS=( "README.md" )
 

@@ -47,10 +47,10 @@ REQUIRED_USE+="
 RDEPEND+="
 	${PYTHON_DEPS}
 	$(python_gen_cond_dep '
-		>=sci-ml/tensorflow-2[${PYTHON_USEDEP},python]
 		dev-python/sysv-ipc[${PYTHON_USEDEP}]
 		dev-python/gym[${PYTHON_USEDEP}]
 	')
+	>=sci-ml/tensorflow-2[${PYTHON_SINGLE_USEDEP},python]
 	app-alternatives/sh
 	sys-process/procps
 	sys-process/psmisc

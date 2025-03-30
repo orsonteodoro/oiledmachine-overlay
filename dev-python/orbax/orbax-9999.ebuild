@@ -10,6 +10,7 @@ EAPI=8
 # google-cloud-logging
 # myst-nb
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="flit"
 PROTOBUF_PV="5.26.1"
 PYTHON_COMPAT=( "python3_"{10,11} ) # Upstream only tests up to 3.11.
@@ -50,14 +51,16 @@ REQUIRED_USE="
 	)
 "
 ORBAX_EXPORT_DEPEND="
-	dev-python/absl-py[${PYTHON_USEDEP}]
-	dev-python/dataclasses-json[${PYTHON_USEDEP}]
-	dev-python/etils[${PYTHON_USEDEP}]
-	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/jax[${PYTHON_USEDEP}]
-	dev-python/jaxlib[${PYTHON_USEDEP}]
-	dev-python/jaxtyping[${PYTHON_USEDEP}]
-	dev-python/orbax-checkpoint[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/absl-py[${PYTHON_USEDEP}]
+		dev-python/dataclasses-json[${PYTHON_USEDEP}]
+		dev-python/etils[${PYTHON_USEDEP}]
+		dev-python/numpy[${PYTHON_USEDEP}]
+	')
+	dev-python/jax[${PYTHON_SINGLE_USEDEP}]
+	dev-python/jaxlib[${PYTHON_SINGLE_USEDEP}]
+	dev-python/jaxtyping[${PYTHON_SINGLE_USEDEP}]
+	dev-python/orbax-checkpoint[${PYTHON_SINGLE_USEDEP}]
 "
 RDEPEND+="
 	${ORBAX_EXPORT_DEPEND}
@@ -66,34 +69,36 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	(
-		>=dev-python/flit-core-3.5[${PYTHON_USEDEP}]
-		<dev-python/flit-core-4[${PYTHON_USEDEP}]
-	)
-	doc? (
-		>=dev-python/docutils-0.18.1[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-6.2.1[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-autodoc-typehints-1.11.1[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-applehelp-1.0.3[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-bibtex-2.4.2[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-devhelp-1.0.2[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-htmlhelp-2.0.1[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-katex-0.9.0[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-serializinghtml-1.1.5[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-qthelp-1.0.3[${PYTHON_USEDEP}]
-		dev-python/sphinx-design[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		(
+			>=dev-python/flit-core-3.5[${PYTHON_USEDEP}]
+			<dev-python/flit-core-4[${PYTHON_USEDEP}]
+		)
+		doc? (
+			>=dev-python/docutils-0.18.1[${PYTHON_USEDEP}]
+			>=dev-python/sphinx-6.2.1[${PYTHON_USEDEP}]
+			>=dev-python/sphinx-autodoc-typehints-1.11.1[${PYTHON_USEDEP}]
+			>=dev-python/sphinxcontrib-applehelp-1.0.3[${PYTHON_USEDEP}]
+			>=dev-python/sphinxcontrib-bibtex-2.4.2[${PYTHON_USEDEP}]
+			>=dev-python/sphinxcontrib-devhelp-1.0.2[${PYTHON_USEDEP}]
+			>=dev-python/sphinxcontrib-htmlhelp-2.0.1[${PYTHON_USEDEP}]
+			>=dev-python/sphinxcontrib-katex-0.9.0[${PYTHON_USEDEP}]
+			>=dev-python/sphinxcontrib-serializinghtml-1.1.5[${PYTHON_USEDEP}]
+			>=dev-python/sphinxcontrib-qthelp-1.0.3[${PYTHON_USEDEP}]
+			dev-python/sphinx-design[${PYTHON_USEDEP}]
 
-		>=dev-python/ipython-7.23.1[${PYTHON_USEDEP}]
-		>=dev-python/ipykernel-6.5.0[${PYTHON_USEDEP}]
-		dev-python/cached-property[${PYTHON_USEDEP}]
-		dev-python/importlib-resources[${PYTHON_USEDEP}]
-		dev-python/myst-nb[${PYTHON_USEDEP}]
-	)
-	test? (
-		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/pytest-xdist[${PYTHON_USEDEP}]
-		dev-python/requests[${PYTHON_USEDEP}]
-	)
+			>=dev-python/ipython-7.23.1[${PYTHON_USEDEP}]
+			>=dev-python/ipykernel-6.5.0[${PYTHON_USEDEP}]
+			dev-python/cached-property[${PYTHON_USEDEP}]
+			dev-python/importlib-resources[${PYTHON_USEDEP}]
+			dev-python/myst-nb[${PYTHON_USEDEP}]
+		)
+		test? (
+			dev-python/pytest[${PYTHON_USEDEP}]
+			dev-python/pytest-xdist[${PYTHON_USEDEP}]
+			dev-python/requests[${PYTHON_USEDEP}]
+		)
+	')
 "
 # Avoid circular depends with tensorflow \
 PDEPEND+="

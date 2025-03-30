@@ -16,7 +16,7 @@ diff -urp tensorflow-2.13.0.orig/third_party/gpus/crosstool/cc_toolchain_config.
 +    if cpu in ["local"]:
 +        return [
 +            tool_path(name = "gcc", path = ctx.attr.host_compiler_path),
-+            tool_path(name = "ar", path = "/var/tmp/portage/sci-libs/tensorflow-@TENSORFLOW_PV@/temp/gcc-ar.sh"),
++            tool_path(name = "ar", path = "/var/tmp/portage/sci-ml/tensorflow-@TENSORFLOW_PV@/temp/gcc-ar.sh"),
 +            tool_path(name = "compat-ld", path = "/usr/bin/ld"),
 +            tool_path(name = "cpp", path = ctx.attr.host_compiler_prefix + "/cpp"),
 +            tool_path(name = "dwp", path = "/usr/bin/dwp"),

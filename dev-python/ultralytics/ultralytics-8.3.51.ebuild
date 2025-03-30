@@ -86,9 +86,7 @@ RDEPEND+="
 		$(python_gen_cond_dep '
 			>=dev-python/onnx-1.12.0[${PYTHON_USEDEP}]
 			>=dev-python/openvino-2024.0.0[${PYTHON_USEDEP}]
-			>=sci-ml/tensorflow-2.0.0[${PYTHON_USEDEP}]
 			>=dev-python/tensorflowjs-3.9.0[${PYTHON_USEDEP}]
-			dev-python/keras[${PYTHON_USEDEP}]
 			arm64? (
 				(
 					>=dev-libs/flatbuffers-23.5.26
@@ -98,6 +96,8 @@ RDEPEND+="
 				>=dev-python/numpy-1.23.5[${PYTHON_USEDEP}]
 			)
 		')
+		>=sci-ml/tensorflow-2.0.0[${PYTHON_SINGLE_USEDEP}]
+		dev-python/keras[${PYTHON_SINGLE_USEDEP}]
 	)
 	logging? (
 		$(python_gen_cond_dep '

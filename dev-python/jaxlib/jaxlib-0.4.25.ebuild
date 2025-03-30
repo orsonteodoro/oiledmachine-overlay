@@ -41,6 +41,7 @@ CUDA_TARGETS_COMPAT=(
 	compute_90
 )
 DISTUTILS_EXT=1
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="standalone"
 EGIT_COMMIT="f9e20d58754283de87b2ed35cc9df58bcdff2073"
 EROCM_SKIP_EXCLUSIVE_LLVM_SLOT_IN_PATH=1
@@ -222,10 +223,6 @@ REQUIRED_USE+="
 	$(gen_cuda_required_use)
 	$(gen_rocm_required_use)
 	$(gen_llvm_slot_required_use)
-	^^ (
-		python_targets_python3_10
-		python_targets_python3_11
-	)
 	clang? (
 		^^ (
 			${LLVM_COMPAT[@]/#/llvm_slot_}
@@ -335,11 +332,13 @@ gen_rocm_depends() {
 RDEPEND+="
 	!dev-python/jaxlib-bin
 	!sci-libs/jaxlib-bin
+	$(python_gen_cond_dep '
+		>=dev-python/numpy-1.20[${PYTHON_USEDEP}]
+		>=dev-python/pybind11-2.10.0[${PYTHON_USEDEP}]
+	')
 	>=app-arch/snappy-1.1.10
 	>=dev-libs/double-conversion-3.2.0
 	>=dev-libs/nsync-1.25.0
-	>=dev-python/numpy-1.20[${PYTHON_USEDEP}]
-	>=dev-python/pybind11-2.10.0[${PYTHON_USEDEP}]
 	>=sys-libs/zlib-1.2.13
 	virtual/jre:${JAVA_SLOT}
 	cuda? (
@@ -377,8 +376,10 @@ gen_llvm_bdepend() {
 	done
 }
 BDEPEND+="
+	$(python_gen_cond_dep '
+		dev-python/build[${PYTHON_USEDEP}]
+	')
 	>=dev-build/bazel-${BAZEL_PV}:${BAZEL_PV%.*}
-	dev-python/build[${PYTHON_USEDEP}]
 	clang? (
 		$(gen_llvm_bdepend)
 	)

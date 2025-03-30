@@ -70,7 +70,6 @@ RDEPEND+="
 		tensorflow? (
 			dev-python/graphviz[${PYTHON_USEDEP}]
 			dev-python/pydot[${PYTHON_USEDEP}]
-			dev-python/tensorflow[${PYTHON_USEDEP}]
 		)
 	')
 	pytorch? (
@@ -80,6 +79,9 @@ RDEPEND+="
 		')
 		dev-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	)
+	tensorflow? (
+		sci-ml/tensorflow[${PYTHON_SINGLE_USEDEP}]
+	)
 "
 DEPEND+="
 	${RDEPEND}
@@ -87,8 +89,7 @@ DEPEND+="
 BDEPEND+="
 	$(python_gen_cond_dep '
 		tensorflow-testing? (
-			<dev-python/keras-3.0[${PYTHON_USEDEP}]
-			dev-python/tensorflow[${PYTHON_USEDEP}]
+			sci-ml/tensorflow[${PYTHON_SINGLE_USEDEP}]
 		)
 		test? (
 			>=dev-python/gradio-4.0.0[${PYTHON_USEDEP}]
@@ -118,6 +119,9 @@ BDEPEND+="
 			dev-python/types-urllib3[${PYTHON_USEDEP}]
 		)
 	')
+	tensorflow-testing? (
+		<dev-python/keras-3.0[${PYTHON_SINGLE_USEDEP}]
+	)
 "
 DOCS=( "README.md" )
 

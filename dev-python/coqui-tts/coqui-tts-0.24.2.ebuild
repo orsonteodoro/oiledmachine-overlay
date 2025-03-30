@@ -54,7 +54,6 @@ ${LANGS[@]/#/l10n_}
 ebuild_revision_4
 "
 RDEPEND+="
-	>=sci-ml/transformers-4.42.0[${PYTHON_SINGLE_USEDEP}]
 	$(python_gen_cond_dep '
 		>=dev-python/anyascii-0.3.0[${PYTHON_USEDEP}]
 		>=dev-python/coqui-tts-trainer-0.1.4[${PYTHON_USEDEP}]
@@ -69,11 +68,9 @@ RDEPEND+="
 		>=dev-python/num2words-0.5.11[${PYTHON_USEDEP}]
 		>=dev-python/numpy-1.25.2[${PYTHON_USEDEP}]
 		>=dev-python/packaging-23.1[${PYTHON_USEDEP}]
-		>=dev-python/pysbd-0.3.4[${PYTHON_USEDEP}]
 		>=dev-python/pyyaml-6.0[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.11.2[${PYTHON_USEDEP}]
 		>=dev-python/soundfile-0.12.0[${PYTHON_USEDEP}]
-		>=dev-python/spacy-3[${PYTHON_USEDEP}]
 		>=dev-python/tqdm-4.64.1[${PYTHON_USEDEP}]
 		cors? (
 			dev-python/flask-cors[${PYTHON_USEDEP}]
@@ -107,7 +104,10 @@ RDEPEND+="
 		)
 	')
 	>=dev-python/encodec-0.1.1[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/pysbd-0.3.4[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/spacy-3[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/pytorch-2.1[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/transformers-4.42.0[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/torchaudio[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="

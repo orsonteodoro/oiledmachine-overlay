@@ -4,10 +4,15 @@
 
 EAPI=8
 
+# FIXME:
+#dev-python/orbax-checkpoint/orbax-checkpoint-0.4.4.ebuild: line 97: no match: dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
+#dev-python/orbax-checkpoint/orbax-checkpoint-0.5.11.ebuild: line 92: no match: dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
+
 # U22
 
 # See https://github.com/google/orbax/blob/main/.github/workflows/build.yml for supported python
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="flit"
 PYTHON_COMPAT=( "python3_"{10,11} ) # Upstream only tests up to 3.11.
 
@@ -43,39 +48,43 @@ REQUIRED_USE="
 gen_protobuf_checkpoint_rdepend() {
 	local s
 	for s in ${PROTOBUF_SLOTS[@]} ; do
-		echo "
-			dev-libs/protobuf:0/${s}
-			dev-python/protobuf:0/${s}[${PYTHON_USEDEP}]
-		"
+		echo '
+			dev-libs/protobuf:0/'${s}'
+			dev-python/protobuf:0/'${s}'[${PYTHON_USEDEP}]
+		'
 	done
 }
 CHECKPOINT_RDEPEND="
-	(
-		>=sci-libs/tensorstore-0.1.51[${PYTHON_USEDEP}]
-	)
-	>=dev-python/jax-0.4.9[${PYTHON_USEDEP}]
-	dev-python/absl-py[${PYTHON_USEDEP}]
-	dev-python/etils[${PYTHON_USEDEP},epath,epy]
-	dev-python/msgpack[${PYTHON_USEDEP}]
-	dev-python/nest-asyncio[${PYTHON_USEDEP}]
-	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/pyyaml[${PYTHON_USEDEP}]
-	dev-python/typing-extensions[${PYTHON_USEDEP}]
-	dev-python/jaxlib[${PYTHON_USEDEP}]
-	dev-python/jaxtyping[${PYTHON_USEDEP}]
-	|| (
-		$(gen_protobuf_checkpoint_rdepend)
-	)
-	dev-libs/protobuf:=
-	dev-python/protobuf:=
+	$(python_gen_cond_dep '
+		(
+			>=sci-libs/tensorstore-0.1.51[${PYTHON_USEDEP}]
+		)
+		dev-python/absl-py[${PYTHON_USEDEP}]
+		dev-python/etils[${PYTHON_USEDEP},epath,epy]
+		dev-python/msgpack[${PYTHON_USEDEP}]
+		dev-python/nest-asyncio[${PYTHON_USEDEP}]
+		dev-python/numpy[${PYTHON_USEDEP}]
+		dev-python/pyyaml[${PYTHON_USEDEP}]
+		dev-python/typing-extensions[${PYTHON_USEDEP}]
+		|| (
+			'$(gen_protobuf_checkpoint_rdepend)'
+		)
+		dev-libs/protobuf:=
+		dev-python/protobuf:=
+	')
+	>=dev-python/jax-0.4.9[${PYTHON_SINGLE_USEDEP}]
+	dev-python/jaxlib[${PYTHON_SINGLE_USEDEP}]
+	dev-python/jaxtyping[${PYTHON_SINGLE_USEDEP}]
 "
 ORBAX_EXPORT_RDEPEND="
-	dev-python/absl-py[${PYTHON_USEDEP}]
-	dev-python/dataclasses-json[${PYTHON_USEDEP}]
-	dev-python/etils[${PYTHON_USEDEP}]
-	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/jax[${PYTHON_USEDEP}]
-	dev-python/jaxlib[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/absl-py[${PYTHON_USEDEP}]
+		dev-python/dataclasses-json[${PYTHON_USEDEP}]
+		dev-python/etils[${PYTHON_USEDEP}]
+		dev-python/numpy[${PYTHON_USEDEP}]
+	')
+	dev-python/jax[${PYTHON_SINGLE_USEDEP}]
+	dev-python/jaxlib[${PYTHON_SINGLE_USEDEP}]
 "
 RDEPEND+="
 	${CHECKPOINT_RDEPEND}
@@ -84,32 +93,40 @@ DEPEND+="
 	${RDEPEND}
 "
 CHECKPOINT_TEST_BDEPEND="
-	dev-libs/pytest[${PYTHON_USEDEP}]
-	dev-libs/pytest-xdist[${PYTHON_USEDEP}]
-	dev-python/google-cloud-logging[${PYTHON_USEDEP}]
-	dev-python/mock[${PYTHON_USEDEP}]
-	dev-python/flax[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-libs/pytest[${PYTHON_USEDEP}]
+		dev-libs/pytest-xdist[${PYTHON_USEDEP}]
+		dev-python/google-cloud-logging[${PYTHON_USEDEP}]
+		dev-python/mock[${PYTHON_USEDEP}]
+	')
+	dev-python/flax[${PYTHON_SINGLE_USEDEP}]
 "
 ORBAX_EXPORT_TEST_BDEPEND="
-	=sci-ml/tensorflow-9999[${PYTHON_USEDEP}]
-	dev-libs/pytest[${PYTHON_USEDEP}]
-	dev-libs/pytest-xdist[${PYTHON_USEDEP}]
-	dev-python/requests[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		=sci-ml/tensorflow-9999[${PYTHON_USEDEP}]
+		dev-libs/pytest[${PYTHON_USEDEP}]
+		dev-libs/pytest-xdist[${PYTHON_USEDEP}]
+		dev-python/requests[${PYTHON_USEDEP}]
+	')
 "
 BDEPEND+="
-	(
-		>=dev-python/flit-core-3.5[${PYTHON_USEDEP}]
-		<dev-python/flit-core-4[${PYTHON_USEDEP}]
-	)
+	$(python_gen_cond_dep '
+		(
+			>=dev-python/flit-core-3.5[${PYTHON_USEDEP}]
+			<dev-python/flit-core-4[${PYTHON_USEDEP}]
+		)
+	')
 	test? (
 		${CHECKPOINT_TEST_BDEPEND}
 	)
 "
 # Avoid circular depends with tensorflow \
 PDEPEND+="
-	tensorflow? (
-		>=sci-ml/tensorflow-2.15.0[${PYTHON_USEDEP}]
-	)
+	$(python_gen_cond_dep '
+		tensorflow? (
+			>=sci-ml/tensorflow-2.15.0[${PYTHON_SINGLE_USEDEP}]
+		)
+	')
 "
 DOCS=( "README.md" )
 

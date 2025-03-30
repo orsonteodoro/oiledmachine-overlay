@@ -8,7 +8,8 @@ EAPI=8
 # https://github.com/keras-team/keras/blob/v2.14.0/WORKSPACE
 # https://github.com/keras-team/keras/blob/v2.14.0/.bazelversion
 
-PYTHON_COMPAT=( "python3_"{9..11} )
+DISTUTILS_SINGLE_IMPL=1
+PYTHON_COMPAT=( "python3_"{10..11} )
 
 inherit bazel distutils-r1 protobuf-ver
 
@@ -40,50 +41,56 @@ IUSE=" test ebuild_revision_3"
 gen_rdepend_protobuf() {
 	local s
 	for s in ${PROTOBUF_SLOTS[@]} ; do
-		echo  "
+		echo  '
 			(
-				dev-libs/protobuf:0/${s}
-				dev-python/protobuf:0/${s}[${PYTHON_USEDEP}]
+				dev-libs/protobuf:0/'${s}'
+				dev-python/protobuf:0/'${s}'[${PYTHON_USEDEP}]
 			)
-		"
+		'
 	done
 }
 RDEPEND="
-	(
-		>=dev-python/numpy-1.24.3[${PYTHON_USEDEP}]
-		<dev-python/numpy-2[${PYTHON_USEDEP}]
-	)
-	=sci-ml/tensorflow-${PV%.*}*[${PYTHON_USEDEP},python]
-	>=dev-python/scipy-1.9.2[${PYTHON_USEDEP}]
-	>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
-	>=dev-python/keras-preprocessing-1.1.2[${PYTHON_USEDEP}]
-	>=sys-libs/zlib-1.2.13
-	dev-python/absl-py[${PYTHON_USEDEP}]
-	dev-python/h5py[${PYTHON_USEDEP}]
-	dev-python/pandas[${PYTHON_USEDEP}]
-	virtual/pillow[${PYTHON_USEDEP}]
-	dev-python/pydot[${PYTHON_USEDEP}]
-	dev-python/pyyaml[${PYTHON_USEDEP}]
-	|| (
-		$(gen_rdepend_protobuf)
-	)
-	dev-libs/protobuf:=
-	dev-python/protobuf:=
+	$(python_gen_cond_dep '
+		(
+			>=dev-python/numpy-1.24.3[${PYTHON_USEDEP}]
+			<dev-python/numpy-2[${PYTHON_USEDEP}]
+		)
+		>=dev-python/scipy-1.9.2[${PYTHON_USEDEP}]
+		>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
+		>=sys-libs/zlib-1.2.13
+		dev-python/absl-py[${PYTHON_USEDEP}]
+		dev-python/h5py[${PYTHON_USEDEP}]
+		dev-python/pandas[${PYTHON_USEDEP}]
+		dev-python/pydot[${PYTHON_USEDEP}]
+		dev-python/pyyaml[${PYTHON_USEDEP}]
+		dev-python/protobuf:=
+		virtual/pillow[${PYTHON_USEDEP}]
+		|| (
+			'$(gen_rdepend_protobuf)'
+		)
+		dev-libs/protobuf:=
+	')
+	>=dev-python/keras-preprocessing-1.1.2[${PYTHON_SINGLE_USEDEP}]
+	=sci-ml/tensorflow-${PV%.*}*[${PYTHON_SINGLE_USEDEP},python]
 "
 DEPEND="
 	${RDEPEND}
-	dev-python/setuptools[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/setuptools[${PYTHON_USEDEP}]
+	')
 "
 BDEPEND="
-	>=dev-build/bazel-${BAZEL_PV}:${BAZEL_PV%.*}
-	app-arch/unzip
-	dev-java/java-config
-	test? (
-		>=dev-python/black-22.3.0[${PYTHON_USEDEP}]
-		>=dev-python/flake8-4.0.1[${PYTHON_USEDEP}]
-		>=dev-python/isort-5.10.1[${PYTHON_USEDEP}]
-		dev-python/portpicker[${PYTHON_USEDEP}]
-	)
+	$(python_gen_cond_dep '
+		>=dev-build/bazel-${BAZEL_PV}:${BAZEL_PV%.*}
+		app-arch/unzip
+		dev-java/java-config
+		test? (
+			>=dev-python/black-22.3.0[${PYTHON_USEDEP}]
+			>=dev-python/flake8-4.0.1[${PYTHON_USEDEP}]
+			>=dev-python/isort-5.10.1[${PYTHON_USEDEP}]
+			dev-python/portpicker[${PYTHON_USEDEP}]
+		)
+	')
 "
 # Bazel tests not pytest, also want GPU access
 DOCS=( "README.md" )

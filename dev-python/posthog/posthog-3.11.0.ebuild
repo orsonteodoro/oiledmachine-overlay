@@ -12,6 +12,7 @@ EAPI=8
 
 MY_PN="posthog-python"
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..11} )
 
@@ -46,50 +47,60 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev langchain sentry test"
 RDEPEND+="
-	>=dev-python/backoff-1.10.0[${PYTHON_USEDEP}]
-	>=dev-python/monotonic-1.5.0[${PYTHON_USEDEP}]
-	>=dev-python/requests-2.7[${PYTHON_USEDEP}]
-	>=dev-python/six-1.5[${PYTHON_USEDEP}]
-	>dev-python/python-dateutil-2.1[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		>=dev-python/backoff-1.10.0[${PYTHON_USEDEP}]
+		>=dev-python/monotonic-1.5.0[${PYTHON_USEDEP}]
+		>=dev-python/requests-2.7[${PYTHON_USEDEP}]
+		>=dev-python/six-1.5[${PYTHON_USEDEP}]
+		>dev-python/python-dateutil-2.1[${PYTHON_USEDEP}]
+		sentry? (
+			dev-python/sentry-sdk[${PYTHON_USEDEP}]
+			dev-python/django[${PYTHON_USEDEP}]
+		)
+	')
 	langchain? (
-		>=dev-python/langchain-0.2.0[${PYTHON_USEDEP}]
-	)
-	sentry? (
-		dev-python/sentry-sdk[${PYTHON_USEDEP}]
-		dev-python/django[${PYTHON_USEDEP}]
+		>=dev-python/langchain-0.2.0[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="
 	${RDEPEND}
+	$(python_gen_cond_dep '
+		dev? (
+			dev-python/black[${PYTHON_USEDEP}]
+			dev-python/isort[${PYTHON_USEDEP}]
+			dev-python/flake8[${PYTHON_USEDEP}]
+			dev-python/flake8-print[${PYTHON_USEDEP}]
+		)
+		test? (
+			>=dev-python/freezegun-0.3.15[${PYTHON_USEDEP}]
+			>=dev-python/mock-2.0.0[${PYTHON_USEDEP}]
+			dev-python/anthropic[${PYTHON_USEDEP}]
+			dev-python/coverage[${PYTHON_USEDEP}]
+			dev-python/django[${PYTHON_USEDEP}]
+			dev-python/flake8[${PYTHON_USEDEP}]
+			dev-python/langgraph[${PYTHON_USEDEP}]
+			dev-python/openai[${PYTHON_USEDEP}]
+			dev-python/pydantic[${PYTHON_USEDEP}]
+			dev-python/pylint[${PYTHON_USEDEP}]
+			dev-python/pytest[${PYTHON_USEDEP}]
+			dev-python/pytest-asyncio[${PYTHON_USEDEP}]
+			dev-python/pytest-timeout[${PYTHON_USEDEP}]
+		)
+	')
 	dev? (
-		dev-python/black[${PYTHON_USEDEP}]
-		dev-python/isort[${PYTHON_USEDEP}]
-		dev-python/flake8[${PYTHON_USEDEP}]
-		dev-python/flake8-print[${PYTHON_USEDEP}]
-		dev-vcs/pre-commit
+		dev-vcs/pre-commit[${PYTHON_SINGLE_USEDEP}]
 	)
 	test? (
-		>=dev-python/freezegun-0.3.15[${PYTHON_USEDEP}]
-		>=dev-python/langchain-anthropic-0.2.0[${PYTHON_USEDEP}]
-		>=dev-python/langchain-community-0.2.0[${PYTHON_USEDEP}]
-		>=dev-python/langchain-openai-0.2.0[${PYTHON_USEDEP}]
-		>=dev-python/mock-2.0.0[${PYTHON_USEDEP}]
-		dev-python/anthropic[${PYTHON_USEDEP}]
-		dev-python/coverage[${PYTHON_USEDEP}]
-		dev-python/django[${PYTHON_USEDEP}]
-		dev-python/flake8[${PYTHON_USEDEP}]
-		dev-python/langgraph[${PYTHON_USEDEP}]
-		dev-python/openai[${PYTHON_USEDEP}]
-		dev-python/pydantic[${PYTHON_USEDEP}]
-		dev-python/pylint[${PYTHON_USEDEP}]
-		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/pytest-asyncio[${PYTHON_USEDEP}]
-		dev-python/pytest-timeout[${PYTHON_USEDEP}]
+		>=dev-python/langchain-anthropic-0.2.0[${PYTHON_SINGLE_USEDEP}]
+		>=dev-python/langchain-community-0.2.0[${PYTHON_SINGLE_USEDEP}]
+		>=dev-python/langchain-openai-0.2.0[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 BDEPEND+="
-	dev-python/setuptools[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/setuptools[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+	')
 "
 DOCS=( "CHANGELOG.md" "README.md" )
 

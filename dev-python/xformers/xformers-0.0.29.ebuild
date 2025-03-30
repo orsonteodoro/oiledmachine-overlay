@@ -72,12 +72,12 @@ BDEPEND+="
 	)
 	lra-benchmark? (
 		$(python_gen_cond_dep '
-			>=sci-ml/tensorflow-2.3.1[${PYTHON_USEDEP}]
-			>=sci-ml/tensorflow-text-2.7.3[${PYTHON_USEDEP}]
-			>=sci-ml/tensorflow-datasets-4.0.1[${PYTHON_USEDEP}]
 			dev-python/submitit[${PYTHON_USEDEP}]
 			dev-python/fvcore[${PYTHON_USEDEP}]
 		')
+		>=sci-ml/tensorflow-2.3.1[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/tensorflow-text-2.7.3[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/tensorflow-datasets-4.0.1[${PYTHON_SINGLE_USEDEP}]
 		>=sci-visualization/tensorboard-2.3.0[${PYTHON_SINGLE_USEDEP}]
 	)
 	test? (

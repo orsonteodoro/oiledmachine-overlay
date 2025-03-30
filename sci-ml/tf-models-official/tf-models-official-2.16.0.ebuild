@@ -8,6 +8,7 @@ EAPI=8
 # TODO package:
 # tf-keras		rdep
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
@@ -44,52 +45,62 @@ SLOT="0/${PV%.*}"
 IUSE+=" doc nlp test"
 if [[ "${PV}" =~ "9999" ]] ; then
 	RDEPEND+="
-		>=dev-python/wrapt-1.15[${PYTHON_USEDEP}]
-		>=dev-python/tf-keras-9999[${PYTHON_USEDEP}]
-		>=sci-ml/tensorflow-hub-9999[${PYTHON_USEDEP}]
-		dev-python/pyyaml[${PYTHON_USEDEP}]
-		media-libs/opencv[${PYTHON_USEDEP},python]
+		$(python_gen_cond_dep '
+			>=dev-python/wrapt-1.15[${PYTHON_USEDEP}]
+			dev-python/pyyaml[${PYTHON_USEDEP}]
+		')
+		>=dev-python/tf-keras-9999[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/tensorflow-hub-9999[${PYTHON_SINGLE_USEDEP}]
+		media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
 	"
 else
 	RDEPEND+="
-		>=dev-python/pyyaml-6.0.0[${PYTHON_USEDEP}]
-		>=dev-python/tf-keras-2.16.0[${PYTHON_USEDEP}]
-		>=sci-ml/tensorflow-hub-0.6.0[${PYTHON_USEDEP}]
-		media-libs/opencv[${PYTHON_USEDEP},python]
+		$(python_gen_cond_dep '
+			>=dev-python/pyyaml-6.0.0[${PYTHON_USEDEP}]
+		')
+		>=dev-python/tf-keras-2.16.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/tensorflow-hub-0.6.0[${PYTHON_SINGLE_USEDEP}]
+		media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
 	"
 fi
 RDEPEND+="
-	>=dev-python/google-api-python-client-1.6.7[${PYTHON_USEDEP}]
-	>=dev-python/kaggle-1.3.9[${PYTHON_USEDEP}]
-	>=dev-python/numpy-1.20[${PYTHON_USEDEP}]
-	>=dev-python/pandas-0.22.0[${PYTHON_USEDEP}]
-	>=dev-python/psutil-5.4.3[${PYTHON_USEDEP}]
-	>=dev-python/py-cpuinfo-3.3.0[${PYTHON_USEDEP}]
-	>=dev-python/scipy-0.19.1[${PYTHON_USEDEP}]
-	>=sci-ml/tensorflow-model-optimization-0.4.1[${PYTHON_USEDEP}]
-	>=sci-ml/tf-slim-1.1.0[${PYTHON_USEDEP}]
-	dev-python/cython[${PYTHON_USEDEP}]
-	dev-python/immutabledict[${PYTHON_USEDEP}]
-	dev-python/matplotlib[${PYTHON_USEDEP}]
-	dev-python/oauth2client[${PYTHON_USEDEP}]
-	dev-python/pycocotools[${PYTHON_USEDEP}]
-	dev-python/six[${PYTHON_USEDEP}]
-	sci-ml/tensorflow-datasets[${PYTHON_USEDEP}]
-	virtual/pillow[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		>=dev-python/google-api-python-client-1.6.7[${PYTHON_USEDEP}]
+		>=dev-python/kaggle-1.3.9[${PYTHON_USEDEP}]
+		>=dev-python/numpy-1.20[${PYTHON_USEDEP}]
+		>=dev-python/pandas-0.22.0[${PYTHON_USEDEP}]
+		>=dev-python/psutil-5.4.3[${PYTHON_USEDEP}]
+		>=dev-python/py-cpuinfo-3.3.0[${PYTHON_USEDEP}]
+		>=dev-python/scipy-0.19.1[${PYTHON_USEDEP}]
+		dev-python/cython[${PYTHON_USEDEP}]
+		dev-python/immutabledict[${PYTHON_USEDEP}]
+		dev-python/matplotlib[${PYTHON_USEDEP}]
+		dev-python/oauth2client[${PYTHON_USEDEP}]
+		dev-python/pycocotools[${PYTHON_USEDEP}]
+		dev-python/six[${PYTHON_USEDEP}]
+		virtual/pillow[${PYTHON_USEDEP}]
+		nlp? (
+			dev-python/sacrebleu[${PYTHON_USEDEP}]
+			sci-ml/sentencepiece[${PYTHON_USEDEP},python]
+			sci-ml/seqeval[${PYTHON_USEDEP}]
+		)
+	')
+	>=sci-ml/tensorflow-model-optimization-0.4.1[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/tf-slim-1.1.0[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/tensorflow-datasets[${PYTHON_SINGLE_USEDEP}]
 	nlp? (
-		dev-python/sacrebleu[${PYTHON_USEDEP}]
-		sci-ml/sentencepiece[${PYTHON_USEDEP},python]
-		sci-ml/seqeval[${PYTHON_USEDEP}]
-		sci-ml/tensorflow-text:0/${PV%.*}[${PYTHON_USEDEP}]
+		sci-ml/tensorflow-text:0/${PV%.*}[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	test? (
-		dev-python/pytest[${PYTHON_USEDEP}]
-	)
+	$(python_gen_cond_dep '
+		test? (
+			dev-python/pytest[${PYTHON_USEDEP}]
+		)
+	')
 "
 
 src_unpack() {

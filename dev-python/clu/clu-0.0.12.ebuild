@@ -4,6 +4,7 @@
 
 EAPI=8
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
@@ -37,40 +38,35 @@ LICENSE="
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
-REQUIRED_USE="
-	test? (
-		^^ (
-			python_targets_python3_10
-			python_targets_python3_11
-			python_targets_python3_12
-		)
-	)
-"
 RDEPEND+="
-	dev-python/absl-py[${PYTHON_USEDEP}]
-	dev-python/etils[${PYTHON_USEDEP},epath]
-	dev-python/flax[${PYTHON_USEDEP}]
-	dev-python/jax[${PYTHON_USEDEP}]
-	dev-python/jaxlib[${PYTHON_USEDEP}]
-	dev-python/ml-collections[${PYTHON_USEDEP}]
-	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/packaging[${PYTHON_USEDEP}]
-	dev-python/typing-extensions[${PYTHON_USEDEP}]
-	dev-python/wrapt[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/absl-py[${PYTHON_USEDEP}]
+		dev-python/etils[${PYTHON_USEDEP},epath]
+		dev-python/ml-collections[${PYTHON_USEDEP}]
+		dev-python/numpy[${PYTHON_USEDEP}]
+		dev-python/packaging[${PYTHON_USEDEP}]
+		dev-python/typing-extensions[${PYTHON_USEDEP}]
+		dev-python/wrapt[${PYTHON_USEDEP}]
+	')
+	dev-python/flax[${PYTHON_SINGLE_USEDEP}]
+	dev-python/jax[${PYTHON_SINGLE_USEDEP}]
+	dev-python/jaxlib[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	dev-python/setuptools[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/setuptools[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+		test? (
+			dev-python/pytest[${PYTHON_USEDEP}]
+		)
+	')
 	test? (
-		$(python_gen_any_dep '
-			>=sci-ml/pytorch-2.0.0[${PYTHON_SINGLE_USEDEP}]
-		')
-		dev-python/pytest[${PYTHON_USEDEP}]
-		sci-ml/tensorflow[${PYTHON_USEDEP}]
-		sci-ml/tensorflow-datasets[${PYTHON_USEDEP}]
+		>=sci-ml/pytorch-2.0.0[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/tensorflow[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/tensorflow-datasets[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DOCS=( "AUTHORS" "CHANGELOG.md" "README.md" )

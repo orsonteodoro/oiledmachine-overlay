@@ -101,7 +101,6 @@ RDEPEND+="
 			dev-python/pydantic[${PYTHON_USEDEP}]
 		)
 		tensorflow? (
-			>=sci-ml/tensorflow-2.15.0[${PYTHON_USEDEP}]
 			dev-python/prettytable[${PYTHON_USEDEP}]
 			dev-python/psutil[${PYTHON_USEDEP}]
 			dev-python/py-cpuinfo[${PYTHON_USEDEP}]
@@ -118,6 +117,9 @@ RDEPEND+="
 	)
 	pytorch? (
 		>=sci-ml/pytorch-2.2.1[${PYTHON_SINGLE_USEDEP}]
+	)
+	tensorflow? (
+		>=sci-ml/tensorflow-2.15.0[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="
@@ -138,16 +140,13 @@ BDEPEND+="
 		test? (
 			>=dev-python/accelerate-0.21.0[${PYTHON_USEDEP}]
 			>=sci-libs/dynast-1.6.0_rc1[${PYTHON_USEDEP}]
-			>=sci-libs/intel-tensorflow-2.12.0[${PYTHON_USEDEP}]
 			>=sci-ml/onnx-1.15.0[${PYTHON_USEDEP}]
 			sci-libs/auto-round[${PYTHON_USEDEP}]
 			sci-libs/horovod[${PYTHON_USEDEP}]
 			sci-libs/mxnet-mkl[${PYTHON_USEDEP}]
 			sci-libs/optimum[${PYTHON_USEDEP}]
 			sci-libs/peft[${PYTHON_USEDEP}]
-			sci-ml/tensorflow-addons[${PYTHON_USEDEP}]
 			sci-libs/tf2onnx[${PYTHON_USEDEP}]
-			sci-ml/tf-slim[${PYTHON_USEDEP}]
 			dev-python/xgboost[${PYTHON_USEDEP}]
 
 			dev-python/isort[${PYTHON_USEDEP}]
@@ -164,8 +163,11 @@ BDEPEND+="
 	' python3_10)
 	test? (
 		>=sci-ml/intel-extension-for-pytorch-1.10[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/intel-tensorflow-2.12.0[${PYTHON_SINGLE_USEDEP}]
 		>=sci-ml/onnxruntime-1.17.1[${PYTHON_SINGLE_USEDEP},python]
 		>=sci-ml/torchvision-0.17.1[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/tensorflow-addons[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/tf-slim[${PYTHON_SINGLE_USEDEP}]
 	)
 "

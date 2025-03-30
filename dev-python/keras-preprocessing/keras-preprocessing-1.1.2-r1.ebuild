@@ -3,6 +3,7 @@
 
 EAPI=8
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYPI_NO_NORMALIZE=1
 PYPI_PN="Keras_Preprocessing"
@@ -25,25 +26,31 @@ LICENSE="MIT"
 SLOT="0"
 IUSE+=" dev image test"
 RDEPEND="
-	>=dev-python/numpy-1.9.1[${PYTHON_USEDEP}]
-	>=dev-python/six-1.9.0[${PYTHON_USEDEP}]
-	dev-python/scipy[${PYTHON_USEDEP}]
-	image? (
-		>=dev-python/cipy-0.14[${PYTHON_USEDEP}]
-		>=virtual/pillow-5.2.0[${PYTHON_USEDEP}]
-	)
+	$(python_gen_cond_dep '
+		>=dev-python/numpy-1.9.1[${PYTHON_USEDEP}]
+		>=dev-python/six-1.9.0[${PYTHON_USEDEP}]
+		dev-python/scipy[${PYTHON_USEDEP}]
+		image? (
+			>=dev-python/cipy-0.14[${PYTHON_USEDEP}]
+			>=virtual/pillow-5.2.0[${PYTHON_USEDEP}]
+		)
+	')
 "
 BDEPEND+="
-	dev? (
-		dev-python/flake8[${PYTHON_USEDEP}]
-	)
+	$(python_gen_cond_dep '
+		dev? (
+			dev-python/flake8[${PYTHON_USEDEP}]
+		)
+		test? (
+			dev-python/pandas[${PYTHON_USEDEP}]
+			dev-python/pytest[${PYTHON_USEDEP}]
+			dev-python/pytest-xdist[${PYTHON_USEDEP}]
+			dev-python/pytest-cov[${PYTHON_USEDEP}]
+			sci-ml/tensorflow[${PYTHON_USEDEP}]
+			virtual/pillow[${PYTHON_USEDEP}]
+		)
+	')
 	test? (
-		dev-python/keras[${PYTHON_USEDEP}]
-		dev-python/pandas[${PYTHON_USEDEP}]
-		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/pytest-xdist[${PYTHON_USEDEP}]
-		dev-python/pytest-cov[${PYTHON_USEDEP}]
-		sci-ml/tensorflow[${PYTHON_USEDEP}]
-		virtual/pillow[${PYTHON_USEDEP}]
+		dev-python/keras[${PYTHON_SINGLE_USEDEP}]
 	)
 "

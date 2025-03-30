@@ -6,6 +6,7 @@ EAPI=8
 
 MY_PN="sonnet"
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} ) # Upstream list up to 3.10
 
@@ -38,43 +39,54 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc examples test"
+IUSE+=" cuda doc examples tensorflow test"
 RDEPEND+="
-	>=dev-python/absl-py-0.7.1[${PYTHON_USEDEP}]
-	>=dev-python/numpy-1.16.3[${PYTHON_USEDEP}]
-	>=dev-python/tabulate-0.7.5[${PYTHON_USEDEP}]
-	>=dev-python/wrapt-1.11.1[${PYTHON_USEDEP}]
-	>=dev-python/dm-tree-0.1.1[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		>=dev-python/absl-py-0.7.1[${PYTHON_USEDEP}]
+		>=dev-python/numpy-1.16.3[${PYTHON_USEDEP}]
+		>=dev-python/tabulate-0.7.5[${PYTHON_USEDEP}]
+		>=dev-python/wrapt-1.11.1[${PYTHON_USEDEP}]
+		>=dev-python/dm-tree-0.1.1[${PYTHON_USEDEP}]
+	')
+	tensorflow? (
+		>=sci-ml/tensorflow-2.12.0_rc0[${PYTHON_SINGLE_USEDEP},cuda?,python]
+	)
 "
 DEPEND+="
 	${RDEPEND}
 "
 TENSORFLOW_BDEPEND="
-	>=sci-ml/tensorflow-2.12.0_rc0
-	>=sci-ml/tensorflow-probability-0.12.2
+	>=sci-ml/tensorflow-2.12.0_rc0[${PYTHON_SINGLE_USEDEP},python]
+	>=sci-ml/tensorflow-probability-0.12.2[${PYTHON_SINGLE_USEDEP}]
 "
 BDEPEND+="
-	dev-python/setuptools[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/setuptools[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+		doc? (
+			(
+				>=dev-python/sphinxcontrib-bibtex-0.4.2[${PYTHON_USEDEP}]
+				<dev-python/sphinxcontrib-bibtex-2[${PYTHON_USEDEP}]
+			)
+			>=dev-python/sphinx-2.0.1[${PYTHON_USEDEP}]
+			>=dev-python/sphinx-rtd-theme-0.4.3[${PYTHON_USEDEP}]
+			>=dev-python/sphinxcontrib-katex-0.4.1[${PYTHON_USEDEP}]
+			>=dev-python/sphinx-autodoc-typehints-1.10.3[${PYTHON_USEDEP}]
+		)
+		test? (
+			(
+				>=sci-ml/tensorflow-datasets-1[${PYTHON_SINGLE_USEDEP}]
+				<sci-ml/tensorflow-datasets-4[${PYTHON_SINGLE_USEDEP}]
+			)
+			>=dev-python/mock-3.0.5[${PYTHON_USEDEP}]
+			dev-python/docutils[${PYTHON_USEDEP}]
+		)
+	')
 	doc? (
 		${TENSORFLOW_BDEPEND}
-		(
-			>=dev-python/sphinxcontrib-bibtex-0.4.2[${PYTHON_USEDEP}]
-			<dev-python/sphinxcontrib-bibtex-2[${PYTHON_USEDEP}]
-		)
-		>=dev-python/sphinx-2.0.1[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-rtd-theme-0.4.3[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-katex-0.4.1[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-autodoc-typehints-1.10.3[${PYTHON_USEDEP}]
 	)
 	test? (
-		(
-			>=sci-ml/tensorflow-datasets-1[${PYTHON_USEDEP}]
-			<sci-ml/tensorflow-datasets-4[${PYTHON_USEDEP}]
-		)
 		${TENSORFLOW_BDEPEND}
-		>=dev-python/mock-3.0.5[${PYTHON_USEDEP}]
-		dev-python/docutils[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "README.md" )

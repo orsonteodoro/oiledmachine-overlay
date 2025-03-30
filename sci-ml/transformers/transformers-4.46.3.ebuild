@@ -188,10 +188,6 @@ RDEPEND="
 			>=dev-python/deepspeed-0.9.3[${PYTHON_USEDEP}]
 		)
 		flax? (
-			>=dev-python/flax-0.4.1[${PYTHON_USEDEP}]
-			>=dev-python/jax-0.4.1[${PYTHON_USEDEP}]
-			>=dev-python/jaxlib-0.4.1[${PYTHON_USEDEP}]
-			>=dev-python/optax-0.0.8[${PYTHON_USEDEP}]
 			dev-python/scipy[${PYTHON_USEDEP}]
 		)
 		ftfy? (
@@ -256,15 +252,6 @@ RDEPEND="
 			dev-python/blobfile[${PYTHON_USEDEP}]
 			dev-python/tiktoken[${PYTHON_USEDEP}]
 		)
-		tf? (
-			>=dev-python/keras-nlp-0.3.1[${PYTHON_USEDEP}]
-			>=sci-ml/tensorflow-2.9[${PYTHON_USEDEP}]
-			sci-ml/tensorflow-text[${PYTHON_USEDEP}]
-		)
-		tf-cpu? (
-			>=dev-python/keras-2.9[${PYTHON_USEDEP}]
-			sci-ml/tensorflow-probability[${PYTHON_USEDEP}]
-		)
 		torchhub? (
 			dev-python/importlib-metadata[${PYTHON_USEDEP}]
 			dev-python/protobuf[${PYTHON_USEDEP}]
@@ -287,6 +274,21 @@ RDEPEND="
 	)
 	speech? (
 		sci-ml/torchaudio[${PYTHON_SINGLE_USEDEP}]
+	)
+	flax? (
+		>=dev-python/flax-0.4.1[${PYTHON_SINGLE_USEDEP}]
+		>=dev-python/jax-0.4.1[${PYTHON_SINGLE_USEDEP}]
+		>=dev-python/jaxlib-0.4.1[${PYTHON_SINGLE_USEDEP}]
+		>=dev-python/optax-0.0.8[${PYTHON_SINGLE_USEDEP}]
+	)
+	tf? (
+		>=dev-python/keras-nlp-0.3.1[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/tensorflow-2.9[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/tensorflow-text[${PYTHON_SINGLE_USEDEP}]
+	)
+	tf-cpu? (
+		>=dev-python/keras-2.9[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/tensorflow-probability[${PYTHON_SINGLE_USEDEP}]
 	)
 	timm? (
 		dev-python/timm[${PYTHON_SINGLE_USEDEP}]

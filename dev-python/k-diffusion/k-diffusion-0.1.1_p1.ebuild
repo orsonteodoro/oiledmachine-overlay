@@ -51,7 +51,6 @@ RDEPEND+="
 		dev-python/scikit-image[${PYTHON_USEDEP}]
 		dev-python/scipy[${PYTHON_USEDEP}]
 		dev-python/tqdm[${PYTHON_USEDEP}]
-		dev-python/wandb[${PYTHON_USEDEP}]
 		sci-ml/safetensors[${PYTHON_USEDEP}]
 		virtual/pillow[${PYTHON_USEDEP}]
 	')
@@ -62,6 +61,7 @@ RDEPEND+="
 	dev-python/kornia[${PYTHON_SINGLE_USEDEP}]
 	dev-python/torchdiffeq[${PYTHON_SINGLE_USEDEP}]
 	dev-python/torchsde[${PYTHON_SINGLE_USEDEP}]
+	dev-python/wandb[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="

@@ -44,14 +44,8 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
 STABLE_DIFFUSION_MODEL_RDEPEND="
 	$(python_gen_cond_dep '
-		(
-			>=sci-ml/tensorflow-2.5[${PYTHON_USEDEP}]
-			<sci-ml/tensorflow-2.12[${PYTHON_USEDEP}]
-		)
 		>=sci-libs/nncf-2.4.0[${PYTHON_USEDEP}]
 		>=sci-ml/onnx-1.13.0[${PYTHON_USEDEP}]
-		>=sci-ml/openvino-2022.2.0[${PYTHON_USEDEP}]
-		>=sci-ml/tensorflow-datasets-4.2.0[${PYTHON_USEDEP}]
 
 		(
 			>=dev-python/matplotlib-3.4[${PYTHON_USEDEP}]
@@ -85,11 +79,17 @@ STABLE_DIFFUSION_MODEL_RDEPEND="
 		>=dev-python/scikit-image-0.19.2[${PYTHON_USEDEP}]
 
 	')
+		(
+		>=sci-ml/tensorflow-2.5[${PYTHON_SINGLE_USEDEP}]
+		<sci-ml/tensorflow-2.12[${PYTHON_SINGLE_USEDEP}]
+	)
 	>=dev-python/controlnet-aux-0.0.6[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/diffusers-0.9.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/diffusers-0.23.0[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/huggingface_hub-0.9.1[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/openvino-2022.2.0[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/pytorch-1.13.1[${PYTHON_SINGLE_USEDEP}]
+	>=sci-ml/tensorflow-datasets-4.2.0[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/torchmetrics-0.11.0[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/torchvision-0.14.1[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/transformers-4.38.0[${PYTHON_SINGLE_USEDEP}]
@@ -104,11 +104,11 @@ PLUGIN_RDEPEND="
 		>=sci-ml/safetensors-0.4.1[${PYTHON_USEDEP}]
 		dev-python/accelerate[${PYTHON_USEDEP}]
 		sci-ml/huggingface_hub[${PYTHON_USEDEP}]
-		sci-ml/openvino[${PYTHON_USEDEP}]
 	')
 	>=dev-python/controlnet-aux-0.0.6[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/diffusers-0.22.0[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/transformers-4.38.0[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/openvino[${PYTHON_SINGLE_USEDEP}]
 "
 #	${STABLE_DIFFUSION_MODEL_RDEPEND}
 RDEPEND+="
@@ -123,12 +123,12 @@ RDEPEND+="
 		media-libs/opencv[${PYTHON_USEDEP},python]
 		media-gfx/gimp:0/3
 		net-misc/gdown[${PYTHON_USEDEP}]
-		sci-ml/openvino[${PYTHON_USEDEP}]
 	')
 	${PLUGIN_RDEPEND}
 	>=dev-python/controlnet-aux-0.0.6[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/timm-0.4.5[${PYTHON_SINGLE_USEDEP}]
 	dev-python/diffusers[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/openvino[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/transformers[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="

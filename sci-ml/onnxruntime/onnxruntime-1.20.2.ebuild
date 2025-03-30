@@ -1098,12 +1098,12 @@ RDEPEND="
 		sci-ml/oneDNN:=
 	)
 	openvino? (
-		>=sci-ml/openvino-${OPENVINO_PV}
+		>=sci-ml/openvino-${OPENVINO_PV}[${PYTHON_SINGLE_USEDEP}]
 		openvino_targets_gpu? (
-			>=sci-ml/openvino-${OPENVINO_PV}[video_cards_intel]
+			>=sci-ml/openvino-${OPENVINO_PV}[${PYTHON_SINGLE_USEDEP},video_cards_intel]
 		)
 		openvino_targets_npu? (
-			>=sci-ml/openvino-${OPENVINO_PV}[npu]
+			>=sci-ml/openvino-${OPENVINO_PV}[${PYTHON_SINGLE_USEDEP},npu]
 		)
 	)
 	rocm? (

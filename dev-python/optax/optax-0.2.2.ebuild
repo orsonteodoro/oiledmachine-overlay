@@ -11,6 +11,7 @@ EAPI=8
 # sphinx_contributors
 # sphinxcontrib-katex
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="flit"
 FLAX_PV="0.5.3"
 PYTHON_COMPAT=( "python3_"{10..11} )
@@ -46,66 +47,74 @@ REQUIRED_USE+="
 	)
 "
 RDEPEND+="
-	>=dev-python/absl-py-0.7.1[${PYTHON_USEDEP}]
-	>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
-	>=dev-python/chex-0.1.86[${PYTHON_USEDEP}]
-	>=dev-python/jax-0.1.55[${PYTHON_USEDEP}]
-	>=dev-python/jaxlib-0.1.37[${PYTHON_USEDEP}]
-	dp-accounting? (
-		>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
-	)
+	$(python_gen_cond_dep '
+		>=dev-python/absl-py-0.7.1[${PYTHON_USEDEP}]
+		>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
+		>=dev-python/chex-0.1.86[${PYTHON_USEDEP}]
+		dp-accounting? (
+			>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
+		)
+		examples? (
+			>=dev-python/dp_accounting-0.4[${PYTHON_USEDEP}]
+		)
+	')
+	>=dev-python/jax-0.1.55[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/jaxlib-0.1.37[${PYTHON_SINGLE_USEDEP}]
 	examples? (
-		>=dev-python/dp_accounting-0.4[${PYTHON_USEDEP}]
-		>=dev-python/dm-haiku-0.0.3[${PYTHON_USEDEP}]
-		>=sci-ml/tensorflow-${TENSORFLOW_PV}[${PYTHON_USEDEP}]
-		>=sci-ml/tensorflow-datasets-${TENSORFLOW_DATASETS_PV}[${PYTHON_USEDEP}]
+		>=dev-python/dm-haiku-0.0.3[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/tensorflow-${TENSORFLOW_PV}[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/tensorflow-datasets-${TENSORFLOW_DATASETS_PV}[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	(
-		>=dev-python/flit-core-3.2[${PYTHON_USEDEP}]
-		<dev-python/flit-core-4[${PYTHON_USEDEP}]
-	)
-	app-arch/zip
+	$(python_gen_cond_dep '
+		(
+			>=dev-python/flit-core-3.2[${PYTHON_USEDEP}]
+			<dev-python/flit-core-4[${PYTHON_USEDEP}]
+		)
+		app-arch/zip
+		doc? (
+			>=dev-python/ipython-8.8.0[${PYTHON_USEDEP}]
+			>=dev-python/matplotlib-3.5.0[${PYTHON_USEDEP}]
+			>=dev-python/myst-nb-1.0.0[${PYTHON_USEDEP}]
+			>=dev-python/sphinx-6.0.0[${PYTHON_USEDEP}]
+			>=dev-python/sphinx-book-theme-1.0.1[${PYTHON_USEDEP}]
+			>=dev-python/sphinx-collections-0.0.1[${PYTHON_USEDEP}]
+			>=dev-python/sphinx-gallery-0.14.0[${PYTHON_USEDEP}]
+			dev-python/sphinx-autodoc-typehints[${PYTHON_USEDEP}]
+			dev-python/sphinx_contributors[${PYTHON_USEDEP}]
+			dev-python/sphinxcontrib-katex[${PYTHON_USEDEP}]
+		)
+		dp-accounting? (
+			>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
+			>=dev-python/attrs-21.4.0[${PYTHON_USEDEP}]
+			>=dev-python/mpmath-1.2.1[${PYTHON_USEDEP}]
+			>=dev-python/numpy-1.21.4[${PYTHON_USEDEP}]
+			>=dev-python/scipy-1.7.1[${PYTHON_USEDEP}]
+		)
+		test? (
+			>=dev-python/dm-tree-0.1.7[${PYTHON_USEDEP}]
+		)
+	')
 	doc? (
-		>=dev-python/ipython-8.8.0[${PYTHON_USEDEP}]
-		>=dev-python/matplotlib-3.5.0[${PYTHON_USEDEP}]
-		>=dev-python/myst-nb-1.0.0[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-6.0.0[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-book-theme-1.0.1[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-collections-0.0.1[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-gallery-0.14.0[${PYTHON_USEDEP}]
-		>=dev-python/dm-haiku-0.0.11[${PYTHON_USEDEP}]
-		dev-python/sphinx-autodoc-typehints[${PYTHON_USEDEP}]
-		dev-python/sphinx_contributors[${PYTHON_USEDEP}]
-		dev-python/sphinxcontrib-katex[${PYTHON_USEDEP}]
-	)
-	dp-accounting? (
-		>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
-		>=dev-python/attrs-21.4.0[${PYTHON_USEDEP}]
-		>=dev-python/mpmath-1.2.1[${PYTHON_USEDEP}]
-		>=dev-python/numpy-1.21.4[${PYTHON_USEDEP}]
-		>=dev-python/scipy-1.7.1[${PYTHON_USEDEP}]
-	)
-	test? (
-		>=dev-python/dm-tree-0.1.7[${PYTHON_USEDEP}]
+		>=dev-python/dm-haiku-0.0.11[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 # Avoid circular depends with flax \
 # Avoid circular depends with tensorflow \
 PDEPEND+="
 	doc? (
-		>=sci-ml/tensorflow-${TENSORFLOW_PV}[${PYTHON_USEDEP}]
-		>=sci-ml/tensorflow-datasets-${TENSORFLOW_DATASETS_PV}[${PYTHON_USEDEP}]
+		>=sci-ml/tensorflow-${TENSORFLOW_PV}[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/tensorflow-datasets-${TENSORFLOW_DATASETS_PV}[${PYTHON_SINGLE_USEDEP}]
 	)
 	examples? (
-		>=dev-python/flax-${FLAX_PV}[${PYTHON_USEDEP}]
+		>=dev-python/flax-${FLAX_PV}[${PYTHON_SINGLE_USEDEP}]
 	)
 	test? (
-		>=dev-python/flax-${FLAX_PV}[${PYTHON_USEDEP}]
+		>=dev-python/flax-${FLAX_PV}[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 S="${WORKDIR}/${P}"

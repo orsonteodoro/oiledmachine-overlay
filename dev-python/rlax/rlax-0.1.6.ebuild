@@ -6,6 +6,7 @@ EAPI=8
 
 MY_PN="${PN/-/_}"
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
@@ -39,40 +40,44 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" doc examples test"
 RDEPEND+="
-	>=dev-python/absl-py-0.9.0[${PYTHON_USEDEP}]
-	>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
-	>=dev-python/chex-0.0.8[${PYTHON_USEDEP}]
-	>=dev-python/distrax-0.0.2[${PYTHON_USEDEP}]
-	>=dev-python/jax-0.3.0[${PYTHON_USEDEP}]
-	>=dev-python/jaxlib-0.1.37[${PYTHON_USEDEP}]
-	dev-python/dm-env[${PYTHON_USEDEP}]
-	examples? (
-		>=dev-python/dm-env-1.2[${PYTHON_USEDEP}]
-	)
+	$(python_gen_cond_dep '
+		>=dev-python/absl-py-0.9.0[${PYTHON_USEDEP}]
+		>=dev-python/chex-0.0.8[${PYTHON_USEDEP}]
+		>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
+		dev-python/dm-env[${PYTHON_USEDEP}]
+		examples? (
+			>=dev-python/dm-env-1.2[${PYTHON_USEDEP}]
+		)
+	')
+	>=dev-python/distrax-0.0.2[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/jax-0.3.0[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/jaxlib-0.1.37[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	dev-python/setuptools[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
-	doc? (
-		<dev-python/jinja2-3.1[${PYTHON_USEDEP}]
-		>=dev-python/docutils-0.16[${PYTHON_USEDEP}]
-		>=dev-python/ipykernel-5.3.4[${PYTHON_USEDEP}]
-		>=dev-python/ipython-7.16.3[${PYTHON_USEDEP}]
-		>=dev-python/matplotlib-3.5.0[${PYTHON_USEDEP}]
-		>=dev-python/myst_nb-0.13.1[${PYTHON_USEDEP}]
-		>=dev-python/pandoc-1.0.2[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-4.5.0[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-book-theme-0.3.3[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-katex-0.9.0[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-bibtex-2.4.2[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-autodoc-typehints-1.11.1[${PYTHON_USEDEP}]
-	)
+	$(python_gen_cond_dep '
+		dev-python/setuptools[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+		doc? (
+			>=dev-python/docutils-0.16[${PYTHON_USEDEP}]
+			>=dev-python/ipykernel-5.3.4[${PYTHON_USEDEP}]
+			>=dev-python/ipython-7.16.3[${PYTHON_USEDEP}]
+			>=dev-python/matplotlib-3.5.0[${PYTHON_USEDEP}]
+			>=dev-python/myst_nb-0.13.1[${PYTHON_USEDEP}]
+			>=dev-python/pandoc-1.0.2[${PYTHON_USEDEP}]
+			>=dev-python/sphinx-4.5.0[${PYTHON_USEDEP}]
+			>=dev-python/sphinx-book-theme-0.3.3[${PYTHON_USEDEP}]
+			>=dev-python/sphinxcontrib-katex-0.9.0[${PYTHON_USEDEP}]
+			>=dev-python/sphinxcontrib-bibtex-2.4.2[${PYTHON_USEDEP}]
+			>=dev-python/sphinx-autodoc-typehints-1.11.1[${PYTHON_USEDEP}]
+			<dev-python/jinja2-3.1[${PYTHON_USEDEP}]
+		)
+	')
 	test? (
-		>=dev-python/dm-haiku-0.0.4[${PYTHON_USEDEP}]
-		>=dev-python/optax-0.0.9[${PYTHON_USEDEP}]
+		>=dev-python/dm-haiku-0.0.4[${PYTHON_SINGLE_USEDEP}]
+		>=dev-python/optax-0.0.9[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DOCS=( "README.md" )

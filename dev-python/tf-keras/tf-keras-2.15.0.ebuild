@@ -5,6 +5,7 @@
 EAPI=8
 
 BAZEL_PV="5.4.0"
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 JAVA_SLOT=11
 PYTHON_COMPAT=( "python3_"{10..12} )
@@ -65,22 +66,24 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" "
 # protobuf requirement relaxed
 RDEPEND+="
-	(
-		>=dev-python/numpy-1.24.3[${PYTHON_USEDEP}]
-		<dev-python/numpy-2.1.0[${PYTHON_USEDEP}]
-	)
-	>=dev-python/protobuf-3.20.3[${PYTHON_USEDEP}]
-	dev-python/protobuf:=
-	>=dev-python/black-22.3.0[${PYTHON_USEDEP}]
-	>=dev-python/isort-5.10.1[${PYTHON_USEDEP}]
-	>=dev-python/flake8-4.0.1[${PYTHON_USEDEP}]
-	>=dev-python/scipy-1.9.2[${PYTHON_USEDEP}]
-	=sci-ml/tensorflow-${PV%.*}*[${PYTHON_USEDEP}]
-	dev-python/pandas[${PYTHON_USEDEP}]
-	dev-python/portpicker[${PYTHON_USEDEP}]
-	dev-python/pydot[${PYTHON_USEDEP}]
-	dev-python/pyyaml[${PYTHON_USEDEP}]
-	virtual/pillow[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		(
+			>=dev-python/numpy-1.24.3[${PYTHON_USEDEP}]
+			<dev-python/numpy-2.1.0[${PYTHON_USEDEP}]
+		)
+		>=dev-python/protobuf-3.20.3[${PYTHON_USEDEP}]
+		dev-python/protobuf:=
+		>=dev-python/black-22.3.0[${PYTHON_USEDEP}]
+		>=dev-python/isort-5.10.1[${PYTHON_USEDEP}]
+		>=dev-python/flake8-4.0.1[${PYTHON_USEDEP}]
+		>=dev-python/scipy-1.9.2[${PYTHON_USEDEP}]
+		dev-python/pandas[${PYTHON_USEDEP}]
+		dev-python/portpicker[${PYTHON_USEDEP}]
+		dev-python/pydot[${PYTHON_USEDEP}]
+		dev-python/pyyaml[${PYTHON_USEDEP}]
+		virtual/pillow[${PYTHON_USEDEP}]
+	')
+	=sci-ml/tensorflow-${PV%.*}*[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}

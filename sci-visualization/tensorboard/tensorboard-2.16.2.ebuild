@@ -198,9 +198,7 @@ BDEPEND="
 	sys-devel/gcc:${GCC_SLOT}
 "
 PDEPEND="
-	$(python_gen_cond_dep '
-		=sci-ml/tensorflow-'$(ver_cut 1-2 ${PV})'*[${PYTHON_USEDEP},python]
-	')
+	=sci-ml/tensorflow-$(ver_cut 1-2 ${PV})*[${PYTHON_SINGLE_USEDEP},python]
 "
 PATCHES=(
 	"${FILESDIR}/tensorboard-2.12.0-regex_edit_dialog_component-window-settimeout.patch"
