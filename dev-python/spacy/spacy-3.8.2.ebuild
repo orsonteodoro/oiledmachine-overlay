@@ -80,17 +80,17 @@ RDEPEND+="
 		l10n_th? (
 			>=dev-python/pythainlp-2.0[${PYTHON_USEDEP}]
 		)
-		lookups? (
-			>=dev-python/spacy-lookups-data-1.0.3[${PYTHON_USEDEP}]
-		)
-		transformers? (
-			>=dev-python/spacy-transformers-1.1.2[${PYTHON_USEDEP}]
-		)
 	')
 	>=dev-python/thinc-8.3.0[${PYTHON_SINGLE_USEDEP}]
 	=dev-python/thinc-8*[${PYTHON_SINGLE_USEDEP}]
 	dev-python/spacy-legacy[${PYTHON_SINGLE_USEDEP}]
 	dev-python/spacy-loggers[${PYTHON_SINGLE_USEDEP}]
+	lookups? (
+		>=dev-python/spacy-lookups-data-1.0.3[${PYTHON_SINGLE_USEDEP}]
+	)
+	transformers? (
+		>=dev-python/spacy-transformers-1.1.2[${PYTHON_SINGLE_USEDEP}]
+	)
 "
 DEPEND+="
 	${RDEPEND}
