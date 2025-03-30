@@ -267,7 +267,7 @@ RDEPEND="
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	)
 	accelerate? (
-		>=dev-python/accelerate-0.26.0[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/accelerate-0.26.0[${PYTHON_SINGLE_USEDEP}]
 	)
 	pytorch? (
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
