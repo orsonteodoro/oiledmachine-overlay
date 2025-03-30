@@ -4,6 +4,7 @@
 
 EAPI=8
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{8..11} )
 
@@ -35,27 +36,29 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" docs test torch"
+IUSE+=" docs pytorch test"
 REQUIRED_USE="
 	test? (
-		torch
+		pytorch
 	)
 "
 RDEPEND+="
-	>=dev-python/numpy-1.16.3[${PYTHON_USEDEP}]
-	dev-python/termcolor[${PYTHON_USEDEP}]
-	test? (
-		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/pytest-cov[${PYTHON_USEDEP}]
-	)
-	torch? (
-		$(python_gen_any_dep '
-			sci-ml/caffe2[${PYTHON_SINGLE_USEDEP},numpy]
-			sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
-		')
-		>=dev-python/gitdb-2[${PYTHON_USEDEP}]
-		dev-python/GitPython[${PYTHON_USEDEP}]
-		dev-python/matplotlib[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		>=dev-python/numpy-1.16.3[${PYTHON_USEDEP}]
+		dev-python/termcolor[${PYTHON_USEDEP}]
+		test? (
+			dev-python/pytest[${PYTHON_USEDEP}]
+			dev-python/pytest-cov[${PYTHON_USEDEP}]
+		)
+		pytorch? (
+			>=dev-python/gitdb-2[${PYTHON_USEDEP}]
+			dev-python/GitPython[${PYTHON_USEDEP}]
+			dev-python/matplotlib[${PYTHON_USEDEP}]
+		)
+	')
+	pytorch? (
+		sci-ml/caffe2[${PYTHON_SINGLE_USEDEP},numpy]
+		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="

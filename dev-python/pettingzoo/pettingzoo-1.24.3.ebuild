@@ -50,7 +50,6 @@ RDEPEND+="
 		classic? (
 			>=dev-python/pygame-'${PYGAME_PV}'[${PYTHON_USEDEP}]
 			>=dev-python/python-chess-1.9.4[${PYTHON_USEDEP}]
-			>=dev-python/rlcard-1.0.5[${PYTHON_USEDEP}]
 		)
 		mpe? (
 			>=dev-python/pygame-'${PYGAME_PV}'[${PYTHON_USEDEP}]
@@ -66,6 +65,7 @@ RDEPEND+="
 	')
 	>=dev-python/gymnasium-0.28.0[${PYTHON_SINGLE_USEDEP}]
 	classic? (
+		>=dev-python/rlcard-1.0.5[${PYTHON_SINGLE_USEDEP}]
 		>=dev-python/shimmy-1.2.0[${PYTHON_SINGLE_USEDEP},openspiel]
 	)
 	sisl? (
