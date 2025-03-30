@@ -54,7 +54,6 @@ RDEPEND+="
 		sci-ml/safetensors[${PYTHON_USEDEP}]
 		training? (
 			>=dev-python/webdataset-0.2.5[${PYTHON_USEDEP}]
-			>=sci-ml/pytorch-2.0[${PYTHON_USEDEP}]
 			dev-python/fsspec[${PYTHON_USEDEP}]
 			dev-python/pandas[${PYTHON_USEDEP}]
 		)
@@ -65,6 +64,7 @@ RDEPEND+="
 	sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 	training? (
 		>=dev-python/timm-1.0.10[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/pytorch-2.0[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/transformers[${PYTHON_SINGLE_USEDEP},sentencepiece]
 	)
 "

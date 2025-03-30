@@ -307,10 +307,6 @@ BDEPEND_TEST_CONSTRAINTS="
 			>=dev-python/pytest-5.0[${PYTHON_USEDEP}]
 			<dev-python/pytest-7.5[${PYTHON_USEDEP}]
 		)
-		(
-			>=sci-ml/pytorch-1.13[${PYTHON_USEDEP}]
-			<sci-ml/pytorch-2.3[${PYTHON_USEDEP}]
-		)
 		<dev-python/networkx-3.1.1[${PYTHON_USEDEP}]
 		<dev-python/jax-0.4.15[${PYTHON_USEDEP}]
 		>=dev-python/defusedxml-0.7.1[${PYTHON_USEDEP}]
