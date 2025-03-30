@@ -75,29 +75,32 @@ RDEPEND+="
 		>=sci-libs/dlib-19.16[${PYTHON_USEDEP},python]
 		dev-libs/boost[${PYTHON_USEDEP},python]
 		dev-python/numpy[${PYTHON_USEDEP}]
-		media-libs/opencv[${PYTHON_USEDEP},contribhdf,png,python,v4l]
+		cuda_targets_sm_50? (
+			>=sci-libs/dlib-19.21[${PYTHON_USEDEP},cuda?,python]
+		)
+		ffmpeg? (
+			dev-python/ffmpeg-python[${PYTHON_USEDEP}]
+		)
+		gtk? (
+			dev-python/elevate[${PYTHON_USEDEP}]
+		)
+		pyv4l2? (
+			dev-python/pyv4l2[${PYTHON_USEDEP}]
+		)
 	')
 	${PYTHON_DEPS}
 	>=dev-libs/inih-52
 	app-admin/sudo
 	dev-libs/libevdev
+	media-libs/opencv[${PYTHON_SINGLE_USEDEP},contribhdf,png,python,v4l]
 	sys-libs/pam
 	cuda_targets_sm_50? (
-		$(python_gen_cond_dep '
-			>=sci-libs/dlib-19.21[${PYTHON_USEDEP},cuda?,python]
-		')
 		dev-util/nvidia-cuda-toolkit:=
 	)
 	ffmpeg? (
-		$(python_gen_cond_dep '
-			dev-python/ffmpeg-python[${PYTHON_USEDEP}]
-		')
 		media-video/ffmpeg:0/56.58.58[v4l]
 	)
 	gtk? (
-		$(python_gen_cond_dep '
-			dev-python/elevate[${PYTHON_USEDEP}]
-		')
 		dev-libs/gobject-introspection[${PYTHON_SINGLE_USEDEP}]
 		x11-libs/gtk+:3[introspection]
 		|| (
@@ -108,9 +111,6 @@ RDEPEND+="
 		)
 	)
 	pyv4l2? (
-		$(python_gen_cond_dep '
-			dev-python/pyv4l2[${PYTHON_USEDEP}]
-		')
 		media-libs/libv4l
 	)
 "

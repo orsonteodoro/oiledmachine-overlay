@@ -58,7 +58,6 @@ STABLE_DIFFUSION_MODEL_RDEPEND="
 		>=virtual/pillow-8.3.2[${PYTHON_USEDEP}]
 		dev-python/psutil[${PYTHON_USEDEP}]
 		dev-python/scipy[${PYTHON_USEDEP}]
-		media-libs/opencv[${PYTHON_USEDEP},python]
 		net-misc/gdown[${PYTHON_USEDEP}]
 
 
@@ -94,6 +93,7 @@ STABLE_DIFFUSION_MODEL_RDEPEND="
 	>=sci-ml/torchvision-0.14.1[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/transformers-4.38.0[${PYTHON_SINGLE_USEDEP}]
 	dev-python/pytorch-lightning[${PYTHON_SINGLE_USEDEP}]
+	media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
 "
 PLUGIN_RDEPEND="
 	$(python_gen_cond_dep '
@@ -120,7 +120,6 @@ RDEPEND+="
 		dev-python/scikit-image[${PYTHON_USEDEP}]
 		dev-python/scipy[${PYTHON_USEDEP}]
 		dev-python/typing[${PYTHON_USEDEP}]
-		media-libs/opencv[${PYTHON_USEDEP},python]
 		media-gfx/gimp:0/3
 		net-misc/gdown[${PYTHON_USEDEP}]
 	')
@@ -128,6 +127,7 @@ RDEPEND+="
 	>=dev-python/controlnet-aux-0.0.6[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/timm-0.4.5[${PYTHON_SINGLE_USEDEP}]
 	dev-python/diffusers[${PYTHON_SINGLE_USEDEP}]
+	media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
 	sci-ml/openvino[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/transformers[${PYTHON_SINGLE_USEDEP}]
 "

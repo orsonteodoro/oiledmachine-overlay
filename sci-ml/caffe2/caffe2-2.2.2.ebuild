@@ -832,9 +832,7 @@ RDEPEND="
 		virtual/opencl
 	)
 	opencv? (
-		$(python_gen_cond_dep '
-			media-libs/opencv:=[${PYTHON_USEDEP},python]
-		')
+		media-libs/opencv:=[${PYTHON_SINGLE_USEDEP},python]
 	)
 	rocm? (
 		|| (

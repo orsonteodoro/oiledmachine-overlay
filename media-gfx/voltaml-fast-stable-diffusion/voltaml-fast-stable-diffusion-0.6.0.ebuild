@@ -102,7 +102,6 @@ PYTORCH_DEPENDS="
 		>=dev-python/piexif-1.1.3[${PYTHON_USEDEP}]
 		>=dev-python/pyamdgpuinfo-2.1.6[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.10.1[${PYTHON_USEDEP}]
-		>=media-libs/opencv-4.7.0.72[${PYTHON_USEDEP},imgproc,png,python]
 		>=sci-ml/safetensors-0.4.0[${PYTHON_USEDEP}]
 	')
 	>=dev-python/asdff-0.2.1[${PYTHON_SINGLE_USEDEP}]
@@ -113,6 +112,7 @@ PYTORCH_DEPENDS="
 	>=dev-python/pytorch-lightning-2.1.1[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/realesrgan-0.3.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/tomesd-0.1.3[${PYTHON_SINGLE_USEDEP}]
+	>=media-libs/opencv-4.7.0.72[${PYTHON_SINGLE_USEDEP},imgproc,png,python]
 	>=sci-ml/huggingface_hub-0.19.4[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/tokenizers-0.15.0[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/transformers-4.36.1[${PYTHON_SINGLE_USEDEP}]

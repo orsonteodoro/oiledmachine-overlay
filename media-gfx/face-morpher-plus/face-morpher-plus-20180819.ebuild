@@ -59,7 +59,6 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=media-libs/opencv-3.4.1[${PYTHON_USEDEP},ffmpeg?,gstreamer?,gtk3?,jpeg?,png?,python,qt5?,qt6?,wayland?]
 		dev-python/docopt[${PYTHON_USEDEP}]
 		dev-python/facemorpher[${PYTHON_USEDEP},ffmpeg?,gstreamer?,stasm]
 		dev-python/matplotlib[${PYTHON_USEDEP}]
@@ -68,6 +67,7 @@ RDEPEND+="
 		dev-python/stasm[${PYTHON_USEDEP}]
 		sci-libs/dlib[${PYTHON_USEDEP},jpeg?,png?]
 	')
+	>=media-libs/opencv-3.4.1[${PYTHON_SINGLE_USEDEP},ffmpeg?,gstreamer?,gtk3?,jpeg?,png?,python,qt5?,qt6?,wayland?]
 "
 DEPEND+="
 	${RDEPEND}

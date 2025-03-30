@@ -176,7 +176,6 @@ RDEPEND="
 		)
 		agents? (
 			dev-python/datasets[${PYTHON_USEDEP}]
-			media-libs/opencv[${PYTHON_USEDEP},python]
 		)
 		av? (
 			>=dev-python/av-9.2.0[${PYTHON_USEDEP}]
@@ -264,6 +263,7 @@ RDEPEND="
 	>=sci-ml/huggingface_hub-0.23.2[${PYTHON_SINGLE_USEDEP}]
 	agents? (
 		dev-python/diffusers[${PYTHON_SINGLE_USEDEP}]
+		media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	)
 	accelerate? (

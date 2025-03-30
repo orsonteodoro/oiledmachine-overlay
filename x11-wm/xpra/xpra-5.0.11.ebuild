@@ -4,13 +4,18 @@
 
 EAPI=8
 
+# FIXME:
+#x11-wm/xpra/xpra-6.2.1.ebuild: line 711: no match: ~dev-python/pyopengl-3.1.7[${PYTHON_USEDEP}]
+#x11-wm/xpra/xpra-5.0.11.ebuild: line 746: no match: ~dev-python/pyopengl-3.1.7[${PYTHON_USEDEP}]
+
 # D10, U22.04
 # 5.x LTS, EOL 2026, see https://github.com/Xpra-org/xpra/wiki/Versions
 
 MY_PV="$(ver_cut 1-4)"
 
-DISTUTILS_USE_PEP517="setuptools"
 DISTUTILS_EXT=1
+DISTUTILS_SINGLE_IMPL=1
+DISTUTILS_USE_PEP517="setuptools"
 FFMPEG_SLOT="0/56.58.58"
 PATENT_STATUS_IUSE=(
 	patent_status_nonfree
@@ -352,7 +357,9 @@ RENCODE_PV="1.0.6"
 # See https://github.com/Xpra-org/xpra/blob/v5.0.11/docs/Build/Dependencies.md for the full list.
 
 PILLOW_DEPEND="
-	virtual/pillow[${PYTHON_USEDEP},jpeg?,tiff?,webp?,zlib?]
+	$(python_gen_cond_dep '
+		virtual/pillow[${PYTHON_USEDEP},jpeg?,tiff?,webp?,zlib?]
+	')
 "
 
 PYOPENGL_VER=(
@@ -362,12 +369,12 @@ PYOPENGL_VER=(
 gen_opengl_rdepend() {
 	local s
 	for s in ${PYOPENGL_VER[@]} ; do
-		echo "
+		echo '
 			(
-				~dev-python/pyopengl-${s}[${PYTHON_USEDEP}]
-				~dev-python/pyopengl-accelerate-${s}[${PYTHON_USEDEP}]
+				~dev-python/pyopengl-'${s}'[${PYTHON_USEDEP}]
+				~dev-python/pyopengl-accelerate-'${s}'[${PYTHON_USEDEP}]
 			)
-		"
+		'
 	done
 }
 
@@ -424,21 +431,147 @@ PATENT_STATUS_RDEPEND="
 # https://developer.nvidia.com/video-codec-sdk-archive
 RDEPEND+="
 	${PATENT_STATUS_RDEPEND}
+	$(python_gen_cond_dep '
+		dev-python/pygobject[${PYTHON_USEDEP}]
+		aes? (
+			dev-python/cryptography[${PYTHON_USEDEP}]
+		)
+		audio? (
+			dev-python/gst-python:1.0[${PYTHON_USEDEP}]
+		)
+		avahi? (
+			dev-python/netifaces[${PYTHON_USEDEP}]
+			net-dns/avahi[${PYTHON_USEDEP},python]
+		)
+		brotli? (
+			app-arch/brotli[${PYTHON_USEDEP}]
+		)
+		cpu-percent? (
+			dev-python/psutil[${PYTHON_USEDEP}]
+		)
+		cups? (
+			dev-python/pycups[${PYTHON_USEDEP}]
+		)
+		dbus? (
+			dev-python/dbus-python[${PYTHON_USEDEP}]
+		)
+		gssapi? (
+			dev-python/gssapi[${PYTHON_USEDEP}]
+		)
+		gtk3? (
+			>=dev-python/pycairo-1.20.0[${PYTHON_USEDEP}]
+			dev-python/pygobject:3[${PYTHON_USEDEP},cairo]
+		)
+		ibus? (
+			app-i18n/ibus[${PYTHON_USEDEP},gtk3]
+		)
+		kerberos? (
+			dev-python/pykerberos[${PYTHON_USEDEP}]
+		)
+		keycloak? (
+			dev-python/oauthlib[${PYTHON_USEDEP}]
+		)
+		ldap? (
+			dev-python/python-ldap[${PYTHON_USEDEP}]
+		)
+		ldap3? (
+			dev-python/ldap3[${PYTHON_USEDEP}]
+		)
+		lz4? (
+			>=dev-python/lz4-4.0.2[${PYTHON_USEDEP}]
+		)
+		lzo? (
+			>=dev-python/python-lzo-0.7.0[${PYTHON_USEDEP}]
+		)
+		mysql? (
+			dev-python/mysql-connector-python[${PYTHON_USEDEP}]
+		)
+		nvenc? (
+			>=dev-python/pycuda-'${PYCUDA_PV}'[${PYTHON_USEDEP}]
+			>=dev-util/nvidia-cuda-toolkit-5:=
+			>=media-video/nvidia-video-codec-sdk-10
+			dev-python/numpy[${PYTHON_USEDEP}]
+			dev-python/pynvml[${PYTHON_USEDEP}]
+		)
+		nvfbc? (
+			>=dev-python/pycuda-'${PYCUDA_PV}'[${PYTHON_USEDEP}]
+			>=dev-util/nvidia-cuda-toolkit-11:=
+			dev-python/numpy[${PYTHON_USEDEP}]
+		)
+		nvjpeg? (
+			>=dev-python/pycuda-'${PYCUDA_PV}'[${PYTHON_USEDEP}]
+		        >=dev-util/nvidia-cuda-toolkit-10:=
+			dev-python/numpy[${PYTHON_USEDEP}]
+		)
+		proxy? (
+			dev-python/setproctitle[${PYTHON_USEDEP}]
+		)
+		qrencode? (
+			media-gfx/qrencode[${PYTHON_USEDEP}]
+		)
+		quic? (
+			dev-python/aioquic[${PYTHON_USEDEP}]
+		)
+		rencode? (
+			>=dev-python/rencode-'${RENCODE_PV}'[${PYTHON_USEDEP}]
+		)
+		server? (
+			pyinotify? (
+				dev-python/pyinotify[${PYTHON_USEDEP}]
+			)
+		)
+		socks? (
+			dev-python/PySocks[${PYTHON_USEDEP}]
+		)
+		ssh? (
+			dev-python/dnspython[${PYTHON_USEDEP}]
+			sshpass? (
+				net-misc/sshpass
+			)
+			|| (
+				(
+					dev-python/bcrypt[${PYTHON_USEDEP}]
+					dev-python/paramiko[${PYTHON_USEDEP}]
+				)
+				virtual/ssh
+			)
+		)
+		u2f? (
+			>=dev-python/pyu2f-0.1.5[${PYTHON_USEDEP}]
+			dev-python/cryptography[${PYTHON_USEDEP}]
+		)
+		uinput? (
+			>=dev-python/python-uinput-0.11.2[${PYTHON_USEDEP}]
+		)
+		webcam? (
+			pyinotify? (
+				dev-python/pyinotify[${PYTHON_USEDEP}]
+			)
+		)
+		websockets? (
+			dev-python/websockify[${PYTHON_USEDEP}]
+		)
+		xdg? (
+			dev-python/pyxdg[${PYTHON_USEDEP}]
+			x11-misc/xdg-utils
+		)
+		yaml? (
+			dev-python/pyyaml[${PYTHON_USEDEP}]
+		)
+		zeroconf? (
+			dev-python/zeroconf[${PYTHON_USEDEP}]
+		)
+	')
 	acct-group/xpra
 	app-admin/sudo
 	dev-lang/python[sqlite?,ssl?]
 	dev-libs/gobject-introspection
 	dev-libs/glib[dbus?]
-	dev-python/pygobject[${PYTHON_USEDEP}]
-	aes? (
-		dev-python/cryptography[${PYTHON_USEDEP}]
-	)
 	appindicator? (
 		dev-libs/libappindicator[introspection]
 		gnome-base/librsvg[introspection]
 	)
 	audio? (
-		dev-python/gst-python:1.0[${PYTHON_USEDEP}]
 		media-libs/gst-plugins-bad:1.0[introspection]
 		media-libs/gst-plugins-base:1.0[introspection]
 		media-libs/gstreamer:1.0[introspection]
@@ -448,13 +581,6 @@ RDEPEND+="
 	)
 	avif? (
 		>=media-libs/libavif-0.9
-	)
-	avahi? (
-		dev-python/netifaces[${PYTHON_USEDEP}]
-		net-dns/avahi[${PYTHON_USEDEP},python]
-	)
-	brotli? (
-		app-arch/brotli[${PYTHON_USEDEP}]
 	)
 	cuda_targets_sm_52? (
 		>=dev-util/nvidia-cuda-toolkit-6.5:=
@@ -486,14 +612,10 @@ RDEPEND+="
 	cuda_targets_sm_90? (
 		>=dev-util/nvidia-cuda-toolkit-11.8:=
 	)
-	cpu-percent? (
-		dev-python/psutil[${PYTHON_USEDEP}]
-	)
 	csc_libyuv? (
 		media-libs/libyuv
 	)
 	cups? (
-		dev-python/pycups[${PYTHON_USEDEP}]
 		cups-forwarding? (
 			net-print/cups
 			net-print/cups-filters
@@ -501,7 +623,6 @@ RDEPEND+="
 		)
 	)
 	dbus? (
-		dev-python/dbus-python[${PYTHON_USEDEP}]
 		sys-apps/dbus[X?]
 	)
 	drm? (
@@ -514,12 +635,7 @@ RDEPEND+="
 		gnome-extra/gnome-shell-extension-appindicator
 		gnome-extra/gnome-shell-extension-topicons-plus
 	)
-	gssapi? (
-		dev-python/gssapi[${PYTHON_USEDEP}]
-	)
 	gtk3? (
-		>=dev-python/pycairo-1.20.0[${PYTHON_USEDEP}]
-		dev-python/pygobject:3[${PYTHON_USEDEP},cairo]
 		dev-libs/gobject-introspection
 		x11-libs/gtk+:3[wayland?,X?,introspection]
 		x11-libs/pango[introspection]
@@ -527,57 +643,18 @@ RDEPEND+="
 	html5-client? (
 		www-apps/xpra-html5
 	)
-	ibus? (
-		app-i18n/ibus[${PYTHON_USEDEP},gtk3]
-	)
 	jpeg? (
 		${PILLOW_DEPEND}
 		>=media-libs/libjpeg-turbo-1.4
 	)
-	kerberos? (
-		dev-python/pykerberos[${PYTHON_USEDEP}]
-	)
-	keycloak? (
-		dev-python/oauthlib[${PYTHON_USEDEP}]
-	)
-	ldap? (
-		dev-python/python-ldap[${PYTHON_USEDEP}]
-	)
-	ldap3? (
-		dev-python/ldap3[${PYTHON_USEDEP}]
-	)
-	lz4? (
-		>=dev-python/lz4-4.0.2[${PYTHON_USEDEP}]
-	)
-	lzo? (
-		>=dev-python/python-lzo-0.7.0[${PYTHON_USEDEP}]
-	)
-	mysql? (
-		dev-python/mysql-connector-python[${PYTHON_USEDEP}]
-	)
-	nvenc? (
-		>=dev-python/pycuda-${PYCUDA_PV}[${PYTHON_USEDEP}]
-		>=dev-util/nvidia-cuda-toolkit-5:=
-		>=media-video/nvidia-video-codec-sdk-10
-		dev-python/numpy[${PYTHON_USEDEP}]
-		dev-python/pynvml[${PYTHON_USEDEP}]
-	)
-	nvfbc? (
-		>=dev-python/pycuda-${PYCUDA_PV}[${PYTHON_USEDEP}]
-		>=dev-util/nvidia-cuda-toolkit-11:=
-		dev-python/numpy[${PYTHON_USEDEP}]
-	)
-	nvjpeg? (
-		>=dev-python/pycuda-${PYCUDA_PV}[${PYTHON_USEDEP}]
-	        >=dev-util/nvidia-cuda-toolkit-10:=
-		dev-python/numpy[${PYTHON_USEDEP}]
-	)
 	opengl? (
 		x11-base/xorg-drivers[video_cards_dummy]
 		client? (
-			|| (
-				$(gen_opengl_rdepend)
-			)
+			$(python_gen_cond_dep '
+				|| (
+					'$(gen_opengl_rdepend)'
+				)
+			')
 			dev-python/pyopengl:=
 			dev-python/pyopengl-accelerate:=
 		)
@@ -610,46 +687,13 @@ RDEPEND+="
 			media-libs/libpulse
 		)
 	)
-	qrencode? (
-		media-gfx/qrencode[${PYTHON_USEDEP}]
-	)
-	quic? (
-		dev-python/aioquic[${PYTHON_USEDEP}]
-	)
-	rencode? (
-		>=dev-python/rencode-${RENCODE_PV}[${PYTHON_USEDEP}]
-	)
-	socks? (
-		dev-python/PySocks[${PYTHON_USEDEP}]
-	)
 	server? (
 		x11-base/xorg-server[-minimal,xvfb]
 		x11-drivers/xf86-input-void
 		x11-themes/adwaita-icon-theme
 	)
-	proxy? (
-		dev-python/setproctitle[${PYTHON_USEDEP}]
-	)
-	server? (
-		pyinotify? (
-			dev-python/pyinotify[${PYTHON_USEDEP}]
-		)
-	)
 	spng? (
 		>=media-libs/libspng-0.7
-	)
-	ssh? (
-		dev-python/dnspython[${PYTHON_USEDEP}]
-		sshpass? (
-			net-misc/sshpass
-		)
-		|| (
-			(
-				dev-python/bcrypt[${PYTHON_USEDEP}]
-				dev-python/paramiko[${PYTHON_USEDEP}]
-			)
-			virtual/ssh
-		)
 	)
 	systemd? (
 		sys-apps/systemd
@@ -659,13 +703,6 @@ RDEPEND+="
 	)
 	tiff? (
 		${PILLOW_DEPEND}
-	)
-	u2f? (
-		>=dev-python/pyu2f-0.1.5[${PYTHON_USEDEP}]
-		dev-python/cryptography[${PYTHON_USEDEP}]
-	)
-	uinput? (
-		>=dev-python/python-uinput-0.11.2[${PYTHON_USEDEP}]
 	)
 	v4l2? (
 		sys-kernel/linux-headers
@@ -683,10 +720,7 @@ RDEPEND+="
 	)
 	webcam? (
 		client? (
-			>=media-libs/opencv-2.0[${PYTHON_USEDEP},python]
-		)
-		pyinotify? (
-			dev-python/pyinotify[${PYTHON_USEDEP}]
+			>=media-libs/opencv-2.0[${PYTHON_SINGLE_USEDEP},python]
 		)
 		webcam-forwarding? (
 			kernel_linux? (
@@ -697,9 +731,6 @@ RDEPEND+="
 	webp? (
 		${PILLOW_DEPEND}
 		>=media-libs/libwebp-0.5[opengl?]
-	)
-	websockets? (
-		dev-python/websockify[${PYTHON_USEDEP}]
 	)
 	X? (
 		x11-libs/libX11
@@ -712,38 +743,30 @@ RDEPEND+="
 		x11-libs/libXres
 		x11-libs/libXtst
 	)
-	xdg? (
-		dev-python/pyxdg[${PYTHON_USEDEP}]
-		x11-misc/xdg-utils
-	)
-	yaml? (
-		dev-python/pyyaml[${PYTHON_USEDEP}]
-	)
-	zeroconf? (
-		dev-python/zeroconf[${PYTHON_USEDEP}]
-	)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	virtual/pkgconfig
-	cython? (
-		>=dev-python/cython-3.0.0_alpha11[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		cython? (
+			>=dev-python/cython-3.0.0_alpha11[${PYTHON_USEDEP}]
+		)
+		test? (
+			>=dev-python/rencode-'${RENCODE_PV}'[${PYTHON_USEDEP}]
+			dev-python/cryptography[${PYTHON_USEDEP}]
+			dev-python/numpy[${PYTHON_USEDEP}]
+			client? (
+				sys-libs/zlib
+				X? (
+					x11-misc/xclip
+				)
+			)
 	)
+	')
+	virtual/pkgconfig
 	doc? (
 		app-text/pandoc
-	)
-	test? (
-		>=dev-python/rencode-${RENCODE_PV}[${PYTHON_USEDEP}]
-		dev-python/cryptography[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
-		client? (
-			sys-libs/zlib
-			X? (
-				x11-misc/xclip
-			)
-		)
 	)
 	|| (
 		sys-devel/gcc[cxx]

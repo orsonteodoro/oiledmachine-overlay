@@ -331,7 +331,6 @@ BDEPEND_TEST_CONSTRAINTS="
 		>=dev-python/scipy-1.11.1[${PYTHON_USEDEP}]
 		>=dev-python/sympy-1.10[${PYTHON_USEDEP}]
 		>=dev-python/wheel-0.38.1[${PYTHON_USEDEP}]
-		>=media-libs/opencv-4.5[${PYTHON_USEDEP},python]
 	')
 	(
 		>=dev-python/keras-2.0.0[${PYTHON_SINGLE_USEDEP}]
@@ -345,9 +344,10 @@ BDEPEND_TEST_CONSTRAINTS="
 		>=sci-ml/tensorflow-2.5[${PYTHON_SINGLE_USEDEP}]
 		<sci-ml/tensorflow-2.17.0[${PYTHON_SINGLE_USEDEP}]
 	)
-	<dev-python/jaxlib-0.4.15[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/attrs-23.2.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/kornia-0.7.0[${PYTHON_SINGLE_USEDEP}]
+	>=media-libs/opencv-4.5[${PYTHON_SINGLE_USEDEP},python]
+	<dev-python/jaxlib-0.4.15[${PYTHON_SINGLE_USEDEP}]
 "
 # tests/stress_tests/scripts/requirements.txt \
 BDEPEND_STRESS_TESTS="
@@ -388,7 +388,6 @@ BDEPEND_E2E_TESTS="
 		>=dev-python/scikit-image-0.17.2[${PYTHON_USEDEP}]
 		>=dev-python/tabulate-0.9.0[${PYTHON_USEDEP}]
 		>=dev-python/unittest-xml-reporting-3.0.4[${PYTHON_USEDEP}]
-		>=media-libs/opencv-4.5[${PYTHON_USEDEP},python]
 		>=dev-python/pretrainedmodels-0.7.4[${PYTHON_USEDEP}]
 		dev-python/deepctr-torch[${PYTHON_USEDEP}]
 		dev-python/openvino-dev[${PYTHON_USEDEP}]
@@ -396,6 +395,7 @@ BDEPEND_E2E_TESTS="
 		dev-python/numpy[${PYTHON_USEDEP}]
 	')
 	>=dev-python/timm-0.9.2[${PYTHON_SINGLE_USEDEP}]
+	>=media-libs/opencv-4.5[${PYTHON_SINGLE_USEDEP},python]
 	sci-ml/tensorflow-hub[${PYTHON_SINGLE_USEDEP}]
 "
 # model_hub_tests/tensorflow/requirements.txt \
@@ -544,8 +544,8 @@ BDEPEND_SAMPLES_TESTS_SMOKE_TESTS="
 		dev-python/pytest-xdist[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 		dev-python/requests[${PYTHON_USEDEP}]
-		media-libs/opencv[${PYTHON_USEDEP},python]
 	')
+	media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
 "
 BDEPEND+="
 	>=dev-build/cmake-3.13

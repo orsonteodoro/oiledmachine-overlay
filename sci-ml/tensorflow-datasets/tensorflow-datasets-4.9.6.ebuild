@@ -111,12 +111,12 @@ HUGGINGFACE_RDEPEND="
 		dev-python/wrapt[${PYTHON_USEDEP}]
 		dev-python/zarr[${PYTHON_USEDEP}]
 		dev-python/dm-tree[${PYTHON_USEDEP}]
-		media-libs/opencv[${PYTHON_USEDEP},python]
 		sci-libs/gcld3[${PYTHON_USEDEP}]
 		sci-ml/datasets[${PYTHON_USEDEP}]
 		virtual/pillow[${PYTHON_USEDEP}]
 	')
 	>=dev-python/array-record-0.5.0[${PYTHON_SINGLE_USEDEP}]
+	media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
 	sci-ml/tensorflow[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/tensorflow-data-validation[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/tensorflow-io[${PYTHON_SINGLE_USEDEP}]
@@ -197,7 +197,6 @@ RDEPEND+="
 		imagenet2012_corrupted? (
 			dev-python/scikit-image[${PYTHON_USEDEP}]
 			dev-python/scipy[${PYTHON_USEDEP}]
-			media-libs/opencv[${PYTHON_USEDEP},python]
 		)
 		matplotlib? (
 			dev-python/matplotlib[${PYTHON_USEDEP}]
@@ -252,6 +251,9 @@ RDEPEND+="
 	sci-ml/tensorflow-metadata[${PYTHON_SINGLE_USEDEP}]
 	huggingface? (
 		${HUGGINGFACE_RDEPEND}
+	)
+	imagenet2012_corrupted? (
+		media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
 	)
 	locomotion? (
 		$(python_gen_cond_dep '

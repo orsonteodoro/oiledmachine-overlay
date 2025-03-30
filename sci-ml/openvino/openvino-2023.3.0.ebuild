@@ -314,7 +314,6 @@ BDEPEND_TEST_CONSTRAINTS="
 		>=dev-python/pytest-timeout-2.1.0[${PYTHON_USEDEP}]
 		>=dev-python/requests-2.25.1[${PYTHON_USEDEP}]
 		>=dev-python/wheel-0.38.1[${PYTHON_USEDEP}]
-		>=media-libs/opencv-4.5[${PYTHON_USEDEP},python]
 	')
 	(
 		>=sci-ml/pytorch-1.13[${PYTHON_SINGLE_USEDEP}]
@@ -324,6 +323,7 @@ BDEPEND_TEST_CONSTRAINTS="
 		>=sci-ml/tensorflow-2.5[${PYTHON_SINGLE_USEDEP}]
 		<sci-ml/tensorflow-2.15.0[${PYTHON_SINGLE_USEDEP}]
 	)
+	>=media-libs/opencv-4.5[${PYTHON_SINGLE_USEDEP},python]
 	<dev-python/jax-0.4.15[${PYTHON_SINGLE_USEDEP}]
 	<dev-python/jaxlib-0.4.15[${PYTHON_SINGLE_USEDEP}]
 "
@@ -503,8 +503,8 @@ BDEPEND_SAMPLES_TESTS_SMOKE_TESTS="
 		dev-python/scipy[${PYTHON_USEDEP}]
 		dev-python/test-generator[${PYTHON_USEDEP}]
 		dev-python/wheel[${PYTHON_USEDEP}]
-		media-libs/opencv[${PYTHON_USEDEP},python]
 	')
+	media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
 "
 
 BDEPEND+="

@@ -48,9 +48,9 @@ RDEPEND+="
 		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/scipy[${PYTHON_USEDEP}]
 		dev-python/tqdm[${PYTHON_USEDEP}]
-		media-libs/opencv[${PYTHON_USEDEP},python]
 		virtual/pillow[${PYTHON_USEDEP}]
 	')
+	media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
 	sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 "
