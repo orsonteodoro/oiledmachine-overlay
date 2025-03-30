@@ -77,7 +77,6 @@ RDEPEND="
 		dev-python/rich[${PYTHON_USEDEP}]
 		dev-python/scipy[${PYTHON_USEDEP}]
 		dev-python/ml-dtypes[${PYTHON_USEDEP}]
-		sci-visualization/tensorboard-plugin-profile[${PYTHON_USEDEP}]
 		virtual/pillow[${PYTHON_USEDEP}]
 		|| (
 			'$(gen_rdepend_protobuf)'
@@ -87,6 +86,7 @@ RDEPEND="
 	')
 	>=sci-ml/tensorflow-${TENSORFLOW_PV}[${PYTHON_SINGLE_USEDEP},python]
 	dev-python/optree[${PYTHON_SINGLE_USEDEP},jax?,pytorch?]
+	sci-visualization/tensorboard-plugin-profile[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}

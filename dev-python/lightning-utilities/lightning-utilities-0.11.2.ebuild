@@ -6,6 +6,7 @@ EAPI=8
 
 MY_PN="${PN/-/_}"
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
@@ -40,51 +41,57 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev doc test"
 RDEPEND+="
-	>=dev-python/packaging-17.1
-	dev-python/typing-extensions
+	$(python_gen_cond_dep '
+		>=dev-python/packaging-17.1
+		dev-python/typing-extensions
+	')
 "
 DEPEND+="
-	dev-python/setuptools[${PYTHON_USEDEP}]
 	${RDEPEND}
+	$(python_gen_cond_dep '
+		dev-python/setuptools[${PYTHON_USEDEP}]
+	')
 "
 BDEPEND+="
-	dev-python/setuptools[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
-	dev? (
-		>=app-misc/check-jsonschema-0.28.0[${PYTHON_USEDEP}]
-		>=dev-python/mypy-1.0.0[${PYTHON_USEDEP}]
-		dev-python/types-setuptools[${PYTHON_USEDEP}]
-	)
-	doc? (
-		(
-			>=dev-python/sphinx-5.0[${PYTHON_USEDEP}]
-			<dev-python/sphinx-6.0[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		dev-python/setuptools[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+		dev? (
+			>=app-misc/check-jsonschema-0.28.0[${PYTHON_USEDEP}]
+			>=dev-python/mypy-1.0.0[${PYTHON_USEDEP}]
+			dev-python/types-setuptools[${PYTHON_USEDEP}]
 		)
-		(
-			>=dev-python/myst-parser-1.0.0[${PYTHON_USEDEP}]
-			<dev-python/myst-parser-2.0.0[${PYTHON_USEDEP}]
+		doc? (
+			(
+				>=dev-python/sphinx-5.0[${PYTHON_USEDEP}]
+				<dev-python/sphinx-6.0[${PYTHON_USEDEP}]
+			)
+			(
+				>=dev-python/myst-parser-1.0.0[${PYTHON_USEDEP}]
+				<dev-python/myst-parser-2.0.0[${PYTHON_USEDEP}]
+			)
+			>=dev-python/docutils-0.16[${PYTHON_USEDEP}]
+			>=dev-python/nbsphinx-0.8.5[${PYTHON_USEDEP}]
+			>=dev-python/pandoc-1.0[${PYTHON_USEDEP}]
+			>=dev-python/pygments-2.4.1[${PYTHON_USEDEP}]
+			>=dev-python/requests-2.0.0[${PYTHON_USEDEP}]
+			>=dev-python/sphinx-autodoc-typehints-1.0[${PYTHON_USEDEP}]
+			>=dev-python/sphinx-paramlinks-0.5.1[${PYTHON_USEDEP}]
+			>=dev-python/sphinx-togglebutton-0.2[${PYTHON_USEDEP}]
+			>=dev-python/sphinx-copybutton-0.3[${PYTHON_USEDEP}]
+			>=dev-python/sphinxcontrib-fulltoc-1.0[${PYTHON_USEDEP}]
+			dev-python/ipython[${PYTHON_USEDEP},notebook]
+			dev-python/pt-lightning-sphinx-theme[${PYTHON_USEDEP}]
+			dev-python/sphinxcontrib-mockautodoc[${PYTHON_USEDEP}]
 		)
-		>=dev-python/docutils-0.16[${PYTHON_USEDEP}]
-		>=dev-python/nbsphinx-0.8.5[${PYTHON_USEDEP}]
-		>=dev-python/pandoc-1.0[${PYTHON_USEDEP}]
-		>=dev-python/pygments-2.4.1[${PYTHON_USEDEP}]
-		>=dev-python/requests-2.0.0[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-autodoc-typehints-1.0[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-paramlinks-0.5.1[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-togglebutton-0.2[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-copybutton-0.3[${PYTHON_USEDEP}]
-		>=dev-python/sphinxcontrib-fulltoc-1.0[${PYTHON_USEDEP}]
-		dev-python/ipython[${PYTHON_USEDEP},notebook]
-		dev-python/pt-lightning-sphinx-theme[${PYTHON_USEDEP}]
-		dev-python/sphinxcontrib-mockautodoc[${PYTHON_USEDEP}]
-	)
-	test? (
-		>=dev-python/coverage-7.5.3[${PYTHON_USEDEP}]
-		>=dev-python/pytest-8.2.2[${PYTHON_USEDEP}]
-		>=dev-python/pytest-cov-5.0.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-timeout-2.3.1[${PYTHON_USEDEP}]
-		dev-python/fire[${PYTHON_USEDEP}]
-	)
+		test? (
+			>=dev-python/coverage-7.5.3[${PYTHON_USEDEP}]
+			>=dev-python/pytest-8.2.2[${PYTHON_USEDEP}]
+			>=dev-python/pytest-cov-5.0.0[${PYTHON_USEDEP}]
+			>=dev-python/pytest-timeout-2.3.1[${PYTHON_USEDEP}]
+			dev-python/fire[${PYTHON_USEDEP}]
+		)
+	')
 "
 DOCS=( "CHANGELOG.md" "README.md" )
 

@@ -51,9 +51,9 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/kornia-rs-0.1.0[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
 	')
+	>=dev-python/kornia-rs-0.1.0[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/pytorch-1.9.1[${PYTHON_SINGLE_USEDEP}]
 	x? (
 		>=sci-ml/onnxruntime-1.16[${PYTHON_SINGLE_USEDEP},cuda?,python]

@@ -9,6 +9,7 @@ EAPI=8
 #DISTUTILS_ARGS=(
 #	"kornia-py/Cargo.toml"
 #)
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="maturin"
 PYTHON_COMPAT=( "python3_"{10..12} "pypy3" )
 
@@ -1318,19 +1319,21 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	$(python_gen_cond_dep '
+		>=dev-util/maturin-1[${PYTHON_USEDEP}]
+		dev-python/pytest[${PYTHON_USEDEP}]
+		dev? (
+			>=dev-python/numpy-1.23.0[${PYTHON_USEDEP}]
+			dev-python/pytest[${PYTHON_USEDEP}]
+		)
+	')
 	|| (
 		>=dev-lang/rust-1.76
 		>=dev-lang/rust-bin-1.76
 	)
-	>=dev-util/maturin-1[${PYTHON_USEDEP}]
-	dev-python/pytest[${PYTHON_USEDEP}]
 	dev? (
-		$(python_gen_any_dep '
-			>=dev-python/kornia-0.7.2[${PYTHON_SINGLE_USEDEP}]
-		')
-		>=dev-python/numpy-1.23.0[${PYTHON_USEDEP}]
-		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/jax[${PYTHON_USEDEP},cpu]
+		>=dev-python/kornia-0.7.2[${PYTHON_SINGLE_USEDEP}]
+		dev-python/jax[${PYTHON_SINGLE_USEDEP},cpu]
 	)
 "
 DOCS=( "README.md" )

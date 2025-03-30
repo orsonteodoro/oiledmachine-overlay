@@ -165,13 +165,13 @@ PYTORCH_EXTRA_RDEPEND="
 				<dev-python/rich-13.6.0[${PYTHON_USEDEP}]
 			)
 		)
-		(
-			>=sci-visualization/tensorboardx-2.2[${PYTHON_USEDEP}]
-			strict? (
-				<sci-visualization/tensorboardx-2.7.0[${PYTHON_USEDEP}]
-			)
-		)
 	')
+	(
+		>=sci-visualization/tensorboardx-2.2[${PYTHON_SINGLE_USEDEP}]
+		strict? (
+			<sci-visualization/tensorboardx-2.7.0[${PYTHON_SINGLE_USEDEP}]
+		)
+	)
 "
 RDEPEND+="
 	${PYTORCH_BASE_RDEPEND}

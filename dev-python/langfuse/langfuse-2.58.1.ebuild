@@ -83,7 +83,6 @@ BDEPEND+="
 			>=dev-python/boto3-1.28.59[${PYTHON_USEDEP}]
 			>=dev-python/bson-0.5.10[${PYTHON_USEDEP}]
 			>=dev-python/bs4-0.0.1[${PYTHON_USEDEP}]
-			>=dev-python/chromadb-0.4.2[${PYTHON_USEDEP}]
 			>=dev-python/cohere-4.46[${PYTHON_USEDEP}]
 			>=dev-python/dashscope-1.14.1[${PYTHON_USEDEP}]
 			>=dev-python/langgraph-0.2.62[${PYTHON_USEDEP}]
@@ -106,6 +105,7 @@ BDEPEND+="
 		)
 	')
 	dev? (
+		>=dev-python/chromadb-0.4.2[${PYTHON_SINGLE_USEDEP}]
 		>=sci-ml/huggingface_hub-0.16.4[${PYTHON_SINGLE_USEDEP}]
 		>=dev-python/langchain-anthropic-0.1.4[${PYTHON_SINGLE_USEDEP}]
 		>=dev-python/langchain-aws-0.1.3[${PYTHON_SINGLE_USEDEP}]

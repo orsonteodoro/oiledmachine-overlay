@@ -87,7 +87,6 @@ RDEPEND+="
 		>=dev-python/bcrypt-4.3.0[${PYTHON_USEDEP}]
 		>=dev-python/black-25.1.0[${PYTHON_USEDEP}]
 		>=dev-python/boto3-1.35.53[${PYTHON_USEDEP}]
-		>=dev-python/chromadb-0.6.2[${PYTHON_USEDEP}]
 		>=dev-python/docker-7.1.0[${PYTHON_USEDEP}]
 		>=dev-python/docx2txt-0.8[${PYTHON_USEDEP}]
 		>=dev-python/duckduckgo-search-7.3.2[${PYTHON_USEDEP}]
@@ -153,6 +152,7 @@ RDEPEND+="
 		sci-ml/sentencepiece[${PYTHON_USEDEP}]
 		dev-python/tiktoken[${PYTHON_USEDEP}]
 	')
+	>=dev-python/chromadb-0.6.2[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/colbert-ai-0.2.21[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/faster-whisper-1.1.1[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/langchain-0.3.19[${PYTHON_SINGLE_USEDEP}]

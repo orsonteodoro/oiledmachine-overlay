@@ -56,7 +56,6 @@ ebuild_revision_4
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/anyascii-0.3.0[${PYTHON_USEDEP}]
-		>=dev-python/coqui-tts-trainer-0.1.4[${PYTHON_USEDEP}]
 		>=dev-python/coqpit-0.0.16[${PYTHON_USEDEP}]
 		>=dev-python/cython-3.0.0[${PYTHON_USEDEP}]
 		>=dev-python/einops-0.6.0[${PYTHON_USEDEP}]
@@ -103,6 +102,7 @@ RDEPEND+="
 			>=dev-python/flask-3.0.0[${PYTHON_USEDEP}]
 		)
 	')
+	>=dev-python/coqui-tts-trainer-0.1.4[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/encodec-0.1.1[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/pysbd-0.3.4[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/spacy-3[${PYTHON_SINGLE_USEDEP}]

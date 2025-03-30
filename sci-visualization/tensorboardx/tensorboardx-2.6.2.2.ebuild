@@ -4,10 +4,15 @@
 
 EAPI=8
 
+# FIXME:
+# sci-visualization/tensorboardx/tensorboardx-2.6.2.2.ebuild: line 84: no match: dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
+# sci-visualization/tensorboardx/tensorboardx-2.6.2.2.ebuild: line 137: no match: dev-python/protobuf:0/4.23[${PYTHON_USEDEP}]
+
 MY_PN="tensorboardX"
 
 inherit protobuf-ver
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PROTOBUF_SLOTS_REL=(
 	${PROTOBUF_SLOTS[@]}
@@ -51,58 +56,62 @@ IUSE+=" doc test"
 gen_protobuf_rdepends() {
 	local s
 	for s in ${PROTOBUF_SLOTS_REL[@]} ; do
-		echo "
-			dev-python/protobuf:0/${s}[${PYTHON_USEDEP}]
-		"
+		echo '
+			dev-python/protobuf:0/'${s}'[${PYTHON_USEDEP}]
+		'
 	done
 }
 gen_protobuf_bdepends() {
 	local s
 	for s in ${PROTOBUF_SLOTS_DEV[@]} ; do
-		echo "
-			dev-python/protobuf:0/${s}[${PYTHON_USEDEP}]
-		"
+		echo '
+			dev-python/protobuf:0/'${s}'[${PYTHON_USEDEP}]
+		'
 	done
 }
 RDEPEND+="
-	|| (
-		$(gen_protobuf_rdepends)
-	)
-	dev-python/protobuf:=
-	dev-python/numpy[${PYTHON_USEDEP}]
-	dev-python/packaging[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		|| (
+			'$(gen_protobuf_rdepends)'
+		)
+		dev-python/protobuf:=
+		dev-python/numpy[${PYTHON_USEDEP}]
+		dev-python/packaging[${PYTHON_USEDEP}]
+	')
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	dev-python/setuptools[${PYTHON_USEDEP}]
-	dev-python/setuptools-scm[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
-	doc? (
-		dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}]
-	)
-	test? (
-		$(python_gen_any_dep '
-			sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
-			sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
-		')
-		>=dev-python/imageio-2.27[${PYTHON_USEDEP}]
-		dev-python/boto3[${PYTHON_USEDEP}]
-		dev-python/flake8[${PYTHON_USEDEP}]
-		dev-python/numpy[${PYTHON_USEDEP}]
-		dev-python/pytest[${PYTHON_USEDEP}]
-		dev-python/tensorboard[${PYTHON_USEDEP}]
-		dev-python/matplotlib[${PYTHON_USEDEP}]
-		dev-python/moto[${PYTHON_USEDEP}]
-		dev-python/onnx[${PYTHON_USEDEP}]
-		dev-python/pytest-cov[${PYTHON_USEDEP}]
-		dev-python/soundfile[${PYTHON_USEDEP}]
-		dev-python/visdom[${PYTHON_USEDEP}]
-		|| (
-			$(gen_protobuf_bdepends)
+	$(python_gen_cond_dep '
+		dev-python/setuptools[${PYTHON_USEDEP}]
+		dev-python/setuptools-scm[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+		doc? (
+			dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}]
 		)
-		dev-python/protobuf:=
+		test? (
+			>=dev-python/imageio-2.27[${PYTHON_USEDEP}]
+			dev-python/boto3[${PYTHON_USEDEP}]
+			dev-python/flake8[${PYTHON_USEDEP}]
+			dev-python/numpy[${PYTHON_USEDEP}]
+			dev-python/pytest[${PYTHON_USEDEP}]
+			dev-python/tensorboard[${PYTHON_USEDEP}]
+			dev-python/matplotlib[${PYTHON_USEDEP}]
+			dev-python/moto[${PYTHON_USEDEP}]
+			dev-python/onnx[${PYTHON_USEDEP}]
+			dev-python/pytest-cov[${PYTHON_USEDEP}]
+			dev-python/soundfile[${PYTHON_USEDEP}]
+			dev-python/visdom[${PYTHON_USEDEP}]
+			|| (
+				'$(gen_protobuf_bdepends)'
+			)
+			dev-python/protobuf:=
+		)
+	')
+	test? (
+		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
+		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DOCS=( "HISTORY.rst" "README.md" )

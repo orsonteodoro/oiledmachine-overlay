@@ -67,7 +67,6 @@ RDEPEND+="
 		>=dev-python/wasabi-0.9.1[${PYTHON_USEDEP}]
 		>=dev-python/weasel-0.1.0[${PYTHON_USEDEP}]
 		dev-python/setuptools[${PYTHON_USEDEP}]
-		dev-python/spacy-loggers[${PYTHON_USEDEP}]
 		cuda? (
 			>=dev-python/cupy-5.0.0_beta4[${PYTHON_USEDEP}]
 		)
@@ -91,6 +90,7 @@ RDEPEND+="
 	>=dev-python/thinc-8.3.0[${PYTHON_SINGLE_USEDEP}]
 	=dev-python/thinc-8*[${PYTHON_SINGLE_USEDEP}]
 	dev-python/spacy-legacy[${PYTHON_SINGLE_USEDEP}]
+	dev-python/spacy-loggers[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}

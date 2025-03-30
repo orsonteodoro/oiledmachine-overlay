@@ -306,7 +306,6 @@ RDEPEND="
 		>=dev-python/markdown-2.6.8[${PYTHON_USEDEP}]
 		>=dev-python/numpy-1.12.0[${PYTHON_USEDEP}]
 		>=dev-python/werkzeug-1.0.1[${PYTHON_USEDEP}]
-		>=sci-visualization/tensorboard-plugin-wit-1.6.0[${PYTHON_USEDEP}]
 		>dev-python/six-1.9[${PYTHON_USEDEP}]
 
 		|| (
@@ -403,6 +402,7 @@ RDEPEND="
 		dev-python/protobuf:=
 		net-libs/grpc:=
 	')
+	>=sci-visualization/tensorboard-plugin-wit-1.6.0[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}

@@ -4,10 +4,15 @@
 
 EAPI=8
 
+# FIXME:
+# sci-visualization/tensorboard-plugin-profile/tensorboard-plugin-profile-2.15.1.ebuild: line 78: no match: dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
+# sci-visualization/tensorboard-plugin-profile/tensorboard-plugin-profile-2.14.0.ebuild: line 78: no match: dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
+
 MY_PN="${PN/-/_}"
 
 inherit protobuf-ver
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PROTOBUF_SLOTS=(
 	${PROTOBUF_3_SLOTS[@]}
@@ -49,26 +54,30 @@ IUSE+=" "
 gen_protobuf_rdepend() {
 	local s
 	for s in ${PROTOBUF_SLOTS[@]} ; do
-		echo "
-			dev-python/protobuf:0/${s}[${PYTHON_USEDEP}]
-		"
+		echo '
+			dev-python/protobuf:0/'${s}'[${PYTHON_USEDEP}]
+		'
 	done
 }
 RDEPEND+="
-	>=dev-python/absl-py-0.4[${PYTHON_USEDEP}]
-	>=dev-python/gviz-api-1.9.0[${PYTHON_USEDEP}]
-	|| (
-		$(gen_protobuf_rdepend)
-	)
-	dev-python/protobuf:=
-	>=dev-python/six-1.10.0[${PYTHON_USEDEP}]
-	>=dev-python/werkzeug-0.11.15[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		>=dev-python/absl-py-0.4[${PYTHON_USEDEP}]
+		>=dev-python/gviz-api-1.9.0[${PYTHON_USEDEP}]
+		|| (
+			'$(gen_protobuf_rdepend)'
+		)
+		dev-python/protobuf:=
+		>=dev-python/six-1.10.0[${PYTHON_USEDEP}]
+		>=dev-python/werkzeug-0.11.15[${PYTHON_USEDEP}]
+	')
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	>=dev-python/setuptools-41.0.0[${PYTHON_USEDEP}]
+	$(python_gen_cond_dep '
+		>=dev-python/setuptools-41.0.0[${PYTHON_USEDEP}]
+	')
 "
 DOCS=( "${S}/README.md" )
 

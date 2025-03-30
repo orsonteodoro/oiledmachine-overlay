@@ -94,7 +94,6 @@ PYTORCH_DEPENDS="
 		>=dev-python/cpufeature-0.2.1[${PYTHON_USEDEP}]
 		>=dev-python/dataclasses-json-0.6.1[${PYTHON_USEDEP}]
 		>=dev-python/hypertile-0.1.5_p9999[${PYTHON_USEDEP}]
-		>=dev-python/k-diffusion-0.1.1[${PYTHON_USEDEP}]
 		>=dev-python/ftfy-6.1.1[${PYTHON_USEDEP}]
 		>=dev-python/gpustat-1.1.1[${PYTHON_USEDEP}]
 		>=dev-python/omegaconf-2.3.0[${PYTHON_USEDEP}]
@@ -105,6 +104,7 @@ PYTORCH_DEPENDS="
 	')
 	>=dev-python/asdff-0.2.1[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/controlnet-aux-0.0.7[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/k-diffusion-0.1.1[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/timm-0.9.10[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/diffusers-0.24.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/invisible-watermark-0.2.0[${PYTHON_SINGLE_USEDEP}]

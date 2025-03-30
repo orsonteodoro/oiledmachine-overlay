@@ -225,12 +225,6 @@ VISUAL_RDEPEND="
 "
 BASE_RDEPEND="
 	$(python_gen_cond_dep '
-		(
-			>=dev-python/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
-			strict? (
-				<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
-			)
-		)
 		>dev-python/numpy-1.20.0[${PYTHON_USEDEP}]
 		!strict? (
 			dev-python/packaging[${PYTHON_USEDEP}]
@@ -239,6 +233,12 @@ BASE_RDEPEND="
 			>=dev-python/packaging-17.1[${PYTHON_USEDEP}]
 		)
 	')
+	(
+		>=dev-python/lightning-utilities-0.8.0[${PYTHON_SINGLE_USEDEP}]
+		strict? (
+			<dev-python/lightning-utilities-0.12.0[${PYTHON_SINGLE_USEDEP}]
+		)
+	)
 	(
 		>=sci-ml/pytorch-1.10.0[${PYTHON_SINGLE_USEDEP}]
 		strict? (
@@ -324,12 +324,6 @@ CLASSIFICATION_TEST_BDEPEND="
 DOCS_BDEPEND="
 	$(python_gen_cond_dep '
 		(
-			>=dev-python/lightning-1.8.0[${PYTHON_USEDEP}]
-			strict? (
-				<dev-python/lightning-2.3.0[${PYTHON_USEDEP}]
-			)
-		)
-		(
 			>=dev-python/pydantic-1.0.0[${PYTHON_USEDEP}]
 			strict? (
 				<dev-python/pydantic-3.0.0[${PYTHON_USEDEP}]
@@ -345,10 +339,16 @@ DOCS_BDEPEND="
 		>=dev-python/sphinx-paramlinks-0.6.0[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-togglebutton-0.3.2[${PYTHON_USEDEP}]
 		>=dev-python/sphinxcontrib-fulltoc-1.0[${PYTHON_USEDEP}]
-		>=dev-python/lightning-utilities-0.11.2[${PYTHON_USEDEP}]
 		dev-python/lai-sphinx-theme[${PYTHON_USEDEP}]
 		dev-python/sphinxcontrib-mockautodoc[${PYTHON_USEDEP}]
 	')
+	(
+		>=dev-python/lightning-1.8.0[${PYTHON_SINGLE_USEDEP}]
+		strict? (
+			<dev-python/lightning-2.3.0[${PYTHON_SINGLE_USEDEP}]
+		)
+	)
+	>=dev-python/lightning-utilities-0.11.2[${PYTHON_SINGLE_USEDEP}]
 "
 DOCS_TEST_BDEPEND="
 	$(python_gen_cond_dep '

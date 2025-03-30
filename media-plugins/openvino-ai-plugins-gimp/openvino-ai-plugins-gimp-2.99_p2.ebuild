@@ -102,12 +102,12 @@ PLUGIN_RDEPEND="
 		>=dev-python/tqdm-4.64.0[${PYTHON_USEDEP}]
 		>=dev-python/watchdog-2.1.9[${PYTHON_USEDEP}]
 		>=sci-ml/safetensors-0.4.1[${PYTHON_USEDEP}]
-		sci-ml/huggingface_hub[${PYTHON_USEDEP}]
 	')
 	>=dev-python/controlnet-aux-0.0.6[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/diffusers-0.22.0[${PYTHON_SINGLE_USEDEP}]
 	>=sci-ml/transformers-4.38.0[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/accelerate[${PYTHON_SINGLE_USEDEP}]
+	sci-ml/huggingface_hub[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/openvino[${PYTHON_SINGLE_USEDEP}]
 "
 #	${STABLE_DIFFUSION_MODEL_RDEPEND}

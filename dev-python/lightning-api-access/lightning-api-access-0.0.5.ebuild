@@ -6,6 +6,7 @@ EAPI=8
 
 MY_PN="${PN/-/_}"
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
@@ -45,11 +46,13 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	dev-python/setuptools[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
-	dev? (
-		dev-python/flake8
-	)
+	$(python_gen_cond_dep '
+		dev-python/setuptools[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+		dev? (
+			dev-python/flake8[${PYTHON_USEDEP}]
+		)
+	')
 "
 DOCS=( "README.md" )
 

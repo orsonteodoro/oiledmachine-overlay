@@ -292,7 +292,6 @@ BDEPEND_TEST_CONSTRAINTS="
 			>=dev-python/pytest-5.0[${PYTHON_USEDEP}]
 			<dev-python/pytest-7.5[${PYTHON_USEDEP}]
 		)
-		<dev-python/jax-0.4.15[${PYTHON_USEDEP}]
 		>=dev-python/defusedxml-0.7.1[${PYTHON_USEDEP}]
 		>=dev-python/distro-1.9.0[${PYTHON_USEDEP}]
 		>=dev-python/fastjsonschema-2.17.1[${PYTHON_USEDEP}]
@@ -322,9 +321,10 @@ BDEPEND_TEST_CONSTRAINTS="
 		>=sci-ml/tensorflow-2.5[${PYTHON_SINGLE_USEDEP}]
 		<sci-ml/tensorflow-2.17.0[${PYTHON_SINGLE_USEDEP}]
 	)
-	>=media-libs/opencv-4.5[${PYTHON_SINGLE_USEDEP},python]
 	>=dev-python/attrs-23.2.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/kornia-0.7.0[${PYTHON_SINGLE_USEDEP}]
+	>=media-libs/opencv-4.5[${PYTHON_SINGLE_USEDEP},python]
+	<dev-python/jax-0.4.15[${PYTHON_SINGLE_USEDEP}]
 	<dev-python/jaxlib-0.4.15[${PYTHON_SINGLE_USEDEP}]
 "
 # tests/stress_tests/scripts/requirements.txt \

@@ -120,7 +120,6 @@ BDEPEND+="
 			>=dev-python/compel-0.1.8[${PYTHON_USEDEP}]
 			>=dev-python/requests-mock-1.10.0[${PYTHON_USEDEP}]
 			>=sci-ml/safetensors-0.3.1[${PYTHON_USEDEP}]
-			>=sci-ml/transformers-4.25.1[${PYTHON_USEDEP}]
 			dev-python/datasets[${PYTHON_USEDEP}]
 			dev-python/jinja2[${PYTHON_USEDEP}]
 			dev-python/librosa[${PYTHON_USEDEP}]
@@ -134,6 +133,7 @@ BDEPEND+="
 	test? (
 		>=dev-python/invisible-watermark-0.2.0[${PYTHON_SINGLE_USEDEP}]
 		>=dev-python/k-diffusion-0.0.12[${PYTHON_SINGLE_USEDEP}]
+		>=sci-ml/transformers-4.25.1[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 	)
 "

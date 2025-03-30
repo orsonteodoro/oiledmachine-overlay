@@ -12,8 +12,8 @@ EAPI=8
 # sphinxcontrib-mockautodoc
 # sphinxcontrib-video
 
-DISTUTILS_USE_PEP517="setuptools"
 DISTUTILS_SINGLE_IMPL=1
+DISTUTILS_USE_PEP517="setuptools"
 export PACKAGE_NAME="app"
 PYPI_NO_NORMALIZE=1
 PYTHON_COMPAT=( "python3_"{10..11} )
@@ -87,12 +87,6 @@ APP_BASE_RDEPEND="
 			)
 		)
 		(
-			>=dev-python/lightning-utilities-0.8.0[${PYTHON_USEDEP}]
-			strict? (
-				<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
-			)
-		)
-		(
 			>=dev-python/python-multipart-0.0.5[${PYTHON_USEDEP}]
 			strict? (
 				<dev-python/python-multipart-0.0.7[${PYTHON_USEDEP}]
@@ -141,10 +135,16 @@ APP_BASE_RDEPEND="
 			<dev-python/websockets-11.1.0[${PYTHON_USEDEP}]
 		)
 		>=dev-python/pydantic-1.7.4[${PYTHON_USEDEP}]
-		>=dev-python/lightning-cloud-0.5.69[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
 		dev-python/starlette[${PYTHON_USEDEP}]
 	')
+	(
+		>=dev-python/lightning-utilities-0.8.0[${PYTHON_SINGLE_USEDEP}]
+		strict? (
+			<dev-python/lightning-utilities-0.12.0[${PYTHON_SINGLE_USEDEP}]
+		)
+	)
+	>=dev-python/lightning-cloud-0.5.69[${PYTHON_SINGLE_USEDEP}]
 "
 APP_CLOUD_RDEPEND="
 	$(python_gen_cond_dep '
@@ -176,8 +176,8 @@ APP_COMPONENTS_RDEPEND="
 				<dev-python/aiohttp-3.9.0[${PYTHON_USEDEP}]
 			)
 		)
-		>=dev-python/lightning-api-access-0.0.3[${PYTHON_USEDEP}]
 	')
+	>=dev-python/lightning-api-access-0.0.3[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/lightning-fabric-1.9.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/pytorch-lightning-1.9.0[${PYTHON_SINGLE_USEDEP}]
 "
@@ -204,9 +204,9 @@ DOCS_BDEPEND="
 			)
 		)
 		(
-			>=dev-python/lightning-utilities-0.11.1[${PYTHON_USEDEP}]
+			>=dev-python/lightning-utilities-0.11.1[${PYTHON_SINGLE_USEDEP}]
 			strict? (
-				<dev-python/lightning-utilities-0.12.0[${PYTHON_USEDEP}]
+				<dev-python/lightning-utilities-0.12.0[${PYTHON_SINGLE_USEDEP}]
 			)
 		)
 		(

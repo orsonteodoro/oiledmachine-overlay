@@ -292,13 +292,13 @@ BDEPEND+="
 			dev-python/pandas[${PYTHON_USEDEP}]
 			dev-python/pydub[${PYTHON_USEDEP}]
 			dev-python/pyyaml[${PYTHON_USEDEP}]
-			dev-python/jax[${PYTHON_USEDEP},cpu]
 
 			>=dev-python/pylint-2.6.0[${PYTHON_USEDEP}]
 			dev-python/yapf[${PYTHON_USEDEP}]
 		)
 	')
 	test? (
+		dev-python/jax[${PYTHON_SINGLE_USEDEP},cpu]
 		sci-ml/tensorflow-io[${PYTHON_SINGLE_USEDEP}]
 	)
 "

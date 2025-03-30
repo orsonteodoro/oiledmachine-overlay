@@ -44,7 +44,7 @@ RDEPEND+="
 		dev-python/protobuf[${PYTHON_USEDEP}]
 		dev-python/protobuf:=
 		dev-python/numpy[${PYTHON_USEDEP}]
-		sci-ml/onnxruntime[${PYTHON_USEDEP},python]
+		sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
 	')
 	>=sci-ml/transformers-4.36.0[${PYTHON_SINGLE_USEDEP}]
 "

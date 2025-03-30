@@ -102,7 +102,6 @@ BDEPEND+="
 
 			dev-python/scikit-learn[${PYTHON_USEDEP}]
 
-			dev-python/lightning[${PYTHON_USEDEP}]
 			dev-python/ray[${PYTHON_USEDEP},air,tune]
 
 			dev-python/fastcore[${PYTHON_USEDEP}]
@@ -123,6 +122,7 @@ BDEPEND+="
 		')
 		<dev-python/gymnasium-1.0.0[${PYTHON_SINGLE_USEDEP}]
 		dev-python/jax[${PYTHON_SINGLE_USEDEP},cpu]
+		dev-python/lightning[${PYTHON_SINGLE_USEDEP}]
 		dev-python/moviepy[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]

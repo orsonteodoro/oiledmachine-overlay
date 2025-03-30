@@ -6,6 +6,7 @@ EAPI=8
 
 MY_PN="${PN//-/_}"
 
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="standalone"
 PYTHON_COMPAT=( "python3_"{8..11} )
 

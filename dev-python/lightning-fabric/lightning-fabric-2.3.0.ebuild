@@ -209,12 +209,6 @@ FABRIC_STRATEGIES_BDEPEND="
 "
 FABRIC_TEST_BDEPEND="
 	$(python_gen_cond_dep '
-		(
-			>=sci-visualization/tensorboardx-2.2[${PYTHON_USEDEP}]
-			strict? (
-				<sci-visualization/tensorboardx-2.7.0[${PYTHON_USEDEP}]
-			)
-		)
 		>=dev-python/click-8.1.7[${PYTHON_USEDEP}]
 		>=dev-python/coverage-7.3.1[${PYTHON_USEDEP}]
 		>=dev-python/pytest-7.4.0[${PYTHON_USEDEP}]
@@ -227,6 +221,12 @@ FABRIC_TEST_BDEPEND="
 		>=sci-ml/torchmetrics-0.7.0[${PYTHON_SINGLE_USEDEP}]
 		strict? (
 			<sci-ml/torchmetrics-1.3.0[${PYTHON_SINGLE_USEDEP}]
+		)
+	)
+	(
+		>=sci-visualization/tensorboardx-2.2[${PYTHON_SINGLE_USEDEP}]
+		strict? (
+			<sci-visualization/tensorboardx-2.7.0[${PYTHON_SINGLE_USEDEP}]
 		)
 	)
 "

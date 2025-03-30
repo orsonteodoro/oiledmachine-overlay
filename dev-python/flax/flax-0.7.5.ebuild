@@ -66,7 +66,6 @@ RDEPEND+="
 		>=dev-python/rich-11.1[${PYTHON_USEDEP}]
 		dev-python/matplotlib[${PYTHON_USEDEP}]
 		dev-python/msgpack[${PYTHON_USEDEP}]
-		dev-python/orbax[${PYTHON_USEDEP}]
 		sci-libs/tensorstore[${PYTHON_USEDEP}]
 	')
 	(
@@ -80,6 +79,7 @@ RDEPEND+="
 	)
 	<dev-python/orbax-checkpoint-0.4.5[${PYTHON_SINGLE_USEDEP}]
 	dev-python/optax[${PYTHON_SINGLE_USEDEP}]
+	dev-python/orbax[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
