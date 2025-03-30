@@ -45,7 +45,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev"
 RDEPEND+="
 	$(python_gen_cond_dep '
-		dev-python/accelerate[${PYTHON_USEDEP}]
+		sci-ml/accelerate[${PYTHON_USEDEP}]
 		dev-python/einops[${PYTHON_USEDEP}]
 		dev-python/jsonmerge[${PYTHON_USEDEP}]
 		dev-python/scikit-image[${PYTHON_USEDEP}]
