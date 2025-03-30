@@ -69,7 +69,7 @@ RDEPEND+="
 		dev-python/requests[${PYTHON_USEDEP}]
 		sci-ml/onnx[${PYTHON_USEDEP}]
 		training? (
-			>=dev-python/accelerate-0.29.3[${PYTHON_USEDEP}]
+			>=sci-ml/accelerate-0.29.3[${PYTHON_USEDEP}]
 			>=dev-python/peft-0.6.0[${PYTHON_USEDEP}]
 			dev-python/datasets[${PYTHON_USEDEP}]
 			dev-python/jinja2[${PYTHON_USEDEP}]
@@ -77,7 +77,7 @@ RDEPEND+="
 			dev-python/protobuf:=
 		)
 		pytorch? (
-			>=dev-python/accelerate-0.29.3[${PYTHON_USEDEP}]
+			>=sci-ml/accelerate-0.29.3[${PYTHON_USEDEP}]
 		)
 	')
 	>=sci-ml/huggingface_hub-0.23.2[${PYTHON_SINGLE_USEDEP}]
