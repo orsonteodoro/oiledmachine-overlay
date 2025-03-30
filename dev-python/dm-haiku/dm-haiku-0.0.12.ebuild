@@ -61,7 +61,6 @@ BDEPEND+="
 		test? (
 			>=dev-python/cloudpickle-1.2.2[${PYTHON_USEDEP}]
 			>=dev-python/mock-3.0.5[${PYTHON_USEDEP}]
-			>=dev-python/chex-0.0.4[${PYTHON_USEDEP}]
 			>=dev-python/dm-tree-0.1.1[${PYTHON_USEDEP}]
 			dev-python/dill[${PYTHON_USEDEP}]
 			dev-python/pytest-xdist[${PYTHON_USEDEP}]
@@ -69,6 +68,7 @@ BDEPEND+="
 		)
 	')
 	test? (
+		>=dev-python/chex-0.0.4[${PYTHON_SINGLE_USEDEP}]
 		>=dev-python/optax-0.0.1[${PYTHON_SINGLE_USEDEP}]
 		>=sci-ml/tensorflow-2.16.0[${PYTHON_SINGLE_USEDEP},python]
 	)

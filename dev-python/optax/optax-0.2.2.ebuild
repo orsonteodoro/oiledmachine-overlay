@@ -50,7 +50,6 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/absl-py-0.7.1[${PYTHON_USEDEP}]
 		>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
-		>=dev-python/chex-0.1.86[${PYTHON_USEDEP}]
 		dp-accounting? (
 			>=dev-python/absl-py-1.0.0[${PYTHON_USEDEP}]
 		)
@@ -58,6 +57,7 @@ RDEPEND+="
 			>=dev-python/dp_accounting-0.4[${PYTHON_USEDEP}]
 		)
 	')
+	>=dev-python/chex-0.1.86[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/jax-0.1.55[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/jaxlib-0.1.37[${PYTHON_SINGLE_USEDEP}]
 	examples? (

@@ -38,9 +38,6 @@ RDEPEND+="
 		go? (
 			dev-lang/go
 		)
-		jax? (
-			>=dev-python/chex-0.1.5[${PYTHON_USEDEP}]
-		)
 		julia? (
 			dev-lang/julia
 		)
@@ -71,6 +68,7 @@ RDEPEND+="
 		)
 	')
 	jax? (
+		>=dev-python/chex-0.1.5[${PYTHON_SINGLE_USEDEP}]
 		>=dev-python/distrax-0.1.3[${PYTHON_SINGLE_USEDEP}]
 		>=dev-python/dm-haiku-0.0.8[${PYTHON_SINGLE_USEDEP}]
 		>=dev-python/jax-0.3.24[${PYTHON_SINGLE_USEDEP}]

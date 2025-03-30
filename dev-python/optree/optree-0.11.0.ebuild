@@ -35,13 +35,13 @@ ebuild_revision_2
 RDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/typing-extensions[${PYTHON_USEDEP}]
-		jax? (
-			dev-python/jax[${PYTHON_USEDEP}]
-		)
 		numpy? (
 			dev-python/numpy[${PYTHON_USEDEP}]
 		)
 	')
+	jax? (
+		dev-python/jax[${PYTHON_SINGLE_USEDEP}]
+	)
 	pytorch? (
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	)
@@ -57,10 +57,6 @@ BDEPEND+="
 		dev-python/wheel[${PYTHON_USEDEP}]
 		benchmark? (
 			(
-				>=dev-python/jax-0.4.6[${PYTHON_USEDEP},cpu]
-				<dev-python/jax-0.5.0_alpha0[${PYTHON_USEDEP},cpu]
-			)
-			(
 				>=dev-python/dm-tree-0.1[${PYTHON_USEDEP}]
 				<dev-python/dm-tree-0.2.0_alpha0[${PYTHON_USEDEP}]
 			)
@@ -71,7 +67,6 @@ BDEPEND+="
 		doc? (
 			>=dev-python/sphinx-5.2.1[${PYTHON_USEDEP}]
 			>=dev-python/sphinx-autodoc-typehints-1.19.2[${PYTHON_USEDEP}]
-			>=dev-python/jax-0.3[${PYTHON_USEDEP},cpu]
 			dev-python/sphinx-autoapi[${PYTHON_USEDEP}]
 			dev-python/sphinx-autobuild[${PYTHON_USEDEP}]
 			dev-python/sphinx-copybutton[${PYTHON_USEDEP}]
@@ -105,12 +100,17 @@ BDEPEND+="
 	')
 	benchmark? (
 		(
+			>=dev-python/jax-0.4.6[${PYTHON_SINGLE_USEDEP},cpu]
+			<dev-python/jax-0.5.0_alpha0[${PYTHON_SINGLE_USEDEP},cpu]
+		)
+		(
 			>=sci-ml/pytorch-2.0[${PYTHON_SINGLE_USEDEP}]
 			<sci-ml/pytorch-2.1.0_alpha0[${PYTHON_SINGLE_USEDEP}]
 		)
 		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
 	)
 	doc? (
+		>=dev-python/jax-0.3[${PYTHON_SINGLE_USEDEP},cpu]
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	)
 	test? (

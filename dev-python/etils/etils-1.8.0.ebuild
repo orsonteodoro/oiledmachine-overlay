@@ -166,15 +166,15 @@ BDEPEND+="
 		test? (
 			>=dev-python/pylint-2.6.0[${PYTHON_USEDEP}]
 			dev-python/dataclass-array[${PYTHON_USEDEP}]
-			dev-python/optree[${PYTHON_USEDEP}]
 			dev-python/pyink[${PYTHON_USEDEP}]
 			dev-python/pytest[${PYTHON_USEDEP}]
 			dev-python/pytest-subtests[${PYTHON_USEDEP}]
 			dev-python/pytest-xdist[${PYTHON_USEDEP}]
-			dev-python/chex[${PYTHON_USEDEP}]
 		)
 	')
 	test? (
+		dev-python/chex[${PYTHON_SINGLE_USEDEP}]
+		dev-python/optree[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	)
 "

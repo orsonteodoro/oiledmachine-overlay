@@ -55,13 +55,13 @@ RDEPEND+="
 		dev-python/pandas[${PYTHON_USEDEP}]
 		dev-python/pygame[${PYTHON_USEDEP}]
 		dev-python/reactivex[${PYTHON_USEDEP}]
-		dev-python/chex[${PYTHON_USEDEP}]
 		dev-python/dmlab2d[${PYTHON_USEDEP}]
 		dev-python/dm-tree[${PYTHON_USEDEP}]
 		dev-python/dm-env[${PYTHON_USEDEP}]
 		dev-python/ml-collections[${PYTHON_USEDEP}]
 	')
 	<media-libs/opencv-4.7[${PYTHON_SINGLE_USEDEP},python]
+	dev-python/chex[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/tensorflow[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="

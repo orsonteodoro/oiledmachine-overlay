@@ -42,13 +42,13 @@ IUSE+=" doc examples test"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/absl-py-0.9.0[${PYTHON_USEDEP}]
-		>=dev-python/chex-0.0.8[${PYTHON_USEDEP}]
 		>=dev-python/numpy-1.18.0[${PYTHON_USEDEP}]
 		dev-python/dm-env[${PYTHON_USEDEP}]
 		examples? (
 			>=dev-python/dm-env-1.2[${PYTHON_USEDEP}]
 		)
 	')
+	>=dev-python/chex-0.0.8[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/distrax-0.0.2[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/jax-0.3.0[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/jaxlib-0.1.37[${PYTHON_SINGLE_USEDEP}]
