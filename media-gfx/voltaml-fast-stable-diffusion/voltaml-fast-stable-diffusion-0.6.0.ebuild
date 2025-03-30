@@ -89,7 +89,7 @@ BOT_DEPENDS="
 "
 PYTORCH_DEPENDS="
 	$(python_gen_cond_dep '
-		>=dev-python/accelerate-0.24.1[${PYTHON_USEDEP}]
+		>=sci-ml/accelerate-0.24.1[${PYTHON_USEDEP}]
 		>=dev-python/boto3-1.28.83[${PYTHON_USEDEP}]
 		>=dev-python/coloredlogs-15.0.1[${PYTHON_USEDEP}]
 		>=dev-python/cpufeature-0.2.1[${PYTHON_USEDEP}]
