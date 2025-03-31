@@ -119,7 +119,7 @@ MITIGATION_URI="https://webkitgtk.org/security/WSA-2025-0002.html"
 VULNERABILITIES_FIXED=(
 	"CVE-2024-44192;DoS;Medium"
 	"CVE-2024-54467;ID;Medium"
-	"CVE-2025-24201;DoS, DT, ID;High"
+	"CVE-2025-24201;SBX, DoS, DT, ID;High"
 )
 OCDM_WV="virtual/libc" # Placeholder
 PYTHON_COMPAT=( "python3_"{10..12} )
