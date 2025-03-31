@@ -213,7 +213,7 @@ src_prepare() {
 }
 
 multilib_src_configure() {
-	GST_PLUGINS_NOAUTO="amfcodec bz2 codec2json hls lcevcdecoder lcevcencoder ipcpipeline librfb msdk nvcodec qsv shm va vulkan wayland x11"
+	GST_PLUGINS_NOAUTO="amfcodec bz2 codec2json hls lcevcdecoder lcevcencoder ipcpipeline librfb msdk nvcodec qsv shm va vulkan wayland webrtcdsp x11"
 	local emesonargs=(
 		$(meson_feature "amf" "amfcodec")
 		$(meson_feature "bzip2" "bz2")
@@ -233,6 +233,7 @@ multilib_src_configure() {
 		-Dnvcodec=$(usex nvcodec "enabled" "disabled")
 		-Dshm="enabled"
 		-Dudev=$(usex udev $(usex vaapi "enabled" "disabled") "disabled")
+		-Dwebrtcdsp="disabled"
 		-Dx11=$(usex X "enabled" "disabled")
 	)
 	gstreamer_multilib_src_configure
