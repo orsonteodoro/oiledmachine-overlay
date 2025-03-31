@@ -295,7 +295,7 @@ DEPEND_WAYLAND="
 "
 
 DEPEND_ZLIB="
-	>=sys-libs/zlib-1:1.3
+	>=sys-libs/zlib-1.3
 "
 
 DEPEND_PLUGINS_AJA="
