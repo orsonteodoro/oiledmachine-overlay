@@ -113,17 +113,13 @@ tr uk vi zh_CN
 LLVM_COMPAT=( 18 14 )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MESA_PV="18.0.0_rc5"
-MITIGATION_DATE="Feb 09, 2025"
+MITIGATION_DATE="Mar 20, 2025"
 MITIGATION_LAST_UPDATE=1741943640 # From `date +%s -d "2025-03-14 2:14 AM PDT"` from tag in GH for this version
-MITIGATION_URI="https://webkitgtk.org/security/WSA-2025-0001.html"
+MITIGATION_URI="https://webkitgtk.org/security/WSA-2025-0002.html"
 VULNERABILITIES_FIXED=(
-	"CVE-2025-24162;ZC, DoS, DT, ID;Critical"
-	"CVE-2024-27856;CE, DoS, DT, ID;High"
-	"CVE-2025-24150;CI, DoS, DT, ID;High"
-	"CVE-2024-54543;DoS, DT, ID;High"
-	"CVE-2025-24143;ID;Medium"
-	"CVE-2024-54658;DoS;Medium"
-	"CVE-2025-24158;DoS;Medium"
+	"CVE-2024-44192;DoS;Medium"
+	"CVE-2024-54467;ID;Medium"
+	"CVE-2025-24201;DoS, DT, ID;High"
 )
 OCDM_WV="virtual/libc" # Placeholder
 PYTHON_COMPAT=( "python3_"{10..12} )
