@@ -67,6 +67,10 @@ DISABLED_CONSTRAINTS_RDEPEND="
 			>=dev-python/unstructured-client-0.23.0[${PYTHON_USEDEP}]
 			<dev-python/unstructured-client-0.26.0[${PYTHON_USEDEP}]
 		)
+		(
+			>=dev-python/weaviate-client-3.26.7[${PYTHON_USEDEP}]
+			<dev-python/weaviate-client-4.0.0[${PYTHON_USEDEP}]
+		)
 		<dev-python/botocore-1.34.132[${PYTHON_USEDEP}]
 		<dev-python/urllib3-1.27[${PYTHON_USEDEP}]
 		>=dev-python/grpcio-1.65.5[${PYTHON_USEDEP}]
@@ -76,10 +80,6 @@ DISABLED_CONSTRAINTS_RDEPEND="
 	(
 		>=sci-ml/tokenizers-0.19[${PYTHON_SINGLE_USEDEP}]
 		<sci-ml/tokenizers-0.20[${PYTHON_SINGLE_USEDEP}]
-	)
-	(
-		>=dev-python/weaviate-client-3.26.7[${PYTHON_SINGLE_USEDEP}]
-		<dev-python/weaviate-client-4.0.0[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 BASE_RDEPEND="

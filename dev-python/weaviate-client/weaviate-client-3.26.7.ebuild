@@ -13,7 +13,6 @@ MY_PN="weaviate-python-client"
 # pytest-profiling
 # types-urllib3
 
-DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 GRPC_SLOTS=(
 	"1.57"
@@ -69,69 +68,65 @@ REQUIRED_USE="
 gen_grpcio_rdepend() {
 	local s
 	for s in ${GRPC_SLOTS[@]} ; do
-		echo '
-			=dev-python/grpcio-'${s}'*[${PYTHON_USEDEP}]
-			=dev-python/grpcio-tools-'${s}'*[${PYTHON_USEDEP}]
-		'
+		echo "
+			=dev-python/grpcio-${s}*[${PYTHON_USEDEP}]
+			=dev-python/grpcio-tools-${s}*[${PYTHON_USEDEP}]
+		"
 	done
 }
 RDEPEND+="
-	$(python_gen_cond_dep '
-		>=dev-python/Authlib-1.3.1
-		>=dev-python/requests-2.32.2
-		>=dev-python/validators-0.21.2
-		grpc? (
-			|| (
-				'$(gen_grpcio_rdepend)'
-			)
-			dev-python/grpcio:=
-			dev-python/grpcio-tools:=
+	>=dev-python/Authlib-1.3.1
+	>=dev-python/requests-2.32.2
+	>=dev-python/validators-0.21.2
+	grpc? (
+		|| (
+			$(gen_grpcio_rdepend)
 		)
-	')
+		dev-python/grpcio:=
+		dev-python/grpcio-tools:=
+	)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	$(python_gen_cond_dep '
-		>=dev-python/setuptools-65[${PYTHON_USEDEP}]
-		>=dev-python/wheel-0.38.1[${PYTHON_USEDEP}]
-		>dev-python/setuptools-scm-6.2[${PYTHON_USEDEP},toml(+)]
-		dev? (
-			>=dev-python/requests-2.32.2[${PYTHON_USEDEP}]
-			>=dev-python/validators-0.21.2[${PYTHON_USEDEP}]
-			>=dev-python/Authlib-1.3.1[${PYTHON_USEDEP}]
-
-			dev-python/build[${PYTHON_USEDEP}]
-			dev-python/twine[${PYTHON_USEDEP}]
-			dev-python/wheel[${PYTHON_USEDEP}]
-			dev-python/setuptools-scm[${PYTHON_USEDEP}]
-			>=dev-python/sphinx-7.0.0[${PYTHON_USEDEP}]
-
-			>=dev-python/pytest-7.4.4[${PYTHON_USEDEP}]
-			>=dev-python/pytest-cov-4.1.0[${PYTHON_USEDEP}]
-			>=dev-python/pytest-benchmark-4.0.0[${PYTHON_USEDEP}]
-			>=dev-python/pytest-profiling-1.7.0[${PYTHON_USEDEP}]
-			>=dev-python/coverage-7.4.1[${PYTHON_USEDEP}]
-			>=dev-python/werkzeug-2.3.7[${PYTHON_USEDEP}]
-			>=dev-python/pytest-httpserver-1.0.8[${PYTHON_USEDEP}]
-
-			>=dev-python/mypy-1.5.1[${PYTHON_USEDEP}]
-			>=dev-python/mypy-extensions-1.0.0[${PYTHON_USEDEP}]
-			>=dev-python/tomli-2.0.1[${PYTHON_USEDEP}]
-			>=dev-python/types-protobuf-4.24.0.1[${PYTHON_USEDEP}]
-			>=dev-python/types-requests-2.31.0.2[${PYTHON_USEDEP}]
-			>=dev-python/types-urllib3-1.26.25.14[${PYTHON_USEDEP}]
-			>=dev-python/typing-extensions-4.7.1[${PYTHON_USEDEP}]
-
-			dev-python/flake8[${PYTHON_USEDEP}]
-			>=dev-python/flake8-bugbear-24.1.17[${PYTHON_USEDEP}]
-			>=dev-python/flake8-comprehensions-3.14.0[${PYTHON_USEDEP}]
-			>=dev-python/flake8-builtins-2.2.0[${PYTHON_USEDEP}]
-		)
-	')
+	>=dev-python/setuptools-65[${PYTHON_USEDEP}]
+	>=dev-python/wheel-0.38.1[${PYTHON_USEDEP}]
+	>dev-python/setuptools-scm-6.2[${PYTHON_USEDEP},toml(+)]
 	dev? (
-		dev-vcs/pre-commit[${PYTHON_SINGLE_USEDEP}]
+		$(python_gen_any_dep '
+			dev-vcs/pre-commit[${PYTHON_SINGLE_USEDEP}]
+		')
+		>=dev-python/requests-2.32.2[${PYTHON_USEDEP}]
+		>=dev-python/validators-0.21.2[${PYTHON_USEDEP}]
+		>=dev-python/Authlib-1.3.1[${PYTHON_USEDEP}]
+
+		dev-python/build[${PYTHON_USEDEP}]
+		dev-python/twine[${PYTHON_USEDEP}]
+		dev-python/wheel[${PYTHON_USEDEP}]
+		dev-python/setuptools-scm[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-7.0.0[${PYTHON_USEDEP}]
+
+		>=dev-python/pytest-7.4.4[${PYTHON_USEDEP}]
+		>=dev-python/pytest-cov-4.1.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-benchmark-4.0.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-profiling-1.7.0[${PYTHON_USEDEP}]
+		>=dev-python/coverage-7.4.1[${PYTHON_USEDEP}]
+		>=dev-python/werkzeug-2.3.7[${PYTHON_USEDEP}]
+		>=dev-python/pytest-httpserver-1.0.8[${PYTHON_USEDEP}]
+
+		>=dev-python/mypy-1.5.1[${PYTHON_USEDEP}]
+		>=dev-python/mypy-extensions-1.0.0[${PYTHON_USEDEP}]
+		>=dev-python/tomli-2.0.1[${PYTHON_USEDEP}]
+		>=dev-python/types-protobuf-4.24.0.1[${PYTHON_USEDEP}]
+		>=dev-python/types-requests-2.31.0.2[${PYTHON_USEDEP}]
+		>=dev-python/types-urllib3-1.26.25.14[${PYTHON_USEDEP}]
+		>=dev-python/typing-extensions-4.7.1[${PYTHON_USEDEP}]
+
+		dev-python/flake8[${PYTHON_USEDEP}]
+		>=dev-python/flake8-bugbear-24.1.17[${PYTHON_USEDEP}]
+		>=dev-python/flake8-comprehensions-3.14.0[${PYTHON_USEDEP}]
+		>=dev-python/flake8-builtins-2.2.0[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "README.rst" )

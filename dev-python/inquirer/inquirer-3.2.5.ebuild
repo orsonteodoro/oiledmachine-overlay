@@ -49,6 +49,7 @@ BDEPEND+="
 	dev-python/wheel[${PYTHON_USEDEP}]
 	dev? (
 		$(python_gen_any_dep '
+			>=dev-python/pre-commit-hooks-4.3.0[${PYTHON_SINGLE_USEDEP}]
 			>=dev-vcs/pre-commit-2.17.0[${PYTHON_SINGLE_USEDEP}]
 		')
 		>=dev-python/bandit-1.7.4[${PYTHON_USEDEP}]
@@ -57,7 +58,6 @@ BDEPEND+="
 		>=dev-python/furo-2022.9.29[${PYTHON_USEDEP}]
 		>=dev-python/isort-5.10.1[${PYTHON_USEDEP}]
 		>=dev-python/pexpect-4.8.0[${PYTHON_USEDEP}]
-		>=dev-python/pre-commit-hooks-4.3.0[${PYTHON_USEDEP}]
 		>=dev-python/pyupgrade-2.31.1[${PYTHON_USEDEP}]
 		>=dev-python/safety-2.3.1[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-5.3.0[${PYTHON_USEDEP}]
