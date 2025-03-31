@@ -213,7 +213,7 @@ src_prepare() {
 }
 
 multilib_src_configure() {
-	GST_PLUGINS_NOAUTO="amfcodec bz2 codec2json hls ipcpipeline librfb msdk nvcodec qsv shm va vulkan wayland x11"
+	GST_PLUGINS_NOAUTO="amfcodec bz2 codec2json hls lcevcdecoder lcevcencoder ipcpipeline librfb msdk nvcodec qsv shm va vulkan wayland x11"
 	local emesonargs=(
 		$(meson_feature "amf" "amfcodec")
 		$(meson_feature "bzip2" "bz2")
@@ -227,6 +227,8 @@ multilib_src_configure() {
 		-Dcodec2json="disabled"
 		-Dhls="disabled"
 		-Dipcpipeline="enabled"
+		-Dlcevcdecoder="disabled"
+		-Dlcevcencoder="disabled"
 		-Dmsdk=$(usex msdk "enabled" "disabled")
 		-Dnvcodec=$(usex nvcodec "enabled" "disabled")
 		-Dshm="enabled"
