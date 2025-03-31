@@ -99,9 +99,8 @@ REQUIRED_USE="
 	)
 "
 # Depends update Jan 5, 2023
-# yaml-cpp relaxed
 RDEPEND="
-	>=dev-cpp/yaml-cpp-0.7.0:=
+	~dev-cpp/yaml-cpp-0.7.0:=
 	>=dev-cpp/pystring-1.1.3
 	>=dev-libs/expat-2.4.1
 	>=sys-libs/minizip-ng-3.0.7
