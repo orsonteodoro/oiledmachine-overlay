@@ -213,7 +213,7 @@ src_prepare() {
 }
 
 multilib_src_configure() {
-	GST_PLUGINS_NOAUTO="amfcodec bz2 codec2json hls lcevcdecoder lcevcencoder ipcpipeline librfb msdk nvcodec qsv shm va vulkan wayland webrtcdsp x11"
+	GST_PLUGINS_NOAUTO="amfcodec bz2 codec2json hls lcevcdecoder lcevcencoder ipcpipeline librfb msdk nvcodec qsv shm va vulkan wayland webrtc webrtcdsp x11"
 	local emesonargs=(
 		$(meson_feature "amf" "amfcodec")
 		$(meson_feature "bzip2" "bz2")
@@ -233,6 +233,7 @@ multilib_src_configure() {
 		-Dnvcodec=$(usex nvcodec "enabled" "disabled")
 		-Dshm="enabled"
 		-Dudev=$(usex udev $(usex vaapi "enabled" "disabled") "disabled")
+		-Dwebrtc="disabled"
 		-Dwebrtcdsp="disabled"
 		-Dx11=$(usex X "enabled" "disabled")
 	)
@@ -242,4 +243,11 @@ multilib_src_configure() {
 multilib_src_test() {
 	# Tests are slower than upstream expects
 	CK_DEFAULT_TIMEOUT=300 gstreamer_multilib_src_test
+}
+
+multilib_src_install() {
+	gstreamer_multilib_src_install
+
+	# Package collision
+	find "${ED}/usr" -name "libgstwebrtcdsp.so" -delete || die
 }
