@@ -75,11 +75,11 @@ RDEPEND="
 		>=media-libs/shaderc-2019.1[${MULTILIB_USEDEP}]
 	)
 	unwind? (
-		llvm-libunwind? (
-			llvm-runtimes/libunwind[${MULTILIB_USEDEP}]
-		)
 		!llvm-libunwind? (
 			sys-libs/libunwind:=[${MULTILIB_USEDEP}]
+		)
+		llvm-libunwind? (
+			llvm-runtimes/libunwind[${MULTILIB_USEDEP}]
 		)
 	)
 	vulkan? (
@@ -126,7 +126,7 @@ src_unpack() {
 			"${S}/3rdparty/fast_float" \
 			|| die
 
-		if use opengl; then
+		if use opengl ; then
 			rmdir "${S}/3rdparty/glad" || die
 			mv \
 				"glad-${GLAD_PV}" \
@@ -164,7 +164,7 @@ multilib_src_configure() {
 		$(meson_feature xxhash)
 		$(meson_use test tests)
 		-Ddemos=false #851927
-		-Dvulkan-registry="${ESYSROOT}"/usr/share/vulkan/registry/vk.xml
+		-Dvulkan-registry="${ESYSROOT}/usr/share/vulkan/registry/vk.xml"
 	)
 	meson_src_configure
 }
@@ -174,8 +174,9 @@ multilib_src_install() {
 	# Prevent vulkan from leaking into the .pc here for now.  (bug #951125)
 	if ! use vulkan && has_version "media-libs/vulkan-loader" ; then
 		sed -E \
+			-i \
 			-e '/^Requires/s/vulkan[^,]*,? ?//;s/, $//;/^Requires[^:]*: $/d' \
-			-i "${ED}/usr/$(get_libdir)/pkgconfig/libplacebo.pc" \
+			"${ED}/usr/$(get_libdir)/pkgconfig/libplacebo.pc" \
 			|| die
 	fi
 }
