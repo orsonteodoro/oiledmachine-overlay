@@ -295,7 +295,7 @@ contribovis contribsfm contribxfeatures2d -cuda -cudnn debug dnnsamples +eigen
 +opencl +openexr -opengl -openmp +opencvapps +openh264 openvino -openvx +png
 +python +quirc -qt5 -qt6 rocm -spng +sun -system-flatbuffers tesseract -testprograms
 -tbb +tiff +vaapi +v4l +vpx +vtk -wayland +webp x264 x265 -xine video_cards_intel
--vulkan ebuild_revision_9
+-vulkan ebuild_revision_10
 "
 # OpenGL needs gtk or Qt installed to activate, otherwise build system
 # will silently disable it without the user knowing, which defeats the
@@ -1453,7 +1453,7 @@ eerror "OpenVINO is not supported for ${ARCH}"
 			cmake_src_configure
 		}
 
-		python_foreach_impl python_configure
+		python_configure
 	else
 		mycmakeargs+=(
 			-DBUILD_opencv_python2=OFF
@@ -1467,11 +1467,7 @@ eerror "OpenVINO is not supported for ${ARCH}"
 }
 
 multilib_src_compile() {
-	if multilib_is_native_abi && use python ; then
-		python_foreach_impl cmake_src_compile
-	else
-		cmake_src_compile
-	fi
+	cmake_src_compile
 }
 
 # Fix loader for cx-Freeze
@@ -1502,9 +1498,9 @@ multilib_src_install() {
 		)
 	fi
 	if multilib_is_native_abi && use python ; then
-		python_foreach_impl cmake_src_install
-		python_foreach_impl python_optimize
-		python_foreach_impl fix_python_loader
+		cmake_src_install
+		python_optimize
+		fix_python_loader
 	else
 		cmake_src_install
 	fi

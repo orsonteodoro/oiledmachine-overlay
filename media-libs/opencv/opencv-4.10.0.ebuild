@@ -285,7 +285,7 @@ IUSE="
 	${PATENT_STATUS_IUSE[@]}
 	debug -doc +eigen gflags glog -halide +java -non-free +opencvapps +python
 	-system-flatbuffers test -testprograms -vulkan -zlib-ng
-	ebuild_revision_9
+	ebuild_revision_10
 "
 # hal for acceleration
 IUSE+="
@@ -1628,7 +1628,7 @@ eerror "OpenVINO is not supported for ${ARCH}"
 			cmake_src_configure
 		}
 
-		python_foreach_impl python_configure
+		python_configure
 	else
 		mycmakeargs+=(
 			-DBUILD_opencv_python3=OFF
@@ -1642,14 +1642,7 @@ eerror "OpenVINO is not supported for ${ARCH}"
 }
 
 multilib_src_compile() {
-	opencv_compile() {
-		cmake_src_compile
-	}
-	if multilib_is_native_abi && use python ; then
-		python_foreach_impl opencv_compile
-	else
-		opencv_compile
-	fi
+	cmake_src_compile
 }
 
 multilib_src_test() {
@@ -1727,7 +1720,7 @@ multilib_src_test() {
 	}
 
 	if multilib_is_native_abi && use python ; then
-		python_foreach_impl virtx opencv_test
+		virtx opencv_test
 	else
 		virtx opencv_test
 	fi
@@ -1761,9 +1754,9 @@ multilib_src_install() {
 		)
 	fi
 	if multilib_is_native_abi && use python ; then
-		python_foreach_impl cmake_src_install
-		python_foreach_impl python_optimize
-		python_foreach_impl fix_python_loader
+		cmake_src_install
+		python_optimize
+		fix_python_loader
 	else
 		cmake_src_install
 	fi
