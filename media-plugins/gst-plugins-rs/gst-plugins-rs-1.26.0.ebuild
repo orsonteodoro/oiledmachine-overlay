@@ -1393,16 +1393,14 @@ ewarn
 }
 
 multilib_src_configure() {
-	local llvm_slot
-	if use llvm_slot_19 ; then
-		llvm_slot=19
-	elif use llvm_slot_18 ; then
-		llvm_slot=18
-	elif use llvm_slot_17 ; then
-		llvm_slot=17
-	elif use llvm_slot_16 ; then
-		llvm_slot=16
-	fi
+	local llvm_slot=""
+	local x
+	for x in ${LLVM_COMPAT[@]} ; do
+		if has "llvm_slot_${s}" ${IUSE_EFFECTIVE} && use "llvm_slot_${s}" ; then
+			llvm_slot="${x}"
+			break
+		fi
+	done
 	LLVM_MAX_SLOT=${llvm_slot}
 	llvm_pkg_setup
 einfo "LLVM SLOT:  ${LLVM_MAX_SLOT}"
