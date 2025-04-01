@@ -1,0 +1,15 @@
+diff '--color=auto' -urp opencv-4.11.0.orig/modules/gapi/cmake/DownloadADE.cmake opencv-4.11.0/modules/gapi/cmake/DownloadADE.cmake
+--- opencv-4.11.0.orig/modules/gapi/cmake/DownloadADE.cmake	2025-01-08 04:47:46.000000000 -0800
++++ opencv-4.11.0/modules/gapi/cmake/DownloadADE.cmake	2025-04-01 12:32:05.845366922 -0700
+@@ -1,7 +1,7 @@
+ set(ade_src_dir "${OpenCV_BINARY_DIR}/3rdparty/ade")
+-set(ade_filename "v0.1.2e.zip")
++set(ade_filename "v0.1.2e.tar.gz")
+ set(ade_subdir "ade-0.1.2e")
+-set(ade_md5 "962ce79e0b95591f226431f7b5f152cd")
++set(ade_md5 "e36774fc32e99463462f5b882f5d572d")
+ ocv_download(FILENAME ${ade_filename}
+              HASH ${ade_md5}
+              URL
+Only in opencv-4.11.0/modules/gapi/cmake: DownloadADE.cmake.orig
+Only in opencv-4.11.0/modules/gapi/cmake: DownloadADE.cmake.rej

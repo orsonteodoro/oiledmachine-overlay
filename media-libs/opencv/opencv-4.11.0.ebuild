@@ -226,7 +226,7 @@ if [[ "${PV}" == *"9999"* ]] ; then
 	EGIT_REPO_URI="https://github.com/${PN}/${PN}.git"
 else
 	# From ocv_download()
-	ADE_PV="0.1.2d"									# See https://github.com/opencv/opencv/blob/4.10.0/modules/gapi/cmake/DownloadADE.cmake#L2
+	ADE_PV="0.1.2e"									# See https://github.com/opencv/opencv/blob/4.10.0/modules/gapi/cmake/DownloadADE.cmake#L2
 	DNN_SAMPLES_FACE_DETECTOR_COMMIT="b2bfc75f6aea5b1f834ff0f0b865a7c18ff1459f"	# See https://github.com/opencv/opencv_extra/blob/4.10.0/testdata/dnn/download_models.py#L389
 	FACE_ALIGNMENT_COMMIT="8afa57abc8229d611c4937165d20e2a2d9fc5a12"		# See https://github.com/opencv/opencv_contrib/blob/4.10.0/modules/face/CMakeLists.txt#L11
 	NVIDIA_OPTICAL_FLOW_COMMIT="edb50da3cf849840d680249aa6dbef248ebce2ca"		# See https://github.com/opencv/opencv_contrib/blob/4.10.0/modules/cudaoptflow/CMakeLists.txt#L12
@@ -984,7 +984,7 @@ PATCHES=(
 #	"${FILESDIR}/${PN}-4.8.1-use-system-flatbuffers.patch"
 	"${FILESDIR}/${PN}-4.8.1-use-system-opencl.patch"
 	"${FILESDIR}/${PN}-4.9.0-drop-python2-detection.patch"
-	"${FILESDIR}/${PN}-4.9.0-ade-0.1.2d.tar.gz.patch"
+	"${FILESDIR}/${PN}-4.11.0-ade-0.1.2e.tar.gz.patch"
 	"${FILESDIR}/${PN}-4.9.0-cmake-cleanup.patch"
 	# TODO applied in src_prepare
 	# "${FILESDIR}/${PN}_contrib-${PV}-rgbd.patch"
