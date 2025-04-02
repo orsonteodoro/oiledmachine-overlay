@@ -55,6 +55,7 @@ distutils_enable_sphinx "doc"
 distutils_enable_tests "pytest"
 
 pkg_setup() {
+	python_setup
 	if use test ; then
 		if ! has_version "media-libs/vips" ; then
 eerror

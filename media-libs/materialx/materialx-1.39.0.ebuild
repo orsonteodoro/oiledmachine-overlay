@@ -112,7 +112,7 @@ PATCHES=(
 DOCS=( )
 
 pkg_setup() {
-	use python && python_setup
+	python_setup
 }
 
 verify_version() {

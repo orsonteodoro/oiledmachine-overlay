@@ -119,6 +119,7 @@ eerror
 		die
 	fi
 
+	python_setup
 	setup_openjdk
 
 	if has network-sandbox $FEATURES ; then

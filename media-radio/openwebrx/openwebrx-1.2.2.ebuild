@@ -229,6 +229,7 @@ DOCS=( "CHANGELOG.md" "LICENSE.txt" "README.md" )
 
 pkg_setup() {
 	ewarn "This ebuild is in development"
+	python_setup
 }
 
 src_configure() {

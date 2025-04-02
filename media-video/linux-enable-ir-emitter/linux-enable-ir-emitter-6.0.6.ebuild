@@ -86,6 +86,7 @@ pkg_setup() {
 		~VIDEO_DEV
 	"
 	check_extra_config
+	python_setup
 }
 
 src_configure() {

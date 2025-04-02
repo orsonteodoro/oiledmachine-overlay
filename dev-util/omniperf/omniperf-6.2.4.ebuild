@@ -77,6 +77,7 @@ PATCHES=(
 DOCS=( "AUTHORS" "CHANGES" )
 
 pkg_setup() {
+	python_setup
 	rocm_pkg_setup
 }
 

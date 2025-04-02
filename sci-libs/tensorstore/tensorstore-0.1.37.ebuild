@@ -327,6 +327,7 @@ eerror
 		die
 	fi
 
+	python_setup
 	setup_openjdk
 
 	request_network_sandbox_permissions

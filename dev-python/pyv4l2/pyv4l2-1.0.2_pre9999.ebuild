@@ -53,6 +53,7 @@ PATCHES=(
 
 pkg_setup() {
 	export EUSE_CYTHON="True"
+	python_setup
 }
 
 unpack_live() {

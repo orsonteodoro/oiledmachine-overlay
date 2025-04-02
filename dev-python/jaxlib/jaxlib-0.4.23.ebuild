@@ -703,6 +703,7 @@ einfo
 
 pkg_setup() {
 	dhms_start
+	python_setup
 	setup_tc
 
 	if ! [[ "${BAZEL_LD_PRELOAD_IGNORED_RISKS}" =~ ("allow"|"accept") ]] ; then

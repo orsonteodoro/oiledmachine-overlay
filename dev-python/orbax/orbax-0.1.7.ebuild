@@ -89,6 +89,7 @@ eerror "Please remove it.  Upstream only supports up to 3.9."
 eerror
 		die
 	fi
+	python_setup
 }
 
 src_unpack() {

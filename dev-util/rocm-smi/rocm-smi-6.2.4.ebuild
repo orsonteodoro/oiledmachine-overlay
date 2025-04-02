@@ -60,6 +60,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	python_setup
 	rocm_pkg_setup
 }
 

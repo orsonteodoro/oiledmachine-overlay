@@ -334,6 +334,7 @@ pkg_pretend() {
 
 pkg_setup() {
 	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
+	python_setup
 }
 
 gen_git_tag() {

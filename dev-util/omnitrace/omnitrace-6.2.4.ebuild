@@ -167,8 +167,8 @@ PATCHES=(
 )
 
 pkg_setup() {
-	rocm_pkg_setup
 	python_setup
+	rocm_pkg_setup
 }
 
 src_unpack() {
