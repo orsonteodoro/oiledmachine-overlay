@@ -43,7 +43,7 @@ BDEPEND="
 DOCS=( "README.md" )
 
 pkg_setup() {
-	use test && python_setup
+	python_setup
 }
 
 src_configure() {
