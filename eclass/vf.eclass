@@ -145,6 +145,12 @@ einfo "TC = Type Confusion"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ToCToU" ]] ; then
 einfo "ToCToU = Time of Check Time of Use Race Condition"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "TSE" ]] ; then
+einfo "TSE = Transient Speculative Execution"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "TSG" ]] ; then
+einfo "TSG = Transient Speculative Execution Gadget"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "UB" ]] ; then
 einfo "UB = Undefined Behavior"
 		fi
