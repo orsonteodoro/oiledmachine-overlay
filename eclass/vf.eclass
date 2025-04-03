@@ -64,6 +64,9 @@ einfo "${id}:  ${vulnerability_classes} (${SEVERITY_LABEL} ${severity})"
 	# or more DoS, DT, ID.
 	#
 einfo
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "BO" ]] ; then
+einfo "BO = Buffer Overflow"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ ("ACE"|"CE") ]] ; then
 # Arbitrary Code Execution
 einfo "CE = Code Execution"
@@ -99,6 +102,9 @@ einfo "IF = Improper Free"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "IP" ]] ; then
 einfo "IP = Improper Permissions"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "IO" ]] ; then
+einfo "IO = Integer Overflow"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "MC" ]] ; then
 einfo "MC = Memory Corruption"
