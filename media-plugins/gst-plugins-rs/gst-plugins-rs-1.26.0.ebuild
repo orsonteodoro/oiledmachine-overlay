@@ -24,7 +24,7 @@ MY_PV="${PV}"
 EXPECTED_BUILD_FILES_FINGERPRINT="disable"
 GOBJECT_INTROSPECTION_PV="1.74.0"
 GST_PV="${MY_PV}"
-LLVM_COMPAT=( {17..16} ) # For clang-sys ; slot based on rust subslot
+LLVM_COMPAT=( 19 ) # For clang-sys ; slot based on rust subslot
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MODULES=(
 	audiofx
@@ -1317,28 +1317,12 @@ gen_llvm_bdepend() {
 	done
 }
 RUST_BDEPEND="
-	llvm_slot_16? (
+	llvm_slot_19? (
 		|| (
-			=dev-lang/rust-1.72*
-			=dev-lang/rust-1.71*
-			=dev-lang/rust-1.70*
-			=dev-lang/rust-bin-1.72*
-			=dev-lang/rust-bin-1.71*
-			=dev-lang/rust-bin-1.70*
-		)
-	)
-	llvm_slot_17? (
-		|| (
-			=dev-lang/rust-1.77*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.75*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.75*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.74*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.73*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.77*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.75*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.75*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.74*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.73*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.85*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.86*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.85*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.86*[${MULTILIB_USEDEP}]
 		)
 	)
 	|| (
