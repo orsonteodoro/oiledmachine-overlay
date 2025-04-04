@@ -27,65 +27,68 @@ GST_PV="${MY_PV}"
 LLVM_COMPAT=( 19 ) # For clang-sys ; slot based on rust subslot
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MODULES=(
-	audiofx
-	aws
-	cdg
-	claxon
-	closedcaption
-	csound
-	dav1d
-	doc
-	examples
-	fallbackswitch
-	ffv1
-	file
-	flavors
-	fmp4
-	gif
-	gopbuffer
-	gtk4
-	hlsmultivariantsink
-	hlssink3
-	hsv
-	inter
-	json
-	lewton
-	livesync
-	mp4
-	mpegtslive
-	ndi
-	onvif
-	originalbuffer
-	png
-	quinn
-	raptorq
-	rav1e
-	regex
-	relationmeta
-	reqwest
-	rtp
-	rtsp
-	speechmatics
-	spotify
-	sodium
-	streamgrouper
-#	test
-	textahead
-	textwrap
-	threadshare
-	togglerecord
-	tracers
-	uriplaylistbin
-	videofx
-	vvdec
-	webp
-	webrtc
-	webrtchttp
+	"audiofx"
+	"aws"
+	"cdg"
+	"claxon"
+	"closedcaption"
+	"csound"
+	"dav1d"
+	"doc"
+	"examples"
+	"fallbackswitch"
+	"ffv1"
+	"file"
+	"flavors"
+	"fmp4"
+	"gif"
+	"gopbuffer"
+	"gtk4"
+	"hlsmultivariantsink"
+	"hlssink3"
+	"hsv"
+	"inter"
+	"json"
+	"lewton"
+	"livesync"
+	"mp4"
+	"mpegtslive"
+	"ndi"
+	"onvif"
+	"originalbuffer"
+	"png"
+	"quinn"
+	"raptorq"
+	"rav1e"
+	"regex"
+	"relationmeta"
+	"reqwest"
+	"rtp"
+	"rtsp"
+	"speechmatics"
+	"spotify"
+	"sodium"
+	"streamgrouper"
+#	"test"
+	"textahead"
+	"textwrap"
+	"threadshare"
+	"togglerecord"
+	"tracers"
+	"uriplaylistbin"
+	"videofx"
+	"vvdec"
+	"webp"
+	"webrtc"
+	"webrtchttp"
 )
 PATENT_STATUS_IUSE=(
-	patent_status_nonfree
+	"patent_status_nonfree"
 )
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_"{8..11} )
+RUST_MAX_VER="1.86.0" # Inclusive.  Corresponds to llvm 19
+RUST_MIN_VER="1.85.0" # Corresponds to llvm 19
+#RUST_PV="${RUST_MIN_VER}"
 
 if [[ "${MY_PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
