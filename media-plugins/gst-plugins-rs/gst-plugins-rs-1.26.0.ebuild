@@ -1319,10 +1319,10 @@ gen_llvm_bdepend() {
 RUST_BDEPEND="
 	llvm_slot_19? (
 		|| (
-			=dev-lang/rust-1.85*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.86*[${MULTILIB_USEDEP}]
 			=dev-lang/rust-bin-1.85*[${MULTILIB_USEDEP}]
 			=dev-lang/rust-bin-1.86*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.85*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.86*[${MULTILIB_USEDEP}]
 		)
 	)
 	|| (
