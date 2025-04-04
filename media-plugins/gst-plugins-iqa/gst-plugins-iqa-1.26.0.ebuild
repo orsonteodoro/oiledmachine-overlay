@@ -18,6 +18,9 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 "
+PATCHES=(
+	"${FILESDIR}/${PN}-1.24.9-use-dssim3.patch"
+)
 
 multilib_src_configure() {
 	local emesonargs=(
