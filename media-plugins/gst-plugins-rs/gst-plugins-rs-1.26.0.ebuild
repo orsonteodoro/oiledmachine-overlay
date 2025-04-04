@@ -86,9 +86,8 @@ PATENT_STATUS_IUSE=(
 	"patent_status_nonfree"
 )
 PYTHON_COMPAT=( "python3_"{8..11} )
-RUST_MAX_VER="1.86.0" # Inclusive.  Corresponds to llvm 19
-RUST_MIN_VER="1.85.0" # Corresponds to llvm 19
-#RUST_PV="${RUST_MIN_VER}"
+RUST_MAX_VER="1.86.0" # Inclusive.  Corresponds to llvm 19.1
+RUST_MIN_VER="1.85.0" # Corresponds to llvm 19.1
 
 if [[ "${MY_PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -1381,16 +1380,17 @@ ewarn
 
 multilib_src_configure() {
 	local llvm_slot=""
-	local x
-	for x in ${LLVM_COMPAT[@]} ; do
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
 		if has "llvm_slot_${s}" ${IUSE_EFFECTIVE} && use "llvm_slot_${s}" ; then
-			llvm_slot="${x}"
+			llvm_slot="${s}"
 			break
 		fi
 	done
 	LLVM_MAX_SLOT=${llvm_slot}
 	llvm_pkg_setup
 einfo "LLVM SLOT:  ${LLVM_MAX_SLOT}"
+	${RUSTC} --version
 
 	export CSOUND_LIB_DIR="${ESYSROOT}/usr/$(get_libdir)"
 
