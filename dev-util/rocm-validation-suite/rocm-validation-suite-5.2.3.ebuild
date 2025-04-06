@@ -105,8 +105,10 @@ src_install() {
 	cmake_src_install
 	# Fix missing ldd rows
 	insinto "${EROCM_PATH}"
-	doexe "rvslib/librvslib.so"
-	doexe "rvs/librvshelper.so"
+	pushd "${WORKDIR}/${MY_PN}-${PV}_build" >/dev/null 2>&1 || die
+		doexe "rvslib/librvslib.so"
+		doexe "rvs/librvshelper.so"
+	popd >/dev/null 2>&1 || die
 	rocm_mv_docs
 	rocm_fix_rpath
 ewarn "RCQT (ROCm Configuration Qualification Tool) does not support portage."
