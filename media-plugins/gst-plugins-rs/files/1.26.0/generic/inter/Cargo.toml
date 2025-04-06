@@ -9,18 +9,18 @@ edition.workspace = true
 rust-version.workspace = true
 
 [dependencies]
-anyhow = "1"
+anyhow = "^1"
 gst = { workspace = true, features = ["v1_18"] }
 gst-utils.workspace = true
 gst-app.workspace = true
 
 [dev-dependencies]
-pretty_assertions = "1"
+pretty_assertions = "^1"
 gst-check.workspace = true
-futures = "0.3"
-tokio = { version = "1", features = ["fs", "macros", "rt-multi-thread", "time"] }
-tokio-stream = "0.1.11"
-serial_test = "3"
+futures = "^0.3"
+tokio = { version = "^1", features = ["fs", "macros", "rt-multi-thread", "time"] }
+tokio-stream = "=0.1.11"
+serial_test = "^3"
 
 [lib]
 name = "gstrsinter"

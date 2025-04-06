@@ -9,22 +9,22 @@ edition.workspace = true
 rust-version.workspace = true
 
 [dependencies]
-anyhow = "1"
-atomic_refcell = "0.1"
-data-encoding = "2.4"
-futures = "0.3"
+anyhow = "^1"
+atomic_refcell = "^0.1"
+data-encoding = "^2.4"
+futures = "^0.3"
 gst = { workspace = true, features = ["v1_20"] }
 gst-app = { workspace = true, features = ["v1_20"] }
 gst-net = { workspace = true, features = ["v1_20"] }
 gst-pbutils = { workspace = true, features = ["v1_20"] }
-lru = "0.13"
-rtsp-types = "0.1"
-sdp-types = "0.1"
-socket2 = "0.5"
-thiserror = "2"
-tokio = { version = "1.0", default-features = false, features = ["io-util", "macros", "net", "time", "rt-multi-thread", "sync"] }
-tokio-stream = "0.1"
-url = "2"
+lru = "^0.13"
+rtsp-types = "^0.1"
+sdp-types = "^0.1"
+socket2 = "^0.5"
+thiserror = "^2"
+tokio = { version = "^1.0", default-features = false, features = ["io-util", "macros", "net", "time", "rt-multi-thread", "sync"] }
+tokio-stream = "^0.1"
+url = "^2"
 
 [lib]
 name = "gstrsrtsp"

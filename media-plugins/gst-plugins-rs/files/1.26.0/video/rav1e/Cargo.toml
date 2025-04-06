@@ -11,8 +11,8 @@ rust-version.workspace = true
 [dependencies]
 gst.workspace = true
 gst-video.workspace = true
-rav1e = { version = "0.7", default-features = false, features = ["threading"] }
-atomic_refcell = "0.1"
+rav1e = { version = "^0.7", default-features = false, features = ["threading"] }
+atomic_refcell = "^0.1"
 
 [dev-dependencies]
 gst-check.workspace = true

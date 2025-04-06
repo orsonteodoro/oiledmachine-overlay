@@ -12,9 +12,9 @@ rust-version.workspace = true
 gst.workspace = true
 gst-base.workspace = true
 gst-video.workspace = true
-cdg = "0.1"
-cdg_renderer = "0.8"
-image = { version = "0.25", default-features = false }
+cdg = "^0.1"
+cdg_renderer = "^0.8"
+image = { version = "^0.25", default-features = false }
 
 [dev-dependencies]
 gst-app.workspace = true

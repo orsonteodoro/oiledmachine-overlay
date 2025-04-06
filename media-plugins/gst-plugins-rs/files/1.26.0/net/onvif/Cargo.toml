@@ -13,12 +13,12 @@ gst = { workspace = true, features = ["v1_20"] }
 gst-rtp = { workspace = true, features = ["v1_20"] }
 gst-base = { workspace = true, features = ["v1_20"] }
 gst-video = { workspace = true, features = ["v1_20"] }
-xmlparser = "0.13"
-chrono = { version = "0.4.31", default-features = false }
+xmlparser = "^0.13"
+chrono = { version = "^0.4.31", default-features = false }
 cairo-rs.workspace = true
 pango.workspace = true
 pangocairo.workspace = true
-xmltree = "0.11"
+xmltree = "^0.11"
 
 [lib]
 name = "gstrsonvif"

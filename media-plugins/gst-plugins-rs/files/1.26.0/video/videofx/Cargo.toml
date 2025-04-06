@@ -10,13 +10,13 @@ rust-version.workspace = true
 
 [dependencies]
 cairo-rs.workspace = true
-atomic_refcell = "0.1"
-color-thief = "0.2.2"
-color-name = "1.0.0"
-image = { version = "0.25", default-features = false }
-image_hasher = "3"
-dssim-core = { version = "3.2.3", optional = true }
-rgb = { version = "0.8", optional = true }
+atomic_refcell = "^0.1"
+color-thief = "=0.2.2"
+color-name = "=1.0.0"
+image = { version = "^0.25", default-features = false }
+image_hasher = "^3"
+dssim-core = { version = "=3.2.3", optional = true }
+rgb = { version = "^0.8", optional = true }
 gst = { workspace = true, features = ["v1_16"] }
 gst-base = { workspace = true, features = ["v1_16"] }
 gst-video = { workspace = true, features = ["v1_16"] }

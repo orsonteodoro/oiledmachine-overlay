@@ -9,7 +9,7 @@ edition.workspace = true
 rust-version.workspace = true
 
 [dependencies]
-url = "2"
+url = "^2"
 gst.workspace = true
 gst-base.workspace = true
 

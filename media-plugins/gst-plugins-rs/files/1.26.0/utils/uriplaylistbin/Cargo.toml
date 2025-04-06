@@ -10,15 +10,15 @@ rust-version.workspace = true
 
 [dependencies]
 gst = { workspace = true, features = ["v1_24"] }
-anyhow = "1"
-clap = { version = "4", optional = true, features = ["derive"] }
-thiserror = "2"
+anyhow = "^1"
+clap = { version = "^4", optional = true, features = ["derive"] }
+thiserror = "^2"
 
 [dev-dependencies]
 gst-app.workspace = true
-url = "2.2"
-more-asserts = "0.3"
-tempfile = "3"
+url = "^2.2"
+more-asserts = "^0.3"
+tempfile = "^3"
 
 [lib]
 name = "gsturiplaylistbin"

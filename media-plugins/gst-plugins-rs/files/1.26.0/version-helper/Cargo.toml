@@ -13,5 +13,5 @@ edition.workspace = true
 rust-version = "1.69"
 
 [dependencies]
-chrono = { version = "0.4.23", default-features = false, features = ["std", "clock"] }
-toml_edit = { version = "0.22.8", default-features = false, features = ["parse"] }
+chrono = { version = "^0.4.23", default-features = false, features = ["std", "clock"] }
+toml_edit = { version = "^0.22.8", default-features = false, features = ["parse"] }
