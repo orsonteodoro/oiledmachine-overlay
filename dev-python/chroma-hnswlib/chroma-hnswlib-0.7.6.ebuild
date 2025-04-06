@@ -6,6 +6,7 @@ EAPI=8
 
 MY_PN="hnswlib"
 
+DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
@@ -38,7 +39,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+IUSE+=" ebuild_revision_1"
 RDEPEND+="
 	dev-python/numpy[${PYTHON_USEDEP}]
 "
