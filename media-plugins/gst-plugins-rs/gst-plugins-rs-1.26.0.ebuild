@@ -1360,6 +1360,7 @@ BDEPEND+="
 	)
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-1.26.0-some-mismatched-types.patch"
 )
 
 check_network_sandbox() {
