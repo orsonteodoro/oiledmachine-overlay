@@ -83,6 +83,8 @@ src_prepare() {
 src_configure() {
 	rocm_set_default_clang
 
+	addpredict "/usr/bin/python"
+
 # Prevent:
 # ld.bfd: /usr/lib/gcc/x86_64-pc-linux-gnu/12/../../../../lib64/libyaml-cpp.so: undefined reference to `std::ios_base_library_init()@GLIBCXX_3.4.32'
 	check_pkg_glibcxx "dev-cpp/yaml-cpp" "/usr/$(get_libdir)/libyaml-cpp.so" "${HIP_4_1_GLIBCXX}"
@@ -105,7 +107,8 @@ src_install() {
 	cmake_src_install
 	# Fix missing ldd rows
 	insinto "${EROCM_PATH}"
-	pushd "${WORKDIR}/${MY_PN}-${PV}_build" >/dev/null 2>&1 || die
+	pushd "${WORKDIR}/${MY_PN}-rocm-${PV}_build" >/dev/null 2>&1 || die
+		exeinto "${EROCM_PATH}/lib"
 		doexe "rvslib/librvslib.so"
 		doexe "rvs/librvshelper.so"
 	popd >/dev/null 2>&1 || die
