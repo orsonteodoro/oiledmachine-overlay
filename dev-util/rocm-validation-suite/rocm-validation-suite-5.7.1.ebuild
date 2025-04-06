@@ -107,8 +107,7 @@ src_install() {
 	insinto "${EROCM_PATH}"
 	pushd "${WORKDIR}/${MY_PN}-rocm-${PV}_build" >/dev/null 2>&1 || die
 		exeinto "${EROCM_PATH}/lib"
-		doexe "rvslib/librvslib.so"
-		doexe "rvs/librvshelper.so"
+		doexe "bin/librvslib.so"
 	popd >/dev/null 2>&1 || die
 	rocm_mv_docs
 	rocm_fix_rpath
