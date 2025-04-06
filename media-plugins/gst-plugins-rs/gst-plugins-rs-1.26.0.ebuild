@@ -205,7 +205,6 @@ cesu8-1.1.0
 cexpr-0.6.0
 cfg-expr-0.15.8
 cfg-expr-0.17.2
-cfg-if-0.1.10
 cfg-if-1.0.0
 cfg_aliases-0.2.1
 chrono-0.4.40
@@ -417,7 +416,7 @@ librespot-oauth-0.6.0
 librespot-playback-0.6.0
 librespot-protocol-0.6.0
 libsodium-sys-0.2.7
-libwebp-sys2-0.1.2
+libwebp-sys2-0.1.8
 linux-raw-sys-0.4.15
 linux-raw-sys-0.9.3
 litemap-0.7.5
@@ -922,7 +921,7 @@ ${PATENT_STATUS_IUSE[@]}
 aom doc nvcodec qsv openh264 rav1e system-libsodium va vaapi vpx vulkan x264 x265
 webrtc-aws
 webrtc-livekit
-ebuild_revision_5
+ebuild_revision_6
 "
 WEBRTC_AV1_ENCODERS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -1469,69 +1468,7 @@ einfo "Generating lockfile"
 	rm Cargo.lock
 	cargo generate-lockfile || die "Failed to update Cargo.lock"
 
-	# Fixes for:
-	# required by package `gst-plugin-<...> <...> (<...>)`
-	# The # suffix means the runtime/dev check was already performed in Cargo.toml.
-	# Versions are the same as the original lockfile.
-
-	AWS_CONFIG_PV="1.5.10"
-	CC_PV="1.2.16"
-	CLAP_PV="4.5.31"
-	HTTP_PV="1.2.0"
-	LIBC_PV="0.2.170"
-	TEMPFILE_PV="3.17.1"
-	QUICK_XML_PV="0.37.2"
-	SERDE_PV="1.0.218"
-	SMALLVEC_PV="1.14.0"
-	TOKIO_PV="1.43.0"
-
-	cargo add "aws-config@=${AWS_CONFIG_PV}" --package "gst-plugin-aws" #
-	cargo add "aws-config@=${AWS_CONFIG_PV}" --package "gst-plugin-webrtc" #
-	cargo add "cc@=${CC_PV}" --package "gst-plugin-threadshare" --build #
-	cargo add "clap@=${CLAP_PV}" --package "gst-plugin-closedcaption" --dev #
-	cargo add "clap@=${CLAP_PV}" --package "gst-plugin-quinn" --dev #
-	cargo add "clap@=${CLAP_PV}" --package "gst-plugin-sodium" #
-	cargo add "clap@=${CLAP_PV}" --package "gst-plugin-threadshare" #
-	cargo add "clap@=${CLAP_PV}" --package "gst-plugin-uriplaylistbin" #
-	cargo add "clap@=${CLAP_PV}" --package "gst-plugin-webrtc" --dev #
-	cargo add "clap@=${CLAP_PV}" --package "gst-plugin-webrtc-signalling" --dev #
-	cargo add "http@=${HTTP_PV}" --package "gst-plugin-speechmatics" #
-	cargo add "http@=${HTTP_PV}" --package "gst-plugin-webrtc" #
-	cargo add "libc@=${LIBC_PV}" --package "gst-plugin-threadshare" #
-	cargo add "quick-xml@=${QUICK_XML_PV}" --package "gst-plugin-fmp4" --dev #
-	cargo add "quick-xml@=${QUICK_XML_PV}" --package "gst-plugin-ndi" #
-	cargo add "serde@=${SERDE_PV}" --package "gst-plugin-aws" #
-	cargo add "serde@=${SERDE_PV}" --package "gst-plugin-closedcaption" #
-	cargo add "serde@=${SERDE_PV}" --package "gst-plugin-fmp4" --dev #
-	cargo add "serde@=${SERDE_PV}" --package "gst-plugin-json" #
-	cargo add "serde@=${SERDE_PV}" --package "gst-plugin-sodium" #
-	cargo add "serde@=${SERDE_PV}" --package "gst-plugin-speechmatics" #
-	cargo add "serde@=${SERDE_PV}" --package "gst-plugin-tracers" #
-	cargo add "serde@=${SERDE_PV}" --package "gst-plugin-webrtc" #
-	cargo add "serde@=${SERDE_PV}" --package "gst-plugin-webrtc-signalling-protocol" #
-	cargo add "serde@=${SERDE_PV}" --package "gst-plugin-webrtc-signalling" #
-	cargo add "smallvec@=${SMALLVEC_PV}" --package "gst-plugin-audiofx" #
-	cargo add "smallvec@=${SMALLVEC_PV}" --package "gst-plugin-closedcaption" #
-	cargo add "smallvec@=${SMALLVEC_PV}" --package "gst-plugin-flavors" #
-	cargo add "smallvec@=${SMALLVEC_PV}" --package "gst-plugin-ndi" #
-	cargo add "smallvec@=${SMALLVEC_PV}" --package "gst-plugin-mpegtslive" #
-	cargo add "smallvec@=${SMALLVEC_PV}" --package "gst-plugin-rtp" #
-	cargo add "smallvec@=${SMALLVEC_PV}" --package "gst-plugin-sodium" #
-	cargo add "tempfile@=${TEMPFILE_PV}" --package "gst-plugin-mp4" --dev #
-	cargo add "tempfile@=${TEMPFILE_PV}" --package "gst-plugin-uriplaylistbin" --dev #
-	cargo add "tokio@=${TOKIO_PV}" --package "gst-plugin-aws" #
-	cargo add "tokio@=${TOKIO_PV}" --package "gst-plugin-inter" --dev #
-	cargo add "tokio@=${TOKIO_PV}" --package "gst-plugin-quinn" #
-	cargo add "tokio@=${TOKIO_PV}" --package "gst-plugin-reqwest" #
-	cargo add "tokio@=${TOKIO_PV}" --package "gst-plugin-rtp" #
-	cargo add "tokio@=${TOKIO_PV}" --package "gst-plugin-rtsp" #
-	cargo add "tokio@=${TOKIO_PV}" --package "gst-plugin-speechmatics" #
-	cargo add "tokio@=${TOKIO_PV}" --package "gst-plugin-spotify" #
-	cargo add "tokio@=${TOKIO_PV}" --package "gst-plugin-tracers" #
-	cargo add "tokio@=${TOKIO_PV}" --package "gst-plugin-webrtchttp" #
-	cargo add "tokio@=${TOKIO_PV}" --package "gst-plugin-webrtc" #
-	cargo add "tokio@=${TOKIO_PV}" --package "gst-plugin-webrtc" --dev #
-	cargo add "tokio@=${TOKIO_PV}" --package "gst-plugin-webrtc-signalling" #
+ewarn "QA:  Manually update Cargo.* files for build errors or security mitigations"
 	die
 }
 
