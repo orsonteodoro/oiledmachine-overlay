@@ -219,6 +219,11 @@ build_rocmlir() {
 	# Just a precaution.  llvm/clang is broken at -O3.
 	replace-flags '-O*' '-O2'
 
+	# Avoid errors:
+	# <...>-ld: unrecognized option '--as-needed;'
+	# <...>-ld: unrecognized option '-fuse-ld=lld;'
+	unset LDFLAGS
+
 	ccmake \
 		"${mycmakeargs[@]}" \
 		..
