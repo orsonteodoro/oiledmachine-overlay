@@ -2,12 +2,13 @@
 
 | Support level        | Quality      | Meaning                                                                        |
 | ---                  | ---          | ---                                                                            |
-| EOL                  | Poor         | No longer compatible and may be removed, may have security issues              |
-| Deprecated           | Best to poor | Phased out for removal and may be actively removed, may have security issues   |
 | Fully supported      | Best         | Tested, fully compatible                                                       |
 | Mostly supported     | Better       | Tested and partially compatible                                                |
 | Partially supported  | Good         | May be tested and partially compatible                                         |
 | Available            | Good to poor | Not tested, partially compatible, ebuild may be unfinished                     |
+| Deprecated           | Best to poor | Phased out for removal and may be actively removed, may have security issues   |
+| EOL                  | Poor         | No longer compatible and may be removed, may have security issues              |
+| Not supported        | Poor         | No longer compatible and may be removed, may have security issues              |
 
 | Python            | Level of support                         |
 | ---               | ---                                      |
