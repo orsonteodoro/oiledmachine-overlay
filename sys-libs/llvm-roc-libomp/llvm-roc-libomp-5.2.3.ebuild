@@ -402,6 +402,8 @@ src_configure() {
 	export PYTHONPATH="${ESYSROOT}/usr/lib/${EPYTHON}/site-packages/:${PYTHONPATH}"
 	export PYTHONPATH="${ESYSROOT}/${EROCM_PATH}/lib/${EPYTHON}/site-packages:${PYTHONPATH}"
 
+	export MAKEOPTS="-j1"
+
 	PROJECTS="openmp"
 	local experimental_targets=""
 	if use llvm_targets_X86 ; then
@@ -456,6 +458,8 @@ src_configure() {
 				-DAMDDeviceLibs_DIR="${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)/cmake/AMDDeviceLibs"
 				-DDEVICELIBS_ROOT="${S_DEVICELIBS}"
 				-DLIBOMPTARGET_AMDGCN_GFXLIST=$(get_amdgpu_flags)
+				-DLIBOMPTARGET_BUILD_AMDGCN_BCLIB=ON
+				-DLIBOMPTARGET_BUILD_DEVICERTL_BCLIB=OFF # Build scripts broken for this release
 			)
 		fi
 		if use llvm_targets_NVPTX ; then
