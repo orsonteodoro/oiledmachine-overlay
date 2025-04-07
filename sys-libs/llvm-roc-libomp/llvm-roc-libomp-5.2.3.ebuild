@@ -459,7 +459,6 @@ src_configure() {
 				-DDEVICELIBS_ROOT="${S_DEVICELIBS}"
 				-DLIBOMPTARGET_AMDGCN_GFXLIST=$(get_amdgpu_flags)
 				-DLIBOMPTARGET_BUILD_AMDGCN_BCLIB=ON
-				-DLIBOMPTARGET_BUILD_DEVICERTL_BCLIB=OFF # Build scripts broken for this release
 			)
 		fi
 		if use llvm_targets_NVPTX ; then
@@ -480,6 +479,14 @@ src_configure() {
 }
 
 src_compile() {
+	pushd "${WORKDIR}/llvm-project-rocm-${PV}/openmp_build/" >/dev/null 2>&1 || die
+		local x
+		for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
+			if use "amdgpu_targets_${x}" ; then
+				eninja "touch-target-${x}"
+			fi
+		done
+	popd >/dev/null 2>&1 || die
 	cmake_src_compile
 }
 
