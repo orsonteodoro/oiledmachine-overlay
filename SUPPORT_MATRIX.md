@@ -1,14 +1,14 @@
 # Ebuild *DEPENDs support matrix for this overlay
 
-| Support level        | Quality      | Meaning                                                                        |
-| ---                  | ---          | ---                                                                            |
-| Fully supported      | Best         | Tested, fully compatible                                                       |
-| Mostly supported     | Better       | Tested and partially compatible                                                |
-| Partially supported  | Good         | May be tested and partially compatible                                         |
-| Available            | Good to poor | Not tested, partially compatible, ebuild may be unfinished                     |
-| Deprecated           | Best to poor | Phased out for removal and may be actively removed, may have security issues   |
-| EOL                  | Poor         | No longer compatible and may be removed, may have security issues              |
-| Not supported        | Poor         | Dropped support by overlay, may have security issues, untested                 |
+| Support level        | Quality      | Meaning                                                                                                  |
+| ---                  | ---          | ---                                                                                                      |
+| Fully supported      | Best         | Tested, fully compatible                                                                                 |
+| Mostly supported     | Better       | Tested and partially compatible                                                                          |
+| Partially supported  | Good         | May be tested and partially compatible                                                                   |
+| Available            | Good to poor | Not tested, partially compatible, ebuild may be unfinished                                               |
+| Deprecated           | Best to poor | Phased out for removal and may be actively removed, may have security issues                             |
+| EOL                  | Poor         | No longer compatible and may be removed, may have security issues that are practically impossible to fix |
+| Not supported        | Poor         | Dropped support by overlay, may have security issues, untested                                           |
 
 | Python            | Level of support                         |
 | ---               | ---                                      |
