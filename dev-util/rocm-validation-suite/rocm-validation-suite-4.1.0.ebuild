@@ -83,6 +83,11 @@ src_prepare() {
 src_configure() {
 	rocm_set_default_clang
 
+	local gcc_ver=$(gcc-major-version)
+	if ver_test "${gcc_ver}" -eq "12" ; then
+		export NVCC_APPEND_FLAGS="-allow-unsupported-compiler"
+	fi
+
 	addpredict "/usr/bin/python"
 
 # Prevent:

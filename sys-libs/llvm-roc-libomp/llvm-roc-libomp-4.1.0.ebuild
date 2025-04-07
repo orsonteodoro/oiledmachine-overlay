@@ -51,7 +51,7 @@ PYTHON_COMPAT=( "python3_"{10..12} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_USE_LLVM_ROC=1
 
-inherit cmake flag-o-matic grpc-ver python-single-r1 rocm
+inherit cmake flag-o-matic grpc-ver python-single-r1 rocm toolchain-funcs
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/llvm-project-rocm-${PV}/openmp"
@@ -322,6 +322,11 @@ src_configure() {
 	filter-flags '-fuse-ld=*'
 	append-ldflags -fuse-ld=lld
 	strip-unsupported-flags # Filter LDFLAGS
+
+	local gcc_ver=$(gcc-major-version)
+	if ver_test "${gcc_ver}" -eq "12" ; then
+		export NVCC_APPEND_FLAGS="-allow-unsupported-compiler"
+	fi
 
 # Fix
 # /usr/bin/python3.12: No module named pip
