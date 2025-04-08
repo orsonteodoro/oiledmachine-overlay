@@ -223,7 +223,20 @@ c02deac299a473f66b7de625038d69e2aad555c4
 d4e6f69ec4407163efcfd23e0dac5f9571b6ade1
 810361c77f4dd8dfb3c95fd998d120075122f171
 )
-RUST_MAX_VER="1.62.0" # Inclusive
+declare -A RUST_PV_TO_LLVM_SLOT=(
+# Capped by LLVM_COMPAT
+	["1.81.0"]="18"
+	["1.80.1"]="18"
+	["1.79.0"]="18"
+	["1.78.0"]="18"
+)
+RUST_SLOTS=(
+	"1.81.0"
+	"1.80.1"
+	"1.79.0"
+	"1.78.0"
+)
+RUST_MAX_VER="1.81.0" # Inclusive
 RUST_MIN_VER="1.62.0"
 RUST_PV="${RUST_MIN_VER}"
 PPC_FLAGS=(
@@ -476,6 +489,23 @@ KCP_RDEPEND="
 	)
 "
 
+gen_rust_cdepend() {
+	local s
+	for s in ${RUST_SLOTS[@]} ; do
+		local llvm_slot=${RUST_PV_TO_LLVM_SLOT[${s}]}
+		echo "
+			(
+				llvm-core/clang:${llvm_slot}
+				llvm-core/llvm:${llvm_slot}
+				=dev-lang/rust-${s}
+				=dev-lang/rust-bin-${s}
+				dev-lang/rust:=
+				dev-lang/rust-bin:=
+			)
+		"
+	done
+}
+
 # KCFI requires https://reviews.llvm.org/D119296 patch
 # We can eagerly prune the gcc dep from cpu_flag_x86_* but we want to handle
 # both inline assembly (.c) and assembler file (.S) cases.
@@ -710,15 +740,8 @@ CDEPEND+="
 	rust? (
 		>=dev-util/cbindgen-0.56.0
 		>=dev-util/pahole-1.16[${PYTHON_SINGLE_USEDEP}]
-		!clang? (
-			>=sys-devel/gcc-4.5
-		)
-		clang? (
-			$(gen_clang_llvm_pair 16 ${LLVM_MAX_SLOT})
-		)
 		|| (
-			~dev-lang/rust-${RUST_PV}
-			~dev-lang/rust-bin-${RUST_PV}
+			$(gen_rust_cdepend)
 		)
 	)
 	xz? (

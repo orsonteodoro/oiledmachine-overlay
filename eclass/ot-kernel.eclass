@@ -11905,8 +11905,36 @@ einfo "Changed to ${sym}=${OT_KERNEL_KCONFIG[${sym}]} in .config"
 # guarantees
 #
 ot-kernel_set_rust() {
+	has rust ${IUSE_EFFECTIVE} || return
 	ot-kernel_use rust || return
-	if has_version "~dev-lang/rust-${RUST_PV}" || has_version "~dev-lang/rust-bin-${RUST_PV}" ; then
+
+	unset RUSTC
+
+	local found=0
+	local rust_pv=""
+	for s in ${RUST_SLOTS[@]} ; do
+		local rust_llvm_slot=${RUST_PV_TO_LLVM_SLOT[${s}]}
+		# llvm_slot is associated with CC
+		if ver_test "${rust_llvm_slot}" -ne "${llvm_slot}" ; then
+			continue
+		fi
+
+		if has_version "dev-lang/rust-bin:${s}" ; then
+			export RUSTC="/opt/rust-bin-${s}/bin/rustc"
+			export PATH="/opt/rust-bin-${s}/bin:${PATH}"
+			rust_pv="${s}"
+			found=1
+			break
+		elif has_version "dev-lang/rust:${s}" ; then
+			export RUSTC="/usr/lib/rust/${s}/bin/rustc"
+			export PATH="/usr/lib/rust/${s}/bin:${PATH}"
+			rust_pv="${s}"
+			found=1
+			break
+		fi
+	done
+
+	if (( ${found} == 0 )) ; then
 		ot-kernel_y_configopt "CONFIG_RUST"
 		ot-kernel_unset_configopt "CONFIG_MODVERSIONS"
 		ot-kernel_unset_configopt "CONFIG_GCC_PLUGINS"
@@ -11916,14 +11944,24 @@ ot-kernel_set_rust() {
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
 		ot-kernel_unset_configopt "CONFIG_SHADOW_CALL_STACK"
 		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO_BTF"
-		if _ot-kernel_is_hardening_level_least_secure ; then
-			:
-		else
-eerror "OT_KERNEL_HARDENING_LEVEL=fast-af are only supported for OT_KERNEL_USE=rust with USE=rust."
-			die
-		fi
-ewarn "CONFIG_RUST=y lowers security."
+		found=1
+	else
+eerror "Cannot find Rust slot."
+		die
 	fi
+
+	${RUSTC} --version || die
+
+	if _ot-kernel_is_hardening_level_least_secure ; then
+		:
+	else
+eerror "OT_KERNEL_HARDENING_LEVEL=fast-af are only supported for OT_KERNEL_USE=rust with USE=rust."
+		die
+	fi
+
+# Review.  If old Rust, maybe.  It could be that not all rust modules are not
+# sanitized with all hardening techniques.
+#ewarn "CONFIG_RUST=y may lower security."
 }
 
 
