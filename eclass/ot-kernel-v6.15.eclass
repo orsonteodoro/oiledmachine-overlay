@@ -185,7 +185,7 @@ GCC_MIN_KCP_ZEN_SAUCE_AMD64=14
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
 KMOD_PV="13"
 # llvm slot originally 16, testing 18
-LLVM_COMPAT=( {18..13} ) # KCP wants 19 but previous test may had failure
+LLVM_COMPAT=( {19..13} ) # Limited by Rust
 LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
 LLVM_MIN_SLOT=${LLVM_COMPAT[-1]}
 LLVM_MIN_KCFI_ARM64=16
@@ -295,12 +295,24 @@ RISCV_FLAGS=(
 )
 declare -A RUST_PV_TO_LLVM_SLOT=(
 # Capped by LLVM_COMPAT
+	#["9999"]="20"
+	#["1.86.0"]="19"
+	#["1.85.0"]="19"
+	["1.84.1"]="19"
+	["1.83.0"]="19"
+	["1.82.0"]="19"
 	["1.81.0"]="18"
 	["1.80.1"]="18"
 	["1.79.0"]="18"
 	["1.78.0"]="18"
 )
 RUST_SLOTS=(
+	#"9999"
+	#"1.86.0"
+	#"1.85.0"
+	"1.84.1"
+	"1.83.0"
+	"1.82.0"
 	"1.81.0"
 	"1.80.1"
 	"1.79.0"
