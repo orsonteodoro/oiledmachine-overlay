@@ -3,6 +3,9 @@
 
 EAPI=8
 
+# TODO:
+# Fix configure time error
+
 AMDGPU_TARGETS_COMPAT=(
 	gfx803
 	gfx900

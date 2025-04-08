@@ -28,7 +28,7 @@ PYTHON_COMPAT=( "python3_"{10..11} )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit check-glibcxx-ver cmake distutils-r1 prefix rocm toolchain-funcs
+inherit check-glibcxx-ver cmake distutils-r1 flag-o-matic prefix rocm toolchain-funcs
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-rocm-${PV}"
@@ -64,6 +64,9 @@ REQUIRED_USE="
 		rocm
 	)
 "
+# dev-util/hip[numa] applied to prevent:
+#    ld.lld: error: undefined reference due to --no-allow-shlib-undefined: numa_sched_setaffinity
+#    >>> referenced by /opt/rocm-6.1.2/lib/libamdhip64.so
 RDEPEND="
 	${PYTHON_DEPS}
 	${ROCM_CLANG_DEPEND}
@@ -72,7 +75,7 @@ RDEPEND="
 	dev-python/joblib[${PYTHON_USEDEP}]
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
-	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,numa,rocm?]
 	client? (
 		dev-libs/boost
 		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
@@ -145,6 +148,11 @@ src_prepare() {
 src_configure() {
 	rocm_set_default_hipcc
 
+	einfo "CFLAGS: ${CFLAGS}"
+	einfo "CXXFLAGS: ${CXXFLAGS}"
+	einfo "CPPFLAGS: ${CPPFLAGS}"
+	einfo "LDFLAGS: ${LDFLAGS}"
+
 	if use rocm ; then
 		append-ldflags \
 			-Wl,-L"/opt/rocm-${ROCM_VERSION}/llvm/$(rocm_get_libdir)" \
@@ -157,6 +165,7 @@ src_configure() {
 		fi
 	fi
 	if has_version "dev-util/hip:${ROCM_SLOT}[numa]" ; then
+einfo "Adding -Wl,-lnuma"
 		append-ldflags -Wl,-lnuma
 	fi
 
