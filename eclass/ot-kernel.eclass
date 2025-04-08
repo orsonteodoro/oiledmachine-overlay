@@ -473,7 +473,7 @@ UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
 MITIGATION_DATE="Apr 7, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1743118980 # From `date +%s -d "2025-03-27 16:43"` from earliest timestamp corresponding to the weekly release in link below
+MITIGATION_LAST_UPDATE=1744100160 # From `date +%s -d "2025-04-08 8:16 UTC"` from earliest timestamp corresponding to the weekly release in link below
 MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
 # High and critical are noted and only those that are fixed on this release day
