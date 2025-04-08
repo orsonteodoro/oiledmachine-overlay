@@ -3,21 +3,21 @@
 
 EAPI=8
 
-GENPATCHES_FALLBACK_COMMIT="7847c71705cc92ba9e9b1d8728fa8692270170e8" # 2024-11-30 12:29:45 -0500
-LINUX_SOURCES_FALLBACK_COMMIT="586de92313fcab8ed84ac5f78f4d2aae2db92c59" # 2025-03-22 17:33:38 -0700
-RC_PV="rc7" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
+GENPATCHES_FALLBACK_COMMIT="9a08d160ff7967c7d32ca5b1277e9c86260440f0" # 2025-03-25 14:48:28 -0400
+LINUX_SOURCES_FALLBACK_COMMIT="0af2f6be1b4281385b618cb86ad946eded089ac8" # 2025-04-06 13:11:33 -0700
+RC_PV="rc1" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
-# https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.14
+# https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.15
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-CLEAR_LINUX_PATCHES_VER="6.10.2-1454"
+CLEAR_LINUX_PATCHES_VER="6.13.8-1555"
 EBUILD_REV="ebuild_revision_6"
-GENPATCHES_VER="1" # can be live only when 9999
-PATCH_PROJC_VER="6.13-r0"
+GENPATCHES_VER="live" # can be live only when 9999
+PATCH_PROJC_VER="6.14-r0"
 PATCH_RT_VER="6.14-rc1-rt1"
 
-inherit ot-kernel-v6.14
+inherit ot-kernel-v6.15
 
 # See also,
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel.eclass

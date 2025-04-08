@@ -48,6 +48,7 @@
 #       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.6
 #       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.12
 #       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.13
+#       https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.14
 # KCFI:
 #	https://github.com/torvalds/linux/compare/v6.0...samitolvanen:kcfi-v5
 # kernel_compiler_patch:
@@ -89,6 +90,8 @@
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.1/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.6/
 #	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.12/
+#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.13/
+#	http://cdn.kernel.org/pub/linux/kernel/projects/rt/6.14/
 # Project C CPU Scheduler:
 #	https://cchalpha.blogspot.com/search/label/Project%20C
 #	https://gitlab.com/alfredchen/projectc/-/tree/master
@@ -104,6 +107,8 @@
 #	https://github.com/torvalds/linux/compare/v6.1...zen-kernel:6.1/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.6...zen-kernel:6.6/zen-sauce
 #	https://github.com/torvalds/linux/compare/v6.12...zen-kernel:6.12/zen-sauce
+#	https://github.com/torvalds/linux/compare/v6.13...zen-kernel:6.13/zen-sauce
+#	https://github.com/torvalds/linux/compare/v6.14...zen-kernel:6.14/zen-sauce
 
 # CI
 # branch tip or live, 2024-08-15:  gcc 12.2, llvm 17.0.6; kernel versions 5.10, 6.6, 6.11
@@ -438,7 +443,7 @@ TRAINERS=(
 	webcam
 	yt
 )
-PYTHON_COMPAT=( python3_{10..11} ) # Slots based on dev-python/selenium
+PYTHON_COMPAT=( "python3_"{10..11} ) # Slots based on dev-python/selenium
 
 RT_ALT_FN="patches-${PATCH_RT_VER}.tar.gz"
 RT_BASE_DOMAIN_URI=${RT_BASE_DOMAIN_URI:-"cdn.kernel.org"}
@@ -473,6 +478,19 @@ MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
 # High and critical are noted and only those that are fixed on this release day
 # Medium and low are shown optionally.
+	# 20250408
+	"CVE-2025-22017;;"
+	"CVE-2025-22016;;"
+	"CVE-2025-22015;NPD, DoS;"
+	"CVE-2025-22014;DoS;"
+	"CVE-2025-22013;DoS;"
+	"CVE-2025-22012;DoS;"
+	"CVE-2025-22011;DoS;"
+	"CVE-2025-22010;DoS;"
+	"CVE-2025-22008;RC;"
+	"CVE-2025-22009;NPD, DoS;"
+	"CVE-2025-0927;;Rejected"
+
 	# 20250403
 	"CVE-2025-22004;UAF;"
 	"CVE-2025-22003;OOB;"
@@ -800,7 +818,7 @@ fi
 ZEN_MUQSS_BASE_URI="https://github.com/torvalds/linux/commit/"
 ZEN_SAUCE_BASE_URI="https://github.com/torvalds/linux/commit/"
 
-inherit check-reqs dhms flag-o-matic multiprocessing python-r1 ot-kernel-kutils ot-kernel-pkgflags
+inherit check-reqs dhms flag-o-matic multiprocessing python-single-r1 ot-kernel-kutils ot-kernel-pkgflags
 inherit security-scan toolchain-funcs vf
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -973,6 +991,7 @@ DEPEND+="
 "
 # lscpu needs sys-apps/util-linux
 BDEPEND+="
+	${PYTHON_DEPS}
 	dev-util/patchutils
 	sys-apps/findutils
 	sys-apps/util-linux
@@ -1568,6 +1587,8 @@ einfo "Security vulnerabilities fixed:  ${MITIGATION_URI}"
 		local dhms_passed=$(dhms_get ${MITIGATION_LAST_UPDATE} ${now})
 einfo "Time since the last security update:  ${dhms_passed}"
 	fi
+
+	python_setup
 
 	if declare -f ot-kernel_pkg_setup_cb > /dev/null ; then
 		ot-kernel_pkg_setup_cb
@@ -5008,7 +5029,7 @@ einfo "Disabling kexec"
 			ot-kernel_unset_configopt "CONFIG_KEXEC"
 		fi
 	fi
-	if python -c "import sys; sys.exit(0) if (${ot_kernel_dma_attack_mitigations}>=1.5) else sys.exit(1)" ; then
+	if ${EPYTHON} -c "import sys; sys.exit(0) if (${ot_kernel_dma_attack_mitigations}>=1.5) else sys.exit(1)" ; then
 einfo "Using strict as the default IOMMU domain type for mitigation against DMA attack."
 		ot-kernel_unset_configopt "CONFIG_IOMMU_DEFAULT_PASSTHROUGH"
 		ot-kernel_unset_configopt "CONFIG_IOMMU_DEFAULT_DMA_LAZY"
@@ -8935,7 +8956,7 @@ ot-kernel_set_kconfig_processor_class() {
 				ot-kernel_y_configopt "CONFIG_X86_64_ACPI_NUMA"
 			fi
 			ot-kernel_set_configopt "CONFIG_NODES_SHIFT" \
-				$(python -c "import math; print(math.ceil(math.log(${nsockets})/math.log(2)))")
+				$(${EPYTHON} -c "import math; print(math.ceil(math.log(${nsockets})/math.log(2)))")
 		fi
 	elif [[ \
 		   "${processor_class}" == "unicore" \

@@ -234,7 +234,7 @@ IUSE+="
 ${ARM_FLAGS[@]}
 ${PPC_FLAGS[@]}
 ${X86_FLAGS[@]}
-bmq build c2tcp +cfs -clang deepcc -debug -dwarf4 -expoline -gdb +genpatches
+bmq build c2tcp +cfs -clang deepcc -debug doc -dwarf4 -expoline -gdb +genpatches
 -genpatches_1510 muqss orca pgo qt5 +retpoline rock-dkms rt symlink tresor
 tresor_prompt tresor_sysfs uksm zen-muqss zen-sauce
 "
@@ -484,6 +484,12 @@ DEPEND+="
 BDEPEND+="
 	build? (
 		${CDEPEND}
+	)
+	doc? (
+		$(python_gen_cond_dep '
+			>=dev-python/sphinx-1.3[${PYTHON_USEDEP}]
+			dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}]
+		')
 	)
 "
 

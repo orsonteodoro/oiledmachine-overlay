@@ -289,7 +289,7 @@ QT6_PV="6.4"
 RISCV_FLAGS=(
 	+cpu_flags_riscv_rvv
 )
-RUST_MAX_VER="1.78.0" # Inclusive
+RUST_MAX_VER="1.85.1" # Inclusive
 RUST_MIN_VER="1.78.0"
 RUST_PV="${RUST_MIN_VER}"
 X86_FLAGS=(
@@ -334,7 +334,7 @@ ${ARM_FLAGS[@]}
 ${PPC_FLAGS[@]}
 ${RISCV_FLAGS[@]}
 ${X86_FLAGS[@]}
-bbrv2 bbrv3 build c2tcp +cet +cfs -clang deepcc -debug -dwarf4 -dwarf5
+bbrv2 bbrv3 build c2tcp +cet +cfs -clang deepcc -debug doc -dwarf4 -dwarf5
 -dwarf-auto -exfat -expoline -gdb +genpatches -genpatches_1510 -kcfi -lto nest
 orca pgo prjc qt5 qt6 +retpoline rt -rust shadowcallstack symlink tresor tresor_prompt
 tresor_sysfs zen-sauce
@@ -598,7 +598,6 @@ CDEPEND+="
 	>=sys-devel/bison-2.0
 	>=sys-devel/flex-2.5.35
 	>=dev-build/make-4.0
-	app-arch/cpio
 	dev-util/pkgconf
 	sys-apps/grep[pcre]
 	virtual/libelf
@@ -839,10 +838,8 @@ CDEPEND+="
 		)
 	)
 	rust? (
-		$(python_gen_any_dep '
-			>=dev-util/pahole-1.16[${PYTHON_SINGLE_USEDEP}]
-		')
 		>=dev-util/cbindgen-0.65.1
+		>=dev-util/pahole-1.16[${PYTHON_SINGLE_USEDEP}]
 		!clang? (
 			>=sys-devel/gcc-4.5
 		)
@@ -927,6 +924,13 @@ DEPEND+="
 BDEPEND+="
 	build? (
 		${CDEPEND}
+	)
+	doc? (
+		$(python_gen_cond_dep '
+			>=dev-python/sphinx-2.4.4[${PYTHON_USEDEP}]
+			dev-python/alabaster[${PYTHON_USEDEP}]
+			dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}]
+		')
 	)
 "
 if ! [[ "${PV}" =~ "9999" ]] ; then
@@ -1439,6 +1443,7 @@ ot-kernel_check_versions() {
 	_ot-kernel_check_versions "net-dialup/ppp" "2.4.0" "CONFIG_PPP"
 	_ot-kernel_check_versions "net-firewall/iptables" "1.4.2" "CONFIG_NETFILTER"
 	_ot-kernel_check_versions "net-fs/nfs-utils" "1.0.5" "NFS_FS"
+	_ot-kernel_check_versions "sys-apps/gawk" "5.1.0" ""
 	_ot-kernel_check_versions "sys-apps/pcmciautils" "004" "CONFIG_PCMCIA"
 	_ot-kernel_check_versions "sys-boot/grub" "0.93" ""
 	_ot-kernel_check_versions "sys-fs/btrfs-progs" "0.18" "CONFIG_BTRFS_FS"

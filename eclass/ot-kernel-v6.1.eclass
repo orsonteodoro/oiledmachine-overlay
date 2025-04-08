@@ -263,7 +263,7 @@ IUSE+="
 ${ARM_FLAGS[@]}
 ${PPC_FLAGS[@]}
 ${X86_FLAGS[@]}
-bbrv2 build c2tcp +cet +cfs -clang deepcc -debug -dwarf4 -dwarf5 -dwarf-auto
+bbrv2 build c2tcp +cet +cfs -clang deepcc -debug doc -dwarf4 -dwarf5 -dwarf-auto
 -exfat -expoline -gdb +genpatches -genpatches_1510 -kcfi -lto nest orca pgo prjc
 qt5 +retpoline rt -rust shadowcallstack symlink tresor tresor_prompt tresor_sysfs
 zen-sauce
@@ -708,10 +708,8 @@ CDEPEND+="
 		)
 	)
 	rust? (
-		$(python_gen_any_dep '
-			>=dev-util/pahole-1.16[${PYTHON_SINGLE_USEDEP}]
-		')
 		>=dev-util/cbindgen-0.56.0
+		>=dev-util/pahole-1.16[${PYTHON_SINGLE_USEDEP}]
 		!clang? (
 			>=sys-devel/gcc-4.5
 		)
@@ -795,6 +793,12 @@ DEPEND+="
 BDEPEND+="
 	build? (
 		${CDEPEND}
+	)
+	doc? (
+		$(python_gen_cond_dep '
+			>=dev-python/sphinx-1.7[${PYTHON_USEDEP}]
+			dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}]
+		')
 	)
 "
 
