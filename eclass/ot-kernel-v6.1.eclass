@@ -238,7 +238,6 @@ RUST_SLOTS=(
 )
 RUST_MAX_VER="1.81.0" # Inclusive
 RUST_MIN_VER="1.62.0"
-RUST_PV="${RUST_MIN_VER}"
 PPC_FLAGS=(
 	cpu_flags_ppc_476fpe
 	cpu_flags_ppc_altivec

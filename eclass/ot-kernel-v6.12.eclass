@@ -308,7 +308,6 @@ RUST_SLOTS=(
 )
 RUST_MAX_VER="1.81.0" # Inclusive
 RUST_MIN_VER="1.78.0"
-RUST_PV="${RUST_MIN_VER}"
 X86_FLAGS=(
 # See also
 # arch/x86/Kconfig.assembler
