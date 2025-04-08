@@ -181,7 +181,7 @@ GCC_MIN_KCP_ZEN_SAUCE_AMD64=14
 GENPATCHES_VER="${GENPATCHES_VER:?1}"
 KMOD_PV="13"
 # llvm slot originally 16, testing 18
-LLVM_COMPAT=( {18..13} ) # KCP wants 19 but previous test may had failure
+LLVM_COMPAT=( {18..13} ) # Based on scripts/min-tool-version.sh
 LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
 LLVM_MIN_SLOT=${LLVM_COMPAT[-1]}
 LLVM_MIN_KCFI_ARM64=16
