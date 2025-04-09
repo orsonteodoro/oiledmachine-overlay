@@ -14,7 +14,7 @@
 * Loops and algorithms can only be O(1), O(n).
 * No more than 2 tabs indents.
 * Generators should be used instead of repeated blocks of strings.
-* All local variables and loop variables should be declared explicit local.
+* All local variables and loop variables should be declared explicitly local.
 * All local names should be lower case with underscore separating words.
 * All global names should be capitalized with underscores separating words.
 * An ASCII inspired sort should be used whenever possible to the following
