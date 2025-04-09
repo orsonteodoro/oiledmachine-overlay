@@ -16,8 +16,8 @@
 
 #### See also
 
-[The security policy](SECURITY.md)
-[The overlay ebuild style guideline](EBUILD_STYLE_GUIDELINE.md)
+* [The security policy](SECURITY.md)
+* [The overlay ebuild style guideline](EBUILD_STYLE_GUIDELINE.md)
 
 ### Code review
 
