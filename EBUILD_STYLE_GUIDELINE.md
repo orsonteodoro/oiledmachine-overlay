@@ -22,14 +22,18 @@
   - assocative arrays
   - *DEPENDs
   - if-else chains
+  - In metadata.xml in the
+    - use flag section
+    - upstream section
   - IUSE
   - REQUIRED_USE
+  - SRC_URI
   - switch-case
   - User defined global variables
 * Strings are double quoted.
 * Versions are double quoted.
 * File/folder paths are typically double quoted from start to end.
-* The metadata.xml
+* The metadata.xml style
   - 2 space indent to emphasize detailed oriented and detailed reviewed ebuild.
   - Symmetrical block style
 * Simplification by removing explicit phase functions is preferred.
