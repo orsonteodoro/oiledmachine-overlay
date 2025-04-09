@@ -23,15 +23,16 @@
 * The metadata.xml
   - 2 space indent to emphasize detailed oriented and detailed reviewed ebuild.
   - Symmetrical block style
+* Simplification by removing explicit phase functions is preferred.
 
 1. Header
    - Must contain copyright notice
 
-2. Comments
+2. Comments (optional)
    - TODO list
    - FIXME objectives
 
-4. Pre inherits
+4. Pre inherits (optional)
 
 3. User defined global variables
 
