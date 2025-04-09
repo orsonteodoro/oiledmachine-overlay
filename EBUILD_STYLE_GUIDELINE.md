@@ -45,23 +45,25 @@
 
 4. Pre inherits (optional)
 
-3. User defined global variables
+3. User defined global variables above
 
 4. General eclass inherits
 
 5. Download section
    - Typically a conditional with PV == *9999*
    - Live repo info (optional)
+     - # User defined globals above
      - EGIT_BRANCH
      - EGIT_REPO_URI
      - EGIT_CHECKOUT_DIR
      - inherit git-r3
+     - # Common globals below
      - IUSE+=" fallback-commit"
    - Stable download info
      - KEYWORDS
      - SRC_URI
 
-6. Commonly used global variables
+6. Commonly used global variables below
    - DESCRIPTION
      - It should be the same style
      - Typically an adjective phrase
