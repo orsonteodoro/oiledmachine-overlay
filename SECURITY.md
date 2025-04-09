@@ -76,7 +76,7 @@ The issue report should have the following:
     - Improper Permissions
     - Privelege Escalation
     - Arbitary Code Execution
-    - Supply chain attack
+    - Supply Chain Attack
     - Malware
     - See the CWE website or https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/vf.eclass
 - CWE (optional)
