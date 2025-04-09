@@ -16,7 +16,7 @@
 * Generators should be used instead of repeated blocks of strings.
 * All local variables and loop variables should be declared explicit local.
 * All local names should be lower case with underscore separating words.
-* All global names should be capital with underscores separating words.
+* All global names should be capitalized with underscores separating words.
 * The metadata.xml
   - 2 space indent to emphasize detailed oriented and detailed reviewed ebuild.
   - Symmetrical block style
