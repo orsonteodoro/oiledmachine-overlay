@@ -26,7 +26,7 @@
 * Simplification by removing explicit phase functions is preferred.
 
 1. Header
-   - Must contain copyright notice
+   - A copyright notice is required
 
 2. Comments (optional)
    - TODO list
@@ -39,19 +39,23 @@
 4. General eclass inherits
 
 5. Download section
-   - Typically conditional PV == *9999*
+   - Typically a conditional with PV == *9999*
    - Live repo info (optional)
      - inherit git
    - Stable download info
      - KEYWORDS
      - SRC_URI
 
-6. Required basic global variables
+6. Basic global variables
    - DESCRIPTION
      - It should be the same style
      - Typically an adjective phrase
+     - It should be simplified if too long
+   - SLOT
+   - RESTRICT
    - IUSE
      - For live ebuilds, fallback-commit should be available.
+   - REQUIRED_USE
    - RDEPEND
    - DEPEND
    - BDEPEND
