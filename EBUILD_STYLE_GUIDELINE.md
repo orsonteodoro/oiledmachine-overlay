@@ -46,7 +46,7 @@
      - KEYWORDS
      - SRC_URI
 
-6. Basic global variables
+6. Commonly used global variables
    - DESCRIPTION
      - It should be the same style
      - Typically an adjective phrase
