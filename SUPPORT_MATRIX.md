@@ -5,7 +5,7 @@
 | Fully supported      | Best         | Tested, fully compatible                                                                                 |
 | Mostly supported     | Better       | Tested and partially compatible                                                                          |
 | Partially supported  | Good         | May be tested and partially compatible                                                                   |
-| Available            | Good to poor | Not tested, partially compatible, ebuild may be unfinished                                               |
+| Available            | Good to poor | Not tested, partially compatible, ebuild may be unfinished, Work in Progress (WIP)                       |
 | Deprecated           | Best to poor | Phased out for removal and may be actively removed, may have security issues                             |
 | EOL                  | Poor         | No longer compatible and may be removed, may have security issues that are practically impossible to fix |
 | Not supported        | Poor         | Dropped support by overlay, may have security issues, untested                                           |
@@ -57,6 +57,8 @@ exist in build files.
 | OpenGL <= 4.6     | Fully supported                          |
 | OpenCL <= 2.0     | Fully supported                          |
 | Ollama            | Fully supported                          |
+| OpenMP (CPU)      | Fully supported                          |
+| OpenMP (GPU)      | Available                                |
 | OpenRC            | Fully supported                          |
 | Protobuf 3        | Fully supported                          |
 | Protobuf 4        | Available                                |
@@ -65,6 +67,7 @@ exist in build files.
 | Qt 5.x            | Available                                |
 | Qt 6.x            | Fully supported                          |
 | ROCm              | Available                                |
+| SYCL              | Available                                |
 | systemd           | Partially supported                      |
 | TensorFlow        | Available                                |
 | Vulkan            | Fully supported                          |
