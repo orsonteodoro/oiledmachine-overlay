@@ -24,7 +24,9 @@ hardware design flaw in the pointer security, then it cannot be easily fixed
 and maybe the hardware be replaced.
 
 For example, if the software requires a Rust component that uses GTK3 but
-the fix in GTK4.  The fix will be likely skipped until upstream it.
+the fix in the GTK4 release.  The fix will be likely skipped until upstream
+updates both the Rust dependencies and the code that references those
+libraries.
 
 ## Patching/triage priorities (ranked high top)
 
