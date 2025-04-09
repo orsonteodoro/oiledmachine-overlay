@@ -59,9 +59,9 @@ It is recommended to use open source packages whenever possible.
 Report it as an issue request but only if it has a patch or fixed in a particular version.
 
 The issue report should have the following:
-- Summary
+- Summary (recommended)
 - Packages affected (required)
-- CVE (optional)
+- CVE ID (optional)
 - Either a CVSS 3.1 vector string, vulnerability classes, or univeral recognized bug name (required)
   - Vulernability classes (multiple allowed):
     - DoS - Denial of Service - e.g. crash, memory leak - same as availability in CVSS 3.1
@@ -79,7 +79,7 @@ The issue report should have the following:
     - Supply Chain Attack
     - Malware
     - See the CWE website or https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/vf.eclass
-- CWE (optional)
+- CWE ID (optional)
 - A patch or version(s) that fixes it (required)
 
 ## Unpatched vulnerabilities
