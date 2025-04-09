@@ -148,6 +148,15 @@ src_prepare() {
 src_configure() {
 	rocm_set_default_hipcc
 
+	if ver_test $(gcc-major-version) -ne "13" ; then
+ewarn
+ewarn "GCC 13 may be required to build ${PN}.  If configure test failure, do"
+ewarn
+ewarn "eselect gcc set x86_64-pc-linux-gnu-13"
+ewarn "source /etc/profile"
+ewarn
+	fi
+
 	if use rocm ; then
 		append-ldflags \
 			-Wl,-L"/opt/rocm-${ROCM_VERSION}/llvm/$(rocm_get_libdir)" \
