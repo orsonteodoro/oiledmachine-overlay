@@ -6,7 +6,7 @@
 * Arrays are symmetrical.
 * Strings are symmetrical.
 * Indents are tabs only.
-* Anti simple coding style is preferred to reduce the learning curve of patching software at code level.
+* The ebuild coding style should resemble higher level programming languages to reduce the learning curve of patching software at code level.
 * Ebuild explicit and verbose syntax is preferred to encourage fixing code level bugs.
 * 80 characters per line.
 * Comments indented either tab 0 or 1st tab and no more.
