@@ -91,9 +91,9 @@ These generally should not be reported.  They may be reported on these cases:
 - It was reported upstream but upstream does not want to fix it after 2 or 4
   year(s) it was reported, or if those versions are EOL.  If it was EOL, note it
   so we can bump the package.
-- The vulnerability is in the wild and being actively exploited but the
-  vendor is unwilling to fix it.  It is recommended to discuss in private
-  first.  DO NOT SEND A ISSUE REQUEST YET.
+- The critical to high vulnerability is in the wild and being actively exploited
+  but the vendor is unwilling to fix it.  It is recommended to discuss in
+  private first.  DO NOT SEND A ISSUE REQUEST YET.
 
 If you make a report, there is a chance it will be ignored or closed so don't
 be offended.
