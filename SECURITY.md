@@ -90,7 +90,8 @@ These generally should not be reported.  They may be reported on these cases:
   year(s) it was reported, or if those versions are EOL.  If it was EOL, note it
   so we can bump the package.
 
-If you make a report, there is a chance it will be ignored or closed.
+If you make a report, there is a chance it will be ignored or closed so don't
+be offended.
 
 The report may be done via issue request but only if it contains no sensitive
 information and no personal attacks.
