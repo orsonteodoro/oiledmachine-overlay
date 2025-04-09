@@ -31,7 +31,7 @@ libraries.
 ## Patching/triage priorities (ranked high top)
 
 0. Ebuilds that block (security) updates
-1. Fixing untested packages
+1. Fixing untested ebuilds
 2. Critical severity vulernabilities
 3. High severity vulernabilities
 4. Bumping versions for high value assets with weekly or biweekly vulnerability recurrence intervals
