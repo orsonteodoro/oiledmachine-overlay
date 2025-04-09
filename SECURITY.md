@@ -62,7 +62,7 @@ The issue report should have the following:
 - Summary (recommended)
 - Packages affected (required)
 - CVE ID (optional)
-- Either a CVSS 3.1 vector string, vulnerability classes, or univeral recognized bug name (required)
+- Either a CVSS 3.1 vector string, vulnerability classes, or universally recognized bug name (required)
   - Vulernability classes (multiple allowed):
     - DoS - Denial of Service - e.g. crash, memory leak - same as availability in CVSS 3.1
     - DT - Data Tampering - e.g. corrupted data, compromised data integrity - same as integrity in CVSS 3.1
