@@ -17,6 +17,8 @@
 * All local variables and loop variables should be declared explicit local.
 * All local names should be lower case with underscore separating words.
 * All global names should be capitalized with underscores separating words.
+* ASCII inspired sorting is required for user defined global variables,
+  configure section, *DEPEND sections.
 * Strings are double quoted.
 * Versions are double quoted.
 * File/folder paths are typically double quoted from start to end.
@@ -41,7 +43,11 @@
 5. Download section
    - Typically a conditional with PV == *9999*
    - Live repo info (optional)
-     - inherit git
+     - EGIT_BRANCH
+     - EGIT_REPO_URI
+     - EGIT_CHECKOUT_DIR
+     - inherit git-r3
+     - IUSE+=" fallback-commit"
    - Stable download info
      - KEYWORDS
      - SRC_URI
@@ -54,7 +60,6 @@
    - SLOT
    - RESTRICT
    - IUSE
-     - For live ebuilds, fallback-commit should be available.
    - REQUIRED_USE
    - RDEPEND
    - DEPEND
