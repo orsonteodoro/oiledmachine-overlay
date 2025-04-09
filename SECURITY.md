@@ -39,7 +39,7 @@ libraries.
 6. Uncaught Information Disclosure (ID)
 7. Uncaught Data Tampering (DT)
 8. Uncaught Denial of Service (DoS)
-9. Uncaught security vulnerabilities
+9. Uncaught security vulnerability advisories
 10. Memory leaks (CWE-401)
 11. Heavy I/O (CWE-400, CWE-770)
 12. Modifying or speeding up ebuilds to mitigate against vulnerability backlog
