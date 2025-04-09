@@ -144,7 +144,8 @@ src_prepare() {
 
 src_configure() {
 	addpredict "/dev/kfd"
-	rocm_set_default_hipcc
+#	rocm_set_default_hipcc # broken
+	rocm_set_default_gcc
 
 	if use rocm ; then
 		append-ldflags \
