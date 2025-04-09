@@ -94,7 +94,7 @@ If you make a report, there is a chance it will be ignored or closed so don't
 be offended.
 
 The report may be done via issue request but only if it contains no sensitive
-information and no personal attacks.
+information, no personal attacks, and nothing that violates the website rules.
 
 ## Personal identifiable information
 
