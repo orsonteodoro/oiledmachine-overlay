@@ -1,5 +1,7 @@
 # Security policy
 
+(This page is still a rough draft.)
+
 The security policy is based on the name of the overlay, with the focus on
 eliminating performance slow downs that manifest as memory leaks, heavy I/O,
 large FPS drops.
