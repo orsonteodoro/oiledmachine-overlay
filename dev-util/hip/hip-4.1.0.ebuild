@@ -66,7 +66,7 @@ LICENSE="
 # MIT - hipamd-rocm-4.5.2/LICENSE.txt
 
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="cuda debug numa -pal profile +rocm test ebuild_revision_39"
+IUSE="cuda debug numa -pal profile +rocm test ebuild_revision_40"
 REQUIRED_USE="
 	pal? (
 		rocm
@@ -287,7 +287,8 @@ src_compile() {
 			-DHIP_PLATFORM="amd"
 			-DHIP_RUNTIME="rocclr"
 			-DOPENCL_DIR="${OCL_S}"
-			-DROCclr_DIR="${ROCCLR_S}_build/lib/cmake/rocclr"
+#			-DROCclr_DIR="${ROCCLR_S}_build/lib/cmake/rocclr"
+			-DROCclr_DIR="${ROCCLR_S}"
 			-DBUILD_PAL=$(usex pal ON OFF)
 			-DROCCLR_PATH="${ROCCLR_S}"
 			-DUSE_COMGR_LIBRARY=ON
@@ -309,6 +310,12 @@ src_compile() {
 		cmake_src_compile
 	popd >/dev/null 2>&1 || die
 
+	if use rocm ; then
+		mycmakeargs+=(
+			-DROCclr_DIR="${WORKDIR}/ROCclr-rocm-4.1.0_build/lib/cmake/rocclr"
+		)
+	fi
+
 	einfo "Building HIP"
 	pushd "${S}" >/dev/null 2>&1 || die
 		CMAKE_USE_DIR="${S}" \
@@ -325,6 +332,12 @@ src_compile() {
 }
 
 src_install() {
+	pushd "${ROCCLR_S}" >/dev/null 2>&1 || die
+		CMAKE_USE_DIR="${ROCCLR_S}" \
+		BUILD_DIR="${ROCCLR_S}_build" \
+		cmake_src_install
+	popd >/dev/null 2>&1 || die
+
 	cmake_src_install
 
 	# Don't install .hipInfo and .hipVersion to bin/lib

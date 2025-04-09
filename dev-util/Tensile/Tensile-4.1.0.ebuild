@@ -145,6 +145,9 @@ src_prepare() {
 src_configure() {
 	addpredict "/dev/kfd"
 	rocm_set_default_hipcc
+	export CC=""
+	export CXX=""
+	export CPP=""
 
 	if use rocm ; then
 		append-ldflags \
@@ -192,6 +195,7 @@ src_configure() {
 				-DHIP_COMPILER="clang"
 				-DHIP_PLATFORM="amd"
 				-DHIP_RUNTIME="rocclr"
+				-DROCclr_DIR="${ESYSROOT}//opt/rocm-${PV}/lib/cmake/hip"
 			)
 		fi
 		rocm_src_configure
@@ -226,7 +230,6 @@ src_install() {
 	insinto "${EROCM_PATH}/lib/${EPYTHON}/site-packages/${PN}"
 	doins -r \
 		"Configs" \
-		"CustomKernels" \
 		"Perf" \
 		"ReplacementKernels" \
 		"ReplacementKernels-cov3" \

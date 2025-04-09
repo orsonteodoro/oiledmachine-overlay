@@ -1576,6 +1576,7 @@ rocm_set_default_aocc() {
 rocm_set_default_hipcc() {
 	export CC="hipcc"
 	export CXX="hipcc"
+#	export CPP="${CC} -E"
 	strip-unsupported-flags
 	if has cuda ${IUSE_EFFECTIVE} && use cuda ; then
 		# Limited by HIPIFY.  See _rocm_set_globals_default()
