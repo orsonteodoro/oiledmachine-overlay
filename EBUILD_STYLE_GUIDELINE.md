@@ -34,6 +34,8 @@
   - Symmetrical block style
 * Simplification by removing explicit phase functions is preferred.
 
+# Ebuild organization
+
 1. Header
    - A copyright notice is required
 
