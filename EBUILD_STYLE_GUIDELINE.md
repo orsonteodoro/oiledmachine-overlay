@@ -17,8 +17,15 @@
 * All local variables and loop variables should be declared explicit local.
 * All local names should be lower case with underscore separating words.
 * All global names should be capitalized with underscores separating words.
-* ASCII inspired sorting is required for user defined global variables,
-  configure section, *DEPEND sections.
+* An ASCII inspired sort should be used whenever possible to the following
+  - arrays
+  - assocative arrays
+  - *DEPENDs
+  - if-else chains
+  - IUSE
+  - REQUIRED_USE
+  - switch-case
+  - User defined global variables
 * Strings are double quoted.
 * Versions are double quoted.
 * File/folder paths are typically double quoted from start to end.
