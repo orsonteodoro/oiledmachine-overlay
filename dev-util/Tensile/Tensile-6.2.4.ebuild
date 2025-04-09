@@ -64,6 +64,9 @@ REQUIRED_USE="
 		rocm
 	)
 "
+# dev-util/hip[numa] applied to prevent:
+#    ld.lld: error: undefined reference due to --no-allow-shlib-undefined: numa_sched_setaffinity
+#    >>> referenced by /opt/rocm-6.2.4/lib/libamdhip64.so
 RDEPEND="
 	${PYTHON_DEPS}
 	${ROCM_CLANG_DEPEND}
@@ -72,7 +75,7 @@ RDEPEND="
 	dev-python/joblib[${PYTHON_USEDEP}]
 	dev-python/msgpack[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
-	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,rocm?]
+	~dev-util/hip-${PV}:${ROCM_SLOT}[cuda?,numa,rocm?]
 	client? (
 		dev-libs/boost
 		~dev-util/rocm-smi-${PV}:${ROCM_SLOT}
