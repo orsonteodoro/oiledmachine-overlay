@@ -17,6 +17,9 @@
 * All local variables and loop variables should be declared explicit local.
 * All local names should be lower case with underscore separating words.
 * All global names should be capitalized with underscores separating words.
+* Strings are double quoted.
+* Versions are double quoted.
+* File/folder paths are typically double quoted from start to end.
 * The metadata.xml
   - 2 space indent to emphasize detailed oriented and detailed reviewed ebuild.
   - Symmetrical block style
