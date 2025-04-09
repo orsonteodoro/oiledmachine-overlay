@@ -56,6 +56,7 @@
    - PATCHES
 
 7. Ebuild phases
+   - These should be in chronological order.
    - src_setup()
    - src_unpack()
      - For live ebuilds, it should have a fallback-commit.
