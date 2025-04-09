@@ -82,7 +82,7 @@ The issue report should have the following:
 - CWE ID (optional)
 - A patch or version(s) that fixes it (required)
 
-## Unpatched vulnerabilities
+## Unpatched vulnerabilities (aka 0-day vulnerabilities)
 
 These generally should not be reported.  They may be reported on these cases:
 
