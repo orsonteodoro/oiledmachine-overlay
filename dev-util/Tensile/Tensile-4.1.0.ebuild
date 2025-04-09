@@ -145,9 +145,6 @@ src_prepare() {
 src_configure() {
 	addpredict "/dev/kfd"
 	rocm_set_default_hipcc
-	export CC=""
-	export CXX=""
-	export CPP=""
 
 	if use rocm ; then
 		append-ldflags \
