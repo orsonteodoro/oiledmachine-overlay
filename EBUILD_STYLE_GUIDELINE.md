@@ -35,6 +35,8 @@
   - User defined global variables
 * Strings are double quoted.
 * Versions are double quoted.
+* Integers are not quoted.
+* Floats are quoted.
 * File/folder paths are typically double quoted from start to end.
 * The metadata.xml style
   - 2 space indent to emphasize detailed oriented and detailed reviewed ebuild.
