@@ -59,9 +59,12 @@
     may use just `dev-libs/libgcrypt` for RDEPENDs.
 
 * PYTHON_COMPAT fallbacks.
-  - If setup.py contains only python3, you may list only stable Python KEYWORDS.
+  - If setup.py contains only python3, you may list only stable Python KEYWORDS,
+    or include up to Python 12 which U24 uses, or include up to Python 11 which
+    D12 uses.
   - If setup.py contains Python 3.9 only, you may only list the tested version
-    and earlier.
+    and earlier.  The package by some packagers is considered EOL or a defunct
+    project.
   - If setup.py contains Python 3.9, 3.10, but you tested 3.11, you
     may specify `PYTHON_COMPAT=( "python3_"{10..11} )` but you need to
     leave a comment that you tested it or specify which package exactly needs it.
