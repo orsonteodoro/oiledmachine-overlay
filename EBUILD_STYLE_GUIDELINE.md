@@ -159,7 +159,7 @@
 
   - [Pegasus](https://en.wikipedia.org/wiki/Pegasus_(spyware))
   - [FORCEDENTRY](https://en.wikipedia.org/wiki/FORCEDENTRY)
-  - OOB ZCA ACE with FreeType [CVE-2025-27363](https://nvd.nist.gov/vuln/detail/CVE-2025-27363)
+  - [CVE-2025-27363](https://nvd.nist.gov/vuln/detail/CVE-2025-27363)
 
 * C/C++ daemons and suid packages require `-fstack-clash-protection` C{,XX}FLAG.
 
