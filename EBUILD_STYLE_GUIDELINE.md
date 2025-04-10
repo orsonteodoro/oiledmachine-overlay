@@ -135,7 +135,7 @@
     - `-fstack-protector`
     - `-D_FORTIFY_SOURCE=2` with `-O1` or higher
     - `-fPIC`
-    - ` -fPIE -pie`
+    - `-fPIE -pie`
     - `-Wl,-z,noexecstack`
     - `-Wl,-z,relro -Wl,-z,now`
 
