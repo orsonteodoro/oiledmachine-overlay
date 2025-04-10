@@ -94,6 +94,9 @@
   available and implemented properly if the project does not document it.
 * The ebuild should be polished to improve stability and to hide/disable
   unfinshed features at the code level.
+* The CFLAGS should be changed to prevent Denial of Service (e.g. crash).
+* If -O3 or -Ofast causes a crash, then the CFLAG must be downgraded to -O2 or
+  whatever is necessary to prevent a crash.
 
 # Ebuild organization
 
