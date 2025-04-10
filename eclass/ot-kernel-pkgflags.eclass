@@ -6161,7 +6161,7 @@ ot-kernel-pkgflags_libnetfilter_queue() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the libomp package
 ot-kernel-pkgflags_libomp() { # DONE
-	if ot-kernel_has_version_pkgflags "sys-libs/libomp" ; then
+	if ot-kernel_has_version_pkgflags "llvm-runtimes/openmp" ; then
 		if [[ "${cpu_sched}" =~ ("pds"|"prjc-pds") ]] ; then
 ewarn
 ewarn "Detected use of the PDS scheduler."

@@ -898,7 +898,7 @@ RDEPEND+="
 	llvm_slot_15? (
 		openmp? (
 			!rocm? (
-				sys-libs/libomp:15
+				llvm-runtimes/openmp:15
 			)
 		)
 		|| (
@@ -938,7 +938,7 @@ RDEPEND+="
 	llvm_slot_16? (
 		openmp? (
 			!rocm? (
-				sys-libs/libomp:16
+				llvm-runtimes/openmp:16
 			)
 		)
 		|| (
@@ -954,7 +954,7 @@ RDEPEND+="
 	llvm_slot_17? (
 		openmp? (
 			!rocm? (
-				sys-libs/libomp:17
+				llvm-runtimes/openmp:17
 			)
 		)
 		|| (

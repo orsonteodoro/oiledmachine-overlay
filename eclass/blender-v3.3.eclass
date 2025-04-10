@@ -851,7 +851,7 @@ RDEPEND+="
 	)
 	llvm_slot_11? (
 		!rocm? (
-			sys-libs/libomp:11
+			llvm-runtimes/openmp:11
 		)
 		|| (
 			~media-libs/mesa-20.2.3[X?]
@@ -898,7 +898,7 @@ RDEPEND+="
 	)
 	llvm_slot_12? (
 		!rocm? (
-			sys-libs/libomp:12
+			llvm-runtimes/openmp:12
 		)
 		|| (
 			~media-libs/mesa-21.1.0[X?]
@@ -938,7 +938,7 @@ RDEPEND+="
 	)
 	llvm_slot_13? (
 		!rocm? (
-			sys-libs/libomp:13
+			llvm-runtimes/openmp:13
 		)
 		|| (
 			~media-libs/mesa-21.2.5[X?]
