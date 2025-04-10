@@ -145,7 +145,7 @@
   - Web audio codecs
   - Web image codecs
   - PDF packages
-  - Font packages
+  - Font libraries
   - Web browser packages
   - Messaging apps
   - Networked multimedia apps
