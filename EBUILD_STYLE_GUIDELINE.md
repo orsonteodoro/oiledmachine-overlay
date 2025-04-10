@@ -124,7 +124,7 @@
   - Scrolling:  No delay, no lag
   - Workstation:  48 hours minimum uptime for all nighter scenario
 * C/C++ packages that process user generated content from the Internet need to
-  be hardened to prevent Code Execution (CE) based Zero Click Attack (ZCA).
+  be hardened to prevent Arbitrary Code Execution (ACE) based Zero Click Attack (ZCA).
 
   Apply for GCC >= 14 or
 
@@ -154,6 +154,12 @@
   You must verify the compiler's hardening is on and/or apply the hardening
   flags unconditionally.  Don't assume that the user is using the default on
   hardened USE flag settings for the C/C++ compiler or hardened linker.
+
+  We want to mitigate against inspired attacks based on the following
+
+  - [Pegasus](https://en.wikipedia.org/wiki/Pegasus_(spyware))
+  - [FORCEDENTRY](https://en.wikipedia.org/wiki/FORCEDENTRY)
+  - OOB ZCA ACE with FreeType [CVE-2025-27363](https://nvd.nist.gov/vuln/detail/CVE-2025-27363)
 
 * C/C++ daemons and suid packages require `-fstack-clash-protection` C{,XX}FLAG.
 
