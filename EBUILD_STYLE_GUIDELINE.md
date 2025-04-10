@@ -6,8 +6,11 @@
 * Arrays are symmetrical.
 * Strings are symmetrical.
 * Indents are tabs only.
-* The ebuild coding style should resemble similar higher level programming languages coding styles to reduce the learning curve of patching software at code level.
-* Ebuild explicit and verbose syntax is preferred to encourage fixing code level bugs.
+* The ebuild coding style should resemble similar higher level programming
+  languages coding styles to reduce the learning curve of patching software at
+  code level.
+* Ebuild explicit and verbose syntax is preferred to encourage fixing code level
+  bugs.
 * 80 characters per line.
 * Comments indented either tab 0 or 1st tab and no more.
 - Comments should be in formal language.
@@ -29,6 +32,7 @@
     - upstream section
   - IUSE
   - LICENSE
+  - Local variables declaration section
   - REQUIRED_USE
   - SRC_URI
   - switch-case
@@ -43,9 +47,9 @@
   - Symmetrical block style
 * Simplification by removing explicit phase functions is preferred.
 * The oldest CI image is the fallback image if no specific versions specified in
-  build files but images are in CI.  If no CI testing is being done, then you
-  don't need to specify the version unless the code requires it
-  (e.g. gui-libs/gtk:4).
+  the build files but distro images are specified in the CI files.  If no CI
+  testing is being done, then you don't need to specify the version unless the
+  code requires it (e.g. gui-libs/gtk:4).
 
   - For example,
 
