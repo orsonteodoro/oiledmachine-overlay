@@ -127,14 +127,17 @@
   prevent Code Execution (CE) based Zero Click Attack (ZCA).
 
   Apply for GCC >= 14 or
-    `-fhardened`
+
+    - `-fhardened`
+
   or the standard web browser hardening {C,CXX,LD}FLAGS
-    `-fstack-protector`
-    `-D_FORTIFY_SOURCE=2` with `-O1` or higher
-    `-fPIC`
-    ` -fPIE -pie`
-    `-Wl,-z,noexecstack`
-    `-Wl,-z,relro -Wl,-z,now`
+
+    - `-fstack-protector`
+    - `-D_FORTIFY_SOURCE=2` with `-O1` or higher
+    - `-fPIC`
+    - ` -fPIE -pie`
+    - `-Wl,-z,noexecstack`
+    - `-Wl,-z,relro -Wl,-z,now`
 
   The classes of packages that should be hardened against CE + ZCA are:
 
