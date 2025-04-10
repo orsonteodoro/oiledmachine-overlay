@@ -72,7 +72,10 @@
     available on distro due to python-utils-r1.eclass restrictions.
 * If an ebuild references a PYTHON_SINGLE_USEDEP in *DEPENDs, the ebuild should
   use either `DISTUTILS_SINGLE_IMPL=1` with `inherit distutils-r1` or
-  `inherit python-single-r1`.
+  `inherit python-single-r1`.  This edge case is not well documented.
+* If a package contains a uncommon license or legal changes that introduce a
+  new phrase or clause, it should be documented as a comment near the LICENSE
+  variable.
 
 # Ebuild organization
 
@@ -106,6 +109,7 @@
      - Typically an adjective phrase
      - It should be simplified if too long
    - LICENSE
+     - List licence commentary below this variable.
    - SLOT
    - RESTRICT
    - IUSE
