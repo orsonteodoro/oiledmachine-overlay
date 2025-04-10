@@ -76,6 +76,8 @@
 * If a package contains an uncommon license or legal changes that introduce a
   new phrase or clause, it should be documented as a comment near the LICENSE
   variable.
+* Live ebuilds should have fallback-commit support to reduce gh issue spam and
+  to improve reproducibility for projects without version tags.
 
 # Ebuild organization
 
@@ -123,7 +125,8 @@
 
 7. Ebuild phases
    - These should be in chronological order.
-   - src_setup()
+   - pkg_setup()
+   - pkg_nofetch()
    - src_unpack()
      - For live ebuilds, it should have a fallback-commit.
    - src_configure()
