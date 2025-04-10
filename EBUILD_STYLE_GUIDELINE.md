@@ -58,6 +58,9 @@
     If the build files say just libgcrypt and no images or CI testing, you
     may use just `dev-libs/libgcrypt` for RDEPENDs.
 
+    If the build files say libgcrypt with minimum version, you may use that
+    instead.
+
 * PYTHON_COMPAT fallbacks.
   - If setup.py contains only python3, you may list only stable Python KEYWORDS,
     or include up to Python 12 which U24 uses, or include up to Python 11 which
