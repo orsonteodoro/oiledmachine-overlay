@@ -45,18 +45,18 @@
 
   - For example,
 
-    U24 has libgcrypt 1.10.3
-    U22 has libgcrypt 1.9.4
-    D12 has libgcrypt 1.10.1
+    - U24 has libgcrypt 1.10.3
+    - U22 has libgcrypt 1.9.4
+    - D12 has libgcrypt 1.10.1
 
     If the build files say libgcrypt and image D24 is only being tested, then use
-    >=dev-libs/libgcrypt-1.10.3 for RDEPENDs.
+    `>=dev-libs/libgcrypt-1.10.3` for RDEPENDs.
 
     If the build files say libgcrypt and image D12 and D24 are being tested, then
-    use >=dev-libs/libgcrypt-1.94 for RDEPENDs.
+    use `>=dev-libs/libgcrypt-1.94` for RDEPENDs.
 
     If the build files say just libgcrypt and no images or CI testing, you
-    may use just dev-libs/libgcrypt for RDEPENDS.
+    may use just `dev-libs/libgcrypt` for RDEPENDs.
 
 * PYTHON_COMPAT fallbacks.
   - If setup.py contains only python3, you may list only stable Python KEYWORDS.
