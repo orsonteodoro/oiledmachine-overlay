@@ -95,7 +95,7 @@
 * The ebuild should be polished to improve stability and to hide/disable
   unfinshed features at the code level.
 * The CFLAGS should be changed with `filter-flags` or `replace-flags` to
-  prevent Denial of Service (e.g. crash).
+  prevent Denial of Service (e.g. crash) vulnerability.
 * If -O3 or -Ofast causes a crash, then the CFLAG must be downgraded to -O2 or
   whatever is necessary to prevent a crash.
 * The CFLAGS must be bumped or boosted if degraded runtime performance is
