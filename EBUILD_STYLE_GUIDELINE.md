@@ -71,7 +71,8 @@
     `PYTHON_COMPAT=( "python3_10" )` as the default fallback since Python 3.9 is not
     available on distro due to python-utils-r1.eclass restrictions.
 * If an ebuild references a PYTHON_SINGLE_USEDEP in *DEPENDs, the ebuild should
-  use either `DISTUTILS_SINGLE_IMPL=1` or `inherit python-single-r1`.
+  use either `DISTUTILS_SINGLE_IMPL=1` with `inherit distutils-r1` or
+  `inherit python-single-r1`.
 
 # Ebuild organization
 
