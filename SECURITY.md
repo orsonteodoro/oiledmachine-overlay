@@ -97,9 +97,10 @@ These generally should not be reported.  They may be reported on these cases:
 - If the vulnerability is Information Disclosure (ID), Data Tampering (DT),
   Privilege Escalation (PE), Arbitary Code Execution (CE), or two or more
   classes of vulnerabilities please report it to upstream first privately,
-  especially if upstream has a bug bounty program.
+  especially if upstream has a bug bounty program.  DO NOT SEND AN ISSUE
+  REQUEST YET.
 - If the vulnerability has a critical to high severity and in the wild and being
-  actively exploited but the vendor is unwilling to fix it.  It is recommended
+  actively exploited but the vendor is unwilling to fix it, it is recommended
   to discuss in private first.  DO NOT SEND AN ISSUE REQUEST YET.
 
 If you make a report, there is a chance it will be ignored or closed so don't
