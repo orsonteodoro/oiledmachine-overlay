@@ -38,6 +38,37 @@
   - 2 space indent to emphasize detailed oriented and detailed reviewed ebuild.
   - Symmetrical block style
 * Simplification by removing explicit phase functions is preferred.
+* The oldest CI image is the fallback image if no specific versions specified in
+  build files but images are in CI.  If no CI testing is being done, then you
+  don't need to specify the version unless the code requires it
+  (e.g. gui-libs/gtk:4).
+
+  - For example,
+
+    U24 has libgcrypt 1.10.3
+    U22 has libgcrypt 1.9.4
+    D12 has libgcrypt 1.10.1
+
+    If the build files say libgcrypt and image D24 is only being tested, then use
+    >=dev-libs/libgcrypt-1.10.3 for RDEPENDs.
+
+    If the build files say libgcrypt and image D12 and D24 are being tested, then
+    use >=dev-libs/libgcrypt-1.94 for RDEPENDs.
+
+    If the build files say just libgcrypt and no images or CI testing, you
+    may use just dev-libs/libgcrypt for RDEPENDS.
+
+* PYTHON_COMPAT fallbacks.
+  - If setup.py contains only python3, you may list only stable Python KEYWORDS.
+  - If setup.py contains Python 3.9 only, you may only list the tested version
+    and earlier.
+  - If setup.py contains Python 3.9, 3.10, but you tested 3.11, you
+    may specify PYTHON_COMPAT=( python3_{10..11} ) but you need to
+    leave a comment that you tested it or specify which package exactly needs it.
+    Otherwise, I revert it back to upstream tested.
+  - If setup.py contains Python 3.9, 3.10, you should put
+    PYTHON_COMPAT=( python3_10 ) as the default fallback since Python 3.9 is not
+    available on distro due to python-utils-r1.eclass restrictions.
 
 # Ebuild organization
 
@@ -68,7 +99,6 @@
 
 6. Commonly used global variables
    - DESCRIPTION
-     - It should be the same style
      - Typically an adjective phrase
      - It should be simplified if too long
    - LICENSE
