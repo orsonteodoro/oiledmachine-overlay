@@ -119,6 +119,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.1.3-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-4.5.2-fix-clang++-detection.patch"
 	"${FILESDIR}/${PN}-5.7.1-filesystem_error.patch"
+	"${FILESDIR}/${PN}-5.1.3-mlir_build-vector-header.patch"
 )
 
 warn_untested_gpu() {

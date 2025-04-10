@@ -1,0 +1,10 @@
+--- a/src/include/miopen/mlir_build.hpp.orig	2022-05-07 23:08:05.000000000 -0700
++++ b/src/include/miopen/mlir_build.hpp	2025-04-10 13:55:46.832267451 -0700
+@@ -34,6 +34,7 @@
+ #include <boost/filesystem/path.hpp>
+ #include <boost/optional.hpp>
+ #include <string>
++#include <vector>
+ 
+ namespace miopen {
+ 
