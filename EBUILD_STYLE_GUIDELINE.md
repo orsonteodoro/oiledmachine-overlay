@@ -151,8 +151,9 @@
   - Networked multimedia apps
   - Network libraries
   - Streaming media libraries
+  - Image libraries
   - Kernel
-  - Any package with a CVSS history of AV:N C:H I:H A:H
+  - Any network app or direct dependency with a CVSS history of AV:N C:H I:H A:H
 
   You must verify the compiler's hardening is on and/or apply the hardening
   flags unconditionally.  Don't assume that the user is using the default on
