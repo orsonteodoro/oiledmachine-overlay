@@ -40,7 +40,7 @@
 * Strings are double quoted.
 * Versions are double quoted.
 * Integers are not quoted.
-* Floats are quoted.
+* Floats are double quoted.
 * File/folder paths are typically double quoted from start to end.
 * The metadata.xml style
   - 2 space indent to emphasize detailed oriented and detailed reviewed ebuild.
@@ -123,6 +123,36 @@
   - Ebuild compliation time: < 24 hours
   - Scrolling:  No delay, no lag
   - Workstation:  48 hours minimum uptime for all nighter scenario
+* C/C++ packages that process user data from the Internet need to be hardened to
+  prevent Code Execution (CE) based Zero Click Attack (ZCA).
+
+  Apply for GCC >= 14 or
+    `-fhardened`
+  or the standard web browser hardening {C,CXX,LD}FLAGS
+    `-fstack-protector`
+    `-D_FORTIFY_SOURCE=2` with `-O1` or higher
+    `-fPIC`
+    ` -fPIE -pie`
+    `-Wl,-z,noexecstack`
+    `-Wl,-z,relro -Wl,-z,now`
+
+  The classes of packages that should be hardened against CE + ZCA are:
+
+  - Web video codecs
+  - Web audio codecs
+  - Web image codecs
+  - PDF packages
+  - Font packages
+  - Web browser packages
+  - Messaging apps
+  - Networked multimedia apps
+  - Kernel
+
+  You must verify the compiler's hardening is on and/or apply the hardening
+  flags unconditionally.  Don't assume that the user is using the default USE
+  flag settings for the C/C++ compiler.
+
+* C/C++ daemons and suid packages require `-fstack-clash-protection` C{,XX}FLAG.
 
 # Ebuild organization
 
