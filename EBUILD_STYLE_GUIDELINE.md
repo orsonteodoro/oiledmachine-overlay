@@ -166,6 +166,10 @@
 * Telemetry should be disabled by default.  Any telemetry requires additional
   LICENSE variable changes.
 
+* Eclasses
+  - Should be well documented
+  - Must support EAPI 8
+
 # Ebuild organization
 
 1. Header
