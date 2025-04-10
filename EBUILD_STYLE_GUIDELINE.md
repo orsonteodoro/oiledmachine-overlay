@@ -203,7 +203,15 @@
      - It should be simplified if too long
    - HOMEPAGE
    - LICENSE
-     - List licence commentary below this variable.
+     - Must disclose copyright licenses
+     - Must disclose patent licenses
+     - Must disclose end user agreements
+     - Must disclose acceptable use agreement (e.g. AI ethics)
+     - Must disclose terms of service
+     - Must disclose privacy policy
+     - Must disclose data collection policy (e.g. telemetry)
+     - Must disclose all legal text or provide a link to the policy
+     - List license commentary below this variable.
    - SLOT
    - RESTRICT
    - IUSE
