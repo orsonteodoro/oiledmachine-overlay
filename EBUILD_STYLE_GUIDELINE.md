@@ -86,7 +86,9 @@
   to improve reproducibility for projects without version tags.
 * Using sed patches is strongly discouraged.  Use patch files instead.
 * Network based daemons should be considered for sandboxing or confinement for
-  new projects or packages with high reported vulnerabilities.
+  new projects or packages with high reported vulnerabilities or to prevent
+  Information Discloure (ID) or Data Tampering (DT) based path traversal
+  attacks.
 * Daemons need to be run as non-root user.
 * For web apps that require user login, the ssl USE flag should be made
   available and implemented properly if the project does not document it.
