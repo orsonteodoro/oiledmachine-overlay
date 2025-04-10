@@ -139,7 +139,7 @@
     - `-Wl,-z,noexecstack`
     - `-Wl,-z,relro -Wl,-z,now`
 
-  The classes of packages that should be hardened against CE + ZCA are:
+  The classes of C/C++ packages that should be hardened against CE + ZCA are:
 
   - Web video codecs
   - Web audio codecs
