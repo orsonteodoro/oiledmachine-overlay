@@ -149,7 +149,9 @@
   - Web browser packages
   - Messaging apps
   - Networked multimedia apps
+  - Network libraries
   - Kernel
+  - Any package with a CVSS history of AV:N C:H I:H A:H
 
   You must verify the compiler's hardening is on and/or apply the hardening
   flags unconditionally.  Don't assume that the user is using the default on
