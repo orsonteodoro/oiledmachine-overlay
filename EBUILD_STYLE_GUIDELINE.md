@@ -94,9 +94,26 @@
   available and implemented properly if the project does not document it.
 * The ebuild should be polished to improve stability and to hide/disable
   unfinshed features at the code level.
-* The CFLAGS should be changed to prevent Denial of Service (e.g. crash).
+* The CFLAGS should be changed with `filter-flags` or `replace-flags` to
+  prevent Denial of Service (e.g. crash).
 * If -O3 or -Ofast causes a crash, then the CFLAG must be downgraded to -O2 or
   whatever is necessary to prevent a crash.
+* The CFLAGS must be bumped or boosted if degraded runtime performance is
+  severe.
+* If below 24 FPS, then bump the -Oflag minimum allowed.
+* If computation is longer than expected, then bump the -Oflag minimum allowed.
+* Performance expectations:
+  - Servers:  6 days minimum uptime, +60 days uptime preferred
+  - Gaming newer titles:  60 FPS
+  - Gaming older titles:  30 FPS
+  - Hardcore mode gaming:  +60 days uptime
+  - Sports:  30 FPS
+  - Vlogs:  30 FPS
+  - Movies:  24 FPS
+  - Audio production:  No jitter, no studder
+  - Live radio reporting:  No jitter, no studder
+  - Ebuild compliation time: < 24 hours
+  - Scrolling:  No delay, no lag
 
 # Ebuild organization
 
