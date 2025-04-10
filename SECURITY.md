@@ -21,7 +21,7 @@ See also hardware vulnerabilities.
 
 For example, if the software has pointer security gaurantees but relies on
 hardware design flaw in the pointer security, then it cannot be easily fixed
-and maybe the hardware be replaced.
+and maybe the hardware needs to be replaced.
 
 For example, if the software requires a Rust component that uses GTK3 but
 the fix in the GTK4 release.  The fix will be likely skipped until upstream
