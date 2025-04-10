@@ -73,7 +73,7 @@
 * If an ebuild references a PYTHON_SINGLE_USEDEP in *DEPENDs, the ebuild should
   use either `DISTUTILS_SINGLE_IMPL=1` with `inherit distutils-r1` or
   `inherit python-single-r1`.  This edge case is not well documented.
-* If a package contains a uncommon license or legal changes that introduce a
+* If a package contains an uncommon license or legal changes that introduce a
   new phrase or clause, it should be documented as a comment near the LICENSE
   variable.
 
