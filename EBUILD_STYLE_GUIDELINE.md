@@ -51,10 +51,10 @@
     - U22 has libgcrypt 1.9.4
     - D12 has libgcrypt 1.10.1
 
-    If the build files say libgcrypt and image D24 is only being tested, then use
+    If the build files say libgcrypt and image U24 is only being tested, then use
     `>=dev-libs/libgcrypt-1.10.3` for RDEPENDs.
 
-    If the build files say libgcrypt and image D12 and D24 are being tested, then
+    If the build files say libgcrypt and image D12 and U24 are being tested, then
     use `>=dev-libs/libgcrypt-1.94` for RDEPENDs.
 
     If the build files say just libgcrypt and no images or CI testing, you
