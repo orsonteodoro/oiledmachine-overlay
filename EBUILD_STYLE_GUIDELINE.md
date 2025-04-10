@@ -150,6 +150,7 @@
   - Messaging apps
   - Networked multimedia apps
   - Network libraries
+  - Streaming media libraries
   - Kernel
   - Any package with a CVSS history of AV:N C:H I:H A:H
 
