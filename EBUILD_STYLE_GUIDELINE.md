@@ -123,8 +123,8 @@
   - Ebuild compliation time: < 24 hours
   - Scrolling:  No delay, no lag
   - Workstation:  48 hours minimum uptime for all nighter scenario
-* C/C++ packages that process user data from the Internet need to be hardened to
-  prevent Code Execution (CE) based Zero Click Attack (ZCA).
+* C/C++ packages that process user generated content from the Internet need to
+  be hardened to prevent Code Execution (CE) based Zero Click Attack (ZCA).
 
   Apply for GCC >= 14 or
 
