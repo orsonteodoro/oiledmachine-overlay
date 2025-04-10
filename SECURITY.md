@@ -75,8 +75,8 @@ The issue report should have the following:
     - Race Condition
     - Sandbox Escape
     - Improper Permissions
-    - Privelege Escalation
-    - Arbitary Code Execution
+    - Privilege Escalation
+    - Arbitrary Code Execution
     - Supply Chain Attack
     - Malware
     - See the CWE website or https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/vf.eclass
