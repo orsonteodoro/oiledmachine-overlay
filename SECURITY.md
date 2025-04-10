@@ -92,13 +92,15 @@ These generally should not be reported.  They may be reported on these cases:
 - It was reported upstream but upstream does not want to fix it after 2 or 4
   year(s) it was reported, or if those versions are EOL.  If it was EOL, note it
   so we can bump the package.
-- If the vulnerability is strictly a Denial of Service (DoS) vulnerability, you
-  may report it here as an issue request here and on the upstream repo.
 - If the vulnerability is Information Disclosure (ID), Data Tampering (DT),
   Privilege Escalation (PE), Arbitary Code Execution (CE), or two or more
   classes of vulnerabilities please report it to upstream first privately,
   especially if upstream has a bug bounty program.  DO NOT SEND AN ISSUE
   REQUEST YET.
+- If the vulnerability is strictly a Denial of Service (DoS) vulnerability, you
+  may report it here as an issue request here and on the upstream repo.
+- If you suspect that this DoS is linked to ID or DT, report it privately to
+  upstream.  DO NOT SEND AN ISSUE REQUEST YET.
 - If the vulnerability has a critical to high severity and in the wild and being
   actively exploited but the vendor is unwilling to fix it, it is recommended
   to discuss in private first.  DO NOT SEND AN ISSUE REQUEST YET.
