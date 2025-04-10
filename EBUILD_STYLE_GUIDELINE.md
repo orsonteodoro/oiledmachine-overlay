@@ -108,7 +108,7 @@
   - Gaming older titles:  30 FPS
   - Hardcore mode gaming:  +60 days uptime
   - Sports:  30 FPS
-  - Vlogs:  30 FPS
+  - News and Vlogs:  30 FPS
   - Movies:  24 FPS
   - Audio production:  No jitter, no studder
   - Live radio reporting:  No jitter, no studder
