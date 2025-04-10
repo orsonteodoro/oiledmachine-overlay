@@ -150,7 +150,7 @@
 
   You must verify the compiler's hardening is on and/or apply the hardening
   flags unconditionally.  Don't assume that the user is using the default USE
-  flag settings for the C/C++ compiler.
+  flag settings for the C/C++ compiler or hardened linker.
 
 * C/C++ daemons and suid packages require `-fstack-clash-protection` C{,XX}FLAG.
 
