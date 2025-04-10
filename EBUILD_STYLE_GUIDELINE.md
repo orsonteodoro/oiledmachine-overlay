@@ -114,6 +114,7 @@
   - Live radio reporting:  No jitter, no studder
   - Ebuild compliation time: < 24 hours
   - Scrolling:  No delay, no lag
+  - Workstation:  48 hours minimum uptime for all nighter scenario
 
 # Ebuild organization
 
