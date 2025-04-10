@@ -65,7 +65,8 @@
   - If setup.py contains Python 3.9, 3.10, but you tested 3.11, you
     may specify PYTHON_COMPAT=( python3_{10..11} ) but you need to
     leave a comment that you tested it or specify which package exactly needs it.
-    Otherwise, I revert it back to upstream tested.
+    Otherwise, I revert it back to upstream tested version list.  I assume that
+    you made a typo that will introduce a non-reproducable build.
   - If setup.py contains Python 3.9, 3.10, you should put
     PYTHON_COMPAT=( python3_10 ) as the default fallback since Python 3.9 is not
     available on distro due to python-utils-r1.eclass restrictions.
