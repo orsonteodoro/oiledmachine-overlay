@@ -93,7 +93,7 @@
 * For web apps that require user login, the ssl USE flag should be made
   available and implemented properly if the project does not document it.
 * The ebuild should be polished to improve stability and to hide/disable
-  unfinshed features.
+  unfinshed features at the code level.
 
 # Ebuild organization
 
