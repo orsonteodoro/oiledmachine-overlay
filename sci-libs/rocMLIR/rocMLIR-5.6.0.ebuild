@@ -106,6 +106,7 @@ RESTRICT="test"
 PATCHES=(
 	"${FILESDIR}/${PN}-5.5.0-fix-so-suffix.patch"
 	"${FILESDIR}/${PN}-5.6.0-hardcoded-paths.patch"
+	"${FILESDIR}/${PN}-5.6.0-rocblas-benchmark-driver-string-header.patch"
 )
 
 ccmake() {

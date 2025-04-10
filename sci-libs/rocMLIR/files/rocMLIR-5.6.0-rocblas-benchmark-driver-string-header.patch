@@ -1,0 +1,10 @@
+--- a/mlir/utils/performance/rocblas-benchmark-driver/rocblas-benchmark-driver.cpp.orig	2023-04-12 05:18:38.000000000 -0700
++++ b/mlir/utils/performance/rocblas-benchmark-driver/rocblas-benchmark-driver.cpp	2025-04-10 07:31:40.134075966 -0700
+@@ -20,6 +20,7 @@
+ #undef rocblas_gemm_ex
+ 
+ #include <cstdio>
++#include <string>
+ 
+ #define ROCBLAS_ABORT_IF_FAIL(expr)                                            \
+   do {                                                                         \
