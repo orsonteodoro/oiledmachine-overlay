@@ -153,6 +153,7 @@
   - Streaming media libraries
   - Image libraries
   - Kernel
+  - Network apps that use vendored librares (aka internal forked libraries) of the types above instead of system libraries
   - Any network app or direct dependency with a CVSS history of AV:N C:H I:H A:H
 
   You must verify the compiler's hardening is on and/or apply the hardening
