@@ -17,9 +17,11 @@
 * All local variables and loop variables should be declared explicitly local.
 * All local names should be lower case with underscore separating words.
 * All global names should be capitalized with underscores separating words.
-* An ASCII inspired sort should be used whenever possible to the following
+* An ASCII inspired sort should be used for lists.  Sorting should be used in
+  the following
   - arrays
   - assocative arrays
+  - command line arguments if possible
   - *DEPENDs
   - if-else chains
   - In metadata.xml in the
