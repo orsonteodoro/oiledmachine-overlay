@@ -76,8 +76,9 @@
 * If a package contains an uncommon license or legal changes that introduce a
   new phrase or clause, it should be documented as a comment near the LICENSE
   variable.
-* Live ebuilds should have fallback-commit support to reduce gh issue spam and
+* Live ebuilds should have fallback-commit support to reduce GH issue spam and
   to improve reproducibility for projects without version tags.
+* Using sed patches is strongly discouraged.  Use patch files instead.
 
 # Ebuild organization
 
