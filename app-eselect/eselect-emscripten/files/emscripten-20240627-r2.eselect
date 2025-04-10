@@ -118,10 +118,10 @@ find_targets() {
             elif [[ "${compiler}" == "llvm" ]] ; then
                 for llvm_slot in ${LLVM_VERSIONS} ; do
                     if grep -q -F -e "llvm_targets_WebAssembly" \
-                           $(realpath "${EROOT}"/var/db/pkg/sys-devel/llvm-${llvm_slot}*/USE) \
+                           $(realpath "${EROOT}"/var/db/pkg/llvm-core/llvm-${llvm_slot}*/USE) \
                        && grep -q -F -e "llvm_targets_WebAssembly" \
-                           $(realpath "${EROOT}"/var/db/pkg/sys-devel/clang-${llvm_slot}*/USE) ; then
-			llvm_pv=$(basename $(realpath "${EROOT}"/var/db/pkg/sys-devel/clang-${llvm_slot}*) \
+                           $(realpath "${EROOT}"/var/db/pkg/llvm-core/clang-${llvm_slot}*/USE) ; then
+			llvm_pv=$(basename $(realpath "${EROOT}"/var/db/pkg/llvm-core/clang-${llvm_slot}*) \
 				| sed -e "s|clang-||")
                         llvm_major="${llvm_slot}"
                         llvm_major_minor=$(echo "${llvm_pv}" | cut -f 1-2 -d '.')

@@ -361,7 +361,7 @@ https://docs.blender.org/manual/en/latest/modeling/meshes/editing/face/intersect
     </flag>
     <flag name="valgrind">
       Add support for memory debugging using
-      <pkg>dev-util/valgrind</pkg>
+      <pkg>dev-debug/valgrind</pkg>
     </flag>
     <flag name="vpx">
       Adds support for VP9 for video output.

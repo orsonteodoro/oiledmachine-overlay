@@ -1169,7 +1169,7 @@ RDEPEND+="
 		<media-libs/openusd-24[imaging,monolithic,opengl,openvdb,openimageio,python]
 	)
 	valgrind? (
-		dev-util/valgrind
+		dev-debug/valgrind
 	)
 	wayland? (
 		>=dev-libs/wayland-1.22.0
@@ -1207,7 +1207,7 @@ BDEPEND+="
 	' 'python*')
 	>=dev-build/cmake-3.10
 	>=dev-cpp/yaml-cpp-0.7.0
-	>=dev-util/meson-0.63.0
+	>=dev-build/meson-0.63.0
 	>=dev-util/vulkan-headers-1.2.198
 	dev-util/patchelf
 	virtual/pkgconfig

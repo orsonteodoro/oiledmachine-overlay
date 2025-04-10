@@ -5842,7 +5842,7 @@ ot-kernel-pkgflags_libcgroup() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the libcxx package
 ot-kernel-pkgflags_libcxx() { # DONE
-	if ot-kernel_has_version_pkgflags "sys-libs/libcxx" ; then
+	if ot-kernel_has_version_pkgflags "llvm-runtimes/libcxx" ; then
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
 	fi
@@ -5852,7 +5852,7 @@ ot-kernel-pkgflags_libcxx() { # DONE
 # @DESCRIPTION:
 # Applies kernel config flags for the libcxxabi package
 ot-kernel-pkgflags_libcxxabi() { # DONE
-	if ot-kernel_has_version_pkgflags "sys-libs/libcxxabi" ; then
+	if ot-kernel_has_version_pkgflags "llvm-runtimes/libcxxabi" ; then
 		ot-kernel_y_configopt "CONFIG_EXPERT"
 		ot-kernel_y_configopt "CONFIG_FUTEX"
 	fi

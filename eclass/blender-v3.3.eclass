@@ -1088,7 +1088,7 @@ RDEPEND+="
 		<media-libs/openusd-23[imaging,monolithic]
 	)
 	valgrind? (
-		dev-util/valgrind
+		dev-debug/valgrind
 	)
 	webp? (
 		>=media-libs/libwebp-1.2.2

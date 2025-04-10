@@ -33,7 +33,7 @@ RDEPEND=">=dev-dotnet/gtk-sharp-2.12.21:2
 	 !dev-dotnet/gconf-sharp
 	 !dev-dotnet/art-sharp"
 DEPEND="${RDEPEND}
-	sys-devel/automake:1.11"
+	dev-build/automake:1.11"
 inherit autotools dotnet
 if [[ ${PV} == "9999" ]] ; then
 EGIT_REPO_URI="https://github.com/mono/gnome-sharp.git"
