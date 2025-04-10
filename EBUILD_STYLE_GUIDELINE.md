@@ -119,7 +119,7 @@
   - News and vlogs:  30 FPS
   - Movies:  24 FPS
   - Audio production:  No jitter, no studder
-  - Live radio reporting:  No jitter, no studder
+  - Live radio reporting:  No jitter, no studder, 5 hour uptime minimum
   - Ebuild compliation time: < 24 hours
   - Scrolling:  No delay, no lag
   - Workstation:  48 hours minimum uptime for all nighter scenario
@@ -155,6 +155,7 @@
    - DESCRIPTION
      - Typically an adjective phrase
      - It should be simplified if too long
+   - HOMEPAGE
    - LICENSE
      - List licence commentary below this variable.
    - SLOT
