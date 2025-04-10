@@ -26,6 +26,7 @@
     - use flag section
     - upstream section
   - IUSE
+  - LICENSE
   - REQUIRED_USE
   - SRC_URI
   - switch-case
@@ -70,6 +71,7 @@
      - It should be the same style
      - Typically an adjective phrase
      - It should be simplified if too long
+   - LICENSE
    - SLOT
    - RESTRICT
    - IUSE
