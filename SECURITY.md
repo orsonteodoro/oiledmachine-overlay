@@ -27,7 +27,8 @@ replaced.
 For example, if the software requires a Rust component that uses GTK3 but
 the fix in the GTK4 release.  The fix will be likely skipped until upstream
 updates both the Rust dependencies and the code that references those
-libraries.
+libraries.  Most of the vulnerable cargo packages will be bumped to
+non-vulernable except for this breaking GTK4 change.
 
 ## Patching/triage priorities (ranked high top)
 
