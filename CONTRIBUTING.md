@@ -6,13 +6,15 @@
 2. Machine Learning (ML) libraries and apps
 3. Game development apps
 4. Graphic arts apps
-5. Electron based apps
-6. Tauri based apps
-7. Security libs or apps
-8. Utility apps
-9. Developer tools
-10. Bug fixes
-11. Security fixes
+5. Next generation video editing apps
+6. Vlogging apps
+7. Electron based apps
+8. Tauri based apps
+9. Security libs or apps
+10. Utility apps
+11. Developer tools
+12. Bug fixes
+13. Security fixes
 
 #### See also
 
