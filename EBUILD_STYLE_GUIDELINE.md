@@ -163,6 +163,9 @@
 
 * C/C++ daemons and suid packages require `-fstack-clash-protection` C{,XX}FLAG.
 
+* Telemetry should be disabled by default.  Any telemetry requires additional
+  LICENSE variable changes.
+
 # Ebuild organization
 
 1. Header
