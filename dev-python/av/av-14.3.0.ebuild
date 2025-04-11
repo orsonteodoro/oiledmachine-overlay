@@ -23,7 +23,7 @@ DESCRIPTION="Pythonic bindings for FFmpeg's libraries."
 HOMEPAGE="https://github.com/PyAV-Org/PyAV https://pypi.org/project/av/"
 LICENSE="BSD"
 SLOT="0"
-IUSE="test"
+IUSE="lint test"
 RESTRICT="
 	!test? (
 		test
@@ -48,6 +48,20 @@ BDEPEND="
 			<dev-python/cython-4[${PYTHON_USEDEP}]
 		)
 		>=dev-python/setuptools-61[${PYTHON_USEDEP}]
+		lint? (
+			>=dev-python/mypy-1.15.0[${PYTHON_USEDEP}]
+			dev-python/isort[${PYTHON_USEDEP}]
+			dev-python/numpy[${PYTHON_USEDEP}]
+			dev-python/pytest[${PYTHON_USEDEP}]
+			dev-python/ruff[${PYTHON_USEDEP}]
+			virtual/pillow[${PYTHON_USEDEP}]
+		)
+		test? (
+			dev-python/cython[${PYTHON_USEDEP}]
+			dev-python/numpy[${PYTHON_USEDEP}]
+			dev-python/pillow[${PYTHON_USEDEP}]
+			dev-python/pytest[${PYTHON_USEDEP}]
+		)
 	')
 	virtual/pkg-config
 	sys-devel/gcc
