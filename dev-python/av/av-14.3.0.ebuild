@@ -10,7 +10,7 @@ PYTHON_COMPAT=( "python3_"{10..13} )
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 
-inherit distutils-r1
+inherit distutils-r1 flag-o-matic
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${MY_P}"
@@ -49,9 +49,19 @@ BDEPEND="
 		)
 		>=dev-python/setuptools-61[${PYTHON_USEDEP}]
 	')
+	virtual/pkg-config
+	sys-devel/gcc
 "
 
 distutils_enable_tests "pytest"
+
+pkg_setup() {
+	python_setup
+	export CC="${CHOST}-gcc"
+	export CXX="${CHOST}-g++"
+	export CPP="${CC} -E"
+	strip-unsupported-flags
+}
 
 src_configure() {
 	local cython_pv=$(cython --version | cut -f 3 -d " ")
