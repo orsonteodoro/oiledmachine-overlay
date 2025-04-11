@@ -126,7 +126,7 @@
 * C/C++ packages that process user generated content from the Internet need to
   be hardened to prevent Arbitrary Code Execution (ACE) based Zero Click Attack (ZCA).
 
-  Apply for GCC >= 14 or
+  Apply the following {C,CXX}FLAGS for GCC >= 14
 
     - `-fhardened`
 
