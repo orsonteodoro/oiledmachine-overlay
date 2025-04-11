@@ -235,8 +235,8 @@
      - Must disclose data collection policy (e.g. telemetry)
      - Must disclose all legal text or provide a link to the policy
      - List license commentary below this variable.
-   - SLOT
    - RESTRICT
+   - SLOT
    - IUSE
    - REQUIRED_USE
    - RDEPEND
