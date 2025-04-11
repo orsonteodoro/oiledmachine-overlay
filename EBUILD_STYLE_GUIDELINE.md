@@ -191,17 +191,24 @@
 1. Header
    - A copyright notice is required
 
-2. Comments (optional)
-   - TODO list
-   - FIXME objectives
+2. EAPI=8
+
+3. Comments (optional)
+   - TODO package list
+   - FIXME task lisk and compiler errors
 
 4. Pre inherits (optional)
 
-3. User defined global variables
+5. Package atom overrides
+   - MY_PN
+   - MY_PV
+   - MY_P
 
-4. General eclass inherits
+6. User defined global variables
 
-5. Download section
+7. General eclass inherits
+
+8. Download section
    - Typically a conditional with PV == *9999*
    - Live repo info (optional)
      - EGIT_BRANCH
@@ -213,7 +220,7 @@
      - KEYWORDS
      - SRC_URI
 
-6. Commonly used global variables
+9. Commonly used global variables
    - DESCRIPTION
      - Typically an adjective phrase
      - It should be simplified if too long
@@ -239,7 +246,7 @@
    - DOCS
    - PATCHES
 
-7. Ebuild phases
+10. Ebuild phases
    - These should be in chronological order.
    - pkg_setup()
    - pkg_nofetch()
