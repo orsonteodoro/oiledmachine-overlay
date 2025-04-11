@@ -344,7 +344,6 @@ BDEPEND_MODEL_HUB_TESTS_TORCH_TESTS="
 	${BDEPEND_TEST_CONSTRAINTS}
 	$(python_gen_cond_dep '
 		>=dev-python/auto-gptq-0.5.1[${PYTHON_USEDEP}]
-		dev-python/av[${PYTHON_USEDEP}]
 		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/optimum[${PYTHON_USEDEP}]
 		dev-python/pandas[${PYTHON_USEDEP}]
@@ -359,6 +358,7 @@ BDEPEND_MODEL_HUB_TESTS_TORCH_TESTS="
 		dev-python/wheel[${PYTHON_USEDEP}]
 		sci-ml/sentencepiece[${PYTHON_USEDEP},python]
 	')
+	dev-python/av[${PYTHON_SINGLE_USEDEP}]
 	dev-python/basicsr[${PYTHON_SINGLE_USEDEP}]
 	dev-python/facexlib[${PYTHON_SINGLE_USEDEP}]
 	dev-python/timm[${PYTHON_SINGLE_USEDEP}]

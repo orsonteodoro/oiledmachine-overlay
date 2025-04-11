@@ -179,9 +179,6 @@ RDEPEND="
 		agents? (
 			dev-python/datasets[${PYTHON_USEDEP}]
 		)
-		av? (
-			dev-python/av[${PYTHON_USEDEP}]
-		)
 		codecarbon? (
 			>=dev-python/codecarbon-2.8.1[${PYTHON_USEDEP}]
 		)
@@ -277,6 +274,9 @@ RDEPEND="
 	)
 	accelerate? (
 		>=sci-ml/accelerate-0.26.0[${PYTHON_SINGLE_USEDEP}]
+	)
+	av? (
+		dev-python/av[${PYTHON_SINGLE_USEDEP}]
 	)
 	pytorch? (
 		>=sci-ml/pytorch-2.0[${PYTHON_SINGLE_USEDEP}]

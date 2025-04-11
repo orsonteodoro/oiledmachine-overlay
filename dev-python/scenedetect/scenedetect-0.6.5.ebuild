@@ -46,15 +46,15 @@ RDEPEND+="
 		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/platformdirs[${PYTHON_USEDEP}]
 		dev-python/tqdm[${PYTHON_USEDEP}]
-		pyav? (
-			>=dev-python/av-9.2[${PYTHON_USEDEP}]
-		)
 	')
 	moviepy? (
 		dev-python/moviepy[${PYTHON_SINGLE_USEDEP}]
 	)
 	opencv? (
 		media-libs/opencv[${PYTHON_SINGLE_USEDEP},python]
+	)
+	pyav? (
+		>=dev-python/av-9.2[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="
