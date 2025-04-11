@@ -307,7 +307,7 @@ src_install() {
 	rocm_mv_docs
 
 	# Prevent collision
-	rm -rf "${ED}/opt/rocm-5.3.3/share/miopen/db/"*".kbd" || true
+	rm -rf "${ED}/opt/rocm-5.3.3/share/miopen/db/"*".kdb" || true
 }
 
 # OILEDMACHINE-OVERLAY-STATUS:  builds-without-problems
