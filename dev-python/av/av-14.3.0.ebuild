@@ -32,9 +32,6 @@ RESTRICT="
 DOCS=( "AUTHORS.rst" "CHANGELOG.rst" "README.md" )
 RDEPEND="
 	!dev-python/ha-av
-	$(python_gen_cond_dep '
-		dev-python/ha-ffmpeg[${PYTHON_USEDEP}]
-	')
 	|| (
 		>=media-video/ffmpeg-7.1.1:59.61.61[${PYTHON_SINGLE_USEDEP}]
 		>=media-video/ffmpeg-7.1.1:0[${PYTHON_SINGLE_USEDEP}]
