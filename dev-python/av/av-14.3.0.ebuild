@@ -58,8 +58,8 @@ BDEPEND="
 			dev-python/pytest[${PYTHON_USEDEP}]
 		)
 	')
-	virtual/pkg-config
 	sys-devel/gcc
+	virtual/pkgconf
 "
 
 distutils_enable_tests "pytest"
