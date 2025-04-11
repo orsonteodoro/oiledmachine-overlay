@@ -11,7 +11,7 @@ EAPI=8
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit distutils-r1 pypi
+inherit distutils-r1 optfeature pypi
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="develop"
@@ -126,6 +126,11 @@ src_install() {
 	distutils-r1_src_install
 	docinto "licenses"
 	dodoc "LICENSE.txt"
+}
+
+pkg_postinst() {
+	optfeature_header "Install optional packages:"
+	optfeature "Data related to corpora, taggers, etc" "dev-python/nltk-data"
 }
 
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
