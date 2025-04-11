@@ -59,7 +59,7 @@ BDEPEND="
 		)
 	')
 	sys-devel/gcc
-	virtual/pkgconf
+	virtual/pkgconfig
 "
 
 distutils_enable_tests "pytest"
