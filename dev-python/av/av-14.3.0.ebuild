@@ -6,9 +6,10 @@ EAPI=8
 MY_PN="PyAV"
 MY_P="${MY_PN}-${PV}"
 
-PYTHON_COMPAT=( "python3_"{10..13} )
+DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
+PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit distutils-r1 flag-o-matic
 
@@ -23,7 +24,7 @@ DESCRIPTION="Pythonic bindings for FFmpeg's libraries."
 HOMEPAGE="https://github.com/PyAV-Org/PyAV https://pypi.org/project/av/"
 LICENSE="BSD"
 SLOT="0"
-IUSE="lint test"
+IUSE="lint test ebuild_revision_1"
 RESTRICT="
 	!test? (
 		test
