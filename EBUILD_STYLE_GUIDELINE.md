@@ -43,7 +43,9 @@
 * Floats are double quoted.
 * File/folder paths are typically double quoted from start to end.
 * The metadata.xml style
-  - 2 space indent to emphasize detailed oriented and detailed reviewed ebuild.
+  - 2 space indent to emphasize detailed oriented and detailed reviewed ebuild
+  - 80 characters
+  - No personal identifiable information in upstream section
   - Symmetrical block style
 * Simplification by removing explicit phase functions is preferred.
 * The oldest CI image is the fallback image if no specific versions specified in
