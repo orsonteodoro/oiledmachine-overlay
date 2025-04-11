@@ -63,6 +63,7 @@ BDEPEND="
 	')
 	sys-devel/gcc
 	virtual/pkgconfig
+	dev-util/patchutils
 "
 
 distutils_enable_tests "pytest"
@@ -94,4 +95,21 @@ eerror "${PN} requires Cython 3.1.0 alpha 1 or above."
 		die
 	fi
 	distutils-r1_src_configure
+}
+
+src_install() {
+	distutils-r1_src_install
+
+	# Multislot
+	if has_version ">=media-video/ffmpeg-7.1.1:59.61.61" ; then
+		local x
+		for x in $(find "${ED}" -name "*.so") ; do
+			if ldd "${x}" | grep -q -E -e "(libavutil.so|libavcodec.so)" ; then
+einfo "Updating RPATH for ${x}"
+				patchelf --add-rpath "/usr/lib/ffmpeg/59.61.61/$(get_libdir)" "${x}" || die
+			fi
+		done
+	# else
+	#	unislot
+	fi
 }
