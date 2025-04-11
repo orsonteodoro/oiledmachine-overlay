@@ -76,10 +76,14 @@ pkg_setup() {
 }
 
 src_configure() {
+	which cython || die "Missing symlink.  Use \`eselect cython\` to set it to Cython 3."
 	local cython_pv=$(cython --version | cut -f 3 -d " ")
 einfo "Cython version:  ${cython_pv}"
 	if ver_test "${cython_pv%%.*}" -ne "3" ; then
-eerror "Use eselect cython to switch to cython 3."
+eerror "Use \`eselect cython\` to switch to Cython 3."
+		die
+	elif ver_test "${cython_pv}" -lt "3.1.0_alpha1" ; then
+eerror "${PN} requires Cython 3.1.0 alpha 1 or above."
 		die
 	fi
 	distutils-r1_src_configure
