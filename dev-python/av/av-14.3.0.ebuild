@@ -52,3 +52,13 @@ BDEPEND="
 "
 
 distutils_enable_tests "pytest"
+
+src_configure() {
+	local cython_pv=$(cython --version | cut -f 3 -d " ")
+einfo "Cython version:  ${cython_pv}"
+	if ver_test "${cython_pv%%.*}" -ne "3" ; then
+eerror "Use eselect cython to switch to cython 3."
+		die
+	fi
+	distutils-r1_src_configure
+}
