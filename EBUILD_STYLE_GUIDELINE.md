@@ -175,6 +175,15 @@
   - Should be well documented
   - Must support EAPI 8
 
+* Supported versions
+  - Stable: Yes
+  - LTS:  Yes
+  - Beta:  No
+  - Alpha:  No
+  - Preview:  No
+  - Live:  Yes
+  - Live snapshot:  Yes
+
 # Ebuild organization
 
 1. Header
