@@ -20,8 +20,8 @@ KEYWORDS="
 ~amd64 ~amd64-linux ~amd64-macos ~arm64 ~arm64-macos
 "
 SRC_URI="
-	https://github.com/cython/cython/archive/${PV}.tar.gz
-		-> ${P}.gh.tar.gz
+https://github.com/cython/cython/archive/${PV}.tar.gz
+	-> ${P}.gh.tar.gz
 "
 
 DESCRIPTION="A Python to C compiler"

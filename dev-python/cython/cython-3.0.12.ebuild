@@ -7,7 +7,7 @@ EAPI=8
 # U 20.04
 
 MY_PV="${PV/_beta/b}"
-MY_PV="${PV/_rc/rc}"
+MY_PV="${MY_PV/_rc/rc}"
 
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
@@ -24,8 +24,8 @@ KEYWORDS="
 "
 S="${WORKDIR}/${PN}-${MY_PV}"
 SRC_URI="
-	https://github.com/cython/cython/archive/${MY_PV}.tar.gz
-		-> ${P}.gh.tar.gz
+https://github.com/cython/cython/archive/${MY_PV}.tar.gz
+	-> ${P}.gh.tar.gz
 "
 
 DESCRIPTION="A Python to C compiler"
