@@ -197,12 +197,12 @@
    - TODO package list
    - FIXME task lisk and compiler errors
 
-4. Pre inherits (optional)
-
-5. Package atom overrides
+4. Package atom overrides
    - MY_PN
    - MY_PV
    - MY_P
+
+5. Pre inherits (optional)
 
 6. User defined global variables
 
