@@ -274,7 +274,9 @@ src_configure() {
 	append-cxxflags "--rocm-path=${ESYSROOT}${EROCM_PATH}"
 	append-cxxflags "--hip-device-lib-path=${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)/amdgcn/bitcode"
 
-	append-cxxflags "-I/opt/rocm-5.2.3/include/rocblas"
+	if use rocm ; then
+		append-cxxflags "-I/opt/rocm-${PV}/include/rocblas"
+	fi
 
 	# Fix for both
 	# lld: error: undefined symbol: __stack_chk_fail ; if fail try append-flags "-fno-stack-protector"
