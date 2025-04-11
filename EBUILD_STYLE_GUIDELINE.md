@@ -45,7 +45,7 @@
 * The metadata.xml style
   - 2 space indent to emphasize detailed oriented and detailed reviewed ebuild
   - 80 characters
-  - No personal identifiable information in upstream section
+  - No personal identifiable information, specifically maintainer section, under upstream section
   - Symmetrical block style
 * Simplification by removing explicit phase functions is preferred.
 * The oldest CI image is the fallback image if no specific versions specified in
