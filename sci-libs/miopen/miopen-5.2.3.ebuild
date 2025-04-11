@@ -119,6 +119,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-5.2.3-hardcoded-paths.patch"
 	"${FILESDIR}/${PN}-4.5.2-fix-clang++-detection.patch"
 	"${FILESDIR}/${PN}-5.7.1-filesystem_error.patch"
+	"${FILESDIR}/${PN}-5.1.3-mlir_build-vector-header.patch"
 )
 
 warn_untested_gpu() {
@@ -272,6 +273,8 @@ src_configure() {
 	addpredict "/dev/dri/"
 	append-cxxflags "--rocm-path=${ESYSROOT}${EROCM_PATH}"
 	append-cxxflags "--hip-device-lib-path=${ESYSROOT}${EROCM_PATH}/$(rocm_get_libdir)/amdgcn/bitcode"
+
+	append-cxxflags "-I/opt/rocm-5.2.3/include/rocblas"
 
 	# Fix for both
 	# lld: error: undefined symbol: __stack_chk_fail ; if fail try append-flags "-fno-stack-protector"
