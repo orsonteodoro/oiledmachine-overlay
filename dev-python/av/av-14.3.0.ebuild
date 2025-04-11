@@ -41,7 +41,10 @@ RDEPEND="
 # Cython relaxed
 BDEPEND="
 	$(python_gen_cond_dep '
-		=dev-python/cython-3*[${PYTHON_USEDEP}]
+		(
+			>=dev-python/cython-3.1.0_beta1[${PYTHON_USEDEP}]
+			<dev-python/cython-4[${PYTHON_USEDEP}]
+		)
 		>=dev-python/setuptools-61[${PYTHON_USEDEP}]
 		lint? (
 			>=dev-python/mypy-1.15.0[${PYTHON_USEDEP}]
