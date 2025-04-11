@@ -180,7 +180,7 @@
 * Supported versions
   - Stable: Yes
   - LTS:  Yes
-  - Beta:  No
+  - Beta:  Generally no, with exceptions
   - Alpha:  No
   - Preview:  No
   - Live:  Yes
