@@ -34,7 +34,7 @@ non-vulernable except for this breaking GTK4 change.
 
 #### Definitions
 
-* Zero Click Attack - a network based attack that doesn't require UI interaction and no changes in privileges are necessary
+* Zero Click Attack (ZCA) - a network based attack that doesn't require UI interaction and no changes in privileges are necessary
 * C:H - high confidentiality loss possible, serious impact possible, all sensitive information can be disclosed
 * C:L - low confidentiality loss possible, miniscule impact possible, some information can be disclosed
 * I:H - high data integrity loss possible, serious impact possible, full data integrity loss or full modification of data files or security metadata or user privileges
@@ -44,9 +44,9 @@ non-vulernable except for this breaking GTK4 change.
 
 #### Levels
 
-Severity | Technical meaning                   | In layman's terms                                                             | Proper remediation response times (ebuild dev) | Proper remediation response time (admin)
+Severity | Technical meaning                   | In layman's terms                                                             | Proper remediation response times (ebuild dev) | Proper remediation response times (admin)
 ---      | ---                                 | ---                                                                           | ---                                            | ---
-Critical | Zero Click Attack + C:H + I:H + A:H | An unmitigable immediate full loss possibility                                | 1 week or less                                 | 24 hours especially if actively exploited in the wild
+Critical | ZCA + C:H + I:H + A:H               | An unmitigable immediate full loss possibility                                | 1 week or less                                 | 24 hours especially if actively exploited in the wild
 High     | 2 or more C:H, I:H, or A:H          | A challenging high loss possibility with additional capabilities for attacker | 1 week or less                                 | 24 hours for C and I, 1 week for A
 Moderate | At least one C:H, I:H, or A:H       | A challenging high loss possibility                                           | 1 week or less                                 | 24 hours for C and I, 1 week for A
 Low      | At least one C:L, I:L, or A:L       | A challenging low loss possibility                                            | 60 days or less                                | 60 days
