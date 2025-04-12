@@ -3,7 +3,7 @@
 
 EAPI=8
 
-MY_PN="generative-ai-python"
+MY_PN="deprecated-generative-ai-python"
 
 DISTUTILS_USE_PEP517="setuptools"
 PYPI_NO_NORMALIZE=1
