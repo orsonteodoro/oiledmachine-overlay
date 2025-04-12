@@ -69,7 +69,7 @@ BDEPEND+="
 		>=dev-python/pylint-3.1.0[${PYTHON_USEDEP}]
 	)
 "
-DOCS=( "CHANGELOG" "README.md" )
+DOCS=( "README.md" )
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
