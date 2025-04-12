@@ -30,25 +30,6 @@ updates both the Rust dependencies and the code that references those
 libraries.  Most of the vulnerable cargo packages will be bumped to
 non-vulernable except for this breaking GTK4 change.
 
-## Patching/triage priorities (ranked high top)
-
-0. Ebuilds that block (security) updates
-1. Fixing untested ebuilds
-2. Critical severity vulernabilities
-3. High severity vulernabilities
-4. Bumping versions for high value assets with weekly or biweekly vulnerability recurrence intervals
-5. Zero click attack (CVSS AV:N, PR:N, UI:N)
-6. Uncaught Information Disclosure (ID)
-7. Uncaught Data Tampering (DT)
-8. Uncaught Denial of Service (DoS)
-9. Uncaught security vulnerability advisories
-10. Memory leaks (CWE-401)
-11. Heavy I/O (CWE-400, CWE-770)
-12. Modifying or speeding up ebuilds to mitigate against vulnerability backlog
-13. Bumping EOL software (CWE-1104)
-14. Pruning or substituting EOL software (CWE-1329)
-15. Testing untested software (CWE-1357)
-
 ## Severity
 
 #### Definitions
@@ -71,6 +52,25 @@ Moderate | At least one C:H, I:H, or A:H       | A challenging high loss possibi
 Low      | At least one C:L, I:L, or A:L       | A challenging low loss possibility                                            | 60 days or less                                | 60 days
 
 The remediation response times apply to this overlay only and may actually be longer.
+
+## Patching/triage priorities (ranked high top)
+
+0. Ebuilds that block (security) updates
+1. Fixing untested ebuilds
+2. Critical severity vulernabilities
+3. High severity vulernabilities
+4. Bumping versions for high value assets with weekly or biweekly vulnerability recurrence intervals
+5. Zero click attack (CVSS AV:N, PR:N, UI:N)
+6. Uncaught Information Disclosure (ID)
+7. Uncaught Data Tampering (DT)
+8. Uncaught Denial of Service (DoS)
+9. Uncaught security vulnerability advisories
+10. Memory leaks (CWE-401)
+11. Heavy I/O (CWE-400, CWE-770)
+12. Modifying or speeding up ebuilds to mitigate against vulnerability backlog
+13. Bumping EOL software (CWE-1104)
+14. Pruning or substituting EOL software (CWE-1329)
+15. Testing untested software (CWE-1357)
 
 ## Binary packages
 
