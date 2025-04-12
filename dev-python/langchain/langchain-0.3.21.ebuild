@@ -11,7 +11,7 @@ EAPI=8
 # sphinx-typlog-theme
 
 DISTUTILS_SINGLE_IMPL=1
-DISTUTILS_USE_PEP517="poetry"
+DISTUTILS_USE_PEP517="pdm-backend"
 PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit distutils-r1 pypi
