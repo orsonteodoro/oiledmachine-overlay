@@ -34,7 +34,7 @@ non-vulernable except for this breaking GTK4 change.
 
 #### Definitions
 
-* Zero Click Attack (ZCA) - a network based attack that doesn't require UI interaction and no changes in privileges are necessary
+* Zero Click Attack (ZCA) - a network based attack that doesn't require UI interaction and no changes in privileges are necessary (AV:N UI:N PR:N)
 * C:H - high confidentiality loss possible, serious impact possible, all sensitive information can be disclosed
 * C:L - low confidentiality loss possible, miniscule impact possible, some information can be disclosed
 * I:H - high data integrity loss possible, serious impact possible, full data integrity loss or full modification of data files or security metadata or user privileges
