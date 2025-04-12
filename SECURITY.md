@@ -46,10 +46,10 @@ non-vulernable except for this breaking GTK4 change.
 
 Severity | Technical meaning                   | In layman's terms                                                             | Proper remediation response times (ebuild dev) | Proper remediation response times (admin)
 ---      | ---                                 | ---                                                                           | ---                                            | ---
-Critical | ZCA + C:H + I:H + A:H               | An unmitigable immediate full loss possibility                                | 1 week or less                                 | 24 hours especially if actively exploited in the wild
-High     | 2 or more C:H, I:H, or A:H          | A challenging high loss possibility with additional capabilities for attacker | 1 week or less                                 | 24 hours for C and I, 1 week for A
-Moderate | At least one C:H, I:H, or A:H       | A challenging high loss possibility                                           | 1 week or less                                 | 24 hours for C and I, 1 week for A
-Low      | At least one C:L, I:L, or A:L       | A challenging low loss possibility                                            | 60 days or less                                | 60 days
+Critical | ZCA + C:H + I:H + A:H               | An unmitigable immediate full loss possibility                                | 1 week or less                                 | 24 hours or less especially if actively exploited in the wild
+High     | 2 or more C:H, I:H, or A:H          | A challenging high loss possibility with additional capabilities for attacker | 1 week or less                                 | 24 hours or less for C and I; 1 week or less for A
+Moderate | At least one C:H, I:H, or A:H       | A challenging high loss possibility                                           | 1 week or less                                 | 24 hours or less for C and I; 1 week or less for A
+Low      | At least one C:L, I:L, or A:L       | A challenging low loss possibility                                            | 60 days or less                                | 60 days or less
 
 The remediation response times apply to this overlay only and may actually be longer.
 
