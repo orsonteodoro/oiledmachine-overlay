@@ -60,7 +60,7 @@ The remediation response times apply to this overlay only and may actually be lo
 2. Critical severity vulernabilities
 3. High severity vulernabilities
 4. Bumping versions for high value assets with weekly or biweekly vulnerability recurrence intervals
-5. Zero click attack (CVSS AV:N, PR:N, UI:N)
+5. Zero click attack
 6. Uncaught Information Disclosure (ID)
 7. Uncaught Data Tampering (DT)
 8. Uncaught Denial of Service (DoS)
