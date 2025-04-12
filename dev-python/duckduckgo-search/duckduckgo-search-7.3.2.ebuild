@@ -7,6 +7,8 @@ EAPI=8
 # TODO package:
 # pytest-dependency
 
+MY_PN="${PN/-/_}"
+
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..13} )
 
@@ -22,7 +24,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 else
 	KEYWORDS="~amd64"
-	S="${WORKDIR}/${PN}-${PV}"
+	S="${WORKDIR}/${MY_PN}-${PV}"
 	SRC_URI="
 https://github.com/deedy5/duckduckgo_search/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
