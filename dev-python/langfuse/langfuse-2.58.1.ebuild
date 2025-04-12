@@ -119,7 +119,7 @@ BDEPEND+="
 		>=dev-vcs/pre-commit-3.2.2[${PYTHON_SINGLE_USEDEP}]
 	)
 "
-DOCS=( "CHANGELOG" "README.md" )
+DOCS=( "README.md" )
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
