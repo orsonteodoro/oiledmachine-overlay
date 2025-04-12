@@ -53,14 +53,13 @@ non-vulernable except for this breaking GTK4 change.
 
 #### Definitions
 
-Zero Click Attack - a network based attack that doesn't require UI interaction and no changes in privileges are necessary
-
-C:H - high confidentiality loss possible, serious impact possible, all sensitive information can be disclosed
-C:L - low confidentiality loss possible, miniscule impact possible, some information can be disclosed
-I:H - high integrity loss possible, serious impact possible, full integrity loss or full modification
-I:L - low integrity loss possible, miniscule impact possible, possiblity of integrity loss or limited modification
-A:H - high availablity loss possible, serious impact possible, completely unavailable resources
-A:L - low availability loss possible, miniscule impact possible, partial or full available resources
+* Zero Click Attack - a network based attack that doesn't require UI interaction and no changes in privileges are necessary
+* C:H - high confidentiality loss possible, serious impact possible, all sensitive information can be disclosed
+* C:L - low confidentiality loss possible, miniscule impact possible, some information can be disclosed
+* I:H - high integrity loss possible, serious impact possible, full integrity loss or full modification
+* I:L - low integrity loss possible, miniscule impact possible, possiblity of integrity loss or limited modification
+* A:H - high availablity loss possible, serious impact possible, completely unavailable resources
+* A:L - low availability loss possible, miniscule impact possible, partial or full available resources
 
 #### Levels
 
