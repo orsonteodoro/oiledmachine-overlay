@@ -8,15 +8,39 @@ EAPI=8
 
 MY_PV="chromium-${PV}"
 
+TARBALL_FLAVOR="lite" # full or lite
+
+# For lite versus full tarball see:
+# https://github.com/OSSystems/meta-browser/issues/763
+# https://groups.google.com/a/chromium.org/g/chromium-packagers/c/oE60kVFFMyQ/m/T26AJMc7AgAJ
+# Added dirs:   https://source.chromium.org/chromium/chromium/tools/build/+/main:recipes/recipes/publish_tarball.py;l=291
+# Pruned dirs:  https://source.chromium.org/chromium/chromium/tools/build/+/main:recipes/recipe_modules/chromium/resources/export_tarball.py;l=28
+# Pruned list:  https://source.chromium.org/chromium/chromium/tools/build/+/main:recipes/recipes/publish_tarball.expected/basic.json
+
+# The lite prunes the following:
+# .git folders
+# Build tools (closure-compiler, llvm, node, rust)
+# Debian sysroots
+# Debug libraries
+# NaCl
+# Proprietary platform support
+# Testing support (apache-linux, blink web tests, test samples, fuzzing data)
+
 inherit dhms
 
 KEYWORDS="~amd64 ~arm64 ~ppc64"
 S="${WORKDIR}"
 # https://gsdview.appspot.com/chromium-browser-official/?marker=chromium-135.0.7049.0.tar.x%40
 # https://commondatastorage.googleapis.com/chromium-browser-official/chromium-135.0.7049.264.tar.xz
-SRC_URI="
-	https://gsdview.appspot.com/chromium-browser-official/chromium-${PV}.tar.xz
-"
+if [[ "${TARBALL_FLAVOR}" == "lite" ]] ; then
+	SRC_URI="
+https://gsdview.appspot.com/chromium-browser-official/chromium-${PV}-lite.tar.xz
+	"
+else
+	SRC_URI="
+https://gsdview.appspot.com/chromium-browser-official/chromium-${PV}.tar.xz
+	"
+fi
 
 DESCRIPTION="Chromium sources"
 HOMEPAGE="https://www.chromium.org/"
