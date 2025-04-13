@@ -121,7 +121,7 @@ declare -A CFLAGS_RDEPEND=(
 	["media-libs/dav1d"]=">=;-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
 	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
 )
-EBUILD_MAINTAINER_MODE=0
+EBUILD_MAINTAINER_MODE=1
 FFMPEG_COMPAT=(
 	"0/59.61.61" # 7.0, 7.1
 	"0/58.60.60" # 6.0
@@ -135,15 +135,15 @@ FFMPEG_COMPAT=(
 	"0/51.53.53" # 0.10
 	"0/50.53.53" # 0.8
 )
-FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-02.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-01.tar.xz"
 FIREFOX_LOONG_PATCHSET="firefox-${PV%%.*}-loong-patches-01.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 GTK3_PV="3.14.5"
 LICENSE_FILE_NAME="FF-$(ver_cut 1-2 ${PV})-THIRD-PARTY-LICENSES.html"
 LICENSE_FINGERPRINT="\
-187e3aee7d62a2c01a4bec8076abc9fcf24b28af1444614f9e454c589a7cea5f\
-a8fb1d2e34f83f4d3bd2fff4164f7d83a65e24e2ae4b63b4a2395acea0c673b6\
+bf2c7ce41eda92a85a28cde63257620e3ad1e8406dce0bc4e6654d7f63e2ecc4\
+ecfe882331c663056933cc078a91eee4978ae46faf3e0442159b523227a5c7ee\
 " # SHA512
 LLVM_COMPAT=( 19 ) # Limited based on rust
 LTO_TYPE="" # Global variable
@@ -160,7 +160,7 @@ VULNERABILITIES_FIXED=(
 	"CVE-2025-3035;ZC, ID;Medium"
 	"CVE-2025-3033;ID, DT;High"
 	"CVE-2025-3030;ZC, MC, CE, DoS, DT, ID;High"
-	"CVE-2025-3034;ZC, MC, CE; DoS, DT, ID;High"
+	"CVE-2025-3034;ZC, MC, CE, DoS, DT, ID;High"
 )
 MOZ_ESR=
 MOZ_LANGS=(
@@ -656,7 +656,7 @@ CDEPEND="
 	${PATENT_CDEPENDS}
 	>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.42:2[${MULTILIB_USEDEP}]
-	>=dev-libs/nss-3.108[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.109[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.36.0[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.7.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.13.3[${MULTILIB_USEDEP}]
