@@ -47,10 +47,10 @@ non-vulernable except for this breaking GTK4 change.
 Severity | Technical meaning                   | In layman's terms                                                                 | Proper remediation response times (ebuild dev) | Proper remediation response times (admin)
 ---      | ---                                 | ---                                                                               | ---                                            | ---
 Critical | ZCA + C:H + I:H + A:H               | An unmitigable immediate serious loss possibility with full attacker capabilities | 10 days or less                                | 24 hours or less especially if actively exploited in the wild
-High     | ZCA + C:L + I:L + A:L               | An unmitigable immediate limited loss possibility with more attacker capabilities | 10 days or less                                | 24 hours or less
 High     | 2 or more C:H, I:H, or A:H          | A challenging serious loss possibility with more attacker capabilities            | 10 days or less                                | 24 hours or less for C and I; 1 week or less for A
-Medium   | ZCA + at least one C:L or I:L       | An unmitigable immediate limited loss possibility                                 | 10 days or less                                | 24 hours or less
+High     | ZCA + C:L + I:L + A:L               | An unmitigable immediate limited loss possibility with more attacker capabilities | 10 days or less                                | 24 hours or less
 Medium   | At least one C:H, I:H, or A:H       | A challenging serious loss possibility                                            | 10 days or less                                | 24 hours or less for C and I; 1 week or less for A
+Medium   | ZCA + at least one C:L or I:L       | An unmitigable immediate limited loss possibility                                 | 10 days or less                                | 24 hours or less
 Low      | At least one C:L, I:L, or A:L       | A challenging limited loss possibility                                            | 17 days or less                                | 13 days or less
 
 The remediation response times apply to this overlay only and may actually be longer.
