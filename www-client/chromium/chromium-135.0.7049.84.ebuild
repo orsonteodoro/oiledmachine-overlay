@@ -102,8 +102,8 @@ hu id it ja kn ko lt lv ml mr ms nb nl pl pt-BR pt-PT ro ru sk sl sr sv sw ta
 te th tr uk ur vi zh-CN zh-TW
 "
 
-CROMITE_COMMIT="f13b33b73e22ecaa1ae9a567a8e0c74caf446678" # Based on most recent either tools/under-control/src/RELEASE or build/RELEASE
-CROMITE_PV="134.0.6998.89"
+CROMITE_COMMIT="1a04064c883777197fd33e6d58905d1e2b05e542" # Based on most recent either tools/under-control/src/RELEASE or build/RELEASE
+CROMITE_PV="135.0.7049.52"
 
 # About PGO version compatibility
 #
@@ -155,15 +155,11 @@ LLVM_OFFICIAL_SLOT="${LLVM_COMPAT[-1]}" # Cr official slot
 LLVM_SLOT="" # Global variable
 LTO_TYPE="" # Global variable
 MESA_PV="20.3.5"
-MITIGATION_DATE="Mar 10, 2025" # Official annoucement (blog)
-MITIGATION_LAST_UPDATE=1741382940 # From `date +%s -d "2025-03-07 1:29 PM PST"` From tag in GH
-MITIGATION_URI="https://chromereleases.googleblog.com/2025/03/stable-channel-update-for-desktop_10.html"
+MITIGATION_DATE="Apr 8, 2025" # Official annoucement (blog)
+MITIGATION_LAST_UPDATE=1744062000 # From `date +%s -d "2025-04-07 2:40 PM PDT"` From tag in GH
+MITIGATION_URI="https://chromereleases.googleblog.com/2025/04/stable-channel-update-for-desktop_8.html"
 VULNERABILITIES_FIXED=(
-	"CVE-2025-1920;DoS, DT, ID;High"
-	"CVE-2025-2135;DoS, DT, ID;High"
-	"CVE-2025-24201;DoS, DT, ID;High"
-	"CVE-2025-2136;DoS, DT, ID;High"
-	"CVE-2025-2137;DoS, DT, ID;High"
+	"CVE-2025-3066;DoS, DT, ID;High"
 )
 NABIS=0 # Global variable
 NODE_VERSION=22
@@ -178,17 +174,6 @@ PATCH_VER="${PV%%\.*}${PATCH_REVISION}"
 PGO_LLVM_SUPPORTED_VERSIONS=(
 	"22.0.0.9999"
 	"22.0.0"
-	"20.1.2"
-	"20.1.1"
-	"20.1.0"
-	"19.1.7"
-	"19.1.6"
-	"19.1.5"
-	"19.1.4"
-	"19.1.3"
-	"19.1.2"
-	"19.1.1"
-	"19.1.0"
 	"${LLVM_OFFICIAL_SLOT}.0.0.9999"
 	"${LLVM_OFFICIAL_SLOT}.0.0"
 )
@@ -196,7 +181,7 @@ PREGENERATED_PGO_PROFILE_MIN_LLVM_SLOT="${LLVM_MIN_SLOT}"
 PYTHON_COMPAT=( "python3_"{9..13} )
 PYTHON_REQ_USE="xml(+)"
 QT6_PV="6.4.2"
-UNGOOGLED_CHROMIUM_PV="134.0.6998.88-1"
+UNGOOGLED_CHROMIUM_PV="135.0.7049.84-1"
 USE_LTO=0 # Global variable
 # https://github.com/chromium/chromium/blob/135.0.7049.84/tools/clang/scripts/update.py#L38 \
 # grep 'CLANG_REVISION = ' ${S}/tools/clang/scripts/update.py -A1 | cut -c 18- # \
@@ -208,7 +193,7 @@ RUST_NEEDS_LLVM="yes please"
 RUST_OPTIONAL="yes" # Not actually optional, but we don't need system Rust (or LLVM) with USE=bundled-toolchain
 RUSTC_VER="" # Global variable
 RUST_MAX_VER="9999" # Corresponds to llvm-20.1
-RUST_MIN_VER="1.84.1" # Corresponds to llvm-19.1
+RUST_MIN_VER="9999" # Corresponds to llvm-20.1
 RUST_PV="${RUST_MIN_VER}"
 SHADOW_CALL_STACK=0 # Global variable
 S_CROMITE="${WORKDIR}/cromite-${CROMITE_COMMIT}"
@@ -734,6 +719,7 @@ DISTRO_REQUIRE_USE="
 #
 REQUIRED_USE+="
 	${PATENT_USE_FLAGS}
+	!system-toolchain
 	!headless (
 		extensions
 		pdf
@@ -819,7 +805,7 @@ REQUIRED_USE+="
 		jit
 		kerberos
 		libaom
-		llvm_slot_19
+		llvm_slot_21
 		mdns
 		mpris
 		openh264
@@ -1291,16 +1277,10 @@ CLANG_BDEPEND="
 	)
 "
 RUST_BDEPEND="
-	llvm_slot_20? (
+	llvm_slot_21? (
 		|| (
 			=dev-lang/rust-9999
 			=dev-lang/rust-bin-9999
-		)
-	)
-	llvm_slot_19? (
-		|| (
-			dev-lang/rust:${RUST_PV}
-			dev-lang/rust-bin:${RUST_PV}
 		)
 	)
 	|| (
@@ -1885,7 +1865,7 @@ pkg_setup() {
 	# The emerge package system will over prune when it should not when it
 	# uses the mv merge technique with sandbox disabled.
 
-	local tc_count_expected=4644
+	local tc_count_expected=4643
 	local tc_count_actual=$(cat "/usr/share/chromium/toolchain/file-count")
 	if (( ${tc_count_actual} != ${tc_count_expected} )) ; then
 ewarn
