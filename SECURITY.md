@@ -54,8 +54,11 @@ Medium   | At least one C:H, I:H, or A:H       | A challenging serious loss poss
 Low      | At least one C:L, I:L, or A:L       | A challenging limited loss possibility                                           | 17 days or less                                | 13 days or less
 
 The remediation response times apply to this overlay only and may actually be longer.
+
 The proper total remediation time is ebuild developer time + administrator time.
+
 Total remediation time for customers should be 12 days before billing time.  This is the overlay's primary demographic.
+
 Total remediation time for businesses should be 4 hours or less before elevated customer worry time.
 
 ## Patching/triage priorities (ranked high top)
