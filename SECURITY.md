@@ -57,9 +57,25 @@ The remediation response times apply to this overlay only and may actually be lo
 
 The proper total remediation time is ebuild developer time + administrator time.
 
-Total remediation time for customers should be 12 days before billing time ends.  This is the overlay's primary demographic.
+Total remediation time for customers should be 12 days before billing time ends.
+This is the overlay's primary demographic.
 
-Total remediation time for organizations and businesses should be 4 hours or less before elevated customer worry time or aligned with the system maintenance period.  This case is not supported due to the lack of developers.
+Let's take web browsers for example with two proper remediation periods.
+
+The first remediation period should start immediately after billing deadline
+(18th of the month) for early spender personalities.  The browser should be
+secure ready at the beginning of the month.
+
+The second remediation period should start at 1st of the month for last minute
+spenders personalities.  The browser should be secure ready to use a few days
+before the deadline.
+
+The initial start time is not always constant in reality due to backlogs,
+package triage fairness, or understaffing.
+
+Total remediation time for organizations and businesses should be 4 hours or
+less before elevated customer worry time or aligned with the system maintenance
+period.  This case is not supported due to the lack of developers.
 
 ## Patching/triage priorities (ranked high top)
 
