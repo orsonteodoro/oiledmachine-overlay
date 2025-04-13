@@ -62,7 +62,7 @@ This is the overlay's primary demographic.
 
 Let's take web browsers for example with two proper remediation periods.
 
-The first remediation period should start immediately after billing deadline
+The first remediation period should start immediately after the billing deadline
 (18th of the month) for early spender personalities.  The browser should be
 secure ready at the beginning of the month.
 
