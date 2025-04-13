@@ -35,23 +35,25 @@ non-vulernable except for this breaking GTK4 change.
 #### Definitions
 
 * Zero Click Attack (ZCA) - a network based attack that doesn't require UI interaction and no changes in privileges are necessary (AV:N UI:N PR:N)
+* Social Engineering Attack (SEA) - a type of attack that manipulates the user by deceptive acting to change or gain sensitive information
+* Spoof Attack (SA) - a type of attack that uses deception to lure to use the attacker's asset or website
 * C:H - high confidentiality loss possible, serious impact possible, all sensitive information can be disclosed
 * C:L - low confidentiality loss possible, miniscule impact possible, some information can be disclosed
 * I:H - high data integrity loss possible, serious impact possible, full data integrity loss or full modification of data files or security metadata or user privileges
-* I:L - low data integrity loss possible, miniscule impact possible, possiblity of integrity loss or partial modification
+* I:L - low data integrity loss possible, miniscule impact possible, possiblity of integrity loss or partial modification that may lead to serious loss
 * A:H - high availablity loss possible, serious impact possible, completely unavailable resources
 * A:L - low availability loss possible, miniscule impact possible, partial or full available resources
 
 #### Levels
 
-Severity | Technical meaning                   | In layman's terms                                                                 | Proper remediation response times (ebuild dev) | Proper remediation response times (admin)
----      | ---                                 | ---                                                                               | ---                                            | ---
-Critical | ZCA + C:H + I:H + A:H               | An unmitigable immediate serious loss possibility with full attacker capabilities | 10 days or less                                | 24 hours or less especially if actively exploited in the wild
-High     | 2 or more C:H, I:H, or A:H          | A challenging serious loss possibility with more attacker capabilities            | 10 days or less                                | 24 hours or less for C and I; 1 week or less for A
-High     | ZCA + C:L + I:L + A:L               | An unmitigable immediate limited loss possibility with more attacker capabilities | 10 days or less                                | 24 hours or less
-Medium   | At least one C:H, I:H, or A:H       | A challenging serious loss possibility                                            | 10 days or less                                | 24 hours or less for C and I; 1 week or less for A
-Medium   | ZCA + at least one C:L or I:L       | An unmitigable immediate limited loss possibility                                 | 10 days or less                                | 24 hours or less
-Low      | At least one C:L, I:L, or A:L       | A challenging limited loss possibility                                            | 17 days or less                                | 13 days or less
+Severity | Technical meaning                   | In layman's terms                                                                            | Proper remediation response times (ebuild dev) | Proper remediation response times (admin)
+---      | ---                                 | ---                                                                                          | ---                                            | ---
+Critical | ZCA + C:H + I:H + A:H               | An unmitigable immediate serious loss possibility with full attacker capabilities            | 10 days or less                                | 24 hours or less especially if actively exploited in the wild
+High     | 2 or more C:H, I:H, or A:H          | A challenging serious loss possibility with more attacker capabilities                       | 10 days or less                                | 24 hours or less for C and I; 1 week or less for A
+High     | ZCA + C:L + I:L + A:L + (SEA or SA) | An unmitigable immediate serious to limited loss possibility with more attacker capabilities | 10 days or less                                | 24 hours or less
+Medium   | At least one C:H, I:H, or A:H       | A challenging serious loss possibility                                                       | 10 days or less                                | 24 hours or less for C and I; 1 week or less for A
+Medium   | ZCA + at least one C:L or I:L       | An unmitigable immediate limited loss possibility                                            | 10 days or less                                | 24 hours or less
+Low      | At least one C:L, I:L, or A:L       | A challenging limited loss possibility                                                       | 17 days or less                                | 13 days or less
 
 The remediation response times apply to this overlay only and may actually be longer.
 
