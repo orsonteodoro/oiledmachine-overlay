@@ -42,7 +42,7 @@ non-vulernable except for this breaking GTK4 change.
 * I:H - high data integrity loss possible, serious impact possible, full data integrity loss or full modification of data files or security metadata or user privileges
 * I:L - low data integrity loss possible, miniscule impact possible, possiblity of integrity loss or partial modification that may lead to serious loss
 * A:H - high availablity loss possible, serious impact possible, completely unavailable resources
-* A:L - low availability loss possible, miniscule impact possible, partial or full available resources
+* A:L - low availability loss possible, miniscule impact possible, partial or full available resources with possibly degraded performance
 
 #### Levels
 
