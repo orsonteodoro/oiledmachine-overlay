@@ -57,7 +57,7 @@ The remediation response times apply to this overlay only and may actually be lo
 
 The proper total remediation time is ebuild developer time + administrator time.
 
-Total remediation time for customers should be 12 days before billing time.  This is the overlay's primary demographic.
+Total remediation time for customers should be 12 days before billing time ends.  This is the overlay's primary demographic.
 
 Total remediation time for organizations and businesses should be 4 hours or less before elevated customer worry time or aligned with the system maintenance period.  This case is not supported due to the lack of developers.
 
