@@ -4,14 +4,16 @@
 
 EAPI=8
 
+# 134.0.6998.88 -> 135.0.7049.84
+
 MY_PV="chromium-${PV}"
 
 inherit dhms
 
 KEYWORDS="~amd64 ~arm64 ~ppc64"
 S="${WORKDIR}"
-# https://gsdview.appspot.com/chromium-browser-official/?marker=chromium-134.0.6998.0.tar.x%40
-# https://commondatastorage.googleapis.com/chromium-browser-official/chromium-134.0.6998.264.tar.xz
+# https://gsdview.appspot.com/chromium-browser-official/?marker=chromium-135.0.7049.0.tar.x%40
+# https://commondatastorage.googleapis.com/chromium-browser-official/chromium-135.0.7049.264.tar.xz
 SRC_URI="
 	https://gsdview.appspot.com/chromium-browser-official/chromium-${PV}.tar.xz
 "
