@@ -30,8 +30,6 @@ updates both the Rust dependencies and the code that references those
 libraries.  Most of the vulnerable cargo packages will be bumped to
 non-vulernable except for this breaking GTK4 change.
 
-## Severity
-
 #### Definitions
 
 * Zero Click Attack (ZCA) - a network based attack that doesn't require UI interaction and no changes in privileges are necessary (AV:N UI:N PR:N)
@@ -44,7 +42,7 @@ non-vulernable except for this breaking GTK4 change.
 * A:H - high availablity loss possible, serious impact possible, completely unavailable resources
 * A:L - low availability loss possible, miniscule impact possible, partial or full available resources with possibly degraded performance
 
-#### Levels
+## Severity levels
 
 Severity | Technical meaning                   | In layman's terms                                                                                             | Proper remediation response times (ebuild dev) | Proper remediation response times (admin)
 ---      | ---                                 | ---                                                                                                           | ---                                            | ---
@@ -55,12 +53,16 @@ Medium   | At least one C:H, I:H, or A:H       | A challenging serious loss poss
 Medium   | ZCA + at least one C:L or I:L       | An unmitigable immediate limited loss possibility                                                             | 10 days or less                                | 24 hours or less
 Low      | At least one C:L, I:L, or A:L       | A challenging limited loss possibility                                                                        | 17 days or less                                | 13 days or less
 
+## Remediation
+
 The remediation response times apply to this overlay only and may actually be longer.
 
 The proper total remediation time is ebuild developer time + administrator time.
 
 Total remediation time for customers should be 12 days before billing time ends.
 This is the overlay's primary demographic.
+
+### The web browser case
 
 Let's take web browsers for example with two proper remediation periods.
 
@@ -74,6 +76,13 @@ before the deadline.
 
 The initial start time is not always constant in reality due to backlogs,
 package triage fairness, or understaffing.
+
+### Small packages cases
+
+Remediation start time happens when there is a version bump and the period
+is relative to that release date.
+
+### Unsupported cases
 
 Total remediation time for organizations and businesses should be 4 hours or
 less before elevated customer worry time or aligned with the system maintenance
