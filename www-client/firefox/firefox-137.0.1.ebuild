@@ -28,29 +28,29 @@ EAPI=8
 #
 # For dependency versioning, see also
 # https://firefox-source-docs.mozilla.org/setup/linux_build.html
-# https://www.mozilla.org/en-US/firefox/137.0/system-requirements/
-# /var/tmp/portage/www-client/firefox-137.0/work/firefox-137.0/moz.configure
-# /var/tmp/portage/www-client/firefox-137.0/work/firefox-137.0/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41 [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
-# /var/tmp/portage/www-client/firefox-137.0/work/firefox-137.0/build/moz.configure/nss.configure L12
-# /var/tmp/portage/www-client/firefox-137.0/work/firefox-137.0/gfx/graphite2/include/graphite2/Font.h L31
-# /var/tmp/portage/www-client/firefox-137.0/work/firefox-137.0/gfx/harfbuzz/moz.yaml
-# /var/tmp/portage/www-client/firefox-137.0/work/firefox-137.0/intl/icu/source/common/unicode/uvernum.h L63
-# /var/tmp/portage/www-client/firefox-137.0/work/firefox-137.0/ipc/chromium/src/third_party/libevent/configure.ac L8
-# /var/tmp/portage/www-client/firefox-137.0/work/firefox-137.0/media/libaom/config/aom_version.h L7 [old]
-# /var/tmp/portage/www-client/firefox-137.0/work/firefox-137.0/media/libjpeg/jconfig.h L7
-# /var/tmp/portage/www-client/firefox-137.0/work/firefox-137.0/media/libpng/png.h L281
-# /var/tmp/portage/www-client/firefox-137.0/work/firefox-137.0/media/libvpx/config/vpx_version.h L8
-# /var/tmp/portage/www-client/firefox-137.0/work/firefox-137.0/media/libwebp/moz.yaml L16
-# /var/tmp/portage/www-client/firefox-137.0/work/firefox-137.0/modules/freetype2/include/freetype/freetype.h L5175
-# /var/tmp/portage/www-client/firefox-137.0/work/firefox-137.0/nsprpub/pr/include/prinit.h L35
-# /var/tmp/portage/www-client/firefox-137.0/work/firefox-137.0/third_party/dav1d/meson.build L26
-# /var/tmp/portage/www-client/firefox-137.0/work/firefox-137.0/third_party/pipewire/pipewire/version.h L49
-# /var/tmp/portage/www-client/firefox-137.0/work/firefox-137.0/taskcluster/kinds/toolchain/nasm.yml
-# /var/tmp/portage/www-client/firefox-137.0/work/firefox-137.0/taskcluster/kinds/toolchain/node.yml
-# /var/tmp/portage/www-client/firefox-137.0/work/firefox-137.0/taskcluster/kinds/toolchain/rust.yml
-# /var/tmp/portage/www-client/firefox-137.0/work/firefox-137.0/taskcluster/kinds/fetch/toolchains.yml
+# https://www.mozilla.org/en-US/firefox/137.0.1/system-requirements/
+# /var/tmp/portage/www-client/firefox-137.0.1/work/firefox-137.0.1/moz.configure
+# /var/tmp/portage/www-client/firefox-137.0.1/work/firefox-137.0.1/dom/media/platforms/ffmpeg//FFmpegRuntimeLinker.cpp L41 [y component in x.y.z subslot in ebuild.  >= n0.8 for 53]
+# /var/tmp/portage/www-client/firefox-137.0.1/work/firefox-137.0.1/build/moz.configure/nss.configure L12
+# /var/tmp/portage/www-client/firefox-137.0.1/work/firefox-137.0.1/gfx/graphite2/include/graphite2/Font.h L31
+# /var/tmp/portage/www-client/firefox-137.0.1/work/firefox-137.0.1/gfx/harfbuzz/moz.yaml
+# /var/tmp/portage/www-client/firefox-137.0.1/work/firefox-137.0.1/intl/icu/source/common/unicode/uvernum.h L63
+# /var/tmp/portage/www-client/firefox-137.0.1/work/firefox-137.0.1/ipc/chromium/src/third_party/libevent/configure.ac L8
+# /var/tmp/portage/www-client/firefox-137.0.1/work/firefox-137.0.1/media/libaom/config/aom_version.h L7 [old]
+# /var/tmp/portage/www-client/firefox-137.0.1/work/firefox-137.0.1/media/libjpeg/jconfig.h L7
+# /var/tmp/portage/www-client/firefox-137.0.1/work/firefox-137.0.1/media/libpng/png.h L281
+# /var/tmp/portage/www-client/firefox-137.0.1/work/firefox-137.0.1/media/libvpx/config/vpx_version.h L8
+# /var/tmp/portage/www-client/firefox-137.0.1/work/firefox-137.0.1/media/libwebp/moz.yaml L16
+# /var/tmp/portage/www-client/firefox-137.0.1/work/firefox-137.0.1/modules/freetype2/include/freetype/freetype.h L5175
+# /var/tmp/portage/www-client/firefox-137.0.1/work/firefox-137.0.1/nsprpub/pr/include/prinit.h L35
+# /var/tmp/portage/www-client/firefox-137.0.1/work/firefox-137.0.1/third_party/dav1d/meson.build L26
+# /var/tmp/portage/www-client/firefox-137.0.1/work/firefox-137.0.1/third_party/pipewire/pipewire/version.h L49
+# /var/tmp/portage/www-client/firefox-137.0.1/work/firefox-137.0.1/taskcluster/kinds/toolchain/nasm.yml
+# /var/tmp/portage/www-client/firefox-137.0.1/work/firefox-137.0.1/taskcluster/kinds/toolchain/node.yml
+# /var/tmp/portage/www-client/firefox-137.0.1/work/firefox-137.0.1/taskcluster/kinds/toolchain/rust.yml
+# /var/tmp/portage/www-client/firefox-137.0.1/work/firefox-137.0.1/taskcluster/kinds/fetch/toolchains.yml
 #   Keyword searches:  cbindgen-, llvm-, pkgconf-, zlib
-# /var/tmp/portage/www-client/firefox-137.0/work/firefox-137.0/taskcluster
+# /var/tmp/portage/www-client/firefox-137.0.1/work/firefox-137.0.1/taskcluster
 #   Keyword search:  gtk
 
 # Track http://ftp.mozilla.org/pub/firefox/releases/ for version updates.
@@ -72,7 +72,7 @@ unset __
 
 # To check every minor version or update MOZ_LANGS use the code below:
 __='
-PV="137.0"
+PV="137.0.1"
 wget -q -O - "http://ftp.mozilla.org/pub/firefox/releases/${PV}/linux-x86_64/xpi/" \
 	| grep "href.*linux-x86_64"  \
 	| cut -f 3 -d ">" \
@@ -89,7 +89,7 @@ unset __
 
 __='
 # For dependency versions, scan also with:
-SRC="/var/tmp/portage/www-client/firefox-137.0/work/firefox-137.0"
+SRC="/var/tmp/portage/www-client/firefox-137.0.1/work/firefox-137.0.1"
 grep -E \
 	-e "[0-9]+\.[0-9]+(\.[0-9]+)?" \
 	-e "dependency" \
@@ -135,7 +135,7 @@ FFMPEG_COMPAT=(
 	"0/51.53.53" # 0.10
 	"0/50.53.53" # 0.8
 )
-FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-02.tar.xz"
 FIREFOX_LOONG_PATCHSET="firefox-${PV%%.*}-loong-patches-01.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
@@ -149,7 +149,7 @@ LLVM_COMPAT=( 19 ) # Limited based on rust
 LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
 MITIGATION_DATE="Apr 1, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1743434460 # From `date +%s -d "2025-03-31 08:21"` from ftp date matching version in report
+MITIGATION_LAST_UPDATE=1744078500 # From `date +%s -d "2025-04-07 19:15"` from ftp date matching version in report
 MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-20/"
 SEVERITY_LABEL="Severity:"
 VULNERABILITIES_FIXED=(
