@@ -66,6 +66,7 @@ EAPI=8
 #   https://github.com/facebook/zstd/blob/ea0aa030cdf31f7897c5bfc153f0d36e92768095/lib/zstd.h#L107					; version
 # https://github.com/chromium/chromium/blob/135.0.7049.84/DEPS#L512									; live
 
+ALLOW_SYSTEM_TOOLCHAIN=0
 CFI_CAST=0 # Global variable
 CFI_ICALL=0 # Global variable
 CFI_VCALL=0 # Global variable
@@ -148,9 +149,15 @@ LICENSE_FINGERPRINT="\
 3b75594581b07f7494691ff5e19bd35ebf2e88ad6c4700d61b4941d1bc864aa1\
 3d18117d17306e46007a463bf26fb344ea1db94fbbadab7e53172a6cb79c9768\
 "
-LLVM_COMPAT=( 22 21 ) # [LLVM_OFFICIAL_SLOT+1, LLVM_OFFICIAL_SLOT] high to low both inclusive
-LLVM_MAX_SLOT="${LLVM_COMPAT[0]}" # Max is LLVM_OFFICIAL_SLOT+1
-LLVM_MIN_SLOT="${LLVM_COMPAT[-1]}" # Min is both LLVM_OFFICIAL_SLOT and the pregenerated PGO profile needed for INSTR_PROF_INDEX_VERSION version 12 compatibility for the profdata file format.
+if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
+	LLVM_COMPAT=( 22 21 ) # Can use [CURRENT_LLVM_MAJOR_VERSION+1 or CURRENT_LLVM_MAJOR_VERSION] inclusive
+	LLVM_MAX_SLOT="${LLVM_COMPAT[0]}" # Max can be is LLVM_OFFICIAL_SLOT+1
+	LLVM_MIN_SLOT="${LLVM_COMPAT[-1]}" # Min is both LLVM_OFFICIAL_SLOT and the pregenerated PGO profile needed for INSTR_PROF_INDEX_VERSION version 12 compatibility for the profdata file format.
+else
+	LLVM_COMPAT=( 21 ) # Forced to match upstream
+	LLVM_MAX_SLOT="${LLVM_COMPAT[0]}" # Max can be is LLVM_OFFICIAL_SLOT+1
+	LLVM_MIN_SLOT="${LLVM_COMPAT[-1]}" # Min is both LLVM_OFFICIAL_SLOT and the pregenerated PGO profile needed for INSTR_PROF_INDEX_VERSION version 12 compatibility for the profdata file format.
+fi
 LLVM_OFFICIAL_SLOT="${LLVM_COMPAT[-1]}" # Cr official slot
 LLVM_SLOT="" # Global variable
 LTO_TYPE="" # Global variable
@@ -202,9 +209,13 @@ TESTDATA_P="${PN}-${PV}"
 ZLIB_PV="1.3.0"
 
 inherit cflags-depends check-linker check-reqs chromium-2 dhms desktop edo
-inherit flag-o-matic flag-o-matic-om linux-info lcnr llvm multilib-minimal
+inherit flag-o-matic flag-o-matic-om linux-info lcnr multilib-minimal
 inherit multiprocessing ninja-utils pax-utils python-any-r1
-inherit readme.gentoo-r1 rust systemd toolchain-funcs vf xdg-utils
+inherit readme.gentoo-r1 systemd toolchain-funcs vf xdg-utils
+
+if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
+	inherit llvm rust
+fi
 
 is_cromite_compatible() {
 	local c4_min=$(ver_cut 4 ${PV})
@@ -232,15 +243,19 @@ SRC_URI="
 		https://gitlab.solidsilicon.io/public-development/open-source/chromium/openpower-patches/-/archive/${PPC64_HASH}/openpower-patches-${PPC64_HASH}.tar.bz2
 			-> chromium-openpower-${PPC64_HASH:0:10}.tar.bz2
 	)
-	system-toolchain? (
-		https://gitlab.com/Matt.Jolly/chromium-patches/-/archive/${PATCH_VER}/chromium-patches-${PATCH_VER}.tar.bz2
-	)
 	test? (
 		https://gsdview.appspot.com/chromium-browser-official/chromium-${PV}-testdata.tar.xz
 		https://chromium-fonts.storage.googleapis.com/${TEST_FONT}
 			-> chromium-${PV%%\.*}-testfonts.tar.gz
 	)
 "
+if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
+	SRC_URI+="
+		system-toolchain? (
+			https://gitlab.com/Matt.Jolly/chromium-patches/-/archive/${PATCH_VER}/chromium-patches-${PATCH_VER}.tar.bz2
+		)
+	"
+fi
 if is_cromite_compatible ; then
 	IUSE+="
 		cromite
@@ -583,7 +598,6 @@ ${CPU_FLAGS_PPC[@]/#/cpu_flags_ppc_}
 ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${IUSE_CODECS[@]}
 ${IUSE_LIBCXX[@]}
-${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 +accessibility bindist bluetooth +bundled-libcxx +cfi -cet +cups
 +css-hyphen -debug +drumbrake +encode +extensions ffmpeg-chromium firejail
@@ -594,11 +608,17 @@ ${PATENT_STATUS[@]}
 -system-dav1d +system-ffmpeg -system-flac -system-fontconfig
 -system-freetype -system-harfbuzz -system-icu -system-libaom
 -system-libjpeg-turbo -system-libpng -system-libwebp -system-libxml
--system-libxslt -system-openh264 -system-opus -system-re2 -system-toolchain
+-system-libxslt -system-openh264 -system-opus -system-re2
 -system-zlib +system-zstd systemd test +wayland +webassembly
 -widevine +X
 ebuild_revision_2
 "
+if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
+	IUSE+="
+		${LLVM_COMPAT[@]/#/llvm_slot_}
+		-system-toolchain
+	"
+fi
 
 # What is considered a proprietary codec can be found at:
 #
@@ -717,9 +737,18 @@ DISTRO_REQUIRE_USE="
 #//third_party/dawn/src/dawn/partition_alloc:partition_alloc(//build/toolchain/linux:clang_x64)
 #  needs //base/allocator/partition_allocator:partition_alloc(//build/toolchain/linux:clang_x64)
 #
+if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ;then
+	REQUIRED_USE+="
+		official? (
+			llvm_slot_21
+		)
+		system-toolchain? (
+			bundled-libcxx
+		)
+	"
+fi
 REQUIRED_USE+="
 	${PATENT_USE_FLAGS}
-	!system-toolchain
 	!headless (
 		extensions
 		pdf
@@ -805,7 +834,6 @@ REQUIRED_USE+="
 		jit
 		kerberos
 		libaom
-		llvm_slot_21
 		mdns
 		mpris
 		openh264
@@ -846,9 +874,6 @@ REQUIRED_USE+="
 	)
 	system-libstdcxx? (
 		!cfi
-	)
-	system-toolchain? (
-		bundled-libcxx
 	)
 	test? (
 		cfi
@@ -892,13 +917,19 @@ if is_cromite_compatible ; then
 			!openh264
 			!mdns
 			!reporting-api
-			!system-toolchain
 			!widevine
 		)
 		official? (
 			!cromite
 		)
 	"
+	if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ;then
+		REQUIRED_USE+="
+			chromite? (
+				!system-toolchain
+			)
+		"
+	fi
 fi
 if [[ "${UNGOOGLED_CHROMIUM_PV%-*}" == "${PV}" ]] ; then
 	# USE=widevine is default ON, implying that it is allowed, in
@@ -1313,14 +1344,18 @@ BDEPEND+="
 	mold? (
 		>=sys-devel/mold-2.0
 	)
-	system-toolchain? (
-		${RUST_BDEPEND}
-		>=dev-util/bindgen-0.68.0
-	)
 	vaapi? (
 		media-video/libva-utils
 	)
 "
+if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
+	BDEPEND+="
+		system-toolchain? (
+			${RUST_BDEPEND}
+			>=dev-util/bindgen-0.68.0
+		)
+	"
+fi
 
 # Upstream uses llvm:16
 # When CFI + PGO + official was tested, it didn't work well with LLVM12.  Error noted in
@@ -1391,6 +1426,14 @@ Chromium, then add --password-store=basic to CHROMIUM_FLAGS in
 /etc/chromium/default.
 
 "
+
+_use_system_toolchain() {
+	if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] && use system-toolchain ; then
+		return 0
+	else
+		return 1
+	fi
+}
 
 python_check_deps() {
 	python_has_version "dev-python/setuptools[${PYTHON_USEDEP}]"
@@ -1877,7 +1920,7 @@ ewarn "Expected file count:  ${tc_count_expected}"
 ewarn
 	fi
 
-	local sources_count_expected=938133
+	local sources_count_expected=527345
 	local sources_count_actual=$(cat "/usr/share/chromium/sources/file-count")
 	if (( ${sources_count_actual} != ${sources_count_expected} )) ; then
 ewarn
@@ -2079,10 +2122,11 @@ src_unpack() {
 	cp -aT "/usr/share/chromium/sources" "${S}" || die
 	export PATH="/usr/share/chromium/toolchain/gn/out:${PATH}"
 
-	if use system-toolchain ; then
+	if _use_system_toolchain ; then
 		unpack "chromium-patches-${PATCH_VER}.tar.bz2"
 	else
 		rm -rf "${S}/third_party/llvm-build/Release+Asserts" || true
+		mkdir -p "${S}/third_party/llvm-build"
 		ln -s "/usr/share/chromium/toolchain/clang" "${S}/third_party/llvm-build/Release+Asserts" || die
 
 		rm -rf "${S}/third_party/rust-toolchain" || true
@@ -2215,16 +2259,17 @@ einfo "Applying the distro patchset ..."
 		"${FILESDIR}/chromium-135-oauth2-client-switches.patch"
 		"${FILESDIR}/chromium-135-map_droppable-glibc.patch"
 		"${FILESDIR}/chromium-135-webrtc-pipewire.patch"
+		"${FILESDIR}/chromium-135-gperf.patch"
 	)
 
-	if use system-toolchain ; then
+	if _use_system_toolchain ; then
 		apply_distro_patchset_for_system_toolchain
 	fi
 }
 
 apply_oiledmachine_overlay_patchset() {
 einfo "Applying the oiledmachine-overlay patchset ..."
-	if use system-toolchain && tc-is-clang ; then
+	if _use_system_toolchain && tc-is-clang ; then
 	# Using gcc with these patches results in this error:
 	# Two or more targets generate the same output:
 	#   lib.unstripped/libEGL.so
@@ -2266,7 +2311,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		)
 	fi
 
-	if use system-toolchain ; then
+	if _use_system_toolchain ; then
 		# Slot 16 is selected but it spits out 17.
 #
 # Fixes:
@@ -3289,7 +3334,7 @@ eerror
 		# Get the stdatomic.h from clang not from gcc.
 		append-cflags -stdlib=libc++
 		append-ldflags -stdlib=libc++
-		if ver_test ${LLVM_SLOT} -ge 16 ; then
+		if ver_test "${LLVM_SLOT}" -ge "16" ; then
 			append-cppflags "-isystem/usr/lib/clang/${LLVM_SLOT}/include"
 			show_clang_header_warning "${LLVM_SLOT}"
 		else
@@ -3357,7 +3402,7 @@ eerror
 }
 
 _src_configure_compiler() {
-	if use system-toolchain ; then
+	if _use_system_toolchain ; then
 		_set_system_cc
 	else
 		export PATH="${S}/third_party/llvm-build/Release+Asserts/bin:${PATH}"
@@ -3533,7 +3578,7 @@ ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
 
 	local myconf_gn=""
 
-	if use system-toolchain ; then
+	if _use_system_toolchain ; then
 		configure_system_toolchain
 	else
 einfo "Using the bundled toolchain"
@@ -4168,7 +4213,7 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	replace-flags "-Ofast" "-O3" # -Ofast is broken.  TODO: fix crashes by using O3 in some *.gn* files
 	replace-flags "-O4" "-O3" # -O4 is the same as -O3
 
-	if ! use system-toolchain ; then
+	if ! _use_system_toolchain ; then
 	# The vendored clang/rust is likely built for portability not performance
 	# that is why it is very slow.
 		replace-flags "-O*" "-O2"
@@ -4702,7 +4747,7 @@ einfo
 	# See also https://github.com/chromium/chromium/blob/135.0.7049.84/docs/pgo.md
 	# profile-instr-use is clang which that file assumes but gcc doesn't have.
 	# chrome_pgo_phase:  0=NOP, 1=PGI, 2=PGO
-	if use pgo && tc-is-clang && ver_test $(clang-major-version) -ge ${PREGENERATED_PGO_PROFILE_MIN_LLVM_SLOT} ; then
+	if use pgo && tc-is-clang && ver_test "$(clang-major-version)" -ge "${PREGENERATED_PGO_PROFILE_MIN_LLVM_SLOT}" ; then
 	# The profile data is already shipped so use it.
 	# PGO profile location: chrome/build/pgo_profiles/chrome-linux-*.profdata
 		myconf_gn+=" chrome_pgo_phase=2"
@@ -4711,7 +4756,7 @@ einfo
 		myconf_gn+=" chrome_pgo_phase=0"
 	fi
 
-	if use system-toolchain ; then
+	if _use_system_toolchain ; then
 		myconf_gn+=" llvm_libdir=\"$(get_libdir)\""
 	fi
 
@@ -4752,7 +4797,7 @@ eerror
 
 	# I noticed that the vendored clang doesn't use ccache.  Let us explicitly use ccache if requested.
 	# See https://github.com/chromium/chromium/blob/135.0.7049.84/build/toolchain/cc_wrapper.gni#L36
-	if ! use system-toolchain ; then
+	if ! _use_system_toolchain ; then
 		if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
 			myconf_gn+=" cc_wrapper=\"ccache\""
 			export CCACHE_BASEDIR="${TMPDIR}"
@@ -4906,7 +4951,7 @@ _src_compile() {
 	# This codepath does minimal patching, so we're at the mercy of upstream
 	# CFLAGS. This is fine - we're not intending to force this on users
 	# and we do a lot of flag 'management' anyway.
-	if ! use system-toolchain ; then
+	if ! _use_system_toolchain ; then
 		QA_FLAGS_IGNORED="
 			usr/lib64/chromium-browser/chrome
 			usr/lib64/chromium-browser/chrome-sandbox
