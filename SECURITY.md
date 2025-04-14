@@ -89,7 +89,8 @@ less before elevated worry time from service disruptions, user performance
 stress, or aligned with the system maintenance period.  This case is not
 supported due to the lack of developers.
 
-This case applies to web services, web servers, or kiosk applications.
+This case applies to web services, web servers, or kiosk applications
+assuming continuous uninterrupted availability.
 
 ## Patching/triage priorities (ranked high top)
 
