@@ -30,7 +30,7 @@ updates both the Rust dependencies and the code that references those
 libraries.  Most of the vulnerable cargo packages will be bumped to
 non-vulernable except for this breaking GTK4 change.
 
-#### Definitions
+## Definitions
 
 * Zero Click Attack (ZCA) - a network based attack that doesn't require UI interaction and no changes in privileges are necessary (AV:N UI:N PR:N)
 * Social Engineering Attack (SEA) - a type of attack that manipulates the user by deceptive Hollywood acting to change or gain sensitive information
