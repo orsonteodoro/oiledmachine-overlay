@@ -70,13 +70,13 @@ ALLOW_SYSTEM_TOOLCHAIN=0
 CFI_CAST=0 # Global variable
 CFI_ICALL=0 # Global variable
 CFI_VCALL=0 # Global variable
-CHROMIUM_EBUILD_MAINTAINER=1 # See also GEN_ABOUT_CREDITS
+CHROMIUM_EBUILD_MAINTAINER=0 # See also GEN_ABOUT_CREDITS
 
 #
 # Set to 1 below to generate an about_credits.html including bundled internal
 # dependencies.
 #
-GEN_ABOUT_CREDITS=1
+GEN_ABOUT_CREDITS=0
 #
 
 # One of the major sources of lag comes from dependencies
@@ -146,8 +146,8 @@ GTK4_PV="4.8.3"
 LIBVA_PV="2.17.0"
 # SHA512 about_credits.html fingerprint: \
 LICENSE_FINGERPRINT="\
-3b75594581b07f7494691ff5e19bd35ebf2e88ad6c4700d61b4941d1bc864aa1\
-3d18117d17306e46007a463bf26fb344ea1db94fbbadab7e53172a6cb79c9768\
+30f7b844718a0a1ad8410d1680152febe78ea8c7e8f3b480b2c700717c732744\
+5ca8cd62e965b96772a52cde659817219687ad26052e6fe4b1d38974b07d945c\
 "
 if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
 	LLVM_COMPAT=( 22 21 ) # Can use [CURRENT_LLVM_MAJOR_VERSION+1 or CURRENT_LLVM_MAJOR_VERSION] inclusive
