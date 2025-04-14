@@ -1134,16 +1134,6 @@ eerror
 
 pkg_pretend() {
 	if [[ "${MERGE_TYPE}" != "binary" ]] ; then
-		if use pgo ; then
-			if ! has usersandbox $FEATURES ; then
-	# PGO doesn't require usersandbox dropped in general.
-eerror
-eerror "You must enable usersandbox as X server can not run as root!"
-eerror
-				die
-			fi
-		fi
-
 	# Ensure we have enough disk space to compile
 		if use pgo || use debug ; then
 			CHECKREQS_DISK_BUILD="14300M"
@@ -2113,7 +2103,6 @@ einfo
 		--disable-strip \
 		--disable-tests \
 		--disable-updater \
-		--disable-wasm-gc \
 		--disable-wmf \
 		--enable-negotiateauth \
 		--enable-new-pass-manager \
