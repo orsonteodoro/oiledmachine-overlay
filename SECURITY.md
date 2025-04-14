@@ -85,8 +85,9 @@ is relative to that release date.
 ### Unsupported cases
 
 Total remediation time for organizations and businesses should be 4 hours or
-less before elevated customer worry time or aligned with the system maintenance
-period.  This case is not supported due to the lack of developers.
+less before elevated worry time from service disruptions, user performance
+stress, or aligned with the system maintenance period.  This case is not
+supported due to the lack of developers.
 
 ## Patching/triage priorities (ranked high top)
 
