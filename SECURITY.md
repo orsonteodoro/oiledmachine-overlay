@@ -80,7 +80,8 @@ package triage fairness, or understaffing.
 ### Small packages cases
 
 Remediation start time happens when there is a version bump and the period
-is relative to that release date.
+is relative to that release date.  Usually the point release and the
+security advisory date are relatively close.
 
 ### Fast turnaround remediation (unsupported)
 
