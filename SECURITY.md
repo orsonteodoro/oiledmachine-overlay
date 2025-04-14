@@ -82,7 +82,7 @@ package triage fairness, or understaffing.
 Remediation start time happens when there is a version bump and the period
 is relative to that release date.
 
-### Fast turnaround remediation for servers (unsupported)
+### Fast turnaround remediation (unsupported)
 
 Total remediation time for organizations and businesses should be 4 hours or
 less before elevated worry time from service disruptions, user performance
