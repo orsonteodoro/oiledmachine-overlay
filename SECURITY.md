@@ -90,7 +90,8 @@ stress, or aligned with the system maintenance period.  This case is not
 supported due to the lack of developers.
 
 This case applies to web services, web servers, or kiosk applications
-assuming continuous uninterrupted availability.
+assuming continuous uninterrupted availability with performance problems
+resolved quickly.
 
 ## Patching/triage priorities (ranked high top)
 
