@@ -614,14 +614,12 @@ PATENT_CDEPENDS="
 	media-libs/mesa[${MULTILIB_USEDEP},patent_status_nonfree=]
 	!patent_status_nonfree? (
 		|| (
-			$(gen_ffmpeg_royalty_free_depends_multislot)
 			$(gen_ffmpeg_royalty_free_depends_unislot)
 		)
 		media-video/ffmpeg:=
 	)
 	patent_status_nonfree? (
 		|| (
-			$(gen_ffmpeg_nonfree_depends_multislot)
 			$(gen_ffmpeg_nonfree_depends_unislot)
 		)
 		media-video/ffmpeg:=

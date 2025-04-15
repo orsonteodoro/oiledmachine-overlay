@@ -633,14 +633,12 @@ PATENT_CDEPENDS="
 	media-libs/mesa[${MULTILIB_USEDEP},patent_status_nonfree=]
 	!patent_status_nonfree? (
 		|| (
-			$(gen_ffmpeg_royalty_free_depends_multislot)
 			$(gen_ffmpeg_royalty_free_depends_unislot)
 		)
 		media-video/ffmpeg:=
 	)
 	patent_status_nonfree? (
 		|| (
-			$(gen_ffmpeg_nonfree_depends_multislot)
 			$(gen_ffmpeg_nonfree_depends_unislot)
 		)
 		media-video/ffmpeg:=
@@ -3157,7 +3155,8 @@ ewarn
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-MOD-TYPE:  ebuild, new-patches
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi, license-completness, license-transparency
-# OILEDMACHINE-OVERLAY-TEST:  PASS (INTERACTIVE) 113.0.1 (May 15, 2023)
+
+# OILEDMACHINE-OVERLAY-TEST:  PASS (INTERACTIVE) 137.0.2 (Apr 15, 2025)
 # USE="X dav1d dbus eme-free jemalloc jumbo-build libcanberra opus
 # proprietary-codecs-disable-end-user pulseaudio speech system-ffmpeg vaapi vpx
 # wayland webspeech -aac -alsa -cups (-debug) -ebolt -ffvpx -geckodriver
@@ -3174,6 +3173,7 @@ ewarn
 # -oc -pa -pl -pt-BR -pt-PT -rm -ro -ru -sc -sco -si -sk -sl -son -sq -sr -sv
 # -szl -ta -te -th -tl -tr -trs -uk -ur -uz -vi -xh -zh-CN -zh-TW"
 # Last build timestamp - 116:59.03 (first run)
+# Completion time:  0 days, 2 hrs, 48 mins, 54 secs
 # CFLAGS: -O2 -pipe (PASS [interactive testing])
 # CFLAGS: -Ofast -pipe (PASS [interactive testing])
 # OILEDMACHINE-OVERLAY-TEST-TOOLCHAIN:
@@ -3185,17 +3185,17 @@ ewarn
 #   browsing - pass
 #   video on demand - pass
 #     dav1d - pass
-#     video/avc (H.264) - expected fail
+#     video/avc (H.264) - untested
 #   audio streaming
-#     mp3 (shoutcast v1) - pass with random fails
-#     aac - expected fail
+#     mp3 (shoutcast v1) - untested
+#     aac - untested
 #   audio on demand
-#     mp3 - pass
-#     aac - expected fail
-#     wav - pass/fail - only one sample played
-#  WebGL Aquarium - pass, ~62 FPS
-#  CanvasMark 2013 - passed
-#  GPU Shader Experiments (https://www.kevs3d.co.uk/dev/shaders) - passed, randomly selected
+#     mp3 - untested
+#     aac - untested
+#     wav - untested
+#  WebGL Aquarium - fail
+#  CanvasMark 2013 - untested
+#  GPU Shader Experiments (https://www.kevs3d.co.uk/dev/shaders) - untested
 # TODO: retest with aac USE flag on
 
 # = Ebuild fork checklist =
