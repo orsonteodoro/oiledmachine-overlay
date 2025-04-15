@@ -230,7 +230,7 @@ WASI_SDK_LLVM_VER="19"
 
 inherit autotools cflags-depends check-linker check-reqs desktop dhms flag-o-matic
 inherit gnome2-utils lcnr linux-info llvm multilib-minimal multiprocessing
-inherit pax-utils python-any-r1 readme.gentoo-r1 rust toolchain-funcs
+inherit optfeature pax-utils python-any-r1 readme.gentoo-r1 rust toolchain-funcs
 inherit virtualx vf xdg
 
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86"
@@ -2499,12 +2499,14 @@ einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 		if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" != "1" ]] ; then
 ewarn "APPLY_OILEDMACHINE_OVERLAY_PATCHSET is currently disabled."
 			if is_flagq_last '-Ofast' ; then
-ewarn "-Ofast -> -O3"
 				OFLAG="-O3"
 			fi
-ewarn "-ffast-math is removed"
 			filter-flags '-ffast-math'
 		fi
+
+		# Breaks webgl aquarium
+		replace-flags '-Ofast' '-O3'
+		filter-flags '-ffast-math'
 
 		if is_flagq_last '-Ofast' || [[ "${OFLAG}" == "-Ofast" ]] ; then
 			OFLAG="-Ofast"
