@@ -167,7 +167,7 @@ MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-20/"
 SEVERITY_LABEL="Severity:"
 VULNERABILITIES_FIXED=(
 	# 20250415
-	"CVE-2025-3608;MC;High"
+	"CVE-2025-3608;RC, MC;High"
 
 	# 20250401
 	"CVE-2025-3028;ZC, UAF, DT, DoS;Medium"
@@ -3172,7 +3172,6 @@ ewarn
 # -it -ja -ka -kab -kk -km -kn -ko -lij -lt -lv -mk -mr -ms -my -nb -ne -nl -nn
 # -oc -pa -pl -pt-BR -pt-PT -rm -ro -ru -sc -sco -si -sk -sl -son -sq -sr -sv
 # -szl -ta -te -th -tl -tr -trs -uk -ur -uz -vi -xh -zh-CN -zh-TW"
-# Last build timestamp - 116:59.03 (first run)
 # Completion time:  0 days, 2 hrs, 48 mins, 54 secs
 # CFLAGS: -O2 -pipe (PASS [interactive testing])
 # CFLAGS: -Ofast -pipe (PASS [interactive testing])
