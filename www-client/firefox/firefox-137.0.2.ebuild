@@ -3159,21 +3159,21 @@ ewarn
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  multiabi, license-completness, license-transparency
 
 # OILEDMACHINE-OVERLAY-TEST:  PASS (INTERACTIVE) 137.0.2 (Apr 15, 2025)
-# USE="X dav1d dbus eme-free jemalloc jumbo-build libcanberra opus
-# proprietary-codecs-disable-end-user pulseaudio speech system-ffmpeg vaapi vpx
-# wayland webspeech -aac -alsa -cups (-debug) -ebolt -ffvpx -geckodriver
-# -gmp-autoupdate -h264 -hardened -hwaccel -jack -libproxy -libsecret -mold
-# -openh264 -pgo -proprietary-codecs -proprietary-codecs-disable
-# -proprietary-codecs-disable-codec-developer -screencast (-selinux) -sndio
-# -system-av1 -system-harfbuzz -system-icu -system-jpeg -system-libevent
-# -system-libvpx -system-png (-system-python-libs) -system-webp (-telemetry)
-# -webrtc -wifi"
+# USE="X dav1d dbus eme-free jemalloc libcanberra opus pulseaudio speech vpx
+# wayland webspeech -aac -alsa -cups (-debug) -firejail -gmp-autoupdate
+# -gnome-shell -hardened -hwaccel -jack -jit -libnotify -libproxy -libsecret
+# -mold -openh264 -pgo -rust-simd -screencast (-selinux) -sndio -system-av1
+# -system-harfbuzz -system-icu -system-jpeg -system-libevent -system-libvpx
+# -system-png -system-webp -systemd (-telemetry) -vaapi (-valgrind)
+# -wasm-sandbox -webrtc -wifi"
 # L10N="-ach -af -an -ar -ast -az -be -bg -bn -br -bs -ca -ca-valencia -cak -cs
 # -cy -da -de -dsb -el -en-CA -en-GB -eo -es-AR -es-CL -es-ES -es-MX -et -eu -fa
 # -ff -fi -fr -fur -fy -ga -gd -gl -gn -gu -he -hi -hr -hsb -hu -hy -ia -id -is
 # -it -ja -ka -kab -kk -km -kn -ko -lij -lt -lv -mk -mr -ms -my -nb -ne -nl -nn
-# -oc -pa -pl -pt-BR -pt-PT -rm -ro -ru -sc -sco -si -sk -sl -son -sq -sr -sv
-# -szl -ta -te -th -tl -tr -trs -uk -ur -uz -vi -xh -zh-CN -zh-TW"
+# -oc -pa -pl -pt-BR -pt-PT -rm -ro -ru -sat -sc -sco -si -sk -skr -sl -son -sq
+# -sr -sv -szl -ta -te -tg -th -tl -tr -trs -uk -ur -uz -vi -xh -zh-CN -zh-TW"
+# LLVM_SLOT="19"
+# PATENT_STATUS="-nonfree"
 # Completion time:  0 days, 2 hrs, 48 mins, 54 secs
 # CFLAGS: -O2 -pipe (PASS [interactive testing])
 # CFLAGS: -Ofast -pipe (PASS [interactive testing])
@@ -3194,7 +3194,7 @@ ewarn
 #     mp3 - untested
 #     aac - untested
 #     wav - untested
-#  WebGL Aquarium - fail
+#  WebGL Aquarium - -Ofast fail, -O2 disabled
 #  CanvasMark 2013 - untested
 #  GPU Shader Experiments (https://www.kevs3d.co.uk/dev/shaders) - untested
 # TODO: retest with aac USE flag on
