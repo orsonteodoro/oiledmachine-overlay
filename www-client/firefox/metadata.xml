@@ -97,12 +97,6 @@ www-client/firefox -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_6
   <flag name="firejail">
     Use Firejail for sandboxing.
   </flag>
-  <flag name="ffvpx">
-    Essentially a minimalst fork of ffmpeg 5.x without non-free codecs and
-    only necessary codecs for decode.  Codecs supported for 64-bit:  vpx{8,9},
-    av1, opus, flac.  Codecs supported for 32-bit:  flac.  This has a higher
-    precedence than the system-ffmpeg.
-  </flag>
   <flag name="jemalloc">
     Uses a memory allocator that will result in decreased memory consumption.
 

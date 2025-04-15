@@ -125,18 +125,31 @@ declare -A CFLAGS_RDEPEND=(
 DBUS_PV="0.60"
 DBUS_GLIB_PV="0.60"
 EBUILD_MAINTAINER_MODE=0
+declare -A FFMPEG_SLOT_TO_PV=(
+	["59.61.61"]="7.0, 7.1"
+	["58.60.60"]="6.0"
+	["57.59.59"]="5.0"
+	["56.58.58"]="4.0"
+	["55.57.57"]="3.0"
+	["54.56.56"]="2.4"
+	["52.55.55"]="2.0"
+	["52.54.54"]="1.1, 1.2"
+	["51.54.54"]="0.11, 1.0"
+	["51.53.53"]="0.10"
+	["50.53.53"]="0.8"
+)
 FFMPEG_COMPAT=(
-	"0/59.61.61" # 7.0, 7.1
-	"0/58.60.60" # 6.0
-	"0/57.59.59" # 5.0
-	"0/56.58.58" # 4.0
-	"0/55.57.57" # 3.0
-	"0/54.56.56" # 2.4
-	"0/52.55.55" # 2.0
-	"0/52.54.54" # 1.1, 1.2
-	"0/51.54.54" # 0.11, 1.0
-	"0/51.53.53" # 0.10
-	"0/50.53.53" # 0.8
+	"59.61.61" # 7.0, 7.1
+	"58.60.60" # 6.0
+	"57.59.59" # 5.0
+	"56.58.58" # 4.0
+	"55.57.57" # 3.0
+	"54.56.56" # 2.4
+	"52.55.55" # 2.0
+	"52.54.54" # 1.1, 1.2
+	"51.54.54" # 0.11, 1.0
+	"51.53.53" # 0.10
+	"50.53.53" # 0.8
 )
 FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-09.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
@@ -451,9 +464,9 @@ IUSE+="
 ${CODEC_IUSE}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
-alsa cups +dbus debug eme-free +ffvpx firejail +hardened -hwaccel jack +jemalloc
+alsa cups +dbus debug eme-free firejail +hardened -hwaccel jack +jemalloc
 +jit libcanberra libnotify libproxy libsecret mold +pgo
-+pulseaudio rust-simd selinux sndio speech +system-av1 +system-ffmpeg
++pulseaudio rust-simd selinux sndio speech +system-av1
 +system-harfbuzz +system-icu +system-jpeg +system-libevent +system-libvpx
 system-png +system-webp systemd -telemetry +vaapi +wayland +webrtc wifi
 webspeech +X
@@ -477,7 +490,6 @@ PATENT_REQUIRED_USE="
 	)
 	openh264? (
 		patent_status_nonfree
-		system-ffmpeg
 	)
 	vaapi? (
 		patent_status_nonfree
@@ -490,25 +502,10 @@ REQUIRED_USE="
 	^^ (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
-	aac? (
-		system-ffmpeg
-	)
-	dav1d? (
-		|| (
-			ffvpx
-			system-ffmpeg
-		)
-	)
 	libcanberra? (
 		|| (
 			alsa
 			pulseaudio
-		)
-	)
-	opus? (
-		|| (
-			ffvpx
-			system-ffmpeg
 		)
 	)
 	pgo? (
@@ -520,12 +517,6 @@ REQUIRED_USE="
 	)
 	vaapi? (
 		wayland
-	)
-	vpx? (
-		|| (
-			ffvpx
-			system-ffmpeg
-		)
 	)
 	wayland? (
 		dbus
@@ -569,11 +560,20 @@ UDEV_RDEPEND="
 	)
 "
 
-gen_ffmpeg_nonfree_depends() {
+gen_ffmpeg_nonfree_depends_multislot() {
 	local s
-	for s in ${FFMPEG_COMPAT} ; do
+	for s in ${FFMPEG_COMPAT[@]} ; do
 		echo "
 			media-video/ffmpeg:${s}[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
+		"
+	done
+}
+
+gen_ffmpeg_nonfree_depends_unislot() {
+	local s
+	for s in ${FFMPEG_COMPAT[@]} ; do
+		echo "
+			media-video/ffmpeg:0/${s}[${MULTILIB_USEDEP},dav1d?,opus?,patent_status_nonfree,vaapi?,vpx?]
 		"
 	done
 }
@@ -581,9 +581,9 @@ gen_ffmpeg_nonfree_depends() {
 # vaapi, qsv, etc are disabled because some packages (especially the drivers)
 # cannot individually disable just the nonfree just like the mesa package.
 # It may inadvertantly touch the nonfree during runtime.
-gen_ffmpeg_royalty_free_depends() {
+gen_ffmpeg_royalty_free_depends_multislot() {
 	local s
-	for s in ${FFMPEG_COMPAT} ; do
+	for s in ${FFMPEG_COMPAT[@]} ; do
 		echo "
 			(
 				!<dev-libs/openssl-3
@@ -595,23 +595,36 @@ gen_ffmpeg_royalty_free_depends() {
 		"
 	done
 }
+gen_ffmpeg_royalty_free_depends_unislot() {
+	local s
+	for s in ${FFMPEG_COMPAT[@]} ; do
+		echo "
+			(
+				!<dev-libs/openssl-3
+				media-video/ffmpeg:0/${s}[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+			)
+			(
+				media-video/ffmpeg:0/${s}[${MULTILIB_USEDEP},-amf,-cuda,dav1d?,-fdk,-kvazaar,-mmal,-nvdec,-nvenc,-openh264,-openssl,opus?,-patent_status_nonfree,-qsv,-vaapi,-vdpau,vpx?,-vulkan,-x264,-x265]
+			)
+		"
+	done
+}
 
-# x86_64 will use ffvpx and system-ffmpeg but others will use system-ffmpeg
 PATENT_CDEPENDS="
 	media-libs/mesa[${MULTILIB_USEDEP},patent_status_nonfree=]
 	!patent_status_nonfree? (
-		system-ffmpeg? (
-			|| (
-				$(gen_ffmpeg_royalty_free_depends)
-			)
+		|| (
+			$(gen_ffmpeg_royalty_free_depends_multislot)
+			$(gen_ffmpeg_royalty_free_depends_unislot)
 		)
+		media-video/ffmpeg:=
 	)
 	patent_status_nonfree? (
-		system-ffmpeg? (
-			|| (
-				$(gen_ffmpeg_nonfree_depends)
-			)
+		|| (
+			$(gen_ffmpeg_nonfree_depends_multislot)
+			$(gen_ffmpeg_nonfree_depends_unislot)
 		)
+		media-video/ffmpeg:=
 		vaapi? (
 			media-libs/vaapi-drivers[${MULTILIB_USEDEP},patent_status_nonfree=]
 		)
@@ -1669,10 +1682,6 @@ ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
 	# links it, it fails because of cbindings is 64-bit and the dependencies
 	# use the build information for 64-bit linking, which should be 32-bit.
 
-	# Allow to use system-ffmpeg completely.
-	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-128.3.0e-allow-ffmpeg-decode-av1.patch"
-	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-128.3.0e-disable-ffvpx.patch"
-
 	# Prevent tab crash
 	_eapply_oiledmachine_set "${FILESDIR}/extra-patches/${PN}-106.0.2-disable-broken-flags-dom-bindings.patch"
 
@@ -2195,28 +2204,6 @@ einfo
 		--x-includes="${ESYSROOT}/usr/include" \
 		--x-libraries="${ESYSROOT}/usr/$(get_libdir)"
 
-	if use system-ffmpeg ; then
-		mozconfig_add_options_ac \
-			'+system-ffmpeg' \
-			--enable-ffmpeg
-	else
-		mozconfig_add_options_ac \
-			'-system-ffmpeg' \
-			--disable-ffmpeg
-	fi
-
-	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" != "1" ]] ; then
-		:
-	elif use ffvpx ; then
-		mozconfig_add_options_ac \
-			'ffvpx=default' \
-			--with-ffvpx="default"
-	else
-		mozconfig_add_options_ac \
-			'ffvpx=no' \
-			--with-ffvpx="no"
-	fi
-
 	# mozconfig_add_options_ac \
 	#	'' \
 	#	--with-libclang-path="$(${CHOST}-llvm-config --libdir)"
@@ -2659,7 +2646,6 @@ ewarn "Add more swap space if linker causes an out of memory (OOM) condition."
 	mozconfig_add_options_mk \
 		'Gentoo default' \
 		"MOZ_OBJDIR=${BUILD_OBJ_DIR}"
-
 
 einfo "Cross-compile ABI:\t\t${ABI}"
 einfo "Cross-compile CFLAGS:\t${CFLAGS}"
