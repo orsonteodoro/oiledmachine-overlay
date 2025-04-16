@@ -11,6 +11,12 @@ EAPI=8
 # TODO package (optional):
 # mypy-protobuf
 
+CPU_FLAGS_X86=(
+	cpu_flags_x86_avx
+	cpu_flags_x86_avx512f
+	cpu_flags_x86_sse
+)
+
 inherit grpc-ver
 
 MY_PN="chroma"
@@ -701,7 +707,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" dev"
+IUSE+="
+${CPU_FLAGS_X86[@]}
+dev
+"
 gen_grpcio_rdepend_dev() {
 	local s
 	for s in ${GRPC_SLOTS_DEV[@]} ; do
@@ -864,6 +873,15 @@ python_configure() {
 }
 
 src_configure() {
+	if \
+		   use cpu_flags_x86_avx \
+		|| use cpu_flags_x86_avx512f \
+		|| use cpu_flags_x86_sse \
+	; then
+		:
+	else
+		export HNSWLIB_NO_NATIVE=1
+	fi
 	distutils-r1_src_configure
 }
 
