@@ -15,6 +15,7 @@ inherit grpc-ver
 
 MY_PN="chroma"
 
+CHROMA_CORE_HNSWLIB_PV="0.8.1"
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
@@ -686,6 +687,8 @@ SRC_URI="
 $(cargo_crate_uris ${CRATES})
 https://github.com/chroma-core/chroma/archive/refs/tags/${PV}.tar.gz
 	-> ${P}.tar.gz
+https://github.com/chroma-core/hnswlib/archive/refs/tags/${CHROMA_CORE_HNSWLIB_PV}.tar.gz
+	-> chroma-core-hnswlib-${CHROMA_CORE_HNSWLIB_PV}.tar.gz
 "
 
 DESCRIPTION="the AI-native open-source embedding database"
@@ -821,6 +824,23 @@ pkg_setup() {
 	rust_pkg_setup
 }
 
+gen_git_tag() {
+	local path="${1}"
+	local tag_name="${2}"
+einfo "Generating tag start for ${path}"
+	pushd "${path}" >/dev/null 2>&1 || die
+		git init || die
+		git config user.email "name@example.com" || die
+		git config user.name "John Doe" || die
+		touch dummy || die
+		git add dummy || die
+		#git add -f * || die
+		git commit -m "Dummy" || die
+		git tag ${tag_name} || die
+	popd >/dev/null 2>&1 || die
+einfo "Generating tag done"
+}
+
 src_unpack() {
 	unpack ${A}
 	cargo_src_unpack
@@ -828,6 +848,11 @@ src_unpack() {
 		"${WORKDIR}/chromadb-rs-${CHROMADB_RS_COMMIT}" \
 		"${WORKDIR}/chromadb-${CHROMADB_RS_COMMIT}" \
 		|| die
+	mv \
+		"${WORKDIR}/hnswlib-${CHROMA_CORE_HNSWLIB_PV}" \
+		"${WORKDIR}/hnswlib" \
+		|| die
+	gen_git_tag "${S}" "${PV}"
 }
 
 src_prepare() {
@@ -843,6 +868,7 @@ src_configure() {
 }
 
 python_compile() {
+	#export HNSWLIB_NO_NATIVE=1
 	cargo_src_compile
 	distutils-r1_python_compile
 }
