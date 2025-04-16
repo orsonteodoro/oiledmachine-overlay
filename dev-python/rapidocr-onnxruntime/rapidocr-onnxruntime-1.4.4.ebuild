@@ -100,14 +100,17 @@ python_compile() {
 		"bdist_wheel" \
 		"v${PV}" \
 		|| die
+
+	local d="${WORKDIR}/${PN}-${PV}_${EPYTHON}/install"
+	mkdir -p "${d}"
+	local wheel_path=$(realpath "${S}/python/dist/rapidocr_onnxruntime-${PV}-py3-none-any.whl")
+einfo "Installing wheel for ${EPYTHON}"
+	distutils_wheel_install "${d}" \
+		"${wheel_path}"
 }
 
 python_install() {
-	local d="${WORKDIR}/${PN}-${PV}_${EPYTHON}/install"
-	local wheel_path=$(realpath "${S_PYTHON}/dist/rapidocr_onnxruntime-${PV}-py3-none-any.whl")
-	distutils_wheel_install "${d}" \
-		"${wheel_path}"
-
+	:
 }
 
 src_install() {
