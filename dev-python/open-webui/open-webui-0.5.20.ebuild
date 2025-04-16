@@ -7,10 +7,10 @@ EAPI=8
 AT_TYPES_NODE_PV="20.11.30"
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="hatchling"
-NODE_VERSION="${AT_TYPES_NODE_PV%%.*}"
+NODE_VERSION="22" # From https://github.com/open-webui/open-webui/blob/v0.5.20/Dockerfile#L24
 PYTHON_COMPAT=( "python3_"{11..12} )
 
-inherit distutils-r1 pypi
+inherit distutils-r1 pypi npm
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -173,14 +173,30 @@ BDEPEND+="
 "
 DOCS=( "CHANGELOG.md" "README.md" )
 
+pkg_setup() {
+	python_setup
+	npm_pkg_setup
+}
+
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
 	else
-		unpack ${A}
+#		unpack ${A}
+#		cd "${S}" || die
+		npm_src_unpack
 	fi
+}
+
+src_configure() {
+	distutils-r1_src_configure
+}
+
+src_compile() {
+	npm_hydrate
+	distutils-r1_src_compile
 }
 
 src_install() {
