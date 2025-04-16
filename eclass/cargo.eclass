@@ -760,6 +760,10 @@ cargo_env() {
 cargo_src_compile() {
 	debug-print-function ${FUNCNAME} "$@"
 
+	# oiledmachine-overlay changes:
+	[[ -e "/Cargo.toml" ]] && die "Remove /Cargo.toml to continue"
+	[[ -e "/Cargo.lock" ]] && die "Remove /Cargo.lock to continue"
+
 	if [[ -z "${CARGO}" ]]; then
 		die "CARGO is not set; was rust_pkg_setup run?"
 	fi
