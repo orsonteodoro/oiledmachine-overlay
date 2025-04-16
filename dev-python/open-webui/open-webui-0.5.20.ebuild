@@ -173,9 +173,27 @@ BDEPEND+="
 "
 DOCS=( "CHANGELOG.md" "README.md" )
 
+check_virtual_mem() {
+	local total_mem=$(free -t \
+		| grep "Total:" \
+		| sed -r -e "s|[[:space:]]+| |g" \
+		| cut -f 2 -d " ")
+	local total_mem_gib=$(python -c "import math;print(round(${total_mem}/1024/1024))")
+	if (( ${total_mem_gib} < 8 )) ; then
+ewarn
+ewarn "Please add more swap."
+ewarn
+ewarn "Current total memory:  ${total_mem_gib} GiB"
+ewarn "Minimum total memory:  8 GiB"
+ewarn "Tested total memory:  30 GiB"
+ewarn
+	fi
+}
+
 pkg_setup() {
 	python_setup
 	npm_pkg_setup
+	check_virtual_mem
 }
 
 src_unpack() {
@@ -184,9 +202,10 @@ src_unpack() {
 		git-r3_fetch
 		git-r3_checkout
 	else
-#		unpack ${A}
-#		cd "${S}" || die
 		npm_src_unpack
+		if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+ewarn "QA:  modify package.json build with just vite build"
+		fi
 	fi
 }
 
@@ -196,6 +215,11 @@ src_configure() {
 
 src_compile() {
 	npm_hydrate
+
+	# Prevent:
+	# FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
+	export NODE_OPTIONS=" --max-old-space-size=4096"
+
 	distutils-r1_src_compile
 }
 
