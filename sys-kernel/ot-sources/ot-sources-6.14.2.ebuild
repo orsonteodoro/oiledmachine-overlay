@@ -27,9 +27,7 @@ inherit ot-kernel-v6.14
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  modularize-ebuild-as-milestone-eclasses
 # OILEDMACHINE-OVERLAY-META-TAGS:  see-eclass-for-full-details
 # OILEDMACHINE-OVERLAY-META-WIP:  tresor, signed-kexec-kernel, signed-kernels
-
-
-# OILEDMACHINE-OVERLAY-TEST:  N/A
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.14.2 (20250415) with builder profile with -O2 and -march=native and no PGI/PGO
 
 #
 # Some USE or OT_KERNEL_USE may be ignored in eclasses.
