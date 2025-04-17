@@ -379,6 +379,9 @@ einfo "OPEN_WEBUI_URI:  ${open_webui_uri}"
 	fowners "${PN}:${PN}" "/var/lib/open-webui/data/cache/embedding/models"
 	fowners "${PN}:${PN}" "/var/lib/open-webui/data/cache/tiktoken"
 	fowners "${PN}:${PN}" "/var/lib/open-webui/data/cache/torch_extensions"
+
+	# Junk that should not be there.
+	rm -rf "${ED}/usr/lib/python"*"/site-packages/data/"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
