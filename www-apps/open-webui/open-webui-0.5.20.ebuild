@@ -240,6 +240,7 @@ ewarn
 }
 
 pkg_setup() {
+ewarn "The ${CATEGORY}/${PN} ebuild is still in development."
 	python_setup
 	npm_pkg_setup
 	check_virtual_mem
