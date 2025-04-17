@@ -40,7 +40,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" cuda ollama +openrc rag-ocr systemd"
+IUSE+="
+cuda ollama +openrc rag-ocr systemd
+ebuild_revision_1
+"
 REQUIRED_USE="
 	|| (
 		openrc
@@ -382,6 +385,19 @@ einfo "OPEN_WEBUI_URI:  ${open_webui_uri}"
 
 	# Junk that should not be there.
 	rm -rf "${ED}/usr/lib/python"*"/site-packages/data/"
+
+einfo "Fixing hardcoded paths"
+	sed -i \
+		-e "s|python -c|${EPYTHON} -c|g" \
+		-e "s|/usr/local/lib/${EPYTHON}/site-packages|/usr/lib/${EPYTHON}/site-packages|g" \
+		"${ED}/usr/lib/${EPYTHON}/site-packages/open_webui/__init__.py" \
+		"${ED}/opt/open-webui/backend/start.sh" \
+		"${ED}/opt/open-webui/backend/open_webui/__init__.py" \
+		|| die
+	sed -i \
+		-e "s|uvicorn|/usr/lib/python-exec/${EPYTHON}/uvicorn|g" \
+		"${ED}/opt/open-webui/backend/start.sh" \
+		|| die
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
