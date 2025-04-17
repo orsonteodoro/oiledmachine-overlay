@@ -8,6 +8,7 @@ EAPI=8
 # 0.5.7 -> 0.5.11
 # 0.5.11 -> 0.5.12
 # 0.5.12 -> 0.5.13
+# 0.5.13 -> 0.6.5
 
 # Hardened because of CVE-2024-37032 implications of similar attacks.
 
@@ -30,9 +31,9 @@ EAPI=8
 # U20
 # For depends see
 # https://github.com/ollama/ollama/blob/main/docs/development.md
-# ROCm:  https://github.com/ollama/ollama/blob/v0.5.13/.github/workflows/test.yaml
-# CUDA:  https://github.com/ollama/ollama/blob/v0.5.13/.github/workflows/release.yaml#L194
-# Hardware support:  https://github.com/ollama/ollama/blob/v0.5.13/docs/gpu.md
+# ROCm:  https://github.com/ollama/ollama/blob/v0.6.5/.github/workflows/test.yaml
+# CUDA:  https://github.com/ollama/ollama/blob/v0.6.5/.github/workflows/release.yaml#L194
+# Hardware support:  https://github.com/ollama/ollama/blob/v0.6.5/docs/gpu.md
 AMDGPU_TARGETS_COMPAT=(
 	gfx900
 	gfx906_xnack_minus
@@ -135,31 +136,32 @@ benevolentjoker-belial benevolentjoker-bethanygpt benevolentjoker-nsfwmonika
 benevolentjoker-nsfwvanessa benevolentjoker-satan bespoke-minicheck bge-large
 bge-m3 canadiangamer-neena canadiangamer-priya captainkyd-whiterabbitneo7b
 chatgph-70b-instruct chatgph-gph-main chatgph-medix-ph codebooga codegeex4
-codegemma codellama codeqwen codestral codeup command-r command-r-plus
-command-r7b command-r7b-arabic dbrx deepscaler deepseek-coder deepseek-coder-v2
-deepseek-llm deepseek-r1 deepseek-v2 deepseek-v2.5 deepseek-v3 disinfozone-telos
-dolphin-llama3 dolphin-mistral dolphin-mixtral dolphin-phi dolphin3 dolphincoder
-duckdb-nsql ehartford-theprofessor eramax-aura_v3 everythinglm falcon falcon2
-falcon3 firefunction-v2 gemma gemma2 glm4 exaone3.5 fixt-home-3b-v3
-fixt-home-3b-v2 goliath granite-code granite-embedding granite3-dense
-granite3.1-dense granite3-guardian granite3-moe granite3.1-moe granite3.2-vision
-hemanth-chessplayer hermes3 hookingai-monah-8b internlm2
-jimscard-adult-film-screenwriter-nsfw jimscard-whiterabbit-neo joefamous-grok-1
-leeplenty-lumimaid-v0.2 llama-guard3 llama-pro llama2 llama2-chinese
-llama2-uncensored llama3 llama3-chatqa llama3-gradient llama3-groq-tool-use
-llama3.1 llama3.2 llama3.2-vision llama3.3 llava llava-llama3 llava-phi3
-magicoder mannix-replete-adapted-llama3-8b mannix-llamax3-8b-alpaca
-mannix-smaug-qwen2-72b mannix-replete-coder-llama3-8b marco-o1 mathstral
-meditron medllama2 megadolphin minicpm-v mistral mistral-large mistral-nemo
-mistral-openorca mistral-small mistrallite mixtral
-monotykamary-whiterabbitneo-v1.5a moondream mxbai-embed-large nemotron
-nemotron-mini neural-chat nexusraven nomic-embed-text notus notux nous-hermes
-nous-hermes2 nous-hermes2-mixtral nqduc-gemsura nqduc-mixsura nqduc-mixsura-sft
-nuextract olmo2 open-orca-platypus2 openchat opencoder openhermes openthinker
-orca-mini orca2 paraphrase-multilingual partai-dorna-llama3 phi phi3 phi3.5 phi4
-phi4-mini phind-codellama qwen qwen2 qwen2-math qwen2.5 qwen2.5-coder qwq
-r1-1776 reader-lm reefer-her2 reefer-minimonica reefer-monica reflection
-rfc-whiterabbitneo rouge-replete-coder-qwen2-1.5b sailor2 samantha-mistral
+codegemma codellama codeqwen codestral codeup command-a command-r command-r-plus
+command-r7b command-r7b-arabic dbrx deepcoder deepscaler deepseek-coder
+deepseek-coder-v2 deepseek-llm deepseek-r1 deepseek-v2 deepseek-v2.5 deepseek-v3
+disinfozone-telos dolphin-llama3 dolphin-mistral dolphin-mixtral dolphin-phi
+dolphin3 dolphincoder duckdb-nsql ehartford-theprofessor eramax-aura_v3
+everythinglm falcon falcon2 falcon3 firefunction-v2 gemma gemma2 gemma3 glm4
+exaone3.5 fixt-home-3b-v3 fixt-home-3b-v2 goliath granite-code granite-embedding
+granite3-dense granite3.1-dense granite3-guardian granite3-moe granite3.1-moe
+granite3.2-vision granite3.3 hemanth-chessplayer hermes3 hookingai-monah-8b
+internlm2 jimscard-adult-film-screenwriter-nsfw jimscard-whiterabbit-neo
+joefamous-grok-1 leeplenty-lumimaid-v0.2 llama-guard3 llama-pro llama2
+llama2-chinese llama2-uncensored llama3 llama3-chatqa llama3-gradient
+llama3-groq-tool-use llama3.1 llama3.2 llama3.2-vision llama3.3 llava
+llava-llama3 llava-phi3 magicoder mannix-replete-adapted-llama3-8b
+mannix-llamax3-8b-alpaca mannix-smaug-qwen2-72b mannix-replete-coder-llama3-8b
+marco-o1 mathstral meditron medllama2 megadolphin minicpm-v mistral
+mistral-large mistral-nemo mistral-openorca mistral-small mistral-small3.1
+mistrallite mixtral monotykamary-whiterabbitneo-v1.5a moondream
+mxbai-embed-large nemotron nemotron-mini neural-chat nexusraven nomic-embed-text
+notus notux nous-hermes nous-hermes2 nous-hermes2-mixtral nqduc-gemsura
+nqduc-mixsura nqduc-mixsura-sft nuextract olmo2 open-orca-platypus2 openchat
+opencoder openhermes openthinker orca-mini orca2 paraphrase-multilingual
+partai-dorna-llama3 phi phi3 phi3.5 phi4 phi4-mini phind-codellama qwen qwen2
+qwen2-math qwen2.5 qwen2.5-coder qwq r1-1776 reader-lm reefer-her2
+reefer-minimonica reefer-monica reflection rfc-whiterabbitneo
+rouge-replete-coder-qwen2-1.5b sailor2 samantha-mistral
 sammcj-smaug-mixtral-v0.1 savethedoctor-whiterabbitneo13bq8_0 shieldgemma
 smallthinker smollm snowflake-arctic-embed snowflake-arctic-embed2 solar
 solar-pro sparksammy-samantha sparksammy-samantha-3.1
@@ -243,6 +245,20 @@ else
 		"github.com/stretchr/testify v1.1.4/go.mod"
 		"rsc.io/pdf v0.1.1"
 		"rsc.io/pdf v0.1.1/go.mod"
+		"github.com/google/go-cmp v0.6.0"
+		"github.com/google/go-cmp v0.6.0/go.mod"
+		"github.com/yuin/goldmark v1.4.13"
+		"github.com/yuin/goldmark v1.4.13/go.mod"
+		"golang.org/x/mod v0.23.0"
+		"golang.org/x/mod v0.23.0/go.mod"
+		"golang.org/x/net v0.35.0"
+		"golang.org/x/net v0.35.0/go.mod"
+		"golang.org/x/sync v0.11.0"
+		"golang.org/x/sync v0.11.0/go.mod"
+		"golang.org/x/sys v0.30.0"
+		"golang.org/x/sys v0.30.0/go.mod"
+		"golang.org/x/telemetry v0.0.0-20240521205824-bda55230c457"
+		"golang.org/x/telemetry v0.0.0-20240521205824-bda55230c457/go.mod"
 		"golang.org/x/mod v0.17.0"
 		"golang.org/x/mod v0.17.0/go.mod"
 		"golang.org/x/sync v0.11.0"
@@ -1663,6 +1679,8 @@ else
 		"golang.org/x/tools v0.0.0-20200619180055-7c47624df98f/go.mod"
 		"golang.org/x/tools v0.0.0-20210106214847-113979e3529a/go.mod"
 		"golang.org/x/tools v0.1.4/go.mod"
+		"golang.org/x/tools v0.30.0"
+		"golang.org/x/tools v0.30.0/go.mod"
 		"golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7/go.mod"
 		"golang.org/x/xerrors v0.0.0-20191011141410-1b5146add898/go.mod"
 		"golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543/go.mod"
@@ -1906,6 +1924,9 @@ LLM_LICENSES="
 	ollama_llms_codeup? (
 		CreativeML-Open-RAIL++-M-License-20230726
 	)
+	ollama_llms_command-a? (
+		CC-BY-NC-4.0
+	)
 	ollama_llms_command-r? (
 		CC-BY-NC-4.0
 	)
@@ -1921,6 +1942,9 @@ LLM_LICENSES="
 	ollama_llms_dbrx? (
 		Databricks-Open-Model-License
 		Databricks-Open-Model-Acceptable-Use-Policy
+	)
+	ollama_llms_deepcoder? (
+		MIT
 	)
 	ollama_llms_deepscaler? (
 		MIT
@@ -2023,6 +2047,10 @@ LLM_LICENSES="
 		Gemma-Terms-of-Use-20240221
 		Gemma-Prohibited-Use-Policy-20240221
 	)
+	ollama_llms_gemma3? (
+		Gemma-Terms-of-Use-20240221
+		Gemma-Prohibited-Use-Policy-20240221
+	)
 	ollama_llms_glm4? (
 		glm-4-9b-LICENSE
 	)
@@ -2052,6 +2080,9 @@ LLM_LICENSES="
 		Apache-2.0
 	)
 	ollama_llms_granite3.2-vision? (
+		Apache-2.0
+	)
+	ollama_llms_granite3.3? (
 		Apache-2.0
 	)
 	ollama_llms_hemanth-chessplayer? (
@@ -2199,6 +2230,9 @@ LLM_LICENSES="
 	ollama_llms_mistral-small? (
 		Apache-2.0
 		MRL-0.1.md
+	)
+	ollama_llms_mistral-small3.1? (
+		Apache-2.0
 	)
 	ollama_llms_mistrallite? (
 		Apache-2.0
@@ -2930,7 +2964,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-0.5.11-hardcoded-paths.patch"
-	"${FILESDIR}/${PN}-0.5.13-cmd-changes.patch"
+	"${FILESDIR}/${PN}-0.6.5-cmd-changes.patch"
 	"${FILESDIR}/${PN}-0.5.13-custom-cpu-features.patch"
 	"${FILESDIR}/${PN}-0.5.11-sse42.patch"
 )
@@ -3816,7 +3850,7 @@ build_new_runner_cpu() {
 	export OLLAMA_SKIP_CPU_RUNNER_AVX2=1
 
 	# See also
-	# https://github.com/ollama/ollama/blob/v0.5.13/llama/llama.go
+	# https://github.com/ollama/ollama/blob/v0.6.5/llama/llama.go
 	local args=(
 		-p $(get_makeopts_jobs)
 		-x
@@ -3922,7 +3956,7 @@ build_new_runner_gpu() {
 	export OLLAMA_SKIP_CPU_RUNNER=1
 
 	# See also
-	# https://github.com/ollama/ollama/blob/v0.5.13/llama/llama.go
+	# https://github.com/ollama/ollama/blob/v0.6.5/llama/llama.go
 	local args=(
 		-p $(get_makeopts_jobs)
 		-x

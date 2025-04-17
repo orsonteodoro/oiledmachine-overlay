@@ -2445,7 +2445,7 @@ diff '--color=auto' -urp ollama-0.5.12.orig/cmd/cmd.go ollama-0.5.12/cmd/cmd.go
 +		"mistral-large": "MRL-0.1",
 +		"mistral-nemo": "Apache-2.0",
 +		"mistral-openorca": "Apache-2.0",
-+		"mistral-small": "MRL-0.1",
++		"mistral-small": "Apache-2.0 MRL-0.1", // 2409 instruct is MRL, 2501 instruct is Apache-2.0
 +		"mistrallite": "Apache-2.0",
 +		"mixtral": "Apache-2.0",
 +		"moondream": "Apache-2.0",

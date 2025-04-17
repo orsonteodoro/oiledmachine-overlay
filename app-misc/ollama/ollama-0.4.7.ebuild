@@ -116,81 +116,48 @@ CUDA_TARGETS_COMPAT=(
 	sm_90a
 )
 LLMS=(
-adens-quran-guide
-agcobra-liberated-qwen1.5-72b
-akx-viking-7b
-alfred ALIENTELLIGENCE-christiancounselor ALIENTELLIGENCE-crisisintervention
-ALIENTELLIGENCE-doomsdayurvivalist
-ALIENTELLIGENCE-enriquecastillorincon ALIENTELLIGENCE-gamemasterroleplaying
-ALIENTELLIGENCE-holybible
-ALIENTELLIGENCE-mentalwellness
-ALIENTELLIGENCE-pcarchitect
-ALIENTELLIGENCE-prayerline
-ALIENTELLIGENCE-sarah
-ALIENTELLIGENCE-sarahv2
-ALIENTELLIGENCE-whiterabbit
-ALIENTELLIGENCE-whiterabbitv2 all-minilm
-Artalius-lixi aya aya-expanse bakllava
-artifish-mlewd-v2.4
-athene-v2
+adens-quran-guide agcobra-liberated-qwen1.5-72b akx-viking-7b alfred
+ALIENTELLIGENCE-christiancounselor ALIENTELLIGENCE-crisisintervention
+ALIENTELLIGENCE-doomsdayurvivalist ALIENTELLIGENCE-enriquecastillorincon
+ALIENTELLIGENCE-gamemasterroleplaying ALIENTELLIGENCE-holybible
+ALIENTELLIGENCE-mentalwellness ALIENTELLIGENCE-pcarchitect
+ALIENTELLIGENCE-prayerline ALIENTELLIGENCE-sarah ALIENTELLIGENCE-sarahv2
+ALIENTELLIGENCE-whiterabbit ALIENTELLIGENCE-whiterabbitv2 all-minilm
+Artalius-lixi aya aya-expanse bakllava artifish-mlewd-v2.4 athene-v2
 benevolentjoker-belial benevolentjoker-bethanygpt benevolentjoker-nsfwmonika
 benevolentjoker-nsfwvanessa benevolentjoker-satan bespoke-minicheck bge-large
-bge-m3 canadiangamer-neena canadiangamer-priya
-captainkyd-whiterabbitneo7b
-chatgph-70b-instruct
-chatgph-gph-main chatgph-medix-ph codebooga
-codegeex4 codegemma codellama codeqwen codestral codeup command-r
-command-r-plus dbrx deepseek-coder deepseek-coder-v2
-deepseek-llm deepseek-v2 deepseek-v2.5 disinfozone-telos dolphin-llama3
-dolphin-mistral dolphin-mixtral dolphin-phi dolphincoder duckdb-nsql
-ehartford-theprofessor
-eramax-aura_v3 everythinglm falcon falcon2 firefunction-v2 gemma gemma2 glm4
-fixt-home-3b-v3
-fixt-home-3b-v2
-goliath granite-code
-granite3-dense
-granite3-guardian
-granite3-moe
-hemanth-chessplayer
-hermes3
-hookingai-monah-8b
-internlm2 jimscard-adult-film-screenwriter-nsfw
-jimscard-whiterabbit-neo
-joefamous-grok-1
-leeplenty-lumimaid-v0.2
-llama-guard3 llama-pro llama2 llama2-chinese llama2-uncensored llama3
-llama3-chatqa llama3-gradient llama3-groq-tool-use llama3.1 llama3.2 llama3.2-vision llava
-llava-llama3 llava-phi3 magicoder mannix-replete-adapted-llama3-8b
-mannix-llamax3-8b-alpaca
-mannix-smaug-qwen2-72b
-mannix-replete-coder-llama3-8b
-marco-o1
-mathstral meditron medllama2 megadolphin
+bge-m3 canadiangamer-neena canadiangamer-priya captainkyd-whiterabbitneo7b
+chatgph-70b-instruct chatgph-gph-main chatgph-medix-ph codebooga codegeex4
+codegemma codellama codeqwen codestral codeup command-r command-r-plus dbrx
+deepseek-coder deepseek-coder-v2 deepseek-llm deepseek-v2 deepseek-v2.5
+disinfozone-telos dolphin-llama3 dolphin-mistral dolphin-mixtral dolphin-phi
+dolphincoder duckdb-nsql ehartford-theprofessor eramax-aura_v3 everythinglm
+falcon falcon2 firefunction-v2 gemma gemma2 glm4 fixt-home-3b-v3 fixt-home-3b-v2
+goliath granite-code granite3-dense granite3-guardian granite3-moe
+hemanth-chessplayer hermes3 hookingai-monah-8b internlm2
+jimscard-adult-film-screenwriter-nsfw jimscard-whiterabbit-neo joefamous-grok-1
+leeplenty-lumimaid-v0.2 llama-guard3 llama-pro llama2 llama2-chinese
+llama2-uncensored llama3 llama3-chatqa llama3-gradient llama3-groq-tool-use
+llama3.1 llama3.2 llama3.2-vision llava llava-llama3 llava-phi3 magicoder
+mannix-replete-adapted-llama3-8b mannix-llamax3-8b-alpaca mannix-smaug-qwen2-72b
+mannix-replete-coder-llama3-8b marco-o1 mathstral meditron medllama2 megadolphin
 minicpm-v mistral mistral-large mistral-nemo mistral-openorca mistral-small
-mistrallite mixtral monotykamary-whiterabbitneo-v1.5a
-moondream
-mxbai-embed-large nemotron nemotron-mini
-neural-chat nexusraven nomic-embed-text notus notux nous-hermes nous-hermes2
-nous-hermes2-mixtral nqduc-gemsura nqduc-mixsura nqduc-mixsura-sft nuextract
-open-orca-platypus2 openchat openhermes orca-mini
-orca2 paraphrase-multilingual partai-dorna-llama3 phi phi3 phi3.5
-phind-codellama qwen qwen2
-qwen2-math qwen2.5 qwen2.5-coder qwq reader-lm reefer-her2 reefer-minimonica reefer-monica
-reflection
-rfc-whiterabbitneo
-rouge-replete-coder-qwen2-1.5b
-samantha-mistral
-sammcj-smaug-mixtral-v0.1
-savethedoctor-whiterabbitneo13bq8_0
-shieldgemma smollm snowflake-arctic-embed solar solar-pro
-sparksammy-samantha sparksammy-samantha-3.1 sparksammy-samantha-eggplant
-sparksammy-samantha-v3-uncensored sparksammy-tinysam-goog
-sparksammy-tinysam-msft sqlcoder stable-beluga stable-code stablelm-zephyr
-stablelm2 starcoder starcoder2 starling-lm themanofrod-travel-agent
-tinydolphin tinyllama tulu3 vicuna
-wizard-math wizard-vicuna wizard-vicuna-uncensored wizardcoder wizardlm
-wizardlm-uncensored wizardlm2 xwinlm yarn-llama2 yarn-mistral yi yi-coder
-zephyr
+mistrallite mixtral monotykamary-whiterabbitneo-v1.5a moondream
+mxbai-embed-large nemotron nemotron-mini neural-chat nexusraven nomic-embed-text
+notus notux nous-hermes nous-hermes2 nous-hermes2-mixtral nqduc-gemsura
+nqduc-mixsura nqduc-mixsura-sft nuextract open-orca-platypus2 openchat
+openhermes orca-mini orca2 paraphrase-multilingual partai-dorna-llama3 phi phi3
+phi3.5 phind-codellama qwen qwen2 qwen2-math qwen2.5 qwen2.5-coder qwq reader-lm
+reefer-her2 reefer-minimonica reefer-monica reflection rfc-whiterabbitneo
+rouge-replete-coder-qwen2-1.5b samantha-mistral sammcj-smaug-mixtral-v0.1
+savethedoctor-whiterabbitneo13bq8_0 shieldgemma smollm snowflake-arctic-embed
+solar solar-pro sparksammy-samantha sparksammy-samantha-3.1
+sparksammy-samantha-eggplant sparksammy-samantha-v3-uncensored
+sparksammy-tinysam-goog sparksammy-tinysam-msft sqlcoder stable-beluga
+stable-code stablelm-zephyr stablelm2 starcoder starcoder2 starling-lm
+themanofrod-travel-agent tinydolphin tinyllama tulu3 vicuna wizard-math
+wizard-vicuna wizard-vicuna-uncensored wizardcoder wizardlm wizardlm-uncensored
+wizardlm2 xwinlm yarn-llama2 yarn-mistral yi yi-coder zephyr
 )
 LLVM_COMPAT=( 17 )
 #
@@ -2165,6 +2132,7 @@ LLM_LICENSES="
 		Apache-2.0
 	)
 	ollama_llms_mistral-small? (
+		Apache-2.0
 		MRL-0.1.md
 	)
 	ollama_llms_mistrallite? (
