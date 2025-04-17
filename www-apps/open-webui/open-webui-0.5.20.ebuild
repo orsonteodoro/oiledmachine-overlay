@@ -40,7 +40,9 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+IUSE+=" cuda ollama openrc rag-ocr systemd"
+REQUIRED_USE="
+"
 # For missing dev-python/moto[s3] rdepends
 MOTO_RDEPEND="
 	$(python_gen_cond_dep '
@@ -68,8 +70,47 @@ UVICORN_RDEPEND="
 		>=dev-python/watchfiles-0.13[${PYTHON_USEDEP}]
 	')
 "
+TORCH_TRIPLES=(
+	# torch:torchaudio:torchvison
+	"2.0.1:2.0.1:0.15.2"
+	"2.1.2:2.1.2:0.16.2"
+	"2.2.2:2.2.2:0.17.2"
+	"2.3.1:2.3.1:0.18.1"
+	"2.4.1:2.4.1:0.19.1"
+	"2.5.1:2.5.1:0.20.1"
+)
+gen_torch_rdepend() {
+	local r
+	for r in ${TORCH_TRIPLES[@]} ; do
+		local torch_pv="${r%%:*}"
+		local torchaudio_pv="${r%%:*}"
+		torchaudio_pv="${torchaudio_pv##*:}"
+		local torchvision_pv="${r##*:}"
+		echo "
+			(
+				~sci-ml/pytorch-${torch_pv}[${PYTHON_SINGLE_USEDEP},cuda?]
+				~sci-ml/torchaudio-${torchaudio_pv}[${PYTHON_SINGLE_USEDEP}]
+				~sci-ml/torchvision-${torchvision_pv}[${PYTHON_SINGLE_USEDEP},cuda?]
+			)
+		"
+	done
+}
+DOCKER_REPEND="
+	|| (
+		$(gen_torch_rdepend)
+	)
+	sci-ml/pytorch:=
+	sci-ml/torchaudio:=
+	sci-ml/torchvision:=
+	rag-ocr? (
+		media-video/ffmpeg
+		x11-libs/libSM
+		x11-libs/libXext
+	)
+"
 # Relaxed pymilvus
 RDEPEND+="
+	${DOCKER_REPEND}
 	${PASSLIB_RDEPEND}
 	${PYJWT_RDEPEND}
 	${MOTO_RDEPEND}
@@ -164,6 +205,8 @@ RDEPEND+="
 	>=dev-python/unstructured-0.16.17[${PYTHON_SINGLE_USEDEP}]
 	>=media-libs/opencv-4.11.0[${PYTHON_SINGLE_USEDEP},python]
 	sci-ml/transformers[${PYTHON_SINGLE_USEDEP}]
+	acct-group/${PN}
+	acct-user/${PN}
 "
 DEPEND+="
 	${RDEPEND}
@@ -209,6 +252,31 @@ ewarn "QA:  modify package.json build with just vite build"
 	fi
 }
 
+setup_build_env() {
+
+	USE_CUDA=$(usex cuda "true" "false")
+	USE_OLLAMA=$(usex ollama "true" "false")
+	if use cuda ; then
+		if has_version "=dev-util/nvidia-cuda-toolkit-11*" ; then
+			local pv=$(best_version "=dev-util/nvidia-cuda-toolkit-11*" | sed -e "s|dev-util/nvidia-cuda-toolkit-||g")
+			export USE_CUDA_VER="cu${pv//.}"
+		elif has_version "=dev-util/nvidia-cuda-toolkit-12*" ; then
+			local pv=$(best_version "=dev-util/nvidia-cuda-toolkit-12*" | sed -e "s|dev-util/nvidia-cuda-toolkit-||g")
+			export USE_CUDA_VER="cu${pv//.}"
+		else
+eerror "CUDA other than 11 or 12 are not supported."
+			die
+		fi
+	fi
+
+	# Pass build args to the build
+	export USE_OLLAMA_DOCKER=${USE_OLLAMA:-}
+	export USE_CUDA_DOCKER=${USE_CUDA:-}
+	export USE_CUDA_DOCKER_VER=${USE_CUDA_VER:-}
+	export USE_EMBEDDING_MODEL_DOCKER=${USE_EMBEDDING_MODEL:-}
+	export USE_RERANKING_MODEL_DOCKER=${USE_RERANKING_MODEL:-}
+}
+
 src_configure() {
 	distutils-r1_src_configure
 }
@@ -223,10 +291,65 @@ src_compile() {
 	distutils-r1_src_compile
 }
 
+install_backend() {
+	# Include hidden files/dirs with *
+	shopt -s dotglob
+
+	insinto "/opt/open-webui"
+	doins -r "backend"
+
+	# Exclude hidden files/dirs with *
+	shopt -u dotglob
+}
+
+install_init_services() {
+	sed \
+		-e "s|@NODE_VERSION@|${NODE_VERSION}|g" \
+		"${FILESDIR}/${PN}-start-server" \
+		> \
+		"${T}/${PN}-start-server" \
+		|| die
+	exeinto "/usr/bin"
+	doexe "${T}/${PN}-start-server"
+
+	insinto "/etc/conf.d"
+	doins "${FILESDIR}/open-webui.conf"
+	if use openrc ; then
+		exeinto "/etc/init.d"
+		newexe "${FILESDIR}/${PN}.openrc" "${PN}"
+	fi
+	if use systemd ; then
+		insinto "/usr/lib/systemd/system"
+		newins "${FILESDIR}/${PN}.systemd" "${PN}.service"
+	fi
+}
+
+install_launcher_wrapper() {
+	local open_webui_hostname=${OPEN_WEBUI_HOSTNAME:-"127.0.0.1"}
+	local open_webui_port=${OPEN_WEBUI_PORT:-8080}
+
+einfo "LOBECHAT_HOSTNAME:  ${lobechat_hostname} (user-definable, per-package environment variable)"
+einfo "LOBECHAT_PORT:  ${lobechat_port} (user-definable, per-package environment variable)"
+
+	local open_webui_uri=${OPEN_WEBUI_URI:-"http://${open_webui_hostname}:${open_webui_port}"}
+einfo "OPEN_WEBUI_URI:  ${open_webui_uri}"
+	sed \
+		-e "s|@OPEN_WEBUI_URI@|${open_webui_uri}|g" \
+		> \
+		"${T}/open-webui" \
+		|| die
+	exeinto "/usr/bin"
+	doexe "${T}/open-webui"
+}
+
 src_install() {
 	distutils-r1_src_install
 	docinto "licenses"
 	dodoc "LICENSE"
+
+	install_launcher_wrapper
+	install_backend
+	install_init_services
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

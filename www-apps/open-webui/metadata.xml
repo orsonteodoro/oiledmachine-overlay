@@ -6,6 +6,29 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <!--
+
+    Build time environment variables:
+
+    OPEN_WEBUI_HOSTNAME - hostname
+    Default:  127.0.0.1
+
+    OPEN_WEBUI_PORT - port to connect to the web interface
+    Default:  8080
+
+    OPEN_WEBUI_URI - hostname to use
+    Default:  http://127.0.0.1:8080
+
+    Sample /etc/portage/env/open-webui.conf:
+
+    OPEN_WEBUI_HOSTNAME="127.0.0.1"
+    OPEN_WEBUI_PORT=8080
+    OPEN_WEBUI_URI="http://127.0.0.1:8080"
+
+    Sample /etc/portage/package.env:
+    dev-python/open-webui open-webui.conf
+
+  -->
   <upstream>
     <bugs-to>https://github.com/open-webui/open-webui/issues</bugs-to>
     <changelog>https://github.com/open-webui/open-webui/blob/main/CHANGELOG.md</changelog>

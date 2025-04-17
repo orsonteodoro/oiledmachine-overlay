@@ -1,0 +1,8 @@
+#!/bin/bash
+NODE_VERSION=@NODE_VERSION@
+main() {
+	cd "/opt/open-webui"
+	source "/etc/open-webui/open-webui.conf"
+	./start.sh
+}
+main

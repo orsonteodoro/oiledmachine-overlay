@@ -5,5 +5,5 @@ EAPI=8
 
 inherit acct-group
 
-DESCRIPTION="A group for Lobe Chat"
+DESCRIPTION="A group for Open WebUI"
 ACCT_GROUP_ID=-1
