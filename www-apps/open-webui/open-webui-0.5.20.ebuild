@@ -322,7 +322,15 @@ install_init_services() {
 	doexe "${T}/${PN}-start-server"
 
 	insinto "/etc/conf.d"
-	doins "${FILESDIR}/${PN}.conf"
+	sed \
+		-e "s|@OPEN_WEBUI_HOST@|${open_webui_hostname}|g" \
+		-e "s|@OPEN_WEBUI_PORT@|${open_webui_port}|g" \
+		"${FILESDIR}/${PN}.conf" \
+		> \
+		"${T}/${PN}.conf" \
+		|| die
+	doins "${T}/${PN}.conf"
+
 	if use openrc ; then
 		exeinto "/etc/init.d"
 		newexe "${FILESDIR}/${PN}.openrc" "${PN}"
@@ -334,14 +342,6 @@ install_init_services() {
 }
 
 install_launcher_wrapper() {
-	local open_webui_hostname=${OPEN_WEBUI_HOSTNAME:-"127.0.0.1"}
-	local open_webui_port=${OPEN_WEBUI_PORT:-8080}
-
-einfo "OPEN_WEBUI_HOSTNAME:  ${open_webui_hostname} (user-definable, per-package environment variable)"
-einfo "OPEN_WEBUI_PORT:  ${open_webui_port} (user-definable, per-package environment variable)"
-
-	local open_webui_uri=${OPEN_WEBUI_URI:-"http://${open_webui_hostname}:${open_webui_port}"}
-einfo "OPEN_WEBUI_URI:  ${open_webui_uri}"
 	sed \
 		-e "s|@OPEN_WEBUI_URI@|${open_webui_uri}|g" \
 		"${FILESDIR}/${PN}" \
@@ -356,6 +356,15 @@ src_install() {
 	distutils-r1_src_install
 	docinto "licenses"
 	dodoc "LICENSE"
+
+	local open_webui_hostname=${OPEN_WEBUI_HOSTNAME:-"127.0.0.1"}
+	local open_webui_port=${OPEN_WEBUI_PORT:-8080}
+
+einfo "OPEN_WEBUI_HOSTNAME:  ${open_webui_hostname} (user-definable, per-package environment variable)"
+einfo "OPEN_WEBUI_PORT:  ${open_webui_port} (user-definable, per-package environment variable)"
+
+	local open_webui_uri=${OPEN_WEBUI_URI:-"http://${open_webui_hostname}:${open_webui_port}"}
+einfo "OPEN_WEBUI_URI:  ${open_webui_uri}"
 
 	install_launcher_wrapper
 	install_backend
