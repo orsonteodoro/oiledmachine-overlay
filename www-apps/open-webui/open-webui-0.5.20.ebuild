@@ -211,7 +211,9 @@ RDEPEND+="
 	sci-ml/transformers[${PYTHON_SINGLE_USEDEP}]
 	acct-group/${PN}
 	acct-user/${PN}
+	x11-misc/xdg-utils
 "
+# xdg-utils is not an upstream requirement but for the launcher wrapper.
 DEPEND+="
 	${RDEPEND}
 "
