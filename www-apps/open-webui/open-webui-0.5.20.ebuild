@@ -301,8 +301,11 @@ install_backend() {
 	# Include hidden files/dirs with *
 	shopt -s dotglob
 
-	insinto "/opt/open-webui"
+	insinto "/opt/${PN}"
 	doins -r "backend"
+
+	fperms 0755 "/opt/${PN}/backend/dev.sh"
+	fperms 0755 "/opt/${PN}/backend/start.sh"
 
 	# Exclude hidden files/dirs with *
 	shopt -u dotglob
@@ -319,7 +322,7 @@ install_init_services() {
 	doexe "${T}/${PN}-start-server"
 
 	insinto "/etc/conf.d"
-	doins "${FILESDIR}/open-webui.conf"
+	doins "${FILESDIR}/${PN}.conf"
 	if use openrc ; then
 		exeinto "/etc/init.d"
 		newexe "${FILESDIR}/${PN}.openrc" "${PN}"
@@ -341,11 +344,12 @@ einfo "LOBECHAT_PORT:  ${lobechat_port} (user-definable, per-package environment
 einfo "OPEN_WEBUI_URI:  ${open_webui_uri}"
 	sed \
 		-e "s|@OPEN_WEBUI_URI@|${open_webui_uri}|g" \
+		"${FILESDIR}/${PN}" \
 		> \
-		"${T}/open-webui" \
+		"${T}/${PN}" \
 		|| die
 	exeinto "/usr/bin"
-	doexe "${T}/open-webui"
+	doexe "${T}/${PN}"
 }
 
 src_install() {
