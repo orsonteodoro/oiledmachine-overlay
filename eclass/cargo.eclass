@@ -487,6 +487,10 @@ cargo_update_crates () {
 cargo_src_unpack() {
 	debug-print-function ${FUNCNAME} "$@"
 
+	# oiledmachine-overlay changes:
+	[[ -e "/Cargo.toml" ]] && die "Remove /Cargo.toml to continue"
+	[[ -e "/Cargo.lock" ]] && die "Remove /Cargo.lock to continue"
+
 	mkdir -p "${ECARGO_VENDOR}" "${S}" || die
 
 	local archive shasum pkg
@@ -540,6 +544,10 @@ cargo_src_unpack() {
 # NOTE: might require passing --frozen to cargo_src_configure if git dependencies are used.
 cargo_live_src_unpack() {
 	debug-print-function ${FUNCNAME} "$@"
+
+	# oiledmachine-overlay changes:
+	[[ -e "/Cargo.toml" ]] && die "Remove /Cargo.toml to continue"
+	[[ -e "/Cargo.lock" ]] && die "Remove /Cargo.lock to continue"
 
 	[[ "${PV}" == *9999* ]] || die "${FUNCNAME} only allowed in live/9999 ebuilds"
 	[[ "${EBUILD_PHASE}" == unpack ]] || die "${FUNCNAME} only allowed in src_unpack"
@@ -759,10 +767,6 @@ cargo_env() {
 # Build the package using cargo build.
 cargo_src_compile() {
 	debug-print-function ${FUNCNAME} "$@"
-
-	# oiledmachine-overlay changes:
-	[[ -e "/Cargo.toml" ]] && die "Remove /Cargo.toml to continue"
-	[[ -e "/Cargo.lock" ]] && die "Remove /Cargo.lock to continue"
 
 	if [[ -z "${CARGO}" ]]; then
 		die "CARGO is not set; was rust_pkg_setup run?"
