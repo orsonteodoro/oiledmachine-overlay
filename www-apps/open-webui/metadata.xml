@@ -35,4 +35,21 @@
     <remote-id type="github">open-webui/open-webui</remote-id>
     <remote-id type="pypi">open-webui</remote-id>
   </upstream>
+  <use>
+    <flag name="cuda">
+      Add GPU hardware acceleration.
+    </flag>
+    <flag name="ollama">
+      Add Ollama local LLM support.
+    </flag>
+    <flag name="openrc">
+      Add support for OpenRC.
+    </flag>
+    <flag name="rag-ocr">
+      Add RAG OCR support.
+    </flag>
+    <flag name="systemd">
+      Add support for systemd.
+    </flag>
+  </use>
 </pkgmetadata>

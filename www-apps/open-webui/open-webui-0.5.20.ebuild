@@ -40,8 +40,12 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" cuda ollama openrc rag-ocr systemd"
+IUSE+=" cuda ollama +openrc rag-ocr systemd"
 REQUIRED_USE="
+	|| (
+		openrc
+		systemd
+	)
 "
 # For missing dev-python/moto[s3] rdepends
 MOTO_RDEPEND="
