@@ -337,8 +337,8 @@ install_launcher_wrapper() {
 	local open_webui_hostname=${OPEN_WEBUI_HOSTNAME:-"127.0.0.1"}
 	local open_webui_port=${OPEN_WEBUI_PORT:-8080}
 
-einfo "LOBECHAT_HOSTNAME:  ${lobechat_hostname} (user-definable, per-package environment variable)"
-einfo "LOBECHAT_PORT:  ${lobechat_port} (user-definable, per-package environment variable)"
+einfo "OPEN_WEBUI_HOSTNAME:  ${open_webui_hostname} (user-definable, per-package environment variable)"
+einfo "OPEN_WEBUI_PORT:  ${open_webui_port} (user-definable, per-package environment variable)"
 
 	local open_webui_uri=${OPEN_WEBUI_URI:-"http://${open_webui_hostname}:${open_webui_port}"}
 einfo "OPEN_WEBUI_URI:  ${open_webui_uri}"
@@ -360,6 +360,15 @@ src_install() {
 	install_launcher_wrapper
 	install_backend
 	install_init_services
+
+	keepdir "/var/lib/open-webui/data/cache/whisper/models"
+	keepdir "/var/lib/open-webui/data/cache/embedding/models"
+	keepdir "/var/lib/open-webui/data/cache/tiktoken"
+	keepdir "/var/lib/open-webui/data/cache/torch_extensions"
+	fowners "${PN}:${PN}" "/var/lib/open-webui/data/cache/whisper/models"
+	fowners "${PN}:${PN}" "/var/lib/open-webui/data/cache/embedding/models"
+	fowners "${PN}:${PN}" "/var/lib/open-webui/data/cache/tiktoken"
+	fowners "${PN}:${PN}" "/var/lib/open-webui/data/cache/torch_extensions"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
