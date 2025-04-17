@@ -224,6 +224,9 @@ BDEPEND+="
 	net-libs/nodejs:${NODE_VERSION}[npm]
 "
 DOCS=( "CHANGELOG.md" "README.md" )
+PATCHES=(
+	"${FILESDIR}/${PN}-0.5.20-symbolize-string-literals.patch"
+)
 
 check_virtual_mem() {
 	local total_mem=$(free -t \
@@ -255,6 +258,10 @@ src_unpack() {
 		git-r3_fetch
 		git-r3_checkout
 	else
+	# For maintenance
+		#unpack ${A}
+		#die
+
 		npm_src_unpack
 		if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 ewarn "QA:  modify package.json build with just vite build"
@@ -263,7 +270,6 @@ ewarn "QA:  modify package.json build with just vite build"
 }
 
 setup_build_env() {
-
 	USE_CUDA=$(usex cuda "true" "false")
 	USE_OLLAMA=$(usex ollama "true" "false")
 	if use cuda ; then
@@ -285,6 +291,39 @@ eerror "CUDA other than 11 or 12 are not supported."
 	export USE_CUDA_DOCKER_VER=${USE_CUDA_VER:-}
 	export USE_EMBEDDING_MODEL_DOCKER=${USE_EMBEDDING_MODEL:-}
 	export USE_RERANKING_MODEL_DOCKER=${USE_RERANKING_MODEL:-}
+}
+
+src_prepare() {
+	local file_paths=(
+		"backend/dev.sh"
+		"backend/open_webui/__init__.py"
+		"backend/open_webui/env.py"
+		"backend/start.sh"
+		"run.sh"
+	)
+
+	local listen_host="0.0.0.0" # 127.0.0.1, router, or ISP provided address
+	local backend_path="/opt/${PN}/backend"
+	local open_webui_path="/usr/lib/${EPYTHON}/site-packages/open_webui"
+	local port=${OPEN_WEBUI_PORT:-8080}
+	local hostname=${OPEN_WEBUI_HOST:-"localhost"}
+	local cuda_lib_path="/opt/cuda/targets/x86_64-linux/lib"
+	local pytorch_lib_path="/usr/lib/${EPYTHON}/site-packages/torch/lib"
+	local uvicorn_path="/usr/lib/python-exec/${EPYTHON}/uvicorn"
+
+	sed -i \
+		-e "s|@CUDNN_LIB_PATH@|${cuda_lib_path}|g" \
+		-e "s|@OPEN_WEBUI_BACKEND_DIR@|${backend_path}|g" \
+		-e "s|@OPEN_WEBUI_DIR@|${open_webui_path}|g" \
+		-e "s|@OPEN_WEBUI_LISTEN_HOST@|${listen_host}|g" \
+		-e "s|@OPEN_WEBUI_PORT@|${port}|g" \
+		-e "s|@OPEN_WEBUI_HOST@|${hostname}|g" \
+		-e "s|@PYTORCH_LIB_PATH@|${pytorch_lib_path}|g" \
+		-e "s|@UVICORN_PATH@|${uvicorn_path}|g" \
+		${file_paths[@]} \
+		|| die
+
+	distutils-r1_src_prepare
 }
 
 src_configure() {
@@ -385,19 +424,6 @@ einfo "OPEN_WEBUI_URI:  ${open_webui_uri}"
 
 	# Junk that should not be there.
 	rm -rf "${ED}/usr/lib/python"*"/site-packages/data/"
-
-einfo "Fixing hardcoded paths"
-	sed -i \
-		-e "s|python -c|${EPYTHON} -c|g" \
-		-e "s|/usr/local/lib/${EPYTHON}/site-packages|/usr/lib/${EPYTHON}/site-packages|g" \
-		"${ED}/usr/lib/${EPYTHON}/site-packages/open_webui/__init__.py" \
-		"${ED}/opt/open-webui/backend/start.sh" \
-		"${ED}/opt/open-webui/backend/open_webui/__init__.py" \
-		|| die
-	sed -i \
-		-e "s|uvicorn|/usr/lib/python-exec/${EPYTHON}/uvicorn|g" \
-		"${ED}/opt/open-webui/backend/start.sh" \
-		|| die
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD

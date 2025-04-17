@@ -1,0 +1,127 @@
+diff '--color=auto' -urp open-webui-0.5.20.orig/backend/dev.sh open-webui-0.5.20/backend/dev.sh
+--- open-webui-0.5.20.orig/backend/dev.sh	2025-03-05 19:44:45.000000000 -0800
++++ open-webui-0.5.20/backend/dev.sh	2025-04-17 15:58:53.753154494 -0700
+@@ -1,2 +1,2 @@
+-PORT="${PORT:-8080}"
+-uvicorn open_webui.main:app --port $PORT --host 0.0.0.0 --forwarded-allow-ips '*' --reload
+\ No newline at end of file
++PORT="${PORT:-@OPEN_WEBUI_PORT@}"
++@UVICORN_PATH@ open_webui.main:app --port $PORT --host @OPEN_WEBUI_LISTEN_HOST@ --forwarded-allow-ips '*' --reload
+diff '--color=auto' -urp open-webui-0.5.20.orig/backend/open_webui/__init__.py open-webui-0.5.20/backend/open_webui/__init__.py
+--- open-webui-0.5.20.orig/backend/open_webui/__init__.py	2025-03-05 19:44:45.000000000 -0800
++++ open-webui-0.5.20/backend/open_webui/__init__.py	2025-04-17 15:58:03.129602636 -0700
+@@ -32,8 +32,8 @@ def main(
+ 
+ @app.command()
+ def serve(
+-    host: str = "0.0.0.0",
+-    port: int = 8080,
++    host: str = "@OPEN_WEBUI_LISTEN_HOST@",
++    port: int = @OPEN_WEBUI_PORT@,
+ ):
+     os.environ["FROM_INIT_PY"] = "true"
+     if os.getenv("WEBUI_SECRET_KEY") is None:
+@@ -54,8 +54,8 @@ def serve(
+         os.environ["LD_LIBRARY_PATH"] = ":".join(
+             LD_LIBRARY_PATH
+             + [
+-                "/usr/local/lib/python3.11/site-packages/torch/lib",
+-                "/usr/local/lib/python3.11/site-packages/nvidia/cudnn/lib",
++                "@PYTORCH_LIB_PATH@",
++                "@CUDNN_LIB_PATH@",
+             ]
+         )
+         try:
+@@ -79,8 +79,8 @@ def serve(
+ 
+ @app.command()
+ def dev(
+-    host: str = "0.0.0.0",
+-    port: int = 8080,
++    host: str = "@OPEN_WEBUI_LISTEN_HOST@",
++    port: int = @OPEN_WEBUI_PORT@,
+     reload: bool = True,
+ ):
+     uvicorn.run(
+diff '--color=auto' -urp open-webui-0.5.20.orig/backend/open_webui/env.py open-webui-0.5.20/backend/open_webui/env.py
+--- open-webui-0.5.20.orig/backend/open_webui/env.py	2025-03-05 19:44:45.000000000 -0800
++++ open-webui-0.5.20/backend/open_webui/env.py	2025-04-17 15:52:56.875366412 -0700
+@@ -15,10 +15,10 @@ from open_webui.constants import ERROR_M
+ # Load .env file
+ ####################################
+ 
+-OPEN_WEBUI_DIR = Path(__file__).parent  # the path containing this file
++OPEN_WEBUI_DIR = "@OPEN_WEBUI_DIR@"  # the path containing this file
+ print(OPEN_WEBUI_DIR)
+ 
+-BACKEND_DIR = OPEN_WEBUI_DIR.parent  # the path containing this file
++BACKEND_DIR = "@OPEN_WEBUI_BACKEND_DIR@"  # the path containing this file
+ BASE_DIR = BACKEND_DIR.parent  # the path containing the backend/
+ 
+ print(BACKEND_DIR)
+diff '--color=auto' -urp open-webui-0.5.20.orig/backend/start.sh open-webui-0.5.20/backend/start.sh
+--- open-webui-0.5.20.orig/backend/start.sh	2025-03-05 19:44:45.000000000 -0800
++++ open-webui-0.5.20/backend/start.sh	2025-04-17 15:59:00.809146342 -0700
+@@ -11,13 +11,13 @@ if [[ "${RAG_WEB_LOADER_ENGINE,,}" == "p
+         playwright install-deps chromium
+     fi
+ 
+-    python -c "import nltk; nltk.download('punkt_tab')"
++    @EPYTHON@ -c "import nltk; nltk.download('punkt_tab')"
+ fi
+ 
+ KEY_FILE=.webui_secret_key
+ 
+-PORT="${PORT:-8080}"
+-HOST="${HOST:-0.0.0.0}"
++PORT="${PORT:-@OPEN_WEBUI_PORT@}"
++HOST="${HOST:-@OPEN_WEBUI_LISTEN_HOST@}"
+ if test "$WEBUI_SECRET_KEY $WEBUI_JWT_SECRET_KEY" = " "; then
+   echo "Loading WEBUI_SECRET_KEY from file, not provided as an environment variable."
+ 
+@@ -38,7 +38,7 @@ fi
+ 
+ if [[ "${USE_CUDA_DOCKER,,}" == "true" ]]; then
+   echo "CUDA is enabled, appending LD_LIBRARY_PATH to include torch/cudnn & cublas libraries."
+-  export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/usr/local/lib/python3.11/site-packages/torch/lib:/usr/local/lib/python3.11/site-packages/nvidia/cudnn/lib"
++  export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:@PYTORCH_LIB_PATH@:@CUDNN_LIB_PATH@"
+ fi
+ 
+ # Check if SPACE_ID is set, if so, configure for space
+@@ -46,15 +46,15 @@ if [ -n "$SPACE_ID" ]; then
+   echo "Configuring for HuggingFace Space deployment"
+   if [ -n "$ADMIN_USER_EMAIL" ] && [ -n "$ADMIN_USER_PASSWORD" ]; then
+     echo "Admin user configured, creating"
+-    WEBUI_SECRET_KEY="$WEBUI_SECRET_KEY" uvicorn open_webui.main:app --host "$HOST" --port "$PORT" --forwarded-allow-ips '*' &
++    WEBUI_SECRET_KEY="$WEBUI_SECRET_KEY" @UVICORN_PATH@ open_webui.main:app --host "$HOST" --port "$PORT" --forwarded-allow-ips '*' &
+     webui_pid=$!
+     echo "Waiting for webui to start..."
+-    while ! curl -s http://localhost:8080/health > /dev/null; do
++    while ! curl -s http://@OPEN_WEBUI_HOST@:@OPEN_WEBUI_PORT@/health > /dev/null; do
+       sleep 1
+     done
+     echo "Creating admin user..."
+     curl \
+-      -X POST "http://localhost:8080/api/v1/auths/signup" \
++      -X POST "http://@OPEN_WEBUI_HOST@:@OPEN_WEBUI_PORT@/api/v1/auths/signup" \
+       -H "accept: application/json" \
+       -H "Content-Type: application/json" \
+       -d "{ \"email\": \"${ADMIN_USER_EMAIL}\", \"password\": \"${ADMIN_USER_PASSWORD}\", \"name\": \"Admin\" }"
+@@ -65,4 +65,4 @@ if [ -n "$SPACE_ID" ]; then
+   export WEBUI_URL=${SPACE_HOST}
+ fi
+ 
+-WEBUI_SECRET_KEY="$WEBUI_SECRET_KEY" exec uvicorn open_webui.main:app --host "$HOST" --port "$PORT" --forwarded-allow-ips '*'
++WEBUI_SECRET_KEY="$WEBUI_SECRET_KEY" exec @UVICORN_PATH@ open_webui.main:app --host "$HOST" --port "$PORT" --forwarded-allow-ips '*'
+diff '--color=auto' -urp open-webui-0.5.20.orig/run.sh open-webui-0.5.20/run.sh
+--- open-webui-0.5.20.orig/run.sh	2025-03-05 19:44:45.000000000 -0800
++++ open-webui-0.5.20/run.sh	2025-04-17 16:00:20.681041847 -0700
+@@ -3,7 +3,7 @@
+ image_name="open-webui"
+ container_name="open-webui"
+ host_port=3000
+-container_port=8080
++container_port=@OPEN_WEBUI_PORT@
+ 
+ docker build -t "$image_name" .
+ docker stop "$container_name" &>/dev/null || true
