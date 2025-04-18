@@ -76,9 +76,7 @@ python_check_deps() {
 }
 
 pkg_setup() {
-	if use test; then
-		python-single-r1_pkg_setup
-	fi
+	python-single-r1_pkg_setup
 	LLVM_MAX_SLOT="${LLVM_SLOT}"
 	llvm_pkg_setup
 }

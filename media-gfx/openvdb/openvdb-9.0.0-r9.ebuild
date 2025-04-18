@@ -293,11 +293,11 @@ PATCHES=(
 )
 
 is_crosscompile() {
-	[[ ${CHOST} != ${CTARGET} ]]
+	[[ "${CHOST}" != "${CTARGET}" ]]
 }
 
 pkg_setup() {
-	use python && python-single-r1_pkg_setup
+	python-single-r1_pkg_setup
 	if ! is_crosscompile && which jemalloc-confg ; then
 		if jemalloc-config --cflags | grep -q -e "cfi" ; then
 			ewarn "jemalloc may need rebuild if vdb_print -version stalls."

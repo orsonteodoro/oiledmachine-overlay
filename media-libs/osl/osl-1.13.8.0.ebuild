@@ -312,9 +312,7 @@ ewarn "to test and fix."
 ewarn
 	fi
 
-	if use python ; then
-		python-single-r1_pkg_setup
-	fi
+	python-single-r1_pkg_setup
 
 	llvm_pkg_setup
 }

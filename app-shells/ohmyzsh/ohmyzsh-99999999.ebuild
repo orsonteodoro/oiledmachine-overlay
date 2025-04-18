@@ -1385,9 +1385,7 @@ eerror
 	if use ruby ; then
 		ruby-ng_pkg_setup
 	fi
-	if use python ; then
-		python_setup
-	fi
+	python_setup
 }
 
 pkg_nofetch() {

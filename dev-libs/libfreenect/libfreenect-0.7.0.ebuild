@@ -95,7 +95,7 @@ eerror
 			die
 		fi
 	fi
-	use python && python-single-r1_pkg_setup
+	python-single-r1_pkg_setup
 }
 
 src_configure() {

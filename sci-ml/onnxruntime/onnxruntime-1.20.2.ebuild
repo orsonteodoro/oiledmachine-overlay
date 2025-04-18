@@ -1218,7 +1218,7 @@ _PATCHES=(
 )
 
 pkg_setup() {
-	use python && python-single-r1_pkg_setup
+	python-single-r1_pkg_setup
 	use llvm && llvm-r1_pkg_setup
 
 	if use rocm_6_0 ; then
@@ -1835,7 +1835,7 @@ src_prepare() {
 
 	CMAKE_USE_DIR="${S}/cmake"
 
-	python && python_setup
+	python_setup
 
 	use cuda && cuda_src_prepare
 

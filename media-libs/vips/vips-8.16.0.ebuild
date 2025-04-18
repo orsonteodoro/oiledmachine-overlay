@@ -300,7 +300,7 @@ PDEPEND+="
 DOCS=( "ChangeLog" "README.md" )
 
 pkg_setup() {
-	use test && python_setup
+	python_setup
 	use vala && vala_setup
 	if use test ; then
 ewarn

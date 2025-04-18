@@ -460,7 +460,7 @@ pkg_setup() {
 	else
 		die "Found unsupported -std=c++${CXX_STD_MIN}"
 	fi
-	use python && python-single-r1_pkg_setup
+	python-single-r1_pkg_setup
 
 	if use icc ; then
 		which icc >/dev/null 2>&1 || die "You must set the PATH to icc as a per-package envvar"

@@ -72,9 +72,7 @@ python_check_deps() {
 }
 
 pkg_setup() {
-	if use test; then
-		python-single-r1_pkg_setup
-	fi
+	python-single-r1_pkg_setup
 	llvm_pkg_setup
 }
 

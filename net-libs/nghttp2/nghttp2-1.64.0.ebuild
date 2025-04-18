@@ -141,7 +141,7 @@ BDEPEND="
 "
 
 pkg_setup() {
-	use doc && python_setup
+	python_setup
 	if tc-is-clang && use http3 && ! use bpf ; then
 ewarn "bpf is default ON upstream if clang ON, http3 ON"
 	fi

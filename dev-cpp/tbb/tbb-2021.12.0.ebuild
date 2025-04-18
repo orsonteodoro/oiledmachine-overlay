@@ -105,20 +105,16 @@ pkg_setup()
 {
 	if use test ; then
 		if [[ ${FEATURES} =~ test ]] ; then
-einfo
 einfo "Testing enabled."
-einfo
 		else
-ewarn
 ewarn "Testing disabled.  Add FEATURES=test before ebuild."
-ewarn
 		fi
 	fi
 
-	use python && python_setup
-	[[ ${FEATURES} =~ test ]] \
+	python_setup
+	[[ "${FEATURES}" =~ "test" ]] \
 		&& use test \
-		&& ver_test ${PV} -eq 2021.2.0 \
+		&& ver_test "${PV}" -eq "2021.2.0" \
 		&& ewarn "${PV} is expected to fail test"
 }
 

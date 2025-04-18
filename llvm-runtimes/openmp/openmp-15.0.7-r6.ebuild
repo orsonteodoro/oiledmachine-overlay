@@ -210,7 +210,7 @@ pkg_pretend() {
 
 pkg_setup() {
 ewarn "You may need to uninstall =libomp-${PV} first if merge is unsuccessful."
-	use test && python-any-r1_pkg_setup
+	python-any-r1_pkg_setup
 	LLVM_MAX_SLOT="${LLVM_SLOT}"
 	llvm_pkg_setup
 }

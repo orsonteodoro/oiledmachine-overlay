@@ -90,9 +90,7 @@ ewarn "The pdf USE flags may need FEATURES=\"\${FEATURES} -network-sandbox\" as"
 ewarn "a per-package environmental setting for doc generation completeness."
 ewarn
 	fi
-	if use html || use man || use pdf || use singlehtml || use texinfo ; then
-		python-any-r1_pkg_setup
-	fi
+	python-any-r1_pkg_setup
 }
 PATCHES=(
 	#"${FILESDIR}/nanodbc-2.11.3-boost-test.patch"

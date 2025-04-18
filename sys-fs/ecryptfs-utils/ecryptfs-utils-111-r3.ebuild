@@ -88,7 +88,7 @@ PATCHES=(
 
 pkg_setup() {
 	einfo "EBRZ_REVISION=${EBRZ_REVISION}"
-	use python && python-single-r1_pkg_setup
+	python-single-r1_pkg_setup
 	CONFIG_CHECK="~ECRYPT_FS"
 	linux-info_pkg_setup
 	if has network-sandbox $FEATURES ; then

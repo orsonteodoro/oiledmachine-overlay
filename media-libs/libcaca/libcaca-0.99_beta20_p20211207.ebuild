@@ -193,7 +193,7 @@ PATCHES=(
 # e4968ba : Fix-a-problem-in-the-caca_resize-overflow-detection-.patch
 
 pkg_setup() {
-	use python && python_setup
+	python_setup
 	java-pkg-opt-2_pkg_setup
 	use java && java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
 	use mono && mono-env_pkg_setup

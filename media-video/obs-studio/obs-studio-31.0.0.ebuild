@@ -789,7 +789,7 @@ sanitize_login_tokens() {
 pkg_setup() {
 	use qt6 && qt_check 6
 	use lua && lua-single_pkg_setup
-	use python && python-single-r1_pkg_setup
+	python-single-r1_pkg_setup
 
 	if use browser ; then
 		if [[ "${ABI}" =~ "ppc" ]] ; then

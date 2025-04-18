@@ -120,8 +120,9 @@ python_check_deps() {
 }
 
 pkg_setup() {
-	LLVM_MAX_SLOT=${LLVM_MAJOR} llvm_pkg_setup
-	use test && python-any-r1_pkg_setup
+	LLVM_MAX_SLOT=${LLVM_MAJOR} \
+	llvm_pkg_setup
+	python-any-r1_pkg_setup
 
 # See https://bugs.gentoo.org/767700
 einfo

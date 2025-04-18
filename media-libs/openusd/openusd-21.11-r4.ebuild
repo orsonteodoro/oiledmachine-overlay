@@ -263,10 +263,10 @@ PATCHES=(
 	"${FILESDIR}/openusd-21.11-clang-14-compat.patch"
 	"${FILESDIR}/openusd-21.11-use-whole-archive-for-lld.patch"
 )
-DOCS=( CHANGELOG.md README.md )
+DOCS=( "CHANGELOG.md" "README.md" )
 
 pkg_setup() {
-	use python && python-single-r1_pkg_setup
+	python-single-r1_pkg_setup
 }
 
 gen_pyside2_uic_file() {

@@ -142,7 +142,7 @@ python_check_deps() {
 }
 
 pkg_setup() {
-	use test && python-any-r1_pkg_setup
+	python-any-r1_pkg_setup
 
 # See https://bugs.gentoo.org/767700
 einfo

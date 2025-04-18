@@ -238,9 +238,7 @@ pkg_setup() {
 		_boilerplate_dl "${SEARCHENGINES_FN}" "${SEARCHENGINES_FN}" \
 			"https://surf.suckless.org/patches/searchengines/"
 	fi
-	if use mod_adblock ; then
-		python_setup
-	fi
+	python_setup
 	check_geolocation
 }
 

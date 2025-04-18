@@ -374,7 +374,7 @@ pkg_setup() {
 		check_network_sandbox
 	fi
 	use jit && llvm_pkg_setup
-	use test && python-any-r1_pkg_setup
+	python-any-r1_pkg_setup
 einfo
 einfo "To hard unmask the jit USE flag, do:"
 einfo

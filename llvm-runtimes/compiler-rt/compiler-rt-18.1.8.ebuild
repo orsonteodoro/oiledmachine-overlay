@@ -92,7 +92,8 @@ ewarn
 pkg_setup() {
 	if target_is_not_host || tc-is-cross-compiler ; then
 		# strips vars like CFLAGS="-march=x86_64-v3" for non-x86 architectures
-		CHOST=${CTARGET} strip-unsupported-flags
+		CHOST="${CTARGET}" \
+		strip-unsupported-flags
 		# overrides host docs otherwise
 		DOCS=()
 	fi
