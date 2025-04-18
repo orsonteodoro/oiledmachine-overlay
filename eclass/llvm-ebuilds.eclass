@@ -64,6 +64,8 @@ ewarn "6. Switch the TCP Congestion Control to one with the highest average"
 ewarn "   throughput (e.g. pcc).  For lossy poor quality connections, avoid"
 ewarn "   cubic and illinois."
 ewarn "7. Perform downloads at non busy times."
+ewarn "8. Perform downloads at night to mitigate against solar flare"
+ewarn "   disruptions."
 ewarn
 	fi
 }
