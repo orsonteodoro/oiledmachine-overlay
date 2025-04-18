@@ -7,7 +7,7 @@
 EAPI=8
 
 LIVE_TYPE="git"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_"{10..11} )
 inherit autotools flag-o-matic git-r3 java-pkg-opt-2 python-single-r1
 
 NANO_YCMD_COMMIT="4f52bbc46b1c593f3f7ae58f76820297251fe5ad"
@@ -82,13 +82,16 @@ LIB_DEPEND="
 gen_ycmd_rdepend() {
 	local s
 	for s in ${YCMD_SLOTS[@]} ; do
-		echo "
-			ycmd-${s}? (
-				$(python_gen_cond_dep '
-					dev-util/ycmd:'${s}'[${PYTHON_USEDEP}]
-				')
-			)
-		"
+		local impl
+		for impl in ${PYTHON_COMPAT[@]} ; do
+			echo "
+				ycmd-${s}? (
+					python_single_target_${impl}? (
+						dev-util/ycmd:${s}[python_targets_${impl}(-)]
+					)
+				)
+			"
+		done
 	done
 }
 RDEPEND+="
