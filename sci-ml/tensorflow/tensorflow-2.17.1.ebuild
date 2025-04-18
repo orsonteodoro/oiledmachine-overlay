@@ -4,20 +4,6 @@
 
 EAPI=8
 
-# FIXME:
-#sci-ml/tensorflow/tensorflow-2.15.1.ebuild: line 929: no match: python?
-#sci-ml/tensorflow/tensorflow-2.15.1.ebuild: line 957: no match: python_single_target_python3_10?
-#sci-ml/tensorflow/tensorflow-2.5.3.ebuild: line 878: no match: python?
-#sci-ml/tensorflow/tensorflow-2.5.3.ebuild: line 906: no match: python_single_target_python3_10?
-#sci-ml/tensorflow/tensorflow-2.14.1.ebuild: line 912: no match: python?
-#sci-ml/tensorflow/tensorflow-2.14.1.ebuild: line 940: no match: python_single_target_python3_10?
-#sci-ml/tensorflow/tensorflow-2.16.1.ebuild: line 965: no match: python?
-#sci-ml/tensorflow/tensorflow-2.16.1.ebuild: line 989: no match: python_single_target_python3_10?
-#sci-ml/tensorflow/tensorflow-2.17.1.ebuild: line 966: no match: python?
-#sci-ml/tensorflow/tensorflow-2.17.1.ebuild: line 990: no match: python_single_target_python3_10?
-#sci-ml/tensorflow/tensorflow-2.18.0.ebuild: line 1061: no match: python?
-#sci-ml/tensorflow/tensorflow-2.18.0.ebuild: line 1085: no match: python_single_target_python3_10?
-
 # TODO:
 # Enable KEYWORDS
 # Patch test
@@ -882,14 +868,19 @@ RDEPEND_GRPCIO="
 gen_protobuf_rdepend() {
 	local s
 	for s in ${PROTOBUF_SLOTS[@]} ; do
-		echo '
-			(
-				dev-libs/protobuf:0/'${s}'
-				python? (
-					dev-python/protobuf:0/'${s}'[${PYTHON_USEDEP}]
+		local impl
+		for impl in ${PYTHON_COMPAT[@]} ; do
+			echo "
+				(
+					dev-libs/protobuf:0/${s}
+					python? (
+						python_single_target_${impl}? (
+							dev-python/protobuf:0/${s}[python_targets_${impl}(-)]
+						)
+					)
 				)
-			)
-		'
+			"
+		done
 	done
 }
 # The abseil-cpp rdepends is handled by protobuf package.
@@ -907,11 +898,9 @@ RDEPEND="
 	>=net-misc/curl-8.4.0
 	>=sys-apps/hwloc-2.7.1:=
 	>=sys-libs/zlib-1.2.13
-	$(python_gen_cond_dep '
-		|| (
-			'$(gen_protobuf_rdepend)'
-		)
-	')
+	|| (
+		$(gen_protobuf_rdepend)
+	)
 	dev-libs/protobuf:=
 	!alt-ssl? (
 		>=dev-libs/openssl-3:0=
@@ -951,9 +940,6 @@ RDEPEND="
 			>=dev-python/ml-dtypes-0.3.1[${PYTHON_USEDEP}]
 
 			>=dev-python/opt-einsum-3.3.0[${PYTHON_USEDEP}]
-			!big-endian? (
-				'${RDEPEND_GRPCIO}'
-			)
 			>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
 			>=dev-python/termcolor-2.1.1[${PYTHON_USEDEP}]
 			>=dev-python/typing-extensions-4.8.0[${PYTHON_USEDEP}]
@@ -963,9 +949,12 @@ RDEPEND="
 			>=dev-python/pybind11-2.10.4[${PYTHON_USEDEP}]
 			>=dev-python/tblib-2.0.0[${PYTHON_USEDEP}]
 			system-flatbuffers? (
-				~dev-libs/flatbuffers-${FLATBUFFERS_PV}
+				~dev-libs/flatbuffers-'${FLATBUFFERS_PV}'
 			)
 		')
+		!big-endian? (
+			${RDEPEND_GRPCIO}
+		)
 		=sci-visualization/tensorboard-${DEP_VER}*[${PYTHON_SINGLE_USEDEP}]
 	)
 	rocm? (
