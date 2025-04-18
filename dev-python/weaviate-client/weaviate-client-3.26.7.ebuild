@@ -4,9 +4,6 @@
 
 EAPI=8
 
-# FIXME:
-# dev-python/weaviate-client/weaviate-client-3.26.7.ebuild: line 99: no match: =dev-python/grpcio-1.57*[${PYTHON_USEDEP}]
-
 MY_PN="weaviate-python-client"
 
 # TODO package:
