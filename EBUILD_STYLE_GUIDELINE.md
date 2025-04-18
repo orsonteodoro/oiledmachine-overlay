@@ -197,6 +197,7 @@
    - lag multitasking
    - cause data loss with the kernel OOM killer
    - have random build failures (undeterministic build order problems)
+
   Halting or slow down could be considered a Denial of Service (DoS).  See CVSS
   availability definition for details.  The ebuild should override the user
   provided option with `MAKEOPTS="-j1"` with reason in commented code if those
