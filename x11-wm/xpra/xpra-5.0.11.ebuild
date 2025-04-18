@@ -4,10 +4,6 @@
 
 EAPI=8
 
-# FIXME:
-#x11-wm/xpra/xpra-6.2.1.ebuild: line 711: no match: ~dev-python/pyopengl-3.1.7[${PYTHON_USEDEP}]
-#x11-wm/xpra/xpra-5.0.11.ebuild: line 746: no match: ~dev-python/pyopengl-3.1.7[${PYTHON_USEDEP}]
-
 # D10, U22.04
 # 5.x LTS, EOL 2026, see https://github.com/Xpra-org/xpra/wiki/Versions
 
@@ -369,12 +365,17 @@ PYOPENGL_VER=(
 gen_opengl_rdepend() {
 	local s
 	for s in ${PYOPENGL_VER[@]} ; do
-		echo '
-			(
-				~dev-python/pyopengl-'${s}'[${PYTHON_USEDEP}]
-				~dev-python/pyopengl-accelerate-'${s}'[${PYTHON_USEDEP}]
-			)
-		'
+		local impl
+		for impl in ${PYTHON_COMPAT[@]} ; do
+			echo "
+				(
+					python_single_target_${impl}? (
+						~dev-python/pyopengl-${s}[python_targets_${impl}(-)]
+						~dev-python/pyopengl-accelerate-${s}[python_targets_${impl}(-)]
+					)
+				)
+			"
+		done
 	done
 }
 
@@ -650,11 +651,9 @@ RDEPEND+="
 	opengl? (
 		x11-base/xorg-drivers[video_cards_dummy]
 		client? (
-			$(python_gen_cond_dep '
-				|| (
-					'$(gen_opengl_rdepend)'
-				)
-			')
+			|| (
+				$(gen_opengl_rdepend)
+			)
 			dev-python/pyopengl:=
 			dev-python/pyopengl-accelerate:=
 		)
