@@ -196,7 +196,7 @@
   failures (undeterministic build order problems).  Halting or slow down could
   be considered a Denial of Service.  See CVSS availability definition for
   details.  The ebuild should override the user provided option with
-  `MAKEOPTS="-j1"` if those problems are present.
+  `MAKEOPTS="-j1"` with reason in commented code if those problems are present.
 
 * The ebuild should not do unusal activity.
   See [XZ Utils backdoor](https://en.wikipedia.org/wiki/XZ_Utils_backdoor)
