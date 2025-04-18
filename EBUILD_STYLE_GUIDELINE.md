@@ -186,9 +186,9 @@
   - Live:  Yes
   - Live snapshot:  Yes
 
-* Ebuild digest "no match" warnings must be fixed to avoid short circuiting
-  *DEPENDs, to avoid breaking upstream security expectations, to avoid
-  runtime failures.
+* Ebuild digest "no match" non-fatal errors must be fixed to avoid short
+  circuiting *DEPENDs, to avoid breaking upstream security expectations, and to
+  avoid runtime failures.
 
 * Do not use nested *DEPENDs generators.
 
