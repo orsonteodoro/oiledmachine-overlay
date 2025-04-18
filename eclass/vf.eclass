@@ -119,6 +119,9 @@ einfo "NPD = Null Pointer Dereference"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "OOB" ]] ; then
 einfo "OOB = Out Of Bounds Access"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "OOR" ]] ; then
+einfo "OOR = Out Of Range Access"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ ("PE"|"EP"|"EoP") ]] ; then
 # Escalated Privileges
 # Escalation of Privileges
