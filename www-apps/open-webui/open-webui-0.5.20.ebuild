@@ -42,7 +42,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 cuda ollama +openrc rag-ocr systemd
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	|| (
@@ -293,7 +293,7 @@ eerror "CUDA other than 11 or 12 are not supported."
 	export USE_RERANKING_MODEL_DOCKER=${USE_RERANKING_MODEL:-}
 }
 
-src_prepare() {
+python_prepare() {
 	local file_paths=(
 		"backend/dev.sh"
 		"backend/open_webui/__init__.py"
@@ -322,7 +322,9 @@ src_prepare() {
 		-e "s|@UVICORN_PATH@|${uvicorn_path}|g" \
 		${file_paths[@]} \
 		|| die
+}
 
+src_prepare() {
 	distutils-r1_src_prepare
 }
 
