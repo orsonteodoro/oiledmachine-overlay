@@ -195,7 +195,7 @@
    - halt or freeze the computer
    - produce heavy swap
    - lag multitasking
-   - cause data loss with the kernel OOM killer
+   - cause data loss with the kernel (Out Of Memory) OOM killer
    - have random build failures (undeterministic build order problems)
 
   Halting or slow down could be considered a Denial of Service (DoS).  See CVSS
