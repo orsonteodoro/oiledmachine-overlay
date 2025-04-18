@@ -214,6 +214,7 @@
      - EGIT_BRANCH
      - EGIT_REPO_URI
      - EGIT_CHECKOUT_DIR
+     - FALLBACK_COMMIT
      - inherit git-r3
      - IUSE+=" fallback-commit"
    - Stable download info
