@@ -4,10 +4,6 @@
 
 EAPI=8
 
-# FIXME:
-# sci-visualization/tensorboardx/tensorboardx-2.6.2.2.ebuild: line 84: no match: dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
-# sci-visualization/tensorboardx/tensorboardx-2.6.2.2.ebuild: line 137: no match: dev-python/protobuf:0/4.23[${PYTHON_USEDEP}]
-
 MY_PN="tensorboardX"
 
 inherit protobuf-ver
@@ -56,28 +52,38 @@ IUSE+=" doc test"
 gen_protobuf_rdepends() {
 	local s
 	for s in ${PROTOBUF_SLOTS_REL[@]} ; do
-		echo '
-			dev-python/protobuf:0/'${s}'[${PYTHON_USEDEP}]
-		'
+		local impl
+		for impl in ${PYTHON_COMPAT[@]} ; do
+			echo "
+				python_single_target_${impl}? (
+					dev-python/protobuf:0/${s}[python_targets_${impl}(-)]
+				)
+			"
+		done
 	done
 }
 gen_protobuf_bdepends() {
 	local s
 	for s in ${PROTOBUF_SLOTS_DEV[@]} ; do
-		echo '
-			dev-python/protobuf:0/'${s}'[${PYTHON_USEDEP}]
-		'
+		local impl
+		for impl in ${PYTHON_COMPAT[@]} ; do
+			echo "
+				python_single_target_${impl}? (
+					dev-python/protobuf:0/${s}[python_targets_${impl}(-)]
+				)
+			"
+		done
 	done
 }
 RDEPEND+="
 	$(python_gen_cond_dep '
-		|| (
-			'$(gen_protobuf_rdepends)'
-		)
-		dev-python/protobuf:=
 		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/packaging[${PYTHON_USEDEP}]
 	')
+	|| (
+		$(gen_protobuf_rdepends)
+	)
+	dev-python/protobuf:=
 "
 DEPEND+="
 	${RDEPEND}
@@ -103,15 +109,15 @@ BDEPEND+="
 			dev-python/pytest-cov[${PYTHON_USEDEP}]
 			dev-python/soundfile[${PYTHON_USEDEP}]
 			dev-python/visdom[${PYTHON_USEDEP}]
-			|| (
-				'$(gen_protobuf_bdepends)'
-			)
-			dev-python/protobuf:=
 		)
 	')
 	test? (
 		sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 		sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
+		|| (
+			$(gen_protobuf_bdepends)
+		)
+		dev-python/protobuf:=
 	)
 "
 DOCS=( "HISTORY.rst" "README.md" )
