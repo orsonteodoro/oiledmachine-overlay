@@ -19,7 +19,7 @@ TARBALL_FLAVOR="lite" # full or lite
 
 # The lite prunes the following:
 # .git folders
-# Build tools (closure-compiler, llvm, node, rust)
+# Build tools and source code (closure-compiler, llvm, node, rust)
 # Debian sysroots
 # Debug libraries
 # NaCl
