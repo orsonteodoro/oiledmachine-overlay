@@ -4,10 +4,6 @@
 
 EAPI=8
 
-# FIXME:
-#dev-python/orbax-checkpoint/orbax-checkpoint-0.4.4.ebuild: line 97: no match: dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
-#dev-python/orbax-checkpoint/orbax-checkpoint-0.5.11.ebuild: line 92: no match: dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
-
 # U22
 
 # See https://github.com/google/orbax/blob/main/.github/workflows/build.yml for supported python
