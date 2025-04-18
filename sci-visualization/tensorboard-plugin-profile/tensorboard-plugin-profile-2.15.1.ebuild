@@ -4,10 +4,6 @@
 
 EAPI=8
 
-# FIXME:
-# sci-visualization/tensorboard-plugin-profile/tensorboard-plugin-profile-2.15.1.ebuild: line 78: no match: dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
-# sci-visualization/tensorboard-plugin-profile/tensorboard-plugin-profile-2.14.0.ebuild: line 78: no match: dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
-
 MY_PN="${PN/-/_}"
 
 inherit protobuf-ver
@@ -54,22 +50,27 @@ IUSE+=" "
 gen_protobuf_rdepend() {
 	local s
 	for s in ${PROTOBUF_SLOTS[@]} ; do
-		echo '
-			dev-python/protobuf:0/'${s}'[${PYTHON_USEDEP}]
-		'
+		local impl
+		for impl in ${PYTHON_COMPAT[@]} ; do
+			echo "
+				python_single_target_${impl}? (
+					dev-python/protobuf:0/${s}[python_targets_${impl}(-)]
+				)
+			"
+		done
 	done
 }
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/absl-py-0.4[${PYTHON_USEDEP}]
 		>=dev-python/gviz-api-1.9.0[${PYTHON_USEDEP}]
-		|| (
-			'$(gen_protobuf_rdepend)'
-		)
-		dev-python/protobuf:=
 		>=dev-python/six-1.10.0[${PYTHON_USEDEP}]
 		>=dev-python/werkzeug-0.11.15[${PYTHON_USEDEP}]
 	')
+	|| (
+		$(gen_protobuf_rdepend)
+	)
+	dev-python/protobuf:=
 "
 DEPEND+="
 	${RDEPEND}
