@@ -42,7 +42,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 cuda ollama +openrc rag-ocr systemd
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	|| (
@@ -293,7 +293,10 @@ eerror "CUDA other than 11 or 12 are not supported."
 	export USE_RERANKING_MODEL_DOCKER=${USE_RERANKING_MODEL:-}
 }
 
-python_prepare() {
+python_prepare_all() {
+	distutils-r1_python_prepare_all
+	local ${PWD}
+einfo "PWD: ${PWD}"
 	local file_paths=(
 		"backend/dev.sh"
 		"backend/open_webui/__init__.py"
@@ -302,26 +305,30 @@ python_prepare() {
 		"run.sh"
 	)
 
-	local listen_host="0.0.0.0" # 127.0.0.1, router, or ISP provided address
+	local cudnn_lib_path="/opt/cuda/targets/x86_64-linux/lib"
 	local backend_path="/opt/${PN}/backend"
+	local hostname=${OPEN_WEBUI_HOST:-"localhost"}
+	local listen_host="0.0.0.0" # 127.0.0.1, router, or ISP provided address
 	local open_webui_path="/usr/lib/${EPYTHON}/site-packages/open_webui"
 	local port=${OPEN_WEBUI_PORT:-8080}
-	local hostname=${OPEN_WEBUI_HOST:-"localhost"}
-	local cuda_lib_path="/opt/cuda/targets/x86_64-linux/lib"
 	local pytorch_lib_path="/usr/lib/${EPYTHON}/site-packages/torch/lib"
 	local uvicorn_path="/usr/lib/python-exec/${EPYTHON}/uvicorn"
 
-	sed -i \
-		-e "s|@CUDNN_LIB_PATH@|${cuda_lib_path}|g" \
-		-e "s|@OPEN_WEBUI_BACKEND_DIR@|${backend_path}|g" \
-		-e "s|@OPEN_WEBUI_DIR@|${open_webui_path}|g" \
-		-e "s|@OPEN_WEBUI_LISTEN_HOST@|${listen_host}|g" \
-		-e "s|@OPEN_WEBUI_PORT@|${port}|g" \
-		-e "s|@OPEN_WEBUI_HOST@|${hostname}|g" \
-		-e "s|@PYTORCH_LIB_PATH@|${pytorch_lib_path}|g" \
-		-e "s|@UVICORN_PATH@|${uvicorn_path}|g" \
-		${file_paths[@]} \
-		|| die
+	local path
+	for path in ${file_paths[@]} ; do
+einfo "Editing ${PWD}/${path}"
+		sed -i \
+			-e "s|@CUDNN_LIB_PATH@|${cudnn_lib_path}|g" \
+			-e "s|@OPEN_WEBUI_BACKEND_DIR@|${backend_path}|g" \
+			-e "s|@OPEN_WEBUI_DIR@|${open_webui_path}|g" \
+			-e "s|@OPEN_WEBUI_LISTEN_HOST@|${listen_host}|g" \
+			-e "s|@OPEN_WEBUI_PORT@|${port}|g" \
+			-e "s|@OPEN_WEBUI_HOST@|${hostname}|g" \
+			-e "s|@PYTORCH_LIB_PATH@|${pytorch_lib_path}|g" \
+			-e "s|@UVICORN_PATH@|${uvicorn_path}|g" \
+			"${PWD}/${path}" \
+			|| die
+	done
 }
 
 src_prepare() {
