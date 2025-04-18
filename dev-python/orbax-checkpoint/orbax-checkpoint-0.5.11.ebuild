@@ -48,10 +48,15 @@ REQUIRED_USE="
 gen_protobuf_checkpoint_rdepend() {
 	local s
 	for s in ${PROTOBUF_SLOTS[@]} ; do
-		echo '
-			dev-libs/protobuf:0/'${s}'
-			dev-python/protobuf:0/'${s}'[${PYTHON_USEDEP}]
-		'
+		local impl
+		for impl in ${PYTHON_COMPAT[@]} ; do
+			echo "
+				python_single_target_${impl}? (
+					dev-libs/protobuf:0/${s}
+					dev-python/protobuf:0/${s}[python_targets_${impl}(-)]
+				)
+			"
+		done
 	done
 }
 CHECKPOINT_RDEPEND="
@@ -65,16 +70,16 @@ CHECKPOINT_RDEPEND="
 		dev-python/numpy[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 		dev-python/typing-extensions[${PYTHON_USEDEP}]
-		|| (
-			'$(gen_protobuf_checkpoint_rdepend)'
-		)
-		dev-libs/protobuf:=
-		dev-python/protobuf:=
 	')
 	>=dev-python/jax-0.4.9[${PYTHON_SINGLE_USEDEP}]
 	dev-python/etils[${PYTHON_SINGLE_USEDEP},epath,epy]
 	dev-python/jaxlib[${PYTHON_SINGLE_USEDEP}]
 	dev-python/jaxtyping[${PYTHON_SINGLE_USEDEP}]
+	|| (
+		$(gen_protobuf_checkpoint_rdepend)
+	)
+	dev-libs/protobuf:=
+	dev-python/protobuf:=
 "
 ORBAX_EXPORT_RDEPEND="
 	$(python_gen_cond_dep '
