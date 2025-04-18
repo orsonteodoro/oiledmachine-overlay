@@ -4,10 +4,6 @@
 
 EAPI=8
 
-# FIXME:
-#dev-python/chromadb/chromadb-0.6.3.ebuild: line 818: no match: =dev-python/grpcio-1.49*[${PYTHON_USEDEP}]
-#dev-python/chromadb/chromadb-0.6.3.ebuild: line 831: no match: =dev-python/grpcio-tools-1.63*[${PYTHON_USEDEP}]
-
 # TODO package (optional):
 # mypy-protobuf
 
