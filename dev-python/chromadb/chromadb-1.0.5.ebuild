@@ -1072,6 +1072,9 @@ DOCS=( "README.md" )
 pkg_setup() {
 	python_setup
 	rust_pkg_setup
+
+	# Prevent overswapping
+	export MAKEOPTS="-j1"
 }
 
 gen_git_tag() {
