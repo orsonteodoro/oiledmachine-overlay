@@ -45,6 +45,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 DOCS_IUSE="
 all-docs csv doc docx epub image md odt org pdf ppt pptx rst rtf tsv xlsx
+ebuild_revision_1
 "
 LEGACY_IUSE="
 huggingface local-inference paddleocr
@@ -311,10 +312,10 @@ src_unpack() {
 }
 
 python_prepare_all() {
+	distutils-r1_python_prepare_all
 	if ! use analytics ; then
 		eapply "${FILESDIR}/${PN}-0.16.17-remove-analytics.patch"
 	fi
-	distutils-r1_python_prepare_all
 }
 
 src_prepare() {

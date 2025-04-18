@@ -127,7 +127,7 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 doc gna gna1 gna1_1401 gna2 -lto +mkl-dnn -openmp +samples system-pugixml test
 +tbb video_cards_intel
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	?? (
@@ -355,9 +355,9 @@ src_unpack() {
 }
 
 python_prepare_all() {
-	eapply ${_PATCHES[@]}
-	cmake_src_prepare
 	distutils-r1_python_prepare_all
+	cmake_src_prepare
+	eapply ${_PATCHES[@]}
 }
 
 check_cython() {

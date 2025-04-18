@@ -172,6 +172,7 @@ gen_rom_iuse() {
 IUSE+="
 $(gen_rom_iuse)
 +skip-roms test
+ebuild_revision_1
 "
 gen_rom_required_use1() {
 	local f
@@ -277,13 +278,13 @@ einfo
 }
 
 python_prepare_all() {
-	S="${WORKDIR}/AutoROM-${PV}"
-	pushd "${S}" >/dev/null 2>&1 || die
-		eapply ${_PATCHES[@]}
-	popd >/dev/null 2>&1 || die
 	S="${WORKDIR}/AutoROM-${PV}/packages/AutoROM.accept-rom-license"
 	pushd "${S}" >/dev/null 2>&1 || die
 		distutils-r1_python_prepare_all
+	popd >/dev/null 2>&1 || die
+	S="${WORKDIR}/AutoROM-${PV}"
+	pushd "${S}" >/dev/null 2>&1 || die
+		eapply ${_PATCHES[@]}
 	popd >/dev/null 2>&1 || die
 }
 

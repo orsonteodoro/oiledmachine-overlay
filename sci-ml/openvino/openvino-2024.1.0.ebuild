@@ -182,7 +182,7 @@ ${CPU_FLAGS_X86[@]}
 development-tools doc -lto +mlas +npu -openmp python runtime +samples
 -system-flatbuffers system-opencl system-protobuf system-pugixml system-snappy
 system-tbb -telemetry test +tbb video_cards_intel
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	?? (
@@ -689,12 +689,12 @@ src_unpack() {
 }
 
 python_prepare_all() {
+	distutils-r1_python_prepare_all
+	cmake_src_prepare
 	eapply ${_PATCHES[@]}
 	if ! use telemetry ; then
 		eapply "${FILESDIR}/openvino-2024.1.0-hard-disable-telemetry.patch"
 	fi
-	cmake_src_prepare
-	distutils-r1_python_prepare_all
 }
 
 src_configure() {

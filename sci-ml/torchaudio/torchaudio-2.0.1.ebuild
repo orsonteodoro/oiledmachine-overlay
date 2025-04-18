@@ -39,7 +39,7 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
@@ -76,10 +76,10 @@ PATCHES=(
 )
 
 python_prepare_all() {
+	distutils-r1_python_prepare_all
 	dep_prepare_cp "${WORKDIR}/text-${FLASHLIGHT_TEXT_COMMIT}" "${S}/third_party/flashlight-text/submodule"
 	dep_prepare_cp "${WORKDIR}/kaldi-${KALDI_COMMIT}" "${S}/third_party/kaldi/submodule"
 	dep_prepare_cp "${WORKDIR}/kenlm-${KENLM_COMMIT}" "${S}/third_party/kenlm/kenlm"
-	distutils-r1_python_prepare_all
 }
 
 python_configure() {

@@ -190,7 +190,7 @@ ${CPU_FLAGS_X86[@]}
 development-tools doc gna -lto +mlas -openmp python runtime +samples
 -system-flatbuffers system-opencl system-protobuf system-pugixml system-snappy
 system-tbb test +tbb video_cards_intel
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	?? (
@@ -677,9 +677,9 @@ src_unpack() {
 }
 
 python_prepare_all() {
-	eapply ${_PATCHES[@]}
-	cmake_src_prepare
 	distutils-r1_python_prepare_all
+	cmake_src_prepare
+	eapply ${_PATCHES[@]}
 }
 
 src_configure() {

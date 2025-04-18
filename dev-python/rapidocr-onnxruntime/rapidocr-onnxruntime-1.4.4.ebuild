@@ -34,7 +34,9 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" "
+IUSE+="
+ebuild_revision_1
+"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/pyclipper-1.2.0[${PYTHON_USEDEP}]
@@ -65,9 +67,9 @@ src_unpack() {
 }
 
 python_prepare_all() {
+	distutils-r1_python_prepare_all
 	cd "${S_PROJ}" || die
 	eapply "${FILESDIR}/${PN}-1.4.4-decrapify-version.patch"
-	distutils-r1_python_prepare_all
 }
 
 src_prepare() {

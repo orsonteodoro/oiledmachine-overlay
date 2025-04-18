@@ -207,7 +207,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${CPU_FLAGS_X86_64[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang cpu cuda debug rocm rocm_6_0
-ebuild_revision_2
+ebuild_revision_3
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
 
@@ -824,6 +824,10 @@ EOF
 }
 
 python_prepare_all() {
+	distutils-r1_python_prepare_all
+	cuda_src_prepare
+	cd "${S}" || die
+
 ewarn
 ewarn "If build failure, use MAKEOPTS=\"-j1\".  Expect memory use to be 6-11"
 ewarn "GiB per process."
@@ -857,11 +861,6 @@ ewarn
 	if use rocm ; then
 		rocm_src_prepare
 	fi
-
-	cd "${S}" || die
-
-	cuda_src_prepare
-	distutils-r1_python_prepare_all
 
 	cd "${XLA_S}" || die
 

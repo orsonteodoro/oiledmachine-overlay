@@ -51,7 +51,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${LANGS[@]/#/l10n_}
 -cors dev doc notebooks server
-ebuild_revision_4
+ebuild_revision_5
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
@@ -144,10 +144,10 @@ BDEPEND+="
 DOCS=( "README.md" )
 
 python_prepare_all() {
+	distutils-r1_python_prepare_all
 	if use cors ; then
 		eapply "${FILESDIR}/${PN}-0.24.2-cors.patch"
 	fi
-	distutils-r1_python_prepare_all
 }
 
 pkg_postinst() {

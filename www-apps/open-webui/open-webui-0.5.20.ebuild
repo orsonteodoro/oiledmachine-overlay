@@ -42,7 +42,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 cuda ollama +openrc rag-ocr systemd
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	|| (
@@ -295,7 +295,6 @@ eerror "CUDA other than 11 or 12 are not supported."
 
 python_prepare_all() {
 	distutils-r1_python_prepare_all
-	local ${PWD}
 einfo "PWD: ${PWD}"
 	local file_paths=(
 		"backend/dev.sh"

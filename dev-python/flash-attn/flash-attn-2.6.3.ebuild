@@ -86,7 +86,7 @@ IUSE="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${ROCM_IUSE[@]}
 cuda rocm training
-ebuild_revision_1
+ebuild_revision_2
 "
 gen_rocm_required_use() {
 	local pv
@@ -206,6 +206,7 @@ DOCS=( "AUTHORS" "usage.md" )
 distutils_enable_tests "pytest"
 
 src_prepare() {
+	distutils-r1_python_prepare_all
 	if use cuda ; then
 		dep_prepare_mv "${WORKDIR}/cutlass-${CUTLASS_COMMIT}" "${S}/csrc/cutlass"
 		eapply "${FILESDIR}/${PN}-2.6.3-cutlass-hardcoded-paths.patch"
@@ -222,7 +223,6 @@ src_prepare() {
 	else
 		sed -i -e "s|@ROCM_VERSION@|6.1.2|g" $(grep -l "@ROCM_VERSION@") || die
 	fi
-	distutils-r1_python_prepare_all
 }
 
 python_configure() {
