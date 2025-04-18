@@ -934,14 +934,19 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 dev
-ebuild_revision_1
+ebuild_revision_2
 "
 gen_grpcio_rdepend_dev() {
 	local s
 	for s in ${GRPC_SLOTS_DEV[@]} ; do
-		echo "
-			=dev-python/grpcio-${s}*[${PYTHON_USEDEP}]
-		"
+		local impl
+		for impl in ${PYTHON_COMPAT[@]} ; do
+			echo "
+				python_single_target_${impl}? (
+					=dev-python/grpcio-${s}*[python_targets_${impl}(-)]
+				)
+			"
+		done
 	done
 }
 gen_grpcio_bdepend_dev() {
@@ -949,12 +954,17 @@ gen_grpcio_bdepend_dev() {
 	local s2
 	for s1 in ${GRPC_SLOTS_DEV[@]} ; do
 		s2=$(grpc_get_protobuf_slot "${s1}")
-		echo '
-			(
-				=dev-python/grpcio-tools-'${s1}'*[${PYTHON_USEDEP}]
-				dev-python/protobuf:0/'${s2}'[${PYTHON_USEDEP}]
-			)
-		'
+		local impl
+		for impl in ${PYTHON_COMPAT[@]} ; do
+			echo "
+				(
+					python_single_target_${impl}? (
+						=dev-python/grpcio-tools-${s1}*[python_targets_${impl}(-)]
+						dev-python/protobuf:0/${s2}[python_targets_${impl}(-)]
+					)
+				)
+			"
+		done
 	done
 }
 gen_grpcio_rdepend_rel() {
@@ -962,15 +972,34 @@ gen_grpcio_rdepend_rel() {
 	local s2
 	for s1 in ${GRPC_SLOTS_REL[@]} ; do
 		s2=$(grpc_get_protobuf_slot "${s1}")
-		echo '
-			(
-				=dev-python/grpcio-'${s1}'*[${PYTHON_USEDEP}]
-				dev-python/protobuf:0/'${s2}'[${PYTHON_USEDEP}]
-			)
-		'
+		local impl
+		for impl in ${PYTHON_COMPAT[@]} ; do
+			echo "
+				(
+					python_single_target_${impl}? (
+						=dev-python/grpcio-${s1}*[python_targets_${impl}(-)]
+						dev-python/protobuf:0/${s2}[python_targets_${impl}(-)]
+					)
+				)
+			"
+		done
 	done
 }
 RDEPEND+="
+	!dev? (
+		|| (
+			$(gen_grpcio_rdepend_rel)
+		)
+		dev-python/grpcio:=
+		dev-python/protobuf:=
+	)
+	dev? (
+		|| (
+			$(gen_grpcio_rdepend_dev)
+		)
+		dev-python/grpcio-tools:=
+		dev-python/protobuf:=
+	)
 	$(python_gen_cond_dep '
 		>=dev-python/bcrypt-4.0.1[${PYTHON_USEDEP}]
 		>=dev-python/chroma-hnswlib-0.7.6[${PYTHON_USEDEP}]
@@ -993,26 +1022,16 @@ RDEPEND+="
 		>=dev-python/uvicorn-0.18.3[${PYTHON_USEDEP},standard(+)]
 		dev-python/importlib-resources[${PYTHON_USEDEP}]
 		!dev? (
-			|| (
-				'$(gen_grpcio_rdepend_rel)'
-			)
-			dev-python/grpcio:=
-			dev-python/protobuf:=
-			~dev-python/opentelemetry-api-${OPENTELEMETRY_PV_REL}[${PYTHON_USEDEP}]
-			~dev-python/opentelemetry-exporter-otlp-proto-grpc-${OPENTELEMETRY_PV_REL}[${PYTHON_USEDEP}]
-			~dev-python/opentelemetry-instrumentation-fastapi-0.48_beta0:${OPENTELEMETRY_SLOT_REL}[${PYTHON_USEDEP}]
-			~dev-python/opentelemetry-sdk-${OPENTELEMETRY_PV_REL}[${PYTHON_USEDEP}]
+			~dev-python/opentelemetry-api-'${OPENTELEMETRY_PV_REL}'[${PYTHON_USEDEP}]
+			~dev-python/opentelemetry-exporter-otlp-proto-grpc-'${OPENTELEMETRY_PV_REL}'[${PYTHON_USEDEP}]
+			~dev-python/opentelemetry-instrumentation-fastapi-0.48_beta0:'${OPENTELEMETRY_SLOT_REL}'[${PYTHON_USEDEP}]
+			~dev-python/opentelemetry-sdk-'${OPENTELEMETRY_PV_REL}'[${PYTHON_USEDEP}]
 		)
 		dev? (
-			|| (
-				'$(gen_grpcio_rdepend_dev)'
-			)
-			dev-python/grpcio-tools:=
-			dev-python/protobuf:=
-			~dev-python/opentelemetry-api-${OPENTELEMETRY_PV_DEV}[${PYTHON_USEDEP}]
-			~dev-python/opentelemetry-exporter-otlp-proto-grpc-${OPENTELEMETRY_PV_DEV}[${PYTHON_USEDEP}]
-			~dev-python/opentelemetry-instrumentation-fastapi-0.50_beta0:${OPENTELEMETRY_SLOT_DEV}[${PYTHON_USEDEP}]
-			~dev-python/opentelemetry-sdk-${OPENTELEMETRY_PV_DEV}[${PYTHON_USEDEP}]
+			~dev-python/opentelemetry-api-'${OPENTELEMETRY_PV_DEV}'[${PYTHON_USEDEP}]
+			~dev-python/opentelemetry-exporter-otlp-proto-grpc-'${OPENTELEMETRY_PV_DEV}'[${PYTHON_USEDEP}]
+			~dev-python/opentelemetry-instrumentation-fastapi-0.50_beta0:'${OPENTELEMETRY_SLOT_DEV}'[${PYTHON_USEDEP}]
+			~dev-python/opentelemetry-sdk-'${OPENTELEMETRY_PV_DEV}'[${PYTHON_USEDEP}]
 		)
 	')
 	>=dev-python/posthog-2.4.0[${PYTHON_SINGLE_USEDEP}]
@@ -1041,14 +1060,14 @@ BDEPEND+="
 			dev-python/pytest-xdist[${PYTHON_USEDEP}]
 			dev-python/setuptools-scm[${PYTHON_USEDEP}]
 			dev-python/types-protobuf[${PYTHON_USEDEP}]
-			|| (
-				'$(gen_grpcio_bdepend_dev)'
-			)
-			dev-python/grpcio-tools:=
-			dev-python/protobuf:=
 		)
 	')
 	dev? (
+		|| (
+			$(gen_grpcio_bdepend_dev)
+		)
+		dev-python/grpcio-tools:=
+		dev-python/protobuf:=
 		dev-vcs/pre-commit[${PYTHON_SINGLE_USEDEP}]
 	)
 "

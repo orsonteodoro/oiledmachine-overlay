@@ -113,7 +113,7 @@ RDEPEND+="
 		>=dev-python/python-multipart-0.0.18[${PYTHON_USEDEP}]
 	)
 	translations? (
-		>=dev-python/pydantic-ai-0.0.15[${PYTHON_USEDEP}]
+		>=dev-python/pydantic-ai-0.0.30[${PYTHON_USEDEP}]
 	)
 "
 DEPEND+="
@@ -129,18 +129,18 @@ BDEPEND+="
 			>=dev-python/mkdocstrings-0.26.1[${PYTHON_USEDEP},python(+)]
 			>=dev-python/mkdocstrings-python-0.5.2[${PYTHON_USEDEP}]
 		)
-		>=dev-python/black-24.10.0[${PYTHON_USEDEP}]
+		>=dev-python/black-25.1.0[${PYTHON_USEDEP}]
 		>=dev-python/griffe-typingdoc-0.2.7[${PYTHON_USEDEP}]
 		>=dev-python/jieba-0.42.1[${PYTHON_USEDEP}]
 		>=dev-python/markdown-include-variants-0.0.4[${PYTHON_USEDEP}]
 		>=dev-python/mdx-include-1.4.1[${PYTHON_USEDEP}]
 		>=dev-python/mkdocs-macros-plugin-1.3.7[${PYTHON_USEDEP}]
-		>=dev-python/mkdocs-material-9.5.18[${PYTHON_USEDEP}]
+		>=dev-python/mkdocs-material-9.6.1[${PYTHON_USEDEP}]
 		>=dev-python/mkdocs-redirects-1.2.1[${PYTHON_USEDEP}]
 		>=dev-python/pyyaml-5.3.1[${PYTHON_USEDEP}]
 		>=dev-python/typer-0.12.5[${PYTHON_USEDEP}]
 		>=media-gfx/cairosvg-2.7.1[${PYTHON_USEDEP}]
-		>=virtual/pillow-11.0.0[${PYTHON_USEDEP}]
+		>=virtual/pillow-11.1.0[${PYTHON_USEDEP}]
 	)
 	test? (
 		(
@@ -154,17 +154,17 @@ BDEPEND+="
 		>=dev-python/coverage-6.5.0[${PYTHON_USEDEP},toml(+)]
 		>=dev-python/dirty-equals-0.8.0[${PYTHON_USEDEP}]
 		>=dev-python/flask-1.1.2[${PYTHON_USEDEP}]
-		>=dev-python/inline-snapshot-0.18.1[${PYTHON_USEDEP}]
+		>=dev-python/inline-snapshot-0.19.3[${PYTHON_USEDEP}]
 		>=dev-python/mypy-1.8.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-7.1.3[${PYTHON_USEDEP}]
 		>=dev-python/pyjwt-2.8.0[${PYTHON_USEDEP}]
 		>=dev-python/pyyaml-5.3.1[${PYTHON_USEDEP}]
-		>=dev-python/sqlmodel-0.0.22[${PYTHON_USEDEP}]
+		>=dev-python/sqlmodel-0.0.23[${PYTHON_USEDEP}]
 		>=dev-python/types-ujson-5.10.0.20240515[${PYTHON_USEDEP}]
 		>=dev-python/types-orjson-3.6.2[${PYTHON_USEDEP}]
 		doc? (
 			>=dev-python/httpx-0.23.0[${PYTHON_USEDEP}]
-			>=dev-util/ruff-0.6.4
+			>=dev-util/ruff-0.9.4
 		)
 	)
 "
