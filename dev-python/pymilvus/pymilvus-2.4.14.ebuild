@@ -58,15 +58,18 @@ IUSE+=" bulk_writer dev model"
 gen_grpcio_dev() {
 	local s
 	for s in ${GRPC_SLOTS_DEV[@]} ; do
-		echo "
-			(
-				$(python_gen_cond_dep '
-					=dev-python/grpcio-'${s}'*[${PYTHON_USEDEP}]
-					=dev-python/grpcio-testing-'${s}'*[${PYTHON_USEDEP}]
-					=dev-python/grpcio-tools-'${s}'*[${PYTHON_USEDEP}]
-				')
-			)
-		"
+		local impl
+		for impl in ${PYTHON_COMPAT[@]} ; do
+			echo "
+				(
+					python_single_target_${impl}? (
+						=dev-python/grpcio-${s}*[python_targets_${impl}(-)]
+						=dev-python/grpcio-testing-${s}*[python_targets_${impl}(-)]
+						=dev-python/grpcio-tools-${s}*[python_targets_${impl}(-)]
+					)
+				)
+			"
+		done
 	done
 }
 gen_grpcio_rel() {
@@ -74,14 +77,17 @@ gen_grpcio_rel() {
 	local s2
 	for s1 in ${GRPC_SLOTS_REL[@]} ; do
 		s2=$(grpc_get_protobuf_slot "${s1}")
-		echo "
-			(
-				$(python_gen_cond_dep '
-					=dev-python/grpcio-'${s1}'*[${PYTHON_USEDEP}]
-					dev-python/protobuf:0/'${s2}'[${PYTHON_USEDEP}]
-				')
-			)
-		"
+		local impl
+		for impl in ${PYTHON_COMPAT[@]} ; do
+			echo "
+				(
+					python_single_target_${impl}? (
+						=dev-python/grpcio-${s1}*[python_targets_${impl}(-)]
+						dev-python/protobuf:0/${s2}[python_targets_${impl}(-)]
+					)
+				)
+			"
+		done
 	done
 }
 RDEPEND+="
