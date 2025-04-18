@@ -60,6 +60,25 @@ GCC_COMPAT=( {12..9} )
 GCC_MAX_SLOT="${GCC_COMPAT[0]}"
 GCC_MIN_SLOT="${GCC_COMPAT[-1]}"
 GCC_SLOT_WITH_CUDA=12
+GRPC_PROTOBUF_PAIRS=(
+	"1.67:5.27"
+	"1.66:5.27"
+	"1.65:5.26"
+	"1.64:5.26"
+	"1.63:5.26"
+	"1.62:4.25"
+	"1.61:4.25"
+	"1.60:4.25"
+	"1.59:4.24"
+	"1.58:4.23"
+	"1.57:4.23"
+	"1.56:4.23"
+	"1.55:4.23"
+	"1.54:3.21"
+	"1.53:3.21"
+	"1.52:3.21"
+	"1.49:3.21"
+)
 inherit hip-versions
 HIP_SLOTS=(
 # See also https://github.com/ROCm/tensorflow-upstream/blob/develop-upstream/rocm_docs/tensorflow-rocm-release.md?plain=1
@@ -642,313 +661,65 @@ GOOGLE_CLOUD_CPP_PROTOBUF_3_21="
 		)
 	)
 "
+gen_protobuf_rdepend1() {
+	local row
+	for row in ${GRPC_PROTOBUF_PAIRS[@]} ; do
+		local grpc_pv="${row%:*}"
+		local protobuf_pv="${row#*:}"
+		local protobuf_name="GOOGLE_CLOUD_CPP_PROTOBUF_${protobuf_pv/./_}"
+		local impl
+		for impl in ${PYTHON_COMPAT[@]} ; do
+			echo  "
+				(
+					${!protobuf_name}
+					!big-endian? (
+						python_single_target_${impl}? (
+							=net-libs/grpc-${grpc_pv}*[python_targets_${impl}(-),python]
+						)
+					)
+					big-endian? (
+						=net-libs/grpc-${grpc_pv}*[-python]
+					)
+				)
+			"
+		done
+	done
+}
 RDEPEND_PROTOBUF="
 	|| (
-		(
-			${GOOGLE_CLOUD_CPP_PROTOBUF_5_27}
-			!big-endian? (
-				$(python_gen_cond_dep '
-					=net-libs/grpc-1.67*[${PYTHON_USEDEP},python]
-				')
-			)
-			big-endian? (
-				=net-libs/grpc-1.67*[-python]
-			)
-		)
-		(
-			${GOOGLE_CLOUD_CPP_PROTOBUF_5_27}
-			!big-endian? (
-				$(python_gen_cond_dep '
-					=net-libs/grpc-1.66*[${PYTHON_USEDEP},python]
-				')
-			)
-			big-endian? (
-				=net-libs/grpc-1.66*[-python]
-			)
-		)
-		(
-			${GOOGLE_CLOUD_CPP_PROTOBUF_5_26}
-			!big-endian? (
-				$(python_gen_cond_dep '
-					=net-libs/grpc-1.65*[${PYTHON_USEDEP},python]
-				')
-			)
-			big-endian? (
-				=net-libs/grpc-1.65*[-python]
-			)
-		)
-		(
-			${GOOGLE_CLOUD_CPP_PROTOBUF_5_26}
-			!big-endian? (
-				$(python_gen_cond_dep '
-					=net-libs/grpc-1.64*[${PYTHON_USEDEP},python]
-				')
-			)
-			big-endian? (
-				=net-libs/grpc-1.64*[-python]
-			)
-		)
-		(
-			${GOOGLE_CLOUD_CPP_PROTOBUF_5_26}
-			!big-endian? (
-				$(python_gen_cond_dep '
-					=net-libs/grpc-1.63*[${PYTHON_USEDEP},python]
-				')
-			)
-			big-endian? (
-				=net-libs/grpc-1.63*[-python]
-			)
-		)
-		(
-			${GOOGLE_CLOUD_CPP_PROTOBUF_4_25}
-			!big-endian? (
-				$(python_gen_cond_dep '
-					=net-libs/grpc-1.62*[${PYTHON_USEDEP},python]
-				')
-			)
-			big-endian? (
-				=net-libs/grpc-1.62*[-python]
-			)
-		)
-		(
-			${GOOGLE_CLOUD_CPP_PROTOBUF_4_25}
-			!big-endian? (
-				$(python_gen_cond_dep '
-					=net-libs/grpc-1.61*[${PYTHON_USEDEP},python]
-				')
-			)
-			big-endian? (
-				=net-libs/grpc-1.61*[-python]
-			)
-		)
-		(
-			${GOOGLE_CLOUD_CPP_PROTOBUF_4_25}
-			!big-endian? (
-				$(python_gen_cond_dep '
-					=net-libs/grpc-1.60*[${PYTHON_USEDEP},python]
-				')
-			)
-			big-endian? (
-				=net-libs/grpc-1.60*[-python]
-			)
-		)
-		(
-			${GOOGLE_CLOUD_CPP_PROTOBUF_4_24}
-			!big-endian? (
-				$(python_gen_cond_dep '
-					=net-libs/grpc-1.59*[${PYTHON_USEDEP},python]
-				')
-			)
-			big-endian? (
-				=net-libs/grpc-1.59*[-python]
-			)
-		)
-		(
-			${GOOGLE_CLOUD_CPP_PROTOBUF_4_23}
-			!big-endian? (
-				$(python_gen_cond_dep '
-					=net-libs/grpc-1.58*[${PYTHON_USEDEP},python]
-				')
-			)
-			big-endian? (
-				=net-libs/grpc-1.58*[-python]
-			)
-		)
-		(
-			${GOOGLE_CLOUD_CPP_PROTOBUF_4_23}
-			!big-endian? (
-				$(python_gen_cond_dep '
-					=net-libs/grpc-1.57*[${PYTHON_USEDEP},python]
-				')
-			)
-			big-endian? (
-				=net-libs/grpc-1.57*[-python]
-			)
-		)
-		(
-			${GOOGLE_CLOUD_CPP_PROTOBUF_4_23}
-			!big-endian? (
-				$(python_gen_cond_dep '
-					=net-libs/grpc-1.56*[${PYTHON_USEDEP},python]
-				')
-			)
-			big-endian? (
-				=net-libs/grpc-1.56*[-python]
-			)
-		)
-		(
-			${GOOGLE_CLOUD_CPP_PROTOBUF_4_23}
-			!big-endian? (
-				$(python_gen_cond_dep '
-					=net-libs/grpc-1.55*[${PYTHON_USEDEP},python]
-				')
-			)
-			big-endian? (
-				=net-libs/grpc-1.55*[-python]
-			)
-		)
-		(
-			${GOOGLE_CLOUD_CPP_PROTOBUF_3_21}
-			!big-endian? (
-				$(python_gen_cond_dep '
-					=net-libs/grpc-1.54*[${PYTHON_USEDEP},python]
-				')
-			)
-			big-endian? (
-				=net-libs/grpc-1.54*[-python]
-			)
-		)
-		(
-			${GOOGLE_CLOUD_CPP_PROTOBUF_3_21}
-			!big-endian? (
-				$(python_gen_cond_dep '
-					=net-libs/grpc-1.53*[${PYTHON_USEDEP},python]
-				')
-			)
-			big-endian? (
-				=net-libs/grpc-1.53*[-python]
-			)
-		)
-		(
-			${GOOGLE_CLOUD_CPP_PROTOBUF_3_21}
-			!big-endian? (
-				$(python_gen_cond_dep '
-					=net-libs/grpc-1.52*[${PYTHON_USEDEP},python]
-				')
-			)
-			big-endian? (
-				=net-libs/grpc-1.52*[-python]
-			)
-		)
-		(
-			${GOOGLE_CLOUD_CPP_PROTOBUF_3_21}
-			!big-endian? (
-				$(python_gen_cond_dep '
-					=net-libs/grpc-1.49*[${PYTHON_USEDEP},python]
-				')
-			)
-			big-endian? (
-				=net-libs/grpc-1.49*[-python]
-			)
-		)
+		$(gen_protobuf_rdepend1)
 	)
 	python? (
 		net-libs/google-cloud-cpp:=
 	)
 	net-libs/grpc:=
 "
-
+gen_grpcio_rdepend1() {
+	local row
+	for row in ${GRPC_PROTOBUF_PAIRS[@]} ; do
+		local grpc_pv="${row%:*}"
+		local protobuf_pv="${row#*:}"
+		local impl
+		for impl in ${PYTHON_COMPAT[@]} ; do
+			echo  "
+				(
+					=dev-python/grpcio-${grpc_pv}*:=[python_targets_${impl}(-)]
+					=dev-python/grpcio-tools-${grpc_pv}*:=[python_targets_${impl}(-)]
+					=net-libs/grpc-${grpc_pv}*[python_targets_${impl}(-),python]
+					dev-python/protobuf:0/${protobuf_pv}[python_targets_${impl}(-)]
+				)
+			"
+		done
+	done
+}
 RDEPEND_GRPCIO="
-	$(python_gen_cond_dep '
-		|| (
-			(
-				=dev-python/grpcio-1.67*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-tools-1.67*:=[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.67*[${PYTHON_USEDEP},python]
-				dev-python/protobuf:0/5.27[${PYTHON_USEDEP}]
-			)
-			(
-				=dev-python/grpcio-1.66*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-tools-1.66*:=[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.66*[${PYTHON_USEDEP},python]
-				dev-python/protobuf:0/5.27[${PYTHON_USEDEP}]
-			)
-			(
-				=dev-python/grpcio-1.65*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-tools-1.65*:=[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.65*[${PYTHON_USEDEP},python]
-				dev-python/protobuf:0/5.26[${PYTHON_USEDEP}]
-			)
-			(
-				=dev-python/grpcio-1.64*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-tools-1.64*:=[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.64*[${PYTHON_USEDEP},python]
-				dev-python/protobuf:0/5.26[${PYTHON_USEDEP}]
-			)
-			(
-				=dev-python/grpcio-1.63*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-tools-1.63*:=[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.63*[${PYTHON_USEDEP},python]
-				dev-python/protobuf:0/5.26[${PYTHON_USEDEP}]
-			)
-			(
-				=dev-python/grpcio-1.62*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-tools-1.62*:=[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.62*[${PYTHON_USEDEP},python]
-				dev-python/protobuf:0/4.25[${PYTHON_USEDEP}]
-			)
-			(
-				=dev-python/grpcio-1.61*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-tools-1.61*:=[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.61*[${PYTHON_USEDEP},python]
-				dev-python/protobuf:0/4.25[${PYTHON_USEDEP}]
-			)
-			(
-				=dev-python/grpcio-1.60*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-tools-1.60*:=[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.60*[${PYTHON_USEDEP},python]
-				dev-python/protobuf:0/4.25[${PYTHON_USEDEP}]
-			)
-			(
-				=dev-python/grpcio-1.59*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-tools-1.59*:=[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.59*[${PYTHON_USEDEP},python]
-				dev-python/protobuf:0/4.24[${PYTHON_USEDEP}]
-			)
-			(
-				=dev-python/grpcio-1.58*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-tools-1.58*:=[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.58*[${PYTHON_USEDEP},python]
-				dev-python/protobuf:0/4.23[${PYTHON_USEDEP}]
-			)
-			(
-				=dev-python/grpcio-1.57*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-tools-1.57*:=[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.57*[${PYTHON_USEDEP},python]
-				dev-python/protobuf:0/4.23[${PYTHON_USEDEP}]
-			)
-			(
-				=dev-python/grpcio-1.56*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-tools-1.56*:=[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.56*[${PYTHON_USEDEP},python]
-				dev-python/protobuf:0/4.23[${PYTHON_USEDEP}]
-			)
-			(
-				=dev-python/grpcio-1.55*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-tools-1.55*:=[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.55*[${PYTHON_USEDEP},python]
-				dev-python/protobuf:0/4.23[${PYTHON_USEDEP}]
-			)
-			(
-				=dev-python/grpcio-1.54*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-tools-1.54*:=[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.54*[${PYTHON_USEDEP},python]
-				dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
-			)
-			(
-				=dev-python/grpcio-1.53*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-tools-1.53*:=[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.53*[${PYTHON_USEDEP},python]
-				dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
-			)
-			(
-				=dev-python/grpcio-1.52*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-tools-1.52*:=[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.52*[${PYTHON_USEDEP},python]
-				dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
-			)
-			(
-				=dev-python/grpcio-1.49*:=[${PYTHON_USEDEP}]
-				=dev-python/grpcio-tools-1.49*:=[${PYTHON_USEDEP}]
-				=net-libs/grpc-1.49*[${PYTHON_USEDEP},python]
-				dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
-			)
-		)
-		dev-python/grpcio:=
-		dev-python/grpcio-tools:=
-		dev-python/protobuf:=
-		net-libs/grpc:=
-	' python3_{10..11})
+	|| (
+		$(gen_grpcio_rdepend1)
+	)
+	dev-python/grpcio:=
+	dev-python/grpcio-tools:=
+	dev-python/protobuf:=
+	net-libs/grpc:=
 "
 
 # Missing extension package for TF_ENABLE_ONEDNN_OPTS=1
