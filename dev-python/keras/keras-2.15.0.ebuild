@@ -42,12 +42,17 @@ IUSE=" test ebuild_revision_3"
 gen_rdepend_protobuf() {
 	local s
 	for s in ${PROTOBUF_SLOTS[@]} ; do
-		echo  '
-			(
-				dev-libs/protobuf:0/'${s}'
-				dev-python/protobuf:0/'${s}'[${PYTHON_USEDEP}]
-			)
-		'
+		local impl
+		for impl in ${PYTHON_COMPAT[@]} ; do
+			echo  "
+				(
+					python_single_target_${impl}? (
+						dev-libs/protobuf:0/${s}
+						dev-python/protobuf:0/${s}[python_targets_${impl}(-)]
+					)
+				)
+			"
+		done
 	done
 }
 RDEPEND="
@@ -65,14 +70,14 @@ RDEPEND="
 		dev-python/pydot[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 		virtual/pillow[${PYTHON_USEDEP}]
-		|| (
-			'$(gen_rdepend_protobuf)'
-		)
-		dev-libs/protobuf:=
-		dev-python/protobuf:=
 	')
 	>=dev-python/keras-preprocessing-1.1.2[${PYTHON_SINGLE_USEDEP}]
 	=sci-ml/tensorflow-${PV%.*}*[${PYTHON_SINGLE_USEDEP},python]
+	|| (
+		$(gen_rdepend_protobuf)
+	)
+	dev-libs/protobuf:=
+	dev-python/protobuf:=
 "
 DEPEND="
 	${RDEPEND}
