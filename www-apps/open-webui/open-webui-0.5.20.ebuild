@@ -42,7 +42,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 cuda ollama +openrc rag-ocr systemd
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	|| (
@@ -259,8 +259,8 @@ src_unpack() {
 		git-r3_checkout
 	else
 	# For maintenance
-		#unpack ${A}
-		#die
+		unpack ${A}
+		die
 
 		npm_src_unpack
 		if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then

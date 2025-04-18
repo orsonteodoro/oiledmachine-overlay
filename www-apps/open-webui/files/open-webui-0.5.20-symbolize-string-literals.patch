@@ -1,6 +1,6 @@
 diff '--color=auto' -urp open-webui-0.5.20.orig/backend/dev.sh open-webui-0.5.20/backend/dev.sh
 --- open-webui-0.5.20.orig/backend/dev.sh	2025-03-05 19:44:45.000000000 -0800
-+++ open-webui-0.5.20/backend/dev.sh	2025-04-17 15:58:53.753154494 -0700
++++ open-webui-0.5.20/backend/dev.sh	2025-04-17 21:34:36.112687406 -0700
 @@ -1,2 +1,2 @@
 -PORT="${PORT:-8080}"
 -uvicorn open_webui.main:app --port $PORT --host 0.0.0.0 --forwarded-allow-ips '*' --reload
@@ -9,7 +9,7 @@ diff '--color=auto' -urp open-webui-0.5.20.orig/backend/dev.sh open-webui-0.5.20
 +@UVICORN_PATH@ open_webui.main:app --port $PORT --host @OPEN_WEBUI_LISTEN_HOST@ --forwarded-allow-ips '*' --reload
 diff '--color=auto' -urp open-webui-0.5.20.orig/backend/open_webui/__init__.py open-webui-0.5.20/backend/open_webui/__init__.py
 --- open-webui-0.5.20.orig/backend/open_webui/__init__.py	2025-03-05 19:44:45.000000000 -0800
-+++ open-webui-0.5.20/backend/open_webui/__init__.py	2025-04-17 15:58:03.129602636 -0700
++++ open-webui-0.5.20/backend/open_webui/__init__.py	2025-04-17 21:34:36.112878757 -0700
 @@ -32,8 +32,8 @@ def main(
  
  @app.command()
@@ -45,23 +45,32 @@ diff '--color=auto' -urp open-webui-0.5.20.orig/backend/open_webui/__init__.py o
      uvicorn.run(
 diff '--color=auto' -urp open-webui-0.5.20.orig/backend/open_webui/env.py open-webui-0.5.20/backend/open_webui/env.py
 --- open-webui-0.5.20.orig/backend/open_webui/env.py	2025-03-05 19:44:45.000000000 -0800
-+++ open-webui-0.5.20/backend/open_webui/env.py	2025-04-17 15:52:56.875366412 -0700
++++ open-webui-0.5.20/backend/open_webui/env.py	2025-04-17 21:36:40.927752454 -0700
 @@ -15,10 +15,10 @@ from open_webui.constants import ERROR_M
  # Load .env file
  ####################################
  
 -OPEN_WEBUI_DIR = Path(__file__).parent  # the path containing this file
-+OPEN_WEBUI_DIR = "@OPEN_WEBUI_DIR@"  # the path containing this file
++OPEN_WEBUI_DIR = Path("@OPEN_WEBUI_DIR@")  # the path containing this file
  print(OPEN_WEBUI_DIR)
  
 -BACKEND_DIR = OPEN_WEBUI_DIR.parent  # the path containing this file
-+BACKEND_DIR = "@OPEN_WEBUI_BACKEND_DIR@"  # the path containing this file
++BACKEND_DIR = Path("@OPEN_WEBUI_BACKEND_DIR@")  # the path containing this file
  BASE_DIR = BACKEND_DIR.parent  # the path containing the backend/
  
  print(BACKEND_DIR)
+@@ -154,7 +154,7 @@ def parse_section(section):
+ 
+ 
+ try:
+-    changelog_path = BASE_DIR / "CHANGELOG.md"
++    changelog_path = OPEN_WEBUI_DIR / "CHANGELOG.md"
+     with open(str(changelog_path.absolute()), "r", encoding="utf8") as file:
+         changelog_content = file.read()
+ 
 diff '--color=auto' -urp open-webui-0.5.20.orig/backend/start.sh open-webui-0.5.20/backend/start.sh
 --- open-webui-0.5.20.orig/backend/start.sh	2025-03-05 19:44:45.000000000 -0800
-+++ open-webui-0.5.20/backend/start.sh	2025-04-17 15:59:00.809146342 -0700
++++ open-webui-0.5.20/backend/start.sh	2025-04-17 21:34:36.113161776 -0700
 @@ -11,13 +11,13 @@ if [[ "${RAG_WEB_LOADER_ENGINE,,}" == "p
          playwright install-deps chromium
      fi
@@ -115,7 +124,7 @@ diff '--color=auto' -urp open-webui-0.5.20.orig/backend/start.sh open-webui-0.5.
 +WEBUI_SECRET_KEY="$WEBUI_SECRET_KEY" exec @UVICORN_PATH@ open_webui.main:app --host "$HOST" --port "$PORT" --forwarded-allow-ips '*'
 diff '--color=auto' -urp open-webui-0.5.20.orig/run.sh open-webui-0.5.20/run.sh
 --- open-webui-0.5.20.orig/run.sh	2025-03-05 19:44:45.000000000 -0800
-+++ open-webui-0.5.20/run.sh	2025-04-17 16:00:20.681041847 -0700
++++ open-webui-0.5.20/run.sh	2025-04-17 21:34:36.113264438 -0700
 @@ -3,7 +3,7 @@
  image_name="open-webui"
  container_name="open-webui"
