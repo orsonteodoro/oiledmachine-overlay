@@ -42,7 +42,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 cuda ollama +openrc rag-ocr systemd
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE="
 	|| (
@@ -435,6 +435,12 @@ einfo "OPEN_WEBUI_URI:  ${open_webui_uri}"
 
 	# Junk that should not be there.
 	rm -rf "${ED}/usr/lib/python"*"/site-packages/data/"
+
+	# Done to remove error but not necessary
+	fowners -R "root:root" "/usr/lib/${EPYTHON}/site-packages/open_webui/static"
+
+	# Necessary
+	fowners -R "root:root" "/usr/lib/${EPYTHON}/site-packages/open_webui/backend/data"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
