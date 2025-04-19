@@ -146,6 +146,7 @@ RDEPEND+="
 		>=dev-python/fpdf2-2.8.2[${PYTHON_USEDEP}]
 		>=dev-python/ftfy-6.2.3[${PYTHON_USEDEP}]
 		>=dev-python/gcp-storage-emulator-2024.08.03[${PYTHON_USEDEP}]
+		>=dev-python/google-cloud-storage-2.19.0[${PYTHON_USEDEP}]
 		>=dev-python/google-generativeai-0.7.2[${PYTHON_USEDEP}]
 		>=dev-python/googleapis-common-protos-1.63.2[${PYTHON_USEDEP}]
 		>=dev-python/ldap3-2.9.1[${PYTHON_USEDEP}]
