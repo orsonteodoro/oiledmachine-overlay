@@ -259,8 +259,8 @@ src_unpack() {
 		git-r3_checkout
 	else
 	# For maintenance
-		unpack ${A}
-		die
+		#unpack ${A}
+		#die
 
 		npm_src_unpack
 		if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
