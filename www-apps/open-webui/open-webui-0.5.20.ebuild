@@ -306,7 +306,8 @@ einfo "PWD: ${PWD}"
 	)
 
 	local cudnn_lib_path="/opt/cuda/targets/x86_64-linux/lib"
-	local backend_path="/opt/${PN}/backend"
+	#local backend_path="/opt/${PN}/backend"
+	local backend_path="/usr/lib/${EPYTHON}/site-packages/open_webui/backend"
 	local hostname=${OPEN_WEBUI_HOST:-"localhost"}
 	local listen_host="0.0.0.0" # 127.0.0.1, router, or ISP provided address
 	local open_webui_path="/usr/lib/${EPYTHON}/site-packages/open_webui"
@@ -353,11 +354,11 @@ install_backend() {
 	# Include hidden files/dirs with *
 	shopt -s dotglob
 
-	insinto "/opt/${PN}"
+	insinto "/usr/lib/${EPYTHON}/site-packages/open_webui"
 	doins -r "backend"
 
-	fperms 0755 "/opt/${PN}/backend/dev.sh"
-	fperms 0755 "/opt/${PN}/backend/start.sh"
+	fperms 0755 "/usr/lib/${EPYTHON}/site-packages/open_webui/backend/dev.sh"
+	fperms 0755 "/usr/lib/${EPYTHON}/site-packages/open_webui/backend/start.sh"
 
 	# Exclude hidden files/dirs with *
 	shopt -u dotglob
