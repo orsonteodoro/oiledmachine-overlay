@@ -208,6 +208,19 @@
   See [XZ Utils backdoor](https://en.wikipedia.org/wiki/XZ_Utils_backdoor)
   on Wikipedia.
 
+* Hardcoded `-march=` in the compiler output is unsupported.  The package must
+  be modified or ebuild changed to accommodate older architectures with
+  possibly custom-optimization USE flag or removed of that -march in build
+  flag.  The use of hardcoded flags can be result in illegal instruction,
+  perceived as vendor lock-in, or an undisclosed sponsored project by that
+  vendor.
+
+* The use of automagic for SIMD is unsupported.  The package must be modified
+  or ebuild changed to accommodate older architectures via cpu_flags_* USE
+  flags.  The build files may be modified to optionalize them.  Again,
+  these hardcoded SIMD flags may result in illegal instruction, or perceived
+  as vendor lock-in, or undisclosed sponsored project.
+
 # Ebuild organization
 
 1. Header
