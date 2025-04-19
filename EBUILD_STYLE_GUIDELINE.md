@@ -219,7 +219,7 @@
   or ebuild changed to accommodate older architectures via cpu_flags_* USE
   flags.  The build files may be modified to optionalize them.  Again,
   these hardcoded SIMD flags may result in illegal instruction, or perceived
-  as vendor lock-in, or undisclosed sponsored project.
+  as vendor lock-in, or as an undisclosed sponsored project.
 
 # Ebuild organization
 
