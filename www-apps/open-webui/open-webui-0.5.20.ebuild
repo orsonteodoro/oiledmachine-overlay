@@ -42,7 +42,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 cuda ollama +openrc rag-ocr systemd
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	|| (
@@ -367,6 +367,7 @@ install_backend() {
 install_init_services() {
 	sed \
 		-e "s|@NODE_VERSION@|${NODE_VERSION}|g" \
+		-e "s|@EPYTHON@|${EPYTHON}|g" \
 		"${FILESDIR}/${PN}-start-server" \
 		> \
 		"${T}/${PN}-start-server" \
