@@ -213,7 +213,7 @@
   possibly custom-optimization USE flag or removed of that -march in build
   flag.  The use of hardcoded flags can be result in an illegal instruction
   runtime error, perceived as offensive by some as vendor lock-in or as an
-  undisclosed sponsored project by that vendor/distro or fanboyism by the
+  undisclosed sponsored project by that vendor or fanboyism by the
   project.
 
 * The use of SIMD build time autodetection or forced SIMD flags are not
