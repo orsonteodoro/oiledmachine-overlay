@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild originators -->
+    <email>tupone@gentoo.org</email>
+    <name>Tupone Alfredo</name>
+  </maintainer>
+  <maintainer type="project">
+    <!-- Ebuild originators -->
+    <email>python@gentoo.org</email>
+    <name>Python</name>
+  </maintainer>
+  <use>
+    <flag name="parquet">
+      Enables read/write parquet data format
+    </flag>
+    <flag name="cpu_flags_arm_sve">
+      Adds -march=armv8-a+sve to CXXFLAGS
+    </flag>
+    <flag name="cpu_flags_arm_sve128">
+      Adds -march=armv8-a+sve and -msve-vector-bits=128 to CXXFLAGS
+    </flag>
+    <flag name="cpu_flags_arm_sve256">
+      Adds -march=armv8-a+sve and -msve-vector-bits=256 to CXXFLAGS
+    </flag>
+    <flag name="cpu_flags_arm_sve512">
+      Adds -march=armv8-a+sve and -msve-vector-bits=512 to CXXFLAGS
+    </flag>
+    <flag name="cpu_flags_ppc_altivec">
+      Adds -maltivec to CXXFLAGS
+    </flag>
+    <flag name="cpu_flags_x86_avx2">
+      Adds -march=haswell to CXXFLAGS
+    </flag>
+    <flag name="cpu_flags_x86_avx512bw">
+      Adds -march=skylake-avx512 to CXXFLAGS
+    </flag>
+    <flag name="cpu_flags_x86_avx512cd">
+      Adds -march=skylake-avx512 to CXXFLAGS
+    </flag>
+    <flag name="cpu_flags_x86_avx512dq">
+      Adds -march=skylake-avx512 to CXXFLAGS
+    </flag>
+    <flag name="cpu_flags_x86_avx512f">
+      Adds -march=skylake-avx512 to CXXFLAGS
+    </flag>
+    <flag name="cpu_flags_x86_avx512vl">
+      Adds -march=skylake-avx512 to CXXFLAGS
+    </flag>
+    <flag name="cpu_flags_x86_sse4_2">
+      Adds -msse4.2 to CXXFLAGS
+    </flag>
+  </use>
+  <upstream>
+    <remote-id type="github">apache/arrow</remote-id>
+    <remote-id type="pypi">pyarrow</remote-id>
+  </upstream>
+</pkgmetadata>
