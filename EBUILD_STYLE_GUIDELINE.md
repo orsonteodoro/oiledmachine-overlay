@@ -214,7 +214,7 @@
   flag.  The use of hardcoded flags can be result in an illegal instruction
   runtime error, perceived as offensive by some as vendor lock-in or as an
   undisclosed sponsored project by that vendor or fanboyism by the
-  project.
+  project or underoptimized.
 
 * The use of SIMD build time autodetection or forced SIMD flags are not
   unsupported.  The package must be modified or ebuild changed to accommodate
@@ -222,7 +222,7 @@
   modified to optionalize them.  Again, these hardcoded SIMD flags may result in
   an illegal instruction runtime error, or perceived as offensive by some as
   vendor lock-in or as an undisclosed sponsored project or fanboyism by the
-  project.
+  project or underoptimized.
 
 # Ebuild organization
 
