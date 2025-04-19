@@ -213,14 +213,14 @@
   possibly custom-optimization USE flag or removed of that -march in build
   flag.  The use of hardcoded flags can be result in an illegal instruction
   runtime error, perceived as offensive by some as vendor lock-in or as an
-  undisclosed sponsored project by that vendor.
+  undisclosed sponsored project by that vendor or fanboyism by the project.
 
 * The use of automagic for SIMD is unsupported.  The package must be modified
   or ebuild changed to accommodate older architectures via cpu_flags_* USE
   flags.  The build files may be modified to optionalize them.  Again,
   these hardcoded SIMD flags may result in illegal instruction runtime error, or
   perceived as offensive by some as vendor lock-in or as an undisclosed
-  sponsored project.
+  sponsored project or fanboyism by the project.
 
 # Ebuild organization
 
