@@ -219,8 +219,9 @@
   unsupported.  The package must be modified or ebuild changed to accommodate
   older architectures via cpu_flags_* USE flags.  The build files may be
   modified to optionalize them.  Again, these hardcoded SIMD flags may result in
-  illegal instruction runtime error, or perceived as offensive by some as vendor
-  lock-in or as an undisclosed sponsored project or fanboyism by the project.
+  an illegal instruction runtime error, or perceived as offensive by some as
+  vendor lock-in or as an undisclosed sponsored project or fanboyism by the
+  project.
 
 # Ebuild organization
 
