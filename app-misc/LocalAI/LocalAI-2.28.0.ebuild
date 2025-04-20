@@ -5116,43 +5116,6 @@ einfo "Replace EGO_SUM contents with the following:"
 	die
 }
 
-_get_fastest_go_proxy() {
-	# goproxy is in <gentoo-overlay>/profiles/thirdpartymirrors
-	# goproxy is https://proxy.golang.org/ https://goproxy.io/
-
-	local servers=(
-		"proxy.golang.org"
-		"goproxy.io"
-	)
-
-	local results=""
-	local server
-	for server in ${servers[@]} ; do
-		local lag=$(ping -c 1 "${server}" 2>/dev/null \
-			| grep "time=" \
-			| grep -E -o "[0-9.]+ ms" \
-			| cut -f 1 -d " ")
-		if [[ -z "${lag}" ]] ; then
-			lag="9999"
-		fi
-		results+="${lag} ${server}\n"
-	done
-
-#einfo "${results}"
-	# Get lowest latency
-	server=$(echo -e "${results}" \
-		| sort -g \
-		| sed -e "/^$/d" \
-		| head -n 1 \
-		| cut -f 2 -d " ")
-#einfo "Fastest go proxy server:  ${server}"
-	if [[ -z "${server}" ]] ; then
-eerror "Failed to get fastest go proxy server."
-		die
-	fi
-	echo "${server}"
-}
-
 # Avoid "argument list too long" when downloading from SRC_URI.  It is a portage
 # bug.  We will bypass SRC_URI and download line by line as if it were a live
 # ebuild to avoid that error.
@@ -5170,23 +5133,18 @@ einfo "Called _go-module_src_unpack"
 	cd "${EDISTDIR}" || die
 	addwrite "${EDISTDIR}"
 
-	local i=0
 	local line exts
 	# For tracking go.sum errors \
 	local error_in_gosum=0
 	local -a gosum_errorlines
 	# Used make SRC_URI easier to read \
 	local newline=$'\n'
-	local server
+
+	# Use only this server to avoid missing packages.
+	__GOMODULE_GOPROXY_BASEURI="https://proxy.golang.org/"
 
 	# Now parse EGO_SUM
 	for line in "${_EGO_SUM[@]}"; do
-		if (( ${i} % 30 == 0 )) ; then
-			server=$(_get_fastest_go_proxy)
-			__GOMODULE_GOPROXY_BASEURI="https://${server}/"
-		fi
-		i=$(( ${i} + 1 ))
-
 		local module version modfile version_modfile kvs x
 		read -r module version_modfile kvs <<< "${line}"
 		# kvs contains the hash and may contain other data from
