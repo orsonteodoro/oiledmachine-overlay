@@ -266,13 +266,18 @@ einfo "Replace EGO_SUM contents with the following:"
 
 _setup_go_offline_cache() {
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+	local cache_path_actual="${EDISTDIR}/go-cache/${CATEGORY}/${PN}"
+	local modcache_path_actual="${EDISTDIR}/go-modcache/${CATEGORY}/${PN}"
+	export GOCACHE="${cache_path_actual}"
+	export GOMODCACHE="${modcache_path_actual}"
 	addwrite "${EDISTDIR}"
-	mkdir -p "${EDISTDIR}/go-cache/${CATEGORY}/${PN}"
-	addwrite "${EDISTDIR}/go-cache/${CATEGORY}/${PN}"
-	mkdir -p "${HOME}/.cache"
-	ln -s "${EDISTDIR}/go-cache/${CATEGORY}/${PN}" "${HOME}/.cache/go-build"
-	local d=$(go env GOCACHE)
-einfo "Default GOCACHE:  ${d}"
+
+	mkdir -p "${cache_path_actual}"
+	addwrite "${cache_path_actual}"
+
+	mkdir -p "${modcache_path_actual}"
+	addwrite "${modcache_path_actual}"
+	go env
 }
 
 src_unpack() {
@@ -326,6 +331,7 @@ src_prepare() {
 
 
 src_compile() {
+	_setup_go_offline_cache
 	local go_tags=()
 	use debug && go_tags+=( "debug" )
 	use p2p && go_tags+=( "p2p" )
