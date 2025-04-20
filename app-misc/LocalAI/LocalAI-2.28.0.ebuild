@@ -231,23 +231,9 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.28.0-offline-install.patch"
 )
 
-# @FUNCTION: _check_network_sandbox
-# @DESCRIPTION:
-# Check if sandbox is more lax when downloading in unpack phase
-_check_network_sandbox() {
-	if has network-sandbox ${FEATURES} ; then
-eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
-eerror "env to be able to download go micropackages."
-eerror
-		die
-	fi
-}
-
 pkg_setup() {
 ewarn "This ebuild is still in development"
 	python_setup
-	_check_network_sandbox
 }
 
 gen_unpack() {
