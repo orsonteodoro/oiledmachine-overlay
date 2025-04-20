@@ -275,6 +275,8 @@
      - Must disclose privacy policy
      - Must disclose data collection policy (e.g. telemetry)
      - Must disclose all legal text or provide a link to the policy
+     - Must disclose all vendored packages (from submodules or third-party folder) licenses
+     - Must disclose all assets (e.g. graphics, audio, fonts, themes, etc) licenses
      - List license commentary below this variable.
    - RESTRICT
    - SLOT
