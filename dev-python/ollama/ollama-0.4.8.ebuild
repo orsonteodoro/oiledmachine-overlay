@@ -41,15 +41,15 @@ IUSE+=" dev"
 RDEPEND+="
 	>=dev-lang/python-3.8
 	>=dev-python/anyio-4.5.2[${PYTHON_USEDEP}]
-	>=dev-python/certifi-2024.8.30[${PYTHON_USEDEP}]
+	>=dev-python/certifi-2025.1.31[${PYTHON_USEDEP}]
 	>=dev-python/exceptiongroup-1.2.2[${PYTHON_USEDEP}]
 	>=dev-python/h11-0.14.0[${PYTHON_USEDEP}]
-	>=dev-python/httpcore-1.0.6[${PYTHON_USEDEP}]
+	>=dev-python/httpcore-1.0.8[${PYTHON_USEDEP}]
 	>=dev-python/httpx-0.28.1[${PYTHON_USEDEP}]
 	>=dev-python/idna-3.10[${PYTHON_USEDEP}]
-	>=dev-python/pydantic-2.9.2[${PYTHON_USEDEP}]
+	>=dev-python/pydantic-2.10.6[${PYTHON_USEDEP}]
 	>=dev-python/sniffio-1.3.1[${PYTHON_USEDEP}]
-	>=dev-python/typing-extensions-4.12.2[${PYTHON_USEDEP}]
+	>=dev-python/typing-extensions-4.13.2[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
