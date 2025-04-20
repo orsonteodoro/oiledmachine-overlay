@@ -4912,6 +4912,12 @@ else
 		"tags.cncf.io/container-device-interface/specs-go v0.7.0"
 		"tags.cncf.io/container-device-interface/specs-go v0.7.0/go.mod"
 	)
+
+	# When GEN_EBUILD == 0, do not download from SRC_URI but from custom downloader.
+	if [[ "${GEN_EBUILD}" == "1" || "${GEN_EBUILD}" == "2" ]] ; then
+		EGO_SUM=( ${_EGO_SUM[@]} )
+	fi
+
 	KEYWORDS="~amd64"
 	S="${WORKDIR}/${PN}-${PV}"
 	#go-module_set_globals
@@ -5239,7 +5245,7 @@ einfo "Done unpack"
 			gen_unpack
 		elif [[ "${GEN_EBUILD}" == "2" ]] ; then
 	# Phase 2, dep of dep [of dep ...]
-			_go-module_src_unpack
+			go-module_src_unpack
 			gen_unpack
 		else
 			#go-module_src_unpack
