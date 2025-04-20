@@ -4963,7 +4963,7 @@ https://github.com/microsoft/onnxruntime/releases/download/v${ONNXRUNTIME_PV}/on
 	"
 fi
 
-DESCRIPTION="A free local-first self-hosted progressive web app featuring generation of text, audio, video, images, voice cloning with distributed P2P (Peer-to-Peer) inference"
+DESCRIPTION="A REST API featuring integrated WebUI, P2P inference, generation of text, audio, video, images, voice cloning"
 HOMEPAGE="
 	https://github.com/mudler/LocalAI
 	https://localai.io/
