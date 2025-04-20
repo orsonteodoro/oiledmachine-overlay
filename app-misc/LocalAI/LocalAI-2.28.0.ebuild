@@ -5125,8 +5125,8 @@ einfo "Replace EGO_SUM contents with the following:"
 # The too many link issue is connected to feature bloat or too many
 # testing packages.
 
-_go-module_src_unpack() {
-einfo "Called _go-module_src_unpack"
+# Same as go-module_set_globals()
+_go-module_pre_src_unpack() {
 	# From go-module.eclass
 
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
@@ -5210,7 +5210,7 @@ einfo "Called _go-module_src_unpack"
 			_distfile="${_reluri//\//%2F}"
 
 			#EGO_SUM_SRC_URI+=" ${_uri} -> ${_distfile}${newline}"
-			#_GOMODULE_GOSUM_REVERSE_MAP["${_distfile}"]="${_reluri}"
+			_GOMODULE_GOSUM_REVERSE_MAP["${_distfile}"]="${_reluri}"
 
 			if [[ -e "${EDISTDIR}/${_distfile}" ]] ; then
 				continue
@@ -5224,7 +5224,6 @@ einfo "Called _go-module_src_unpack"
 			if ! [[ -e "${EDISTDIR}/${_distfile}" ]] ; then
 				mv "${EDISTDIR}/${_distfile}.__download__" "${EDISTDIR}/${_distfile}" || die
 			fi
-			# TODO generate/verify integrity
 		done
 	done
 
@@ -5235,6 +5234,17 @@ einfo "Called _go-module_src_unpack"
 		done
 		die "Invalid EGO_SUM format"
 	fi
+
+	# Ensure these variables are not changed past this point
+	readonly EGO_SUM
+	#readonly EGO_SUM_SRC_URI
+	readonly _GOMODULE_GOSUM_REVERSE_MAP
+
+	# export the GOPROXY setting
+	export GOPROXY="file://${T}/go-proxy"
+
+	# Set the guard that we are safe
+	_GO_MODULE_SET_GLOBALS_CALLED=1
 }
 
 _go-module_gen_manifest() {
@@ -5371,15 +5381,47 @@ eerror "File integrity mismatch for ${EDISTDIR}/${_distfile}.  Delete the file a
 	done
 }
 
+# @FUNCTION: go-module_src_unpack
+# @DESCRIPTION:
+# Sets up GOFLAGS for the system and then unpacks based on the following rules:
+# 1. If EGO_SUM is set, unpack the base tarball(s) and set up the
+#    local go proxy.  This mode is deprecated.
+# 2. Otherwise, if EGO_VENDOR is set, bail out, as this functionality was removed.
+# 3. Otherwise, call 'ego mod verify' and then do a normal unpack.
+# Set compile env via go-env.
+_go-module_src_unpack() {
+        if use amd64 || use arm || use arm64 ||
+                ( use ppc64 && [[ $(tc-endian) == "little" ]] ) || use s390 || use x86; then
+                        GOFLAGS="-buildmode=pie ${GOFLAGS}"
+        fi
+        GOFLAGS="${GOFLAGS} -p=$(makeopts_jobs)"
+        if [[ "${#_EGO_SUM[@]}" -gt 0 ]]; then
+                eqawarn "This ebuild uses EGO_SUM which is deprecated"
+                eqawarn "Please migrate to a dependency tarball"
+                eqawarn "This will become a fatal error in the future"
+                _go-module_src_unpack_gosum
+        elif [[ "${#EGO_VENDOR[@]}" -gt 0 ]]; then
+                eerror "${EBUILD} is using EGO_VENDOR which is no longer supported"
+                die "Please update this ebuild"
+        else
+                default
+                if [[ ! -d "${S}"/vendor ]]; then
+                        cd "${S}"
+                        local nf
+                        [[ -n ${NONFATAL_VERIFY} ]] && nf=nonfatal
+                        ${nf} ego mod verify
+                fi
+        fi
+
+        go-env_set_compile_environment
+}
+
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
 	else
-		unpack ${A}
-einfo "Done unpack"
-
 	# Generating requires 2 phases for dependency of dependency
 		if [[ "${GEN_EBUILD}" == "1" ]] ; then
 	# Phase 1, direct deps
@@ -5389,12 +5431,14 @@ einfo "Done unpack"
 			go-module_src_unpack
 			gen_unpack
 		else
-			#go-module_src_unpack
-			_go-module_src_unpack
+			_go-module_pre_src_unpack # Download here
 			if ! [[ -e "${FILESDIR}/${PV}/Manifest" ]] ; then
 				_go-module_gen_manifest
 			fi
-			_go-module_verify_manifest
+			#_go-module_verify_manifest
+
+			cd "${WORKDIR}" || die
+			_go-module_src_unpack # Unpack all here
 		fi
 	fi
 }
@@ -5436,6 +5480,8 @@ src_prepare() {
 			|| die
 	fi
 }
+
+
 
 src_compile() {
 	local go_tags=()
