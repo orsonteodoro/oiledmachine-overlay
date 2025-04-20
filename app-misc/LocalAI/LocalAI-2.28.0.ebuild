@@ -289,7 +289,6 @@ src_unpack() {
 src_prepare() {
 	default
 	# S_GO should appear at this point
-	[[ -e "${WORKDIR}/go-mod" ]] || die "Retry, but upgrade dev-lang/go first."
 	dep_prepare_mv "${WORKDIR}/bark.cpp-${BARK_CPP_PV}" "${S}/sources/bark.cpp"
 	dep_prepare_mv "${WORKDIR}/encodec.cpp-${ENCODEC_CPP_COMMIT}" "${S}/sources/bark.cpp/encodec.cpp"
 	dep_prepare_mv "${WORKDIR}/ggml-${GGML_COMMIT_1}" "${S}/sources/bark.cpp/encodec.cpp/ggml"
