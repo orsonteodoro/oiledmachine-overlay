@@ -54,7 +54,7 @@ PIPER_PHONEMIZE_COMMIT="fccd4f335aa68ac0b72600822f34d84363daa2bf" # For go-piper
 STABLE_DIFFUSION_CPP_COMMIT="53e3b17eb3d0b5760ced06a1f98320b68b34aaae"
 WHISPER_CPP_COMMIT="6266a9f9e56a5b925e9892acf650f3eb1245814d"
 
-inherit dep-prepare edo python-single-r1
+inherit dep-prepare edo go-offline-cache python-single-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -264,29 +264,12 @@ einfo "Replace EGO_SUM contents with the following:"
 	die
 }
 
-_setup_go_offline_cache() {
-	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	local cache_path_actual="${EDISTDIR}/go-cache/${CATEGORY}/${PN}"
-	local modcache_path_actual="${EDISTDIR}/go-modcache/${CATEGORY}/${PN}"
-	export GOCACHE="${cache_path_actual}"
-	export GOMODCACHE="${modcache_path_actual}"
-	addwrite "${EDISTDIR}"
-
-	mkdir -p "${cache_path_actual}"
-	addwrite "${cache_path_actual}"
-
-	mkdir -p "${modcache_path_actual}"
-	addwrite "${modcache_path_actual}"
-	go env
-}
-
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
 	else
-		_setup_go_offline_cache
 		unpack ${A}
 	fi
 }
@@ -331,7 +314,7 @@ src_prepare() {
 
 
 src_compile() {
-	_setup_go_offline_cache
+	go-offline-cache_setup
 	local go_tags=()
 	use debug && go_tags+=( "debug" )
 	use p2p && go_tags+=( "p2p" )
