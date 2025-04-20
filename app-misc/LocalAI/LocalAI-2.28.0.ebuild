@@ -5118,7 +5118,7 @@ einfo "Replace EGO_SUM contents with the following:"
 # ebuild to avoid that error.
 
 # The reason why the argument list is too long is that there are too many links.
-# The too many link issue is connected to too many features or too many
+# The too many link issue is connected to feature bloat or too many
 # testing packages.
 
 _go-module_src_unpack() {
