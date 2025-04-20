@@ -5199,7 +5199,19 @@ einfo "Called _go-module_src_unpack"
 			#EGO_SUM_SRC_URI+=" ${_uri} -> ${_distfile}${newline}"
 			#_GOMODULE_GOSUM_REVERSE_MAP["${_distfile}"]="${_reluri}"
 
-			wget -O "${EDISTDIR}/${_distfile}${newline}" "${_uri}"
+			if [[ -e "${EDISTDIR}/${_distfile}" ]] ; then
+				continue
+			fi
+
+			# Download must be atomic.
+			if [[ -e "${EDISTDIR}/${_distfile}.__download__" ]] ; then
+				rm -f "${EDISTDIR}/${_distfile}.__download__"
+			fi
+			wget -O "${EDISTDIR}/${_distfile}.__download__" "${_uri}" || die
+			if ! [[ -e "${EDISTDIR}/${_distfile}" ]] ; then
+				mv "${EDISTDIR}/${_distfile}.__download__" "${EDISTDIR}/${_distfile}" || die
+			fi
+			# TODO generate/verify integrity
 		done
 	done
 
