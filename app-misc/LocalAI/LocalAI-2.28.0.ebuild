@@ -271,6 +271,8 @@ _setup_go_offline_cache() {
 	addwrite "${EDISTDIR}/go-cache/${CATEGORY}/${PN}"
 	mkdir -p "${HOME}/.cache"
 	ln -s "${EDISTDIR}/go-cache/${CATEGORY}/${PN}" "${HOME}/.cache/go-build"
+	local d=$(go env GOCACHE)
+einfo "Default GOCACHE:  ${d}"
 }
 
 src_unpack() {
