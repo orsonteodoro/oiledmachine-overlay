@@ -5238,7 +5238,8 @@ einfo "Called _go-module_src_unpack"
 }
 
 _go-module_gen_manifest() {
-einfo "Copy contents to ${FILESDIR}/${PV}/Manifest"
+einfo "Generating go module Manifest..."
+	rm -f "${T}/Manifest"
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	cd "${EDISTDIR}" || die
 
@@ -5295,13 +5296,15 @@ einfo "Copy contents to ${FILESDIR}/${PV}/Manifest"
 			local size=$(stat -c "%s" "${EDISTDIR}/${_distfile}")
 			local blake2b_fingerprint=$(rhash --blake2b "${EDISTDIR}/${_distfile}" | cut -f 1 -d " ")
 			local sha512_fingerprint=$(rhash --sha512 "${EDISTDIR}/${_distfile}" | cut -f 1 -d " ")
-			echo "DIST ${_distfile} ${size} BLAKE2B ${blake2b_fingerprint} SHA512 ${sha512_fingerprint}"
+			echo "DIST ${_distfile} ${size} BLAKE2B ${blake2b_fingerprint} SHA512 ${sha512_fingerprint}" >> "${T}/Manifest"
 		done
 	done
+einfo "Copy ${T}/Manifest to <overlay-dir>/${CATEGORY}/${PN}/files/${PV}/Manifest"
 	die
 }
 
 _go-module_verify_manifest() {
+einfo "Verifying go module integrities..."
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 	cd "${EDISTDIR}" || die
 
@@ -5358,8 +5361,12 @@ _go-module_verify_manifest() {
 			local size=$(stat -c "%s" "${EDISTDIR}/${_distfile}")
 			local blake2b_fingerprint=$(rhash --blake2b "${EDISTDIR}/${_distfile}" | cut -f 1 -d " ")
 			local sha512_fingerprint=$(rhash --sha512 "${EDISTDIR}/${_distfile}" | cut -f 1 -d " ")
-			grep -e "DIST ${_distfile} ${size} BLAKE2B ${blake2b_fingerprint} SHA512 ${sha512_fingerprint}" "${FILESDIR}/${PV}/Manifest" \
-				|| die "File integrity mismatch for ${EDISTDIR}/${_distfile}.  Delete the file and try again."
+			if grep -q -e "DIST ${_distfile} ${size} BLAKE2B ${blake2b_fingerprint} SHA512 ${sha512_fingerprint}" "${FILESDIR}/${PV}/Manifest" ; then
+einfo "${_distfile} BLAKE2B SHA512 size ;-)"
+			else
+eerror "File integrity mismatch for ${EDISTDIR}/${_distfile}.  Delete the file and try again."
+				die
+			fi
 		done
 	done
 }
@@ -5384,6 +5391,10 @@ einfo "Done unpack"
 		else
 			#go-module_src_unpack
 			_go-module_src_unpack
+			if ! [[ -e "${FILESDIR}/${PV}/Manifest" ]] ; then
+				_go-module_gen_manifest
+			fi
+			_go-module_verify_manifest
 		fi
 	fi
 }
