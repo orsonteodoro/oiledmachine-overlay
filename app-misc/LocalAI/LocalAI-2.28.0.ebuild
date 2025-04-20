@@ -5238,23 +5238,11 @@ einfo "Called _go-module_src_unpack"
 }
 
 _go-module_gen_manifest() {
-einfo "Copy to ${FILESDIR}/${PV}/Manifest"
-	# From go-module.eclass
-
+einfo "Copy contents to ${FILESDIR}/${PV}/Manifest"
 	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
-	mkdir -p "${EDISTDIR}"
 	cd "${EDISTDIR}" || die
-	addwrite "${EDISTDIR}"
 
 	local line exts
-	# For tracking go.sum errors \
-	local error_in_gosum=0
-	local -a gosum_errorlines
-	# Used make SRC_URI easier to read \
-	local newline=$'\n'
-
-	# Use only this server to avoid missing packages.
-	__GOMODULE_GOPROXY_BASEURI="https://proxy.golang.org/"
 
 	# Now parse EGO_SUM
 	for line in "${_EGO_SUM[@]}"; do
@@ -5266,12 +5254,6 @@ einfo "Copy to ${FILESDIR}/${PV}/Manifest"
 		# Split 'v0.3.0/go.mod' into 'v0.3.0' and '/go.mod'
 		# It might NOT have the trailing /go.mod
 		IFS=/ read -r version modfile x <<<"${version_modfile}"
-		# Reject multiple slashes
-		if [[ -n ${x} ]]; then
-			error_in_gosum=1
-			gosum_errorlines+=( "Bad version: ${version_modfile}" )
-			continue
-		fi
 
 		# The modfile variable should be either empty or '/go.mod'
 		# There is a chance that upstream Go might add something else here in
@@ -5284,15 +5266,7 @@ einfo "Copy to ${FILESDIR}/${PV}/Manifest"
 		case "${modfile}" in
 			'') exts=( zip ) ;;
 			'go.mod'|'/go.mod') exts=( mod ) ;;
-			*) errormsg="Unknown modfile: line='${line}', modfile='${modfile}'" ;;
 		esac
-
-		# If it was a bad entry, restart the loop
-		if [[ -n ${errormsg} ]]; then
-			error_in_gosum=1
-			gosum_errorlines+=( "${errormsg} line='${line}', modfile='${modfile}'" )
-			continue
-		fi
 
 		# Encode the name(path) of a Golang module in the format expected by Goproxy.
 		# Upper letters are replaced by their lowercase version with a '!' prefix.
@@ -5314,44 +5288,80 @@ einfo "Copy to ${FILESDIR}/${PV}/Manifest"
 		for _ext in "${exts[@]}" ; do
 			# Relative URI within a GOPROXY for a file
 			_reluri="${_dir}/@v/${version}.${_ext}"
-			# SRC_URI: LHS entry
-			_uri="${__GOMODULE_GOPROXY_BASEURI}/${_reluri}"
-#			_uri="mirror://goproxy/${_reluri}"
 			# SRC_URI: RHS entry, encode any slash in the path as
 			# %2F in the filename
 			_distfile="${_reluri//\//%2F}"
-
-			#EGO_SUM_SRC_URI+=" ${_uri} -> ${_distfile}${newline}"
-			#_GOMODULE_GOSUM_REVERSE_MAP["${_distfile}"]="${_reluri}"
-
-			if [[ -e "${EDISTDIR}/${_distfile}" ]] ; then
-				continue
-			fi
 
 			local size=$(stat -c "%s" "${EDISTDIR}/${_distfile}")
 			local blake2b_fingerprint=$(rhash --blake2b "${EDISTDIR}/${_distfile}" | cut -f 1 -d " ")
 			local sha512_fingerprint=$(rhash --sha512 "${EDISTDIR}/${_distfile}" | cut -f 1 -d " ")
 			echo "DIST ${_distfile} ${size} BLAKE2B ${blake2b_fingerprint} SHA512 ${sha512_fingerprint}"
-
-			# The downloaded file must be atomic.
-			if [[ -e "${EDISTDIR}/${_distfile}.__download__" ]] ; then
-				rm -f "${EDISTDIR}/${_distfile}.__download__"
-			fi
-			wget -O "${EDISTDIR}/${_distfile}.__download__" "${_uri}" || die
-			if ! [[ -e "${EDISTDIR}/${_distfile}" ]] ; then
-				mv "${EDISTDIR}/${_distfile}.__download__" "${EDISTDIR}/${_distfile}" || die
-			fi
-			# TODO generate/verify integrity
 		done
 	done
+	die
+}
 
-	if [[ ${error_in_gosum} != 0 ]]; then
-		eerror "Trailing information in EGO_SUM in ${P}.ebuild"
-		for line in "${gosum_errorlines[@]}" ; do
-			eerror "${line}"
+_go-module_verify_manifest() {
+	local EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
+	cd "${EDISTDIR}" || die
+
+	local line exts
+
+	# Now parse EGO_SUM
+	for line in "${_EGO_SUM[@]}"; do
+		local module version modfile version_modfile kvs x
+		read -r module version_modfile kvs <<< "${line}"
+		# kvs contains the hash and may contain other data from
+		# upstream in the future. We do not currently use any of this data.
+
+		# Split 'v0.3.0/go.mod' into 'v0.3.0' and '/go.mod'
+		# It might NOT have the trailing /go.mod
+		IFS=/ read -r version modfile x <<<"${version_modfile}"
+
+		# The modfile variable should be either empty or '/go.mod'
+		# There is a chance that upstream Go might add something else here in
+		# the future, and we should be prepared to capture it.
+		# The .info files do not need to be downloaded, they will be created
+		# based on the .mod file.
+		# See https://github.com/golang/go/issues/35922#issuecomment-584824275
+		exts=()
+		local errormsg=''
+		case "${modfile}" in
+			'') exts=( zip ) ;;
+			'go.mod'|'/go.mod') exts=( mod ) ;;
+		esac
+
+		# Encode the name(path) of a Golang module in the format expected by Goproxy.
+		# Upper letters are replaced by their lowercase version with a '!' prefix.
+		# The transformed result of 'module' is stored in the '_dir' variable.
+		#
+		## Python:
+		# return re.sub('([A-Z]{1})', r'!\1', s).lower()
+		## Sed:
+		## This uses GNU Sed extension \l to downcase the match
+		# echo "${module}" |sed 's,[A-Z],!\l&,g'
+		local re _dir lower
+		_dir="${module}"
+		re='(.*)([A-Z])(.*)'
+		while [[ ${_dir} =~ ${re} ]]; do
+			lower='!'"${BASH_REMATCH[2],}"
+			_dir="${BASH_REMATCH[1]}${lower}${BASH_REMATCH[3]}"
 		done
-		die "Invalid EGO_SUM format"
-	fi
+
+		for _ext in "${exts[@]}" ; do
+			# Relative URI within a GOPROXY for a file
+			_reluri="${_dir}/@v/${version}.${_ext}"
+			# SRC_URI: RHS entry, encode any slash in the path as
+			# %2F in the filename
+			_distfile="${_reluri//\//%2F}"
+
+			local size=$(stat -c "%s" "${EDISTDIR}/${_distfile}")
+			local blake2b_fingerprint=$(rhash --blake2b "${EDISTDIR}/${_distfile}" | cut -f 1 -d " ")
+			local sha512_fingerprint=$(rhash --sha512 "${EDISTDIR}/${_distfile}" | cut -f 1 -d " ")
+			grep -e "DIST ${_distfile} ${size} BLAKE2B ${blake2b_fingerprint} SHA512 ${sha512_fingerprint}" "${FILESDIR}/${PV}/Manifest" \
+				|| die "File integrity mismatch for ${EDISTDIR}/${_distfile}.  Delete the file and try again."
+		done
+	done
 }
 
 src_unpack() {
