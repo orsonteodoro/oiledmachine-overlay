@@ -5426,12 +5426,14 @@ src_prepare() {
 		cat \
 			"${DISTDIR}/onnxruntime-linux-x64-${ONNXRUNTIME_PV}.tgz" \
 			> \
-			"${S}/sources/onnxruntime/onnxruntime-linux-x64-${ONNXRUNTIME_PV}.tgz"
+			"${S}/sources/onnxruntime/onnxruntime-linux-x64-${ONNXRUNTIME_PV}.tgz" \
+			|| die
 	elif [[ "${ARCH}" == "arm64" ]] ; then
 		cat \
 			"${DISTDIR}/onnxruntime-linux-aarch64-${ONNXRUNTIME_PV}.tgz" \
 			> \
-			"${S}/sources/onnxruntime/onnxruntime-linux-aarch64-${ONNXRUNTIME_PV}.tgz"
+			"${S}/sources/onnxruntime/onnxruntime-linux-aarch64-${ONNXRUNTIME_PV}.tgz" \
+			|| die
 	fi
 }
 
