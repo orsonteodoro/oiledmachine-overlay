@@ -5128,7 +5128,7 @@ _get_fastest_go_proxy() {
 	local results=""
 	local server
 	for server in ${servers[@]} ; do
-		local lag=$(ping -c 1 "${server}" \
+		local lag=$(ping -c 1 "${server}" 2>/dev/null \
 			| grep "time=" \
 			| grep -E -o "[0-9.]+ ms" \
 			| cut -f 1 -d " ")
