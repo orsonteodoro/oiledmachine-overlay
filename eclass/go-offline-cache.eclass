@@ -24,6 +24,12 @@ eerror
 eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
 eerror "env to be able to download go micropackages."
 eerror
+eerror "Contents of /etc/portage/env/disable-sandbox.conf:"
+eerror "FEATURES=\"\${FEATURES} -network-sandbox\""
+eerror
+eerror "Contents of /etc/portage/package.env:"
+eerror "${CATEGORY}/${PN} disable-sandbox.conf"
+eerror
 		die
 	fi
 }
