@@ -247,7 +247,6 @@ ewarn
 }
 
 pkg_setup() {
-ewarn "The ${CATEGORY}/${PN} ebuild is still in development."
 	python_setup
 	npm_pkg_setup
 	check_virtual_mem
@@ -447,3 +446,4 @@ einfo "OPEN_WEBUI_URI:  ${open_webui_uri}"
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (0.5.20, 20250419)
 # UI - passed
 # Ollama - passed
+# Web RAG - testing
