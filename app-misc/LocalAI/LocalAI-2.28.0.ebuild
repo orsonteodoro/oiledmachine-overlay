@@ -5116,6 +5116,11 @@ einfo "Replace EGO_SUM contents with the following:"
 # Avoid "argument list too long" when downloading from SRC_URI.  It is a portage
 # bug.  We will bypass SRC_URI and download line by line as if it were a live
 # ebuild to avoid that error.
+
+# The reason why the argument list is too long is that there are too many links.
+# The too many link issue is connected to too many features or too many
+# testing packages.
+
 _go-module_src_unpack() {
 einfo "Called _go-module_src_unpack"
 	# From go-module.eclass
