@@ -30,11 +30,24 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1101
 )
 CPU_FLAGS_X86=(
+	cpu_flags_x86_amx_bf16
+	cpu_flags_x86_amx_int8
+	cpu_flags_x86_amx_tile
 	cpu_flags_x86_avx
 	cpu_flags_x86_avx2
+	cpu_flags_x86_avx512_vbmi
+	cpu_flags_x86_avx512_vnni
+	cpu_flags_x86_avx512_bf16
+	cpu_flags_x86_avx512bw
+	cpu_flags_x86_avx512cd
+	cpu_flags_x86_avx512dq
+	cpu_flags_x86_avx512f
+	cpu_flags_x86_avx512vl
+	cpu_flags_x86_avx_vnni
+	cpu_flags_x86_bmi2
 	cpu_flags_x86_f16c
 	cpu_flags_x86_fma
-	cpu_flags_x86_avx512f
+	cpu_flags_x86_sse4_2
 )
 #
 # To update use this run `ebuild ollama-0.4.2.ebuild digest clean unpack`
@@ -147,6 +160,100 @@ REQUIRED_USE="
 		rocm
 		sycl-f16
 		sycl-f32
+	)
+	amd64? (
+		^^ (
+			native
+			cpu_flags_x86_sse4_2
+		)
+	)
+	cpu_flags_x86_amx_bf16? (
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+		cpu_flags_x86_f16c
+	)
+	cpu_flags_x86_amx_int8? (
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+		cpu_flags_x86_f16c
+	)
+	cpu_flags_x86_amx_tile? (
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+		cpu_flags_x86_f16c
+	)
+	cpu_flags_x86_avx? (
+		cpu_flags_x86_sse4_2
+	)
+	cpu_flags_x86_avx2? (
+		cpu_flags_x86_avx
+	)
+	cpu_flags_x86_avx512bw? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512f
+	)
+	cpu_flags_x86_avx512cd? (
+		cpu_flags_x86_avx2
+	)
+	cpu_flags_x86_avx512dq? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512f
+	)
+	cpu_flags_x86_avx512f? (
+		cpu_flags_x86_avx2
+	)
+	cpu_flags_x86_avx512vl? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512f
+	)
+	cpu_flags_x86_avx512_bf16? (
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+		cpu_flags_x86_avx512_vnni
+	)
+	cpu_flags_x86_avx512_vbmi? (
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+		cpu_flags_x86_f16c
+	)
+	cpu_flags_x86_avx512_vnni? (
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+		cpu_flags_x86_f16c
+	)
+	cpu_flags_x86_avx_vnni? (
+		cpu_flags_x86_avx
+		cpu_flags_x86_avx2
+		cpu_flags_x86_bmi2
+	)
+	cpu_flags_x86_bmi2? (
+		cpu_flags_x86_sse4_2
+	)
+	cpu_flags_x86_f16c? (
+		cpu_flags_x86_avx
+		cpu_flags_x86_sse4_2
+	)
+	cpu_flags_x86_fma? (
+		cpu_flags_x86_avx
+		cpu_flags_x86_sse4_2
 	)
 	rocm? (
 		|| (
@@ -366,8 +473,16 @@ src_compile() {
 	fi
 
 	local cmake_args=(
-		-DGGML_AVX512=$(usex cpu_flags_x86_avx512f "ON" "OFF")
+		-DGGML_AMX_BF16=$(usex cpu_flags_x86_amx_bf16)
+		-DGGML_AMX_INT8=$(usex cpu_flags_x86_amx_int8)
+		-DGGML_AMX_TILE=$(usex cpu_flags_x86_amx_tile)
+		-DGGML_AVX_VNNI=$(usex cpu_flags_x86_avx_vnni)
 		-DGGML_AVX2=$(usex cpu_flags_x86_avx2 "ON" "OFF")
+		-DGGML_AVX512=$(usex cpu_flags_x86_avx512f "ON" "OFF")
+		-DGGML_AVX512_BF16=$(usex cpu_flags_x86_avx512_bf16)
+		-DGGML_AVX512_VBMI=$(usex cpu_flags_x86_avx512_vbmi)
+		-DGGML_AVX512_VNNI=$(usex cpu_flags_x86_avx512_vnni)
+		-DGGML_BMI2=$(usex cpu_flags_x86_bmi2)
 		-DGGML_FMA=$(usex cpu_flags_x86_fma "ON" "OFF")
 		-DGGML_F16C=$(usex cpu_flags_x86_f16c "ON" "OFF")
 		-DGGML_NATIVE=$(usex native "ON" "OFF")

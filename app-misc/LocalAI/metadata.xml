@@ -46,6 +46,9 @@
     <flag name="cuda">
       Support NVIDIA GPU accelerated BLAS.
     </flag>
+    <flag name="native">
+      Build with -march=native.  Disabling requires SSE4.2 for ARCH=amd64.
+    </flag>
     <flag name="openblas">
       Support CPU accelerated BLAS.
     </flag>
