@@ -107,6 +107,14 @@ cflags-hardened_append() {
 	if [[ "${CFLAGS_HARDENED_LEVEL}" == "2" && "${CFLAGS_HARDENED_NX_VERSUS_CF}" =~ ("both"|"cf") ]] && tc-check-min_ver gcc "14.2" ; then
 einfo "Appending -fhardened"
 einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with local arrays or local pointers)"
+		if [[ "${CFLAGS}" =~ "-O0" ]] ; then
+			replace-flags "-O0" "-O1"
+			CFLAGS_HARDENED_CFLAGS+=" -O1"
+		fi
+		if [[ "${CXXFLAGS}" =~ "-O0" ]] ; then
+			replace-flags "-O0" "-O1"
+			CFLAGS_HARDENED_CFLAGS+=" -O1"
+		fi
 		filter-flags \
 			"-fstack-clash-protection" \
 			"-fstack-protector" \
@@ -121,12 +129,6 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 		filter-flags "-fhardened"
 		append-cflags "-fhardened"
 		append-cxxflags "-fhardened"
-		if [[ "${CFLAGS}" =~ "-O0" ]] ; then
-			CFLAGS_HARDENED_CFLAGS+=" -O1"
-		fi
-		if [[ "${CXXFLAGS}" =~ "-O0" ]] ; then
-			CFLAGS_HARDENED_CFLAGS+=" -O1"
-		fi
 		CFLAGS_HARDENED_CFLAGS+=" -fhardened"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fhardened"
 		CFLAGS_HARDENED_LDFLAGS=""
@@ -136,7 +138,13 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 			CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,noexecstack"
 		fi
 	else
-		replace-flags '-O0' '-O1'
+		replace-flags "-O0" "-O1"
+		if [[ "${CFLAGS}" =~ "-O0" ]] ; then
+			CFLAGS_HARDENED_CFLAGS+=" -O1"
+		fi
+		if [[ "${CXXFLAGS}" =~ "-O0" ]] ; then
+			CFLAGS_HARDENED_CFLAGS+=" -O1"
+		fi
 		if \
 			(( \
 				   ${CFLAGS_HARDENED_DAEMON:-0} == 1 \
@@ -151,12 +159,6 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 			append-cxxflags "-fstack-clash-protection"
 			CFLAGS_HARDENED_CFLAGS+=" -fstack-clash-protection"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fstack-clash-protection"
-		fi
-		if [[ "${CFLAGS}" =~ "-O0" ]] ; then
-			CFLAGS_HARDENED_CFLAGS+=" -O1"
-		fi
-		if [[ "${CXXFLAGS}" =~ "-O0" ]] ; then
-			CFLAGS_HARDENED_CFLAGS+=" -O1"
 		fi
 		if [[ "${CFLAGS_HARDENED_LEVEL}" == "1" ]] && ! tc-enables-ssp ; then
 einfo "Standard SSP hardening (>= 8 byte buffers, *alloc functions)"
