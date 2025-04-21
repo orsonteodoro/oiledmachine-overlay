@@ -12,6 +12,8 @@ EAPI=8
 # TODO package:
 # upx-ucl
 
+MY_PN2="local-ai"
+
 inherit hip-versions
 
 AMDGPU_TARGETS_COMPAT=(
@@ -29,7 +31,8 @@ AMDGPU_TARGETS_COMPAT=(
 )
 CPU_FLAGS_X86=(
 	cpu_flags_x86_avx
-	cpu_flags_x86_fc16
+	cpu_flags_x86_avx2
+	cpu_flags_x86_f16c
 	cpu_flags_x86_fma
 	cpu_flags_x86_avx512f
 )
@@ -60,7 +63,7 @@ PIPER_PHONEMIZE_COMMIT="fccd4f335aa68ac0b72600822f34d84363daa2bf" # For go-piper
 STABLE_DIFFUSION_CPP_COMMIT="53e3b17eb3d0b5760ced06a1f98320b68b34aaae"
 WHISPER_CPP_COMMIT="6266a9f9e56a5b925e9892acf650f3eb1245814d"
 
-inherit dep-prepare edo go-download-cache python-single-r1
+inherit dep-prepare desktop edo go-download-cache python-single-r1 xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -71,7 +74,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	KEYWORDS="~amd64"
+	#KEYWORDS="~amd64"
 	S="${WORKDIR}/${PN}-${PV}"
 	#go-module_set_globals
 
@@ -129,10 +132,10 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 ${CPU_FLAGS_X86[@]}
-ci cuda debug devcontainer native openblas opencl p2p rocm sycl-f16 sycl-f32 tts vulkan
+ci cuda debug devcontainer native openblas opencl openrc p2p rocm sycl-f16
+sycl-f32 systemd tts vulkan
 "
 REQUIRED_USE="
-	$()
 	!ci
 	!devcontainer
 	?? (
@@ -146,6 +149,10 @@ REQUIRED_USE="
 		|| (
 			${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
 		)
+	)
+	|| (
+		openrc
+		systemd
 	)
 "
 gen_grpc_rdepend() {
@@ -179,6 +186,9 @@ RDEPEND+="
 		media-video/ffmpeg:=
 	)
 	>=app-accessibility/espeak-ng-1.51
+	acct-group/${PN}
+	acct-user/${PN}
+	x11-misc/xdg-utils
 	cuda? (
 		=dev-util/nvidia-cuda-toolkit-12*
 		dev-util/nvidia-cuda-toolkit:=
@@ -215,6 +225,7 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-build/cmake-3.26.4
 	>=dev-lang/go-1.22.6
+	app-arch/upx
 	app-crypt/rhash
 	net-misc/iputils
 	net-misc/wget
@@ -367,11 +378,126 @@ ewarn "Q/A:  Remove 01-llava.patch conditional block"
 		build
 }
 
+sanitize_file_permissions() {
+einfo "Sanitizing file/folder permissions"
+	IFS=$'\n'
+	local path
+	for path in $(find "${ED}") ; do
+		chown root:root "${path}" || die
+		if file "${path}" | grep -q -e "directory" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "ELF .* shared object" ; then
+			chmod 0755 "${path}" || die
+		elif file "${path}" | grep -q -e "symbolic link" ; then
+			:
+		else
+			chmod 0644 "${path}" || die
+		fi
+	done
+	IFS=$' \t\n'
+}
+
+install_init_services() {
+	sed \
+		-e "s|@EPYTHON@|${EPYTHON}|g" \
+		"${FILESDIR}/${MY_PN2}-start-server" \
+		> \
+		"${T}/${MY_PN2}-start-server" \
+		|| die
+	exeinto "/usr/bin"
+	doexe "${T}/${MY_PN2}-start-server"
+
+	# From https://github.com/mudler/LocalAI/blob/v2.28.0/.env
+	insinto "/etc/conf.d"
+	sed \
+		-e "s|@LOCAL_AI_HOST@|${local_ai_hostname}|g" \
+		-e "s|@LOCAL_AI_PORT@|${local_ai_port}|g" \
+		-e "s|@GO_TAGS@|${go_tags}|g"
+		"${FILESDIR}/${MY_PN2}.conf" \
+		> \
+		"${T}/${MY_PN2}.conf" \
+		|| die
+	if use cuda ; then
+		sed -i \
+			-e "s|@BUILD_TYPE@|cublas|g" \
+			-e "s|# export BUILD_TYPE|export BUILD_TYPE|g" \
+			"${T}/${MY_PN2}.conf" \
+			|| die
+	elif use openblas ; then
+		sed -i \
+			-e "s|@BUILD_TYPE@|openblas|g" \
+			-e "s|# export BUILD_TYPE|export BUILD_TYPE|g" \
+			"${T}/${MY_PN2}.conf" \
+			|| die
+	elif use opencl ; then
+		sed -i \
+			-e "s|@BUILD_TYPE@|clblas|g" \
+			-e "s|# export BUILD_TYPE|export BUILD_TYPE|g" \
+			"${T}/${MY_PN2}.conf" \
+			|| die
+	fi
+	doins "${T}/${MY_PN2}.conf"
+
+	if use openrc ; then
+		exeinto "/etc/init.d"
+		newexe "${FILESDIR}/${MY_PN2}.openrc" "${MY_PN2}"
+	fi
+	if use systemd ; then
+		insinto "/usr/lib/systemd/system"
+		newins "${FILESDIR}/${MY_PN2}.systemd" "${MY_PN2}.service"
+	fi
+}
+
 src_install() {
+	local local_ai_hostname=${LOCAL_AI_HOSTNAME:-"127.0.0.1"}
+	local local_ai_port=${LOCAL_AI_PORT:-8080}
+
+einfo "LOCAL_AI_HOSTNAME:  ${local_ai_hostname} (user-definable, per-package environment variable)"
+einfo "LOCAL_AI_PORT:  ${local_ai_port} (user-definable, per-package environment variable)"
+
+	local local_ai_uri=${LOCAL_AI_URI:-"http://${local_ai_hostname}:${local_ai_port}"}
+einfo "LOCAL_AI_URI:  ${local_ai_uri}"
+
 	docinto "licenses"
 	dodoc "LICENSE.md"
-	exeinto "/usr/bin"
+	local dest="/opt/local-ai"
+
+	exeinto "${dest}"
 	doexe "local-ai"
+
+	insinto "${dest}"
+	doins -r "sources"
+	doins -r "backend-assets"
+
+	keepdir "${dest}/models"
+
+
+	install_init_services
+
+	if [[ -e "sources/go-piper/piper-phonemize/pi/lib/" ]] ; then
+		exeinto "${dest}"
+		doexe "sources/go-piper/piper-phonemize/pi/lib/"*
+	fi
+
+#	newicon \
+#		"static/favicon.png" \
+#		"${MY_PN2}.png"
+
+	make_desktop_entry \
+		"${MY_PN2}" \
+		"${PN}" \
+		"${MY_PN2}.png" \
+		"Education;ArtificialIntelligence"
+
+	keepdir "/var/lib/${MY_PN2}/"
+	keepdir "/var/lib/${MY_PN2}/generated/images"
+	keepdir "/var/lib/${MY_PN2}/huggingface/hub"
+	keepdir "/var/lib/${MY_PN2}/models"
+
+	fowners -R "${MY_PN2}:${MY_PN2}" "/var/lib/${MY_PN2}"
+
+	sanitize_file_permissions
 }
 
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  N/A

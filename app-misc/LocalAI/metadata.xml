@@ -6,6 +6,29 @@
     <email>orsonteodoro@hotmail.com</email>
     <name>Orson Teodoro</name>
   </maintainer>
+  <!--
+
+    Build time environment variables:
+
+    LOCAL_AI_HOSTNAME - hostname
+    Default:  127.0.0.1
+
+    LOCAL_AI_PORT - port to connect to the web interface
+    Default:  8080
+
+    LOCAL_AI_URI - hostname to use
+    Default:  http://127.0.0.1:8080
+
+    Sample /etc/portage/env/local-ai.conf:
+
+    LOCAL_AI_HOSTNAME="127.0.0.1"
+    LOCAL_AI_PORT=8080
+    LOCAL_AI_URI="http://127.0.0.1:8080"
+
+    Sample /etc/portage/package.env:
+    dev-python/local-ai local-ai.conf
+
+  -->
   <upstream>
     <bugs-to>https://github.com/mudler/LocalAI/issues</bugs-to>
     <remote-id type="github">mudler/LocalAI</remote-id>

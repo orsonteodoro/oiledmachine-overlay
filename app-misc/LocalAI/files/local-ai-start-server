@@ -1,0 +1,7 @@
+#!/bin/bash
+main() {
+	cd "/opt/local-ai"
+	source "/etc/local-ai/local-ai.conf"
+	./local-ai
+}
+main
