@@ -50,6 +50,8 @@ ROCM_SLOTS=(
 )
 
 BARK_CPP_PV="1.0.0"
+CFLAGS_HARDENED_APPEND_GOFLAGS=1
+CFLAGS_HARDENED_SERVER=1
 ENCODEC_CPP_COMMIT="05513e7f03d8d349734a2b7a47b2e9921f0adeb0" # For bark.cpp
 ESPEAK_NG_COMMIT="8593723f10cfd9befd50de447f14bf0a9d2a14a4" # For go-piper
 GGML_COMMIT_1="aa00e1676417d8007dbaa47d2ee1a6e06c60d546" # For bark.cpp/encodec.cpp
@@ -63,7 +65,8 @@ PIPER_PHONEMIZE_COMMIT="fccd4f335aa68ac0b72600822f34d84363daa2bf" # For go-piper
 STABLE_DIFFUSION_CPP_COMMIT="53e3b17eb3d0b5760ced06a1f98320b68b34aaae"
 WHISPER_CPP_COMMIT="6266a9f9e56a5b925e9892acf650f3eb1245814d"
 
-inherit dep-prepare desktop edo go-download-cache python-single-r1 xdg
+inherit cflags-hardened dep-prepare desktop edo flag-o-matic go-download-cache
+inherit python-single-r1 toolchain-funcs xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -331,6 +334,10 @@ src_prepare() {
 	fi
 }
 
+src_configure() {
+	cflags-hardened_append
+}
+
 src_compile() {
 	go-download-cache_setup
 	local go_tags=()
@@ -464,7 +471,7 @@ einfo "LOCAL_AI_PORT:  ${local_ai_port} (user-definable, per-package environment
 einfo "LOCAL_AI_URI:  ${local_ai_uri}"
 
 	docinto "licenses"
-	dodoc "LICENSE.md"
+	dodoc "LICENSE"
 	local dest="/opt/local-ai"
 
 	exeinto "${dest}"
