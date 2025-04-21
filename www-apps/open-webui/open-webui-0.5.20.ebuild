@@ -442,6 +442,12 @@ einfo "OPEN_WEBUI_URI:  ${open_webui_uri}"
 	fowners -R "root:root" "/usr/lib/${EPYTHON}/site-packages/open_webui/backend/data"
 }
 
+pkg_postinst() {
+ewarn "The Web Search for RAG is not default on."
+ewarn "To set Web Search for RAG go to:  Settings > Admin Settings > Web Search"
+ewarn "Details to set it up can be found at https://docs.openwebui.com/category/-web-search"
+}
+
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (0.5.20, 20250419)
 # UI - passed
