@@ -5,7 +5,7 @@
 # @ECLASS: cflags-hardened.eclass
 # @MAINTAINER:
 # orsonteodoro@hotmail.com
-# @SUPPORTED_EAPIS: 6 7 8
+# @SUPPORTED_EAPIS: 7 8
 # @BLURB: Additional functions to simplify hardening
 # @DESCRIPTION:
 # This eclass can be used to easily deploy harden flags for network/server
