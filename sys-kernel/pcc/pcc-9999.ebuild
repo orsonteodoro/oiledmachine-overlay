@@ -232,8 +232,6 @@ _src_compile_one() {
 		| cut -f 1 -d " " \
 		| cut -f 2 -d "=" \
 		| sed -e "s/[\"|']//g")
-	strip-unsupported-flags
-	einfo "CC: ${CC}"
 
 einfo "PATH (before):  ${PATH}"
 	if tc-is-gcc ; then
@@ -256,6 +254,8 @@ einfo "PATH (before):  ${PATH}"
 			| tr "\n" ":")
 	fi
 einfo "PATH (after):  ${PATH}"
+	strip-unsupported-flags
+	einfo "CC: ${CC}"
 	gcc --version || die
 
 	local modargs=(
