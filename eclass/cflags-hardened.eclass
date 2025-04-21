@@ -49,7 +49,7 @@ CFLAGS_HARDENED_LEVEL=${CFLAGS_HARDENED_LEVEL:-1}
 #
 # Acceptable values:
 #
-#   nx   - For LDFLAGS+=-Wl,-z,noexecstack
+#   nx   - For LDFLAGS+=-Wl,-z,noexecstack   (cannot be used with interpreters (e.g. JavaScript), nested functions with trampolines)
 #   cf   - For LDFLAGS+=-fcf-protection=full
 #   none - Do not apply any
 #   both - Apply both
