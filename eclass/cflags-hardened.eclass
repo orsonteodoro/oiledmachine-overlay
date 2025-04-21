@@ -16,8 +16,8 @@ case ${EAPI} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
-if [[ -z ${_CFLAGS_HARDEN_ECLASS} ]]; then
-_CFLAGS_HARDEND_ECLASS=1
+if [[ -z ${_CFLAGS_HARDENED_ECLASS} ]]; then
+_CFLAGS_HARDENED_ECLASS=1
 
 inherit flag-o-matic toolchain-funcs
 
