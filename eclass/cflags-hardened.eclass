@@ -38,10 +38,30 @@ inherit flag-o-matic toolchain-funcs
 #     Use cases:
 #     For DSS builds if test suite passed for this level
 CFLAGS_HARDENED_LEVEL=${CFLAGS_HARDENED_LEVEL:-1}
+CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_USER_LEVEL
 # @DESCRIPTION:
 # Same as above but the user can override the SSP level.
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_RETPOLINE
+# @DESCRIPTION:
+# Acceptable values:
+# 0 or unset - disable or ebuild can customize it
+# 1 - General case solution
+# If the CPU is not vulnerable, it will not apply the flag.
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_RETPOLINE_FLAVOR
+# @DESCRIPTION:
+# Controls retpoline protection versus speed tradeoff.
+# Acceptable values:  balanced, default, register, secure, secure-embedded, secure-lightweight, secure-realtime, secure-speed, testing
+# default is the same as secure without performance guarantees.
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_RETPOLINE_FLAVOR_USER
+# @DESCRIPTION:
+# Allows the user to override retpoline protection versus speed tradeoff.
+# Acceptable values:  balanced, default, register, secure, secure-embedded, secure-lightweight, secure-realtime, secure-speed, testing
+# default is the same as secure without performance guarantees.
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_APPEND_GOFLAGS
 # @DESCRIPTION:
@@ -63,8 +83,8 @@ CFLAGS_HARDENED_LEVEL=${CFLAGS_HARDENED_LEVEL:-1}
 # Valid values:
 #
 # ce (Code Execution)
-# dt (Data Tampering)
 # dos (Denial of Service)
+# dt (Data Tampering)
 # pe (Privilege Esclation)
 # id (Information Disclosure)
 #
@@ -81,11 +101,68 @@ CFLAGS_HARDENED_LEVEL=${CFLAGS_HARDENED_LEVEL:-1}
 # sensitive-data
 # scripting
 # server
-# web-browsers
-# web-servers
+# virtual-machine
+# web-browser
+# web-server
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_KERNEL
 
+# @FUNCTION: _cflags-hardened_append_clang_retpoline
+# @DESCRIPTION:
+# Apply retpoline flags for clang
+_cflags-hardened_append_clang_retpoline() {
+	tc-is-clang || return
+	if \
+		[[ \
+			   "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("balanced"|"default"|"portable") \
+			|| "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "secure" \
+		]] \
+	; then
+		append-flags $(test-flags-CC "-mretpoline-external-thunk")
+		CFLAGS_HARDENED_CFLAGS+=" -mretpoline-external-thunk"
+		CFLAGS_HARDENED_CXXFLAGS+=" -mretpoline-external-thunk"
+	fi
+}
+
+# @FUNCTION: _cflags-hardened_append_gcc_retpoline
+# @DESCRIPTION:
+# Apply retpoline flags for gcc
+_cflags-hardened_append_gcc_retpoline() {
+	tc-is-gcc || return
+	if [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "testing" ]] && test-flags-CC "-mfunction-return=keep" ; then
+	# No mitigation
+		append-flags $(test-flags-CC "-mfunction-return=keep")
+		CFLAGS_HARDENED_CFLAGS+=" -mfunction-return=keep"
+		CFLAGS_HARDENED_CXXFLAGS+=" -mfunction-return=keep"
+	elif [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "register" ]] && test-flags-CC "-mindirect-branch-register" ; then
+	# Full mitigation
+		append-flags $(test-flags-CC "-mindirect-branch-register")
+		CFLAGS_HARDENED_CFLAGS+=" -mfunction-return=keep"
+		CFLAGS_HARDENED_CXXFLAGS+=" -mfunction-return=keep"
+	elif \
+		[[ \
+			   "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("balanced"|"default"|"portable") \
+			|| "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "secure" \
+		]] \
+			&& \
+		test-flags-CC "-mfunction-return=thunk" \
+	; then
+	# Full mitigation but random performance between compiler vendors
+		append-flags $(test-flags-CC "-mfunction-return=thunk")
+		CFLAGS_HARDENED_CFLAGS+=" -mfunction-return=thunk"
+		CFLAGS_HARDENED_CXXFLAGS+=" -mfunction-return=thunk"
+	elif [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("secure-embedded"|"secure-lightweight") ]] && test-flags-CC "-mfunction-return=thunk-extern" ; then
+	# Full mitigation (deterministic)
+		append-flags $(test-flags-CC "-mfunction-return=thunk-extern")
+		CFLAGS_HARDENED_CFLAGS+=" -mfunction-return=thunk-extern"
+		CFLAGS_HARDENED_CXXFLAGS+=" -mfunction-return=thunk-extern"
+	elif [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("secure-realtime"|"secure-speed") ]] && test-flags-CC "-mfunction-return=thunk-inline" ; then
+	# Full mitigation (deterministic)
+		append-flags $(test-flags-CC "-mfunction-return=thunk-inline")
+		CFLAGS_HARDENED_CFLAGS+=" -mfunction-return=thunk-inline"
+		CFLAGS_HARDENED_CXXFLAGS+=" -mfunction-return=thunk-inline"
+	fi
+}
 
 # @FUNCTION: cflags-hardened_append
 # @DESCRIPTION:
@@ -109,7 +186,7 @@ cflags-hardened_append() {
 	if \
 		[[ "${CFLAGS_HARDENED_LEVEL}" == "2" ]] \
 			&& \
-		[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("admin-access"|"ce"|"daemon"|"dos"|"dss"|"dt"|"execution-integrity"|"extensions"|"id"|"kernel"|"multithreaded-confidential"|"pe"|"plugins"|"real-time-integrity"|"safety-critical"|"scripting"|"sensitive-data"|"server"|"web-servers") ]] \
+		[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("admin-access"|"ce"|"daemon"|"dos"|"dss"|"dt"|"execution-integrity"|"extensions"|"id"|"kernel"|"multithreaded-confidential"|"pe"|"plugins"|"real-time-integrity"|"safety-critical"|"sensitive-data"|"server") ]] \
 			&& \
 		tc-check-min_ver gcc "14.2" \
 	; then
@@ -139,13 +216,6 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 		CFLAGS_HARDENED_CFLAGS+=" -fhardened"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fhardened"
 		CFLAGS_HARDENED_LDFLAGS=""
-		if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("execution-integrity"|"scripting"|"sensitive-data"|"web-servers") ]] ; then
-			filter-flags "-Wa,--noexecstack"
-			filter-flags "-Wl,-z,noexecstack"
-			append-flags "-Wa,--noexecstack"
-			append-ldflags "-Wl,-z,noexecstack"
-			CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,noexecstack"
-		fi
 	else
 		replace-flags "-O0" "-O1"
 		if [[ "${CFLAGS}" =~ "-O0" ]] ; then
@@ -159,7 +229,13 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 				&&
 			test-flags-CC "-fstack-clash-protection" \
 		; then
-	# MC, DT, CE, DoS, EP
+	# MC, DT, CE, DoS, PE
+	# CE = Code Execution
+	# DoS = Denial of Service
+	# DT = Data Tampering
+	# ID = Information Disclosure
+	# MC = Memory Corruption
+	# PE = Privilege Execution
 			filter-flags "-fstack-clash-protection"
 			append-flags "-fstack-clash-protection"
 			CFLAGS_HARDENED_CFLAGS+=" -fstack-clash-protection"
@@ -202,21 +278,60 @@ einfo "All SSP hardening (All functions hardened)"
 					&&
 			test-flags-CC "-fcf-protection=full" \
 		; then
-	# MC, ID, PE, ACE
+	# MC, ID, PE, CE
 			filter-flags "-fcf-protection=*"
 			append-flags "-fcf-protection=full"
 			CFLAGS_HARDENED_CFLAGS+=" -fcf-protection=full"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fcf-protection=full"
 		fi
-		if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("ce"|"execution-integrity"|"scripting"|"sensitive-data"|"web-servers") ]] ; then
-	# ACE, DT/ID
-			filter-flags "-Wa,--noexecstack"
-			filter-flags "-Wl,-z,noexecstack"
-			append-flags "-Wa,--noexecstack"
-			append-ldflags "-Wl,-z,noexecstack"
-			CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,noexecstack"
+	fi
+
+	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("ce"|"execution-integrity"|"scripting"|"sensitive-data"|"web-server") ]] ; then
+	# CE, DT/ID
+		filter-flags "-Wa,--noexecstack"
+		filter-flags "-Wl,-z,noexecstack"
+		append-flags "-Wa,--noexecstack"
+		append-ldflags "-Wl,-z,noexecstack"
+		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,noexecstack"
+	fi
+	if [[ "${CFLAGS_HARDENED_RETPOLINE:-1}" == "1" && "${CFLAGS_HARDENED_USE_CASES}" =~ ("id"|"kernel") ]] ; then
+	# ID
+	# Spectre V2 mitigation Linux kernel case
+		# For GCC it uses
+		#   General case: -mindirect-branch=thunk-extern -mindirect-branch-register
+		#   vDSO case:    -mindirect-branch=thunk-inline -mindirect-branch-register
+		# For Clang it uses:
+		#   General case: -mretpoline-external-thunk -mindirect-branch-cs-prefix
+		#   vDSO case:    -mretpoline
+		:
+	elif [[ "${CFLAGS_HARDENED_RETPOLINE:-1}" == "1" && "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"id"|"scripting"|"sensitive-data"|"server"|"virtual-machine"|"web-browser") ]] ; then
+		:
+	# ID
+	# Spectre V2 mitigation general case
+		if which lscpu >/dev/null && lscpu | grep -q "Spectre v2.*Mitigation" ; then
+			filter-flags "-mretpoline"
+			append-flags "-mretpoline" # implies -mindirect-branch=thunk-extern
+			CFLAGS_HARDENED_CFLAGS+=" -mretpoline"
+			CFLAGS_HARDENED_CXXFLAGS+=" -mretpoline"
+			CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,retpolineplt"
+
+			if [[ -n "${CFLAGS_HARDENED_RETPOLINE_FLAVOR_USER}" ]] ; then
+				CFLAGS_HARDENED_RETPOLINE_FLAVOR="${CFLAGS_HARDENED_RETPOLINE_FLAVOR_USER}"
+			fi
+
+			filter-flags \
+				"-mretpoline-external-thunk" \
+				"-mfunction-return=keep" \
+				"-mindirect-branch-register" \
+				"-mfunction-return=thunk" \
+				"-mfunction-return=thunk-inline" \
+				"-mfunction-return=thunk-extern"
+
+			_cflags-hardened_append_gcc_retpoline
+			_cflags-hardened_append_clang_retpoline
 		fi
 	fi
+
 	export CFLAGS_HARDENED_CFLAGS
 	export CFLAGS_HARDENED_CXXFLAGS
 	export CFLAGS_HARDENED_LDFLAGS
