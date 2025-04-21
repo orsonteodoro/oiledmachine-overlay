@@ -127,13 +127,14 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 			"-Wl,-z,now" \
 			"-fcf-protection=*"
 		filter-flags "-fhardened"
-		append-cflags "-fhardened"
-		append-cxxflags "-fhardened"
+		append-flags "-fhardened"
 		CFLAGS_HARDENED_CFLAGS+=" -fhardened"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fhardened"
 		CFLAGS_HARDENED_LDFLAGS=""
 		if [[ "${CFLAGS_HARDENED_NX_VERSUS_CF}" =~ "both" ]] ; then
+			filter-flags "-Wa,--noexecstack"
 			filter-flags "-Wl,-z,noexecstack"
+			append-flags "-Wa,--noexecstack"
 			append-ldflags "-Wl,-z,noexecstack"
 			CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,noexecstack"
 		fi
@@ -155,30 +156,26 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 			test-flags-CC "-fstack-clash-protection" \
 		; then
 			filter-flags "-fstack-clash-protection"
-			append-cflags "-fstack-clash-protection"
-			append-cxxflags "-fstack-clash-protection"
+			append-flags "-fstack-clash-protection"
 			CFLAGS_HARDENED_CFLAGS+=" -fstack-clash-protection"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fstack-clash-protection"
 		fi
 		if [[ "${CFLAGS_HARDENED_LEVEL}" == "1" ]] && ! tc-enables-ssp ; then
 einfo "Standard SSP hardening (>= 8 byte buffers, *alloc functions)"
 			filter-flags "-fstack-protector"
-			append-cflags "-fstack-protector"
-			append-cxxflags "-fstack-protector"
+			append-flags "-fstack-protector"
 			CFLAGS_HARDENED_CFLAGS+=" -fstack-protector"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fstack-protector"
 		elif [[ "${CFLAGS_HARDENED_LEVEL}" == "2" ]] && ! tc-enables-ssp-strong ; then
 einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with local arrays or local pointers)"
 			filter-flags "-fstack-protector-strong"
-			append-cflags "-fstack-protector-strong"
-			append-cxxflags "-fstack-protector-strong"
+			append-flags "-fstack-protector-strong"
 			CFLAGS_HARDENED_CFLAGS+=" -fstack-protector-strong"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fstack-protector-strong"
 		elif [[ "${CFLAGS_HARDENED_LEVEL}" == "3" ]] && ! tc-enables-ssp-all ; then
 einfo "All SSP hardening (All functions hardened)"
 			filter-flags "-fstack-protector-all"
-			append-cflags "-fstack-protector-all"
-			append-cxxflags "-fstack-protector-all"
+			append-flags "-fstack-protector-all"
 			CFLAGS_HARDENED_CFLAGS+=" -fstack-protector-all"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fstack-protector-all"
 		fi
@@ -187,8 +184,7 @@ einfo "All SSP hardening (All functions hardened)"
 				-D_FORTIFY_SOURCE=1 \
 				-D_FORTIFY_SOURCE=2 \
 				-D_FORTIFY_SOURCE=3
-			append-cflags -D_FORTIFY_SOURCE=2
-			append-cxxflags -D_FORTIFY_SOURCE=2
+			append-flags -D_FORTIFY_SOURCE=2
 			CFLAGS_HARDENED_CFLAGS+=" -D_FORTIFY_SOURCE=2"
 			CFLAGS_HARDENED_CXXFLAGS+=" -D_FORTIFY_SOURCE=2"
 		fi
@@ -198,13 +194,14 @@ einfo "All SSP hardening (All functions hardened)"
 		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,now"
 		if [[ "${CFLAGS_HARDENED_NX_VERSUS_CF}" =~ ("both"|"cf") ]] && test-flags-CC "-fcf-protection=full" ; then
 			filter-flags "-fcf-protection=*"
-			append-cflags "-fcf-protection=full"
-			append-cxxflags "-fcf-protection=full"
+			append-flags "-fcf-protection=full"
 			CFLAGS_HARDENED_CFLAGS+=" -fcf-protection=full"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fcf-protection=full"
 		fi
 		if [[ "${CFLAGS_HARDENED_NX_VERSUS_CF}" =~ ("both"|"nx") ]] ; then
+			filter-flags "-Wa,--noexecstack"
 			filter-flags "-Wl,-z,noexecstack"
+			append-flags "-Wa,--noexecstack"
 			append-ldflags "-Wl,-z,noexecstack"
 			CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,noexecstack"
 		fi
@@ -231,11 +228,18 @@ einfo "CGO_LDFLAGS:  ${CGO_LDFLAGS}"
 # Example warning: https://bugs.gentoo.org/256679
 # See https://wiki.gentoo.org/wiki/Hardened/GNU_stack_quickstart#Causes_of_executable_stack_markings
 cflags-hardened_append_nx() {
+	append-flags -Wa,--noexecstack
 	append-ldflags -Wl,-z,noexecstack
 	if [[ "${CFLAGS_HARDENED_APPEND_GOFLAGS:-0}" == "1" ]] ; then
+		export CGO_CFLAGS+=" -Wa,--noexecstack"
+		export CGO_CXXFLAGS+=" -Wa,--noexecstack"
 		export CGO_LDFLAGS+=" -Wl,-z,noexecstack"
 	fi
+einfo "CFLAGS:  ${CFLAGS}"
+einfo "CXXFLAGS:  ${CXXFLAGS}"
 einfo "LDFLAGS:  ${LDFLAGS}"
+einfo "CGO_CFLAGS:  ${CGO_CFLAGS}"
+einfo "CGO_CXXFLAGS:  ${CGO_CXXFLAGS}"
 einfo "CGO_LDFLAGS:  ${CGO_LDFLAGS}"
 }
 
