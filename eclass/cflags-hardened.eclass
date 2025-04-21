@@ -71,6 +71,7 @@ CFLAGS_HARDENED_NX_VERSUS_CF=${CFLAGS_HARDENED_NX_VERSUS_CF:-"nx"}
 # Acceptable values: 1, 0, unset
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_DISABLED
+# @USER_VARIABLE
 # @DESCRIPTION:
 # A user variable to disable hardening flags.
 #
