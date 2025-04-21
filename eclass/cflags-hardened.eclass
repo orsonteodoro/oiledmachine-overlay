@@ -41,7 +41,7 @@ CFLAGS_HARDENED_LEVEL=${CFLAGS_HARDENED_LEVEL:-1}
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_NX_VERSUS_CF
 # @DESCRIPTION:
-# (Draft)
+# (Draft... still undergoing reasearch)
 # Choose either nx bit protection or cf protection.  They may be
 # mutually exclusive.  Using cf may require trampolines (executable stack) but
 # -Wl,-z,noexecstack will cause trampolines to be disabled.  Executable stack
@@ -49,9 +49,10 @@ CFLAGS_HARDENED_LEVEL=${CFLAGS_HARDENED_LEVEL:-1}
 #
 # Acceptable values:
 #
-#   nx   - For LDFLAGS+=-Wl,-z,noexecstack    (full protection)
-#   cf   - For LDFLAGS+=-fcf-protection=full  (partial protection)
-#   none - Do not apply any                   (no explicit protection)
+#   nx   - For LDFLAGS+=-Wl,-z,noexecstack
+#   cf   - For LDFLAGS+=-fcf-protection=full
+#   none - Do not apply any
+#   both - Apply both
 #
 # See also https://wiki.gentoo.org/wiki/Hardened/GNU_stack_quickstart#Causes_of_executable_stack_markings
 # Chromium will use -z,noexecstack by default but not -fcf-protection=full.  Use
@@ -99,23 +100,23 @@ cflags-hardened_append() {
 	CFLAGS_HARDENED_CFLAGS=""
 	CFLAGS_HARDENED_CXXFLAGS=""
 	CFLAGS_HARDENED_LDFLAGS=""
-	if [[ "${CFLAGS_HARDENED_LEVEL}" == "2" && "${CFLAGS_HARDENED_NX_VERSUS_CF}" == "cf" ]] && tc-check-min_ver gcc "14.2" ; then
+	if [[ "${CFLAGS_HARDENED_LEVEL}" == "2" && "${CFLAGS_HARDENED_NX_VERSUS_CF}" =~ ("cf"|"both") ]] && tc-check-min_ver gcc "14.2" ; then
 einfo "Appending -fhardened"
 einfo "Strong SSP hardending (>= 8 byte buffers, *alloc functions, functions with local arrays or local pointers)"
 		filter-flags \
-			-fstack-clash-protection \
-			-fstack-protector \
-			-fstack-protector-strong \
-			-fstack-protector-all \
-			-D_FORTIFY_SOURCE=1 \
-			-D_FORTIFY_SOURCE=2 \
-			-D_FORTIFY_SOURCE=3 \
-			-Wl,-z,relro \
-			-Wl,-z,now \
-			-fcf-protection=full
-		filter-flags -fhardened
-		append-cflags $(test-flags-CC -fhardened)
-		append-cxxflags $(test-flags-CXX -fhardened)
+			"-fstack-clash-protection" \
+			"-fstack-protector" \
+			"-fstack-protector-strong" \
+			"-fstack-protector-all" \
+			"-D_FORTIFY_SOURCE=1" \
+			"-D_FORTIFY_SOURCE=2" \
+			"-D_FORTIFY_SOURCE=3" \
+			"-Wl,-z,relro" \
+			"-Wl,-z,now" \
+			"-fcf-protection=*"
+		filter-flags "-fhardened"
+		append-cflags "-fhardened"
+		append-cxxflags "-fhardened"
 		if [[ "${CFLAGS}" =~ "-O0" ]] ; then
 			CFLAGS_HARDENED_CFLAGS+=" -O1"
 		fi
@@ -125,6 +126,11 @@ einfo "Strong SSP hardending (>= 8 byte buffers, *alloc functions, functions wit
 		CFLAGS_HARDENED_CFLAGS+=" -fhardened"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fhardened"
 		CFLAGS_HARDENED_LDFLAGS=""
+		if [[ "${CFLAGS_HARDENED_NX_VERSUS_CF}" =~ "both" ]] ; then
+			filter-flags "-Wl,-z,noexecstack"
+			append-ldflags "-Wl,-z,noexecstack"
+			CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,noexecstack"
+		fi
 	else
 		replace-flags '-O0' '-O1'
 		if \
@@ -134,11 +140,11 @@ einfo "Strong SSP hardending (>= 8 byte buffers, *alloc functions, functions wit
 				|| ${CFLAGS_HARDENED_SUID:-0}   == 1 \
 			)) \
 					&& \
-			test-flags-CC -fstack-clash-protection \
+			test-flags-CC "-fstack-clash-protection" \
 		; then
-			filter-flags -fstack-clash-protection
-			append-cflags -fstack-clash-protection
-			append-cxxflags -fstack-clash-protection
+			filter-flags "-fstack-clash-protection"
+			append-cflags "-fstack-clash-protection"
+			append-cxxflags "-fstack-clash-protection"
 			CFLAGS_HARDENED_CFLAGS+=" -fstack-clash-protection"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fstack-clash-protection"
 		fi
@@ -150,23 +156,23 @@ einfo "Strong SSP hardending (>= 8 byte buffers, *alloc functions, functions wit
 		fi
 		if [[ "${CFLAGS_HARDENED_LEVEL}" == "1" ]] && ! tc-enables-ssp ; then
 einfo "Standard SSP hardending (>= 8 byte buffers, *alloc functions)"
-			filter-flags -fstack-protector
-			append-cflags -fstack-protector
-			append-cxxflags -fstack-protector
+			filter-flags "-fstack-protector"
+			append-cflags "-fstack-protector"
+			append-cxxflags "-fstack-protector"
 			CFLAGS_HARDENED_CFLAGS+=" -fstack-protector"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fstack-protector"
 		elif [[ "${CFLAGS_HARDENED_LEVEL}" == "2" ]] && ! tc-enables-ssp-strong ; then
 einfo "Strong SSP hardending (>= 8 byte buffers, *alloc functions, functions with local arrays or local pointers)"
-			filter-flags -fstack-protector-strong
-			append-cflags -fstack-protector-strong
-			append-cxxflags -fstack-protector-strong
+			filter-flags "-fstack-protector-strong"
+			append-cflags "-fstack-protector-strong"
+			append-cxxflags "-fstack-protector-strong"
 			CFLAGS_HARDENED_CFLAGS+=" -fstack-protector-strong"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fstack-protector-strong"
 		elif [[ "${CFLAGS_HARDENED_LEVEL}" == "3" ]] && ! tc-enables-ssp-all ; then
 einfo "All SSP hardending (All functions hardened)"
-			filter-flags -fstack-protector-all
-			append-cflags -fstack-protector-all
-			append-cxxflags -fstack-protector-all
+			filter-flags "-fstack-protector-all"
+			append-cflags "-fstack-protector-all"
+			append-cxxflags "-fstack-protector-all"
 			CFLAGS_HARDENED_CFLAGS+=" -fstack-protector-all"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fstack-protector-all"
 		fi
@@ -180,20 +186,21 @@ einfo "All SSP hardending (All functions hardened)"
 			CFLAGS_HARDENED_CFLAGS+=" -D_FORTIFY_SOURCE=2"
 			CFLAGS_HARDENED_CXXFLAGS+=" -D_FORTIFY_SOURCE=2"
 		fi
-		append-ldflags -Wl,-z,relro
-		append-ldflags -Wl,-z,now
+		append-ldflags "-Wl,-z,relro"
+		append-ldflags "-Wl,-z,now"
 		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,relro"
 		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,now"
-		if [[ "${CFLAGS_HARDENED_NX_VERSUS_CF}" == "cf" ]] && test-flags-CC -fcf-protection=full ; then
-			append-cflags -fcf-protection=full
-			append-cxxflags -fcf-protection=full
+		if [[ "${CFLAGS_HARDENED_NX_VERSUS_CF}" =~ ("both"|"cf") ]] && test-flags-CC "-fcf-protection=full" ; then
+			filter-flags "-fcf-protection=*"
+			append-cflags "-fcf-protection=full"
+			append-cxxflags "-fcf-protection=full"
 			CFLAGS_HARDENED_CFLAGS+=" -fcf-protection=full"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fcf-protection=full"
-		elif [[ "${CFLAGS_HARDENED_NX_VERSUS_CF}" == "nx" ]] ; then
-			append-cflags -fcf-protection=full
-			append-cxxflags -fcf-protection=full
-			CFLAGS_HARDENED_CFLAGS+=" -fcf-protection=full"
-			CFLAGS_HARDENED_CXXFLAGS+=" -fcf-protection=full"
+		fi
+		if [[ "${CFLAGS_HARDENED_NX_VERSUS_CF}" =~ ("both"|"nx") ]] ; then
+			filter-flags "-Wl,-z,noexecstack"
+			append-ldflags "-Wl,-z,noexecstack"
+			CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,noexecstack"
 		fi
 	fi
 	export CFLAGS_HARDENED_CFLAGS
