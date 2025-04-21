@@ -104,7 +104,7 @@ cflags-hardened_append() {
 	CFLAGS_HARDENED_CFLAGS=""
 	CFLAGS_HARDENED_CXXFLAGS=""
 	CFLAGS_HARDENED_LDFLAGS=""
-	if [[ "${CFLAGS_HARDENED_LEVEL}" == "2" && "${CFLAGS_HARDENED_NX_VERSUS_CF}" =~ ("cf"|"both") ]] && tc-check-min_ver gcc "14.2" ; then
+	if [[ "${CFLAGS_HARDENED_LEVEL}" == "2" && "${CFLAGS_HARDENED_NX_VERSUS_CF}" =~ ("both"|"cf") ]] && tc-check-min_ver gcc "14.2" ; then
 einfo "Appending -fhardened"
 einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with local arrays or local pointers)"
 		filter-flags \
