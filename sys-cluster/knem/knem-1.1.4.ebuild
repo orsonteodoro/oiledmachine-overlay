@@ -243,6 +243,27 @@ einfo "KERNEL_DIR_SUFFIX:  ${KERNEL_DIR_SUFFIX}"
 			| cut -f 2 -d "=" \
 			| sed -e "s/[\"|']//g")
 		export CPP="${CC} -E"
+einfo "PATH (before):  ${PATH}"
+		if tc-is-gcc ; then
+			local slot=$(gcc-major-version)
+			local path="/usr/${CHOST}/gcc-bin/${slot}"
+			export PATH=$(echo "${PATH}" \
+				| tr ":" "\n" \
+				| sed -e "\|/usr/lib/llvm/|d" \
+				| sed -e "\|/usr/${CHOST}/gcc-bin/|d" \
+				| sed -e "s|/usr/local/sbin|${path}\n/usr/local/sbin|g" \
+				| tr "\n" ":")
+		else
+			local slot=$(clang-major-version)
+			local path="/usr/lib/llvm/${slot}/bin"
+			export PATH=$(echo "${PATH}" \
+				| tr ":" "\n" \
+				| sed -e "\|/usr/lib/llvm/|d" \
+				| sed -e "\|/usr/${CHOST}/gcc-bin/|d" \
+				| sed -e "s|/usr/local/sbin|${path}\n/usr/local/sbin|g" \
+				| tr "\n" ":")
+		fi
+einfo "PATH (after):  ${PATH}"
 		strip-unsupported-flags
 		einfo "CC: ${CC}"
 	fi
