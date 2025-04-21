@@ -419,7 +419,7 @@ install_init_services() {
 	sed \
 		-e "s|@LOCAL_AI_HOST@|${local_ai_hostname}|g" \
 		-e "s|@LOCAL_AI_PORT@|${local_ai_port}|g" \
-		-e "s|@GO_TAGS@|${go_tags}|g"
+		-e "s|@GO_TAGS@|${go_tags}|g" \
 		"${FILESDIR}/${MY_PN2}.conf" \
 		> \
 		"${T}/${MY_PN2}.conf" \
