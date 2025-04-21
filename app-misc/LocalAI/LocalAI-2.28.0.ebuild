@@ -210,11 +210,14 @@ RDEPEND+="
 		>=media-libs/vulkan-loader-1.3.275.0
 		>=sys-apps/pciutils-3.10.0
 	)
+	dev-libs/protobuf:=
+	net-libs/grpc:=
+"
+# Relaxed grpc for compatibility testing
+DISABLED_RDEPEND="
 	|| (
 		$(gen_grpc_rdepend)
 	)
-	dev-libs/protobuf:=
-	net-libs/grpc:=
 "
 DEPEND+="
 	${RDEPEND}
