@@ -44,7 +44,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 cuda ollama +openrc rag-ocr systemd
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	|| (
