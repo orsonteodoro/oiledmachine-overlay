@@ -189,8 +189,8 @@ RDEPEND+="
 		media-video/ffmpeg:=
 	)
 	>=app-accessibility/espeak-ng-1.51
-	acct-group/${PN}
-	acct-user/${PN}
+	acct-group/${MY_PN2}
+	acct-user/${MY_PN2}
 	x11-misc/xdg-utils
 	cuda? (
 		=dev-util/nvidia-cuda-toolkit-12*
