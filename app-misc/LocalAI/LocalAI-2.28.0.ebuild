@@ -12,6 +12,9 @@ EAPI=8
 # TODO package:
 # upx-ucl
 
+# TODO:
+# Change build files to make kleidai offline install.
+
 MY_PN2="local-ai"
 
 inherit hip-versions
@@ -28,6 +31,11 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1031
 	gfx1100
 	gfx1101
+)
+CPU_FLAGS_ARM=(
+	cpu_flags_arm_dotprod
+	cpu_flags_arm_i8mm
+	cpu_flags_arm_sme
 )
 CPU_FLAGS_LOONG=(
 	cpu_flags_loong_lasx
@@ -101,7 +109,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-	#KEYWORDS="~amd64"
+	#KEYWORDS="~amd64 ~arm64"
 	S="${WORKDIR}/${PN}-${PV}"
 	#go-module_set_globals
 
@@ -158,6 +166,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
+${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_LOONG[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_S390[@]}
@@ -347,6 +356,20 @@ DEPEND+="
 		dev-util/vulkan-headers:=
 	)
 "
+DISABLED_DEPEND="
+	cpu_flags_arm_dotprod? (
+		>=dev-cpp/kleidiai-1.5.0
+		dev-cpp/kleidiai:=
+	)
+	cpu_flags_arm_i8mm? (
+		>=dev-cpp/kleidiai-1.5.0
+		dev-cpp/kleidiai:=
+	)
+	cpu_flags_arm_sme? (
+		>=dev-cpp/kleidiai-1.5.0
+		dev-cpp/kleidiai:=
+	)
+"
 # iputils, rhash, wget are for custom downloader in src_unpack() only.
 BDEPEND+="
 	${PYTHON_DEPS}
@@ -506,6 +529,21 @@ src_compile() {
 		-DGGML_RV_ZFH=$(usex cpu_flags_riscv_rv_zfh "ON" "OFF")
 		-DGGML_VXE=$(usex cpu_flags_s390_vxe "ON" "OFF")
 	)
+
+	if \
+		   use cpu_flags_arm_dotprod \
+		|| use cpu_flags_arm_i8mm \
+		|| use cpu_flags_arm_sme \
+	; then
+		cmake_args+=(
+			-DGGML_CPU_KLEIDIAI=ON
+		)
+	else
+		cmake_args+=(
+			-DGGML_CPU_KLEIDIAI=OFF
+		)
+	fi
+
 	export CMAKE_ARGS="${cmake_args[@]}"
 
 	# Old patch
