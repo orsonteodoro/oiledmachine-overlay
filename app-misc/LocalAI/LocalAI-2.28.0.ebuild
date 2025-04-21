@@ -435,6 +435,11 @@ install_init_services() {
 			-e "s|# export BUILD_TYPE|export BUILD_TYPE|g" \
 			"${T}/${MY_PN2}.conf" \
 			|| die
+	else
+		sed -i \
+			-e "s|@BUILD_TYPE@|openblas|g" \
+			"${T}/${MY_PN2}.conf" \
+			|| die
 	fi
 	doins "${T}/${MY_PN2}.conf"
 
@@ -471,7 +476,6 @@ einfo "LOCAL_AI_URI:  ${local_ai_uri}"
 
 	keepdir "${dest}/models"
 
-
 	install_init_services
 
 	if [[ -e "sources/go-piper/piper-phonemize/pi/lib/" ]] ; then
@@ -479,9 +483,9 @@ einfo "LOCAL_AI_URI:  ${local_ai_uri}"
 		doexe "sources/go-piper/piper-phonemize/pi/lib/"*
 	fi
 
-#	newicon \
-#		"static/favicon.png" \
-#		"${MY_PN2}.png"
+	newicon \
+		"docs/static/apple-touch-icon.png" \
+		"${MY_PN2}.png"
 
 	make_desktop_entry \
 		"${MY_PN2}" \
@@ -497,6 +501,10 @@ einfo "LOCAL_AI_URI:  ${local_ai_uri}"
 	fowners -R "${MY_PN2}:${MY_PN2}" "/var/lib/${MY_PN2}"
 
 	sanitize_file_permissions
+}
+
+pkg_postinst() {
+	xdg_pkg_postinst
 }
 
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
