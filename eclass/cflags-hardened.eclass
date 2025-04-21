@@ -102,7 +102,7 @@ cflags-hardened_append() {
 	CFLAGS_HARDENED_LDFLAGS=""
 	if [[ "${CFLAGS_HARDENED_LEVEL}" == "2" && "${CFLAGS_HARDENED_NX_VERSUS_CF}" =~ ("cf"|"both") ]] && tc-check-min_ver gcc "14.2" ; then
 einfo "Appending -fhardened"
-einfo "Strong SSP hardending (>= 8 byte buffers, *alloc functions, functions with local arrays or local pointers)"
+einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with local arrays or local pointers)"
 		filter-flags \
 			"-fstack-clash-protection" \
 			"-fstack-protector" \
@@ -155,21 +155,21 @@ einfo "Strong SSP hardending (>= 8 byte buffers, *alloc functions, functions wit
 			CFLAGS_HARDENED_CFLAGS+=" -O1"
 		fi
 		if [[ "${CFLAGS_HARDENED_LEVEL}" == "1" ]] && ! tc-enables-ssp ; then
-einfo "Standard SSP hardending (>= 8 byte buffers, *alloc functions)"
+einfo "Standard SSP hardening (>= 8 byte buffers, *alloc functions)"
 			filter-flags "-fstack-protector"
 			append-cflags "-fstack-protector"
 			append-cxxflags "-fstack-protector"
 			CFLAGS_HARDENED_CFLAGS+=" -fstack-protector"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fstack-protector"
 		elif [[ "${CFLAGS_HARDENED_LEVEL}" == "2" ]] && ! tc-enables-ssp-strong ; then
-einfo "Strong SSP hardending (>= 8 byte buffers, *alloc functions, functions with local arrays or local pointers)"
+einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with local arrays or local pointers)"
 			filter-flags "-fstack-protector-strong"
 			append-cflags "-fstack-protector-strong"
 			append-cxxflags "-fstack-protector-strong"
 			CFLAGS_HARDENED_CFLAGS+=" -fstack-protector-strong"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fstack-protector-strong"
 		elif [[ "${CFLAGS_HARDENED_LEVEL}" == "3" ]] && ! tc-enables-ssp-all ; then
-einfo "All SSP hardending (All functions hardened)"
+einfo "All SSP hardening (All functions hardened)"
 			filter-flags "-fstack-protector-all"
 			append-cflags "-fstack-protector-all"
 			append-cxxflags "-fstack-protector-all"
