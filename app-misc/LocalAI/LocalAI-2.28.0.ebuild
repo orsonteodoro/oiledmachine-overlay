@@ -27,6 +27,12 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1100
 	gfx1101
 )
+CPU_FLAGS_X86=(
+	cpu_flags_x86_avx
+	cpu_flags_x86_fc16
+	cpu_flags_x86_fma
+	cpu_flags_x86_avx512f
+)
 #
 # To update use this run `ebuild ollama-0.4.2.ebuild digest clean unpack`
 # changing GEN_EBUILD with the following transition states 0 -> 1 -> 2 -> 0
@@ -122,7 +128,8 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
-ci cuda debug devcontainer openblas opencl p2p rocm sycl-f16 sycl-f32 tts vulkan
+${CPU_FLAGS_X86[@]}
+ci cuda debug devcontainer native openblas opencl p2p rocm sycl-f16 sycl-f32 tts vulkan
 "
 REQUIRED_USE="
 	$()
@@ -236,6 +243,21 @@ ewarn "This ebuild is still in development"
 	python_setup
 }
 
+gen_git_tag() {
+	local path="${1}"
+	local tag_name="${2}"
+einfo "Generating tag start for ${path}"
+	pushd "${path}" >/dev/null 2>&1 || die
+		git init || die
+		git config user.email "name@example.com" || die
+		git config user.name "John Doe" || die
+		git add * || die
+		git commit -m "Dummy" || die
+		git tag ${tag_name} || die
+	popd >/dev/null 2>&1 || die
+einfo "Generating tag done"
+}
+
 gen_unpack() {
 einfo "Replace EGO_SUM contents with the following:"
 	IFS=$'\n'
@@ -257,6 +279,7 @@ src_unpack() {
 		git-r3_checkout
 	else
 		unpack ${A}
+		gen_git_tag "${S}" "v${PV}"
 	fi
 }
 
@@ -297,8 +320,6 @@ src_prepare() {
 	fi
 }
 
-
-
 src_compile() {
 	go-download-cache_setup
 	local go_tags=()
@@ -323,6 +344,22 @@ src_compile() {
 		build_type="sycl_f32"
 	fi
 
+	local cmake_args=(
+		-DGGML_AVX512=$(usex cpu_flags_x86_avx512f "ON" "OFF")
+		-DGGML_AVX2=$(usex cpu_flags_x86_avx2 "ON" "OFF")
+		-DGGML_FMA=$(usex cpu_flags_x86_fma "ON" "OFF")
+		-DGGML_F16C=$(usex cpu_flags_x86_f16c "ON" "OFF")
+		-DGGML_NATIVE=$(usex native "ON" "OFF")
+	)
+	export CMAKE_ARGS="${cmake_args[@]}"
+
+	# Old patch
+	if [[ -e "${S}/backend/cpp/llama/patches/01-llava.patch" ]] ; then
+		rm -f "${S}/backend/cpp/llama"*"/patches/01-llava.patch"
+	else
+ewarn "Q/A:  Remove 01-llava.patch conditional block"
+	fi
+
 	emake \
 		BUILD_TYPE="${build_type[@]}" \
 		GO_TAGS="${go_tags[@]}" \
@@ -333,6 +370,8 @@ src_compile() {
 src_install() {
 	docinto "licenses"
 	dodoc "LICENSE.md"
+	exeinto "/usr/bin"
+	doexe "local-ai"
 }
 
 # OILEDMACHINE-OVERLAY-META:  INDEPENDENTLY-CREATED-EBUILD
