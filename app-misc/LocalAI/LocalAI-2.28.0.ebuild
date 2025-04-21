@@ -29,6 +29,17 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1100
 	gfx1101
 )
+CPU_FLAGS_LOONG=(
+	cpu_flags_loong_lasx
+	cpu_flags_loong_lsx
+)
+CPU_FLAGS_RISCV=(
+	cpu_flags_riscv_rvv
+	cpu_flags_riscv_rv_zfh
+)
+CPU_FLAGS_S390=(
+	cpu_flags_s390_vxe
+)
 CPU_FLAGS_X86=(
 	cpu_flags_x86_amx_bf16
 	cpu_flags_x86_amx_int8
@@ -147,6 +158,9 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${AMDGPU_TARGETS_COMPAT[@]/#/amdgpu_targets_}
+${CPU_FLAGS_LOONG[@]}
+${CPU_FLAGS_RISCV[@]}
+${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 ci cuda debug devcontainer native openblas opencl openrc p2p rocm sycl-f16
 sycl-f32 systemd tts vulkan
@@ -473,10 +487,10 @@ src_compile() {
 	fi
 
 	local cmake_args=(
-		-DGGML_AMX_BF16=$(usex cpu_flags_x86_amx_bf16)
-		-DGGML_AMX_INT8=$(usex cpu_flags_x86_amx_int8)
-		-DGGML_AMX_TILE=$(usex cpu_flags_x86_amx_tile)
-		-DGGML_AVX_VNNI=$(usex cpu_flags_x86_avx_vnni)
+		-DGGML_AMX_BF16=$(usex cpu_flags_x86_amx_bf16 "ON" "OFF")
+		-DGGML_AMX_INT8=$(usex cpu_flags_x86_amx_int8 "ON" "OFF")
+		-DGGML_AMX_TILE=$(usex cpu_flags_x86_amx_tile "ON" "OFF")
+		-DGGML_AVX_VNNI=$(usex cpu_flags_x86_avx_vnni "ON" "OFF")
 		-DGGML_AVX2=$(usex cpu_flags_x86_avx2 "ON" "OFF")
 		-DGGML_AVX512=$(usex cpu_flags_x86_avx512f "ON" "OFF")
 		-DGGML_AVX512_BF16=$(usex cpu_flags_x86_avx512_bf16)
@@ -485,7 +499,12 @@ src_compile() {
 		-DGGML_BMI2=$(usex cpu_flags_x86_bmi2)
 		-DGGML_FMA=$(usex cpu_flags_x86_fma "ON" "OFF")
 		-DGGML_F16C=$(usex cpu_flags_x86_f16c "ON" "OFF")
+		-DGGML_LASX=$(usex cpu_flags_loong_lasx "ON" "OFF")
+		-DGGML_LSX=$(usex cpu_flags_loong_lsx "ON" "OFF")
 		-DGGML_NATIVE=$(usex native "ON" "OFF")
+		-DGGML_RVV=$(usex cpu_flags_riscv_rvv "ON" "OFF")
+		-DGGML_RV_ZFH=$(usex cpu_flags_riscv_rv_zfh "ON" "OFF")
+		-DGGML_VXE=$(usex cpu_flags_s390_vxe "ON" "OFF")
 	)
 	export CMAKE_ARGS="${cmake_args[@]}"
 
