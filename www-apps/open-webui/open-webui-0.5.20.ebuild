@@ -456,9 +456,16 @@ einfo "OPEN_WEBUI_URI:  ${open_webui_uri}"
 
 pkg_postinst() {
 	xdg_pkg_postinst
+ewarn
 ewarn "The Web Search for RAG is not default on."
+ewarn
 ewarn "To set Web Search for RAG go to:  Settings > Admin Settings > Web Search"
-ewarn "Details to set it up can be found at https://docs.openwebui.com/category/-web-search"
+ewarn
+ewarn "More details can be found at"
+ewarn
+ewarn "  https://docs.openwebui.com/category/-web-search"
+ewarn "  https://docs.openwebui.com/features/rag/#web-search-for-rag"
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
