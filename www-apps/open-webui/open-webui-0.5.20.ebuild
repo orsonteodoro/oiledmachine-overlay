@@ -4,13 +4,15 @@
 
 EAPI=8
 
+MY_PN="Open WebUI"
+
 AT_TYPES_NODE_PV="20.11.30"
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="hatchling"
 NODE_VERSION="22" # From https://github.com/open-webui/open-webui/blob/v0.5.20/Dockerfile#L24
 PYTHON_COMPAT=( "python3_"{11..12} )
 
-inherit distutils-r1 pypi npm
+inherit desktop distutils-r1 pypi npm xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -440,9 +442,20 @@ einfo "OPEN_WEBUI_URI:  ${open_webui_uri}"
 
 	# Necessary
 	fowners -R "root:root" "/usr/lib/${EPYTHON}/site-packages/open_webui/backend/data"
+
+	newicon \
+		"static/favicon.png" \
+		"${PN}.png"
+
+	make_desktop_entry \
+		"${PN}" \
+		"${MY_PN}" \
+		"${PN}.png" \
+		"Education;ArtificialIntelligence"
 }
 
 pkg_postinst() {
+	xdg_pkg_postinst
 ewarn "The Web Search for RAG is not default on."
 ewarn "To set Web Search for RAG go to:  Settings > Admin Settings > Web Search"
 ewarn "Details to set it up can be found at https://docs.openwebui.com/category/-web-search"
