@@ -55,9 +55,13 @@ CFLAGS_HARDENED_LEVEL=${CFLAGS_HARDENED_LEVEL:-1}
 #   both - Apply both
 #
 # See also https://wiki.gentoo.org/wiki/Hardened/GNU_stack_quickstart#Causes_of_executable_stack_markings
+#
 # Chromium will use -z,noexecstack by default but not -fcf-protection=full.  Use
 # cf if you need to run interpreter or trampoline but cannot disable executable
 # stack.
+#
+# The -fhardened is missing -Wl,-z,noexecstack.
+#
 CFLAGS_HARDENED_NX_VERSUS_CF=${CFLAGS_HARDENED_NX_VERSUS_CF:-"nx"}
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_APPEND_GOFLAGS
