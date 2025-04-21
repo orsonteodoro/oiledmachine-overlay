@@ -39,30 +39,9 @@ inherit flag-o-matic toolchain-funcs
 #     For DSS builds if test suite passed for this level
 CFLAGS_HARDENED_LEVEL=${CFLAGS_HARDENED_LEVEL:-1}
 
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_NX_VERSUS_CF
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_USER_LEVEL
 # @DESCRIPTION:
-# (Draft... still undergoing reasearch)
-# Choose either nx bit protection or cf protection.  They may be
-# mutually exclusive.  Using cf may require trampolines (executable stack) but
-# -Wl,-z,noexecstack will cause trampolines to be disabled.  Executable stack
-# is required by interpreters.
-#
-# Acceptable values:
-#
-#   nx   - For LDFLAGS+=-Wl,-z,noexecstack   (cannot be used with interpreters (e.g. JavaScript), nested functions with trampolines)
-#   cf   - For LDFLAGS+=-fcf-protection=full
-#   none - Do not apply any
-#   both - Apply both
-#
-# See also https://wiki.gentoo.org/wiki/Hardened/GNU_stack_quickstart#Causes_of_executable_stack_markings
-#
-# Chromium will use -z,noexecstack by default but not -fcf-protection=full.  Use
-# cf if you need to run interpreter or trampoline but cannot disable executable
-# stack.
-#
-# The -fhardened is missing -Wl,-z,noexecstack.
-#
-CFLAGS_HARDENED_NX_VERSUS_CF=${CFLAGS_HARDENED_NX_VERSUS_CF:-"nx"}
+# Same as above but the user can override the SSP level.
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_APPEND_GOFLAGS
 # @DESCRIPTION:
@@ -79,17 +58,34 @@ CFLAGS_HARDENED_NX_VERSUS_CF=${CFLAGS_HARDENED_NX_VERSUS_CF:-"nx"}
 # CFLAGS_HARDENED_DISABLED=1
 #
 
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_SUID
-# Add additional flags to secure packages with IUSE=suid
-# Acceptable values: 1, 0, unset
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_USE_CASES
+# Add additional flags to secure packages based on typical USE cases.
+# Valid values:
+#
+# ce (Code Execution)
+# dt (Data Tampering)
+# dos (Denial of Service)
+# pe (Privilege Esclation)
+# id (Information Disclosure)
+#
+# admin-access (e.g. sudo)
+# daemon
+# dss
+# extensions
+# execution-integrity
+# kernel
+# real-time-integrity
+# safety-critical
+# multithreaded-confidential
+# plugins
+# sensitive-data
+# scripting
+# server
+# web-browsers
+# web-servers
 
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_DAEMON
-# Add additional flags to secure daemons package
-# Acceptable values: 1, 0, unset
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_KERNEL
 
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_SERVER
-# Add additional flags to secure server packages
-# Acceptable values: 1, 0, unset
 
 # @FUNCTION: cflags-hardened_append
 # @DESCRIPTION:
@@ -102,10 +98,21 @@ CFLAGS_HARDENED_NX_VERSUS_CF=${CFLAGS_HARDENED_NX_VERSUS_CF:-"nx"}
 #
 cflags-hardened_append() {
 	[[ "${CFLAGS_HARDENED_DISABLED:-0}" == 1 ]] && return
+
+	if [[ -n "${CFLAGS_HARDENED_USER_LEVEL}" ]] ; then
+		CFLAGS_HARDENED_LEVEL="${CFLAGS_HARDENED_USER_LEVEL}"
+	fi
+
 	CFLAGS_HARDENED_CFLAGS=""
 	CFLAGS_HARDENED_CXXFLAGS=""
 	CFLAGS_HARDENED_LDFLAGS=""
-	if [[ "${CFLAGS_HARDENED_LEVEL}" == "2" && "${CFLAGS_HARDENED_NX_VERSUS_CF}" =~ ("both"|"cf") ]] && tc-check-min_ver gcc "14.2" ; then
+	if \
+		[[ "${CFLAGS_HARDENED_LEVEL}" == "2" ]] \
+			&& \
+		[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("admin-access"|"ce"|"daemon"|"dos"|"dss"|"dt"|"execution-integrity"|"extensions"|"id"|"kernel"|"multithreaded-confidential"|"pe"|"plugins"|"real-time-integrity"|"safety-critical"|"scripting"|"sensitive-data"|"server"|"web-servers") ]] \
+			&& \
+		tc-check-min_ver gcc "14.2" \
+	; then
 einfo "Appending -fhardened"
 einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with local arrays or local pointers)"
 		if [[ "${CFLAGS}" =~ "-O0" ]] ; then
@@ -132,7 +139,7 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 		CFLAGS_HARDENED_CFLAGS+=" -fhardened"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fhardened"
 		CFLAGS_HARDENED_LDFLAGS=""
-		if [[ "${CFLAGS_HARDENED_NX_VERSUS_CF}" =~ "both" ]] ; then
+		if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("execution-integrity"|"scripting"|"sensitive-data"|"web-servers") ]] ; then
 			filter-flags "-Wa,--noexecstack"
 			filter-flags "-Wl,-z,noexecstack"
 			append-flags "-Wa,--noexecstack"
@@ -148,14 +155,11 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 			CFLAGS_HARDENED_CFLAGS+=" -O1"
 		fi
 		if \
-			(( \
-				   ${CFLAGS_HARDENED_DAEMON:-0} == 1 \
-				|| ${CFLAGS_HARDENED_SERVER:-0} == 1 \
-				|| ${CFLAGS_HARDENED_SUID:-0}   == 1 \
-			)) \
-					&& \
+			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("admin-access"|"ce"|"daemon"|"dos"|"dt"|"multithreaded-confidential"|"pe"|"server"|"suid") ]] \
+				&&
 			test-flags-CC "-fstack-clash-protection" \
 		; then
+	# MC, DT, CE, DoS, EP
 			filter-flags "-fstack-clash-protection"
 			append-flags "-fstack-clash-protection"
 			CFLAGS_HARDENED_CFLAGS+=" -fstack-clash-protection"
@@ -193,13 +197,19 @@ einfo "All SSP hardening (All functions hardened)"
 		append-ldflags "-Wl,-z,now"
 		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,relro"
 		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,now"
-		if [[ "${CFLAGS_HARDENED_NX_VERSUS_CF}" =~ ("both"|"cf") ]] && test-flags-CC "-fcf-protection=full" ; then
+		if \
+			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("ce"|"dss"|"execution-integrity"|"extensions"|"id"|"kernel"|"pe"|"plugins"|"real-time-integrity"|"safety-critical"|"sensitive-data") ]] \
+					&&
+			test-flags-CC "-fcf-protection=full" \
+		; then
+	# MC, ID, PE, ACE
 			filter-flags "-fcf-protection=*"
 			append-flags "-fcf-protection=full"
 			CFLAGS_HARDENED_CFLAGS+=" -fcf-protection=full"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fcf-protection=full"
 		fi
-		if [[ "${CFLAGS_HARDENED_NX_VERSUS_CF}" =~ ("both"|"nx") ]] ; then
+		if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("ce"|"execution-integrity"|"scripting"|"sensitive-data"|"web-servers") ]] ; then
+	# ACE, DT/ID
 			filter-flags "-Wa,--noexecstack"
 			filter-flags "-Wl,-z,noexecstack"
 			append-flags "-Wa,--noexecstack"
