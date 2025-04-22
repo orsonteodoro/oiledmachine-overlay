@@ -129,6 +129,7 @@ _cflags-hardened_has_cet() {
 # Apply retpoline flags for Clang.
 _cflags-hardened_append_clang_retpoline() {
 	tc-is-clang || return
+	[[ "${ARCH}" == "amd64" ]] || return
 
 	if ! _cflags-hardened_has_cet ; then
 	# Allow -mretpoline-external-thunk
@@ -156,6 +157,7 @@ ewarn "Avoiding possible flag conflict between -fcf-protection=return and -mretp
 # Apply retpoline flags for gcc
 _cflags-hardened_append_gcc_retpoline() {
 	tc-is-gcc || return
+	[[ "${ARCH}" == "amd64" ]] || return
 
 	if ! _cflags-hardened_has_cet ; then
 	# Allow -mfunction-return=*
