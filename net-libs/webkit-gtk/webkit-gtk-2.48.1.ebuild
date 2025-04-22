@@ -80,6 +80,7 @@ declare -A CFLAGS_RDEPEND=(
 	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
 )
 CFLAGS_HARDENED_USE_CASES="dss sensitive-data web-browser"
+CFLAGS_HARDENED_TRAPV=0 # Apply per component using custom patch
 CHECKREQS_DISK_BUILD="18G" # and even this might not be enough, bug #417307
 CLANG_PV="18"
 CMAKE_MAKEFILE_GENERATOR="ninja"
