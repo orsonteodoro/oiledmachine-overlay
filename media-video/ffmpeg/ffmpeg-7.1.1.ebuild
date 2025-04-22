@@ -1883,6 +1883,8 @@ eerror
 		"-pie" \
 		"-fPIC" \
 		"-fPIE" \
+		"-no-pie" \
+		"-nopie" \
 		"-Wl,-z,relro" \
 		"-Wl,-z,now"
 	myconf+=(
