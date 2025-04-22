@@ -448,8 +448,8 @@ einfo "All SSP hardening (All functions hardened)"
 		CFLAGS_HARDENED_CXXFLAGS+=" -ftrapv"
 	fi
 
-	# Apply only if it produces *only* an exe.
-	# Do not apply if package produces exe and lib(s).
+	# For executable packages only.
+	# Do not apply to hybrid (executible with libs) packages
 	if [[ "${CFLAGS_HARDENED_PIE:-0}" == "1" ]] && ! tc-enables-pie ; then
 		filter-flags "-fPIE" "-pie"
 		append-flags "-fPIE" "-pie"
@@ -457,7 +457,8 @@ einfo "All SSP hardening (All functions hardened)"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fPIE -pie"
 	fi
 
-	if [[ "${CFLAGS_HARDENED_PIC:-1}" == "1" ]] ; then
+	# For library packages only
+	if [[ "${CFLAGS_HARDENED_PIC:-0}" == "1" ]] ; then
 		filter-flags "-fPIC"
 		append-flags "-fPIC"
 		CFLAGS_HARDENED_CFLAGS+=" -fPIC"
