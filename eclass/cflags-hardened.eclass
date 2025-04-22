@@ -81,6 +81,11 @@ CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 # CFLAGS_HARDENED_DISABLED=1
 #
 
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_PIE
+# @DESCRIPTION:
+# Adds -fPIC if compiler is not enable it by default.
+# Acceptable values: 1, 0, unset
+
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_USE_CASES
 # Add additional flags to secure packages based on typical USE cases.
 # Valid values:
@@ -401,6 +406,11 @@ einfo "All SSP hardening (All functions hardened)"
 			_cflags-hardened_append_gcc_retpoline
 			_cflags-hardened_append_clang_retpoline
 		fi
+	fi
+
+	if [[ "${CFLAGS_HARDENED_PIE:-1}" == "1" ]] ! tc-enables-pie ; then
+		filter-flags "-fPIC"
+		append-flags "-fPIC"
 	fi
 
 	export CFLAGS_HARDENED_CFLAGS
