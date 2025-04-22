@@ -101,10 +101,12 @@ CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 # id (Information Disclosure)
 #
 # admin-access (e.g. sudo)
+# container-runtime
 # daemon
 # dss (e.g. cryptocurrency, finance)
 # extension
 # execution-integrity
+# hypervisor
 # jit
 # kernel
 # messenger
@@ -412,7 +414,7 @@ einfo "All SSP hardening (All functions hardened)"
 		#   General case: -mretpoline-external-thunk -mindirect-branch-cs-prefix
 		#   vDSO case:    -mretpoline
 		:
-	elif [[ "${CFLAGS_HARDENED_RETPOLINE:-1}" == "1" && "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"id"|"scripting"|"sensitive-data"|"server"|"web-browser") ]] ; then
+	elif [[ "${CFLAGS_HARDENED_RETPOLINE:-1}" == "1" && "${CFLAGS_HARDENED_USE_CASES}" =~ ("container-runtime"|"dss"|"id"|"hypervisor"|"kernel"|"network"|"scripting"|"sensitive-data"|"server"|"web-browser") ]] ; then
 		:
 	# ID
 	# Spectre V2 mitigation general case
