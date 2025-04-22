@@ -183,6 +183,11 @@ ewarn "Forcing -mindirect-branch-register to avoid flag conflict between -fcf-pr
 		CFLAGS_HARDENED_RETPOLINE_FLAVOR="register"
 	fi
 
+	# cf-protection (CE -> DoS, DT, ID) is a more stronger than Retpoline against Spectre v2 (ID).
+	# cf-protection=full is mutually exclusive to -mfunction-return=thunk.
+	# For old machines without CET, we fallback to Retpoline.
+	# For newer machines, we prioritize CET over Retpoline.
+
 	filter-flags "-mfunction-return=*"
 	filter-flags "-mindirect-branch-register"
 
