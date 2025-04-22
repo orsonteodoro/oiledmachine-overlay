@@ -143,15 +143,28 @@ ewarn "Avoiding possible flag conflict between -fcf-protection=return and -mretp
 		return
 	fi
 
-	if \
-		[[ \
-			   "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("balanced"|"default"|"portable") \
-			|| "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "secure" \
-		]] \
-	; then
+	if [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("secure-realtime"|"secure-speed") ]] && test-flags-CC "-mretpoline" ; then
+	# For portablity and speed
+		append-flags "-mretpoline"
+		CFLAGS_HARDENED_CFLAGS+=" -mretpoline"
+		CFLAGS_HARDENED_CXXFLAGS+=" -mretpoline"
+		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,retpolineplt"
+	elif [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("secure-embedded"|"secure-lightweight") ]] && test-flags-CC "-mretpoline-external-thunk" ; then
+	# For cheap embedded devices
+		append-flags "-mretpoline"
+		CFLAGS_HARDENED_CFLAGS+=" -mretpoline"
+		CFLAGS_HARDENED_CXXFLAGS+=" -mretpoline"
+		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,retpolineplt"
+
 		append-flags $(test-flags-CC "-mretpoline-external-thunk")
 		CFLAGS_HARDENED_CFLAGS+=" -mretpoline-external-thunk"
 		CFLAGS_HARDENED_CXXFLAGS+=" -mretpoline-external-thunk"
+	else
+	# For portablity and speed
+		append-flags "-mretpoline"
+		CFLAGS_HARDENED_CFLAGS+=" -mretpoline"
+		CFLAGS_HARDENED_CXXFLAGS+=" -mretpoline"
+		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,retpolineplt"
 	fi
 }
 
@@ -178,11 +191,6 @@ ewarn "Forcing -mindirect-branch-register to avoid flag conflict between -fcf-pr
 		append-flags $(test-flags-CC "-mfunction-return=keep")
 		CFLAGS_HARDENED_CFLAGS+=" -mfunction-return=keep"
 		CFLAGS_HARDENED_CXXFLAGS+=" -mfunction-return=keep"
-	elif [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "register" ]] && test-flags-CC "-mindirect-branch-register" ; then
-	# Full mitigation
-		append-flags $(test-flags-CC "-mindirect-branch-register")
-		CFLAGS_HARDENED_CFLAGS+=" -mindirect-branch-register"
-		CFLAGS_HARDENED_CXXFLAGS+=" -mindirect-branch-register"
 	elif \
 		[[ \
 			   "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("balanced"|"default"|"portable") \
@@ -191,20 +199,27 @@ ewarn "Forcing -mindirect-branch-register to avoid flag conflict between -fcf-pr
 			&& \
 		test-flags-CC "-mfunction-return=thunk" \
 	; then
-	# Full mitigation but random performance between compiler vendors
+	# Full mitigation gainst Spectre v2 (but random performance between compiler vendors)
 		append-flags $(test-flags-CC "-mfunction-return=thunk")
 		CFLAGS_HARDENED_CFLAGS+=" -mfunction-return=thunk"
 		CFLAGS_HARDENED_CXXFLAGS+=" -mfunction-return=thunk"
 	elif [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("secure-embedded"|"secure-lightweight") ]] && test-flags-CC "-mfunction-return=thunk-extern" ; then
-	# Full mitigation (deterministic)
+	# Full mitigation against Spectre v2 (deterministic)
 		append-flags $(test-flags-CC "-mfunction-return=thunk-extern")
 		CFLAGS_HARDENED_CFLAGS+=" -mfunction-return=thunk-extern"
 		CFLAGS_HARDENED_CXXFLAGS+=" -mfunction-return=thunk-extern"
 	elif [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("secure-realtime"|"secure-speed") ]] && test-flags-CC "-mfunction-return=thunk-inline" ; then
-	# Full mitigation (deterministic)
+	# Full mitigation against Spectre v2 (deterministic)
 		append-flags $(test-flags-CC "-mfunction-return=thunk-inline")
 		CFLAGS_HARDENED_CFLAGS+=" -mfunction-return=thunk-inline"
 		CFLAGS_HARDENED_CXXFLAGS+=" -mfunction-return=thunk-inline"
+	fi
+
+	if [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "register" ]] && test-flags-CC "-mindirect-branch-register" ; then
+	# Mitigation against CFI but does not mitigate Spectre v2.
+		append-flags $(test-flags-CC "-mindirect-branch-register")
+		CFLAGS_HARDENED_CFLAGS+=" -mindirect-branch-register"
+		CFLAGS_HARDENED_CXXFLAGS+=" -mindirect-branch-register"
 	fi
 }
 
@@ -373,13 +388,6 @@ einfo "All SSP hardening (All functions hardened)"
 				"-mfunction-return=thunk" \
 				"-mfunction-return=thunk-inline" \
 				"-mfunction-return=thunk-extern"
-
-			if tc-is-clang && test-flags-CC "-mretpoline" ; then
-				append-flags "-mretpoline"
-				CFLAGS_HARDENED_CFLAGS+=" -mretpoline"
-				CFLAGS_HARDENED_CXXFLAGS+=" -mretpoline"
-				CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,retpolineplt"
-			fi
 
 			if [[ -n "${CFLAGS_HARDENED_RETPOLINE_FLAVOR_USER}" ]] ; then
 				CFLAGS_HARDENED_RETPOLINE_FLAVOR="${CFLAGS_HARDENED_RETPOLINE_FLAVOR_USER}"
