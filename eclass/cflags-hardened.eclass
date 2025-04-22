@@ -314,24 +314,26 @@ einfo "All SSP hardening (All functions hardened)"
 		:
 	# ID
 	# Spectre V2 mitigation general case
-		if which lscpu >/dev/null && lscpu | grep -q "Spectre v2.*Mitigation" && test-flags-CC "-mretpoline" ; then
-			filter-flags "-mretpoline"
-			append-flags "-mretpoline" # implies -mindirect-branch=thunk-extern
-			CFLAGS_HARDENED_CFLAGS+=" -mretpoline"
-			CFLAGS_HARDENED_CXXFLAGS+=" -mretpoline"
-			CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,retpolineplt"
-
-			if [[ -n "${CFLAGS_HARDENED_RETPOLINE_FLAVOR_USER}" ]] ; then
-				CFLAGS_HARDENED_RETPOLINE_FLAVOR="${CFLAGS_HARDENED_RETPOLINE_FLAVOR_USER}"
-			fi
-
+		if which lscpu >/dev/null && lscpu | grep -q "Spectre v2.*Mitigation" ; then
 			filter-flags \
+				"-mretpoline" \
 				"-mretpoline-external-thunk" \
 				"-mfunction-return=keep" \
 				"-mindirect-branch-register" \
 				"-mfunction-return=thunk" \
 				"-mfunction-return=thunk-inline" \
 				"-mfunction-return=thunk-extern"
+
+			if tc-is-clang && test-flags-CC "-mretpoline" ; then
+				append-flags "-mretpoline"
+				CFLAGS_HARDENED_CFLAGS+=" -mretpoline"
+				CFLAGS_HARDENED_CXXFLAGS+=" -mretpoline"
+				CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,retpolineplt"
+			fi
+
+			if [[ -n "${CFLAGS_HARDENED_RETPOLINE_FLAVOR_USER}" ]] ; then
+				CFLAGS_HARDENED_RETPOLINE_FLAVOR="${CFLAGS_HARDENED_RETPOLINE_FLAVOR_USER}"
+			fi
 
 			_cflags-hardened_append_gcc_retpoline
 			_cflags-hardened_append_clang_retpoline
