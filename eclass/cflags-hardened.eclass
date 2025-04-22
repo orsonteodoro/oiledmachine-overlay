@@ -105,8 +105,6 @@ CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 # web-browser
 # web-server
 
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_KERNEL
-
 # @FUNCTION: _cflags-hardened_append_clang_retpoline
 # @DESCRIPTION:
 # Apply retpoline flags for clang
@@ -175,6 +173,14 @@ _cflags-hardened_append_gcc_retpoline() {
 #
 cflags-hardened_append() {
 	[[ "${CFLAGS_HARDENED_DISABLED:-0}" == 1 ]] && return
+
+	if [[ -z "${CC}" ]] ; then
+		export CC=$(tc-getCC)
+		export CXX=$(tc-getCXX)
+		export CPP="${CC} -E"
+einfo "CC:  ${CC}"
+		${CC} --version || die
+	fi
 
 	if [[ -n "${CFLAGS_HARDENED_USER_LEVEL}" ]] ; then
 		CFLAGS_HARDENED_LEVEL="${CFLAGS_HARDENED_USER_LEVEL}"
@@ -308,7 +314,7 @@ einfo "All SSP hardening (All functions hardened)"
 		:
 	# ID
 	# Spectre V2 mitigation general case
-		if which lscpu >/dev/null && lscpu | grep -q "Spectre v2.*Mitigation" ; then
+		if which lscpu >/dev/null && lscpu | grep -q "Spectre v2.*Mitigation" && test-flags-CC "-mretpoline" ; then
 			filter-flags "-mretpoline"
 			append-flags "-mretpoline" # implies -mindirect-branch=thunk-extern
 			CFLAGS_HARDENED_CFLAGS+=" -mretpoline"
