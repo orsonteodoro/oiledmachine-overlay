@@ -1834,10 +1834,19 @@ eerror
 		append_all -fno-sanitize=cfi-icall # Prevent illegal instruction with ffprobe
 	fi
 	cflags-hardened_append
-	append-flags -fno-strict-overflow
-	append-flags -fPIE
+	# Let build scripts apply hardening flags for correct
+	# disabling/enablement order.
+	filter-flags \
+		"-D_FORTIFY_SOURCE=*" \
+		"-fstack-protector*" \
+		"-pic" \
+		"-pie" \
+		"-fPIC" \
+		"-fPIE" \
+		"-Wl,-z,relro" \
+		"-Wl,-z,now"
 	myconf+=(
-		--extra-ldexeflags="-fPIE -pie"
+		--toolchain="hardened"
 	)
 
 	# Silence ld.lld: error: libavcodec/libavcodec.so: undefined reference to vpx_codec_get_caps
