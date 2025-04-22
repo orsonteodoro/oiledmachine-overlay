@@ -408,7 +408,7 @@ einfo "All SSP hardening (All functions hardened)"
 		fi
 	fi
 
-	if [[ "${CFLAGS_HARDENED_PIE:-1}" == "1" ]] ! tc-enables-pie ; then
+	if [[ "${CFLAGS_HARDENED_PIE:-1}" == "1" ]] && ! tc-enables-pie ; then
 		filter-flags "-fPIC"
 		append-flags "-fPIC"
 	fi
