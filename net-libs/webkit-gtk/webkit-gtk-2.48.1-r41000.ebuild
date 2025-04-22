@@ -12,7 +12,7 @@ EAPI=8
 # c = reserved
 # de = ebuild revision
 
-# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.48.0/Source/WebKit/Configurations/Version.xcconfig
+# See also, https://github.com/WebKit/WebKit/blob/webkitgtk-2.48.1/Source/WebKit/Configurations/Version.xcconfig
 # To make sure that libwebrtc is the same revision
 
 # libwebrtc requires git clone or the fix the tarball to contain the libwebrtc folder.
@@ -26,17 +26,17 @@ EAPI=8
 # This means also you cannot use the geolocation feature.
 
 # For dependencies, see:
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.48.0/CMakeLists.txt
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.48.0/Source/cmake/BubblewrapSandboxChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.48.0/Source/cmake/FindGStreamer.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.48.0/Source/cmake/GStreamerChecks.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.48.0/Source/cmake/OptionsGTK.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.48.0/Source/cmake/WebKitCommon.cmake
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.48.0/Tools/buildstream/elements/sdk-platform.bst
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.48.0/Tools/buildstream/elements/sdk/gst-plugin-dav1d.bst
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.48.0/Tools/gtk/install-dependencies
-#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.48.0/Tools/gtk/dependencies
-#   https://github.com/WebKit/WebKit/tree/webkitgtk-2.48.0/Tools/glib/dependencies
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.48.1/CMakeLists.txt
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.48.1/Source/cmake/BubblewrapSandboxChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.48.1/Source/cmake/FindGStreamer.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.48.1/Source/cmake/GStreamerChecks.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.48.1/Source/cmake/OptionsGTK.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.48.1/Source/cmake/WebKitCommon.cmake
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.48.1/Tools/buildstream/elements/sdk-platform.bst
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.48.1/Tools/buildstream/elements/sdk/gst-plugin-dav1d.bst
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.48.1/Tools/gtk/install-dependencies
+#   https://github.com/WebKit/WebKit/blob/webkitgtk-2.48.1/Tools/gtk/dependencies
+#   https://github.com/WebKit/WebKit/tree/webkitgtk-2.48.1/Tools/glib/dependencies
 #   https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/DependenciesPolicy.html
 #   https://docs.webkit.org/Ports/WebKitGTK%20and%20WPE%20WebKit/GCCRequirement.html
 
@@ -67,7 +67,7 @@ EAPI=8
 # Manette 0.2.4 is required by webkit-gtk but LTS version is 0.2.3
 # xdg-dbus-proxy is using U 20.04 version
 # Dependencies last updated from
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.48.0
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.48.1
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 
@@ -79,6 +79,7 @@ declare -A CFLAGS_RDEPEND=(
 	["media-libs/dav1d"]=">=;-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
 	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
 )
+CFLAGS_HARDENED_USE_CASES="web-browser"
 CHECKREQS_DISK_BUILD="18G" # and even this might not be enough, bug #417307
 CLANG_PV="18"
 CMAKE_MAKEFILE_GENERATOR="ninja"
@@ -107,13 +108,17 @@ tr uk vi zh_CN
 LLVM_COMPAT=( 18 14 )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MESA_PV="18.0.0_rc5"
-MITIGATION_DATE="Mar 20, 2025"
+MITIGATION_DATE="Apr 7, 2025"
 MITIGATION_LAST_UPDATE=1743585600 # From `date +%s -d "2025-04-02 2:20 AM PDT"` from tag in GH for this version
-MITIGATION_URI="https://webkitgtk.org/security/WSA-2025-0002.html"
+MITIGATION_URI="https://webkitgtk.org/security/WSA-2025-0003.html"
 VULNERABILITIES_FIXED=(
-	"CVE-2024-44192;DoS;Medium"
-	"CVE-2024-54467;ID;Medium"
-	"CVE-2025-24201;SBX, DoS, DT, ID;High"
+	"CVE-2024-54551;ZC, DoS;High"
+	"CVE-2025-24208;XSS, DT, ID;Medium"
+	"CVE-2025-24209;BO, ZC, DoS, DT, ID;High"
+	"CVE-2025-24213;MC, DoS, DT, ID;High"
+	"CVE-2025-24216;DoS;Medium"
+	"CVE-2025-24264;ZC, DoS, DT, ID;Critical"
+	"CVE-2025-30427;DoS;Medium"
 )
 OCDM_WV="virtual/libc" # Placeholder
 PYTHON_COMPAT=( "python3_"{10..12} )
@@ -130,7 +135,7 @@ SO_VERSION=$(( ${SO_CURRENT} - ${SO_AGE} ))
 USE_RUBY=" ruby31 ruby32 ruby33"
 WK_PAGE_SIZE=64 # global var not const
 
-inherit cflags-depends check-linker check-reqs cmake desktop dhms flag-o-matic
+inherit cflags-depends cflags-hardened check-linker check-reqs cmake desktop dhms flag-o-matic
 inherit git-r3 gnome2 lcnr linux-info llvm multilib-minimal multiprocessing
 inherit pax-utils python-single-r1 ruby-single toolchain-funcs vf
 
@@ -442,7 +447,7 @@ SLOT="${API_VERSION}/${SO_VERSION}"
 # For codecs, see
 # https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp#L49
 # https://github.com/WebKit/WebKit/blob/main/Source/WebCore/platform/graphics/gstreamer/GStreamerRegistryScanner.cpp#L280
-# https://github.com/WebKit/WebKit/blob/webkitgtk-2.48.0/Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.cpp#L52
+# https://github.com/WebKit/WebKit/blob/webkitgtk-2.48.1/Source/WebCore/platform/mediastream/gstreamer/RealtimeOutgoingAudioSourceGStreamer.cpp#L52
 
 GST_ACODECS_IUSE="
 aac
@@ -476,7 +481,7 @@ MSE_VCODECS_IUSE="
 "
 
 # Based on patent status
-# Compare https://github.com/WebKit/WebKit/blob/webkitgtk-2.48.0/Tools/glib/dependencies
+# Compare https://github.com/WebKit/WebKit/blob/webkitgtk-2.48.1/Tools/glib/dependencies
 DEFAULT_GST_PLUGINS="
 +a52
 -aac
@@ -2174,30 +2179,7 @@ ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
 	# DT - Data Tamperint
 	# ID - Information Disclosure
 
-	# Prevent the sys-devel/gcc[vanilla] unintended consequences.
-	if tc-enables-ssp ; then
-einfo "SSP is already enabled."
-	else
-	# As a precaution mitigate CE, DT, ID, DoS
-einfo "Adding SSP protection"
-		append-flags -fstack-protector
-	fi
-
-	if tc-enables-fortify-source ; then
-einfo "_FORITIFY_SOURCE is already enabled."
-	else
-	# A precaution to mitigate CE, DT, ID, DoS (CWE-121).
-einfo "Adding _FORITIFY_SOURCE=2"
-		append-flags -D_FORTIFY_SOURCE=2
-	fi
-
-	if tc-enables-pie ; then
-einfo "PIC is already enabled."
-	else
-	# ASLR (buffer overflow mitigation)
-einfo "Adding -fPIC"
-		append-flags -fPIC
-	fi
+	cflags-hardened_append
 
 	# Add more swap if linker OOMs computer.
 
