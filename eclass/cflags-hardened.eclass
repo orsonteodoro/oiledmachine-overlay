@@ -102,9 +102,12 @@ CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 # extensions
 # execution-integrity
 # kernel
+# messengers
 # real-time-integrity
 # safety-critical
 # multithreaded-confidential
+# multiuser-system
+# p2p
 # plugins
 # sensitive-data
 # scripting
@@ -263,7 +266,7 @@ einfo "CC:  ${CC}"
 	if \
 		[[ "${CFLAGS_HARDENED_LEVEL}" == "2" ]] \
 			&& \
-		[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("admin-access"|"ce"|"daemon"|"dos"|"dss"|"dt"|"execution-integrity"|"extensions"|"id"|"kernel"|"multithreaded-confidential"|"pe"|"plugins"|"real-time-integrity"|"safety-critical"|"sensitive-data"|"server") ]] \
+		[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("admin-access"|"ce"|"daemon"|"dos"|"dss"|"dt"|"execution-integrity"|"extensions"|"id"|"kernel"|"messengers"|"multithreaded-confidential"|"multiuser-system"|"p2p"|"pe"|"plugins"|"real-time-integrity"|"safety-critical"|"sensitive-data"|"server"|"web-browser") ]] \
 			&& \
 		tc-check-min_ver gcc "14.2" \
 	; then
@@ -302,7 +305,7 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 			CFLAGS_HARDENED_CFLAGS+=" -O1"
 		fi
 		if \
-			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("admin-access"|"ce"|"daemon"|"databases"|"dos"|"dss"|"dt"|"execution-integrity"|"multithreaded-confidential"|"pe"|"server"|"suid") ]] \
+			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("admin-access"|"ce"|"daemon"|"databases"|"dos"|"dss"|"dt"|"execution-integrity"|"messengers"|"multithreaded-confidential"|"multiuser-system"|"p2p"|"pe"|"server"|"suid"|"web-browser") ]] \
 				&&
 			test-flags-CC "-fstack-clash-protection" \
 		; then
