@@ -418,7 +418,7 @@ einfo "All SSP hardening (All functions hardened)"
 	# Spectre V2 mitigation general case
 		# -mfunction-return and -fcf-protection are mutually exclusive.
 
-		if which lscpu >/dev/null && lscpu | grep -q "Spectre v2.*Mitigation" ; then
+		if which lscpu >/dev/null && lscpu | grep -E -q "Spectre v2.*(Mitigation|Vulnerable)" ; then
 			filter-flags \
 				"-mretpoline" \
 				"-mretpoline-external-thunk" \
