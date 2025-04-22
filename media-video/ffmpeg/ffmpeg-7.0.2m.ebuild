@@ -506,11 +506,10 @@ ${PATENT_STATUS[@]}
 ${TRAINERS[@]}
 ${USE_LICENSES[@]}
 alsa chromium -clear-config-first cuda cuda-filters doc dvdvideo +encode gdbm
-liblensfun libqrencode mold
-openvino oss pgo
-+re-codecs sndio soc sr static-libs tensorflow test torch v4l wayland
+liblensfun libqrencode mold openvino oss pgo +re-codecs sndio soc sr static-libs
+tensorflow test torch v4l wayland
 
-ebuild_revision_18
+ebuild_revision_21
 "
 
 # The distro has frei0r-plugins as GPL-2 only but source is actually GPL-2+, GPL-3+ [baltan.cpp], LGPL-2.1+ [nois0r.cpp].
