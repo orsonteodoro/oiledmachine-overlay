@@ -85,10 +85,22 @@
     ULIMIT - Sets the maximum open file limit.
     Default values:  Mold - 16384, BFD/LLD - 1024
 
+    FPMATH_MODE - Sets the float performance versus accuracy tradeoff.
+    Speed and accuracy are mutually exclusive in this context.
+    In accuracy mode, calculations are done in memory and runtime rounding modes are respected.
+
+    Virtually all web browsers prioritize speed over accuracy.
+
+    Acceptable values:
+
+      speed    - use this package for strictly entertainment with no cost lost
+      accuracy - use this package for finance or high-precision scientific research
+      unset    - alias for speed (default)
 
     MITIGATION_USE_CASE - Sets the safety period for ebuild (re-)installs.  If
     the duration exceeds, the ebuild will not (re-)install until a newer point
     release is provided by upstream.
+
     Valid values:
       donations - 1 week
       email     - 1 week
@@ -97,11 +109,13 @@
       shopping  - 1 week
       socials   - 2 weeks
       default   - 60 days (ebuild default)
+
     Examples:
       MITIGATION_USE_CASE="money"              # The ebuild is (re-)installable for 1 week from release date.
       MITIGATION_USE_CASE="donations socials"  # The ebuild is (re-)installable for 1 week from release date.
       MITIGATION_USE_CASE="socials"            # The ebuild is (re-)installable for 2 weeks from release date.
       MITIGATION_USE_CASE="default"            # The ebuild is (re-)installable for 60 days from release date but may likely contain vulnerabilities.
+
 
     For PGO details, see
 

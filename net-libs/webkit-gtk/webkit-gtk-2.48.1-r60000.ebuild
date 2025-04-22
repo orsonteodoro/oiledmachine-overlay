@@ -80,7 +80,7 @@ declare -A CFLAGS_RDEPEND=(
 	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
 )
 CFLAGS_HARDENED_LEVEL=1
-CFLAGS_HARDENED_USE_CASES="dss sensitive-data web-browser"
+CFLAGS_HARDENED_USE_CASES="sensitive-data web-browser"
 CFLAGS_HARDENED_TRAPV=0 # Apply per component using custom patch
 CHECKREQS_DISK_BUILD="18G" # and even this might not be enough, bug #417307
 CLANG_PV="18"
@@ -537,7 +537,7 @@ aqua +avif -bmalloc -cache-partitioning clang dash debug +doc -eme +flite
 +opengl openmp -seccomp +speech-synthesis -spell -system-malloc test thunder
 +variation-fonts wayland +webassembly -webdriver +webgl webm-eme -webrtc webvtt
 -webxr +woff2 +X
-ebuild_revision_1
+ebuild_revision_2
 "
 
 gen_gst_plugins_duse() {
@@ -2186,6 +2186,14 @@ ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
 	# DoS - Denial of Service
 	# DT - Data Tamperint
 	# ID - Information Disclosure
+
+	if [[ "${FPMATH_MODE:-speed}" == "accuracy" ]] ; then
+einfo "Floating point math mode:  accuracy"
+		CFLAGS_HARDENED_USE_CASES+=" fp-determinism"
+	else
+einfo "Floating point math mode:  speed"
+	fi
+einfo "FPMATH_MODE is a user configurable variable.  See metadata.xml for details."
 
 	cflags-hardened_append
 
