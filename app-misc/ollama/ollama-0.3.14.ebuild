@@ -161,6 +161,8 @@ wizardlm wizardlm-uncensored wizardlm2 xwinlm yarn-llama2 yarn-mistral yi
 yi-coder zephyr
 )
 LLVM_COMPAT=( 17 )
+CFLAGS_HARDENED_APPEND_GOFLAGS=1
+CFLAGS_HARDENED_USE_CASES="daemon execution-integrity server"
 GEN_EBUILD=0
 EGO_PN="github.com/ollama/ollama"
 LLAMA_CPP_COMMIT="3f1ae2e32cde00c39b96be6d01c2997c29bae555"
@@ -191,7 +193,7 @@ if ! [[ "${PV}" =~ "9999" ]] ; then
 	export S_GO="${WORKDIR}/go-mod"
 fi
 
-inherit dep-prepare edo flag-o-matic go-module lcnr multiprocessing optfeature rocm
+inherit cflags-hardened dep-prepare edo flag-o-matic go-module lcnr multiprocessing optfeature rocm
 
 
 # protobuf-go 1.34.1 tests with protobuf 5.27.0-rc1
@@ -2457,7 +2459,7 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl native openblas openrc rocm
-sandbox systemd unrestrict video_cards_intel ebuild_revision_44
+sandbox systemd unrestrict video_cards_intel ebuild_revision_45
 "
 gen_rocm_required_use() {
 	local s
@@ -3131,37 +3133,7 @@ src_configure() {
 			|| die
 	fi
 
-	# Use similar hardening flags like TF for community generated LLMs.
-	# These are used as a precaution to mitigate CE, DT, ID, DoS (CWE-121).
-	# CE = Code Execution
-	# DT = Data Tampering
-	# ID = Information Disclosure
-	# DoS = Denial of Service
-	# _FORTIFY_SOURCE levels:
-	# 1 = compile time check.
-	# 2 = compile time + runtime check with constant value.
-	# 3 = compile time + runtime check with size().
-	# TF uses 1
-	# The distro by default uses _FORTIFY_SOURCE=2 and PIE when maybe sys-devel/gcc[-vanilla]
-	if tc-enables-fortify-source ; then
-	# Buffer overflow mitigation
-einfo "-D_FORTIFY_SOURCE is already enabled."
-	else
-		: #append-flags -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=2
-	fi
-
-	if tc-enables-ssp ; then
-einfo "-fstack-protector* is already enabled."
-	else
-	# As a precaution mitigate CE, DT, ID, DoS
-	# Stack based buffer overflow protection
-		: #append-flags -fstack-protector
-	fi
-
-	if tc-enables-pie ; then
-	# ASLR (buffer overflow mitigation)
-einfo "PIE is already enabled."
-	fi
+	cflags-hardened_append
 
 	strip-unsupported-flags
 
