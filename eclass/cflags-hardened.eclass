@@ -101,11 +101,11 @@ CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 # id (Information Disclosure)
 #
 # admin-access (e.g. sudo)
-# container
 # daemon
 # dss (e.g. cryptocurrency, finance)
 # extension
 # execution-integrity
+# jit
 # kernel
 # messenger
 # real-time-integrity
@@ -115,11 +115,10 @@ CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 # p2p
 # plugin
 # sandbox
-# secure-critical (e.g. sandbox, antivirus, crypto libs, memory libs)
+# secure-critical (e.g. sandbox, antivirus, crypto libs, memory allocator libs)
 # sensitive-data
 # scripting
 # server
-# virtual-machine
 # web-browser
 # web-server
 
@@ -273,7 +272,7 @@ einfo "CC:  ${CC}"
 	if \
 		[[ "${CFLAGS_HARDENED_LEVEL}" == "2" ]] \
 			&& \
-		[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("admin-access"|"ce"|"daemon"|"dos"|"dss"|"dt"|"execution-integrity"|"extension"|"id"|"kernel"|"messenger"|"multithreaded-confidential"|"multiuser-system"|"p2p"|"pe"|"plugin"|"real-time-integrity"|"safety-critical"|"secure-critical"|"sensitive-data"|"server"|"web-browser") ]] \
+		[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("admin-access"|"ce"|"daemon"|"dos"|"dss"|"dt"|"execution-integrity"|"extension"|"id"|"jit"|"kernel"|"messenger"|"multithreaded-confidential"|"multiuser-system"|"p2p"|"pe"|"plugin"|"real-time-integrity"|"safety-critical"|"scripting"|"secure-critical"|"sensitive-data"|"server"|"web-browser") ]] \
 			&& \
 		tc-check-min_ver gcc "14.2" \
 	; then
@@ -361,7 +360,7 @@ einfo "All SSP hardening (All functions hardened)"
 		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,relro"
 		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,now"
 		if \
-			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("ce"|"dss"|"execution-integrity"|"extension"|"id"|"kernel"|"pe"|"plugin"|"real-time-integrity"|"safety-critical"|"secure-critical"|"sensitive-data") ]] \
+			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("ce"|"dss"|"execution-integrity"|"extension"|"id"|"jit"|"kernel"|"multiuser-system"|"pe"|"plugin"|"real-time-integrity"|"safety-critical"|"scripting"|"secure-critical"|"sensitive-data") ]] \
 					&&
 			test-flags-CC "-fcf-protection=full" \
 					&&
@@ -395,7 +394,7 @@ einfo "All SSP hardening (All functions hardened)"
 		#   General case: -mretpoline-external-thunk -mindirect-branch-cs-prefix
 		#   vDSO case:    -mretpoline
 		:
-	elif [[ "${CFLAGS_HARDENED_RETPOLINE:-1}" == "1" && "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"id"|"scripting"|"sensitive-data"|"server"|"virtual-machine"|"web-browser") ]] ; then
+	elif [[ "${CFLAGS_HARDENED_RETPOLINE:-1}" == "1" && "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"id"|"scripting"|"sensitive-data"|"server"|"web-browser") ]] ; then
 		:
 	# ID
 	# Spectre V2 mitigation general case
