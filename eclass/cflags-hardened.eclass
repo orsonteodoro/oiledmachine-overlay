@@ -87,7 +87,13 @@ CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_PIE
 # @DESCRIPTION:
-# Adds -fPIC if compiler is not enable it by default.
+# Adds -fPIE -pie if compiler is not enable it by default to executable only packages.
+# Acceptable values: 1, 0, unset
+# It is recommended that build scripts handle hybrid (exe + libs) cases.
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_PIC
+# @DESCRIPTION:
+# Adds -fPIC if compiler is not enable it by default to library only packages.
 # Acceptable values: 1, 0, unset
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_USE_CASES
