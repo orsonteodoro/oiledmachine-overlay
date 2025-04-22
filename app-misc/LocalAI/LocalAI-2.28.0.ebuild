@@ -82,6 +82,7 @@ ROCM_SLOTS=(
 )
 
 BARK_CPP_PV="1.0.0"
+CFLAGS_HARDENED_APPEND_GOFLAGS=1
 CFLAGS_HARDENED_USE_CASES="daemon execution-integrity server"
 ENCODEC_CPP_COMMIT="05513e7f03d8d349734a2b7a47b2e9921f0adeb0" # For bark.cpp
 ESPEAK_NG_COMMIT="8593723f10cfd9befd50de447f14bf0a9d2a14a4" # For go-piper
@@ -172,6 +173,7 @@ ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 ci cuda debug devcontainer native openblas opencl openrc p2p rocm sycl-f16
 sycl-f32 systemd tts vulkan
+ebuild_revision_1
 "
 REQUIRED_USE="
 	!ci
