@@ -370,7 +370,7 @@ CPU_REQUIRED_USE="
 # +re-codecs is based on unpatched behavior to prevent breaking changes.
 
 inherit cflags-hardened cuda flag-o-matic flag-o-matic-om llvm multilib
-inherit multilib-minimal python-single-r1 toolchain-funcs uopts ${SCM}
+inherit multilib-minimal python-single-r1 toolchain-funcs uopts
 
 if [[ "${MY_PV#9999}" == "${MY_PV}" ]] ; then
 	KEYWORDS="
