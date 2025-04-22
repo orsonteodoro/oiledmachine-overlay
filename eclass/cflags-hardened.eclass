@@ -38,7 +38,7 @@ inherit flag-o-matic toolchain-funcs
 #     Use cases:
 #     For DSS builds if test suite passed for this level
 CFLAGS_HARDENED_LEVEL=${CFLAGS_HARDENED_LEVEL:-1}
-CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"register"}
+CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_USER_LEVEL
 # @DESCRIPTION:
@@ -55,13 +55,16 @@ CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"register"}
 # @DESCRIPTION:
 # Controls retpoline protection versus speed tradeoff.
 # Acceptable values:  balanced, default, register, secure, secure-embedded, secure-lightweight, secure-realtime, secure-speed, testing
-# default is the same as register to avoid mutual exclusivity.
+# The default could be register or secure depending on CET.
+# secure is compiler dependent so the performance guarantees vary.
+# secure is a bidirectional alias for default, balanced.
+# secure-embedded is a bidirectional alias for secure-lightweight.
+# secure-realtime is a bidirectional alias for secure-speed.
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_RETPOLINE_FLAVOR_USER
 # @DESCRIPTION:
 # Allows the user to override retpoline protection versus speed tradeoff.
-# Acceptable values:  balanced, default, register, secure, secure-embedded, secure-lightweight, secure-realtime, secure-speed, testing
-# default is the same as register to avoid mutual exclusivity.
+# See CFLAGS_HARDENED_RETPOLINE_FLAVOR for details.
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_APPEND_GOFLAGS
 # @DESCRIPTION:
