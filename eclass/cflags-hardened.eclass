@@ -98,7 +98,7 @@ CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 #
 # admin-access (e.g. sudo)
 # daemon
-# dss
+# dss (e.g. cryptocurrency, finance)
 # extensions
 # execution-integrity
 # kernel
@@ -302,7 +302,7 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 			CFLAGS_HARDENED_CFLAGS+=" -O1"
 		fi
 		if \
-			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("admin-access"|"ce"|"daemon"|"dos"|"dt"|"multithreaded-confidential"|"pe"|"server"|"suid") ]] \
+			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("admin-access"|"ce"|"daemon"|"databases"|"dos"|"dss"|"dt"|"execution-integrity"|"multithreaded-confidential"|"pe"|"server"|"suid") ]] \
 				&&
 			test-flags-CC "-fstack-clash-protection" \
 		; then
@@ -365,7 +365,7 @@ einfo "All SSP hardening (All functions hardened)"
 		fi
 	fi
 
-	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("ce"|"execution-integrity"|"scripting"|"sensitive-data"|"web-server") ]] ; then
+	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("ce"|"execution-integrity"|"scripting"|"sensitive-data"|"server"|"web-server") ]] ; then
 	# CE, DT/ID
 		filter-flags "-Wa,--noexecstack"
 		filter-flags "-Wl,-z,noexecstack"
