@@ -105,11 +105,39 @@ CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"register"}
 # web-browser
 # web-server
 
+# @FUNCTION: _cflags-hardened_has_cet
+# @DESCRIPTION:
+# Check if CET is supported for -fcf-protection=full.
+_cflags-hardened_has_cet() {
+	local ibt=0
+	local user_shstk=0
+	if grep -q -e "flags.*ibt" "/proc/cpuinfo" ; then
+		ibt=1
+	fi
+	if grep -q -e "flags.*user_shstk" "/proc/cpuinfo" ; then
+		user_shstk=1
+	fi
+	if (( ${ibt} == 1 && ${user_shstk} )) ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
 # @FUNCTION: _cflags-hardened_append_clang_retpoline
 # @DESCRIPTION:
-# Apply retpoline flags for clang
+# Apply retpoline flags for Clang.
 _cflags-hardened_append_clang_retpoline() {
 	tc-is-clang || return
+
+	if ! _cflags-hardened_has_cet ; then
+	# Allow -mretpoline-external-thunk
+		filter-flags "-fcf-protection=*"
+	elif is-flagq "-fcf-protection=*"  ; then
+ewarn "Avoiding possible flag conflict between -fcf-protection=return and -mretpoline-external-thunk implied by -fcf-protection=full."
+		filter-flags "-mretpoline-external-thunk"
+		return
+	fi
 
 	if \
 		[[ \
@@ -117,13 +145,9 @@ _cflags-hardened_append_clang_retpoline() {
 			|| "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "secure" \
 		]] \
 	; then
-		if is-flagq "-fcf-protection=*" ; then
-ewarn "Avoiding possible flag conflict between -fcf-protection=return and -mretpoline-external-thunk implied by -fcf-protection=full."
-		else
-			append-flags $(test-flags-CC "-mretpoline-external-thunk")
-			CFLAGS_HARDENED_CFLAGS+=" -mretpoline-external-thunk"
-			CFLAGS_HARDENED_CXXFLAGS+=" -mretpoline-external-thunk"
-		fi
+		append-flags $(test-flags-CC "-mretpoline-external-thunk")
+		CFLAGS_HARDENED_CFLAGS+=" -mretpoline-external-thunk"
+		CFLAGS_HARDENED_CXXFLAGS+=" -mretpoline-external-thunk"
 	fi
 }
 
@@ -133,10 +157,16 @@ ewarn "Avoiding possible flag conflict between -fcf-protection=return and -mretp
 _cflags-hardened_append_gcc_retpoline() {
 	tc-is-gcc || return
 
-	if is-flagq "-fcf-protection=*" && [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" != "register" ]] ; then
+	if ! _cflags-hardened_has_cet ; then
+	# Allow -mfunction-return=*
+		filter-flags "-fcf-protection=*"
+	elif is-flagq "-fcf-protection=*"  ; then
 ewarn "Forcing -mindirect-branch-register to avoid flag conflict between -fcf-protection=return implied by -fcf-protection=full."
 		CFLAGS_HARDENED_RETPOLINE_FLAVOR="register"
 	fi
+
+	filter-flags "-mfunction-return=*"
+	filter-flags "-mindirect-branch-register"
 
 	if [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "testing" ]] && test-flags-CC "-mfunction-return=keep" ; then
 	# No mitigation
@@ -294,6 +324,8 @@ einfo "All SSP hardening (All functions hardened)"
 			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("ce"|"dss"|"execution-integrity"|"extensions"|"id"|"kernel"|"pe"|"plugins"|"real-time-integrity"|"safety-critical"|"sensitive-data") ]] \
 					&&
 			test-flags-CC "-fcf-protection=full" \
+					&&
+			_cflags-hardened_has_cet \
 		; then
 	# MC, ID, PE, CE
 			filter-flags "-fcf-protection=*"
