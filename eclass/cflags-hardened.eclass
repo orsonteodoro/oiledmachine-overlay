@@ -112,6 +112,7 @@ CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 # safety-critical
 # multithreaded-confidential
 # multiuser-system
+# network
 # p2p
 # plugin
 # sandbox
@@ -269,12 +270,15 @@ einfo "CC:  ${CC}"
 	CFLAGS_HARDENED_CFLAGS=""
 	CFLAGS_HARDENED_CXXFLAGS=""
 	CFLAGS_HARDENED_LDFLAGS=""
+	local gcc_pv=$(gcc-version)
 	if \
 		[[ "${CFLAGS_HARDENED_LEVEL}" == "2" ]] \
 			&& \
-		[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("admin-access"|"ce"|"daemon"|"dos"|"dss"|"dt"|"execution-integrity"|"extension"|"id"|"jit"|"kernel"|"messenger"|"multithreaded-confidential"|"multiuser-system"|"p2p"|"pe"|"plugin"|"real-time-integrity"|"safety-critical"|"scripting"|"secure-critical"|"sensitive-data"|"server"|"web-browser") ]] \
+		[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("admin-access"|"ce"|"daemon"|"dos"|"dss"|"dt"|"execution-integrity"|"extension"|"id"|"jit"|"kernel"|"messenger"|"multithreaded-confidential"|"multiuser-system"|"network"|"p2p"|"pe"|"plugin"|"real-time-integrity"|"safety-critical"|"scripting"|"secure-critical"|"sensitive-data"|"server"|"web-browser") ]] \
 			&& \
-		tc-check-min_ver gcc "14.2" \
+		tc-is-gcc \
+			&&
+		ver_test "${gcc_pv}" -ge "14.2" \
 	; then
 einfo "Appending -fhardened"
 einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with local arrays or local pointers)"
@@ -311,7 +315,7 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 			CFLAGS_HARDENED_CFLAGS+=" -O1"
 		fi
 		if \
-			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("admin-access"|"ce"|"daemon"|"databases"|"dos"|"dss"|"dt"|"execution-integrity"|"messenger"|"multithreaded-confidential"|"multiuser-system"|"p2p"|"pe"|"secure-critical"|"server"|"suid"|"web-browser") ]] \
+			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("admin-access"|"ce"|"daemon"|"databases"|"dos"|"dss"|"dt"|"execution-integrity"|"messenger"|"multithreaded-confidential"|"multiuser-system"|"network"|"p2p"|"pe"|"secure-critical"|"server"|"suid"|"web-browser") ]] \
 				&&
 			test-flags-CC "-fstack-clash-protection" \
 		; then
@@ -360,7 +364,7 @@ einfo "All SSP hardening (All functions hardened)"
 		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,relro"
 		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,now"
 		if \
-			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("ce"|"dss"|"execution-integrity"|"extension"|"id"|"jit"|"kernel"|"multiuser-system"|"pe"|"plugin"|"real-time-integrity"|"safety-critical"|"scripting"|"secure-critical"|"sensitive-data") ]] \
+			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("ce"|"dss"|"execution-integrity"|"extension"|"id"|"jit"|"kernel"|"multiuser-system"|"network"|"pe"|"plugin"|"real-time-integrity"|"safety-critical"|"scripting"|"secure-critical"|"sensitive-data") ]] \
 					&&
 			test-flags-CC "-fcf-protection=full" \
 					&&
@@ -372,9 +376,23 @@ einfo "All SSP hardening (All functions hardened)"
 			CFLAGS_HARDENED_CFLAGS+=" -fcf-protection=full"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fcf-protection=full"
 		fi
+
+		if \
+			[[ "${CFLAGS_HARDENED_TRIVIAL_AUTO_VAR_INIT:-1}" == "1" ]] \
+				&& \
+			tc-is-clang \
+				&&
+			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dos"|"dss"|"safety-critical"|"secure-critical") ]] \
+		; then
+	# DoS
+			filter-flags "-ftrivial-auto-var-init=zero"
+			append-flags "-ftrivial-auto-var-init=zero"
+			CFLAGS_HARDENED_CFLAGS+=" -ftrivial-auto-var-init=zero"
+			CFLAGS_HARDENED_CXXFLAGS+=" -ftrivial-auto-var-init=zero"
+		fi
 	fi
 
-	if [[ "${CFLAGS_HARDENED_NOEXECSTACK:-1}" == "1" && "${CFLAGS_HARDENED_USE_CASES}" =~ ("ce"|"execution-integrity"|"multiuser-system"|"scripting"|"sensitive-data"|"server"|"web-server") ]] ; then
+	if [[ "${CFLAGS_HARDENED_NOEXECSTACK:-1}" == "1" && "${CFLAGS_HARDENED_USE_CASES}" =~ ("ce"|"execution-integrity"|"multiuser-system"|"network"|"scripting"|"sensitive-data"|"server"|"web-server") ]] ; then
 	# CE, DT/ID
 		filter-flags "-Wa,--noexecstack"
 		filter-flags "-Wl,-z,noexecstack"
@@ -419,9 +437,29 @@ einfo "All SSP hardening (All functions hardened)"
 		fi
 	fi
 
-	if [[ "${CFLAGS_HARDENED_PIE:-1}" == "1" ]] && ! tc-enables-pie ; then
+	if [[ "${CFLAGS_HARDENED_TRAPV:-1}" == "1" && "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"network"|"secure-critical"|"safety-critical") ]] ; then
+	# Remove flag if 50% drop in performance.
+	# For runtime *signed* integer overflow detection
+		filter-flags "-ftrapv"
+		append-flags "-ftrapv"
+		CFLAGS_HARDENED_CFLAGS+=" -ftrapv"
+		CFLAGS_HARDENED_CXXFLAGS+=" -ftrapv"
+	fi
+
+	# Apply only if it produces *only* an exe.
+	# Do not apply if package produces exe and lib(s).
+	if [[ "${CFLAGS_HARDENED_PIE:-0}" == "1" ]] && ! tc-enables-pie ; then
+		filter-flags "-fPIE" "-pie"
+		append-flags "-fPIE" "-pie"
+		CFLAGS_HARDENED_CFLAGS+=" -fPIE -pie"
+		CFLAGS_HARDENED_CXXFLAGS+=" -fPIE -pie"
+	fi
+
+	if [[ "${CFLAGS_HARDENED_PIC:-1}" == "1" ]] ; then
 		filter-flags "-fPIC"
 		append-flags "-fPIC"
+		CFLAGS_HARDENED_CFLAGS+=" -fPIC"
+		CFLAGS_HARDENED_CXXFLAGS+=" -fPIC"
 	fi
 
 	export CFLAGS_HARDENED_CFLAGS

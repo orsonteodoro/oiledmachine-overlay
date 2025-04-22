@@ -21,6 +21,8 @@ MY_PV="${PV/m/}"
 MY_P="${PN}-${MY_PV}"
 MY_PVR="${PVR/m/}"
 
+CFLAGS_HARDENED_LEVEL=3 # SSP all is upstream default
+CFLAGS_HARDENED_USE_CASES="network"
 CUDA_TARGETS_COMPAT=(
 	sm_30
 	sm_60
@@ -362,9 +364,8 @@ CPU_REQUIRED_USE="
 
 # +re-codecs is based on unpatched behavior to prevent breaking changes.
 
-inherit cuda flag-o-matic multilib multilib-minimal python-single-r1
-inherit toolchain-funcs ${SCM}
-inherit flag-o-matic-om llvm uopts
+inherit cflags-hardened cuda flag-o-matic flag-o-matic-om llvm multilib
+inherit multilib-minimal python-single-r1 toolchain-funcs uopts ${SCM}
 
 if [[ "${MY_PV#9999}" == "${MY_PV}" ]] ; then
 	KEYWORDS="
@@ -467,10 +468,10 @@ ${TRAINERS[@]}
 ${USE_LICENSES[@]}
 alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm
 liblensfun mold openvino oss
-pgo +pic
+pgo
 +re-codecs sndio sr static-libs tensorflow test v4l wayland
 
-ebuild_revision_17
+ebuild_revision_18
 "
 
 # x means plus.  There is a bug in the USE flag system where + is not recognized.
@@ -1446,12 +1447,6 @@ eerror
 		die
 	fi
 
-	if ! use pic && is-flagq '-flto*' ; then
-ewarn
-ewarn "USE=pic may required for LTO"
-ewarn
-	fi
-
 #
 # BFD LTO with GCC:
 #
@@ -1748,6 +1743,12 @@ eerror
 	if tc-is-clang && has_version "llvm-runtimes/compiler-rt-sanitizer[cfi]" ; then
 		append_all -fno-sanitize=cfi-icall # Prevent illegal instruction with ffprobe
 	fi
+	cflags-hardened_append
+	append-flags -fno-strict-overflow
+	append-flags -fPIE
+	myconf+=(
+		--extra-ldexeflags="-fPIE -pie"
+	)
 
 	# Silence ld.lld: error: libavcodec/libavcodec.so: undefined reference to vpx_codec_get_caps
 	# Error happens when linking -lvpx and -lopenh264 together to make ffprobe_g.  Removing -lopenh264 fixes it.
@@ -1927,20 +1928,8 @@ eerror
 		fi
 	done
 
-	if use pic ; then
-		myconf+=(
-			--enable-pic
-		)
-	# Disable the asm code if PIC is required as the provided asm decidedly
-	# is not PIC for x86.
-		if [[ "${ABI}" == "x86" ]] ; then
-			myconf+=(
-				--disable-asm
-			)
-		fi
-	fi
-	if [[ "${ABI}" == "x32" ]] ; then
-	# Bug #427004
+	# Broken on x32 (bug #427004) and not PIC safe on x86 (bug #916067)
+	if [[ "${ABI}" == "x32" || "${ABI}" == "x86" ]] ; then
 		myconf+=(
 			--disable-asm
 		)
@@ -1972,6 +1961,7 @@ eerror
 	myconf=(
 		--enable-avfilter
 		--enable-avresample
+		--enable-pic
 		--disable-stripping
 	# This is only for hardcoded cflags; those are used in configure checks that may
 	# interfere with proper detections, bug #671746 and bug #645778
