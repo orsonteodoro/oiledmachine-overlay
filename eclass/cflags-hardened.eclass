@@ -24,12 +24,12 @@ inherit flag-o-matic toolchain-funcs
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_LEVEL
 # @DESCRIPTION:
 # Sets the SSP (Stack Smashing Protection) level.  Set it before inheriting cflags-hardened.
-# 1 = standard (recommended for heavy packages, default)
+# 1 = basic (recommended for heavy packages or performance-critical packages)
 #     Use cases:
 #     Used by Chromium production builds
 #     Linux kernel default for %3 of functions
 #     For DSS builds that fail on strong, strongest but pass with standard
-# 2 = strong (recommened for light packages)
+# 2 = strong (recommened for light packages, default)
 #     Use cases:
 #     Used by Chromium debug builds
 #     Used by linux kernel default for 20% of functions
@@ -37,7 +37,7 @@ inherit flag-o-matic toolchain-funcs
 # 3 = strongest
 #     Use cases:
 #     For DSS builds if test suite passed for this level
-CFLAGS_HARDENED_LEVEL=${CFLAGS_HARDENED_LEVEL:-1}
+CFLAGS_HARDENED_LEVEL=${CFLAGS_HARDENED_LEVEL:-2}
 CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_USER_LEVEL
