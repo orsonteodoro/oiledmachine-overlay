@@ -112,6 +112,8 @@ CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 # dss (e.g. cryptocurrency, finance)
 # extension
 # execution-integrity
+# fp-determinism
+# high-precision-research
 # hypervisor
 # jit
 # kernel
@@ -159,7 +161,7 @@ _cflags-hardened_append_clang_retpoline() {
 
 	if ! _cflags-hardened_has_cet ; then
 	# Allow -mretpoline-external-thunk
-		filter-flags "-fcf-protection=*"
+		filter-flags "-f*cf-protection=*"
 	elif is-flagq "-fcf-protection=*"  ; then
 ewarn "Avoiding possible flag conflict between -fcf-protection=return and -mretpoline-external-thunk implied by -fcf-protection=full."
 		filter-flags "-mretpoline-external-thunk"
@@ -200,7 +202,7 @@ _cflags-hardened_append_gcc_retpoline() {
 
 	if ! _cflags-hardened_has_cet ; then
 	# Allow -mfunction-return=*
-		filter-flags "-fcf-protection=*"
+		filter-flags "-f*cf-protection=*"
 	elif is-flagq "-fcf-protection=*"  ; then
 ewarn "Forcing -mindirect-branch-register to avoid flag conflict between -fcf-protection=return implied by -fcf-protection=full."
 		CFLAGS_HARDENED_RETPOLINE_FLAVOR="register"
@@ -211,8 +213,8 @@ ewarn "Forcing -mindirect-branch-register to avoid flag conflict between -fcf-pr
 	# For old machines without CET, we fallback to Retpoline.
 	# For newer machines, we prioritize CET over Retpoline.
 
-	filter-flags "-mfunction-return=*"
-	filter-flags "-mindirect-branch-register"
+	filter-flags "-m*function-return=*"
+	filter-flags "-m*indirect-branch-register"
 
 	if [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "testing" ]] && test-flags-CC "-mfunction-return=keep" ; then
 	# No mitigation
@@ -299,17 +301,17 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 			CFLAGS_HARDENED_CFLAGS+=" -O1"
 		fi
 		filter-flags \
-			"-fstack-clash-protection" \
-			"-fstack-protector" \
-			"-fstack-protector-strong" \
-			"-fstack-protector-all" \
+			"-f*cf-protection=*" \
+			"-f*hardened" \
+			"-f*stack-clash-protection" \
+			"-f*stack-protector" \
+			"-f*stack-protector-strong" \
+			"-f*stack-protector-all" \
 			"-D_FORTIFY_SOURCE=1" \
 			"-D_FORTIFY_SOURCE=2" \
 			"-D_FORTIFY_SOURCE=3" \
 			"-Wl,-z,relro" \
-			"-Wl,-z,now" \
-			"-fcf-protection=*"
-		filter-flags "-fhardened"
+			"-Wl,-z,now"
 		append-flags "-fhardened"
 		CFLAGS_HARDENED_CFLAGS+=" -fhardened"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fhardened"
@@ -334,26 +336,26 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 	# ID = Information Disclosure
 	# MC = Memory Corruption
 	# PE = Privilege Execution
-			filter-flags "-fstack-clash-protection"
+			filter-flags "-f*stack-clash-protection"
 			append-flags "-fstack-clash-protection"
 			CFLAGS_HARDENED_CFLAGS+=" -fstack-clash-protection"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fstack-clash-protection"
 		fi
 		if [[ "${CFLAGS_HARDENED_LEVEL}" == "1" ]] && ! tc-enables-ssp ; then
 einfo "Standard SSP hardening (>= 8 byte buffers, *alloc functions)"
-			filter-flags "-fstack-protector"
+			filter-flags "-f*stack-protector"
 			append-flags "-fstack-protector"
 			CFLAGS_HARDENED_CFLAGS+=" -fstack-protector"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fstack-protector"
 		elif [[ "${CFLAGS_HARDENED_LEVEL}" == "2" ]] && ! tc-enables-ssp-strong ; then
 einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with local arrays or local pointers)"
-			filter-flags "-fstack-protector-strong"
+			filter-flags "-f*stack-protector-strong"
 			append-flags "-fstack-protector-strong"
 			CFLAGS_HARDENED_CFLAGS+=" -fstack-protector-strong"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fstack-protector-strong"
 		elif [[ "${CFLAGS_HARDENED_LEVEL}" == "3" ]] && ! tc-enables-ssp-all ; then
 einfo "All SSP hardening (All functions hardened)"
-			filter-flags "-fstack-protector-all"
+			filter-flags "-f*stack-protector-all"
 			append-flags "-fstack-protector-all"
 			CFLAGS_HARDENED_CFLAGS+=" -fstack-protector-all"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fstack-protector-all"
@@ -379,7 +381,7 @@ einfo "All SSP hardening (All functions hardened)"
 			_cflags-hardened_has_cet \
 		; then
 	# MC, ID, PE, CE
-			filter-flags "-fcf-protection=*"
+			filter-flags "-f*cf-protection=*"
 			append-flags "-fcf-protection=full"
 			CFLAGS_HARDENED_CFLAGS+=" -fcf-protection=full"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fcf-protection=full"
@@ -393,7 +395,7 @@ einfo "All SSP hardening (All functions hardened)"
 			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dos"|"dss"|"safety-critical"|"secure-critical") ]] \
 		; then
 	# DoS
-			filter-flags "-ftrivial-auto-var-init=zero"
+			filter-flags "-f*trivial-auto-var-init=*"
 			append-flags "-ftrivial-auto-var-init=zero"
 			CFLAGS_HARDENED_CFLAGS+=" -ftrivial-auto-var-init=zero"
 			CFLAGS_HARDENED_CXXFLAGS+=" -ftrivial-auto-var-init=zero"
@@ -428,13 +430,10 @@ einfo "All SSP hardening (All functions hardened)"
 
 		if which lscpu >/dev/null && lscpu | grep -E -q "Spectre v2.*(Mitigation|Vulnerable)" ; then
 			filter-flags \
-				"-mretpoline" \
-				"-mretpoline-external-thunk" \
-				"-mfunction-return=keep" \
-				"-mindirect-branch-register" \
-				"-mfunction-return=thunk" \
-				"-mfunction-return=thunk-inline" \
-				"-mfunction-return=thunk-extern"
+				"-m*retpoline" \
+				"-m*retpoline-external-thunk" \
+				"-m*function-return=*" \
+				"-m*indirect-branch-register" \
 
 			if [[ -n "${CFLAGS_HARDENED_RETPOLINE_FLAVOR_USER}" ]] ; then
 				CFLAGS_HARDENED_RETPOLINE_FLAVOR="${CFLAGS_HARDENED_RETPOLINE_FLAVOR_USER}"
@@ -448,7 +447,7 @@ einfo "All SSP hardening (All functions hardened)"
 	if [[ "${CFLAGS_HARDENED_TRAPV:-1}" == "1" && "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"network"|"secure-critical"|"safety-critical") ]] ; then
 	# Remove flag if 50% drop in performance.
 	# For runtime *signed* integer overflow detection
-		filter-flags "-ftrapv"
+		filter-flags "-f*trapv"
 		append-flags "-ftrapv"
 		CFLAGS_HARDENED_CFLAGS+=" -ftrapv"
 		CFLAGS_HARDENED_CXXFLAGS+=" -ftrapv"
@@ -477,6 +476,27 @@ einfo "All SSP hardening (All functions hardened)"
 		append-flags "-fno-allow-store-data-races"
 		CFLAGS_HARDENED_CFLAGS+=" -fno-allow-store-data-races"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fno-allow-store-data-races"
+	fi
+
+	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"fp-determinism"|"high-precision-research") ]] ; then
+	# Do not use in performance-critical applications
+		replace-flags "-Ofast" "-O3"
+		filter-flags \
+			"-f*fast-math" \
+			"-f*float-store" \
+			"-f*excess-precision=*" \
+			"-f*fp-contract=*" \
+			"-f*rounding-math" \
+			"-m*fpmath=*"
+		append-flags \
+			"-ffast-math" \
+			"-ffloat-store" \
+			"-fexcess-precision=standard" \
+			"-ffp-contract=off" \
+			"-frounding-math" \
+			"-mfpmath=*"
+		CFLAGS_HARDENED_CFLAGS+=" -ffloat-store -fexcess-precision=standard -ffp-contract=off -frounding-math"
+		CFLAGS_HARDENED_CXXFLAGS+=" -ffloat-store -fexcess-precision=standard -ffp-contract=off -frounding-math"
 	fi
 
 	export CFLAGS_HARDENED_CFLAGS
