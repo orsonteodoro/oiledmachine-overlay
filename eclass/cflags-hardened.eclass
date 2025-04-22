@@ -109,6 +109,8 @@ CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 # multiuser-system
 # p2p
 # plugins
+# sandbox
+# secure-critical (e.g. sandbox, antivirus, crypto libs, memory libs)
 # sensitive-data
 # scripting
 # server
@@ -266,7 +268,7 @@ einfo "CC:  ${CC}"
 	if \
 		[[ "${CFLAGS_HARDENED_LEVEL}" == "2" ]] \
 			&& \
-		[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("admin-access"|"ce"|"daemon"|"dos"|"dss"|"dt"|"execution-integrity"|"extensions"|"id"|"kernel"|"messengers"|"multithreaded-confidential"|"multiuser-system"|"p2p"|"pe"|"plugins"|"real-time-integrity"|"safety-critical"|"sensitive-data"|"server"|"web-browser") ]] \
+		[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("admin-access"|"ce"|"daemon"|"dos"|"dss"|"dt"|"execution-integrity"|"extensions"|"id"|"kernel"|"messengers"|"multithreaded-confidential"|"multiuser-system"|"p2p"|"pe"|"plugins"|"real-time-integrity"|"safety-critical"|"secure-critical"|"sensitive-data"|"server"|"web-browser") ]] \
 			&& \
 		tc-check-min_ver gcc "14.2" \
 	; then
@@ -305,7 +307,7 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 			CFLAGS_HARDENED_CFLAGS+=" -O1"
 		fi
 		if \
-			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("admin-access"|"ce"|"daemon"|"databases"|"dos"|"dss"|"dt"|"execution-integrity"|"messengers"|"multithreaded-confidential"|"multiuser-system"|"p2p"|"pe"|"server"|"suid"|"web-browser") ]] \
+			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("admin-access"|"ce"|"daemon"|"databases"|"dos"|"dss"|"dt"|"execution-integrity"|"messengers"|"multithreaded-confidential"|"multiuser-system"|"p2p"|"pe"|"secure-critical"|"server"|"suid"|"web-browser") ]] \
 				&&
 			test-flags-CC "-fstack-clash-protection" \
 		; then
@@ -354,7 +356,7 @@ einfo "All SSP hardening (All functions hardened)"
 		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,relro"
 		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,now"
 		if \
-			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("ce"|"dss"|"execution-integrity"|"extensions"|"id"|"kernel"|"pe"|"plugins"|"real-time-integrity"|"safety-critical"|"sensitive-data") ]] \
+			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("ce"|"dss"|"execution-integrity"|"extensions"|"id"|"kernel"|"pe"|"plugins"|"real-time-integrity"|"safety-critical"|"secure-critical"|"sensitive-data") ]] \
 					&&
 			test-flags-CC "-fcf-protection=full" \
 					&&
