@@ -38,7 +38,7 @@ inherit flag-o-matic toolchain-funcs
 #     Use cases:
 #     For DSS builds if test suite passed for this level
 CFLAGS_HARDENED_LEVEL=${CFLAGS_HARDENED_LEVEL:-1}
-CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
+CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"register"}
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_USER_LEVEL
 # @DESCRIPTION:
@@ -55,13 +55,13 @@ CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 # @DESCRIPTION:
 # Controls retpoline protection versus speed tradeoff.
 # Acceptable values:  balanced, default, register, secure, secure-embedded, secure-lightweight, secure-realtime, secure-speed, testing
-# default is the same as secure without performance guarantees.
+# default is the same as register to avoid mutual exclusivity.
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_RETPOLINE_FLAVOR_USER
 # @DESCRIPTION:
 # Allows the user to override retpoline protection versus speed tradeoff.
 # Acceptable values:  balanced, default, register, secure, secure-embedded, secure-lightweight, secure-realtime, secure-speed, testing
-# default is the same as secure without performance guarantees.
+# default is the same as register to avoid mutual exclusivity.
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_APPEND_GOFLAGS
 # @DESCRIPTION:
@@ -110,15 +110,20 @@ CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 # Apply retpoline flags for clang
 _cflags-hardened_append_clang_retpoline() {
 	tc-is-clang || return
+
 	if \
 		[[ \
 			   "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("balanced"|"default"|"portable") \
 			|| "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "secure" \
 		]] \
 	; then
-		append-flags $(test-flags-CC "-mretpoline-external-thunk")
-		CFLAGS_HARDENED_CFLAGS+=" -mretpoline-external-thunk"
-		CFLAGS_HARDENED_CXXFLAGS+=" -mretpoline-external-thunk"
+		if is-flagq "-fcf-protection=*" ; then
+ewarn "Avoiding possible flag conflict between -fcf-protection=return and -mretpoline-external-thunk implied by -fcf-protection=full."
+		else
+			append-flags $(test-flags-CC "-mretpoline-external-thunk")
+			CFLAGS_HARDENED_CFLAGS+=" -mretpoline-external-thunk"
+			CFLAGS_HARDENED_CXXFLAGS+=" -mretpoline-external-thunk"
+		fi
 	fi
 }
 
@@ -127,6 +132,12 @@ _cflags-hardened_append_clang_retpoline() {
 # Apply retpoline flags for gcc
 _cflags-hardened_append_gcc_retpoline() {
 	tc-is-gcc || return
+
+	if is-flagq "-fcf-protection=*" && [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" != "register" ]] ; then
+ewarn "Forcing -mindirect-branch-register to avoid flag conflict between -fcf-protection=return implied by -fcf-protection=full."
+		CFLAGS_HARDENED_RETPOLINE_FLAVOR="register"
+	fi
+
 	if [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "testing" ]] && test-flags-CC "-mfunction-return=keep" ; then
 	# No mitigation
 		append-flags $(test-flags-CC "-mfunction-return=keep")
@@ -135,8 +146,8 @@ _cflags-hardened_append_gcc_retpoline() {
 	elif [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "register" ]] && test-flags-CC "-mindirect-branch-register" ; then
 	# Full mitigation
 		append-flags $(test-flags-CC "-mindirect-branch-register")
-		CFLAGS_HARDENED_CFLAGS+=" -mfunction-return=keep"
-		CFLAGS_HARDENED_CXXFLAGS+=" -mfunction-return=keep"
+		CFLAGS_HARDENED_CFLAGS+=" -mindirect-branch-register"
+		CFLAGS_HARDENED_CXXFLAGS+=" -mindirect-branch-register"
 	elif \
 		[[ \
 			   "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("balanced"|"default"|"portable") \
@@ -314,6 +325,8 @@ einfo "All SSP hardening (All functions hardened)"
 		:
 	# ID
 	# Spectre V2 mitigation general case
+		# -mfunction-return and -fcf-protection are mutually exclusive.
+
 		if which lscpu >/dev/null && lscpu | grep -q "Spectre v2.*Mitigation" ; then
 			filter-flags \
 				"-mretpoline" \
