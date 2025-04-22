@@ -150,7 +150,7 @@ ewarn "Avoiding possible flag conflict between -fcf-protection=return and -mretp
 		CFLAGS_HARDENED_CXXFLAGS+=" -mretpoline"
 		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,retpolineplt"
 	elif [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("secure-embedded"|"secure-lightweight") ]] && test-flags-CC "-mretpoline-external-thunk" ; then
-	# For cheap embedded devices
+	# For cheap embedded devices that are designed to be slow.
 		append-flags "-mretpoline"
 		CFLAGS_HARDENED_CFLAGS+=" -mretpoline"
 		CFLAGS_HARDENED_CXXFLAGS+=" -mretpoline"
