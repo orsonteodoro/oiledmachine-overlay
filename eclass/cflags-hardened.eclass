@@ -465,6 +465,14 @@ einfo "All SSP hardening (All functions hardened)"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fPIC"
 	fi
 
+	if tc-is-gcc && is-flagq '-Ofast' && [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"safety-critical") ]] ; then
+	# DT, DoS
+		filter-flags "-f*allow-store-data-races"
+		append-flags "-fno-allow-store-data-races"
+		CFLAGS_HARDENED_CFLAGS+=" -fno-allow-store-data-races"
+		CFLAGS_HARDENED_CXXFLAGS+=" -fno-allow-store-data-races"
+	fi
+
 	export CFLAGS_HARDENED_CFLAGS
 	export CFLAGS_HARDENED_CXXFLAGS
 	export CFLAGS_HARDENED_LDFLAGS
