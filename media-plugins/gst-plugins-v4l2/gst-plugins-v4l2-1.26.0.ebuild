@@ -5,15 +5,19 @@ EAPI=8
 
 # See sys/v4l2/meson.build
 
+CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-good"
 GST_PLUGINS_ENABLED="v4l2"
 
-inherit gstreamer-meson
+inherit cflags-hardened gstreamer-meson
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~m68k ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
 
 DESCRIPTION="V4L2 source/sink plugin for GStreamer"
-IUSE="udev"
+IUSE="
+udev
+ebuild_revision_1
+"
 RDEPEND="
 	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP}]
 	media-libs/libv4l[${MULTILIB_USEDEP}]
@@ -27,6 +31,7 @@ DEPEND="
 "
 
 multilib_src_configure() {
+	cflags-hardened_append
 	local emesonargs=(
 		-Dv4l2-gudev=$(usex udev enabled disabled)
 	)
