@@ -70,7 +70,7 @@ libjpeg_turbo_trainers_decode
 libjpeg_turbo_trainers_grayscale
 libjpeg_turbo_trainers_transformations
 pgo static-libs
-build_revision_1
+ebuild_revision_1
 "
 REQUIRED_USE="
 	pgo? (
