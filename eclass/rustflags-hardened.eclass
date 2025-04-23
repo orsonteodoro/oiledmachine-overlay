@@ -131,16 +131,24 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 			&&
 		ver_test "${rust_pv}" -ge "1.60.0" \
 	; then
-		RUSTFLAGS+=" -Z cf-protection=full"
+	# Rust code generation
+		RUSTFLAGS+=" -C target-feature=+cet"
+
+	# C/C++ linking
+		RUSTFLAGS+=" -C link-arg=-fcf-protection=full"
 	fi
 
+	# Not production ready
 	if ver_test "${rust_pv}" -ge "1.58.0" ; then
 		if [[ "${RUSTFLAGS_HARDENED_LEVEL}" == "3" ]] ; then
-			RUSTFLAGS+=" -Z stack-protector=all"
+	#		RUSTFLAGS+=" -C stack-protector=all"			# Rust code generation
+			RUSTFLAGS+=" -C link-arg=-fstack-protector-all"		# C/C++ linking
 		elif [[ "${RUSTFLAGS_HARDENED_LEVEL}" == "2" ]] ; then
-			RUSTFLAGS+=" -Z stack-protector=strong"
+	#		RUSTFLAGS+=" -C stack-protector=strong"			# Rust code generation
+			RUSTFLAGS+=" -C link-arg=-fstack-protector-strong"	# C/C++ linking
 		elif [[ "${RUSTFLAGS_HARDENED_LEVEL}" == "1" ]] ; then
-			RUSTFLAGS+=" -Z stack-protector=basic"
+	#		RUSTFLAGS+=" -C stack-protector=basic"			# Rust code generation
+			RUSTFLAGS+=" -C link-arg=-fstack-protector"		# C/C++ linking
 		fi
 	fi
 
