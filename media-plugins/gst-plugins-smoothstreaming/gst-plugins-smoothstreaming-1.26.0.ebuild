@@ -3,13 +3,17 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="network plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
-inherit gstreamer-meson
+inherit cflags-hardened gstreamer-meson
 
 KEYWORDS="~amd64 ~arm64 ~x86"
 
 DESCRIPTION="Smooth Streaming plugin for GStreamer"
+IUSE="
+ebuild_revision_1
+"
 RDEPEND="
 	>=dev-libs/libxml2-2.8[${MULTILIB_USEDEP}]
 "
@@ -24,6 +28,11 @@ src_prepare() {
 		gstadaptivedemux_dep:gstadaptivedemux \
 		gstisoff_dep:gstisoff \
 		gsturidownloader_dep:gsturidownloader
+}
+
+multilib_src_configure() {
+	cflags-hardened_append
+	gstreamer_multilib_src_configure
 }
 
 pkg_postinst() {
