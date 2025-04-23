@@ -8,6 +8,7 @@ EAPI=8
 # See https://gstreamer.freedesktop.org/security/
 # gstreamer-1.22.x requires 2.62, but 2.64 is strongly recommended
 
+CFLAGS_HARDENED_USE_CASES="network untrusted-data"
 MITIGATION_DATE="Dec 3, 2024" # Advisory date
 MITIGATION_URI="https://gstreamer.freedesktop.org/security/"
 SEVERITY_LABEL="CVSS 4.0"
@@ -18,7 +19,7 @@ VULNERABILITIES_FIXED=(
 # DT = Data Tampering
 # ID = Information Disclosure
 
-inherit gstreamer-meson vf
+inherit cflags-hardened gstreamer-meson vf
 
 KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~m68k ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86
@@ -69,6 +70,7 @@ einfo "Security vulnerabilities fixed:  ${MITIGATION_URI}"
 }
 
 multilib_src_configure() {
+	cflags-hardened_append
 	local emesonargs=(
 		$(meson_feature "unwind" "libunwind")
 		$(meson_feature "unwind" "libdw")
