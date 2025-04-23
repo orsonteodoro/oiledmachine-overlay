@@ -22,7 +22,7 @@ unset -f _gst_plugins_rs_globals
 
 MY_PV="${PV}"
 
-CFLAGS_HARDENED_USE_CASES="network plugin untrusted-data secure-critical"
+RUSTFLAGS_HARDENED_USE_CASES="network plugin untrusted-data secure-critical"
 EXPECTED_BUILD_FILES_FINGERPRINT="disable"
 GOBJECT_INTROSPECTION_PV="1.74.0"
 GST_PV="${MY_PV}"
@@ -88,8 +88,10 @@ PATENT_STATUS_IUSE=(
 	"patent_status_nonfree"
 )
 PYTHON_COMPAT=( "python3_"{8..11} )
-RUST_MAX_VER="1.85.1" # Inclusive.  Corresponds to llvm 19.1
-RUST_MIN_VER="1.85.1" # Corresponds to llvm 19.1
+#RUST_MAX_VER="1.85.1" # Inclusive.  Corresponds to llvm 19.1
+#RUST_MIN_VER="1.85.1" # Corresponds to llvm 19.1
+RUST_MAX_VER="1.86.0" # Inclusive.  Corresponds to llvm 19.1
+RUST_MIN_VER="1.86.0" # Corresponds to llvm 19.1
 
 if [[ "${MY_PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -896,7 +898,7 @@ declare -A GIT_CRATES=(
 	fi
 fi
 
-inherit cflags-hardened flag-o-matic lcnr llvm meson multilib-minimal
+inherit rustflags-hardened flag-o-matic lcnr llvm meson multilib-minimal
 inherit python-any-r1 rust
 
 DESCRIPTION="Various GStreamer plugins written in Rust"
@@ -924,7 +926,7 @@ ${PATENT_STATUS_IUSE[@]}
 aom doc nvcodec qsv openh264 rav1e system-libsodium va vaapi vpx vulkan x264 x265
 webrtc-aws
 webrtc-livekit
-ebuild_revision_7
+ebuild_revision_8
 "
 WEBRTC_AV1_ENCODERS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -1504,7 +1506,7 @@ src_prepare() {
 }
 
 multilib_src_configure() {
-	cflags-hardened_append
+	rustflags-hardened_append
 	meson_src_configure
 }
 
