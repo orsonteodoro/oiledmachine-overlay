@@ -3,13 +3,17 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
-inherit gstreamer-meson
+inherit cflags-hardened gstreamer-meson
 
 KEYWORDS="~amd64 ~arm64 ~x86"
 
 DESCRIPTION="UVC compliant H.264 encoding cameras plugin for GStreamer"
+IUSE="
+ebuild_revision_1
+"
 RDEPEND="
 	dev-libs/libgudev:=[${MULTILIB_USEDEP}]
 	virtual/libusb:1[${MULTILIB_USEDEP}]
@@ -21,4 +25,9 @@ DEPEND="
 src_prepare() {
 	default
 	gstreamer_system_library gstbasecamerabin_dep:libgstbasecamerabinsrc
+}
+
+multilib_src_configure() {
+	cflags-hardened_append
+	gstreamer_multilib_src_configure
 }
