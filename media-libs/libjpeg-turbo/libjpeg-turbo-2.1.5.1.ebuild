@@ -3,6 +3,7 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CMAKE_ECLASS="cmake"
 MULTILIB_WRAPPED_HEADERS=(
 	"/usr/include/jconfig.h"
@@ -16,8 +17,8 @@ UOPTS_BOLT_INST_ARGS=(
 	"libturbojpeg.so.0.2.0:--skip-funcs=.text/1"
 )
 
-inherit cmake-multilib java-pkg-opt-2 flag-o-matic flag-o-matic-om
-inherit toolchain-funcs uopts
+inherit cflags-hardened cmake-multilib java-pkg-opt-2 flag-o-matic
+inherit flag-o-matic-om toolchain-funcs uopts
 
 if [[ "$(ver_cut 3)" -lt 90 ]] ; then
 	KEYWORDS="
@@ -40,28 +41,29 @@ LICENSE="
 "
 SLOT="0/0.2"
 IUSE="
-	+asm cpu_flags_arm_neon java static-libs
-	pgo
-	libjpeg_turbo_trainers_70_pct_quality_baseline
-	libjpeg_turbo_trainers_75_pct_quality_baseline
-	libjpeg_turbo_trainers_80_pct_quality_baseline
-	libjpeg_turbo_trainers_90_pct_quality_baseline
-	libjpeg_turbo_trainers_95_pct_quality_baseline
-	libjpeg_turbo_trainers_98_pct_quality_baseline
-	libjpeg_turbo_trainers_99_pct_quality_baseline
-	libjpeg_turbo_trainers_100_pct_quality_baseline
-	libjpeg_turbo_trainers_70_pct_quality_progressive
-	libjpeg_turbo_trainers_75_pct_quality_progressive
-	libjpeg_turbo_trainers_80_pct_quality_progressive
-	libjpeg_turbo_trainers_90_pct_quality_progressive
-	libjpeg_turbo_trainers_95_pct_quality_progressive
-	libjpeg_turbo_trainers_98_pct_quality_progressive
-	libjpeg_turbo_trainers_99_pct_quality_progressive
-	libjpeg_turbo_trainers_100_pct_quality_progressive
-	libjpeg_turbo_trainers_crop
-	libjpeg_turbo_trainers_decode
-	libjpeg_turbo_trainers_grayscale
-	libjpeg_turbo_trainers_transformations
++asm cpu_flags_arm_neon java
+libjpeg_turbo_trainers_70_pct_quality_baseline
+libjpeg_turbo_trainers_75_pct_quality_baseline
+libjpeg_turbo_trainers_80_pct_quality_baseline
+libjpeg_turbo_trainers_90_pct_quality_baseline
+libjpeg_turbo_trainers_95_pct_quality_baseline
+libjpeg_turbo_trainers_98_pct_quality_baseline
+libjpeg_turbo_trainers_99_pct_quality_baseline
+libjpeg_turbo_trainers_100_pct_quality_baseline
+libjpeg_turbo_trainers_70_pct_quality_progressive
+libjpeg_turbo_trainers_75_pct_quality_progressive
+libjpeg_turbo_trainers_80_pct_quality_progressive
+libjpeg_turbo_trainers_90_pct_quality_progressive
+libjpeg_turbo_trainers_95_pct_quality_progressive
+libjpeg_turbo_trainers_98_pct_quality_progressive
+libjpeg_turbo_trainers_99_pct_quality_progressive
+libjpeg_turbo_trainers_100_pct_quality_progressive
+libjpeg_turbo_trainers_crop
+libjpeg_turbo_trainers_decode
+libjpeg_turbo_trainers_grayscale
+libjpeg_turbo_trainers_transformations
+pgo  static-libs
+ebuild_revision_1
 "
 REQUIRED_USE="
 	pgo? (
@@ -287,11 +289,7 @@ _src_configure() {
 	if tc-is-clang && has_version "llvm-runtimes/compiler-rt-sanitizers[cfi]" ; then
 		append_all -fno-sanitize=cfi-icall # breaks precompiled cef based apps
 	fi
-
-	if is-flagq "-Ofast" ; then
-		# Precaution
-		append_all $(test-flags -fno-allow-store-data-races)
-	fi
+	cflags-hardened_append
 
 	if use static-libs && [[ "${lib_type}" == "static" ]] ;then
 		mycmakeargs+=(
