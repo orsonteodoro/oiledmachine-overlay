@@ -34,7 +34,7 @@ EAPI=8
 # Keep default IUSE options for relevant ones mirrored with gst-plugins-gtk and
 # gst-plugins-bad
 
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="network untrusted-data"
 GST_ORG_MODULE="gst-plugins-base"
 MITIGATION_DATE="Dec 3, 2024" # Advisory date
 MITIGATION_URI="https://gstreamer.freedesktop.org/security/"
@@ -62,7 +62,7 @@ LICENSE="GPL-2+ LGPL-2+"
 IUSE="
 alsa +egl gbm +gles2 +introspection ivorbis nls +ogg opengl +orc +pango theora
 +vorbis wayland +X
-ebuild_revision_1
+ebuild_revision_2
 "
 GL_REQUIRED_USE="
 	|| (
