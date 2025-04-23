@@ -270,7 +270,8 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		RUSTFLAGS+=" -C overflow-checks=on"
 	fi
 
-	RUSTFLAGS+=" -C llvm-args=-fstack-clash-protection"
+	RUSTFLAGS+=" -C target-feature=+stack-probe"
+	RUSTFLAGS+=" -C link-arg=-fstack-clash-protection"
 
 	if \
 		[[ \
@@ -305,8 +306,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		RUSTFLAGS+=" -C relocation-model=pic"
 	fi
 
-	RUSTFLAGS+=" -C link-arg=-z -C link-arg=relro"
-	RUSTFLAGS+=" -C link-arg=-z -C link-arg=now"
+	RUSTFLAGS+=" -C relro-level=full"
 
 	if [[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"fp-determinism"|"high-precision-research") ]] ; then
 		if [[ "${ARCH}" == "amd64" ]] ; then
