@@ -260,6 +260,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 			&& \
 		"${RUSTFLAGS_HARDENED_USE_CASES}" =~ \
 ("dss"\
+|"execution-integrity"\
 |"network"\
 |"secure-critical"\
 |"safety-critical"\

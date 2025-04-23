@@ -574,6 +574,7 @@ einfo "All SSP hardening (All functions hardened)"
 			&& \
 		"${CFLAGS_HARDENED_USE_CASES}" =~ \
 ("dss"\
+|"execution-integrity"\
 |"network"\
 |"secure-critical"\
 |"safety-critical"\
