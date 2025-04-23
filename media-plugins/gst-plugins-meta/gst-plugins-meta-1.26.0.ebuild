@@ -328,3 +328,4 @@ RDEPEND="
 		~media-plugins/gst-plugins-x265-${PV}:1.0[${MULTILIB_USEDEP}]
 	)
 "
+
