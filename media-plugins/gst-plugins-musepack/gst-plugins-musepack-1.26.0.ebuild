@@ -5,12 +5,16 @@ EAPI=8
 
 # See ext/musepack/meson.build
 
+CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
-inherit gstreamer-meson
+inherit cflags-hardened gstreamer-meson
 
 DESCRIPTION="Musepack plugin for GStreamer"
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~m68k ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86"
+IUSE="
+ebuild_revision_1
+"
 RDEPEND="
 	media-sound/musepack-tools:=[${MULTILIB_USEDEP}]
 "
@@ -19,6 +23,7 @@ DEPEND="
 "
 
 multilib_src_configure() {
+	cflags-hardened_append
 	local emesonargs=(
 		-Dgpl=enabled
 	)
