@@ -4,6 +4,9 @@
 
 EAPI=8
 
+# Keep default IUSE mirrored with gst-plugins-base
+
+CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-good"
 GST_PLUGINS_ENABLED="qt6"
 QT5_SUBSLOTS=(
@@ -26,12 +29,15 @@ QT5_SUBSLOTS=(
 	"5.15.0"
 )
 
-inherit gstreamer-meson
+inherit cflags-hardened gstreamer-meson
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~x86-linux"
 
 DESCRIPTION="A Qt5 video sink plugin for GStreamer"
-IUSE="egl wayland +X" # Keep default IUSE mirrored with gst-plugins-base
+IUSE="
+egl wayland +X
+ebuild_revision_1
+"
 REQUIRED_USE="
 	|| (
 		egl
@@ -77,6 +83,7 @@ DEPEND="
 "
 
 multilib_src_configure() {
+	cflags-hardened_append
 	local emesonargs=(
 		-Dqt-egl=$(usex egl "enabled" "disabled")
 		-Dqt-wayland=$(usex wayland "enabled" "disabled")
