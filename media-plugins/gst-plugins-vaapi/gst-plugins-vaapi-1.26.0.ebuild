@@ -34,6 +34,7 @@ EAPI=8
 # 'X' enables non-GL X support; GLX support when combined with 'opengl'
 # gst-plugins-bad still needed for codecparsers (GL libraries moved to -base); checked for 1.14 (recheck for 1.16)
 
+CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_PLUGINS_NOAUTO="wayland"
 GST_REQ="${PV}"
 MY_PN="gstreamer-vaapi" # older
@@ -46,7 +47,7 @@ VIDEO_CARDS=(
 	video_cards_nvidia
 )
 
-inherit gstreamer-meson
+inherit cflags-hardened gstreamer-meson
 
 KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv ~x86"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -61,6 +62,7 @@ SLOT="1.0"
 IUSE="
 ${VIDEO_CARDS[@]}
 +drm +egl +gles2 opengl wayland +X
+ebuild_revision_1
 "
 REQUIRED_USE="
 	gles2? (
@@ -122,6 +124,7 @@ DEPEND="
 "
 
 multilib_src_configure() {
+	cflags-hardened_append
 	local emesonargs=(
 		$(meson_feature drm)
 		$(meson_feature X x11)
