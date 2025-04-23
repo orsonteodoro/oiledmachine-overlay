@@ -3,15 +3,24 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="network plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
-inherit gstreamer-meson
+inherit cflags-hardened gstreamer-meson
 
 KEYWORDS="~amd64 ~arm64"
 
 DESCRIPTION="SCTP plugins for GStreamer"
+IUSE="
+ebuild_revision_1
+"
 RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
 "
+
+multilib_src_configure() {
+	cflags-hardened_append
+	gstreamer_multilib_src_configure
+}
