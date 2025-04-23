@@ -150,7 +150,7 @@ _rustflags-hardened_fcmp() {
 	local a="${1}"
 	local opt="${2}"
 	local b="${3}"
-	python -c "exit(0) if ${a} ${b} ${c} else exit(1)"
+	python -c "exit(0) if ${a} ${opt} ${b} else exit(1)"
 	return $?
 }
 
