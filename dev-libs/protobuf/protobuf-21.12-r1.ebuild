@@ -4,9 +4,11 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
 INTERNAL_VERSION="3.21.12" # From configure.ac L20
 
-inherit cmake-multilib elisp-common flag-o-matic multilib-minimal toolchain-funcs
+inherit cflags-hardened cmake-multilib elisp-common flag-o-matic
+inherit multilib-minimal toolchain-funcs
 
 if [[ "${PV}" == *"9999" ]]; then
 	inherit git-r3
@@ -49,7 +51,10 @@ SLOT="0/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 # 18.3 : 3.18 From configure.ac's AC_INIT
 # 16.2 : 3.16 From configure.ac's AC_INIT
 
-IUSE="emacs examples static-libs test zlib ebuild_revision_1"
+IUSE="
+emacs examples static-libs test zlib
+ebuild_revision_2
+"
 RDEPEND="
 	zlib? (
 		>=sys-libs/zlib-1.2.13[${MULTILIB_USEDEP}]
@@ -136,6 +141,7 @@ src_configure() {
 	# https://sourceware.org/bugzilla/show_bug.cgi?id=24527
 		tc-ld-disable-gold
 	fi
+	cflags-hardened_append
 
 	# Shared libs only
 	local with_static_libs="ON"
