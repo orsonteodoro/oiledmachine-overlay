@@ -3,14 +3,18 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
-inherit gstreamer-meson
+inherit cflags-hardened gstreamer-meson
 
 KEYWORDS="~amd64 ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~x86"
 
 DESCRIPTION="DTS audio decoder plugin for GStreamer"
-IUSE="+orc"
+IUSE="
++orc
+ebuild_revision_1
+"
 RDEPEND="
 	media-libs/libdca[${MULTILIB_USEDEP}]
 	orc? (
@@ -22,6 +26,7 @@ DEPEND="
 "
 
 multilib_src_configure() {
+	cflags-hardened_append
 	local emesonargs=(
 		-Dgpl=enabled
 	)
