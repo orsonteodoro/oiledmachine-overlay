@@ -151,11 +151,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 			&&
 		ver_test "${rust_pv}" -ge "1.60.0" \
 	; then
-	# Rust code generation
 		RUSTFLAGS+=" -C target-feature=+cet"
-
-	# C/C++ linking
-		RUSTFLAGS+=" -C link-arg=-fcf-protection=full"
 	fi
 
 	if [[ -n "${RUSTFLAGS_HARDENED_USER_LEVEL}" ]] ; then
@@ -164,16 +160,15 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 
 	# Not production ready only available on nightly
 	# For status see https://github.com/rust-lang/rust/blob/master/src/doc/rustc/src/exploit-mitigations.md?plain=1#L41
-	if ver_test "${rust_pv}" -ge "1.58.0" ; then
+	if true ; then
+		: # Broken
+	elif ver_test "${rust_pv}" -ge "1.58.0" ; then
 		if [[ "${RUSTFLAGS_HARDENED_LEVEL}" == "3" ]] ; then
-	#		RUSTFLAGS+=" -C stack-protector=all"			# Rust code generation
-			RUSTFLAGS+=" -C link-arg=-fstack-protector-all"		# C/C++ linking
+	#		RUSTFLAGS+=" -C stack-protector=all"
 		elif [[ "${RUSTFLAGS_HARDENED_LEVEL}" == "2" ]] ; then
-	#		RUSTFLAGS+=" -C stack-protector=strong"			# Rust code generation
-			RUSTFLAGS+=" -C link-arg=-fstack-protector-strong"	# C/C++ linking
+	#		RUSTFLAGS+=" -C stack-protector=strong"
 		elif [[ "${RUSTFLAGS_HARDENED_LEVEL}" == "1" ]] ; then
-	#		RUSTFLAGS+=" -C stack-protector=basic"			# Rust code generation
-			RUSTFLAGS+=" -C link-arg=-fstack-protector"		# C/C++ linking
+	#		RUSTFLAGS+=" -C stack-protector=basic"
 		fi
 	fi
 
@@ -225,12 +220,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 			if _rustflags-hardened_has_cet ; then
 				:
 			else
-	# For Rust code generation
 				RUSTFLAGS+=" -C target-feature=+retpoline"
-
-	# For C/C++ linking
-				RUSTFLAGS+=" -C link-arg=-mretpoline"
-				RUSTFLAGS+=" -C link-arg=-mretpoline-external-thunk"
 			fi
 		fi
 	fi
@@ -254,8 +244,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	]] ; then
 	# Remove flag if 50% drop in performance.
 	# For runtime *signed* integer overflow detection
-		RUSTFLAGS+=" -C overflow-checks=on"	# Rust code generation
-		RUSTFLAGS+=" -C link-arg=-ftrapv"	# C/C++ linking
+		RUSTFLAGS+=" -C overflow-checks=on"
 	fi
 
 	RUSTFLAGS+=" -C link-arg=-fstack-clash-protection"
@@ -301,19 +290,10 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 			replace-flags "-Ofast" "-O3"
 			RUSTFLAGS+=" -C opt-level=3"
 		fi
-	# For Rust code generation
 		RUSTFLAGS+=" -C float-opts=none"
 		RUSTFLAGS+=" -C target-feature=+strict-fp"
 		RUSTFLAGS+=" -C target-feature=-fast-math"
 		RUSTFLAGS+=" -C codegen-units=1"
-
-	# For C/C++ linking
-		RUSTFLAGS+=" -C link-arg=-fno-fast-math"
-		RUSTFLAGS+=" -C link-arg=-ffloat-store"
-		RUSTFLAGS+=" -C link-arg=-frounding-math"
-		RUSTFLAGS+=" -C link-arg=-fexcess-precision=standard"
-		RUSTFLAGS+=" -C link-arg=-ffp-contract=off"
-		RUSTFLAGS+=" -C link-arg=-frounding-math"
 	fi
 	export RUSTFLAGS
 }
