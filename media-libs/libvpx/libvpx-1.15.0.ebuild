@@ -7,15 +7,17 @@
 EAPI=8
 
 AOCC_COMPAT=( 14 16 )
-PYTHON_COMPAT=( "python3_"{10..12} )
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
 LIBVPX_TESTDATA_VER="1.14.1"
 N_SAMPLES=1
+PYTHON_COMPAT=( "python3_"{10..12} )
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 
-inherit aocc flag-o-matic flag-o-matic-om llvm multilib-minimal python-single-r1 toolchain-funcs uopts
+inherit aocc cflags-hardened flag-o-matic flag-o-matic-om llvm multilib-minimal
+inherit python-single-r1 toolchain-funcs uopts
 
 KEYWORDS="
 ~amd64 ~amd64-linux ~amd64-macos ~arm64 ~arm ~arm-linux ~arm64 ~loong ~mips
@@ -51,7 +53,7 @@ IUSE="
 ${PPC_IUSE}
 ${TRAINER_IUSE}
 chromium doc +examples +highbitdepth pgo postproc static-libs svc test +threads
-r1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	pgo? (
@@ -501,6 +503,7 @@ _src_configure() {
 	if tc-is-clang && has_version "llvm-runtimes/compiler-rt-sanitizers[cfi]" ; then
 		append_all -fno-sanitize=cfi-icall # Prevent illegal instruction with vpxenc --help
 	fi
+	cflags-hardened_append
 
 	if use chromium && [[ "${lib_type}" == "static" ]] ; then
 		export ASFLAGS="-DCHROMIUM"
