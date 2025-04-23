@@ -125,7 +125,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # For accuracy/integrity set values closer to 20.
 
 # Estimates:
-# Flag					Performance as a normalized multiple
+# Flag					Performance as a normalized decimal multiple
 # No mitigation				1.00
 # -D_FORTIFY_SOURCE=2			1.00 - 1.05
 # -fstack-protect			1.01 - 1.05

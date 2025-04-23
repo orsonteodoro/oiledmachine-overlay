@@ -104,7 +104,7 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # For accuracy/integrity set values closer to 16.
 
 # Estimates:
-# Flag					Performance as a normalized multiple
+# Flag					Performance as a normalized decimal multiple
 # No mitigation				   1
 # -C stack-protector=all		1.05 - 1.10
 # -C stack-protector=strong		1.02 - 1.05
