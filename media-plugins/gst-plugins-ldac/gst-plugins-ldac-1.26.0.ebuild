@@ -3,16 +3,25 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
-inherit gstreamer-meson
+inherit cflags-hardened gstreamer-meson
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~x86"
 
 DESCRIPTION="LDAC plugin for GStreamer"
+IUSE="
+ebuild_revision_1
+"
 RDEPEND="
 	media-libs/libldac[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
 "
+
+multilib_src_configure() {
+	cflags-hardened_append
+	gstreamer_multilib_src_configure
+}
