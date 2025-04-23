@@ -270,7 +270,12 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		RUSTFLAGS+=" -C overflow-checks=on"
 	fi
 
-	RUSTFLAGS+=" -C target-feature=+stack-probe"
+	# For CFLAGS equivalent list, see also `rustc --print target-features`
+	# For -mllvm option, see `rustc -C llvm-args="--help"`
+	if ${RUSTC} --print target-features | grep -q -e "stack-probe" ; then
+	# Mitigation for stack clash, stack overflow
+		RUSTFLAGS+=" -C target-feature=+stack-probe"
+	fi
 	RUSTFLAGS+=" -C link-arg=-fstack-clash-protection"
 
 	if \
