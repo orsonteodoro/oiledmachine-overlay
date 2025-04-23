@@ -15,7 +15,7 @@ EAPI=8
 
 # Baseline requirement for libva is 1.6, but 1.10 gets more features
 
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="network untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 PATENT_STATUS=(
 	patent_status_nonfree
