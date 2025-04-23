@@ -3,15 +3,19 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-base"
 
-inherit gstreamer-meson
+inherit cflags-hardened gstreamer-meson
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
 # Everything below is for building opusparse from gst-plugins-bad. Once it moves into -base, all below can be removed
 SRC_URI+=" https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad-${PV}.tar.${GST_TARBALL_SUFFIX}"
 
 DESCRIPTION="Opus audio parser plugin for GStreamer"
+IUSE="
+ebuild_revision_1
+"
 CDEPEND="
 	>=media-libs/opus-0.9.4:=[${MULTILIB_USEDEP}]
 "
@@ -37,6 +41,7 @@ in_bdir() {
 }
 
 src_configure() {
+	cflags-hardened_append
 	S="${WORKDIR}/gst-plugins-base-${PV}" \
 	multilib_foreach_abi gstreamer_multilib_src_configure
 	S="${WORKDIR}/gst-plugins-bad-${PV}"  \
