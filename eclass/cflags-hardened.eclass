@@ -99,6 +99,7 @@ CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_USE_CASES
 # Add additional flags to secure packages based on typical USE cases.
 # Valid values:
+# Acceptable values: 1, 0, unset
 #
 # ce (Code Execution)
 # dos (Denial of Service)
@@ -626,8 +627,7 @@ einfo "All SSP hardening (All functions hardened)"
 			"-ffloat-store" \
 			"-fexcess-precision=standard" \
 			"-ffp-contract=off" \
-			"-frounding-math" \
-			"-mfpmath=*"
+			"-frounding-math"
 		CFLAGS_HARDENED_CFLAGS+=" -ffloat-store -fexcess-precision=standard -ffp-contract=off -frounding-math"
 		CFLAGS_HARDENED_CXXFLAGS+=" -ffloat-store -fexcess-precision=standard -ffp-contract=off -frounding-math"
 	fi

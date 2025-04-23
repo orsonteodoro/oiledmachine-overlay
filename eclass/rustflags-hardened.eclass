@@ -37,9 +37,25 @@ _RUSTFLAGS_HARDENED_ECLASS=1
 #     For DSS builds if test suite passed for this level
 RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_NOEXECSTACK
+# @DESCRIPTION:
+# Explicitly add -C link-arg=-znoexecstack to flags.
+
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_PIE
+# @DESCRIPTION:
+# Adds PIE to executable only packages.
+# Acceptable values: 1, 0, unset
+# It is recommended that build scripts handle hybrid (exe + libs) cases.
+
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_PIC
+# @DESCRIPTION:
+# Adds PIC to library only packages.
+# Acceptable values: 1, 0, unset
+
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_USE_CASES
 # Add additional flags to secure packages based on typical USE cases.
 # Valid values:
+# Acceptable values: 1, 0, unset
 #
 # ce (Code Execution)
 # dos (Denial of Service)
@@ -234,6 +250,39 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	fi
 
 	RUSTFLAGS+=" -C link-arg=-fstack-clash-protection"
+
+	if \
+		[[ \
+			"${RUSTFLAGS_HARDENED_NOEXECSTACK:-1}" == "1" \
+				&& \
+			"${RUSTFLAGS_HARDENED_USE_CASES}" \
+				=~ \
+("ce"\
+|"execution-integrity"\
+|"multiuser-system"\
+|"network"\
+|"scripting"\
+|"sensitive-data"\
+|"server"\
+|"untrusted-data"\
+|"web-server")\
+		]] \
+	; then
+	# CE, DT/ID
+		RUSTFLAGS+=" -C link-arg=-znoexecstack"
+	fi
+
+	# For executable packages only.
+	# Do not apply to hybrid (executible with libs) packages
+	if [[ "${RUSTFLAGS_HARDENED_PIE:-0}" == "1" ]] ; then
+		RUSTFLAGS+=" -C relocation-model=pic"
+		RUSTFLAGS+=" -C link-arg=-pie"
+	fi
+
+	# For library packages only
+	if [[ "${RUSTFLAGS_HARDENED_PIC:-0}" == "1" ]] ; then
+		RUSTFLAGS+=" -C relocation-model=pic"
+	fi
 
 	RUSTFLAGS+=" -C link-arg=-z -C link-arg=relro"
 	RUSTFLAGS+=" -C link-arg=-z -C link-arg=now"
