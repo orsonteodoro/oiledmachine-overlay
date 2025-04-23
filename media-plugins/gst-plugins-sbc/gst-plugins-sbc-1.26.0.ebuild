@@ -3,16 +3,25 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
-inherit gstreamer-meson
+inherit cflags-hardened gstreamer-meson
 
 KEYWORDS="~amd64 ~arm64 ~x86"
 
 DESCRIPTION="SBC encoder and decoder plugin for GStreamer"
+IUSE="
+ebuild_revision_1
+"
 RDEPEND="
 	>=media-libs/sbc-1.0[${MULTILIB_USEDEP}]
 "
 DEPEND="
 	${RDEPEND}
 "
+
+multilib_src_configure() {
+	cflags-hardened_append
+	gstreamer_multilib_src_configure
+}
