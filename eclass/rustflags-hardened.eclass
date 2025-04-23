@@ -154,7 +154,8 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		RUSTFLAGS+=" -C link-arg=-fcf-protection=full"
 	fi
 
-	# Not production ready
+	# Not production ready only available on nightly
+	# For status see https://github.com/rust-lang/rust/blob/master/src/doc/rustc/src/exploit-mitigations.md?plain=1#L41
 	if ver_test "${rust_pv}" -ge "1.58.0" ; then
 		if [[ "${RUSTFLAGS_HARDENED_LEVEL}" == "3" ]] ; then
 	#		RUSTFLAGS+=" -C stack-protector=all"			# Rust code generation
