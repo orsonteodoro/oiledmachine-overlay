@@ -459,11 +459,6 @@ einfo "CFLAGS:  ${CFLAGS}"
 		replace-flags '-O*' '-Ofast'
 	fi
 
-	if is-flagq "-Ofast" ; then
-		# Precaution
-		append_all $(test-flags -fno-allow-store-data-races)
-	fi
-
 	# For fixing segfault with PGO+BOLT
 	append-flags \
 		$(test-flags \

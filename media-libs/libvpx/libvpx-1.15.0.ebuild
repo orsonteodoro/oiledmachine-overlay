@@ -475,11 +475,6 @@ _src_configure() {
 	# Fork ebuild if you need -O0
 	replace-flags '-O0' '-O1'
 
-	if is-flagq "-Ofast" ; then
-		# Precaution
-		append_all $(test-flags -fno-allow-store-data-races)
-	fi
-
 	if tc-is-clang && ( use pgo || ( has epgo ${IUSE_EFFECTIVE} && use epgo ) ) ; then
 		append-flags -mllvm -vp-counters-per-site=8
 	fi
