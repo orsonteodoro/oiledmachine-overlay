@@ -576,7 +576,7 @@ einfo "All SSP hardening (All functions hardened)"
 |"network"\
 |"secure-critical"\
 |"safety-critical"\
-|"unreviewed-data")\
+|"untrusted-data")\
 	]] ; then
 	# Remove flag if 50% drop in performance.
 	# For runtime *signed* integer overflow detection
