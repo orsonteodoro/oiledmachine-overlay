@@ -11,7 +11,9 @@ MY_PN="gst-libav"
 MY_PV="$(ver_cut 1-3)"
 MY_P="${MY_PN}-${MY_PV}"
 
-inherit gstreamer-meson
+CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
+
+inherit cflags-hardened gstreamer-meson
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~x86"
 S="${WORKDIR}/${MY_P}"
@@ -21,7 +23,9 @@ DESCRIPTION="A FFmpeg based GStreamer plugin"
 HOMEPAGE="https://gstreamer.freedesktop.org/modules/gst-libav.html"
 LICENSE="LGPL-2+"
 SLOT="1.0"
-IUSE=" ebuild_revision_1"
+IUSE="
+ebuild_revision_2
+"
 RDEPEND="
 	>=dev-libs/glib-2.40.0:2[${MULTILIB_USEDEP}]
 	~media-libs/gstreamer-${MY_PV}:1.0[${MULTILIB_USEDEP}]
@@ -43,6 +47,7 @@ BDEPEND="
 src_configure() {
 	local prefix=""
 	_configure() {
+		cflags-hardened_append
 		if has_version "media-video/ffmpeg:58.60.60" ; then # 6.1.x
 einfo "Using ffmpeg 6.1.x multislot"
 			prefix="usr/lib/ffmpeg/58.60.60"
