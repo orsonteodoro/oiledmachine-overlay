@@ -14,12 +14,14 @@ EAPI=8
 # https://github.com/grpc/grpc/blob/v1.67.1/Rakefile#L146
 
 MY_PV="${PV//_pre/-pre}"
+
+CFLAGS_HARDENED_USE_CASES="network untrusted-data"
 OPENCENSUS_PROTO_PV="0.3.0"
 PYTHON_COMPAT=( "python3_"{10..12} )
 RUBY_OPTIONAL="yes"
 USE_RUBY="ruby31 ruby32 ruby33"
 
-inherit cmake multilib-minimal python-r1 ruby-ng
+inherit cflags-hardened cmake multilib-minimal python-r1 ruby-ng
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${MY_PV}"
@@ -66,7 +68,7 @@ IUSE+="
 ${LSRT_IUSE[@]/#/-}
 cxx doc examples test
 
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE+="
 	python? (
@@ -188,6 +190,7 @@ src_prepare() {
 }
 
 src_configure() {
+	cflags-hardened_append
 	use php && export EXTRA_DEFINES=GRPC_POSIX_FORK_ALLOW_PTHREAD_ATFORK
 	configure_abi() {
 		export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
