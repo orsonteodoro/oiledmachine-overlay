@@ -3,13 +3,17 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
-inherit gstreamer-meson
+inherit cflags-hardened gstreamer-meson
 
 KEYWORDS="~amd64 ~arm64 ~x86"
 
 DESCRIPTION="OpenCV elements for GStreamer"
+IUSE="
+ebuild_revision_1
+"
 RDEPEND="
 	>=media-libs/opencv-4.0.0:=[${MULTILIB_USEDEP},contrib,contribdnn]
 "
@@ -21,6 +25,7 @@ PATCHES=(
 )
 
 multilib_src_configure() {
+	cflags-hardened_append
 	local emesonargs=(
 		# We need to disable here to avoid colliding w/ gst-plugins-bad
 		# on translations, because we currently do a "full" install in
