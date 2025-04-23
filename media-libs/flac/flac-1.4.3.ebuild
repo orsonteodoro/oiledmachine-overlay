@@ -5,10 +5,11 @@ EAPI=8
 
 # U 22.04
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
 LIBFLAC_SONAME="10"
 LIBFLACXX_SONAME="12"
 
-inherit autotools flag-o-matic multilib-minimal toolchain-funcs
+inherit autotools cflags-hardened flag-o-matic multilib-minimal toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 S="${WORKDIR}/${P}"
@@ -31,6 +32,7 @@ X86_IUSE="
 IUSE="
 ${X86_IUSE}
 +cxx debug ogg static-libs
+ebuild_revision_1
 "
 # AVX configure switch is for both AVX & AVX2
 REQUIRED_USE="
@@ -105,6 +107,7 @@ _src_configure() {
 	if tc-is-clang && has_version "llvm-runtimes/compiler-rt-sanitizers[cfi]" && has_sanitizer "cfi" ; then
 		append_all -fno-sanitize=cfi-icall # cfi-icall breaks CEF with illegal instruction
 	fi
+	cflags-hardened_append
 
 	local myeconfargs=(
 		--disable-doxygen-docs
