@@ -128,7 +128,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	local arch=$(echo "${CFLAGS}" \
 		| grep -E -o -e "-march=[-a-z0-9_]+" \
 		| sed -e "s|-march=||")
-	if [[ -n "${arch}" && ! "${RUSTFLAGS}" =~ "target-cpu=" ]] ; then
+	if [[ -n "${arch}" ]] && ! [[ "${RUSTFLAGS}" =~ "target-cpu=" ]] ; then
 		RUSTFLAGS+=" -C target-cpu=${arch}"
 	fi
 
@@ -136,7 +136,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		| grep -E -o -e "-O(0|1|2|3|4|fast|s|z)" \
 		| tail -n 1 \
 		| sed -e "s|-O||")
-	if [[ ! "${RUSTFLAGS}" =~ "opt-level" ]] ; then
+	if ! [[ "${RUSTFLAGS}" =~ "opt-level" ]] ; then
 		if [[ "${opt_level}" == "fast" ]] ; then
 			opt_level="3"
 		fi
