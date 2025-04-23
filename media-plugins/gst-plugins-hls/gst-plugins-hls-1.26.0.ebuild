@@ -3,14 +3,18 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="plugin network untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
-inherit gstreamer-meson
+inherit cflags-hardened gstreamer-meson
 
 KEYWORDS="~amd64 ~arm64 ~x86"
 
 DESCRIPTION="HTTP live streaming plugin for GStreamer"
-IUSE="libgcrypt nettle openssl"
+IUSE="
+libgcrypt nettle openssl
+ebuild_revision_1
+"
 REQUIRED_USE="
 	|| (
 		libgcrypt
@@ -44,6 +48,7 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	cflags-hardened_append
 	local crypto_provider
 	if use libgcrypt ; then
 		crypto_provider="libcrypt"
