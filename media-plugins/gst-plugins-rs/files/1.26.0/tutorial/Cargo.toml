@@ -13,8 +13,8 @@ gst.workspace = true
 gst-base.workspace = true
 gst-video.workspace = true
 gst-audio.workspace = true
-byte-slice-cast = "^1.0"
-num-traits = "=0.2.19"
+byte-slice-cast = "1.0"
+num-traits = "0.2"
 
 [lib]
 name = "gstrstutorial"

@@ -11,8 +11,8 @@ description = "GStreamer Rust PNG encoder/decoder"
 [dependencies]
 gst.workspace = true
 gst-video.workspace = true
-png = "=0.17.2"
-parking_lot = "^0.12"
+png = "0.17.2"
+parking_lot = "0.12"
 
 [dev-dependencies]
 gst-check.workspace = true

@@ -9,7 +9,7 @@ description = "GStreamer Regular Expression Plugin"
 repository.workspace = true
 
 [dependencies]
-regex = "^1.5"
+regex = "1.5"
 gst.workspace = true
 
 [lib]

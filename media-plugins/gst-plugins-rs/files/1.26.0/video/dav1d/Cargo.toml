@@ -9,11 +9,11 @@ license = "MIT OR Apache-2.0"
 description = "GStreamer dav1d AV1 decoder Plugin"
 
 [dependencies]
-dav1d = "=0.10.3"
+dav1d = "0.10.3"
 gst = { workspace = true, features = ["v1_18"] }
 gst-base = { workspace = true, features = ["v1_18"] }
 gst-video = { workspace = true, features = ["v1_18"] }
-num_cpus = "^1.0"
+num_cpus = "1.0"
 
 [lib]
 name = "gstdav1d"

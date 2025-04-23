@@ -11,9 +11,9 @@ rust-version.workspace = true
 [dependencies]
 gst.workspace = true
 gst-audio.workspace = true
-lewton = { version = "^0.10", default-features = false }
-byte-slice-cast = "^1.0"
-atomic_refcell = "^0.1"
+lewton = { version = "0.10", default-features = false }
+byte-slice-cast = "1.0"
+atomic_refcell = "0.1"
 
 [dev-dependencies]
 gst-check.workspace = true

@@ -15,10 +15,10 @@ gst-video.workspace = true
 gst-plugin-gtk4 = { path = "../../video/gtk4", optional = true }
 gtk = { workspace = true, optional = true }
 gio = { workspace = true, optional = true }
-parking_lot = "^0.12"
+parking_lot = "0.12"
 
 [dev-dependencies]
-either = "^1.0"
+either = "1.0"
 gst-check.workspace = true
 
 [lib]

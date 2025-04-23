@@ -9,13 +9,13 @@ edition.workspace = true
 rust-version.workspace = true
 
 [dependencies]
-anyhow = "^1"
+anyhow = "1"
 gst = { workspace = true,  features = ["v1_18"] }
 gst-base = { workspace = true, features = ["v1_18"] }
 gst-audio = { workspace = true, features = ["v1_18"] }
 gst-video = { workspace = true, features = ["v1_18"] }
 gst-pbutils = { workspace = true, features = ["v1_20"] }
-bitstream-io = "^2.3"
+bitstream-io = "2.3"
 
 [lib]
 name = "gstfmp4"
@@ -26,11 +26,11 @@ path = "src/lib.rs"
 gst-app = { workspace = true, features = ["v1_18"] }
 gst-check = { workspace = true, features = ["v1_18"] }
 gst-pbutils = { workspace = true, features = ["v1_20"] }
-m3u8-rs = "^6.0"
-chrono = "^0.4.35"
-dash-mpd = { version = "^0.18", default-features = false }
-quick-xml = { version = "^0.37", features = ["serialize"] }
-serde = "^1"
+m3u8-rs = "6.0"
+chrono = "0.4.35"
+dash-mpd = { version = "0.18", default-features = false }
+quick-xml = { version = "0.37", features = ["serialize"] }
+serde = "1"
 
 [build-dependencies]
 gst-plugin-version-helper.workspace = true

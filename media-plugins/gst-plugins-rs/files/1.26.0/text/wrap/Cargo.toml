@@ -9,8 +9,8 @@ description = "GStreamer Text Wrap Plugin"
 repository.workspace = true
 
 [dependencies]
-textwrap = { version = "^0.16", features = ["hyphenation"] }
-hyphenation = "^0.8"
+textwrap = { version = "0.16", features = ["hyphenation"] }
+hyphenation = "0.8"
 gst.workspace = true
 
 [lib]

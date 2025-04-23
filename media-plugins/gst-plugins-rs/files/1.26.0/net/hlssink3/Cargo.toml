@@ -12,17 +12,17 @@ rust-version.workspace = true
 gst.workspace = true
 gst-app.workspace = true
 gio.workspace = true
-m3u8-rs = "^6.0"
-chrono = "^0.4"
-sprintf = "^0.4"
+m3u8-rs = "6.0"
+chrono = "0.4"
+sprintf = "0.4"
 
 [dev-dependencies]
 gst-audio.workspace = true
 gst-video.workspace = true
 gst-check.workspace = true
 gst-pbutils = { workspace = true, features = ["v1_20"] }
-m3u8-rs = "^6.0"
-anyhow = "^1"
+m3u8-rs = "6.0"
+anyhow = "1"
 
 [build-dependencies]
 gst-plugin-version-helper.workspace = true
