@@ -37,6 +37,10 @@ _RUSTFLAGS_HARDENED_ECLASS=1
 #     For DSS builds if test suite passed for this level
 RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_USER_LEVEL
+# @DESCRIPTION:
+# Same as above but the user can override the SSP level.
+
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_NOEXECSTACK
 # @DESCRIPTION:
 # Explicitly add -C link-arg=-znoexecstack to flags.
@@ -152,6 +156,10 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 
 	# C/C++ linking
 		RUSTFLAGS+=" -C link-arg=-fcf-protection=full"
+	fi
+
+	if [[ -n "${RUSTFLAGS_HARDENED_USER_LEVEL}" ]] ; then
+		RUSTFLAGS_HARDENED_LEVEL="${RUSTFLAGS_HARDENED_USER_LEVEL}"
 	fi
 
 	# Not production ready only available on nightly
