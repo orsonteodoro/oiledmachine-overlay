@@ -21,6 +21,8 @@ _gst_plugins_rs_globals
 unset -f _gst_plugins_rs_globals
 
 MY_PV="${PV}"
+
+CFLAGS_HARDENED_USE_CASES="network plugin untrusted-data secure-critical"
 EXPECTED_BUILD_FILES_FINGERPRINT="disable"
 GOBJECT_INTROSPECTION_PV="1.74.0"
 GST_PV="${MY_PV}"
@@ -894,7 +896,8 @@ declare -A GIT_CRATES=(
 	fi
 fi
 
-inherit flag-o-matic lcnr llvm meson multilib-minimal python-any-r1 rust
+inherit cflags-hardened flag-o-matic lcnr llvm meson multilib-minimal
+inherit python-any-r1 rust
 
 DESCRIPTION="Various GStreamer plugins written in Rust"
 HOMEPAGE="https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs"
@@ -921,7 +924,7 @@ ${PATENT_STATUS_IUSE[@]}
 aom doc nvcodec qsv openh264 rav1e system-libsodium va vaapi vpx vulkan x264 x265
 webrtc-aws
 webrtc-livekit
-ebuild_revision_6
+ebuild_revision_7
 "
 WEBRTC_AV1_ENCODERS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -1498,6 +1501,11 @@ src_prepare() {
 		-e "s|csound64|csound|g" \
 		"meson.build" \
 		|| die
+}
+
+multilib_src_configure() {
+	cflags-hardened_append
+	meson_src_configure
 }
 
 multilib_src_compile() {
