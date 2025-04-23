@@ -3,14 +3,18 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-good"
 GST_PLUGINS_BUILD_DIR="ximage"
 
-inherit gstreamer-meson
+inherit cflags-hardened gstreamer-meson
 
 KEYWORDS="~amd64 ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="X11 video capture stream plugin for GStreamer"
+IUSE="
+ebuild_revision_1
+"
 RDEPEND="
 	x11-libs/libX11[${MULTILIB_USEDEP}]
 	x11-libs/libXdamage[${MULTILIB_USEDEP}]
@@ -25,6 +29,7 @@ DEPEND="
 "
 
 multilib_src_configure() {
+	cflags-hardened_append
 	local emesonargs=(
 		-Dximagesrc=enabled
 		-Dximagesrc-navigation=enabled
@@ -32,6 +37,5 @@ multilib_src_configure() {
 		-Dximagesrc-xfixes=enabled
 		-Dximagesrc-xdamage=enabled
 	)
-
 	gstreamer_multilib_src_configure
 }
