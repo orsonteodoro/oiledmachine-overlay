@@ -270,6 +270,9 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		RUSTFLAGS+=" -C overflow-checks=on"
 	fi
 
+	local host=$(${RUSTC} -vV | grep "host:" | cut -f 2 -d " ")
+einfo "rustc host:  ${host}"
+
 	# For CFLAGS equivalent list, see also `rustc --print target-features`
 	# For -mllvm option, see `rustc -C llvm-args="--help"`
 	if ${RUSTC} --print target-features | grep -q -e "stack-probe" ; then
