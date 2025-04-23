@@ -379,12 +379,30 @@ einfo "CC:  ${CC}"
 			export CC="${CHOST}-clang-${LLVM_SLOT}"
 			export CXX="${CHOST}-clang++-${LLVM_SLOT}"
 			export CPP="${CC} -E"
-		elif tc-is-gcc && [[ -n "${LLVM_SLOT}" ]] ; then
+		elif tc-is-gcc ; then
 			export CC="${CHOST}-clang"
 			export CXX="${CHOST}-clang++"
 			export CPP="${CC} -E"
 		fi
+		if [[ -z "${LLVM_SLOT}" ]] ; then
+			export LLVM_SLOT=$(clang-major-version)
+			export CC="${CHOST}-clang-${LLVM_SLOT}"
+			export CXX="${CHOST}-clang++-${LLVM_SLOT}"
+			export CPP="${CC} -E"
+		fi
 		strip-unsupported-flags
+		if ${CC} --version ; then
+eerror "CFI requires Clang.  Do the following:"
+eerror "emerge -1vuDN llvm-core/llvm:${LLVM_SLOT}"
+eerror "emerge -vuDN llvm-core/clang:${LLVM_SLOT}"
+eerror "emerge -vuDN llvm-core/lld"
+eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
+eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[cfi]"
+eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
+ewarn "You can only use Clang with LTO systemwide if doing LLVM CFI."
+
+			die
+		fi
 	fi
 
 	if [[ -n "${CFLAGS_HARDENED_LEVEL_USER}" ]] ; then
@@ -819,6 +837,17 @@ einfo "All SSP hardening (All functions hardened)"
 		fi
 		filter-flags "-fuse-ld=*"
 		append-ldflags "-fuse-ld=lld"
+		if [[ -z "${LLVM_SLOT}" ]] || ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[cfi]" ; then
+eerror "CFI requires Clang.  Do the following:"
+eerror "emerge -1vuDN llvm-core/llvm:${LLVM_SLOT}"
+eerror "emerge -vuDN llvm-core/clang:${LLVM_SLOT}"
+eerror "emerge -vuDN llvm-core/lld"
+eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
+eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[ubsan]"
+eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
+
+			die
+		fi
 	fi
 
 	if \
@@ -830,6 +859,14 @@ einfo "All SSP hardening (All functions hardened)"
 		append-flags "-fsanitize=undefined"
 		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=undefined"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=undefined"
+		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[ubsan]" ; then
+eerror "Missing UBSAN sanitizer.  Do the following:"
+eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
+eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[ubsan]"
+eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
+
+			die
+		fi
 	fi
 
 	if \
@@ -841,6 +878,14 @@ einfo "All SSP hardening (All functions hardened)"
 		append-flags "-fsanitize=address"
 		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=address"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=address"
+		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[asan]" ; then
+eerror "Missing ASAN sanitizer.  Do the following:"
+eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
+eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[asan]"
+eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
+
+			die
+		fi
 	fi
 
 	if \
@@ -852,6 +897,14 @@ einfo "All SSP hardening (All functions hardened)"
 		append-flags "-fsanitize=thread"
 		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=thread"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=thread"
+		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[tsan]" ; then
+eerror "Missing TSAN sanitizer.  Do the following:"
+eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
+eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[tsan]"
+eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
+
+			die
+		fi
 	fi
 
 	if [[ "${CFLAGS}" =~ "-fsanitize=" ]] ; then

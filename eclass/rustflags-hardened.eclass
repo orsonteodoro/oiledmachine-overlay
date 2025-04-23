@@ -440,18 +440,42 @@ einfo "rustc host:  ${host}"
 # Missing -fno-sanitize-recover for Rust
 ewarn "UBSAN_OPTIONS=halt_on_error=1 must be placed in wrapper or env file for UBSAN mitigation to be effective."
 		RUSTFLAGS+=" -Zsanitizer=undefined"
+		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[ubsan]" ; then
+eerror "Missing UBSAN sanitizer.  Do the following:"
+eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
+eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[ubsan]"
+eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
+
+			die
+		fi
 	fi
 
 	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "2.00" && [[ "${RUSTFLAGS_HARDENED_ASAN:-0}" == "1" ]] ; then
 # Missing -fno-sanitize-recover for Rust
 ewarn "ASAN_OPTIONS=halt_on_error=1 must be placed in wrapper or env file for ASAN mitigation to be effective."
 		RUSTFLAGS+=" -Zsanitizer=address"
+		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[asan]" ; then
+eerror "Missing ASAN sanitizer.  Do the following:"
+eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
+eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[asan]"
+eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
+
+			die
+		fi
 	fi
 
 	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "15.00" && [[ "${RUSTFLAGS_HARDENED_TSAN:-0}" == "1" ]] ; then
 # Missing -fno-sanitize-recover for Rust
 ewarn "TSAN_OPTIONS=halt_on_error=1 must be placed in wrapper or env file for TSAN mitigation to be effective."
 		RUSTFLAGS+=" -Zsanitizer=thread"
+		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[tsan]" ; then
+eerror "Missing TSAN sanitizer.  Do the following:"
+eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
+eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[tsan]"
+eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
+
+			die
+		fi
 	fi
 
 	export RUSTFLAGS
