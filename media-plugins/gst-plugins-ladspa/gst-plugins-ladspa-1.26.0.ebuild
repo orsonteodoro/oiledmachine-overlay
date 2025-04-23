@@ -3,15 +3,17 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
-inherit gstreamer-meson
+inherit cflags-hardened gstreamer-meson
 
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 
 DESCRIPTION="Ladspa elements for GStreamer"
 IUSE="
-	rdf
+rdf
+ebuild_revision_1
 "
 RDEPEND="
 	media-libs/ladspa-sdk[${MULTILIB_USEDEP}]
@@ -24,6 +26,7 @@ DEPEND="
 "
 
 multilib_src_configure() {
+	cflags-hardened_append
 	local emesonargs=(
 		$(meson_feature "rdf" "ladspa-rdf")
 	)
