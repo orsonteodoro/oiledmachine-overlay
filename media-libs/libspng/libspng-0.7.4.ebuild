@@ -8,13 +8,14 @@ EAPI=8
 
 # GitHub is bugged?  The ZIP does not have a image so download manually
 BENCHMARK_IMAGES_COMMIT="2478ec174d74d66343449f850d22e0eabb0f01b0"
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 PYTHON_COMPAT=( "python3_"{10..12} ) # Limited by distro for dev-python/mkdocs-material
 
-inherit flag-o-matic meson multilib-build python-any-r1 toolchain-funcs uopts
+inherit flag-o-matic cflags-hardened meson multilib-build python-any-r1 toolchain-funcs uopts
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${P}"
@@ -42,7 +43,10 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc examples +opt -static-libs -test -threads zlib"
+IUSE+="
+doc examples +opt -static-libs -test -threads zlib
+ebuild_revision_1
+"
 REQUIRED_USE+="
 	pgo? (
 		examples
@@ -126,6 +130,7 @@ _src_configure() {
 	local d="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}-${lib_type}"
 	mkdir -p "${d}" || die
 	uopts_src_configure
+	cflags-hardened_append
 
 	local emesonargs=(
 		$(meson_feature threads multithreading)
