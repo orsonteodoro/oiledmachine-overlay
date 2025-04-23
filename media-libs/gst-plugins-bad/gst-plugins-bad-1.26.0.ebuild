@@ -15,6 +15,7 @@ EAPI=8
 
 # Baseline requirement for libva is 1.6, but 1.10 gets more features
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 PATENT_STATUS=(
 	patent_status_nonfree
@@ -28,7 +29,7 @@ VIDEO_CARDS=(
 	video_cards_intel
 )
 
-inherit gstreamer-meson
+inherit cflags-hardened gstreamer-meson
 
 KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~m68k ~mips ~ppc ~ppc64 ~s390 ~sparc ~x86
@@ -43,7 +44,7 @@ ${PATENT_STATUS}
 ${VIDEO_CARDS[@]}
 amf bzip2 +introspection msdk nls nvcodec onevpl +orc qsv udev vaapi vnc vulkan
 vulkan-video wayland X
-ebuild_revision_1
+ebuild_revision_2
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -213,6 +214,7 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	cflags-hardened_append
 	GST_PLUGINS_NOAUTO="amfcodec bz2 codec2json hls lcevcdecoder lcevcencoder ipcpipeline librfb msdk nvcodec qsv shm va vulkan wayland webrtc webrtcdsp x11"
 	local emesonargs=(
 		$(meson_feature "amf" "amfcodec")
