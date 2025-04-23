@@ -637,6 +637,8 @@ einfo "All SSP hardening (All functions hardened)"
 				"-mno-avx512ifma"
 				"-mno-avx512vl"
 				"-mno-mmx"
+				"-mno-msse4"
+				"-mno-msse4.1"
 				"-mno-sse"
 				"-mno-sse2"
 			)

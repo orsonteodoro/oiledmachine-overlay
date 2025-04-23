@@ -327,10 +327,12 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 				"-mno-avx512ifma" \
 				"-mno-fma" \
 				"-mno-mmx" \
+				"-mno-msse4" \
+				"-mno-msse4.1" \
 				"-mno-sse" \
 				"-mno-sse2"
 			RUSTFLAGS+=" -C target-cpu=generic"
-			RUSTFLAGS+=" -C target-feature=-3dnow,-avx,-avx2,-avx512cd,-avx512dq,-avx512f,-avx512ifma,-avx512vl,-fma,-mmx,-sse,-sse2"
+			RUSTFLAGS+=" -C target-feature=-3dnow,-avx,-avx2,-avx512cd,-avx512dq,-avx512f,-avx512ifma,-avx512vl,-fma,-mmx,-msse4,-msse4.1,-sse,-sse2"
 		fi
 		if [[ "${ARCH}" == "arm64" ]] ; then
 			replace-flags "-march=*" "-march=armv8-a"
