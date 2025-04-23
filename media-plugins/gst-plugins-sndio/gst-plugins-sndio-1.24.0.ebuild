@@ -5,7 +5,9 @@ EAPI=7
 
 MY_P="gstreamer1-plugins-sndio-${PV}"
 
-inherit toolchain-funcs
+CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
+
+inherit cflags-hardened toolchain-funcs
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MY_P}"
@@ -18,6 +20,9 @@ DESCRIPTION="Sndio audio sink and source for GStreamer"
 HOMEPAGE="https://github.com/BSDKaffee/gstreamer1-plugins-sndio"
 LICENSE="ISC"
 SLOT="0"
+IUSE="
+ebuild_revision_1
+"
 RDEPEND="
 	media-libs/gst-plugins-base:1.0
 	media-sound/sndio:=
@@ -25,6 +30,11 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 "
+
+multilib_src_configure() {
+	cflags-hardened_append
+	gstreamer_multilib_src_configure
+}
 
 src_compile() {
 	tc-export CC
