@@ -5,7 +5,7 @@ EAPI=8
 
 # Old media-libs/gst-plugins-ugly is a blocker for xingmux moving from ugly->good.
 
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="network untrusted-data"
 GST_ORG_MODULE="gst-plugins-good"
 MITIGATION_DATE="Dec 3, 2024" # Advisory date
 MITIGATION_URI="https://gstreamer.freedesktop.org/security/"
@@ -47,7 +47,7 @@ HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="LGPL-2.1+"
 IUSE="
 nls +orc
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND="
 	>=dev-libs/glib-2.64.0[${MULTILIB_USEDEP}]
