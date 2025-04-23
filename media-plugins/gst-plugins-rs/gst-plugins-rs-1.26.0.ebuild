@@ -88,10 +88,8 @@ PATENT_STATUS_IUSE=(
 	"patent_status_nonfree"
 )
 PYTHON_COMPAT=( "python3_"{8..11} )
-#RUST_MAX_VER="1.85.1" # Inclusive.  Corresponds to llvm 19.1
-#RUST_MIN_VER="1.85.1" # Corresponds to llvm 19.1
-RUST_MAX_VER="1.86.0" # Inclusive.  Corresponds to llvm 19.1
-RUST_MIN_VER="1.86.0" # Corresponds to llvm 19.1
+RUST_MAX_VER="1.85.1" # Inclusive.  Corresponds to llvm 19.1
+RUST_MIN_VER="1.85.1" # Corresponds to llvm 19.1
 
 if [[ "${MY_PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"

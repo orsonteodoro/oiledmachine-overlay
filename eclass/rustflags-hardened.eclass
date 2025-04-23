@@ -164,11 +164,11 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		: # Broken
 	elif ver_test "${rust_pv}" -ge "1.58.0" ; then
 		if [[ "${RUSTFLAGS_HARDENED_LEVEL}" == "3" ]] ; then
-	#		RUSTFLAGS+=" -C stack-protector=all"
+			RUSTFLAGS+=" -C stack-protector=all"
 		elif [[ "${RUSTFLAGS_HARDENED_LEVEL}" == "2" ]] ; then
-	#		RUSTFLAGS+=" -C stack-protector=strong"
+			RUSTFLAGS+=" -C stack-protector=strong"
 		elif [[ "${RUSTFLAGS_HARDENED_LEVEL}" == "1" ]] ; then
-	#		RUSTFLAGS+=" -C stack-protector=basic"
+			RUSTFLAGS+=" -C stack-protector=basic"
 		fi
 	fi
 
