@@ -38,9 +38,9 @@ inherit flag-o-matic toolchain-funcs
 #     Use cases:
 #     For DSS builds if test suite passed for this level
 CFLAGS_HARDENED_LEVEL=${CFLAGS_HARDENED_LEVEL:-2}
-CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_USER_LEVEL
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_LEVEL_USER
+# @USER_VARIABLE
 # @DESCRIPTION:
 # Same as above but the user can override the SSP level.
 
@@ -60,6 +60,7 @@ CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 # secure is a bidirectional alias for default, balanced.
 # secure-embedded is a bidirectional alias for secure-lightweight.
 # secure-realtime is a bidirectional alias for secure-speed.
+CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_RETPOLINE_FLAVOR_USER
 # @DESCRIPTION:
@@ -96,10 +97,76 @@ CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 # Adds -fPIC if compiler is not enable it by default to library only packages.
 # Acceptable values: 1, 0, unset
 
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_CFI
+# @DESCRIPTION:
+# Allow runtime execution integrity check to prevent CE, DoS, DT, ID
+# to exit before unauthorized transaction in trusted code.
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_UBSAN
+# @DESCRIPTION:
+# Allow ubsan runtime detect to exit before DoS, DT, ID happens.
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_ASAN
+# @DESCRIPTION:
+# Allow asan runtime detect to exit before DoS, DT, ID happens.
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_TSAN
+# @DESCRIPTION:
+# Allow tsan runtime detect to exit before DoS, DT, ID happens.
+
+
+01234567890123456789012345678901234567890123456789012345678901234567890123456789
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_TOLERANCE
+# @DESCRIPTION:
+# The default performance impact to trigger enablement of expensive mitigations.
+# Acceptable values: 1.0 to 21.00 (based on table below), unset
+# Default: 1.35 (Similar to -Os without mitigations)
+CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
+# For speed set values closer to 1.
+# For accuracy/integrity set values closer to 20.
+
+# Estimates:
+# Flag					Performance as a normalized multiple
+# No mitigation				1.00
+# -D_FORTIFY_SOURCE=2			1.00 - 1.05
+# -fstack-protect			1.01 - 1.05
+# -fstack-protect-strong		1.03 - 1.10
+# -fstack-protect-all			1.05 - 1.10
+# -fcf-protection			1.01 - 1.05
+# -fstack-clash-protection		1.02 - 1.10
+# -ftrapv				1.20 - 2.00  *
+# -fcf-protection=full			1.03 - 1.10
+# -fsanitize=cfi			1.05 - 1.15  *
+# -fsanitize=undefined			1.02 - 1.20  *
+# -fsanitize=address			1.50 - 2.00  *
+# -fsanitize=thread			2.00 - 5.00  *
+# -mfloat-abi=soft -mfpu=none           5.00 - 20.00 *
+# -mfunction-return=thunk-extern	1.01 - 1.05
+# -mfunction-return=thunk-inline	1.01 - 1.03
+# -mfunction-return=thunk		1.01 - 1.05
+# -mretpoline				1.10 - 1.30
+# -mretpoline-external-thunk		1.15 - 1.35
+
+# * Only these are conditionally set based on worst case
+#  CFLAGS_HARDENED_TOLERANCE
+
+# Setting to 5.0 will enable TSAN, ASAN, UBSAN, LLVM CFI.
+# Setting to 20.0 will enable soft-floats.
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_TOLERANCE_USER
+# @USER_VARIABLE
+# A user override for CFLAGS_HARDENED_TOLERANCE.  This is to allow the user to
+# set the security-performance tradeoff especially for performance-critical
+# apps/libs.
+# Acceptable values: 1.0-20.00, unset (same as CFLAGS_HARDENED_TOLERANCE)
+# Default: unset
+# It is assumed that these don't stack and are mutually exclusive.
+# It can be applied per package.
+
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_USE_CASES
+# @DESCRIPTION:
 # Add additional flags to secure packages based on typical USE cases.
-# Valid values:
-# Acceptable values: 1, 0, unset
+# Acceptable values:
 #
 # ce (Code Execution)
 # dos (Denial of Service)
@@ -265,6 +332,17 @@ ewarn "Forcing -mindirect-branch-register to avoid flag conflict between -fcf-pr
 	fi
 }
 
+# @FUNCTION: _cflags-hardened_fcmp
+# @DESCRIPTION:
+# Floating point compare.  Bash does not support floating point comparison
+_cflags-hardened_fcmp() {
+	local a="${1}"
+	local opt="${2}"
+	local b="${3}"
+	python -c "exit(0) if ${a} ${b} ${c} else exit(1)"
+	return $?
+}
+
 # @FUNCTION: cflags-hardened_append
 # @DESCRIPTION:
 # Apply and deploy hardening flags easily.
@@ -285,8 +363,12 @@ einfo "CC:  ${CC}"
 		${CC} --version || die
 	fi
 
-	if [[ -n "${CFLAGS_HARDENED_USER_LEVEL}" ]] ; then
-		CFLAGS_HARDENED_LEVEL="${CFLAGS_HARDENED_USER_LEVEL}"
+	if [[ -n "${CFLAGS_HARDENED_LEVEL_USER}" ]] ; then
+		CFLAGS_HARDENED_LEVEL="${CFLAGS_HARDENED_LEVEL_USER}"
+	fi
+
+	if [[ -n "${CFLAGS_HARDENED_TOLERANCE_USER}" ]] ; then
+		CFLAGS_HARDENED_TOLERANCE="${CFLAGS_HARDENED_TOLERANCE_USER}"
 	fi
 
 	CFLAGS_HARDENED_CFLAGS=""
@@ -569,17 +651,21 @@ einfo "All SSP hardening (All functions hardened)"
 		fi
 	fi
 
-	if [[ \
-		"${CFLAGS_HARDENED_TRAPV:-1}" == "1" \
-			&& \
-		"${CFLAGS_HARDENED_USE_CASES}" =~ \
+	if \
+		[[ \
+			"${CFLAGS_HARDENED_TRAPV:-1}" == "1" \
+				&& \
+			"${CFLAGS_HARDENED_USE_CASES}" =~ \
 ("dss"\
 |"execution-integrity"\
 |"network"\
 |"secure-critical"\
 |"safety-critical"\
 |"untrusted-data")\
-	]] ; then
+		]] \
+				&&
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "2.00" # Worst case score
+	; then
 	# Remove flag if 50% drop in performance.
 	# For runtime *signed* integer overflow detection
 		filter-flags "-f*trapv"
@@ -613,7 +699,11 @@ einfo "All SSP hardening (All functions hardened)"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fno-allow-store-data-races"
 	fi
 
-	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"fp-determinism"|"high-precision-research") ]] ; then
+	if \
+		[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"fp-determinism"|"high-precision-research") ]] \
+			&& \
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "20.00" \
+	; then
 	# Do not use in performance-critical applications
 		replace-flags "-Ofast" "-O3"
 		if [[ "${ARCH}" == "amd64" ]] ; then
@@ -672,6 +762,47 @@ einfo "All SSP hardening (All functions hardened)"
 			"-frounding-math"
 		CFLAGS_HARDENED_CFLAGS+=" -ffloat-store -fexcess-precision=standard -ffp-contract=off -frounding-math"
 		CFLAGS_HARDENED_CXXFLAGS+=" -ffloat-store -fexcess-precision=standard -ffp-contract=off -frounding-math"
+	fi
+
+	# We want to fallback to CFI if CET is missing to mitigate against CE.
+
+	# For LLVM CFI, we want to be to *require* it as a fallback for non CET
+	# users to support it for just browsers.
+
+	# We don't enable these because clang/llvm not installed by default.
+	# We will need to test them before allowing users to use them.
+	# Enablement is complicated by LLVM_COMPAT and compile time to build LLVM with sanitizers enabled.
+	# Worst case scores for tolerance
+	if _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.15" && [[ "${CFLAGS_HARDENED_CFI:-0}" == "1" ]] && ! _cflags-hardened_has_cet ; then
+		filter-flags "-f*sanitize=cfi"
+		append-flags "-fsanitize=cfi"
+		append-flags "-fno-sanitize-recover"
+		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=cfi -fno-sanitize-recover"
+		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=cfi -fno-sanitize-recover"
+	fi
+
+	if _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.20" && [[ "${CFLAGS_HARDENED_UBSAN:-0}" == "1" ]] ; then
+		filter-flags "-f*sanitize=undefined"
+		append-flags "-fsanitize=undefined"
+		append-flags "-fno-sanitize-recover"
+		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=undefined -fno-sanitize-recover"
+		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=undefined -fno-sanitize-recover"
+	fi
+
+	if _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "2.00" && [[ "${CFLAGS_HARDENED_ASAN:-0}" == "1" ]] ; then
+		filter-flags "-f*sanitize=address"
+		append-flags "-fsanitize=address"
+		append-flags "-fsanitize=address"
+		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=address -fno-sanitize-recover"
+		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=address -fno-sanitize-recover"
+	fi
+
+	if _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "5.00" && [[ "${CFLAGS_HARDENED_TSAN:-0}" == "1"  ]] ; then
+		filter-flags "-f*sanitize=thread"
+		append-flags "-fsanitize=thread"
+		append-flags "-fsanitize=thread"
+		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=thread -fno-sanitize-recover"
+		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=thread -fno-sanitize-recover"
 	fi
 
 	export CFLAGS_HARDENED_CFLAGS

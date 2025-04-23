@@ -57,9 +57,9 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # Acceptable values: 1, 0, unset
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_USE_CASES
+# @DESCRIPTION:
 # Add additional flags to secure packages based on typical USE cases.
-# Valid values:
-# Acceptable values: 1, 0, unset
+# Acceptable values:
 #
 # ce (Code Execution)
 # dos (Denial of Service)
@@ -95,6 +95,63 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # web-browser
 # web-server
 
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_TOLERANCE
+# @DESCRIPTION:
+# The default performance impact to trigger enablement of expensive mitigations.
+# Acceptable values: 1.0 to 16.0 (based on table below), unset
+# Default: 1.20 (Similar to -Os without mitigations)
+# For speed set values closer to 1.
+# For accuracy/integrity set values closer to 16.
+
+# Estimates:
+# Flag					Performance as a normalized multiple
+# No mitigation				   1
+# -C stack-protector=all		1.05 - 1.10
+# -C stack-protector=strong		1.02 - 1.05
+# -C stack-protector=basic		1.01 - 1.03
+# -C target-feature=+retpoline		1.01 - 1.20
+# -C soft-float				 2.0 - 10.00 *
+# -C link-arg=-D_FORTIFY_SOURCE=2	1.01 - 1.05
+# -Zsanitizer=address			1.20 - 2.00  *
+# -Zsanitizer=thread			 5.0 - 15.00 *
+# -Zsanitizer=undefined			1.10 - 1.50  *
+
+# * Only these are conditionally set based on worst case
+#  RUSTFLAGS_HARDENED_TOLERANCE
+
+# Setting to 2.0 will enable ASAN, UBSAN.
+# Setting to 15.0 will enable TSAN.
+
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_TOLERANCE_USER
+# A user override for RUSTFLAGS_HARDENED_TOLERANCE.
+# Acceptable values: 1.0-16, unset
+# Default: unset
+# It is assumed that these don't stack and are mutually exclusive.
+# It can be applied per package.
+
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_ASAN
+# @DESCRIPTION:
+# Allow asan runtime detect to exit before DoS, DT, ID happens.
+
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_TSAN
+# @DESCRIPTION:
+# Allow tsan runtime detect to exit before DoS, DT, ID happens.
+
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_UBSAN
+# @DESCRIPTION:
+# Allow ubsan runtime detect to exit before DoS, DT, ID happens.
+
+# @FUNCTION: _rustflags-hardened_fcmp
+# @DESCRIPTION:
+# Floating point compare.  Bash does not support floating point comparison
+_rustflags-hardened_fcmp() {
+	local a="${1}"
+	local opt="${2}"
+	local b="${3}"
+	python -c "exit(0) if ${a} ${b} ${c} else exit(1)"
+	return $?
+}
+
 # @FUNCTION: _rustflags-hardened_has_cet
 # @DESCRIPTION:
 # Check if CET is supported for -fcf-protection=full.
@@ -118,10 +175,19 @@ _rustflags-hardened_has_cet() {
 # @DESCRIPTION:
 # Apply RUSTFLAG hardening to Rust packages.
 rustflags-hardened_append() {
+	if [[ -n "${RUSTFLAGS_HARDENED_USER_LEVEL}" ]] ; then
+		RUSTFLAGS_HARDENED_LEVEL="${RUSTFLAGS_HARDENED_USER_LEVEL}"
+	fi
+
+	if [[ -n "${RUSTFLAGS_HARDENED_TOLERANCE_USER}" ]] ; then
+		RUSTFLAGS_HARDENED_TOLERANCE="${RUSTFLAGS_HARDENED_TOLERANCE_USER}"
+	fi
+
 	if [[ -z "${RUSTC}" ]] ; then
 eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		die
 	fi
+
 	local rust_pv=$("${RUSTC}" --version \
 		| cut -f 2 -d " ")
 
@@ -174,10 +240,6 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		ver_test "${rust_pv}" -ge "1.60.0" \
 	; then
 		RUSTFLAGS+=" -C target-feature=+cet"
-	fi
-
-	if [[ -n "${RUSTFLAGS_HARDENED_USER_LEVEL}" ]] ; then
-		RUSTFLAGS_HARDENED_LEVEL="${RUSTFLAGS_HARDENED_USER_LEVEL}"
 	fi
 
 	# Not production ready only available on nightly
@@ -317,7 +379,10 @@ einfo "rustc host:  ${host}"
 
 	RUSTFLAGS+=" -C relro-level=full"
 
-	if [[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"fp-determinism"|"high-precision-research") ]] ; then
+	if [[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"fp-determinism"|"high-precision-research") ]] \
+		&& \
+	_rustflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "10.00" \
+	; then
 		if [[ "${ARCH}" == "amd64" ]] ; then
 			replace-flags "-march=*" "-march=generic"
 			filter-flags "-mtune=*"
@@ -363,6 +428,24 @@ einfo "rustc host:  ${host}"
 		RUSTFLAGS+=" -C soft-float"
 		RUSTFLAGS+=" -C codegen-units=1"
 	fi
+
+	# No CFI support
+
+	# We don't enable these because clang/llvm not installed by default.
+	# We will need to test them before allowing users to use them.
+	# Enablement is complicated by LLVM_COMPAT and compile time to build LLVM with sanitizers enabled.
+	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.50" && [[ "${RUSTFLAGS_HARDENED_UBSAN:-0}" == "1" ]] ; then
+		RUSTFLAGS+=" -Zsanitizer=undefined"
+	fi
+
+	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "2.00" && [[ "${RUSTFLAGS_HARDENED_ASAN:-0}" == "1" ]] ; then
+		RUSTFLAGS+=" -Zsanitizer=address"
+	fi
+
+	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "15.00" && [[ "${RUSTFLAGS_HARDENED_TSAN:-0}" == "1" ]] ; then
+		RUSTFLAGS+=" -Zsanitizer=thead"
+	fi
+
 	export RUSTFLAGS
 }
 
