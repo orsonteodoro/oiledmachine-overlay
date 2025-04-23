@@ -4,15 +4,19 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="network plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 GST_PLUGINS_BUILD_DIR="mdns"
 GST_PLUGINS_ENABLED="microdns"
 
-inherit gstreamer-meson
+inherit cflags-hardened gstreamer-meson
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="A device provider plugin and RTSP server discovery for GStreamer"
+IUSE="
+ebuild_revision_1
+"
 # Force libmicrodns-0.2.0 to avoid critical vulnerability
 RDEPEND="
 	>=net-libs/libmicrodns-0.2.0
@@ -21,3 +25,8 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 "
+
+multilib_src_configure() {
+	cflags-hardened_append
+	gstreamer_multilib_src_configure
+}
