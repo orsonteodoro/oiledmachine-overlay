@@ -4,14 +4,18 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="plugin network untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
-inherit gstreamer-meson
+inherit cflags-hardened gstreamer-meson
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="cURL network source and sink for GStreamer"
-IUSE="ssh"
+IUSE="
+ssh
+ebuild_revision_1
+"
 RDEPEND="
 	>=net-misc/curl-7.55.0[${MULTILIB_USEDEP},ssh?]
 	~media-libs/gst-plugins-base-${PV}:1.0[${MULTILIB_USEDEP}]
@@ -24,6 +28,7 @@ DEPEND="
 "
 
 multilib_src_configure() {
+	cflags-hardened_append
 	GST_PLUGINS_NOAUTO="curl-ssh2"
 	local emesonargs=(
 		-Dcurl-ssh2=$(usex ssh "enabled" "disabled")
