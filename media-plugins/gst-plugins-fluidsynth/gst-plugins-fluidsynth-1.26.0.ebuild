@@ -5,13 +5,17 @@ EAPI=8
 
 # See ext/fluidsynth/meson.build
 
+CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
-inherit gstreamer-meson
+inherit cflags-hardened gstreamer-meson
 
 KEYWORDS="~amd64 ~amd64-macos ~arm ~arm64 ~arm64-macos ~x86"
 
 DESCRIPTION="FluidSynth plugin for GStreamer"
+IUSE="
+ebuild_revision_1
+"
 RDEPEND="
 	>=media-sound/fluidsynth-2.1:=[${MULTILIB_USEDEP}]
 "
@@ -20,6 +24,7 @@ DEPEND="
 "
 
 multilib_src_configure() {
+	cflags-hardened_append
 	local emesonargs=(
 		-Dgpl=enabled
 	)
