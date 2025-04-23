@@ -6,6 +6,7 @@
 EAPI=8
 
 AOCC_COMPAT=( 14 16 )
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CMAKE_ECLASS="cmake"
 GCC_MIN_SLOT=6
 CLANG_MIN_SLOT=7
@@ -22,8 +23,8 @@ UOPTS_BOLT_INST_ARGS=(
 	"libaom_av1_rc.so:--skip-funcs=.text/1"
 )
 
-inherit aocc cmake-multilib flag-o-matic flag-o-matic-om multiprocessing python-single-r1
-inherit toolchain-funcs uopts
+inherit aocc cmake-multilib flag-o-matic flag-o-matic-om cflags-hardened
+inherit multiprocessing python-single-r1 toolchain-funcs uopts
 
 if [[ ${PV} == *9999* ]]; then
 	inherit git-r3
@@ -93,6 +94,7 @@ ${PPC_IUSE}
 ${PGO_TRAINERS}
 ${X86_IUSE}
 +asm big-endian chromium debug doc +examples lossless pgo static-libs test
+ebuild_revision_1
 "
 REQUIRED_USE="
 	cpu_flags_x86_sse2? (
@@ -506,6 +508,7 @@ einfo "CFLAGS:  ${CFLAGS}"
 	if tc-is-clang && has_version "llvm-runtimes/compiler-rt-sanitizers[cfi]" ; then
 		append_all -fno-sanitize=cfi-icall
 	fi
+	cflags-hardened_append
 
 	if use chromium && [[ "${lib_type}" == "static" ]] ; then
 		mycmakeargs+=(

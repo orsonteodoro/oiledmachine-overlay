@@ -130,6 +130,7 @@ CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 # sensitive-data
 # scripting
 # server
+# untrusted-data (e.g. user generated content, unreviewed-data, unsanitized-data, unreviewed-scripts, unreviewed-anything)
 # web-browser
 # web-server
 
@@ -168,13 +169,23 @@ ewarn "Avoiding possible flag conflict between -fcf-protection=return and -mretp
 		return
 	fi
 
-	if [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("secure-realtime"|"secure-speed") ]] && test-flags-CC "-mretpoline" ; then
+	if \
+		[[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("secure-realtime"|"secure-speed") ]] \
+			&& \
+		test-flags-CC "-mretpoline" \
+	; then
 	# For portablity and speed
 		append-flags "-mretpoline"
 		CFLAGS_HARDENED_CFLAGS+=" -mretpoline"
 		CFLAGS_HARDENED_CXXFLAGS+=" -mretpoline"
 		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,retpolineplt"
-	elif [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("secure-embedded"|"secure-lightweight") ]] && test-flags-CC "-mretpoline" && test-flags-CC "-mretpoline-external-thunk" ; then
+	elif \
+		[[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("secure-embedded"|"secure-lightweight") ]] \
+			&& \
+		test-flags-CC "-mretpoline" \
+			&& \
+		test-flags-CC "-mretpoline-external-thunk" \
+	; then
 	# For cheap embedded devices that are designed to be slow.
 		append-flags "-mretpoline"
 		CFLAGS_HARDENED_CFLAGS+=" -mretpoline"
@@ -282,9 +293,40 @@ einfo "CC:  ${CC}"
 	CFLAGS_HARDENED_LDFLAGS=""
 	local gcc_pv=$(gcc-version)
 	if \
-		[[ "${CFLAGS_HARDENED_LEVEL}" == "2" ]] \
-			&& \
-		[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("admin-access"|"ce"|"daemon"|"dos"|"dss"|"dt"|"execution-integrity"|"extension"|"id"|"jit"|"kernel"|"messenger"|"multithreaded-confidential"|"multiuser-system"|"network"|"p2p"|"pe"|"plugin"|"real-time-integrity"|"safety-critical"|"scripting"|"secure-critical"|"sensitive-data"|"server"|"web-browser") ]] \
+		[[ \
+			"${CFLAGS_HARDENED_LEVEL}" == "2" \
+		]] \
+				&& \
+		[[ \
+			"${CFLAGS_HARDENED_USE_CASES}" \
+					=~ \
+("admin-access"\
+|"ce"\
+|"daemon"\
+|"dos"\
+|"dss"\
+|"dt"\
+|"execution-integrity"\
+|"extension"\
+|"id"\
+|"jit"\
+|"kernel"\
+|"messenger"\
+|"multithreaded-confidential"\
+|"multiuser-system"\
+|"network"\
+|"p2p"\
+|"pe"\
+|"plugin"\
+|"real-time-integrity"\
+|"safety-critical"\
+|"scripting"\
+|"secure-critical"\
+|"sensitive-data"\
+|"server"\
+|"untrusted-data"\
+|"web-browser")\
+		]] \
 			&& \
 		tc-is-gcc \
 			&&
@@ -325,8 +367,30 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 			CFLAGS_HARDENED_CFLAGS+=" -O1"
 		fi
 		if \
-			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("admin-access"|"ce"|"daemon"|"databases"|"dos"|"dss"|"dt"|"execution-integrity"|"messenger"|"multithreaded-confidential"|"multiuser-system"|"network"|"p2p"|"pe"|"secure-critical"|"server"|"suid"|"web-browser") ]] \
-				&&
+			[[ \
+				"${CFLAGS_HARDENED_USE_CASES}" \
+					=~ \
+("admin-access"\
+|"ce"\
+|"daemon"\
+|"databases"\
+|"dos"\
+|"dss"\
+|"dt"\
+|"execution-integrity"\
+|"messenger"\
+|"multithreaded-confidential"\
+|"multiuser-system"\
+|"network"\
+|"p2p"\
+|"pe"\
+|"secure-critical"\
+|"server"\
+|"suid"\
+|"untrusted-data"\
+|"web-browser")\
+			]] \
+					&&
 			test-flags-CC "-fstack-clash-protection" \
 		; then
 	# MC, DT, CE, DoS, PE
@@ -374,7 +438,26 @@ einfo "All SSP hardening (All functions hardened)"
 		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,relro"
 		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,now"
 		if \
-			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("ce"|"dss"|"execution-integrity"|"extension"|"id"|"jit"|"kernel"|"multiuser-system"|"network"|"pe"|"plugin"|"real-time-integrity"|"safety-critical"|"scripting"|"secure-critical"|"sensitive-data") ]] \
+			[[ "${CFLAGS_HARDENED_USE_CASES}" \
+					=~ \
+("ce"\
+|"dss"\
+|"execution-integrity"\
+|"extension"\
+|"id"\
+|"jit"\
+|"kernel"\
+|"multiuser-system"\
+|"network"\
+|"pe"\
+|"plugin"\
+|"real-time-integrity"\
+|"safety-critical"\
+|"scripting"\
+|"secure-critical"\
+|"sensitive-data"\
+|"untrusted-data")\
+			]] \
 					&&
 			test-flags-CC "-fcf-protection=full" \
 					&&
@@ -388,11 +471,18 @@ einfo "All SSP hardening (All functions hardened)"
 		fi
 
 		if \
-			[[ "${CFLAGS_HARDENED_TRIVIAL_AUTO_VAR_INIT:-1}" == "1" ]] \
-				&& \
 			tc-is-clang \
-				&&
-			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dos"|"dss"|"safety-critical"|"secure-critical") ]] \
+					&&
+			[[ \
+				"${CFLAGS_HARDENED_TRIVIAL_AUTO_VAR_INIT:-1}" == "1" \
+					&&
+				"${CFLAGS_HARDENED_USE_CASES}" \
+					=~ \
+("dos"\
+|"dss"\
+|"safety-critical"\
+|"secure-critical") \
+			]] \
 		; then
 	# DoS
 			filter-flags "-f*trivial-auto-var-init=*"
@@ -402,7 +492,23 @@ einfo "All SSP hardening (All functions hardened)"
 		fi
 	fi
 
-	if [[ "${CFLAGS_HARDENED_NOEXECSTACK:-1}" == "1" && "${CFLAGS_HARDENED_USE_CASES}" =~ ("ce"|"execution-integrity"|"multiuser-system"|"network"|"scripting"|"sensitive-data"|"server"|"web-server") ]] ; then
+	if \
+		[[ \
+			"${CFLAGS_HARDENED_NOEXECSTACK:-1}" == "1" \
+				&& \
+			"${CFLAGS_HARDENED_USE_CASES}" \
+				=~ \
+("ce"\
+|"execution-integrity"\
+|"multiuser-system"\
+|"network"\
+|"scripting"\
+|"sensitive-data"\
+|"server"\
+|"untrusted-data"\
+|"web-server")\
+		]] \
+	; then
 	# CE, DT/ID
 		filter-flags "-Wa,--noexecstack"
 		filter-flags "-Wl,-z,noexecstack"
@@ -422,7 +528,25 @@ einfo "All SSP hardening (All functions hardened)"
 		#   General case: -mretpoline-external-thunk -mindirect-branch-cs-prefix
 		#   vDSO case:    -mretpoline
 		:
-	elif [[ "${CFLAGS_HARDENED_RETPOLINE:-1}" == "1" && "${CFLAGS_HARDENED_USE_CASES}" =~ ("container-runtime"|"dss"|"id"|"hypervisor"|"kernel"|"network"|"scripting"|"sensitive-data"|"server"|"web-browser") ]] ; then
+	elif \
+		[[ \
+			"${CFLAGS_HARDENED_RETPOLINE:-1}" == "1" \
+				&& \
+			"${CFLAGS_HARDENED_USE_CASES}" \
+				=~ \
+("container-runtime"\
+|"dss"\
+|"id"\
+|"hypervisor"\
+|"kernel"\
+|"network"\
+|"scripting"\
+|"sensitive-data"\
+|"server"\
+|"untrusted-data"\
+|"web-browser")\
+		]] \
+	; then
 		:
 	# ID
 	# Spectre V2 mitigation general case
@@ -444,7 +568,16 @@ einfo "All SSP hardening (All functions hardened)"
 		fi
 	fi
 
-	if [[ "${CFLAGS_HARDENED_TRAPV:-1}" == "1" && "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"network"|"secure-critical"|"safety-critical") ]] ; then
+	if [[ \
+		"${CFLAGS_HARDENED_TRAPV:-1}" == "1" \
+			&& \
+		"${CFLAGS_HARDENED_USE_CASES}" =~ \
+("dss"\
+|"network"\
+|"secure-critical"\
+|"safety-critical"\
+|"unreviewed-data")\
+	]] ; then
 	# Remove flag if 50% drop in performance.
 	# For runtime *signed* integer overflow detection
 		filter-flags "-f*trapv"
