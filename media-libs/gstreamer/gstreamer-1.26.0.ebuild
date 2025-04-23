@@ -31,7 +31,10 @@ DESCRIPTION="Open source multimedia framework"
 HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="LGPL-2+"
 SLOT="1.0"
-IUSE="+caps +introspection nls unwind"
+IUSE="
++caps +introspection nls unwind
+ebuild_revision_1
+"
 RDEPEND="
 	>=dev-libs/glib-2.64.0:2[${MULTILIB_USEDEP}]
 	caps? (
