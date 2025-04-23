@@ -3,13 +3,17 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-ugly"
 
-inherit gstreamer-meson
+inherit cflags-hardened gstreamer-meson
 
 #KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
 
 DESCRIPTION="DVD read plugin for GStreamer"
+IUSE="
+ebuild_revision_1
+"
 RDEPEND="
 	>=media-libs/libdvdread-0.5.0:=[${MULTILIB_USEDEP}]
 "
@@ -18,6 +22,7 @@ DEPEND="
 "
 
 multilib_src_configure() {
+	cflags-hardened_append
 	local emesonargs=(
 		-Dgpl=enabled
 	)
