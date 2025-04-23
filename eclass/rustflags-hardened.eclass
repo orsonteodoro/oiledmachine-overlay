@@ -270,7 +270,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		RUSTFLAGS+=" -C overflow-checks=on"
 	fi
 
-	RUSTFLAGS+=" -C link-arg=-fstack-clash-protection"
+	RUSTFLAGS+=" -C llvm-args=-fstack-clash-protection"
 
 	if \
 		[[ \
