@@ -3,13 +3,17 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
-inherit gstreamer-meson
+inherit cflags-hardened gstreamer-meson
 
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 
 DESCRIPTION="LV2 elements for GStreamer"
+IUSE="
+ebuild_revision_1
+"
 RDEPEND="
 	media-libs/lv2[${MULTILIB_USEDEP}]
 	>=media-libs/lilv-0.22[${MULTILIB_USEDEP}]
@@ -17,3 +21,8 @@ RDEPEND="
 DEPEND="
 	${RDEPEND}
 "
+
+multilib_src_configure() {
+	cflags-hardened_append
+	gstreamer_multilib_src_configure
+}
