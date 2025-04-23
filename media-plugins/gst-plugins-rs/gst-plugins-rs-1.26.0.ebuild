@@ -22,7 +22,7 @@ unset -f _gst_plugins_rs_globals
 
 MY_PV="${PV}"
 
-RUSTFLAGS_HARDENED_USE_CASES="network plugin untrusted-data secure-critical"
+RUSTFLAGS_HARDENED_USE_CASES="network plugin untrusted-data secure-critical server"
 EXPECTED_BUILD_FILES_FINGERPRINT="disable"
 GOBJECT_INTROSPECTION_PV="1.74.0"
 GST_PV="${MY_PV}"
