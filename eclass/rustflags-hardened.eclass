@@ -437,15 +437,21 @@ einfo "rustc host:  ${host}"
 	# We will need to test them before allowing users to use them.
 	# Enablement is complicated by LLVM_COMPAT and compile time to build LLVM with sanitizers enabled.
 	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.50" && [[ "${RUSTFLAGS_HARDENED_UBSAN:-0}" == "1" ]] ; then
+# Missing -fno-sanitize-recover for Rust
+ewarn "UBSAN_OPTIONS=halt_on_error=1 must be placed in wrapper or env file for UBSAN mitigation to be effective."
 		RUSTFLAGS+=" -Zsanitizer=undefined"
 	fi
 
 	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "2.00" && [[ "${RUSTFLAGS_HARDENED_ASAN:-0}" == "1" ]] ; then
+# Missing -fno-sanitize-recover for Rust
+ewarn "ASAN_OPTIONS=halt_on_error=1 must be placed in wrapper or env file for ASAN mitigation to be effective."
 		RUSTFLAGS+=" -Zsanitizer=address"
 	fi
 
 	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "15.00" && [[ "${RUSTFLAGS_HARDENED_TSAN:-0}" == "1" ]] ; then
-		RUSTFLAGS+=" -Zsanitizer=thead"
+# Missing -fno-sanitize-recover for Rust
+ewarn "TSAN_OPTIONS=halt_on_error=1 must be placed in wrapper or env file for TSAN mitigation to be effective."
+		RUSTFLAGS+=" -Zsanitizer=thread"
 	fi
 
 	export RUSTFLAGS

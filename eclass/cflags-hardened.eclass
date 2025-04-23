@@ -803,6 +803,8 @@ einfo "All SSP hardening (All functions hardened)"
 	fi
 
 	if [[ "${CFLAGS}" =~ "-fsanitize=" ]] ; then
+	# Force exit before data/execution integrity is compromised.
+		filter-flags "-f*sanitize-recover"
 		append-flags "-fno-sanitize-recover"
 		CFLAGS_HARDENED_CFLAGS+=" -fno-sanitize-recover"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fno-sanitize-recover"
