@@ -122,6 +122,8 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # Setting to 2.0 will enable ASAN, UBSAN.
 # Setting to 15.0 will enable TSAN.
 
+# For example, TSAN is about 5-15x slower compared to the unmitigated build.
+
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_TOLERANCE_USER
 # A user override for RUSTFLAGS_HARDENED_TOLERANCE.
 # Acceptable values: 1.0-16, unset

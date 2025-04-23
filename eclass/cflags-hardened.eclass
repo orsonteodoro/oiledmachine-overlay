@@ -152,6 +152,8 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # Setting to 5.0 will enable TSAN, ASAN, UBSAN, LLVM CFI.
 # Setting to 20.0 will enable soft-floats.
 
+# For example, TSAN is about 2-5x slower compared to the unmitigated build.
+
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_TOLERANCE_USER
 # @USER_VARIABLE
 # A user override for CFLAGS_HARDENED_TOLERANCE.  This is to allow the user to
