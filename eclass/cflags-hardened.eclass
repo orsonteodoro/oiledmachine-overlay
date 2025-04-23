@@ -843,7 +843,7 @@ eerror "emerge -1vuDN llvm-core/llvm:${LLVM_SLOT}"
 eerror "emerge -vuDN llvm-core/clang:${LLVM_SLOT}"
 eerror "emerge -vuDN llvm-core/lld"
 eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[ubsan]"
+eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[cfi]"
 eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 
 			die

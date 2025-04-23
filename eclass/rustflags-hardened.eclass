@@ -431,7 +431,7 @@ einfo "rustc host:  ${host}"
 		RUSTFLAGS+=" -C codegen-units=1"
 	fi
 
-	# No CFI support
+	# No CFI support in Rust
 
 	# We don't enable these because clang/llvm not installed by default.
 	# We will need to test them before allowing users to use them.
