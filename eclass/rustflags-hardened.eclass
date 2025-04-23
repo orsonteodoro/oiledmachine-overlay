@@ -122,7 +122,27 @@ rustflags-hardened_append() {
 eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		die
 	fi
-	local rust_pv=$("${RUSTC}" --version | cut -f 2 -d " ")
+	local rust_pv=$("${RUSTC}" --version \
+		| cut -f 2 -d " ")
+
+	local arch=$(echo "${CFLAGS}" \
+		| grep -E -o "-march=[a-z0-9-_]+")
+	if [[ -n "${arch}" && ! "${RUSTFLAGS}" =~ "target-cpu=" ]] ; then
+		RUSTFLAGS+=" -C target-cpu=${arch}"
+	fi
+
+	local opt_level=$(echo "${CFLAGS}" \
+		| grep -E -o -e "-O(0|1|2|3|4|fast|s|z)" \
+		| tail -n 1)
+	if [[ ! "${RUSTFLAGS}" =~ "opt-level" ]] ; then
+		if [[ "${opt_level}" == "fast" ]] ; then
+			opt_level="3"
+		fi
+		if [[ "${opt_level}" == "4" ]] ; then
+			opt_level="3"
+		fi
+		RUSTFLAGS+=" -C opt-level=${opt_level}"
+	fi
 
 	if ! _rustflags-hardened_has_cet ; then
 	# Allow -mretpoline-external-thunk
@@ -232,8 +252,9 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	fi
 	RUSTFLAGS+=" -C link-arg=-D_FORTIFY_SOURCE=2"
 
+	# Similar to -ftrapv
 	if [[ \
-		"${RUSTFLAGS_HARDENED_TRAPV:-1}" == "1" \
+		"${RUSTFLAGS_HARDENED_INT_OVERFLOW:-1}" == "1" \
 			&& \
 		"${RUSTFLAGS_HARDENED_USE_CASES}" =~ \
 ("dss"\
@@ -267,7 +288,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		]] \
 	; then
 	# CE, DT/ID
-		RUSTFLAGS+=" -C link-arg=-znoexecstack"
+		RUSTFLAGS+=" -C link-arg=-z -C link-arg=noexecstack"
 	fi
 
 	# For executable packages only.
@@ -286,13 +307,47 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	RUSTFLAGS+=" -C link-arg=-z -C link-arg=now"
 
 	if [[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"fp-determinism"|"high-precision-research") ]] ; then
+		if [[ "${ARCH}" == "amd64" ]] ; then
+			replace-flags "-march=*" "-march=generic"
+			filter-flags "-mtune=*"
+			filter-flags \
+				"-m*3dnow*"
+				"-m*avx*" \
+				"-m*fma*" \
+				"-m*mmx" \
+				"-m*sse*"
+			append-flags \
+				"-mno-3dnow" \
+				"-mno-avx" \
+				"-mno-avx2" \
+				"-mno-avx512cd" \
+				"-mno-avx512dq" \
+				"-mno-avx512f" \
+				"-mno-avx512vl" \
+				"-mno-avx512ifma" \
+				"-mno-fma" \
+				"-mno-mmx" \
+				"-mno-sse" \
+				"-mno-sse2"
+			RUSTFLAGS+=" -C target-cpu=generic"
+			RUSTFLAGS+=" -C target-feature=-3dnow,-avx,-avx2,-avx512cd,-avx512dq,-avx512f,-avx512ifma,-avx512vl,-fma,-mmx,-sse,-sse2"
+		fi
+		if [[ "${ARCH}" == "arm64" ]] ; then
+			replace-flags "-march=*" "-march=armv8-a"
+			filter-flags "-mtune=*"
+			RUSTFLAGS+=" -C target-cpu=generic"
+			RUSTFLAGS+=" -C target-feature=-fp-armv8,-neon"
+		fi
 		if is-flagq "-Ofast" ; then
 			replace-flags "-Ofast" "-O3"
 			RUSTFLAGS+=" -C opt-level=3"
 		fi
+		RUSTFLAGS+=" -C target-cpu=generic"
 		RUSTFLAGS+=" -C float-opts=none"
 		RUSTFLAGS+=" -C target-feature=+strict-fp"
 		RUSTFLAGS+=" -C target-feature=-fast-math"
+		RUSTFLAGS+=" -C float-precision=exact"
+		RUSTFLAGS+=" -C soft-float"
 		RUSTFLAGS+=" -C codegen-units=1"
 	fi
 	export RUSTFLAGS

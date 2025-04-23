@@ -615,6 +615,45 @@ einfo "All SSP hardening (All functions hardened)"
 	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"fp-determinism"|"high-precision-research") ]] ; then
 	# Do not use in performance-critical applications
 		replace-flags "-Ofast" "-O3"
+		if [[ "${ARCH}" == "amd64" ]] ; then
+			filter-flags "-march=*"
+			filter-flags "-mtune=*"
+			filter-flags \
+				"-m*3dnow*"
+				"-m*avx*" \
+				"-m*fma*" \
+				"-m*mmx" \
+				"-m*sse*"
+			append-flags "-march=generic"
+			CFLAGS_HARDENED_CFLAGS+=" -march=generic"
+			CFLAGS_HARDENED_CXXFLAGS+=" -march=generic"
+			local l=(
+				"-mno-3dnow" \
+				"-mno-avx"
+				"-mno-avx2"
+				"-mno-avx512cd"
+				"-mno-avx512dq"
+				"-mno-avx512f"
+				"-mno-avx512ifma"
+				"-mno-avx512vl"
+				"-mno-mmx"
+				"-mno-sse"
+				"-mno-sse2"
+			)
+			append-flags ${l[@]}
+			CFLAGS_HARDENED_CFLAGS+=" ${l[@]}"
+			CFLAGS_HARDENED_CXXFLAGS+=" ${l[@]}"
+		fi
+		if [[ "${ARCH}" == "arm64" ]] ; then
+			filter-flags "-march=*"
+			filter-flags "-mtune=*"
+			append-flags "-march=armv8-a"
+			append-flags "-mfloat-abi=soft" "-mfpu=none"
+			CFLAGS_HARDENED_CFLAGS+=" -march=armv8-a"
+			CFLAGS_HARDENED_CXXFLAGS+=" -march=armv8-a"
+			CFLAGS_HARDENED_CFLAGS+=" -mfloat-abi=soft -mfpu=none"
+			CFLAGS_HARDENED_CXXFLAGS+=" -mfloat-abi=soft -mfpu=none"
+		fi
 		filter-flags \
 			"-f*fast-math" \
 			"-f*float-store" \
