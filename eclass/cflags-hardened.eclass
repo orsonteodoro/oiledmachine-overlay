@@ -364,6 +364,29 @@ einfo "CC:  ${CC}"
 		${CC} --version || die
 	fi
 
+	if \
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.15" \
+			&& \
+		[[ "${CFLAGS_HARDENED_CFI:-0}" == "1" ]] \
+			&& \
+		! _cflags-hardened_has_cet \
+			&& \
+		[[ "${ARCH}" == "amd64" ]] \
+	; then
+		if tc-is-clang ; then
+			:
+		elif tc-is-gcc && [[ -n "${LLVM_SLOT}" ]] ; then
+			export CC="${CHOST}-clang-${LLVM_SLOT}"
+			export CXX="${CHOST}-clang++-${LLVM_SLOT}"
+			export CPP="${CC} -E"
+		elif tc-is-gcc && [[ -n "${LLVM_SLOT}" ]] ; then
+			export CC="${CHOST}-clang"
+			export CXX="${CHOST}-clang++"
+			export CPP="${CC} -E"
+		fi
+		strip-unsupported-flags
+	fi
+
 	if [[ -n "${CFLAGS_HARDENED_LEVEL_USER}" ]] ; then
 		CFLAGS_HARDENED_LEVEL="${CFLAGS_HARDENED_LEVEL_USER}"
 	fi
@@ -774,28 +797,57 @@ einfo "All SSP hardening (All functions hardened)"
 	# We will need to test them before allowing users to use them.
 	# Enablement is complicated by LLVM_COMPAT and compile time to build LLVM with sanitizers enabled.
 	# Worst case scores for tolerance
-	if _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.15" && [[ "${CFLAGS_HARDENED_CFI:-0}" == "1" ]] && ! _cflags-hardened_has_cet ; then
+	if \
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.15" \
+			&& \
+		[[ "${CFLAGS_HARDENED_CFI:-0}" == "1" ]] \
+			&& \
+		! _cflags-hardened_has_cet \
+			&& \
+		[[ "${ARCH}" == "amd64" ]] \
+	; then
 		filter-flags "-f*sanitize=cfi"
 		append-flags "-fsanitize=cfi"
 		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=cfi"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=cfi"
+
+		filter-flags "-flto*"
+		append-flags "-flto=thin"
+		append-ldflags "-flto=thin"
+		if tc-is-gcc && [[ "${CFLAGS_HARDENED_LTO_PARALLEL:-1}" == "1" ]] ; then
+			append-ldflags "-fuse-linker-plugin"
+		fi
+		filter-flags "-fuse-ld=*"
+		append-ldflags "-fuse-ld=lld"
 	fi
 
-	if _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.20" && [[ "${CFLAGS_HARDENED_UBSAN:-0}" == "1" ]] ; then
+	if \
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.20" \
+			&& \
+		[[ "${CFLAGS_HARDENED_UBSAN:-0}" == "1" ]] \
+	; then
 		filter-flags "-f*sanitize=undefined"
 		append-flags "-fsanitize=undefined"
 		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=undefined"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=undefined"
 	fi
 
-	if _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "2.00" && [[ "${CFLAGS_HARDENED_ASAN:-0}" == "1" ]] ; then
+	if \
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "2.00" \
+			&& \
+		[[ "${CFLAGS_HARDENED_ASAN:-0}" == "1" ]] \
+	; then
 		filter-flags "-f*sanitize=address"
 		append-flags "-fsanitize=address"
 		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=address"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=address"
 	fi
 
-	if _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "5.00" && [[ "${CFLAGS_HARDENED_TSAN:-0}" == "1"  ]] ; then
+	if \
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "5.00" \
+			&& \
+		[[ "${CFLAGS_HARDENED_TSAN:-0}" == "1"  ]] \
+	; then
 		filter-flags "-f*sanitize=thread"
 		append-flags "-fsanitize=thread"
 		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=thread"
