@@ -7,6 +7,8 @@ EAPI=8
 # gst-plugins-good for rtprtxsend and rtpbin elements, maybe more
 # gst-plugins-srtp for srtpenc and srtpdec elements
 
+CFLAGS_HARDENED_USE_CASES="network untrusted-data server"
+
 inherit gstreamer-meson
 
 KEYWORDS="~amd64 ~arm64 ~x86"
@@ -14,7 +16,10 @@ KEYWORDS="~amd64 ~arm64 ~x86"
 DESCRIPTION="A GStreamer based RTSP server library"
 HOMEPAGE="https://gstreamer.freedesktop.org/modules/gst-rtsp-server.html"
 LICENSE="LGPL-2+"
-IUSE="examples +introspection static-libs"
+IUSE="
+examples +introspection static-libs
+ebuild_revision_1
+"
 RDEPEND="
 	>=media-libs/gstreamer-${PV}:${SLOT}[${MULTILIB_USEDEP},introspection?]
 	>=media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP},introspection?]
@@ -32,6 +37,7 @@ BDEPEND="
 "
 
 multilib_src_configure() {
+	cflags-hardened_append
 	local emesonargs=(
 		-Dintrospection=$(multilib_native_usex introspection "enabled" "disabled")
 	)
