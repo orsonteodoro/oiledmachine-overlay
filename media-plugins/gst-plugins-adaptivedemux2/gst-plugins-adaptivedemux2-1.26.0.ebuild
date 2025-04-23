@@ -3,14 +3,18 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
 GST_ORG_MODULE="gst-plugins-good"
 
-inherit gstreamer-meson
+inherit cflags-hardened gstreamer-meson
 
 KEYWORDS="~amd64 ~arm64"
 
 DESCRIPTION="Adaptive demuxer plugins for GStreamer"
-IUSE="libgcrypt nettle openssl"
+IUSE="
+libgcrypt nettle openssl
+ebuild_revision_1
+"
 REQUIRED_USE="
 	|| (
 		libgcrypt
@@ -42,6 +46,7 @@ RDEPEND="
 "
 
 multilib_src_configure() {
+	cflags-hardened_append
 	local emesonargs=(
 		-Dhls-crypto=nettle
 	)
