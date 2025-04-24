@@ -18,7 +18,7 @@ EAPI=8
 ACORN_PV="8.14.1"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 CFLAGS_HARDENED_PIE="1"
-CFLAGS_HARDENED_USE_CASES="jit network untrusted-data server web-server"
+CFLAGS_HARDENED_USE_CASES="jit language-runtime network untrusted-data server web-server"
 TRAINER_TYPES=(
 	abort_controller
 	assert

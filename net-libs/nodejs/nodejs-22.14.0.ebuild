@@ -15,7 +15,7 @@ EAPI=8
 ACORN_PV="8.14.0"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 CFLAGS_HARDENED_PIE="1"
-CFLAGS_HARDENED_USE_CASES="jit network untrusted-data server web-server"
+CFLAGS_HARDENED_USE_CASES="jit language-runtime network untrusted-data server web-server"
 TRAINER_TYPES=(
 	abort_controller
 	assert
@@ -71,7 +71,7 @@ COREPACK_PV="0.31.0"
 LTO_TYPE="none" # Global var
 MULTIPLEXER_VER="11"
 NGHTTP2_PV="1.64.0"
-NPM_PV="10.9.2" # See https://github.com/nodejs/node/blob/v22.13.1/deps/npm/package.json
+NPM_PV="10.9.2" # See https://github.com/nodejs/node/blob/v22.14.0/deps/npm/package.json
 PYTHON_COMPAT=( "python3_"{8..12} ) # See configure
 PYTHON_REQ_USE="threads(+)"
 TPGO_CONFIGURE_DONT_SET_FLAGS=1

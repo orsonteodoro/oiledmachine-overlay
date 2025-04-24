@@ -241,6 +241,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 |"extension"\
 |"id"\
 |"jit"\
+|"language-runtime"\
 |"kernel"\
 |"multiuser-system"\
 |"network"\
@@ -385,15 +386,50 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	local host=$(${RUSTC} -vV | grep "host:" | cut -f 2 -d " ")
 einfo "rustc host:  ${host}"
 
+	# MC, CE, PE, DoS, DT, ID
+	if \
+		[[ \
+			"${RUSTFLAGS_HARDENED_USE_CASES}" \
+					=~ \
+("admin-access"\
+|"ce"\
+|"daemon"\
+|"dos"\
+|"dss"\
+|"dt"\
+|"execution-integrity"\
+|"extension"\
+|"id"\
+|"jit"\
+|"kernel"\
+|"language-runtime"\
+|"messenger"\
+|"multithreaded-confidential"\
+|"multiuser-system"\
+|"network"\
+|"p2p"\
+|"pe"\
+|"plugin"\
+|"real-time-integrity"\
+|"safety-critical"\
+|"scripting"\
+|"secure-critical"\
+|"sensitive-data"\
+|"server"\
+|"untrusted-data"\
+|"web-browser")\
+		]] \
+	; then
 	# For CFLAGS equivalent list, see also `rustc --print target-features`
 	# For -mllvm option, see `rustc -C llvm-args="--help"`
-	if ${RUSTC} --print target-features | grep -q -e "stack-probe" ; then
+		if ${RUSTC} --print target-features | grep -q -e "stack-probe" ; then
 	# Mitigation for stack clash, stack overflow
-		RUSTFLAGS+=" -C target-feature=+stack-probe"
-	fi
+	# Not available for ARCH=amd64 prebuilt build.
+			RUSTFLAGS+=" -C target-feature=+stack-probe"
+		fi
 
-	# MC, CE, PE, DoS, DT, ID
-	RUSTFLAGS+=" -C link-arg=-fstack-clash-protection"
+		RUSTFLAGS+=" -C link-arg=-fstack-clash-protection"
+	fi
 
 	if \
 		[[ \
@@ -403,6 +439,7 @@ einfo "rustc host:  ${host}"
 				=~ \
 ("ce"\
 |"execution-integrity"\
+|"language-runtime"\
 |"multiuser-system"\
 |"network"\
 |"scripting"\

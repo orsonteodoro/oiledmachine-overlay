@@ -192,6 +192,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # hypervisor
 # jit
 # kernel
+# language-runtime (e.g. compiler, interpeter, language virtual machine)
 # messenger
 # real-time-integrity
 # safety-critical
@@ -451,6 +452,7 @@ ewarn "You can only use Clang with LTO systemwide if doing LLVM CFI."
 |"id"\
 |"jit"\
 |"kernel"\
+|"language-runtime"\
 |"messenger"\
 |"multithreaded-confidential"\
 |"multiuser-system"\
@@ -520,6 +522,7 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 |"dss"\
 |"dt"\
 |"execution-integrity"\
+|"language-runtime"\
 |"messenger"\
 |"multithreaded-confidential"\
 |"multiuser-system"\
@@ -586,6 +589,7 @@ einfo "All SSP hardening (All functions hardened)"
 |"id"\
 |"jit"\
 |"kernel"\
+|"language-runtime"\
 |"multiuser-system"\
 |"network"\
 |"pe"\
@@ -639,6 +643,7 @@ einfo "All SSP hardening (All functions hardened)"
 				=~ \
 ("ce"\
 |"execution-integrity"\
+|"language-runtime"\
 |"multiuser-system"\
 |"network"\
 |"scripting"\
