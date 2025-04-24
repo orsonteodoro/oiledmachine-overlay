@@ -234,7 +234,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		filter-flags "-f*cf-protection=*"
 	elif \
 		[[ "${RUSTFLAGS_HARDENED_USE_CASES}" \
-					=~ \
+			=~ \
 ("ce"\
 |"dss"\
 |"execution-integrity"\
@@ -344,7 +344,15 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		append-flags -D_FORTIFY_SOURCE=${level}
 		RUSTFLAGS+=" -C link-arg=-D_FORTIFY_SOURCE=${level}"
 	elif \
-		[[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("container-runtime"|"dss"|"untrusted-data"|"secure-critical"|"multiuser-system") ]] \
+		[[ \
+			"${RUSTFLAGS_HARDENED_USE_CASES}" \
+				=~ \
+("container-runtime"\
+|"dss"\
+|"untrusted-data"\
+|"secure-critical"\
+|"multiuser-system") \
+		]] \
 				&& \
 		has_version ">=sys-libs/glibc-2.34" \
 	; then
@@ -367,7 +375,8 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	if [[ \
 		"${RUSTFLAGS_HARDENED_INT_OVERFLOW:-1}" == "1" \
 			&& \
-		"${RUSTFLAGS_HARDENED_USE_CASES}" =~ \
+		"${RUSTFLAGS_HARDENED_USE_CASES}" \
+			=~ \
 ("dss"\
 |"execution-integrity"\
 |"network"\
@@ -390,7 +399,7 @@ einfo "rustc host:  ${host}"
 	if \
 		[[ \
 			"${RUSTFLAGS_HARDENED_USE_CASES}" \
-					=~ \
+				=~ \
 ("admin-access"\
 |"ce"\
 |"daemon"\

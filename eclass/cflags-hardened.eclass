@@ -440,7 +440,7 @@ ewarn "You can only use Clang with LTO systemwide if doing LLVM CFI."
 				&& \
 		[[ \
 			"${CFLAGS_HARDENED_USE_CASES}" \
-					=~ \
+				=~ \
 ("admin-access"\
 |"ce"\
 |"daemon"\
@@ -581,7 +581,7 @@ einfo "All SSP hardening (All functions hardened)"
 		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,now"
 		if \
 			[[ "${CFLAGS_HARDENED_USE_CASES}" \
-					=~ \
+				=~ \
 ("ce"\
 |"dss"\
 |"execution-integrity"\
@@ -601,9 +601,9 @@ einfo "All SSP hardening (All functions hardened)"
 |"sensitive-data"\
 |"untrusted-data")\
 			]] \
-					&&
+				&&
 			test-flags-CC "-fcf-protection=full" \
-					&&
+				&&
 			_cflags-hardened_has_cet \
 		; then
 	# MC, ID, PE, CE
@@ -787,7 +787,16 @@ einfo "All SSP hardening (All functions hardened)"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fPIC"
 	fi
 
-	if tc-is-gcc && is-flagq '-Ofast' && [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"safety-critical") ]] ; then
+	if \
+		tc-is-gcc && is-flagq '-Ofast' \
+			&& \
+		[[ \
+			"${CFLAGS_HARDENED_USE_CASES}" \
+				=~ \
+("dss"\
+|"safety-critical") \
+		]] \
+	; then
 	# DoS, DT
 		filter-flags "-f*allow-store-data-races"
 		append-flags "-fno-allow-store-data-races"
@@ -796,8 +805,14 @@ einfo "All SSP hardening (All functions hardened)"
 	fi
 
 	if \
-		[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"fp-determinism"|"high-precision-research") ]] \
-			&& \
+		[[ \
+			"${CFLAGS_HARDENED_USE_CASES}" \
+				=~ \
+("dss"\
+|"fp-determinism"\
+|"high-precision-research") \
+		]] \
+				&& \
 		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "20.00" \
 	; then
 	# Do not use in performance-critical applications
