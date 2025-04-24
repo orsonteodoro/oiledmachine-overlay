@@ -343,7 +343,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		append-flags -D_FORTIFY_SOURCE=${level}
 		RUSTFLAGS+=" -C link-arg=-D_FORTIFY_SOURCE=${level}"
 	elif \
-		[[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("container-runtime"|"untrusted-data"|"secure-critical"|"multiuser-system") ]] \
+		[[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("container-runtime"|"dss"|"untrusted-data"|"secure-critical"|"multiuser-system") ]] \
 				&& \
 		ver_test ">=sys-libs/glibc-2.34" \
 	; then

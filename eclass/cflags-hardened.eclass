@@ -742,7 +742,7 @@ einfo "All SSP hardening (All functions hardened)"
 			CFLAGS_HARDENED_CFLAGS+=" -D_FORTIFY_SOURCE=${level}"
 			CFLAGS_HARDENED_CXXFLAGS+=" -D_FORTIFY_SOURCE=${level}"
 		elif \
-			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("container-runtime"|"untrusted-data"|"secure-critical"|"multiuser-system") ]] \
+			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("container-runtime"|"dss"|"untrusted-data"|"secure-critical"|"multiuser-system") ]] \
 				&& \
 			ver_test ">=sys-libs/glibc-2.34" \
 		; then
