@@ -240,7 +240,7 @@ _cflags-hardened_fcmp() {
 _cflags-hardened_proximate_opt_level() {
 	if _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">" "1.80" ; then
 einfo "CFLAGS_HARDENED_TOLERANCE:  ${CFLAGS_HARDENED_TOLERANCE} (similar to -O0 with heavy thrashing)"
-	elif _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.5" ; then
+	elif _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.4" ; then
 einfo "CFLAGS_HARDENED_TOLERANCE:  ${CFLAGS_HARDENED_TOLERANCE} (similar to -O0 with light thrashing)"
 	elif _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.35" ; then
 einfo "CFLAGS_HARDENED_TOLERANCE:  ${CFLAGS_HARDENED_TOLERANCE} (similar to -O1)"
