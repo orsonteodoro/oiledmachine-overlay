@@ -484,6 +484,8 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 			"-D_FORTIFY_SOURCE=3" \
 			"-Wl,-z,relro" \
 			"-Wl,-z,now"
+
+	# DoS, DT, ID
 		append-flags "-fhardened"
 		CFLAGS_HARDENED_CFLAGS+=" -fhardened"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fhardened"
@@ -523,31 +525,35 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 					&&
 			test-flags-CC "-fstack-clash-protection" \
 		; then
-	# MC, DT, CE, DoS, PE
 	# CE = Code Execution
 	# DoS = Denial of Service
 	# DT = Data Tampering
 	# ID = Information Disclosure
 	# MC = Memory Corruption
 	# PE = Privilege Execution
+
+	# MC, CE, PE, DoS, DT, ID
 			filter-flags "-f*stack-clash-protection"
 			append-flags "-fstack-clash-protection"
 			CFLAGS_HARDENED_CFLAGS+=" -fstack-clash-protection"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fstack-clash-protection"
 		fi
 		if [[ "${CFLAGS_HARDENED_LEVEL}" == "1" ]] && ! tc-enables-ssp ; then
+	# DoS, DT
 einfo "Standard SSP hardening (>= 8 byte buffers, *alloc functions)"
 			filter-flags "-f*stack-protector"
 			append-flags "-fstack-protector"
 			CFLAGS_HARDENED_CFLAGS+=" -fstack-protector"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fstack-protector"
 		elif [[ "${CFLAGS_HARDENED_LEVEL}" == "2" ]] && ! tc-enables-ssp-strong ; then
+	# DoS, DT
 einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with local arrays or local pointers)"
 			filter-flags "-f*stack-protector-strong"
 			append-flags "-fstack-protector-strong"
 			CFLAGS_HARDENED_CFLAGS+=" -fstack-protector-strong"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fstack-protector-strong"
 		elif [[ "${CFLAGS_HARDENED_LEVEL}" == "3" ]] && ! tc-enables-ssp-all ; then
+	# DoS, DT
 einfo "All SSP hardening (All functions hardened)"
 			filter-flags "-f*stack-protector-all"
 			append-flags "-fstack-protector-all"
@@ -559,10 +565,14 @@ einfo "All SSP hardening (All functions hardened)"
 				-D_FORTIFY_SOURCE=1 \
 				-D_FORTIFY_SOURCE=2 \
 				-D_FORTIFY_SOURCE=3
+
+	# DoS, DT, ID
 			append-flags -D_FORTIFY_SOURCE=2
 			CFLAGS_HARDENED_CFLAGS+=" -D_FORTIFY_SOURCE=2"
 			CFLAGS_HARDENED_CXXFLAGS+=" -D_FORTIFY_SOURCE=2"
 		fi
+
+	# DoS, DT
 		append-ldflags "-Wl,-z,relro"
 		append-ldflags "-Wl,-z,now"
 		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,relro"
@@ -614,7 +624,7 @@ einfo "All SSP hardening (All functions hardened)"
 |"secure-critical") \
 			]] \
 		; then
-	# DoS
+	# DoS, ID
 			filter-flags "-f*trivial-auto-var-init=*"
 			append-flags "-ftrivial-auto-var-init=zero"
 			CFLAGS_HARDENED_CFLAGS+=" -ftrivial-auto-var-init=zero"
@@ -639,7 +649,7 @@ einfo "All SSP hardening (All functions hardened)"
 |"web-server")\
 		]] \
 	; then
-	# CE, DT/ID
+	# CE, DoS
 		filter-flags "-Wa,--noexecstack"
 		filter-flags "-Wl,-z,noexecstack"
 		append-flags "-Wa,--noexecstack"
@@ -678,7 +688,7 @@ einfo "All SSP hardening (All functions hardened)"
 		]] \
 	; then
 		:
-	# ID
+	# DoS, ID
 	# Spectre V2 mitigation general case
 		# -mfunction-return and -fcf-protection are mutually exclusive.
 
@@ -715,6 +725,7 @@ einfo "All SSP hardening (All functions hardened)"
 	; then
 	# Remove flag if 50% drop in performance.
 	# For runtime *signed* integer overflow detection
+	# DoS, DT
 		filter-flags "-f*trapv"
 		append-flags "-ftrapv"
 		CFLAGS_HARDENED_CFLAGS+=" -ftrapv"
@@ -739,7 +750,7 @@ einfo "All SSP hardening (All functions hardened)"
 	fi
 
 	if tc-is-gcc && is-flagq '-Ofast' && [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"safety-critical") ]] ; then
-	# DT, DoS
+	# DoS, DT
 		filter-flags "-f*allow-store-data-races"
 		append-flags "-fno-allow-store-data-races"
 		CFLAGS_HARDENED_CFLAGS+=" -fno-allow-store-data-races"

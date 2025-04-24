@@ -257,10 +257,13 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		: # Broken
 	elif ver_test "${rust_pv}" -ge "1.58.0" ; then
 		if [[ "${RUSTFLAGS_HARDENED_LEVEL}" == "3" ]] ; then
+	# DoS, DT
 			RUSTFLAGS+=" -C stack-protector=all"
 		elif [[ "${RUSTFLAGS_HARDENED_LEVEL}" == "2" ]] ; then
+	# DoS, DT
 			RUSTFLAGS+=" -C stack-protector=strong"
 		elif [[ "${RUSTFLAGS_HARDENED_LEVEL}" == "1" ]] ; then
+	# DoS, DT
 			RUSTFLAGS+=" -C stack-protector=basic"
 		fi
 	fi
@@ -313,6 +316,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 			if _rustflags-hardened_has_cet ; then
 				:
 			else
+	# DoS, ID
 				RUSTFLAGS+=" -C target-feature=+retpoline"
 			fi
 		fi
@@ -321,8 +325,9 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	if is-flagq "-O0" ; then
 		replace-flags "-O0" "-O1"
 		RUSTFLAGS+=" -C opt-level=1"
-		RUSTFLAGS+=" -C link-arg=-D_FORTIFY_SOURCE=2"
+
 	fi
+	# DoS, DT, ID
 	RUSTFLAGS+=" -C link-arg=-D_FORTIFY_SOURCE=2"
 
 	# Similar to -ftrapv
@@ -341,6 +346,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	]] ; then
 	# Remove flag if 50% drop in performance.
 	# For runtime *signed* integer overflow detection
+	# DoS, DT
 		RUSTFLAGS+=" -C overflow-checks=on"
 	fi
 
@@ -353,6 +359,8 @@ einfo "rustc host:  ${host}"
 	# Mitigation for stack clash, stack overflow
 		RUSTFLAGS+=" -C target-feature=+stack-probe"
 	fi
+
+	# MC, CE, PE, DoS, DT, ID
 	RUSTFLAGS+=" -C link-arg=-fstack-clash-protection"
 
 	if \
@@ -372,7 +380,7 @@ einfo "rustc host:  ${host}"
 |"web-server")\
 		]] \
 	; then
-	# CE, DT/ID
+	# CE, DoS
 		RUSTFLAGS+=" -C link-arg=-z -C link-arg=noexecstack"
 	fi
 
@@ -388,6 +396,7 @@ einfo "rustc host:  ${host}"
 		RUSTFLAGS+=" -C relocation-model=pic"
 	fi
 
+	# DoS, DT
 	RUSTFLAGS+=" -C relro-level=full"
 
 	if [[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"fp-determinism"|"high-precision-research") ]] \
