@@ -157,6 +157,8 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # -mindirect-branch-register		1.05 - 1.30
 # -mretpoline				1.10 - 1.30
 # -mretpoline-external-thunk		1.15 - 1.35
+# -fvtable-verify=preinit		1.06 - 1.16
+# -fvtable-verify=std			1.05 - 1.15
 
 # * Only these are conditionally set based on worst case
 #  CFLAGS_HARDENED_TOLERANCE
