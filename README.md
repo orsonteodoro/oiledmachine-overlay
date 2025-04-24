@@ -208,38 +208,53 @@ For interactive testing, some most used functionality will be tested.
 
 ## Security policy
 
-### 2020 policy
+See [SECURITY.md](SECURITY.md)
 
-In 2020 for this overlay only, it was decided that ebuild-packages would be
-dropped or migrated into oiledmachine-legacy to ideally eliminate
-vulnerable packages.
+### 2025 policy
 
-Packages are updated if a critical vulnerability has been announced.
-Send an [issue request](https://github.com/orsonteodoro/oiledmachine-overlay/issues)
-if you find one.
+This overlay will force hardening always on to mitigate against some zero click
+attacks.
 
-Web engines and browsers such as firefox, chromium, webkit-gtk, cef-bin,
-CEF/Electron web based apps, are updated everytime a critical
-vulnerability is announced or after several strings of high vulnerabilties.
+These hardening performance worst case penalty is around 1.35 times the base
+performance without mitigation which is similar to -O1 at -40% best case
+performance penalty relative to -O3/-Ofast.
 
-ot-kernel is updated every release to minimize unpatched 0-day exploits.  Old
-ebuilds are removed intentionally and assume to contain one or an unannounced
-one by comparing keywords in the kernel changelog with the
-[CWE Top 25 Most Dangerous Software Weaknesses (2022)](https://cwe.mitre.org/top25/archive/2022/2022_cwe_top25.html)
-list.
+Users can override the tolerance level by changing
+CFLAGS_HARDENED_TOLERANCE_USER.  Details about what runtime mitigations will be
+activated can be found at
+[cflags-hardened.eclass] (https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/cflags-hardened.eclass#L123)
 
-Packages are updated based on [GLSA](https://security.gentoo.org/glsa) and
-random [NVD](https://nvd.nist.gov/vuln/search) searches.
+The hardening benefits will include some execution-integrity mitigations,
+some information disclosure mitigations, and some denial of service
+mitigations.
 
-Any binary package with dependencies with critical or high security
-advisories matching the version of the dependency will be mentioned in
-the ebuild at the time of packaging.  Only upstream can fix those problems
-especially if dependencies are statically linked.
+Execution-integrity mitigations with LLVM CFI (and CET) will mitigate
+unauthorized transactions in trusted compiled code.
 
-Some packages or ebuilds may be hard masked in 
-[profiles/package.mask](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/profiles/package.mask)
-if the package still has some utility but unable to be removed, or
-contains a known infamous critical vulnerability.
+The ubsan runtime mitigation will protect against code execution,
+information disclosure, data tampering, denial of service before they happen.
+
+While it may upset minimalists, this forced mitigation may prevent some classes
+of real world cost loss.
+
+The classes of software that will be forced hardening on can be found at
+[cflags-hardened.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/cflags-hardened.eclass#L186)
+under the CFLAGS_HARDENED_USE_CASES.  This class and the rustflags-hardened
+eclass have @USER_VARIABLE marked environment variables which can be placed
+as a [per-package env configuration](https://wiki.gentoo.org/wiki//etc/portage/package.env)
+or in [/etc/portage/make.conf](https://wiki.gentoo.org/wiki//etc/portage/make.conf).
+
+The requirement is based partly on the overlay's maintainer shift towards a
+defensive posture on cybersecurity.
+
+Requirements:
+
+sys-devel/gcc[sanitizers]
+sys-devel/clang
+llvm-runtimes/compiler-rt[cfi,ubsan]
+llvm-runtimes/compiler-rt-sanitizers[cfi,ubsan]
+
+For this overlay only, ARCH=amd64 users without CET ar
 
 ### 2023 policy
 
@@ -285,31 +300,38 @@ media-gfx/upscayl allow-session-replay.conf
 media-video/sr disable-avscan.conf
 ```
 
-#### Limitations
+### 2020 policy
 
-These scans may, however, be too sensitive or may result in false positives.
-The scans for session-replay/analytics are limited to plaintext only and can be
-easily circumvented with obfuscated forms or written language change (i.e.
-non-English) in source code form.  Only firmware/logos provided to ot-sources,
-Electron and NPM based packages, media-video/sr are scanned.  You may need to
-set up your own
-[/etc/portage/bashrc](https://wiki.gentoo.org/wiki//etc/portage/bashrc)
-for additional comprehensive scans that scan again malware, and session replay
-and analytics keywords.
+In 2020 for this overlay only, it was decided that ebuild-packages would be
+dropped or migrated into oiledmachine-legacy to ideally eliminate
+vulnerable packages.
 
-Additional packages with binary blobs or prebuilt packages may be modified with
-these extra scans.
+Packages are updated if a critical vulnerability has been announced.
+Send an [issue request](https://github.com/orsonteodoro/oiledmachine-overlay/issues)
+if you find one.
 
-Source code scans are limited to command line patterns and keyword search.
-Scanning based on library API calls or function names is not done.
+Web engines and browsers such as firefox, chromium, webkit-gtk, cef-bin,
+CEF/Electron web based apps, are updated everytime a critical
+vulnerability is announced or after several strings of high vulnerabilties.
 
-Source code scans for unauthorized microphone and webcam use are currently not
-done but can be added via the bashrc with a grep on found die check.  Some of
-these issues can be mitigated by running the app under isolation or in a
-sandbox.
+ot-kernel is updated every release to minimize unpatched 0-day exploits.  Old
+ebuilds are removed intentionally and assume to contain one or an unannounced
+one by comparing keywords in the kernel changelog with the
+[CWE Top 25 Most Dangerous Software Weaknesses (2022)](https://cwe.mitre.org/top25/archive/2022/2022_cwe_top25.html)
+list.
 
-These scans are ineffective against physical or side-channel attacks such as
-unencrypted keyboard/input connection capture (e.g. evil maid attack).
+Packages are updated based on [GLSA](https://security.gentoo.org/glsa) and
+random [NVD](https://nvd.nist.gov/vuln/search) searches.
+
+Any binary package with dependencies with critical or high security
+advisories matching the version of the dependency will be mentioned in
+the ebuild at the time of packaging.  Only upstream can fix those problems
+especially if dependencies are statically linked.
+
+Some packages or ebuilds may be hard masked in 
+[profiles/package.mask](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/profiles/package.mask)
+if the package still has some utility but unable to be removed, or
+contains a known infamous critical vulnerability.
 
 ## PGO/BOLT packages
 
