@@ -11,7 +11,7 @@ EGIT_COMMIT="1e805500dc14a507598cebdd49557c32e514899f"
 inherit cflags-hardened meson-multilib
 
 KEYWORDS="~amd64"
-S="${WORKDIR}/${PN}-v${PV}-${EGIT_COMMIT}"
+S="${WORKDIR}/${PN}-v${PV}"
 SRC_URI="
 https://code.videolan.org/rist/librist/-/archive/v${PV}/${PN}-v${PV}.tar.bz2
 "
@@ -22,7 +22,7 @@ LICENSE="BSD-2"
 SLOT="0"
 IUSE="
 -nettle -gnutls +mbedtls +tools -tun
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	!kernel_linux? (
