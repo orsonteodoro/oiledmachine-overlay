@@ -231,6 +231,11 @@ mitigations.
 Execution-integrity mitigations with LLVM CFI (and CET) will mitigate
 against unauthorized transactions in trusted compiled code.
 
+This overlay will set LLVM CFI default off.  Then, it will prioritize candidate
+packages individually for those where costly or devastating unauthorized
+transactions could take place.  Then, it will slow evaluate each candidate
+for LLVM CFI mitigation enablement.
+
 The ubsan runtime mitigation will protect against code execution,
 information disclosure, data tampering, denial of service before they happen.
 
@@ -266,9 +271,6 @@ llvm-runtimes/compiler-rt-sanitizers[cfi,ubsan]
 In addition, ARCH=amd64 users without CET must build and rebuild all packages
 that use LTO with clang or disable selectively LTO in to prevent building/linking
 issues when LLVM CFI is being used.  LLVM CFI requires LTO to work.
-
-This overlay will set LLVM CFI default off and evaluate candidate packages
-individually for compatibility.
 
 ### 2023 policy
 
