@@ -15,7 +15,7 @@ EAPI=8
 ACORN_PV="8.4.1"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 CFLAGS_HARDENED_PIE="1"
-CFLAGS_HARDENED_USE_CASES="jit language-runtime network untrusted-data server web-server"
+CFLAGS_HARDENED_USE_CASES="jit language-runtime network secure-critical server untrusted-data web-server"
 TRAINER_TYPES=(
 	assert
 	async_hooks
@@ -122,7 +122,7 @@ $(gen_iuse_pgo)
 acorn +asm +corepack cpu_flags_x86_sse2 -custom-optimization debug doc fips +icu
 inspector npm man mold pax-kernel pgo -pointer-compression +snapshot +ssl
 system-icu +system-ssl systemtap test
-ebuild_revision_16
+ebuild_revision_17
 "
 
 gen_required_use_pgo() {
