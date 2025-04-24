@@ -3,11 +3,12 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
 PATENT_STATUS_USE=(
 	"patent_status_nonfree"
 )
 
-inherit cmake xdg multilib-minimal
+inherit cflags-hardened cmake xdg multilib-minimal
 
 if [[ ${PV} == *9999* ]] ; then
 	EGIT_REPO_URI="https://github.com/strukturag/libheif.git"
@@ -44,6 +45,7 @@ ${FFMPEG_HW_ACCEL_DECODE_H265_USE[@]}
 ${PATENT_STATUS_USE[@]}
 -avc avif +aom -dav1d -ffmpeg +gdk-pixbuf go jpeg -jpeg2k -kvazaar -heic -htj2k
 -libde265 -rav1e +libsharpyuv -svt-av1 test +threads -uvg266 -vvc -vvenc -x265
+ebuild_revision_1
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -199,6 +201,7 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	cflags-hardened_append
 	export GO111MODULE=auto
 	local mycmakeargs=(
 		-DENABLE_PLUGIN_LOADING="true"
