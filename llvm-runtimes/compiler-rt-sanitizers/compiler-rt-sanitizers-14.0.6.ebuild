@@ -257,6 +257,11 @@ SANITIZER_REQUIRED_USE="
 # The AI (LLM) could be wrong about SafeStack working for x86-64.  See
 # https://issues.chromium.org/issues/40603870
 #
+# The link says
+# https://clang.llvm.org/docs/SafeStack.html#known-security-limitations
+# The site says it assumed correct and verified by hand.  This is not good
+# testing.
+#
 REQUIRED_USE="
 	${SANITIZER_REQUIRED_USE}
 	amd64? (

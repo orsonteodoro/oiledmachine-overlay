@@ -61,6 +61,11 @@ ${SANITIZER_FLAGS[@]/#/+}
 # The AI (LLM) could be wrong about SafeStack working for x86-64.  See
 # https://issues.chromium.org/issues/40603870
 #
+# The link says
+# https://clang.llvm.org/docs/SafeStack.html#known-security-limitations
+# The site says it assumed correct and verified by hand.  This is not good
+# testing.
+#
 # See also https://github.com/llvm/llvm-project/blob/llvmorg-13.0.1/compiler-rt/cmake/config-ix.cmake
 SANITIZER_REQUIRED_USE="
 	asan? (
