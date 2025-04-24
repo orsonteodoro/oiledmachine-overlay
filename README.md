@@ -228,8 +228,10 @@ The hardening benefits will include some execution-integrity mitigations,
 some information disclosure mitigations, and some denial of service
 mitigations.
 
-Execution-integrity mitigations with LLVM CFI (and CET) will mitigate
-against unauthorized transactions in trusted compiled code.
+Execution-integrity mitigations with LLVM CFI (and CET or PAC) will mitigate
+against unauthorized transactions in trusted compiled code.   If you have
+CET or PAC, you can ignore the LLVM CFI requirement.  The LLVM CFI
+requirement in this overlay only applies to ARCH=amd64 users without CET.
 
 This overlay will set LLVM CFI default off.  Then, it will prioritize candidate
 packages individually for those where costly or devastating unauthorized
