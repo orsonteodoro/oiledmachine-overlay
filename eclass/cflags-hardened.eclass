@@ -746,11 +746,11 @@ einfo "All SSP hardening (All functions hardened)"
 			&& \
 		has_version ">=sys-libs/glibc-2.34" \
 	; then
-		if tc-is-clang && ver_test $(gcc-major-version) -ge "15" ; then
+		if tc-is-clang && ver_test $(clang-major-version) -ge "15" ; then
 			append-flags -D_FORTIFY_SOURCE=3
 			CFLAGS_HARDENED_CFLAGS+=" -D_FORTIFY_SOURCE=3"
 			CFLAGS_HARDENED_CXXFLAGS+=" -D_FORTIFY_SOURCE=3"
-		elif tc-is-gcc && ver_test $(clang-major-version) -ge "12" ; then
+		elif tc-is-gcc && ver_test $(gcc-major-version) -ge "12" ; then
 			append-flags -D_FORTIFY_SOURCE=3
 			CFLAGS_HARDENED_CFLAGS+=" -D_FORTIFY_SOURCE=3"
 			CFLAGS_HARDENED_CXXFLAGS+=" -D_FORTIFY_SOURCE=3"

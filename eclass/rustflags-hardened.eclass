@@ -347,10 +347,10 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 				&& \
 		has_version ">=sys-libs/glibc-2.34" \
 	; then
-		if tc-is-clang && ver_test $(gcc-major-version) -ge "15" ; then
+		if tc-is-clang && ver_test $(clang-major-version) -ge "15" ; then
 			append-flags "-D_FORTIFY_SOURCE=3"
 			RUSTFLAGS+=" -C link-arg=-D_FORTIFY_SOURCE=3"
-		elif tc-is-gcc && ver_test $(clang-major-version) -ge "12" ; then
+		elif tc-is-gcc && ver_test $(gcc-major-version) -ge "12" ; then
 			append-flags "-D_FORTIFY_SOURCE=3"
 			RUSTFLAGS+=" -C link-arg=-D_FORTIFY_SOURCE=3"
 		else
