@@ -254,8 +254,6 @@ sys-devel/clang
 llvm-runtimes/compiler-rt[cfi,ubsan]
 llvm-runtimes/compiler-rt-sanitizers[cfi,ubsan]
 
-For this overlay only, ARCH=amd64 users without CET ar
-
 ### 2023 policy
 
 Due to recent hacking near the beginning of the year (or earlier) of a prominent
