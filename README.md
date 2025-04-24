@@ -229,7 +229,7 @@ some information disclosure mitigations, and some denial of service
 mitigations.
 
 Execution-integrity mitigations with LLVM CFI (and CET) will mitigate
-unauthorized transactions in trusted compiled code.
+against unauthorized transactions in trusted compiled code.
 
 The ubsan runtime mitigation will protect against code execution,
 information disclosure, data tampering, denial of service before they happen.
