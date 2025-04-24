@@ -50,6 +50,17 @@ IUSE+="
 ${CPU_X86_FLAGS[@]/#/cpu_flags_x86_}
 ${SANITIZER_FLAGS[@]/#/+}
 "
+#
+# There's some difficulty in setting up per arch package.use.mask in this overlay.
+# Maybe because of the distro overrides.
+#
+# "SafeStack on ${ARCH} is useless and using may add a vulnerability."
+# "Disable the safestack USE flag to continue or fork and remove this"
+# "message."
+#
+# The AI (LLM) could be wrong about SafeStack working for x86-64.  See
+# https://issues.chromium.org/issues/40603870
+#
 # See also https://github.com/llvm/llvm-project/blob/llvmorg-13.0.1/compiler-rt/cmake/config-ix.cmake
 SANITIZER_REQUIRED_USE="
 	asan? (

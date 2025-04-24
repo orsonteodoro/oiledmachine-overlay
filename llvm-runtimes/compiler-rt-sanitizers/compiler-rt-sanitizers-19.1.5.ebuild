@@ -284,6 +284,9 @@ SANITIZER_REQUIRED_USE="
 # "Disable the safestack USE flag to continue or fork and remove this"
 # "message."
 #
+# The AI (LLM) could be wrong about SafeStack working for x86-64.  See
+# https://issues.chromium.org/issues/40603870
+#
 REQUIRED_USE="
 	${SANITIZER_REQUIRED_USE}
 	amd64? (
