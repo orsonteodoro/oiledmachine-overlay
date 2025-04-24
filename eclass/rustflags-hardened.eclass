@@ -372,20 +372,22 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	fi
 
 	# Similar to -ftrapv
-	if [[ \
-		"${RUSTFLAGS_HARDENED_INT_OVERFLOW:-1}" == "1" \
-			&& \
-		"${RUSTFLAGS_HARDENED_USE_CASES}" \
-			=~ \
+	if \
+		[[ \
+			"${RUSTFLAGS_HARDENED_INT_OVERFLOW:-1}" == "1" \
+				&& \
+			"${RUSTFLAGS_HARDENED_USE_CASES}" \
+				=~ \
 ("dss"\
 |"execution-integrity"\
 |"network"\
 |"secure-critical"\
 |"safety-critical"\
 |"untrusted-data")\
+		]] \
 			&& \
 		_cflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.20" \
-	]] ; then
+	; then
 	# Remove flag if 50% drop in performance.
 	# For runtime *signed* integer overflow detection
 	# DoS, DT
