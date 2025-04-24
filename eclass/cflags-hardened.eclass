@@ -97,22 +97,26 @@ CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 # Adds -fPIC if compiler is not enable it by default to library only packages.
 # Acceptable values: 1, 0, unset
 
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_CFI
-# @DESCRIPTION:
-# Allow runtime execution integrity check to prevent CE, DoS, DT, ID
-# to exit before unauthorized transaction in trusted code.
-
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_UBSAN
-# @DESCRIPTION:
-# Allow ubsan runtime detect to exit before DoS, DT, ID happens.
-
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_ASAN
 # @DESCRIPTION:
 # Allow asan runtime detect to exit before DoS, DT, ID happens.
 
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_CFI
+# @DESCRIPTION:
+# Allow runtime execution integrity check to prevent CE, DoS, DT
+# to exit before unauthorized transaction in trusted code.
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_MSAN
+# @DESCRIPTION:
+# Allow msan runtime detect to exit before DoS, ID happens.
+
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_TSAN
 # @DESCRIPTION:
-# Allow tsan runtime detect to exit before DoS, DT, ID happens.
+# Allow tsan runtime detect to exit before DoS, DT happens.
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_UBSAN
+# @DESCRIPTION:
+# Allow ubsan runtime detect to exit before DoS, DT happens.
 
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_TOLERANCE
@@ -138,6 +142,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # -fsanitize=cfi			1.05 - 1.15  *
 # -fsanitize=undefined			1.02 - 1.20  *
 # -fsanitize=address			1.50 - 2.00  *
+# -fsanitize=memory			3.00 - 5.00  *
 # -fsanitize=thread			2.00 - 5.00  *
 # -mfloat-abi=soft -mfpu=none           5.00 - 20.00 *
 # -mfunction-return=thunk-extern	1.01 - 1.05
@@ -901,6 +906,25 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 eerror "Missing TSAN sanitizer.  Do the following:"
 eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
 eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[tsan]"
+eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
+
+			die
+		fi
+	fi
+
+	if \
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "5.00" \
+			&& \
+		[[ "${CFLAGS_HARDENED_MSAN:-0}" == "1"  ]] \
+	; then
+		filter-flags "-f*sanitize=memory"
+		append-flags "-fsanitize=memory"
+		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=memory"
+		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=memory"
+		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[tsan]" ; then
+eerror "Missing MSAN sanitizer.  Do the following:"
+eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
+eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[msan]"
 eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 
 			die

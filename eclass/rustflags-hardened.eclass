@@ -114,6 +114,7 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # -C soft-float				 2.0 - 10.00 *
 # -C link-arg=-D_FORTIFY_SOURCE=2	1.01 - 1.05
 # -Zsanitizer=address			1.20 - 2.00  *
+# -Zsanitizer=memory			 3.0 - 5.0   *
 # -Zsanitizer=thread			 5.0 - 15.00 *
 # -Zsanitizer=undefined			1.10 - 1.50  *
 
@@ -136,13 +137,18 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # @DESCRIPTION:
 # Allow asan runtime detect to exit before DoS, DT, ID happens.
 
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_MSAN
+# @DESCRIPTION:
+# Allow msan runtime detect to exit before DoS, ID happens.
+
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_TSAN
 # @DESCRIPTION:
-# Allow tsan runtime detect to exit before DoS, DT, ID happens.
+# Allow tsan runtime detect to exit before DoS, DT happens.
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_UBSAN
 # @DESCRIPTION:
-# Allow ubsan runtime detect to exit before DoS, DT, ID happens.
+# Allow ubsan runtime detect to exit before DoS, DT happens.
+
 
 # @FUNCTION: _rustflags-hardened_fcmp
 # @DESCRIPTION:
@@ -461,6 +467,20 @@ ewarn "ASAN_OPTIONS=halt_on_error=1 must be placed in wrapper or env file for AS
 eerror "Missing ASAN sanitizer.  Do the following:"
 eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
 eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[asan]"
+eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
+
+			die
+		fi
+	fi
+
+	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "5.00" && [[ "${RUSTFLAGS_HARDENED_MSAN:-0}" == "1" ]] ; then
+# Missing -fno-sanitize-recover for Rust
+ewarn "MSAN_OPTIONS=halt_on_error=1 must be placed in wrapper or env file for MSAN mitigation to be effective."
+		RUSTFLAGS+=" -Zsanitizer=memory"
+		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[msan]" ; then
+eerror "Missing MSAN sanitizer.  Do the following:"
+eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
+eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[msan]"
 eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 
 			die
