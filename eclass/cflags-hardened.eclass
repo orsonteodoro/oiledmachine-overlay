@@ -199,12 +199,14 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # extension
 # execution-integrity
 # fp-determinism
+# game-engine
 # high-precision-research
 # hypervisor
 # jit
 # kernel
 # language-runtime (e.g. compiler, interpeter, language virtual machine)
 # messenger
+# modular-app (an app that uses plugins)
 # real-time-integrity
 # safety-critical
 # multithreaded-confidential
@@ -1094,6 +1096,16 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 		append-flags "-fno-sanitize-recover"
 		CFLAGS_HARDENED_CFLAGS+=" -fno-sanitize-recover"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fno-sanitize-recover"
+	fi
+
+	if [[ "${CFLAGS_HARDENED_VTABLE_VERIFY:-0}" == "1" ]] && tc-is-gcc && ver_test $(gcc-version) -ge "4.9" ; then
+	# Apply only for C++ projects
+	# DoS, DT
+		if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"game-engine"|"hypervisor"|"kernel"|"modular-app"|"network"|"safety-critical"|"secure-critical"|"web-browsers") ]] ; then
+			filter-flags "-f*vtable-verify=*"
+			append-cxxflags "-fvtable-verify=std"
+			CFLAGS_HARDENED_CXXFLAGS+=" -fvtable-verify=std"
+		fi
 	fi
 
 	export CFLAGS_HARDENED_CFLAGS
