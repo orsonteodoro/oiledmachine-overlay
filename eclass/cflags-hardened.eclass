@@ -16,6 +16,8 @@ case ${EAPI} in
 	*) die "${ECLASS}: EAPI ${EAPI:-0} not supported" ;;
 esac
 
+# TODO add PAC support
+
 if [[ -z ${_CFLAGS_HARDENED_ECLASS} ]]; then
 _CFLAGS_HARDENED_ECLASS=1
 
@@ -265,6 +267,17 @@ einfo "CFLAGS_HARDENED_TOLERANCE:  ${CFLAGS_HARDENED_TOLERANCE} (similar to -Ofa
 	fi
 einfo "The CFLAGS_HARDENED_TOLERANCE_USER can override this.  See cflags-hardened.eclass for details."
 }
+
+# @FUNCTION: _cflags-hardened_has_pauth
+# @DESCRIPTION:
+# Check if CPU supports PAC (Pointer Authentication Code)
+_cflags-hardened_has_pauth() {
+	local pauth=0
+	if grep "Features" "/proc/cpuinfo" | grep -q -e "pauth" ; then
+		pauth=1
+	fi
+	return ${pauth}
+fi
 
 # @FUNCTION: _cflags-hardened_has_cet
 # @DESCRIPTION:

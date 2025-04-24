@@ -196,6 +196,16 @@ einfo "RUSTFLAGS_HARDENED_TOLERANCE:  ${RUSTFLAGS_HARDENED_TOLERANCE} (similar t
 einfo "The RUSTFLAGS_HARDENED_TOLERANCE_USER can override this.  See rustflags-hardened.eclass for details."
 }
 
+# @FUNCTION: _rustflags-hardened_has_pauth
+# @DESCRIPTION:
+# Check if CPU supports PAC (Pointer Authentication Code)
+_rustflags-hardened_has_pauth() {
+	local pauth=0
+	if grep "Features" "/proc/cpuinfo" | grep -q -e "pauth" ; then
+		pauth=1
+	fi
+	return ${pauth}
+fi
 
 # @FUNCTION: _rustflags-hardened_has_cet
 # @DESCRIPTION:
@@ -286,6 +296,8 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		ver_test "${rust_pv}" -ge "1.60.0" \
 	; then
 		RUSTFLAGS+=" -C target-feature=+cet"
+	elif _rustflags-hardened_has_pauth ; then
+		RUSTFLAGS+=" -C control-flow-protection"
 	fi
 
 	# Not production ready only available on nightly
@@ -498,7 +510,7 @@ einfo "rustc host:  ${host}"
 	# For executable packages only.
 	# Do not apply to hybrid (executible with libs) packages
 	if [[ "${RUSTFLAGS_HARDENED_PIE:-0}" == "1" ]] ; then
-		RUSTFLAGS+=" -C relocation-model=pic"
+		RUSTFLAGS+=" -C relocation-model=pie"
 		RUSTFLAGS+=" -C link-arg=-pie"
 	fi
 
