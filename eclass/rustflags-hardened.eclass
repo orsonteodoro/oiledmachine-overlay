@@ -112,7 +112,8 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # -C target-feature=+retpoline		1.01 - 1.20
 # -C overflow-checks=on			1.01 - 1.20  *
 # -C soft-float				 2.0 - 10.00 *
-# -C link-arg=-D_FORTIFY_SOURCE=2	1.01 - 1.05
+# -C link-arg=-D_FORTIFY_SOURCE=2	1.01
+# -C link-arg=-D_FORTIFY_SOURCE=3	1.02
 # -Zsanitizer=address			1.20 - 2.00  *
 # -Zsanitizer=memory			 3.0 - 5.0   *
 # -Zsanitizer=thread			 5.0 - 15.00 *
@@ -149,6 +150,13 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # @DESCRIPTION:
 # Allow ubsan runtime detect to exit before DoS, DT happens.
 
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_FORTIFY_SOURCE
+# @DESCRIPTION:
+# Allow to override the _FORTIFY_SOURCE level.
+# Acceptable values:
+# 1 - compile time protection
+# 2 - general compile + runtime protection
+# 3 - maximum compile + runtime protection
 
 # @FUNCTION: _rustflags-hardened_fcmp
 # @DESCRIPTION:
@@ -327,8 +335,28 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		RUSTFLAGS+=" -C opt-level=1"
 
 	fi
+
 	# DoS, DT, ID
-	RUSTFLAGS+=" -C link-arg=-D_FORTIFY_SOURCE=2"
+	filter-flags "-D_FORTIFY_SOURCE=*"
+	if [[ -n "${RUSTFLAGS_HARDENED_FORTIFY_SOURCE}" ]] ; then
+		local level="${RUSTFLAGS_HARDENED_FORTIFY_SOURCE}"
+		append-flags -D_FORTIFY_SOURCE=${level}
+		RUSTFLAGS+=" -C link-arg=-D_FORTIFY_SOURCE=${level}"
+	elif [[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("container-runtime"|"untrusted-data"|"secure-critical"|"multiuser-system") ]] ; then
+		if tc-is-clang && ver_test $(gcc-major-version) -ge "15" ; then
+			append-flags "-D_FORTIFY_SOURCE=3"
+			RUSTFLAGS+=" -C link-arg=-D_FORTIFY_SOURCE=3"
+		elif tc-is-gcc && ver_test $(clang-major-version) -ge "12" ; then
+			append-flags "-D_FORTIFY_SOURCE=3"
+			RUSTFLAGS+=" -C link-arg=-D_FORTIFY_SOURCE=3"
+		else
+			append-flags "-D_FORTIFY_SOURCE=2"
+			RUSTFLAGS+=" -C link-arg=-D_FORTIFY_SOURCE=2"
+		fi
+	else
+		append-flags "-D_FORTIFY_SOURCE=2"
+		RUSTFLAGS+=" -C link-arg=-D_FORTIFY_SOURCE=2"
+	fi
 
 	# Similar to -ftrapv
 	if [[ \

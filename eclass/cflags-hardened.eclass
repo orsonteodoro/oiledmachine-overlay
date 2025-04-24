@@ -131,7 +131,8 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # Estimates:
 # Flag					Performance as a normalized decimal multiple
 # No mitigation				1.00
-# -D_FORTIFY_SOURCE=2			1.00 - 1.05
+# -D_FORTIFY_SOURCE=2			1.01
+# -D_FORTIFY_SOURCE=3			1.02
 # -fstack-protect			1.01 - 1.05
 # -fstack-protect-strong		1.03 - 1.10
 # -fstack-protect-all			1.05 - 1.10
@@ -207,6 +208,15 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # untrusted-data (e.g. user generated content, unreviewed-data, unsanitized-data, unreviewed-scripts, unreviewed-anything)
 # web-browser
 # web-server
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_FORTIFY_SOURCE
+# @DESCRIPTION:
+# Allow to override the _FORTIFY_SOURCE level.
+# Acceptable values:
+# 1 - compile time protection
+# 2 - general compile + runtime protection
+# 3 - maximum compile + runtime protection
+
 
 # @FUNCTION: _cflags-hardened_has_cet
 # @DESCRIPTION:
@@ -560,17 +570,6 @@ einfo "All SSP hardening (All functions hardened)"
 			CFLAGS_HARDENED_CFLAGS+=" -fstack-protector-all"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fstack-protector-all"
 		fi
-		if ! tc-enables-fortify-source ; then
-			filter-flags \
-				-D_FORTIFY_SOURCE=1 \
-				-D_FORTIFY_SOURCE=2 \
-				-D_FORTIFY_SOURCE=3
-
-	# DoS, DT, ID
-			append-flags -D_FORTIFY_SOURCE=2
-			CFLAGS_HARDENED_CFLAGS+=" -D_FORTIFY_SOURCE=2"
-			CFLAGS_HARDENED_CXXFLAGS+=" -D_FORTIFY_SOURCE=2"
-		fi
 
 	# DoS, DT
 		append-ldflags "-Wl,-z,relro"
@@ -730,6 +729,37 @@ einfo "All SSP hardening (All functions hardened)"
 		append-flags "-ftrapv"
 		CFLAGS_HARDENED_CFLAGS+=" -ftrapv"
 		CFLAGS_HARDENED_CXXFLAGS+=" -ftrapv"
+	fi
+
+	if ! tc-enables-fortify-source ; then
+		filter-flags \
+			"-D_FORTIFY_SOURCE=*"
+
+	# DoS, DT, ID
+		if [[ -n "${CFLAGS_HARDENED_FORTIFY_SOURCE}" ]] ; then
+			local level="${CFLAGS_HARDENED_FORTIFY_SOURCE}"
+			append-flags -D_FORTIFY_SOURCE=${level}
+			CFLAGS_HARDENED_CFLAGS+=" -D_FORTIFY_SOURCE=${level}"
+			CFLAGS_HARDENED_CXXFLAGS+=" -D_FORTIFY_SOURCE=${level}"
+		elif [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("container-runtime"|"untrusted-data"|"secure-critical"|"multiuser-system") ]] ; then
+			if tc-is-clang && ver_test $(gcc-major-version) -ge "15" ; then
+				append-flags -D_FORTIFY_SOURCE=3
+				CFLAGS_HARDENED_CFLAGS+=" -D_FORTIFY_SOURCE=3"
+				CFLAGS_HARDENED_CXXFLAGS+=" -D_FORTIFY_SOURCE=3"
+			elif tc-is-gcc && ver_test $(clang-major-version) -ge "12" ; then
+				append-flags -D_FORTIFY_SOURCE=3
+				CFLAGS_HARDENED_CFLAGS+=" -D_FORTIFY_SOURCE=3"
+				CFLAGS_HARDENED_CXXFLAGS+=" -D_FORTIFY_SOURCE=3"
+			else
+				append-flags -D_FORTIFY_SOURCE=2
+				CFLAGS_HARDENED_CFLAGS+=" -D_FORTIFY_SOURCE=2"
+				CFLAGS_HARDENED_CXXFLAGS+=" -D_FORTIFY_SOURCE=2"
+			fi
+		else
+			append-flags -D_FORTIFY_SOURCE=2
+			CFLAGS_HARDENED_CFLAGS+=" -D_FORTIFY_SOURCE=2"
+			CFLAGS_HARDENED_CXXFLAGS+=" -D_FORTIFY_SOURCE=2"
+		fi
 	fi
 
 	# For executable packages only.
