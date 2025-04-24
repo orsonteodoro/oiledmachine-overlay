@@ -244,6 +244,11 @@ eclass have @USER_VARIABLE marked environment variables which can be placed
 as a [per-package env configuration](https://wiki.gentoo.org/wiki//etc/portage/package.env)
 or in [/etc/portage/make.conf](https://wiki.gentoo.org/wiki//etc/portage/make.conf).
 
+The overlay will fork some distro ebuilds to apply the `cflags-hardended`
+and `rustflags-hardened` mitigations since the distro ebuilds do not do
+a good job verifying that mitigations are applied to security-critical
+packages.
+
 The requirement is based partly on the overlay's maintainer shift towards a
 defensive posture on cybersecurity.
 
