@@ -744,7 +744,7 @@ einfo "All SSP hardening (All functions hardened)"
 	elif \
 		[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("container-runtime"|"dss"|"untrusted-data"|"secure-critical"|"multiuser-system") ]] \
 			&& \
-		ver_test ">=sys-libs/glibc-2.34" \
+		has_version ">=sys-libs/glibc-2.34" \
 	; then
 		if tc-is-clang && ver_test $(gcc-major-version) -ge "15" ; then
 			append-flags -D_FORTIFY_SOURCE=3
