@@ -3,7 +3,9 @@
 
 EAPI=8
 
-inherit multilib-minimal
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
+
+inherit cflags-hardened multilib-minimal
 
 SRC_URI="https://downloads.xiph.org/releases/opus/${P}.tar.gz"
 
@@ -12,7 +14,10 @@ HOMEPAGE="https://www.opus-codec.org/"
 LICENSE="BSD"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64"
-IUSE="doc fixed-point +float +http libressl static-libs"
+IUSE="
+doc fixed-point +float +http libressl static-libs
+ebuild_revision_1
+"
 RDEPEND="media-libs/libogg[${MULTILIB_USEDEP}]
 	media-libs/opus[${MULTILIB_USEDEP}]
 	http? (
@@ -43,6 +48,7 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	cflags-hardened_append
 	local myeconfargs=(
 		$(use_enable doc)
 		$(use_enable fixed-point)
