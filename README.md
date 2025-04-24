@@ -255,7 +255,7 @@ more defensive posture on cybersecurity.
 Requirements:
 
 ```
-sys-devel/gcc[sanitizers]
+sys-devel/gcc[sanitizers,vtv]
 sys-devel/llvm
 sys-devel/clang
 sys-devel/lld
