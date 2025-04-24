@@ -268,6 +268,9 @@ llvm-runtimes/compiler-rt
 llvm-runtimes/compiler-rt-sanitizers[cfi,ubsan]
 ```
 
+They are required because it assumed that the vulnerability is unpatched and
+the fix require these features to be present.
+
 In addition, ARCH=amd64 users without CET must build and rebuild all packages
 that use LTO with clang or disable selectively LTO in to prevent building/linking
 issues when LLVM CFI is being used.  LLVM CFI requires LTO to work.
