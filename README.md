@@ -222,7 +222,7 @@ around 1.35 times the base performance without mitigation which is similar to
 Users can override the tolerance level by changing
 CFLAGS_HARDENED_TOLERANCE_USER.  Details about what runtime mitigations will be
 activated can be found at
-[cflags-hardened.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/cflags-hardened.eclass#L123)
+[cflags-hardened.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/cflags-hardened.eclass#L123).
 
 The hardening benefits will include some execution-integrity mitigations,
 some information disclosure mitigations, and some denial of service
@@ -236,7 +236,7 @@ requirement in this overlay only applies to ARCH=amd64 users without CET.
 This overlay will set LLVM CFI default off.  Then, it will prioritize candidate
 packages individually for those where costly or devastating unauthorized
 transactions could take place.  Then, it will slow evaluate each candidate
-for LLVM CFI mitigation enablement.
+package for LLVM CFI mitigation enablement.
 
 The ubsan runtime mitigation will protect against code execution,
 information disclosure, data tampering, denial of service before they happen.
