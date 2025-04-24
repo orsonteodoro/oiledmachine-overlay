@@ -525,6 +525,30 @@ einfo "CC:  ${CC}"
 		fi
 	fi
 
+	local s
+	if tc-is-clang && [[ "${ARCH}" == "amd64" ]] ; then
+		s=$(clang-major-version)
+		if ! has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[cfi]" ; then
+ewarn "LLVM CFI will be soon be required for the oiledmachine-overlay for ARCH=amd64 without CET.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with cfi USE flag enabled."
+		fi
+	fi
+
+	local s
+	if tc-is-clang && [[ "${ARCH}" == "amd64" ]] ; then
+		s=$(clang-major-version)
+		if ! has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[ubsan]" ; then
+ewarn "ubsan with clang will be soon be required for the oiledmachine-overlay for ARCH=amd64.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with ubsan USE flag enabled."
+		fi
+	fi
+
+	local s
+	if tc-is-clang && [[ "${ARCH}" == "amd64" ]] ; then
+		s=$(clang-major-version)
+		if ! has_version "sys-devel/gcc:${s}[ubsan]" ; then
+ewarn "ubsan with gcc will be soon be required for the oiledmachine-overlay for ARCH=amd64.  Rebuild sys-devel/gcc ${s} with sanitize USE flag enabled."
+		fi
+	fi
+
 	if [[ -n "${CFLAGS_HARDENED_LEVEL_USER}" ]] ; then
 		CFLAGS_HARDENED_LEVEL="${CFLAGS_HARDENED_LEVEL_USER}"
 	fi
@@ -1100,12 +1124,19 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fno-sanitize-recover"
 	fi
 
+	local s
+	if tc-is-gcc ; then
+		s=$(gcc-major-version)
+		if ! has_version "sys-devel/gcc:${s}[vtv]" ; then
+ewarn "vtable hardening is required for the oiledmachine overlay for C++.  Rebuild gcc ${s} with vtv USE flag enabled."
+		fi
+	fi
+
 	if [[ "${CFLAGS_HARDENED_VTABLE_VERIFY:-1}" == "1" ]] && tc-is-gcc && ver_test $(gcc-version) -ge "4.9" ; then
-		local s=$(gcc-major-version)
 	# Apply only for C++ projects
 	# DoS, DT
 		if ! has_version "sys-devel/gcc:${s}[vtv]" ; then
-ewarn "Skipping vtable hardening.  Do \`emerge sys-devel/gcc:${s}[vtv]\` and re-emerge again."
+ewarn "Skipping vtable hardening.  Update gcc and rebuild ${CATEGORY}/${PN}-${PV} again."
 		elif has_version "" && [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"game-engine"|"hypervisor"|"kernel"|"modular-app"|"network"|"safety-critical"|"secure-critical"|"web-browsers") ]] ; then
 			filter-flags "-f*vtable-verify=*"
 			append-cxxflags "-fvtable-verify=std"
