@@ -1105,9 +1105,8 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 	# Apply only for C++ projects
 	# DoS, DT
 		if ! has_version "sys-devel/gcc:${s}[vtv]" ; then
-eerror "Do \`emerge sys-devel/gcc:${s}[vtv]\` before preceeding."
-			die
-		if has_version "" && [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"game-engine"|"hypervisor"|"kernel"|"modular-app"|"network"|"safety-critical"|"secure-critical"|"web-browsers") ]] ; then
+ewarn "Skipping vtable hardening.  Do \`emerge sys-devel/gcc:${s}[vtv]\` and re-emerge again."
+		elif has_version "" && [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"game-engine"|"hypervisor"|"kernel"|"modular-app"|"network"|"safety-critical"|"secure-critical"|"web-browsers") ]] ; then
 			filter-flags "-f*vtable-verify=*"
 			append-cxxflags "-fvtable-verify=std"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fvtable-verify=std"
