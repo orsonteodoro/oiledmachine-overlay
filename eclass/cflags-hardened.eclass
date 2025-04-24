@@ -731,39 +731,38 @@ einfo "All SSP hardening (All functions hardened)"
 		CFLAGS_HARDENED_CXXFLAGS+=" -ftrapv"
 	fi
 
-	if ! tc-enables-fortify-source ; then
-		filter-flags \
-			"-D_FORTIFY_SOURCE=*"
+	# Do not use tc-enables-fortify-source because it doesn't do quality control.
+	filter-flags \
+		"-D_FORTIFY_SOURCE=*"
 
 	# DoS, DT, ID
-		if [[ -n "${CFLAGS_HARDENED_FORTIFY_SOURCE}" ]] ; then
-			local level="${CFLAGS_HARDENED_FORTIFY_SOURCE}"
-			append-flags -D_FORTIFY_SOURCE=${level}
-			CFLAGS_HARDENED_CFLAGS+=" -D_FORTIFY_SOURCE=${level}"
-			CFLAGS_HARDENED_CXXFLAGS+=" -D_FORTIFY_SOURCE=${level}"
-		elif \
-			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("container-runtime"|"dss"|"untrusted-data"|"secure-critical"|"multiuser-system") ]] \
-				&& \
-			ver_test ">=sys-libs/glibc-2.34" \
-		; then
-			if tc-is-clang && ver_test $(gcc-major-version) -ge "15" ; then
-				append-flags -D_FORTIFY_SOURCE=3
-				CFLAGS_HARDENED_CFLAGS+=" -D_FORTIFY_SOURCE=3"
-				CFLAGS_HARDENED_CXXFLAGS+=" -D_FORTIFY_SOURCE=3"
-			elif tc-is-gcc && ver_test $(clang-major-version) -ge "12" ; then
-				append-flags -D_FORTIFY_SOURCE=3
-				CFLAGS_HARDENED_CFLAGS+=" -D_FORTIFY_SOURCE=3"
-				CFLAGS_HARDENED_CXXFLAGS+=" -D_FORTIFY_SOURCE=3"
-			else
-				append-flags -D_FORTIFY_SOURCE=2
-				CFLAGS_HARDENED_CFLAGS+=" -D_FORTIFY_SOURCE=2"
-				CFLAGS_HARDENED_CXXFLAGS+=" -D_FORTIFY_SOURCE=2"
-			fi
+	if [[ -n "${CFLAGS_HARDENED_FORTIFY_SOURCE}" ]] ; then
+		local level="${CFLAGS_HARDENED_FORTIFY_SOURCE}"
+		append-flags -D_FORTIFY_SOURCE=${level}
+		CFLAGS_HARDENED_CFLAGS+=" -D_FORTIFY_SOURCE=${level}"
+		CFLAGS_HARDENED_CXXFLAGS+=" -D_FORTIFY_SOURCE=${level}"
+	elif \
+		[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("container-runtime"|"dss"|"untrusted-data"|"secure-critical"|"multiuser-system") ]] \
+			&& \
+		ver_test ">=sys-libs/glibc-2.34" \
+	; then
+		if tc-is-clang && ver_test $(gcc-major-version) -ge "15" ; then
+			append-flags -D_FORTIFY_SOURCE=3
+			CFLAGS_HARDENED_CFLAGS+=" -D_FORTIFY_SOURCE=3"
+			CFLAGS_HARDENED_CXXFLAGS+=" -D_FORTIFY_SOURCE=3"
+		elif tc-is-gcc && ver_test $(clang-major-version) -ge "12" ; then
+			append-flags -D_FORTIFY_SOURCE=3
+			CFLAGS_HARDENED_CFLAGS+=" -D_FORTIFY_SOURCE=3"
+			CFLAGS_HARDENED_CXXFLAGS+=" -D_FORTIFY_SOURCE=3"
 		else
 			append-flags -D_FORTIFY_SOURCE=2
 			CFLAGS_HARDENED_CFLAGS+=" -D_FORTIFY_SOURCE=2"
 			CFLAGS_HARDENED_CXXFLAGS+=" -D_FORTIFY_SOURCE=2"
 		fi
+	else
+		append-flags -D_FORTIFY_SOURCE=2
+		CFLAGS_HARDENED_CFLAGS+=" -D_FORTIFY_SOURCE=2"
+		CFLAGS_HARDENED_CXXFLAGS+=" -D_FORTIFY_SOURCE=2"
 	fi
 
 	# For executable packages only.
