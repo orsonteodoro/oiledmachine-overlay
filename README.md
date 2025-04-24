@@ -250,7 +250,7 @@ a good job verifying that mitigations are applied to security-critical
 packages.
 
 The requirement is based partly on the overlay's maintainer shift towards a
-defensive posture on cybersecurity.
+more defensive posture on cybersecurity.
 
 Requirements:
 
