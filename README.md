@@ -215,9 +215,9 @@ See [SECURITY.md](SECURITY.md)
 This overlay will force hardening always on to mitigate against some zero click
 attacks.
 
-These hardening performance worst case penalty is around 1.35 times the base
-performance without mitigation which is similar to -O1 at -40% best case
-performance penalty relative to -O3/-Ofast.
+These default hardening flags have an estimated worst case performance penalty
+around 1.35 times the base performance without mitigation which is similar to
+-O1 at -40% best case performance penalty relative to -O3 or -Ofast.
 
 Users can override the tolerance level by changing
 CFLAGS_HARDENED_TOLERANCE_USER.  Details about what runtime mitigations will be
