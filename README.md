@@ -256,10 +256,17 @@ Requirements:
 
 ```
 sys-devel/gcc[sanitizers]
+sys-devel/llvm
 sys-devel/clang
-llvm-runtimes/compiler-rt[cfi,ubsan]
+sys-devel/lld
+llvm-runtimes/compiler-rt
 llvm-runtimes/compiler-rt-sanitizers[cfi,ubsan]
 ```
+
+In addition, ARCH=amd64 users without CET must build and rebuild all packages
+that use LTO with clang to prevent building/linking issues when LLVM CFI is
+being used.
+
 
 ### 2023 policy
 
