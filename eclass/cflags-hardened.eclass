@@ -281,7 +281,7 @@ _cflags-hardened_has_pauth() {
 		pauth=1
 	fi
 	return ${pauth}
-fi
+}
 
 # @FUNCTION: _cflags-hardened_has_cet
 # @DESCRIPTION:

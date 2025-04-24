@@ -205,7 +205,7 @@ _rustflags-hardened_has_pauth() {
 		pauth=1
 	fi
 	return ${pauth}
-fi
+}
 
 # @FUNCTION: _rustflags-hardened_has_cet
 # @DESCRIPTION:
