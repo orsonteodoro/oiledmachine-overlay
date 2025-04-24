@@ -254,10 +254,12 @@ defensive posture on cybersecurity.
 
 Requirements:
 
+```
 sys-devel/gcc[sanitizers]
 sys-devel/clang
 llvm-runtimes/compiler-rt[cfi,ubsan]
 llvm-runtimes/compiler-rt-sanitizers[cfi,ubsan]
+```
 
 ### 2023 policy
 
