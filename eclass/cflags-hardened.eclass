@@ -258,7 +258,7 @@ einfo "CFLAGS_HARDENED_TOLERANCE:  ${CFLAGS_HARDENED_TOLERANCE} (similar to -O3)
 	else
 einfo "CFLAGS_HARDENED_TOLERANCE:  ${CFLAGS_HARDENED_TOLERANCE} (similar to -Ofast)"
 	fi
-einfo "The CFLAGS_HARDENED_TOLERANCE_USER may be used to override.  See cflags-hardened.eclass for details."
+einfo "The CFLAGS_HARDENED_TOLERANCE_USER can override this.  See cflags-hardened.eclass for details."
 }
 
 # @FUNCTION: _cflags-hardened_has_cet

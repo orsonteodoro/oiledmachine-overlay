@@ -193,7 +193,7 @@ einfo "RUSTFLAGS_HARDENED_TOLERANCE:  ${RUSTFLAGS_HARDENED_TOLERANCE} (similar t
 	else
 einfo "RUSTFLAGS_HARDENED_TOLERANCE:  ${RUSTFLAGS_HARDENED_TOLERANCE} (similar to -Ofast)"
 	fi
-einfo "The RUSTFLAGS_HARDENED_TOLERANCE_USER may be used to override.  See cflags-hardened.eclass for details."
+einfo "The RUSTFLAGS_HARDENED_TOLERANCE_USER can override this.  See rustflags-hardened.eclass for details."
 }
 
 
