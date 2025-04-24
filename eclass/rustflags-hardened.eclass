@@ -114,16 +114,18 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # -C soft-float				 2.0 - 10.00 *
 # -C link-arg=-D_FORTIFY_SOURCE=2	1.01
 # -C link-arg=-D_FORTIFY_SOURCE=3	1.02
-# -Zsanitizer=address			1.20 - 2.00  *
-# -Zsanitizer=memory			 3.0 - 5.0   *
+# -Zsanitizer=address			2.00 - 3.00  *
+# -Zsanitizer=cfi			1.05 - 1.20  *
+# -Zsanitizer=hwaddress			1.30 - 1.80  *		arm64 only
+# -Zsanitizer=leak			1.01 - 1.05  *
+# -Zsanitizer=memory			 1.5 - 2.00  *
 # -Zsanitizer=thread			 5.0 - 15.00 *
-# -Zsanitizer=undefined			1.10 - 1.50  *
 
 # * Only these are conditionally set based on worst case
 #  RUSTFLAGS_HARDENED_TOLERANCE
 
-# Setting to 2.0 will enable ASAN, UBSAN.
-# Setting to 15.0 will enable TSAN.
+# Setting to 2.0 will enable CFI, HWSAN, LSAN, MSAN.
+# Setting to 15.0 will enable CFI, HWSAN, LSAN, MSAN, TSAN.
 
 # For example, TSAN is about 5-15x slower compared to the unmitigated build.
 
@@ -141,19 +143,19 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_ASAN
 # @DESCRIPTION:
-# Allow asan runtime detect to exit before DoS, DT, ID happens.
+# Allow asan runtime detect to exit before CE, PE, DoS, DT, ID happens.
+
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_CFI
+# @DESCRIPTION:
+# Allow cfi runtime detect to exit before CE, PE, DoS, DT, ID happens.
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_MSAN
 # @DESCRIPTION:
-# Allow msan runtime detect to exit before DoS, ID happens.
+# Allow msan runtime detect to exit before CE, PE, DoS, ID happens.
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_TSAN
 # @DESCRIPTION:
-# Allow tsan runtime detect to exit before DoS, DT happens.
-
-# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_UBSAN
-# @DESCRIPTION:
-# Allow ubsan runtime detect to exit before DoS, DT happens.
+# Allow tsan runtime detect to exit before CE, PE, DoS, DT, ID happens.
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_FORTIFY_SOURCE
 # @DESCRIPTION:
@@ -172,6 +174,26 @@ _rustflags-hardened_fcmp() {
 	local b="${3}"
 	python -c "exit(0) if ${a} ${opt} ${b} else exit(1)"
 	return $?
+}
+
+_rustflags-hardened_print_cfi_rules() {
+ewarn
+ewarn "The rules for CFI hardening:"
+ewarn
+ewarn "(1) Do not CFI the Clang toolchain."
+ewarn "(2) Do not CFI @system set."
+ewarn "(3) You must always use Clang for LTO."
+ewarn
+}
+
+_rustflags-hardened_print_cfi_requires_clang() {
+eerror "CFI requires Clang.  Do the following:"
+eerror "emerge -1vuDN llvm-core/llvm:${LLVM_SLOT}"
+eerror "emerge -vuDN llvm-core/clang:${LLVM_SLOT}"
+eerror "emerge -vuDN llvm-core/lld"
+eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
+eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[cfi]"
+eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 }
 
 # @FUNCTION: _rustflags-hardened_proximate_opt_level
@@ -195,6 +217,18 @@ einfo "RUSTFLAGS_HARDENED_TOLERANCE:  ${RUSTFLAGS_HARDENED_TOLERANCE} (similar t
 	fi
 einfo "The RUSTFLAGS_HARDENED_TOLERANCE_USER can override this.  See rustflags-hardened.eclass for details."
 }
+
+# @FUNCTION: _rustflags-hardened_has_mte
+# @DESCRIPTION:
+# Check if CPU supports MTE (Memory Tagging Extension)
+_rustflags-hardened_has_mte() {
+	local mte=0
+	if grep "Features" "/proc/cpuinfo" | grep -q -e "mte" ; then
+		mte=1
+	fi
+	return ${mte}
+}
+
 
 # @FUNCTION: _rustflags-hardened_has_pauth
 # @DESCRIPTION:
@@ -236,6 +270,50 @@ rustflags-hardened_append() {
 
 	if [[ -n "${RUSTFLAGS_HARDENED_TOLERANCE_USER}" ]] ; then
 		RUSTFLAGS_HARDENED_TOLERANCE="${RUSTFLAGS_HARDENED_TOLERANCE_USER}"
+	fi
+
+	if [[ -z "${CC}" ]] ; then
+		export CC=$(tc-getCC)
+		export CXX=$(tc-getCXX)
+		export CPP="${CC} -E"
+einfo "CC:  ${CC}"
+		${CC} --version || die
+	fi
+
+	if \
+		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.15" \
+			&& \
+		[[ "${RUSTFLAGS_HARDENED_CFI:-0}" == "1" ]] \
+			&& \
+		! _rustflags-hardened_has_cet \
+			&& \
+		[[ "${ARCH}" == "amd64" ]] \
+	; then
+		if tc-is-clang ; then
+			:
+		elif tc-is-gcc && [[ -n "${LLVM_SLOT}" ]] ; then
+			export CC="${CHOST}-clang-${LLVM_SLOT}"
+			export CXX="${CHOST}-clang++-${LLVM_SLOT}"
+			export CPP="${CC} -E"
+		elif tc-is-gcc ; then
+			export CC="${CHOST}-clang"
+			export CXX="${CHOST}-clang++"
+			export CPP="${CC} -E"
+		fi
+		if [[ -z "${LLVM_SLOT}" ]] ; then
+			export LLVM_SLOT=$(clang-major-version)
+			export CC="${CHOST}-clang-${LLVM_SLOT}"
+			export CXX="${CHOST}-clang++-${LLVM_SLOT}"
+			export CPP="${CC} -E"
+		fi
+		strip-unsupported-flags
+		if ${CC} --version ; then
+			:
+		else
+			_rustflags-hardened_print_cfi_requires_clang
+			_rustflags-hardened_print_cfi_rules
+			die
+		fi
 	fi
 
 	if [[ -z "${RUSTC}" ]] ; then
@@ -572,26 +650,23 @@ einfo "rustc host:  ${host}"
 		RUSTFLAGS+=" -C codegen-units=1"
 	fi
 
-	# No CFI support in Rust
-
 	# We don't enable these because clang/llvm not installed by default.
 	# We will need to test them before allowing users to use them.
 	# Enablement is complicated by LLVM_COMPAT and compile time to build LLVM with sanitizers enabled.
-	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.50" && [[ "${RUSTFLAGS_HARDENED_UBSAN:-0}" == "1" ]] ; then
+
+	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.8" && [[ "${RUSTFLAGS_HARDENED_HWSAN:-0}" == "1" ]] && _rustflags-hardened_has_mte ; then
 # Missing -fno-sanitize-recover for Rust
-ewarn "UBSAN_OPTIONS=halt_on_error=1 must be placed in wrapper or env file for UBSAN mitigation to be effective."
-		RUSTFLAGS+=" -Zsanitizer=undefined"
-		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[ubsan]" ; then
-eerror "Missing UBSAN sanitizer.  Do the following:"
+ewarn "HWSAN_OPTIONS=halt_on_error=1 must be placed in wrapper or env file for HWSAN mitigation to be effective."
+		RUSTFLAGS+=" -Zsanitizer=hwaddress"
+		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[hwsan]" ; then
+eerror "Missing HWSAN sanitizer.  Do the following:"
 eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[ubsan]"
+eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[hwsan]"
 eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 
 			die
 		fi
-	fi
-
-	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "2.00" && [[ "${RUSTFLAGS_HARDENED_ASAN:-0}" == "1" ]] ; then
+	elif _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "3.00" && [[ "${RUSTFLAGS_HARDENED_ASAN:-0}" == "1" ]] ; then
 # Missing -fno-sanitize-recover for Rust
 ewarn "ASAN_OPTIONS=halt_on_error=1 must be placed in wrapper or env file for ASAN mitigation to be effective."
 		RUSTFLAGS+=" -Zsanitizer=address"
@@ -605,7 +680,37 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 		fi
 	fi
 
-	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "5.00" && [[ "${RUSTFLAGS_HARDENED_MSAN:-0}" == "1" ]] ; then
+	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.20" && [[ "${RUSTFLAGS_HARDENED_CFI:-0}" == "1" ]] ; then
+# Missing -fno-sanitize-recover for Rust
+ewarn "CFI_OPTIONS=halt_on_error=1 must be placed in wrapper or env file for CFI mitigation to be effective."
+		RUSTFLAGS+=" -Zsanitizer=cfi"
+		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[cfi]" ; then
+eerror "Missing CFI sanitizer.  Do the following:"
+eerror "emerge -1vuDN llvm-core/llvm:${LLVM_SLOT}"
+eerror "emerge -vuDN llvm-core/clang:${LLVM_SLOT}"
+eerror "emerge -vuDN llvm-core/lld"
+eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
+eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[cfi]"
+eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
+			die
+		fi
+	fi
+
+	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" && [[ "${RUSTFLAGS_HARDENED_LSAN:-0}" == "1" ]] ; then
+# Missing -fno-sanitize-recover for Rust
+ewarn "LSAN_OPTIONS=halt_on_error=1 must be placed in wrapper or env file for LSAN mitigation to be effective."
+		RUSTFLAGS+=" -Zsanitizer=leak"
+		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[lsan]" ; then
+eerror "Missing LSAN sanitizer.  Do the following:"
+eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
+eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[lsan]"
+eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
+
+			die
+		fi
+	fi
+
+	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "2.00" && [[ "${RUSTFLAGS_HARDENED_MSAN:-0}" == "1" ]] ; then
 # Missing -fno-sanitize-recover for Rust
 ewarn "MSAN_OPTIONS=halt_on_error=1 must be placed in wrapper or env file for MSAN mitigation to be effective."
 		RUSTFLAGS+=" -Zsanitizer=memory"
