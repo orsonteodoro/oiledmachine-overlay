@@ -169,6 +169,26 @@ _rustflags-hardened_fcmp() {
 	return $?
 }
 
+# @FUNCTION: _rustflags-hardened_proximate_opt_level
+# @DESCRIPTION:
+# Convert the tolerance level to -Oflag level
+_rustflags-hardened_proximate_opt_level() {
+	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.5" ; then
+einfo "RUSTFLAGS_HARDENED_TOLERANCE:  ${RUSTFLAGS_HARDENED_TOLERANCE} (similar to -O0)"
+	elif _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.35" ; then
+einfo "RUSTFLAGS_HARDENED_TOLERANCE:  ${RUSTFLAGS_HARDENED_TOLERANCE} (similar to -O1)"
+	elif _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.250" ; then
+einfo "RUSTFLAGS_HARDENED_TOLERANCE:  ${RUSTFLAGS_HARDENED_TOLERANCE} (similar to -Os)"
+	elif _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" ; then
+einfo "RUSTFLAGS_HARDENED_TOLERANCE:  ${RUSTFLAGS_HARDENED_TOLERANCE} (similar to -O2)"
+	elif _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" ; then
+einfo "RUSTFLAGS_HARDENED_TOLERANCE:  ${RUSTFLAGS_HARDENED_TOLERANCE} (similar to -O3)"
+	else
+einfo "RUSTFLAGS_HARDENED_TOLERANCE:  ${RUSTFLAGS_HARDENED_TOLERANCE} (similar to -Ofast)"
+	fi
+}
+
+
 # @FUNCTION: _rustflags-hardened_has_cet
 # @DESCRIPTION:
 # Check if CET is supported for -fcf-protection=full.
@@ -307,11 +327,11 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		]] \
 	; then
 		:
-	# ID
+	# DoS, ID
 	# Spectre V2 mitigation general case
 		# -mfunction-return and -fcf-protection are mutually exclusive.
 
-		if which lscpu >/dev/null && lscpu | grep -E -q "Spectre v2.*(Mitigation|Vulnerable)" ; then
+		if which lscpu >/dev/null && lscpu | grep -q -E -e "Spectre v2.*(Mitigation|Vulnerable)" ; then
 			filter-flags \
 				"-m*retpoline" \
 				"-m*retpoline-external-thunk" \
@@ -594,6 +614,7 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 	fi
 
 	export RUSTFLAGS
+	_rustflags-hardened_proximate_opt_level
 }
 
 fi

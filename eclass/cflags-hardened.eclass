@@ -149,6 +149,11 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # -mfunction-return=thunk-extern	1.01 - 1.05
 # -mfunction-return=thunk-inline	1.01 - 1.03
 # -mfunction-return=thunk		1.01 - 1.05
+# -mindirect-branch=ibrs		1.01 - 1.10
+# -mindirect-branch=thunk		1.05 - 1.30
+# -mindirect-branch=thunk-inline	1.03 - 1.25
+# -mindirect-branch=thunk-extern	1.05 - 1.15
+# -mindirect-branch-register		1.05 - 1.30
 # -mretpoline				1.10 - 1.30
 # -mretpoline-external-thunk		1.15 - 1.35
 
@@ -218,6 +223,24 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # 2 - general compile + runtime protection
 # 3 - maximum compile + runtime protection
 
+# @FUNCTION: _cflags-hardened_proximate_opt_level
+# @DESCRIPTION:
+# Convert the tolerance level to -Oflag level
+_cflags-hardened_proximate_opt_level() {
+	if _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.5" ; then
+einfo "CFLAGS_HARDENED_TOLERANCE:  ${CFLAGS_HARDENED_TOLERANCE} (similar to -O0)"
+	elif _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.35" ; then
+einfo "CFLAGS_HARDENED_TOLERANCE:  ${CFLAGS_HARDENED_TOLERANCE} (similar to -O1)"
+	elif _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.25" ; then
+einfo "CFLAGS_HARDENED_TOLERANCE:  ${CFLAGS_HARDENED_TOLERANCE} (similar to -Os)"
+	elif _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" ; then
+einfo "CFLAGS_HARDENED_TOLERANCE:  ${CFLAGS_HARDENED_TOLERANCE} (similar to -O2)"
+	elif _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" ; then
+einfo "CFLAGS_HARDENED_TOLERANCE:  ${CFLAGS_HARDENED_TOLERANCE} (similar to -O3)"
+	else
+einfo "CFLAGS_HARDENED_TOLERANCE:  ${CFLAGS_HARDENED_TOLERANCE} (similar to -Ofast)"
+	fi
+}
 
 # @FUNCTION: _cflags-hardened_has_cet
 # @DESCRIPTION:
@@ -339,6 +362,41 @@ ewarn "Forcing -mindirect-branch-register to avoid flag conflict between -fcf-pr
 		append-flags $(test-flags-CC "-mfunction-return=thunk-inline")
 		CFLAGS_HARDENED_CFLAGS+=" -mfunction-return=thunk-inline"
 		CFLAGS_HARDENED_CXXFLAGS+=" -mfunction-return=thunk-inline"
+	fi
+
+
+	if [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("secure-realtime"|"secure-speed") ]] && which lscpu && grep -q -e "Spectre v2.*Mitigation.*IBRS_FW" ; then
+	# Full mitigation against Spectre v2 (hardware implementation)
+		append-flags $(test-flags-CC "-mindirect-branch=ibrs")
+		CFLAGS_HARDENED_CFLAGS+=" -mindirect-branch=ibrs"
+		CFLAGS_HARDENED_CXXFLAGS+=" -mindirect-branch=ibrs"
+	elif [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "testing" ]] && test-flags-CC "-mindirect-branch=none" ; then
+	# No mitigation
+		append-flags $(test-flags-CC "-mindirect-branch=none")
+		CFLAGS_HARDENED_CFLAGS+=" -mindirect-branch=none"
+		CFLAGS_HARDENED_CXXFLAGS+=" -mindirect-branch=none"
+	elif \
+		[[ \
+			   "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("balanced"|"default"|"portable") \
+			|| "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "secure" \
+		]] \
+			&& \
+		test-flags-CC "-mindirect-branch=thunk" \
+	; then
+	# Full mitigation against Spectre v2 (but random performance between compiler vendors)
+		append-flags $(test-flags-CC "-mindirect-branch=thunk")
+		CFLAGS_HARDENED_CFLAGS+=" -mindirect-branch=thunk"
+		CFLAGS_HARDENED_CXXFLAGS+=" -mindirect-branch=thunk"
+	elif [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("secure-embedded"|"secure-lightweight") ]] && test-flags-CC "-mindirect-branch=thunk-extern" ; then
+	# Full mitigation against Spectre v2 (deterministic)
+		append-flags $(test-flags-CC "-mindirect-branch=thunk-extern")
+		CFLAGS_HARDENED_CFLAGS+=" -mindirect-branch=thunk-extern"
+		CFLAGS_HARDENED_CXXFLAGS+=" -mindirect-branch=thunk-extern"
+	elif [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("secure-realtime"|"secure-speed") ]] && test-flags-CC "-mindirect-branch=thunk-inline" ; then
+	# Full mitigation against Spectre v2 (deterministic)
+		append-flags $(test-flags-CC "-mindirect-branch=thunk-inline")
+		CFLAGS_HARDENED_CFLAGS+=" -mindirect-branch=thunk-inline"
+		CFLAGS_HARDENED_CXXFLAGS+=" -mindirect-branch=thunk-inline"
 	fi
 
 	if [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "register" ]] && test-flags-CC "-mindirect-branch-register" ; then
@@ -696,7 +754,7 @@ einfo "All SSP hardening (All functions hardened)"
 	# Spectre V2 mitigation general case
 		# -mfunction-return and -fcf-protection are mutually exclusive.
 
-		if which lscpu >/dev/null && lscpu | grep -E -q "Spectre v2.*(Mitigation|Vulnerable)" ; then
+		if which lscpu >/dev/null && lscpu | grep -q -E -e "Spectre v2.*(Mitigation|Vulnerable)" ; then
 			filter-flags \
 				"-m*retpoline" \
 				"-m*retpoline-external-thunk" \
@@ -1021,6 +1079,7 @@ einfo "CGO_CFLAGS:  ${CGO_CFLAGS}"
 einfo "CGO_CXXFLAGS:  ${CGO_CXXFLAGS}"
 einfo "CGO_LDFLAGS:  ${CGO_LDFLAGS}"
 	fi
+	_cflags-hardened_proximate_opt_level
 }
 
 # @FUNCTION: cflags-hardened_append_nx
