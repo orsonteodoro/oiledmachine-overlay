@@ -132,7 +132,12 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # Acceptable values: 1.0-16, unset
 # Default: unset
 # It is assumed that these don't stack and are mutually exclusive.
-# It can be applied per package.
+#
+# What value means is that one can tune the package for either low latency or
+# more accurate calcuation by controlling the worst case limits on a per
+# package basis.
+# (ex. stock trading versus accurate finance model calculated predictions)
+#
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_ASAN
 # @DESCRIPTION:
@@ -188,6 +193,7 @@ einfo "RUSTFLAGS_HARDENED_TOLERANCE:  ${RUSTFLAGS_HARDENED_TOLERANCE} (similar t
 	else
 einfo "RUSTFLAGS_HARDENED_TOLERANCE:  ${RUSTFLAGS_HARDENED_TOLERANCE} (similar to -Ofast)"
 	fi
+einfo "The RUSTFLAGS_HARDENED_TOLERANCE_USER may be used to override.  See cflags-hardened.eclass for details."
 }
 
 

@@ -173,7 +173,12 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # Acceptable values: 1.0-20.00, unset (same as CFLAGS_HARDENED_TOLERANCE)
 # Default: unset
 # It is assumed that these don't stack and are mutually exclusive.
-# It can be applied per package.
+#
+# What value means is that one can tune the package for either low latency or
+# more accurate calcuation by controlling the worst case limits on a per
+# package basis.
+# (ex. stock trading versus accurate finance model calculated predictions)
+#
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_USE_CASES
 # @DESCRIPTION:
@@ -253,6 +258,7 @@ einfo "CFLAGS_HARDENED_TOLERANCE:  ${CFLAGS_HARDENED_TOLERANCE} (similar to -O3)
 	else
 einfo "CFLAGS_HARDENED_TOLERANCE:  ${CFLAGS_HARDENED_TOLERANCE} (similar to -Ofast)"
 	fi
+einfo "The CFLAGS_HARDENED_TOLERANCE_USER may be used to override.  See cflags-hardened.eclass for details."
 }
 
 # @FUNCTION: _cflags-hardened_has_cet
