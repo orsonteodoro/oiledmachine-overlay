@@ -124,7 +124,7 @@ CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 # @DESCRIPTION:
 # The default performance impact to trigger enablement of expensive mitigations.
 # Acceptable values: 1.0 to 21.00 (based on table below), unset
-# Default: 1.35 (Similar to -Os without mitigations)
+# Default: 1.35 (Similar to -O1 best case without mitigations)
 CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # For speed set values closer to 1.
 # For accuracy/integrity set values closer to 20.

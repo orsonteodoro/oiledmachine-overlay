@@ -99,7 +99,7 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # @DESCRIPTION:
 # The default performance impact to trigger enablement of expensive mitigations.
 # Acceptable values: 1.0 to 16.0 (based on table below), unset
-# Default: 1.20 (Similar to -Os without mitigations)
+# Default: 1.20 (Similar to -O1 best case without mitigations)
 # For speed set values closer to 1.
 # For accuracy/integrity set values closer to 16.
 
