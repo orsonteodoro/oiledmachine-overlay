@@ -14,6 +14,8 @@ EAPI=8
 
 ACORN_PV="8.14.0"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
+CFLAGS_HARDENED_PIE="1"
+CFLAGS_HARDENED_USE_CASES="jit network untrusted-data server web-server"
 TRAINER_TYPES=(
 	abort_controller
 	assert
@@ -79,9 +81,9 @@ UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 WRK_PV="1.2.1" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 
-inherit bash-completion-r1 flag-o-matic flag-o-matic-om linux-info
-inherit multiprocessing ninja-utils pax-utils python-any-r1 check-linker lcnr
-inherit toolchain-funcs uopts xdg-utils
+inherit bash-completion-r1 cflags-hardened check-linker flag-o-matic
+inherit flag-o-matic-om lcnr linux-info multiprocessing ninja-utils pax-utils
+inherit python-any-r1 toolchain-funcs uopts xdg-utils
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/node-v${PV}"
@@ -686,6 +688,8 @@ ewarn "If moldlto fails for gcc, try clang."
 eerror "To use mold, enable the mold USE flag."
 		die
 	fi
+
+	cflags-hardened_append
 
 	if ! use asm && ! use system-ssl ; then
 		myconf+=( --openssl-no-asm )
