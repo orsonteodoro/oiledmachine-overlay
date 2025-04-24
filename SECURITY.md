@@ -30,6 +30,13 @@ updates both the Rust dependencies and the code that references those
 libraries.  Most of the vulnerable cargo packages will be bumped to
 non-vulernable except for this breaking GTK4 change.
 
+## The current security posture
+
+The current security posture of this overlay is neutral-defensive.
+
+- Default secure upstream settings (neutral posture)
+- Proactive vulnerability discovery and remediation (defensive posture)
+
 ## Definitions
 
 * Zero Click Attack (ZCA) - a network based attack that doesn't require UI interaction and no changes in privileges are necessary (AV:N UI:N PR:N)
