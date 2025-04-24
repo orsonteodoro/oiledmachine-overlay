@@ -5,9 +5,10 @@ EAPI=8
 
 # See https://bugs.gentoo.org/822012
 
+CFLAGS_HARDENED_USE_CASES="network"
 EGIT_COMMIT="1e805500dc14a507598cebdd49557c32e514899f"
 
-inherit meson-multilib
+inherit cflags-hardened meson-multilib
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-v${PV}-${EGIT_COMMIT}"
@@ -19,7 +20,10 @@ DESCRIPTION="Reliable Internet Streaming Transport"
 HOMEPAGE="https://code.videolan.org/rist/librist/"
 LICENSE="BSD-2"
 SLOT="0"
-IUSE="-nettle -gnutls +mbedtls +tools -tun"
+IUSE="
+-nettle -gnutls +mbedtls +tools -tun
+ebuild_revision_1
+"
 REQUIRED_USE="
 	!kernel_linux? (
 		!tun
@@ -48,6 +52,7 @@ BDEPEND+="
 "
 
 src_configure() {
+	cflags-hardened_append
 	local emesonargs=(
 		$(meson_use gnutls use_gnutls)
 		$(meson_use nettle use_nettle)
