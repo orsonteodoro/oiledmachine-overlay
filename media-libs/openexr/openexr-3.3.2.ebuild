@@ -4,12 +4,14 @@
 EAPI=8
 
 MY_PN="OpenEXR"
-OPENEXR_IMAGES_PV="1.0"
+
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CPU_FLAGS_X86=(
 	cpu_flags_x86_avx
 )
+OPENEXR_IMAGES_PV="1.0"
 
-inherit cmake flag-o-matic
+inherit cflags-hardened cmake flag-o-matic
 
 KEYWORDS="~amd64 ~arm64 ~arm64-macos ~amd64-linux ~x86-linux"
 SRC_URI="
@@ -31,6 +33,7 @@ SLOT="0/32"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 doc examples -large-stack +utils test +threads
+ebuild_revision_1
 "
 REQUIRED_USE="
 	doc? (
@@ -126,6 +129,8 @@ einfo "Update SLOT to ${so_ver}"
 	if use x86 ; then
 		replace-cpu-flags "native" "i686"
 	fi
+
+	cflags-hardened_append
 
 	local mycmakeargs=(
 		-DBUILD_SHARED_LIBS="yes"
