@@ -223,12 +223,25 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # 2 - general compile + runtime protection
 # 3 - maximum compile + runtime protection
 
+# @FUNCTION: _cflags-hardened_fcmp
+# @DESCRIPTION:
+# Floating point compare.  Bash does not support floating point comparison
+_cflags-hardened_fcmp() {
+	local a="${1}"
+	local opt="${2}"
+	local b="${3}"
+	python -c "exit(0) if ${a} ${opt} ${b} else exit(1)"
+	return $?
+}
+
 # @FUNCTION: _cflags-hardened_proximate_opt_level
 # @DESCRIPTION:
 # Convert the tolerance level to -Oflag level
 _cflags-hardened_proximate_opt_level() {
-	if _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.5" ; then
-einfo "CFLAGS_HARDENED_TOLERANCE:  ${CFLAGS_HARDENED_TOLERANCE} (similar to -O0)"
+	if _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">" "1.80" ; then
+einfo "CFLAGS_HARDENED_TOLERANCE:  ${CFLAGS_HARDENED_TOLERANCE} (similar to -O0 with heavy thrashing)"
+	elif _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.5" ; then
+einfo "CFLAGS_HARDENED_TOLERANCE:  ${CFLAGS_HARDENED_TOLERANCE} (similar to -O0 with light thrashing)"
 	elif _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.35" ; then
 einfo "CFLAGS_HARDENED_TOLERANCE:  ${CFLAGS_HARDENED_TOLERANCE} (similar to -O1)"
 	elif _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.25" ; then
@@ -405,17 +418,6 @@ ewarn "Forcing -mindirect-branch-register to avoid flag conflict between -fcf-pr
 		CFLAGS_HARDENED_CFLAGS+=" -mindirect-branch-register"
 		CFLAGS_HARDENED_CXXFLAGS+=" -mindirect-branch-register"
 	fi
-}
-
-# @FUNCTION: _cflags-hardened_fcmp
-# @DESCRIPTION:
-# Floating point compare.  Bash does not support floating point comparison
-_cflags-hardened_fcmp() {
-	local a="${1}"
-	local opt="${2}"
-	local b="${3}"
-	python -c "exit(0) if ${a} ${opt} ${b} else exit(1)"
-	return $?
 }
 
 # @FUNCTION: cflags-hardened_append
