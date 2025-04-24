@@ -705,8 +705,8 @@ einfo "All SSP hardening (All functions hardened)"
 |"safety-critical"\
 |"untrusted-data")\
 		]] \
-				&&
-		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "2.00" # Worst case score
+				&& \
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "2.00" \
 	; then
 	# Remove flag if 50% drop in performance.
 	# For runtime *signed* integer overflow detection

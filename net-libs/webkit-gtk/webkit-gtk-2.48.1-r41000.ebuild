@@ -2182,14 +2182,6 @@ ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
 	# DT - Data Tamperint
 	# ID - Information Disclosure
 
-	if [[ "${FPMATH_MODE:-speed}" == "accuracy" ]] ; then
-einfo "Floating point math mode:  accuracy"
-		CFLAGS_HARDENED_USE_CASES+=" fp-determinism"
-	else
-einfo "Floating point math mode:  speed"
-	fi
-einfo "FPMATH_MODE is a user configurable variable.  See metadata.xml for details."
-
 	cflags-hardened_append
 
 	# Add more swap if linker OOMs computer.

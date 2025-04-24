@@ -110,6 +110,7 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # -C stack-protector=strong		1.02 - 1.05
 # -C stack-protector=basic		1.01 - 1.03
 # -C target-feature=+retpoline		1.01 - 1.20
+# -C overflow-checks=on			1.01 - 1.20  *
 # -C soft-float				 2.0 - 10.00 *
 # -C link-arg=-D_FORTIFY_SOURCE=2	1.01 - 1.05
 # -Zsanitizer=address			1.20 - 2.00  *
@@ -329,6 +330,8 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 |"secure-critical"\
 |"safety-critical"\
 |"untrusted-data")\
+			&& \
+		_cflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.20" \
 	]] ; then
 	# Remove flag if 50% drop in performance.
 	# For runtime *signed* integer overflow detection
