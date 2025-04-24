@@ -54,12 +54,11 @@ CFLAGS_HARDENED_LEVEL=${CFLAGS_HARDENED_LEVEL:-2}
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_RETPOLINE_FLAVOR
 # @DESCRIPTION:
 # Controls retpoline protection versus speed tradeoff.
-# Acceptable values:  balanced, default, register, secure, secure-embedded, secure-lightweight, secure-realtime, secure-speed, testing
-# The default could be register or secure depending on CET.
+# Acceptable values:  balanced, default, secure, secure-embedded, secure-lightweight, secure-realtime, secure-speed, testing
 # secure is compiler dependent so the performance guarantees vary.
 # secure is a bidirectional alias for default, balanced.
 # secure-embedded is a bidirectional alias for secure-lightweight.
-# secure-realtime is a bidirectional alias for secure-speed.
+# secure-realtime is a bidirectional alias for secure-speed or IBRS.
 CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_RETPOLINE_FLAVOR_USER
@@ -346,7 +345,7 @@ ewarn "Forcing -mindirect-branch-register to avoid flag conflict between -fcf-pr
 		CFLAGS_HARDENED_RETPOLINE_FLAVOR="register"
 	fi
 
-	# cf-protection (CE -> DoS, DT, ID) is a more stronger than Retpoline against Spectre v2 (ID).
+	# cf-protection (CE, ID) is a more stronger than Retpoline against Spectre v2 (ID).
 	# cf-protection=full is mutually exclusive to -mfunction-return=thunk.
 	# For old machines without CET, we fallback to Retpoline.
 	# For newer machines, we prioritize CET over Retpoline.
@@ -418,8 +417,9 @@ ewarn "Forcing -mindirect-branch-register to avoid flag conflict between -fcf-pr
 		CFLAGS_HARDENED_CXXFLAGS+=" -mindirect-branch=thunk-inline"
 	fi
 
-	if [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "register" ]] && test-flags-CC "-mindirect-branch-register" ; then
+	if [[ "${CFLAGS}" =~ ("mindirect-branch"|"function-return") ]] && test-flags-CC "-mindirect-branch-register" ; then
 	# Mitigation against CFI but does not mitigate Spectre v2.
+	# ID
 		append-flags $(test-flags-CC "-mindirect-branch-register")
 		CFLAGS_HARDENED_CFLAGS+=" -mindirect-branch-register"
 		CFLAGS_HARDENED_CXXFLAGS+=" -mindirect-branch-register"

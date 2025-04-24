@@ -131,7 +131,7 @@ $(gen_iuse_pgo)
 acorn +asm +corepack cpu_flags_x86_sse2 -custom-optimization debug doc
 -drumbrake fips +icu inspector +npm man mold pax-kernel pgo +snapshot +ssl
 system-icu +system-ssl test
-ebuild_revision_15
+ebuild_revision_16
 "
 
 gen_required_use_pgo() {
