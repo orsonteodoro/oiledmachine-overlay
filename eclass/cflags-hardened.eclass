@@ -432,6 +432,26 @@ ewarn "Forcing -mindirect-branch-register to avoid flag conflict between -fcf-pr
 	fi
 }
 
+_cflags-hardened_print_cfi_rules() {
+ewarn
+ewarn "The rules for CFI hardening:"
+ewarn
+ewarn "(1) Do not CFI the Clang toolchain."
+ewarn "(2) Do not CFI @system set."
+ewarn "(3) You must always use Clang for LTO."
+ewarn
+}
+
+_cflags-hardened_print_cfi_requires_clang() {
+eerror "CFI requires Clang.  Do the following:"
+eerror "emerge -1vuDN llvm-core/llvm:${LLVM_SLOT}"
+eerror "emerge -vuDN llvm-core/clang:${LLVM_SLOT}"
+eerror "emerge -vuDN llvm-core/lld"
+eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
+eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[cfi]"
+eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
+}
+
 # @FUNCTION: cflags-hardened_append
 # @DESCRIPTION:
 # Apply and deploy hardening flags easily.
@@ -480,15 +500,10 @@ einfo "CC:  ${CC}"
 		fi
 		strip-unsupported-flags
 		if ${CC} --version ; then
-eerror "CFI requires Clang.  Do the following:"
-eerror "emerge -1vuDN llvm-core/llvm:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-core/clang:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-core/lld"
-eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[cfi]"
-eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
-ewarn "You can only use Clang with LTO systemwide if doing LLVM CFI."
-
+			:
+		else
+			_cflags-hardened_print_cfi_requires_clang
+			_cflags-hardened_print_cfi_rules
 			die
 		fi
 	fi
@@ -982,17 +997,6 @@ einfo "All SSP hardening (All functions hardened)"
 		fi
 		filter-flags "-fuse-ld=*"
 		append-ldflags "-fuse-ld=lld"
-		if [[ -z "${LLVM_SLOT}" ]] || ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[cfi]" ; then
-eerror "CFI requires Clang.  Do the following:"
-eerror "emerge -1vuDN llvm-core/llvm:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-core/clang:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-core/lld"
-eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[cfi]"
-eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
-
-			die
-		fi
 	fi
 
 	if \
