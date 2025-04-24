@@ -1098,7 +1098,7 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fno-sanitize-recover"
 	fi
 
-	if [[ "${CFLAGS_HARDENED_VTABLE_VERIFY:-0}" == "1" ]] && tc-is-gcc && ver_test $(gcc-version) -ge "4.9" ; then
+	if [[ "${CFLAGS_HARDENED_VTABLE_VERIFY:-1}" == "1" ]] && tc-is-gcc && ver_test $(gcc-version) -ge "4.9" ; then
 	# Apply only for C++ projects
 	# DoS, DT
 		if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"game-engine"|"hypervisor"|"kernel"|"modular-app"|"network"|"safety-critical"|"secure-critical"|"web-browsers") ]] ; then
