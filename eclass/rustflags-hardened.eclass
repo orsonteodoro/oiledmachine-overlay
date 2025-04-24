@@ -339,6 +339,9 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 
 	# DoS, DT, ID
 	filter-flags "-D_FORTIFY_SOURCE=*"
+	filter-flags "-U_FORTIFY_SOURCE"
+	append-flags "-U_FORTIFY_SOURCE"
+	RUSTFLAGS+=" -C link-arg=-U_FORTIFY_SOURCE"
 	if [[ -n "${RUSTFLAGS_HARDENED_FORTIFY_SOURCE}" ]] ; then
 		local level="${RUSTFLAGS_HARDENED_FORTIFY_SOURCE}"
 		append-flags -D_FORTIFY_SOURCE=${level}

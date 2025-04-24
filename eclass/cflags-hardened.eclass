@@ -738,7 +738,11 @@ einfo "All SSP hardening (All functions hardened)"
 
 	# Do not use tc-enables-fortify-source because it doesn't do quality control.
 	filter-flags \
-		"-D_FORTIFY_SOURCE=*"
+		"-D_FORTIFY_SOURCE=*" \
+		"-U_FORTIFY_SOURCE"
+	append-flags "-U_FORTIFY_SOURCE"
+	CFLAGS_HARDENED_CFLAGS+=" -U_FORTIFY_SOURCE"
+	CFLAGS_HARDENED_CXXFLAGS+=" -U_FORTIFY_SOURCE"
 
 	# DoS, DT, ID
 	if [[ -n "${CFLAGS_HARDENED_FORTIFY_SOURCE}" ]] ; then
