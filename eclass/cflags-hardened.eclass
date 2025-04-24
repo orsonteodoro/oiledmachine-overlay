@@ -227,6 +227,12 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # 2 - general compile + runtime protection
 # 3 - maximum compile + runtime protection
 
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_INDIRECT_BRANCH_REGISTER
+# @DESCRIPTION:
+# Acceptable values:
+# 1 - enable (default)
+# 0 - disable, if buggy
+
 # @FUNCTION: _cflags-hardened_fcmp
 # @DESCRIPTION:
 # Floating point compare.  Bash does not support floating point comparison
@@ -417,7 +423,7 @@ ewarn "Forcing -mindirect-branch-register to avoid flag conflict between -fcf-pr
 		CFLAGS_HARDENED_CXXFLAGS+=" -mindirect-branch=thunk-inline"
 	fi
 
-	if [[ "${CFLAGS}" =~ ("mindirect-branch"|"function-return") ]] && test-flags-CC "-mindirect-branch-register" ; then
+	if [[ "${CFLAGS_HARDENED_INDIRECT_BRANCH_REGISTER:-1}" == "1" ]] && [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "register" || "${CFLAGS}" =~ ("mindirect-branch"|"function-return") ]] && test-flags-CC "-mindirect-branch-register" ; then
 	# Mitigation against CFI but does not mitigate Spectre v2.
 	# ID
 		append-flags $(test-flags-CC "-mindirect-branch-register")
