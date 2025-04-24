@@ -267,8 +267,8 @@ In addition, ARCH=amd64 users without CET must build and rebuild all packages
 that use LTO with clang or disable selectively LTO in to prevent building/linking
 issues when LLVM CFI is being used.  LLVM CFI requires LTO to work.
 
-This overlay will evaluate candidate packages individually for LLVM CFI
-compatibility.
+This overlay will set LLVM CFI default off and evaluate candidate packages
+individually for compatibility.
 
 ### 2023 policy
 
