@@ -154,7 +154,7 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # @DESCRIPTION:
 # Allow to override the _FORTIFY_SOURCE level.
 # Acceptable values:
-# 1 - compile time protection
+# 1 - compile time checks only
 # 2 - general compile + runtime protection
 # 3 - maximum compile + runtime protection
 
