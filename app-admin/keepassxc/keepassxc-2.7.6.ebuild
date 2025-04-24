@@ -3,8 +3,10 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="secure-critical sensitive-data"
 VIRTUALX_REQUIRED="manual"
-inherit cmake flag-o-matic virtualx xdg
+
+inherit cflags-hardened cmake flag-o-matic virtualx xdg
 
 QT6_PV="6.6.1"
 QT5_PV="5.2.0"
@@ -45,7 +47,10 @@ LICENSE="
 	GPL-3
 "
 SLOT="0"
-IUSE="X autotype browser doc keeshare +network qt5 qt5compat qt6 test wayland yubikey"
+IUSE="
+autotype browser doc keeshare +network qt5 qt5compat qt6 test wayland X yubikey
+ebuild_revision_1
+"
 RESTRICT="
 	!test? (
 		test
@@ -249,6 +254,7 @@ src_configure() {
 	filter-lto
 	replace-flags '-O*' '-O2'
 	export MAKEOPTS="-j1"
+	cflags-hardened_append
 
 	local mycmakeargs=(
 		# Gentoo users enable ccache via e.g. FEATURES=ccache or

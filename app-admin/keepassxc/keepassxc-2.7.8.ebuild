@@ -3,11 +3,12 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="secure-critical sensitive-data"
 QT5_PV="5.2.0"
 QT6_PV="6.6.1"
 VIRTUALX_REQUIRED="manual"
 
-inherit cmake flag-o-matic virtualx xdg
+inherit cflags-hardened cmake flag-o-matic virtualx xdg
 
 # Time to convert to Qt6
 # patch start time:  1705819601 (Sat Jan 20 10:46:41 PM PST 2024)
@@ -57,7 +58,8 @@ RESTRICT="
 "
 SLOT="0"
 IUSE="
-X autotype browser doc keeshare +network qt5 qt5compat qt6 test wayland yubikey
+autotype browser doc keeshare +network qt5 qt5compat qt6 test wayland X yubikey
+ebuild_revision_1
 "
 REQUIRED_USE="
 	^^ (
@@ -253,6 +255,7 @@ src_configure() {
 	filter-lto
 	replace-flags '-O*' '-O2'
 	export MAKEOPTS="-j1"
+	cflags-hardened_append
 
 	local -a mycmakeargs=(
 		# Gentoo users enable ccache via e.g. FEATURES=ccache or
