@@ -249,9 +249,15 @@ Privilege Execution (PE), Denial of Service (DoS), Data Tampering (DT),
 Information Disclosure (ID) before they happen.  Only a few vulnerabilities
 will be blocked on the top 50 vulnerabilities per month ranking.
 
-The asan/hwasan will not be default enabled since the design has issues.  We
-will follow recommendations to prevent worst case unintended consequences
-scenario which may lead to information disclosure.
+The not safe for production sanitizers will default opt-out since the design has
+issues.  This is to follow recommendations to prevent worst case unintended
+consequences scenario which may lead to information disclosure.  However, there
+are trade-offs between several classes of exploits versus information
+disclosure.  Many of the sanitizers mitigate a combination of CE, PE, DoS, DT,
+ID during runtime but have a possible ID tradeoff.  Users can opt-in by
+additional per-package USE flags.
+
+
 
 While it may upset minimalists, this forced mitigation may prevent some classes
 of real world cost loss.
