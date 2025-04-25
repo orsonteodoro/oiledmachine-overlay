@@ -240,7 +240,8 @@ package for LLVM CFI mitigation enablement.
 
 The ubsan runtime mitigation will protect against some code execution,
 information disclosure, data tampering, denial of service before they happen.
-This sanitizer will block a few top 50 reported vulnerabilities per month.
+This sanitizer will block a few of the top 50 reported vulnerabilities per
+month.
 
 The hwasan runtime mitigation will protect against some use-after-free (UAF),
 double free, memory corruption, code execution, information disclosure, data
