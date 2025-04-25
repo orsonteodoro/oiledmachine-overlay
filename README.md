@@ -293,7 +293,7 @@ that use LTO with Clang or disable selectively LTO in to prevent building/linkin
 issues when LLVM CFI is being used.  LLVM CFI requires LTO to work.  There may
 be issues with static-libs.  If problems are encountered with static-libs,
 the package should either be disable static-libs or recompiled the package with
-static libs with Clang only.
+static-libs with Clang only.
 
 ### 2023 policy
 
