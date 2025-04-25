@@ -274,8 +274,8 @@ sys-devel/lld
 llvm-runtimes/compiler-rt
 
 #
-# For servers you may want to add hwsan but the benefits outweight the costs
-# (e.g. class action lawsuit).
+# For security-critical servers you may want to add hwsan but the benefits
+# outweight the costs.
 # To use it you must boost it to CFLAGS_HARDENED_TOLERANCE_USER to 1.80 (amd64)
 # or 1.50 (arm64).
 #
