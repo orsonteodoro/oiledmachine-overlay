@@ -116,7 +116,7 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # -C link-arg=-D_FORTIFY_SOURCE=3	1.02
 # -Zsanitizer=address			2.00 - 3.00  *
 # -Zsanitizer=cfi			1.05 - 1.20  *
-# -Zsanitizer=hwaddress			1.30 - 1.80  *		arm64 only
+# -Zsanitize=hwaddress			1.30 - 1.80 (amd64), 1.1-1.5 (arm64)  *
 # -Zsanitizer=leak			1.01 - 1.05  *
 # -Zsanitizer=memory			 1.5 - 2.00  *
 # -Zsanitizer=thread			 5.0 - 15.00 *
@@ -149,7 +149,15 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # @DESCRIPTION:
 # Allow cfi runtime detect to exit before CE, PE, DoS, DT, ID happens.
 
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_MSAN
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_HWSAN
+# @DESCRIPTION:
+# Allow hwsan runtime detect to exit before CE, DoS, DT, ID happens.
+
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_LSAN
+# @DESCRIPTION:
+# Allow lsan runtime detect to exit before DoS happens.
+
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_MSAN
 # @DESCRIPTION:
 # Allow msan runtime detect to exit before CE, PE, DoS, ID happens.
 
@@ -654,7 +662,10 @@ einfo "rustc host:  ${host}"
 	# We will need to test them before allowing users to use them.
 	# Enablement is complicated by LLVM_COMPAT and compile time to build LLVM with sanitizers enabled.
 
-	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.8" && [[ "${RUSTFLAGS_HARDENED_HWSAN:-0}" == "1" ]] && _rustflags-hardened_has_mte ; then
+	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.8" && [[ "${RUSTFLAGS_HARDENED_HWSAN:-0}" == "1" ]] ; then
+		if ! _rustflags-hardened_has_mte ; then
+ewarn "You are using an emulated memory tagging.  It will have a performance hit."
+		fi
 # Missing -fno-sanitize-recover for Rust
 ewarn "HWSAN_OPTIONS=halt_on_error=1 must be placed in wrapper or env file for HWSAN mitigation to be effective."
 		RUSTFLAGS+=" -Zsanitizer=hwaddress"
