@@ -212,6 +212,8 @@ See [SECURITY.md](SECURITY.md)
 
 ### 2025 policy
 
+(Draft)
+
 This overlay will force hardening always on to mitigate against some zero click
 attacks.
 
@@ -238,21 +240,18 @@ packages individually for those where costly or devastating unauthorized
 transactions could take place.  Then, it will slow evaluate each candidate
 package for LLVM CFI mitigation enablement.
 
-The ubsan runtime mitigation will protect against some code execution,
-information disclosure, data tampering, denial of service before they happen.
-This sanitizer will block a few of the top 50 reported vulnerabilities per
-month.
+The sanitizer options have not been enabled as default on.  It will be disabled
+until LLVM team has improved the security option.
 
-The hwasan runtime mitigation will protect against some use-after-free (UAF),
-double free, memory corruption, code execution, information disclosure, data
-tampering, denial of service.  These are typically high to critical
-vulnerability severity.  This option is not default on but a suggestion for
-secure-critical servers.  To use it you must at least set
-CFLAGS_HARDENED_TOLERANCE_USER to 1.80 (amd64) or 1.50 (arm64).  For ARCH=amd64
-it is like -O0 worst case with heavy thrashing or almost double processing time,
-but also emulated also for this arch.  For ARCH=arm64 it is like -O0 best case
-with light thrashing, but hardware based for this case.  This sanitizer or
-asan will cover a lot of cases on the top 50 reported vulnerabilies per month.
+The ubsan minimal runtime will be default on in this overlay for hardened marked
+packages.  Ubsan will protect against Code Execution (CE),
+Privilege Execution (PE), Denial of Service (DoS), Data Tampering (DT),
+Information Disclosure (ID) before they happen.  Only a few vulnerabilities
+will be blocked on the top 50 vulnerabilities per month ranking.
+
+The asan/hwasan will not be default enabled since the design has issues.  We
+will follow recommendations to prevent worst case unintended consequences
+scenario which may lead to information disclosure.
 
 While it may upset minimalists, this forced mitigation may prevent some classes
 of real world cost loss.
@@ -282,10 +281,10 @@ sys-devel/lld
 llvm-runtimes/compiler-rt
 
 # For ARCH=amd64
-llvm-runtimes/compiler-rt-sanitizers[cfi,lsan,ubsan]
+llvm-runtimes/compiler-rt-sanitizers[cfi,ubsan]
 
 # For ARCH=arm64
-llvm-runtimes/compiler-rt-sanitizers[lsan,ubsan]
+llvm-runtimes/compiler-rt-sanitizers[ubsan]
 ```
 
 They are required because it assumed that the vulnerability is unpatched and
