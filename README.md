@@ -295,7 +295,7 @@ There may be issues with static-libs.  If problems are encountered with
 static-libs, the package should either disable static-libs or the static-libs
 recompiled with with Clang only.  This is too prevent any link-time issues or
 intermediate representation (IR) or LTO bytecode incompability since LTO will
-use that information to IPO optimize (finish compiling) in link phase.  The
+use that information to IPO optimize (or finish compiling) in link phase.  The
 eclass will require that -ffat-lto-objects is not used to speed up linking
 and lower the size cost.  It will transfer two representations to the HDD, so
 it is like worst case double the copy time with -ffat-lto-objects when
