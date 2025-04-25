@@ -1210,7 +1210,7 @@ ewarn "vtable hardening is required for the oiledmachine overlay for C++.  Rebui
 		fi
 	fi
 
-	if [[ "${CFLAGS_HARDENED_VTABLE_VERIFY:-1}" == "1" ]] && tc-is-gcc && ver_test $(gcc-version) -ge "4.9" ; then
+	if [[ "${CFLAGS_HARDENED_VTABLE_VERIFY:-0}" == "1" ]] && tc-is-gcc && ver_test $(gcc-version) -ge "4.9" ; then
 	# Apply only for C++ projects
 	# DoS, DT
 		if ! has_version "sys-devel/gcc:${s}[vtv]" ; then
