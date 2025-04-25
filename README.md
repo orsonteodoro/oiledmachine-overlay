@@ -245,7 +245,7 @@ The hwsan runtime mitigation will protect against some use-after-free (UAF),
 double free, memory corruption, code execution, information disclosure, data
 tampering, denial of service.  These are typically high to critical
 vulnerability severity.  This option is not default on but a suggestion for
-secure-critical servers.  To use it you must boost it to
+secure-critical servers.  To use it you must at least set
 CFLAGS_HARDENED_TOLERANCE_USER to 1.80 (amd64) or 1.50 (arm64).  For
 ARCH=amd64 it is like -O1 with heavy thrashing or almost double processing
 time for the worst case, but also emulated also for this arch.  For
