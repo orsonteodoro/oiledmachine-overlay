@@ -298,7 +298,9 @@ intermediate representation (IR) or LTO bytecode incompability since LTO will
 use that information to optimize (finish compiling) in link phase.  The
 eclass will require that -ffat-lto-objects is not used to speed up linking
 and lower the size cost.  It will transfer two representations to the HDD, so
-it is like worst case double the copy time with -ffat-lto-objects.
+it is like worst case double the copy time with -ffat-lto-objects when
+transfering the library which could be like for the static-library 1GB
+without LTO and 2GB with LTO -ffat-lto-objects.
 
 ### 2023 policy
 
