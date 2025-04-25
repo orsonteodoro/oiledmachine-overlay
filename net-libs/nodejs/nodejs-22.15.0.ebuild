@@ -16,6 +16,7 @@ ACORN_PV="8.14.0"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 CFLAGS_HARDENED_PIE="1"
 CFLAGS_HARDENED_USE_CASES="jit language-runtime network secure-critical server untrusted-data web-server"
+CFLAGS_HARDENED_VTABLE_VERIFY="1"
 TRAINER_TYPES=(
 	abort_controller
 	assert
@@ -127,7 +128,7 @@ $(gen_iuse_pgo)
 acorn +asm +corepack cpu_flags_x86_sse2 -custom-optimization debug doc fips +icu
 inspector +npm man mold pax-kernel pgo +snapshot +ssl system-icu +system-ssl
 test
-ebuild_revision_18
+ebuild_revision_19
 "
 
 gen_required_use_pgo() {
