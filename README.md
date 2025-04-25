@@ -225,8 +225,8 @@ activated can be found at
 [cflags-hardened.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/cflags-hardened.eclass#L123).
 
 The hardening benefits will include some execution-integrity mitigations,
-some information disclosure mitigations, and some denial of service
-mitigations.
+some information disclosure mitigations, some denial of service
+mitigations, and some data tampering mitigations.
 
 Execution-integrity mitigations with LLVM CFI (and CET or PAC) will mitigate
 against unauthorized transactions in trusted compiled code.   If you have
