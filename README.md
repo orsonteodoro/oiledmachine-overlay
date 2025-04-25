@@ -269,7 +269,7 @@ packages.
 The requirement is based partly on the overlay's maintainer shift towards a
 more defensive posture on cybersecurity.
 
-Requirements:
+#### Requirements
 
 ```
 sys-devel/gcc[sanitize,vtv]
