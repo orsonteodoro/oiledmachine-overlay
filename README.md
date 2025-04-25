@@ -246,11 +246,10 @@ double free, memory corruption, code execution, information disclosure, data
 tampering, denial of service.  These are typically high to critical
 vulnerability severity.  This option is not default on but a suggestion for
 secure-critical servers.  To use it you must at least set
-CFLAGS_HARDENED_TOLERANCE_USER to 1.80 (amd64) or 1.50 (arm64).  For
-ARCH=amd64 it is like -O0 with heavy thrashing or almost double processing
-time for the worst case, but also emulated also for this arch.  For
-ARCH=arm64 it is like -O0 with light thrashing for worst case, but
-hardware based for this case.
+CFLAGS_HARDENED_TOLERANCE_USER to 1.80 (amd64) or 1.50 (arm64).  For ARCH=amd64
+it is like -O0 worst case with heavy thrashing or almost double processing time,
+but also emulated also for this arch.  For ARCH=arm64 it is like -O0 best case
+with light thrashing, but hardware based for this case.
 
 While it may upset minimalists, this forced mitigation may prevent some classes
 of real world cost loss.
