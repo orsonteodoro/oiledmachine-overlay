@@ -279,11 +279,11 @@ llvm-runtimes/compiler-rt
 # To use it you must boost it to CFLAGS_HARDENED_TOLERANCE_USER to 1.80 (amd64)
 # or 1.50 (arm64).
 #
-# For ARCH=amd64 it is -O1 with heavy thrashing or almost double processing time
-# for the worst case, but also emulated also for this arch.
+# For ARCH=amd64 it is like -O1 with heavy thrashing or almost double processing
+# time for the worst case, but also emulated also for this arch.
 #
-# For ARCH=arm64 it is -O1 with light thrashing for worst case, but hardware
-# based for this case.
+# For ARCH=arm64 it is like -O1 with light thrashing for worst case, but
+# hardware based for this case.
 #
 
 # For ARCH=amd64
