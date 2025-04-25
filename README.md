@@ -292,8 +292,8 @@ In addition, ARCH=amd64 users without CET must build and rebuild all packages
 that use LTO with Clang or disable selectively LTO in to prevent building/linking
 issues when LLVM CFI is being used.  LLVM CFI requires LTO to work.  There may
 be issues with static-libs.  If problems are encountered with static-libs,
-the package should either be disable static-libs or recompiled the package with
-static-libs with Clang only.
+the package should either disable static-libs or the static-libs recompiled with
+with Clang only.
 
 ### 2023 policy
 
