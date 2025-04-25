@@ -273,14 +273,24 @@ sys-devel/clang
 sys-devel/lld
 llvm-runtimes/compiler-rt
 
-# For ARCH=amd64, for servers you may want to add hwsan which is emulated but
-# the benefits outweight the costs.  To use it you must boost it to
-# CFLAGS_HARDENED_TOLERANCE_USER=1.80 which is similar to -O0 with heavy
-# thrashing or almost double processing time for worst case.
+#
+# For servers you may want to add hwsan but the benefits outweight the costs
+# (e.g. class action lawsuit).
+# To use it you must boost it to CFLAGS_HARDENED_TOLERANCE_USER to 1.80 (amd64)
+# or 1.50 (arm64).
+#
+# For ARCH=amd64 it is -O1 with heavy thrashing or almost double processing time
+# for the worst case, but also emulated also for this arch.
+#
+# For ARCH=arm64 it is -O1 with light thrashing for worst case, but hardware
+# based for this case.
+#
+
+# For ARCH=amd64
 llvm-runtimes/compiler-rt-sanitizers[cfi,lsan,ubsan]
 
 # For ARCH=arm64
-llvm-runtimes/compiler-rt-sanitizers[hwsan,lsan,ubsan]
+llvm-runtimes/compiler-rt-sanitizers[lsan,ubsan]
 ```
 
 They are required because it assumed that the vulnerability is unpatched and
