@@ -296,7 +296,7 @@ static-libs, the package should either disable static-libs or the static-libs
 recompiled with with Clang only.  This is too prevent any link-time issues or
 intermediate representation (IR) or LTO bytecode incompability since LTO will
 use that information to IPO optimize (or finish compiling) in link phase.  The
-eclass will require that -ffat-lto-objects is not used to speed up linking
+eclass will require that -ffat-lto-objects be not used to speed up linking
 and lower the size cost.  It will transfer two representations to the HDD, so
 it is like worst case double the copy time with -ffat-lto-objects when
 transfering the library which could be like for the static-library 1GB
