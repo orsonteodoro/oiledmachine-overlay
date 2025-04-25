@@ -1215,7 +1215,7 @@ ewarn "vtable hardening is required for the oiledmachine overlay for C++.  Rebui
 	# DoS, DT
 		if ! has_version "sys-devel/gcc:${s}[vtv]" ; then
 ewarn "Skipping vtable hardening.  Update gcc and rebuild ${CATEGORY}/${PN}-${PV} again."
-		elif has_version "" && [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"game-engine"|"hypervisor"|"kernel"|"modular-app"|"network"|"safety-critical"|"secure-critical"|"web-browsers") ]] ; then
+		elif has_version "sys-devel/gcc:${s}[vtv]" && [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"game-engine"|"hypervisor"|"kernel"|"modular-app"|"network"|"safety-critical"|"secure-critical"|"web-browsers") ]] ; then
 			filter-flags "-f*vtable-verify=*"
 			append-cxxflags "-fvtable-verify=std"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fvtable-verify=std"
