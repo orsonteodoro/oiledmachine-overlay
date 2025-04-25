@@ -1050,6 +1050,7 @@ einfo "All SSP hardening (All functions hardened)"
 	# We will need to test them before allowing users to use them.
 	# Enablement is complicated by LLVM_COMPAT and compile time to build LLVM with sanitizers enabled.
 	# Worst case scores for tolerance
+	filter-flags "-f*sanitize=cfi"
 	if \
 		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.15" \
 			&& \
@@ -1059,7 +1060,6 @@ einfo "All SSP hardening (All functions hardened)"
 			&& \
 		[[ "${ARCH}" == "amd64" ]] \
 	; then
-		filter-flags "-f*sanitize=cfi"
 		append-flags "-fsanitize=cfi"
 		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=cfi"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=cfi"
@@ -1074,6 +1074,8 @@ einfo "All SSP hardening (All functions hardened)"
 		append-ldflags "-fuse-ld=lld"
 	fi
 
+	filter-flags "-f*sanitize=hwaddress"
+	filter-flags "-f*sanitize=address"
 	if \
 		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.8" \
 			&& \
@@ -1087,7 +1089,6 @@ einfo "All SSP hardening (All functions hardened)"
 ewarn "You are using an emulated memory tagging.  It will have a performance hit."
 		fi
 
-		filter-flags "-f*sanitize=hwaddress"
 		append-flags "-fsanitize=hwaddress"
 		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=hwaddress"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=hwaddress"
@@ -1104,7 +1105,6 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 			&& \
 		[[ "${CFLAGS_HARDENED_ASAN:-0}" == "1" ]] \
 	; then
-		filter-flags "-f*sanitize=address"
 		append-flags "-fsanitize=address"
 		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=address"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=address"
@@ -1118,12 +1118,12 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 		fi
 	fi
 
+	filter-flags "-f*sanitize=leak"
 	if \
 		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" \
 			&& \
 		[[ "${CFLAGS_HARDENED_LSAN:-0}" == "1"  ]] \
 	; then
-		filter-flags "-f*sanitize=leak"
 		append-flags "-fsanitize=leak"
 		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=leak"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=leak"
@@ -1137,12 +1137,12 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 		fi
 	fi
 
+	filter-flags "-f*sanitize=memory"
 	if \
 		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "2.00" \
 			&& \
 		[[ "${CFLAGS_HARDENED_MSAN:-0}" == "1"  ]] \
 	; then
-		filter-flags "-f*sanitize=memory"
 		append-flags "-fsanitize=memory"
 		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=memory"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=memory"
@@ -1156,12 +1156,12 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 		fi
 	fi
 
+	filter-flags "-f*sanitize=thread"
 	if \
 		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "15.00" \
 			&& \
 		[[ "${CFLAGS_HARDENED_TSAN:-0}" == "1"  ]] \
 	; then
-		filter-flags "-f*sanitize=thread"
 		append-flags "-fsanitize=thread"
 		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=thread"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=thread"
@@ -1175,12 +1175,12 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 		fi
 	fi
 
+	filter-flags "-f*sanitize=undefined"
 	if \
 		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" \
 			&& \
 		[[ "${CFLAGS_HARDENED_UBSAN:-0}" == "1" ]] \
 	; then
-		filter-flags "-f*sanitize=undefined"
 		append-flags "-fsanitize=undefined"
 		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=undefined"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=undefined"
@@ -1194,9 +1194,9 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 		fi
 	fi
 
+	filter-flags "-f*sanitize-recover"
 	if [[ "${CFLAGS}" =~ "-fsanitize=" ]] ; then
 	# Force exit before data/execution integrity is compromised.
-		filter-flags "-f*sanitize-recover"
 		append-flags "-fno-sanitize-recover"
 		CFLAGS_HARDENED_CFLAGS+=" -fno-sanitize-recover"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fno-sanitize-recover"
