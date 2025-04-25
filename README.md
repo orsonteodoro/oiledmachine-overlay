@@ -245,7 +245,12 @@ The hwsan runtime mitigation will protect against some use-after-free (UAF),
 double free, memory corruption, code execution, information disclosure, data
 tampering, denial of service.  These are typically high to critical
 vulnerability severity.  This option is not default on but a suggestion for
-secure-critical servers.
+secure-critical servers.  To use it you must boost it to
+CFLAGS_HARDENED_TOLERANCE_USER to 1.80 (amd64) or 1.50 (arm64).  For
+ARCH=amd64 it is like -O1 with heavy thrashing or almost double processing
+time for the worst case, but also emulated also for this arch.  For
+ARCH=arm64 it is like -O1 with light thrashing for worst case, but
+hardware based for this case.
 
 While it may upset minimalists, this forced mitigation may prevent some classes
 of real world cost loss.
@@ -273,19 +278,6 @@ sys-devel/llvm
 sys-devel/clang
 sys-devel/lld
 llvm-runtimes/compiler-rt
-
-#
-# For secure-critical servers you may want to add hwsan but the benefits
-# outweight the costs.
-# To use it you must boost it to CFLAGS_HARDENED_TOLERANCE_USER to 1.80 (amd64)
-# or 1.50 (arm64).
-#
-# For ARCH=amd64 it is like -O1 with heavy thrashing or almost double processing
-# time for the worst case, but also emulated also for this arch.
-#
-# For ARCH=arm64 it is like -O1 with light thrashing for worst case, but
-# hardware based for this case.
-#
 
 # For ARCH=amd64
 llvm-runtimes/compiler-rt-sanitizers[cfi,lsan,ubsan]
