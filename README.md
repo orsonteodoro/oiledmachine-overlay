@@ -229,7 +229,7 @@ some information disclosure mitigations, some denial of service
 mitigations, and some data tampering mitigations.
 
 Execution-integrity mitigations with LLVM CFI (and CET or PAC) will mitigate
-against unauthorized transactions in trusted compiled code.   If you have
+against some unauthorized transactions in trusted compiled code.   If you have
 CET or PAC, you can ignore the LLVM CFI requirement.  The LLVM CFI
 requirement in this overlay only applies to ARCH=amd64 users without CET.
 
