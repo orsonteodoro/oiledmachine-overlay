@@ -1211,9 +1211,11 @@ ewarn "vtable hardening is required for the oiledmachine overlay for C++.  Rebui
 	fi
 
 	if [[ "${CFLAGS_HARDENED_VTABLE_VERIFY:-0}" == "1" ]] && tc-is-gcc && ver_test $(gcc-version) -ge "4.9" ; then
-	# Apply vtv only for C++ packages that produce apps but no libs to
-	# simplify maintenance.  The package manager is not designed to track
-	# updates which makes it a maintenance nightmare.
+	# The package manager is not designed to track updates which makes it a
+	# maintenance nightmare.  vtv can only be applied to c++ to the
+	# following cases to simplify maintenance.
+	# (1) app only packages.
+	# (2) hybrid packages (app+lib) without headers.
 	# DoS, DT
 		if ! has_version "sys-devel/gcc:${s}[vtv]" ; then
 ewarn "Skipping vtable hardening.  Update gcc and rebuild ${CATEGORY}/${PN}-${PV} again."
