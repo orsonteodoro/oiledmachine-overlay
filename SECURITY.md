@@ -34,7 +34,7 @@ non-vulernable except for this breaking GTK4 change.
 
 The current security posture of this overlay is neutral-defensive.
 
-- Default secure upstream settings (neutral posture)
+- Default well tested and secure upstream settings (neutral posture)
 - Proactive vulnerability discovery and remediation (defensive posture)
 
 ## Definitions
