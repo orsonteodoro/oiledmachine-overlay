@@ -50,22 +50,6 @@ IUSE+="
 ${CPU_X86_FLAGS[@]/#/cpu_flags_x86_}
 ${SANITIZER_FLAGS[@]/#/+}
 "
-#
-# There's some difficulty in setting up per arch package.use.mask in this overlay.
-# Maybe because of the distro overrides.
-#
-# "SafeStack on ${ARCH} is useless and using may add a vulnerability."
-# "Disable the safestack USE flag to continue or fork and remove this"
-# "message."
-#
-# The AI (LLM) could be wrong about SafeStack working for x86-64.  See
-# https://issues.chromium.org/issues/40603870
-#
-# The link says
-# https://clang.llvm.org/docs/SafeStack.html#known-security-limitations
-# The site says it assumed correct and verified by hand.  This is not good
-# testing.
-#
 # See also https://github.com/llvm/llvm-project/blob/llvmorg-13.0.1/compiler-rt/cmake/config-ix.cmake
 SANITIZER_REQUIRED_USE="
 	asan? (
@@ -252,6 +236,9 @@ SANITIZER_REQUIRED_USE="
 "
 REQUIRED_USE="
 	${SANITIZER_REQUIRED_USE}
+	amd64? (
+		!safestack
+	)
 	test? (
 		cfi? (
 			ubsan
@@ -400,6 +387,19 @@ ewarn
 			break
 		fi
 	done
+
+	if use amd64 && use safestack ; then
+eerror
+eerror "SafeStack on ${ARCH} is has not been academically peer reviewed since"
+eerror "2022 or endorsed by a well known security expert for this arch."
+eerror
+eerror "See also issue:  https://issues.chromium.org/issues/40603870"
+eerror "It is still unknown if the recent fixes addresses these 2 issues in"
+eerror "comment #2."
+eerror
+eerror "Use at your own risk."
+eerror
+	fi
 
 	local mycmakeargs=(
 		-DCOMPILER_RT_INSTALL_PATH="${EPREFIX}/usr/lib/clang/${SLOT}"
