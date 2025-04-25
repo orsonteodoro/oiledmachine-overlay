@@ -289,11 +289,13 @@ They are required because it assumed that the vulnerability is unpatched and
 the fix require these features to be present.
 
 In addition, ARCH=amd64 users without CET must build and rebuild all packages
-that use LTO with Clang or disable selectively LTO in to prevent building/linking
-issues when LLVM CFI is being used.  LLVM CFI requires LTO to work.  There may
-be issues with static-libs.  If problems are encountered with static-libs,
-the package should either disable static-libs or the static-libs recompiled with
-with Clang only.
+that use LTO with Clang or disable selectively LTO in to prevent building or
+linking issues when LLVM CFI is being used.  LLVM CFI requires LTO to work.
+There may be issues with static-libs.  If problems are encountered with
+static-libs, the package should either disable static-libs or the static-libs
+recompiled with with Clang only.  This is too prevent any link-time issues or
+intermediate representation (IR) or LTO bytecode incompability since LTO will
+use that information to optimize (finish compiling) in link phase.
 
 ### 2023 policy
 
