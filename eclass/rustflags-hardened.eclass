@@ -124,8 +124,8 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # * Only these are conditionally set based on worst case
 #  RUSTFLAGS_HARDENED_TOLERANCE
 
-# Setting to 2.0 will enable CFI, HWSAN, LSAN, MSAN.
-# Setting to 15.0 will enable CFI, HWSAN, LSAN, MSAN, TSAN.
+# Setting to 2.0 will enable CFI, HWASAN, LSAN, MSAN.
+# Setting to 15.0 will enable CFI, HWASAN, LSAN, MSAN, TSAN.
 
 # For example, TSAN is about 5-15x slower compared to the unmitigated build.
 
@@ -149,9 +149,9 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # @DESCRIPTION:
 # Allow cfi runtime detect to exit before CE, PE, DoS, DT, ID happens.
 
-# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_HWSAN
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_HWASAN
 # @DESCRIPTION:
-# Allow hwsan runtime detect to exit before CE, DoS, DT, ID happens.
+# Allow hwasan runtime detect to exit before CE, DoS, DT, ID happens.
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_LSAN
 # @DESCRIPTION:
@@ -662,17 +662,17 @@ einfo "rustc host:  ${host}"
 	# We will need to test them before allowing users to use them.
 	# Enablement is complicated by LLVM_COMPAT and compile time to build LLVM with sanitizers enabled.
 
-	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.8" && [[ "${RUSTFLAGS_HARDENED_HWSAN:-0}" == "1" ]] ; then
+	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.8" && [[ "${RUSTFLAGS_HARDENED_HWASAN:-0}" == "1" ]] ; then
 		if ! _rustflags-hardened_has_mte ; then
 ewarn "You are using an emulated memory tagging.  It will have a performance hit."
 		fi
 # Missing -fno-sanitize-recover for Rust
-ewarn "HWSAN_OPTIONS=halt_on_error=1 must be placed in wrapper or env file for HWSAN mitigation to be effective."
+ewarn "HWASAN_OPTIONS=halt_on_error=1 must be placed in wrapper or env file for HWASAN mitigation to be effective."
 		RUSTFLAGS+=" -Zsanitizer=hwaddress"
-		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[hwsan]" ; then
-eerror "Missing HWSAN sanitizer.  Do the following:"
+		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[hwasan]" ; then
+eerror "Missing HWASAN sanitizer.  Do the following:"
 eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[hwsan]"
+eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[hwasan]"
 eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 
 			die

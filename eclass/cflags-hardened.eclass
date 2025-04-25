@@ -106,9 +106,9 @@ CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 # @DESCRIPTION:
 # Allow cfi runtime detect to exit before CE, PE, DoS, DT, ID happens.
 
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_HWSAN
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_HWASAN
 # @DESCRIPTION:
-# Allow hwsan runtime detect to exit before CE, DoS, DT, ID happens.
+# Allow hwasan runtime detect to exit before CE, DoS, DT, ID happens.
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_LSAN
 # @DESCRIPTION:
@@ -172,7 +172,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # * Only these are conditionally set based on worst case
 #  CFLAGS_HARDENED_TOLERANCE
 
-# Setting to 5.0 will enable ASAN or HWSAN, LLVM CFI, LSAN, MSAN, UBSAN.
+# Setting to 5.0 will enable ASAN or HWASAN, LLVM CFI, LSAN, MSAN, UBSAN.
 # Setting to 20.0 will enable soft-floats and more.
 
 # For example, TSAN is about 2-5x slower compared to the unmitigated build.
@@ -571,7 +571,7 @@ ewarn "ubsan with clang will be soon be required for the oiledmachine-overlay fo
 	if tc-is-clang && [[ "${ARCH}" == "amd64" || "${ARCH}" == "arm64" ]] ; then
 		s=$(clang-major-version)
 		if ! has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[hwbsan]" ; then
-ewarn "hwsan with clang will be soon be required for the oiledmachine-overlay for ARCH=arm64.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with hwsan USE flag enabled."
+ewarn "hwasan with clang will be soon be required for the oiledmachine-overlay for ARCH=arm64.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with hwasan USE flag enabled."
 		fi
 	fi
 
@@ -1077,7 +1077,7 @@ einfo "All SSP hardening (All functions hardened)"
 	if \
 		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.8" \
 			&& \
-		[[ "${CFLAGS_HARDENED_HWSAN:-0}" == "1"  ]] \
+		[[ "${CFLAGS_HARDENED_HWASAN:-0}" == "1"  ]] \
 			&& \
 		[[ "${ARCH}" == "amd64" || "${ARCH}" == "arm64" ]] \
 			&&
@@ -1091,10 +1091,10 @@ ewarn "You are using an emulated memory tagging.  It will have a performance hit
 		append-flags "-fsanitize=hwaddress"
 		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=hwaddress"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=hwaddress"
-		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[hwsan]" ; then
-eerror "Missing HWSAN sanitizer.  Do the following:"
+		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[hwasan]" ; then
+eerror "Missing HWASAN sanitizer.  Do the following:"
 eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[hwsan]"
+eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[hwasan]"
 eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 
 			die
