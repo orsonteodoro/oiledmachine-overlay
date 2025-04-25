@@ -238,13 +238,13 @@ packages individually for those where costly or devastating unauthorized
 transactions could take place.  Then, it will slow evaluate each candidate
 package for LLVM CFI mitigation enablement.
 
-The ubsan runtime mitigation will protect against code execution,
+The ubsan runtime mitigation will protect against some code execution,
 information disclosure, data tampering, denial of service before they happen.
 
-The hwsan runtime mitigation will protect against use-after-free (UAF), double
-free, memory corruption, code execution, information disclosure, data tampering,
-denial of service.  These are typically high to critical vulnerability
-severity.
+The hwsan runtime mitigation will protect against some use-after-free (UAF),
+double free, memory corruption, code execution, information disclosure, data
+tampering, denial of service.  These are typically high to critical
+vulnerability severity.
 
 While it may upset minimalists, this forced mitigation may prevent some classes
 of real world cost loss.
