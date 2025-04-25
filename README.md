@@ -241,6 +241,10 @@ package for LLVM CFI mitigation enablement.
 The ubsan runtime mitigation will protect against code execution,
 information disclosure, data tampering, denial of service before they happen.
 
+The hwsan runtime mitigation will protect against UAF, double free, memory
+corruption, code execution, information disclosure, data tampering, denial of
+service.
+
 While it may upset minimalists, this forced mitigation may prevent some classes
 of real world cost loss.
 
@@ -267,7 +271,8 @@ sys-devel/llvm
 sys-devel/clang
 sys-devel/lld
 llvm-runtimes/compiler-rt
-llvm-runtimes/compiler-rt-sanitizers[cfi,ubsan]
+llvm-runtimes/compiler-rt-sanitizers[cfi,lsan,ubsan] # For ARCH=amd64, for servers you may want to add hwsan which is emulated but benefits outweight the cost.
+llvm-runtimes/compiler-rt-sanitizers[hwsan,lsan,ubsan] # For ARCH=arm64
 ```
 
 They are required because it assumed that the vulnerability is unpatched and
