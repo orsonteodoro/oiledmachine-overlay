@@ -246,7 +246,7 @@ transactions could take place.  Then, it will slow evaluate each candidate
 package for LLVM CFI mitigation enablement.
 
 The not safe for production sanitizers will default to opt-in in this overlay to
-decrease the success rate for vulnerability scanning.  Users can choose to
+decrease the success chances for vulnerability scanning.  Users can choose to
 opt-out and follow upstream's opt-out performance-first security posture.
 However, there are trade-offs between a combination of several classes of
 exploits versus information disclosure.  Many of the sanitizers mitigate a
