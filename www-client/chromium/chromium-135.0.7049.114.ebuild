@@ -3588,7 +3588,7 @@ ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
 einfo "Using the bundled toolchain"
 	fi
 
-	cflags-depends_append
+	cflags-hardened_append
 	# We just want the missing flags (retpoline, -fstack-clash-protection)  flags
 	filter-flags \
 		"-f*stack-protector" \
@@ -3604,11 +3604,11 @@ eerror "Enable the cet USE flag"
 	fi
 	if use official ; then
 ewarn "You are using official settings.  For strong hardening, disable this USE flag."
-		myconf_gn+=" use_fc_protection=none"
+		myconf_gn+=" use_fc_protection=\"none\""
 		myconf_gn+=" use_retpoline=false"
 		myconf_gn+=" use_stack_clash_protection=false"
 	elif use cet ; then
-		myconf_gn+=" use_fc_protection=full"
+		myconf_gn+=" use_fc_protection=\"full\""
 		myconf_gn+=" use_retpoline=false"
 		myconf_gn+=" use_stack_clash_protection=true"
 		if is-flagq "-ftrapv" ; then
@@ -3619,8 +3619,8 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
 			myconf_gn+=" use_fortify_source=3"
 		fi
-	elif [[ "${ARCH}" == "amd64" ]] && isflagq "-mretpoline" ; then
-		myconf_gn+=" use_fc_protection=none"
+	elif [[ "${ARCH}" == "amd64" ]] && is-flagq "-mretpoline" ; then
+		myconf_gn+=" use_fc_protection=\"none\""
 		myconf_gn+=" use_retpoline=true"
 		myconf_gn+=" use_stack_clash_protection=true"
 		if is-flagq "-ftrapv" ; then
@@ -3632,7 +3632,7 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 			myconf_gn+=" use_fortify_source=2"
 		fi
 	else
-		myconf_gn+=" use_fc_protection=none"
+		myconf_gn+=" use_fc_protection=\"none\""
 		myconf_gn+=" use_retpoline=false"
 		myconf_gn+=" use_stack_clash_protection=true"
 		if is-flagq "-ftrapv" ; then
