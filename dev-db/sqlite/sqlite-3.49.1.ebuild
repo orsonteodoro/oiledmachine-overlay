@@ -4,7 +4,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 
 # EPGO (custom pgo training) disabled for simplification reasons.
 UOPTS_SUPPORT_EPGO=0
@@ -45,7 +45,10 @@ RESTRICT="
 	)
 "
 SLOT="3"
-IUSE="debug doc icu +readline secure-delete static-libs tcl test tools"
+IUSE="
+debug doc icu +readline secure-delete static-libs tcl test tools
+ebuild_revision_1
+"
 REQUIRED_USE="
 	pgo? (
 		tcl
