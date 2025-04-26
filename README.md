@@ -249,13 +249,13 @@ Privilege Execution (PE), Denial of Service (DoS), Data Tampering (DT),
 Information Disclosure (ID) before they happen.  Only a few vulnerabilities
 will be blocked on the top 50 vulnerabilities per month ranking.
 
-The not safe for production sanitizers will default opt-out since the design has
-issues.  This is to follow recommendations to prevent worst case unintended
-consequences scenario which may lead to information disclosure.  However, there
-are trade-offs between several classes of exploits versus information
-disclosure.  Many of the sanitizers mitigate a combination of CE, PE, DoS, DT,
-ID during runtime but have a possible unintended ID tradeoff.  Users can opt-in
-by additional per-package USE flags.  This opt-in/opt-out is a Faustian bargain.
+The not safe for production sanitizers will default to opt-in in this overlay to
+decrease the attacker capabilties.  Users can choose to opt-out and follow
+upstream opt-out performance-first security posture.  However, there are
+trade-offs between several classes of exploits versus information disclosure.
+Many of the sanitizers mitigate a combination of CE, PE, DoS, DT, ID during
+runtime but have a possible unintended ID tradeoff.  Users can opt-in by
+additional per-package USE flags.  This opt-in/opt-out is a Faustian bargain.
 If you opt-in, you lose.  If you opt-out, you lose.  For opt-out, you accept
 many vulnerabilities + performance increase.  For opt-in, you accept 1
 unintended vulnerability possibility + performance penalty.
