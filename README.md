@@ -245,7 +245,7 @@ decrease the attacker capabilties.  Users can choose to opt-out and follow
 upstream's opt-out performance-first security posture.  However, there are
 trade-offs between a combination of several classes of exploits versus
 information disclosure.  Many of the sanitizers mitigate a combination of Code
-Execution (CE), Privilege Execution (PE), Denial of Service (DoS), Data
+Execution (CE), Privilege Escalation (PE), Denial of Service (DoS), Data
 Tampering (DT), Information Disclosure (ID) during runtime but have a possible
 unintended ID tradeoff.  Users can opt-out by setting
 CFLAGS_HARDENED_TOLERANCE_USER to a lower multiple to exclude them.  This
@@ -279,7 +279,7 @@ year. The vulnerabilities should be deduped and unique only one cwe per row.
 To get a nice table of vulnerability protection per sanitizer, ask the AI/LLM this:
 
 give me a y/n table of what would be protected against for code execution,
-privilege execution, data tampering, information disclosure, denial of service
+privilege escalation, data tampering, information disclosure, denial of service
 for all of the llvm sanitizers.  Also include performance impact as a normalized
 decimal multiple per each sanitizer.  Also include llvm's status as y, n, n/a
 for production use.  Also include practioners' y, n, n/a endorsement for
@@ -289,7 +289,7 @@ like -fsanitize-minimal-runtime.
 To get a nice table of vulnerability protection per `<flag>`, ask the AI/LLM this:
 
 give me a y/n table of what would be protected against for code execution,
-privilege execution, data tampering, information disclosure, denial of service
+privilege escalation, data tampering, information disclosure, denial of service
 for `<flag>`.  Also include performance impact as a normalized decimal multiple.
 
 

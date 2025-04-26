@@ -705,7 +705,7 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 	# DT = Data Tampering
 	# ID = Information Disclosure
 	# MC = Memory Corruption
-	# PE = Privilege Execution
+	# PE = Privilege Escalation
 
 	# MC, CE, PE, DoS, DT, ID
 			filter-flags "-f*stack-clash-protection"
