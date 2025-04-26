@@ -278,19 +278,22 @@ year. The vulnerabilities should be deduped and unique only one cwe per row.
 
 To get a nice table of vulnerability protection per sanitizer, ask the AI/LLM this:
 
-give me a y/n table of what would be protected against for code execution,
-privilege escalation, data tampering, information disclosure, denial of service
-for all of the llvm sanitizers.  Also include performance impact as a normalized
-decimal multiple per each sanitizer.  Also include llvm's status as y, n, n/a
-for production use.  Also include practioners' y, n, n/a endorsement for
-production use.  Also include minimal llvm runtime sanitizer implementations
-like -fsanitize-minimal-runtime.
+Give me a y, n, n/a table of what would be protected for code execution,
+privilege escalation, data tampering, information, denial of service for all of
+the llvm sanitizers.  Also include performance impact as a normalized decimal
+multiple per each sanitizer.  Also include llvm's status as y, n, n/a for
+production use.  Also include practioners' y, n, n/a endorsement for production
+use.  Also include minimum llvm runtime sanitizer implementations like
+-fsanitize-minimal-runtime.  Give me the performance impacts for both amd64 and
+arm64 and as a best case and worst case.
 
 To get a nice table of vulnerability protection per `<flag>`, ask the AI/LLM this:
 
-give me a y/n table of what would be protected against for code execution,
+Give me a y/n table of what would be protected against for code execution,
 privilege escalation, data tampering, information disclosure, denial of service
 for `<flag>`.  Also include performance impact as a normalized decimal multiple.
+Give me the performance impacts for both amd64 and arm64 and as a best case and
+worst case.
 
 
 While it may upset minimalists, this forced mitigation may prevent some classes
