@@ -255,7 +255,9 @@ consequences scenario which may lead to information disclosure.  However, there
 are trade-offs between several classes of exploits versus information
 disclosure.  Many of the sanitizers mitigate a combination of CE, PE, DoS, DT,
 ID during runtime but have a possible ID tradeoff.  Users can opt-in by
-additional per-package USE flags.
+additional per-package USE flags.  This opt-in/opt-out is a Faustian bargain
+where you have to choose either to accept many vulnerabilities versus 1
+vulnerability.  If you opt-in, you lose.  if you opt-out, you lose.
 
 
 
