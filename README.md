@@ -251,7 +251,7 @@ will be blocked on the top 50 vulnerabilities per month ranking.
 
 The not safe for production sanitizers will default to opt-in in this overlay to
 decrease the attacker capabilties.  Users can choose to opt-out and follow
-upstream opt-out convienience-first security posture.  However, there are
+upstream opt-out performance-first security posture.  However, there are
 trade-offs between a combination of several classes of exploits versus
 information disclosure.  Many of the sanitizers mitigate a combination of CE,
 PE, DoS, DT, ID during runtime but have a possible unintended ID tradeoff.
