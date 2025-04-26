@@ -261,6 +261,13 @@ Privilege Execution (PE), Denial of Service (DoS), Data Tampering (DT),
 Information Disclosure (ID) before they happen.  Only a few vulnerabilities
 will be blocked on the top 50 vulnerabilities reported per month ranking.
 
+The hwasan will be optional but secure-critical may consider enabling this
+sanitizer since many top 50 vulnerabilities reported per month rankings will be
+mitigated.  To enable it, set CFLAGS_HARDENED_TOLERANCE_USER=1.80 for ARCH=amd64
+or CFLAGS_HARDENED_TOLERANCE_USER=1.5.  For ARCH=amd64, this is about -O0
+worst case with heavy swapping.  For ARCH=arm64, this is about -O0 best case
+with light swapping to no swapping.
+
 To get the vulernabilities reported per month ranking, ask the AI/LLM this:
 
 Give me the top 50 vulnerabilities with corresponding temperature based on
@@ -270,13 +277,6 @@ vulnerability. Allow for multiple sanitizer possibilities so that hwasan can be
 use when just asan presented. Give me the full list. The temperature should use
 red, orange, yellow, blue. I only want the vulnerabilities from now to previous
 year. The vulnerabilities should be deduped and unique only one cwe per row.
-
-The hwasan will be optional but secure-critical may consider enabling this
-sanitizer since many top 50 vulnerabilities reported per month rankings will be
-mitigated.  To enable it, set CFLAGS_HARDENED_TOLERANCE_USER=1.80 for ARCH=amd64
-or CFLAGS_HARDENED_TOLERANCE_USER=1.5.  For ARCH=amd64, this is about -O0
-worst case with heavy swapping.  For ARCH=arm64, this is about -O0 best case
-with light swapping to no swapping.
 
 While it may upset minimalists, this forced mitigation may prevent some classes
 of real world cost loss.
