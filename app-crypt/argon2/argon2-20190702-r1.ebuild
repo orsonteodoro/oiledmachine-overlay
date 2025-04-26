@@ -3,7 +3,7 @@
 
 EAPI=7
 
-CFLAGS_HARDENED_USE_CASES="dss secure-critical sensitive-data"
+CFLAGS_HARDENED_USE_CASES="secure-critical sensitive-data"
 
 inherit cflags-hardened toolchain-funcs
 
