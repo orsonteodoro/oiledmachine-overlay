@@ -4,7 +4,7 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="secure-critical sensitive-data"
-CFLAGS_HARDENED_VTABLE_VERIFY="1"
+CFLAGS_HARDENED_VTABLE_VERIFY="0"
 QT5_PV="5.2.0"
 QT6_PV="6.6.1"
 VIRTUALX_REQUIRED="manual"
@@ -60,7 +60,7 @@ RESTRICT="
 SLOT="0"
 IUSE="
 autotype browser doc keeshare +network qt5 qt5compat qt6 test wayland X yubikey
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	^^ (
