@@ -141,13 +141,12 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # No mitigation				1.00
 # -D_FORTIFY_SOURCE=2			1.01
 # -D_FORTIFY_SOURCE=3			1.02
+# -fcf-protection=full			1.03 - 1.10
+# -fstack-clash-protection		1.02 - 1.10
 # -fstack-protect			1.01 - 1.05
 # -fstack-protect-strong		1.03 - 1.10
 # -fstack-protect-all			1.05 - 1.10
-# -fcf-protection			1.01 - 1.05
-# -fstack-clash-protection		1.02 - 1.10
 # -ftrapv				1.20 - 2.00  *
-# -fcf-protection=full			1.03 - 1.10
 # -fsanitize=address			2.00 - 3.00 (asan); 1.00 - 1.05 (amd64, gwp-asan),  1.00 - 1.07 (arm64, gwp-asan) *
 # -fsanitize=cfi			1.05 - 1.20  *
 # -fsanitize=hwaddress			1.10 - 1.50 (arm64)  *

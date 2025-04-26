@@ -106,20 +106,20 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # Estimates:
 # Flag					Performance as a normalized decimal multiple
 # No mitigation				   1
+# -C link-arg=-D_FORTIFY_SOURCE=2	1.01
+# -C link-arg=-D_FORTIFY_SOURCE=3	1.02
+# -C overflow-checks=on			1.01 - 1.20  *
+# -C soft-float				 2.0 - 10.00 *
 # -C stack-protector=all		1.05 - 1.10
 # -C stack-protector=strong		1.02 - 1.05
 # -C stack-protector=basic		1.01 - 1.03
 # -C target-feature=+retpoline		1.01 - 1.20
-# -C overflow-checks=on			1.01 - 1.20  *
-# -C soft-float				 2.0 - 10.00 *
-# -C link-arg=-D_FORTIFY_SOURCE=2	1.01
-# -C link-arg=-D_FORTIFY_SOURCE=3	1.02
-# -fsanitize=address			2.00 - 3.00 (asan); 1.00 - 1.05 (amd64, gwp-asan),  1.00 - 1.07 (arm64, gwp-asan) *
+# -fsanitizer=address			2.00 - 3.00 (asan); 1.00 - 1.05 (amd64, gwp-asan),  1.00 - 1.07 (arm64, gwp-asan) *
 # -Zsanitizer=cfi			1.05 - 1.20  *
-# -Zsanitize=hwaddress			1.10 - 1.50 (arm64)  *
+# -Zsanitizer=hwaddress			1.10 - 1.50 (arm64)  *
 # -Zsanitizer=leak			1.01 - 1.05  *
 # -Zsanitizer=memory			 1.5 - 2.00  *
-# -Zsanitize=safestack			1.02 - 1.10  *
+# -Zsanitizer=safestack			1.02 - 1.10  *
 # -Zsanitizer=thread			 5.0 - 15.00 *
 
 # * Only these are conditionally set based on worst case
