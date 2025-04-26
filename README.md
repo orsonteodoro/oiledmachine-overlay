@@ -300,10 +300,7 @@ sys-devel/lld
 llvm-runtimes/compiler-rt
 
 # For ARCH=amd64
-llvm-runtimes/compiler-rt-sanitizers[cfi,ubsan]
-
-# For ARCH=arm64
-llvm-runtimes/compiler-rt-sanitizers[ubsan]
+llvm-runtimes/compiler-rt-sanitizers[cfi]
 ```
 
 They are required because it assumed that the vulnerability is unpatched and
