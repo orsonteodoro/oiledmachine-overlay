@@ -259,7 +259,7 @@ opt-in/opt-out is a Faustian bargain.  If you opt-in, you lose.  If you opt-out,
 you lose.  For opt-out, you accept many vulnerabilities with full attacker
 capabilities + performance increase.  For opt-in, you accept ID leading to 1
 concerning full attacker capabilities vulnerability + performance penalty.
-There are several non production sanitizers that have these issue.
+There are several non production sanitizers that have this issue.
 
 The ubsan minimal runtime will be default on in this overlay for hardened marked
 packages.  Ubsan will protect against some of each CE, PE, DoS, DT, ID before
