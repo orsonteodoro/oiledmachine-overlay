@@ -252,7 +252,7 @@ PE, DoS, DT, ID during runtime but have a possible unintended ID tradeoff.
 Users can opt-out by setting CFLAGS_HARDENED_TOLERANCE_USER to a lower multiple
 to exclude them.  This opt-in/opt-out is a Faustian bargain.  If you opt-in, you
 lose.  If you opt-out, you lose.  For opt-out, you accept many vulnerability
-classes available to attack + performance increase.  For opt-in, you accept 1
+classes available to attacker + performance increase.  For opt-in, you accept 1
 unintended vulnerability possibility + performance penalty.
 
 The ubsan minimal runtime will be default on in this overlay for hardened marked
