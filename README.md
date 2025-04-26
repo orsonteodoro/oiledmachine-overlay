@@ -268,7 +268,7 @@ or CFLAGS_HARDENED_TOLERANCE_USER=1.5.  For ARCH=amd64, this is about -O0
 worst case with heavy swapping.  For ARCH=arm64, this is about -O0 best case
 with light swapping to no swapping.
 
-To get the vulernabilities reported per month ranking, ask the AI/LLM this:
+To get the vulnerabilities reported per month ranking, ask the AI/LLM this:
 
 Give me the top 50 vulnerabilities with corresponding temperature based on
 reported vulnerabilities per month sorted by reported vulnerabilities per month
