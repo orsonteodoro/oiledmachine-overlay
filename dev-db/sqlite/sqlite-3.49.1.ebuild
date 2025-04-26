@@ -46,8 +46,8 @@ RESTRICT="
 "
 SLOT="3"
 IUSE="
-debug doc icu +readline secure-delete static-libs tcl test tools
-ebuild_revision_1
+debug doc icu +readline static-libs tcl test tools
+ebuild_revision_2
 "
 REQUIRED_USE="
 	pgo? (
@@ -419,12 +419,10 @@ _src_configure() {
 		)
 	fi
 
-	if use secure-delete ; then
-		# Enable secure_delete pragma by default.
-		# https://sqlite.org/compile.html#secure_delete
-		# https://sqlite.org/pragma.html#pragma_secure_delete
-		append-cppflags -DSQLITE_SECURE_DELETE
-	fi
+	# Enable secure_delete pragma by default.
+	# https://sqlite.org/compile.html#secure_delete
+	# https://sqlite.org/pragma.html#pragma_secure_delete
+	append-cppflags -DSQLITE_SECURE_DELETE
 
 	options+=(
 		$(use_enable static-libs static)
