@@ -271,7 +271,7 @@ Give me the top 50 vulnerabilities with corresponding temperature based on
 reported vulnerabilities per month sorted by reported vulnerabilities per month
 and another column that list the corresponding llvm sanitizer to stop the
 vulnerability. Allow for multiple sanitizer possibilities so that hwasan can be
-use when just asan presented. Give me the full list. The temperature should use
+used when just asan presented. Give me the full list. The temperature should use
 red, orange, yellow, blue. I only want the vulnerabilities from now to previous
 year. The vulnerabilities should be deduped and unique only one cwe per row.
 
