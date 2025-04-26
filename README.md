@@ -330,7 +330,7 @@ sys-devel/lld
 llvm-runtimes/compiler-rt
 
 # For ARCH=amd64
-llvm-runtimes/compiler-rt-sanitizers[cfi,hwsan,ubsan]
+llvm-runtimes/compiler-rt-sanitizers[cfi,hwsan,ubsan,safestack]
 
 # For ARCH=arm64
 llvm-runtimes/compiler-rt-sanitizers[hwsan,ubsan]
