@@ -328,6 +328,7 @@ sys-devel/llvm
 sys-devel/clang
 sys-devel/lld
 llvm-runtimes/compiler-rt
+llvm-runtimes/compiler-rt-sanitizers-logging[production]
 
 # For ARCH=amd64
 llvm-runtimes/compiler-rt-sanitizers[asan,cfi,ubsan,safestack]
@@ -352,16 +353,6 @@ and lower the size cost.  It will transfer two representations to the HDD, so
 it is like worst case double the copy time with -ffat-lto-objects when
 transfering the library which could be like for the static-library 1GB
 without LTO and 2GB with LTO -ffat-lto-objects.
-
-The sanitizer modules must have their logs disabled.  A ebuild will be added
-to disable it systemwide.
-- ASAN: export ASAN_OPTIONS=log_path=/dev/null:verbosity=0
-- HWASAN: export HWASAN_OPTIONS=log_path=/dev/null:verbosity=0
-- UBSAN: export UBSAN_OPTIONS=print_stacktrace=0:log_path=/dev/null
-- MSAN: export MSAN_OPTIONS=log_path=/dev/null:verbosity=0
-- TSAN: export TSAN_OPTIONS=log_path=/dev/null:verbosity=0
-- DFSAN: export DFSAN_OPTIONS=warn_unimplemented=0
-- LSAN: export LSAN_OPTIONS=log_path=/dev/null:verbosity=0
 
 ### 2023 policy
 
