@@ -3590,8 +3590,6 @@ einfo "Using the bundled toolchain"
 	cflags-depends_append
 	# We just want the missing flags (retpoline, -fstack-clash-protection)  flags
 	filter-flags \
-		"-f*cf-protection=*" \
-		"-f*hardened" \
 		"-f*stack-protector" \
 		"-f*sanitize=*" \
 		"-ftrivial-auto-var-init=*" \
@@ -3599,6 +3597,44 @@ einfo "Using the bundled toolchain"
 		"-U_FORTIFY_SOURCE" \
 		"-Wl,-z,now" \
 		"-Wl,-z,relro"
+	replace-flags "-fhardened" "-fcf-protection=full"
+	if \
+		( \
+			use is-flagq "-fc-protection=full" \
+				|| \
+			is-flagq "-fhardened" \
+		) \
+			&& \
+		use cfi \
+	; then
+eerror
+eerror "CFI overlap detected.  Choices"
+eerror
+eerror "(1) Disable USE=cfi"
+eerror "(2) Remove -fc-protection=full"
+eerror "(3) Remove -fhardened to continue"
+eerror "(4) Change to -fc-protection=return"
+eerror
+		die
+	fi
+# LLVM CFI - forward edge protection
+# ShadowCallStack - backward edge protection
+# -fcf-protection=branch - forward edge protection
+# -fcf-protection=return - backward edge protection
+# -fcf-protection=full - forward and backward edge protection
+	if use pgo ; then
+# The compile flags should be the same as the one to generate the profile.
+ewarn "You have enabled PGO, disabling flags that differ from the one used to generate the prebuilt PGO profile"
+ewarn "For proper hardening, disable the pgo USE flag."
+		filter-flags \
+			"-fc-protection=*" \
+			"-fstack-clash-protection" \
+			"-ftrapv" \
+			"-mindirect-branch=*" \
+			"-mfunction-return=*" \
+			"-mretpoline" \
+			"-mretpoline-external-thunk"
+	fi
 
 	# Debug symbols level 2 is still on when official is on even though
 	# is_debug=false.
