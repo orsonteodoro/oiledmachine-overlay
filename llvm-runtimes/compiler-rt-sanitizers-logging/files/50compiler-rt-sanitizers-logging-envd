@@ -1,4 +1,5 @@
 ASAN_OPTIONS="abort_on_error=1:log_path=/dev/null:verbosity=0"
+CFI_OPTIONS="halt_on_error=1"
 DFSAN_OPTIONS="warn_unimplemented=0"
 HWASAN_OPTIONS="abort_on_error=1:log_path=/dev/null:verbosity=0" # No halt on error
 LSAN_OPTIONS="exitcode=1:log_path=/dev/null:verbosity=0" # Halt on error by exitcode
