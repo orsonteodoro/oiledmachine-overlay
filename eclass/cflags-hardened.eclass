@@ -558,21 +558,21 @@ ewarn "LLVM CFI will be soon be required for the oiledmachine-overlay for ARCH=a
 	if tc-is-clang && [[ "${ARCH}" == "amd64" ]] ; then
 		s=$(clang-major-version)
 		if ! has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[lsan]" ; then
-: #ewarn "lsan will be soon be required for the oiledmachine-overlay for ARCH=amd64 without CET.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with lsan USE flag enabled."
+ewarn "lsan will be soon be required for the oiledmachine-overlay for ARCH=amd64 without CET.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with lsan USE flag enabled."
 		fi
 	fi
 
 	if tc-is-clang && [[ "${ARCH}" == "amd64" ]] ; then
 		s=$(clang-major-version)
 		if ! has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[ubsan]" ; then
-: #ewarn "ubsan with clang will be soon be required for the oiledmachine-overlay for ARCH=amd64.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with ubsan USE flag enabled."
+ewarn "ubsan with clang will be soon be required for the oiledmachine-overlay for ARCH=amd64.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with ubsan USE flag enabled."
 		fi
 	fi
 
 	if tc-is-clang && [[ "${ARCH}" == "amd64" || "${ARCH}" == "arm64" ]] ; then
 		s=$(clang-major-version)
 		if ! has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[hwasan]" ; then
-: #ewarn "hwasan with clang will be soon be required for the oiledmachine-overlay for ARCH=arm64.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with hwasan USE flag enabled."
+ewarn "hwasan with clang will be soon be required for the oiledmachine-overlay for ARCH=arm64.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with hwasan USE flag enabled."
 		fi
 	fi
 
