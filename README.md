@@ -244,19 +244,20 @@ The not safe for production sanitizers will default to opt-in in this overlay to
 decrease the attacker capabilties.  Users can choose to opt-out and follow
 upstream's opt-out performance-first security posture.  However, there are
 trade-offs between a combination of several classes of exploits versus
-information disclosure.  Many of the sanitizers mitigate a combination of CE,
-PE, DoS, DT, ID during runtime but have a possible unintended ID tradeoff.
-Users can opt-out by setting CFLAGS_HARDENED_TOLERANCE_USER to a lower multiple
-to exclude them.  This opt-in/opt-out is a Faustian bargain.  If you opt-in, you
-lose.  If you opt-out, you lose.  For opt-out, you accept many vulnerability
-classes available to attacker + performance increase.  For opt-in, you accept 1
-unintended vulnerability possibility + performance penalty.
+information disclosure.  Many of the sanitizers mitigate a combination of Code
+Execution (CE), Privilege Execution (PE), Denial of Service (DoS), Data
+Tampering (DT), Information Disclosure (ID) during runtime but have a possible
+unintended ID tradeoff.  Users can opt-out by setting
+CFLAGS_HARDENED_TOLERANCE_USER to a lower multiple to exclude them.  This
+opt-in/opt-out is a Faustian bargain.  If you opt-in, you lose.  If you opt-out,
+you lose.  For opt-out, you accept many vulnerability classes available to
+attacker + performance increase.  For opt-in, you accept 1 unintended
+vulnerability possibility + performance penalty.
 
 The ubsan minimal runtime will be default on in this overlay for hardened marked
-packages.  Ubsan will protect against some of each Code Execution (CE),
-Privilege Execution (PE), Denial of Service (DoS), Data Tampering (DT),
-Information Disclosure (ID) before they happen.  Only a few vulnerabilities
-will be blocked on the top 50 vulnerabilities reported per month ranking.
+packages.  Ubsan will protect against some of each CE, PE, DoS, DT, ID before
+they happen.  Only a few vulnerabilities will be blocked on the top 50
+vulnerabilities reported per month ranking.
 
 The hwasan will be optional but secure-critical may consider enabling this
 sanitizer since many top 50 vulnerabilities reported per month rankings will be
