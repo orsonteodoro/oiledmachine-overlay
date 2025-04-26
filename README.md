@@ -355,6 +355,10 @@ it is like worst case double the copy time with -ffat-lto-objects when
 transfering the library which could be like for the static-library 1GB
 without LTO and 2GB with LTO -ffat-lto-objects.
 
+ASLR must be enabled for mitigation for sanitizers to prevent a critical
+severity vulnerability.  These checks are in both the compiler-rt-sanitizers
+ebuild.
+
 ### 2023 policy
 
 Due to recent hacking near the beginning of the year (or earlier) of a prominent
