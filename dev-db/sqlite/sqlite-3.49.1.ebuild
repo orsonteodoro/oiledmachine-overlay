@@ -4,13 +4,15 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
+
 # EPGO (custom pgo training) disabled for simplification reasons.
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_TPGO=1
 UOPTS_SUPPORT_TBOLT=1
 
-inherit autotools flag-o-matic multilib-minimal toolchain-funcs uopts
+inherit flag-o-matic cflags-hardened multilib multilib-minimal toolchain-funcs uopts
 
 # On version updates, make sure to read the forum (https://sqlite.org/forum/forum)
 # for hints regarding test failures, backports, etc.
@@ -27,9 +29,9 @@ else
 	KEYWORDS="~amd64 ~x64-macos" # Based on download page
 	S="${WORKDIR}/${PN}-src-${SRC_PV}"
 	SRC_URI="
-		https://sqlite.org/2024/${PN}-src-${SRC_PV}.zip
+		https://sqlite.org/2025/${PN}-src-${SRC_PV}.zip
 		doc? (
-			https://sqlite.org/2024/${PN}-doc-${DOC_PV}.zip
+			https://sqlite.org/2025/${PN}-doc-${DOC_PV}.zip
 		)
 	"
 fi
@@ -74,7 +76,6 @@ DEPEND="
 	)
 "
 BDEPEND="
-	>=dev-lang/tcl-8.6:0
 "
 if [[ "${PV}" == "9999" ]] ; then
 	BDEPEND+="
@@ -87,9 +88,11 @@ else
 fi
 
 PATCHES=(
-	"${FILESDIR}/${PN}-3.45.1-ppc64-ptr.patch"
-	"${FILESDIR}/${PN}-3.47.1-buildtclext.patch"
 	"${FILESDIR}/${PN}-3.47.2-hwtime.h-Don-t-use-rdtsc-on-i486.patch"
+	# https://sqlite.org/forum/forumpost/f93323a743
+	"${FILESDIR}/${PN}-3.49.0-icu-tests.patch"
+	# https://bugs.gentoo.org/949981, https://www2.sqlite.org/src/info/ffd05de8a3b7cab1
+	"${FILESDIR}/${PN}-3.49.1-jimsh.patch"
 )
 
 erun() {
@@ -226,7 +229,6 @@ src_unpack() {
 src_prepare() {
 	default
 
-	eautoreconf
 	prepare_abi() {
 		cp -a \
 			"${S}" \
@@ -252,6 +254,7 @@ _src_configure() {
 	uopts_src_configure
 	# Skip configure check
 	append-flags -Wno-error=coverage-mismatch
+	cflags-hardened_append
 	local -x CPPFLAGS="${CPPFLAGS}"
 	local -x CFLAGS="${CFLAGS}"
 	local options=()
@@ -302,7 +305,7 @@ _src_configure() {
 	# https://sqlite.org/compile.html#enable_fts5
 	# https://sqlite.org/fts3.html
 	# https://sqlite.org/fts5.html
-	append-cppflags -DSQLITE_ENABLE_FTS3 -DSQLITE_ENABLE_FTS3_PARENTHESIS -DSQLITE_ENABLE_FTS4
+	append-cppflags -DSQLITE_ENABLE_FTS3 -DSQLITE_ENABLE_FTS3_PARENTHESIS
 	options+=(
 		--enable-fts5
 	)
@@ -313,7 +316,9 @@ _src_configure() {
 	# Support memsys5 memory allocator.
 	# https://sqlite.org/compile.html#enable_memsys5
 	# https://sqlite.org/malloc.html#memsys5
-	append-cppflags -DSQLITE_ENABLE_MEMSYS5
+	options+=(
+		--enable-memsys5
+	)
 
 	# Support sqlite3_normalized_sql() function.
 	# https://sqlite.org/c3ref/expanded_sql.html
@@ -339,12 +344,17 @@ _src_configure() {
 	# https://sqlite.org/compile.html#enable_geopoly
 	# https://sqlite.org/rtree.html
 	# https://sqlite.org/geopoly.html
-	append-cppflags -DSQLITE_ENABLE_RTREE -DSQLITE_ENABLE_GEOPOLY
+	options+=(
+		--enable-rtree
+		--enable-geopoly
+	)
 
 	# Support Session extension.
 	# https://sqlite.org/compile.html#enable_session
 	# https://sqlite.org/sessionintro.html
-	append-cppflags -DSQLITE_ENABLE_SESSION
+	options+=(
+		--enable-session
+	)
 
 	# Support scan status functions.
 	# https://sqlite.org/compile.html#enable_stmt_scanstatus
@@ -390,8 +400,9 @@ _src_configure() {
 	if use icu ; then
 		# Support ICU extension.
 		# https://sqlite.org/compile.html#enable_icu
-		append-cppflags -DSQLITE_ENABLE_ICU
-		sed -e "s/^TLIBS = @LIBS@/& -licui18n -licuuc/" -i "Makefile.in" || die "sed failed"
+		options+=(
+			--with-icu-config
+		)
 	fi
 
 	options+=(
@@ -451,6 +462,20 @@ _src_configure() {
 		fi
 	fi
 
+	if [[ "${CHOST}" != *"-darwin"* ]] ; then
+		# set SONAME for the library
+		options+=(
+			--soname=legacy
+		)
+	else
+		# to allow install_name_tool id change
+		append-ldflags -headerpad_max_install_names
+	fi
+
+	# https://sqlite.org/forum/forumpost/4f4d06a9f6683bb9
+	tc-export_build_env BUILD_CC
+
+	CC_FOR_BUILD="${BUILD_CC}" \
 	econf "${options[@]}"
 }
 
@@ -565,6 +590,15 @@ multilib_src_install() {
 		HAVE_TCL=$(usex tcl 1 "") \
 		TCLLIBDIR="${EPREFIX}/usr/$(get_libdir)/${P}" \
 		install
+
+	if [[ "${CHOST}" == *"-darwin"* ]] ; then
+	# The fix for install_name, soname=legacy doesn't work for this (but
+	# breaks the build instead)
+		install_name_tool \
+			-id "${EPREFIX}/usr/$(get_libdir)/libsqlite3$(get_libname 0)" \
+			"${ED}/usr/$(get_libdir)/libsqlite3$(get_libname ${PV})" \
+			|| die "failed to fix install_name"
+	fi
 
 	if use tools && multilib_is_native_abi ; then
 		install_tool() {
