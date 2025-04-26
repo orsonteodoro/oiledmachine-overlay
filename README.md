@@ -256,7 +256,7 @@ classes available to attacker + performance increase.  For opt-in, you accept 1
 unintended vulnerability possibility + performance penalty.
 
 The ubsan minimal runtime will be default on in this overlay for hardened marked
-packages.  Ubsan will protect against Code Execution (CE),
+packages.  Ubsan will protect against some of each Code Execution (CE),
 Privilege Execution (PE), Denial of Service (DoS), Data Tampering (DT),
 Information Disclosure (ID) before they happen.  Only a few vulnerabilities
 will be blocked on the top 50 vulnerabilities reported per month ranking.
