@@ -589,7 +589,7 @@ einfo "rustc host:  ${host}"
 |"web-server")\
 		]] \
 	; then
-	# CE, DoS
+	# CE, PE, DoS
 		RUSTFLAGS+=" -C link-arg=-z -C link-arg=noexecstack"
 	fi
 

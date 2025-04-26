@@ -289,7 +289,7 @@ arm64 and as a best case and worst case.
 
 To get a nice table of vulnerability protection per `<flag>`, ask the AI/LLM this:
 
-Give me a y/n table of what would be protected against for code execution,
+Give me a y, n, n/a table of what would be protected against for code execution,
 privilege escalation, data tampering, information disclosure, denial of service
 for `<flag>`.  Also include performance impact as a normalized decimal multiple.
 Give me the performance impacts for both amd64 and arm64 and as a best case and

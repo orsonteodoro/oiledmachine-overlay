@@ -815,7 +815,7 @@ einfo "All SSP hardening (All functions hardened)"
 |"web-server")\
 		]] \
 	; then
-	# CE, DoS
+	# CE, PE, DoS
 		filter-flags "-Wa,--noexecstack"
 		filter-flags "-Wl,-z,noexecstack"
 		append-flags "-Wa,--noexecstack"
