@@ -337,7 +337,7 @@ llvm-runtimes/compiler-rt-sanitizers-logging[production]
 llvm-runtimes/compiler-rt-sanitizers[asan,cfi,gwp-asan,ubsan,safestack]
 
 # For ARCH=arm64
-llvm-runtimes/compiler-rt-sanitizers[gwp-asan,hwsan,ubsan,safestack]
+llvm-runtimes/compiler-rt-sanitizers[asan,gwp-asan,hwsan,ubsan,safestack]
 ```
 
 They are required because it assumed that the vulnerability is unpatched and
