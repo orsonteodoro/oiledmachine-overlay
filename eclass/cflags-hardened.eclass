@@ -571,7 +571,7 @@ ewarn "ubsan with clang will be soon be required for the oiledmachine-overlay fo
 
 	if tc-is-clang && [[ "${ARCH}" == "amd64" || "${ARCH}" == "arm64" ]] ; then
 		s=$(clang-major-version)
-		if ! has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[hwbsan]" ; then
+		if ! has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[hwasan]" ; then
 ewarn "hwasan with clang will be soon be required for the oiledmachine-overlay for ARCH=arm64.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with hwasan USE flag enabled."
 		fi
 	fi
@@ -1083,8 +1083,10 @@ einfo "All SSP hardening (All functions hardened)"
 		[[ "${CFLAGS_HARDENED_HWASAN:-0}" == "1"  ]] \
 			&& \
 		[[ "${ARCH}" == "amd64" || "${ARCH}" == "arm64" ]] \
-			&&
+			&& \
 		_cflags-hardened_has_mte \
+			&& \
+		tc-is-clang \
 	; then
 		if ! _rustflags-hardened_has_mte ; then
 ewarn "You are using an emulated memory tagging.  It will have a performance hit."

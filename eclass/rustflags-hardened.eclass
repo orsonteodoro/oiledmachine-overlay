@@ -660,7 +660,7 @@ einfo "rustc host:  ${host}"
 	# We will need to test them before allowing users to use them.
 	# Enablement is complicated by LLVM_COMPAT and compile time to build LLVM with sanitizers enabled.
 
-	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.8" && [[ "${RUSTFLAGS_HARDENED_HWASAN:-0}" == "1" ]] ; then
+	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.8" && [[ "${RUSTFLAGS_HARDENED_HWASAN:-0}" == "1" ]] && tc-is-clang ; then
 		if ! _rustflags-hardened_has_mte ; then
 ewarn "You are using an emulated memory tagging.  It will have a performance hit."
 		fi
