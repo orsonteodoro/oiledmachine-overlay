@@ -25,7 +25,7 @@ SLOT="$(ver_cut 1-3)"
 IUSE+="
 +abi_x86_32 abi_x86_64 +clang debug hexagon +libfuzzer +memprof +orc +profile
 test +xray
-ebuild_revision_8
+ebuild_revision_9
 "
 # sanitizer targets, keep in sync with config-ix.cmake
 # NB: ubsan, scudo deliberately match two entries
@@ -266,6 +266,9 @@ REQUIRED_USE="
 		profile
 		xray
 	)
+"
+RDEPEND="
+	llvm-runtimes/compiler-rt-sanitizers-logging
 "
 DEPEND="
 	llvm-core/llvm:${LLVM_MAJOR}

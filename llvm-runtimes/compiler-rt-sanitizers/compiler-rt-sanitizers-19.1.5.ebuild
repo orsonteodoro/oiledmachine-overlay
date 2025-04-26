@@ -48,7 +48,7 @@ SLOT="${LLVM_MAJOR}"
 IUSE+="
 +abi_x86_32 abi_x86_64 +clang +ctx-profile debug hexagon +libfuzzer +memprof
 +orc +profile test +xray
-ebuild_revision_8
+ebuild_revision_9
 ${LLVM_EBUILDS_LLVM19_REVISION}
 "
 # sanitizer targets, keep in sync with config-ix.cmake
@@ -293,6 +293,9 @@ REQUIRED_USE="
 		profile
 		xray
 	)
+"
+RDEPEND="
+	llvm-runtimes/compiler-rt-sanitizers-logging
 "
 DEPEND="
 	llvm-core/llvm:${LLVM_MAJOR}

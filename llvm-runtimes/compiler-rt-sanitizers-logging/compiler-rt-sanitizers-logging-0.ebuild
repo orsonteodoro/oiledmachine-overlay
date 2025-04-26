@@ -4,8 +4,6 @@
 
 EAPI=8
 
-inherit check-reqs
-
 S="${WORKDIR}"
 
 DESCRIPTION="Enable/disable sanitizer system-wide"
@@ -23,23 +21,6 @@ DEPEND+="
 BDEPEND+="
 "
 DOCS=( )
-
-pkg_setup() {
-	linux-info_pkg_setup
-	CONFIG_CHECK="
-		~RELOCATABLE
-		~RANDOMIZE_BASE
-	"
-	if [[ "${ARCH}" == "amd64" ]] ; then
-		CONFIG_CHECK+="
-			~RANDOMIZE_MEMORY
-		"
-	fi
-	WARNING_RELOCATABLE="CONFIG_RELOCATABLE is required for mitigation for non-production compiler-rt-sanitizers and Scudo."
-	WARNING_RANDOMIZE_BASE="CONFIG_RANDOMIZE_BASE (KASLR) is required for mitigation for non-production compiler-rt-sanitizers and Scudo."
-	WARNING_RANDOMIZE_MEMORY="CONFIG_RANDOMIZE_MEMORY is required for mitigation for non-production compiler-rt-sanitizers and Scudo."
-	check_extra_config
-}
 
 src_install() {
 	if use production ; then
