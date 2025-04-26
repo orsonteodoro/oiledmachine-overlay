@@ -48,7 +48,7 @@ SLOT="${LLVM_MAJOR}"
 IUSE+="
 +abi_x86_32 abi_x86_64 +clang +ctx-profile debug hexagon +libfuzzer +memprof
 +orc +profile test +xray
-ebuild_revision_4
+ebuild_revision_8
 ${LLVM_EBUILDS_LLVM19_REVISION}
 "
 # sanitizer targets, keep in sync with config-ix.cmake
@@ -359,23 +359,21 @@ pkg_pretend() {
 }
 
 pkg_setup() {
-	if use scudo ; then
-		linux-info_pkg_setup
-# See https://llvm.org/docs/ScudoHardenedAllocator.html#randomness
-		CONFIG_CHECK="
-			~RELOCATABLE
-			~RANDOMIZE_BASE
+	linux-info_pkg_setup
+	# See https://llvm.org/docs/ScudoHardenedAllocator.html#randomness
+	CONFIG_CHECK="
+		~RELOCATABLE
+		~RANDOMIZE_BASE
+	"
+	if [[ "${ARCH}" == "amd64" ]] ; then
+		CONFIG_CHECK+="
+			~RANDOMIZE_MEMORY
 		"
-		if [[ "${ARCH}" == "amd64" ]] ; then
-			CONFIG_CHECK+="
-				~RANDOMIZE_MEMORY
-			"
-		fi
-		WARNING_RELOCATABLE="CONFIG_RELOCATABLE is required by Scudo."
-		WARNING_RANDOMIZE_BASE="CONFIG_RANDOMIZE_BASE (KASLR) is required by Scudo."
-		WARNING_RANDOMIZE_MEMORY="CONFIG_RANDOMIZE_MEMORY is required by Scudo."
-		check_extra_config
 	fi
+	WARNING_RELOCATABLE="CONFIG_RELOCATABLE is required for mitigation for non-production compiler-rt-sanitizers and Scudo."
+	WARNING_RANDOMIZE_BASE="CONFIG_RANDOMIZE_BASE (KASLR) is required for mitigation for hardened non-production compiler-rt-sanitizers and Scudo."
+	WARNING_RANDOMIZE_MEMORY="CONFIG_RANDOMIZE_MEMORY is required for mitigiation for non-production compiler-rt-sanitizers and Scudo."
+	check_extra_config
 	check_space
 	python-any-r1_pkg_setup
 }
