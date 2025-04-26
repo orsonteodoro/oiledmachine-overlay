@@ -325,6 +325,7 @@ _cflags-hardened_has_cet() {
 # @FUNCTION: _cflags-hardened_append_clang_retpoline
 # @DESCRIPTION:
 # Apply retpoline flags for Clang.
+# PE, ID
 _cflags-hardened_append_clang_retpoline() {
 	tc-is-clang || return
 	[[ "${ARCH}" == "amd64" ]] || return
@@ -376,6 +377,7 @@ ewarn "Avoiding possible flag conflict between -fcf-protection=return and -mretp
 # @FUNCTION: _cflags-hardened_append_gcc_retpoline
 # @DESCRIPTION:
 # Apply retpoline flags for gcc
+# PE, ID
 _cflags-hardened_append_gcc_retpoline() {
 	tc-is-gcc || return
 	[[ "${ARCH}" == "amd64" ]] || return
@@ -462,7 +464,6 @@ ewarn "Forcing -mindirect-branch-register to avoid flag conflict between -fcf-pr
 
 	if [[ "${CFLAGS_HARDENED_INDIRECT_BRANCH_REGISTER:-1}" == "1" ]] && [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "register" || "${CFLAGS}" =~ ("mindirect-branch"|"function-return") ]] && test-flags-CC "-mindirect-branch-register" ; then
 	# Mitigation against CFI but does not mitigate Spectre v2.
-	# ID
 		append-flags $(test-flags-CC "-mindirect-branch-register")
 		CFLAGS_HARDENED_CFLAGS+=" -mindirect-branch-register"
 		CFLAGS_HARDENED_CXXFLAGS+=" -mindirect-branch-register"

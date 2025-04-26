@@ -404,7 +404,6 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	fi
 
 	if [[ "${RUSTFLAGS_HARDENED_RETPOLINE:-1}" == "1" && "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("id"|"kernel") ]] ; then
-	# ID
 	# Spectre V2 mitigation Linux kernel case
 		# For GCC it uses
 		#   General case: -mindirect-branch=thunk-extern -mindirect-branch-register
@@ -433,7 +432,6 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		]] \
 	; then
 		:
-	# DoS, ID
 	# Spectre V2 mitigation general case
 		# -mfunction-return and -fcf-protection are mutually exclusive.
 
@@ -451,7 +449,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 			if _rustflags-hardened_has_cet ; then
 				:
 			else
-	# DoS, ID
+	# PE, ID
 				RUSTFLAGS+=" -C target-feature=+retpoline"
 			fi
 		fi
