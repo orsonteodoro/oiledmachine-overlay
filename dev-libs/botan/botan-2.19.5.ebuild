@@ -30,7 +30,7 @@ VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/botan.asc"
 inherit cflags-hardened edo flag-o-matic multiprocessing python-r1
 inherit toolchain-funcs verify-sig
 
-# We don't list 32-bit because of unpatched vulnerabilities.
+# We don't list 32-bit because of unpatched vulnerabilities in those arches.
 KEYWORDS="
 ~amd64 ~arm64 ~hppa ~loong ~ppc64 ~riscv ~sparc
 "
