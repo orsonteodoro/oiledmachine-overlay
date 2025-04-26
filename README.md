@@ -251,14 +251,14 @@ will be blocked on the top 50 vulnerabilities per month ranking.
 
 The not safe for production sanitizers will default to opt-in in this overlay to
 decrease the attacker capabilties.  Users can choose to opt-out and follow
-upstream opt-out performance-first security posture.  However, there are
-trade-offs between several classes of exploits versus information disclosure.
-Many of the sanitizers mitigate a combination of CE, PE, DoS, DT, ID during
-runtime but have a possible unintended ID tradeoff.  Users can opt-in by
-additional per-package USE flags.  This opt-in/opt-out is a Faustian bargain.
-If you opt-in, you lose.  If you opt-out, you lose.  For opt-out, you accept
-many vulnerabilities + performance increase.  For opt-in, you accept 1
-unintended vulnerability possibility + performance penalty.
+upstream opt-out convienience-first security posture.  However, there are
+trade-offs between a combination of several classes of exploits versus
+information disclosure.  Many of the sanitizers mitigate a combination of CE,
+PE, DoS, DT, ID during runtime but have a possible unintended ID tradeoff.
+Users can opt-in by additional per-package USE flags.  This opt-in/opt-out is a
+Faustian bargain.  If you opt-in, you lose.  If you opt-out, you lose.  For
+opt-out, you accept many vulnerabilities + performance increase.  For opt-in,
+you accept 1 unintended vulnerability possibility + performance penalty.
 
 While it may upset minimalists, this forced mitigation may prevent some classes
 of real world cost loss.
