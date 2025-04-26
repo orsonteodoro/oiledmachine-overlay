@@ -114,7 +114,7 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # -C soft-float				 2.0 - 10.00 *
 # -C link-arg=-D_FORTIFY_SOURCE=2	1.01
 # -C link-arg=-D_FORTIFY_SOURCE=3	1.02
-# -Zsanitizer=address			2.00 - 3.00  *
+# -fsanitize=address			2.00 - 3.00 (asan); 1.00 - 1.05 (amd64, gwp-asan),  1.00 - 1.07 (arm64, gwp-asan) *
 # -Zsanitizer=cfi			1.05 - 1.20  *
 # -Zsanitize=hwaddress			1.10 - 1.50 (arm64)  *
 # -Zsanitizer=leak			1.01 - 1.05  *
@@ -661,12 +661,30 @@ einfo "rustc host:  ${host}"
 	# We will need to test them before allowing users to use them.
 	# Enablement is complicated by LLVM_COMPAT and compile time to build LLVM with sanitizers enabled.
 
-	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.8" && [[ "${RUSTFLAGS_HARDENED_HWASAN:-0}" == "1" ]] && tc-is-clang && [[ "${ARCH}" == "arm64" ]] ; then
+	if \
+		[[ "${RUSTFLAGS_HARDENED_GWP_ASAN:-0}" == "1" ]] \
+			&& \
+		( \
+			( _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" && [[ "${ARCH}" == "amd64" ]] ) \
+				||
+			( _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.07" && [[ "${ARCH}" == "arm64" ]] ) \
+		) \
+	; then
+	# For performance-critical
+		RUSTFLAGS+=" -Zsanitizer=address"
+		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[gwp-asan]" ; then
+eerror "Missing GWP-ASAN sanitizer.  Do the following:"
+eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
+eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[asan,gwp-asan]"
+eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
+
+			die
+		fi
+	elif _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.8" && [[ "${RUSTFLAGS_HARDENED_HWASAN:-0}" == "1" ]] && tc-is-clang && [[ "${ARCH}" == "arm64" ]] ; then
+	# For secure-critical
 		if ! _rustflags-hardened_has_mte ; then
 ewarn "You are using an emulated memory tagging.  It will have a performance hit."
 		fi
-# Missing -fno-sanitize-recover for Rust
-ewarn "HWASAN_OPTIONS=halt_on_error=1 must be placed in wrapper or env file for HWASAN mitigation to be effective."
 		RUSTFLAGS+=" -Zsanitizer=hwaddress"
 		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[hwasan]" ; then
 eerror "Missing HWASAN sanitizer.  Do the following:"
@@ -677,8 +695,7 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 			die
 		fi
 	elif _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "3.00" && [[ "${RUSTFLAGS_HARDENED_ASAN:-0}" == "1" ]] && [[ "${ARCH}" == "amd64" ]] ; then
-# Missing -fno-sanitize-recover for Rust
-ewarn "ASAN_OPTIONS=halt_on_error=1 must be placed in wrapper or env file for ASAN mitigation to be effective."
+	# For secure-critical
 		RUSTFLAGS+=" -Zsanitizer=address"
 		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[asan]" ; then
 eerror "Missing ASAN sanitizer.  Do the following:"
@@ -691,8 +708,6 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 	fi
 
 	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.20" && [[ "${RUSTFLAGS_HARDENED_CFI:-0}" == "1" ]] ; then
-# Missing -fno-sanitize-recover for Rust
-ewarn "CFI_OPTIONS=halt_on_error=1 must be placed in wrapper or env file for CFI mitigation to be effective."
 		RUSTFLAGS+=" -Zsanitizer=cfi"
 		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[cfi]" ; then
 eerror "Missing CFI sanitizer.  Do the following:"
@@ -707,8 +722,6 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 	fi
 
 	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" && [[ "${RUSTFLAGS_HARDENED_LSAN:-0}" == "1" ]] ; then
-# Missing -fno-sanitize-recover for Rust
-ewarn "LSAN_OPTIONS=halt_on_error=1 must be placed in wrapper or env file for LSAN mitigation to be effective."
 		RUSTFLAGS+=" -Zsanitizer=leak"
 		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[lsan]" ; then
 eerror "Missing LSAN sanitizer.  Do the following:"
@@ -721,8 +734,6 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 	fi
 
 	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "2.00" && [[ "${RUSTFLAGS_HARDENED_MSAN:-0}" == "1" ]] ; then
-# Missing -fno-sanitize-recover for Rust
-ewarn "MSAN_OPTIONS=halt_on_error=1 must be placed in wrapper or env file for MSAN mitigation to be effective."
 		RUSTFLAGS+=" -Zsanitizer=memory"
 		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[msan]" ; then
 eerror "Missing MSAN sanitizer.  Do the following:"
@@ -735,8 +746,6 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 	fi
 
 	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" && [[ "${RUSTFLAGS_HARDENED_SAFESTACK:-0}" == "1" ]] && tc-is-clang ; then
-# Missing -fno-sanitize-recover for Rust
-ewarn "ASAN_OPTIONS=halt_on_error=1 and HWASAN_OPTIONS=halt_on_error=1 must be placed in wrapper or env file for SafeStack mitigation to be effective."
 ewarn "SafeStack should be combined with either ASAN or HWASAN for halt on error"
 		RUSTFLAGS+=" -Zsanitizer=safestack"
 		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[safestack]" ; then
@@ -750,8 +759,6 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 	fi
 
 	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "15.00" && [[ "${RUSTFLAGS_HARDENED_TSAN:-0}" == "1" ]] ; then
-# Missing -fno-sanitize-recover for Rust
-ewarn "TSAN_OPTIONS=halt_on_error=1 must be placed in wrapper or env file for TSAN mitigation to be effective."
 		RUSTFLAGS+=" -Zsanitizer=thread"
 		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[tsan]" ; then
 eerror "Missing TSAN sanitizer.  Do the following:"

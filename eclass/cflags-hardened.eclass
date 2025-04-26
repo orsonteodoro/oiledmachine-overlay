@@ -148,7 +148,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # -fstack-clash-protection		1.02 - 1.10
 # -ftrapv				1.20 - 2.00  *
 # -fcf-protection=full			1.03 - 1.10
-# -fsanitize=address			2.00 - 3.00  *
+# -fsanitize=address			2.00 - 3.00 (asan); 1.00 - 1.05 (amd64, gwp-asan),  1.00 - 1.07 (arm64, gwp-asan) *
 # -fsanitize=cfi			1.05 - 1.20  *
 # -fsanitize=hwaddress			1.10 - 1.50 (arm64)  *
 # -fsanitize=leak			1.01 - 1.05  *
@@ -581,6 +581,13 @@ ewarn "hwasan with clang will be soon be required for the oiledmachine-overlay f
 		s=$(clang-major-version)
 		if ! has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[asan]" ; then
 ewarn "asan with clang will be soon be required for the oiledmachine-overlay for ARCH=arm64.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with hwasan USE flag enabled."
+		fi
+	fi
+
+	if tc-is-clang ; then
+		s=$(clang-major-version)
+		if ! has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[gwp-asan]" ; then
+ewarn "asan and gwp-asan with clang will be soon be required for the oiledmachine-overlay for ARCH=arm64 and ARCH=amd64.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with both asan and gwp-asan USE flag enabled."
 		fi
 	fi
 
@@ -1086,6 +1093,29 @@ einfo "All SSP hardening (All functions hardened)"
 	filter-flags "-f*sanitize=hwaddress"
 	filter-flags "-f*sanitize=address"
 	if \
+		( \
+			( _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" && [[ "${ARCH}" == "amd64" ]] ) \
+				||
+			( _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.07" && [[ "${ARCH}" == "arm64" ]] ) \
+		) \
+			&& \
+		[[ "${CFLAGS_HARDENED_GWP_ASAN:-0}" == "1"  ]] \
+			&& \
+		tc-is-clang \
+	; then
+	# For performance-critical
+		append-flags "-fsanitize=address"
+		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=address"
+		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=address"
+		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[gwp-asan]" ; then
+eerror "Missing GWP-ASAN sanitizer.  Do the following:"
+eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
+eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[asan,gwp-asan]"
+eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
+
+			die
+		fi
+	elif \
 		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.8" \
 			&& \
 		[[ "${CFLAGS_HARDENED_HWASAN:-0}" == "1"  ]] \
@@ -1096,6 +1126,7 @@ einfo "All SSP hardening (All functions hardened)"
 			&& \
 		tc-is-clang \
 	; then
+	# For secure-critical
 		if ! _rustflags-hardened_has_mte ; then
 ewarn "You are using an emulated memory tagging.  It will have a performance hit."
 		fi
@@ -1118,6 +1149,7 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 			&& \
 		[[ "${ARCH}" == "amd64" ]] \
 	; then
+	# For secure-critical
 		append-flags "-fsanitize=address"
 		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=address"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=address"
