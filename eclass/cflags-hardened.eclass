@@ -279,7 +279,10 @@ einfo "CFLAGS_HARDENED_TOLERANCE:  ${CFLAGS_HARDENED_TOLERANCE} (similar to -O3)
 	else
 einfo "CFLAGS_HARDENED_TOLERANCE:  ${CFLAGS_HARDENED_TOLERANCE} (similar to -Ofast)"
 	fi
-einfo "The CFLAGS_HARDENED_TOLERANCE_USER can override this.  See cflags-hardened.eclass for details."
+einfo
+einfo "The CFLAGS_HARDENED_TOLERANCE_USER can override this.  See"
+einfo "cflags-hardened.eclass for details."
+einfo
 }
 
 # @FUNCTION: _cflags-hardened_has_mte
@@ -335,7 +338,10 @@ _cflags-hardened_append_clang_retpoline() {
 	# Allow -mretpoline-external-thunk
 		filter-flags "-f*cf-protection=*"
 	elif is-flagq "-fcf-protection=*"  ; then
-ewarn "Avoiding possible flag conflict between -fcf-protection=return and -mretpoline-external-thunk implied by -fcf-protection=full."
+ewarn
+ewarn "Avoiding possible flag conflict between -fcf-protection=return and"
+ewarn "-mretpoline-external-thunk implied by -fcf-protection=full."
+ewarn
 		filter-flags "-mretpoline-external-thunk"
 		return
 	fi
@@ -387,7 +393,10 @@ _cflags-hardened_append_gcc_retpoline() {
 	# Allow -mfunction-return=*
 		filter-flags "-f*cf-protection=*"
 	elif is-flagq "-fcf-protection=*"  ; then
-ewarn "Forcing -mindirect-branch-register to avoid flag conflict between -fcf-protection=return implied by -fcf-protection=full."
+ewarn
+ewarn "Forcing -mindirect-branch-register to avoid flag conflict between"
+ewarn "-fcf-protection=return implied by -fcf-protection=full."
+ewarn
 		CFLAGS_HARDENED_RETPOLINE_FLAVOR="register"
 	fi
 
@@ -399,15 +408,20 @@ ewarn "Forcing -mindirect-branch-register to avoid flag conflict between -fcf-pr
 	filter-flags "-m*function-return=*"
 	filter-flags "-m*indirect-branch-register"
 
-	if [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "testing" ]] && test-flags-CC "-mfunction-return=keep" ; then
+	if \
+		[[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "testing" ]] \
+			&& \
+		test-flags-CC "-mfunction-return=keep" \
+	; then
 	# No mitigation
 		append-flags $(test-flags-CC "-mfunction-return=keep")
 		CFLAGS_HARDENED_CFLAGS+=" -mfunction-return=keep"
 		CFLAGS_HARDENED_CXXFLAGS+=" -mfunction-return=keep"
 	elif \
 		[[ \
-			   "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("balanced"|"default"|"portable") \
-			|| "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "secure" \
+			"${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("balanced"|"default"|"portable") \
+				|| \
+			"${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "secure" \
 		]] \
 			&& \
 		test-flags-CC "-mfunction-return=thunk" \
@@ -416,12 +430,20 @@ ewarn "Forcing -mindirect-branch-register to avoid flag conflict between -fcf-pr
 		append-flags $(test-flags-CC "-mfunction-return=thunk")
 		CFLAGS_HARDENED_CFLAGS+=" -mfunction-return=thunk"
 		CFLAGS_HARDENED_CXXFLAGS+=" -mfunction-return=thunk"
-	elif [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("secure-embedded"|"secure-lightweight") ]] && test-flags-CC "-mfunction-return=thunk-extern" ; then
+	elif \
+		[[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("secure-embedded"|"secure-lightweight") ]] \
+			&& \
+		test-flags-CC "-mfunction-return=thunk-extern" \
+	; then
 	# Full mitigation against Spectre v2 (deterministic)
 		append-flags $(test-flags-CC "-mfunction-return=thunk-extern")
 		CFLAGS_HARDENED_CFLAGS+=" -mfunction-return=thunk-extern"
 		CFLAGS_HARDENED_CXXFLAGS+=" -mfunction-return=thunk-extern"
-	elif [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("secure-realtime"|"secure-speed") ]] && test-flags-CC "-mfunction-return=thunk-inline" ; then
+	elif \
+		[[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("secure-realtime"|"secure-speed") ]] \
+			&& \
+		test-flags-CC "-mfunction-return=thunk-inline" \
+	; then
 	# Full mitigation against Spectre v2 (deterministic)
 		append-flags $(test-flags-CC "-mfunction-return=thunk-inline")
 		CFLAGS_HARDENED_CFLAGS+=" -mfunction-return=thunk-inline"
@@ -429,20 +451,31 @@ ewarn "Forcing -mindirect-branch-register to avoid flag conflict between -fcf-pr
 	fi
 
 
-	if [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("secure-realtime"|"secure-speed") ]] && which lscpu && grep -q -e "Spectre v2.*Mitigation.*IBRS_FW" ; then
+	if \
+		[[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("secure-realtime"|"secure-speed") ]] \
+			&& \
+		which lscpu \
+			&& \
+		grep -q -e "Spectre v2.*Mitigation.*IBRS_FW" \
+	; then
 	# Full mitigation against Spectre v2 (hardware implementation)
 		append-flags $(test-flags-CC "-mindirect-branch=ibrs")
 		CFLAGS_HARDENED_CFLAGS+=" -mindirect-branch=ibrs"
 		CFLAGS_HARDENED_CXXFLAGS+=" -mindirect-branch=ibrs"
-	elif [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "testing" ]] && test-flags-CC "-mindirect-branch=none" ; then
+	elif \
+		[[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "testing" ]] \
+			&& \
+		test-flags-CC "-mindirect-branch=none" \
+	; then
 	# No mitigation
 		append-flags $(test-flags-CC "-mindirect-branch=none")
 		CFLAGS_HARDENED_CFLAGS+=" -mindirect-branch=none"
 		CFLAGS_HARDENED_CXXFLAGS+=" -mindirect-branch=none"
 	elif \
 		[[ \
-			   "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("balanced"|"default"|"portable") \
-			|| "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "secure" \
+			"${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("balanced"|"default"|"portable") \
+				|| \
+			"${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "secure" \
 		]] \
 			&& \
 		test-flags-CC "-mindirect-branch=thunk" \
@@ -451,19 +484,37 @@ ewarn "Forcing -mindirect-branch-register to avoid flag conflict between -fcf-pr
 		append-flags $(test-flags-CC "-mindirect-branch=thunk")
 		CFLAGS_HARDENED_CFLAGS+=" -mindirect-branch=thunk"
 		CFLAGS_HARDENED_CXXFLAGS+=" -mindirect-branch=thunk"
-	elif [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("secure-embedded"|"secure-lightweight") ]] && test-flags-CC "-mindirect-branch=thunk-extern" ; then
+	elif \
+		[[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("secure-embedded"|"secure-lightweight") ]] \
+			&& \
+		test-flags-CC "-mindirect-branch=thunk-extern" \
+	; then
 	# Full mitigation against Spectre v2 (deterministic)
 		append-flags $(test-flags-CC "-mindirect-branch=thunk-extern")
 		CFLAGS_HARDENED_CFLAGS+=" -mindirect-branch=thunk-extern"
 		CFLAGS_HARDENED_CXXFLAGS+=" -mindirect-branch=thunk-extern"
-	elif [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("secure-realtime"|"secure-speed") ]] && test-flags-CC "-mindirect-branch=thunk-inline" ; then
+	elif \
+		[[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("secure-realtime"|"secure-speed") ]] \
+			&& \
+		test-flags-CC "-mindirect-branch=thunk-inline" \
+	; then
 	# Full mitigation against Spectre v2 (deterministic)
 		append-flags $(test-flags-CC "-mindirect-branch=thunk-inline")
 		CFLAGS_HARDENED_CFLAGS+=" -mindirect-branch=thunk-inline"
 		CFLAGS_HARDENED_CXXFLAGS+=" -mindirect-branch=thunk-inline"
 	fi
 
-	if [[ "${CFLAGS_HARDENED_INDIRECT_BRANCH_REGISTER:-1}" == "1" ]] && [[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "register" || "${CFLAGS}" =~ ("mindirect-branch"|"function-return") ]] && test-flags-CC "-mindirect-branch-register" ; then
+	if \
+		[[ "${CFLAGS_HARDENED_INDIRECT_BRANCH_REGISTER:-1}" == "1" ]] \
+			&& \
+		[[ \
+			"${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" == "register" \
+				|| \
+			"${CFLAGS}" =~ ("mindirect-branch"|"function-return") \
+		]] \
+			&& \
+		test-flags-CC "-mindirect-branch-register" \
+	; then
 	# Mitigation against CFI but does not mitigate Spectre v2.
 		append-flags $(test-flags-CC "-mindirect-branch-register")
 		CFLAGS_HARDENED_CFLAGS+=" -mindirect-branch-register"
@@ -552,42 +603,67 @@ einfo "CC:  ${CC}"
 	if tc-is-clang && [[ "${ARCH}" == "amd64" ]] ; then
 		s=$(clang-major-version)
 		if ! has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[cfi]" ; then
-ewarn "LLVM CFI will be soon be required for the oiledmachine-overlay for ARCH=amd64 without CET.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with cfi USE flag enabled."
+ewarn
+ewarn "LLVM CFI will be soon be required for the oiledmachine-overlay for"
+ewarn "ARCH=amd64 without CET.  Rebuild llvm-runtimes/compiler-rt-sanitizers"
+ewarn "${s} with cfi USE flag enabled."
+ewarn
 		fi
 	fi
 
 	if tc-is-clang && [[ "${ARCH}" == "amd64" ]] ; then
 		s=$(clang-major-version)
 		if ! has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[lsan]" ; then
-ewarn "lsan will be soon be required for the oiledmachine-overlay for ARCH=amd64 without CET.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with lsan USE flag enabled."
+ewarn
+ewarn "lsan will be soon be required for the oiledmachine-overlay for"
+ewarn "ARCH=amd64 without CET.  Rebuild llvm-runtimes/compiler-rt-sanitizers"
+ewarn "${s} with lsan USE flag enabled."
+ewarn
 		fi
 	fi
 
 	if tc-is-clang && [[ "${ARCH}" == "amd64" ]] ; then
 		s=$(clang-major-version)
 		if ! has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[ubsan]" ; then
-ewarn "ubsan with clang will be soon be required for the oiledmachine-overlay for ARCH=amd64.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with ubsan USE flag enabled."
+ewarn
+ewarn "ubsan with clang will be soon be required for the oiledmachine-overlay"
+ewarn "for ARCH=amd64.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with"
+ewarn "ubsan USE flag enabled."
+ewarn
 		fi
 	fi
 
 	if tc-is-clang && [[ "${ARCH}" == "arm64" ]] ; then
 		s=$(clang-major-version)
 		if ! has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[hwasan]" ; then
-ewarn "hwasan with clang will be soon be required for the oiledmachine-overlay for ARCH=arm64.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with hwasan USE flag enabled."
+ewarn
+ewarn "hwasan with clang will be soon be required for the oiledmachine-overlay"
+ewarn "for ARCH=arm64.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with"
+ewarn "hwasan USE flag enabled."
+ewarn
 		fi
 	fi
 
 	if tc-is-clang && [[ "${ARCH}" == "amd64" ]] ; then
 		s=$(clang-major-version)
 		if ! has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[asan]" ; then
-ewarn "asan with clang will be soon be required for the oiledmachine-overlay for ARCH=arm64.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with hwasan USE flag enabled."
+ewarn
+ewarn "asan with clang will be soon be required for the oiledmachine-overlay"
+ewarn "for ARCH=arm64.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with"
+ewarn "hwasan USE flag enabled."
+ewarn
 		fi
 	fi
 
 	if tc-is-clang ; then
 		s=$(clang-major-version)
 		if ! has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[gwp-asan]" ; then
-ewarn "asan and gwp-asan with clang will be soon be required for the oiledmachine-overlay for ARCH=arm64 and ARCH=amd64.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with both asan and gwp-asan USE flag enabled."
+ewarn
+ewarn "asan and gwp-asan with clang will be soon be required for the"
+ewarn "oiledmachine-overlay for ARCH=arm64 and ARCH=amd64.  Rebuild"
+ewarn "llvm-runtimes/compiler-rt-sanitizers ${s} with both asan and gwp-asan"
+ewarn "USE flag enabled."
+ewarn
 		fi
 	fi
 
@@ -595,7 +671,10 @@ ewarn "asan and gwp-asan with clang will be soon be required for the oiledmachin
 	if tc-is-clang && [[ "${ARCH}" == "amd64" ]] ; then
 		s=$(clang-major-version)
 		if ! has_version "sys-devel/gcc:${s}[sanitize]" ; then
-ewarn "ubsan with gcc will be soon be required for the oiledmachine-overlay for ARCH=amd64.  Rebuild sys-devel/gcc ${s} with sanitize USE flag enabled."
+ewarn
+ewarn "ubsan with gcc will be soon be required for the oiledmachine-overlay for"
+ewarn "ARCH=amd64.  Rebuild sys-devel/gcc ${s} with sanitize USE flag enabled."
+ewarn
 		fi
 	fi
 
@@ -840,7 +919,13 @@ einfo "All SSP hardening (All functions hardened)"
 		CFLAGS_HARDENED_CXXFLAGS+=" -Wa,--noexecstack"
 		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,noexecstack"
 	fi
-	if [[ "${CFLAGS_HARDENED_RETPOLINE:-1}" == "1" && "${CFLAGS_HARDENED_USE_CASES}" =~ ("id"|"kernel") ]] ; then
+	if \
+		[[ \
+			"${CFLAGS_HARDENED_RETPOLINE:-1}" == "1" \
+				&& \
+			"${CFLAGS_HARDENED_USE_CASES}" =~ ("id"|"kernel") \
+		]] \
+	; then
 	# ID
 	# Spectre V2 mitigation Linux kernel case
 		# For GCC it uses
@@ -874,7 +959,11 @@ einfo "All SSP hardening (All functions hardened)"
 	# Spectre V2 mitigation general case
 		# -mfunction-return and -fcf-protection are mutually exclusive.
 
-		if which lscpu >/dev/null && lscpu | grep -q -E -e "Spectre v2.*(Mitigation|Vulnerable)" ; then
+		if \
+			which lscpu >/dev/null \
+				&& \
+			lscpu | grep -q -E -e "Spectre v2.*(Mitigation|Vulnerable)" \
+		; then
 			filter-flags \
 				"-m*retpoline" \
 				"-m*retpoline-external-thunk" \
@@ -1093,6 +1182,64 @@ einfo "All SSP hardening (All functions hardened)"
 	filter-flags "-f*sanitize=hwaddress"
 	filter-flags "-f*sanitize=address"
 	if \
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.8" \
+			&& \
+		[[ "${CFLAGS_HARDENED_HWASAN:-0}" == "1"  ]] \
+			&& \
+		[[ "${ARCH}" == "arm64" ]] \
+			&& \
+		_cflags-hardened_has_mte \
+			&& \
+		tc-is-clang \
+			&& \
+		[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"secure-critical") ]] \
+	; then
+	# For secure-critical
+		if ! _rustflags-hardened_has_mte ; then
+ewarn "You are using an emulated memory tagging.  It will have a performance hit."
+		fi
+
+		append-flags "-fsanitize=hwaddress"
+		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=hwaddress"
+		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=hwaddress"
+		if \
+			tc-is-clang \
+				&& \
+			! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[hwasan]" \
+		; then
+eerror "Missing HWASAN sanitizer.  Do the following:"
+eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
+eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[hwasan]"
+eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
+
+			die
+		fi
+	elif \
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "3.00" \
+			&& \
+		[[ "${CFLAGS_HARDENED_ASAN:-0}" == "1" ]] \
+			&& \
+		[[ "${ARCH}" == "amd64" ]] \
+			&& \
+		[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"secure-critical") ]] \
+	; then
+	# For secure-critical
+		append-flags "-fsanitize=address"
+		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=address"
+		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=address"
+		if \
+			tc-is-clang \
+				&& \
+			! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[asan]" \
+		; then
+eerror "Missing ASAN sanitizer.  Do the following:"
+eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
+eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[asan]"
+eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
+
+			die
+		fi
+	elif \
 		( \
 			( _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" && [[ "${ARCH}" == "amd64" ]] ) \
 				||
@@ -1111,52 +1258,6 @@ einfo "All SSP hardening (All functions hardened)"
 eerror "Missing GWP-ASAN sanitizer.  Do the following:"
 eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
 eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[asan,gwp-asan]"
-eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
-
-			die
-		fi
-	elif \
-		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.8" \
-			&& \
-		[[ "${CFLAGS_HARDENED_HWASAN:-0}" == "1"  ]] \
-			&& \
-		[[ "${ARCH}" == "arm64" ]] \
-			&& \
-		_cflags-hardened_has_mte \
-			&& \
-		tc-is-clang \
-	; then
-	# For secure-critical
-		if ! _rustflags-hardened_has_mte ; then
-ewarn "You are using an emulated memory tagging.  It will have a performance hit."
-		fi
-
-		append-flags "-fsanitize=hwaddress"
-		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=hwaddress"
-		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=hwaddress"
-		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[hwasan]" ; then
-eerror "Missing HWASAN sanitizer.  Do the following:"
-eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[hwasan]"
-eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
-
-			die
-		fi
-	elif \
-		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "3.00" \
-			&& \
-		[[ "${CFLAGS_HARDENED_ASAN:-0}" == "1" ]] \
-			&& \
-		[[ "${ARCH}" == "amd64" ]] \
-	; then
-	# For secure-critical
-		append-flags "-fsanitize=address"
-		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=address"
-		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=address"
-		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[asan]" ; then
-eerror "Missing ASAN sanitizer.  Do the following:"
-eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[asan]"
 eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 
 			die
@@ -1191,7 +1292,11 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 		append-flags "-fsanitize=memory"
 		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=memory"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=memory"
-		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[msan]" ; then
+		if \
+			tc-is-clang \
+				&& \
+			! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[msan]" \
+		; then
 eerror "Missing MSAN sanitizer.  Do the following:"
 eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
 eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[msan]"
@@ -1232,7 +1337,11 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 		append-flags "-fsanitize=thread"
 		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=thread"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=thread"
-		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[tsan]" ; then
+		if \
+			tc-is-clang \
+				&& \
+			! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[tsan]" \
+		; then
 eerror "Missing TSAN sanitizer.  Do the following:"
 eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
 eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[tsan]"
@@ -1251,7 +1360,11 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 		append-flags "-fsanitize=undefined"
 		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=undefined"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=undefined"
-		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[ubsan]" ; then
+		if \
+			tc-is-clang \
+				&& \
+			! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[ubsan]" \
+		; then
 eerror "Missing UBSAN sanitizer.  Do the following:"
 eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
 eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[ubsan]"
@@ -1286,7 +1399,11 @@ ewarn "vtable hardening is required for the oiledmachine overlay for C++.  Rebui
 	# DoS, DT
 		if ! has_version "sys-devel/gcc:${s}[vtv]" ; then
 ewarn "Skipping vtable hardening.  Update gcc and rebuild ${CATEGORY}/${PN}-${PV} again."
-		elif has_version "sys-devel/gcc:${s}[vtv]" && [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"game-engine"|"hypervisor"|"kernel"|"modular-app"|"network"|"safety-critical"|"secure-critical"|"web-browsers") ]] ; then
+		elif \
+			has_version "sys-devel/gcc:${s}[vtv]" \
+				&& \
+			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"game-engine"|"hypervisor"|"kernel"|"modular-app"|"network"|"safety-critical"|"secure-critical"|"web-browsers") ]] \
+		; then
 			filter-flags "-f*vtable-verify=*"
 			append-cxxflags "-fvtable-verify=std"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fvtable-verify=std"
