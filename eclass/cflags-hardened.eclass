@@ -108,15 +108,15 @@ CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_HWASAN
 # @DESCRIPTION:
-# Allow hwasan runtime detect to exit before CE, DoS, DT, ID happens.
+# Allow hwasan runtime detect to exit before CE, PE, DoS, DT, ID happens.
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_LSAN
 # @DESCRIPTION:
-# Allow lsan runtime detect to exit before DoS happens.
+# Allow lsan runtime detect to exit before ID happens.
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_MSAN
 # @DESCRIPTION:
-# Allow msan runtime detect to exit before CE, PE, DoS, ID happens.
+# Allow msan runtime detect to exit before CE, PE, DoS, DT, ID happens.
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_TSAN
 # @DESCRIPTION:

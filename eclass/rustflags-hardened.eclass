@@ -151,15 +151,15 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_HWASAN
 # @DESCRIPTION:
-# Allow hwasan runtime detect to exit before CE, DoS, DT, ID happens.
+# Allow hwasan runtime detect to exit before CE, PE, DoS, DT, ID happens.
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_LSAN
 # @DESCRIPTION:
-# Allow lsan runtime detect to exit before DoS happens.
+# Allow lsan runtime detect to exit before ID happens.
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_MSAN
 # @DESCRIPTION:
-# Allow msan runtime detect to exit before CE, PE, DoS, ID happens.
+# Allow msan runtime detect to exit before CE, PE, DoS, DT, ID happens.
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_TSAN
 # @DESCRIPTION:
