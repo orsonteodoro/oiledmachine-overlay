@@ -275,7 +275,7 @@ use when just asan presented. Give me the full list. The temperature should use
 red, orange, yellow, blue. I only want the vulnerabilities from now to previous
 year. The vulnerabilities should be deduped and unique only one cwe per row.
 
-To get a nice table of vulnerability protection per sanitizer, ask the AL/LLM this:
+To get a nice table of vulnerability protection per sanitizer, ask the AI/LLM this:
 
 give me a y/n table of what would be protected for code execution, privilege
 execution, data tampering, information disclosure, denial of service for all of
