@@ -30,8 +30,9 @@ VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/botan.asc"
 inherit cflags-hardened edo flag-o-matic multiprocessing python-r1
 inherit toolchain-funcs verify-sig
 
+# We don't list 32-bit because of unpatched vulnerabilities.
 KEYWORDS="
-amd64 ~arm ~arm64 ~hppa ~loong ppc ppc64 ~riscv ~sparc x86 ~ppc-macos
+~amd64 ~arm64 ~hppa ~loong ~ppc64 ~riscv ~sparc
 "
 S="${WORKDIR}/${MY_P}"
 SRC_URI="
@@ -51,7 +52,7 @@ ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
 doc boost bzip2 lzma python static-libs sqlite test tools zlib
-ebuild_revision_1
+ebuild_revision_2
 "
 RESTRICT="
 	!test? (
