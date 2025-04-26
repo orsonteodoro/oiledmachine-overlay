@@ -259,10 +259,10 @@ The ubsan minimal runtime will be default on in this overlay for hardened marked
 packages.  Ubsan will protect against Code Execution (CE),
 Privilege Execution (PE), Denial of Service (DoS), Data Tampering (DT),
 Information Disclosure (ID) before they happen.  Only a few vulnerabilities
-will be blocked on the top 50 vulnerabilities per month ranking.
+will be blocked on the top 50 vulnerabilities reported per month ranking.
 
 The hwasan will be optional but secure-critical may consider enabling this
-sanitizer since many top 50 vulnerabilities per month rankings will be
+sanitizer since many top 50 vulnerabilities reported per month rankings will be
 mitigated.  To enable it, set CFLAGS_HARDENED_TOLERANCE_USER=1.80 for ARCH=amd64
 or CFLAGS_HARDENED_TOLERANCE_USER=1.5.  For ARCH=amd64, this is about -O0
 worst case with heavy swapping.  For ARCH=arm64, this is about -O0 best case
