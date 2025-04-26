@@ -356,7 +356,7 @@ transfering the library which could be like for the static-library 1GB
 without LTO and 2GB with LTO -ffat-lto-objects.
 
 ASLR must be enabled for mitigation for sanitizers to prevent a critical
-severity vulnerability.  These checks are in both the compiler-rt-sanitizers
+severity vulnerability.  These checks are verified in the compiler-rt-sanitizers
 ebuild.
 
 ### 2023 policy
