@@ -116,7 +116,7 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # -C link-arg=-D_FORTIFY_SOURCE=3	1.02
 # -Zsanitizer=address			2.00 - 3.00  *
 # -Zsanitizer=cfi			1.05 - 1.20  *
-# -Zsanitize=hwaddress			1.30 - 1.80 (amd64), 1.1-1.5 (arm64)  *
+# -Zsanitize=hwaddress			1.10 - 1.50 (arm64)  *
 # -Zsanitizer=leak			1.01 - 1.05  *
 # -Zsanitizer=memory			 1.5 - 2.00  *
 # -Zsanitizer=thread			 5.0 - 15.00 *
@@ -660,7 +660,7 @@ einfo "rustc host:  ${host}"
 	# We will need to test them before allowing users to use them.
 	# Enablement is complicated by LLVM_COMPAT and compile time to build LLVM with sanitizers enabled.
 
-	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.8" && [[ "${RUSTFLAGS_HARDENED_HWASAN:-0}" == "1" ]] && tc-is-clang ; then
+	if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.8" && [[ "${RUSTFLAGS_HARDENED_HWASAN:-0}" == "1" ]] && tc-is-clang && [[ "${ARCH}" == "arm64" ]] ; then
 		if ! _rustflags-hardened_has_mte ; then
 ewarn "You are using an emulated memory tagging.  It will have a performance hit."
 		fi
@@ -675,7 +675,7 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 
 			die
 		fi
-	elif _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "3.00" && [[ "${RUSTFLAGS_HARDENED_ASAN:-0}" == "1" ]] ; then
+	elif _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "3.00" && [[ "${RUSTFLAGS_HARDENED_ASAN:-0}" == "1" ]] && [[ "${ARCH}" == "amd64" ]] ; then
 # Missing -fno-sanitize-recover for Rust
 ewarn "ASAN_OPTIONS=halt_on_error=1 must be placed in wrapper or env file for ASAN mitigation to be effective."
 		RUSTFLAGS+=" -Zsanitizer=address"

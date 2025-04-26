@@ -150,7 +150,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # -fcf-protection=full			1.03 - 1.10
 # -fsanitize=address			2.00 - 3.00  *
 # -fsanitize=cfi			1.05 - 1.20  *
-# -fsanitize=hwaddress			1.30 - 1.80 (amd64), 1.1-1.5 (arm64)  *
+# -fsanitize=hwaddress			1.10 - 1.50 (arm64)  *
 # -fsanitize=leak			1.01 - 1.05  *
 # -fsanitize=memory			1.50 - 2.00  *
 # -fsanitize=thread			5.00 - 15.00 *
@@ -569,10 +569,17 @@ ewarn "ubsan with clang will be soon be required for the oiledmachine-overlay fo
 		fi
 	fi
 
-	if tc-is-clang && [[ "${ARCH}" == "amd64" || "${ARCH}" == "arm64" ]] ; then
+	if tc-is-clang && [[ "${ARCH}" == "arm64" ]] ; then
 		s=$(clang-major-version)
 		if ! has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[hwasan]" ; then
 ewarn "hwasan with clang will be soon be required for the oiledmachine-overlay for ARCH=arm64.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with hwasan USE flag enabled."
+		fi
+	fi
+
+	if tc-is-clang && [[ "${ARCH}" == "amd64" ]] ; then
+		s=$(clang-major-version)
+		if ! has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[asan]" ; then
+ewarn "asan with clang will be soon be required for the oiledmachine-overlay for ARCH=arm64.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with hwasan USE flag enabled."
 		fi
 	fi
 
@@ -1082,7 +1089,7 @@ einfo "All SSP hardening (All functions hardened)"
 			&& \
 		[[ "${CFLAGS_HARDENED_HWASAN:-0}" == "1"  ]] \
 			&& \
-		[[ "${ARCH}" == "amd64" || "${ARCH}" == "arm64" ]] \
+		[[ "${ARCH}" == "arm64" ]] \
 			&& \
 		_cflags-hardened_has_mte \
 			&& \
@@ -1107,6 +1114,8 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "3.00" \
 			&& \
 		[[ "${CFLAGS_HARDENED_ASAN:-0}" == "1" ]] \
+			&& \
+		[[ "${ARCH}" == "amd64" ]] \
 	; then
 		append-flags "-fsanitize=address"
 		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=address"
