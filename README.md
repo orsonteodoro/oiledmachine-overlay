@@ -259,6 +259,7 @@ you lose.  For opt-out, you accept many vulnerabilities with full & partial
 attacker capabilities + performance increase.  For opt-in, you accept ID
 leading to 1 concerning full attacker capabilities vulnerability + performance
 penalty.  There are several non production sanitizers that have this issue.
+There is a disable logging workaround to mitigate the latter case.
 
 The ubsan minimal runtime will be default on in this overlay for hardened marked
 packages.  Ubsan will protect against some of each CE, PE, DoS, DT, ID before
