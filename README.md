@@ -240,9 +240,6 @@ packages individually for those where costly or devastating unauthorized
 transactions could take place.  Then, it will slow evaluate each candidate
 package for LLVM CFI mitigation enablement.
 
-The sanitizer options have not been enabled as default on.  It will be disabled
-until LLVM team has improved the security option.
-
 The not safe for production sanitizers will default to opt-in in this overlay to
 decrease the attacker capabilties.  Users can choose to opt-out and follow
 upstream's opt-out performance-first security posture.  However, there are
