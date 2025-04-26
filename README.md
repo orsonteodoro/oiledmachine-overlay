@@ -240,7 +240,37 @@ against some unauthorized transactions in trusted compiled code.   If you have
 CET or PAC, you can ignore the LLVM CFI requirement.  The LLVM CFI
 requirement in this overlay only applies to ARCH=amd64 users without CET.
 
-As of this time, only production quality sanitizers will be allowed.
+This overlay will set LLVM CFI default off.  Then, it will prioritize candidate
+packages individually for those where costly or devastating unauthorized
+transactions could take place.  Then, it will slow evaluate each candidate
+package for LLVM CFI mitigation enablement.
+
+The not safe for production sanitizers will default to opt-in in this overlay to
+decrease the success chances for vulnerability scanning.  Users can choose to
+opt-out and follow upstream's opt-out performance-first security posture.
+However, there are trade-offs.  Many of the sanitizers mitigate a combination of
+Code Execution (CE), Privilege Escalation (PE), Denial of Service (DoS), Data
+Tampering (DT), Information Disclosure (ID) during runtime.  It is not clear why
+it was an issue but the LLM did explain it clearly.  You should ask the AI.  I
+don't disclose it here for security reasons.  Users can opt-out by setting
+CFLAGS_HARDENED_TOLERANCE_USER to a lower multiple to exclude them.  This
+opt-in/opt-out is a Faustian bargain.  If you opt-in, you lose.  If you opt-out,
+you lose.  For opt-out, you accept many vulnerabilities with full & partial
+attacker capabilities + performance increase.  For opt-in, you accept ID
+leading to 1 concerning full attacker capabilities vulnerability + performance
+penalty.  There are several non production sanitizers that have this issue.
+
+The ubsan minimal runtime will be default on in this overlay for hardened marked
+packages.  Ubsan will protect against some of each CE, PE, DoS, DT, ID before
+they happen.  Only a few vulnerabilities will be blocked on the top 50
+vulnerabilities reported per month ranking.
+
+The hwasan will be optional but secure-critical may consider enabling this
+sanitizer since many top 50 vulnerabilities reported per month rankings will be
+mitigated.  To enable it, set CFLAGS_HARDENED_TOLERANCE_USER=1.80 for ARCH=amd64
+or CFLAGS_HARDENED_TOLERANCE_USER=1.5.  For ARCH=amd64, this is about -O0
+worst case with heavy swapping.  For ARCH=arm64, this is about -O0 best case
+with light swapping to no swapping.
 
 To get the vulnerabilities reported per month ranking, ask the AI/LLM this:
 
