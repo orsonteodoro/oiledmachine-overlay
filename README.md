@@ -261,6 +261,16 @@ Privilege Execution (PE), Denial of Service (DoS), Data Tampering (DT),
 Information Disclosure (ID) before they happen.  Only a few vulnerabilities
 will be blocked on the top 50 vulnerabilities reported per month ranking.
 
+To get the vulernabilities reported per month ranking, ask the AI/LLM this:
+
+Give me the top 50 vulnerabilities with corresponding temperature based on
+reported vulnerabilities per month sorted by reported vulnerabilities per month
+and another column that list the corresponding llvm sanitizer to stop the
+vulnerability. Allow for multiple sanitizer possibilities so that hwasan can be
+use when just asan presented. Give me the full list. The temperature should use
+red, orange, yellow, blue. I only want the vulnerabilities from now to previous
+year. The vulnerabilities should be deduped and unique only one cwe per row.
+
 The hwasan will be optional but secure-critical may consider enabling this
 sanitizer since many top 50 vulnerabilities reported per month rankings will be
 mitigated.  To enable it, set CFLAGS_HARDENED_TOLERANCE_USER=1.80 for ARCH=amd64
