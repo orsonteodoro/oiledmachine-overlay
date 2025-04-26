@@ -1,7 +1,7 @@
-ASAN_OPTIONS="log_path=/dev/null:verbosity=0"
+ASAN_OPTIONS="abort_on_error=1:log_path=/dev/null:verbosity=0"
 DFSAN_OPTIONS="warn_unimplemented=0"
-HWASAN_OPTIONS="log_path=/dev/null:verbosity=0"
-LSAN_OPTIONS="log_path=/dev/null:verbosity=0"
-MSAN_OPTIONS="log_path=/dev/null:verbosity=0"
-TSAN_OPTIONS="log_path=/dev/null:verbosity=0"
-UBSAN_OPTIONS="print_stacktrace=0:log_path=/dev/null"
+HWASAN_OPTIONS="abort_on_error=1:log_path=/dev/null:verbosity=0" # No halt on error
+LSAN_OPTIONS="exitcode=1:log_path=/dev/null:verbosity=0" # Halt on error by exitcode
+MSAN_OPTIONS="abort_on_error=1:log_path=/dev/null:verbosity=0"
+TSAN_OPTIONS="halt_on_error=1:log_path=/dev/null:verbosity=0"
+UBSAN_OPTIONS="halt_on_error=1:print_stacktrace=0:log_path=/dev/null"
