@@ -1,0 +1,21 @@
+diff '--color=auto' -urp tremor-9999.orig/configure.ac tremor-9999/configure.ac
+--- tremor-9999.orig/configure.ac	2025-04-26 01:21:31.351724892 -0700
++++ tremor-9999/configure.ac	2025-04-26 01:23:14.896879446 -0700
+@@ -63,13 +63,13 @@ else
+         case $host in 
+         arm-*-*)
+                 DEBUG="-g -Wall -W -D__NO_MATH_INLINES -fsigned-char -D_ARM_ASSEM_"
+-                CFLAGS="-O2 -Wall -W -D_ARM_ASSEM_ -fsigned-char"
+-                PROFILE="-Wall -W -pg -g -O2 -D_ARM_ASSEM_ -fsigned-char -fno-inline-functions";;
++                CFLAGS="-Wall -W -D_ARM_ASSEM_ -fsigned-char"
++                PROFILE="-Wall -W -pg -g -D_ARM_ASSEM_ -fsigned-char -fno-inline-functions";;
+ 
+         *)
+                 DEBUG="-g -Wall -W -D__NO_MATH_INLINES -fsigned-char"
+-                CFLAGS="-O2 -Wall -W -fsigned-char"
+-                PROFILE="-Wall -W -pg -g -O2 -fsigned-char -fno-inline-functions";;
++                CFLAGS="-Wall -W -fsigned-char"
++                PROFILE="-Wall -W -pg -g -fsigned-char -fno-inline-functions";;
+         esac
+ fi
+ CFLAGS="$CFLAGS $cflags_save -D_REENTRANT"

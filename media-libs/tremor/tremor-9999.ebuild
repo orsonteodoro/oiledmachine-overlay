@@ -3,12 +3,14 @@
 
 EAPI=8
 
-inherit autotools multilib-minimal
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
+
+inherit autotools cflags-hardened multilib-minimal
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
 	EGIT_REPO_URI="https://gitlab.xiph.org/xiph/tremor.git"
-	FALLBACK_COMMIT="9b78f57f4335f7158dbb82df00645d2ba57e0d33"
+	FALLBACK_COMMIT="820fb3237ea81af44c9cc468c8b4e20128e3e5ad"
 	KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
 	IUSE+=" fallback-commit"
 	inherit git-r3
@@ -34,7 +36,7 @@ BDEPEND="
 "
 
 PATCHES=(
-	"${FILESDIR}/${PN}-9999-9b78f57-autoconf.patch"
+	"${FILESDIR}/${PN}-9999-820fb32-autoconf.patch"
 )
 
 src_prepare() {
@@ -53,6 +55,7 @@ src_unpack() {
 }
 
 multilib_src_configure() {
+	cflags-hardened_append
 	ECONF_SOURCE="${S}" \
 	econf $(use_enable low-accuracy)
 }
