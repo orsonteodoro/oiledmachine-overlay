@@ -3598,25 +3598,11 @@ einfo "Using the bundled toolchain"
 		"-Wl,-z,now" \
 		"-Wl,-z,relro"
 	replace-flags "-fhardened" "-fcf-protection=full"
-	if \
-		( \
-			use is-flagq "-fc-protection=full" \
-				|| \
-			is-flagq "-fhardened" \
-		) \
-			&& \
-		use cfi \
-	; then
-eerror
-eerror "CFI overlap detected.  Choices"
-eerror
-eerror "(1) Disable USE=cfi"
-eerror "(2) Remove -fc-protection=full"
-eerror "(3) Remove -fhardened to continue"
-eerror "(4) Change to -fc-protection=return"
-eerror
+	if ! use cet && is-flagq "-fcf-protection=*" ; then
+eerror "Enable the cet USE flag"
 		die
 	fi
+	filter-flags "-fcf-protection=*"
 # LLVM CFI - forward edge protection
 # ShadowCallStack - backward edge protection
 # -fcf-protection=branch - forward edge protection
