@@ -328,7 +328,7 @@ that use LTO with Clang or disable selectively LTO in to prevent building or
 linking issues when LLVM CFI is being used.  LLVM CFI requires LTO to work.
 There may be issues with static-libs.  If problems are encountered with
 static-libs, the package should either disable static-libs or the static-libs
-recompiled with with Clang only.  This is too prevent any link-time issues or
+recompiled with with Clang only.  This is to prevent any link-time issues or
 intermediate representation (IR) or LTO bytecode incompability since LTO will
 use that information to IPO optimize (or finish compiling) in link phase.  The
 eclass will require that -ffat-lto-objects be not used to speed up linking
