@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# FIXME:  Remove or make unused ciphers optional
+
 MY_P="Botan-${PV}"
 
 CPU_FLAGS_ARM=(
