@@ -243,12 +243,6 @@ package for LLVM CFI mitigation enablement.
 The sanitizer options have not been enabled as default on.  It will be disabled
 until LLVM team has improved the security option.
 
-The ubsan minimal runtime will be default on in this overlay for hardened marked
-packages.  Ubsan will protect against Code Execution (CE),
-Privilege Execution (PE), Denial of Service (DoS), Data Tampering (DT),
-Information Disclosure (ID) before they happen.  Only a few vulnerabilities
-will be blocked on the top 50 vulnerabilities per month ranking.
-
 The not safe for production sanitizers will default to opt-in in this overlay to
 decrease the attacker capabilties.  Users can choose to opt-out and follow
 upstream's opt-out performance-first security posture.  However, there are
@@ -260,6 +254,19 @@ to exclude them.  This opt-in/opt-out is a Faustian bargain.  If you opt-in, you
 lose.  If you opt-out, you lose.  For opt-out, you accept many vulnerabilities +
 performance increase.  For opt-in, you accept 1 unintended vulnerability
 possibility + performance penalty.
+
+The ubsan minimal runtime will be default on in this overlay for hardened marked
+packages.  Ubsan will protect against Code Execution (CE),
+Privilege Execution (PE), Denial of Service (DoS), Data Tampering (DT),
+Information Disclosure (ID) before they happen.  Only a few vulnerabilities
+will be blocked on the top 50 vulnerabilities per month ranking.
+
+The hwasan will be optional but secure-critical may consider enabling this
+sanitizer since many top 50 vulnerabilities per month rankings will be
+mitigated.  To enable it, set CFLAGS_HARDENED_TOLERANCE_USER=1.80 for ARCH=amd64
+or CFLAGS_HARDENED_TOLERANCE_USER=1.5.  For ARCH=amd64, this is about -O0
+worst case with heavy swap.  For ARCH=arm64, this is about -O0 best case with
+light swap.
 
 While it may upset minimalists, this forced mitigation may prevent some classes
 of real world cost loss.
