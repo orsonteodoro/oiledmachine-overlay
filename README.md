@@ -248,18 +248,17 @@ package for LLVM CFI mitigation enablement.
 The not safe for production sanitizers will default to opt-in in this overlay to
 decrease the success chances for vulnerability scanning.  Users can choose to
 opt-out and follow upstream's opt-out performance-first security posture.
-However, there are trade-offs between a combination of several classes of
-exploits versus information disclosure.  Many of the sanitizers mitigate a
-combination of Code Execution (CE), Privilege Escalation (PE), Denial of Service
-(DoS), Data Tampering (DT), Information Disclosure (ID) during runtime.  It is
-not clear why it was an issue but the LLM did explain it clearly.  You should
-ask the AI.  I don't disclose it here for security reasons.  Users can opt-out
-by setting CFLAGS_HARDENED_TOLERANCE_USER to a lower multiple to exclude them.
-This opt-in/opt-out is a Faustian bargain.  If you opt-in, you lose.  If you
-opt-out, you lose.  For opt-out, you accept many vulnerabilities with full
-attacker capabilities + performance increase.  For opt-in, you accept ID leading
-to 1 concerning full attacker capabilities vulnerability + performance penalty.
-There are several non production sanitizers that have this issue.
+However, there are trade-offs.  Many of the sanitizers mitigate a combination of
+Code Execution (CE), Privilege Escalation (PE), Denial of Service (DoS), Data
+Tampering (DT), Information Disclosure (ID) during runtime.  It is not clear why
+it was an issue but the LLM did explain it clearly.  You should ask the AI.  I
+don't disclose it here for security reasons.  Users can opt-out by setting
+CFLAGS_HARDENED_TOLERANCE_USER to a lower multiple to exclude them.  This
+opt-in/opt-out is a Faustian bargain.  If you opt-in, you lose.  If you opt-out,
+you lose.  For opt-out, you accept many vulnerabilities with full & partial
+attacker capabilities + performance increase.  For opt-in, you accept ID
+leading to 1 concerning full attacker capabilities vulnerability + performance
+penalty.  There are several non production sanitizers that have this issue.
 
 The ubsan minimal runtime will be default on in this overlay for hardened marked
 packages.  Ubsan will protect against some of each CE, PE, DoS, DT, ID before
