@@ -7,7 +7,7 @@ CFLAGS_HARDENED_USE_CASES="dss secure-critical sensitive-data"
 
 inherit cflags-hardened toolchain-funcs
 
-# We don't list the 32 bit versions because of missing mitigations.
+# We don't list the 32 bit versions because of missing mitigations for those arches.
 KEYWORDS="
 ~amd64 ~amd64-linux ~x64-macos
 "
