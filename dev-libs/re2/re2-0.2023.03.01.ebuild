@@ -5,12 +5,14 @@ EAPI=8
 
 # Bump every month
 
-# Different date format used upstream.
 RE2_VER="${PV#0.}"
 RE2_VER="${RE2_VER//./-}"
+
+# Different date format used upstream.
+CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 SONAME="10"				# https://github.com/google/re2/blob/2023-03-01/CMakeLists.txt#L33
 
-inherit cmake-multilib toolchain-funcs
+inherit cflags-hardened cmake-multilib toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/re2-${RE2_VER}"
@@ -23,7 +25,10 @@ DESCRIPTION="An efficient, principled regular expression library"
 HOMEPAGE="https://github.com/google/re2"
 LICENSE="BSD"
 SLOT="0/${SONAME}"
-IUSE="-debug icu test"
+IUSE="
+-debug icu test
+ebuild_revision_1
+"
 RDEPEND="
 	icu? (
 		dev-libs/icu:0[${MULTILIB_USEDEP}]
@@ -42,6 +47,7 @@ DOCS=( "AUTHORS" "CONTRIBUTORS" "README" "doc/syntax.txt" )
 HTML_DOCS=( "doc/syntax.html" )
 
 src_configure() {
+	cflags-hardened_append
 	local mycmakeargs=(
 		-DCMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
 		-DBUILD_SHARED_LIBS=ON

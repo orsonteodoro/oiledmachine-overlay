@@ -6,16 +6,18 @@ EAPI=8
 
 # Bump every month
 
+RE2_VER="${PV#0.}"
+RE2_VER="${RE2_VER//./-}"
+
 # Different date format used upstream.
 ABSEIL_CPP_PV="20240116.2"		# https://github.com/google/re2/blob/2024-07-02/MODULE.bazel#L16
+CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..12} )
-RE2_VER="${PV#0.}"
-RE2_VER="${RE2_VER//./-}"
 SONAME="11"				# https://github.com/google/re2/blob/2024-07-02/CMakeLists.txt#L33
 
-inherit cmake-multilib distutils-r1 toolchain-funcs
+inherit cflags-hardened cmake-multilib distutils-r1 toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/re2-${RE2_VER}"
@@ -29,7 +31,10 @@ DESCRIPTION="An efficient, principled regular expression library"
 HOMEPAGE="https://github.com/google/re2"
 LICENSE="BSD"
 SLOT="0/${SONAME}"
-IUSE="-debug icu python test"
+IUSE="
+-debug icu python test
+ebuild_revision_1
+"
 RDEPEND="
 	icu? (
 		dev-libs/icu:0[${MULTILIB_USEDEP}]
@@ -103,6 +108,7 @@ python_configure() {
 src_configure() {
 	multilib_foreach_abi build_multilib_abseil
 	configure_multilib_re2() {
+		cflags-hardened_append
 		local mycmakeargs=(
 			-DCMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
 			-DBUILD_SHARED_LIBS=ON
