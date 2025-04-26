@@ -255,8 +255,8 @@ upstream opt-out performance-first security posture.  However, there are
 trade-offs between a combination of several classes of exploits versus
 information disclosure.  Many of the sanitizers mitigate a combination of CE,
 PE, DoS, DT, ID during runtime but have a possible unintended ID tradeoff.
-Users can opt-in by setting CFLAGS_HARDENED_TOLERANCE_USER a lower multiple to
-exclude them.  This opt-in/opt-out is a Faustian bargain.  If you opt-in, you
+Users can opt-in by setting CFLAGS_HARDENED_TOLERANCE_USER to a lower multiple
+to exclude them.  This opt-in/opt-out is a Faustian bargain.  If you opt-in, you
 lose.  If you opt-out, you lose.  For opt-out, you accept many vulnerabilities +
 performance increase.  For opt-in, you accept 1 unintended vulnerability
 possibility + performance penalty.
