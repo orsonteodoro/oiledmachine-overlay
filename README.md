@@ -268,10 +268,10 @@ vulnerabilities reported per month ranking.
 
 The hwasan will be optional but secure-critical may consider enabling this
 sanitizer since many top 50 vulnerabilities reported per month rankings will be
-mitigated.  To enable it, set CFLAGS_HARDENED_TOLERANCE_USER=1.80 for ARCH=amd64
-or CFLAGS_HARDENED_TOLERANCE_USER=1.5.  For ARCH=amd64, this is about -O0
-worst case with heavy swapping.  For ARCH=arm64, this is about -O0 best case
-with light swapping to no swapping.
+mitigated.  To enable it, set CFLAGS_HARDENED_TOLERANCE_USER=3.0 for ARCH=amd64
+or CFLAGS_HARDENED_TOLERANCE_USER=1.5 for ARCH=arm64.  For ARCH=amd64, this is
+about -O0 worst case with heavy swapping.  For ARCH=arm64, this is about -O0
+best case with light swapping to no swapping.
 
 To get the vulnerabilities reported per month ranking, ask the AI/LLM this:
 
