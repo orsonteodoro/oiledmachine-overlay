@@ -1,25 +1,59 @@
---- build/config/compiler/BUILD.gn.orig	2025-04-26 14:23:44.027798230 -0700
-+++ build/config/compiler/BUILD.gn	2025-04-26 14:34:52.361070233 -0700
-@@ -202,6 +202,9 @@ declare_args() {
+--- a/build/config/compiler/BUILD.gn.orig	2025-04-26 14:23:44.027798230 -0700
++++ b/build/config/compiler/BUILD.gn	2025-04-26 14:34:52.361070233 -0700
+@@ -202,6 +202,12 @@ declare_args() {
  
    #use_mold = false
    #custom_optimization_level = ""
 +
 +  use_retpoline = is_linux && is_clang
 +  use_stack_clash_protection = is_linux
++  use_cf_protection = "none"
++  use_trapv = 0
++  use_fortify_source = -1
  }
  
  declare_args() {
-@@ -390,6 +393,14 @@ config("compiler") {
+@@ -390,6 +393,45 @@ config("compiler") {
        }
      }
  
++    cflags += [ "-mretpoline", "-mno-retpoline" ]
 +    if (use_retpoline) {
 +      cflags += [ "-mretpoline" ]
++      rustflags += [ "-Ctarget-feature=+retpoline" ]
 +    }
 +
++    cflags -= [ "-fstack-clash-protection", "-fno-stack-clash-protection" ]
 +    if (use_stack_clash_protection) {
 +      cflags += [ "-fstack-clash-protection" ]
++    }
++
++    cflags -= [ "-fc-protection=none", "-fc-protection=full", "-fc-protection=return", "-fc-protection=branch" ]
++    rustflags -= [ "-Ctarget-feature=+cet", "-Ctarget-feature=-cet" ]
++    if (use_cf_protection == "none") {
++      cflags += [ "-fc-protection=none" ]
++      rustflags += [ "-Ctarget-feature=-cet" ]
++    } else if (use_cf_protection == "full") {
++      cflags += [ "-fc-protection=full" ]
++      rustflags += [ "-Ctarget-feature=+cet" ]
++    } else if (use_cf_protection == "return") {
++      cflags += [ "-fc-protection=return" ]
++    } else if (use_cf_protection == "branch") {
++      cflags += [ "-fc-protection=branch" ]
++    }
++
++    cflags -= [ "-ftrapv" ]
++    rustflags -= [ "-Coverflow-checks=on" ]
++    if (use_trapv) {
++      cflags += [ "-ftrapv" ]
++      rustflags += [ "-Coverflow-checks=on" ]
++    }
++
++    defines -= [ "_FORTIFY_SOURCE", "_FORTIFY_SOURCE=1", "_FORTIFY_SOURCE=2", "_FORTIFY_SOURCE=3" ]
++    if (use_fortify_source == 2) {
++      defines += [ "_FORTIFY_SOURCE=2" ]
++    elif (use_fortify_source == 3) {
++      defines += [ "_FORTIFY_SOURCE=3" ]
 +    }
 +
      if (use_mold) {

@@ -3595,8 +3595,6 @@ einfo "Using the bundled toolchain"
 		"-f*sanitize=*" \
 		"-f*sanitize-recover" \
 		"-ftrivial-auto-var-init=*" \
-		"-D_FORTIFY_SOURCE" \
-		"-U_FORTIFY_SOURCE" \
 		"-Wl,-z,now" \
 		"-Wl,-z,relro"
 	replace-flags "-fhardened" "-fcf-protection=full"
@@ -3605,21 +3603,55 @@ eerror "Enable the cet USE flag"
 		die
 	fi
 	if use official ; then
+ewarn "You are using official settings.  For strong hardening, disable this USE flag."
+		myconf_gn+=" use_fc_protection=none"
 		myconf_gn+=" use_retpoline=false"
 		myconf_gn+=" use_stack_clash_protection=false"
 	elif use cet ; then
+		myconf_gn+=" use_fc_protection=full"
 		myconf_gn+=" use_retpoline=false"
 		myconf_gn+=" use_stack_clash_protection=true"
+		if is-flagq "-ftrapv" ; then
+			myconf_gn+=" use_trapv=true"
+		fi
+		if is-flagq "-D_FORITFY_SOURCE=3" ; then
+			myconf_gn+=" use_fortify_source=3"
+		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
+			myconf_gn+=" use_fortify_source=3"
+		fi
 	elif [[ "${ARCH}" == "amd64" ]] && isflagq "-mretpoline" ; then
+		myconf_gn+=" use_fc_protection=none"
 		myconf_gn+=" use_retpoline=true"
 		myconf_gn+=" use_stack_clash_protection=true"
+		if is-flagq "-ftrapv" ; then
+			myconf_gn+=" use_trapv=true"
+		fi
+		if is-flagq "-D_FORITFY_SOURCE=3" ; then
+			myconf_gn+=" use_fortify_source=3"
+		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
+			myconf_gn+=" use_fortify_source=2"
+		fi
 	else
+		myconf_gn+=" use_fc_protection=none"
 		myconf_gn+=" use_retpoline=false"
 		myconf_gn+=" use_stack_clash_protection=true"
+		if is-flagq "-ftrapv" ; then
+			myconf_gn+=" use_trapv=true"
+		fi
+		if is-flagq "-D_FORITFY_SOURCE=3" ; then
+			myconf_gn+=" use_fortify_source=3"
+		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
+			myconf_gn+=" use_fortify_source=2"
+		fi
 	fi
-	filter-flags "-fcf-protection=*"
-	filter-flags "-fstack-clash-protection"
-	filter-flags "-mretpoline"
+	# Handled in build scripts.
+	filter-flags \
+		"-D_FORTIFY_SOURCE" \
+		"-U_FORTIFY_SOURCE" \
+		"-fcf-protection=*" \
+		"-fstack-clash-protection" \
+		"-ftrapv" \
+		"-mretpoline"
 # LLVM CFI - forward edge protection
 # ShadowCallStack - backward edge protection
 # -fcf-protection=branch - forward edge protection
