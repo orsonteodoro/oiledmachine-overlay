@@ -2343,6 +2343,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 
 	PATCHES+=(
 		"${FILESDIR}/extra-patches/${PN}-134.0.6998.88-custom-optimization-level.patch"
+		"${FILESDIR}/extra-patches/${PN}-135.0.7049.114-hardening.patch"
 	)
 	if ! use official ; then
 	# This section contains significant changes.  The above sections contains minor changes.
@@ -3592,6 +3593,7 @@ einfo "Using the bundled toolchain"
 	filter-flags \
 		"-f*stack-protector" \
 		"-f*sanitize=*" \
+		"-f*sanitize-recover" \
 		"-ftrivial-auto-var-init=*" \
 		"-D_FORTIFY_SOURCE" \
 		"-U_FORTIFY_SOURCE" \
@@ -3602,7 +3604,22 @@ einfo "Using the bundled toolchain"
 eerror "Enable the cet USE flag"
 		die
 	fi
+	if use official ; then
+		myconf_gn+=" use_retpoline=false"
+		myconf_gn+=" use_stack_clash_protection=false"
+	elif use cet ; then
+		myconf_gn+=" use_retpoline=false"
+		myconf_gn+=" use_stack_clash_protection=true"
+	elif [[ "${ARCH}" == "amd64" ]] && isflagq "-mretpoline" ; then
+		myconf_gn+=" use_retpoline=true"
+		myconf_gn+=" use_stack_clash_protection=true"
+	else
+		myconf_gn+=" use_retpoline=false"
+		myconf_gn+=" use_stack_clash_protection=true"
+	fi
 	filter-flags "-fcf-protection=*"
+	filter-flags "-fstack-clash-protection"
+	filter-flags "-mretpoline"
 # LLVM CFI - forward edge protection
 # ShadowCallStack - backward edge protection
 # -fcf-protection=branch - forward edge protection

@@ -1,0 +1,27 @@
+--- build/config/compiler/BUILD.gn.orig	2025-04-26 14:23:44.027798230 -0700
++++ build/config/compiler/BUILD.gn	2025-04-26 14:34:52.361070233 -0700
+@@ -202,6 +202,9 @@ declare_args() {
+ 
+   #use_mold = false
+   #custom_optimization_level = ""
++
++  use_retpoline = is_linux && is_clang
++  use_stack_clash_protection = is_linux
+ }
+ 
+ declare_args() {
+@@ -390,6 +393,14 @@ config("compiler") {
+       }
+     }
+ 
++    if (use_retpoline) {
++      cflags += [ "-mretpoline" ]
++    }
++
++    if (use_stack_clash_protection) {
++      cflags += [ "-fstack-clash-protection" ]
++    }
++
+     if (use_mold) {
+       ldflags += [ "-fuse-ld=mold" ]
+     } else if (use_lld) {
