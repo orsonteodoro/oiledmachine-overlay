@@ -221,6 +221,11 @@ These default hardening flags have an estimated worst case performance penalty
 around 1.35 times the base performance without mitigation which is similar to
 -O1 at -40% best case performance penalty relative to -O3 or -Ofast.
 
+We are considering changing this policy from absolute to relative so that
+in secure-critical packages without performance element can be properly secured.
+The default value for CFLAGS_HARDENED_TOLERANCE may be overwritten per ebuild.
+HWASAN may be required in the future in this overlay.
+
 Users can override the tolerance level by changing
 CFLAGS_HARDENED_TOLERANCE_USER.  Details about what runtime mitigations will be
 activated can be found at
