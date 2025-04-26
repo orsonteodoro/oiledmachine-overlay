@@ -153,6 +153,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # -fsanitize=hwaddress			1.10 - 1.50 (arm64)  *
 # -fsanitize=leak			1.01 - 1.05  *
 # -fsanitize=memory			1.50 - 2.00  *
+# -fsanitize=safe-stack			1.02 - 1.10  *
 # -fsanitize=thread			5.00 - 15.00 *
 # -fsanitize=undefined			1.01 - 1.10  *
 # -mfloat-abi=soft -mfpu=none           5.00 - 20.00 *
@@ -1162,6 +1163,28 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 eerror "Missing MSAN sanitizer.  Do the following:"
 eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
 eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[msan]"
+eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
+
+			die
+		fi
+	fi
+
+	filter-flags "-f*sanitize=safe-stack"
+	if \
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" \
+			&& \
+		[[ "${CFLAGS_HARDENED_SAFESTACK:-0}" == "1"  ]] \
+			&& \
+		tc-is-clang \
+	; then
+		append-flags "-fsanitize=safe-stack"
+		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=safe-stack"
+		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=safe-stack"
+ewarn "SafeStack should be combined with either ASAN or HWASAN for halt on error"
+		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[safestack]" ; then
+eerror "Missing SafeStack sanitizer.  Do the following:"
+eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
+eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[tsan]"
 eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 
 			die
