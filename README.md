@@ -224,7 +224,9 @@ around 1.35 times the base performance without mitigation which is similar to
 We are considering changing this policy from absolute to relative so that
 in secure-critical packages without performance element can be properly secured.
 The default value for CFLAGS_HARDENED_TOLERANCE may be overwritten per ebuild.
-ASAN/HWASAN may be required in the future in this overlay.
+ASAN/HWASAN may be required in the future in this overlay.  ASAN/HWASAN may
+be used for lightweight security-critical, GWP-ASAN for more heavier packages
+or performance-critical packages.
 
 Users can override the tolerance level by changing
 CFLAGS_HARDENED_TOLERANCE_USER.  Details about what runtime mitigations will be
@@ -332,10 +334,10 @@ llvm-runtimes/compiler-rt
 llvm-runtimes/compiler-rt-sanitizers-logging[production]
 
 # For ARCH=amd64
-llvm-runtimes/compiler-rt-sanitizers[asan,cfi,ubsan,safestack]
+llvm-runtimes/compiler-rt-sanitizers[asan,cfi,gwp-asan,ubsan,safestack]
 
 # For ARCH=arm64
-llvm-runtimes/compiler-rt-sanitizers[hwsan,ubsan,safestack]
+llvm-runtimes/compiler-rt-sanitizers[gwp-asan,hwsan,ubsan,safestack]
 ```
 
 They are required because it assumed that the vulnerability is unpatched and
