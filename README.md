@@ -286,6 +286,13 @@ production use.  Also include practioners' y, n, n/a endorsement for production
 use.  Also include minimal llvm runtime sanitizer implementations like
 -fsanitize-minimal-runtime.
 
+To get a nice table of vulnerability protection per `<flag>`, ask the AI/LLM this:
+
+give me a y/n table of what would be protected against for code execution,
+privilege execution, data tampering, information disclosure, denial of service
+for `<flag>`.  Also include performance impact as a normalized decimal multiple.
+
+
 While it may upset minimalists, this forced mitigation may prevent some classes
 of real world cost loss.
 
