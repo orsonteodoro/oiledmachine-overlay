@@ -7,6 +7,7 @@ CFLAGS_HARDENED_USE_CASES="secure-critical untrusted-data"
 
 inherit cflags-hardened cmake-multilib
 
+KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv ~sparc"
 SRC_URI="
 https://github.com/microsoft/mimalloc/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -16,7 +17,6 @@ DESCRIPTION="A compact general purpose allocator with excellent performance"
 HOMEPAGE="https://github.com/microsoft/mimalloc"
 LICENSE="MIT"
 SLOT="0/2"
-KEYWORDS="~amd64 ~arm64 ~loong ~ppc64 ~riscv ~sparc"
 IUSE="debug test valgrind"
 RESTRICT="
 	!test? (
