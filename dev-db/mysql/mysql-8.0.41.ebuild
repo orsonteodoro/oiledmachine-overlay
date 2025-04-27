@@ -538,7 +538,7 @@ einfo "MTR_PARALLEL is set to '${MTR_PARALLEL}'"
 		"${FILESDIR}"/my.cnf-8.0.distro-client \
 		"${FILESDIR}"/my.cnf-8.0.distro-server \
 			> "${T}"/my.cnf || die
-	local -X PATH_CONFIG_FILE="${T}/my.cnf"
+	local -x PATH_CONFIG_FILE="${T}/my.cnf"
 
 	# Create directories because mysqladmin might run out of order
 	mkdir -p "${T}"/var-tests{,/log} || die
