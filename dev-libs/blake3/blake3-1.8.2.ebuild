@@ -24,13 +24,16 @@ LICENSE="
 	)
 "
 SLOT="0/0"
-IUSE="test"
+IUSE="tbb test"
 RESTRICT="
 	!test? (
 		test
 	)
 "
 BDEPEND="
+	tbb? (
+		dev-cpp/tbb:0
+	)
 	test? (
 		${PYTHON_DEPS}
 	)
@@ -40,13 +43,14 @@ PATCHES=(
 )
 
 pkg_setup() {
-	use test && python-any-r1_pkg_setup
+	python-any-r1_pkg_setup
 }
 
 src_configure() {
 	cflags-hardened_append
 	local mycmakeargs=(
-		-DBLAKE3_BUILD_TESTING="$(usex test)"
+		-DBLAKE3_BUILD_TESTING=$(usex test)
+		-DBLAKE3_USE_TBB=$(usex TBB)
 	)
 	cmake_src_configure
 }
