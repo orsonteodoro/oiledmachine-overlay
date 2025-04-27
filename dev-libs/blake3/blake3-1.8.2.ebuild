@@ -24,7 +24,7 @@ LICENSE="
 	)
 "
 SLOT="0/0"
-IUSE="tbb test"
+IUSE="-tbb test"
 RESTRICT="
 	!test? (
 		test
