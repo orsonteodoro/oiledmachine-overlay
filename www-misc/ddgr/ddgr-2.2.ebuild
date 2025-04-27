@@ -4,9 +4,9 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_"{8..11} )
 
-inherit python-single-r1
+inherit profile-mem python-single-r1
 
 SRC_URI="
 https://github.com/jarun/ddgr/archive/v${PV}.tar.gz
@@ -39,9 +39,9 @@ pkg_setup() {
 
 src_install() {
 	python_scriptinto "$(python_get_sitedir)/${PN}"
-	python_doexe ddgr
+	python_doexe "ddgr"
 	dosym "$(python_get_scriptdir)/ddgr" "/usr/bin/ddgr"
-	doman ddgr.1
+	doman "ddgr.1"
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
