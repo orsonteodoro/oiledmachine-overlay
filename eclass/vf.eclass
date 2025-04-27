@@ -190,7 +190,8 @@ einfo
 einfo "Give me the y, n, n/a in a table if <cve-id> causes code execution,"
 einfo "elevated privileges, data tampering, denial of service, information"
 einfo "disclosure. This one is a <full vulnerability description (e.g. use"
-einfo "after free)>."
+einfo "after free)>.  Also give me a cvss 3.1 estimate and severity as a"
+einfo "column."
 einfo
 	fi
 }
