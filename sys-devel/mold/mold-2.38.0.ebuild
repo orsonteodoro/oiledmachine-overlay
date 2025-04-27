@@ -12,8 +12,7 @@ if [[ "${PV}" == "9999" ]] ; then
 	inherit git-r3
 else
 	KEYWORDS="
-~amd64 ~amd64-linux ~arm ~arm64 ~arm64-macos ~loong ~m68k ~ppc ~ppc64 ~riscv
-~s390 ~sparc ~x86 ~x86-linux
+~amd64 ~arm ~arm64 ~ppc ~ppc64
 	"
 	SRC_URI="
 https://github.com/rui314/mold/archive/refs/tags/v${PV}.tar.gz
@@ -32,11 +31,17 @@ LICENSE="
 #  - xxhash (BSD-2)
 #  - siphash ( MIT CC0-1.0 )
 SLOT="0"
+IUSE="debug test"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 RDEPEND="
 	>=dev-cpp/tbb-2021.7.0-r1
+	app-arch/zstd:=
 	dev-cpp/tbb:0
 	dev-cpp/tbb:=
-	app-arch/zstd:=
 	dev-libs/blake3:=
 	sys-libs/zlib
 	!kernel_Darwin? (
@@ -61,18 +66,75 @@ pkg_pretend() {
 
 src_prepare() {
 	cmake_src_prepare
+
+	local L=(
+	# Needs unpackaged dwarfdump
+		"test/compress-debug-sections.sh"
+		"test/compressed-debug-info.sh"
+		"test/dead-debug-sections.sh"
+
+	# Heavy tests, need qemu
+		"test/gdb-index-compress-output.sh"
+		"test/gdb-index-dwarf2.sh"
+		"test/gdb-index-dwarf3.sh"
+		"test/gdb-index-dwarf4.sh"
+		"test/gdb-index-dwarf5.sh"
+		"test/lto-archive.sh"
+		"test/lto-dso.sh"
+		"test/lto-gcc.sh"
+		"test/lto-llvm.sh"
+		"test/lto-version-script.sh"
+
+	# Fails if binutils errors out on textrels by default
+		"test/textrel.sh"
+		"test/textrel2.sh"
+
+	# static-pie tests require glibc built with static-pie support
+		""
+	)
+
+
+	# static-pie tests require glibc built with static-pie support
+	if ! has_version -d 'sys-libs/glibc[static-pie(+)]' ; then
+		L+=(
+			rm "test/static-pie.sh"
+			rm "test/ifunc-static-pie.sh"
+		)
+	fi
+
+	local x
+	for x in ${L[@]} ; do
+		rm "${x}" || die
+	done
 }
 
 src_configure() {
+	use debug || append-cppflags "-DNDEBUG"
 	local mycmakeargs=(
-		-DMOLD_ENABLE_QEMU_TESTS=OFF
+		-DBUILD_TESTING=$(usex test)
 		-DMOLD_LTO=OFF # Should be up to the user to decide this with CXXFLAGS.
 		-DMOLD_USE_MIMALLOC=$(usex !kernel_Darwin)
 		-DMOLD_USE_SYSTEM_MIMALLOC=ON
 		-DMOLD_USE_SYSTEM_TBB=ON
 		-DTBB_DIR="${ESYSROOT}/usr/$(get_libdir)/cmake/TBB"
 	)
+
+	if use test ; then
+		mycmakeargs+=(
+			-DMOLD_ENABLE_QEMU_TESTS=OFF
+		)
+	fi
+
 	cmake_src_configure
+}
+
+src_test() {
+	export \
+		TEST_CC="$(tc-getCC)" \
+		TEST_CXX="$(tc-getCXX)" \
+		TEST_GCC="$(tc-getCC)" \
+		TEST_GXX="$(tc-getCXX)"
+	cmake_src_test
 }
 
 src_install() {
