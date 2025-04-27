@@ -5,18 +5,20 @@
 EAPI=8
 
 # https://bugs.gentoo.org/623962
-# Tests set TZ for tests leading to failures on musl if sys-libs/timezone-data isnt installed.
+# tests set TZ for tests leading to failures on musl if sys-libs/timezone-data isnt installed
 
 MY_PV="${PV//_pre*}"
 MY_P="${PN}-${MY_PV}"
+
+CFLAGS_HARDENED_USE_CASES="secure-critical sensitive-data untrusted-data"
 PATCHSET_VER="8.0.40:01"
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 
-inherit check-reqs cmake edo flag-o-matic linux-info multiprocessing prefix
-inherit toolchain-funcs uopts
+inherit cflags-hardened check-reqs cmake edo flag-o-matic linux-info
+inherit multiprocessing prefix toolchain-funcs uopts
 
 KEYWORDS="
 ~amd64 ~arm ~arm64 ~hppa ~mips -ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux
@@ -46,7 +48,8 @@ SLOT="8.0"
 # -ppc for bug #761715
 IUSE="
 cjk cracklib debug jemalloc latin1 numa +perl profiling router selinux +server
-tcmalloc test
+tcmalloc test test-install
+ebuild_revision_1
 "
 REQUIRED_USE="
 	?? (
@@ -69,6 +72,12 @@ REQUIRED_USE="
 		server
 	)
 	tcmalloc? (
+		server
+	)
+	test? (
+		server
+	)
+	test-install? (
 		server
 	)
 "
@@ -104,16 +113,8 @@ COMMON_DEPEND="
 "
 DEPEND="
 	${COMMON_DEPEND}
-	app-alternatives/yacc
 	server? (
 		net-libs/rpcsvc-proto
-	)
-	test? (
-		acct-group/mysql
-		acct-user/mysql
-		dev-perl/Expect
-		dev-perl/JSON
-		sys-libs/timezone-data
 	)
 "
 RDEPEND="
@@ -132,6 +133,27 @@ RDEPEND="
 	selinux? (
 		sec-policy/selinux-mysql
 	)
+	test-install? (
+		app-arch/zip
+		dev-lang/perl
+		dev-perl/Expect
+		dev-perl/JSON
+		sys-libs/timezone-data
+	)
+"
+BDEPEND="
+	app-alternatives/yacc
+	virtual/pkgconfig
+	test? (
+		acct-group/mysql
+		acct-user/mysql
+		app-arch/zip
+		dev-lang/perl
+		dev-perl/Expect
+		dev-perl/JSON
+		sys-libs/timezone-data
+	)
+
 "
 # For other stuff to bring us in
 # dev-perl/DBD-mysql is needed by some scripts installed by MySQL
@@ -235,7 +257,7 @@ src_unpack() {
 src_prepare() {
 	# Avoid rpm call which would trigger sandbox, #692368
 	sed -i \
-		-e 's/MY_RPM rpm/MY_RPM rpmNOTEXISTENT/' \
+		-e 's/MY_RPM rpm/MY_RPM rpmNONEXISTENT/' \
 		CMakeLists.txt || die
 
 	# Remove the centos and rhel selinux policies to support mysqld_safe under SELinux
@@ -264,11 +286,15 @@ _src_configure_compiler() {
 
 _src_configure() {
 	uopts_src_configure # Wipes -fprofile*
+	cflags-hardened_append
 	# Bug #114895, bug #110149
 	filter-flags "-O" "-O[01]"
 
 	# Code requires C++17 due to https://github.com/mysql/mysql-server/commit/236ab55bedd8c9eacd80766d85edde2a8afacd08
 	append-cxxflags -std=c++17
+
+	# Debug build type used extensively to add preprocessor definitions
+	use debug && CMAKE_BUILD_TYPE="Debug"
 
 	local mycmakeargs=(
 		-Wno-dev # less noise
@@ -289,6 +315,7 @@ _src_configure() {
 		-DINSTALL_INFODIR=share/info
 		-DINSTALL_LIBDIR=$(get_libdir)
 		-DINSTALL_MANDIR=share/man
+		-DINSTALL_PRIV_LIBDIR=$(get_libdir)/mysql/private
 		-DINSTALL_MYSQLDATADIR="${EPREFIX}/var/lib/mysql"
 		-DINSTALL_MYSQLSHAREDIR=share/mysql
 		-DINSTALL_PLUGINDIR=$(get_libdir)/mysql/plugin
@@ -296,8 +323,10 @@ _src_configure() {
 		-DINSTALL_SUPPORTFILESDIR="${EPREFIX}/usr/share/mysql"
 		-DMYSQL_DATADIR="${EPREFIX}/var/lib/mysql"
 		-DMYSQL_UNIX_ADDR="${EPREFIX}/var/run/mysqld/mysqld.sock"
-		-DROUTER_INSTALL_LOGROTATEDIR="${EPREFIX}/etc/logrotate.d"
 		-DROUTER_INSTALL_DOCDIR="share/doc/${PF}"
+		-DROUTER_INSTALL_PLUGINDIR="$(get_libdir)/mysqlrouter"
+		-DROUTER_INSTALL_LIBDIR="$(get_libdir)/mysqlrouter/private"
+		-DROUTER_INSTALL_LOGROTATEDIR="${EPREFIX}/etc/logrotate.d"
 		-DSYSCONFDIR="${EPREFIX}/etc/mysql"
 		-DWITH_BOOST="${S}/boost"
 		-DWITH_CURL=system
@@ -313,42 +342,35 @@ _src_configure() {
 		# Enables -Werror
 		-DMYSQL_MAINTAINER_MODE=OFF
 
+		# Debug hack wrt #497532
+		-DCMAKE_C_FLAGS_RELWITHDEBINFO="$(usev !debug '-DNDEBUG' )"
+		-DCMAKE_CXX_FLAGS_RELWITHDEBINFO="$(usev !debug '-DNDEBUG' )"
+
+		# Automagically uses LLD when not using LTO (bug #710272, #775845)
+		-DUSE_LD_LLD=OFF
+
 		# Causes issues on musl bug #922808
 		-DWITH_BUILD_ID=OFF
-	)
 
-	if use debug; then
-		# Debug build type used extensively to add preprocessor definitions
-		local -x CMAKE_BUILD_TYPE="Debug"
-	else
-		# debug hack wrt #497532
-		mycmakeargs+=(
-			-DCMAKE_C_FLAGS_RELWITHDEBINFO="$(usev !debug '-DNDEBUG' )"
-			-DCMAKE_CXX_FLAGS_RELWITHDEBINFO="$(usev !debug '-DNDEBUG' )"
-		)
-	fi
+		# These are installed via dev-db/mysql-connector-c
+		-DWITHOUT_CLIENTLIBS=YES
+
+		-DWITH_ICU=system
+		-DWITH_LZ4=system
+		# Our dev-libs/rapidjson doesn't carry necessary fixes for std::regex
+		-DWITH_RAPIDJSON=bundled
+		-DWITH_ZSTD=system
+
+		# This is the expected location for upstream RPM's and the script will search for location relative to it.
+		# Other locations will not work.
+		-DINSTALL_MYSQLTESTDIR=$(usex test-install 'share/mysql-test' 0)
+	)
 
 	if tc-is-lto ; then
 		mycmakeargs+=( -DWITH_LTO=ON )
 	else
 		mycmakeargs+=( -DWITH_LTO=OFF )
 	fi
-
-	if use test ; then
-		mycmakeargs+=( -DINSTALL_MYSQLTESTDIR=share/mysql/mysql-test )
-	else
-		mycmakeargs+=( -DINSTALL_MYSQLTESTDIR='' )
-	fi
-
-	mycmakeargs+=( -DWITHOUT_CLIENTLIBS=YES )
-
-	mycmakeargs+=(
-		-DWITH_ICU=system
-		-DWITH_LZ4=system
-		# Our dev-libs/rapidjson doesn't carry necessary fixes for std::regex
-		-DWITH_RAPIDJSON=bundled
-		-DWITH_ZSTD=system
-	)
 
 	if [[ -n "${MYSQL_DEFAULT_CHARSET}" && -n "${MYSQL_DEFAULT_COLLATION}" ]] ; then
 ewarn "You are using a custom charset of ${MYSQL_DEFAULT_CHARSET}"
@@ -543,8 +565,6 @@ einfo "MTR_PARALLEL is set to '${MTR_PARALLEL}'"
 		"gis.spatial_utility_function_simplify;5452;Known rounding error with latest AMD processors (PS)"
 		"gis.st_symdifference;5452;Known rounding error with latest AMD processors (PS)"
 
-		"innodb.alter_kill;0;Known test failure -- no upstream bug yet"
-
 		"main.derived_limit;0;Known rounding error with latest AMD processors -- no upstream bug yet"
 		"main.explain_tree;0;Known rounding error with latest AMD processors -- no upstream bug yet"
 		"main.gis-precise;0;Known rounding error with latest AMD processors -- no upstream bug yet"
@@ -570,10 +590,10 @@ einfo "MTR_PARALLEL is set to '${MTR_PARALLEL}'"
 
 		"sys_vars.myisam_data_pointer_size_func;87935;Test will fail on slow hardware"
 
-		"x.connection;0;Known failure - no upstream bug yet"
-		"main.slow_log;0;Known failure - no upstream bug yet"
-
 		"sys_vars.build_id_basic;0;Requires -DWITH_BUILD_ID=ON"
+
+		"main.keyring_migration_password;0;Known test failure -- no upstream bug yet"
+		"innodb.upgrade_orphan;0;Known test failure -- no upstream bug yet"
 	)
 
 	if ! hash zip 1>/dev/null 2>&1 ; then
@@ -586,7 +606,7 @@ einfo "MTR_PARALLEL is set to '${MTR_PARALLEL}'"
 
 	if has_version ">=dev-libs/openssl-3.2" ; then
 		# https://bugs.mysql.com/bug.php?id=113258
-		# Fails still with 8.0.37
+		# Fails still with 8.0.41
 		disabled_tests+=(
 			"rpl.rpl_tlsv13;0;CCM8 ciphers have a lower security level with OpenSSL 3.2"
 			"auth_sec.wl15800_ciphers_tlsv13;0;CCM8 ciphers have a lower security level with OpenSSL 3.2"
@@ -635,13 +655,6 @@ einfo "MTR_PARALLEL is set to '${MTR_PARALLEL}'"
 		"pfs_user-oom"
 		"pfs"
 	)
-
-	if use debug ; then
-		CMAKE_SKIP_TESTS+=(
-			# binary_log::transaction::compression::Payload_event_buffer_istream::~Payload_event_buffer_istream(): Assertion `!m_outstanding_error' failed.
-			"payload_event_buffer_istream"
-		)
-	fi
 
 	# Try to increase file limits to increase test coverage
 	local test_coverage=${TEST_COVERAGE:-"best"} # 16500, 4162, 3000
@@ -704,13 +717,6 @@ einfo "Making Convenience links for mysqlcheck multi-call binary"
 	# INSTALL_LAYOUT=STANDALONE causes cmake to create a /usr/data dir
 	if [[ -d "${ED}/usr/data" ]] ; then
 		rm -Rf "${ED}/usr/data" || die
-	fi
-
-	# Unless they explicitly specific USE=test, then do not install the
-	# testsuite. It DOES have a use to be installed, esp. when you want to do a
-	# validation of your database configuration after tuning it.
-	if ! use test ; then
-		rm -rf "${ED}/${MY_SHAREDSTATEDIR#${EPREFIX}}/mysql-test"
 	fi
 
 	# Configuration stuff
@@ -1102,14 +1108,16 @@ einfo "Install server log:\t\t\t${mysqld_logfile}"
 	if [[ -f "${config_file}" ]] ; then
 		config_files+=( "${config_file}" )
 	else
-ewarn "Client configuration '${config_file}' not found; Skipping configuration of default authentication plugin for client ..."
+ewarn "Client configuration '${config_file}' not found."
+ewarn "Skipping configuration of default authentication plugin for client ..."
 	fi
 
 	config_file="${EROOT}/etc/mysql/mysql.d/50-distro-server.cnf"
 	if [[ -f "${config_file}" ]] ; then
 		config_files+=( "${config_file}" )
 	else
-ewarn "Server configuration '${config_file}' not found; Skipping configuration of default authentication plugin for mysqld ..."
+ewarn "Server configuration '${config_file}' not found"
+ewarn "Skipping configuration of default authentication plugin for mysqld ..."
 	fi
 
 	if [[ ${#config_files[@]} -gt 0 ]] ; then
@@ -1183,7 +1191,8 @@ einfo "Trying to get password for mysql 'root' user from '${tmp_mysqld_password_
 			MYSQL_ROOT_PASSWORD="$(_getoptval "${tmp_mysqld_password_source}" password)"
 			if [[ -n "${MYSQL_ROOT_PASSWORD}" ]] ; then
 				if [[ ${MYSQL_ROOT_PASSWORD} == *$'\n'* ]] ; then
-ewarn "Ignoring password from '${tmp_mysqld_password_source}' section due to newline character (do you have multiple password options set?)!"
+ewarn "Ignoring password from '${tmp_mysqld_password_source}' section due to newline character!"
+ewarn "(Do you have multiple password options set?)"
 					MYSQL_ROOT_PASSWORD=
 					continue
 				fi

@@ -4,6 +4,7 @@
 
 EAPI="7"
 
+CFLAGS_HARDENED_USE_CASES="secure-critical sensitive-data untrusted-data"
 CMAKE_MAKEFILE_GENERATOR="emake"
 PATCHSET_VER="5.7.36:01"
 UOPTS_SUPPORT_EBOLT=0
@@ -11,7 +12,7 @@ UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 
-inherit check-reqs cmake flag-o-matic linux-info multilib-minimal
+inherit cflags-hardened check-reqs cmake flag-o-matic linux-info multilib-minimal
 inherit multiprocessing prefix toolchain-funcs uopts
 
 KEYWORDS="
@@ -39,6 +40,7 @@ SLOT="5.7/18"
 IUSE="
 cjk client-libs cracklib debug experimental jemalloc latin1 numa +perl profiling
 selinux +server static static-libs systemtap tcmalloc test
+ebuild_revision_1
 "
 REQUIRED_USE="
 	?? (
@@ -318,6 +320,7 @@ _src_configure_compiler() {
 
 _src_configure() {
 	uopts_src_configure # Wipes -fprofile*
+	cflags-hardened_append
 	# Filter LTO for legacy branch with ODR violations (bug #855242)
 	filter-lto
 
