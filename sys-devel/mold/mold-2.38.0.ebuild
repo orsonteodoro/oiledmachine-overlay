@@ -38,14 +38,16 @@ RESTRICT="
 	)
 "
 RDEPEND="
-	>=dev-cpp/tbb-2021.7.0-r1
+	>=app-arch/zstd-1.5.7
 	app-arch/zstd:=
-	dev-cpp/tbb:0
+	>=dev-cpp/tbb-2022.0.0:0
 	dev-cpp/tbb:=
+	>=dev-libs/blake3-1.6.1:=
 	dev-libs/blake3:=
-	sys-libs/zlib
+	>=sys-libs/zlib-1.3
+	sys-libs/zlib:=
 	!kernel_Darwin? (
-		>=dev-libs/mimalloc-2.2
+		>=dev-libs/mimalloc-2.2.2
 		dev-libs/mimalloc:=
 	)
 "
