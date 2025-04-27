@@ -472,12 +472,47 @@ UKSM_BASE_URI=\
 UKSM_FN="uksm-${KV_MAJOR_MINOR}.patch"
 UKSM_SRC_URI="${UKSM_BASE_URI}${UKSM_FN}"
 
-MITIGATION_DATE="Apr 8, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1744289089 # From `date +%s -d "2025-04-10 14:44:49 +0200"` from repo for latest tag
+MITIGATION_DATE="Apr 24, 2025" # Advisory date
+MITIGATION_LAST_UPDATE=1745571081 # From `date +%s -d "2025-04-25 10:51:21 +0200"` from repo for latest tag
 MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
 # High and critical are noted and only those that are fixed on this release day
 # Medium and low are shown optionally.
+
+	# 20250424
+	"CVE-2024-56705;;"
+	"CVE-2024-49995;;Rejected"
+
+	# 20250423
+	"CVE-2025-22032;NPD, DoS;"
+
+	# 20250422
+	"CVE-2025-22077;;"
+
+	# 20250418
+	"CVE-2025-37838;UAF;"
+	"CVE-2025-40364;;"
+	"CVE-2025-38575;;"
+	"CVE-2025-38479;;"
+	"CVE-2025-38240;NPD, DoS;"
+	"CVE-2025-38152;;"
+	"CVE-2025-38104;;"
+	"CVE-2025-38049;;"
+	"CVE-2025-37925;;"
+	"CVE-2025-40325;;"
+	"CVE-2025-37893;DoS;"
+	"CVE-2025-40114;OOB;"
+	"CVE-2025-40014;OOB;"
+	"CVE-2025-39989;DoS;" # restart on panic
+	"CVE-2025-39930;;"
+	"CVE-2025-39778;OOB;"
+	"CVE-2025-39755;;"
+	"CVE-2025-39735;OOB;"
+	"CVE-2025-39728;OOB, DoS;"
+	"CVE-2025-39688;;"
+	"CVE-2025-38637;;"
+	"CVE-2025-37785;OOB;"
+	"CVE-2025-37860;NPD, DoS;"
 
 	# 20250417
 	"CVE-2020-36789;;"
