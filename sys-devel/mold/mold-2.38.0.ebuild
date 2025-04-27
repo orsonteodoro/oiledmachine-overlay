@@ -46,12 +46,18 @@ RDEPEND="
 	>=sys-libs/zlib-1.3
 	sys-libs/zlib:=
 	!kernel_Darwin? (
-		>=dev-libs/mimalloc-2.2
+		>=dev-libs/mimalloc-2
 		dev-libs/mimalloc:=
 	)
 "
 DEPEND="
 	${RDEPEND}
+"
+BDEPEND="
+	test? (
+		>=dev-libs/mimalloc-2.2
+		dev-libs/mimalloc:=
+	)
 "
 
 pkg_pretend() {
