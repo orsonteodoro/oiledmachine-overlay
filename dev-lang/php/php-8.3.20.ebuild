@@ -4,6 +4,7 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="secure-critical sensitive-data untrusted-data"
 GCC_SLOT=12
 LLVM_COMPAT=( {19..15} )
 LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
@@ -29,7 +30,7 @@ UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 WANT_AUTOMAKE="none"
 
-inherit autotools flag-o-matic llvm multilib postgres systemd uopts
+inherit autotools cflags-hardened flag-o-matic llvm multilib postgres systemd uopts
 
 KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390
@@ -454,7 +455,6 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/php-8.3.10-optional-png-testfixen.patch"
 	"${FILESDIR}/php-8.3.9-gd-cachevars.patch"
 )
 
@@ -680,13 +680,6 @@ src_prepare() {
 	#
 		ext/sockets/tests/bug63000.phpt
 
-	# fails in a network sandbox,
-	# fixed upstream but not yet included in the stable releases.
-	#
-	#	https://github.com/php/php-src/pull/17314
-	#
-		ext/standard/tests/http/gh16810.phpt
-
 	# Tests ignoring the "-n" flag we pass to run-tests.php,
 	#
 	#   https://github.com/php/php-src/pull/11669
@@ -709,14 +702,6 @@ src_prepare() {
 	# the tests fail. This is not really a test that end users should
 	# be running pre-install, in my opinion. Bug 927461.
 		ext/fileinfo/tests/bug78987.phpt
-
-	# Bug 935382, fixed eventually by
-	#
-	# - https://github.com/php/php-src/pull/14788
-	# - https://github.com/php/php-src/pull/14814
-	#
-		ext/standard/tests/strings/chunk_split_variation1_32bit.phpt
-		ext/standard/tests/strings/wordwrap_memory_limit.phpt
 
 	# Bug 935379, not yet fixed upstream but looks harmless (ordering
 	# of keys isn't guaranteed AFAICS):
@@ -834,6 +819,7 @@ eerror "Bugged optimized version.  Disable either clang USE flag or both bolt an
 			die
 		fi
 	fi
+	cflags-hardened_append
 	einfo "CFLAGS:  ${CFLAGS}"
 	einfo "CXXFLAGS:  ${CXXFLAGS}"
 	addpredict /usr/share/snmp/mibs/.index #nowarn
