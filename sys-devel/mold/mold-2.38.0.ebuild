@@ -42,7 +42,6 @@ RDEPEND="
 	app-arch/zstd:=
 	>=dev-cpp/tbb-2022.0.0:0
 	dev-cpp/tbb:=
-	>=dev-libs/blake3-1.6.1:=
 	dev-libs/blake3:=
 	>=sys-libs/zlib-1.3
 	sys-libs/zlib:=
