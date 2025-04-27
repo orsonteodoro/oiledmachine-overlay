@@ -605,7 +605,7 @@ eerror "ARCH=${ARCH} not supported.  Use gcc compiler."
 }
 
 src_test() {
-	local -x SANDBOX_ON=0 # Required so libsandbox.so will not crash test because of libasan.so...
+	#local -x SANDBOX_ON=0 # Required so libsandbox.so will not crash test because of libasan.so...
 	export ASAN_OPTIONS="abort_on_error=1:log_path=/dev/null:verbosity=0:verify_asan_link_order=0"
 	export UBSAN_OPTIONS="halt_on_error=1:print_stacktrace=0:log_path=/dev/null"
 	export CC=$(tc-getCC)
