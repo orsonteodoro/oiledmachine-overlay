@@ -51,7 +51,7 @@ einfo "Patched vulnerabilities:"
 				_severity=" (${SEVERITY_LABEL} ${severity})"
 			fi
 			if [[ -n "${_severity}" || -n "${vulnerability_classes}" ]] ; then
-				_delimiter=""
+				_delimiter=":"
 			fi
 einfo "${id}${_delimiter}  ${vulnerability_classes}${_severity}"
 		done
