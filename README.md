@@ -284,6 +284,9 @@ vulnerability. Allow for multiple sanitizer possibilities so that hwasan can be
 used when just asan presented. Give me the full list. The temperature should use
 red, orange, yellow, blue. I only want the vulnerabilities from now to previous
 year. The vulnerabilities should be deduped and unique only one cwe per row.
+After that list is generated, create a separate list listing the statistical
+frequency of sanitizers used in the first table and sort that bottom list by
+frequency.
 
 To get a nice table of vulnerability protection per sanitizer, ask the AI/LLM this:
 
@@ -332,6 +335,11 @@ sys-devel/clang
 sys-devel/lld
 llvm-runtimes/compiler-rt
 llvm-runtimes/compiler-rt-sanitizers-logging[production]
+
+# Choose one for ASAN/UBSAN sanitizers support for Rust
+# The -Zsanitizer option is only available for live ebuilds
+=dev-lang/rust-9999
+=dev-lang/rust-bin-9999
 
 # For ARCH=amd64
 llvm-runtimes/compiler-rt-sanitizers[asan,cfi,gwp-asan,ubsan,safestack]
