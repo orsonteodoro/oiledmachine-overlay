@@ -1017,7 +1017,7 @@ _missing_libs() {
 			"${ED}/opt/${PN}/${PN}-client" \
 			-type f \
 			\( \
-				   -executable
+				   -executable \
 				-o -name "*.so*" \
 			\) \
 		) ; do

@@ -11,11 +11,11 @@ EAPI=8
 # https://www.spotify.com/us/download/linux/
 # https://community.spotify.com/t5/Desktop-Linux/Linux-Spotify-client-1-x-now-in-stable/m-p/1300404
 #
-# CEF_DEPENDS_VERSION="130.0.6723.117"
-# CEF_DEPENDS_VERSION_A="130"
+# CEF_DEPENDS_VERSION="131.0.6778.109"
+# CEF_DEPENDS_VERSION_A="131"
 # CEF_DEPENDS_VERSION_B="0"
-# CEF_DEPENDS_VERSION_C="6723"
-# CEF_DEPENDS_VERSION_D="117"
+# CEF_DEPENDS_VERSION_C="6778"
+# CEF_DEPENDS_VERSION_D="109"
 #
 # Third party licenses:
 #
@@ -45,23 +45,23 @@ EAPI=8
 #
 # For Chromium *DEPENDs and versioning see:
 #
-# https://github.com/chromium/chromium/tree/130.0.6723.117/build/linux/sysroot_scripts/generated_package_lists
-# https://github.com/chromium/chromium/blob/130.0.6723.117/build/install-build-deps.py
-# https://github.com/chromium/chromium/blob/130.0.6723.117/tools/clang/scripts/update.py#L42
+# https://github.com/chromium/chromium/tree/131.0.6778.109/build/linux/sysroot_scripts/generated_package_lists
+# https://github.com/chromium/chromium/blob/131.0.6778.109/build/install-build-deps.py
+# https://github.com/chromium/chromium/blob/131.0.6778.109/tools/clang/scripts/update.py#L42
 #
 # For vendored Chromium third party *DEPENDs versioning see:
 #
-# https://github.com/chromium/chromium/blob/130.0.6723.117/third_party/fontconfig/README.chromium#L3
-# https://github.com/chromium/chromium/blob/130.0.6723.117/third_party/zlib/zlib.h#L40
+# https://github.com/chromium/chromium/blob/131.0.6778.109/third_party/fontconfig/README.chromium#L3
+# https://github.com/chromium/chromium/blob/131.0.6778.109/third_party/zlib/zlib.h#L40
 #
 # Versions only obtainable through tarball:
 #
-# https://chromium.googlesource.com/chromium/src.git/+/refs/tags/130.0.6723.117/third_party/freetype/README.chromium            L165    ; newer than generated_package_lists
-# https://chromium.googlesource.com/chromium/src.git/+/refs/tags/130.0.6723.117/third_party/harfbuzz-ng/README.chromium         L3      ; newer than generated_package_lists
-# https://chromium.googlesource.com/chromium/src.git/+/refs/tags/130.0.6723.117/third_party/libdrm/README.chromium              L24     ; newer than generated_package_lists
-# /var/tmp/portage/www-client/chromium-130.0.6723.117/work/chromium-130.0.6723.117/third_party/ffmpeg/libavutil/version.h               ; do not use
-# /var/tmp/portage/www-client/chromium-130.0.6723.117/work/chromium-130.0.6723.117/third_party/ffmpeg/libavcodec/version*.h             ; do not use
-# /var/tmp/portage/www-client/chromium-130.0.6723.117/work/chromium-130.0.6723.117/third_party/ffmpeg/libavformat/version*.h            ; do not use
+# https://chromium.googlesource.com/chromium/src.git/+/refs/tags/131.0.6778.109/third_party/freetype/README.chromium            L165    ; newer than generated_package_lists
+# https://chromium.googlesource.com/chromium/src.git/+/refs/tags/131.0.6778.109/third_party/harfbuzz-ng/README.chromium         L3      ; newer than generated_package_lists
+# https://chromium.googlesource.com/chromium/src.git/+/refs/tags/131.0.6778.109/third_party/libdrm/README.chromium              L24     ; newer than generated_package_lists
+# /var/tmp/portage/www-client/chromium-131.0.6778.109/work/chromium-131.0.6778.109/third_party/ffmpeg/libavutil/version.h               ; do not use
+# /var/tmp/portage/www-client/chromium-131.0.6778.109/work/chromium-131.0.6778.109/third_party/ffmpeg/libavcodec/version*.h             ; do not use
+# /var/tmp/portage/www-client/chromium-131.0.6778.109/work/chromium-131.0.6778.109/third_party/ffmpeg/libavformat/version*.h            ; do not use
 #
 
 # Dropped pax-kernel USE flag because of the license plus the CEF version used
@@ -73,9 +73,13 @@ EAPI=8
 # For ffmpeg:0/x.y.z, y must be <= 59.
 ALSA_LIB="1.1.3"
 ATK_PV="2.26.2"
-BUILD_ID_AMD64="g01893f92" # Change this after every bump
+BUILD_ID_AMD64="g834e17d4" # Change this after every bump
 CAIRO_PV="1.16.0"
 CLANG_PV="17"
+CPU_FLAGS_X86=(
+	"cpu_flags_x86_avx2"
+	"cpu_flags_x86_sse4_2"
+)
 DEFAULT_CONFIGURATION="stable"
 EXPECTED_DEPENDS_FINGERPRINT="\
 fd58cdd53a8053f5409d059776d9356e26a621bf8753f3e9d6887814769a2eab\
@@ -194,6 +198,7 @@ LICENSE="
 RESTRICT="binchecks mirror strip"
 SLOT="0/${DEFAULT_CONFIGURATION}"
 IUSE+="
+${CPU_FLAGS_X86[@]}
 emoji ffmpeg firejail bluetooth libnotify pulseaudio vaapi wayland zenity +X
 ebuild_revision_1
 "
@@ -274,7 +279,7 @@ OPTIONAL_RDEPENDS_UNLISTED="
 # *DEPENDs based on install-build-deps.sh's common_lib_list and lib_list variables.
 
 # For details see:
-# https://github.com/chromium/chromium/blob/130.0.6723.117/build/install-build-deps.py#L329
+# https://github.com/chromium/chromium/blob/131.0.6778.109/build/install-build-deps.py#L329
 
 # The version is obtained in src_prepare
 
@@ -462,6 +467,19 @@ else
 fi
 
 pkg_setup() {
+	# Compatible CPUs:
+	# >= Excavator (2015)
+	# >= Haswell (2013)
+	if ! use cpu_flags_x86_avx2 ; then
+einfo "AVX2 is required.  Use the =${CATEGORY}/${PN}-1.2.45.454 ebuild or website instead."
+einfo "The web version can be found at https://open.spotify.com"
+		die
+	fi
+	if ! use cpu_flags_x86_sse4_2 ; then
+einfo "SSE 4.2 is required.  Use the =${CATEGORY}/${PN}-1.2.45.454 ebuild or website instead."
+einfo "The web version can be found at https://open.spotify.com"
+		die
+	fi
 	local configuration_desc
 	if [[ "${PV}" =~ "9999" ]] ; then
 		CONFIGURATION="${DEFAULT_CONFIGURATION}"
@@ -1017,7 +1035,7 @@ _missing_libs() {
 			"${ED}/opt/${PN}/${PN}-client" \
 			-type f \
 			\( \
-				   -executable
+				   -executable \
 				-o -name "*.so*" \
 			\) \
 		) ; do
@@ -1223,6 +1241,7 @@ ewarn
 # OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.26.1187 (20231221) ; Sorting playlists by creator is broken.
 # OILEDMACHINE-OVERLAY-TEST:  PASS [USA] / PASS [UK] (interactive) 1.2.37.701 (20240531) with openrc
 # OILEDMACHINE-OVERLAY-TEST:  FAIL (interactive) 1.2.52.442 (20250111) with openrc
+# OILEDMACHINE-OVERLAY-TEST:  FAIL (interactive) 1.2.59.514 (20250426) with openrc
 # CPU support:  fail with illegal instruction
 # X:  pass
 # wayland:  pass with older ebuilds
