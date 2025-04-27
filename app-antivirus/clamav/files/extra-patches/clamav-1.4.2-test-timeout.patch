@@ -1,0 +1,28 @@
+diff '--color=auto' -urp clamav-clamav-1.4.2.orig/unit_tests/check_clamav.c clamav-clamav-1.4.2/unit_tests/check_clamav.c
+--- clamav-clamav-1.4.2.orig/unit_tests/check_clamav.c	2025-01-19 20:53:11.000000000 -0800
++++ clamav-clamav-1.4.2/unit_tests/check_clamav.c	2025-04-27 12:01:06.911077445 -0700
+@@ -1351,13 +1351,13 @@ static Suite *test_cl_suite(void)
+     tcase_add_loop_test(tc_cl_scan, test_fmap_duplicate_out_of_bounds, 0, expect);
+     tcase_add_loop_test(tc_cl_scan, test_fmap_assorted_api, 0, expect);
+ 
+-    user_timeout = getenv("T");
++    user_timeout = getenv("TEST_CASE_TIMEOUT");
+     if (user_timeout) {
+         int timeout = atoi(user_timeout);
+         tcase_set_timeout(tc_cl_scan, timeout);
+         printf("Using test case timeout of %d seconds set by user\n", timeout);
+     } else {
+-        printf("Using default test timeout; alter by setting 'T' env var (in seconds)\n");
++        printf("Using default test timeout; alter by setting 'TEST_CASE_TIMEOUT' env var (in seconds)\n");
+     }
+     return s;
+ }
+@@ -2053,7 +2053,7 @@ int main(int argc, char **argv)
+     srunner_run_all(sr, CK_NORMAL);
+     nf = srunner_ntests_failed(sr);
+     if (nf)
+-        printf("NOTICE: Use the 'T' environment variable to adjust testcase timeout\n");
++        printf("NOTICE: Use the 'TEST_CASE_TIMEOUT' environment variable to adjust testcase timeout\n");
+     srunner_free(sr);
+ 
+     xmlCleanupParser();

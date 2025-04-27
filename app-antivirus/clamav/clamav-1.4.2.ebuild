@@ -27,57 +27,63 @@ EAPI=8
 # rust-bin < 1.71 has an executable stack
 # which is not supported on selinux #911589
 
-GENERATE_LOCKFILE=0
 MY_P="${P//_/-}"
 
 declare -A GIT_CRATES=(
-	[onenote_parser]="https://github.com/Cisco-Talos/onenote.rs;29c08532252b917543ff268284f926f30876bb79;onenote.rs-%commit%" # 0.3.1
+[onenote_parser]="https://github.com/Cisco-Talos/onenote.rs;8b450447e58143004b68dd21c11b710fdb79be92;onenote.rs-%commit%" # 0.3.1
 )
 
-# From "./convert-cargo-lock.sh 1.4.1 1.4.1"
+CFLAGS_HARDENED_ASAN=0 # Broken
+CFLAGS_HARDENED_HWASAN=0
+CFLAGS_HARDENED_TOLERANCE="3.0"
+CFLAGS_HARDENED_UBSAN=0 # Broken
+CFLAGS_HARDENED_USE_CASES="jit network secure-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_VTABLE_VERIFY=1
+# From "./convert-cargo-lock.sh 1.4.2 1.4.2"
 CRATES="
-adler2-2.0.0
+adler-1.0.2
 adler32-1.2.0
 aho-corasick-1.1.3
 android-tzdata-0.1.1
 android_system_properties-0.1.5
-autocfg-1.4.0
+autocfg-1.3.0
 base64-0.21.7
 bindgen-0.65.1
 bit_field-0.10.2
 bitflags-1.3.2
-bitflags-2.6.0
+bitflags-2.5.0
 block-buffer-0.10.4
 bumpalo-3.16.0
-bytemuck-1.19.0
+bytemuck-1.21.0
 byteorder-1.5.0
-bytes-1.8.0
+bytes-1.9.0
 bzip2-rs-0.1.2
 cbindgen-0.25.0
-cc-1.1.31
+cc-1.0.97
 cexpr-0.6.0
 cfg-if-1.0.0
 chrono-0.4.38
-clang-sys-1.8.1
+clang-sys-1.7.0
 color_quant-1.1.0
-core-foundation-sys-0.8.7
-cpufeatures-0.2.14
-crc32fast-1.4.2
+core-foundation-sys-0.8.6
+cpufeatures-0.2.12
+crc32fast-1.4.0
 crossbeam-deque-0.8.5
 crossbeam-epoch-0.9.18
-crossbeam-utils-0.8.20
+crossbeam-utils-0.8.19
 crunchy-0.2.2
 crypto-common-0.1.6
 delharc-0.6.1
 digest-0.10.7
-either-1.13.0
-encoding_rs-0.8.35
+either-1.11.0
+encoding_rs-0.8.34
 enum-primitive-derive-0.2.2
-errno-0.3.9
-exr-1.73.0
-fastrand-2.1.1
-fdeflate-0.3.6
-flate2-1.0.34
+errno-0.3.8
+exr-1.72.0
+fastrand-2.1.0
+fdeflate-0.3.4
+flate2-1.0.30
+flume-0.11.0
 generic-array-0.14.7
 gif-0.13.1
 glob-0.3.1
@@ -87,7 +93,7 @@ heck-0.4.1
 hex-0.4.3
 hex-literal-0.4.1
 home-0.5.9
-iana-time-zone-0.1.61
+iana-time-zone-0.1.60
 iana-time-zone-haiku-0.1.2
 image-0.24.9
 indexmap-1.9.3
@@ -95,91 +101,100 @@ inflate-0.4.5
 itertools-0.10.5
 itoa-1.0.11
 jpeg-decoder-0.3.1
-js-sys-0.3.72
-lazy_static-1.5.0
+js-sys-0.3.69
+lazy_static-1.4.0
 lazycell-1.3.0
 lebe-0.5.2
-libc-0.2.161
-libloading-0.8.5
-linux-raw-sys-0.4.14
-log-0.4.22
-memchr-2.7.4
+libc-0.2.155
+libloading-0.8.3
+linux-raw-sys-0.4.13
+lock_api-0.4.12
+log-0.4.21
+memchr-2.7.2
 minimal-lexical-0.2.1
-miniz_oxide-0.8.0
+miniz_oxide-0.7.2
 nom-7.1.3
-num-complex-0.4.6
+num-complex-0.4.5
 num-integer-0.1.46
 num-traits-0.2.19
-once_cell-1.20.2
-paste-1.0.15
+once_cell-1.19.0
+paste-1.0.14
 peeking_take_while-0.1.2
-png-0.17.14
-prettyplease-0.2.25
-primal-check-0.3.4
-proc-macro2-1.0.89
+png-0.17.13
+prettyplease-0.2.19
+primal-check-0.3.3
+proc-macro2-1.0.81
 qoi-0.4.1
-quote-1.0.37
+quote-1.0.36
 rayon-1.10.0
 rayon-core-1.12.1
-regex-1.11.1
-regex-automata-0.4.8
-regex-syntax-0.8.5
+regex-1.10.4
+regex-automata-0.4.6
+regex-syntax-0.8.3
 rustc-hash-1.1.0
 rustdct-0.7.1
 rustfft-6.2.0
-rustix-0.38.38
-ryu-1.0.18
-serde-1.0.214
-serde_derive-1.0.214
-serde_json-1.0.132
+rustix-0.38.34
+ryu-1.0.17
+scopeguard-1.2.0
+serde-1.0.200
+serde_derive-1.0.200
+serde_json-1.0.116
 sha1-0.10.6
 sha2-0.10.8
 shlex-1.3.0
 simd-adler32-0.3.7
 smallvec-1.13.2
+spin-0.9.8
 strength_reduce-0.2.4
 syn-1.0.109
-syn-2.0.85
-tempfile-3.13.0
-thiserror-1.0.65
-thiserror-impl-1.0.65
+syn-2.0.60
+tempfile-3.10.1
+thiserror-1.0.59
+thiserror-impl-1.0.59
 tiff-0.9.1
-tinyvec-1.8.0
+tinyvec-1.6.0
 toml-0.5.11
 transpose-0.2.3
 typenum-1.17.0
-unicode-ident-1.0.13
-unicode-segmentation-1.12.0
-uuid-1.11.0
-version_check-0.9.5
-wasm-bindgen-0.2.95
-wasm-bindgen-backend-0.2.95
-wasm-bindgen-macro-0.2.95
-wasm-bindgen-macro-support-0.2.95
-wasm-bindgen-shared-0.2.95
+unicode-ident-1.0.12
+unicode-segmentation-1.11.0
+uuid-1.8.0
+version_check-0.9.4
+wasm-bindgen-0.2.92
+wasm-bindgen-backend-0.2.92
+wasm-bindgen-macro-0.2.92
+wasm-bindgen-macro-support-0.2.92
+wasm-bindgen-shared-0.2.92
 weezl-0.1.8
 which-4.4.2
 widestring-1.1.0
 windows-core-0.52.0
 windows-sys-0.52.0
-windows-sys-0.59.0
-windows-targets-0.52.6
-windows_aarch64_gnullvm-0.52.6
-windows_aarch64_msvc-0.52.6
-windows_i686_gnu-0.52.6
-windows_i686_gnullvm-0.52.6
-windows_i686_msvc-0.52.6
-windows_x86_64_gnu-0.52.6
-windows_x86_64_gnullvm-0.52.6
-windows_x86_64_msvc-0.52.6
+windows-targets-0.52.5
+windows_aarch64_gnullvm-0.52.5
+windows_aarch64_msvc-0.52.5
+windows_i686_gnu-0.52.5
+windows_i686_gnullvm-0.52.5
+windows_i686_msvc-0.52.5
+windows_x86_64_gnu-0.52.5
+windows_x86_64_gnullvm-0.52.5
+windows_x86_64_msvc-0.52.5
 zune-inflate-0.2.54
 "
 CURL_PV="7.68.0"
+GENERATE_LOCKFILE=0
 LLVM_MAX_SLOT=14
 PYTEST_PV="7.2.0"
-PYTHON_COMPAT=( python3_{10..12} ) # CI uses 3.8
+PYTHON_COMPAT=( "python3_"{10..12} ) # CI uses 3.8
+RUSTFLAGS_HARDENED_ASAN=0
+RUSTFLAGS_HARDENED_HWASAN=0
+RUSTFLAGS_HARDENED_USE_CASES="jit network secure-critical sensitive-data untrusted-data"
+RUSTFLAGS_HARDENED_UBSAN=0
+RUSTFLAGS_HARDENED_TOLERANCE="3.0"
 
-inherit cargo cmake flag-o-matic lcnr llvm python-any-r1 systemd tmpfiles
+inherit cargo cflags-hardened cmake eapi9-ver flag-o-matic lcnr llvm
+inherit python-any-r1 rustflags-hardened systemd tmpfiles toolchain-funcs
 
 if ! [[ "${PV}" =~ "_rc" ]] ; then
 	KEYWORDS="~amd64 ~arm64 ~arm64-macos"
@@ -390,6 +405,7 @@ PATCHES=(
 	"${FILESDIR}/extra-patches/${PN}-1.0.0-llvm14-noreturn.patch"
 	"${FILESDIR}/extra-patches/${PN}-1.0.0-llvm14.patch"
 	"${FILESDIR}/extra-patches/${PN}-1.0.0-llvm15.patch"
+	"${FILESDIR}/extra-patches/${PN}-1.4.2-test-timeout.patch"
 	"${FILESDIR}/${PN}-1.4.1-pointer-types.patch"
 )
 
@@ -473,6 +489,8 @@ eerror
 }
 
 src_configure() {
+	cflags-hardened_append
+	rustflags-hardened_append
 	use elibc_musl && append-ldflags -lfts
 	use ppc64 && append-flags -mminimal-toc
 
@@ -485,7 +503,6 @@ src_configure() {
 		replace-flags '-O*' '-O3'
 	fi
 
-	clang --version
 	local mycmakeargs=(
 		-DAPP_CONFIG_DIRECTORY="${EPREFIX}/etc/clamav"
 		-DBYTECODE_RUNTIME=$(usex jit llvm interpreter)
@@ -551,10 +568,73 @@ src_configure() {
 	cmake_src_configure
 }
 
+get_llvm_arch() {
+# See https://github.com/llvm/llvm-project/blob/llvmorg-20.1.3/compiler-rt/cmake/Modules/AllSupportedArchDefs.cmake
+	if [[ "${ARCH}" == "amd64" ]] ; then
+		echo "x86_64"
+	elif [[ "${ARCH}" == "arm64" ]] ; then
+		echo "aarch64"
+	elif [[ "${ARCH}" == "loong" ]] ; then
+		echo "loongarch64"
+	elif [[ "${ARCH}" == "ppc64" && "${CHOST}" =~ "powerpc64le" ]] ; then
+		echo "powerpc64le"
+	elif [[ "${ARCH}" == "ppc64" && "${CHOST}" =~ "powerpc64-" ]] ; then
+		echo "powerpc64"
+	elif [[ "${ARCH}" == "ppc" && "${CHOST}" =~ "powerpc-" ]] ; then
+		echo "powerpc"
+	elif [[ "${ARCH}" == "riscv" && "${CHOST}" =~ "riscv64" ]] ; then
+		echo "riscv64"
+	elif [[ "${ARCH}" == "riscv" && "${CHOST}" =~ "riscv32" ]] ; then
+		echo "riscv32"
+	elif [[ "${ARCH}" == "mips" && "${CHOST}" =~ "mips64el" ]] ; then
+		echo "mips64el"
+	elif [[ "${ARCH}" == "mips" && "${CHOST}" =~ "mips64" ]] ; then
+		echo "mips64"
+	elif [[ "${ARCH}" == "mips" && "${CHOST}" =~ "mipsel" ]] ; then
+		echo "mipsel"
+	elif [[ "${ARCH}" == "mips" && "${CHOST}" =~ "mips-" ]] ; then
+		echo "mips"
+	elif [[ "${ARCH}" == "sparc" && "${CHOST}" =~ "sparc-" ]] ; then
+		echo "sparc"
+	elif [[ "${ARCH}" == "s390" && "${CHOST}" =~ "s390x" ]] ; then
+		echo "s390x"
+	else
+eerror "ARCH=${ARCH} not supported.  Use gcc compiler."
+		die
+	fi
+}
+
 src_test() {
+	local -x SANDBOX_ON=0 # Required so libsandbox.so will not crash test because of libasan.so...
+	export ASAN_OPTIONS="abort_on_error=1:log_path=/dev/null:verbosity=0:verify_asan_link_order=0"
+	export UBSAN_OPTIONS="halt_on_error=1:print_stacktrace=0:log_path=/dev/null"
+	export CC=$(tc-getCC)
+	local preload_libs="" # Required so libsandbox.so will not crash test because of libasan.so...
+	if tc-is-gcc ; then
+		if [[ -n "${CFLAGS_HARDENED_ASAN}" ]] ; then
+			preload_libs+=":"$(${CC} -print-file-name=libasan.so)
+		fi
+		if [[ -n "${CFLAGS_HARDENED_UBSAN}" ]] ; then
+			preload_libs+=":"$(${CC} -print-file-name=libubsan.so)
+		fi
+	else
+		local arch=$(get_llvm_arch)
+		if [[ -n "${CFLAGS_HARDENED_ASAN}" ]] ; then
+			preload_libs+=":"$(${CC} -print-file-name=libclang_rt.asan-${arch}.so)
+		fi
+		if [[ -n "${CFLAGS_HARDENED_UBSAN}" ]] ; then
+			preload_libs+=":"$(${CC} -print-file-name=libclang_rt.ubsan_minimal-${arch}.so)
+		fi
+	fi
+	if [[ -n "${CFLAGS_HARDENED_ASAN}" || -n "${CFLAGS_HARDENED_UBSAN}" ]] ; then
+		export LD_PRELOAD="${preload_libs}"
+	fi
+einfo "LD_PRELOAD:  ${LD_PRELOAD}"
 	use valgrind && ewarn "Testing with valgrind may likely fail."
-	cd "${BUILD_DIR}" || die
-	use jit && "unit_tests/check_clamav" || die
+	cd "${S}_build" || die
+	if use jit ; then
+		"./unit_tests/check_clamav" || die
+	fi
 	cmake_src_test
 }
 
@@ -680,7 +760,7 @@ ewarn "only the clamd daemon itself. You should add freshclam (and perhaps"
 ewarn "clamav-milter) to any runlevels that previously contained clamd."
 ewarn
 	else
-		if [[ -n "${REPLACING_VERSIONS}" ]] && ver_test "${REPLACING_VERSIONS}" -le "1.3.1" ; then
+		if ver_replacing -le "1.3.1" ; then
 ewarn
 ewarn "From 1.3.1-r1 the Gentoo-provided systemd services have been retired in"
 ewarn "favour of using the units shipped by upstream.  Ensure that any required"

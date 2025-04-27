@@ -114,7 +114,7 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # -C stack-protector=strong		1.02 - 1.05
 # -C stack-protector=basic		1.01 - 1.03
 # -C target-feature=+retpoline		1.01 - 1.20
-# -fsanitizer=address			2.00 - 3.00 (asan); 1.00 - 1.05 (amd64, gwp-asan),  1.00 - 1.07 (arm64, gwp-asan) *
+# -Zsanitizer=address			2.00 - 3.00 (asan); 1.00 - 1.05 (amd64, gwp-asan),  1.00 - 1.07 (arm64, gwp-asan) *
 # -Zsanitizer=cfi			1.05 - 1.20  *
 # -Zsanitizer=hwaddress			1.10 - 1.50 (arm64)  *
 # -Zsanitizer=leak			1.01 - 1.05  *
@@ -173,6 +173,11 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # 1 - compile time checks only
 # 2 - general compile + runtime protection
 # 3 - maximum compile + runtime protection
+
+
+# @ECLASS_VARIABLE:  RUSTFLAGS_UNSTABLE_RUSTC_PV
+# @DESCRIPTION:
+RUSTFLAGS_UNSTABLE_RUSTC_PV="1.86.0"
 
 # @FUNCTION: _rustflags-hardened_fcmp
 # @DESCRIPTION:
@@ -272,6 +277,26 @@ _rustflags-hardened_has_cet() {
 	fi
 }
 
+# @FUNCTION: _rustflags-hardened_has_unstable_rust
+# @DESCRIPTION:
+_rustflags-hardened_has_unstable_rust() {
+	if [[ -z "${RUSTC}" ]] ; then
+eerror "QA:  Place _rustflags-hardened_has_unstable_rust() after RUSTC init."
+		die
+	fi
+	local rust_pv=$(${RUSTC} --version | cut -f 2 -d " ")
+	local is_unstable=0
+	if ver_test "${rust_pv}" -lt "${RUSTFLAGS_UNSTABLE_RUSTC_PV}" ; then
+		return 1
+	fi
+	if has_version "=dev-lang/rust-9999" ; then
+		return 0
+	elif has_version "=dev-lang/rust-bin-9999" ; then
+		return 0
+	fi
+	return 1
+}
+
 # @FUNCTION: rustflags-hardened_append
 # @DESCRIPTION:
 # Apply RUSTFLAG hardening to Rust packages.
@@ -283,6 +308,8 @@ rustflags-hardened_append() {
 	if [[ -n "${RUSTFLAGS_HARDENED_TOLERANCE_USER}" ]] ; then
 		RUSTFLAGS_HARDENED_TOLERANCE="${RUSTFLAGS_HARDENED_TOLERANCE_USER}"
 	fi
+
+ewarn "=dev-lang/rust-bin-9999 or =dev-lang/rust-9999 will be required for security-critical rust packages."
 
 	if [[ -z "${CC}" ]] ; then
 		export CC=$(tc-getCC)
@@ -674,6 +701,8 @@ einfo "rustc host:  ${host}"
 		[[ "${ARCH}" == "arm64" ]] \
 			&& \
 		[[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"secure-critical") ]] \
+			&&
+		_rustflags-hardened_has_unstable_rust \
 	; then
 	# For secure-critical
 		if ! _rustflags-hardened_has_mte ; then
@@ -695,6 +724,8 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 		[[ "${ARCH}" == "amd64" ]] \
 			&& \
 		[[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"secure-critical") ]] \
+			&&
+		_rustflags-hardened_has_unstable_rust \
 	; then
 	# For secure-critical
 		RUSTFLAGS+=" -Zsanitizer=address"
@@ -714,6 +745,8 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 				||
 			( _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.07" && [[ "${ARCH}" == "arm64" ]] ) \
 		) \
+			&&
+		_rustflags-hardened_has_unstable_rust \
 	; then
 	# For performance-critical
 		RUSTFLAGS+=" -Zsanitizer=address"
@@ -731,6 +764,8 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.20" \
 			&& \
 		[[ "${RUSTFLAGS_HARDENED_CFI:-0}" == "1" ]] \
+			&&
+		_rustflags-hardened_has_unstable_rust \
 	; then
 		RUSTFLAGS+=" -Zsanitizer=cfi"
 		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[cfi]" ; then
@@ -749,6 +784,8 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" \
 			&& \
 		[[ "${RUSTFLAGS_HARDENED_LSAN:-0}" == "1" ]] \
+			&&
+		_rustflags-hardened_has_unstable_rust \
 	; then
 		RUSTFLAGS+=" -Zsanitizer=leak"
 		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[lsan]" ; then
@@ -765,6 +802,8 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "2.00" \
 			&& \
 		[[ "${RUSTFLAGS_HARDENED_MSAN:-0}" == "1" ]] \
+			&&
+		_rustflags-hardened_has_unstable_rust \
 	; then
 		RUSTFLAGS+=" -Zsanitizer=memory"
 		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[msan]" ; then
@@ -783,6 +822,8 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 		[[ "${RUSTFLAGS_HARDENED_SAFESTACK:-0}" == "1" ]] \
 			&& \
 		tc-is-clang \
+			&&
+		_rustflags-hardened_has_unstable_rust \
 	; then
 ewarn "SafeStack should be combined with either ASAN or HWASAN for halt on error"
 		RUSTFLAGS+=" -Zsanitizer=safestack"
@@ -800,6 +841,8 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "15.00" \
 			&& \
 		[[ "${RUSTFLAGS_HARDENED_TSAN:-0}" == "1" ]] \
+			&&
+		_rustflags-hardened_has_unstable_rust \
 	; then
 		RUSTFLAGS+=" -Zsanitizer=thread"
 		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[tsan]" ; then
@@ -813,6 +856,7 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 	fi
 
 	export RUSTFLAGS
+einfo "RUSTFLAGS:  ${RUSTFLAGS}"
 	_rustflags-hardened_proximate_opt_level
 }
 
