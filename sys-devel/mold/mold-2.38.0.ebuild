@@ -45,7 +45,7 @@ RDEPEND="
 	dev-libs/blake3:=
 	sys-libs/zlib
 	!kernel_Darwin? (
-		>=dev-libs/mimalloc-2
+		>=dev-libs/mimalloc-2.2
 		dev-libs/mimalloc:=
 	)
 "
