@@ -52,7 +52,7 @@
 +    defines -= [ "_FORTIFY_SOURCE", "_FORTIFY_SOURCE=1", "_FORTIFY_SOURCE=2", "_FORTIFY_SOURCE=3" ]
 +    if (use_fortify_source == 2) {
 +      defines += [ "_FORTIFY_SOURCE=2" ]
-+    else if (use_fortify_source == 3) {
++    } else if (use_fortify_source == 3) {
 +      defines += [ "_FORTIFY_SOURCE=3" ]
 +    }
 +
