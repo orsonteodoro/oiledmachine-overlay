@@ -13,7 +13,7 @@
  }
  
  declare_args() {
-@@ -390,6 +393,39 @@ config("compiler") {
+@@ -390,6 +393,38 @@ config("compiler") {
        }
      }
  
@@ -38,7 +38,6 @@
 +      cflags += [ "-fc-protection=branch" ]
 +    }
 +
-+    rustflags -= [ "-Coverflow-checks=on" ]
 +    if (use_trapv) {
 +      cflags += [ "-ftrapv" ]
 +      rustflags += [ "-Coverflow-checks=on" ]
