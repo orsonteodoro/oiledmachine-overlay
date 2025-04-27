@@ -4,6 +4,7 @@
 
 EAPI="8"
 
+CFLAGS_HARDENED_USE_CASES="secure-critical sensitive-data untrusted-data"
 JAVA_PKG_OPT_USE="jdbc"
 PATCHSET_VER="10.11.6:01"
 SUBSLOT="18"
@@ -12,8 +13,8 @@ UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 
-inherit cmake flag-o-matic java-pkg-opt-2 multiprocessing prefix systemd
-inherit toolchain-funcs uopts
+inherit cflags-hardened cmake flag-o-matic java-pkg-opt-2 multiprocessing prefix
+inherit systemd toolchain-funcs uopts
 
 KEYWORDS="~amd64 ~arm64 ~arm64-macos"
 # Shorten the path because the socket path length must be shorter than 107 chars
@@ -41,6 +42,7 @@ IUSE="
 innodb-lzo innodb-snappy jdbc jemalloc kerberos latin1 mroonga numa odbc oqgraph
 pam +perl profiling rocksdb selinux +server sphinx sst-rsync sst-mariabackup
 static systemd systemtap s3 tcmalloc test xml yassl
+ebuild_revision_1
 "
 REQUIRED_USE="
 	?? (
@@ -413,6 +415,8 @@ _src_configure() {
 
 	# bug #283926, with GCC4.4, this is required to get correct behavior.
 	append-flags -fno-strict-aliasing
+
+	cflags-hardened_append
 
 	CMAKE_BUILD_TYPE="RelWithDebInfo"
 
