@@ -27,15 +27,15 @@
 +    }
 +
 +    if (use_cf_protection == "none") {
-+      cflags += [ "-fc-protection=none" ]
++      cflags += [ "-fcf-protection=none" ]
 +      rustflags += [ "-Ctarget-feature=-cet" ]
 +    } else if (use_cf_protection == "full") {
-+      cflags += [ "-fc-protection=full" ]
++      cflags += [ "-fcf-protection=full" ]
 +      rustflags += [ "-Ctarget-feature=+cet" ]
 +    } else if (use_cf_protection == "return") {
-+      cflags += [ "-fc-protection=return" ]
++      cflags += [ "-fcf-protection=return" ]
 +    } else if (use_cf_protection == "branch") {
-+      cflags += [ "-fc-protection=branch" ]
++      cflags += [ "-fcf-protection=branch" ]
 +    }
 +
 +    if (use_trapv) {
