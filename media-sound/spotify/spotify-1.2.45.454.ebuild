@@ -489,23 +489,33 @@ ewarn
 	fi
 
 	local require_network=0
-	if has "extra-dep-checks" ${IUSE} \
-		&& use extra-dep-checks ; then
+	if \
+		has "extra-dep-checks" ${IUSE} \
+			&& \
+		use extra-dep-checks \
+	; then
 		require_network=1
 eerror
 eerror "Network access required to verify Chromium dependencies."
 eerror
 	fi
-	if has "verify-gpg-key" ${IUSE} \
-		&& use verify-gpg-key \
-		&& has "network-sandbox" ${FEATURES} ; then
+	if \
+		has "verify-gpg-key" ${IUSE} \
+			&& \
+		use verify-gpg-key \
+			&& \
+		has "network-sandbox" ${FEATURES} \
+	; then
 		require_network=1
 eerror
 eerror "Network access required to verify the public repository gpg key."
 eerror
 	fi
-	if [[ "${PV}" =~ "9999" ]] \
-		&& has "network-sandbox" ${FEATURES} ; then
+	if \
+		[[ "${PV}" =~ "9999" ]] \
+			&& \
+		has "network-sandbox" ${FEATURES} \
+	; then
 		require_network=1
 eerror
 eerror "Network access required to download from live source and verify the"
@@ -555,8 +565,9 @@ einfo "Expected BLAKE2B:\t${GPG_PUBLIC_KEY_BLAKE2B}"
 einfo "Actual BLAKE2B:\t${actual_blake2b}"
 einfo
 	if [[ \
-		   "${actual_sha512}" == "${GPG_PUBLIC_KEY_SHA512}" \
-		&& "${actual_blake2b}" == "${GPG_PUBLIC_KEY_BLAKE2B}" \
+		"${actual_sha512}" == "${GPG_PUBLIC_KEY_SHA512}" \
+			&& \
+		"${actual_blake2b}" == "${GPG_PUBLIC_KEY_BLAKE2B}" \
 	]] ; then
 		:
 	else
@@ -577,8 +588,10 @@ einfo "Importing GPG key into sandboxed keychain"
 	gpg --import "${GPG_PUB_KEY_FN}" || die # \
 	# Added the public key to the (sandboxed) keychain.
 
-	if ! gpg --list-keys \
-		| grep -q -e "${GPG_KEY_ID}" ; then
+	if \
+		! gpg --list-keys \
+		| grep -q -e "${GPG_KEY_ID}" \
+	; then
 eerror
 eerror "GPG_KEY_ID needs to be updated or is untrusted."
 eerror
@@ -615,7 +628,13 @@ eerror
 		| cut -f 2 -d " ")
 	local expire_time=$(date -d "${EXPIRE_DATE}" "+%s")
 	local now_time=$(date "+%s")
-	if (( ${now_time} > ${expire_time} )) ; then
+	if \
+		has "verify-gpg-key" ${IUSE} \
+			&& \
+		use verify-gpg-key \
+			&& \
+		(( ${now_time} > ${expire_time} )) \
+	; then
 eerror
 eerror "The key is outdated.  Is ${PN} End Of Life (EOL)?"
 eerror
@@ -627,13 +646,25 @@ eerror
 	fi
 
 	local external_key_check=0
-	if [[ "${PV}" =~ "9999" \
-		&& ( -z "${EVCS_OFFLINE}" || "${EVCS_OFFLINE}" == "0" ) ]] ; then
+	if \
+		[[ \
+			"${PV}" =~ "9999" \
+				&& \
+			( \
+				-z "${EVCS_OFFLINE}" \
+					|| \
+				"${EVCS_OFFLINE}" == "0" \
+			) \
+		]] \
+	; then
 		external_key_check=1
 	fi
 
-	if has "verify-gpg-key" ${IUSE} \
-		&& use verify-gpg-key ; then
+	if \
+		has "verify-gpg-key" ${IUSE} \
+			&& \
+		use verify-gpg-key \
+	; then
 		external_key_check=1
 	fi
 
@@ -721,9 +752,11 @@ einfo
 einfo "Packages fingerprints:"
 einfo
 	if \
-		   _verify_package_list "md5" \
-		&& _verify_package_list "sha1" \
-		&& _verify_package_list "sha256" \
+		_verify_package_list "md5" \
+			&& \
+		_verify_package_list "sha1" \
+			&& \
+		_verify_package_list "sha256" \
 	; then
 		return 0
 	fi
@@ -780,8 +813,7 @@ check_client_depends() {
 		  echo -n "${depends}${recommends}${suggests}" \
 		| sha512sum \
 		| cut -f 1 -d " ")
-	if [[ "${actual_depends_fingerprint}" \
-		!= "${EXPECTED_DEPENDS_FINGERPRINT}" ]] ; then
+	if [[ "${actual_depends_fingerprint}" != "${EXPECTED_DEPENDS_FINGERPRINT}" ]] ; then
 eerror
 eerror "Upstream has updated the dependencies."
 eerror
@@ -846,11 +878,15 @@ einfo "Expected size:\t${expected_size}"
 einfo "Actual size:\t\t${actual_size}"
 einfo
 	if \
-		   _verify_client_deb "md5" \
-		&& _verify_client_deb "sha1" \
-		&& _verify_client_deb "sha256" \
-		&& _verify_client_deb "sha512" \
-		&& (( "${expected_size}" == "${actual_size}" )) \
+		_verify_client_deb "md5" \
+			&& \
+		_verify_client_deb "sha1" \
+			&& \
+		_verify_client_deb "sha256" \
+			&& \
+		_verify_client_deb "sha512" \
+			&& \
+		(( "${expected_size}" == "${actual_size}" )) \
 	; then
 		return 0
 	fi
@@ -921,10 +957,13 @@ einfo
 einfo "Expected BLAKE2B:\t${EXPECTED_BLAKE2B}"
 einfo "Actual BLAKE2B:\t${ACTUAL_BLAKE2B}"
 einfo
-	if [[ \
-		   "${EXPECTED_BLAKE2B}" == "${ACTUAL_BLAKE2B}" \
-		&& "${SIZE_BLAKE2B}" == "128" \
-	]] ; then
+	if \
+		[[ \
+			"${EXPECTED_BLAKE2B}" == "${ACTUAL_BLAKE2B}" \
+				&& \
+			"${SIZE_BLAKE2B}" == "128" \
+		]] \
+	; then
 		return 0
 	fi
 	return 1
@@ -1142,8 +1181,11 @@ src_install() {
 	domenu "${S}/${SHARE_PATH}/${PN}.desktop"
 	# Dropped pax_kernel USE flag because of license.
 
-	if has "extra-dep-checks" ${IUSE} \
-		use extra-dep-checks ; then
+	if \
+		has "extra-dep-checks" ${IUSE} \
+			&& \
+		use extra-dep-checks \
+	; then
 		check_cr
 		check_libs
 	fi

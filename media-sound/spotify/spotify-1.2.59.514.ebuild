@@ -76,10 +76,6 @@ ATK_PV="2.26.2"
 BUILD_ID_AMD64="g834e17d4" # Change this after every bump
 CAIRO_PV="1.16.0"
 CLANG_PV="17"
-CPU_FLAGS_X86=(
-	"cpu_flags_x86_avx2"
-	"cpu_flags_x86_sse4_2"
-)
 DEFAULT_CONFIGURATION="stable"
 EXPECTED_DEPENDS_FINGERPRINT="\
 fd58cdd53a8053f5409d059776d9356e26a621bf8753f3e9d6887814769a2eab\
@@ -198,7 +194,6 @@ LICENSE="
 RESTRICT="binchecks mirror strip"
 SLOT="0/${DEFAULT_CONFIGURATION}"
 IUSE+="
-${CPU_FLAGS_X86[@]}
 emoji ffmpeg firejail bluetooth libnotify pulseaudio vaapi wayland zenity +X
 ebuild_revision_1
 "
@@ -467,19 +462,9 @@ else
 fi
 
 pkg_setup() {
-	# Compatible CPUs:
-	# >= Excavator (2015)
-	# >= Haswell (2013)
-	if ! use cpu_flags_x86_avx2 ; then
-einfo "AVX2 is required.  Use the =${CATEGORY}/${PN}-1.2.45.454 ebuild or website instead."
+ewarn "A newer processor may be required to use this version."
+ewarn "Older processors can use the =${CATEGORY}/${PN}-1.2.45.454 ebuild or website instead."
 einfo "The web version can be found at https://open.spotify.com"
-		die
-	fi
-	if ! use cpu_flags_x86_sse4_2 ; then
-einfo "SSE 4.2 is required.  Use the =${CATEGORY}/${PN}-1.2.45.454 ebuild or website instead."
-einfo "The web version can be found at https://open.spotify.com"
-		die
-	fi
 	local configuration_desc
 	if [[ "${PV}" =~ "9999" ]] ; then
 		CONFIGURATION="${DEFAULT_CONFIGURATION}"
@@ -507,23 +492,33 @@ ewarn
 	fi
 
 	local require_network=0
-	if has "extra-dep-checks" ${IUSE} \
-		&& use extra-dep-checks ; then
+	if \
+		has "extra-dep-checks" ${IUSE} \
+			&& \
+		use extra-dep-checks \
+	; then
 		require_network=1
 eerror
 eerror "Network access required to verify Chromium dependencies."
 eerror
 	fi
-	if has "verify-gpg-key" ${IUSE} \
-		&& use verify-gpg-key \
-		&& has "network-sandbox" ${FEATURES} ; then
+	if \
+		has "verify-gpg-key" ${IUSE} \
+			&& \
+		use verify-gpg-key \
+			&& \
+		has "network-sandbox" ${FEATURES} \
+	; then
 		require_network=1
 eerror
 eerror "Network access required to verify the public repository gpg key."
 eerror
 	fi
-	if [[ "${PV}" =~ "9999" ]] \
-		&& has "network-sandbox" ${FEATURES} ; then
+	if \
+		[[ "${PV}" =~ "9999" ]] \
+			&& \
+		has "network-sandbox" ${FEATURES} \
+	; then
 		require_network=1
 eerror
 eerror "Network access required to download from live source and verify the"
@@ -572,10 +567,13 @@ einfo
 einfo "Expected BLAKE2B:\t${GPG_PUBLIC_KEY_BLAKE2B}"
 einfo "Actual BLAKE2B:\t${actual_blake2b}"
 einfo
-	if [[ \
-		   "${actual_sha512}" == "${GPG_PUBLIC_KEY_SHA512}" \
-		&& "${actual_blake2b}" == "${GPG_PUBLIC_KEY_BLAKE2B}" \
-	]] ; then
+	if \
+		[[ \
+			"${actual_sha512}" == "${GPG_PUBLIC_KEY_SHA512}" \
+				&& \
+			"${actual_blake2b}" == "${GPG_PUBLIC_KEY_BLAKE2B}" \
+		]] \
+	; then
 		:
 	else
 eerror
@@ -595,8 +593,10 @@ einfo "Importing GPG key into sandboxed keychain"
 	gpg --import "${GPG_PUB_KEY_FN}" || die # \
 	# Added the public key to the (sandboxed) keychain.
 
-	if ! gpg --list-keys \
-		| grep -q -e "${GPG_KEY_ID}" ; then
+	if \
+		! gpg --list-keys \
+		| grep -q -e "${GPG_KEY_ID}" \
+	; then
 eerror
 eerror "GPG_KEY_ID needs to be updated or is untrusted."
 eerror
@@ -633,7 +633,13 @@ eerror
 		| cut -f 2 -d " ")
 	local expire_time=$(date -d "${EXPIRE_DATE}" "+%s")
 	local now_time=$(date "+%s")
-	if (( ${now_time} > ${expire_time} )) ; then
+	if \
+		has "verify-gpg-key" ${IUSE} \
+			&& \
+		use verify-gpg-key \
+			&& \
+		(( ${now_time} > ${expire_time} )) \
+	; then
 eerror
 eerror "The key is outdated.  Is ${PN} End Of Life (EOL)?"
 eerror
@@ -645,13 +651,25 @@ eerror
 	fi
 
 	local external_key_check=0
-	if [[ "${PV}" =~ "9999" \
-		&& ( -z "${EVCS_OFFLINE}" || "${EVCS_OFFLINE}" == "0" ) ]] ; then
+	if \
+		[[ \
+			"${PV}" =~ "9999" \
+				&& \
+			( \
+				-z "${EVCS_OFFLINE}" \
+					|| \
+				"${EVCS_OFFLINE}" == "0" \
+			) \
+		]] \
+	; then
 		external_key_check=1
 	fi
 
-	if has "verify-gpg-key" ${IUSE} \
-		&& use verify-gpg-key ; then
+	if \
+		has "verify-gpg-key" ${IUSE} \
+			&& \
+		use verify-gpg-key \
+	; then
 		external_key_check=1
 	fi
 
@@ -739,9 +757,11 @@ einfo
 einfo "Packages fingerprints:"
 einfo
 	if \
-		   _verify_package_list "md5" \
-		&& _verify_package_list "sha1" \
-		&& _verify_package_list "sha256" \
+		_verify_package_list "md5" \
+			&& \
+		_verify_package_list "sha1" \
+			&& \
+		_verify_package_list "sha256" \
 	; then
 		return 0
 	fi
@@ -798,8 +818,7 @@ check_client_depends() {
 		  echo -n "${depends}${recommends}${suggests}" \
 		| sha512sum \
 		| cut -f 1 -d " ")
-	if [[ "${actual_depends_fingerprint}" \
-		!= "${EXPECTED_DEPENDS_FINGERPRINT}" ]] ; then
+	if [[ "${actual_depends_fingerprint}" != "${EXPECTED_DEPENDS_FINGERPRINT}" ]] ; then
 eerror
 eerror "Upstream has updated the dependencies."
 eerror
@@ -864,11 +883,15 @@ einfo "Expected size:\t${expected_size}"
 einfo "Actual size:\t\t${actual_size}"
 einfo
 	if \
-		   _verify_client_deb "md5" \
-		&& _verify_client_deb "sha1" \
-		&& _verify_client_deb "sha256" \
-		&& _verify_client_deb "sha512" \
-		&& (( "${expected_size}" == "${actual_size}" )) \
+		_verify_client_deb "md5" \
+			&& \
+		_verify_client_deb "sha1" \
+			&& \
+		_verify_client_deb "sha256" \
+			&& \
+		_verify_client_deb "sha512" \
+			&& \
+		(( "${expected_size}" == "${actual_size}" )) \
 	; then
 		return 0
 	fi
@@ -939,10 +962,13 @@ einfo
 einfo "Expected BLAKE2B:\t${EXPECTED_BLAKE2B}"
 einfo "Actual BLAKE2B:\t${ACTUAL_BLAKE2B}"
 einfo
-	if [[ \
-		   "${EXPECTED_BLAKE2B}" == "${ACTUAL_BLAKE2B}" \
-		&& "${SIZE_BLAKE2B}" == "128" \
-	]] ; then
+	if \
+		[[ \
+			"${EXPECTED_BLAKE2B}" == "${ACTUAL_BLAKE2B}" \
+				&& \
+			"${SIZE_BLAKE2B}" == "128" \
+		]] \
+	; then
 		return 0
 	fi
 	return 1
@@ -1157,8 +1183,11 @@ src_install() {
 	domenu "${S}/${SHARE_PATH}/${PN}.desktop"
 	# Dropped pax_kernel USE flag because of license.
 
-	if has "extra-dep-checks" ${IUSE} \
-		use extra-dep-checks ; then
+	if \
+		has "extra-dep-checks" ${IUSE} \
+			&&
+		use extra-dep-checks \
+	; then
 		check_cr
 		check_libs
 	fi
