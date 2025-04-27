@@ -8,7 +8,7 @@
 +  use_retpoline = is_linux && is_clang
 +  use_stack_clash_protection = is_linux
 +  use_cf_protection = "none"
-+  use_trapv = 0
++  use_trapv = false
 +  use_fortify_source = -1
  }
  
