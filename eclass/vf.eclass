@@ -184,6 +184,14 @@ einfo "XSS = Cross Site Scripting Attack"
 einfo "ZC = Zero Click Attack"
 		fi
 einfo
+einfo "Tip:  Ask the AI/LLM this question to fill in the blanks for the table"
+einfo "for possible impact vectors:"
+einfo
+einfo "Give me the y, n, n/a in a table if <cve-id> causes code execution,"
+einfo "elevated privileges, data tampering, denial of service, information"
+einfo "disclosure. This one is a <full vulnerability description (e.g. use"
+einfo "after free)>."
+einfo
 	fi
 }
 fi
