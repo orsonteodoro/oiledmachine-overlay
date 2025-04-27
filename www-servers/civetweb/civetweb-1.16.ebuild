@@ -3,6 +3,7 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="server untrusted-data"
 CMAKE_MAKEFILE_GENERATOR="emake"
 # CMakeLists.txt lists versions
 # See https://github.com/civetweb/civetweb/tree/v1.15/src/third_party
@@ -26,7 +27,7 @@ LUA_PV_SUPPORTED=(
 	"5.4.0"
 ) # Upstream supported specifically
 
-inherit cmake flag-o-matic lua multilib-minimal
+inherit cflags-hardened cmake flag-o-matic lua multilib-minimal
 
 KEYWORDS="~amd64 ~ppc ~x86"
 S="${WORKDIR}/civetweb-${PV}"
@@ -44,7 +45,7 @@ ${LUA_COMPAT[@]/#/lua_targets_}
 +asan +c11 c89 c99 cxx98 cxx11 +cxx14 +cgi gnu17 -cxx +caching debug doc
 -duktape +ipv6 -lua -serve_no_files +server_executable -server_stats +ssl
 static-libs -test -websockets -zlib
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE+="
 	lua? (
@@ -235,6 +236,7 @@ _usex_lto() {
 }
 
 _configure() {
+	cflags-hardened_append
 	# CIVETWEB_CXX_STANDARD auto is c++14 > c++11 > c++98 depending on
 	#   the compiler
 	# CIVETWEB_C_STANDARD auto is c11 > c98 > c89 depending on compiler
