@@ -50,7 +50,7 @@ src_configure() {
 	cflags-hardened_append
 	local mycmakeargs=(
 		-DBLAKE3_BUILD_TESTING=$(usex test)
-		-DBLAKE3_USE_TBB=$(usex TBB)
+		-DBLAKE3_USE_TBB=$(usex tbb)
 	)
 	cmake_src_configure
 }
