@@ -3,15 +3,17 @@
 
 EAPI=7
 
+CFLAGS_HARDENED_USE_CASES="language-runtime untrusted-data"
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
-UOPTS_SUPPORT_TBOLT=1
+UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=1
 
-inherit portability toolchain-funcs uopts
+inherit cflags-hardened portability toolchain-funcs uopts
 
 # Tarballs are produced from ${PV} branches in
 # https://gitweb.gentoo.org/proj/lua-patches.git
+KEYWORDS="~amd64 ~arm ~arm64 ~s390 ~x86"
 SRC_URI="
 	https://dev.gentoo.org/~soap/distfiles/${P}.tar.xz
 "
@@ -21,9 +23,9 @@ extending applications"
 HOMEPAGE="https://www.lua.org/"
 LICENSE="MIT"
 SLOT="5.1"
-KEYWORDS="~amd64 ~arm ~arm64 ~s390 ~x86"
 IUSE="
 +deprecated readline static-libs test
+ebuild_revision_1
 "
 REQUIRED_USE="
 	pgo? (
@@ -82,6 +84,7 @@ _src_configure() {
 	if tc-is-gcc && [[ "${PGO_PHASE}" == "PGO" ]] ; then
 		append-flags -Wno-error=coverage-mismatch
 	fi
+	cflags-hardened_append
 	econf
 }
 

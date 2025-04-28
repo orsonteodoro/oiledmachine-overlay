@@ -3,15 +3,17 @@
 
 EAPI=7
 
+CFLAGS_HARDENED_USE_CASES="language-runtime untrusted-data"
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
-UOPTS_SUPPORT_TBOLT=1
+UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=1
 
-inherit autotools portability toolchain-funcs uopts
+inherit autotools cflags-hardened portability toolchain-funcs uopts
 
 # Tarballs are produced from ${PV} branches in
 # https://gitweb.gentoo.org/proj/lua-patches.git
+KEYWORDS="~amd64 ~arm ~arm64 ~s390 ~x86"
 SRC_URI="
 	https://dev.gentoo.org/~soap/distfiles/${P}.tar.xz
 "
@@ -21,9 +23,9 @@ extending applications"
 HOMEPAGE="https://www.lua.org/"
 LICENSE="MIT"
 SLOT="5.3"
-KEYWORDS="~amd64 ~arm ~arm64 ~s390 ~x86"
 IUSE="
 +deprecated readline static-libs test
+ebuild_revision_1
 "
 REQUIRED_USE="
 	pgo? (
@@ -64,8 +66,10 @@ src_prepare() {
 	if use elibc_musl; then
 		# locales on musl are non-functional (#834153)
 		# https://wiki.musl-libc.org/open-issues.html#Locale-limitations
-		sed -e 's|os.setlocale("pt_BR") or os.setlocale("ptb")|false|g' \
-			-i tests/literals.lua || die
+		sed -i \
+			-e 's|os.setlocale("pt_BR") or os.setlocale("ptb")|false|g' \
+			"tests/literals.lua" \
+			|| die
 	fi
 
 	uopts_src_prepare
@@ -85,6 +89,7 @@ _src_configure() {
 		append-flags -Wno-error=coverage-mismatch
 	fi
 	use deprecated && append-cppflags -DLUA_COMPAT_5_1 -DLUA_COMPAT_5_2
+	cflags-hardened_append
 	econf
 }
 
