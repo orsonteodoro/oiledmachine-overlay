@@ -566,7 +566,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 |"untrusted-data")\
 		]] \
 			&& \
-		_cflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.20" \
+		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.20" \
 	; then
 	# Remove flag if 50% drop in performance.
 	# For runtime *signed* integer overflow detection
@@ -769,9 +769,9 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 		[[ "${RUSTFLAGS_HARDENED_GWP_ASAN:-0}" == "1" ]] \
 			&& \
 		( \
-			( _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" && [[ "${ARCH}" == "amd64" ]] ) \
+			( _rustflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" && [[ "${ARCH}" == "amd64" ]] ) \
 				||
-			( _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.07" && [[ "${ARCH}" == "arm64" ]] ) \
+			( _rustflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.07" && [[ "${ARCH}" == "arm64" ]] ) \
 		) \
 			&&
 		_rustflags-hardened_has_unstable_rust \
