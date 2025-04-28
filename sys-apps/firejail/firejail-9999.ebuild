@@ -648,6 +648,7 @@ declare -A SCOPE=(
 	["x-terminal-emulator"]="ban"
 )
 
+CFLAGS_HARDENED_USE_CASES="secure-critical sandbox sensitive-data untrusted-data"
 DOTTED_FILENAMES=(
 blender-2.8
 blender-3.6
@@ -1533,7 +1534,8 @@ X_XPRA_ONLY=(
 )
 
 
-inherit flag-o-matic linux-info python-single-r1 toolchain-funcs virtualx
+inherit cflags-hardened flag-o-matic linux-info python-single-r1 toolchain-funcs
+inherit virtualx
 
 gen_clang_bdepend() {
 	local s
@@ -1576,7 +1578,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 apparmor auto +chroot clang contrib +dbusproxy +file-transfer +firejail_profiles_default
 +firejail_profiles_server +globalcfg landlock +network +private-home selfrando selinux
 +suid test-profiles test-x11 +userns vanilla wrapper X xephyr xpra xvfb
-ebuild_revision_17
+ebuild_revision_18
 "
 REQUIRED_USE+="
 	${GUI_REQUIRED_USE}
@@ -2923,6 +2925,11 @@ ewarn "Use LLD or mold for ROP mitigation"
 	[[ -n "${cflags}" ]] && append-flags ${cflags}
 	[[ -n "${ldflags}" ]] && append-flags ${ldflags}
 
+
+	cflags-hardened_append
+	cflags="${cflags} ${CFLAGS_HARDENED_CFLAGS}"
+	ldflags="${ldflags} ${CFLAGS_HARDENED_LDFLAGS}"
+
 	sed -i \
 		-e "s:-ggdb::g" \
 		-e "s:-Wall:${cflags} -Wall:g" \
@@ -3040,8 +3047,8 @@ _src_configure() {
 
 src_configure()
 {
-	# Make _FORTIFY_SOURCE work properly
-	replace-flags '-O0' '-O1'
+	# Make _FORTIFY_SOURCE=2 work
+	replace-flags "-O0" "-O1"
 
 	local impl
 	for impl in $(get_impls) ; do
