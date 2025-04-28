@@ -280,6 +280,7 @@ _rustflags-hardened_has_cet() {
 
 # @FUNCTION: _rustflags-hardened_has_unstable_rust
 # @DESCRIPTION:
+# For -Z <option> checks
 _rustflags-hardened_has_unstable_rust() {
 	if [[ -z "${RUSTC}" ]] ; then
 eerror "QA:  Place _rustflags-hardened_has_unstable_rust() after RUSTC init."
@@ -293,6 +294,18 @@ eerror "QA:  Place _rustflags-hardened_has_unstable_rust() after RUSTC init."
 	if has_version "=dev-lang/rust-9999" ; then
 		return 0
 	elif has_version "=dev-lang/rust-bin-9999" ; then
+		return 0
+	fi
+	return 1
+}
+
+# @FUNCTION: _rustflags-hardened_has_target_feature
+# @DESCRIPTION:
+# For -C target-feature=<option> checks
+_rustflags-hardened_has_target_feature() {
+	local feature="${1}"
+	[[ -n "${RUSTC}" ]] || die "QA:  Initialize RUSTC first"
+	if ${RUSTC} --print target-features | grep -q -e "${feature}" ; then
 		return 0
 	fi
 	return 1
@@ -414,6 +427,8 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		ver_test "${rust_pv}" -ge "1.60.0" \
 			&& \
 		[[ "${RUSTFLAGS_HARDENED_CET:-1}" == "1" ]] \
+			&& \
+		_rustflags-hardened_has_target_feature "cet" \
 	; then
 		RUSTFLAGS+=" -C target-feature=+cet"
 	elif \
@@ -486,7 +501,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 
 			if _rustflags-hardened_has_cet ; then
 				:
-			else
+			elif _rustflags-hardened_has_target_feature "retpoline" ; then
 	# PE, ID
 				RUSTFLAGS+=" -C target-feature=+retpoline"
 			fi
@@ -598,7 +613,7 @@ einfo "rustc host:  ${host}"
 	; then
 	# For CFLAGS equivalent list, see also `rustc --print target-features`
 	# For -mllvm option, see `rustc -C llvm-args="--help"`
-		if ${RUSTC} --print target-features | grep -q -e "stack-probe" ; then
+		if _rustflags-hardened_has_target_feature "stack-probe" ; then
 	# Mitigation for stack clash, stack overflow
 	# Not available for ARCH=amd64 prebuilt build.
 			RUSTFLAGS+=" -C target-feature=+stack-probe"
@@ -691,7 +706,9 @@ einfo "rustc host:  ${host}"
 		fi
 		RUSTFLAGS+=" -C target-cpu=generic"
 		RUSTFLAGS+=" -C float-opts=none"
-		RUSTFLAGS+=" -C target-feature=+strict-fp"
+		if _rustflags-hardened_has_target_feature "strict-fp" ; then
+			RUSTFLAGS+=" -C target-feature=+strict-fp"
+		fi
 		RUSTFLAGS+=" -C target-feature=-fast-math"
 		RUSTFLAGS+=" -C float-precision=exact"
 		RUSTFLAGS+=" -C soft-float"
