@@ -357,7 +357,8 @@ BDEPEND="
 "
 # dev-libs/gobject-introspection-common, dev-libs/vala-common are needed by eautoreconf.
 PATCHES=(
-	"${FILESDIR}/librsvg-2.58.5-time-rust-1.80.patch"
+	"${FILESDIR}/${PN}-2.58.5-time-rust-1.80.patch"
+	"${FILESDIR}/${PN}-2.58.5-rust-target.patch"
 )
 
 pkg_setup() {
@@ -386,10 +387,13 @@ multilib_src_configure() {
 		--enable-pixbuf-loader
 	)
 
-	if ! multilib_is_native_abi; then
-		myconf+=(
+	myconf+=(
 	# Set the rust target, which can differ from CHOST
-			RUST_TARGET="$(rust_abi)"
+		RUST_TARGET="$(rust_abi)"
+	)
+
+	if ! multilib_is_native_abi ; then
+		myconf+=(
 	# RUST_TARGET is only honored if cross_compiling, but non-native ABIs aren't cross as
 	# far as C parts and configure auto-detection are concerned as CHOST equals CBUILD
 			cross_compiling="yes"
@@ -412,6 +416,7 @@ src_compile() {
 }
 
 multilib_src_compile() {
+	export RUST_TARGET
 	cargo_env gnome2_src_compile
 }
 
@@ -434,7 +439,7 @@ multilib_src_install() {
 multilib_src_install_all() {
 	find "${ED}" -name '*.la' -delete || die
 
-	if use gtk-doc; then
+	if use gtk-doc ; then
 		mkdir -p "${ED}/usr/share/gtk-doc/html/" || die
 		mv \
 			"${ED}/usr/share/doc/Rsvg-2.0" \
