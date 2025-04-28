@@ -8,14 +8,15 @@ EAPI=8
 MY_PV="${PV/_rc/-rc}"
 MY_PV="${MY_PV//./_}"
 
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 MULTILIB_CHOST_TOOLS=(
 	"/usr/bin/icu-config"
 )
-PYTHON_COMPAT=( python3_{10..13} )
+PYTHON_COMPAT=( "python3_"{10..13} )
 VERIFY_SIG_OPENPGP_KEY_PATH="${BROOT}/usr/share/openpgp-keys/icu.asc"
 
-inherit autotools flag-o-matic flag-o-matic-om llvm multilib-minimal
-inherit python-any-r1 toolchain-funcs verify-sig
+inherit autotools cflags-hardened flag-o-matic flag-o-matic-om llvm
+inherit multilib-minimal python-any-r1 toolchain-funcs verify-sig
 
 if [[ "${PV}" =~ "_rc" ]] ; then
 	KEYWORDS="
@@ -54,7 +55,10 @@ RESTRICT="
 	)
 "
 SLOT="0/${PV%.*}"
-IUSE="debug doc examples static-libs test ebuild_revision_1"
+IUSE="
+debug doc examples static-libs test
+ebuild_revision_2
+"
 BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
@@ -97,7 +101,8 @@ src_prepare() {
 	# ODR violations, experimental API
 	sed -i \
 		-e "s/#   define UCONFIG_NO_MF2 0/#define UCONFIG_NO_MF2 1/" \
-		common/unicode/uconfig.h || die
+		"common/unicode/uconfig.h" \
+		|| die
 
 	# Fix linking of icudata
 	sed -i \
@@ -170,28 +175,37 @@ src_configure() {
 
 _configure_abi() {
 	filter-flags \
-		"-Wno-unused-command-line-argument" \
 		"-DDHAVE_DLOPEN=0" \
 		"-DU_DISABLE_RENAMING=1" \
-		"-DU_STATIC_IMPLEMENTATION"
+		"-DU_STATIC_IMPLEMENTATION" \
+		"-Wno-unused-command-line-argument"
 
 	if [[ "${lib_type}" == "static" ]] ; then
 		append_all \
-			-Wno-unused-command-line-argument
+			"-Wno-unused-command-line-argument"
 		append-cppflags \
-			-DDHAVE_DLOPEN=0 \
-			-DU_DISABLE_RENAMING=1 \
-			-DU_STATIC_IMPLEMENTATION
+			"-DDHAVE_DLOPEN=0" \
+			"-DU_DISABLE_RENAMING=1" \
+			"-DU_STATIC_IMPLEMENTATION"
 	fi
 
 	# CFI Breaks building vte
-	for value in cfi-vcall cfi-nvcall cfi-derived-cast cfi-unrelated-cast cfi ; do
+	local L=(
+		"cfi-vcall"
+		"cfi-nvcall"
+		"cfi-derived-cast"
+		"cfi-unrelated-cast"
+		"cfi"
+	)
+	local value
+	for value in ${L[@]} ; do
 		if is-flagq "-fsanitize=*${value}" ; then
 			einfo "Removing ${value}"
 			strip-flag-value "${value}"
 		fi
 	done
 	filter-flags -fsanitize-cfi-cross-dso
+	cflags-hardened_append
 
 	export ESHAREDLIBCFLAGS=""
 	export ESHAREDLIBCXXFLAGS=""
@@ -320,9 +334,7 @@ multilib_src_install_all() {
 
 pkg_postinst() {
 	if use static-libs ; then
-ewarn
 ewarn "static-lib consumers require -DU_STATIC_IMPLEMENTATION"
-ewarn
 	fi
 }
 
