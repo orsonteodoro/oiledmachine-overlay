@@ -27,7 +27,7 @@ MY_P="${PN}-${MY_PV}"
 MY_PVR="${PVR/m/}"
 
 CFLAGS_HARDENED_LEVEL=3 # SSP all is upstream default
-CFLAGS_HARDENED_USE_CASES="network"
+CFLAGS_HARDENED_USE_CASES="network sensitive-data untrusted-data"
 CUDA_TARGETS_COMPAT=(
 	sm_30
 	sm_60
