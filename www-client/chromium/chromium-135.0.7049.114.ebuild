@@ -72,7 +72,7 @@ CFI_CAST=0 # Global variable
 CFI_ICALL=0 # Global variable
 CFI_VCALL=0 # Global variable
 CFLAGS_HARDENED_LEVEL="1" # Same as build scripts
-CFLAGS_HARDENED_USE_CASES="jit network sandbox scripting sensitive-data untrusted-data web-browser"
+CFLAGS_HARDENED_USE_CASES="jit network scripting sensitive-data untrusted-data web-browser"
 CHROMIUM_EBUILD_MAINTAINER=0 # See also GEN_ABOUT_CREDITS
 
 #
