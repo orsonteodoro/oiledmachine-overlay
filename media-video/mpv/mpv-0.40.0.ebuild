@@ -3,13 +3,16 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
+
 LUA_COMPAT=( "lua5-"{1..2} "luajit" )
 PATENT_STATUS_IUSE=(
 	patent_status_nonfree
 )
 PYTHON_COMPAT=( "python3_"{10..13} )
 
-inherit flag-o-matic lua-single meson optfeature pax-utils python-single-r1 xdg
+inherit cflags-hardened flag-o-matic lua-single meson optfeature pax-utils
+inherit python-single-r1 xdg
 
 if [[ "${PV}" == "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/mpv-player/mpv.git"
@@ -43,7 +46,7 @@ SLOT="0/2" # soname
 IUSE="
 ${PATENT_STATUS_IUSE[@]}
 +X +alsa aqua archive bluray cdda +cli coreaudio debug +drm dvb dvd +egl gamepad
-+iconv jack javascript jpeg lcms libcaca +libmpv +lua network nvenc openal opengl
++iconv jack javascript jpeg lcms libcaca +libmpv +lua network nvenc openal
 pipewire pulseaudio rubberband sdl selinux sixel sndio soc test tools +uchardet
 vaapi vapoursynth vdpau vulkan wayland xv zimg zlib
 "
@@ -83,14 +86,7 @@ REQUIRED_USE="
 	nvenc? (
 		|| (
 			egl
-			opengl
 			vulkan
-		)
-	)
-	opengl? (
-		|| (
-			X
-			aqua
 		)
 	)
 	test? (
@@ -129,21 +125,21 @@ PATENT_STATUS_DEPEND="
 		!media-libs/libva
 		!x11-libs/libvdpau
 		|| (
-			media-video/ffmpeg:58.60.60[encode,network?,-patent_status_nonfree,soc(-)?,threads,-vaapi,-vdpau]
-			media-video/ffmpeg:0/58.60.60[encode,network?,-patent_status_nonfree,soc(-)?,threads,-vaapi,-vdpau]
+			media-video/ffmpeg:58.60.60[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
+			media-video/ffmpeg:0/58.60.60[encode(+),network?,-patent_status_nonfree,soc(-)?,threads(+),-vaapi,-vdpau]
 		)
 	)
 	patent_status_nonfree? (
 		|| (
-			media-video/ffmpeg:58.60.60[encode,network?,patent_status_nonfree,soc(-)?,threads,vaapi?,vdpau?]
-			media-video/ffmpeg:0/58.60.60[encode,network?,patent_status_nonfree,soc(-)?,threads,vaapi?,vdpau?]
+			media-video/ffmpeg:58.60.60[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
+			media-video/ffmpeg:0/58.60.60[encode(+),network?,patent_status_nonfree,soc(-)?,threads(+),vaapi?,vdpau?]
 		)
 	)
 	media-video/ffmpeg:=
 "
 COMMON_DEPEND="
 	${PATENT_STATUS_DEPEND}
-	>=media-libs/libplacebo-6.338.2:=[opengl?,vulkan?]
+	>=media-libs/libplacebo-7.349.0:=[vulkan?]
 	>=media-libs/libass-0.12.2:=[fontconfig]
 	alsa? (
 		>=media-libs/alsa-lib-1.0.18
@@ -160,13 +156,13 @@ COMMON_DEPEND="
 	)
 	drm? (
 		>=x11-libs/libdrm-2.4.105
+		media-libs/libdisplay-info:=
 		egl? (
 			>=media-libs/mesa-17.1.0[gbm(+)]
 		)
 	)
 	dvd? (
-		>=media-libs/libdvdnav-4.2.0
-		>=media-libs/libdvdread-4.1.0:=
+		media-libs/libdvdnav
 	)
 	egl? (
 		media-libs/libglvnd
@@ -211,9 +207,6 @@ COMMON_DEPEND="
 	openal? (
 		>=media-libs/openal-1.13
 	)
-	opengl? (
-		media-libs/libglvnd[X?]
-	)
 	pipewire? (
 		>=media-video/pipewire-0.3.57:=
 	)
@@ -222,6 +215,7 @@ COMMON_DEPEND="
 	)
 	rubberband? (
 		>=media-libs/rubberband-1.8.0
+		media-libs/rubberband:=
 	)
 	sdl? (
 		media-libs/libsdl2[sound,threads(+),video]
@@ -249,7 +243,7 @@ COMMON_DEPEND="
 	wayland? (
 		>=x11-libs/libxkbcommon-0.3.0
 		>=dev-libs/wayland-1.21.0
-		>=dev-libs/wayland-protocols-1.31
+		>=dev-libs/wayland-protocols-1.41
 	)
 	X? (
 		>=x11-libs/libX11-1.0.0
@@ -298,7 +292,7 @@ DEPEND="
 "
 BDEPEND="
 	${PYTHON_DEPS}
-	>=dev-build/meson-0.62.0
+	>=dev-build/meson-1.3.0
 	dev-util/patchelf
 	virtual/pkgconfig
 	cli? (
@@ -308,6 +302,15 @@ BDEPEND="
 		dev-util/wayland-scanner
 	)
 "
+
+pkg_pretend() {
+	if has_version "${CATEGORY}/${PN}[X,opengl]" && ! use egl ; then #953107
+ewarn "${PN}'s 'opengl' USE was removed in favour of the 'egl' USE as it was"
+ewarn "only for the deprecated 'gl-x11' mpv option when 'egl-x11/wayland'"
+ewarn "should be used if --gpu-api=opengl. It is recommended to enable 'egl'"
+ewarn "unless using vulkan (default since ${PN}-0.40) or something else."
+	fi
+}
 
 pkg_setup() {
 	use lua && lua-single_pkg_setup
@@ -326,14 +329,7 @@ einfo "Skipping -DNDEBUG due to USE=test"
 		fi
 	fi
 
-	mpv_feature_multi() {
-		local set
-		local use
-		for use in "${1}" "${2}"; do
-			use ${use} || set="disabled"
-		done
-		echo -D${3-${2}}=${set-"enabled"}
-	}
+	cflags-hardened_append
 
 	local emesonargs=(
 		$(meson_feature alsa)
@@ -357,7 +353,6 @@ einfo "Skipping -DNDEBUG due to USE=test"
 		$(meson_feature libcaca caca)
 		$(meson_feature libmpv plain-gl)
 		$(meson_feature nvenc cuda-hwaccel)
-		$(meson_feature nvenc cuda-interop)
 		$(meson_feature openal)
 		$(meson_feature pipewire)
 		$(meson_feature pulseaudio pulse)
@@ -379,20 +374,9 @@ einfo "Skipping -DNDEBUG due to USE=test"
 		$(meson_use cli cplayer)
 		$(meson_use libmpv)
 		$(meson_use test tests)
-		$(mpv_feature_multi aqua opengl videotoolbox-gl)
-		$(mpv_feature_multi egl drm gbm) # gbm is only used by egl-drm
-		$(mpv_feature_multi egl drm egl-drm)
-		$(mpv_feature_multi egl wayland egl-wayland)
-		$(mpv_feature_multi egl X egl-x11)
-		$(mpv_feature_multi opengl X gl-x11)
-		$(mpv_feature_multi opengl aqua gl-cocoa)
-		$(mpv_feature_multi vaapi X vaapi-x11)
-		$(mpv_feature_multi vaapi drm vaapi-drm)
-		$(mpv_feature_multi vaapi wayland vaapi-wayland)
-		$(mpv_feature_multi vdpau opengl vdpau-gl-x11)
 		-Dbuild-date="false"
 		-Dcplugins="enabled"
-		-Dgl=$(use egl || use libmpv || use opengl && echo "enabled" || echo "disabled")
+		-Dgl=$(use aqua || use egl || use libmpv && echo "enabled" || echo "disabled")
 		-Dlibavdevice="enabled"
 		-Dlua=$(usex lua "${ELUA}" "disabled")
 		-Dpdf-build="disabled"
