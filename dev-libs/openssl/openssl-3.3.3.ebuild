@@ -6,7 +6,7 @@ EAPI=8
 MY_P="${P/_/-}"
 
 CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data untrusted-data"
-VERIFY_SIG_OPENPGP_KEY_PATH=/usr/share/openpgp-keys/openssl.org.asc
+VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/openssl.org.asc"
 
 inherit cflags-hardened edo flag-o-matic linux-info toolchain-funcs
 inherit multilib multilib-minimal multiprocessing preserve-libs
