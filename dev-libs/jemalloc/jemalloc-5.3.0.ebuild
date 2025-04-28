@@ -7,6 +7,12 @@ EAPI=8
 # PGOing this library is justified because the size of the library is over a
 # 1000 4k pages in size.
 
+CFLAGS_HARDENED_USE_CASES="secure-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_ASAN=1
+CFLAGS_HARDENED_GWP_ASAN=1
+CFLAGS_HARDENED_HWASAN=1
+CFLAGS_HARDENED_UBSAN=1
+CFLAGS_HARDENED_TOLERANCE="3.0"
 MULTILIB_WRAPPED_HEADERS=(
 	"/usr/include/jemalloc/jemalloc.h"
 )
@@ -17,11 +23,10 @@ TRAINERS=(
 TRAIN_TEST_DURATION=1800 # 30 min
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
-UOPTS_SUPPORT_TBOLT=1
+UOPTS_SUPPORT_TBOLT=0 # bolt and asan/ubsan are mutually exclusive
 UOPTS_SUPPORT_TPGO=1
 
-inherit autotools multilib-minimal
-inherit uopts
+inherit autotools cflags-hardened multilib-minimal uopts
 
 KEYWORDS+=" ~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 SRC_URI="https://github.com/jemalloc/jemalloc/releases/download/${PV}/${P}.tar.bz2"
@@ -47,14 +52,11 @@ SLOT="0/2"
 IUSE+="
 ${TRAINERS[@]}
 custom-cflags debug lazy-lock prof static-libs stats test xmalloc
+ebuild_revision_1
 "
 REQUIRED_USE+="
 	!custom-cflags? (
-		!bolt
 		!pgo
-	)
-	bolt? (
-		custom-cflags
 	)
 	pgo? (
 		custom-cflags
@@ -71,23 +73,29 @@ REQUIRED_USE+="
 "
 HTML_DOCS=( doc/jemalloc.html )
 
-_add_gcov() {
+_add_lib() {
+	local lib="${1}"
 	local d="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
 	local f
 	for f in Makefile Makefile.in ; do
-einfo "Editing ${f}:  Adding -lgcov"
-		sed -i -e "s|EXTRA_LDFLAGS :=|EXTRA_LDFLAGS := -lgcov|g" \
-			"${d}/${f}" || die
+einfo "Editing ${f}:  Adding ${lib}"
+		sed -i \
+			-e "s|EXTRA_LDFLAGS :=|EXTRA_LDFLAGS := ${lib}|g" \
+			"${d}/${f}" \
+			|| die
 	done
 }
 
-_remove_gcov() {
+_remove_lib() {
+	local lib="${1}"
 	local d="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
 	local f
 	for f in Makefile Makefile.in ; do
-einfo "Editing ${f}:  Removing -lgcov"
-		sed -i -e "s|EXTRA_LDFLAGS := -lgcov|EXTRA_LDFLAGS :=|g" \
-			"${d}/${f}" || die
+einfo "Editing ${f}:  Removing ${lib}"
+		sed -i \
+			-e "s|EXTRA_LDFLAGS := ${lib}|EXTRA_LDFLAGS :=|g" \
+			"${d}/${f}" \
+			|| die
 	done
 }
 
@@ -135,6 +143,7 @@ _src_configure() {
 	if [[ "${PGO_PHASE}" == "PGO" ]] ; then
 		tc-is-gcc && append-flags -Wno-error=coverage-mismatch
 	fi
+	cflags-hardened_append
 	local myconf=(
 		$(use_enable debug)
 		$(use_enable lazy-lock)
@@ -143,8 +152,23 @@ _src_configure() {
 		$(use_enable xmalloc)
 	)
 	ECONF_SOURCE="${S}-${MULTILIB_ABI_FLAG}.${ABI}" econf "${myconf[@]}"
-	[[ "${PGO_PHASE}" == "PGI" ]] && _add_gcov
-	[[ "${PGO_PHASE}" == "PGO" ]] && _remove_gcov
+	if tc-is-gcc ; then
+		local s=$(gcc-major-version)
+		if has_version "sys-devel/gcc:${s}[sanitize]" ; then
+			_add_lib $(cflags-hardened_get_sanitizer_path "asan")
+		else
+ewarn "Rebuild sys-devel/gcc[sanitize] for runtime memory corruption mitigation"
+		fi
+	elif tc-is-clang ; then
+		local s=$(clang-major-version)
+		if has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[asan,hwsan,ubsan]" ; then
+			_add_lib $(cflags-hardened_get_sanitizer_path "ubsan" "_minimal")
+		else
+ewarn "Rebuild llvm-runtimes/compiler-rt-sanitizers:${s}[asan,hwsan,ubsan] for runtime memory corruption mitigation"
+		fi
+	fi
+	[[ "${PGO_PHASE}" == "PGI" ]] && _add_lib "-lgcov"
+	[[ "${PGO_PHASE}" == "PGO" ]] && _remove_lib "-lgcov"
 }
 
 _src_compile() {

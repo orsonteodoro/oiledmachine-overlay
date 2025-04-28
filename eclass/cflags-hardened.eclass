@@ -248,6 +248,60 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # 1 - enable (default)
 # 0 - disable, if buggy
 
+# @FUNCTION: _cflags-hardened_get_llvm_arch
+# @DESCRIPTION:
+# Get the arch to link to the sanitizer
+_cflags-hardened_get_llvm_arch() {
+# See https://github.com/llvm/llvm-project/blob/llvmorg-20.1.3/compiler-rt/cmake/Modules/AllSupportedArchDefs.cmake
+	if [[ "${ARCH}" == "amd64" ]] ; then
+		echo "x86_64"
+	elif [[ "${ARCH}" == "arm64" ]] ; then
+		echo "aarch64"
+	elif [[ "${ARCH}" == "loong" ]] ; then
+		echo "loongarch64"
+	elif [[ "${ARCH}" == "ppc64" && "${CHOST}" =~ "powerpc64le" ]] ; then
+		echo "powerpc64le"
+	elif [[ "${ARCH}" == "ppc64" && "${CHOST}" =~ "powerpc64-" ]] ; then
+		echo "powerpc64"
+	elif [[ "${ARCH}" == "ppc" && "${CHOST}" =~ "powerpc-" ]] ; then
+		echo "powerpc"
+	elif [[ "${ARCH}" == "riscv" && "${CHOST}" =~ "riscv64" ]] ; then
+		echo "riscv64"
+	elif [[ "${ARCH}" == "riscv" && "${CHOST}" =~ "riscv32" ]] ; then
+		echo "riscv32"
+	elif [[ "${ARCH}" == "mips" && "${CHOST}" =~ "mips64el" ]] ; then
+		echo "mips64el"
+	elif [[ "${ARCH}" == "mips" && "${CHOST}" =~ "mips64" ]] ; then
+		echo "mips64"
+	elif [[ "${ARCH}" == "mips" && "${CHOST}" =~ "mipsel" ]] ; then
+		echo "mipsel"
+	elif [[ "${ARCH}" == "mips" && "${CHOST}" =~ "mips-" ]] ; then
+		echo "mips"
+	elif [[ "${ARCH}" == "sparc" && "${CHOST}" =~ "sparc-" ]] ; then
+		echo "sparc"
+	elif [[ "${ARCH}" == "s390" && "${CHOST}" =~ "s390x" ]] ; then
+		echo "s390x"
+	else
+eerror "ARCH=${ARCH} not supported.  Use gcc compiler."
+		die
+	fi
+}
+
+# @FUNCTION: cflags-hardened_get_sanitizer_path
+# @DESCRIPTION:
+# Get the abspath to the sanitizer
+cflags-hardened_get_sanitizer_path() {
+	local name="${1}" # asan, lsan, tsan, ubsan,  ...
+	local suffix="${2}" # _minimal, _standalone
+	local path
+	if tc-is-gcc ; then
+		path=$(${CC} -print-file-name=lib${name}.so)
+	elif tc-is-clang ; then
+		path=$(${CC} -print-file-name=libclang_rt.${name}${suffix}-${arch}.so)
+	fi
+	echo "${path}"
+}
+
 # @FUNCTION: _cflags-hardened_fcmp
 # @DESCRIPTION:
 # Floating point compare.  Bash does not support floating point comparison
@@ -1194,7 +1248,7 @@ einfo "All SSP hardening (All functions hardened)"
 		[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"secure-critical") ]] \
 	; then
 	# For secure-critical
-		if ! _rustflags-hardened_has_mte ; then
+		if ! _cflags-hardened_has_mte ; then
 ewarn "You are using an emulated memory tagging.  It will have a performance hit."
 		fi
 
