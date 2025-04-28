@@ -116,6 +116,8 @@ unset __
 
 APPLY_OILEDMACHINE_OVERLAY_PATCHSET="1"
 BUILD_OBJ_DIR="" # global var not const
+CFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
+RUSTFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
 # One of the major sources of lag comes from dependencies.  These are strict to
 # match performance to competition or normal builds.
 declare -A CFLAGS_RDEPEND=(
@@ -228,10 +230,10 @@ VIRTUALX_REQUIRED="manual"
 WASI_SDK_VER="25.0"
 WASI_SDK_LLVM_VER="19"
 
-inherit autotools cflags-depends check-linker check-reqs desktop dhms flag-o-matic
-inherit gnome2-utils lcnr linux-info llvm multilib-minimal multiprocessing
-inherit optfeature pax-utils python-any-r1 readme.gentoo-r1 rust toolchain-funcs
-inherit virtualx vf xdg
+inherit autotools cflags-depends cflags-hardened check-linker check-reqs desktop
+inherit dhms flag-o-matic gnome2-utils lcnr linux-info llvm multilib-minimal
+inherit multiprocessing optfeature pax-utils python-any-r1 readme.gentoo-r1 rust
+inherit rustflags-hardened toolchain-funcs virtualx vf xdg
 
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86"
 S="${WORKDIR}/${PN}-${PV/e}"
@@ -470,6 +472,7 @@ alsa cups +dbus debug eme-free firejail +hardened -hwaccel jack +jemalloc
 +system-harfbuzz +system-icu +system-jpeg +system-libevent +system-libvpx
 system-png +system-webp systemd -telemetry +vaapi +wayland +webrtc wifi
 webspeech +X
+ebuild_revision_1
 "
 
 # Firefox-only IUSE
@@ -2457,6 +2460,9 @@ einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 
 	# Filter ldflags after linker switch
 	strip-unsupported-flags
+
+	cflags-hardened_append
+	rustflags-hardened_append
 
 	# PGO was moved outside lto block to allow building pgo without lto.
 	if use pgo ; then
