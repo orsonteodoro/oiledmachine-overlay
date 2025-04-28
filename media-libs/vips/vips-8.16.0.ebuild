@@ -13,6 +13,7 @@ EAPI=8
 # Going with the CI tested interpretation.
 # CI disables deprecated but enabled by default in meson_options.txt
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx"
 	"cpu_flags_x86_avx512bw"
@@ -33,8 +34,8 @@ SO_R=0
 SO_A=18
 SO_MAJOR=$((${SO_C} - ${SO_A})) # Currently 42
 
-inherit flag-o-matic llvm meson-multilib multilib-minimal vala
-inherit python-r1 toolchain-funcs
+inherit cflags-hardened flag-o-matic llvm meson-multilib multilib-minimal
+inherit python-r1 toolchain-funcs vala
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/libvips-${PV}"
@@ -58,7 +59,7 @@ ${PATENT_STATUS_IUSE[@]}
 +jpeg2k +jxl +lcms +matio -minimal -nifti +openexr +openslide +orc
 +pangocairo +png +poppler +python +ppm -spng +svg test +tiff
 +vala +webp +zlib
-ebuild_revision_6
+ebuild_revision_7
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -460,8 +461,9 @@ _strip_flags() {
 }
 
 _apply_flags() {
+	cflags-hardened_append
 	if [[ "${configuration}" == "release" ]] ; then
-		:;
+		:
 	elif use fuzz-testing && [[ "${configuration}" == "test" ]] ; then
 		append-cppflags \
 			-g \
