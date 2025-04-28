@@ -390,7 +390,11 @@ _cflags-hardened_append_clang_retpoline() {
 	if ! _cflags-hardened_has_cet ; then
 	# Allow -mretpoline-external-thunk
 		filter-flags "-f*cf-protection=*"
-	elif is-flagq "-fcf-protection=*"  ; then
+	elif \
+		is-flagq "-fcf-protection=*"  \
+			&& \
+		[[ "${CFLAGS_HARDENED_CF_PROTECTION:-1}" == "1" ]] \
+	; then
 ewarn
 ewarn "Avoiding possible flag conflict between -fcf-protection=return and"
 ewarn "-mretpoline-external-thunk implied by -fcf-protection=full."
@@ -445,7 +449,11 @@ _cflags-hardened_append_gcc_retpoline() {
 	if ! _cflags-hardened_has_cet ; then
 	# Allow -mfunction-return=*
 		filter-flags "-f*cf-protection=*"
-	elif is-flagq "-fcf-protection=*"  ; then
+	elif \
+		is-flagq "-fcf-protection=*"  \
+			&& \
+		[[ "${CFLAGS_HARDENED_CF_PROTECTION:-1}" == "1" ]] \
+	; then
 ewarn
 ewarn "Forcing -mindirect-branch-register to avoid flag conflict between"
 ewarn "-fcf-protection=return implied by -fcf-protection=full."
@@ -783,6 +791,8 @@ ewarn
 		tc-is-gcc \
 			&&
 		ver_test "${gcc_pv}" -ge "14.2" \
+			&& \
+		[[ "${CFLAGS_HARDENED_FHARDENED:-1}" == "1" ]] \
 	; then
 einfo "Appending -fhardened"
 einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with local arrays or local pointers)"
@@ -915,6 +925,8 @@ einfo "All SSP hardening (All functions hardened)"
 			test-flags-CC "-fcf-protection=full" \
 				&&
 			_cflags-hardened_has_cet \
+				&& \
+			[[ "${CFLAGS_HARDENED_CF_PROTECTION:-1}" == "1" ]] \
 		; then
 	# MC, ID, PE, CE
 			filter-flags "-f*cf-protection=*"

@@ -6,7 +6,10 @@ EAPI=8
 
 # Worth keeping an eye on 'develop' branch upstream for possible backports.
 AUTOTOOLS_AUTO_DEPEND="no"
+CFLAGS_HARDENED_CF_PROTECTION=0		# -cf-protection is untested or unverified
+CFLAGS_HARDENED_FHARDENED=0		# -fhardened is untested or unverified
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
+
 TRAINERS=(
 	zlib_trainers_minizip_binary_long
 	zlib_trainers_minizip_binary_max_compression
@@ -66,7 +69,7 @@ SLOT="0/1" # subslot = SONAME
 IUSE="
 ${TRAINERS[@]}
 minizip minizip-utils pgo static-libs backup-copy
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	pgo? (
@@ -415,9 +418,14 @@ eerror "Remove all cfi flags from ${flag}"
 			die
 		fi
 	done
-	# We just want the basic for now
+
+	# We just want the basic well tested ones for now.
 	cflags-hardened_append
-	filter-flags "-f*cf-protection=*"	# Untested
+
+	# Removed untested flags
+	filter-flags \
+		"-f*cf-protection=*" \
+		"-f*hardened"
 
 	if use pgo && tc-is-gcc && train_meets_requirements && [[  "${PGO_PHASE}" == "PGO" ]] ; then
 		if use minizip ; then

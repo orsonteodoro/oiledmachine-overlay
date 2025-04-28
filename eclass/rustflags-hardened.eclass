@@ -411,9 +411,15 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		]] \
 			&&
 		ver_test "${rust_pv}" -ge "1.60.0" \
+			&& \
+		[[ "${RUSTFLAGS_HARDENED_CET:-1}" == "1" ]] \
 	; then
 		RUSTFLAGS+=" -C target-feature=+cet"
-	elif _rustflags-hardened_has_pauth ; then
+	elif \
+		_rustflags-hardened_has_pauth \
+			&& \
+		[[ "${RUSTFLAGS_HARDENED_PAUTH:-1}" == "1" ]] \
+	; then
 		RUSTFLAGS+=" -C control-flow-protection"
 	fi
 
