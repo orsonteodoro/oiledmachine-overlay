@@ -19,6 +19,7 @@ EAPI=7
 # include the gitmodules (vendored internal dependencies).
 
 BENCHMARKDOTNET_COMMIT="96ed005c57605cb8f005b6941c4d83453912eb75"
+CFLAGS_HARDENED_USE_CASES="language-runtime sensitive-data untrusted-data"
 CHECKREQS_DISK_BUILD="4500M"
 DEBIANSHOOTOUTMONO_COMMIT="3fde2ced806c1fe7eed81120a40d99474fa009f0"
 FLAMEGRAPH_COMMIT="f857ebc94bfe2a9bfdc4f1536ebacfb7466f69ba"
@@ -40,12 +41,12 @@ UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=1
 XMRNBENCHMARKER_COMMIT="97f618cd585af549dd861b7c142656c496f6a89b"
 
-inherit autotools check-reqs linux-info mono-env pax-utils multilib-minimal
-inherit lcnr toolchain-funcs uopts
+inherit autotools cflags-hardened check-reqs lcnr linux-info mono-env pax-utils
+inherit multilib-minimal toolchain-funcs uopts
 
-KEYWORDS="amd64 ~arm ~arm64 ~ppc ~ppc64 -riscv x86 ~amd64-linux"
+KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 -riscv ~x86 ~amd64-linux"
 SRC_URI="
-https://download.mono-project.com/sources/mono/${P}.tar.xz
+https://dl.winehq.org/mono/sources/mono/mono-${PV}.tar.xz
 jemalloc? (
 	https://github.com/jemalloc/jemalloc/archive/refs/tags/${JEMALLOC_PV}.tar.gz
 		-> jemalloc-${JEMALLOC_PV}.tar.gz
@@ -72,10 +73,9 @@ gen_trainers_required_use() {
 	done
 }
 
-DESCRIPTION="Mono runtime and class libraries, a C# compiler/interpreter"
+DESCRIPTION="Mono open source ECMA CLI, C# and .NET implementation"
 HOMEPAGE="
-	https://github.com/mono/mono
-	https://mono-project.com
+https://gitlab.winehq.org/mono/mono
 "
 # Extra licenses are listed because it is in source code form and third party
 # external modules.  Also, additional licenses for additional files through git
@@ -247,7 +247,7 @@ BDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-5.12-try-catch.patch"
+#	"${FILESDIR}/${PN}-5.12-try-catch.patch"
 	"${FILESDIR}/${PN}-6.12.0.122-disable-automagic-ccache.patch"
 	"${FILESDIR}/${PN}-6.12.0.182-disable-test-mono-callspec.patch"
 	"${FILESDIR}/${PN}-6.12.0.182-mono-benchmark-missing-main.patch"
@@ -431,6 +431,7 @@ _src_configure_compiler() {
 
 _src_configure() {
 	uopts_src_configure
+	cflags-hardened_append
 
 	if tc-is-gcc && [[ "${PGO_PHASE}" == "PGO" ]] ; then
 		append-flags -Wno-error=coverage-mismatch
@@ -659,3 +660,5 @@ pkg_postinst() {
 }
 
 # OILEDMACHINE-OVERLAY-META-TAGS:  PGO
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (20250428)
+# hello world:  passed
