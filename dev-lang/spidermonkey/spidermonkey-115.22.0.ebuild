@@ -3,12 +3,16 @@
 
 EAPI="8"
 
+# 115.21.0 -> 115.22.0
+
 # For polkit
 
 # DEPENDS:
 # /var/tmp/portage/dev-lang/spidermonkey-115.21.0/work/firefox-115.21.0/taskcluster/ci/toolchain/rust.yml
 # /var/tmp/portage/dev-lang/spidermonkey-115.21.0/work/firefox-115.21.0/taskcluster/ci/fetch/toolchains.yml
 
+CFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
+RUSTFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_neon"
 )
@@ -72,7 +76,9 @@ RUST_MIN_VER="1.65.0" # Corresponds to llvm 15
 
 WANT_AUTOCONF="2.1"
 
-inherit autotools check-reqs dhms flag-o-matic llvm multiprocessing prefix python-any-r1 rust toolchain-funcs
+inherit autotools cflags-hardened check-reqs dhms flag-o-matic llvm
+inherit multiprocessing prefix python-any-r1 rust rustflags-hardened
+inherit toolchain-funcs
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
 S="${WORKDIR}/firefox-${MY_PV}/js/src"
@@ -94,6 +100,7 @@ IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang debug +jit lto rust-simd test
+ebuild_revision_1
 "
 REQUIRED_USE="
 	rust-simd? (
@@ -433,10 +440,10 @@ einfo "Time passed since the last security update:  ${dhms_passed}"
 src_configure() {
 	check_security_expire
 	# Show flags set at the beginning
-einfo "Current CFLAGS:    ${CFLAGS}"
-einfo "Current CXXFLAGS:  ${CXXFLAGS}"
-einfo "Current LDFLAGS:   ${LDFLAGS}"
-einfo "Current RUSTFLAGS: ${RUSTFLAGS}"
+#einfo "Current CFLAGS:    ${CFLAGS}"
+#einfo "Current CXXFLAGS:  ${CXXFLAGS}"
+#einfo "Current LDFLAGS:   ${LDFLAGS}"
+#einfo "Current RUSTFLAGS: ${RUSTFLAGS}"
 
 	if tc-is-clang && ! use clang ; then
 eerror "Detected clang.  You must set USE=clang."
@@ -481,6 +488,8 @@ einfo "Enforcing the use of gcc due to USE=-clang ..."
 	# that no unsupported flags are set
 		strip-unsupported-flags
 	fi
+	cflags-hardened_append
+	rustflags-hardened_append
 
 	# Ensure we use correct toolchain,
 	# AS is used in a non-standard way by upstream, #bmo1654031

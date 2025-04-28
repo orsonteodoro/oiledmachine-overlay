@@ -102,6 +102,7 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # Default: 1.20 (Similar to -O1 best case without mitigations)
 # For speed set values closer to 1.
 # For accuracy/integrity set values closer to 16.
+RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 
 # Estimates:
 # Flag					Performance as a normalized decimal multiple
@@ -640,8 +641,12 @@ einfo "rustc host:  ${host}"
 		RUSTFLAGS+=" -C relocation-model=pic"
 	fi
 
+	if ver_test "${rust_pv}" -ge "1.79" ; then
 	# DoS, DT
-	RUSTFLAGS+=" -C relro-level=full"
+		RUSTFLAGS+=" -C relro-level=full"
+		RUSTFLAGS+=" -Clink-arg=-Wl,-z,relro"
+		RUSTFLAGS+=" -Clink-arg=-Wl,-z,now"
+	fi
 
 	if [[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"fp-determinism"|"high-precision-research") ]] \
 		&& \

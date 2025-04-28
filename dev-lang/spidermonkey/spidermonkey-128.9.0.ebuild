@@ -12,7 +12,10 @@ EAPI="8"
 # 128.3.1 -> 128.4.0
 # 128.4.0 -> 128.5.0
 # 128.7.0 -> 128.8.0
+# 128.8.0 -> 128.9.0
 
+CFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
+RUSTFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_neon"
 )
@@ -24,9 +27,9 @@ MY_PN="mozjs"
 MY_PV="${PV/_pre*}"
 
 # MITIGATION_LAST_UPDATE is the same as firefox esr ebuild
-MITIGATION_DATE="Mar 4, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1741038480 # From `date +%s -d "2025-03-03 13:48"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-16/"
+MITIGATION_DATE="Apr 1, 2025" # Advisory date
+MITIGATION_LAST_UPDATE=1743434100 # From `date +%s -d "2025-03-31 08:15"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-22/"
 MOZ_ESR="yes"
 MOZ_PN="firefox"
 MOZ_PV="${PV}"
@@ -68,7 +71,9 @@ RUST_MIN_VER="1.76.0" # Corresponds to llvm 17
 
 WANT_AUTOCONF="2.1"
 
-inherit autotools check-reqs dhms flag-o-matic llvm-r1 multiprocessing prefix python-any-r1 rust toolchain-funcs
+inherit autotools cflags-hardened check-reqs dhms flag-o-matic llvm-r1
+inherit multiprocessing prefix python-any-r1 rust rustflags-hardened
+inherit toolchain-funcs
 
 KEYWORDS="~amd64 ~arm ~arm64 ~riscv ~x86"
 S="${WORKDIR}/firefox-${PV%_*}"
@@ -94,6 +99,7 @@ IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang debug +jit lto rust-simd test
+ebuild_revision_1
 "
 REQUIRED_USE="
 	rust-simd? (
@@ -523,11 +529,11 @@ einfo "Time passed since the last security update:  ${dhms_passed}"
 src_configure() {
 	check_security_expire
 	# Show flags set at the beginning
-einfo "Current BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
-einfo "Current CFLAGS:    ${CFLAGS}"
-einfo "Current CXXFLAGS:  ${CXXFLAGS}"
-einfo "Current LDFLAGS:   ${LDFLAGS}"
-einfo "Current RUSTFLAGS: ${RUSTFLAGS}"
+#einfo "Current BINDGEN_CFLAGS:\t${BINDGEN_CFLAGS:-no value set}"
+#einfo "Current CFLAGS:    ${CFLAGS}"
+#einfo "Current CXXFLAGS:  ${CXXFLAGS}"
+#einfo "Current LDFLAGS:   ${LDFLAGS}"
+#einfo "Current RUSTFLAGS: ${RUSTFLAGS}"
 
 	if tc-is-clang && ! use clang ; then
 eerror "Detected clang.  Set USE=clang."
@@ -579,6 +585,8 @@ einfo "Enforcing the use of gcc due to USE=-clang ..."
 	# that no unsupported flags are set
 		strip-unsupported-flags
 	fi
+	cflags-hardened_append
+	rustflags-hardened_append
 
 	# Ensure we use correct toolchain,
 	# AS is used in a non-standard way by upstream, #bmo1654031
