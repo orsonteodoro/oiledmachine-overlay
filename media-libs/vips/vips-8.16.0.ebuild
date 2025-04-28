@@ -13,7 +13,7 @@ EAPI=8
 # Going with the CI tested interpretation.
 # CI disables deprecated but enabled by default in meson_options.txt
 
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx"
 	"cpu_flags_x86_avx512bw"
@@ -59,7 +59,7 @@ ${PATENT_STATUS_IUSE[@]}
 +jpeg2k +jxl +lcms +matio -minimal -nifti +openexr +openslide +orc
 +pangocairo +png +poppler +python +ppm -spng +svg test +tiff
 +vala +webp +zlib
-ebuild_revision_7
+ebuild_revision_8
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (

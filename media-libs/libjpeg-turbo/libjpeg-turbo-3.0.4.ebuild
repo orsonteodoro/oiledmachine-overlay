@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CMAKE_ECLASS="cmake"
 MULTILIB_WRAPPED_HEADERS=(
 	"/usr/include/jconfig.h"
@@ -70,7 +70,7 @@ libjpeg_turbo_trainers_decode
 libjpeg_turbo_trainers_grayscale
 libjpeg_turbo_trainers_transformations
 pgo static-libs
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	pgo? (
