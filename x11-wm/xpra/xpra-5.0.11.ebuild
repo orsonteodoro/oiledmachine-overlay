@@ -81,7 +81,7 @@ spng sqlite +ssh sshpass +ssl systemd +tcp-wrappers test tiff u2f -uinput +v4l2
 vaapi vpx vsock -wayland +webcam webcam-forwarding webp +websockets +X x264 x265
 +xdg +xinput yaml zeroconf zlib
 
-ebuild_revision_2
+ebuild_revision_3
 "
 # Upstream enables uinput by default.  Disabled because ebuild exists.
 # Upstream enables drm by default.  Disabled because unfinished.
@@ -1089,6 +1089,7 @@ python_install_all() {
 				|| die
 		fi
 	fi
+	python_fix_shebang "${ED}"
 }
 
 pkg_postinst() {
