@@ -1345,7 +1345,7 @@ BDEPEND+="
 	dev-lang/perl
 	dev-vcs/git
 	mold? (
-		>=sys-devel/mold-2.0
+		>=sys-devel/mold-2.38
 	)
 	vaapi? (
 		media-video/libva-utils
@@ -1576,7 +1576,7 @@ pkg_pretend() {
 		pre_build_checks
 	fi
 
-	if use headless; then
+	if use headless ; then
 		local headless_unused_flags=(
 			"cups"
 			"kerberos"
@@ -1585,13 +1585,14 @@ pkg_pretend() {
 			"vaapi"
 			"wayland"
 		)
+		local myiuse
 		for myiuse in ${headless_unused_flags[@]}; do
 			if use ${myiuse} ; then
 ewarn "Ignoring USE=${myiuse}.  USE=headless is set."
 			fi
 		done
 	fi
-	if ! use bindist && use ffmpeg-chromium; then
+	if ! use bindist && use ffmpeg-chromium ; then
 ewarn "Ignoring USE=ffmpeg-chromium.  USE=bindist is not set."
 	fi
 }
@@ -1790,8 +1791,11 @@ node_pkg_setup() {
 		| sed -e "s|v||g")
 	if [[ -n "${NODE_SLOTS}" ]] ; then
 		for slot in ${NODE_SLOTS} ; do
-			if has_version "=net-libs/nodejs-${slot}*" \
-				&& (( ${node_pv%%.*} == ${slot} )) ; then
+			if \
+				has_version "=net-libs/nodejs-${slot}*" \
+					&& \
+				(( ${node_pv%%.*} == ${slot} )) \
+			; then
 				export NODE_VERSION=${slot}
 				found=1
 				break
@@ -1815,8 +1819,11 @@ eerror
 			die
 		fi
 	elif [[ -n "${NODE_VERSION}" ]] ; then
-		if has_version "=net-libs/nodejs-${NODE_VERSION}*" \
-			&& (( ${node_pv%%.*} == ${NODE_VERSION} )) ; then
+		if \
+			has_version "=net-libs/nodejs-${NODE_VERSION}*" \
+				&& \
+			(( ${node_pv%%.*} == ${NODE_VERSION} )) \
+		; then
 			found=1
 		fi
 		if (( ${found} == 0 )) ; then
@@ -2237,7 +2244,7 @@ apply_distro_patchset_for_system_toolchain() {
 	# Oxidised hacks, let's keep 'em all in one place
 	# This is a nightly option that does not exist in older releases
 	# https://github.com/rust-lang/rust/commit/389a399a501a626ebf891ae0bb076c25e325ae64
-	if ver_test ${RUST_SLOT} -lt "1.83.0"; then
+	if ver_test ${RUST_SLOT} -lt "1.83.0" ; then
 		sed '/rustflags = \[ "-Zdefault-visibility=hidden" \]/d' -i build/config/gcc/BUILD.gn ||
 			die "Failed to remove default visibility nightly option"
 	fi
@@ -2245,7 +2252,7 @@ apply_distro_patchset_for_system_toolchain() {
 	# Upstream Rust replaced adler with adler2, for older versions of Rust
 	# we still need to tell GN that we have the older lib when it tries to
 	# copy the Rust sysroot into the bulid directory.
-	if ver_test ${RUST_SLOT} -lt "1.86.0"; then
+	if ver_test ${RUST_SLOT} -lt "1.86.0" ; then
 		sed -i 's/adler2/adler/' "build/rust/std/BUILD.gn" \
 			|| die "Failed to tell GN that we have adler and not adler2"
 	fi
@@ -3134,12 +3141,12 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 	)
 	local not_found_libs=()
 	for lib in "${keeplibs[@]}"; do
-		if [[ ! -d "${lib}" ]] && ! has "${lib}" "${whitelist_libs[@]}"; then
+		if [[ ! -d "${lib}" ]] && ! has "${lib}" "${whitelist_libs[@]}" ; then
 			not_found_libs+=( "${lib}" )
 		fi
 	done
 
-	if (( ${#not_found_libs[@]} > 0 )); then
+	if (( ${#not_found_libs[@]} > 0 )) ; then
 eerror "The following \`keeplibs\` directories were not found in the source tree:"
 		local lib
 		for lib in "${not_found_libs[@]}"; do
@@ -3314,12 +3321,17 @@ einfo "PATH=${PATH} (after)"
 		fi
 		if has_version "=llvm-core/llvm-${LLVM_SLOT}.0.9999" ; then
 			if \
-				   has_version "=llvm-core/llvm-${LLVM_SLOT}.0.9999[-fallback-commit]" \
-				|| has_version "=llvm-core/clang-${LLVM_SLOT}.0.9999[-fallback-commit]" \
-				|| has_version "=llvm-core/lld-${LLVM_SLOT}.0.9999[-fallback-commit]" \
-				|| has_version "=llvm-runtimes/compiler-rt-sanitizers-${LLVM_SLOT}.0.9999[-fallback-commit]" \
-				|| has_version "=llvm-runtimes/compiler-rt-${LLVM_SLOT}.0.9999[-fallback-commit]" \
-				|| has_version "=llvm-core/clang-runtime-${LLVM_SLOT}.0.9999[-fallback-commit]" \
+				has_version "=llvm-core/llvm-${LLVM_SLOT}.0.9999[-fallback-commit]" \
+					|| \
+				has_version "=llvm-core/clang-${LLVM_SLOT}.0.9999[-fallback-commit]" \
+					|| \
+				has_version "=llvm-core/lld-${LLVM_SLOT}.0.9999[-fallback-commit]" \
+					|| \
+				has_version "=llvm-runtimes/compiler-rt-sanitizers-${LLVM_SLOT}.0.9999[-fallback-commit]" \
+					|| \
+				has_version "=llvm-runtimes/compiler-rt-${LLVM_SLOT}.0.9999[-fallback-commit]" \
+					|| \
+				has_version "=llvm-core/clang-runtime-${LLVM_SLOT}.0.9999[-fallback-commit]" \
 			; then
 eerror
 eerror "The fallback-commit USE flag is required."
@@ -3499,7 +3511,7 @@ einfo "Using the system toolchain"
 		myconf_gn+=" host_pkg_config=\"$(tc-getBUILD_PKG_CONFIG)\""
 
 	# Setup cups-config, build system only uses --libs option
-		if use cups; then
+		if use cups ; then
 			mkdir "${T}/cups-config" || die
 			cp \
 				"${ESYSROOT}/usr/bin/${CHOST}-cups-config" \
@@ -3776,9 +3788,11 @@ ewarn "For proper hardening, disable the pgo USE flag."
 	)
 	# [C]
 	if \
-		   use bundled-libcxx \
-		|| use cfi \
-		|| use official \
+		use bundled-libcxx \
+			|| \
+		use cfi \
+			|| \
+		use official \
 	; then
 	# Unbundling breaks cfi-icall and cfi-cast.
 	# Unbundling weakens the security because it removes noexecstack,
@@ -3890,13 +3904,19 @@ ewarn
 			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
 			myconf_gn+=" v8_enable_lite_mode=false"
 	# See L553 in /usr/share/chromium/sources/v8/BUILD.gn
-			if [[ \
-				   "${ARCH}"  == "amd64" \
-				|| "${ARCH}"  == "arm" \
-				|| "${ARCH}"  == "arm64" \
-				|| "${CHOST}" =~ "riscv64" \
-				|| "${CHOST}" =~ "s390x" \
-			]] ; then
+			if \
+				[[ \
+					"${ARCH}"  == "amd64" \
+						|| \
+					"${ARCH}"  == "arm" \
+						|| \
+					"${ARCH}"  == "arm64" \
+						|| \
+					"${CHOST}" =~ "riscv64" \
+						|| \
+					"${CHOST}" =~ "s390x" \
+				]] \
+			; then
 				myconf_gn+=" v8_enable_maglev=true" # %5 runtime benefit
 			else
 				myconf_gn+=" v8_enable_maglev=false"
@@ -3990,14 +4010,21 @@ einfo "JIT off is similar to -O${jit_level_desc} worst case."
 	else
 	# The V8 Sandbox needs pointer compression.
 	# See L720 in /usr/share/chromium/sources/v8/BUILD.gn
-		if [[ \
-			   "${ARCH}"  == "amd64" \
-			|| "${ARCH}"  == "arm64" \
-			|| "${ARCH}"  == "ppc64" \
-			|| "${CHOST}" =~ "loongarch64" \
-			|| "${CHOST}" =~ "riscv64" \
-			|| "${CHOST}" =~ "s390x" \
-		]] ; then
+		if \
+			[[ \
+				"${ARCH}"  == "amd64" \
+					|| \
+				"${ARCH}"  == "arm64" \
+					|| \
+				"${ARCH}"  == "ppc64" \
+						|| \
+				"${CHOST}" =~ "loongarch64" \
+					|| \
+				"${CHOST}" =~ "riscv64" \
+					|| \
+				"${CHOST}" =~ "s390x" \
+			]] \
+		; then
 			myconf_gn+=" v8_enable_pointer_compression=$(usex pointer-compression true false)"
 			if (( ${total_ram_gib} >= 8 )) ; then
 				myconf_gn+=" v8_enable_pointer_compression_8gb=$(usex pointer-compression true false)"
@@ -4062,7 +4089,7 @@ ewarn "The new V8 Sandbox [for the JavaScript engine] (2024) will be automagic o
 	# Allows distributions to link pulseaudio directly (DT_NEEDED) instead of
 	# using dlopen. This helps with automated detection of ABI mismatches and
 	# prevents silent errors.
-	if use pulseaudio; then
+	if use pulseaudio ; then
 		myconf_gn+=" link_pulseaudio=true"
 	fi
 
@@ -4448,7 +4475,7 @@ einfo "Configuring bundled ffmpeg..."
 	# We don't use the same clang version as upstream, and with -Werror
 	# we need to make sure that we don't get superfluous warnings.
 	append-flags -Wno-unknown-warning-option
-	if tc-is-cross-compiler; then
+	if tc-is-cross-compiler ; then
 		export BUILD_CXXFLAGS+=" -Wno-unknown-warning-option"
 		export BUILD_CFLAGS+=" -Wno-unknown-warning-option"
 	fi
@@ -4490,7 +4517,7 @@ einfo "Configuring bundled ffmpeg..."
 		if use qt6 ; then
 			myconf_gn+=" use_qt6=true"
 			local cbuild_libdir=$(get_libdir)
-			if tc-is-cross-compiler; then
+			if tc-is-cross-compiler ; then
 	# Hack to workaround get_libdir not being able to handle CBUILD, bug
 	# #794181
 				local cbuild_libdir=$($(tc-getBUILD_PKG_CONFIG) \
@@ -4572,18 +4599,22 @@ eerror "To use mold, enable the mold USE flag."
 	fi
 	if \
 		(( ${USE_LTO} == 1 )) \
-			&&
+					&&
 		( \
 			( \
-				tc-is-clang && [[ "${LTO_TYPE}" == "thinlto" ]] \
+				tc-is-clang \
+					&& \
+				[[ "${LTO_TYPE}" == "thinlto" ]] \
 			) \
-				|| \
+					|| \
 			( \
 				use cfi \
 			) \
-				|| \
+					|| \
 			( \
-				use official && [[ "${PGO_PHASE}" != "PGI" ]] \
+				use official \
+					&& \
+				[[ "${PGO_PHASE}" != "PGI" ]] \
 			) \
 		) \
 	; then
@@ -4628,7 +4659,7 @@ einfo "Using Mold without LTO"
 	fi
 
 	# Skipping typecheck is only supported on amd64, bug #876157
-	if ! use amd64; then
+	if ! use amd64 ; then
 		myconf_gn+=" devtools_skip_typecheck=false"
 	fi
 
@@ -4666,17 +4697,20 @@ einfo "Using Mold without LTO"
 		if (( ${is_cfi_custom} == 1 )) ; then
 	# Change by CFLAGS
 			if \
-				   has_sanitizer_option "cfi-vcall" \
-				|| (( ${CFI_VCALL} == 1 )) \
+				has_sanitizer_option "cfi-vcall" \
+					|| \
+				(( ${CFI_VCALL} == 1 )) \
 			; then
 				myconf_gn+=" is_cfi=true"
 				CFI_VCALL=1
 			fi
 
 			if \
-				   has_sanitizer_option "cfi-derived-cast" \
-				|| has_sanitizer_option "cfi-unrelated-cast" \
-				|| (( ${CFI_CAST} == 1 )) \
+				has_sanitizer_option "cfi-derived-cast" \
+					|| \
+				has_sanitizer_option "cfi-unrelated-cast" \
+					|| \
+				(( ${CFI_CAST} == 1 )) \
 			; then
 				myconf_gn+=" use_cfi_cast=true"
 				CFI_CAST=1
@@ -4685,8 +4719,9 @@ einfo "Using Mold without LTO"
 			fi
 
 			if \
-				   has_sanitizer_option "cfi-icall" \
-				|| (( ${CFI_ICALL} == 1 )) \
+				has_sanitizer_option "cfi-icall" \
+					|| \
+				(( ${CFI_ICALL} == 1 )) \
 			; then
 				myconf_gn+=" use_cfi_icall=true"
 				CFI_ICALL=1
@@ -4781,10 +4816,11 @@ eerror
 
 	if \
 		use arm64 \
-			&& \
+				&& \
 		( \
-			   has_sanitizer_option "shadow-call-stack" \
-			|| (( ${SHADOW_CALL_STACK} == 1 )) \
+			has_sanitizer_option "shadow-call-stack" \
+				|| \
+			(( ${SHADOW_CALL_STACK} == 1 )) \
 		) \
 	; then
 		myconf_gn+=" use_shadow_call_stack=true"
@@ -4937,10 +4973,13 @@ einfo "Building ${file_name}"
 
 _update_licenses() {
 	# Upstream doesn't package PATENTS files
-	if [[ \
-		   "${CHROMIUM_EBUILD_MAINTAINER}" == "1" \
-		&& "${GEN_ABOUT_CREDITS}" == "1" \
-	]] ; then
+	if \
+		[[ \
+			"${CHROMIUM_EBUILD_MAINTAINER}" == "1" \
+				&& \
+			"${GEN_ABOUT_CREDITS}" == "1" \
+		]] \
+	; then
 einfo "Generating license and copyright notice file"
 		eninja -C "out/Release" "about_credits"
 		# It should be updated when the major.minor.build.x changes
@@ -5175,7 +5214,7 @@ _src_install() {
 	# USE="-X wayland"
 	doins "out/Release/xdg-"{"settings","mime"}
 
-	if ! use system-icu && ! use headless; then
+	if ! use system-icu && ! use headless ; then
 		doins "out/Release/icudtl.dat"
 	fi
 
@@ -5336,7 +5375,7 @@ pkg_postinst() {
 	xdg_desktop_database_update
 	readme.gentoo_print_elog
 
-	if ! use headless; then
+	if ! use headless ; then
 		if use vaapi ; then
 	# It says 3 args:
 	# https://github.com/chromium/chromium/blob/135.0.7049.114/docs/gpu/vaapi.md#vaapi-on-linux
@@ -5355,7 +5394,7 @@ einfo "Chromium or add --enable-features=WebRTCPipeWireCapturer to"
 einfo "CHROMIUM_FLAGS in /etc/chromium/default."
 einfo
 		fi
-		if use gtk4; then
+		if use gtk4 ; then
 einfo
 einfo "Chromium prefers GTK3 over GTK4 at runtime. To override this behavior"
 einfo "you need to pass --gtk-version=4, e.g. by adding it to CHROMIUM_FLAGS in"
