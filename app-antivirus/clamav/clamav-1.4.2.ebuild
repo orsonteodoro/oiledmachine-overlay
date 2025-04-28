@@ -33,11 +33,11 @@ declare -A GIT_CRATES=(
 [onenote_parser]="https://github.com/Cisco-Talos/onenote.rs;8b450447e58143004b68dd21c11b710fdb79be92;onenote.rs-%commit%" # 0.3.1
 )
 
-CFLAGS_HARDENED_ASAN=0 # Broken
-CFLAGS_HARDENED_HWASAN=0
+CFLAGS_HARDENED_ASAN=1 # Broken
+CFLAGS_HARDENED_HWASAN=1
 CFLAGS_HARDENED_TOLERANCE="3.0"
-CFLAGS_HARDENED_UBSAN=0 # Broken
-CFLAGS_HARDENED_USE_CASES="jit network secure-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_UBSAN=1 # Broken
+CFLAGS_HARDENED_USE_CASES="jit network security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 # From "./convert-cargo-lock.sh 1.4.2 1.4.2"
 CRATES="
@@ -605,25 +605,30 @@ eerror "ARCH=${ARCH} not supported.  Use gcc compiler."
 }
 
 src_test() {
-	#local -x SANDBOX_ON=0 # Required so libsandbox.so will not crash test because of libasan.so...
-	export ASAN_OPTIONS="abort_on_error=1:log_path=/dev/null:verbosity=0:verify_asan_link_order=0"
-	export UBSAN_OPTIONS="halt_on_error=1:print_stacktrace=0:log_path=/dev/null"
+	local -x SANDBOX_ON=0 # Required so libsandbox.so will not crash test because of libasan.so...
+	export ASAN_OPTIONS="abort_on_error=0:log_path=/dev/null:verbosity=0:verify_asan_link_order=0"
+	export UBSAN_OPTIONS="halt_on_error=0:print_stacktrace=0:log_path=/dev/null"
 	export CC=$(tc-getCC)
 	local preload_libs="" # Required so libsandbox.so will not crash test because of libasan.so...
 	if tc-is-gcc ; then
-		if [[ -n "${CFLAGS_HARDENED_ASAN}" ]] ; then
-			preload_libs+=":"$(${CC} -print-file-name=libasan.so)
-		fi
-		if [[ -n "${CFLAGS_HARDENED_UBSAN}" ]] ; then
-			preload_libs+=":"$(${CC} -print-file-name=libubsan.so)
+		local s=$(gcc-major-version)
+		if has_version "sys-devel/gcc:${s}[sanitize]" ; then
+			if [[ -n "${CFLAGS_HARDENED_ASAN}" ]] ; then
+				preload_libs+=":"$(cflags-hardened_get_sanitizer_path "asan")
+			fi
+			if [[ -n "${CFLAGS_HARDENED_UBSAN}" ]] ; then
+				preload_libs+=":"$(cflags-hardened_get_sanitizer_path "ubsan" "_minimal")
+			fi
 		fi
 	else
-		local arch=$(get_llvm_arch)
-		if [[ -n "${CFLAGS_HARDENED_ASAN}" ]] ; then
-			preload_libs+=":"$(${CC} -print-file-name=libclang_rt.asan-${arch}.so)
-		fi
-		if [[ -n "${CFLAGS_HARDENED_UBSAN}" ]] ; then
-			preload_libs+=":"$(${CC} -print-file-name=libclang_rt.ubsan_minimal-${arch}.so)
+		local s=$(clang-major-version)
+		if has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[asan,hwsan,ubsan]" ; then
+			if [[ -n "${CFLAGS_HARDENED_ASAN}" ]] ; then
+				preload_libs+=":"$(cflags-hardened_get_sanitizer_path "asan")
+			fi
+			if [[ -n "${CFLAGS_HARDENED_UBSAN}" ]] ; then
+				preload_libs+=":"$(cflags-hardened_get_sanitizer_path "ubsan" "_minimal")
+			fi
 		fi
 	fi
 	if [[ -n "${CFLAGS_HARDENED_ASAN}" || -n "${CFLAGS_HARDENED_UBSAN}" ]] ; then

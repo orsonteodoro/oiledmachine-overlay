@@ -10,7 +10,7 @@ EAPI=8
 MY_PV="${PV//_pre*}"
 MY_P="${PN}-${MY_PV}"
 
-CFLAGS_HARDENED_USE_CASES="secure-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 PATCHSET_VER="8.0.40:01"
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0

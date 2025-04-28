@@ -4,7 +4,7 @@
 
 EAPI="8"
 
-CFLAGS_HARDENED_USE_CASES="secure-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 JAVA_PKG_OPT_USE="jdbc"
 PATCHSET_VER="10.6.16:01"
 SUBSLOT="18"

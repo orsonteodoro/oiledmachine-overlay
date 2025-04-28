@@ -87,7 +87,7 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # p2p
 # plugin
 # sandbox
-# secure-critical (e.g. sandbox, antivirus, crypto libs, memory allocator libs)
+# security-critical (e.g. sandbox, antivirus, crypto libs, memory allocator libs)
 # sensitive-data
 # scripting
 # server
@@ -405,7 +405,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 |"real-time-integrity"\
 |"safety-critical"\
 |"scripting"\
-|"secure-critical"\
+|"security-critical"\
 |"sensitive-data"\
 |"untrusted-data")\
 		]] \
@@ -508,7 +508,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 ("container-runtime"\
 |"dss"\
 |"untrusted-data"\
-|"secure-critical"\
+|"security-critical"\
 |"multiuser-system") \
 		]] \
 				&& \
@@ -539,7 +539,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 ("dss"\
 |"execution-integrity"\
 |"network"\
-|"secure-critical"\
+|"security-critical"\
 |"safety-critical"\
 |"untrusted-data")\
 		]] \
@@ -582,7 +582,7 @@ einfo "rustc host:  ${host}"
 |"real-time-integrity"\
 |"safety-critical"\
 |"scripting"\
-|"secure-critical"\
+|"security-critical"\
 |"sensitive-data"\
 |"server"\
 |"untrusted-data"\
@@ -700,11 +700,11 @@ einfo "rustc host:  ${host}"
 			&& \
 		[[ "${ARCH}" == "arm64" ]] \
 			&& \
-		[[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"secure-critical") ]] \
+		[[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"security-critical") ]] \
 			&&
 		_rustflags-hardened_has_unstable_rust \
 	; then
-	# For secure-critical
+	# For security-critical
 		if ! _rustflags-hardened_has_mte ; then
 ewarn "You are using an emulated memory tagging.  It will have a performance hit."
 		fi
@@ -723,11 +723,11 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 			&& \
 		[[ "${ARCH}" == "amd64" ]] \
 			&& \
-		[[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"secure-critical") ]] \
+		[[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"security-critical") ]] \
 			&&
 		_rustflags-hardened_has_unstable_rust \
 	; then
-	# For secure-critical
+	# For security-critical
 		RUSTFLAGS+=" -Zsanitizer=address"
 		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[asan]" ; then
 eerror "Missing ASAN sanitizer.  Do the following:"

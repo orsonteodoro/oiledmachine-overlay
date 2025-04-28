@@ -7,7 +7,7 @@ EAPI=8
 # PGOing this library is justified because the size of the library is over a
 # 1000 4k pages in size.
 
-CFLAGS_HARDENED_USE_CASES="secure-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_ASAN=1
 CFLAGS_HARDENED_GWP_ASAN=1
 CFLAGS_HARDENED_HWASAN=1

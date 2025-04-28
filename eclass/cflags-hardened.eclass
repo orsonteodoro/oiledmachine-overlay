@@ -226,7 +226,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # p2p
 # plugin
 # sandbox
-# secure-critical (e.g. sandbox, antivirus, crypto libs, memory allocator libs)
+# security-critical (e.g. sandbox, antivirus, crypto libs, memory allocator libs)
 # sensitive-data
 # scripting
 # server
@@ -773,7 +773,7 @@ ewarn
 |"real-time-integrity"\
 |"safety-critical"\
 |"scripting"\
-|"secure-critical"\
+|"security-critical"\
 |"sensitive-data"\
 |"server"\
 |"untrusted-data"\
@@ -839,7 +839,7 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 |"network"\
 |"p2p"\
 |"pe"\
-|"secure-critical"\
+|"security-critical"\
 |"server"\
 |"suid"\
 |"untrusted-data"\
@@ -907,7 +907,7 @@ einfo "All SSP hardening (All functions hardened)"
 |"real-time-integrity"\
 |"safety-critical"\
 |"scripting"\
-|"secure-critical"\
+|"security-critical"\
 |"sensitive-data"\
 |"untrusted-data")\
 			]] \
@@ -934,7 +934,7 @@ einfo "All SSP hardening (All functions hardened)"
 ("dos"\
 |"dss"\
 |"safety-critical"\
-|"secure-critical") \
+|"security-critical") \
 			]] \
 		; then
 	# DoS, ID
@@ -1040,7 +1040,7 @@ einfo "All SSP hardening (All functions hardened)"
 ("dss"\
 |"execution-integrity"\
 |"network"\
-|"secure-critical"\
+|"security-critical"\
 |"safety-critical"\
 |"untrusted-data")\
 		]] \
@@ -1071,7 +1071,7 @@ einfo "All SSP hardening (All functions hardened)"
 		CFLAGS_HARDENED_CFLAGS+=" -D_FORTIFY_SOURCE=${level}"
 		CFLAGS_HARDENED_CXXFLAGS+=" -D_FORTIFY_SOURCE=${level}"
 	elif \
-		[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("container-runtime"|"dss"|"untrusted-data"|"secure-critical"|"multiuser-system") ]] \
+		[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("container-runtime"|"dss"|"untrusted-data"|"security-critical"|"multiuser-system") ]] \
 			&& \
 		has_version ">=sys-libs/glibc-2.34" \
 	; then
@@ -1245,9 +1245,9 @@ einfo "All SSP hardening (All functions hardened)"
 			&& \
 		tc-is-clang \
 			&& \
-		[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"secure-critical") ]] \
+		[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"security-critical") ]] \
 	; then
-	# For secure-critical
+	# For security-critical
 		if ! _cflags-hardened_has_mte ; then
 ewarn "You are using an emulated memory tagging.  It will have a performance hit."
 		fi
@@ -1274,9 +1274,9 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 			&& \
 		[[ "${ARCH}" == "amd64" ]] \
 			&& \
-		[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"secure-critical") ]] \
+		[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"security-critical") ]] \
 	; then
-	# For secure-critical
+	# For security-critical
 		append-flags "-fsanitize=address"
 		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=address"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=address"
@@ -1455,7 +1455,7 @@ ewarn "Skipping vtable hardening.  Update gcc and rebuild ${CATEGORY}/${PN}-${PV
 		elif \
 			has_version "sys-devel/gcc:${s}[vtv]" \
 				&& \
-			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"game-engine"|"hypervisor"|"kernel"|"modular-app"|"network"|"safety-critical"|"secure-critical"|"web-browsers") ]] \
+			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"game-engine"|"hypervisor"|"kernel"|"modular-app"|"network"|"safety-critical"|"security-critical"|"web-browsers") ]] \
 		; then
 			filter-flags "-f*vtable-verify=*"
 			append-cxxflags "-fvtable-verify=std"

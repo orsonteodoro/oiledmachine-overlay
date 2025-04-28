@@ -16,7 +16,7 @@ EAPI=8
 
 MY_PN="jemalloc"
 
-CFLAGS_HARDENED_USE_CASES="secure-critical untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CFLAGS_HARDENED_ASAN=1
 CFLAGS_HARDENED_GWP_ASAN=1
 CFLAGS_HARDENED_HWASAN=1

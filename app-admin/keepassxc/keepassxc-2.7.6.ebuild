@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="secure-critical sensitive-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data"
 CFLAGS_HARDENED_VTABLE_VERIFY="0"
 VIRTUALX_REQUIRED="manual"
 

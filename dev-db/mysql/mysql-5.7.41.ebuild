@@ -4,7 +4,7 @@
 
 EAPI="7"
 
-CFLAGS_HARDENED_USE_CASES="secure-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CMAKE_MAKEFILE_GENERATOR="emake"
 PATCHSET_VER="5.7.36:01"
 UOPTS_SUPPORT_EBOLT=0

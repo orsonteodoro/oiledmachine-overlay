@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="secure-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 
 PYTHON_COMPAT=( "python3_"{10..13} )
 inherit cflags-hardened cmake python-any-r1

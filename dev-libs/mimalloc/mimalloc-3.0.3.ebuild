@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="secure-critical untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 
 inherit cflags-hardened cmake-multilib
 

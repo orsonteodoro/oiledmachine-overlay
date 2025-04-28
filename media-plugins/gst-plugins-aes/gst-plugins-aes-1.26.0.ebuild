@@ -4,7 +4,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="plugin secure-critical untrusted-data"
+CFLAGS_HARDENED_USE_CASES="plugin security-critical untrusted-data"
 GST_ORG_MODULE="gst-plugins-bad"
 
 inherit cflags-hardened gstreamer-meson
