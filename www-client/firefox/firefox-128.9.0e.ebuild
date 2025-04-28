@@ -116,8 +116,8 @@ unset __
 
 APPLY_OILEDMACHINE_OVERLAY_PATCHSET="1"
 BUILD_OBJ_DIR="" # global var not const
-CFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data web-browser"
-RUSTFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data web-browser"
+CFLAGS_HARDENED_USE_CASES="jit language-runtime network scripting sensitive-data untrusted-data web-browser"
+RUSTFLAGS_HARDENED_USE_CASES="jit language-runtime network scripting sensitive-data untrusted-data web-browser"
 # One of the major sources of lag comes from dependencies.  These are strict to
 # match performance to competition or normal builds.
 declare -A CFLAGS_RDEPEND=(
