@@ -6,39 +6,8 @@ EAPI=8
 
 # Worth keeping an eye on 'develop' branch upstream for possible backports.
 AUTOTOOLS_AUTO_DEPEND="no"
-UOPTS_SUPPORT_EBOLT=0
-UOPTS_SUPPORT_EPGO=0
-UOPTS_SUPPORT_TBOLT=0
-UOPTS_SUPPORT_TPGO=1
-VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/madler.asc"
-
-inherit autotools edo flag-o-matic flag-o-matic-om multilib-minimal
-inherit toolchain-funcs uopts verify-sig
-
-KEYWORDS="~amd64  ~arm ~arm-linux ~arm64 ~arm64-linux ~arm64-macos ~ppc ~ppc64 ~ppc64-linux ~s390"
-S="${WORKDIR}/${P}"
-S_orig="${WORKDIR}/${P}"
-SRC_URI="
-	https://zlib.net/${P}.tar.gz
-	https://zlib.net/fossils/${P}.tar.xz
-	https://zlib.net/current/beta/${P}.tar.xz
-	https://github.com/madler/zlib/releases/download/v${PV}/${P}.tar.xz
-	verify-sig? (
-		https://zlib.net/${P}.tar.xz.asc
-		https://github.com/madler/zlib/releases/download/v${PV}/${P}.tar.xz.asc
-	)
-"
-
-DESCRIPTION="Standard (de)compression library"
-HOMEPAGE="https://zlib.net/"
-LICENSE="ZLIB"
-# pgo? ( GPL-2 ) # unsourced, can't remember why this was added.
-# The FAQ does mention GPL-2 but the file is not there but a file with a
-# similar name exist but under different licensing.
-SLOT="0/1" # subslot = SONAME
-IUSE="minizip minizip-utils static-libs backup-copy"
-IUSE+="
-	pgo
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
+TRAINERS=(
 	zlib_trainers_minizip_binary_long
 	zlib_trainers_minizip_binary_max_compression
 	zlib_trainers_minizip_binary_short
@@ -63,7 +32,41 @@ IUSE+="
 	zlib_trainers_zlib_text_max
 	zlib_trainers_zlib_text_min
 	zlib_trainers_zlib_text_random
-	ebuild_revision_1
+)
+UOPTS_SUPPORT_EBOLT=0
+UOPTS_SUPPORT_EPGO=0
+UOPTS_SUPPORT_TBOLT=0
+UOPTS_SUPPORT_TPGO=1
+VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/madler.asc"
+
+inherit autotools cflags-hardened edo flag-o-matic flag-o-matic-om
+inherit multilib-minimal toolchain-funcs uopts verify-sig
+
+KEYWORDS="~amd64  ~arm ~arm-linux ~arm64 ~arm64-linux ~arm64-macos ~ppc ~ppc64 ~ppc64-linux ~s390"
+S="${WORKDIR}/${P}"
+S_orig="${WORKDIR}/${P}"
+SRC_URI="
+https://zlib.net/${P}.tar.gz
+https://zlib.net/fossils/${P}.tar.xz
+https://zlib.net/current/beta/${P}.tar.xz
+https://github.com/madler/zlib/releases/download/v${PV}/${P}.tar.xz
+	verify-sig? (
+https://zlib.net/${P}.tar.xz.asc
+https://github.com/madler/zlib/releases/download/v${PV}/${P}.tar.xz.asc
+	)
+"
+
+DESCRIPTION="Standard (de)compression library"
+HOMEPAGE="https://zlib.net/"
+LICENSE="ZLIB"
+# pgo? ( GPL-2 ) # unsourced, can't remember why this was added.
+# The FAQ does mention GPL-2 but the file is not there but a file with a
+# similar name exist but under different licensing.
+SLOT="0/1" # subslot = SONAME
+IUSE="
+${TRAINERS[@]}
+minizip minizip-utils pgo static-libs backup-copy
+ebuild_revision_2
 "
 REQUIRED_USE="
 	pgo? (
@@ -389,7 +392,15 @@ _src_configure() {
 	# Prevents libpng from being built, breaks pngfix when zlib libs are being replaced
 	# Prevents loading of precompiled www browser
 	# It doesn't work for elibc_glibc and gcc combo.
-	for value in cfi-vcall cfi-nvcall cfi-derived-cast cfi-unrelated-cast cfi ; do
+	local L=(
+		"cfi-vcall"
+		"cfi-nvcall"
+		"cfi-derived-cast"
+		"cfi-unrelated-cast"
+		"cfi"
+	)
+	local value
+	for value in ${L[@]} ; do
 		if is-flagq "-fsanitize=*${value}" ; then
 			einfo "Removing ${value}"
 			strip-flag-value "${value}"
@@ -400,12 +411,13 @@ _src_configure() {
 	local flag
 	for flag in CFLAGS CXXFLAGS LDFLAGS ; do
 		if [[ "${!flag}" =~ "cfi" ]] ; then
-eerror
 eerror "Remove all cfi flags from ${flag}"
-eerror
 			die
 		fi
 	done
+	# We just want the basic for now
+	cflags-hardened_append
+	filter-flags "-f*cf-protection=*"	# Untested
 
 	if use pgo && tc-is-gcc && train_meets_requirements && [[  "${PGO_PHASE}" == "PGO" ]] ; then
 		if use minizip ; then
@@ -518,7 +530,7 @@ _run_trainer_images_zlib() {
 	mkdir -p "${T}/sandbox" || die
 	cd "${T}/sandbox" || die
 	local N=270 # 30 * 9 compression levels
-	local MAX_FILES_IN_ARCHIVE=${MINIZIP_TRAINING_MAX_FILES:=500} # arbitrary
+	local MAX_FILES_IN_ARCHIVE=${MINIZIP_TRAINING_MAX_FILES:-500} # arbitrary
 
 	has_image_folder() {
 		if [[ -d "${distdir}/trainer/assets/avif" ]] ; then
@@ -799,7 +811,7 @@ _run_trainer_text_minizip() {
 	# it will decompress this single file.
 	# It does it 300 times for various directory sizes for about 30
 	# times per compression level.
-	local MAX_FILES_IN_ARCHIVE=${MINIZIP_TRAINING_MAX_FILES:=500} # arbitrary
+	local MAX_FILES_IN_ARCHIVE=${MINIZIP_TRAINING_MAX_FILES:-500} # arbitrary
 	for i in $(seq 1 ${N}) ; do
 		#einfo "Preparing training sandbox"
 		mkdir -p "${T}/sandbox" || die
@@ -929,7 +941,7 @@ _run_trainer_binary_minizip() {
 
 	# Binary version:  This test will simulate compressing an entire folder
 	# of files, then it will decompress this single file.
-	local MAX_FILES_IN_ARCHIVE=${MINIZIP_TRAINING_MAX_FILES:=500} # arbitrary
+	local MAX_FILES_IN_ARCHIVE=${MINIZIP_TRAINING_MAX_FILES:-500} # arbitrary
 	for i in $(seq 1 ${N}) ; do
 		#einfo "Preparing training sandbox"
 		mkdir -p "${T}/sandbox" || die
@@ -1031,41 +1043,41 @@ einfo
 		_run_trainer_text_zlib "random"
 	fi
 	if use zlib_trainers_minizip_binary_long ; then
-		local N=${MINIZIP_TRAINING_LONG_N_ITERATIONS:=300}
+		local N=${MINIZIP_TRAINING_LONG_N_ITERATIONS:-300}
 		_run_trainer_binary_minizip
 	fi
 	if use zlib_trainers_minizip_binary_max_compression ; then
-		local N=${MINIZIP_TRAINING_SHORT_N_ITERATIONS:=30}
+		local N=${MINIZIP_TRAINING_SHORT_N_ITERATIONS:-30}
 		local max_compression=1
 		_run_trainer_binary_minizip
 		unset max_compression
 	fi
 	if use zlib_trainers_minizip_binary_short ; then
-		local N=${MINIZIP_TRAINING_SHORT_N_ITERATIONS:=30}
+		local N=${MINIZIP_TRAINING_SHORT_N_ITERATIONS:-30}
 		_run_trainer_binary_minizip
 	fi
 	if use zlib_trainers_minizip_binary_store ; then
-		local N=${MINIZIP_TRAINING_SHORT_N_ITERATIONS:=30}
+		local N=${MINIZIP_TRAINING_SHORT_N_ITERATIONS:-30}
 		local store_only=1
 		_run_trainer_binary_minizip
 		unset store_only
 	fi
 	if use zlib_trainers_minizip_text_long ; then
-		local N=${MINIZIP_TRAINING_LONG_N_ITERATIONS:=300}
+		local N=${MINIZIP_TRAINING_LONG_N_ITERATIONS:-300}
 		_run_trainer_text_minizip
 	fi
 	if use zlib_trainers_minizip_text_max_compression ; then
-		local N=${MINIZIP_TRAINING_SHORT_N_ITERATIONS:=30}
+		local N=${MINIZIP_TRAINING_SHORT_N_ITERATIONS:-30}
 		local max_compression=1
 		_run_trainer_text_minizip
 		unset max_compression
 	fi
 	if use zlib_trainers_minizip_text_short ; then
-		local N=${MINIZIP_TRAINING_SHORT_N_ITERATIONS:=30}
+		local N=${MINIZIP_TRAINING_SHORT_N_ITERATIONS:-30}
 		_run_trainer_text_minizip
 	fi
 	if use zlib_trainers_minizip_text_store ; then
-		local N=${MINIZIP_TRAINING_SHORT_N_ITERATIONS:=30}
+		local N=${MINIZIP_TRAINING_SHORT_N_ITERATIONS:-30}
 		local store_only=1
 		_run_trainer_text_minizip
 		unset store_only
@@ -1073,9 +1085,9 @@ einfo
 }
 
 train_meets_requirements() {
-	if multilib_is_native_abi && which pigz 2>/dev/null 1>/dev/null ; then
+	if multilib_is_native_abi && which "pigz" 2>/dev/null 1>/dev/null ; then
 		return 0
-	elif ! multilib_is_native_abi && which pigz-${ABI} 2>/dev/null 1>/dev/null ; then
+	elif ! multilib_is_native_abi && which "pigz-${ABI}" 2>/dev/null 1>/dev/null ; then
 		return 0
 	fi
 	return 1
