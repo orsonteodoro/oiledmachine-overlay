@@ -153,11 +153,11 @@ _src_configure() {
 		append-flags -fprofile-arcs
 	fi
 	if [[ "${PGO_PHASE}" == "PGO" ]] ; then
-		tc-is-gcc && append-flags -Wno-error=coverage-mismatch
+		tc-is-gcc && append-flags -Wno-error="coverage-mismatch"
 	fi
 	cflags-hardened_append
 	local myconf=(
-		--prefix=/usr/$(get_libdir)/openusd
+		--prefix="/usr/$(get_libdir)/openusd"
 		$(use_enable debug)
 		$(use_enable lazy-lock)
 		$(use_enable prof)

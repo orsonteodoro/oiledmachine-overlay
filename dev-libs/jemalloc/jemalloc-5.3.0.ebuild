@@ -141,7 +141,7 @@ _src_configure() {
 		append-flags -fprofile-arcs
 	fi
 	if [[ "${PGO_PHASE}" == "PGO" ]] ; then
-		tc-is-gcc && append-flags -Wno-error=coverage-mismatch
+		tc-is-gcc && append-flags -Wno-error="coverage-mismatch"
 	fi
 	cflags-hardened_append
 	local myconf=(
@@ -258,8 +258,8 @@ multilib_src_install_all() {
 	if [[ ${CHOST} == *-darwin* ]] ; then
 		# fixup install_name, #437362
 		install_name_tool \
-			-id "${EPREFIX}"/usr/$(get_libdir)/libjemalloc.2.dylib \
-			"${ED}"/usr/$(get_libdir)/libjemalloc.2.dylib || die
+			-id "${EPREFIX}/usr/$(get_libdir)/libjemalloc.2.dylib" \
+			"${ED}/usr/$(get_libdir)/libjemalloc.2.dylib" || die
 	fi
 	use static-libs || find "${ED}" -name '*.a' -delete
 }
