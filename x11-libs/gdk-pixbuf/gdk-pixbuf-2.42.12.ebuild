@@ -5,7 +5,7 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 
-inherit gnome.org gnome2-utils meson-multilib multilib xdg
+inherit cflags-hardened gnome.org gnome2-utils meson-multilib multilib xdg
 
 MULTILIB_CHOST_TOOLS=(
 	"/usr/bin/gdk-pixbuf-query-loaders$(get_exeext)"
@@ -20,7 +20,10 @@ DESCRIPTION="Image loading library for GTK+"
 HOMEPAGE="https://gitlab.gnome.org/GNOME/gdk-pixbuf"
 LICENSE="LGPL-2.1+"
 SLOT="2"
-IUSE="gtk-doc +introspection gif jpeg test tiff"
+IUSE="
+gtk-doc +introspection gif jpeg test tiff
+ebuild_revision_1
+"
 RESTRICT="
 	!test? (
 		test
@@ -42,7 +45,9 @@ DEPEND="
 		>=media-libs/tiff-3.9.2:=[${MULTILIB_USEDEP}]
 	)
 "
-RDEPEND="${DEPEND}"
+RDEPEND="
+	${DEPEND}
+"
 BDEPEND="
 	>=sys-devel/gettext-0.19.8
 	app-text/docbook-xsl-stylesheets
@@ -56,12 +61,14 @@ BDEPEND="
 		>=dev-util/gi-docgen-2021.1
 	)
 "
+
 src_prepare() {
 	default
 	xdg_environment_reset
 }
 
 multilib_src_configure() {
+	cflags-hardened_append
 	local emesonargs=(
 		$(meson_feature gif)
 		$(meson_feature tiff)
