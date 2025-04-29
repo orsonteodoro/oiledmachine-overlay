@@ -221,17 +221,23 @@ These default hardening flags have an estimated worst case performance penalty
 around 1.35 times the base performance without mitigation which is similar to
 -O1 at -40% best case performance penalty relative to -O3 or -Ofast.
 
-We are considering changing this policy from absolute to relative so that
-in secure-critical packages without performance element can be properly secured.
-The default value for CFLAGS_HARDENED_TOLERANCE may be overwritten per ebuild.
-ASAN/HWASAN may be required in the future in this overlay.  ASAN/HWASAN may
-be used for lightweight security-critical, GWP-ASAN for more heavier packages
-or performance-critical packages.
+Packages are relativly adjusted for CFLAGS_HARDENED_TOLERANCE so that
+in packages can be properly secured mitigating repeating past mistakes.
+ASAN/HWASAN/GWP-ASAN will be required.  Packages with historical CVE rapport
+of heap overflows or use-after-free will be ASANed.  Packages with historical
+CVE rapport for integer overflows or bounds issues will get UBSAN treatment.
+The -fstack-protector does not mitigate heap overflow.
 
 Users can override the tolerance level by changing
 CFLAGS_HARDENED_TOLERANCE_USER.  Details about what runtime mitigations will be
 activated can be found at
 [cflags-hardened.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/cflags-hardened.eclass#L123).
+
+CFLAGS_HARDENED_TOLERANCE_USER and RUSTFLAGS_HARDENED_TOLERANCE_USER mean the
+same.
+
+When does a package meet performance critical?  If it is not marked
+cflags-critical or rustflags-critical.
 
 The hardening benefits will include some execution-integrity mitigations,
 some information disclosure mitigations, some denial of service
@@ -342,10 +348,10 @@ llvm-runtimes/compiler-rt-sanitizers-logging[production]
 =dev-lang/rust-bin-9999
 
 # For ARCH=amd64
-llvm-runtimes/compiler-rt-sanitizers[asan,cfi,gwp-asan,ubsan,safestack]
+llvm-runtimes/compiler-rt-sanitizers[asan,cfi,ubsan,safestack]
 
 # For ARCH=arm64
-llvm-runtimes/compiler-rt-sanitizers[asan,gwp-asan,hwsan,ubsan,safestack]
+llvm-runtimes/compiler-rt-sanitizers[asan,hwsan,ubsan,safestack]
 ```
 
 They are required because it assumed that the vulnerability is unpatched and

@@ -1,6 +1,8 @@
 ASAN_OPTIONS="abort_on_error=1:log_path=/dev/null:verbosity=0:verify_asan_link_order=0"
 CFI_OPTIONS="halt_on_error=1"
 DFSAN_OPTIONS="warn_unimplemented=0"
+#GWP_ASAN=1
+GWP_ASAN_SAMPLE_RATE=@GWP_ASAN_SAMPLE_RATE@
 HWASAN_OPTIONS="abort_on_error=1:log_path=/dev/null:verbosity=0" # No halt on error
 LSAN_OPTIONS="exitcode=1:log_path=/dev/null:verbosity=0" # Halt on error by exitcode
 MSAN_OPTIONS="abort_on_error=1:log_path=/dev/null:verbosity=0"
