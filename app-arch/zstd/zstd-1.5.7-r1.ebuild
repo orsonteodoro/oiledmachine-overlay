@@ -3,6 +3,8 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_CF_PROTECTION=0         # -cf-protection is untested or unverified
+CFLAGS_HARDENED_FHARDENED=0             # -fhardened is untested or unverified
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 
 inherit cflags-hardened meson-multilib
@@ -25,7 +27,10 @@ LICENSE="
 	)
 "
 SLOT="0/1"
-IUSE="+lzma lz4 static-libs test zlib"
+IUSE="
++lzma lz4 static-libs test zlib
+ebuild_revision_2
+"
 RESTRICT="
 	!test? (
 		test
