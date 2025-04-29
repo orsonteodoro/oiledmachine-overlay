@@ -228,6 +228,25 @@ of heap overflows or use-after-free will be ASANed.  Packages with historical
 CVE rapport for integer overflows or bounds issues will get UBSAN treatment.
 The -fstack-protector does not mitigate heap overflow.
 
+| CFLAGS_HARDENED_TOLERANCE | Package security posture                  | Inherits cflag-hardened or rustflags-hardened eclass
+| ----                      | ----                                      | ----
+| 1.10 or less              | Performance-critical                      | No
+| 1.11-1.50                 | Balanced                                  | Maybe
+| 1.35                      | Balanced default to enable Retpoline      | Yes
+| 1.80 or more              | Security-critical                         | Yes
+| 3.0                       | Security-critical default to enable ASAN  | Yes
+
+How to interpret the above table:
+
+1.0 means fully performance optimized as -Ofast/-O3 and unmitigated.
+1.11 means 1.10 times slower than the base performance.  This is the best case balanced performance.
+1.50 means 1.50 times slower than the base performance.  This is the worst case balanced performance.
+3.0 means 3 times slower than the base performance.
+Setting CFLAGS_HARDENED_TOLERANCE_USER means that you are accepting or managing
+the worst case performance as a result of hardening.
+The values are normalized float multiples relative to the base.
+In the above table, ASAN means any ASAN flavor (ASAN, GWP-ASAN, HWSAN).
+
 For packages marked sensitive-data, there are consideration of adding wrapper to
 use a secure heap allocator (scudo, hardened_malloc, etc) for secure erase of
 sensitive data from memory on dealloc.
@@ -238,7 +257,7 @@ activated can be found at
 [cflags-hardened.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/cflags-hardened.eclass#L123).
 
 CFLAGS_HARDENED_TOLERANCE_USER and RUSTFLAGS_HARDENED_TOLERANCE_USER mean the
-same.
+same, but not necessary one affecting the other.
 
 When does a package meet performance critical?  If it is not marked
 cflags-critical or rustflags-critical.
