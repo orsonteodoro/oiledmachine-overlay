@@ -247,6 +247,9 @@ How to interpret the above table:
   the worst case performance as a result of hardening.
 - The values are normalized float multiples relative to the base.
 - In the above table, ASAN means any ASAN flavor (ASAN, GWP-ASAN, HWSAN).
+- The ASAN/UBSAN will be allowed if it passes the test suite or passes a
+  interactive test.  The test suite has a higher precedence to decide
+  if it should be disabled.
 
 For packages marked sensitive-data, there are consideration of adding wrapper to
 use a secure heap allocator (scudo, hardened_malloc, etc) for secure erase of
