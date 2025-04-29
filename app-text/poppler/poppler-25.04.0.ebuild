@@ -34,10 +34,10 @@ fi
 
 DESCRIPTION="PDF rendering library based on the xpdf-3.0 code base"
 HOMEPAGE="https://poppler.freedesktop.org/"
-
-LICENSE="GPL-2"
+LICENSE="
+	GPL-2
+"
 IUSE="
-01234567890123456789012345678901234567890123456789012345678901234567890123456789
 boost cairo cjk curl +cxx debug doc gpgme +introspection +jpeg +jpeg2k +lcms nss
 png qt5 qt6 test tiff +utils
 "
@@ -46,7 +46,6 @@ RESTRICT="
 		test
 	)
 "
-
 COMMON_DEPEND="
 	>=media-libs/fontconfig-2.13
 	>=media-libs/freetype-2.10
@@ -116,7 +115,6 @@ BDEPEND="
 	>=dev-util/glib-utils-2.64
 	virtual/pkgconfig
 "
-
 if [[ "${PV}" != *"9999"* ]] ; then
 	BDEPEND+="
 		verify-sig? (
