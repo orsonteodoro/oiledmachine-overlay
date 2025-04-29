@@ -9,6 +9,7 @@ CFLAGS_HARDENED_HWASAN=1
 CFLAGS_HARDENED_UBSAN=1
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_TOLERANCE="3.00"
+# CVE-2015-8863 - network zero click attack, heap-based overflow (ASAN), off-by-one (UBSAN)
 
 inherit autotools cflags-hardened flag-o-matic
 
@@ -124,3 +125,7 @@ src_install() {
 	default
 	use static-libs || { find "${D}" -name '*.la' -delete || die; }
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (20250429)
+# test-suite:  pass
+# hello-world json object:  pass
