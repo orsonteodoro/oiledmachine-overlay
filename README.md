@@ -228,6 +228,10 @@ of heap overflows or use-after-free will be ASANed.  Packages with historical
 CVE rapport for integer overflows or bounds issues will get UBSAN treatment.
 The -fstack-protector does not mitigate heap overflow.
 
+For packages marked sensitive-data, there are consideration of adding wrapper to
+use a secure heap allocator (scudo, hardened_malloc, etc) for secure erase of
+sensitive data from memory on dealloc.
+
 Users can override the tolerance level by changing
 CFLAGS_HARDENED_TOLERANCE_USER.  Details about what runtime mitigations will be
 activated can be found at
@@ -348,10 +352,10 @@ llvm-runtimes/compiler-rt-sanitizers-logging[production]
 =dev-lang/rust-bin-9999
 
 # For ARCH=amd64
-llvm-runtimes/compiler-rt-sanitizers[asan,cfi,ubsan,safestack]
+llvm-runtimes/compiler-rt-sanitizers[asan,cfi,gwp-asan,ubsan,safestack]
 
 # For ARCH=arm64
-llvm-runtimes/compiler-rt-sanitizers[asan,hwsan,ubsan,safestack]
+llvm-runtimes/compiler-rt-sanitizers[asan,hwsan,gwp-asan,ubsan,safestack]
 ```
 
 They are required because it assumed that the vulnerability is unpatched and
