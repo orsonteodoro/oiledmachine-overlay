@@ -240,7 +240,7 @@ How to interpret the above table:
 
 - 1.0 means fully performance optimized as -Ofast/-O3 and unmitigated.
 - 1.10 means performance-critical like -O2.
-- 1.11 means 1.10 times slower than the base performance.  This is the best case balanced performance.
+- 1.11 means 1.11 times slower than the base performance.  This is the best case balanced performance.
 - 1.40 means like -O0 at its best case.
 - 1.50 means 1.50 times slower than the base performance.  This is the worst case balanced performance.
 - 1.51 to 1.79 means declining performance and additional decent mitigations may be applied.
