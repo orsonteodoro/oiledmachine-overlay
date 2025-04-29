@@ -242,7 +242,7 @@ How to interpret the above table:
 - 1.11 means 1.10 times slower than the base performance.  This is the best case balanced performance.
 - 1.50 means 1.50 times slower than the base performance.  This is the worst case balanced performance.
 - 1.51 to 1.79 means declining performance and decent mitigations may be applied.
-- 3.0 means 3 times slower than the base performance but enable expensive mitigations against critical severity vulnerabilities/exploits.
+- 3.0 means 3 times worst case slower than the base performance but enable expensive mitigations against critical severity vulnerabilities/exploits.
 - Setting CFLAGS_HARDENED_TOLERANCE_USER means that you are accepting or managing
   the worst case performance as a result of hardening.
 - The values are normalized float multiples relative to the base.
