@@ -10,6 +10,7 @@ inherit bash-completion-r1 cflags-hardened linux-info meson
 
 KEYWORDS="amd64 arm arm64 ~loong ppc ppc64 ~riscv x86"
 SRC_URI="https://github.com/containers/${PN}/releases/download/v${PV}/${P}.tar.xz"
+
 DESCRIPTION="Unprivileged sandboxing tool, namespaces-powered chroot-like solution"
 HOMEPAGE="https://github.com/containers/bubblewrap/"
 LICENSE="LGPL-2+"
