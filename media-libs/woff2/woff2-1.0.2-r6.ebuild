@@ -3,7 +3,9 @@
 
 EAPI=8
 
-inherit cmake-multilib
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
+
+inherit cflags-hardened cmake-multilib
 
 SRC_URI="https://github.com/google/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
@@ -12,6 +14,9 @@ HOMEPAGE="https://github.com/google/woff2"
 LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64"
+IUSE+="
+ebuild_revision_1
+"
 RDEPEND+="
 	>=app-arch/brotli-1.0.1[${MULTILIB_USEDEP}]
 "
@@ -23,6 +28,7 @@ BDEPEND+="
 "
 
 src_configure() {
+	cflags-hardened_append
 	local mycmakeargs=(
 		-DCANONICAL_PREFIXES=ON #661942
 		-DCMAKE_SKIP_RPATH=ON # needed, causes QA warnings otherwise
