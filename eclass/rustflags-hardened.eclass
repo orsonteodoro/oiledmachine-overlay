@@ -727,8 +727,6 @@ einfo "rustc host:  ${host}"
 		tc-is-clang \
 			&& \
 		[[ "${ARCH}" == "arm64" ]] \
-			&& \
-		[[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"security-critical") ]] \
 			&&
 		_rustflags-hardened_has_unstable_rust \
 	; then
@@ -750,8 +748,6 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 		[[ "${RUSTFLAGS_HARDENED_ASAN:-0}" == "1" ]] \
 			&& \
 		[[ "${ARCH}" == "amd64" ]] \
-			&& \
-		[[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"security-critical") ]] \
 			&&
 		_rustflags-hardened_has_unstable_rust \
 	; then

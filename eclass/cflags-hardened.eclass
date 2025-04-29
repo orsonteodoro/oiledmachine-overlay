@@ -1256,8 +1256,6 @@ einfo "All SSP hardening (All functions hardened)"
 		_cflags-hardened_has_mte \
 			&& \
 		tc-is-clang \
-			&& \
-		[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"security-critical") ]] \
 	; then
 	# For security-critical
 		if ! _cflags-hardened_has_mte ; then
@@ -1285,8 +1283,6 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 		[[ "${CFLAGS_HARDENED_ASAN:-0}" == "1" ]] \
 			&& \
 		[[ "${ARCH}" == "amd64" ]] \
-			&& \
-		[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"security-critical") ]] \
 	; then
 	# For security-critical
 		append-flags "-fsanitize=address"

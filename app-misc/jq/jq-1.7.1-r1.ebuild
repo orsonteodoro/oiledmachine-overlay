@@ -3,13 +3,18 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_ASAN=1
+CFLAGS_HARDENED_GWP_ASAN=1
+CFLAGS_HARDENED_HWASAN=1
+CFLAGS_HARDENED_UBSAN=1
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_TOLERANCE="3.00"
 
 inherit autotools cflags-hardened flag-o-matic
 
 MY_PV="${PV/_/}"
 MY_P="${PN}-${MY_PV}"
-ONIGURUMA_MIN_PV='>=dev-libs/oniguruma-6.9.3' # Keep this in sync with bundled modules/oniguruma/
+ONIGURUMA_PV="6.9.3" # Keep this in sync with bundled modules/oniguruma/
 
 KEYWORDS="
 ~alpha amd64 ~arm arm64 ~loong ~ppc ppc64 ~riscv ~sparc x86 ~amd64-linux
@@ -30,13 +35,13 @@ DEPEND="
 	>=sys-devel/bison-3.0
 	app-alternatives/lex
 	oniguruma? (
-		${ONIGURUMA_MIN_PV}:=[static-libs?]
+		>=dev-libs/oniguruma-${ONIGURUMA_PV}:=[static-libs?]
 	)
 "
 RDEPEND="
 	!static-libs? (
 		oniguruma? (
-			${ONIGURUMA_MIN_PV}[static-libs?]
+			>=dev-libs/oniguruma-${ONIGURUMA_PV}[static-libs?]
 		)
 	)
 "
@@ -45,11 +50,11 @@ PATCHES=(
 	"${FILESDIR}/jq-1.7.1-runpath.patch"
 )
 
-RESTRICT="
-	!test? (
-		test
-	)
-"
+#RESTRICT="
+#	!test? (
+#		test
+#	)
+#"
 REQUIRED_USE="
 	test? (
 		oniguruma
@@ -104,7 +109,7 @@ src_configure() {
 }
 
 src_test() {
-	if ! LD_LIBRARY_PATH="${S}/.libs" nonfatal emake check; then
+	if ! LD_LIBRARY_PATH="${S}/.libs" nonfatal emake check ; then
 		if [[ -r "${S}/test-suite.log" ]]; then
 eerror "Tests failed, outputting testsuite log"
 			cat "${S}/test-suite.log" || die
