@@ -2356,7 +2356,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	# This section contains significant changes.  The above sections contains minor changes.
 
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-perfetto.patch"
+#			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-perfetto.patch"
 			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-icu-tracing.patch"
 		)
 
@@ -3701,8 +3701,8 @@ ewarn "For proper hardening, disable the pgo USE flag."
 	fi
 
 	# Disable profiling/tracing these should not be enabled in production.
-	myconf_gn+=" v8_use_perfetto=false"
-	myconf_gn+=" rtc_use_perfetto=false"
+#	myconf_gn+=" v8_use_perfetto=false"
+#	myconf_gn+=" rtc_use_perfetto=false"
 
 	# Enable DCHECK with USE=debug only, increases chrome binary size by 30%, bug #811138.
 	# DCHECK is fatal by default, make it configurable at runtime, #bug 807881.
