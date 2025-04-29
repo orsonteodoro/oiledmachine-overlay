@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data sensitive-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CPU_FLAGS_PPC=(
 	"cpu_flags_ppc_altivec"
 	"cpu_flags_ppc_vsx"
@@ -41,6 +41,7 @@ IUSE="
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
 cacert test test-full +utils
+ebuild_revision_1
 "
 
 REQUIRED_USE="
