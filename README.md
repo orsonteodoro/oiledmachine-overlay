@@ -238,14 +238,14 @@ The -fstack-protector does not mitigate heap overflow.
 
 How to interpret the above table:
 
-1.0 means fully performance optimized as -Ofast/-O3 and unmitigated.
-1.11 means 1.10 times slower than the base performance.  This is the best case balanced performance.
-1.50 means 1.50 times slower than the base performance.  This is the worst case balanced performance.
-3.0 means 3 times slower than the base performance.
-Setting CFLAGS_HARDENED_TOLERANCE_USER means that you are accepting or managing
-the worst case performance as a result of hardening.
-The values are normalized float multiples relative to the base.
-In the above table, ASAN means any ASAN flavor (ASAN, GWP-ASAN, HWSAN).
+- 1.0 means fully performance optimized as -Ofast/-O3 and unmitigated.
+- 1.11 means 1.10 times slower than the base performance.  This is the best case balanced performance.
+- 1.50 means 1.50 times slower than the base performance.  This is the worst case balanced performance.
+- 3.0 means 3 times slower than the base performance.
+- Setting CFLAGS_HARDENED_TOLERANCE_USER means that you are accepting or managing
+  the worst case performance as a result of hardening.
+- The values are normalized float multiples relative to the base.
+- In the above table, ASAN means any ASAN flavor (ASAN, GWP-ASAN, HWSAN).
 
 For packages marked sensitive-data, there are consideration of adding wrapper to
 use a secure heap allocator (scudo, hardened_malloc, etc) for secure erase of
