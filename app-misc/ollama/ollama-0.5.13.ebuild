@@ -3305,7 +3305,6 @@ einfo "gcc_slot: ${gcc_slot}"
 
 	# For sgemm.cpp, ggml.c
 
-	# omt
 	local CPU_FEATURES=()
 
 	if use cpu_flags_x86_sse ; then

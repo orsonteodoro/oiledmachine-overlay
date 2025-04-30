@@ -728,7 +728,6 @@ einfo "rustc host:  ${host}"
 			["type"]="tysan"
 		)
 
-		# omt
 		declare -A SLOWDOWN=(
 			["asan"]="4.0"
 			["cfi"]="2.0"

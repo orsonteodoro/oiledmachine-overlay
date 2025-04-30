@@ -1061,7 +1061,6 @@ einfo "Running:  \`dkms install ${DKMS_PKG_NAME}/${DKMS_PKG_VER} -k ${_k} --forc
 		# Copy for slotification
 		_copy_modules
 	fi
-	#omt
 	_compress_modules "/lib/modules/${kernel_release}"
 	_compress_modules "/lib/modules-rock/${PV}/${kernel_release}" # slotified path
 	_verify_magic_all "/lib/modules" "/usr/src/linux-${k}"
