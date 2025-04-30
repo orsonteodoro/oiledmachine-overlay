@@ -3,6 +3,9 @@
 
 EAPI=8
 
+# 32-bit breaks with asan and ubsan sanitizers on
+#CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
+CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data untrusted-data"
 QA_CONFIG_IMPL_DECL_SKIP=(
 	# gnulib FPs
@@ -51,11 +54,11 @@ REQUIRED_USE="
 		tools
 	)
 "
-RESTRICT="
-	!test? (
-		test
-	)
-"
+#RESTRICT="
+#	!test? (
+#		test
+#	)
+#"
 # >=nettle-3.10 as a workaround for bug #936011
 RDEPEND="
 	>=dev-libs/libtasn1-4.9:=[${MULTILIB_USEDEP}]
@@ -210,3 +213,56 @@ multilib_src_install_all() {
 		dodoc "doc/examples/"*".c"
 	fi
 }
+
+
+# With asan/ubsan sanitizers (32-bit)
+# ============================================================================
+# Testsuite summary for GnuTLS 3.8.9
+# ============================================================================
+# # TOTAL: 201
+# # PASS:  180
+# # SKIP:  11
+# # XFAIL: 0
+# # FAIL:  10
+# # XPASS: 0
+# # ERROR: 0
+# ============================================================================
+
+# Without sanitizers (32-bit)
+# ============================================================================
+# Testsuite summary for GnuTLS 3.8.9
+# ============================================================================
+# # TOTAL: 201
+# # PASS:  192
+# # SKIP:  9
+# # XFAIL: 0
+# # FAIL:  0
+# # XPASS: 0
+# # ERROR: 0
+# ============================================================================
+
+# ASAN only (32-bit)
+# ============================================================================
+# Testsuite summary for GnuTLS 3.8.9
+# ============================================================================
+# # TOTAL: 201
+# # PASS:  182
+# # SKIP:  11
+# # XFAIL: 0
+# # FAIL:  8
+# # XPASS: 0
+# # ERROR: 0
+# ============================================================================
+
+# Ubsan only (32-bit)
+# ============================================================================
+# Testsuite summary for GnuTLS 3.8.9
+# ============================================================================
+# # TOTAL: 201
+# # PASS:  187
+# # SKIP:  11
+# # XFAIL: 0
+# # FAIL:  3
+# # XPASS: 0
+# # ERROR: 0
+# ============================================================================
