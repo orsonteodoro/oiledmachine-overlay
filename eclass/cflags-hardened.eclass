@@ -98,34 +98,9 @@ CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 # Adds -fPIC if compiler is not enable it by default to library only packages.
 # Acceptable values: 1, 0, unset
 
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_ASAN
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_SANITIZERS
 # @DESCRIPTION:
-# Allow asan runtime detect to exit before CE, PE, DoS, DT, ID happens.
-
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_CFI
-# @DESCRIPTION:
-# Allow cfi runtime detect to exit before CE, PE, DoS, DT, ID happens.
-
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_HWASAN
-# @DESCRIPTION:
-# Allow hwasan runtime detect to exit before CE, PE, DoS, DT, ID happens.
-
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_LSAN
-# @DESCRIPTION:
-# Allow lsan runtime detect to exit before ID happens.
-
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_MSAN
-# @DESCRIPTION:
-# Allow msan runtime detect to exit before CE, PE, DoS, DT, ID happens.
-
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_TSAN
-# @DESCRIPTION:
-# Allow tsan runtime detect to exit before CE, PE, DoS, DT, ID happens.
-
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_UBSAN
-# @DESCRIPTION:
-# Allow ubsan runtime detect to exit before CE, PE, DoS, DT, ID happens.
-
+# A space delimited list of allowed sanitizer options.
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_TOLERANCE
 # @DESCRIPTION:
@@ -141,41 +116,40 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # No mitigation				1.00
 # -D_FORTIFY_SOURCE=2			1.01
 # -D_FORTIFY_SOURCE=3			1.02
-# -fcf-protection=full			1.03 - 1.10
-# -fstack-clash-protection		1.02 - 1.10
-# -fstack-protect			1.01 - 1.05
-# -fstack-protect-strong		1.03 - 1.10
-# -fstack-protect-all			1.05 - 1.10
-# -ftrapv				1.20 - 2.00  *
-# -fsanitize=address			2.00 - 3.00 (asan); 1.00 - 1.05 (amd64, gwp-asan),  1.00 - 1.07 (arm64, gwp-asan) *
-# -fsanitize=cfi			1.05 - 1.20  *
-# -fsanitize=hwaddress			1.10 - 1.50 (arm64)  *
-# -fsanitize=leak			1.01 - 1.05  *
-# -fsanitize=memory			1.50 - 2.00  *
-# -fsanitize=safe-stack			1.02 - 1.10  *
-# -fsanitize=thread			5.00 - 15.00 *
-# -fsanitize=undefined			1.01 - 1.10  *
-# -mfloat-abi=soft -mfpu=none           5.00 - 20.00 *
-# -mfunction-return=thunk-extern	1.01 - 1.05
-# -mfunction-return=thunk-inline	1.01 - 1.03
-# -mfunction-return=thunk		1.01 - 1.05
-# -mindirect-branch=ibrs		1.01 - 1.10
-# -mindirect-branch=thunk		1.05 - 1.30
-# -mindirect-branch=thunk-inline	1.03 - 1.25
-# -mindirect-branch=thunk-extern	1.05 - 1.15
-# -mindirect-branch-register		1.05 - 1.30
-# -mretpoline				1.10 - 1.30
-# -mretpoline-external-thunk		1.15 - 1.35
-# -fvtable-verify=preinit		1.06 - 1.16
-# -fvtable-verify=std			1.05 - 1.15
+# -fcf-protection=full			1.03 -  1.10
+# -fstack-clash-protection		1.02 -  1.10
+# -fstack-protect			1.01 -  1.05
+# -fstack-protect-strong		1.03 -  1.10
+# -fstack-protect-all			1.05 -  1.10
+# -ftrapv				1.20 -  2.00
+# -fsanitize=address			1.50 -  4.00 (asan); 1.01 - 1.1 (gwp-asan)
+# -fsanitize=cfi			1.10 -  2.00
+# -fsanitize=hwaddress			1.15 -  1.50 (arm64)
+# -fsanitize=leak			1.05 -  1.50
+# -fsanitize=memory			3.00 - 11.00
+# -fsanitize=safe-stack			1.01 -  1.20
+# -fsanitize=shadowcallstack		1.01 -  1.15
+# -fsanitize=thread			4.00 - 16.00
+# -fsanitize=undefined			1.10 -  2.00
+# -mfloat-abi=soft -mfpu=none           5.00 - 20.00
+# -mfunction-return=thunk-extern	1.01 -  1.05
+# -mfunction-return=thunk-inline	1.01 -  1.03
+# -mfunction-return=thunk		1.01 -  1.05
+# -mindirect-branch=ibrs		1.01 -  1.10
+# -mindirect-branch=thunk		1.05 -  1.30
+# -mindirect-branch=thunk-inline	1.03 -  1.25
+# -mindirect-branch=thunk-extern	1.05 -  1.15
+# -mindirect-branch-register		1.05 -  1.30
+# -mretpoline				1.10 -  1.30
+# -mretpoline-external-thunk		1.15 -  1.35
+# -fvtable-verify=preinit		1.06 -  1.16
+# -fvtable-verify=std			1.05 -  1.15
 
-# * Only these are conditionally set based on worst case
-#  CFLAGS_HARDENED_TOLERANCE
+# Setting to 4.0 will enable ASAN and other faster sanitizers.
+# Setting to 15.0 will enable TSAN and other faster sanitizers.
+# Setting to 20.0 will enable soft-floats and other faster sanitizers.
 
-# Setting to 5.0 will enable ASAN or HWASAN, LLVM CFI, LSAN, MSAN, UBSAN.
-# Setting to 20.0 will enable soft-floats and more.
-
-# For example, TSAN is about 2-5x slower compared to the unmitigated build.
+# For example, TSAN is about 4-16x slower compared to the unmitigated build.
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_TOLERANCE_USER
 # @USER_VARIABLE
@@ -1166,237 +1140,230 @@ einfo "All SSP hardening (All functions hardened)"
 	# We will need to test them before allowing users to use them.
 	# Enablement is complicated by LLVM_COMPAT and compile time to build LLVM with sanitizers enabled.
 	# Worst case scores for tolerance
-	filter-flags "-f*sanitize=cfi"
-	if \
-		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.15" \
-			&& \
-		[[ "${CFLAGS_HARDENED_CFI:-0}" == "1" ]] \
-			&& \
-		! _cflags-hardened_has_cet \
-			&& \
-		[[ "${ARCH}" == "amd64" ]] \
-	; then
-		append-flags "-fsanitize=cfi"
-		append-ldflags "-fsanitize=cfi"
-		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=cfi"
-		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=cfi"
-		CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=cfi"
 
-		filter-flags "-flto*"
-		append-flags "-flto=thin"
-		append-ldflags "-flto=thin"
-		if tc-is-gcc && [[ "${CFLAGS_HARDENED_LTO_PARALLEL:-1}" == "1" ]] ; then
-			append-ldflags "-fuse-linker-plugin"
+	filter-flags "-f*sanitize=*"
+	if [[ -n "${CFLAGS_HARDENED_SANITIZERS}" ]] ; then
+		local l="${CFLAGS_HARDENED_SANITIZERS}"
+		declare -A GCC_M=(
+			["shift"]="ubsan"
+			["shift-exponent"]="ubsan"
+			["shift-base"]="ubsan"
+			["integer-divide-by-zero"]="ubsan"
+			["unreachable"]="ubsan"
+			["vla-bound"]="ubsan"
+			["null"]="ubsan"
+			["return"]="ubsan"
+			["signed-integer-overflow"]="ubsan"
+			["bounds"]="ubsan"
+			["bounds-strict"]="ubsan"
+			["alignment"]="ubsan"
+			["object-size"]="ubsan"
+			["float-divide-by-zero"]="ubsan"
+			["float-cast-overflow"]="ubsan"
+			["nonnull-attribute"]="ubsan"
+			["returns-nonnull-attribute"]="ubsan"
+			["bool"]="ubsan"
+			["enum"]="ubsan"
+			["vptr"]="ubsan"
+			["pointer-overflow"]="ubsan"
+			["builtin"]="ubsan"
+
+			["address"]="asan"
+			["hwaddress"]="hwsan"
+			["kernel-address"]="asan"
+			["kernel-hwaddress"]="hwasan"
+			["leak"]="lsan"
+			["pointer-compare"]="asan"
+			["pointer-subtract"]="asan"
+			["shadow-call-stack"]="shadowcallstack"
+			["thread"]="tsan"
+			["undefined"]="ubsan"
+		)
+		declare -A CLANG_M=(
+			["alignment"]="ubsan"
+			["bool"]="ubsan"
+			["builtin"]="ubsan"
+			["bounds"]="ubsan"
+			["array-bounds"]="ubsan"
+			["local-bounds"]="ubsan"
+			["undefined"]="ubsan"
+			["enum"]="ubsan"
+			["float-cast-overflow"]="ubsan"
+			["float-divide-by-zero"]="ubsan"
+			["function"]="ubsan"
+			["implicit-unsigned-integer-truncation"]="ubsan"
+			["implicit-signed-integer-truncation"]="ubsan"
+			["implicit-integer-sign-change"]="ubsan"
+			["integer-divide-by-zero"]="ubsan"
+			["implicit-bitfield-conversion"]="ubsan"
+			["nonnull-attribute"]="ubsan"
+			["null"]="ubsan"
+			["nullability-arg"]="ubsan"
+			["nullability-assign"]="ubsan"
+			["nullability-return"]="ubsan"
+			["objc-cast"]="ubsan"
+			["object-size"]="ubsan"
+			["pointer-overflow"]="ubsan"
+			["return"]="ubsan"
+			["returns-nonnull-attribute"]="ubsan"
+			["shift"]="ubsan"
+			["shift-base"]="ubsan"
+			["shift-exponent"]="ubsan"
+			["unsigned-shift-base"]="ubsan"
+			["signed-integer-overflow"]="ubsan"
+			["unreachable"]="ubsan"
+			["unsigned-integer-overflow"]="ubsan"
+			["vla-bound"]="ubsan"
+			["vptr"]="ubsan"
+
+			["undefined"]="ubsan"
+			["undefined-trap"]="ubsan"
+			["implicit-integer-truncation"]="ubsan"
+			["implicit-integer-arithmetic-value-change"]="ubsan"
+			["implicit-integer-conversion"]="ubsan"
+			["implicit-conversion"]="ubsan"
+			["integer"]="ubsan"
+			["nullability"]="ubsan"
+
+			["address"]="asan"
+			["cfi"]="cfi"
+			["dataflow"]="dfsan"
+			["hwaddress"]="hwasan"
+			["leak"]="lsan"
+			["memory"]="msan"
+			["safe-stack"]="safestack"
+			["shadowcallstack"]="shadowcallstack"
+			["realtime"]="rtsan"
+			["thread"]="tsan"
+			["type"]="tysan"
+		)
+
+		declare -A SLOWDOWN=(
+			["asan"]="4.0"
+			["cfi"]="2.0"
+			["dfsan"]="30.0"
+			["gwp-asan"]="1.15"
+			["hwasan"]="2.0"
+			["lsan"]="1.5"
+			["msan"]="11.0"
+			["rtsan"]="1.05" # placeholder
+			["safestack"]="1.20"
+			["shadowcallstack"]="1.15"
+			["tsan"]="16.0"
+			["ubsan"]="2.0"
+			["tysan"]="1.05" # placeholder
+		)
+
+		unset added
+		declare -A added=(
+			["asan"]="0"			# CE, PE, DoS, DT, ID
+			["cfi"]="0"			# CE, PE, DoS, DT, ID
+			["dfsan"]="0"
+			["gwp-asan"]="0"
+			["hwasan"]="0"			# CE, PE, DoS, DT, ID
+			["lsan"]="0"			# ID
+			["msan"]="0"			# CE, PE, DoS, DT, ID
+			["rtsan"]="0"
+			["safestack"]="0"
+			["shadowcallstack"]="0"
+			["tsan"]="0"			# CE, PE, DoS, DT, ID
+			["ubsan"]="0"			# CE, PE, DoS, DT, ID
+			["tysan"]="0"
+		)
+
+		if tc-is-gcc ; then
+			if [[ -n "${CC}" ]] ; then
+				GCC_SLOT=$(gcc-major-version)
+			else
+				CC=$(tc-getCC)
+				CXX=$(tc-getCXX)
+				GCC_SLOT=$(gcc-major-version)
+			fi
 		fi
-		filter-flags "-fuse-ld=*"
-		append-ldflags "-fuse-ld=lld"
-	fi
+		local L=$(echo "${l}")
+		local x
+		for x in ${L[@]} ; do
+			local module
+			if tc-is-clang ; then
+				module=${CLANG_M[${x}]}
+			else
+				module=${GCC_M[${x}]}
+			fi
+			if [[ -z "${module}" ]] ; then
+ewarn "Skipping custom sanitizer -fsanitize=${x} for CC=${CC}"
+				continue
+			fi
+			local slowdown=${SLOWDOWN[${module}]}
 
-	filter-flags "-f*sanitize=hwaddress"
-	filter-flags "-f*sanitize=address"
-	if \
-		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.8" \
-			&& \
-		[[ "${CFLAGS_HARDENED_HWASAN:-0}" == "1"  ]] \
-			&& \
-		[[ "${ARCH}" == "arm64" ]] \
-			&& \
-		_cflags-hardened_has_mte \
-			&& \
-		tc-is-clang \
-	; then
-	# For security-critical
-		if ! _cflags-hardened_has_mte ; then
-ewarn "You are using an emulated memory tagging.  It will have a performance hit."
-		fi
-
-		append-flags "-fsanitize=hwaddress"
-		append-ldflags "-fsanitize=hwaddress"
-		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=hwaddress"
-		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=hwaddress"
-		CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=hwaddress"
-		if \
-			tc-is-clang \
-				&& \
-			! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[hwasan]" \
-		; then
-eerror "Missing HWASAN sanitizer.  Do the following:"
+			if \
+				tc-is-gcc \
+					&&
+				! has_version "sys-devel/gcc:${GCC_SLOT}[sanitize]" \
+					&& \
+				[[ ${added[${module}]} == "0" ]] \
+			; then
+eerror "Missing ${module} sanitizer.  Do the following:"
+eerror "emerge -1vuDN sys-devel/gcc:${GCC_SLOT}[sanitize]"
+			elif \
+				tc-is-clang \
+					&& \
+				! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[${module}]" \
+					&& \
+				[[ ${added[${module}]} == "0" ]] \
+			; then
+eerror "Missing ${module} sanitizer.  Do the following:"
 eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[hwasan]"
+eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[${module}]"
 eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
+				die
+			fi
+			if \
+				_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "${slowdown}" \
+					&& \
+				[[ ${added[${module}]} == "0" ]] \
+			; then
+				if [[ "${module}" == "hwaddress" ]] && _cflags-hardened_has_mte && [[ "${ARCH}" == "arm64" ]] ; then
+					append-flags "-fsanitize=${x}"
+					append-ldflags "-fsanitize=${x}"
+					CFLAGS_HARDENED_CFLAGS+=" -fsanitize=${x}"
+					CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=${x}"
+					CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=${x}"
+				elif [[ "${module}" == "hwaddress" ]] ; then
+					:
+				elif [[ "${module}" == "cfi" ]] && _cflags-hardened_has_cet && [[ "${ARCH}" == "amd64" ]] ; then
+					append-flags "-fsanitize=${x}"
+					append-ldflags "-fsanitize=${x}"
+					CFLAGS_HARDENED_CFLAGS+=" -fsanitize=${x}"
+					CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=${x}"
+					CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=${x}"
 
-			die
-		fi
-	elif \
-		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "3.00" \
-			&& \
-		[[ "${CFLAGS_HARDENED_ASAN:-0}" == "1" ]] \
-			&& \
-		[[ "${ARCH}" == "amd64" ]] \
-	; then
-	# For security-critical
-		append-flags "-fsanitize=address"
-		append-ldflags "-fsanitize=address"
-		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=address"
-		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=address"
-		CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=address"
-		if \
-			tc-is-clang \
-				&& \
-			! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[asan]" \
-		; then
-eerror "Missing ASAN sanitizer.  Do the following:"
-eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[asan]"
-eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
+					filter-flags "-flto*"
+					append-flags "-flto=thin"
+					append-ldflags "-flto=thin"
+					CFLAGS_HARDENED_CFLAGS+=" -flto=thin"
+					CFLAGS_HARDENED_CXXFLAGS+=" -flto=thin"
+					CFLAGS_HARDENED_LDFLAGS+=" -flto=thin"
+					if tc-is-gcc && [[ "${CFLAGS_HARDENED_LTO_PARALLEL:-1}" == "1" ]] ; then
+						append-ldflags "-fuse-linker-plugin"
+						CFLAGS_HARDENED_LDFLAGS+=" -fuse-linker-plugin"
+					fi
+					filter-flags "-fuse-ld=*"
+					append-ldflags "-fuse-ld=lld"
+					CFLAGS_HARDENED_LDFLAGS+=" -fuse-ld=lld"
+				elif [[ "${module}" == "cfi" ]] ; then
+					:
+				else
+					append-flags "-fsanitize=${x}"
+					append-ldflags "-fsanitize=${x}"
+					CFLAGS_HARDENED_CFLAGS+=" -fsanitize=${x}"
+					CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=${x}"
+					CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=${x}"
+				fi
 
-			die
-		fi
-	elif \
-		( \
-			( _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" && [[ "${ARCH}" == "amd64" ]] ) \
-				||
-			( _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.07" && [[ "${ARCH}" == "arm64" ]] ) \
-		) \
-			&& \
-		[[ "${CFLAGS_HARDENED_GWP_ASAN:-0}" == "1"  ]] \
-			&& \
-		tc-is-clang \
-	; then
-	# For performance-critical
-		append-flags "-fsanitize=address"
-		append-ldflags "-fsanitize=address"
-		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=address"
-		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=address"
-		CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=address"
-		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[gwp-asan]" ; then
-eerror "Missing GWP-ASAN sanitizer.  Do the following:"
-eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[asan,gwp-asan]"
-eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
-
-			die
-		fi
-	fi
-
-	filter-flags "-f*sanitize=leak"
-	if \
-		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" \
-			&& \
-		[[ "${CFLAGS_HARDENED_LSAN:-0}" == "1"  ]] \
-	; then
-		append-flags "-fsanitize=leak"
-		append-ldflags "-fsanitize=leak"
-		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=leak"
-		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=leak"
-		CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=leak"
-		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[lsan]" ; then
-eerror "Missing LSAN sanitizer.  Do the following:"
-eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[lsan]"
-eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
-
-			die
-		fi
-	fi
-
-	filter-flags "-f*sanitize=memory"
-	if \
-		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "2.00" \
-			&& \
-		[[ "${CFLAGS_HARDENED_MSAN:-0}" == "1"  ]] \
-	; then
-		append-flags "-fsanitize=memory"
-		append-ldflags "-fsanitize=memory"
-		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=memory"
-		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=memory"
-		CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=memory"
-		if \
-			tc-is-clang \
-				&& \
-			! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[msan]" \
-		; then
-eerror "Missing MSAN sanitizer.  Do the following:"
-eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[msan]"
-eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
-
-			die
-		fi
-	fi
-
-	filter-flags "-f*sanitize=safe-stack"
-	if \
-		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" \
-			&& \
-		[[ "${CFLAGS_HARDENED_SAFESTACK:-0}" == "1"  ]] \
-			&& \
-		tc-is-clang \
-	; then
-		append-flags "-fsanitize=safe-stack"
-		append-ldflags "-fsanitize=safe-stack"
-		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=safe-stack"
-		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=safe-stack"
-		CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=safe-stack"
-ewarn "SafeStack should be combined with either ASAN or HWASAN for halt on error"
-		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[safestack]" ; then
-eerror "Missing SafeStack sanitizer.  Do the following:"
-eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[tsan]"
-eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
-
-			die
-		fi
-	fi
-
-	filter-flags "-f*sanitize=thread"
-	if \
-		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "15.00" \
-			&& \
-		[[ "${CFLAGS_HARDENED_TSAN:-0}" == "1"  ]] \
-	; then
-		append-flags "-fsanitize=thread"
-		append-ldflags "-fsanitize=thread"
-		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=thread"
-		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=thread"
-		CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=thread"
-		if \
-			tc-is-clang \
-				&& \
-			! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[tsan]" \
-		; then
-eerror "Missing TSAN sanitizer.  Do the following:"
-eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[tsan]"
-eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
-
-			die
-		fi
-	fi
-
-	filter-flags "-f*sanitize=undefined"
-	if \
-		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" \
-			&& \
-		[[ "${CFLAGS_HARDENED_UBSAN:-0}" == "1" ]] \
-	; then
-		append-flags "-fsanitize=undefined"
-		append-ldflags "-fsanitize=undefined"
-		CFLAGS_HARDENED_CFLAGS+=" -fsanitize=undefined"
-		CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=undefined"
-		CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=undefined"
-		if \
-			tc-is-clang \
-				&& \
-			! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[ubsan]" \
-		; then
-eerror "Missing UBSAN sanitizer.  Do the following:"
-eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[ubsan]"
-eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
-
-			die
-		fi
+				added[${module}]="1"
+einfo "Added ${x} from ${module} sanitizer"
+			fi
+		done
 	fi
 
 	filter-flags "-f*sanitize-recover"

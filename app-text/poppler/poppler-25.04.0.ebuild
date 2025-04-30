@@ -3,10 +3,9 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_ASAN=0 # Breaks during test suite
-CFLAGS_HARDENED_GWP_ASAN=0
-CFLAGS_HARDENED_HWASAN=0
-#CFLAGS_HARDENED_TOLERANCE="1.35" 3.0 for asan, 1.35 for default
+# Sanitizers breaks during test suite
+#CFLAGS_HARDENED_SANITIZERS="address"
+CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 
 inherit cflags-hardened cmake flag-o-matic toolchain-funcs xdg-utils

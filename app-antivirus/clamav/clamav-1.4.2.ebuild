@@ -33,11 +33,9 @@ declare -A GIT_CRATES=(
 [onenote_parser]="https://github.com/Cisco-Talos/onenote.rs;8b450447e58143004b68dd21c11b710fdb79be92;onenote.rs-%commit%" # 0.3.1
 )
 
-CFLAGS_HARDENED_ASAN=0 # Broken
-CFLAGS_HARDENED_HWASAN=0
-CFLAGS_HARDENED_TOLERANCE="3.0"
-CFLAGS_HARDENED_UBSAN=0 # Broken
 CFLAGS_HARDENED_USE_CASES="jit network security-critical sensitive-data untrusted-data"
+#CFLAGS_HARDENED_SANITIZERS="address undefined signed-integer-overflow" # Broken during tests
+CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 # From "./convert-cargo-lock.sh 1.4.2 1.4.2"
 CRATES="
@@ -273,7 +271,8 @@ LICENSE="
 SLOT="0/sts"
 IUSE="
 doc clamonacc +clamapp custom-cflags experimental jit libclamav-only man milter rar
-selinux +system-mspack systemd test valgrind r1
+selinux +system-mspack systemd test valgrind
+ebuild_revision_2
 "
 REQUIRED_USE="
 	clamonacc? (

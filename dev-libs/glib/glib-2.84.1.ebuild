@@ -4,6 +4,9 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
+#CFLAGS_HARDENED_SANITIZERS="address undefined"
+CFLAGS_HARDENED_TOLERANCE="4.00"
+# CVE-2018-16428 - network zero click attack, null pointer dereference (UBSAN)
 INTROSPECTION_PN="gobject-introspection"
 INTROSPECTION_PV="1.82.0"
 INTROSPECTION_P="${INTROSPECTION_PN}-${INTROSPECTION_PV}"
@@ -39,11 +42,11 @@ IUSE="
 dbus debug +elf doc +introspection +mime selinux static-libs sysprof systemtap
 test utils xattr
 "
-RESTRICT="
-	!test? (
-		test
-	)
-"
+#RESTRICT="
+#	!test? (
+#		test
+#	)
+#"
 
 # * elfutils (via libelf) does not build on Windows. gresources are not embedded
 # within ELF binaries on that platform anyway and inspecting ELF binaries from
@@ -83,7 +86,9 @@ RDEPEND="
 		>=dev-util/sysprof-capture-3.40.1:4[${MULTILIB_USEDEP}]
 	)
 "
-DEPEND="${RDEPEND}"
+DEPEND="
+	${RDEPEND}
+"
 # libxml2 used for optional tests that get automatically skipped
 BDEPEND="
 	${PYTHON_DEPS}
@@ -465,6 +470,10 @@ EOF
 }
 
 multilib_src_test() {
+	local -x SANDBOX_ON=0 # Required so libsandbox.so will not crash test because of libasan.so...
+	export LD_PRELOAD=
+	ASAN_OPTIONS="abort_on_error=1:log_path=${T}/asan.log:verbosity=0:verify_asan_link_order=0"
+	UBSAN_OPTIONS="halt_on_error=1:print_stacktrace=0:log_path=${T}/ubsan.log"
 	export XDG_CONFIG_DIRS="/etc/xdg"
 	export XDG_DATA_DIRS="/usr/local/share:/usr/share"
 	# TODO: Use ${ABI} here to be unique for multilib?

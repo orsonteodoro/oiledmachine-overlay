@@ -109,27 +109,25 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # No mitigation				   1
 # -C link-arg=-D_FORTIFY_SOURCE=2	1.01
 # -C link-arg=-D_FORTIFY_SOURCE=3	1.02
-# -C overflow-checks=on			1.01 - 1.20  *
-# -C soft-float				 2.0 - 10.00 *
-# -C stack-protector=all		1.05 - 1.10
-# -C stack-protector=strong		1.02 - 1.05
-# -C stack-protector=basic		1.01 - 1.03
-# -C target-feature=+retpoline		1.01 - 1.20
-# -Zsanitizer=address			2.00 - 3.00 (asan); 1.00 - 1.05 (amd64, gwp-asan),  1.00 - 1.07 (arm64, gwp-asan) *
-# -Zsanitizer=cfi			1.05 - 1.20  *
-# -Zsanitizer=hwaddress			1.10 - 1.50 (arm64)  *
-# -Zsanitizer=leak			1.01 - 1.05  *
-# -Zsanitizer=memory			 1.5 - 2.00  *
-# -Zsanitizer=safestack			1.02 - 1.10  *
-# -Zsanitizer=thread			 5.0 - 15.00 *
+# -C overflow-checks=on			1.01 -  1.20
+# -C soft-float				2.00 -  10.00
+# -C stack-protector=all		1.05 -  1.10
+# -C stack-protector=strong		1.02 -  1.05
+# -C stack-protector=basic		1.01 -  1.03
+# -C target-feature=+retpoline		1.01 -  1.20
+# -Zsanitizer=address			1.50 -  4.0 (asan); 1.01 - 1.1 (gwp-asan)
+# -Zsanitizer=cfi			1.10 -  2.0
+# -Zsanitizer=hwaddress			1.15 -  1.50 (arm64)
+# -Zsanitizer=leak			1.05 -  1.5
+# -Zsanitizer=memory			3.00 - 11.00
+# -Zsanitizer=safestack			1.01 -  1.20
+# -Zsanitizer=shadow-call-stack		1.01 -  1.15
+# -Zsanitizer=thread			4.00 - 16.00
 
-# * Only these are conditionally set based on worst case
-#  RUSTFLAGS_HARDENED_TOLERANCE
+# Setting to 4.0 will enable ASAN and other faster sanitizers.
+# Setting to 15.0 will enable TSAN and other faster sanitizers.
 
-# Setting to 2.0 will enable CFI, HWASAN, LSAN, MSAN.
-# Setting to 15.0 will enable CFI, HWASAN, LSAN, MSAN, TSAN.
-
-# For example, TSAN is about 5-15x slower compared to the unmitigated build.
+# For example, TSAN is about 4-16x slower compared to the unmitigated build.
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_TOLERANCE_USER
 # A user override for RUSTFLAGS_HARDENED_TOLERANCE.
@@ -143,29 +141,9 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # (ex. stock trading versus accurate finance model calculated predictions)
 #
 
-# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_ASAN
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_SANITIZERS
 # @DESCRIPTION:
-# Allow asan runtime detect to exit before CE, PE, DoS, DT, ID happens.
-
-# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_CFI
-# @DESCRIPTION:
-# Allow cfi runtime detect to exit before CE, PE, DoS, DT, ID happens.
-
-# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_HWASAN
-# @DESCRIPTION:
-# Allow hwasan runtime detect to exit before CE, PE, DoS, DT, ID happens.
-
-# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_LSAN
-# @DESCRIPTION:
-# Allow lsan runtime detect to exit before ID happens.
-
-# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_MSAN
-# @DESCRIPTION:
-# Allow msan runtime detect to exit before CE, PE, DoS, DT, ID happens.
-
-# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_TSAN
-# @DESCRIPTION:
-# Allow tsan runtime detect to exit before CE, PE, DoS, DT, ID happens.
+# A space delimited list of allowed sanitizer options.
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_FORTIFY_SOURCE
 # @DESCRIPTION:
@@ -331,6 +309,12 @@ ewarn "=dev-lang/rust-bin-9999 or =dev-lang/rust-9999 will be required for secur
 		export CPP="${CC} -E"
 einfo "CC:  ${CC}"
 		${CC} --version || die
+	fi
+
+	if tc-is-gcc ; then
+		RUSTFLAGS+=" -C linker=gcc"
+	elif tc-is-clang ; then
+		RUSTFLAGS+=" -C linker=clang"
 	fi
 
 	if \
@@ -719,164 +703,138 @@ einfo "rustc host:  ${host}"
 	# We will need to test them before allowing users to use them.
 	# Enablement is complicated by LLVM_COMPAT and compile time to build LLVM with sanitizers enabled.
 
-	if \
-		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.8" \
-			&& \
-		[[ "${RUSTFLAGS_HARDENED_HWASAN:-0}" == "1" ]] \
-			&& \
-		tc-is-clang \
-			&& \
-		[[ "${ARCH}" == "arm64" ]] \
-			&&
-		_rustflags-hardened_has_unstable_rust \
-	; then
-	# For security-critical
-		if ! _rustflags-hardened_has_mte ; then
-ewarn "You are using an emulated memory tagging.  It will have a performance hit."
+	filter-flags "-f*sanitize=*"
+	if [[ -n "${RUSTFLAGS_HARDENED_SANITIZERS}" ]] ; then
+		local l="${RUSTFLAGS_HARDENED_SANITIZERS}"
+		declare -A GCC_M=(
+			["address"]="asan"
+			["hwaddress"]="hwsan"
+			["leak"]="lsan"
+			["shadow-call-stack"]="shadowcallstack"
+			["thread"]="tsan"
+			["undefined"]="ubsan"
+		)
+		declare -A CLANG_M=(
+			["address"]="asan"
+			["cfi"]="cfi"
+			["dataflow"]="dfsan"
+			["hwaddress"]="hwasan"
+			["leak"]="lsan"
+			["memory"]="msan"
+			["safe-stack"]="safestack"
+			["shadow-call-stack"]="shadowcallstack"
+			["shadowcallstack"]="shadowcallstack"
+			["realtime"]="rtsan"
+			["thread"]="tsan"
+			["type"]="tysan"
+		)
+
+		# omt
+		declare -A SLOWDOWN=(
+			["asan"]="4.0"
+			["cfi"]="2.0"
+			["dfsan"]="30.0"
+			["gwp-asan"]="1.15"
+			["hwasan"]="2.0"
+			["lsan"]="1.5"
+			["msan"]="11.0"
+			["rtsan"]="1.05" # placeholder
+			["safestack"]="1.20"
+			["shadowcallstack"]="1.15"
+			["tsan"]="16.0"
+			["ubsan"]="2.0"
+			["tysan"]="1.05" # placeholder
+		)
+
+		unset added
+		declare -A added=(
+			["asan"]="0"			# CE, PE, DoS, DT, ID
+			["cfi"]="0"			# CE, PE, DoS, DT, ID
+			["dfsan"]="0"
+			["gwp-asan"]="0"
+			["hwasan"]="0"			# CE, PE, DoS, DT, ID
+			["lsan"]="0"			# ID
+			["msan"]="0"			# CE, PE, DoS, DT, ID
+			["rtsan"]="0"
+			["safestack"]="0"
+			["shadowcallstack"]="0"
+			["tsan"]="0"			# CE, PE, DoS, DT, ID
+			["ubsan"]="0"			# CE, PE, DoS, DT, ID
+			["tysan"]="0"
+		)
+
+		if tc-is-gcc ; then
+			if [[ -n "${CC}" ]] ; then
+				GCC_SLOT=$(gcc-major-version)
+			else
+				CC=$(tc-getCC)
+				CXX=$(tc-getCXX)
+				GCC_SLOT=$(gcc-major-version)
+			fi
 		fi
-		RUSTFLAGS+=" -Zsanitizer=hwaddress"
-		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[hwasan]" ; then
-eerror "Missing HWASAN sanitizer.  Do the following:"
+		local L=$(echo "${l}")
+		local x
+		for x in ${L[@]} ; do
+			local module
+			if tc-is-clang ; then
+				module=${CLANG_M[${x}]}
+			else
+				module=${GCC_M[${x}]}
+			fi
+			if [[ -z "${module}" ]] ; then
+ewarn "Skipping custom sanitizer -fsanitize=${x} for CC=${CC}"
+				continue
+			fi
+			local slowdown=${SLOWDOWN[${module}]}
+
+			if \
+				tc-is-gcc \
+					&&
+				! has_version "sys-devel/gcc:${GCC_SLOT}[sanitize]" \
+					&& \
+				[[ ${added[${module}]} == "0" ]] \
+			; then
+eerror "Missing ${module} sanitizer.  Do the following:"
+eerror "emerge -1vuDN sys-devel/gcc:${GCC_SLOT}[sanitize]"
+			elif \
+				tc-is-clang \
+					&& \
+				! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[${module}]" \
+					&& \
+				[[ ${added[${module}]} == "0" ]] \
+			; then
+eerror "Missing ${module} sanitizer.  Do the following:"
 eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[hwasan]"
+eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[${module}]"
 eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
-			die
-		fi
-	elif \
-		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "3.00" \
-			&& \
-		[[ "${RUSTFLAGS_HARDENED_ASAN:-0}" == "1" ]] \
-			&& \
-		[[ "${ARCH}" == "amd64" ]] \
-			&&
-		_rustflags-hardened_has_unstable_rust \
-	; then
-	# For security-critical
-		RUSTFLAGS+=" -Zsanitizer=address"
-		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[asan]" ; then
-eerror "Missing ASAN sanitizer.  Do the following:"
-eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[asan]"
-eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
+				die
+			fi
+			if \
+				_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "${slowdown}" \
+					&& \
+				[[ ${added[${module}]} == "0" ]] \
+			; then
+				if [[ "${module}" == "ubsan" ]] ; then
+	# Not supported
+	# Many of the above sanitizer options are not supported
+					:
+				elif [[ "${module}" == "hwaddress" ]] && _rustflags-hardened_has_mte && [[ "${ARCH}" == "arm64" ]] ; then
+					RUSTFLAGS+=" -Zsanitizer=${x}"
+				elif [[ "${module}" == "hwaddress" ]] ; then
+					:
+				elif [[ "${module}" == "cfi" ]] && _rustflags-hardened_has_cet && [[ "${ARCH}" == "amd64" ]] ; then
+					RUSTFLAGS+=" -Zsanitizer=${x}"
+				elif [[ "${module}" == "cfi" ]] ; then
+					:
+				else
+					RUSTFLAGS+=" -Zsanitizer=${x}"
+				fi
 
-			die
-		fi
-	elif \
-		[[ "${RUSTFLAGS_HARDENED_GWP_ASAN:-0}" == "1" ]] \
-			&& \
-		( \
-			( _rustflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" && [[ "${ARCH}" == "amd64" ]] ) \
-				||
-			( _rustflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.07" && [[ "${ARCH}" == "arm64" ]] ) \
-		) \
-			&&
-		_rustflags-hardened_has_unstable_rust \
-	; then
-	# For performance-critical
-		RUSTFLAGS+=" -Zsanitizer=address"
-		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[gwp-asan]" ; then
-eerror "Missing GWP-ASAN sanitizer.  Do the following:"
-eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[asan,gwp-asan]"
-eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
+				added[${module}]="1"
+einfo "Added ${x} from ${module} sanitizer"
 
-			die
-		fi
-	fi
-
-	if \
-		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.20" \
-			&& \
-		[[ "${RUSTFLAGS_HARDENED_CFI:-0}" == "1" ]] \
-			&&
-		_rustflags-hardened_has_unstable_rust \
-	; then
-		RUSTFLAGS+=" -Zsanitizer=cfi"
-		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[cfi]" ; then
-eerror "Missing CFI sanitizer.  Do the following:"
-eerror "emerge -1vuDN llvm-core/llvm:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-core/clang:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-core/lld"
-eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[cfi]"
-eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
-			die
-		fi
-	fi
-
-	if \
-		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" \
-			&& \
-		[[ "${RUSTFLAGS_HARDENED_LSAN:-0}" == "1" ]] \
-			&&
-		_rustflags-hardened_has_unstable_rust \
-	; then
-		RUSTFLAGS+=" -Zsanitizer=leak"
-		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[lsan]" ; then
-eerror "Missing LSAN sanitizer.  Do the following:"
-eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[lsan]"
-eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
-
-			die
-		fi
-	fi
-
-	if \
-		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "2.00" \
-			&& \
-		[[ "${RUSTFLAGS_HARDENED_MSAN:-0}" == "1" ]] \
-			&&
-		_rustflags-hardened_has_unstable_rust \
-	; then
-		RUSTFLAGS+=" -Zsanitizer=memory"
-		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[msan]" ; then
-eerror "Missing MSAN sanitizer.  Do the following:"
-eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[msan]"
-eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
-
-			die
-		fi
-	fi
-
-	if \
-		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" \
-			&& \
-		[[ "${RUSTFLAGS_HARDENED_SAFESTACK:-0}" == "1" ]] \
-			&& \
-		tc-is-clang \
-			&&
-		_rustflags-hardened_has_unstable_rust \
-	; then
-ewarn "SafeStack should be combined with either ASAN or HWASAN for halt on error"
-		RUSTFLAGS+=" -Zsanitizer=safestack"
-		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[safestack]" ; then
-eerror "Missing TSAN sanitizer.  Do the following:"
-eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[safestack]"
-eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
-
-			die
-		fi
-	fi
-
-	if \
-		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "15.00" \
-			&& \
-		[[ "${RUSTFLAGS_HARDENED_TSAN:-0}" == "1" ]] \
-			&&
-		_rustflags-hardened_has_unstable_rust \
-	; then
-		RUSTFLAGS+=" -Zsanitizer=thread"
-		if tc-is-clang && ! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[tsan]" ; then
-eerror "Missing TSAN sanitizer.  Do the following:"
-eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
-eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[tsan]"
-eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
-
-			die
-		fi
+			fi
+		done
 	fi
 
 	export RUSTFLAGS
