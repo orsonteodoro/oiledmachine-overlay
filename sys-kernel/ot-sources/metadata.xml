@@ -2444,6 +2444,10 @@ OT_KERNEL_WORK_PROFILE="http-server-busy"
     ros
     workstation
 
+    See Also
+
+      OT_KERNEL_SECURITY_CRITICAL
+
 
 
     OT_KERNEL_MESSAGE - Print a message near the end of the kernel init.
@@ -2918,6 +2922,37 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Using 3-4 may cause data loss that manifest as freezes.
     Using 4 may cause disk corruption with certain disks.
+
+
+
+    OT_KERNEL_SECURITY_CRITICAL - Perform runtime monitoring with KASAN to halt
+    several critical severity based vulnerabilities/exploits.  Do a kernel
+    panic crash on the kernel before running attacker's code or crash before
+    running unauthorized changes.
+
+    Modes:
+
+    Mode    | Performance impact | Compatibility
+    HW_TAGS | 1.05x - 1.25x      | Adding cpu_flags_arm_mte to both USE and OT_KERNEL_USE will use HW_TAGS.
+    SW_TAGS | 1.2x - 2.0x        | Fallback for arm64
+    GENERIC | 1.5x - 4.0x        | Fallback for non-arm64 CPUs.
+
+    1.5x means 1.5 times the base unmitigated and optimized performance.
+    4.0x means 4 times slower compared to the base unmitigated and optimized performance.
+
+    The following work profiles have this unconditionally on:
+
+    dss
+
+    Acceptable values:
+
+    1 - protect and crash
+    0 - do not protect but maximize uptime availability (default, same as upstream)
+    unset - same as 0
+
+    See also:
+
+      OT_KERNEL_MAX_UPTIME
 
 
 

@@ -3997,6 +3997,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_SATA_LPM_MAX
 	unset OT_KERNEL_SATA_LPM_MID
 	unset OT_KERNEL_SATA_LPM_MIN
+	unset OT_KERNEL_SECURITY_CRITICAL
 	unset OT_KERNEL_SGX
 	unset OT_KERNEL_SLAB_ALLOCATOR
 	unset OT_KERNEL_SME
@@ -12593,6 +12594,67 @@ ot-kernel_set_dev_mem() {
 	fi
 }
 
+# @FUNCTION: ot-kernel_set_security_critical
+# @DESCRIPTION:
+# Use the kernel for secure critical mode
+ot-kernel_set_security_critical() {
+	local mte=0
+
+	if ot-kernel_use cpu_flags_arm_mte ; then
+		mte=1
+	fi
+
+	local security_critical=${OT_KERNEL_SECURITY_CRITICAL:-0}
+	if \
+		[[ \
+			"${work_profile}" == "custom" \
+				|| \
+			"${work_profile}" == "manual" \
+		]] \
+	; then
+		:
+	elif \
+		[[ "${security_critical}" == "1" ]] \
+			|| \
+		[[ "${work_profile}" == "dss" ]] \
+	; then
+		ot-kernel_y_configopt "CONFIG_KASAN"
+		ot-kernel_y_configopt "CONFIG_KASAN_PANIC"
+		if \
+			[[ \
+				"${arch}" == "arm64" \
+					&& \
+				"${mte}" == "1" \
+			]] \
+				&& \
+			 ver_test "${KV_MAJOR_MINOR}" -ge "5.10" \
+		; then
+	# 1.05x - 1.25 performance impact, best for production
+			ot-kernel_y_configopt "CONFIG_KASAN_HW_TAGS"
+		elif \
+			[[ \
+				"${arch}" == "arm64" \
+					&& \
+				"${mte}" == "1" \
+			]] \
+				&& \
+			 ver_test "${KV_MAJOR_MINOR}" -ge "5.4" \
+		; then
+	# 1.2x - 2.0 performance impact, borderline production
+			ot-kernel_y_configopt "CONFIG_KASAN_SW_TAGS"
+		else
+	# 1.4x - 4.0x performance impact, slow for production
+			ot-kernel_y_configopt "CONFIG_KASAN_GENERIC"
+		fi
+	else
+		ot-kernel_unset_configopt "CONFIG_KASAN"
+		ot-kernel_unset_configopt "CONFIG_KASAN_PANIC"
+		ot-kernel_unset_configopt "CONFIG_KASAN_HW_TAGS"
+		ot-kernel_unset_configopt "CONFIG_KASAN_SW_TAGS"
+		ot-kernel_unset_configopt "CONFIG_KASAN_GENERIC"
+	fi
+}
+
 # @FUNCTION: ot-kernel_src_configure_assisted
 # @DESCRIPTION:
 # More assisted configuration
@@ -12786,6 +12848,7 @@ einfo "Disabling all debug and shortening logging buffers"
 	_ot-kernel_toggle_fips_mode
 
 	_ot-kernel_enable_ppc_476fpe_workaround
+	ot-kernel_set_security_critical
 
 	ot-kernel_set_kconfig_from_envvar_array # Final user override
 	ot-kernel_print_thp_status
