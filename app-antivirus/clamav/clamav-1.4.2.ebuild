@@ -33,10 +33,10 @@ declare -A GIT_CRATES=(
 [onenote_parser]="https://github.com/Cisco-Talos/onenote.rs;8b450447e58143004b68dd21c11b710fdb79be92;onenote.rs-%commit%" # 0.3.1
 )
 
-CFLAGS_HARDENED_ASAN=1 # Broken
-CFLAGS_HARDENED_HWASAN=1
+CFLAGS_HARDENED_ASAN=0 # Broken
+CFLAGS_HARDENED_HWASAN=0
 CFLAGS_HARDENED_TOLERANCE="3.0"
-CFLAGS_HARDENED_UBSAN=1 # Broken
+CFLAGS_HARDENED_UBSAN=0 # Broken
 CFLAGS_HARDENED_USE_CASES="jit network security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 # From "./convert-cargo-lock.sh 1.4.2 1.4.2"
@@ -568,71 +568,13 @@ src_configure() {
 	cmake_src_configure
 }
 
-get_llvm_arch() {
-# See https://github.com/llvm/llvm-project/blob/llvmorg-20.1.3/compiler-rt/cmake/Modules/AllSupportedArchDefs.cmake
-	if [[ "${ARCH}" == "amd64" ]] ; then
-		echo "x86_64"
-	elif [[ "${ARCH}" == "arm64" ]] ; then
-		echo "aarch64"
-	elif [[ "${ARCH}" == "loong" ]] ; then
-		echo "loongarch64"
-	elif [[ "${ARCH}" == "ppc64" && "${CHOST}" =~ "powerpc64le" ]] ; then
-		echo "powerpc64le"
-	elif [[ "${ARCH}" == "ppc64" && "${CHOST}" =~ "powerpc64-" ]] ; then
-		echo "powerpc64"
-	elif [[ "${ARCH}" == "ppc" && "${CHOST}" =~ "powerpc-" ]] ; then
-		echo "powerpc"
-	elif [[ "${ARCH}" == "riscv" && "${CHOST}" =~ "riscv64" ]] ; then
-		echo "riscv64"
-	elif [[ "${ARCH}" == "riscv" && "${CHOST}" =~ "riscv32" ]] ; then
-		echo "riscv32"
-	elif [[ "${ARCH}" == "mips" && "${CHOST}" =~ "mips64el" ]] ; then
-		echo "mips64el"
-	elif [[ "${ARCH}" == "mips" && "${CHOST}" =~ "mips64" ]] ; then
-		echo "mips64"
-	elif [[ "${ARCH}" == "mips" && "${CHOST}" =~ "mipsel" ]] ; then
-		echo "mipsel"
-	elif [[ "${ARCH}" == "mips" && "${CHOST}" =~ "mips-" ]] ; then
-		echo "mips"
-	elif [[ "${ARCH}" == "sparc" && "${CHOST}" =~ "sparc-" ]] ; then
-		echo "sparc"
-	elif [[ "${ARCH}" == "s390" && "${CHOST}" =~ "s390x" ]] ; then
-		echo "s390x"
-	else
-eerror "ARCH=${ARCH} not supported.  Use gcc compiler."
-		die
-	fi
-}
-
 src_test() {
+	export TEST_CASE_TIMEOUT="40"
 	local -x SANDBOX_ON=0 # Required so libsandbox.so will not crash test because of libasan.so...
-	export ASAN_OPTIONS="abort_on_error=0:log_path=/dev/null:verbosity=0:verify_asan_link_order=0"
-	export UBSAN_OPTIONS="halt_on_error=0:print_stacktrace=0:log_path=/dev/null"
 	export CC=$(tc-getCC)
-	local preload_libs="" # Required so libsandbox.so will not crash test because of libasan.so...
-	if tc-is-gcc ; then
-		local s=$(gcc-major-version)
-		if has_version "sys-devel/gcc:${s}[sanitize]" ; then
-			if [[ -n "${CFLAGS_HARDENED_ASAN}" ]] ; then
-				preload_libs+=":"$(cflags-hardened_get_sanitizer_path "asan")
-			fi
-			if [[ -n "${CFLAGS_HARDENED_UBSAN}" ]] ; then
-				preload_libs+=":"$(cflags-hardened_get_sanitizer_path "ubsan" "_minimal")
-			fi
-		fi
-	else
-		local s=$(clang-major-version)
-		if has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[asan,hwsan,ubsan]" ; then
-			if [[ -n "${CFLAGS_HARDENED_ASAN}" ]] ; then
-				preload_libs+=":"$(cflags-hardened_get_sanitizer_path "asan")
-			fi
-			if [[ -n "${CFLAGS_HARDENED_UBSAN}" ]] ; then
-				preload_libs+=":"$(cflags-hardened_get_sanitizer_path "ubsan" "_minimal")
-			fi
-		fi
-	fi
 	if [[ -n "${CFLAGS_HARDENED_ASAN}" || -n "${CFLAGS_HARDENED_UBSAN}" ]] ; then
-		export LD_PRELOAD="${preload_libs}"
+	# Required so libsandbox.so will not crash test because of libasan.so...
+		export LD_PRELOAD=""
 	fi
 einfo "LD_PRELOAD:  ${LD_PRELOAD}"
 	use valgrind && ewarn "Testing with valgrind may likely fail."

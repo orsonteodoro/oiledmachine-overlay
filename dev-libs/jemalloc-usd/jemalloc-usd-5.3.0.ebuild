@@ -165,21 +165,6 @@ _src_configure() {
 		$(use_enable xmalloc)
 	)
 	ECONF_SOURCE="${S}-${MULTILIB_ABI_FLAG}.${ABI}" econf "${myconf[@]}"
-	if tc-is-gcc ; then
-		local s=$(gcc-major-version)
-		if has_version "sys-devel/gcc:${s}[sanitize]" ; then
-			_add_lib $(cflags-hardened_get_sanitizer_path "asan")
-		else
-ewarn "Rebuild sys-devel/gcc[sanitize] for runtime memory corruption mitigation"
-		fi
-	elif tc-is-clang ; then
-		local s=$(clang-major-version)
-		if has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[asan,hwsan,ubsan]" ; then
-			_add_lib $(cflags-hardened_get_sanitizer_path "ubsan" "_minimal")
-		else
-ewarn "Rebuild llvm-runtimes/compiler-rt-sanitizers:${s}[asan,hwsan,ubsan] for runtime memory corruption mitigation"
-		fi
-	fi
 	[[ "${PGO_PHASE}" == "PGI" ]] && _add_lib "-lgcov"
 	[[ "${PGO_PHASE}" == "PGO" ]] && _remove_lib "-gcov"
 }
