@@ -12627,7 +12627,7 @@ ot-kernel_set_security_critical() {
 				"${mte}" == "1" \
 			]] \
 				&& \
-			 ver_test "${KV_MAJOR_MINOR}" -ge "5.10" \
+			 ver_test "${KV_MAJOR_MINOR}" -ge "5.11" \
 		; then
 	# 1.05x - 1.25 performance impact, best for production
 			ot-kernel_y_configopt "CONFIG_KASAN_HW_TAGS"
