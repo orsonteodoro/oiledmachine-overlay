@@ -1169,7 +1169,7 @@ einfo "All SSP hardening (All functions hardened)"
 			["builtin"]="ubsan"
 
 			["address"]="asan"
-			["hwaddress"]="hwsan"
+			["hwaddress"]="hwasan"
 			["kernel-address"]="asan"
 			["kernel-hwaddress"]="hwasan"
 			["leak"]="lsan"
@@ -1270,6 +1270,7 @@ einfo "All SSP hardening (All functions hardened)"
 			["ubsan"]="0"			# CE, PE, DoS, DT, ID
 			["tysan"]="0"
 		)
+		local asan=0
 
 		if tc-is-gcc ; then
 			if [[ -n "${CC}" ]] ; then
@@ -1317,20 +1318,31 @@ eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[${module}
 eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 				die
 			fi
+			local skip=0
 			if \
 				_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "${slowdown}" \
 					&& \
 				[[ ${added[${module}]} == "0" ]] \
 			; then
-				if [[ "${module}" == "hwaddress" ]] && _cflags-hardened_has_mte && [[ "${ARCH}" == "arm64" ]] ; then
+				if [[ "${x}" =~ "address" ]] && (( ${asan} == 1 )) ; then
+					skip=1
+				elif [[ "${x}" == "hwaddress" ]] && _cflags-hardened_has_mte && [[ "${ARCH}" == "arm64" ]] ; then
 					append-flags "-fsanitize=${x}"
 					append-ldflags "-fsanitize=${x}"
 					CFLAGS_HARDENED_CFLAGS+=" -fsanitize=${x}"
 					CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=${x}"
 					CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=${x}"
-				elif [[ "${module}" == "hwaddress" ]] ; then
-					:
-				elif [[ "${module}" == "cfi" ]] && _cflags-hardened_has_cet && [[ "${ARCH}" == "amd64" ]] ; then
+					asan=1
+				elif [[ "${x}" == "hwaddress" ]] ; then
+					skip=1
+				elif [[ "${x}" == "address" ]] ; then
+					append-flags "-fsanitize=${x}"
+					append-ldflags "-fsanitize=${x}"
+					CFLAGS_HARDENED_CFLAGS+=" -fsanitize=${x}"
+					CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=${x}"
+					CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=${x}"
+					asan=1
+				elif [[ "${x}" == "cfi" ]] && ! _cflags-hardened_has_cet && [[ "${ARCH}" == "amd64" ]] ; then
 					append-flags "-fsanitize=${x}"
 					append-ldflags "-fsanitize=${x}"
 					CFLAGS_HARDENED_CFLAGS+=" -fsanitize=${x}"
@@ -1350,9 +1362,15 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 					filter-flags "-fuse-ld=*"
 					append-ldflags "-fuse-ld=lld"
 					CFLAGS_HARDENED_LDFLAGS+=" -fuse-ld=lld"
-				elif [[ "${module}" == "cfi" ]] ; then
-					:
+				elif [[ "${x}" == "cfi" ]] ; then
+					skip=1
 				else
+					if [[ "${x}" == "undefined" || "${x}" == "signed-integer-overflow" ]] ; then
+	# Dedupe -fsanitize=signed-integer-overflow
+						filter-flags -f*trapv
+						CFLAGS_HARDENED_CFLAGS=$(echo "${CFLAGS_HARDENED_CFLAGS}" | sed -e "s|-ftrapv||")
+						CFLAGS_HARDENED_CXXFLAGS=$(echo "${CXXFLAGS_HARDENED_CFLAGS}" | sed -e "s|-ftrapv||")
+					fi
 					append-flags "-fsanitize=${x}"
 					append-ldflags "-fsanitize=${x}"
 					CFLAGS_HARDENED_CFLAGS+=" -fsanitize=${x}"
@@ -1360,8 +1378,10 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 					CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=${x}"
 				fi
 
-				added[${module}]="1"
+				if (( ${skip} == 0 )) ; then
+					added[${module}]="1"
 einfo "Added ${x} from ${module} sanitizer"
+				fi
 			fi
 		done
 	fi

@@ -707,7 +707,7 @@ einfo "rustc host:  ${host}"
 		local l="${RUSTFLAGS_HARDENED_SANITIZERS}"
 		declare -A GCC_M=(
 			["address"]="asan"
-			["hwaddress"]="hwsan"
+			["hwaddress"]="hwasan"
 			["leak"]="lsan"
 			["shadow-call-stack"]="shadowcallstack"
 			["thread"]="tsan"
@@ -760,6 +760,7 @@ einfo "rustc host:  ${host}"
 			["ubsan"]="0"			# CE, PE, DoS, DT, ID
 			["tysan"]="0"
 		)
+		local asan=0
 
 		if tc-is-gcc ; then
 			if [[ -n "${CC}" ]] ; then
@@ -807,30 +808,38 @@ eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[${module}
 eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 				die
 			fi
+			local skip=0
 			if \
 				_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "${slowdown}" \
 					&& \
 				[[ ${added[${module}]} == "0" ]] \
 			; then
-				if [[ "${module}" == "ubsan" ]] ; then
+				if [[ "${x}" =~ "address" ]] && (( ${asan} == 1 )) ; then
+					skip=1
+				elif [[ "${x}" == "ubsan" ]] ; then
 	# Not supported
 	# Many of the above sanitizer options are not supported
-					:
-				elif [[ "${module}" == "hwaddress" ]] && _rustflags-hardened_has_mte && [[ "${ARCH}" == "arm64" ]] ; then
+					skip=1
+				elif [[ "${x}" == "hwaddress" ]] && _rustflags-hardened_has_mte && [[ "${ARCH}" == "arm64" ]] ; then
 					RUSTFLAGS+=" -Zsanitizer=${x}"
-				elif [[ "${module}" == "hwaddress" ]] ; then
-					:
-				elif [[ "${module}" == "cfi" ]] && _rustflags-hardened_has_cet && [[ "${ARCH}" == "amd64" ]] ; then
+					asan=1
+				elif [[ "${x}" == "hwaddress" ]] ; then
+					skip=1
+				elif [[ "${x}" == "address" ]] ; then
 					RUSTFLAGS+=" -Zsanitizer=${x}"
-				elif [[ "${module}" == "cfi" ]] ; then
-					:
+					asan=1
+				elif [[ "${x}" == "cfi" ]] && ! _rustflags-hardened_has_cet && [[ "${ARCH}" == "amd64" ]] ; then
+					RUSTFLAGS+=" -Zsanitizer=${x}"
+				elif [[ "${x}" == "cfi" ]] ; then
+					skip=1
 				else
 					RUSTFLAGS+=" -Zsanitizer=${x}"
 				fi
 
-				added[${module}]="1"
+				if (( ${skip} == 0 )) ; then
+					added[${module}]="1"
 einfo "Added ${x} from ${module} sanitizer"
-
+				fi
 			fi
 		done
 	fi

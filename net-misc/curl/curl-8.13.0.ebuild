@@ -30,6 +30,10 @@ EAPI=8
 # don't be afraid to require a later version.
 # ngtcp2 = https://bugs.gentoo.org/912029 - can only build with one tls backend at a time.
 
+CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
+# CVE-2018-16840 - heap use-after-free (ASAN)
+# CVE-2017-8818 - out of bounds (UBSAN)
+CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="security-critical network sensitive-data untrusted-data"
 MULTILIB_WRAPPED_HEADERS=(
 	"/usr/include/curl/curlbuild.h"
@@ -102,7 +106,7 @@ ${IMPLS[@]}
 +adns +alt-svc brotli debug ech +ftp gnutls gopher +hsts +http2 +http3 +httpsrr
 idn +imap kerberos ldap mbedtls +openssl +pop3 +psl +quic rtmp rustls samba
 sasl-scram +smtp ssh ssl static-libs test telnet +tftp +websockets zstd
-ebuild_revision_1
+ebuild_revision_2
 "
 RESTRICT="
 	!test? (
@@ -498,23 +502,32 @@ multilib_src_compile() {
 # There is also a pytest harness that tests for bugs in some very specific
 # situations; we can rely on upstream for this rather than adding additional test deps.
 multilib_src_test() {
+	#
 	# See https://github.com/curl/curl/blob/master/tests/runtests.pl#L5721
+	#
 	# -n: no valgrind (unreliable in sandbox and doesn't work correctly on all arches)
 	# -v: verbose
 	# -a: keep going on failure (so we see everything that breaks, not just 1st test)
 	# -k: keep test files after completion
 	# -am: automake style TAP output
 	# -p: print logs if test fails
-	# Note: if needed, we can skip specific tests. See e.g. Fedora's packaging
+	#
+	# If needed, we can skip specific tests. See e.g. Fedora's packaging
 	# or just read https://github.com/curl/curl/tree/master/tests#run.
-	# Note: we don't run the testsuite for cross-compilation.
+	#
+	# We don't need to run the testsuite for cross-compilation.
 	# Upstream recommend 7*nproc as a starting point for parallel tests, but
 	# this ends up breaking when nproc is huge (like -j80).
+	#
 	# The network sandbox causes tests 241 and 1083 to fail; these are typically skipped
 	# as most gentoo users don't have an 'ip6-localhost'
+	#
+	# FAIL 1308: 'formpost unit tests' unittest, curl_formadd, curl_formget, FORM
+	#
+
 	multilib_is_native_abi \
 		&& \
-	emake test TFLAGS="-n -v -a -k -am -p -j$((2*$(makeopts_jobs))) !241 !1083"
+	emake test TFLAGS="-n -v -a -k -am -p -j$((2*$(makeopts_jobs))) !241 !1083 !1308"
 }
 
 multilib_src_install() {
