@@ -2927,10 +2927,10 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
     OT_KERNEL_SECURITY_CRITICAL - Perform runtime monitoring with KASAN to halt
-    several critical severity based vulnerabilities/exploits.  Do a kernel panic
-    crash on the kernel before running attacker's code, or crash the kernel
-    before running unauthorized changes, or crash the kernel before running
-    attacker's exfiltration code.
+    several undiscovered critical severity based vulnerabilities/exploits.  Do a
+    kernel panic crash on the kernel before running attacker's code, or crash
+    the kernel before running unauthorized changes, or crash the kernel before
+    running attacker's exfiltration code.
 
     Modes:
 
