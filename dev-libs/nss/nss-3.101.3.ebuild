@@ -3,6 +3,12 @@
 
 EAPI=8
 
+# Sanitizers break test results
+#CFLAGS_HARDENED_ASAN=0
+#CFLAGS_HARDENED_GWP_ASAN=0
+#CFLAGS_HARDENED_HWASAN=0
+#CFLAGS_HARDENED_TOLERANCE="3.0"
+#CFLAGS_HARDENED_UBSAN=0
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CPU_FLAGS_PPC=(
 	"cpu_flags_ppc_altivec"
@@ -47,13 +53,13 @@ IUSE="
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
 cacert test +utils
-ebuild_revision_1
+ebuild_revision_2
 "
-RESTRICT="
-	!test? (
-		test
-	)
-"
+#RESTRICT="
+#	!test? (
+#		test
+#	)
+#"
 # pkg-config called by nss-config -> virtual/pkgconfig in RDEPEND
 RDEPEND="
 	>=dev-db/sqlite-3.8.2[${MULTILIB_USEDEP}]
@@ -141,6 +147,31 @@ src_prepare() {
 
 multilib_src_configure() {
 	cflags-hardened_append
+
+	local libs=()
+	if tc-is-gcc ; then
+		local s=$(gcc-major-version)
+		if has_version "sys-devel/gcc:${s}[sanitize]" ; then
+			if [[ -n "${CFLAGS_HARDENED_ASAN}" ]] ; then
+				libs+=( $(cflags-hardened_get_sanitizer_path "asan") )
+			fi
+			if [[ -n "${CFLAGS_HARDENED_UBSAN}" ]] ; then
+				libs+=( $(cflags-hardened_get_sanitizer_path "ubsan" "_minimal") )
+			fi
+		fi
+	else
+		local s=$(clang-major-version)
+		if has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[asan,hwsan,ubsan]" ; then
+			if [[ -n "${CFLAGS_HARDENED_ASAN}" ]] ; then
+				libs+=( $(cflags-hardened_get_sanitizer_path "asan") )
+			fi
+			if [[ -n "${CFLAGS_HARDENED_UBSAN}" ]] ; then
+				libs+=( $(cflags-hardened_get_sanitizer_path "ubsan" "_minimal") )
+			fi
+		fi
+	fi
+#	append-ldflags ${libs[@]}
+
 	# Ensure we stay multilib aware
 	sed -i \
 		-e "/@libdir@/ s:lib64:$(get_libdir):" \
@@ -270,7 +301,7 @@ ewarn "EXTRA_NSSCONF applied, please disable custom settings before reporting bu
 	XCFLAGS="${BUILD_CFLAGS}" \
 	emake -C coreconf \
 		CC="$(tc-getBUILD_CC)" \
-			${buildbits-${mybits}}
+		${buildbits-${mybits}}
 	makeargs+=(
 		NSINSTALL="${PWD}/$(find -type f -name nsinstall)"
 	)
@@ -307,7 +338,10 @@ einfo "30-45+ minutes per lib configuration. Bug #852755"
 	# Hack to get current objdir (prefixed dir where built binaries are)
 	# Without this, at least multilib tests go wrong when building the amd64 variant
 	# after x86.
-	local objdir=$(find "${BUILD_DIR}/dist" -maxdepth 1 -iname Linux* | rev | cut -d "/" -f 1 | rev)
+	local objdir=$(find "${BUILD_DIR}/dist" -maxdepth 1 -iname "Linux*" \
+		| rev \
+		| cut -d "/" -f 1 \
+		| rev)
 
 	# We can tweak to a subset of tests in future if we need to, but we would prefer not.
 	DIST="${BUILD_DIR}/dist" \
@@ -357,7 +391,7 @@ cleanup_chk() {
 	local i
 	for i in ${NSS_CHK_SIGN_LIBS} ; do
 		local libfname="${libdir}/lib${i}.so"
-		# If the major version has changed, then we have old chk files.
+	# If the major version has changed, then we have old chk files.
 		[ ! -f "${libfname}" -a -f "${libfname}.chk" ] \
 			&& rm -f "${libfname}.chk"
 	done
@@ -397,7 +431,7 @@ multilib_src_install() {
 		"${ED}/usr/$(get_libdir)/pkgconfig" \
 		|| die
 
-	# create an nss-softokn.pc from nss.pc for libfreebl and some private headers
+	# Create an nss-softokn.pc from nss.pc for libfreebl and some private headers
 	# bug 517266
 	sed	\
 		-e 's#Libs:#Libs: -lfreebl#' \
@@ -407,7 +441,7 @@ multilib_src_install() {
 		"${ED}/usr/$(get_libdir)/pkgconfig/nss-softokn.pc" \
 		|| die "could not create nss-softokn.pc"
 
-	# all the include files
+	# All the include files
 	insinto "/usr/include/nss"
 	doins "public/nss/"*"."{"h","api"}
 	insinto "/usr/include/nss/private"
