@@ -221,11 +221,11 @@ These default hardening flags have an estimated worst case performance penalty
 around 1.35 times the base performance without mitigation which is similar to
 -O1 at -40% best case performance penalty relative to -O3 or -Ofast.
 
-Packages are relativly adjusted for CFLAGS_HARDENED_TOLERANCE so that
-in packages can be properly secured mitigating repeating past mistakes.
-ASAN/HWASAN/GWP-ASAN will be required.  Packages with historical CVE rapport
+Packages are relatively adjusted for CFLAGS_HARDENED_TOLERANCE so that in
+packages can be properly secured mitigating repeating past mistakes.
+ASAN/HWASAN/GWP-ASAN will be required.  Packages with historical CVE reputation
 of heap overflows or use-after-free will be ASANed.  Packages with historical
-CVE rapport for integer overflows or bounds issues will get UBSAN treatment.
+CVE reputation for integer overflows or bounds issues will get UBSAN treatment.
 The -fstack-protector does not mitigate heap overflow.
 
 | CFLAGS_HARDENED_TOLERANCE | Package security posture                  | Inherits cflag-hardened or rustflags-hardened eclass
@@ -234,7 +234,7 @@ The -fstack-protector does not mitigate heap overflow.
 | 1.11-1.50                 | Balanced                                  | Maybe
 | 1.35                      | Balanced default to enable Retpoline      | Yes
 | 1.80 or more              | Security-critical                         | Yes
-| 3.0                       | Security-critical default to enable ASAN  | Yes
+| 4.0                       | Security-critical default to enable ASAN  | Yes
 
 How to interpret the above table:
 
@@ -244,7 +244,7 @@ How to interpret the above table:
 - 1.40 means like -O0 at its best case.
 - 1.50 means 1.50 times slower than the base performance.  This is the worst case balanced performance.
 - 1.51 to 1.79 means declining performance and additional decent mitigations may be applied.
-- 3.0 means 3 times worst case slower than the base performance but enable expensive mitigations against critical severity vulnerabilities/exploits.
+- 4.0 means 4 times worst case slower than the base performance but enable expensive mitigations against critical severity vulnerabilities/exploits.
 - Setting CFLAGS_HARDENED_TOLERANCE_USER means that you are accepting or managing
   the worst case performance as a result of hardening.
 - The values are normalized float multiples relative to the base.
