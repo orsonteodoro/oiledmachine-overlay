@@ -703,7 +703,6 @@ einfo "rustc host:  ${host}"
 	# We will need to test them before allowing users to use them.
 	# Enablement is complicated by LLVM_COMPAT and compile time to build LLVM with sanitizers enabled.
 
-	filter-flags "-f*sanitize=*"
 	if [[ -n "${RUSTFLAGS_HARDENED_SANITIZERS}" ]] ; then
 		local l="${RUSTFLAGS_HARDENED_SANITIZERS}"
 		declare -A GCC_M=(
