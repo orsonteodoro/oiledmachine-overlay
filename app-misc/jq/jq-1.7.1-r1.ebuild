@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_SANITIZERS="address hwasan undefined"
+CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_TOLERANCE="4.00"
 # CVE-2015-8863 - network zero click attack, heap-based overflow (ASAN), off-by-one (UBSAN)

@@ -7,7 +7,7 @@ EAPI=8
 # PGOing this library is justified because the size of the library is over a
 # 1000 4k pages in size.
 
-CFLAGS_HARDENED_SANITIZERS="address"
+CFLAGS_HARDENED_SANITIZERS="address hwaddress"
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 MULTILIB_WRAPPED_HEADERS=(
