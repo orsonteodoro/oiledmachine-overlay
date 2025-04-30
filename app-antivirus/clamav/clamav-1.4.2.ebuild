@@ -34,7 +34,7 @@ declare -A GIT_CRATES=(
 )
 
 CFLAGS_HARDENED_USE_CASES="jit network security-critical sensitive-data untrusted-data"
-#CFLAGS_HARDENED_SANITIZERS="address undefined signed-integer-overflow" # Broken during tests
+# Sanitizers are broken during tests
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 # From "./convert-cargo-lock.sh 1.4.2 1.4.2"
@@ -185,11 +185,8 @@ GENERATE_LOCKFILE=0
 LLVM_MAX_SLOT=14
 PYTEST_PV="7.2.0"
 PYTHON_COMPAT=( "python3_"{10..12} ) # CI uses 3.8
-RUSTFLAGS_HARDENED_ASAN=0
-RUSTFLAGS_HARDENED_HWASAN=0
 RUSTFLAGS_HARDENED_USE_CASES="jit network secure-critical sensitive-data untrusted-data"
-RUSTFLAGS_HARDENED_UBSAN=0
-RUSTFLAGS_HARDENED_TOLERANCE="3.0"
+RUSTFLAGS_HARDENED_TOLERANCE="4.0"
 
 inherit cargo cflags-hardened cmake eapi9-ver flag-o-matic lcnr llvm
 inherit python-any-r1 rustflags-hardened systemd tmpfiles toolchain-funcs
@@ -488,8 +485,6 @@ eerror
 }
 
 src_configure() {
-	cflags-hardened_append
-	rustflags-hardened_append
 	use elibc_musl && append-ldflags -lfts
 	use ppc64 && append-flags -mminimal-toc
 
@@ -501,6 +496,8 @@ src_configure() {
 			'-mtune=*'
 		replace-flags '-O*' '-O3'
 	fi
+	cflags-hardened_append
+	rustflags-hardened_append
 
 	local mycmakeargs=(
 		-DAPP_CONFIG_DIRECTORY="${EPREFIX}/etc/clamav"
@@ -569,9 +566,9 @@ src_configure() {
 
 src_test() {
 	export TEST_CASE_TIMEOUT="40"
-	local -x SANDBOX_ON=0 # Required so libsandbox.so will not crash test because of libasan.so...
+	#local -x SANDBOX_ON=0 # Required so libsandbox.so will not crash test because of libasan.so...
 	export CC=$(tc-getCC)
-	if [[ -n "${CFLAGS_HARDENED_ASAN}" || -n "${CFLAGS_HARDENED_UBSAN}" ]] ; then
+	if [[ -n "${CFLAGS_HARDENED_SANITIZERS}" ]] ; then
 	# Required so libsandbox.so will not crash test because of libasan.so...
 		export LD_PRELOAD=""
 	fi
