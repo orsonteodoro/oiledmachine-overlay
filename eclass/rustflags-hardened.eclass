@@ -337,20 +337,29 @@ einfo "CC:  ${CC}"
 			export CXX="${CHOST}-clang++"
 			export CPP="${CC} -E"
 		fi
-		if [[ -z "${LLVM_SLOT}" ]] ; then
-			export LLVM_SLOT=$(clang-major-version)
-			export CC="${CHOST}-clang-${LLVM_SLOT}"
-			export CXX="${CHOST}-clang++-${LLVM_SLOT}"
-			export CPP="${CC} -E"
-		fi
-		strip-unsupported-flags
-		if ${CC} --version ; then
-			:
-		else
-			_rustflags-hardened_print_cfi_requires_clang
-			_rustflags-hardened_print_cfi_rules
-			die
-		fi
+	fi
+
+	if [[ -n "${LLVM_SLOT}" ]] ; then
+		export LLVM_SLOT=$(clang-major-version)
+		export CC="${CHOST}-clang-${LLVM_SLOT}"
+		export CXX="${CHOST}-clang++-${LLVM_SLOT}"
+		export CPP="${CC} -E"
+		local path="/usr/lib/llvm/${LLVM_SLOT}/bin"
+einfo "PATH:  ${PATH} (before)"
+		PATH=$(echo "${PATH}" \
+			| tr ":" "\n" \
+			| sed -e "\|/usr/lib/llvm|d" \
+			| sed -e "s|/opt/bin|/opt/bin\n${path}|g" \
+			| tr "\n" ":")
+einfo "PATH:  ${PATH} (after)"
+	fi
+	strip-unsupported-flags
+	if ${CC} --version ; then
+		:
+	else
+		_rustflags-hardened_print_cfi_requires_clang
+		_rustflags-hardened_print_cfi_rules
+		die
 	fi
 
 	if [[ -z "${RUSTC}" ]] ; then
