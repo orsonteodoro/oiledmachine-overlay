@@ -4,7 +4,7 @@
 EAPI=8
 
 # 32-bit breaks with asan and ubsan sanitizers on
-CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
+#CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data untrusted-data"
 QA_CONFIG_IMPL_DECL_SKIP=(
@@ -140,24 +140,6 @@ src_prepare() {
 }
 
 multilib_src_configure() {
-	if tc-is-gcc ; then
-# Unbreak asan/ubsan
-		export CC="clang"
-		export CXX="clang++"
-		export CPP="${CC} -E"
-		export LLVM_SLOT=$(clang-major-version)
-		export CC="${CHOST}-clang-${LLVM_SLOT}"
-		export CXX="${CHOST}-clang++-${LLVM_SLOT}"
-		export CPP="${CC} -E"
-		local path="/usr/lib/llvm/${LLVM_SLOT}/bin"
-einfo "PATH:  ${PATH} (before)"
-		PATH=$(echo "${PATH}" \
-			| tr ":" "\n" \
-			| sed -e "\|/usr/lib/llvm|d" \
-			| sed -e "s|/opt/bin|/opt/bin\n${path}|g" \
-			| tr "\n" ":")
-einfo "PATH:  ${PATH} (after)"
-	fi
 	cflags-hardened_append
 	LINGUAS="${LINGUAS//en/en@boldquot en@quot}"
 

@@ -543,6 +543,7 @@ einfo "CC:  ${CC}"
 		${CC} --version || die
 	fi
 
+	local need_clang=0
 	if \
 		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.15" \
 			&& \
@@ -552,6 +553,14 @@ einfo "CC:  ${CC}"
 			&& \
 		[[ "${ARCH}" == "amd64" ]] \
 	; then
+		need_clang=1
+	fi
+
+	if [[ -n "${CFLAGS_HARDENED_SANITIZERS}" ]] ; then
+		need_clang=1
+	fi
+
+	if (( ${need_clang} == 1 )) ; then
 		if tc-is-clang ; then
 			:
 		elif tc-is-gcc && [[ -n "${LLVM_SLOT}" ]] ; then
@@ -565,19 +574,17 @@ einfo "CC:  ${CC}"
 		fi
 	fi
 
-	if [[ -n "${LLVM_SLOT}" ]] ; then
-		export LLVM_SLOT=$(clang-major-version)
-		export CC="${CHOST}-clang-${LLVM_SLOT}"
-		export CXX="${CHOST}-clang++-${LLVM_SLOT}"
-		export CPP="${CC} -E"
+	if [[ -n "${LLVM_SLOT}" ]] || (( ${need_clang} == 1 )) ; then
 		local path="/usr/lib/llvm/${LLVM_SLOT}/bin"
-einfo "PATH:  ${PATH} (before)"
 		PATH=$(echo "${PATH}" \
 			| tr ":" "\n" \
 			| sed -e "\|/usr/lib/llvm|d" \
 			| sed -e "s|/opt/bin|/opt/bin\n${path}|g" \
 			| tr "\n" ":")
-einfo "PATH:  ${PATH} (after)"
+		export LLVM_SLOT=$(clang-major-version)
+		export CC="${CHOST}-clang-${LLVM_SLOT}"
+		export CXX="${CHOST}-clang++-${LLVM_SLOT}"
+		export CPP="${CC} -E"
 	fi
 	strip-unsupported-flags
 	if ${CC} --version ; then
