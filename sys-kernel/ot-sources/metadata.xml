@@ -1666,6 +1666,7 @@ OT_KERNEL_WORK_PROFILE="http-server-busy"
     See also:
 
       HT
+      OT_KERNEL_SECURITY_CRITICAL
       OT_KERNEL_SME
       OT_KERNEL_SME_DEFAULT_ON
       SEV
