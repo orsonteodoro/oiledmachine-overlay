@@ -404,6 +404,15 @@ ASLR must be enabled for mitigation for sanitizers to prevent a critical
 severity vulnerability.  These checks are verified in the compiler-rt-sanitizers
 ebuild.
 
+Users must use the same default compiler vendor when a package is using
+sanitizers systemwide.  It is suggested by the AI/LLMs that you cannot mix GCC
+sanitizers with LLVM sanitizers on the same package/project.  The overlay
+maintainer opinion about mixing is to avoid the possibility symbol collsion
+with wrong signatures in static-libs using different vendors.  The ebuilds
+manage it with CFLAGS_HARDENED_SANITIZERS_COMPAT and eclass assist.  The users
+must choose only one default compiler vendor via CC and CXX and discourage
+switching between vendors via per-package flags for LTO, CFI, ASAN, UBSAN, etc.
+
 ### 2023 policy
 
 Due to recent hacking near the beginning of the year (or earlier) of a prominent
