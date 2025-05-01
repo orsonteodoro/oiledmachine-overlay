@@ -16,7 +16,8 @@ EAPI=8
 
 MY_PN="jemalloc"
 
-CFLAGS_HARDENED_SANITIZERS="address hwaddress"
+# asan breaks test suite.
+CFLAGS_HARDENED_SANITIZERS="undefined"
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 MULTILIB_WRAPPED_HEADERS=(
@@ -56,7 +57,7 @@ SLOT="0/2"
 IUSE+="
 ${TRAINERS[@]}
 custom-cflags debug lazy-lock prof static-libs stats test xmalloc
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE+="
 	!custom-cflags? (
@@ -138,9 +139,11 @@ src_prepare() {
 src_configure() { :; }
 
 _src_configure_compiler() {
-	export CC=$(tc-getCC)
-	export CXX=$(tc-getCXX)
-	export CPP=$(tc-getCPP)
+	# clang breaks tests
+	export CC="gcc"
+	export CXX="g++"
+	export CPP="${CC} -E"
+	strip-unsupported-flags
 }
 
 _src_configure() {

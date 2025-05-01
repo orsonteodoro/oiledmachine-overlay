@@ -7,9 +7,11 @@ EAPI=8
 # PGOing this library is justified because the size of the library is over a
 # 1000 4k pages in size.
 
-CFLAGS_HARDENED_SANITIZERS="address hwaddress"
+# asan breaks test suite.
+CFLAGS_HARDENED_SANITIZERS="undefined"
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" )
 MULTILIB_WRAPPED_HEADERS=(
 	"/usr/include/jemalloc/jemalloc.h"
 )
@@ -49,7 +51,7 @@ SLOT="0/2"
 IUSE+="
 ${TRAINERS[@]}
 custom-cflags debug lazy-lock prof static-libs stats test xmalloc
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE+="
 	!custom-cflags? (
@@ -126,12 +128,15 @@ src_prepare() {
 src_configure() { :; }
 
 _src_configure_compiler() {
-	export CC=$(tc-getCC)
-	export CXX=$(tc-getCXX)
-	export CPP=$(tc-getCPP)
+	# clang breaks tests
+	export CC="gcc"
+	export CXX="g++"
+	export CPP="${CC} -E"
+	strip-unsupported-flags
 }
 
 _src_configure() {
+	strip-unsupported-flags
 	uopts_src_configure
 	filter-flags -fprofile-arcs
 	if [[ "${PGO_PHASE}" == "PGI" ]] ; then
