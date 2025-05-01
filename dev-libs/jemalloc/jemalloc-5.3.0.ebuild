@@ -9,9 +9,9 @@ EAPI=8
 
 # asan breaks test suite.
 CFLAGS_HARDENED_SANITIZERS="undefined"
+CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" )
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
-CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" )
 MULTILIB_WRAPPED_HEADERS=(
 	"/usr/include/jemalloc/jemalloc.h"
 )

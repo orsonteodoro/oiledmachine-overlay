@@ -18,6 +18,7 @@ MY_PN="jemalloc"
 
 # asan breaks test suite.
 CFLAGS_HARDENED_SANITIZERS="undefined"
+CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" )
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 MULTILIB_WRAPPED_HEADERS=(
