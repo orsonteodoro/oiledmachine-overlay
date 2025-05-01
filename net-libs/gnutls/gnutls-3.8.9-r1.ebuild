@@ -7,6 +7,7 @@ EAPI=8
 #CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data untrusted-data"
+#CFLAGS_HARDENED_USE_LLVM_SANITIZERS=1
 QA_CONFIG_IMPL_DECL_SKIP=(
 	# gnulib FPs
 	MIN
