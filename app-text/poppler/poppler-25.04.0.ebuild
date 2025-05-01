@@ -4,8 +4,8 @@
 EAPI=8
 
 # Sanitizers breaks during test suite
-#CFLAGS_HARDENED_SANITIZERS="address"
 CFLAGS_HARDENED_TOLERANCE="4.0"
+CFLAGS_HARDENED_TRAPV="0" # Breaks during test suite
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 
 inherit cflags-hardened cmake flag-o-matic toolchain-funcs xdg-utils
@@ -43,6 +43,7 @@ LICENSE="
 IUSE="
 boost cairo cjk curl +cxx debug doc gpgme +introspection +jpeg +jpeg2k +lcms nss
 png qt5 qt6 test tiff +utils
+ebuild_revision_1
 "
 RESTRICT="
 	!test? (
@@ -206,3 +207,35 @@ src_install() {
 		doins -r "${S}/glib/reference/html/"*
 	fi
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (25.04.0, 20240501)
+
+# When no hardening is applied and g++ or clang++ used
+# 100% tests passed, 0 tests failed out of 28
+
+# When hardening is applied and g++:
+# 96% tests passed, 1 tests failed out of 28
+#
+# Total Test time (real) =  50.82 sec
+#
+# The following tests FAILED:
+#	 17 - check_qt6_goostring (Subprocess aborted)
+
+# When asan is applied and g++:
+# 93% tests passed, 2 tests failed out of 28
+#
+# Total Test time (real) =   8.38 sec
+#
+# The following tests FAILED:
+#	  3 - check_qt6_fonts (Subprocess aborted)
+#	  5 - check_qt6_annotations (Subprocess aborted)
+
+
+# When asan is applied and clang++ it stucks at 2/28:
+# ctest -j 4 --test-load 4
+# Test project /var/tmp/portage/app-text/poppler-25.04.0/work/poppler-25.04.0_build
+#       Start  1: check_qt6_attachments
+#  1/28 Test  #1: check_qt6_attachments .................   Passed    1.10 sec
+#       Start  2: check_qt6_dateConversion
+#  2/28 Test  #2: check_qt6_dateConversion ..............   Passed    0.04 sec
+#       Start  3: check_qt6_fonts
