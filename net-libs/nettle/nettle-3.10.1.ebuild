@@ -12,7 +12,6 @@ CPU_FLAGS_ARM=(
 	"cpu_flags_arm_neon"
 	"cpu_flags_arm_sha1"
 	"cpu_flags_arm_sha2"
-	""
 )
 CPU_FLAGS_PPC=(
 	"cpu_flags_ppc_altivec"
