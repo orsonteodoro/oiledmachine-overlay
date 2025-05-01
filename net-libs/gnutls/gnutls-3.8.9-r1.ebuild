@@ -216,6 +216,7 @@ multilib_src_install_all() {
 	fi
 }
 
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.8.9, 20250501)
 
 # With asan/ubsan sanitizers (32-bit)
 # ============================================================================

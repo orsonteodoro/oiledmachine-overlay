@@ -180,5 +180,5 @@ multilib_src_test() {
 	emake check || die
 }
 
-# OILEDMACHINE-OVERLAY-TEST:  PASSED (20250430)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.10.1, 20250430)
 # test suite:  passed (with and without sanitizers)
