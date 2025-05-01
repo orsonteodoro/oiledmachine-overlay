@@ -534,5 +534,11 @@ src_test() {
 	cmake_build check-all
 }
 
+pkg_postinst() {
+ewarn "Do not use or mix LLVM sanitizers and GCC sanitizers systemwide."
+ewarn "Do not use or mix GCC LTO and LLVM LTO systemwide for systemwide LLVM CFI."
+ewarn "Do not mix GCC GIMPLE IR with LLVM IR with static-libs."
+}
+
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  ebuild, hardening
