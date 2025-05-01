@@ -35,6 +35,7 @@ CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 # CVE-2017-8818 - out of bounds (UBSAN)
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="security-critical network sensitive-data untrusted-data"
+CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" ) # llvm build failing with and without sanitizers.  TODO retest with eselect gcc switch.
 MULTILIB_WRAPPED_HEADERS=(
 	"/usr/include/curl/curlbuild.h"
 )
