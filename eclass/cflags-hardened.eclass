@@ -573,8 +573,8 @@ einfo "CC:  ${CC}"
 			export CC="${CHOST}-clang"
 			export CXX="${CHOST}-clang++"
 			export CPP="${CC} -E"
-			LLVM_SLOT=$(clang-major-version)
 		fi
+		LLVM_SLOT=$(clang-major-version)
 	fi
 
 	if [[ -n "${LLVM_SLOT}" ]] || (( ${need_clang} == 1 )) ; then
