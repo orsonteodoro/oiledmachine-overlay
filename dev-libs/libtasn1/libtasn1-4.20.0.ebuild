@@ -8,6 +8,7 @@ CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 # CVE-2021-46848:  off-by-one read (ASAN)
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="security-critical network untrusted-data"
+CFLAGS_HARDENED_USE_LLVM_SANITIZERS=1
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/libtasn1.asc"
 LLVM_COMPAT=( {15..20} )
 
@@ -100,17 +101,6 @@ multilib_src_configure() {
 			break
 		fi
 	done
-	export CC="${CHOST}-clang-${LLVM_SLOT}"
-	export CXX="${CHOST}-clang++-${LLVM_SLOT}"
-	export CXX="${CC} -E"
-	local path
-	path="/usr/lib/llvm/${LLVM_SLOT}/bin"
-	export PATH=$(echo "${PATH}" \
-		| tr ":" "\n" \
-		| sed -e "\|/usr/lib/llvm|d" \
-		| sed -e "s|/opt/bin|/opt/bin\n${path}|g" \
-		| tr "\n" ":")
-einfo "PATH:  ${PATH}"
 	cflags-hardened_append
 	# -fanalyzer substantially slows down the build and isn't useful for
 	# us. It's useful for upstream as it's static analysis, but it's not

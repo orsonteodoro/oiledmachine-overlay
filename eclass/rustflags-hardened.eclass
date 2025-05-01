@@ -332,6 +332,10 @@ einfo "CC:  ${CC}"
 		need_clang=1
 	fi
 
+	if [[ "${RUSTFLAGS_HARDENED_USE_LLVM_SANITIZERS}" == "1" ]] ; then
+		need_clang=1
+	fi
+
 	if (( ${need_clang} == 1 )) ; then
 		if tc-is-clang ; then
 			:
