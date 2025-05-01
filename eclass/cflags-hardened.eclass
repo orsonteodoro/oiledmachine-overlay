@@ -543,6 +543,7 @@ einfo "CC:  ${CC}"
 		${CC} --version || die
 	fi
 
+	local need_cfi=0
 	local need_clang=0
 	if \
 		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.15" \
@@ -553,6 +554,7 @@ einfo "CC:  ${CC}"
 			&& \
 		[[ "${ARCH}" == "amd64" ]] \
 	; then
+		need_cfi=1
 		need_clang=1
 	fi
 
@@ -575,23 +577,37 @@ einfo "CC:  ${CC}"
 	fi
 
 	if [[ -n "${LLVM_SLOT}" ]] || (( ${need_clang} == 1 )) ; then
-		local path="/usr/lib/llvm/${LLVM_SLOT}/bin"
+		local path
+		if [[ "${CHROMIUM_TOOLCHAIN}" == "1" ]] ; then
+			path="/usr/share/chromium/toolchain/clang/bin"
+		else
+			path="/usr/lib/llvm/${LLVM_SLOT}/bin"
+		fi
 		PATH=$(echo "${PATH}" \
 			| tr ":" "\n" \
 			| sed -e "\|/usr/lib/llvm|d" \
 			| sed -e "s|/opt/bin|/opt/bin\n${path}|g" \
 			| tr "\n" ":")
 		export LLVM_SLOT=$(clang-major-version)
-		export CC="${CHOST}-clang-${LLVM_SLOT}"
-		export CXX="${CHOST}-clang++-${LLVM_SLOT}"
-		export CPP="${CC} -E"
+		if [[ "${CHROMIUM_TOOLCHAIN}" == "1" ]] ; then
+			export CC="clang"
+			export CXX="clang++-"
+			export CPP="${CC} -E"
+		else
+			export CC="${CHOST}-clang-${LLVM_SLOT}"
+			export CXX="${CHOST}-clang++-${LLVM_SLOT}"
+			export CPP="${CC} -E"
+		fi
 	fi
 	strip-unsupported-flags
 	if ${CC} --version ; then
 		:
 	else
-		_cflags-hardened_print_cfi_requires_clang
-		_cflags-hardened_print_cfi_rules
+		if (( ${need_cfi} == 1 )) ; then
+			_cflags-hardened_print_cfi_requires_clang
+			_cflags-hardened_print_cfi_rules
+		fi
+eerror "Did not detect compiler."
 		die
 	fi
 

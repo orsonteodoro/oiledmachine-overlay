@@ -100,6 +100,9 @@ einfo "DT = Data Tampering"
 # CVSS 3.1 - AV:P/PR:N/UI:N/C:H
 einfo "EMA = Evil Maid Attack"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "HO" ]] ; then
+einfo "HO = Heap Based Buffer Overflow"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ID" ]] ; then
 einfo "ID = Information Disclosure"
 		fi
@@ -112,6 +115,12 @@ einfo "IP = Improper Permissions"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "IO" ]] ; then
 einfo "IO = Integer Overflow"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "IS" ]] ; then
+einfo "IS = Insufficient Sanitiation of Input"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "IV" ]] ; then
+einfo "IV = Insufficient Validation of Input or Data"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "MC" ]] ; then
 einfo "MC = Memory Corruption"
@@ -142,6 +151,9 @@ einfo "PP = Prototype Pollution"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "RC" ]] ; then
 einfo "RC = Race Condition"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "SO" ]] ; then
+einfo "SO = Stack Based Buffer Overflow"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "SBX" ]] ; then
 einfo "SBX = Sandbox Escape"
