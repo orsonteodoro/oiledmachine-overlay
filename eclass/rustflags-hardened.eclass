@@ -768,7 +768,22 @@ einfo "rustc host:  ${host}"
 	# We will need to test them before allowing users to use them.
 	# Enablement is complicated by LLVM_COMPAT and compile time to build LLVM with sanitizers enabled.
 
-	if [[ -n "${RUSTFLAGS_HARDENED_SANITIZERS}" ]] ; then
+	local sanitizers_compat=0
+	if \
+		tc-is-gcc \
+			&& \
+		_rustflags-hardened_sanitizers_compat "gcc" \
+	; then
+		sanitizers_compat=1
+	elif \
+		tc-is-clang \
+			&& \
+		_rustflags-hardened_sanitizers_compat "llvm" \
+	; then
+		sanitizers_compat=1
+	fi
+
+	if [[ -n "${RUSTFLAGS_HARDENED_SANITIZERS}" ]] && (( ${sanitizers_compat} == 1 )) ; then
 		local l="${RUSTFLAGS_HARDENED_SANITIZERS}"
 		declare -A GCC_M=(
 			["address"]="asan"
@@ -839,21 +854,6 @@ einfo "rustc host:  ${host}"
 		local L=$(echo "${l}")
 		local x
 		for x in ${L[@]} ; do
-			if \
-				tc-is-gcc \
-					&& \
-				_rustflags-hardened_sanitizers_compat "gcc" \
-			; then
-				:
-			elif \
-				tc-is-clang \
-					&& \
-				_rustflags-hardened_sanitizers_compat "clang" \
-			; then
-				:
-			else
-				continue
-			fi
 
 			local module
 			if tc-is-clang ; then

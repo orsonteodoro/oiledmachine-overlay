@@ -1206,8 +1206,23 @@ einfo "All SSP hardening (All functions hardened)"
 	# Enablement is complicated by LLVM_COMPAT and compile time to build LLVM with sanitizers enabled.
 	# Worst case scores for tolerance
 
+	local sanitizers_compat=0
+	if \
+		tc-is-gcc \
+			&& \
+		_cflags-hardened_sanitizers_compat "gcc" \
+	; then
+		sanitizers_compat=1
+	elif \
+		tc-is-clang \
+			&& \
+		_cflags-hardened_sanitizers_compat "llvm" \
+	; then
+		sanitizers_compat=1
+	fi
+
 	filter-flags "-f*sanitize=*"
-	if [[ -n "${CFLAGS_HARDENED_SANITIZERS}" ]] ; then
+	if [[ -n "${CFLAGS_HARDENED_SANITIZERS}" ]] && (( ${sanitizers_compat} == 1 )) ; then
 		local l="${CFLAGS_HARDENED_SANITIZERS}"
 		declare -A GCC_M=(
 			["shift"]="ubsan"
@@ -1349,22 +1364,6 @@ einfo "All SSP hardening (All functions hardened)"
 		local L=$(echo "${l}")
 		local x
 		for x in ${L[@]} ; do
-			if \
-				tc-is-gcc \
-					&& \
-				_cflags-hardened_sanitizers_compat "gcc" \
-			; then
-				:
-			elif \
-				tc-is-clang \
-					&& \
-				_cflags-hardened_sanitizers_compat "clang" \
-			; then
-				:
-			else
-				continue
-			fi
-
 			local module
 			if tc-is-clang ; then
 				module=${CLANG_M[${x}]}
