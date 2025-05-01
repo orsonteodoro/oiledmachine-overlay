@@ -2387,9 +2387,9 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 			)
 		fi
 	fi
-#	PATCHES+=(
-#		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-v8-5c595ad.patch"
-#	)
+	PATCHES+=(
+		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-v8-5c595ad.patch"
+	)
 }
 
 is_cromite_patch_non_fatal() {
