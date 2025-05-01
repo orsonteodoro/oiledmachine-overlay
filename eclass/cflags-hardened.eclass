@@ -558,10 +558,6 @@ einfo "CC:  ${CC}"
 		need_clang=1
 	fi
 
-	if [[ -n "${CFLAGS_HARDENED_SANITIZERS}" ]] ; then
-		need_clang=1
-	fi
-
 	if (( ${need_clang} == 1 )) ; then
 		if tc-is-clang ; then
 			:
