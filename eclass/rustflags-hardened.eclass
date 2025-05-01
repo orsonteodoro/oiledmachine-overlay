@@ -141,10 +141,6 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # (ex. stock trading versus accurate finance model calculated predictions)
 #
 
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_SANITIZERS
-# @DESCRIPTION:
-# A space delimited list of allowed sanitizer options.
-
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_FORTIFY_SOURCE
 # @DESCRIPTION:
 # Allow to override the _FORTIFY_SOURCE level.
@@ -153,10 +149,41 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # 2 - general compile + runtime protection
 # 3 - maximum compile + runtime protection
 
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SANITIZERS
+# @DESCRIPTION:
+# A space delimited list of allowed sanitizer options.
+
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SANITIZERS_COMPAT
+# @DESCRIPTION:
+# You cannot mix sanitizers with static-libs.  The preferred value depends on
+# the default CC/CXX.  The CC vendor should not be changed per package but
+# distro does not put guardrails from doing this.  List of compatible sanitizers
+# This affects if the sanitizer be applied to the package.  This affects if
+# LLVM CFI gets applied also.
+# Acceptable values:
+# llvm
+# gcc
+# Example:
+# RUSTFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" "llvm" )
+
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_UNSTABLE_RUSTC_PV
 # @DESCRIPTION:
 RUSTFLAGS_UNSTABLE_RUSTC_PV="1.86.0"
+
+# @FUNCTION: _rustflags-hardened_sanitizers_compat
+# @DESCRIPTION:
+# Check the sanitizer compatibility
+_rustflags-hardened_sanitizers_compat() {
+	local needed_compiler="${1}"
+	local impl
+	for impl in ${RUSTFLAGS_HARDENED_SANITIZERS_COMPAT[@]} ; do
+		if [[ "${impl}" == "${needed_compiler}" ]] ; then
+			return 0
+		fi
+	done
+	return 1
+}
 
 # @FUNCTION: _rustflags-hardened_fcmp
 # @DESCRIPTION:
@@ -327,31 +354,34 @@ einfo "CC:  ${CC}"
 		! _rustflags-hardened_has_cet \
 			&& \
 		[[ "${ARCH}" == "amd64" ]] \
+			&& \
+		_rustflags-hardened_sanitizers_compat "llvm" \
 	; then
 		need_cfi=1
 		need_clang=1
 	fi
 
-	if [[ "${RUSTFLAGS_HARDENED_USE_LLVM_SANITIZERS}" == "1" ]] ; then
+	if tc-is-clang ; then
+		need_clang=1
+	fi
+	if [[ "${CHROMIUM_TOOLCHAIN}" == "1" ]] ; then
 		need_clang=1
 	fi
 
 	if (( ${need_clang} == 1 )) ; then
-		if tc-is-clang ; then
-			:
-		elif tc-is-gcc && [[ -n "${LLVM_SLOT}" ]] ; then
+	# Get the slot
+		if [[ -n "${LLVM_SLOT}" ]] ; then
 			export CC="${CHOST}-clang-${LLVM_SLOT}"
 			export CXX="${CHOST}-clang++-${LLVM_SLOT}"
 			export CPP="${CC} -E"
-		elif tc-is-gcc ; then
+		else
 			export CC="${CHOST}-clang"
 			export CXX="${CHOST}-clang++"
 			export CPP="${CC} -E"
 		fi
 		LLVM_SLOT=$(clang-major-version)
-	fi
 
-	if [[ -n "${LLVM_SLOT}" ]] || (( ${need_clang} == 1 )) ; then
+	# Avoid wrong clang used bug
 		local path
 		if [[ "${CHROMIUM_TOOLCHAIN}" == "1" ]] ; then
 			path="/usr/share/chromium/toolchain/clang/bin"
@@ -364,6 +394,8 @@ einfo "CC:  ${CC}"
 			| sed -e "s|/opt/bin|/opt/bin\n${path}|g" \
 			| tr "\n" ":")
 		export LLVM_SLOT=$(clang-major-version)
+
+	# Set CC/CXX again to avoid ccache and reproducibility problems.
 		if [[ "${CHROMIUM_TOOLCHAIN}" == "1" ]] ; then
 			export CC="clang"
 			export CXX="clang++-"
@@ -807,6 +839,22 @@ einfo "rustc host:  ${host}"
 		local L=$(echo "${l}")
 		local x
 		for x in ${L[@]} ; do
+			if \
+				tc-is-gcc \
+					&& \
+				_rustflags-hardened_sanitizers_compat "gcc" \
+			; then
+				:
+			elif \
+				tc-is-clang \
+					&& \
+				_rustflags-hardened_sanitizers_compat "clang" \
+			; then
+				:
+			else
+				continue
+			fi
+
 			local module
 			if tc-is-clang ; then
 				module=${CLANG_M[${x}]}

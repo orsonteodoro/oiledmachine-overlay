@@ -222,6 +222,19 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # 1 - enable (default)
 # 0 - disable, if buggy
 
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_SANITIZERS_COMPAT
+# @DESCRIPTION:
+# You cannot mix sanitizers with static-libs.  The preferred value depends on
+# the default CC/CXX.  The CC vendor should not be changed per package but
+# distro does not put guardrails from doing this.  List of compatible sanitizers
+# This affects if the sanitizer be applied to the package.  This affects if
+# LLVM CFI gets applied also.
+# Acceptable values:
+# llvm
+# gcc
+# Example:
+# CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" "llvm" )
+
 # @FUNCTION: _cflags-hardened_fcmp
 # @DESCRIPTION:
 # Floating point compare.  Bash does not support floating point comparison
@@ -256,6 +269,20 @@ einfo
 einfo "The CFLAGS_HARDENED_TOLERANCE_USER can override this.  See"
 einfo "cflags-hardened.eclass for details."
 einfo
+}
+
+# @FUNCTION: _cflags-hardened_sanitizers_compat
+# @DESCRIPTION:
+# Check the sanitizer compatibility
+_cflags-hardened_sanitizers_compat() {
+	local needed_compiler="${1}"
+	local impl
+	for impl in ${CFLAGS_HARDENED_SANITIZERS_COMPAT[@]} ; do
+		if [[ "${impl}" == "${needed_compiler}" ]] ; then
+			return 0
+		fi
+	done
+	return 1
 }
 
 # @FUNCTION: _cflags-hardened_has_mte
@@ -553,31 +580,34 @@ einfo "CC:  ${CC}"
 		! _cflags-hardened_has_cet \
 			&& \
 		[[ "${ARCH}" == "amd64" ]] \
+			&& \
+		_cflags-hardened_sanitizers_compat "llvm" \
 	; then
 		need_cfi=1
 		need_clang=1
 	fi
 
-	if [[ "${CFLAGS_HARDENED_USE_LLVM_SANITIZERS}" == "1" ]] ; then
+	if tc-is-clang ; then
+		need_clang=1
+	fi
+	if [[ "${CHROMIUM_TOOLCHAIN}" == "1" ]] ; then
 		need_clang=1
 	fi
 
 	if (( ${need_clang} == 1 )) ; then
-		if tc-is-clang ; then
-			:
-		elif tc-is-gcc && [[ -n "${LLVM_SLOT}" ]] ; then
+	# Get the slot
+		if [[ -n "${LLVM_SLOT}" ]] ; then
 			export CC="${CHOST}-clang-${LLVM_SLOT}"
 			export CXX="${CHOST}-clang++-${LLVM_SLOT}"
 			export CPP="${CC} -E"
-		elif tc-is-gcc ; then
+		else
 			export CC="${CHOST}-clang"
 			export CXX="${CHOST}-clang++"
 			export CPP="${CC} -E"
 		fi
-		LLVM_SLOT=$(clang-major-version)
-	fi
+		export LLVM_SLOT=$(clang-major-version)
 
-	if [[ -n "${LLVM_SLOT}" ]] || (( ${need_clang} == 1 )) ; then
+	# Avoid wrong clang used bug
 		local path
 		if [[ "${CHROMIUM_TOOLCHAIN}" == "1" ]] ; then
 			path="/usr/share/chromium/toolchain/clang/bin"
@@ -590,6 +620,8 @@ einfo "CC:  ${CC}"
 			| sed -e "s|/opt/bin|/opt/bin\n${path}|g" \
 			| tr "\n" ":")
 		export LLVM_SLOT=$(clang-major-version)
+
+	# Set CC/CXX again to avoid ccache and reproducibility problems.
 		if [[ "${CHROMIUM_TOOLCHAIN}" == "1" ]] ; then
 			export CC="clang"
 			export CXX="clang++-"
@@ -1317,6 +1349,22 @@ einfo "All SSP hardening (All functions hardened)"
 		local L=$(echo "${l}")
 		local x
 		for x in ${L[@]} ; do
+			if \
+				tc-is-gcc \
+					&& \
+				_cflags-hardened_sanitizers_compat "gcc" \
+			; then
+				:
+			elif \
+				tc-is-clang \
+					&& \
+				_cflags-hardened_sanitizers_compat "clang" \
+			; then
+				:
+			else
+				continue
+			fi
+
 			local module
 			if tc-is-clang ; then
 				module=${CLANG_M[${x}]}

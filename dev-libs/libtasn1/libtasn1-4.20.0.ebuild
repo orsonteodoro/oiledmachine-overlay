@@ -4,13 +4,12 @@
 EAPI=8
 
 # GCC breaks with asan
-CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
+#CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 # CVE-2021-46848:  off-by-one read (ASAN)
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="security-critical network untrusted-data"
-CFLAGS_HARDENED_USE_LLVM_SANITIZERS=1
+CFLAGS_HARDENED_SANITIZERS_COMPAT=( "llvm" )
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/libtasn1.asc"
-LLVM_COMPAT=( {15..20} )
 
 inherit cflags-hardened multilib-minimal libtool toolchain-funcs verify-sig
 
@@ -30,55 +29,15 @@ HOMEPAGE="https://www.gnu.org/software/libtasn1/"
 LICENSE="LGPL-2.1+"
 SLOT="0/6" # subslot = libtasn1 soname version
 IUSE="
-${LLVM_COMPAT[@]/#/llvm_slot_}
 static-libs test
-"
-REQUIRED_USE="
-	^^ (
-		${LLVM_COMPAT[@]/#/llvm_slot_}
-	)
+ebuild_revision_1
 "
 RESTRICT="
 	!test? (
 		test
 	)
 "
-gen_clang_rdepend() {
-	local s
-	for s in ${LLVM_COMPAT[@]} ; do
-		echo "
-			llvm_slot_${s}? (
-				llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
-				llvm-core/clang:${s}[${MULTILIB_USEDEP}]
-				=llvm-core/clang-runtime-${s}*[${MULTILIB_USEDEP},sanitize]
-				=llvm-runtimes/compiler-rt-${s}*[${MULTILIB_USEDEP}]
-				!arm64? (
-					=llvm-runtimes/compiler-rt-sanitizers-${s}*[${MULTILIB_USEDEP},asan,ubsan]
-				)
-				arm64? (
-					=llvm-runtimes/compiler-rt-sanitizers-${s}*[${MULTILIB_USEDEP},asan,hwasan,ubsan]
-				)
-			)
-		"
-	done
-}
-RDEPEND="
-	(
-		$(gen_clang_rdepend)
-		llvm-runtimes/compiler-rt-sanitizers:=
-	)
-"
-DEPEND="
-	(
-		$(gen_clang_rdepend)
-		llvm-runtimes/compiler-rt-sanitizers:=
-	)
-"
 BDEPEND="
-	(
-		$(gen_clang_rdepend)
-		llvm-runtimes/compiler-rt-sanitizers:=
-	)
 	app-alternatives/yacc
 	sys-apps/help2man
 	verify-sig? (
@@ -94,13 +53,6 @@ src_prepare() {
 }
 
 multilib_src_configure() {
-	local s
-	for s in ${LLVM_COMPAT[@]} ; do
-		if use "llvm_slot_${s}" ; then
-			LLVM_SLOT=${s}
-			break
-		fi
-	done
 	cflags-hardened_append
 	# -fanalyzer substantially slows down the build and isn't useful for
 	# us. It's useful for upstream as it's static analysis, but it's not
