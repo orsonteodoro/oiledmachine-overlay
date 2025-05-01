@@ -4,8 +4,9 @@
 EAPI=8
 
 CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" )
 CFLAGS_HARDENED_TOLERANCE="4.00"
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
 # CVE-2015-8863 - network zero click attack, heap-based overflow (ASAN), off-by-one (UBSAN)
 
 inherit autotools cflags-hardened flag-o-matic
@@ -89,6 +90,12 @@ src_prepare() {
 }
 
 src_configure() {
+	# Build time breakage when building with clang
+	export CC="gcc"
+	export CXX="g++"
+	export CPP="${CC} -E"
+	strip-unsupported-flags
+
 	# TODO: Drop on next release > 1.7.1
 	# bug #944014
 	append-cflags -std=gnu17
