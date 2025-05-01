@@ -224,16 +224,24 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_SANITIZERS_COMPAT
 # @DESCRIPTION:
+# A list of sanitizer implementations that have been verified to work with
+# the test suite in src_test().
+#
 # You cannot mix sanitizers with static-libs.  The preferred value depends on
 # the default CC/CXX.  The CC vendor should not be changed per package but
 # distro does not put guardrails from doing this.  List of compatible sanitizers
 # This affects if the sanitizer be applied to the package.  This affects if
 # LLVM CFI gets applied also.
+#
 # Acceptable values:
-# llvm
-# gcc
+#
+#   llvm - via llvm-runtimes/compiler-rt-sanitizers
+#   gcc  - via sys-devel/gcc[sanitizers]
+#
 # Example:
-# CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" "llvm" )
+#
+#   CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" "llvm" )
+#
 
 # @FUNCTION: _cflags-hardened_fcmp
 # @DESCRIPTION:
