@@ -3,7 +3,8 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
+# Sanitizers disabled because it breaks gnutls tests
+#CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 # CVE-2023-36660 - out of bounds write, memory corruption (ASAN)
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
@@ -60,6 +61,7 @@ ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
 +asm doc +gmp static-libs
+ebuild_revision_1
 "
 # The arm64 crypto option controls AES, SHA1, and SHA2 usage.
 REQUIRED_USE="
