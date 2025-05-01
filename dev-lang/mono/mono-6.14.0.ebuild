@@ -425,8 +425,11 @@ src_configure() {
 }
 
 _src_configure_compiler() {
-	export CC=$(tc-getCC)
-	export CXX=$(tc-getCXX)
+	# Forced gcc to avoid potential jemalloc build issues
+	export CC="gcc"
+	export CXX="g++"
+	export CPP="${CC} -E"
+	strip-unsupported-flags
 }
 
 _src_configure() {
