@@ -203,7 +203,7 @@ einfo "Give me the y, n, n/a in a table if <cve-id> causes code execution,"
 einfo "elevated privileges, data tampering, denial of service, information"
 einfo "disclosure. This one is a <universally recognized bug name (e.g. use"
 einfo "after free)>.  Also give me a CVSS 3.1 estimate and severity as a"
-einfo "column."
+einfo "column.  The package in question is <package-name>."
 einfo
 	fi
 }
