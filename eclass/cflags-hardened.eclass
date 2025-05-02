@@ -360,11 +360,13 @@ _cflags-hardened_append_clang_retpoline() {
 		test-flags-CC "-mretpoline-external-thunk" \
 	; then
 	# For cheap embedded devices that are designed to be slow.
+	# ZC, ID
 		append-flags "-mretpoline"
 		CFLAGS_HARDENED_CFLAGS+=" -mretpoline"
 		CFLAGS_HARDENED_CXXFLAGS+=" -mretpoline"
 		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,retpolineplt"
 
+	# ZC, ID
 		append-flags "-mretpoline-external-thunk"
 		CFLAGS_HARDENED_CFLAGS+=" -mretpoline-external-thunk"
 		CFLAGS_HARDENED_CXXFLAGS+=" -mretpoline-external-thunk"
@@ -403,7 +405,6 @@ _cflags-hardened_append_clang_retpoline() {
 # @FUNCTION: _cflags-hardened_append_gcc_retpoline
 # @DESCRIPTION:
 # Apply retpoline flags for gcc
-# PE, ID
 _cflags-hardened_append_gcc_retpoline() {
 	tc-is-gcc || return
 	[[ "${ARCH}" == "amd64" ]] || return
@@ -435,6 +436,7 @@ _cflags-hardened_append_gcc_retpoline() {
 		test-flags-CC "-mfunction-return=thunk" \
 	; then
 	# Full mitigation gainst Spectre v2 (but random performance between compiler vendors)
+	# ZC, ID
 		append-flags $(test-flags-CC "-mfunction-return=thunk")
 		CFLAGS_HARDENED_CFLAGS+=" -mfunction-return=thunk"
 		CFLAGS_HARDENED_CXXFLAGS+=" -mfunction-return=thunk"
@@ -488,6 +490,7 @@ _cflags-hardened_append_gcc_retpoline() {
 		test-flags-CC "-mindirect-branch=thunk" \
 	; then
 	# Full mitigation against Spectre v2 (but random performance between compiler vendors)
+	# ZC, ID
 		append-flags $(test-flags-CC "-mindirect-branch=thunk")
 		CFLAGS_HARDENED_CFLAGS+=" -mindirect-branch=thunk"
 		CFLAGS_HARDENED_CXXFLAGS+=" -mindirect-branch=thunk"
@@ -886,28 +889,28 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 					&&
 			test-flags-CC "-fstack-clash-protection" \
 		; then
-	# MC, CE, PE, DoS, DT, ID
+	# ZC, CE, EP, DoS, DT
 			filter-flags "-f*stack-clash-protection"
 			append-flags "-fstack-clash-protection"
 			CFLAGS_HARDENED_CFLAGS+=" -fstack-clash-protection"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fstack-clash-protection"
 		fi
 		if [[ "${CFLAGS_HARDENED_LEVEL}" == "1" ]] && ! tc-enables-ssp ; then
-	# DoS, DT
+	# ZC, CE, EP
 einfo "Standard SSP hardening (>= 8 byte buffers, *alloc functions)"
 			filter-flags "-f*stack-protector"
 			append-flags "-fstack-protector"
 			CFLAGS_HARDENED_CFLAGS+=" -fstack-protector"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fstack-protector"
 		elif [[ "${CFLAGS_HARDENED_LEVEL}" == "2" ]] && ! tc-enables-ssp-strong ; then
-	# DoS, DT
+	# ZC, CE, EP
 einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with local arrays or local pointers)"
 			filter-flags "-f*stack-protector-strong"
 			append-flags "-fstack-protector-strong"
 			CFLAGS_HARDENED_CFLAGS+=" -fstack-protector-strong"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fstack-protector-strong"
 		elif [[ "${CFLAGS_HARDENED_LEVEL}" == "3" ]] && ! tc-enables-ssp-all ; then
-	# DoS, DT
+	# ZC, CE, EP
 einfo "All SSP hardening (All functions hardened)"
 			filter-flags "-f*stack-protector-all"
 			append-flags "-fstack-protector-all"
@@ -915,7 +918,7 @@ einfo "All SSP hardening (All functions hardened)"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fstack-protector-all"
 		fi
 
-	# DoS, DT
+	# ZC, CE, PE, DT
 		append-ldflags "-Wl,-z,relro"
 		append-ldflags "-Wl,-z,now"
 		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,relro"
@@ -949,7 +952,7 @@ einfo "All SSP hardening (All functions hardened)"
 				&& \
 			[[ "${CFLAGS_HARDENED_CF_PROTECTION:-1}" == "1" ]] \
 		; then
-	# MC, ID, PE, CE
+	# ZC, CE, PE
 			filter-flags "-f*cf-protection=*"
 			append-flags "-fcf-protection=full"
 			CFLAGS_HARDENED_CFLAGS+=" -fcf-protection=full"
@@ -996,7 +999,7 @@ einfo "All SSP hardening (All functions hardened)"
 |"web-server")\
 		]] \
 	; then
-	# CE, PE, DoS
+	# ZC, CE, PE
 		filter-flags "-Wa,--noexecstack"
 		filter-flags "-Wl,-z,noexecstack"
 		append-flags "-Wa,--noexecstack"
@@ -1082,7 +1085,7 @@ einfo "All SSP hardening (All functions hardened)"
 	; then
 	# Remove flag if 50% drop in performance.
 	# For runtime *signed* integer overflow detection
-	# DoS, DT
+	# ZC, CE, PE, DoS, DT, ID
 		filter-flags "-f*trapv"
 		append-flags "-ftrapv"
 		CFLAGS_HARDENED_CFLAGS+=" -ftrapv"
@@ -1097,7 +1100,7 @@ einfo "All SSP hardening (All functions hardened)"
 	CFLAGS_HARDENED_CFLAGS+=" -U_FORTIFY_SOURCE"
 	CFLAGS_HARDENED_CXXFLAGS+=" -U_FORTIFY_SOURCE"
 
-	# DoS, DT, ID
+	# ZC, CE, PE, DoS, DT, ID
 	if [[ -n "${CFLAGS_HARDENED_FORTIFY_SOURCE}" ]] ; then
 		local level="${CFLAGS_HARDENED_FORTIFY_SOURCE}"
 		append-flags -D_FORTIFY_SOURCE=${level}
@@ -1130,6 +1133,7 @@ einfo "All SSP hardening (All functions hardened)"
 	# For executable packages only.
 	# Do not apply to hybrid (executible with libs) packages
 	if [[ "${CFLAGS_HARDENED_PIE:-0}" == "1" ]] && ! tc-enables-pie ; then
+	# ZC, CE, PE, ID
 		filter-flags "-fPIE" "-pie"
 		append-flags "-fPIE" "-pie"
 		CFLAGS_HARDENED_CFLAGS+=" -fPIE -pie"
@@ -1138,6 +1142,7 @@ einfo "All SSP hardening (All functions hardened)"
 
 	# For library packages only
 	if [[ "${CFLAGS_HARDENED_PIC:-0}" == "1" ]] ; then
+	# ZC, CE, PE, ID
 		filter-flags "-fPIC"
 		append-flags "-fPIC"
 		CFLAGS_HARDENED_CFLAGS+=" -fPIC"
@@ -1536,7 +1541,6 @@ ewarn "vtable hardening is required for the oiledmachine overlay for C++.  Rebui
 	# following cases to simplify maintenance.
 	# (1) app only packages.
 	# (2) hybrid packages (app+lib) without headers.
-	# DoS, DT
 		if ! has_version "sys-devel/gcc:${s}[vtv]" ; then
 ewarn "Skipping vtable hardening.  Update gcc and rebuild ${CATEGORY}/${PN}-${PV} again."
 		elif \
@@ -1544,6 +1548,7 @@ ewarn "Skipping vtable hardening.  Update gcc and rebuild ${CATEGORY}/${PN}-${PV
 				&& \
 			[[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"game-engine"|"hypervisor"|"kernel"|"modular-app"|"network"|"safety-critical"|"security-critical"|"web-browsers") ]] \
 		; then
+	# ZC, CE, PE
 			filter-flags "-f*vtable-verify=*"
 			append-cxxflags "-fvtable-verify=std"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fvtable-verify=std"

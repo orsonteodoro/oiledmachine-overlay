@@ -487,12 +487,14 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 			&& \
 		_rustflags-hardened_has_target_feature "cet" \
 	; then
+	# ZC, CE, PE
 		RUSTFLAGS+=" -C target-feature=+cet"
 	elif \
 		_rustflags-hardened_has_pauth \
 			&& \
 		[[ "${RUSTFLAGS_HARDENED_PAUTH:-1}" == "1" ]] \
 	; then
+	# ZC, CE, PE
 		RUSTFLAGS+=" -C control-flow-protection"
 	fi
 
@@ -502,13 +504,13 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		: # Broken
 	elif ver_test "${rust_pv}" -ge "1.58.0" ; then
 		if [[ "${RUSTFLAGS_HARDENED_LEVEL}" == "3" ]] ; then
-	# DoS, DT
+	# ZC, CE, EP
 			RUSTFLAGS+=" -C stack-protector=all"
 		elif [[ "${RUSTFLAGS_HARDENED_LEVEL}" == "2" ]] ; then
-	# DoS, DT
+	# ZC, CE, EP
 			RUSTFLAGS+=" -C stack-protector=strong"
 		elif [[ "${RUSTFLAGS_HARDENED_LEVEL}" == "1" ]] ; then
-	# DoS, DT
+	# ZC, CE, EP
 			RUSTFLAGS+=" -C stack-protector=basic"
 		fi
 	fi
@@ -559,7 +561,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 			if _rustflags-hardened_has_cet ; then
 				:
 			elif _rustflags-hardened_has_target_feature "retpoline" ; then
-	# PE, ID
+	# ZC, ID
 				RUSTFLAGS+=" -C target-feature=+retpoline"
 			fi
 		fi
@@ -571,7 +573,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 
 	fi
 
-	# DoS, DT, ID
+	# ZC, CE, PE, DoS, DT, ID
 	filter-flags "-D_FORTIFY_SOURCE=*"
 	filter-flags "-U_FORTIFY_SOURCE"
 	append-flags "-U_FORTIFY_SOURCE"
@@ -627,14 +629,13 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	; then
 	# Remove flag if 50% drop in performance.
 	# For runtime *signed* integer overflow detection
-	# DoS, DT
+	# ZC, CE, PE, DoS, DT, ID
 		RUSTFLAGS+=" -C overflow-checks=on"
 	fi
 
 	local host=$(${RUSTC} -vV | grep "host:" | cut -f 2 -d " ")
 einfo "rustc host:  ${host}"
 
-	# MC, CE, PE, DoS, DT, ID
 	if \
 		[[ \
 			"${RUSTFLAGS_HARDENED_USE_CASES}" \
@@ -676,6 +677,7 @@ einfo "rustc host:  ${host}"
 			RUSTFLAGS+=" -C target-feature=+stack-probe"
 		fi
 
+	# ZC, CE, EP, DoS, DT
 		RUSTFLAGS+=" -C link-arg=-fstack-clash-protection"
 	fi
 
@@ -697,19 +699,21 @@ einfo "rustc host:  ${host}"
 |"web-server")\
 		]] \
 	; then
-	# CE, PE, DoS
+	# ZC, CE, PE
 		RUSTFLAGS+=" -C link-arg=-z -C link-arg=noexecstack"
 	fi
 
 	# For executable packages only.
 	# Do not apply to hybrid (executible with libs) packages
 	if [[ "${RUSTFLAGS_HARDENED_PIE:-0}" == "1" ]] ; then
+	# ZC, CE, PE, ID
 		RUSTFLAGS+=" -C relocation-model=pie"
 		RUSTFLAGS+=" -C link-arg=-pie"
 	fi
 
 	# For library packages only
 	if [[ "${RUSTFLAGS_HARDENED_PIC:-0}" == "1" ]] ; then
+	# ZC, CE, PE, ID
 		RUSTFLAGS+=" -C relocation-model=pic"
 	fi
 
