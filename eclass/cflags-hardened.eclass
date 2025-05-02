@@ -1044,7 +1044,6 @@ einfo "All SSP hardening (All functions hardened)"
 		]] \
 	; then
 		:
-	# DoS, ID
 	# Spectre V2 mitigation general case
 		# -mfunction-return and -fcf-protection are mutually exclusive.
 
@@ -1062,9 +1061,8 @@ einfo "All SSP hardening (All functions hardened)"
 			if [[ -n "${CFLAGS_HARDENED_RETPOLINE_FLAVOR_USER}" ]] ; then
 				CFLAGS_HARDENED_RETPOLINE_FLAVOR="${CFLAGS_HARDENED_RETPOLINE_FLAVOR_USER}"
 			fi
-
-			_cflags-hardened_append_gcc_retpoline
-			_cflags-hardened_append_clang_retpoline
+			_cflags-hardened_append_gcc_retpoline		# ZC, ID
+			_cflags-hardened_append_clang_retpoline		# ZC, ID
 		fi
 	fi
 
