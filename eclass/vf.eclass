@@ -191,6 +191,9 @@ einfo "UAF = Use After Free"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "XSS" ]] ; then
 einfo "XSS = Cross Site Scripting Attack"
 		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "XSRF" ]] ; then
+einfo "XSRF = Cross Site Request Forgery"
+		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "ZC" ]] ; then
 # CVSS 3.1 - AV:N/PR:N/UI:N
 einfo "ZC = Zero Click Attack"

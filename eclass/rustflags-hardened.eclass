@@ -406,7 +406,7 @@ einfo "CC:  ${CC}"
 	# Set CC/CXX again to avoid ccache and reproducibility problems.
 		if [[ "${CHROMIUM_TOOLCHAIN}" == "1" ]] ; then
 			export CC="clang"
-			export CXX="clang++-"
+			export CXX="clang++"
 			export CPP="${CC} -E"
 		else
 			export CC="${CHOST}-clang-${LLVM_SLOT}"
