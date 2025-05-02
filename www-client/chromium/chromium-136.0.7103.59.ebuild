@@ -756,8 +756,10 @@ if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ;then
 		)
 	"
 fi
+# Drumbrake is broken in this release
 REQUIRED_USE+="
 	${PATENT_USE_FLAGS}
+	!drumbrake
 	!headless (
 		extensions
 		pdf
@@ -2387,9 +2389,9 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 			)
 		fi
 	fi
-	PATCHES+=(
-		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-v8-5c595ad.patch"
-	)
+#	PATCHES+=(
+#		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-v8-5c595ad.patch"
+#	)
 }
 
 is_cromite_patch_non_fatal() {
@@ -3639,8 +3641,15 @@ einfo "Using the bundled toolchain"
 		"-ftrivial-auto-var-init=*" \
 		"-Wl,-z,now" \
 		"-Wl,-z,relro"
-	replace-flags "-fhardened" "-fcf-protection=full"
-	if ! use cet && is-flagq "-fcf-protection=*" ; then
+	local wants_fc_protection=0
+	if \
+		   is-flagq "-fcf-protection=all" \
+		|| is-flagq "-fcf-protection=branch" \
+		|| is-flagq "-fcf-protection=return" \
+	; then
+		wants_fc_protection=1
+	fi
+	if ! use cet && (( ${wants_fc_protection} == 1 )) ; then
 eerror "Enable the cet USE flag"
 		die
 	fi
