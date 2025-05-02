@@ -104,7 +104,7 @@
     mimalloc            | y  | y   | y   | y[3]   | config      | n  | n     | AI/ML (pyTorch, ONNX Runtime)
     scudo               | y  | y   | y   | y[4]   | poison      | n  | y     | Android
     PartitionAlloc      | y  | y   | y   | y[5]   | poison      | y  | y     | Chromium
-    ptmalloc            | n  | n   | n   | n      | none        | n  | n     | Glibc, Linux userland apps
+    ptmalloc            | n  | n   | n   | n      | none        | n  | n     | glibc, Linux userland apps
     tcmalloc            | y  | y   | y   | n      | none        | n  | n     | Databases (Redis, MariaDB)          
     slub                | y  | y   | y   | y[6]   | none        | n  | n     | Kernel
 
