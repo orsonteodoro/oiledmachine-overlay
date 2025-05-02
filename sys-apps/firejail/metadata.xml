@@ -117,7 +117,7 @@
     FP = secure free sensitive wipe policy
     TC = Type confusion mitigation
     MTE = Memory Type Extension (arm64 only)
-    HF = hash function
+    HF = hash function used for ASLR
     [1] = Either Xorshift PRNG or ARC4
     [2] = ChaCha8
     [3] = ChaCha20
