@@ -96,17 +96,18 @@
     Valid values - hardened_malloc, mimalloc, scudo, system-malloc,
     unset (It will fallback to hardened malloc followed by ptmalloc.)
 
-    Allocator           | HO | OOB | UAF | HF     | FP          | TC | MTE   | Examples
-    bmalloc             | y  | y   | y   | n      | poison      | n  | n     | Older WebKitGTK release
-    jemalloc            | y  | y   | y   | n      | none        | n  | n     | Mono, Blender, MariaDB, QEMU
-    libpas              | y  | y   | y   | y[1]   | poison/zero | y  | n     | Latest WebKitGTK
-    hardened_malloc     | y  | y   | y   | y[2]   | poison      | y  | n     | GrapheneOS
-    mimalloc            | y  | y   | y   | y[3]   | config      | n  | n     | AI/ML (pyTorch, ONNX Runtime)
-    scudo               | y  | y   | y   | y[4]   | poison      | n  | y     | Android
-    PartitionAlloc      | y  | y   | y   | y[5]   | poison      | y  | y     | Chromium
-    ptmalloc            | n  | n   | n   | n      | none        | n  | n     | glibc, Linux userland apps
-    tcmalloc            | y  | y   | y   | n      | none        | n  | n     | Databases (Redis, MariaDB)          
-    slub                | y  | y   | y   | y[6]   | none        | n  | n     | Kernel
+    Allocator           | HO | OOB | UAF | HF     | FB          | FP              | TC | MTE   | Examples
+    bmalloc             | y  | y   | y   | n      | poison      | none            | n  | n     | Older WebKitGTK release
+    jemalloc            | y  | y   | y   | n      | none        | none            | n  | n     | Mono, Blender, MariaDB, QEMU
+    libpas              | y  | y   | y   | y[1]   | poison/zero | none/zero (c)   | y  | n     | Latest WebKitGTK
+    hardened_malloc     | y  | y   | y   | y[2]   | poison      | poison/zero     | y  | n     | GrapheneOS
+    mimalloc            | y  | y   | y   | y[3]   | config      | none            | n  | n     | AI/ML (pyTorch, ONNX Runtime)
+    mozjemalloc         | y  | y   | n   | n/a    | none        | none            | n  | n     | Firefox
+    scudo               | y  | y   | y   | y[4]   | poison      | poison/zero (c) | n  | y     | Android
+    PartitionAlloc      | y  | y   | y   | y[5]   | poison      | zero (o)        | y  | y     | Chromium
+    ptmalloc            | n  | n   | n   | n      | none        | none            | n  | n     | glibc, Linux userland apps
+    tcmalloc            | y  | y   | y   | n      | none        | none            | n  | n     | Databases (Redis, MariaDB)          
+    slub                | y  | y   | y   | y[6]   | none        | none/poison (c) | n  | n     | Kernel
 
     For sensitive data apps:  KASLR, HO=y, OOB=y, UAF=y, FP=poison|zero are required for security-critical.
     For web browsers:         KASLR, HO=y, OOB=y, UAF=y, FP=poison|zero, TC=y are required for security-critical.
@@ -114,7 +115,8 @@
     HO = Heap Overflow mitigation
     OOB = Out of Bounds mitigation
     ASLR = Address Space Layout Randomization protection (userspace fallback if kernel was not built with KASLR)
-    FP = secure free sensitive wipe policy
+    FB = wipe policy when freeing, especially for sensitive data
+    FP = page wipe policy, (c) = configurable, (o) optional
     HF = hash function used for ASLR
     TC = Type confusion mitigation
     MTE = Memory Type Extension (arm64 only)
@@ -125,6 +127,7 @@
     [4] = KASLR required & linear function
     [5] = ALSR, linear PSNR
     [6] = via KASLR
+    [7] = It is default off.
 
     OOM[PROFILE_NAME] - Set the normalized number of pages for the OOM (Out Of Memory) killer.
     Higher values mean likely killed based on OOM killer context.
