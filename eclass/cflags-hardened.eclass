@@ -1264,6 +1264,10 @@ einfo "All SSP hardening (All functions hardened)"
 		sanitizers_compat=1
 	fi
 
+	if [[ "${CFLAGS_HARDENED_SANITIZERS_DEACTIVATE}" == 0 ]] ; then
+		sanitizers_compat=0
+	fi
+
 	filter-flags "-f*sanitize=*"
 	if [[ -n "${CFLAGS_HARDENED_SANITIZERS}" ]] && (( ${sanitizers_compat} == 1 )) ; then
 		local l="${CFLAGS_HARDENED_SANITIZERS}"

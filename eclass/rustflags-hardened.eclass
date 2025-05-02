@@ -791,6 +791,10 @@ einfo "rustc host:  ${host}"
 		sanitizers_compat=1
 	fi
 
+	if [[ "${RUSTFLAGS_HARDENED_SANITIZERS_DEACTIVATE}" == 0 ]] ; then
+		sanitizers_compat=0
+	fi
+
 	if [[ -n "${RUSTFLAGS_HARDENED_SANITIZERS}" ]] && (( ${sanitizers_compat} == 1 )) ; then
 		local l="${RUSTFLAGS_HARDENED_SANITIZERS}"
 		declare -A GCC_M=(

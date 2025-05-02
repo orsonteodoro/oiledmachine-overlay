@@ -265,6 +265,14 @@ activated can be found at
 CFLAGS_HARDENED_TOLERANCE_USER and RUSTFLAGS_HARDENED_TOLERANCE_USER mean the
 same, but not necessary one affecting the other.
 
+The CFLAGS_HARDENED_SANITIZERS_DEACTIVATE=1 and
+RUSTFLAGS_HARDENED_SANITIZERS_DEACTIVATE=1 can be used to turn off sanitizers on
+a per-package basis.  Some packages force using gcc or llvm to get the package
+built and as a result force sanitizers on when they should be disabled.  These
+per-package flags can be used to avoid incompatibility problems.  Add the flag
+to the package and then rebuild the problematic package or deep dependency
+causing the problem.
+
 When does a package meet performance critical?  If it is not marked
 cflags-critical or rustflags-critical.
 
