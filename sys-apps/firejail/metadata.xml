@@ -99,7 +99,7 @@
     Allocator           | HO | OOB | UAF | HF     | FB          | FP              | TC | MTE   | Examples
     bmalloc             | y  | y   | y   | n      | poison      | none            | n  | n     | Older WebKitGTK release
     jemalloc            | y  | y   | y   | n      | none        | none            | n  | n     | Mono, Blender, MariaDB, QEMU
-    hardened_malloc     | y  | y   | y   | y[2]   | poison      | poison/zero     | y  | n     | GrapheneOS
+    hardened_malloc     | y  | y   | y   | y[2]   | poison      | poison/zero     | y  | y (c) | GrapheneOS
     libpas              | y  | y   | y   | y[1]   | poison/zero | none/zero (c)   | y  | n     | Latest WebKitGTK
     mimalloc            | y  | y   | y   | y[3]   | config      | none            | n  | n     | AI/ML (pyTorch, ONNX Runtime)
     mozjemalloc         | y  | y   | n   | n/a    | none        | none            | n  | n     | Firefox
@@ -119,7 +119,7 @@
     FB = wipe policy when freeing, especially for sensitive data
     FP = page wipe policy, (c) = configurable, (o) optional
     TC = Type confusion mitigation
-    MTE = Memory Type Extension (arm64 only), hardware accelerated UAF detection and protection
+    MTE = Memory Type Extension (arm64 only), hardware accelerated UAF detection and protection, (c) = if enabled at build time
     ASLR = Address Space Layout Randomization protection (userspace fallback if kernel was not built with KASLR)
     [1] = Either Xorshift PRNG or ARC4
     [2] = ChaCha8
