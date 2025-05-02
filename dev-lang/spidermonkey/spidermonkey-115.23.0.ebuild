@@ -4,12 +4,13 @@
 EAPI="8"
 
 # 115.21.0 -> 115.22.0
+# 115.22.0 -> 115.23.0
 
 # For polkit
 
 # DEPENDS:
-# /var/tmp/portage/dev-lang/spidermonkey-115.21.0/work/firefox-115.21.0/taskcluster/ci/toolchain/rust.yml
-# /var/tmp/portage/dev-lang/spidermonkey-115.21.0/work/firefox-115.21.0/taskcluster/ci/fetch/toolchains.yml
+# /var/tmp/portage/dev-lang/spidermonkey-115.23.0/work/firefox-115.23.0/taskcluster/ci/toolchain/rust.yml
+# /var/tmp/portage/dev-lang/spidermonkey-115.23.0/work/firefox-115.23.0/taskcluster/ci/fetch/toolchains.yml
 
 CFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
 RUSTFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
@@ -33,9 +34,9 @@ MY_PV="${PV/_pre*}" # Handle Gentoo pre-releases
 MY_MAJOR=$(ver_cut 1)
 
 # MITIGATION_LAST_UPDATE is the same as firefox esr ebuild
-MITIGATION_DATE="Mar 4, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1741038420 # From `date +%s -d "2025-03-03 13:47"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-15/"
+MITIGATION_DATE="Apr 29, 2025" # Advisory date
+MITIGATION_LAST_UPDATE=1745866140 # From `date +%s -d "2025-04-28 11:49"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-30/"
 MOZ_ESR="yes"
 
 MOZ_PV=${PV}

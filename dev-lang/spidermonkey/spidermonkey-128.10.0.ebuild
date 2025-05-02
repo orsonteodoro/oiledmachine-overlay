@@ -13,6 +13,7 @@ EAPI="8"
 # 128.4.0 -> 128.5.0
 # 128.7.0 -> 128.8.0
 # 128.8.0 -> 128.9.0
+# 128.9.0 -> 128.10.0
 
 CFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
 RUSTFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
@@ -27,9 +28,9 @@ MY_PN="mozjs"
 MY_PV="${PV/_pre*}"
 
 # MITIGATION_LAST_UPDATE is the same as firefox esr ebuild
-MITIGATION_DATE="Apr 1, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1743434100 # From `date +%s -d "2025-03-31 08:15"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-22/"
+MITIGATION_DATE="Apr 29, 2025" # Advisory date
+MITIGATION_LAST_UPDATE=1745866500 # From `date +%s -d "2025-04-28 11:55"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-29/"
 MOZ_ESR="yes"
 MOZ_PN="firefox"
 MOZ_PV="${PV}"
@@ -54,7 +55,7 @@ if [[ "${PV}" == *"_rc"* ]] ; then
 fi
 
 # Patch version
-FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-09.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-11.tar.xz"
 #SPIDERMONKEY_PATCHSET="spidermonkey-${PV%%.*}-patches-01.tar.xz"
 SPIDERMONKEY_PATCHSET="spidermonkey-128-patches-03.tar.xz"
 PATCH_URIS=(
