@@ -1379,13 +1379,12 @@ einfo "All SSP hardening (All functions hardened)"
 
 		unset added
 		declare -A added=(
-	# ZC = Zero Click Attack
 	# CE = Code Execution
 	# DoS = Denial of Service
 	# DT = Data Tampering
 	# ID = Information Disclosure
-	# MC = Memory Corruption
 	# PE = Privilege Escalation
+	# ZC = Zero Click Attack
 	#		Sanitizer			Type of attacks it protects against
 			["asan"]="0"			# ZC, CE, PE, DoS, DT, ID
 			["cfi"]="0"			# ZC, CE, PE
