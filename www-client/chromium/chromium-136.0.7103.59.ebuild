@@ -3672,19 +3672,16 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 		fi
 	elif [[ "${ARCH}" == "amd64" ]] && is-flagq "-mretpoline" ; then
 		myconf_gn+=" use_fc_protection=\"none\""
-#		myconf_gn+=" use_retpoline=true"
-		myconf_gn+=" use_retpoline=false"
-#		myconf_gn+=" use_stack_clash_protection=true"
-		myconf_gn+=" use_stack_clash_protection=false"
+		myconf_gn+=" use_retpoline=true"
+		myconf_gn+=" use_stack_clash_protection=true"
 		if is-flagq "-ftrapv" ; then
-#			myconf_gn+=" use_trapv=true"
-			myconf_gn+=" use_trapv=false"
+			myconf_gn+=" use_trapv=true"
 		fi
-#		if is-flagq "-D_FORITFY_SOURCE=3" ; then
-#			myconf_gn+=" use_fortify_source=3"
-#		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
-#			myconf_gn+=" use_fortify_source=2"
-#		fi
+		if is-flagq "-D_FORITFY_SOURCE=3" ; then
+			myconf_gn+=" use_fortify_source=3"
+		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
+			myconf_gn+=" use_fortify_source=2"
+		fi
 	else
 		myconf_gn+=" use_fc_protection=\"none\""
 		myconf_gn+=" use_retpoline=false"
@@ -5499,6 +5496,8 @@ ewarn
 #
 
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  YES
+# OILEDMACHINE-OVERLAY-TEST: FAILED 136.0.7103.59  (20250502) - build failure
+# OILEDMACHINE-OVERLAY-TEST: FAILED 135.0.7049.114 (20250430) - build failure
 # OILEDMACHINE-OVERLAY-TEST: PASSED (interactive) 128.0.6613.119 (20240907)
 # Oflag = -O2
 # Build Completion time:  1 days, 17 hrs, 11 mins, 53 secs - fail, did not pass 24 hrs fix standard for critical vulnerabilities.  Package not built and installed within 24 hrs.
