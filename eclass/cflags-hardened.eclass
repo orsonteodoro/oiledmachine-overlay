@@ -401,19 +401,12 @@ _cflags-hardened_append_gcc_retpoline() {
 	tc-is-gcc || return
 	[[ "${ARCH}" == "amd64" ]] || return
 
-	if ! _cflags-hardened_has_cet ; then
-	# Allow -mfunction-return=*
-		filter-flags "-f*cf-protection=*"
-	elif \
-		is-flagq "-fcf-protection=*"  \
-			&& \
-		[[ "${CFLAGS_HARDENED_CF_PROTECTION:-1}" == "1" ]] \
-	; then
-ewarn
-ewarn "Forcing -mindirect-branch-register to avoid flag conflict between"
-ewarn "-fcf-protection=return implied by -fcf-protection=full."
-ewarn
-		CFLAGS_HARDENED_RETPOLINE_FLAVOR="register"
+	#-mindirect-branch is not compatible with fcf-protection=return
+	filter-flags "-f*cf-protection=*"
+	if _cflags-hardened_has_cet ; then
+		append-flags "-fcf-protection=branch"
+	else
+		append-flags "-fcf-protection=none"
 	fi
 
 	# cf-protection (CE, ID) is a more stronger than Retpoline against Spectre v2 (ID).
@@ -465,7 +458,6 @@ ewarn
 		CFLAGS_HARDENED_CFLAGS+=" -mfunction-return=thunk-inline"
 		CFLAGS_HARDENED_CXXFLAGS+=" -mfunction-return=thunk-inline"
 	fi
-
 
 	if \
 		[[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("secure-realtime"|"secure-speed") ]] \
@@ -815,6 +807,12 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 		CFLAGS_HARDENED_CFLAGS+=" -fhardened"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fhardened"
 		CFLAGS_HARDENED_LDFLAGS=""
+		filter-flags "-f*cf-protection=*"
+		if _cflags-hardened_has_cet ; then
+			append-flags "-fcf-protection=branch"
+		else
+			append-flags "-fcf-protection=none"
+		fi
 	else
 		replace-flags "-O0" "-O1"
 		if [[ "${CFLAGS}" =~ "-O0" ]] ; then
