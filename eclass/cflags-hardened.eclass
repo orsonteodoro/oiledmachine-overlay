@@ -342,22 +342,6 @@ _cflags-hardened_append_clang_retpoline() {
 	tc-is-clang || return
 	[[ "${ARCH}" == "amd64" ]] || return
 
-	if ! _cflags-hardened_has_cet ; then
-	# Allow -mretpoline-external-thunk
-		filter-flags "-f*cf-protection=*"
-	elif \
-		is-flagq "-fcf-protection=*"  \
-			&& \
-		[[ "${CFLAGS_HARDENED_CF_PROTECTION:-1}" == "1" ]] \
-	; then
-ewarn
-ewarn "Avoiding possible flag conflict between -fcf-protection=return and"
-ewarn "-mretpoline-external-thunk implied by -fcf-protection=full."
-ewarn
-		filter-flags "-mretpoline-external-thunk"
-		return
-	fi
-
 	if \
 		[[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("secure-realtime"|"secure-speed") ]] \
 			&& \
@@ -391,6 +375,29 @@ ewarn
 		CFLAGS_HARDENED_CXXFLAGS+=" -mretpoline"
 		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,retpolineplt"
 	fi
+
+	#-mindirect-branch is not compatible with fcf-protection=return
+	# There is a tradeoff between -fcf-protection versus -mindirect-branch.
+	# We keep the flag that removes the more dangerous vulnerabilities.
+	if _cflags-hardened_has_cet ; then
+		filter-flags "-m*retpoline"
+		filter-flags "-m*retpoline-external-thunk"
+		filter-flags "-Wl,-z,retpolineplt"
+		CFLAGS_HARDENED_CFLAGS=$(echo "${CFLAGS_HARDENED_CFLAGS}" \
+			| sed \
+				-e "s|-mretpoline||g" \
+				-e "s|-mretpoline-external-thunk||g")
+		CFLAGS_HARDENED_CXXFLAGS=$(echo "${CFLAGS_HARDENED_CXXFLAGS}" \
+			| sed \
+				-e "s|-mretpoline||g" \
+				-e "s|-mretpoline-external-thunk||g")
+		CFLAGS_HARDENED_LDFLAGS=$(echo "${CFLAGS_HARDENED_LDFLAGS}" \
+			| sed \
+				-e "s|-Wl,-z,retpolineplt||g")
+	else
+		filter-flags "-f*cf-protection=*"
+		append-flags "-fcf-protection=none" # none works, branch works, return doesn't work
+	fi
 }
 
 # @FUNCTION: _cflags-hardened_append_gcc_retpoline
@@ -400,14 +407,6 @@ ewarn
 _cflags-hardened_append_gcc_retpoline() {
 	tc-is-gcc || return
 	[[ "${ARCH}" == "amd64" ]] || return
-
-	#-mindirect-branch is not compatible with fcf-protection=return
-	filter-flags "-f*cf-protection=*"
-	if _cflags-hardened_has_cet ; then
-		append-flags "-fcf-protection=branch"
-	else
-		append-flags "-fcf-protection=none"
-	fi
 
 	# cf-protection (CE, ID) is a more stronger than Retpoline against Spectre v2 (ID).
 	# cf-protection=full is mutually exclusive to -mfunction-return=thunk.
@@ -527,6 +526,50 @@ _cflags-hardened_append_gcc_retpoline() {
 		append-flags $(test-flags-CC "-mindirect-branch-register")
 		CFLAGS_HARDENED_CFLAGS+=" -mindirect-branch-register"
 		CFLAGS_HARDENED_CXXFLAGS+=" -mindirect-branch-register"
+	fi
+
+	#-mindirect-branch is not compatible with fcf-protection=return
+	# There is a tradeoff between -fcf-protection versus -mindirect-branch.
+	# We keep the flag that removes the more dangerous vulnerabilities.
+	if _cflags-hardened_has_cet ; then
+		filter-flags "-m*function-return=*"
+		filter-flags "-m*indirect-branch=*"
+		filter-flags "-m*indirect-branch-register"
+		CFLAGS_HARDENED_CFLAGS=$(echo "${CFLAGS_HARDENED_CFLAGS}" \
+			| sed \
+				-e "s|-mindirect-branch-register||g")
+		CFLAGS_HARDENED_CXXFLAGS=$(echo "${CXXFLAGS_HARDENED_CFLAGS}" \
+			| sed \
+				-e "s|-mindirect-branch-register||g")
+		CFLAGS_HARDENED_CFLAGS=$(echo "${CFLAGS_HARDENED_CFLAGS}" \
+			| sed \
+				-e "s|-mfunction-return=keep||g" \
+				-e "s|-mfunction-return=thunk||g" \
+				-e "s|-mfunction-return=thunk-inline||g" \
+				-e "s|-mfunction-return=thunk-extern||g")
+		CFLAGS_HARDENED_CXXFLAGS=$(echo "${CXXFLAGS_HARDENED_CFLAGS}" \
+			| sed \
+				-e "s|-mfunction-return=keep||g" \
+				-e "s|-mfunction-return=thunk||g" \
+				-e "s|-mfunction-return=thunk-inline||g" \
+				-e "s|-mfunction-return=thunk-extern||g")
+		CFLAGS_HARDENED_CFLAGS=$(echo "${CFLAGS_HARDENED_CFLAGS}" \
+			| sed \
+				-e "s|-mindirect-branch=thunk-extern||g" \
+				-e "s|-mindirect-branch=thunk-inline||g" \
+				-e "s|-mindirect-branch=thunk||g" \
+				-e "s|-mindirect-branch=none||g" \
+				-e "s|-mindirect-branch=ibrs||g")
+		CFLAGS_HARDENED_CXXFLAGS=$(echo "${CXXFLAGS_HARDENED_CXXFLAGS}" \
+			| sed \
+				-e "s|-mindirect-branch=thunk-extern||g" \
+				-e "s|-mindirect-branch=thunk-inline||g" \
+				-e "s|-mindirect-branch=thunk||g" \
+				-e "s|-mindirect-branch=none||g" \
+				-e "s|-mindirect-branch=ibrs||g")
+	else
+		filter-flags "-f*cf-protection=*"
+		append-flags "-fcf-protection=none" # none works, branch works, return doesn't work
 	fi
 }
 
@@ -807,12 +850,6 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 		CFLAGS_HARDENED_CFLAGS+=" -fhardened"
 		CFLAGS_HARDENED_CXXFLAGS+=" -fhardened"
 		CFLAGS_HARDENED_LDFLAGS=""
-		filter-flags "-f*cf-protection=*"
-		if _cflags-hardened_has_cet ; then
-			append-flags "-fcf-protection=branch"
-		else
-			append-flags "-fcf-protection=none"
-		fi
 	else
 		replace-flags "-O0" "-O1"
 		if [[ "${CFLAGS}" =~ "-O0" ]] ; then
