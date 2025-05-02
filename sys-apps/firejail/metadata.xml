@@ -105,8 +105,8 @@
     mozjemalloc         | y  | y   | n   | n/a    | zero/poison (c) | none            | n  | n     | Firefox
     PartitionAlloc      | y  | y   | y   | y[5]   | poison          | none            | y  | y     | Chromium
     ptmalloc            | n  | n   | n   | n      | none            | none            | n  | n     | glibc, Linux userland apps
-    scudo               | y  | y   | y   | y[4]   | zero/poison (c) | none            | n  | y     | Android
-    slub                | y  | y   | y   | y[6]   | none            | none/poison (c) | n  | n     | Kernel/drivers
+    Scudo               | y  | y   | y   | y[4]   | zero/poison (c) | none            | n  | y     | Android
+    Slub                | y  | y   | y   | y[6]   | none            | none/poison (c) | n  | n     | Kernel/drivers
     tcmalloc            | y  | y   | y   | n      | none            | none            | n  | n     | Databases (Redis, MariaDB)          
 
     For sensitive data apps:  KASLR, HO=y, OOB=y, UAF=y, FP=poison|zero are required for security-critical.
