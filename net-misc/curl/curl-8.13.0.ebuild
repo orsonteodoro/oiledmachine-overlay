@@ -338,8 +338,9 @@ eerror "Please file a bug, hit impossible condition w/ USE=ssl handling."
 }
 
 multilib_src_configure() {
-	export CC="gcc"
-	export CXX="g++"
+	local abi_flags="CFLAGS_${ABI}"
+	export CC="gcc ${!abi_flags}"
+	export CXX="g++ ${!abi_flags}"
 	export CPP="${CC} -E"
 	strip-unsupported-flags
 	cflags-hardened_append

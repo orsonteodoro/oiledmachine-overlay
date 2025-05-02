@@ -51,7 +51,7 @@ SLOT="0/2"
 IUSE+="
 ${TRAINERS[@]}
 custom-cflags debug lazy-lock prof static-libs stats test xmalloc
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE+="
 	!custom-cflags? (
@@ -242,7 +242,7 @@ multilib_src_install() {
 }
 
 multilib_src_install_all() {
-	if [[ ${CHOST} == *-darwin* ]] ; then
+	if [[ "${CHOST}" == *"-darwin"* ]] ; then
 		# fixup install_name, #437362
 		install_name_tool \
 			-id "${EPREFIX}/usr/$(get_libdir)/libjemalloc.2.dylib" \
