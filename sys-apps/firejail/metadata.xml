@@ -94,7 +94,7 @@
 
     MALLOC_BACKEND[PROFILE_NAME] - Set the hardened allocator
     Valid values - hardened_malloc, mimalloc, scudo, system-malloc,
-    unset (a hardened malloc followed by system-malloc)
+    unset (It will fallback to hardened malloc followed by ptmalloc.)
 
     Allocator           | HO | OOB | UAF | HF     | FP          | TC | MTE   | Examples
     bmalloc             | y  | y   | y   | n      | poison      | n  | n     | Older WebKitGTK release
