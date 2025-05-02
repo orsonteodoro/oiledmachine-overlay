@@ -113,7 +113,7 @@
 
     HO = Heap Overflow mitigation
     OOB = Out of Bounds mitigation
-    ASLR = Address Space Layout Randomization protection
+    ASLR = Address Space Layout Randomization protection (userspace fallback if kernel was not built with KASLR)
     FP = secure free sensitive wipe policy
     HF = hash function used for ASLR
     TC = Type confusion mitigation
