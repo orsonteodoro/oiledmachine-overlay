@@ -35,7 +35,7 @@ CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 # CVE-2017-8818 - out of bounds (UBSAN)
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="security-critical network sensitive-data untrusted-data"
-CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" ) # llvm build failing with and without sanitizers.  TODO retest with eselect gcc switch.
+CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" ) # llvm build failing with and without sanitizers.
 MULTILIB_WRAPPED_HEADERS=(
 	"/usr/include/curl/curlbuild.h"
 )
@@ -338,6 +338,10 @@ eerror "Please file a bug, hit impossible condition w/ USE=ssl handling."
 }
 
 multilib_src_configure() {
+	export CC="gcc"
+	export CXX="g++"
+	export CPP="${CC} -E"
+	strip-unsupported-flags
 	cflags-hardened_append
 	# We make use of the fact that later flags override earlier ones
 	# So start with all ssl providers off until proven otherwise
@@ -555,3 +559,10 @@ ewarn "Use this _only_ for testing. Debug builds should _not_ be used in anger."
 ewarn "hic sunt dracones; you have been warned."
 	fi
 }
+
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (8.13.0, 20250501)
+# gcc-12:  passed with asan and ubsan with test suite
+# gcc-14:  passed with asan and ubsan with test suite
+# llvm-19:  fails to build
+# llvm-15:  fails to build
