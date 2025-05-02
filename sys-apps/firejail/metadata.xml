@@ -117,6 +117,7 @@
     UAF = Use After Free mitigation
     HF = Hash Function used for ASLR
     FB = Freed Block in page wipe policy, especially for sensitive data
+    (The poison random pattern is used to detect memory corruption bugs, not necessarily to secure wipe.)
     FP = Freed Page wipe policy, (c) = configurable, (o) = optional
     TC = Type Confusion mitigation
     MTE = Memory Type Extension (arm64 only), hardware accelerated UAF detection and protection, (c) = if enabled at build time
