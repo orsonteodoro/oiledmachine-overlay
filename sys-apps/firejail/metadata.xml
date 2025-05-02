@@ -92,22 +92,22 @@
     LANDLOCK_EXECUTE[PROFILE_NAME] - Add execute rule path is comma separated
     Valid values - PATH1; PATH1,PATH2; PATH1,PATH2,...; unset (don't apply)
 
-    MALLOC_BACKEND[PROFILE_NAME] - Set the hardened allocator
+    MALLOC_BACKEND[PROFILE_NAME] - Set the hardened heap allocator
     Valid values - hardened_malloc, mimalloc, scudo, system-malloc,
     unset (It will fallback to hardened malloc followed by ptmalloc.)
 
-    Allocator           | HO | OOB | UAF | HF     | FB              | FP              | TC | MTE   | Examples
-    bmalloc             | y  | y   | y   | n      | poison          | none            | n  | n     | Older WebKitGTK release
-    jemalloc            | y  | y   | y   | n      | zero/poison (c) | none            | n  | n     | Mono, Blender, MariaDB, QEMU
-    hardened_malloc     | y  | y   | y   | y[2]   | poison          | none            | y  | y (c) | GrapheneOS
-    libpas              | y  | y   | y   | y[1]   | none            | none            | y  | n     | Latest WebKitGTK
-    mimalloc            | y  | y   | y   | y[3]   | none            | none            | n  | n     | AI/ML (pyTorch, ONNX Runtime)
-    mozjemalloc         | y  | y   | n   | n/a    | zero/poison (c) | none            | n  | n     | Firefox
-    PartitionAlloc      | y  | y   | y   | y[5]   | poison          | none            | y  | y     | Chromium
-    ptmalloc            | n  | n   | n   | n      | none            | none            | n  | n     | glibc, Linux userland apps
-    Scudo               | y  | y   | y   | y[4]   | zero/poison (c) | none            | n  | y     | Android
-    Slub                | y  | y   | y   | y[6]   | none            | none/poison (c) | n  | n     | Kernel/drivers
-    tcmalloc            | y  | y   | y   | n      | none            | none            | n  | n     | Databases (Redis, MariaDB)          
+    Heap allocator      | HO | OOB | UAF | HF     | FB                 | FP              | TC | MTE   | Examples
+    bmalloc             | y  | y   | y   | n      | poison             | none            | n  | n     | Older WebKitGTK release
+    jemalloc            | y  | y   | y   | n      | zero/poison (c)[7] | none            | n  | n     | Mono, Blender, MariaDB, QEMU
+    hardened_malloc     | y  | y   | y   | y[2]   | poison             | none            | y  | y (c) | GrapheneOS
+    libpas              | y  | y   | y   | y[1]   | none               | none            | y  | n     | Latest WebKitGTK
+    mimalloc            | y  | y   | y   | y[3]   | none               | none            | n  | n     | AI/ML (pyTorch, ONNX Runtime)
+    mozjemalloc         | y  | y   | n   | n/a    | zero/poison (c)[8] | none            | n  | n     | Firefox
+    PartitionAlloc      | y  | y   | y   | y[5]   | poison             | none            | y  | y     | Chromium
+    ptmalloc            | n  | n   | n   | n      | none               | none            | n  | n     | glibc, Linux userland apps
+    Scudo               | y  | y   | y   | y[4]   | zero/poison (c)    | none            | n  | y     | Android
+    Slub                | y  | y   | y   | y[6]   | none               | none/poison (c) | n  | n     | Kernel/drivers
+    tcmalloc            | y  | y   | y   | n      | none               | none            | n  | n     | Databases (Redis, MariaDB)          
 
     For sensitive data apps:  KASLR, HO=y, OOB=y, UAF=y, FP=poison|zero are required for security-critical.
     For web browsers:         KASLR, HO=y, OOB=y, UAF=y, FP=poison|zero, TC=y are required for security-critical.
@@ -129,6 +129,7 @@
     [5] = ALSR, linear PSNR
     [6] = via KASLR
     [7] = It is default off.
+    [8] = It may be off by default.
 
     OOM[PROFILE_NAME] - Set the normalized number of pages for the OOM (Out Of Memory) killer.
     Higher values mean likely killed based on OOM killer context.
