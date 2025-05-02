@@ -96,18 +96,18 @@
     Valid values - hardened_malloc, mimalloc, scudo, system-malloc,
     unset (It will fallback to hardened malloc followed by ptmalloc.)
 
-    Allocator           | HO | OOB | UAF | HF     | FB          | FP              | TC | MTE   | Examples
-    bmalloc             | y  | y   | y   | n      | poison      | none            | n  | n     | Older WebKitGTK release
-    jemalloc            | y  | y   | y   | n      | none        | none            | n  | n     | Mono, Blender, MariaDB, QEMU
-    hardened_malloc     | y  | y   | y   | y[2]   | poison      | poison/zero     | y  | y (c) | GrapheneOS
-    libpas              | y  | y   | y   | y[1]   | poison/zero | none/zero (c)   | y  | n     | Latest WebKitGTK
-    mimalloc            | y  | y   | y   | y[3]   | config      | none            | n  | n     | AI/ML (pyTorch, ONNX Runtime)
-    mozjemalloc         | y  | y   | n   | n/a    | none        | none            | n  | n     | Firefox
-    PartitionAlloc      | y  | y   | y   | y[5]   | poison      | zero (o)        | y  | y     | Chromium
-    ptmalloc            | n  | n   | n   | n      | none        | none            | n  | n     | glibc, Linux userland apps
-    scudo               | y  | y   | y   | y[4]   | poison      | poison/zero (c) | n  | y     | Android
-    slub                | y  | y   | y   | y[6]   | none        | none/poison (c) | n  | n     | Kernel/drivers
-    tcmalloc            | y  | y   | y   | n      | none        | none            | n  | n     | Databases (Redis, MariaDB)          
+    Allocator           | HO | OOB | UAF | HF     | FB              | FP              | TC | MTE   | Examples
+    bmalloc             | y  | y   | y   | n      | poison          | none            | n  | n     | Older WebKitGTK release
+    jemalloc            | y  | y   | y   | n      | zero/poison (c) | none            | n  | n     | Mono, Blender, MariaDB, QEMU
+    hardened_malloc     | y  | y   | y   | y[2]   | poison          | none            | y  | y (c) | GrapheneOS
+    libpas              | y  | y   | y   | y[1]   | none            | none            | y  | n     | Latest WebKitGTK
+    mimalloc            | y  | y   | y   | y[3]   | none            | none            | n  | n     | AI/ML (pyTorch, ONNX Runtime)
+    mozjemalloc         | y  | y   | n   | n/a    | zero/poison (c) | none            | n  | n     | Firefox
+    PartitionAlloc      | y  | y   | y   | y[5]   | poison          | none            | y  | y     | Chromium
+    ptmalloc            | n  | n   | n   | n      | none            | none            | n  | n     | glibc, Linux userland apps
+    scudo               | y  | y   | y   | y[4]   | zero/poison (c) | none            | n  | y     | Android
+    slub                | y  | y   | y   | y[6]   | none            | none/poison (c) | n  | n     | Kernel/drivers
+    tcmalloc            | y  | y   | y   | n      | none            | none            | n  | n     | Databases (Redis, MariaDB)          
 
     For sensitive data apps:  KASLR, HO=y, OOB=y, UAF=y, FP=poison|zero are required for security-critical.
     For web browsers:         KASLR, HO=y, OOB=y, UAF=y, FP=poison|zero, TC=y are required for security-critical.
