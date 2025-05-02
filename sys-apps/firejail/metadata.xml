@@ -105,7 +105,7 @@
     mozjemalloc         | y  | y   | n   | n/a    | zero/poison (c)[8] | none            | n  | n     | Firefox
     PartitionAlloc      | y  | y   | y   | y[5]   | poison             | none            | y  | y     | Chromium
     ptmalloc            | n  | n   | n   | n      | none               | none            | n  | n     | glibc, Linux userland apps
-    Scudo               | y  | y   | y   | y[4]   | zero/poison (c)    | none            | n  | y     | Android
+    Scudo               | y  | y   | y   | y[4]   | zero/poison (c)[9] | none            | n  | y     | Android
     Slub                | y  | y   | y   | y[6]   | none               | none/poison (c) | n  | n     | Kernel/drivers
     tcmalloc            | y  | y   | y   | n      | none               | none            | n  | n     | Databases (Redis, MariaDB)          
 
@@ -130,6 +130,7 @@
     [6] = via KASLR
     [7] = It is default off.
     [8] = It may be off by default.
+    [9] = Poison is default on.
 
     OOM[PROFILE_NAME] - Set the normalized number of pages for the OOM (Out Of Memory) killer.
     Higher values mean likely killed based on OOM killer context.
