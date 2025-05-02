@@ -132,7 +132,7 @@
     [8] = It may be off by default.
     [9] = Poison is default on.
     [10] = Can use runtime environment variables MALLOC_CONF=junk:true for poison, or MALLOC_CONF=zero:true for zeroing
-    [11] = If poison is enabled, it could detect UAF.  The default values make it no.  Using zero does not turn on UAF migation.
+    [11] = If poison is enabled, it could detect and mitigate some UAF.  The default values make it no.  Using zero does not turn on UAF mitigation.
 
     OOM[PROFILE_NAME] - Set the normalized number of pages for the OOM (Out Of Memory) killer.
     Higher values mean likely killed based on OOM killer context.
