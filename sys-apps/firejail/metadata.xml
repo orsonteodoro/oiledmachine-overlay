@@ -111,13 +111,14 @@
     For sensitive data apps:  KASLR, HO=y, OOB=y, UAF=y, FP=poison|zero are required for secure-critical.
     For browsers:             KASLR, HO=y, OOB=y, UAF=y, FP=poison|zero, TC=y are required for secure-critical.
 
-    HO = Heap Overflow protection
-    OOB = Out of Bounds protection
+    HO = Heap Overflow mitigation
+    OOB = Out of Bounds mitigation
     ASLR = Address Space Layout Randomization protection
     FP = secure free sensitive wipe policy
+    HF = hash function used for ASLR
     TC = Type confusion mitigation
     MTE = Memory Type Extension (arm64 only)
-    HF = hash function used for ASLR
+    UAF = Use after free mitigation
     [1] = Either Xorshift PRNG or ARC4
     [2] = ChaCha8
     [3] = ChaCha20
