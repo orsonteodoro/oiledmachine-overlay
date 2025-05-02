@@ -96,26 +96,34 @@
     Valid values - hardened_malloc, mimalloc, scudo, system-malloc,
     unset (a hardened malloc followed by system-malloc)
 
-                        | ASLR   | freed data remittance policy[7]            | ARM64 MTE[3] | type confusion mitigation strategy[9][10]
-    hardened_malloc     | yes[6] | small allocs zeroed, large allocs unerased | optional     | size classes in dedicated region with random base, PartitionAlloc inspired
-    mimalloc            | yes[8] | eager cryptographic erase                  | no           | size classes associated with page/segment of the same size class
-    scudo               | yes[2] | zeroed immediate or zeroed when full delay | optional     | size classes associated with same region of the same size class
-    unset [5]           | [1]    | left unsanitized                           | no[4]        | size grouping via arena bins
-    bmalloc [11]        |        |                                            |              | yes, a page of same object type
-    PartitionAlloc [11] |        |                                            |              | yes, a page containing objects of the same bucket
+    Allocator           | HO | OOB | UAF | HF     | FP          | TC | MTE   | Examples
+    bmalloc             | y  | y   | y   | n      | poison      | n  | n     | Older WebKitGTK release
+    jemalloc            | y  | y   | y   | n      | none        | n  | n     | Mono, Blender, MariaDB, QEMU
+    libpas              | y  | y   | y   | y[1]   | poison/zero | y  | n     | Latest WebKitGTK
+    hardened_malloc     | y  | y   | y   | y[2]   | poison      | y  | n     | GrapheneOS
+    mimalloc            | y  | y   | y   | y[3]   | config      | n  | n     | AI/ML (pyTorch, ONNX Runtime)
+    scudo               | y  | y   | y   | y[4]   | poison      | n  | y     | Android
+    PartitionAlloc      | y  | y   | y   | y[5]   | poison      | y  | y     | Chromium
+    ptmalloc            | n  | n   | n   | n      | none        | n  | n     | Glibc, Linux userland apps
+    tcmalloc            | y  | y   | y   | n      | none        | n  | n     | Databases (Redis, MariaDB)          
+    slub                | y  | y   | y   | y[6]   | none        | n  | n     | Kernel
 
-    [1] Only if RANDOMIZE_BASE (KALSR) is enabled in the kernel config and active.  Otherwise, it does not perform proactive mixing.
-    [2] Depends on KASLR and may use linear function
-    [3] Buffer overflow and use-after-free protection
-    [4] MTE is default on in the Linux Kernel
-    [5] ptmalloc for glibc; mallocng for musl
-    [6] Proactive via ChaCha8
-    [7] Using zeros for erasing makes it easier to find keys or sensitive data strings.
-    [8] Proactive via ChaCha20
-    [9] Allocator is suited for dynamically typed scripting languages (e.g. JavaScript).  It is preferred to use the vendored allocator.
-    [10] Type confusion mitigation is typically practically not exact but sized based.  Ideally, the exact data type is all grouped together.
-    [11] Not provided as external lib but listed as an example for comparison of a model allocator designed to mitigate against type confusion
+    For sensitive data apps:  KASLR, HO=y, OOB=y, UAF=y, FP=poison|zero are required for secure-critical.
+    For browsers:             KASLR, HO=y, OOB=y, UAF=y, FP=poison|zero, TC=y are required for secure-critical.
 
+    HO = Heap Overflow protection
+    OOB = Out of Bounds protection
+    ASLR = Address Space Layout Randomization protection
+    FP = secure free sensitive wipe policy
+    TC = Type confusion mitigation
+    MTE = Memory Type Extension (arm64 only)
+    HF = hash function
+    [1] = Either Xorshift PRNG or ARC4
+    [2] = ChaCha8
+    [3] = ChaCha20
+    [4] = KASLR required & linear function
+    [5] = ALSR, linear PSNR
+    [6] = via KASLR
 
     OOM[PROFILE_NAME] - Set the normalized number of pages for the OOM (Out Of Memory) killer.
     Higher values mean likely killed based on OOM killer context.
