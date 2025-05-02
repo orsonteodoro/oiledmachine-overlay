@@ -114,13 +114,13 @@
 
     HO = Heap Overflow mitigation
     OOB = Out of Bounds mitigation
-    ASLR = Address Space Layout Randomization protection (userspace fallback if kernel was not built with KASLR)
+    UAF = Use after free mitigation
+    HF = hash function used for ASLR
     FB = wipe policy when freeing, especially for sensitive data
     FP = page wipe policy, (c) = configurable, (o) optional
-    HF = hash function used for ASLR
     TC = Type confusion mitigation
-    MTE = Memory Type Extension (arm64 only)
-    UAF = Use after free mitigation
+    MTE = Memory Type Extension (arm64 only), hardware accelerated UAF detection and protection
+    ASLR = Address Space Layout Randomization protection (userspace fallback if kernel was not built with KASLR)
     [1] = Either Xorshift PRNG or ARC4
     [2] = ChaCha8
     [3] = ChaCha20
