@@ -886,13 +886,6 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 					&&
 			test-flags-CC "-fstack-clash-protection" \
 		; then
-	# CE = Code Execution
-	# DoS = Denial of Service
-	# DT = Data Tampering
-	# ID = Information Disclosure
-	# MC = Memory Corruption
-	# PE = Privilege Escalation
-
 	# MC, CE, PE, DoS, DT, ID
 			filter-flags "-f*stack-clash-protection"
 			append-flags "-fstack-clash-protection"
@@ -1383,19 +1376,27 @@ einfo "All SSP hardening (All functions hardened)"
 
 		unset added
 		declare -A added=(
-			["asan"]="0"			# CE, PE, DoS, DT, ID
-			["cfi"]="0"			# CE, PE, DoS, DT, ID
-			["dfsan"]="0"
-			["gwp-asan"]="0"
-			["hwasan"]="0"			# CE, PE, DoS, DT, ID
-			["lsan"]="0"			# ID
-			["msan"]="0"			# CE, PE, DoS, DT, ID
+	# ZC = Zero Click Attack
+	# CE = Code Execution
+	# DoS = Denial of Service
+	# DT = Data Tampering
+	# ID = Information Disclosure
+	# MC = Memory Corruption
+	# PE = Privilege Escalation
+	#		Sanitizer			Type of attacks it protects against
+			["asan"]="0"			# ZC, CE, PE, DoS, DT, ID
+			["cfi"]="0"			# ZC, CE, PE
+			["dfsan"]="0"			# DT, ID
+			["gwp-asan"]="0"		# ZC, CE, PE, DoS, DT, ID
+			["hwasan"]="0"			# ZC, CE, PE, DoS, DT, ID
+			["lsan"]="0"			# DoS
+			["msan"]="0"			# DoS, ID
 			["rtsan"]="0"
-			["safestack"]="0"
-			["shadowcallstack"]="0"
-			["tsan"]="0"			# CE, PE, DoS, DT, ID
-			["ubsan"]="0"			# CE, PE, DoS, DT, ID
-			["tysan"]="0"
+			["safestack"]="0"		# ZC, CE, PE
+			["shadowcallstack"]="0"		# ZC, CE, PE
+			["tsan"]="0"			# ZC, CE, PE, DoS, DT
+			["ubsan"]="0"			# ZC, CE, PE, DoS, DT, ID
+			["tysan"]="0"			# ZC, CE, PE, DoS, DT, ID
 		)
 		local asan=0
 
