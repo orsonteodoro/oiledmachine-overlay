@@ -109,7 +109,7 @@
     slub                | y  | y   | y   | y[6]   | none        | n  | n     | Kernel
 
     For sensitive data apps:  KASLR, HO=y, OOB=y, UAF=y, FP=poison|zero are required for security-critical.
-    For browsers:             KASLR, HO=y, OOB=y, UAF=y, FP=poison|zero, TC=y are required for security-critical.
+    For web browsers:         KASLR, HO=y, OOB=y, UAF=y, FP=poison|zero, TC=y are required for security-critical.
 
     HO = Heap Overflow mitigation
     OOB = Out of Bounds mitigation
