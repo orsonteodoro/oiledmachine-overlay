@@ -284,7 +284,7 @@ If an ASaned curl gets updated, it may complain with:
 ==<id>==ASan runtime does not come first in initial library list; you should either link runtime to your application or manually preload it with LD_PRELOAD.
 ```
 
-Doing `source /etc/profile` or restarting to fix the issue.
+Try doing a `source /etc/profile` or a restart to fix the issue.
 
 
 When does a package meet performance critical?  If it is not marked
