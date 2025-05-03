@@ -1113,7 +1113,7 @@ einfo "All SSP hardening (All functions hardened)"
 |"security-critical") \
 			]] \
 		; then
-	# DoS, ID
+	# CE, PE, DoS, DT, ID
 			filter-flags "-f*trivial-auto-var-init=*"
 			append-flags "-ftrivial-auto-var-init=zero"
 			CFLAGS_HARDENED_CFLAGS+=" -ftrivial-auto-var-init=zero"
