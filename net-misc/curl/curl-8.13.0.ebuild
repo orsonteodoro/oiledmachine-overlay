@@ -30,7 +30,8 @@ EAPI=8
 # don't be afraid to require a later version.
 # ngtcp2 = https://bugs.gentoo.org/912029 - can only build with one tls backend at a time.
 
-CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
+# You cannot pick both asan and ubsan in this package because it will break the login, pam, or a pam based module.
+CFLAGS_HARDENED_SANITIZERS="address hwaddress"
 # CVE-2018-16840 - heap use-after-free (ASAN)
 # CVE-2017-8818 - out of bounds (UBSAN)
 CFLAGS_HARDENED_TOLERANCE="4.0"
@@ -107,7 +108,7 @@ ${IMPLS[@]}
 +adns +alt-svc brotli debug ech +ftp gnutls gopher +hsts +http2 +http3 +httpsrr
 idn +imap kerberos ldap mbedtls +openssl +pop3 +psl +quic rtmp rustls samba
 sasl-scram +smtp ssh ssl static-libs test telnet +tftp +websockets zstd
-ebuild_revision_2
+ebuild_revision_3
 "
 RESTRICT="
 	!test? (
