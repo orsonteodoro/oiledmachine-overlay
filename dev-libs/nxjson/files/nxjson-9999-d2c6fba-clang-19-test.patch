@@ -1,0 +1,12 @@
+diff '--color=auto' -urp nxjson-9999.orig/test/test.c nxjson-9999/test/test.c
+--- nxjson-9999.orig/test/test.c	2025-05-03 15:56:22.323076581 -0700
++++ nxjson-9999/test/test.c	2025-05-03 16:01:20.002703441 -0700
+@@ -23,7 +23,7 @@
+ #include <malloc.h>
+ #include <assert.h>
+ #include <sys/stat.h>
+-//#include <unistd.h>
++#include <unistd.h> // enable for clang 19
+ #include <fcntl.h>
+ 
+ #include "../nxjson.h"

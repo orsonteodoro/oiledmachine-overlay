@@ -4,6 +4,9 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
+CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" "llvm" )
+CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 
 EXPECTED_FINGERPRINT="\
@@ -44,7 +47,8 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/nxjson-9999_p20200927-libdir-path.patch"
+	"${FILESDIR}/${PN}-9999_p20200927-libdir-path.patch"
+	"${FILESDIR}/${PN}-9999-d2c6fba-clang-19-test.patch"
 )
 
 get_lib_types() {
@@ -86,7 +90,6 @@ src_prepare() {
 	export CMAKE_USE_DIR="${S}"
 	cd "${CMAKE_USE_DIR}" || die
 	cmake_src_prepare
-	export CMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
 	prepare_abi() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
@@ -94,7 +97,7 @@ src_prepare() {
 			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			cd "${CMAKE_USE_DIR}" || die
 			if [[ "${lib_type}" == "shared" ]] ; then
-				sed -i -e "s|STATIC|SHARED|" CMakeLists.txt || die
+				sed -i -e "s|STATIC|SHARED|" "CMakeLists.txt" || die
 			fi
 		done
 	}
@@ -102,13 +105,13 @@ src_prepare() {
 }
 
 src_configure() {
+	export CMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
 	local mycmakeargs=(
 		-DBUILD_TESTS=$(usex test)
 	)
 	configure_abi() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
-			cp -a "${S}-${MULTILIB_ABI_FLAG}.${ABI}"
 			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${CMAKE_USE_DIR}" || die
@@ -123,7 +126,6 @@ src_compile() {
 	compile_abi() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
-			cp -a "${S}-${MULTILIB_ABI_FLAG}.${ABI}"
 			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
@@ -137,12 +139,11 @@ src_test() {
 	test_abi() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
-			cp -a "${S}-${MULTILIB_ABI_FLAG}.${ABI}"
 			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
-			cd "${BUILD_DIR}" || die
+			cd "${BUILD_DIR}/test" || die
 			if use test ; then
-				nxjson || die
+				./nxjson-test || die
 			fi
 		done
 	}
@@ -154,7 +155,6 @@ src_install() {
 	install_abi() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
-			cp -a "${S}-${MULTILIB_ABI_FLAG}.${ABI}"
 			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${BUILD_DIR}" || die
