@@ -34,7 +34,7 @@ HOMEPAGE="https://github.com/yarosla/nxjson"
 SLOT="0/${EXPECTED_FINGERPRINT:0:7}"
 IUSE+="
 debug static-libs test
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND+="
 	virtual/libc
@@ -166,3 +166,6 @@ src_install() {
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (9999, d2c6fba, 20250503)
+# test-suite gcc:  passed with asan, ubsan
+# test-suite clang:  passed with asan, ubsan
