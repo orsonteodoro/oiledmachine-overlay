@@ -838,8 +838,7 @@ einfo "rustc host:  ${host}"
 		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
 			| sed -r \
 				-e "s#-C[ ]*link-arg=-z[ ]*-C[ ]*link-arg=noexecstack##g" \
-				-e "s#-C[ ]*link-arg=-Wl,-z,noexecstack##g" \
-			)
+				-e "s#-C[ ]*link-arg=-Wl,-z,noexecstack##g")
 		RUSTFLAGS+=" -C link-arg=-Wl,-z,noexecstack"
 	fi
 
