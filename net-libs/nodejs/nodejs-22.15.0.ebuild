@@ -725,8 +725,8 @@ eerror "To use mold, enable the mold USE flag."
 		myconf+=( --openssl-default-cipher-list=${NODEJS_OPENSSL_DEFAULT_LIST_CORE} )
 	fi
 
-ewarn
 ewarn "Disabling pointer compression."
+
 ewarn
 ewarn "Use --max-old-space-size=4096 or --max-old-space-size=8192 to"
 ewarn "NODE_OPTIONS environment variable if out of memory (OOM)."
