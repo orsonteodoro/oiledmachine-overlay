@@ -7,6 +7,7 @@ CFLAGS_HARDENED_USE_CASES="untrusted-data"
 
 inherit cflags-hardened cmake-multilib
 
+KEYWORDS="~amd64 ~arm64"
 SRC_URI="
 https://github.com/DaveGamble/${PN}/archive/v${PV}.tar.gz
 	-> ${P}.tar.gz
@@ -19,10 +20,9 @@ RESTRICT="
 	!test? ( test )
 "
 SLOT="0"
-KEYWORDS="~amd64 ~arm64"
 IUSE="
 test
-ebuild_revision_1
+ebuild_revision_2
 "
 
 src_prepare() {
@@ -34,6 +34,7 @@ src_prepare() {
 }
 
 src_configure() {
+	cflags-hardened_append
 	local mycmakeargs=(
 		-DENABLE_CJSON_TEST=$(usex test)
 	)
