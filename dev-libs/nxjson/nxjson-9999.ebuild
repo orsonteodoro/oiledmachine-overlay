@@ -4,12 +4,14 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
+
 EXPECTED_FINGERPRINT="\
 cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce\
 47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e\
 "
 
-inherit cmake git-r3 multilib-minimal toolchain-funcs
+inherit cflags-hardened cmake git-r3 multilib-minimal toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
@@ -27,7 +29,10 @@ DESCRIPTION="A very small JSON parser written in C"
 LICENSE="LGPL-3+"
 HOMEPAGE="https://github.com/yarosla/nxjson"
 SLOT="0/${EXPECTED_FINGERPRINT:0:7}"
-IUSE+=" debug static-libs test"
+IUSE+="
+debug static-libs test
+ebuild_revision_1
+"
 RDEPEND+="
 	virtual/libc
 "
@@ -107,6 +112,7 @@ src_configure() {
 			export CMAKE_USE_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
 			export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 			cd "${CMAKE_USE_DIR}" || die
+			cflags-hardened_append
 			cmake_src_configure
 		done
 	}
