@@ -130,6 +130,7 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # For example, TSAN is about 4-16x slower compared to the unmitigated build.
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_TOLERANCE_USER
+# @DESCRIPTION:
 # A user override for RUSTFLAGS_HARDENED_TOLERANCE.
 # Acceptable values: 1.0-16, unset
 # Default: unset
@@ -178,6 +179,25 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # @ECLASS_VARIABLE:  RUSTFLAGS_UNSTABLE_RUSTC_PV
 # @DESCRIPTION:
 RUSTFLAGS_UNSTABLE_RUSTC_PV="1.86.0"
+
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_USER_BTI
+# @USER_VARIABLE
+# @DESCRIPTION:
+# User override to force enable BTI (Branch Target Identification).
+# armv9*-r or armv8*-r users should set this if they have the feature.
+
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_USER_MTE
+# @USER_VARIABLE
+# @DESCRIPTION:
+# User override to force enable MTE (Memory Tag Extention).
+# armv9*-r or armv8*-r users should set this if they have the feature.
+
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_USER_PAC
+# @USER_VARIABLE
+# @DESCRIPTION:
+# User override to force enable PAC (Pointer Authentication Code).
+# armv9*-r or armv8*-r users should set this if they have the feature.
+
 
 # @FUNCTION: _rustflags-hardened_sanitizers_compat
 # @DESCRIPTION:
@@ -324,6 +344,92 @@ _rustflags-hardened_has_target_feature() {
 	return 1
 }
 
+# @FUNCTION:  _rustflags-hardened_arm_cfi
+# @DESCRIPTION:
+# Adjust flags for forward edge CFI
+_rustflags-hardened_arm_cfi() {
+	[[ "${ARCH}" == "amd64" ]] || return
+	declare -A BTI=(
+		["armv8.3-a"]="0"
+		["armv8.4-a"]="0"
+		["armv8.5-a"]="1"
+		["armv8.6-a"]="1"
+		["armv8.7-a"]="1"
+		["armv8.8-a"]="1"
+		["armv8.9-a"]="1"
+		["armv9-a"]="1"
+	)
+
+	declare -A MTE=(
+		["armv8.3-a"]="0"
+		["armv8.4-a"]="0"
+		["armv8.5-a"]="1"
+		["armv8.6-a"]="1"
+		["armv8.7-a"]="1"
+		["armv8.8-a"]="1"
+		["armv8.9-a"]="1"
+		["armv9-a"]="1"
+	)
+
+	declare -A PAC=(
+		["armv8.3-a"]="1"
+		["armv8.4-a"]="1"
+		["armv8.5-a"]="1"
+		["armv8.6-a"]="1"
+		["armv8.7-a"]="1"
+		["armv8.8-a"]="1"
+		["armv8.9-a"]="1"
+		["armv9-a"]="1"
+	)
+
+	local march=$(echo "${CFLAGS}" \
+		| grep -E "-march=armv8\.[0-9]-a" \
+		| tr " " "\n" \
+		| tail -n 1 \
+		| sed -e "s|-march=||g")
+
+	local bti="${BTI[${march}]}"
+	local mte="${MTE[${march}]}"
+	local pac="${PAC[${march}]}"
+	[[ -z "${bti}" ]] && bti="0"
+	[[ -z "${mte}" ]] && mte="0"
+	[[ -z "${pac}" ]] && pac="0"
+
+	if [[ -n "${RUSTFLAGS_HARDENED_USER_BTI}" ]] ; then
+		bti="${RUSTFLAGS_HARDENED_USER_BTI}"
+	fi
+
+	if [[ -n "${RUSTFLAGS_HARDENED_USER_MTE}" ]] ; then
+		mte="${RUSTFLAGS_HARDENED_USER_MTE}"
+	fi
+
+	if [[ -n "${RUSTFLAGS_HARDENED_USER_PAC}" ]] ; then
+		pac="${RUSTFLAGS_HARDENED_USER_PAC}"
+	fi
+
+	RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+		| sed \
+			-e "s|-C target-feature=[+]pac-ret,[+]bti||g" \
+			-e "s|-C target-feature=[+]pac-ret||g" \
+			-e "s|-C target-feature=[+]bti||g" \
+			-e "s|-C target-feature=-pac-ret,-bti||g")
+	if [[ "${bti}" == "1" && "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("security-critical") ]] ; then
+	# Partial heap overflow mitigation, jop, rop
+		RUSTFLAGS+=" -C target-feature=+pac-ret,+bti"	# security-critical
+	elif [[ "${pac}" == "1" ]] ; then
+	# Partial heap overflow mitigation, jop, rop
+		RUSTFLAGS+=" -C target-feature=+pac-ret,+bti"	# balance
+	elif [[ "${pac}" == "1" ]] ; then
+	# Partial heap overflow mitigation, rop
+		RUSTFLAGS+=" -C target-feature=+pac-ret"	# balance
+	elif [[ "${bti}" == "1" ]] ; then
+	# jop
+		RUSTFLAGS+=" -C target-feature=+bti"		# performance-critical
+	else
+		RUSTFLAGS+=" -C target-feature=-pac-ret,-bti"	# performance-critical
+	fi
+}
+
 # @FUNCTION: rustflags-hardened_append
 # @DESCRIPTION:
 # Apply RUSTFLAG hardening to Rust packages.
@@ -346,10 +452,12 @@ einfo "CC:  ${CC}"
 		${CC} --version || die
 	fi
 
-	if tc-is-gcc ; then
-		RUSTFLAGS+=" -C linker=gcc"
-	elif tc-is-clang ; then
+	RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+		| sed -r -e "s#-C[ ]*linker=(clang|gcc)##g")
+	if tc-is-clang ; then
 		RUSTFLAGS+=" -C linker=clang"
+	elif tc-is-gcc ; then
+		RUSTFLAGS+=" -C linker=gcc"
 	fi
 
 	local need_cfi=0
@@ -435,9 +543,11 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		| cut -f 2 -d " ")
 
 	local arch=$(echo "${CFLAGS}" \
-		| grep -E -o -e "-march=[-a-z0-9_]+" \
+		| grep -E -o -e "-march=[-.a-z0-9]+" \
 		| sed -e "s|-march=||")
 	if [[ -n "${arch}" ]] && ! [[ "${RUSTFLAGS}" =~ "target-cpu=" ]] ; then
+		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+			| sed -r -e "s|-C[ ]*target-cpu=[-.a-z0-9]+||g")
 		RUSTFLAGS+=" -C target-cpu=${arch}"
 	fi
 
@@ -452,6 +562,8 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		if [[ "${opt_level}" == "4" ]] ; then
 			opt_level="3"
 		fi
+		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+			| sed -r -e "s#-C[ ]*opt-level=(0|1|2|3|4|fast|s|z)##g")
 		RUSTFLAGS+=" -C opt-level=${opt_level}"
 	fi
 
@@ -488,6 +600,8 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		_rustflags-hardened_has_target_feature "cet" \
 	; then
 	# ZC, CE, PE
+		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+			| sed -r -e "s#-C[ ]*target-feature=[-+]cet##g")
 		RUSTFLAGS+=" -C target-feature=+cet"
 	elif \
 		_rustflags-hardened_has_pauth \
@@ -495,6 +609,8 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		[[ "${RUSTFLAGS_HARDENED_PAUTH:-1}" == "1" ]] \
 	; then
 	# ZC, CE, PE
+		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+			| sed -r -e "s#-C[ ]*control-flow-protection##g")
 		RUSTFLAGS+=" -C control-flow-protection"
 	fi
 
@@ -503,6 +619,9 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	if true ; then
 		: # Broken
 	elif ver_test "${rust_pv}" -ge "1.58.0" ; then
+		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+			| sed -r \
+				-e "s#-C[ ]*stack-protector=(all|basic|none|strong)##g" \)
 		if [[ "${RUSTFLAGS_HARDENED_LEVEL}" == "3" ]] ; then
 	# ZC, CE, EP
 			RUSTFLAGS+=" -C stack-protector=all"
@@ -563,6 +682,8 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 				:
 			elif _rustflags-hardened_has_target_feature "retpoline" ; then
 	# ZC, ID
+				RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+					| sed -r -e "s#-C[ ]*target-feature=[-+]retpoline##g")
 				RUSTFLAGS+=" -C target-feature=+retpoline"
 			fi
 		fi
@@ -570,14 +691,17 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 
 	if is-flagq "-O0" ; then
 		replace-flags "-O0" "-O1"
+		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+			| sed -r -e "s#-C[ ]*opt-level=(0|1|2|3|4|fast|s|z)##g")
 		RUSTFLAGS+=" -C opt-level=1"
-
 	fi
 
 	# ZC, CE, PE, DoS, DT, ID
 	filter-flags "-D_FORTIFY_SOURCE=*"
 	filter-flags "-U_FORTIFY_SOURCE"
 	append-flags "-U_FORTIFY_SOURCE"
+	RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+		| sed -r -e "s#-C[ ]*link-arg=-U_FORTIFY_SOURCE##g")
 	RUSTFLAGS+=" -C link-arg=-U_FORTIFY_SOURCE"
 	if [[ -n "${RUSTFLAGS_HARDENED_FORTIFY_SOURCE}" ]] ; then
 		local level="${RUSTFLAGS_HARDENED_FORTIFY_SOURCE}"
@@ -596,6 +720,8 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 				&& \
 		has_version ">=sys-libs/glibc-2.34" \
 	; then
+		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+			| sed -r -e "s#-C[ ]*link-arg=-D_FORTIFY_SOURCE=[0-3]+##g")
 		if tc-is-clang && ver_test $(clang-major-version) -ge "15" ; then
 			append-flags "-D_FORTIFY_SOURCE=3"
 			RUSTFLAGS+=" -C link-arg=-D_FORTIFY_SOURCE=3"
@@ -608,6 +734,8 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		fi
 	else
 		append-flags "-D_FORTIFY_SOURCE=2"
+		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+			| sed -r -e "s#-C[ ]*link-arg=-D_FORTIFY_SOURCE=[0-3]+##g")
 		RUSTFLAGS+=" -C link-arg=-D_FORTIFY_SOURCE=2"
 	fi
 
@@ -631,6 +759,8 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	# Remove flag if 50% drop in performance.
 	# For runtime *signed* integer overflow detection
 	# ZC, CE, PE, DoS, DT, ID
+		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+			| sed -r -e "s#-C[ ]*overflow-checks=(on|off|true|false|yes|no|y|n)##g")
 		RUSTFLAGS+=" -C overflow-checks=on"
 	fi
 
@@ -675,10 +805,14 @@ einfo "rustc host:  ${host}"
 		if _rustflags-hardened_has_target_feature "stack-probe" ; then
 	# Mitigation for stack clash, stack overflow
 	# Not available for ARCH=amd64 prebuilt build.
+			RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+				| sed -r -e "s#-C[ ]*target-feature=[-+]stack-probe##g")
 			RUSTFLAGS+=" -C target-feature=+stack-probe"
 		fi
 
 	# ZC, CE, EP, DoS, DT
+		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+			| sed -r -e "s#-C[ ]*link-arg=[-+]fstack-clash-protection##g")
 		RUSTFLAGS+=" -C link-arg=-fstack-clash-protection"
 	fi
 
@@ -701,28 +835,52 @@ einfo "rustc host:  ${host}"
 		]] \
 	; then
 	# ZC, CE, PE
-		RUSTFLAGS+=" -C link-arg=-z -C link-arg=noexecstack"
+		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+			| sed -r \
+				-e "s#-C[ ]*link-arg=-z[ ]*-C[ ]*link-arg=noexecstack##g" \
+				-e "s#-C[ ]*link-arg=-Wl,-z,noexecstack##g"
+			)
+		RUSTFLAGS+=" -C link-arg=-Wl,-z,noexecstack"
 	fi
 
 	# For executable packages only.
 	# Do not apply to hybrid (executible with libs) packages
 	if [[ "${RUSTFLAGS_HARDENED_PIE:-0}" == "1" ]] ; then
 	# ZC, CE, PE, ID
+		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+			| sed -r -e "s#-C[ ]*relocation-model=pie##g")
 		RUSTFLAGS+=" -C relocation-model=pie"
+
+		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+			| sed -r -e "s#-C[ ]*link-arg=-pie##g")
 		RUSTFLAGS+=" -C link-arg=-pie"
 	fi
 
 	# For library packages only
 	if [[ "${RUSTFLAGS_HARDENED_PIC:-0}" == "1" ]] ; then
 	# ZC, CE, PE, ID
+		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+			| sed -r -e "s#-C[ ]*relocation-model=pic##g")
 		RUSTFLAGS+=" -C relocation-model=pic"
 	fi
 
 	if ver_test "${rust_pv}" -ge "1.79" ; then
 	# DoS, DT
+		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+			| sed -r -e "s#-C[ ]*relro-level=(off|partial|full)##g")
 		RUSTFLAGS+=" -C relro-level=full"
-		RUSTFLAGS+=" -Clink-arg=-Wl,-z,relro"
-		RUSTFLAGS+=" -Clink-arg=-Wl,-z,now"
+
+		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+			| sed -r \
+				-e "s#-C[ ]*link-arg=-z[ ]*-C[ ]*link-arg=relro##g" \
+				-e "s#-C[ ]*link-arg=-Wl,-z,relro##g")
+		RUSTFLAGS+=" -C link-arg=-Wl,-z,relro"
+
+		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+			| sed -r \
+				-e "s#-C[ ]*link-arg=-z[ ]*-C[ ]*link-arg=now##g" \
+				-e "s#-C[ ]*link-arg=-Wl,-z,now##g")
+		RUSTFLAGS+=" -C link-arg=-Wl,-z,now"
 	fi
 
 	if [[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"fp-determinism"|"high-precision-research") ]] \
@@ -753,27 +911,43 @@ einfo "rustc host:  ${host}"
 				"-mno-msse4.1" \
 				"-mno-sse" \
 				"-mno-sse2"
+			RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+				| sed -r -e "s|-C[ ]*target-cpu=[-.a-z0-9]+||g")
 			RUSTFLAGS+=" -C target-cpu=generic"
 			RUSTFLAGS+=" -C target-feature=-3dnow,-avx,-avx2,-avx512cd,-avx512dq,-avx512f,-avx512ifma,-avx512vl,-fma,-mmx,-msse4,-msse4.1,-sse,-sse2"
 		fi
 		if [[ "${ARCH}" == "arm64" ]] ; then
 			replace-flags "-march=*" "-march=armv8-a"
 			filter-flags "-mtune=*"
+			RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+				| sed -r -e "s|-C[ ]*target-cpu=[-.a-z0-9]+||g")
 			RUSTFLAGS+=" -C target-cpu=generic"
 			RUSTFLAGS+=" -C target-feature=-fp-armv8,-neon"
 		fi
 		if is-flagq "-Ofast" ; then
 			replace-flags "-Ofast" "-O3"
+			RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+				| sed -r -e "s#-C[ ]*opt-level=(0|1|2|3|4|fast|s|z)##g")
 			RUSTFLAGS+=" -C opt-level=3"
 		fi
+
+		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+			| sed -r -e "s|-C[ ]*target-cpu=[-.a-z0-9]+||g")
 		RUSTFLAGS+=" -C target-cpu=generic"
-		RUSTFLAGS+=" -C float-opts=none"
 		if _rustflags-hardened_has_target_feature "strict-fp" ; then
+			RUSTFLAGS=$(echo "${RUSTFLAGS}" | sed -r -e "s#-C[ ]*target-feature=[-+]strict-fp##g")
 			RUSTFLAGS+=" -C target-feature=+strict-fp"
 		fi
+		RUSTFLAGS=$(echo "${RUSTFLAGS}" | sed -r -e "s#-C[ ]*target-feature=[-+]fast-math##g")
 		RUSTFLAGS+=" -C target-feature=-fast-math"
+
+		RUSTFLAGS=$(echo "${RUSTFLAGS}" | sed -r -e "s#-C[ ]*float-precision=(exact|16|32|64)##g")
 		RUSTFLAGS+=" -C float-precision=exact"
+
+		RUSTFLAGS=$(echo "${RUSTFLAGS}" | sed -r -e "s#-C[ ]*soft-float##g")
 		RUSTFLAGS+=" -C soft-float"
+
+		RUSTFLAGS=$(echo "${RUSTFLAGS}" | sed -r -e "s#-C[ ]*codegen-units=[0-9]+##g")
 		RUSTFLAGS+=" -C codegen-units=1"
 	fi
 
@@ -955,11 +1129,8 @@ einfo "Added ${x} from ${module} sanitizer"
 		if (( ${asan} == 1 )) ; then
 einfo "Deduping stack overflow check"
 			RUSTFLAGS=$(echo "${RUSTFLAGS}" \
-				| sed \
-					-e "s|-C stack-protector=all||g" \
-					-e "s|-C stack-protector=basic||g" \
-					-e "s|-C stack-protector=none||g" \
-					-e "s|-C stack-protector=strong||g")
+				| sed -r \
+					-e "s#-C stack-protector=(all|basic|none|strong)##g")
 	# Disable if it was the compiler default
 			RUSTFLAGS+=" -C stack-protector=none"
 		fi

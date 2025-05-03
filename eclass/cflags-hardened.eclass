@@ -153,6 +153,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_TOLERANCE_USER
 # @USER_VARIABLE
+# @DESCRIPTION:
 # A user override for CFLAGS_HARDENED_TOLERANCE.  This is to allow the user to
 # set the security-performance tradeoff especially for performance-critical
 # apps/libs.
@@ -242,6 +243,24 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 #
 #   CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" "llvm" )
 #
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_USER_BTI
+# @USER_VARIABLE
+# @DESCRIPTION:
+# User override to force enable BTI (Branch Target Identification).
+# armv9*-r or armv8*-r users should set this if they have the feature.
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_USER_MTE
+# @USER_VARIABLE
+# @DESCRIPTION:
+# User override to force enable MTE (Memory Tag Extention).
+# armv9*-r or armv8*-r users should set this if they have the feature.
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_USER_PAC
+# @USER_VARIABLE
+# @DESCRIPTION:
+# User override to force enable PAC (Pointer Authentication Code).
+# armv9*-r or armv8*-r users should set this if they have the feature.
 
 # @FUNCTION: _cflags-hardened_fcmp
 # @DESCRIPTION:
@@ -576,6 +595,9 @@ _cflags-hardened_append_gcc_retpoline() {
 	fi
 }
 
+# @FUNCTION:  _cflags-hardened_print_cfi_rules
+# @DESCRIPTION:
+# Print rules for successful LLVM CFI
 _cflags-hardened_print_cfi_rules() {
 ewarn
 ewarn "The rules for CFI hardening:"
@@ -586,6 +608,9 @@ ewarn "(3) You must always use Clang for LTO."
 ewarn
 }
 
+# @FUNCTION:  _cflags-hardened_print_cfi_requires_clang
+# @DESCRIPTION:
+# Print LLVM CFI requirements
 _cflags-hardened_print_cfi_requires_clang() {
 eerror "CFI requires Clang.  Do the following:"
 eerror "emerge -1vuDN llvm-core/llvm:${LLVM_SLOT}"
@@ -594,6 +619,87 @@ eerror "emerge -vuDN llvm-core/lld"
 eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
 eerror "emerge -vuDN llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[cfi]"
 eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
+}
+
+# @FUNCTION:  _cflags-hardened_arm_cfi
+# @DESCRIPTION:
+# Adjust flags for forward edge CFI
+_cflags-hardened_arm_cfi() {
+	[[ "${ARCH}" == "amd64" ]] || return
+	declare -A BTI=(
+		["armv8.3-a"]="0"
+		["armv8.4-a"]="0"
+		["armv8.5-a"]="1"
+		["armv8.6-a"]="1"
+		["armv8.7-a"]="1"
+		["armv8.8-a"]="1"
+		["armv8.9-a"]="1"
+		["armv9-a"]="1"
+	)
+
+	declare -A MTE=(
+		["armv8.3-a"]="0"
+		["armv8.4-a"]="0"
+		["armv8.5-a"]="1"
+		["armv8.6-a"]="1"
+		["armv8.7-a"]="1"
+		["armv8.8-a"]="1"
+		["armv8.9-a"]="1"
+		["armv9-a"]="1"
+	)
+
+	declare -A PAC=(
+		["armv8.3-a"]="1"
+		["armv8.4-a"]="1"
+		["armv8.5-a"]="1"
+		["armv8.6-a"]="1"
+		["armv8.7-a"]="1"
+		["armv8.8-a"]="1"
+		["armv8.9-a"]="1"
+		["armv9-a"]="1"
+	)
+
+	local march=$(echo "${CFLAGS}" \
+		| grep -E "-march=armv[8-9]\.[0-9]-a" \
+		| tr " " "\n" \
+		| tail -n 1 \
+		| sed -e "s|-march=||g")
+
+	local bti="${BTI[${march}]}"
+	local mte="${MTE[${march}]}"
+	local pac="${PAC[${march}]}"
+	[[ -z "${bti}" ]] && bti="0"
+	[[ -z "${mte}" ]] && mte="0"
+	[[ -z "${pac}" ]] && pac="0"
+
+	if [[ -n "${CFLAGS_HARDENED_USER_BTI}" ]] ; then
+		bti="${CFLAGS_HARDENED_USER_BTI}"
+	fi
+
+	if [[ -n "${CFLAGS_HARDENED_USER_MTE}" ]] ; then
+		mte="${CFLAGS_HARDENED_USER_MTE}"
+	fi
+
+	if [[ -n "${CFLAGS_HARDENED_USER_PAC}" ]] ; then
+		pac="${CFLAGS_HARDENED_USER_PAC}"
+	fi
+
+	filter-flags "-m*branch-protection=*"
+	if [[ "${bti}" == "1" && "${CFLAGS_HARDENED_USE_CASES}" =~ ("security-critical") ]] ; then
+	# Partial heap overflow mitigation, jop, rop
+		append-flags "-mbranch-protection=pac-ret+bti"	# security-critical
+	elif [[ "${pac}" == "1" ]] ; then
+	# Partial heap overflow mitigation, jop, rop
+		append-flags "-mbranch-protection=standard"	# balance
+	elif [[ "${pac}" == "1" ]] ; then
+	# Partial heap overflow mitigation, rop
+		append-flags "-mbranch-protection=pac-ret"	# balance
+	elif [[ "${bti}" == "1" ]] ; then
+	# jop
+		append-flags "-mbranch-protection=bti"		# performance-critical
+	else
+		append-flags "-mbranch-protection=none"		# performance-critical
+	fi
 }
 
 # @FUNCTION: cflags-hardened_append
