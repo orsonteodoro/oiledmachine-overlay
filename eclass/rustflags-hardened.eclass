@@ -114,6 +114,9 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # -C stack-protector=all		1.05 -  1.10
 # -C stack-protector=strong		1.02 -  1.05
 # -C stack-protector=basic		1.01 -  1.03
+# -C target-feature=+bti		1.00 -  1.05
+# -C target-feature=+pac-ret		1.01 -  1.05
+# -C target-feature=+pac-ret,+bti	1.02 -  1.07
 # -C target-feature=+retpoline		1.01 -  1.20
 # -Zsanitizer=address			1.50 -  4.0 (asan); 1.01 - 1.1 (gwp-asan)
 # -Zsanitizer=cfi			1.10 -  2.0
@@ -441,16 +444,16 @@ ewarn
 			-e "s|-C target-feature=[+]pac-ret||g" \
 			-e "s|-C target-feature=[+]bti||g" \
 			-e "s|-C target-feature=-pac-ret,-bti||g")
-	if [[ "${bti}" == "1" && "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("security-critical") ]] ; then
+	if [[ "${bti}" == "1" ]] && _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.07" ; then
 	# Partial heap overflow mitigation, jop, rop
 		RUSTFLAGS+=" -C target-feature=+pac-ret,+bti"	# security-critical
-	elif [[ "${pac}" == "1" ]] ; then
+	elif [[ "${pac}" == "1" ]] && _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" ; then
 	# Partial heap overflow mitigation, jop, rop
 		RUSTFLAGS+=" -C target-feature=+pac-ret,+bti"	# balance
-	elif [[ "${pac}" == "1" ]] ; then
+	elif [[ "${pac}" == "1" ]] && _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" ; then
 	# Partial heap overflow mitigation, rop
 		RUSTFLAGS+=" -C target-feature=+pac-ret"	# balance
-	elif [[ "${bti}" == "1" ]] ; then
+	elif [[ "${bti}" == "1" ]] && _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" ; then
 	# jop
 		RUSTFLAGS+=" -C target-feature=+bti"		# performance-critical
 	else

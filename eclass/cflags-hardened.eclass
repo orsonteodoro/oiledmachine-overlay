@@ -131,6 +131,10 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # -fsanitize=shadowcallstack		1.01 -  1.15
 # -fsanitize=thread			4.00 - 16.00
 # -fsanitize=undefined			1.10 -  2.00
+# -mbranch-protection=bti		1.00 -  1.05
+# -mbranch-protection=pac-ret		1.01 -  1.05
+# -mbranch-protection=pac-ret+bti	1.02 -  1.07
+# -mbranch-protection=standard		1.02 -  1.07
 # -mfloat-abi=soft -mfpu=none           5.00 - 20.00
 # -mfunction-return=thunk-extern	1.01 -  1.05
 # -mfunction-return=thunk-inline	1.01 -  1.03
@@ -712,16 +716,16 @@ ewarn
 	fi
 
 	filter-flags "-m*branch-protection=*"
-	if [[ "${bti}" == "1" && "${CFLAGS_HARDENED_USE_CASES}" =~ ("security-critical") ]] ; then
+	if [[ "${bti}" == "1" ]] && _cflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.07" ; then
 	# Partial heap overflow mitigation, jop, rop
 		append-flags "-mbranch-protection=pac-ret+bti"	# security-critical
-	elif [[ "${pac}" == "1" ]] ; then
+	elif [[ "${pac}" == "1" ]] && _cflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" ; then
 	# Partial heap overflow mitigation, jop, rop
 		append-flags "-mbranch-protection=standard"	# balance
-	elif [[ "${pac}" == "1" ]] ; then
+	elif [[ "${pac}" == "1" ]] && _cflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" ; then
 	# Partial heap overflow mitigation, rop
 		append-flags "-mbranch-protection=pac-ret"	# balance
-	elif [[ "${bti}" == "1" ]] ; then
+	elif [[ "${bti}" == "1" ]] && _cflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" ; then
 	# jop
 		append-flags "-mbranch-protection=bti"		# performance-critical
 	else
