@@ -957,7 +957,10 @@ einfo "Added ${x} from ${module} sanitizer"
 				| sed \
 					-e "s|-C stack-protector=all||g" \
 					-e "s|-C stack-protector=basic||g" \
+					-e "s|-C stack-protector=none||g" \
 					-e "s|-C stack-protector=strong||g")
+	# Disable if it was the compiler default
+			RUSTFLAGS+=" -C stack-protector=none"
 		fi
 	fi
 
