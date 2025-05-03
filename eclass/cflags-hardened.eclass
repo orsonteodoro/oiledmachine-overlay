@@ -1401,6 +1401,7 @@ einfo "All SSP hardening (All functions hardened)"
 			["tysan"]="0"			# ZC, CE, PE, DoS, DT, ID
 		)
 		local asan=0
+		local ubsan=0
 
 		if tc-is-gcc ; then
 			if [[ -n "${CC}" ]] ; then
@@ -1495,12 +1496,6 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 				elif [[ "${x}" == "cfi" ]] ; then
 					skip=1
 				else
-					if [[ "${x}" == "undefined" || "${x}" == "signed-integer-overflow" ]] ; then
-	# Dedupe -fsanitize=signed-integer-overflow
-						filter-flags -f*trapv
-						CFLAGS_HARDENED_CFLAGS=$(echo "${CFLAGS_HARDENED_CFLAGS}" | sed -e "s|-ftrapv||")
-						CFLAGS_HARDENED_CXXFLAGS=$(echo "${CXXFLAGS_HARDENED_CFLAGS}" | sed -e "s|-ftrapv||")
-					fi
 					append-flags "-fsanitize=${x}"
 					append-ldflags "-fsanitize=${x}"
 					CFLAGS_HARDENED_CFLAGS+=" -fsanitize=${x}"
@@ -1514,6 +1509,34 @@ einfo "Added ${x} from ${module} sanitizer"
 				fi
 			fi
 		done
+
+		if (( ${asan} == 1 )) ; then
+	# Dedupe -fstack-protector
+			filter-flags "-fstack-protector*"
+			CFLAGS_HARDENED_CFLAGS=$(echo "${CFLAGS_HARDENED_CFLAGS}" \
+				| sed \
+					-e "s|-fstack-protector-all||g" \
+					-e "s|-fstack-protector-strong||g" \
+					-e "s|-fstack-protector||g")
+			CFLAGS_HARDENED_CXXFLAGS=$(echo "${CXXFLAGS_HARDENED_CFLAGS}" \
+				| sed \
+					-e "s|-fstack-protector-all||g" \
+					-e "s|-fstack-protector-strong||g" \
+					-e "s|-fstack-protector||g")
+	# Disable the compiler default.
+			append-flags "-fno-stack-protector"
+			CFLAGS_HARDENED_CFLAGS+=" -fno-stack-protector"
+			CFLAGS_HARDENED_CXXFLAGS+=" -fno-stack-protector"
+		fi
+
+		if (( ${ubsan} == 1 )) ; then
+			if [[ "${x}" == "undefined" || "${x}" == "signed-integer-overflow" ]] ; then
+	# Dedupe -fsanitize=signed-integer-overflow
+				filter-flags "-f*trapv"
+				CFLAGS_HARDENED_CFLAGS=$(echo "${CFLAGS_HARDENED_CFLAGS}" | sed -e "s|-ftrapv||")
+				CFLAGS_HARDENED_CXXFLAGS=$(echo "${CXXFLAGS_HARDENED_CFLAGS}" | sed -e "s|-ftrapv||")
+			fi
+		fi
 	fi
 
 	filter-flags "-f*sanitize-recover"

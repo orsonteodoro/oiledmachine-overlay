@@ -506,12 +506,12 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		if [[ "${RUSTFLAGS_HARDENED_LEVEL}" == "3" ]] ; then
 	# ZC, CE, EP
 			RUSTFLAGS+=" -C stack-protector=all"
-		elif [[ "${RUSTFLAGS_HARDENED_LEVEL}" == "2" ]] ; then
-	# ZC, CE, EP
-			RUSTFLAGS+=" -C stack-protector=strong"
 		elif [[ "${RUSTFLAGS_HARDENED_LEVEL}" == "1" ]] ; then
 	# ZC, CE, EP
 			RUSTFLAGS+=" -C stack-protector=basic"
+		elif [[ "${RUSTFLAGS_HARDENED_LEVEL}" == "2" ]] ; then
+	# ZC, CE, EP
+			RUSTFLAGS+=" -C stack-protector=strong"
 		fi
 	fi
 
@@ -799,6 +799,10 @@ einfo "rustc host:  ${host}"
 		sanitizers_compat=0
 	fi
 
+	if ! _rustflags-hardened_has_unstable_rust ; then
+		sanitizers_compat=0
+	fi
+
 	if [[ -n "${RUSTFLAGS_HARDENED_SANITIZERS}" ]] && (( ${sanitizers_compat} == 1 )) ; then
 		local l="${RUSTFLAGS_HARDENED_SANITIZERS}"
 		declare -A GCC_M=(
@@ -946,6 +950,14 @@ einfo "Added ${x} from ${module} sanitizer"
 				fi
 			fi
 		done
+
+		if (( ${asan} == 1 )) ; then
+			RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+				| sed \
+					-e "s|-C stack-protector=all||g" \
+					-e "s|-C stack-protector=basic||g" \
+					-e "s|-C stack-protector=strong||g")
+		fi
 	fi
 
 	export RUSTFLAGS
