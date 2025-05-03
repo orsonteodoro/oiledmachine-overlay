@@ -134,7 +134,7 @@ SO_CURRENT="17"
 #SO_REVISION=""
 SO_AGE="17"
 SO_VERSION=$(( ${SO_CURRENT} - ${SO_AGE} ))
-USE_RUBY=" ruby31 ruby32 ruby33"
+USE_RUBY=" ruby32 ruby33"
 WK_PAGE_SIZE=64 # global var not const
 
 inherit cflags-depends cflags-hardened check-linker check-reqs cmake desktop dhms flag-o-matic

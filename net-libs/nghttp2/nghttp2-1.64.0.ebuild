@@ -10,7 +10,7 @@ MRUBY_COMMIT="32279e4128527bab4c961854b9cce727a060abea"
 MUNIT_COMMIT="7f53fea8901089d46233302b3af35bf8be93cfc5"
 NEVERBLEED_COMMIT="929e470260d460dacc20a10601c2d3c7a9f386b2"
 PYTHON_COMPAT=( "python3_"{10..12} )
-USE_RUBY="ruby31 ruby32 ruby33"
+USE_RUBY="ruby32 ruby33"
 
 inherit cflags-hardened cmake multilib-minimal python-r1 ruby-single toolchain-funcs
 

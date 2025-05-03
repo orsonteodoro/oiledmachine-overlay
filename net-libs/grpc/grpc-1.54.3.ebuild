@@ -22,7 +22,7 @@ CFLAGS_HARDENED_USE_CASES="network untrusted-data"
 OPENCENSUS_PROTO_PV="0.3.0"
 PYTHON_COMPAT=( "python3_"{10..11} )
 RUBY_OPTIONAL="yes"
-USE_RUBY="ruby31 ruby32"
+USE_RUBY="ruby32"
 
 inherit cflags-hardened cmake flag-o-matic multilib-minimal python-r1 ruby-ng
 
@@ -130,10 +130,6 @@ PDEPEND+="
 		~dev-python/grpcio-${PV}[${PYTHON_USEDEP}]
 	)
 	ruby? (
-		ruby_targets_ruby31? (
-			dev-lang/ruby:3.1
-			~dev-ruby/grpc-${PV}[ruby_targets_ruby31?]
-		)
 		ruby_targets_ruby32? (
 			dev-lang/ruby:3.2
 			~dev-ruby/grpc-${PV}[ruby_targets_ruby32?]

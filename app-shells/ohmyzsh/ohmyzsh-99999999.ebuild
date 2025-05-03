@@ -9,7 +9,7 @@ MISSING_DEPENDS=() # Global variable
 PYTHON_COMPAT=( python3_{10..11} )
 RDEPEND_COMMON_ALIASES=() # Global variable
 RUBY_OPTIONAL=1
-USE_RUBY="ruby31 ruby32"
+USE_RUBY="ruby32"
 ZSH_DEST="/usr/share/zsh/site-contrib/${PN}"
 ZSH_EDEST="${EPREFIX}${ZSH_DEST}"
 ZSH_TEMPLATE="templates/zshrc.zsh-template"
@@ -1037,8 +1037,8 @@ PLUGINS_RDEPEND="
 	omz_plugins_rails? (
 		|| (
 			dev-lang/ruby
-			dev-ruby/rails[ruby_targets_ruby31?,ruby_targets_ruby32?]
-			dev-ruby/rake[ruby_targets_ruby31?,ruby_targets_ruby32?]
+			dev-ruby/rails[ruby_targets_ruby32?]
+			dev-ruby/rake[ruby_targets_ruby32?]
 		)
 	)
 	omz_plugins_rand-quote? (
@@ -1067,7 +1067,7 @@ PLUGINS_RDEPEND="
 	)
 	omz_plugins_ruby? (
 		dev-lang/ruby
-		dev-ruby/rubygems[ruby_targets_ruby31?,ruby_targets_ruby32?]
+		dev-ruby/rubygems[ruby_targets_ruby32?]
 	)
 	omz_plugins_salt? (
 		app-admin/salt
