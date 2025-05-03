@@ -3,6 +3,9 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
+CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" "llvm" )
+CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 
 inherit cflags-hardened cmake-multilib
@@ -11,7 +14,11 @@ KEYWORDS="
 ~amd64 ~arm64 ~x86
 "
 S="${WORKDIR}/${PN}-$(ver_cut 1-2 ${PV})"
-SRC_URI="https://github.com/zeux/${PN}/releases/download/v${PV}/${P}.tar.gz"
+# The release tarball doesn't have testing
+SRC_URI="
+https://github.com/zeux/pugixml/archive/refs/tags/v1.15.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION="Light-weight, simple, and fast XML parser for C++ with XPath support"
 HOMEPAGE="
@@ -19,7 +26,7 @@ HOMEPAGE="
 	https://github.com/zeux/pugixml/
 "
 LICENSE="MIT"
-IUSE+=" doc static-libs"
+IUSE+=" doc static-libs test"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 # U 22.04
 DEPEND+="
@@ -43,6 +50,7 @@ src_configure() {
 	local mycmakeargs=(
 		-DBUILD_SHARED_LIBS=ON
 		-DPUGIXML_BUILD_SHARED_AND_STATIC_LIBS=$(usex static-libs)
+		-DPUGIXML_BUILD_TESTS=$(usex test)
 	)
 	cmake-multilib_src_configure
 }
@@ -52,3 +60,7 @@ src_install() {
 	dodoc "LICENSE.md"
 	use doc && einstalldocs
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (1.15, 20250503)
+# test-suite gcc:  passed with asan, ubsan
+# test-suite clang:  passed with asan, ubsan
