@@ -180,23 +180,32 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # @DESCRIPTION:
 RUSTFLAGS_UNSTABLE_RUSTC_PV="1.86.0"
 
-# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_USER_BTI
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_BTI_USER
 # @USER_VARIABLE
 # @DESCRIPTION:
 # User override to force enable BTI (Branch Target Identification).
 # armv9*-r or armv8*-r users should set this if they have the feature.
+# Valid values: 1, 0, unset
 
-# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_USER_MTE
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_MTE_USER
 # @USER_VARIABLE
 # @DESCRIPTION:
 # User override to force enable MTE (Memory Tag Extention).
 # armv9*-r or armv8*-r users should set this if they have the feature.
+# Valid values: 1, 0, unset
 
-# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_USER_PAC
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_PAC_USER
 # @USER_VARIABLE
 # @DESCRIPTION:
 # User override to force enable PAC (Pointer Authentication Code).
 # armv9*-r or armv8*-r users should set this if they have the feature.
+# Valid values: 1, 0, unset
+
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_ARM_CFI_USER
+# @USER_VARIABLE
+# @DESCRIPTION:
+# Allow build to be built with JOP, ROP mitigations
+# Valid values: 1, 0, unset
 
 
 # @FUNCTION: _rustflags-hardened_sanitizers_compat
@@ -349,6 +358,11 @@ _rustflags-hardened_has_target_feature() {
 # Adjust flags for forward edge CFI
 _rustflags-hardened_arm_cfi() {
 	[[ "${ARCH}" == "amd64" ]] || return
+	[[ "${RUSTFLAGS_HARDENED_ARM_CFI_USER}" == "0" ]] && return
+
+	# The default setting, not ready for production
+	[[ "${RUSTFLAGS_HARDENED_ARM_CFI:-0}" == "0" ]] && return
+
 	declare -A BTI=(
 		["armv8.3-a"]="0"
 		["armv8.4-a"]="0"
@@ -388,6 +402,20 @@ _rustflags-hardened_arm_cfi() {
 		| tail -n 1 \
 		| sed -e "s|-march=||g")
 
+	if [[ -z "${march}" ]] ; then
+ewarn
+ewarn "Add -march= to CFLAGS to enable CFI for ARCH=arm64"
+ewarn
+ewarn "  or"
+ewarn
+ewarn "change RUSTFLAGS_HARDENED_BTI_USER, RUSTFLAGS_HARDENED_MTE_USER,"
+ewarn "RUSTFLAGS_HARDENED_PAC_USER."
+ewarn
+ewarn "See rustflags-hardened.eclass for details."
+ewarn
+		return
+	fi
+
 	local bti="${BTI[${march}]}"
 	local mte="${MTE[${march}]}"
 	local pac="${PAC[${march}]}"
@@ -395,16 +423,16 @@ _rustflags-hardened_arm_cfi() {
 	[[ -z "${mte}" ]] && mte="0"
 	[[ -z "${pac}" ]] && pac="0"
 
-	if [[ -n "${RUSTFLAGS_HARDENED_USER_BTI}" ]] ; then
-		bti="${RUSTFLAGS_HARDENED_USER_BTI}"
+	if [[ -n "${RUSTFLAGS_HARDENED_BTI_USER}" ]] ; then
+		bti="${RUSTFLAGS_HARDENED_BTI_USER}"
 	fi
 
-	if [[ -n "${RUSTFLAGS_HARDENED_USER_MTE}" ]] ; then
-		mte="${RUSTFLAGS_HARDENED_USER_MTE}"
+	if [[ -n "${RUSTFLAGS_HARDENED_MTE_USER}" ]] ; then
+		mte="${RUSTFLAGS_HARDENED_MTE_USER}"
 	fi
 
-	if [[ -n "${RUSTFLAGS_HARDENED_USER_PAC}" ]] ; then
-		pac="${RUSTFLAGS_HARDENED_USER_PAC}"
+	if [[ -n "${RUSTFLAGS_HARDENED_PAC_USER}" ]] ; then
+		pac="${RUSTFLAGS_HARDENED_PAC_USER}"
 	fi
 
 	RUSTFLAGS=$(echo "${RUSTFLAGS}" \
@@ -475,6 +503,8 @@ einfo "CC:  ${CC}"
 	; then
 		need_cfi=1
 		need_clang=1
+	elif [[ "${ARCH}" == "arm64" ]] ; then
+		_rustflags-hardened_arm_cfi
 	fi
 
 	if tc-is-clang ; then

@@ -244,23 +244,32 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 #   CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" "llvm" )
 #
 
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_USER_BTI
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_BTI_USER
 # @USER_VARIABLE
 # @DESCRIPTION:
 # User override to force enable BTI (Branch Target Identification).
 # armv9*-r or armv8*-r users should set this if they have the feature.
+# Valid values: 1, 0, unset
 
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_USER_MTE
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_MTE_USER
 # @USER_VARIABLE
 # @DESCRIPTION:
 # User override to force enable MTE (Memory Tag Extention).
 # armv9*-r or armv8*-r users should set this if they have the feature.
+# Valid values: 1, 0, unset
 
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_USER_PAC
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_PAC_USER
 # @USER_VARIABLE
 # @DESCRIPTION:
 # User override to force enable PAC (Pointer Authentication Code).
 # armv9*-r or armv8*-r users should set this if they have the feature.
+# Valid values: 1, 0, unset
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_ARM_CFI_USER
+# @USER_VARIABLE
+# @DESCRIPTION:
+# Allow build to be built with JOP, ROP mitigations
+# Valid values: 1, 0, unset
 
 # @FUNCTION: _cflags-hardened_fcmp
 # @DESCRIPTION:
@@ -626,6 +635,11 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 # Adjust flags for forward edge CFI
 _cflags-hardened_arm_cfi() {
 	[[ "${ARCH}" == "amd64" ]] || return
+	[[ "${CFLAGS_HARDENED_ARM_CFI_USER}" == "0" ]] && return
+
+	# The default setting, not ready for production
+	[[ "${CFLAGS_HARDENED_ARM_CFI:-0}" == "0" ]] && return
+
 	declare -A BTI=(
 		["armv8.3-a"]="0"
 		["armv8.4-a"]="0"
@@ -665,6 +679,19 @@ _cflags-hardened_arm_cfi() {
 		| tail -n 1 \
 		| sed -e "s|-march=||g")
 
+	if [[ -z "${march}" ]] ; then
+ewarn
+ewarn "Add -march= to CFLAGS to enable CFI for ARCH=arm64"
+ewarn
+ewarn "  or"
+ewarn
+ewarn "change CFLAGS_HARDENED_BTI_USER, CFLAGS_HARDENED_MTE_USER,"
+ewarn "CFLAGS_HARDENED_PAC_USER."
+ewarn
+ewarn "See cflags-hardened.eclass for details."
+ewarn
+	fi
+
 	local bti="${BTI[${march}]}"
 	local mte="${MTE[${march}]}"
 	local pac="${PAC[${march}]}"
@@ -672,16 +699,16 @@ _cflags-hardened_arm_cfi() {
 	[[ -z "${mte}" ]] && mte="0"
 	[[ -z "${pac}" ]] && pac="0"
 
-	if [[ -n "${CFLAGS_HARDENED_USER_BTI}" ]] ; then
-		bti="${CFLAGS_HARDENED_USER_BTI}"
+	if [[ -n "${CFLAGS_HARDENED_BTI_USER}" ]] ; then
+		bti="${CFLAGS_HARDENED_BTI_USER}"
 	fi
 
-	if [[ -n "${CFLAGS_HARDENED_USER_MTE}" ]] ; then
-		mte="${CFLAGS_HARDENED_USER_MTE}"
+	if [[ -n "${CFLAGS_HARDENED_MTE_USER}" ]] ; then
+		mte="${CFLAGS_HARDENED_MTE_USER}"
 	fi
 
-	if [[ -n "${CFLAGS_HARDENED_USER_PAC}" ]] ; then
-		pac="${CFLAGS_HARDENED_USER_PAC}"
+	if [[ -n "${CFLAGS_HARDENED_PAC_USER}" ]] ; then
+		pac="${CFLAGS_HARDENED_PAC_USER}"
 	fi
 
 	filter-flags "-m*branch-protection=*"
@@ -1029,6 +1056,7 @@ einfo "All SSP hardening (All functions hardened)"
 		append-ldflags "-Wl,-z,now"
 		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,relro"
 		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,now"
+
 		if \
 			[[ "${CFLAGS_HARDENED_USE_CASES}" \
 				=~ \
@@ -1063,6 +1091,8 @@ einfo "All SSP hardening (All functions hardened)"
 			append-flags "-fcf-protection=full"
 			CFLAGS_HARDENED_CFLAGS+=" -fcf-protection=full"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fcf-protection=full"
+		elif [[ "${ARCH}" == "arm64" ]] ; then
+			_cflags-hardened_arm_cfi
 		fi
 
 		if \
