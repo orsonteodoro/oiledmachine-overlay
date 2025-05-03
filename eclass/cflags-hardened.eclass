@@ -636,7 +636,7 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 
 # @FUNCTION:  _cflags-hardened_arm_cfi
 # @DESCRIPTION:
-# Adjust flags for forward edge CFI
+# Adjust flags for CFI
 _cflags-hardened_arm_cfi() {
 	[[ "${ARCH}" == "amd64" ]] || return
 	[[ "${CFLAGS_HARDENED_ARM_CFI_USER}" == "0" ]] && return

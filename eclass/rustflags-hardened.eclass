@@ -358,7 +358,7 @@ _rustflags-hardened_has_target_feature() {
 
 # @FUNCTION:  _rustflags-hardened_arm_cfi
 # @DESCRIPTION:
-# Adjust flags for forward edge CFI
+# Adjust flags for CFI
 _rustflags-hardened_arm_cfi() {
 	[[ "${ARCH}" == "amd64" ]] || return
 	[[ "${RUSTFLAGS_HARDENED_ARM_CFI_USER}" == "0" ]] && return
