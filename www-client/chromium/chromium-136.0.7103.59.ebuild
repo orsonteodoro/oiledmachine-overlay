@@ -1348,6 +1348,8 @@ RUST_BDEPEND="
 if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
 	BDEPEND+="
 		${CLANG_BDEPEND}
+		>=net-libs/nodejs-22.11.0:${NODE_VERSION}[inspector]
+		app-eselect/eselect-nodejs
 	"
 fi
 # Upstream uses live rust.  Rust version is relaxed.
@@ -1365,10 +1367,8 @@ BDEPEND+="
 	>=app-arch/gzip-1.7
 	>=dev-util/gperf-3.2
 	>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
-	>=net-libs/nodejs-22.11.0:${NODE_VERSION}[inspector]
 	>=sys-devel/bison-2.4.3
 	app-alternatives/lex
-	app-eselect/eselect-nodejs
 	dev-lang/perl
 	dev-vcs/git
 	mold? (
@@ -2142,7 +2142,9 @@ einfo
 	done
 
 	( use system-dav1d || use system-libaom ) && cflags-depends_check
-	node_pkg_setup
+	if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
+		node_pkg_setup
+	fi
 	check_security_expire
 	check_ulimit
 }
