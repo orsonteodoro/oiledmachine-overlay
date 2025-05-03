@@ -12618,6 +12618,7 @@ ot-kernel_set_security_critical() {
 			|| \
 		[[ "${work_profile}" == "dss" ]] \
 	; then
+		local need_stack_protector=0
 		ot-kernel_y_configopt "CONFIG_KASAN"
 		ot-kernel_y_configopt "CONFIG_KASAN_PANIC"
 		if \
@@ -12631,6 +12632,7 @@ ot-kernel_set_security_critical() {
 		; then
 	# 1.05x - 1.25 performance impact, best for production
 			ot-kernel_y_configopt "CONFIG_KASAN_HW_TAGS"
+			need_stack_protector=1
 		elif \
 			[[ \
 				"${arch}" == "arm64" \
@@ -12648,8 +12650,10 @@ ot-kernel_set_security_critical() {
 		fi
 
 einfo "Deduping stack overflow check"
-	ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR"
-	ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR_STRONG"
+		if (( "${need_stack_protector}" == 1 )) ; then
+			ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR"
+			ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR_STRONG"
+		fi
 	else
 		ot-kernel_unset_configopt "CONFIG_KASAN"
 		ot-kernel_unset_configopt "CONFIG_KASAN_PANIC"
