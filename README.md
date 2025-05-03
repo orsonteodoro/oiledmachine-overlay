@@ -273,9 +273,10 @@ per-package flags can be used to avoid incompatibility problems.  Add the flag
 to the package and then rebuild the problematic package or deep dependency
 causing the problem.
 
-If a package is ASan-able it will dedupe the overlapping check to prevent double
-checking stack overflow.  If a package is UBSan-able, it will dedupe the
-overlapping signed integer check to avoid double checking signed overflow.
+If a package is ASan-able, the *flags-hardened eclass will dedupe the
+overlapping check to prevent double checking stack overflow.  If a package is
+UBSan-able, it will dedupe the overlapping signed integer check to avoid double
+checking signed overflow.
 
 When does a package meet performance critical?  If it is not marked
 cflags-critical or rustflags-critical.
