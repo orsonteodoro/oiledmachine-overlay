@@ -39,3 +39,6 @@ src_configure() {
 	)
 	cmake-multilib_src_configure
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (1.17.17, 20250503)
+# test-suite:  passed
