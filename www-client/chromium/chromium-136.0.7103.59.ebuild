@@ -2377,11 +2377,11 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		)
 	fi
 
-#	PATCHES+=(
-#		"${FILESDIR}/extra-patches/${PN}-134.0.6998.88-custom-optimization-level.patch"
-#		"${FILESDIR}/extra-patches/${PN}-135.0.7049.114-hardening.patch"
-#	)
-	if ! use official && false ; then
+	PATCHES+=(
+		"${FILESDIR}/extra-patches/${PN}-134.0.6998.88-custom-optimization-level.patch"
+		"${FILESDIR}/extra-patches/${PN}-135.0.7049.114-hardening.patch"
+	)
+	if ! use official ; then
 	# This section contains significant changes.  The above sections contains minor changes.
 
 		PATCHES+=(
@@ -4978,10 +4978,10 @@ eerror
 	# I noticed that the vendored clang doesn't use ccache.  Let us explicitly use ccache if requested.
 	# See https://github.com/chromium/chromium/blob/136.0.7103.59/build/toolchain/cc_wrapper.gni#L36
 	if ! _use_system_toolchain ; then
-#		if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
-#			myconf_gn+=" cc_wrapper=\"ccache\""
-#			export CCACHE_BASEDIR="${TMPDIR}"
-#		fi
+		if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
+			myconf_gn+=" cc_wrapper=\"ccache\""
+			export CCACHE_BASEDIR="${TMPDIR}"
+		fi
 
 		[[ "${FEATURES}" =~ "distcc" ]] && die "FEATURES=distcc with USE=-system-toolchain is not supported by the ebuild."
 		[[ "${FEATURES}" =~ "icecream" ]] && die "FEATURES=icecream with USE=-system-toolchain is not supported by the ebuild."
