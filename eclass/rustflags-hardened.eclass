@@ -118,19 +118,19 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # -C target-feature=+pac-ret		1.01 -  1.05
 # -C target-feature=+pac-ret,+bti	1.02 -  1.07
 # -C target-feature=+retpoline		1.01 -  1.20
-# -Zsanitizer=address			1.50 -  4.0 (asan); 1.01 - 1.1 (gwp-asan)
+# -Zsanitizer=address			1.50 -  4.0 (ASan); 1.01 - 1.1 (GWP-ASan)
 # -Zsanitizer=cfi			1.10 -  2.0
-# -Zsanitizer=hwaddress			1.15 -  1.50 (arm64)
+# -Zsanitizer=hwaddress			1.15 -  1.50 (ARM64)
 # -Zsanitizer=leak			1.05 -  1.5
 # -Zsanitizer=memory			3.00 - 11.00
 # -Zsanitizer=safestack			1.01 -  1.20
 # -Zsanitizer=shadow-call-stack		1.01 -  1.15
 # -Zsanitizer=thread			4.00 - 16.00
 
-# Setting to 4.0 will enable ASAN and other faster sanitizers.
-# Setting to 15.0 will enable TSAN and other faster sanitizers.
+# Setting to 4.0 will enable ASan and other faster sanitizers.
+# Setting to 15.0 will enable TSan and other faster sanitizers.
 
-# For example, TSAN is about 4-16x slower compared to the unmitigated build.
+# For example, TSan is about 4-16x slower compared to the unmitigated build.
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_TOLERANCE_USER
 # @DESCRIPTION:
@@ -563,7 +563,7 @@ einfo "CC:  ${CC}"
 			_rustflags-hardened_print_cfi_requires_clang
 			_rustflags-hardened_print_cfi_rules
 		fi
-eerror "Did not detect compiler."
+eerror "Did not detect a compiler."
 		die
 	fi
 

@@ -122,9 +122,9 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # -fstack-protect-strong		1.03 -  1.10
 # -fstack-protect-all			1.05 -  1.10
 # -ftrapv				1.20 -  2.00
-# -fsanitize=address			1.50 -  4.00 (asan); 1.01 - 1.1 (gwp-asan)
+# -fsanitize=address			1.50 -  4.00 (ASan); 1.01 - 1.1 (GWP-ASan)
 # -fsanitize=cfi			1.10 -  2.00
-# -fsanitize=hwaddress			1.15 -  1.50 (arm64)
+# -fsanitize=hwaddress			1.15 -  1.50 (ARM64)
 # -fsanitize=leak			1.05 -  1.50
 # -fsanitize=memory			3.00 - 11.00
 # -fsanitize=safe-stack			1.01 -  1.20
@@ -150,10 +150,10 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # -fvtable-verify=std			1.05 -  1.15
 
 # Setting to 4.0 will enable ASAN and other faster sanitizers.
-# Setting to 15.0 will enable TSAN and other faster sanitizers.
+# Setting to 15.0 will enable TSan and other faster sanitizers.
 # Setting to 20.0 will enable soft-floats and other faster sanitizers.
 
-# For example, TSAN is about 4-16x slower compared to the unmitigated build.
+# For example, TSan is about 4-16x slower compared to the unmitigated build.
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_TOLERANCE_USER
 # @USER_VARIABLE
@@ -823,7 +823,7 @@ einfo "CC:  ${CC}"
 			_cflags-hardened_print_cfi_requires_clang
 			_cflags-hardened_print_cfi_rules
 		fi
-eerror "Did not detect compiler."
+eerror "Did not detect a compiler."
 		die
 	fi
 
@@ -844,7 +844,7 @@ ewarn
 		s=$(clang-major-version)
 		if ! has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[lsan]" ; then
 ewarn
-ewarn "lsan will be soon be required for the oiledmachine-overlay for"
+ewarn "LSan will be soon be required for the oiledmachine-overlay for"
 ewarn "ARCH=amd64 without CET.  Rebuild llvm-runtimes/compiler-rt-sanitizers"
 ewarn "${s} with lsan USE flag enabled."
 ewarn
@@ -855,7 +855,7 @@ ewarn
 		s=$(clang-major-version)
 		if ! has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[ubsan]" ; then
 ewarn
-ewarn "ubsan with clang will be soon be required for the oiledmachine-overlay"
+ewarn "UBSan with Clang will be soon be required for the oiledmachine-overlay"
 ewarn "for ARCH=amd64.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with"
 ewarn "ubsan USE flag enabled."
 ewarn
@@ -866,7 +866,7 @@ ewarn
 		s=$(clang-major-version)
 		if ! has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[hwasan]" ; then
 ewarn
-ewarn "hwasan with clang will be soon be required for the oiledmachine-overlay"
+ewarn "HWASan with Clang will be soon be required for the oiledmachine-overlay"
 ewarn "for ARCH=arm64.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with"
 ewarn "hwasan USE flag enabled."
 ewarn
@@ -877,7 +877,7 @@ ewarn
 		s=$(clang-major-version)
 		if ! has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[asan]" ; then
 ewarn
-ewarn "asan with clang will be soon be required for the oiledmachine-overlay"
+ewarn "ASan with Clang will be soon be required for the oiledmachine-overlay"
 ewarn "for ARCH=arm64.  Rebuild llvm-runtimes/compiler-rt-sanitizers ${s} with"
 ewarn "hwasan USE flag enabled."
 ewarn
@@ -888,7 +888,7 @@ ewarn
 		s=$(clang-major-version)
 		if ! has_version "llvm-runtimes/compiler-rt-sanitizers:${s}[gwp-asan]" ; then
 ewarn
-ewarn "asan and gwp-asan with clang will be soon be required for the"
+ewarn "ASan and GWP-ASan with Clang will be soon be required for the"
 ewarn "oiledmachine-overlay for ARCH=arm64 and ARCH=amd64.  Rebuild"
 ewarn "llvm-runtimes/compiler-rt-sanitizers ${s} with both asan and gwp-asan"
 ewarn "USE flag enabled."
@@ -901,7 +901,7 @@ ewarn
 		s=$(clang-major-version)
 		if ! has_version "sys-devel/gcc:${s}[sanitize]" ; then
 ewarn
-ewarn "ubsan with gcc will be soon be required for the oiledmachine-overlay for"
+ewarn "UBSan with gcc will be soon be required for the oiledmachine-overlay for"
 ewarn "ARCH=amd64.  Rebuild sys-devel/gcc ${s} with sanitize USE flag enabled."
 ewarn
 		fi
