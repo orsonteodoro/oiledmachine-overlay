@@ -1015,14 +1015,14 @@ einfo "All SSP hardening (All functions hardened)"
 			"${CFLAGS_HARDENED_USE_CASES}" =~ ("id"|"kernel") \
 		]] \
 	; then
-	# ID
 	# Spectre V2 mitigation Linux kernel case
-		# For GCC it uses
-		#   General case: -mindirect-branch=thunk-extern -mindirect-branch-register
-		#   vDSO case:    -mindirect-branch=thunk-inline -mindirect-branch-register
-		# For Clang it uses:
-		#   General case: -mretpoline-external-thunk -mindirect-branch-cs-prefix
-		#   vDSO case:    -mretpoline
+	# For GCC it uses
+	#   General case: -mindirect-branch=thunk-extern -mindirect-branch-register
+	#   vDSO case:    -mindirect-branch=thunk-inline -mindirect-branch-register
+	# For Clang it uses:
+	#   General case: -mretpoline-external-thunk -mindirect-branch-cs-prefix
+	#   vDSO case:    -mretpoline
+	# ZC, ID
 		:
 	elif \
 		[[ \

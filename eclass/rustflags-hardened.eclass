@@ -517,12 +517,13 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 
 	if [[ "${RUSTFLAGS_HARDENED_RETPOLINE:-1}" == "1" && "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("id"|"kernel") ]] ; then
 	# Spectre V2 mitigation Linux kernel case
-		# For GCC it uses
-		#   General case: -mindirect-branch=thunk-extern -mindirect-branch-register
-		#   vDSO case:    -mindirect-branch=thunk-inline -mindirect-branch-register
-		# For Clang it uses:
-		#   General case: -mretpoline-external-thunk -mindirect-branch-cs-prefix
-		#   vDSO case:    -mretpoline
+	# For GCC it uses
+	#   General case: -mindirect-branch=thunk-extern -mindirect-branch-register
+	#   vDSO case:    -mindirect-branch=thunk-inline -mindirect-branch-register
+	# For Clang it uses:
+	#   General case: -mretpoline-external-thunk -mindirect-branch-cs-prefix
+	#   vDSO case:    -mretpoline
+	# ZC, ID
 		:
 	elif \
 		[[ \
