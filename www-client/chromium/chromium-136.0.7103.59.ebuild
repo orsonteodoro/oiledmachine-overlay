@@ -1269,9 +1269,14 @@ CLANG_RDEPEND="
 	)
 "
 
+if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
+	RDEPEND+="
+		${CLANG_RDEPEND}
+	"
+fi
+
 RDEPEND+="
 	${COMMON_DEPEND}
-	${CLANG_RDEPEND}
 	sys-kernel/mitigate-id
 	virtual/ttf-fonts
 	virtual/patent-status[patent_status_nonfree=,patent_status_sponsored_ncp_nb=]
@@ -1340,13 +1345,17 @@ RUST_BDEPEND="
 		dev-lang/rust-bin:=
 	)
 "
+if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
+	BDEPEND+="
+		${CLANG_BDEPEND}
+	"
+fi
 # Upstream uses live rust.  Rust version is relaxed.
 # Mold was relicensed as MIT in 2.0.  >=2.0 was used to avoid legal issues.
 BDEPEND+="
 	$(python_gen_any_dep '
 		dev-python/setuptools[${PYTHON_USEDEP}]
 	')
-	${CLANG_BDEPEND}
 	${COMMON_SNAPSHOT_DEPEND}
 	${PYTHON_DEPS}
 	app-alternatives/ninja
