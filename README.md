@@ -223,9 +223,9 @@ around 1.35 times the base performance without mitigation which is similar to
 
 Packages are relatively adjusted for CFLAGS_HARDENED_TOLERANCE so that in
 packages can be properly secured mitigating repeating past mistakes.
-ASAN/HWASAN/GWP-ASAN will be required.  Packages with historical CVE reputation
-of heap overflows or use-after-free will be ASANed.  Packages with historical
-CVE reputation for integer overflows or bounds issues will get UBSAN treatment.
+ASan/HWASan/GWP-ASan will be required.  Packages with historical CVE reputation
+of heap overflows or use-after-free will be ASaned.  Packages with historical
+CVE reputation for integer overflows or bounds issues will get UBSan treatment.
 The -fstack-protector does not mitigate heap overflow.
 
 | CFLAGS_HARDENED_TOLERANCE | Package security posture                  | Inherits cflag-hardened or rustflags-hardened eclass
@@ -234,7 +234,7 @@ The -fstack-protector does not mitigate heap overflow.
 | 1.11-1.50                 | Balanced                                  | Maybe
 | 1.35                      | Balanced default to enable Retpoline      | Yes
 | 1.80 or more              | Security-critical                         | Yes
-| 4.0                       | Security-critical default to enable ASAN  | Yes
+| 4.0                       | Security-critical default to enable ASan  | Yes
 
 How to interpret the above table:
 
@@ -248,8 +248,8 @@ How to interpret the above table:
 - Setting CFLAGS_HARDENED_TOLERANCE_USER means that you are accepting or managing
   the worst case performance as a result of hardening.
 - The values are normalized float multiples relative to the base.
-- In the above table, ASAN means any ASAN flavor (ASAN, GWP-ASAN, HWSAN).
-- The ASAN/UBSAN will be allowed if it passes the test suite or passes an
+- In the above table, ASan means any ASan flavor (ASan, GWP-ASan, HWASan).
+- The ASan/UBSan will be allowed if it passes the test suite or passes an
   interactive test.  The test suite has a higher precedence to decide
   if it should be disabled.
 
@@ -277,6 +277,15 @@ If a package is ASan-able, the *flags-hardened eclass will dedupe the
 overlapping check to prevent double checking stack overflow.  If a package is
 UBSan-able, it will dedupe the overlapping signed integer check to avoid double
 checking signed overflow.
+
+If an ASaned curl gets updated, it may complain with:
+
+```
+==<id>==ASan runtime does not come first in initial library list; you should either link runtime to your application or manually preload it with LD_PRELOAD.
+```
+
+Doing `source /etc/profile` or restarting to fix the issue.
+
 
 When does a package meet performance critical?  If it is not marked
 cflags-critical or rustflags-critical.
@@ -311,12 +320,12 @@ leading to 1 concerning full attacker capabilities vulnerability + performance
 penalty.  There are several non production sanitizers that have this issue.
 There is a disable logging workaround to mitigate the latter case.
 
-The ubsan minimal runtime will be default on in this overlay for hardened marked
-packages.  Ubsan will protect against some of each CE, PE, DoS, DT, ID before
+The UBSan minimal runtime will be default on in this overlay for hardened marked
+packages.  UBSan will protect against some of each CE, PE, DoS, DT, ID before
 they happen.  Only a few vulnerabilities will be blocked on the top 50
 vulnerabilities reported per month ranking.
 
-The hwasan will be optional but secure-critical may consider enabling this
+The HWASan will be optional but secure-critical may consider enabling this
 sanitizer since many top 50 vulnerabilities reported per month rankings will be
 mitigated.  To enable it, set CFLAGS_HARDENED_TOLERANCE_USER=3.0 for ARCH=amd64
 or CFLAGS_HARDENED_TOLERANCE_USER=1.5 for ARCH=arm64.  For ARCH=amd64, this is
@@ -328,8 +337,8 @@ To get the vulnerabilities reported per month ranking, ask the AI/LLM this:
 Give me the top 50 vulnerabilities with corresponding temperature based on
 reported vulnerabilities per month sorted by reported vulnerabilities per month
 and another column that list the corresponding llvm sanitizer to stop the
-vulnerability. Allow for multiple sanitizer possibilities so that hwasan can be
-used when just asan presented. Give me the full list. The temperature should use
+vulnerability. Allow for multiple sanitizer possibilities so that HWASan can be
+used when just ASan presented. Give me the full list. The temperature should use
 red, orange, yellow, blue. I only want the vulnerabilities from now to previous
 year. The vulnerabilities should be deduped and unique only one cwe per row.
 After that list is generated, create a separate list listing the statistical
@@ -384,7 +393,7 @@ sys-devel/lld
 llvm-runtimes/compiler-rt
 llvm-runtimes/compiler-rt-sanitizers-logging[production]
 
-# Choose one for ASAN/UBSAN sanitizers support for Rust
+# Choose one for ASan/UBSan sanitizers support for Rust
 # The -Zsanitizer option is only available for live ebuilds
 =dev-lang/rust-9999
 =dev-lang/rust-bin-9999
@@ -424,7 +433,7 @@ maintainer opinion about mixing is to avoid the possibility symbol collsion
 with wrong signatures in static-libs using different vendors.  The ebuilds
 manage it with CFLAGS_HARDENED_SANITIZERS_COMPAT and eclass assist.  The users
 must choose only one default compiler vendor via CC and CXX and discourage
-switching between vendors via per-package flags for LTO, CFI, ASAN, UBSAN, etc.
+switching between vendors via per-package flags for LTO, CFI, ASan, UBSan, etc.
 
 ### 2023 policy
 
