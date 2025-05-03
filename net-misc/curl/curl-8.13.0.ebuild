@@ -30,7 +30,8 @@ EAPI=8
 # don't be afraid to require a later version.
 # ngtcp2 = https://bugs.gentoo.org/912029 - can only build with one tls backend at a time.
 
-# You cannot pick both asan and ubsan in this package because it will break the login, pam, or a pam based module.
+# You cannot pick both asan and ubsan at the same in this package because it
+# will break the login, pam, or a pam based module.
 CFLAGS_HARDENED_SANITIZERS="address hwaddress"
 # CVE-2018-16840 - heap use-after-free (ASAN)
 # CVE-2017-8818 - out of bounds (UBSAN)
