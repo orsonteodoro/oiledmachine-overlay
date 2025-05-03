@@ -2,6 +2,13 @@
 # Copyright 2009-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
+# FIXME:
+#[15818/27103] python3.12 ../../v8/tools/run.py ./mksnapshot --turbo_instruction_scheduling --stress-turbo-late-spilling --target_os=linux --target_arch=x64 --embedded_src gen/v8/embedded.S --predictable --no-use-ic --turbo-elide-frames --embedded_variant Default --random-seed 314159265 --startup_blob snapshot_blob.bin --no-native-code-counters --concurrent-builtin-generation --concurrent-turbofan-max-threads=0
+#FAILED: gen/v8/embedded.S snapshot_blob.bin 
+#python3.12 ../../v8/tools/run.py ./mksnapshot --turbo_instruction_scheduling --stress-turbo-late-spilling --target_os=linux --target_arch=x64 --embedded_src gen/v8/embedded.S --predictable --no-use-ic --turbo-elide-frames --embedded_variant Default --random-seed 314159265 --startup_blob snapshot_blob.bin --no-native-code-counters --concurrent-builtin-generation --concurrent-turbofan-max-threads=0
+#Return code is -11
+
+
 # Monitor
 #   https://chromereleases.googleblog.com/search/label/Dev%20updates
 # for security updates.  They are announced faster than NVD.
@@ -2359,11 +2366,11 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		)
 	fi
 
-	PATCHES+=(
-		"${FILESDIR}/extra-patches/${PN}-134.0.6998.88-custom-optimization-level.patch"
-		"${FILESDIR}/extra-patches/${PN}-135.0.7049.114-hardening.patch"
-	)
-	if ! use official ; then
+#	PATCHES+=(
+#		"${FILESDIR}/extra-patches/${PN}-134.0.6998.88-custom-optimization-level.patch"
+#		"${FILESDIR}/extra-patches/${PN}-135.0.7049.114-hardening.patch"
+#	)
+	if ! use official && false ; then
 	# This section contains significant changes.  The above sections contains minor changes.
 
 		PATCHES+=(
@@ -4960,10 +4967,10 @@ eerror
 	# I noticed that the vendored clang doesn't use ccache.  Let us explicitly use ccache if requested.
 	# See https://github.com/chromium/chromium/blob/136.0.7103.59/build/toolchain/cc_wrapper.gni#L36
 	if ! _use_system_toolchain ; then
-		if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
-			myconf_gn+=" cc_wrapper=\"ccache\""
-			export CCACHE_BASEDIR="${TMPDIR}"
-		fi
+#		if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
+#			myconf_gn+=" cc_wrapper=\"ccache\""
+#			export CCACHE_BASEDIR="${TMPDIR}"
+#		fi
 
 		[[ "${FEATURES}" =~ "distcc" ]] && die "FEATURES=distcc with USE=-system-toolchain is not supported by the ebuild."
 		[[ "${FEATURES}" =~ "icecream" ]] && die "FEATURES=icecream with USE=-system-toolchain is not supported by the ebuild."
