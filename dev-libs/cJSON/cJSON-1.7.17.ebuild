@@ -3,28 +3,39 @@
 
 EAPI=7
 
-inherit cmake-multilib
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
 
-SRC_URI="https://github.com/DaveGamble/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+inherit cflags-hardened cmake-multilib
+
+SRC_URI="
+https://github.com/DaveGamble/${PN}/archive/v${PV}.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION="Ultralightweight JSON parser in ANSI C"
 HOMEPAGE="https://github.com/DaveGamble/cJSON"
 LICENSE="MIT"
+RESTRICT="
+	!test? ( test )
+"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64"
-IUSE="test"
-RESTRICT="!test? ( test )"
+IUSE="
+test
+ebuild_revision_1
+"
 
 src_prepare() {
 	cmake_src_prepare
-
-	sed -i -e '/-Werror/d' CMakeLists.txt || die
+	sed -i \
+		-e '/-Werror/d' \
+		"CMakeLists.txt" \
+		|| die
 }
 
 src_configure() {
 	local mycmakeargs=(
 		-DENABLE_CJSON_TEST=$(usex test)
 	)
-
 	cmake-multilib_src_configure
 }
