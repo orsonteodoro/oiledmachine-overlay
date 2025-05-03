@@ -838,7 +838,7 @@ einfo "rustc host:  ${host}"
 		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
 			| sed -r \
 				-e "s#-C[ ]*link-arg=-z[ ]*-C[ ]*link-arg=noexecstack##g" \
-				-e "s#-C[ ]*link-arg=-Wl,-z,noexecstack##g"
+				-e "s#-C[ ]*link-arg=-Wl,-z,noexecstack##g" \
 			)
 		RUSTFLAGS+=" -C link-arg=-Wl,-z,noexecstack"
 	fi
@@ -1130,7 +1130,7 @@ einfo "Added ${x} from ${module} sanitizer"
 einfo "Deduping stack overflow check"
 			RUSTFLAGS=$(echo "${RUSTFLAGS}" \
 				| sed -r \
-					-e "s#-C stack-protector=(all|basic|none|strong)##g")
+					-e "s#-C[ ]*stack-protector=(all|basic|none|strong)##g")
 	# Disable if it was the compiler default
 			RUSTFLAGS+=" -C stack-protector=none"
 		fi
