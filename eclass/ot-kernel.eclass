@@ -12646,6 +12646,10 @@ ot-kernel_set_security_critical() {
 	# 1.4x - 4.0x performance impact, slow for production
 			ot-kernel_y_configopt "CONFIG_KASAN_GENERIC"
 		fi
+
+einfo "Deduping stack overflow check"
+	ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR"
+	ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR_STRONG"
 	else
 		ot-kernel_unset_configopt "CONFIG_KASAN"
 		ot-kernel_unset_configopt "CONFIG_KASAN_PANIC"
