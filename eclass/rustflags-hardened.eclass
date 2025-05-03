@@ -651,7 +651,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	elif ver_test "${rust_pv}" -ge "1.58.0" ; then
 		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
 			| sed -r \
-				-e "s#-C[ ]*stack-protector=(all|basic|none|strong)##g" \)
+				-e "s#-C[ ]*stack-protector=(all|basic|none|strong)##g")
 		if [[ "${RUSTFLAGS_HARDENED_LEVEL}" == "3" ]] ; then
 	# ZC, CE, EP
 			RUSTFLAGS+=" -C stack-protector=all"
