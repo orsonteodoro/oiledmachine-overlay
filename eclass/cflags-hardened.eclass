@@ -1503,8 +1503,10 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 					if [[ "${x}" == "undefined" || "${x}" == "signed-integer-overflow" ]] ; then
 einfo "Deduping signed integer overflow check"
 						filter-flags "-f*trapv"
-						CFLAGS_HARDENED_CFLAGS=$(echo "${CFLAGS_HARDENED_CFLAGS}" | sed -e "s|-ftrapv||")
-						CFLAGS_HARDENED_CXXFLAGS=$(echo "${CXXFLAGS_HARDENED_CFLAGS}" | sed -e "s|-ftrapv||")
+						CFLAGS_HARDENED_CFLAGS=$(echo "${CFLAGS_HARDENED_CFLAGS}" \
+							| sed -r -e "s#-f(-no|)trapv##g")
+						CFLAGS_HARDENED_CXXFLAGS=$(echo "${CXXFLAGS_HARDENED_CFLAGS}" \
+							| sed -r -e "s#-f(-no|)trapv##g")
 					fi
 				fi
 
