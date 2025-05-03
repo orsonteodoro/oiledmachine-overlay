@@ -1501,7 +1501,7 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 					CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=${x}"
 					CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=${x}"
 					if [[ "${x}" == "undefined" || "${x}" == "signed-integer-overflow" ]] ; then
-	# Dedupe -fsanitize=signed-integer-overflow
+	# Dedupe signed overflow check
 						filter-flags "-f*trapv"
 						CFLAGS_HARDENED_CFLAGS=$(echo "${CFLAGS_HARDENED_CFLAGS}" | sed -e "s|-ftrapv||")
 						CFLAGS_HARDENED_CXXFLAGS=$(echo "${CXXFLAGS_HARDENED_CFLAGS}" | sed -e "s|-ftrapv||")
@@ -1516,7 +1516,7 @@ einfo "Added ${x} from ${module} sanitizer"
 		done
 
 		if (( ${asan} == 1 )) ; then
-	# Dedupe -fstack-protector
+	# Dedupe double stack overflow check
 			filter-flags "-fstack-protector*"
 			CFLAGS_HARDENED_CFLAGS=$(echo "${CFLAGS_HARDENED_CFLAGS}" \
 				| sed \

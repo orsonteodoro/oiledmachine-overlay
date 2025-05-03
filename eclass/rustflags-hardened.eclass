@@ -952,6 +952,7 @@ einfo "Added ${x} from ${module} sanitizer"
 		done
 
 		if (( ${asan} == 1 )) ; then
+	# Dedupe stack overflow check
 			RUSTFLAGS=$(echo "${RUSTFLAGS}" \
 				| sed \
 					-e "s|-C stack-protector=all||g" \
