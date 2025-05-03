@@ -224,7 +224,7 @@ around 1.35 times the base performance without mitigation which is similar to
 Packages are relatively adjusted for CFLAGS_HARDENED_TOLERANCE so that in
 packages can be properly secured mitigating repeating past mistakes.
 ASan/HWASan/GWP-ASan will be required.  Packages with historical CVE reputation
-of heap overflows or use-after-free will be ASaned.  Packages with historical
+of heap overflows or use after free will be ASan-ed.  Packages with historical
 CVE reputation for integer overflows or bounds issues will get UBSan treatment.
 The -fstack-protector does not mitigate heap overflow.
 
@@ -278,7 +278,24 @@ overlapping check to prevent double checking stack overflow.  If a package is
 UBSan-able, it will dedupe the overlapping signed integer check to avoid double
 checking signed overflow.
 
-If an ASaned curl gets updated, it may complain with:
+| Flag               | Heap overflow mitigation | Stack overflow mitigation |
+| ----               | ----                     | ----                      |
+| -fstack-protector  | No                       | Yes                       |
+| -fsanitize=address | Yes                      | Yes                       |
+
+Heap overflow is implied ranked higher than stack overflow for vulnerabilities
+reported on the Top 25 list of vulnerabilities classes.  -fstack-protector*
+is a pre-2014 mitigation.  For 2025, hardened allocators, sanitizers, MTE are
+preferred for the security-critical perimeter.
+
+| Flag                 | Signed integer overflow mitigation | Unsigned integer overflow mitigation |
+| ----                 | ----                               | ----                                 |
+| -ftrapv              | Yes                                | No                                   |
+| -fsanitize=undefined | Yes                                | Yes                                  |
+
+Integer overflow is typically associated with signed integer overflow.
+
+If an ASan-ed curl gets updated, it may complain with:
 
 ```
 ==<id>==ASan runtime does not come first in initial library list; you should either link runtime to your application or manually preload it with LD_PRELOAD.
