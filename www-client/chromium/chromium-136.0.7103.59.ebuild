@@ -3514,7 +3514,11 @@ einfo "Using the system toolchain"
 			append-flags -mevex512
 	else
 		myconf_gn+=" is_clang=false"
-		if use gwp-asan && use partitionalloc ; then
+		if [[ "${ABI}" == "arm" || "${ABI}" == "ppc" || "${ABI}" == "x86" ]] ; then
+	# Any 32-bit ABI
+			myconf_gn+=" enable_gwp_asan_partitionalloc=false"
+			myconf_gn+=" enable_gwp_asan=false"
+		elif use gwp-asan && use partitionalloc ; then
 			myconf_gn+=" enable_gwp_asan_partitionalloc=true"
 			myconf_gn+=" enable_gwp_asan=true"
 		else
