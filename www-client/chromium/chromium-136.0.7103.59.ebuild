@@ -3650,9 +3650,13 @@ einfo "Disabling GWP-ASan for 32-bit"
 	# Any 32-bit ABI
 		myconf_gn+=" enable_gwp_asan_partitionalloc=false"
 		myconf_gn+=" enable_gwp_asan=false"
-	elif tc-is-clang && ( use gwp-asan && use partitionalloc ) ; then
+	elif tc-is-clang && use gwp-asan && use partitionalloc ; then
 einfo "Enabling GWP-ASan for PartitionAlloc"
 		myconf_gn+=" enable_gwp_asan_partitionalloc=true"
+		myconf_gn+=" enable_gwp_asan=true"
+	elif tc-is-clang && use gwp-asan ; then
+einfo "Enabling GWP-ASan for an alternative heap allocator"
+		myconf_gn+=" use_allocator_shim=true"
 		myconf_gn+=" enable_gwp_asan=true"
 	else
 einfo "Disabling GWP-ASan"
