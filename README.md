@@ -295,15 +295,6 @@ preferred for the security-critical perimeter.
 
 Integer overflow is typically associated with signed integer overflow.
 
-If an ASan-ed curl gets updated, it may complain with:
-
-```
-==<id>==ASan runtime does not come first in initial library list; you should either link runtime to your application or manually preload it with LD_PRELOAD.
-```
-
-Try doing a `source /etc/profile` or a restart to fix the issue.
-
-
 When does a package meet performance critical?  If it is not marked
 cflags-critical or rustflags-critical.
 
@@ -451,6 +442,39 @@ with wrong signatures in static-libs using different vendors.  The ebuilds
 manage it with CFLAGS_HARDENED_SANITIZERS_COMPAT and eclass assist.  The users
 must choose only one default compiler vendor via CC and CXX and discourage
 switching between vendors via per-package flags for LTO, CFI, ASan, UBSan, etc.
+
+#### Troubleshooting
+
+##### Run failure #1
+
+If an ASan-ed curl gets updated, it may complain with:
+
+```
+==<id>==ASan runtime does not come first in initial library list; you should either link runtime to your application or manually preload it with LD_PRELOAD.
+```
+
+Try doing a `source /etc/profile` or a restart to fix the issue.
+
+##### Run failure #2
+
+If missing ASan or UBSan symbols are encoutered in the build system toolchain,
+replace the broken shared library or executible using the distro tarball.
+
+Only a few packages are affected
+
+- app-misc/jq
+- net-misc/curl
+- dev-libs/jemalloc
+- dev-libs/libtasn1
+- dev-libs/nxjson
+- dev-libs/libpcre2
+- dev-libs/jemalloc-usd
+- dev-libs/pugixml
+
+The issue has been fixed by linking statically with the sanitizer libraries.
+While the packages above were tested thoroughly with the test suite with
+intra-package testing, bugs in inter-package testing will appear randomly.
+
 
 ### 2023 policy
 
