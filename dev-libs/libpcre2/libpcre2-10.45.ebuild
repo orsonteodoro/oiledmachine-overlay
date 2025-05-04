@@ -14,8 +14,8 @@ MULTILIB_CHOST_TOOLS=(
 )
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/nicholaswilson.asc"
 
-inherit cflags-hardened libtool multilib multilib-minimal toolchain-funcs
-inherit verify-sig
+inherit cflags-hardened flag-o-matic libtool multilib multilib-minimal
+inherit toolchain-funcs verify-sig
 
 if [[ "${PV}" != *"_rc"* ]] ; then
 	KEYWORDS="
