@@ -340,7 +340,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       shadow-call-stack | backward     | 1.01 - 1.03                    | CE, PE                   | Function return in C or C++
 
       CE = Arbitrary Code Execution
-      PE = Privilege Execution
+      PE = Privilege Escalation
 
       PE is mitigated in SUID builds.
 
