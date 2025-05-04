@@ -838,7 +838,6 @@ REQUIRED_USE+="
 		dav1d
 		encode
 		extensions
-		gwp-asan
 		hidpi
 		jit
 		kerberos
