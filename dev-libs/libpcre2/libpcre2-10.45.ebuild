@@ -8,7 +8,7 @@ MY_P="pcre2-${PV/_rc/-RC}"
 CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" "llvm" )
 CFLAGS_HARDENED_TOLERANCE="4.0"
-CFLAGS_HARDENED_USE_CASES="jit sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical jit sensitive-data untrusted-data"
 MULTILIB_CHOST_TOOLS=(
 	"/usr/bin/pcre2-config"
 )
