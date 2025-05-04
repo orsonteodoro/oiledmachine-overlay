@@ -342,18 +342,16 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Mitigates against unauthorized transactions from compromised execution
       integrity by crashing the process before running attacker's code.
 
-                        | CF edge type | Estimated performance slowdown | Mitigated attack vectors | Programming equivalent
-      cfi-cast          | -            | 1.01 - 1.05                    | CE                       | dynamic_cast in C++
-      cfi-icall         | forward      | 1.05 - 1.10                    | CE, PE                   | Function pointer call in C or C++
-      cfi-vcall         | forward      | 1.05 - 1.15                    | CE, PE                   | Virtual function call in C++
-      shadow-call-stack | backward     | 1.01 - 1.03                    | CE, PE                   | Function return in C or C++
+                        | CF edge type | Estimated performance slowdown | Mitigated attack vectors | Attack difficulty | Report prevalence | Programming equivalent
+      cfi-cast          | -            | 1.01 - 1.05                    | CE                       | Medium            | Most              | dynamic_cast in C++
+      cfi-icall         | forward      | 1.05 - 1.10                    | CE, PE                   | Medium            | Moderate          | Function pointer call in C or C++
+      cfi-vcall         | forward      | 1.05 - 1.15                    | CE, PE                   | Easy              | Most              | Virtual function call in C++
+      shadow-call-stack | backward     | 1.01 - 1.03                    | CE, PE                   | Hard              | Least             | Function return in C or C++
 
       CE = Arbitrary Code Execution
       PE = Privilege Escalation
 
       PE is mitigated in SUID builds.
-
-      Backward edge is likely the popular attacker case.
 
       Arm64 users, see also the cpu_flags_arm_pac, cpu_flags_arm_bti USE flags.
 
