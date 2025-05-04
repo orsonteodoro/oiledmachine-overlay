@@ -265,14 +265,6 @@ activated can be found at
 CFLAGS_HARDENED_TOLERANCE_USER and RUSTFLAGS_HARDENED_TOLERANCE_USER mean the
 same, but not necessary one affecting the other.
 
-The CFLAGS_HARDENED_SANITIZERS_DEACTIVATE=1 and
-RUSTFLAGS_HARDENED_SANITIZERS_DEACTIVATE=1 can be used to turn off sanitizers on
-a per-package basis.  Some packages force using gcc or llvm to get the package
-built and as a result force sanitizers on when they should be disabled.  These
-per-package flags can be used to avoid incompatibility problems.  Add the flag
-to the package and then rebuild the problematic package or deep dependency
-causing the problem.
-
 If a package is ASan-able, the *flags-hardened eclass will dedupe the
 overlapping check to prevent double checking stack overflow.  If a package is
 UBSan-able, it will dedupe the overlapping signed integer check to avoid double
@@ -486,6 +478,24 @@ inter-package bugs easily for packages that may affect the @system set.  It
 is preferred to avoid ASan-ing/UBSan-ing the @system set to avoid an unfixable
 @system or the compiler toolchain, but it is not obvious sometimes if a
 package will affect @system.
+
+##### Breaking Qt based packages at configure time
+
+You can either make a copy of the ebuild to your local overlay for the ebuild
+and modify the ebuild to set abort_on_error=0 for ASan and halt_on_error=0 for
+UBSan in configure time check.  Then, for testing make both variables 1.
+
+or
+
+Disable sanitizers for dev-libs/libpcre2 package with the following...
+
+The CFLAGS_HARDENED_SANITIZERS_DEACTIVATE=1 and
+RUSTFLAGS_HARDENED_SANITIZERS_DEACTIVATE=1 can be used to turn off sanitizers on
+a per-package basis.  Some packages force using gcc or llvm to get the package
+built and as a result force sanitizers on when they should be disabled.  These
+per-package flags can be used to avoid incompatibility problems.  Add the flag
+to the package and then rebuild the problematic package or deep dependency
+causing the problem.
 
 ### 2023 policy
 
