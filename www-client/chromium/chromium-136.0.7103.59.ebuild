@@ -608,17 +608,15 @@ ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${IUSE_CODECS[@]}
 ${IUSE_LIBCXX[@]}
 ${PATENT_STATUS[@]}
-+accessibility bindist bluetooth +bundled-libcxx +cfi -cet +cups
-+css-hyphen -debug +drumbrake +encode +extensions ffmpeg-chromium firejail
--gtk4 -hangouts -headless +hidpi +jit +js-type-check +kerberos +mdns mold
-+mpris -official +partitionalloc pax-kernel +pdf pic +pgo +plugins +pointer-compression
-+pre-check-vaapi
-+pulseaudio +reporting-api qt6 +screencast selinux
--system-dav1d +system-ffmpeg -system-flac -system-fontconfig
--system-freetype -system-harfbuzz -system-icu -system-libaom
--system-libjpeg-turbo -system-libpng -system-libwebp -system-libxml
--system-libxslt -system-openh264 -system-opus -system-re2
--system-zlib +system-zstd systemd test +wayland +webassembly
++accessibility bindist bluetooth +bundled-libcxx +cfi -cet +cups +css-hyphen
+-debug +drumbrake +encode +extensions ffmpeg-chromium firejail -gtk4 +gwp-asan
+-hangouts -headless +hidpi +jit +js-type-check +kerberos +mdns mold +mpris
+-official +partitionalloc pax-kernel +pdf pic +pgo +plugins +pointer-compression
++pre-check-vaapi +pulseaudio +reporting-api qt6 +screencast selinux
+-system-dav1d +system-ffmpeg -system-flac -system-fontconfig -system-freetype
+-system-harfbuzz -system-icu -system-libaom -system-libjpeg-turbo -system-libpng
+-system-libwebp -system-libxml -system-libxslt -system-openh264 -system-opus
+-system-re2 -system-zlib +system-zstd systemd test +wayland +webassembly
 -widevine +X
 ebuild_revision_2
 "
@@ -840,6 +838,7 @@ REQUIRED_USE+="
 		dav1d
 		encode
 		extensions
+		gwp-asan
 		hidpi
 		jit
 		kerberos
@@ -3515,6 +3514,13 @@ einfo "Using the system toolchain"
 			append-flags -mevex512
 	else
 		myconf_gn+=" is_clang=false"
+		if use gwp-asan && use partitionalloc ; then
+			myconf_gn+=" enable_gwp_asan_partitionalloc=true"
+			myconf_gn+=" enable_gwp_asan=true"
+		else
+			myconf_gn+=" enable_gwp_asan_partitionalloc=false"
+			myconf_gn+=" enable_gwp_asan=false"
+		fi
 	fi
 
 	# Handled by build scripts
@@ -3644,6 +3650,7 @@ ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
 		configure_system_toolchain
 	else
 einfo "Using the bundled toolchain"
+		myconf_gn+=" is_clang=true"
 	fi
 
 	cflags-hardened_append
