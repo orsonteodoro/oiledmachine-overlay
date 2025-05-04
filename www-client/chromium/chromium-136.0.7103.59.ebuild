@@ -2,13 +2,6 @@
 # Copyright 2009-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-# FIXME:
-#[15818/27103] python3.12 ../../v8/tools/run.py ./mksnapshot --turbo_instruction_scheduling --stress-turbo-late-spilling --target_os=linux --target_arch=x64 --embedded_src gen/v8/embedded.S --predictable --no-use-ic --turbo-elide-frames --embedded_variant Default --random-seed 314159265 --startup_blob snapshot_blob.bin --no-native-code-counters --concurrent-builtin-generation --concurrent-turbofan-max-threads=0
-#FAILED: gen/v8/embedded.S snapshot_blob.bin 
-#python3.12 ../../v8/tools/run.py ./mksnapshot --turbo_instruction_scheduling --stress-turbo-late-spilling --target_os=linux --target_arch=x64 --embedded_src gen/v8/embedded.S --predictable --no-use-ic --turbo-elide-frames --embedded_variant Default --random-seed 314159265 --startup_blob snapshot_blob.bin --no-native-code-counters --concurrent-builtin-generation --concurrent-turbofan-max-threads=0
-#Return code is -11
-
-
 # Monitor
 #   https://chromereleases.googleblog.com/search/label/Dev%20updates
 # for security updates.  They are announced faster than NVD.
@@ -766,7 +759,6 @@ fi
 # Drumbrake is broken in this release
 REQUIRED_USE+="
 	${PATENT_USE_FLAGS}
-	!drumbrake
 	!headless (
 		extensions
 		pdf
@@ -2385,7 +2377,8 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	# This section contains significant changes.  The above sections contains minor changes.
 
 		PATCHES+=(
-#			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-perfetto.patch"
+	# FIXME: update perfetto disable patch
+	#		"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-perfetto.patch"
 			"${FILESDIR}/extra-patches/${PN}-128.0.6613.137-disable-icu-tracing.patch"
 		)
 
@@ -2407,9 +2400,12 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 			)
 		fi
 	fi
-#	PATCHES+=(
-#		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-v8-5c595ad.patch"
-#	)
+
+	if use drumbrake ; then
+		PATCHES+=(
+			"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-v8-5c595ad.patch"
+		)
+	fi
 }
 
 is_cromite_patch_non_fatal() {
@@ -4484,6 +4480,23 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 		myconf_gn+=" rtc_enable_avx2=true"
 	else
 		myconf_gn+=" rtc_enable_avx2=false"
+	fi
+
+# ERROR:
+#
+# [15818/27103] python3.12 ../../v8/tools/run.py ./mksnapshot --turbo_instruction_scheduling --stress-turbo-late-spilling --target_os=linux --target_arch=x64 --embedded_src gen/v8/embedded.S --predictable --no-use-ic --turbo-elide-frames --embedded_variant Default --random-seed 314159265 --startup_blob snapshot_blob.bin --no-native-code-counters --concurrent-builtin-generation --concurrent-turbofan-max-threads=0
+# FAILED: gen/v8/embedded.S snapshot_blob.bin
+# python3.12 ../../v8/tools/run.py ./mksnapshot --turbo_instruction_scheduling --stress-turbo-late-spilling --target_os=linux --target_arch=x64 --embedded_src gen/v8/embedded.S --predictable --no-use-ic --turbo-elide-frames --embedded_variant Default --random-seed 314159265 --startup_blob snapshot_blob.bin --no-native-code-counters --concurrent-builtin-generation --concurrent-turbofan-max-threads=0
+# Return code is -11
+#
+# Reported by elfx86exts:
+# Instruction set extensions used: AVX, AVX2, AVX512, BMI, BMI2, BWI, CMOV, DQI, MODE64, NOVLX, PCLMUL, SSE1, SSE2, SSE3, SSE41, SSSE3, VLX
+#
+	if use cpu_flags_x86_avx2 ; then
+	# Default on upstream for 64-bit with wasm enabled
+		myconf_gn+=" v8_enable_wasm_simd256_revec=true"
+	else
+		myconf_gn+=" v8_enable_wasm_simd256_revec=false"
 	fi
 
 	myconf_gn+=" treat_warnings_as_errors=false"
