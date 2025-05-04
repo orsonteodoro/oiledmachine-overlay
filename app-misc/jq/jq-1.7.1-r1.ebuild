@@ -29,7 +29,10 @@ DESCRIPTION="A lightweight and flexible command-line JSON processor"
 HOMEPAGE="https://stedolan.github.io/jq/"
 LICENSE="MIT CC-BY-3.0"
 SLOT="0"
-IUSE="+oniguruma static-libs test"
+IUSE="
++oniguruma static-libs test
+ebuild_revision_1
+"
 DEPEND="
 	>=sys-devel/bison-3.0
 	app-alternatives/lex

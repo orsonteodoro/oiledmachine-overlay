@@ -26,7 +26,10 @@ HOMEPAGE="
 	https://github.com/zeux/pugixml/
 "
 LICENSE="MIT"
-IUSE+=" doc static-libs test"
+IUSE+="
+doc static-libs test
+ebuild_revision_1
+"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 # U 22.04
 DEPEND+="

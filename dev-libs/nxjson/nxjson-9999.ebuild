@@ -34,7 +34,7 @@ HOMEPAGE="https://github.com/yarosla/nxjson"
 SLOT="0/${EXPECTED_FINGERPRINT:0:7}"
 IUSE+="
 debug static-libs test
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND+="
 	virtual/libc
