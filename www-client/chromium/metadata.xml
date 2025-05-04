@@ -339,6 +339,9 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       cfi-vcall         | forward      | 1.05 - 1.15                    | CE, PE                   | Virtual function call in C++
       shadow-call-stack | backward     | 1.01 - 1.03                    | CE, PE                   | Function return in C or C++
 
+      CE = Arbitrary Code Execution
+      PE = Privilege Execution
+
       PE is mitigated in SUID builds.
 
       Backward edge is likely the popular attacker case.
