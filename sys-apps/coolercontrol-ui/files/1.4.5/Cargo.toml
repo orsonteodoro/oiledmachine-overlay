@@ -32,7 +32,7 @@ tauri-plugin-localhost = "2.1.0"
 tauri-plugin-store = "2.1.0"
 tauri-plugin-window-state = "2.0.2"
 # These should follow the versions Tauri uses:
-glib = "=0.18.5"
+glib = "=0.20.0"
 gtk = "=0.18.1"
 gdk = "=0.18.0"
 zbus = "=4.0.1"
