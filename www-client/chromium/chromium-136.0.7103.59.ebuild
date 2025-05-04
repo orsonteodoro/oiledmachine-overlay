@@ -3513,17 +3513,6 @@ einfo "Using the system toolchain"
 			append-flags -mevex512
 	else
 		myconf_gn+=" is_clang=false"
-		if [[ "${ABI}" == "arm" || "${ABI}" == "ppc" || "${ABI}" == "x86" ]] ; then
-	# Any 32-bit ABI
-			myconf_gn+=" enable_gwp_asan_partitionalloc=false"
-			myconf_gn+=" enable_gwp_asan=false"
-		elif use gwp-asan && use partitionalloc ; then
-			myconf_gn+=" enable_gwp_asan_partitionalloc=true"
-			myconf_gn+=" enable_gwp_asan=true"
-		else
-			myconf_gn+=" enable_gwp_asan_partitionalloc=false"
-			myconf_gn+=" enable_gwp_asan=false"
-		fi
 	fi
 
 	# Handled by build scripts
@@ -3654,6 +3643,21 @@ ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
 	else
 einfo "Using the bundled toolchain"
 		myconf_gn+=" is_clang=true"
+	fi
+
+	if tc-is-clang && [[ "${ABI}" == "arm" || "${ABI}" == "ppc" || "${ABI}" == "x86" ]] ; then
+einfo "Disabling GWP-ASan for 32-bit"
+	# Any 32-bit ABI
+		myconf_gn+=" enable_gwp_asan_partitionalloc=false"
+		myconf_gn+=" enable_gwp_asan=false"
+	elif tc-is-clang && ( use gwp-asan && use partitionalloc ) ; then
+einfo "Enabling GWP-ASan for PartitionAlloc"
+		myconf_gn+=" enable_gwp_asan_partitionalloc=true"
+		myconf_gn+=" enable_gwp_asan=true"
+	else
+einfo "Disabling GWP-ASan"
+		myconf_gn+=" enable_gwp_asan_partitionalloc=false"
+		myconf_gn+=" enable_gwp_asan=false"
 	fi
 
 	cflags-hardened_append
