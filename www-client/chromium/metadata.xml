@@ -518,10 +518,10 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       disable these checks because they can expose bugs.
     </flag>
     <flag name="qt5">
-      Enable qt5 support
+      Enable Qt 5 support
     </flag>
     <flag name="qt6">
-      Enable qt6 support
+      Enable Qt 6 support
     </flag>
     <flag name="reporting-api">
       Enable support for the Reporting API to self-snitch about errors, crashes,
