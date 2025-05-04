@@ -4687,7 +4687,7 @@ eerror "To use mold, enable the mold USE flag."
 	myconf_gn+=" is_official_build=$(usex official true false)"
 	if ! use official ; then
 	# The reason why we disable official in this ebuild fork is to drop the
-	# lock-in to proprietary codecs.
+	# lock-in to proprietary settings including proprietary codecs.
 
 	# The MiraclePtr is enabled on official Linux.
 	# When official is disabled, it reduces the attack surface and adds a
