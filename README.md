@@ -445,7 +445,10 @@ switching between vendors via per-package flags for LTO, CFI, ASan, UBSan, etc.
 
 #### Troubleshooting
 
-##### Run failure #1
+##### Run failure #1 or broken decrypted login
+
+A broken login may be encountered and cause a profile not to decrypt home as a
+result of broken simultaneously use of ASan and UBSan with curl.
 
 If an ASan-ed curl gets updated, it may complain with:
 
@@ -455,10 +458,12 @@ If an ASan-ed curl gets updated, it may complain with:
 
 Try doing a `source /etc/profile` or a restart to fix the issue.
 
+Try emerging curl from this overlay with the fix or use the distro curl instead.
+
 ##### Run failure #2
 
 If missing ASan or UBSan symbols are encoutered in the build system toolchain,
-replace the broken shared library or executible using the distro tarball.
+replace the broken shared library or executable using the distro tarball.
 
 Only a few packages are affected
 
@@ -474,7 +479,6 @@ Only a few packages are affected
 The issue has been fixed by linking statically with the sanitizer libraries.
 While the packages above were tested thoroughly with the test suite with
 intra-package testing, bugs in inter-package testing will appear randomly.
-
 
 ### 2023 policy
 
