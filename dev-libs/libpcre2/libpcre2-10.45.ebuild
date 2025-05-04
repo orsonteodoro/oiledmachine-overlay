@@ -5,7 +5,10 @@ EAPI=8
 
 MY_P="pcre2-${PV/_rc/-RC}"
 
-CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
+CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" "llvm" )
+CFLAGS_HARDENED_TOLERANCE="4.0"
+CFLAGS_HARDENED_USE_CASES="jit sensitive-data untrusted-data"
 MULTILIB_CHOST_TOOLS=(
 	"/usr/bin/pcre2-config"
 )
@@ -35,6 +38,7 @@ LICENSE="BSD"
 SLOT="0/3" # libpcre2-posix.so version
 IUSE="
 bzip2 +jit libedit +pcre16 +pcre32 +readline static-libs unicode valgrind zlib
+ebuild_revision_1
 "
 REQUIRED_USE="
 	?? (
@@ -80,6 +84,9 @@ src_prepare() {
 
 multilib_src_configure() {
 	cflags-hardened_append
+	if tc-is-clang && is-flagq "-fsanitize=undefined" ; then
+		append-flags "-fno-sanitize=function"
+	fi
 	local myeconfargs=(
 		$(multilib_native_use_enable bzip2 pcre2grep-libbz2)
 		$(multilib_native_use_enable libedit pcre2test-libedit)
@@ -104,7 +111,7 @@ multilib_src_compile() {
 }
 
 multilib_src_test() {
-	emake check VERBOSE=yes
+	emake check VERBOSE="yes"
 }
 
 multilib_src_install() {
@@ -131,3 +138,7 @@ eerror "libpcre2-8$(get_libname) not found in build, aborting"
 multilib_src_install_all() {
 	find "${ED}" -type f -name "*.la" -delete || die
 }
+
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (10.45, 20250503)
+# test-suite gcc:  passed with asan, ubsan
+# test-suite clang:  passed with asan, ubsan
