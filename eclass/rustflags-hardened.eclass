@@ -210,6 +210,12 @@ RUSTFLAGS_UNSTABLE_RUSTC_PV="1.86.0"
 # Allow build to be built with JOP, ROP mitigations
 # Valid values: 1, 0, unset
 
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SANITIZERS_DEACTIVATE
+# @USER_VARIABLE
+# @DESCRIPTION:
+# Enable or disable sanitizers for a package.  To be used on a per-package basis.
+# Acceptable values: 1, 0, unset
+
 
 # @FUNCTION: _rustflags-hardened_sanitizers_compat
 # @DESCRIPTION:
@@ -1002,7 +1008,7 @@ einfo "rustc host:  ${host}"
 		sanitizers_compat=1
 	fi
 
-	if [[ "${RUSTFLAGS_HARDENED_SANITIZERS_DEACTIVATE}" == 0 ]] ; then
+	if [[ "${RUSTFLAGS_HARDENED_SANITIZERS_DEACTIVATE}" == "0" ]] ; then
 		sanitizers_compat=0
 	fi
 
@@ -1157,15 +1163,15 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 					if tc-is-clang ; then
 						RUSTFLAGS+=" -C link-args=-static-libsan"
 					elif tc-is-gcc && [[ "${module}" == "asan" ]] ; then
-						RUSTFLAGS+=" -C link-args=-static-libasan"
+						RUSTFLAGS+=" -C link-args="$(${CC} -print-file-name=libasan.a)
 					elif tc-is-gcc && [[ "${module}" == "hwasan" ]] ; then
-						RUSTFLAGS+=" -C link-args=-static-libhwasan"
+						RUSTFLAGS+=" -C link-args="$(${CC} -print-file-name=libhwasan.a)
 					elif tc-is-gcc && [[ "${module}" == "lsan" ]] ; then
-						RUSTFLAGS+=" -C link-args=-static-liblsan"
+						RUSTFLAGS+=" -C link-args="$(${CC} -print-file-name=liblsan.a)
 					elif tc-is-gcc && [[ "${module}" == "tsan" ]] ; then
-						RUSTFLAGS+=" -C link-args=-static-libtsan"
+						RUSTFLAGS+=" -C link-args="$(${CC} -print-file-name=libtsan.a)
 					elif tc-is-gcc && [[ "${module}" == "ubsan" ]] ; then
-						RUSTFLAGS+=" -C link-args=-static-libubsan"
+						RUSTFLAGS+=" -C link-args="$(${CC} -print-file-name=libubsan.a)
 					fi
 
 					added[${module}]="1"

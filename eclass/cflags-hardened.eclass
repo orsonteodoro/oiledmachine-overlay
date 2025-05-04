@@ -102,6 +102,13 @@ CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 # @DESCRIPTION:
 # A space delimited list of allowed sanitizer options.
 
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_SANITIZERS_DEACTIVATE
+# @USER_VARIABLE
+# @DESCRIPTION:
+# Enable or disable sanitizers for a package.  To be used on a per-package basis.
+# Acceptable values: 1, 0, unset
+
+
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_TOLERANCE
 # @DESCRIPTION:
 # The default performance impact to trigger enablement of expensive mitigations.
@@ -1400,7 +1407,7 @@ einfo "All SSP hardening (All functions hardened)"
 		sanitizers_compat=1
 	fi
 
-	if [[ "${CFLAGS_HARDENED_SANITIZERS_DEACTIVATE}" == 0 ]] ; then
+	if [[ "${CFLAGS_HARDENED_SANITIZERS_DEACTIVATE}" == "0" ]] ; then
 		sanitizers_compat=0
 	fi
 
@@ -1656,20 +1663,15 @@ einfo "Deduping signed integer overflow check"
 						CFLAGS_HARDENED_CXXFLAGS+=" -static-libsan"
 						CFLAGS_HARDENED_LDFLAGS+=" -static-libsan"
 					elif tc-is-gcc && [[ "${module}" == "asan" ]] ; then
-						append-flags "-Wl,-static-libasan"
-						CFLAGS_HARDENED_CFLAGS+=" -Wl,-static-libasan"
+						CFLAGS_HARDENED_LDFLAGS+=" "$(${CC} -print-file-name=libasan.a)
 					elif tc-is-gcc && [[ "${module}" == "hwasan" ]] ; then
-						append-flags "-Wl,-static-libhwasan"
-						CFLAGS_HARDENED_CFLAGS+=" -Wl,-static-libhwasan"
+						CFLAGS_HARDENED_LDFLAGS+=" "$(${CC} -print-file-name=libhwasan.a)
 					elif tc-is-gcc && [[ "${module}" == "lsan" ]] ; then
-						append-flags "-Wl,-static-liblsan"
-						CFLAGS_HARDENED_CFLAGS+=" -Wl,-static-liblsan"
+						CFLAGS_HARDENED_LDFLAGS+=" "$(${CC} -print-file-name=liblsan.a)
 					elif tc-is-gcc && [[ "${module}" == "tsan" ]] ; then
-						append-flags "-Wl,-static-libtsan"
-						CFLAGS_HARDENED_CFLAGS+=" -Wl,-static-libtsan"
+						CFLAGS_HARDENED_LDFLAGS+=" "$(${CC} -print-file-name=libtsan.a)
 					elif tc-is-gcc && [[ "${module}" == "ubsan" ]] ; then
-						append-flags "-Wl,-static-libubsan"
-						CFLAGS_HARDENED_CFLAGS+=" -Wl,-static-libubsan"
+						CFLAGS_HARDENED_LDFLAGS+=" "$(${CC} -print-file-name=libubsan.a)
 					fi
 
 					added[${module}]="1"
