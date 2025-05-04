@@ -472,12 +472,12 @@ Only a few packages are affected
 
 The issue has been fixed by linking statically with the sanitizer libraries.
 While the packages above were tested thoroughly with the test suite with
-intra-package testing, bugs in inter-package testing will appear randomly.
-This is why a slow rollout for ASan-ed and UBSan-ed packages are used to catch
-inter-package bugs easily for packages that may affect the @system set.  It
-is preferred to avoid ASan-ing/UBSan-ing the @system set to avoid an unfixable
-@system or the compiler toolchain, but it is not obvious sometimes if a
-package will affect @system.
+intra-package self testing, bugs in inter-package integration testing between
+packages will appear randomly and unexpectedly.  This is why a slow rollout for
+ASan-ed and UBSan-ed packages are used to catch inter-package bugs easily for
+packages that may affect the @system set.  It is preferred to avoid
+ASan-ing/UBSan-ing the @system set to avoid an unfixable @system or the compiler
+toolchain, but it is not obvious sometimes if a package will affect @system.
 
 ##### Breaking Qt based packages at configure time
 
