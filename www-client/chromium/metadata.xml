@@ -407,7 +407,19 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     </flag>
     <flag name="gwp-asan">
       Use GWP-ASan to mitigate against memory corruption (Use After Free,
-      Heap Overflows) for undiscovered vulnerabilities.  (EXPERIMENTAL)
+      Heap Overflows, Buffer Overflows, Use After Return) for undiscovered
+      critical-high severity vulnerabilities.  When memory corruption is
+      detected, the process will crash to prevent attacker's code being
+      executed.  (EXPERIMENTAL)
+
+      It requires manual changes to the wrapper.  This may slow down the build
+      by 2.5x worst case.
+
+      It is primarily used as a debug tool but not recommended in production
+      by sanitizer developers due to the performance penalty.
+
+      Hardened users may want to enable this option for added real-time
+      protection.
     </flag>
     <flag name="hangouts">
       Enable support for Hangouts and features such as screen sharing
