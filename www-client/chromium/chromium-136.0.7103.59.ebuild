@@ -4685,6 +4685,17 @@ eerror "To use mold, enable the mold USE flag."
 	fi
 
 	myconf_gn+=" is_official_build=$(usex official true false)"
+	if ! use official ; then
+	# The reason why we disable official in this ebuild fork is to drop the
+	# lock-in to proprietary codecs.
+
+	# The MiraclePtr is enabled on official Linux.
+	# When official is disabled, it reduces the attack surface and adds a
+	# UAF critical-high vulnerability.
+	# We force MiraclePtr on since GWP-ASan is default off.
+	# It may overlap with GWP-ASan's UAF mitigation.
+		myconf_gn+=" enable_backup_ref_ptr_support=$(usex partitionalloc true false)"
+	fi
 
 	if [[ -z "${LTO_TYPE}" ]] ; then
 		LTO_TYPE=$(check-linker_get_lto_type)
