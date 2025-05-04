@@ -481,9 +481,10 @@ package will affect @system.
 
 ##### Breaking Qt based packages at configure time
 
-You can either make a copy of the ebuild to your local overlay for the ebuild
-and modify the ebuild to set abort_on_error=0 for ASan and halt_on_error=0 for
-UBSan in configure time check.  Then, for testing make both variables 1.
+You can either make a copy of the ebuild to your local overlay and modify the
+ebuild to set abort_on_error=0 for ASan and halt_on_error=0 for UBSan in
+configure time check for ASAN_OPTIONS and UBSAN_OPTIONS environment variables.
+Then, for src_test() make both variables 1.
 
 or
 
