@@ -609,7 +609,7 @@ ${IUSE_CODECS[@]}
 ${IUSE_LIBCXX[@]}
 ${PATENT_STATUS[@]}
 +accessibility bindist bluetooth +bundled-libcxx +cfi -cet +cups +css-hyphen
--debug +drumbrake +encode +extensions ffmpeg-chromium firejail -gtk4 +gwp-asan
+-debug +drumbrake +encode +extensions ffmpeg-chromium firejail -gtk4 -gwp-asan
 -hangouts -headless +hidpi +jit +js-type-check +kerberos +mdns mold +mpris
 -official +partitionalloc pax-kernel +pdf pic +pgo +plugins +pointer-compression
 +pre-check-vaapi +pulseaudio +reporting-api qt6 +screencast selinux
