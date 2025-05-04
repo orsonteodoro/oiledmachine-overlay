@@ -470,15 +470,20 @@ Only a few packages are affected
 - app-misc/jq
 - net-misc/curl
 - dev-libs/jemalloc
+- dev-libs/jemalloc-usd
+- dev-libs/libpcre2
 - dev-libs/libtasn1
 - dev-libs/nxjson
-- dev-libs/libpcre2
-- dev-libs/jemalloc-usd
 - dev-libs/pugixml
 
 The issue has been fixed by linking statically with the sanitizer libraries.
 While the packages above were tested thoroughly with the test suite with
 intra-package testing, bugs in inter-package testing will appear randomly.
+This is why a slow rollout for ASan-ed and UBSan-ed packages are used to catch
+inter-package bugs easily for packages that may affect the @system set.  It
+is preferred to avoid ASan-ing/UBSan-ing the @system set to avoid breaking
+@system or the compiler toolchain, but it is not obvious sometimes if a package
+will affect @system.
 
 ### 2023 policy
 
