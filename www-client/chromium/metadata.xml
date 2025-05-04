@@ -415,7 +415,8 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       by 2.5x worst case.
 
       It is primarily used as a debug tool but not recommended in production
-      by sanitizer developers due to the performance penalty.
+      by sanitizer developers due to the performance penalty or the
+      performance-first security posture.
 
       Hardened users may want to enable this option for added real-time
       protection.
