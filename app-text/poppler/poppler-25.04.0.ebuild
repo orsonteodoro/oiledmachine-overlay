@@ -4,6 +4,9 @@
 EAPI=8
 
 # Sanitizers breaks during test suite
+
+# For gcc, test failure for asan, build time failure with ubsan.
+# For llvm, test stall for asan, build time failure with ubsan.
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_TRAPV="0" # Breaks during test suite
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
@@ -197,12 +200,20 @@ src_configure() {
 	cmake_src_configure
 }
 
+src_compile() {
+	cmake_src_compile
+}
+
+src_test() {
+	cmake_src_test
+}
+
 src_install() {
 	cmake_src_install
 
-	# live version doesn't provide html documentation
+	# The live version doesn't provide html documentation.
 	if use cairo && use doc && [[ "${PV}" != *"9999"* ]]; then
-		# For now install gtk-doc there
+	# For now, install gtk-doc there.
 		insinto "/usr/share/gtk-doc/html/poppler"
 		doins -r "${S}/glib/reference/html/"*
 	fi
