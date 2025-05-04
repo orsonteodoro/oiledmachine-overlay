@@ -4511,6 +4511,10 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 		myconf_gn+=" v8_enable_wasm_simd256_revec=true"
 	else
 		myconf_gn+=" v8_enable_wasm_simd256_revec=false"
+	# It will override the config.
+		sed -i -e "s|v8_enable_wasm_simd256_revec = true|v8_enable_wasm_simd256_revec = false|g" \
+			"v8/BUILD.gn" \
+			|| die
 	fi
 
 	myconf_gn+=" treat_warnings_as_errors=false"
