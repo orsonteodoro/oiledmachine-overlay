@@ -5,9 +5,9 @@ EAPI=8
 
 MY_P="pcre2-${PV/_rc/-RC}"
 
-#CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
-#CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" "llvm" ) # breaks grep
-#CFLAGS_HARDENED_TOLERANCE="4.0"
+CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
+CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" "llvm" )
+CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="jit sensitive-data untrusted-data"
 MULTILIB_CHOST_TOOLS=(
 	"/usr/bin/pcre2-config"
@@ -38,7 +38,7 @@ LICENSE="BSD"
 SLOT="0/3" # libpcre2-posix.so version
 IUSE="
 bzip2 +jit libedit +pcre16 +pcre32 +readline static-libs unicode valgrind zlib
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	?? (

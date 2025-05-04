@@ -1612,7 +1612,7 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 					CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=${x}"
 					CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=${x}"
 					asan=1
-				elif [[ "${x}" == "cfi" ]] && ! _cflags-hardened_has_cet && [[ "${ARCH}" == "amd64" ]] ; then
+				elif [[ "${x}" == "cfi" ]] && ! _cflags-hardened_has_cet && [[ "${ARCH}" == "amd64" ]] && tc-is-clang ; then
 					append-flags "-fsanitize=${x}"
 					append-ldflags "-fsanitize=${x}"
 					CFLAGS_HARDENED_CFLAGS+=" -fsanitize=${x}"
@@ -1625,10 +1625,6 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 					CFLAGS_HARDENED_CFLAGS+=" -flto=thin"
 					CFLAGS_HARDENED_CXXFLAGS+=" -flto=thin"
 					CFLAGS_HARDENED_LDFLAGS+=" -flto=thin"
-					if tc-is-gcc && [[ "${CFLAGS_HARDENED_LTO_PARALLEL:-1}" == "1" ]] ; then
-						append-ldflags "-fuse-linker-plugin"
-						CFLAGS_HARDENED_LDFLAGS+=" -fuse-linker-plugin"
-					fi
 					filter-flags "-fuse-ld=*"
 					append-ldflags "-fuse-ld=lld"
 					CFLAGS_HARDENED_LDFLAGS+=" -fuse-ld=lld"
@@ -1651,6 +1647,31 @@ einfo "Deduping signed integer overflow check"
 				fi
 
 				if (( ${skip} == 0 )) ; then
+	# We need to statically link sanitizers to avoid breaking the @system
+	# set.
+					if tc-is-clang ; then
+						append-flags "-static-libsan"
+						append-ldflags "-static-libsan"
+						CFLAGS_HARDENED_CFLAGS+=" -static-libsan"
+						CFLAGS_HARDENED_CXXFLAGS+=" -static-libsan"
+						CFLAGS_HARDENED_LDFLAGS+=" -static-libsan"
+					elif tc-is-gcc && [[ "${module}" == "asan" ]] ; then
+						append-flags "-Wl,-static-libasan"
+						CFLAGS_HARDENED_CFLAGS+=" -Wl,-static-libasan"
+					elif tc-is-gcc && [[ "${module}" == "hwasan" ]] ; then
+						append-flags "-Wl,-static-libhwasan"
+						CFLAGS_HARDENED_CFLAGS+=" -Wl,-static-libhwasan"
+					elif tc-is-gcc && [[ "${module}" == "lsan" ]] ; then
+						append-flags "-Wl,-static-liblsan"
+						CFLAGS_HARDENED_CFLAGS+=" -Wl,-static-liblsan"
+					elif tc-is-gcc && [[ "${module}" == "tsan" ]] ; then
+						append-flags "-Wl,-static-libtsan"
+						CFLAGS_HARDENED_CFLAGS+=" -Wl,-static-libtsan"
+					elif tc-is-gcc && [[ "${module}" == "ubsan" ]] ; then
+						append-flags "-Wl,-static-libubsan"
+						CFLAGS_HARDENED_CFLAGS+=" -Wl,-static-libubsan"
+					fi
+
 					added[${module}]="1"
 einfo "Added ${x} from ${module} sanitizer"
 				fi

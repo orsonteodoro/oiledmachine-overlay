@@ -1143,7 +1143,7 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 				elif [[ "${x}" == "address" ]] ; then
 					RUSTFLAGS+=" -Zsanitizer=${x}"
 					asan=1
-				elif [[ "${x}" == "cfi" ]] && ! _rustflags-hardened_has_cet && [[ "${ARCH}" == "amd64" ]] ; then
+				elif [[ "${x}" == "cfi" ]] && ! _rustflags-hardened_has_cet && [[ "${ARCH}" == "amd64" ]] && tc-is-clang ; then
 					RUSTFLAGS+=" -Zsanitizer=${x}"
 				elif [[ "${x}" == "cfi" ]] ; then
 					skip=1
@@ -1152,6 +1152,22 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 				fi
 
 				if (( ${skip} == 0 )) ; then
+	# We need to statically link sanitizers to avoid breaking some of the
+	# @world set.
+					if tc-is-clang ; then
+						RUSTFLAGS+=" -C link-args=-static-libsan"
+					elif tc-is-gcc && [[ "${module}" == "asan" ]] ; then
+						RUSTFLAGS+=" -C link-args=-static-libasan"
+					elif tc-is-gcc && [[ "${module}" == "hwasan" ]] ; then
+						RUSTFLAGS+=" -C link-args=-static-libhwasan"
+					elif tc-is-gcc && [[ "${module}" == "lsan" ]] ; then
+						RUSTFLAGS+=" -C link-args=-static-liblsan"
+					elif tc-is-gcc && [[ "${module}" == "tsan" ]] ; then
+						RUSTFLAGS+=" -C link-args=-static-libtsan"
+					elif tc-is-gcc && [[ "${module}" == "ubsan" ]] ; then
+						RUSTFLAGS+=" -C link-args=-static-libubsan"
+					fi
+
 					added[${module}]="1"
 einfo "Added ${x} from ${module} sanitizer"
 				fi
