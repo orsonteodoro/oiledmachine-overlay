@@ -456,9 +456,11 @@ If an ASan-ed curl gets updated, it may complain with:
 ==<id>==ASan runtime does not come first in initial library list; you should either link runtime to your application or manually preload it with LD_PRELOAD.
 ```
 
-Try doing a `source /etc/profile` or a restart to fix the issue.
+Try doing a `source /etc/profile` to fix the issue temporarily.
 
-Try emerging curl from this overlay with the fix or use the distro curl instead.
+Try emerging curl from this overlay with the fix or use the distro curl instead
+for the permanent fix.
+
 
 ##### Run failure #2
 
