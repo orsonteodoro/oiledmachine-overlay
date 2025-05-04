@@ -326,7 +326,14 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       SSP security features.  This is the upstream default.
     </flag>
     <flag name="cet">
-      Provide some CET protection to the V8 JavaScript engine.  (EXPERIMENTAL)
+      Use CET for hardware accelerated execution integrity checks.
+
+      For official builds, utilize CET protection in the V8 JavaScript engine.
+
+      For unofficial builds, increase the CET protection coverage as much as
+      possible.
+
+      (EXPERIMENTAL)
     </flag>
     <flag name="cfi">
       Builds with mitigations to ensure execution integrity within built code.
@@ -378,10 +385,12 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       browser version for security reasons.]
     </flag>
     <flag name="cpu_flags_arm_pac">
-      Mitigate against ROP attacks
+      Use PAC for some hardware accelerated execution integrity checks.
+      Mitigate against ROP (backward edge CFI) attacks.
     </flag>
     <flag name="cpu_flags_arm_bti">
-      Mitigate against JOP attacks
+      Use BTI for some hardware accelerated execution integrity checks.
+      Mitigate against JOP (forward edge CFI) attacks.
     </flag>
     <flag name="css-hyphen">
       Add support for auto hyphenization of words (e.g. "hyphens: auto") for CSS
