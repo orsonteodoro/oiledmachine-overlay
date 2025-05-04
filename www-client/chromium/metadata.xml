@@ -329,30 +329,21 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Provide some CET protection to the V8 JavaScript engine.  (EXPERIMENTAL)
     </flag>
     <flag name="cfi">
-      cfi-cast:
-      Compile the build with mitigation against possible bad casting
-      vulnerabilities.  When a violation is encountered, the program aborts.
+      Builds with mitigations to ensure execution integrity within built code
+      built code.  Mitigates against unauthorized transactions from
+      compromised execution integrity by crashing the process
 
-      cfi-icall:
-      Compile the build with bad function cast checks and non static function
-      pointers checks.  When a violation is encountered, the program aborts.
+                        | CF edge type | Estimated performance slowdown | Mitigated attack vectors | Programming equivalent
+      cfi-cast          | -            | 1.01 - 1.05                    | CE                       | dynamic_cast in C++
+      cfi-icall         | forward      | 1.05 - 1.10                    | CE, PE                   | Function pointer call in C or C++
+      cfi-vcall         | forward      | 1.05 - 1.15                    | CE, PE                   | Virtual function call in C++
+      shadow-call-stack | backward     | 1.01 - 1.03                    | CE, PE                   | Function return in C or C++
 
-      cfi-vcall:
-      Compile the build with Clang Control Flow Integrity (CFI) security
-      protections to mitigate against arbitrary code execution caused by from
-      memory corruption attempts from forward edge attacks from virtual
-      functions.  For backward edge protection see shadowcallstack USE flag.
-      The estimated impact is around 1% CPU overhead, around 15% or less code
-      size increase.  When a violation is encountered, the program aborts.
+      PE is mitigated in SUID builds.
 
-      The abort is a way to halt more dangerous code execution.
+      Backward edge is likely the popular attacker case.
 
-      shadow-call-stack:
-      Allows for backward edge protections against return address overwrites
-      that could lead to arbitrary code execution.  (Experimental, arm64 only)
-      Use -fsanitize=shadow-call-stack to activate this protection.
-
-      Arm64 users, see also the branch-protection USE flag.
+      Arm64 users, see also the cpu_flags_arm_pac, cpu_flags_arm_bti USE flags.
 
       Additional ebuild per-package environment variables if USE=-official:
 
@@ -361,8 +352,11 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
 
       For the official build settings, it is fixed based on the ABI.
 
-      For x86-64 it is cfi-vcall=true, cfi-icall=true, cfi-cast=false
-      All other microarches are all false, but you may customize via the
+
+      The build defaults for CFI are as follows:
+
+      For x86-64, it will use cfi-vcall=true, cfi-icall=true, cfi-cast=false
+      For all other microarches, are all false, but you may customize via the
       -fsanitize= compiler flag with the cfi USE flag.
     </flag>
     <flag name="component-build">
@@ -460,13 +454,11 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="official">
       Enable the use of official build settings [similar to the official bin but
       without branding] instead of the developer build settings.  Enables
-      security hardending (for both the browser and internal bundled third party
-      dependencies built with the stronger CFI Basic mode with cfi-vcall and
-      cfi-icall [both enabled on x86_64], Full RELRO, noexecstack, PIE, SSP),
-      PGO, debug symbols level 2.  Disables use of third party ebuilds (without
-      CFI and PGO) and uses the internal bundled hardened and PGOed version of
-      those libraries with static linkage.  It implies the default features and
-      proprietary codecs.
+      security hardending against some critical-high vulnerabilities (with CFI,
+      Full RELRO, noexecstack, PIE, SSP), PGO, debug symbols level 2.  Disables
+      use of third party ebuilds (without CFI and PGO) and uses the internal
+      bundled hardened and PGOed version of those libraries with static linkage.
+      It implies the default features and proprietary codecs.
     </flag>
     <flag name="pax-kernel">
       Allow building on a PaX-enabled kernel
@@ -500,9 +492,6 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="plugins">
       Builds support for plugins.
     </flag>
-    <!--
-    See https://www.energystar.gov/products/data_center_equipment/16-more-ways-cut-energy-waste-data-center/implement-efficient-data
-    -->
     <flag name="pointer-compression">
       Enable to reclaim more memory with pointer compression in JavaScript
       contexts.  This only benefits 64-bit ABIs.
