@@ -361,6 +361,8 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       For x86-64, it will use cfi-vcall=true, cfi-icall=true, cfi-cast=false
       For all other microarches, are all false, but you may customize via the
       -fsanitize= compiler flag with the cfi USE flag.
+
+      The CFI sanitizer can mitigate only a few top 50 reported vulnerabilities.
     </flag>
     <flag name="component-build">
       Split build into more shared libraries to speed up linking. Mostly
@@ -417,6 +419,9 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
 
       Hardened users may want to enable this option for added real-time
       protection.
+
+      The GWP-ASan sanitizer can mitigate many of the top 50 reported
+      vulnerabilities.
     </flag>
     <flag name="hangouts">
       Enable support for Hangouts and features such as screen sharing
