@@ -3866,6 +3866,68 @@ einfo "Disabling GWP-ASan"
 		myconf_gn+=" use_memory_tagging=false"
 	fi
 
+	if use official ; then
+		:
+	elif use partitionalloc && use miracleptr ; then
+		:
+	elif use cpu_flags_arm_mte ; then
+		:
+	elif [[ "${ABI}" == "arm64" ]] ; then
+ewarn
+ewarn "You are disabling memory corruption mitigations."
+ewarn
+ewarn "Enable one of the combos below for increased coverage against memory"
+ewarn "corruption attacks."
+ewarn
+ewarn "1. MTE = Score 3.2"
+ewarn "2. MTE + MiraclePtr = Score 3.2"
+ewarn "3. MTE + PartitionAlloc = Score 3.1"
+ewarn "4. MiraclePtr + PartitionAlloc = Score 3.1 (Upstream default)"
+ewarn "5. MTE + MircalePtr + PartitionAlloc = Score 3.0"
+ewarn "6. GWP-ASan + MTE = Score 3.0"
+ewarn "7. GWP-ASan + MTE + MiraclePtr = Score 2.8"
+ewarn
+ewarn "Rankings above maximize mitigation and minimizes overhead."
+ewarn
+	elif [[ "${ABI}" == "amd64" ]] ; then
+ewarn
+ewarn "You are disabling memory corruption mitigations."
+ewarn
+ewarn "Enable one of the combos below for increased coverage against memory"
+ewarn "corruption attacks."
+ewarn
+ewarn "1. MiraclePtr + PartitionAlloc = Score 3.1 (Upstream default)"
+ewarn "2. GWP-ASan + MiraclePtr + PartitionAlloc = Score 2.6"
+ewarn "3. GWP-ASan = Score 1.6"
+ewarn
+ewarn "Rankings above maximize mitigation and minimizes overhead."
+ewarn
+	elif [[ "${ABI}" == "arm" || "${ABI}" == "ppc" || "${ABI}" == "x86" ]] ; then
+	# 32-bit fallback
+ewarn
+ewarn "You are disabling memory corruption mitigations."
+ewarn
+ewarn "Enable one of the combos below for increased coverage against memory"
+ewarn "corruption attacks."
+ewarn
+ewarn "1. MiraclePtr + PartitionAlloc = Score 3.1 (Upstream default)"
+ewarn
+ewarn "Use 64-bit instead for a more secure build."
+ewarn
+	else
+	# 64-bit fallback
+ewarn
+ewarn "You are disabling memory corruption mitigations."
+ewarn
+ewarn "Enable one of the combos below for increased coverage against memory"
+ewarn "corruption attacks."
+ewarn
+ewarn "1. MiraclePtr + PartitionAlloc = Score 3.1 (Upstream default)"
+ewarn "2. GWP-ASan + MiraclePtr + PartitionAlloc = Score 2.6"
+ewarn "3. GWP-ASan = Score 1.6"
+ewarn
+	fi
+
 	cflags-hardened_append
 	# We just want the missing flags (retpoline, -fstack-clash-protection)  flags
 	filter-flags \
