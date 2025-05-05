@@ -17,8 +17,8 @@ CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx"
 	"cpu_flags_x86_avx512bw"
-	"cpu_flags_x86_bf16_spr"
-	"cpu_flags_x86_bf16_zen4"
+	"cpu_flags_x86_avx512fp16"
+	"cpu_flags_x86_avx512bf16"
 	"cpu_flags_x86_ssse3"
 )
 GCC_PV="14"
@@ -148,7 +148,7 @@ RDEPEND+="
 		media-libs/libnsgif[${MULTILIB_USEDEP}]
 	)
 	highway? (
-		>=dev-cpp/highway-0.16.0[${MULTILIB_USEDEP},cpu_flags_x86_avx=,cpu_flags_x86_avx512bw=,cpu_flags_x86_bf16_spr=,cpu_flags_x86_bf16_zen4=,cpu_flags_x86_ssse3=]
+		>=dev-cpp/highway-0.16.0[${MULTILIB_USEDEP},cpu_flags_x86_avx=,cpu_flags_x86_avx512bw=,cpu_flags_x86_avx512bf16=,cpu_flags_x86_avx512fp16=,cpu_flags_x86_ssse3=]
 	)
 	imagemagick? (
 		!graphicsmagick? (

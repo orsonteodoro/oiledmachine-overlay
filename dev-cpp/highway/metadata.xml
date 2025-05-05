@@ -72,6 +72,12 @@
     <flag name="cpu_flags_x86_avx2">
       Optimize with AVX2
     </flag>
+    <flag name="cpu_flags_x86_avx512bf16">
+      Optimize with BF16 for Zen 4 or later
+    </flag>
+    <flag name="cpu_flags_x86_avx512bitalg">
+      Optimize with AVX512BITALG
+    </flag>
     <flag name="cpu_flags_x86_avx512bw">
       Optimize with AVX512BW
     </flag>
@@ -84,23 +90,35 @@
     <flag name="cpu_flags_x86_avx512f">
       Optimize with AVX512F
     </flag>
+    <flag name="cpu_flags_x86_avx512fp16">
+      Optimize with BF16/FP16 for Sapphire Rapids or later
+    </flag>
+    <flag name="cpu_flags_x86_avx512vbmi">
+      Optimize with AVX512VBMI
+    </flag>
+    <flag name="cpu_flags_x86_avx512vbmi2">
+      Optimize with AVX512VBMI2
+    </flag>
     <flag name="cpu_flags_x86_avx512vl">
       Optimize with AVX512VL
     </flag>
-    <flag name="cpu_flags_x86_bf16_zen4">
-      Optimize with BF16 for Zen 4 or later
+    <flag name="cpu_flags_x86_avx512vnni">
+      Optimize with AVX512VNNI
     </flag>
-    <flag name="cpu_flags_x86_bf16_spr">
-      Optimize with BF16 for Sapphire Rapids or later
+    <flag name="cpu_flags_x86_avx512vpopcntdq">
+      Optimize with AVX512VPOPCNTDQ
+    </flag>
+    <flag name="cpu_flags_x86_f16c">
+      Optimize with F16C
     </flag>
     <flag name="cpu_flags_x86_gfni">
       Optimize with GFNI
     </flag>
-    <flag name="cpu_flags_x86_sse4">
-      Optimize with SSE4
+    <flag name="cpu_flags_x86_sse2">
+      Optimize with SSE2
     </flag>
-    <flag name="cpu_flags_x86_sse4.2">
-      Optimize with SSE4.2
+    <flag name="cpu_flags_x86_sse4_2">
+      Optimize with SSE4.1, SSE4.2
     </flag>
     <flag name="cpu_flags_x86_ssse3">
       Optimize with SSSE3
@@ -108,14 +126,8 @@
     <flag name="cpu_flags_x86_vaes">
       Optimize with VAES
     </flag>
-    <flag name="cpu_flags_x86_vbmi">
-      Optimize with VBMI
-    </flag>
-    <flag name="cpu_flags_x86_vbmi2">
-      Optimize with VBMI2
-    </flag>
-    <flag name="cpu_flags_x86_vnni">
-      Optimize with VNNI
+    <flag name="cpu_flags_x86_vpclmulqdq">
+      Optimize with VPCLMULQDQ
     </flag>
   </use>
 </pkgmetadata>

@@ -25,28 +25,27 @@ CPU_FLAGS_RISCV=(
 	"cpu_flags_riscv_rvv"
 )
 CPU_FLAGS_X86=(
-	"cpu_flags_x86_sse2"
-	"cpu_flags_x86_ssse3"
-	"cpu_flags_x86_sse4"
-	"cpu_flags_x86_sse4_2"
-	"cpu_flags_x86_avx2"
-
-	"cpu_flags_x86_gfni"
-	"cpu_flags_x86_vaes"
-	"cpu_flags_x86_vbmi"
-	"cpu_flags_x86_vbmi2"
-	"cpu_flags_x86_vnni"
-
-	"cpu_flags_x86_bf16_spr"
-	"cpu_flags_x86_bf16_zen4"
-
 	"cpu_flags_x86_avx"
-
-	"cpu_flags_x86_avx512f"
+	"cpu_flags_x86_avx2"
+	"cpu_flags_x86_avx512bf16"
+	"cpu_flags_x86_avx512bitalg"
+	"cpu_flags_x86_avx512bw"
 	"cpu_flags_x86_avx512cd"
 	"cpu_flags_x86_avx512dq"
-	"cpu_flags_x86_avx512bw"
+	"cpu_flags_x86_avx512f"
+	"cpu_flags_x86_avx512fp16"
+	"cpu_flags_x86_avx512vbmi"
+	"cpu_flags_x86_avx512vbmi2"
 	"cpu_flags_x86_avx512vl"
+	"cpu_flags_x86_avx512vnni"
+	"cpu_flags_x86_avx512vpopcntdq"
+	"cpu_flags_x86_f16c"
+	"cpu_flags_x86_gfni"
+	"cpu_flags_x86_sse2"
+	"cpu_flags_x86_sse4_2"
+	"cpu_flags_x86_ssse3"
+	"cpu_flags_x86_vaes"
+	"cpu_flags_x86_vpclmulqdq"
 )
 
 inherit cmake-multilib
@@ -75,78 +74,153 @@ ${CPU_FLAGS_X86[@]}
 test
 "
 REQUIRED_USE="
-	cpu_flags_x86_gfni? (
-		cpu_flags_x86_avx512f
-		cpu_flags_x86_avx512cd
-		cpu_flags_x86_vbmi
-		cpu_flags_x86_vbmi2
-		cpu_flags_x86_vaes
-		cpu_flags_x86_vnni
-	)
-	cpu_flags_x86_vbmi? (
-		cpu_flags_x86_avx512f
-		cpu_flags_x86_avx512cd
-		cpu_flags_x86_gfni
-		cpu_flags_x86_vbmi2
-		cpu_flags_x86_vaes
-		cpu_flags_x86_vnni
-	)
-	cpu_flags_x86_vbmi2? (
-		cpu_flags_x86_avx512f
-		cpu_flags_x86_avx512cd
-		cpu_flags_x86_gfni
-		cpu_flags_x86_vbmi
-		cpu_flags_x86_vaes
-		cpu_flags_x86_vnni
-	)
-	cpu_flags_x86_vaes? (
-		cpu_flags_x86_avx512f
-		cpu_flags_x86_avx512cd
-		cpu_flags_x86_gfni
-		cpu_flags_x86_vbmi
-		cpu_flags_x86_vbmi2
-		cpu_flags_x86_vnni
-	)
-	cpu_flags_x86_vnni? (
-		cpu_flags_x86_avx512f
-		cpu_flags_x86_avx512cd
-		cpu_flags_x86_gfni
-		cpu_flags_x86_vbmi
-		cpu_flags_x86_vbmi2
-		cpu_flags_x86_vaes
+	cpu_flags_x86_ssse3? (
+		cpu_flags_x86_sse2
 	)
 
-	cpu_flags_x86_sse4? (
+	cpu_flags_x86_sse4_2? (
+		cpu_flags_x86_ssse3
+	)
+
+	cpu_flags_x86_avx? (
 		cpu_flags_x86_sse4_2
 	)
+
 	cpu_flags_x86_avx2? (
 		cpu_flags_x86_avx
+		cpu_flags_x86_f16c
 	)
+
 	cpu_flags_x86_avx512f? (
 		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512dq
 		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512vl
 	)
 	cpu_flags_x86_avx512cd? (
 		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512dq
 		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
 	)
 	cpu_flags_x86_avx512dq? (
+		cpu_flags_x86_avx2
 		cpu_flags_x86_avx512bw
 		cpu_flags_x86_avx512cd
 		cpu_flags_x86_avx512f
 		cpu_flags_x86_avx512vl
 	)
 	cpu_flags_x86_avx512bw? (
-		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx2
 		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512cd
 		cpu_flags_x86_avx512f
 		cpu_flags_x86_avx512vl
 	)
 	cpu_flags_x86_avx512vl? (
+		cpu_flags_x86_avx2
 		cpu_flags_x86_avx512bw
-		cpu_flags_x86_avx512cd
 		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512cd
 		cpu_flags_x86_avx512f
+	)
+
+	cpu_flags_x86_vpclmulqdq? (
+		cpu_flags_x86_avx512bitalg
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vbmi
+		cpu_flags_x86_avx512vl
+		cpu_flags_x86_gfni
+		cpu_flags_x86_vaes
+	)
+	cpu_flags_x86_avx512vbmi? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+		cpu_flags_x86_f16c
+	)
+	cpu_flags_x86_avx512vbmi2? (
+		cpu_flags_x86_avx512bitalg
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vbmi
+		cpu_flags_x86_avx512vl
+		cpu_flags_x86_gfni
+		cpu_flags_x86_vaes
+		cpu_flags_x86_vpclmulqdq
+	)
+	cpu_flags_x86_vaes? (
+		cpu_flags_x86_avx512bitalg
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vbmi2
+		cpu_flags_x86_avx512vl
+		cpu_flags_x86_gfni
+		cpu_flags_x86_vpclmulqdq
+	)
+	cpu_flags_x86_avx512vnni? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+		cpu_flags_x86_f16c
+	)
+	cpu_flags_x86_avx512bitalg? (
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vbmi2
+		cpu_flags_x86_avx512vl
+		cpu_flags_x86_gfni
+		cpu_flags_x86_vaes
+		cpu_flags_x86_vpclmulqdq
+	)
+	cpu_flags_x86_avx512vpopcntdq? (
+		cpu_flags_x86_avx512bitalg
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vbmi2
+		cpu_flags_x86_avx512vl
+		cpu_flags_x86_gfni
+		cpu_flags_x86_vaes
+		cpu_flags_x86_vpclmulqdq
+	)
+	cpu_flags_x86_gfni? (
+		cpu_flags_x86_avx512bitalg
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vbmi2
+		cpu_flags_x86_avx512vl
+		cpu_flags_x86_vaes
+		cpu_flags_x86_vpclmulqdq
+	)
+
+	cpu_flags_x86_avx512bf16? (
+		cpu_flags_x86_gfni
+	)
+
+	cpu_flags_x86_avx512fp16? (
+		cpu_flags_x86_gfni
+		cpu_flags_x86_avx512bf16
 	)
 "
 DEPEND="
@@ -242,7 +316,7 @@ _configure_cpu_flags_x86() {
 			"HWY_SSSE3"
 		)
 	fi
-	if ! use cpu_flags_x86_sse4 ; then
+	if ! use cpu_flags_x86_sse4_2 ; then
 		disabled_cpu_flags+=(
 			"HWY_SSE4"
 		)
@@ -262,14 +336,19 @@ _configure_cpu_flags_x86() {
 			"HWY_AVX3_DL"
 		)
 	fi
-	if ! use cpu_flags_x86_bf16_spr ; then
+	if ! use cpu_flags_x86_avx512fp16 ; then
 		disabled_cpu_flags+=(
 			"HWY_AVX3_SPR"
 		)
 	fi
-	if ! use cpu_flags_x86_bf16_zen4 ; then
+	if ! use cpu_flags_x86_avx512bf16 ; then
 		disabled_cpu_flags+=(
 			"HWY_AVX3_ZEN4"
+		)
+	fi
+	if ! use cpu_flags_x86_f16c ; then
+		mycmakeargs+=(
+			"-DHWY_DISABLE_F16C=1"
 		)
 	fi
 }

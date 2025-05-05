@@ -162,10 +162,10 @@
     <flag name="cpu_flags_x86_avx512bw">
       Optimize with AVX512
     </flag>
-    <flag name="cpu_flags_x86_bf16_spr">
-      Optimize with AVX512 + BF16 for Sapphire Rapids or later
+    <flag name="cpu_flags_x86_avx512fp16">
+      Optimize with AVX512 + BF16/FP16 for Sapphire Rapids or later
     </flag>
-    <flag name="cpu_flags_x86_bf16_zen4">
+    <flag name="cpu_flags_x86_avx512bf16">
       Optimize with AVX512 + BF16 for Zen 4 or later
     </flag>
   </use>
