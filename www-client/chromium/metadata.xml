@@ -339,8 +339,9 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Use software based execution integrity checks.
 
       Builds with mitigations to ensure execution integrity within built code.
-      Mitigates against unauthorized transactions from compromised execution
-      integrity by crashing the process before running attacker's code.
+      Mitigates against unauthorized transactions or actions from the
+      compromised execution integrity by crashing the process before running
+      attacker's code.
 
                         | CF edge type | Estimated performance slowdown | Mitigated attack vectors | Attack difficulty | Report prevalence | Programming equivalent
       cfi-cast          | -            | 1.01 - 1.05                    | CE                       | Medium            | Most              | dynamic_cast in C++
@@ -384,13 +385,19 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       [The USE flag is only available when the patchset version matches the
       browser version for security reasons.]
     </flag>
-    <flag name="cpu_flags_arm_pac">
-      Use PAC for some hardware accelerated execution integrity checks.
-      Mitigate against ROP (backward edge CFI) attacks.
-    </flag>
     <flag name="cpu_flags_arm_bti">
       Use BTI for some hardware accelerated execution integrity checks.
       Mitigate against JOP (forward edge CFI) attacks.
+    </flag>
+    <flag name="cpu_flags_arm_mte">
+      Use MTE for hardware accelerated Use After Free (UAF) detection.  When a
+      UAF is detected, it will crash before running the attacker's code so that
+      unauthorized transactions or actions are stopped.  All heap allocations
+      are checked in PartitionAlloc.
+    </flag
+    <flag name="cpu_flags_arm_pac">
+      Use PAC for some hardware accelerated execution integrity checks.
+      Mitigate against ROP (backward edge CFI) attacks.
     </flag>
     <flag name="css-hyphen">
       Add support for auto hyphenization of words (e.g. "hyphens: auto") for CSS
@@ -432,6 +439,10 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
 
       The GWP-ASan sanitizer can mitigate many of the top 50 reported
       vulnerabilities.
+
+      Note not all heap allocations are checked.  The sampling rate is about
+      1:10000, 1 check out of 10000 allocations or 0.1% of all allocations total
+      inspected for memory corruption.
     </flag>
     <flag name="hangouts">
       Enable support for Hangouts and features such as screen sharing
@@ -457,6 +468,11 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     </flag>
     <flag name="mdns">
       Enable Multicast DNS support.
+    </flag>
+    <flag name="miracleptr">
+      Use software based Use After Free (UAF) mitigation with pointers with
+      PartitionAlloc.  It will mitigate an estimated 50% UAFs.  It may overlap
+      with GWP-ASan and MTE.
     </flag>
     <flag name="ml">
       Build and enable Artificial Intelligence (AI) or Machine Learning (ML)

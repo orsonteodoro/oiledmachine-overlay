@@ -569,6 +569,7 @@ CPU_FLAGS_ARM=(
 	bti
 	neon
 	pac
+	mte
 )
 CPU_FLAGS_PPC=(
 	vsx3
@@ -610,7 +611,7 @@ ${IUSE_LIBCXX[@]}
 ${PATENT_STATUS[@]}
 +accessibility bindist bluetooth +bundled-libcxx +cfi -cet +cups +css-hyphen
 -debug +drumbrake +encode +extensions ffmpeg-chromium firejail -gtk4 -gwp-asan
--hangouts -headless +hidpi +jit +js-type-check +kerberos +mdns mold +mpris
+-hangouts -headless +hidpi +jit +js-type-check +kerberos +mdns +miracleptr mold +mpris
 -official +partitionalloc pax-kernel +pdf pic +pgo +plugins +pointer-compression
 +pre-check-vaapi +pulseaudio +reporting-api qt6 +screencast selinux
 -system-dav1d +system-ffmpeg -system-flac -system-fontconfig -system-freetype
@@ -804,8 +805,8 @@ REQUIRED_USE+="
 	ffmpeg-chromium? (
 		bindist
 	)
-	!headless? (
-		pdf
+	miracleptr? (
+		partitionalloc
 	)
 	official? (
 		!cet
@@ -843,6 +844,7 @@ REQUIRED_USE+="
 		kerberos
 		libaom
 		mdns
+		miracleptr
 		mpris
 		openh264
 		opus
@@ -2317,6 +2319,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	PATCHES+=(
 		"${FILESDIR}/extra-patches/${PN}-123.0.6312.58-zlib-selective-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-133.0.6943.53-disable-speech.patch"
+		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-use-memory-tagging.patch"
 	)
 
 	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
@@ -3664,6 +3667,16 @@ einfo "Disabling GWP-ASan"
 		myconf_gn+=" enable_gwp_asan=false"
 	fi
 
+	if use official ; then
+		myconf_gn+" use_memory_tagging=true"
+	# It it will be default off.
+	elif tc-is-clang && [[ "${ABI}" == "arm64" ]] ; then
+		myconf_gn+" use_memory_tagging=$(usex cpu_flags_arm_mte true false)"
+		myconf_gn+" use_full_mte=$(usex cpu_flags_arm_mte true false)"
+	else
+		myconf_gn+" use_memory_tagging=false"
+	fi
+
 	cflags-hardened_append
 	# We just want the missing flags (retpoline, -fstack-clash-protection)  flags
 	filter-flags \
@@ -4689,12 +4702,14 @@ eerror "To use mold, enable the mold USE flag."
 	# The reason why we disable official in this ebuild fork is to drop the
 	# lock-in to proprietary settings including proprietary codecs.
 
-	# The MiraclePtr is enabled on official Linux.
+	# The MiraclePtr is default enabled on official Linux.
+	# MiraclePtr is software based UAF detection.
 	# When official is disabled, it reduces the attack surface and adds a
 	# UAF critical-high vulnerability.
 	# We force MiraclePtr on since GWP-ASan is default off.
 	# It may overlap with GWP-ASan's UAF mitigation.
-		myconf_gn+=" enable_backup_ref_ptr_support=$(usex partitionalloc true false)"
+	# See also https://security.googleblog.com/2022/09/use-after-freedom-miracleptr.html
+		myconf_gn+=" enable_backup_ref_ptr_support=$(usex miracleptr true false)"
 	fi
 
 	if [[ -z "${LTO_TYPE}" ]] ; then
