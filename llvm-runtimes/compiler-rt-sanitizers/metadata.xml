@@ -85,9 +85,8 @@
       disjoint safe/unsafe stacks instead of canaries and additional
       measures to protect and hide the safe stack.
 
-      For the x86_64 implementation, there are several criticisms of
-      SafeStack.  There seems to be a consensus of no benefit in using this.
-      One researcher noted a information disclosure attack/vulnerability.
+      This can be used as an alternative for ShadowCallStack for backward
+      edge CFI.
     </flag>
     <flag name="sanitize">
       Build the sanitizer runtimes.
@@ -104,6 +103,8 @@
       Build the ShadowCallStack (SCS) runtime to protect against overwritten
       return addresses using a disjoint, isolated, hidden SCS.  SCS is a
       better alternative to fstack-protector and SafeStack.
+
+      For ARCH=amd64, use safestack instead for backward edge CFI.
     </flag>
     <flag name="tsan">
       Build the Thread Sanitizer runtime for data races detection where one
