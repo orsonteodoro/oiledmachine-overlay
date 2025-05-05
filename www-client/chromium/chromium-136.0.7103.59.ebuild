@@ -3944,7 +3944,7 @@ ewarn
 		:
 	elif use cfi ; then
 		:
-	elif [[ "${ABI}" == "amd64" ]] ; then
+	elif [[ "${ABI}" == "arm64" ]] ; then
 ewarn
 ewarn "You are missing CFI for execution integrity.  These are associated with"
 ewarn "a few top 25 reported vulnerabilities."
