@@ -637,6 +637,7 @@ IUSE_CODECS=(
 IUSE+="
 ${CPU_FLAGS_ARM[@]/#/cpu_flags_arm_}
 ${CPU_FLAGS_PPC[@]/#/cpu_flags_ppc_}
+${CPU_FLAGS_RISCV[@]/#/cpu_flags_riscv_}
 ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${IUSE_CODECS[@]}
 ${IUSE_LIBCXX[@]}
@@ -3872,6 +3873,8 @@ einfo "Disabling GWP-ASan"
 		:
 	elif use cpu_flags_arm_mte ; then
 		:
+	elif use gwp-asan ; then
+		:
 	elif [[ "${ABI}" == "arm64" ]] ; then
 ewarn
 ewarn "You are disabling memory corruption mitigations."
@@ -3879,28 +3882,23 @@ ewarn
 ewarn "Enable one of the combos below for increased coverage against memory"
 ewarn "corruption attacks."
 ewarn
-ewarn "1. MTE = Score 3.2"
-ewarn "2. MTE + MiraclePtr = Score 3.2"
-ewarn "3. MTE + PartitionAlloc = Score 3.1"
-ewarn "4. MiraclePtr + PartitionAlloc = Score 3.1 (Upstream default)"
-ewarn "5. MTE + MircalePtr + PartitionAlloc = Score 3.0"
-ewarn "6. GWP-ASan + MTE = Score 3.0"
-ewarn "7. GWP-ASan + MTE + MiraclePtr = Score 2.8"
+ewarn "    Mitigation combo                                        | Score | Security posture     | Upstream default?"
+ewarn "-----------------------------------------------------------------------------------------------------------"
+ewarn " 1. PartitionAlloc + MiraclePtr + MTE                       |  17.8 | Security-critical    |"
+ewarn " 2. PartitionAlloc + MiraclePtr + GWP-ASan                  |  17.2 | Security-critical    |"
+ewarn " 3. MiraclePtr + MTE                                        |  13.6 | Security-critical    |"
+ewarn " 4. MiraclePtr + GWP-ASan                                   |  13.0 | Security-critical    |"
+ewarn " 5. PartitionAlloc + MTE                                    |  12.6 | Balance              |"
+ewarn " 6. PartitionAlloc + GWP-ASan                               |  12.0 | Balance              |"
+ewarn " 7. MiraclePtr + PartitionAlloc                             |  11.4 | Balance              | Yes"
+ewarn " 8. MTE                                                     |   8.4 | Performance-critical |"
+ewarn " 9. GWP-ASan                                                |   7.8 | Security-critical    |"
+ewarn "10. MiraclePtr                                              |   7.8 | Balance              |"
+ewarn "11. PartitionAlloc                                          |   7.8 | Performance-critical |"
 ewarn
-ewarn "Rankings above maximize mitigation and minimizes overhead."
-ewarn
-	elif [[ "${ABI}" == "amd64" ]] ; then
-ewarn
-ewarn "You are disabling memory corruption mitigations."
-ewarn
-ewarn "Enable one of the combos below for increased coverage against memory"
-ewarn "corruption attacks."
-ewarn
-ewarn "1. MiraclePtr + PartitionAlloc = Score 3.1 (Upstream default)"
-ewarn "2. GWP-ASan + MiraclePtr + PartitionAlloc = Score 2.6"
-ewarn "3. GWP-ASan = Score 1.6"
-ewarn
-ewarn "Rankings above maximize mitigation and minimizes overhead."
+ewarn "The scores reflect maximizing mitigation coverage, minimizing overhead,"
+ewarn "and rewarding more for combos that attack widely reported memory"
+ewarn "corruption related vulnerabilities."
 ewarn
 	elif [[ "${ABI}" == "arm" || "${ABI}" == "ppc" || "${ABI}" == "x86" ]] ; then
 	# 32-bit fallback
@@ -3910,7 +3908,9 @@ ewarn
 ewarn "Enable one of the combos below for increased coverage against memory"
 ewarn "corruption attacks."
 ewarn
-ewarn "1. MiraclePtr + PartitionAlloc = Score 3.1 (Upstream default)"
+ewarn "    Mitigation combo                                        | Score | Security posture     | Upstream default?"
+ewarn "-----------------------------------------------------------------------------------------------------------"
+ewarn " 1. MiraclePtr + PartitionAlloc                             |  11.4 | Balance              | Yes"
 ewarn
 ewarn "Use 64-bit instead for a more secure build."
 ewarn
@@ -3922,9 +3922,71 @@ ewarn
 ewarn "Enable one of the combos below for increased coverage against memory"
 ewarn "corruption attacks."
 ewarn
-ewarn "1. MiraclePtr + PartitionAlloc = Score 3.1 (Upstream default)"
-ewarn "2. GWP-ASan + MiraclePtr + PartitionAlloc = Score 2.6"
-ewarn "3. GWP-ASan = Score 1.6"
+ewarn "    Mitigation combo                                        | Score | Security posture     | Upstream default?"
+ewarn "-----------------------------------------------------------------------------------------------------------"
+ewarn " 1. PartitionAlloc + MiraclePtr + GWP-ASan                  |  17.2 | Security-critical    |"
+ewarn " 2. MiraclePtr + GWP-ASan                                   |  13.0 | Security-critical    |"
+ewarn " 3. PartitionAlloc + GWP-ASan                               |  12.0 | Balance              |"
+ewarn " 4. MiraclePtr + PartitionAlloc                             |  11.4 | Balance              | Yes"
+ewarn " 5. GWP-ASan                                                |   7.8 | Security-critical    |"
+ewarn " 6. MiraclePtr                                              |   7.8 | Balance              |"
+ewarn " 7. PartitionAlloc                                          |   7.8 | Performance-critical |"
+ewarn
+ewarn "The scores reflect maximizing mitigation coverage, minimizing overhead,"
+ewarn "and rewarding more for combos that attack widely reported memory"
+ewarn "corruption related vulnerabilities."
+ewarn
+	fi
+
+	if use official ; then
+		:
+	elif use cpu_flags_arm_bti && use cpu_flags_arm_pac ; then
+		:
+	elif use cfi ; then
+		:
+	elif [[ "${ABI}" == "amd64" ]] ; then
+ewarn
+ewarn "You are missing CFI for execution integrity.  These are associated with"
+ewarn "a few top 25 reported vulnerabilities."
+ewarn
+ewarn "The scores:"
+ewarn
+ewarn "    Mitigation combo                                           | Score | Security posture  | Upstream default?"
+ewarn "--------------------------------------------------------------------------------------------------------------"
+ewarn "1. CFI (vcall + icall + cast) + ShadowCallStack                |   4.2 | Security-critical |"
+ewarn "2. CFI (vcall + icall + cast)                                  |   4.1 | Security-critcial | Yes"
+ewarn "3. BTI + PAC                                                   |   3.9 | Balance           |"
+ewarn "4. CFI (vcall) + BTI                                           |   3.9 | Balance           |"
+ewarn "5. ShadowCallStack                                             |   3.4 | Balance"
+ewarn
+ewarn "The scores reflect maximizing mitigation coverage, minimizing overhead,"
+ewarn "and rewarding more for combos that attack widely reported CFI related"
+ewarn "vulnerabilities."
+ewarn
+	elif [[ "${ABI}" == "amd64" ]] ; then
+ewarn
+ewarn "You are missing CFI for execution integrity.  These are associated with"
+ewarn "a few top 25 reported vulnerabilities."
+ewarn
+ewarn "The scores:"
+ewarn
+ewarn "    Mitigation combo                                           | Score | Security posture     | Upstream default?"
+ewarn "--------------------------------------------------------------------------------------------------------------"
+ewarn "1. CFI (vcall + icall + cast) + ShadowCallStack                |   4.2 | Security-critical    |"
+ewarn "2. CFI (vcall + icall + cast)                                  |   4.1 | Security-critical    | Yes"
+ewarn "3. ShadowCallStack                                             |   3.4 | Balance              |"
+ewarn "4. CFE + CFI (vcall + icall + cast)                            |   3.4 | Balance              |"
+ewarn "5. CFE                                                         |   2.8 | Performance-critical |"
+ewarn
+ewarn "The scores reflect maximizing mitigation coverage, minimizing overhead,"
+ewarn "and rewarding more for combos that attack widely reported CFI related"
+ewarn "vulnerabilities."
+ewarn
+	else
+ewarn
+ewarn "You are using an ABI or platform without LLVM CFI (Control Flow Integrity) support."
+ewarn "CFI associated attacks are a few of the top 25 reported vulnerabilities list."
+ewarn "This increases the attack surface of the build."
 ewarn
 	fi
 
