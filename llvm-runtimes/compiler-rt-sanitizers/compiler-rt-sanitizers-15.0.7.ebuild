@@ -55,6 +55,9 @@ ${SANITIZER_FLAGS[@]/#/+}
 "
 # See also https://github.com/llvm/llvm-project/blob/llvmorg-15.0.6/compiler-rt/cmake/Modules/AllSupportedArchDefs.cmake
 SANITIZER_REQUIRED_USE="
+	amd64? (
+		!shadowcallstack
+	)
 	asan? (
 		|| (
 			amd64
