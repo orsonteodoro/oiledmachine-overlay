@@ -570,15 +570,47 @@ CPU_FLAGS_ARM=(
 	neon
 	pac
 	mte
+	neon
+	neon_aes
+	neon_bf16
+	sve
+	sve_256
+	sve2
+	sve2_128
 )
 CPU_FLAGS_PPC=(
+	ppc8
+	ppc9
+	ppc10
 	vsx3
+	z15
+	z16
+)
+CPU_FLAGS_RISCV=(
+	rvv
 )
 CPU_FLAGS_X86=(
+	avx
 	avx2
+	avx512bitalg
+	avx512bf16
+	avx512vbmi
+	avx512vbmi2
+	avx512vnni
+	avx512vpopcntdq
+	avx512bw
+	avx512cd
+	avx512dq
+	avx512f
+	avx512fp16
+	avx512vl
+	gfni
+	f16c
 	sse2
 	sse4_2
 	ssse3
+	vaes
+	vpclmulqdq
 )
 IUSE_LIBCXX=(
 	bundled-libcxx
@@ -796,6 +828,162 @@ REQUIRED_USE+="
 	bindist? (
 		!system-ffmpeg
 	)
+	cpu_flags_x86_avx? (
+		cpu_flags_x86_sse4_2
+	)
+	cpu_flags_x86_avx2? (
+		cpu_flags_x86_avx
+		cpu_flags_x86_f16c
+	)
+	cpu_flags_x86_avx512bw? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avx512cd? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avx512dq? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avx512f? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avx512vl? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+	)
+
+	cpu_flags_x86_avx512vbmi? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avx512vbmi2? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vbmi
+		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avx512vnni? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vl
+	)
+	cpu_flags_x86_avx512bitalg? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vbmi2
+		cpu_flags_x86_avx512vl
+		cpu_flags_x86_avx512vnni
+		cpu_flags_x86_avx512vpopcntdq
+		cpu_flags_x86_gfni
+		cpu_flags_x86_vaes
+		cpu_flags_x86_vpclmulqdq
+	)
+	cpu_flags_x86_avx512vpopcntdq? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512bitalg
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vbmi2
+		cpu_flags_x86_avx512vl
+		cpu_flags_x86_avx512vnni
+		cpu_flags_x86_gfni
+		cpu_flags_x86_vaes
+		cpu_flags_x86_vpclmulqdq
+	)
+	cpu_flags_x86_f16c? (
+		cpu_flags_x86_avx
+	)
+	cpu_flags_x86_gfni? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512bitalg
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vbmi2
+		cpu_flags_x86_avx512vl
+		cpu_flags_x86_avx512vnni
+		cpu_flags_x86_avx512vpopcntdq
+		cpu_flags_x86_vaes
+		cpu_flags_x86_vpclmulqdq
+	)
+	cpu_flags_x86_ssse3? (
+		cpu_flags_x86_sse2
+	)
+	cpu_flags_x86_sse4_2? (
+		cpu_flags_x86_ssse3
+	)
+	cpu_flags_x86_vaes? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512bitalg
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vbmi2
+		cpu_flags_x86_avx512vl
+		cpu_flags_x86_avx512vnni
+		cpu_flags_x86_avx512vpopcntdq
+		cpu_flags_x86_gfni
+		cpu_flags_x86_vpclmulqdq
+	)
+	cpu_flags_x86_vpclmulqdq? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_avx512bitalg
+		cpu_flags_x86_avx512bw
+		cpu_flags_x86_avx512cd
+		cpu_flags_x86_avx512dq
+		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vbmi2
+		cpu_flags_x86_avx512vl
+		cpu_flags_x86_avx512vnni
+		cpu_flags_x86_avx512vpopcntdq
+		cpu_flags_x86_gfni
+		cpu_flags_x86_vaes
+	)
+
+	cpu_flags_x86_avx512fp16? (
+		cpu_flags_x86_vaes
+		cpu_flags_x86_avx512bf16
+	)
+	cpu_flags_x86_avx512bf16? (
+		cpu_flags_x86_vaes
+	)
+
 	cups? (
 		pdf
 	)
@@ -2320,6 +2508,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-123.0.6312.58-zlib-selective-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-133.0.6943.53-disable-speech.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-use-memory-tagging.patch"
+		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-highway-optionalize-simd.patch"
 	)
 
 	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
@@ -4030,6 +4219,11 @@ ewarn
 			jit_level=0
 		fi
 
+		if ! use cpu_flags_x86_avx2 && [[ "${ABI}" == "x86" || "${ABI}" == "amd64" ]] && (( ${jit_level} >= 2 )) ; then
+einfo "No AVX2, downgrading to jit_level=1 without turbofan"
+			jit_level=1
+		fi
+
 		if use webassembly && (( ${jit_level} < 2 )) ; then
 einfo "Changing jit_level=${jit_level} to jit_level=2 for WebAssembly."
 			jit_level=2
@@ -4491,28 +4685,6 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	myconf_gn+=" target_cpu=\"${target_cpu}\""
 	myconf_gn+=" v8_current_cpu=\"${target_cpu}\""
 
-	if ! use cpu_flags_arm_neon ; then
-		myconf_gn+=" use_neon=false"
-	fi
-
-	if ! use cpu_flags_x86_sse2 ; then
-		myconf_gn+=" use_sse2=false"
-	fi
-
-	if ! use cpu_flags_x86_sse4_2 ; then
-		myconf_gn+=" use_sse4_2=false"
-	fi
-
-	if ! use cpu_flags_x86_ssse3 ; then
-		myconf_gn+=" use_ssse3=false"
-	fi
-
-	if use cpu_flags_x86_avx2 ; then
-		myconf_gn+=" rtc_enable_avx2=true"
-	else
-		myconf_gn+=" rtc_enable_avx2=false"
-	fi
-
 # ERROR:
 #
 # [15818/27103] python3.12 ../../v8/tools/run.py ./mksnapshot --turbo_instruction_scheduling --stress-turbo-late-spilling --target_os=linux --target_arch=x64 --embedded_src gen/v8/embedded.S --predictable --no-use-ic --turbo-elide-frames --embedded_variant Default --random-seed 314159265 --startup_blob snapshot_blob.bin --no-native-code-counters --concurrent-builtin-generation --concurrent-turbofan-max-threads=0
@@ -4523,7 +4695,81 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 # Reported by elfx86exts:
 # Instruction set extensions used: AVX, AVX2, AVX512, BMI, BMI2, BWI, CMOV, DQI, MODE64, NOVLX, PCLMUL, SSE1, SSE2, SSE3, SSE41, SSSE3, VLX
 #
-	if use cpu_flags_x86_avx2 ; then
+
+	myconf_gn+=" use_neon=$(usex cpu_flags_arm_neon true false)"
+	myconf_gn+=" use_neon_aes=$(usex cpu_flags_arm_neon_aes true false)"
+	myconf_gn+=" use_neon_bf16=$(usex cpu_flags_arm_neon_bf16 true false)"
+	myconf_gn+=" use_sve=$(usex cpu_flags_arm_sve true false)"
+	myconf_gn+=" use_sve_256=$(usex cpu_flags_arm_sve_256 true false)"
+	myconf_gn+=" use_sve2=$(usex cpu_flags_arm_sve2 true false)"
+	myconf_gn+=" use_sve2_128=$(usex cpu_flags_arm_sve2_128 true false)"
+
+	myconf_gn+=" use_ppc8=$(usex cpu_flags_ppc_ppc8 true false)"
+	myconf_gn+=" use_ppc9=$(usex cpu_flags_ppc_ppc9 true false)"
+	myconf_gn+=" use_ppc10=$(usex cpu_flags_ppc_ppc10 true false)"
+	myconf_gn+=" use_z15=$(usex cpu_flags_ppc_z15 true false)"
+	myconf_gn+=" use_z16=$(usex cpu_flags_ppc_z16 true false)"
+
+	myconf_gn+=" use_rvv=$(usex cpu_flags_riscv_rvv true false)"
+
+	myconf_gn+=" use_avx2=$(usex cpu_flags_x86_avx2 true false)"
+	myconf_gn+=" use_avx3_spr=$(usex cpu_flags_x86_avx512fp16 true false)"		# Sapphire Rapids or better
+	myconf_gn+=" use_avx3_zen4=$(usex cpu_flags_x86_avx512bf16 true false)"		# Zen 4 or better
+	myconf_gn+=" use_f16c=$(usex cpu_flags_x86_f16c true false)"
+	myconf_gn+=" use_sse2=$(usex cpu_flags_x86_sse2 true false)"
+	myconf_gn+=" use_ssse3=$(usex cpu_flags_x86_ssse3 true false)"
+	myconf_gn+=" use_sse4=$(usex cpu_flags_x86_sse4_2 true false)"
+	myconf_gn+=" use_sse4_2=$(usex cpu_flags_x86_sse4_2 true false)"
+
+	# For AVX3, see \
+	# https://github.com/google/highway/blob/00fe003dac355b979f36157f9407c7c46448958e/hwy/ops/set_macros-inl.h#L136
+	# For AVX3_DL, see \
+	# https://github.com/google/highway/blob/00fe003dac355b979f36157f9407c7c46448958e/hwy/ops/set_macros-inl.h#L138
+
+	if \
+		   use cpu_flags_x86_avx512vbmi \
+		&& use cpu_flags_x86_avx512vbmi2 \
+		&& use cpu_flags_x86_avx512vnni \
+		&& use cpu_flags_x86_avx512bitalg \
+		&& use cpu_flags_x86_avx512vpopcntdq \
+		&& use cpu_flags_x86_gfni \
+		&& use cpu_flags_x86_vaes \
+		&& use cpu_flags_x86_vpclmulqdq \
+	; then
+	# Ice Lake or better
+		myconf_gn+=" use_avx3_dl=true"
+	else
+		myconf_gn+=" use_avx3_dl=false"
+	fi
+
+	if \
+		   use cpu_flags_x86_avx512bw \
+		&& use cpu_flags_x86_avx512cd \
+		&& use cpu_flags_x86_avx512dq \
+		&& use cpu_flags_x86_avx512f  \
+		&& use cpu_flags_x86_avx512vl \
+	; then
+	# The same as AVX512
+		myconf_gn+=" use_avx3=true"
+	else
+		myconf_gn+=" use_avx3=false"
+	fi
+
+	myconf_gn+=" rtc_enable_avx2=$(usex cpu_flags_x86_avx2 true false)"
+
+	myconf_gn+=" use_wasm=$(usex webassembly true false)"
+	if use webassembly ; then
+		if [[ "${ABI}" == "x86" || "${ABI}" == "amd64" ]] ; then
+			myconf_gn+=" use_wasm_emu256=$(usex cpu_flags_x86_sse2 true false)"
+		elif [[ "${ABI}" == "arm" || "${ABI}" == "arm64" ]] ; then
+			myconf_gn+=" use_wasm_emu256=$(usex cpu_flags_arm_neon true false)"
+		else
+			myconf_gn+=" use_wasm_emu256=false"
+		fi
+	fi
+
+
+	if use cpu_flags_x86_avx ; then
 	# Default on upstream for 64-bit with wasm enabled
 		myconf_gn+=" v8_enable_wasm_simd256_revec=true"
 	else
