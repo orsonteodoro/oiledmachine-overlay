@@ -482,9 +482,15 @@ rustflags-hardened_append() {
 ewarn "=dev-lang/rust-bin-9999 or =dev-lang/rust-9999 will be required for security-critical rust packages."
 
 	if [[ -z "${CC}" ]] ; then
-		export CC=$(tc-getCC)
-		export CXX=$(tc-getCXX)
-		export CPP="${CC} -E"
+		if [[ "${CHROMIUM_TOOLCHAIN}" == "1" ]] ; then
+			export CC="${CHOST}-clang"
+			export CXX="${CHOST}-clang++"
+			export CPP="${CC} -E"
+		else
+			export CC=$(tc-getCC)
+			export CXX=$(tc-getCXX)
+			export CPP="${CC} -E"
+		fi
 einfo "CC:  ${CC}"
 		${CC} --version || die
 	fi

@@ -753,9 +753,15 @@ cflags-hardened_append() {
 	[[ "${CFLAGS_HARDENED_DISABLED:-0}" == 1 ]] && return
 
 	if [[ -z "${CC}" ]] ; then
-		export CC=$(tc-getCC)
-		export CXX=$(tc-getCXX)
-		export CPP="${CC} -E"
+		if [[ "${CHROMIUM_TOOLCHAIN}" == "1" ]] ; then
+			export CC="${CHOST}-clang"
+			export CXX="${CHOST}-clang++"
+			export CPP="${CC} -E"
+		else
+			export CC=$(tc-getCC)
+			export CXX=$(tc-getCXX)
+			export CPP="${CC} -E"
+		fi
 einfo "CC:  ${CC}"
 		${CC} --version || die
 	fi

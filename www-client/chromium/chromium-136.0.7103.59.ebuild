@@ -3668,13 +3668,13 @@ einfo "Disabling GWP-ASan"
 	fi
 
 	if use official ; then
-		myconf_gn+" use_memory_tagging=true"
+		myconf_gn+=" use_memory_tagging=true"
 	# It it will be default off.
 	elif tc-is-clang && [[ "${ABI}" == "arm64" ]] ; then
-		myconf_gn+" use_memory_tagging=$(usex cpu_flags_arm_mte true false)"
-		myconf_gn+" use_full_mte=$(usex cpu_flags_arm_mte true false)"
+		myconf_gn+=" use_memory_tagging=$(usex cpu_flags_arm_mte true false)"
+		myconf_gn+=" use_full_mte=$(usex cpu_flags_arm_mte true false)"
 	else
-		myconf_gn+" use_memory_tagging=false"
+		myconf_gn+=" use_memory_tagging=false"
 	fi
 
 	cflags-hardened_append
