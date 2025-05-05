@@ -4531,6 +4531,7 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	# It will override the config.
 		sed -i -e "s|v8_enable_wasm_simd256_revec = true|v8_enable_wasm_simd256_revec = false|g" \
 			"v8/BUILD.gn" \
+			"v8/test/unittests/BUILD.gn" \
 			|| die
 	fi
 
