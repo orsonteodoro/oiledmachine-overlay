@@ -1,6 +1,6 @@
 --- a/third_party/highway/BUILD.gn.orig	2025-05-05 22:06:30.620846901 -0700
 +++ b/third_party/highway/BUILD.gn	2025-05-05 22:20:02.747960893 -0700
-@@ -2,12 +2,155 @@
+@@ -2,12 +2,153 @@
  # Use of this source code is governed by a BSD-style license that can be
  # found in the LICENSE file.
  
@@ -73,9 +73,7 @@
 +    }
 +    if (!use_avx3_spr) {
 +      cflags += [ "-mno-avx512fp16" ]
-+      cflags += [ "-mno-avx512bf16" ]
 +      defines += [ "HWY_DISABLED_TARGETS=HWY_AVX3_SPR" ]
-+      defines += [ "HWY_AVX3_DISABLE_AVX512BF16=1" ]
 +    }
 +    if (!use_avx3_zen4) {
 +      cflags += [ "-mno-avx512bf16" ]
