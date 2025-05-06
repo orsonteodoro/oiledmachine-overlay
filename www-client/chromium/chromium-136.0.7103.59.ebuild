@@ -579,31 +579,35 @@ CPU_FLAGS_ARM=(
 	sve2_128
 )
 CPU_FLAGS_PPC=(
-	ppc8
-	ppc9
-	ppc10
+	altivec
+	crypto
+	power8-vector
+	power9-vector
+	power10-vector
 	vsx3
-	z15
-	z16
 )
 CPU_FLAGS_RISCV=(
 	rvv
+)
+CPU_FLAGS_S390=(
+	z15
+	z16
 )
 CPU_FLAGS_X86=(
 	avx
 	avx2
 	avx512bitalg
 	avx512bf16
-	avx512vbmi
-	avx512vbmi2
-	avx512vnni
-	avx512vpopcntdq
 	avx512bw
 	avx512cd
 	avx512dq
 	avx512f
 	avx512fp16
+	avx512vbmi
+	avx512vbmi2
 	avx512vl
+	avx512vnni
+	avx512vpopcntdq
 	gfni
 	f16c
 	sse2
@@ -638,6 +642,7 @@ IUSE+="
 ${CPU_FLAGS_ARM[@]/#/cpu_flags_arm_}
 ${CPU_FLAGS_PPC[@]/#/cpu_flags_ppc_}
 ${CPU_FLAGS_RISCV[@]/#/cpu_flags_riscv_}
+${CPU_FLAGS_S390[@]/#/cpu_flags_s390_}
 ${CPU_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${IUSE_CODECS[@]}
 ${IUSE_LIBCXX[@]}
@@ -829,6 +834,18 @@ REQUIRED_USE+="
 	bindist? (
 		!system-ffmpeg
 	)
+
+	cpu_flags_ppc_power8-vector? (
+		cpu_flags_ppc_altivec
+		cpu_flags_ppc_crypto
+	)
+	cpu_flags_ppc_power9-vector? (
+		cpu_flags_ppc_power8-vector
+	)
+	cpu_flags_ppc_power10-vector? (
+		cpu_flags_ppc_power9-vector
+	)
+
 	cpu_flags_x86_avx? (
 		cpu_flags_x86_sse4_2
 	)
@@ -4840,13 +4857,14 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	myconf_gn+=" use_sve2=$(usex cpu_flags_arm_sve2 true false)"
 	myconf_gn+=" use_sve2_128=$(usex cpu_flags_arm_sve2_128 true false)"
 
-	myconf_gn+=" use_ppc8=$(usex cpu_flags_ppc_ppc8 true false)"
-	myconf_gn+=" use_ppc9=$(usex cpu_flags_ppc_ppc9 true false)"
-	myconf_gn+=" use_ppc10=$(usex cpu_flags_ppc_ppc10 true false)"
-	myconf_gn+=" use_z15=$(usex cpu_flags_ppc_z15 true false)"
-	myconf_gn+=" use_z16=$(usex cpu_flags_ppc_z16 true false)"
+	myconf_gn+=" use_ppc8=$(usex cpu_flags_ppc_power8-vector true false)"
+	myconf_gn+=" use_ppc9=$(usex cpu_flags_ppc_power9-vector true false)"
+	myconf_gn+=" use_ppc10=$(usex cpu_flags_ppc_power10-vector true false)"
 
 	myconf_gn+=" use_rvv=$(usex cpu_flags_riscv_rvv true false)"
+
+	myconf_gn+=" use_z15=$(usex cpu_flags_s390_z15 true false)"
+	myconf_gn+=" use_z16=$(usex cpu_flags_s390_z16 true false)"
 
 	myconf_gn+=" use_avx2=$(usex cpu_flags_x86_avx2 true false)"
 	myconf_gn+=" use_avx3_spr=$(usex cpu_flags_x86_avx512fp16 true false)"		# Sapphire Rapids or better
