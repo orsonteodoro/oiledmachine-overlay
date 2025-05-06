@@ -388,6 +388,7 @@ _configure_cpu_flags_x86() {
 	use cpu_flags_x86_avx512cd || append-flags -mno-avx512cd
 	use cpu_flags_x86_avx512dq || append-flags -mno-avx512dq
 	use cpu_flags_x86_avx512f || append-flags -mno-avx512f
+	use cpu_flags_x86_avx512f || append-flags -mno-evex512
 	use cpu_flags_x86_avx512vl || append-flags -mno-avx512vl
 	if ! use cpu_flags_x86_avx512bw ; then
 		disabled_cpu_flags+=(
