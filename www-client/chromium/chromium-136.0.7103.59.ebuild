@@ -2510,6 +2510,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-133.0.6943.53-disable-speech.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-use-memory-tagging.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-highway-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-simd-defaults.patch"
 	)
 
 	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then

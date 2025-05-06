@@ -1,23 +1,20 @@
 Subject:  Make SIMD instructions optional for zlib
 Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
 Date: Wed Oct 20 03:40:04 PM PDT 2021 (Unix time: 1634769604)
---- a/third_party/skia/third_party/zlib/BUILD.gn.orig	2024-03-19 15:16:10.686770000 -0700
-+++ b/third_party/skia/third_party/zlib/BUILD.gn	2024-03-20 08:41:53.569359410 -0700
-@@ -6,6 +6,13 @@
+
+# Changes May 5, 2025:
+# Moved defaults to build/config/simd.gni
+--- a/third_party/skia/third_party/zlib/BUILD.gn.orig	2025-05-05 16:48:42.563888382 -0700
++++ b/third_party/skia/third_party/zlib/BUILD.gn	2025-05-05 16:49:38.384599045 -0700
+@@ -3,6 +3,7 @@
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
+ 
++import("//build/config/simd.gni")
  import("../third_party.gni")
  import("zlib.gni")
  
-+declare_args() {
-+  use_neon = true
-+  use_sse4_2 = true
-+  use_ssse3 = true
-+  use_sse2 = true
-+}
-+
- if (skia_use_system_zlib) {
-   system("zlib") {
-     libs = [ "z" ]
-@@ -30,12 +37,12 @@ if (skia_use_system_zlib) {
+@@ -30,12 +31,12 @@ if (skia_use_system_zlib) {
    }
  
    use_arm_neon_optimizations =
@@ -33,7 +30,7 @@ Date: Wed Oct 20 03:40:04 PM PDT 2021 (Unix time: 1634769604)
        defines = [ "ADLER32_SIMD_SSSE3" ]
        if (is_win) {
          defines += [ "X86_WINDOWS" ]
-@@ -52,7 +59,7 @@ if (skia_use_system_zlib) {
+@@ -52,7 +53,7 @@ if (skia_use_system_zlib) {
    source_set("zlib_adler32_simd") {
      visibility = [ ":*" ]
  
@@ -42,7 +39,7 @@ Date: Wed Oct 20 03:40:04 PM PDT 2021 (Unix time: 1634769604)
        sources = [
          "../externals/zlib/adler32_simd.c",
          "../externals/zlib/adler32_simd.h",
-@@ -165,7 +172,7 @@ if (skia_use_system_zlib) {
+@@ -165,7 +166,7 @@ if (skia_use_system_zlib) {
    }
  
    config("zlib_crc32_simd_config") {
@@ -51,7 +48,7 @@ Date: Wed Oct 20 03:40:04 PM PDT 2021 (Unix time: 1634769604)
        defines = [ "CRC32_SIMD_SSE42_PCLMUL" ]
      }
    }
-@@ -173,7 +180,7 @@ if (skia_use_system_zlib) {
+@@ -173,7 +174,7 @@ if (skia_use_system_zlib) {
    source_set("zlib_crc32_simd") {
      visibility = [ ":*" ]
  
@@ -60,23 +57,17 @@ Date: Wed Oct 20 03:40:04 PM PDT 2021 (Unix time: 1634769604)
        sources = [
          "../externals/zlib/crc32_simd.c",
          "../externals/zlib/crc32_simd.h",
---- a/third_party/zlib/BUILD.gn.orig	2024-03-19 15:15:25.342724600 -0700
-+++ b/third_party/zlib/BUILD.gn	2024-03-20 08:39:38.482542837 -0700
-@@ -11,6 +11,13 @@ declare_args() {
-   zlib_symbols_visible = false
- }
+--- a/third_party/zlib/BUILD.gn.orig	2025-05-05 16:48:42.564158961 -0700
++++ b/third_party/zlib/BUILD.gn	2025-05-05 16:49:49.264437910 -0700
+@@ -2,6 +2,7 @@
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
  
-+declare_args() {
-+  use_neon = true
-+  use_sse4_2 = true
-+  use_ssse3 = true
-+  use_sse2 = true
-+}
-+
- if (build_with_chromium) {
-   import("//testing/test.gni")
- }
-@@ -72,16 +79,16 @@ if ((current_cpu == "arm" || current_cpu
++import("//build/config/simd.gni")
+ import("//build/config/compiler/compiler.gni")
+ import("//build/config/dcheck_always_on.gni")
+ 
+@@ -72,16 +73,16 @@ if ((current_cpu == "arm" || current_cpu
      !(is_win && !is_clang)) {
    # TODO(richard.townsend@arm.com): Optimizations temporarily disabled for
    # Windows on Arm MSVC builds, see http://crbug.com/v8/10012.
@@ -96,7 +87,7 @@ Date: Wed Oct 20 03:40:04 PM PDT 2021 (Unix time: 1634769604)
      defines = [ "ADLER32_SIMD_SSSE3" ]
      if (is_win) {
        defines += [ "X86_WINDOWS" ]
-@@ -98,13 +105,13 @@ config("zlib_adler32_simd_config") {
+@@ -98,13 +99,13 @@ config("zlib_adler32_simd_config") {
  source_set("zlib_adler32_simd") {
    visibility = [ ":*" ]
  
@@ -112,7 +103,7 @@ Date: Wed Oct 20 03:40:04 PM PDT 2021 (Unix time: 1634769604)
        cflags = [ "-mssse3" ]
      }
    }
-@@ -213,7 +220,7 @@ source_set("zlib_inflate_chunk_simd") {
+@@ -219,7 +220,7 @@ source_set("zlib_inflate_chunk_simd") {
  }
  
  config("zlib_crc32_simd_config") {
@@ -121,7 +112,7 @@ Date: Wed Oct 20 03:40:04 PM PDT 2021 (Unix time: 1634769604)
      defines = [ "CRC32_SIMD_SSE42_PCLMUL" ]
    }
  }
-@@ -221,7 +228,7 @@ config("zlib_crc32_simd_config") {
+@@ -227,7 +228,7 @@ config("zlib_crc32_simd_config") {
  source_set("zlib_crc32_simd") {
    visibility = [ ":*" ]
  

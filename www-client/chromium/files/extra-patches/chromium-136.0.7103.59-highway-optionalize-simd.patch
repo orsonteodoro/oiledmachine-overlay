@@ -1,41 +1,12 @@
-diff '--color=auto' -urp a/third_party/highway/BUILD.gn b/third_party/highway/BUILD.gn
---- a/third_party/highway/BUILD.gn	2025-04-27 16:35:54.000000000 -0700
-+++ b/third_party/highway/BUILD.gn	2025-05-05 08:47:34.911819003 -0700
-@@ -4,10 +4,123 @@
+--- a/third_party/highway/BUILD.gn.orig	2025-05-05 16:46:58.836517230 -0700
++++ b/third_party/highway/BUILD.gn	2025-05-05 16:47:43.729418482 -0700
+@@ -2,12 +2,95 @@
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
  
++import("//build/config/simd.gni")
  import("//testing/test.gni")
  
-+declare_args() {
-+  use_f16c = true
-+  use_sse2 = true
-+  use_ssse3 = true
-+  use_sse4 = true
-+  use_avx2 = true
-+  use_avx3 = true
-+  use_avx3_dl = true
-+  use_avx3_spr = true
-+  use_avx3_zen4 = true
-+
-+  use_sve = true
-+  use_sve_256 = true
-+  use_sve2 = true
-+  use_sve2_128 = true
-+  use_neon = true
-+  use_neon_aes = true
-+  use_neon_bf16 = true
-+
-+  use_riscv_rvv = true
-+
-+  use_ppc8 = true
-+  use_ppc9 = true
-+  use_ppc10 = true
-+  use_z15 = true
-+  use_z16 = true
-+
-+  use_wasm = true
-+  use_wasm_emu256 = true
-+}
-+
  # This config is applied to targets that depend on libhwy
  config("libhwy_external_config") {
    include_dirs = [ "src" ]
