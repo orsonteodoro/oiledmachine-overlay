@@ -48,13 +48,16 @@
     <flag name="cpu_flags_arm_sve2_128">
       Optimize for ARM SVE2 128-bit vectors
     </flag>
-    <flag name="cpu_flags_ppc_ppc8">
+    <flag name="cpu_flags_ppc_crypto">
+      Optimize with cryptographic instructions
+    </flag>
+    <flag name="cpu_flags_ppc_power8-vector">
       Optimize for POWER8
     </flag>
-    <flag name="cpu_flags_ppc_ppc9">
+    <flag name="cpu_flags_ppc_power9-vector">
       Optimize for POWER9
     </flag>
-    <flag name="cpu_flags_ppc_ppc10">
+    <flag name="cpu_flags_ppc_power10-vector">
       Optimize for POWER10
     </flag>
     <flag name="cpu_flags_riscv_rvv">
@@ -65,6 +68,9 @@
     </flag>
     <flag name="cpu_flags_s390_z15">
       Optimize for z15
+    </flag>
+    <flag name="cpu_flags_x86_aes">
+      Optimize with AES-NI
     </flag>
     <flag name="cpu_flags_x86_avx">
       Optimize with AVX
@@ -108,11 +114,23 @@
     <flag name="cpu_flags_x86_avx512vpopcntdq">
       Optimize with AVX512VPOPCNTDQ
     </flag>
+    <flag name="cpu_flags_x86_bmi">
+      Optimize with BMI
+    </flag>
+    <flag name="cpu_flags_x86_bmi2">
+      Optimize with BMI2
+    </flag>
+    <flag name="cpu_flags_x86_fma">
+      Optimize with FMA
+    </flag>
     <flag name="cpu_flags_x86_f16c">
       Optimize with F16C
     </flag>
     <flag name="cpu_flags_x86_gfni">
       Optimize with GFNI
+    </flag>
+    <flag name="cpu_flags_x86_pclmul">
+      Optimize with PCLMUL
     </flag>
     <flag name="cpu_flags_x86_sse2">
       Optimize with SSE2

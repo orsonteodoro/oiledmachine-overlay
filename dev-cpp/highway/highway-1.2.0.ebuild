@@ -13,9 +13,12 @@ CPU_FLAGS_ARM=(
 	"cpu_flags_arm_sve2_128"
 )
 CPU_FLAGS_PPC=(
-	"cpu_flags_ppc_ppc8"
-	"cpu_flags_ppc_ppc9"
-	"cpu_flags_ppc_ppc10"
+	"cpu_flags_ppc_altivec"
+	"cpu_flags_ppc_crypto"
+	"cpu_flags_ppc_power8-vector"
+	"cpu_flags_ppc_power9-vector"
+	"cpu_flags_ppc_power10-vector"
+	"cpu_flags_ppc_vsx"
 )
 CPU_FLAGS_S390=(
 	"cpu_flags_s390_z14"
@@ -25,6 +28,7 @@ CPU_FLAGS_RISCV=(
 	"cpu_flags_riscv_rvv"
 )
 CPU_FLAGS_X86=(
+	"cpu_flags_x86_aes"
 	"cpu_flags_x86_avx"
 	"cpu_flags_x86_avx2"
 	"cpu_flags_x86_avx512bf16"
@@ -39,8 +43,12 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx512vl"
 	"cpu_flags_x86_avx512vnni"
 	"cpu_flags_x86_avx512vpopcntdq"
+	"cpu_flags_x86_bmi"
+	"cpu_flags_x86_bm2"
+	"cpu_flags_x86_fma"
 	"cpu_flags_x86_f16c"
 	"cpu_flags_x86_gfni"
+	"cpu_flags_x86_pclmul"
 	"cpu_flags_x86_sse2"
 	"cpu_flags_x86_sse4_2"
 	"cpu_flags_x86_ssse3"
@@ -48,7 +56,7 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_vpclmulqdq"
 )
 
-inherit cmake-multilib
+inherit cmake-multilib flag-o-matic toolchain-funcs
 
 if [[ "${PV}" == *9999* ]]; then
 	inherit git-r3
@@ -74,6 +82,17 @@ ${CPU_FLAGS_X86[@]}
 test
 "
 REQUIRED_USE="
+	cpu_flags_ppc_power8-vector? (
+		cpu_flags_ppc_altivec
+		cpu_flags_ppc_vsx
+	)
+	cpu_flags_ppc_power9-vector? (
+		cpu_flags_ppc_power8-vector
+	)
+	cpu_flags_ppc_power10-vector? (
+		cpu_flags_ppc_power9-vector
+	)
+
 	cpu_flags_x86_ssse3? (
 		cpu_flags_x86_sse2
 	)
@@ -88,6 +107,7 @@ REQUIRED_USE="
 
 	cpu_flags_x86_avx2? (
 		cpu_flags_x86_avx
+		cpu_flags_x86_fma
 		cpu_flags_x86_f16c
 	)
 
@@ -136,6 +156,7 @@ REQUIRED_USE="
 		cpu_flags_x86_avx512vbmi
 		cpu_flags_x86_avx512vl
 		cpu_flags_x86_avx512vnni
+		cpu_flags_x86_avx512vpopcntdq
 		cpu_flags_x86_gfni
 		cpu_flags_x86_vaes
 	)
@@ -157,6 +178,7 @@ REQUIRED_USE="
 		cpu_flags_x86_avx512vbmi
 		cpu_flags_x86_avx512vl
 		cpu_flags_x86_avx512vnni
+		cpu_flags_x86_avx512vpopcntdq
 		cpu_flags_x86_gfni
 		cpu_flags_x86_vaes
 		cpu_flags_x86_vpclmulqdq
@@ -170,6 +192,7 @@ REQUIRED_USE="
 		cpu_flags_x86_avx512vbmi2
 		cpu_flags_x86_avx512vl
 		cpu_flags_x86_avx512vnni
+		cpu_flags_x86_avx512vpopcntdq
 		cpu_flags_x86_gfni
 		cpu_flags_x86_vpclmulqdq
 	)
@@ -190,6 +213,7 @@ REQUIRED_USE="
 		cpu_flags_x86_avx512vbmi2
 		cpu_flags_x86_avx512vl
 		cpu_flags_x86_avx512vnni
+		cpu_flags_x86_avx512vpopcntdq
 		cpu_flags_x86_gfni
 		cpu_flags_x86_vaes
 		cpu_flags_x86_vpclmulqdq
@@ -203,6 +227,7 @@ REQUIRED_USE="
 		cpu_flags_x86_avx512vbmi2
 		cpu_flags_x86_avx512vl
 		cpu_flags_x86_avx512vnni
+		cpu_flags_x86_avx512vpopcntdq
 		cpu_flags_x86_gfni
 		cpu_flags_x86_vaes
 		cpu_flags_x86_vpclmulqdq
@@ -216,6 +241,7 @@ REQUIRED_USE="
 		cpu_flags_x86_avx512vbmi2
 		cpu_flags_x86_avx512vl
 		cpu_flags_x86_avx512vnni
+		cpu_flags_x86_avx512vpopcntdq
 		cpu_flags_x86_vaes
 		cpu_flags_x86_vpclmulqdq
 	)
@@ -281,19 +307,32 @@ _configure_cpu_flags_arm() {
 }
 
 _configure_cpu_flags_ppc() {
-	if ! use cpu_flags_ppc_ppc8 ; then
+	if ! use cpu_flags_ppc_power8-vector ; then
+		append-flags -mno-power8-vector
 		disabled_cpu_flags+=(
 			"HWY_PPC8"
 		)
 	fi
-	if ! use cpu_flags_ppc_ppc9 ; then
+	if ! use cpu_flags_ppc_power9-vector ; then
+		append-flags -mno-power9-vector
 		disabled_cpu_flags+=(
 			"HWY_PPC9"
 		)
 	fi
-	if ! use cpu_flags_ppc_ppc10 ; then
+	if ! use cpu_flags_ppc_power10-vector ; then
+		if tc-is-clang ; then
+			append-flags -mno-power10-vector
+		fi
 		disabled_cpu_flags+=(
 			"HWY_PPC10"
+		)
+	fi
+	if ! use cpu_flags_ppc_vsx ; then
+		append-flags -mno-vsx
+	fi
+	if ! use cpu_flags_ppc_crypto ; then
+		mycmakeargs+=(
+			"-DHWY_DISABLE_PPC8_CRYPTO=1"
 		)
 	fi
 }
@@ -313,30 +352,53 @@ _configure_cpu_flags_s390() {
 
 _configure_cpu_flags_x86() {
 	if ! use cpu_flags_x86_sse2 ; then
+		append-flags -mno-sse2
 		disabled_cpu_flags+=(
 			"HWY_SSE2"
 		)
 	fi
+
 	if ! use cpu_flags_x86_ssse3 ; then
+		append-flags -mno-ssse3
 		disabled_cpu_flags+=(
 			"HWY_SSSE3"
 		)
 	fi
+
 	if ! use cpu_flags_x86_sse4_2 ; then
+		append-flags -mno-sse4.1
+		append-flags -mno-sse4.2
 		disabled_cpu_flags+=(
 			"HWY_SSE4"
 		)
 	fi
+
 	if ! use cpu_flags_x86_avx2 ; then
+		append-flags -mno-avx2
 		disabled_cpu_flags+=(
 			"HWY_AVX2"
 		)
 	fi
+
+	use cpu_flags_x86_avx512bw || append-flags -mno-avx512bw
+	use cpu_flags_x86_avx512cd || append-flags -mno-avx512cd
+	use cpu_flags_x86_avx512dq || append-flags -mno-avx512dq
+	use cpu_flags_x86_avx512f || append-flags -mno-avx512f
+	use cpu_flags_x86_avx512vl || append-flags -mno-avx512vl
 	if ! use cpu_flags_x86_avx512bw ; then
 		disabled_cpu_flags+=(
 			"HWY_AVX3"
 		)
 	fi
+
+	use cpu_flags_x86_avx512bitalg || append-flags -mno-avx512bitalg
+	use cpu_flags_x86_avx512vpopcntdq || append-flags -mno-avx512vpopcntdq
+	use cpu_flags_x86_avx512vbmi || append-flags -mno-avx512vbmi
+	use cpu_flags_x86_avx512vbmi2 || append-flags -mno-avx512vbmi2
+	use cpu_flags_x86_avx512vnni || append-flags -mno-avx512vnni
+	use cpu_flags_x86_gfni || append-flags -mno-gfni
+	use cpu_flags_x86_vaes || append-flags -mno-vaes
+	use cpu_flags_x86_vpclmulqdq || append-flags -mno-vpclmulqdq
 	if ! use cpu_flags_x86_gfni ; then
 		disabled_cpu_flags+=(
 			"HWY_AVX3_DL"
@@ -352,9 +414,32 @@ _configure_cpu_flags_x86() {
 			"HWY_AVX3_ZEN4"
 		)
 	fi
+
+	use cpu_flags_x86_f16c || append-flags -mno-f16c
 	if ! use cpu_flags_x86_f16c ; then
 		mycmakeargs+=(
 			"-DHWY_DISABLE_F16C=1"
+		)
+	fi
+
+	use cpu_flags_x86_bmi || append-flags -mno-bmi
+	use cpu_flags_x86_bmi2 || append-flags -mno-bmi2
+	use cpu_flags_x86_fma || append-flags -mno-fma
+	if use cpu_flags_x86_bmi && use cpu_flags_x86_bmi2 && use cpu_flags_x86_fma ; then
+		:
+	else
+		mycmakeargs+=(
+			"-DHWY_DISABLE_BMI2_FMA=1"
+		)
+	fi
+
+	use cpu_flags_x86_aes || append-flags -mno-aes
+	use cpu_flags_x86_pclmul || append-flags -mno-pclmul
+	if use cpu_flags_x86_pclmul && use cpu_flags_x86_aes ; then
+		:
+	else
+		mycmakeargs+=(
+			"-DHWY_DISABLE_PCLMUL_AES=1"
 		)
 	fi
 }
