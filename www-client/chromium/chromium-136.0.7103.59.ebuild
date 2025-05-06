@@ -567,6 +567,9 @@ SLOT="0/stable"
 #
 CPU_FLAGS_ARM=(
 	bti
+	crc32
+	dotprod
+	i8mm
 	neon
 	pac
 	mte
@@ -616,6 +619,8 @@ CPU_FLAGS_X86=(
 	fma
 	gfni
 	sse2
+	sse3
+	sse4_1
 	sse4_2
 	ssse3
 	vaes
@@ -975,9 +980,13 @@ REQUIRED_USE+="
 	)
 	cpu_flags_x86_ssse3? (
 		cpu_flags_x86_sse2
+		cpu_flags_x86_sse3
+	)
+	cpu_flags_x86_sse4_1? (
+		cpu_flags_x86_ssse3
 	)
 	cpu_flags_x86_sse4_2? (
-		cpu_flags_x86_ssse3
+		cpu_flags_x86_sse4_1
 	)
 	cpu_flags_x86_vaes? (
 		cpu_flags_x86_avx2
@@ -2544,6 +2553,8 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-use-memory-tagging.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-highway-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-simd-defaults.patch"
+		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-build-config-compiler-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-libaom-optionalize-simd.patch"
 	)
 
 	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
@@ -4868,6 +4879,8 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 # Instruction set extensions used: AVX, AVX2, AVX512, BMI, BMI2, BWI, CMOV, DQI, MODE64, NOVLX, PCLMUL, SSE1, SSE2, SSE3, SSE41, SSSE3, VLX
 #
 
+	myconf_gn+=" use_crc32=$(usex cpu_flags_arm_crc32 true false)"
+	myconf_gn+=" use_dotprod=$(usex cpu_flags_arm_dotprod true false)"
 	myconf_gn+=" use_neon=$(usex cpu_flags_arm_neon true false)"
 	myconf_gn+=" use_neon_aes=$(usex cpu_flags_arm_neon_aes true false)"
 	myconf_gn+=" use_neon_bf16=$(usex cpu_flags_arm_neon_bf16 true false)"
@@ -4875,6 +4888,11 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	myconf_gn+=" use_sve_256=$(usex cpu_flags_arm_sve_256 true false)"
 	myconf_gn+=" use_sve2=$(usex cpu_flags_arm_sve2 true false)"
 	myconf_gn+=" use_sve2_128=$(usex cpu_flags_arm_sve2_128 true false)"
+	if use cpu_flags_arm_neon && use cpu_flags_arm_i8mm ; then
+		myconf_gn+=" use_neon_i8mm=true"
+	else
+		myconf_gn+=" use_neon_i8mm=false"
+	fi
 
 	myconf_gn+=" use_altivec=$(usex cpu_flags_ppc_altivec true false)"
 	myconf_gn+=" use_crypto=$(usex cpu_flags_ppc_crypto true false)"
@@ -4897,7 +4915,9 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	myconf_gn+=" use_f16c=$(usex cpu_flags_x86_f16c true false)"
 	myconf_gn+=" use_fma=$(usex cpu_flags_x86_fma true false)"
 	myconf_gn+=" use_sse2=$(usex cpu_flags_x86_sse2 true false)"
+	myconf_gn+=" use_sse3=$(usex cpu_flags_x86_sse3 true false)"
 	myconf_gn+=" use_sse4=$(usex cpu_flags_x86_sse4_2 true false)"
+	myconf_gn+=" use_sse4_1=$(usex cpu_flags_x86_sse4_1 true false)"
 	myconf_gn+=" use_sse4_2=$(usex cpu_flags_x86_sse4_2 true false)"
 	myconf_gn+=" use_ssse3=$(usex cpu_flags_x86_ssse3 true false)"
 

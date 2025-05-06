@@ -159,7 +159,7 @@
 +      [ hwy_disabled_targets ],
 +      "trim string"
 +    )
-+    defines += [ "HWY_DISABLED_TARGETS='(${hwy_disabled_targets})'" ]
++    defines += [ "HWY_DISABLED_TARGETS=(${hwy_disabled_targets})" ]
 +  }
    if (target_cpu == "x86") {
      # Highway automatically disables AVX2 and AVX3 targets when compiling in

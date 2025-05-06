@@ -1,0 +1,54 @@
+--- a/build/config/compiler/BUILD.gn.orig	2025-05-06 12:17:04.463858108 -0700
++++ b/build/config/compiler/BUILD.gn	2025-05-06 13:11:25.058135925 -0700
+@@ -15,6 +15,7 @@ import("//build/config/gclient_args.gni"
+ import("//build/config/host_byteorder.gni")
+ import("//build/config/pch.gni")
+ import("//build/config/rust.gni")
++import("//build/config/simd.gni")
+ import("//build/config/ui.gni")
+ import("//build/config/unwind.gni")
+ import("//build/toolchain/cros/cros_config.gni")
+@@ -1254,8 +1255,12 @@ config("compiler_cpu_abi") {
+     if (current_cpu == "x64") {
+       cflags += [
+         "-m64",
+-        "-msse3",
+       ]
++      if (use_sse3) {
++        cflags += [
++          "-msse3",
++        ]
++      }
+       ldflags += [ "-m64" ]
+     } else if (current_cpu == "x86") {
+       cflags += [ "-m32" ]
+@@ -1263,8 +1268,12 @@ config("compiler_cpu_abi") {
+       if (!is_nacl) {
+         cflags += [
+           "-mfpmath=sse",
+-          "-msse3",
+         ]
++        if (use_sse3) {
++          cflags += [
++            "-msse3",
++          ]
++        }
+       }
+     } else if (current_cpu == "arm") {
+       if (is_clang && !is_android && !is_nacl && !is_chromeos_device) {
+@@ -1365,9 +1374,13 @@ config("compiler_cpu_abi") {
+       }
+ 
+       if (mips_dsp_rev == 1) {
+-        cflags += [ "-mdsp" ]
++        if (use_dsp) {
++          cflags += [ "-mdsp" ]
++        }
+       } else if (mips_dsp_rev == 2) {
+-        cflags += [ "-mdspr2" ]
++        if (use_dspr2) {
++          cflags += [ "-mdspr2" ]
++        }
+       }
+ 
+       cflags += [ "-m${mips_float_abi}-float" ]
