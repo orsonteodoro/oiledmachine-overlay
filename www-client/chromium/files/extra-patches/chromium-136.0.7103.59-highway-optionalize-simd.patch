@@ -1,6 +1,6 @@
---- a/third_party/highway/BUILD.gn.orig	2025-05-06 00:38:00.361901686 -0700
-+++ b/third_party/highway/BUILD.gn	2025-05-06 00:49:02.197064600 -0700
-@@ -2,12 +2,159 @@
+--- a/third_party/highway/BUILD.gn.orig	2025-05-06 07:47:58.984490701 -0700
++++ b/third_party/highway/BUILD.gn	2025-05-06 07:51:30.156875061 -0700
+@@ -2,12 +2,164 @@
  # Use of this source code is governed by a BSD-style license that can be
  # found in the LICENSE file.
  
@@ -154,9 +154,20 @@
 +    }
 +  }
 +  if (hwy_disabled_targets != "") {
-+    hwy_disabled_targets = hwy_disabled_targets[1..]
-+    defines += [ "HWY_DISABLED_TARGETS=(" + hwy_disabled_targets + ")" ]
++    hwy_disabled_targets = exec_script(
++      "//tools/slice_string.py",
++      [ hwy_disabled_targets ],  # Start at index 1
++      "value"
++    )
++    hwy_disabled_targets = "HWY_DISABLED_TARGETS=(${hwy_disabled_targets})"
++    defines += [ hwy_disabled_targets ]
 +  }
    if (target_cpu == "x86") {
      # Highway automatically disables AVX2 and AVX3 targets when compiling in
      # 32-bit mode due to bugs in the generated code. However, when doing so it
+--- /dev/null	2025-05-03 00:54:32.134046439 -0700
++++ b/tools/slice_string.py	2025-05-06 07:46:30.114162827 -0700
+@@ -0,0 +1,3 @@
++#!/usr/bin/env python3
++import sys
++print(sys.argv[1][1:])
