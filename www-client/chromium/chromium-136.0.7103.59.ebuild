@@ -4018,7 +4018,7 @@ ewarn
 ewarn "    Mitigation combo                                           | Score     | Security posture     | Upstream default?"
 ewarn "--------------------------------------------------------------------------------------------------------------"
 ewarn " 1. CFI (icall + vcall + cast)                                 | 0.87      | Security-critical    |"
-ewarn " 2. CFE                                                        | 0.845     | Balanced             |"
+ewarn " 2. CET                                                        | 0.845     | Balanced             |"
 ewarn " 3. CFI (vcall + icall)                                        | 0.705     | Balanced             | Yes for amd64 official only"
 ewarn " 4. CFI (vcall)                                                | 0.51      | Performance-critical |"
 ewarn
