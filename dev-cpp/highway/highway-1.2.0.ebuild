@@ -4,9 +4,9 @@
 EAPI=8
 
 CPU_FLAGS_ARM=(
+	"cpu_flags_arm_aes"
+	"cpu_flags_arm_bf16"
 	"cpu_flags_arm_neon"
-	"cpu_flags_arm_neon_without_aes"
-	"cpu_flags_arm_neon_bf16"
 	"cpu_flags_arm_sve"
 	"cpu_flags_arm_sve2"
 	"cpu_flags_arm_sve_256"
@@ -80,7 +80,7 @@ ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 test
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	cpu_flags_ppc_power8-vector? (
@@ -279,12 +279,12 @@ _configure_cpu_flags_arm() {
 			"HWY_NEON"
 		)
 	fi
-	if ! use cpu_flags_arm_neon_without_aes ; then
+	if ! use cpu_flags_arm_neon || use cpu_flags_arm_aes ; then
 		disabled_cpu_flags+=(
 			"HWY_NEON_WITHOUT_AES"
 		)
 	fi
-	if ! use cpu_flags_arm_neon_bf16 ; then
+	if ! use cpu_flags_arm_neon || ! use cpu_flags_arm_bf16 ; then
 		disabled_cpu_flags+=(
 			"HWY_NEON_BF16"
 		)
