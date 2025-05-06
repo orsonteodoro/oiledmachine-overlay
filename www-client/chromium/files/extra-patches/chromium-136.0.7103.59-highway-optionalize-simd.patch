@@ -1,6 +1,6 @@
 --- a/third_party/highway/BUILD.gn.orig	2025-05-05 22:06:30.620846901 -0700
 +++ b/third_party/highway/BUILD.gn	2025-05-05 22:20:02.747960893 -0700
-@@ -2,12 +2,152 @@
+@@ -2,12 +2,153 @@
  # Use of this source code is governed by a BSD-style license that can be
  # found in the LICENSE file.
  
@@ -44,7 +44,8 @@
 +      defines += [ "HWY_DISABLED_TARGETS=HWY_SSSE3" ]
 +    }
 +    if (!use_sse4) {
-+      cflags += [ "-mno-sse4.1", "-mno-sse4.2" ]
++      cflags += [ "-mno-sse4.1" ]
++      cflags += [ "-mno-sse4.2" ]
 +      defines += [ "HWY_DISABLED_TARGETS=HWY_SSE4" ]
 +    }
 +    if (!use_avx2) {
@@ -52,10 +53,10 @@
 +      defines += [ "HWY_DISABLED_TARGETS=HWY_AVX2" ]
 +    }
 +    if (!use_avx3) {
-+      cflags += [ "-mno-avx512f" ]
 +      cflags += [ "-mno-avx512bw" ]
 +      cflags += [ "-mno-avx512cd" ]
 +      cflags += [ "-mno-avx512dq" ]
++      cflags += [ "-mno-avx512f" ]
 +      cflags += [ "-mno-avx512vl" ]
 +      defines += [ "HWY_DISABLED_TARGETS=HWY_AVX3" ]
 +    }
