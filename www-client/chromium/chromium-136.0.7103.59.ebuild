@@ -566,6 +566,8 @@ SLOT="0/stable"
 #   https://github.com/chromium/chromium/blob/136.0.7103.59/sandbox/linux/BUILD.gn
 #
 CPU_FLAGS_ARM=(
+	aes
+	bf16
 	bti
 	crc32
 	dotprod
@@ -574,8 +576,6 @@ CPU_FLAGS_ARM=(
 	pac
 	mte
 	neon
-	neon_aes
-	neon_bf16
 	sve
 	sve_256
 	sve2
@@ -4882,12 +4882,20 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	myconf_gn+=" use_crc32=$(usex cpu_flags_arm_crc32 true false)"
 	myconf_gn+=" use_dotprod=$(usex cpu_flags_arm_dotprod true false)"
 	myconf_gn+=" use_neon=$(usex cpu_flags_arm_neon true false)"
-	myconf_gn+=" use_neon_aes=$(usex cpu_flags_arm_neon_aes true false)"
-	myconf_gn+=" use_neon_bf16=$(usex cpu_flags_arm_neon_bf16 true false)"
 	myconf_gn+=" use_sve=$(usex cpu_flags_arm_sve true false)"
 	myconf_gn+=" use_sve_256=$(usex cpu_flags_arm_sve_256 true false)"
 	myconf_gn+=" use_sve2=$(usex cpu_flags_arm_sve2 true false)"
 	myconf_gn+=" use_sve2_128=$(usex cpu_flags_arm_sve2_128 true false)"
+	if use cpu_flags_arm_neon && use cpu_flags_arm_bf16 ; then
+		myconf_gn+=" use_neon_bf16=true"
+	else
+		myconf_gn+=" use_neon_bf16=false"
+	fi
+	if use cpu_flags_arm_neon && use cpu_flags_arm_aes ; then
+		myconf_gn+=" use_neon_aes=true"
+	else
+		myconf_gn+=" use_neon_aes=false"
+	fi
 	if use cpu_flags_arm_neon && use cpu_flags_arm_i8mm ; then
 		myconf_gn+=" use_neon_i8mm=true"
 	else
