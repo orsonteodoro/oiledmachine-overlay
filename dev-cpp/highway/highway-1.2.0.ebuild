@@ -416,7 +416,7 @@ _configure_cpu_flags_x86() {
 		)
 	fi
 
-	use cpu_flags_x86_avx512bf16 || append-flags -mno-avx512bfp16
+	use cpu_flags_x86_avx512bf16 || append-flags -mno-avx512bf16
 	if ! use cpu_flags_x86_avx512bf16 ; then
 		disabled_cpu_flags+=(
 			"HWY_AVX3_ZEN4"
