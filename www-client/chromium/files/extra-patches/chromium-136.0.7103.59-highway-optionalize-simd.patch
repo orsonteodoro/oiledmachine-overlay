@@ -171,3 +171,11 @@
 +#!/usr/bin/env python3
 +import sys
 +print(sys.argv[1][1:])
+--- a/.gn.orig	2025-05-06 08:47:51.860419626 -0700
++++ b/.gn	2025-05-06 08:48:26.131161367 -0700
+@@ -173,4 +173,5 @@ exec_script_allowlist =
+ 
+       "//tools/grit/grit_rule.gni",
+       "//tools/gritsettings/BUILD.gn",
++      "//third_party/highway/BUILD.gn",
+     ]

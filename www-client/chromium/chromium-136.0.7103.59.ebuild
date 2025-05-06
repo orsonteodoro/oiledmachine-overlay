@@ -6003,7 +6003,8 @@ ewarn
 
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  YES
 # OILEDMACHINE-OVERLAY-TEST: FAILED 136.0.7103.59  (20250502) - build failure
-# OILEDMACHINE-OVERLAY-TEST: FAILED 135.0.7049.114 (20250430) - build failure
+# OILEDMACHINE-OVERLAY-TEST: FAILED 135.0.7049.114 (20250430) - build failure and segfault with running mksnapshot
+# OILEDMACHINE-OVERLAY-TEST: FAILED 136.0.7103.59 (20250506) - build failure and segfault with running mksnapshot
 # OILEDMACHINE-OVERLAY-TEST: PASSED (interactive) 128.0.6613.119 (20240907)
 # Oflag = -O2
 # Build Completion time:  1 days, 17 hrs, 11 mins, 53 secs - fail, did not pass 24 hrs fix standard for critical vulnerabilities.  Package not built and installed within 24 hrs.
