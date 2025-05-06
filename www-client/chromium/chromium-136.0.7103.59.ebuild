@@ -4014,17 +4014,13 @@ ewarn "mitigate a possible code execution attack."
 ewarn
 ewarn "The scores:"
 ewarn
+# Do not put ShadowCallStack.  It is broken in amd64.
 ewarn "    Mitigation combo                                           | Score     | Security posture     | Upstream default?"
 ewarn "--------------------------------------------------------------------------------------------------------------"
-ewarn " 1. CFI (icall + vcall + cast) + SCS                           | 0.91285   | Security-critical    |"
-ewarn " 2. CFE + ShadowCallStack                                      | 0.90925   | Balanced             |"
-ewarn " 3. CFI (icall + vcall + cast)                                 | 0.87      | Security-critical    |"
-ewarn " 4. CFE                                                        | 0.845     | Balanced             |"
-ewarn " 5. CFI (icall + vcall) + ShadowCallStack                      | 0.78725   | Balanced             |"
-ewarn " 6. CFI (vcall + icall)                                        | 0.705     | Balanced             | Yes for amd64 official only"
-ewarn " 7. CFI (vcall) + ShadowCallStack                              | 0.61175   | Performance-critical |"
-ewarn " 8. ShadowCallStack                                            | 0.5195    | Performance-critical |"
-ewarn " 9. CFI (vcall)                                                | 0.51      | Performance-critical |"
+ewarn " 1. CFI (icall + vcall + cast)                                 | 0.87      | Security-critical    |"
+ewarn " 2. CFE                                                        | 0.845     | Balanced             |"
+ewarn " 3. CFI (vcall + icall)                                        | 0.705     | Balanced             | Yes for amd64 official only"
+ewarn " 4. CFI (vcall)                                                | 0.51      | Performance-critical |"
 ewarn
 ewarn "The scores reflect maximizing mitigation coverage, minimizing overhead,"
 ewarn "and rewarding more for combos that attack widely reported CFI related"
