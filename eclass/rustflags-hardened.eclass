@@ -531,7 +531,7 @@ einfo "CC:  ${CC}"
 
 	if (( ${need_clang} == 1 )) ; then
 	# Get the slot
-		if [[ -n "${LLVM_SLOT}" ]] ; then
+		if [[ -n "${LLVM_SLOT}" && "${CHROMIUM_TOOLCHAIN}" != "1" ]] ; then
 			export CC="${CHOST}-clang-${LLVM_SLOT}"
 			export CXX="${CHOST}-clang++-${LLVM_SLOT}"
 			export CPP="${CC} -E"
