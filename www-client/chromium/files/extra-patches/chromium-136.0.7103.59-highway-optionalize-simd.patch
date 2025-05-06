@@ -1,6 +1,6 @@
---- a/third_party/highway/BUILD.gn.orig	2025-05-05 22:06:30.620846901 -0700
-+++ b/third_party/highway/BUILD.gn	2025-05-05 22:20:02.747960893 -0700
-@@ -2,12 +2,154 @@
+--- a/third_party/highway/BUILD.gn.orig	2025-05-06 00:38:00.361901686 -0700
++++ b/third_party/highway/BUILD.gn	2025-05-06 00:49:02.197064600 -0700
+@@ -2,12 +2,159 @@
  # Use of this source code is governed by a BSD-style license that can be
  # found in the LICENSE file.
  
@@ -12,6 +12,7 @@
    include_dirs = [ "src" ]
    defines = []
 +  cflags = []
++  hwy_disabled_targets=""
 +  if (target_cpu == "x64" || target_cpu == "x86") {
 +    if (!use_f16c) {
 +      cflags += [ "-mno-f16c" ]
@@ -37,20 +38,20 @@
 +    }
 +    if (!use_sse2) {
 +      cflags += [ "-mno-sse2" ]
-+      defines += [ "HWY_DISABLED_TARGETS=HWY_SSE2" ]
++      hwy_disabled_targets += "|HWY_SSE2"
 +    }
 +    if (!use_ssse3) {
 +      cflags += [ "-mno-ssse3" ]
-+      defines += [ "HWY_DISABLED_TARGETS=HWY_SSSE3" ]
++      hwy_disabled_targets += "|HWY_SSSE3"
 +    }
 +    if (!use_sse4) {
 +      cflags += [ "-mno-sse4.1" ]
 +      cflags += [ "-mno-sse4.2" ]
-+      defines += [ "HWY_DISABLED_TARGETS=HWY_SSE4" ]
++      hwy_disabled_targets += "|HWY_SSE4"
 +    }
 +    if (!use_avx2) {
 +      cflags += [ "-mno-avx2" ]
-+      defines += [ "HWY_DISABLED_TARGETS=HWY_AVX2" ]
++      hwy_disabled_targets += "|HWY_AVX2"
 +    }
 +    if (!use_avx3) {
 +      cflags += [ "-mno-avx512bw" ]
@@ -59,7 +60,7 @@
 +      cflags += [ "-mno-avx512f" ]
 +      cflags += [ "-mno-avx512vl" ]
 +      cflags += [ "-mno-evex512" ]
-+      defines += [ "HWY_DISABLED_TARGETS=HWY_AVX3" ]
++      hwy_disabled_targets += "|HWY_AVX3"
 +    }
 +    if (!use_avx3_dl) {
 +      cflags += [ "-mno-avx512bitalg" ]
@@ -70,44 +71,44 @@
 +      cflags += [ "-mno-gfni" ]
 +      cflags += [ "-mno-vaes" ]
 +      cflags += [ "-mno-vpclmulqdq" ]
-+      defines += [ "HWY_DISABLED_TARGETS=HWY_AVX3_DL" ]
++      hwy_disabled_targets += "|AVX3_DL"
 +    }
 +    if (!use_avx3_spr) {
 +      cflags += [ "-mno-avx512fp16" ]
-+      defines += [ "HWY_DISABLED_TARGETS=HWY_AVX3_SPR" ]
++      hwy_disabled_targets += "|AVX3_SPR"
 +    }
 +    if (!use_avx3_zen4) {
 +      cflags += [ "-mno-avx512bf16" ]
-+      defines += [ "HWY_DISABLED_TARGETS=HWY_AVX3_ZEN4" ]
++      hwy_disabled_targets += "|AVX3_ZEN4"
 +      defines += [ "HWY_AVX3_DISABLE_AVX512BF16=1" ]
 +    }
 +  }
 +  if (target_cpu == "arm" || target_cpu == "arm64") {
 +    if (!use_sve) {
-+      defines += [ "HWY_DISABLED_TARGETS=HWY_SVE" ]
++      hwy_disabled_targets += "|SVE"
 +    }
 +    if (!use_sve_256) {
-+      defines += [ "HWY_DISABLED_TARGETS=HWY_SVE_256" ]
++      hwy_disabled_targets += "|SVE_256"
 +    }
 +    if (!use_sve2) {
-+      defines += [ "HWY_DISABLED_TARGETS=HWY_SVE2" ]
++      hwy_disabled_targets += "|SVE2"
 +    }
 +    if (!use_sve2_128) {
-+      defines += [ "HWY_DISABLED_TARGETS=HWY_SVE2_128" ]
++      hwy_disabled_targets += "|SVE2_128"
 +    }
 +    if (!use_neon) {
-+      defines += [ "HWY_DISABLED_TARGETS=HWY_NEON" ]
++      hwy_disabled_targets += "|NEON"
 +    }
 +    if (!use_neon_aes) {
-+      defines += [ "HWY_DISABLED_TARGETS=HWY_NEON_WITHOUT_AES" ]
++      hwy_disabled_targets += "|NEON_WITHOUT_AES"
 +    }
 +    if (!use_neon_bf16) {
-+      defines += [ "HWY_DISABLED_TARGETS=HWY_NEON_BF16" ]
++      hwy_disabled_targets += "|NEON_BF16"
 +    }
 +  }
 +  if (target_cpu == "riscv") {
 +    if (!use_rvv) {
-+      defines += [ "HWY_DISABLED_TARGETS=HWY_RVV" ]
++      hwy_disabled_targets += "|RVV"
 +    }
 +  }
 +  if (target_cpu == "ppc" || target_cpu == "ppc64") {
@@ -120,17 +121,17 @@
 +    }
 +    if (!use_ppc8) {
 +      cflags += [ "-mno-power8-vector" ]
-+      defines += [ "HWY_DISABLED_TARGETS=HWY_PPC8" ]
++      hwy_disabled_targets += "|PPC8"
 +    }
 +    if (!use_ppc9) {
 +      cflags += [ "-mno-power9-vector" ]
-+      defines += [ "HWY_DISABLED_TARGETS=HWY_PPC9" ]
++      hwy_disabled_targets += "|PPC9"
 +    }
 +    if (!use_ppc10) {
 +      if (is_clang) {
 +        cflags += [ "-mno-power10-vector" ]
 +      }
-+      defines += [ "HWY_DISABLED_TARGETS=HWY_PPC10" ]
++      hwy_disabled_targets += "|PPC10"
 +    }
 +    if (!use_vsx) {
 +      cflags += [ "-mno-vsx" ]
@@ -138,19 +139,23 @@
 +  }
 +  if (target_cpu == "s390" || target_cpu == "s390x") {
 +    if (!use_z15) {
-+      defines += [ "HWY_DISABLED_TARGETS=HWY_Z15" ]
++      hwy_disabled_targets += "|Z15"
 +    }
 +    if (!use_z16) {
-+      defines += [ "HWY_DISABLED_TARGETS=HWY_Z16" ]
++      hwy_disabled_targets += "|Z16"
 +    }
 +  }
 +  if (target_cpu == "wasm") {
 +    if (!use_wasm_emu256) {
-+      defines += [ "HWY_DISABLED_TARGETS=HWY_WASM_EMU256" ]
++      hwy_disabled_targets += "|WASM_EMU256"
 +    }
 +    if (!use_wasm) {
-+      defines += [ "HWY_DISABLED_TARGETS=HWY_WASM" ]
++      hwy_disabled_targets += "|WASM"
 +    }
++  }
++  if (hwy_disabled_targets != "") {
++    hwy_disabled_targets = hwy_disabled_targets[1..]
++    defines += [ "HWY_DISABLED_TARGETS=(" + hwy_disabled_targets + ")" ]
 +  }
    if (target_cpu == "x86") {
      # Highway automatically disables AVX2 and AVX3 targets when compiling in
