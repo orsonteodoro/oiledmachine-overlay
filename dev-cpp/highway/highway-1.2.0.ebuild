@@ -336,6 +336,7 @@ _configure_cpu_flags_ppc() {
 		append-flags -mno-vsx
 	fi
 	if ! use cpu_flags_ppc_crypto ; then
+		append-flags -mno-crypto
 		cpp_flags+=" -DHWY_DISABLE_PPC8_CRYPTO=1"
 	fi
 }
