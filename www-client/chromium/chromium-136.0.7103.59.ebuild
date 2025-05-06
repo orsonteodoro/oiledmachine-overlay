@@ -888,6 +888,11 @@ REQUIRED_USE+="
 		cpu_flags_x86_avx512f
 		cpu_flags_x86_avx512vbmi
 		cpu_flags_x86_avx512vl
+		cpu_flags_x86_avx512vnni
+		cpu_flags_x86_avx512vpopcntdq
+		cpu_flags_x86_gfni
+		cpu_flags_x86_vaes
+		cpu_flags_x86_vpclmulqdq
 	)
 	cpu_flags_x86_avx512vnni? (
 		cpu_flags_x86_avx2
@@ -903,6 +908,7 @@ REQUIRED_USE+="
 		cpu_flags_x86_avx512cd
 		cpu_flags_x86_avx512dq
 		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vbmi
 		cpu_flags_x86_avx512vbmi2
 		cpu_flags_x86_avx512vl
 		cpu_flags_x86_avx512vnni
@@ -918,9 +924,11 @@ REQUIRED_USE+="
 		cpu_flags_x86_avx512cd
 		cpu_flags_x86_avx512dq
 		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vbmi
 		cpu_flags_x86_avx512vbmi2
 		cpu_flags_x86_avx512vl
 		cpu_flags_x86_avx512vnni
+		cpu_flags_x86_avx512vpopcntdq
 		cpu_flags_x86_gfni
 		cpu_flags_x86_vaes
 		cpu_flags_x86_vpclmulqdq
@@ -935,6 +943,7 @@ REQUIRED_USE+="
 		cpu_flags_x86_avx512cd
 		cpu_flags_x86_avx512dq
 		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vbmi
 		cpu_flags_x86_avx512vbmi2
 		cpu_flags_x86_avx512vl
 		cpu_flags_x86_avx512vnni
@@ -955,6 +964,7 @@ REQUIRED_USE+="
 		cpu_flags_x86_avx512cd
 		cpu_flags_x86_avx512dq
 		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vbmi
 		cpu_flags_x86_avx512vbmi2
 		cpu_flags_x86_avx512vl
 		cpu_flags_x86_avx512vnni
@@ -969,6 +979,7 @@ REQUIRED_USE+="
 		cpu_flags_x86_avx512cd
 		cpu_flags_x86_avx512dq
 		cpu_flags_x86_avx512f
+		cpu_flags_x86_avx512vbmi
 		cpu_flags_x86_avx512vbmi2
 		cpu_flags_x86_avx512vl
 		cpu_flags_x86_avx512vnni
