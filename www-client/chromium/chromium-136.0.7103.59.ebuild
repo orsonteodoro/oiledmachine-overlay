@@ -581,6 +581,11 @@ CPU_FLAGS_ARM=(
 	sve2
 	sve2_128
 )
+CPU_FLAGS_MIPS=(
+	dsp
+	dspr2
+	msa
+)
 CPU_FLAGS_PPC=(
 	altivec
 	crypto
@@ -650,6 +655,7 @@ IUSE_CODECS=(
 # Most option defaults are based on build files.
 IUSE+="
 ${CPU_FLAGS_ARM[@]/#/cpu_flags_arm_}
+${CPU_FLAGS_MIPS[@]/#/cpu_flags_mips_}
 ${CPU_FLAGS_PPC[@]/#/cpu_flags_ppc_}
 ${CPU_FLAGS_RISCV[@]/#/cpu_flags_riscv_}
 ${CPU_FLAGS_S390[@]/#/cpu_flags_s390_}
@@ -4901,6 +4907,10 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	else
 		myconf_gn+=" use_neon_i8mm=false"
 	fi
+
+	myconf_gn+=" use_dsp=$(usex cpu_flags_mips_dsp true false)"
+	myconf_gn+=" use_dspr2=$(usex cpu_flags_mips_dspr2 true false)"
+	myconf_gn+=" mips_use_msa=$(usex cpu_flags_mips_msa true false)"
 
 	myconf_gn+=" use_altivec=$(usex cpu_flags_ppc_altivec true false)"
 	myconf_gn+=" use_crypto=$(usex cpu_flags_ppc_crypto true false)"
