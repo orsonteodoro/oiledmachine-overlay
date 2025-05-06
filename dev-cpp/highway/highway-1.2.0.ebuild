@@ -80,6 +80,7 @@ ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 test
+ebuild_revision_1
 "
 REQUIRED_USE="
 	cpu_flags_ppc_power8-vector? (
@@ -335,9 +336,7 @@ _configure_cpu_flags_ppc() {
 		append-flags -mno-vsx
 	fi
 	if ! use cpu_flags_ppc_crypto ; then
-		cpp_flags+=(
-			"-DHWY_DISABLE_PPC8_CRYPTO=1"
-		)
+		cpp_flags+=" -DHWY_DISABLE_PPC8_CRYPTO=1"
 	fi
 }
 
@@ -421,9 +420,7 @@ _configure_cpu_flags_x86() {
 
 	use cpu_flags_x86_f16c || append-flags -mno-f16c
 	if ! use cpu_flags_x86_f16c ; then
-		cpp_flags+=(
-			"-DHWY_DISABLE_F16C=1"
-		)
+		cpp_flags+=" -DHWY_DISABLE_F16C=1"
 	fi
 
 	use cpu_flags_x86_bmi || append-flags -mno-bmi
@@ -432,9 +429,7 @@ _configure_cpu_flags_x86() {
 	if use cpu_flags_x86_bmi && use cpu_flags_x86_bmi2 && use cpu_flags_x86_fma ; then
 		:
 	else
-		cpp_flags+=(
-			"-DHWY_DISABLE_BMI2_FMA=1"
-		)
+		cpp_flags+=" -DHWY_DISABLE_BMI2_FMA=1"
 	fi
 
 	use cpu_flags_x86_aes || append-flags -mno-aes
@@ -442,15 +437,12 @@ _configure_cpu_flags_x86() {
 	if use cpu_flags_x86_pclmul && use cpu_flags_x86_aes ; then
 		:
 	else
-		cpp_flags+=(
-			"-DHWY_DISABLE_PCLMUL_AES=1"
-		)
+		cpp_flags+=" -DHWY_DISABLE_PCLMUL_AES=1"
 	fi
 }
 
 multilib_src_configure() {
-	local cpp_flags=(
-	)
+	local cpp_flags=""
 	local mycmakeargs=(
 		-DBUILD_TESTING=$(usex test)
 		-DHWY_CMAKE_ARM7=$(usex cpu_flags_arm_neon)
@@ -482,9 +474,12 @@ multilib_src_configure() {
 		done
 		str="${str:1}"
 		mycmakeargs+=(
-			-DCMAKE_CXX_FLAGS="-DHWY_DISABLED_TARGETS=\"(${str})\" ${cpp_flags[@]}"
+			-DCMAKE_CXX_FLAGS=-DHWY_DISABLED_TARGETS="\"(${str})\""
 		)
 	fi
+	mycmakeargs+=(
+		-DCMAKE_CXX_FLAGS="${cpp_flags}"
+	)
 
 	use test && mycmakeargs+=( "-DHWY_SYSTEM_GTEST=ON" )
 
