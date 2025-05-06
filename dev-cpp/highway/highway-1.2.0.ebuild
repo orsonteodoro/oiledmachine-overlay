@@ -80,7 +80,7 @@ ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 test
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	cpu_flags_ppc_power8-vector? (
@@ -426,11 +426,12 @@ _configure_cpu_flags_x86() {
 	use cpu_flags_x86_bmi || append-flags -mno-bmi
 	use cpu_flags_x86_bmi2 || append-flags -mno-bmi2
 	use cpu_flags_x86_fma || append-flags -mno-fma
-	if use cpu_flags_x86_bmi && use cpu_flags_x86_bmi2 && use cpu_flags_x86_fma ; then
-		:
-	else
-		cpp_flags+=" -DHWY_DISABLE_BMI2_FMA=1"
-	fi
+#	if use cpu_flags_x86_bmi && use cpu_flags_x86_bmi2 && use cpu_flags_x86_fma ; then
+#		:
+#	else
+	# Breaks if flag is added
+#		cpp_flags+=" -DHWY_DISABLE_BMI2_FMA=1"
+#	fi
 
 	use cpu_flags_x86_aes || append-flags -mno-aes
 	use cpu_flags_x86_pclmul || append-flags -mno-pclmul
@@ -450,7 +451,6 @@ multilib_src_configure() {
 		-DHWY_CMAKE_RVV=$(usex cpu_flags_riscv_rvv)
 		-DHWY_WARNINGS_ARE_ERRORS=OFF
 	)
-
 
 	local disabled_cpu_flags=()
 	if [[ "${ARCH}" == "arm" || "${ARCH}" == "arm64" ]] ; then
