@@ -595,6 +595,7 @@ CPU_FLAGS_S390=(
 	z16
 )
 CPU_FLAGS_X86=(
+	aes
 	avx
 	avx2
 	avx512bitalg
@@ -4887,6 +4888,7 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	myconf_gn+=" use_z15=$(usex cpu_flags_s390_z15 true false)"
 	myconf_gn+=" use_z16=$(usex cpu_flags_s390_z16 true false)"
 
+	myconf_gn+=" use_aes=$(usex cpu_flags_x86_aes true false)"
 	myconf_gn+=" use_avx2=$(usex cpu_flags_x86_avx2 true false)"
 	myconf_gn+=" use_avx3_spr=$(usex cpu_flags_x86_avx512fp16 true false)"		# Sapphire Rapids or better
 	myconf_gn+=" use_avx3_zen4=$(usex cpu_flags_x86_avx512bf16 true false)"		# Zen 4 or better
@@ -4895,9 +4897,9 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	myconf_gn+=" use_f16c=$(usex cpu_flags_x86_f16c true false)"
 	myconf_gn+=" use_fma=$(usex cpu_flags_x86_fma true false)"
 	myconf_gn+=" use_sse2=$(usex cpu_flags_x86_sse2 true false)"
-	myconf_gn+=" use_ssse3=$(usex cpu_flags_x86_ssse3 true false)"
 	myconf_gn+=" use_sse4=$(usex cpu_flags_x86_sse4_2 true false)"
 	myconf_gn+=" use_sse4_2=$(usex cpu_flags_x86_sse4_2 true false)"
+	myconf_gn+=" use_ssse3=$(usex cpu_flags_x86_ssse3 true false)"
 
 	# For AVX3, see \
 	# https://github.com/google/highway/blob/00fe003dac355b979f36157f9407c7c46448958e/hwy/ops/set_macros-inl.h#L136
