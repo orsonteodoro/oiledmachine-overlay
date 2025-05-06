@@ -20,12 +20,12 @@ CPU_FLAGS_PPC=(
 	"cpu_flags_ppc_power10-vector"
 	"cpu_flags_ppc_vsx"
 )
+CPU_FLAGS_RISCV=(
+	"cpu_flags_riscv_rvv"
+)
 CPU_FLAGS_S390=(
 	"cpu_flags_s390_z14"
 	"cpu_flags_s390_z15"
-)
-CPU_FLAGS_RISCV=(
-	"cpu_flags_riscv_rvv"
 )
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_aes"
@@ -58,7 +58,7 @@ CPU_FLAGS_X86=(
 
 inherit cmake-multilib flag-o-matic toolchain-funcs
 
-if [[ "${PV}" == *9999* ]]; then
+if [[ "${PV}" == *"9999"* ]]; then
 	inherit git-r3
 	EGIT_REPO_URI="https://github.com/google/highway.git"
 else
@@ -76,8 +76,8 @@ SLOT="0"
 IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
-${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_RISCV[@]}
+${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 test
 "
