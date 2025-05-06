@@ -80,7 +80,7 @@ ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 test
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	cpu_flags_ppc_power8-vector? (
@@ -388,7 +388,6 @@ _configure_cpu_flags_x86() {
 	use cpu_flags_x86_avx512cd || append-flags -mno-avx512cd
 	use cpu_flags_x86_avx512dq || append-flags -mno-avx512dq
 	use cpu_flags_x86_avx512f || append-flags -mno-avx512f
-	use cpu_flags_x86_avx512f || append-flags -mno-evex512
 	use cpu_flags_x86_avx512vl || append-flags -mno-avx512vl
 	if ! use cpu_flags_x86_avx512bw ; then
 		disabled_cpu_flags+=(
@@ -486,6 +485,7 @@ multilib_src_configure() {
 	fi
 	mycmakeargs+=(
 		-DCMAKE_CXX_FLAGS="${cpp_flags}"
+		-DCMAKE_CXX_FLAGS="${CXXFLAGS}"
 	)
 
 	use test && mycmakeargs+=( "-DHWY_SYSTEM_GTEST=ON" )
