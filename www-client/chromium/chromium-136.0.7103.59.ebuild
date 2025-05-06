@@ -4925,6 +4925,7 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	myconf_gn+=" use_z16=$(usex cpu_flags_s390_z16 true false)"
 
 	myconf_gn+=" use_aes=$(usex cpu_flags_x86_aes true false)"
+	myconf_gn+=" use_avx=$(usex cpu_flags_x86_avx true false)"
 	myconf_gn+=" use_avx2=$(usex cpu_flags_x86_avx2 true false)"
 	myconf_gn+=" use_avx3_spr=$(usex cpu_flags_x86_avx512fp16 true false)"		# Sapphire Rapids or better
 	myconf_gn+=" use_avx3_zen4=$(usex cpu_flags_x86_avx512bf16 true false)"		# Zen 4 or better
