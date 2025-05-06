@@ -1,0 +1,1 @@
+cpu_flags_riscv_rvv - Add support for the RISC-V Vector (RVV) extension.

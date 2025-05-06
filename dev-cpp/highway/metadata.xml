@@ -30,11 +30,11 @@
     <flag name="cpu_flags_arm_neon">
       Optimize for ARM NEON
     </flag>
-    <flag name="cpu_flags_arm_neon_bf16">
-      Optimize for ARM NEON with BF16
+    <flag name="cpu_flags_arm_bf16">
+      Optimize for ARM with BF16
     </flag>
-    <flag name="cpu_flags_arm_neon_without_aes">
-      Optimize for ARM NEON without AES
+    <flag name="cpu_flags_arm_aes">
+      Optimize for ARM with AES
     </flag>
     <flag name="cpu_flags_arm_sve">
       Optimize for ARM SVE
@@ -61,7 +61,7 @@
       Optimize for POWER10
     </flag>
     <flag name="cpu_flags_riscv_rvv">
-      Optimize with RVV
+      Optimize with RISC-V Vector Extension (RVV)
     </flag>
     <flag name="cpu_flags_s390_z14">
       Optimize for z14
@@ -70,82 +70,82 @@
       Optimize for z15
     </flag>
     <flag name="cpu_flags_x86_aes">
-      Optimize with AES-NI
+      Optimize with Advanced Encryption Standard New Instructions (AES-NI)
     </flag>
     <flag name="cpu_flags_x86_avx">
-      Optimize with AVX
+      Optimize with Advanced Vector Extensions (AVX)
     </flag>
     <flag name="cpu_flags_x86_avx2">
-      Optimize with AVX2
+      Optimize with Advanced Vector Extensions 2 (AVX2)
     </flag>
     <flag name="cpu_flags_x86_avx512bf16">
-      Optimize with BF16 for Zen 4 or later
+      Optimize with AVX-512 Bfloat16 Floating-Point Instructions (AVX512BF16) for Zen 4 or later
     </flag>
     <flag name="cpu_flags_x86_avx512bitalg">
-      Optimize with AVX512BITALG
+      Optimize with AVX-512 Bit Algorithms (AVX512BITALG)
     </flag>
     <flag name="cpu_flags_x86_avx512bw">
-      Optimize with AVX512BW
+      Optimize with AVX-512 Byte and Word Instructions (AVX512BW)
     </flag>
     <flag name="cpu_flags_x86_avx512cd">
-      Optimize with AVX512CD
+      Optimize with AVX-512 Conflict Detection Instructions (AVX512CD)
     </flag>
     <flag name="cpu_flags_x86_avx512dq">
-      Optimize with AVX512DQ
+      Optimize with AVX-512 Doubleword and Quadword Instructions (AVX512DQ)
     </flag>
     <flag name="cpu_flags_x86_avx512f">
-      Optimize with AVX512F
+      Optimize with AVX-512 Foundation Instructions (AVX512F)
     </flag>
     <flag name="cpu_flags_x86_avx512fp16">
-      Optimize with BF16/FP16 for Sapphire Rapids or later
+      Optimize with AVX-512 Half-Precision Floating-Point Instructions (AVX512FP16) for Sapphire Rapids or later
     </flag>
     <flag name="cpu_flags_x86_avx512vbmi">
-      Optimize with AVX512VBMI
+      Optimize with AVX-512 Vector Byte Manipulation Instructions (AVX512VBMI)
     </flag>
     <flag name="cpu_flags_x86_avx512vbmi2">
-      Optimize with AVX512VBMI2
+      Optimize with AVX-512 Vector Byte Manipulation Instructions 2 (AVX512VBMI2)
     </flag>
     <flag name="cpu_flags_x86_avx512vl">
-      Optimize with AVX512VL
+      Optimize with AVX-512 Vector Length Extensions (AVX512VL)
     </flag>
     <flag name="cpu_flags_x86_avx512vnni">
-      Optimize with AVX512VNNI
+      Optimize with AVX-512 Vector Neural Network Instructions (AVX512VNNI)
     </flag>
     <flag name="cpu_flags_x86_avx512vpopcntdq">
-      Optimize with AVX512VPOPCNTDQ
+      Optimize with AVX-512 Vector Population Count Instruction (AVX512VPOPCNTDQ)
     </flag>
     <flag name="cpu_flags_x86_bmi">
-      Optimize with BMI
+      Optimize with Bit Manipulation Instructions Set 1 (BMI)
     </flag>
     <flag name="cpu_flags_x86_bmi2">
-      Optimize with BMI2
+      Optimize with Bit Manipulation Instructions Set 2 (BMI2)
     </flag>
     <flag name="cpu_flags_x86_fma">
-      Optimize with FMA
+      Optimize with Fused Multiply-Add (FMA)
     </flag>
     <flag name="cpu_flags_x86_f16c">
-      Optimize with F16C
+      Optimize with Half-Precision Conversion Instructions (F16C).
     </flag>
     <flag name="cpu_flags_x86_gfni">
-      Optimize with GFNI
+      Optimize with AVX-512 Galois Field New Instructions (GFNI)
     </flag>
     <flag name="cpu_flags_x86_pclmul">
-      Optimize with PCLMUL
+      Optimize with Packed Carry-less Multiplication (PCLMUL)
     </flag>
     <flag name="cpu_flags_x86_sse2">
-      Optimize with SSE2
+      Optimize with Streaming SIMD Extensions 2 (SSE2)
     </flag>
     <flag name="cpu_flags_x86_sse4_2">
-      Optimize with SSE4.1, SSE4.2
+      Optimize with Streaming SIMD Extensions 4 (SSE 4.1, SSE 4.2)
     </flag>
     <flag name="cpu_flags_x86_ssse3">
-      Optimize with SSSE3
+      Optimize with Supplemental Streaming SIMD Extensions 3 (SSSE3)
     </flag>
     <flag name="cpu_flags_x86_vaes">
-      Optimize with VAES
+      Optimize with AVX-512 Vector AES Instructions (VAES)
     </flag>
     <flag name="cpu_flags_x86_vpclmulqdq">
-      Optimize with VPCLMULQDQ
+      Optimize with AVX-512 Packed Carry-less Multiplication of Quadwords (VPCLMULQDQ)
     </flag>
   </use>
 </pkgmetadata>
