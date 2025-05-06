@@ -584,6 +584,7 @@ CPU_FLAGS_PPC=(
 	power8-vector
 	power9-vector
 	power10-vector
+	vsx
 	vsx3
 )
 CPU_FLAGS_RISCV=(
@@ -608,8 +609,11 @@ CPU_FLAGS_X86=(
 	avx512vl
 	avx512vnni
 	avx512vpopcntdq
-	gfni
+	bmi
+	bmi2
 	f16c
+	fma
+	gfni
 	sse2
 	sse4_2
 	ssse3
@@ -4871,9 +4875,12 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	myconf_gn+=" use_sve2=$(usex cpu_flags_arm_sve2 true false)"
 	myconf_gn+=" use_sve2_128=$(usex cpu_flags_arm_sve2_128 true false)"
 
+	myconf_gn+=" use_altivec=$(usex cpu_flags_ppc_altivec true false)"
+	myconf_gn+=" use_crypto=$(usex cpu_flags_ppc_crypto true false)"
 	myconf_gn+=" use_ppc8=$(usex cpu_flags_ppc_power8-vector true false)"
 	myconf_gn+=" use_ppc9=$(usex cpu_flags_ppc_power9-vector true false)"
 	myconf_gn+=" use_ppc10=$(usex cpu_flags_ppc_power10-vector true false)"
+	myconf_gn+=" use_vsx=$(usex cpu_flags_ppc_vsx true false)"
 
 	myconf_gn+=" use_rvv=$(usex cpu_flags_riscv_rvv true false)"
 
@@ -4883,7 +4890,10 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	myconf_gn+=" use_avx2=$(usex cpu_flags_x86_avx2 true false)"
 	myconf_gn+=" use_avx3_spr=$(usex cpu_flags_x86_avx512fp16 true false)"		# Sapphire Rapids or better
 	myconf_gn+=" use_avx3_zen4=$(usex cpu_flags_x86_avx512bf16 true false)"		# Zen 4 or better
+	myconf_gn+=" use_bmi=$(usex cpu_flags_x86_bmi true false)"
+	myconf_gn+=" use_bmi2=$(usex cpu_flags_x86_bmi2 true false)"
 	myconf_gn+=" use_f16c=$(usex cpu_flags_x86_f16c true false)"
+	myconf_gn+=" use_fma=$(usex cpu_flags_x86_fma true false)"
 	myconf_gn+=" use_sse2=$(usex cpu_flags_x86_sse2 true false)"
 	myconf_gn+=" use_ssse3=$(usex cpu_flags_x86_ssse3 true false)"
 	myconf_gn+=" use_sse4=$(usex cpu_flags_x86_sse4_2 true false)"
