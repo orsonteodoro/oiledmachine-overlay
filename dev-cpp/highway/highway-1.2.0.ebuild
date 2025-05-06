@@ -80,7 +80,7 @@ ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_S390[@]}
 ${CPU_FLAGS_X86[@]}
 test
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	cpu_flags_ppc_power8-vector? (
@@ -408,11 +408,15 @@ _configure_cpu_flags_x86() {
 			"HWY_AVX3_DL"
 		)
 	fi
+
+	use cpu_flags_x86_avx512fp16 || append-flags -mno-avx512fp16
 	if ! use cpu_flags_x86_avx512fp16 ; then
 		disabled_cpu_flags+=(
 			"HWY_AVX3_SPR"
 		)
 	fi
+
+	use cpu_flags_x86_avx512bf16 || append-flags -mno-avx512bfp16
 	if ! use cpu_flags_x86_avx512bf16 ; then
 		disabled_cpu_flags+=(
 			"HWY_AVX3_ZEN4"
