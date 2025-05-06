@@ -3976,17 +3976,26 @@ ewarn
 	elif [[ "${ABI}" == "arm64" ]] ; then
 ewarn
 ewarn "You are missing CFI for execution integrity.  These are associated with"
-ewarn "a few top 25 reported vulnerabilities."
+ewarn "a few top 25 reported vulnerabilities.  Choose one of the following to"
+ewarn "mitigate a possible code execution attack."
 ewarn
 ewarn "The scores:"
 ewarn
-ewarn "    Mitigation combo                                           | Score | Security posture  | Upstream default?"
+ewarn "    Mitigation combo                                           | Score     | Security posture     | Upstream default?"
 ewarn "--------------------------------------------------------------------------------------------------------------"
-ewarn "1. CFI (vcall + icall + cast) + ShadowCallStack                |   4.2 | Security-critical |"
-ewarn "2. CFI (vcall + icall + cast)                                  |   4.1 | Security-critcial | Yes"
-ewarn "3. BTI + PAC                                                   |   3.9 | Balance           |"
-ewarn "4. CFI (vcall) + BTI                                           |   3.9 | Balance           |"
-ewarn "5. ShadowCallStack                                             |   3.4 | Balance"
+ewarn " 1. CFI (icall + vcall + cast) + SCS                           | 0.91285   | Security-critical    |"
+ewarn " 2. CFI (icall + vcall + cast) + BTI + PAC                     | 0.9082    | Security-critical    |"
+ewarn " 3. CFI (icall + vcall + cast) + PAC                           | 0.8962    | Security-critical    |"
+ewarn " 4. CFI (icall + vcall + cast) + BTI                           | 0.8815    | Security-critical    |"
+ewarn " 5. CFI (icall + vcall + cast)                                 | 0.87      | Security-critical    |"
+ewarn " 6. CFI (icall + vcall) + ShadowCallStack                      | 0.78725   | Balanced             |"
+ewarn " 7. BTI + PAC                                                  | 0.775     | Balanced             | Yes for arm64 only"
+ewarn " 8. CFI (vcall + icall)                                        | 0.705     | Balanced             | Yes for amd64 official only"
+ewarn " 9. CFI (vcall) + ShadowCallStack                              | 0.61175   | Performance-critical |"
+ewarn "10. PAC                                                        | 0.601     | Performance-critical |"
+ewarn "11. BTI                                                        | 0.544     | Performance-critical |"
+ewarn "12. ShadowCallStack                                            | 0.5195    | Performance-critical |"
+ewarn "13. CFI (vcall)                                                | 0.51      | Performance-critical |"
 ewarn
 ewarn "The scores reflect maximizing mitigation coverage, minimizing overhead,"
 ewarn "and rewarding more for combos that attack widely reported CFI related"
@@ -3995,17 +4004,22 @@ ewarn
 	elif [[ "${ABI}" == "amd64" ]] ; then
 ewarn
 ewarn "You are missing CFI for execution integrity.  These are associated with"
-ewarn "a few top 25 reported vulnerabilities."
+ewarn "a few top 25 reported vulnerabilities.  Choose one of the following to"
+ewarn "mitigate a possible code execution attack."
 ewarn
 ewarn "The scores:"
 ewarn
-ewarn "    Mitigation combo                                           | Score | Security posture     | Upstream default?"
+ewarn "    Mitigation combo                                           | Score     | Security posture     | Upstream default?"
 ewarn "--------------------------------------------------------------------------------------------------------------"
-ewarn "1. CFI (vcall + icall + cast) + ShadowCallStack                |   4.2 | Security-critical    |"
-ewarn "2. CFI (vcall + icall + cast)                                  |   4.1 | Security-critical    | Yes"
-ewarn "3. ShadowCallStack                                             |   3.4 | Balance              |"
-ewarn "4. CFE + CFI (vcall + icall + cast)                            |   3.4 | Balance              |"
-ewarn "5. CFE                                                         |   2.8 | Performance-critical |"
+ewarn " 1. CFI (icall + vcall + cast) + SCS                           | 0.91285   | Security-critical    |"
+ewarn " 2. CFE + ShadowCallStack                                      | 0.90925   | Balanced             |"
+ewarn " 3. CFI (icall + vcall + cast)                                 | 0.87      | Security-critical    |"
+ewarn " 4. CFE                                                        | 0.845     | Balanced             |"
+ewarn " 5. CFI (icall + vcall) + ShadowCallStack                      | 0.78725   | Balanced             |"
+ewarn " 6. CFI (vcall + icall)                                        | 0.705     | Balanced             | Yes for amd64 official only"
+ewarn " 7. CFI (vcall) + ShadowCallStack                              | 0.61175   | Performance-critical |"
+ewarn " 8. ShadowCallStack                                            | 0.5195    | Performance-critical |"
+ewarn " 9. CFI (vcall)                                                | 0.51      | Performance-critical |"
 ewarn
 ewarn "The scores reflect maximizing mitigation coverage, minimizing overhead,"
 ewarn "and rewarding more for combos that attack widely reported CFI related"
