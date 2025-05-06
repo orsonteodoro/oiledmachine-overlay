@@ -99,7 +99,7 @@
 +    if (!use_neon) {
 +      hwy_disabled_targets += "|NEON"
 +    }
-+    if (!use_neon_aes) {
++    if (!use_neon_without_aes) {
 +      hwy_disabled_targets += "|NEON_WITHOUT_AES"
 +    }
 +    if (!use_neon_bf16) {

@@ -4891,10 +4891,10 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	else
 		myconf_gn+=" use_neon_bf16=false"
 	fi
-	if use cpu_flags_arm_neon && use cpu_flags_arm_aes ; then
-		myconf_gn+=" use_neon_aes=true"
+	if use cpu_flags_arm_neon && ! use cpu_flags_arm_aes ; then
+		myconf_gn+=" use_neon_without_aes=true"
 	else
-		myconf_gn+=" use_neon_aes=false"
+		myconf_gn+=" use_neon_without_aes=false"
 	fi
 	if use cpu_flags_arm_neon && use cpu_flags_arm_i8mm ; then
 		myconf_gn+=" use_neon_i8mm=true"
