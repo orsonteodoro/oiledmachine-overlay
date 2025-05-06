@@ -826,6 +826,9 @@ REQUIRED_USE+="
 		${IUSE_LIBCXX[@]}
 	)
 	partitionalloc
+	amd64? (
+		cpu_flags_x86_sse2
+	)
 	cfi? (
 		!mold
 		!system-dav1d
