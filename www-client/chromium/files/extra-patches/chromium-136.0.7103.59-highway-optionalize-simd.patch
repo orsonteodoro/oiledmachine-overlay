@@ -1,6 +1,6 @@
 --- a/third_party/highway/BUILD.gn.orig	2025-05-06 07:47:58.984490701 -0700
 +++ b/third_party/highway/BUILD.gn	2025-05-06 07:51:30.156875061 -0700
-@@ -2,12 +2,163 @@
+@@ -2,12 +2,162 @@
  # Use of this source code is governed by a BSD-style license that can be
  # found in the LICENSE file.
  
@@ -59,7 +59,6 @@
 +      cflags += [ "-mno-avx512dq" ]
 +      cflags += [ "-mno-avx512f" ]
 +      cflags += [ "-mno-avx512vl" ]
-+      cflags += [ "-mno-evex512" ]
 +      hwy_disabled_targets += "|HWY_AVX3"
 +    }
 +    if (!use_avx3_dl) {
