@@ -5005,6 +5005,9 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	myconf_gn+=" use_sve_256=$(usex cpu_flags_arm_sve_256 true false)"
 	myconf_gn+=" use_sve2=$(usex cpu_flags_arm_sve2 true false)"
 	myconf_gn+=" use_sve2_128=$(usex cpu_flags_arm_sve2_128 true false)"
+
+	myconf_gn+=" arm_use_neon=$(usex cpu_flags_arm_neon true false)" # libvpx
+
 	if use cpu_flags_arm_neon && use cpu_flags_arm_bf16 ; then
 		myconf_gn+=" use_neon_bf16=true"
 	else
