@@ -4906,11 +4906,11 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	myconf_gn+=" libyuv_use_lsx=$(usex cpu_flags_loong_lsx true false)"
 	myconf_gn+=" libyuv_use_msa=$(usex cpu_flags_mips_msa true false)"
 	myconf_gn+=" libyuv_use_neon=$(usex cpu_flags_arm_neon true false)"
-	myconf_gn+=" libyuv_use_sve=$(usex cpu_flags_arm_sve true false)"
 	myconf_gn+=" libyuv_use_sme=$(usex cpu_flags_arm_sme true false)"
+	myconf_gn+=" libyuv_use_sve=$(usex cpu_flags_arm_sve true false)"
 
-	myconf_gn+=" loongarch64_use_lsx=$(usex cpu_flags_loong_lsx true false)"
 	myconf_gn+=" loongarch64_use_lasx=$(usex cpu_flags_loong_lasx true false)"
+	myconf_gn+=" loongarch64_use_lsx=$(usex cpu_flags_loong_lsx true false)"
 
 	myconf_gn+=" use_crc32=$(usex cpu_flags_arm_crc32 true false)"
 	myconf_gn+=" use_dotprod=$(usex cpu_flags_arm_dotprod true false)"
