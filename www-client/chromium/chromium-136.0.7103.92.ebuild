@@ -4914,6 +4914,8 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	myconf_gn+=" loongarch64_use_lasx=$(usex cpu_flags_loong_lasx true false)"
 	myconf_gn+=" loongarch64_use_lsx=$(usex cpu_flags_loong_lsx true false)"
 
+	myconf_gn+=" rtc_build_with_neon=$(usex cpu_flags_arm_neon true false)"
+
 	myconf_gn+=" use_crc32=$(usex cpu_flags_arm_crc32 true false)"
 	myconf_gn+=" use_dotprod=$(usex cpu_flags_arm_dotprod true false)"
 	myconf_gn+=" use_neon=$(usex cpu_flags_arm_neon true false)"
