@@ -4911,12 +4911,14 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 #
 
 	if ! use cpu_flags_arm_dotprod ; then
+		sed -i -e "s|XNN_ENABLE_ARM_DOTPROD=1|XNN_ENABLE_ARM_DOTPROD=0|g" || die
 		sed -r -i -e "/:.*[+]dotprod/d" "third_party/xnnpack/BUILD.gn" || die
 	fi
 	if ! use cpu_flags_arm_fp16 ; then
 		sed -r -i -e "/:.*[+]fp16/d" "third_party/xnnpack/BUILD.gn" || die
 	fi
 	if ! use cpu_flags_arm_i8mm ; then
+		sed -i -e "s|XNN_ENABLE_ARM_I8MM=1|XNN_ENABLE_ARM_I8MM=0|g" || die
 		sed -r -i -e "/:.*[+]i8mm/d" "third_party/xnnpack/BUILD.gn" || die
 	fi
 
