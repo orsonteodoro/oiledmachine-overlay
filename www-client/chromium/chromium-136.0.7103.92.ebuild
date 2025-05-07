@@ -4923,8 +4923,10 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	if ! use cpu_flags_x86_avx ; then
 		sed -r -i -e "/:.*_avx-/d" "third_party/xnnpack/BUILD.gn" || die
 	fi
-	if ! use cpu_flags_x86_avx2 ; then
-		sed -r -i -e "/:.*_avx2/d" -e "/:.*-no-avx2/d" "third_party/xnnpack/BUILD.gn" || die
+	if use cpu_flags_x86_avx2 ; then
+		sed -r -i -e "/:.*-no-avx2/d" "third_party/xnnpack/BUILD.gn" || die
+	else
+		sed -r -i -e "/:.*_avx2/d" "third_party/xnnpack/BUILD.gn" || die
 	fi
 	if ! use cpu_flags_x86_avx512f ; then
 		sed -r -i -e "/:.*_avx512f/d" "third_party/xnnpack/BUILD.gn" || die
@@ -4932,10 +4934,12 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	if ! use cpu_flags_x86_avx512fp16 ; then
 		sed -r -i -e "/:.*-avx512fp16/d" "third_party/xnnpack/BUILD.gn" || die
 	fi
-	if ! use cpu_flags_x86_f16c ; then
-		sed -r -i -e "/:.*_f16c/d" -e "/:.*-no-f16c/d" "third_party/xnnpack/BUILD.gn" || die
+	if use cpu_flags_x86_f16c ; then
+		sed -r -i -e "/:.*-no-f16c/d" "third_party/xnnpack/BUILD.gn" || die
+	else
+		sed -r -i -e "/:.*_f16c/d" "third_party/xnnpack/BUILD.gn" || die
 	fi
-	if ! use cpu_flags_x86_fma ; then
+	if use cpu_flags_x86_fma ; then
 		sed -r -i -e ":/-no-fma/d" "third_party/xnnpack/BUILD.gn" || die
 	fi
 	if ! use cpu_flags_x86_gfni ; then
@@ -4944,16 +4948,20 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	if ! use cpu_flags_x86_sse ; then
 		sed -r -i -e "/:.*_sse-/d" "third_party/xnnpack/BUILD.gn" || die
 	fi
-	if ! use cpu_flags_x86_sse2 ; then
-		sed -r -i -e "/:.*_sse2/d" -e "/:.*-no-sse2/d" "third_party/xnnpack/BUILD.gn" || die
+	if use cpu_flags_x86_sse2 ; then
+		sed -r -i -e "/:.*-no-sse2/d" "third_party/xnnpack/BUILD.gn" || die
+	else
+		sed -r -i -e "/:.*_sse2/d" "third_party/xnnpack/BUILD.gn" || die
 	fi
-	if ! use cpu_flags_x86_sse3 ; then
+	if use cpu_flags_x86_sse3 ; then
 		sed -r -i -e "/:.*-no-sse3/d" "third_party/xnnpack/BUILD.gn" || die
 	fi
-	if ! use cpu_flags_x86_sse4_1 ; then
-		sed -r -i -e "/:.*_sse4[.]1/d" -e "/:.*-no-sse4[.]1/d" "third_party/xnnpack/BUILD.gn" || die
+	if use cpu_flags_x86_sse4_1 ; then
+		sed -r -i -e "/:.*-no-sse4[.]1/d" "third_party/xnnpack/BUILD.gn" || die
+	else
+		sed -r -i -e "/:.*_sse4[.]1/d" "third_party/xnnpack/BUILD.gn" || die
 	fi
-	if ! use cpu_flags_x86_sse4_2 ; then
+	if use cpu_flags_x86_sse4_2 ; then
 		sed -r -i -e "/:.*-no-sse4[.]1/d" "third_party/xnnpack/BUILD.gn" || die
 	fi
 	if ! use cpu_flags_x86_ssse3 ; then
