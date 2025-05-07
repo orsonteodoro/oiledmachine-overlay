@@ -903,7 +903,12 @@ REQUIRED_USE+="
 		cpu_flags_x86_mmx
 	)
 
+	cpu_flags_x86_aes? (
+		cpu_flags_x86_pclmul
+	)
+
 	cpu_flags_x86_avx? (
+		cpu_flags_x86_pclmul
 		cpu_flags_x86_sse4_2
 	)
 	cpu_flags_x86_avx2? (
@@ -1024,6 +1029,9 @@ REQUIRED_USE+="
 		cpu_flags_x86_avx512vpopcntdq
 		cpu_flags_x86_vaes
 		cpu_flags_x86_vpclmulqdq
+	)
+	cpu_flags_x86_pclmul? (
+		cpu_flags_x86_sse4_2
 	)
 	cpu_flags_x86_sse? (
 		cpu_flags_x86_mmx
@@ -2615,6 +2623,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-dav1d-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-libjpeg-turbo-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-opus-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-libwebp-optionalize-simd.patch"
 	)
 
 	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then

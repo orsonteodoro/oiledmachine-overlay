@@ -1,0 +1,151 @@
+--- a/third_party/libwebp/BUILD.gn.orig	2025-04-27 16:35:54.000000000 -0700
++++ b/third_party/libwebp/BUILD.gn	2025-05-07 15:17:54.800986663 -0700
+@@ -4,6 +4,7 @@
+ 
+ import("//build/config/arm.gni")
+ import("//build/config/sanitizers/sanitizers.gni")
++import("//build/config/simd.gni")
+ import("//testing/libfuzzer/fuzzer_test.gni")
+ 
+ # Public configuration exported to users of the libwebp targets.
+@@ -35,7 +36,7 @@ set_opt_level = !is_debug && (is_posix |
+ # arm_use_neon and arm_optionally_use_neon are false will result in link errors
+ # for its dsp init functions.
+ use_dsp_neon =
+-    current_cpu == "arm64" || (current_cpu == "arm" && arm_version >= 7)
++    (current_cpu == "arm64" || (current_cpu == "arm" && arm_version >= 7)) && use_neon
+ 
+ source_set("libwebp_webp") {
+   sources = [
+@@ -133,43 +134,57 @@ source_set("libwebp_dsp_headers") {
+ }
+ 
+ static_library("libwebp_dsp") {
++  sources = []
++  cflags = []
++  if (use_mips_dspr2) {
++    sources = [
++      "src/src/dsp/alpha_processing_mips_dsp_r2.c",
++      "src/src/dsp/cost_mips_dsp_r2.c",
++      "src/src/dsp/dec_mips_dsp_r2.c",
++      "src/src/dsp/enc_mips_dsp_r2.c",
++      "src/src/dsp/filters_mips_dsp_r2.c",
++      "src/src/dsp/lossless_enc_mips_dsp_r2.c",
++      "src/src/dsp/lossless_mips_dsp_r2.c",
++      "src/src/dsp/rescaler_mips_dsp_r2.c",
++      "src/src/dsp/upsampling_mips_dsp_r2.c",
++      "src/src/dsp/yuv_mips_dsp_r2.c",
++    ]
++  } else {
++    cflags += [ "-mno-dspr2" ]
++  }
++  if (use_msa) {
++    sources = [
++      "src/src/dsp/dec_msa.c",
++      "src/src/dsp/enc_msa.c",
++      "src/src/dsp/filters_msa.c",
++      "src/src/dsp/lossless_enc_msa.c",
++      "src/src/dsp/lossless_msa.c",
++      "src/src/dsp/rescaler_msa.c",
++      "src/src/dsp/upsampling_msa.c",
++    ]
++  } else {
++    cflags += [ "-mno-msa" ]
++  }
+   sources = [
+     "src/src/dsp/alpha_processing.c",
+-    "src/src/dsp/alpha_processing_mips_dsp_r2.c",
+     "src/src/dsp/cost.c",
+     "src/src/dsp/cost_mips32.c",
+-    "src/src/dsp/cost_mips_dsp_r2.c",
+     "src/src/dsp/cpu.c",
+     "src/src/dsp/dec.c",
+     "src/src/dsp/dec_clip_tables.c",
+     "src/src/dsp/dec_mips32.c",
+-    "src/src/dsp/dec_mips_dsp_r2.c",
+-    "src/src/dsp/dec_msa.c",
+     "src/src/dsp/enc.c",
+     "src/src/dsp/enc_mips32.c",
+-    "src/src/dsp/enc_mips_dsp_r2.c",
+-    "src/src/dsp/enc_msa.c",
+     "src/src/dsp/filters.c",
+-    "src/src/dsp/filters_mips_dsp_r2.c",
+-    "src/src/dsp/filters_msa.c",
+     "src/src/dsp/lossless.c",
+     "src/src/dsp/lossless_enc.c",
+     "src/src/dsp/lossless_enc_mips32.c",
+-    "src/src/dsp/lossless_enc_mips_dsp_r2.c",
+-    "src/src/dsp/lossless_enc_msa.c",
+-    "src/src/dsp/lossless_mips_dsp_r2.c",
+-    "src/src/dsp/lossless_msa.c",
+     "src/src/dsp/rescaler.c",
+     "src/src/dsp/rescaler_mips32.c",
+-    "src/src/dsp/rescaler_mips_dsp_r2.c",
+-    "src/src/dsp/rescaler_msa.c",
+     "src/src/dsp/ssim.c",
+     "src/src/dsp/upsampling.c",
+-    "src/src/dsp/upsampling_mips_dsp_r2.c",
+-    "src/src/dsp/upsampling_msa.c",
+     "src/src/dsp/yuv.c",
+     "src/src/dsp/yuv_mips32.c",
+-    "src/src/dsp/yuv_mips_dsp_r2.c",
+   ]
+   configs += [ ":libwebp_config" ]
+   configs -= [ "//build/config/compiler:chromium_code" ]
+@@ -182,8 +197,18 @@ static_library("libwebp_dsp") {
+   public_configs = [ ":libwebp_public_config" ]
+   deps = [
+     ":libwebp_dec",
+-    ":libwebp_dsp_sse2",
+-    ":libwebp_dsp_sse41",
++  ]
++  if (use_sse2) {
++    deps += [
++      ":libwebp_dsp_sse2",
++    ]
++  }
++  if (use_sse4_1) {
++    deps += [
++      ":libwebp_dsp_sse41",
++    ]
++  }
++  deps += [
+     ":libwebp_enc",
+     ":libwebp_utils",
+     ":libwebp_webp",
+@@ -196,14 +221,29 @@ static_library("libwebp_dsp") {
+     deps += [ "//third_party/cpu_features:ndk_compat" ]
+   }
+   if (current_cpu == "x86" || current_cpu == "x64") {
+-    defines = [
+-      "WEBP_HAVE_SSE2",
+-      "WEBP_HAVE_SSE41",
++    defines = []
++    if (use_sse2) {
++      defines += [
++        "WEBP_HAVE_SSE2",
++      ]
++    }
++    if (use_sse4_1) {
++      defines += [
++        "WEBP_HAVE_SSE41",
++      ]
++    }
++  }
++  if (use_sse2) {
++    allow_circular_includes_from = []
++      ":libwebp_dsp_sse2",
++    ]
++  }
++  if (use_sse4_1) {
++    allow_circular_includes_from += [
++      ":libwebp_dsp_sse41",
+     ]
+   }
+-  allow_circular_includes_from = [
+-    ":libwebp_dsp_sse2",
+-    ":libwebp_dsp_sse41",
++  allow_circular_includes_from += [
+     ":libwebp_utils",
+   ]
+   if (use_dsp_neon) {
