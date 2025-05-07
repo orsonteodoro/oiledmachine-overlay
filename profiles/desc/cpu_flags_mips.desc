@@ -1,3 +1,3 @@
-cpu_flags_mips_dsp - Add support for MIPS DSP ASE, revision 1
-cpu_flags_mips_dspr2 - Add support for MIPS DSP ASE, revision 2
+cpu_flags_mips_dsp - Add support for MIPS DSP Application-Specific Extension (ASE), revision 1
+cpu_flags_mips_dspr2 - Add support for MIPS DSP Application-Specific Extension (ASE), revision 2
 cpu_flags_mips_msa - Add support for MIPS SIMD Architecture (MSA)
