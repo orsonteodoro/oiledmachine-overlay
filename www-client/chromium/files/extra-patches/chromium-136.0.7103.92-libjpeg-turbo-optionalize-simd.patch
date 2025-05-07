@@ -331,7 +331,7 @@
      ":libjpeg16",
 -    ":simd",
    ]
-+  if (use_mmx || use_3dnow || use_sse || use_sse2 || use_avx2 || use_avx512 || use_neon) {
++  if (use_mmx || use_3dnow || use_sse || use_sse2 || use_avx2 || use_neon) {
 +    deps += [
 +      ":simd",
 +    ]
