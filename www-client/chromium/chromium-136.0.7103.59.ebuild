@@ -4412,11 +4412,6 @@ ewarn
 			jit_level=0
 		fi
 
-		if ! use cpu_flags_x86_avx2 && [[ "${ABI}" == "x86" || "${ABI}" == "amd64" ]] && (( ${jit_level} >= 2 )) ; then
-einfo "No AVX2, downgrading to jit_level=1 without turbofan"
-			jit_level=1
-		fi
-
 		if use webassembly && (( ${jit_level} < 2 )) ; then
 einfo "Changing jit_level=${jit_level} to jit_level=2 for WebAssembly."
 			jit_level=2
@@ -5356,7 +5351,7 @@ einfo "Using Mold without LTO"
 	local expected_lto_type="thinlto"
 	if [[ "${myconf_gn}" =~ "is_cfi=true" ]] ; then
 		if ! [[ "${LTO_TYPE}" =~ ("${expected_lto_type}") ]] ; then
-		# Build scripts can only use ThinLTO for CFI.
+	# Build scripts can only use ThinLTO for CFI.
 eerror
 eerror "CFI requires ThinLTO."
 eerror
