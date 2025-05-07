@@ -124,7 +124,7 @@
       Optimize with Fused Multiply-Add (FMA)
     </flag>
     <flag name="cpu_flags_x86_f16c">
-      Optimize with Half-Precision Conversion Instructions (F16C).
+      Optimize with Half-Precision Conversion Instructions (F16C)
     </flag>
     <flag name="cpu_flags_x86_gfni">
       Optimize with AVX-512 Galois Field New Instructions (GFNI)
