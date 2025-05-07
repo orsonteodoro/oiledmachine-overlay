@@ -1,7 +1,8 @@
 --- /dev/null	2025-05-03 00:54:32.134046439 -0700
 +++ b/build/config/simd.gni	2025-05-05 16:45:28.274227767 -0700
-@@ -0,0 +1,65 @@
+@@ -0,0 +1,66 @@
 +declare_args() {
++  use_3dnow = true
 +  use_aes = true
 +  use_amx_int8 = true
 +  use_amx_tile = true

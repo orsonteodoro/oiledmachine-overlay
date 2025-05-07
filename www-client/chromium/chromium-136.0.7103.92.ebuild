@@ -615,6 +615,7 @@ CPU_FLAGS_S390=(
 	z16
 )
 CPU_FLAGS_X86=(
+	3dnow
 	aes
 	amx-int8
 	amx-tile
@@ -639,6 +640,7 @@ CPU_FLAGS_X86=(
 	f16c
 	fma
 	gfni
+	mmx
 	pclmul
 	popcnt
 	sse
@@ -885,6 +887,10 @@ REQUIRED_USE+="
 		cpu_flags_ppc_power9-vector
 	)
 
+	cpu_flags_x86_3dnow? (
+		cpu_flags_x86_mmx
+	)
+
 	cpu_flags_x86_avx? (
 		cpu_flags_x86_sse4_2
 	)
@@ -1006,6 +1012,9 @@ REQUIRED_USE+="
 		cpu_flags_x86_avx512vpopcntdq
 		cpu_flags_x86_vaes
 		cpu_flags_x86_vpclmulqdq
+	)
+	cpu_flags_x86_sse? (
+		cpu_flags_x86_mmx
 	)
 	cpu_flags_x86_sse2? (
 		cpu_flags_x86_sse
@@ -2592,6 +2601,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-ruy-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-webrtc-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-dav1d-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-libjpeg-turbo-optionalize-simd.patch"
 	)
 
 	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
@@ -5043,6 +5053,7 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	myconf_gn+=" use_z15=$(usex cpu_flags_s390_z15 true false)"
 	myconf_gn+=" use_z16=$(usex cpu_flags_s390_z16 true false)"
 
+	myconf_gn+=" use_3dnow=$(usex cpu_flags_x86_3dnow true false)"
 	myconf_gn+=" use_aes=$(usex cpu_flags_x86_aes true false)"
 	myconf_gn+=" use_avx=$(usex cpu_flags_x86_avx true false)"
 	myconf_gn+=" use_avx2=$(usex cpu_flags_x86_avx2 true false)"
