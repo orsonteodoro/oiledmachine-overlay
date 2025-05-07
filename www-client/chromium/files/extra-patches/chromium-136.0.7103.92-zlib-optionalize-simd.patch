@@ -1,9 +1,3 @@
-Subject:  Make SIMD instructions optional for zlib
-Patch Author:  Orson Teodoro <orsonteodoro@hotmail.com>
-Date: Wed Oct 20 03:40:04 PM PDT 2021 (Unix time: 1634769604)
-
-# Changes May 5, 2025:
-# Moved defaults to build/config/simd.gni
 --- a/third_party/skia/third_party/zlib/BUILD.gn.orig	2025-05-07 01:28:09.642365173 -0700
 +++ b/third_party/skia/third_party/zlib/BUILD.gn	2025-05-07 01:31:43.616373391 -0700
 @@ -3,6 +3,7 @@
@@ -121,3 +115,34 @@ Date: Wed Oct 20 03:40:04 PM PDT 2021 (Unix time: 1634769604)
      sources = [
        "crc32_simd.c",
        "crc32_simd.h",
+--- a/third_party/crashpad/crashpad/third_party/zlib/BUILD.gn.orig	2025-04-27 16:35:54.000000000 -0700
++++ b/third_party/crashpad/crashpad/third_party/zlib/BUILD.gn	2025-05-07 15:54:12.196007198 -0700
+@@ -12,6 +12,7 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
++import("//build/config/simd.gni")
+ import("../../build/crashpad_buildconfig.gni")
+ 
+ if (crashpad_is_in_chromium || crashpad_is_in_fuchsia || crashpad_is_in_dart) {
+@@ -129,10 +130,16 @@ if (zlib_source == "external") {
+           "$zlib_dir/crc_folding.c",
+         ]
+         if (!crashpad_is_win || crashpad_is_clang) {
+-          cflags += [
+-            "-msse4.2",
+-            "-mpclmul",
+-          ]
++          if (use_sse4_2) {
++            cflags += [
++              "-msse4.2",
++            ]
++          }
++          if (use_pclmul) {
++            cflags += [
++              "-mpclmul",
++            ]
++          }
+         }
+         if (crashpad_is_clang) {
+           cflags += [ "-Wno-incompatible-pointer-types" ]
