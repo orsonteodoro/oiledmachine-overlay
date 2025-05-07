@@ -11,7 +11,7 @@
  use_opus_arm_optimization =
 -    current_cpu == "arm" ||
 -    (current_cpu == "arm64" && (is_fuchsia || is_ios || is_win))
-+    (current_cpu == "arm" || (current_cpu == "arm64" && (is_fuchsia || is_ios || is_win))) && (use_armv4 || (use_edsp && use_armv5e) || arm_use_neon)
++    (current_cpu == "arm" || (current_cpu == "arm64" && (is_fuchsia || is_ios || is_win))) && (use_armv4 || (use_edsp && use_armv5te) || arm_use_neon)
  
  # NaCl, unlike Chrome, doesn't target SSE2 minimum, so skip optimizations for
  # the sake of simplicity.
@@ -24,7 +24,7 @@
  # defined(_MSC_VER) || defined(__linux__).
  use_opus_arm_rtcd =
 -    current_cpu == "arm" && (is_win || is_android || is_linux || is_chromeos)
-+    current_cpu == "arm" && (is_win || is_android || is_linux || is_chromeos) && ((use_edsp && use_armv5e) || (use_edsp && use_armv6))
++    current_cpu == "arm" && (is_win || is_android || is_linux || is_chromeos) && ((use_edsp && use_armv5te) || (use_edsp && use_armv6))
  
  config("opus_config") {
    include_dirs = [ "src/include" ]
@@ -81,7 +81,7 @@
 +          "OPUS_ARM_INLINE_ASM",
 +        ]
 +      }
-+      if (use_edsp && use_armv5e) {
++      if (use_edsp && use_armv5te) {
 +        defines += [
 +          "OPUS_ARM_INLINE_EDSP",
 +        ]
@@ -94,7 +94,7 @@
      }
  
      if (use_opus_arm_rtcd) {
-+      if (use_edsp && use_armv5e) {
++      if (use_edsp && use_armv5te) {
 +        defines += [
 +          "OPUS_ARM_MAY_HAVE_EDSP",
 +        ]

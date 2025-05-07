@@ -388,8 +388,8 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="cpu_flags_arm_armv4">
       Add support for ARMv4 or later optimizations
     </flag>
-    <flag name="cpu_flags_arm_armv5e">
-      Add support for ARMv5e or later optimizations
+    <flag name="cpu_flags_arm_armv5te">
+      Add support for ARMv5TE or later optimizations
     </flag>
     <flag name="cpu_flags_arm_armv6">
       Add support for ARMv6 or later optimizations
