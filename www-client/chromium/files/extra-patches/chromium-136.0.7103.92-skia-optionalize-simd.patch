@@ -1,0 +1,36 @@
+--- a/third_party/skia/BUILD.gn.orig	2025-04-27 16:35:54.000000000 -0700
++++ b/third_party/skia/BUILD.gn	2025-05-07 00:25:14.905815670 -0700
+@@ -3,6 +3,7 @@
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
+ 
++import("//build/config/simd.gni")
+ import("gn/codec.gni")
+ import("gn/fuchsia_defines.gni")
+ import("gn/shared_sources.gni")
+@@ -1639,7 +1640,13 @@ skia_component("skia") {
+     ":avif",
+     ":crabbyavif",
+     ":heif",
+-    ":hsw",
++  ]
++  if (use_sse2 && use_sse3 && use_sse4_1 && use_sse4_2 && use_avx && use_pclmul && use_avx2 && use_bmi && use_bmi2 && use_fma) {
++    deps += [
++      ":hsw",
++    ]
++  }
++  deps += [
+     ":jpeg_decode",
+     ":jpegxl_decode",
+     ":lasx",
+@@ -1822,7 +1829,9 @@ skia_static_library("pathkit") {
+   public_configs = [ ":skia_public" ]
+   configs = skia_library_configs
+ 
+-  deps = [ ":hsw" ]
++  if (use_sse2 && use_sse3 && use_sse4_1 && use_sse4_2 && use_avx && use_pclmul && use_avx2 && use_bmi && use_bmi2 && use_fma) {
++    deps = [ ":hsw" ]
++  }
+ 
+   sources = []
+   sources += skia_pathops_sources

@@ -586,6 +586,10 @@ CPU_FLAGS_ARM=(
 	sve_256
 	sve2
 	sve2_128
+	thumb
+)
+CPU_FLAGS_LOONG=(
+	lsx
 )
 CPU_FLAGS_MIPS=(
 	dsp
@@ -662,6 +666,7 @@ IUSE_CODECS=(
 # Most option defaults are based on build files.
 IUSE+="
 ${CPU_FLAGS_ARM[@]/#/cpu_flags_arm_}
+${CPU_FLAGS_LOONG[@]/#/cpu_flags_loong_}
 ${CPU_FLAGS_MIPS[@]/#/cpu_flags_mips_}
 ${CPU_FLAGS_PPC[@]/#/cpu_flags_ppc_}
 ${CPU_FLAGS_RISCV[@]/#/cpu_flags_riscv_}
@@ -2571,6 +2576,10 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-simd-defaults.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-build-config-compiler-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-libaom-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-libvpx-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-pdfium-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-skia-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-perfetto-optionalize-simd.patch"
 	)
 
 	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
@@ -4913,6 +4922,8 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 		myconf_gn+=" use_neon_i8mm=false"
 	fi
 
+	myconf_gn+=" use_lsx=$(usex cpu_flags_loong_lsx true false)"
+
 	myconf_gn+=" use_dsp=$(usex cpu_flags_mips_dsp true false)"
 	myconf_gn+=" use_dspr2=$(usex cpu_flags_mips_dspr2 true false)"
 	myconf_gn+=" mips_use_msa=$(usex cpu_flags_mips_msa true false)"
@@ -4976,8 +4987,10 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	; then
 	# The same as AVX512
 		myconf_gn+=" use_avx3=true"
+		myconf_gn+=" use_avx512=true"
 	else
 		myconf_gn+=" use_avx3=false"
+		myconf_gn+=" use_avx512=false"
 	fi
 
 	myconf_gn+=" rtc_enable_avx2=$(usex cpu_flags_x86_avx2 true false)"

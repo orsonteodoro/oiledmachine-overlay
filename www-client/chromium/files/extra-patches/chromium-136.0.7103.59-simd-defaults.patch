@@ -1,6 +1,6 @@
 --- /dev/null	2025-05-03 00:54:32.134046439 -0700
 +++ b/build/config/simd.gni	2025-05-05 16:45:28.274227767 -0700
-@@ -0,0 +1,49 @@
+@@ -0,0 +1,52 @@
 +declare_args() {
 +  use_aes = true
 +  use_avx = true
@@ -21,6 +21,8 @@
 +  use_sse4_1 = true
 +  use_sse4_2 = true
 +
++  use_lsx = true
++
 +  use_crc32 = true
 +  use_dotprod = true
 +  use_neon = true
@@ -31,6 +33,7 @@
 +  use_sve_256 = true
 +  use_sve2 = true
 +  use_sve2_128 = true
++  use_thumb = true
 +
 +  use_dsp = true
 +  use_dspr2 = true

@@ -1,0 +1,102 @@
+--- a/third_party/libvpx/BUILD.gn.orig	2025-05-05 12:21:24.000000000 -0700
++++ b/third_party/libvpx/BUILD.gn	2025-05-06 23:55:14.372721603 -0700
+@@ -5,6 +5,7 @@
+ import("//build/config/android/config.gni")
+ import("//build/config/arm.gni")
+ import("//build/config/chromeos/ui_mode.gni")
++import("//build/config/simd.gni")
+ import("//testing/test.gni")
+ import("//third_party/libvpx/libvpx_srcs.gni")
+ import("//third_party/libvpx/libvpx_test_srcs.gni")
+@@ -585,27 +586,68 @@ static_library("libvpx") {
+   if (current_cpu == "x86" || (current_cpu == "x64" && !is_msan)) {
+     deps += [
+       ":libvpx_asm",
+-      ":libvpx_intrinsics_avx",
+-      ":libvpx_intrinsics_avx2",
+-      ":libvpx_intrinsics_avx512",
+-      ":libvpx_intrinsics_mmx",
+-      ":libvpx_intrinsics_sse2",
+-      ":libvpx_intrinsics_sse4_1",
+-      ":libvpx_intrinsics_ssse3",
+     ]
++    if (use_avx) {
++      deps += [
++        ":libvpx_intrinsics_avx",
++      }
++    if (use_avx2) {
++      deps += [
++        ":libvpx_intrinsics_avx2",
++      }
++    }
++    if (use_avx512) {
++      deps += [
++        ":libvpx_intrinsics_avx512",
++      }
++    }
++    if (use_mmx) {
++      deps += [
++        ":libvpx_intrinsics_mmx",
++      }
++    }
++    if (use_sse2) {
++      deps += [
++        ":libvpx_intrinsics_sse2",
++      }
++    }
++    if (use_sse4_1) {
++      deps += [
++        ":libvpx_intrinsics_sse4_1",
++      }
++    }
++    if (use_ssse3) {
++      deps += [
++        ":libvpx_intrinsics_ssse3",
++      }
++    }
+   }
+   if (cpu_arch_full == "arm-neon-highbd" || cpu_arch_full == "arm-neon" ||
+       cpu_arch_full == "arm-neon-cpu-detect" || current_cpu == "arm64") {
+-    deps += [ ":libvpx_intrinsics_neon" ]
++    if (use_neon) {
++      deps += [ ":libvpx_intrinsics_neon" ]
++    }
+   }
+   if (current_cpu == "arm64") {
+-    deps += [ ":libvpx_intrinsics_neon_dotprod" ]
+-    deps += [ ":libvpx_intrinsics_neon_i8mm" ]
++    if (use_dotprod) {
++      deps += [ ":libvpx_intrinsics_neon_dotprod" ]
++    }
++    if (use_i8mm) {
++      deps += [ ":libvpx_intrinsics_neon_i8mm" ]
++    }
+     if (!is_win) {
+       deps += [
+-        ":libvpx_intrinsics_sve",
+-        ":libvpx_intrinsics_sve2",
+       ]
++      if (use_sve) {
++        deps += [
++          ":libvpx_intrinsics_sve",
++        ]
++      }
++      if (use_sve2) {
++        deps += [
++          ":libvpx_intrinsics_sve2",
++        ]
++      }
+     }
+   }
+   if (is_android) {
+@@ -615,7 +657,9 @@ static_library("libvpx") {
+     deps += [ ":libvpx_assembly_arm" ]
+   }
+   if (current_cpu == "loong64") {
+-    deps += [ ":libvpx_loongarch_lsx" ]
++    if (use_lsx) {
++      deps += [ ":libvpx_loongarch_lsx" ]
++    }
+   }
+ 
+   public_configs = [ ":libvpx_public_config" ]

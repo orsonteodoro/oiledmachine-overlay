@@ -1,0 +1,65 @@
+--- a/third_party/perfetto/gn/standalone/BUILD.gn.orig	2025-04-27 16:35:54.000000000 -0700
++++ b/third_party/perfetto/gn/standalone/BUILD.gn	2025-05-07 00:46:05.953831078 -0700
+@@ -12,6 +12,7 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
++import("//build/config/simd.gni")
+ import("//gn/perfetto_check_build_deps.gni")
+ import("//gn/standalone/android.gni")
+ import("//gn/standalone/libc++/libc++.gni")
+@@ -288,9 +289,13 @@ config("default") {
+   } else if (current_cpu == "arm") {
+     cflags += [
+       "-march=armv7-a",
+-      "-mfpu=neon",
+-      "-mthumb",
+     ]
++    if (use_neon && use_thumb) {
++      cflags += [
++        "-mfpu=neon",
++        "-mthumb",
++      ]
++    }
+   } else if (current_cpu == "riscv64") {
+     if (!is_clang) {
+       # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=104338
+@@ -300,9 +305,13 @@ config("default") {
+     asmflags += [ "-m32" ]
+     cflags += [
+       "-m32",
+-      "-msse2",
+-      "-mfpmath=sse",
+     ]
++    if (use_sse2) {
++      cflags += [
++        "-msse2",
++        "-mfpmath=sse",
++      ]
++    }
+     ldflags += [ "-m32" ]
+   } else if (current_cpu == "arm64") {
+     cflags += [ "-fno-omit-frame-pointer" ]
+@@ -311,13 +320,15 @@ config("default") {
+     if (enable_perfetto_x64_cpu_opt) {
+       # When updating these flags, the CheckCpuOptimizations() in utils.cc must
+       # be updated accordingly.
+-      cflags += [
+-        "-mbmi",
+-        "-mbmi2",
+-        "-mavx2",
+-        "-mpopcnt",
+-        "-msse4.2",
+-      ]
++      if (use_bmi && use_bmi2 && use_avx2 && use_popcnt && use_sse4_2) {
++        cflags += [
++          "-mbmi",
++          "-mbmi2",
++          "-mavx2",
++          "-mpopcnt",
++          "-msse4.2",
++        ]
++      }
+     }
+   }
+ 
