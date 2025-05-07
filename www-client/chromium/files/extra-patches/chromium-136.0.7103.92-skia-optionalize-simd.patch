@@ -114,3 +114,39 @@
    }
  
    if (malloc != "" && !is_win) {
+--- a/third_party/skia/modules/skcms/BUILD.gn.orig	2025-04-27 16:35:54.000000000 -0700
++++ b/third_party/skia/modules/skcms/BUILD.gn	2025-05-07 02:17:36.879046078 -0700
+@@ -90,11 +90,29 @@ static_library("skcms") {
+       "SKCMS_DISABLE_HSW",
+       "SKCMS_DISABLE_SKX",
+     ]
++  } else {
++    defines = []
++    if (!use_sse2 || !use_sse3 || !use_ssse3 || !use_sse4_1 || !use_sse4_2 || !use_pclmul || !use_avx || !use_avx2 || !use_bmi || !use_bmi2 || !use_fma) {
++      defines = [
++        "SKCMS_DISABLE_HSW",
++      ]
++    }
++    if (!use_sse2 || !use_sse3 || !use_ssse3 || !use_sse4_1 || !use_sse4_2 || !use_pclmul || !use_avx || !use_avx2 || !use_bmi || !use_bmi2 || !use_fma || !use_aes || !use_avx512) {
++      defines = [
++        "SKCMS_DISABLE_SKX",
++      ]
++    }
+   }
+   public = skcms_public_headers
+   sources = skcms_public + skcms_TransformBaseline
+-  deps = [
+-    ":skcms_TransformHsw",
+-    ":skcms_TransformSkx",
+-  ]
++  if (use_sse2 && use_sse3 && use_ssse3 && use_sse4_1 && use_sse4_2 && use_pclmul && use_avx && use_avx2 && use_bmi && use_bmi2 && use_fma) {
++    deps = [
++      ":skcms_TransformHsw",
++    ]
++  }
++  if (use_sse2 && use_sse3 && use_ssse3 && use_sse4_1 && use_sse4_2 && use_pclmul && use_avx && use_avx2 && use_bmi && use_bmi2 && use_fma && use_aes && use_avx512) {
++    deps = [
++      ":skcms_TransformSkx",
++    ]
++  }
+ }

@@ -1,0 +1,35 @@
+--- a/third_party/ruy/BUILD.gn.orig	2025-05-06 18:17:34.502644452 -0700
++++ b/third_party/ruy/BUILD.gn	2025-05-07 01:57:45.670749752 -0700
+@@ -580,10 +580,28 @@ source_set("ruy_kernel") {
+   deps = [
+     ":ruy_apply_multiplier",
+     ":ruy_check_macros",
+-    ":ruy_kernel_arm",
+-    ":ruy_kernel_avx",
+-    ":ruy_kernel_avx2_fma",
+-    ":ruy_kernel_avx512",
++  ]
++  if (current_cpu == "arm" || current_cpu == "arm64") {
++    deps += [
++      ":ruy_kernel_arm",
++    ]
++  }
++  if (use_avx) {
++    deps += [
++      ":ruy_kernel_avx",
++    ]
++  }
++  if (use_avx2 && use_fma) {
++    deps += [
++      ":ruy_kernel_avx2_fma",
++    ]
++  }
++  if (use_avx512) {
++    deps += [
++      ":ruy_kernel_avx512",
++    ]
++  }
++  deps += [
+     ":ruy_kernel_common",
+     ":ruy_mat",
+     ":ruy_matrix",
