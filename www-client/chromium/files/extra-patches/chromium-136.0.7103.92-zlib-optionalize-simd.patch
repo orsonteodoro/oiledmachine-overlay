@@ -52,7 +52,7 @@
          "../externals/zlib/crc32_simd.c",
          "../externals/zlib/crc32_simd.h",
 --- a/third_party/zlib/BUILD.gn.orig	2025-05-07 01:28:09.673377742 -0700
-+++ b/third_party/zlib/BUILD.gn	2025-05-07 01:31:51.200452523 -0700
++++ b/third_party/zlib/BUILD.gn	2025-05-07 16:53:58.934237033 -0700
 @@ -2,6 +2,7 @@
  # Use of this source code is governed by a BSD-style license that can be
  # found in the LICENSE file.
@@ -81,7 +81,7 @@
      defines = [ "ADLER32_SIMD_SSSE3" ]
      if (is_win) {
        defines += [ "X86_WINDOWS" ]
-@@ -98,13 +99,13 @@ config("zlib_adler32_simd_config") {
+@@ -98,7 +99,7 @@ config("zlib_adler32_simd_config") {
  source_set("zlib_adler32_simd") {
    visibility = [ ":*" ]
  
@@ -90,13 +90,6 @@
      sources = [
        "adler32_simd.c",
        "adler32_simd.h",
-     ]
- 
--    if (!is_win || is_clang) {
-+    if ((!is_win || is_clang) && use_ssse3) {
-       cflags = [ "-mssse3" ]
-     }
-   }
 @@ -219,7 +220,7 @@ source_set("zlib_inflate_chunk_simd") {
  }
  
@@ -115,6 +108,18 @@
      sources = [
        "crc32_simd.c",
        "crc32_simd.h",
+@@ -340,9 +341,9 @@ component("zlib") {
+       ":zlib_slide_hash_simd",
+     ]
+ 
+-    if (use_x86_x64_optimizations) {
++    if (use_x86_x64_optimizations && (use_sse4_2 && use_pclmul)) {
+       deps += [ ":zlib_crc32_simd" ]
+-    } else if (use_arm_neon_optimizations) {
++    } else if (use_arm_neon_optimizations && ((use_aes && use_crc32 && current_cpu == "arm64") || (use_crc32 && current_cpu == "arm")) {
+       deps += [ ":zlib_arm_crc32" ]
+     }
+   } else {
 --- a/third_party/crashpad/crashpad/third_party/zlib/BUILD.gn.orig	2025-04-27 16:35:54.000000000 -0700
 +++ b/third_party/crashpad/crashpad/third_party/zlib/BUILD.gn	2025-05-07 15:54:12.196007198 -0700
 @@ -12,6 +12,7 @@
