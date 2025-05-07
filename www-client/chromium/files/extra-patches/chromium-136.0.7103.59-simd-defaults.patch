@@ -35,7 +35,7 @@
 +  use_lsx = true
 +
 +  use_armv4 = true
-+  use_armv5e = true
++  use_armv5te = true
 +  use_armv6 = true
 +  use_bf16 = true
 +  use_crc32 = true
