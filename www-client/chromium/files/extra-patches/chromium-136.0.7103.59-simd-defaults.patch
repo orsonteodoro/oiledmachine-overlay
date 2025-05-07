@@ -1,6 +1,6 @@
 --- /dev/null	2025-05-03 00:54:32.134046439 -0700
 +++ b/build/config/simd.gni	2025-05-05 16:45:28.274227767 -0700
-@@ -0,0 +1,52 @@
+@@ -0,0 +1,53 @@
 +declare_args() {
 +  use_aes = true
 +  use_avx = true
@@ -14,6 +14,7 @@
 +  use_f16c = true
 +  use_fma = true
 +  use_pclmul = true
++  use_popcnt = true
 +  use_sse2 = true
 +  use_sse3 = true
 +  use_ssse3 = true

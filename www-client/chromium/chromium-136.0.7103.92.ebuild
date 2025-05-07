@@ -635,6 +635,7 @@ CPU_FLAGS_X86=(
 	fma
 	gfni
 	pclmul
+	popcnt
 	sse2
 	sse3
 	sse4_1
@@ -4959,6 +4960,7 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	myconf_gn+=" use_f16c=$(usex cpu_flags_x86_f16c true false)"
 	myconf_gn+=" use_fma=$(usex cpu_flags_x86_fma true false)"
 	myconf_gn+=" use_pclmul=$(usex cpu_flags_x86_pclmul true false)"
+	myconf_gn+=" use_popcnt=$(usex cpu_flags_x86_popcnt true false)"
 	myconf_gn+=" use_sse2=$(usex cpu_flags_x86_sse2 true false)"
 	myconf_gn+=" use_sse3=$(usex cpu_flags_x86_sse3 true false)"
 	myconf_gn+=" use_sse4=$(usex cpu_flags_x86_sse4_2 true false)"
