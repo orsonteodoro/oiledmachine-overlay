@@ -385,9 +385,21 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       [The USE flag is only available when the patchset version matches the
       browser version for security reasons.]
     </flag>
+    <flag name="cpu_flags_arm_armv4">
+      Add support for ARMv4 or later optimizations
+    </flag>
+    <flag name="cpu_flags_arm_armv5e">
+      Add support for ARMv5e or later optimizations
+    </flag>
+    <flag name="cpu_flags_arm_armv6">
+      Add support for ARMv6 or later optimizations
+    </flag>
     <flag name="cpu_flags_arm_bti">
       Use BTI for some hardware accelerated execution integrity checks.
       Mitigate against JOP (forward edge CFI) attacks.
+    </flag>
+    <flag name="cpu_flags_arm_edsp">
+      Add Enhanced DSP instructions (EDSP)
     </flag>
     <flag name="cpu_flags_arm_mte">
       Use MTE for hardware accelerated Use After Free (UAF) detection.  When a
@@ -406,10 +418,10 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Add support for Loongson Advanced SIMD eXtension (LASX).
     </flag>
     <flag name="cpu_flags_mips_dsp">
-      Add support for MIPS DSP Application-Specific Extension (ASE), revision 1.
+      Add support for MIPS DSP Application-Specific Extension (ASE) Revision 1.
     </flag>
     <flag name="cpu_flags_mips_dspr2">
-      Add support for MIPS DSP Application-Specific Extension (ASE), revision 2.
+      Add support for MIPS DSP Application-Specific Extension (ASE) Revision 2.
     </flag>
     <flag name="cpu_flags_mips_msa">
       Add support for MIPS SIMD Architecture (MSA).

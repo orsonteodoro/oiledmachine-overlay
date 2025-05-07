@@ -41,12 +41,12 @@
  
        if (mips_dsp_rev == 1) {
 -        cflags += [ "-mdsp" ]
-+        if (use_dsp) {
++        if (use_mips_dsp) {
 +          cflags += [ "-mdsp" ]
 +        }
        } else if (mips_dsp_rev == 2) {
 -        cflags += [ "-mdspr2" ]
-+        if (use_dspr2) {
++        if (use_mips_dspr2) {
 +          cflags += [ "-mdspr2" ]
 +        }
        }

@@ -573,10 +573,14 @@ SLOT="0/stable"
 #
 CPU_FLAGS_ARM=(
 	aes
+	armv4
+	armv5e
+	armv6
 	bf16
 	bti
 	crc32
 	dotprod
+	edsp
 	fp16
 	i8mm
 	neon
@@ -5007,9 +5011,13 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 
 	myconf_gn+=" rtc_build_with_neon=$(usex cpu_flags_arm_neon true false)"
 
+	myconf_gn+=" use_armv4=$(usex cpu_flags_arm_armv4 true false)"
+	myconf_gn+=" use_armv5e=$(usex cpu_flags_arm_armv5e true false)"
+	myconf_gn+=" use_armv6=$(usex cpu_flags_arm_armv6 true false)"
 	myconf_gn+=" use_bf16=$(usex cpu_flags_arm_bf16 true false)"
 	myconf_gn+=" use_crc32=$(usex cpu_flags_arm_crc32 true false)"
 	myconf_gn+=" use_dotprod=$(usex cpu_flags_arm_dotprod true false)"
+	myconf_gn+=" use_edsp=$(usex cpu_flags_arm_edsp true false)"
 	myconf_gn+=" use_fp16=$(usex cpu_flags_arm_fp16 true false)"
 	myconf_gn+=" use_i8mm=$(usex cpu_flags_arm_i8mm true false)"
 	myconf_gn+=" use_neon=$(usex cpu_flags_arm_neon true false)"
