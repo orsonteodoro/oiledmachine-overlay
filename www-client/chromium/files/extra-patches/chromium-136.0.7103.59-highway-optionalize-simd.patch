@@ -70,44 +70,44 @@
 +      cflags += [ "-mno-gfni" ]
 +      cflags += [ "-mno-vaes" ]
 +      cflags += [ "-mno-vpclmulqdq" ]
-+      hwy_disabled_targets += "|AVX3_DL"
++      hwy_disabled_targets += "|HWY_AVX3_DL"
 +    }
 +    if (!use_avx3_spr) {
 +      cflags += [ "-mno-avx512fp16" ]
-+      hwy_disabled_targets += "|AVX3_SPR"
++      hwy_disabled_targets += "|HWY_AVX3_SPR"
 +    }
 +    if (!use_avx3_zen4) {
 +      cflags += [ "-mno-avx512bf16" ]
-+      hwy_disabled_targets += "|AVX3_ZEN4"
++      hwy_disabled_targets += "|HWY_AVX3_ZEN4"
 +      defines += [ "HWY_AVX3_DISABLE_AVX512BF16=1" ]
 +    }
 +  }
 +  if (target_cpu == "arm" || target_cpu == "arm64") {
 +    if (!use_sve) {
-+      hwy_disabled_targets += "|SVE"
++      hwy_disabled_targets += "|HWY_SVE"
 +    }
 +    if (!use_sve_256) {
-+      hwy_disabled_targets += "|SVE_256"
++      hwy_disabled_targets += "|HWY_SVE_256"
 +    }
 +    if (!use_sve2) {
-+      hwy_disabled_targets += "|SVE2"
++      hwy_disabled_targets += "|HWY_SVE2"
 +    }
 +    if (!use_sve2_128) {
-+      hwy_disabled_targets += "|SVE2_128"
++      hwy_disabled_targets += "|HWY_SVE2_128"
 +    }
 +    if (!use_neon) {
-+      hwy_disabled_targets += "|NEON"
++      hwy_disabled_targets += "|HWY_NEON"
 +    }
 +    if (!use_neon_without_aes) {
-+      hwy_disabled_targets += "|NEON_WITHOUT_AES"
++      hwy_disabled_targets += "|HWY_NEON_WITHOUT_AES"
 +    }
 +    if (!use_neon_bf16) {
-+      hwy_disabled_targets += "|NEON_BF16"
++      hwy_disabled_targets += "|HWY_NEON_BF16"
 +    }
 +  }
 +  if (target_cpu == "riscv") {
 +    if (!use_rvv) {
-+      hwy_disabled_targets += "|RVV"
++      hwy_disabled_targets += "|HWY_RVV"
 +    }
 +  }
 +  if (target_cpu == "ppc" || target_cpu == "ppc64") {
@@ -120,17 +120,17 @@
 +    }
 +    if (!use_ppc8) {
 +      cflags += [ "-mno-power8-vector" ]
-+      hwy_disabled_targets += "|PPC8"
++      hwy_disabled_targets += "|HWY_PPC8"
 +    }
 +    if (!use_ppc9) {
 +      cflags += [ "-mno-power9-vector" ]
-+      hwy_disabled_targets += "|PPC9"
++      hwy_disabled_targets += "|HWY_PPC9"
 +    }
 +    if (!use_ppc10) {
 +      if (is_clang) {
 +        cflags += [ "-mno-power10-vector" ]
 +      }
-+      hwy_disabled_targets += "|PPC10"
++      hwy_disabled_targets += "|HWY_PPC10"
 +    }
 +    if (!use_vsx) {
 +      cflags += [ "-mno-vsx" ]
@@ -138,18 +138,18 @@
 +  }
 +  if (target_cpu == "s390" || target_cpu == "s390x") {
 +    if (!use_z15) {
-+      hwy_disabled_targets += "|Z15"
++      hwy_disabled_targets += "|HWY_Z15"
 +    }
 +    if (!use_z16) {
-+      hwy_disabled_targets += "|Z16"
++      hwy_disabled_targets += "|HWY_Z16"
 +    }
 +  }
 +  if (target_cpu == "wasm") {
 +    if (!use_wasm_emu256) {
-+      hwy_disabled_targets += "|WASM_EMU256"
++      hwy_disabled_targets += "|HWY_WASM_EMU256"
 +    }
 +    if (!use_wasm) {
-+      hwy_disabled_targets += "|WASM"
++      hwy_disabled_targets += "|HWY_WASM"
 +    }
 +  }
 +  if (hwy_disabled_targets != "") {
