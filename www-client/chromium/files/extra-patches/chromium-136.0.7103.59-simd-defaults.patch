@@ -1,16 +1,17 @@
 --- /dev/null	2025-05-03 00:54:32.134046439 -0700
 +++ b/build/config/simd.gni	2025-05-05 16:45:28.274227767 -0700
-@@ -0,0 +1,64 @@
+@@ -0,0 +1,65 @@
 +declare_args() {
 +  use_aes = true
 +  use_amx_int8 = true
 +  use_amx_tile = true
 +  use_avx = true
 +  use_avx2 = true
-+  use_avx3 = true
-+  use_avx3_dl = true
++  use_avx3 = true # >= avx512
++  use_avx3_dl = true # >= avx512 + vaes
 +  use_avx3_spr = true
 +  use_avx3_zen4 = true
++  use_avx512 = true
 +  use_avx512fp16 = true
 +  use_avxvnni = true
 +  use_avxvnniint8 = true
