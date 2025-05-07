@@ -115,8 +115,16 @@
  
    if (malloc != "" && !is_win) {
 --- a/third_party/skia/modules/skcms/BUILD.gn.orig	2025-04-27 16:35:54.000000000 -0700
-+++ b/third_party/skia/modules/skcms/BUILD.gn	2025-05-07 02:17:36.879046078 -0700
-@@ -90,11 +90,29 @@ static_library("skcms") {
++++ b/third_party/skia/modules/skcms/BUILD.gn	2025-05-07 02:37:14.023412210 -0700
+@@ -3,6 +3,7 @@
+ # Use of this source code is governed by a BSD-style license that can be
+ # found in the LICENSE file.
+ 
++import("//build/config/simd.gni")
+ import("skcms.gni")
+ 
+ # Use for CPU-specific skcms transform code that needs particular compiler flags.
+@@ -90,11 +91,29 @@ static_library("skcms") {
        "SKCMS_DISABLE_HSW",
        "SKCMS_DISABLE_SKX",
      ]

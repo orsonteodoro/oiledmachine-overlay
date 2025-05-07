@@ -1,0 +1,104 @@
+--- ./third_party/webrtc/common_audio/BUILD.gn.orig	2025-04-27 16:35:54.000000000 -0700
++++ ./third_party/webrtc/common_audio/BUILD.gn	2025-05-07 02:36:08.423916014 -0700
+@@ -6,6 +6,7 @@
+ # in the file PATENTS.  All contributing project authors may
+ # be found in the AUTHORS file in the root of the source tree.
+ 
++import("//build/config/simd.gni")
+ import("../webrtc.gni")
+ 
+ visibility = [ ":*" ]
+@@ -67,8 +68,12 @@ rtc_library("common_audio") {
+   }
+ 
+   if (current_cpu == "x86" || current_cpu == "x64") {
+-    deps += [ ":common_audio_sse2" ]
+-    deps += [ ":common_audio_avx2" ]
++    if (use_sse2) {
++      deps += [ ":common_audio_sse2" ]
++    }
++    if (use_avx2 && use_fma) {
++      deps += [ ":common_audio_avx2" ]
++    }
+   }
+ }
+ 
+@@ -232,8 +237,12 @@ rtc_library("fir_filter_factory") {
+     "../system_wrappers",
+   ]
+   if (current_cpu == "x86" || current_cpu == "x64") {
+-    deps += [ ":common_audio_sse2" ]
+-    deps += [ ":common_audio_avx2" ]
++    if (use_sse2) {
++      deps += [ ":common_audio_sse2" ]
++    }
++    if (use_avx2 && use_fma) {
++      deps += [ ":common_audio_avx2" ]
++    }
+   }
+   if (rtc_build_with_neon) {
+     deps += [ ":common_audio_neon" ]
+--- ./third_party/webrtc/modules/audio_processing/agc2/rnn_vad/BUILD.gn.orig	2025-04-27 16:35:54.000000000 -0700
++++ ./third_party/webrtc/modules/audio_processing/agc2/rnn_vad/BUILD.gn	2025-05-07 02:32:00.233617705 -0700
+@@ -6,6 +6,7 @@
+ # in the file PATENTS.  All contributing project authors may
+ # be found in the AUTHORS file in the root of the source tree.
+ 
++import("//build/config/simd.gni")
+ import("../../../../webrtc.gni")
+ 
+ rtc_library("rnn_vad") {
+@@ -103,7 +104,9 @@ rtc_source_set("rnn_vad_layers") {
+     "//third_party/rnnoise:rnn_vad",
+   ]
+   if (current_cpu == "x86" || current_cpu == "x64") {
+-    deps += [ ":vector_math_avx2" ]
++    if (use_avx2 && use_fma) {
++      deps += [ ":vector_math_avx2" ]
++    }
+   }
+ }
+ 
+@@ -165,7 +168,9 @@ rtc_library("rnn_vad_pitch") {
+     "../../../../rtc_base/system:arch",
+   ]
+   if (current_cpu == "x86" || current_cpu == "x64") {
+-    deps += [ ":vector_math_avx2" ]
++    if (use_avx2 && use_fma) {
++      deps += [ ":vector_math_avx2" ]
++    }
+   }
+ }
+ 
+@@ -303,7 +308,9 @@ if (rtc_include_tests) {
+       "//third_party/rnnoise:rnn_vad",
+     ]
+     if (current_cpu == "x86" || current_cpu == "x64") {
+-      deps += [ ":vector_math_avx2" ]
++      if (use_avx2 && use_fma) {
++        deps += [ ":vector_math_avx2" ]
++      }
+     }
+     data = unittest_resources
+     if (is_ios) {
+--- ./third_party/webrtc/modules/audio_processing/aec3/BUILD.gn.orig	2025-04-27 16:35:54.000000000 -0700
++++ ./third_party/webrtc/modules/audio_processing/aec3/BUILD.gn	2025-05-07 02:33:41.064958634 -0700
+@@ -6,6 +6,7 @@
+ # in the file PATENTS.  All contributing project authors may
+ # be found in the AUTHORS file in the root of the source tree.
+ 
++import("//build/config/simd.gni")
+ import("../../../webrtc.gni")
+ 
+ rtc_library("aec3") {
+@@ -161,7 +162,9 @@ rtc_library("aec3") {
+   ]
+ 
+   if (current_cpu == "x86" || current_cpu == "x64") {
+-    deps += [ ":aec3_avx2" ]
++    if (use_avx2 && use_fma) {
++      deps += [ ":aec3_avx2" ]
++    }
+   }
+ }
+ 
