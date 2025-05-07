@@ -496,10 +496,10 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Add support for Supplemental Streaming SIMD Extensions 3 (SSSE3)
     </flag>
     <flag name="cpu_flags_x86_vaes">
-      Add support for AVX-512 Vector AES instructions (VAES).
+      Add support for Vector AES instructions (VAES).
     </flag>
     <flag name="cpu_flags_x86_vpclmulqdq">
-      Add support for AVX-512 Packed Carry-less Multiplication of Quadwords (VPCLMULQDQ).
+      Add support for Packed Carry-less Multiplication of Quadwords (VPCLMULQDQ).
     </flag>
     <flag name="css-hyphen">
       Add support for auto hyphenization of words (e.g. "hyphens: auto") for CSS

@@ -577,6 +577,7 @@ CPU_FLAGS_ARM=(
 	bti
 	crc32
 	dotprod
+	fp16
 	i8mm
 	neon
 	pac
@@ -615,6 +616,8 @@ CPU_FLAGS_S390=(
 )
 CPU_FLAGS_X86=(
 	aes
+	amx-int8
+	amx-tile
 	avx
 	avx2
 	avx512bitalg
@@ -629,6 +632,8 @@ CPU_FLAGS_X86=(
 	avx512vl
 	avx512vnni
 	avx512vpopcntdq
+	avxvnni
+	avxvnniint8
 	bmi
 	bmi2
 	f16c
@@ -636,6 +641,7 @@ CPU_FLAGS_X86=(
 	gfni
 	pclmul
 	popcnt
+	sse
 	sse2
 	sse3
 	sse4_1
@@ -1001,6 +1007,9 @@ REQUIRED_USE+="
 		cpu_flags_x86_vaes
 		cpu_flags_x86_vpclmulqdq
 	)
+	cpu_flags_x86_sse2? (
+		cpu_flags_x86_sse
+	)
 	cpu_flags_x86_ssse3? (
 		cpu_flags_x86_sse2
 		cpu_flags_x86_sse3
@@ -1013,31 +1022,11 @@ REQUIRED_USE+="
 	)
 	cpu_flags_x86_vaes? (
 		cpu_flags_x86_avx2
-		cpu_flags_x86_avx512bitalg
-		cpu_flags_x86_avx512bw
-		cpu_flags_x86_avx512cd
-		cpu_flags_x86_avx512dq
-		cpu_flags_x86_avx512f
-		cpu_flags_x86_avx512vbmi
-		cpu_flags_x86_avx512vbmi2
-		cpu_flags_x86_avx512vl
-		cpu_flags_x86_avx512vnni
-		cpu_flags_x86_avx512vpopcntdq
 		cpu_flags_x86_gfni
 		cpu_flags_x86_vpclmulqdq
 	)
 	cpu_flags_x86_vpclmulqdq? (
 		cpu_flags_x86_avx2
-		cpu_flags_x86_avx512bitalg
-		cpu_flags_x86_avx512bw
-		cpu_flags_x86_avx512cd
-		cpu_flags_x86_avx512dq
-		cpu_flags_x86_avx512f
-		cpu_flags_x86_avx512vbmi
-		cpu_flags_x86_avx512vbmi2
-		cpu_flags_x86_avx512vl
-		cpu_flags_x86_avx512vnni
-		cpu_flags_x86_avx512vpopcntdq
 		cpu_flags_x86_gfni
 		cpu_flags_x86_vaes
 	)
@@ -1048,6 +1037,24 @@ REQUIRED_USE+="
 	)
 	cpu_flags_x86_avx512bf16? (
 		cpu_flags_x86_vaes
+	)
+
+	cpu_flags_x86_amx-tile? (
+		cpu_flags_x86_amx-int8
+		cpu_flags_x86_avx512fp16
+	)
+
+	cpu_flags_x86_amx-int8? (
+		cpu_flags_x86_amx-tile
+		cpu_flags_x86_avx512fp16
+	)
+	cpu_flags_x86_avxvnni? (
+		cpu_flags_x86_avx2
+		cpu_flags_x86_bmi
+		cpu_flags_x86_bmi2
+		cpu_flags_x86_fma
+		cpu_flags_x86_vaes
+		cpu_flags_x86_vpclmulqdq
 	)
 
 	cups? (
@@ -4903,6 +4910,68 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 # Instruction set extensions used: AVX, AVX2, AVX512, BMI, BMI2, BWI, CMOV, DQI, MODE64, NOVLX, PCLMUL, SSE1, SSE2, SSE3, SSE41, SSSE3, VLX
 #
 
+	if ! use cpu_flags_arm_dotprod ; then
+		sed -r -i -e "/:.*[+]dotprod/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_arm_fp16 ; then
+		sed -r -i -e "/:.*[+]fp16/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_arm_i8mm ; then
+		sed -r -i -e "/:.*[+]i8mm/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+
+	if ! use cpu_flags_x86_avx ; then
+		sed -r -i -e "/:.*_avx-/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_x86_avx2 ; then
+		sed -r -i -e "/:.*_avx2/d" -e "/:.*-no-avx2/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_x86_avx512f ; then
+		sed -r -i -e "/:.*_avx512f/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_x86_avx512fp16 ; then
+		sed -r -i -e "/:.*-avx512fp16/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_x86_f16c ; then
+		sed -r -i -e "/:.*_f16c/d" -e "/:.*-no-f16c/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_x86_fma ; then
+		sed -r -i -e ":/-no-fma/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_x86_gfni ; then
+		sed -r -i -e "/:.*-gfni/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_x86_sse ; then
+		sed -r -i -e "/:.*_sse-/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_x86_sse2 ; then
+		sed -r -i -e "/:.*_sse2/d" -e "/:.*-no-sse2/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_x86_sse3 ; then
+		sed -r -i -e "/:.*-no-sse3/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_x86_sse4_1 ; then
+		sed -r -i -e "/:.*_sse4[.]1/d" -e "/:.*-no-sse4[.]1/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_x86_sse4_2 ; then
+		sed -r -i -e "/:.*-no-sse4[.]1/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_x86_ssse3 ; then
+		sed -r -i -e "/:.*_ssse3/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_x86_amx-tile ; then
+		sed -r -i -e "/:.*amx-tile/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_x86_amx-int8 ; then
+		sed -r -i -e "/:.*amx-int8/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_x86_avxvnni ; then
+		sed -r -i -e "/:.*avxvnni-/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_x86_avxvnniint8 ; then
+		sed -r -i -e "/:.*avxvnniint8-/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+
 	myconf_gn+=" libyuv_disable_rvv=$(usex cpu_flags_riscv_rvv false true)"
 	myconf_gn+=" libyuv_use_lasx=$(usex cpu_flags_loong_lasx true false)"
 	myconf_gn+=" libyuv_use_lsx=$(usex cpu_flags_loong_lsx true false)"
@@ -4916,8 +4985,11 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 
 	myconf_gn+=" rtc_build_with_neon=$(usex cpu_flags_arm_neon true false)"
 
+	myconf_gn+=" use_bf16=$(usex cpu_flags_arm_bf16 true false)"
 	myconf_gn+=" use_crc32=$(usex cpu_flags_arm_crc32 true false)"
 	myconf_gn+=" use_dotprod=$(usex cpu_flags_arm_dotprod true false)"
+	myconf_gn+=" use_fp16=$(usex cpu_flags_arm_fp16 true false)"
+	myconf_gn+=" use_i8mm=$(usex cpu_flags_arm_i8mm true false)"
 	myconf_gn+=" use_neon=$(usex cpu_flags_arm_neon true false)"
 	myconf_gn+=" use_sve=$(usex cpu_flags_arm_sve true false)"
 	myconf_gn+=" use_sve_256=$(usex cpu_flags_arm_sve_256 true false)"
@@ -4962,12 +5034,17 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	myconf_gn+=" use_avx2=$(usex cpu_flags_x86_avx2 true false)"
 	myconf_gn+=" use_avx3_spr=$(usex cpu_flags_x86_avx512fp16 true false)"		# Sapphire Rapids or better
 	myconf_gn+=" use_avx3_zen4=$(usex cpu_flags_x86_avx512bf16 true false)"		# Zen 4 or better
+	myconf_gn+=" use_avx512fp16=$(usex cpu_flags_x86_avx512bf16 true false)"	# Zen 4 or better
+	myconf_gn+=" use_avxvnni=$(usex cpu_flags_x86_avxvnni true false)"
+	myconf_gn+=" use_avxvnniint8=$(usex cpu_flags_x86_avxvnniint8 true false)"
 	myconf_gn+=" use_bmi=$(usex cpu_flags_x86_bmi true false)"
 	myconf_gn+=" use_bmi2=$(usex cpu_flags_x86_bmi2 true false)"
 	myconf_gn+=" use_f16c=$(usex cpu_flags_x86_f16c true false)"
 	myconf_gn+=" use_fma=$(usex cpu_flags_x86_fma true false)"
+	myconf_gn+=" use_gfni=$(usex cpu_flags_x86_gfni true false)"
 	myconf_gn+=" use_pclmul=$(usex cpu_flags_x86_pclmul true false)"
 	myconf_gn+=" use_popcnt=$(usex cpu_flags_x86_popcnt true false)"
+	myconf_gn+=" use_sse=$(usex cpu_flags_x86_sse true false)"
 	myconf_gn+=" use_sse2=$(usex cpu_flags_x86_sse2 true false)"
 	myconf_gn+=" use_sse3=$(usex cpu_flags_x86_sse3 true false)"
 	myconf_gn+=" use_sse4=$(usex cpu_flags_x86_sse4_2 true false)"

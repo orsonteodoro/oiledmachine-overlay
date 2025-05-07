@@ -142,10 +142,10 @@
       Optimize with Supplemental Streaming SIMD Extensions 3 (SSSE3)
     </flag>
     <flag name="cpu_flags_x86_vaes">
-      Optimize with AVX-512 Vector AES Instructions (VAES)
+      Optimize with Vector AES Instructions (VAES)
     </flag>
     <flag name="cpu_flags_x86_vpclmulqdq">
-      Optimize with AVX-512 Packed Carry-less Multiplication of Quadwords (VPCLMULQDQ)
+      Optimize with Packed Carry-less Multiplication of Quadwords (VPCLMULQDQ)
     </flag>
   </use>
 </pkgmetadata>

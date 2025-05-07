@@ -1,20 +1,27 @@
 --- /dev/null	2025-05-03 00:54:32.134046439 -0700
 +++ b/build/config/simd.gni	2025-05-05 16:45:28.274227767 -0700
-@@ -0,0 +1,53 @@
+@@ -0,0 +1,63 @@
 +declare_args() {
 +  use_aes = true
++  use_amx_int8 = true
++  use_amx_tile = true
 +  use_avx = true
 +  use_avx2 = true
 +  use_avx3 = true
 +  use_avx3_dl = true
 +  use_avx3_spr = true
 +  use_avx3_zen4 = true
++  use_avx512fp16 = true
++  use_avxvnni = true
++  use_avxvnniint8 = true
 +  use_bmi = true
 +  use_bmi2 = true
 +  use_f16c = true
 +  use_fma = true
++  use_gfni = true
 +  use_pclmul = true
 +  use_popcnt = true
++  use_sse = true
 +  use_sse2 = true
 +  use_sse3 = true
 +  use_ssse3 = true
@@ -24,8 +31,11 @@
 +
 +  use_lsx = true
 +
++  use_bf16 = true
 +  use_crc32 = true
 +  use_dotprod = true
++  use_fp16 = true
++  use_i8mm = true
 +  use_neon = true
 +  use_neon_bf16 = true
 +  use_neon_i8mm = true

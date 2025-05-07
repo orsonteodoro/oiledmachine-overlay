@@ -26,12 +26,12 @@
 -    ":skcms_TransformHsw",
 -    ":skcms_TransformSkx",
    ]
-+  if (use_sse2 && use_sse3 && use_ssse3 && use_sse4_1 && use_sse4_2 && use_pclmul && use_avx && use_avx2 && use_bmi && use_bmi2 && use_fma) {
++  if (use_sse && use_sse2 && use_sse3 && use_ssse3 && use_sse4_1 && use_sse4_2 && use_pclmul && use_avx && use_avx2 && use_bmi && use_bmi2 && use_fma) {
 +    deps += [
 +      ":skcms_TransformHsw",
 +    ]
 +  }
-+  if (use_sse2 && use_sse3 && use_ssse3 && use_sse4_1 && use_sse4_2 && use_pclmul && use_avx && use_avx2 && use_bmi && use_bmi2 && use_fma && use_aes && use_avx512) {
++  if (use_sse && use_sse2 && use_sse3 && use_ssse3 && use_sse4_1 && use_sse4_2 && use_pclmul && use_avx && use_avx2 && use_bmi && use_bmi2 && use_fma && use_aes && use_avx512) {
 +    deps += [
 +      ":skcms_TransformSkx",
 +    ]
