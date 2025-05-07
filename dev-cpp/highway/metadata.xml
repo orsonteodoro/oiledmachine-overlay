@@ -27,14 +27,14 @@
     <remote-id type="github">google/highway</remote-id>
   </upstream>
   <use>
-    <flag name="cpu_flags_arm_neon">
-      Optimize for ARM NEON
+    <flag name="cpu_flags_arm_aes">
+      Optimize for ARM with AES
     </flag>
     <flag name="cpu_flags_arm_bf16">
       Optimize for ARM with BF16
     </flag>
-    <flag name="cpu_flags_arm_aes">
-      Optimize for ARM with AES
+    <flag name="cpu_flags_arm_neon">
+      Optimize for ARM NEON
     </flag>
     <flag name="cpu_flags_arm_sve">
       Optimize for ARM SVE
