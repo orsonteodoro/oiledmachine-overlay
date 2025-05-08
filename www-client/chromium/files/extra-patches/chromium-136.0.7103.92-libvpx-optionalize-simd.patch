@@ -61,7 +61,7 @@
 +      deps += [
 +        ":libvpx_intrinsics_ssse3",
 +      ]
-+    )
++    }
    }
    if (cpu_arch_full == "arm-neon-highbd" || cpu_arch_full == "arm-neon" ||
        cpu_arch_full == "arm-neon-cpu-detect" || current_cpu == "arm64") {
