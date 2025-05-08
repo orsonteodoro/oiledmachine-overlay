@@ -397,6 +397,12 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="cpu_flags_arm_armv6">
       Add support for ARMv6 or later optimizations.
     </flag>
+    <flag name="cpu_flags_arm_armv7">
+      Add support for ARMv7 or later optimizations.
+    </flag>
+    <flag name="cpu_flags_arm_armv8">
+      Add support for ARMv8 or later optimizations.
+    </flag>
     <flag name="cpu_flags_arm_bti">
       Use BTI for some hardware accelerated execution integrity checks.
       Mitigate against JOP (forward edge CFI) attacks.

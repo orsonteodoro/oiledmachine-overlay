@@ -576,6 +576,8 @@ CPU_FLAGS_ARM=(
 	armv4
 	armv5te
 	armv6
+	armv7
+	armv8
 	bf16
 	bti
 	crc32
@@ -884,9 +886,14 @@ REQUIRED_USE+="
 	cpu_flags_arm_armv5te? (
 		cpu_flags_arm_armv4
 	)
-
 	cpu_flags_arm_armv6? (
 		cpu_flags_arm_armv5te
+	)
+	cpu_flags_arm_armv7? (
+		cpu_flags_arm_armv6
+	)
+	cpu_flags_arm_armv8? (
+		cpu_flags_arm_armv7
 	)
 
 	cpu_flags_ppc_power8-vector? (
@@ -5042,6 +5049,8 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	myconf_gn+=" use_armv4=$(usex cpu_flags_arm_armv4 true false)"
 	myconf_gn+=" use_armv5te=$(usex cpu_flags_arm_armv5te true false)"
 	myconf_gn+=" use_armv6=$(usex cpu_flags_arm_armv6 true false)"
+	myconf_gn+=" use_armv7=$(usex cpu_flags_arm_armv7 true false)"
+	myconf_gn+=" use_armv8=$(usex cpu_flags_arm_armv8 true false)"
 	myconf_gn+=" use_bf16=$(usex cpu_flags_arm_bf16 true false)"
 	myconf_gn+=" use_crc32=$(usex cpu_flags_arm_crc32 true false)"
 	myconf_gn+=" use_dotprod=$(usex cpu_flags_arm_dotprod true false)"
