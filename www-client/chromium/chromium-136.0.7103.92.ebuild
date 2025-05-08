@@ -5083,7 +5083,6 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	myconf_gn+=" use_avx2=$(usex cpu_flags_x86_avx2 true false)"
 	myconf_gn+=" use_avx512fp16=$(usex cpu_flags_x86_avx512fp16 true false)"		# Sapphire Rapids or better
 	myconf_gn+=" use_avx512bf16=$(usex cpu_flags_x86_avx512bf16 true false)"		# Zen 4 or better
-	myconf_gn+=" use_avx512fp16=$(usex cpu_flags_x86_avx512bf16 true false)"		# Zen 4 or better
 	myconf_gn+=" use_avxvnni=$(usex cpu_flags_x86_avxvnni true false)"
 	myconf_gn+=" use_avxvnniint8=$(usex cpu_flags_x86_avxvnniint8 true false)"
 	myconf_gn+=" use_bmi=$(usex cpu_flags_x86_bmi true false)"
