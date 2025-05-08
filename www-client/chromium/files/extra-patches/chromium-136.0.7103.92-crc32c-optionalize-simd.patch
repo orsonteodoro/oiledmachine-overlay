@@ -84,7 +84,7 @@
 +      ":crc32c_arm64",
 +    ]
 +  }
-+  if (use_sse42) {
++  if (use_sse4_2) {
 +    deps += [
 +      ":crc32c_sse42",
 +    ]

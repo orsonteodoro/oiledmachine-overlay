@@ -24,7 +24,7 @@
 -  sources = [
 +  sources = []
 +  cflags = []
-+  if (use_mips_dspr2) {
++  if (use_dspr2) {
 +    sources += [
 +      "src/src/dsp/alpha_processing_mips_dsp_r2.c",
 +      "src/src/dsp/cost_mips_dsp_r2.c",

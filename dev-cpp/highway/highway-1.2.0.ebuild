@@ -378,7 +378,7 @@ _configure_cpu_flags_x86() {
 	use cpu_flags_x86_avx512dq || append-flags -mno-avx512dq
 	use cpu_flags_x86_avx512f || append-flags -mno-avx512f
 	use cpu_flags_x86_avx512vl || append-flags -mno-avx512vl
-	if ! use cpu_flags_x86_avx512bw ; then
+	if ! use cpu_flags_x86_avx512f ; then
 		disabled_cpu_flags+=(
 			"HWY_AVX3"
 		)
@@ -392,7 +392,7 @@ _configure_cpu_flags_x86() {
 	use cpu_flags_x86_gfni || append-flags -mno-gfni
 	use cpu_flags_x86_vaes || append-flags -mno-vaes
 	use cpu_flags_x86_vpclmulqdq || append-flags -mno-vpclmulqdq
-	if ! use cpu_flags_x86_gfni ; then
+	if ! use cpu_flags_x86_avx512vbmi2 ; then
 		disabled_cpu_flags+=(
 			"HWY_AVX3_DL"
 		)

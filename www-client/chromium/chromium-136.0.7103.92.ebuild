@@ -5038,6 +5038,7 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 
 	myconf_gn+=" rtc_build_with_neon=$(usex cpu_flags_arm_neon true false)"
 
+	myconf_gn+=" use_aes=$(usex cpu_flags_arm_aes true false)"
 	myconf_gn+=" use_armv4=$(usex cpu_flags_arm_armv4 true false)"
 	myconf_gn+=" use_armv5te=$(usex cpu_flags_arm_armv5te true false)"
 	myconf_gn+=" use_armv6=$(usex cpu_flags_arm_armv6 true false)"
@@ -5057,23 +5058,8 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	myconf_gn+=" arm_use_thumb=$(usex cpu_flags_arm_thumb true false)"
 	myconf_gn+=" arm_optionally_use_neon=false"
 
-	if use cpu_flags_arm_neon && use cpu_flags_arm_bf16 ; then
-		myconf_gn+=" use_neon_bf16=true"
-	else
-		myconf_gn+=" use_neon_bf16=false"
-	fi
-	if use cpu_flags_arm_neon && ! use cpu_flags_arm_aes ; then
-		myconf_gn+=" use_neon_without_aes=true"
-	else
-		myconf_gn+=" use_neon_without_aes=false"
-	fi
-	if use cpu_flags_arm_neon && use cpu_flags_arm_i8mm ; then
-		myconf_gn+=" use_neon_i8mm=true"
-	else
-		myconf_gn+=" use_neon_i8mm=false"
-	fi
-
 	myconf_gn+=" use_lsx=$(usex cpu_flags_loong_lsx true false)"
+	myconf_gn+=" use_lasx=$(usex cpu_flags_loong_lasx true false)"
 
 	myconf_gn+=" use_dsp=$(usex cpu_flags_mips_dsp true false)"
 	myconf_gn+=" use_dspr2=$(usex cpu_flags_mips_dspr2 true false)"
@@ -5095,9 +5081,9 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	myconf_gn+=" use_aes=$(usex cpu_flags_x86_aes true false)"
 	myconf_gn+=" use_avx=$(usex cpu_flags_x86_avx true false)"
 	myconf_gn+=" use_avx2=$(usex cpu_flags_x86_avx2 true false)"
-	myconf_gn+=" use_avx3_spr=$(usex cpu_flags_x86_avx512fp16 true false)"		# Sapphire Rapids or better
-	myconf_gn+=" use_avx3_zen4=$(usex cpu_flags_x86_avx512bf16 true false)"		# Zen 4 or better
-	myconf_gn+=" use_avx512fp16=$(usex cpu_flags_x86_avx512bf16 true false)"	# Zen 4 or better
+	myconf_gn+=" use_avx512fp16=$(usex cpu_flags_x86_avx512fp16 true false)"		# Sapphire Rapids or better
+	myconf_gn+=" use_avx512bf16=$(usex cpu_flags_x86_avx512bf16 true false)"		# Zen 4 or better
+	myconf_gn+=" use_avx512fp16=$(usex cpu_flags_x86_avx512bf16 true false)"		# Zen 4 or better
 	myconf_gn+=" use_avxvnni=$(usex cpu_flags_x86_avxvnni true false)"
 	myconf_gn+=" use_avxvnniint8=$(usex cpu_flags_x86_avxvnniint8 true false)"
 	myconf_gn+=" use_bmi=$(usex cpu_flags_x86_bmi true false)"
@@ -5131,9 +5117,9 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 		&& use cpu_flags_x86_vpclmulqdq \
 	; then
 	# Ice Lake or better
-		myconf_gn+=" use_avx3_dl=true"
+		myconf_gn+=" use_avx512vbmi2=true"
 	else
-		myconf_gn+=" use_avx3_dl=false"
+		myconf_gn+=" use_avx512vbmi2=false"
 	fi
 
 	if \
@@ -5144,10 +5130,8 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 		&& use cpu_flags_x86_avx512vl \
 	; then
 	# The same as AVX512
-		myconf_gn+=" use_avx3=true"
 		myconf_gn+=" use_avx512=true"
 	else
-		myconf_gn+=" use_avx3=false"
 		myconf_gn+=" use_avx512=false"
 	fi
 

@@ -53,7 +53,7 @@
 +      cflags += [ "-mno-avx2" ]
 +      hwy_disabled_targets += "|HWY_AVX2"
 +    }
-+    if (!use_avx3) {
++    if (!use_avx512) {
 +      cflags += [ "-mno-avx512bw" ]
 +      cflags += [ "-mno-avx512cd" ]
 +      cflags += [ "-mno-avx512dq" ]
@@ -61,7 +61,7 @@
 +      cflags += [ "-mno-avx512vl" ]
 +      hwy_disabled_targets += "|HWY_AVX3"
 +    }
-+    if (!use_avx3_dl) {
++    if (!use_avx512vbmi2) {
 +      cflags += [ "-mno-avx512bitalg" ]
 +      cflags += [ "-mno-avx512vpopcntdq" ]
 +      cflags += [ "-mno-avx512vbmi" ]
@@ -72,11 +72,11 @@
 +      cflags += [ "-mno-vpclmulqdq" ]
 +      hwy_disabled_targets += "|HWY_AVX3_DL"
 +    }
-+    if (!use_avx3_spr) {
++    if (!use_avx512fp16) {
 +      cflags += [ "-mno-avx512fp16" ]
 +      hwy_disabled_targets += "|HWY_AVX3_SPR"
 +    }
-+    if (!use_avx3_zen4) {
++    if (!use_avx512bf16) {
 +      cflags += [ "-mno-avx512bf16" ]
 +      hwy_disabled_targets += "|HWY_AVX3_ZEN4"
 +      defines += [ "HWY_AVX3_DISABLE_AVX512BF16=1" ]
@@ -98,10 +98,10 @@
 +    if (!use_neon) {
 +      hwy_disabled_targets += "|HWY_NEON"
 +    }
-+    if (!use_neon_without_aes) {
++    if (!use_neon || use_aes) {
 +      hwy_disabled_targets += "|HWY_NEON_WITHOUT_AES"
 +    }
-+    if (!use_neon_bf16) {
++    if (!use_neon || !use_bf16) {
 +      hwy_disabled_targets += "|HWY_NEON_BF16"
 +    }
 +  }
