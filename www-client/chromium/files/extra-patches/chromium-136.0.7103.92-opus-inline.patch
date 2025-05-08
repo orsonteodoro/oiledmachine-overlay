@@ -1,0 +1,38 @@
+--- a/third_party/opus/src/celt/cpu_support.h.orig	2025-05-05 12:21:24.000000000 -0700
++++ b/third_party/opus/src/celt/cpu_support.h	2025-05-08 14:28:10.691930084 -0700
+@@ -62,10 +62,6 @@ int opus_select_arch(void);
+ 
+ #else
+ #define OPUS_ARCHMASK 0
+-
+-static OPUS_INLINE int opus_select_arch(void)
+-{
+-  return 0;
+-}
++int opus_select_arch(void);
+ #endif
+ #endif
+--- a/third_party/opus/src/celt/arm/armcpu.c.orig	2025-05-05 12:21:24.000000000 -0700
++++ b/third_party/opus/src/celt/arm/armcpu.c	2025-05-08 14:30:31.393849006 -0700
+@@ -185,6 +185,9 @@ static int opus_select_arch_impl(void)
+ }
+ 
+ int opus_select_arch(void) {
++#if !defined(OPUS_HAVE_RTCD)
++  return 0;
++#endif
+   int arch = opus_select_arch_impl();
+ #ifdef FUZZING
+   arch = rand()%(arch+1);
+--- a/third_party/opus/src/celt/x86/x86cpu.c.orig	2025-05-05 12:21:24.000000000 -0700
++++ b/third_party/opus/src/celt/x86/x86cpu.c	2025-05-08 14:30:22.529919980 -0700
+@@ -167,6 +167,9 @@ static int opus_select_arch_impl(void)
+ }
+ 
+ int opus_select_arch(void) {
++#if !defined(OPUS_HAVE_RTCD)
++    return 0;
++#endif
+     int arch = opus_select_arch_impl();
+ #ifdef FUZZING
+     /* Randomly downgrade the architecture. */
