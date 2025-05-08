@@ -225,6 +225,10 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     vaapi USE flag.
 
 
+    OSHIT_OPT_LEVEL_OPUS="2" - Optimize opus at -O2
+    Valid values:  2, 3, fast
+
+
     OSHIT_OPT_LEVEL_RNNOISE="1" - Optimize rnnoise at -O2
     Valid values:  1, 2, 3, fast
 

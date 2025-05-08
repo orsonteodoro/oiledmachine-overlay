@@ -426,8 +426,8 @@
    "-D_FILE_OFFSET_BITS=64",
    "-D_POSIX_C_SOURCE=200112L",
  ]
---- a/third_party/libaom/BUILD.gn.orig	2024-10-30 21:42:38.827302700 -0700
-+++ b/third_party/libaom/BUILD.gn	2024-11-01 08:07:32.286144255 -0700
+--- a/third_party/libaom/BUILD.gn.orig	2025-03-07 13:29:53.000000000 -0800
++++ b/third_party/libaom/BUILD.gn	2025-03-16 13:27:41.955038504 -0700
 @@ -12,6 +12,10 @@ import("//third_party/libaom/libaom_test
  import("//third_party/libaom/options.gni")
  import("//third_party/nasm/nasm_assemble.gni")
@@ -436,10 +436,10 @@
 +  libaom_custom_optimization_level = ""
 +}
 +
- buildflag_header("libaom_buildflags") {
-   header = "libaom_buildflags.h"
- 
-@@ -68,6 +72,33 @@ libaom_include_dirs = [
+ # Sets the architecture name for building libaom.
+ if (current_cpu == "x86") {
+   cpu_arch_full = "ia32"
+@@ -62,6 +66,33 @@ libaom_include_dirs = [
  # Private configuration used in building libaom.
  config("libaom_config") {
    include_dirs = libaom_include_dirs
@@ -573,18 +573,18 @@
      "-Wno-unused-function",
      "-Wno-deprecated-comma-subscript",
    ]
---- a/v8/gni/v8.gni.orig	2024-10-30 21:48:14.598277600 -0700
-+++ b/v8/gni/v8.gni	2024-11-01 08:07:58.893713171 -0700
-@@ -179,6 +179,8 @@ declare_args() {
-   # (experimental).
-   # TODO(sroettger): enable by default once we have bot support for testing.
-   v8_enable_memory_sealing = false
+--- a/v8/gni/v8.gni.orig	2025-02-03 11:02:21.000000000 -0800
++++ b/v8/gni/v8.gni	2025-02-09 15:29:08.000951514 -0800
+@@ -184,6 +184,8 @@ declare_args() {
+ 
+   # Sets -DV8_ENABLE_ETW_STACK_WALKING. Enables ETW Stack Walking
+   v8_enable_etw_stack_walking = is_win
 +
 +  #v8_custom_optimization_level = ""
  }
  
  if (v8_use_external_startup_data == "") {
-@@ -275,6 +277,8 @@ if (is_debug && !v8_optimized_debug) {
+@@ -281,6 +283,8 @@ if (is_debug && !v8_optimized_debug) {
    }
  }
  
@@ -593,3 +593,51 @@
  if (!is_debug) {
    v8_remove_configs += [
      # Too much performance impact, unclear security benefit.
+--- a/third_party/opus/BUILD.gn.orig	2025-05-08 09:28:25.672855460 -0700
++++ b/third_party/opus/BUILD.gn	2025-05-08 13:18:27.456763572 -0700
+@@ -6,6 +6,10 @@ import("//build/config/arm.gni")
+ import("//build/config/simd.gni")
+ import("//testing/test.gni")
+ 
++declare_args() {
++  opus_custom_optimization_level = ""
++}
++
+ # If ARM optimizations shall be used to accelerate performance.
+ use_opus_arm_optimization =
+     (current_cpu == "arm" || (current_cpu == "arm64" && (is_fuchsia || is_ios || is_win))) && (use_armv4 || use_edsp || arm_use_neon)
+@@ -46,6 +50,34 @@ config("opus_private_config") {
+   ]
+ 
+   cflags = []
++  if (opus_custom_optimization_level != "") {
++    if (opus_custom_optimization_level != "") {
++      if (is_win) {
++        if (opus_custom_optimization_level == "fast" || opus_custom_optimization_level == "3") {
++          cflags += [ "/O2" ]
++        } else if (opus_custom_optimization_level == "2") {
++          cflags += [ "/Ox" ]
++        } else if (opus_custom_optimization_level == "s") {
++          cflags += [ "/Os", "/Oy", "/Og", "/GF" ]
++        } else if (opus_custom_optimization_level == "1") {
++          cflags += [ "/Ot", "/Oy" ]
++        } else if (opus_custom_optimization_level == "z") {
++          cflags += [ "/O1" ]
++        } else if (opus_custom_optimization_level == "0") {
++          cflags += [ "/Od" ]
++        }
++        if (is_clang) {
++          cflags += [ "/clang:-O$opus_custom_optimization_level" ]
++        }
++      } else {
++        if (opus_custom_optimization_level == "fast" && !is_clang) {
++          cflags += [ "-O$opus_custom_optimization_level", "-fno-allow-store-data-races" ]
++        } else {
++          cflags += [ "-O$opus_custom_optimization_level" ]
++        }
++      }
++    }
++  }
+ 
+   if (is_win) {
+     defines += [ "inline=__inline" ]

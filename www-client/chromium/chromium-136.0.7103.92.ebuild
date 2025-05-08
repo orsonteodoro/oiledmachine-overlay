@@ -2676,7 +2676,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	fi
 
 	PATCHES+=(
-		"${FILESDIR}/extra-patches/${PN}-134.0.6998.88-custom-optimization-level.patch"
+		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-custom-optimization-level.patch"
 		"${FILESDIR}/extra-patches/${PN}-135.0.7049.114-hardening.patch"
 	)
 	if ! use official ; then
@@ -4720,6 +4720,7 @@ ewarn "The new V8 Sandbox [for the JavaScript engine] (2024) will be automagic o
 	local oshit_opt_level_libaom
 	local oshit_opt_level_libvpx
 	local oshit_opt_level_openh264
+	local oshit_opt_level_opus
 	local oshit_opt_level_rnnoise
 	local oshit_opt_level_ruy
 	local oshit_opt_level_tflite
@@ -4732,6 +4733,7 @@ ewarn "The new V8 Sandbox [for the JavaScript engine] (2024) will be automagic o
 		oshit_opt_level_libaom=${OSHIT_OPT_LEVEL_LIBAOM:-"2"}
 		oshit_opt_level_libvpx=${OSHIT_OPT_LEVEL_LIBVPX:-"2"}
 		oshit_opt_level_openh264=${OSHIT_OPT_LEVEL_OPENH264:-"2"}
+		oshit_opt_level_opus=${OSHIT_OPT_LEVEL_OPUS:-"2"}
 		oshit_opt_level_rnnoise=${OSHIT_OPT_LEVEL_RNNOISE:-"2"}
 		oshit_opt_level_ruy=${OSHIT_OPT_LEVEL_RUY:-"2"}
 		oshit_opt_level_tflite=${OSHIT_OPT_LEVEL_TFLITE:-"2"}
@@ -4780,6 +4782,14 @@ ewarn "The new V8 Sandbox [for the JavaScript engine] (2024) will be automagic o
 		oshit_opt_level_openh264="2"
 	fi
 
+	if [[ "${oshit_opt_level_opus}" =~ ("2"|"3"|"fast") ]] ; then
+	# If you don't care, then just use -O2.
+	# We use -O2 for inlining enablement in clang.
+		:
+	else
+		oshit_opt_level_opus="2"
+	fi
+
 	if [[ "${oshit_opt_level_rnnoise}" =~ ("1"|"2"|"3"|"fast") ]] ; then
 	# If you don't care about AI/ML or noise reduction, then just use -O1.
 		:
@@ -4821,6 +4831,7 @@ einfo "OSHIT_OPT_LEVEL_DAV1D=${oshit_opt_level_dav1d}"
 einfo "OSHIT_OPT_LEVEL_LIBAOM=${oshit_opt_level_libaom}"
 einfo "OSHIT_OPT_LEVEL_LIBVPX=${oshit_opt_level_libvpx}"
 einfo "OSHIT_OPT_LEVEL_OPENH264=${oshit_opt_level_openh264}"
+einfo "OSHIT_OPT_LEVEL_OPUS=${oshit_opt_level_opus}"
 einfo "OSHIT_OPT_LEVEL_RNNOISE=${oshit_opt_level_rnnoise}"
 einfo "OSHIT_OPT_LEVEL_RUY=${oshit_opt_level_ruy}"
 einfo "OSHIT_OPT_LEVEL_TFLITE=${oshit_opt_level_tflite}"
@@ -4830,6 +4841,7 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 		myconf_gn+=" libaom_custom_optimization_level=${oshit_opt_level_libaom}"
 		myconf_gn+=" libvpx_custom_optimization_level=${oshit_opt_level_libvpx}"
 		myconf_gn+=" openh264_custom_optimization_level=${oshit_opt_level_openh264}"
+		myconf_gn+=" opus_custom_optimization_level=${oshit_opt_level_opus}"
 		myconf_gn+=" rnnoise_custom_optimization_level=${oshit_opt_level_rnnoise}"
 		myconf_gn+=" ruy_custom_optimization_level=${oshit_opt_level_ruy}"
 		myconf_gn+=" tflite_custom_optimization_level=${oshit_opt_level_tflite}"
