@@ -114,7 +114,7 @@
      ":libwebp_enc",
      ":libwebp_utils",
      ":libwebp_webp",
-@@ -196,14 +221,29 @@ static_library("libwebp_dsp") {
+@@ -196,14 +221,30 @@ static_library("libwebp_dsp") {
      deps += [ "//third_party/cpu_features:ndk_compat" ]
    }
    if (current_cpu == "x86" || current_cpu == "x64") {
@@ -133,8 +133,9 @@
 +      ]
 +    }
 +  }
++  allow_circular_includes_from = []
 +  if (use_sse2) {
-+    allow_circular_includes_from = []
++    allow_circular_includes_from += [
 +      ":libwebp_dsp_sse2",
 +    ]
 +  }

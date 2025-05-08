@@ -53,13 +53,14 @@
      "modules/skcms",
    ]
  
-@@ -1822,7 +1843,9 @@ skia_static_library("pathkit") {
+@@ -1822,7 +1843,10 @@ skia_static_library("pathkit") {
    public_configs = [ ":skia_public" ]
    configs = skia_library_configs
  
 -  deps = [ ":hsw" ]
++  deps = []
 +  if (use_sse && use_sse2 && use_sse3 && use_ssse3 && use_sse4_1 && use_sse4_2 && use_pclmul && use_avx && use_avx2 && use_bmi && use_bmi2 && use_fma) {
-+    deps = [ ":hsw" ]
++    deps += [ ":hsw" ]
 +  }
  
    sources = []
@@ -124,19 +125,19 @@
  import("skcms.gni")
  
  # Use for CPU-specific skcms transform code that needs particular compiler flags.
-@@ -90,11 +91,29 @@ static_library("skcms") {
+@@ -90,11 +91,30 @@ static_library("skcms") {
        "SKCMS_DISABLE_HSW",
        "SKCMS_DISABLE_SKX",
      ]
 +  } else {
 +    defines = []
 +    if (!use_sse || !use_sse2 || !use_sse3 || !use_ssse3 || !use_sse4_1 || !use_sse4_2 || !use_pclmul || !use_avx || !use_avx2 || !use_bmi || !use_bmi2 || !use_fma) {
-+      defines = [
++      defines += [
 +        "SKCMS_DISABLE_HSW",
 +      ]
 +    }
 +    if (!use_sse || !use_sse2 || !use_sse3 || !use_ssse3 || !use_sse4_1 || !use_sse4_2 || !use_pclmul || !use_avx || !use_avx2 || !use_bmi || !use_bmi2 || !use_fma || !use_aes || !use_avx512) {
-+      defines = [
++      defines += [
 +        "SKCMS_DISABLE_SKX",
 +      ]
 +    }
@@ -147,13 +148,14 @@
 -    ":skcms_TransformHsw",
 -    ":skcms_TransformSkx",
 -  ]
++  deps = []
 +  if (use_sse && use_sse2 && use_sse3 && use_ssse3 && use_sse4_1 && use_sse4_2 && use_pclmul && use_avx && use_avx2 && use_bmi && use_bmi2 && use_fma) {
-+    deps = [
++    deps += [
 +      ":skcms_TransformHsw",
 +    ]
 +  }
 +  if (use_sse && use_sse2 && use_sse3 && use_ssse3 && use_sse4_1 && use_sse4_2 && use_pclmul && use_avx && use_avx2 && use_bmi && use_bmi2 && use_fma && use_aes && use_avx512) {
-+    deps = [
++    deps += [
 +      ":skcms_TransformSkx",
 +    ]
 +  }

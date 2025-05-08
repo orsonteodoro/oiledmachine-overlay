@@ -19,7 +19,7 @@
    } else if (current_cpu == "arm") {
      # The assembly uses the frame pointer register (r7 in Thumb/r11 in
      # ARM), the compiler doesn't like that.
-@@ -447,28 +450,36 @@ skia_source_set("skia_opts") {
+@@ -447,28 +450,38 @@ skia_source_set("skia_opts") {
  
  if (current_cpu == "x64") {
    skia_source_set("skcms_TransformHsw") {
@@ -30,16 +30,17 @@
 -        "-march=haswell",
 -        "-std=c11",
 -      ]
++    cflags = []
 +    if (use_mmx && use_sse && use_sse2 && use_sse3 && use_ssse3 && use_sse4_1 && use_sse4_2 && use_pclmul && use_avx && use_avx2 && use_bmi && use_bmi2 && use_fma) {
 +      sources = skcms_TransformHsw
 +      if (!is_win) {
-+        cflags = [
++        cflags += [
 +          "-w",
 +          "-march=haswell",
-+         "-std=c11",
++          "-std=c11",
 +        ]
 +      } else {
-+        cflags = [ "/arch:AVX2" ]
++        cflags += [ "/arch:AVX2" ]
 +      }
      } else {
 -      cflags = [ "/arch:AVX2" ]
@@ -55,16 +56,17 @@
 -        "-march=skylake-avx512",
 -        "-std=c11",
 -      ]
++    cflags = []
 +    if (use_mmx && use_sse && use_sse2 && use_sse3 && use_ssse3 && use_sse4_1 && use_sse4_2 && use_pclmul && use_avx && use_avx2 && use_bmi && use_bmi2 && use_fma && use_aes && use_avx512) {
 +      sources = skcms_TransformSkx
 +      if (!is_win) {
-+        cflags = [
++        cflags += [
 +          "-w",
 +          "-march=skylake-avx512",
 +          "-std=c11",
 +        ]
 +      } else {
-+        cflags = [ "/arch:AVX512" ]
++        cflags += [ "/arch:AVX512" ]
 +      }
      } else {
 -      cflags = [ "/arch:AVX512" ]
