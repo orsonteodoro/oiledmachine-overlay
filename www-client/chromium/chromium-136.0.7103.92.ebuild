@@ -587,6 +587,7 @@ CPU_FLAGS_ARM=(
 	pac
 	mte
 	neon
+	sme
 	sve
 	sve_256
 	sve2
