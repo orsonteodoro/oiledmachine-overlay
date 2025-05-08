@@ -394,12 +394,18 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="cpu_flags_arm_armv6">
       Add support for SIMD based ARMv6 media data processing instructions.
     </flag>
+    <flag name="cpu_flags_arm_bf16">
+      Add support for 16-bit Brain Floating-point instructions.
+    </flag>
     <flag name="cpu_flags_arm_bti">
       Use BTI for some hardware accelerated execution integrity checks.
       Mitigate against JOP (forward edge CFI) attacks.
     </flag>
     <flag name="cpu_flags_arm_edsp">
       Add support for Enhanced DSP instructions (EDSP) and prefetching (PLD).
+    </flag>
+    <flag name="cpu_flags_arm_i8mm">
+      Add support for 8-bit Integer Matrix Multiplication instructions.
     </flag>
     <flag name="cpu_flags_arm_neon">
       Add support for ARM Advanced SIMD extension (NEON).
@@ -450,6 +456,27 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="cpu_flags_riscv_rvv">
       Add support for RISC-V Vector Extension (RVV).
     </flag>
+    <flag name="cpu_flags_ppc_altivec">
+      Add support for AltiVec instruction set for 32-bit floats and integer SIMD.
+    </flag>
+    <flag name="cpu_flags_ppc_crypto">
+      Add support for PowerPC cryptographic instructions.
+    </flag>
+    <flag name="cpu_flags_ppc_power8-vector">
+      Add support for POWER8 vector instructions.
+    </flag>
+    <flag name="cpu_flags_ppc_power9-vector">
+      Add support for POWER9 vector instructions.
+    </flag>
+    <flag name="cpu_flags_ppc_power10-vector">
+      Add support for POWER10 vector instructions.
+    </flag>
+    <flag name="cpu_flags_ppc_vsx">
+      Add support for Vector-Scalar Extension.
+    </flag>
+    <flag name="cpu_flags_ppc_vsx3">
+      Add support for Vector-Scalar Extension 3.
+    </flag>
     <flag name="cpu_flags_s390_z15">
       Add support for z15.
     </flag>
@@ -471,20 +498,14 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="cpu_flags_x86_avx">
       Add support for Advanced Vector Extensions (AVX).
     </flag>
-    <flag name="cpu_flags_x86_avxvnniint8">
-      Add support for Vector Neural Network Instructions (AVXVNNINT8)
-    </flag>
-    <flag name="cpu_flags_x86_avxvnni">
-      Add support for Vector Neural Network Instructions (AVXVNNI, AVX-VNNI)
-    </flag>
     <flag name="cpu_flags_x86_avx2">
       Add support for Advanced Vector Extensions 2 (AVX2).
     </flag>
-    <flag name="cpu_flags_x86_avx512bf16">
-      Add support for AVX-512 Bfloat16 Floating-Point Instructions (AVX512BF16).
-    </flag>
     <flag name="cpu_flags_x86_avx512bitalg">
       Add support for AVX-512 Bit Algorithms (AVX512BITALG).
+    </flag>
+    <flag name="cpu_flags_x86_avx512bf16">
+      Add support for AVX-512 Bfloat16 Floating-Point Instructions (AVX512BF16).
     </flag>
     <flag name="cpu_flags_x86_avx512bw">
       Add support for AVX-512 Byte and Word Instructions (AVX512BW).
@@ -516,17 +537,23 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="cpu_flags_x86_avx512vpopcntdq">
       Add support for AVX-512 Vector Population Count Instruction (AVX512VPOPCNTDQ).
     </flag>
+    <flag name="cpu_flags_x86_avxvnni">
+      Add support for Vector Neural Network Instructions (AVXVNNI, AVX-VNNI)
+    </flag>
+    <flag name="cpu_flags_x86_avxvnniint8">
+      Add support for Vector Neural Network Instructions (AVXVNNINT8)
+    </flag>
     <flag name="cpu_flags_x86_bmi">
       Add support for Bit Manipulation Instructions Set 1 (BMI).
     </flag>
     <flag name="cpu_flags_x86_bmi2">
       Add support for Bit Manipulation Instructions Set 2 (BMI2).
     </flag>
-    <flag name="cpu_flags_x86_fma">
-      Add support for Fused Multiply-Add (FMA).
-    </flag>
     <flag name="cpu_flags_x86_f16c">
       Add support for Half-Precision Conversion Instructions (F16C)
+    </flag>
+    <flag name="cpu_flags_x86_fma">
+      Add support for Fused Multiply-Add (FMA).
     </flag>
     <flag name="cpu_flags_x86_gfni">
       Add support for AVX-512 Galois Field New Instructions (GFNI).

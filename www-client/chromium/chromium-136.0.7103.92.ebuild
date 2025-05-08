@@ -583,9 +583,9 @@ CPU_FLAGS_ARM=(
 	fp16
 	i8mm
 	neon
-	pac
 	mte
 	neon
+	pac
 	sme
 	sve
 	sve_256
@@ -889,6 +889,9 @@ REQUIRED_USE+="
 	)
 	cpu_flags_ppc_power10-vector? (
 		cpu_flags_ppc_power9-vector
+	)
+	cpu_flags_ppc_vsx3? (
+		cpu_flags_ppc_vsx
 	)
 
 	cpu_flags_x86_3dnow? (
