@@ -4971,7 +4971,6 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 			"third_party/xnnpack/BUILD.gn" \
 			|| die
 	fi
-
 	if ! use cpu_flags_x86_avx ; then
 		sed -r -i -e "/:.*_avx-/d" "third_party/xnnpack/BUILD.gn" || die
 	fi
@@ -5040,10 +5039,10 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	myconf_gn+=" libyuv_use_sme=$(usex cpu_flags_arm_sme true false)"
 	myconf_gn+=" libyuv_use_sve=$(usex cpu_flags_arm_sve true false)"
 
-	myconf_gn+=" loongarch64_use_lasx=$(usex cpu_flags_loong_lasx true false)"
-	myconf_gn+=" loongarch64_use_lsx=$(usex cpu_flags_loong_lsx true false)"
+	myconf_gn+=" loongarch64_use_lasx=$(usex cpu_flags_loong_lasx true false)" # libyuv
+	myconf_gn+=" loongarch64_use_lsx=$(usex cpu_flags_loong_lsx true false)" # libpng, libyuv
 
-	myconf_gn+=" rtc_build_with_neon=$(usex cpu_flags_arm_neon true false)"
+	myconf_gn+=" rtc_build_with_neon=$(usex cpu_flags_arm_neon true false)" # webrtc
 
 	myconf_gn+=" use_aes=$(usex cpu_flags_arm_aes true false)"
 	myconf_gn+=" use_armv4=$(usex cpu_flags_arm_armv4 true false)"
@@ -5063,8 +5062,8 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	myconf_gn+=" use_sve2=$(usex cpu_flags_arm_sve2 true false)"
 	myconf_gn+=" use_sve2_128=$(usex cpu_flags_arm_sve2_128 true false)"
 
-	myconf_gn+=" arm_use_neon=$(usex cpu_flags_arm_neon true false)" # libvpx
-	myconf_gn+=" arm_use_thumb=$(usex cpu_flags_arm_thumb true false)"
+	myconf_gn+=" arm_use_neon=$(usex cpu_flags_arm_neon true false)" # blink, ffmpeg, libjpeg_turbo, libpng, libvpx, lzma_sdk, opus, pdfium, pffft, skia, webrtc, zlib
+	myconf_gn+=" arm_use_thumb=$(usex cpu_flags_arm_thumb true false)" # compiler
 	myconf_gn+=" arm_optionally_use_neon=false"
 
 	myconf_gn+=" use_lsx=$(usex cpu_flags_loong_lsx true false)"
@@ -5072,7 +5071,7 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 
 	myconf_gn+=" use_dsp=$(usex cpu_flags_mips_dsp true false)"
 	myconf_gn+=" use_dspr2=$(usex cpu_flags_mips_dspr2 true false)"
-	myconf_gn+=" mips_use_msa=$(usex cpu_flags_mips_msa true false)"
+	myconf_gn+=" mips_use_msa=$(usex cpu_flags_mips_msa true false)" # libyuv, libpng
 
 	myconf_gn+=" use_altivec=$(usex cpu_flags_ppc_altivec true false)"
 	myconf_gn+=" use_crypto=$(usex cpu_flags_ppc_crypto true false)"
