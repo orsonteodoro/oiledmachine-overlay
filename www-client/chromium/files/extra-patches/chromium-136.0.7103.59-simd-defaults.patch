@@ -1,6 +1,6 @@
 --- /dev/null	2025-05-03 00:54:32.134046439 -0700
 +++ b/build/config/simd.gni	2025-05-05 16:45:28.274227767 -0700
-@@ -0,0 +1,68 @@
+@@ -0,0 +1,65 @@
 +declare_args() {
 +  use_3dnow = true
 +  use_aes = true
@@ -35,9 +35,6 @@
 +  use_armv4 = true
 +  use_armv5te = true
 +  use_armv6 = true
-+  use_armv7 = true
-+  use_armv8 = true
-+  use_armv9 = true
 +  use_bf16 = true
 +  use_crc32 = true
 +  use_dotprod = true
