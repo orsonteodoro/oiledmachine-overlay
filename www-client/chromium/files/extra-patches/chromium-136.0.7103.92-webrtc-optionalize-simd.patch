@@ -102,3 +102,34 @@
    }
  }
  
+--- a/third_party/webrtc/common_audio/third_party/ooura/BUILD.gn.orig	2025-04-27 16:35:54.000000000 -0700
++++ b/third_party/webrtc/common_audio/third_party/ooura/BUILD.gn	2025-05-07 17:03:58.109366086 -0700
+@@ -6,6 +6,7 @@
+ # in the file PATENTS.  All contributing project authors may
+ # be found in the AUTHORS file in the root of the source tree.
+ 
++import("//build/config/simd.gni")
+ import("../../../webrtc.gni")
+ 
+ rtc_library("fft_size_128") {
+@@ -21,12 +22,14 @@ rtc_library("fft_size_128") {
+   cflags = []
+ 
+   if (current_cpu == "x86" || current_cpu == "x64") {
+-    sources += [
+-      "fft_size_128/ooura_fft_sse2.cc",
+-      "fft_size_128/ooura_fft_tables_neon_sse2.h",
+-    ]
+-    if (is_posix || is_fuchsia) {
+-      cflags += [ "-msse2" ]
++    if (use_sse2) {
++      sources += [
++        "fft_size_128/ooura_fft_sse2.cc",
++        "fft_size_128/ooura_fft_tables_neon_sse2.h",
++      ]
++      if (is_posix || is_fuchsia) {
++        cflags += [ "-msse2" ]
++      }
+     }
+   }
+ 

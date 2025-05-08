@@ -2626,6 +2626,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-libwebp-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-fuzztest-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-crc32c-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-blink-optionalize-simd.patch"
 	)
 
 	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then

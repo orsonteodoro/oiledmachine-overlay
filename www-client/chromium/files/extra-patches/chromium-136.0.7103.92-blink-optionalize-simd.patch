@@ -1,0 +1,27 @@
+--- a/third_party/blink/renderer/platform/BUILD.gn.orig	2025-04-27 16:35:54.000000000 -0700
++++ b/third_party/blink/renderer/platform/BUILD.gn	2025-05-07 17:14:29.284276923 -0700
+@@ -8,6 +8,7 @@ import("//build/compiled_action.gni")
+ import("//build/config/compiler/compiler.gni")
+ import("//build/config/features.gni")
+ import("//build/config/ui.gni")
++import("//build/config/simd.gni")
+ import("//build/nocompile.gni")
+ import("//media/media_options.gni")
+ import("//testing/libfuzzer/fuzzer_test.gni")
+@@ -1927,9 +1928,13 @@ component("platform") {
+   }
+ 
+   if (current_cpu == "x86" || current_cpu == "x64") {
+-    deps += [ ":blink_x86_avx" ]
+-    sources += [ "audio/cpu/x86/delay_sse2.cc" ]
+-    allow_circular_includes_from += [ ":blink_x86_avx" ]
++    if (use_avx) {
++      deps += [ ":blink_x86_avx" ]
++      allow_circular_includes_from += [ ":blink_x86_avx" ]
++    }
++    if (use_sse && use_sse2) {
++      sources += [ "audio/cpu/x86/delay_sse2.cc" ]
++    }
+   }
+ 
+   if (current_cpu == "arm64" || (current_cpu == "arm" && arm_use_neon)) {
