@@ -1,5 +1,5 @@
 --- a/third_party/libwebp/BUILD.gn.orig	2025-04-27 16:35:54.000000000 -0700
-+++ b/third_party/libwebp/BUILD.gn	2025-05-07 15:17:54.800986663 -0700
++++ b/third_party/libwebp/BUILD.gn	2025-05-07 16:58:08.599592985 -0700
 @@ -4,6 +4,7 @@
  
  import("//build/config/arm.gni")
@@ -21,10 +21,11 @@
  }
  
  static_library("libwebp_dsp") {
+-  sources = [
 +  sources = []
 +  cflags = []
 +  if (use_mips_dspr2) {
-+    sources = [
++    sources += [
 +      "src/src/dsp/alpha_processing_mips_dsp_r2.c",
 +      "src/src/dsp/cost_mips_dsp_r2.c",
 +      "src/src/dsp/dec_mips_dsp_r2.c",
@@ -40,7 +41,7 @@
 +    cflags += [ "-mno-dspr2" ]
 +  }
 +  if (use_msa) {
-+    sources = [
++    sources += [
 +      "src/src/dsp/dec_msa.c",
 +      "src/src/dsp/enc_msa.c",
 +      "src/src/dsp/filters_msa.c",
@@ -52,7 +53,7 @@
 +  } else {
 +    cflags += [ "-mno-msa" ]
 +  }
-   sources = [
++  sources += [
      "src/src/dsp/alpha_processing.c",
 -    "src/src/dsp/alpha_processing_mips_dsp_r2.c",
      "src/src/dsp/cost.c",

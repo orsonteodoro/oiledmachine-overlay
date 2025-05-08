@@ -1,5 +1,5 @@
---- ./third_party/webrtc/common_audio/BUILD.gn.orig	2025-04-27 16:35:54.000000000 -0700
-+++ ./third_party/webrtc/common_audio/BUILD.gn	2025-05-07 02:36:08.423916014 -0700
+--- a/third_party/webrtc/common_audio/BUILD.gn.orig	2025-04-27 16:35:54.000000000 -0700
++++ b/third_party/webrtc/common_audio/BUILD.gn	2025-05-07 02:36:08.423916014 -0700
 @@ -6,6 +6,7 @@
  # in the file PATENTS.  All contributing project authors may
  # be found in the AUTHORS file in the root of the source tree.
@@ -38,8 +38,8 @@
    }
    if (rtc_build_with_neon) {
      deps += [ ":common_audio_neon" ]
---- ./third_party/webrtc/modules/audio_processing/agc2/rnn_vad/BUILD.gn.orig	2025-04-27 16:35:54.000000000 -0700
-+++ ./third_party/webrtc/modules/audio_processing/agc2/rnn_vad/BUILD.gn	2025-05-07 02:32:00.233617705 -0700
+--- a/third_party/webrtc/modules/audio_processing/agc2/rnn_vad/BUILD.gn.orig	2025-04-27 16:35:54.000000000 -0700
++++ b/third_party/webrtc/modules/audio_processing/agc2/rnn_vad/BUILD.gn	2025-05-07 02:32:00.233617705 -0700
 @@ -6,6 +6,7 @@
  # in the file PATENTS.  All contributing project authors may
  # be found in the AUTHORS file in the root of the source tree.
@@ -81,8 +81,8 @@
      }
      data = unittest_resources
      if (is_ios) {
---- ./third_party/webrtc/modules/audio_processing/aec3/BUILD.gn.orig	2025-04-27 16:35:54.000000000 -0700
-+++ ./third_party/webrtc/modules/audio_processing/aec3/BUILD.gn	2025-05-07 02:33:41.064958634 -0700
+--- a/third_party/webrtc/modules/audio_processing/aec3/BUILD.gn.orig	2025-04-27 16:35:54.000000000 -0700
++++ b/third_party/webrtc/modules/audio_processing/aec3/BUILD.gn	2025-05-07 02:33:41.064958634 -0700
 @@ -6,6 +6,7 @@
  # in the file PATENTS.  All contributing project authors may
  # be found in the AUTHORS file in the root of the source tree.
