@@ -430,7 +430,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Add supprot for Scalable Vector Extensions (SVE) 256-bit vectors
     </flag>
     <flag name="cpu_flags_arm_sve2">
-      Add support for Scalable Vector Extensions 2 (SVE).
+      Add support for Scalable Vector Extensions 2 (SVE2).
     </flag>
     <flag name="cpu_flags_arm_sve_256">
       Add supprot for Scalable Vector Extensions 2 (SVE2) 128-bit vectors
