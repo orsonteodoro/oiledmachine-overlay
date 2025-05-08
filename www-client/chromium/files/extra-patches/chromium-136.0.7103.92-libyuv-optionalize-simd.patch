@@ -1,0 +1,19 @@
+--- a/third_party/libyuv/BUILD.gn.orig	2025-05-05 12:21:24.000000000 -0700
++++ b/third_party/libyuv/BUILD.gn	2025-05-08 08:45:47.982413498 -0700
+@@ -7,6 +7,7 @@
+ # be found in the AUTHORS file in the root of the source tree.
+ 
+ import("//build/config/features.gni")
++import("//build/config/simd.gni")
+ import("//testing/test.gni")
+ import("libyuv.gni")
+ 
+@@ -20,6 +21,8 @@ declare_args() {
+   libyuv_symbols_visible = false
+ }
+ 
++libyuv_use_neon = libyuv_use_neon && use_dotprod && use_i8mm
++
+ config("libyuv_config") {
+   include_dirs = [ "include" ]
+   if (is_android) {

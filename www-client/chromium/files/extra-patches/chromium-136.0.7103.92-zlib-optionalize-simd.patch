@@ -13,7 +13,7 @@
  
    use_arm_neon_optimizations =
 -      (current_cpu == "arm" || current_cpu == "arm64") && (is_clang || !is_win)
-+      (current_cpu == "arm" || current_cpu == "arm64") && (is_clang || !is_win) && use_neon
++      (current_cpu == "arm" || current_cpu == "arm64") && (is_clang || !is_win) && use_neon && use_aes && use_crc32
    use_x86_x64_optimizations =
 -      (current_cpu == "x86" || current_cpu == "x64") && !is_ios
 +      (current_cpu == "x86" || current_cpu == "x64") && !is_ios && use_sse2

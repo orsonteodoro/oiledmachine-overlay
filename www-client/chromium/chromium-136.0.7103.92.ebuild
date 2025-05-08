@@ -2620,6 +2620,8 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-crc32c-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-blink-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-lzma_sdk-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-libyuv-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-cpuinfo-optionalize-simd.patch"
 	)
 
 	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
@@ -5022,7 +5024,7 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	myconf_gn+=" libyuv_use_msa=$(usex cpu_flags_mips_msa true false)"
 	myconf_gn+=" libyuv_use_neon=$(usex cpu_flags_arm_neon true false)"
 	myconf_gn+=" libyuv_use_sme=$(usex cpu_flags_arm_sme true false)"
-	myconf_gn+=" libyuv_use_sve=$(usex cpu_flags_arm_sve true false)"
+	myconf_gn+=" libyuv_use_sve=$(usex cpu_flags_arm_sve2 true false)" # This line is not a typo.
 
 	myconf_gn+=" loongarch64_use_lasx=$(usex cpu_flags_loong_lasx true false)" # libyuv
 	myconf_gn+=" loongarch64_use_lsx=$(usex cpu_flags_loong_lsx true false)" # libpng, libyuv
