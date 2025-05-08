@@ -50,6 +50,7 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_gfni"
 	"cpu_flags_x86_pclmul"
 	"cpu_flags_x86_sse2"
+	"cpu_flags_x86_sse4_1"
 	"cpu_flags_x86_sse4_2"
 	"cpu_flags_x86_ssse3"
 	"cpu_flags_x86_vaes"
@@ -98,8 +99,11 @@ REQUIRED_USE="
 		cpu_flags_x86_sse2
 	)
 
-	cpu_flags_x86_sse4_2? (
+	cpu_flags_x86_sse4_1? (
 		cpu_flags_x86_ssse3
+	)
+	cpu_flags_x86_sse4_2? (
+		cpu_flags_x86_sse4_1
 	)
 
 	cpu_flags_x86_pclmul? (
@@ -358,9 +362,9 @@ _configure_cpu_flags_x86() {
 		)
 	fi
 
-	if ! use cpu_flags_x86_sse4_2 ; then
-		append-flags -mno-sse4.1
-		append-flags -mno-sse4.2
+	use cpu_flags_x86_sse4_1 || append-flags -mno-sse4.1
+	use cpu_flags_x86_sse4_2 || append-flags -mno-sse4.2
+	if ! use cpu_flags_x86_sse4_1 || ! use cpu_flags_x86_sse4_2 ; then
 		disabled_cpu_flags+=(
 			"HWY_SSE4"
 		)
