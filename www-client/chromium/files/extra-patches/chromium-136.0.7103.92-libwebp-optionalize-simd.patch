@@ -1,5 +1,5 @@
---- a/third_party/libwebp/BUILD.gn.orig	2025-04-27 16:35:54.000000000 -0700
-+++ b/third_party/libwebp/BUILD.gn	2025-05-07 16:58:08.599592985 -0700
+--- a/third_party/libwebp/BUILD.gn.orig	2025-05-08 07:52:56.498731603 -0700
++++ b/third_party/libwebp/BUILD.gn	2025-05-08 07:55:12.575529730 -0700
 @@ -4,6 +4,7 @@
  
  import("//build/config/arm.gni")
@@ -17,7 +17,7 @@
  
  source_set("libwebp_webp") {
    sources = [
-@@ -133,43 +134,57 @@ source_set("libwebp_dsp_headers") {
+@@ -133,43 +134,61 @@ source_set("libwebp_dsp_headers") {
  }
  
  static_library("libwebp_dsp") {
@@ -38,7 +38,9 @@
 +      "src/src/dsp/yuv_mips_dsp_r2.c",
 +    ]
 +  } else {
-+    cflags += [ "-mno-dspr2" ]
++    if (current_cpu == "mips" || current_cpu == "mips64" || current_cpu == "mipsel" || current_cpu == "mips64el") {
++      cflags += [ "-mno-dspr2" ]
++    }
 +  }
 +  if (use_msa) {
 +    sources += [
@@ -51,7 +53,9 @@
 +      "src/src/dsp/upsampling_msa.c",
 +    ]
 +  } else {
-+    cflags += [ "-mno-msa" ]
++    if (current_cpu == "mips" || current_cpu == "mips64" || current_cpu == "mipsel" || current_cpu == "mips64el") {
++      cflags += [ "-mno-msa" ]
++    }
 +  }
 +  sources += [
      "src/src/dsp/alpha_processing.c",
@@ -93,7 +97,7 @@
    ]
    configs += [ ":libwebp_config" ]
    configs -= [ "//build/config/compiler:chromium_code" ]
-@@ -182,8 +197,18 @@ static_library("libwebp_dsp") {
+@@ -182,8 +201,18 @@ static_library("libwebp_dsp") {
    public_configs = [ ":libwebp_public_config" ]
    deps = [
      ":libwebp_dec",
@@ -114,7 +118,7 @@
      ":libwebp_enc",
      ":libwebp_utils",
      ":libwebp_webp",
-@@ -196,14 +221,30 @@ static_library("libwebp_dsp") {
+@@ -196,14 +225,30 @@ static_library("libwebp_dsp") {
      deps += [ "//third_party/cpu_features:ndk_compat" ]
    }
    if (current_cpu == "x86" || current_cpu == "x64") {
