@@ -24,7 +24,7 @@
  # defined(_MSC_VER) || defined(__linux__).
  use_opus_arm_rtcd =
 -    current_cpu == "arm" && (is_win || is_android || is_linux || is_chromeos)
-+    current_cpu == "arm" && (is_win || is_android || is_linux || is_chromeos) && (use_edsp || use_armv6))
++    current_cpu == "arm" && (is_win || is_android || is_linux || is_chromeos) && (use_edsp || use_armv6)
  
  config("opus_config") {
    include_dirs = [ "src/include" ]
