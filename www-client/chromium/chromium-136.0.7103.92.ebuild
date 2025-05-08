@@ -578,6 +578,7 @@ CPU_FLAGS_ARM=(
 	armv6
 	armv7
 	armv8
+	armv9
 	bf16
 	bti
 	crc32
@@ -894,6 +895,9 @@ REQUIRED_USE+="
 	)
 	cpu_flags_arm_armv8? (
 		cpu_flags_arm_armv7
+	)
+	cpu_flags_arm_armv9? (
+		cpu_flags_arm_armv8
 	)
 
 	cpu_flags_ppc_power8-vector? (
