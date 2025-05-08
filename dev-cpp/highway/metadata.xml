@@ -28,25 +28,25 @@
   </upstream>
   <use>
     <flag name="cpu_flags_arm_aes">
-      Optimize for ARM with AES
+      Optimize for ARM with Advanced Encryption Standard (AES)
     </flag>
     <flag name="cpu_flags_arm_bf16">
       Optimize for ARM with BF16
     </flag>
     <flag name="cpu_flags_arm_neon">
-      Optimize for ARM NEON
+      Optimize for ARM Advanced SIMD extension (NEON)
     </flag>
     <flag name="cpu_flags_arm_sve">
-      Optimize for ARM SVE
+      Optimize for ARM Scalable Vector Extensions (SVE)
     </flag>
     <flag name="cpu_flags_arm_sve_256">
-      Optimize for ARM SVE 256-bit vectors
+      Optimize for ARM Scalable Vector Extensions (SVE) 256-bit vectors
     </flag>
     <flag name="cpu_flags_arm_sve2">
-      Optimize for ARM SVE2
+      Optimize for ARM Scalable Vector Extensions 2 (SVE2)
     </flag>
     <flag name="cpu_flags_arm_sve2_128">
-      Optimize for ARM SVE2 128-bit vectors
+      Optimize for ARM Scalable Vector Extensions 2 (SVE2) 128-bit vectors
     </flag>
     <flag name="cpu_flags_ppc_crypto">
       Optimize with cryptographic instructions
