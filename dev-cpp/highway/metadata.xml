@@ -135,8 +135,11 @@
     <flag name="cpu_flags_x86_sse2">
       Optimize with Streaming SIMD Extensions 2 (SSE2)
     </flag>
+    <flag name="cpu_flags_x86_sse4_1">
+      Optimize with Streaming SIMD Extensions 4.1 (SSE4.1)
+    </flag>
     <flag name="cpu_flags_x86_sse4_2">
-      Optimize with Streaming SIMD Extensions 4 (SSE 4.1, SSE 4.2)
+      Optimize with Streaming SIMD Extensions 4.2 (SSE4.2)
     </flag>
     <flag name="cpu_flags_x86_ssse3">
       Optimize with Supplemental Streaming SIMD Extensions 3 (SSSE3)

@@ -553,10 +553,10 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Add support for Streaming SIMD Extensions 3 (SSE3) or Prescott New Instructions (PNI).
     </flag>
     <flag name="cpu_flags_x86_sse4_1">
-      Add support for Streaming SIMD Extensions 4.1.
+      Add support for Streaming SIMD Extensions 4.1 (SSE4.1).
     </flag>
     <flag name="cpu_flags_x86_sse4_2">
-      Add support for Streaming SIMD Extensions 4.2.
+      Add support for Streaming SIMD Extensions 4.2 (SSE4.2).
     </flag>
     <flag name="cpu_flags_x86_ssse3">
       Add support for Supplemental Streaming SIMD Extensions 3 (SSSE3).
