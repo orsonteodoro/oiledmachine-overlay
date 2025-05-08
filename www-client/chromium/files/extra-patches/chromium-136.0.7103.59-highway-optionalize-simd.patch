@@ -44,7 +44,7 @@
 +      cflags += [ "-mno-ssse3" ]
 +      hwy_disabled_targets += "|HWY_SSSE3"
 +    }
-+    if (!use_sse4) {
++    if (!use_sse4_1 || !use_sse4_2) {
 +      cflags += [ "-mno-sse4.1" ]
 +      cflags += [ "-mno-sse4.2" ]
 +      hwy_disabled_targets += "|HWY_SSE4"
