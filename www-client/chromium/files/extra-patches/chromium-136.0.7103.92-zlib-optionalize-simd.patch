@@ -116,7 +116,7 @@
 +    if (use_x86_x64_optimizations && (use_sse4_2 && use_pclmul)) {
        deps += [ ":zlib_crc32_simd" ]
 -    } else if (use_arm_neon_optimizations) {
-+    } else if (use_arm_neon_optimizations && ((use_aes && use_crc32 && current_cpu == "arm64") || (use_crc32 && current_cpu == "arm")) {
++    } else if (use_arm_neon_optimizations && ((use_aes && use_crc32 && current_cpu == "arm64") || (use_crc32 && current_cpu == "arm"))) {
        deps += [ ":zlib_arm_crc32" ]
      }
    } else {
