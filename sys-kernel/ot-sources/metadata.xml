@@ -1661,6 +1661,10 @@ OT_KERNEL_WORK_PROFILE="http-server-busy"
       The -af is intentional because it emphasizes extreme security measures.
       (Acceptable aliases:  secure-af, secure-as-fuck, hard-af, epic-boss)
 
+      Note: secure-af was original envisioned to be an availability-first
+      policy.  There are competing security objectives or philosophies.  For
+      integrity-first policy set OT_KERNEL_SECURITY_CRITICAL=1.
+
       unset - same as custom.
 
     See also:
@@ -2929,18 +2933,31 @@ unset OT_KERNEL_PRIVATE_KEY
     OT_KERNEL_SECURITY_CRITICAL - Perform runtime monitoring with KASAN and UBSAN.
 
     Use KASAN to halt on several undiscovered high/critical severity based
-    vulnerabilities/exploits to mitigate against memory corruption.  Do a kernel
-    panic crash on the kernel before running attacker's code, or crash the
-    kernel before running unauthorized changes, or crash the kernel before
-    running attacker's exfiltration code.
+    vulnerabilities/exploits to mitigate against memory corruption.  Examples
+    include use after free, double free, heap overflow, stack overflow that
+    could be exploited for code execution.
 
     Use UBSAN to halt on several undiscovered high/critical severity based
-    vulnerabilities/exploits to mitigate against undefined behavior.  Do a
-    kernel panic crash on the kernel before running attacker's code, or crash
-    the kernel before running unauthorized changes, or crash the kernel before
-    running attacker's exfiltration code.
+    vulnerabilities/exploits to mitigate against undefined behavior.  Examples
+    include signed integer overflow, out of bounds access, null pointer
+    dereference, etc that could be exploited for code execution.
 
-    
+    In either case, it does a kernel panic crash on the kernel before running
+    attacker's code, or crash the kernel before running unauthorized changes, or
+    crash the kernel before running attacker's exfiltration code.
+
+    There are competing security objectives for security.  Always-available and
+    execution-integrity are mutually exclusive.  This setting is
+    execution-integrity first meaning that in secure contexts, it should never
+    be compromised.  If a vulnerability is detected, the computer should stop
+    if or if not the vulnerability is exploited for the attacker's benefit.  It
+    assumes that it is better to halt than to continue unauthorized anything
+    that gives the attacker an advantage at the cost of the other person.
+    These sanitizers schemes may also trigger on false positives.  It is
+    estimated 1-10% for KASAN and 5-20% for UBSAN.  A crash can be a negative
+    experience that leads to lost work or contributing to a bad day.  This is
+    is why OT_KERNEL_SECURITY_CRITICAL is default off except for the dss work
+    profile.
 
     Modes:
 
