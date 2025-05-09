@@ -2949,16 +2949,16 @@ unset OT_KERNEL_PRIVATE_KEY
 
     There are competing security objectives for security.  Always-available and
     execution-integrity are mutually exclusive.  This setting is
-    execution-integrity first means that in secure contexts, it should never
+    execution-integrity first meaning that in secure contexts, it should never
     be compromised.  If a vulnerability is detected, the computer should stop
-    if or if not the vulnerability is exploited for the attacker's benefit.  It
-    assumes that it is better to halt than to continue unauthorized anything
-    that gives the attacker an advantage at the cost of the other person.
-    These sanitizers schemes may also trigger on false positives.  It is
-    estimated 1-10% for KASAN and 5-20% for UBSAN.  A crash can be a negative
-    experience that leads to lost work or contributing to a bad day.  This is
-    is why OT_KERNEL_SECURITY_CRITICAL is default off except for the dss work
-    profile.
+    whether or not the vulnerability is taken advantage of and exploited for the
+    benefit of the attacker(s).  It assumes that it is better to halt than to
+    continue unauthorized anything that gives the attacker an advantage at the
+    cost of you or the other people involved.  These sanitizers schemes may also
+    trigger on false positives.  It is estimated 1-10% for KASAN and 5-20% for
+    UBSAN.  A crash can be a negative experience that leads to lost work or
+    changes a good day into a bad day.  This is is why
+    OT_KERNEL_SECURITY_CRITICAL is default off except for the dss work profile.
 
     Modes:
 
