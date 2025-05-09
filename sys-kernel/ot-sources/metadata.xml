@@ -2949,7 +2949,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
     There are competing security objectives for security.  Always-available and
     execution-integrity are mutually exclusive.  This setting is
-    execution-integrity first meaning that in secure contexts, it should never
+    execution-integrity first means that in secure contexts, it should never
     be compromised.  If a vulnerability is detected, the computer should stop
     if or if not the vulnerability is exploited for the attacker's benefit.  It
     assumes that it is better to halt than to continue unauthorized anything
