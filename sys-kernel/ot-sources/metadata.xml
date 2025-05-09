@@ -1616,8 +1616,7 @@ OT_KERNEL_WORK_PROFILE="http-server-busy"
 
 
     OT_KERNEL_HARDENING_LEVEL - sets the security mitigation level of the
-    kernel.  In these ebuilds and eclasses - security hardening flags, CFI,
-    KCFI, and SCS (ShadowCallStack) - get enabled when set to secure-af.
+    kernel.  In these ebuilds and eclasses - standard security hardening flags.
 
     Setting to performance also allows to use io_uring for more performance at
     the expense of security.
@@ -1671,6 +1670,7 @@ OT_KERNEL_WORK_PROFILE="http-server-busy"
 
       HT
       OT_KERNEL_SECURITY_CRITICAL
+      OT_KERNEL_SECURITY_CRITICAL_SCHEMES
       OT_KERNEL_SME
       OT_KERNEL_SME_DEFAULT_ON
       SEV
@@ -2930,22 +2930,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
-    OT_KERNEL_SECURITY_CRITICAL - Perform runtime monitoring and protection
-    with KASAN and UBSAN.
-
-    Use KASAN to halt on several undiscovered high/critical severity based
-    vulnerabilities/exploits to mitigate against memory corruption.  Examples
-    include use after free, double free, heap overflow, stack overflow that
-    could be exploited for code execution.
-
-    Use UBSAN to halt on several undiscovered high/critical severity based
-    vulnerabilities/exploits to mitigate against undefined behavior.  Examples
-    include signed integer overflow, out of bounds access, null pointer
-    dereference, etc that could be exploited for code execution.
-
-    In either case, it does a kernel panic crash on the kernel before running
-    attacker's code, or crashes the kernel before running unauthorized changes,
-    or crashes the kernel before running attacker's exfiltration code.
+    OT_KERNEL_SECURITY_CRITICAL - Perform runtime monitoring and protection.
 
     There are competing security objectives for security.  Always-available and
     execution-integrity are mutually exclusive.  This setting is
@@ -2955,25 +2940,15 @@ unset OT_KERNEL_PRIVATE_KEY
     benefit of the attacker(s).  It assumes that it is better to halt than to
     continue unauthorized anything that gives the attacker an advantage at the
     cost of you or the other people involved.  These sanitizers schemes may also
-    trigger on false positives.  It is estimated 1-10% for KASAN and 5-20% for
-    UBSAN.  A crash can be a negative experience that leads to lost work or
-    changes a good day into a bad day.  This is is why
+    trigger on false positives.  A crash can be a negative experience that leads
+    to lost work or changes a good day into a bad day.  This is is why
     OT_KERNEL_SECURITY_CRITICAL is default off except for the dss work profile.
 
-    Modes:
+    In any case, it does a kernel panic crash on the kernel before running
+    attacker's code, or crashes the kernel before running unauthorized changes,
+    or crashes the kernel before running attacker's exfiltration code.
 
-    KASAN Mode | Performance impact | Compatibility
-    HW_TAGS    | 1.05x - 1.25x      | Adding cpu_flags_arm_mte to both USE and OT_KERNEL_USE will use HW_TAGS.
-    SW_TAGS    | 1.2x - 2.0x        | Fallback for arm64
-    GENERIC    | 1.5x - 4.0x        | Fallback for non-arm64 CPUs.
-
-    1.5x means 1.5 times the base unmitigated and optimized performance.
-    4.0x means 4 times slower compared to the base unmitigated and optimized performance.
-
-    UBSAN Mode | Performance impact
-    inline     | 1.1x to 2x        
-
-    The following work profiles have this unconditionally on:
+    Unconditionally enabled for work profiles:
 
     dss
 
@@ -2986,6 +2961,62 @@ unset OT_KERNEL_PRIVATE_KEY
     See also:
 
       OT_KERNEL_MAX_UPTIME
+      OT_KERNEL_SECURITY_CRITICAL_SCHEMES
+
+
+
+    OT_KERNEL_SECURITY_CRITICAL_SCHEMES - A list of sanitizer schemes to protect
+    the kernel.  The default is kasan and ubsan.
+
+    Sanitizer  | Supported versions | Threats mitigated  | Performance impact | Production ready | Estimated CVSS 3.1 Severity | Estimated false positives
+    kasan      | >= 4.0             | CE, DT             | 2-5x               | Yes              | Critical                    | < 1 %
+    ubsan      | >= 4.5             | CE, DT             | 1.1-2x             | Yes              | High                        | < 0.1 %
+    kcsan      | >= 5.8             | DT                 | 1.5-3x             | Yes              | Medium - High               | 1 - 5 %
+    msan       | >= 6.1             | ID                 | 3-10x              | No               | Medium - High               | < 1 %
+    kcfi       | >= 6.1             | CE, PE             | 1.05-1.5x          | Maybe            | Critical                    | < 0.1 %
+    cfi-5.15   | = 5.15             | CE, PE             | 1.05-1.5x          | Maybe            | Critical                    | < 0.1 %
+    kfence     | >= 5.12            | CE, DT             | 1.01-1.1x          | Yes              | High - Critical             | 1-5 %
+    scs        | >= 5.8             | CE, PE             | 1.01-1.05x         | Maybe            | Critical                    | 0 %
+
+    CE = Code Execution
+    DT = Data Tampering
+    ID = Information Disclosure
+    PE = Privilege Escalation
+
+    KASAN Mode | Supported versions | Performance impact | Compatibility
+    HW_TAGS    | >= 5.11            | 1.05x - 1.25x      | Adding cpu_flags_arm_mte to both USE and OT_KERNEL_USE will use HW_TAGS.
+    SW_TAGS    | >= 5.0             | 1.2x - 2.0x        | Fallback for arm64
+    GENERIC    | >= 5.0             | 1.5x - 4.0x        | Fallback for non-arm64 CPUs.
+
+    1.5x means 1.5 times the base unmitigated and optimized performance.
+    4.0x means 4 times slower compared to the base unmitigated and optimized performance.
+
+    Use KASAN or KFENCE to halt on several undiscovered 
+    vulnerabilities/exploits to mitigate against memory corruption.  Examples
+    include use after free, double free, heap overflow, stack overflow.
+    KASAN is comprehensive.  KFENCE is faster and sampled based.  The HW_TAGS,
+    SW_TAGS, GENERIC are automagic but still require you choose kasan.
+
+    Use UBSAN to halt on several undiscovered vulnerabilities/exploits to
+    mitigate against undefined behavior.  Examples include signed integer
+    overflow, out of bounds access, null pointer dereference.
+
+    Use KCFI to halt on compromised execution integrity.  It is lightweight
+    variation compared to cfi-5.15.
+
+    Use MSAN to halt on uninitalized memory.  This catches sensitive data leaks
+    from unsanitized memory before memory is being used.
+
+    Use SCS to halt on ROP detection.
+
+    Use cfi-5.15 for the older comprehensive implementation.
+
+
+    Examples:
+
+    OT_KERNEL_SECURITY_CRITICAL_SCHEMES="kasan ubsan"
+    OT_KERNEL_SECURITY_CRITICAL_SCHEMES="kasan ubsan kcsan"
+    OT_KERNEL_SECURITY_CRITICAL_SCHEMES="ubsan"
 
 
 

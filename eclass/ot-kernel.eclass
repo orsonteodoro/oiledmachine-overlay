@@ -4002,6 +4002,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_SATA_LPM_MID
 	unset OT_KERNEL_SATA_LPM_MIN
 	unset OT_KERNEL_SECURITY_CRITICAL
+	unset OT_KERNEL_SECURITY_CRITICAL_SCHEMES
 	unset OT_KERNEL_SGX
 	unset OT_KERNEL_SLAB_ALLOCATOR
 	unset OT_KERNEL_SME
@@ -4121,6 +4122,7 @@ ot-kernel_clear_env() {
 	unset IPTABLES_ROUTER
 	unset TLS
 	unset TLS_REGION
+	unset KFENCE_SAMPLE_INTERVAL
 	unset KVM_GUEST_MEM_HOTPLUG
 	unset KVM_GUEST_PCI_HOTPLUG
 	unset KVM_GUEST_VIRTIO_BALLOON
@@ -4978,23 +4980,10 @@ ot-kernel_set_kconfig_boot_args() {
 
 # @FUNCTION: ot-kernel_set_kconfig_cfi
 # @DESCRIPTION:
-# Sets the kernel config for Control Flow Integrity (CFI)
+# Sets the kernel config for Control Flow Integrity (CFI) using the non-production patches
 ot-kernel_set_kconfig_cfi() {
-	_ot-kernel_validate_hardening_level
-	if _ot-kernel_is_hardening_level_custom ; then
-		:
-	elif _ot-kernel_is_hardening_level_secure ; then
-		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
-	elif \
-		_ot-kernel_is_hardening_level_most_secure \
-			&&
-		has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi \
-			&& \
-		[[ \
-			   "${arch}" == "x86_64"
-			|| "${arch}" == "arm64" \
-		]] \
-	; then
+	local enable=${1:-1}
+	if (( ${enable} == 1 )) && has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi ; then
 		if [[ "${arch}" == "arm64" ]] && (( ${llvm_slot} < 12 )) ; then
 eerror
 eerror "CFI requires LLVM >= 12 on arm64"
@@ -5013,37 +5002,19 @@ einfo "Enabling CFI support in the in the .config."
 		ot-kernel_unset_configopt "CONFIG_CFI_PERMISSIVE"
 		ban_dma_attack_use "cfi" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
-	elif _ot-kernel_is_hardening_level_least_secure ; then
+	else
 einfo "Disabling CFI support in the in the .config."
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
 	fi
-
-	if \
-		   _ot-kernel_is_hardening_level_most_secure \
-		&& has cfi ${IUSE_EFFECTIVE} && ot-kernel_use cfi \
-		&& [[ "${arch}" == "arm64" ]] \
-	; then
-		# Need to recheck
-ewarn "You must manually set arm64 CFI in the .config."
-	fi
+	# Recheck if arm64 needs still manually set KCFI.
 }
 
 # @FUNCTION: ot-kernel_set_kconfig_kcfi
 # @DESCRIPTION:
-# Sets the kernel config for Control Flow Integrity (CFI)
+# Sets the kernel config for Kernel Control Flow Integrity (KCFI)
 ot-kernel_set_kconfig_kcfi() {
-	_ot-kernel_validate_hardening_level
-	if _ot-kernel_is_hardening_level_custom ; then
-		:
-	elif _ot-kernel_is_hardening_level_secure ; then
-		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
-	elif \
-		_ot-kernel_is_hardening_level_most_secure \
-			&& \
-		has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi \
-			&& \
-		[[ "${arch}" == "x86_64" || "${arch}" == "arm64" ]] \
-	; then
+	local enable=${1:-1}
+	if (( ${enable} == 1 )) && has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi ; then
 		if [[ "${arch}" == "arm64" ]] && (( ${llvm_slot} < 15 )) ; then
 eerror
 eerror "CFI requires LLVM >= 15 on arm64"
@@ -5072,21 +5043,11 @@ einfo "Enabling KCFI support in the in the .config."
 		ot-kernel_unset_configopt "CONFIG_CFI_PERMISSIVE"
 		ban_dma_attack_use "cfi" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
-	elif _ot-kernel_is_hardening_level_least_secure ; then
+	else
 einfo "Disabling KCFI support in the in the .config."
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
 	fi
-
-	if \
-		_ot-kernel_is_hardening_level_most_secure \
-			&& \
-		has kcfi ${IUSE_EFFECTIVE} && ot-kernel_use kcfi \
-			&& \
-		[[ "${arch}" == "arm64" ]] \
-	; then
-		# Need to recheck
-ewarn "You must manually set arm64 KCFI in the .config."
-	fi
+	# Recheck if arm64 needs still manually set KCFI.
 }
 
 # @FUNCTION: ot-kernel_set_kconfig_kexec
@@ -9298,24 +9259,8 @@ eerror
 # @DESCRIPTION:
 # Sets the kernel config for ShadowCallStack (SCS)
 ot-kernel_set_kconfig_scs() {
-	_ot-kernel_validate_hardening_level
-	if _ot-kernel_is_hardening_level_custom ; then
-		:
-	elif \
-		[[ \
-			   "${hardening_level}" == "default" \
-			|| "${hardening_level}" == "practical" \
-			|| "${hardening_level}" == "secure" \
-		]] \
-	; then
-		ot-kernel_unset_configopt "CONFIG_CFI_CLANG_SHADOW"
-	elif \
-		_ot-kernel_is_hardening_level_most_secure \
-			&& \
-		has shadowcallstack ${IUSE_EFFECTIVE} && ot-kernel_use shadowcallstack \
-			&& \
-		[[ "${arch}" == "arm64" ]] \
-	; then
+	local enable=${1:-1}
+	if (( ${enable} == 1 )) && has shadowcallstack ${IUSE_EFFECTIVE} && ot-kernel_use shadowcallstack ; then
 		if (( ${llvm_slot} < 10 )) && tc-is-clang ; then
 eerror
 eerror "Shadow Call Stack (SCS) requires LLVM >= 10"
@@ -9332,7 +9277,7 @@ einfo "Enabling SCS support in the in the .config."
 			ot-kernel_y_configopt "CONFIG_CFI_CLANG_SHADOW"
 			ot-kernel_y_configopt "CONFIG_MODULES"
 		fi
-	elif _ot-kernel_is_hardening_level_least_secure ; then
+	else
 einfo "Disabling SCS support in the in the .config."
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG_SHADOW"
 	fi
@@ -12608,7 +12553,11 @@ ot-kernel_set_security_critical() {
 		mte=1
 	fi
 
+	# TODO: patch kernel for custom panic for <sanitizer>.fault=panic for KCSAN, UBSAN, KMSAN, KFENCE.
+
 	local security_critical=${OT_KERNEL_SECURITY_CRITICAL:-0}
+	local schemes=${OT_KERNEL_SECURITY_CRITICAL_SCHEMES-"kasan ubsan"}
+	local kfence_sample_interval=${KFENCE_SAMPLE_INTERVAL-100}
 	if \
 		[[ \
 			"${work_profile}" == "custom" \
@@ -12624,24 +12573,31 @@ ot-kernel_set_security_critical() {
 	; then
 		local need_stack_protector=0
 
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "panic_on_warn=[01]"
 		if \
-			[[ \
-				"${arch}" == "arm" \
-					|| \
-				"${arch}" == "arm64" \
-					|| \
-				"${arch}" == "loongarch" \
-					|| \
-				"${arch}" == "powerpc" \
-					|| \
-				"${arch}" == "s390" \
-					|| \
-				"${arch}" == "x86_64" \
-			]] \
-				|| \
-			( [[ "${arch}" == "riscv" ]] && grep -q -e "^CONFIG_64BIT=y" "${BUILD_DIR}/.config" ) \
-				|| \
-			( [[ "${arch}" == "x86" ]] && grep -q -e "^CONFIG_X86_64=y" "${BUILD_DIR}/.config" ) \
+			[[ "${schemes}" =~ "kasan" ]] \
+						&& \
+			( \
+				[[ \
+					"${arch}" == "arm" \
+						|| \
+					"${arch}" == "arm64" \
+						|| \
+					"${arch}" == "loongarch" \
+						|| \
+					"${arch}" == "powerpc" \
+						|| \
+					"${arch}" == "s390" \
+						|| \
+					"${arch}" == "x86_64" \
+				]] \
+						|| \
+				( [[ "${arch}" == "riscv" ]] && grep -q -e "^CONFIG_64BIT=y" "${BUILD_DIR}/.config" ) \
+						|| \
+				( [[ "${arch}" == "x86" ]] && grep -q -e "^CONFIG_X86_64=y" "${BUILD_DIR}/.config" ) \
+			) \
+						&& \
+			ver_test "${KV_MAJOR_MINOR}" -eq "4.0" \
 		; then
 			ot-kernel_y_configopt "CONFIG_KASAN"
 
@@ -12664,11 +12620,11 @@ ot-kernel_set_security_critical() {
 					"${mte}" == "1" \
 				]] \
 					&& \
-				 ver_test "${KV_MAJOR_MINOR}" -ge "5.4" \
+				ver_test "${KV_MAJOR_MINOR}" -ge "5.4" \
 			; then
 	# 1.2x - 2.0 performance impact, borderline production
 				ot-kernel_y_configopt "CONFIG_KASAN_SW_TAGS"
-			else
+			elif ver_test "${KV_MAJOR_MINOR}" -ge "5.0" ; then
 	# 1.4x - 4.0x performance impact, slow for production
 				ot-kernel_y_configopt "CONFIG_KASAN_GENERIC"
 			fi
@@ -12678,14 +12634,159 @@ einfo "Deduping stack overflow check"
 				ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR"
 				ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR_STRONG"
 			fi
+			ot-kernel_unset_pat_kconfig_kernel_cmdline "kasan=(on|off)"
 			ot-kernel_set_kconfig_kernel_cmdline "kasan=on"
-			ot-kernel_set_kconfig_kernel_cmdline "kasan.fault=panic"
+			if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
+				ot-kernel_unset_pat_kconfig_kernel_cmdline "kasan.fault=(panic|panic_on_write|report)"
+				ot-kernel_set_kconfig_kernel_cmdline "kasan.fault=panic"
+			else
+				ot-kernel_set_kconfig_kernel_cmdline "panic_on_warn=1"
+			fi
 		else
 			ot-kernel_unset_configopt "CONFIG_KASAN"
 			ot-kernel_unset_pat_kconfig_kernel_cmdline "kasan=(on|off)"
+			ot-kernel_unset_pat_kconfig_kernel_cmdline "kasan.fault=(panic|panic_on_write|report)"
 		fi
 
 		if \
+			[[ "${schemes}" =~ "kcsan" ]] \
+					&& \
+			[[ \
+				"${arch}" == "arm64" \
+					|| \
+				"${arch}" == "loongarch" \
+					|| \
+				"${arch}" == "mips" \
+					|| \
+				"${arch}" == "riscv" \
+					|| \
+				"${arch}" == "powerpc" \
+					|| \
+				"${arch}" == "s390" \
+					|| \
+				"${arch}" == "x86" \
+					|| \
+				"${arch}" == "x86_64" \
+			]] \
+					&& \
+			ver_test "${KV_MAJOR_MINOR}" -ge "5.8" \
+		; then
+			ot-kernel_y_configopt "CONFIG_KCSAN"
+			ot-kernel_set_kconfig_kernel_cmdline "panic_on_warn=1"
+		else
+			ot-kernel_unset_configopt "CONFIG_KCSAN"
+		fi
+
+		if \
+			[[ "${schemes}" =~ "cfi-5.15" ]] \
+					&& \
+			[[ \
+				"${arch}" == "x86_64" \
+			]] \
+					&& \
+			ver_test "${KV_MAJOR_MINOR}" -eq "5.15" \
+		; then
+			ot-kernel_set_kconfig_cfi 1					# Uses llvm_slot
+			ot-kernel_set_kconfig_kernel_cmdline "panic_on_warn=1"
+		else
+			ot-kernel_set_kconfig_cfi 0
+		fi
+
+
+		if \
+			[[ "${schemes}" =~ "kcfi" ]] \
+					&& \
+			[[ \
+				"${arch}" == "arm" \
+					|| \
+				"${arch}" == "arm64" \
+					|| \
+				"${arch}" == "riscv" \
+					|| \
+				"${arch}" == "x86" \
+					|| \
+				"${arch}" == "x86_64" \
+			]] \
+					&& \
+			ver_test "${KV_MAJOR_MINOR}" -ge "6.1" \
+		; then
+			ot-kernel_set_kconfig_kcfi 1					# Uses llvm_slot
+			ot-kernel_set_kconfig_kernel_cmdline "panic_on_warn=1"
+		else
+			ot-kernel_set_kconfig_kcfi 0
+		fi
+
+		if \
+			[[ "${schemes}" =~ "scs" ]] \
+					&& \
+			[[ \
+				"${arch}" == "arm64" \
+					|| \
+				"${arch}" == "riscv" \
+			]] \
+					&& \
+			ver_test "${KV_MAJOR_MINOR}" -ge "5.8" \
+		; then
+			ot-kernel_set_kconfig_scs 1					# Uses llvm_slot
+			ot-kernel_set_kconfig_kernel_cmdline "panic_on_warn=1"
+		else
+			ot-kernel_set_kconfig_scs 0					# Uses llvm_slot
+		fi
+
+		if \
+			[[ "${schemes}" =~ "kfence" ]] \
+					&& \
+			[[ \
+				"${arch}" == "arm" \
+					|| \
+				"${arch}" == "arm64" \
+					|| \
+				"${arch}" == "loongarch" \
+					|| \
+				"${arch}" == "riscv" \
+					|| \
+				"${arch}" == "parisc" \
+					|| \
+				"${arch}" == "parisc64" \
+					|| \
+				"${arch}" == "s390" \
+					|| \
+				"${arch}" == "x86" \
+					|| \
+				"${arch}" == "x86_64" \
+			]] \
+					&& \
+			ver_test "${KV_MAJOR_MINOR}" -ge "5.12" \
+		; then
+			ot-kernel_y_configopt "CONFIG_KFENCE"
+			ot-kernel_y_configopt "CONFIG_KFENCE_SAMPLE_INTERVAL=${kfence_sample_interval}"
+			ot-kernel_set_kconfig_kernel_cmdline "panic_on_warn=1"
+		else
+			ot-kernel_unset_configopt "CONFIG_KFENCE"
+		fi
+
+		if \
+			[[ "${schemes}" =~ "kmsan" ]] \
+					&& \
+			[[ \
+				"${arch}" == "s390" \
+					|| \
+				"${arch}" == "x86" \
+					|| \
+				"${arch}" == "x86_64" \
+			]] \
+					&& \
+			ver_test "${KV_MAJOR_MINOR}" -ge "6.1" \
+		; then
+			ot-kernel_y_configopt "CONFIG_KMSAN"
+			ot-kernel_set_kconfig_kernel_cmdline "panic_on_warn=1"
+		else
+			ot-kernel_unset_configopt "CONFIG_KMSAN"
+		fi
+
+		if \
+			[[ "${schemes}" =~ "ubsan" ]] \
+					&& \
 			[[ \
 				"${arch}" == "arm" \
 					|| \
@@ -12707,17 +12808,29 @@ einfo "Deduping stack overflow check"
 					|| \
 				"${arch}" == "x86_64" \
 			]] \
+					&& \
+			ver_test "${KV_MAJOR_MINOR}" -ge "4.5" \
 		; then
 			ot-kernel_y_configopt "CONFIG_UBSAN"
-			ot-kernel_y_configopt "CONFIG_UBSAN_TRAP"
 			ot-kernel_y_configopt "CONFIG_UBSAN_ALIGNMENT"
-			ot-kernel_y_configopt "CONFIG_UBSAN_BOUNDS"
-			ot-kernel_y_configopt "CONFIG_UBSAN_DIV_ZERO"
-			ot-kernel_y_configopt "CONFIG_UBSAN_SHIFT"
 			if ver_test "${KV_MAJOR_MINOR}" -ge "4.5" && ver_test "${KV_MAJOR_MINOR}" -le "5.4" ; then
 				ot-kernel_y_configopt "CONFIG_UBSAN_SANITIZE_ALL"
 			fi
+			if ver_test "${KV_MAJOR_MINOR}" -ge "4.9" && ver_test "${KV_MAJOR_MINOR}" -le "4.17" ; then
+				ot-kernel_y_configopt "CONFIG_UBSAN_NULL"
+			fi
+			if ver_test "${KV_MAJOR_MINOR}" -ge "5.7" ; then
+				ot-kernel_y_configopt "CONFIG_UBSAN_TRAP"
+			fi
+			if ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
+				ot-kernel_y_configopt "CONFIG_UBSAN_BOUNDS"
+			fi
+			if ver_test "${KV_MAJOR_MINOR}" -ge "5.11" ; then
+				ot-kernel_y_configopt "CONFIG_UBSAN_DIV_ZERO"
+				ot-kernel_y_configopt "CONFIG_UBSAN_SHIFT"
+			fi
 			ot-kernel_set_kconfig_kernel_cmdline "ubsan=on"
+			ot-kernel_set_kconfig_kernel_cmdline "panic_on_warn=1"
 		else
 			ot-kernel_unset_configopt "CONFIG_UBSAN"
 			ot-kernel_unset_configopt "CONFIG_UBSAN_ALIGNMENT"
@@ -12728,13 +12841,22 @@ einfo "Deduping stack overflow check"
 			ot-kernel_unset_configopt "CONFIG_UBSAN_TRAP"
 			ot-kernel_unset_pat_kconfig_kernel_cmdline "ubsan=(on|off)"
 		fi
-
 	else
 		ot-kernel_unset_configopt "CONFIG_KASAN"
 		ot-kernel_unset_configopt "CONFIG_KASAN_HW_TAGS"
 		ot-kernel_unset_configopt "CONFIG_KASAN_SW_TAGS"
 		ot-kernel_unset_configopt "CONFIG_KASAN_GENERIC"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "kasan=(on|off)"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "kasan.fault=(panic|panic_on_write|report)"
+
+		ot-kernel_unset_configopt "CONFIG_KCSAN"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "panic_on_warn=[01]"
+
+		ot-kernel_unset_configopt "CONFIG_KFENCE"
+
+		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
+
+		ot-kernel_unset_configopt "CONFIG_KMSAN"
 
 		ot-kernel_unset_configopt "CONFIG_UBSAN"
 		ot-kernel_unset_configopt "CONFIG_UBSAN_ALIGNMENT"
@@ -12793,14 +12915,6 @@ einfo
 		|| "${_OT_KERNEL_FORCE_STABILITY}" == "1" \
 	]] ; then
 einfo "Forcing the default hardening level for maximum uptime"
-	# Place before ot-kernel-pkgflags_apply, \
-	#	ot-kernel_set_kconfig_hardening_level, \
-	#	ot-kernel_set_kconfig_cfi, \
-	#	ot-kernel_set_kconfig_kcfi, \
-	#	ot-kernel_set_kconfig_cpu_scheduler, \
-	#	ot-kernel_set_kconfig_scs, \
-	#	ot-kernel_optimize_gaming, \
-	#	ot-kernel_optimize_realtime \
 		hardening_level="default"
 	fi
 
@@ -12904,9 +13018,6 @@ einfo "Disabling all debug and shortening logging buffers"
 
 	# Continue hardening_level context:
 		ot-kernel_set_kconfig_hardening_level
-		ot-kernel_set_kconfig_scs # Uses llvm_slot
-		ot-kernel_set_kconfig_cfi # Uses llvm_slot
-		ot-kernel_set_kconfig_kcfi # Uses llvm_slot
 		ot-kernel_set_kconfig_bpf_spectre_mitigation # This call goes after the call to ot-kernel-pkgflags_apply.
 	ot-kernel_set_kconfig_iommu_domain_type
 	ot-kernel-pkgflags_cipher_optional
