@@ -2969,7 +2969,7 @@ unset OT_KERNEL_PRIVATE_KEY
     the kernel.  The default is kasan and ubsan.
 
     Sanitizer  | Supported versions | Threats mitigated   | Performance impact | Production ready | Estimated CVSS 3.1 Severity | Estimated false positives
-    cfi-5.15   | = 5.15             | CE, PE, DT, DoS     | 1.05-1.15x         | Maybe            | High - Critical             | 0.1 - 1 %
+    cfi-5.15   | = 5.15             | CE, PE              | 1.05-1.15x         | Maybe            | High - Critical             | 0.1 - 1 %
     kcfi       | >= 6.1             | CE, PE              | 1.05-1.5x          | Maybe            | High - Critical             | < 0.1 %
     kasan      | >= 4.0             | CE, DT, DoS, DT, ID | 2-5x               | Yes              | Low - Critical              | < 1 %
     kcsan      | >= 5.8             | DoS, DT, ID         | 1.5-3x             | Yes              | Low - Medium                | 1 - 5 %
