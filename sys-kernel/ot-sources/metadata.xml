@@ -2991,6 +2991,12 @@ unset OT_KERNEL_PRIVATE_KEY
     1.5x means 1.5 times the base unmitigated and optimized performance.
     4.0x means 4 times slower compared to the base unmitigated and optimized performance.
 
+    The estimated CVSS 3.1 severity ranges reflect the vulnerability not the
+    sanitizer.   The kasan or kfence sanitizers for example would block use
+    after free vulnerabilities that are marked critical before they were
+    taken advantage of by attackers.  This is to block giving away full
+    capabilities to an attacker.
+
     Use KASAN or KFENCE to halt on several undiscovered 
     vulnerabilities/exploits to mitigate against memory corruption.  Examples
     include use after free, double free, heap overflow, stack overflow.
