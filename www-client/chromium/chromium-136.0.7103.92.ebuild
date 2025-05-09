@@ -4783,12 +4783,11 @@ ewarn "The new V8 Sandbox [for the JavaScript engine] (2024) will be automagic o
 		oshit_opt_level_openh264="2"
 	fi
 
-	if [[ "${oshit_opt_level_opus}" =~ ("2"|"3"|"fast") ]] ; then
-	# If you don't care, then just use -O2.
-	# We use -O2 for inlining enablement in clang.
+	if [[ "${oshit_opt_level_opus}" =~ ("1"|"2"|"3"|"fast") ]] ; then
+	# If you don't care, then just use -O1.
 		:
 	else
-		oshit_opt_level_opus="2"
+		oshit_opt_level_opus="1"
 	fi
 
 	if [[ "${oshit_opt_level_rnnoise}" =~ ("1"|"2"|"3"|"fast") ]] ; then
