@@ -2943,8 +2943,8 @@ unset OT_KERNEL_PRIVATE_KEY
     dereference, etc that could be exploited for code execution.
 
     In either case, it does a kernel panic crash on the kernel before running
-    attacker's code, or crash the kernel before running unauthorized changes, or
-    crash the kernel before running attacker's exfiltration code.
+    attacker's code, or crashes the kernel before running unauthorized changes,
+    or crashes the kernel before running attacker's exfiltration code.
 
     There are competing security objectives for security.  Always-available and
     execution-integrity are mutually exclusive.  This setting is
