@@ -2968,15 +2968,15 @@ unset OT_KERNEL_PRIVATE_KEY
     OT_KERNEL_SECURITY_CRITICAL_SCHEMES - A list of sanitizer schemes to protect
     the kernel.  The default is kasan and ubsan.
 
-    Sanitizer  | Supported versions | Threats mitigated  | Performance impact | Production ready | Estimated CVSS 3.1 Severity | Estimated false positives
-    cfi-5.15   | = 5.15             | CE, PE             | 1.05-1.5x          | Maybe            | Critical                    | < 0.1 %
-    kcfi       | >= 6.1             | CE, PE             | 1.05-1.5x          | Maybe            | Critical                    | < 0.1 %
-    kasan      | >= 4.0             | CE, DT             | 2-5x               | Yes              | Critical                    | < 1 %
-    kcsan      | >= 5.8             | DT                 | 1.5-3x             | Yes              | Medium - High               | 1 - 5 %
-    kfence     | >= 5.12            | CE, DT             | 1.01-1.1x          | Yes              | High - Critical             | 1-5 %
-    msan       | >= 6.1             | ID                 | 3-10x              | No               | Medium - High               | < 1 %
-    scs        | >= 5.8             | CE, PE             | 1.01-1.05x         | Maybe            | Critical                    | 0 %
-    ubsan      | >= 4.5             | CE, DT             | 1.1-2x             | Yes              | High                        | < 0.1 %
+    Sanitizer  | Supported versions | Threats mitigated   | Performance impact | Production ready | Estimated CVSS 3.1 Severity | Estimated false positives
+    cfi-5.15   | = 5.15             | CE, PE, DT, DoS     | 1.05-1.15x         | Maybe            | High - Critical             | 0.1 - 1 %
+    kcfi       | >= 6.1             | CE, PE              | 1.05-1.5x          | Maybe            | High - Critical             | < 0.1 %
+    kasan      | >= 4.0             | CE, DT, DoS, DT, ID | 2-5x               | Yes              | Low - Critical              | < 1 %
+    kcsan      | >= 5.8             | DoS, DT, ID         | 1.5-3x             | Yes              | Low - Medium                | 1 - 5 %
+    kfence     | >= 5.12            | CE, DT, DoS, DT, ID | 1.01-1.1x          | Yes              | Low - Critical              | 1-5 %
+    msan       | >= 6.1             | ID                  | 3-10x              | No               | Low - High                  | < 1 %
+    scs        | >= 5.8             | CE, PE              | 1.01-1.05x         | Maybe            | High - Critical             | 0 %
+    ubsan      | >= 4.5             | CE, PE, DoS, DT, ID | 1.1-2x             | Yes              | Low - Critical              | < 0.1 %
 
     CE = Code Execution
     DT = Data Tampering
@@ -3002,7 +3002,8 @@ unset OT_KERNEL_PRIVATE_KEY
     overflow, out of bounds access, null pointer dereference.
 
     Use KCFI to halt on compromised execution integrity.  It is lightweight
-    variation compared to cfi-5.15.
+    variation compared to cfi-5.15.  KCFI primary mitigation is similar to
+    cfi-icall.
 
     Use MSAN to halt on uninitalized memory.  This catches sensitive data leaks
     from unsanitized memory before memory is being used.
