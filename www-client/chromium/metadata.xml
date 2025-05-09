@@ -243,7 +243,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     Note:  May be set to 1 if disinterested in AI/ML.
 
 
-    OSHIT_OPT_LEVEL_V8="3" - Optimize v8 at O2
+    OSHIT_OPT_LEVEL_V8="3" - Optimize v8 at O3
     Valid values:  2, 3
 
 
