@@ -12593,8 +12593,8 @@ ot-kernel_set_security_critical() {
 			if \
 				[[ \
 					"${arch}" == "arm64" \
-					&& \
-						"${mte}" == "1" \
+						&& \
+					"${mte}" == "1" \
 				]] \
 					&& \
 				 ver_test "${KV_MAJOR_MINOR}" -ge "5.11" \
@@ -12655,14 +12655,22 @@ einfo "Deduping stack overflow check"
 		; then
 			ot-kernel_y_configopt "CONFIG_UBSAN"
 			ot-kernel_y_configopt "CONFIG_UBSAN_TRAP"
+			ot-kernel_y_configopt "CONFIG_UBSAN_ALIGNMENT"
+			ot-kernel_y_configopt "CONFIG_UBSAN_BOUNDS"
+			ot-kernel_y_configopt "CONFIG_UBSAN_DIV_ZERO"
+			ot-kernel_y_configopt "CONFIG_UBSAN_SHIFT"
 			if ver_test "${KV_MAJOR_MINOR}" -ge "4.5" && ver_test "${KV_MAJOR_MINOR}" -le "5.4" ; then
 				ot-kernel_y_configopt "CONFIG_UBSAN_SANITIZE_ALL"
 			fi
 			ot-kernel_set_kconfig_kernel_cmdline "ubsan=on"
 		else
 			ot-kernel_unset_configopt "CONFIG_UBSAN"
-			ot-kernel_unset_configopt "CONFIG_UBSAN_TRAP"
+			ot-kernel_unset_configopt "CONFIG_UBSAN_ALIGNMENT"
+			ot-kernel_unset_configopt "CONFIG_UBSAN_BOUNDS"
+			ot-kernel_unset_configopt "CONFIG_UBSAN_DIV_ZERO"
 			ot-kernel_unset_configopt "CONFIG_UBSAN_SANITIZE_ALL"
+			ot-kernel_unset_configopt "CONFIG_UBSAN_SHIFT"
+			ot-kernel_unset_configopt "CONFIG_UBSAN_TRAP"
 			ot-kernel_unset_pat_kconfig_kernel_cmdline "ubsan=(on|off)"
 		fi
 
@@ -12674,8 +12682,12 @@ einfo "Deduping stack overflow check"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "kasan=(on|off)"
 
 		ot-kernel_unset_configopt "CONFIG_UBSAN"
-		ot-kernel_unset_configopt "CONFIG_UBSAN_TRAP"
+		ot-kernel_unset_configopt "CONFIG_UBSAN_ALIGNMENT"
+		ot-kernel_unset_configopt "CONFIG_UBSAN_BOUNDS"
+		ot-kernel_unset_configopt "CONFIG_UBSAN_DIV_ZERO"
 		ot-kernel_unset_configopt "CONFIG_UBSAN_SANITIZE_ALL"
+		ot-kernel_unset_configopt "CONFIG_UBSAN_SHIFT"
+		ot-kernel_unset_configopt "CONFIG_UBSAN_TRAP"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "ubsan=(on|off)"
 	fi
 }
