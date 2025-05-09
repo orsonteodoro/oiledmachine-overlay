@@ -12568,47 +12568,115 @@ ot-kernel_set_security_critical() {
 		[[ "${work_profile}" == "dss" ]] \
 	; then
 		local need_stack_protector=0
-		ot-kernel_y_configopt "CONFIG_KASAN"
-		ot-kernel_y_configopt "CONFIG_KASAN_PANIC"
+
 		if \
 			[[ \
+				"${arch}" == "arm" \
+					|| \
 				"${arch}" == "arm64" \
-					&& \
-				"${mte}" == "1" \
+					|| \
+				"${arch}" == "loongarch" \
+					|| \
+				"${arch}" == "powerpc" \
+					|| \
+				"${arch}" == "s390" \
+					|| \
+				"${arch}" == "x86_64" \
 			]] \
-				&& \
-			 ver_test "${KV_MAJOR_MINOR}" -ge "5.11" \
+				|| \
+			( [[ "${arch}" == "riscv" ]] && grep -q -e "^CONFIG_64BIT=y" "${BUILD_DIR}/.config" ) \
+				|| \
+			( [[ "${arch}" == "x86" ]] && grep -q -e "^CONFIG_X86_64=y" "${BUILD_DIR}/.config" ) \
 		; then
+			ot-kernel_y_configopt "CONFIG_KASAN"
+
+			if \
+				[[ \
+					"${arch}" == "arm64" \
+					&& \
+						"${mte}" == "1" \
+				]] \
+					&& \
+				 ver_test "${KV_MAJOR_MINOR}" -ge "5.11" \
+			; then
 	# 1.05x - 1.25 performance impact, best for production
-			ot-kernel_y_configopt "CONFIG_KASAN_HW_TAGS"
-			need_stack_protector=1
-		elif \
-			[[ \
-				"${arch}" == "arm64" \
+				ot-kernel_y_configopt "CONFIG_KASAN_HW_TAGS"
+				need_stack_protector=1
+			elif \
+				[[ \
+					"${arch}" == "arm64" \
+						&& \
+					"${mte}" == "1" \
+				]] \
 					&& \
-				"${mte}" == "1" \
-			]] \
-				&& \
-			 ver_test "${KV_MAJOR_MINOR}" -ge "5.4" \
-		; then
+				 ver_test "${KV_MAJOR_MINOR}" -ge "5.4" \
+			; then
 	# 1.2x - 2.0 performance impact, borderline production
-			ot-kernel_y_configopt "CONFIG_KASAN_SW_TAGS"
-		else
+				ot-kernel_y_configopt "CONFIG_KASAN_SW_TAGS"
+			else
 	# 1.4x - 4.0x performance impact, slow for production
-			ot-kernel_y_configopt "CONFIG_KASAN_GENERIC"
-		fi
+				ot-kernel_y_configopt "CONFIG_KASAN_GENERIC"
+			fi
 
 einfo "Deduping stack overflow check"
-		if (( "${need_stack_protector}" == 1 )) ; then
-			ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR"
-			ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR_STRONG"
+			if (( "${need_stack_protector}" == 1 )) ; then
+				ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR"
+				ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR_STRONG"
+			fi
+			ot-kernel_set_kconfig_kernel_cmdline "kasan=on"
+			ot-kernel_set_kconfig_kernel_cmdline "kasan.fault=panic"
+		else
+			ot-kernel_unset_configopt "CONFIG_KASAN"
+			ot-kernel_unset_pat_kconfig_kernel_cmdline "kasan=(on|off)"
 		fi
+
+		if \
+			[[ \
+				"${arch}" == "arm" \
+					|| \
+				"${arch}" == "arm64" \
+					|| \
+				"${arch}" == "mips" \
+					|| \
+				"${arch}" == "riscv" \
+					|| \
+				"${arch}" == "parisc" \
+					|| \
+				"${arch}" == "parisc64" \
+					|| \
+				"${arch}" == "powerpc" \
+					|| \
+				"${arch}" == "s390" \
+					|| \
+				"${arch}" == "x86" \
+					|| \
+				"${arch}" == "x86_64" \
+			]] \
+		; then
+			ot-kernel_y_configopt "CONFIG_UBSAN"
+			ot-kernel_y_configopt "CONFIG_UBSAN_TRAP"
+			if ver_test "${KV_MAJOR_MINOR}" -ge "4.5" && ver_test "${KV_MAJOR_MINOR}" -le "5.4" ; then
+				ot-kernel_y_configopt "CONFIG_UBSAN_SANITIZE_ALL"
+			fi
+			ot-kernel_set_kconfig_kernel_cmdline "ubsan=on"
+		else
+			ot-kernel_unset_configopt "CONFIG_UBSAN"
+			ot-kernel_unset_configopt "CONFIG_UBSAN_TRAP"
+			ot-kernel_unset_configopt "CONFIG_UBSAN_SANITIZE_ALL"
+			ot-kernel_unset_pat_kconfig_kernel_cmdline "ubsan=(on|off)"
+		fi
+
 	else
 		ot-kernel_unset_configopt "CONFIG_KASAN"
-		ot-kernel_unset_configopt "CONFIG_KASAN_PANIC"
 		ot-kernel_unset_configopt "CONFIG_KASAN_HW_TAGS"
 		ot-kernel_unset_configopt "CONFIG_KASAN_SW_TAGS"
 		ot-kernel_unset_configopt "CONFIG_KASAN_GENERIC"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "kasan=(on|off)"
+
+		ot-kernel_unset_configopt "CONFIG_UBSAN"
+		ot-kernel_unset_configopt "CONFIG_UBSAN_TRAP"
+		ot-kernel_unset_configopt "CONFIG_UBSAN_SANITIZE_ALL"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "ubsan=(on|off)"
 	fi
 }
 

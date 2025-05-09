@@ -2926,21 +2926,34 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
-    OT_KERNEL_SECURITY_CRITICAL - Perform runtime monitoring with KASAN to halt
-    several undiscovered critical severity based vulnerabilities/exploits.  Do a
+    OT_KERNEL_SECURITY_CRITICAL - Perform runtime monitoring with KASAN and UBSAN.
+
+    Use KASAN to halt on several undiscovered high/critical severity based
+    vulnerabilities/exploits to mitigate against memory corruption.  Do a kernel
+    panic crash on the kernel before running attacker's code, or crash the
+    kernel before running unauthorized changes, or crash the kernel before
+    running attacker's exfiltration code.
+
+    Use UBSAN to halt on several undiscovered high/critical severity based
+    vulnerabilities/exploits to mitigate against undefined behavior.  Do a
     kernel panic crash on the kernel before running attacker's code, or crash
     the kernel before running unauthorized changes, or crash the kernel before
     running attacker's exfiltration code.
 
+    
+
     Modes:
 
-    Mode    | Performance impact | Compatibility
-    HW_TAGS | 1.05x - 1.25x      | Adding cpu_flags_arm_mte to both USE and OT_KERNEL_USE will use HW_TAGS.
-    SW_TAGS | 1.2x - 2.0x        | Fallback for arm64
-    GENERIC | 1.5x - 4.0x        | Fallback for non-arm64 CPUs.
+    KASAN Mode | Performance impact | Compatibility
+    HW_TAGS    | 1.05x - 1.25x      | Adding cpu_flags_arm_mte to both USE and OT_KERNEL_USE will use HW_TAGS.
+    SW_TAGS    | 1.2x - 2.0x        | Fallback for arm64
+    GENERIC    | 1.5x - 4.0x        | Fallback for non-arm64 CPUs.
 
     1.5x means 1.5 times the base unmitigated and optimized performance.
     4.0x means 4 times slower compared to the base unmitigated and optimized performance.
+
+    UBSAN Mode | Performance impact
+    inline     | 1.1x to 2x        
 
     The following work profiles have this unconditionally on:
 
