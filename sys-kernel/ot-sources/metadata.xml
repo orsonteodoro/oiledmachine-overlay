@@ -2969,14 +2969,14 @@ unset OT_KERNEL_PRIVATE_KEY
     the kernel.  The default is kasan and ubsan.
 
     Sanitizer  | Supported versions | Threats mitigated  | Performance impact | Production ready | Estimated CVSS 3.1 Severity | Estimated false positives
-    kasan      | >= 4.0             | CE, DT             | 2-5x               | Yes              | Critical                    | < 1 %
-    ubsan      | >= 4.5             | CE, DT             | 1.1-2x             | Yes              | High                        | < 0.1 %
-    kcsan      | >= 5.8             | DT                 | 1.5-3x             | Yes              | Medium - High               | 1 - 5 %
-    msan       | >= 6.1             | ID                 | 3-10x              | No               | Medium - High               | < 1 %
-    kcfi       | >= 6.1             | CE, PE             | 1.05-1.5x          | Maybe            | Critical                    | < 0.1 %
     cfi-5.15   | = 5.15             | CE, PE             | 1.05-1.5x          | Maybe            | Critical                    | < 0.1 %
+    kcfi       | >= 6.1             | CE, PE             | 1.05-1.5x          | Maybe            | Critical                    | < 0.1 %
+    kasan      | >= 4.0             | CE, DT             | 2-5x               | Yes              | Critical                    | < 1 %
+    kcsan      | >= 5.8             | DT                 | 1.5-3x             | Yes              | Medium - High               | 1 - 5 %
     kfence     | >= 5.12            | CE, DT             | 1.01-1.1x          | Yes              | High - Critical             | 1-5 %
+    msan       | >= 6.1             | ID                 | 3-10x              | No               | Medium - High               | < 1 %
     scs        | >= 5.8             | CE, PE             | 1.01-1.05x         | Maybe            | Critical                    | 0 %
+    ubsan      | >= 4.5             | CE, DT             | 1.1-2x             | Yes              | High                        | < 0.1 %
 
     CE = Code Execution
     DT = Data Tampering
