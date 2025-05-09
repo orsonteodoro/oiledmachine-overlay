@@ -2930,7 +2930,8 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
 
-    OT_KERNEL_SECURITY_CRITICAL - Perform runtime monitoring with KASAN and UBSAN.
+    OT_KERNEL_SECURITY_CRITICAL - Perform runtime monitoring and protection
+    with KASAN and UBSAN.
 
     Use KASAN to halt on several undiscovered high/critical severity based
     vulnerabilities/exploits to mitigate against memory corruption.  Examples
