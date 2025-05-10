@@ -12792,14 +12792,14 @@ einfo "Deduping stack overflow check"
 			ot-kernel_y_configopt "CONFIG_KFENCE"
 			if [[ "${work_profile}" == "dss" ]] ; then
 				if (( ${kfence_sample_interval} > 10 )) ; then
-					ot-kernel_y_configopt "CONFIG_KFENCE_SAMPLE_INTERVAL=10"
+					ot-kernel_set_configopt "CONFIG_KFENCE_SAMPLE_INTERVAL" "10"
 				elif (( ${kfence_sample_interval} == 0 )) ; then
-					ot-kernel_y_configopt "CONFIG_KFENCE_SAMPLE_INTERVAL=1"
+					ot-kernel_set_configopt "CONFIG_KFENCE_SAMPLE_INTERVAL" "1"
 				else
-					ot-kernel_y_configopt "CONFIG_KFENCE_SAMPLE_INTERVAL=${kfence_sample_interval}"
+					ot-kernel_set_configopt "CONFIG_KFENCE_SAMPLE_INTERVAL" "${kfence_sample_interval}"
 				fi
 			else
-				ot-kernel_y_configopt "CONFIG_KFENCE_SAMPLE_INTERVAL=${kfence_sample_interval}"
+				ot-kernel_set_configopt "CONFIG_KFENCE_SAMPLE_INTERVAL" "${kfence_sample_interval}"
 			fi
 			ot-kernel_set_kconfig_kernel_cmdline "panic_on_warn=1"
 		else
