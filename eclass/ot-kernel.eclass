@@ -12896,8 +12896,6 @@ einfo "Deduping stack overflow check"
 
 		ot-kernel_unset_configopt "CONFIG_KFENCE"
 
-		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
-
 		ot-kernel_unset_configopt "CONFIG_KMSAN"
 
 		ot-kernel_unset_configopt "CONFIG_UBSAN"
