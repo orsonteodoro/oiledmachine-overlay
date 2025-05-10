@@ -12617,6 +12617,7 @@ ot-kernel_set_security_critical() {
 		[[ "${work_profile}" == "dss" ]] \
 	; then
 		local need_stack_protector=0
+		local asan=0
 
 		ot-kernel_unset_configopt "CONFIG_KASAN_HW_TAGS"
 		ot-kernel_unset_configopt "CONFIG_KASAN_SW_TAGS"
@@ -12655,6 +12656,7 @@ ot-kernel_set_security_critical() {
 						&& \
 			ver_test "${KV_MAJOR_MINOR}" -eq "4.0" \
 		; then
+			asan=1
 			ot-kernel_y_configopt "CONFIG_KASAN"
 
 			if \
@@ -12694,12 +12696,6 @@ ot-kernel_set_security_critical() {
 			elif ver_test "${KV_MAJOR_MINOR}" -ge "5.0" ; then
 	# 1.4x - 4.0x performance impact, slow for production
 				ot-kernel_y_configopt "CONFIG_KASAN_GENERIC"
-			fi
-
-einfo "Deduping stack overflow check"
-			if (( "${need_stack_protector}" == 1 )) ; then
-				ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR"
-				ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR_STRONG"
 			fi
 			ot-kernel_unset_pat_kconfig_kernel_cmdline "kasan=(on|off)"
 			ot-kernel_set_kconfig_kernel_cmdline "kasan=on"
@@ -12834,6 +12830,7 @@ einfo "Deduping stack overflow check"
 					&& \
 			ver_test "${KV_MAJOR_MINOR}" -ge "5.12" \
 		; then
+			asan=1
 			ot-kernel_y_configopt "CONFIG_KFENCE"
 			if [[ "${work_profile}" == "dss" ]] ; then
 				if (( ${kfence_sample_interval} > 10 )) ; then
@@ -12847,6 +12844,7 @@ einfo "Deduping stack overflow check"
 				ot-kernel_set_configopt "CONFIG_KFENCE_SAMPLE_INTERVAL" "${kfence_sample_interval}"
 			fi
 			ot-kernel_set_kconfig_kernel_cmdline "kfence.fault=panic"
+			need_stack_protector=1
 		else
 			ot-kernel_unset_configopt "CONFIG_KFENCE"
 		fi
@@ -12926,6 +12924,12 @@ einfo "Deduping stack overflow check"
 			ot-kernel_unset_configopt "CONFIG_UBSAN_SHIFT"
 			ot-kernel_unset_configopt "CONFIG_UBSAN_TRAP"
 			ot-kernel_unset_pat_kconfig_kernel_cmdline "ubsan=(on|off)"
+		fi
+
+		if (( ${need_stack_protector} == 0 )) && (( ${asan} == 1 )) ; then
+einfo "Deduping stack overflow check"
+			ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR"
+			ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR_STRONG"
 		fi
 	else
 		ot-kernel_unset_configopt "CONFIG_KASAN"
