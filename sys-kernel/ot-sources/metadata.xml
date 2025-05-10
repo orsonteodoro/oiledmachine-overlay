@@ -3015,7 +3015,8 @@ unset OT_KERNEL_PRIVATE_KEY
     the memory is checked for memory corruption.
 
     KASAN_SAMPLE_INTERVAL is set to 1 by default, meaning each page of memory
-    is tagged for security critical.
+    is tagged for security-critical inspection for memory corruption.  This
+    tunable applies only HW_TAGS and SW_TAGS.
 
     Use UBSAN to halt on several undiscovered vulnerabilities/exploits to
     mitigate against undefined behavior.  Examples include signed integer
