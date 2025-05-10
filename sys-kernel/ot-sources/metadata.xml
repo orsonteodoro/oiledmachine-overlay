@@ -3037,7 +3037,7 @@ unset OT_KERNEL_PRIVATE_KEY
     mitigate against undefined behavior.  Examples include signed integer
     overflow, out of bounds access, null pointer dereference.
 
-    For this to work, you need either:
+    Requirements:
 
     sys-devel/gcc[sanitize]
 
