@@ -2979,6 +2979,7 @@ unset OT_KERNEL_PRIVATE_KEY
     ubsan      | >= 4.5             | CE, PE, DoS, DT, ID | 1.1-2x             | Yes              | Low - Critical              | < 0.1 %
 
     CE = Code Execution
+    DoS = Denial of Service
     DT = Data Tampering
     ID = Information Disclosure
     PE = Privilege Escalation
