@@ -2984,10 +2984,10 @@ unset OT_KERNEL_PRIVATE_KEY
     ID = Information Disclosure
     PE = Privilege Escalation
 
-    KASAN Mode | Supported versions | Performance impact | Compatibility
-    HW_TAGS    | >= 5.11            | 1.05x - 1.25x      | Adding cpu_flags_arm_mte to both USE and OT_KERNEL_USE will use HW_TAGS.
-    SW_TAGS    | >= 5.0             | 1.2x - 2.0x        | Fallback for arm64
-    GENERIC    | >= 5.0             | 1.5x - 4.0x        | Fallback for non-arm64 CPUs.
+    KASAN Mode | Supported versions | Performance impact | Sampled? | Compatibility
+    HW_TAGS    | >= 5.11            | 1.05x - 1.25x      | Yes      | Adding cpu_flags_arm_mte to both USE and OT_KERNEL_USE will use HW_TAGS.
+    SW_TAGS    | >= 5.0             | 1.2x - 2.0x        | Yes      | Fallback for arm64
+    GENERIC    | >= 5.0             | 1.5x - 4.0x        | No       | Fallback for non-arm64 CPUs.
 
     1.5x means 1.5 times slower than the base which is unmitigated and optimized
     for performance.
@@ -3001,13 +3001,21 @@ unset OT_KERNEL_PRIVATE_KEY
     taken advantage of by attackers.  This is to block giving away full
     capabilities to an attacker.
 
-    Use KASAN or KFENCE to halt on several undiscovered 
-    vulnerabilities/exploits to mitigate against memory corruption.  Examples
-    include use after free, double free, heap overflow, stack overflow.
-    KASAN is comprehensive.  KFENCE is faster and sampled based meaning that
-    it doesn't inspect every allocation/deallocation/use.  The HW_TAGS, SW_TAGS,
-    GENERIC are automagic but still require you choose kasan.
-    KFENCE_SAMPLE_INTERVAL is set to 100 ms default.
+    Use KASAN or KFENCE to halt on several undiscovered vulnerabilities to
+    mitigate against memory corruption.  Examples include use after free, double
+    free, heap overflow, stack overflow.
+
+    KASAN is comprehensive.  The HW_TAGS, SW_TAGS, GENERIC are automagic but
+    still require you choose kasan.
+
+    KFENCE is faster and sampled based meaning that it doesn't inspect every
+    allocation/deallocation/use.
+
+    KFENCE_SAMPLE_INTERVAL is set to 10 ms by default, meaning every 10 ms
+    the memory is checked for memory corruption.
+
+    KASAN_SAMPLE_INTERVAL is set to 1 by default, meaning each page of memory
+    is tagged for security critical.
 
     Use UBSAN to halt on several undiscovered vulnerabilities/exploits to
     mitigate against undefined behavior.  Examples include signed integer
@@ -3032,10 +3040,11 @@ unset OT_KERNEL_PRIVATE_KEY
     OT_KERNEL_SECURITY_CRITICAL_SCHEMES="kasan ubsan"
     OT_KERNEL_SECURITY_CRITICAL_SCHEMES="kasan ubsan kcsan"
     OT_KERNEL_SECURITY_CRITICAL_SCHEMES="ubsan"
-    KFENCE_SAMPLE_INTERVAL="100"
+    KFENCE_SAMPLE_INTERVAL="10"
 
     See also:
 
+      KASAN_SAMPLE_INTERVAL
       KFENCE_SAMPLE_INTERVAL
 
 
@@ -4044,8 +4053,20 @@ unset OT_KERNEL_PRIVATE_KEY
     Valid values:  0 (default), 1.
     See also: KVM_ADD_IGNORE_MSRS_EQ_1
 
+    KASAN_SAMPLE_INTERVAL - Set the tag creation interval between number of tags
+    to control check overhead.
+    Valid values:  an integer, 1 (every page is tagged tagged, upstream and ebuild default)
+    Possible recommendations:
+    security-critical: 1,  balanced: 10,  performance-critical: 100
+    security-critical: 1,  balanced: 100,  performance-critical: 1000
+    security-critical: 1,  balanced: 1000,  performance-critical: 10000
+    So changes are based on orders of magnitude.
+    The tuneable is not well documented or verified.
+
     KFENCE_SAMPLE_INTERVAL - Set the check interval in milliseconds.
-    Valid values:  an integer, 0 (disable kfence), 100 (default)
+    Valid values:  an integer, 0 (disable kfence), 10 (ebuild default), 100 (upstream default)
+    Recommendations:  security-critical: 10,  balanced: 100,  performance-critical: 1000
+    So changes are based on magnitude of order.
 
     LM_SENSORS_MODULES - Add modules for lm-sensors.
     Valid values:  0 (default), 1.
