@@ -5076,9 +5076,24 @@ einfo "Enabling KCFI support in the in the .config."
 		ot-kernel_unset_configopt "CONFIG_CFI_PERMISSIVE"
 		ban_dma_attack_use "cfi" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
+		local clang_slot
+		if tc-is-clang ; then
+			clang_slot=$(clang-major-version)
+		else
+			clang_slot=0
+		fi
+		if ot-kernel_use rust && ver_test "${KV_MAJOR_MINOR}" -ge "6.12" && tc-is-clang && (( ${clang_slot} >= 19 )) ; then
+einfo "Enabling CFI support for Rust"
+			ot-kernel_y_configopt "CONFIG_CFI_ICALL_NORMALIZE_INTEGERS"
+		else
+einfo "Disabling CFI support for Rust"
+			ot-kernel_unset_configopt "CONFIG_CFI_ICALL_NORMALIZE_INTEGERS"
+		fi
 	else
 einfo "Disabling KCFI support in the in the .config."
 		ot-kernel_unset_configopt "CONFIG_CFI_CLANG"
+einfo "Disabling CFI support for Rust"
+		ot-kernel_unset_configopt "CONFIG_CFI_ICALL_NORMALIZE_INTEGERS"
 	fi
 	# Recheck if arm64 needs still manually set KCFI.
 }

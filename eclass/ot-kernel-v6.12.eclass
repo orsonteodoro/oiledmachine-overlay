@@ -301,10 +301,7 @@ declare -A RUST_PV_TO_LLVM_SLOT=(
 	["1.78.0"]="18"
 )
 RUST_SLOTS=(
-	"1.81.0"
-	"1.80.1"
-	"1.79.0"
-	"1.78.0"
+	"9999" # Needs -Z flags for sanitizers
 )
 RUST_MAX_VER="1.81.0" # Inclusive
 RUST_MIN_VER="1.78.0"

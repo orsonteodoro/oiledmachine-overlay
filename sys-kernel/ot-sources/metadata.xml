@@ -3004,7 +3004,12 @@ unset OT_KERNEL_PRIVATE_KEY
     Use KASAN or KFENCE to halt on several undiscovered vulnerabilities to
     mitigate against memory corruption.  Examples include use after free, double
     free, heap overflow, stack overflow.  KASAN and KFENCE have overlap.  Do not
-    use both at the same time.
+    use both at the same time.  KASAN has overlap with stack overflow
+    protection.  KFENCE does not protect against stack overflow.  For Rust based
+    drivers, it is recommended to use KASAN and kernel versions >= 6.12 for
+    proper SSP and HOP protection.  SSP is Stack Smashing Protection and HOP is
+    Heap Overflow Protection.  Both SSP and HOP mitigate against code execution
+    and privilege escalation.
 
     KASAN is comprehensive.  The HW_TAGS, SW_TAGS, GENERIC are automagic but
     still require you choose kasan.
@@ -3070,6 +3075,18 @@ unset OT_KERNEL_PRIVATE_KEY
     You need to manually check the toolchains since BDEPENDs checks are missing.
 
     If you go the clang route, it should all be in the same slot.
+
+    For SSP or HOP with Rust drivers require:
+
+    =dev-lang/rust-9999 or =dev-lang/rust-bin-9999
+
+        AND
+
+    >=sys-devel/gcc-11 or >=llvm-core/clang-11
+
+        AND
+
+    KASAN (SW_TAGS or GENERIC)
 
     Examples:
 
