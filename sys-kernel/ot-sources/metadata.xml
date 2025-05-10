@@ -3021,11 +3021,13 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Use KCSAN to halt on concurrency violations.
 
-    Use cfi for the older implementation.
+    Use CFI to halt on compromised execution integrity with just pointer
+    functions.  It requires LTO.
 
-    Use KCFI to halt on compromised execution integrity.  It is a lightweight
-    variation compared to cfi.  KCFI's primary mitigation is similar to
-    cfi-icall alone.
+    Use KCFI to halt on compromised execution integrity with both pointer
+    functions and some static function calls connected with the entry point
+    of modules or exported symbols.  It doesn't need LTO, so build time is
+    fast.
 
     Use SCS to halt on ROP detection.  Usually SCS is paired with CFI for
     complete CFI coverage.
