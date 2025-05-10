@@ -3000,8 +3000,10 @@ unset OT_KERNEL_PRIVATE_KEY
     Use KASAN or KFENCE to halt on several undiscovered 
     vulnerabilities/exploits to mitigate against memory corruption.  Examples
     include use after free, double free, heap overflow, stack overflow.
-    KASAN is comprehensive.  KFENCE is faster and sampled based.  The HW_TAGS,
-    SW_TAGS, GENERIC are automagic but still require you choose kasan.
+    KASAN is comprehensive.  KFENCE is faster and sampled based meaning that
+    it doesn't inspect every allocation.  The HW_TAGS, SW_TAGS, GENERIC are
+    automagic but still require you choose kasan.  KFENCE_SAMPLE_INTERVAL
+    is set to 100 ms default.
 
     Use UBSAN to halt on several undiscovered vulnerabilities/exploits to
     mitigate against undefined behavior.  Examples include signed integer
@@ -3024,6 +3026,11 @@ unset OT_KERNEL_PRIVATE_KEY
     OT_KERNEL_SECURITY_CRITICAL_SCHEMES="kasan ubsan"
     OT_KERNEL_SECURITY_CRITICAL_SCHEMES="kasan ubsan kcsan"
     OT_KERNEL_SECURITY_CRITICAL_SCHEMES="ubsan"
+    KFENCE_SAMPLE_INTERVAL="100"
+
+    See also:
+
+      KFENCE_SAMPLE_INTERVAL
 
 
 
@@ -4030,6 +4037,9 @@ unset OT_KERNEL_PRIVATE_KEY
     from the kernel kernel config if you decide to disable it.
     Valid values:  0 (default), 1.
     See also: KVM_ADD_IGNORE_MSRS_EQ_1
+
+    KFENCE_SAMPLE_INTERVAL - Set the check interval in milliseconds.
+    Valid values:  an integer, 0 (disable kfence), 100 (default)
 
     LM_SENSORS_MODULES - Add modules for lm-sensors.
     Valid values:  0 (default), 1.
