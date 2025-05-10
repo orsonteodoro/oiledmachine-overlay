@@ -2966,7 +2966,24 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
     OT_KERNEL_SECURITY_CRITICAL_TYPES - A list of sanitizer types to protect
-    the kernel.  The default is kasan and ubsan.
+    the kernel.  The default is kasan and ubsan.  For this to work, you need
+    either:
+
+    sys-devel/gcc[sanitize]
+
+      or
+
+    LLVM_SLOT=16 # It should be >= 16
+    llvm-core/llvm:${LLVM_SLOT}
+    llvm-core/clang:${LLVM_SLOT}
+    llvm-core/lld:${LLVM_SLOT}
+    llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]
+    =llvm-runtimes/compiler-rt-${LLVM_SLOT}*
+    =llvm-runtimes/compiler-rt-sanitizers-${LLVM_SLOT}*[asan,msan,tsan,shadowcallstack,ubsan]
+
+    You need to manually check the toolchains since BDEPENDs checks are missing.
+
+    If you go the clang route, it should all be in the same slot.
 
     Sanitizer  | Supported versions | Threats mitigated   | Performance impact | Production ready | Estimated CVSS 3.1 Severity | Estimated false positives
     cfi-5.15   | = 5.15             | CE, PE              | 1.05-1.15x         | Maybe            | High - Critical             | 0.1 - 1 %
@@ -2974,9 +2991,21 @@ unset OT_KERNEL_PRIVATE_KEY
     kcfi       | >= 6.1             | CE, PE              | 1.05-1.5x          | Maybe            | High - Critical             | < 0.1 %
     kcsan      | >= 5.8             | DoS, DT, ID         | 1.5-3x             | Yes              | Low - Medium                | 1 - 5 %
     kfence     | >= 5.12            | CE, DT, DoS, DT, ID | 1.01-1.1x          | Yes              | Low - Critical              | 1 - 5 %
-    msan       | >= 6.1             | ID                  | 3-10x              | No               | Low - High                  | < 1 %
+    kmsan      | >= 6.1             | ID                  | 3-10x              | No               | Low - High                  | < 1 %
     scs        | >= 5.8             | CE, PE              | 1.01-1.05x         | Maybe            | High - Critical             | 0 %
     ubsan      | >= 4.5             | CE, PE, DoS, DT, ID | 1.1-2x             | Yes              | Low - Critical              | < 0.1 %
+
+    Sanitizer       | GCC Support   | Clang/LLVM support
+    cfi-5.15        | No            | >= 13 (amd64), >= 12 (arm64)
+    kasan (HW_TAGS) | >= 10         | >= 12
+    kasan (SW_TAGS) | >= 11         | Yes
+    kasan (GENERIC) | >= 8.3        | >= 11
+    kcfi            | No            | >= 16
+    kcsan           | >= 11         | >= 11
+    kfence          | ?             | ?
+    kmsan           | No            | >= 14.0.6
+    scs             | >= 12.1       | >= 11
+    ubsan           | >= 4.9        | >= 3.1
 
     CE = Code Execution
     DoS = Denial of Service
