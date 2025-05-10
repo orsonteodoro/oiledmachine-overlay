@@ -12790,7 +12790,17 @@ einfo "Deduping stack overflow check"
 			ver_test "${KV_MAJOR_MINOR}" -ge "5.12" \
 		; then
 			ot-kernel_y_configopt "CONFIG_KFENCE"
-			ot-kernel_y_configopt "CONFIG_KFENCE_SAMPLE_INTERVAL=${kfence_sample_interval}"
+			if [[ "${work_profile}" == "dss" ]] ; then
+				if (( ${kfence_sample_interval} > 10 )) ; then
+					ot-kernel_y_configopt "CONFIG_KFENCE_SAMPLE_INTERVAL=10"
+				elif (( ${kfence_sample_interval} == 0 )) ; then
+					ot-kernel_y_configopt "CONFIG_KFENCE_SAMPLE_INTERVAL=1"
+				else
+					ot-kernel_y_configopt "CONFIG_KFENCE_SAMPLE_INTERVAL=${kfence_sample_interval}"
+				fi
+			else
+				ot-kernel_y_configopt "CONFIG_KFENCE_SAMPLE_INTERVAL=${kfence_sample_interval}"
+			fi
 			ot-kernel_set_kconfig_kernel_cmdline "panic_on_warn=1"
 		else
 			ot-kernel_unset_configopt "CONFIG_KFENCE"
