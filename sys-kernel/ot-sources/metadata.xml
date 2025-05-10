@@ -3013,6 +3013,8 @@ unset OT_KERNEL_PRIVATE_KEY
     mitigate against undefined behavior.  Examples include signed integer
     overflow, out of bounds access, null pointer dereference.
 
+    Use KCSAN to halt on concurrency violations.
+
     Use KCFI to halt on compromised execution integrity.  It is lightweight
     variation compared to cfi-5.15.  KCFI primary mitigation is similar to
     cfi-icall.
