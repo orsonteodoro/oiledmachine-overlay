@@ -2973,7 +2973,7 @@ unset OT_KERNEL_PRIVATE_KEY
     kasan      | >= 4.0             | CE, DT, DoS, DT, ID | 2-5x               | Yes              | Low - Critical              | < 1 %
     kcfi       | >= 6.1             | CE, PE              | 1.05-1.5x          | Maybe            | High - Critical             | < 0.1 %
     kcsan      | >= 5.8             | DoS, DT, ID         | 1.5-3x             | Yes              | Low - Medium                | 1 - 5 %
-    kfence     | >= 5.12            | CE, DT, DoS, DT, ID | 1.01-1.1x          | Yes              | Low - Critical              | 1-5 %
+    kfence     | >= 5.12            | CE, DT, DoS, DT, ID | 1.01-1.1x          | Yes              | Low - Critical              | 1 - 5 %
     msan       | >= 6.1             | ID                  | 3-10x              | No               | Low - High                  | < 1 %
     scs        | >= 5.8             | CE, PE              | 1.01-1.05x         | Maybe            | High - Critical             | 0 %
     ubsan      | >= 4.5             | CE, PE, DoS, DT, ID | 1.1-2x             | Yes              | Low - Critical              | < 0.1 %
