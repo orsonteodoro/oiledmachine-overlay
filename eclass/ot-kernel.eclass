@@ -12866,6 +12866,10 @@ einfo "Deduping stack overflow check"
 		ot-kernel_unset_configopt "CONFIG_UBSAN_SHIFT"
 		ot-kernel_unset_configopt "CONFIG_UBSAN_TRAP"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "ubsan=(on|off)"
+
+		ot-kernel_set_kconfig_cfi 0
+		ot-kernel_set_kconfig_kcfi 0
+		ot-kernel_set_kconfig_scs 0
 	fi
 }
 
