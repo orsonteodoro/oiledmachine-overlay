@@ -2996,10 +2996,10 @@ unset OT_KERNEL_PRIVATE_KEY
     optimized for performance.
 
     The estimated CVSS 3.1 severity ranges reflect the vulnerability not the
-    sanitizer.   The kasan or kfence sanitizers for example would block use
+    sanitizer.   The KASAN or KFENCE sanitizers for example would block use
     after free vulnerabilities that are marked critical before they were
     taken advantage of by attackers.  This is to block giving away full
-    capabilities to an attacker.
+    capabilities to attacker(s).
 
     Use KASAN or KFENCE to halt on several undiscovered vulnerabilities to
     mitigate against memory corruption.  Examples include use after free, double
