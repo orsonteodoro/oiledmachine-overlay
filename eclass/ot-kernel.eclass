@@ -3896,6 +3896,10 @@ eerror "KTLS_COMPAT has been renamed to TLS.  Please rename to continue."
 eerror "KTLS_REGION has been renamed to TLS_REGION.  Please rename to continue."
 	fi
 
+	if [[ -n "${OT_KERNEL_SECURITY_CRITICAL_SCHEMES}" ]] ; then
+eerror "OT_KERNEL_SECURITY_CRITICAL_SCHEMES has been renamed to OT_KERNEL_SECURITY_CRITICAL_TYPES.  Please rename to continue."
+	fi
+
 ewarn
 ewarn "The interpretation of the OT_KERNEL_HARDENING_LEVEL values has changed."
 ewarn "See metadata.xml (or \`epkginfo -x ${PN}::oiledmachine-overlay\`) for"
@@ -4002,7 +4006,7 @@ ot-kernel_clear_env() {
 	unset OT_KERNEL_SATA_LPM_MID
 	unset OT_KERNEL_SATA_LPM_MIN
 	unset OT_KERNEL_SECURITY_CRITICAL
-	unset OT_KERNEL_SECURITY_CRITICAL_SCHEMES
+	unset OT_KERNEL_SECURITY_CRITICAL_TYPES
 	unset OT_KERNEL_SGX
 	unset OT_KERNEL_SLAB_ALLOCATOR
 	unset OT_KERNEL_SME
@@ -4122,6 +4126,7 @@ ot-kernel_clear_env() {
 	unset IPTABLES_ROUTER
 	unset TLS
 	unset TLS_REGION
+	unset KASAN_SAMPLE_INTERVAL
 	unset KFENCE_SAMPLE_INTERVAL
 	unset KVM_GUEST_MEM_HOTPLUG
 	unset KVM_GUEST_PCI_HOTPLUG
@@ -12556,8 +12561,9 @@ ot-kernel_set_security_critical() {
 	# TODO: patch kernel for custom panic for <sanitizer>.fault=panic for KCSAN, UBSAN, KMSAN, KFENCE.
 
 	local security_critical=${OT_KERNEL_SECURITY_CRITICAL:-0}
-	local schemes=${OT_KERNEL_SECURITY_CRITICAL_SCHEMES-"kasan ubsan"}
-	local kfence_sample_interval=${KFENCE_SAMPLE_INTERVAL-100}
+	local types=${OT_KERNEL_SECURITY_CRITICAL_TYPES-"kasan ubsan"}
+	local kfence_sample_interval=${KFENCE_SAMPLE_INTERVAL-10}
+	local kasan_sample_interval=${KASAN_SAMPLE_INTERVAL-1}
 	if \
 		[[ \
 			"${work_profile}" == "custom" \
@@ -12575,7 +12581,7 @@ ot-kernel_set_security_critical() {
 
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "panic_on_warn=[01]"
 		if \
-			[[ "${schemes}" =~ "kasan" ]] \
+			[[ "${types}" =~ "kasan" ]] \
 						&& \
 			( \
 				[[ \
@@ -12607,11 +12613,17 @@ ot-kernel_set_security_critical() {
 						&& \
 					"${mte}" == "1" \
 				]] \
-					&& \
-				 ver_test "${KV_MAJOR_MINOR}" -ge "5.11" \
+						&& \
+				ver_test "${KV_MAJOR_MINOR}" -ge "5.11" \
 			; then
 	# 1.05x - 1.25 performance impact, best for production
 				ot-kernel_y_configopt "CONFIG_KASAN_HW_TAGS"
+				ot-kernel_unset_pat_kconfig_kernel_cmdline "kasan.page_alloc.sample=[0-9]+"
+				if [[ "${work_profile}" == "dss" ]] ; then
+					ot-kernel_set_kconfig_kernel_cmdline "kasan.page_alloc.sample=1"
+				else
+					ot-kernel_set_kconfig_kernel_cmdline "kasan.page_alloc.sample=${kasan_sample_interval}"
+				fi
 				need_stack_protector=1
 			elif \
 				[[ \
@@ -12619,11 +12631,16 @@ ot-kernel_set_security_critical() {
 						&& \
 					"${mte}" == "1" \
 				]] \
-					&& \
+						&& \
 				ver_test "${KV_MAJOR_MINOR}" -ge "5.4" \
 			; then
 	# 1.2x - 2.0 performance impact, borderline production
 				ot-kernel_y_configopt "CONFIG_KASAN_SW_TAGS"
+				if [[ "${work_profile}" == "dss" ]] ; then
+					ot-kernel_set_kconfig_kernel_cmdline "kasan.page_alloc.sample=1"
+				else
+					ot-kernel_set_kconfig_kernel_cmdline "kasan.page_alloc.sample=${kasan_sample_interval}"
+				fi
 			elif ver_test "${KV_MAJOR_MINOR}" -ge "5.0" ; then
 	# 1.4x - 4.0x performance impact, slow for production
 				ot-kernel_y_configopt "CONFIG_KASAN_GENERIC"
@@ -12649,7 +12666,7 @@ einfo "Deduping stack overflow check"
 		fi
 
 		if \
-			[[ "${schemes}" =~ "kcsan" ]] \
+			[[ "${types}" =~ "kcsan" ]] \
 					&& \
 			[[ \
 				"${arch}" == "arm64" \
@@ -12678,7 +12695,7 @@ einfo "Deduping stack overflow check"
 		fi
 
 		if \
-			[[ "${schemes}" =~ "cfi-5.15" ]] \
+			[[ "${types}" =~ "cfi-5.15" ]] \
 					&& \
 			[[ \
 				"${arch}" == "x86_64" \
@@ -12694,7 +12711,7 @@ einfo "Deduping stack overflow check"
 
 
 		if \
-			[[ "${schemes}" =~ "kcfi" ]] \
+			[[ "${types}" =~ "kcfi" ]] \
 					&& \
 			[[ \
 				"${arch}" == "arm" \
@@ -12717,7 +12734,7 @@ einfo "Deduping stack overflow check"
 		fi
 
 		if \
-			[[ "${schemes}" =~ "scs" ]] \
+			[[ "${types}" =~ "scs" ]] \
 					&& \
 			[[ \
 				"${arch}" == "arm64" \
@@ -12734,7 +12751,7 @@ einfo "Deduping stack overflow check"
 		fi
 
 		if \
-			[[ "${schemes}" =~ "kfence" ]] \
+			[[ "${types}" =~ "kfence" ]] \
 					&& \
 			[[ \
 				"${arch}" == "arm" \
@@ -12766,7 +12783,7 @@ einfo "Deduping stack overflow check"
 		fi
 
 		if \
-			[[ "${schemes}" =~ "kmsan" ]] \
+			[[ "${types}" =~ "kmsan" ]] \
 					&& \
 			[[ \
 				"${arch}" == "s390" \
@@ -12785,7 +12802,7 @@ einfo "Deduping stack overflow check"
 		fi
 
 		if \
-			[[ "${schemes}" =~ "ubsan" ]] \
+			[[ "${types}" =~ "ubsan" ]] \
 					&& \
 			[[ \
 				"${arch}" == "arm" \
@@ -12848,6 +12865,7 @@ einfo "Deduping stack overflow check"
 		ot-kernel_unset_configopt "CONFIG_KASAN_GENERIC"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "kasan=(on|off)"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "kasan.fault=(panic|panic_on_write|report)"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "kasan.page_alloc.sample=[0-9]+"
 
 		ot-kernel_unset_configopt "CONFIG_KCSAN"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "panic_on_warn=[01]"

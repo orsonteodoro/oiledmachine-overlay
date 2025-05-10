@@ -1670,7 +1670,7 @@ OT_KERNEL_WORK_PROFILE="http-server-busy"
 
       HT
       OT_KERNEL_SECURITY_CRITICAL
-      OT_KERNEL_SECURITY_CRITICAL_SCHEMES
+      OT_KERNEL_SECURITY_CRITICAL_TYPES
       OT_KERNEL_SME
       OT_KERNEL_SME_DEFAULT_ON
       SEV
@@ -2939,7 +2939,7 @@ unset OT_KERNEL_PRIVATE_KEY
     whether or not the vulnerability is taken advantage of and exploited for the
     benefit of the attacker(s).  It assumes that it is better to halt than to
     continue unauthorized anything that gives the attacker an advantage at the
-    cost of you or the other people involved.  These sanitizers schemes may also
+    cost of you or the other people involved.  These sanitizers types may also
     trigger on false positives.  A crash can be a negative experience that leads
     to lost work or changes a good day into a bad day.  This is is why
     OT_KERNEL_SECURITY_CRITICAL is default off except for the dss work profile.
@@ -2961,11 +2961,11 @@ unset OT_KERNEL_PRIVATE_KEY
     See also:
 
       OT_KERNEL_MAX_UPTIME
-      OT_KERNEL_SECURITY_CRITICAL_SCHEMES
+      OT_KERNEL_SECURITY_CRITICAL_TYPES
 
 
 
-    OT_KERNEL_SECURITY_CRITICAL_SCHEMES - A list of sanitizer schemes to protect
+    OT_KERNEL_SECURITY_CRITICAL_TYPES - A list of sanitizer types to protect
     the kernel.  The default is kasan and ubsan.
 
     Sanitizer  | Supported versions | Threats mitigated   | Performance impact | Production ready | Estimated CVSS 3.1 Severity | Estimated false positives
@@ -3038,9 +3038,9 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Examples:
 
-    OT_KERNEL_SECURITY_CRITICAL_SCHEMES="kasan ubsan"
-    OT_KERNEL_SECURITY_CRITICAL_SCHEMES="kasan ubsan kcsan"
-    OT_KERNEL_SECURITY_CRITICAL_SCHEMES="ubsan"
+    OT_KERNEL_SECURITY_CRITICAL_TYPES="kasan ubsan"
+    OT_KERNEL_SECURITY_CRITICAL_TYPES="kasan ubsan kcsan"
+    OT_KERNEL_SECURITY_CRITICAL_TYPES="ubsan"
     KFENCE_SAMPLE_INTERVAL="10"
 
     See also:
