@@ -3019,11 +3019,9 @@ unset OT_KERNEL_PRIVATE_KEY
     KFENCE_SAMPLE_INTERVAL is set to 10 ms by default, meaning every 10 ms
     the memory is checked for memory corruption.
 
-    Use UBSAN to halt on several undiscovered vulnerabilities/exploits to
-    mitigate against undefined behavior.  Examples include signed integer
-    overflow, out of bounds access, null pointer dereference.
-
     Use KCSAN to halt on concurrency violations.
+
+    Use cfi-5.15 for the older comprehensive implementation.
 
     Use KCFI to halt on compromised execution integrity.  It is lightweight
     variation compared to cfi-5.15.  KCFI primary mitigation is similar to
@@ -3034,8 +3032,9 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Use SCS to halt on ROP detection.
 
-    Use cfi-5.15 for the older comprehensive implementation.
-
+    Use UBSAN to halt on several undiscovered vulnerabilities/exploits to
+    mitigate against undefined behavior.  Examples include signed integer
+    overflow, out of bounds access, null pointer dereference.
 
     Examples:
 
