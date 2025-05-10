@@ -7867,8 +7867,16 @@ einfo "Enabling LTO"
 		ot-kernel_y_configopt "CONFIG_HAS_LTO_CLANG"
 		ban_dma_attack_use "lto" "CONFIG_KALLSYMS"
 		ot-kernel_y_configopt "CONFIG_KALLSYMS"
-		ot-kernel_unset_configopt "CONFIG_KASAN"
-		ot-kernel_unset_configopt "CONFIG_KASAN_HW_TAGS"
+
+	if grep -q -E -e "^CONFIG_DEBUG_INFO=y" "${path_config}" ; then
+ewarn "LTO is mutually exclusive with debug."
+	fi
+
+	# DEBUG_INFO xor KASAN
+		ot-kernel_unset_configopt "CONFIG_DEBUG_INFO"
+#		ot-kernel_unset_configopt "CONFIG_KASAN"
+#		ot-kernel_unset_configopt "CONFIG_KASAN_HW_TAGS"
+
 		ot-kernel_y_configopt "CONFIG_LTO"
 		ot-kernel_y_configopt "CONFIG_LTO_CLANG"
 		ot-kernel_unset_configopt "CONFIG_LTO_CLANG_FULL"
@@ -12402,6 +12410,7 @@ ot-kernel-debugger() {
 		ot-kernel_y_configopt "CONFIG_DEBUG_INFO"
 		ot-kernel_y_configopt "CONFIG_DEBUG_INFO_DWARF4"
 		picked=1
+ewarn "LTO is mutually exclusive with debug.  Disable the dwarf4 USE flag to use LTO."
 	fi
 	if has dwarf5 ${IUSE_EFFECTIVE} && ot-kernel_use dwarf5 ; then
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.18" ; then
@@ -12411,6 +12420,7 @@ ot-kernel-debugger() {
 		ot-kernel_y_configopt "CONFIG_DEBUG_INFO"
 		ot-kernel_y_configopt "CONFIG_DEBUG_INFO_DWARF5"
 		picked=1
+ewarn "LTO is mutually exclusive with debug.  Disable the dwarf5 USE flag to use LTO."
 	fi
 	if has dwarf-auto ${IUSE_EFFECTIVE} && ot-kernel_use dwarf-auto ; then
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.18" ; then
@@ -12420,6 +12430,7 @@ ot-kernel-debugger() {
 		ot-kernel_y_configopt "CONFIG_DEBUG_KERNEL"
 		ot-kernel_y_configopt "CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT"
 		picked=1
+ewarn "LTO is mutually exclusive with debug.  Disable the dwarf-auto USE flag to use LTO."
 	fi
 }
 
