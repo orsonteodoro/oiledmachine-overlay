@@ -3922,6 +3922,10 @@ eerror "KTLS_REGION has been renamed to TLS_REGION.  Please rename to continue."
 eerror "OT_KERNEL_SECURITY_CRITICAL_SCHEMES has been renamed to OT_KERNEL_SECURITY_CRITICAL_TYPES.  Please rename to continue."
 	fi
 
+	if [[ "${OT_KERNEL_SECURITY_CRITICAL_TYPES}" =~ "cfi-5.15" ]] ; then
+eerror "The cfi-5.15 option has been renamed to cfi in OT_KERNEL_SECURITY_CRITICAL_TYPES.  Please rename to continue."
+	fi
+
 ewarn
 ewarn "The interpretation of the OT_KERNEL_HARDENING_LEVEL values has changed."
 ewarn "See metadata.xml (or \`epkginfo -x ${PN}::oiledmachine-overlay\`) for"
