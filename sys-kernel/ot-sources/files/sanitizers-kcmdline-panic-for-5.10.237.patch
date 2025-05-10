@@ -1,0 +1,132 @@
+--- a/kernel/kcsan/core.c.orig	2025-03-24 07:02:41.000000000 -0700
++++ b/kernel/kcsan/core.c	2025-05-10 00:14:14.818539986 -0700
+@@ -26,6 +26,16 @@
+ #include "kcsan.h"
+ #include "permissive.h"
+ 
++static int kcsan_fault_mode __read_mostly = 0;
++
++static int __init kcsan_fault_param(char *str)
++{
++	if (str && strcmp(str, "panic") == 0)
++		kcsan_fault_mode = 1;
++	return 1;
++}
++__setup("kcsan.fault=", kcsan_fault_param);
++
+ static bool kcsan_early_enable = IS_ENABLED(CONFIG_KCSAN_EARLY_ENABLE);
+ unsigned int kcsan_udelay_task = CONFIG_KCSAN_UDELAY_TASK;
+ unsigned int kcsan_udelay_interrupt = CONFIG_KCSAN_UDELAY_INTERRUPT;
+--- a/kernel/kcsan/report.c.orig	2025-03-24 07:02:41.000000000 -0700
++++ b/kernel/kcsan/report.c	2025-05-10 00:22:28.859195990 -0700
+@@ -419,6 +419,10 @@ static void print_report(enum kcsan_valu
+ 	if (rate_limit_report(this_frame, other_frame))
+ 		return;
+ 
++	if (kcsan_fault_mode == 1) {
++		panic("KCSAN: data race detected, panicking as requested");
++	}
++
+ 	/* Print report header. */
+ 	pr_err("==================================================================\n");
+ 	if (other_info) {
+--- a/kernel/scs.c.orig	2022-12-11 14:15:18.000000000 -0800
++++ b/kernel/scs.c	2025-05-10 01:33:35.900065024 -0700
+@@ -12,6 +12,16 @@
+ #include <linux/vmalloc.h>
+ #include <linux/vmstat.h>
+ 
++static int scs_fault_mode __read_mostly = 0;
++
++static int __init scs_fault_param(char *str)
++{
++	if (str && strcmp(str, "panic") == 0)
++		scs_fault_mode = 1;
++	return 1;
++}
++__setup("scs.fault=", scs_fault_param);
++
+ static void __scs_account(void *s, int account)
+ {
+ 	struct page *scs_page = vmalloc_to_page(s);
+@@ -151,6 +161,10 @@ void scs_release(struct task_struct *tsk
+ 	if (!s)
+ 		return;
+ 
++	if (scs_fault_mode == 1) {
++		panic("SCS: shadow call stack violation, panicking as requested");
++	}
++
+ 	WARN(task_scs_end_corrupted(tsk),
+ 	     "corrupted shadow stack detected when freeing task\n");
+ 	scs_check_usage(tsk);
+--- a/lib/ubsan.c.orig	2025-05-10 07:21:38.254515690 -0700
++++ b/lib/ubsan.c	2025-05-10 07:23:33.594681941 -0700
+@@ -17,6 +17,16 @@
+ 
+ #include "ubsan.h"
+ 
++static int ubsan_fault_mode __read_mostly = 0;
++
++static int __init ubsan_fault_param(char *str)
++{
++	if (str && strcmp(str, "panic") == 0)
++		ubsan_fault_mode = 1;
++	return 1;
++}
++__setup("ubsan.fault=", ubsan_fault_param);
++
+ const char *type_check_kinds[] = {
+ 	"load of",
+ 	"store to",
+@@ -137,6 +147,10 @@ static void ubsan_prologue(struct source
+ {
+ 	current->in_ubsan++;
+ 
++	if (ubsan_fault_mode == 1) {
++		panic("UBSAN: undefined behavior detected, panicking as requested");
++	}
++
+ 	pr_err("========================================"
+ 		"========================================\n");
+ 	pr_err("UBSAN: %s in %s:%d:%d\n", reason, loc->file_name,
+--- a/mm/kasan/common.c.orig	2025-05-10 08:19:44.135192697 -0700
++++ b/mm/kasan/common.c	2025-05-10 08:20:16.454996447 -0700
+@@ -24,6 +24,7 @@
+ #include <linux/memory.h>
+ #include <linux/mm.h>
+ #include <linux/module.h>
++#include <linux/panic.h>
+ #include <linux/printk.h>
+ #include <linux/sched.h>
+ #include <linux/sched/task_stack.h>
+@@ -40,6 +41,16 @@
+ #include "kasan.h"
+ #include "../slab.h"
+ 
++static int kasan_fault_mode __read_mostly = 0;
++
++static int __init kasan_fault_param(char *str)
++{
++	if (str && strcmp(str, "panic") == 0)
++		kasan_fault_mode = 1;
++	return 1;
++}
++__setup("kasan.fault=", kasan_fault_param);
++
+ depot_stack_handle_t kasan_save_stack(gfp_t flags)
+ {
+ 	unsigned long entries[KASAN_STACK_DEPTH];
+--- a/mm/kasan/report.c.orig	2025-05-10 07:47:33.295010655 -0700
++++ b/mm/kasan/report.c	2025-05-10 07:58:59.070476426 -0700
+@@ -79,6 +79,10 @@ static DEFINE_SPINLOCK(report_lock);
+ 
+ static void start_report(unsigned long *flags)
+ {
++	if (kasan_fault_mode == 1) {
++		panic("KASAN: memory access violation detected, panicking as requested");
++	}
++
+ 	/*
+ 	 * Make sure we don't end up in loop.
+ 	 */

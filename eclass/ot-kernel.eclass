@@ -2983,6 +2983,27 @@ einfo "Applying the Nest scheduler patch"
 	fi
 }
 
+# @FUNCTION: ot-kernel_apply_kcmdline_for_sanitizers
+# @DESCRIPTION:
+# Add patch to avoid panic_on_warn for sanitizers
+ot-kernel_apply_kcmdline_for_sanitizers() {
+	if ver_test "${KV_MAJOR_MINOR}" -gt "6.6" ; then
+		_fpatch "${FILESDIR}/sanitizers-kcmdline-panic-for-6.14.6.patch"
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "6.6" ; then
+		_fpatch "${FILESDIR}/sanitizers-kcmdline-panic-for-6.6.90.patch"
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "6.1" ; then
+		_fpatch "${FILESDIR}/sanitizers-kcmdline-panic-for-6.1.138.patch"
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
+		_fpatch "${FILESDIR}/sanitizers-kcmdline-panic-for-5.15.182.patch"
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
+		_fpatch "${FILESDIR}/sanitizers-kcmdline-panic-for-5.10.237.patch"
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
+		_fpatch "${FILESDIR}/sanitizers-kcmdline-panic-for-5.4.293.patch"
+	else
+ewarn "QA:  Update sanitizer patch for kernel ${KV_MAJOR_MINOR}."
+	fi
+}
+
 # @FUNCTION: apply_all_patchsets
 # @DESCRIPTION:
 # Apply the patches conditionally based on extraversion or cpu_sched
@@ -3133,6 +3154,7 @@ apply_all_patchsets() {
 	apply_custom_logo
 
 	ot-kernel_apply_kcp
+	ot-kernel_apply_kcmdline_for_sanitizers
 
 	if [[ "${PV}" =~ "9999" ]] ; then
 		# Disable + suffix
@@ -12593,7 +12615,15 @@ ot-kernel_set_security_critical() {
 		ot-kernel_unset_configopt "CONFIG_KASAN_HW_TAGS"
 		ot-kernel_unset_configopt "CONFIG_KASAN_SW_TAGS"
 		ot-kernel_unset_configopt "CONFIG_KASAN_GENERIC"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "cfi.fault=panic"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "kasan.fault=(panic|panic_on_write|report)"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "kcfi.fault=panic"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "kcsan.fault=panic"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "kfence.fault=panic"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "kmsan.fault=panic"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "panic_on_warn=[01]"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "scs.fault=panic"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "ubsan.fault=panic"
 		if \
 			[[ "${types}" =~ "kasan" ]] \
 						&& \
@@ -12669,9 +12699,8 @@ einfo "Deduping stack overflow check"
 			ot-kernel_set_kconfig_kernel_cmdline "kasan=on"
 			if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
 				ot-kernel_unset_pat_kconfig_kernel_cmdline "kasan.fault=(panic|panic_on_write|report)"
-				ot-kernel_set_kconfig_kernel_cmdline "kasan.fault=panic"
 			else
-				ot-kernel_set_kconfig_kernel_cmdline "panic_on_warn=1"
+				ot-kernel_set_kconfig_kernel_cmdline "kasan.fault=panic"
 			fi
 		else
 			ot-kernel_unset_configopt "CONFIG_KASAN"
@@ -12703,14 +12732,24 @@ einfo "Deduping stack overflow check"
 			ver_test "${KV_MAJOR_MINOR}" -ge "5.8" \
 		; then
 			ot-kernel_y_configopt "CONFIG_KCSAN"
-			ot-kernel_set_kconfig_kernel_cmdline "panic_on_warn=1"
+			ot-kernel_set_kconfig_kernel_cmdline "kcsan.fault=panic"
 		else
 			ot-kernel_unset_configopt "CONFIG_KCSAN"
 		fi
 
+		has_cfi_in_types() {
+			local x
+			for x in ${types} ; do
+				if [[ "${x}" == "cfi" ]] ; then
+					return 0
+				fi
+			done
+			return 1
+		}
+
 		if \
-			[[ "${types}" =~ "cfi-5.15" ]] \
-					&& \
+			has_cfi_in_types \
+					&&
 			[[ \
 				"${arch}" == "x86_64" \
 			]] \
@@ -12718,7 +12757,7 @@ einfo "Deduping stack overflow check"
 			ver_test "${KV_MAJOR_MINOR}" -eq "5.15" \
 		; then
 			ot-kernel_set_kconfig_cfi 1					# Uses llvm_slot
-			ot-kernel_set_kconfig_kernel_cmdline "panic_on_warn=1"
+			ot-kernel_set_kconfig_kernel_cmdline "cfi.fault=panic"
 		else
 			ot-kernel_set_kconfig_cfi 0
 		fi
@@ -12742,7 +12781,7 @@ einfo "Deduping stack overflow check"
 			ver_test "${KV_MAJOR_MINOR}" -ge "6.1" \
 		; then
 			ot-kernel_set_kconfig_kcfi 1					# Uses llvm_slot
-			ot-kernel_set_kconfig_kernel_cmdline "panic_on_warn=1"
+			ot-kernel_set_kconfig_kernel_cmdline "kcfi.fault=panic"
 		else
 			ot-kernel_set_kconfig_kcfi 0
 		fi
@@ -12759,7 +12798,7 @@ einfo "Deduping stack overflow check"
 			ver_test "${KV_MAJOR_MINOR}" -ge "5.8" \
 		; then
 			ot-kernel_set_kconfig_scs 1					# Uses llvm_slot
-			ot-kernel_set_kconfig_kernel_cmdline "panic_on_warn=1"
+			ot-kernel_set_kconfig_kernel_cmdline "scs.fault=panic"
 		else
 			ot-kernel_set_kconfig_scs 0					# Uses llvm_slot
 		fi
@@ -12801,7 +12840,7 @@ einfo "Deduping stack overflow check"
 			else
 				ot-kernel_set_configopt "CONFIG_KFENCE_SAMPLE_INTERVAL" "${kfence_sample_interval}"
 			fi
-			ot-kernel_set_kconfig_kernel_cmdline "panic_on_warn=1"
+			ot-kernel_set_kconfig_kernel_cmdline "kfence.fault=panic"
 		else
 			ot-kernel_unset_configopt "CONFIG_KFENCE"
 		fi
@@ -12820,7 +12859,7 @@ einfo "Deduping stack overflow check"
 			ver_test "${KV_MAJOR_MINOR}" -ge "6.1" \
 		; then
 			ot-kernel_y_configopt "CONFIG_KMSAN"
-			ot-kernel_set_kconfig_kernel_cmdline "panic_on_warn=1"
+			ot-kernel_set_kconfig_kernel_cmdline "kmsan.fault=panic"
 		else
 			ot-kernel_unset_configopt "CONFIG_KMSAN"
 		fi
@@ -12871,7 +12910,7 @@ einfo "Deduping stack overflow check"
 				ot-kernel_y_configopt "CONFIG_UBSAN_SHIFT"
 			fi
 			ot-kernel_set_kconfig_kernel_cmdline "ubsan=on"
-			ot-kernel_set_kconfig_kernel_cmdline "panic_on_warn=1"
+			ot-kernel_set_kconfig_kernel_cmdline "ubsan.fault=panic"
 		else
 			ot-kernel_unset_configopt "CONFIG_UBSAN"
 			ot-kernel_unset_configopt "CONFIG_UBSAN_ALIGNMENT"
@@ -12887,12 +12926,8 @@ einfo "Deduping stack overflow check"
 		ot-kernel_unset_configopt "CONFIG_KASAN_HW_TAGS"
 		ot-kernel_unset_configopt "CONFIG_KASAN_SW_TAGS"
 		ot-kernel_unset_configopt "CONFIG_KASAN_GENERIC"
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "kasan=(on|off)"
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "kasan.fault=(panic|panic_on_write|report)"
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "kasan.page_alloc.sample=[0-9]+"
 
 		ot-kernel_unset_configopt "CONFIG_KCSAN"
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "panic_on_warn=[01]"
 
 		ot-kernel_unset_configopt "CONFIG_KFENCE"
 
@@ -12905,11 +12940,23 @@ einfo "Deduping stack overflow check"
 		ot-kernel_unset_configopt "CONFIG_UBSAN_SANITIZE_ALL"
 		ot-kernel_unset_configopt "CONFIG_UBSAN_SHIFT"
 		ot-kernel_unset_configopt "CONFIG_UBSAN_TRAP"
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "ubsan=(on|off)"
 
 		ot-kernel_set_kconfig_cfi 0
 		ot-kernel_set_kconfig_kcfi 0
 		ot-kernel_set_kconfig_scs 0
+
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "cfi.fault=panic"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "kasan.fault=(panic|panic_on_write|report)"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "kasan.page_alloc.sample=[0-9]+"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "kasan=(on|off)"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "kcfi.fault=panic"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "kcsan.fault=panic"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "kfence.fault=panic"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "kmsan.fault=panic"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "panic_on_warn=[01]"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "scs.fault=panic"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "ubsan.fault=panic"
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "ubsan=(on|off)"
 	fi
 }
 

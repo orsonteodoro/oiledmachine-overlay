@@ -1,0 +1,154 @@
+--- a/kernel/cfi.c.orig	2025-05-10 06:34:47.173025071 -0700
++++ b/kernel/cfi.c	2025-05-10 06:47:38.823309372 -0700
+@@ -16,6 +16,16 @@
+ #include <asm/cacheflush.h>
+ #include <asm/set_memory.h>
+ 
++static int cfi_fault_mode __read_mostly = 0;
++
++static int __init cfi_fault_param(char *str)
++{
++	if (str && strcmp(str, "panic") == 0)
++		cfi_fault_mode = 1;
++	return 1;
++}
++__setup("cfi.fault=", cfi_fault_param);
++
+ /* Compiler-defined handler names */
+ #ifdef CONFIG_CFI_PERMISSIVE
+ #define cfi_failure_handler	__ubsan_handle_cfi_check_fail
+@@ -25,6 +35,10 @@
+ 
+ static inline void handle_cfi_failure(void *ptr)
+ {
++	if (cfi_fault_mode == 1) {
++		panic("CFI: control flow violation, panicking as requested");
++	}
++
+ 	if (IS_ENABLED(CONFIG_CFI_PERMISSIVE))
+ 		WARN_RATELIMIT(1, "CFI failure (target: %pS):\n", ptr);
+ 	else
+--- a/kernel/kcsan/core.c.orig	2025-03-24 07:02:41.000000000 -0700
++++ b/kernel/kcsan/core.c	2025-05-10 00:14:14.818539986 -0700
+@@ -26,6 +26,16 @@
+ #include "kcsan.h"
+ #include "permissive.h"
+ 
++static int kcsan_fault_mode __read_mostly = 0;
++
++static int __init kcsan_fault_param(char *str)
++{
++	if (str && strcmp(str, "panic") == 0)
++		kcsan_fault_mode = 1;
++	return 1;
++}
++__setup("kcsan.fault=", kcsan_fault_param);
++
+ static bool kcsan_early_enable = IS_ENABLED(CONFIG_KCSAN_EARLY_ENABLE);
+ unsigned int kcsan_udelay_task = CONFIG_KCSAN_UDELAY_TASK;
+ unsigned int kcsan_udelay_interrupt = CONFIG_KCSAN_UDELAY_INTERRUPT;
+--- a/kernel/kcsan/report.c.orig	2025-03-24 07:02:41.000000000 -0700
++++ b/kernel/kcsan/report.c	2025-05-10 00:22:28.859195990 -0700
+@@ -419,6 +419,10 @@ static void print_report(enum kcsan_valu
+ 	if (rate_limit_report(this_frame, other_frame))
+ 		return;
+ 
++	if (kcsan_fault_mode == 1) {
++		panic("KCSAN: data race detected, panicking as requested");
++	}
++
+ 	/* Print report header. */
+ 	pr_err("==================================================================\n");
+ 	if (other_info) {
+--- a/kernel/scs.c.orig	2022-12-11 14:15:18.000000000 -0800
++++ b/kernel/scs.c	2025-05-10 01:33:35.900065024 -0700
+@@ -12,6 +12,16 @@
+ #include <linux/vmalloc.h>
+ #include <linux/vmstat.h>
+ 
++static int scs_fault_mode __read_mostly = 0;
++
++static int __init scs_fault_param(char *str)
++{
++	if (str && strcmp(str, "panic") == 0)
++		scs_fault_mode = 1;
++	return 1;
++}
++__setup("scs.fault=", scs_fault_param);
++
+ static void __scs_account(void *s, int account)
+ {
+ 	struct page *scs_page = vmalloc_to_page(s);
+@@ -151,6 +161,10 @@ void scs_release(struct task_struct *tsk
+ 	if (!s)
+ 		return;
+ 
++	if (scs_fault_mode == 1) {
++		panic("SCS: shadow call stack violation, panicking as requested");
++	}
++
+ 	WARN(task_scs_end_corrupted(tsk),
+ 	     "corrupted shadow stack detected when freeing task\n");
+ 	scs_check_usage(tsk);
+--- a/lib/ubsan.c.orig	2025-05-10 01:29:52.561840827 -0700
++++ b/lib/ubsan.c	2025-05-10 01:33:58.491693273 -0700
+@@ -18,6 +18,16 @@
+ 
+ #include "ubsan.h"
+ 
++static int ubsan_fault_mode __read_mostly = 0;
++
++static int __init ubsan_fault_param(char *str)
++{
++	if (str && strcmp(str, "panic") == 0)
++		ubsan_fault_mode = 1;
++	return 1;
++}
++__setup("ubsan.fault=", ubsan_fault_param);
++
+ static const char * const type_check_kinds[] = {
+ 	"load of",
+ 	"store to",
+@@ -138,6 +148,10 @@ static void ubsan_prologue(struct source
+ {
+ 	current->in_ubsan++;
+ 
++	if (ubsan_fault_mode == 1) {
++		panic("UBSAN: undefined behavior detected, panicking as requested");
++	}
++
+ 	pr_err("========================================"
+ 		"========================================\n");
+ 	pr_err("UBSAN: %s in %s:%d:%d\n", reason, loc->file_name,
+--- a/mm/kfence/core.c.orig	2025-05-10 00:28:08.646220755 -0700
++++ b/mm/kfence/core.c	2025-05-10 00:30:33.620180509 -0700
+@@ -36,6 +36,16 @@
+ 
+ #include "kfence.h"
+ 
++static int kfence_fault_mode __read_mostly = 0;
++
++static int __init kfence_fault_param(char *str)
++{
++	if (str && strcmp(str, "panic") == 0)
++		kfence_fault_mode = 1;
++	return 1;
++}
++__setup("kfence.fault=", kfence_fault_param);
++
+ /* Disables KFENCE on the first warning assuming an irrecoverable error. */
+ #define KFENCE_WARN_ON(cond)                                                   \
+ 	({                                                                     \
+--- a/mm/kfence/report.c.orig	2025-03-24 07:02:41.000000000 -0700
++++ b/mm/kfence/report.c	2025-05-10 00:29:51.796806566 -0700
+@@ -220,6 +220,10 @@ void kfence_report_error(unsigned long a
+ 	 */
+ 	lockdep_off();
+ 
++	if (kfence_fault_mode == 1) {
++		panic("KFENCE: memory access violation, panicking as requested");
++	}
++
+ 	pr_err("==================================================================\n");
+ 	/* Print report header. */
+ 	switch (type) {

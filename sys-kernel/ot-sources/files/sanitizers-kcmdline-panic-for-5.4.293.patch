@@ -1,0 +1,70 @@
+--- a/lib/ubsan.c.orig	2025-05-10 07:21:38.254515690 -0700
++++ b/lib/ubsan.c	2025-05-10 07:23:33.594681941 -0700
+@@ -17,6 +17,16 @@
+ 
+ #include "ubsan.h"
+ 
++static int ubsan_fault_mode __read_mostly = 0;
++
++static int __init ubsan_fault_param(char *str)
++{
++	if (str && strcmp(str, "panic") == 0)
++		ubsan_fault_mode = 1;
++	return 1;
++}
++__setup("ubsan.fault=", ubsan_fault_param);
++
+ const char *type_check_kinds[] = {
+ 	"load of",
+ 	"store to",
+@@ -137,6 +147,10 @@ static void ubsan_prologue(struct source
+ {
+ 	current->in_ubsan++;
+ 
++	if (ubsan_fault_mode == 1) {
++		panic("UBSAN: undefined behavior detected, panicking as requested");
++	}
++
+ 	pr_err("========================================"
+ 		"========================================\n");
+ 	pr_err("UBSAN: %s in %s:%d:%d\n", reason, loc->file_name,
+--- a/mm/kasan/common.c.orig	2025-05-10 08:04:42.172388063 -0700
++++ b/mm/kasan/common.c	2025-05-10 08:04:40.620482569 -0700
+@@ -25,6 +25,7 @@
+ #include <linux/memory.h>
+ #include <linux/mm.h>
+ #include <linux/module.h>
++#include <linux/panic.h>
+ #include <linux/printk.h>
+ #include <linux/sched.h>
+ #include <linux/sched/task_stack.h>
+@@ -39,6 +40,16 @@
+ #include "kasan.h"
+ #include "../slab.h"
+ 
++static int kasan_fault_mode __read_mostly = 0;
++
++static int __init kasan_fault_param(char *str)
++{
++	if (str && strcmp(str, "panic") == 0)
++		kasan_fault_mode = 1;
++	return 1;
++}
++__setup("kasan.fault=", kasan_fault_param);
++
+ static inline int in_irqentry_text(unsigned long ptr)
+ {
+ 	return (ptr >= (unsigned long)&__irqentry_text_start &&
+--- a/mm/kasan/report.c.orig	2025-05-10 07:47:33.295010655 -0700
++++ b/mm/kasan/report.c	2025-05-10 07:58:59.070476426 -0700
+@@ -79,6 +79,10 @@ static DEFINE_SPINLOCK(report_lock);
+ 
+ static void start_report(unsigned long *flags)
+ {
++	if (kasan_fault_mode == 1) {
++		panic("KASAN: memory access violation detected, panicking as requested");
++	}
++
+ 	/*
+ 	 * Make sure we don't end up in loop.
+ 	 */

@@ -192,6 +192,9 @@ PATCH_ZEN_SAUCE_BLACKLISTED_COMMITS=(
 	${PATCH_ZEN_SAUCE_BRANDING}
 # Disabled ZEN: INTERACTIVE: Use BFQ as our elevator
 # Reason: It's better to change via sysfs.  Benchmarks show performance throughput degration with SSD with BFQ.
+
+# Duplicate
+	833eb35
 )
 
 PATCH_ZEN_SAUCE_COMMITS=(
