@@ -3027,10 +3027,11 @@ unset OT_KERNEL_PRIVATE_KEY
     variation compared to cfi-5.15.  KCFI primary mitigation is similar to
     cfi-icall.
 
+    Use SCS to halt on ROP detection.  Usually SCS is paired with CFI for
+    complete CFI coverage.
+
     Use MSAN to halt on uninitalized memory.  This catches sensitive data leaks
     from unsanitized memory before memory is being used.
-
-    Use SCS to halt on ROP detection.
 
     Use UBSAN to halt on several undiscovered vulnerabilities/exploits to
     mitigate against undefined behavior.  Examples include signed integer
