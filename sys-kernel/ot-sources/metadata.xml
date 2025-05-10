@@ -3003,7 +3003,8 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Use KASAN or KFENCE to halt on several undiscovered vulnerabilities to
     mitigate against memory corruption.  Examples include use after free, double
-    free, heap overflow, stack overflow.
+    free, heap overflow, stack overflow.  KASAN and KFENCE have overlap.  Do not
+    use both at the same time.
 
     KASAN is comprehensive.  The HW_TAGS, SW_TAGS, GENERIC are automagic but
     still require you choose kasan.
