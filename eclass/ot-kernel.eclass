@@ -12579,6 +12579,9 @@ ot-kernel_set_security_critical() {
 	; then
 		local need_stack_protector=0
 
+		ot-kernel_unset_configopt "CONFIG_KASAN_HW_TAGS"
+		ot-kernel_unset_configopt "CONFIG_KASAN_SW_TAGS"
+		ot-kernel_unset_configopt "CONFIG_KASAN_GENERIC"
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "panic_on_warn=[01]"
 		if \
 			[[ "${types}" =~ "kasan" ]] \
