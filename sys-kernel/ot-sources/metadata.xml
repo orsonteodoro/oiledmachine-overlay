@@ -2978,18 +2978,6 @@ unset OT_KERNEL_PRIVATE_KEY
     scs        | >= 5.8             | CE, PE              | 1.01-1.05x         | Maybe            | High - Critical             | 0 %
     ubsan      | >= 4.5             | CE, PE, DoS, DT, ID | 1.1-2x             | Yes              | Low - Critical              | < 0.1 %
 
-    Sanitizer       | GCC Support   | Clang/LLVM support
-    cfi-5.15        | No            | >= 13 (amd64), >= 12 (arm64)
-    kasan (HW_TAGS) | >= 10         | >= 12
-    kasan (SW_TAGS) | >= 11         | Yes
-    kasan (GENERIC) | >= 8.3        | >= 11
-    kcfi            | No            | >= 16
-    kcsan           | >= 11         | >= 11
-    kfence          | ?             | ?
-    kmsan           | No            | >= 14.0.6
-    scs             | >= 12.1       | >= 11
-    ubsan           | >= 4.9        | >= 3.1
-
     CE = Code Execution
     DoS = Denial of Service
     DT = Data Tampering
@@ -3062,6 +3050,18 @@ unset OT_KERNEL_PRIVATE_KEY
     llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]
     =llvm-runtimes/compiler-rt-${LLVM_SLOT}*
     =llvm-runtimes/compiler-rt-sanitizers-${LLVM_SLOT}*[asan,msan,tsan,shadowcallstack,ubsan]
+
+    Sanitizer       | GCC Support   | Clang/LLVM support
+    cfi-5.15        | No            | >= 13 (amd64), >= 12 (arm64)
+    kasan (HW_TAGS) | >= 10         | >= 12
+    kasan (SW_TAGS) | >= 11         | Yes
+    kasan (GENERIC) | >= 8.3        | >= 11
+    kcfi            | No            | >= 16
+    kcsan           | >= 11         | >= 11
+    kfence          | ?             | ?
+    kmsan           | No            | >= 14.0.6
+    scs             | >= 12.1       | >= 11
+    ubsan           | >= 4.9        | >= 3.1
 
     You need to manually check the toolchains since BDEPENDs checks are missing.
 
