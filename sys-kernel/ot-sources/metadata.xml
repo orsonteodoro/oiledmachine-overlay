@@ -2989,7 +2989,7 @@ unset OT_KERNEL_PRIVATE_KEY
     SW_TAGS    | >= 5.0             | 1.2x - 2.0x        | Fallback for arm64
     GENERIC    | >= 5.0             | 1.5x - 4.0x        | Fallback for non-arm64 CPUs.
 
-    1.5x means 1.5 times the base unmitigated and optimized performance.
+    1.5x means 1.5 times slower than the base unmitigated and optimized performance.
     4.0x means 4 times slower compared to the base unmitigated and optimized performance.
 
     The estimated CVSS 3.1 severity ranges reflect the vulnerability not the
