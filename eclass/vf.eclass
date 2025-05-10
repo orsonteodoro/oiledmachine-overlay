@@ -53,7 +53,11 @@ einfo "Patched vulnerabilities:"
 			if [[ -n "${_severity}" || -n "${vulnerability_classes}" ]] ; then
 				_delimiter=":"
 			fi
+			if [[ "${_severity}" =~ [Rr]"ejected" ]] ; then
+echo -e " \033[0;32m*\033[0m \e[9m${id}\e[0m"
+			else
 einfo "${id}${_delimiter}  ${vulnerability_classes}${_severity}"
+			fi
 		done
 		IFS=$' \t\n'
 	#

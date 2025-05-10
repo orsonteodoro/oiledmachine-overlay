@@ -2870,7 +2870,9 @@ ot-kernel_src_unpack() {
 		apply_vanilla_point_releases
 	fi
 einfo "Done unpacking."
-	verify_point_release
+	if ! [[ "${PV}" =~ "9999" ]] ; then
+		verify_point_release
+	fi
 }
 
 # @FUNCTION: apply_clear_linux_patches
