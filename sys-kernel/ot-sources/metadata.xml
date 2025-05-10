@@ -2969,14 +2969,14 @@ unset OT_KERNEL_PRIVATE_KEY
     the kernel.  The default is kasan and ubsan.
 
     Sanitizer  | Supported versions | Threats mitigated   | Performance impact | Production ready | Estimated CVSS 3.1 Severity | Estimated false positives
-    cfi-5.15   | = 5.15             | CE, PE              | 1.05-1.15x         | Maybe            | High - Critical             | 0.1 - 1 %
-    kasan      | >= 4.0             | CE, DT, DoS, DT, ID | 2-5x               | Yes              | Low - Critical              | < 1 %
-    kcfi       | >= 6.1             | CE, PE              | 1.05-1.5x          | Maybe            | High - Critical             | < 0.1 %
-    kcsan      | >= 5.8             | DoS, DT, ID         | 1.5-3x             | Yes              | Low - Medium                | 1 - 5 %
-    kfence     | >= 5.12            | CE, DT, DoS, DT, ID | 1.01-1.1x          | Yes              | Low - Critical              | 1 - 5 %
-    kmsan      | >= 6.1             | ID                  | 3-10x              | No               | Low - High                  | < 1 %
-    scs        | >= 5.8             | CE, PE              | 1.01-1.05x         | Maybe            | High - Critical             | 0 %
-    ubsan      | >= 4.5             | CE, PE, DoS, DT, ID | 1.1-2x             | Yes              | Low - Critical              | < 0.1 %
+    cfi-5.15   |  = 5.15            | CE, PE              | 1.05 -  1.15x      | Maybe            | High - Critical             | 0.1 - 1 %
+    kasan      | >= 4.0             | CE, DT, DoS, DT, ID | 2.00 -  5.00x      | Yes              |  Low - Critical             | < 1 %
+    kcfi       | >= 6.1             | CE, PE              | 1.05 -  1.50x      | Maybe            | High - Critical             | < 0.1 %
+    kcsan      | >= 5.8             | DoS, DT, ID         | 1.50 -  3.00x      | Yes              |  Low - Medium               | 1 - 5 %
+    kfence     | >= 5.12            | CE, DT, DoS, DT, ID | 1.01 -  1.10x      | Yes              |  Low - Critical             | 1 - 5 %
+    kmsan      | >= 6.1             | ID                  | 3.00 - 10.00x      | No               |  Low - High                 | < 1 %
+    scs        | >= 5.8             | CE, PE              | 1.01 -  1.05x      | Maybe            | High - Critical             | 0 %
+    ubsan      | >= 4.5             | CE, PE, DoS, DT, ID | 1.10 -  2.00x      | Yes              |  Low - Critical             | < 0.1 %
 
     CE = Code Execution
     DoS = Denial of Service
@@ -2986,8 +2986,8 @@ unset OT_KERNEL_PRIVATE_KEY
 
     KASAN Mode | Supported versions | Performance impact | Sampled? | Compatibility
     HW_TAGS    | >= 5.11            | 1.05x - 1.25x      | Yes      | Adding cpu_flags_arm_mte to both USE and OT_KERNEL_USE will use HW_TAGS.
-    SW_TAGS    | >= 5.0             | 1.2x - 2.0x        | Yes      | Fallback for arm64
-    GENERIC    | >= 5.0             | 1.5x - 4.0x        | No       | Fallback for non-arm64 CPUs.
+    SW_TAGS    | >= 5.0             | 1.20x - 2.00x      | Yes      | Fallback for arm64
+    GENERIC    | >= 5.0             | 1.50x - 4.00x      | No       | Fallback for non-arm64 CPUs.
 
     1.5x means 1.5 times slower than the base which is unmitigated and optimized
     for performance.
