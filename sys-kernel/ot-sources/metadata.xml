@@ -3023,7 +3023,7 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Use cfi for the older implementation.
 
-    Use KCFI to halt on compromised execution integrity.  It is lightweight
+    Use KCFI to halt on compromised execution integrity.  It is a lightweight
     variation compared to cfi.  KCFI's primary mitigation is similar to
     cfi-icall alone.
 
@@ -3036,6 +3036,8 @@ unset OT_KERNEL_PRIVATE_KEY
     Use UBSAN to halt on several undiscovered vulnerabilities/exploits to
     mitigate against undefined behavior.  Examples include signed integer
     overflow, out of bounds access, null pointer dereference.
+
+    Examples of when and when not to use:
 
     Requirements:
 
