@@ -4558,7 +4558,7 @@ einfo "JIT off is similar to -O${jit_level_desc} worst case."
 				"${ARCH}"  == "arm64" \
 					|| \
 				"${ARCH}"  == "ppc64" \
-						|| \
+					|| \
 				"${CHOST}" =~ "loongarch64" \
 					|| \
 				"${CHOST}" =~ "riscv64" \
