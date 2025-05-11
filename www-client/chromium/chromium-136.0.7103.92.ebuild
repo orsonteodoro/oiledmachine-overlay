@@ -4494,15 +4494,15 @@ einfo "Changing jit_level=${jit_level} to jit_level=2 for WebAssembly."
 #
 # Reported by elfx86exts:
 # Instruction set extensions used: AVX, AVX2, AVX512, BMI, BMI2, BWI, CMOV, DQI, MODE64, NOVLX, PCLMUL, SSE1, SSE2, SSE3, SSE41, SSSE3, VLX
-	if [[ "${ABI}" == "arm" || "${ABI}" == "x86" || "${ABI}" == "ppc" ]] ; then
+		if [[ "${ABI}" == "arm" || "${ABI}" == "x86" || "${ABI}" == "ppc" ]] ; then
 # Upstream doesn't support it.
 ewarn "The v8 sandbox is not supported for 32-bit."
-		myconf_gn+=" v8_enable_sandbox=false"
-	else
+			myconf_gn+=" v8_enable_sandbox=false"
+		else
 # v8 sandbox was verified working before but broke today.
 ewarn "The v8 sandbox is broken.  Use the prebuilt binary for fixed v8 sandbox."
-		myconf_gn+=" v8_enable_sandbox=false"
-	fi
+			myconf_gn+=" v8_enable_sandbox=false"
+		fi
 
 		# Place hardware limits here
 		# Disable the more powerful JIT for older machines to speed up build time.
