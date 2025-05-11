@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# FIXME add rust hardened flags
+
 # Monitor
 #   https://chromereleases.googleblog.com/search/label/Dev%20updates
 # for security updates.  They are announced faster than NVD.
@@ -2678,7 +2680,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 
 	PATCHES+=(
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-custom-optimization-level.patch"
-#		"${FILESDIR}/extra-patches/${PN}-135.0.7049.114-hardening.patch"
+		"${FILESDIR}/extra-patches/${PN}-135.0.7049.114-hardening.patch"
 	)
 	if ! use official ; then
 	# This section contains significant changes.  The above sections contains minor changes.
@@ -4120,7 +4122,7 @@ ewarn "This increases the attack surface of the build."
 ewarn
 	fi
 
-#	cflags-hardened_append
+	cflags-hardened_append
 	# We just want the missing flags (retpoline, -fstack-clash-protection)  flags
 	filter-flags \
 		"-f*stack-protector" \
