@@ -4,20 +4,6 @@
 
 EAPI=8
 
-# FIXME ERROR:
-#
-# [15818/27103] python3.12 ../../v8/tools/run.py ./mksnapshot --turbo_instruction_scheduling --stress-turbo-late-spilling --target_os=linux --target_arch=x64 --embedded_src gen/v8/embedded.S --predictable --no-use-ic --turbo-elide-frames --embedded_variant Default --random-seed 314159265 --startup_blob snapshot_blob.bin --no-native-code-counters --concurrent-builtin-generation --concurrent-turbofan-max-threads=0
-# FAILED: gen/v8/embedded.S snapshot_blob.bin
-# python3.12 ../../v8/tools/run.py ./mksnapshot --turbo_instruction_scheduling --stress-turbo-late-spilling --target_os=linux --target_arch=x64 --embedded_src gen/v8/embedded.S --predictable --no-use-ic --turbo-elide-frames --embedded_variant Default --random-seed 314159265 --startup_blob snapshot_blob.bin --no-native-code-counters --concurrent-builtin-generation --concurrent-turbofan-max-threads=0
-# Return code is -11
-#
-# Reported by elfx86exts:
-# Instruction set extensions used: AVX, AVX2, AVX512, BMI, BMI2, BWI, CMOV, DQI, MODE64, NOVLX, PCLMUL, SSE1, SSE2, SSE3, SSE41, SSSE3, VLX
-#
-# Tested failed solutions:
-# All patchsets disabled
-# DrumBrake disabled
-
 # Monitor
 #   https://chromereleases.googleblog.com/search/label/Dev%20updates
 # for security updates.  They are announced faster than NVD.
@@ -3040,13 +3026,13 @@ src_prepare() {
 	# cfi-icall with static linkage may have less breakage than dynamic,
 	# which will force user to disable cfi-icall in Cross DSO CFI unvendored
 	# lib.
-#	apply_distro_patchset
+	apply_distro_patchset
 
-#	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" == "1" ]] ; then
-#		apply_oiledmachine_overlay_patchset
-#	else
-#ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
-#	fi
+	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" == "1" ]] ; then
+		apply_oiledmachine_overlay_patchset
+	else
+ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
+	fi
 
 	default
 
@@ -4173,31 +4159,29 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 			myconf_gn+=" use_fortify_source=3"
 		fi
 	elif [[ "${ARCH}" == "amd64" ]] && is-flagq "-mretpoline" ; then
-#		myconf_gn+=" use_fc_protection=\"none\""
-#		myconf_gn+=" use_retpoline=true"
-#		myconf_gn+=" use_stack_clash_protection=true"
-#		if is-flagq "-ftrapv" ; then
-#			myconf_gn+=" use_trapv=true"
-#		fi
-#		if is-flagq "-D_FORITFY_SOURCE=3" ; then
-#			myconf_gn+=" use_fortify_source=3"
-#		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
-#			myconf_gn+=" use_fortify_source=2"
-#		fi
-		:
+		myconf_gn+=" use_fc_protection=\"none\""
+		myconf_gn+=" use_retpoline=true"
+		myconf_gn+=" use_stack_clash_protection=true"
+		if is-flagq "-ftrapv" ; then
+			myconf_gn+=" use_trapv=true"
+		fi
+		if is-flagq "-D_FORITFY_SOURCE=3" ; then
+			myconf_gn+=" use_fortify_source=3"
+		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
+			myconf_gn+=" use_fortify_source=2"
+		fi
 	else
-#		myconf_gn+=" use_fc_protection=\"none\""
-#		myconf_gn+=" use_retpoline=false"
-#		myconf_gn+=" use_stack_clash_protection=true"
-#		if is-flagq "-ftrapv" ; then
-#			myconf_gn+=" use_trapv=true"
-#		fi
-#		if is-flagq "-D_FORITFY_SOURCE=3" ; then
-#			myconf_gn+=" use_fortify_source=3"
-#		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
-#			myconf_gn+=" use_fortify_source=2"
-#		fi
-		:
+		myconf_gn+=" use_fc_protection=\"none\""
+		myconf_gn+=" use_retpoline=false"
+		myconf_gn+=" use_stack_clash_protection=true"
+		if is-flagq "-ftrapv" ; then
+			myconf_gn+=" use_trapv=true"
+		fi
+		if is-flagq "-D_FORITFY_SOURCE=3" ; then
+			myconf_gn+=" use_fortify_source=3"
+		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
+			myconf_gn+=" use_fortify_source=2"
+		fi
 	fi
 	# Handled in build scripts.
 	filter-flags \
@@ -4382,7 +4366,7 @@ ewarn
 	myconf_gn+=" enable_ppapi=false"
 	myconf_gn+=" enable_reporting=$(usex reporting-api true false)"
 	myconf_gn+=" enable_service_discovery=true" # Required by chrome/browser/extensions/api/BUILD.gn.  mdns may be a dependency.
-#	myconf_gn+=" enable_speech_service=false" # It is enabled but missing backend either local service or remote service.
+	myconf_gn+=" enable_speech_service=false" # It is enabled but missing backend either local service or remote service.
 	myconf_gn+=" enable_widevine=$(usex widevine true false)"
 	myconf_gn+=" enable_openxr=false"	# https://github.com/chromium/chromium/tree/136.0.7103.92/device/vr#platform-support
 	myconf_gn+=" enable_vr=false"		# https://github.com/chromium/chromium/blob/136.0.7103.92/device/vr/buildflags/buildflags.gni#L32
@@ -4498,9 +4482,17 @@ einfo "Changing jit_level=${jit_level} to jit_level=2 for WebAssembly."
 			jit_level=${JIT_LEVEL_OVERRIDE}
 		fi
 
-		if (( ${jit_level} >= 2 )) ; then
-			jit_level=1
-		fi
+
+# ERROR:
+#
+# [15818/27103] python3.12 ../../v8/tools/run.py ./mksnapshot --turbo_instruction_scheduling --stress-turbo-late-spilling --target_os=linux --target_arch=x64 --embedded_src gen/v8/embedded.S --predictable --no-use-ic --turbo-elide-frames --embedded_variant Default --random-seed 314159265 --startup_blob snapshot_blob.bin --no-native-code-counters --concurrent-builtin-generation --concurrent-turbofan-max-threads=0
+# FAILED: gen/v8/embedded.S snapshot_blob.bin
+# python3.12 ../../v8/tools/run.py ./mksnapshot --turbo_instruction_scheduling --stress-turbo-late-spilling --target_os=linux --target_arch=x64 --embedded_src gen/v8/embedded.S --predictable --no-use-ic --turbo-elide-frames --embedded_variant Default --random-seed 314159265 --startup_blob snapshot_blob.bin --no-native-code-counters --concurrent-builtin-generation --concurrent-turbofan-max-threads=0
+# Return code is -11
+#
+# Reported by elfx86exts:
+# Instruction set extensions used: AVX, AVX2, AVX512, BMI, BMI2, BWI, CMOV, DQI, MODE64, NOVLX, PCLMUL, SSE1, SSE2, SSE3, SSE41, SSSE3, VLX
+		myconf_gn+=" v8_enable_sandbox=false" # Enabling probably broke it.
 
 		# Place hardware limits here
 		# Disable the more powerful JIT for older machines to speed up build time.
