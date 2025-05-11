@@ -4475,11 +4475,6 @@ ewarn
 			jit_level=0
 		fi
 
-		if use webassembly && (( ${jit_level} < 2 )) ; then
-einfo "Changing jit_level=${jit_level} to jit_level=2 for WebAssembly."
-			jit_level=2
-		fi
-
 		if [[ -n "${JIT_LEVEL_OVERRIDE}" ]] ; then
 			jit_level=${JIT_LEVEL_OVERRIDE}
 		fi
