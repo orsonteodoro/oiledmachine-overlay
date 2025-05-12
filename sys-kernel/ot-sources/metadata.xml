@@ -3111,7 +3111,7 @@ unset OT_KERNEL_PRIVATE_KEY
     specify sanitizer exceptions to these sections. (DEVELOPMENT, PLANNED)
 
     When these exceptions are added, it may regain single digit FPS or single
-    digit hours for KASAN+UBSAN.
+    or double digit hours for KASAN+UBSAN.
 
     Acceptable values:
 
