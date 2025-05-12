@@ -3105,8 +3105,8 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
     OT_KERNEL_SECURITY_CRITICAL_EXCLUSIONS - Apply performance-critical
-    exclusions to drivers and subsystems.  The idea is to get most of the
-    mitigation coverage of the sanitizers but not penalize in
+    sanitizer exclusions to drivers and subsystems.  The idea is to get most
+    of the mitigation coverage of the sanitizers but not penalize in
     performance-critical sections.  The kernel does not conveniently allow to
     specify sanitizer exceptions to these sections. (DEVELOPMENT, PLANNED)
 
