@@ -3110,8 +3110,8 @@ unset OT_KERNEL_PRIVATE_KEY
     performance-critical sections.  The kernel does not conveniently allow to
     specify sanitizer exceptions to these sections. (DEVELOPMENT, PLANNED)
 
-    When these exceptions are added, it may regain single digit FPS or single
-    or double digit hours for KASAN+UBSAN.
+    When these exceptions are added, it may regain single digit FPS or 
+    decrease compile times by single or double digit hours for KASAN+UBSAN.
 
     Acceptable values:
 
