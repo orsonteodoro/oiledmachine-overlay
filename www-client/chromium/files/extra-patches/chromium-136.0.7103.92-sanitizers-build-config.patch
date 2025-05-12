@@ -1,0 +1,94 @@
+--- a/build/config/sanitizers/BUILD.gn.orig	2025-05-05 12:21:24.000000000 -0700
++++ b/build/config/sanitizers/BUILD.gn	2025-05-12 02:30:30.899032682 -0700
+@@ -571,12 +571,42 @@ config("ubsan_flags") {
+   }
+ }
+ 
++config("asan_no_recover") {
++  if (is_asan_no_recover) {
++    cflags = [ "-fno-sanitize-recover=address" ]
++  }
++}
++
++config("hwasan_no_recover") {
++  if (is_hwasan_no_recover) {
++    cflags = [ "-fno-sanitize-recover=hwaddress" ]
++  }
++}
++
++config("lsan_no_recover") {
++  if (is_lsan_no_recover) {
++    cflags = [ "-fno-sanitize-recover=leak" ]
++  }
++}
++
++config("msan_no_recover") {
++  if (is_msan_no_recover) {
++    cflags = [ "-fno-sanitize-recover=memory" ]
++  }
++}
++
+ config("ubsan_no_recover") {
+   if (is_ubsan_no_recover) {
+     cflags = [ "-fno-sanitize-recover=undefined" ]
+   }
+ }
+ 
++config("tsan_no_recover") {
++  if (is_tsan_no_recover) {
++    cflags = [ "-fno-sanitize-recover=thread" ]
++  }
++}
++
+ config("ubsan_security_flags") {
+   if (is_ubsan_security) {
+     if (!defined(ubsan_security_ignorelist_path)) {
+@@ -617,12 +653,17 @@ all_sanitizer_configs = [
+   ":common_sanitizer_flags",
+   ":coverage_flags",
+   ":default_sanitizer_ldflags",
+   ":asan_flags",
++  ":asan_no_recover",
+   ":cfi_flags",
+   ":hwasan_flags",
++  ":hwasan_no_recover",
+   ":lsan_flags",
++  ":lsan_no_recover",
+   ":msan_flags",
++  ":msan_no_recover",
+   ":tsan_flags",
++  ":tsan_no_recover",
+   ":ubsan_flags",
+   ":ubsan_no_recover",
+   ":ubsan_security_flags",
+--- a/build/config/sanitizers/sanitizers.gni.orig	2025-05-05 12:21:24.000000000 -0700
++++ b/build/config/sanitizers/sanitizers.gni	2025-05-12 02:31:15.154442199 -0700
+@@ -32,6 +32,11 @@ declare_args() {
+   is_ubsan = false
+ 
+   # Halt the program if a problem is detected.
++  is_asan_no_recover = false
++  is_hwasan_no_recover = false
++  is_lsan_no_recover = false
++  is_msan_no_recover = false
++  is_tsan_no_recover = false
+   is_ubsan_no_recover = false
+ 
+   # Track where uninitialized memory originates from. From fastest to slowest:
+@@ -209,11 +215,16 @@ assert(
+ # the prebuilt Rust stdlib which has no sanitizer support with it.
+ if (!is_a_target_toolchain || toolchain_for_rust_host_build_tools) {
+   is_asan = false
++  is_asan_no_recover = false
+   is_cfi = false
+   is_hwasan = false
++  is_hwasan_no_recover = false
+   is_lsan = false
++  is_lsan_no_recover = false
+   is_msan = false
++  is_msan_no_recover = false
+   is_tsan = false
++  is_tsan_no_recover = false
+   is_ubsan = false
+   is_ubsan_no_recover = false
+   is_ubsan_security = false

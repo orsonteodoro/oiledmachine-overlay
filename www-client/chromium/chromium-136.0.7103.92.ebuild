@@ -77,6 +77,8 @@ CFI_ICALL=0 # Global variable
 CFI_VCALL=0 # Global variable
 CFLAGS_HARDENED_LEVEL="1" # Same as build scripts
 CFLAGS_HARDENED_USE_CASES="jit network scripting sensitive-data untrusted-data web-browser"
+CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
+# CFLAGS_HARDENED_SANITIZERS_COMPAT=( "llvm" )
 CHROMIUM_EBUILD_MAINTAINER=0 # See also GEN_ABOUT_CREDITS
 
 #
@@ -694,14 +696,14 @@ ${PATENT_STATUS[@]}
 +accessibility bindist bluetooth +bundled-libcxx +cfi -cet +cups +css-hyphen
 -debug +drumbrake +encode +extensions ffmpeg-chromium firejail -gtk4 -gwp-asan
 -hangouts -headless +hidpi +jit +js-type-check +kerberos +mdns +miracleptr mold +mpris
--official +partitionalloc pax-kernel +pdf pic +pgo +plugins +pointer-compression
+-official +partitionalloc pax-kernel +pdf pic +pgo +plugins
 +pre-check-vaapi +pulseaudio +reporting-api qt6 +screencast selinux
 -system-dav1d +system-ffmpeg -system-flac -system-fontconfig -system-freetype
 -system-harfbuzz -system-icu -system-libaom -system-libjpeg-turbo -system-libpng
 -system-libwebp -system-libxml -system-libxslt -system-openh264 -system-opus
 -system-re2 -system-zlib +system-zstd systemd test +wayland +webassembly
 -widevine +X
-ebuild_revision_2
+ebuild_revision_3
 "
 if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
 	IUSE+="
@@ -2628,6 +2630,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-libyuv-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-cpuinfo-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-opus-inline.patch"
+		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-sanitizers-build-config.patch"
 	)
 
 	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
@@ -3028,13 +3031,13 @@ src_prepare() {
 	# cfi-icall with static linkage may have less breakage than dynamic,
 	# which will force user to disable cfi-icall in Cross DSO CFI unvendored
 	# lib.
-#	apply_distro_patchset
+	apply_distro_patchset
 
-#	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" == "1" ]] ; then
-#		apply_oiledmachine_overlay_patchset
-#	else
-#ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
-#	fi
+	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" == "1" ]] ; then
+		apply_oiledmachine_overlay_patchset
+	else
+ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
+	fi
 
 	default
 
@@ -4126,8 +4129,6 @@ ewarn
 	# We just want the missing flags (retpoline, -fstack-clash-protection)  flags
 	filter-flags \
 		"-f*stack-protector" \
-		"-f*sanitize=*" \
-		"-f*sanitize-recover" \
 		"-ftrivial-auto-var-init=*" \
 		"-Wl,-z,now" \
 		"-Wl,-z,relro"
@@ -4160,37 +4161,71 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
 			myconf_gn+=" use_fortify_source=3"
 		fi
+
+		# For sanitizers on internal libc++
+		if is-flagq "-fsanitize=address" ; then
+			myconf_gn+=" is_asan=true"
+		fi
+		if is-flagq "-fsanitize=hwaddress" ; then
+			myconf_gn+=" is_hwasan=true"
+		fi
+		if is-flagq "-fsanitize=undefined" ; then
+			myconf_gn+=" is_ubsan=true"
+		fi
 	elif [[ "${ARCH}" == "amd64" ]] && is-flagq "-mretpoline" ; then
-		:
-#		myconf_gn+=" use_fc_protection=\"none\""
-#		myconf_gn+=" use_retpoline=true"
-#		myconf_gn+=" use_stack_clash_protection=true"
-#		if is-flagq "-ftrapv" ; then
-#			myconf_gn+=" use_trapv=true"
-#		fi
-#		if is-flagq "-D_FORITFY_SOURCE=3" ; then
-#			myconf_gn+=" use_fortify_source=3"
-#		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
-#			myconf_gn+=" use_fortify_source=2"
-#		fi
+		myconf_gn+=" use_fc_protection=\"none\""
+		myconf_gn+=" use_retpoline=true"
+		myconf_gn+=" use_stack_clash_protection=true"
+		if is-flagq "-ftrapv" ; then
+			myconf_gn+=" use_trapv=true"
+		fi
+		if is-flagq "-D_FORITFY_SOURCE=3" ; then
+			myconf_gn+=" use_fortify_source=3"
+		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
+			myconf_gn+=" use_fortify_source=2"
+		fi
+
+		# For sanitizers on internal libc++
+		if is-flagq "-fsanitize=address" ; then
+			myconf_gn+=" is_asan=true"
+		fi
+		if is-flagq "-fsanitize=hwaddress" ; then
+			myconf_gn+=" is_hwasan=true"
+		fi
+		if is-flagq "-fsanitize=undefined" ; then
+			myconf_gn+=" is_ubsan=true"
+		fi
 	else
-		:
-#		myconf_gn+=" use_fc_protection=\"none\""
-##		myconf_gn+=" use_retpoline=false"
-#		myconf_gn+=" use_stack_clash_protection=true"
-#		if is-flagq "-ftrapv" ; then
-#			myconf_gn+=" use_trapv=true"
-#		fi
-#		if is-flagq "-D_FORITFY_SOURCE=3" ; then
-#			myconf_gn+=" use_fortify_source=3"
-#		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
-#			myconf_gn+=" use_fortify_source=2"
-#		fi
+		myconf_gn+=" use_fc_protection=\"none\""
+		# No retpoline
+		myconf_gn+=" use_stack_clash_protection=true"
+		if is-flagq "-ftrapv" ; then
+			myconf_gn+=" use_trapv=true"
+		fi
+		if is-flagq "-D_FORITFY_SOURCE=3" ; then
+			myconf_gn+=" use_fortify_source=3"
+		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
+			myconf_gn+=" use_fortify_source=2"
+		fi
+
+		# For sanitizers on internal libc++
+		if is-flagq "-fsanitize=address" ; then
+			myconf_gn+=" is_asan=true"
+		fi
+		if is-flagq "-fsanitize=hwaddress" ; then
+			myconf_gn+=" is_hwasan=true"
+		fi
+		if is-flagq "-fsanitize=undefined" ; then
+			myconf_gn+=" is_ubsan=true"
+		fi
 	fi
+
 	# Handled in build scripts.
 	filter-flags \
 		"-D_FORTIFY_SOURCE" \
 		"-U_FORTIFY_SOURCE" \
+		"-f*sanitize=*" \
+		"-f*sanitize-recover" \
 		"-fcf-protection=*" \
 		"-fstack-clash-protection" \
 		"-ftrapv" \
@@ -4370,7 +4405,7 @@ ewarn
 	myconf_gn+=" enable_ppapi=false"
 	myconf_gn+=" enable_reporting=$(usex reporting-api true false)"
 	myconf_gn+=" enable_service_discovery=true" # Required by chrome/browser/extensions/api/BUILD.gn.  mdns may be a dependency.
-#	myconf_gn+=" enable_speech_service=false" # It is enabled but missing backend either local service or remote service.
+	myconf_gn+=" enable_speech_service=false" # It is enabled but missing backend either local service or remote service.
 	myconf_gn+=" enable_widevine=$(usex widevine true false)"
 	myconf_gn+=" enable_openxr=false"	# https://github.com/chromium/chromium/tree/136.0.7103.92/device/vr#platform-support
 	myconf_gn+=" enable_vr=false"		# https://github.com/chromium/chromium/blob/136.0.7103.92/device/vr/buildflags/buildflags.gni#L32
@@ -4481,30 +4516,6 @@ ewarn
 			jit_level=${JIT_LEVEL_OVERRIDE}
 		fi
 
-
-# ERROR:
-#
-# [15818/27103] python3.12 ../../v8/tools/run.py ./mksnapshot --turbo_instruction_scheduling --stress-turbo-late-spilling --target_os=linux --target_arch=x64 --embedded_src gen/v8/embedded.S --predictable --no-use-ic --turbo-elide-frames --embedded_variant Default --random-seed 314159265 --startup_blob snapshot_blob.bin --no-native-code-counters --concurrent-builtin-generation --concurrent-turbofan-max-threads=0
-# FAILED: gen/v8/embedded.S snapshot_blob.bin
-# python3.12 ../../v8/tools/run.py ./mksnapshot --turbo_instruction_scheduling --stress-turbo-late-spilling --target_os=linux --target_arch=x64 --embedded_src gen/v8/embedded.S --predictable --no-use-ic --turbo-elide-frames --embedded_variant Default --random-seed 314159265 --startup_blob snapshot_blob.bin --no-native-code-counters --concurrent-builtin-generation --concurrent-turbofan-max-threads=0
-# Return code is -11
-#
-# Reported by elfx86exts:
-# Instruction set extensions used: AVX, AVX2, AVX512, BMI, BMI2, BWI, CMOV, DQI, MODE64, NOVLX, PCLMUL, SSE1, SSE2, SSE3, SSE41, SSSE3, VLX
-#		if [[ "${ABI}" == "arm" || "${ABI}" == "x86" || "${ABI}" == "ppc" ]] ; then
-# Upstream doesn't support it.
-#ewarn "The v8 sandbox is not supported for 32-bit."
-#			myconf_gn+=" v8_enable_sandbox=false"
-#		else
-# v8 sandbox was verified working before but broke today.
-#ewarn "The v8 sandbox is broken.  Use the prebuilt binary for fixed v8 sandbox."
-#			myconf_gn+=" v8_enable_sandbox=false"
-#		fi
-
-		myconf_gn+=" v8_enable_concurrent_mksnapshot=false"
-		myconf_gn+=" v8_enable_pointer_compression=false"
-		myconf_gn+=" v8_enable_pointer_compression_shared_cage=false"
-
 		# Place hardware limits here
 		# Disable the more powerful JIT for older machines to speed up build time.
 		use jit || jit_level=0
@@ -4554,45 +4565,27 @@ einfo "JIT off is similar to -O${jit_level_desc} worst case."
 		myconf_gn+=" v8_enable_hugepage=false"
 	fi
 
-	if use official ; then
-	# Use automagic
-		:
+# ERROR:
+#
+# [15818/27103] python3.12 ../../v8/tools/run.py ./mksnapshot --turbo_instruction_scheduling --stress-turbo-late-spilling --target_os=linux --target_arch=x64 --embedded_src gen/v8/embedded.S --predictable --no-use-ic --turbo-elide-frames --embedded_variant Default --random-seed 314159265 --startup_blob snapshot_blob.bin --no-native-code-counters --concurrent-builtin-generation --concurrent-turbofan-max-threads=0
+# FAILED: gen/v8/embedded.S snapshot_blob.bin
+# python3.12 ../../v8/tools/run.py ./mksnapshot --turbo_instruction_scheduling --stress-turbo-late-spilling --target_os=linux --target_arch=x64 --embedded_src gen/v8/embedded.S --predictable --no-use-ic --turbo-elide-frames --embedded_variant Default --random-seed 314159265 --startup_blob snapshot_blob.bin --no-native-code-counters --concurrent-builtin-generation --concurrent-turbofan-max-threads=0
+# Return code is -11
+#
+# Reported by elfx86exts:
+# Instruction set extensions used: AVX, AVX2, AVX512, BMI, BMI2, BWI, CMOV, DQI, MODE64, NOVLX, PCLMUL, SSE1, SSE2, SSE3, SSE41, SSSE3, VLX
+# To fix disable either v8_enable_sandbox=false or v8_enable_pointer_compression=false
+	if [[ "${ABI}" == "arm" || "${ABI}" == "x86" || "${ABI}" == "ppc" ]] ; then
+# Upstream doesn't support it.
+ewarn "The v8 sandbox is not supported for 32-bit.  Consider using 64-bit only to avoid high-critical severity memory corruption that leads to code execution."
+		myconf_gn+=" v8_enable_sandbox=false"
 	else
-	# The V8 Sandbox needs pointer compression.
-	# See L720 in /usr/share/chromium/sources/v8/BUILD.gn
-		if \
-			[[ \
-				"${ARCH}"  == "amd64" \
-					|| \
-				"${ARCH}"  == "arm64" \
-					|| \
-				"${ARCH}"  == "ppc64" \
-					|| \
-				"${CHOST}" =~ "loongarch64" \
-					|| \
-				"${CHOST}" =~ "riscv64" \
-					|| \
-				"${CHOST}" =~ "s390x" \
-			]] \
-		; then
-#			myconf_gn+=" v8_enable_pointer_compression=$(usex pointer-compression true false)"
-#			if (( ${total_ram_gib} >= 8 )) ; then
-#				myconf_gn+=" v8_enable_pointer_compression_8gb=$(usex pointer-compression true false)"
-#			else
-#				myconf_gn+=" v8_enable_pointer_compression_8gb=false"
-#			fi
-			:
-		else
-ewarn "The new V8 Sandbox [for the JavaScript engine] (2024) will be turned off.  Consider enabling the pointer-compression USE flag to enable the sandbox."
-			myconf_gn+=" v8_enable_pointer_compression=false"
-			myconf_gn+=" v8_enable_pointer_compression_8gb=false"
-		fi
+einfo  "The v8 sandbox is enabled."
+		myconf_gn+=" v8_enable_sandbox=true"
 	fi
 
-	# Still testing when pointer compression is off
-	if ! [[ "${ARCH}" =~ ("amd64"|"arm64") ]] ; then
-ewarn "The new V8 Sandbox [for the JavaScript engine] (2024) will be automagic off.  Consider using 64-bit only."
-	fi
+	myconf_gn+=" v8_enable_pointer_compression=false"		# May break v8 sandbox
+	myconf_gn+=" v8_enable_pointer_compression_shared_cage=false"	# May break v8 sandbox
 
 	# Forced because of asserts
 	myconf_gn+=" enable_screen_ai_service=true" # Required by chrome/renderer:renderer

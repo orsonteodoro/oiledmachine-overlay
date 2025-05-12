@@ -722,14 +722,6 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     <flag name="plugins">
       Builds support for plugins.
     </flag>
-    <flag name="pointer-compression">
-      Enable to reclaim more memory with pointer compression in JavaScript
-      contexts.  This only benefits 64-bit ABIs.
-
-      Disabling may increase battery life and decrease security since the
-      V8 Sandbox [for the JavaScript engine] (2024) requires pointer
-      compression.
-    </flag>
     <flag name="pre-check-llvm">
       Disables LLVM commit checks.  It is not recommended to disable the commit
       tests that notify commit bumps related to security or bugs.
