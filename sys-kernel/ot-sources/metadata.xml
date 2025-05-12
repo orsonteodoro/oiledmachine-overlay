@@ -2966,7 +2966,11 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
     OT_KERNEL_SECURITY_CRITICAL_TYPES - A list of sanitizer types to protect
-    the kernel.  The default is kasan and ubsan.
+    the kernel.  The default is kasan and ubsan.  For gamers and developers,
+    kfence and ubsan is recommended.  For dss, kasan and ubsan is recommened.
+
+    If you use KASAN+UBSAN, the build times may almost double or the worst
+    case FPS may dip below 50 FPS.
 
     Sanitizer  | Supported versions | Threats mitigated   | Performance impact | Production ready | Estimated CVSS 3.1 Severity | Estimated false positives
     cfi        |  = 5.15            | CE, PE              | 1.05 -  1.15x      | Maybe            | High - Critical             | 0.1 - 1 %
@@ -3043,8 +3047,6 @@ unset OT_KERNEL_PRIVATE_KEY
     Use UBSAN to halt on several undiscovered vulnerabilities/exploits to
     mitigate against undefined behavior.  Examples include signed integer
     overflow, out of bounds access, null pointer dereference.
-
-    Examples of when and when not to use:
 
     Requirements:
 
