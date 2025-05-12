@@ -4593,6 +4593,9 @@ einfo  "The v8 sandbox is enabled."
 		myconf_gn+=" v8_enable_sandbox=true"
 	fi
 
+	# DrumBrake needs pointer compression.
+	myconf_gn=$(echo "${myconf_gn}" | sed -e "s|v8_enable_drumbrake=true|v8_enable_drumbrake=false|g")
+
 	myconf_gn+=" v8_enable_pointer_compression=false"		# May break v8 sandbox
 	myconf_gn+=" v8_enable_pointer_compression_shared_cage=false"	# May break v8 sandbox
 
