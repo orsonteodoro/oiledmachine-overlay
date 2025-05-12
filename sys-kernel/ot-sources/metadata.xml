@@ -3125,10 +3125,10 @@ unset OT_KERNEL_PRIVATE_KEY
       dma-storage
       dma-network
       file-systems
-      io-scheduler
       interrupts
-      video-drivers
+      io-scheduler
       timers
+      video-drivers
 
     Examples:
 
