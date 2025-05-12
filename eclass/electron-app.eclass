@@ -1186,6 +1186,12 @@ electron-app_get_electron_platarch_args() {
 # Set the permissions of the chrome-sandbox
 electron-app_set_sandbox_suid() {
 	local path="${1}"
-	fperms 4711 "${path}"
+
+	if [[ "${ELECTRON_APP_SECCOMP:-1}" == "1" ]] ; then
+		fperms u-s "${path}"
+	else
+		fperms 4711 "${path}"
+	fi
+
 	fowners "root:root" "${path}"
 }
