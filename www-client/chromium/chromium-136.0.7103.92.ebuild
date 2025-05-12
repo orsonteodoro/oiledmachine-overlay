@@ -257,19 +257,19 @@ fi
 # See https://gsdview.appspot.com/chromium-browser-official/?marker=chromium-131.0.6778.0.tar.x%40
 SRC_URI="
 	ppc64? (
-		https://gitlab.solidsilicon.io/public-development/open-source/chromium/openpower-patches/-/archive/${PPC64_HASH}/openpower-patches-${PPC64_HASH}.tar.bz2
-			-> chromium-openpower-${PPC64_HASH:0:10}.tar.bz2
+https://gitlab.solidsilicon.io/public-development/open-source/chromium/openpower-patches/-/archive/${PPC64_HASH}/openpower-patches-${PPC64_HASH}.tar.bz2
+	-> chromium-openpower-${PPC64_HASH:0:10}.tar.bz2
 	)
 	test? (
-		https://gsdview.appspot.com/chromium-browser-official/chromium-${PV}-testdata.tar.xz
-		https://chromium-fonts.storage.googleapis.com/${TEST_FONT}
-			-> chromium-${PV%%\.*}-testfonts.tar.gz
+https://gsdview.appspot.com/chromium-browser-official/chromium-${PV}-testdata.tar.xz
+https://chromium-fonts.storage.googleapis.com/${TEST_FONT}
+	-> chromium-${PV%%\.*}-testfonts.tar.gz
 	)
 "
 if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
 	SRC_URI+="
 		system-toolchain? (
-			https://gitlab.com/Matt.Jolly/chromium-patches/-/archive/${PATCH_VER}/chromium-patches-${PATCH_VER}.tar.bz2
+https://gitlab.com/Matt.Jolly/chromium-patches/-/archive/${PATCH_VER}/chromium-patches-${PATCH_VER}.tar.bz2
 		)
 	"
 fi
@@ -279,8 +279,8 @@ if is_cromite_compatible ; then
 	"
 	SRC_URI+="
 		cromite? (
-			https://github.com/uazo/cromite/archive/${CROMITE_COMMIT}.tar.gz
-				-> cromite-${CROMITE_COMMIT:0:7}.tar.gz
+https://github.com/uazo/cromite/archive/${CROMITE_COMMIT}.tar.gz
+	-> cromite-${CROMITE_COMMIT:0:7}.tar.gz
 		)
 	"
 fi
@@ -290,8 +290,8 @@ if [[ "${UNGOOGLED_CHROMIUM_PV%-*}" == "${PV}" ]] ; then
 	"
 	SRC_URI+="
 		ungoogled-chromium? (
-			https://github.com/ungoogled-software/ungoogled-chromium/archive/refs/tags/${UNGOOGLED_CHROMIUM_PV}.tar.gz
-				-> ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}.tar.gz
+https://github.com/ungoogled-software/ungoogled-chromium/archive/refs/tags/${UNGOOGLED_CHROMIUM_PV}.tar.gz
+	-> ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}.tar.gz
 		)
 	"
 fi
@@ -3028,13 +3028,13 @@ src_prepare() {
 	# cfi-icall with static linkage may have less breakage than dynamic,
 	# which will force user to disable cfi-icall in Cross DSO CFI unvendored
 	# lib.
-	apply_distro_patchset
+#	apply_distro_patchset
 
-	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" == "1" ]] ; then
-		apply_oiledmachine_overlay_patchset
-	else
-ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
-	fi
+#	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" == "1" ]] ; then
+#		apply_oiledmachine_overlay_patchset
+#	else
+#ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
+#	fi
 
 	default
 
@@ -4161,29 +4161,31 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 			myconf_gn+=" use_fortify_source=3"
 		fi
 	elif [[ "${ARCH}" == "amd64" ]] && is-flagq "-mretpoline" ; then
-		myconf_gn+=" use_fc_protection=\"none\""
-		myconf_gn+=" use_retpoline=true"
-		myconf_gn+=" use_stack_clash_protection=true"
-		if is-flagq "-ftrapv" ; then
-			myconf_gn+=" use_trapv=true"
-		fi
-		if is-flagq "-D_FORITFY_SOURCE=3" ; then
-			myconf_gn+=" use_fortify_source=3"
-		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
-			myconf_gn+=" use_fortify_source=2"
-		fi
+		:
+#		myconf_gn+=" use_fc_protection=\"none\""
+#		myconf_gn+=" use_retpoline=true"
+#		myconf_gn+=" use_stack_clash_protection=true"
+#		if is-flagq "-ftrapv" ; then
+#			myconf_gn+=" use_trapv=true"
+#		fi
+#		if is-flagq "-D_FORITFY_SOURCE=3" ; then
+#			myconf_gn+=" use_fortify_source=3"
+#		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
+#			myconf_gn+=" use_fortify_source=2"
+#		fi
 	else
-		myconf_gn+=" use_fc_protection=\"none\""
-		myconf_gn+=" use_retpoline=false"
-		myconf_gn+=" use_stack_clash_protection=true"
-		if is-flagq "-ftrapv" ; then
-			myconf_gn+=" use_trapv=true"
-		fi
-		if is-flagq "-D_FORITFY_SOURCE=3" ; then
-			myconf_gn+=" use_fortify_source=3"
-		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
-			myconf_gn+=" use_fortify_source=2"
-		fi
+		:
+#		myconf_gn+=" use_fc_protection=\"none\""
+##		myconf_gn+=" use_retpoline=false"
+#		myconf_gn+=" use_stack_clash_protection=true"
+#		if is-flagq "-ftrapv" ; then
+#			myconf_gn+=" use_trapv=true"
+#		fi
+#		if is-flagq "-D_FORITFY_SOURCE=3" ; then
+#			myconf_gn+=" use_fortify_source=3"
+#		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
+#			myconf_gn+=" use_fortify_source=2"
+#		fi
 	fi
 	# Handled in build scripts.
 	filter-flags \
@@ -4368,7 +4370,7 @@ ewarn
 	myconf_gn+=" enable_ppapi=false"
 	myconf_gn+=" enable_reporting=$(usex reporting-api true false)"
 	myconf_gn+=" enable_service_discovery=true" # Required by chrome/browser/extensions/api/BUILD.gn.  mdns may be a dependency.
-	myconf_gn+=" enable_speech_service=false" # It is enabled but missing backend either local service or remote service.
+#	myconf_gn+=" enable_speech_service=false" # It is enabled but missing backend either local service or remote service.
 	myconf_gn+=" enable_widevine=$(usex widevine true false)"
 	myconf_gn+=" enable_openxr=false"	# https://github.com/chromium/chromium/tree/136.0.7103.92/device/vr#platform-support
 	myconf_gn+=" enable_vr=false"		# https://github.com/chromium/chromium/blob/136.0.7103.92/device/vr/buildflags/buildflags.gni#L32
@@ -4489,15 +4491,19 @@ ewarn
 #
 # Reported by elfx86exts:
 # Instruction set extensions used: AVX, AVX2, AVX512, BMI, BMI2, BWI, CMOV, DQI, MODE64, NOVLX, PCLMUL, SSE1, SSE2, SSE3, SSE41, SSSE3, VLX
-		if [[ "${ABI}" == "arm" || "${ABI}" == "x86" || "${ABI}" == "ppc" ]] ; then
+#		if [[ "${ABI}" == "arm" || "${ABI}" == "x86" || "${ABI}" == "ppc" ]] ; then
 # Upstream doesn't support it.
-ewarn "The v8 sandbox is not supported for 32-bit."
-			myconf_gn+=" v8_enable_sandbox=false"
-		else
+#ewarn "The v8 sandbox is not supported for 32-bit."
+#			myconf_gn+=" v8_enable_sandbox=false"
+#		else
 # v8 sandbox was verified working before but broke today.
-ewarn "The v8 sandbox is broken.  Use the prebuilt binary for fixed v8 sandbox."
-			myconf_gn+=" v8_enable_sandbox=false"
-		fi
+#ewarn "The v8 sandbox is broken.  Use the prebuilt binary for fixed v8 sandbox."
+#			myconf_gn+=" v8_enable_sandbox=false"
+#		fi
+
+		myconf_gn+=" v8_enable_concurrent_mksnapshot=false"
+		myconf_gn+=" v8_enable_pointer_compression=false"
+		myconf_gn+=" v8_enable_pointer_compression_shared_cage=false"
 
 		# Place hardware limits here
 		# Disable the more powerful JIT for older machines to speed up build time.
@@ -4569,12 +4575,13 @@ einfo "JIT off is similar to -O${jit_level_desc} worst case."
 				"${CHOST}" =~ "s390x" \
 			]] \
 		; then
-			myconf_gn+=" v8_enable_pointer_compression=$(usex pointer-compression true false)"
-			if (( ${total_ram_gib} >= 8 )) ; then
-				myconf_gn+=" v8_enable_pointer_compression_8gb=$(usex pointer-compression true false)"
-			else
-				myconf_gn+=" v8_enable_pointer_compression_8gb=false"
-			fi
+#			myconf_gn+=" v8_enable_pointer_compression=$(usex pointer-compression true false)"
+#			if (( ${total_ram_gib} >= 8 )) ; then
+#				myconf_gn+=" v8_enable_pointer_compression_8gb=$(usex pointer-compression true false)"
+#			else
+#				myconf_gn+=" v8_enable_pointer_compression_8gb=false"
+#			fi
+			:
 		else
 ewarn "The new V8 Sandbox [for the JavaScript engine] (2024) will be turned off.  Consider enabling the pointer-compression USE flag to enable the sandbox."
 			myconf_gn+=" v8_enable_pointer_compression=false"
