@@ -639,6 +639,8 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
       Note not all heap allocations are checked.  The sampling rate is about
       1:10000, 1 check out of 10000 allocations or 0.1% of all allocations total
       inspected for memory corruption.
+
+      This will be the fallback if ASan, HWASan, or UBSan sanitizers are disabled.
     </flag>
     <flag name="hangouts">
       Enable support for Hangouts and features such as screen sharing

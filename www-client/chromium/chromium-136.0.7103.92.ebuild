@@ -78,7 +78,7 @@ CFI_VCALL=0 # Global variable
 CFLAGS_HARDENED_LEVEL="1" # Same as build scripts
 CFLAGS_HARDENED_USE_CASES="jit network scripting sensitive-data untrusted-data web-browser"
 CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
-# CFLAGS_HARDENED_SANITIZERS_COMPAT=( "llvm" )
+CFLAGS_HARDENED_SANITIZERS_COMPAT=( "llvm" )
 CHROMIUM_EBUILD_MAINTAINER=0 # See also GEN_ABOUT_CREDITS
 
 #
@@ -3963,7 +3963,173 @@ einfo "Using the bundled toolchain"
 		myconf_gn+=" is_clang=true"
 	fi
 
-	if tc-is-clang && [[ "${ABI}" == "arm" || "${ABI}" == "ppc" || "${ABI}" == "x86" ]] ; then
+	if use official ; then
+		:
+	elif use cpu_flags_arm_bti && use cpu_flags_arm_pac ; then
+		:
+	elif use cfi ; then
+		:
+	elif [[ "${ABI}" == "arm64" ]] ; then
+ewarn
+ewarn "You are missing CFI for execution integrity.  These are associated with"
+ewarn "a few top 25 reported vulnerabilities.  Choose one of the following to"
+ewarn "mitigate a possible code execution attack."
+ewarn
+ewarn "The scores:"
+ewarn
+ewarn "    Mitigation combo                                           | Score     | Security posture     | Upstream default?"
+ewarn "--------------------------------------------------------------------------------------------------------------"
+ewarn " 1. CFI (icall + vcall + cast) + SCS                           | 0.91285   | Security-critical    |"
+ewarn " 2. CFI (icall + vcall + cast) + BTI + PAC                     | 0.9082    | Security-critical    |"
+ewarn " 3. CFI (icall + vcall + cast) + PAC                           | 0.8962    | Security-critical    |"
+ewarn " 4. CFI (icall + vcall + cast) + BTI                           | 0.8815    | Security-critical    |"
+ewarn " 5. CFI (icall + vcall + cast)                                 | 0.87      | Security-critical    |"
+ewarn " 6. CFI (icall + vcall) + ShadowCallStack                      | 0.78725   | Balanced             |"
+ewarn " 7. BTI + PAC                                                  | 0.775     | Balanced             | Yes for arm64 only"
+ewarn " 8. CFI (vcall + icall)                                        | 0.705     | Balanced             | Yes for amd64 official only"
+ewarn " 9. CFI (vcall) + ShadowCallStack                              | 0.61175   | Performance-critical |"
+ewarn "10. PAC                                                        | 0.601     | Performance-critical |"
+ewarn "11. BTI                                                        | 0.544     | Performance-critical |"
+ewarn "12. ShadowCallStack                                            | 0.5195    | Performance-critical |"
+ewarn "13. CFI (vcall)                                                | 0.51      | Performance-critical |"
+ewarn
+ewarn "The scores reflect maximizing mitigation coverage, minimizing overhead,"
+ewarn "and rewarding more for combos that attack widely reported CFI related"
+ewarn "vulnerabilities."
+ewarn
+	elif [[ "${ABI}" == "amd64" ]] ; then
+ewarn
+ewarn "You are missing CFI for execution integrity.  These are associated with"
+ewarn "a few top 25 reported vulnerabilities.  Choose one of the following to"
+ewarn "mitigate a possible code execution attack."
+ewarn
+ewarn "The scores:"
+ewarn
+# Do not put ShadowCallStack.  It is broken in amd64.
+ewarn "    Mitigation combo                                           | Score     | Security posture     | Upstream default?"
+ewarn "--------------------------------------------------------------------------------------------------------------"
+ewarn " 1. CFI (icall + vcall + cast)                                 | 0.87      | Security-critical    |"
+ewarn " 2. CET                                                        | 0.845     | Balanced             |"
+ewarn " 3. CFI (vcall + icall)                                        | 0.705     | Balanced             | Yes for amd64 official only"
+ewarn " 4. CFI (vcall)                                                | 0.51      | Performance-critical |"
+ewarn
+ewarn "The scores reflect maximizing mitigation coverage, minimizing overhead,"
+ewarn "and rewarding more for combos that attack widely reported CFI related"
+ewarn "vulnerabilities."
+ewarn
+	else
+ewarn
+ewarn "You are using an ABI or platform without LLVM CFI (Control Flow Integrity) support."
+ewarn "CFI associated attacks are a few of the top 25 reported vulnerabilities list."
+ewarn "This increases the attack surface of the build."
+ewarn
+	fi
+
+	if use official ; then
+		CFLAGS_HARDENED_SANITIZERS_DEACTIVATE=1
+	fi
+
+	cflags-hardened_append
+	# We just want the missing flags (retpoline, -fstack-clash-protection)  flags
+	filter-flags \
+		"-f*stack-protector" \
+		"-ftrivial-auto-var-init=*" \
+		"-Wl,-z,now" \
+		"-Wl,-z,relro"
+	local wants_fc_protection=0
+	if \
+		   is-flagq "-fcf-protection=all" \
+		|| is-flagq "-fcf-protection=branch" \
+		|| is-flagq "-fcf-protection=return" \
+	; then
+		wants_fc_protection=1
+	fi
+	if ! use cet && (( ${wants_fc_protection} == 1 )) ; then
+eerror "Enable the cet USE flag"
+		die
+	fi
+	if use official ; then
+ewarn "You are using official settings.  For strong hardening, disable this USE flag."
+		myconf_gn+=" use_fc_protection=\"none\""
+		myconf_gn+=" use_retpoline=false"
+		myconf_gn+=" use_stack_clash_protection=false"
+	elif use cet ; then
+		myconf_gn+=" use_fc_protection=\"full\""
+		myconf_gn+=" use_retpoline=false"
+		myconf_gn+=" use_stack_clash_protection=true"
+		if is-flagq "-ftrapv" ; then
+			myconf_gn+=" use_trapv=true"
+		fi
+		if is-flagq "-D_FORITFY_SOURCE=3" ; then
+			myconf_gn+=" use_fortify_source=3"
+		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
+			myconf_gn+=" use_fortify_source=3"
+		fi
+
+		# For sanitizers on internal libc++
+		if is-flagq "-fsanitize=address" ; then
+			myconf_gn+=" is_asan=true"
+		fi
+		if is-flagq "-fsanitize=hwaddress" ; then
+			myconf_gn+=" is_hwasan=true"
+		fi
+		if is-flagq "-fsanitize=undefined" ; then
+			myconf_gn+=" is_ubsan=true"
+		fi
+	elif [[ "${ARCH}" == "amd64" ]] && is-flagq "-mretpoline" ; then
+		myconf_gn+=" use_fc_protection=\"none\""
+		myconf_gn+=" use_retpoline=true"
+		myconf_gn+=" use_stack_clash_protection=true"
+		if is-flagq "-ftrapv" ; then
+			myconf_gn+=" use_trapv=true"
+		fi
+		if is-flagq "-D_FORITFY_SOURCE=3" ; then
+			myconf_gn+=" use_fortify_source=3"
+		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
+			myconf_gn+=" use_fortify_source=2"
+		fi
+
+		# For sanitizers on internal libc++
+		if is-flagq "-fsanitize=address" ; then
+			myconf_gn+=" is_asan=true"
+		fi
+		if is-flagq "-fsanitize=hwaddress" ; then
+			myconf_gn+=" is_hwasan=true"
+		fi
+		if is-flagq "-fsanitize=undefined" ; then
+			myconf_gn+=" is_ubsan=true"
+		fi
+	else
+		myconf_gn+=" use_fc_protection=\"none\""
+		# No retpoline
+		myconf_gn+=" use_stack_clash_protection=true"
+		if is-flagq "-ftrapv" ; then
+			myconf_gn+=" use_trapv=true"
+		fi
+		if is-flagq "-D_FORITFY_SOURCE=3" ; then
+			myconf_gn+=" use_fortify_source=3"
+		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
+			myconf_gn+=" use_fortify_source=2"
+		fi
+
+		# For sanitizers on internal libc++
+		if is-flagq "-fsanitize=address" ; then
+			myconf_gn+=" is_asan=true"
+		fi
+		if is-flagq "-fsanitize=hwaddress" ; then
+			myconf_gn+=" is_hwasan=true"
+		fi
+		if is-flagq "-fsanitize=undefined" ; then
+			myconf_gn+=" is_ubsan=true"
+		fi
+	fi
+
+	if is-flagq "-fsanitize=address" || is-flagq "-fsanitize=hwaddress" ; then
+einfo "Disabling GWP-ASan which overlaps with ASan or HWASan"
+einfo "To deactivate ASan, HWASan, or UBSan sanitizers set CFLAGS_HARDENED_SANITIZERS_DEACTIVATE=1"
+		myconf_gn+=" enable_gwp_asan_partitionalloc=false"
+		myconf_gn+=" enable_gwp_asan=false"
+	elif tc-is-clang && [[ "${ABI}" == "arm" || "${ABI}" == "ppc" || "${ABI}" == "x86" ]] ; then
 einfo "Disabling GWP-ASan for 32-bit"
 	# Any 32-bit ABI
 		myconf_gn+=" enable_gwp_asan_partitionalloc=false"
@@ -4061,163 +4227,6 @@ ewarn "The scores reflect maximizing mitigation coverage, minimizing overhead,"
 ewarn "and rewarding more for combos that attack widely reported memory"
 ewarn "corruption related vulnerabilities."
 ewarn
-	fi
-
-	if use official ; then
-		:
-	elif use cpu_flags_arm_bti && use cpu_flags_arm_pac ; then
-		:
-	elif use cfi ; then
-		:
-	elif [[ "${ABI}" == "arm64" ]] ; then
-ewarn
-ewarn "You are missing CFI for execution integrity.  These are associated with"
-ewarn "a few top 25 reported vulnerabilities.  Choose one of the following to"
-ewarn "mitigate a possible code execution attack."
-ewarn
-ewarn "The scores:"
-ewarn
-ewarn "    Mitigation combo                                           | Score     | Security posture     | Upstream default?"
-ewarn "--------------------------------------------------------------------------------------------------------------"
-ewarn " 1. CFI (icall + vcall + cast) + SCS                           | 0.91285   | Security-critical    |"
-ewarn " 2. CFI (icall + vcall + cast) + BTI + PAC                     | 0.9082    | Security-critical    |"
-ewarn " 3. CFI (icall + vcall + cast) + PAC                           | 0.8962    | Security-critical    |"
-ewarn " 4. CFI (icall + vcall + cast) + BTI                           | 0.8815    | Security-critical    |"
-ewarn " 5. CFI (icall + vcall + cast)                                 | 0.87      | Security-critical    |"
-ewarn " 6. CFI (icall + vcall) + ShadowCallStack                      | 0.78725   | Balanced             |"
-ewarn " 7. BTI + PAC                                                  | 0.775     | Balanced             | Yes for arm64 only"
-ewarn " 8. CFI (vcall + icall)                                        | 0.705     | Balanced             | Yes for amd64 official only"
-ewarn " 9. CFI (vcall) + ShadowCallStack                              | 0.61175   | Performance-critical |"
-ewarn "10. PAC                                                        | 0.601     | Performance-critical |"
-ewarn "11. BTI                                                        | 0.544     | Performance-critical |"
-ewarn "12. ShadowCallStack                                            | 0.5195    | Performance-critical |"
-ewarn "13. CFI (vcall)                                                | 0.51      | Performance-critical |"
-ewarn
-ewarn "The scores reflect maximizing mitigation coverage, minimizing overhead,"
-ewarn "and rewarding more for combos that attack widely reported CFI related"
-ewarn "vulnerabilities."
-ewarn
-	elif [[ "${ABI}" == "amd64" ]] ; then
-ewarn
-ewarn "You are missing CFI for execution integrity.  These are associated with"
-ewarn "a few top 25 reported vulnerabilities.  Choose one of the following to"
-ewarn "mitigate a possible code execution attack."
-ewarn
-ewarn "The scores:"
-ewarn
-# Do not put ShadowCallStack.  It is broken in amd64.
-ewarn "    Mitigation combo                                           | Score     | Security posture     | Upstream default?"
-ewarn "--------------------------------------------------------------------------------------------------------------"
-ewarn " 1. CFI (icall + vcall + cast)                                 | 0.87      | Security-critical    |"
-ewarn " 2. CET                                                        | 0.845     | Balanced             |"
-ewarn " 3. CFI (vcall + icall)                                        | 0.705     | Balanced             | Yes for amd64 official only"
-ewarn " 4. CFI (vcall)                                                | 0.51      | Performance-critical |"
-ewarn
-ewarn "The scores reflect maximizing mitigation coverage, minimizing overhead,"
-ewarn "and rewarding more for combos that attack widely reported CFI related"
-ewarn "vulnerabilities."
-ewarn
-	else
-ewarn
-ewarn "You are using an ABI or platform without LLVM CFI (Control Flow Integrity) support."
-ewarn "CFI associated attacks are a few of the top 25 reported vulnerabilities list."
-ewarn "This increases the attack surface of the build."
-ewarn
-	fi
-
-	cflags-hardened_append
-	# We just want the missing flags (retpoline, -fstack-clash-protection)  flags
-	filter-flags \
-		"-f*stack-protector" \
-		"-ftrivial-auto-var-init=*" \
-		"-Wl,-z,now" \
-		"-Wl,-z,relro"
-	local wants_fc_protection=0
-	if \
-		   is-flagq "-fcf-protection=all" \
-		|| is-flagq "-fcf-protection=branch" \
-		|| is-flagq "-fcf-protection=return" \
-	; then
-		wants_fc_protection=1
-	fi
-	if ! use cet && (( ${wants_fc_protection} == 1 )) ; then
-eerror "Enable the cet USE flag"
-		die
-	fi
-	if use official ; then
-ewarn "You are using official settings.  For strong hardening, disable this USE flag."
-		myconf_gn+=" use_fc_protection=\"none\""
-		myconf_gn+=" use_retpoline=false"
-		myconf_gn+=" use_stack_clash_protection=false"
-	elif use cet ; then
-		myconf_gn+=" use_fc_protection=\"full\""
-		myconf_gn+=" use_retpoline=false"
-		myconf_gn+=" use_stack_clash_protection=true"
-		if is-flagq "-ftrapv" ; then
-			myconf_gn+=" use_trapv=true"
-		fi
-		if is-flagq "-D_FORITFY_SOURCE=3" ; then
-			myconf_gn+=" use_fortify_source=3"
-		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
-			myconf_gn+=" use_fortify_source=3"
-		fi
-
-		# For sanitizers on internal libc++
-		if is-flagq "-fsanitize=address" ; then
-			myconf_gn+=" is_asan=true"
-		fi
-		if is-flagq "-fsanitize=hwaddress" ; then
-			myconf_gn+=" is_hwasan=true"
-		fi
-		if is-flagq "-fsanitize=undefined" ; then
-			myconf_gn+=" is_ubsan=true"
-		fi
-	elif [[ "${ARCH}" == "amd64" ]] && is-flagq "-mretpoline" ; then
-		myconf_gn+=" use_fc_protection=\"none\""
-		myconf_gn+=" use_retpoline=true"
-		myconf_gn+=" use_stack_clash_protection=true"
-		if is-flagq "-ftrapv" ; then
-			myconf_gn+=" use_trapv=true"
-		fi
-		if is-flagq "-D_FORITFY_SOURCE=3" ; then
-			myconf_gn+=" use_fortify_source=3"
-		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
-			myconf_gn+=" use_fortify_source=2"
-		fi
-
-		# For sanitizers on internal libc++
-		if is-flagq "-fsanitize=address" ; then
-			myconf_gn+=" is_asan=true"
-		fi
-		if is-flagq "-fsanitize=hwaddress" ; then
-			myconf_gn+=" is_hwasan=true"
-		fi
-		if is-flagq "-fsanitize=undefined" ; then
-			myconf_gn+=" is_ubsan=true"
-		fi
-	else
-		myconf_gn+=" use_fc_protection=\"none\""
-		# No retpoline
-		myconf_gn+=" use_stack_clash_protection=true"
-		if is-flagq "-ftrapv" ; then
-			myconf_gn+=" use_trapv=true"
-		fi
-		if is-flagq "-D_FORITFY_SOURCE=3" ; then
-			myconf_gn+=" use_fortify_source=3"
-		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
-			myconf_gn+=" use_fortify_source=2"
-		fi
-
-		# For sanitizers on internal libc++
-		if is-flagq "-fsanitize=address" ; then
-			myconf_gn+=" is_asan=true"
-		fi
-		if is-flagq "-fsanitize=hwaddress" ; then
-			myconf_gn+=" is_hwasan=true"
-		fi
-		if is-flagq "-fsanitize=undefined" ; then
-			myconf_gn+=" is_ubsan=true"
-		fi
 	fi
 
 	# Handled in build scripts.

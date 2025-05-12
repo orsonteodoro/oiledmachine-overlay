@@ -1113,7 +1113,9 @@ ewarn "Skipping custom sanitizer -fsanitize=${x} for CC=${CC}"
 			fi
 			local slowdown=${SLOWDOWN[${module}]}
 
-			if \
+			if [[ "${CHROMIUM_TOOLCHAIN}" == "1" ]] ; then
+				:
+			elif \
 				tc-is-gcc \
 					&&
 				! has_version "sys-devel/gcc:${GCC_SLOT}[sanitize]" \
