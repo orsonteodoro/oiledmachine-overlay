@@ -3092,15 +3092,51 @@ unset OT_KERNEL_PRIVATE_KEY
 
     Examples:
 
-    OT_KERNEL_SECURITY_CRITICAL_TYPES="kasan ubsan"
-    OT_KERNEL_SECURITY_CRITICAL_TYPES="kasan ubsan kcsan"
-    OT_KERNEL_SECURITY_CRITICAL_TYPES="ubsan"
-    KFENCE_SAMPLE_INTERVAL="10"
+      OT_KERNEL_SECURITY_CRITICAL_TYPES="kasan ubsan"
+      OT_KERNEL_SECURITY_CRITICAL_TYPES="kasan ubsan kcsan"
+      OT_KERNEL_SECURITY_CRITICAL_TYPES="ubsan"
+      KFENCE_SAMPLE_INTERVAL="10"
 
     See also:
 
       KASAN_SAMPLE_INTERVAL
       KFENCE_SAMPLE_INTERVAL
+      OT_KERNEL_SECURITY_CRITICAL_EXCLUSIONS
+
+
+    OT_KERNEL_SECURITY_CRITICAL_EXCLUSIONS - Apply performance-critical
+    exclusions to drivers and subsystems.  The idea is to get most of the
+    mitigation coverage of the sanitizers but not penalize in
+    performance-critical sections.  The kernel does not conveniently allow to
+    specify sanitizer exceptions to these sections. (DEVELOPMENT, PLANNED)
+
+    When these exceptions are added, it may regain single digit FPS or single
+    digit hours for KASAN+UBSAN.
+
+    Acceptable values:
+
+      A list of subsystems to exclude for KASAN, KFENCE, UBSAN treatment:
+
+      alsa
+      block
+      cpu-scheduler
+      dma-pci
+      dma-graphics
+      dma-storage
+      dma-network
+      file-systems
+      io-scheduler
+      interrupts
+      video-drivers
+      timers
+
+    Examples:
+
+      # For devs or builder machines
+      OT_KERNEL_SECURITY_CRITICAL_EXCLUSIONS="io-scheduler block file-systems interrupts"
+
+      # For live streamers
+      OT_KERNEL_SECURITY_CRITICAL_EXCLUSIONS="alsa timers interrupts cpu-scheduler dma-pci dma-graphics dma-storage dma-network"
 
 
 
