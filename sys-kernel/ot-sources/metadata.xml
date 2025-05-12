@@ -3133,11 +3133,13 @@ unset OT_KERNEL_PRIVATE_KEY
     Examples:
 
       # For devs or builder machines
+      # For SSDs, you may remove block and file-systems from the list.
+      # For HDDs, you may need block and file-systems added the list to mitigate against jitter.
       OT_KERNEL_SECURITY_CRITICAL_EXCLUSIONS="io-scheduler block file-systems interrupts"
 
       # For live streamers
       OT_KERNEL_SECURITY_CRITICAL_EXCLUSIONS="alsa timers interrupts cpu-scheduler dma-pci dma-graphics dma-storage dma-network"
-
+      
 
 
     OT_KERNEL_SLAB_ALLOCATOR - Set the slab allocator
