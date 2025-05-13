@@ -2707,13 +2707,13 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-custom-optimization-level.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-hardening.patch"
 	)
-	if [[ -n "${V8_PV}" ]] && ver_test "${V8_PV}" -ge "13.6" ; then
+	if [[ -n "${V8_PV}" ]] && ver_test "${V8_PV}" -ge "13.7" ; then
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/v8-13.6.233.8-custom-optimization-level.patch" # original in chromium tarball
+			"${FILESDIR}/extra-patches/v8-13.7.152.7-custom-optimization-level.patch" # updated
 		)
 	else
 		PATCHES+=(
-			"${FILESDIR}/extra-patches/v8-13.7.152.7-custom-optimization-level.patch" # updated
+			"${FILESDIR}/extra-patches/v8-13.6.233.8-custom-optimization-level.patch" # original in chromium tarball
 		)
 	fi
 
@@ -2746,7 +2746,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	fi
 
 	# For v8 13.6.233.8
-	if ( use webassembly || use drumbrake ) && ( [[ -z "${V8_PV}" ]] || ver_test "${V8_PV}" -ge "13.6.233.8" ) ; then
+	if ( use webassembly || use drumbrake ) && ( [[ -z "${V8_PV}" ]] || ver_test "${V8_PV}" -eq "13.6.233.8" ) ; then
 		PATCHES+=(
 			"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-v8-5c595ad.patch"
 		)
