@@ -29,7 +29,7 @@
        "//base",
 --- a/build/config/compiler/BUILD.gn.orig	2025-05-13 10:12:48.459612217 -0700
 +++ b/build/config/compiler/BUILD.gn	2025-05-13 11:17:24.072230221 -0700
-@@ -202,6 +202,30 @@ declare_args() {
+@@ -202,6 +202,31 @@ declare_args() {
  
    #use_mold = false
    #custom_optimization_level = ""
@@ -57,6 +57,7 @@
 +  use_rust_stack_probe = false
 +  use_rust_stack_protector_level = ""
 +  use_rust_tsan = false
++  use_rust_ubsan = false
  }
  
  declare_args() {
