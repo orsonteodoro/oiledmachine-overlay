@@ -2966,11 +2966,8 @@ unset OT_KERNEL_PRIVATE_KEY
 
 
     OT_KERNEL_SECURITY_CRITICAL_TYPES - A list of sanitizer types to protect
-    the kernel.  The default is kasan and ubsan.  For gamers and developers,
-    kfence and ubsan is recommended.  For dss, kasan and ubsan is recommened.
-
-    If you use KASAN+UBSAN, the build times may almost double or the worst
-    case FPS may dip below 50 FPS.
+    the kernel.  The default is KASAN and UBSAN when
+    OT_KERNEL_SECURITY_CRITICAL=1.
 
     Sanitizer  | Supported versions | Threats mitigated   | Performance impact | Production ready | Estimated CVSS 3.1 Severity | Estimated false positives
     cfi        |  = 5.15            | CE, PE              | 1.05 -  1.15x      | Maybe            | High - Critical             | 0.1 - 1 %
@@ -3047,6 +3044,33 @@ unset OT_KERNEL_PRIVATE_KEY
     Use UBSAN to halt on several undiscovered vulnerabilities/exploits to
     mitigate against undefined behavior.  Examples include signed integer
     overflow, out of bounds access, null pointer dereference.
+
+    Recommendations:
+
+    Examples                                 | Availability-critical | Security-critical
+    Cryptocurrency wallet                    | N                     | Y
+    E-commerce website                       | N                     | Y
+    Informational website without login mode | Y                     | N
+    Laptop                                   | N                     | Y
+    Login server                             | N                     | Y
+    Login mode website                       | N                     | Y
+    Multiuser home computer                  | N                     | S
+    Senstive data kiosk                      | N                     | Y
+    Informational kiosk                      | Y                     | N
+    Paying bills                             | N                     | Y
+    Permadeath gaming                        | Y                     | N
+    Smartphone                               | N                     | Y
+
+    S = some security is recommended reduce the chance of ransomware attacks (CE, PE, DT).
+
+    Availability-critical means OT_KERNEL_MAX_UPTIME=1 and OT_KERNEL_SECURITY_CRITICAL=0
+    Security-critical means OT_KERNEL_MAX_UPTIME=0 and OT_KERNEL_SECURITY_CRITICAL=1
+
+    If you use KASAN+UBSAN, the build times may almost double or the worst
+    case FPS may dip below 50 FPS.
+
+    For casual gaming or developers, use KFENCE+UBSAN.
+    For dss (government, e-commerce), use KASAN+UBSAN.
 
     Requirements:
 
