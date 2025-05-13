@@ -291,6 +291,7 @@ RISCV_FLAGS=(
 )
 declare -A RUST_PV_TO_LLVM_SLOT=(
 # Capped by LLVM_COMPAT
+	["9999"]="20"
 	["1.84.1"]="19"
 	["1.83.0"]="19"
 	["1.82.0"]="19"
