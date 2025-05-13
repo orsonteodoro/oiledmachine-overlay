@@ -854,9 +854,9 @@ if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ;then
 	"
 fi
 # Drumbrake is broken in this release and off by default.
+#!drumbrake
 REQUIRED_USE+="
 	${PATENT_USE_FLAGS}
-	!drumbrake
 	!headless (
 		extensions
 		pdf
@@ -2746,11 +2746,15 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	fi
 
 	# For v8 13.6.233.8
-	if ( use webassembly || use drumbrake ) && ( [[ -z "${V8_PV}" ]] || ver_test "${V8_PV}" -eq "13.6.233.8" ) ; then
+	if ( use webassembly || use drumbrake ) && ( [[ -z "${V8_PV}" ]] || ver_test "${V8_PV}" -ge "13.6.233.8" ) ; then
 		PATCHES+=(
 			"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-v8-5c595ad.patch"
 		)
 	fi
+
+	PATCHES+=(
+		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-mksnapshot-workarounds.patch"
+	)
 }
 
 is_cromite_patch_non_fatal() {
@@ -4603,8 +4607,11 @@ einfo  "The v8 sandbox is enabled."
 		myconf_gn+=" v8_enable_sandbox=true"
 	fi
 
+	myconf_gn+=" v8_mksnapshot_use_8gb_heap=true"
+	myconf_gn+=" v8_mksnapshot_disable_drumbrake=true"
+
 	# DrumBrake is broken in this release when generating mksnapshot.
-	myconf_gn=$(echo "${myconf_gn}" | sed -e "s|v8_enable_drumbrake=true|v8_enable_drumbrake=false|g")
+	#myconf_gn=$(echo "${myconf_gn}" | sed -e "s|v8_enable_drumbrake=true|v8_enable_drumbrake=false|g")
 
 	local is_64bit=0
 	local is_64bit_sc=0
