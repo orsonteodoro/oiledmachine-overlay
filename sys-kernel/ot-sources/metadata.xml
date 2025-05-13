@@ -3058,9 +3058,11 @@ unset OT_KERNEL_PRIVATE_KEY
     Senstive data kiosk                      | N                     | Y
     Informational kiosk                      | Y                     | N
     Paying bills                             | N                     | Y
-    Permadeath gaming                        | S                     | N
+    Permadeath gaming                        | D                     | N
     Smartphone                               | N                     | Y
 
+    D = The balanced security defaults should be sufficient for secure login and
+        max uptime.
     S = some security is recommended to reduce the chance of ransomware attacks
         (CE, PE, DT) or for login.
 
