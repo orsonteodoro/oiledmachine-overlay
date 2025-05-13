@@ -637,9 +637,14 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		RUSTFLAGS+=" -C control-flow-protection"
 	fi
 
+	${RUSTC} -Z help | grep -q -e "stack-protector"
+	has_stack_protector=$?
+
 	# Not production ready only available on nightly
 	# For status see https://github.com/rust-lang/rust/blob/master/src/doc/rustc/src/exploit-mitigations.md?plain=1#L41
 	if (( ${is_rust_nightly} != 0 )) ; then
+		:
+	elif (( ${has_stack_protector} != 0 )) ; then
 		:
 	else
 		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
@@ -1164,6 +1169,8 @@ einfo "Added ${x} from ${module} sanitizer"
 		done
 
 		if (( ${is_rust_nightly} != 0 )) ; then
+			:
+		elif (( ${has_stack_protector} != 0 )) ; then
 			:
 		else
 einfo "Deduping stack overflow check"
