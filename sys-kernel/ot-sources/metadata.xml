@@ -3138,7 +3138,8 @@ unset OT_KERNEL_PRIVATE_KEY
     specify sanitizer exceptions to these sections. (DEVELOPMENT, PLANNED)
 
     When these exceptions are added, it may regain the lost single digit FPS or 
-    decrease compile times by single or double digit hours for KASAN+UBSAN.
+    decrease compile times by single or double digit hours for KASAN+UBSAN
+    relative to the build without performance-critical exceptions.
 
     Acceptable values:
 
