@@ -4132,9 +4132,11 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 		if is-flagq "-fsanitize=address" || is-flagq "-fsanitize=hwaddress" ; then
 	# Dedupe SSP overlap
 			myconf_gn+=" use_stack_protector_level=\"none\""
-			myconf_gn+=" use_rust_stack_protector_level=\"none\""
+	# Rust flags -Z support on distro broken for =dev-lang/rust-bin-9999
+	#		myconf_gn+=" use_rust_stack_protector_level=\"none\""
 		else
-			myconf_gn+=" use_rust_stack_protector_level=\"basic\""
+	#		myconf_gn+=" use_rust_stack_protector_level=\"basic\""
+			:
 		fi
 	fi
 

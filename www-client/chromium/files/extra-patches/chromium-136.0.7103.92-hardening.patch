@@ -122,19 +122,19 @@
 +      ]
 +    } else if (use_rust_stack_protector_level == "none") {
 +      rustflags += [
-+        "-Cstack-protector=none"
++        "-Zstack-protector=none"
 +      ]
 +    } else if (use_rust_stack_protector_level == "basic") {
 +      rustflags += [
-+        "-Cstack-protector=basic"
++        "-Zstack-protector=basic"
 +      ]
 +    } else if (use_rust_stack_protector_level == "strong") {
 +      rustflags += [
-+        "-Cstack-protector=strong"
++        "-Zstack-protector=strong"
 +      ]
 +    } else if (use_rust_stack_protector_level == "all") {
 +      rustflags += [
-+        "-Cstack-protector=all"
++        "-Zstack-protector=all"
 +      ]
 +    }
 +  }

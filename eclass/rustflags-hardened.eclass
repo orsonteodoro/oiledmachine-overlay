@@ -105,27 +105,27 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 
 # Estimates:
-# Flag					Performance as a normalized decimal multiple
-# No mitigation				   1
-# -C link-arg=-D_FORTIFY_SOURCE=2	1.01
-# -C link-arg=-D_FORTIFY_SOURCE=3	1.02
-# -C overflow-checks=on			1.01 -  1.20
-# -C soft-float				2.00 -  10.00
-# -C stack-protector=all		1.05 -  1.10
-# -C stack-protector=strong		1.02 -  1.05
-# -C stack-protector=basic		1.01 -  1.03
-# -C target-feature=+bti		1.00 -  1.05
-# -C target-feature=+pac-ret		1.01 -  1.05
-# -C target-feature=+pac-ret,+bti	1.02 -  1.07
-# -C target-feature=+retpoline		1.01 -  1.20
-# -Zsanitizer=address			1.50 -  4.0 (ASan); 1.01 - 1.1 (GWP-ASan)
-# -Zsanitizer=cfi			1.10 -  2.0
-# -Zsanitizer=hwaddress			1.15 -  1.50 (ARM64)
-# -Zsanitizer=leak			1.05 -  1.5
-# -Zsanitizer=memory			3.00 - 11.00
-# -Zsanitizer=safestack			1.01 -  1.20
-# -Zsanitizer=shadow-call-stack		1.01 -  1.15
-# -Zsanitizer=thread			4.00 - 16.00
+# Flag						Performance as a normalized decimal multiple
+# No mitigation						   1
+# -C link-arg=-D_FORTIFY_SOURCE=2			1.01
+# -C link-arg=-D_FORTIFY_SOURCE=3			1.02
+# -C overflow-checks=on					1.01 -  1.20
+# -C soft-float						2.00 -  10.00
+# -Z stack-protector=all				1.05 -  1.10
+# -Z stack-protector=strong				1.02 -  1.05
+# -Z stack-protector=basic				1.01 -  1.03
+# -C target-feature=+bti				1.00 -  1.05
+# -C target-feature=+pac-ret				1.01 -  1.05
+# -C target-feature=+pac-ret,+bti			1.02 -  1.07
+# -C target-feature=+retpoline				1.01 -  1.20
+# -Zsanitizer=address					1.50 -  4.0 (ASan); 1.01 - 1.1 (GWP-ASan)
+# -Zsanitizer=cfi					1.10 -  2.0
+# -Zsanitizer=hwaddress					1.15 -  1.50 (ARM64)
+# -Zsanitizer=leak					1.05 -  1.5
+# -Zsanitizer=memory					3.00 - 11.00
+# -Zsanitizer=safestack					1.01 -  1.20
+# -Zsanitizer=shadow-call-stack				1.01 -  1.15
+# -Zsanitizer=thread					4.00 - 16.00
 
 # Setting to 4.0 will enable ASan and other faster sanitizers.
 # Setting to 15.0 will enable TSan and other faster sanitizers.
@@ -662,20 +662,20 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	# Not production ready only available on nightly
 	# For status see https://github.com/rust-lang/rust/blob/master/src/doc/rustc/src/exploit-mitigations.md?plain=1#L41
 	if true ; then
-		: # Broken
-	elif ver_test "${rust_pv}" -ge "1.58.0" ; then
+		: # -Z flags support broken for =dev-lang/rust-bin-9999
+	elif ver_test "${rust_pv}" -ge "${RUSTFLAGS_UNSTABLE_RUSTC_PV}" ; then
 		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
 			| sed -r \
-				-e "s#-C[ ]*stack-protector=(all|basic|none|strong)##g")
+				-e "s#-Z[ ]*stack-protector=(all|basic|none|strong)##g")
 		if [[ "${RUSTFLAGS_HARDENED_LEVEL}" == "3" ]] ; then
 	# ZC, CE, EP
-			RUSTFLAGS+=" -C stack-protector=all"
+			RUSTFLAGS+=" -Z stack-protector=all"
 		elif [[ "${RUSTFLAGS_HARDENED_LEVEL}" == "1" ]] ; then
 	# ZC, CE, EP
-			RUSTFLAGS+=" -C stack-protector=basic"
+			RUSTFLAGS+=" -Z stack-protector=basic"
 		elif [[ "${RUSTFLAGS_HARDENED_LEVEL}" == "2" ]] ; then
 	# ZC, CE, EP
-			RUSTFLAGS+=" -C stack-protector=strong"
+			RUSTFLAGS+=" -Z stack-protector=strong"
 		fi
 	fi
 
@@ -1185,13 +1185,15 @@ einfo "Added ${x} from ${module} sanitizer"
 			fi
 		done
 
-		if (( ${asan} == 1 )) ; then
+		if true ; then
+			: # -Z flags support broken for =dev-lang/rust-bin-9999
+		elif (( ${asan} == 1 )) && ver_test "${rust_pv}" -ge "${RUSTFLAGS_UNSTABLE_RUSTC_PV}" ; then
 einfo "Deduping stack overflow check"
 			RUSTFLAGS=$(echo "${RUSTFLAGS}" \
 				| sed -r \
-					-e "s#-C[ ]*stack-protector=(all|basic|none|strong)##g")
+					-e "s#-Z[ ]*stack-protector=(all|basic|none|strong)##g")
 	# Disable if it was the compiler default
-			RUSTFLAGS+=" -C stack-protector=none"
+			RUSTFLAGS+=" -Z stack-protector=none"
 		fi
 	fi
 
