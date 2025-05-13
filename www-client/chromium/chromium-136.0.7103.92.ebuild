@@ -4125,6 +4125,13 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 		if is-flagq "-fsanitize=address" || is-flagq "-fsanitize=hwaddress" || is-flagq "-fsanitize=undefined" ; then
 			myconf_gn+=" use_rust_no_sanitize_recover=true"
 		fi
+		if is-flagq "-fsanitize=address" || is-flagq "-fsanitize=hwaddress" ; then
+	# Dedupe SSP overlap
+			myconf_gn+=" use_stack_protector_level=\"none\""
+			myconf_gn+=" use_rust_stack_protector_level=\"none\""
+		else
+			myconf_gn+=" use_rust_stack_protector_level=\"basic\""
+		fi
 	fi
 
 	if is-flagq "-fsanitize=address" || is-flagq "-fsanitize=hwaddress" ; then
