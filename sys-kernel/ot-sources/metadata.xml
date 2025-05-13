@@ -3061,7 +3061,7 @@ unset OT_KERNEL_PRIVATE_KEY
     Permadeath gaming                        | Y                     | N
     Smartphone                               | N                     | Y
 
-    S = some security is recommended reduce the chance of ransomware attacks (CE, PE, DT).
+    S = some security is recommended to reduce the chance of ransomware attacks (CE, PE, DT).
 
     Availability-critical means OT_KERNEL_MAX_UPTIME=1 and OT_KERNEL_SECURITY_CRITICAL=0
     Security-critical means OT_KERNEL_MAX_UPTIME=0 and OT_KERNEL_SECURITY_CRITICAL=1
