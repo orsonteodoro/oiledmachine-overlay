@@ -3072,7 +3072,7 @@ unset OT_KERNEL_PRIVATE_KEY
     If you use KASAN+UBSAN, the build times may almost double or the worst
     case FPS may dip below 50 FPS.
 
-    For casual gaming or developers, use KFENCE+UBSAN.
+    For casual gaming, software developers, or builder machines, use KFENCE+UBSAN.
     For dss (government, e-commerce), use KASAN+UBSAN.
 
     Requirements:
