@@ -118,7 +118,7 @@
 +  if (!use_rust_asan && !use_rust_hwasan) {
 +    if (use_rust_stack_protector_level == "")
 +      rustflags += [
-+      }
++      ]
 +    } else if (use_rust_stack_protector_level == "none")
 +      rustflags += [
 +        "-Cstack-protector=none"
