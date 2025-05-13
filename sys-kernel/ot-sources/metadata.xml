@@ -3148,15 +3148,10 @@ unset OT_KERNEL_PRIVATE_KEY
       alsa
       block
       cpu-scheduler
-      dma-pci
-      dma-graphics
-      dma-storage
-      dma-network
       file-systems
       interrupts
       io-scheduler
       timers
-      usb
       video-codecs
       video-drivers
 
@@ -3168,7 +3163,7 @@ unset OT_KERNEL_PRIVATE_KEY
       OT_KERNEL_SECURITY_CRITICAL_EXCLUSIONS="io-scheduler block file-systems interrupts"
 
       # For live streamers
-      OT_KERNEL_SECURITY_CRITICAL_EXCLUSIONS="alsa cpu-scheduler dma-graphics dma-network dma-pci dma-storage interrupts timers"
+      OT_KERNEL_SECURITY_CRITICAL_EXCLUSIONS="alsa cpu-scheduler interrupts timers video-codecs"
       
       # For musicians
       OT_KERNEL_SECURITY_CRITICAL_EXCLUSIONS="alsa cpu-scheduler interrupts"
@@ -3177,7 +3172,7 @@ unset OT_KERNEL_PRIVATE_KEY
       OT_KERNEL_SECURITY_CRITICAL_EXCLUSIONS="cpu-scheduler file-system io-scheduler video-drivers"
 
       # For video conferencing
-      OT_KERNEL_SECURITY_CRITICAL_EXCLUSIONS="cpu-scheduler usb video-codecs"
+      OT_KERNEL_SECURITY_CRITICAL_EXCLUSIONS="cpu-scheduler video-codecs"
 
     OT_KERNEL_SLAB_ALLOCATOR - Set the slab allocator
 
