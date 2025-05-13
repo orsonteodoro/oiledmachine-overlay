@@ -4109,7 +4109,7 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 			myconf_gn+=" use_rust_fortify_source_level=2"
 		fi
 
-		# For sanitizers on internal libc++, SSP for rust
+		# For sanitizers on internal libc++, SSP for Rust
 		if is-flagq "-fsanitize=address" ; then
 			myconf_gn+=" is_asan=true"
 			myconf_gn+=" use_rust_asan=true"
