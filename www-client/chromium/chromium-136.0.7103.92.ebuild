@@ -4608,7 +4608,7 @@ einfo  "The v8 sandbox is enabled."
 	fi
 
 	myconf_gn+=" v8_mksnapshot_use_8gb_heap=true"
-	myconf_gn+=" v8_mksnapshot_disable_drumbrake=true"
+#	myconf_gn+=" v8_mksnapshot_disable_drumbrake=true"
 
 	# DrumBrake is broken in this release when generating mksnapshot.
 	#myconf_gn=$(echo "${myconf_gn}" | sed -e "s|v8_enable_drumbrake=true|v8_enable_drumbrake=false|g")
