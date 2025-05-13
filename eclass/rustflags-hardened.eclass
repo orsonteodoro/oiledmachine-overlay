@@ -745,9 +745,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	filter-flags "-D_FORTIFY_SOURCE=*"
 	filter-flags "-U_FORTIFY_SOURCE"
 	append-flags "-U_FORTIFY_SOURCE"
-	RUSTFLAGS=$(echo "${RUSTFLAGS}" \
-		| sed -r -e "s#-C[ ]*link-arg=-U_FORTIFY_SOURCE##g")
-	RUSTFLAGS+=" -C link-arg=-U_FORTIFY_SOURCE"
+	RUSTFLAGS=$(echo "${RUSTFLAGS}" | sed -r -e "s#-C[ ]*llvm-args=-D_FORTIFY_SOURCE=[0-3]##g")
 	if [[ -n "${RUSTFLAGS_HARDENED_FORTIFY_SOURCE}" ]] ; then
 		local level="${RUSTFLAGS_HARDENED_FORTIFY_SOURCE}"
 		append-flags -D_FORTIFY_SOURCE=${level}
@@ -769,19 +767,18 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 			| sed -r -e "s#-C[ ]*link-arg=-D_FORTIFY_SOURCE=[0-3]+##g")
 		if tc-is-clang && ver_test $(clang-major-version) -ge "15" ; then
 			append-flags "-D_FORTIFY_SOURCE=3"
-			RUSTFLAGS+=" -C link-arg=-D_FORTIFY_SOURCE=3"
+			RUSTFLAGS+=" -C llvm-args=-D_FORTIFY_SOURCE=3"
 		elif tc-is-gcc && ver_test $(gcc-major-version) -ge "12" ; then
 			append-flags "-D_FORTIFY_SOURCE=3"
-			RUSTFLAGS+=" -C link-arg=-D_FORTIFY_SOURCE=3"
+			RUSTFLAGS+=" -C llvm-args=-D_FORTIFY_SOURCE=3"
 		else
 			append-flags "-D_FORTIFY_SOURCE=2"
-			RUSTFLAGS+=" -C link-arg=-D_FORTIFY_SOURCE=2"
+			RUSTFLAGS+=" -C llvm-args=-D_FORTIFY_SOURCE=2"
 		fi
 	else
 		append-flags "-D_FORTIFY_SOURCE=2"
-		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
-			| sed -r -e "s#-C[ ]*link-arg=-D_FORTIFY_SOURCE=[0-3]+##g")
-		RUSTFLAGS+=" -C link-arg=-D_FORTIFY_SOURCE=2"
+		RUSTFLAGS=$(echo "${RUSTFLAGS}" | sed -r -e "s#-C[ ]*llvm-args=-D_FORTIFY_SOURCE=[0-3]##g")
+		RUSTFLAGS+=" -C llvm-args=-D_FORTIFY_SOURCE=2"
 	fi
 
 	# Similar to -ftrapv

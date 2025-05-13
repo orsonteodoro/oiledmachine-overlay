@@ -12,38 +12,6 @@
  # Features used by //base/trace_event and //services/tracing.
  declare_args() {
    # Tracing support requires //third_party/perfetto, which is not available in
---- a/v8/BUILD.gn.orig	2024-10-30 21:48:14.596277700 -0700
-+++ b/v8/BUILD.gn	2024-11-01 08:07:32.042148209 -0700
-@@ -1777,9 +1777,15 @@ config("always_turbofanimize") {
-   # TODO(crbug.com/621335) Rework this so that we don't have the confusion
-   # between "optimize_speed" and "optimize_max".
-   if (((is_posix && !is_android) || is_fuchsia || is_win) && !using_sanitizer) {
--    configs += [ "//build/config/compiler:optimize_speed" ]
-+    configs += [
-+      "//build/config/compiler:optimize_speed",
-+      "//build/config/compiler:v8_custom_optimization_config"
-+    ]
-   } else {
--    configs += [ "//build/config/compiler:optimize_max" ]
-+    configs += [
-+      "//build/config/compiler:optimize_max",
-+      "//build/config/compiler:v8_custom_optimization_config"
-+    ]
-   }
- }
- 
-@@ -6767,7 +6773,10 @@ if (v8_use_libm_trig_functions) {
-     configs -= [ "//build/config/compiler:chromium_code" ]
-     if (!is_debug) {
-       # Build code using -O3, see: crbug.com/1084371.
--      configs += [ "//build/config/compiler:optimize_speed" ]
-+      configs += [
-+        "//build/config/compiler:optimize_speed",
-+        "//build/config/compiler:v8_custom_optimization_config"
-+      ]
-     }
-   }
- }
 --- a/build/config/compiler/BUILD.gn.orig	2024-10-31 23:31:36.558697114 -0700
 +++ b/build/config/compiler/BUILD.gn	2024-11-01 08:07:32.114147043 -0700
 @@ -202,6 +202,7 @@ declare_args() {
@@ -573,26 +541,6 @@
      "-Wno-unused-function",
      "-Wno-deprecated-comma-subscript",
    ]
---- a/v8/gni/v8.gni.orig	2025-02-03 11:02:21.000000000 -0800
-+++ b/v8/gni/v8.gni	2025-02-09 15:29:08.000951514 -0800
-@@ -184,6 +184,8 @@ declare_args() {
- 
-   # Sets -DV8_ENABLE_ETW_STACK_WALKING. Enables ETW Stack Walking
-   v8_enable_etw_stack_walking = is_win
-+
-+  #v8_custom_optimization_level = ""
- }
- 
- if (v8_use_external_startup_data == "") {
-@@ -281,6 +283,8 @@ if (is_debug && !v8_optimized_debug) {
-   }
- }
- 
-+v8_add_configs += [ "//build/config/compiler:v8_custom_optimization_config" ]
-+
- if (!is_debug) {
-   v8_remove_configs += [
-     # Too much performance impact, unclear security benefit.
 --- a/third_party/opus/BUILD.gn.orig	2025-05-08 09:28:25.672855460 -0700
 +++ b/third_party/opus/BUILD.gn	2025-05-08 13:18:27.456763572 -0700
 @@ -6,6 +6,10 @@ import("//build/config/arm.gni")

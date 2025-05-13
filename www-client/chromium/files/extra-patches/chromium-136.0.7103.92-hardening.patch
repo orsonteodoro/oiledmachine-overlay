@@ -1,0 +1,231 @@
+--- a/third_party/perfetto/gn/standalone/BUILD.gn.orig	2025-05-13 10:12:47.836203133 -0700
++++ b/third_party/perfetto/gn/standalone/BUILD.gn	2025-05-13 10:20:55.357465538 -0700
+@@ -245,8 +245,12 @@ config("default") {
+     cflags += [
+       "-g",
+       "-fPIC",
+-      "-fstack-protector-strong",
+     ]
++    if (!is_asan && !is_hwasan) {
++      cflags += [
++        "-fstack-protector-strong",
++      ]
++    }
+   }
+ 
+   # Treat warnings as errors, but give up on fuzzer builds.
+--- a/base/BUILD.gn.orig	2025-05-05 12:21:24.000000000 -0700
++++ b/base/BUILD.gn	2025-05-13 10:21:36.765234742 -0700
+@@ -3169,7 +3169,9 @@ if (!is_nacl && (is_linux || is_chromeos
+     testonly = true
+ 
+     sources = [ "stack_canary_linux_unittest.cc" ]
+-    cflags = [ "-fstack-protector-all" ]
++    if (!is_asan && !is_hwasan) {
++      cflags = [ "-fstack-protector-all" ]
++    }
+ 
+     deps = [
+       "//base",
+--- a/build/config/compiler/BUILD.gn.orig	2025-05-13 10:12:48.459612217 -0700
++++ b/build/config/compiler/BUILD.gn	2025-05-13 11:17:24.072230221 -0700
+@@ -202,6 +202,30 @@ declare_args() {
+ 
+   #use_mold = false
+   #custom_optimization_level = ""
++
++  # C/C++ hardening
++  use_cf_protection = ""
++  use_fortify_source = -1
++  use_retpoline = false
++  use_stack_clash_protection = false
++  use_stack_protector_level = "basic"
++  use_trapv = false
++
++  # Rust hardening
++  use_rust_cet = false
++  use_rust_asan = false
++  use_rust_fortify_source_level = -1
++  use_rust_hwasan = false
++  use_rust_lsan = false
++  use_rust_msan = false
++  use_rust_no_sanitize_recover = false
++  use_rust_overflow_checks = false
++  use_rust_pauth = false
++  use_rust_retpoline = false
++  use_rust_stack_clash_protection = false
++  use_rust_stack_probe = false
++  use_rust_stack_protector_level = ""
++  use_rust_tsan = false
+ }
+ 
+ declare_args() {
+@@ -386,11 +410,49 @@ config("compiler") {
+       } else if ((is_posix && !is_nacl) || is_fuchsia) {
+         if (current_os != "aix") {
+           # Not available on aix.
+-          cflags += [ "-fstack-protector" ]
++          if (!is_asan && !is_hwasan) {
++            if (use_stack_protector_level == "basic") {
++              cflags += [ "-fstack-protector" ]
++            } else if (use_stack_protector_level == "strong") {
++              cflags += [ "-fstack-protector-strong" ]
++            } else if (use_stack_protector_level == "all") {
++              cflags += [ "-fstack-protector-all" ]
++            }
++          }
+         }
+       }
+     }
+ 
++    if (use_retpoline) {
++      cflags += [ "-mretpoline" ]
++    }
++
++    if (use_stack_clash_protection) {
++      cflags += [ "-fstack-clash-protection" ]
++    }
++
++    if (use_cf_protection == "") {
++      cflags += []
++    } else if (use_cf_protection == "none") {
++      cflags += [ "-fcf-protection=none" ]
++    } else if (use_cf_protection == "full") {
++      cflags += [ "-fcf-protection=full" ]
++    } else if (use_cf_protection == "return") {
++      cflags += [ "-fcf-protection=return" ]
++    } else if (use_cf_protection == "branch") {
++      cflags += [ "-fcf-protection=branch" ]
++    }
++
++    if (use_trapv) {
++      cflags += [ "-ftrapv" ]
++    }
++
++    if (use_fortify_source == 2) {
++      defines += [ "_FORTIFY_SOURCE=2" ]
++    } else if (use_fortify_source == 3) {
++      defines += [ "_FORTIFY_SOURCE=3" ]
++    }
++
+     if (use_mold) {
+       ldflags += [ "-fuse-ld=mold" ]
+     } else if (use_lld) {
+@@ -1099,6 +1161,117 @@ config("compiler") {
+     ]
+   }
+ 
++  if (!use_rust_asan && !use_rust_hwasan) {
++    if (use_rust_stack_protector_level == "")
++      rustflags += [
++      }
++    } else if (use_rust_stack_protector_level == "none")
++      rustflags += [
++        "-Cstack-protector=none"
++      ]
++    } else if (use_rust_stack_protector_level == "basic")
++      rustflags += [
++        "-Cstack-protector=basic"
++      ]
++    } else if (use_rust_stack_protector_level == "strong") {
++      rustflags += [
++        "-Cstack-protector=strong"
++      ]
++    } else if (use_rust_stack_protector_level == "all") {
++      rustflags += [
++        "-Cstack-protector=all"
++      ]
++    }
++  }
++  if (!use_rust_ubsan) {
++    if (use_rust_overflow_checks) {
++      rustflags += [
++        "-Coverflow-checks=on"
++      ]
++    }
++  }
++  if (use_rust_cet) {
++    rustflags += [
++      "-Ctarget-feature=+cet"
++    ]
++  }
++  if (use_rust_fortify_source_level == -1) {
++    rustflags += [
++    ]
++  } else if (use_rust_fortify_source_level == 0) {
++    rustflags += [
++      "-Cllvm-args=-D_FORTIFY_SOURCE=0"
++    ]
++  } else if (use_rust_fortify_source_level == 1) {
++    rustflags += [
++      "-Cllvm-args=-D_FORTIFY_SOURCE=1"
++    ]
++  } else if (use_rust_fortify_source_level == 2) {
++    rustflags += [
++      "-Cllvm-args=-D_FORTIFY_SOURCE=2"
++    ]
++  } else if (use_rust_fortify_source_level == 3) {
++    rustflags += [
++      "-Cllvm-args=-D_FORTIFY_SOURCE=3"
++    ]
++  }
++  if (use_rust_pauth) {
++    rustflags += [
++      "-Ccontrol-flow-protection"
++    ]
++  }
++  if (use_rust_retpoline) {
++    rustflags += [
++      "-Ctarget-feature=+retpoline"
++    ]
++  }
++  if (use_rust_stack_clash_protection) {
++    rustflags += [
++      "-Clink-arg=-fstack-clash-protection"
++    ]
++  }
++  if (use_rust_stack_probe) {
++    rustflags += [
++      "-Ctarget-feature=+stack-probe"
++    ]
++  }
++
++  if (use_rust_asan) {
++    rustflags += [
++      "-Zsanitizer=address"
++    ]
++  }
++  if (use_rust_hwasan) {
++    rustflags += [
++      "-Zsanitizer=hwaddress"
++    ]
++  }
++  if (use_rust_lsan) {
++    rustflags += [
++      "-Zsanitizer=leak"
++    ]
++  }
++  if (use_rust_msan) {
++    rustflags += [
++      "-Zsanitizer=memory"
++    ]
++  }
++  if (use_rust_tsan) {
++    rustflags += [
++      "-Zsanitizer=thread"
++    ]
++  }
++  if (use_rust_ubsan) {
++    rustflags += [
++      "-Zsanitizer=undefined"
++    ]
++  }
++  if ((use_rust_asan || use_rust_hwasan || use_rust_lsan || use_rust_msan || use_rust_tsan || use_rust_ubsan) && use_rust_no_sanitize_recover) {
++    rustflags += [
++      "-fno-sanitize-recover=all"
++    ]
++  }
++
+   # 64-bit Android sometimes defines __ARM_NEON but not __ARM_NEON__.
+   # 32-bit Android builds and macOS, however, define __ARM_NEON__,
+   # and code typically checks for this.

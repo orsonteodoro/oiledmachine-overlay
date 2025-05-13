@@ -78,7 +78,7 @@ CFI_VCALL=0 # Global variable
 CFLAGS_HARDENED_LEVEL="1" # Same as build scripts
 CFLAGS_HARDENED_USE_CASES="jit network scripting sensitive-data untrusted-data web-browser"
 CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
-CFLAGS_HARDENED_SANITIZERS_COMPAT=( "llvm" )
+#CFLAGS_HARDENED_SANITIZERS_COMPAT=( "llvm" )
 CHROMIUM_EBUILD_MAINTAINER=0 # See also GEN_ABOUT_CREDITS
 
 #
@@ -225,6 +225,12 @@ SHADOW_CALL_STACK=0 # Global variable
 S_CROMITE="${WORKDIR}/cromite-${CROMITE_COMMIT}"
 S_UNGOOGLED_CHROMIUM="${WORKDIR}/ungoogled-chromium-${UNGOOGLED_CHROMIUM_PV}"
 TESTDATA_P="${PN}-${PV}"
+# Testing this version to avoid breaking security.  The 13.6 series cause the \
+# mksnapshot "Return code is -11" error.  To fix it, it required to either \
+# disable v8 sandbox, or pointer compression and DrumBrake.  Before it was \
+# possible to use all 3.  The 13.7 series fixes contains the 5c595ad commit \
+# to fix a compile error when DrumBrake is enabled. \
+#V8_PV="13.7.152.7" # About the same as the latest Chromium beta release.
 ZLIB_PV="1.3.0"
 
 inherit cflags-depends cflags-hardened check-linker check-reqs chromium-2 dhms
@@ -256,8 +262,10 @@ elif [[ "${PATCHSET_PPC64%%.*}" == "${PV%%.*}" ]] ; then
 else
 	KEYWORDS="~amd64 ~arm64"
 fi
+
+
 # See https://gsdview.appspot.com/chromium-browser-official/?marker=chromium-131.0.6778.0.tar.x%40
-SRC_URI="
+SRC_URI+="
 	ppc64? (
 https://gitlab.solidsilicon.io/public-development/open-source/chromium/openpower-patches/-/archive/${PPC64_HASH}/openpower-patches-${PPC64_HASH}.tar.bz2
 	-> chromium-openpower-${PPC64_HASH:0:10}.tar.bz2
@@ -268,6 +276,12 @@ https://chromium-fonts.storage.googleapis.com/${TEST_FONT}
 	-> chromium-${PV%%\.*}-testfonts.tar.gz
 	)
 "
+if [[ -n "${V8_PV}" ]] ; then
+	SRC_URI+="
+https://github.com/v8/v8/archive/refs/tags/${V8_PV}.tar.gz
+	-> v8-${V8_PV}.tar.gz
+	"
+fi
 if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
 	SRC_URI+="
 		system-toolchain? (
@@ -694,7 +708,7 @@ ${IUSE_CODECS[@]}
 ${IUSE_LIBCXX[@]}
 ${PATENT_STATUS[@]}
 +accessibility bindist bluetooth +bundled-libcxx +cfi -cet +cups +css-hyphen
--debug +drumbrake +encode +extensions ffmpeg-chromium firejail -gtk4 -gwp-asan
+-debug -drumbrake +encode +extensions ffmpeg-chromium firejail -gtk4 -gwp-asan
 -hangouts -headless +hidpi +jit +js-type-check +kerberos +mdns +miracleptr mold +mpris
 -official +partitionalloc pax-kernel +pdf pic +pgo +plugins
 +pre-check-vaapi +pulseaudio +reporting-api qt6 +screencast selinux
@@ -839,9 +853,10 @@ if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ;then
 		)
 	"
 fi
-# Drumbrake is broken in this release
+# Drumbrake is broken in this release and off by default.
 REQUIRED_USE+="
 	${PATENT_USE_FLAGS}
+	!drumbrake
 	!headless (
 		extensions
 		pdf
@@ -2475,6 +2490,13 @@ src_unpack() {
 		local testfonts_tar="${DISTDIR}/chromium-testfonts-${TEST_FONT:0:10}.tar.gz"
 		tar xf "${testfonts_tar}" -C "${testfonts_dir}" || die "Failed to unpack testfonts"
 	fi
+
+	if [[ -n "${V8_PV}" ]] ; then
+einfo "Updating V8 to ${V8_PV}"
+		unpack "v8-${V8_PV}.tar.gz"
+		rm -rf "${S}/v8" || die
+		mv "${WORKDIR}/v8-${V8_PV}" "${S}/v8" || die
+	fi
 }
 
 is_generating_credits() {
@@ -2683,8 +2705,18 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 
 	PATCHES+=(
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-custom-optimization-level.patch"
-		"${FILESDIR}/extra-patches/${PN}-135.0.7049.114-hardening.patch"
+		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-hardening.patch"
 	)
+	if [[ -n "${V8_PV}" ]] && ver_test "${V8_PV}" -ge "13.6" ; then
+		PATCHES+=(
+			"${FILESDIR}/extra-patches/v8-13.6.233.8-custom-optimization-level.patch" # original in chromium tarball
+		)
+	else
+		PATCHES+=(
+			"${FILESDIR}/extra-patches/v8-13.7.152.7-custom-optimization-level.patch" # updated
+		)
+	fi
+
 	if ! use official ; then
 	# This section contains significant changes.  The above sections contains minor changes.
 
@@ -2713,7 +2745,8 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		fi
 	fi
 
-	if use drumbrake ; then
+	# For v8 13.6.233.8
+	if ( use webassembly || use drumbrake ) && ( [[ -z "${V8_PV}" ]] || ver_test "${V8_PV}" -eq "13.6.233.8" ) ; then
 		PATCHES+=(
 			"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-v8-5c595ad.patch"
 		)
@@ -4048,79 +4081,49 @@ ewarn
 eerror "Enable the cet USE flag"
 		die
 	fi
+
 	if use official ; then
 ewarn "You are using official settings.  For strong hardening, disable this USE flag."
-		myconf_gn+=" use_fc_protection=\"none\""
-		myconf_gn+=" use_retpoline=false"
-		myconf_gn+=" use_stack_clash_protection=false"
-	elif use cet ; then
-		myconf_gn+=" use_fc_protection=\"full\""
-		myconf_gn+=" use_retpoline=false"
-		myconf_gn+=" use_stack_clash_protection=true"
-		if is-flagq "-ftrapv" ; then
-			myconf_gn+=" use_trapv=true"
-		fi
-		if is-flagq "-D_FORITFY_SOURCE=3" ; then
-			myconf_gn+=" use_fortify_source=3"
-		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
-			myconf_gn+=" use_fortify_source=3"
-		fi
-
-		# For sanitizers on internal libc++
-		if is-flagq "-fsanitize=address" ; then
-			myconf_gn+=" is_asan=true"
-		fi
-		if is-flagq "-fsanitize=hwaddress" ; then
-			myconf_gn+=" is_hwasan=true"
-		fi
-		if is-flagq "-fsanitize=undefined" ; then
-			myconf_gn+=" is_ubsan=true"
-		fi
-	elif [[ "${ARCH}" == "amd64" ]] && is-flagq "-mretpoline" ; then
-		myconf_gn+=" use_fc_protection=\"none\""
-		myconf_gn+=" use_retpoline=true"
-		myconf_gn+=" use_stack_clash_protection=true"
-		if is-flagq "-ftrapv" ; then
-			myconf_gn+=" use_trapv=true"
-		fi
-		if is-flagq "-D_FORITFY_SOURCE=3" ; then
-			myconf_gn+=" use_fortify_source=3"
-		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
-			myconf_gn+=" use_fortify_source=2"
-		fi
-
-		# For sanitizers on internal libc++
-		if is-flagq "-fsanitize=address" ; then
-			myconf_gn+=" is_asan=true"
-		fi
-		if is-flagq "-fsanitize=hwaddress" ; then
-			myconf_gn+=" is_hwasan=true"
-		fi
-		if is-flagq "-fsanitize=undefined" ; then
-			myconf_gn+=" is_ubsan=true"
-		fi
 	else
-		myconf_gn+=" use_fc_protection=\"none\""
-		# No retpoline
+		if use cet ; then
+			myconf_gn+=" use_cf_protection=\"full\""
+			myconf_gn+=" use_rust_cet=true"
+		else
+			myconf_gn+=" use_cf_protection=\"none\""
+		fi
+		if [[ "${ARCH}" == "amd64" ]] && is-flagq "-mretpoline" ; then
+			myconf_gn+=" use_retpoline=true"
+			myconf_gn+=" use_rust_retpoline=true"
+		fi
 		myconf_gn+=" use_stack_clash_protection=true"
+		myconf_gn+=" use_rust_stack_clash_protection=true"
 		if is-flagq "-ftrapv" ; then
 			myconf_gn+=" use_trapv=true"
+			myconf_gn+=" use_rust_overflow_checks=true"
 		fi
 		if is-flagq "-D_FORITFY_SOURCE=3" ; then
 			myconf_gn+=" use_fortify_source=3"
+			myconf_gn+=" use_rust_fortify_source_level=3"
 		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
 			myconf_gn+=" use_fortify_source=2"
+			myconf_gn+=" use_rust_fortify_source_level=2"
 		fi
 
-		# For sanitizers on internal libc++
+		# For sanitizers on internal libc++, SSP for rust
 		if is-flagq "-fsanitize=address" ; then
 			myconf_gn+=" is_asan=true"
+			myconf_gn+=" use_rust_asan=true"
 		fi
 		if is-flagq "-fsanitize=hwaddress" ; then
 			myconf_gn+=" is_hwasan=true"
+			myconf_gn+=" use_rust_hwasan=true"
 		fi
 		if is-flagq "-fsanitize=undefined" ; then
 			myconf_gn+=" is_ubsan=true"
+			myconf_gn+=" use_rust_ubsan=true"
+		fi
+		if is-flagq "-fsanitize=address" || is-flagq "-fsanitize=hwaddress" || is-flagq "-fsanitize=undefined" ; then
+			myconf_gn+=" use_rust_no_sanitize_recover=true"
 		fi
 	fi
 
@@ -4593,11 +4596,32 @@ einfo  "The v8 sandbox is enabled."
 		myconf_gn+=" v8_enable_sandbox=true"
 	fi
 
-	# DrumBrake needs pointer compression.
+	# DrumBrake is broken in this release when generating mksnapshot.
 	myconf_gn=$(echo "${myconf_gn}" | sed -e "s|v8_enable_drumbrake=true|v8_enable_drumbrake=false|g")
 
-	myconf_gn+=" v8_enable_pointer_compression=false"		# May break v8 sandbox
-	myconf_gn+=" v8_enable_pointer_compression_shared_cage=false"	# May break v8 sandbox
+#	myconf_gn+=" v8_enable_pointer_compression=false"		# May break v8 sandbox
+#	myconf_gn+=" v8_enable_pointer_compression_shared_cage=false"	# May break v8 sandbox
+
+#	myconf_gn+=" v8_enable_pointer_compression=true"
+#	myconf_gn+=" v8_enable_pointer_compression_shared_cage=true"
+	local is_64bit=0
+	if [[ \
+		   "${ABI}" == "arm64" \
+		|| "${ABI}" == "amd64" \
+		|| "${ABI}" == "ppc64" \
+		|| "${CHOST}" =~ "loongarch64" \
+		|| "${CHOST}" =~ "mips64" \
+		|| "${CHOST}" =~ "riscv64" \
+	]] ; then
+		is_64bit=1
+	fi
+	if (( ${total_mem_gib} >= 8 && ${is_64bit} == 1 )) ; then
+einfo "Using pointer-compression for 8 GiB"
+		myconf_gn+=" v8_enable_pointer_compression_8gb=true"
+	else
+einfo "Using pointer-compression for 4 GiB"
+		myconf_gn+=" v8_enable_pointer_compression_8gb=false"
+	fi
 
 	# Forced because of asserts
 	myconf_gn+=" enable_screen_ai_service=true" # Required by chrome/renderer:renderer
