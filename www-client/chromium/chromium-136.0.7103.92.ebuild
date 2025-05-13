@@ -4609,8 +4609,8 @@ einfo  "The v8 sandbox is enabled."
 #	myconf_gn+=" v8_enable_pointer_compression=false"		# May break v8 sandbox
 #	myconf_gn+=" v8_enable_pointer_compression_shared_cage=false"	# May break v8 sandbox
 
-#	myconf_gn+=" v8_enable_pointer_compression=true"
-#	myconf_gn+=" v8_enable_pointer_compression_shared_cage=true"
+	myconf_gn+=" v8_enable_pointer_compression=true"
+	myconf_gn+=" v8_enable_pointer_compression_shared_cage=true"
 	local is_64bit=0
 	if [[ \
 		   "${ABI}" == "arm64" \
