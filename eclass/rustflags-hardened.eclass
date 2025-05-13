@@ -179,10 +179,6 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 #
 
 
-# @ECLASS_VARIABLE:  RUSTFLAGS_UNSTABLE_RUSTC_PV
-# @DESCRIPTION:
-RUSTFLAGS_UNSTABLE_RUSTC_PV="1.86.0"
-
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_BTI_USER
 # @USER_VARIABLE
 # @DESCRIPTION:
@@ -327,27 +323,6 @@ _rustflags-hardened_has_cet() {
 	else
 		return 1
 	fi
-}
-
-# @FUNCTION: _rustflags-hardened_has_unstable_rust
-# @DESCRIPTION:
-# For -Z <option> checks
-_rustflags-hardened_has_unstable_rust() {
-	if [[ -z "${RUSTC}" ]] ; then
-eerror "QA:  Place _rustflags-hardened_has_unstable_rust() after RUSTC init."
-		die
-	fi
-	local rust_pv=$(${RUSTC} --version | cut -f 2 -d " ")
-	local is_unstable=0
-	if ver_test "${rust_pv}" -lt "${RUSTFLAGS_UNSTABLE_RUSTC_PV}" ; then
-		return 1
-	fi
-	if has_version "=dev-lang/rust-9999" ; then
-		return 0
-	elif has_version "=dev-lang/rust-bin-9999" ; then
-		return 0
-	fi
-	return 1
 }
 
 # @FUNCTION: _rustflags-hardened_has_target_feature
@@ -584,6 +559,9 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		die
 	fi
 
+	${RUSTC} -Z help 2>/dev/null 1>/dev/null
+	local is_rust_nightly=$?
+
 	local rust_pv=$("${RUSTC}" --version \
 		| cut -f 2 -d " ")
 
@@ -661,9 +639,9 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 
 	# Not production ready only available on nightly
 	# For status see https://github.com/rust-lang/rust/blob/master/src/doc/rustc/src/exploit-mitigations.md?plain=1#L41
-	if true ; then
-		: # -Z flags support broken for =dev-lang/rust-bin-9999
-	elif ver_test "${rust_pv}" -ge "${RUSTFLAGS_UNSTABLE_RUSTC_PV}" ; then
+	if (( ${is_rust_nightly} != 0 )) ; then
+		:
+	else
 		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
 			| sed -r \
 				-e "s#-Z[ ]*stack-protector=(all|basic|none|strong)##g")
@@ -1185,9 +1163,9 @@ einfo "Added ${x} from ${module} sanitizer"
 			fi
 		done
 
-		if true ; then
-			: # -Z flags support broken for =dev-lang/rust-bin-9999
-		elif (( ${asan} == 1 )) && ver_test "${rust_pv}" -ge "${RUSTFLAGS_UNSTABLE_RUSTC_PV}" ; then
+		if (( ${is_rust_nightly} != 0 )) ; then
+			:
+		else
 einfo "Deduping stack overflow check"
 			RUSTFLAGS=$(echo "${RUSTFLAGS}" \
 				| sed -r \
