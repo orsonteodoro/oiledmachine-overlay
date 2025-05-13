@@ -4606,12 +4606,8 @@ einfo  "The v8 sandbox is enabled."
 	# DrumBrake is broken in this release when generating mksnapshot.
 	myconf_gn=$(echo "${myconf_gn}" | sed -e "s|v8_enable_drumbrake=true|v8_enable_drumbrake=false|g")
 
-#	myconf_gn+=" v8_enable_pointer_compression=false"		# May break v8 sandbox
-#	myconf_gn+=" v8_enable_pointer_compression_shared_cage=false"	# May break v8 sandbox
-
-	myconf_gn+=" v8_enable_pointer_compression=true"
-	myconf_gn+=" v8_enable_pointer_compression_shared_cage=true"
 	local is_64bit=0
+	local is_64bit_sc=0
 	if [[ \
 		   "${ABI}" == "arm64" \
 		|| "${ABI}" == "amd64" \
@@ -4621,6 +4617,25 @@ einfo  "The v8 sandbox is enabled."
 		|| "${CHOST}" =~ "riscv64" \
 	]] ; then
 		is_64bit=1
+	fi
+
+	# V8 may support mips, but the assert may need to be fixed.
+	if [[ \
+		   "${ABI}" == "arm64" \
+		|| "${ABI}" == "amd64" \
+		|| "${ABI}" == "ppc64" \
+		|| "${CHOST}" =~ "loongarch64" \
+		|| "${CHOST}" =~ "riscv64" \
+	]] ; then
+		is_64bit_sc=1
+	fi
+
+	if (( ${is_64bit} == 1 )) ; then
+		myconf_gn+=" v8_enable_pointer_compression=true"
+	fi
+
+	if (( ${is_64bit_sc} == 1 )) ; then
+		myconf_gn+=" v8_enable_pointer_compression_shared_cage=true"
 	fi
 	if (( ${total_mem_gib} >= 8 && ${is_64bit} == 1 )) ; then
 einfo "Using pointer-compression for 8 GiB"
