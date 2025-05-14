@@ -4145,7 +4145,19 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 			fi
 		else
 			if (( ${is_rust_nightly} == 1 )) ; then
-				myconf_gn+=" use_rust_stack_protector_level=\"basic\""
+				if [[ "${CFLAGS_HARDENED_LEVEL}" == "0" ]] ; then
+					myconf_gn+=" use_stack_protector_level=\"none\""
+					myconf_gn+=" use_rust_stack_protector_level=\"none\""
+				elif [[ "${CFLAGS_HARDENED_LEVEL}" == "1" ]] ; then
+					myconf_gn+=" use_stack_protector_level=\"basic\""
+					myconf_gn+=" use_rust_stack_protector_level=\"basic\""
+				elif [[ "${CFLAGS_HARDENED_LEVEL}" == "2" ]] ; then
+					myconf_gn+=" use_stack_protector_level=\"strong\""
+					myconf_gn+=" use_rust_stack_protector_level=\"strong\""
+				elif [[ "${CFLAGS_HARDENED_LEVEL}" == "3" ]] ; then
+					myconf_gn+=" use_stack_protector_level=\"all\""
+					myconf_gn+=" use_rust_stack_protector_level=\"all\""
+				fi
 			fi
 		fi
 	fi
