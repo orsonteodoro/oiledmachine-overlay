@@ -3,7 +3,9 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{9..10} )
+# U24
+
+PYTHON_COMPAT=( "python3_"{11,12} )
 
 inherit cmake python-single-r1
 
@@ -27,7 +29,6 @@ ebuild_revision_1
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
-# U 22.04
 RDEPEND="
 	${PYTHON_DEPS}
 	>=media-libs/freeglut-2.8.1
