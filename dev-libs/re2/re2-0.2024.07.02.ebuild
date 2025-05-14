@@ -36,6 +36,7 @@ IUSE="
 ebuild_revision_1
 "
 RDEPEND="
+	>=dev-cpp/abseil-cpp-20240116.2:0/20240116
 	icu? (
 		dev-libs/icu:0[${MULTILIB_USEDEP}]
 		dev-libs/icu:=
