@@ -3,14 +3,55 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..11} )
-inherit distutils-r1 git-r3
+DISTUTILS_USE_PEP517="no"
+EGIT_COMMIT="7c0f5701130f4178cb63d10da88578b9b705fbb1"
+EXTPLANE_ID="a1428feb9916d6acad8d"
+LIBREMINES_PV="1.10.0"
+LINUX_PV="6.1"
+NAUTILUS_PV="44.2.1"
+OPENFOAM_PV="3.0.1"
+PYTHON_COMPAT=( "python3_11" )
+VIM_QT_PV="20170421"
+
+inherit distutils-r1
+
+# Live ebuilds don't get KEYWORDed
+S="${WORKDIR}/YCM-Generator-${EGIT_COMMIT}"
+SRC_URI="
+https://github.com/PaulHaeger/YCM-Generator/commit/b5015162c2a2da45c7f24954716ad1211110f532.patch
+	-> ycm-generator-b501516-fix-str-lt-comparison.patch
+https://github.com/rdnetto/YCM-Generator/archive/${EGIT_COMMIT}.tar.gz
+	-> ${PN}-${EGIT_COMMIT:0:7}.tar.gz
+https://github.com/rdnetto/YCM-Generator/pull/103.patch
+	-> ycm-generator-pr103-meson-ninja-support.patch
+test? (
+	make? (
+		kbuild? (
+https://cdn.kernel.org/pub/linux/kernel/v$(ver_cut 1 ${LINUX_PV}).x/linux-${LINUX_PV}.tar.xz
+		)
+https://github.com/equalsraf/vim-qt/archive/${VIM_QT_PV}.tar.gz
+	-> vim-qt-${VIM_QT_PV}.tar.gz
+	)
+	cmake? (
+https://github.com/Bollos00/LibreMines/archive/refs/tags/v${LIBREMINES_PV}.tar.gz
+	-> libremines-${LIBREMINES_PV}.tar.gz
+	)
+	meson? (
+https://gitlab.gnome.org/GNOME/nautilus/-/archive/${NAUTILUS_PV}/nautilus-${NAUTILUS_PV}.tar.bz2
+	)
+	qmake? (
+https://github.com/vranki/ExtPlane/archive/refs/tags/untagged-${EXTPLANE_ID}.tar.gz
+	-> extplane-${EXTPLANE_ID}.tar.gz
+	)
+	wmake? (
+https://github.com/OpenFOAM/OpenFOAM-$(ver_cut 1-2 ${OPENFOAM_PV}).x/archive/refs/tags/version-${OPENFOAM_PV}.tar.gz
+	-> openfoam-3.0.1.tar.gz
+	)
+)
+"
 
 DESCRIPTION="Generates config files for YouCompleteMe"
 HOMEPAGE="https://github.com/rdnetto/YCM-Generator"
-
-# Live ebuilds don't get KEYWORDed
-
 LICENSE="
 	GPL-3
 	Unlicense
@@ -88,11 +129,11 @@ LICENSE="
 # GPL-3 - ExtPlane
 # GPL-3+ - openfoam
 # GPL-3+ LGPL-2.1+ - nautilus
+RESTRICT="mirror"
 SLOT="0"
 IUSE+="
-+cmake +make kbuild +meson +qmake +wmake test
-
-qt5 qt6 r5
++cmake +make kbuild +meson +qmake qt5 qt6 +wmake test
+ebuild_revision_5
 "
 REQUIRED_USE+="
 	cmake? (
@@ -174,66 +215,25 @@ BDEPEND+="
 		)
 	)
 "
-EGIT_COMMIT="7c0f5701130f4178cb63d10da88578b9b705fbb1"
-EXTPLANE_DIGEST="a1428feb9916d6acad8d"
-LIBREMINES_PV="1.10.0"
-LINUX_PV="6.1"
-NAUTILUS_PV="44.2.1"
-OPENFOAM_PV="3.0.1"
-VIM_QT_PV="20170421"
-SRC_URI="
-https://github.com/rdnetto/YCM-Generator/archive/${EGIT_COMMIT}.tar.gz
-	-> ${P}.tar.gz
-https://github.com/PaulHaeger/YCM-Generator/commit/b5015162c2a2da45c7f24954716ad1211110f532.patch
-	-> ycm-generator-b501516-fix-str-lt-comparison.patch
-https://github.com/rdnetto/YCM-Generator/pull/103.patch
-	-> ycm-generator-pr103-meson-ninja-support.patch
-test? (
-	make? (
-		kbuild? (
-https://cdn.kernel.org/pub/linux/kernel/v$(ver_cut 1 ${LINUX_PV}).x/linux-${LINUX_PV}.tar.xz
-		)
-https://github.com/equalsraf/vim-qt/archive/${VIM_QT_PV}.tar.gz
-	-> vim-qt-${VIM_QT_PV}.tar.gz
-	)
-	cmake? (
-https://github.com/Bollos00/LibreMines/archive/refs/tags/v${LIBREMINES_PV}.tar.gz
-	-> libremines-${LIBREMINES_PV}.tar.gz
-	)
-	meson? (
-https://gitlab.gnome.org/GNOME/nautilus/-/archive/${NAUTILUS_PV}/nautilus-${NAUTILUS_PV}.tar.bz2
-	)
-	qmake? (
-https://github.com/vranki/ExtPlane/archive/refs/tags/untagged-${EXTPLANE_DIGEST}.tar.gz
-	-> extplane-${EXTPLANE_DIGEST}.tar.gz
-	)
-	wmake? (
-https://github.com/OpenFOAM/OpenFOAM-$(ver_cut 1-2 ${OPENFOAM_PV}).x/archive/refs/tags/version-${OPENFOAM_PV}.tar.gz
-	-> openfoam-3.0.1.tar.gz
-	)
-)
-"
-S="${WORKDIR}/YCM-Generator-${EGIT_COMMIT}"
-RESTRICT="mirror"
 
 src_unpack() {
-	unpack ${P}.tar.gz
+	unpack "${PN}-${EGIT_COMMIT:0:7}.tar.gz"
 	if use test ; then
 		if use cmake ; then
-			unpack libremines-${LIBREMINES_PV}.tar.gz
+			unpack "libremines-${LIBREMINES_PV}.tar.gz"
 		fi
 		if use qmake ; then
-			unpack extplane-${EXTPLANE_DIGEST}.tar.gz
+			unpack "extplane-${EXTPLANE_ID}.tar.gz"
 		fi
 		if use make ; then
-			use kbuild && unpack linux-${LINUX_PV}.tar.xz
-			unpack vim-qt-${VIM_QT_PV}.tar.gz
+			use kbuild && "unpack linux-${LINUX_PV}.tar.xz"
+			unpack "vim-qt-${VIM_QT_PV}.tar.gz"
 		fi
 		if use meson ; then
-			unpack nautilus-${NAUTILUS_PV}.tar.bz2
+			unpack "nautilus-${NAUTILUS_PV}.tar.bz2"
 		fi
 		if use wmake ; then
-			unpack openfoam-${OPENFOAM_PV}.tar.gz
+			unpack "openfoam-${OPENFOAM_PV}.tar.gz"
 		fi
 	fi
 }
@@ -244,7 +244,8 @@ src_prepare() {
 	futurize -0 -v -w "${S}" || die
 	sed -i \
 		-e "s|#!/usr/bin/env python2|#!/usr/bin/env python|" \
-		config_gen.py || die
+		"config_gen.py" \
+		|| die
 	eapply "${FILESDIR}/ycm-generator-9999_p20191112-r3-py3-fixes.patch"
 	eapply "${FILESDIR}/ycm-generator-9999_p20191112-r3-qt6.patch"
 	eapply "${DISTDIR}/ycm-generator-b501516-fix-str-lt-comparison.patch"
@@ -257,7 +258,7 @@ src_prepare() {
 }
 
 src_compile() {
-	:;
+	:
 }
 
 test_autotools() {
@@ -266,16 +267,16 @@ ewarn "The autotools test will infinite loop.  Do not use at this time."
 	einfo "Testing autotools"
 	pushd "${WORKDIR}/vim-qt-package-${VIM_QT_PV}" || die
 # Generate first before bugging out
-		./configure || die
+		"./configure" || die
 	popd || die
 	config_gen.py \
 		"${WORKDIR}/vim-qt-package-${VIM_QT_PV}" \
 		--verbose \
-		-o .ycm_extra_conf-autotools.py \
+		-o ".ycm_extra_conf-autotools.py" \
 		|| die
 	grep -q \
 		-e "Generated by YCM Generator" \
-		.ycm_extra_conf-autotools.py \
+		".ycm_extra_conf-autotools.py" \
 		|| die
 }
 
@@ -296,24 +297,24 @@ einfo "Skipping cmake test"
 		"${WORKDIR}/LibreMines-${LIBREMINES_PV}" \
 		--verbose \
 		--configure_opts=" -G \"Unix Makefiles\" ${qtarg}" \
-		-o .ycm_extra_conf-cmake.py \
+		-o ".ycm_extra_conf-cmake.py" \
 		|| die
 	grep -q \
 		-e "Generated by YCM Generator" \
-		.ycm_extra_conf-cmake.py \
+		".ycm_extra_conf-cmake.py" \
 		|| die
 
 	einfo "Testing cmake with ninja"
-	rm -f .ycm_extra_conf-cmake.py
+	rm -f ".ycm_extra_conf-cmake.py"
 	config_gen.py \
 		"${WORKDIR}/LibreMines-${LIBREMINES_PV}" \
 		--verbose \
 		--configure_opts="${qtarg}" \
-		-o .ycm_extra_conf-cmake.py \
+		-o ".ycm_extra_conf-cmake.py" \
 		|| die
 	grep -q \
 		-e "Generated by YCM Generator" \
-		.ycm_extra_conf-cmake.py \
+		".ycm_extra_conf-cmake.py" \
 		|| die
 }
 
@@ -356,11 +357,11 @@ test_kbuild() {
 		"${WORKDIR}/linux-${LINUX_PV}" \
 		--verbose \
 		-e \
-		-o .ycm_extra_conf-kbuild.py \
+		-o ".ycm_extra_conf-kbuild.py" \
 		|| die
 	grep -q \
 		-e "Generated by YCM Generator" \
-		.ycm_extra_conf-kbuild.py \
+		".ycm_extra_conf-kbuild.py" \
 		|| die
 }
 
@@ -373,11 +374,11 @@ test_meson() {
 		--configure_opts="-Dtests=none" \
 		-N="-v" \
 		--speed="slow" \
-		-o .ycm_extra_conf-meson.py \
+		-o ".ycm_extra_conf-meson.py" \
 		|| die
 	grep -q \
 		-e "Generated by YCM Generator" \
-		.ycm_extra_conf-meson.py \
+		".ycm_extra_conf-meson.py" \
 		|| die
 }
 
@@ -385,13 +386,13 @@ test_qmake() {
 	use qmake || return
 	einfo "Testing Qmake"
 	config_gen.py \
-		"${WORKDIR}/ExtPlane-untagged-${EXTPLANE_DIGEST}" \
+		"${WORKDIR}/ExtPlane-untagged-${EXTPLANE_ID}" \
 		--verbose \
-		-o .ycm_extra_conf-qmake.py \
+		-o ".ycm_extra_conf-qmake.py" \
 		|| die
 	grep -q \
 		-e "Generated by YCM Generator" \
-		.ycm_extra_conf-qmake.py \
+		".ycm_extra_conf-qmake.py" \
 		|| die
 }
 
@@ -436,7 +437,7 @@ eerror "ARCH not supported for wmake"
 	for p in ${L[@]} ; do
 		local len=$(echo "${p}" | tr "/" "\n" | wc -l)
 		len=$((${len} - 2))
-		rm -f .ycm_extra_conf-wmake.py
+		rm -f ".ycm_extra_conf-wmake.py"
 		local subproject_path=$(echo "${p}" \
 			| cut -f 1-${len} -d "/")
 einfo "Processing ${subproject_path}"
@@ -444,11 +445,11 @@ einfo "Processing ${subproject_path}"
 			"${subproject_path}" \
 			--verbose \
 			-e \
-			-o .ycm_extra_conf-wmake.py \
+			-o ".ycm_extra_conf-wmake.py" \
 			|| die
 		grep -q \
 			-e "Generated by YCM Generator" \
-			.ycm_extra_conf-wmake.py \
+			".ycm_extra_conf-wmake.py" \
 			|| die
 	done
 }
@@ -472,12 +473,13 @@ src_test() {
 src_install() {
 	python_install_impl() {
 		python_moduleinto "${PN}"
-		python_domodule *.py fake-toolchain plugin
+		python_domodule *".py" "fake-toolchain" "plugin"
 		fperms 0755 \
-		"$(python_get_sitedir)/${PN}/fake-toolchain/Unix"/{cc,cxx,true} \
-		"$(python_get_sitedir)/${PN}/config_gen.py"
+			"$(python_get_sitedir)/${PN}/fake-toolchain/Unix/"{"cc","cxx","true"} \
+			"$(python_get_sitedir)/${PN}/config_gen.py"
 		dodir "/usr/lib/python-exec/${EPYTHON}"
-		dosym "$(python_get_sitedir)/${PN}/config_gen.py" \
+		dosym \
+			"$(python_get_sitedir)/${PN}/config_gen.py" \
 			"/usr/lib/python-exec/${EPYTHON}/config_gen.py"
 	}
 	python_foreach_impl python_install_impl
