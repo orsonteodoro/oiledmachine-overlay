@@ -852,9 +852,9 @@ if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ;then
 	"
 fi
 # Drumbrake is broken in this release and off by default.
+#!drumbrake
 REQUIRED_USE+="
 	${PATENT_USE_FLAGS}
-	!drumbrake
 	!headless (
 		extensions
 		pdf
@@ -4633,6 +4633,14 @@ einfo "JIT off is similar to -O${jit_level_desc} worst case."
 #
 # Reported by elfx86exts:
 # Instruction set extensions used: AVX, AVX2, AVX512, BMI, BMI2, BWI, CMOV, DQI, MODE64, NOVLX, PCLMUL, SSE1, SSE2, SSE3, SSE41, SSSE3, VLX
+#
+# It is a mess really
+# v8_enable_pointer_compression_shared_cage depends on v8_enable_pointer_compression
+# v8_enable_drumbrake depend on v8_enable_pointer_compression
+# v8_enable_sandbox depends on v8_enable_external_code_space
+# v8_enable_external_code_space depends on v8_enable_pointer_compression
+# Disabling pointer compression will disable both v8 sandbox and drumbrake.
+#
 # To fix disable either v8_enable_sandbox=false or v8_enable_pointer_compression=false
 	if [[ "${ABI}" == "arm" || "${ABI}" == "x86" || "${ABI}" == "ppc" ]] ; then
 # Upstream doesn't support it.
@@ -4643,7 +4651,10 @@ einfo  "The v8 sandbox is enabled."
 		myconf_gn+=" v8_enable_sandbox=true"
 	fi
 
-	myconf_gn=$(echo "${myconf_gn}" | sed -e "s|v8_enable_drumbrake=true|v8_enable_drumbrake=false|g")
+#	myconf_gn=$(echo "${myconf_gn}" | sed -e "s|v8_enable_drumbrake=true|v8_enable_drumbrake=false|g")
+
+	# Testing workaround for the above problem.
+	myconf_gn=" v8_use_snapshot=false"
 
 	local is_64bit=0
 	local is_64bit_sc=0
@@ -4669,24 +4680,23 @@ einfo  "The v8 sandbox is enabled."
 		is_64bit_sc=1
 	fi
 
-	# Pointer compression breaks mksnapshot
-	myconf_gn+=" v8_enable_pointer_compression=false"
-	myconf_gn+=" v8_enable_pointer_compression_shared_cage=false"
+	myconf_gn+=" v8_enable_pointer_compression=true"
+	myconf_gn+=" v8_enable_pointer_compression_shared_cage=true"
 
-	#if (( ${is_64bit} == 1 )) ; then
-	#	myconf_gn+=" v8_enable_pointer_compression=true"
-	#fi
+	if (( ${is_64bit} == 1 )) ; then
+		myconf_gn+=" v8_enable_pointer_compression=true"
+	fi
 
-	#if (( ${is_64bit_sc} == 1 )) ; then
-	#	myconf_gn+=" v8_enable_pointer_compression_shared_cage=true"
-	#fi
-#	if (( ${total_mem_gib} >= 8 && ${is_64bit} == 1 )) ; then
-#einfo "Using pointer-compression for 8 GiB heap"
-#		myconf_gn+=" v8_enable_pointer_compression_8gb=true"
-#	else
-#einfo "Using pointer-compression for 4 GiB heap"
-#		myconf_gn+=" v8_enable_pointer_compression_8gb=false"
-#	fi
+	if (( ${is_64bit_sc} == 1 )) ; then
+		myconf_gn+=" v8_enable_pointer_compression_shared_cage=true"
+	fi
+	if (( ${total_mem_gib} >= 8 && ${is_64bit} == 1 )) ; then
+einfo "Using pointer-compression for 8 GiB heap"
+		myconf_gn+=" v8_enable_pointer_compression_8gb=true"
+	else
+einfo "Using pointer-compression for 4 GiB heap"
+		myconf_gn+=" v8_enable_pointer_compression_8gb=false"
+	fi
 
 	# Forced because of asserts
 	myconf_gn+=" enable_screen_ai_service=true" # Required by chrome/renderer:renderer
@@ -6169,46 +6179,46 @@ src_test() {
 	# https://issues.chromium.org/issues/40939315
 	local skip_tests=(
 		'MessagePumpLibeventTest.NestedNotification*'
-		ClampTest.Death
-		OptionalTest.DereferencingNoValueCrashes
-		PlatformThreadTest.SetCurrentThreadTypeTest
-		RawPtrTest.TrivialRelocability
-		SafeNumerics.IntMaxOperations
-		StackTraceTest.TraceStackFramePointersFromBuffer
-		StringPieceTest.InvalidLengthDeath
-		StringPieceTest.OutOfBoundsDeath
-		ThreadPoolEnvironmentConfig.CanUseBackgroundPriorityForWorker
-		ValuesUtilTest.FilePath
+		"ClampTest.Death"
+		"OptionalTest.DereferencingNoValueCrashes"
+		"PlatformThreadTest.SetCurrentThreadTypeTest"
+		"RawPtrTest.TrivialRelocability"
+		"SafeNumerics.IntMaxOperations"
+		"StackTraceTest.TraceStackFramePointersFromBuffer"
+		"StringPieceTest.InvalidLengthDeath"
+		"StringPieceTest.OutOfBoundsDeath"
+		"ThreadPoolEnvironmentConfig.CanUseBackgroundPriorityForWorker"
+		"ValuesUtilTest.FilePath"
 		# Gentoo-specific
-		AlternateTestParams/PartitionAllocDeathTest.RepeatedAllocReturnNullDirect/0
-		AlternateTestParams/PartitionAllocDeathTest.RepeatedAllocReturnNullDirect/1
-		AlternateTestParams/PartitionAllocDeathTest.RepeatedAllocReturnNullDirect/2
-		AlternateTestParams/PartitionAllocDeathTest.RepeatedAllocReturnNullDirect/3
-		AlternateTestParams/PartitionAllocDeathTest.RepeatedReallocReturnNullDirect/0
-		AlternateTestParams/PartitionAllocDeathTest.RepeatedReallocReturnNullDirect/1
-		AlternateTestParams/PartitionAllocDeathTest.RepeatedReallocReturnNullDirect/2
-		AlternateTestParams/PartitionAllocDeathTest.RepeatedReallocReturnNullDirect/3
-		CharacterEncodingTest.GetCanonicalEncodingNameByAliasName
-		CheckExitCodeAfterSignalHandlerDeathTest.CheckSIGFPE
-		CheckExitCodeAfterSignalHandlerDeathTest.CheckSIGILL
-		CheckExitCodeAfterSignalHandlerDeathTest.CheckSIGSEGV
-		CheckExitCodeAfterSignalHandlerDeathTest.CheckSIGSEGVNonCanonicalAddress
-		FilePathTest.FromUTF8Unsafe_And_AsUTF8Unsafe
-		FileTest.GetInfoForCreationTime
-		ICUStringConversionsTest.ConvertToUtf8AndNormalize
-		NumberFormattingTest.FormatPercent
-		PathServiceTest.CheckedGetFailure
-		PlatformThreadTest.CanChangeThreadType
-		RustLogIntegrationTest.CheckAllSeverity
-		StackCanary.ChangingStackCanaryCrashesOnReturn
-		StackTraceDeathTest.StackDumpSignalHandlerIsMallocFree
-		SysStrings.SysNativeMBAndWide
-		SysStrings.SysNativeMBToWide
-		SysStrings.SysWideToNativeMB
-		TestLauncherTools.TruncateSnippetFocusedMatchesFatalMessagesTest
-		ToolsSanityTest.BadVirtualCallNull
-		ToolsSanityTest.BadVirtualCallWrongType
-		CancelableEventTest.BothCancelFailureAndSucceedOccurUnderContention #new m133: TODO investigate
+		"AlternateTestParams/PartitionAllocDeathTest.RepeatedAllocReturnNullDirect/0"
+		"AlternateTestParams/PartitionAllocDeathTest.RepeatedAllocReturnNullDirect/1"
+		"AlternateTestParams/PartitionAllocDeathTest.RepeatedAllocReturnNullDirect/2"
+		"AlternateTestParams/PartitionAllocDeathTest.RepeatedAllocReturnNullDirect/3"
+		"AlternateTestParams/PartitionAllocDeathTest.RepeatedReallocReturnNullDirect/0"
+		"AlternateTestParams/PartitionAllocDeathTest.RepeatedReallocReturnNullDirect/1"
+		"AlternateTestParams/PartitionAllocDeathTest.RepeatedReallocReturnNullDirect/2"
+		"AlternateTestParams/PartitionAllocDeathTest.RepeatedReallocReturnNullDirect/3"
+		"CharacterEncodingTest.GetCanonicalEncodingNameByAliasName"
+		"CheckExitCodeAfterSignalHandlerDeathTest.CheckSIGFPE"
+		"CheckExitCodeAfterSignalHandlerDeathTest.CheckSIGILL"
+		"CheckExitCodeAfterSignalHandlerDeathTest.CheckSIGSEGV"
+		"CheckExitCodeAfterSignalHandlerDeathTest.CheckSIGSEGVNonCanonicalAddress"
+		"FilePathTest.FromUTF8Unsafe_And_AsUTF8Unsafe"
+		"FileTest.GetInfoForCreationTime"
+		"ICUStringConversionsTest.ConvertToUtf8AndNormalize"
+		"NumberFormattingTest.FormatPercent"
+		"PathServiceTest.CheckedGetFailure"
+		"PlatformThreadTest.CanChangeThreadType"
+		"RustLogIntegrationTest.CheckAllSeverity"
+		"StackCanary.ChangingStackCanaryCrashesOnReturn"
+		"StackTraceDeathTest.StackDumpSignalHandlerIsMallocFree"
+		"SysStrings.SysNativeMBAndWide"
+		"SysStrings.SysNativeMBToWide"
+		"SysStrings.SysWideToNativeMB"
+		"TestLauncherTools.TruncateSnippetFocusedMatchesFatalMessagesTest"
+		"ToolsSanityTest.BadVirtualCallNull"
+		"ToolsSanityTest.BadVirtualCallWrongType"
+		"CancelableEventTest.BothCancelFailureAndSucceedOccurUnderContention" #new m133: TODO investigate
 	)
 	local test_filter="-$(IFS=:; printf '%s' "${skip_tests[*]}")"
 	# test-launcher-bot-mode enables parallelism and plain output.
