@@ -22,8 +22,7 @@
 
 | Python               | Level of support                      |
 | ---                  | ---                                   |
-| 3.9 and earlier      | Not supported (EOL)                   |
-| 3.10                 | Not supported (EOL)*                  |
+| 3.10 and earlier     | Not supported (EOL)*                  |
 | 3.11                 | Mostly supported                      |
 | 3.12                 | Partially supported                   |
 | 3.13                 | Partially supported                   |
@@ -34,8 +33,8 @@
 
 * Not supported due to [python-utils-r1.eclass](https://github.com/gentoo/gentoo/blob/master/eclass/python-utils-r1.eclass#L44)
   EOL restrictions, but not [EOL upstream](https://devguide.python.org/versions/).
-  Forced PYTHON_COMPAT bumps to Python 3.11 may introduce DoS vulnerabilities
-  (e.g. crash) or incompatibilities.
+  Forced PYTHON_COMPAT bumps (to Python 3.11 or any future minimum version
+  bumps) may introduce DoS vulnerabilities (e.g. crash) or incompatibilities.
 
 The LIBC support below reflects the upstream projects CI (Continuous
 Integration) images trend, but it may change if microarchitecture references
