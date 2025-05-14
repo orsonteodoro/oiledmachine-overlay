@@ -58,7 +58,7 @@ exist in build files.
 | musl                 | *       | Available                   |
 
 * Using 32-bit may increase chances of high-critical vulnerabilities.  Examples:
-  - V8 Sandbox (64-bit supported only, protects against memory corruption that may lead to code execution, privilege escalation, data tampering, information disclosure)
+  - V8 Sandbox (64-bit supported only, protects against memory corruption, if not used may lead to code execution, privilege escalation, data tampering, information disclosure)
   - Transient execution CPU vulnerabilities (SCSB, FPVI, BHI, Retbleed) that may lead to information disclosure that are unpatched for 32-bit
   - ASLR effectiveness on 32-bit is estimated to be 10-20% or 20-50% and can lead to increased privilege escalation, data tampering, information disclosure
 
