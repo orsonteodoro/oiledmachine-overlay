@@ -10,6 +10,7 @@ EAPI=8
 # resampy
 # sphinxcontrib-svg2pdfconverter
 # types-decorator
+# velin
 
 
 if [[ "${PV}" =~ "_p" ]]; then
@@ -18,7 +19,8 @@ else
 	MY_PV="$(ver_cut 1-3 ${PV})"
 fi
 
-PYTHON_COMPAT=( "python3_"{10..12} )
+DISTUTILS_USE_PEP517="setuptools"
+PYTHON_COMPAT=( "python3_"{11..13} )
 TEST_DATA_COMMIT="72bd79e448829187f6336818b3f6bdc2c2ae8f5a" # Dec 15, 2022
 
 inherit distutils-r1
@@ -44,26 +46,25 @@ fi
 DESCRIPTION="A Python package for music and audio analysis"
 HOMEPAGE="https://github.com/librosa/librosa"
 LICENSE="ISC"
-SLOT="0/$(ver_cut 1-2 ${PV})"
 RESTRICT="mirror test" # Untested
-IUSE+=" display doc test"
+SLOT="0/$(ver_cut 1-2 ${PV})"
+IUSE+=" display doc lint test"
 RDEPEND+="
-	!~dev-python/numpy-1.22.0
-	!~dev-python/numpy-1.22.1
-	!~dev-python/numpy-1.22.2
 	>=dev-python/audioread-2.1.9[${PYTHON_USEDEP}]
 	>=dev-python/decorator-4.3.0[${PYTHON_USEDEP}]
 	>=dev-python/lazy-loader-0.1[${PYTHON_USEDEP}]
 	>=dev-python/msgpack-1.0[${PYTHON_USEDEP}]
-	>=dev-python/numpy-1.20.3[${PYTHON_USEDEP}]
-	>=dev-python/scikit-learn-0.20.0[${PYTHON_USEDEP}]
-	>=dev-python/scipy-1.2.0[${PYTHON_USEDEP}]
-	>=dev-python/joblib-0.14[${PYTHON_USEDEP}]
+	>=dev-python/numpy-1.22.3[${PYTHON_USEDEP}]
+	>=dev-python/scikit-learn-1.1.0[${PYTHON_USEDEP}]
+	>=dev-python/scipy-1.6.0[${PYTHON_USEDEP}]
+	>=dev-python/joblib-1.0.0[${PYTHON_USEDEP}]
 	>=dev-python/numba-0.51.0[${PYTHON_USEDEP}]
+	>=dev-python/packaging-20.0[${PYTHON_USEDEP}]
 	>=dev-python/pooch-1.1[${PYTHON_USEDEP}]
 	>=dev-python/python-soxr-0.3.2[${PYTHON_USEDEP}]
 	>=dev-python/soundfile-0.12.1[${PYTHON_USEDEP}]
 	>=dev-python/typing-extensions-4.1.1[${PYTHON_USEDEP}]
+	dev-python/samplerate[${PYTHON_USEDEP}]
 	display? (
 		>=dev-python/matplotlib-3.5.0[${PYTHON_USEDEP}]
 	)
@@ -72,27 +73,40 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	dev-python/setuptools[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
+	>=dev-python/setuptools-48[${PYTHON_USEDEP}]
+	>=dev-python/wheel-0.29.0[${PYTHON_USEDEP}]
 	doc? (
 		!~dev-python/sphinx-1.3.1[${PYTHON_USEDEP}]
 		>=dev-python/ipython-7.0[${PYTHON_USEDEP}]
 		>=dev-python/matplotlib-3.5.0[${PYTHON_USEDEP}]
-		>=dev-python/mir_eval-0.5[${PYTHON_USEDEP}]
+		>=dev-python/mir_eval-0.6[${PYTHON_USEDEP}]
 		>=dev-python/numba-0.51[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-copybutton-0.5.2[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-gallery-0.7[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-multiversion-0.2.3[${PYTHON_USEDEP}]
 		>=dev-python/sphinx-rtd-theme-1.2.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinxcontrib-googleanalytics-0.4[${PYTHON_USEDEP}]
+		>=dev-python/sphinxcontrib-svg2pdfconverter-1.1.1[${PYTHON_USEDEP}]
 		dev-python/numpydoc[${PYTHON_USEDEP}]
 		dev-python/presets[${PYTHON_USEDEP}]
 		dev-python/sphinx[${PYTHON_USEDEP}]
-		dev-python/sphinxcontrib-svg2pdfconverter[${PYTHON_USEDEP}]
+	)
+	lint? (
+		>=dev-python/numpy-1.23.4[${PYTHON_USEDEP}]
+		dev-python/bandit[${PYTHON_USEDEP}]
+		dev-python/flake8[${PYTHON_USEDEP}]
+		dev-python/types-decorator[${PYTHON_USEDEP}]
+		dev-python/mypy[${PYTHON_USEDEP}]
+		dev-python/pip[${PYTHON_USEDEP}]
+		dev-python/pytest[${PYTHON_USEDEP}]
+		dev-python/pydocstyle[${PYTHON_USEDEP}]
+		dev-python/velin[${PYTHON_USEDEP}]
+		dev-util/codespell[${PYTHON_USEDEP}]
 	)
 	test? (
 		>=dev-python/matplotlib-3.5.0[${PYTHON_USEDEP}]
-		>=dev-python/packaging-20.0[${PYTHON_USEDEP}]
 		>=dev-python/resampy-0.2.2[${PYTHON_USEDEP}]
+		dev-python/coverage[${PYTHON_USEDEP}]
 		dev-python/flake8[${PYTHON_USEDEP}]
 		dev-python/mypy[${PYTHON_USEDEP}]
 		dev-python/pytest[${PYTHON_USEDEP}]
@@ -104,7 +118,7 @@ BDEPEND+="
 "
 DOCS=( "AUTHORS.md" "README.md" )
 
-distutils_enable_tests pytest
+distutils_enable_tests "pytest"
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]]; then
