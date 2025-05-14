@@ -5170,7 +5170,9 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	myconf_gn+=" use_dsp=$(usex cpu_flags_mips_dsp true false)"
 	myconf_gn+=" use_dspr2=$(usex cpu_flags_mips_dspr2 true false)"
 	myconf_gn+=" use_msa=$(usex cpu_flags_mips_msa true false)"
-	myconf_gn+=" mips_use_msa=$(usex cpu_flags_mips_msa true false)" # libyuv, libpng
+	if [[ "${ABI}" =~ "mips" ]] ; then
+		myconf_gn+=" mips_use_msa=$(usex cpu_flags_mips_msa true false)" # libyuv, libpng
+	fi
 
 	myconf_gn+=" use_altivec=$(usex cpu_flags_ppc_altivec true false)"
 	myconf_gn+=" use_crypto=$(usex cpu_flags_ppc_crypto true false)"
