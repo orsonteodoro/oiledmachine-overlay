@@ -43,7 +43,7 @@ exist in build files.
 | LIBC                 | Arch    | Level of support            |
 | ---                  | ----    | ---                         |
 | glibc                | 64-bit  | Generally supported         |
-| glibc                | 32-bit  | Deprecated                  |
+| glibc                | 32-bit  | Deprecated*                 |
 | glibc                | alpha   | Not supported               |
 | glibc >= 3.38        | amd64   | Fully supported             |
 | glibc                | arm     | Not supported               |
@@ -56,6 +56,10 @@ exist in build files.
 | glibc                | sparc   | Available                   |
 | glibc                | x86     | Not supported               |
 | musl                 | *       | Available                   |
+
+* Using 32-bit may increase chances of high-critical vulnerabilities.  Examples:
+  - V8 Sandbox (64-bit supported only, protects against memory corruption that may lead to code execution, privilege escalation, data tampering, information disclosure)
+  - Transient execution CPU vulnerabilities (SCSB, FPVI, BHI, Retbleed) that may lead to information disclosure that are unpatched for 32-bit
 
 | Platform             | Level of support                      |
 | ---                  | ---                                   |
