@@ -715,7 +715,7 @@ ${PATENT_STATUS[@]}
 -system-libwebp -system-libxml -system-libxslt -system-openh264 -system-opus
 -system-re2 -system-zlib +system-zstd systemd test +wayland +webassembly
 -widevine +X
-ebuild_revision_3
+ebuild_revision_4
 "
 if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
 	IUSE+="
@@ -4138,7 +4138,7 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 		if is-flagq "-fsanitize=address" || is-flagq "-fsanitize=hwaddress" ; then
 	# Dedupe SSP overlap
 			myconf_gn+=" use_stack_protector_level=\"none\""
-			if (( ${is_rust_nightly} == 1 )) ; then
+			if (( ${is_rust_nightly} == 0 )) ; then
 				myconf_gn+=" use_rust_stack_protector_level=\"none\""
 			fi
 		else
@@ -4151,7 +4151,7 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 			elif [[ "${CFLAGS_HARDENED_LEVEL}" == "3" ]] ; then
 				myconf_gn+=" use_stack_protector_level=\"all\""
 			fi
-			if (( ${is_rust_nightly} == 1 )) ; then
+			if (( ${is_rust_nightly} == 0 )) ; then
 				if [[ "${CFLAGS_HARDENED_LEVEL}" == "0" ]] ; then
 					myconf_gn+=" use_rust_stack_protector_level=\"none\""
 				elif [[ "${CFLAGS_HARDENED_LEVEL}" == "1" ]] ; then
