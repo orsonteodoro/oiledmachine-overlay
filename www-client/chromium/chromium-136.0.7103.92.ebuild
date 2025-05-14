@@ -715,7 +715,7 @@ ${PATENT_STATUS[@]}
 -system-libwebp -system-libxml -system-libxslt -system-openh264 -system-opus
 -system-re2 -system-zlib +system-zstd systemd test +wayland +webassembly
 -widevine +X
-ebuild_revision_4
+ebuild_revision_5
 "
 if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
 	IUSE+="
@@ -4070,6 +4070,17 @@ ewarn
 		CFLAGS_HARDENED_SANITIZERS_DEACTIVATE=1
 	fi
 
+	if ! _use_system_toolchain ; then
+		export RUSTC="${S}/third_party/rust-toolchain/bin/rustc"
+	fi
+einfo "RUSTC:  ${RUSTC}"
+	if ${RUSTC} --version ; then
+eerror "QA:  RUSTC is not initialized or missing."
+		die
+	fi
+	${RUSTC} -Z help 2>/dev/null 1>/dev/null
+	local is_rust_nightly=$?
+
 	cflags-hardened_append
 	# We just want the missing flags (retpoline, -fstack-clash-protection)  flags
 	filter-flags \
@@ -4133,8 +4144,6 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 		if is-flagq "-fsanitize=address" || is-flagq "-fsanitize=hwaddress" || is-flagq "-fsanitize=undefined" ; then
 			myconf_gn+=" use_rust_no_sanitize_recover=true"
 		fi
-		${RUSTC} -Z help 2>/dev/null 1>/dev/null
-		local is_rust_nightly=$?
 		if is-flagq "-fsanitize=address" || is-flagq "-fsanitize=hwaddress" ; then
 	# Dedupe SSP overlap
 			myconf_gn+=" use_stack_protector_level=\"none\""
