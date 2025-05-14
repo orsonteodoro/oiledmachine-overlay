@@ -4074,7 +4074,7 @@ ewarn
 		export RUSTC="${S}/third_party/rust-toolchain/bin/rustc"
 	fi
 einfo "RUSTC:  ${RUSTC}"
-	if ${RUSTC} --version ; then
+	if ! ${RUSTC} --version ; then
 eerror "QA:  RUSTC is not initialized or missing."
 		die
 	fi
