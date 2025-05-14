@@ -33,8 +33,9 @@
 | pypy3_11             | Not supported                         |
 
 * Not supported due to [python-utils-r1.eclass](https://github.com/gentoo/gentoo/blob/master/eclass/python-utils-r1.eclass#L44)
-  EOL restrictions, but not EOL upstream.  Forced bumped to Python 3.11 may
-  introduce DoS vulnerabilities (e.g. crash) or incompatibilities.
+  EOL restrictions, but not [EOL upstream](https://devguide.python.org/versions/).
+  Forced bumps to Python 3.11 may introduce DoS vulnerabilities (e.g. crash) or
+  incompatibilities.
 
 The LIBC support below reflects the upstream projects CI (Continuous
 Integration) images trend, but it may change if microarchitecture references
