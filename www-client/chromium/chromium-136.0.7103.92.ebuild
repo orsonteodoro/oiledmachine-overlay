@@ -75,7 +75,7 @@ ALLOW_SYSTEM_TOOLCHAIN=0
 CFI_CAST=0 # Global variable
 CFI_ICALL=0 # Global variable
 CFI_VCALL=0 # Global variable
-CFLAGS_HARDENED_LEVEL="1" # Same as build scripts
+CFLAGS_HARDENED_LEVEL="1" # Global variable
 CFLAGS_HARDENED_USE_CASES="jit network scripting sensitive-data untrusted-data web-browser"
 CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 #CFLAGS_HARDENED_SANITIZERS_COMPAT=( "llvm" )
@@ -2443,6 +2443,16 @@ einfo
 	fi
 	check_security_expire
 	check_ulimit
+
+	if use official ; then
+		CFLAGS_HARDENED_LEVEL="1"
+	elif is-flagq "-fstack-protector" ; then
+		CFLAGS_HARDENED_LEVEL="1"
+	elif is-flagq "-fstack-protector-strong" ; then
+		CFLAGS_HARDENED_LEVEL="2"
+	elif is-flagq "-fstack-protector-strong" ; then
+		CFLAGS_HARDENED_LEVEL="3"
+	fi
 }
 
 src_unpack() {
