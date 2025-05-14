@@ -6,7 +6,7 @@ EAPI=8
 
 # U24
 
-PYTHON_COMPAT=( "python3_"{10..12} ) # U24 uses 3.12
+PYTHON_COMPAT=( "python3_"{11,12} ) # U24 uses 3.12
 
 inherit linux-info meson python-r1 security-scan
 
@@ -20,7 +20,7 @@ HOMEPAGE="
 https://github.com/EmixamPP/linux-enable-ir-emitter
 "
 LICENSE="MIT"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 openrc systemd ebuild_revision_1
@@ -35,10 +35,9 @@ REQUIRED_USE="
 GCC_PV="13.2.0"
 RDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-cpp/argparse-3.1.0
+	>=dev-cpp/argparse-3.0.0
 	>=dev-cpp/yaml-cpp-0.8.0
-	>=dev-libs/spdlog-1.12.0
-	>=media-libs/opencv-4.10.0[gtk3,v4l]
+	>=media-libs/opencv-4.6.0[gtk3,v4l]
 	>=sys-apps/kmod-31[tools]
 	>=sys-devel/gcc-${GCC_PV}
 	>=sys-libs/glibc-2.39
