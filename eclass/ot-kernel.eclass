@@ -12615,7 +12615,7 @@ ot-kernel_set_security_critical() {
 	# TODO: patch kernel for custom panic for <sanitizer>.fault=panic for KCSAN, UBSAN, KMSAN, KFENCE.
 
 	local security_critical=${OT_KERNEL_SECURITY_CRITICAL:-0}
-	local types=${OT_KERNEL_SECURITY_CRITICAL_TYPES-"kasan ubsan"}
+	local types=${OT_KERNEL_SECURITY_CRITICAL_TYPES-"kasan ubsan cfi kcfi"}
 	local kfence_sample_interval=${KFENCE_SAMPLE_INTERVAL-10}
 	local kasan_sample_interval=${KASAN_SAMPLE_INTERVAL-1}
 	if \
