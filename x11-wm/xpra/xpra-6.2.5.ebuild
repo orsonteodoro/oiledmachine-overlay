@@ -10,16 +10,17 @@ EAPI=8
 
 MY_PV="$(ver_cut 1-4)"
 
+CFLAGS_HARDENED_USE_CASES="daemon secure-critical sensitive-data server untrusted-data"
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
-unset DISTUTILS_USE_PEP517
+DISTUTILS_USE_PEP517="setuptools"
 PATENT_STATUS_IUSE=(
 	patent_status_nonfree
 )
-PYTHON_COMPAT=( "python3_10" "python3_12" )
+PYTHON_COMPAT=( "python3_"{11,12} )
 
-inherit cuda distutils-r1 flag-o-matic linux-info prefix tmpfiles udev
-inherit user-info xdg
+inherit cflags-hardened cuda distutils-r1 flag-o-matic linux-info prefix
+inherit tmpfiles udev user-info xdg
 
 SRC_URI="
 https://github.com/Xpra-org/xpra/archive/refs/tags/v${PV}.tar.gz
@@ -75,9 +76,9 @@ aes amf appindicator +audio +avahi avif brotli cityhash +client +clipboard cpu-p
 -cythonize-more +dbus +doc -drm evdi firejail gnome-shell +gtk3 gssapi
 html5-client html5_gzip html5_brotli +http ibus jpeg kerberos +keyboard-layout
 keycloak ldap ldap3 +lz4 lzo +mdns mysql +netdev +notifications -nvdec nvenc nvfbc
-nvjpeg +opengl +openh264 openrc osmesa +pam pinentry png proc +proxy pyinotify
+nvjpeg +opengl +openh264 openrc osmesa otp +pam pinentry png proc +proxy pyinotify
 qrencode +quic -qt6 -rencode +rencodeplus +rfb sd_listen selinux +server +socks
-sound-forwarding spng sqlite +ssh sshpass +ssl systemd +tcp-wrappers test tiff
+sound-forwarding spng sql sqlite +ssh sshpass +ssl systemd +tcp-wrappers test tiff
 u2f -uinput +v4l2 vaapi vpx vsock -wayland +webcam webcam-forwarding webp
 +websockets +X x264 +xdg +xinput yaml zeroconf zlib
 
@@ -467,6 +468,9 @@ RDEPEND+="
 		        >=dev-util/nvidia-cuda-toolkit-10:=
 			dev-python/numpy[${PYTHON_USEDEP}]
 		)
+		otp? (
+			dev-python/pyotp[${PYTHON_USEDEP}]
+		)
 		proxy? (
 			dev-python/setproctitle[${PYTHON_USEDEP}]
 		)
@@ -481,6 +485,9 @@ RDEPEND+="
 		)
 		rencode? (
 			>=dev-python/rencode-'${RENCODE_PV}'[${PYTHON_USEDEP}]
+		)
+		sql? (
+			dev-python/sqlalchemy[${PYTHON_USEDEP}]
 		)
 		server? (
 			pyinotify? (
@@ -894,7 +901,7 @@ python_prepare_all() {
 }
 
 python_configure_all() {
-	filter-flags
+	cflags-hardened_append
 	use cython && check_cython
 	if use evdi && [[ ! -e "${ESYSROOT}/usr/$(get_libdir)/pkgconfig/evdi.pc" ]] ; then
 eerror
@@ -1027,7 +1034,7 @@ python_install_all() {
 	if use openrc ; then
 		fperms 0750 "/etc/init.d/xpra"
 	fi
-	if use X && has_version "x11-base/xorg-drivers[video_cards_dummy]" ; then
+	if use X && has_version "x11-base/xorg-drivers[video_cards_dummy]" && [[ -e "${ED}/etc/xpra/xorg.conf" ]] ; then
 		dodir "/etc/X11"
 		cp \
 			"${ED}/etc/xpra/xorg.conf" \

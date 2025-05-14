@@ -221,6 +221,9 @@
     <flag name="oss">
       Adds support for OSS sound cards.
     </flag>
+    <flag name="otp">
+      Adds support for OTP authentication.
+    </flag>
     <flag name="pam">
       Adds support for PAM for authentication.
     </flag>
