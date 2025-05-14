@@ -32,7 +32,7 @@
 | pypy3                | Available                             |
 | pypy3_11             | Not supported                         |
 
-* Not supported due to python-utils EOL restrictions, but not EOL upstream.  Forced bumped to Python 3.11 introduce DoS vulnerabilities (e.g. crash) or incompatibilities.
+* Not supported due to python-utils EOL restrictions, but not EOL upstream.  Forced bumped to Python 3.11 may introduce DoS vulnerabilities (e.g. crash) or incompatibilities.
 
 The LIBC support below reflects the upstream projects CI (Continuous
 Integration) images trend, but it may change if microarchitecture references
