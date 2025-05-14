@@ -23,7 +23,7 @@
 | Python               | Level of support                      |
 | ---                  | ---                                   |
 | 3.9 and earlier      | Not supported (EOL)                   |
-| 3.10                 | Fully supported                       |
+| 3.10                 | Not supported (EOL)*                  |
 | 3.11                 | Mostly supported                      |
 | 3.12                 | Partially supported                   |
 | 3.13                 | Partially supported                   |
@@ -31,6 +31,8 @@
 | 3.14 and later       | Not supported                         |
 | pypy3                | Available                             |
 | pypy3_11             | Not supported                         |
+
+* Not supported due to python-utils EOL restrictions, but not EOL upstream.  Forced bumped to Python 3.11 introduce DoS vulnerabilities (e.g. crash) or incompatibilities.
 
 The LIBC support below reflects the upstream projects CI (Continuous
 Integration) images trend, but it may change if microarchitecture references
