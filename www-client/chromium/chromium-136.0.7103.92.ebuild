@@ -4,8 +4,6 @@
 
 EAPI=8
 
-# FIXME add rust hardened flags
-
 # Monitor
 #   https://chromereleases.googleblog.com/search/label/Dev%20updates
 # for security updates.  They are announced faster than NVD.
@@ -2450,7 +2448,7 @@ einfo
 		CFLAGS_HARDENED_LEVEL="1"
 	elif is-flagq "-fstack-protector-strong" ; then
 		CFLAGS_HARDENED_LEVEL="2"
-	elif is-flagq "-fstack-protector-strong" ; then
+	elif is-flagq "-fstack-protector-all" ; then
 		CFLAGS_HARDENED_LEVEL="3"
 	fi
 }
