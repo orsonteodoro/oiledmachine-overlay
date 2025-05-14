@@ -31,18 +31,18 @@ REQUIRED_USE="
 "
 RDEPEND="
 	${PYTHON_DEPS}
-	>=media-libs/freeglut-2.8.1
+	>=media-libs/freeglut-3.4.0
 	>=media-libs/glu-9.0.2
-	>=sys-libs/zlib-1.2.11
+	>=sys-libs/zlib-1.3
 	virtual/opengl
 "
 DEPEND="
 	${RDEPEND}
 "
 BDEPEND="
-	>=dev-lang/swig-4.0.2
+	>=dev-lang/swig-4.2.0
 	doc? (
-		>=app-text/doxygen-1.9.1
+		>=app-text/doxygen-1.9.8
 		dev-texlive/texlive-bibtexextra
 		dev-texlive/texlive-fontsextra
 		dev-texlive/texlive-fontutils
@@ -54,7 +54,6 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-1.17.1-cache-variable.patch"
 )
 
 src_configure() {
