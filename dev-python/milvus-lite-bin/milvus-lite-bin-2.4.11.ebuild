@@ -6,7 +6,8 @@ EAPI=8
 
 # U20
 
-PYTHON_COMPAT=( "python3_"{10..12} )
+DISTUTILS_USE_PEP517="no"
+PYTHON_COMPAT=( "python3_"{11..12} )
 
 inherit distutils-r1
 
