@@ -854,9 +854,9 @@ if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ;then
 	"
 fi
 # Drumbrake is broken in this release and off by default.
-#!drumbrake
 REQUIRED_USE+="
 	${PATENT_USE_FLAGS}
+	!drumbrake
 	!headless (
 		extensions
 		pdf
@@ -2751,10 +2751,6 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 			"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-v8-5c595ad.patch"
 		)
 	fi
-
-	PATCHES+=(
-		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-mksnapshot-workarounds.patch"
-	)
 }
 
 is_cromite_patch_non_fatal() {
@@ -4129,14 +4125,18 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 		if is-flagq "-fsanitize=address" || is-flagq "-fsanitize=hwaddress" || is-flagq "-fsanitize=undefined" ; then
 			myconf_gn+=" use_rust_no_sanitize_recover=true"
 		fi
+		${RUSTC} -Z help 2>/dev/null 1>/dev/null
+		local is_rust_nightly=$?
 		if is-flagq "-fsanitize=address" || is-flagq "-fsanitize=hwaddress" ; then
 	# Dedupe SSP overlap
 			myconf_gn+=" use_stack_protector_level=\"none\""
-	# Rust flags -Z support on distro broken for =dev-lang/rust-bin-9999
-	#		myconf_gn+=" use_rust_stack_protector_level=\"none\""
+			if (( ${is_rust_nightly} == 1 )) ; then
+				myconf_gn+=" use_rust_stack_protector_level=\"none\""
+			fi
 		else
-	#		myconf_gn+=" use_rust_stack_protector_level=\"basic\""
-			:
+			if (( ${is_rust_nightly} == 1 )) ; then
+				myconf_gn+=" use_rust_stack_protector_level=\"basic\""
+			fi
 		fi
 	fi
 
@@ -4609,11 +4609,8 @@ einfo  "The v8 sandbox is enabled."
 		myconf_gn+=" v8_enable_sandbox=true"
 	fi
 
-	myconf_gn+=" v8_mksnapshot_use_8gb_heap=true"
-#	myconf_gn+=" v8_mksnapshot_disable_drumbrake=true"
-
 	# DrumBrake is broken in this release when generating mksnapshot.
-	#myconf_gn=$(echo "${myconf_gn}" | sed -e "s|v8_enable_drumbrake=true|v8_enable_drumbrake=false|g")
+	myconf_gn=$(echo "${myconf_gn}" | sed -e "s|v8_enable_drumbrake=true|v8_enable_drumbrake=false|g")
 
 	local is_64bit=0
 	local is_64bit_sc=0
@@ -4647,10 +4644,10 @@ einfo  "The v8 sandbox is enabled."
 		myconf_gn+=" v8_enable_pointer_compression_shared_cage=true"
 	fi
 	if (( ${total_mem_gib} >= 8 && ${is_64bit} == 1 )) ; then
-einfo "Using pointer-compression for 8 GiB"
+einfo "Using pointer-compression for 8 GiB heap"
 		myconf_gn+=" v8_enable_pointer_compression_8gb=true"
 	else
-einfo "Using pointer-compression for 4 GiB"
+einfo "Using pointer-compression for 4 GiB heap"
 		myconf_gn+=" v8_enable_pointer_compression_8gb=false"
 	fi
 
