@@ -4,8 +4,10 @@
 
 EAPI=8
 
+# U24
+
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_10" ) # Upstream tested up to 3.9
+PYTHON_COMPAT=( "python3_"{11,12} ) # U24 uses 3.12
 
 inherit distutils-r1
 
