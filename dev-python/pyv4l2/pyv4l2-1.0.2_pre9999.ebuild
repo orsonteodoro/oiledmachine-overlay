@@ -7,7 +7,7 @@ EAPI=8
 # U16
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_10" ) # Upstream only tests up to 3.8
+PYTHON_COMPAT=( "python3_11" ) # Upstream only tests up to 3.8
 
 inherit distutils-r1
 
