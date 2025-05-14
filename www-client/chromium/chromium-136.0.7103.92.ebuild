@@ -4643,7 +4643,6 @@ einfo  "The v8 sandbox is enabled."
 		myconf_gn+=" v8_enable_sandbox=true"
 	fi
 
-	# DrumBrake is broken in this release when generating mksnapshot.
 	myconf_gn=$(echo "${myconf_gn}" | sed -e "s|v8_enable_drumbrake=true|v8_enable_drumbrake=false|g")
 
 	local is_64bit=0
@@ -4670,20 +4669,24 @@ einfo  "The v8 sandbox is enabled."
 		is_64bit_sc=1
 	fi
 
-	if (( ${is_64bit} == 1 )) ; then
-		myconf_gn+=" v8_enable_pointer_compression=true"
-	fi
+	# Pointer compression breaks mksnapshot
+	myconf_gn+=" v8_enable_pointer_compression=false"
+	myconf_gn+=" v8_enable_pointer_compression_shared_cage=false"
 
-	if (( ${is_64bit_sc} == 1 )) ; then
-		myconf_gn+=" v8_enable_pointer_compression_shared_cage=true"
-	fi
-	if (( ${total_mem_gib} >= 8 && ${is_64bit} == 1 )) ; then
-einfo "Using pointer-compression for 8 GiB heap"
-		myconf_gn+=" v8_enable_pointer_compression_8gb=true"
-	else
-einfo "Using pointer-compression for 4 GiB heap"
-		myconf_gn+=" v8_enable_pointer_compression_8gb=false"
-	fi
+	#if (( ${is_64bit} == 1 )) ; then
+	#	myconf_gn+=" v8_enable_pointer_compression=true"
+	#fi
+
+	#if (( ${is_64bit_sc} == 1 )) ; then
+	#	myconf_gn+=" v8_enable_pointer_compression_shared_cage=true"
+	#fi
+#	if (( ${total_mem_gib} >= 8 && ${is_64bit} == 1 )) ; then
+#einfo "Using pointer-compression for 8 GiB heap"
+#		myconf_gn+=" v8_enable_pointer_compression_8gb=true"
+#	else
+#einfo "Using pointer-compression for 4 GiB heap"
+#		myconf_gn+=" v8_enable_pointer_compression_8gb=false"
+#	fi
 
 	# Forced because of asserts
 	myconf_gn+=" enable_screen_ai_service=true" # Required by chrome/renderer:renderer
