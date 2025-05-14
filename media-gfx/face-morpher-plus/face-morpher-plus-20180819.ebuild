@@ -7,8 +7,9 @@ EAPI=8
 MY_PN="face_morpher_plus"
 
 DISTUTILS_SINGLE_IMPL=1 # Wrapper
+DISTUTILS_USE_PEP517="no"
 FALLBACK_COMMIT="27e6b07fb22732d99a7126d9df86c4e451e6c1c4" # Aug 19, 2018
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{11..12} )
 
 inherit distutils-r1 pypi
 
@@ -20,7 +21,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	S="${WORKDIR}/${P}"
 	inherit git-r3
 else
-#	KEYWORDS="~amd64" # Broken
+	KEYWORDS="~amd64" # Broken
 	S="${WORKDIR}/${MY_PN}-${FALLBACK_COMMIT}"
 	SRC_URI="
 https://github.com/HighCWu/face_morpher_plus/archive/${FALLBACK_COMMIT}.tar.gz
