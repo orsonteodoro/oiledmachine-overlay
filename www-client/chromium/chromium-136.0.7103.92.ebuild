@@ -5111,8 +5111,10 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	myconf_gn+=" libyuv_use_sme=$(usex cpu_flags_arm_sme true false)"
 	myconf_gn+=" libyuv_use_sve=$(usex cpu_flags_arm_sve2 true false)" # This line is not a typo.
 
-	myconf_gn+=" loongarch64_use_lasx=$(usex cpu_flags_loong_lasx true false)" # libyuv
-	myconf_gn+=" loongarch64_use_lsx=$(usex cpu_flags_loong_lsx true false)" # libpng, libyuv
+	if [[ "${ARCH}" == "loong" ]] ; then
+		myconf_gn+=" loongarch64_use_lasx=$(usex cpu_flags_loong_lasx true false)" # libyuv
+		myconf_gn+=" loongarch64_use_lsx=$(usex cpu_flags_loong_lsx true false)" # libpng, libyuv
+	fi
 
 	myconf_gn+=" rtc_build_with_neon=$(usex cpu_flags_arm_neon true false)" # webrtc
 
