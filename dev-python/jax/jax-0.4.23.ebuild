@@ -8,7 +8,7 @@ MY_PN="${PN/-/_}"
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..11} )
+PYTHON_COMPAT=( "python3_11" )
 # Limited by flax
 
 inherit distutils-r1
