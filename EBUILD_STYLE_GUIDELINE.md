@@ -155,18 +155,8 @@
 * C/C++ packages that process user generated content from the Internet need to
   be hardened to prevent Arbitrary Code Execution (ACE) based Zero Click Attack (ZCA).
 
-  Apply the following {C,CXX}FLAGS for GCC >= 14
-
-    - `-fhardened`
-
-  or the standard web browser hardening {C,CXX,LD}FLAGS
-
-    - `-fstack-protector`
-    - `-D_FORTIFY_SOURCE=2` with `-O1` or higher
-    - `-fPIC`
-    - `-fPIE -pie`
-    - `-Wl,-z,noexecstack`
-    - `-Wl,-z,relro -Wl,-z,now`
+  Use the cflags-hardened or the rustflags-hardened eclass to apply hardening
+  consistently.
 
   The classes of C/C++ packages that should be hardened against CE + ZCA are:
 
