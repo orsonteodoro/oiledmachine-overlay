@@ -33,6 +33,7 @@ AMDGPU_TARGETS_COMPAT=(
 BAZEL_PV="6.1.0"
 DISTUTILS_OPTIONAL=1
 DISTUTILS_SINGLE_IMPL=1
+DISTUTILS_USE_PEP517="no"
 CHECKREQS_DISK_BUILD="19G"
 CHECKREQS_DISK_USR="5G"
 CHECKREQS_MEMORY="11G" # Linking goes above 10 GiB
@@ -103,7 +104,7 @@ declare -A LLD_SLOT=(
 # https://github.com/tensorflow/tensorflow/blob/v2.15.1/tensorflow/tools/toolchains/remote_config/configs.bzl
 # https://github.com/tensorflow/tensorflow/blob/v2.15.1/third_party/gpus/rocm_configure.bzl#L210
 LLVM_COMPAT=( {17..15} )
-PYTHON_COMPAT=( "python3_"{10..11} )
+PYTHON_COMPAT=( "python3_11" ) # See https://github.com/tensorflow/tensorflow/blob/v2.15.1/tensorflow/tools/pip_package/setup.py#L429
 # Limited by jax/flax
 # PYTHON_COMPAT limited by gast-4.0[python_targets_python3_9]
 
