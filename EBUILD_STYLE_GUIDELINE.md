@@ -77,7 +77,7 @@
   | Listed                 | PYTHON_COMPAT                              |
   | ---                    | ---                                        |
   | no versions            | (2)                                        |
-  | specific version       | python3_12                                 |
+  | specific version       | python3_11 or python3_12                   |
   | specific versions      | python3_{11,12,13} or python3_{11..13} (1) |
   | python3                | python3_{11,12}                            |
   | python 3.10 or earlier | (2)                                        |
