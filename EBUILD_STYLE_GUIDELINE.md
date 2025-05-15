@@ -95,7 +95,7 @@
       - If none of the above apply and you tested it with python3_13, use python3_13, assuming the distro fallback of PYTHON_SINGLE_TARGET="python3_13".  If you
         do use that Python version, then it may not be compatible with D12, U24 based packages.
       - If the slot is missing in the dependency that the parent package needs, downgrade/upgrade the dependency package.
-      - If the slot is missing in the dependency that the parent package needs and the project is defunct, adjust PYTHON_COMPAT based on app package's python_single_python3_11 or python_single_python3_12.
+      - If the slot is missing in the dependency that the parent package needs and the dependency project is defunct, adjust PYTHON_COMPAT based on app package's python_single_python3_11 or python_single_python3_12.
       - Any unofficial Python version added should be documented next to or below PYTHON_COMPAT, or it may be reverted back to the known working set.
         List of reasons examples:
         - Needed for `<package name>`
