@@ -12,7 +12,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 	+production
 	+gwp-asan
-	ebuild_revision_5
+	ebuild_revision_6
 "
 RDEPEND+="
 "
