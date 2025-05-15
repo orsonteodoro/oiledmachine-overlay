@@ -101,6 +101,7 @@
       - Using PYTHON_SINGLE_TARGET or the main app package tested by you is a good way to increase reproducability.
       - Adding untested non stable (>= python3_13) is can add unintended consequences, more bugs, or Denial of Service (e.g. crash).
       - Adding tested >= python3_13 is allowed.
+      - Testing >= python3_13 is unpaid free labor.
       - Only tested versions are allowed.
       - Any untested is assumed Denial of Service (e.g. crash), decreases reproducability, disruptive and increases security fix backlog.
 
