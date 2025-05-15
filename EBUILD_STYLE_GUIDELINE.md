@@ -74,14 +74,21 @@
 
 * PYTHON_COMPAT fallbacks for setup.py or pyproject.toml
 
-  | Listed                 | PYTHON_COMPAT   |
-  | ---                    | ---             |
-  | python3                | python3_{11,12} |
-  | python 3.10 or earlier | (1)             |
-  | No python              | (1)             |
-
+  | Listed                 | PYTHON_COMPAT        |
+  | ---                    | ---                  |
+  | python3                | python3_{11,12}      |
+  | specific versions      | python3_{11..13} (1) |
+  | python 3.10 or earlier | (2)                  |
+  | No python              | (2)                  |
 
   (1) Fallback rule 2:
+
+    - List all versions from setup.py or pyproject.toml if possible.
+    - Do not eager bump unless an app package needs it.
+    - If eager bumped leave the reason:  Needed for `<package name>`
+    - If you do not leave a reason, it will be reverted back to upstream listed versions.
+
+  (2) Fallback rule 3:
 
     - If the CI image is D12, use python3_11.
     - If the CI image is U24, use python3_12.
