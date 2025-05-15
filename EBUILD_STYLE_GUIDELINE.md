@@ -87,15 +87,15 @@
       - If the CI image is U24, use python3_12.
       - If the CI image tests both D12 and U24, use python3_{11,12}.
       - If a Dockerfile exists, use the above rules.
-      - If the main app says python_single_python3_11 and you tested it interactively or by test suite, use that version.
-      - If the main app says python_single_python3_12 and you tested it interactively or by test suite, use that version.
+      - If the app says python_single_python3_11 and you tested it interactively or by test suite, use that version.
+      - If the app says python_single_python3_12 and you tested it interactively or by test suite, use that version.
       - If your PYTHON_SINGLE_TARGET from /etc/portage/make.conf uses python3_11, use that version.
       - If your PYTHON_SINGLE_TARGET from /etc/portage/make.conf uses python3_12, use that version.
       - If the Python version is in build files (CMakeLists.txt, meson.build, etc), add that version.
       - If none of the above apply and you tested it with python3_13, use python3_13, assuming the distro fallback of PYTHON_SINGLE_TARGET="python3_13".  If you
         do use that Python version, then it may not be compatible with D12, U24 based packages.
-      - If the slot is missing, downgrade/upgrade the package.
-      - If the slot is missing and the project is defunct, adjust PYTHON_COMPAT based on main package's python_single_python3_11 or python_single_python3_12.
+      - If the slot is missing in the dependency that the parent package needs, downgrade/upgrade the dependency package.
+      - If the slot is missing in the dependency that the parent package needs and the project is defunct, adjust PYTHON_COMPAT based on app package's python_single_python3_11 or python_single_python3_12.
       - Any unofficial Python version added should be documented next to or below PYTHON_COMPAT, or it may be reverted back to the known working set.
         List of reasons examples:
         - Needed for `<package name>`
@@ -106,7 +106,7 @@
     Commentary
 
       - Most CI images use D12, U22, U24.
-      - Using PYTHON_SINGLE_TARGET from /etc/portage/make.conf or from the main app package with testing and fixes performed by you is a good way to increase reproducibility.
+      - Using PYTHON_SINGLE_TARGET from /etc/portage/make.conf or from the app package with testing and fixes performed by you is a good way to increase reproducibility.
       - Adding untested non stable (>= python3_13) is can add unintended consequences, more bugs, or Denial of Service (e.g. crash).
       - Adding tested >= python3_13 is allowed.
       - Testing >= python3_13 is unpaid free labor.
