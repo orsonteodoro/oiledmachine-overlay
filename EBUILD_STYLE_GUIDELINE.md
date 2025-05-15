@@ -96,7 +96,12 @@
         do use that Python version, then it may not be compatible with D12, U24 based packages.
       - If the slot is missing, downgrade/upgrade the package.
       - If the slot is missing and the project is defunct, adjust PYTHON_COMPAT based on main package's python_single_python3_11 or python_single_python3_12.
-      - Any unofficial python version added should be documented, or it may be reverted back to the known working set.
+      - Any unofficial Python version added should be documented next to or below PYTHON_COMPAT, or it may be reverted back to the known working set.
+        List of reasons examples:
+        - Needed for <package name>
+        - Test suite passed with Python 3.13
+        - Integration test passed with Python 3.13
+        - Interactive test passed with Python 3.13
 
     Commentary
 
