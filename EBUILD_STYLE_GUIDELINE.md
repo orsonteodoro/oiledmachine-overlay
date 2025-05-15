@@ -111,6 +111,7 @@
       - Integration test passed with Python 3.13
       - Interactive test passed with Python 3.13
     - Consider deleting the ebuild if PYTHON_COMPAT is python3_10 or less but only if it is not necessary to keep it in order for the app to work.
+    - If the Python package contains a prebuilt binary and built using an EOL release, that Python package release should be deleted.
 
   Commentary
 
