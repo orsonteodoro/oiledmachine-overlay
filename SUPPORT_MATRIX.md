@@ -21,7 +21,7 @@
 | Live snapshot        | Yes                                   |
 
 | Python               | Level of support                      | Correspondance     |
-| ---                  | ---                                   |                    |
+| ---                  | ---                                   | ---                |
 | 3.10 and earlier     | Not supported (EOL)*                  | U22 (EOL Apr 2027) |
 | 3.11                 | Mostly supported                      | D12 (EOL Jun 2026) |
 | 3.12                 | Partially supported                   | U24 (EOL Apr 2029) |
@@ -41,7 +41,7 @@ Integration) images trend, but it may change if microarchitecture references
 exist in build files.
 
 | LIBC                 | Arch    | Level of support            | Correspondance         |
-| ---                  | ----    | ---                         |                        |
+| ---                  | ----    | ---                         | ---                    |
 | glibc                | 64-bit  | Generally supported         |                        |
 | glibc                | 32-bit  | Deprecated*                 |                        |
 | glibc                | alpha   | Not supported               |                        |
@@ -63,7 +63,7 @@ exist in build files.
   - V8 Sandbox (64-bit supported only, protects against memory corruption, if not used may lead to code execution, privilege escalation, data tampering, information disclosure)
 
 | Platform                        | Level of support                      | Correspondance               |
-| ---                             | ---                                   |                              |
+| ---                             | ---                                   | ---                          |
 | CUDA                            | Available                             | D12 (11.8), U24 (12.0)       |
 | Electron (amd64)                | Fully supported                       |                              |
 | Electron (arm64)                | Not supported                         |                              |
