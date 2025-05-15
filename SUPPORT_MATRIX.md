@@ -85,7 +85,7 @@ exist in build files.
 | Protobuf 3                      | Fully supported                       | D12 (3.21.12), U24 (3.21.12) |
 | Protobuf 4                      | Available                             |                              |
 | Protobuf 5                      | Available                             |                              |
-| PyTorch                         | Fully supported                       |                              |
+| PyTorch                         | Fully supported                       | D12 (1.13.1)                 |
 | Qt 5.x                          | Available                             |                              |
 | Qt 6.x                          | Fully supported                       |                              |
 | ROCm >= 6.2                     | Available                             | D12 (5.2.3), U24 (5.7.0)     |
