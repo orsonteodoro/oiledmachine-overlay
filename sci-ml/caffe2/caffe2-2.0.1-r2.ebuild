@@ -199,7 +199,7 @@ PYBIND11_COMMIT_1="80dc998efced8ceb2be59756668a7e90e8bef917"
 PYBIND11_COMMIT_2="914c06fb252b6cc3727d0eedab6736e88a3fcb01" # onnx dep
 PYBIND11_COMMIT_3="a1041190c8b8ff0cd9e2f0752248ad5e3789ea0c" # onnx-tensorrt/third_party/onnx dep
 PYBIND11_COMMIT_4="a23996fce38ff6ccfbcdc09f1e63f2c4be5ea2ef" # tensorpipe dep
-PYTHON_COMPAT=( python3_{10..11} ) # Upstream only allows <=3.11
+PYTHON_COMPAT=( "python3_11" ) # Upstream only allows <=3.11
 PYTHON_ENUM_COMMIT="4cfedc426c4e2fc52e3f5c2b4297e15ed8d6b8c7"
 PYTHON_SIX_COMMIT="15e31431af97e5e64b80af0a3f598d382bcdd49a"
 QNNPACK_COMMIT="7d2a4e9931a82adc3814275b6219a03e24e36b4c"

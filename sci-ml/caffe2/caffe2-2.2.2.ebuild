@@ -200,7 +200,7 @@ PYBIND11_COMMIT_1="8a099e44b3d5f85b20f05828d919d2332a8de841"
 PYBIND11_COMMIT_2="5b0a6fc2017fcc176545afe3e09c9f9885283242" # onnx dep
 PYBIND11_COMMIT_3="a1041190c8b8ff0cd9e2f0752248ad5e3789ea0c" # onnx-tensorrt/third_party/onnx dep
 PYBIND11_COMMIT_4="a23996fce38ff6ccfbcdc09f1e63f2c4be5ea2ef" # tensorpipe dep
-PYTHON_COMPAT=( python3_{10..11} ) # Upstream only allows <=3.11
+PYTHON_COMPAT=( "python3_11" ) # Upstream only allows <=3.11
 QNNPACK_COMMIT="7d2a4e9931a82adc3814275b6219a03e24e36b4c"
 inherit hip-versions
 ROCM_SLOTS=(

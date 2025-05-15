@@ -215,7 +215,7 @@ PYBIND11_COMMIT_1="3e9dfa2866941655c56877882565e7577de6fc7b"
 PYBIND11_COMMIT_2="5b0a6fc2017fcc176545afe3e09c9f9885283242" # onnx dep
 PYBIND11_COMMIT_4="a23996fce38ff6ccfbcdc09f1e63f2c4be5ea2ef" # tensorpipe dep
 PYBIND11_COMMIT_5="8a099e44b3d5f85b20f05828d919d2332a8de841" # aotriton dep
-PYTHON_COMPAT=( python3_{10..12} ) # Upstream only allows <=3.12
+PYTHON_COMPAT=( "python3_"{11..12} ) # Upstream only allows <=3.12
 inherit hip-versions
 ROCM_SLOTS=(
 # See https://github.com/pytorch/pytorch/blob/v2.4.1/.ci/docker/build.sh#L190
