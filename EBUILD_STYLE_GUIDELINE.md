@@ -74,10 +74,10 @@
 * PYTHON_COMPAT fallbacks for setup.py or pyproject.toml
   | Listed                 | PYTHON_COMPAT   |
   | python3                | python3_{11,12} |
-  | python 3.10 or earlier | (2) |
-  | No python              | (2) |
+  | python 3.10 or earlier | (1)             |
+  | No python              | (1)             |
 
-  (2) Fallback rule 2:
+  (1) Fallback rule 2:
 
     - If the CI image is D12, use python3_11.
     - If the CI image is U24, use python3_12.
