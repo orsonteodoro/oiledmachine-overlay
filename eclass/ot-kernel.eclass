@@ -443,7 +443,7 @@ TRAINERS=(
 	webcam
 	yt
 )
-PYTHON_COMPAT=( "python3_"{10..11} ) # Slots based on dev-python/selenium
+PYTHON_COMPAT=( "python3_"{11..13} ) # Slots based on PYTHON_TESTED of dev-python/selenium
 
 RT_ALT_FN="patches-${PATCH_RT_VER}.tar.gz"
 RT_BASE_DOMAIN_URI=${RT_BASE_DOMAIN_URI:-"cdn.kernel.org"}

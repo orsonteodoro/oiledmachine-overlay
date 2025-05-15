@@ -20,12 +20,12 @@
 | Live (latest commit) | Yes                                   |
 | Live snapshot        | Yes                                   |
 
-| Python               | Level of support                      |
+| Python               | Level of support                      | Correspondance
 | ---                  | ---                                   |
-| 3.10 and earlier     | Not supported (EOL)*                  |
-| 3.11                 | Mostly supported                      |
-| 3.12                 | Partially supported                   |
-| 3.13                 | Partially supported                   |
+| 3.10 and earlier     | Not supported (EOL)*                  | U22 (EOL Apr 2027)
+| 3.11                 | Mostly supported                      | D12 (EOL Jun 2026)
+| 3.12                 | Partially supported                   | U24 (EOL Apr 2029)
+| 3.13                 | Available                             |
 | 3.13t                | Not supported                         |
 | 3.14 and later       | Not supported                         |
 | pypy3                | Available                             |
@@ -40,12 +40,12 @@ The LIBC support below reflects the upstream projects CI (Continuous
 Integration) images trend, but it may change if microarchitecture references
 exist in build files.
 
-| LIBC                 | Arch    | Level of support            |
+| LIBC                 | Arch    | Level of support            | Correspondance
 | ---                  | ----    | ---                         |
 | glibc                | 64-bit  | Generally supported         |
 | glibc                | 32-bit  | Deprecated*                 |
 | glibc                | alpha   | Not supported               |
-| glibc >= 3.38        | amd64   | Fully supported             |
+| glibc >= 3.40        | amd64   | Fully supported             | U24 (2.39), D12 (2.36)
 | glibc                | arm     | Not supported               |
 | glibc                | arm64   | Available                   |
 | glibc                | hppa    | Not supported               |
