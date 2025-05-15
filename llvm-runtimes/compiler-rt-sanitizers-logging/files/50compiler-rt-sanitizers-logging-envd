@@ -1,10 +1,10 @@
-ASAN_OPTIONS="abort_on_error=1:log_path=/dev/null:verbosity=0:verify_asan_link_order=0"
-CFI_OPTIONS="halt_on_error=1"
-DFSAN_OPTIONS="warn_unimplemented=0"
+ASAN_OPTIONS="halt_on_error=1:log_to_syslog=1:verbosity=0:print_stats=0:print_summary=0:print_stacktrace=0:strip_path_prefix=/:verify_asan_link_order=0"
+CFI_OPTIONS="strict=1:verbosity=0"
+DFSAN_OPTIONS="abort_on_error=1:verbosity=0"
 #GWP_ASAN=1
 GWP_ASAN_SAMPLE_RATE=@GWP_ASAN_SAMPLE_RATE@
-HWASAN_OPTIONS="abort_on_error=1:log_path=/dev/null:verbosity=0" # No halt on error
-LSAN_OPTIONS="exitcode=1:log_path=/dev/null:verbosity=0" # Halt on error by exitcode
-MSAN_OPTIONS="abort_on_error=1:log_path=/dev/null:verbosity=0"
-TSAN_OPTIONS="halt_on_error=1:log_path=/dev/null:verbosity=0"
-UBSAN_OPTIONS="halt_on_error=1:print_stacktrace=0:log_path=/dev/null"
+HWASAN_OPTIONS="halt_on_error=1:log_to_syslog=1:verbosity=0:print_stats=0:print_summary=0:print_stacktrace=0:strip_path_prefix=/"
+LSAN_OPTIONS="exitcode=1:log_to_syslog=1:verbosity=0:print_stats=0:print_summary=0:print_stacktrace=0:strip_path_prefix=/"
+MSAN_OPTIONS="halt_on_error=1:log_to_syslog=1:verbosity=0:print_stats=0:print_summary=0:print_stacktrace=0:strip_path_prefix=/"
+TSAN_OPTIONS="halt_on_error=1:log_to_syslog=1:verbosity=0:print_stats=0:print_summary=0:print_stacktrace=0:strip_path_prefix=/"
+UBSAN_OPTIONS="halt_on_error=1:log_to_syslog=1:verbosity=0:print_summary=0:print_stacktrace=0:strip_path_prefix=/"
