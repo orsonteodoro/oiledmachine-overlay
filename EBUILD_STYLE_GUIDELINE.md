@@ -102,6 +102,7 @@
         - Test suite passed with Python 3.13
         - Integration test passed with Python 3.13
         - Interactive test passed with Python 3.13
+      - Consider deleting the ebuild if PYTHON_COMPAT is python3_10 or less but only if it is not necessary to keep it in order for the app to work.
 
     Commentary
 
