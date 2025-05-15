@@ -11,7 +11,7 @@ DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 MY_PN="audio"
-PYTHON_COMPAT=( "python3_10" )
+PYTHON_COMPAT=( "python3_11" )
 
 inherit dep-prepare distutils-r1 pypi
 
