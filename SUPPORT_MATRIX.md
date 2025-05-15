@@ -20,6 +20,9 @@
 | Live (latest commit) | Yes                                   |
 | Live snapshot        | Yes                                   |
 
+* Using beta, alpha, preview versions may lead to information disclosure when
+  the debug dump or crash report contains sensitive information.
+
 | Python               | Level of support                      | Distro correspondence   |
 | ---                  | ---                                   | ---                     |
 | 3.10 and earlier     | Not supported (EOL)*                  | U22 (EOL Apr 2027)      |
