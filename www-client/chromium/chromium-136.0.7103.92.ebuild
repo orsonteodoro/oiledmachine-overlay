@@ -4081,6 +4081,10 @@ eerror "QA:  RUSTC is not initialized or missing."
 	${RUSTC} -Z help 2>/dev/null 1>/dev/null
 	local is_rust_nightly=$?
 
+	if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "0" ]] ; then
+		CFLAGS_HARDENED_IGNORE_SANITIZER_CHECK=1
+		CFLAGS_HARDENED_NO_COMPILER_SWITCH=1
+	fi
 	cflags-hardened_append
 	# We just want the missing flags (retpoline, -fstack-clash-protection)  flags
 	filter-flags \

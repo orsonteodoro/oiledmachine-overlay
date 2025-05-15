@@ -498,6 +498,10 @@ _src_configure() {
 	if tc-is-clang && has_version "llvm-runtimes/compiler-rt-sanitizers[cfi]" ; then
 		append_all -fno-sanitize=cfi-icall # Prevent illegal instruction with vpxenc --help
 	fi
+	if use aocc ; then
+		CFLAGS_HARDENED_IGNORE_SANITIZER_CHECK=1
+		CFLAGS_HARDENED_NO_COMPILER_SWITCH=1
+	fi
 	cflags-hardened_append
 
 	if use chromium && [[ "${lib_type}" == "static" ]] ; then

@@ -752,16 +752,10 @@ ewarn
 cflags-hardened_append() {
 	[[ "${CFLAGS_HARDENED_DISABLED:-0}" == 1 ]] && return
 
-	if [[ -z "${CC}" ]] ; then
-		if [[ "${CHROMIUM_TOOLCHAIN}" == "1" ]] ; then
-			export CC="${CHOST}-clang"
-			export CXX="${CHOST}-clang++"
-			export CPP="${CC} -E"
-		else
-			export CC=$(tc-getCC)
-			export CXX=$(tc-getCXX)
-			export CPP="${CC} -E"
-		fi
+	if [[ -z "${CC}" ]] && [[ "${CFLAGS_HARDENED_NO_COMPILER_SWITCH:-0}" != "1" ]] ; then
+		export CC=$(tc-getCC)
+		export CXX=$(tc-getCXX)
+		export CPP="${CC} -E"
 einfo "CC:  ${CC}"
 		${CC} --version || die
 	fi
@@ -786,30 +780,17 @@ einfo "CC:  ${CC}"
 	if tc-is-clang ; then
 		need_clang=1
 	fi
-	if [[ "${CHROMIUM_TOOLCHAIN}" == "1" ]] ; then
-		need_clang=1
-	fi
 
-	if (( ${need_clang} == 1 )) ; then
+	if (( ${need_clang} == 1 )) && [[ "${CFLAGS_HARDENED_NO_COMPILER_SWITCH:-0}" != "1" ]] ; then
 	# Get the slot
-		if [[ -n "${LLVM_SLOT}" && "${CHROMIUM_TOOLCHAIN}" != "1" ]] ; then
-			export CC="${CHOST}-clang-${LLVM_SLOT}"
-			export CXX="${CHOST}-clang++-${LLVM_SLOT}"
-			export CPP="${CC} -E"
-		else
-			export CC="${CHOST}-clang"
-			export CXX="${CHOST}-clang++"
-			export CPP="${CC} -E"
-		fi
+		export CC="${CHOST}-clang"
+		export CXX="${CHOST}-clang++"
+		export CPP="${CC} -E"
 		export LLVM_SLOT=$(clang-major-version)
 
 	# Avoid wrong clang used bug
 		local path
-		if [[ "${CHROMIUM_TOOLCHAIN}" == "1" ]] ; then
-			path="/usr/share/chromium/toolchain/clang/bin"
-		else
-			path="/usr/lib/llvm/${LLVM_SLOT}/bin"
-		fi
+		path="/usr/lib/llvm/${LLVM_SLOT}/bin"
 		PATH=$(echo "${PATH}" \
 			| tr ":" "\n" \
 			| sed -e "\|/usr/lib/llvm|d" \
@@ -818,15 +799,9 @@ einfo "CC:  ${CC}"
 		export LLVM_SLOT=$(clang-major-version)
 
 	# Set CC/CXX again to avoid ccache and reproducibility problems.
-		if [[ "${CHROMIUM_TOOLCHAIN}" == "1" ]] ; then
-			export CC="clang"
-			export CXX="clang++"
-			export CPP="${CC} -E"
-		else
-			export CC="${CHOST}-clang-${LLVM_SLOT}"
-			export CXX="${CHOST}-clang++-${LLVM_SLOT}"
-			export CPP="${CC} -E"
-		fi
+		export CC="${CHOST}-clang-${LLVM_SLOT}"
+		export CXX="${CHOST}-clang++-${LLVM_SLOT}"
+		export CPP="${CC} -E"
 	fi
 	strip-unsupported-flags
 	if ${CC} --version ; then
@@ -1579,7 +1554,7 @@ ewarn "Skipping custom sanitizer -fsanitize=${x} for CC=${CC}"
 			fi
 			local slowdown=${SLOWDOWN[${module}]}
 
-			if [[ "${CHROMIUM_TOOLCHAIN}" == "1" ]] ; then
+			if [[ "${RUSTFLAGS_HARDENED_IGNORE_SANITIZER_CHECK:-0}" == "1" ]] ; then
 				:
 			elif \
 				tc-is-gcc \
