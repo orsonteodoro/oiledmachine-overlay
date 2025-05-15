@@ -58,7 +58,7 @@ exist in build files.
 | glibc                | s390x    | Available                   | D12 (2.36), U24 (2.39)   |
 | glibc                | sparc    | Available                   |                          |
 | glibc                | x86      | Not supported               | D12 (2.36), U24 (2.39)   |
-| musl                 | *        | Available                   | D12 (1.2.3), U24 (1.2.4) |
+| musl >= 1.2.3        | *        | Available                   | D12 (1.2.3), U24 (1.2.4) |
 
 * Using 32-bit may increase the chances of high-critical vulnerabilities.  Examples:
   - ASLR effectiveness on 32-bit is estimated to be 10-20% or 20-50% and can lead to increased privilege escalation, data tampering, information disclosure
