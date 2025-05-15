@@ -79,7 +79,7 @@
   | python3                | python3_{11,12}      |
   | specific versions      | python3_{11..13} (1) |
   | python 3.10 or earlier | (2)                  |
-  | No python              | (2)                  |
+  | no versions            | (2)                  |
 
   (1) Fallback rule 2:
 
