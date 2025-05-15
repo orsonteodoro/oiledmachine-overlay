@@ -91,6 +91,7 @@
     - If your PYTHON_SINGLE_TARGET from /etc/portage/make.conf uses python3_12, use that version.
     - If the slot is missing, downgrade/upgrade the package.
     - If the slot is missing and the project is defunct, adjust based on main package's python_single_python3_11 or python_single_python3_12.
+    - Any unofficial python version added should be documented, or it may be reverted back to the known working set.
 
   Most CI images use D12, U22, U24.
   Using PYTHON_SINGLE_TARGET or the main app package is tested by you.
