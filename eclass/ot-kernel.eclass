@@ -3804,8 +3804,8 @@ eerror
 eerror "Re-emerge =sys-kernel/linux-firmware-99999999 for CPU microcode security"
 eerror "updates."
 eerror
+			die
 		fi
-		die
 	fi
 }
 
