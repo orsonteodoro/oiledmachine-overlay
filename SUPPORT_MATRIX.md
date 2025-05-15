@@ -85,18 +85,21 @@ exist in build files.
 | Protobuf 3                      | Fully supported                       | D12 (3.21.12), U24 (3.21.12) |
 | Protobuf 4                      | Available                             |                              |
 | Protobuf 5                      | Available                             |                              |
-| PyTorch >= 2.0                  | Fully supported                       | D12 (1.13.1)                 |
+| PyTorch >= 2.0 (CPU)            | Fully supported                       | D12 (1.13.1)                 |
+| PyTorch >= 2.0 (CUDA 11.8)      | Available                             | D12 (1.13.1)                 |
+| PyTorch >= 2.4 (CUDA 12.4)      | Available                             | D12 (1.13.1)                 |
+| PyTorch >= 2.5 (ROCm 6.2)       | Available                             | D12 (1.13.1)                 |
 | Qt 5.x                          | Available                             |                              |
 | Qt 6.x                          | Fully supported                       |                              |
 | ROCm >= 6.2                     | Available                             | D12 (5.2.3), U24 (5.7.0)     |
 | SYCL                            | Available                             |                              |
 | systemd                         | Partially supported                   |                              |
-| TensorFlow >= 2.14 (CPU)        | Available                             |                              |
-| TensorFlow >= 2.18 (ROCm  6.2)  | Available                             |                              |
+| TensorFlow >= 2.14 (CPU)        | Fully supported                       |                              |
 | TensorFlow == 2.14 (CUDA 11.8)  | Available                             |                              |
 | TensorFlow == 2.16 (CUDA 12.3)  | Available                             |                              |
 | TensorFlow == 2.17 (CUDA 12.3)  | Available                             |                              |
 | TensorFlow == 2.18 (CUDA 12.5)  | Available                             |                              |
+| TensorFlow >= 2.18 (ROCm  6.2)  | Available                             |                              |
 | Vulkan                          | Fully supported                       |                              |
 | Wayland                         | Fully supported                       |                              |
 | X                               | Fully supported                       |                              |
