@@ -94,10 +94,10 @@
     - Any unofficial python version added should be documented, or it may be reverted back to the known working set.
 
   - Most CI images use D12, U22, U24.
-  - Using PYTHON_SINGLE_TARGET or the main app package is tested by you.
+  - Using PYTHON_SINGLE_TARGET or the main app package tested by you is a good way to increase reproducability.
   - Adding non stable (>= python-3.13) is a waste of time or unpaid free labor.
   - Only tested versions are allowed.
-  - Any untested is assumed Denial of Service (e.g. crash).
+  - Any untested is assumed Denial of Service (e.g. crash), decreases reproducability, disruptive and increases security fix backlog.
 
 * If an ebuild references a PYTHON_SINGLE_USEDEP in *DEPENDs, the ebuild should
   use either `DISTUTILS_SINGLE_IMPL=1` with `inherit distutils-r1` or
