@@ -12633,6 +12633,7 @@ ot-kernel_set_security_critical() {
 	; then
 		local need_stack_protector=0
 		local asan=0
+		local enabled=0
 
 		ot-kernel_unset_configopt "CONFIG_KASAN_HW_TAGS"
 		ot-kernel_unset_configopt "CONFIG_KASAN_SW_TAGS"
@@ -12719,6 +12720,7 @@ ot-kernel_set_security_critical() {
 			else
 				ot-kernel_set_kconfig_kernel_cmdline "kasan.fault=panic"
 			fi
+			enabled=1
 		else
 			ot-kernel_unset_configopt "CONFIG_KASAN"
 			ot-kernel_unset_pat_kconfig_kernel_cmdline "kasan=(on|off)"
@@ -12750,6 +12752,7 @@ ot-kernel_set_security_critical() {
 		; then
 			ot-kernel_y_configopt "CONFIG_KCSAN"
 			ot-kernel_set_kconfig_kernel_cmdline "kcsan.fault=panic"
+			enabled=1
 		else
 			ot-kernel_unset_configopt "CONFIG_KCSAN"
 		fi
@@ -12775,6 +12778,7 @@ ot-kernel_set_security_critical() {
 		; then
 			ot-kernel_set_kconfig_cfi 1					# Uses llvm_slot
 			ot-kernel_set_kconfig_kernel_cmdline "cfi.fault=panic"
+			enabled=1
 		else
 			ot-kernel_set_kconfig_cfi 0
 		fi
@@ -12799,6 +12803,7 @@ ot-kernel_set_security_critical() {
 		; then
 			ot-kernel_set_kconfig_kcfi 1					# Uses llvm_slot
 			ot-kernel_set_kconfig_kernel_cmdline "kcfi.fault=panic"
+			enabled=1
 		else
 			ot-kernel_set_kconfig_kcfi 0
 		fi
@@ -12816,6 +12821,7 @@ ot-kernel_set_security_critical() {
 		; then
 			ot-kernel_set_kconfig_scs 1					# Uses llvm_slot
 			ot-kernel_set_kconfig_kernel_cmdline "scs.fault=panic"
+			enabled=1
 		else
 			ot-kernel_set_kconfig_scs 0					# Uses llvm_slot
 		fi
@@ -12860,6 +12866,7 @@ ot-kernel_set_security_critical() {
 			fi
 			ot-kernel_set_kconfig_kernel_cmdline "kfence.fault=panic"
 			need_stack_protector=1
+			enabled=1
 		else
 			ot-kernel_unset_configopt "CONFIG_KFENCE"
 		fi
@@ -12879,6 +12886,7 @@ ot-kernel_set_security_critical() {
 		; then
 			ot-kernel_y_configopt "CONFIG_KMSAN"
 			ot-kernel_set_kconfig_kernel_cmdline "kmsan.fault=panic"
+			enabled=1
 		else
 			ot-kernel_unset_configopt "CONFIG_KMSAN"
 		fi
@@ -12930,6 +12938,7 @@ ot-kernel_set_security_critical() {
 			fi
 			ot-kernel_set_kconfig_kernel_cmdline "ubsan=on"
 			ot-kernel_set_kconfig_kernel_cmdline "ubsan.fault=panic"
+			enabled=1
 		else
 			ot-kernel_unset_configopt "CONFIG_UBSAN"
 			ot-kernel_unset_configopt "CONFIG_UBSAN_ALIGNMENT"
@@ -12946,7 +12955,14 @@ einfo "Deduping stack overflow check"
 			ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR"
 			ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR_STRONG"
 		fi
+		if (( ${enabled} == 1 )) ; then
+einfo "Enabled security critical settings"
+einfo "Sanitizers:  ${types}"
+		else
+einfo "Disabled security critical settings"
+		fi
 	else
+einfo "Disabled security critical settings"
 		ot-kernel_unset_configopt "CONFIG_KASAN"
 		ot-kernel_unset_configopt "CONFIG_KASAN_HW_TAGS"
 		ot-kernel_unset_configopt "CONFIG_KASAN_SW_TAGS"
