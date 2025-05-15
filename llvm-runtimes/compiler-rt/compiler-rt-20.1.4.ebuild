@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# Last update:  2024-09-22
+
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
 		fallback-commit
@@ -14,20 +16,21 @@ inherit llvm-ebuilds
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM18_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM18_BRANCH}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM20_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM20_BRANCH}"
 	fi
 }
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-PYTHON_COMPAT=( "python3_11" )
+PYTHON_COMPAT=( "python3_12" )
 
 inherit cmake crossdev flag-o-matic llvm.org llvm-utils python-any-r1
 inherit toolchain-funcs
 
 KEYWORDS="
-~amd64 ~arm ~arm64 ~ppc64 ~riscv ~x86 ~amd64-linux ~ppc-macos ~x64-macos
+~amd64 ~arm ~arm64 ~loong ~mips ~ppc64 ~riscv ~x86 ~amd64-linux ~arm64-macos
+~ppc-macos ~x64-macos
 "
 
 DESCRIPTION="Compiler runtime library for clang (built-in part)"
@@ -49,8 +52,13 @@ RESTRICT="
 "
 SLOT="${LLVM_MAJOR}"
 IUSE+="
-+abi_x86_32 abi_x86_64 +clang +debug test
-${LLVM_EBUILDS_LLVM18_REVISION}
++abi_x86_32 abi_x86_64 +atomic-builtins +clang +debug test
+${LLVM_EBUILDS_LLVM20_REVISION}
+"
+REQUIRED_USE="
+	atomic-builtins? (
+		clang
+	)
 "
 DEPEND="
 	llvm-core/llvm:${LLVM_MAJOR}
@@ -74,6 +82,9 @@ LLVM_COMPONENTS=(
 	"compiler-rt"
 	"cmake"
 	"llvm/cmake"
+)
+LLVM_TEST_COMPONENTS=(
+	"llvm/include/llvm/TargetParser"
 )
 llvm.org_set_globals
 
@@ -153,7 +164,9 @@ ewarn "${CC} seems to lack runtime, trying with ${nolib_flags[*]}"
 	local mycmakeargs=(
 		-DCOMPILER_RT_INSTALL_PATH="${EPREFIX}/usr/lib/clang/${LLVM_MAJOR}"
 
+		-DCOMPILER_RT_EXCLUDE_ATOMIC_BUILTIN=$(usex !atomic-builtins)
 		-DCOMPILER_RT_INCLUDE_TESTS=$(usex test)
+		-DCOMPILER_RT_BUILD_CTX_PROFILE=OFF
 		-DCOMPILER_RT_BUILD_LIBFUZZER=OFF
 		-DCOMPILER_RT_BUILD_MEMPROF=OFF
 		-DCOMPILER_RT_BUILD_ORC=OFF
@@ -223,3 +236,4 @@ src_test() {
 
 	cmake_build check-builtins
 }
+

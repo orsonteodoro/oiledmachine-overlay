@@ -10,15 +10,15 @@ if [[ "${PV}" =~ "9999" ]] ; then
 fi
 
 LLVM_MAX_SLOT=${PV%%.*}
-PYTHON_COMPAT=( "python3_11" )
+PYTHON_COMPAT=( "python3_12" )
 
 inherit llvm-ebuilds
 
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM18_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM18_BRANCH}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM19_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM19_BRANCH}"
 	fi
 }
 _llvm_set_globals
@@ -38,7 +38,7 @@ LICENSE="
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 offload test
-${LLVM_EBUILDS_LLVM18_REVISION}
+${LLVM_EBUILDS_LLVM19_REVISION}
 "
 REQUIRED_USE="
 "
@@ -72,18 +72,18 @@ llvm.org_set_globals
 
 src_configure() {
 	if tc-is-gcc && ver_test $(gcc-version) -ge "13.1" ; then
-#/var/tmp/portage/dev-lang/llvm-flang-18.0.0.9999/work/flang/lib/Semantics/check-omp-structure.cpp: In member function 'void Fortran::semantics::OmpStructureChecker::ErrIfLHSAndRHSSymbolsMatch(const Fortran::parser::Variable&, const Fortran::parser::Expr&)':
-#/var/tmp/portage/dev-lang/llvm-flang-18.0.0.9999/work/flang/lib/Semantics/check-omp-structure.cpp:1777:19: error: possibly dangling reference to a temporary [-Werror=dangling-reference]
+#/var/tmp/portage/dev-lang/llvm-flang-19.0.0.9999/work/flang/lib/Semantics/check-omp-structure.cpp: In member function 'void Fortran::semantics::OmpStructureChecker::ErrIfLHSAndRHSSymbolsMatch(const Fortran::parser::Variable&, const Fortran::parser::Expr&)':
+#/var/tmp/portage/dev-lang/llvm-flang-19.0.0.9999/work/flang/lib/Semantics/check-omp-structure.cpp:1777:19: error: possibly dangling reference to a temporary [-Werror=dangling-reference]
 # 1777 |     const Symbol &varSymbol = evaluate::GetSymbolVector(*v).front();
 #      |                   ^~~~~~~~~
-#/var/tmp/portage/dev-lang/llvm-flang-18.0.0.9999/work/flang/lib/Semantics/check-omp-structure.cpp:1777:67: note: the temporary was destroyed at the end of the full expression '(& Fortran::evaluate::GetSymbolVector(const A&) [with A = Expr<SomeType>; SymbolVector = std::vector<Fortran::common::Reference<const Fortran::semantics::Symbol> >]().std::vector<Fortran::common::Reference<const Fortran::semantics::Symbol> >::front())->Fortran::common::Reference<const Fortran::semantics::Symbol>::operator std::conditional_t<true, const Fortran::semantics::Symbol&, void>()'
+#/var/tmp/portage/dev-lang/llvm-flang-19.0.0.9999/work/flang/lib/Semantics/check-omp-structure.cpp:1777:67: note: the temporary was destroyed at the end of the full expression '(& Fortran::evaluate::GetSymbolVector(const A&) [with A = Expr<SomeType>; SymbolVector = std::vector<Fortran::common::Reference<const Fortran::semantics::Symbol> >]().std::vector<Fortran::common::Reference<const Fortran::semantics::Symbol> >::front())->Fortran::common::Reference<const Fortran::semantics::Symbol>::operator std::conditional_t<true, const Fortran::semantics::Symbol&, void>()'
 # 1777 |     const Symbol &varSymbol = evaluate::GetSymbolVector(*v).front();
 #      |                                                                   ^
-#/var/tmp/portage/dev-lang/llvm-flang-18.0.0.9999/work/flang/lib/Semantics/check-omp-structure.cpp: In member function 'void Fortran::semantics::OmpStructureChecker::CheckAtomicUpdateStmt(const Fortran::parser::AssignmentStmt&)':
-#/var/tmp/portage/dev-lang/llvm-flang-18.0.0.9999/work/flang/lib/Semantics/check-omp-structure.cpp:1923:19: error: possibly dangling reference to a temporary [-Werror=dangling-reference]
+#/var/tmp/portage/dev-lang/llvm-flang-19.0.0.9999/work/flang/lib/Semantics/check-omp-structure.cpp: In member function 'void Fortran::semantics::OmpStructureChecker::CheckAtomicUpdateStmt(const Fortran::parser::AssignmentStmt&)':
+#/var/tmp/portage/dev-lang/llvm-flang-19.0.0.9999/work/flang/lib/Semantics/check-omp-structure.cpp:1923:19: error: possibly dangling reference to a temporary [-Werror=dangling-reference]
 # 1923 |     const Symbol &varSymbol = evaluate::GetSymbolVector(*v).front();
 #      |                   ^~~~~~~~~
-#/var/tmp/portage/dev-lang/llvm-flang-18.0.0.9999/work/flang/lib/Semantics/check-omp-structure.cpp:1923:67: note: the temporary was destroyed at the end of the full expression '(& Fortran::evaluate::GetSymbolVector(const A&) [with A = Expr<SomeType>; SymbolVector = std::vector<Fortran::common::Reference<const Fortran::semantics::Symbol> >]().std::vector<Fortran::common::Reference<const Fortran::semantics::Symbol> >::front())->Fortran::common::Reference<const Fortran::semantics::Symbol>::operator std::conditional_t<true, const Fortran::semantics::Symbol&, void>()'
+#/var/tmp/portage/dev-lang/llvm-flang-19.0.0.9999/work/flang/lib/Semantics/check-omp-structure.cpp:1923:67: note: the temporary was destroyed at the end of the full expression '(& Fortran::evaluate::GetSymbolVector(const A&) [with A = Expr<SomeType>; SymbolVector = std::vector<Fortran::common::Reference<const Fortran::semantics::Symbol> >]().std::vector<Fortran::common::Reference<const Fortran::semantics::Symbol> >::front())->Fortran::common::Reference<const Fortran::semantics::Symbol>::operator std::conditional_t<true, const Fortran::semantics::Symbol&, void>()'
 # 1923 |     const Symbol &varSymbol = evaluate::GetSymbolVector(*v).front();
 #      |                                                                   ^
 #cc1plus: all warnings being treated as errors
@@ -131,7 +131,7 @@ einfo "Switching ${EROOT}/usr/lib/llvm-flang/${LLVM_MAJOR}/bin/flang-new -> ${ER
 		|| die
 }
 
-# OILEDMACHINE-OVERLAY-STATUS:  passed (2b033a3, 20240305)
+# OILEDMACHINE-OVERLAY-STATUS:  passed (ed0aa34, 20240305)
 # OILEDMACHINE-OVERLAY-EBUILD-FINISHED:  YES
 
 # Testing:
@@ -140,5 +140,5 @@ einfo "Switching ${EROOT}/usr/lib/llvm-flang/${LLVM_MAJOR}/bin/flang-new -> ${ER
 #  print *, "hello world"
 #end program
 #EOF
-#/usr/lib/llvm-flang/18/bin/flang-new hello.f90 -L/usr/lib/llvm-flang/18/lib64 -o hello.exe
-#LD_LIBRARY_PATH="/usr/lib/llvm-flang/18/lib64" ./hello.exe
+#/usr/lib/llvm-flang/19/bin/flang-new hello.f90 -L/usr/lib/llvm-flang/19/lib64 -o hello.exe
+#LD_LIBRARY_PATH="/usr/lib/llvm-flang/19/lib64" ./hello.exe

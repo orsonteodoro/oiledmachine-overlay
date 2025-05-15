@@ -23,7 +23,7 @@ _llvm_set_globals
 unset -f _llvm_set_globals
 
 GCC_SLOT=13
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_11" )
 
 inherit cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
 
@@ -338,7 +338,7 @@ einfo
 		#
 		-DLIBCXX_CXX_ABI=libcxxabi
 		-DLIBCXX_ENABLE_ABI_LINKER_SCRIPT=OFF
-		-DLIBCXX_HAS_MUSL_LIBC=$(usex elibc_musl)
+		-DLIBCXX_HAS_MUSL_LIBC=$(llvm_cmake_use_musl)
 		-DLIBCXX_HAS_GCC_S_LIB=OFF
 		-DLIBCXX_INCLUDE_BENCHMARKS=OFF
 		-DLIBCXX_INCLUDE_TESTS=OFF

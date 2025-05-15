@@ -14,22 +14,18 @@ inherit llvm-ebuilds
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM18_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM18_BRANCH}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM20_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM20_BRANCH}"
 	fi
 }
 _llvm_set_globals
 unset -f _llvm_set_globals
 
 LLVM_SLOT=${PV%%.*}
-PYTHON_COMPAT=( "python3_11" )
+PYTHON_COMPAT=( "python3_12" )
 
 inherit flag-o-matic cmake-multilib linux-info llvm llvm.org
 inherit python-single-r1 toolchain-funcs
-
-KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos
-"
 
 DESCRIPTION="Multi Level Intermediate Representation for LLVM"
 HOMEPAGE="https://openmp.llvm.org"
@@ -44,7 +40,7 @@ SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 	debug test
 	ebuild_revision_4
-${LLVM_EBUILDS_LLVM18_REVISION}
+${LLVM_EBUILDS_LLVM20_REVISION}
 "
 REQUIRED_USE="
 "
@@ -77,7 +73,6 @@ python_check_deps() {
 
 pkg_setup() {
 	python-single-r1_pkg_setup
-	LLVM_MAX_SLOT="${LLVM_SLOT}"
 	llvm_pkg_setup
 }
 

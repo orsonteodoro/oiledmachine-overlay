@@ -3,14 +3,16 @@
 
 EAPI=8
 
+# Last update:  2024-07-23
+
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
 		fallback-commit
 	"
 fi
 
-# For NVPTX, see https://github.com/llvm/llvm-project/blob/release/18.x/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L61
-# For CUDA sdk versions, see https://github.com/llvm/llvm-project/blob/release/18.x/clang/include/clang/Basic/Cuda.h
+# For NVPTX, see https://github.com/llvm/llvm-project/blob/main/openmp/libomptarget/DeviceRTL/CMakeLists.txt#L57C1-L64C1
+# For CUDA sdk versions, see https://github.com/llvm/llvm-project/blob/main/clang/include/clang/Basic/Cuda.h#L41
 CUDA_TARGETS_COMPAT=(
 	auto
 	sm_35
@@ -31,7 +33,7 @@ CUDA_TARGETS_COMPAT=(
 	sm_90
 )
 LLVM_SLOT="${PV%%.*}"
-PYTHON_COMPAT=( "python3_11" )
+PYTHON_COMPAT=( "python3_12" )
 
 inherit llvm-ebuilds
 
@@ -40,13 +42,13 @@ inherit toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-	EGIT_BRANCH="${LLVM_EBUILDS_LLVM18_BRANCH}"
+	EGIT_BRANCH="${LLVM_EBUILDS_LLVM20_BRANCH}"
 	if [[ "${USE}" =~ "fallback-commit" ]] ; then
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM18_FALLBACK_COMMIT}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM20_FALLBACK_COMMIT}"
 	fi
 else
 	KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos
+~amd64 ~arm ~arm64 ~loong ~mips ~ppc64 ~riscv ~x86 ~amd64-linux ~x64-macos
 	"
 fi
 
@@ -67,9 +69,9 @@ RESTRICT="
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-+debug gdb-plugin hwloc offload ompt test llvm_targets_NVPTX
+debug gdb-plugin hwloc offload ompt test llvm_targets_NVPTX
 ebuild_revision_8
-${LLVM_EBUILDS_LLVM18_REVISION}
+${LLVM_EBUILDS_LLVM20_REVISION}
 "
 gen_cuda_required_use() {
 	local x
@@ -229,7 +231,7 @@ LLVM_COMPONENTS=(
 llvm.org_set_globals
 PATCHES=(
 	"${FILESDIR}/${PN}-17.0.0.9999-sover-suffix.patch"
-	"${FILESDIR}/${PN}-19.0.0.9999-libffi.patch"
+#	"${FILESDIR}/${PN}-19.0.0.9999-libffi.patch"
 )
 
 kernel_pds_check() {

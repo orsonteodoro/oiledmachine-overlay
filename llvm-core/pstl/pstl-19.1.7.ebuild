@@ -15,8 +15,8 @@ inherit llvm-ebuilds
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM18_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM18_BRANCH}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM19_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM19_BRANCH}"
 	fi
 }
 _llvm_set_globals
@@ -24,12 +24,13 @@ unset -f _llvm_set_globals
 
 GCC_SLOT=13
 CMAKE_ECLASS="cmake"
-PYTHON_COMPAT=( "python3_11" )
+LLVM_MAX_SLOT=${LLVM_MAJOR}
+PYTHON_COMPAT=( "python3_12" )
 
 inherit cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
 
-LLVM_MAX_SLOT=${LLVM_MAJOR}
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos"
+
 SRC_URI+="
 "
 
@@ -50,7 +51,7 @@ RESTRICT="
 SLOT="${PV%%.*}"
 IUSE+="
 -openmp -tbb test
-${LLVM_EBUILDS_LLVM18_REVISION}
+${LLVM_EBUILDS_LLVM19_REVISION}
 "
 RDEPEND="
 	openmp? (
@@ -100,6 +101,8 @@ src_prepare() {
 }
 
 src_configure() {
+	llvm_prepend_path "${LLVM_MAJOR}"
+
 	configure_abi() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do

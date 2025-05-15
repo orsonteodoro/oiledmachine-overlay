@@ -4,7 +4,9 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( "python3_11" )
+# Last update:  2024-08-22
+
+PYTHON_COMPAT=( "python3_12" )
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
@@ -17,8 +19,8 @@ inherit llvm-ebuilds
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM18_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM18_BRANCH}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM20_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM20_BRANCH}"
 	fi
 }
 _llvm_set_globals
@@ -48,10 +50,10 @@ LICENSE="
 # 4. ConvertUTF.h: TODO.
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
-+binutils-plugin bolt bolt-heatmap +debug debuginfod doc -dump exegesis jemalloc
-libedit +libffi ncurses tcmalloc test xml z3 zstd
-ebuild_revision_7
-${LLVM_EBUILDS_LLVM18_REVISION}
++binutils-plugin bolt bolt-heatmap debug debuginfod doc -dump exegesis jemalloc
+libedit +libffi tcmalloc test xml z3 zstd
+ebuild_revision_0
+${LLVM_EBUILDS_LLVM20_REVISION}
 "
 REQUIRED_USE+="
 	!amd64? (
@@ -123,9 +125,6 @@ RDEPEND="
 	libffi? (
 		>=dev-libs/libffi-3.0.13-r1:0=[${MULTILIB_USEDEP}]
 	)
-	ncurses? (
-		>=sys-libs/ncurses-5.9-r3:0=[${MULTILIB_USEDEP}]
-	)
 	tcmalloc? (
 		dev-util/google-perftools
 	)
@@ -152,7 +151,6 @@ BDEPEND="
 	sys-devel/gnuconfig
 	kernel_Darwin? (
 		<llvm-runtimes/libcxx-${LLVM_VERSION}.9999
-		>=sys-devel/binutils-apple-5.1
 	)
 	libffi? (
 		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
@@ -186,7 +184,6 @@ LLVM_COMPONENTS=(
 	"third-party"
 )
 LLVM_MANPAGES=1
-LLVM_PATCHSET="${PV}-r4"
 LLVM_USE_TARGETS="provide"
 llvm.org_set_globals
 
@@ -273,21 +270,22 @@ check_live_ebuild() {
 		has "${i}" "${prod_targets[@]}" || exp_targets+=( "${i}" )
 	done
 
+	local outdated
 	if [[ ${exp_targets[*]} != ${ALL_LLVM_EXPERIMENTAL_TARGETS[*]} ]]; then
-eqawarn
-eqawarn "ALL_LLVM_EXPERIMENTAL_TARGETS is outdated!"
-eqawarn "    Have: ${ALL_LLVM_EXPERIMENTAL_TARGETS[*]}"
-eqawarn "Expected: ${exp_targets[*]}"
-eqawarn
+eerror "ALL_LLVM_EXPERIMENTAL_TARGETS are outdated!"
+eerror "    Have: ${ALL_LLVM_EXPERIMENTAL_TARGETS[*]}"
+eerror "Expected: ${exp_targets[*]}"
+eerror
+		outdated=1
 	fi
 
 	if [[ ${prod_targets[*]} != ${ALL_LLVM_PRODUCTION_TARGETS[*]} ]]; then
-eqawarn
-eqawarn "ALL_LLVM_PRODUCTION_TARGETS is outdated!"
-eqawarn "    Have: ${ALL_LLVM_PRODUCTION_TARGETS[*]}"
-eqawarn "Expected: ${prod_targets[*]}"
-eqawarn
+eerror "ALL_LLVM_PRODUCTION_TARGETS are outdated!"
+eerror "    Have: ${ALL_LLVM_PRODUCTION_TARGETS[*]}"
+eerror "Expected: ${prod_targets[*]}"
+		outdated=1
 	fi
+	[[ ${outdated} ]] && die "Update ALL_LLVM*_TARGETS"
 }
 
 check_distribution_components() {
@@ -306,6 +304,9 @@ check_distribution_components() {
 						;;
 					# TableGen/mlir lib + deps
 					LLVMCodeGenTypes|LLVMDemangle|LLVMSupport|LLVMTableGen)
+						;;
+					# for mlir-tblgen
+					LLVMCodeGenTypes)
 						;;
 					# used by lldb
 					LLVMDebuginfod)
@@ -333,6 +334,10 @@ check_distribution_components() {
 					docs-llvm-html)
 						use doc || continue
 						;;
+					# used only w/ USE=debuginfd
+					llvm-debuginfod)
+						use debuginfod || continue
+						;;
 				esac
 
 				all_targets+=( "${l}" )
@@ -356,11 +361,11 @@ check_distribution_components() {
 		done
 
 		if [[ ${#add[@]} -gt 0 || ${#remove[@]} -gt 0 ]]; then
-eqawarn
-eqawarn "get_distribution_components() is outdated!"
-eqawarn "   Add: ${add[*]}"
-eqawarn "Remove: ${remove[*]}"
-eqawarn
+eerror "get_distribution_components() is outdated!"
+eerror "   Add: ${add[*]}"
+eerror "Remove: ${remove[*]}"
+eerror "Update get_distribution_components()!"
+die
 		fi
 		cd - >/dev/null || die
 	fi
@@ -381,6 +386,7 @@ src_prepare() {
 	check_live_ebuild
 
 	llvm.org_src_prepare
+
 	if use bolt ; then
 		pushd "${WORKDIR}" || die
 			eapply "${FILESDIR}/llvm-16.0.5-bolt-set-cmake-libdir.patch"
@@ -410,6 +416,9 @@ get_distribution_components() {
 		LLVMDemangle
 		LLVMSupport
 		LLVMTableGen
+
+		# mlir-tblgen
+		LLVMCodeGenTypes
 
 		# testing libraries
 		llvm_gtest
@@ -446,8 +455,10 @@ get_distribution_components() {
 			llvm-c-test
 			llvm-cat
 			llvm-cfi-verify
+			llvm-cgdata
 			llvm-config
 			llvm-cov
+			llvm-ctxprof-util
 			llvm-cvtres
 			llvm-cxxdump
 			llvm-cxxfilt
@@ -507,6 +518,7 @@ get_distribution_components() {
 			llvm-xray
 			obj2yaml
 			opt
+			reduce-chunk-list
 			sancov
 			sanstats
 			split-file
@@ -635,7 +647,6 @@ einfo
 		-DLLVM_ENABLE_DUMP=$(usex dump)
 		-DLLVM_ENABLE_FFI=$(usex libffi)
 		-DLLVM_ENABLE_LIBEDIT=$(usex libedit)
-		-DLLVM_ENABLE_TERMINFO=$(usex ncurses)
 		-DLLVM_ENABLE_LIBXML2=$(usex xml)
 		-DLLVM_ENABLE_ASSERTIONS=$(usex debug)
 		-DLLVM_ENABLE_LIBPFM=$(usex exegesis)
@@ -657,14 +668,9 @@ einfo
 		-DOCAMLFIND=NO
 	)
 
-	# On the macos prefix, this distro doesn't split sys-libs/ncurses to
-	# libtinfo and libncurses, but llvm tries to use libtinfo before
-	# libncurses, and ends up using libtinfo (actually, libncurses.dylib)
-	# from system instead of prefix.
 	use kernel_Darwin && mycmakeargs+=(
 		# Use our libtool instead of looking it up with xcrun \
 		-DCMAKE_LIBTOOL="${EPREFIX}/usr/bin/${CHOST}-libtool"
-		-DTerminfo_LIBRARIES="-lncurses"
 	)
 
 	local suffix=

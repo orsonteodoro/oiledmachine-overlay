@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# Last update:  2024-06-15
+
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
 		fallback-commit
@@ -15,14 +17,14 @@ inherit llvm-ebuilds
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM18_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM18_BRANCH}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM19_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM19_BRANCH}"
 	fi
 }
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-GCC_SLOT=13
+GCC_SLOT=14
 CMAKE_ECLASS="cmake"
 LLVM_COMPONENTS=(
 	"runtimes"
@@ -31,11 +33,14 @@ LLVM_COMPONENTS=(
 	"cmake"
 )
 LLVM_MAX_SLOT=${PV%%.*}
-PYTHON_COMPAT=( "python3_11" )
+PYTHON_COMPAT=( "python3_12" )
 
 inherit cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
 
-KEYWORDS="~amd64 ~arm ~arm64 ~loong ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos"
+KEYWORDS="
+amd64 arm arm64 ~loong ~riscv sparc x86 ~arm64-macos ~x64-macos
+"
+
 SRC_URI+="
 https://github.com/llvm/llvm-project/commit/ef843c8271027b89419d07ffc2aaa3abf91438ef.patch
 	-> libcxx-commit-ef843c8.patch
@@ -57,7 +62,7 @@ RESTRICT="
 "
 SLOT="0"
 IUSE+="
-${LLVM_EBUILDS_LLVM18_REVISION}
+${LLVM_EBUILDS_LLVM19_REVISION}
 hardened +libcxxabi +static-libs test +threads
 ebuild_revision_12
 "
@@ -71,7 +76,7 @@ RDEPEND="
 "
 DEPEND="
 	${RDEPEND}
-	llvm-core/llvm:${LLVM_MAJOR}
+	llvm-core/llvm:${PV%%.*}
 "
 BDEPEND+="
 	>=sys-devel/gcc-${GCC_SLOT}
@@ -101,7 +106,7 @@ check_libstdcxx() {
 
 	if ver_test "${gcc_current_profile_slot}" -lt "${GCC_SLOT}" ; then
 # Fixes:
-# warning "Libc++ only supports GCC 13 and later"
+# warning "Libc++ only supports GCC 14 and later"
 eerror
 eerror "You must switch to >= GCC ${GCC_SLOT}.  Do"
 eerror
@@ -237,29 +242,8 @@ pkg_setup() {
 	check_libstdcxx
 }
 
-src_prepare() {
-	pushd "${WORKDIR}" || die
-		# Retesting
-		# Still bugged since Sept 30, 2022
-		# Fixes build time failure:
-#
-# include/c++/v1/system_error: In instantiation of 'std::__1::error_code::error_code(_Ep, typename std::__1::enable_if<std::__1::is_error_code_enum<_Ep>::value>::type*) [with _Ep = st>
-# include/c++/v1/ios:452:34:   required from here
-# include/c++/v1/system_error:355:40: error: use of deleted function 'void std::__1::__adl_only::make_error_code()'
-#   355 |                 *this = make_error_code(__e);
-#       |                         ~~~~~~~~~~~~~~~^~~~~
-# include/c++/v1/system_error:263:10: note: declared here
-#   263 |     void make_error_code() = delete;
-#
-#		filterdiff -x "*/Cxx2bIssues.csv" "${DISTDIR}/libcxx-commit-ef843c8.patch" \
-#			> "${T}/libcxx-commit-ef843c8.patch" || die
-#		eapply -R "${T}/libcxx-commit-ef843c8.patch"
-	popd
-	llvm.org_src_prepare
-}
-
 src_configure() {
-	llvm_prepend_path "${LLVM_MAJOR}"
+	llvm_prepend_path "${PV%%.*}"
 
 	# note: we need to do this before multilib kicks in since it will
 	# alter the CHOST
@@ -387,6 +371,7 @@ einfo
 		-DLIBCXX_HAS_MUSL_LIBC=$(llvm_cmake_use_musl)
 		-DLIBCXX_INCLUDE_BENCHMARKS=OFF
 		-DLIBCXX_INCLUDE_TESTS=$(usex test)
+		-DLIBCXX_INSTALL_MODULES=ON
 		-DLIBCXX_USE_COMPILER_RT=${use_compiler_rt}
 		-DLLVM_ENABLE_RUNTIMES=libcxx
 		-DLLVM_INCLUDE_TESTS=OFF

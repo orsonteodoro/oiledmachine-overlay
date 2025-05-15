@@ -4,7 +4,9 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( "python3_11" )
+# Last update:  2024-06-01
+
+PYTHON_COMPAT=( "python3_12" )
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
@@ -17,8 +19,8 @@ inherit llvm-ebuilds
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM18_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM18_BRANCH}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM19_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM19_BRANCH}"
 	fi
 }
 _llvm_set_globals
@@ -28,7 +30,7 @@ inherit cmake dhms llvm.org multilib-minimal pax-utils python-any-r1 toolchain-f
 inherit flag-o-matic git-r3 ninja-utils
 
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux
+amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv sparc x86 ~amd64-linux
 ~arm64-macos ~ppc-macos ~x64-macos
 "
 
@@ -48,10 +50,10 @@ LICENSE="
 # 4. ConvertUTF.h: TODO.
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
-+binutils-plugin bolt bolt-heatmap +debug debuginfod doc -dump exegesis jemalloc
-libedit +libffi ncurses tcmalloc test xml z3 zstd
-ebuild_revision_7
-${LLVM_EBUILDS_LLVM18_REVISION}
++binutils-plugin bolt bolt-heatmap debug debuginfod doc -dump exegesis jemalloc
+libedit +libffi tcmalloc test xml z3 zstd
+ebuild_revision_6
+${LLVM_EBUILDS_LLVM19_REVISION}
 "
 REQUIRED_USE+="
 	!amd64? (
@@ -123,9 +125,6 @@ RDEPEND="
 	libffi? (
 		>=dev-libs/libffi-3.0.13-r1:0=[${MULTILIB_USEDEP}]
 	)
-	ncurses? (
-		>=sys-libs/ncurses-5.9-r3:0=[${MULTILIB_USEDEP}]
-	)
 	tcmalloc? (
 		dev-util/google-perftools
 	)
@@ -152,7 +151,6 @@ BDEPEND="
 	sys-devel/gnuconfig
 	kernel_Darwin? (
 		<llvm-runtimes/libcxx-${LLVM_VERSION}.9999
-		>=sys-devel/binutils-apple-5.1
 	)
 	libffi? (
 		>=dev-util/pkgconf-1.3.7[${MULTILIB_USEDEP},pkg-config(+)]
@@ -186,7 +184,6 @@ LLVM_COMPONENTS=(
 	"third-party"
 )
 LLVM_MANPAGES=1
-LLVM_PATCHSET="${PV}-r4"
 LLVM_USE_TARGETS="provide"
 llvm.org_set_globals
 
@@ -381,6 +378,12 @@ src_prepare() {
 	check_live_ebuild
 
 	llvm.org_src_prepare
+
+	if has_version ">=sys-libs/glibc-2.40"; then
+		# https://github.com/llvm/llvm-project/issues/100791
+		rm -r test/tools/llvm-exegesis/X86/latency || die
+	fi
+
 	if use bolt ; then
 		pushd "${WORKDIR}" || die
 			eapply "${FILESDIR}/llvm-16.0.5-bolt-set-cmake-libdir.patch"
@@ -507,6 +510,7 @@ get_distribution_components() {
 			llvm-xray
 			obj2yaml
 			opt
+			reduce-chunk-list
 			sancov
 			sanstats
 			split-file
@@ -635,7 +639,6 @@ einfo
 		-DLLVM_ENABLE_DUMP=$(usex dump)
 		-DLLVM_ENABLE_FFI=$(usex libffi)
 		-DLLVM_ENABLE_LIBEDIT=$(usex libedit)
-		-DLLVM_ENABLE_TERMINFO=$(usex ncurses)
 		-DLLVM_ENABLE_LIBXML2=$(usex xml)
 		-DLLVM_ENABLE_ASSERTIONS=$(usex debug)
 		-DLLVM_ENABLE_LIBPFM=$(usex exegesis)
@@ -657,14 +660,9 @@ einfo
 		-DOCAMLFIND=NO
 	)
 
-	# On the macos prefix, this distro doesn't split sys-libs/ncurses to
-	# libtinfo and libncurses, but llvm tries to use libtinfo before
-	# libncurses, and ends up using libtinfo (actually, libncurses.dylib)
-	# from system instead of prefix.
 	use kernel_Darwin && mycmakeargs+=(
 		# Use our libtool instead of looking it up with xcrun \
 		-DCMAKE_LIBTOOL="${EPREFIX}/usr/bin/${CHOST}-libtool"
-		-DTerminfo_LIBRARIES="-lncurses"
 	)
 
 	local suffix=

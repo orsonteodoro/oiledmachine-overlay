@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# Last update:  2024-05-25
+# Last update:  2024-11-20
 
 PYTHON_COMPAT=( "python3_12" )
 
@@ -19,17 +19,18 @@ inherit llvm-ebuilds
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM19_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM19_BRANCH}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM20_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM20_BRANCH}"
 	fi
 }
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-inherit cmake flag-o-matic llvm.org python-any-r1 toolchain-funcs
+inherit cmake flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
 
 KEYWORDS="
-amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv sparc x86 ~arm64-macos ~x64-macos
+~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86 ~arm64-macos
+~x64-macos
 "
 
 DESCRIPTION="The LLVM linker (link editor)"
@@ -43,7 +44,7 @@ IUSE+="
 debug default-full-relro default-no-relro +default-partial-relro hardened
 hardened-compat test zstd
 ebuild_revision_1
-${LLVM_EBUILDS_LLVM19_REVISION}
+${LLVM_EBUILDS_LLVM20_REVISION}
 "
 REQUIRED_USE+="
 	^^ (
@@ -112,7 +113,7 @@ BDEPEND="
 	~llvm-core/llvm-${PV}:${LLVM_MAJOR}
 	test? (
 		>=dev-build/cmake-3.16
-		$(python_gen_any_dep ">=dev-python/lit-${PV}[\${PYTHON_USEDEP}]")
+		$(python_gen_any_dep "dev-python/lit[\${PYTHON_USEDEP}]")
 	)
 "
 PDEPEND="

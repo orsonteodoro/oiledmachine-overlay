@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# Last update:  2024-09-22
+
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
 		fallback-commit
@@ -15,20 +17,21 @@ inherit llvm-ebuilds
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM18_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM18_BRANCH}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM20_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM20_BRANCH}"
 	fi
 }
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-PYTHON_COMPAT=( "python3_11" )
+PYTHON_COMPAT=( "python3_12" )
 
 inherit check-reqs cmake flag-o-matic linux-info llvm.org llvm-utils python-any-r1
 
 LLVM_MAX_SLOT=${LLVM_MAJOR}
 KEYWORDS="
-~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86 ~amd64-linux ~ppc-macos ~x64-macos
+~amd64 ~arm ~arm64 ~loong ~mips ~ppc64 ~riscv ~x86 ~amd64-linux ~ppc-macos
+~x64-macos
 "
 
 DESCRIPTION="Compiler runtime libraries for clang (sanitizers & xray)"
@@ -42,9 +45,9 @@ LICENSE="
 "
 SLOT="${LLVM_MAJOR}"
 IUSE+="
-${LLVM_EBUILDS_LLVM18_REVISION}
-+abi_x86_32 abi_x86_64 +clang +debug hexagon +libfuzzer +memprof +orc +profile
-test +xray
+${LLVM_EBUILDS_LLVM20_REVISION}
++abi_x86_32 abi_x86_64 +clang +ctx-profile debug hexagon +libfuzzer +memprof
++orc +profile test +xray
 ebuild_revision_9
 "
 # sanitizer targets, keep in sync with config-ix.cmake
@@ -57,6 +60,8 @@ SANITIZER_FLAGS=(
 	hwasan
 	lsan
 	msan
+	nsan
+	rtsan
 	safestack
 	scudo
 	shadowcallstack
@@ -303,7 +308,8 @@ DEPEND="
 BDEPEND="
 	>=dev-build/cmake-3.16
 	clang? (
-		llvm-core/clang
+		llvm-core/clang:${LLVM_MAJOR}
+		llvm-runtimes/compiler-rt:${LLVM_MAJOR}
 	)
 	elibc_glibc? (
 		net-libs/libtirpc
@@ -336,8 +342,8 @@ LLVM_COMPONENTS=(
 	"cmake"
 	"llvm/cmake"
 )
-LLVM_PATCHSET="${PV}-r4"
 LLVM_TEST_COMPONENTS=(
+	"llvm/include/llvm/ProfileData"
 	"llvm/lib/Testing/Support"
 	"third-party"
 )
@@ -452,6 +458,7 @@ eerror
 		# builtins & crt installed by llvm-runtimes/compiler-rt
 		-DCOMPILER_RT_BUILD_BUILTINS=OFF
 		-DCOMPILER_RT_BUILD_CRT=OFF
+		-DCOMPILER_RT_BUILD_CTX_PROFILE=$(usex ctx-profile)
 		-DCOMPILER_RT_BUILD_LIBFUZZER=$(usex libfuzzer)
 		-DCOMPILER_RT_BUILD_MEMPROF=$(usex memprof)
 		-DCOMPILER_RT_BUILD_ORC=$(usex orc)
@@ -496,7 +503,7 @@ eerror
 			# Set version based on the SDK in EPREFIX
 			# This disables i386 for SDK >= 10.15
 			# Will error if has_use tsan and SDK < 10.12
-			-DDARWIN_macosx_OVERRIDE_SDK_VERSION="$(realpath ${EPREFIX}/MacOSX.sdk | sed -e 's/.*MacOSX\(.*\)\.sdk/\1/')"
+			-DDARWIN_macosx_OVERRIDE_SDK_VERSION=$(realpath "${EPREFIX}/MacOSX.sdk" | sed -e 's/.*MacOSX\(.*\)\.sdk/\1/')
 			# Use our libtool instead of looking it up with xcrun
 			-DCMAKE_LIBTOOL="${EPREFIX}/usr/bin/${CHOST}-libtool"
 		)

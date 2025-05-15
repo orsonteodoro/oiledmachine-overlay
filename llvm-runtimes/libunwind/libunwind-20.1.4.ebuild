@@ -3,6 +3,8 @@
 
 EAPI=8
 
+# Last update:  2024-10-23
+
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
 		fallback-commit
@@ -14,14 +16,14 @@ inherit llvm-ebuilds
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM18_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM18_BRANCH}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM20_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM20_BRANCH}"
 	fi
 }
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-PYTHON_COMPAT=( "python3_11" )
+PYTHON_COMPAT=( "python3_12" )
 
 inherit cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1
 inherit toolchain-funcs
@@ -42,8 +44,8 @@ LICENSE="
 "
 SLOT="0"
 IUSE+="
-${LLVM_EBUILDS_LLVM18_REVISION}
-+clang +debug static-libs test
+${LLVM_EBUILDS_LLVM20_REVISION}
++clang debug static-libs test
 "
 REQUIRED_USE="
 	test? (
@@ -79,6 +81,7 @@ LLVM_COMPONENTS=(
 	"cmake"
 )
 LLVM_TEST_COMPONENTS=(
+	"libc"
 	"libcxxabi"
 	"llvm/utils/llvm-lit"
 )

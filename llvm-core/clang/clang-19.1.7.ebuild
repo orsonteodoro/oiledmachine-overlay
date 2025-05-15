@@ -4,7 +4,9 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( "python3_11" )
+# Last update:  2024-06-23
+
+PYTHON_COMPAT=( "python3_12" )
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+="
@@ -17,17 +19,20 @@ inherit llvm-ebuilds
 _llvm_set_globals() {
 	if [[ "${USE}" =~ "fallback-commit" && "${PV}" =~ "9999" ]] ; then
 llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
-		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM18_FALLBACK_COMMIT}"
-		EGIT_BRANCH="${LLVM_EBUILDS_LLVM18_BRANCH}"
+		EGIT_OVERRIDE_COMMIT_LLVM_LLVM_PROJECT="${LLVM_EBUILDS_LLVM19_FALLBACK_COMMIT}"
+		EGIT_BRANCH="${LLVM_EBUILDS_LLVM19_BRANCH}"
 	fi
 }
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-inherit cmake dhms flag-o-matic git-r3 hip-versions llvm.org llvm-utils multilib
-inherit multilib-minimal ninja-utils prefix python-single-r1 toolchain-funcs
+KEYWORDS="
+amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv sparc x86 ~amd64-linux
+~arm64-macos ~x64-macos
+"
 
-KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~arm64-macos ~x64-macos"
+inherit cmake dhms flag-o-matic git-r3 hip-versions llvm.org multilib
+inherit multilib-minimal ninja-utils prefix python-single-r1 toolchain-funcs
 
 DESCRIPTION="C language family frontend for LLVM"
 HOMEPAGE="https://llvm.org/"
@@ -40,12 +45,12 @@ LICENSE="
 # sorttable.js: MIT
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
-cet +debug default-fortify-source-2 default-fortify-source-3 default-full-relro
+cet debug default-fortify-source-2 default-fortify-source-3 default-full-relro
 default-partial-relro default-ssp-buffer-size-4 default-stack-clash-protection
 doc +extra hardened hardened-compat ieee-long-double +pie ssp +static-analyzer
 test xml
 ebuild_revision_9
-${LLVM_EBUILDS_LLVM18_REVISION}
+${LLVM_EBUILDS_LLVM19_REVISION}
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -134,12 +139,6 @@ DEPEND="
 BDEPEND="
 	${PYTHON_DEPS}
 	>=dev-build/cmake-3.16
-	doc? (
-		$(python_gen_cond_dep '
-			dev-python/myst-parser[${PYTHON_USEDEP}]
-			dev-python/sphinx[${PYTHON_USEDEP}]
-		')
-	)
 	test? (
 		~llvm-core/lld-${PV}
 	)
@@ -160,7 +159,6 @@ LLVM_COMPONENTS=(
 	"clang"
 	"clang-tools-extra"
 	"cmake"
-	"llvm/lib/Transforms/Hello"
 )
 LLVM_MANPAGES=1
 LLVM_TEST_COMPONENTS=(
@@ -168,6 +166,15 @@ LLVM_TEST_COMPONENTS=(
 )
 LLVM_USE_TARGETS="llvm"
 llvm.org_set_globals
+[[ -n ${LLVM_MANPAGE_DIST} ]] && BDEPEND+=" doc? ( "
+BDEPEND+="
+	$(python_gen_cond_dep '
+		dev-python/myst-parser[${PYTHON_USEDEP}]
+		dev-python/sphinx[${PYTHON_USEDEP}]
+	')
+"
+[[ -n ${LLVM_MANPAGE_DIST} ]] && BDEPEND+=" ) "
+
 SRC_URI+="
 https://github.com/llvm/llvm-project/commit/71a9b8833231a285b4d8d5587c699ed45881624b.patch
 	-> ${PN}-71a9b88.patch
@@ -516,7 +523,9 @@ get_distribution_components() {
 			c-index-test
 			clang
 			clang-format
+			clang-installapi
 			clang-linker-wrapper
+			clang-nvlink-wrapper
 			clang-offload-bundler
 			clang-offload-packager
 			clang-refactor
@@ -584,12 +593,10 @@ _src_configure_compiler() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
-	llvm_prepend_path "${LLVM_MAJOR}"
 	llvm-ebuilds_fix_toolchain
 }
 
 _src_configure() {
-	llvm_prepend_path "${LLVM_MAJOR}"
 	llvm-ebuilds_fix_toolchain
 
 	# LLVM can have very high memory consumption while linking,
@@ -665,7 +672,9 @@ einfo
 		-DDEFAULT_SYSROOT=$(usex prefix-guest "" "${EPREFIX}")
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}"
 		-DCMAKE_INSTALL_MANDIR="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/share/man"
+		-DLLVM_ROOT="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}"
 		-DCLANG_CONFIG_FILE_SYSTEM_DIR="${EPREFIX}/etc/clang"
+		-DCLANG_CONFIG_FILE_USER_DIR="~/.config/clang"
 
 		# This is relative to bindir.
 		-DCLANG_RESOURCE_DIR="../../../../lib/clang/${LLVM_MAJOR}"
@@ -684,13 +693,6 @@ einfo
 		# libgomp support fails to find headers without explicit -I
 		# furthermore, it provides only syntax checking
 		-DCLANG_DEFAULT_OPENMP_RUNTIME=libomp
-
-		# Disable CUDA to autodetect GPU, so build for all.
-		-DCMAKE_DISABLE_FIND_PACKAGE_CUDAToolkit=ON
-
-		# Disable linking to HSA to avoid automagic dep.
-		# Load it dynamically instead.
-		-DCMAKE_DISABLE_FIND_PACKAGE_hsa-runtime64=ON
 
 		-DCLANG_DEFAULT_PIE_ON_LINUX=$(usex pie)
 
@@ -741,12 +743,6 @@ einfo
 	else
 		mycmakeargs+=(
 			-DLLVM_TOOL_CLANG_TOOLS_EXTRA_BUILD=OFF
-		)
-	fi
-
-	if [[ -n "${EPREFIX}" ]]; then
-		mycmakeargs+=(
-			-DGCC_INSTALL_PREFIX="${EPREFIX}/usr"
 		)
 	fi
 
