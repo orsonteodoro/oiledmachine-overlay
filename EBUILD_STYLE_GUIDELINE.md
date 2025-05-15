@@ -106,7 +106,7 @@
     Commentary
 
       - Most CI images use D12, U22, U24.
-      - Using PYTHON_SINGLE_TARGET or the main app package tested by you is a good way to increase reproducibility.
+      - Using PYTHON_SINGLE_TARGET from /etc/portage/make.conf or from the main app package with testing performed by you is a good way to increase reproducibility.
       - Adding untested non stable (>= python3_13) is can add unintended consequences, more bugs, or Denial of Service (e.g. crash).
       - Adding tested >= python3_13 is allowed.
       - Testing >= python3_13 is unpaid free labor.
