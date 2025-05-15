@@ -65,44 +65,46 @@ exist in build files.
   - Transient execution CPU vulnerabilities (Meltdown, Spectre v2, MDS, TAA, SCSB, FPVI, BHI, Retbleed) that may lead to information disclosure that are unpatched or partially patched for 32-bit
   - V8 Sandbox (64-bit supported only, protects against memory corruption, if not used may lead to code execution, privilege escalation, data tampering, information disclosure)
 
-| Platform                        | Level of support                      | Distro correspondance        |
-| ---                             | ---                                   | ---                          |
-| CUDA                            | Available                             | D12 (11.8), U24 (12.0)       |
-| Electron (amd64)                | Fully supported                       |                              |
-| Electron (arm64)                | Not supported                         |                              |
-| Electron (x86)                  | Not supported                         |                              |
-| gRPC 1.49 - 1.54                | Fully supported                       | D12 (1.51.1), U24 (1.51.1)   |
-| gRPC 1.55 - 1.62                | Available                             |                              |
-| gRPC >= 1.63                    | Available                             |                              |
-| GTK+3                           | Fully supported                       |                              |
-| GTK 4                           | Fully supported                       |                              |
-| OpenGL <= 4.6                   | Fully supported                       |                              |
-| OpenCL <= 2.0                   | Fully supported                       |                              |
-| Ollama                          | Fully supported                       |                              |
-| OpenMP (CPU)                    | Fully supported                       |                              |
-| OpenMP (GPU)                    | Available                             |                              |
-| OpenRC                          | Fully supported                       |                              |
-| Protobuf 3                      | Fully supported                       | D12 (3.21.12), U24 (3.21.12) |
-| Protobuf 4                      | Available                             |                              |
-| Protobuf 5                      | Available                             |                              |
-| PyTorch >= 2.0 (CPU)            | Fully supported                       | D12 (1.13.1)                 |
-| PyTorch >= 2.0 (CUDA 11.8)      | Available                             | D12 (1.13.1)                 |
-| PyTorch >= 2.4 (CUDA 12.4)      | Available                             | D12 (1.13.1)                 |
-| PyTorch >= 2.5 (ROCm 6.2)       | Available                             | D12 (1.13.1)                 |
-| Qt 5.x                          | Available                             |                              |
-| Qt 6.x                          | Fully supported                       |                              |
-| ROCm >= 6.2                     | Available                             | D12 (5.2.3), U24 (5.7.0)     |
-| SYCL                            | Available                             |                              |
-| systemd                         | Partially supported                   |                              |
-| TensorFlow >= 2.14 (CPU)        | Fully supported                       |                              |
-| TensorFlow == 2.14 (CUDA 11.8)  | Available                             |                              |
-| TensorFlow == 2.16 (CUDA 12.3)  | Available                             |                              |
-| TensorFlow == 2.17 (CUDA 12.3)  | Available                             |                              |
-| TensorFlow == 2.18 (CUDA 12.5)  | Available                             |                              |
-| TensorFlow >= 2.18 (ROCm  6.2)  | Available                             |                              |
-| Vulkan                          | Fully supported                       |                              |
-| Wayland                         | Fully supported                       |                              |
-| X                               | Fully supported                       |                              |
+| Platform                        | Level of support                      | Distro correspondance              |
+| ---                             | ---                                   | ---                                |
+| CUDA                            | Available                             | D12 (11.8), U24 (12.0)             |
+| Electron (amd64)                | Fully supported                       |                                    |
+| Electron (arm64)                | Not supported                         |                                    |
+| Electron (x86)                  | Not supported                         |                                    |
+| gRPC 1.49 - 1.54                | Fully supported                       | D12 (1.51.1), U24 (1.51.1)         |
+| gRPC 1.55 - 1.62                | Available                             |                                    |
+| gRPC >= 1.63                    | Available                             |                                    |
+| GTK+3                           | Fully supported                       |                                    |
+| GTK 4                           | Fully supported                       |                                    |
+| OpenGL <= 4.6                   | Fully supported                       |                                    |
+| OpenCL <= 2.0                   | Fully supported                       |                                    |
+| Ollama                          | Fully supported                       |                                    |
+| OpenMP (CPU)                    | Fully supported                       |                                    |
+| OpenMP (GPU)                    | Available                             |                                    |
+| OpenRC                          | Fully supported                       |                                    |
+| Protobuf 3                      | Fully supported                       | D12 (3.21.12), U24 (3.21.12)       |
+| Protobuf 4                      | Available                             |                                    |
+| Protobuf 5                      | Available                             |                                    |
+| PyTorch >= 2.0 (CPU)            | Fully supported                       | D12 (1.13.1)                       |
+| PyTorch >= 2.0 (CUDA 11.8)      | Available                             | D12 (1.13.1)                       |
+| PyTorch >= 2.4 (CUDA 12.4)      | Available                             | D12 (1.13.1)                       |
+| PyTorch >= 2.5 (ROCm 6.2)       | Available                             | D12 (1.13.1)                       |
+| Qt 5.x                          | Available                             |                                    |
+| Qt 6.x                          | Fully supported                       |                                    |
+| ROCm >= 6.2                     | Available                             | D12 (>= 6.3.1), U24 (>= 6.2.0) (1) |
+| SYCL                            | Available                             |                                    |
+| systemd                         | Partially supported                   |                                    |
+| TensorFlow >= 2.14 (CPU)        | Fully supported                       |                                    |
+| TensorFlow == 2.14 (CUDA 11.8)  | Available                             |                                    |
+| TensorFlow == 2.16 (CUDA 12.3)  | Available                             |                                    |
+| TensorFlow == 2.17 (CUDA 12.3)  | Available                             |                                    |
+| TensorFlow == 2.18 (CUDA 12.5)  | Available                             |                                    |
+| TensorFlow >= 2.18 (ROCm  6.2)  | Available                             |                                    |
+| Vulkan                          | Fully supported                       |                                    |
+| Wayland                         | Fully supported                       |                                    |
+| X                               | Fully supported                       |                                    |
+
+(1) D12 uses Python 3.11, U24 uses Python 3.12 for ROCm support
 
 Gentoo Prefix is not supported and deprecated on this overlay.
 
