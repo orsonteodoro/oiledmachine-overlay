@@ -15,7 +15,7 @@ EAPI=8
 # The dev-python/mujoco is for python bindings
 # The sci-physics/mujoco is for native bindings
 
-DISTUTILS_USE_SETUPTOOLS="bdepend"
+DISTUTILS_USE_PEP517="no"
 EGIT_ABSEIL_CPP_COMMIT="fb3621f4f897824c0dbe0615fa94543df6192f30"
 EGIT_BENCHMARK_COMMIT="344117638c8ff7e239044fd0fa7085839fc03021"
 EGIT_CCD_COMMIT="7931e764a19ef6b21b443376c699bbc9c6d4fba8"

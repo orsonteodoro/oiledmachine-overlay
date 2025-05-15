@@ -212,13 +212,13 @@ src_configure() {
 		-DMUJOCO_BUILD_SIMULATE=$(usex simulate "ON" "OFF")
 		-DMUJOCO_BUILD_TESTS=$(usex test "ON" "OFF")
 		-DMUJOCO_ENABLE_AVX=$(usex cpu_flags_x86_avx "ON" "OFF")
-		-DMUJOCO_ENABLE_AVX_INTRINSICS=$(usex asm $(usex cpu_flags_x86_avx ON OFF) OFF)
+		-DMUJOCO_ENABLE_AVX_INTRINSICS=$(usex asm $(usex cpu_flags_x86_avx "ON" "OFF") "OFF")
 		-DMUJOCO_TEST_PYTHON_UTIL=$(usex test "ON" "OFF")
 	)
 
 	if use examples || use simulate ; then
 		mycmakeargs+=(
-			-DMUJOCO_ENABLE_RPATH=OFF
+			-DMUJOCO_ENABLE_RPATH="OFF"
 		)
 	fi
 
@@ -228,7 +228,7 @@ src_configure() {
 		)
 	else
 		mycmakeargs+=(
-			-DMUJOCO_HARDEN:BOOL=OFF
+			-DMUJOCO_HARDEN:BOOL="OFF"
 		)
 	fi
 
