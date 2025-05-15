@@ -91,6 +91,7 @@
       - If the main app says python_single_python3_12 and you tested it interactively or by test suite, use that version.
       - If your PYTHON_SINGLE_TARGET from /etc/portage/make.conf uses python3_11, use that version.
       - If your PYTHON_SINGLE_TARGET from /etc/portage/make.conf uses python3_12, use that version.
+      - If the Python version is in build files (CMakeLists.txt, meson.build, etc), add that version.
       - If the slot is missing, downgrade/upgrade the package.
       - If the slot is missing and the project is defunct, adjust PYTHON_COMPAT based on main package's python_single_python3_11 or python_single_python3_12.
       - Any unofficial python version added should be documented, or it may be reverted back to the known working set.
