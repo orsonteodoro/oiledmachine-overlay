@@ -156,7 +156,10 @@
   be hardened to prevent Arbitrary Code Execution (ACE) based Zero Click Attack (ZCA).
 
   Use the cflags-hardened or the rustflags-hardened eclass to apply hardening
-  consistently.
+  consistently.  Packages that use sanitizers must perform both test-suite
+  testing and integration testing before being permanently default on.  For
+  integration testing, you must make sure that the package that uses the library
+  or executible does not break the security-critical package(s) or @system set.
 
   The classes of C/C++ packages that should be hardened against CE + ZCA are:
 
