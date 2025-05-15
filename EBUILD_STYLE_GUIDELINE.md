@@ -71,21 +71,29 @@
     If the build files say libgcrypt with minimum version, you may use that
     instead.
 
-* PYTHON_COMPAT fallbacks.
-  - If setup.py contains only python3, you may list only stable Python KEYWORDS,
-    or include up to Python 12 which U24 uses, or include up to Python 11 which
-    D12 uses.
-  - If setup.py contains Python 3.9 only, you may only list the tested version
-    and earlier.  The package by some packagers is considered EOL or a defunct
-    project.
-  - If setup.py contains Python 3.9, 3.10, but you tested 3.11, you
-    may specify `PYTHON_COMPAT=( "python3_"{10..11} )` but you need to
-    leave a comment that you tested it or specify which package exactly needs it.
-    Otherwise, I revert it back to upstream tested version list.  I assume that
-    you made a typo that will introduce a non-reproducable build.
-  - If setup.py contains Python 3.9, 3.10, you should put
-    `PYTHON_COMPAT=( "python3_10" )` as the default fallback since Python 3.9 is not
-    available on distro due to python-utils-r1.eclass restrictions.
+* PYTHON_COMPAT fallbacks for setup.py or pyproject.toml
+  | Listed                 | PYTHON_COMPAT   |
+  | python3                | python3_{11,12} |
+  | python 3.10 or earlier | (2) |
+  | No python              | (2) |
+
+  (2) Fallback rule 2:
+
+    - If the CI image is D12, use python3_11.
+    - If the CI image is U24, use python3_12.
+    - If the CI image tests both D12 and U24, use python3_{11,12}.
+    - If a Dockerfile exists, use the above rules.
+    - If the main app says python_single_python3_11 and you tested it interactively or by test suite, use that version.
+    - If the main app says python_single_python3_12 and you tested it interactively or by test suite, use that version.
+    - If your PYTHON_SINGLE_TARGET from /etc/portage/make.conf uses python3_11, use that version.
+    - If your PYTHON_SINGLE_TARGET from /etc/portage/make.conf uses python3_12, use that version.
+
+  Most CI images use D12, U22, U24.
+  Using PYTHON_SINGLE_TARGET or the main app package is tested by you.
+  Adding non stable (>= python-3.13) is a waste of time or unpaid free labor.
+  Only tested versions are allowed.
+  Any untested is assumed Denial of Service (e.g. crash).
+
 * If an ebuild references a PYTHON_SINGLE_USEDEP in *DEPENDs, the ebuild should
   use either `DISTUTILS_SINGLE_IMPL=1` with `inherit distutils-r1` or
   `inherit python-single-r1`.  This edge case is not well documented.
