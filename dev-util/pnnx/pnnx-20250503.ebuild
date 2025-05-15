@@ -10,7 +10,16 @@ CMAKE_MAKEFILE_GENERATOR="emake"
 #DISTUTILS_OPTIONAL=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..1} )
+PYTHON_COMPAT=( "python3_"{11..13} )
+TORCH_TO_VISION=(
+#pytorch:torchvision
+	"2.5:0.20.1"
+	"2.4:0.19.1"
+	"2.3:0.18.1"
+	"2.2:0.17.2"
+	"2.1:0.16.2"
+	"2.0:0.15.2"
+)
 
 inherit cmake distutils-r1 pypi
 
@@ -18,7 +27,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/ncnn-${PV}"
 	EGIT_REPO_URI="https://github.com/Tencent/ncnn.git"
-	FALLBACK_COMMIT="a6d3ef5a0bb59fb496c553c3ef54d141642b4fc5" # Aug 19, 2024
+	FALLBACK_COMMIT="305837fd4a722ebc47c5d72e72d8ec9ae970e932" # May 3, 2025
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/ncnn-${PV}/tools/pnnx"
 	inherit git-r3
@@ -43,19 +52,33 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" onnxruntime protobuf torchvision"
+gen_torch_rdepend() {
+	local row
+	for row in ${TORCH_TO_VISION[@]} ; do
+		local torch_pv="${row%:*}"
+		local vision_pv="${row#*:}"
+		echo "
+			(
+				=sci-ml/pytorch-${torch_pv}*[${PYTHON_SINGLE_USEDEP}]
+				torchvision? (
+					>=sci-ml/torchvision-${vision_pv}[${PYTHON_SINGLE_USEDEP}]
+				)
+			)
+		"
+	done
+}
 RDEPEND+="
+	|| (
+		$(gen_torch_rdepend)
+	)
 	$(python_gen_cond_dep '
 		>=dev-python/protobuf-3.12.4[${PYTHON_USEDEP}]
 	')
-	>=sci-ml/pytorch-1.8.1[${PYTHON_SINGLE_USEDEP}]
 	onnxruntime? (
 		sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
 	)
 	protobuf? (
 		dev-libs/protobuf:=
-	)
-	torchvision? (
-		>=sci-ml/torchvision-0.8.2[${PYTHON_SINGLE_USEDEP}]
 	)
 "
 DEPEND+="

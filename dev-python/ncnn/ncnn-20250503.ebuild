@@ -3,10 +3,10 @@
 
 EAPI=8
 
+DISTUTILS_EXT=1
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
-DISTUTILS_OPTIONAL=1
-#DISTUTILS_USE_PEP517="standalone"
-GLSLANG_COMMIT="4420f9b33ba44928d5c82d9eae0c3bb4d5674c05"
+GLSLANG_COMMIT="a9ac7d5f307e5db5b8c4fbf904bdba8fca6283bc"
 PYBIND11_COMMIT="3e9dfa2866941655c56877882565e7577de6fc7b"
 
 BF16_ARCHES=(
@@ -138,21 +138,19 @@ CPU_FLAGS_X86=(
 	cpu_flags_x86_xop
 )
 
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{11,12} )
 
-inherit cmake dep-prepare distutils-r1 optfeature toolchain-funcs
+inherit distutils-r1 dep-prepare toolchain-funcs
 
-DESCRIPTION="High-performance neural network inference framework"
+DESCRIPTION="Python bindings for the high-performance neural network inference framework"
 HOMEPAGE="https://github.com/Tencent/ncnn/"
-SRC_URI_DISABLED="
+SRC_URI="
+https://github.com/Tencent/ncnn/archive/refs/tags/${PV}.tar.gz
+	-> ${P}.tar.gz
 https://github.com/KhronosGroup/glslang/archive/${GLSLANG_COMMIT}.tar.gz
 	-> glslang-${GLSLANG_COMMIT:0:7}.tar.gz
 https://github.com/pybind/pybind11/archive/${PYBIND11_COMMIT}.tar.gz
 	-> pybind11-${PYBIND11_COMMIT:0:7}.tar.gz
-"
-SRC_URI="
-https://github.com/Tencent/ncnn/archive/refs/tags/${PV}.tar.gz
-	-> ${P}.tar.gz
 "
 
 LICENSE="
@@ -186,7 +184,7 @@ ${CPU_FLAGS_MIPS[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
-examples openmp python tools +vulkan
+openmp
 "
 REQUIRED_USE="
 	cpu_flags_arm_bf16? (
@@ -293,9 +291,6 @@ REQUIRED_USE="
 	cpu_flags_x86_xop? (
 		cpu_flags_x86_avx
 	)
-	python? (
-		${PYTHON_REQUIRED_USE}
-	)
 "
 
 # Need the static library to run tests + skip vulkan / GPU:
@@ -303,116 +298,87 @@ REQUIRED_USE="
 RESTRICT="test"
 
 RDEPEND="
-	tools? (
-		dev-cpp/abseil-cpp:=
-		dev-libs/protobuf:=
-	)
-	vulkan? (
-		dev-util/glslang:=
-		media-libs/vulkan-drivers
-		media-libs/vulkan-loader
-	)
+	$(python_gen_cond_dep '
+		dev-python/numpy[${PYTHON_USEDEP}]
+		dev-python/tqdm[${PYTHON_USEDEP}]
+		dev-python/requests[${PYTHON_USEDEP}]
+		dev-python/portalocker[${PYTHON_USEDEP}]
+	')
+	media-libs/opencv[python,${PYTHON_SINGLE_USEDEP}]
+	dev-util/glslang:=
+	media-libs/vulkan-drivers
+	media-libs/vulkan-loader
 "
 DEPEND="
 	${RDEPEND}
-	vulkan? (
-		dev-util/vulkan-headers
-	)
+	dev-util/vulkan-headers
 "
 BDEPEND="
+	>=dev-build/cmake-3.12
 "
-PDEPEND="
-	~dev-python/ncnn-${PV}[${PYTHON_USEDEP},openmp?]
-	dev-python/ncnn:=
-"
-
 DOCS=( "README.md" "docs/." )
+PATCHES=(
+	"${FILESDIR}/${PN}-20240820-simd-configure.patch"
+)
 
 pkg_pretend() {
-	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
+	[[ "${MERGE_TYPE}" != "binary" ]] && use openmp && tc-check-openmp
 }
 
 pkg_setup() {
-	[[ ${MERGE_TYPE} != binary ]] && use openmp && tc-check-openmp
+	[[ "${MERGE_TYPE}" != "binary" ]] && use openmp && tc-check-openmp
 	python_setup
-}
-
-gen_git_tag() {
-	local path="${1}"
-	local tag_name="${2}"
-einfo "Generating tag start for ${path}"
-	pushd "${path}" >/dev/null 2>&1 || die
-		git init || die
-		git config user.email "name@example.com" || die
-		git config user.name "John Doe" || die
-		touch dummy || die
-		git add dummy || die
-		#git add -f * || die
-		git commit -m "Dummy" || die
-		git tag ${tag_name} || die
-	popd >/dev/null 2>&1 || die
-einfo "Generating tag done"
 }
 
 src_unpack() {
 	unpack ${A}
-
-# Breaks during build.
-#	dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT}" "${S}/glslang"
-#	dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT}" "${S}/python/pybind11"
-#	gen_git_tag "${S}" "${PV}"
+	dep_prepare_mv "${WORKDIR}/glslang-${GLSLANG_COMMIT}" "${S}/glslang"
+	dep_prepare_mv "${WORKDIR}/pybind11-${PYBIND11_COMMIT}" "${S}/python/pybind11"
 }
 
 src_prepare() {
-	cmake_src_prepare
+	distutils-r1_src_prepare
 }
 
 src_configure() {
-	mycmakeargs+=(
-		-DGLSLANG_TARGET_DIR="${ESYSROOT}/usr/$(get_libdir)/cmake"
-		-DNCNN_BUILD_EXAMPLES=$(usex examples)
-		-DNCNN_BUILD_TOOLS=$(usex tools)
-		-DNCNN_PYTHON=OFF
-		-DNCNN_OPENMP=$(usex openmp)
-		-DNCNN_SHARED_LIB=ON
-		-DNCNN_SIMPLEVK=OFF
-		-DNCNN_SYSTEM_GLSLANG=ON
-		-DNCNN_VERSION="${PV}" # avoids libncnn.so.*.%Y%m%d using build date
-		-DNCNN_VULKAN=$(usex vulkan)
+#	export GLSLANG_TARGET_DIR="${ESYSROOT}/usr/$(get_libdir)/cmake"
+	export NCNN_BUILD_EXAMPLES=OFF
+	export NCNN_BUILD_TOOLS=OFF
+	export NCNN_PYTHON=ON
+	export NCNN_OPENMP=$(usex openmp)
+	export NCNN_SHARED_LIB=ON
+	export NCNN_SIMPLEVK=ON
+	export NCNN_SYSTEM_GLSLANG=OFF
+	export NCNN_VERSION="${PV}" # avoids libncnn.so.*.%Y%m%d using build date
 
-		-DNCNN_AVX=$(usex cpu_flags_x86_avx)
-		-DNCNN_AVX2=$(usex cpu_flags_x86_avx2)
-		-DNCNN_AVXNECONVERT=$(usex cpu_flags_x86_avxneconvert)
-		-DNCNN_AVXVNNI=$(usex cpu_flags_x86_avxvnni)
-		-DNCNN_AVXVNNIINT8=$(usex cpu_flags_x86_avxvnniint8)
-		-DNCNN_AVXVNNIINT16=$(usex cpu_flags_x86_avxvnniint16)
-		-DNCNN_AVX512FP16=$(usex cpu_flags_x86_avx512fp16)
-		-DNCNN_AVX512VNNI=$(usex cpu_flags_x86_avx512vnni)
-		-DNCNN_F16C=$(usex cpu_flags_x86_f16c)
-		-DNCNN_FMA=$(usex cpu_flags_x86_fma)
-		-DNCNN_LASX=$(usex cpu_flags_loong_lasx)
-		-DNCNN_LSX=$(usex cpu_flags_loong_lsx)
-		-DNCNN_MMI=$(usex cpu_flags_loong_mmi)
-		-DNCNN_MSA=$(usex cpu_flags_mips_msa)
-		-DNCNN_RVV=$(usex cpu_flags_riscv_rvv)
-		-DNCNN_SSE2=$(usex cpu_flags_x86_sse2)
-		-DNCNN_VFPV4=$(usex cpu_flags_arm_vfpv4)
-		-DNCNN_VSX_SSE2=$(usex cpu_flags_ppc_sse2)
-		-DNCNN_VSX_SSE41=$(usex cpu_flags_ppc_sse41)
-		-DNCNN_XOP=$(usex cpu_flags_x86_xop)
-		-DNCNN_XTHEADVECTOR=$(usex cpu_flags_riscv_xtheadvector)
-		-DNCNN_ZFH=$(usex cpu_flags_riscv_zfh)
-		-DNCNN_ZVFH=$(usex cpu_flags_riscv_zvfh)
-	)
+	export NCNN_AVX=$(usex cpu_flags_x86_avx)
+	export NCNN_AVX2=$(usex cpu_flags_x86_avx2)
+	export NCNN_AVXNECONVERT=$(usex cpu_flags_x86_avxneconvert)
+	export NCNN_AVXVNNI=$(usex cpu_flags_x86_avxvnni)
+	export NCNN_AVXVNNIINT8=$(usex cpu_flags_x86_avxvnniint8)
+	export NCNN_AVXVNNIINT16=$(usex cpu_flags_x86_avxvnniint16)
+	export NCNN_AVX512FP16=$(usex cpu_flags_x86_avx512fp16)
+	export NCNN_AVX512VNNI=$(usex cpu_flags_x86_avx512vnni)
+	export NCNN_F16C=$(usex cpu_flags_x86_f16c)
+	export NCNN_FMA=$(usex cpu_flags_x86_fma)
+	export NCNN_LASX=$(usex cpu_flags_loong_lasx)
+	export NCNN_LSX=$(usex cpu_flags_loong_lsx)
+	export NCNN_MMI=$(usex cpu_flags_loong_mmi)
+	export NCNN_MSA=$(usex cpu_flags_mips_msa)
+	export NCNN_RVV=$(usex cpu_flags_riscv_rvv)
+	export NCNN_SSE2=$(usex cpu_flags_x86_sse2)
+	export NCNN_VFPV4=$(usex cpu_flags_arm_vfpv4)
+	export NCNN_VSX_SSE2=$(usex cpu_flags_ppc_sse2)
+	export NCNN_VSX_SSE41=$(usex cpu_flags_ppc_sse41)
+	export NCNN_XOP=$(usex cpu_flags_x86_xop)
+	export NCNN_XTHEADVECTOR=$(usex cpu_flags_riscv_xtheadvector)
+	export NCNN_ZFH=$(usex cpu_flags_riscv_zfh)
+	export NCNN_ZVFH=$(usex cpu_flags_riscv_zvfh)
 
 	if use cpu_flags_x86_avx512bw && use cpu_flags_x86_avx512cd && use cpu_flags_x86_avx512dq && use cpu_flags_x86_avx512vl ; then
-		mycmakeargs+=(
-			-DNCNN_AVX512=ON
-		)
+		export NCNN_AVX512=ON
 	else
-		mycmakeargs+=(
-			-DNCNN_AVX512=OFF
-		)
+		export NCNN_AVX512=OFF
 	fi
 
 	local found
@@ -426,13 +392,9 @@ src_configure() {
 		fi
 	done
 	if (( ${found} == 1 )) ; then
-		mycmakeargs+=(
-			-DNCNN_ARM82=ON
-		)
+		export NCNN_ARM82=ON
 	else
-		mycmakeargs+=(
-			-DNCNN_ARM82=OFF
-		)
+		export NCNN_ARM82=OFF
 	fi
 
 	found=0
@@ -445,13 +407,9 @@ src_configure() {
 		fi
 	done
 	if (( ${found} == 1 )) ; then
-		mycmakeargs+=(
-			-DNCNN_ARM84BF16=ON
-		)
+		export NCNN_ARM84BF16=ON
 	else
-		mycmakeargs+=(
-			-DNCNN_ARM84BF16=OFF
-		)
+		export NCNN_ARM84BF16=OFF
 	fi
 
 	found=0
@@ -464,13 +422,9 @@ src_configure() {
 		fi
 	done
 	if (( ${found} == 1 )) ; then
-		mycmakeargs+=(
-			-DNCNN_ARM82DOT=ON
-		)
+		export NCNN_ARM82DOT=ON
 	else
-		mycmakeargs+=(
-			-DNCNN_ARM82DOT=OFF
-		)
+		export NCNN_ARM82DOT=OFF
 	fi
 
 	found=0
@@ -483,13 +437,9 @@ src_configure() {
 		fi
 	done
 	if (( ${found} == 1 )) ; then
-		mycmakeargs+=(
-			-DNCNN_ARM82FP16FML=ON
-		)
+		export NCNN_ARM82FP16FML=ON
 	else
-		mycmakeargs+=(
-			-DNCNN_ARM82FP16FML=OFF
-		)
+		export NCNN_ARM82FP16FML=OFF
 	fi
 
 	found=0
@@ -502,13 +452,9 @@ src_configure() {
 		fi
 	done
 	if (( ${found} == 1 )) ; then
-		mycmakeargs+=(
-			-DNCNN_ARM84I8MM=ON
-		)
+		export NCNN_ARM84I8MM=ON
 	else
-		mycmakeargs+=(
-			-DNCNN_ARM84I8MM=OFF
-		)
+		export NCNN_ARM84I8MM=OFF
 	fi
 
 
@@ -522,13 +468,9 @@ src_configure() {
 		fi
 	done
 	if (( ${found} == 1 )) ; then
-		mycmakeargs+=(
-			-DNCNN_ARM86SVE=ON
-		)
+		export NCNN_ARM86SVE=ON
 	else
-		mycmakeargs+=(
-			-DNCNN_ARM86SVE=OFF
-		)
+		export NCNN_ARM86SVE=OFF
 	fi
 
 	found=0
@@ -541,13 +483,9 @@ src_configure() {
 		fi
 	done
 	if (( ${found} == 1 )) ; then
-		mycmakeargs+=(
-			-DNCNN_ARM86SVE2=ON
-		)
+		export NCNN_ARM86SVE2=ON
 	else
-		mycmakeargs+=(
-			-DNCNN_ARM86SVE2=OFF
-		)
+		export NCNN_ARM86SVE2=OFF
 	fi
 
 	found=0
@@ -560,13 +498,9 @@ src_configure() {
 		fi
 	done
 	if (( ${found} == 1 )) ; then
-		mycmakeargs+=(
-			-DNCNN_ARM86SVEBF16=ON
-		)
+		export NCNN_ARM86SVEBF16=ON
 	else
-		mycmakeargs+=(
-			-DNCNN_ARM86SVEBF16=OFF
-		)
+		export NCNN_ARM86SVEBF16=OFF
 	fi
 
 	found=0
@@ -579,13 +513,9 @@ src_configure() {
 		fi
 	done
 	if (( ${found} == 1 )) ; then
-		mycmakeargs+=(
-			-DNCNN_ARM86SVEI8MM=ON
-		)
+		export NCNN_ARM86SVEI8MM=ON
 	else
-		mycmakeargs+=(
-			-DNCNN_ARM86SVEI8MM=OFF
-		)
+		export NCNN_ARM86SVEI8MM=OFF
 	fi
 
 	found=0
@@ -598,39 +528,27 @@ src_configure() {
 		fi
 	done
 	if (( ${found} == 1 )) ; then
-		mycmakeargs+=(
-			-DNCNN_ARM86SVEF32MM=ON
-		)
+		export NCNN_ARM86SVEF32MM=ON
 	else
-		mycmakeargs+=(
-			-DNCNN_ARM86SVEF32MM=OFF
-		)
+		export NCNN_ARM86SVEF32MM=OFF
 	fi
 
 	# A temporary workaround due to a >=clang-18 regression (bug #929228)
 	if tc-is-clang && [[ $(clang-major-version) -ge "18" ]] ; then
-		mycmakeargs+=(
-			-DNCNN_AVX512BF16=OFF
-		)
+		export NCNN_AVX512BF16=OFF
 	else
-		mycmakeargs+=(
-			-DNCNN_AVX512BF16=$(usex cpu_flags_x86_avx512bf16)
-		)
+		export NCNN_AVX512BF16=$(usex cpu_flags_x86_avx512bf16)
 	fi
 
-	cmake_src_configure
+	distutils-r1_src_configure
 }
 
 src_compile() {
-	cmake_src_compile
+	distutils-r1_src_compile
 }
 
 src_install() {
-	cmake_src_install
-}
+	distutils-r1_src_install
 
-pkg_postinst() {
-	# TODO:  Add more orphaned packages or move into overlay's README.md
-	optfeature_header "Install optional packages:"
-	optfeature "From PyTorch or ONNX to ncnn model converter" "dev-util/pnnx"
+	mv "${ED}/usr/share/doc/"{"","python-"}"ncnn-20240820" || die
 }
