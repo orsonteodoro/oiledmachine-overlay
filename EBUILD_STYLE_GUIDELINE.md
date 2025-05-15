@@ -103,7 +103,7 @@
       - Adding tested >= python3_13 is allowed.
       - Testing >= python3_13 is unpaid free labor.
       - Only tested versions are allowed.
-      - Any untested is assumed Denial of Service (e.g. crash), decreases reproducability, disruptive and increases security fix backlog.
+      - Any untested version is assumed Denial of Service (e.g. crash), decreases reproducability, disruptive and increases security fix backlog.
 
 * If an ebuild references a PYTHON_SINGLE_USEDEP in *DEPENDs, the ebuild should
   use either `DISTUTILS_SINGLE_IMPL=1` with `inherit distutils-r1` or
