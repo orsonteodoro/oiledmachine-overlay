@@ -20,9 +20,9 @@ EBRZ_REVISION="878"
 DESCRIPTION="eCryptfs userspace utilities"
 HOMEPAGE="https://launchpad.net/ecryptfs"
 LICENSE="
+	CC-BY-SA-3.0
 	GPL-2
 	GPL-2+
-	CC-BY-SA-3.0
 	GPL-2-with-linking-exception
 	python? (
 		GPL-3+
