@@ -45,7 +45,7 @@ exist in build files.
 | glibc                | 64-bit  | Generally supported         |
 | glibc                | 32-bit  | Deprecated*                 |
 | glibc                | alpha   | Not supported               |
-| glibc >= 3.40        | amd64   | Fully supported             | U24 (2.39), D12 (2.36)
+| glibc >= 3.40        | amd64   | Fully supported             | D12 (2.36), U24 (2.39)
 | glibc                | arm     | Not supported               |
 | glibc                | arm64   | Available                   |
 | glibc                | hppa    | Not supported               |
@@ -62,36 +62,41 @@ exist in build files.
   - Transient execution CPU vulnerabilities (Meltdown, Spectre v2, MDS, TAA, SCSB, FPVI, BHI, Retbleed) that may lead to information disclosure that are unpatched or partially patched for 32-bit
   - V8 Sandbox (64-bit supported only, protects against memory corruption, if not used may lead to code execution, privilege escalation, data tampering, information disclosure)
 
-| Platform             | Level of support                      |
-| ---                  | ---                                   |
-| CUDA                 | Available                             |
-| Electron (amd64)     | Fully supported                       |
-| Electron (arm64)     | Not supported                         |
-| Electron (x86)       | Not supported                         |
-| gRPC 1.49 - 1.54     | Fully supported                       |
-| gRPC 1.55 - 1.62     | Available                             |
-| gRPC >= 1.63         | Available                             |
-| GTK+3                | Fully supported                       |
-| GTK 4                | Fully supported                       |
-| OpenGL <= 4.6        | Fully supported                       |
-| OpenCL <= 2.0        | Fully supported                       |
-| Ollama               | Fully supported                       |
-| OpenMP (CPU)         | Fully supported                       |
-| OpenMP (GPU)         | Available                             |
-| OpenRC               | Fully supported                       |
-| Protobuf 3           | Fully supported                       |
-| Protobuf 4           | Available                             |
-| Protobuf 5           | Available                             |
-| PyTorch              | Fully supported                       |
-| Qt 5.x               | Available                             |
-| Qt 6.x               | Fully supported                       |
-| ROCm                 | Available                             |
-| SYCL                 | Available                             |
-| systemd              | Partially supported                   |
-| TensorFlow           | Available                             |
-| Vulkan               | Fully supported                       |
-| Wayland              | Fully supported                       |
-| X                    | Fully supported                       |
+| Platform                      | Level of support                      | Correspondance
+| ---                           | ---                                   |
+| CUDA                          | Available                             | D12 (11.8), U24 (12.0)
+| Electron (amd64)              | Fully supported                       |
+| Electron (arm64)              | Not supported                         |
+| Electron (x86)                | Not supported                         |
+| gRPC 1.49 - 1.54              | Fully supported                       | D12 (1.51.1), U24 (1.51.1)
+| gRPC 1.55 - 1.62              | Available                             |
+| gRPC >= 1.63                  | Available                             |
+| GTK+3                         | Fully supported                       |
+| GTK 4                         | Fully supported                       |
+| OpenGL <= 4.6                 | Fully supported                       |
+| OpenCL <= 2.0                 | Fully supported                       |
+| Ollama                        | Fully supported                       |
+| OpenMP (CPU)                  | Fully supported                       |
+| OpenMP (GPU)                  | Available                             |
+| OpenRC                        | Fully supported                       |
+| Protobuf 3                    | Fully supported                       |
+| Protobuf 4                    | Available                             |
+| Protobuf 5                    | Available                             |
+| PyTorch                       | Fully supported                       |
+| Qt 5.x                        | Available                             |
+| Qt 6.x                        | Fully supported                       |
+| ROCm >= 6.2                   | Available                             |
+| SYCL                          | Available                             |
+| systemd                       | Partially supported                   |
+| TensorFlow >= 2.14 (CPU)      | Available                             |
+| TensorFlow >= 2.17 (ROCm 6.2) | Available                             |
+| TensorFlow =2.14 (CUDA 11.8)  | Available                             | 
+| TensorFlow =2.16 (CUDA 12.3)  | Available                             | 
+| TensorFlow =2.17 (CUDA 12.3)  | Available                             | 
+| TensorFlow =2.18 (CUDA 12.5)  | Available                             | 
+| Vulkan                        | Fully supported                       |
+| Wayland                       | Fully supported                       |
+| X                             | Fully supported                       |
 
 Gentoo Prefix is not supported and deprecated on this overlay.
 
