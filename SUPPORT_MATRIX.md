@@ -20,8 +20,9 @@
 | Live (latest commit) | Yes                                   |
 | Live snapshot        | Yes                                   |
 
-* Using beta, alpha, preview versions may lead to information disclosure when
-  the debug dump or crash report contains sensitive information.
+* Using beta, alpha, preview versions, or enabling the debug USE flag may lead
+  to information disclosure when the debug dump or crash report contains
+  sensitive information.
 
 | Python               | Level of support                      | Distro correspondence   |
 | ---                  | ---                                   | ---                     |
