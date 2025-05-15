@@ -5,7 +5,7 @@ EAPI=8
 
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_SLOT=18 # Same as llvm-roc
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_12" )
 ROCM_CLANG_USEDEP="llvm_targets_AMDGPU,llvm_targets_X86"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 

@@ -37,7 +37,7 @@ CUDA_TARGETS_COMPAT=(
 CHECKREQS_DISK_BUILD="7G"
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=18
-PYTHON_COMPAT=( "python3_"{9..12} )
+PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake check-reqs edo flag-o-matic multiprocessing python-r1 rocm

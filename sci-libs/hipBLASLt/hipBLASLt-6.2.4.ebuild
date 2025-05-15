@@ -15,7 +15,7 @@ AMDGPU_TARGETS_COMPAT=(
 CMAKE_MAKEFILE_GENERATOR="emake"
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=18
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake flag-o-matic python-r1 rocm

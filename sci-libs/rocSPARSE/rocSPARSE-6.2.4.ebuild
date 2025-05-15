@@ -29,7 +29,7 @@ AMDGPU_TARGETS_COMPAT=(
 )
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_SLOT=18 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.4/llvm/CMakeLists.txt
-PYTHON_COMPAT=( "python3_"{9..12} )
+PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake edo flag-o-matic python-any-r1 toolchain-funcs rocm

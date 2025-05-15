@@ -7,7 +7,7 @@ inherit hip-versions
 
 LLVM_SLOT=18
 MY_P="${PN}-$(ver_cut 1-3 ${PV})"
-PYTHON_COMPAT=( "python3_"{9..11} "pypy3" )
+PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="6.2"
 ROCM_VERSION="${HIP_6_2_VERSION}"
 

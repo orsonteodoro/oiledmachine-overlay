@@ -9,7 +9,7 @@ DOCS_CONFIG_NAME="doxy.cfg"
 DOCS_DEPEND="media-gfx/graphviz"
 HIP_SUPPORT_CUDA=1
 LLVM_SLOT=18 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.4/llvm/CMakeLists.txt
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
 inherit cmake docs prefix python-any-r1 rocm

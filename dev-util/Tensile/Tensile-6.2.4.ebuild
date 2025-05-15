@@ -24,7 +24,7 @@ AMDGPU_TARGETS_COMPAT=(
 CMAKE_USE_DIR="${WORKDIR}/${PN}-rocm-${PV}/${PN}/Source"
 DISTUTILS_USE_PEP517="setuptools"
 LLVM_SLOT=18
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 

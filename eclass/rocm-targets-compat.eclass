@@ -122,17 +122,6 @@ get_rocm_usedep() {
         fi
 }
 
-inherit rocm-targets-compat-4.1
-inherit rocm-targets-compat-4.5
-inherit rocm-targets-compat-5.1
-inherit rocm-targets-compat-5.2
-inherit rocm-targets-compat-5.3
-inherit rocm-targets-compat-5.4
-inherit rocm-targets-compat-5.5
-inherit rocm-targets-compat-5.6
-inherit rocm-targets-compat-5.7
-inherit rocm-targets-compat-6.0
-inherit rocm-targets-compat-6.1
 inherit rocm-targets-compat-6.2
 
 fi

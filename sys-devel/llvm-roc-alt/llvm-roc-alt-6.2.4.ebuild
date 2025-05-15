@@ -7,7 +7,7 @@ DOWNLOAD_FOLDER_URI="http://repo.radeon.com/rocm/apt/6.2.4/pool/proprietary/r/ro
 DOWNLOAD_FILE="rocm-llvm-alt_17.0.0.24050.60204-139~24.04_amd64.deb"
 LLVM_MAX_SLOT=17 # Based on sover and tarball name
 MY_PN="rocm-llvm-alt"
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="${PV%.*}"
 
 inherit unpacker

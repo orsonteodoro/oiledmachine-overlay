@@ -6,7 +6,7 @@ EAPI=8
 BOOST_PV="1.72.0"
 LIBJPEG_TURBO_PV="3.0.2"
 LLVM_SLOT=18
-PYTHON_COMPAT=( "python3_"{10..12} ) # U 20/22
+PYTHON_COMPAT=( "python3_12" ) # U 20/22
 RAPIDJSON_COMMIT="f9d53419e912910fd8fa57d5705fa41425428c35" # committer-date:<=2023-10-05
 PROTOBUF_PV="3.12.4" # The version is behind the 3.21 offered.
 ROCM_SLOT="6.2"
