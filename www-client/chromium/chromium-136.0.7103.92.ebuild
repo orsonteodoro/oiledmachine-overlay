@@ -852,9 +852,9 @@ if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ;then
 	"
 fi
 # Drumbrake is broken in this release and off by default.
-#!drumbrake
 REQUIRED_USE+="
 	${PATENT_USE_FLAGS}
+	!drumbrake
 	!headless (
 		extensions
 		pdf
@@ -4651,14 +4651,14 @@ einfo "JIT off is similar to -O${jit_level_desc} worst case."
 ewarn "The v8 sandbox is not supported for 32-bit.  Consider using 64-bit only to avoid high-critical severity memory corruption that leads to code execution."
 		myconf_gn+=" v8_enable_sandbox=false"
 	else
-einfo  "The v8 sandbox is enabled."
-		myconf_gn+=" v8_enable_sandbox=true"
+einfo  "The v8 sandbox is being disabled.  Use the prebuilt binary for proper support."
+		myconf_gn+=" v8_enable_sandbox=false"
 	fi
 
-#	myconf_gn=$(echo "${myconf_gn}" | sed -e "s|v8_enable_drumbrake=true|v8_enable_drumbrake=false|g")
+# For Node.js, the v8 sandbox is disabled.  This is temporary until a fix can be
+# found or fixed in the next major version.
 
-	# Testing workaround for the above problem.
-	myconf_gn=" v8_use_snapshot=false"
+	myconf_gn=$(echo "${myconf_gn}" | sed -e "s|v8_enable_drumbrake=true|v8_enable_drumbrake=false|g")
 
 	local is_64bit=0
 	local is_64bit_sc=0
@@ -4683,9 +4683,6 @@ einfo  "The v8 sandbox is enabled."
 	]] ; then
 		is_64bit_sc=1
 	fi
-
-	myconf_gn+=" v8_enable_pointer_compression=true"
-	myconf_gn+=" v8_enable_pointer_compression_shared_cage=true"
 
 	if (( ${is_64bit} == 1 )) ; then
 		myconf_gn+=" v8_enable_pointer_compression=true"
