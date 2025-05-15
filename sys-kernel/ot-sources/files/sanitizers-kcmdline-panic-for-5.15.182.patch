@@ -126,7 +126,7 @@
  
  #include "kfence.h"
  
-+static int kfence_fault_mode __read_mostly = 0;
++int kfence_fault_mode __read_mostly = 0;
 +
 +static int __init kfence_fault_param(char *str)
 +{
@@ -152,3 +152,12 @@
  	pr_err("==================================================================\n");
  	/* Print report header. */
  	switch (type) {
+--- a/mm/kfence/kfence.h.orig	2025-03-24 07:02:41.000000000 -0700
++++ b/mm/kfence/kfence.h	2025-05-14 22:49:41.343195915 -0700
+@@ -143,4 +143,6 @@ void kfence_report_error(unsigned long a
+ 
+ void kfence_print_object(struct seq_file *seq, const struct kfence_metadata *meta);
+ 
++extern int kfence_fault_mode;
++
+ #endif /* MM_KFENCE_KFENCE_H */
