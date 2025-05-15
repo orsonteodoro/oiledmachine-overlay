@@ -171,7 +171,8 @@
   Packages that use sanitizers must perform both test-suite testing and
   integration testing before being permanently default on.  For integration
   testing, you must make sure that the package that uses the library or
-  executible does not break the security-critical package(s) or @system set.
+  executible does not break the security-critical package(s) or any of the
+  packages in the @system set.
 
   The classes of C/C++ packages that should be hardened against CE + ZCA are:
 
