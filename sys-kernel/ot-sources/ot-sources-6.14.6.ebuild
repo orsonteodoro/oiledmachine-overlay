@@ -28,6 +28,7 @@ inherit ot-kernel-v6.14
 # OILEDMACHINE-OVERLAY-META-TAGS:  see-eclass-for-full-details
 # OILEDMACHINE-OVERLAY-META-WIP:  tresor, signed-kexec-kernel, signed-kernels
 # OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.14.2 (20250415) with builder profile with -O2 and -march=native and no PGI/PGO
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.14.6 (20250515) with builder profile with -O2 and -march=native and no PGI/PGO, with sanitizers
 
 #
 # Some USE or OT_KERNEL_USE may be ignored in eclasses.
@@ -59,6 +60,8 @@ inherit ot-kernel-v6.14
 # OT_KERNEL_MODULES_SUPPORT="1"
 # OT_KERNEL_SLAB_ALLOCATOR="slub"
 # OT_KERNEL_USB_AUTOSUSPEND=-1
+# OT_KERNEL_SECURITY_CRITICAL=1
+# OT_KERNEL_SECURITY_CRITICAL_TYPES="kfence ubsan kcfi"
 
 # env file gamer profile sample (disabled):
 # OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1
