@@ -46,7 +46,7 @@ inherit ot-kernel-v6.14
 # OT_KERNEL_USE="-rt c2tcp -O3 -bbrv2 -bbrv3 disable_debug -tresor -tresor_sysfs
 # -tresor_x86_64 -tresor_x86_64-256-bit-key-support -tresor_aesni cfs -prjc
 # kernel_compiler_patch futex futex-proton multigen_lru -genpatches -clang pgo
-# -zen-muqss -zen-sauce -cfi -kcfi -zen-multigen_lru -genpatches_1510 build zstd
+# -zen-muqss -zen-sauce -cfi kcfi -zen-multigen_lru -genpatches_1510 build zstd
 # openssl -lto ncurses"
 # OT_KERNEL_VERBOSITY=1
 # OT_KERNEL_WORK_PROFILE="builder-interactive"
