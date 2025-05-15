@@ -20,7 +20,7 @@
 | Live (latest commit) | Yes                                   |
 | Live snapshot        | Yes                                   |
 
-| Python               | Level of support                      | Distro correspondance   |
+| Python               | Level of support                      | Distro correspondence   |
 | ---                  | ---                                   | ---                     |
 | 3.10 and earlier     | Not supported (EOL)*                  | U22 (EOL Apr 2027)      |
 | 3.11                 | Mostly supported                      | D12 (EOL Jun 2026)      |
@@ -40,7 +40,7 @@ The LIBC support below reflects the upstream projects CI (Continuous
 Integration) images trend, but it may change if microarchitecture references
 exist in build files.
 
-| LIBC                 | Arch     | Level of support            | Distro correspondance    |
+| LIBC                 | Arch     | Level of support            | Distro correspondence    |
 | ---                  | ----     | ---                         | ---                      |
 | glibc                | 64-bit   | Generally supported         | D12 (2.36), U24 (2.39)   |
 | glibc                | 32-bit   | Deprecated*                 | D12 (2.36), U24 (2.39)   |
@@ -65,7 +65,7 @@ exist in build files.
   - Transient execution CPU vulnerabilities (Meltdown, Spectre v2, MDS, TAA, SCSB, FPVI, BHI, Retbleed) may lead to information disclosure if unpatched or partially patched for 32-bit
   - V8 Sandbox (64-bit supported only, protects against memory corruption, if not used may lead to code execution, privilege escalation, data tampering, information disclosure)
 
-| Platform                        | Level of support                      | Distro correspondance              |
+| Platform                        | Level of support                      | Distro correspondence              |
 | ---                             | ---                                   | ---                                |
 | CUDA                            | Available                             | D12 (11.8), U24 (12.0)             |
 | Electron (amd64)                | Fully supported                       |                                    |
