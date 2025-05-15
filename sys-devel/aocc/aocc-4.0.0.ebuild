@@ -5,7 +5,7 @@ EAPI=8
 
 DOWNLOADED_FILE="${PN}-compiler-${PV}.tar"
 LLVM_MAX_SLOT=14 # Based on sover
-PYTHON_COMPAT=( python3_{10..12} )
+PYTHON_COMPAT=( "python3_11" )
 
 KEYWORDS="
 ~amd64 ~x86
