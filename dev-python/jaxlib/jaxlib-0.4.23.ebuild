@@ -46,7 +46,7 @@ LLVM_COMPAT=(
 	16 # For ROCm 5.6
 )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
-PYTHON_COMPAT=( "python3_"{10..11} ) # Limited by Flax CI
+PYTHON_COMPAT=( "python3_11" ) # Limited by Flax CI
 
 inherit bazel cuda distutils-r1 dhms flag-o-matic git-r3 hip-versions java-pkg-opt-2
 inherit llvm rocm toolchain-funcs
