@@ -83,6 +83,8 @@ GRPC_PROTOBUF_PAIRS=(
 inherit hip-versions
 HIP_SLOTS=(
 # See also https://github.com/ROCm/tensorflow-upstream/blob/develop-upstream/rocm_docs/tensorflow-rocm-release.md?plain=1
+	"${HIP_6_2_VERSION}" # For llvm 18
+	"${HIP_6_1_VERSION}" # For llvm 17
 	"${HIP_6_0_VERSION}" # For llvm 17
 	"${HIP_5_7_VERSION}" # For llvm 17
 	"${HIP_5_6_VERSION}" # For llvm 16
@@ -105,6 +107,8 @@ HIP_SLOTS2=(
 	$(gen_hip_slots2)
 )
 declare -A LLD_SLOT=(
+	["${HIP_6_2_VERSION}"]="${HIP_6_2_LLVM_SLOT}"
+	["${HIP_6_1_VERSION}"]="${HIP_6_1_LLVM_SLOT}"
 	["${HIP_6_0_VERSION}"]="${HIP_6_0_LLVM_SLOT}"
 	["${HIP_5_7_VERSION}"]="${HIP_5_7_LLVM_SLOT}"
 	["${HIP_5_6_VERSION}"]="${HIP_5_6_LLVM_SLOT}"
@@ -120,7 +124,7 @@ declare -A LLD_SLOT=(
 # See
 # https://github.com/tensorflow/tensorflow/blob/v2.18.0/tensorflow/tools/toolchains/remote_config/configs.bzl
 # https://github.com/tensorflow/tensorflow/blob/v2.18.0/third_party/gpus/rocm_configure.bzl#L210
-LLVM_COMPAT=( {17..15} )
+LLVM_COMPAT=( {18..15} )
 PYTHON_COMPAT=( "python3_"{11..12} ) # See https://github.com/tensorflow/tensorflow/blob/v2.18.0/tensorflow/tools/pip_package/setup.py#L429
 # Limited by jax/flax
 # PYTHON_COMPAT limited by gast-4.0[python_targets_python3_9]
@@ -505,6 +509,12 @@ REQUIRED_USE="
 		^^ (
 			${HIP_SLOTS2[@]}
 		)
+	)
+	rocm_6_2? (
+		llvm_slot_18
+	)
+	rocm_6_1? (
+		llvm_slot_17
 	)
 	rocm_6_0? (
 		llvm_slot_17
@@ -1101,7 +1111,11 @@ einfo "FORCE_LLVM_SLOT may be specified."
 	fi
 
 	if use rocm ; then
-		if has rocm_6_0 ${IUSE_EFFECTIVE} && use rocm_6_0 ; then
+		if has rocm_6_2 ${IUSE_EFFECTIVE} && use rocm_6_2 ; then
+			_LLVM_COMPAT=( 18 )
+		elif has rocm_6_1 ${IUSE_EFFECTIVE} && use rocm_6_1 ; then
+			_LLVM_COMPAT=( 17 )
+		elif has rocm_6_0 ${IUSE_EFFECTIVE} && use rocm_6_0 ; then
 			_LLVM_COMPAT=( 17 )
 		elif has rocm_5_7 ${IUSE_EFFECTIVE} && use rocm_5_7 ; then
 			_LLVM_COMPAT=( 17 )
@@ -1221,7 +1235,15 @@ ewarn "ROCm support is a Work In Progress (WIP)"
 		_remove_llvm_from_path
 
 		# Build with GCC but initialize LLVM_SLOT.
-		if has rocm_6_0 ${IUSE_EFFECTIVE} && use rocm_6_0 ; then
+		if has rocm_6_2 ${IUSE_EFFECTIVE} && use rocm_6_2 ; then
+			LLVM_SLOT=18
+			ROCM_SLOT="6.2"
+			ROCM_VERSION="${HIP_6_2_VERSION}"
+		elif has rocm_6_1 ${IUSE_EFFECTIVE} && use rocm_6_1 ; then
+			LLVM_SLOT=17
+			ROCM_SLOT="6.1"
+			ROCM_VERSION="${HIP_6_1_VERSION}"
+		elif has rocm_6_0 ${IUSE_EFFECTIVE} && use rocm_6_0 ; then
 			LLVM_SLOT=17
 			ROCM_SLOT="6.0"
 			ROCM_VERSION="${HIP_6_0_VERSION}"
