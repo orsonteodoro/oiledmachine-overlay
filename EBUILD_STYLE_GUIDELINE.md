@@ -71,33 +71,35 @@
     If the build files say libgcrypt with minimum version, you may use that
     instead.
 
-* PYTHON_COMPAT fallbacks for setup.py or pyproject.toml
 
-| Listed                 | PYTHON_COMPAT   |
-| ---                    | ---             |
-| python3                | python3_{11,12} |
-| python 3.10 or earlier | (1)             |
-| No python              | (1)             |
+  * PYTHON_COMPAT fallbacks for setup.py or pyproject.toml
 
-  (1) Fallback rule 2:
+    | Listed                 | PYTHON_COMPAT   |
+    | ---                    | ---             |
+    | python3                | python3_{11,12} |
+    | python 3.10 or earlier | (1)             |
+    | No python              | (1)             |
 
-    - If the CI image is D12, use python3_11.
-    - If the CI image is U24, use python3_12.
-    - If the CI image tests both D12 and U24, use python3_{11,12}.
-    - If a Dockerfile exists, use the above rules.
-    - If the main app says python_single_python3_11 and you tested it interactively or by test suite, use that version.
-    - If the main app says python_single_python3_12 and you tested it interactively or by test suite, use that version.
-    - If your PYTHON_SINGLE_TARGET from /etc/portage/make.conf uses python3_11, use that version.
-    - If your PYTHON_SINGLE_TARGET from /etc/portage/make.conf uses python3_12, use that version.
-    - If the slot is missing, downgrade/upgrade the package.
-    - If the slot is missing and the project is defunct, adjust based on main package's python_single_python3_11 or python_single_python3_12.
-    - Any unofficial python version added should be documented, or it may be reverted back to the known working set.
 
-  - Most CI images use D12, U22, U24.
-  - Using PYTHON_SINGLE_TARGET or the main app package tested by you is a good way to increase reproducability.
-  - Adding non stable (>= python-3.13) is a waste of time or unpaid free labor.
-  - Only tested versions are allowed.
-  - Any untested is assumed Denial of Service (e.g. crash), decreases reproducability, disruptive and increases security fix backlog.
+    (1) Fallback rule 2:
+
+      - If the CI image is D12, use python3_11.
+      - If the CI image is U24, use python3_12.
+      - If the CI image tests both D12 and U24, use python3_{11,12}.
+      - If a Dockerfile exists, use the above rules.
+      - If the main app says python_single_python3_11 and you tested it interactively or by test suite, use that version.
+      - If the main app says python_single_python3_12 and you tested it interactively or by test suite, use that version.
+      - If your PYTHON_SINGLE_TARGET from /etc/portage/make.conf uses python3_11, use that version.
+      - If your PYTHON_SINGLE_TARGET from /etc/portage/make.conf uses python3_12, use that version.
+      - If the slot is missing, downgrade/upgrade the package.
+      - If the slot is missing and the project is defunct, adjust PYTHON_COMPAT based on main package's python_single_python3_11 or python_single_python3_12.
+      - Any unofficial python version added should be documented, or it may be reverted back to the known working set.
+
+    - Most CI images use D12, U22, U24.
+    - Using PYTHON_SINGLE_TARGET or the main app package tested by you is a good way to increase reproducability.
+    - Adding non stable (>= python-3.13) is a waste of time or unpaid free labor.
+    - Only tested versions are allowed.
+    - Any untested is assumed Denial of Service (e.g. crash), decreases reproducability, disruptive and increases security fix backlog.
 
 * If an ebuild references a PYTHON_SINGLE_USEDEP in *DEPENDs, the ebuild should
   use either `DISTUTILS_SINGLE_IMPL=1` with `inherit distutils-r1` or
