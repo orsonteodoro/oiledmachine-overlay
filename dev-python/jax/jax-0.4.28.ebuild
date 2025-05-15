@@ -38,10 +38,6 @@ ebuild_revision_2
 # in experimental but not in tests folder.
 DEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.22[${PYTHON_USEDEP}]
-		>=dev-python/scipy-1.9[${PYTHON_USEDEP}]
-	' python3_10)
-	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.23.2[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.9[${PYTHON_USEDEP}]
 	' python3_11)
