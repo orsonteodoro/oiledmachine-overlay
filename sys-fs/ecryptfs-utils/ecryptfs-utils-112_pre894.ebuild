@@ -6,10 +6,14 @@
 
 EAPI=8
 
-LANGS=( ca )
-PYTHON_COMPAT=( python3_10 )
+CFLAGS_HARDENED_USE_CASES="plugin secure-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
+#CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" "llvm" ) # Needs integration testing
+CFLAGS_HARDENED_TOLERANCE="4.0"
+LANGS=( "ca" )
+PYTHON_COMPAT=( "python3_11" )
 
-inherit autotools flag-o-matic linux-info pam python-single-r1
+inherit autotools cflags-hardened flag-o-matic linux-info pam python-single-r1
 
 KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86"
 EBRZ_REPO_URI="lp:~ecryptfs/ecryptfs/trunk"
@@ -31,6 +35,7 @@ SLOT="0"
 IUSE+="
 ${LANGS[@]/#/l10n_}
 doc gpg gtk nls openssl pam pkcs11 python suid test tpm
+ebuild_revision_3
 "
 REQUIRED_USE+="
 	pam? (
@@ -86,6 +91,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-111-python3-ac_python_devel_m4.patch"
 	"${FILESDIR}/${PN}-111-swig-fixes.patch"
 	"${FILESDIR}/${PN}-111-update-libecryptfs_i.patch"
+	"${FILESDIR}/${PN}-112_pre894-fix-tests.patch"
 )
 
 pkg_setup() {
@@ -115,6 +121,7 @@ eerror
 			die
 		fi
 	fi
+einfo "EPYTHON: ${EPYTHON}"
 }
 
 src_unpack() {
@@ -149,6 +156,7 @@ src_prepare() {
 }
 
 src_configure() {
+	cflags-hardened_append
 	append-cppflags -D_FILE_OFFSET_BITS=64
 	local myconf=(
 		--enable-nss
@@ -231,3 +239,6 @@ ewarn
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  ebuild, source-directly-upstream, live-snapshot
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (112_pre894, 20250515) with Python 3.11
+# test suite with clang:  passed
+# test suite with gcc:  passed

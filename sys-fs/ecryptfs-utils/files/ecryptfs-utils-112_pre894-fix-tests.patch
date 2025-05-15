@@ -1,0 +1,24 @@
+diff '--color=auto' -urp ecryptfs-utils-112_pre894.orig/tests/userspace/v1-to-v2-wrapped-passphrase.sh ecryptfs-utils-112_pre894/tests/userspace/v1-to-v2-wrapped-passphrase.sh
+--- ecryptfs-utils-112_pre894.orig/tests/userspace/v1-to-v2-wrapped-passphrase.sh	2022-07-09 06:04:34.273904800 -0700
++++ ecryptfs-utils-112_pre894/tests/userspace/v1-to-v2-wrapped-passphrase.sh	2025-05-15 01:47:43.903696010 -0700
+@@ -42,7 +42,7 @@ do_test()
+ }
+ 
+ test_dir_parent="$TMPDIR"
+-if [ -z "$test_dir_parent"]; then
++if [ -z "$test_dir_parent" ]; then
+ 	test_dir_parent="/tmp"
+ fi
+ 
+diff '--color=auto' -urp ecryptfs-utils-112_pre894.orig/tests/userspace/wrap-unwrap.sh ecryptfs-utils-112_pre894/tests/userspace/wrap-unwrap.sh
+--- ecryptfs-utils-112_pre894.orig/tests/userspace/wrap-unwrap.sh	2022-07-09 06:04:34.273904800 -0700
++++ ecryptfs-utils-112_pre894/tests/userspace/wrap-unwrap.sh	2025-05-15 01:47:29.823819624 -0700
+@@ -33,7 +33,7 @@ test_cleanup()
+ trap test_cleanup 0 1 2 3 15
+ 
+ test_dir_parent="$TMPDIR"
+-if [ -z "$test_dir_parent"]; then
++if [ -z "$test_dir_parent" ]; then
+ 	test_dir_parent="/tmp"
+ fi
+ 
