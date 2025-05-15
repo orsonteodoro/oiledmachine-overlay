@@ -1554,7 +1554,7 @@ ewarn "Skipping custom sanitizer -fsanitize=${x} for CC=${CC}"
 			fi
 			local slowdown=${SLOWDOWN[${module}]}
 
-			if [[ "${RUSTFLAGS_HARDENED_IGNORE_SANITIZER_CHECK:-0}" == "1" ]] ; then
+			if [[ "${CFLAGS_HARDENED_IGNORE_SANITIZER_CHECK:-0}" == "1" ]] ; then
 				:
 			elif \
 				tc-is-gcc \
