@@ -99,7 +99,8 @@
 
       - Most CI images use D12, U22, U24.
       - Using PYTHON_SINGLE_TARGET or the main app package tested by you is a good way to increase reproducability.
-      - Adding non stable (>= python-3.13) is a waste of time or unpaid free labor.
+      - Adding untested non stable (>= python3_13) is can add unintended consequences, more bugs, or Denial of Service (e.g. crash).
+      - Adding tested >= python3_13 is allowed.
       - Only tested versions are allowed.
       - Any untested is assumed Denial of Service (e.g. crash), decreases reproducability, disruptive and increases security fix backlog.
 
