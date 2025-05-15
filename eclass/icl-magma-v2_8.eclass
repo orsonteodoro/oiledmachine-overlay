@@ -49,7 +49,7 @@ CUDA_TARGETS_COMPAT=(
 )
 FORTRAN_STANDARD="77 90"
 MY_PV=$(ver_cut 1-3)
-PYTHON_COMPAT=( python3_{10..11} )
+PYTHON_COMPAT=( "python3_"{11..12} )
 
 inherit cmake flag-o-matic fortran-2 python-any-r1 toolchain-funcs
 if [[ "${MAGMA_ROCM}" == "1" ]] ; then
