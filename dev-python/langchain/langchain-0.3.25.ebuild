@@ -12,7 +12,7 @@ EAPI=8
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="pdm-backend"
-PYTHON_COMPAT=( "python3_"{11,13} ) # No Python 3.12 in testing.
+PYTHON_COMPAT=( "python3_"{11..13} ) # Python 3.12 used for benchmarking
 
 inherit distutils-r1 pypi
 
