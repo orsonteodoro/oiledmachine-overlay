@@ -4650,54 +4650,14 @@ einfo "JIT off is similar to -O${jit_level_desc} worst case."
 # Upstream doesn't support it.
 ewarn "The v8 sandbox is not supported for 32-bit.  Consider using 64-bit only to avoid high-critical severity memory corruption that leads to code execution."
 		myconf_gn+=" v8_enable_sandbox=false"
-	else
-einfo  "The v8 sandbox is being disabled.  Use the prebuilt binary for proper support."
-		myconf_gn+=" v8_enable_sandbox=false"
 	fi
 
 # For Node.js, the v8 sandbox is disabled.  This is temporary until a fix can be
 # found or fixed in the next major version.
 
-	myconf_gn=$(echo "${myconf_gn}" | sed -e "s|v8_enable_drumbrake=true|v8_enable_drumbrake=false|g")
-
-	local is_64bit=0
-	local is_64bit_sc=0
-	if [[ \
-		   "${ABI}" == "arm64" \
-		|| "${ABI}" == "amd64" \
-		|| "${ABI}" == "ppc64" \
-		|| "${CHOST}" =~ "loongarch64" \
-		|| "${CHOST}" =~ "mips64" \
-		|| "${CHOST}" =~ "riscv64" \
-	]] ; then
-		is_64bit=1
-	fi
-
-	# V8 may support mips, but the assert may need to be fixed.
-	if [[ \
-		   "${ABI}" == "arm64" \
-		|| "${ABI}" == "amd64" \
-		|| "${ABI}" == "ppc64" \
-		|| "${CHOST}" =~ "loongarch64" \
-		|| "${CHOST}" =~ "riscv64" \
-	]] ; then
-		is_64bit_sc=1
-	fi
-
-	if (( ${is_64bit} == 1 )) ; then
-		myconf_gn+=" v8_enable_pointer_compression=true"
-	fi
-
-	if (( ${is_64bit_sc} == 1 )) ; then
-		myconf_gn+=" v8_enable_pointer_compression_shared_cage=true"
-	fi
-	if (( ${total_mem_gib} >= 8 && ${is_64bit} == 1 )) ; then
-einfo "Using pointer-compression for 8 GiB heap"
-		myconf_gn+=" v8_enable_pointer_compression_8gb=true"
-	else
-einfo "Using pointer-compression for 4 GiB heap"
-		myconf_gn+=" v8_enable_pointer_compression_8gb=false"
-	fi
+	myconf_gn="${myconf_gn//v8_enable_drumbrake=true/v8_enable_drumbrake=false}"
+	myconf_gn+=" v8_enable_pointer_compression=false"
+	myconf_gn+=" v8_enable_pointer_compression_shared_cage=false"
 
 	# Forced because of asserts
 	myconf_gn+=" enable_screen_ai_service=true" # Required by chrome/renderer:renderer
