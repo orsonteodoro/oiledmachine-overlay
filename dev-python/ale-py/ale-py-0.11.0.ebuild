@@ -10,8 +10,9 @@ EAPI=8
 # cibuildwheel
 
 DISTUTILS_EXT=1
+DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_{10..12} ) # Upstream tests up to 3.12
+PYTHON_COMPAT=( python3_{11..13} ) # Upstream tests up to 3.12
 
 inherit distutils-r1
 
@@ -32,10 +33,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" cibuildwheel test"
 RDEPEND+="
 	$(python_gen_cond_dep '
-		dev-python/typing-extensions[${PYTHON_USEDEP}]
-	' python3_10 )
-	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
+		>=dev-python/numpy-1.20.0[${PYTHON_USEDEP}]
 	')
 	media-libs/libsdl2
 	sys-libs/zlib
@@ -46,7 +44,7 @@ DEPEND+="
 BDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/pybind11-2.10.0[${PYTHON_USEDEP}]
-		>=dev-python/setuptools-61[${PYTHON_USEDEP}]
+		>=dev-python/setuptools-77.0.0[${PYTHON_USEDEP}]
 		cibuildwheel? (
 			dev-python/cibuildwheel[${PYTHON_USEDEP}]
 		)
@@ -54,8 +52,6 @@ BDEPEND+="
 			>=dev-python/pytest-7.0[${PYTHON_USEDEP}]
 		)
 	')
-	>=dev-build/cmake-3.22
-	dev-build/ninja
 	test? (
 		>=dev-python/gymnasium-1.0.0_alpha1[${PYTHON_SINGLE_USEDEP}]
 	)
