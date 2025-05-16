@@ -6,8 +6,8 @@ EAPI=8
 
 MY_PN="${PN/-/_}"
 
-DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( python3_10 )
+DISTUTILS_USE_PEP517="flit"
+PYTHON_COMPAT=( "python3_"{11,12} )
 
 inherit distutils-r1
 
@@ -37,19 +37,26 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc test"
+IUSE+=" dev doc test"
 RDEPEND+="
 	dev-python/absl-py[${PYTHON_USEDEP}]
 	dev-python/contextlib2[${PYTHON_USEDEP}]
 	dev-python/pyyaml[${PYTHON_USEDEP}]
-	dev-python/six[${PYTHON_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	dev-python/setuptools[${PYTHON_USEDEP}]
-	dev-python/wheel[${PYTHON_USEDEP}]
+	(
+		>=dev-python/flit-3.8[${PYTHON_USEDEP}]
+		<dev-python/flit-4[${PYTHON_USEDEP}]
+	)
+	dev? (
+		>=dev-python/pylint-2.6.0[${PYTHON_USEDEP}]
+		dev-python/pytest[${PYTHON_USEDEP}]
+		dev-python/pytest-xdist[${PYTHON_USEDEP}]
+		dev-python/pyink[${PYTHON_USEDEP}]
+	)
 	doc? (
 		dev-python/nbsphinx[${PYTHON_USEDEP}]
 		dev-python/recommonmark[${PYTHON_USEDEP}]
@@ -67,7 +74,7 @@ src_unpack() {
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
-		grep -q -e "_VERSION = '${PV}'" "${S}/setup.py" \
+		grep -q -e "__version__ = \"1.1.0\"" "${S}/pyproject.toml" \
 			|| die "QA:  Bump version"
 	else
 		unpack ${A}
@@ -76,8 +83,8 @@ src_unpack() {
 
 src_install() {
 	distutils-r1_src_install
-	docinto licenses
-	dodoc LICENSE
+	docinto "licenses"
+	dodoc "LICENSE"
 }
 
 distutils_enable_tests "pytest"
