@@ -95,8 +95,8 @@
     - If the CI image is U24, use python3_12.
     - If the CI image tests both D12 and U24, use python3_{11,12}.
     - If a Dockerfile exists, use the above rules.
-    - If the app is set to USE=python_single_python3_11 and you tested lib/app interactively or by test suite, use python3_11.
-    - If the app is set to USE=python_single_python3_12 and you tested lib/app interactively or by test suite, use python3_12.
+    - If the app is set to USE="python_single_target_python3_11" and you tested lib/app interactively or by test suite, use python3_11.
+    - If the app is set to USE="python_single_target_python3_12" and you tested lib/app interactively or by test suite, use python3_12.
     - If your PYTHON_SINGLE_TARGET from /etc/portage/make.conf uses python3_11, use python3_11.
     - If your PYTHON_SINGLE_TARGET from /etc/portage/make.conf uses python3_12, use python3_12.
     - If the Python version is in the build files (CMakeLists.txt, meson.build, etc), add the versions allowed.
@@ -110,6 +110,7 @@
       - Test suite passed with Python 3.13
       - Integration test passed with Python 3.13
       - Interactive test passed with Python 3.13
+      - Test suite and integration testing passed with Python 3.13
     - Consider deleting the ebuild if PYTHON_COMPAT is python3_10 or less but only if it is not necessary to keep it in order for the app to work.
     - If the Python package contains a prebuilt binary and built using an EOL release, that Python package release should be deleted.
 
@@ -121,7 +122,7 @@
     - Adding tested >= python3_13 is allowed.
     - Testing >= python3_13 is unpaid free labor.
     - Only tested versions are allowed.
-    - Any untested version is assumed Denial of Service (e.g. crash), decreases reproducibility, disruptive and increases security fix backlog.
+    - Any untested version is assumed Denial of Service (e.g. crash), decreases or assumed not reproducable, disruptive and increases security fix backlog.
 
 * If an ebuild references a PYTHON_SINGLE_USEDEP in *DEPENDs, the ebuild should
   use either `DISTUTILS_SINGLE_IMPL=1` with `inherit distutils-r1` or
