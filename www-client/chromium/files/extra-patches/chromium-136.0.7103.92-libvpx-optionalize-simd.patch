@@ -22,7 +22,7 @@
 -      ":libvpx_intrinsics_sse4_1",
 -      ":libvpx_intrinsics_ssse3",
 -    ]
-+    if (use_mmx && use_sse2 && use_sse3 && use_ssse3) {
++    if (use_mmx || use_sse2 || use_sse3 || use_ssse3) {
 +      deps += [
 +        ":libvpx_asm",
 +      ]
