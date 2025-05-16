@@ -10,7 +10,7 @@ MY_PN="${PN/-/_}"
 
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{11..13} )
 
 inherit distutils-r1
 
@@ -19,7 +19,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/jax-ml/ml_dtypes.git"
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${MY_PN}-${PV}"
-	FALLBACK_COMMIT="d5fdadcbb7c8fb95dcd6f8bad41fc198d4e21b73" # Jan 3, 2024
+	FALLBACK_COMMIT="f656f18ff3539e289ba9031e5073b094bcf6b340" # Jan 6, 2025
 	inherit git-r3
 else
 	EGIT_EIGEN_COMMIT="7bf2968fed5f246c0589e1111004cb420fcd7c71" # Mar 7, 2023
@@ -41,30 +41,39 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" test ebuild_revision_1"
+IUSE+="
+dev test
+ebuild_revision_1
+"
+REQUIRED_USE="
+	test? (
+		dev
+	)
+"
+
 RDEPEND+="
-	$(python_gen_cond_dep '
-		>=dev-python/numpy-1.21.2[${PYTHON_USEDEP}]
-	' python3_10)
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.23.3[${PYTHON_USEDEP}]
 	' python3_11)
 	$(python_gen_cond_dep '
 		>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
 	' python3_12)
+	$(python_gen_cond_dep '
+		>=dev-python/numpy-2.1.0[${PYTHON_USEDEP}]
+	' python3_13)
 "
 DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
 	>=dev-python/pybind11-2.10.0[${PYTHON_USEDEP}]
-	>=dev-python/setuptools-68.1.0[${PYTHON_USEDEP}]
-	test? (
+	>=dev-python/setuptools-75.7.0[${PYTHON_USEDEP}]
+	dev? (
 		>=dev-python/pylint-2.6.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-6.2.5[${PYTHON_USEDEP}]
 		dev-python/absl-py[${PYTHON_USEDEP}]
-		dev-python/pyink[${PYTHON_USEDEP}]
+		dev-python/pytest[${PYTHON_USEDEP}]
 		dev-python/pytest-xdist[${PYTHON_USEDEP}]
+		dev-python/pyink[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "CHANGELOG.md" "README.md" )
@@ -74,7 +83,7 @@ src_unpack() {
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
-		grep -q -e "__version__ = '$(ver_cut 1-3 ${PV})'" "${S}/ml_dtypes/__init__.py" \
+		grep -q -e "__version__ = \"0.5.1\"" "${S}/ml_dtypes/__init__.py" \
 			|| die "QA:  Bump version"
 	else
 		unpack ${A}
