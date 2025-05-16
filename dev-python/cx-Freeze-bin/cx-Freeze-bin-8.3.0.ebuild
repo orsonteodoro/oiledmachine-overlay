@@ -15,48 +15,62 @@ inherit distutils-r1
 
 KEYWORDS="~amd64 ~arm64 ~ppc64"
 S="${WORKDIR}/${P}"
-SRC_URI="
+SRC_URI_GLIBC="
 	amd64? (
-		python_targets_python3_10? (
-https://files.pythonhosted.org/packages/36/d3/dc10cba6905160a4da44c197eca1d41b1d8c59fb0ae732d9690af88bcf79/cx_Freeze-7.2.7-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
-		)
 		python_targets_python3_11? (
-https://files.pythonhosted.org/packages/96/9f/ac656645d9c399b68811b5ef8e7f6bdabc324685b5c6b72ae5a9b937582d/cx_Freeze-7.2.7-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+https://files.pythonhosted.org/packages/94/d1/c073a99d2633a1c231921d5a9ba9f1f94485da7a75d0139101f4e157c1c5/cx_freeze-8.3.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
 		)
 		python_targets_python3_12? (
-https://files.pythonhosted.org/packages/1b/06/db74d3ab4a851cdd45254b3afdb305e454a6420f9d043159e80c0e3a6f9a/cx_Freeze-7.2.7-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+https://files.pythonhosted.org/packages/e8/b5/21dfa6fd4580bed578e22f4be2f42d585d1e064f1b58fc2321477030414e/cx_freeze-8.3.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
 		)
 		python_targets_python3_13? (
-https://files.pythonhosted.org/packages/a5/59/b5927b79d7d599630cfe0772fbb98ab64e33d2cff6eb186b13ef102d3035/cx_Freeze-7.2.7-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
+https://files.pythonhosted.org/packages/da/da/a97fbb2ee9fb958aca527a9a018a98e8127f0b43c4fb09323d2cdbc4ec94/cx_freeze-8.3.0-cp313-cp313-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
 		)
 	)
 	arm64? (
-		python_targets_python3_10? (
-https://files.pythonhosted.org/packages/bc/71/7598e7769dc1ec834e470798314786195a0c5de920d8145d86f62e6cf403/cx_Freeze-7.2.7-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
-		)
 		python_targets_python3_11? (
-https://files.pythonhosted.org/packages/aa/09/aeca5e86a75b25b1a2455b7e0fa3166eae7ead07d795c0061c1bcedc5eb0/cx_Freeze-7.2.7-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+https://files.pythonhosted.org/packages/77/ba/004331711db1913bc27a844d6cb89b48b0dabea0fadc0adf57dd2e090b80/cx_freeze-8.3.0-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
 		)
 		python_targets_python3_12? (
-https://files.pythonhosted.org/packages/77/79/043d442716ec36f9a0d1e9ebc6fdc6b966da2c5131d7e481dbe3e6c45df8/cx_Freeze-7.2.7-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+https://files.pythonhosted.org/packages/de/97/ddd0daa6de5da6d142a77095d66c8466442f0f8721c6eaa52b63bdbbb29a/cx_freeze-8.3.0-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
 		)
 		python_targets_python3_13? (
-https://files.pythonhosted.org/packages/61/70/57f2c34bf8cdb103377d08ae9db88fca69b8dd0ac336de2697fa68f1c38f/cx_Freeze-7.2.7-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+https://files.pythonhosted.org/packages/45/df/ba05eba858fa33bfcdde589d4b22333ff1444f42ff66e88ad98133105126/cx_freeze-8.3.0-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
 		)
 	)
 	ppc64? (
-		python_targets_python3_10? (
-https://files.pythonhosted.org/packages/10/ef/3f66480bac7e4d29c521e854cc54685a64770140e639b25aca5779ed5876/cx_Freeze-7.2.7-cp310-cp310-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl
-		)
 		python_targets_python3_11? (
-https://files.pythonhosted.org/packages/a3/f4/a060909a2ea8f7425c5379ac9be74a192cc0847f612cd1c92649c1deeb86/cx_Freeze-7.2.7-cp311-cp311-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl
+https://files.pythonhosted.org/packages/6c/5f/9d66343f42c5fdfaa0e4afb3def357b54159a034f0990adbf27ba5c08620/cx_freeze-8.3.0-cp311-cp311-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl
 		)
 		python_targets_python3_12? (
-https://files.pythonhosted.org/packages/2c/32/3db0938fac59d082694c1aab3087354828a838d0853d0909116716a6bd3d/cx_Freeze-7.2.7-cp312-cp312-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl
+https://files.pythonhosted.org/packages/b5/0b/b4cf3e7dffd1a4fa6aa80b26af6b21d0b6dafff56495003639eebdc9a9ba/cx_freeze-8.3.0-cp312-cp312-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl
 		)
-		python_targets_python3_13? (
-https://files.pythonhosted.org/packages/0c/a5/0cec1917c50bbd4a99318c0bdd99d5cd339eabeca2865398d721c6adfc87/cx_Freeze-7.2.7-cp313-cp313-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl
+	)
+"
+SRC_URI_MUSL="
+	amd64? (
+		python_targets_python3_11? (
+https://files.pythonhosted.org/packages/bb/a9/96281c51edde509e73fe16cd3cd997cb4982ec907818a4b9a25289838baf/cx_freeze-8.3.0-cp311-cp311-musllinux_1_2_x86_64.whl
 		)
+		python_targets_python3_12? (
+https://files.pythonhosted.org/packages/98/8c/4da11732f32ed51f2b734caa3fe87559734f68f508ce54b56196ae1c4410/cx_freeze-8.3.0-cp312-cp312-musllinux_1_2_x86_64.whl
+		)
+	)
+	arm64? (
+		python_targets_python3_11? (
+https://files.pythonhosted.org/packages/57/2d/ef8ca36b173444a47ffc94086f3fb03c0ca2f4465f7db14a8c82d06e3ed7/cx_freeze-8.3.0-cp311-cp311-musllinux_1_2_aarch64.whl
+		)
+		python_targets_python3_12? (
+https://files.pythonhosted.org/packages/9b/08/76270e82bff702edd584e252239c1ab92e1807cf5ca2efafd0c69a948775/cx_freeze-8.3.0-cp312-cp312-musllinux_1_2_aarch64.whl
+		)
+	)
+"
+SRC_URI="
+	elibc_glibc? (
+		${SRC_URI_GLIBC}
+	)
+	elibc_musl? (
+		${SRC_URI_MUSL}
 	)
 "
 
@@ -78,7 +92,7 @@ ebuild_revision_4
 RDEPEND+="
 	>=dev-python/filelock-3.12.3[${PYTHON_USEDEP}]
 	>=dev-python/packaging-24[${PYTHON_USEDEP}]
-	>=dev-python/setuptools-65.6.3[${PYTHON_USEDEP}]
+	>=dev-python/setuptools-77.0.3[${PYTHON_USEDEP}]
 	dev-util/patchelf
 	multiprocess? (
 		dev-python/multiprocess[${PYTHON_USEDEP}]
@@ -93,31 +107,30 @@ DEPEND+="
 BDEPEND+="
 	dev? (
 		$(python_gen_any_dep '
-			>=dev-vcs/pre-commit-3.5.0[${PYTHON_SINGLE_USEDEP}]
+			>=dev-vcs/pre-commit-4.2.0[${PYTHON_SINGLE_USEDEP}]
 		')
 		>=dev-python/build-1.2.0[${PYTHON_USEDEP}]
-		>=dev-python/cibuildwheel-2.22.0[${PYTHON_USEDEP}]
-		>=dev-util/bump-my-version-0.26.1[${PYTHON_USEDEP}]
+		>=dev-python/cibuildwheel-2.23.3[${PYTHON_USEDEP}]
+		>=dev-util/bump-my-version-1.1.2[${PYTHON_USEDEP}]
 	)
 	doc? (
 		>=dev-python/furo-2024.8.6[${PYTHON_USEDEP}]
-		>=dev-python/myst-parser-3.0.1[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-7.1.2[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-new-tab-link-0.6.0[${PYTHON_USEDEP}]
-		>=dev-python/sphinx-tabs-3.4.5[${PYTHON_USEDEP}]
+		>=dev-python/myst-parser-4.0.1[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-8.2.3[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-new-tab-link-0.8.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-tabs-3.4.7[${PYTHON_USEDEP}]
 	)
 	test? (
 		pandas? (
 			dev-python/pandas[${PYTHON_USEDEP}]
 		)
-		>=dev-python/coverage-7.6.1[${PYTHON_USEDEP}]
+		>=dev-python/coverage-7.8.0[${PYTHON_USEDEP}]
 		>=dev-python/pluggy-1.5.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-8.3.3[${PYTHON_USEDEP}]
-		>=dev-python/pytest-cov-5.0.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-datafiles-3.0.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-8.3.5[${PYTHON_USEDEP}]
+		>=dev-python/pytest-cov-6.1.1[${PYTHON_USEDEP}]
 		>=dev-python/pytest-mock-3.14.0[${PYTHON_USEDEP}]
-		>=dev-python/pytest-timeout-2.3.1[${PYTHON_USEDEP}]
-		>=dev-python/pytest-xdist-3.6.1[${PYTHON_USEDEP},psutil(+)]
+		>=dev-python/pytest-timeout-2.4.0[${PYTHON_USEDEP}]
+		>=dev-python/pytest-xdist-3.6.1[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( )
@@ -127,9 +140,7 @@ _install_wheel() {
 	local bn=$(basename "${wheel_path}")
 
 	local epython=""
-	if [[ "${bn}" =~ "cp310" ]] ; then
-		epython="python3.10"
-	elif [[ "${bn}" =~ "cp311" ]] ; then
+	if [[ "${bn}" =~ "cp311" ]] ; then
 		epython="python3.11"
 	elif [[ "${bn}" =~ "cp312" ]] ; then
 		epython="python3.12"
