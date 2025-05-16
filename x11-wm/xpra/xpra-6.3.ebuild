@@ -17,7 +17,7 @@ DISTUTILS_USE_PEP517="setuptools"
 PATENT_STATUS_IUSE=(
 	patent_status_nonfree
 )
-PYTHON_COMPAT=( "python3_12" ) # See .github/workflows/build.yml
+PYTHON_COMPAT=( "python3_13" ) # See .github/workflows/build.yml
 
 inherit cflags-hardened cuda distutils-r1 flag-o-matic linux-info prefix
 inherit tmpfiles udev user-info xdg
@@ -77,10 +77,11 @@ cpu-percent +csc_cython csc_libyuv cuda +cuda_rebuild +cups cups-forwarding
 html5-client html5_gzip html5_brotli +http ibus jpeg kerberos +keyboard-layout
 keycloak ldap ldap3 +lz4 lzo +mdns mysql +netdev +notifications -nvdec nvenc
 nvfbc nvjpeg +opengl +openh264 openrc osmesa otp +pam pinentry png proc +proxy
-pyinotify qrencode +quic -qt6 -rencode +rencodeplus +rfb sd_listen selinux
-+server +socks sound-forwarding spng sql sqlite +ssh sshpass +ssl systemd
-+tcp-wrappers test tiff u2f -uinput +v4l2 vaapi vpx vsock -wayland +webcam
-webcam-forwarding webp +websockets +X x264 +xdg +xinput yaml zeroconf zlib
+-pyglet pyinotify qrencode +quic -qt6 remote-encoder -rencode +rencodeplus +rfb
+sd_listen selinux +server +socks sound-forwarding spng sql sqlite +ssh sshpass
++ssl systemd +tcp-wrappers test tiff -tk u2f -uinput +v4l2 vaapi vpx vsock
+wayland +webcam webcam-forwarding webp +websockets +X x264 +xdg +xinput yaml
+zeroconf zlib
 
 ebuild_revision_3
 "
@@ -89,6 +90,14 @@ ebuild_revision_3
 
 # See https://github.com/Xpra-org/xpra/blob/v5.0.4/docs/Build/Dependencies.md
 CLIENT_OPTIONS="
+	client? (
+		|| (
+			gtk3
+			qt6
+			pyglet
+			tk
+		)
+	)
 	opengl? (
 		client
 	)
@@ -474,6 +483,9 @@ RDEPEND+="
 		proxy? (
 			dev-python/setproctitle[${PYTHON_USEDEP}]
 		)
+		pyglet? (
+			dev-python/pyglet[${PYTHON_USEDEP}]
+		)
 		qrencode? (
 			media-gfx/qrencode[${PYTHON_USEDEP}]
 		)
@@ -509,6 +521,9 @@ RDEPEND+="
 				)
 				virtual/ssh
 			)
+		)
+		tk? (
+			dev-lang/python[tk]
 		)
 		u2f? (
 			>=dev-python/pyu2f-0.1.5[${PYTHON_USEDEP}]
@@ -752,7 +767,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-4.1.3-change-init-config-path.patch"
 	"${FILESDIR}/${PN}-5.0.4-udev-path.patch"
 	"${FILESDIR}/${PN}-6.0-translate-flags.patch"
-	"${FILESDIR}/${PN}-6.0-pkgconfig-warn.patch"
+	"${FILESDIR}/${PN}-6.3-pkgconfig-warn.patch"
 )
 
 check_cython() {
@@ -920,6 +935,7 @@ eerror
 	DISTUTILS_ARGS=(
 		$(use_with audio)
 		$(use_with audio gstreamer_audio)
+		$(use_with amf)
 		$(use_with avif)
 		$(use_with brotli)
 		$(use_with client)
@@ -952,9 +968,11 @@ eerror
 		$(use_with pam)
 		$(use_with proc)
 		$(use_with proxy)
+		$(use_with pyglet pyglet_client)
 		$(use_with qrencode)
 		$(use_with qt6 qt6_client)
 		$(use_with rfb)
+		$(use_with remote-encoder remote_encoder)
 		$(use_with rencodeplus)
 		$(use_with server)
 		$(use_with server service)
@@ -962,10 +980,12 @@ eerror
 		$(use_with spng spng_decoder)
 		$(use_with spng spng_encoder)
 		$(use_with sd_listen)
+		$(use_with tk tk_client)
 		$(use_with uinput)
 		$(use_with vpx)
 		$(use_with vsock)
 		$(use_with v4l2)
+		$(use_with wayland)
 		$(use_with webcam)
 		$(use_with webp)
 		$(use_with X argb)
@@ -973,6 +993,7 @@ eerror
 		$(use_with x264 enc_x264)
 		$(use_with xdg xdg_open)
 		$(use_with xinput)
+		$(use_with yaml)
 		--with-keyboard
 #		--with-strict
 		--with-verbose
