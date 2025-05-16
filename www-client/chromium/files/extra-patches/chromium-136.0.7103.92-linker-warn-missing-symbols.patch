@@ -1,0 +1,18 @@
+--- a/build/config/compiler/BUILD.gn.orig	2025-05-16 15:00:04.053125296 -0700
++++ b/build/config/compiler/BUILD.gn	2025-05-16 16:14:32.116506490 -0700
+@@ -575,6 +575,15 @@ config("compiler") {
+     if (!is_component_build) {
+       ldflags += [ "-Wl,-z,now" ]
+     }
++
++    # Allow to skip over disabled simd class functions or global variables
++    if (use_mold) {
++      ldflags += [ "--warn-unresolved-symbols" ]
++    } else if (use_lld) {
++      ldflags += [ "--warn-unresolved-symbols" ]
++    } else {
++      ldflags += [ "--warn-unresolved-symbols" ]
++    }
+   }
+ 
+   # Linux-specific compiler flags setup.

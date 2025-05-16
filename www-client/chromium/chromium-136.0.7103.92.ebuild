@@ -2661,6 +2661,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-cpuinfo-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-opus-inline.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-sanitizers-build-config.patch"
+		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-linker-warn-missing-symbols.patch"
 	)
 
 	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
@@ -5483,18 +5484,6 @@ ewarn "To use LTO, use either Clang MoldLTO, Clang ThinLTO, GCC BFDLTO."
 	elif use mold && (( ${use_thinlto} == 0 && ${USE_LTO} == 0 )) ; then
 einfo "Using Mold without LTO"
 		myconf_gn+=" use_mold=true"
-	fi
-
-# Needed for skip over global variables in headers when using extern.
-	if [[ "${myconf_gn}" =~ "use_mold=true" ]] ; then
-einfo "Adding mold ldflags"
-		append-ldflags -ignore-missing-symbols
-	elif [[ "${myconf_gn}" =~ "use_lld=true" ]] ; then
-einfo "Adding lld ldflags"
-		append-ldflags -ignore-missing-symbols
-	elif [[ "${myconf_gn}" =~ "use_lld=false" ]] ; then
-einfo "Adding bfd ldflags"
-		append-ldflags -allow-shlib-undefined
 	fi
 
 	if use official ; then
