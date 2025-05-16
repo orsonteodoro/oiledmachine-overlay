@@ -8,7 +8,7 @@ MY_PN="${PN//-/_}"
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="pdm-backend"
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{11..13} )
 
 inherit distutils-r1 pypi
 
@@ -27,7 +27,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev lint test test-integration typing"
 RDEPEND+="
-	>=dev-python/langchain-core-0.3.45[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/langchain-core-0.3.51[${PYTHON_SINGLE_USEDEP}]
 "
 DEPEND+="
 	${RDEPEND}
@@ -71,10 +71,10 @@ BDEPEND+="
 	test-integration? (
 		$(python_gen_cond_dep '
 			>=dev-python/spacy-3.0.0[${PYTHON_SINGLE_USEDEP}]
-		' python3_{10,11,12})
+		' python3_{11,12})
 		$(python_gen_cond_dep '
 			>=dev-python/sentence-transformers-2.6.0[${PYTHON_SINGLE_USEDEP}]
-		' python3_{10,11,12})
+		' python3_{11,12})
 		>=dev-python/transformers-4.47.0[${PYTHON_SINGLE_USEDEP}]
 	)
 "
