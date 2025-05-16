@@ -7,7 +7,7 @@ EAPI=8
 # U22
 
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{11..12} )
 
 inherit distutils-r1
 
@@ -28,9 +28,6 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" test"
 # U 22.04
 RDEPEND+="
-	$(python_gen_cond_dep '
-		>=dev-python/tomli-1.2.1[${PYTHON_USEDEP}]
-	' python3_10)
 "
 DEPEND+="
 	${RDEPEND}
