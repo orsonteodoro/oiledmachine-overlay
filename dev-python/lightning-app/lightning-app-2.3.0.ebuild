@@ -16,7 +16,7 @@ DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
 export PACKAGE_NAME="app"
 PYPI_NO_NORMALIZE=1
-PYTHON_COMPAT=( "python3_"{10..11} )
+PYTHON_COMPAT=( "python3_11" )
 
 inherit distutils-r1
 
