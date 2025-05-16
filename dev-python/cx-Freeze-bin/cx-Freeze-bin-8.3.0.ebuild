@@ -117,9 +117,6 @@ RDEPEND+="
 	multiprocess? (
 		dev-python/multiprocess[${PYTHON_USEDEP}]
 	)
-	$(python_gen_cond_dep '
-		>=dev-python/tomli-2.0.1[${PYTHON_USEDEP}]
-	' python3_10)
 "
 DEPEND+="
 	${RDEPEND}
@@ -240,9 +237,6 @@ src_install() {
 		["arm64"]="aarch64"
 		["ppc64"]="ppc64le"
 	)
-	if use python_targets_python3_10 ; then
-ewarn "Python 3.10 fails ldd test for console-cpython-310-${arches}-linux-gnu.  Try >= 3.11 instead if runtime failure."
-	fi
 	distutils-r1_src_install
 }
 
