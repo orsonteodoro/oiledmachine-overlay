@@ -468,9 +468,6 @@ BDEPEND_LAYER_TESTS="
 		dev-python/requests[${PYTHON_USEDEP}]
 		dev-python/sympy[${PYTHON_USEDEP}]
 	')
-	$(python_gen_cond_dep '
-		sci-ml/tensorflow-addons[${PYTHON_SINGLE_USEDEP}]
-	' python3_10)
 	sci-ml/onnxruntime[${PYTHON_SINGLE_USEDEP},python]
 	sci-ml/pytorch[${PYTHON_SINGLE_USEDEP}]
 	sci-ml/torchvision[${PYTHON_SINGLE_USEDEP}]
