@@ -17,7 +17,7 @@ DISTUTILS_USE_PEP517="setuptools"
 PATENT_STATUS_IUSE=(
 	patent_status_nonfree
 )
-PYTHON_COMPAT=( "python3_13" ) # See .github/workflows/build.yml
+PYTHON_COMPAT=( "python3_"{11,12} ) # See pyproject.toml but disagrees in https://github.com/Xpra-org/xpra/blob/v6.3/.github/workflows/build.yml#L15
 
 inherit cflags-hardened cuda distutils-r1 flag-o-matic linux-info prefix
 inherit tmpfiles udev user-info xdg
