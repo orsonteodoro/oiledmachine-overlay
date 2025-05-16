@@ -7,11 +7,11 @@
 +
 +    # Allow to skip over disabled simd class functions or global variables
 +    if (use_mold) {
-+      ldflags += [ "--warn-unresolved-symbols" ]
++      ldflags += [ "-Wl,--warn-unresolved-symbols" ]
 +    } else if (use_lld) {
-+      ldflags += [ "--warn-unresolved-symbols" ]
++      ldflags += [ "-Wl,--warn-unresolved-symbols" ]
 +    } else {
-+      ldflags += [ "--warn-unresolved-symbols" ]
++      ldflags += [ "-Wl,--warn-unresolved-symbols" ]
 +    }
    }
  
