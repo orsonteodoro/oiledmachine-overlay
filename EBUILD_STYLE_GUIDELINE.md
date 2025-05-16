@@ -163,7 +163,9 @@
   - Scrolling:  No delay, no lag
   - Workstation:  48 hours minimum uptime for all nighter scenario
 * C/C++ packages that process user generated content from the Internet need to
-  be hardened to prevent Arbitrary Code Execution (ACE) based Zero Click Attack (ZCA).
+  be hardened to prevent Arbitrary Code Execution (ACE) based Zero Click Attack
+  (ZCA), in addition we should also mitigate against some Information
+  Disclosure (ID) based Zero Click Attacks.
 
   Use the cflags-hardened or the rustflags-hardened eclass to apply hardening
   consistently.
@@ -174,7 +176,8 @@
   executible does not break the security-critical package(s) or any of the
   packages in the @system set.
 
-  The classes of C/C++ packages that should be hardened against CE + ZCA are:
+  The classes of C/C++ packages that should be hardened against CE + ZCA or
+  ID + ZCA are:
 
   - Web video codecs
   - Web audio codecs
