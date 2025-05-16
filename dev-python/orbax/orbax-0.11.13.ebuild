@@ -8,7 +8,7 @@ EAPI=8
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="flit"
-PYTHON_COMPAT=( "python3_10" ) # Upstream only tests up to 3.9.  3.10 is an untested ebuild modificiation and may break.
+PYTHON_COMPAT=( "python3_"{11,12} )
 
 inherit distutils-r1
 
@@ -44,17 +44,18 @@ REQUIRED_USE="
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=sci-libs/tensorstore-0.1.20[${PYTHON_USEDEP}]
+		>=dev-python/simplejson-3.16.0[${PYTHON_USEDEP}]
+		>=sci-libs/tensorstore-0.1.71[${PYTHON_USEDEP}]
 		dev-python/absl-py[${PYTHON_USEDEP}]
-		dev-python/cached-property[${PYTHON_USEDEP}]
-		dev-python/importlib-resources[${PYTHON_USEDEP}]
+		dev-python/humanize[${PYTHON_USEDEP}]
 		dev-python/msgpack[${PYTHON_USEDEP}]
 		dev-python/nest-asyncio[${PYTHON_USEDEP}]
 		dev-python/numpy[${PYTHON_USEDEP}]
+		dev-python/protobuf[${PYTHON_USEDEP}]
 		dev-python/pyyaml[${PYTHON_USEDEP}]
 		dev-python/typing-extensions[${PYTHON_USEDEP}]
 	')
-	>=dev-python/jax-0.4.6[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/jax-0.5.0[${PYTHON_SINGLE_USEDEP}]
 	dev-python/etils[${PYTHON_SINGLE_USEDEP}]
 	dev-python/jaxlib[${PYTHON_SINGLE_USEDEP}]
 "
@@ -68,11 +69,15 @@ BDEPEND+="
 			<dev-python/flit-core-4[${PYTHON_USEDEP}]
 		)
 		test? (
+			dev-python/aiofiles[${PYTHON_USEDEP}]
+			dev-python/google-cloud-logging[${PYTHON_USEDEP}]
+			dev-python/mock[${PYTHON_USEDEP}]
 			dev-python/pytest[${PYTHON_USEDEP}]
 			dev-python/pytest-xdist[${PYTHON_USEDEP}]
 		)
 	')
 	test? (
+		dev-python/chex[${PYTHON_SINGLE_USEDEP}]
 		dev-python/flax[${PYTHON_SINGLE_USEDEP}]
 	)
 "
@@ -82,13 +87,6 @@ distutils_enable_sphinx "docs"
 distutils_enable_tests "pytest"
 
 pkg_setup() {
-	if use python_target_python3_10 ; then
-eerror
-eerror "python_target_python3_10 is a dummy placeholder"
-eerror "Please remove it.  Upstream only supports up to 3.9."
-eerror
-		die
-	fi
 	python_setup
 }
 
