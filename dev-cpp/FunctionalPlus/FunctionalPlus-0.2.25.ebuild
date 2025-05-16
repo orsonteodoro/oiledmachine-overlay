@@ -5,7 +5,7 @@ EAPI=8
 
 # U22.04
 
-PYTHON_COMPAT=( "python3_10" )
+PYTHON_COMPAT=( "python3_12" ) # Based on latest commit
 CLANG_SLOTS=( {18..11} )
 GCC_SLOTS=( {13..9} )
 
@@ -65,3 +65,7 @@ BDEPEND="
 DOCS=( "README.md" )
 
 # OILEDMACHINE-OVERLAY-META:  created-ebuild
+
+pkg_setup() {
+	python_setup
+}
