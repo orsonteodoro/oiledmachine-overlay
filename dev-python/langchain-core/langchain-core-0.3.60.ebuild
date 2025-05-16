@@ -16,7 +16,7 @@ MY_PN="${PN/-/_}"
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="pdm-backend"
-PYTHON_COMPAT=( "python3_"{10..13} )
+PYTHON_COMPAT=( "python3_"{11..13} )
 
 inherit distutils-r1 pypi
 
@@ -36,18 +36,13 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+=" dev lint test typing"
 RDEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/pydantic-2.5.2[${PYTHON_USEDEP}]
-	' python3_{10,11})
-	$(python_gen_cond_dep '
-		>=dev-python/pydantic-2.7.4[${PYTHON_USEDEP}]
-	' python3_{12,13})
-	$(python_gen_cond_dep '
 		(
 			!=dev-python/tenacity-8.4.0
 			>=dev-python/tenacity-8.1.0[${PYTHON_USEDEP}]
 		)
-		>=dev-python/langsmith-0.1.125[${PYTHON_USEDEP}]
+		>=dev-python/langsmith-0.1.126[${PYTHON_USEDEP}]
 		>=dev-python/jsonpatch-1.33[${PYTHON_USEDEP}]
+		>=dev-python/pydantic-2.7.4[${PYTHON_USEDEP}]
 		>=dev-python/pyyaml-5.3[${PYTHON_USEDEP}]
 		>=dev-python/packaging-23.2[${PYTHON_USEDEP}]
 		>=dev-python/typing-extensions-4.7[${PYTHON_USEDEP}]
@@ -64,7 +59,7 @@ BDEPEND+="
 			>=dev-python/setuptools-67.6.1[${PYTHON_USEDEP}]
 		)
 		lint? (
-			>=dev-util/ruff-0.9.2[${PYTHON_USEDEP}]
+			>=dev-util/ruff-0.11.2[${PYTHON_USEDEP}]
 		)
 		test? (
 			>=dev-python/blockbuster-1.5.18[${PYTHON_USEDEP}]
@@ -83,18 +78,19 @@ BDEPEND+="
 			>=dev-python/mypy-1.10[${PYTHON_USEDEP}]
 			>=dev-python/types-pyyaml-6.0.12.2[${PYTHON_USEDEP}]
 			>=dev-python/types-requests-2.28.11.5[${PYTHON_USEDEP}]
-			>=dev-python/types-jinja2-2.11.9[${PYTHON_USEDEP}]
 		)
 	')
 	test? (
 		$(python_gen_cond_dep '
-			>=dev-python/numpy-1.24.0[${PYTHON_USEDEP}]
-			<dev-python/numpy-2.0.0[${PYTHON_USEDEP}]
+			dev-python/pytest-benchmark[${PYTHON_USEDEP}]
+			dev-python/pytest-codspeed[${PYTHON_USEDEP}]
+		')
+		$(python_gen_cond_dep '
+			>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
 		' python3_{10,11})
 		$(python_gen_cond_dep '
-			>=dev-python/numpy-1.26.0[${PYTHON_USEDEP}]
-			<dev-python/numpy-3[${PYTHON_USEDEP}]
-		' python3_{12,13})
+			>=dev-python/numpy-2.1.0[${PYTHON_USEDEP}]
+		' python3_13)
 		dev-python/langchain-tests[${PYTHON_SINGLE_USEDEP}]
 	)
 	typing? (
