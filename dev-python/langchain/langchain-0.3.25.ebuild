@@ -45,9 +45,6 @@ RDEPEND+="
 			>=dev-python/codespell-2.2.0[${PYTHON_USEDEP}]
 		)
 	')
-	$(python_gen_cond_dep '
-		>=dev-python/async-timeout-4.0.0[${PYTHON_USEDEP}]
-	' python3_10)
 	>=dev-python/langchain-core-0.3.58[${PYTHON_SINGLE_USEDEP}]
 	>=dev-python/langchain-text-splitters-0.3.8[${PYTHON_SINGLE_USEDEP}]
 	anthropic? (
