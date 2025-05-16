@@ -12,7 +12,7 @@ EAPI=8
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="pdm-backend"
-PYTHON_COMPAT=( "python3_"{10..13} )
+PYTHON_COMPAT=( "python3_"{11,13} ) # No Python 3.12 in testing.
 
 inherit distutils-r1 pypi
 
@@ -29,7 +29,11 @@ LICENSE="
 "
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" dev codespell dev doc lint test test-integration typing"
+IUSE+="
+anthropic aws azure-ai codespell cohere community deepseek dev doc fireworks
+huggingface google-genai google-vertexai groq lint mistralai openai ollama
+perplexity test test-integration together typing xai
+"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/langsmith-0.1.17[${PYTHON_USEDEP}]
@@ -44,8 +48,59 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/async-timeout-4.0.0[${PYTHON_USEDEP}]
 	' python3_10)
-	>=dev-python/langchain-core-0.3.45[${PYTHON_SINGLE_USEDEP}]
-	>=dev-python/langchain-text-splitters-0.3.7[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/langchain-core-0.3.58[${PYTHON_SINGLE_USEDEP}]
+	>=dev-python/langchain-text-splitters-0.3.8[${PYTHON_SINGLE_USEDEP}]
+	anthropic? (
+		dev-python/langchain-anthropic[${PYTHON_SINGLE_USEDEP}]
+	)
+	aws? (
+		dev-python/langchain-aws[${PYTHON_SINGLE_USEDEP}]
+	)
+	azure-ai? (
+		dev-python/langchain-azure-ai[${PYTHON_SINGLE_USEDEP}]
+	)
+	cohere? (
+		dev-python/langchain-cohere[${PYTHON_SINGLE_USEDEP}]
+	)
+	community? (
+		dev-python/langchain-community[${PYTHON_SINGLE_USEDEP}]
+	)
+	deepseek? (
+		dev-python/langchain-deepseek[${PYTHON_SINGLE_USEDEP}]
+	)
+	fireworks? (
+		dev-python/langchain-fireworks[${PYTHON_SINGLE_USEDEP}]
+	)
+	google-genai? (
+		dev-python/langchain-google-genai[${PYTHON_SINGLE_USEDEP}]
+	)
+	google-vertexai? (
+		dev-python/langchain-google-vertexai[${PYTHON_SINGLE_USEDEP}]
+	)
+	groq? (
+		dev-python/langchain-groq[${PYTHON_SINGLE_USEDEP}]
+	)
+	huggingface? (
+		dev-python/langchain-huggingface[${PYTHON_SINGLE_USEDEP}]
+	)
+	mistralai? (
+		dev-python/langchain-mistralai[${PYTHON_SINGLE_USEDEP}]
+	)
+	ollama? (
+		dev-python/langchain-ollama[${PYTHON_SINGLE_USEDEP}]
+	)
+	openai? (
+		dev-python/langchain-openai[${PYTHON_SINGLE_USEDEP}]
+	)
+	perplexity? (
+		dev-python/langchain-perplexity[${PYTHON_SINGLE_USEDEP}]
+	)
+	together? (
+		dev-python/langchain-together[${PYTHON_SINGLE_USEDEP}]
+	)
+	xai? (
+		dev-python/langchain-xai[${PYTHON_SINGLE_USEDEP}]
+	)
 "
 DEPEND+="
 	${RDEPEND}
@@ -66,7 +121,6 @@ BDEPEND+="
 			>=dev-python/duckdb-engine-0.9.2[${PYTHON_USEDEP}]
 			>=dev-python/freezegun-1.2.2[${PYTHON_USEDEP}]
 			>=dev-python/lark-1.1.5[${PYTHON_USEDEP}]
-			>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
 			>=dev-python/packaging-24.2[${PYTHON_USEDEP}]
 			>=dev-python/pandas-2.0.0[${PYTHON_USEDEP}]
 			>=dev-python/pytest-8[${PYTHON_USEDEP}]
@@ -90,7 +144,7 @@ BDEPEND+="
 			>=dev-python/wrapt-1.15.0[${PYTHON_USEDEP}]
 		)
 		typing? (
-			>=dev-python/mypy-1.10[${PYTHON_USEDEP}]
+			>=dev-python/mypy-1.15[${PYTHON_USEDEP}]
 			>=dev-python/mypy-protobuf-3.0.0[${PYTHON_USEDEP}]
 			>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
 			>=dev-python/types-chardet-5.0.4.6[${PYTHON_USEDEP}]
@@ -106,6 +160,12 @@ BDEPEND+="
 		dev-python/langchain-text-splitters[${PYTHON_SINGLE_USEDEP}]
 	)
 	test? (
+		$(python_gen_cond_dep '
+			>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
+		' python3_{11,12})
+		$(python_gen_cond_dep '
+			>=dev-python/numpy-2.1.0[${PYTHON_USEDEP}]
+		' python3_13)
 		dev-python/langchain-core[${PYTHON_SINGLE_USEDEP}]
 		dev-python/langchain-openai[${PYTHON_SINGLE_USEDEP}]
 		dev-python/langchain-tests[${PYTHON_SINGLE_USEDEP}]
@@ -117,6 +177,12 @@ BDEPEND+="
 		dev-python/langchain-text-splitters[${PYTHON_SINGLE_USEDEP}]
 	)
 	typing? (
+		$(python_gen_cond_dep '
+			>=dev-python/numpy-1.26.4[${PYTHON_USEDEP}]
+		' python3_{11,12})
+		$(python_gen_cond_dep '
+			>=dev-python/numpy-2.1.0[${PYTHON_USEDEP}]
+		' python3_13)
 		dev-python/langchain-core[${PYTHON_SINGLE_USEDEP}]
 		dev-python/langchain-text-splitters[${PYTHON_SINGLE_USEDEP}]
 	)
