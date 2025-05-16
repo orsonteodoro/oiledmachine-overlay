@@ -28,12 +28,11 @@ EAPI=8
 # pytest-html
 # sacremoses
 # super-image
-# test-generator
 # tf-sentence-transformers
 # torchaudio
 
 # For driver version, see
-# https://github.com/openvinotoolkit/openvino/blob/2024.1.0/docs/dev/build_linux.md#software-requirements
+# https://github.com/openvinotoolkit/openvino/blob/2024.3.0/.github/workflows/job_gpu_tests.yml#L88
 
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx2"
@@ -42,7 +41,43 @@ CPU_FLAGS_X86=(
 )
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..11} ) # Based on https://github.com/openvinotoolkit/openvino/blob/2024.1.0/docs/dev/build_linux.md#software-requirements
+PYTHON_COMPAT=( "python3_"{10..12} ) # Based on https://github.com/openvinotoolkit/openvino/blob/2024.6.0/docs/dev/build_linux.md#software-requirements
+
+BENCHMARK_1_COMMIT="d572f4777349d43653b21d6c2fc63020ab326db2"
+BENCHMARK_2_COMMIT="5b7683f49e1e9223cf9927b24f6fd3d6bd82e3f8"
+CMOCK_COMMIT="379a9a8d5dd5cdff8fd345710dd70ae26f966c71"
+COMPUTELIBRARY_COMMIT="c61bd3387403b76d618915ccebf5e9585f52a071"
+DLPACK_COMMIT="ca4d00ad3e2e0f410eeab3264d21b8a39397f362"
+FLATBUFFERS_COMMIT="595bf0007ab1929570c7671f091313c8fc20644e"
+GFLAGS_1_COMMIT="e171aa2d15ed9eb17054558e0b3a6a413bb01067"
+GFLAGS_2_COMMIT="8411df715cf522606e3b1aca386ddfc0b63d34b4"
+GOOGLETEST_1_COMMIT="b796f7d44681514f58a683a3a71ff17c94edb0c1"
+GOOGLETEST_2_COMMIT="5ec7f0c4a113e2f18ac2c6cc7df51ad6afc24081"
+GOOGLETEST_3_COMMIT="99760ac1776430f3df65947992bf4e8ebc0d7660"
+ITTAPI_COMMIT="8e526a82cc805665ef4513399aaea8a5dccfd66f"
+LEVEL_ZERO_COMMIT="fd459f28041c176df23a0b7b791ff20a7689d237"
+LEVEL_ZERO_NPU_EXTENSIONS_COMMIT="a6487cc2c5da9aa13db9e005a320a1b6a0ee5919"
+LIBXSMM_COMMIT="13df674c4b73a1b84f6456de8595903ebfbb43e0"
+MLAS_COMMIT="d1bc25ec4660cddd87804fcf03b2411b5dfb2e94"
+NCC_COMMIT="63e59ed312ba7a946779596e86124c1633f67607"
+NLOHMANN_JSON_COMMIT="9cca280a4d0ccf0c08f47a99aa71d1b0e52f8d03"
+ONEDNN_1_COMMIT="c60a9946aa2386890e5c9f5587974facb7624227"
+ONEDNN_2_COMMIT="0f269193c7466313888d3338209d0d06a22cc6fa"
+ONNX_COMMIT="b8baa8446686496da4cc8fda09f2b6fe65c2a02c"
+OPEN_MODEL_ZOO_COMMIT="e7df86da686d2e1600282422e54f66c2fecea160"
+OPENCL_CLHPP_COMMIT="0bdbbfe5ecda42cff50c96cc5e33527f42fcbd45"
+OPENCL_HEADERS_COMMIT="8275634cf9ec31b6484c2e6be756237cb583999d"
+OPENCL_ICD_LOADER_COMMIT="861b68b290e76d08e7241608479c16431f529945"
+PROTOBUF_COMMIT="f0dc78d7e6e331b8c6bb2d5283e06aa26883ca7c"
+PUGIXML_COMMIT="2e357d19a3228c0a301727aac6bea6fecd982d21"
+PYBIND11_1_COMMIT="7c33cdc2d39c7b99a122579f53bc94c8eb3332ff"
+PYBIND11_2_COMMIT="3e9dfa2866941655c56877882565e7577de6fc7b"
+SHL_COMMIT="27992eaf41ef967ed228ea8d801b1aa489ea8997"
+SNAPPY_COMMIT="2c94e11145f0b7b184b831577c93e5a41c4c0346"
+TELEMETRY_COMMIT="8abddc3dbc8beb04a39b5ea40cbba5020317102f"
+XBYAK_COMMIT="2ce465bbca46e92dde9c44bbe7940fd7f70e3b97"
+YAML_CPP_COMMIT="da82fd982c260e7f335ce5acbceff24b270544d1"
+ZLIB_COMMIT="51b7f2abdade71cd9bb0e7a373ef2610ec6f9daf"
 
 inherit cmake dep-prepare distutils-r1
 
@@ -61,39 +96,6 @@ https://github.com/${org}/${project_name}/archive/${commit}.tar.gz -> ${org}-${p
 		"
 	fi
 }
-
-BENCHMARK_1_COMMIT="bf585a2789e30585b4e3ce6baf11ef2750b54677"
-BENCHMARK_2_COMMIT="5b7683f49e1e9223cf9927b24f6fd3d6bd82e3f8"
-BENCHMARK_3_COMMIT="2dd015dfef425c866d9a43f2c67d8b52d709acb6"
-CMOCK_COMMIT="379a9a8d5dd5cdff8fd345710dd70ae26f966c71"
-COMPUTELIBRARY_COMMIT="f2eda6665c12d568e179f5b0e7a24ccdc0ac824d"
-FLATBUFFERS_COMMIT="0100f6a5779831fa7a651e4b67ef389a8752bd9b"
-GFLAGS_1_COMMIT="e171aa2d15ed9eb17054558e0b3a6a413bb01067"
-GFLAGS_2_COMMIT="8411df715cf522606e3b1aca386ddfc0b63d34b4"
-GOOGLETEST_1_COMMIT="18f8200e3079b0e54fa00cb7ac55d4c39dcf6da6"
-GOOGLETEST_2_COMMIT="5ec7f0c4a113e2f18ac2c6cc7df51ad6afc24081"
-GOOGLETEST_3_COMMIT="70a225df5dd55bd5931664fadaa67765eb9f6016"
-ITTAPI_COMMIT="69dd04030d3a2cf4c32e649ac1f2a628d5af6b46"
-LEVEL_ZERO_COMMIT="4ed13f327d3389285592edcf7598ec3cb2bc712e"
-LEVEL_ZERO_NPU_EXTENSIONS_COMMIT="0e1c471356a724ef6d176ba027a68e210d90939e"
-MLAS_COMMIT="d1bc25ec4660cddd87804fcf03b2411b5dfb2e94"
-NCC_COMMIT="63e59ed312ba7a946779596e86124c1633f67607"
-NLOHMANN_JSON_COMMIT="9cca280a4d0ccf0c08f47a99aa71d1b0e52f8d03"
-ONEDNN_1_COMMIT="26633ae49edd4353a29b7170d9fcef6b2d79f4b3"
-ONEDNN_2_COMMIT="cb77937ffcf5e83b5d1cf2940c94e8b508d8f7b4"
-ONNX_COMMIT="b86cc54efce19530fb953e4b21f57e6b3888534c"
-OPEN_MODEL_ZOO_COMMIT="cf5141dad2a4f24e1c5d5b9d43219ed804c48bbf"
-OPENCL_CLHPP_COMMIT="83cc072d8240aad47ef4663d572a31ef27d0411a"
-OPENCL_HEADERS_COMMIT="2368105c0531069fe927989505de7d125ec58c55"
-OPENCL_ICD_LOADER_COMMIT="229410f86a8c8c9e0f86f195409e5481a2bae067"
-PROTOBUF_COMMIT="fe271ab76f2ad2b2b28c10443865d2af21e27e0e"
-PUGIXML_COMMIT="2e357d19a3228c0a301727aac6bea6fecd982d21"
-PYBIND11_1_COMMIT="2965fa8de3cf9e82c789f906a525a76197b186c1"
-PYBIND11_2_COMMIT="5b0a6fc2017fcc176545afe3e09c9f9885283242"
-SNAPPY_COMMIT="dc05e026488865bc69313a68bcc03ef2e4ea8e83"
-TELEMETRY_COMMIT="58e16c257a512ec7f451c9fccf9ff455065b285b"
-XBYAK_COMMIT="740dff2e866f3ae1a70dd42d6e8836847ed95cc2"
-ZLIB_COMMIT="09155eaa2f9270dc4ed1fa13e2b4b2613e6e4851"
 
 KEYWORDS="~amd64 ~arm ~arm64 ~riscv"
 S="${WORKDIR}/${P}"
@@ -116,6 +118,7 @@ $(_gen_gh_uri openvinotoolkit open_model_zoo ${OPEN_MODEL_ZOO_COMMIT})
 )
 $(_gen_gh_uri openvinotoolkit telemetry ${TELEMETRY_COMMIT})
 $(_gen_gh_uri ARM-software ComputeLibrary ${COMPUTELIBRARY_COMMIT})
+$(_gen_gh_uri libxsmm libxsmm ${LIBXSMM_COMMIT})
 $(_gen_gh_uri openvinotoolkit mlas ${MLAS_COMMIT})
 $(_gen_gh_uri openvinotoolkit oneDNN ${ONEDNN_1_COMMIT})
 $(_gen_gh_uri madler zlib ${ZLIB_COMMIT})
@@ -125,7 +128,6 @@ $(_gen_gh_uri madler zlib ${ZLIB_COMMIT})
 	$(_gen_gh_uri google googletest ${GOOGLETEST_2_COMMIT})
 )
 $(_gen_gh_uri onnx onnx ${ONNX_COMMIT})
-$(_gen_gh_uri google benchmark ${BENCHMARK_3_COMMIT})
 $(_gen_gh_uri pybind pybind11 ${PYBIND11_2_COMMIT})
 !system-opencl? (
 	$(_gen_gh_uri KhronosGroup OpenCL-Headers ${OPENCL_HEADERS_COMMIT})
@@ -133,6 +135,7 @@ $(_gen_gh_uri pybind pybind11 ${PYBIND11_2_COMMIT})
 	$(_gen_gh_uri KhronosGroup OpenCL-ICD-Loader ${OPENCL_ICD_LOADER_COMMIT})
 	$(_gen_gh_uri ThrowTheSwitch CMock ${CMOCK_COMMIT})
 )
+
 $(_gen_gh_uri nlohmann json ${NLOHMANN_JSON_COMMIT})
 $(_gen_gh_uri intel ittapi ${ITTAPI_COMMIT})
 $(_gen_gh_uri openvinotoolkit googletest ${GOOGLETEST_3_COMMIT})
@@ -146,6 +149,10 @@ $(_gen_gh_uri nithinn ncc ${NCC_COMMIT})
 $(_gen_gh_uri oneapi-src oneDNN ${ONEDNN_2_COMMIT})
 $(_gen_gh_uri oneapi-src level-zero ${LEVEL_ZERO_COMMIT})
 $(_gen_gh_uri intel level-zero-npu-extensions ${LEVEL_ZERO_NPU_EXTENSIONS_COMMIT})
+
+$(_gen_gh_uri openvinotoolkit shl ${SHL_COMMIT})
+$(_gen_gh_uri dmlc dlpack ${DLPACK_COMMIT})
+$(_gen_gh_uri jbeder yaml-cpp ${YAML_CPP_COMMIT})
 openmp? (
 	amd64? (
 		https://storage.openvinotoolkit.org/dependencies/thirdparty/linux/iomp.tgz -> iomp-x86-64-7832b16.tgz
@@ -162,7 +169,7 @@ tbb? (
 			https://storage.openvinotoolkit.org/dependencies/thirdparty/linux/oneapi-tbb-2021.2.4-lin.tgz
 		)
 		arm64? (
-			https://storage.openvinotoolkit.org/dependencies/thirdparty/linux/oneapi-tbb-2021.2.1-lin-arm64-20231012.tgz
+			https://storage.openvinotoolkit.org/dependencies/thirdparty/linux/oneapi-tbb-2021.13.0-rc1-lin-arm64-trim.tgz
 		)
 	)
 )
@@ -207,7 +214,7 @@ RDEPEND_CONSTRAINTS="
 
 		(
 			>=dev-python/pytest-5.0[${PYTHON_USEDEP}]
-			<dev-python/pytest-8.1[${PYTHON_USEDEP}]
+			<dev-python/pytest-8.3[${PYTHON_USEDEP}]
 		)
 		>=dev-python/pytest-dependency-0.6.0[${PYTHON_USEDEP}]
 		>=dev-python/pytest-html-4.1.1[${PYTHON_USEDEP}]
@@ -219,8 +226,12 @@ RDEPEND_CONSTRAINTS="
 		>=dev-python/sympy-1.10[${PYTHON_USEDEP}]
 		>=dev-python/wheel-0.38.1[${PYTHON_USEDEP}]
 
+		(
+			>=dev-python/h5py-3.1.0[${PYTHON_USEDEP}]
+			<dev-python/h5py-3.12.0[${PYTHON_USEDEP}]
+		)
 		>=dev-python/docopt-0.6.2[${PYTHON_USEDEP}]
-		>=dev-python/paddlepaddle-2.5.2[${PYTHON_USEDEP}]
+		>=dev-python/paddlepaddle-2.6.0[${PYTHON_USEDEP}]
 		>=dev-python/six-1.16.0[${PYTHON_USEDEP}]
 		(
 			dev-python/protobuf:0/3.21[${PYTHON_USEDEP}]
@@ -257,12 +268,12 @@ RDEPEND+="
 		${RDEPEND_PYTHON_BINDINGS}
 	)
 	system-flatbuffers? (
-		>=dev-libs/flatbuffers-23.5.26
+		>=dev-libs/flatbuffers-24.3.25
 	)
 	system-opencl? (
-		>=dev-cpp/clhpp-2023.02.06
-		>=dev-libs/opencl-icd-loader-2023.02.06
-		>=dev-util/opencl-headers-2023.02.06
+		>=dev-cpp/clhpp-2024.05.08
+		>=dev-libs/opencl-icd-loader-2024.05.08
+		>=dev-util/opencl-headers-2024.05.08
 	)
 	system-protobuf? (
 		>=dev-libs/protobuf-3.20.3:0/3.21
@@ -272,10 +283,10 @@ RDEPEND+="
 		>=dev-libs/pugixml-1.14
 	)
 	system-snappy? (
-		>=app-arch/snappy-1.1.10
+		>=app-arch/snappy-1.2.1
 	)
 	video_cards_intel? (
-		>=dev-libs/intel-compute-runtime-21.38.21026
+		>=dev-libs/intel-compute-runtime-24.05.28454.6
 	)
 "
 DEPEND+="
@@ -285,6 +296,10 @@ DEPEND+="
 BDEPEND_TEST_CONSTRAINTS="
 	$(python_gen_cond_dep '
 		(
+			>=dev-python/h5py-3.1.0[${PYTHON_USEDEP}]
+			<dev-python/h5py-3.12.0[${PYTHON_USEDEP}]
+		)
+		(
 			>=dev-python/numpy-1.16.6[${PYTHON_USEDEP}]
 			<dev-python/numpy-1.27[${PYTHON_USEDEP}]
 		)
@@ -292,12 +307,12 @@ BDEPEND_TEST_CONSTRAINTS="
 			>=dev-python/pytest-5.0[${PYTHON_USEDEP}]
 			<dev-python/pytest-7.5[${PYTHON_USEDEP}]
 		)
+		<dev-python/networkx-3.1.1[${PYTHON_USEDEP}]
 		>=dev-python/defusedxml-0.7.1[${PYTHON_USEDEP}]
 		>=dev-python/distro-1.9.0[${PYTHON_USEDEP}]
 		>=dev-python/fastjsonschema-2.17.1[${PYTHON_USEDEP}]
-		>=dev-python/h5py-3.1.0[${PYTHON_USEDEP}]
 		>=dev-python/jinja2-2.11.2[${PYTHON_USEDEP}]
-		>=dev-python/paddlepaddle-2.5.0[${PYTHON_USEDEP}]
+		>=dev-python/paddlepaddle-2.6.0[${PYTHON_USEDEP}]
 		>=dev-python/pandas-1.3.5[${PYTHON_USEDEP}]
 		>=dev-python/protobuf-3.18.1:0/3.21[${PYTHON_USEDEP}]
 		dev-python/protobuf:=
@@ -310,9 +325,12 @@ BDEPEND_TEST_CONSTRAINTS="
 		>=dev-python/requests-2.25.1[${PYTHON_USEDEP}]
 		>=dev-python/scipy-1.11.1[${PYTHON_USEDEP}]
 		>=dev-python/sympy-1.10[${PYTHON_USEDEP}]
-		>=dev-python/test-generator-0.1.2[${PYTHON_USEDEP}]
 		>=dev-python/wheel-0.38.1[${PYTHON_USEDEP}]
 	')
+	(
+		>=dev-python/keras-2.0.0[${PYTHON_SINGLE_USEDEP}]
+		<dev-python/keras-3.0.0[${PYTHON_SINGLE_USEDEP}]
+	)
 	(
 		>=sci-ml/pytorch-1.13[${PYTHON_SINGLE_USEDEP}]
 		<sci-ml/pytorch-2.3[${PYTHON_SINGLE_USEDEP}]
@@ -530,7 +548,7 @@ BDEPEND+="
 	>=sys-devel/gcc-7.5
 	doc? (
 		$(python_gen_cond_dep '
-			>=dev-python/alabaster-0.7.12[${PYTHON_USEDEP}]
+			>=dev-python/alabaster-0.7.14[${PYTHON_USEDEP}]
 			>=dev-python/atomicwrites-1.4.0[${PYTHON_USEDEP}]
 			>=dev-python/attrs-22.1.0[${PYTHON_USEDEP}]
 			>=dev-python/babel-2.11.0[${PYTHON_USEDEP}]
@@ -539,21 +557,21 @@ BDEPEND+="
 			>=dev-python/certifi-2023.7.22[${PYTHON_USEDEP}]
 			>=dev-python/colorama-0.4.6[${PYTHON_USEDEP}]
 			>=dev-python/cython-0.29.33[${PYTHON_USEDEP}]
-			>=dev-python/docutils-0.16[${PYTHON_USEDEP}]
+			>=dev-python/docutils-0.20[${PYTHON_USEDEP}]
 			>=dev-python/idna-3.4[${PYTHON_USEDEP}]
-			>=dev-python/imagesize-1.2.0[${PYTHON_USEDEP}]
-			>=dev-python/importlib-metadata-4.4.0[${PYTHON_USEDEP}]
+			>=dev-python/imagesize-1.3.0[${PYTHON_USEDEP}]
+			>=dev-python/importlib-metadata-4.8.0[${PYTHON_USEDEP}]
 			>=dev-python/iniconfig-1.1.1[${PYTHON_USEDEP}]
 			>=dev-python/ipython-8.10.0[${PYTHON_USEDEP}]
 			>=dev-python/jinja2-3.1.3[${PYTHON_USEDEP}]
 			>=dev-python/lxml-4.9.2[${PYTHON_USEDEP}]
 			>=dev-python/markupsafe-2.1.1[${PYTHON_USEDEP}]
 			>=dev-python/mistune-2.0.3[${PYTHON_USEDEP}]
-			>=dev-python/myst-parser-0.18.1[${PYTHON_USEDEP}]
+			>=dev-python/myst-parser-2.0.0[${PYTHON_USEDEP}]
 			>=dev-python/packaging-23.0[${PYTHON_USEDEP}]
 			>=dev-python/pluggy-0.13.1[${PYTHON_USEDEP}]
 			>=dev-python/py-1.9.0[${PYTHON_USEDEP}]
-			>=dev-python/pydata-sphinx-theme-0.7.2[${PYTHON_USEDEP}]
+			>=dev-python/pydata-sphinx-theme-0.14.4[${PYTHON_USEDEP}]
 			>=dev-python/pygments-2.15.1[${PYTHON_USEDEP}]
 			>=dev-python/pyparsing-3.0.9[${PYTHON_USEDEP}]
 			>=dev-python/pytest-6.2.5[${PYTHON_USEDEP}]
@@ -561,22 +579,21 @@ BDEPEND+="
 			>=dev-python/pytest-metadata-1.11.0[${PYTHON_USEDEP}]
 			>=dev-python/pytz-2022.7[${PYTHON_USEDEP}]
 			>=dev-python/pyyaml-6.0.1[${PYTHON_USEDEP}]
-			>=dev-python/requests-2.31.0[${PYTHON_USEDEP}]
+			>=dev-python/requests-2.32.0[${PYTHON_USEDEP}]
 			>=dev-python/six-1.15.0[${PYTHON_USEDEP}]
 			>=dev-python/snowballstemmer-2.1.0[${PYTHON_USEDEP}]
 			>=dev-python/soupsieve-2.2.1[${PYTHON_USEDEP}]
-			>=dev-python/sphinx-4.5.0[${PYTHON_USEDEP}]
-			>=dev-python/sphinx-copybutton-0.5.1[${PYTHON_USEDEP}]
-			>=dev-python/sphinx-design-0.3.0[${PYTHON_USEDEP}]
-			>=dev-python/sphinx-inline-tabs-2021.8.17_beta10[${PYTHON_USEDEP}]
-			>=dev-python/sphinx-panels-0.6.0[${PYTHON_USEDEP}]
-			>=dev-python/sphinx-sitemap-2.2.0[${PYTHON_USEDEP}]
+			>=dev-python/sphinx-7.3.7[${PYTHON_USEDEP}]
+			>=dev-python/sphinx-copybutton-0.5.2[${PYTHON_USEDEP}]
+			>=dev-python/sphinx-design-0.5.0[${PYTHON_USEDEP}]
+			>=dev-python/sphinx-inline-tabs-2023.4.21[${PYTHON_USEDEP}]
+			>=dev-python/sphinx-sitemap-2.6.0[${PYTHON_USEDEP}]
 			>=dev-python/sphinxcontrib-applehelp-1.0.2[${PYTHON_USEDEP}]
 			>=dev-python/sphinxcontrib-devhelp-1.0.2[${PYTHON_USEDEP}]
 			>=dev-python/sphinxcontrib-htmlhelp-2.0.0[${PYTHON_USEDEP}]
 			>=dev-python/sphinxcontrib-jsmath-1.0.1[${PYTHON_USEDEP}]
 			>=dev-python/sphinxcontrib-qthelp-1.0.3[${PYTHON_USEDEP}]
-			>=dev-python/sphinxcontrib-serializinghtml-1.1.5[${PYTHON_USEDEP}]
+			>=dev-python/sphinxcontrib-serializinghtml-1.1.9[${PYTHON_USEDEP}]
 			>=dev-python/toml-0.10.2[${PYTHON_USEDEP}]
 			>=dev-python/urllib3-1.26.18[${PYTHON_USEDEP}]
 			>=dev-python/zipp-3.4.1[${PYTHON_USEDEP}]
@@ -601,7 +618,7 @@ DOCS=( "README.md" )
 _PATCHES=(
 	"${FILESDIR}/${PN}-2024.1.0-offline-install.patch"
 	"${FILESDIR}/${PN}-2024.1.0-dont-delete-archives.patch"
-	"${FILESDIR}/${PN}-2024.1.0-set-python-tag.patch"
+	"${FILESDIR}/${PN}-2024.6.0-set-python-tag.patch"
 )
 
 #distutils_enable_sphinx "docs"
@@ -636,8 +653,11 @@ src_unpack() {
 	fi
 	dep_prepare_cp "${WORKDIR}/telemetry-${TELEMETRY_COMMIT}" "${S}/thirdparty/telemetry"
 	dep_prepare_cp "${WORKDIR}/ComputeLibrary-${COMPUTELIBRARY_COMMIT}" "${S}/src/plugins/intel_cpu/thirdparty/ComputeLibrary"
+	dep_prepare_cp "${WORKDIR}/libxsmm-${LIBXSMM_COMMIT}" "${S}/src/plugins/intel_cpu/thirdparty/libxsmm"
 	dep_prepare_cp "${WORKDIR}/mlas-${MLAS_COMMIT}" "${S}/src/plugins/intel_cpu/thirdparty/mlas"
 	dep_prepare_cp "${WORKDIR}/oneDNN-${ONEDNN_1_COMMIT}" "${S}/src/plugins/intel_cpu/thirdparty/onednn"
+	dep_prepare_cp "${WORKDIR}/shl-${SHL_COMMIT}" "${S}/src/plugins/intel_cpu/thirdparty/shl"
+	dep_prepare_cp "${WORKDIR}/dlpack-${DLPACK_COMMIT}" "${S}/src/plugins/intel_cpu/thirdparty/shl/module/dlpack"
 	dep_prepare_cp "${WORKDIR}/zlib-${ZLIB_COMMIT}" "${S}/thirdparty/zlib/zlib"
 	if ! use system-protobuf ; then
 		dep_prepare_cp "${WORKDIR}/protobuf-${PROTOBUF_COMMIT}" "${S}/thirdparty/protobuf/protobuf"
@@ -645,7 +665,6 @@ src_unpack() {
 		dep_prepare_cp "${WORKDIR}/googletest-${GOOGLETEST_2_COMMIT}" "${S}/thirdparty/protobuf/protobuf/third_party/googletest"
 	fi
 	dep_prepare_cp "${WORKDIR}/onnx-${ONNX_COMMIT}" "${S}/thirdparty/onnx/onnx"
-	dep_prepare_cp "${WORKDIR}/benchmark-${BENCHMARK_3_COMMIT}" "${S}/thirdparty/onnx/onnx/third_party/benchmark"
 	dep_prepare_cp "${WORKDIR}/pybind11-${PYBIND11_2_COMMIT}" "${S}/thirdparty/onnx/onnx/third_party/pybind11"
 	if ! use system-opencl ; then
 		dep_prepare_cp "${WORKDIR}/OpenCL-Headers-${OPENCL_HEADERS_COMMIT}" "${S}/thirdparty/ocl/cl_headers"
@@ -668,6 +687,7 @@ src_unpack() {
 	dep_prepare_cp "${WORKDIR}/oneDNN-${ONEDNN_2_COMMIT}" "${S}/src/plugins/intel_gpu/thirdparty/onednn_gpu"
 	dep_prepare_cp "${WORKDIR}/level-zero-${LEVEL_ZERO_COMMIT}" "${S}/src/plugins/intel_npu/thirdparty/level-zero"
 	dep_prepare_cp "${WORKDIR}/level-zero-npu-extensions-${LEVEL_ZERO_NPU_EXTENSIONS_COMMIT}" "${S}/src/plugins/intel_npu/thirdparty/level-zero-ext"
+	dep_prepare_cp "${WORKDIR}/yaml-cpp-${YAML_CPP_COMMIT}" "${S}/src/plugins/intel_npu/thirdparty/yaml-cpp"
 
 	if use tbb ; then
 		if use kernel_linux && [[ "${ABI}" == "amd64" ]] ; then
@@ -701,7 +721,7 @@ src_configure() {
 	local mycmakeargs
 	local _mycmakeargs=(
 		-DBUILD_SHARED_LIBS=ON
-#		-DCI_BUILD_NUMBER="2024.1.0-000--"
+#		-DCI_BUILD_NUMBER="2024.3.0-000--"
 		-DCMAKE_COMPILE_WARNING_AS_ERROR=OFF
 		-DCMAKE_VERBOSE_MAKEFILE=ON
 		-DCPACK_GENERATOR=TGZ
@@ -960,7 +980,7 @@ pkg_postinst() {
 elog
 elog "You have enabled telemetry.  To opt-out and to see the data retention policy, see"
 elog
-elog "https://github.com/openvinotoolkit/openvino/blob/2024.1.0/docs/articles_en/about-openvino/additional-resources/telemetry.rst"
+elog "https://github.com/openvinotoolkit/openvino/blob/2024.3.0/docs/articles_en/about-openvino/additional-resources/telemetry.rst"
 elog
 	fi
 }
