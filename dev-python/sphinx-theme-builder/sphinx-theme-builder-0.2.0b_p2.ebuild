@@ -51,9 +51,6 @@ RDEPEND+="
 	dev-python/packaging[${PYTHON_USEDEP}]
 	dev-python/rich[${PYTHON_USEDEP}]
 	dev-python/nodeenv[${PYTHON_USEDEP}]
-	$(python_gen_cond_dep '
-		dev-python/tomli[${PYTHON_USEDEP}]
-	' python3_10)
 "
 DEPEND+="
 	${RDEPEND}
