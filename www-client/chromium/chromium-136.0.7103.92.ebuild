@@ -5485,6 +5485,18 @@ einfo "Using Mold without LTO"
 		myconf_gn+=" use_mold=true"
 	fi
 
+# Needed for skip over global variables in headers when using extern.
+	if [[ "${myconf_gn}" =~ "use_mold=true" ]] ; then
+einfo "Adding mold ldflags"
+		append-ldflags -ignore-missing-symbols
+	elif [[ "${myconf_gn}" =~ "use_lld=true" ]] ; then
+einfo "Adding lld ldflags"
+		append-ldflags -ignore-missing-symbols
+	elif [[ "${myconf_gn}" =~ "use_lld=false" ]] ; then
+einfo "Adding bfd ldflags"
+		append-ldflags -allow-shlib-undefined
+	fi
+
 	if use official ; then
 	# Allow building against system libraries in official builds
 		sed -i \
