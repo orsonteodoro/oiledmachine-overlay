@@ -14,7 +14,7 @@ fi
 MY_P="${PN}-${MY_PV}"
 
 DISTUTILS_USE_PEP517="flit"
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_11" ) # Upstream lists only 3.10 ; Still needs test
 
 inherit distutils-r1 pypi
 
