@@ -89,6 +89,26 @@ IUSE+="
 dev doc multiprocess pandas test
 ebuild_revision_4
 "
+REQUIRED_USE="
+	elibc_glibc? (
+		ppc64? (
+			!python_targets_python3_13
+		)
+	)
+	elibc_musl? (
+		amd64? (
+			!python_targets_python3_13
+		)
+		arm64? (
+			!python_targets_python3_13
+		)
+		ppc64? (
+			!python_targets_python3_11
+			!python_targets_python3_12
+			!python_targets_python3_13
+		)
+	)
+"
 RDEPEND+="
 	>=dev-python/filelock-3.12.3[${PYTHON_USEDEP}]
 	>=dev-python/packaging-24[${PYTHON_USEDEP}]
