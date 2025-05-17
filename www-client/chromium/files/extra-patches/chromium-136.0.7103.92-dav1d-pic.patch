@@ -1,6 +1,6 @@
 --- a/third_party/dav1d/BUILD.gn.orig	2025-05-17 09:10:03.938739692 -0700
 +++ b/third_party/dav1d/BUILD.gn	2025-05-17 09:22:49.181618286 -0700
-@@ -179,6 +179,22 @@ if (enable_nasm) {
+@@ -179,6 +179,20 @@ if (enable_nasm) {
        rebase_path("$platform_config_root/config.asm", root_build_dir),
      ]
  
@@ -8,14 +8,12 @@
 +      nasm_flags += [
 +        "-f", "elf64",
 +        "-DPIC",
-+        "-DARCH_X86",
 +        "-DARCH_X86_64",
 +      ]
 +    } else if (current_cpu == "x86") {
 +      nasm_flags += [
 +        "-f", "elf32",
 +        "-DPIC",
-+        "-DARCH_X86",
 +        "-DARCH_X86_32",
 +      ]
 +    }
@@ -23,3 +21,41 @@
      defines = []
      if (needs_stack_alignment) {
        defines += [ "STACK_ALIGNMENT=$stack_alignment" ]
+--- a/third_party/dav1d/libdav1d/src/x86/ipred16_sse.asm.orig	2025-05-05 12:21:24.000000000 -0700
++++ b/third_party/dav1d/libdav1d/src/x86/ipred16_sse.asm	2025-05-17 11:09:55.524608311 -0700
+@@ -652,7 +652,11 @@ DECLARE_REG_TMP 4
+ %endif
+ 
+ cglobal ipred_smooth_v_16bpc, 4, 6, 6, dst, stride, tl, w, h, weights
++%if ARCH_X86_64 && PIC
++    lea            weightsq, [rel smooth_weights_1d_16bpc]
++%else
+     LEA            weightsq, smooth_weights_1d_16bpc
++%endif
+     mov                  hd, hm
+     lea            weightsq, [weightsq+hq*4]
+     neg                  hq
+@@ -720,7 +724,11 @@ cglobal ipred_smooth_v_16bpc, 4, 6, 6, d
+     RET
+ 
+ cglobal ipred_smooth_h_16bpc, 3, 6, 6, dst, stride, tl, w, h, weights
++%if ARCH_X86_64 && PIC
++    lea            weightsq, [rel smooth_weights_1d_16bpc]
++%else
+     LEA            weightsq, smooth_weights_1d_16bpc
++%endif
+     mov                  wd, wm
+     movifnidn            hd, hm
+     movd                 m5, [tlq+wq*2] ; right
+@@ -797,7 +805,11 @@ DECLARE_REG_TMP 3
+ 
+ cglobal ipred_smooth_16bpc, 3, 7, 8, dst, stride, tl, w, h, \
+                                      h_weights, v_weights, top
++%if ARCH_X86_64 && PIC
++    lea          h_weightsq, [rel smooth_weights_2d_16bpc]
++%else
+     LEA          h_weightsq, smooth_weights_2d_16bpc
++%endif
+     mov                  wd, wm
+     mov                  hd, hm
+     movd                 m7, [tlq+wq*2] ; right
