@@ -7,10 +7,64 @@
 +    if (current_cpu == "x64") {
 +      nasm_flags += [
 +        "-f", "elf64",
-+        "-DPIC"
++        "-DPIC",
 +      ]
 +    }
 +
      defines = []
      if (needs_stack_alignment) {
        defines += [ "STACK_ALIGNMENT=$stack_alignment" ]
+--- a/third_party/dav1d/libdav1d/src/x86/ipred16_sse.asm.orig	2025-05-05 12:21:24.000000000 -0700
++++ b/third_party/dav1d/libdav1d/src/x86/ipred16_sse.asm	2025-05-16 20:55:46.016431971 -0700
+@@ -652,7 +652,11 @@ DECLARE_REG_TMP 4
+ %endif
+ 
+ cglobal ipred_smooth_v_16bpc, 4, 6, 6, dst, stride, tl, w, h, weights
++%ifdef PIC
++    LEA            weightsq, [rel smooth_weights_1d_16bpc wrt ..got]
++%else
+     LEA            weightsq, smooth_weights_1d_16bpc
++%endif
+     mov                  hd, hm
+     lea            weightsq, [weightsq+hq*4]
+     neg                  hq
+@@ -720,7 +724,11 @@ cglobal ipred_smooth_v_16bpc, 4, 6, 6, d
+     RET
+ 
+ cglobal ipred_smooth_h_16bpc, 3, 6, 6, dst, stride, tl, w, h, weights
++%ifdef PIC
++    LEA            weightsq, [rel smooth_weights_1d_16bpc wrt ..got]
++%else
+     LEA            weightsq, smooth_weights_1d_16bpc
++%endif
+     mov                  wd, wm
+     movifnidn            hd, hm
+     movd                 m5, [tlq+wq*2] ; right
+--- a/third_party/dav1d/libdav1d/src/x86/ipred16_avx2.asm.orig	2025-05-05 12:21:24.000000000 -0700
++++ b/third_party/dav1d/libdav1d/src/x86/ipred16_avx2.asm	2025-05-16 20:55:47.424470596 -0700
+@@ -653,7 +653,11 @@ cglobal ipred_smooth_v_16bpc, 3, 7, 6, d
+     tzcnt                wd, wm
+     mov                  hd, hm
+     movsxd               wq, [r6+wq*4]
++%ifdef PIC
++    lea            weightsq, [rel smooth_weights_1d_16bpc wrt ..got]
++%else
+     lea            weightsq, [base+smooth_weights_1d_16bpc+hq*4]
++%endif
+     neg                  hq
+     vpbroadcastw         m5, [tlq+hq*2] ; bottom
+     add                  wq, r6
+--- a/third_party/dav1d/libdav1d/src/x86/ipred16_avx512.asm.orig	2025-05-05 12:21:24.000000000 -0700
++++ b/third_party/dav1d/libdav1d/src/x86/ipred16_avx512.asm	2025-05-16 20:55:44.534461519 -0700
+@@ -253,7 +253,11 @@ cglobal ipred_smooth_v_16bpc, 3, 7, 7, d
+     tzcnt                wd, wm
+     mov                  hd, hm
+     movsxd               wq, [base+ipred_smooth_v_16bpc_avx512icl_table+wq*4]
++%ifdef PIC
++    lea            weightsq, [rel smooth_weights_1d_16bpc wrt ..got]
++%else
+     lea            weightsq, [base+smooth_weights_1d_16bpc+hq*4]
++%endif
+     neg                  hq
+     vpbroadcastw         m6, [tlq+hq*2] ; bottom
+     lea                  wq, [base+ipred_smooth_v_16bpc_avx512icl_table+wq]
