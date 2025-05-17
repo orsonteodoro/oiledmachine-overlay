@@ -1,0 +1,16 @@
+--- a/third_party/dav1d/BUILD.gn.orig	2025-05-16 17:19:42.068031466 -0700
++++ b/third_party/dav1d/BUILD.gn	2025-05-16 18:51:51.877760020 -0700
+@@ -179,6 +179,13 @@ if (enable_nasm) {
+       rebase_path("$platform_config_root/config.asm", root_build_dir),
+     ]
+ 
++    if (current_cpu == "x64") {
++      nasm_flags += [
++        "-f", "elf64",
++        "-DPIC"
++      ]
++    }
++
+     defines = []
+     if (needs_stack_alignment) {
+       defines += [ "STACK_ALIGNMENT=$stack_alignment" ]
