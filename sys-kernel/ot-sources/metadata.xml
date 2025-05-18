@@ -768,7 +768,7 @@ TBM=0
     Mitigated attack vectors    | CE, PE, DoS, DT, ID ; [14]  | DoS [14]              | CE, PE, DoS, DT, ID     | CE, PE, DoS, DT, ID ; [14] | CE, PE, DoS, DT, ID ; [14] | CE, PE, DoS, DT, ID ; [14] | CE, PE ; [14]
     Posture                     | Balanced                    | Performance-critical  | Security-critical [34]  | Security-critical [34]     | Security-critical [34]     | Security-critical [34]     | Balanced
     Security grade              | C                           | F                     | A                       | B-                         | B                          | B                          | C
-    Performance grade           | B                           | A                     | B or C-F [39]                | C                          | C                          | B                          | B
+    Performance grade           | B                           | A                     | B or C-F [39]           | C                          | C                          | B                          | B
     Uptime grade [38]           | A                           | D                     | C                       | C                          | C                          | C                          | A
     Release schedule grade [37] | C- [36]                     | C- [36]               | C- [36]                 | D [35]                     | D [35]                     | A                          | A
 
