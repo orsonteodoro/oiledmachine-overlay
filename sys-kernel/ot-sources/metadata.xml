@@ -873,7 +873,7 @@ TBM=0
          DT = Data Tampering
          ID = Information Disclosure
     [43] For example it is missing heap overflow and double-free protection
-         that KFENCE provide.  These two vulnerabilities can lead to
+         that KFENCE provides.  These two vulnerabilities can lead to
          ZC, CE, PE, DoS, DT, ID.
 
     Commentary:
