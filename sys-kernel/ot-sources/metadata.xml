@@ -767,8 +767,8 @@ TBM=0
     TBM                         | Y                           | Y                     | N [36]                  | Y                          | Y                          | Y                          | Y
     Mitigated attack vectors    | CE, PE, DoS, DT, ID ; [14]  | DoS [14]              | CE, PE, DoS, DT, ID     | CE, PE, DoS, DT, ID ; [14] | CE, PE, DoS, DT, ID ; [14] | CE, PE, DoS, DT, ID ; [14] | CE, PE ; [14]
     Posture                     | Balanced                    | Performance-critical  | Security-critical [34]  | Security-critical [34]     | Security-critical [34]     | Security-critical [34]     | Balanced
-    Security grade              | C                           | F                     | A                       | B-                         | B                          | B                          | C
-    Performance grade           | B                           | A                     | B or C-F [39]           | C                          | C                          | B                          | B
+    Security grade [40]         | C                           | F                     | A                       | B-                         | B                          | B                          | C
+    Performance grade [41]      | B                           | A                     | B or C-F [39]           | C                          | C                          | B                          | B
     Uptime grade [38]           | A                           | D                     | C                       | C                          | C                          | C                          | A
     Release schedule grade [37] | C- [36]                     | C- [36]               | C- [36]                 | D [35]                     | D [35]                     | A                          | A
 
@@ -804,8 +804,8 @@ TBM=0
     TBM                         |                             |                       | Y                          | Y                          |                            |                            |
     Mitigated attack vectors    |                             |                       | CE, PE, DoS, DT, ID ; [14] | CE, PE, DoS ; [14]         |                            |                            |
     Posture                     |                             |                       | Security-critical [34d]    | Balanced                   |                            |                            |
-    Security grade              |                             |                       | C                          | C                          |                            |                            |
-    Performance grade           |                             |                       | B                          | B                          |                            |                            |
+    Security grade [40]         |                             |                       | C                          | C                          |                            |                            |
+    Performance grade [41]      |                             |                       | B                          | B                          |                            |                            |
     Uptime grade [38]           |                             |                       | C                          | B                          |                            |                            |
     Release schedule grade [37] |                             |                       | ?                          | D                          |                            |                            |
 
@@ -863,6 +863,8 @@ TBM=0
     [36] If the computer is not maintained properly, it could cause an availability problem (e.g crash) or overheating during an online exam with no retakes allowed.  With hardening enabled to the max, the chances increase more.
     [38] Deviation from the default hardening settings may decrease uptime.  Less hardening can lead to DoS or more hardening can lead to overheating.  The default settings get more testing and more bugfixes.
     [39] If using KASAN HW_TAGS, the performance is B grade with 1.20x slower than normal build.  If using generic KASAN, the performance is C-F.  The performance impact in the generic KASAN case is 2-4x slower than normal build.
+    [40] Based on sanitizers, compiler hardening flags, disabling 32-bit, ASLR, disabling swap, etc
+    [41] Based on HZ, scheduler
 
     Commentary:
 
@@ -3288,7 +3290,8 @@ unset OT_KERNEL_PRIVATE_KEY
 
     If you go the clang route, it should all be in the same slot.
 
-    For SSP or HOP with Rust drivers require:
+    For SSP (Stack Smashing Protection) or HOP (Heap Overflow Protection) with
+    Rust drivers require:
 
     =dev-lang/rust-9999 or =dev-lang/rust-bin-9999
 
