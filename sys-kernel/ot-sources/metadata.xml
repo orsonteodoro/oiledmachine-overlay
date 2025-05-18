@@ -739,7 +739,7 @@ TBM=0
     IA32 support [8]              | M [7]                       | M [7]                 | N                       | M [6]                      | N                          | Y                          | M [6]
     SSP (basic)                   | Y                           | N                     | Y                       | Y                          | Y                          | Y                          | Y
     SSP (strong)                  | Y                           | N                     | Y                       | Y                          | Y                          | Y                          | Y
-    BO (_FORTIFY_SOURCE=2) [15]   | N [19][33]                  | N                     | Y                       | Y                          | Y                          | Y                          | N
+    BO (_FORTIFY_SOURCE=2) [44]   | N [19][33]                  | N                     | Y                       | Y                          | Y                          | Y                          | N
     ASLR (basic)                  | Y                           | N                     | Y                       | Y                          | Y                          | Y                          | Y
     ASLR (strong) [2]             | Y                           | N                     | Y                       | Y                          | Y                          | Y                          | Y
     KPTI                          | Y                           | N                     | Y                       | Y                          | Y                          | Y                          | Y
@@ -768,7 +768,7 @@ TBM=0
     Mitigated attack vectors [42] | CE, PE, DoS, DT, ID ; [14]  | DoS [14]              | CE, PE, DoS, DT, ID     | CE, PE, DoS, DT, ID ; [14] | CE, PE, DoS, DT, ID ; [14] | CE, PE, DoS, DT, ID ; [14] | CE, PE ; [14]
     Posture                       | Balanced                    | Performance-critical  | Security-critical [34]  | Security-critical [34]     | Security-critical [34]     | Security-critical [34]     | Balanced
     Security grade [40]           | C                           | F                     | A                       | B-                         | B                          | B                          | C
-    Performance grade [41]        | B                           | A                     | B or C-F [39]           | C                          | C                          | B                          | B
+    Performance grade [41]        | B                           | A                     | B or C-F [39][45]       | C                          | C                          | B                          | B
     Uptime grade [38]             | A                           | D                     | C                       | C                          | C                          | C                          | A
     Release schedule grade [37]   | C- [35a]                    | C- [35a]              | C- [35a]                | D [35b]                    | D [35b]                    | A                          | A
 
@@ -776,7 +776,7 @@ TBM=0
     IA32 support [8]              |                             |                       | Y                          | Y                          |                            |                            |
     SSP (basic)                   |                             |                       | Y                          | N                          |                            |                            |
     SSP (strong)                  |                             |                       | Y                          | Y                          |                            |                            |
-    BO (_FORTIFY_SOURCE=2) [15]   |                             |                       | Y                          | Y                          |                            |                            |
+    BO (_FORTIFY_SOURCE=2) [44]   |                             |                       | Y                          | Y                          |                            |                            |
     ASLR (basic)                  |                             |                       | Y                          | Y                          |                            |                            |
     ASLR (strong) [2]             |                             |                       | Y                          | Y                          |                            |                            |
     KPTI                          |                             |                       | Y                          | Y                          |                            |                            |
@@ -874,6 +874,8 @@ TBM=0
     [43] For example it is missing heap overflow and double-free protection
          that KFENCE provides.  These two vulnerabilities can lead to
          ZC, CE, PE, DoS, DT, ID.
+    [44] Buffer overflow protection, some stack overflow and some heap overflow protection
+    [45] It is possible to replace KASAN with KFENCE, but if you do that you may get attacked between the periodic check or loose a class of vulnerabilies mitigated.
 
     Commentary:
 
