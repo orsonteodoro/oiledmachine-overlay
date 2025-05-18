@@ -878,6 +878,16 @@ TBM=0
     profile.
 
     The builder profile is designed for installing and building ebuilds.
+    Variations of the builder profile is often tested compared to gaming
+    and secure.  With pre-KFENCE changes, uptime was 60 days.  The builder
+    profile is similar to the default vanilla kernel but only changes
+    to IO scheduler and TCP congestion control and slight adjustment to HZ
+    to improve compilation throughput.  The reason why it is similar is
+    that it was in the past trying to fix the stability and uptime problem.
+    The result is a crashless experience in the 60 days and less fiddling
+    with the tunables which translates to better satisfying experience.
+    The builder profile can be considered a general purpose production
+    ready primary profile if you cannot decide what settings to choose.
 
     The secure profile is designed for paying bills, private information.
 
