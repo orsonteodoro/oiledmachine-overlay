@@ -6348,7 +6348,9 @@ eerror
 		fi
 
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.19" ; then
+			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_RANDSTRUCT"
 			ot-kernel_y_configopt "CONFIG_RANDSTRUCT_NONE"
+			ot-kernel_unset_configopt "CONFIG_RANDSTRUCT"
 			ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_FULL"
 			ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_PERFORMANCE"
 		fi
@@ -6615,7 +6617,9 @@ eerror
 		fi
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.19" ; then
 			# CONFIG_COMPILE_TEST is not default ON.
+			ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_RANDSTRUCT"
 			ot-kernel_y_configopt "CONFIG_RANDSTRUCT_NONE"
+			ot-kernel_unset_configopt "CONFIG_RANDSTRUCT"
 			ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_FULL"
 			ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_PERFORMANCE"
 		fi
@@ -6960,14 +6964,23 @@ ewarn "ROP mitigations are available on arm, arm64, riscv, x86_64 arches."
 		if ver_test "${KV_MAJOR_MINOR}" -ge "5.19" ; then
 			ot-kernel_y_configopt "CONFIG_COMPILE_TEST"
 			if tc-is-gcc && grep -q -E -e "^CONFIG_GCC_PLUGINS=y" "${path_config}" ; then
+				ot-kernel_y_configopt "CONFIG_GCC_PLUGIN_RANDSTRUCT"
 				ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_NONE"
+				ot-kernel_y_configopt "CONFIG_RANDSTRUCT"
 				ot-kernel_y_configopt "CONFIG_RANDSTRUCT_FULL"
 				ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_PERFORMANCE"
 			elif tc-is-clang && ver_test $(clang-major-version) -ge "16" ; then
 				ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_NONE"
+				ot-kernel_y_configopt "CONFIG_RANDSTRUCT"
 				ot-kernel_y_configopt "CONFIG_RANDSTRUCT_FULL"
 				ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_PERFORMANCE"
 			else
+				if tc-is-gcc ; then
+					ot-kernel_y_configopt "CONFIG_GCC_PLUGIN_RANDSTRUCT"
+				else
+					ot-kernel_unset_configopt "CONFIG_GCC_PLUGIN_RANDSTRUCT"
+				fi
+				ot-kernel_y_configopt "CONFIG_RANDSTRUCT"
 				ot-kernel_y_configopt "CONFIG_RANDSTRUCT_NONE"
 				ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_FULL"
 				ot-kernel_unset_configopt "CONFIG_RANDSTRUCT_PERFORMANCE"
@@ -9868,6 +9881,78 @@ ot-kernel_set_kconfig_set_keypress_hz() {
 	fi
 }
 
+# @FUNCTION: _ot-kernel_fcmp
+# @DESCRIPTION:
+# Floating point compare.  Bash does not support floating point comparison
+_ot-kernel_fcmp() {
+        local a="${1}"
+        local opt="${2}"
+        local b="${3}"
+        python -c "exit(0) if ${a} ${opt} ${b} else exit(1)"
+        return $?
+}
+
+# @FUNCTION: ot-kernel_set_kconfig_set_user_capacity_hz
+# @DESCRIPTION:
+# Translates the HZ to user capacity
+# Max capacity lowest
+ot-kernel_set_kconfig_set_user_capacity_hz() {
+	local capacity="${1}" # percent
+	if [[ "${arch}" == "alpha" ]] ; then
+		if _cflags-hardened_fcmp "${capacity}" ">=" "100" ; then
+			ot-kernel_set_kconfig_set_timer_hz "32"
+		elif _cflags-hardened_fcmp "${capacity}" ">=" "95" ; then
+			ot-kernel_set_kconfig_set_timer_hz "64"
+		elif _cflags-hardened_fcmp "${capacity}" ">=" "90" ; then
+			ot-kernel_set_kconfig_set_timer_hz "128"
+		elif _cflags-hardened_fcmp "${capacity}" ">=" "85" ; then
+			ot-kernel_set_kconfig_set_timer_hz "256"
+		elif _cflags-hardened_fcmp "${capacity}" ">=" "75" ; then
+			ot-kernel_set_kconfig_set_timer_hz "1024"
+		elif _cflags-hardened_fcmp "${capacity}" ">=" "70" ; then
+			ot-kernel_set_kconfig_set_timer_hz "1200"
+		fi
+	elif [[ "${arch}" == "arm" ]] ; then
+		if _cflags-hardened_fcmp "${capacity}" ">=" "100" ; then
+			ot-kernel_set_kconfig_set_timer_hz "100"
+		elif _cflags-hardened_fcmp "${capacity}" ">=" "95" ; then
+			ot-kernel_set_kconfig_set_timer_hz "200"
+		elif _cflags-hardened_fcmp "${capacity}" ">=" "90" ; then
+			ot-kernel_set_kconfig_set_timer_hz "250"
+		elif _cflags-hardened_fcmp "${capacity}" ">=" "85" ; then
+			ot-kernel_set_kconfig_set_timer_hz "300"
+		elif _cflags-hardened_fcmp "${capacity}" ">=" "80" ; then
+			ot-kernel_set_kconfig_set_timer_hz "1000"
+		fi
+	elif [[ "${arch}" == "mips" ]] ; then
+		if _cflags-hardened_fcmp "${capacity}" ">=" "100" ; then
+			ot-kernel_set_kconfig_set_timer_hz "24"
+		elif _cflags-hardened_fcmp "${capacity}" ">=" "96.7" ; then
+			ot-kernel_set_kconfig_set_timer_hz "48"
+		elif _cflags-hardened_fcmp "${capacity}" ">=" "90" ; then
+			ot-kernel_set_kconfig_set_timer_hz "100"
+		elif _cflags-hardened_fcmp "${capacity}" ">=" "86.7" ; then
+			ot-kernel_set_kconfig_set_timer_hz "128"
+		elif _cflags-hardened_fcmp "${capacity}" ">=" "80" ; then
+			ot-kernel_set_kconfig_set_timer_hz "250"
+		elif _cflags-hardened_fcmp "${capacity}" ">=" "70" ; then
+			ot-kernel_set_kconfig_set_timer_hz "1000"
+		elif _cflags-hardened_fcmp "${capacity}" ">=" "66.7" ; then
+			ot-kernel_set_kconfig_set_timer_hz "1024"
+		fi
+	else
+		if _cflags-hardened_fcmp "${capacity}" ">=" "100" ; then
+			ot-kernel_set_kconfig_set_timer_hz "100"
+		elif _cflags-hardened_fcmp "${capacity}" ">=" "95" ; then
+			ot-kernel_set_kconfig_set_timer_hz "250"
+		elif _cflags-hardened_fcmp "${capacity}" ">=" "90" ; then
+			ot-kernel_set_kconfig_set_timer_hz "300"
+		elif _cflags-hardened_fcmp "${capacity}" ">=" "85" ; then
+			ot-kernel_set_kconfig_set_timer_hz "1000"
+		fi
+	fi
+}
+
 # @FUNCTION: ot-kernel_set_kconfig_clear_hz
 # @DESCRIPTION:
 # Clears the current hz setting
@@ -10184,8 +10269,7 @@ einfo "Added support for x32"
 			|| ( "${OT_KERNEL_ABIS,,}" == "auto" && -e "/usr/lib32" ) \
 			|| ( "${OT_KERNEL_ABIS,,}" == "auto" && -d "/usr/lib" && "${lib_bitness}" == "32" ) \
 		]] ; then
-einfo "Added support for x86"
-			ot-kernel_y_configopt "CONFIG_IA32_EMULATION"
+			_ot-kernel_set_ia32_support
 		fi
 	fi
 	if [[ "${arch}" == "x86" ]] ; then
@@ -10921,13 +11005,18 @@ ewarn "The dss work profile is experimental and in development."
 		|| "${work_profile}" == "media-server" \
 	]] ; then
 		if [[ "${work_profile}" == "dss" ]] ; then
-			ot-kernel_set_kconfig_set_keypress_hz
+	# Assumes the lowest servicing capacity
+			ot-kernel_set_kconfig_set_user_capacity_hz "1" # Percent capacity
 	# We will manually set -O2 and max hardening.
 		elif [[ \
-			   "${work_profile}" == "http-server-busy" \
-			|| "${work_profile}" == "http-server-relaxed" \
+			"${work_profile}" == "http-server-busy" \
 		]] ; then
-			ot-kernel_set_kconfig_set_keypress_hz
+			ot-kernel_set_kconfig_set_user_capacity_hz "100" # Percent capacity
+			_OT_KERNEL_FORCE_STABILITY=1
+		elif [[ \
+			"${work_profile}" == "http-server-relaxed" \
+		]] ; then
+			ot-kernel_set_kconfig_set_user_capacity_hz "50" # Percent capacity
 			_OT_KERNEL_FORCE_STABILITY=1
 		elif [[ "${work_profile}" == "media-server" ]] ; then
 			ot-kernel_set_kconfig_set_video_timer_hz

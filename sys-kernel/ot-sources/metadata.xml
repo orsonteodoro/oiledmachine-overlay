@@ -603,6 +603,7 @@ OT_KERNEL_FIRMWARE="polaris10 regulatory"
 OT_KERNEL_HARDENING_LEVEL="practical"
 OT_KERNEL_INIT="auto"
 OT_KERNEL_INSTALL_SOURCE_CODE="1"
+OT_KERNEL_KCONFIG[CONFIG_FORTIFY_SOURCE]=y
 OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER="graysky2"
 OT_KERNEL_LSMS="auto"
 OT_KERNEL_MESSAGE="I :heart: builder kernel"
@@ -612,11 +613,14 @@ OT_KERNEL_MENUCONFIG_COLORS="blackbg"
 OT_KERNEL_MENUCONFIG_RUN_AT="pre"
 OT_KERNEL_MENUCONFIG_UI="disabled"
 OT_KERNEL_SIGN_MODULES="1"
+OT_KERNEL_SECURITY_CRITICAL=1
+OT_KERNEL_SECURITY_CRITICAL_TYPES="kfence ubsan cfi kcfi"
 OT_KERNEL_SLAB_ALLOCATOR="slub"
+OT_KERNEL_SWAP="1"
 OT_KERNEL_TARGET_TRIPLE="x86_64-pc-linux-gnu"
-OT_KERNEL_TCP_CONGESTION_CONTROLS="cubic lp bbr hybla pcc vegas westwood"
+OT_KERNEL_TCP_CONGESTION_CONTROLS="htcp ppc vegas"
 OT_KERNEL_USE="disable_debug genpatches -lto -pgo -zen-sauce"
-OT_KERNEL_VERBOSITY=1
+OT_KERNEL_VERBOSITY="1"
 OT_KERNEL_WORK_PROFILE="builder-interactive"
 OT_KERNEL_ZSWAP_ALLOCATOR="zsmalloc"
 OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
@@ -646,6 +650,7 @@ OT_KERNEL_INIT="auto"
 OT_KERNEL_INSTALL_SOURCE_CODE="1"
 OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER="graysky2"
 OT_KERNEL_LSMS="bpf"
+OT_KERNEL_MAX_UPTIME="0"
 OT_KERNEL_MESSAGE="I :heart: tourney kernel"
 OT_KERNEL_MODULES_SUPPORT="1"
 OT_KERNEL_MODULES_COMPRESSOR="zstd"
@@ -654,10 +659,11 @@ OT_KERNEL_MENUCONFIG_RUN_AT="pre"
 OT_KERNEL_MENUCONFIG_UI="disabled"
 OT_KERNEL_PGO_FLAVOR="GCC_PDO"
 OT_KERNEL_SIGN_MODULES="1"
+OT_KERNEL_SECURITY_CRITICAL=0
 OT_KERNEL_SLAB_ALLOCATOR="slab"
 OT_KERNEL_SWAP="0"
 OT_KERNEL_TARGET_TRIPLE="x86_64-pc-linux-gnu"
-OT_KERNEL_TCP_CONGESTION_CONTROLS="vegas bbr cubic hybla pcc westwood"
+OT_KERNEL_TCP_CONGESTION_CONTROLS="vegas bbr htcp pcc"
 OT_KERNEL_VERBOSITY=1
 OT_KERNEL_USE="disable_debug genpatches zen-sauce"
 OT_KERNEL_WORK_PROFILE="gaming-tournament"
@@ -683,16 +689,21 @@ OT_KERNEL_FIRMWARE="polaris10 regulatory"
 OT_KERNEL_HARDENING_LEVEL="secure-af"
 OT_KERNEL_INIT="auto"
 OT_KERNEL_INSTALL_SOURCE_CODE="1"
+OT_KERNEL_IOSCHED="kyber kyber"
 OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER="graysky2"
 OT_KERNEL_LSMS="auto"
+OT_KERNEL_MAX_UPTIME="0"
 OT_KERNEL_MESSAGE="This shit is secure af"
 OT_KERNEL_MODULES_SUPPORT="0"
+OT_KERNEL_SECURITY_CRITICAL=1
+OT_KERNEL_SECURITY_CRITICAL_TYPES="asan ubsan cfi kcfi scs"
 OT_KERNEL_SLAB_ALLOCATOR="slab"
+OT_KERNEL_SWAP="0"
 OT_KERNEL_TARGET_TRIPLE="aarch64-unknown-linux-gnu"
-OT_KERNEL_TCP_CONGESTION_CONTROLS="bbr vegas"
-OT_KERNEL_VERBOSITY=1
+OT_KERNEL_TCP_CONGESTION_CONTROLS="cubic"
+OT_KERNEL_VERBOSITY="1"
 OT_KERNEL_USE="disable_debug genpatches zen-sauce cpu_flags_arm_bti"
-OT_KERNEL_WORK_PROFILE="http-server-busy"
+OT_KERNEL_WORK_PROFILE="dss"
 
 
     Commentary about the above settings:
@@ -718,6 +729,118 @@ OT_KERNEL_WORK_PROFILE="http-server-busy"
     To generate the kernel config, you may set OT_KERNEL_MENUCONFIG_UI to
     menuconfig then emerge, then change it back to disabled then emerge.
     The menuconfig can be used to enable drivers.
+
+
+    Comparison for examples:
+
+                                | ot-sources (builder)        | ot-sources (gaming)   | ot-sources (secure)     | gentoo-sources             | gentoo-kernel              | zen-kernel                 | vanilla kernel defaults
+    IA32 support [8]            | M [7]                       | M [7]                 | N                       | M [6]                      | N                          | Y                          | M [6]
+    SSP (basic)                 | Y                           | N                     | Y                       | Y                          | Y                          | Y                          | Y
+    SSP (strong)                | Y                           | N                     | Y                       | Y                          | Y                          | Y                          | Y
+    BO (_FORTIFY_SOURCE=2) [15] | N [19][33]                  | N                     | Y                       | Y                          | Y                          | Y                          | N
+    ASLR (basic)                | Y                           | N                     | Y                       | Y                          | Y                          | Y                          | Y
+    ASLR (strong) [2]           | Y                           | N                     | Y                       | Y                          | Y                          | Y                          | Y
+    KPTI                        | Y                           | N                     | Y                       | Y                          | Y                          | Y                          | Y
+    KASLR                       | N                           | N                     | Y                       | Y [4]                      | Y [4]                      | N                          | N
+    KFENCE                      | Y                           | N                     | N                       | Y [5]                      | Y [5]                      | Y                          | N
+    UBSAN                       | Y                           | N                     | Y                       | Y                          | Y                          | N                          | N
+    KCFI >= 6.1 [9][11]         | Y                           | N                     | Y                       | N                          | N                          | N                          | N
+    SCS >= 5.8 [9][10]          | N                           | N                     | Y                       | N                          | N                          | N                          | N
+    CET (FE/BE) >= 5.18         | M/M [23]                    | N/N                   | M/M [23]                | M/M [22]                   | Y/Y                        | Y/Y                        | Y/N
+    Sandboxing support [3]      | Y                           | Y                     | Y                       | Y                          | Y                          | Y                          | Y
+    Retpoline [13]              | Y                           | N                     | Y                       | N                          | N                          | Y                          | N
+    YAMA [12]                   | M [1]                       | N                     | M [1]                   | M [25]                     | M                          | Y                          | N
+    Free page policy            | None                        | None                  | Zero                    | Poison                     | Poison                     | Poison                     | None
+    RANDSTRUCT                  | N                           | N                     | M [16]                  | M [16]                     | Y                          | N                          | N
+    Swap                        | Y [29]                      | N [18]                | N [17]                  | Y [29]                     | Y [29]                     | Y [29]                     | Y [29]
+    LSMS                        | [21a]                       | [21b]                 | [21c]                   | [21d]                      | [21e]                      | [21f]                      | [21g]
+    CPU scheduler               | cfs-throughput              | cfs-autogroup         | cfs-autogroup [20]      | cfs-throughput             | cfs-throughput             | cfs-autogroup              | cfs-throughput
+    HZ                          | 250                         | 1000                  | 100                     | 100                        | 300                        | 1000                       | 100
+    IO schedulers               | [27a]                       | [27a]                 | [27c]                   | mq-deadline/none [30]      | mq-deadline/none [30]      | BFQ/Kyber [30]             | mq-deadline/none [30]
+    TCP congestion control      | [26a]                       | [26b]                 | [26c]                   | Cubic                      | Cubic                      | Cubic                      | Cubic
+    Panic on oops               | N [15]                      | N                     | N [15]                  | Y                          | Y                          | N [23]                     | N
+    -march                      | generic [32]                | native [32]           | generic [32]            | generic [32]               | generic                    | generic                    | generic [32]
+    -O level                    | 2                           | 3                     | 2                       | 2                          | 2                          | 3                          | 2
+    Mitigated attack vectors    | CE, PE, DoS, DT, ID ; [14]  | None                  | CE, PE, DoS, DT, ID     | CE, PE, DoS, DT, ID ; [14] | CE, PE, DoS, DT, ID ; [14] | CE, PE, DoS, DT, ID ; [14] | CE, PE ; [14]
+    Posture                     | Balanced                    | Performance-critical  | Security-critical [34]  | Security-critical [34]     | Security-critical [34]     | Security-critical [34]     | Balanced
+    Security grade              | C                           | F                     | A                       | B-                         | B                          | B                          | C
+    Performance grade           | B                           | A                     | C                       | C                          | C                          | B                          | B
+    Uptime grade                | A                           | D                     | C                       | C                          | C                          | C                          | A
+    Release schedule grade [37] | C- [36]                     | C- [36]               | C- [36]                 | D [35]                     | D [35]                     | A                          | A
+
+    [1] Maybe, if a chromium based app is installed
+    [2] Increased entropy with RANDOMIZE_MEMORY
+    [3] With SECCOMP, SECCOMP_FILTER
+    [4] ARCH=arm64 only
+    [5] Non ARCH=arm64
+    [6] No by default, but maybe if enabled using custom kernel config file.
+    [7] Yes if multilib files discovered or 32-bit required packages found.
+    [8] 32-bit is insecure by 2025 standards.
+    [9] Requires clang
+    [10] Only on arm64, riscv
+    [11] Only on amd64, arm, arm64, riscv, x86
+    [12] To protect tokens or private keys against information disclosure
+    [13] Only on non CET processors
+    [14] Some but not all
+    [15] Custom patches for sanitizers to panic on violation, so higher availability
+    [16] Yes, if GCC used.
+    [17] Necessary to prevent plaintext memory dump of keys or sensitive data by swap
+    [18] Necessary to prevent lag in permadeath gameplay.
+    [19] Subject to change.
+    [20] Can mitigate DoS (Denial of Service)
+    [21a] auto detected based on installed userland packages
+    [21b] bfp
+    [21c] auto detected based on installed userland packages
+    [21d] integrity,selinux,bpf
+    [21e] landlock,yama,bpf
+    [21f] landlock,lockdown,yama,integrity,bpf
+    [21g] integrity,selinux,bpf
+    [22] Maybe/Maybe depends on the compiler and assembler used
+    [23] Maybe/Maybe depends on the compiler and assembler and USE flags and hardening level
+    [24] KFENCE not hardcoded off in kernel or can fail due to configuration vulnerability
+    [25] Not loaded in CONFIG_LSM.  Possibly a configuration vulnerability.  If lsm="yama" is in the kernel command line, then the config is not vulnerable to information disclosure.
+    [26a] htcp pcc vegas
+    [26b] vegas bbr htcp pcc
+    [26c] cubic
+    [27a] SSD: none, HDD: bfq-low-latency
+    [28b] SSD: kyber, HDD: kyber; Chosen based on CI ASan testing, low attack surface, DoS resistant
+    [29] Information Disclosure is possible when sensitive data is dumped to disk as plaintext.  Encrypted swap or full disk encryption is recommended.
+    [30] Single-queue/Multi-queue
+    [31] Can be rebuild with native or specific microarch
+    [32] Customizable by kernel config
+    [33] Default off but can be overridable with OT_KERNEL_KCONFIG[CONFIG_FORTIFY_SOURCE]=y
+    [34] Based on hardening flags plus sanitizer
+    [35] KEYWORDS delayed rollout is a persistent threat for critical vulnerabilities or zero click attacks that rely on stable.  Relying on stable could be a type of configuration vulnerability.
+    [36] May miss releases or may have uncheck patch failures that block update due to lack of staffing
+    [37] It assumes that critical vulnerabilies be remediated within a week.
+
+    Commentary:
+
+    The gaming profile assumes ideal conditions in secure environment (i.e.
+    behind firewall, gaming app only, no clicking on phishing emails, no hacker
+    probes or attacks adjacent or over the network, no browsing over the
+    internet).  It is time limited during the duration of gameplay.
+
+    The musican profile would be similar to the gaming profile but without swap.
+    It would use the digital-audio-workstation work profile instead.
+
+    Browsing over the Internet is done over the builder profile or the secure
+    profile.
+
+    The builder profile is designed for installing and building ebuilds.
+
+    The secure profile is designed for paying bills, private information.
+
+    The gentoo-sources profile does not mitigate with KCFI against JOP/ROP,
+    which can lead to code execution attacks.  It is missing KCFI and SCS.
+    However, a custom profile enabling KCFI or SCS can mitigate against
+    JOP/ROP attacks.
+
+    The gentoo-sources profile does not mitigate against information
+    disclosure with Retpoline which can lead to information disclosure in
+    pre CET microarches.
+
+    The profiles on ot-kernel will be improved over time.
 
 
 

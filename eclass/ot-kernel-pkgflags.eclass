@@ -2082,7 +2082,7 @@ ot-kernel-pkgflags_conky() { # DONE
 # Applies kernel config flags for the conty package
 ot-kernel-pkgflags_conty() { # DONE
 	if ot-kernel_has_version_pkgflags "games-emulation/conty" ; then
-	        ot-kernel_y_configopt "CONFIG_IA32_EMULATION"
+		_ot-kernel_set_ia32_support
 		_ot-kernel_set_net_ns
 	fi
 }
@@ -2373,7 +2373,7 @@ ot-kernel-pkgflags_criu() { # DONE
 		_ot-kernel-pkgflags_tun
 		ot-kernel_y_configopt "CONFIG_NETFILTER_XT_MARK"
 		if [[ "${arch}" == "x86_64" ]] ; then
-			ot-kernel_y_configopt "CONFIG_IA32_EMULATION"
+			_ot-kernel_set_ia32_support
 		fi
 	fi
 }
@@ -10937,7 +10937,8 @@ ot-kernel-pkgflags_wine() { # DONE
 		ot-kernel_y_configopt "CONFIG_COMPAT_32BIT_TIME"
 		ot-kernel_y_configopt "CONFIG_BINFMT_MISC"		# For .NET
 		if [[ "${arch}" =~ ("x86_64"|"x86") ]] ; then
-			ot-kernel_y_configopt "CONFIG_IA32_EMULATION"	# For Legacy 32-bit
+			# For Legacy 32-bit
+			_ot-kernel_set_ia32_support
 		fi
 		ot-kernel_y_configopt "CONFIG_INOTIFY_USER"
 		ot-kernel_y_configopt "CONFIG_SYSVIPC"
@@ -14036,6 +14037,31 @@ _ot-kernel_set_so_attach_filter() { # DONE
 	# The userland program must have SO_ATTACH_FILTER.
 	ot-kernel_y_configopt "CONFIG_NET"
 	warn_lowered_security "${pkg}" "BPF, Spectre Variant 2, Spectre Variant 4" "ID"
+}
+
+# @FUNCTION: _ot-kernel_set_ia32_support
+# @DESCRIPTION:
+# Enable 32-bit implicitly.
+# Disables 32-bit for security-critical profiles.
+_ot-kernel_set_ia32_support() {
+	if [[ \
+		   "${hardening_level}" == "manual" \
+		|| "${hardening_level}" == "custom" \
+	]] ; then
+		:
+	elif [[ \
+		   "${hardening_level}" == "secure-af" \
+		|| "${hardening_level}" == "secure-as-fuck" \
+		|| "${hardening_level}" == "hard-af" \
+		|| "${hardening_level}" == "hard-as-fuck" \
+		|| "${hardening_level}" == "epic-boss" \
+	]] ; then
+	        ot-kernel_unset_configopt "CONFIG_IA32_EMULATION"
+	elif [[ "${work_profile}" == "dss" ]] ; then
+	        ot-kernel_unset_configopt "CONFIG_IA32_EMULATION"
+	else
+	        ot-kernel_y_configopt "CONFIG_IA32_EMULATION"
+	fi
 }
 
 # CONFIG_ADVISE_SYSCALLS search keywords:  madvise, fadvise
