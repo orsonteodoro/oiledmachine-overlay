@@ -793,7 +793,7 @@ TBM=0
     RANDSTRUCT                    |                             |                       | N                          | N                          |                            |                            |
     Swap                          |                             |                       | Y                          | Y [29]                     |                            |                            |
     LSMS                          |                             |                       | [21i]                      | [21j]                      |                            |                            |
-    CPU scheduler                 |                             |                       | Y                          | cfs-autogroup              |                            |                            |
+    CPU scheduler                 |                             |                       | cfs-autogroup              | cfs-autogroup              |                            |                            |
     HZ                            |                             |                       | 1000                       | 1000                       |                            |                            |
     IO schedulers                 |                             |                       | mq-deadline/none [30][34]  | mq-deadline/none [30][34]  |                            |                            |
     TCP congestion control        |                             |                       | Cubic                      | BBRv1                      |                            |                            |
