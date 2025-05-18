@@ -746,7 +746,7 @@ OT_KERNEL_WORK_PROFILE="dss"
     UBSAN                       | Y                           | N                     | Y                       | Y                          | Y                          | N                          | N
     KCFI >= 6.1 [9][11]         | Y                           | N                     | Y                       | N                          | N                          | N                          | N
     SCS >= 5.8 [9][10]          | N                           | N                     | Y                       | N                          | N                          | N                          | N
-    CET (FE/BE) >= 5.18         | M/M [23]                    | N/N                   | M/M [23]                | M/M [22]                   | Y/Y                        | Y/Y                        | Y/N
+    CET (branch/return) >= 5.18 | M/M [23]                    | N/N                   | M/M [23]                | M/M [22]                   | Y/Y                        | Y/Y                        | Y/N
     Sandboxing support [3]      | Y                           | Y                     | Y                       | Y                          | Y                          | Y                          | Y
     Retpoline [13]              | Y                           | N                     | Y                       | N                          | N                          | Y                          | N
     YAMA [12]                   | M [1]                       | N                     | M [1]                   | M [25]                     | M                          | Y                          | N
