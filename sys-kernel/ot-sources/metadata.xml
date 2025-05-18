@@ -864,7 +864,7 @@ TBM=0
     [38] Deviation from the default hardening settings may decrease uptime.  Less hardening can lead to DoS or more hardening can lead to overheating.  The default settings get more testing and more bugfixes.
     [39] If using KASAN HW_TAGS, the performance is B grade with 1.20x slower than normal build.  If using generic KASAN, the performance is C-F.  The performance impact in the generic KASAN case is 2-4x slower than normal build.
     [40] Based on sanitizers, compiler hardening flags, disabling 32-bit, ASLR, disabling swap, etc
-    [41] Based on HZ, scheduler
+    [41] Based on HZ, scheduler, hardening penalty
 
     Commentary:
 
