@@ -875,7 +875,7 @@ TBM=0
          that KFENCE provides.  These two vulnerabilities can lead to
          ZC, CE, PE, DoS, DT, ID.
     [44] Buffer overflow protection, some stack overflow and some heap overflow protection
-    [45] It is possible to replace KASAN with KFENCE, but if you do that you may get attacked between the periodic check or loose a class of vulnerabilies mitigated.
+    [45] It is possible to replace KASAN with KFENCE, but if you do that you may get attacked between the periodic check or lose a class of vulnerabilies mitigated.
     [46] Biased towards mitigating the more reported and dangerous Race Condition vulnerability versus Timing Attack vulnerability.
 
     Commentary:
