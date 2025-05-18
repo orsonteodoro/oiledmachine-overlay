@@ -843,7 +843,7 @@ TBM=0
     [24] KFENCE not hardcoded off in kernel or can fail due to configuration vulnerability
     [25] Not loaded in CONFIG_LSM.  Possibly a configuration vulnerability.  If lsm="yama" is in the kernel command line, then the config is not vulnerable to information disclosure.
     [26a] htcp pcc vegas ; htcp and pcc for downloading, vegas for low latency
-    [26b] vegas bbr htcp pcc ; htcp and pcc for downloading, vegas for low latency
+    [26b] vegas bbr htcp pcc ; htcp and pcc for downloading, vegas for low latency, bbr for low jitter
     [26c] cubic
     [27a] SSD: none, HDD: bfq-low-latency
     [28b] SSD: kyber, HDD: kyber; Chosen based on CI ASan testing, low attack surface, DoS resistant
