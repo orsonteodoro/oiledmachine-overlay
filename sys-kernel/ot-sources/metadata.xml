@@ -901,14 +901,10 @@ TBM=0
 
     The secure profile is designed for paying bills, private information.
 
-    The gentoo-sources profile does not mitigate with KCFI against JOP/ROP,
-    which can lead to code execution attacks.  It is missing KCFI and SCS.
-    However, a custom profile enabling KCFI or SCS can mitigate against
-    JOP/ROP attacks.
-
-    The gentoo-sources profile does not mitigate against information
-    disclosure with Retpoline which can lead to information disclosure in
-    pre CET microarches.
+    The gentoo-sources profile does not mitigate with KCFI against JOP/ROP
+    in pre CET era, which can lead to code execution attacks.  It is missing
+    KCFI and SCS.  However, a custom profile enabling KCFI or SCS can mitigate
+    against JOP/ROP attacks.
 
     The profiles on ot-kernel will be improved over time.
 
