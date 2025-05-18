@@ -735,79 +735,79 @@ TBM=0
 
     Comparison for examples:
 
-                                | ot-sources (builder)        | ot-sources (gaming)   | ot-sources (secure)     | gentoo-sources             | gentoo-kernel              | zen-kernel                 | vanilla kernel defaults
-    IA32 support [8]            | M [7]                       | M [7]                 | N                       | M [6]                      | N                          | Y                          | M [6]
-    SSP (basic)                 | Y                           | N                     | Y                       | Y                          | Y                          | Y                          | Y
-    SSP (strong)                | Y                           | N                     | Y                       | Y                          | Y                          | Y                          | Y
-    BO (_FORTIFY_SOURCE=2) [15] | N [19][33]                  | N                     | Y                       | Y                          | Y                          | Y                          | N
-    ASLR (basic)                | Y                           | N                     | Y                       | Y                          | Y                          | Y                          | Y
-    ASLR (strong) [2]           | Y                           | N                     | Y                       | Y                          | Y                          | Y                          | Y
-    KPTI                        | Y                           | N                     | Y                       | Y                          | Y                          | Y                          | Y
-    KASAN                       | N                           | N                     | Y                       | Y [4]                      | Y [4]                      | N                          | N
-    KFENCE                      | Y                           | N                     | N                       | Y [5]                      | Y [5]                      | Y                          | N
-    UBSAN                       | Y                           | N                     | Y                       | Y                          | Y                          | N                          | N
-    KCFI >= 6.1 [9][11]         | Y                           | N                     | Y                       | N                          | N                          | N                          | N
-    SCS >= 5.8 [9][10]          | N                           | N                     | Y                       | N                          | N                          | N                          | N
-    CET (branch/return) >= 5.18 | M/M [23]                    | N/N                   | M/M [23]                | M/M [22]                   | Y/Y                        | Y/Y                        | Y/N
-    Sandboxing support [3]      | Y                           | Y                     | Y                       | Y                          | Y                          | Y                          | Y
-    Retpoline [13]              | Y                           | N                     | Y                       | Y                          | Y                          | Y                          | Y
-    YAMA [12]                   | M [1]                       | N                     | M [1]                   | M [25]                     | M                          | Y                          | N
-    Free page policy            | None                        | None                  | Zero                    | Poison                     | Poison                     | Poison                     | None
-    RANDSTRUCT                  | N                           | N                     | M [16]                  | M [16]                     | Y                          | N                          | N
-    Swap                        | Y [29]                      | N [18]                | N [17]                  | Y [29]                     | Y [29]                     | Y [29]                     | Y [29]
-    LSMS                        | [21a]                       | [21b]                 | [21c]                   | [21d]                      | [21e]                      | [21f]                      | [21g]
-    CPU scheduler               | cfs-throughput              | cfs-autogroup         | cfs-autogroup [20]      | cfs-throughput             | cfs-throughput             | cfs-autogroup              | cfs-throughput
-    HZ                          | 250                         | 1000                  | 100                     | 100                        | 300                        | 1000                       | 100
-    IO schedulers               | [27a]                       | [27a]                 | [27c]                   | mq-deadline/none [30a]     | mq-deadline/none [30a]     | BFQ/Kyber [30][34b]        | mq-deadline/none [30][34a]
-    TCP congestion control      | [26a]                       | [26b]                 | [26c]                   | Cubic                      | Cubic                      | Cubic                      | Cubic
-    Panic on oops               | N [15]                      | N                     | N [15]                  | Y                          | Y                          | N [23]                     | N
-    io_uring mitigation         | N                           | N                     | Y                       | N                          | N                          | N                          | N
-    -march                      | generic [32]                | native [32]           | generic [32]            | generic [32]               | generic                    | generic                    | generic [32]
-    -O level                    | 2                           | 3                     | 2                       | 2                          | 2                          | 3                          | 2
-    TBM                         | Y                           | Y                     | N [36]                  | Y                          | Y                          | Y                          | Y
-    Mitigated attack vectors    | CE, PE, DoS, DT, ID ; [14]  | DoS [14]              | CE, PE, DoS, DT, ID     | CE, PE, DoS, DT, ID ; [14] | CE, PE, DoS, DT, ID ; [14] | CE, PE, DoS, DT, ID ; [14] | CE, PE ; [14]
-    Posture                     | Balanced                    | Performance-critical  | Security-critical [34]  | Security-critical [34]     | Security-critical [34]     | Security-critical [34]     | Balanced
-    Security grade [40]         | C                           | F                     | A                       | B-                         | B                          | B                          | C
-    Performance grade [41]      | B                           | A                     | B or C-F [39]           | C                          | C                          | B                          | B
-    Uptime grade [38]           | A                           | D                     | C                       | C                          | C                          | C                          | A
-    Release schedule grade [37] | C- [36]                     | C- [36]               | C- [36]                 | D [35]                     | D [35]                     | A                          | A
+                                  | ot-sources (builder)        | ot-sources (gaming)   | ot-sources (secure)     | gentoo-sources             | gentoo-kernel              | zen-kernel                 | vanilla kernel defaults
+    IA32 support [8]              | M [7]                       | M [7]                 | N                       | M [6]                      | N                          | Y                          | M [6]
+    SSP (basic)                   | Y                           | N                     | Y                       | Y                          | Y                          | Y                          | Y
+    SSP (strong)                  | Y                           | N                     | Y                       | Y                          | Y                          | Y                          | Y
+    BO (_FORTIFY_SOURCE=2) [15]   | N [19][33]                  | N                     | Y                       | Y                          | Y                          | Y                          | N
+    ASLR (basic)                  | Y                           | N                     | Y                       | Y                          | Y                          | Y                          | Y
+    ASLR (strong) [2]             | Y                           | N                     | Y                       | Y                          | Y                          | Y                          | Y
+    KPTI                          | Y                           | N                     | Y                       | Y                          | Y                          | Y                          | Y
+    KASAN                         | N                           | N                     | Y                       | Y [4]                      | Y [4]                      | N                          | N
+    KFENCE                        | Y                           | N                     | N                       | Y [5]                      | Y [5]                      | Y                          | N
+    UBSAN                         | Y                           | N                     | Y                       | Y                          | Y                          | N                          | N
+    KCFI >= 6.1 [9][11]           | Y                           | N                     | Y                       | N                          | N                          | N                          | N
+    SCS >= 5.8 [9][10]            | N                           | N                     | Y                       | N                          | N                          | N                          | N
+    CET (branch/return) >= 5.18   | M/M [23]                    | N/N                   | M/M [23]                | M/M [22]                   | Y/Y                        | Y/Y                        | Y/N
+    Sandboxing support [3]        | Y                           | Y                     | Y                       | Y                          | Y                          | Y                          | Y
+    Retpoline [13]                | Y                           | N                     | Y                       | Y                          | Y                          | Y                          | Y
+    YAMA [12]                     | M [1]                       | N                     | M [1]                   | M [25]                     | M                          | Y                          | N
+    Free page policy              | None                        | None                  | Zero                    | Poison                     | Poison                     | Poison                     | None
+    RANDSTRUCT                    | N                           | N                     | M [16]                  | M [16]                     | Y                          | N                          | N
+    Swap                          | Y [29]                      | N [18]                | N [17]                  | Y [29]                     | Y [29]                     | Y [29]                     | Y [29]
+    LSMS                          | [21a]                       | [21b]                 | [21c]                   | [21d]                      | [21e]                      | [21f]                      | [21g]
+    CPU scheduler                 | cfs-throughput              | cfs-autogroup         | cfs-autogroup [20]      | cfs-throughput             | cfs-throughput             | cfs-autogroup              | cfs-throughput
+    HZ                            | 250                         | 1000                  | 100                     | 100                        | 300                        | 1000                       | 100
+    IO schedulers                 | [27a]                       | [27a]                 | [27c]                   | mq-deadline/none [30a]     | mq-deadline/none [30a]     | BFQ/Kyber [30][34b]        | mq-deadline/none [30][34a]
+    TCP congestion control        | [26a]                       | [26b]                 | [26c]                   | Cubic                      | Cubic                      | Cubic                      | Cubic
+    Panic on oops                 | N [15]                      | N                     | N [15]                  | Y                          | Y                          | N [23]                     | N
+    io_uring mitigation           | N                           | N                     | Y                       | N                          | N                          | N                          | N
+    -march                        | generic [32]                | native [32]           | generic [32]            | generic [32]               | generic                    | generic                    | generic [32]
+    -O level                      | 2                           | 3                     | 2                       | 2                          | 2                          | 3                          | 2
+    TBM                           | Y                           | Y                     | N [36]                  | Y                          | Y                          | Y                          | Y
+    Mitigated attack vectors [42] | CE, PE, DoS, DT, ID ; [14]  | DoS [14]              | CE, PE, DoS, DT, ID     | CE, PE, DoS, DT, ID ; [14] | CE, PE, DoS, DT, ID ; [14] | CE, PE, DoS, DT, ID ; [14] | CE, PE ; [14]
+    Posture                       | Balanced                    | Performance-critical  | Security-critical [34]  | Security-critical [34]     | Security-critical [34]     | Security-critical [34]     | Balanced
+    Security grade [40]           | C                           | F                     | A                       | B-                         | B                          | B                          | C
+    Performance grade [41]        | B                           | A                     | B or C-F [39]           | C                          | C                          | B                          | B
+    Uptime grade [38]             | A                           | D                     | C                       | C                          | C                          | C                          | A
+    Release schedule grade [37]   | C- [36]                     | C- [36]               | C- [36]                 | D [35]                     | D [35]                     | A                          | A
 
-                                | pf-kernel                   | rt-kernel             | linux-tkg                  | clear                      |                            |                            | 
-    IA32 support [8]            |                             |                       | Y                          | Y                          |                            |                            |
-    SSP (basic)                 |                             |                       | Y                          | N                          |                            |                            |
-    SSP (strong)                |                             |                       | Y                          | Y                          |                            |                            |
-    BO (_FORTIFY_SOURCE=2) [15] |                             |                       | Y                          | Y                          |                            |                            |
-    ASLR (basic)                |                             |                       | Y                          | Y                          |                            |                            |
-    ASLR (strong) [2]           |                             |                       | Y                          | Y                          |                            |                            |
-    KPTI                        |                             |                       | Y                          | Y                          |                            |                            |
-    KASAN                       |                             |                       | N                          | N                          |                            |                            |
-    KFENCE                      |                             |                       | Y                          | N                          |                            |                            |
-    UBSAN                       |                             |                       | N                          | N                          |                            |                            |
-    KCFI >= 6.1 [9][11]         |                             |                       | N                          | N                          |                            |                            |
-    SCS >= 5.8 [9][10]          |                             |                       | N                          | N                          |                            |                            |
-    CET (branch/return) >= 5.18 |                             |                       | Y/Y                        | Y/Y                        |                            |                            |
-    Sandboxing support [3]      |                             |                       | Y                          | Y                          |                            |                            |
-    Retpoline [13]              |                             |                       | Y                          | Y                          |                            |                            |
-    YAMA [12]                   |                             |                       | Y                          | N                          |                            |                            |
-    Free page policy            |                             |                       | Poison                     | None                       |                            |                            |
-    RANDSTRUCT                  |                             |                       | N                          | N                          |                            |                            |
-    Swap                        |                             |                       | Y                          | Y [29]                     |                            |                            |
-    LSMS                        |                             |                       | [21i]                      | [21j]                      |                            |                            |
-    CPU scheduler               |                             |                       | Y                          | cfs-autogroup              |                            |                            |
-    HZ                          |                             |                       | 1000                       | 1000                       |                            |                            |
-    IO schedulers               |                             |                       | mq-deadline/none [30][34]  | mq-deadline/none [30][34]  |                            |                            |
-    TCP congestion control      |                             |                       | Cubic                      | BBRv1                      |                            |                            |
-    Panic on oops               |                             |                       | N                          | N                          |                            |                            |
-    io_uring mitigation         |                             |                       | N                          | N                          |                            |                            |  
-    -march                      |                             |                       | generic                    | core2                      |                            |                            |
-    -O level                    |                             |                       | 2                          | 2                          |                            |                            |
-    TBM                         |                             |                       | Y                          | Y                          |                            |                            |
-    Mitigated attack vectors    |                             |                       | CE, PE, DoS, DT, ID ; [14] | CE, PE, DoS ; [14]         |                            |                            |
-    Posture                     |                             |                       | Security-critical [34d]    | Balanced                   |                            |                            |
-    Security grade [40]         |                             |                       | C                          | C                          |                            |                            |
-    Performance grade [41]      |                             |                       | B                          | B                          |                            |                            |
-    Uptime grade [38]           |                             |                       | C                          | B                          |                            |                            |
-    Release schedule grade [37] |                             |                       | ?                          | D                          |                            |                            |
+                                  | pf-kernel                   | rt-kernel             | linux-tkg                  | clear                      |                            |                            | 
+    IA32 support [8]              |                             |                       | Y                          | Y                          |                            |                            |
+    SSP (basic)                   |                             |                       | Y                          | N                          |                            |                            |
+    SSP (strong)                  |                             |                       | Y                          | Y                          |                            |                            |
+    BO (_FORTIFY_SOURCE=2) [15]   |                             |                       | Y                          | Y                          |                            |                            |
+    ASLR (basic)                  |                             |                       | Y                          | Y                          |                            |                            |
+    ASLR (strong) [2]             |                             |                       | Y                          | Y                          |                            |                            |
+    KPTI                          |                             |                       | Y                          | Y                          |                            |                            |
+    KASAN                         |                             |                       | N                          | N                          |                            |                            |
+    KFENCE                        |                             |                       | Y                          | N                          |                            |                            |
+    UBSAN                         |                             |                       | N                          | N                          |                            |                            |
+    KCFI >= 6.1 [9][11]           |                             |                       | N                          | N                          |                            |                            |
+    SCS >= 5.8 [9][10]            |                             |                       | N                          | N                          |                            |                            |
+    CET (branch/return) >= 5.18   |                             |                       | Y/Y                        | Y/Y                        |                            |                            |
+    Sandboxing support [3]        |                             |                       | Y                          | Y                          |                            |                            |
+    Retpoline [13]                |                             |                       | Y                          | Y                          |                            |                            |
+    YAMA [12]                     |                             |                       | Y                          | N                          |                            |                            |
+    Free page policy              |                             |                       | Poison                     | None                       |                            |                            |
+    RANDSTRUCT                    |                             |                       | N                          | N                          |                            |                            |
+    Swap                          |                             |                       | Y                          | Y [29]                     |                            |                            |
+    LSMS                          |                             |                       | [21i]                      | [21j]                      |                            |                            |
+    CPU scheduler                 |                             |                       | Y                          | cfs-autogroup              |                            |                            |
+    HZ                            |                             |                       | 1000                       | 1000                       |                            |                            |
+    IO schedulers                 |                             |                       | mq-deadline/none [30][34]  | mq-deadline/none [30][34]  |                            |                            |
+    TCP congestion control        |                             |                       | Cubic                      | BBRv1                      |                            |                            |
+    Panic on oops                 |                             |                       | N                          | N                          |                            |                            |
+    io_uring mitigation           |                             |                       | N                          | N                          |                            |                            |  
+    -march                        |                             |                       | generic                    | core2                      |                            |                            |
+    -O level                      |                             |                       | 2                          | 2                          |                            |                            |
+    TBM                           |                             |                       | Y                          | Y                          |                            |                            |
+    Mitigated attack vectors [42] |                             |                       | CE, PE, DoS, DT, ID ; [14] | CE, PE, DoS ; [14]         |                            |                            |
+    Posture                       |                             |                       | Security-critical [34d]    | Balanced                   |                            |                            |
+    Security grade [40]           |                             |                       | C                          | C                          |                            |                            |
+    Performance grade [41]        |                             |                       | B                          | B                          |                            |                            |
+    Uptime grade [38]             |                             |                       | C                          | B                          |                            |                            |
+    Release schedule grade [37]   |                             |                       | ?                          | D                          |                            |                            |
 
     [1] Maybe, if a chromium based app is installed
     [2] Increased entropy with RANDOMIZE_MEMORY
@@ -865,6 +865,12 @@ TBM=0
     [39] If using KASAN HW_TAGS, the performance is B grade with 1.20x slower than normal build.  If using generic KASAN, the performance is C-F.  The performance impact in the generic KASAN case is 2-4x slower than normal build.
     [40] Based on sanitizers, compiler hardening flags, disabling 32-bit, ASLR, disabling swap, etc
     [41] Based on HZ, scheduler, hardening penalty
+    [42] Sanitizer and hardening mitigation against:
+         CE = Code Execution
+         PE = Privilege Escalation
+         DoS = Denial of Service
+         DT = Data Tampering
+         ID = Information Disclosure
 
     Commentary:
 
