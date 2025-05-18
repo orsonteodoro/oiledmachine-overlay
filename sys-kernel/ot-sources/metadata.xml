@@ -804,7 +804,7 @@ TBM=0
     TBM                           |                             |                       | Y                          | Y                          |                            |                            |
     Mitigated attack vectors [42] |                             |                       | CE, PE, DoS, DT, ID ; [14] | CE, PE, DoS ; [14]         |                            |                            |
     Posture                       |                             |                       | Security-critical [34]     | Balanced                   |                            |                            |
-    Security grade [40]           |                             |                       | B                          | C                          |                            |                            |
+    Security grade [40]           |                             |                       | B                          | C [43]                     |                            |                            |
     Performance grade [41]        |                             |                       | B                          | B                          |                            |                            |
     Uptime grade [38]             |                             |                       | C                          | B                          |                            |                            |
     Release schedule grade [37]   |                             |                       | ?                          | D                          |                            |                            |
@@ -871,6 +871,7 @@ TBM=0
          DoS = Denial of Service
          DT = Data Tampering
          ID = Information Disclosure
+    [43] For example it is missing heap overflow and double-free protection
 
     Commentary:
 
