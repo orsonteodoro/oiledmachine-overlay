@@ -11022,9 +11022,10 @@ ewarn "The dss work profile is experimental and in development."
 		|| "${work_profile}" == "media-server" \
 	]] ; then
 		if [[ "${work_profile}" == "dss" ]] ; then
-	# Assumes the lowest servicing capacity
-			ot-kernel_set_kconfig_set_user_capacity_hz "1" # Percent capacity
-	# We will manually set -O2 and max hardening.
+	# Mitigate against Race Condition attack which has more attack vectors.
+	# Race condition:  CE, PE, DoS, DT, ID
+	# Timing attack:  PE, ID
+			ot-kernel_set_kconfig_set_highest_timer_hz
 		elif [[ \
 			"${work_profile}" == "http-server-busy" \
 		]] ; then
