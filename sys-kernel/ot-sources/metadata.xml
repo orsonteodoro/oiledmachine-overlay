@@ -866,12 +866,15 @@ TBM=0
     [40] Based on sanitizers, compiler hardening flags, disabling 32-bit, ASLR, disabling swap, etc
     [41] Based on HZ, scheduler, hardening penalty
     [42] Sanitizer and hardening mitigation against:
+         ZC = Zero Click Attack
          CE = Code Execution
          PE = Privilege Escalation
          DoS = Denial of Service
          DT = Data Tampering
          ID = Information Disclosure
     [43] For example it is missing heap overflow and double-free protection
+         that KFENCE provide.  These two vulnerabilities can lead to
+         ZC, CE, PE, DoS, DT, ID.
 
     Commentary:
 
