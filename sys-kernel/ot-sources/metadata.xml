@@ -750,7 +750,7 @@ TBM=0
     SCS >= 5.8 [9][10]          | N                           | N                     | Y                       | N                          | N                          | N                          | N
     CET (branch/return) >= 5.18 | M/M [23]                    | N/N                   | M/M [23]                | M/M [22]                   | Y/Y                        | Y/Y                        | Y/N
     Sandboxing support [3]      | Y                           | Y                     | Y                       | Y                          | Y                          | Y                          | Y
-    Retpoline [13]              | Y                           | N                     | Y                       | N                          | N                          | Y                          | N
+    Retpoline [13]              | Y                           | N                     | Y                       | Y                          | Y                          | Y                          | Y
     YAMA [12]                   | M [1]                       | N                     | M [1]                   | M [25]                     | M                          | Y                          | N
     Free page policy            | None                        | None                  | Zero                    | Poison                     | Poison                     | Poison                     | None
     RANDSTRUCT                  | N                           | N                     | M [16]                  | M [16]                     | Y                          | N                          | N
