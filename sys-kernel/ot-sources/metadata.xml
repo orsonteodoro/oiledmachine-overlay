@@ -791,7 +791,7 @@ TBM=0
     YAMA [12]                     |                             |                       | Y                          | N                          |                            |                            |
     Free page policy              |                             |                       | Poison                     | None                       |                            |                            |
     RANDSTRUCT                    |                             |                       | N                          | N                          |                            |                            |
-    Swap                          |                             |                       | Y                          | Y [29]                     |                            |                            |
+    Swap                          |                             |                       | Y [29]                     | Y [29]                     |                            |                            |
     LSMS                          |                             |                       | [21i]                      | [21j]                      |                            |                            |
     CPU scheduler                 |                             |                       | cfs-autogroup              | cfs-autogroup              |                            |                            |
     HZ                            |                             |                       | 1000                       | 1000                       |                            |                            |
