@@ -28,7 +28,7 @@
  
  cglobal ipred_smooth_v_16bpc, 4, 6, 6, dst, stride, tl, w, h, weights
 +%if ARCH_X86_64 && PIC
-+    lea            weightsq, [rel smooth_weights_1d_16bpc]
++    lea            weightsq, [rel smooth_weights_1d_16bpc wrt ..got]
 +%else
      LEA            weightsq, smooth_weights_1d_16bpc
 +%endif
@@ -40,7 +40,7 @@
  
  cglobal ipred_smooth_h_16bpc, 3, 6, 6, dst, stride, tl, w, h, weights
 +%if ARCH_X86_64 && PIC
-+    lea            weightsq, [rel smooth_weights_1d_16bpc]
++    lea            weightsq, [rel smooth_weights_1d_16bpc wrt ..got]
 +%else
      LEA            weightsq, smooth_weights_1d_16bpc
 +%endif
@@ -52,7 +52,7 @@
  cglobal ipred_smooth_16bpc, 3, 7, 8, dst, stride, tl, w, h, \
                                       h_weights, v_weights, top
 +%if ARCH_X86_64 && PIC
-+    lea          h_weightsq, [rel smooth_weights_2d_16bpc]
++    lea          h_weightsq, [rel smooth_weights_2d_16bpc wrt ..got]
 +%else
      LEA          h_weightsq, smooth_weights_2d_16bpc
 +%endif
