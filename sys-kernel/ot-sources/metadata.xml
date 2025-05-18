@@ -606,6 +606,7 @@ OT_KERNEL_INSTALL_SOURCE_CODE="1"
 OT_KERNEL_KCONFIG[CONFIG_FORTIFY_SOURCE]=y
 OT_KERNEL_KERNEL_COMPILER_PATCH_PROVIDER="graysky2"
 OT_KERNEL_LSMS="auto"
+OT_KERNEL_MAX_UPTIME="0"
 OT_KERNEL_MESSAGE="I :heart: builder kernel"
 OT_KERNEL_MODULES_SUPPORT="1"
 OT_KERNEL_MODULES_COMPRESSOR="zstd"
@@ -667,7 +668,7 @@ OT_KERNEL_TCP_CONGESTION_CONTROLS="vegas bbr htcp pcc"
 OT_KERNEL_VERBOSITY=1
 OT_KERNEL_USE="disable_debug genpatches zen-sauce"
 OT_KERNEL_WORK_PROFILE="gaming-tournament"
-
+TBM=1
 
     An example of a *secure* env file located in /etc/portage/ot-sources/6.9/secure/x86_64/env:
 
@@ -704,6 +705,7 @@ OT_KERNEL_TCP_CONGESTION_CONTROLS="cubic"
 OT_KERNEL_VERBOSITY="1"
 OT_KERNEL_USE="disable_debug genpatches zen-sauce cpu_flags_arm_bti"
 OT_KERNEL_WORK_PROFILE="dss"
+TBM=0
 
 
     Commentary about the above settings:
@@ -762,6 +764,7 @@ OT_KERNEL_WORK_PROFILE="dss"
     io_uring mitigation         | N                           | N                     | Y                       | N                          | N                          | N                          | N
     -march                      | generic [32]                | native [32]           | generic [32]            | generic [32]               | generic                    | generic                    | generic [32]
     -O level                    | 2                           | 3                     | 2                       | 2                          | 2                          | 3                          | 2
+    TBM                         | Y                           | Y                     | N [36]                  | Y                          | Y                          | Y                          | Y
     Mitigated attack vectors    | CE, PE, DoS, DT, ID ; [14]  | DoS [14]              | CE, PE, DoS, DT, ID     | CE, PE, DoS, DT, ID ; [14] | CE, PE, DoS, DT, ID ; [14] | CE, PE, DoS, DT, ID ; [14] | CE, PE ; [14]
     Posture                     | Balanced                    | Performance-critical  | Security-critical [34]  | Security-critical [34]     | Security-critical [34]     | Security-critical [34]     | Balanced
     Security grade              | C                           | F                     | A                       | B-                         | B                          | B                          | C
@@ -798,6 +801,7 @@ OT_KERNEL_WORK_PROFILE="dss"
     io_uring mitigation         |                             |                       | N                          | N                          |                            |                            |  
     -march                      |                             |                       | generic                    | core2                      |                            |                            |
     -O level                    |                             |                       | 2                          | 2                          |                            |                            |
+    TBM                         |                             |                       | Y                          | Y                          |                            |                            |
     Mitigated attack vectors    |                             |                       | CE, PE, DoS, DT, ID ; [14] | CE, PE, DoS ; [14]         |                            |                            |
     Posture                     |                             |                       | Security-critical [34d]    | Balanced                   |                            |                            |
     Security grade              |                             |                       | C                          | C                          |                            |                            |
@@ -855,6 +859,8 @@ OT_KERNEL_WORK_PROFILE="dss"
     [38] Too much hardening can cause overheating leading to a Denial of Service.
     [34a] Can switch to mq-deadline, kyber post compile during runtime
     [34b] Can switch to mq-deadline, kyber, bfq post compile during runtime
+    [35] CONFIG_SCHED_MC_PRIO=y
+    [36] If the computer is not maintained properly, it could cause an availability problem (e.g crash) or overheating during an exam with no retakes allowed.  With hardening enabled to the max, the chances increase more.
 
     Commentary:
 
@@ -4548,6 +4554,14 @@ unset OT_KERNEL_PRIVATE_KEY
     SYSTEMD_FEATURE_FD_COMPARE - Compares file descriptors for duplicates base
     on the selected function.
     Valid values:  kcmp (default), fstat
+
+    TBM - Disables Turbo Boost Max
+    Valid values:
+      1 - enables turbo
+      0 - disable turbo
+      unset - enable turbo
+    Note:  if max availability is on or a work profile requires max
+    availability, it will disable turbo.
 
     TRESOR_MAX_KEY_SIZE - The maximum key size for the cipher.
     Valid values:

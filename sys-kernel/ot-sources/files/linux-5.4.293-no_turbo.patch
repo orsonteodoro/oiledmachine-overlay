@@ -1,0 +1,13 @@
+--- a/drivers/cpufreq/intel_pstate.c.orig	2025-05-18 07:25:28.126085900 -0700
++++ b/drivers/cpufreq/intel_pstate.c	2025-05-18 08:25:30.243643811 -0700
+@@ -2822,6 +2822,10 @@ static int __init intel_pstate_setup(cha
+ 		pr_info("HWP disabled\n");
+ 		no_hwp = 1;
+ 	}
++	if (!strcmp(str, "no_turbo") && !global.no_turbo) {
++		global.no_turbo = 1;
++		intel_pstate_update_limits_for_all();
++	}
+ 	if (!strcmp(str, "enable"))
+ 		no_load = 0;
+ 	if (!strcmp(str, "force"))

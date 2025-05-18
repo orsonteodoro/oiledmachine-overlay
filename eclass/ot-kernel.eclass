@@ -2643,6 +2643,21 @@ einfo "Applying the C2TCP / DeepCC / Orca patch"
 	_fpatch "${EDISTDIR}/${C2TCP_FN}"
 }
 
+# @FUNCTION: ot-kernel_apply_noturbo
+# @DESCRIPTION:
+# Apply patch to disable TBM to increase availability.
+ot-kernel_apply_noturbo() {
+	if ver_test "${KV_MAJOR_MINOR}" -ge "5.15" ; then
+		eapply "${FILESDIR}/linux-6.14.6-no_turbo.patch"
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.10" ; then
+		eapply "${FILESDIR}/linux-5.10.237-no_turbo.patch"
+	elif ver_test "${KV_MAJOR_MINOR}" -ge "5.4" ; then
+		eapply "${FILESDIR}/linux-5.4.293-no_turbo.patch"
+	else
+ewarn "QA:  Test no_turbo patch for pre 5.4.x"
+	fi
+}
+
 # @FUNCTION: _print_gcc_slots
 # @DESCRIPTION:
 # Show user all the gcc_slot_<#> vertically.
@@ -3157,6 +3172,7 @@ apply_all_patchsets() {
 
 	ot-kernel_apply_kcp
 	ot-kernel_apply_kcmdline_for_sanitizers
+	ot-kernel_apply_noturbo
 
 	if [[ "${PV}" =~ "9999" ]] ; then
 		# Disable + suffix
@@ -4199,6 +4215,7 @@ ot-kernel_clear_env() {
 	unset SYSTEMD_FEATURE_SMBIOS
 	unset SYSTEMD_OPTIONAL
 	unset SYSTEMD_UEFI
+	unset TBM
 	unset TRESOR_MAX_KEY_SIZE
 	unset TRESOR_TARGET_OVERRIDE
 	unset TTY_DRIVER
@@ -12691,6 +12708,22 @@ ot-kernel_set_dev_mem() {
 	fi
 }
 
+# @FUNCTION: ot-kernel_set_tbm
+# @DESCRIPTION:
+# Disables TBM settings to maximize uptime or availability.
+ot-kernel_set_tbm() {
+	if [[ \
+		   "${OT_KERNEL_MAX_UPTIME}" == "1" \
+		|| "${_OT_KERNEL_FORCE_STABILITY}" == "1" \
+		|| "${TBM}" == "0" \
+	]] ; then
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "intel_pstate=no_turbo"
+		ot-kernel_set_kconfig_kernel_cmdline "intel_pstate=no_turbo"
+	else
+		ot-kernel_unset_pat_kconfig_kernel_cmdline "intel_pstate=no_turbo"
+	fi
+}
+
 # @FUNCTION: ot-kernel_set_security_critical
 # @DESCRIPTION:
 # Use the kernel for secure critical mode
@@ -13272,6 +13305,7 @@ einfo "Disabling all debug and shortening logging buffers"
 	_ot-kernel_toggle_fips_mode
 
 	_ot-kernel_enable_ppc_476fpe_workaround
+	ot-kernel_set_tbm
 	ot-kernel_set_security_critical
 
 	ot-kernel_set_kconfig_from_envvar_array # Final user override

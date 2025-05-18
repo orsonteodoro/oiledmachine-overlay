@@ -1,0 +1,15 @@
+--- a/drivers/cpufreq/intel_pstate.c.orig	2025-05-17 23:40:26.537971895 -0700
++++ b/drivers/cpufreq/intel_pstate.c	2025-05-18 00:25:30.683123282 -0700
+@@ -3838,6 +3838,12 @@ static int __init intel_pstate_setup(cha
+ 	if (!strcmp(str, "no_hwp"))
+ 		no_hwp = 1;
+ 
++	if (!strcmp(str, "no_turbo") && !global.no_turbo) {
++		global.no_turbo = 1;
++		intel_pstate_update_limits_for_all();
++		arch_set_max_freq_ratio(global.no_turbo);
++	}
++
+ 	if (!strcmp(str, "force"))
+ 		force_load = 1;
+ 	if (!strcmp(str, "hwp_only"))
