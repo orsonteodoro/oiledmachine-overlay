@@ -770,7 +770,7 @@ TBM=0
     Security grade [40]           | C                           | F                     | A                       | B-                         | B                          | B                          | C
     Performance grade [41]        | B                           | A                     | B or C-F [39]           | C                          | C                          | B                          | B
     Uptime grade [38]             | A                           | D                     | C                       | C                          | C                          | C                          | A
-    Release schedule grade [37]   | C- [36]                     | C- [36]               | C- [36]                 | D [35]                     | D [35]                     | A                          | A
+    Release schedule grade [37]   | C- [35a]                    | C- [35a]              | C- [35a]                | D [35b]                    | D [35b]                    | A                          | A
 
                                   | pf-kernel                   | rt-kernel             | linux-tkg                  | clear                      |                            |                            | 
     IA32 support [8]              |                             |                       | Y                          | Y                          |                            |                            |
@@ -853,14 +853,13 @@ TBM=0
     [32] Customizable by kernel config
     [33] Default off but can be overridable with OT_KERNEL_KCONFIG[CONFIG_FORTIFY_SOURCE]=y
     [34] Based on hardening flags plus sanitizer
-    [35] KEYWORDS delayed rollout is a persistent threat for critical vulnerabilities or zero click attacks that rely on stable.  Relying on stable could be a type of configuration vulnerability.
-    [36] May miss releases or may have uncheck patch failures that block update due to lack of staffing
-    [37] It assumes that critical vulnerabilies be remediated within a week.
-    [38] Too much hardening can cause overheating leading to a Denial of Service.
     [34a] Can switch to mq-deadline, kyber post compile during runtime
     [34b] Can switch to mq-deadline, kyber, bfq post compile during runtime
-    [35] CONFIG_SCHED_MC_PRIO=y
+    [35a] May miss releases or may have uncheck patch failures that block update due to lack of staffing
+    [35b] KEYWORDS delayed rollout is a persistent threat for critical vulnerabilities or zero click attacks for users that rely on stable.  Relying on stable could be a type of configuration vulnerability.
     [36] If the computer is not maintained properly, it could cause an availability problem (e.g crash) or overheating during an online exam with no retakes allowed.  With hardening enabled to the max, the chances increase more.
+    [37] It assumes that critical vulnerabilies be remediated within a week.
+    [38] Too much hardening can cause overheating leading to a Denial of Service.
     [38] Deviation from the default hardening settings may decrease uptime.  Less hardening can lead to DoS or more hardening can lead to overheating.  The default settings get more testing and more bugfixes.
     [39] If using KASAN HW_TAGS, the performance is B grade with 1.20x slower than normal build.  If using generic KASAN, the performance is C-F.  The performance impact in the generic KASAN case is 2-4x slower than normal build.
     [40] Based on sanitizers, compiler hardening flags, disabling 32-bit, ASLR, disabling swap, etc
