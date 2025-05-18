@@ -12717,8 +12717,10 @@ ot-kernel_set_tbm() {
 		|| "${_OT_KERNEL_FORCE_STABILITY}" == "1" \
 		|| "${TBM}" == "0" \
 	]] ; then
-		ot-kernel_unset_pat_kconfig_kernel_cmdline "intel_pstate=no_turbo"
-		ot-kernel_set_kconfig_kernel_cmdline "intel_pstate=no_turbo"
+		if grep -q -e "^X86_INTEL_PSTATE=y" "${BUILD_DIR}/.config" ; then
+			ot-kernel_unset_pat_kconfig_kernel_cmdline "intel_pstate=no_turbo"
+			ot-kernel_set_kconfig_kernel_cmdline "intel_pstate=no_turbo"
+		fi
 	else
 		ot-kernel_unset_pat_kconfig_kernel_cmdline "intel_pstate=no_turbo"
 	fi
