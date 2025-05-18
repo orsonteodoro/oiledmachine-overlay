@@ -861,6 +861,7 @@ TBM=0
     [34b] Can switch to mq-deadline, kyber, bfq post compile during runtime
     [35] CONFIG_SCHED_MC_PRIO=y
     [36] If the computer is not maintained properly, it could cause an availability problem (e.g crash) or overheating during an exam with no retakes allowed.  With hardening enabled to the max, the chances increase more.
+    [38] Deviation from the default hardening settings may decrease uptime.  Less hardening can lead to DoS or more hardening can lead to overheating.  The default settings get more testing and more bugfixes.
 
     Commentary:
 
