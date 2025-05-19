@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=3
+CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=4
 CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data untrusted-data"
 
 inherit cflags-hardened gnome.org meson-multilib vala xdg
@@ -16,7 +16,7 @@ LICENSE="LGPL-2.1+"
 SLOT="3.0"
 IUSE="
 +brotli gssapi gtk-doc +introspection samba ssl sysprof test +vala
-ebuild_revision_1
+ebuild_revision_2
 "
 RESTRICT="
 	!test? (

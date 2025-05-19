@@ -31,7 +31,7 @@ LICENSE="LGPL-2.1+"
 SLOT="0/6" # subslot = libtasn1 soname version
 IUSE="
 static-libs test
-ebuild_revision_4
+ebuild_revision_5
 "
 RESTRICT="
 	!test? (

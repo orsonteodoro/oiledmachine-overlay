@@ -51,7 +51,7 @@ IUSE="
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
 cacert test +utils
-ebuild_revision_4
+ebuild_revision_5
 "
 #RESTRICT="
 #	!test? (

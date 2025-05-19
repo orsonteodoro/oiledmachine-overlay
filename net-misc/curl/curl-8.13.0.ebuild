@@ -30,7 +30,7 @@ EAPI=8
 # don't be afraid to require a later version.
 # ngtcp2 = https://bugs.gentoo.org/912029 - can only build with one tls backend at a time.
 
-CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=3
+CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=4
 # You cannot pick both asan and ubsan at the same in this package because it
 # will break the login, pam, or a pam based module.
 CFLAGS_HARDENED_SANITIZERS="address hwaddress"
@@ -110,7 +110,7 @@ ${IMPLS[@]}
 +adns +alt-svc brotli debug ech +ftp gnutls gopher +hsts +http2 +http3 +httpsrr
 idn +imap kerberos ldap mbedtls +openssl +pop3 +psl +quic rtmp rustls samba
 sasl-scram +smtp ssh ssl static-libs test telnet +tftp +websockets zstd
-ebuild_revision_6
+ebuild_revision_7
 "
 RESTRICT="
 	!test? (
