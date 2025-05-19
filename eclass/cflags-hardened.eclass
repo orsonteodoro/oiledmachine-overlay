@@ -1271,13 +1271,14 @@ einfo "All SSP hardening (All functions hardened)"
 	local flags=()
 	local fortify_fix_level
 	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"security-critical") ]] ; then
-		fortify_fix_level="4"
+		fortify_fix_level="3"
 	else
-		fortify_fix_level="${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:-1}"
+		fortify_fix_level="${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:-2}"
 	fi
 
 	# Sorted by coverage
 	# The point is that -D_FORTIFY_SOURCE was broken on release of the flag.
+	# Disabling inline functions could break packages.
 	if [[ "${fortify_fix_level}" == "1" ]] ; then
 	# 80-90% coverage, 4-13% slowdown
 		flags=(
