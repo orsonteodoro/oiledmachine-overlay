@@ -1278,7 +1278,7 @@ einfo "All SSP hardening (All functions hardened)"
 
 	# Sorted by coverage
 	# The point is that -D_FORTIFY_SOURCE was broken on release of the flag.
-	# Disabling inline functions could break packages.
+	# Disabling inline functions could break during build time.
 	if [[ "${fortify_fix_level}" == "1" ]] ; then
 	# 80-90% coverage, 4-13% slowdown
 		flags=(
