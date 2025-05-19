@@ -33,9 +33,10 @@ declare -A GIT_CRATES=(
 [onenote_parser]="https://github.com/Cisco-Talos/onenote.rs;8b450447e58143004b68dd21c11b710fdb79be92;onenote.rs-%commit%" # 0.3.1
 )
 
+CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=4
+CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="jit network security-critical sensitive-data untrusted-data"
 # Sanitizers are broken during tests
-CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 # From "./convert-cargo-lock.sh 1.4.2 1.4.2"
 CRATES="
