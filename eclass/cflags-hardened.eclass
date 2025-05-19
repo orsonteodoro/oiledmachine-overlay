@@ -1257,6 +1257,7 @@ einfo "All SSP hardening (All functions hardened)"
 	fi
 
 	# There is a bug in -D_FORTIFY_SOURCE, certain optimizations break the security expectations of this flag.
+	# Break means a changed or removed fortified check.
 	# There are three strategies to fix the issue.
 	# (1) Annotations with __attribute__((no_fortify))
 	# (2) Adding -fno- flags to ensure security gaurantees.  At -O1, -D_FORTIFY_SOURCE it is already broken.
