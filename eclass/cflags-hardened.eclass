@@ -1284,8 +1284,8 @@ einfo "All SSP hardening (All functions hardened)"
 	local coverage_pct_clang=""
 	local coverage_pct_gcc=""
 	if [[ "${fortify_fix_level}" == "1" ]] ; then
-		coverage_pct_clang="80–90%"
-		coverage_pct_gcc="80-90%" # 4-13% slowdown
+		coverage_pct_clang="80–90%" # 0-5% slowdown
+		coverage_pct_gcc="80-90%" # 0-5% slowdown
 		flags=(
 			"-fno-aggressive-loop-optimizations"	# Clang, GCC
 			"-fno-strict-aliasing"			# Clang, GCC
@@ -1293,8 +1293,8 @@ einfo "All SSP hardening (All functions hardened)"
 	elif [[ "${fortify_fix_level}" == "2" ]] ; then
 	# -fno-tree-loop-optimize -> -fno-unroll-loops
 	# -fno-tree-vectorize -> -fno-vectorize
-		coverage_pct_clang="80–90%"
-		coverage_pct_gcc="85-90%" # 6-20% slowdown
+		coverage_pct_clang="80–90%" # 3-12% slowdown
+		coverage_pct_gcc="85-90%" # 2-10% slowdown
 		flags=(
 			"-fno-tree-loop-optimize"		# GCC
 			"-fno-strict-aliasing"			# Clang, GCC
@@ -1305,8 +1305,8 @@ einfo "All SSP hardening (All functions hardened)"
 	# Each option is >= 50% effective/prevalance
 	# -fno-tree-loop-optimize -> -fno-unroll-loops
 	# -fno-tree-vectorize -> -fno-vectorize
-		coverage_pct_clang="85–90%"
-		coverage_pct_gcc="90-95%" # 8-15% slowdown
+		coverage_pct_clang="85–90%" # 10-22% slowdown
+		coverage_pct_gcc="90-95%" # 10-20% slowdown
 		flags=(
 			"-fno-inline-small-functions"		# Clang, GCC
 			"-fno-strict-aliasing"			# Clang, GCC
@@ -1321,8 +1321,8 @@ einfo "All SSP hardening (All functions hardened)"
 	# -fno-tree-loop-optimize -> -fno-unroll-loops
 	# -fno-tree-vectorize -> -fno-vectorize
 	# -fno-tree-vrp -> -fno-strict-overflow
-		coverage_pct_clang="98–99%"
-		coverage_pct_gcc="99%" # 20-35% slowdown
+		coverage_pct_clang="98–99%" # 22-35% slowdown
+		coverage_pct_gcc="99%" # 20-30% slowdown
 		flags=(
 			"-fno-inline-small-functions"		# Clang, GCC
 			"-fno-optimize-sibling-calls"		# Clang, GCC
@@ -1348,8 +1348,8 @@ einfo "All SSP hardening (All functions hardened)"
 	# -fno-tree-sra -> -mllvm -disable-sra
 	# -fno-tree-vectorize -> -fno-vectorize
 	# -fno-tree-vrp -> -fno-strict-overflow
-		coverage_pct_clang="97–99.7%"
-		coverage_pct_gcc="98-99.9%" # 20-30% slowdown
+		coverage_pct_clang="97–99.7%" # 35-55% slowdown
+		coverage_pct_gcc="98-99.9%" # 30-50% slowdown
 		flags=(
 			"-fno-fast-math"			# Clang, GCC
 			"-fno-inline-small-functions"		# Clang, GCC
@@ -1388,8 +1388,8 @@ einfo "All SSP hardening (All functions hardened)"
 	# -fno-tree-sra -> -mllvm -disable-sra
 	# -fno-tree-vectorize -> -fno-vectorize
 	# -fno-tree-vrp -> -fno-strict-overflow
-		coverage_pct_clang="99.8–99.9%"
-		coverage_pct_gcc="~99.99%" # 35-50% slowdown
+		coverage_pct_clang="99.8–99.9%" # 45-65% slowdown
+		coverage_pct_gcc="~99.99%" # 40-60% slowdown
 		flags=(
 			"-fno-fast-math"			# Clang, GCC
 			"-fno-inline"				# Clang, GCC
