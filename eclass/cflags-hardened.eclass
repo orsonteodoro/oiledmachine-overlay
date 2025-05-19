@@ -1298,6 +1298,12 @@ einfo "All SSP hardening (All functions hardened)"
 			"-fno-unroll-loops"			# Clang
 			"-fno-vectorize"			# Clang
 		)
+		if [[ "${CFLAGS}" =~ "-flto" ]] || ( has "lto" ${IUSE} && use lto ) ; then
+	# Don't strip fortify thunk functions.
+			flags+=(
+				"-fno-inline-small-functions"
+			)
+		fi
 	elif [[ "${fortify_fix_level}" == "3" ]] ; then
 	# Each option is >= 50% effective/prevalance
 	# -fno-tree-loop-optimize -> -fno-unroll-loops
@@ -1312,6 +1318,14 @@ einfo "All SSP hardening (All functions hardened)"
 			"-fno-unroll-loops"			# Clang
 			"-fno-vectorize"			# Clang
 		)
+		if [[ "${CFLAGS}" =~ "-flto" ]] || ( has "lto" ${IUSE} && use lto ) ; then
+	# Don't strip fortify thunk functions.
+			flags+=(
+				"-fno-inline-small-functions"	# GCC
+				"-fno-tree-dce"			# Clang, GCC
+				"-mllvm -disable-dce"		# Clang
+			)
+		fi
 	elif [[ "${fortify_fix_level}" == "4" ]] ; then
 	# -fno-tree-dce -> -mllvm -disable-dce
 	# -fno-tree-dse -> -mllvm -disable-dse
