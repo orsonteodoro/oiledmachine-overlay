@@ -31,12 +31,12 @@ inherit flag-o-matic toolchain-funcs
 #     Used by Chromium production builds
 #     Linux kernel default for %3 of functions
 #     For DSS builds that fail on strong, strongest but pass with standard
-# 2 = strong (recommened for light packages, default)
+# 2 = strong (recommened for light packages, security-critical packages, default)
 #     Use cases:
 #     Used by Chromium debug builds
 #     Used by linux kernel default for 20% of functions
 #     For DSS builds if test suite fails for strongest but passes for strong
-# 3 = strongest
+# 3 = strongest (for legacy or EOL packages, or safety-critical packages or critical infrastructure)
 #     Use cases:
 #     For DSS builds if test suite passed for this level
 CFLAGS_HARDENED_LEVEL=${CFLAGS_HARDENED_LEVEL:-2}
