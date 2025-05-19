@@ -1314,6 +1314,50 @@ einfo "All SSP hardening (All functions hardened)"
 			"-fno-tree-vectorize"
 			"-fno-tree-vrp"
 		)
+	elif [[ "${fortify_fix_level}" == "5" ]] ; then
+	# 98-99.9 coverage, 20-30% slowdown
+		flags=(
+			"-fno-inline-small-functions"
+			"-fno-ipa-cp"
+			"-fno-ipa-cp-clone"
+			"-fno-ipa-icf"
+			"-fno-ipa-pure-const"
+			"-fno-ipa-vrp"
+			"-fno-strict-aliasing"
+			"-fno-optimize-sibling-calls"
+			"-fno-tree-ccp"
+			"-fno-tree-copy-prop"
+			"-fno-tree-dce"
+			"-fno-tree-dse"
+			"-fno-tree-loop-optimize"
+			"-fno-fast-math"
+			"-fno-tree-sra"
+			"-fno-tree-vectorize"
+			"-fno-tree-vrp"
+		)
+	elif [[ "${fortify_fix_level}" == "6" ]] ; then
+	# ~99.99 coverage, 35-50% slowdown
+		flags=(
+			"-fno-inline"
+			"-fno-inline-small-functions"
+			"-fno-ipa-cp"
+			"-fno-ipa-cp-clone"
+			"-fno-ipa-icf"
+			"-fno-ipa-pure-const"
+			"-fno-ipa-vrp"
+			"-fno-strict-aliasing"
+			"-fno-optimize-sibling-calls"
+			"-fno-tree-ccp"
+			"-fno-tree-copy-prop"
+			"-fno-tree-dce"
+			"-fno-tree-dse"
+			"-fno-tree-loop-optimize"
+			"-fno-fast-math"
+			"-fno-tree-pre"
+			"-fno-tree-sra"
+			"-fno-tree-vectorize"
+			"-fno-tree-vrp"
+		)
 	fi
 	if (( ${#flags[@]} > 0 )) ; then
 einfo "Adding extra flags to unbreak -D_FORTIFY_SOURCE"
