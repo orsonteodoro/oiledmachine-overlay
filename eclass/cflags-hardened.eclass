@@ -1256,6 +1256,78 @@ einfo "All SSP hardening (All functions hardened)"
 		CFLAGS_HARDENED_CXXFLAGS+=" -D_FORTIFY_SOURCE=2"
 	fi
 
+	# There is a bug in -D_FORTIFY_SOURCE, certain optimizations break the security expectations of this flag.
+	# There are three strategies to fix the issue.
+	# (1) Annotations with __attribute__((no_fortify))
+	# (2) Adding -fno- flags to ensure security gaurantees.  At -O1, -D_FORTIFY_SOURCE it is already broken.
+	# (3) Alter the compiler so it disables specific optimizations automatically when presented -D_FORTIFY_SOURCE=2.
+	# The preferred is annotations, the fallback is -fno- flags per unit or the entire project.
+	if [[ "${CFLAGS_HARDENED_FORTIFY_DEBUG:-0}" == "1" ]] ; then
+		append-flags -Werror=fortify-source -Werror
+		CFLAGS_HARDENED_CFLAGS+=" -Werror=fortify-source -Werror"
+		CFLAGS_HARDENED_CXXFLAGS+=" -Werror=fortify-source -Werror"
+	fi
+
+	local flags=()
+	local fortify_fix_level
+	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"security-critical") ]] ; then
+		fortify_fix_level="4"
+	else
+		fortify_fix_level="${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:-1}"
+	fi
+
+	# Sorted by coverage
+	# The point is that -D_FORTIFY_SOURCE was broken on release of the flag.
+	if [[ "${fortify_fix_level}" == "1" ]] ; then
+	# 80-90% coverage, 4-13% slowdown
+		flags=(
+			"-fno-aggressive-loop-optimizations"
+			"-fno-strict-aliasing"
+		)
+	elif [[ "${fortify_fix_level}" == "2" ]] ; then
+	# 85-90% coverage, 6-20% slowdown
+		flags=(
+			"-fno-tree-loop-optimize"
+			"-fno-strict-aliasing"
+		)
+	elif [[ "${fortify_fix_level}" == "3" ]] ; then
+	# 90-95% coverage, 8-15% slowdown
+	# Each option is 50% effective/prevalance
+		flags=(
+			"-fno-inline-small-functions"
+			"-fno-strict-aliasing"
+			"-fno-tree-loop-optimize"
+			"-fno-tree-vectorize"
+		)
+	elif [[ "${fortify_fix_level}" == "4" ]] ; then
+	# 99% coverage, 20-35% slowdown
+		flags=(
+			"-fno-inline-small-functions"
+			"-fno-optimize-sibling-calls"
+			"-fno-strict-aliasing"
+			"-fno-tree-dce"
+			"-fno-tree-dse"
+			"-fno-tree-loop-optimize"
+			"-fno-tree-vectorize"
+			"-fno-tree-vrp"
+		)
+	fi
+	if (( ${#flags[@]} > 0 )) ; then
+einfo "Adding extra flags to unbreak -D_FORTIFY_SOURCE"
+		filter-flags ${flags[@]}
+		local x
+		for x in ${flags[@]} ; do
+			CFLAGS_HARDENED_CFLAGS=$(echo "${CFLAGS_HARDENED_CFLAGS}" | sed -e "s|${x}||g")
+			CFLAGS_HARDENED_CXXFLAGS=$(echo "${CXXFLAGS_HARDENED_CFLAGS}" | sed -e "s|${x}||g")
+		done
+		for x in ${flags[@]} ; do
+			local flag=$(test-flags-CC "${x}")
+			append-flags "${flag}"
+			CFLAGS_HARDENED_CFLAGS+=" ${flag}"
+			CFLAGS_HARDENED_CXXFLAGS+=" ${flag}"
+		done
+	fi
+
 	# For executable packages only.
 	# Do not apply to hybrid (executible with libs) packages
 	if [[ "${CFLAGS_HARDENED_PIE:-0}" == "1" ]] && ! tc-enables-pie ; then
