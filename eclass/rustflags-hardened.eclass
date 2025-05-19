@@ -538,7 +538,8 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	local is_rust_nightly=$?
 
 	local rust_pv=$("${RUSTC}" --version \
-		| cut -f 2 -d " ")
+		| cut -f 2 -d " " \
+		| sed -e "s|-nightly||g")
 
 	local arch=$(echo "${CFLAGS}" \
 		| grep -E -o -e "-march=[-.a-z0-9]+" \
