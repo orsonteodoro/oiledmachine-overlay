@@ -1259,10 +1259,8 @@ einfo "All SSP hardening (All functions hardened)"
 	# There is a bug in -D_FORTIFY_SOURCE, certain optimizations break the security expectations of this flag.
 	# Break means a changed or removed fortified check.
 	# There are three strategies to fix the issue.
-	# (1) Annotations with __attribute__((no_fortify))
-	# (2) Adding -fno- flags to ensure security gaurantees.  At -O1, -D_FORTIFY_SOURCE it is already broken.
-	# (3) Alter the compiler so it disables specific optimizations automatically when presented -D_FORTIFY_SOURCE=2.
-	# The preferred is annotations, the fallback is -fno- flags per unit or the entire project.
+	# The point is that -D_FORTIFY_SOURCE was broken on release of the flag.
+	# Disabling inline functions could break during build time.
 	if [[ "${CFLAGS_HARDENED_FORTIFY_DEBUG:-0}" == "1" ]] ; then
 		append-flags -Werror=fortify-source -Werror
 		CFLAGS_HARDENED_CFLAGS+=" -Werror=fortify-source -Werror"
@@ -1280,8 +1278,6 @@ einfo "All SSP hardening (All functions hardened)"
 	fi
 
 	# Sorted by coverage
-	# The point is that -D_FORTIFY_SOURCE was broken on release of the flag.
-	# Disabling inline functions could break during build time.
 	local coverage_pct_clang=""
 	local coverage_pct_gcc=""
 	if [[ "${fortify_fix_level}" == "1" ]] ; then
