@@ -1281,20 +1281,21 @@ einfo "All SSP hardening (All functions hardened)"
 	# Sorted by coverage
 	# The point is that -D_FORTIFY_SOURCE was broken on release of the flag.
 	# Disabling inline functions could break during build time.
+	local coverage_pct=""
 	if [[ "${fortify_fix_level}" == "1" ]] ; then
-	# 80-90% coverage, 4-13% slowdown
+		coverage_pct="80-90%" # 4-13% slowdown
 		flags=(
 			"-fno-aggressive-loop-optimizations"
 			"-fno-strict-aliasing"
 		)
 	elif [[ "${fortify_fix_level}" == "2" ]] ; then
-	# 85-90% coverage, 6-20% slowdown
+		coverage_pct="85-90%" # 6-20% slowdown
 		flags=(
 			"-fno-tree-loop-optimize"
 			"-fno-strict-aliasing"
 		)
 	elif [[ "${fortify_fix_level}" == "3" ]] ; then
-	# 90-95% coverage, 8-15% slowdown
+		coverage_pct="90-95%" # 8-15% slowdown
 	# Each option is >= 50% effective/prevalance
 		flags=(
 			"-fno-inline-small-functions"
@@ -1303,7 +1304,7 @@ einfo "All SSP hardening (All functions hardened)"
 			"-fno-tree-vectorize"
 		)
 	elif [[ "${fortify_fix_level}" == "4" ]] ; then
-	# 99% coverage, 20-35% slowdown
+		coverage_pct="99%" # 20-35% slowdown
 		flags=(
 			"-fno-inline-small-functions"
 			"-fno-optimize-sibling-calls"
@@ -1315,7 +1316,7 @@ einfo "All SSP hardening (All functions hardened)"
 			"-fno-tree-vrp"
 		)
 	elif [[ "${fortify_fix_level}" == "5" ]] ; then
-	# 98-99.9 coverage, 20-30% slowdown
+		coverage_pct="98-99.9%" # 20-30% slowdown
 		flags=(
 			"-fno-inline-small-functions"
 			"-fno-ipa-cp"
@@ -1336,7 +1337,7 @@ einfo "All SSP hardening (All functions hardened)"
 			"-fno-tree-vrp"
 		)
 	elif [[ "${fortify_fix_level}" == "6" ]] ; then
-	# ~99.99 coverage, 35-50% slowdown
+		coverage_pct="~99.99%" # 35-50% slowdown
 		flags=(
 			"-fno-inline"
 			"-fno-inline-small-functions"
@@ -1360,7 +1361,7 @@ einfo "All SSP hardening (All functions hardened)"
 		)
 	fi
 	if (( ${#flags[@]} > 0 )) ; then
-einfo "Adding extra flags to unbreak -D_FORTIFY_SOURCE"
+einfo "Adding extra flags to unbreak ${coverage_pct} of -D_FORTIFY_SOURCE"
 		filter-flags ${flags[@]}
 		local x
 		for x in ${flags[@]} ; do

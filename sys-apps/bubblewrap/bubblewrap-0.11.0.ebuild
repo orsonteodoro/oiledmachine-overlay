@@ -18,7 +18,10 @@ LICENSE="LGPL-2+"
 # tests require root privileges
 RESTRICT="test"
 SLOT="0"
-IUSE="selinux suid"
+IUSE="
+selinux suid
+ebuild_revision_1
+"
 RDEPEND="
 	sys-libs/libseccomp
 	sys-libs/libcap
