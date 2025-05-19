@@ -1436,8 +1436,8 @@ einfo "Adding extra flags to unbreak ${coverage_pct} of -D_FORTIFY_SOURCE"
 			local pat1=$(echo "${flag}" | sed -e "s#^-fno-#-f(no-|-)#g")
 			local pat2=$(echo "${flag}" | sed -e "s#^-fno-#-f*#g")
 			filter-flags "${pat2}"
-			CFLAGS_HARDENED_CFLAGS=$(echo "${CFLAGS_HARDENED_CFLAGS}" | sed -e "s#${pat1}##g")
-			CFLAGS_HARDENED_CXXFLAGS=$(echo "${CXXFLAGS_HARDENED_CFLAGS}" | sed -e "s#${pat1}##g")
+			CFLAGS_HARDENED_CFLAGS=$(echo "${CFLAGS_HARDENED_CFLAGS}" | sed -r -e "s#${pat1}( |$)#\1#g")
+			CFLAGS_HARDENED_CXXFLAGS=$(echo "${CXXFLAGS_HARDENED_CFLAGS}" | sed -r -e "s#${pat1}( |$)#\1#g")
 		done
 		for flag in "${flags[@]}" ; do
 			local flag=$(test-flags-CC "${flag}")
