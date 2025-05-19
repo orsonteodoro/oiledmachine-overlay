@@ -1297,8 +1297,8 @@ einfo "All SSP hardening (All functions hardened)"
 		coverage_pct_clang="80–90%" # 3-12% slowdown
 		coverage_pct_gcc="85-90%" # 2-10% slowdown
 		flags=(
-			"-fno-tree-loop-optimize"		# GCC
 			"-fno-strict-aliasing"			# Clang, GCC
+			"-fno-tree-loop-optimize"		# GCC
 			"-fno-unroll-loops"			# Clang
 			"-fno-vectorize"			# Clang
 		)
