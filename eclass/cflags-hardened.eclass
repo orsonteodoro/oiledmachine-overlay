@@ -1281,96 +1281,157 @@ einfo "All SSP hardening (All functions hardened)"
 	# Sorted by coverage
 	# The point is that -D_FORTIFY_SOURCE was broken on release of the flag.
 	# Disabling inline functions could break during build time.
-	local coverage_pct=""
+	local coverage_pct_clang=""
+	local coverage_pct_gcc=""
 	if [[ "${fortify_fix_level}" == "1" ]] ; then
-		coverage_pct="80-90%" # 4-13% slowdown
+		coverage_pct_clang="80–90%"
+		coverage_pct_gcc="80-90%" # 4-13% slowdown
 		flags=(
-			"-fno-aggressive-loop-optimizations"
-			"-fno-strict-aliasing"
+			"-fno-aggressive-loop-optimizations"	# Clang, GCC
+			"-fno-strict-aliasing"			# Clang, GCC
 		)
 	elif [[ "${fortify_fix_level}" == "2" ]] ; then
-		coverage_pct="85-90%" # 6-20% slowdown
+	# -fno-tree-loop-optimize -> -fno-unroll-loops
+	# -fno-tree-vectorize -> -fno-vectorize
+		coverage_pct_clang="80–90%"
+		coverage_pct_gcc="85-90%" # 6-20% slowdown
 		flags=(
-			"-fno-tree-loop-optimize"
-			"-fno-strict-aliasing"
+			"-fno-tree-loop-optimize"		# GCC
+			"-fno-strict-aliasing"			# Clang, GCC
+			"-fno-unroll-loops"			# Clang
+			"-fno-vectorize"			# Clang
 		)
 	elif [[ "${fortify_fix_level}" == "3" ]] ; then
-		coverage_pct="90-95%" # 8-15% slowdown
 	# Each option is >= 50% effective/prevalance
+	# -fno-tree-loop-optimize -> -fno-unroll-loops
+	# -fno-tree-vectorize -> -fno-vectorize
+		coverage_pct_clang="85–90%"
+		coverage_pct_gcc="90-95%" # 8-15% slowdown
 		flags=(
-			"-fno-inline-small-functions"
-			"-fno-strict-aliasing"
-			"-fno-tree-loop-optimize"
-			"-fno-tree-vectorize"
+			"-fno-inline-small-functions"		# Clang, GCC
+			"-fno-strict-aliasing"			# Clang, GCC
+			"-fno-tree-loop-optimize"		# GCC
+			"-fno-tree-vectorize"			# GCC
+			"-fno-unroll-loops"			# Clang
+			"-fno-vectorize"			# Clang
 		)
 	elif [[ "${fortify_fix_level}" == "4" ]] ; then
-		coverage_pct="99%" # 20-35% slowdown
+	# -fno-tree-dce -> -mllvm -disable-dce
+	# -fno-tree-dse -> -mllvm -disable-dse
+	# -fno-tree-loop-optimize -> -fno-unroll-loops
+	# -fno-tree-vectorize -> -fno-vectorize
+	# -fno-tree-vrp -> -fno-strict-overflow
+		coverage_pct_clang="98–99%"
+		coverage_pct_gcc="99%" # 20-35% slowdown
 		flags=(
-			"-fno-inline-small-functions"
-			"-fno-optimize-sibling-calls"
-			"-fno-strict-aliasing"
-			"-fno-tree-dce"
-			"-fno-tree-dse"
-			"-fno-tree-loop-optimize"
-			"-fno-tree-vectorize"
-			"-fno-tree-vrp"
+			"-fno-inline-small-functions"		# Clang, GCC
+			"-fno-optimize-sibling-calls"		# Clang, GCC
+			"-fno-strict-aliasing"			# Clang, GCC
+			"-fno-strict-overflow"			# Clang
+			"-fno-tree-dce"				# GCC
+			"-fno-tree-dse"				# GCC
+			"-fno-tree-loop-optimize"		# GCC
+			"-fno-tree-vectorize"			# GCC
+			"-fno-tree-vrp"				# GCC
+			"-fno-unroll-loops"			# Clang
+			"-fno-vectorize"			# Clang
+			"-mllvm -disable-dce"			# Clang
+			"-mllvm -disable-dse"			# Clang
 		)
 	elif [[ "${fortify_fix_level}" == "5" ]] ; then
-		coverage_pct="98-99.9%" # 20-30% slowdown
+	# -fno-ipa-cp -> -mllvm -disable-ipa-cp
+	# -fno-tree-ccp -> -mllvm -disable-ccp
+	# -fno-tree-copy-prop -> -mllvm -disable-copyprop
+	# -fno-tree-dce -> -mllvm -disable-dce
+	# -fno-tree-dse -> -mllvm -disable-dse
+	# -fno-tree-loop-optimize -> -fno-unroll-loops
+	# -fno-tree-sra -> -mllvm -disable-sra
+	# -fno-tree-vectorize -> -fno-vectorize
+	# -fno-tree-vrp -> -fno-strict-overflow
+		coverage_pct_clang="97–99.7%"
+		coverage_pct_gcc="98-99.9%" # 20-30% slowdown
 		flags=(
-			"-fno-inline-small-functions"
-			"-fno-ipa-cp"
-			"-fno-ipa-cp-clone"
-			"-fno-ipa-icf"
-			"-fno-ipa-pure-const"
-			"-fno-ipa-vrp"
-			"-fno-strict-aliasing"
-			"-fno-optimize-sibling-calls"
-			"-fno-tree-ccp"
-			"-fno-tree-copy-prop"
-			"-fno-tree-dce"
-			"-fno-tree-dse"
-			"-fno-tree-loop-optimize"
-			"-fno-fast-math"
-			"-fno-tree-sra"
-			"-fno-tree-vectorize"
-			"-fno-tree-vrp"
+			"-fno-fast-math"			# Clang, GCC
+			"-fno-inline-small-functions"		# Clang, GCC
+			"-fno-ipa-cp"				# GCC
+			"-fno-ipa-cp-clone"			# GCC
+			"-fno-ipa-icf"				# Clang, GCC
+			"-fno-ipa-pure-const"			# Clang, GCC
+			"-fno-ipa-vrp"				# GCC
+			"-fno-optimize-sibling-calls"		# Clang, GCC
+			"-fno-strict-aliasing"			# Clang, GCC
+			"-fno-strict-overflow"			# Clang
+			"-fno-tree-ccp"				# GCC
+			"-fno-tree-copy-prop"			# GCC
+			"-fno-tree-dce"				# GCC
+			"-fno-tree-dse"				# GCC
+			"-fno-tree-loop-optimize"		# GCC
+			"-fno-tree-sra"				# GCC
+			"-fno-tree-vectorize"			# GCC
+			"-fno-tree-vrp"				# GCC
+			"-fno-unroll-loops"			# Clang
+			"-fno-vectorize"			# Clang
+			"-mllvm -disable-ccp"			# Clang
+			"-mllvm -disable-dce"			# Clang
+			"-mllvm -disable-dse"			# Clang
+			"-mllvm -disable-ipa-cp"		# Clang
+			"-mllvm -disable-sra"			# Clang
 		)
 	elif [[ "${fortify_fix_level}" == "6" ]] ; then
-		coverage_pct="~99.99%" # 35-50% slowdown
+	# -fno-ipa-cp -> -mllvm -disable-ipa-cp
+	# -fno-tree-ccp -> -mllvm -disable-ccp
+	# -fno-tree-copy-prop -> -mllvm -disable-copyprop
+	# -fno-tree-dce -> -mllvm -disable-dce
+	# -fno-tree-dse -> -mllvm -disable-dse
+	# -fno-tree-loop-optimize -> -fno-unroll-loops
+	# -fno-tree-pre -> -mllvm -disable-pre
+	# -fno-tree-sra -> -mllvm -disable-sra
+	# -fno-tree-vectorize -> -fno-vectorize
+	# -fno-tree-vrp -> -fno-strict-overflow
+		coverage_pct_clang="99.8–99.9%"
+		coverage_pct_gcc="~99.99%" # 35-50% slowdown
 		flags=(
-			"-fno-inline"
-			"-fno-inline-small-functions"
-			"-fno-ipa-cp"
-			"-fno-ipa-cp-clone"
-			"-fno-ipa-icf"
-			"-fno-ipa-pure-const"
-			"-fno-ipa-vrp"
-			"-fno-strict-aliasing"
-			"-fno-optimize-sibling-calls"
-			"-fno-tree-ccp"
-			"-fno-tree-copy-prop"
-			"-fno-tree-dce"
-			"-fno-tree-dse"
-			"-fno-tree-loop-optimize"
-			"-fno-fast-math"
-			"-fno-tree-pre"
-			"-fno-tree-sra"
-			"-fno-tree-vectorize"
-			"-fno-tree-vrp"
+			"-fno-fast-math"			# Clang, GCC
+			"-fno-inline"				# Clang, GCC
+			"-fno-inline-small-functions"		# Clang, GCC
+			"-fno-ipa-cp"				# GCC
+			"-fno-ipa-cp-clone"			# GCC
+			"-fno-ipa-icf"				# Clang, GCC
+			"-fno-ipa-pure-const"			# Clang, GCC
+			"-fno-ipa-vrp"				# GCC
+			"-fno-optimize-sibling-calls"		# Clang, GCC
+			"-fno-strict-aliasing"			# Clang, GCC
+			"-fno-strict-overflow"			# Clang
+			"-fno-tree-ccp"				# GCC
+			"-fno-tree-copy-prop"			# GCC
+			"-fno-tree-dce"				# GCC
+			"-fno-tree-dse"				# GCC
+			"-fno-tree-loop-optimize"		# GCC
+			"-fno-tree-pre"				# GCC
+			"-fno-tree-sra"				# GCC
+			"-fno-tree-vectorize"			# GCC
+			"-fno-tree-vrp"				# GCC
+			"-fno-unroll-loops"			# Clang
+			"-fno-vectorize"			# Clang
+			"-mllvm -disable-ccp"			# Clang
+			"-mllvm -disable-dce"			# Clang
+			"-mllvm -disable-dse"			# Clang
+			"-mllvm -disable-ipa-cp"		# Clang
+			"-mllvm -disable-pre"			# Clang
+			"-mllvm -disable-sra"			# Clang
 		)
 	fi
 	if (( ${#flags[@]} > 0 )) ; then
 einfo "Adding extra flags to unbreak ${coverage_pct} of -D_FORTIFY_SOURCE"
 		filter-flags ${flags[@]}
-		local x
-		for x in ${flags[@]} ; do
-			CFLAGS_HARDENED_CFLAGS=$(echo "${CFLAGS_HARDENED_CFLAGS}" | sed -e "s|${x}||g")
-			CFLAGS_HARDENED_CXXFLAGS=$(echo "${CXXFLAGS_HARDENED_CFLAGS}" | sed -e "s|${x}||g")
+		local flag
+		for flag in "${flags[@]}" ; do
+			CFLAGS_HARDENED_CFLAGS=$(echo "${CFLAGS_HARDENED_CFLAGS}" | sed -e "s|${flag}||g")
+			CFLAGS_HARDENED_CXXFLAGS=$(echo "${CXXFLAGS_HARDENED_CFLAGS}" | sed -e "s|${flag}||g")
 		done
-		for x in ${flags[@]} ; do
-			local flag=$(test-flags-CC "${x}")
-			append-flags "${flag}"
+		for flag in "${flags[@]}" ; do
+			local flag=$(test-flags-CC "${flag}")
+			append-flags ${flag}
 			CFLAGS_HARDENED_CFLAGS+=" ${flag}"
 			CFLAGS_HARDENED_CXXFLAGS+=" ${flag}"
 		done
