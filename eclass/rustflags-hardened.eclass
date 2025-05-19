@@ -974,7 +974,7 @@ einfo "rustc host:  ${host}"
 		sanitizers_compat=0
 	fi
 
-	if ! _rustflags-hardened_has_unstable_rust ; then
+	if (( ${is_rust_nightly} != 0 )) ; then
 		sanitizers_compat=0
 	fi
 
