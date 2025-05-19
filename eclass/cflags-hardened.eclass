@@ -1295,7 +1295,7 @@ einfo "All SSP hardening (All functions hardened)"
 		)
 	elif [[ "${fortify_fix_level}" == "3" ]] ; then
 	# 90-95% coverage, 8-15% slowdown
-	# Each option is 50% effective/prevalance
+	# Each option is >= 50% effective/prevalance
 		flags=(
 			"-fno-inline-small-functions"
 			"-fno-strict-aliasing"
