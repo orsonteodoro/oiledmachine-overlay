@@ -1126,16 +1126,12 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 	# @world set.
 					if tc-is-clang ; then
 						RUSTFLAGS+=" -C link-args=-static-libsan"
-					elif tc-is-gcc && [[ "${module}" == "asan" ]] ; then
-						RUSTFLAGS+=" -C link-args="$(${CC} -print-file-name=libasan.a)
-					elif tc-is-gcc && [[ "${module}" == "hwasan" ]] ; then
-						RUSTFLAGS+=" -C link-args="$(${CC} -print-file-name=libhwasan.a)
-					elif tc-is-gcc && [[ "${module}" == "lsan" ]] ; then
-						RUSTFLAGS+=" -C link-args="$(${CC} -print-file-name=liblsan.a)
-					elif tc-is-gcc && [[ "${module}" == "tsan" ]] ; then
-						RUSTFLAGS+=" -C link-args="$(${CC} -print-file-name=libtsan.a)
-					elif tc-is-gcc && [[ "${module}" == "ubsan" ]] ; then
-						RUSTFLAGS+=" -C link-args="$(${CC} -print-file-name=libubsan.a)
+einfo "Linking -static-libsan for Clang $(clang-major-version)"
+					elif tc-is-gcc ; then
+						local lib_name="lib${module}.a"
+						local lib_path=$(${CC} -print-file-name="${lib_name}")
+						RUSTFLAGS+=" -C link-args=${lib_path}"
+einfo "Linking ${lib_name} for GCC $(gcc-major-version)"
 					fi
 
 					added[${module}]="1"

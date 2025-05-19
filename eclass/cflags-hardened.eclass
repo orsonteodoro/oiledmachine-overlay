@@ -1764,16 +1764,13 @@ einfo "Deduping signed integer overflow check"
 						CFLAGS_HARDENED_CFLAGS+=" -static-libsan"
 						CFLAGS_HARDENED_CXXFLAGS+=" -static-libsan"
 						CFLAGS_HARDENED_LDFLAGS+=" -static-libsan"
-					elif tc-is-gcc && [[ "${module}" == "asan" ]] ; then
-						CFLAGS_HARDENED_LDFLAGS+=" "$(${CC} -print-file-name=libasan.a)
-					elif tc-is-gcc && [[ "${module}" == "hwasan" ]] ; then
-						CFLAGS_HARDENED_LDFLAGS+=" "$(${CC} -print-file-name=libhwasan.a)
-					elif tc-is-gcc && [[ "${module}" == "lsan" ]] ; then
-						CFLAGS_HARDENED_LDFLAGS+=" "$(${CC} -print-file-name=liblsan.a)
-					elif tc-is-gcc && [[ "${module}" == "tsan" ]] ; then
-						CFLAGS_HARDENED_LDFLAGS+=" "$(${CC} -print-file-name=libtsan.a)
-					elif tc-is-gcc && [[ "${module}" == "ubsan" ]] ; then
-						CFLAGS_HARDENED_LDFLAGS+=" "$(${CC} -print-file-name=libubsan.a)
+einfo "Linking -static-libsan for Clang $(clang-major-version)"
+					elif tc-is-gcc ; then
+						local lib_name="lib${module}.a"
+						local lib_path=$(${CC} -print-file-name="${lib_name}")
+						append-flags "${lib_path}"
+						CFLAGS_HARDENED_LDFLAGS+=" ${lib_path}"
+einfo "Linking ${lib_name} for GCC $(gcc-major-version)"
 					fi
 
 					added[${module}]="1"

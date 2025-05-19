@@ -33,7 +33,7 @@ declare -A GIT_CRATES=(
 [onenote_parser]="https://github.com/Cisco-Talos/onenote.rs;8b450447e58143004b68dd21c11b710fdb79be92;onenote.rs-%commit%" # 0.3.1
 )
 
-CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=4
+CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=0
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="jit network security-critical sensitive-data untrusted-data"
 # Sanitizers are broken during tests
@@ -330,6 +330,7 @@ CDEPEND="
 		$(python_gen_any_dep ">=dev-python/pytest-${PYTEST_PV}"'[${PYTHON_USEDEP}]')
 	)
 "
+# Forced dev-lang/rust-bin-9999 for SSP
 BDEPEND="
 	virtual/pkgconfig
 	doc? (
@@ -344,11 +345,11 @@ BDEPEND="
 	)
 	|| (
 		(
-			>=dev-lang/rust-1.71.0
+			=dev-lang/rust-9999
 			dev-lang/rust:=
 		)
 		(
-			>=dev-lang/rust-bin-1.71.0
+			>=dev-lang/rust-bin-9999
 			dev-lang/rust-bin:=
 		)
 	)
@@ -395,6 +396,18 @@ echo "mkdir -p /etc/portage/profile/package.use.mask"
 echo "echo \"app-antivirus/clamav -jit\" >> /etc/portage/profile/package.use.mask"
 echo
 	rust_pkg_setup
+einfo "RUSTC:  ${RUSTC}"
+	${RUSTC} -Z help | grep -q stack-protector
+	local ret=$?
+	if (( ${ret} != 0 )) ; then
+eerror
+eerror "Install or switch to =dev-lang/rust-bin-9999 or =dev-lang/rust-9999"
+eerror "Or see \`eselect rust\` to switch to the corresponding 9999 ebuild"
+eerror
+eerror "This is required for SSP (Stack Smashing Protection)."
+eerror
+		die
+	fi
 }
 
 PATCHES=(
@@ -498,7 +511,7 @@ src_configure() {
 		replace-flags '-O*' '-O3'
 	fi
 	cflags-hardened_append
-	rustflags-hardened_append
+#	rustflags-hardened_append
 
 	local mycmakeargs=(
 		-DAPP_CONFIG_DIRECTORY="${EPREFIX}/etc/clamav"
