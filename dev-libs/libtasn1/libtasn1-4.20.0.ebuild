@@ -3,6 +3,7 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=4
 # GCC breaks with asan
 CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 # CVE-2021-46848:  off-by-one read (ASAN)
