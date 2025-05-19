@@ -29,9 +29,6 @@ KEYWORDS="
 ~sparc ~x86 ~amd64-linux ~x86-linux ~x64-solaris
 "
 S="${WORKDIR}/${P}/${PN}"
-
-DESCRIPTION="Mozilla's Network Security Services library that implements PKI support"
-HOMEPAGE="https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS"
 SRC_URI="
 https://archive.mozilla.org/pub/security/nss/releases/${RTM_NAME}/src/${P}.tar.gz
 	cacert? (
@@ -39,15 +36,22 @@ https://dev.gentoo.org/~juippis/mozilla/patchsets/nss-3.104-cacert-class1-class3
 	)
 "
 
-LICENSE="|| ( MPL-2.0 GPL-2 LGPL-2.1 )"
+DESCRIPTION="Mozilla's Network Security Services library that implements PKI support"
+HOMEPAGE="https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS"
+LICENSE="
+	|| (
+		GPL-2
+		LGPL-2.1
+		MPL-2.0
+	)
+"
 SLOT="0"
 IUSE="
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
 cacert test test-full +utils
-ebuild_revision_6
+ebuild_revision_7
 "
-
 REQUIRED_USE="
 	test-full? (
 		test

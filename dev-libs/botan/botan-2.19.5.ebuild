@@ -55,7 +55,7 @@ ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
 doc boost bzip2 lzma python static-libs sqlite test tools zlib
-ebuild_revision_5
+ebuild_revision_6
 "
 RESTRICT="
 	!test? (
