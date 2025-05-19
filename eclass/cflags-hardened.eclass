@@ -1423,6 +1423,12 @@ einfo "All SSP hardening (All functions hardened)"
 		)
 	fi
 	if (( ${#flags[@]} > 0 )) ; then
+		local coverage_pct
+		if tc-is-clang ; then
+			coverage_pct="${coverage_pct_clang}"
+		else
+			coverage_pct="${coverage_pct_gcc}"
+		fi
 einfo "Adding extra flags to unbreak ${coverage_pct} of -D_FORTIFY_SOURCE"
 		filter-flags ${flags[@]}
 		local flag
