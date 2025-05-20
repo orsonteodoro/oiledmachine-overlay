@@ -27,7 +27,10 @@ DESCRIPTION="Portable Network Graphics library"
 HOMEPAGE="http://www.libpng.org/"
 LICENSE="libpng2"
 SLOT="0/16"
-IUSE="apng cpu_flags_x86_sse static-libs test"
+IUSE="
+apng cpu_flags_x86_sse static-libs test
+ebuild_revision_1
+"
 RESTRICT="
 	!test? (
 		test
