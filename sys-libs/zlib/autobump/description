@@ -1,4 +1,0 @@
-AUTOBUMP=1
-CATEGORY="sys-libs"
-PN="zlib"
-BUMP_POLICY="new-patch-versions-per-minor-major"
