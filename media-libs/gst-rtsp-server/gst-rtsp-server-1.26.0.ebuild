@@ -18,7 +18,7 @@ HOMEPAGE="https://gstreamer.freedesktop.org/modules/gst-rtsp-server.html"
 LICENSE="LGPL-2+"
 IUSE="
 examples +introspection static-libs
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND="
 	>=media-libs/gstreamer-${PV}:${SLOT}[${MULTILIB_USEDEP},introspection?]
