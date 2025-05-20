@@ -40,7 +40,7 @@ KEYWORDS="
 IUSE="
 brotli +cxx dane doc examples +idn nls +openssl pkcs11 sslv2 sslv3 static-libs
 test test-full +tls-heartbeat tools zlib zstd
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE="
 	test-full? (
