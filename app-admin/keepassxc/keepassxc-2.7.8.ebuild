@@ -61,7 +61,7 @@ RESTRICT="
 SLOT="0"
 IUSE="
 autotype browser doc keeshare +network qt5 qt5compat qt6 test wayland X yubikey
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	^^ (
