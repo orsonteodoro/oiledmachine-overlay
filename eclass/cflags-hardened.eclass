@@ -1272,6 +1272,25 @@ einfo "All SSP hardening (All functions hardened)"
 		CFLAGS_HARDENED_CXXFLAGS+=" -Werror=fortify-source -Werror"
 	fi
 
+	# Required disable to prevent removing thunks or undoing the -fno- flag.
+	# BOLT:  It could possibly remove thunk functions.
+	# PGO:  If you place -fno-tree-loop-vectorize before then use -fprofile-use after, it could undo -fno-tree-loop-vectorize.
+	local bad_flags=(
+		"bolt"
+		"ebolt"
+		"epgo"
+		"pgo"
+		"tpgo"
+		"tbolt"
+	)
+	local flag
+	for flag in ${bad_flags[@]} ; do
+		if has "${flag}" ${IUSE} && use "${flag}" ; then
+eerror "You must disable ${flag} so that it doesn't potentially affect the integrity of -D_FORTIFY_SOURCE"
+			die
+		fi
+	done
+
 	local flags=()
 	local fortify_fix_level
 	# Increase CFLAGS_HARDENED_FORTIFY_FIX_LEVEL manually by inspection to
