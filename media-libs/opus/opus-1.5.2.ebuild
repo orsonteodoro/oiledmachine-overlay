@@ -27,7 +27,7 @@ IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
 custom-modes debug deep-plc dred doc hardened osce static-libs test
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	dred? (
