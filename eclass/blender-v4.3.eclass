@@ -77,7 +77,7 @@ FFMPEG_IUSE+="
 	+jpeg2k libaom +mp3 +opus rav1e svt-av1 +theora +vorbis +vpx webm +webp x264 x265 +xvid
 "
 
-LLVM_COMPAT=( {17..15} )
+LLVM_COMPAT=( {18..15} )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 LLVM_MAX_UPSTREAM=17 # (inclusive)
 

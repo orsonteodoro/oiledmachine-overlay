@@ -1306,7 +1306,7 @@ einfo "All SSP hardening (All functions hardened)"
 			"-mllvm -disable-dce"			# Clang
 		)
 		if ! [[ "${fortify_fix_level}" =~ "-inline" ]] ; then
-			flags=(
+			flags+=(
 				"-fno-inline-small-functions"	# Clang, GCC
 			)
 		fi
@@ -1333,7 +1333,7 @@ einfo "All SSP hardening (All functions hardened)"
 			"-mllvm -disable-dse"			# Clang
 		)
 		if ! [[ "${fortify_fix_level}" =~ "-inline" ]] ; then
-			flags=(
+			flags+=(
 				"-fno-inline-small-functions"	# Clang, GCC
 			)
 		fi
@@ -1362,7 +1362,7 @@ einfo "All SSP hardening (All functions hardened)"
 			"-mllvm -disable-dse"			# Clang
 		)
 		if ! [[ "${fortify_fix_level}" =~ "-inline" ]] ; then
-			flags=(
+			flags+=(
 				"-fno-inline-small-functions"	# Clang, GCC
 			)
 		fi
