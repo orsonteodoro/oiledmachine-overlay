@@ -37,7 +37,10 @@ RESTRICT="
 # 3.0.0 dropped some unstable APIs; bug #813705
 # 6.0.0 changed libharfbuzz-subset.so ABI
 SLOT="0/6.0.0"
-IUSE="+cairo debug doc experimental +glib +graphite icu +introspection test +truetype"
+IUSE="
++cairo debug doc experimental +glib +graphite icu +introspection test +truetype
+ebuild_revision_1
+"
 REQUIRED_USE="
 	introspection? (
 		glib
