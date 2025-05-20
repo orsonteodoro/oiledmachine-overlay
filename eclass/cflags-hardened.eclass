@@ -1258,14 +1258,22 @@ einfo "All SSP hardening (All functions hardened)"
 		CFLAGS_HARDENED_CXXFLAGS+=" -D_FORTIFY_SOURCE=2"
 	fi
 
-	# There is a bug in -D_FORTIFY_SOURCE, certain optimizations break the
-	# security expectations of this flag.
+	# There is a bug in -D_FORTIFY_SOURCE that certain optimizations break
+	# the security expectations of this flag.
+	#
 	# Break means change, altered, removed, or makes difficult the
-	# fortified source check or the thunk function.  The compiler will
-	# optimize away the critical severity vulnerability check when it should
-	# not be removed.
+	# fortified source check or the thunk function.
+	#
+	# The compiler will optimize away the critical severity vulnerability
+	# check when it should not be removed.
+	#
 	# -D_FORTIFY_SOURCE was broken on release of the flag because -O1 and
 	# above enable flags that break it and it needs -O1 to work properly.
+	#
+	# If you just add -D_FORTIFY_SOURCE=2 without the -fno-flags, it is
+	# a critical vulnerability.  When you add the -fno- flags, it could
+	# be reduced to low or none depending on the security-performance
+	# tradeoff.
 	if [[ "${CFLAGS_HARDENED_FORTIFY_DEBUG:-0}" == "1" ]] ; then
 		append-flags -Werror=fortify-source -Werror
 		CFLAGS_HARDENED_CFLAGS+=" -Werror=fortify-source -Werror"
