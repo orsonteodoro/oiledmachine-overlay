@@ -49,7 +49,7 @@ SLOT="8.0"
 IUSE="
 cjk cracklib debug jemalloc latin1 numa +perl profiling router selinux +server
 tcmalloc test test-install
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	?? (
