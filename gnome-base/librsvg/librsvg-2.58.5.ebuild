@@ -315,7 +315,10 @@ LICENSE="
 "
 # LGPL-2.1+ is the project license.  The rest are crate licenses
 SLOT="2"
-IUSE="gtk-doc +introspection +vala"
+IUSE="
+gtk-doc +introspection +vala
+ebuild_revision_1
+"
 REQUIRED_USE="
 	gtk-doc? (
 		introspection
