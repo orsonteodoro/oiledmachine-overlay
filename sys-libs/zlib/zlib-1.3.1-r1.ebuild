@@ -32,7 +32,10 @@ DESCRIPTION="Standard (de)compression library"
 HOMEPAGE="https://zlib.net/"
 LICENSE="ZLIB"
 SLOT="0/1" # subslot = SONAME
-IUSE="minizip static-libs"
+IUSE="
+minizip static-libs
+ebuild_revision_2
+"
 RDEPEND="
 	!sys-libs/zlib-ng[compat]
 "
