@@ -53,7 +53,7 @@ IUSE="
 ${PPC_IUSE}
 ${TRAINER_IUSE}
 chromium doc +examples +highbitdepth pgo postproc static-libs svc test +threads
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	pgo? (
