@@ -24,7 +24,10 @@ HOMEPAGE="https://code.videolan.org/videolan/dav1d"
 LICENSE="BSD-2"
 # Check SONAME on version bumps!
 SLOT="0/7"
-IUSE="+8bit +10bit +asm test xxhash"
+IUSE="
++8bit +10bit +asm test xxhash
+ebuild_revision_1
+"
 RESTRICT="
 	!test? (
 		test
