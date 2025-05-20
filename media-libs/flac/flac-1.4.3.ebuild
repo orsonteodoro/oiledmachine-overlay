@@ -32,7 +32,7 @@ X86_IUSE="
 IUSE="
 ${X86_IUSE}
 +cxx debug ogg static-libs
-ebuild_revision_1
+ebuild_revision_2
 "
 # AVX configure switch is for both AVX & AVX2
 REQUIRED_USE="
