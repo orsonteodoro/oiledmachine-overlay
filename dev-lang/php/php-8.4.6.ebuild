@@ -100,6 +100,7 @@ trainer-ext-reflection
 trainer-ext-spl
 trainer-ext-standard
 trainer-zend
+ebuild_revision_1
 "
 # Without USE=readline or libedit, the interactive "php -a" CLI will hang.
 REQUIRED_USE_BENCHMARK_SYMFONY_DEMO="
