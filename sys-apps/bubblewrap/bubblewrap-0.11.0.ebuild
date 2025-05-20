@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=3
+CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=4
 CFLAGS_HARDENED_PIE=1
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 
@@ -20,7 +20,7 @@ RESTRICT="test"
 SLOT="0"
 IUSE="
 selinux suid
-ebuild_revision_5
+ebuild_revision_6
 "
 RDEPEND="
 	sys-libs/libseccomp
