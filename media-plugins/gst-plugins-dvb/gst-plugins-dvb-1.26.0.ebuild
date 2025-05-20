@@ -12,7 +12,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~x86"
 
 DESCRIPTION="DVB device capture plugin for GStreamer"
 IUSE="
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND="
 "
