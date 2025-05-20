@@ -203,6 +203,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # jit
 # kernel
 # language-runtime (e.g. compiler, interpeter, language virtual machine)
+# login (sudo)
 # messenger
 # modular-app (an app that uses plugins)
 # real-time-integrity
@@ -1275,7 +1276,7 @@ einfo "All SSP hardening (All functions hardened)"
 	local fortify_fix_level
 	# Increase CFLAGS_HARDENED_FORTIFY_FIX_LEVEL manually by inspection to
 	# avoid inline build-time failure.
-	if (( "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"crypto") )) ; then
+	if (( "${CFLAGS_HARDENED_USE_CASES}" =~ ("crypto"|"dss"|"login") )) ; then
 		fortify_fix_level="${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:-3}"
 	elif (( "${CFLAGS_HARDENED_USE_CASES}" =~ ("untrusted-data"|"network"|"server"|"web-browser") )) ; then
 		fortify_fix_level="${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:-2}"

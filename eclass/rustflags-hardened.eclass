@@ -79,6 +79,7 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # hypervisor
 # jit
 # kernel
+# login (sudo)
 # messenger
 # real-time-integrity
 # safety-critical
