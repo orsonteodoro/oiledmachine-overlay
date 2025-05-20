@@ -12,7 +12,7 @@ KEYWORDS="~amd64 ~arm64 ~x86"
 
 DESCRIPTION="OpenCV elements for GStreamer"
 IUSE="
-ebuild_revision_3
+ebuild_revision_4
 "
 RDEPEND="
 	>=media-libs/opencv-4.0.0:=[${MULTILIB_USEDEP},contrib,contribdnn]
