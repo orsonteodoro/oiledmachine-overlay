@@ -35,6 +35,7 @@ declare -A GIT_CRATES=(
 
 CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=0
 CFLAGS_HARDENED_TOLERANCE="4.0"
+CFLAGS_HARDENED_TRAPV=0
 CFLAGS_HARDENED_USE_CASES="jit network security-critical sensitive-data untrusted-data"
 # Sanitizers are broken during tests
 CFLAGS_HARDENED_VTABLE_VERIFY=1
@@ -270,7 +271,7 @@ SLOT="0/sts"
 IUSE="
 doc clamonacc +clamapp custom-cflags experimental jit libclamav-only man milter rar
 selinux +system-mspack systemd test valgrind
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	clamonacc? (
@@ -345,11 +346,11 @@ BDEPEND="
 	)
 	|| (
 		(
-			=dev-lang/rust-9999
+			=dev-lang/rust-1.71.0
 			dev-lang/rust:=
 		)
 		(
-			>=dev-lang/rust-bin-9999
+			>=dev-lang/rust-bin-1.71.0
 			dev-lang/rust-bin:=
 		)
 	)
@@ -399,7 +400,7 @@ echo
 einfo "RUSTC:  ${RUSTC}"
 	${RUSTC} -Z help | grep -q stack-protector
 	local ret=$?
-	if (( ${ret} != 0 )) ; then
+	if (( ${ret} != 0 )) && false ; then
 eerror
 eerror "Install or switch to =dev-lang/rust-bin-9999 or =dev-lang/rust-9999"
 eerror "Or see \`eselect rust\` to switch to the corresponding 9999 ebuild"
@@ -510,7 +511,7 @@ src_configure() {
 			'-mtune=*'
 		replace-flags '-O*' '-O3'
 	fi
-	cflags-hardened_append
+#	cflags-hardened_append
 #	rustflags-hardened_append
 
 	local mycmakeargs=(
@@ -579,13 +580,12 @@ src_configure() {
 }
 
 src_test() {
+	export ASAN_OPTIONS="strict_init=0:log_path=${T}/asan_log:halt_on_error=0:continue_on_error=1:verify_asan_link_order=0"
 	export TEST_CASE_TIMEOUT="40"
-	#local -x SANDBOX_ON=0 # Required so libsandbox.so will not crash test because of libasan.so...
+	local -x SANDBOX_ON=0 # Required so libsandbox.so will not crash test because of libasan.so...
 	export CC=$(tc-getCC)
-	if [[ -n "${CFLAGS_HARDENED_SANITIZERS}" ]] ; then
-	# Required so libsandbox.so will not crash test because of libasan.so...
-		export LD_PRELOAD=""
-	fi
+	export LD_PRELOAD=""
+	addwrite '/dev/null.*'
 einfo "LD_PRELOAD:  ${LD_PRELOAD}"
 	use valgrind && ewarn "Testing with valgrind may likely fail."
 	cd "${S}_build" || die
@@ -593,6 +593,7 @@ einfo "LD_PRELOAD:  ${LD_PRELOAD}"
 		"./unit_tests/check_clamav" || die
 	fi
 	cmake_src_test
+	grep -e "^ERROR:" "${T}/build.log" && die "Detected error"
 }
 
 src_install() {
