@@ -1278,20 +1278,29 @@ einfo "All SSP hardening (All functions hardened)"
 	fi
 
 	# Sorted by coverage
+	# CWE-119
 	local coverage_pct_clang=""
 	local coverage_pct_gcc=""
 	if [[ "${fortify_fix_level}" == "1" ]] ; then
-		coverage_pct_clang="80–90%" # 0-5% slowdown
-		coverage_pct_gcc="80-90%" # 0-5% slowdown
+		coverage_pct_clang="68–83%"			# 0-7% slowdown
+		coverage_pct_gcc="70-85%"			# 0-7% slowdown
 		flags=(
 			"-fno-aggressive-loop-optimizations"	# Clang, GCC
 			"-fno-strict-aliasing"			# Clang, GCC
 		)
+		if [[ "${CFLAGS}" =~ "-flto" ]] || ( has "lto" ${IUSE} && use lto ) ; then
+	# Don't strip fortify source thunk functions.
+			coverage_pct_clang="73–88%"		# 0-5% slowdown
+			coverage_pct_gcc="75-90%"		# 0-5% slowdown
+			flags+=(
+				"-fno-inline-small-functions"	# Clang, GCC
+			)
+		fi
 	elif [[ "${fortify_fix_level}" == "2" ]] ; then
 	# -fno-tree-loop-optimize -> -fno-unroll-loops
 	# -fno-tree-vectorize -> -fno-vectorize
-		coverage_pct_clang="80–90%" # 3-12% slowdown
-		coverage_pct_gcc="85-90%" # 2-10% slowdown
+		coverage_pct_clang="78–88%"			# 4-15% slowdown
+		coverage_pct_gcc="80-90%"			# 4-15% slowdown
 		flags=(
 			"-fno-strict-aliasing"			# Clang, GCC
 			"-fno-tree-loop-optimize"		# GCC
@@ -1299,17 +1308,21 @@ einfo "All SSP hardening (All functions hardened)"
 			"-fno-vectorize"			# Clang
 		)
 		if [[ "${CFLAGS}" =~ "-flto" ]] || ( has "lto" ${IUSE} && use lto ) ; then
-	# Don't strip fortify thunk functions.
+	# Don't strip fortify source thunk functions.
+			coverage_pct_clang="83–93%"		# 4-15% slowdown
+			coverage_pct_gcc="85-95%"		# 4-15% slowdown
 			flags+=(
-				"-fno-inline-small-functions"
+				"-fno-inline-small-functions"	# Clang, GCC
+				"-fno-tree-dce"			# GCC
+				"-mllvm -disable-dce"		# Clang
 			)
 		fi
 	elif [[ "${fortify_fix_level}" == "3" ]] ; then
 	# Each option is >= 50% effective/prevalance
 	# -fno-tree-loop-optimize -> -fno-unroll-loops
 	# -fno-tree-vectorize -> -fno-vectorize
-		coverage_pct_clang="85–90%" # 10-22% slowdown
-		coverage_pct_gcc="90-95%" # 10-20% slowdown
+		coverage_pct_clang="83–93%"			# 10-22% slowdown
+		coverage_pct_gcc="85-95%"			# 10-22% slowdown
 		flags=(
 			"-fno-inline-small-functions"		# Clang, GCC
 			"-fno-strict-aliasing"			# Clang, GCC
@@ -1319,9 +1332,10 @@ einfo "All SSP hardening (All functions hardened)"
 			"-fno-vectorize"			# Clang
 		)
 		if [[ "${CFLAGS}" =~ "-flto" ]] || ( has "lto" ${IUSE} && use lto ) ; then
-	# Don't strip fortify thunk functions.
+	# Don't strip fortify source thunk functions.
+			coverage_pct_clang="88–95%"		# 10-22% slowdown
+			coverage_pct_gcc="90-97%"		# 10-22% slowdown
 			flags+=(
-				"-fno-inline-small-functions"	# GCC
 				"-fno-tree-dce"			# Clang, GCC
 				"-mllvm -disable-dce"		# Clang
 			)
@@ -1332,8 +1346,8 @@ einfo "All SSP hardening (All functions hardened)"
 	# -fno-tree-loop-optimize -> -fno-unroll-loops
 	# -fno-tree-vectorize -> -fno-vectorize
 	# -fno-tree-vrp -> -fno-strict-overflow
-		coverage_pct_clang="98–99%" # 22-35% slowdown
-		coverage_pct_gcc="99%" # 20-30% slowdown
+		coverage_pct_clang="97–99%"			# 20-35% slowdown
+		coverage_pct_gcc="98-99%"			# 20-35% slowdown
 		flags=(
 			"-fno-inline-small-functions"		# Clang, GCC
 			"-fno-optimize-sibling-calls"		# Clang, GCC
@@ -1359,8 +1373,8 @@ einfo "All SSP hardening (All functions hardened)"
 	# -fno-tree-sra -> -mllvm -disable-sra
 	# -fno-tree-vectorize -> -fno-vectorize
 	# -fno-tree-vrp -> -fno-strict-overflow
-		coverage_pct_clang="97–99.7%" # 35-55% slowdown
-		coverage_pct_gcc="98-99.9%" # 30-50% slowdown
+		coverage_pct_clang="97–99.7%"			# 35-55% slowdown
+		coverage_pct_gcc="98-99.9%"			# 30-55% slowdown
 		flags=(
 			"-fno-fast-math"			# Clang, GCC
 			"-fno-inline-small-functions"		# Clang, GCC
@@ -1399,8 +1413,8 @@ einfo "All SSP hardening (All functions hardened)"
 	# -fno-tree-sra -> -mllvm -disable-sra
 	# -fno-tree-vectorize -> -fno-vectorize
 	# -fno-tree-vrp -> -fno-strict-overflow
-		coverage_pct_clang="99.8–99.9%" # 45-65% slowdown
-		coverage_pct_gcc="~99.99%" # 40-60% slowdown
+		coverage_pct_clang="99.8–99.9%"			# 40-65% slowdown
+		coverage_pct_gcc="~99.9%"			# 40-65% slowdown
 		flags=(
 			"-fno-fast-math"			# Clang, GCC
 			"-fno-inline"				# Clang, GCC
