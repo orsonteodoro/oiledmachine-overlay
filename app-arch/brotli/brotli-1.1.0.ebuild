@@ -35,7 +35,10 @@ LICENSE="
 	)
 "
 SLOT="0/$(ver_cut 1)"
-IUSE="python test"
+IUSE="
+python test
+ebuild_revision_1
+"
 REQUIRED_USE="
 	python? (
 		${PYTHON_REQUIRED_USE}
