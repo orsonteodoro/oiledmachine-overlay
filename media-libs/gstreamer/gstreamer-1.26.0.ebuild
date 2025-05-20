@@ -33,7 +33,7 @@ LICENSE="LGPL-2+"
 SLOT="1.0"
 IUSE="
 +caps +introspection nls unwind
-ebuild_revision_3
+ebuild_revision_4
 "
 RDEPEND="
 	>=dev-libs/glib-2.64.0:2[${MULTILIB_USEDEP}]
