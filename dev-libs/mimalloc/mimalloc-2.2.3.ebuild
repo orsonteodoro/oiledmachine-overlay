@@ -17,7 +17,10 @@ DESCRIPTION="A compact general purpose allocator with excellent performance"
 HOMEPAGE="https://github.com/microsoft/mimalloc"
 LICENSE="MIT"
 SLOT="0/2"
-IUSE="debug test valgrind"
+IUSE="
+debug test valgrind
+ebuild_revision_1
+"
 RESTRICT="
 	!test? (
 		test
