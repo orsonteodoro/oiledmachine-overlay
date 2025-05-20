@@ -7,7 +7,7 @@ EAPI=8
 #CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 # CVE-2023-36660 - out of bounds write, memory corruption (ASAN)
 CFLAGS_HARDENED_TOLERANCE="4.0"
-CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="crypto security-critical sensitive-data untrusted-data"
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_aes"
 	"cpu_flags_arm_neon"

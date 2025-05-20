@@ -7,7 +7,7 @@ EAPI=8
 CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 # CVE-2021-46848:  off-by-one read (ASAN)
 CFLAGS_HARDENED_TOLERANCE="4.0"
-CFLAGS_HARDENED_USE_CASES="security-critical network untrusted-data"
+CFLAGS_HARDENED_USE_CASES="crypto security-critical network untrusted-data"
 CFLAGS_HARDENED_SANITIZERS_COMPAT=( "llvm" )
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/libtasn1.asc"
 

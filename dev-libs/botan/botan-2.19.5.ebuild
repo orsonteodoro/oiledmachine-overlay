@@ -25,7 +25,7 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse4_1"
 	"cpu_flags_x86_sse4_2"
 )
-CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data"
+CFLAGS_HARDENED_USE_CASES="crypto security-critical sensitive-data"
 PYTHON_COMPAT=( "python3_"{10..12} )
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/botan.asc"
 

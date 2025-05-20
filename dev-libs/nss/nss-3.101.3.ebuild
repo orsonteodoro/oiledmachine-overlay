@@ -6,7 +6,7 @@ EAPI=8
 # Sanitizers break test results
 #CFLAGS_HARDENED_SANITIZERS="address"
 CFLAGS_HARDENED_TOLERANCE="4.0"
-CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="crypto security-critical sensitive-data untrusted-data"
 CPU_FLAGS_PPC=(
 	"cpu_flags_ppc_altivec"
 	"cpu_flags_ppc_vsx"

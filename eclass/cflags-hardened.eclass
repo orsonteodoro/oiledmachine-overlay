@@ -1271,7 +1271,13 @@ einfo "All SSP hardening (All functions hardened)"
 	local fortify_fix_level
 	# Increase CFLAGS_HARDENED_FORTIFY_FIX_LEVEL manually by inspection to
 	# avoid inline build-time failure.
-	fortify_fix_level="${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:-2}"
+	if (( "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"crypto") )) ; then
+		fortify_fix_level="${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:-3}"
+	elif (( "${CFLAGS_HARDENED_USE_CASES}" =~ ("untrusted-data"|"network"|"server") )) ; then
+		fortify_fix_level="${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:-2}"
+	else
+		fortify_fix_level="${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:-1}"
+	fi
 
 	# Sorted by coverage
 	# CWE-119
@@ -1279,13 +1285,13 @@ einfo "All SSP hardening (All functions hardened)"
 	local coverage_pct_clang=""
 	local coverage_pct_gcc=""
 	if [[ "${fortify_fix_level}" == "1" ]] ; then
-	# For performance-critical or balance
+	# For low risk trusted data
 	# -fno-tree-dce -> -mllvm -disable-dce
 	# -fno-tree-loop-optimize -> -fno-unroll-loops
 	# -fno-tree-vectorize -> -fno-vectorize
 	# 3.9/Low CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:N/I:L/A:N
-		coverage_pct_clang="~90–95%"			#
-		coverage_pct_gcc="~90–95%"			#
+		coverage_pct_clang="~90–95%"			# ~3–7% slowdown
+		coverage_pct_gcc="~90–95%"			# ~3–7% slowdown
 		flags=(
 			"-fno-strict-aliasing"			# Clang, GCC
 			"-fno-tree-dce"				# GCC
@@ -1300,15 +1306,42 @@ einfo "All SSP hardening (All functions hardened)"
 			)
 		fi
 	elif [[ "${fortify_fix_level}" == "2" ]] ; then
-	# Production security-critical
+	# Practical security-critical, untrusted data/connections
 	# -fno-tree-dce -> -mllvm -disable-dce
 	# -fno-tree-dse -> -mllvm -disable-dse
 	# -fno-tree-loop-optimize -> -fno-unroll-loops
 	# -fno-tree-vectorize -> -fno-vectorize
 	# -fno-tree-vrp -> -fno-strict-overflow
 	# 0/None CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:N/I:N/A:N
-		coverage_pct_clang="97–99%"			# 20-35% slowdown
-		coverage_pct_gcc="98-99%"			# 20-35% slowdown
+		coverage_pct_clang="98–99%"			# ~5–10% slowdown
+		coverage_pct_gcc="98-99%"			# ~5–10% slowdown
+		flags=(
+			"-fno-strict-aliasing"			# Clang, GCC
+			"-fno-tree-loop-optimize"		# GCC
+			"-fno-tree-vectorize"			# GCC
+			"-fno-tree-dce"				# GCC
+			"-fno-tree-dse"				# GCC
+			"-fno-tree-vrp"				# GCC
+			"-fno-unroll-loops"			# Clang
+			"-fno-vectorize"			# Clang
+			"-mllvm -disable-dce"			# Clang
+			"-mllvm -disable-dse"			# Clang
+		)
+		if ! [[ "${fortify_fix_level}" =~ "-inline" ]] ; then
+			flags=(
+				"-fno-inline-small-functions"	# Clang, GCC
+			)
+		fi
+	elif [[ "${fortify_fix_level}" == "3" ]] ; then
+	# Theoretical security-critical (crypto, dss)
+	# -fno-tree-dce -> -mllvm -disable-dce
+	# -fno-tree-dse -> -mllvm -disable-dse
+	# -fno-tree-loop-optimize -> -fno-unroll-loops
+	# -fno-tree-vectorize -> -fno-vectorize
+	# -fno-tree-vrp -> -fno-strict-overflow
+	# 0/None CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:N/I:N/A:N
+		coverage_pct_clang="98–99%"			# ~6–12% slowdown
+		coverage_pct_gcc="98-99%"			# ~6–12% slowdown
 		flags=(
 			"-fno-optimize-sibling-calls"		# Clang, GCC
 			"-fno-strict-aliasing"			# Clang, GCC
