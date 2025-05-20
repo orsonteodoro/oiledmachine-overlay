@@ -29,7 +29,7 @@ LICENSE="
 SLOT="0/1"
 IUSE="
 +lzma lz4 static-libs test zlib
-ebuild_revision_3
+ebuild_revision_4
 "
 RESTRICT="
 	!test? (
