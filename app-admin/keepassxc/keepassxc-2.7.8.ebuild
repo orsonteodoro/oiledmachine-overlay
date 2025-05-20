@@ -3,6 +3,7 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=4
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data"
 CFLAGS_HARDENED_VTABLE_VERIFY="0"
 QT5_PV="5.2.0"
@@ -60,7 +61,7 @@ RESTRICT="
 SLOT="0"
 IUSE="
 autotype browser doc keeshare +network qt5 qt5compat qt6 test wayland X yubikey
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	^^ (
