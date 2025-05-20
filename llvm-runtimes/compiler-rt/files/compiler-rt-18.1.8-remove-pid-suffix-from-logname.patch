@@ -1,0 +1,16 @@
+--- a/compiler-rt/lib/sanitizer_common/sanitizer_file.cpp.orig	2024-06-15 10:21:32.000000000 -0700
++++ b/compiler-rt/lib/sanitizer_common/sanitizer_file.cpp	2025-05-19 23:16:04.423061661 -0700
+@@ -54,10 +54,10 @@ void ReportFile::ReopenIfNecessary() {
+ 
+   const char *exe_name = GetProcessName();
+   if (common_flags()->log_exe_name && exe_name) {
+-    internal_snprintf(full_path, kMaxPathLength, "%s.%s.%zu", path_prefix,
+-                      exe_name, pid);
++    internal_snprintf(full_path, kMaxPathLength, "%s.%s", path_prefix,
++                      exe_name);
+   } else {
+-    internal_snprintf(full_path, kMaxPathLength, "%s.%zu", path_prefix, pid);
++    internal_snprintf(full_path, kMaxPathLength, "%s", path_prefix);
+   }
+   if (common_flags()->log_suffix) {
+     internal_strlcat(full_path, common_flags()->log_suffix, kMaxPathLength);

@@ -52,8 +52,9 @@ RESTRICT="
 "
 SLOT="${LLVM_MAJOR}"
 IUSE+="
-+abi_x86_32 abi_x86_64 +atomic-builtins +clang +debug test
 ${LLVM_EBUILDS_LLVM19_REVISION}
++abi_x86_32 abi_x86_64 +atomic-builtins +clang +debug test
+ebuild_revision_1
 "
 REQUIRED_USE="
 	atomic-builtins? (
@@ -92,6 +93,9 @@ python_check_deps() {
 	use test || return 0
 	python_has_version ">=dev-python/lit-15[${PYTHON_USEDEP}]"
 }
+PATCHES=(
+	"${FILESDIR}/${PN}-18.1.8-remove-pid-suffix-from-logname.patch"
+)
 
 pkg_pretend() {
 	if ! use clang && ! tc-is-clang ; then
