@@ -22,7 +22,7 @@ RESTRICT="
 SLOT="0"
 IUSE="
 test
-ebuild_revision_2
+ebuild_revision_3
 "
 
 src_prepare() {
