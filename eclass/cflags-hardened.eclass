@@ -191,6 +191,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 #
 # admin-access (e.g. sudo)
 # container-runtime
+# crypto
 # daemon
 # dss (e.g. cryptocurrency, finance)
 # extension
@@ -1333,7 +1334,7 @@ einfo "All SSP hardening (All functions hardened)"
 			)
 		fi
 	elif [[ "${fortify_fix_level}" == "3" ]] ; then
-	# Theoretical security-critical (crypto, audits)
+	# Theoretical security-critical (crypto, audits, logins)
 	# -fno-tree-dce -> -mllvm -disable-dce
 	# -fno-tree-dse -> -mllvm -disable-dse
 	# -fno-tree-loop-optimize -> -fno-unroll-loops

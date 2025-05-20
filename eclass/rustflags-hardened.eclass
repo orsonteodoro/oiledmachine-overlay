@@ -69,6 +69,7 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 #
 # admin-access (e.g. sudo)
 # container-runtime
+# crypto
 # daemon
 # dss (e.g. cryptocurrency, finance)
 # extension
