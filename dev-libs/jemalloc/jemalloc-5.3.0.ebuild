@@ -8,7 +8,7 @@ EAPI=8
 # 1000 4k pages in size.
 
 # asan breaks test suite.
-CFLAGS_HARDENED_SANITIZERS="undefined"
+CFLAGS_HARDENED_SANITIZERS="address undefined"
 CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" )
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
@@ -51,7 +51,7 @@ SLOT="0/2"
 IUSE+="
 ${TRAINERS[@]}
 custom-cflags debug lazy-lock prof static-libs stats test xmalloc
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE+="
 	!custom-cflags? (
@@ -70,33 +70,7 @@ REQUIRED_USE+="
 		pgo
 	)
 "
-HTML_DOCS=( doc/jemalloc.html )
-
-_add_lib() {
-	local lib="${1}"
-	local d="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
-	local f
-	for f in Makefile Makefile.in ; do
-einfo "Editing ${f}:  Adding ${lib}"
-		sed -i \
-			-e "s|EXTRA_LDFLAGS :=|EXTRA_LDFLAGS := ${lib}|g" \
-			"${d}/${f}" \
-			|| die
-	done
-}
-
-_remove_lib() {
-	local lib="${1}"
-	local d="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
-	local f
-	for f in Makefile Makefile.in ; do
-einfo "Editing ${f}:  Removing ${lib}"
-		sed -i \
-			-e "s|EXTRA_LDFLAGS := ${lib}|EXTRA_LDFLAGS :=|g" \
-			"${d}/${f}" \
-			|| die
-	done
-}
+HTML_DOCS=( "doc/jemalloc.html" )
 
 pkg_setup() {
 	uopts_setup
@@ -137,6 +111,27 @@ _src_configure_compiler() {
 
 _src_configure() {
 	strip-unsupported-flags
+
+	if (( ${#CFLAGS_HARDENED_SANITIZERS_COMPAT[@]} > 0 )) ; then
+		if tc-is-clang && [[ "${CFLAGS_HARDENED_SANITIZERS_COMPAT[@]}" =~ "llvm" ]] ; then
+einfo "Adding -static-libsan for Clang $(clang-major-version)"
+			export LIBS+=" -static-libsan"
+		fi
+		if tc-is-gcc && [[ "${CFLAGS_HARDENED_SANITIZERS_COMPAT[@]}" =~ "gcc" ]] && [[ "${CFLAGS_HARDENED_SANITIZERS}" =~ (^|" ")"address" ]] ; then
+			local lib_name="libasan.a"
+einfo "Adding ${lib_name} for GCC $(gcc-major-version)"
+			export LIBS+=" "$(${CC} -print-file-name="${lib_name}")
+		fi
+		if tc-is-gcc && [[ "${CFLAGS_HARDENED_SANITIZERS_COMPAT[@]}" =~ "gcc" ]] && [[ "${CFLAGS_HARDENED_SANITIZERS}" =~ "undefined" ]] ; then
+			local lib_name="libubsan.a"
+einfo "Adding ${lib_name} for GCC $(gcc-major-version)"
+			export LIBS+=" "$(${CC} -print-file-name="${lib_name}")
+		fi
+	fi
+
+	[[ "${PGO_PHASE}" == "PGI" ]] && export LIBS+=" -lgcov"
+	[[ "${PGO_PHASE}" == "PGO" ]] && export LIBS="${LIBS//-lgcov/}"
+
 	uopts_src_configure
 	filter-flags -fprofile-arcs
 	if [[ "${PGO_PHASE}" == "PGI" ]] ; then
@@ -154,8 +149,6 @@ _src_configure() {
 		$(use_enable xmalloc)
 	)
 	ECONF_SOURCE="${S}-${MULTILIB_ABI_FLAG}.${ABI}" econf "${myconf[@]}"
-	[[ "${PGO_PHASE}" == "PGI" ]] && _add_lib "-lgcov"
-	[[ "${PGO_PHASE}" == "PGO" ]] && _remove_lib "-lgcov"
 }
 
 _src_compile() {
@@ -230,8 +223,14 @@ train_override_duration() {
 }
 
 multilib_src_test() {
+	export ASAN_OPTIONS="strict_init=0:log_path=${T}/asan_log:halt_on_error=0:continue_on_error=1:verify_asan_link_order=0"
+	local -x SANDBOX_ON=0 # Required so libsandbox.so will not crash test because of libasan.so...
+	export LD_PRELOAD=""
+	addpredict /dev/null
+einfo "LD_PRELOAD:  ${LD_PRELOAD}"
 	emake check
 	emake stress
+	grep -e "^ERROR:" "${T}/build.log" && die "Detected error"
 }
 
 multilib_src_install() {
