@@ -27,7 +27,10 @@ RESTRICT="
 	)
 "
 SLOT="0/1.10.0-meson"
-IUSE="static-libs test"
+IUSE="
+static-libs test
+ebuild_revision_1
+"
 
 PATCHES=(
 	"${FILESDIR}/${PV}-fix-freestanding-test.patch"
