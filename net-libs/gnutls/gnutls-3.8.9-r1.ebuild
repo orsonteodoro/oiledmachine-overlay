@@ -3,7 +3,6 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=4
 # 32-bit breaks with asan and ubsan sanitizers on
 #CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 CFLAGS_HARDENED_TOLERANCE="4.0"

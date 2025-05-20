@@ -5,7 +5,6 @@ EAPI=7
 
 # TODO: Default enable brotli at some point? But in 2.70.0 not advertised to servers yet - https://gitlab.gnome.org/GNOME/libsoup/issues/146
 
-CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=4
 CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data untrusted-data"
 VALA_USE_DEPEND="vapigen"
 

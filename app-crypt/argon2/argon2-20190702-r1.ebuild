@@ -3,7 +3,6 @@
 
 EAPI=7
 
-CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=4
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data"
 
 inherit cflags-hardened toolchain-funcs

@@ -5,7 +5,6 @@ EAPI=8
 
 MY_P="${P/_/-}"
 
-CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=4
 CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data untrusted-data"
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/openssl.org.asc"
 

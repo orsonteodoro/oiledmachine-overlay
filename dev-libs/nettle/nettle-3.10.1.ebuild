@@ -6,7 +6,6 @@ EAPI=8
 # Sanitizers disabled because it breaks gnutls tests
 #CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 # CVE-2023-36660 - out of bounds write, memory corruption (ASAN)
-CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=4
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CPU_FLAGS_ARM=(
