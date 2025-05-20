@@ -94,7 +94,7 @@ python_check_deps() {
 	python_has_version ">=dev-python/lit-15[${PYTHON_USEDEP}]"
 }
 PATCHES=(
-	"${FILESDIR}/${PN}-18.1.8-remove-pid-suffix-from-logname.patch"
+#	"${FILESDIR}/${PN}-18.1.8-remove-pid-suffix-from-logname.patch"
 )
 
 pkg_pretend() {
