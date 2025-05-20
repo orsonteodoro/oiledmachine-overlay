@@ -1274,7 +1274,7 @@ einfo "All SSP hardening (All functions hardened)"
 	# avoid inline build-time failure.
 	if (( "${CFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"crypto") )) ; then
 		fortify_fix_level="${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:-3}"
-	elif (( "${CFLAGS_HARDENED_USE_CASES}" =~ ("untrusted-data"|"network"|"server") )) ; then
+	elif (( "${CFLAGS_HARDENED_USE_CASES}" =~ ("untrusted-data"|"network"|"server"|"web-browser") )) ; then
 		fortify_fix_level="${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:-2}"
 	else
 		fortify_fix_level="${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:-1}"
