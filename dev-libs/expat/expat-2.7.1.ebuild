@@ -28,7 +28,7 @@ LICENSE="MIT"
 SLOT="0"
 IUSE="
 examples static-libs test unicode
-ebuild_revision_2
+ebuild_revision_3
 "
 RESTRICT="
 	!test? (
