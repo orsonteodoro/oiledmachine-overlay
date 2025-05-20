@@ -1260,8 +1260,9 @@ einfo "All SSP hardening (All functions hardened)"
 	# There is a bug in -D_FORTIFY_SOURCE, certain optimizations break the
 	# security expectations of this flag.
 	# Break means change, altered, removed, or makes difficult the
-	# fortified source check.  The compiler will optimize away the critical
-	# severity vulnerability check when it should not be removed.
+	# fortified source check or the thunk function.  The compiler will
+	# optimize away the critical severity vulnerability check when it should
+	# not be removed.
 	# -D_FORTIFY_SOURCE was broken on release of the flag because -O1 and
 	# above enable flags that break it and it needs -O1 to work properly.
 	if [[ "${CFLAGS_HARDENED_FORTIFY_DEBUG:-0}" == "1" ]] ; then
