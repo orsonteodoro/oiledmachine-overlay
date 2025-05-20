@@ -53,7 +53,7 @@ SLOT="0/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 
 IUSE="
 emacs examples -jsoncpp static-libs test zlib
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	jsoncpp? (
