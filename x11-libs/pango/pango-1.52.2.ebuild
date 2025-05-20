@@ -20,7 +20,7 @@ LICENSE="LGPL-2+"
 SLOT="0"
 IUSE="
 debug +introspection sysprof test X
-ebuild_revision_2
+ebuild_revision_3
 "
 RESTRICT="
 	!test? (
