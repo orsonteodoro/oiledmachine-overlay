@@ -14,7 +14,7 @@ KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86"
 
 DESCRIPTION="JACK audio server source/sink plugin for GStreamer"
 IUSE="
-ebuild_revision_3
+ebuild_revision_4
 "
 RDEPEND="
 	|| (
