@@ -47,7 +47,7 @@ HOMEPAGE="https://gstreamer.freedesktop.org/"
 LICENSE="LGPL-2.1+"
 IUSE="
 nls +orc
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND="
 	>=dev-libs/glib-2.64.0[${MULTILIB_USEDEP}]
