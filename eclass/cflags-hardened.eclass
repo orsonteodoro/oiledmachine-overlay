@@ -1271,7 +1271,7 @@ einfo "All SSP hardening (All functions hardened)"
 	local fortify_fix_level
 	# Increase CFLAGS_HARDENED_FORTIFY_FIX_LEVEL manually by inspection to
 	# avoid inline build-time failure.
-	fortify_fix_level="${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:-1}"
+	fortify_fix_level="${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:-2}"
 
 	# Sorted by coverage
 	# CWE-119
@@ -1299,7 +1299,7 @@ einfo "All SSP hardening (All functions hardened)"
 				"-fno-inline-small-functions"	# Clang, GCC
 			)
 		fi
-	elif [[ "${fortify_fix_level}" == "1" ]] ; then
+	elif [[ "${fortify_fix_level}" == "2" ]] ; then
 	# Production security-critical
 	# -fno-tree-dce -> -mllvm -disable-dce
 	# -fno-tree-dse -> -mllvm -disable-dse
