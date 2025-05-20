@@ -61,7 +61,7 @@ ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
 +asm doc +gmp static-libs
-ebuild_revision_8
+ebuild_revision_9
 "
 # The arm64 crypto option controls AES, SHA1, and SHA2 usage.
 REQUIRED_USE="
