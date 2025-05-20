@@ -26,7 +26,10 @@ DESCRIPTION="Stream-oriented XML parser library"
 HOMEPAGE="https://libexpat.github.io/"
 LICENSE="MIT"
 SLOT="0"
-IUSE="examples static-libs test unicode"
+IUSE="
+examples static-libs test unicode
+ebuild_revision_1
+"
 RESTRICT="
 	!test? (
 		test
