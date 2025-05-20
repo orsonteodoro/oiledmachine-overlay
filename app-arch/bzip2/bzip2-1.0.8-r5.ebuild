@@ -28,7 +28,10 @@ KEYWORDS="
 ~alpha amd64 arm arm64 hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86
 ~arm64-macos
 "
-IUSE="static static-libs"
+IUSE="
+static static-libs
+ebuild_revision_1
+"
 
 BDEPEND="
 	verify-sig? (
