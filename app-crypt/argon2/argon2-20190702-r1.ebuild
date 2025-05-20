@@ -4,7 +4,7 @@
 EAPI=7
 
 CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=3
-CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data"
+CFLAGS_HARDENED_USE_CASES="crypto security-critical sensitive-data"
 
 inherit cflags-hardened toolchain-funcs
 
@@ -29,7 +29,7 @@ LICENSE="
 SLOT="0/1"
 IUSE="
 static-libs
-ebuild_revision_8
+ebuild_revision_9
 "
 DOCS=(
 	"argon2-specs.pdf" "CHANGELOG.md" "README.md"
