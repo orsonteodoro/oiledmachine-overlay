@@ -19,7 +19,7 @@ RESTRICT="test"
 SLOT="0"
 IUSE="
 selinux suid
-ebuild_revision_6
+ebuild_revision_7
 "
 RDEPEND="
 	sys-libs/libseccomp
