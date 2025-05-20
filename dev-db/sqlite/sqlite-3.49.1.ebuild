@@ -47,7 +47,7 @@ RESTRICT="
 SLOT="3"
 IUSE="
 debug doc icu +readline static-libs tcl test tools
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	pgo? (
