@@ -24,7 +24,10 @@ DESCRIPTION="A fixed-point version of the Ogg Vorbis decoder (also known as libv
 HOMEPAGE="https://wiki.xiph.org/Tremor"
 LICENSE="BSD"
 SLOT="0"
-IUSE+=" low-accuracy"
+IUSE+="
+low-accuracy
+ebuild_revision_1
+"
 RDEPEND="
 	>=media-libs/libogg-1.3.0:=[${MULTILIB_USEDEP}]
 "
