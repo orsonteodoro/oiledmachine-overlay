@@ -19,7 +19,10 @@ DESCRIPTION="Internationalized text layout and rendering library"
 HOMEPAGE="https://pango.gnome.org/ https://gitlab.gnome.org/GNOME/pango"
 LICENSE="LGPL-2+"
 SLOT="0"
-IUSE="debug examples +introspection sysprof test X"
+IUSE="
+debug examples +introspection sysprof test X
+ebuild_revision_1
+"
 RESTRICT="
 	!test? (
 		test
