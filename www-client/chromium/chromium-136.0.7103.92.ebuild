@@ -73,6 +73,7 @@ ALLOW_SYSTEM_TOOLCHAIN=0
 CFI_CAST=0 # Global variable
 CFI_ICALL=0 # Global variable
 CFI_VCALL=0 # Global variable
+CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=1
 CFLAGS_HARDENED_LEVEL="1" # Global variable
 CFLAGS_HARDENED_USE_CASES="jit network scripting sensitive-data untrusted-data web-browser"
 CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
