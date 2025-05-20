@@ -1283,7 +1283,7 @@ einfo "All SSP hardening (All functions hardened)"
 	# -fno-tree-dce -> -mllvm -disable-dce
 	# -fno-tree-loop-optimize -> -fno-unroll-loops
 	# -fno-tree-vectorize -> -fno-vectorize
-	# CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:N/I:L/A:N ; 3.9 (Low)
+	# 3.9/Low CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:N/I:L/A:N
 		coverage_pct_clang="~90–95%"			#
 		coverage_pct_gcc="~90–95%"			#
 		flags=(
@@ -1306,7 +1306,7 @@ einfo "All SSP hardening (All functions hardened)"
 	# -fno-tree-loop-optimize -> -fno-unroll-loops
 	# -fno-tree-vectorize -> -fno-vectorize
 	# -fno-tree-vrp -> -fno-strict-overflow
-	# CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:N/I:N/A:N ; 0 (None)
+	# 0/None CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:N/I:N/A:N
 		coverage_pct_clang="97–99%"			# 20-35% slowdown
 		coverage_pct_gcc="98-99%"			# 20-35% slowdown
 		flags=(
@@ -1325,7 +1325,7 @@ einfo "All SSP hardening (All functions hardened)"
 		)
 		if ! [[ "${fortify_fix_level}" =~ "-inline" ]] ; then
 			flags=(
-				"-fno-inline-small-functions"		# Clang, GCC
+				"-fno-inline-small-functions"	# Clang, GCC
 			)
 		fi
 	fi
