@@ -1294,7 +1294,7 @@ einfo "All SSP hardening (All functions hardened)"
 	local flag
 	for flag in ${bad_flags[@]} ; do
 		if has "${flag}" ${IUSE} && use "${flag}" ; then
-eerror "You must disable ${flag} so that it doesn't potentially affect the integrity of -D_FORTIFY_SOURCE"
+eerror "You must disable the ${flag} USE flag so that it doesn't potentially affect the integrity of -D_FORTIFY_SOURCE"
 			die
 		fi
 	done
