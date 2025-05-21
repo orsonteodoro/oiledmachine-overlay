@@ -385,7 +385,7 @@ more defensive posture on cybersecurity.
 
 #### -D_FORTIFY_SOURCE integrity re-evaluated
 
--D_FORTIFY_SOURCE provides stack overflow and heap protection for str*,
+-D_FORTIFY_SOURCE provides stack overflow and heap overflow protection for str*,
 and mem* functions for packages that use GLIBC.  If compromised or not applied
 carefully, it may result in a critical severity vulnerability.
 
