@@ -1,18 +1,168 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild fork only on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
   <maintainer type="project">
-    <!-- Ebuild originators -->
+    <!-- Ebuild originator -->
     <email>base-system@gentoo.org</email>
     <name>Gentoo Base System</name>
   </maintainer>
+  <upstream>
+    <remote-id type="cpe">cpe:/a:gnu:zlib</remote-id>
+    <remote-id type="github">madler/zlib</remote-id>
+  </upstream>
+  <!--
+
+    oiledmachine-overlay notes:
+
+    This ebuild fork introduces PGO.
+
+    PGO instructions
+    (1) emerge the zlib ebuild without pgo USE flag
+    (2) emerge pigz
+    (3) emerge with pgo USE flag and at least one trainer USE flag.
+        For web, the default compression levels are recommended.  Also,
+        consider 8 and max for image compression if using png, which
+        are often used on the web.
+
+    You may set the following per-package envvars:
+
+    MINIZIP_TRAINING_SHORT_N_ITERATIONS=X, where X >= 1 will only affect the
+    trainer-...-short, trainer-...-store,
+    trainer-...-max-compression USE flags.  The default is 30.
+
+    MINIZIP_TRAINING_LONG_N_ITERATIONS=X, where X >= 1 will only affect the
+    trainer-...-long USE flags.  The default is 300.
+
+    MINIZIP_TRAINING_MAX_FILES=N, where N >= 1 will limit the number of
+    files to add to archived binary zip files.  The default is
+    500.
+
+    At least one
+
+      ${PORTAGE_DISTDIR}/trainer/assets/{apng,bmp,gif,images,jpeg,png,svg,tiff,webp}
+
+    folder is required for trainer-zlib-images USE flag.
+    Image assets will not be provided but you may provide your own
+    or obtain them from the web if they are marked public domain or
+    permissive or license compatible.  See the ebuild for the exact details
+    of asset placement.
+
+    For custom training see README.md in the overlay.
+
+  -->
   <use>
+    <flag name="backup-copy">
+      Make a backup copy of the previous libz.so
+    </flag>
     <flag name="minizip">
-     Include the minizip library for quick and dirty zip extraction
+      Include the minizip library for quick and dirty zip extraction
+    </flag>
+    <flag name="minizip-utils">
+      Include the minizip demo frontends
+    </flag>
+    <flag name="pgo">
+      Build with Profiled Guided Optimizations
+    </flag>
+    <flag name="trainer-custom">
+      Run a custom trainer script
+    </flag>
+    <flag name="zlib_trainers_minizip_binary_long">
+      Run the trainer against text files for minizip only with N=300 so that
+      each compression level is trained fairly
+    </flag>
+    <flag name="zlib_trainers_minizip_binary_max_compression">
+      Run the trainer against text files for minizip only abridged training with
+      N=30 with maximum compression level
+    </flag>
+    <flag name="zlib_trainers_minizip_binary_short">
+      Run the trainer against text files for minizip only abridged training with
+      N=30 so that essential code paths do not get deoptimized
+    </flag>
+    <flag name="zlib_trainers_minizip_binary_store">
+      Run the trainer against text files for minizip only abridged training with
+      N=30 with store only archival
+    </flag>
+    <flag name="zlib_trainers_minizip_text_long">
+      Run the trainer against binary files for minizip only with N=300 so that
+      each compression level is trained fairly
+    </flag>
+    <flag name="zlib_trainers_minizip_text_max_compression">
+      Run the trainer against binary files for minizip only abridged training
+      with with N=30 with maximum compression level
+    </flag>
+    <flag name="zlib_trainers_minizip_text_short">
+      Run the trainer against binary files for minizip only abridged training
+      version with with N=30 so that code paths do not get deoptimized
+    </flag>
+    <flag name="zlib_trainers_minizip_text_store">
+      Run the trainer against binary files for minizip only abridged training
+      with with N=30 with store only archiving
+    </flag>
+    <flag name="zlib_trainers_zlib_binary_all">
+      Run the trainer against text files for zlib only with all compression
+      levels
+    </flag>
+    <flag name="zlib_trainers_zlib_binary_default">
+      Run the trainer against text files for zlib only with compression level 6
+    </flag>
+    <flag name="zlib_trainers_zlib_binary_max">
+      Run the trainer against text files for zlib only with compression level 9
+    </flag>
+    <flag name="zlib_trainers_zlib_binary_min">
+      Run the trainer against text files for zlib only with compression level 1
+    </flag>
+    <flag name="zlib_trainers_zlib_binary_random">
+      Run the trainer against text files for zlib only with random compression
+      levels
+    </flag>
+    <flag name="zlib_trainers_zlib_images_all">
+      Run the trainer against image files for zlib only with all compression
+      levels
+    </flag>
+    <flag name="zlib_trainers_zlib_images_default">
+      Run the trainer against image files for zlib only with compression level 6
+    </flag>
+    <flag name="zlib_trainers_zlib_images_max">
+      Run the trainer against image files for zlib only with compression
+      level 9, which is also used by libpng as the default for saving
+    </flag>
+    <flag name="zlib_trainers_zlib_images_level_8">
+      Run the trainer against image files for zlib only with compression
+      level 8, used for memory compression in libpng
+    </flag>
+    <flag name="zlib_trainers_zlib_images_min">
+      Run the trainer against image files for zlib only with compression
+      level 1
+    </flag>
+    <flag name="zlib_trainers_zlib_images_random">
+      Run the trainer against image files for zlib only with random compression
+      levels
+    </flag>
+    <flag name="zlib_trainers_zlib_text_all">
+      Run the trainer against binary files for zlib only with all compression
+      levels
+    </flag>
+    <flag name="zlib_trainers_zlib_text_default">
+      Run the trainer against binary files for zlib only with compression
+      level 6
+    </flag>
+    <flag name="zlib_trainers_zlib_text_max">
+      Run the trainer against binary files for zlib only with compression
+      level 9
+    </flag>
+    <flag name="zlib_trainers_zlib_text_min">
+      Run the trainer against binary files for zlib only with compression
+      level 1
+    </flag>
+    <flag name="zlib_trainers_zlib_text_random">
+      Run the trainer against binary files for zlib only with random compression
+      levels
     </flag>
   </use>
-  <upstream>
-    <remote-id type="github">madler/zlib</remote-id>
-    <remote-id type="cpe">cpe:/a:gnu:zlib</remote-id>
-  </upstream>
 </pkgmetadata>
+
