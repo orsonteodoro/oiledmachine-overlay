@@ -383,12 +383,45 @@ packages.
 The requirement is based partly on the overlay's maintainer shift towards a
 more defensive posture on cybersecurity.
 
-BOLT and PGO will still be a user choice.
+#### -D_FORTIFY_SOURCE integrity re-evaluated
 
-There are two narratives.  It is unknown which narrative holds.
+-D_FORTIFY_SOURCE provides stack overflow and heap protection for str*,
+and mem* functions for packages that use GLIBC.  If compromised or not applied
+carefully, it may result in a critical severity vulnerability.
 
-* PGO/BOLT will increase the attack complexity lowering the CVSS score.  The mitigation drops to almost half the CVSS score when complexity increased in this narrative.
-* PGO/BOLT will compromise the integrity of -D_FORTIFY_SOURCE checks or thunks.  It may even prune the critical vulnerability check or thunk function.  The CVSS score maybe drops a quarter in this narrative but estimated to be high severity.
+##### Extra flags added fix lost fortify source integrity
+
+When -O1, -O2, -O3 is added, -D_FORTIFY_SOURCE's integrity may be compromised.
+
+This overlay applies 3 sets of flags to ensure that the integrity of fortify source
+checks and thunks are not compromised by compiler optimizations.
+
+* Set 1 for trusted secure data packages.  ~90–95% coverage, ~3–7% slowdown.
+* Set 2 for practical security-critical packages.  98-99% coverage, ~5–10% slowdown.
+* Set 3 for theoretical security-critcal packages.  98-99% coverage, ~6–12% slowdown.
+
+Doesn't -O flags achieve the same thing?  Yes but it doesn't give the fine
+grained control compared to these sets.  The set is selected to counter the most
+prevalent compromises with the most effectiveness.  With the -O flags, it
+doesn't necessary follow that order.
+
+##### BOLT/PGO is here stay in cflags-hardened contexts
+
+There was some thought to remove BOLT/PGO in packages marked with
+cflags-hardened to eliminate a source of -D_FORTIFY_SOURCE integrity loss.
+After hearing the perspectives, it was decided it can stay.  BOLT and PGO will
+still be a user choice.  It is not clear which opinion is correct and the most
+secure.
+
+There are two narratives.
+
+* PGO/BOLT will increase the attack complexity lowering the CVSS score.  The
+  mitigation drops to almost half the CVSS score when complexity increased in
+  this narrative.
+* PGO/BOLT will compromise the integrity of -D_FORTIFY_SOURCE checks or thunks.
+  It may even prune the critical vulnerability check or thunk function.  The
+  CVSS score maybe drops a quarter in this narrative but estimated to be high
+  severity.
 
 #### Requirements
 
