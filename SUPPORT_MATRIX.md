@@ -96,7 +96,7 @@ exist in build files.
 * Clang 18 is recommended as fallback.
 * Vendored Clang 21 is only supported on Chromium.
 * rust-bin 9999 is recommended for SSP, sanitizers, and as default to be used in security-critical packages.
-* rust-bin oldest supported stable (1.74.0) and rust-bin latest stable (1.86.0) are recommended as fallbacks for non security-critical packages.
+* rust-bin older supported stable (1.74.0, 1.75.0) and rust-bin latest stable (1.86.0) are recommended as fallbacks for non security-critical packages.
 * Due to the lack of GPU hardware access, the requirements are the exact major.minor version requirements for this overlay and ML/LLM libraries for reproducibility.
 
 | Platform                        | Level of support                      | Distro correspondence              |
