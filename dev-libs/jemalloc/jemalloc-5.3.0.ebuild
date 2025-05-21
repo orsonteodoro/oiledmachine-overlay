@@ -8,6 +8,7 @@ EAPI=8
 # 1000 4k pages in size.
 
 # asan breaks test suite.
+CFLAGS_HARDENED_FORTIFY_SOURCE=0
 CFLAGS_HARDENED_SANITIZERS="address undefined"
 CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" )
 CFLAGS_HARDENED_TOLERANCE="4.0"
@@ -51,7 +52,7 @@ SLOT="0/2"
 IUSE+="
 ${TRAINERS[@]}
 custom-cflags debug lazy-lock prof static-libs stats test xmalloc
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE+="
 	!custom-cflags? (
