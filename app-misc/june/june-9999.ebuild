@@ -83,7 +83,7 @@ RDEPEND+="
 	app-misc/ollama
 	media-libs/portaudio[alsa?,jack?,oss?]
 	media-libs/sdl2-mixer[wav]
-	media-libs/libsdl2[alsa?,jack?,nas?,oss?,pulseaudio?,sound,threads]
+	media-libs/libsdl2[alsa?,jack?,nas?,oss?,pulseaudio?,sound,threads(+)]
 	|| (
 		sci-libs/mkl
 		sci-libs/openblas[eselect-ldso,openmp]

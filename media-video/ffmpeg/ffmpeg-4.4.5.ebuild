@@ -954,7 +954,7 @@ RDEPEND+="
 		>=net-fs/samba-3.6.23-r1[${MULTILIB_USEDEP},client]
 	)
 	sdl? (
-		<media-libs/libsdl2-3[${MULTILIB_USEDEP},sound,threads,video,wayland?,X?]
+		<media-libs/libsdl2-3[${MULTILIB_USEDEP},sound,threads(+),video,wayland?,X?]
 	)
 	sndio? (
 		media-sound/sndio:=[${MULTILIB_USEDEP}]
