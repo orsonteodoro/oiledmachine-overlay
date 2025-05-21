@@ -94,7 +94,7 @@ exist in build files.
 * The entire @world needs to be built with the same GCC version to avoid build time symbol version problems for GPU support.
 * Clang 18 is recommended as fallback.
 * Vendored Clang 21 is only supported on Chromium.
-* rust-bin 9999 is recommended for SSP and as default.
+* rust-bin 9999 is recommended for SSP, sanitizers, and as default.
 * rust-bin 1.74.0 and rust-bin 1.86.0 is recommended as fallbacks.
 * Due to the lack of GPU hardware access, the requirements are the exact major.minor version requirements for this overlay and ML/LLM libraries for reproducibility.
 
