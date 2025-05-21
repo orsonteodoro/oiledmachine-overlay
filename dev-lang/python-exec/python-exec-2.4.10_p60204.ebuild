@@ -47,7 +47,7 @@ python_check_deps() {
 }
 
 pkg_setup() {
-	python-any-r1_pkg_setup
+	use test && python-any-r1_pkg_setup
 	rocm_pkg_setup
 }
 
@@ -58,13 +58,9 @@ src_prepare() {
 
 src_configure() {
 	local pyimpls=() i EPYTHON
-	for i in "${_PYTHON_ALL_IMPLS[@]}"; do
-		if use "python_targets_${i}"; then
-			_python_export "${i}" "EPYTHON"
-			pyimpls+=(
-				"${EPYTHON}"
-			)
-		fi
+	for i in "${PYTHON_COMPAT[@]}"; do
+		EPYTHON="${i/_/.}"
+		pyimpls+=( "${EPYTHON}" )
 	done
 
 	local myconf=(
@@ -80,8 +76,18 @@ src_install() {
 	default
 
 	if use native-symlinks; then
-		local programs=( python python3 )
-		local scripts=( python-config python3-config 2to3 idle pydoc pyvenv )
+		local programs=(
+			"python"
+			"python3"
+		)
+		local scripts=(
+			"python-config"
+			"python3-config"
+			"2to3"
+			"idle"
+			"pydoc"
+			"pyvenv"
+		)
 
 		local f
 		for f in "${programs[@]}"; do
