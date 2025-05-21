@@ -716,7 +716,7 @@ RDEPEND+="
 	)
 	webp? (
 		${PILLOW_DEPEND}
-		>=media-libs/libwebp-0.5[opengl?]
+		>=media-libs/libwebp-0.5
 	)
 	X? (
 		x11-libs/libX11
