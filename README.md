@@ -389,6 +389,9 @@ more defensive posture on cybersecurity.
 and mem* functions for packages that use GLIBC.  If compromised or not applied
 carefully, it may result in a critical severity vulnerability.
 
+-D_FORTIFY_SOURCE is like the poor man's version of ASan but limited to these
+cases and not comprehensive memory corruption mitigation.
+
 ##### Extra flags added fix lost fortify source integrity
 
 When -O1, -O2, -O3 is added, -D_FORTIFY_SOURCE's integrity may be compromised.
