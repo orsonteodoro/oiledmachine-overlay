@@ -416,7 +416,7 @@ After hearing the perspectives, it was decided it can stay.  BOLT and PGO will
 still be a user choice.  It is not clear which opinion is correct and the most
 secure.
 
-There are two narratives.
+There are two narratives in this Faustian bargain.
 
 * PGO/BOLT will increase the attack complexity lowering the CVSS score.  The
   mitigation drops to almost half the CVSS score when complexity increased in
