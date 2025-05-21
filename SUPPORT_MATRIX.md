@@ -92,7 +92,7 @@ exist in build files.
 * GCC 12 is recommended for CUDA 11.8 when using pyTorch (ML), TensorFlow (ML), Ollama (LLM).
 * GCC 14 is recommended for CUDA 12.8 when using Blender, Ollama (LLM).
 * The entire @world needs to be built with the same GCC version to avoid build time symbol version problems for GPU support.
-* What it means for CUDA users is that if you want your AI girlfriend (LLM) to have hardware accelerated speech-to-text (STT) capabilities stick to GCC 12 and CUDA 11.8.
+* What it means for CUDA users is that if you want your AI girlfriend (LLM) to have hardware accelerated speech recognition stick to GCC 12 and CUDA 11.8.
 * Clang 18 is recommended as fallback.
 * Vendored Clang 21 is only supported on Chromium.
 * rust-bin 9999 is recommended for SSP, sanitizers, and as default.
