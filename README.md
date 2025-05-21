@@ -388,7 +388,7 @@ BOLT and PGO will still be a user choice.
 There are two narratives.  It is unknown which narrative holds.
 
 * PGO/BOLT will increase the attack complexity lowering the CVSS score.  The mitigation drops to almost half the CVSS score when complexity increased in this narrative.
-* PGO/BOLT will compromise the integrity of -D_FORTIFY_SOURCE checks.  The CVSS score maybe a drops quarter in this narrative but estimated to be high severity.
+* PGO/BOLT will compromise the integrity of -D_FORTIFY_SOURCE checks.  The CVSS score maybe drops a quarter in this narrative but estimated to be high severity.
 
 #### Requirements
 
