@@ -307,7 +307,7 @@ DEPEND+="
 		>=sys-libs/zlib-${ZLIB_PV}[${MULTILIB_USEDEP}]
 	)
 	sdl2? (
-		>=media-libs/libsdl2-${LIBSDL2_PV}[${MULTILIB_USEDEP},joystick?,sound?,threads(+),vulkan?]
+		>=media-libs/libsdl2-${LIBSDL2_PV}[${MULTILIB_USEDEP},joystick?,sound?,threads(+)?,vulkan?]
 		sound? (
 			>=media-libs/sdl2-mixer-${SDL2_MIXER_PV}[${MULTILIB_USEDEP},flac,mod,mp3,vorbis]
 		)
