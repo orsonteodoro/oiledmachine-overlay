@@ -383,11 +383,12 @@ packages.
 The requirement is based partly on the overlay's maintainer shift towards a
 more defensive posture on cybersecurity.
 
-BOLT and PGO will be deprecated or removed in ebuilds containing the
-cflags-hardened or rustflags eclass.  These optimizations may affect the
-integrity of -D_FORTIFY_SOURCE flag.  Estimates indicate when one or both are
-applied it may be high CVSS severity even when -fno-* mitigations applied.
-If applied the wrong way, it can undo the -fno- flag.
+BOLT and PGO will still be a user choice.
+
+There are two narratives.  It is unknown which narrative holds.
+
+* PGO/BOLT will increase the attack complexity lowering the CVSS score.  The mitigation is almost half when complexity increased in this narrative.
+* PGO/BOLT will compromise the integrity of -D_FORTIFY_SOURCE checks.  The CVSS score maybe drops quarter in this narrative but estimated to be high.
 
 #### Requirements
 
