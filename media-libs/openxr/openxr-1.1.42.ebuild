@@ -46,10 +46,13 @@ REQUIRED_USE+="
 "
 DEPEND+="
 	${PYTHON_DEPS}
-	media-libs/mesa[egl(+),gles2?,libglvnd(+)]
+	media-libs/mesa[egl(+),libglvnd(+)]
 	media-libs/vulkan-drivers
 	media-libs/vulkan-loader
 	virtual/libc
+	gles2? (
+		media-libs/mesa[gles2(+),opengl]
+	)
 	system-jsoncpp? (
 		dev-libs/jsoncpp
 	)

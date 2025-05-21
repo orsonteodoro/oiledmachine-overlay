@@ -830,7 +830,7 @@ RDEPEND+="
 		>=app-misc/geoclue-2.6.0:2.0
 	)
 	gles2? (
-		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},egl(+),gles2]
+		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},egl(+),gles2(+),opengl]
 	)
 	gnome-keyring? (
 		>=app-crypt/libsecret-0.18.6[${MULTILIB_USEDEP}]

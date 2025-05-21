@@ -244,7 +244,7 @@ CDEPEND="
 	)
 	wayland? (
 		>=dev-libs/wayland-1.20.0[${MULTILIB_USEDEP}]
-		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},egl(+),gles2(+),wayland]
+		>=media-libs/mesa-${MESA_PV}[${MULTILIB_USEDEP},egl(+),gles2(+),opengl,wayland]
 		>=x11-libs/libxkbcommon-1.4.0[${MULTILIB_USEDEP}]
 		gui-libs/libdecor[${MULTILIB_USEDEP}]
 	)
