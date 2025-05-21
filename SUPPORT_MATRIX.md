@@ -97,7 +97,7 @@ exist in build files.
 * Vendored Clang `21.0.0git` and vendored Rust (`<rust-ver>-dev`) from the chromium-toolchain package are only supported on Chromium for proper Rust SSP.
 * rust-bin 9999 is recommended for SSP, sanitizers, and as default to be used in security-critical packages.
 * rust-bin older supported stable (1.74.0, 1.75.0) and rust-bin latest stable (1.86.0) are recommended as fallbacks for non security-critical packages.
-* Due to the lack of GPU hardware access, the requirements are the exact major.minor version requirements for this overlay and ML/LLM libraries for reproducibility.
+* Due to the lack of GPU access, the requirements are the exact major.minor version requirements for this overlay and ML/LLM libraries for increased chances of reproducibility.
 
 | Platform                        | Level of support                      | Distro correspondence              |
 | ---                             | ---                                   | ---                                |
