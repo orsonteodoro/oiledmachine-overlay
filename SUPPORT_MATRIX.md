@@ -24,22 +24,6 @@
   to information disclosure when the debug dump or crash report contains
   sensitive information.
 
-| Python               | Level of support                      | Distro correspondence   |
-| ---                  | ---                                   | ---                     |
-| 3.10 and earlier     | Not supported (EOL)*                  | U22 (EOL Apr 2027)      |
-| 3.11                 | Mostly supported                      | D12 (EOL Jun 2026)      |
-| 3.12                 | Partially supported                   | U24 (EOL Apr 2029)      |
-| 3.13                 | Available                             |                         |
-| 3.13t                | Not supported                         |                         |
-| 3.14 and later       | Not supported                         |                         |
-| pypy3                | Available                             |                         |
-| pypy3_11             | Not supported                         |                         |
-
-* Not supported due to [python-utils-r1.eclass](https://github.com/gentoo/gentoo/blob/master/eclass/python-utils-r1.eclass#L44)
-  EOL restrictions, but not [EOL upstream](https://devguide.python.org/versions/).
-  Forced PYTHON_COMPAT bumps (to Python 3.11 or any future minimum version
-  bumps) may introduce DoS vulnerabilities (e.g. crash) or incompatibilities.
-
 The LIBC support below reflects the upstream projects CI (Continuous
 Integration) images trend, but it may change if microarchitecture references
 exist in build files.
@@ -98,6 +82,22 @@ exist in build files.
 * rust-bin 9999 is recommended for SSP, sanitizers, and as default to be used in security-critical packages.
 * rust-bin older supported stable (1.74.0, 1.75.0) and rust-bin latest stable (1.86.0) are recommended as fallbacks for non security-critical packages.
 * Due to the lack of GPU access, the requirements are the exact major.minor version requirements for this overlay and ML/LLM libraries for increased chances of reproducibility.
+
+| Python               | Level of support                      | Distro correspondence   |
+| ---                  | ---                                   | ---                     |
+| 3.10 and earlier     | Not supported (EOL)*                  | U22 (EOL Apr 2027)      |
+| 3.11                 | Mostly supported                      | D12 (EOL Jun 2026)      |
+| 3.12                 | Partially supported                   | U24 (EOL Apr 2029)      |
+| 3.13                 | Available                             |                         |
+| 3.13t                | Not supported                         |                         |
+| 3.14 and later       | Not supported                         |                         |
+| pypy3                | Available                             |                         |
+| pypy3_11             | Not supported                         |                         |
+
+* Not supported due to [python-utils-r1.eclass](https://github.com/gentoo/gentoo/blob/master/eclass/python-utils-r1.eclass#L44)
+  EOL restrictions, but not [EOL upstream](https://devguide.python.org/versions/).
+  Forced PYTHON_COMPAT bumps (to Python 3.11 or any future minimum version
+  bumps) may introduce DoS vulnerabilities (e.g. crash) or incompatibilities.
 
 | Platform                        | Level of support                      | Distro correspondence              |
 | ---                             | ---                                   | ---                                |
