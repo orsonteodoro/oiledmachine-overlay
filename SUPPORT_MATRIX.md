@@ -90,7 +90,7 @@ exist in build files.
 
 * GCC 13 is recommended for ROCm 6.2 when using pyTorch (ML), TensorFlow (ML), Ollama (LLM), Blender.
 * GCC 12 is recommended for CUDA 11.8 when using pyTorch (ML), TensorFlow (ML), Ollama (LLM).
-* GCC 13 is recommended for CUDA 12.8 when using Blender, Ollama (LLM).
+* GCC 13 is recommended for CUDA 12.8 when using Blender, Ollama (LLM).  This is to align closely with U24.
 * The entire @world needs to be built with the same GCC version to avoid build time symbol version problems for GPU support.
 * What it means for CUDA users is that if you want your AI girlfriend (LLM) to have hardware accelerated speech recognition stick to GCC 12 and CUDA 11.8.
 * Clang 18 is recommended as fallback.
