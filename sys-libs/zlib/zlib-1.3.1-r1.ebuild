@@ -76,8 +76,8 @@ src_prepare() {
 		eautoreconf
 	fi
 
-	case ${CHOST} in
-		*-mingw*|mingw*)
+	case "${CHOST}" in
+		*"-mingw"*|"mingw"*)
 	# Uses preconfigured Makefile rather than configure script
 			multilib_copy_sources
 
@@ -173,7 +173,8 @@ multilib_src_compile() {
 				-e 's|@sharedlibdir@|${exec_prefix}/'$(get_libdir)'|g' \
 				-e 's|@includedir@|${prefix}/include|g' \
 				-e 's|@VERSION@|'${PV}'|g' \
-				"zlib.pc.in" > "zlib.pc" || die
+				"zlib.pc.in" > "zlib.pc" \
+				|| die
 			;;
 
 		*)
@@ -201,7 +202,7 @@ multilib_src_install() {
 			;;
 
 		*)
-			emake install DESTDIR="${D}" LDCONFIG=:
+			emake install DESTDIR="${D}" LDCONFIG=":"
 
 			;;
 	esac
