@@ -94,7 +94,7 @@ exist in build files.
 * The entire @world needs to be built with the same GCC version to avoid build time symbol version problems for GPU support.
 * What it means for CUDA users is that if you want your AI girlfriend (LLM) to have hardware accelerated speech recognition stick to GCC 12 and CUDA 11.8.
 * Clang 18 is recommended as fallback.
-* Vendored Clang 21 and vendored Rust are only supported on Chromium for proper SSP.
+* Vendored Clang 21 and vendored Rust are only supported on Chromium for proper Rust SSP.
 * rust-bin 9999 is recommended for SSP, sanitizers, and as default to be used in security-critical packages.
 * rust-bin older supported stable (1.74.0, 1.75.0) and rust-bin latest stable (1.86.0) are recommended as fallbacks for non security-critical packages.
 * Due to the lack of GPU hardware access, the requirements are the exact major.minor version requirements for this overlay and ML/LLM libraries for reproducibility.
