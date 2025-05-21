@@ -96,7 +96,7 @@ exist in build files.
 * Vendored Clang 21 is only supported on Chromium.
 * rust-bin 9999 is recommended for SSP and as default.
 * rust-bin 1.74.0 and rust-bin 1.86.0 is recommended as fallbacks.
-* Due to the lack of GPU hardware access, the requirements are the exact major.minor version requirements for this overlay and libraries for reproducibility.
+* Due to the lack of GPU hardware access, the requirements are the exact major.minor version requirements for this overlay and ML/LLM libraries for reproducibility.
 
 | Platform                        | Level of support                      | Distro correspondence              |
 | ---                             | ---                                   | ---                                |
