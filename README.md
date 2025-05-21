@@ -423,9 +423,11 @@ There are two narratives in this Faustian bargain.
   mitigation drops to almost half the CVSS score when complexity increased in
   this narrative.
 * PGO/BOLT will compromise the integrity of -D_FORTIFY_SOURCE checks or thunks.
-  It may even prune the critical vulnerability check or thunk function.  It may
-  override/undo the above Sets.  The CVSS score maybe drops a quarter in this
-  narrative but estimated to be high severity.
+  It may override/undo the above Sets.  It may even prune the critical
+  vulnerability check or thunk function.  When you remove the Set, you are
+  allowing the attacker to do code execution and not halting it as intended.
+  The CVSS score maybe drops a quarter in this narrative but estimated to be
+  high severity.
 
 #### Requirements
 
