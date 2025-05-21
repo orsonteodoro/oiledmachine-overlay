@@ -69,6 +69,32 @@ exist in build files.
   - Transient execution CPU vulnerabilities (Meltdown, Spectre v2, MDS, TAA, SCSB, FPVI, BHI, Retbleed) may lead to information disclosure if unpatched or partially patched for 32-bit
   - V8 Sandbox (64-bit supported only, protects against memory corruption, if not used may lead to code execution, privilege escalation, data tampering, information disclosure)
 
+| Compiler                        | Level of support                      | Distro correspondence              |
+| ---                             | ---                                   | ---                                |
+| Clang 14                        | Not supported                         | D12 (14.0)                         |
+| Clang 18                        | Full supported                        | U24 (18.0)                         |
+| Clang 19                        | Supported                             |                                    |
+| Clang 20                        | Available                             |                                    |
+| Clang 21                        | Not supported                         |                                    |
+| Cython 0.29.37                  | Partially supported                   | D12 (0.29.32)                      |
+| Cython 3.0.12                   | Available                             | U24 (3.0.8)                        |
+| Cython 3.1.0b1                  | Fully supported                       |                                    |
+| GCC 12                          | Full supported                        | D12 (12.2)                         |
+| GCC 13                          | Supported                             | U24 (13.2)                         |
+| Rust 1.63.0                     | Not supported                         | D12 (1.63.0)                       |
+| Rust 1.74.0                     | Partially supported                   |                                    |
+| Rust 1.75.0                     | Available                             | U24 (1.75.0)                       |
+| Rust 1.86.0                     | Fully supported                       |                                    |
+| Rust-9999 (1.89.0-nightly)      | Partially supported                   |                                    |
+
+* GCC 13 is recommended for ROCm 6.2 when using pyTorch, TensorFlow, AI/ML.
+* GCC 12 is recommended for CUDA 11.8 when using pyTorch, TensorFlow, AI/ML.
+* Clang 18 is recommended as fallback.
+* Vendored Clang 21 is only supported on Chromium.
+* rust-bin 9999 is recommended for SSP and as default.
+* rust-bin 1.74.0 and rust-bin 1.86.0 is recommended as fallbacks.
+* Due to the lack of GPU hardware access, the requirements are the exact major.minor version requirements for this overlay and libraries for reproducibility.
+
 | Platform                        | Level of support                      | Distro correspondence              |
 | ---                             | ---                                   | ---                                |
 | CUDA                            | Available                             | D12 (11.8), U24 (12.0)             |
