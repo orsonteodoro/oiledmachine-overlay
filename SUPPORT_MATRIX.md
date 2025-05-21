@@ -119,10 +119,11 @@ exist in build files.
 | Protobuf 3                      | Fully supported                       | D12 (3.21.12), U24 (3.21.12)       |
 | Protobuf 4                      | Available                             |                                    |
 | Protobuf 5                      | Available                             |                                    |
-| PyTorch >= 2.0 (CPU)            | Fully supported                       | D12 (1.13.1)                       |
-| PyTorch >= 2.0 (CUDA 11.8)      | Available                             | D12 (1.13.1)                       |
-| PyTorch >= 2.4 (CUDA 12.4)      | Available                             | D12 (1.13.1)                       |
-| PyTorch >= 2.5 (ROCm 6.2)       | Available                             | D12 (1.13.1)                       |
+| PyTorch 1.13.x                  | Not supported                         | D12 (1.13.1)                       |
+| PyTorch >= 2.0 (CPU)            | Fully supported                       |                                    |
+| PyTorch >= 2.0 (CUDA 11.8)      | Available                             |                                    |
+| PyTorch >= 2.4 (CUDA 12.4)      | Available                             |                                    |
+| PyTorch >= 2.5 (ROCm 6.2)       | Available                             |                                    |
 | Qt 5.x                          | Available                             |                                    |
 | Qt 6.x                          | Fully supported                       |                                    |
 | ROCm >= 6.2                     | Available                             | D12 (>= 6.3.1), U24 (>= 6.2.0) (1) |
