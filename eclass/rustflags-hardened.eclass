@@ -151,6 +151,7 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # @DESCRIPTION:
 # Allow to override the _FORTIFY_SOURCE level.
 # Acceptable values:
+# 0 - package doesn't use mem*, str* functions from glibc
 # 1 - compile time checks only
 # 2 - general compile + runtime protection
 # 3 - maximum compile + runtime protection

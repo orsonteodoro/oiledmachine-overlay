@@ -226,6 +226,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # @DESCRIPTION:
 # Allow to override the _FORTIFY_SOURCE level.
 # Acceptable values:
+# 0 - package doesn't use mem*, str* functions from glibc
 # 1 - compile time checks only
 # 2 - general compile + runtime protection
 # 3 - maximum compile + runtime protection
@@ -1316,7 +1317,9 @@ eerror "You must disable the ${flag} USE flag so that it doesn't potentially aff
 	# Design notes:  Make sure you review the estimated CVSS score, when making a custom flag set.
 	local coverage_pct_clang=""
 	local coverage_pct_gcc=""
-	if [[ "${fortify_fix_level}" == "1" ]] ; then
+	if [[ "${CFLAGS_HARDENED_FORTIFY_SOURCE}" == "0" ]] ; then
+		:
+	elif [[ "${fortify_fix_level}" == "1" ]] ; then
 	# For low risk trusted data
 	# -fno-tree-dce -> -mllvm -disable-dce
 	# -fno-tree-loop-optimize -> -fno-unroll-loops
