@@ -87,7 +87,7 @@ exist in build files.
 | Rust 1.86.0                     | Fully supported                       |                                    |
 | Rust-9999 (1.89.0-nightly)      | Partially supported                   |                                    |
 
-* GCC 13 is recommended for ROCm 6.2 when using pyTorch (ML), TensorFlow (ML), Blender.
+* GCC 13 is recommended for ROCm 6.2 when using pyTorch (ML), TensorFlow (ML), Ollama (LLM), Blender.
 * GCC 12 is recommended for CUDA 11.8 when using pyTorch (ML), TensorFlow (ML), Ollama (LLM).
 * GCC 14 is recommended for CUDA 12.8 when using Blender, Ollama (LLM).
 * The entire @world needs to be built with the same GCC version to avoid build time symbol version problems for GPU support.
