@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-  <maintainer type="person">
-    <!-- Ebuild on the oiledmachine-overlay -->
-    <email>orsonteodoro@hotmail.com</email>
-    <name>Orson Teodoro</name>
-  </maintainer>
   <maintainer type="project">
-    <!-- Ebuild originator -->
     <email>python@gentoo.org</email>
     <name>Python</name>
   </maintainer>
@@ -19,13 +13,6 @@
     <bugs-to>https://github.com/projg2/python-exec/issues/</bugs-to>
     <remote-id type="github">projg2/python-exec</remote-id>
   </upstream>
-  <!--
-
-  oiledmachine-overlay notes:
-
-  This ebuild fork is required for multislot Tensile.
-
-  -->
   <use>
     <flag name="native-symlinks">
       Install generic symlinks like python and python3.  If this flag
