@@ -16,7 +16,7 @@ DESCRIPTION="A meta-ebuild for the Clang runtime libraries"
 HOMEPAGE="https://clang.llvm.org/"
 LICENSE="metapackage"
 SLOT="${PV%%.*}"
-IUSE="+compiler-rt libcxx openmp pstl +sanitize"
+IUSE="+compiler-rt libcxx offload openmp pstl +sanitize"
 REQUIRED_USE="
 	sanitize? (
 		compiler-rt
