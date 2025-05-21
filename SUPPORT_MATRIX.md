@@ -79,8 +79,9 @@ exist in build files.
 | Cython 0.29.37                  | Partially supported                   | D12 (0.29.32)                      |
 | Cython 3.0.12                   | Available                             | U24 (3.0.8)                        |
 | Cython 3.1.0b1                  | Fully supported                       |                                    |
-| GCC 12                          | Full supported                        | D12 (12.2)                         |
+| GCC 12                          | Fully supported                       | D12 (12.2)                         |
 | GCC 13                          | Supported                             | U24 (13.2)                         |
+| GCC 14                          | Supported                             |                                    |
 | Rust 1.63.0                     | Not supported                         | D12 (1.63.0)                       |
 | Rust 1.74.0                     | Partially supported                   |                                    |
 | Rust 1.75.0                     | Available                             | U24 (1.75.0)                       |
