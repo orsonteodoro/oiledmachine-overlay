@@ -36,8 +36,9 @@ LICENSE="
 "
 SLOT="0"
 IUSE="
-emacs
 ${LLVM_EBUILDS_LLVM18_REVISION}
+emacs
+ebuild_revision_1
 "
 RDEPEND="
 	!llvm-core/llvm:0
@@ -48,7 +49,7 @@ BDEPEND="
 	)
 "
 LLVM_COMPONENTS=(
-	"llvm/utils/vim"
+	"llvm/utils"
 )
 llvm.org_set_globals
 
