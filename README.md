@@ -391,7 +391,7 @@ carefully, it may result in a critical severity vulnerability.
 
 -D_FORTIFY_SOURCE is like the poor man's version of ASan but limited to these
 cases and not comprehensive memory corruption mitigation.  It is the fallback
-when any ASan flavor cannot be applied.
+when ASan cannot be applied.
 
 ##### Extra flags added fix lost fortify source integrity
 
