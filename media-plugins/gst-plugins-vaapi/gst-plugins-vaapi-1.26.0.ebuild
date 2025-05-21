@@ -90,12 +90,7 @@ REQUIRED_USE="
 "
 GL_DEPS="
 	~media-libs/gst-plugins-base-${GST_REQ}:${SLOT}[egl?,gles2(+)?,opengl?,wayland?,X?]
-	media-libs/mesa[${MULTILIB_USEDEP},egl(+)?,gles2(+)?,opengl,X?]
-	(
-		>=media-libs/mesa-24.1.0_rc1
-		<media-libs/mesa-24.1.0_rc1
-	)
-	media-libs/mesa:=
+	>=media-libs/mesa-24.1[${MULTILIB_USEDEP},egl(+)?,gles2(+)?,opengl,X?]
 "
 RDEPEND="
 	~media-libs/gst-plugins-base-${GST_REQ}:${SLOT}[${MULTILIB_USEDEP}]
