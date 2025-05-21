@@ -1294,8 +1294,12 @@ einfo "All SSP hardening (All functions hardened)"
 	)
 	local flag
 	for flag in ${bad_flags[@]} ; do
-		if has "${flag}" ${IUSE} && use "${flag}" ; then
+		if has "${flag}" ${IUSE} ;
+			if use "${flag}" ; then
 ewarn "The ${flag} USE flag may potentially affect the integrity of -D_FORTIFY_SOURCE"
+			else
+ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_SOURCE"
+			if
 		fi
 	done
 
