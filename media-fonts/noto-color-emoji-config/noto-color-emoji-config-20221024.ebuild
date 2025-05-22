@@ -68,7 +68,13 @@ src_unpack() {
 	mkdir -p "${S}" || die
 	cat "${FILESDIR}/61-noto-${MY_PV}.conf" > "${S}/61-noto.conf" || die
 	if has_version "media-fonts/noto-emoji" ; then
-ewarn "USE=-colrv1 is required if using distro noto-emoji package."
+eerror
+eerror "USE=-colrv1 is required if using distro noto-emoji package."
+eerror
+eerror "Remove the media-fonts/noto-emoji::oiledmachine-overlay package and"
+eerror "replace with media-fonts/noto-emoji-bin::oiledmachine-overlay"
+eerror
+		die
 	fi
 
 	if ! use cbdt && ! use cbdt-win ; then
