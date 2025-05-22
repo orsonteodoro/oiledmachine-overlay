@@ -4432,8 +4432,19 @@ eerror
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr dctcp illinois"}
 		fi
 	elif [[ \
+		"${work_profile}" == "website-enterprise" \
+	]] ; then
+	# bbr for maximizing user capacity and production
+	# cubic for maintenance mode
+		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3 cubic"}
+		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2 cubic"}
+		else
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr cubic"}
+		fi
+	elif [[ \
 		   "${work_profile}" == "game-server" \
-		|| "${work_profile}" == "website-enterprise" \
 		|| "${work_profile}" == "website-interactive" \
 		|| "${work_profile}" == "website-small" \
 	]] ; then
