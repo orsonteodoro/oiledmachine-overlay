@@ -4162,6 +4162,7 @@ ot-kernel_clear_env() {
 	unset DSS_DISK_ENCRYPTION
 	unset DSS_FIREWALL_TYPE
 	unset DSS_REGION
+	unset DSS_ROLE
 	unset EMU_16BIT
 	unset HPLIP_PARPORT
 	unset HPLIP_USB
@@ -11022,19 +11023,29 @@ ewarn "The dss work profile is experimental and in development."
 		|| "${work_profile}" == "media-server" \
 	]] ; then
 		if [[ "${work_profile}" == "dss" ]] ; then
+			local dss_role="${DSS_ROLE:-client}"
+			if [[ "${dss_role}" == "client" || "${dss_role}" == "interactive" ]] ; then
 	# Mitigate against Race Condition attack which has more attack vectors.
 	# Race condition:  CE, PE, DoS, DT, ID
+				ot-kernel_set_kconfig_set_highest_timer_hz
+			elif [[ "${dss_role}" == "auth" ]] ; then
 	# Timing attack:  PE, ID
-			ot-kernel_set_kconfig_set_highest_timer_hz
+				ot-kernel_set_kconfig_set_lowest_timer_hz
+			elif [[ "${dss_role}" == "kiosk" ]] ; then
+	# Similar to lowest Hz, single user
+				ot-kernel_set_kconfig_set_keypress_hz
+			else
+				ot-kernel_set_kconfig_set_user_capacity_hz "100" # Percent
+			fi
 		elif [[ \
 			"${work_profile}" == "http-server-busy" \
 		]] ; then
-			ot-kernel_set_kconfig_set_user_capacity_hz "100" # Percent capacity
+			ot-kernel_set_kconfig_set_user_capacity_hz "100" # Percent
 			_OT_KERNEL_FORCE_STABILITY=1
 		elif [[ \
 			"${work_profile}" == "http-server-relaxed" \
 		]] ; then
-			ot-kernel_set_kconfig_set_user_capacity_hz "50" # Percent capacity
+			ot-kernel_set_kconfig_set_user_capacity_hz "50" # Percent
 			_OT_KERNEL_FORCE_STABILITY=1
 		elif [[ "${work_profile}" == "media-server" ]] ; then
 			ot-kernel_set_kconfig_set_video_timer_hz

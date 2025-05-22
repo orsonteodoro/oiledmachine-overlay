@@ -675,6 +675,7 @@ TBM=1
 CFLAGS="-O2 -pipe"
 CXXFLAGS="-O2 -pipe"
 LDFLAGS="-O2"
+DSS_ROLE="client"
 OT_KERNEL_ARCH="arm64"
 OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS="1"
 OT_KERNEL_BOOT_ARGS="delayacct"
@@ -757,7 +758,7 @@ TBM=0
     Swap                          | Y [29]                      | N [18]                | N [17]                  | Y [29]                     | Y [29]                     | Y [29]                     | Y [29]
     LSMS                          | [21a]                       | [21b]                 | [21c]                   | [21d]                      | [21e]                      | [21f]                      | [21g]
     CPU scheduler                 | cfs-throughput              | cfs-autogroup         | cfs-autogroup [20]      | cfs-throughput             | cfs-throughput             | cfs-autogroup              | cfs-throughput
-    HZ                            | 250                         | 1000                  | 1000 [46]               | 100                        | 300                        | 1000                       | 100
+    HZ                            | 250                         | 1000                  | 1000 [46][47]           | 100                        | 300                        | 1000                       | 100
     IO schedulers                 | [27a]                       | [27a]                 | [27c]                   | mq-deadline/none [30a]     | mq-deadline/none [30a]     | BFQ/Kyber [30][34b]        | mq-deadline/none [30][34a]
     TCP congestion control        | [26a]                       | [26b]                 | [26c]                   | Cubic                      | Cubic                      | Cubic                      | Cubic
     Panic on oops                 | N [15]                      | N                     | N [15]                  | Y                          | Y                          | N [23]                     | N
@@ -877,6 +878,7 @@ TBM=0
     [44] Buffer overflow protection, some stack overflow and some heap overflow protection
     [45] It is possible to replace KASAN with KFENCE, but if you do that you may get attacked between the periodic check or lose a class of vulnerabilies mitigated.
     [46] Biased towards mitigating the more reported and dangerous Race Condition vulnerability versus Timing Attack vulnerability.
+    [47] Tunable with DSS_ROLE
 
     Commentary:
 
@@ -4291,6 +4293,15 @@ unset OT_KERNEL_PRIVATE_KEY
     Note:  Only one region can be selected.  usa enables additional federal
     settings.
     See also:  TLS_REGION
+
+    DSS_ROLE - Set the role being used to mitigate either timing attack or race
+    condition attack.
+    Valid values:
+    auth - For API or user authentication server, optimized for timing attack mitigation
+    client - For client computer, optimized for race condition mitigation
+    general - For general websites, optimized for high capacity
+    kiosk - For single user kiosk, designed to restricting the number of user events, with timing attack mitigation
+    interactive - For interactive websites, optimized for low latency
 
     DVD - Support for DVD, DVD-R, DVD-RW, DVD+R, DVD+RW, Blu-Ray
     Valid values:  0, 1 (default)
