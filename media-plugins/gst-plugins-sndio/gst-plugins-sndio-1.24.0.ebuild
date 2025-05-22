@@ -21,7 +21,7 @@ HOMEPAGE="https://github.com/BSDKaffee/gstreamer1-plugins-sndio"
 LICENSE="ISC"
 SLOT="0"
 IUSE="
-ebuild_revision_4
+ebuild_revision_5
 "
 RDEPEND="
 	media-libs/gst-plugins-base:1.0
