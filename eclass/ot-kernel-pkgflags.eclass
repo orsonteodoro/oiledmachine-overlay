@@ -9997,7 +9997,7 @@ ot-kernel-pkgflags_systemd() { # DONE
 			|| "${work_profile}" == "pi-deep-learning" \
 			|| "${work_profile}" == "pi-music-production" \
 			|| "${work_profile}" == "radio-broadcaster" \
-			|| "${work_profile}" == "realtime-hpc" \
+			|| "${work_profile}" == "hpc-realtime" \
 			|| "${work_profile}" == "ros" \
 			|| "${work_profile}" == "voip" \
 		]] ; then
@@ -12481,23 +12481,26 @@ declare -A WORK_PROFILE_LATENCY_BIAS_KEY=(
         ["casual-gaming"]="input"
         ["casual-gaming-laptop"]="input"
         ["custom"]="input" # placeholder
+        ["database-server"]="alert-server"
+        ["datacenter-backend"]="alert-server"
         ["digital-audio-workstation"]="audio"
         ["distributed-computing-client"]="throughput-interactive"
         ["distributed-computing-server"]="sleepy-server"
-        ["desktop-guest-vm"]="video"
+        ["vm-guest-desktop"]="video"
         ["dss"]="input"
         ["dvr"]="video"
         ["file-server"]="sleepy-server"
         ["gaming-tournament"]="input"
         ["game-server"]="alert-server"
         ["gamedev"]="throughput-interactive"
-        ["gaming-guest-vm"]="input"
+        ["vm-guest-gaming"]="input"
         ["gpu-gaming-laptop"]="input"
-        ["green-hpc"]="power"
         ["green-pc"]="power"
-        ["greenest-hpc"]="power"
         ["greenest-pc"]="power"
         ["hpc"]="throughput-headless"
+        ["hpc-green"]="power"
+        ["hpc-greenest"]="power"
+        ["hpc-throughput"]="throughput"
         ["jukebox"]="audio"
         ["laptop"]="power"
         ["live-streaming-gamer"]="input"
@@ -12517,7 +12520,7 @@ declare -A WORK_PROFILE_LATENCY_BIAS_KEY=(
         ["presentation"]="video"
         ["pro-gaming"]="input"
         ["radio-broadcaster"]="audio"
-        ["realtime-hpc"]="jitter"
+        ["hpc-realtime"]="jitter"
         ["renderfarm-dedicated"]="throughput-headless"
         ["renderfarm-workstation"]="throughput-interactive"
         ["ros"]="jitter"
@@ -12526,8 +12529,8 @@ declare -A WORK_PROFILE_LATENCY_BIAS_KEY=(
         ["smartphone-voice"]="audio"
         ["solar-desktop"]="input"
         ["solar-gaming"]="input"
+        ["streaming-server"]="alert-server"
         ["tablet"]="power"
-        ["throughput-hpc"]="throughput"
         ["touchscreen-laptop"]="video"
         ["video-conferencing"]="audio"
         ["voip"]="audio"
@@ -12752,10 +12755,26 @@ _ot-kernel_y_thp() {
 		is_rt=1
 	fi
 
+	# Usally low latency or memory intense servers/apps
 	if [[ \
-		   "${work_profile}" == "website-enterprise" \
+		   "${work_profile}" == "database-server" \
+		|| "${work_profile}" == "datacenter-backend" \
+		|| "${work_profile}" == "hpc" \
+		|| "${work_profile}" == "hpc-green" \
+		|| "${work_profile}" == "hpc-greenest" \
+		|| "${work_profile}" == "hpc-realtime" \
+		|| "${work_profile}" == "hpc-thoughput" \
+		|| "${work_profile}" == "live-video-reporter" \
+		|| "${work_profile}" == "musical-live-performance" \
+		|| "${work_profile}" == "radio-broadcaster" \
+		|| "${work_profile}" == "streaming-server" \
+		|| "${work_profile}" == "website-enterprise" \
 		|| "${work_profile}" == "website-interactive" \
 		|| "${work_profile}" == "website-small" \
+		|| "${work_profile}" == "video-conferencing" \
+		|| "${work_profile}" == "voip" \
+		|| "${work_profile}" == "vm-guest-desktop" \
+		|| "${work_profile}" == "vm-guest-gaming" \
 	]] ; then
 	# Avoid latency spike case
 		ot-kernel_unset_configopt "CONFIG_TRANSPARENT_HUGEPAGE"
@@ -12999,28 +13018,65 @@ _ot-kernel_realtime_packages() {
 		_ot-kernel_realtime_pkg "media-libs/openal" "SCHED_RR"
 	fi
 
-	# Servers
+	# High availability servers
 	if [[ \
-		   "${work_profile}" == "distributed-computing-server" \
-		|| "${work_profile}" == "file-server" \
+		   "${work_profile}" == "database-server" \
+		|| "${work_profile}" == "datacenter-backend" \
+		|| "${work_profile}" == "distributed-computing-server" \
 		|| "${work_profile}" == "game-server" \
+		|| "${work_profile}" == "hpc-realtime" \
 		|| "${work_profile}" == "media-server" \
-		|| "${work_profile}" == "realtime-hpc" \
+		|| "${work_profile}" == "streaming-server" \
 		|| "${work_profile}" == "website-enterprise" \
 		|| "${work_profile}" == "website-interactive" \
 		|| "${work_profile}" == "website-small" \
 	]] ; then
-		# Assumes PREEMPT=y
-		_ot-kernel_realtime_pkg "dev-db/keydb" "SCHED_FIFO"
-		_ot-kernel_realtime_pkg "dev-php/hhvm" "SCHED_RR"
-		_ot-kernel_realtime_pkg "net-analyzer/netdata" "SCHED_FIFO"
-		_ot-kernel_realtime_pkg "net-fs/samba[ads]" "SCHED_FIFO"
+		_ot-kernel_realtime_pkg "sys-apps/watchdogd" "SCHED_RR"
+		_ot-kernel_realtime_pkg "sys-cluster/keepalived" "SCHED_RR"
+	fi
+
+	# Time sensitive servers
+	if [[ \
+		   "${work_profile}" == "database-server" \
+		|| "${work_profile}" == "dss" \
+		|| "${work_profile}" == "distributed-computing-server" \
+		|| "${work_profile}" == "game-server" \
+		|| "${work_profile}" == "hpc-realtime" \
+		|| "${work_profile}" == "media-server" \
+		|| "${work_profile}" == "streaming-server" \
+		|| "${work_profile}" == "website-enterprise" \
+		|| "${work_profile}" == "website-interactive" \
+		|| "${work_profile}" == "website-small" \
+	]] ; then
 		_ot-kernel_realtime_pkg "net-misc/chrony" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "net-misc/ntp" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "net-misc/ntpsec" "SCHED_FIFO"
-		_ot-kernel_realtime_pkg "sys-apps/watchdogd" "SCHED_RR"
-		_ot-kernel_realtime_pkg "sys-cluster/keepalived" "SCHED_RR"
+	fi
+
+	# Realtime website servers
+	if [[ \
+		   "${work_profile}" == "website-enterprise" \
+		|| "${work_profile}" == "website-interactive" \
+		|| "${work_profile}" == "website-small" \
+	]] ; then
+		_ot-kernel_realtime_pkg "dev-php/hhvm" "SCHED_RR"
+		_ot-kernel_realtime_pkg "net-analyzer/netdata" "SCHED_FIFO"
 		_ot-kernel_realtime_pkg "www-servers/civetweb" "SCHED_RR"
+	fi
+
+	# Authentication servers
+	if [[ \
+		   "${work_profile}" == "dss" \
+	]] ; then
+		_ot-kernel_realtime_pkg "net-fs/samba[ads]" "SCHED_FIFO"
+	fi
+
+	# Realtime database servers
+	if [[ \
+		   "${work_profile}" == "database-server" \
+		|| "${work_profile}" == "datacenter-backend" \
+	]] ; then
+		_ot-kernel_realtime_pkg "dev-db/keydb" "SCHED_FIFO"
 	fi
 
 	# The packages above hint that low latency may be necessary.

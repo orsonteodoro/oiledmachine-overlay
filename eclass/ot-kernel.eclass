@@ -3944,6 +3944,7 @@ eerror "OT_KERNEL_SECURITY_CRITICAL_SCHEMES has been renamed to OT_KERNEL_SECURI
 eerror "The cfi-5.15 option has been renamed to cfi in OT_KERNEL_SECURITY_CRITICAL_TYPES.  Please rename to continue."
 	fi
 
+
 ewarn
 ewarn "The interpretation of the OT_KERNEL_HARDENING_LEVEL values has changed."
 ewarn "See metadata.xml (or \`epkginfo -x ${PN}::oiledmachine-overlay\`) for"
@@ -4406,29 +4407,16 @@ eerror
 			die
 		fi
 	elif [[ \
-		   "${work_profile}" == "realtime-hpc" \
+		   "${work_profile}" == "database-server" \
+		|| "${work_profile}" == "datacenter-backend" \
+		|| "${work_profile}" == "hpc" \
+		|| "${work_profile}" == "hpc-realtime" \
+		|| "${work_profile}" == "hpc-throughput" \
 	]] ; then
-		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
-			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3 dctcp illinois"}
-		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
-			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2 dctcp illinois"}
-		else
-			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr dctcp illinois"}
-		fi
+		v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"dctcp"}
 	elif [[ \
-		   "${work_profile}" == "hpc" \
-		|| "${work_profile}" == "throughput-hpc" \
-	]] ; then
-		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
-			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"dctcp bbr3 illinois"}
-		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
-			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"dctcp bbr2 illinois"}
-		else
-			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"dctcp bbr illinois"}
-		fi
-	elif [[ \
-		   "${work_profile}" == "green-hpc" \
-		|| "${work_profile}" == "greenest-hpc" \
+		   "${work_profile}" == "hpc-green" \
+		|| "${work_profile}" == "hpc-greenest" \
 	]] ; then
 	# Optimize for power savings
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
@@ -4445,7 +4433,7 @@ eerror "Remove bbrv2 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profil
 eerror
 			die
 		else
-			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr dctcp illinois"}
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr dctcp"}
 		fi
 	elif [[ \
 		   "${work_profile}" == "website-enterprise" \
@@ -4493,8 +4481,12 @@ eerror
 		fi
 	elif [[ \
 		   "${work_profile}" == "distributed-computing-server" \
-		|| "${work_profile}" == "dvr" \
 		|| "${work_profile}" == "file-server" \
+	]] ; then
+	# Optimize for throughput
+		v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"cubic"}
+	elif [[ \
+		   "${work_profile}" == "dvr" \
 		|| "${work_profile}" == "jukebox" \
 		|| "${work_profile}" == "media-server" \
 		|| "${work_profile}" == "pi-audio-player" \
@@ -5710,14 +5702,14 @@ einfo "Changed .config to use MuQSS"
 	fi
 
 	if [[ \
-		   "${work_profile}" == "realtime-hpc" \
+		   "${work_profile}" == "hpc-realtime" \
 	]] ; then
 	# Low latency
 		_set_muqss_numa
 	elif [[ \
 		   "${work_profile}" == "gamedev" \
 		|| "${work_profile}" == "hpc" \
-		|| "${work_profile}" == "throughput-hpc" \
+		|| "${work_profile}" == "hpc-throughput" \
 		|| "${work_profile}" == "workstation" \
 	]] ; then
 	# Throughput
@@ -10703,7 +10695,7 @@ ewarn
 			|| "${work_profile}" == "pi-deep-learning" \
 			|| "${work_profile}" == "pi-music-production" \
 			|| "${work_profile}" == "radio-broadcaster" \
-			|| "${work_profile}" == "realtime-hpc" \
+			|| "${work_profile}" == "hpc-realtime" \
 			|| "${work_profile}" == "ros" \
 			|| "${work_profile}" == "voip" \
 		]] ; then
@@ -10755,6 +10747,24 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"web-server\" is deprecated.  Use either distribu
 		die
 	elif [[ "${work_profile}" == "http-server" ]] ; then
 ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either website-enterprise, website-interactive, website-small instead."
+		die
+	elif [[ "${work_profile}" == "green-hpc" ]] ; then
+ewarn "OT_KERNEL_WORK_PROFILE=\"green-hpc\" has been renamed to hpc-green."
+		die
+	elif [[ "${work_profile}" == "greenest-hpc" ]] ; then
+ewarn "OT_KERNEL_WORK_PROFILE=\"greenest-hpc\" has been renamed to hpc-greenest."
+		die
+	elif [[ "${work_profile}" == "realtime-hpc" ]] ; then
+ewarn "OT_KERNEL_WORK_PROFILE=\"realtime-hpc\" has been renamed to hpc-realtime."
+		die
+	elif [[ "${work_profile}" == "throughput-hpc" ]] ; then
+ewarn "OT_KERNEL_WORK_PROFILE=\"throughput-hpc\" has been renamed to hpc-throughput."
+		die
+	elif [[ "${work_profile}" == "desktop-guest-vm" ]] ; then
+ewarn "OT_KERNEL_WORK_PROFILE=\"desktop-guest-vm\" has been renamed to vm-guest-desktop."
+		die
+	elif [[ "${work_profile}" == "gaming-guest-vm" ]] ; then
+ewarn "OT_KERNEL_WORK_PROFILE=\"desktop-guest-vm\" has been renamed to vm-guest-gaming."
 		die
 	fi
 
@@ -10919,8 +10929,8 @@ ewarn "The dss work profile is experimental and in development."
 		ot-kernel_y_configopt "CONFIG_SCHED_OMIT_FRAME_POINTER"
 		ot-kernel_iosched_interactive
 	elif [[ \
-		   "${work_profile}" == "desktop-guest-vm" \
-		|| "${work_profile}" == "gaming-guest-vm" \
+		   "${work_profile}" == "vm-guest-desktop" \
+		|| "${work_profile}" == "vm-guest-gaming" \
 	]] ; then
 		ot-kernel_set_kconfig_set_lowest_timer_hz # Reduce cpu overhead
 		ot-kernel_set_preempt "CONFIG_PREEMPT"
@@ -11071,15 +11081,25 @@ ewarn "The dss work profile is experimental and in development."
 			ot-kernel_iosched_interactive
 		fi
 	elif [[ \
-		   "${work_profile}" == "distributed-computing-server" \
+		   "${work_profile}" == "database-server" \
+		|| "${work_profile}" == "datacenter-backend" \
+		|| "${work_profile}" == "distributed-computing-server" \
 		|| "${work_profile}" == "dss" \
 		|| "${work_profile}" == "file-server" \
 		|| "${work_profile}" == "media-server" \
+		|| "${work_profile}" == "streaming-server" \
 		|| "${work_profile}" == "website-enterprise" \
 		|| "${work_profile}" == "website-interactive" \
 		|| "${work_profile}" == "website-small" \
 	]] ; then
-		if [[ "${work_profile}" == "dss" ]] ; then
+		if [[ \
+			   "${work_profile}" == "database-server" \
+			|| "${work_profile}" == "datacenter-backend" \
+		]] ; then
+	# Optimize low latency
+			ot-kernel_set_kconfig_set_highest_timer_hz
+			_OT_KERNEL_FORCE_STABILITY=1
+		elif [[ "${work_profile}" == "dss" ]] ; then
 			local dss_role="${DSS_ROLE:-client}"
 			if [[ "${dss_role}" == "client" || "${dss_role}" == "interactive" ]] ; then
 	# Mitigate against Race Condition attack which has more attack vectors.
@@ -11096,10 +11116,15 @@ ewarn "The dss work profile is experimental and in development."
 			fi
 		elif [[ "${work_profile}" == "media-server" ]] ; then
 			ot-kernel_set_kconfig_set_video_timer_hz
-		elif [[ "${work_profile}" == "website-enterprise" ]] ; then
+		elif [[ \
+			"${work_profile}" == "website-enterprise" \
+		]] ; then
 			ot-kernel_set_kconfig_set_user_capacity_hz "100" # Percent
 			_OT_KERNEL_FORCE_STABILITY=1
-		elif [[ "${work_profile}" == "website-interactive" ]] ; then
+		elif [[ \
+			   "${work_profile}" == "streaming-server" \
+			|| "${work_profile}" == "website-interactive" \
+		]] ; then
 			ot-kernel_set_kconfig_set_highest_timer_hz
 			_OT_KERNEL_FORCE_STABILITY=1
 		elif [[ "${work_profile}" == "website-small" ]] ; then
@@ -11117,12 +11142,26 @@ ewarn "The dss work profile is experimental and in development."
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_POWERSAVE"
 		fi
 		ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
-		if [[ "${work_profile}" == "file-server" ]] ; then
+		if [[ \
+			   "${work_profile}" == "file-server" \
+			|| "${work_profile}" == "streaming-server" \
+		]] ; then
 			ot-kernel_iosched_max_throughput
-		elif [[ "${work_profile}" == "website-enterprise" || "${work_profile}" == "website-interactive" ]] ; then
+		elif [[ \
+			   "${work_profile}" == "database-server" \
+			|| "${work_profile}" == "datacenter-backend" \
+			|| "${work_profile}" == "website-enterprise" \
+			|| "${work_profile}" == "website-interactive" \
+		]] ; then
 			ot-kernel_iosched_max_tps
 		else
 			ot-kernel_iosched_interactive
+		fi
+		if [[ \
+			   "${work_profile}" == "website-interactive" \
+			|| "${work_profile}" == "website-small" \
+		]] ; then
+			_OT_KERNEL_FORCE_SWAP_OFF=1
 		fi
 	elif [[ \
 		   "${work_profile}" == "live-streaming-gamer" \
@@ -11266,11 +11305,11 @@ ewarn "The dss work profile is experimental and in development."
 		ot-kernel_set_rcu_powersave
 		ot-kernel_iosched_lowest_power
 	elif [[ \
-		   "${work_profile}" == "green-hpc" \
-		|| "${work_profile}" == "greenest-hpc" \
-		|| "${work_profile}" == "hpc" \
-		|| "${work_profile}" == "realtime-hpc" \
-		|| "${work_profile}" == "throughput-hpc" \
+		   "${work_profile}" == "hpc" \
+		|| "${work_profile}" == "hpc-green" \
+		|| "${work_profile}" == "hpc-greenest" \
+		|| "${work_profile}" == "hpc-realtime" \
+		|| "${work_profile}" == "hpc-throughput" \
 	]] ; then
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_PERFORMANCE"
@@ -11278,7 +11317,7 @@ ewarn "The dss work profile is experimental and in development."
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_SCHEDUTIL"
 		ot-kernel_y_configopt "CONFIG_CPU_FREQ_GOV_POWERSAVE"
 
-		if [[ "${work_profile}" == "green-hpc" ]] ; then
+		if [[ "${work_profile}" == "hpc-green" ]] ; then
 			ot-kernel_set_kconfig_set_lowest_timer_hz # Power savings
 			ot-kernel_set_kconfig_no_hz_full
 			ot-kernel_unset_all_cpu_freq_default_gov
@@ -11291,7 +11330,7 @@ ewarn "The dss work profile is experimental and in development."
 			ot-kernel_set_rcu_powersave
 			ot-kernel_iosched_lowest_power
 			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
-		elif [[ "${work_profile}" == "greenest-hpc" ]] ; then
+		elif [[ "${work_profile}" == "hpc-greenest" ]] ; then
 			ot-kernel_set_kconfig_set_lowest_timer_hz # Power savings
 			ot-kernel_set_kconfig_no_hz_full
 			ot-kernel_unset_all_cpu_freq_default_gov
@@ -11306,7 +11345,7 @@ ewarn "The dss work profile is experimental and in development."
 			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
 		elif [[ \
 			   "${work_profile}" == "hpc" \
-			|| "${work_profile}" == "throughput-hpc" \
+			|| "${work_profile}" == "hpc-throughput" \
 		]] ; then
 			ot-kernel_set_kconfig_set_lowest_timer_hz # Shorter runtimes
 			ot-kernel_set_kconfig_slab_allocator "slub"
@@ -11319,7 +11358,7 @@ ewarn "The dss work profile is experimental and in development."
 			fi
 			ot-kernel_iosched_max_throughput
 			OT_KERNEL_SWAP=${OT_KERNEL_SWAP:-"1"}
-		elif [[ "${work_profile}" == "realtime-hpc" ]] ; then
+		elif [[ "${work_profile}" == "hpc-realtime" ]] ; then
 			ot-kernel_set_kconfig_set_highest_timer_hz # Minimize jitter
 			ot-kernel_set_kconfig_no_hz_full
 			ot-kernel_set_rt_rcu
