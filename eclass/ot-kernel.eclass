@@ -4393,7 +4393,7 @@ _ot-kernel_set_kconfig_get_init_tcp_congestion_controls() {
 	elif [[ \
 		   "${work_profile}" == "dss" \
 	]] ; then
-	# Optimize for security, bbrv2 is Information Discolsure (ID) and Denial of Service (DoS) resistance
+	# Optimize for security, bbrv2 is Information Discolsure (ID) and Denial of Service (DoS) resistant
 	# BBRv1 is not DoS resistant because ECN is ineffective.
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3"}
