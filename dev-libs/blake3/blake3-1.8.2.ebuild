@@ -26,7 +26,7 @@ LICENSE="
 SLOT="0/0"
 IUSE="
 -tbb test
-ebuild_revision_3
+ebuild_revision_4
 "
 RESTRICT="
 	!test? (
