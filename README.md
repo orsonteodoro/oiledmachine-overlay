@@ -401,8 +401,8 @@ This overlay applies 3 sets of flags to ensure that the integrity of fortify sou
 checks and thunks are not compromised by compiler optimizations.
 
 * Set 1 for trusted secure data packages.  95% Coverage
-* Set 2 for practical security-critical packages.  ~99.9 Coverage
-* Set 3 for theoretical security-critcal packages.  ~99.9 Coverage
+* Set 2 for practical security-critical packages.  99 Coverage
+* Set 3 for theoretical security-critcal packages.  ~99 Coverage
 
 Medium severity without sanitizers + SSP-strong,  Low severity with ASan + UBSan + SSP-strong
 

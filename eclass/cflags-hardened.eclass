@@ -1339,7 +1339,7 @@ ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_S
 	# -fno-tree-dce -> -mllvm -disable-dce
 	# -fno-tree-loop-optimize -> -fno-unroll-loops
 	# -fno-tree-vectorize -> -fno-vectorize
-		coverage_pct="~95%"
+		coverage_pct="95%"
 		if tc-is-clang || tc-is-gcc ; then
 			flags+=(
 				"-fno-strict-aliasing"
@@ -1439,7 +1439,7 @@ ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_S
 	# -fno-tree-loop-optimize -> -fno-unroll-loops
 	# -fno-tree-vectorize -> -fno-vectorize -fno-slp-vectorize
 	# -fno-tree-vrp -> -fno-strict-overflow
-		coverage_pct="99%"
+		coverage_pct="~99%"
 		if tc-is-clang || tc-is-gcc ; then
 			flags+=(
 				"-fno-inline-functions"
