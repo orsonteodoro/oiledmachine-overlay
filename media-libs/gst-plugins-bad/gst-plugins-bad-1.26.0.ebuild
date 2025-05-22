@@ -44,7 +44,7 @@ ${PATENT_STATUS}
 ${VIDEO_CARDS[@]}
 amf bzip2 +introspection msdk nls nvcodec onevpl +orc qsv udev vaapi vnc vulkan
 vulkan-video wayland X
-ebuild_revision_5
+ebuild_revision_6
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
