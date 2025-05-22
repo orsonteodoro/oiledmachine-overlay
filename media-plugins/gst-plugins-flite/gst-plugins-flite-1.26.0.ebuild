@@ -13,7 +13,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="The Flite speech synthesis plugin for GStreamer"
 IUSE="
-ebuild_revision_4
+ebuild_revision_5
 "
 RDEPEND="
 	app-accessibility/flite[${MULTILIB_USEDEP}]
