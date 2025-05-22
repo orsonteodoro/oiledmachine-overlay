@@ -11,7 +11,8 @@ DESCRIPTION="A minimal config for using Noto colored emojis"
 LICENSE="CC-PD"
 KEYWORDS="~amd64"
 IUSE="
-+cbdt cbdt-win +colrv1 colrv1-no-flags r2
++cbdt cbdt-win +colrv1 colrv1-no-flags
+ebuild_revision_2
 "
 REQUIRED_USE="
 	|| (
@@ -67,10 +68,7 @@ src_unpack() {
 	mkdir -p "${S}" || die
 	cat "${FILESDIR}/61-noto-${MY_PV}.conf" > "${S}/61-noto.conf" || die
 	if has_version "media-fonts/noto-emoji" ; then
-eerror
-eerror "USE=-colrv1 is required if using distro noto-emoji package."
-eerror
-		die
+ewarn "USE=-colrv1 is required if using distro noto-emoji package."
 	fi
 
 	if ! use cbdt && ! use cbdt-win ; then
@@ -103,9 +101,7 @@ ewarn
 }
 
 pkg_postrm() {
-einfo
 einfo "Errors immediately below are okay."
-einfo
 	eselect fontconfig disable 61-noto.conf
 	font_pkg_postrm
 	if use cbdt && use colrv1 ; then
