@@ -4449,14 +4449,8 @@ eerror
 		|| "${work_profile}" == "website-small" \
 	]] ; then
 	# vegas for production mode
-	# bbr for maintenance mode
-		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
-			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"vegas bbr3"}
-		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
-			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"vegas bbr2"}
-		else
-			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"vegas bbr"}
-		fi
+	# cubic for maintenance mode
+		v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"vegas cubic"}
 	elif [[ \
 		   "${work_profile}" == "distributed-computing-server" \
 		|| "${work_profile}" == "dvr" \
