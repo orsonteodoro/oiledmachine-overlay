@@ -4393,13 +4393,17 @@ _ot-kernel_set_kconfig_get_init_tcp_congestion_controls() {
 	elif [[ \
 		   "${work_profile}" == "dss" \
 	]] ; then
-	# bbr chosen for information disclosure resistance
+	# Optimize for security, bbrv2 is Information Discolsure (ID) and Denial of Service (DoS) resistance
+	# BBRv1 is not DoS resistant because ECN is ineffective.
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3"}
 		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2"}
 		else
-			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr"}
+eerror
+eerror "Enable bbrv2 or bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile} for DoS mitigation."
+eerror
+			die
 		fi
 	elif [[ \
 		   "${work_profile}" == "realtime-hpc" \
@@ -4426,9 +4430,10 @@ _ot-kernel_set_kconfig_get_init_tcp_congestion_controls() {
 		   "${work_profile}" == "green-hpc" \
 		|| "${work_profile}" == "greenest-hpc" \
 	]] ; then
+	# Optimize for power savings
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
-# Energy savings is unknown.
-# We are interested in deterministic power savings.
+	# bbrv3 Energy savings is unknown.
+	# Deterministic power savings allowed only.
 eerror
 eerror "Remove bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr or dctcp instead."
 eerror
@@ -4446,37 +4451,45 @@ eerror
 		   "${work_profile}" == "website-enterprise" \
 		|| "${work_profile}" == "website-interactive" \
 	]] ; then
-	# bbr for enterprise is chosen to maximizing user capacity and production.
-	# bbr is chosen because it is resistant to information disclosure and denial of service.
+	# Optimize for capacity and security.  BBRv2 is resistant to ID, DoS.
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3"}
 		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2"}
 		else
-			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr"}
+eerror
+eerror "Enable bbrv2 or bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile} for DoS mitigation."
+eerror
+			die
 		fi
 	elif [[ \
 		"${work_profile}" == "website-small" \
 	]] ; then
-	# bbr is chosen because it is resistant to information disclosure.
+	# Optimize for security.  BBR flavors are resistant to ID.
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3"}
 		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2"}
 		else
-			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr"}
+eerror
+eerror "Enable bbrv2 or bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile} for DoS mitigation."
+eerror
+			die
 		fi
 	elif [[ \
 		   "${work_profile}" == "game-server" \
 	]] ; then
-	# vegas for production mode
-	# cubic for maintenance mode
+	# Optimize for low latency.  Vegas for production mode
+	# Optimize for high throughput.  BBRv2 for maintenace mode and fallback if under DoS
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"vegas bbr3"}
 		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"vegas bbr2"}
 		else
-			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"vegas bbr"}
+eerror
+eerror "Enable bbrv2 or bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile} for fallback DoS mitigation."
+eerror
+			die
 		fi
 	elif [[ \
 		   "${work_profile}" == "distributed-computing-server" \
@@ -4489,6 +4502,7 @@ eerror
 		|| "${work_profile}" == "pi-web-browser" \
 		|| "${work_profile}" == "sdr" \
 	]] ; then
+	# Optimize for low jitter
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3"}
 		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
@@ -4503,6 +4517,7 @@ eerror
 		|| "${work_profile}" == "video-smartphone" \
 		|| "${work_profile}" == "video-tablet" \
 	]] ; then
+	# Optimize for power savings
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
 eerror
 eerror "Remove bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr instead."
@@ -4528,6 +4543,7 @@ eerror
 		|| "${work_profile}" == "solar-gaming" \
 		|| "${work_profile}" == "touchscreen-laptop" \
 	]] ; then
+	# Optimize for power savings
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
 eerror
 eerror "Remove bbrv3 from OT_KERNEL_USE for OT_KERNEL_WORK_PROFILE=${work_profile}.  Use bbr instead."
@@ -4542,6 +4558,7 @@ eerror
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr htcp hybla lp vegas westwood"}
 		fi
 	else
+	# Optimize for capabilities
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3 htcp hybla lp vegas westwood"}
 		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
