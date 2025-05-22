@@ -82,7 +82,7 @@ pyinotify qrencode +quic -qt6 -rencode +rencodeplus +rfb sd_listen selinux
 +tcp-wrappers test tiff u2f -uinput +v4l2 vaapi vpx vsock -wayland +webcam
 webcam-forwarding webp +websockets +X x264 +xdg +xinput yaml zeroconf zlib
 
-ebuild_revision_6
+ebuild_revision_7
 "
 # Upstream enables uinput by default.  Disabled because ebuild exists.
 # Upstream enables drm by default.  Disabled because unfinished.

@@ -83,7 +83,7 @@ sd_listen selinux +server +socks sound-forwarding spng sql sqlite +ssh sshpass
 wayland +webcam webcam-forwarding webp +websockets +X x264 +xdg +xinput yaml
 zeroconf zlib
 
-ebuild_revision_6
+ebuild_revision_7
 "
 # Upstream enables uinput by default.  Disabled because ebuild exists.
 # Upstream enables drm by default.  Disabled because unfinished.
