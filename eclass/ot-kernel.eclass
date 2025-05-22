@@ -4451,7 +4451,7 @@ eerror
 		   "${work_profile}" == "website-enterprise" \
 		|| "${work_profile}" == "website-interactive" \
 	]] ; then
-	# Optimize for capacity and security.  BBRv2 is resistant to ID, DoS.
+	# Optimize for maximum capacity and security.  BBRv2 is resistant to ID, DoS.
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3"}
 		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
