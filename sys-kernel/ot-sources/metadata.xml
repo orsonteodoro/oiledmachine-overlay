@@ -3252,7 +3252,7 @@ unset OT_KERNEL_PRIVATE_KEY
     Login server                             | N                     | Y
     Login mode website                       | N                     | Y
     Multiuser home computer                  | N                     | S
-    Senstive data kiosk                      | N                     | Y
+    Sensitive data kiosk                     | N                     | Y
     Informational kiosk                      | Y                     | N
     Paying bills                             | N                     | Y
     Permadeath gaming                        | D                     | N
