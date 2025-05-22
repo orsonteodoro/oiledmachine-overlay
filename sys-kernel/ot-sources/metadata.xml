@@ -2635,14 +2635,15 @@ TBM=0
     gamedev
     game-server
     gaming-tournament
-    http-server-busy
-    http-server-relaxed
     musical-live-performance
     pi-deep-learning
     pi-music-production
     presentation
     pro-gaming
     ros
+    website-enterprise
+    website-interactive
+    website-small
     workstation
 
     See Also
@@ -3987,8 +3988,6 @@ unset OT_KERNEL_PRIVATE_KEY
       greenest-hpc
       greenest-pc
       hpc
-      http-server-busy
-      http-server-relaxed
       realtime-hpc
       jukebox
       laptop
@@ -4023,6 +4022,9 @@ unset OT_KERNEL_PRIVATE_KEY
       touchscreen-laptop
       video-conferencing
       voip
+      website-enterprise
+      website-interactive
+      website-small
       workstation
 
     Notes:

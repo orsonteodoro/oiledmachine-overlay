@@ -12498,8 +12498,6 @@ declare -A WORK_PROFILE_LATENCY_BIAS_KEY=(
         ["greenest-hpc"]="power"
         ["greenest-pc"]="power"
         ["hpc"]="throughput-headless"
-        ["http-server-busy"]="alert-server"
-        ["http-server-relaxed"]="relaxed-server"
         ["jukebox"]="audio"
         ["laptop"]="power"
         ["live-streaming-gamer"]="input"
@@ -12533,6 +12531,9 @@ declare -A WORK_PROFILE_LATENCY_BIAS_KEY=(
         ["touchscreen-laptop"]="video"
         ["video-conferencing"]="audio"
         ["voip"]="audio"
+        ["website-enterprise"]="alert-server"
+        ["website-interactive"]="alert-server"
+        ["website-small"]="relaxed-server"
         ["workstation"]="throughput-interactive"
 )
 
@@ -12752,8 +12753,9 @@ _ot-kernel_y_thp() {
 	fi
 
 	if [[ \
-		   "${work_profile}" == "http-server-busy" \
-		|| "${work_profile}" == "http-server-relaxed" \
+		   "${work_profile}" == "website-enterprise" \
+		|| "${work_profile}" == "website-interactive" \
+		|| "${work_profile}" == "website-small" \
 	]] ; then
 	# Avoid latency spike case
 		ot-kernel_unset_configopt "CONFIG_TRANSPARENT_HUGEPAGE"
@@ -13000,12 +13002,13 @@ _ot-kernel_realtime_packages() {
 	# Servers
 	if [[ \
 		   "${work_profile}" == "distributed-computing-server" \
-		|| "${work_profile}" == "http-server-busy" \
-		|| "${work_profile}" == "http-server-relaxed" \
 		|| "${work_profile}" == "file-server" \
 		|| "${work_profile}" == "game-server" \
 		|| "${work_profile}" == "media-server" \
 		|| "${work_profile}" == "realtime-hpc" \
+		|| "${work_profile}" == "website-enterprise" \
+		|| "${work_profile}" == "website-interactive" \
+		|| "${work_profile}" == "website-small" \
 	]] ; then
 		# Assumes PREEMPT=y
 		_ot-kernel_realtime_pkg "dev-db/keydb" "SCHED_FIFO"

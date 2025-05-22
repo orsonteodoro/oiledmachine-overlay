@@ -4433,8 +4433,9 @@ eerror
 		fi
 	elif [[ \
 		   "${work_profile}" == "game-server" \
-		|| "${work_profile}" == "http-server-busy" \
-		|| "${work_profile}" == "http-server-relaxed" \
+		|| "${work_profile}" == "website-enterprise" \
+		|| "${work_profile}" == "website-interactive" \
+		|| "${work_profile}" == "website-small" \
 	]] ; then
 	# vegas for production mode
 	# bbr for maintenance mode
@@ -10694,11 +10695,17 @@ ewarn "OT_KERNEL_WORK_PROFILE=\"video-smartphone\" is deprecated.  Use smartphon
 	elif [[ "${work_profile}" == "video-tablet" ]] ; then
 ewarn "OT_KERNEL_WORK_PROFILE=\"video-tablet\" is deprecated.  Use tablet instead."
 		die
+	elif [[ "${work_profile}" == "http-server-relaxed" ]] ; then
+ewarn "OT_KERNEL_WORK_PROFILE=\"web-server\" is deprecated.  Use either distributed-computing-server, file-server, media-server, website-enterprise, website-interactive, website-small instead."
+		die
+	elif [[ "${work_profile}" == "http-server-busy" ]] ; then
+ewarn "OT_KERNEL_WORK_PROFILE=\"web-server\" is deprecated.  Use either distributed-computing-server, file-server, media-server, website-enterprise, website-interactive, website-small instead."
+		die
 	elif [[ "${work_profile}" == "web-server" ]] ; then
-ewarn "OT_KERNEL_WORK_PROFILE=\"web-server\" is deprecated.  Use either distributed-computing-server, http-server-busy, http-server-relaxed, file-server, media-server instead."
+ewarn "OT_KERNEL_WORK_PROFILE=\"web-server\" is deprecated.  Use either distributed-computing-server, file-server, media-server, website-enterprise, website-interactive, website-small instead."
 		die
 	elif [[ "${work_profile}" == "http-server" ]] ; then
-ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either http-server-busy, http-server-relaxed instead."
+ewarn "OT_KERNEL_WORK_PROFILE=\"http-server\" is deprecated.  Use either website-enterprise, website-interactive, website-small instead."
 		die
 	fi
 
@@ -11018,9 +11025,10 @@ ewarn "The dss work profile is experimental and in development."
 		   "${work_profile}" == "distributed-computing-server" \
 		|| "${work_profile}" == "dss" \
 		|| "${work_profile}" == "file-server" \
-		|| "${work_profile}" == "http-server-busy" \
-		|| "${work_profile}" == "http-server-relaxed" \
 		|| "${work_profile}" == "media-server" \
+		|| "${work_profile}" == "website-enterprise" \
+		|| "${work_profile}" == "website-interactive" \
+		|| "${work_profile}" == "website-small" \
 	]] ; then
 		if [[ "${work_profile}" == "dss" ]] ; then
 			local dss_role="${DSS_ROLE:-client}"
@@ -11037,18 +11045,17 @@ ewarn "The dss work profile is experimental and in development."
 			else
 				ot-kernel_set_kconfig_set_user_capacity_hz "100" # Percent
 			fi
-		elif [[ \
-			"${work_profile}" == "http-server-busy" \
-		]] ; then
-			ot-kernel_set_kconfig_set_user_capacity_hz "100" # Percent
-			_OT_KERNEL_FORCE_STABILITY=1
-		elif [[ \
-			"${work_profile}" == "http-server-relaxed" \
-		]] ; then
-			ot-kernel_set_kconfig_set_user_capacity_hz "50" # Percent
-			_OT_KERNEL_FORCE_STABILITY=1
 		elif [[ "${work_profile}" == "media-server" ]] ; then
 			ot-kernel_set_kconfig_set_video_timer_hz
+		elif [[ "${work_profile}" == "website-enterprise" ]] ; then
+			ot-kernel_set_kconfig_set_user_capacity_hz "100" # Percent
+			_OT_KERNEL_FORCE_STABILITY=1
+		elif [[ "${work_profile}" == "website-interactive" ]] ; then
+			ot-kernel_set_kconfig_set_highest_timer_hz
+			_OT_KERNEL_FORCE_STABILITY=1
+		elif [[ "${work_profile}" == "website-small" ]] ; then
+			ot-kernel_set_kconfig_set_user_capacity_hz "50" # Percent
+			_OT_KERNEL_FORCE_STABILITY=1
 		else
 			ot-kernel_set_kconfig_set_lowest_timer_hz
 		fi
@@ -11061,10 +11068,10 @@ ewarn "The dss work profile is experimental and in development."
 			ot-kernel_y_configopt "CONFIG_PCIEASPM_POWERSAVE"
 		fi
 		ot-kernel_set_preempt "CONFIG_PREEMPT_NONE"
-		if [[ "${work_profile}" == "http-server-busy" ]] ; then
-			ot-kernel_iosched_max_tps
-		elif [[ "${work_profile}" == "file-server" ]] ; then
+		if [[ "${work_profile}" == "file-server" ]] ; then
 			ot-kernel_iosched_max_throughput
+		elif [[ "${work_profile}" == "website-enterprise" || "${work_profile}" == "website-interactive" ]] ; then
+			ot-kernel_iosched_max_tps
 		else
 			ot-kernel_iosched_interactive
 		fi
