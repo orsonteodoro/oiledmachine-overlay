@@ -879,7 +879,7 @@ TBM=0
     [45] It is possible to replace KASAN with KFENCE, but if you do that you may get attacked between the periodic check or lose a class of vulnerabilies mitigated.
     [46] Biased towards mitigating the more reported and dangerous Race Condition vulnerability versus Timing Attack vulnerability.
     [47] Tunable with DSS_ROLE
-    [48] BBRv2 or BBRv3 flavor with ECN, resistant to ID, DoS; but bbrv2 and bbrv3 has ECN support which prevents DoS.
+    [48] BBRv2 or BBRv3 or Cubic can be used to mitigate DoS partially.  Use Cubic if router doesn't support ECN.
 
     Commentary:
 
@@ -2631,6 +2631,8 @@ TBM=0
 
     The following work profiles maximize uptime unconditionally:
     
+    database-server
+    datacenter-backend
     digital-audio-workstation
     dss
     gamedev
@@ -3535,7 +3537,7 @@ unset OT_KERNEL_PRIVATE_KEY
       pi-video-player
       presentation
       pro-gaming
-      realtime-hpc
+      hpc-realtime
       ros
       sdr
       smartphone
@@ -3544,6 +3546,8 @@ unset OT_KERNEL_PRIVATE_KEY
       streamer-desktop
       streamer-reporter
       tablet
+      website-small
+      website-interactive
       video-conferencing
       voip
 
@@ -3553,13 +3557,13 @@ unset OT_KERNEL_PRIVATE_KEY
       builder-dedicated
       builder-interactive
       gamedev
-      green-hpc
-      greenest-hpc
-      laptop
       hpc
+      hpc-green
+      hpc-greenest
+      hpc-throughput
+      laptop
       mainstream-desktop
       pi-web-browser
-      throughput-hpc
       workstation
 
     If you would like to increase the number of browser tabs, then swap should
@@ -3972,23 +3976,23 @@ unset OT_KERNEL_PRIVATE_KEY
       casual-gaming
       casual-gaming-laptop
       custom
+      database-server
+      datacenter-backend
       digital-audio-workstation
       distributed-computing-server
       distributed-computing-client
-      desktop-guest-vm
       dss
       dvr
       file-server
       game-server
       gamedev
-      gaming-guest-vm
       gaming-tournament
       gpu-gaming-laptop
-      green-hpc
       green-pc
-      greenest-hpc
       greenest-pc
       hpc
+      hpc-greenest
+      hpc-green
       realtime-hpc
       jukebox
       laptop
@@ -4027,6 +4031,8 @@ unset OT_KERNEL_PRIVATE_KEY
       website-interactive
       website-small
       workstation
+      vm-guest-desktop
+      vm-guest-gaming
 
     Notes:
 
