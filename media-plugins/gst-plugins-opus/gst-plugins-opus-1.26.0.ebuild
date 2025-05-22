@@ -14,7 +14,7 @@ SRC_URI+=" https://gstreamer.freedesktop.org/src/gst-plugins-bad/gst-plugins-bad
 
 DESCRIPTION="Opus audio parser plugin for GStreamer"
 IUSE="
-ebuild_revision_4
+ebuild_revision_5
 "
 CDEPEND="
 	>=media-libs/opus-0.9.4:=[${MULTILIB_USEDEP}]
