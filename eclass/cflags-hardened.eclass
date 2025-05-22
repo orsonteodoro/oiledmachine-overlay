@@ -1405,9 +1405,9 @@ ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_S
 			flags+=(
 				"-fno-aggressive-loop-optimizations"
 				"-fno-tree-loop-optimize"
-				"-fno-tree-vectorize"
 				"-fno-tree-dce"
 				"-fno-tree-dse"
+				"-fno-tree-vectorize"
 				"-fno-tree-vrp"
 			)
 		fi
