@@ -1340,29 +1340,40 @@ ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_S
 	# -fno-tree-loop-optimize -> -fno-unroll-loops
 	# -fno-tree-vectorize -> -fno-vectorize
 		coverage_pct="~95%"
-		flags=(
-			"-fno-aggressive-loop-optimizations"	# GCC
-			"-fno-loop-optimize"			# Clang
-			"-fno-strict-aliasing"			# Clang, GCC
-			"-fno-tree-dce"				# GCC
-			"-fno-tree-loop-optimize"		# GCC
-			"-fno-unroll-loops"			# Clang
-			"-fno-vectorize"			# Clang
-			"-mllvm -disable-dce"			# Clang
-		)
-		if ! [[ "${fortify_fix_level}" =~ "-inline" ]] ; then
+		if tc-is-clang || tc-is-gcc ; then
 			flags+=(
-				"-fno-inline-small-functions"	# Clang, GCC
+				"-fno-strict-aliasing"
 			)
 		fi
-		if [[ "${CFLAGS}" =~ "-flto" ]] || ( has "lto" ${IUSE} && use lto ) ; then
-			if tc-is-gcc ; then
+		if tc-is-clang ; then
+			flags+=(
+				"-fno-loop-optimize"
+				"-fno-unroll-loops"
+				"-fno-vectorize"
+				"-mllvm -disable-dce"
+			)
+		elif tc-is-gcc ; then
+			flags+=(
+				"-fno-aggressive-loop-optimizations"
+				"-fno-tree-dce"
+				"-fno-tree-loop-optimize"
+			)
+		fi
+		if ! [[ "${fortify_fix_level}" =~ "-inline" ]] ; then
+			if tc-is-clang || tc-is-gcc ; then
 				flags+=(
-					"-fno-ipa-cp"
+					"-fno-inline-small-functions"
 				)
-			else
+			fi
+		fi
+		if [[ "${CFLAGS}" =~ "-flto" ]] || ( has "lto" ${IUSE} && use lto ) ; then
+			if tc-is-clang ; then
 				flags+=(
 					"-fno-whole-program-vtables"
+				)
+			elif tc-is-gcc ; then
+				flags+=(
+					"-fno-ipa-cp"
 				)
 			fi
 		fi
@@ -1375,37 +1386,48 @@ ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_S
 	# -fno-tree-vectorize -> -fno-vectorize -fno-slp-vectorize
 	# -fno-tree-vrp -> -fno-strict-overflow
 		coverage_pct="99%"
-		flags=(
-			"-fno-aggressive-loop-optimizations"	# GCC
-			"-fno-inline-functions"			# Clang, GCC
-			"-fno-loop-optimize"			# Clang
-			"-fno-slp-vectorize"			# Clang
-			"-fno-strict-aliasing"			# Clang, GCC
-			"-fno-tree-loop-optimize"		# GCC
-			"-fno-tree-vectorize"			# GCC
-			"-fno-tree-dce"				# GCC
-			"-fno-tree-dse"				# GCC
-			"-fno-tree-vrp"				# GCC
-			"-fno-unroll-loops"			# Clang
-			"-fno-vectorize"			# Clang
-			"-mllvm -disable-dce"			# Clang
-			"-mllvm -disable-dse"			# Clang
-		)
-		if ! [[ "${fortify_fix_level}" =~ "-inline" ]] ; then
+		if tc-is-clang || tc-is-gcc ; then
 			flags+=(
-				"-fno-inline-small-functions"	# Clang, GCC
+				"-fno-inline-functions"
+				"-fno-strict-aliasing"
 			)
 		fi
-		if [[ "${CFLAGS}" =~ "-flto" ]] || ( has "lto" ${IUSE} && use lto ) ; then
-			if tc-is-gcc ; then
+		if tc-is-clang ; then
+			flags+=(
+				"-fno-loop-optimize"
+				"-fno-slp-vectorize"
+				"-fno-unroll-loops"
+				"-fno-vectorize"
+				"-mllvm -disable-dce"
+				"-mllvm -disable-dse"
+			)
+		elif tc-is-gcc ; then
+			flags+=(
+				"-fno-aggressive-loop-optimizations"
+				"-fno-tree-loop-optimize"
+				"-fno-tree-vectorize"
+				"-fno-tree-dce"
+				"-fno-tree-dse"
+				"-fno-tree-vrp"
+			)
+		fi
+		if ! [[ "${fortify_fix_level}" =~ "-inline" ]] ; then
+			if tc-is-clang || tc-is-gcc ; then
 				flags+=(
-					"-fno-ipa-cp"
-					"-fno-ipa-icf"
+					"-fno-inline-small-functions"	# Clang, GCC
 				)
-			else
+			fi
+		fi
+		if [[ "${CFLAGS}" =~ "-flto" ]] || ( has "lto" ${IUSE} && use lto ) ; then
+			if tc-is-clang ; then
 				flags+=(
 					"-fno-lto-promote-static-vtables"
 					"-fno-whole-program-vtables"
+				)
+			elif tc-is-gcc ; then
+				flags+=(
+					"-fno-ipa-cp"
+					"-fno-ipa-icf"
 				)
 			fi
 		fi
@@ -1418,39 +1440,50 @@ ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_S
 	# -fno-tree-vectorize -> -fno-vectorize -fno-slp-vectorize
 	# -fno-tree-vrp -> -fno-strict-overflow
 		coverage_pct="99%"
-		flags=(
-			"-fno-aggressive-loop-optimizations"	# GCC
-			"-fno-inline-functions"			# Clang, GCC
-			"-fno-loop-optimize"			# Clang
-			"-fno-optimize-sibling-calls"		# Clang, GCC
-			"-fno-slp-vectorize"			# Clang
-			"-fno-strict-aliasing"			# Clang, GCC
-			"-fno-strict-overflow"			# Clang
-			"-fno-tree-dce"				# GCC
-			"-fno-tree-dse"				# GCC
-			"-fno-tree-loop-optimize"		# GCC
-			"-fno-tree-vectorize"			# GCC
-			"-fno-tree-vrp"				# GCC
-			"-fno-unroll-loops"			# Clang
-			"-fno-vectorize"			# Clang
-			"-mllvm -disable-dce"			# Clang
-			"-mllvm -disable-dse"			# Clang
-		)
-		if ! [[ "${fortify_fix_level}" =~ "-inline" ]] ; then
+		if tc-is-clang || tc-is-gcc ; then
 			flags+=(
-				"-fno-inline-small-functions"	# Clang, GCC
+				"-fno-inline-functions"
+				"-fno-optimize-sibling-calls"
+				"-fno-strict-aliasing"
 			)
 		fi
-		if [[ "${CFLAGS}" =~ "-flto" ]] || ( has "lto" ${IUSE} && use lto ) ; then
-			if tc-is-gcc ; then
+		if tc-is-clang ; then
+			flags+=(
+				"-fno-loop-optimize"
+				"-fno-slp-vectorize"
+				"-fno-strict-overflow"
+				"-fno-unroll-loops"
+				"-fno-vectorize"
+				"-mllvm -disable-dce"
+				"-mllvm -disable-dse"
+			)
+		elif tc-is-gcc ; then
+			flags+=(
+				"-fno-aggressive-loop-optimizations"
+				"-fno-tree-dce"
+				"-fno-tree-dse"
+				"-fno-tree-loop-optimize"
+				"-fno-tree-vectorize"
+				"-fno-tree-vrp"
+			)
+		fi
+		if ! [[ "${fortify_fix_level}" =~ "-inline" ]] ; then
+			if tc-is-clang || tc-is-gcc ; then
 				flags+=(
-					"-fno-ipa-cp"
-					"-fno-ipa-icf"
+					"-fno-inline-small-functions"
 				)
-			else
+			fi
+		fi
+		if [[ "${CFLAGS}" =~ "-flto" ]] || ( has "lto" ${IUSE} && use lto ) ; then
+			if tc-is-clang ; then
 				flags+=(
 					"-fno-lto-promote-static-vtables"
 					"-fno-whole-program-vtables"
+				)
+			elif tc-is-gcc ; then
+				flags+=(
+					"-fno-ipa-cp"
+					"-fno-ipa-icf"
 				)
 			fi
 		fi

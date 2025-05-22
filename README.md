@@ -400,9 +400,11 @@ When -O1, -O2, -O3 is added, -D_FORTIFY_SOURCE's integrity may be compromised.
 This overlay applies 3 sets of flags to ensure that the integrity of fortify source
 checks and thunks are not compromised by compiler optimizations.
 
-* Set 1 for trusted secure data packages.  ~90–95% coverage, ~3–7% slowdown.
-* Set 2 for practical security-critical packages.  98-99% coverage, ~5–10% slowdown.
-* Set 3 for theoretical security-critcal packages.  98-99% coverage, ~6–12% slowdown.
+* Set 1 for trusted secure data packages.  95% Coverage
+* Set 2 for practical security-critical packages.  ~99.9 Coverage
+* Set 3 for theoretical security-critcal packages.  ~99.9 Coverage
+
+Medium severity without sanitizers + SSP-strong,  Low severity with ASan + UBSan + SSP-strong
 
 Doesn't -O flags achieve the same thing?  Yes but it doesn't give the fine
 grained control compared to these sets.  The set is selected to counter the most
