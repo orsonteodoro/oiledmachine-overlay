@@ -4391,6 +4391,17 @@ _ot-kernel_set_kconfig_get_init_tcp_congestion_controls() {
 	]] ; then
 		:
 	elif [[ \
+		   "${work_profile}" == "dss" \
+	]] ; then
+	# bbr chosen for information disclosure resistance
+		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3"}
+		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2"}
+		else
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr"}
+		fi
+	elif [[ \
 		   "${work_profile}" == "realtime-hpc" \
 	]] ; then
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
@@ -4432,25 +4443,41 @@ eerror
 			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr dctcp illinois"}
 		fi
 	elif [[ \
-		"${work_profile}" == "website-enterprise" \
+		   "${work_profile}" == "website-enterprise" \
+		|| "${work_profile}" == "website-interactive" \
 	]] ; then
-	# bbr for maximizing user capacity and production
-	# cubic for maintenance mode
+	# bbr for enterprise is chosen to maximizing user capacity and production.
+	# bbr is chosen because it is resistant to information disclosure and denial of service.
 		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
-			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3 cubic"}
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3"}
 		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
-			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2 cubic"}
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2"}
 		else
-			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr cubic"}
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr"}
+		fi
+	elif [[ \
+		"${work_profile}" == "website-small" \
+	]] ; then
+	# bbr is chosen because it is resistant to information disclosure.
+		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr3"}
+		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr2"}
+		else
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"bbr"}
 		fi
 	elif [[ \
 		   "${work_profile}" == "game-server" \
-		|| "${work_profile}" == "website-interactive" \
-		|| "${work_profile}" == "website-small" \
 	]] ; then
 	# vegas for production mode
 	# cubic for maintenance mode
-		v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"vegas cubic"}
+		if has bbrv3 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv3 ; then
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"vegas bbr3"}
+		elif has bbrv2 ${IUSE_EFFECTIVE} && ot-kernel_use bbrv2 ; then
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"vegas bbr2"}
+		else
+			v=${OT_KERNEL_TCP_CONGESTION_CONTROLS:-"vegas bbr"}
+		fi
 	elif [[ \
 		   "${work_profile}" == "distributed-computing-server" \
 		|| "${work_profile}" == "dvr" \
