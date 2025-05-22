@@ -12,7 +12,7 @@ KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 
 DESCRIPTION="LV2 elements for GStreamer"
 IUSE="
-ebuild_revision_4
+ebuild_revision_5
 "
 RDEPEND="
 	media-libs/lv2[${MULTILIB_USEDEP}]
