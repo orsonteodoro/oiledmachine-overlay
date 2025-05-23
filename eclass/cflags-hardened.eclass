@@ -1790,6 +1790,7 @@ einfo "Adding extra flags to unbreak ${coverage_pct} of -D_FORTIFY_SOURCE check 
 				GCC_SLOT=$(gcc-major-version)
 			fi
 		fi
+		local sanitizer_paths=()
 		local L=$(echo "${l}")
 		local x
 		for x in ${L[@]} ; do
@@ -1842,7 +1843,7 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 					append-ldflags "-fsanitize=${x}"
 					CFLAGS_HARDENED_CFLAGS+=" -fsanitize=${x}"
 					CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=${x}"
-					#CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=${x}"
+					CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=${x}"
 					asan=1
 				elif [[ "${x}" == "hwaddress" ]] ; then
 					skip=1
@@ -1851,21 +1852,21 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 					append-ldflags "-fsanitize=${x}"
 					CFLAGS_HARDENED_CFLAGS+=" -fsanitize=${x}"
 					CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=${x}"
-					#CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=${x}"
+					CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=${x}"
 					asan=1
 				elif [[ "${x}" == "cfi" ]] && ! _cflags-hardened_has_cet && [[ "${ARCH}" == "amd64" ]] && tc-is-clang ; then
 					append-flags "-fsanitize=${x}"
 					append-ldflags "-fsanitize=${x}"
 					CFLAGS_HARDENED_CFLAGS+=" -fsanitize=${x}"
 					CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=${x}"
-					#CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=${x}"
+					CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=${x}"
 
 					filter-flags "-flto*"
 					append-flags "-flto=thin"
 					append-ldflags "-flto=thin"
 					CFLAGS_HARDENED_CFLAGS+=" -flto=thin"
 					CFLAGS_HARDENED_CXXFLAGS+=" -flto=thin"
-					#CFLAGS_HARDENED_LDFLAGS+=" -flto=thin"
+					CFLAGS_HARDENED_LDFLAGS+=" -flto=thin"
 					filter-flags "-fuse-ld=*"
 					append-ldflags "-fuse-ld=lld"
 					CFLAGS_HARDENED_LDFLAGS+=" -fuse-ld=lld"
@@ -1876,7 +1877,7 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 					append-ldflags "-fsanitize=${x}"
 					CFLAGS_HARDENED_CFLAGS+=" -fsanitize=${x}"
 					CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=${x}"
-					#CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=${x}"
+					CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=${x}"
 					if [[ "${x}" == "undefined" || "${x}" == "signed-integer-overflow" ]] ; then
 einfo "Deduping signed integer overflow check"
 						filter-flags "-f*trapv"
@@ -1888,8 +1889,13 @@ einfo "Deduping signed integer overflow check"
 				fi
 
 				if (( ${skip} == 0 )) ; then
+	#
 	# We need to statically link sanitizers to avoid breaking the @system
 	# set.
+	#
+	# Prevent linking to shared lib.  When you unemerge the compiler slot
+	# containing the sanitizer lib, it could lead to a DoS.
+	#
 					if tc-is-clang ; then
 						append-flags "-static-libsan"
 						append-ldflags -Wl,--no-as-needed "-static-libsan"
@@ -1901,6 +1907,18 @@ einfo "Linking -static-libsan for Clang $(clang-major-version)"
 						local lib_name="lib${module}.a"
 						local cflags_abi="CFLAGS_${ABI}"
 						local lib_path=$(${CC} ${!cflags_abi} -print-file-name="${lib_name}")
+						sanitizer_paths+=(
+							"${lib_path}"
+						)
+						local path
+						for path in ${sanitizer_paths[@]} ; do
+							CFLAGS=$(echo "${CFLAGS}" | sed -e "s|${path}||g")
+							CXXFLAGS=$(echo "${CXXFLAGS}" | sed -e "s|${path}||g")
+							LDFLAGS=$(echo "${LDFLAGS}" | sed -e "s|${path}||g")
+							CFLAGS_HARDENED_LDFLAGS=$(echo "${RUSTFLAGS}" | sed -e "s|${path}||g")
+						done
+		# Prevent linking to shared lib.  When you unemerge gcc slot
+		# containing the sanitizer lib, it could lead to a DoS.
 						append-ldflags -Wl,--no-as-needed -static-lib${module} "${lib_path}"
 						CFLAGS_HARDENED_LDFLAGS+=" -Wl,--no-as-needed -static-lib${module} ${lib_path}"
 einfo "Linking ${lib_name} for GCC $(gcc-major-version)"

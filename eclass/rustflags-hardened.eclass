@@ -1056,6 +1056,7 @@ einfo "rustc host:  ${host}"
 				GCC_SLOT=$(gcc-major-version)
 			fi
 		fi
+		local sanitizer_paths=()
 		local L=$(echo "${l}")
 		local x
 		for x in ${L[@]} ; do
@@ -1125,8 +1126,13 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 				fi
 
 				if (( ${skip} == 0 )) ; then
+	#
 	# We need to statically link sanitizers to avoid breaking some of the
 	# @world set.
+	#
+	# Prevent linking to shared lib.  When you unemerge the compiler slot
+	# containing the sanitizer lib, it could lead to a DoS.
+	#
 					if tc-is-clang ; then
 						RUSTFLAGS+=" -C link-arg=-Wl,--no-as-needed -C link-arg=-static-libsan"
 einfo "Linking -static-libsan for Clang $(clang-major-version)"
@@ -1134,7 +1140,13 @@ einfo "Linking -static-libsan for Clang $(clang-major-version)"
 						local lib_name="lib${module}.a"
 						local cflags_abi="CFLAGS_${ABI}"
 						local lib_path=$(${CC} ${!cflags_abi} -print-file-name="${lib_name}")
-						#RUSTFLAGS+=" -C link-arg=${lib_path}"
+						sanitizer_paths+=(
+							"${lib_path}"
+						)
+						local path
+						for path in ${sanitizer_paths[@]} ; do
+							RUSTFLAGS=$(echo "${RUSTFLAGS}" | sed -e "s|${path}||g")
+						done
 						RUSTFLAGS+=" -C link-arg=-Wl,--no-as-needed -C link-arg=-static-lib${module} -C link-arg=${lib_path}"
 einfo "Linking -static-lib${module} for GCC $(gcc-major-version)"
 					fi
