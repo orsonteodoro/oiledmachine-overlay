@@ -458,12 +458,12 @@ src_unpack() {
 
 src_prepare() {
 	cmake_src_prepare
-	if ver_test "${LLVM_SLOT}" -ge "16" ; then
+	if use jit && ver_test "${LLVM_SLOT}" -ge "16" ; then
 einfo "LLVM_SLOT:\t${LLVM_SLOT}"
 		eapply "${FILESDIR}/extra-patches/${PN}-1.0.0-llvm16.patch"
 		ewarn "JIT is still broken for LLVM 16"
 	fi
-	if ver_test "${LLVM_SLOT}" -ge "15" ; then
+	if use jit && ver_test "${LLVM_SLOT}" -ge "15" ; then
 einfo "LLVM_SLOT:\t${LLVM_SLOT}"
 		ewarn "JIT is still broken for LLVM 15"
 	fi
