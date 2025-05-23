@@ -546,6 +546,14 @@ per-package flags can be used to avoid incompatibility problems.  Add the flag
 to the package and then rebuild the problematic package or deep dependency
 causing the problem.
 
+##### Missing ASan symbols with Flatpak because of missing ASan symbols in curl
+
+You may get an error with sys-apps/flatpak interaction with broken linked curl.
+Delete /usr/bin/flatpak, re-emerge curl without ASan with per-package env containing
+CFLAGS_HARDENED_SANITIZERS_DEACTIVATE=1 or with fixed cflags-hardened eclass with
+changes linking to just the static library not shared ASan library.  Re-emerge
+sys-apps/flatpak.
+
 ### 2023 policy
 
 Due to recent hacking near the beginning of the year (or earlier) of a prominent
