@@ -1146,7 +1146,7 @@ einfo "Linking -static-libsan for Clang $(clang-major-version)"
 						local pat="/usr/lib/gcc/${CHOST}/[0-9]+(.*)?/lib${module}.a"
 						RUSTFLAGS=$(echo "${RUSTFLAGS}" | sed -r -e "s|${pat}||g")
 						if [[ "${RUSTFLAGS}" =~ "--as-needed" ]] ; then
-							RUSTFLAGS+=" -C link-arg=-Wl,--no-as-needed -C link-arg=-static-lib${module} -C link-arg=${lib_path}"
+							RUSTFLAGS+=" -C link-arg=-Wl,--no-as-needed -C link-arg=-static-lib${module} -C link-arg=${lib_path} -C link-arg=-Wl,--as-needed"
 						else
 							RUSTFLAGS+=" -C link-arg=-static-lib${module}"
 						fi
