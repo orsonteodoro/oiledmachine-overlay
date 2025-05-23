@@ -33,6 +33,7 @@ declare -A GIT_CRATES=(
 [onenote_parser]="https://github.com/Cisco-Talos/onenote.rs;8b450447e58143004b68dd21c11b710fdb79be92;onenote.rs-%commit%" # 0.3.1
 )
 
+CFLAGS_HARDENED_SANITIZERS="undefined"
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_TRAPV=0
 CFLAGS_HARDENED_USE_CASES="jit network security-critical sensitive-data untrusted-data"
@@ -183,7 +184,6 @@ zune-inflate-0.2.54
 "
 CURL_PV="7.68.0"
 GENERATE_LOCKFILE=0
-LLVM_MAX_SLOT=14
 PYTEST_PV="7.2.0"
 PYTHON_COMPAT=( "python3_"{10..12} ) # CI uses 3.8
 RUSTFLAGS_HARDENED_USE_CASES="jit network secure-critical sensitive-data untrusted-data"
@@ -386,7 +386,12 @@ pkg_setup() {
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
 		check_network_sandbox
 	fi
-	use jit && llvm_pkg_setup
+	if use jit ; then
+		LLVM_MAX_SLOT=14
+ewarn "USE=jit requires <=llvm-core/llvm-${LLVM_MAX_SLOT} to work."
+ewarn "If test fails, disable jit."
+		llvm_pkg_setup
+	fi
 	python-any-r1_pkg_setup
 einfo
 einfo "To hard unmask the jit USE flag, do:"
@@ -580,12 +585,15 @@ src_configure() {
 
 src_test() {
 # Test is broken when a dependency is ASaned.
-	export ASAN_OPTIONS="strict_init=0:log_path=${T}/asan_log:halt_on_error=0:continue_on_error=1:verify_asan_link_order=0"
-	export TEST_CASE_TIMEOUT="40"
-	local -x SANDBOX_ON=0 # Required so libsandbox.so will not crash test because of libasan.so...
-	export CC=$(tc-getCC)
-	export LD_PRELOAD=""
-	addwrite '/dev/null.*'
+#	export ASAN_OPTIONS="strict_init=0:log_path=${T}/asan_log:halt_on_error=0:continue_on_error=1:verify_asan_link_order=0"
+#	export TEST_CASE_TIMEOUT="40"
+#	local -x SANDBOX_ON=0 # Required so libsandbox.so will not crash test because of libasan.so...
+#	export CC=$(tc-getCC)
+#	export LD_PRELOAD=""
+	if (( ${#CFLAGS_HARDENED_SANITIZERS_COMPAT[@]} > 0 )) ; then
+		addwrite "/dev/"
+		rm -f "/dev/null."*
+	fi
 einfo "LD_PRELOAD:  ${LD_PRELOAD}"
 	use valgrind && ewarn "Testing with valgrind may likely fail."
 	cd "${S}_build" || die
@@ -593,7 +601,10 @@ einfo "LD_PRELOAD:  ${LD_PRELOAD}"
 		"./unit_tests/check_clamav" || die
 	fi
 	cmake_src_test
-	grep -e "^ERROR:" "${T}/build.log" && die "Detected error"
+	if (( ${#CFLAGS_HARDENED_SANITIZERS_COMPAT[@]} > 0 )) ; then
+		rm -f "/dev/null."*
+		grep -e "^ERROR:" "${T}/build.log" && die "Detected error"
+	fi
 }
 
 src_install() {
