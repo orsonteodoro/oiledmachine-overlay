@@ -1056,7 +1056,6 @@ einfo "rustc host:  ${host}"
 				GCC_SLOT=$(gcc-major-version)
 			fi
 		fi
-		local sanitizer_paths=()
 		local L=$(echo "${l}")
 		local x
 		for x in ${L[@]} ; do
@@ -1140,13 +1139,8 @@ einfo "Linking -static-libsan for Clang $(clang-major-version)"
 						local lib_name="lib${module}.a"
 						local cflags_abi="CFLAGS_${ABI}"
 						local lib_path=$(${CC} ${!cflags_abi} -print-file-name="${lib_name}")
-						sanitizer_paths+=(
-							"${lib_path}"
-						)
-						local path
-						for path in ${sanitizer_paths[@]} ; do
-							RUSTFLAGS=$(echo "${RUSTFLAGS}" | sed -e "s|${path}||g")
-						done
+						local pat="/usr/lib/gcc/${CHOST}/[0-9]+(.*)?/lib${module}.a"
+						RUSTFLAGS=$(echo "${RUSTFLAGS}" | sed -r -e "s|${pat}||g")
 						RUSTFLAGS+=" -C link-arg=-Wl,--no-as-needed -C link-arg=-static-lib${module} -C link-arg=${lib_path}"
 einfo "Linking -static-lib${module} for GCC $(gcc-major-version)"
 					fi

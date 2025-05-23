@@ -1790,7 +1790,6 @@ einfo "Adding extra flags to unbreak ${coverage_pct} of -D_FORTIFY_SOURCE check 
 				GCC_SLOT=$(gcc-major-version)
 			fi
 		fi
-		local sanitizer_paths=()
 		local L=$(echo "${l}")
 		local x
 		for x in ${L[@]} ; do
@@ -1907,16 +1906,11 @@ einfo "Linking -static-libsan for Clang $(clang-major-version)"
 						local lib_name="lib${module}.a"
 						local cflags_abi="CFLAGS_${ABI}"
 						local lib_path=$(${CC} ${!cflags_abi} -print-file-name="${lib_name}")
-						sanitizer_paths+=(
-							"${lib_path}"
-						)
-						local path
-						for path in ${sanitizer_paths[@]} ; do
-							CFLAGS=$(echo "${CFLAGS}" | sed -e "s|${path}||g")
-							CXXFLAGS=$(echo "${CXXFLAGS}" | sed -e "s|${path}||g")
-							LDFLAGS=$(echo "${LDFLAGS}" | sed -e "s|${path}||g")
-							CFLAGS_HARDENED_LDFLAGS=$(echo "${RUSTFLAGS}" | sed -e "s|${path}||g")
-						done
+						local pat="/usr/lib/gcc/${CHOST}/[0-9]+(.*)?/lib${module}.a"
+						CFLAGS=$(echo "${CFLAGS}" | sed -r -e "s|${pat}||g")
+						CXXFLAGS=$(echo "${CXXFLAGS}" | sed -r -e "s|${pat}||g")
+						LDFLAGS=$(echo "${LDFLAGS}" | sed -r -e "s|${pat}||g")
+						CFLAGS_HARDENED_LDFLAGS=$(echo "${CFLAGS_HARDENED_LDFLAGS}" | sed -e "s|${pat}||g")
 		# Prevent linking to shared lib.  When you unemerge gcc slot
 		# containing the sanitizer lib, it could lead to a DoS.
 						append-ldflags -Wl,--no-as-needed -static-lib${module} "${lib_path}"
