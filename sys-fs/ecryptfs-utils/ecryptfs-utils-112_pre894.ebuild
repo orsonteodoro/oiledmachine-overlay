@@ -82,7 +82,6 @@ DEPEND+="
 BDEPEND+="
 	>=dev-util/intltool-0.41.0
 	$(python_gen_cond_dep '
-		dev-python/configobj[${PYTHON_USEDEP}]
 		dev-vcs/breezy[${PYTHON_USEDEP}]
 	')
 	sys-devel/gettext
