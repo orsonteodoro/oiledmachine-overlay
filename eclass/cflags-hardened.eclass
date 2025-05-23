@@ -1900,9 +1900,9 @@ einfo "Linking -static-libsan for Clang $(clang-major-version)"
 					elif tc-is-gcc ; then
 						local lib_name="lib${module}.a"
 						local lib_path=$(${CC} -print-file-name="${lib_name}")
-						append-flags "${lib_path}"
-						CFLAGS_HARDENED_LDFLAGS+=" ${lib_path}"
-einfo "Linking ${lib_name} for GCC $(gcc-major-version)"
+						append-ldflags "-static-lib${module}"
+						CFLAGS_HARDENED_LDFLAGS+=" -static-lib${module}"
+einfo "Linking -static-lib${module} for GCC $(gcc-major-version)"
 					fi
 
 					added[${module}]="1"

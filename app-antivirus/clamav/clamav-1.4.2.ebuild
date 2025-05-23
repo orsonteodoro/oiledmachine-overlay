@@ -34,6 +34,7 @@ declare -A GIT_CRATES=(
 )
 
 CFLAGS_HARDENED_SANITIZERS="undefined"
+CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" )
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_TRAPV=0
 CFLAGS_HARDENED_USE_CASES="jit network security-critical sensitive-data untrusted-data"
@@ -270,7 +271,7 @@ SLOT="0/sts"
 IUSE="
 doc clamonacc +clamapp custom-cflags experimental jit libclamav-only man milter rar
 selinux +system-mspack systemd test valgrind
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	clamonacc? (
@@ -585,11 +586,11 @@ src_configure() {
 
 src_test() {
 # Test is broken when a dependency is ASaned.
-#	export ASAN_OPTIONS="strict_init=0:log_path=${T}/asan_log:halt_on_error=0:continue_on_error=1:verify_asan_link_order=0"
-#	export TEST_CASE_TIMEOUT="40"
-#	local -x SANDBOX_ON=0 # Required so libsandbox.so will not crash test because of libasan.so...
+	export ASAN_OPTIONS="strict_init=0:log_path=${T}/asan_log:halt_on_error=0:continue_on_error=1:verify_asan_link_order=0"
+	export TEST_CASE_TIMEOUT="40"
+	local -x SANDBOX_ON=0 # Required so libsandbox.so will not crash test because of libasan.so...
 #	export CC=$(tc-getCC)
-#	export LD_PRELOAD=""
+	export LD_PRELOAD=""
 	if (( ${#CFLAGS_HARDENED_SANITIZERS_COMPAT[@]} > 0 )) ; then
 		addwrite "/dev/"
 		rm -f "/dev/null."*

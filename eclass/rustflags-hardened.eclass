@@ -1133,8 +1133,9 @@ einfo "Linking -static-libsan for Clang $(clang-major-version)"
 					elif tc-is-gcc ; then
 						local lib_name="lib${module}.a"
 						local lib_path=$(${CC} -print-file-name="${lib_name}")
-						RUSTFLAGS+=" -C link-args=${lib_path}"
-einfo "Linking ${lib_name} for GCC $(gcc-major-version)"
+						#RUSTFLAGS+=" -C link-args=${lib_path}"
+						RUSTFLAGS+=" -C link-args=-static-lib${module}"
+einfo "Linking -static-lib${module} for GCC $(gcc-major-version)"
 					fi
 
 					added[${module}]="1"
