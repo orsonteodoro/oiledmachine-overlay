@@ -33,8 +33,9 @@ declare -A GIT_CRATES=(
 [onenote_parser]="https://github.com/Cisco-Talos/onenote.rs;8b450447e58143004b68dd21c11b710fdb79be92;onenote.rs-%commit%" # 0.3.1
 )
 
-CFLAGS_HARDENED_SANITIZERS="undefined"
-CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" )
+#CFLAGS_HARDENED_SANITIZERS="address"
+#CFLAGS_HARDENED_SANITIZERS="undefined" # with llvm all unit test fail for both asan, ubsan
+#CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" )
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_TRAPV=0
 CFLAGS_HARDENED_USE_CASES="jit network security-critical sensitive-data untrusted-data"
@@ -271,7 +272,7 @@ SLOT="0/sts"
 IUSE="
 doc clamonacc +clamapp custom-cflags experimental jit libclamav-only man milter rar
 selinux +system-mspack systemd test valgrind
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE="
 	clamonacc? (
@@ -384,6 +385,10 @@ eerror
 }
 
 pkg_setup() {
+	if use test && ! [[ "${FEATURES}" =~ "userpriv" ]] ; then
+eerror "USE=test requires FEATURES=\"${FEATURES} userpriv\""
+		die
+	fi
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
 		check_network_sandbox
 	fi
@@ -516,8 +521,8 @@ src_configure() {
 			'-mtune=*'
 		replace-flags '-O*' '-O3'
 	fi
-#	cflags-hardened_append
-#	rustflags-hardened_append
+	cflags-hardened_append
+	rustflags-hardened_append
 
 	local mycmakeargs=(
 		-DAPP_CONFIG_DIRECTORY="${EPREFIX}/etc/clamav"
@@ -589,8 +594,7 @@ src_test() {
 	export ASAN_OPTIONS="strict_init=0:log_path=${T}/asan_log:halt_on_error=0:continue_on_error=1:verify_asan_link_order=0"
 	export TEST_CASE_TIMEOUT="40"
 	local -x SANDBOX_ON=0 # Required so libsandbox.so will not crash test because of libasan.so...
-#	export CC=$(tc-getCC)
-	export LD_PRELOAD=""
+	export LD_PRELOAD="" # Required for sanitizer testing
 	if (( ${#CFLAGS_HARDENED_SANITIZERS_COMPAT[@]} > 0 )) ; then
 		addwrite "/dev/"
 		rm -f "/dev/null."*

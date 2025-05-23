@@ -58,7 +58,7 @@ SLOT="0/2"
 IUSE+="
 ${TRAINERS[@]}
 custom-cflags debug lazy-lock prof static-libs stats test xmalloc
-ebuild_revision_15
+ebuild_revision_16
 "
 REQUIRED_USE+="
 	!custom-cflags? (
