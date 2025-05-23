@@ -1135,7 +1135,7 @@ einfo "Linking -static-libsan for Clang $(clang-major-version)"
 						local cflags_abi="CFLAGS_${ABI}"
 						local lib_path=$(${CC} ${!cflags_abi} -print-file-name="${lib_name}")
 						#RUSTFLAGS+=" -C link-arg=${lib_path}"
-						RUSTFLAGS+=" -C link-arg=-Wl,--no-as-needed -C link-arg=${lib_path}"
+						RUSTFLAGS+=" -C link-arg=-Wl,--no-as-needed -C link-arg=-static-lib${module} -C link-arg=${lib_path}"
 einfo "Linking -static-lib${module} for GCC $(gcc-major-version)"
 					fi
 

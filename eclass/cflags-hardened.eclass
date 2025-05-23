@@ -1901,8 +1901,8 @@ einfo "Linking -static-libsan for Clang $(clang-major-version)"
 						local lib_name="lib${module}.a"
 						local cflags_abi="CFLAGS_${ABI}"
 						local lib_path=$(${CC} ${!cflags_abi} -print-file-name="${lib_name}")
-						append-ldflags -Wl,--no-as-needed "${lib_path}"
-						CFLAGS_HARDENED_LDFLAGS+=" -Wl,--no-as-needed ${lib_path}"
+						append-ldflags -Wl,--no-as-needed -static-lib${module} "${lib_path}"
+						CFLAGS_HARDENED_LDFLAGS+=" -Wl,--no-as-needed -static-lib${module} ${lib_path}"
 einfo "Linking ${lib_name} for GCC $(gcc-major-version)"
 					fi
 
