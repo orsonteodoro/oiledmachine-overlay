@@ -1897,10 +1897,15 @@ einfo "Deduping signed integer overflow check"
 	#
 					if tc-is-clang ; then
 						append-flags "-static-libsan"
-						append-ldflags -Wl,--no-as-needed "-static-libsan"
 						CFLAGS_HARDENED_CFLAGS+=" -static-libsan"
 						CFLAGS_HARDENED_CXXFLAGS+=" -static-libsan"
-						CFLAGS_HARDENED_LDFLAGS+=" -Wl,--no-as-needed -static-libsan"
+						if [[ "${LDFLAGS}" =~ "--as-needed" ]] ; then
+							append-ldflags "-Wl,--no-as-needed" "-static-libsan" "-Wl,--as-needed"
+							CFLAGS_HARDENED_LDFLAGS+=" -Wl,--no-as-needed -static-libsan -Wl,--as-needed"
+						else
+							append-ldflags "-static-libsan"
+							CFLAGS_HARDENED_LDFLAGS+=" -static-libsan"
+						fi
 einfo "Linking -static-libsan for Clang $(clang-major-version)"
 					elif tc-is-gcc ; then
 						local lib_name="lib${module}.a"
@@ -1913,8 +1918,13 @@ einfo "Linking -static-libsan for Clang $(clang-major-version)"
 						CFLAGS_HARDENED_LDFLAGS=$(echo "${CFLAGS_HARDENED_LDFLAGS}" | sed -e "s|${pat}||g")
 		# Prevent linking to shared lib.  When you unemerge gcc slot
 		# containing the sanitizer lib, it could lead to a DoS.
-						append-ldflags -Wl,--no-as-needed -static-lib${module} "${lib_path}"
-						CFLAGS_HARDENED_LDFLAGS+=" -Wl,--no-as-needed -static-lib${module} ${lib_path}"
+						if [[ "${LDFLAGS}" =~ "--as-needed" ]] ; then
+							append-ldflags "-Wl,--no-as-needed" "-static-lib${module}" "${lib_path}" "-Wl,--as-needed"
+							CFLAGS_HARDENED_LDFLAGS+=" -Wl,--no-as-needed -static-lib${module} ${lib_path} -Wl,--as-needed"
+						else
+							append-ldflags "-static-lib${module}" "${lib_path}"
+							CFLAGS_HARDENED_LDFLAGS+=" -static-lib${module} ${lib_path}"
+						fi
 einfo "Linking ${lib_name} for GCC $(gcc-major-version)"
 					fi
 

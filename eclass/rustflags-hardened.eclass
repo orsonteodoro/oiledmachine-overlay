@@ -1133,7 +1133,11 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 	# containing the sanitizer lib, it could lead to a DoS.
 	#
 					if tc-is-clang ; then
-						RUSTFLAGS+=" -C link-arg=-Wl,--no-as-needed -C link-arg=-static-libsan"
+						if [[ "${RUSTFLAGS}" =~ "--as-needed" ]] ; then
+							RUSTFLAGS+=" -C link-arg=-Wl,--no-as-needed -C link-arg=-static-libsan -C link-arg=-Wl,--as-needed"
+						else
+							RUSTFLAGS+=" -C link-arg=-Wl,--no-as-needed -C link-arg=-static-libsan"
+						fi
 einfo "Linking -static-libsan for Clang $(clang-major-version)"
 					elif tc-is-gcc ; then
 						local lib_name="lib${module}.a"
@@ -1141,7 +1145,11 @@ einfo "Linking -static-libsan for Clang $(clang-major-version)"
 						local lib_path=$(${CC} ${!cflags_abi} -print-file-name="${lib_name}")
 						local pat="/usr/lib/gcc/${CHOST}/[0-9]+(.*)?/lib${module}.a"
 						RUSTFLAGS=$(echo "${RUSTFLAGS}" | sed -r -e "s|${pat}||g")
-						RUSTFLAGS+=" -C link-arg=-Wl,--no-as-needed -C link-arg=-static-lib${module} -C link-arg=${lib_path}"
+						if [[ "${RUSTFLAGS}" =~ "--as-needed" ]] ; then
+							RUSTFLAGS+=" -C link-arg=-Wl,--no-as-needed -C link-arg=-static-lib${module} -C link-arg=${lib_path}"
+						else
+							RUSTFLAGS+=" -C link-arg=-static-lib${module}"
+						fi
 einfo "Linking -static-lib${module} for GCC $(gcc-major-version)"
 					fi
 
