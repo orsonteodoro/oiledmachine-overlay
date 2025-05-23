@@ -32,7 +32,7 @@ EAPI=8
 
 # You cannot pick both asan and ubsan at the same in this package because it
 # will break the login, pam, or a pam based module.
-# Disabled because it breaks clamav tests and possibly ruff during build time
+# Disabled because it breaks clamav tests and possibly ruff during build time so integration test issues.
 #CFLAGS_HARDENED_SANITIZERS="address hwaddress"
 #CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" ) # llvm build failing with and without sanitizers.
 # CVE-2018-16840 - heap use-after-free (ASAN)
