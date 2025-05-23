@@ -68,7 +68,9 @@ RDEPEND+="
 	)
 	python? (
 		${PYTHON_DEPS}
-		$(python_gen_cond_dep 'dev-python/future[${PYTHON_USEDEP}]')
+		$(python_gen_cond_dep '
+			dev-python/future[${PYTHON_USEDEP}]
+		')
 	)
 	tpm? (
 		app-crypt/trousers
@@ -79,7 +81,10 @@ DEPEND+="
 "
 BDEPEND+="
 	>=dev-util/intltool-0.41.0
-	dev-vcs/breezy
+	$(python_gen_cond_dep '
+		dev-python/configobj[${PYTHON_USEDEP}]
+		dev-vcs/breezy[${PYTHON_USEDEP}]
+	')
 	sys-devel/gettext
 	virtual/pkgconfig
 	python? (
