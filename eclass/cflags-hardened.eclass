@@ -1842,7 +1842,7 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 					append-ldflags "-fsanitize=${x}"
 					CFLAGS_HARDENED_CFLAGS+=" -fsanitize=${x}"
 					CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=${x}"
-					CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=${x}"
+					#CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=${x}"
 					asan=1
 				elif [[ "${x}" == "hwaddress" ]] ; then
 					skip=1
@@ -1851,21 +1851,21 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 					append-ldflags "-fsanitize=${x}"
 					CFLAGS_HARDENED_CFLAGS+=" -fsanitize=${x}"
 					CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=${x}"
-					CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=${x}"
+					#CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=${x}"
 					asan=1
 				elif [[ "${x}" == "cfi" ]] && ! _cflags-hardened_has_cet && [[ "${ARCH}" == "amd64" ]] && tc-is-clang ; then
 					append-flags "-fsanitize=${x}"
 					append-ldflags "-fsanitize=${x}"
 					CFLAGS_HARDENED_CFLAGS+=" -fsanitize=${x}"
 					CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=${x}"
-					CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=${x}"
+					#CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=${x}"
 
 					filter-flags "-flto*"
 					append-flags "-flto=thin"
 					append-ldflags "-flto=thin"
 					CFLAGS_HARDENED_CFLAGS+=" -flto=thin"
 					CFLAGS_HARDENED_CXXFLAGS+=" -flto=thin"
-					CFLAGS_HARDENED_LDFLAGS+=" -flto=thin"
+					#CFLAGS_HARDENED_LDFLAGS+=" -flto=thin"
 					filter-flags "-fuse-ld=*"
 					append-ldflags "-fuse-ld=lld"
 					CFLAGS_HARDENED_LDFLAGS+=" -fuse-ld=lld"
@@ -1876,7 +1876,7 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 					append-ldflags "-fsanitize=${x}"
 					CFLAGS_HARDENED_CFLAGS+=" -fsanitize=${x}"
 					CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=${x}"
-					CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=${x}"
+					#CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=${x}"
 					if [[ "${x}" == "undefined" || "${x}" == "signed-integer-overflow" ]] ; then
 einfo "Deduping signed integer overflow check"
 						filter-flags "-f*trapv"
@@ -1892,17 +1892,18 @@ einfo "Deduping signed integer overflow check"
 	# set.
 					if tc-is-clang ; then
 						append-flags "-static-libsan"
-						append-ldflags "-static-libsan"
+						append-ldflags -Wl,--no-as-needed "-static-libsan"
 						CFLAGS_HARDENED_CFLAGS+=" -static-libsan"
 						CFLAGS_HARDENED_CXXFLAGS+=" -static-libsan"
-						CFLAGS_HARDENED_LDFLAGS+=" -static-libsan"
+						CFLAGS_HARDENED_LDFLAGS+=" -Wl,--no-as-needed -static-libsan"
 einfo "Linking -static-libsan for Clang $(clang-major-version)"
 					elif tc-is-gcc ; then
 						local lib_name="lib${module}.a"
-						local lib_path=$(${CC} -print-file-name="${lib_name}")
-						append-ldflags "-static-lib${module}"
-						CFLAGS_HARDENED_LDFLAGS+=" -static-lib${module}"
-einfo "Linking -static-lib${module} for GCC $(gcc-major-version)"
+						local cflags_abi="CFLAGS_${ABI}"
+						local lib_path=$(${CC} ${!cflags_abi} -print-file-name="${lib_name}")
+						append-ldflags -Wl,--no-as-needed "${lib_path}"
+						CFLAGS_HARDENED_LDFLAGS+=" -Wl,--no-as-needed ${lib_path}"
+einfo "Linking ${lib_name} for GCC $(gcc-major-version)"
 					fi
 
 					added[${module}]="1"
