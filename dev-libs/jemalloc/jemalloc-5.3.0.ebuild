@@ -7,8 +7,8 @@ EAPI=8
 # PGOing this library is justified because the size of the library is over a
 # 1000 4k pages in size.
 
-# asan breaks test suite.
-CFLAGS_HARDENED_SANITIZERS="address undefined"
+# asan breaks test suite.  ubsan works with test suite.
+CFLAGS_HARDENED_SANITIZERS="undefined"
 CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" )
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
@@ -51,7 +51,7 @@ SLOT="0/2"
 IUSE+="
 ${TRAINERS[@]}
 custom-cflags debug lazy-lock prof static-libs stats test xmalloc
-ebuild_revision_10
+ebuild_revision_11
 "
 REQUIRED_USE+="
 	!custom-cflags? (
@@ -74,6 +74,10 @@ HTML_DOCS=( "doc/jemalloc.html" )
 
 pkg_setup() {
 	uopts_setup
+	if use test && [[ "${FEATURES}" =~ "userpriv" ]] && (( ${#CFLAGS_HARDENED_SANITIZERS_COMPAT[@]} > 0 )) ; then
+eerror "FEATURES=\"${FEATURES} -userpriv\" needs to be added as a per-package env file in order to run tests."
+		die
+	fi
 }
 
 src_prepare() {
@@ -223,14 +227,16 @@ train_override_duration() {
 }
 
 multilib_src_test() {
-	export ASAN_OPTIONS="strict_init=0:log_path=${T}/asan_log:halt_on_error=0:continue_on_error=1:verify_asan_link_order=0"
-	local -x SANDBOX_ON=0 # Required so libsandbox.so will not crash test because of libasan.so...
-	export LD_PRELOAD=""
-	addpredict /dev/null
-einfo "LD_PRELOAD:  ${LD_PRELOAD}"
+	if (( ${#CFLAGS_HARDENED_SANITIZERS_COMPAT[@]} > 0 )) ; then
+		addwrite "/dev/"
+		rm -f "/dev/null."*
+	fi
 	emake check
 	emake stress
-	grep -e "^ERROR:" "${T}/build.log" && die "Detected error"
+	if (( ${#CFLAGS_HARDENED_SANITIZERS_COMPAT[@]} > 0 )) ; then
+		rm -f "/dev/null."*
+		grep -e "^ERROR:" "${T}/build.log" && die "Detected error"
+	fi
 }
 
 multilib_src_install() {
