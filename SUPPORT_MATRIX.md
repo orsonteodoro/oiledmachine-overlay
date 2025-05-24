@@ -115,6 +115,7 @@ exist in build files.
 | OpenGL <= 4.6                     | Fully supported                       |                                    |
 | OpenCL <= 2.0                     | Fully supported                       |                                    |
 | Ollama >= 0.3 (CPU)               | Fully supported                       |                                    |
+| Ollama >= 0.3 (CUDA 11.8)         | Available                             |                                    |
 | Ollama 0.3, 0.4 (ROCm 6.1)        | Not Supported                         |                                    |
 | Ollama 0.3, 0.4 (CUDA 12.4)       | Available                             |                                    |
 | Ollama 0.5, 0.6, 0.7 (ROCm 6.3)   | Planned                               |                                    |
