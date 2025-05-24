@@ -76,19 +76,31 @@ python_check_deps() {
 	python_has_version -b "dev-python/sphinx-rtd-theme[${PYTHON_USEDEP}]"
 }
 
+check_cython() {
+	local actual_cython_pv=$(cython --version 2>&1 \
+		| cut -f 3 -d " " \
+		| sed -e "s|b|_beta|g" -e "s|a|_alpha|g" -e "s|rc|_rc|g")
+	local actual_cython_slot=$(ver_cut 1-2 "${actual_cython_pv}")
+	local expected_cython_slot="3.0"
+	if ver_test "${actual_cython_slot}" -ne "${expected_cython_slot}" ; then
+eerror
+eerror "You must switch to Cython ${expected_cython_slot}."
+eerror "Use \`eselect cython\` to switch"
+eerror
+eerror "Actual cython slot:  ${actual_cython_slot}"
+eerror "Expected cython slot:  ${expected_cython_slot}"
+eerror
+		die
+	fi
+}
+
 python_prepare_all() {
 	# Don't use some random SDK on Darwin.
 	sed -i -e '/_ldflags =/s/=.*isysroot.*darwin.*None/= None/' \
 		"setupinfo.py" \
 		|| die
 
-	local cython_pv=$(cython --version 2>&1 \
-		| cut -f 3 -d " " \
-		| sed -e "s|b|_beta|g" -e "s|a|_alpha|g")
-	if ver_test "${cython_pv%.*}" -ne "3.0" ; then
-eerror "You must switch to Cython 3.0.  Use \`eselect cython\` to switch"
-		die
-	fi
+	check_cython
 
 	distutils-r1_python_prepare_all
 }
