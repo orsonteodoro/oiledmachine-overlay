@@ -11,7 +11,7 @@ MY_PV="${MY_PV/_rc/rc}"
 
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..12} "pypy3" )
+PYTHON_COMPAT=( "python3_"{10..13} "pypy3" )
 PYTHON_REQ_USE="threads(+)"
 SITEFILE="50cython-gentoo.el"
 SLOT_MAJOR=$(ver_cut 1-2 "${PV}")
