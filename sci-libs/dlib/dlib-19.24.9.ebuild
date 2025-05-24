@@ -5,7 +5,7 @@ EAPI=8
 
 # doc needs a bunch of deps not in portage
 
-CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data" # biometrics TFA
+CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data" # Biometrics TFA
 
 DISTUTILS_EXT=1
 DISTUTILS_OPTIONAL=1
