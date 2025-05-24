@@ -74,7 +74,7 @@ DOCS=(
 
 pkg_setup() {
 	rust_pkg_setup
-	req-sandbox-changes_no_userpriv "For sanitizer dependency support.  Solves \"Can't open file: /dev/null.<pid> (reason: 13)\" error."
+	sandbox-changes_no_userpriv "For sanitizer dependency support.  Solves \"Can't open file: /dev/null.<pid> (reason: 13)\" error."
 }
 
 src_prepare() {
