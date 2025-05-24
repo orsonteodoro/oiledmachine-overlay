@@ -1,11 +1,11 @@
 # -*-eselect-*-  vim: ft=eselect
-# Copyright 2019-2022 Orson Teodoro
+# Copyright 2019-2025 Orson Teodoro
 # Copyright 2005-2012 Gentoo Foundation
 # Distributed under the terms of the GNU GPL version 2 or later
 
 DESCRIPTION="Manages the Cython multslot symlinks"
 MAINTAINER="orsonteodoro@hotmail.com"
-VERSION="20230713"
+VERSION="20250523"
 PN="cython"
 
 find_python_impls() {
@@ -85,14 +85,9 @@ set_symlink() {
                 ln -s /usr/lib/${epython}/site-packages/pyximport{.${slot},}
             fi
         done
-    elif [[ "${target}" =~ ^Cython ]] ; then
+    elif [[ "${target}" =~ [0-9][.][0-9]+ ]] ; then
         target="${target}"
-        target=$(echo "${target}" \
-            | tr " " "." \
-            | sed -E -e "s|C|c|g" \
-                -e "s|([0-9]+)\.x|\1|")
-
-        slot="${target/cython.}"
+        slot=$(echo "${target}" | sed -r -e "s|[c]ython[.]||")
 
         cd /usr/bin
         ln -s ../lib/python-exec/python-exec2 /usr/bin/cygdb
@@ -177,14 +172,11 @@ do_list() {
         for epython in ${pyimpls[@]} ; do
             if [[ -L /usr/lib/python-exec/${epython}/cython ]] ; then
                 local bn=$(basename $(canonicalise "/usr/lib/python-exec/${epython}/cython"))
+		local desc=$(echo "${targets[i]}" | sed -e "s|cython.|Cython |g")
                 if [[ ${targets[i]} == "${bn}" ]] ; then
-                    targets[i]=$(highlight_marker "${targets[i]}")
+                    targets[i]=$(highlight_marker "${desc}")
                 else
-                    targets[i]=$(echo "${targets[i]}" \
-                        | tr "." " " \
-                        | sed -E -e "s|c|C|g" \
-                            -e "s|([0-9]+)|\1.x|" \
-                            -e "s| x||g")
+                    targets[i]="${desc}"
                 fi
             fi
         done
