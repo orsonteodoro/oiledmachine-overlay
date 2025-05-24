@@ -60,8 +60,8 @@ exist in build files.
 | Clang 19                        | Supported                             |                                    |
 | Clang 20                        | Available                             |                                    |
 | Clang 21                        | Not supported                         |                                    |
-| Cython 0.29.37                  | Partially supported                   | D12 (0.29.32)                      |
-| Cython 3.0.12                   | Partially Supported                   | U24 (3.0.8)                        |
+| Cython 0.29.37                  | Fully supported                       | D12 (0.29.32)                      |
+| Cython 3.0.12                   | Fully Supported                       | U24 (3.0.8)                        |
 | Cython 3.1.0b1                  | Fully supported                       |                                    |
 | GCC 12                          | Fully supported                       | D12 (12.2)                         |
 | GCC 13                          | Partially Supported                   | U24 (13.2)                         |
