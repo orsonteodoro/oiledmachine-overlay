@@ -90,7 +90,7 @@ exist in build files.
 | 3.10 and earlier     | Not supported (EOL)*                  | U22 (EOL Apr 2027)                         |
 | 3.11                 | Mostly supported                      | D12 (EOL Jun 2026)                         |
 | 3.12                 | Partially supported                   | U24 (EOL Apr 2029)                         |
-| 3.13                 | Available                             | F41 (EOL Nov 2025) F42 (EOL May 2026)      |
+| 3.13                 | Available                             | F41 (EOL Nov 2025), F42 (EOL May 2026)     |
 | 3.13t                | Not supported                         |                                            |
 | 3.14 and later       | Not supported                         |                                            |
 | pypy3                | Available                             |                                            |
