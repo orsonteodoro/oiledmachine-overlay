@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data untrusted-data web-browser"
+CFLAGS_HARDENED_USE_CASES="jit network security-critical sensitive-data untrusted-data web-browser"
 PYTHON_COMPAT=( python3_{11..13} )
 PYTHON_REQ_USE="xml(+)"
 inherit cflags-hardened check-reqs flag-o-matic multiprocessing optfeature
@@ -22,6 +22,7 @@ IUSE="
 	accessibility +alsa bindist custom-cflags designer geolocation
 	+jumbo-build kerberos opengl +pdfium pulseaudio qml screencast
 	+system-icu vaapi vulkan webdriver +widgets
+	ebuild_revision_1
 "
 REQUIRED_USE="
 	designer? ( qml widgets )
