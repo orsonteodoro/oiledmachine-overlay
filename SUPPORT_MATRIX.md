@@ -134,7 +134,7 @@ exist in build files.
 | Qt 5.x                            | Available                             |                                    |
 | Qt 6.x                            | Fully supported                       |                                    |
 | ROCm 6.2                          | Available                             | U24 (>= 6.2.0) (1)                 |
-| ROCm 6.3                          | Planned                               | D12 (>= 6.3.1) (1)                 |
+| ROCm 6.3                          | Planned                               | D12 (>= 6.3.1) (2)                 |
 | SYCL                              | Available                             |                                    |
 | systemd                           | Partially supported                   |                                    |
 | TensorFlow >= 2.14 (CPU)          | Fully supported                       |                                    |
@@ -147,7 +147,8 @@ exist in build files.
 | Wayland                           | Fully supported                       |                                    |
 | X                                 | Fully supported                       |                                    |
 
-(1) D12 uses Python 3.11, U24 uses Python 3.12 for ROCm support
+(1) U24 uses Python 3.12 for ROCm support
+(2) D12 uses Python 3.11 for ROCm support
 
 Gentoo Prefix is not supported and deprecated on this overlay.
 
