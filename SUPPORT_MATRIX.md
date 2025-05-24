@@ -7,6 +7,7 @@
 | Partially supported  | Good         | May be tested and partially compatible                                                                   |
 | Available            | Good to poor | **Not tested**, partially compatible, ebuild may be unfinished, Work in Progress (WIP)                   |
 | Deprecated           | Best to poor | Phased out for removal and may be actively removed, may have security issues                             |
+| Planned              | -            | To be added to maximize compatibility between platforms                                                  |
 | EOL                  | Poor         | No longer compatible and may be removed, may have security issues that are practically impossible to fix |
 | Not supported        | Poor         | Dropped support by overlay, may have security issues, untested                                           |
 
@@ -99,45 +100,52 @@ exist in build files.
   Forced PYTHON_COMPAT bumps (to Python 3.11 or any future minimum version
   bumps) may introduce DoS vulnerabilities (e.g. crash) or incompatibilities.
 
-| Platform                        | Level of support                      | Distro correspondence              |
-| ---                             | ---                                   | ---                                |
-| CUDA                            | Available                             | D12 (11.8), U24 (12.0)             |
-| Electron (amd64)                | Fully supported                       |                                    |
-| Electron (arm64)                | Not supported                         |                                    |
-| Electron (x86)                  | Not supported                         |                                    |
-| gRPC 1.49 - 1.54                | Fully supported                       | D12 (1.51.1), U24 (1.51.1)         |
-| gRPC 1.55 - 1.62                | Available                             |                                    |
-| gRPC >= 1.63                    | Available                             |                                    |
-| GTK+3                           | Fully supported                       |                                    |
-| GTK 4                           | Fully supported                       |                                    |
-| OpenGL <= 4.6                   | Fully supported                       |                                    |
-| OpenCL <= 2.0                   | Fully supported                       |                                    |
-| Ollama                          | Fully supported                       |                                    |
-| OpenMP (CPU)                    | Fully supported                       |                                    |
-| OpenMP (GPU)                    | Available                             |                                    |
-| OpenRC                          | Fully supported                       |                                    |
-| Protobuf 3                      | Fully supported                       | D12 (3.21.12), U24 (3.21.12)       |
-| Protobuf 4                      | Available                             |                                    |
-| Protobuf 5                      | Available                             |                                    |
-| PyTorch 1.13.x                  | Not supported                         | D12 (1.13.1)                       |
-| PyTorch >= 2.0 (CPU)            | Fully supported                       |                                    |
-| PyTorch >= 2.0 (CUDA 11.8)      | Available                             |                                    |
-| PyTorch >= 2.4 (CUDA 12.4)      | Available                             |                                    |
-| PyTorch >= 2.5 (ROCm 6.2)       | Available                             |                                    |
-| Qt 5.x                          | Available                             |                                    |
-| Qt 6.x                          | Fully supported                       |                                    |
-| ROCm >= 6.2                     | Available                             | D12 (>= 6.3.1), U24 (>= 6.2.0) (1) |
-| SYCL                            | Available                             |                                    |
-| systemd                         | Partially supported                   |                                    |
-| TensorFlow >= 2.14 (CPU)        | Fully supported                       |                                    |
-| TensorFlow == 2.14 (CUDA 11.8)  | Available                             |                                    |
-| TensorFlow == 2.16 (CUDA 12.3)  | Available                             |                                    |
-| TensorFlow == 2.17 (CUDA 12.3)  | Available                             |                                    |
-| TensorFlow == 2.18 (CUDA 12.5)  | Available                             |                                    |
-| TensorFlow >= 2.18 (ROCm  6.2)  | Available                             |                                    |
-| Vulkan                          | Fully supported                       |                                    |
-| Wayland                         | Fully supported                       |                                    |
-| X                               | Fully supported                       |                                    |
+| Platform                          | Level of support                      | Distro correspondence              |
+| ---                               | ---                                   | ---                                |
+| CUDA 11.8                         | Available                             | D12 (11.8)                         |
+| CUDA 12.8                         | Planned                               | U24 (12.0)                         |
+| Electron (amd64)                  | Fully supported                       |                                    |
+| Electron (arm64)                  | Not supported                         |                                    |
+| Electron (x86)                    | Not supported                         |                                    |
+| gRPC 1.49 - 1.54                  | Fully supported                       | D12 (1.51.1), U24 (1.51.1)         |
+| gRPC 1.55 - 1.62                  | Available                             |                                    |
+| gRPC >= 1.63                      | Available                             |                                    |
+| GTK+3                             | Fully supported                       |                                    |
+| GTK 4                             | Fully supported                       |                                    |
+| OpenGL <= 4.6                     | Fully supported                       |                                    |
+| OpenCL <= 2.0                     | Fully supported                       |                                    |
+| Ollama >= 0.3 (CPU)               | Fully supported                       |                                    |
+| Ollama 0.3, 0.4 (ROCm 6.1)        | Not Supported                         |                                    |
+| Ollama 0.3, 0.4 (CUDA 12.4)       | Available                             |                                    |
+| Ollama 0.5, 0.6, 0.7 (ROCm 6.3)   | Planned                               |                                    |
+| Ollama 0.5, 0.6, 0.6 (CUDA 12.8)  | Available                             |                                    |
+| OpenMP (CPU)                      | Fully supported                       |                                    |
+| OpenMP (GPU)                      | Available                             |                                    |
+| OpenRC                            | Fully supported                       |                                    |
+| Protobuf 3                        | Fully supported                       | D12 (3.21.12), U24 (3.21.12)       |
+| Protobuf 4                        | Available                             |                                    |
+| Protobuf 5                        | Available                             |                                    |
+| PyTorch 1.13.x                    | Not supported                         | D12 (1.13.1)                       |
+| PyTorch >= 2.0 (CPU)              | Fully supported                       |                                    |
+| PyTorch >= 2.0 (CUDA 11.8)        | Available                             |                                    |
+| PyTorch 2.5 (CUDA 12.4)           | Available                             |                                    |
+| PyTorch 2.5 (ROCm 6.2)            | Available                             |                                    |
+| PyTorch 2.7 (CUDA 12.8)           | Planned                               |                                    |
+| Qt 5.x                            | Available                             |                                    |
+| Qt 6.x                            | Fully supported                       |                                    |
+| ROCm 6.2                          | Available                             | U24 (>= 6.2.0) (1)                 |
+| ROCm 6.3                          | Planned                               | D12 (>= 6.3.1) (1)                 |
+| SYCL                              | Available                             |                                    |
+| systemd                           | Partially supported                   |                                    |
+| TensorFlow >= 2.14 (CPU)          | Fully supported                       |                                    |
+| TensorFlow 2.14 (CUDA 11.8)       | Available                             |                                    |
+| TensorFlow 2.16 (CUDA 12.3)       | Available                             |                                    |
+| TensorFlow 2.17 (CUDA 12.3)       | Available                             |                                    |
+| TensorFlow 2.18 (CUDA 12.5)       | Available                             |                                    |
+| TensorFlow 2.18 (ROCm  6.2)       | Available                             |                                    |
+| Vulkan                            | Fully supported                       |                                    |
+| Wayland                           | Fully supported                       |                                    |
+| X                                 | Fully supported                       |                                    |
 
 (1) D12 uses Python 3.11, U24 uses Python 3.12 for ROCm support
 
