@@ -81,7 +81,7 @@ python_prepare_all() {
 		"setupinfo.py" \
 		|| die
 
-	local cython_pv=$(cython --version \
+	local cython_pv=$(cython --version 2>&1 \
 		| cut -f 3 -d " " \
 		| sed -e "s|b|_beta|g" -e "s|a|_alpha|g")
 	if ver_test "${cython_pv%.*}" -ne "3.0" ; then

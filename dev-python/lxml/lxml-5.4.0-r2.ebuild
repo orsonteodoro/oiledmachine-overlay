@@ -87,11 +87,11 @@ python_prepare_all() {
 		"setupinfo.py" \
 		|| die
 
-	local cython_pv=$(cython --version \
+	local cython_pv=$(cython --version 2>&1 \
 		| cut -f 3 -d " " \
 		| sed -e "s|b|_beta|g" -e "s|a|_alpha|g")
-	if ver_test "${cython_pv%.*}" -ne "3.1" ; then
-eerror "You must switch to Cython 3.1.  Use \`eselect cython\` to switch"
+	if ! ver_test "${cython_pv%.*}" -eq "3.1" && ! ver_test "${cython_pv%.*}" -eq "3.0" ; then
+eerror "You must switch to either Cython 3.0 or Cython 3.1.  Use \`eselect cython\` to switch"
 		die
 	fi
 
