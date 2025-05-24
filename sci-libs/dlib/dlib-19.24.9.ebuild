@@ -5,6 +5,8 @@ EAPI=8
 
 # doc needs a bunch of deps not in portage
 
+CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data" # biometrics TFA
+
 DISTUTILS_EXT=1
 DISTUTILS_OPTIONAL=1
 DISTUTILS_USE_PEP517="setuptools"
@@ -15,7 +17,7 @@ CPU_FLAGS_X86=(
 	cpu_flags_x86_sse4_1
 )
 
-inherit cmake cuda distutils-r1
+inherit cflags-hardened cmake cuda distutils-r1
 
 KEYWORDS="~amd64 ~x86 ~amd64-linux ~x86-linux"
 SRC_URI="
@@ -24,12 +26,12 @@ https://github.com/davisking/dlib/archive/v${PV}.tar.gz
 "
 
 DESCRIPTION="Numerical and networking C++ library"
-HOMEPAGE="http://dlib.net/"
+HOMEPAGE="https://dlib.net/"
 LICENSE="Boost-1.0"
 SLOT="0/${PV}"
 IUSE="
 ${CPU_FLAGS_X86[@]}
-cblas cuda debug examples gif jpeg lapack mkl png python sqlite test X
+cblas cuda debug examples ffmpeg gif jpeg lapack mkl png python sqlite test webp X
 "
 REQUIRED_USE="
 	python? (
@@ -48,6 +50,9 @@ RDEPEND="
 	)
 	cuda? (
 		dev-libs/cudnn:=
+	)
+	ffmpeg? (
+		media-video/ffmpeg:=[X?]
 	)
 	gif? (
 		media-libs/giflib:=
@@ -72,6 +77,9 @@ RDEPEND="
 	sqlite? (
 		dev-db/sqlite:3
 	)
+	webp? (
+		media-libs/libwebp:=
+	)
 	X? (
 		x11-libs/libX11
 	)
@@ -91,6 +99,7 @@ BDEPEND="
 DOCS=( "docs/README.txt" )
 PATCHES=(
 	"${FILESDIR}/${PN}-19.24.2-simd-changes.patch"
+	"${FILESDIR}/${PN}-19.24.8-disable-upstream-flags.patch"
 )
 
 src_prepare() {
@@ -100,6 +109,7 @@ src_prepare() {
 }
 
 src_configure() {
+	cflags-hardened_append
 	local mycmakeargs=(
 		-DDLIB_ENABLE_ASSERTS=$(usex debug)
 		-DDLIB_ENABLE_STACK_TRACE=$(usex debug)
@@ -110,7 +120,9 @@ src_configure() {
 		-DDLIB_PNG_SUPPORT=$(usex png)
 		-DDLIB_USE_BLAS=$(usex cblas)
 		-DDLIB_USE_CUDA=$(usex cuda)
+		-DDLIB_USE_FFMPEG=$(usex ffmpeg)
 		-DDLIB_USE_LAPACK=$(usex lapack)
+		-DDLIB_WEBP_SUPPORT=$(usex webp)
 		-DUSE_AVX_INSTRUCTIONS=$(usex cpu_flags_x86_avx)
 		-DUSE_SSE2_INSTRUCTIONS=$(usex cpu_flags_x86_sse2)
 		-DUSE_SSE4_INSTRUCTIONS=$(usex cpu_flags_x86_sse4_1)
