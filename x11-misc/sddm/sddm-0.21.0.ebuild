@@ -4,13 +4,16 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{10,13} pypy3 ) # Limited by dev-python/docutils
+# U 22.04.4
+
+CFLAGS_HARDENED_USE_CASES="admin-access multiuser-system security-critical sensitive-data"
+PYTHON_COMPAT=( "python3_"{10,13} "pypy3" ) # Limited by dev-python/docutils
 QT5_PV="5.15.3"
 QT6_PV="6.4.2"
 
-inherit cmake linux-info optfeature python-any-r1 systemd tmpfiles
+inherit cflags-hardened cmake linux-info optfeature python-any-r1 systemd tmpfiles
 
-if [[ ${PV} == *9999* ]]; then
+if [[ "${PV}" == *"9999"* ]]; then
 	inherit git-r3
 	EGIT_REPO_URI="https://github.com/sddm/sddm.git"
 	EGIT_BRANCH="develop"
@@ -36,6 +39,7 @@ SLOT="0"
 # systemd is the fallback default upstream.
 IUSE="
 -elogind +systemd +qt5 -qt6 test -wayland -weston +X
+ebuild_revision_1
 "
 REQUIRED_USE="
 	^^ (
@@ -56,7 +60,6 @@ RESTRICT="
 		test
 	)
 "
-# U 22.04.4
 COMMON_DEPEND="
 	!systemd? (
 		>=sys-power/upower-0.99.17
@@ -174,6 +177,7 @@ src_prepare() {
 }
 
 src_configure() {
+	cflags-hardened_append
 	local mycmakeargs=(
 		-DBUILD_MAN_PAGES=ON
 		-DBUILD_WITH_X=$(usex X)
