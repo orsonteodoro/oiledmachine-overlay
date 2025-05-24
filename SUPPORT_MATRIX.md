@@ -7,7 +7,7 @@
 | Partially supported  | Good         | May be tested and partially compatible                                                                   |
 | Available            | Good to poor | **Not tested**, partially compatible, ebuild may be unfinished, Work in Progress (WIP)                   |
 | Deprecated           | Best to poor | Phased out for removal and may be actively removed, may have security issues                             |
-| Planned              | -            | To be added to maximize interoperability between platforms                                               |
+| Planned              | -            | To be added to maximize interoperability between platforms and app features                              |
 | EOL                  | Poor         | No longer compatible and may be removed, may have security issues that are practically impossible to fix |
 | Not supported        | Poor         | Dropped support by overlay, may have security issues, untested                                           |
 
