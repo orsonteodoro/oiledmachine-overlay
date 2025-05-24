@@ -4,10 +4,21 @@
 EAPI=8
 
 DISTUTILS_EXT=1
-DISTUTILS_USE_PEP517=setuptools
-PYTHON_COMPAT=( python3_{11..14} pypy3_11 )
+DISTUTILS_USE_PEP517="setuptools"
+PYTHON_COMPAT=( "python3_"{11..14} "pypy3_11" )
 
 inherit distutils-r1 optfeature toolchain-funcs
+
+KEYWORDS="
+~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390
+~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos
+~x64-solaris
+"
+S="${WORKDIR}/lxml-${P}"
+SRC_URI="
+https://github.com/lxml/lxml/archive/${P}.tar.gz
+	-> ${P}.gh.tar.gz
+"
 
 DESCRIPTION="A Pythonic binding for the libxml2 and libxslt libraries"
 HOMEPAGE="
@@ -15,17 +26,19 @@ HOMEPAGE="
 	https://pypi.org/project/lxml/
 	https://github.com/lxml/lxml/
 "
-SRC_URI="
-	https://github.com/lxml/lxml/archive/${P}.tar.gz
-		-> ${P}.gh.tar.gz
+LICENSE="
+	BSD
+	ElementTree
+	GPL-2
+	PSF-2
 "
-S=${WORKDIR}/lxml-${P}
-
-LICENSE="BSD ElementTree GPL-2 PSF-2"
 SLOT="0"
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris"
 IUSE="doc examples +threads test"
-RESTRICT="!test? ( test )"
+RESTRICT="
+	!test? (
+		test
+	)
+"
 
 # Note: lib{xml2,xslt} are used as C libraries, not Python modules.
 DEPEND="
@@ -36,9 +49,9 @@ RDEPEND="
 	${DEPEND}
 "
 BDEPEND="
-	virtual/pkgconfig
 	>=dev-python/cython-3.0.10[${PYTHON_USEDEP}]
 	=dev-python/cython-3.1*[${PYTHON_USEDEP}]
+	virtual/pkgconfig
 	doc? (
 		$(python_gen_any_dep '
 			dev-python/docutils[${PYTHON_USEDEP}]
@@ -67,9 +80,10 @@ python_check_deps() {
 }
 
 python_prepare_all() {
-	# don't use some random SDK on Darwin
+	# Don't use some random SDK on Darwin.
 	sed -i -e '/_ldflags =/s/=.*isysroot.*darwin.*None/= None/' \
-		setupinfo.py || die
+		"setupinfo.py" \
+		|| die
 
 	local cython_pv=$(cython --version \
 		| cut -f 3 -d " " \
@@ -84,7 +98,7 @@ eerror "You must switch to Cython 3.1.  Use \`eselect cython\` to switch"
 
 python_compile() {
 	local DISTUTILS_ARGS=(
-		# by default it adds -w to CFLAGS
+	# By default, it adds -w to CFLAGS.
 		--warnings
 	)
 	tc-export PKG_CONFIG
@@ -97,16 +111,16 @@ python_compile_all() {
 }
 
 python_test() {
-	local dir=${BUILD_DIR}/test$(python_get_sitedir)/lxml
-	local -x PATH=${BUILD_DIR}/test/usr/bin:${PATH}
+	local dir="${BUILD_DIR}/test$(python_get_sitedir)/lxml"
+	local -x PATH="${BUILD_DIR}/test/usr/bin:${PATH}"
 
-	cp -al "${BUILD_DIR}"/{install,test} || die
-	cp -al src/lxml/tests "${dir}/" || die
-	cp -al src/lxml/html/tests "${dir}/html/" || die
-	mkdir "${dir}"/../../doc || die
+	cp -al "${BUILD_DIR}/"{"install","test"} || die
+	cp -al "src/lxml/tests" "${dir}/" || die
+	cp -al "src/lxml/html/tests" "${dir}/html/" || die
+	mkdir "${dir}/../../doc" || die
 	# this one needs to be copied, because upstream uses doc/../../../doc
-	cp -r "${S}"/doc "${dir}"/../../ || die
-	ln -s "${S}"/doc "${dir}"/../../../../ || die
+	cp -r "${S}/doc" "${dir}/../../" || die
+	ln -s "${S}/doc" "${dir}/../../../../" || die
 
 	"${EPYTHON}" test.py --no-src -vv --all-levels -p ||
 		die "Tests fail on ${EPYTHON}"
@@ -114,8 +128,8 @@ python_test() {
 
 python_install_all() {
 	if use doc; then
-		local DOCS=( README.rst *.txt doc/*.txt )
-		local HTML_DOCS=( doc/html/. )
+		local DOCS=( "README.rst" *".txt" "doc/"*".txt" )
+		local HTML_DOCS=( "doc/html/." )
 	fi
 	if use examples; then
 		dodoc -r samples
@@ -125,7 +139,7 @@ python_install_all() {
 }
 
 pkg_postinst() {
-	optfeature "Support for BeautifulSoup as a parser backend" dev-python/beautifulsoup4
-	optfeature "Translates CSS selectors to XPath 1.0 expressions" dev-python/cssselect
-	optfeature "Support for lxml.html.clean sanitizer" dev-python/lxml-html-clean
+	optfeature "Support for BeautifulSoup as a parser backend" "dev-python/beautifulsoup4"
+	optfeature "Translates CSS selectors to XPath 1.0 expressions" "dev-python/cssselect"
+	optfeature "Support for lxml.html.clean sanitizer" "dev-python/lxml-html-clean"
 }
