@@ -159,7 +159,7 @@ _MULTILIB_WRAPPED_HEADERS=(
 )
 # From ocv_download()
 ADE_PV="0.1.2a"									# See https://github.com/opencv/opencv/blob/4.8.1/modules/gapi/cmake/DownloadADE.cmake#L2
-CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data" # Biometrics TFA
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data" # Biometrics TFA
 CMAKE_PV="3.26"
 DNN_SAMPLES_FACE_DETECTOR_COMMIT="b2bfc75f6aea5b1f834ff0f0b865a7c18ff1459f"	# See https://github.com/opencv/opencv_extra/blob/4.8.1/testdata/dnn/download_models.py#L311
 FACE_ALIGNMENT_COMMIT="8afa57abc8229d611c4937165d20e2a2d9fc5a12"		# See https://github.com/opencv/opencv_contrib/blob/4.8.1/modules/face/CMakeLists.txt#L11
@@ -296,7 +296,7 @@ contribovis contribsfm contribxfeatures2d -cuda -cudnn debug dnnsamples +eigen
 +opencl +openexr -opengl -openmp +opencvapps +openh264 openvino -openvx +png
 +python +quirc -qt5 -qt6 rocm -spng +sun -system-flatbuffers tesseract -testprograms
 -tbb +tiff +vaapi +v4l +vpx +vtk -wayland +webp x264 x265 -xine video_cards_intel
--vulkan ebuild_revision_11
+-vulkan ebuild_revision_12
 "
 # OpenGL needs gtk or Qt installed to activate, otherwise build system
 # will silently disable it without the user knowing, which defeats the

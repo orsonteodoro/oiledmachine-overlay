@@ -5,7 +5,7 @@ EAPI=8
 
 # doc needs a bunch of deps not in portage
 
-CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data" # Biometrics TFA
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data" # Biometrics TFA
 
 DISTUTILS_EXT=1
 DISTUTILS_OPTIONAL=1
@@ -32,6 +32,7 @@ SLOT="0/${PV}"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 cblas cuda debug examples ffmpeg gif jpeg lapack mkl png python sqlite test webp X
+ebuild_revision_1
 "
 REQUIRED_USE="
 	python? (
