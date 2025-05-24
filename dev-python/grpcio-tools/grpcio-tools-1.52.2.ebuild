@@ -57,7 +57,27 @@ python_prepare_all() {
 	hprefixify setup.py
 }
 
+check_cython() {
+	local actual_cython_pv=$(cython --version 2>&1 \
+		| cut -f 3 -d " " \
+		| sed -e "s|a|_alpha|g" \
+		| sed -e "s|b|_beta|g" \
+		| sed -e "s|rc|_rc|g")
+	local actual_cython_major=$(ver_cut 1-2 "${actual_cython_pv}")
+	local expected_cython_slot="0.29"
+	if ver_test "${actual_cython_slot}" -ne "${expected_cython_slot}" ; then
+eerror
+eerror "Switch cython to ${expected_cython_slot} via eselect-cython"
+eerror
+eerror "Actual cython version:\t${actual_cython_pv}"
+eerror "Expected cython version\t${expected_cython_slot}"
+eerror
+		die
+	fi
+}
+
 python_configure_all() {
+	check_cython
 	export GRPC_PYTHON_BUILD_WITH_CYTHON=1
 	export GRPC_PYTHON_BUILD_EXT_COMPILER_JOBS="$(makeopts_jobs)"
 }

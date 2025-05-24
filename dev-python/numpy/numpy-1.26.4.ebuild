@@ -36,7 +36,7 @@ RDEPEND="
 BDEPEND="
 	${RDEPEND}
 	>=dev-build/meson-1.1.0
-	>=dev-python/cython-3.0.0[${PYTHON_USEDEP}]
+	>=dev-python/cython-3.0.0:3.0[${PYTHON_USEDEP}]
 	lapack? (
 		virtual/pkgconfig
 	)
@@ -65,7 +65,27 @@ python_prepare_all() {
 	distutils-r1_python_prepare_all
 }
 
+check_cython() {
+	local actual_cython_pv=$(cython --version 2>&1 \
+		| cut -f 3 -d " " \
+		| sed -e "s|a|_alpha|g" \
+		| sed -e "s|b|_beta|g" \
+		| sed -e "s|rc|_rc|g")
+	local actual_cython_slot=$(ver_cut 1-2 "${actual_cython_pv}")
+	local expected_cython_slot="3.0"
+	if ver_test "${actual_cython_slot}" -ne "${expected_cython_slot}" ; then
+eerror
+eerror "Switch cython to ${expected_cython_slot} via eselect-cython"
+eerror
+eerror "Actual cython version:\t${actual_cython_pv}"
+eerror "Expected cython version\t${expected_cython_slot}"
+eerror
+		die
+	fi
+}
+
 python_configure_all() {
+	check_cython
 	DISTUTILS_ARGS=(
 		-Dallow-noblas=$(usex !lapack true false)
 		-Dblas=$(usev lapack cblas)
@@ -178,6 +198,6 @@ python_test() {
 }
 
 python_install_all() {
-	local DOCS=( LICENSE.txt README.md THANKS.txt )
+	local DOCS=( "LICENSE.txt" "README.md" "THANKS.txt" )
 	distutils-r1_python_install_all
 }
