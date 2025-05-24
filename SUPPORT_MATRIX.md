@@ -118,7 +118,7 @@ exist in build files.
 | Ollama 0.3, 0.4 (ROCm 6.1)        | Not Supported                         |                                    |
 | Ollama 0.3, 0.4 (CUDA 12.4)       | Available                             |                                    |
 | Ollama 0.5, 0.6, 0.7 (ROCm 6.3)   | Planned                               |                                    |
-| Ollama 0.5, 0.6, 0.6 (CUDA 12.8)  | Available                             |                                    |
+| Ollama 0.5, 0.6, 0.7 (CUDA 12.8)  | Available                             |                                    |
 | OpenMP (CPU)                      | Fully supported                       |                                    |
 | OpenMP (GPU)                      | Available                             |                                    |
 | OpenRC                            | Fully supported                       |                                    |
