@@ -107,6 +107,7 @@ exist in build files.
 | CUDA 12.8                         | Planned                               | U24 (12.0)                                               |
 | Electron (amd64)                  | Fully supported                       |                                                          |
 | Electron (arm64)                  | Not supported                         |                                                          |
+| Electron (armv7)                  | Not supported                         |                                                          |
 | Electron (x86)                    | Not supported                         |                                                          |
 | gRPC 1.49 - 1.54                  | Fully supported                       | D12 (1.51.1), F41 (1.48.4), F42 (1.48.4), U24 (1.51.1)   |
 | gRPC 1.55 - 1.62                  | Available                             |                                                          |
