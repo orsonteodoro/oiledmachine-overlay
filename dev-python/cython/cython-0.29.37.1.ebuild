@@ -39,6 +39,7 @@ RESTRICT="
 SLOT="${SLOT_MAJOR}/${PV}"
 IUSE="emacs test ebuild_revision_1"
 RDEPEND="
+	!dev-python/cython:0
 	app-eselect/eselect-cython
 	emacs? (
 		>=app-editors/emacs-23.1:*
