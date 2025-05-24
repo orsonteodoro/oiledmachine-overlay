@@ -75,7 +75,13 @@ pkg_setup() {
 }
 
 check_cython() {
-	which cython || die "Missing symlink.  Use \`eselect cython\` to set it to Cython 3.1."
+	if ! which cython ; then
+eerror
+eerror "Missing symlink.  Use \`eselect cython set 3.1\` to continue and make"
+eerror "sure that dev-python/cython:3.1 is installed."
+eerror
+		die
+	fi
 	local actual_cython_pv=$(cython --version 2>&1 \
 		| cut -f 3 -d " " \
 		| sed -e "s|b|_beta|g" -e "s|a|_alpha|g" -e "s|rc|_rc|g")

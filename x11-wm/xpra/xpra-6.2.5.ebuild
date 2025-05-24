@@ -756,7 +756,13 @@ PATCHES=(
 )
 
 check_cython() {
-	cython --version || die "Check \`eselect cython\` to make sure it is set to 3.0"
+	if ! cython --version ; then
+eerror
+eerror "Do \`eselect cython set 3.0\` to continue and make sure that"
+eerror "dev-python/cython:3.0 is installed."
+eerror
+		die
+	fi
 	local actual_cython_pv=$(cython --version 2>&1 \
 		| cut -f 3 -d " " \
 		| sed -e "s|a|_alpha|g" \
