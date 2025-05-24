@@ -182,8 +182,7 @@ EGO_PN="github.com/ollama/ollama"
 LLAMA_CPP_UPDATE=0
 ROCM_SLOTS=(
 	# Limited by libhipblas.so.2 hardcoded SOVERSION
-	"6.0"
-	"6.1"
+	"6.3"
 )
 gen_rocm_iuse() {
 	local s
@@ -196,11 +195,8 @@ gen_rocm_iuse() {
 ROCM_IUSE=( $(gen_rocm_iuse) )
 inherit hip-versions
 declare -A ROCM_VERSIONS=(
-	["5_7"]="${HIP_5_7_VERSION}"
-	["6_0"]="${HIP_6_0_VERSION}"
-	["6_1"]="${HIP_6_1_VERSION}"
+	["6_3"]="${HIP_6_3_VERSION}"
 )
-#ROCM_VERSION="6.1.2"
 if ! [[ "${PV}" =~ "9999" ]] ; then
 	export S_GO="${WORKDIR}/go-mod"
 fi
@@ -2731,9 +2727,9 @@ CUDA_11_8_BDEPEND="
 		=sys-devel/gcc-11*[cxx]
 	)
 "
-CUDA_12_4_BDEPEND="
+CUDA_12_8_BDEPEND="
 	(
-		=dev-util/nvidia-cuda-toolkit-12.4*
+		=dev-util/nvidia-cuda-toolkit-12.8*
 		=sys-devel/gcc-13*[cxx]
 	)
 "
@@ -2856,72 +2852,72 @@ BDEPEND="
 		cuda_targets_sm_50? (
 			|| (
 				${CUDA_11_8_BDEPEND}
-				${CUDA_12_4_BDEPEND}
+				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_52? (
 			|| (
 				${CUDA_11_8_BDEPEND}
-				${CUDA_12_4_BDEPEND}
+				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_60? (
 			|| (
 				${CUDA_11_8_BDEPEND}
-				${CUDA_12_4_BDEPEND}
+				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_61? (
 			|| (
 				${CUDA_11_8_BDEPEND}
-				${CUDA_12_4_BDEPEND}
+				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_70? (
 			|| (
 				${CUDA_11_8_BDEPEND}
-				${CUDA_12_4_BDEPEND}
+				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_75? (
 			|| (
 				${CUDA_11_8_BDEPEND}
-				${CUDA_12_4_BDEPEND}
+				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_80? (
 			|| (
 				${CUDA_11_8_BDEPEND}
-				${CUDA_12_4_BDEPEND}
+				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_86? (
 			|| (
 				${CUDA_11_8_BDEPEND}
-				${CUDA_12_4_BDEPEND}
+				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_89? (
 			|| (
 				${CUDA_11_8_BDEPEND}
-				${CUDA_12_4_BDEPEND}
+				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_90? (
 			|| (
 				${CUDA_11_8_BDEPEND}
-				${CUDA_12_4_BDEPEND}
+				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_90? (
 			|| (
 				${CUDA_11_8_BDEPEND}
-				${CUDA_12_4_BDEPEND}
+				${CUDA_12_8_BDEPEND}
 			)
 		)
 		cuda_targets_sm_90a? (
 			|| (
-				${CUDA_12_4_BDEPEND}
+				${CUDA_12_8_BDEPEND}
 			)
 		)
 		dev-util/nvidia-cuda-toolkit:=

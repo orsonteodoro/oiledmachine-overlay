@@ -170,7 +170,6 @@ KOMPUTE_COMMIT="4565194ed7c32d1d2efa32ceab4d3c6cae006306"
 LLAMA_CPP_UPDATE=0
 ROCM_SLOTS=(
 	# Limited by libhipblas.so.2 hardcoded SOVERSION
-	"6.0"
 	"6.1"
 )
 gen_rocm_iuse() {
@@ -184,11 +183,8 @@ gen_rocm_iuse() {
 ROCM_IUSE=( $(gen_rocm_iuse) )
 inherit hip-versions
 declare -A ROCM_VERSIONS=(
-	["5_7"]="${HIP_5_7_VERSION}"
-	["6_0"]="${HIP_6_0_VERSION}"
 	["6_1"]="${HIP_6_1_VERSION}"
 )
-#ROCM_VERSION="6.1.2"
 if ! [[ "${PV}" =~ "9999" ]] ; then
 	export S_GO="${WORKDIR}/go-mod"
 fi

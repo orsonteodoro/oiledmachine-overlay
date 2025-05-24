@@ -123,5 +123,6 @@ get_rocm_usedep() {
 }
 
 inherit rocm-targets-compat-6.2
+inherit rocm-targets-compat-6.3
 
 fi
