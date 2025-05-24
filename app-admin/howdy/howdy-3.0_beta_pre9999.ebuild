@@ -14,7 +14,7 @@ EAPI=8
 # opencv - works
 # pyv4l2 - USE flag broken
 
-CFLAGS_HARDENED_USE_CASES="security-critical plugin"
+CFLAGS_HARDENED_USE_CASES="admin-access plugin security-critical"
 PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit cflags-hardened git-r3 meson python-single-r1
@@ -57,7 +57,7 @@ CUDA_TARGETS_COMPAT=(
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 +bash-completion cuda -ffmpeg +gtk -pyv4l2
-ebuild_revision_14
+ebuild_revision_15
 "
 REQUIRED_USE+="
 	!ffmpeg
