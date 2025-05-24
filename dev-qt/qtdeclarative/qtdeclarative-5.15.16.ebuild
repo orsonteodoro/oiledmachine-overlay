@@ -8,14 +8,17 @@ if [[ ${PV} != *9999* ]]; then
 	KEYWORDS="amd64 arm arm64 ~hppa ~loong ppc ppc64 ~riscv x86"
 fi
 
-CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data" # Add retpoline to textfield widgets which collects passwords
+CFLAGS_HARDENED_USE_CASES="jit security-critical sensitive-data untrusted-data" # Add retpoline to textfield widgets which collects passwords
 PYTHON_COMPAT=( "python3_"{8..13} )
 
 inherit cflags-hardened flag-o-matic python-any-r1 qt5-build
 
 DESCRIPTION="The QML and Quick modules for the Qt5 framework"
 
-IUSE="gles2-only +jit localstorage vulkan +widgets"
+IUSE="
+gles2-only +jit localstorage vulkan +widgets
+ebuild_revision_1
+"
 
 # qtgui[gles2-only=] is needed because of bug 504322
 DEPEND="

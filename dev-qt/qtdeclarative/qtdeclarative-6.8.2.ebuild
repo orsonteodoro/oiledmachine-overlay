@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data" # Add retpoline to textfield widgets which collects passwords
+CFLAGS_HARDENED_USE_CASES="jit security-critical sensitive-data untrusted-data" # Add retpoline to textfield widgets which collects passwords
 PYTHON_COMPAT=( "python3_"{10..13} )
 
 # behaves very badly when qtdeclarative is not already installed, also
@@ -18,7 +18,10 @@ if [[ ${QT6_BUILD_TYPE} == release ]]; then
 	KEYWORDS="amd64 arm arm64 ~hppa ~loong ppc ppc64 ~riscv x86"
 fi
 
-IUSE="accessibility +jit +network opengl qmlls +sql +ssl svg vulkan +widgets"
+IUSE="
+accessibility +jit +network opengl qmlls +sql +ssl svg vulkan +widgets
+ebuild_revision_1
+"
 
 RDEPEND="
 	~dev-qt/qtbase-${PV}:6[accessibility=,gui,network=,opengl=,sql?,ssl?,vulkan=,widgets=]
