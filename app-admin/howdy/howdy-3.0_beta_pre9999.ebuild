@@ -14,9 +14,10 @@ EAPI=8
 # opencv - works
 # pyv4l2 - USE flag broken
 
+CFLAGS_HARDENED_USE_CASES="security-critical plugin"
 PYTHON_COMPAT=( "python3_"{8..11} )
 
-inherit git-r3 meson python-single-r1
+inherit cflags-hardened git-r3 meson python-single-r1
 
 DLIB_MODELS_DATE="20210412"
 EGIT_COMMIT_DLIB_MODELS="daf943f7819a3dda8aec4276754ef918dc26491f"
@@ -55,7 +56,8 @@ CUDA_TARGETS_COMPAT=(
 )
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-+bash-completion cuda -ffmpeg +gtk -pyv4l2 ebuild_revision_13
++bash-completion cuda -ffmpeg +gtk -pyv4l2
+ebuild_revision_14
 "
 REQUIRED_USE+="
 	!ffmpeg
@@ -212,6 +214,7 @@ einfo "Changing python3 -> ${EPYTHON}"
 }
 
 src_configure() {
+	cflags-hardened_append
 	pushd "${S}/howdy/src" || die
 		if use cuda ; then
 			sed -i \
