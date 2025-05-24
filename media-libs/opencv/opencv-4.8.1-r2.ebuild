@@ -159,6 +159,7 @@ _MULTILIB_WRAPPED_HEADERS=(
 )
 # From ocv_download()
 ADE_PV="0.1.2a"									# See https://github.com/opencv/opencv/blob/4.8.1/modules/gapi/cmake/DownloadADE.cmake#L2
+CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data" # Biometrics TFA
 CMAKE_PV="3.26"
 DNN_SAMPLES_FACE_DETECTOR_COMMIT="b2bfc75f6aea5b1f834ff0f0b865a7c18ff1459f"	# See https://github.com/opencv/opencv_extra/blob/4.8.1/testdata/dnn/download_models.py#L311
 FACE_ALIGNMENT_COMMIT="8afa57abc8229d611c4937165d20e2a2d9fc5a12"		# See https://github.com/opencv/opencv_contrib/blob/4.8.1/modules/face/CMakeLists.txt#L11
@@ -239,7 +240,7 @@ CPU_FEATURES_MAP=(
 	${X86_CPU_FEATURES[@]}
 )
 
-inherit cuda java-pkg-opt-2 cmake-multilib flag-o-matic hip-versions
+inherit cflags-hardened cuda java-pkg-opt-2 cmake-multilib flag-o-matic hip-versions
 inherit python-single-r1 toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64"
@@ -295,7 +296,7 @@ contribovis contribsfm contribxfeatures2d -cuda -cudnn debug dnnsamples +eigen
 +opencl +openexr -opengl -openmp +opencvapps +openh264 openvino -openvx +png
 +python +quirc -qt5 -qt6 rocm -spng +sun -system-flatbuffers tesseract -testprograms
 -tbb +tiff +vaapi +v4l +vpx +vtk -wayland +webp x264 x265 -xine video_cards_intel
--vulkan ebuild_revision_10
+-vulkan ebuild_revision_11
 "
 # OpenGL needs gtk or Qt installed to activate, otherwise build system
 # will silently disable it without the user knowing, which defeats the
@@ -1098,6 +1099,8 @@ src_prepare() {
 multilib_src_configure() {
 	# bug #919101 and https://github.com/opencv/opencv/issues/19020
 	filter-lto
+
+	cflags-hardened_append
 
 	# bug 734284
 	# Jasper was removed from tree because of security problems.  Upstream

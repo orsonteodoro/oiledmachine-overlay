@@ -156,6 +156,7 @@ _MULTILIB_WRAPPED_HEADERS=( # {{{
 
 	"/usr/include/opencv4/opencv2/wechat_qrcode.hpp"
 ) # }}}
+CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data" # Biometrics TFA
 CMAKE_PV="3.26"
 # TODO make this only relevant for binhost \
 CPU_FEATURES_MAP=(
@@ -217,7 +218,7 @@ ROCM_SLOTS=(
 QT5_PV="5.12.8"
 QT6_PV="6.2.4"
 
-inherit cuda java-pkg-opt-2 cmake-multilib flag-o-matic hip-versions
+inherit cflags-hardened cuda java-pkg-opt-2 cmake-multilib flag-o-matic hip-versions
 inherit python-single-r1 toolchain-funcs virtualx
 
 if [[ "${PV}" == *"9999"* ]] ; then
@@ -281,7 +282,7 @@ IUSE="
 	${PATENT_STATUS_IUSE[@]}
 	debug doc +eigen gflags glog -halide +java -non-free +opencvapps +python
 	-system-flatbuffers test -testprograms -vulkan
-	ebuild_revision_10
+	ebuild_revision_11
 "
 # hal for acceleration
 IUSE+="
@@ -1188,6 +1189,8 @@ src_prepare() {
 multilib_src_configure() {
 	# bug #919101 and https://github.com/opencv/opencv/issues/19020
 	filter-lto
+
+	cflags-hardened_append
 
 	export LIBDIR=$(get_libdir)
 	local mycmakeargs=(
