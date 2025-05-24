@@ -45,7 +45,7 @@ DEPEND+="
 # TODO: doc: requirements.bazel.txt
 BDEPEND+="
 	>=dev-python/coverage-4.0[${PYTHON_USEDEP}]
-	>=dev-python/cython-0.29.26:0[${PYTHON_USEDEP}]
+	>=dev-python/cython-0.29.26:0.29[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.29[${PYTHON_USEDEP}]
 	doc? (
 		>=dev-python/six-1.10[${PYTHON_USEDEP}]

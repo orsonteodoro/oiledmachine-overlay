@@ -40,10 +40,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
-	(
-		>=dev-python/cython-0.29.1[${PYTHON_USEDEP}]
-		<dev-python/cython-3
-	)
+	>=dev-python/cython-0.29.1:0.29[${PYTHON_USEDEP}]
 	dev? (
 		>=dev-python/pytest-4.6.5[${PYTHON_USEDEP}]
 		>=dev-python/pytest-timeout-1.3.3[${PYTHON_USEDEP}]

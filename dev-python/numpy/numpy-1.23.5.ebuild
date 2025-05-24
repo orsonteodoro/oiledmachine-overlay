@@ -4,6 +4,7 @@
 EAPI=8
 
 DISTUTILS_EXT=1
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{8..11} )
 PYTHON_REQ_USE="threads(+)"
 
@@ -41,10 +42,7 @@ RDEPEND="
 "
 BDEPEND="
 	${RDEPEND}
-	(
-		<dev-python/cython-3[${PYTHON_USEDEP}]
-		>=dev-python/cython-0.29.30[${PYTHON_USEDEP}]
-	)
+	>=dev-python/cython-0.29.30:0.29[${PYTHON_USEDEP}]
 	>=dev-python/wheel-0.37.0[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-59.2.0[${PYTHON_USEDEP}]
 	doc? (
@@ -80,11 +78,11 @@ src_unpack() {
 python_prepare_all() {
 	# Allow use with setuptools 60.x
 	# See numpy-1.22.1-revert-setuptools-upper-bound.patch for details
-	export SETUPTOOLS_USE_DISTUTILS=stdlib
+	export SETUPTOOLS_USE_DISTUTILS="stdlib"
 
 	if use lapack; then
-		local incdir="${EPREFIX}"/usr/include
-		local libdir="${EPREFIX}"/usr/$(get_libdir)
+		local incdir="${EPREFIX}/usr/include"
+		local libdir="${EPREFIX}/usr/$(get_libdir)"
 		cat >> site.cfg <<-EOF || die
 			[blas]
 			include_dirs = ${incdir}

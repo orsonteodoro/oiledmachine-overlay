@@ -49,8 +49,7 @@ RDEPEND="
 "
 # cython: they are using __pyx_empty_tuple directly
 BDEPEND="
-	>=dev-python/cython-3.0.10[${PYTHON_USEDEP}]
-	=dev-python/cython-3.0*[${PYTHON_USEDEP}]
+	>=dev-python/cython-3.0.10:3.0[${PYTHON_USEDEP}]
 	virtual/pkgconfig
 	doc? (
 		$(python_gen_any_dep '

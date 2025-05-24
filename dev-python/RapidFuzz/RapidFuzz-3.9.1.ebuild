@@ -6,7 +6,7 @@ EAPI=8
 
 MY_PN="${PN,,}"
 
-DISTUTILS_USE_SETUPTOOLS="bdepend"
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{8..12} )
 
 inherit distutils-r1 pypi
@@ -43,10 +43,7 @@ BDEPEND+="
 		dev-python/sphinxcontrib-bibtex[${PYTHON_USEDEP}]
 	)
 	cpp? (
-		(
-			>=dev-python/cython-3.0.9[${PYTHON_USEDEP}]
-			<dev-python/cython-3.1.0[${PYTHON_USEDEP}]
-		)
+		>=dev-python/cython-3.0.9:3.0[${PYTHON_USEDEP}]
 		>=dev-python/rapidfuzz_capi-1.0.5[${PYTHON_USEDEP}]
 		>=dev-python/scikit-build-0.17.0[${PYTHON_USEDEP}]
 		>=dev-build/cmake-3.22.5

@@ -115,7 +115,7 @@ BDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/setuptools-61.0.0[${PYTHON_USEDEP}]
 		mujoco? (
-			<dev-python/cython-3[${PYTHON_USEDEP}]
+			<dev-python/cython-3:0.29[${PYTHON_USEDEP}]
 		)
 		test? (
 			>=dev-python/dill-0.3.7[${PYTHON_USEDEP}]

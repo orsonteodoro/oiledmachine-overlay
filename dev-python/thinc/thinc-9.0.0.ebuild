@@ -72,8 +72,7 @@ DEPEND+="
 "
 BDEPEND+="
 	$(python_gen_cond_dep '
-		>=dev-python/cython-0.25[${PYTHON_USEDEP}]
-		<dev-python/cython-3[${PYTHON_USEDEP}]
+		>=dev-python/cython-0.25:0.29[${PYTHON_USEDEP}]
 		>=dev-python/numpy-1.15.0[${PYTHON_USEDEP}]
 		>=dev-python/cymem-2.0.2[${PYTHON_USEDEP}]
 		>=dev-python/preshed-3.0.2[${PYTHON_USEDEP}]

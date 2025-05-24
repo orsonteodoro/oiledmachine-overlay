@@ -7,7 +7,7 @@ EAPI=8
 # U22
 
 DISTUTILS_EXT=1
-DISTUTILS_USE_SETUPTOOLS="bdepend"
+DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{8..12} )
 
 inherit distutils-r1
@@ -37,12 +37,9 @@ DEPEND+="
 "
 # See CI
 BDEPEND+="
-	(
-		>=dev-python/cython-3.0.2[${PYTHON_USEDEP}]
-		<dev-python/cython-3.1.0[${PYTHON_USEDEP}]
-	)
 	>=dev-build/cmake-3.22.1
 	>=dev-build/ninja-1.10.1
+	>=dev-python/cython-3.0:3.0[${PYTHON_USEDEP}]
 	>=dev-python/packaging-24.0[${PYTHON_USEDEP}]
 	>=dev-python/scikit-build-0.13.0[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-69.2.0[${PYTHON_USEDEP}]

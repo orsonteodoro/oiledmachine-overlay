@@ -49,9 +49,11 @@ RDEPEND="
 	${DEPEND}
 "
 BDEPEND="
-	>=dev-python/cython-3.0.10[${PYTHON_USEDEP}]
-	=dev-python/cython-3.1*[${PYTHON_USEDEP}]
 	virtual/pkgconfig
+	|| (
+		>=dev-python/cython-3.0.10:3.0[${PYTHON_USEDEP}]
+		>=dev-python/cython-3.1:3.1[${PYTHON_USEDEP}]
+	)
 	doc? (
 		$(python_gen_any_dep '
 			dev-python/docutils[${PYTHON_USEDEP}]

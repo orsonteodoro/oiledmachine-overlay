@@ -31,7 +31,7 @@ IUSE+=" ebuild_revision_1"
 # See https://github.com/grpc/grpc/blob/v1.64.3/bazel/grpc_python_deps.bzl#L45
 # See https://github.com/grpc/grpc/tree/v1.64.3/third_party
 RDEPEND="
-	>=dev-python/cython-0.29.35:0[${PYTHON_USEDEP}]
+	>=dev-python/cython-0.29.35:0.29[${PYTHON_USEDEP}]
 	dev-python/protobuf:${PROTOBUF_SLOT}[${PYTHON_USEDEP}]
 	dev-python/protobuf:=
 	~dev-python/grpcio-${PV}[${PYTHON_USEDEP}]
