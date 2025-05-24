@@ -29,25 +29,25 @@ The LIBC support below reflects the upstream projects CI (Continuous
 Integration) images trend, but it may change if microarchitecture references
 exist in build files.
 
-| LIBC                 | Arch     | Level of support            | Distro correspondence    |
-| ---                  | ----     | ---                         | ---                      |
-| glibc                | 64-bit   | Generally supported         | D12 (2.36), U24 (2.39)   |
-| glibc                | 32-bit   | Deprecated*                 | D12 (2.36), U24 (2.39)   |
-| glibc                | alpha    | Not supported               |                          |
-| glibc >= 3.40        | amd64    | Fully supported             | D12 (2.36), U24 (2.39)   |
-| glibc                | arm      | Not supported               | D12 (2.36), U24 (2.39)   |
-| glibc                | arm64    | Available                   | D12 (2.36), U24 (2.39)   |
-| glibc                | hppa     | Not supported               |                          |
-| glibc                | loong    | Available                   |                          |
-| glibc                | mips64   | Available                   | D12 (2.36)               |
-| glibc                | mips     | Available                   | D12 (2.36)               |
-| glibc                | ppc      | Not supported               |                          |
-| glibc                | ppc64    | Available                   |             U24 (2.39)   |
-| glibc                | riscv    | Available                   |             U24 (2.39)   |
-| glibc                | s390x    | Available                   | D12 (2.36), U24 (2.39)   |
-| glibc                | sparc    | Available                   |                          |
-| glibc                | x86      | Not supported               | D12 (2.36), U24 (2.39)   |
-| musl >= 1.2.3        | *        | Available                   | D12 (1.2.3), U24 (1.2.4) |
+| LIBC                 | Arch     | Level of support            | Distro correspondence                          |
+| ---                  | ----     | ---                         | ---                                            |
+| glibc                | 64-bit   | Generally supported         | D12 (2.36), U24 (2.39)                         |
+| glibc                | 32-bit   | Deprecated*                 | D12 (2.36), U24 (2.39)                         |
+| glibc                | alpha    | Not supported               |                                                |
+| glibc >= 3.40        | amd64    | Fully supported             | D12 (2.36), F41 (2.40), F42 (2.41), U24 (2.39) |
+| glibc                | arm      | Not supported               | D12 (2.36), U24 (2.39)                         |
+| glibc                | arm64    | Available                   | D12 (2.36), U24 (2.39)                         |
+| glibc                | hppa     | Not supported               |                                                |
+| glibc                | loong    | Available                   |                                                |
+| glibc                | mips64   | Available                   | D12 (2.36)                                     |
+| glibc                | mips     | Available                   | D12 (2.36)                                     |
+| glibc                | ppc      | Not supported               |                                                |
+| glibc                | ppc64    | Available                   |             U24 (2.39)                         |
+| glibc                | riscv    | Available                   |             U24 (2.39)                         |
+| glibc                | s390x    | Available                   | D12 (2.36), U24 (2.39)                         |
+| glibc                | sparc    | Available                   |                                                |
+| glibc                | x86      | Not supported               | D12 (2.36), U24 (2.39)                         |
+| musl >= 1.2.3        | *        | Available                   | D12 (1.2.3), U24 (1.2.4)                       |
 
 * Using 32-bit may increase the chances of high-critical vulnerabilities.  Examples:
   - ASLR effectiveness on 32-bit is estimated to be 10-20% or 20-50% and can lead to increased privilege escalation, data tampering, information disclosure
@@ -58,19 +58,20 @@ exist in build files.
 | ---                             | ---                                   | ---                                |
 | Clang 14                        | Not supported                         | D12 (14.0)                         |
 | Clang 18                        | Fully supported                       | U24 (18.0)                         |
-| Clang 19                        | Supported                             |                                    |
-| Clang 20                        | Available                             |                                    |
+| Clang 19                        | Supported                             | F41 (19.1.7)                       |
+| Clang 20                        | Available                             | F42 (20.1.3)                       |
 | Clang 21                        | Not supported                         |                                    |
 | Cython 0.29.37.1                | Fully supported                       | D12 (0.29.32)                      |
 | Cython 3.0.12                   | Fully Supported                       | U24 (3.0.8)                        |
 | Cython 3.1.0                    | Fully supported                       |                                    |
 | GCC 12                          | Fully supported                       | D12 (12.2)                         |
 | GCC 13                          | Partially Supported                   | U24 (13.2)                         |
-| GCC 14                          | Partially Supported                   |                                    |
+| GCC 14                          | Partially Supported                   | F41 (14.2.1)                       |
+| GCC 15                          | Not Supported                         | F42 (15.1.1)                       |
 | Rust 1.63.0                     | Not supported                         | D12 (1.63.0)                       |
 | Rust 1.74.0                     | Partially supported                   |                                    |
 | Rust 1.75.0                     | Available                             | U24 (1.75.0)                       |
-| Rust 1.86.0                     | Fully supported                       |                                    |
+| Rust 1.86.0                     | Fully supported                       | F41 (1.86.0), F42 (1.86.0)         |
 | Rust-9999 (1.89.0-nightly)      | Partially supported                   |                                    |
 
 * GCC 13 is recommended for ROCm 6.2 when using pyTorch (ML), TensorFlow (ML), Ollama (LLM), Blender.
@@ -84,69 +85,71 @@ exist in build files.
 * rust-bin older supported stable (1.74.0, 1.75.0) and rust-bin latest stable (1.86.0) are recommended as fallbacks for non security-critical packages.
 * Due to the lack of GPU access, the requirements are the exact major.minor version requirements for this overlay and ML/LLM libraries for increased chances of reproducibility.
 
-| Python               | Level of support                      | Distro correspondence   |
-| ---                  | ---                                   | ---                     |
-| 3.10 and earlier     | Not supported (EOL)*                  | U22 (EOL Apr 2027)      |
-| 3.11                 | Mostly supported                      | D12 (EOL Jun 2026)      |
-| 3.12                 | Partially supported                   | U24 (EOL Apr 2029)      |
-| 3.13                 | Available                             |                         |
-| 3.13t                | Not supported                         |                         |
-| 3.14 and later       | Not supported                         |                         |
-| pypy3                | Available                             |                         |
-| pypy3_11             | Not supported                         |                         |
+| Python               | Level of support                      | Distro correspondence                      |
+| ---                  | ---                                   | ---                                        |
+| 3.10 and earlier     | Not supported (EOL)*                  | U22 (EOL Apr 2027)                         |
+| 3.11                 | Mostly supported                      | D12 (EOL Jun 2026)                         |
+| 3.12                 | Partially supported                   | U24 (EOL Apr 2029)                         |
+| 3.13                 | Available                             | F41 (EOL Nov 2025) F42 (EOL May 2026)      |
+| 3.13t                | Not supported                         |                                            |
+| 3.14 and later       | Not supported                         |                                            |
+| pypy3                | Available                             |                                            |
+| pypy3_11             | Not supported                         |                                            |
 
 * Not supported due to [python-utils-r1.eclass](https://github.com/gentoo/gentoo/blob/master/eclass/python-utils-r1.eclass#L44)
   EOL restrictions, but not [EOL upstream](https://devguide.python.org/versions/).
   Forced PYTHON_COMPAT bumps (to Python 3.11 or any future minimum version
   bumps) may introduce DoS vulnerabilities (e.g. crash) or incompatibilities.
 
-| Platform                          | Level of support                      | Distro correspondence              |
-| ---                               | ---                                   | ---                                |
-| CUDA 11.8                         | Available                             | D12 (11.8)                         |
-| CUDA 12.8                         | Planned                               | U24 (12.0)                         |
-| Electron (amd64)                  | Fully supported                       |                                    |
-| Electron (arm64)                  | Not supported                         |                                    |
-| Electron (x86)                    | Not supported                         |                                    |
-| gRPC 1.49 - 1.54                  | Fully supported                       | D12 (1.51.1), U24 (1.51.1)         |
-| gRPC 1.55 - 1.62                  | Available                             |                                    |
-| gRPC >= 1.63                      | Available                             |                                    |
-| GTK+3                             | Fully supported                       |                                    |
-| GTK 4                             | Fully supported                       |                                    |
-| OpenGL <= 4.6                     | Fully supported                       |                                    |
-| OpenCL <= 2.0                     | Fully supported                       |                                    |
-| Ollama >= 0.3 (CPU)               | Fully supported                       |                                    |
-| Ollama >= 0.3 (CUDA 11.8)         | Available                             |                                    |
-| Ollama 0.3, 0.4 (ROCm 6.1)        | Not Supported                         |                                    |
-| Ollama 0.3, 0.4 (CUDA 12.4)       | Available                             |                                    |
-| Ollama 0.5, 0.6, 0.7 (ROCm 6.3)   | Planned                               |                                    |
-| Ollama 0.5, 0.6, 0.7 (CUDA 12.8)  | Available                             |                                    |
-| OpenMP (CPU)                      | Fully supported                       |                                    |
-| OpenMP (GPU)                      | Available                             |                                    |
-| OpenRC                            | Fully supported                       |                                    |
-| Protobuf 3                        | Fully supported                       | D12 (3.21.12), U24 (3.21.12)       |
-| Protobuf 4                        | Available                             |                                    |
-| Protobuf 5                        | Available                             |                                    |
-| PyTorch 1.13.x                    | Not supported                         | D12 (1.13.1)                       |
-| PyTorch >= 2.0 (CPU)              | Fully supported                       |                                    |
-| PyTorch >= 2.0 (CUDA 11.8)        | Available                             |                                    |
-| PyTorch 2.5 (CUDA 12.4)           | Available                             |                                    |
-| PyTorch 2.5 (ROCm 6.2)            | Available                             |                                    |
-| PyTorch 2.7 (CUDA 12.8)           | Planned                               |                                    |
-| Qt 5.x                            | Available                             |                                    |
-| Qt 6.x                            | Fully supported                       |                                    |
-| ROCm 6.2                          | Available                             | U24 (>= 6.2.0) (1)                 |
-| ROCm 6.3                          | Planned                               | D12 (>= 6.3.1) (2)                 |
-| SYCL                              | Available                             |                                    |
-| systemd                           | Partially supported                   |                                    |
-| TensorFlow >= 2.14 (CPU)          | Fully supported                       |                                    |
-| TensorFlow 2.14 (CUDA 11.8)       | Available                             |                                    |
-| TensorFlow 2.16 (CUDA 12.3)       | Available                             |                                    |
-| TensorFlow 2.17 (CUDA 12.3)       | Available                             |                                    |
-| TensorFlow 2.18 (CUDA 12.5)       | Available                             |                                    |
-| TensorFlow 2.18 (ROCm  6.2)       | Available                             |                                    |
-| Vulkan                            | Fully supported                       |                                    |
-| Wayland                           | Fully supported                       |                                    |
-| X                                 | Fully supported                       |                                    |
+| Platform                          | Level of support                      | Distro correspondence                                    |
+| ---                               | ---                                   | ---                                                      |
+| CUDA 11.8                         | Available                             | D12 (11.8)                                               |
+| CUDA 12.8                         | Planned                               | U24 (12.0)                                               |
+| Electron (amd64)                  | Fully supported                       |                                                          |
+| Electron (arm64)                  | Not supported                         |                                                          |
+| Electron (x86)                    | Not supported                         |                                                          |
+| gRPC 1.49 - 1.54                  | Fully supported                       | D12 (1.51.1), F41 (1.48.4), F42 (1.48.4), U24 (1.51.1)   |
+| gRPC 1.55 - 1.62                  | Available                             |                                                          |
+| gRPC >= 1.63                      | Available                             |                                                          |
+| GTK+3                             | Fully supported                       |                                                          |
+| GTK 4                             | Fully supported                       |                                                          |
+| OpenGL <= 4.6                     | Fully supported                       |                                                          |
+| OpenCL <= 2.0                     | Fully supported                       |                                                          |
+| Ollama >= 0.3 (CPU)               | Fully supported                       |                                                          |
+| Ollama >= 0.3 (CUDA 11.8)         | Available                             |                                                          |
+| Ollama 0.3, 0.4 (ROCm 6.1)        | Not Supported                         |                                                          |
+| Ollama 0.3, 0.4 (CUDA 12.4)       | Available                             |                                                          |
+| Ollama 0.5, 0.6, 0.7 (ROCm 6.3)   | Planned                               |                                                          |
+| Ollama 0.5, 0.6, 0.7 (CUDA 12.8)  | Available                             |                                                          |
+| OpenMP (CPU)                      | Fully supported                       |                                                          |
+| OpenMP (GPU)                      | Available                             |                                                          |
+| OpenRC                            | Fully supported                       |                                                          |
+| Protobuf 3                        | Fully supported                       | D12 (3.21.12), F41 (3.19.6), F42 (3.19.6), U24 (3.21.12) |
+| Protobuf 4                        | Available                             |                                                          |
+| Protobuf 5                        | Available                             |                                                          |
+| PyTorch 1.13.x                    | Not supported                         | D12 (1.13.1)                                             |
+| PyTorch >= 2.0 (CPU)              | Fully supported                       |                                                          |
+| PyTorch >= 2.0 (CUDA 11.8)        | Available                             |                                                          |
+| PyTorch 2.4 (CPU)                 | Available                             | F41 (2.4.0)                                              |
+| PyTorch 2.5 (CPU)                 | Fully Supported                       | F42 (2.5.1)                                              |
+| PyTorch 2.5 (CUDA 12.4)           | Available                             |                                                          |
+| PyTorch 2.5 (ROCm 6.2)            | Available                             |                                                          |
+| PyTorch 2.7 (CUDA 12.8)           | Planned                               |                                                          |
+| Qt 5.x                            | Available                             |                                                          |
+| Qt 6.x                            | Fully supported                       |                                                          |
+| ROCm 6.2                          | Available                             | F41 (6.2.1), U24 (>= 6.2.0) (1)                          |
+| ROCm 6.3                          | Planned                               | D12 (>= 6.3.1) (2), F42 (6.3.1)                          |
+| SYCL                              | Available                             |                                                          |
+| systemd                           | Partially supported                   |                                                          |
+| TensorFlow >= 2.14 (CPU)          | Fully supported                       |                                                          |
+| TensorFlow 2.14 (CUDA 11.8)       | Available                             |                                                          |
+| TensorFlow 2.16 (CUDA 12.3)       | Available                             |                                                          |
+| TensorFlow 2.17 (CUDA 12.3)       | Available                             |                                                          |
+| TensorFlow 2.18 (CUDA 12.5)       | Available                             |                                                          |
+| TensorFlow 2.18 (ROCm  6.2)       | Available                             |                                                          |
+| Vulkan                            | Fully supported                       |                                                          |
+| Wayland                           | Fully supported                       |                                                          |
+| X                                 | Fully supported                       |                                                          |
 
 * (1) U24 uses Python 3.12 for ROCm support
 * (2) D12 uses Python 3.11 for ROCm support
