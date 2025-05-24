@@ -192,7 +192,7 @@ RUSTFLAGS_HARDENED_USE_CASES="jit network secure-critical sensitive-data untrust
 RUSTFLAGS_HARDENED_TOLERANCE="4.0"
 
 inherit cargo cflags-hardened cmake eapi9-ver flag-o-matic lcnr llvm
-inherit python-any-r1 rustflags-hardened systemd tmpfiles toolchain-funcs
+inherit python-any-r1 rustflags-hardened sandbox-changes systemd tmpfiles toolchain-funcs
 
 if ! [[ "${PV}" =~ "_rc" ]] ; then
 	KEYWORDS="~amd64 ~arm64 ~arm64-macos"
@@ -374,23 +374,13 @@ python_check_deps() {
 	python_has_version -b ">=dev-python/pytest-${PYTEST_PV}[${PYTHON_USEDEP}]"
 }
 
-check_network_sandbox() {
-	if has network-sandbox $FEATURES ; then
-eerror
-eerror "FEATURES=\"-network-sandbox\" must be added per-package env to be able"
-eerror "to update lockfile."
-eerror
-		die
-	fi
-}
-
 pkg_setup() {
 	if use test && ! [[ "${FEATURES}" =~ "userpriv" ]] ; then
 eerror "USE=test requires FEATURES=\"${FEATURES} userpriv\""
 		die
 	fi
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
-		check_network_sandbox
+		sandbox-changes_no_network_sandbox "To update lockfile"
 	fi
 	if use jit ; then
 		LLVM_MAX_SLOT=14

@@ -31,7 +31,7 @@ EGIT_CR_ZLIB_COMMIT="2d44c51ada6d325b85b53427b02dabf44648bca4"		# Found in https
 PROTOBUF_PV="3.21.11"							# Found in https://github.com/google/tensorstore/blob/v0.1.37/third_party/com_google_protobuf/workspace.bzl#L27C96-L27C100
 PYTHON_COMPAT=( "python3_"{8..11} ) # CI uses 3.9
 
-inherit distutils-r1 flag-o-matic llvm toolchain-funcs
+inherit distutils-r1 flag-o-matic llvm sandbox-changes toolchain-funcs
 
 # We may need to prefix with gh so that the fingerprints do not conflict between releases and snapshots.
 bazel_external_uris="
@@ -171,16 +171,6 @@ setup_openjdk() {
 	else
 eerror
 eerror "dev-java/openjdk:${JAVA_SLOT} or dev-java/openjdk-bin:${JAVA_SLOT} must be installed"
-eerror
-		die
-	fi
-}
-
-request_network_sandbox_permissions() {
-	if has network-sandbox $FEATURES ; then
-eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
-eerror "env to be able to download micropackages."
 eerror
 		die
 	fi
@@ -330,7 +320,7 @@ eerror
 	python_setup
 	setup_openjdk
 
-	request_network_sandbox_permissions
+	sandbox-changes_no_network_sandbox "For downloading micropackages"
 
 	setup_tc
 }

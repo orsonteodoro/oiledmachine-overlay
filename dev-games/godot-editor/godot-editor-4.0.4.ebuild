@@ -14,7 +14,7 @@ FRAMEWORK="4.5" # Target .NET Framework
 VIRTUALX_REQUIRED="manual"
 
 inherit godot-4.0
-inherit desktop flag-o-matic llvm python-any-r1 scons-utils virtualx
+inherit desktop flag-o-matic llvm python-any-r1 sandbox-changes scons-utils virtualx
 
 SRC_URI="
 	https://github.com/godotengine/${MY_PN}/archive/${PV}-${STATUS}.tar.gz -> ${MY_P}.tar.gz
@@ -662,13 +662,7 @@ eerror
 		fi
 		export DOTNET_CLI_TELEMETRY_OPTOUT=1
 
-		if has network-sandbox ${FEATURES} ; then
-eerror
-eerror "Mono support requires network-sandbox to be disabled in FEATURES on a"
-eerror "per-package level."
-eerror
-			die
-		fi
+		sandbox-changes_no_network_sandbox "To download micropackages"
 	fi
 
 	use speech && check_speech_dispatcher

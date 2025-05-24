@@ -45,7 +45,7 @@ CPU_FLAGS=(
 	${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
 )
 
-inherit cmake flag-o-matic linux-info python-r1 toolchain-funcs uopts
+inherit cmake flag-o-matic linux-info python-r1 sandbox-changes toolchain-funcs uopts
 
 SRC_URI="
 https://github.com/embree/embree/archive/v${PV}.tar.gz
@@ -278,13 +278,7 @@ ewarn
 	fi
 
 	if use doc-html ; then
-		if has network-sandbox $FEATURES ; then
-eerror
-eerror "${PN} requires network-sandbox to be disabled in FEATURES to be able to"
-eerror "use MathJax for math rendering."
-eerror
-			die
-		fi
+		sandbox-changes_no_network_sandbox "To use MathJax for math rendering for USE=doc-html"
 ewarn
 ewarn "Building package may exhibit random failures with doc-html USE flag."
 ewarn "Emerge and try again."

@@ -4,10 +4,10 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_"{8..11} )
 CMAKE_IN_SOURCE_BUILD=1
 
-inherit cmake flag-o-matic java-pkg-opt-2 python-r1
+inherit cmake flag-o-matic java-pkg-opt-2 python-r1 sandbox-changes
 
 DESCRIPTION="A code-completion & code-comprehension server"
 HOMEPAGE="https://ycm-core.github.io/ycmd/"
@@ -702,13 +702,7 @@ pkg_setup() {
 		   ( ! use system-tern       && use javascript ) \
 		|| ( ! use system-typescript && use typescript ) \
 	; then
-		if has network-sandbox $FEATURES ; then
-eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package env"
-eerror "to be able to download the internal dependencies."
-eerror
-			die
-		fi
+		sandbox-changes_no_network_sandbox "To download dependencies"
 	fi
 
 	# No standard ebuild yet.

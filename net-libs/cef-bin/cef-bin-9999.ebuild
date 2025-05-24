@@ -43,7 +43,7 @@ LIBXI_PV="1.7.10"
 MESA_PV="20.3.5"
 VIRTUALX_REQUIRED="manual"
 
-inherit chromium-2 cmake flag-o-matic linux-info virtualx
+inherit chromium-2 cmake flag-o-matic linux-info sandbox-changes virtualx
 
 KEYWORDS="~arm ~arm64 ~amd64"
 S="${WORKDIR}" # Dummy
@@ -361,10 +361,8 @@ ewarn "FEATURES as a per package envvar."
 ewarn
 	fi
 
-	if [[ "${PV}" =~ "9999" ]] && has "network-sandbox" ${FEATURES} ; then
-eerror
-eerror "Network access required to download from a live source."
-eerror
+	if [[ "${PV}" =~ "9999" ]] ; then
+		sandbox-changes_no_network_sandbox "To download tarballs from a live source"
 	fi
 }
 

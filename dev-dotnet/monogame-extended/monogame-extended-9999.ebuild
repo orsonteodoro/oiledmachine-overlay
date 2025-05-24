@@ -5,7 +5,8 @@
 EAPI=8
 
 DOTNET_V="6.0"
-inherit git-r3 lcnr
+
+inherit git-r3 lcnr sandbox-changes
 
 DESCRIPTION="MonoGame.Extended are classes and extensions to make MonoGame more \
 awesome"
@@ -36,13 +37,7 @@ EGIT_BRANCH="develop"
 EGIT_COMMIT="HEAD"
 
 pkg_setup() {
-	if has network-sandbox ${FEATURES} ; then
-eerror
-eerror "Building requires network-sandbox to be disabled in FEATURES on a"
-eerror "per-package level."
-eerror
-		die
-	fi
+	sandbox-changes_no_network_sandbox "For downloading micropackages"
 
 	local found=0
 	for sdk in ${DOTNET_SUPPORTED_SDKS[@]} ; do

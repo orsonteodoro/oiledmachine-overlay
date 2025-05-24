@@ -22,8 +22,8 @@ _GO_OFFLINE_CACHE=1
 _go-download-cache_check_network_sandbox() {
 	if has network-sandbox ${FEATURES} ; then
 eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
-eerror "env to be able to download go micropackages."
+eerror "Sandbox changes requested via per-package env for =${CATEGORY}/${PN}-${PVR}."
+eerror "Reason:  To download micropackages and offline cache"
 eerror
 eerror "Contents of /etc/portage/env/disable-sandbox.conf:"
 eerror "FEATURES=\"\${FEATURES} -network-sandbox\""

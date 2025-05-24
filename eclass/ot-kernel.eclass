@@ -1123,7 +1123,7 @@ ZEN_MUQSS_BASE_URI="https://github.com/torvalds/linux/commit/"
 ZEN_SAUCE_BASE_URI="https://github.com/torvalds/linux/commit/"
 
 inherit check-reqs dhms flag-o-matic multiprocessing python-single-r1 ot-kernel-kutils ot-kernel-pkgflags
-inherit security-scan toolchain-funcs vf
+inherit sandbox-changes security-scan toolchain-funcs vf
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
@@ -1739,19 +1739,6 @@ ewarn
 	fi
 }
 
-# @FUNCTION: _check_network_sandbox
-# @DESCRIPTION:
-# Check if sandbox is more lax when downloading in unpack phase
-_check_network_sandbox() {
-	if has network-sandbox ${FEATURES} ; then
-eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
-eerror "env to be able to use live sources or to download logos."
-eerror
-		die
-	fi
-}
-
 verify_profraw_compatibility() {
 einfo "Verifying profraw version compatibility"
 	# The profiling data format is very version sensitive.
@@ -1904,11 +1891,11 @@ einfo "Time since the last security update:  ${dhms_passed}"
 		fi
 	fi
 	if [[ "${PV}" =~ "9999" ]] ; then
-		_check_network_sandbox
+		sandbox-changes_no_network_sandbox "To download from a live source"
 	fi
 
 	if [[ -n "${OT_KERNEL_LOGO_URI}" ]] ; then
-		_check_network_sandbox
+		sandbox-changes_no_network_sandbox "To download logos"
 	fi
 
 	if has tresor ${IUSE_EFFECTIVE} ; then
@@ -12029,7 +12016,7 @@ einfo "Using boot logo from ${OT_KERNEL_LOGO_URI}"
 		if _ot-kernel_is_upstream_logo ; then
 			:
 		elif [[ "${OT_KERNEL_LOGO_URI}" =~ ("http://"|"https://"|"ftp://") ]] ; then
-			_check_network_sandbox
+			sandbox-changes_no_network_sandbox "To download logos"
 			wget -O "${T}/boot.logo" "${OT_KERNEL_LOGO_URI}" || die
 		else
 			local path="${OT_KERNEL_LOGO_URI}"

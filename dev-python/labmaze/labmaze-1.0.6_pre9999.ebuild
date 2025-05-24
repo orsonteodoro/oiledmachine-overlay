@@ -7,8 +7,9 @@ EAPI=8
 BAZEL_SLOT="5.1"
 DISTUTILS_USE_PEP517="setuptools"
 JAVA_SLOT="11"
-PYTHON_COMPAT=( python3_{8..11} )
-inherit distutils-r1 git-r3 java-utils-2
+PYTHON_COMPAT=( "python3_"{8..11} )
+
+inherit distutils-r1 git-r3 java-utils-2 sandbox-changes
 
 bazel_external_uris="
 
@@ -122,13 +123,7 @@ eerror
 	python_setup
 	setup_openjdk
 
-	if has network-sandbox $FEATURES ; then
-eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
-eerror "env to be able to download micropackages."
-eerror
-		die
-	fi
+	sandbox-changes_no_network_sandbox "To download micropackages"
 }
 
 src_unpack() {

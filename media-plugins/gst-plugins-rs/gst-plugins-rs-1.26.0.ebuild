@@ -866,7 +866,7 @@ declare -A GIT_CRATES=(
 fi
 
 inherit rustflags-hardened flag-o-matic lcnr llvm meson multilib-minimal
-inherit python-any-r1 rust
+inherit python-any-r1 rust sandbox-changes
 
 DESCRIPTION="Various GStreamer plugins written in Rust"
 HOMEPAGE="https://gitlab.freedesktop.org/gstreamer/gst-plugins-rs"
@@ -1335,16 +1335,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.26.0-some-mismatched-types.patch"
 )
 
-check_network_sandbox() {
-	if has network-sandbox $FEATURES ; then
-eerror
-eerror "FEATURES=\"-network-sandbox\" must be added per-package env to be able"
-eerror "to download the internal dependencies."
-eerror
-		die
-	fi
-}
-
 pkg_setup() {
 	if [[ "${GENERATE_LOCKFILE}" =~ "1" ]] ; then
 		check_network_sandbox
@@ -1358,7 +1348,7 @@ ewarn
 	fi
 
 	if [[ "${MY_PV}" =~ "9999" ]] ; then
-		check_network_sandbox
+		sandbox-changes_no_network_sandbox "To download internal dependencies"
 	fi
 	python-any-r1_pkg_setup
 

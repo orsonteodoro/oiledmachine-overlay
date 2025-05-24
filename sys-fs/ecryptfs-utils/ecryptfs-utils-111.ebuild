@@ -11,7 +11,7 @@ CFLAGS_HARDENED_TOLERANCE="4.0"
 LANGS=( "ca" )
 PYTHON_COMPAT=( "python3_11" )
 
-inherit autotools cflags-hardened flag-o-matic linux-info pam python-single-r1
+inherit autotools cflags-hardened flag-o-matic linux-info pam python-single-r1 sandbox-changes
 
 KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86"
 EBRZ_REPO_URI="lp:~ecryptfs/ecryptfs/trunk"
@@ -101,13 +101,7 @@ pkg_setup() {
 	python-single-r1_pkg_setup
 	CONFIG_CHECK="~ECRYPT_FS"
 	linux-info_pkg_setup
-	if has network-sandbox $FEATURES ; then
-eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
-eerror "env to be able to download from a live source."
-eerror
-		die
-	fi
+	sandbox-changes_no_network_sandbox "To download the project"
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 	addwrite "${distdir}"
 	if [[ ! -d "${distdir}/ecryptfs-utils-src" ]] ; then

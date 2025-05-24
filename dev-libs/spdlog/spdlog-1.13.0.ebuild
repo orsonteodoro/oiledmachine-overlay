@@ -3,7 +3,7 @@
 
 EAPI=8
 
-inherit cmake-multilib
+inherit cmake-multilib sandbox-changes
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="v1.x"
@@ -38,13 +38,7 @@ PATCHES=(
 check_network_sandbox() {
 	# We need to download catch2 to make it multilib since the catch ebuild
 	# package is unilib.
-	if has network-sandbox $FEATURES ; then
-eerror
-eerror "FEATURES=\"-network-sandbox\" must be added per-package env to be able"
-eerror "to run test."
-eerror
-		die
-	fi
+	sandbox-changes_no_network_sandbox "To download catch2 for running multilib tests"
 }
 
 pkg_setup() {

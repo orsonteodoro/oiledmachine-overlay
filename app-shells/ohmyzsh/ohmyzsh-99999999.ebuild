@@ -14,7 +14,7 @@ ZSH_DEST="/usr/share/zsh/site-contrib/${PN}"
 ZSH_EDEST="${EPREFIX}${ZSH_DEST}"
 ZSH_TEMPLATE="templates/zshrc.zsh-template"
 
-inherit python-r1 ruby-ng
+inherit python-r1 ruby-ng sandbox-changes
 
 if [[ "${PV}" =~ "99999999" ]] ; then
 	EGIT_REPO_URI="https://github.com/ohmyzsh/ohmyzsh.git"
@@ -1374,13 +1374,7 @@ BDEPEND+="
 
 pkg_setup() {
 	if use update-emoji-data ; then
-		if has network-sandbox $FEATURES ; then
-eerror
-eerror "${PN} require network-sandbox to be disabled in FEATURES on a"
-eerror "per-package basis in order to update emoji data."
-eerror
-			die
-		fi
+		sandbox-changes_no_network_sandbox "Update emoji data"
 	fi
 	if use ruby ; then
 		ruby-ng_pkg_setup

@@ -10,7 +10,7 @@ EGIT_BRANCH="master"
 EGIT_REPO_URI="https://github.com/marshallward/TiledSharp.git"
 
 USE_DOTNET="net40"
-inherit dotnet git-r3 lcnr
+inherit dotnet git-r3 lcnr sandbox-changes
 
 DESCRIPTION="C# library for parsing and importing TMX and TSX files generated \
 by Tiled, a tile map generation tool."
@@ -66,13 +66,7 @@ eerror
 		die
 	fi
 	export DOTNET_CLI_TELEMETRY_OPTOUT=1
-	if has network-sandbox ${FEATURES} ; then
-eerror
-eerror "Building requires network-sandbox to be disabled in FEATURES on a"
-eerror "per-package level."
-eerror
-		die
-	fi
+	sandbox-changes_no_network_sandbox "To download from a live source"
 }
 
 src_unpack() {

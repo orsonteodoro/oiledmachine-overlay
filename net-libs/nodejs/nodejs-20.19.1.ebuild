@@ -84,7 +84,7 @@ WRK_PV="1.2.1" # The following are locked for deterministic builds.  Bump if vul
 
 inherit bash-completion-r1 cflags-hardened check-linker flag-o-matic
 inherit flag-o-matic-om lcnr linux-info multiprocessing ninja-utils pax-utils
-inherit python-any-r1 toolchain-funcs uopts xdg-utils
+inherit python-any-r1 sandbox-changes toolchain-funcs uopts xdg-utils
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/node-v${PV}"
@@ -295,11 +295,7 @@ eerror
 	local u
 	for u in ${PN}_trainers_http ${PN}_trainers_https ; do
                 if use "${u}" && has network-sandbox $FEATURES ; then
-eerror
-eerror "The ${u} USE flag requires FEATURES=\"\${FEATURES} -network-sandbox\""
-eerror "to be able to download to generate PGO profiles for that USE flag."
-eerror
-                        die
+			sandbox-changes_no_network_sandbox "For USE=${u} to download and to generate PGO profile"
                 fi
 	done
 

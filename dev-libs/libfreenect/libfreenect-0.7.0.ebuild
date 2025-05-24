@@ -6,7 +6,7 @@ EAPI=8
 CMAKE_BUILD_TYPE=Release
 PYTHON_COMPAT=( python3_{8..11} )
 
-inherit cmake-multilib flag-o-matic multilib-minimal python-single-r1
+inherit cmake-multilib flag-o-matic multilib-minimal python-single-r1 sandbox-changes
 
 DESCRIPTION="Drivers and libraries for the Xbox Kinect device"
 HOMEPAGE="https://github.com/OpenKinect/libfreenect"
@@ -86,14 +86,7 @@ DOCS=( README.md )
 
 pkg_setup() {
 	if ! use bindist ; then
-		if has network-sandbox ${FEATURES} ; then
-eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added as a"
-eerror "per-package environment variable to be able to download the audio"
-eerror "firmware."
-eerror
-			die
-		fi
+		sandbox-changes_no_network_sandbox "To download audio firmware"
 	fi
 	python-single-r1_pkg_setup
 }

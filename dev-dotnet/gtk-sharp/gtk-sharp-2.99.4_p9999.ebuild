@@ -8,7 +8,7 @@ EAPI=7
 
 FRAMEWORK="3.5"
 MY_PV=$(ver_cut 1-3 ${PV})
-inherit autotools dotnet git-r3
+inherit autotools dotnet git-r3 sandbox-changes
 
 DESCRIPTION="Gtk# is a Mono/.NET binding to the cross platform Gtk+ GUI toolkit \
 and the foundation of most GUI apps built with Mono"
@@ -74,13 +74,7 @@ declare -A DTFM=(
 )
 
 pkg_setup() {
-	if has network-sandbox ${FEATURES} ; then
-eerror
-eerror "Building requires network-sandbox to be disabled in FEATURES on a"
-eerror "per-package level."
-eerror
-		die
-	fi
+	sandbox-changes_no_network_sandbox "To download micropackages"
 
 	local
 	dotnet_pkg_setup

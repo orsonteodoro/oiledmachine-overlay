@@ -4,7 +4,7 @@
 
 EAPI=7
 
-inherit git-r3 lcnr
+inherit git-r3 lcnr sandbox-changes
 
 DESCRIPTION="SharpNav is an advanced pathfinding library for C#"
 HOMEPAGE="http://sharpnav.com"
@@ -69,13 +69,7 @@ PATCHES=(
 )
 
 pkg_setup() {
-	if has network-sandbox ${FEATURES} ; then
-eerror
-eerror "Building requires network-sandbox to be disabled in FEATURES on a"
-eerror "per-package level."
-eerror
-		die
-	fi
+	sandbox-changes_no_network_sandbox "To download micropackages"
 }
 
 EXPECTED_BUILD_FILES="\

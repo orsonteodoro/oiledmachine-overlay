@@ -66,7 +66,7 @@ ERIDS=(
 	${WIN_ERIDS[@]}
 )
 
-inherit lcnr
+inherit lcnr sandbox-changes
 
 EGIT_COMMIT="v${MY_PV}"
 EGIT_BRANCH="master"
@@ -231,13 +231,7 @@ get_hrid() {
 }
 
 pkg_setup() {
-	if has network-sandbox ${FEATURES} ; then
-eerror
-eerror "Building requires network-sandbox to be disabled in FEATURES on a"
-eerror "per-package level."
-eerror
-		die
-	fi
+	sandbox-changes_no_network_sandbox "To download micropackages"
 
 	local found=0
 	for sdk in ${DOTNET_SUPPORTED_SDKS[@]} ; do

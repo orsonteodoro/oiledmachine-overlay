@@ -158,7 +158,7 @@ declare -A atabs=(
 	["sha512"]="\t"
 )
 
-inherit desktop flag-o-matic gnome2-utils toolchain-funcs unpacker xdg
+inherit desktop flag-o-matic gnome2-utils sandbox-changes toolchain-funcs unpacker xdg
 
 #KEYWORDS="~amd64"
 S="${WORKDIR}"
@@ -491,52 +491,24 @@ ewarn "Some podcasts will be broken if the ffmpeg USE flag is disabled."
 ewarn
 	fi
 
-	local require_network=0
 	if \
 		has "extra-dep-checks" ${IUSE} \
 			&& \
 		use extra-dep-checks \
 	; then
-		require_network=1
-eerror
-eerror "Network access required to verify Chromium dependencies."
-eerror
+		sandbox-changes_no_network_sandbox "To verify Chromium dependencies"
 	fi
 	if \
 		has "verify-gpg-key" ${IUSE} \
 			&& \
 		use verify-gpg-key \
-			&& \
-		has "network-sandbox" ${FEATURES} \
 	; then
-		require_network=1
-eerror
-eerror "Network access required to verify the public repository gpg key."
-eerror
+		sandbox-changes_no_network_sandbox "To verify public repository key"
 	fi
 	if \
 		[[ "${PV}" =~ "9999" ]] \
-			&& \
-		has "network-sandbox" ${FEATURES} \
 	; then
-		require_network=1
-eerror
-eerror "Network access required to download from live source and verify the"
-eerror "public repository key."
-eerror
-	fi
-	if [[ "${require_network}" == "1" ]] ; then
-eerror
-eerror "Network access required to download from live source and verify the"
-eerror "public repository key."
-eerror
-eerror "Create the following /etc/portage/env/no-network-sandbox.conf file:"
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\""
-eerror
-eerror "Add to /etc/portage/package.env:"
-eerror "${CATEGORY}/${PN} no-network-sandbox.conf"
-eerror
-		die
+		sandbox-changes_no_network_sandbox "To download from a life source and verify public repository key"
 	fi
 	export EDISTDIR="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 }

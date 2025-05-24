@@ -7,7 +7,7 @@ EAPI=8
 
 PYTHON_COMPAT=( "python3_"{8..11} )
 
-inherit cmake flag-o-matic multilib-build python-any-r1 toolchain-funcs
+inherit cmake flag-o-matic multilib-build python-any-r1 sandbox-changes toolchain-funcs
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
@@ -79,16 +79,10 @@ pkg_setup() {
 		fi
 	fi
 	if use texinfo ; then
-ewarn
-ewarn "The texinfo USE flags may need FEATURES=\"\${FEATURES} -network-sandbox\""
-ewarn "as a per-package environmental setting for doc generation completeness."
-ewarn
+		sandbox-changes_no_network_sandbox "For USE=texinfo for doc generation completeness"
 	fi
 	if use pdf ; then
-ewarn
-ewarn "The pdf USE flags may need FEATURES=\"\${FEATURES} -network-sandbox\" as"
-ewarn "a per-package environmental setting for doc generation completeness."
-ewarn
+		sandbox-changes_no_network_sandbox "For USE=pdf for doc generation completeness"
 	fi
 	python-any-r1_pkg_setup
 }

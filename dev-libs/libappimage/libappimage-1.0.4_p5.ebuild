@@ -5,7 +5,8 @@
 EAPI=8
 
 CMAKE_MAKEFILE_GENERATOR="emake" # required for downloading in compile phase
-inherit cmake linux-info
+
+inherit cmake linux-info sandbox-changes
 
 DESCRIPTION="Implements functionality for dealing with AppImage files"
 LICENSE="MIT" # project default license
@@ -74,14 +75,7 @@ PATCHES=(
 )
 
 pkg_setup() {
-	# Forced because we need sources for squashfuse.
-	if has network-sandbox $FEATURES ; then
-eerror
-eerror "${PN} requires network-sandbox to be disabled in FEATURES in order to"
-eerror "download internal dependencies."
-eerror
-		die
-	fi
+	sandbox-changes_no_network_sandbox "To download squashfuse dependencies"
 
 	linux-info_pkg_setup
 	linux_config_exists

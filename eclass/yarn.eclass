@@ -230,10 +230,16 @@ yarn_env_pop() {
 yarn_check_network_sandbox() {
 # Corepack problems.  Cannot do complete offline install.
 # Required for yarn 4.x
-	if has network-sandbox $FEATURES ; then
+	if has network-sandbox ${FEATURES} ; then
 eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
-eerror "env to be able to download micropackages."
+eerror "Sandbox changes requested via per-package env for =${CATEGORY}/${PN}-${PVR}."
+eerror "Reason:  To download micropackages and offline cache"
+eerror
+eerror "Contents of /etc/portage/env/no-network-sandbox.conf"
+eerror "FEATURES=\"\${FEATURES} -network-sandbox\""
+eerror
+eerror "Contents of /etc/portage/package.env"
+eerror "${CATEGORY}/${PN} no-network-sandbox.conf"
 eerror
 		die
 	fi
@@ -263,19 +269,9 @@ eerror "   \`corepack prepare --all --activate\`"
 		local yarn_pv=$(/usr/bin/yarn --version)
 		if ! [[ "${yarn_pv}" =~ [0-9]+\.[0-9]+\.[0-9]+ ]] ; then
 eerror
-eerror "Failed to detect version.  Install yarn or disable network-sandbox in"
-eerror "FEATURES."
+eerror "Failed to detect version.  Install yarn."
 eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
-eerror "env to be able to download and cache offline micropackages."
-eerror
-eerror "Contents of /etc/portage/env/no-network-sandbox.conf"
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\""
-eerror
-eerror "Contents of /etc/portage/package.env"
-eerror "${CATEGORY}/${PN} no-network-sandbox.conf"
-eerror
-				die
+			die
 		fi
 	popd >/dev/null 2>&1 || die
 }

@@ -66,7 +66,7 @@ PARAMIKO_PV="2.9.3"
 PYTHON_COMPAT=( "python3_"{10..12} )
 
 # Cargo must go after distutils-r1
-inherit autotools distutils-r1 cargo lcnr
+inherit autotools distutils-r1 cargo lcnr sandbox-changes
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${PN}-${PV}"
@@ -212,38 +212,17 @@ PATCHES=(
 	"${FILESDIR}/breezy-3.3.3-fix-compile-test.patch" # Added by oiledmachine-overlay
 )
 
-check_network_sandbox() {
-	if has network-sandbox $FEATURES ; then
-eerror
-eerror "FEATURES=\"-network-sandbox\" must be added per-package env to be able"
-eerror "to update lockfile."
-eerror
-		die
-	fi
-}
-
-check_usersandbox() {
+pkg_setup() {
+	[[ "${GENERATE_LOCKFILE}" == "1" ]] && check_network_sandbox
+	python_setup
+	if use test ; then
 #
 # The error message:
 #
 # * /var/tmp/portage/sys-apps/sandbox-2.29/work/sandbox-2.29/libsandbox/libsandbox.c:resolve_path():240: failure (Cannot allocate memory):
 # * malloc(8192)
 #
-	if has usersandbox $FEATURES ; then
-eerror
-eerror "FEATURES=\"-usersandbox\" must be added per-package env to be able"
-eerror "to run tests."
-eerror
-		die
-	fi
-}
-
-pkg_setup() {
-	[[ "${GENERATE_LOCKFILE}" == "1" ]] && check_network_sandbox
-	python_setup
-	if use test ; then
-		check_usersandbox
-		use sftp && check_network_sandbox
+		sandbox-changes_no_usersandbox "To run tests with USE=sftp"
 	fi
 	rust_pkg_setup
 }

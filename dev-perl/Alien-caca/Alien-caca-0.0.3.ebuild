@@ -6,7 +6,7 @@ EAPI=8
 
 LIBCACA_PV="0.99.beta20"
 DIST_AUTHOR="YANICK"
-inherit perl-module
+inherit perl-module sandbox-changes
 
 DESCRIPTION="Alien package for the Colored ASCII Art library"
 HOMEPAGE="
@@ -82,19 +82,9 @@ PATCHES+=(
 	"${FILESDIR}/Alien-caca-0.0.3-fix-CVE-2022-0856.patch"
 )
 
-check_network_sandbox() {
-	if has network-sandbox $FEATURES ; then
-eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
-eerror "env to be able to download micropackages."
-eerror
-		die
-	fi
-}
-
 pkg_setup() {
 	if ! use system-libcaca ; then
-		check_network_sandbox
+		sandbox-changes_no_network_sandbox "To download micropackages"
 	fi
 }
 

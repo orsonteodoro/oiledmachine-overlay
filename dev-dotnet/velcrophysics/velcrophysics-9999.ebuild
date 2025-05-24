@@ -4,7 +4,7 @@
 
 EAPI=8
 
-inherit git-r3 lcnr
+inherit git-r3 lcnr sandbox-changes
 
 DESCRIPTION="High performance 2D collision detection system with realistic \
 physics responses."
@@ -77,13 +77,7 @@ MONOGAME_PV_DOTNET5="3.8.0.1641"
 MONOGAME_PV_DOTNET6="3.8.1.303"
 
 pkg_setup() {
-	if has network-sandbox ${FEATURES} ; then
-eerror
-eerror "Building requires network-sandbox to be disabled in FEATURES on a"
-eerror "per-package level."
-eerror
-		die
-	fi
+	sandbox-changes_no_network_sandbox "To download micropackages"
 
 	use net50 && sdk="${DOTNET_SUPPORTED_SDKS[net50]}"
 	use net60 && sdk="${DOTNET_SUPPORTED_SDKS[net60]}"

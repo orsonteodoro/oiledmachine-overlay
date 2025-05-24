@@ -12,7 +12,7 @@ DOTNET_SUPPORTED_SDKS=( "dotnet-sdk-bin-${DOTNET_PV}" )
 PROJECT_NAME="SFML.Net"
 TARGET_FRAMEWORK="netstandard2.0"
 
-inherit dotnet
+inherit dotnet sandbox-changes
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/SFML/SFML.Net.git"
@@ -78,13 +78,7 @@ einfo
 }
 
 pkg_setup() {
-	if has network-sandbox ${FEATURES} ; then
-eerror
-eerror "Building requires network-sandbox to be disabled in FEATURES on a"
-eerror "per-package level."
-eerror
-		die
-	fi
+	sandbox-changes_no_network-sandbox "For downloading micropackages"
 
 	local found=0
 	for sdk in ${DOTNET_SUPPORTED_SDKS[@]} ; do

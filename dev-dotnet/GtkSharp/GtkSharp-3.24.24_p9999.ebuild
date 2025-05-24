@@ -7,7 +7,8 @@
 EAPI=7
 
 MY_PV=$(ver_cut 1-3 ${PV})
-inherit dotnet git-r3
+
+inherit dotnet git-r3 sandbox-changes
 
 DESCRIPTION=".NET wrapper for Gtk and other related libraries"
 HOMEPAGE="https://github.com/GtkSharp/GtkSharp"
@@ -84,13 +85,7 @@ declare -A DTFM=(
 )
 
 pkg_setup() {
-	if has network-sandbox ${FEATURES} ; then
-eerror
-eerror "Building requires network-sandbox to be disabled in FEATURES on a"
-eerror "per-package level."
-eerror
-		die
-	fi
+	sandbox-changes_no_network_sandbox "To download micropackages"
 
 	local found=0
 	for sdk in ${DOTNET_SDKS[@]} ; do

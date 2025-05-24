@@ -12,7 +12,7 @@ EXPECTED_FINGERPRINT="\
 "
 export S_GO="${WORKDIR}/go_build"
 
-inherit git-r3 lcnr linux-info
+inherit git-r3 lcnr linux-info sandbox-changes
 
 if [[ "${PV}" =~ "99999999" ]] ; then
 	IUSE+=" fallback-commit"
@@ -375,12 +375,8 @@ get_zig_arch() {
 }
 
 pkg_setup() {
-	if [[ "${PV}" =~ "99999999" ]] && has network-sandbox $FEATURES ; then
-eerror
-eerror "${PN} requires network-sandbox to be disabled in FEATURES in order to"
-eerror "download micropackages."
-eerror
-		die
+	if [[ "${PV}" =~ "99999999" ]] ; then
+		sandbox-changes_no_network_sandbox "To download micropackages"
 	fi
 	linux-info_pkg_setup
 	linux_config_exists

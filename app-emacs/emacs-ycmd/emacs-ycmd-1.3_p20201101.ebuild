@@ -7,7 +7,7 @@ EAPI=8
 NEED_EMACS="27.2"
 EMACS_SLOT="${NEED_EMACS%%.*}"
 PYTHON_COMPAT=( python3_{8..11} )
-inherit elisp java-pkg-opt-2 python-single-r1
+inherit elisp java-pkg-opt-2 python-single-r1 sandbox-changes
 
 DESCRIPTION="Emacs client for ycmd, the code completion system"
 HOMEPAGE="https://github.com/abingham/emacs-ycmd"
@@ -90,13 +90,7 @@ PATCHES=(
 )
 
 pkg_setup() {
-	if has network-sandbox $FEATURES ; then
-eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
-eerror "env to be able to download the internal dependencies."
-eerror
-		die
-	fi
+	sandbox-changes_no_network_sandbox "To download internal dependencies"
 
 	# No standard ebuild yet.
 	if use system-jdtls ; then

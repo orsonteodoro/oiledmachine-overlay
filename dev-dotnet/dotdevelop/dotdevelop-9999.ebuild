@@ -6,7 +6,7 @@ EAPI=8
 
 DOTNET_PV="6.0"
 
-inherit git-r3 lcnr xdg
+inherit git-r3 lcnr sandbox-changes xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/dotdevelop/dotdevelop.git"
@@ -119,13 +119,7 @@ EXPECTED_BUILD_FILES="\
 "
 
 pkg_setup() {
-	if has network-sandbox ${FEATURES} ; then
-eerror
-eerror "Building requires network-sandbox to be disabled in FEATURES on a"
-eerror "per-package level."
-eerror
-		die
-	fi
+	sandbox-changes_no_network_sandbox "To download micropackages"
 
 	local found=0
 	for sdk in ${DOTNET_SUPPORTED_SDKS[@]} ; do

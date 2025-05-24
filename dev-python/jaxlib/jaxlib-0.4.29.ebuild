@@ -75,7 +75,7 @@ LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 PYTHON_COMPAT=( "python3_"{11..12} ) # Limited by Flax CI
 
 inherit bazel cuda distutils-r1 dhms flag-o-matic git-r3 hip-versions java-pkg-opt-2
-inherit llvm pypi rocm toolchain-funcs
+inherit llvm pypi rocm sandbox-changes toolchain-funcs
 
 # DO NOT HARD WRAP
 # DO NOT CHANGE TARBALL FILE EXT
@@ -565,16 +565,6 @@ ROCM_PATCHES=(
 
 distutils_enable_tests "pytest"
 
-check_network_sandbox_permissions() {
-	if has network-sandbox $FEATURES ; then
-eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
-eerror "env to be able to download micropackages."
-eerror
-		die
-	fi
-}
-
 setup_linker() {
 	if use rocm ; then
 		return
@@ -899,7 +889,8 @@ eerror
 	java-pkg-opt-2_pkg_setup
 	java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
 
-	check_network_sandbox_permissions # Required because rules_python/pip cannot do offline easily.
+	# Required because rules_python/pip cannot do offline easily.
+	# sandbox-changes_no_network_sandbox "To download micropackages"
 }
 
 src_unpack() {

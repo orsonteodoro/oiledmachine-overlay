@@ -19,7 +19,7 @@ fi
 ROCM_SLOT="${PV%.*}"
 ROCM_VERSION="${PV}"
 
-inherit rocm unpacker
+inherit rocm sandbox-changes unpacker
 
 if [[ "${MAINTAINER_MODE}" =~ "1" ]] ; then
 	:
@@ -67,16 +67,6 @@ S="${WORKDIR}"
 PATCHES=(
 )
 
-check_sandbox() {
-	if has network-sandbox ${FEATURES} ; then
-eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
-eerror "env to be able to download kernels."
-eerror
-		die
-	fi
-}
-
 unpack_deb() {
 	echo ">>> Unpacking ${1##*/} to ${PWD}"
 	unpack ${1}
@@ -90,7 +80,7 @@ src_unpack() {
 
 	if [[ "${MAINTAINER_MODE}" == "1" ]] ; then
 	# For minimizing copy-paste human error.
-		check_sandbox
+		sandbox-changes_no_network_sandbox "To download kernels"
 		# For hashes
 		wget "https://repo.radeon.com/rocm/apt/${MY_PV}/dists/ubuntu/main/binary-amd64/Packages"
 		csplit \

@@ -42,7 +42,7 @@ UOPTS_SUPPORT_TPGO=1
 XMRNBENCHMARKER_COMMIT="97f618cd585af549dd861b7c142656c496f6a89b"
 
 inherit autotools cflags-hardened check-reqs lcnr linux-info mono-env pax-utils
-inherit multilib-minimal toolchain-funcs uopts
+inherit multilib-minimal sandbox-changes toolchain-funcs uopts
 
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 -riscv ~x86 ~amd64-linux"
 SRC_URI="
@@ -294,18 +294,10 @@ pkg_setup() {
 	uopts_setup
 
 	if \
-		( \
-			   use mono_trainers_acceptance_tests_coreclr \
-			|| use mono_trainers_acceptance_tests_microbench \
-		) \
-		&& \
-		has network-sandbox ${FEATURES} \
+		   use mono_trainers_acceptance_tests_coreclr \
+		|| use mono_trainers_acceptance_tests_microbench \
 	; then
-eerror
-eerror "Building with acceptance-tests requires network-sandbox to be disabled"
-eerror "in FEATURES on a per-package level."
-eerror
-		die
+		sandbox-changes_no_network_sandbox "For building with USE=acceptance-tests"
 	fi
 
 	if use mono_trainers_acceptance_tests_coreclr ; then

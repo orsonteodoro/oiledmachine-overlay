@@ -10,7 +10,7 @@ EXPECTED_BUILD_FINGERPRINT="\
 34d5dd4c2f2fcd708ca826714e1a4bc0fc331ae48d20883c47d0a2fca62fb413\
 20f00fd42c2232881b8532530fa8ccfdabed6e30107a082ee5c9f300155c1f68"
 
-inherit cmake flag-o-matic git-r3 python-any-r1
+inherit cmake flag-o-matic git-r3 python-any-r1 sandbox-changes
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -108,13 +108,8 @@ src_unpack() {
 		unpack ${A}
 	fi
 	if use test ; then
-		if has network-sandbox $FEATURES ; then
-eerror
-eerror "${PN} requires network-sandbox to be disabled in FEATURES to be able to"
-eerror "conduct testing."
-eerror
-			die
-		fi
+	# TODO:  verify that this can be removed.
+		sandbox-changes_no_network_sandbox "To be able to use USE=test"
 	fi
 }
 

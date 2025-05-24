@@ -103,13 +103,7 @@ pkg_setup() {
 	python-single-r1_pkg_setup
 	CONFIG_CHECK="~ECRYPT_FS"
 	linux-info_pkg_setup
-	if has network-sandbox $FEATURES ; then
-eerror
-eerror "FEATURES=\"\${FEATURES} -network-sandbox\" must be added per-package"
-eerror "env to be able to download from a live source."
-eerror
-		die
-	fi
+	sandbox-changes_no_network_sandbox "To download the project"
 	local distdir=${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}
 	addwrite "${distdir}"
 	if [[ ! -d "${distdir}/ecryptfs-utils-src" ]] ; then

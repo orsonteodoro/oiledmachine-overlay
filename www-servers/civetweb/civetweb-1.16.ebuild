@@ -27,7 +27,7 @@ LUA_PV_SUPPORTED=(
 	"5.4.0"
 ) # Upstream supported specifically
 
-inherit cflags-hardened cmake flag-o-matic lua multilib-minimal
+inherit cflags-hardened cmake flag-o-matic lua multilib-minimal sandbox-changes
 
 KEYWORDS="~amd64 ~ppc ~x86"
 S="${WORKDIR}/civetweb-${PV}"
@@ -138,13 +138,7 @@ ewarn "Lua >=5.3 support is for testing only."
 	fi
 	if use test ; then
 ewarn "The test USE flag has not been tested yet."
-		if has network-sandbox $FEATURES ; then
-eerror
-eerror "${PN} requires network-sandbox to be disabled in FEATURES in order to"
-eerror "download test dependencies."
-eerror
-			die
-		fi
+		sandbox-changes_no_network_sandbox "For USE=test to download test dependencies"
 	fi
 
 	if use lua ; then
