@@ -127,7 +127,6 @@ BDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/howdy-3.0_beta_pre9999-howdy-gtk-fix-camera-id.patch"
 )
 
 pkg_setup()
