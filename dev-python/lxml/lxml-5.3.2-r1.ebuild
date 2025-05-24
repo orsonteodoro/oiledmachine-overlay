@@ -84,8 +84,7 @@ check_cython() {
 	local expected_cython_slot="3.0"
 	if ver_test "${actual_cython_slot}" -ne "${expected_cython_slot}" ; then
 eerror
-eerror "You must switch to Cython ${expected_cython_slot}."
-eerror "Use \`eselect cython\` to switch"
+eerror "Do \`eselect cython set ${expected_cython_slot}\` to continue"
 eerror
 eerror "Actual cython slot:  ${actual_cython_slot}"
 eerror "Expected cython slot:  ${expected_cython_slot}"

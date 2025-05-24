@@ -92,7 +92,7 @@ python_configure() {
 	local expected_cython_slot="0.29"
 	if ver_test "${actual_cython_slot}" -ne "${expected_cython_slot}" ; then
 eerror
-eerror "Switch cython to ${expected_cython_pv} via eselect-cython"
+eerror "Do \`eselect cython set ${expected_cython_slot}\` to continue."
 eerror
 eerror "Actual cython version:\t${actual_cython_pv}"
 eerror "Expected cython version\t${expected_cython_slot}"

@@ -736,7 +736,7 @@ DEPEND+="
 BDEPEND+="
 	$(python_gen_cond_dep '
 		cython? (
-			>=dev-python/cython-3.0.0_alpha11[${PYTHON_USEDEP}]
+			>=dev-python/cython-3.0.0_alpha11:3.0[${PYTHON_USEDEP}]
 		)
 		test? (
 			>=dev-python/rencode-'${RENCODE_PV}'[${PYTHON_USEDEP}]
@@ -771,20 +771,20 @@ PATCHES=(
 )
 
 check_cython() {
-	cython --version || die "Check eselect cython"
+	cython --version || die "Check \`eselect cython\` to make sure it is set to 3.0"
 	local actual_cython_pv=$(cython --version 2>&1 \
 		| cut -f 3 -d " " \
 		| sed -e "s|a|_alpha|g" \
 		| sed -e "s|b|_beta|g" \
 		| sed -e "s|rc|_rc|g")
-	local expected_cython_pv="3.0.0_alpha11"
-	local required_cython_major=$(ver_cut 1 ${expected_cython_pv})
-	if ver_test ${actual_cython_pv} -lt ${required_cython_major} ; then
+	local actual_cython_slot=$(ver_cut 1-2 "${expected_cython_pv}")
+	local expected_cython_slot="3.0"
+	if ver_test "${actual_cython_slot}" -ne "${expected_cython_slot}" ; then
 eerror
-eerror "Switch cython to >= ${expected_cython_pv} via eselect-cython"
+eerror "Do \`eselect cython set ${expected_cython_pv}\` to continue."
 eerror
 eerror "Actual cython version:\t${actual_cython_pv}"
-eerror "Expected cython version\t${expected_cython_pv}"
+eerror "Expected cython version\t${expected_cython_slot}"
 eerror
 		die
 	fi
