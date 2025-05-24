@@ -74,24 +74,27 @@ pkg_setup() {
 	strip-unsupported-flags
 }
 
+check_cython() {
+	which cython || die "Missing symlink.  Use \`eselect cython\` to set it to Cython 3.1."
+	local actual_cython_pv=$(cython --version 2>&1 \
+		| cut -f 3 -d " " \
+		| sed -e "s|b|_beta|g" -e "s|a|_alpha|g" -e "s|rc|_rc|g")
+	local actual_cython_slot=$(ver_cut 1-2 "${actual_cython_pv}")
+	local expected_cython_slot="3.1"
+	if ver_test "${actual_cython_slot}" -ne "${expected_cython_slot}" ; then
+eerror
+eerror "You must switch to Cython ${expected_cython_slot}."
+eerror "Use \`eselect cython\` to switch"
+eerror
+eerror "Actual cython slot:  ${actual_cython_slot}"
+eerror "Expected cython slot:  ${expected_cython_slot}"
+eerror
+		die
+	fi
+}
+
 src_configure() {
-	which cython || die "Missing symlink.  Use \`eselect cython\` to set it to Cython 3."
-	local cython_pv=$(cython --version | cut -f 3 -d " ")
-	local normalized_pv="${cython_pv}"
-	if [[ "${normalized_pv}" =~ "a" ]] ; then
-		normalized_pv=${normalized_pv/a/_alpha}
-	elif [[ "${normalized_pv}" =~ "b" ]] ; then
-		normalized_pv=${normalized_pv/b/_beta}
-	fi
-einfo "Raw Cython version:  ${cython_pv}"
-einfo "Normalized Cython version:  ${normalized_pv}"
-	if ver_test "${normalized_pv%%.*}" -ne "3" ; then
-eerror "Use \`eselect cython\` to switch to Cython 3."
-		die
-	elif ver_test "${normalized_pv}" -lt "3.1.0_alpha1" ; then
-eerror "${PN} requires Cython 3.1.0 alpha 1 or above."
-		die
-	fi
+	check_cython
 	distutils-r1_src_configure
 }
 
