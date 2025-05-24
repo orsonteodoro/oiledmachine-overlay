@@ -137,8 +137,8 @@ exist in build files.
 | PyTorch 2.7 (CUDA 12.8)           | Planned                               |                                                          |
 | Qt 5.x                            | Available                             |                                                          |
 | Qt 6.x                            | Fully supported                       |                                                          |
-| ROCm 6.2                          | Available                             | F41 (6.2.1), U24 (>= 6.2.0) (1)                          |
-| ROCm 6.3                          | Planned                               | D12 (>= 6.3.1) (2), F42 (6.3.1)                          |
+| ROCm 6.2                          | Available                             | F41 (6.2.1) (3), U24 (>= 6.2.0) (1)                      |
+| ROCm 6.3                          | Planned                               | D12 (>= 6.3.1) (2), F42 (6.3.1) (3)                      |
 | SYCL                              | Available                             |                                                          |
 | systemd                           | Partially supported                   |                                                          |
 | TensorFlow >= 2.14 (CPU)          | Fully supported                       |                                                          |
@@ -153,6 +153,7 @@ exist in build files.
 
 * (1) U24 uses Python 3.12 for ROCm support
 * (2) D12 uses Python 3.11 for ROCm support
+* (3) F41, F42 uses Python 3.13 for ROCm support
 
 Gentoo Prefix is not supported and deprecated on this overlay.
 
