@@ -3,7 +3,9 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data" # Live ebuilds or git modules with no https (MITM attack) are assumed untrusted.
+# Live ebuilds or git modules with no https (MITM attack) are assumed untrusted.
+# Added retpoline for passwords.
+CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 GENTOO_DEPEND_ON_PERL="no"
 
 # bug #329479: git-remote-testgit is not multiple-version aware
