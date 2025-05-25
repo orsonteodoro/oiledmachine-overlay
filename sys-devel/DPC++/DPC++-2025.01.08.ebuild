@@ -3,6 +3,9 @@
 
 EAPI=8
 
+# We would like to use the 6.1.0 release, but it is using U22 which needs
+# Python 3.10.
+
 # Deps:  https://github.com/intel/llvm/blob/nightly-2025-01-08/devops/dependencies.json
 # LLVM 20 ; See https://github.com/intel/llvm/blob/nightly-2025-01-08/cmake/Modules/LLVMVersion.cmake
 # U24.04 ; See https://github.com/intel/llvm/blob/nightly-2025-01-08/sycl/doc/GetStartedGuide.md?plain=1#L310
@@ -385,7 +388,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-2024.03.15-system-libs.patch"
+	"${FILESDIR}/${PN}-2025.01.08-system-libs.patch"
 )
 
 warn_untested_gpu() {
@@ -465,56 +468,30 @@ eerror "Switch to >=llvm-core/clang-18.0"
 src_prepare() {
 	cmake_src_prepare
 
-	pushd "${WORKDIR}" >/dev/null 2>&1 || die
-		eapply "${FILESDIR}/${PN}-2024.03.15-hardcoded-paths.patch"
+	pushd "${S}" >/dev/null 2>&1 || die
+		eapply "${FILESDIR}/${PN}-2025.01.08-hardcoded-paths.patch"
 	popd >/dev/null 2>&1 || die
 
 	# Speed up symbol replacmenet for @...@ by reducing the search space
 	# Generated from below one liner ran in the same folder as this file:
 	# grep -F -r -e "+++" files/*hardcoded-paths* | cut -f 2 -d " " | cut -f 1 -d $'\t' | sort | uniq | cut -f 2- -d $'/' | sort | uniq
 	export PATCH_PATHS=(
-		"${WORKDIR}/llvm-2022-12/clang/lib/Driver/ToolChains/AMDGPU.cpp"
-		"${WORKDIR}/llvm-2022-12/clang/tools/amdgpu-arch/CMakeLists.txt"
-		"${WORKDIR}/llvm-2022-12/mlir/lib/Dialect/GPU/CMakeLists.txt"
-		"${WORKDIR}/llvm-2022-12/mlir/lib/ExecutionEngine/CMakeLists.txt"
-		"${WORKDIR}/llvm-2022-12/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt"
-		"${WORKDIR}/llvm-2022-12/sycl/plugins/hip/CMakeLists.txt"
-		"${WORKDIR}/llvm-nightly-2023-10-26/clang/lib/Driver/ToolChains/AMDGPU.cpp"
-		"${WORKDIR}/llvm-nightly-2023-10-26/libc/cmake/modules/prepare_libc_gpu_build.cmake"
-		"${WORKDIR}/llvm-nightly-2023-10-26/libc/src/math/gpu/vendor/CMakeLists.txt"
-		"${WORKDIR}/llvm-nightly-2023-10-26/libc/utils/gpu/loader/CMakeLists.txt"
-		"${WORKDIR}/llvm-nightly-2023-10-26/mlir/lib/Dialect/GPU/CMakeLists.txt"
-		"${WORKDIR}/llvm-nightly-2023-10-26/mlir/lib/ExecutionEngine/CMakeLists.txt"
-		"${WORKDIR}/llvm-nightly-2023-10-26/mlir/lib/Target/LLVM/CMakeLists.txt"
-		"${WORKDIR}/llvm-nightly-2023-10-26/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt"
-		"${WORKDIR}/llvm-nightly-2023-10-26/sycl/plugins/hip/CMakeLists.txt"
-		"${WORKDIR}/llvm-nightly-2024-03-15/clang/lib/Driver/ToolChains/AMDGPU.cpp"
-		"${WORKDIR}/llvm-nightly-2024-03-15/libc/src/math/amdgpu/CMakeLists.txt"
-		"${WORKDIR}/llvm-nightly-2024-03-15/libc/utils/gpu/loader/CMakeLists.txt"
-		"${WORKDIR}/llvm-nightly-2024-03-15/mlir/lib/Dialect/GPU/CMakeLists.txt"
-		"${WORKDIR}/llvm-nightly-2024-03-15/mlir/lib/ExecutionEngine/CMakeLists.txt"
-		"${WORKDIR}/llvm-nightly-2024-03-15/mlir/lib/Target/LLVM/CMakeLists.txt"
-		"${WORKDIR}/llvm-nightly-2024-03-15/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt"
-		"${WORKDIR}/llvm-nightly-2024-03-15/sycl/plugins/hip/CMakeLists.txt"
-		"${WORKDIR}/llvm-sycl-nightly-20220812/clang/lib/Driver/ToolChains/AMDGPU.cpp"
-		"${WORKDIR}/llvm-sycl-nightly-20220812/clang/tools/amdgpu-arch/CMakeLists.txt"
-		"${WORKDIR}/llvm-sycl-nightly-20220812/mlir/lib/Dialect/GPU/CMakeLists.txt"
-		"${WORKDIR}/llvm-sycl-nightly-20220812/mlir/lib/ExecutionEngine/CMakeLists.txt"
-		"${WORKDIR}/llvm-sycl-nightly-20220812/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt"
-		"${WORKDIR}/llvm-sycl-nightly-20220812/sycl/plugins/hip/CMakeLists.txt"
-		"${WORKDIR}/llvm-sycl-nightly-20230417/clang/lib/Driver/ToolChains/AMDGPU.cpp"
-		"${WORKDIR}/llvm-sycl-nightly-20230417/clang/tools/amdgpu-arch/CMakeLists.txt"
-		"${WORKDIR}/llvm-sycl-nightly-20230417/libc/cmake/modules/prepare_libc_gpu_build.cmake"
-		"${WORKDIR}/llvm-sycl-nightly-20230417/libc/utils/gpu/loader/CMakeLists.txt"
-		"${WORKDIR}/llvm-sycl-nightly-20230417/mlir/lib/Dialect/GPU/CMakeLists.txt"
-		"${WORKDIR}/llvm-sycl-nightly-20230417/mlir/lib/ExecutionEngine/CMakeLists.txt"
-		"${WORKDIR}/llvm-sycl-nightly-20230417/openmp/libomptarget/plugins-nextgen/amdgpu/CMakeLists.txt"
-		"${WORKDIR}/llvm-sycl-nightly-20230417/openmp/libomptarget/plugins/amdgpu/CMakeLists.txt"
-		"${WORKDIR}/llvm-sycl-nightly-20230417/sycl/plugins/hip/CMakeLists.txt"
-		"${WORKDIR}/unified-runtime-cf26de283a1233e6c93feb085acc10c566888b59/source/adapters/hip/CMakeLists.txt"
-		"${WORKDIR}/unified-runtime-ec634ff05b067d7922ec45059dda94665e5dcd9b/source/adapters/hip/CMakeLists.txt"
+		"${WORKDIR}/llvm-nightly-2025-01-08/clang/lib/Driver/ToolChains/AMDGPU.cpp"
+		"${WORKDIR}/llvm-nightly-2025-01-08/libc/benchmarks/gpu/src/math/CMakeLists.txt"
+		"${WORKDIR}/llvm-nightly-2025-01-08/libc/src/math/amdgpu/CMakeLists.txt"
+		"${WORKDIR}/llvm-nightly-2025-01-08/libc/utils/gpu/loader/CMakeLists.txt"
+		"${WORKDIR}/llvm-nightly-2025-01-08/mlir/lib/ExecutionEngine/CMakeLists.txt"
+		"${WORKDIR}/llvm-nightly-2025-01-08/mlir/lib/Target/LLVM/CMakeLists.txt"
+		"${WORKDIR}/llvm-nightly-2025-01-08/offload/plugins-nextgen/amdgpu/CMakeLists.txt"
 	)
-	rocm_src_prepare
+	if use rocm ; then
+		rocm_src_prepare
+	else
+		local x
+		for x in ${PATCH_PATHS[@]} ; do
+			sed -i -e "s|-@ROCM_VERSION@||g" "${x}" || die
+		done
+	fi
 }
 
 src_configure() {
