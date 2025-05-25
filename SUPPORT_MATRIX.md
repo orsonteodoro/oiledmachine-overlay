@@ -122,8 +122,13 @@ exist in build files.
 | Ollama 0.3, 0.4 (CUDA 12.4)       | Available                             |                                                          |
 | Ollama 0.5, 0.6, 0.7 (ROCm 6.3)   | Planned                               |                                                          |
 | Ollama 0.5, 0.6, 0.7 (CUDA 12.8)  | Available                             |                                                          |
-| OpenMP (CPU)                      | Fully supported                       |                                                          |
-| OpenMP (GPU)                      | Available                             |                                                          |
+| GCC OpenMP (CPU)                  | Fully supported                       |                                                          |
+| LLVM OpenMP (CPU)                 | Fully supported                       |                                                          |
+| LLVM OpenMP offload (CUDA)        | Available                             |                                                          |
+| LLVM OpenMP offload (ROCm)        | Not Supported                         |                                                          |
+| ROCm OpenMP offload               | Available                             |                                                          |
+| DPC++ OpenMP offload              | Planned                               |                                                          |
+| OpenMP (ROCm)                     | Available                             |                                                          |
 | OpenRC                            | Fully supported                       |                                                          |
 | Protobuf 3                        | Fully supported                       | D12 (3.21.12), F41 (3.19.6), F42 (3.19.6), U24 (3.21.12) |
 | Protobuf 4                        | Available                             |                                                          |
