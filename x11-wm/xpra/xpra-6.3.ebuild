@@ -787,7 +787,7 @@ eerror
 	local expected_cython_slot="3.0"
 	if ver_test "${actual_cython_slot}" -ne "${expected_cython_slot}" ; then
 eerror
-eerror "Do \`eselect cython set ${expected_cython_pv}\` to continue."
+eerror "Do \`eselect cython set ${expected_cython_slot}\` to continue."
 eerror
 eerror "Actual cython version:\t${actual_cython_pv}"
 eerror "Expected cython version\t${expected_cython_slot}"
