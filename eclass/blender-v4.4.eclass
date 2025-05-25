@@ -1087,7 +1087,16 @@ RDEPEND+="
 			>=dev-libs/level-zero-1.19.2
 			<dev-libs/level-zero-2.0
 		)
-		>=sys-devel/DPC++-2025.01.08:0/8[aot?]
+		|| (
+			(
+				>=sys-devel/DPC++-6.0.0_rc1:0/8[aot?]
+				!>=sys-devel/DPC++-2019
+			)
+			(
+				>=sys-devel/DPC++-2025.01.08:0/8[aot?]
+				!<sys-devel/DPC++-2025.01.08
+			)
+		)
 		aot? (
 			>=dev-libs/intel-compute-runtime-23.43.27642.40[l0]
 			>=dev-util/intel-graphics-compiler-2.1.14
