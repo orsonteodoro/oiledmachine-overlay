@@ -146,7 +146,7 @@ python_install_all() {
 
 pkg_postinst() {
 	use emacs && elisp-site-regen
-	eselect cython set "cython.${SLOT_MAJOR}"
+	eselect cython set "${SLOT_MAJOR}"
 einfo "Use \`eselect cython\` to switch between Cython slots."
 }
 
