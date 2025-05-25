@@ -768,7 +768,7 @@ eerror
 		| sed -e "s|a|_alpha|g" \
 		| sed -e "s|b|_beta|g" \
 		| sed -e "s|rc|_rc|g")
-	local actual_cython_slot=$(ver_cut 1-2 "${expected_cython_pv}")
+	local actual_cython_slot=$(ver_cut 1-2 "${actual_cython_pv}")
 	local expected_cython_slot="3.0"
 	if ver_test "${actual_cython_slot}" -ne "${expected_cython_slot}" ; then
 eerror
