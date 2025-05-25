@@ -982,10 +982,11 @@ eerror
 		--with-keyboard
 #		--with-strict
 		--with-verbose
-		--without-warn
 		--without-debug
 		--without-example
+		--without-openh264 # missing wels folder
 		--without-PIC
+		--without-warn
 		--without-Xdummy
 	)
 
