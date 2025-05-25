@@ -413,13 +413,12 @@ src_configure() {
 	BUILD_DIR=${WORKDIR}/compiler-rt_build
 
 	if use clang; then
-		local -x CC=${CHOST}-clang
-		local -x CXX=${CHOST}-clang++
+		local -x CC="${CHOST}-clang"
+		local -x CXX="${CHOST}-clang++"
+		local -x CPP="${CC} -E"
 		strip-unsupported-flags
-ewarn
-ewarn "Disable the clang USE flag if \"Assumed value of MB_LEN_MAX wrong\" pops up."
-ewarn
 	fi
+ewarn "Rebuild with GCC 12 if \"Assumed value of MB_LEN_MAX wrong\" pops up."
 
 	local flag want_sanitizer=OFF
 	for flag in "${SANITIZER_FLAGS[@]}"; do
@@ -428,19 +427,6 @@ ewarn
 			break
 		fi
 	done
-
-	if use amd64 && use safestack ; then
-eerror
-eerror "SafeStack on ${ARCH} is has not been academically peer reviewed since"
-eerror "2022 or endorsed by a well known security expert for this arch."
-eerror
-eerror "See also issue:  https://issues.chromium.org/issues/40603870"
-eerror "It is still unknown if the recent fixes addresses these 2 issues in"
-eerror "comment #2."
-eerror
-eerror "Use at your own risk."
-eerror
-	fi
 
 	local mycmakeargs=(
 		-DCOMPILER_RT_INSTALL_PATH="${EPREFIX}/usr/lib/clang/${LLVM_MAJOR}"
