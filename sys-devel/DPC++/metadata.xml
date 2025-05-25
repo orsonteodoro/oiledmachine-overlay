@@ -45,6 +45,9 @@
     <flag name="native-cpu">
       Enable SYCL Native CPU support
     </flag>
+    <flag name="openmp">
+      Add support for GPU offloading
+    </flag>
     <flag name="sycl-fusion">
       Enable the JIT kernel fusion compiler
     </flag>

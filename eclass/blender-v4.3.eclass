@@ -1080,10 +1080,6 @@ RDEPEND+="
 				>=sys-devel/DPC++-2024.03.14:0/7[aot?]
 				!<sys-devel/DPC++-2024.03.14
 			)
-			(
-				>=sys-devel/DPC++-5.2.0:0/7[aot?]
-				!>=sys-devel/DPC++-2019
-			)
 		)
 		aot? (
 			>=dev-libs/intel-compute-runtime-23.52.28202.45[l0]

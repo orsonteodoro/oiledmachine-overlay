@@ -1090,10 +1090,6 @@ RDEPEND+="
 		)
 		|| (
 			(
-				>=sys-devel/DPC++-6.0.0_rc1:0/8[aot?]
-				!>=sys-devel/DPC++-2019
-			)
-			(
 				>=sys-devel/DPC++-2025.01.08:0/8[aot?]
 				!<sys-devel/DPC++-2025.01.08
 			)
