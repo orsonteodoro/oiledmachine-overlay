@@ -694,8 +694,6 @@ CODECS="
 	)
 "
 
-# The distro's llvm 14 for mesa is 22.05.
-# Missing OCLOC
 PATENT_STATUS_RDEPEND="
 	virtual/patent-status[patent_status_nonfree=]
 	!patent_status_nonfree? (
@@ -717,6 +715,9 @@ PATENT_STATUS_RDEPEND="
 		)
 	)
 "
+# The distro's llvm 14 for mesa is 22.05.
+# Missing OCLOC
+# For compute-runtime version correspondance to level zero, see https://github.com/intel/compute-runtime/blob/23.52.28202.45/manifests/manifest.yml#L56
 RDEPEND+="
 	$(python_gen_cond_dep '
 		(
@@ -1085,7 +1086,7 @@ RDEPEND+="
 			)
 		)
 		aot? (
-			>=dev-libs/intel-compute-runtime-23.43.27642.40[l0]
+			>=dev-libs/intel-compute-runtime-23.52.28202.45[l0]
 			>=dev-util/intel-graphics-compiler-1.0.17384.29
 		)
 	)
