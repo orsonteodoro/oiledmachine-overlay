@@ -89,7 +89,7 @@ python_configure() {
 		| sed -e "s|b|_beta|g" \
 		| sed -e "s|rc|_rc|g")
 	local actual_cython_slot=$(ver_cut 1-2 "${actual_cython_pv}")
-	local expected_cython_pv="0.29"
+	local expected_cython_slot="0.29"
 	if ver_test "${actual_cython_slot}" -ne "${expected_cython_slot}" ; then
 eerror
 eerror "Do \`eselect cython set ${expected_cython_slot}\` to continue."
