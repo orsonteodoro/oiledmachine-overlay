@@ -281,7 +281,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_VULNERABILITY_HISTORY
 # @DESCRIPTION:
-# List of historical CVE memory corruptions.  Used to tiebreak retpoline versus
+# List of historical CVE memory corruptions.  Used to tie break retpoline versus
 # cf-protection mutually exclusive flags.
 #
 # Valid values:
@@ -303,7 +303,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_PROTECT_SPECTRUM_USER
 # @USER_VARIABLE
 # @DESCRIPTION:
-# Allow to override the CFI vs Retpoline automagic.  This allows the user to
+# Allow to override the CFI versus Retpoline automagic.  This allows the user to
 # optimize mitigation either against information disclosure with Retpoline; or
 # code execution and privilege escalation with CFI.
 #
