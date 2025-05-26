@@ -4,6 +4,7 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="jit network security-critical sensitive-data untrusted-data web-browser"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="UAF" # Based on Chromium
 PYTHON_COMPAT=( python3_{11..13} )
 PYTHON_REQ_USE="xml(+)"
 inherit cflags-hardened check-reqs flag-o-matic multiprocessing optfeature
