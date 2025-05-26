@@ -109,3 +109,11 @@ src_install() {
 	doman "man/"*".1"
 	dodoc "BUGS" "History"* "README" "ToDo" "WHERE"
 }
+
+pkg_postinst() {
+ewarn
+ewarn "If you are using zip's encryption with ZipCrypto, please migrate the zip"
+ewarn "contents to a peer reviewed crypto algorithm like AES using an"
+ewarn "alternative program."
+ewarn
+}
