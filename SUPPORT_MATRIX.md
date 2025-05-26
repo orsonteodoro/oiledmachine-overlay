@@ -166,7 +166,7 @@ exist in build files.
       ebuilds will be provided.  You must either keep a local ebuild fork
       with cflags-hardened changes or add per-package hardening CFLAGS (e.g.
       Retpoline, CET) for UI toolkit packages that have a password UI widget,
-      or process untrusted data, or process sensitive data.
+      or for packages that process untrusted data or process sensitive data.
 
 Gentoo Prefix is not supported and deprecated on this overlay.
 
