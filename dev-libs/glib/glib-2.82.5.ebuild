@@ -4,9 +4,10 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
+# CVE-2018-16428 - network zero click attack, null pointer dereference (UBSAN)
 #CFLAGS_HARDENED_SANITIZERS="address undefined"
 CFLAGS_HARDENED_TOLERANCE="4.00"
-# CVE-2018-16428 - network zero click attack, null pointer dereference (UBSAN)
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO IO"
 INTROSPECTION_PN="gobject-introspection"
 INTROSPECTION_PV="1.82.0"
 INTROSPECTION_P="${INTROSPECTION_PN}-${INTROSPECTION_PV}"
