@@ -5,6 +5,7 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO"
 INTERNAL_VERSION="5.26.1" # From CMakeLists.txt L82
 
 inherit cflags-hardened cmake-multilib elisp-common flag-o-matic
