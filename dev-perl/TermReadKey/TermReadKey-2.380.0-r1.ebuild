@@ -3,7 +3,7 @@
 
 EAPI=8
 
-# Add retpoline
+# Add retpoline for kpcli
 CFLAGS_HARDENED_USE_FLAGS="security-critical sensitive-data"
 
 DIST_AUTHOR=JSTOWE
