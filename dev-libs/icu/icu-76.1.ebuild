@@ -9,6 +9,7 @@ MY_PV="${PV/_rc/-rc}"
 MY_PV="${MY_PV//./_}"
 
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF HO IO SO UAF UM"
 MULTILIB_CHOST_TOOLS=(
 	"/usr/bin/icu-config"
 )
