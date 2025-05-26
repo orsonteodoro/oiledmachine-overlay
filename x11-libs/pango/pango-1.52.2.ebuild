@@ -3,7 +3,9 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+# Add retpoline for the show password feature
+CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=3
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 
 inherit cflags-hardened flag-o-matic gnome2-utils meson-multilib xdg
 
@@ -20,7 +22,7 @@ LICENSE="LGPL-2+"
 SLOT="0"
 IUSE="
 debug +introspection sysprof test X
-ebuild_revision_4
+ebuild_revision_5
 "
 RESTRICT="
 	!test? (
