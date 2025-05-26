@@ -4,6 +4,7 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO"
 NASM_PV="2.15.05"
 
 if [[ "${PV}" == "9999" ]]; then

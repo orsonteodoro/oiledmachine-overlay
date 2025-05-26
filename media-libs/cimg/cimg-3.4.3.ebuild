@@ -3,6 +3,11 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="DF HO"
+
+inherit cflags-hardened
+
 KEYWORDS="~amd64 ~x86"
 S="${WORKDIR}/CImg-v.${PV}"
 SRC_URI="
@@ -21,6 +26,10 @@ LICENSE="
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="doc examples"
+
+src_configure() {
+	cflags-hardened_append
+}
 
 src_install() {
 	doheader "CImg.h"
