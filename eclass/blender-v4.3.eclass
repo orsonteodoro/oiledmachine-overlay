@@ -198,7 +198,7 @@ ${ROCM_SLOTS[@]}
 +opencl +openexr +openimagedenoise +openimageio +openmp +opensubdiv +openvdb
 +openxr -optix +osl +pdf +potrace +pulseaudio release -rocm -sdl +sndfile sycl
 +tbb test +tiff +usd +uv-slim -valgrind +wayland
-ebuild_revision_3
+ebuild_revision_4
 "
 # hip is default ON upstream.
 inherit blender
@@ -1438,6 +1438,7 @@ eerror
 	# shadows, see bug #276338 for reference
 	append-flags -funsigned-char
 	append-lfs-flags
+	cflags-hardened_append
 
 	local s="${OPENVDB_ABIS_MAJOR_VERS}"
 	if use "abi${s}-compat" ; then

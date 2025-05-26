@@ -32,7 +32,10 @@ einfo "BLENDER_MAIN_SYMLINK_MODE:\t${BLENDER_MAIN_SYMLINK_MODE}"
 _blender_set_globals
 unset -f _blender_set_globals
 
-inherit cuda check-reqs cmake dhms flag-o-matic hip-versions llvm pax-utils
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO IO SO"
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
+
+inherit cflags-hardened cuda check-reqs cmake dhms flag-o-matic hip-versions llvm pax-utils
 inherit python-single-r1 rocm toolchain-funcs xdg
 
 DESCRIPTION="3D Creation/Animation/Publishing System"
