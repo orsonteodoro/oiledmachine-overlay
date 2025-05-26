@@ -4,6 +4,7 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO IO SO UM"
 CMAKE_ECLASS="cmake"
 MULTILIB_WRAPPED_HEADERS=(
 	"/usr/include/jconfig.h"
