@@ -640,7 +640,7 @@ _PROFILE_GRAPH["zstdgrep"]="zstd"
 _PROFILE_GRAPH["zstdless"]="zstd"
 _PROFILE_GRAPH["zstdmt"]="zstd"
 
-declare -A SCOPE=(
+declare -A _SCOPE=(
 	["X"]="ban"
 	["Xephyr"]="ban" # Breaks --x11=xephyr
 	["xpra"]="ban" # Causes Authorization required, but no authorization protocol specified
