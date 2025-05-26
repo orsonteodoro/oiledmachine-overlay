@@ -230,6 +230,7 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # HO - Heap Overflow
 # IO - Integer Overflow
 # IU - Integer Underflow
+# PE - Privilege Escalation
 # SO - Stack Overflow
 # TC - Type Confusion
 # UAF - Use After Free
@@ -572,7 +573,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	local protect_spectrum="none" # retpoline, cfi, gain, none
 	if \
 		[[ \
-			"${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"SO"|"TC"|"UAF") \
+			"${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF") \
 				|| \
 			"${RUSTFLAGS_HARDENED_USE_CASES}" =~ "untrusted-data" \
 		]] \
@@ -586,7 +587,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		protect_spectrum="cet"
 	elif \
 		[[ \
-			"${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"SO"|"TC"|"UAF") \
+			"${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF") \
 				|| \
 			"${RUSTFLAGS_HARDENED_USE_CASES}" =~ "untrusted-data" \
 		]] \
@@ -605,13 +606,13 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 			&& \
 		[[ "${RUSTFLAGS_HARDENED_PAUTH:-1}" == "1" ]] \
 	; then
-	# PAC:  "BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"SO"|"TC"|"UAF"
-	# BTI:  "BO"|"BU"|"CE"|"DF"|"DP"|"HO"|"IO"|"IU"|"SO"|"TC"|"UAF"
-	# MTE:  "BO"|"BU"|"CE"|"DF"|"DP"|"HO"|"IO"|"IU"|"SO"|"TC"|"UAF"
+	# PAC:  "BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF"
+	# BTI:  "BO"|"BU"|"CE"|"DF"|"DP"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF"
+	# MTE:  "BO"|"BU"|"CE"|"DF"|"DP"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF"
 		protect_spectrum="arm-cfi"
 	elif \
 		[[ \
-			"${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"SO"|"TC"|"UAF") \
+			"${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF") \
 				|| \
 			"${RUSTFLAGS_HARDENED_USE_CASES}" =~ "untrusted-data" \
 		]] \

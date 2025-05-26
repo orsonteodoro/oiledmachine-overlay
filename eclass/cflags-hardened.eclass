@@ -300,6 +300,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # HO - Heap Overflow
 # IO - Integer Overflow
 # IU - Integer Underflow
+# PE - Privilege Escalation
 # SO - Stack Overflow
 # TC - Type Confusion
 # UAF - Use After Free
@@ -943,7 +944,7 @@ ewarn
 	local protect_spectrum="none" # retpoline, cfi, gain, none
 	if \
 		[[ \
-			"${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"SO"|"TC"|"UAF") \
+			"${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF") \
 				|| \
 			"${CFLAGS_HARDENED_USE_CASES}" =~ "untrusted-data" \
 		]] \
@@ -955,7 +956,7 @@ ewarn
 		protect_spectrum="cet"
 	elif \
 		[[ \
-			"${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"SO"|"TC"|"UAF") \
+			"${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF") \
 				|| \
 			"${CFLAGS_HARDENED_USE_CASES}" =~ "untrusted-data" \
 		]] \
@@ -975,13 +976,13 @@ ewarn
 		[[ "${CFLAGS_HARDENED_ARM_CFI:-0}" == "1" ]] \
 	; then
 	# TODO
-	# PAC:  "BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"SO"|"TC"|"UAF"
-	# BTI:  "BO"|"BU"|"CE"|"DF"|"DP"|"HO"|"IO"|"IU"|"SO"|"TC"|"UAF"
-	# MTE:  "BO"|"BU"|"CE"|"DF"|"DP"|"HO"|"IO"|"IU"|"SO"|"TC"|"UAF"
+	# PAC:  "BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF"
+	# BTI:  "BO"|"BU"|"CE"|"DF"|"DP"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF"
+	# MTE:  "BO"|"BU"|"CE"|"DF"|"DP"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF"
 		protect_spectrum="arm-cfi"
 	elif \
 		[[ \
-			"${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"SO"|"TC"|"UAF") \
+			"${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF") \
 				|| \
 			"${CFLAGS_HARDENED_USE_CASES}" =~ "untrusted-data" \
 		]] \
