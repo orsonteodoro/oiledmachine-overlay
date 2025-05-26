@@ -307,6 +307,9 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # optimize mitigation either against information disclosure with Retpoline; or
 # code execution and privilege escalation with CFI.
 #
+# Note:  Code execution is considered more dangerous than information
+# disclosure.
+#
 # Valid values:
 # arm-cfi  - Apply PAC/BTI/MTE
 # cet      - Apply CET

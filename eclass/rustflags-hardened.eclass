@@ -237,6 +237,9 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # optimize mitigation either against information disclosure with Retpoline; or
 # code execution and privilege escalation with CFI.
 #
+# Note:  Code execution is considered more dangerous than information
+# disclosure.
+#
 # Valid values:
 # arm-cfi  - Apply PAC/BTI/MTE
 # cet      - Apply CET
