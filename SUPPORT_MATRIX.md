@@ -112,8 +112,8 @@ exist in build files.
 | gRPC 1.49 - 1.54                  | Fully supported                       | D12 (1.51.1), F41 (1.48.4), F42 (1.48.4), U24 (1.51.1)   |
 | gRPC 1.55 - 1.62                  | Available                             |                                                          |
 | gRPC >= 1.63                      | Available                             |                                                          |
-| GTK+2 (4)                         | Not Supported                         |
-| GTK+3                             | Fully supported                       |                                                          |
+| GTK 2 (4)                         | Not Supported                         |
+| GTK 3                             | Fully supported                       |                                                          |
 | GTK 4                             | Fully supported                       |                                                          |
 | OpenGL <= 4.6                     | Fully supported                       |                                                          |
 | OpenCL <= 2.0                     | Fully supported                       |                                                          |
