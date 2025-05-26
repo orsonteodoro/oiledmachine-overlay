@@ -200,7 +200,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # login (sudo)
 # messenger
 # modular-app (an app that uses plugins)
-# real-time-integrity
+# realtime-integrity
 # safety-critical
 # multithreaded-confidential
 # multiuser-system
@@ -1029,7 +1029,7 @@ einfo "Protect spectrum:  ${protect_spectrum}"
 |"p2p"\
 |"pe"\
 |"plugin"\
-|"real-time-integrity"\
+|"realtime-integrity"\
 |"safety-critical"\
 |"scripting"\
 |"security-critical"\

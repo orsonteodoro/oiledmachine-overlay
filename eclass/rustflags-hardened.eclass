@@ -75,7 +75,7 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # kernel
 # login (sudo)
 # messenger
-# real-time-integrity
+# realtime-integrity
 # safety-critical
 # multithreaded-confidential
 # multiuser-system
@@ -832,7 +832,7 @@ einfo "rustc host:  ${host}"
 |"network"\
 |"p2p"\
 |"plugin"\
-|"real-time-integrity"\
+|"realtime-integrity"\
 |"safety-critical"\
 |"scripting"\
 |"security-critical"\
