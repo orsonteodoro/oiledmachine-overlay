@@ -731,6 +731,7 @@ PATENT_STATUS_RDEPEND="
 # Missing OCLOC
 # Missing nanobind
 # For compute-runtime version correspondance to level zero, see https://github.com/intel/compute-runtime/blob/23.52.28202.45/manifests/manifest.yml#L56
+# https://github.com/oneapi-src/unified-runtime/blob/da04d13807044aaf17615b66577fb0e832011ab1/cmake/FetchLevelZero.cmake#L104
 RDEPEND+="
 	$(python_gen_cond_dep '
 		(
