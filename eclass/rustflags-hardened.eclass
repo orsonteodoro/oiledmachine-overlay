@@ -628,7 +628,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 			"${RUSTFLAGS_HARDENED_USE_CASES}" =~ "sensitive-data" \
 		]] \
 			&& \
-		[[ "${ARCH}" =~ ("amd64"|"s390") ]] \
+		[[ "${ARCH}" =~ ("amd64"|"x86") ]] \
 	; then
 		protect_spectrum="retpoline"
 	else
@@ -738,7 +738,9 @@ einfo "Protect spectrum:  ${protect_spectrum}"
 	# ZC, ID
 				RUSTFLAGS=$(echo "${RUSTFLAGS}" \
 					| sed -r -e "s#-C[ ]*target-feature=[-+]retpoline##g")
-				RUSTFLAGS+=" -C target-feature=+retpoline"
+				if [[ "${ARCH}" =~ ("amd64"|"x86") ]] ; then
+					RUSTFLAGS+=" -C target-feature=+retpoline"
+				fi
 			fi
 		fi
 	fi

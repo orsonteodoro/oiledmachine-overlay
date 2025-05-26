@@ -402,7 +402,7 @@ _cflags-hardened_has_cet() {
 # PE, ID
 _cflags-hardened_append_clang_retpoline() {
 	tc-is-clang || return
-	[[ "${ARCH}" == "amd64" ]] || return
+	[[ "${ARCH}" =~ ("amd64"|"x86") ]] || return
 
 	if \
 		[[ "${CFLAGS_HARDENED_RETPOLINE_FLAVOR}" =~ ("secure-realtime"|"secure-speed") ]] \
@@ -469,7 +469,7 @@ _cflags-hardened_append_clang_retpoline() {
 # Apply retpoline flags for gcc
 _cflags-hardened_append_gcc_retpoline() {
 	tc-is-gcc || return
-	[[ "${ARCH}" == "amd64" ]] || return
+	[[ "${ARCH}" =~ ("amd64"|"s390"|"x86") ]] || return
 
 	# cf-protection (CE, ID) is a more stronger than Retpoline against Spectre v2 (ID).
 	# cf-protection=full is mutually exclusive to -mfunction-return=thunk.
@@ -999,7 +999,7 @@ ewarn
 			"${CFLAGS_HARDENED_USE_CASES}" =~ "sensitive-data" \
 		]] \
 			&& \
-		[[ "${ARCH}" =~ ("amd64"|"s390") ]] \
+		[[ "${ARCH}" =~ ("amd64"|"s390"|"x86") ]] \
 	; then
 		protect_spectrum="retpoline"
 	else
@@ -1239,8 +1239,10 @@ einfo "All SSP hardening (All functions hardened)"
 			if [[ -n "${CFLAGS_HARDENED_RETPOLINE_FLAVOR_USER}" ]] ; then
 				CFLAGS_HARDENED_RETPOLINE_FLAVOR="${CFLAGS_HARDENED_RETPOLINE_FLAVOR_USER}"
 			fi
-			_cflags-hardened_append_gcc_retpoline		# ZC, ID
-			_cflags-hardened_append_clang_retpoline		# ZC, ID
+			if [[ "${ARCH}" =~ ("amd64"|"s390"|"x86") ]] ; then
+				_cflags-hardened_append_gcc_retpoline		# ZC, ID
+				_cflags-hardened_append_clang_retpoline		# ZC, ID
+			fi
 		fi
 	fi
 
