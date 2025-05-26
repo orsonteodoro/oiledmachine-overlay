@@ -133,8 +133,18 @@ AMDGPU_UNTESTED_TARGETS=(
 	gfx1200
 	gfx1201
 )
+BOOST_ASSERT_COMMIT="447e0b3a331930f8708ade0e42683d12de9dfbc3"
+BOOST_CONFIG_COMMIT="11385ec21012926e15a612e3bf9f9a71403c1e5b"
+BOOST_CONTAINER_HASH_COMMIT="6d214eb776456bf17fbee20780a034a23438084f"
+BOOST_CORE_COMMIT="083b41c17e34f1fc9b43ab796b40d0d8bece685c"
+BOOST_DESCRIBE_COMMIT="50719b212349f3d1268285c586331584d3dbfeb5"
+BOOST_PREDEF_COMMIT="0fdfb49c3a6789e50169a44e88a07cc889001106"
+BOOST_STATIC_ASSERT_COMMIT="ba72d3340f3dc6e773868107f35902292f84b07e"
+BOOST_THROW_EXCEPTION_COMMIT="7c8ec2114bc1f9ab2a8afbd629b96fbdd5901294"
+BOOST_UNORDERED_COMMIT="5e6b9291deb55567d41416af1e77c2516dc1250f"
 BUILD_DIR="${WORKDIR}/llvm-nightly-${PV//./}/build"
 CMAKE_USE_DIR="${WORKDIR}/llvm-nightly-${PV//./-}/llvm"
+COMPUTE_RUNTIME_PV="24.39.31294.12"
 CUDA_TARGETS_COMPAT=(
 	sm_20
 	sm_21
@@ -172,20 +182,26 @@ GCC_COMPAT=( 13 ) # Should only list non EOL
 # We cannot unbundle this because it has to be compiled with the clang/llvm
 # that we are building here. Otherwise we run into problems running the compiler.
 CPU_EMUL_COMMIT="38f070a7e1de00d0398224e9d6306cc59010d147" # Same as 1.0.31 ; Search committer-date:<=2025-01-08
+LEVEL_ZERO_PV="1.19.2"
 LLVM_COMPAT=( 20 18 ) # Should only list non EOL
 LLVM_TARGET_USEDEPS=${ALL_LLVM_TARGETS[@]/%/(-)?}
+OPENCL_HEADERS_COMMIT="542d7a8f65ecfd88b38de35d8b10aa67b36b33b2"
+OPENCL_HEADERS_COMMIT="542d7a8f65ecfd88b38de35d8b10aa67b36b33b2"
+OPENCL_ICD_LOADER_COMMIT="804b6f040503c47148bee535230070da6b857ae4"
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOTS=(
 	rocm_6_3
 	rocm_6_2
 )
-# For UR_COMMIT, see https://github.com/intel/llvm/blob/nightly-2025-01-08/sycl/cmake/modules/UnifiedRuntimeTag.cmake
-UR_COMMIT="da04d13807044aaf17615b66577fb0e832011ab1" # \
+# For the UNIFIED_MEMORY_FRAMEWORK_PV, see https://github.com/oneapi-src/unified-runtime/blob/da04d13807044aaf17615b66577fb0e832011ab1/source/common/CMakeLists.txt#L38
+UNIFIED_MEMORY_FRAMEWORK_PV="0.10.0"
+# For UNIFIED_RUNTIME_COMMIT, see https://github.com/intel/llvm/blob/nightly-2025-01-08/sycl/cmake/modules/UnifiedRuntimeTag.cmake
+UNIFIED_RUNTIME_COMMIT="da04d13807044aaf17615b66577fb0e832011ab1" # \
 # For VC_INTR_COMMIT, see https://github.com/intel/llvm/blob/nightly-2025-01-08/llvm/lib/SYCLLowerIR/CMakeLists.txt#L19
 VC_INTR_COMMIT="4e51b2467104a257c22788e343dafbdde72e28bb" # Newer versions cause compile failure \
 
 inherit hip-versions
-inherit cmake dhms flag-o-matic llvm python-any-r1 rocm toolchain-funcs
+inherit cmake dep-prepare dhms flag-o-matic llvm python-any-r1 rocm toolchain-funcs
 
 DOCS_BUILDER="doxygen"
 DOCS_DIR="build/docs"
@@ -204,14 +220,45 @@ inherit docs
 
 #KEYWORDS="~amd64" # Needs install test
 S="${WORKDIR}/llvm-nightly-${PV//./-}"
-S_UR="${WORKDIR}/unified-runtime-${UR_COMMIT}"
+S_UR="${WORKDIR}/unified-runtime-${UNIFIED_RUNTIME_COMMIT}"
 SRC_URI="
 https://github.com/intel/llvm/archive/refs/tags/nightly-${PV//./-}.tar.gz
 	-> ${P}.tar.gz
 https://github.com/intel/vc-intrinsics/archive/${VC_INTR_COMMIT}.tar.gz
 	-> ${P}-vc-intrinsics-${VC_INTR_COMMIT:0:7}.tar.gz
-https://github.com/oneapi-src/unified-runtime/archive/${UR_COMMIT}.tar.gz
-	-> ${P}-unified-runtime-${UR_COMMIT:0:7}.tar.gz
+https://github.com/oneapi-src/unified-runtime/archive/${UNIFIED_RUNTIME_COMMIT}.tar.gz
+	-> ${P}-unified-runtime-${UNIFIED_RUNTIME_COMMIT:0:7}.tar.gz
+https://github.com/oneapi-src/level-zero/archive/refs/tags/v${LEVEL_ZERO_PV}.tar.gz
+	-> level-zero-${LEVEL_ZERO_PV}.tar.gz
+https://github.com/intel/compute-runtime/archive/refs/tags/24.39.31294.12.tar.gz
+	-> compute-runtime-${COMPUTE_RUNTIME_PV}.tar.gz
+https://github.com/oneapi-src/unified-memory-framework/archive/refs/tags/v${UNIFIED_MEMORY_FRAMEWORK_PV}.tar.gz
+	-> unified-memory-framework-${UNIFIED_MEMORY_FRAMEWORK_PV}.tar.gz
+https://github.com/KhronosGroup/OpenCL-Headers/archive/${OPENCL_HEADERS_COMMIT}.tar.gz
+	-> OpenCL-Headers-${OPENCL_HEADERS_COMMIT:0:7}.tar.gz
+https://github.com/KhronosGroup/OpenCL-ICD-Loader/archive/${OPENCL_ICD_LOADER_COMMIT}.tar.gz
+	-> OpenCL-ICD-Loader-${OPENCL_ICD_LOADER_COMMIT:0:7}.tar.gz
+
+
+https://github.com/boostorg/assert/archive/${BOOST_ASSERT_COMMIT}.tar.gz
+	-> boostorg-assert-${BOOST_ASSERT_COMMIT:0:7}.tar.gz
+https://github.com/boostorg/config/archive/${BOOST_CONFIG_COMMIT}.tar.gz
+	-> boostorg-config-${BOOST_CONFIG_COMMIT:0:7}.tar.gz
+https://github.com/boostorg/container_hash/archive/${BOOST_CONTAINER_HASH_COMMIT}.tar.gz
+	-> boostorg-container_hash-${BOOST_CONTAINER_HASH_COMMIT:0:7}.tar.gz
+https://github.com/boostorg/core/archive/${BOOST_CORE_COMMIT}.tar.gz
+	-> boostorg-core-${BOOST_CORE_COMMIT:0:7}.tar.gz
+https://github.com/boostorg/describe/archive/${BOOST_DESCRIBE_COMMIT}.tar.gz
+	-> boostorg-describe-${BOOST_DESCRIBE_COMMIT:0:7}.tar.gz
+https://github.com/boostorg/predef/archive/${BOOST_PREDEF_COMMIT}.tar.gz
+	-> boostorg-predef-${BOOST_PREDEF_COMMIT:0:7}.tar.gz
+https://github.com/boostorg/static_assert/archive/${BOOST_STATIC_ASSERT_COMMIT}.tar.gz
+	-> boostorg-static_assert-${BOOST_STATIC_ASSERT_COMMIT:0:7}.tar.gz
+https://github.com/boostorg/throw_exception/archive/${BOOST_THROW_EXCEPTION_COMMIT}.tar.gz
+	-> boostorg-throw_exception-${BOOST_THROW_EXCEPTION_COMMIT:0:7}.tar.gz
+https://github.com/boostorg/unordered/archive/${BOOST_UNORDERED_COMMIT}.tar.gz
+	-> boostorg-unordered-${BOOST_UNORDERED_COMMIT:0:7}.tar.gz
+
 	esimd_emulator? (
 https://github.com/intel/cm-cpu-emulation/archive/${CPU_EMUL_COMMIT}.tar.gz
 	-> ${P}-cm-cpu-emulation-${CPU_EMUL_COMMIT:0:7}.tar.gz
@@ -296,7 +343,9 @@ REQUIRED_USE="
 # See https://github.com/intel/llvm/blob/nightly-2025-01-08/clang/include/clang/Basic/Cuda.h#L42
 # See https://github.com/intel/llvm/blob/nightly-2025-01-08/sycl/doc/GetStartedGuide.md?plain=1#L194 for CUDA
 # See https://github.com/intel/llvm/blob/nightly-2025-01-08/sycl/doc/GetStartedGuide.md?plain=1#L244 for ROCm
-# For compute-runtime version correspondance, see https://github.com/intel/compute-runtime/blob/23.52.28202.45/manifests/manifest.yml#L56
+# For compute-runtime version correspondance, see
+# https://github.com/intel/compute-runtime/blob/23.52.28202.45/manifests/manifest.yml#L56
+# https://github.com/oneapi-src/unified-runtime/blob/da04d13807044aaf17615b66577fb0e832011ab1/cmake/FetchLevelZero.cmake#L104
 RDEPEND="
 	>=dev-build/libtool-2.4.7
 	>=dev-libs/boost-1.74.0:=
@@ -308,7 +357,7 @@ RDEPEND="
 	dev-libs/opencl-icd-loader
 	aot? (
 		video_cards_intel? (
-			>=dev-libs/intel-compute-runtime-23.52.28202.45[l0]
+			>=dev-libs/intel-compute-runtime-24.39.31294.12[l0]
 		)
 	)
 	cuda? (
@@ -388,7 +437,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-2025.01.08-system-libs.patch"
+#	"${FILESDIR}/${PN}-2025.01.08-system-libs.patch"
 )
 
 warn_untested_gpu() {
@@ -468,8 +517,37 @@ eerror "Switch to >=llvm-core/clang-18.0"
 src_prepare() {
 	cmake_src_prepare
 
+#	dep_prepare_cp "${WORKDIR}/compute-runtime-${COMPUTE_RUNTIME_PV}/level_zero/include"	"${BUILD_DIR}/build/content-exp-headers/level_zero/include"
+#	dep_prepare_cp "${WORKDIR}/level-zero-${LEVEL_ZERO_PV}"					"${BUILD_DIR}/build/_deps/level-zero-loader-src"
+#	dep_prepare_mv "${WORKDIR}/OpenCL-Headers-${OPENCL_HEADERS_COMMIT}"			"${BUILD_DIR}/build/_deps/opencl-headers-src"
+#	dep_prepare_mv "${WORKDIR}/unified-memory-framework-${UNIFIED_MEMORY_FRAMEWORK_PV}"	"${BUILD_DIR}/build/_deps/unified-memory-framework-src"
+
+#	dep_prepare_mv "${WORKDIR}/compute-runtime-${COMPUTE_RUNTIME_PV}/level_zero/include"	"${WORKDIR}/_deps/content-exp-headers/level_zero/include"
+
+	dep_prepare_cp "${WORKDIR}/level-zero-${LEVEL_ZERO_PV}"					"${WORKDIR}/_deps/level-zero-loader-src"
+	dep_prepare_mv "${WORKDIR}/compute-runtime-${COMPUTE_RUNTIME_PV}/level_zero/include"	"${WORKDIR}/_deps/content-exp-headers/level_zero/include"
+	dep_prepare_cp "${WORKDIR}/OpenCL-Headers-${OPENCL_HEADERS_COMMIT}"			"${WORKDIR}/_deps/opencl-headers-src"
+	dep_prepare_mv "${WORKDIR}/OpenCL-Headers-${OPENCL_HEADERS_COMMIT}"			"${WORKDIR}/_deps/ocl-headers-src"
+	dep_prepare_mv "${WORKDIR}/OpenCL-ICD-Loader-${OPENCL_ICD_LOADER_COMMIT}"		"${WORKDIR}/_deps/ocl-icd-src"
+	dep_prepare_mv "${WORKDIR}/unified-memory-framework-${UNIFIED_MEMORY_FRAMEWORK_PV}"	"${WORKDIR}/_deps/unified-memory-framework-src"
+
+	dep_prepare_mv "${WORKDIR}/assert-${BOOST_ASSERT_COMMIT}"				"${WORKDIR}/_deps/boost_assert-src"
+	dep_prepare_mv "${WORKDIR}/config-${BOOST_CONFIG_COMMIT}"				"${WORKDIR}/_deps/boost_config-src"
+	dep_prepare_mv "${WORKDIR}/container_hash-${BOOST_CONTAINER_HASH_COMMIT}"		"${WORKDIR}/_deps/boost_container_hash-src"
+	dep_prepare_mv "${WORKDIR}/core-${BOOST_CORE_COMMIT}"					"${WORKDIR}/_deps/boost_core-src"
+	dep_prepare_mv "${WORKDIR}/describe-${BOOST_DESCRIBE_COMMIT}"				"${WORKDIR}/_deps/boost_describe-src"
+	dep_prepare_mv "${WORKDIR}/predef-${BOOST_PREDEF_COMMIT}"				"${WORKDIR}/_deps/boost_predef-src"
+	dep_prepare_mv "${WORKDIR}/static_assert-${BOOST_STATIC_ASSERT_COMMIT}"			"${WORKDIR}/_deps/boost_static_assert-src"
+	dep_prepare_mv "${WORKDIR}/throw_exception-${BOOST_THROW_EXCEPTION_COMMIT}"		"${WORKDIR}/_deps/boost_throw_exception-src"
+	dep_prepare_mv "${WORKDIR}/unordered-${BOOST_UNORDERED_COMMIT}"				"${WORKDIR}/_deps/boost_unordered-src"
+
 	pushd "${S}" >/dev/null 2>&1 || die
 		eapply "${FILESDIR}/${PN}-2025.01.08-hardcoded-paths.patch"
+	popd >/dev/null 2>&1 || die
+
+	pushd "${WORKDIR}/unified-runtime-${UNIFIED_RUNTIME_COMMIT}" >/dev/null 2>&1 || die
+		eapply "${FILESDIR}/${PN}-2025.01.08-unified-runtime-da04d13-exp-headers-path.patch"
+#		eapply "${FILESDIR}/${PN}-2025.01.08-no-copy-zero-headers.patch"
 	popd >/dev/null 2>&1 || die
 
 	# Speed up symbol replacmenet for @...@ by reducing the search space
@@ -563,6 +641,7 @@ src_configure() {
 
 	# Prevent runtime failures with llvm parts.
 	replace-flags '-O*' '-O2'
+	export MAKEOPTS="-j1"
 
 	strip-unsupported-flags
 
@@ -578,8 +657,13 @@ src_configure() {
 		-DCMAKE_INSTALL_INFODIR="${BUILD_DIR}/install/share/info"
 		-DCMAKE_INSTALL_MANDIR="${BUILD_DIR}/install/share/man"
 		-DCMAKE_INSTALL_PREFIX="${BUILD_DIR}/install"
-		-DLEVEL_ZERO_INCLUDE_DIR="${ESYSROOT}/usr/include/level_zero"
-		-DLEVEL_ZERO_LIBRARY="${ESYSROOT}/usr/lib64/libze_loader.so"
+		-DFETCHCONTENT_FULLY_DISCONNECTED=ON
+		-DFETCHCONTENT_QUIET=OFF
+#		-DFETCHCONTENT_SOURCE_DIR_LEVEL_ZERO_LOADER="${WORKDIR}/level-zero-loader-${LEVEL_ZERO_PV}"
+		-DEXP_HEADERS_SOURCE_DIR="${WORKDIR}/_deps/exp_headers-src"
+		-DFETCHCONTENT_BASE_DIR="${WORKDIR}/_deps" # Default:  ${CMAKE_BINARY_DIR}/_deps
+#		-DLEVEL_ZERO_INCLUDE_DIR="${ESYSROOT}/usr/include/level_zero"
+#		-DLEVEL_ZERO_LIBRARY="${ESYSROOT}/usr/lib64/libze_loader.so"
 		-DLLVM_BUILD_DOCS="$(usex doc)"
 		-DLLVM_BUILD_TOOLS="ON"
 		-DLLVM_ENABLE_ASSERTIONS="ON"
@@ -593,6 +677,7 @@ src_configure() {
 		-DLLVM_EXTERNAL_SPIRV_HEADERS_SOURCE_DIR="${ESYSROOT}/usr"
 		-DLLVM_EXTERNAL_SYCL_FUSION_SOURCE_DIR="${S}/sycl-fusion"
 		-DLLVM_EXTERNAL_SYCL_SOURCE_DIR="${S}/sycl"
+		-DLLVM_EXTERNAL_SYCL_JIT_SOURCE_DIR="${WORKDIR}/llvm-nightly-${PV//./-}/sycl-jit"
 		-DLLVM_EXTERNAL_XPTI_SOURCE_DIR="${S}/xpti"
 		-DLLVM_EXTERNAL_XPTIFW_SOURCE_DIR="${S}/xptifw"
 		-DLLVM_INCLUDE_TESTS="$(usex test)"
@@ -600,15 +685,15 @@ src_configure() {
 		-DLLVM_TARGETS_TO_BUILD="${LLVM_TARGETS// /;}"
 		-DLLVMGenXIntrinsics_SOURCE_DIR="${WORKDIR}/vc-intrinsics-${VC_INTR_COMMIT}"
 		-DSYCL_CLANG_EXTRA_FLAGS="${CXXFLAGS}"
+		-DSYCL_ENABLE_BACKENDS="level_zero;opencl;"$(usev esimd_emulator)";"$(usex rocm "hip" "")";"$(usev cuda)";"$(usex native-cpu "native_cpu" "")
+		-DSYCL_ENABLE_EXTENSION_JIT="OFF" # FIXME
 		-DSYCL_ENABLE_KERNEL_FUSION=$(usex sycl-fusion)
 		-DSYCL_ENABLE_MAJOR_RELEASE_PREVIEW_LIB="OFF" # ON upstream
-		-DSYCL_ENABLE_PLUGINS="level_zero;opencl;"$(usev esimd_emulator)";"$(usex rocm "hip" "")";"$(usev cuda)";"$(usex native-cpu "native_cpu" "")
 		-DSYCL_ENABLE_WERROR="OFF"
 		-DSYCL_ENABLE_XPTI_TRACING="ON"
 		-DSYCL_INCLUDE_TESTS="$(usex test)"
-		-DSYCL_PI_UR_SOURCE_DIR="${WORKDIR}/unified-runtime-${UR_COMMIT}"
-		-DSYCL_PI_UR_USE_FETCH_CONTENT="OFF"
-		-DUNIFIED_RUNTIME_SOURCE_DIR="${WORKDIR}/unified-runtime-${UR_COMMIT}"
+		-DSYCL_UR_SOURCE_DIR="${WORKDIR}/unified-runtime-${UNIFIED_RUNTIME_COMMIT}"
+		-DSYCL_UR_USE_FETCH_CONTENT="OFF"
 		-DXPTI_ENABLE_WERROR="OFF"
 		-DXPTI_SOURCE_DIR="${S}/xpti"
 	)
@@ -655,6 +740,7 @@ src_configure() {
 			-DSYCL_BUILD_PI_HIP_PLATFORM="AMD"
 		)
 	fi
+
 
 	cmake_src_configure
 }

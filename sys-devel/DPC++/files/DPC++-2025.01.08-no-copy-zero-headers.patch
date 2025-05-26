@@ -1,0 +1,11 @@
+--- unified-runtime-da04d13807044aaf17615b66577fb0e832011ab1/cmake/FetchLevelZero.cmake.orig	2025-01-06 14:40:39.000000000 -0800
++++ unified-runtime-da04d13807044aaf17615b66577fb0e832011ab1/cmake/FetchLevelZero.cmake	2025-05-25 12:01:06.174575916 -0700
+@@ -90,7 +90,7 @@ target_link_libraries(LevelZeroLoader
+ )
+ 
+ file(GLOB LEVEL_ZERO_LOADER_API_HEADERS "${LEVEL_ZERO_INCLUDE_DIR}/*.h")
+-file(COPY ${LEVEL_ZERO_LOADER_API_HEADERS} DESTINATION ${LEVEL_ZERO_INCLUDE_DIR}/level_zero)
++#file(COPY ${LEVEL_ZERO_LOADER_API_HEADERS} DESTINATION ${LEVEL_ZERO_INCLUDE_DIR}/level_zero)
+ add_library(LevelZeroLoader-Headers INTERFACE)
+ target_include_directories(LevelZeroLoader-Headers
+     INTERFACE "$<BUILD_INTERFACE:${LEVEL_ZERO_INCLUDE_DIR};${LEVEL_ZERO_INCLUDE_DIR}/level_zero>"
