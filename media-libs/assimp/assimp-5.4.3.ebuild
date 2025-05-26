@@ -3,7 +3,10 @@
 
 EAPI=8
 
-inherit cmake-multilib
+CFLAGS_HARDENED_USE_CASES="ip-assets untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO SO"
+
+inherit cflags-hardened cmake-multilib
 
 KEYWORDS="~amd64 ~arm64"
 SRC_URI="https://github.com/${PN}/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
@@ -30,7 +33,10 @@ RESTRICT="
 	)
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE="samples static-libs test"
+IUSE="
+samples static-libs test
+ebuild_revision_1
+"
 RDEPEND="
 	sys-libs/zlib[${MULTILIB_USEDEP},minizip]
 	samples? (
@@ -61,6 +67,7 @@ src_prepare() {
 }
 
 src_configure() {
+	cflags-hardened_append
 	local mycmakeargs=(
 		-DASSIMP_ASAN=OFF
 		-DASSIMP_BUILD_ASSIMP_TOOLS=ON
