@@ -7,10 +7,35 @@ EAPI=7
 # dev-perl/Alien-caca needs to be patched/bump if vulnerabilities are fixed for
 # same version as this one.
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO HO"
 EGIT_COMMIT="f42aa68fc798db63b7b2a789ae8cf5b90b57b752"
-PYTHON_COMPAT=( python3_{8..11} )
-inherit autotools flag-o-matic mono-env java-pkg-opt-2 multilib-minimal
+JAVA_SLOT="1.8"
+PYTHON_COMPAT=( "python3_"{8..11} )
+
+inherit autotools cflags-hardened flag-o-matic mono-env java-pkg-opt-2 multilib-minimal
 inherit python-r1 virtualx
+
+# Live/snapshots ebuilds do not get KEYWORDed
+S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+SRC_URI="
+https://github.com/cacalabs/libcaca/archive/${EGIT_COMMIT}.tar.gz
+	-> ${P}.tar.gz
+https://github.com/cacalabs/libcaca/commit/afacac2cf7dfad8015c059a96046d9c2fa34632f.patch
+	-> libcaca-pr70-afacac2.patch
+https://github.com/cacalabs/libcaca/commit/f57b0d65cfaac5f1fbdc75458170e102f57a8dfa.patch
+	-> libcaca-pr70-f57b0d6.patch
+https://github.com/cacalabs/libcaca/commit/9683d1f7efe316b1e6113b65c6fff40671d35632.patch
+	-> libcaca-pr70-9683d1f.patch
+https://github.com/cacalabs/libcaca/commit/d33a9ca2b7e9f32483c1aee4c3944c56206d456b.patch
+	-> libcaca-pr66-d33a9ca.patch
+"
+# Fix undefined reference to _caca_alloc2d #70
+# From https://github.com/cacalabs/libcaca/pull/70/commits
+# afacac2 - common-image: avoid implicit function declaration
+# f57b0d6 - caca: avoid nested externs
+# 9683d1f - caca_internals: export _caca_alloc2d
+# d33a9ca - Prevent a divide-by-zero by checking for a zero width or height.
 
 DESCRIPTION="A library that creates colored ASCII-art graphics"
 HOMEPAGE="http://libcaca.zoy.org/"
@@ -21,13 +46,11 @@ LICENSE="
 	WTFPL-2
 "
 
-# Live/snapshots ebuilds do not get KEYWORDed
-
 IUSE="
 256-colors-ncurses cxx doc examples imlib java mono ncurses network opengl perl
-php python ruby slang static-libs test truetype X r3
+php python ruby slang static-libs test truetype X
+ebuild_revision_4
 "
-JAVA_SLOT="1.8"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 REQUIRED_USE+="
 	256-colors-ncurses? (
@@ -153,25 +176,6 @@ PDEPEND+="
 		)
 	)
 "
-SRC_URI="
-https://github.com/cacalabs/libcaca/archive/${EGIT_COMMIT}.tar.gz
-	-> ${P}.tar.gz
-https://github.com/cacalabs/libcaca/commit/afacac2cf7dfad8015c059a96046d9c2fa34632f.patch
-	-> libcaca-pr70-afacac2.patch
-https://github.com/cacalabs/libcaca/commit/f57b0d65cfaac5f1fbdc75458170e102f57a8dfa.patch
-	-> libcaca-pr70-f57b0d6.patch
-https://github.com/cacalabs/libcaca/commit/9683d1f7efe316b1e6113b65c6fff40671d35632.patch
-	-> libcaca-pr70-9683d1f.patch
-https://github.com/cacalabs/libcaca/commit/d33a9ca2b7e9f32483c1aee4c3944c56206d456b.patch
-	-> libcaca-pr66-d33a9ca.patch
-"
-# Fix undefined reference to _caca_alloc2d #70
-# From https://github.com/cacalabs/libcaca/pull/70/commits
-# afacac2 - common-image: avoid implicit function declaration
-# f57b0d6 - caca: avoid nested externs
-# 9683d1f - caca_internals: export _caca_alloc2d
-# d33a9ca - Prevent a divide-by-zero by checking for a zero width or height.
-S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 RESTRICT="
 	mirror
 	!test? (
@@ -259,7 +263,7 @@ multilib_src_configure() {
 	if use 256-colors-ncurses ; then
 		append-cppflags -DUSE_NCURSES_256_COLORS=1
 	fi
-	if multilib_is_native_abi; then
+	if multilib_is_native_abi ; then
 		if use java; then
 			export JAVACFLAGS="$(java-pkg_javac-args)"
 			export JAVA_CFLAGS="$(java-pkg_get-jni-cflags)"
@@ -300,6 +304,7 @@ src_configure() {
 }
 
 multilib_src_compile() {
+	cflags-hardened_append
 	local _java_makeopts
 	use java && _java_makeopts="-j1" #480864
 	emake V=1 ${_java_makeopts}
