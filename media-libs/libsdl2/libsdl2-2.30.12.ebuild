@@ -7,7 +7,11 @@ EAPI=8
 
 MY_P="SDL2-${PV/_pre}"
 
-inherit cmake flag-o-matic linux-info toolchain-funcs multilib-minimal
+# Used by ffplay to play videos
+CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="DF HO"
+
+inherit cflags-hardened cmake flag-o-matic linux-info toolchain-funcs multilib-minimal
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~x86"
 S="${WORKDIR}/${MY_P}"
@@ -332,6 +336,7 @@ src_prepare() {
 
 multilib_src_configure() {
 	use custom-cflags || strip-flags
+	cflags-hardened_append
 
 	local mycmakeargs=(
 		-DSDL_3DNOW=$(usex cpu_flags_x86_3dnow)
