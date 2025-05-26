@@ -183,23 +183,17 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # Add additional flags to secure packages based on typical USE cases.
 # Acceptable values:
 #
-# ce (Code Execution)
-# dos (Denial of Service)
-# dt (Data Tampering)
-# pe (Privilege Esclation)
-# id (Information Disclosure)
-#
 # admin-access (e.g. sudo)
 # container-runtime
 # crypto
 # daemon
 # dss (e.g. cryptocurrency, finance)
 # extension
-# execution-integrity
 # fp-determinism
 # game-engine
 # high-precision-research
 # hypervisor
+# ip-assets
 # jit
 # kernel
 # language-runtime (e.g. compiler, interpeter, language virtual machine)
@@ -997,7 +991,7 @@ ewarn
 		[[ \
 			"${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("UM"|"FS") \
 				|| \
-			"${CFLAGS_HARDENED_USE_CASES}" =~ "sensitive-data" \
+			"${CFLAGS_HARDENED_USE_CASES}" =~ ("ip-assets"|"sensitive-data") \
 		]] \
 			&& \
 		[[ "${ARCH}" =~ ("amd64"|"s390"|"x86") ]] \
@@ -1021,14 +1015,10 @@ einfo "Protect spectrum:  ${protect_spectrum}"
 			"${CFLAGS_HARDENED_USE_CASES}" \
 				=~ \
 ("admin-access"\
-|"ce"\
 |"daemon"\
-|"dos"\
 |"dss"\
-|"dt"\
-|"execution-integrity"\
 |"extension"\
-|"id"\
+|"ip-assets"\
 |"jit"\
 |"kernel"\
 |"language-runtime"\
@@ -1096,20 +1086,15 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 				"${CFLAGS_HARDENED_USE_CASES}" \
 					=~ \
 ("admin-access"\
-|"ce"\
 |"daemon"\
 |"databases"\
-|"dos"\
 |"dss"\
-|"dt"\
-|"execution-integrity"\
 |"language-runtime"\
 |"messenger"\
 |"multithreaded-confidential"\
 |"multiuser-system"\
 |"network"\
 |"p2p"\
-|"pe"\
 |"security-critical"\
 |"server"\
 |"suid"\
@@ -1172,8 +1157,7 @@ einfo "All SSP hardening (All functions hardened)"
 					&&
 				"${CFLAGS_HARDENED_USE_CASES}" \
 					=~ \
-("dos"\
-|"dss"\
+("dss"\
 |"safety-critical"\
 |"security-critical") \
 			]] \
@@ -1192,8 +1176,7 @@ einfo "All SSP hardening (All functions hardened)"
 				&& \
 			"${CFLAGS_HARDENED_USE_CASES}" \
 				=~ \
-("ce"\
-|"execution-integrity"\
+("ip-assets"\
 |"language-runtime"\
 |"multiuser-system"\
 |"network"\
@@ -1253,7 +1236,6 @@ einfo "All SSP hardening (All functions hardened)"
 				&& \
 			"${CFLAGS_HARDENED_USE_CASES}" =~ \
 ("dss"\
-|"execution-integrity"\
 |"network"\
 |"security-critical"\
 |"safety-critical"\

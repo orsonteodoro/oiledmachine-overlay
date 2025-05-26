@@ -33,7 +33,7 @@ _blender_set_globals
 unset -f _blender_set_globals
 
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO IO SO"
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="ip-assets untrusted-data"
 
 inherit cflags-hardened cuda check-reqs cmake dhms flag-o-matic hip-versions llvm pax-utils
 inherit python-single-r1 rocm toolchain-funcs xdg

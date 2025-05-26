@@ -61,22 +61,16 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # Add additional flags to secure packages based on typical USE cases.
 # Acceptable values:
 #
-# ce (Code Execution)
-# dos (Denial of Service)
-# dt (Data Tampering)
-# pe (Privilege Esclation)
-# id (Information Disclosure)
-#
 # admin-access (e.g. sudo)
 # container-runtime
 # crypto
 # daemon
 # dss (e.g. cryptocurrency, finance)
 # extension
-# execution-integrity
 # fp-determinism
 # high-precision-research
 # hypervisor
+# ip-assets
 # jit
 # kernel
 # login (sudo)
@@ -626,7 +620,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		[[ \
 			"${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("UM"|"FS") \
 				|| \
-			"${RUSTFLAGS_HARDENED_USE_CASES}" =~ "sensitive-data" \
+			"${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("ip-assets"|"sensitive-data") \
 		]] \
 			&& \
 		[[ "${ARCH}" =~ ("amd64"|"x86") ]] \
@@ -801,7 +795,6 @@ einfo "Protect spectrum:  ${protect_spectrum}"
 			"${RUSTFLAGS_HARDENED_USE_CASES}" \
 				=~ \
 ("dss"\
-|"execution-integrity"\
 |"network"\
 |"security-critical"\
 |"safety-critical"\
@@ -826,14 +819,10 @@ einfo "rustc host:  ${host}"
 			"${RUSTFLAGS_HARDENED_USE_CASES}" \
 				=~ \
 ("admin-access"\
-|"ce"\
 |"daemon"\
-|"dos"\
 |"dss"\
-|"dt"\
-|"execution-integrity"\
 |"extension"\
-|"id"\
+|"ip-assets"\
 |"jit"\
 |"kernel"\
 |"language-runtime"\
@@ -842,7 +831,6 @@ einfo "rustc host:  ${host}"
 |"multiuser-system"\
 |"network"\
 |"p2p"\
-|"pe"\
 |"plugin"\
 |"real-time-integrity"\
 |"safety-critical"\
@@ -876,8 +864,7 @@ einfo "rustc host:  ${host}"
 				&& \
 			"${RUSTFLAGS_HARDENED_USE_CASES}" \
 				=~ \
-("ce"\
-|"execution-integrity"\
+("ip-assets"\
 |"language-runtime"\
 |"multiuser-system"\
 |"network"\
