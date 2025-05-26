@@ -285,6 +285,26 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # Allow build to be built with JOP, ROP mitigations
 # Valid values: 1, 0, unset
 
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_VULNERABILITY_HISTORY
+# @DESCRIPTION:
+# List of historical CVE memory corruptions.  Used to tiebreak retpoline versus
+# cf-protection mutually exclusive flags.
+#
+# Valid values:
+# BO - Buffer Overflow
+# BU - Buffer Underflow
+# CE - Code Execution
+# DF - Double Free
+# DP - Dangling Pointer
+# FS - Format String
+# HO - Heap Overflow
+# IO - Integer Overflow
+# IU - Integer Underflow
+# SO - Stack Overflow
+# TC - Type Confusion
+# UAF - Use After Free
+# UM - Uninitalized Memory
+
 # @FUNCTION: _cflags-hardened_fcmp
 # @DESCRIPTION:
 # Floating point compare.  Bash does not support floating point comparison
@@ -743,6 +763,18 @@ ewarn
 	fi
 }
 
+
+# @FUNCTION: _cflags-hardened_has_llvm_cfi
+_cflags-hardened_has_llvm_cfi() {
+	if ! tc-is-clang ; then
+		return 1
+	elif has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[cfi]" ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
 # @FUNCTION: cflags-hardened_append
 # @DESCRIPTION:
 # Apply and deploy hardening flags easily.
@@ -906,6 +938,69 @@ ewarn
 		CFLAGS_HARDENED_TOLERANCE="${CFLAGS_HARDENED_TOLERANCE_USER}"
 	fi
 
+	# Break ties between Retpoline and CET since they are mutually exclusive
+	# Each CFI implementation has a blindspot
+	local protect_spectrum="none" # retpoline, cfi, gain, none
+	if \
+		[[ \
+			"${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"DF"|"DP"|"IO"|"UAF"|"TC") \
+				|| \
+			"${CFLAGS_HARDENED_USE_CASES}" =~ "untrusted-data" \
+		]] \
+			&& \
+		_cflags-hardened_has_cet \
+			&& \
+		[[ "${CFLAGS_HARDENED_CF_PROTECTION:-1}" == "1" ]] \
+	; then
+		protect_spectrum="cet"
+	elif \
+		[[ \
+			"${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"UAF"|"TC") \
+				|| \
+			"${CFLAGS_HARDENED_USE_CASES}" =~ "untrusted-data" \
+		]] \
+			&& \
+		( \
+			_cflags-hardened_has_pauth \
+				|| \
+			_cflags-hardened_has_mte \
+		) \
+			&& \
+		[[ "${CFLAGS_HARDENED_ARM_CFI:-0}" == "1" ]] \
+	; then
+	# TODO
+	# PAC:  BO, DP, TC, UAF
+	# BTI:  DP, TC, UAF
+	# MTE:  BO, DP, UAF
+		protect_spectrum="arm-cfi"
+	elif \
+		[[ \
+			"${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"DP"|"UAF"|"TC") \
+				|| \
+			"${CFLAGS_HARDENED_USE_CASES}" =~ "untrusted-data" \
+		]] \
+			&& \
+		_cflags-hardened_has_llvm_cfi \
+			&& \
+		[[ "${CFLAGS_HARDENED_LLVM_CFI:-0}" == "1" ]] \
+	; then
+	# TODO
+		protect_spectrum="llvm-cfi"
+	elif \
+		[[ \
+			"${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("DP"|"UM"|"FS") \
+				|| \
+			"${CFLAGS_HARDENED_USE_CASES}" =~ "sensitive-data" \
+		]] \
+			&& \
+		[[ "${ARCH}" =~ ("amd64"|"s390") ]] \
+	; then
+		protect_spectrum="retpoline"
+	else
+		protect_spectrum="none"
+	fi
+einfo "Protect spectrum:  ${protect_spectrum}"
+
 	CFLAGS_HARDENED_CFLAGS=""
 	CFLAGS_HARDENED_CXXFLAGS=""
 	CFLAGS_HARDENED_LDFLAGS=""
@@ -1052,41 +1147,13 @@ einfo "All SSP hardening (All functions hardened)"
 		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,relro"
 		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,now"
 
-		if \
-			[[ "${CFLAGS_HARDENED_USE_CASES}" \
-				=~ \
-("ce"\
-|"dss"\
-|"execution-integrity"\
-|"extension"\
-|"id"\
-|"jit"\
-|"kernel"\
-|"language-runtime"\
-|"multiuser-system"\
-|"network"\
-|"pe"\
-|"plugin"\
-|"real-time-integrity"\
-|"safety-critical"\
-|"scripting"\
-|"security-critical"\
-|"sensitive-data"\
-|"untrusted-data")\
-			]] \
-				&&
-			test-flags-CC "-fcf-protection=full" \
-				&&
-			_cflags-hardened_has_cet \
-				&& \
-			[[ "${CFLAGS_HARDENED_CF_PROTECTION:-1}" == "1" ]] \
-		; then
+		if [[ "${protect_spectrum}" == "cet" ]] ; then
 	# ZC, CE, PE
 			filter-flags "-f*cf-protection=*"
 			append-flags "-fcf-protection=full"
 			CFLAGS_HARDENED_CFLAGS+=" -fcf-protection=full"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fcf-protection=full"
-		elif [[ "${ARCH}" == "arm64" ]] ; then
+		if [[ "${protect_spectrum}" == "arm-cfi" ]] ; then
 			_cflags-hardened_arm_cfi
 		fi
 
@@ -1139,13 +1206,7 @@ einfo "All SSP hardening (All functions hardened)"
 		CFLAGS_HARDENED_CXXFLAGS+=" -Wa,--noexecstack"
 		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,noexecstack"
 	fi
-	if \
-		[[ \
-			"${CFLAGS_HARDENED_RETPOLINE:-1}" == "1" \
-				&& \
-			"${CFLAGS_HARDENED_USE_CASES}" =~ ("id"|"kernel") \
-		]] \
-	; then
+
 	# Spectre V2 mitigation Linux kernel case
 	# For GCC it uses
 	#   General case: -mindirect-branch=thunk-extern -mindirect-branch-register
@@ -1154,27 +1215,7 @@ einfo "All SSP hardening (All functions hardened)"
 	#   General case: -mretpoline-external-thunk -mindirect-branch-cs-prefix
 	#   vDSO case:    -mretpoline
 	# ZC, ID
-		:
-	elif \
-		[[ \
-			"${CFLAGS_HARDENED_RETPOLINE:-1}" == "1" \
-				&& \
-			"${CFLAGS_HARDENED_USE_CASES}" \
-				=~ \
-("container-runtime"\
-|"dss"\
-|"id"\
-|"hypervisor"\
-|"kernel"\
-|"network"\
-|"scripting"\
-|"sensitive-data"\
-|"server"\
-|"untrusted-data"\
-|"web-browser")\
-		]] \
-	; then
-		:
+	if [[ "${protect_spectrum}" == "retpoline" ]] ; then
 	# Spectre V2 mitigation general case
 		# -mfunction-return and -fcf-protection are mutually exclusive.
 
@@ -1853,7 +1894,7 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 					CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=${x}"
 					CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=${x}"
 					asan=1
-				elif [[ "${x}" == "cfi" ]] && ! _cflags-hardened_has_cet && [[ "${ARCH}" == "amd64" ]] && tc-is-clang ; then
+				elif [[ "${x}" == "cfi" && "${protect_spectrum}" == "llvm-cfi" ]] ; then
 					append-flags "-fsanitize=${x}"
 					append-ldflags "-fsanitize=${x}"
 					CFLAGS_HARDENED_CFLAGS+=" -fsanitize=${x}"

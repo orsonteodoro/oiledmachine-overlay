@@ -215,6 +215,26 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # Enable or disable sanitizers for a package.  To be used on a per-package basis.
 # Acceptable values: 1, 0, unset
 
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY
+# @DESCRIPTION:
+# List of historical CVE memory corruptions.  Used to tiebreak retpoline versus
+# cf-protection mutually exclusive flags.
+#
+# Valid values:
+# BO - Buffer Overflow
+# BU - Buffer Underflow
+# CE - Code Execution
+# DF - Double Free
+# DP - Dangling Pointer
+# FS - Format String
+# HO - Heap Overflow
+# IO - Integer Overflow
+# IU - Integer Underflow
+# SO - Stack Overflow
+# TC - Type Confusion
+# UAF - Use After Free
+# UM - Uninitalized Memory
+
 
 # @FUNCTION: _rustflags-hardened_sanitizers_compat
 # @DESCRIPTION:
@@ -445,6 +465,17 @@ ewarn
 	fi
 }
 
+# @FUNCTION: _rustflags-hardened_has_llvm_cfi
+_cflags-hardened_has_llvm_cfi() {
+	if ! tc-is-clang ; then
+		return 1
+	elif has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[cfi]" ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
 # @FUNCTION: rustflags-hardened_append
 # @DESCRIPTION:
 # Apply RUSTFLAG hardening to Rust packages.
@@ -537,6 +568,68 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		die
 	fi
 
+	# Break ties between Retpoline and CET since they are mutually exclusive
+	local protect_spectrum="none" # retpoline, cfi, gain, none
+	if \
+		[[ \
+			"${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"DF"|"DP"|"IO"|"UAF"|"TC") \
+				|| \
+			"${RUSTFLAGS_HARDENED_USE_CASES}" =~ "untrusted-data" \
+		]] \
+			&& \
+		_rustflags-hardened_has_cet \
+			&& \
+		[[ "${RUSTFLAGS_HARDENED_CET:-1}" == "1" ]] \
+			&& \
+		_rustflags-hardened_has_target_feature "cet" \
+	; then
+		protect_spectrum="cet"
+	elif \
+		[[ \
+			"${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"UAF"|"TC") \
+				|| \
+			"${RUSTFLAGS_HARDENED_USE_CASES}" =~ "untrusted-data" \
+		]] \
+			&& \
+		( \
+			_rustflags-hardened_has_pauth \
+				|| \
+			_rustflags-hardened_has_mte \
+		) \
+			&& \
+		[[ "${RUSTFLAGS_HARDENED_PAUTH:-1}" == "1" ]] \
+	; then
+	# PAC:  BO, DP, TC, UAF
+	# BTI:  DP, TC, UAF
+	# MTE:  BO, DP, UAF
+		protect_spectrum="arm-cfi"
+	elif \
+		[[ \
+			"${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"DP"|"UAF"|"TC") \
+				|| \
+			"${RUSTFLAGS_HARDENED_USE_CASES}" =~ "untrusted-data" \
+		]] \
+			&& \
+		_cflags-hardened_has_llvm_cfi \
+			&& \
+		[[ "${RUSTFLAGS_HARDENED_LLVM_CFI:-0}" == "1" ]] \
+	; then
+		protect_spectrum="llvm-cfi"
+	elif \
+		[[ \
+			"${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("DP"|"UM"|"FS") \
+				|| \
+			"${RUSTFLAGS_HARDENED_USE_CASES}" =~ "sensitive-data" \
+		]] \
+			&& \
+		[[ "${ARCH}" =~ ("amd64"|"s390") ]] \
+	; then
+		protect_spectrum="retpoline"
+	else
+		protect_spectrum="none"
+	fi
+einfo "Protect spectrum:  ${protect_spectrum}"
+
 	${RUSTC} -Z help 2>/dev/null 1>/dev/null
 	local is_rust_nightly=$?
 
@@ -572,44 +665,13 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	if ! _rustflags-hardened_has_cet ; then
 	# Allow -mretpoline-external-thunk
 		filter-flags "-f*cf-protection=*"
-	elif \
-		[[ "${RUSTFLAGS_HARDENED_USE_CASES}" \
-			=~ \
-("ce"\
-|"dss"\
-|"execution-integrity"\
-|"extension"\
-|"id"\
-|"jit"\
-|"language-runtime"\
-|"kernel"\
-|"multiuser-system"\
-|"network"\
-|"pe"\
-|"plugin"\
-|"real-time-integrity"\
-|"safety-critical"\
-|"scripting"\
-|"security-critical"\
-|"sensitive-data"\
-|"untrusted-data")\
-		]] \
-			&&
-		ver_test "${rust_pv}" -ge "1.60.0" \
-			&& \
-		[[ "${RUSTFLAGS_HARDENED_CET:-1}" == "1" ]] \
-			&& \
-		_rustflags-hardened_has_target_feature "cet" \
-	; then
+	fi
+	if [[ "${protect_spectrum}" == "cet" ]] ; then
 	# ZC, CE, PE
 		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
 			| sed -r -e "s#-C[ ]*target-feature=[-+]cet##g")
 		RUSTFLAGS+=" -C target-feature=+cet"
-	elif \
-		_rustflags-hardened_has_pauth \
-			&& \
-		[[ "${RUSTFLAGS_HARDENED_PAUTH:-1}" == "1" ]] \
-	; then
+	elif [[ "${protect_spectrum}" == "arm-cfi" ]] ; then
 	# ZC, CE, PE
 		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
 			| sed -r -e "s#-C[ ]*control-flow-protection##g")
@@ -641,7 +703,6 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		fi
 	fi
 
-	if [[ "${RUSTFLAGS_HARDENED_RETPOLINE:-1}" == "1" && "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("id"|"kernel") ]] ; then
 	# Spectre V2 mitigation Linux kernel case
 	# For GCC it uses
 	#   General case: -mindirect-branch=thunk-extern -mindirect-branch-register
@@ -650,27 +711,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	#   General case: -mretpoline-external-thunk -mindirect-branch-cs-prefix
 	#   vDSO case:    -mretpoline
 	# ZC, ID
-		:
-	elif \
-		[[ \
-			"${RUSTFLAGS_HARDENED_RETPOLINE:-1}" == "1" \
-				&& \
-			"${RUSTFLAGS_HARDENED_USE_CASES}" \
-				=~ \
-("container-runtime"\
-|"dss"\
-|"id"\
-|"hypervisor"\
-|"kernel"\
-|"network"\
-|"scripting"\
-|"sensitive-data"\
-|"server"\
-|"untrusted-data"\
-|"web-browser")\
-		]] \
-	; then
-		:
+	if [[ "${protect_spectrum}" == "retpoline" ]] ; then
 	# Spectre V2 mitigation general case
 		# -mfunction-return and -fcf-protection are mutually exclusive.
 
@@ -1116,7 +1157,7 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 				elif [[ "${x}" == "address" ]] ; then
 					RUSTFLAGS+=" -Zsanitizer=${x}"
 					asan=1
-				elif [[ "${x}" == "cfi" ]] && ! _rustflags-hardened_has_cet && [[ "${ARCH}" == "amd64" ]] && tc-is-clang ; then
+				elif [[ "${x}" == "cfi" && "${protect_spectrum}" == "llvm-cfi" ]] ; then
 					RUSTFLAGS+=" -Zsanitizer=${x}"
 				elif [[ "${x}" == "cfi" ]] ; then
 					skip=1
