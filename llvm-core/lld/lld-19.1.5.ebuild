@@ -26,7 +26,7 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-inherit cmake flag-o-matic llvm.org python-any-r1 toolchain-funcs
+inherit cmake flag-o-matic llvm.org python-single-r1 toolchain-funcs
 
 KEYWORDS="
 amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv sparc x86 ~arm64-macos ~x64-macos
@@ -112,7 +112,9 @@ BDEPEND="
 	~llvm-core/llvm-${PV}:${LLVM_MAJOR}
 	test? (
 		>=dev-build/cmake-3.16
-		$(python_gen_any_dep ">=dev-python/lit-${PV}[\${PYTHON_USEDEP}]")
+		$(python_gen_cond_dep "
+			>=dev-python/lit-${PV}[\${PYTHON_USEDEP}]
+		")
 	)
 "
 PDEPEND="
@@ -146,7 +148,7 @@ python_check_deps() {
 }
 
 pkg_setup() {
-	python-any-r1_pkg_setup
+	python-single-r1_pkg_setup
 
 # See https://bugs.gentoo.org/767700
 einfo
