@@ -5,6 +5,7 @@ EAPI=8
 
 # Must be bumped with media-plugins/imlib2_loaders!
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO IO SO"
 
 inherit cflags-hardened multilib-minimal toolchain-funcs
 
