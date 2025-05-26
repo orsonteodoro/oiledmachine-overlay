@@ -305,7 +305,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # @DESCRIPTION:
 # Allow to override the CFI vs Retpoline automagic.  This allows the user to
 # optimize mitigation either against information disclosure with Retpoline; or
-# code execution, privilege escalation, and information disclosure with CFI.
+# code execution and privilege escalation with CFI.
 #
 # Valid values:
 # arm-cfi  - Apply PAC/BTI/MTE
