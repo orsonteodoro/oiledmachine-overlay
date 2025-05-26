@@ -142,7 +142,7 @@ exist in build files.
 | PyTorch 2.5 (ROCm 6.2)            | Available                             |                                                          |
 | PyTorch 2.7 (CUDA 12.8)           | Planned                               |                                                          |
 | PyTorch 2.7 (ROCm 6.3)            | Planned                               |                                                          |
-| Qt 5.x                            | Available                             |                                                          |
+| Qt 5.x                            | Not Supported, but Available (4)      |                                                          |
 | Qt 6.x                            | Fully supported                       |                                                          |
 | ROCm 6.2                          | Available                             | F41 (6.2.1) (3), U24 (>= 6.2.0) (1)                      |
 | ROCm 6.3                          | Planned                               | D12 (>= 6.3.1) (2), F42 (6.3.1) (3)                      |
@@ -161,6 +161,10 @@ exist in build files.
 * (1) U24 uses Python 3.12 for ROCm support
 * (2) D12 uses Python 3.11 for ROCm support
 * (3) F41, F42 uses Python 3.13 for ROCm support
+* (4) Backporting security patches is likely to be incomplete.  No hardened
+      ebuilds will be provided for Qt5.  You must either keep a local fork
+      or add per-package CFLAGS for Qt5 packages that have a password UI
+      widget, or process untrusted data, or process sensitive data.
 
 Gentoo Prefix is not supported and deprecated on this overlay.
 
