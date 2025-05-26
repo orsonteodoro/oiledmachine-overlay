@@ -964,11 +964,11 @@ ewarn
 			_cflags-hardened_has_pauth \
 				|| \
 			_cflags-hardened_has_mte \
-				||
+				|| \
 			[[ "${CFLAGS_HARDENED_BTI_USER}" == "1" ]] \
-				||
+				|| \
 			[[ "${CFLAGS_HARDENED_MTE_USER}" == "1" ]] \
-				||
+				|| \
 			[[ "${CFLAGS_HARDENED_PAC_USER}" == "1" ]] \
 		) \
 			&& \
@@ -1159,7 +1159,7 @@ einfo "All SSP hardening (All functions hardened)"
 			append-flags "-fcf-protection=full"
 			CFLAGS_HARDENED_CFLAGS+=" -fcf-protection=full"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fcf-protection=full"
-		if [[ "${protect_spectrum}" == "arm-cfi" ]] ; then
+		elif [[ "${protect_spectrum}" == "arm-cfi" ]] ; then
 			_cflags-hardened_arm_cfi
 		fi
 

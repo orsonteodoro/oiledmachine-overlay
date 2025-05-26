@@ -25,6 +25,7 @@ MY_PVR="${PVR/m/}"
 
 CFLAGS_HARDENED_LEVEL=3 # SSP all is upstream default
 CFLAGS_HARDENED_USE_CASES="network sensitive-data untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF HO IO SO"
 CUDA_TARGETS_COMPAT=(
 	sm_30
 	sm_60
