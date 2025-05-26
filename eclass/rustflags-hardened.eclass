@@ -595,6 +595,12 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 			_rustflags-hardened_has_pauth \
 				|| \
 			_rustflags-hardened_has_mte \
+				||
+			[[ "${RUSTFLAGS_HARDENED_BTI_USER}" == "1" ]] \
+				||
+			[[ "${RUSTFLAGS_HARDENED_MTE_USER}" == "1" ]] \
+				||
+			[[ "${RUSTFLAGS_HARDENED_PAC_USER}" == "1" ]] \
 		) \
 			&& \
 		[[ "${RUSTFLAGS_HARDENED_PAUTH:-1}" == "1" ]] \

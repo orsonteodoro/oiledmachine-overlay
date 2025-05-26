@@ -964,6 +964,12 @@ ewarn
 			_cflags-hardened_has_pauth \
 				|| \
 			_cflags-hardened_has_mte \
+				||
+			[[ "${CFLAGS_HARDENED_BTI_USER}" == "1" ]] \
+				||
+			[[ "${CFLAGS_HARDENED_MTE_USER}" == "1" ]] \
+				||
+			[[ "${CFLAGS_HARDENED_PAC_USER}" == "1" ]] \
 		) \
 			&& \
 		[[ "${CFLAGS_HARDENED_ARM_CFI:-0}" == "1" ]] \
