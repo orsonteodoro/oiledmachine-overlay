@@ -4,6 +4,7 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO IO SO UAF UM"
 
 inherit autotools cflags-hardened flag-o-matic libtool multilib-minimal
 inherit toolchain-funcs
