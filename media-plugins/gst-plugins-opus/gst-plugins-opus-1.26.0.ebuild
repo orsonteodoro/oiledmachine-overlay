@@ -4,6 +4,7 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="plugin untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="SO"
 GST_ORG_MODULE="gst-plugins-base"
 
 inherit cflags-hardened gstreamer-meson

@@ -35,7 +35,7 @@ EAPI=8
 # gst-plugins-bad
 
 CFLAGS_HARDENED_USE_CASES="network untrusted-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO SO"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO SO"
 GST_ORG_MODULE="gst-plugins-base"
 MITIGATION_DATE="Dec 3, 2024" # Advisory date
 MITIGATION_URI="https://gstreamer.freedesktop.org/security/"

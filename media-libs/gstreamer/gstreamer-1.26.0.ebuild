@@ -9,6 +9,7 @@ EAPI=8
 # gstreamer-1.22.x requires 2.62, but 2.64 is strongly recommended
 
 CFLAGS_HARDENED_USE_CASES="network untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="IU"
 MITIGATION_DATE="Dec 3, 2024" # Advisory date
 MITIGATION_URI="https://gstreamer.freedesktop.org/security/"
 SEVERITY_LABEL="CVSS 4.0"
