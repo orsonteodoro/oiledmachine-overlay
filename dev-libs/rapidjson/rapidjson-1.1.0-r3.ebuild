@@ -5,7 +5,10 @@
 
 EAPI=8
 
-inherit cmake
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO PE"
+
+inherit cflags-hardened cmake
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/miloyip/rapidjson.git"
@@ -19,7 +22,10 @@ fi
 DESCRIPTION="A fast JSON parser/generator for C++ with both SAX/DOM style API"
 HOMEPAGE="https://rapidjson.org/"
 LICENSE="MIT"
-IUSE="doc examples test"
+IUSE="
+doc examples test
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 DEPEND="
@@ -51,6 +57,7 @@ src_prepare() {
 }
 
 src_configure() {
+	cflags-hardened_append
 	local mycmakeargs=(
 		-DDOC_INSTALL_DIR="${EPREFIX}/usr/share/doc/${PF}"
 		-DLIB_INSTALL_DIR="${EPREFIX}/usr/$(get_libdir)"
