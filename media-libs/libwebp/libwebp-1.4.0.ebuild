@@ -8,6 +8,7 @@ EAPI=8
 MY_P="${P/_/-}"
 
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="DF HO IO UAF UM"
 
 inherit autotools cflags-hardened multilib-minimal
 
