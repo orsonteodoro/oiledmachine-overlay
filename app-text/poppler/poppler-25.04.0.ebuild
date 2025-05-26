@@ -148,11 +148,41 @@ src_unpack() {
 	default
 }
 
+set_tc() {
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+	if ! which ${CC} 2>&1 >/dev/null ; then
+		export CC="gcc"
+		export CXX="g++"
+		export CPP="${CC} -E"
+	fi
+	if tc-is-clang ; then
+		export LLVM_SLOT=$(clang-major-version)
+einfo "PATH=${PATH} (before)"
+		export PATH=$(echo "${PATH}" \
+			| tr ":" "\n" \
+			| sed -E -e "/llvm\/[0-9]+/d" \
+			| tr "\n" ":" \
+			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin|g")
+einfo "PATH=${PATH} (after)"
+einfo "Using Clang ${LLVM_SLOT}"
+	else
+		local gcc_slot=$(gcc-major-version)
+		export CC="${CHOST}-gcc-${gcc_slot}"
+		export CXX="${CHOST}-g++-${gcc_slot}"
+		export CPP="${CC} -E"
+einfo "Using GCC ${gcc_slot}"
+	fi
+	strip-unsupported-flags
+	${CC} --version || die "Compiler check failed."
+}
+
 src_prepare() {
 	cmake_src_prepare
 
 	# Clang doesn't grok this flag, the configure nicely tests that, but
 	# cmake just uses it, so remove it if we use clang
+	set_tc
 	if tc-is-clang ; then
 		sed -i \
 			-e 's/-fno-check-new//' \
