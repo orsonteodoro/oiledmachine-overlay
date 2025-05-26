@@ -182,12 +182,13 @@ GCC_COMPAT=( 13 ) # Should only list non EOL
 # We cannot unbundle this because it has to be compiled with the clang/llvm
 # that we are building here. Otherwise we run into problems running the compiler.
 CPU_EMUL_COMMIT="38f070a7e1de00d0398224e9d6306cc59010d147" # Same as 1.0.31 ; Search committer-date:<=2025-01-08
+EMHASH_COMMIT="96dcae6fac2f5f90ce97c9efee61a1d702ddd634"
 LEVEL_ZERO_PV="1.19.2"
 LLVM_COMPAT=( 20 18 ) # Should only list non EOL
 LLVM_TARGET_USEDEPS=${ALL_LLVM_TARGETS[@]/%/(-)?}
 OPENCL_HEADERS_COMMIT="542d7a8f65ecfd88b38de35d8b10aa67b36b33b2"
-OPENCL_HEADERS_COMMIT="542d7a8f65ecfd88b38de35d8b10aa67b36b33b2"
 OPENCL_ICD_LOADER_COMMIT="804b6f040503c47148bee535230070da6b857ae4"
+PARALLEL_HASHMAP_COMMIT="8a889d3699b3c09ade435641fb034427f3fd12b6"
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOTS=(
 	rocm_6_3
@@ -259,11 +260,18 @@ https://github.com/boostorg/throw_exception/archive/${BOOST_THROW_EXCEPTION_COMM
 https://github.com/boostorg/unordered/archive/${BOOST_UNORDERED_COMMIT}.tar.gz
 	-> boostorg-unordered-${BOOST_UNORDERED_COMMIT:0:7}.tar.gz
 
+https://github.com/ktprime/emhash/archive/${EMHASH_COMMIT}.tar.gz
+	-> emhash-${EMHASH_COMMIT:0:7}.tar.gz
+
+https://github.com/greg7mdp/parallel-hashmap/archive/${PARALLEL_HASHMAP_COMMIT}.tar.gz
+	-> parallel-hashmap-${PARALLEL_HASHMAP_COMMIT:0:7}.tar.gz
+
 	esimd_emulator? (
 https://github.com/intel/cm-cpu-emulation/archive/${CPU_EMUL_COMMIT}.tar.gz
 	-> ${P}-cm-cpu-emulation-${CPU_EMUL_COMMIT:0:7}.tar.gz
 	)
 "
+
 
 DESCRIPTION="oneAPI Data Parallel C++ compiler"
 HOMEPAGE="https://github.com/intel/llvm"
@@ -437,7 +445,6 @@ BDEPEND="
 	)
 "
 PATCHES=(
-#	"${FILESDIR}/${PN}-2025.01.08-system-libs.patch"
 )
 
 warn_untested_gpu() {
@@ -517,13 +524,6 @@ eerror "Switch to >=llvm-core/clang-18.0"
 src_prepare() {
 	cmake_src_prepare
 
-#	dep_prepare_cp "${WORKDIR}/compute-runtime-${COMPUTE_RUNTIME_PV}/level_zero/include"	"${BUILD_DIR}/build/content-exp-headers/level_zero/include"
-#	dep_prepare_cp "${WORKDIR}/level-zero-${LEVEL_ZERO_PV}"					"${BUILD_DIR}/build/_deps/level-zero-loader-src"
-#	dep_prepare_mv "${WORKDIR}/OpenCL-Headers-${OPENCL_HEADERS_COMMIT}"			"${BUILD_DIR}/build/_deps/opencl-headers-src"
-#	dep_prepare_mv "${WORKDIR}/unified-memory-framework-${UNIFIED_MEMORY_FRAMEWORK_PV}"	"${BUILD_DIR}/build/_deps/unified-memory-framework-src"
-
-#	dep_prepare_mv "${WORKDIR}/compute-runtime-${COMPUTE_RUNTIME_PV}/level_zero/include"	"${WORKDIR}/_deps/content-exp-headers/level_zero/include"
-
 	dep_prepare_cp "${WORKDIR}/level-zero-${LEVEL_ZERO_PV}"					"${WORKDIR}/_deps/level-zero-loader-src"
 	dep_prepare_mv "${WORKDIR}/compute-runtime-${COMPUTE_RUNTIME_PV}/level_zero/include"	"${WORKDIR}/_deps/content-exp-headers/level_zero/include"
 	dep_prepare_cp "${WORKDIR}/OpenCL-Headers-${OPENCL_HEADERS_COMMIT}"			"${WORKDIR}/_deps/opencl-headers-src"
@@ -541,13 +541,15 @@ src_prepare() {
 	dep_prepare_mv "${WORKDIR}/throw_exception-${BOOST_THROW_EXCEPTION_COMMIT}"		"${WORKDIR}/_deps/boost_throw_exception-src"
 	dep_prepare_mv "${WORKDIR}/unordered-${BOOST_UNORDERED_COMMIT}"				"${WORKDIR}/_deps/boost_unordered-src"
 
+	dep_prepare_mv "${WORKDIR}/emhash-${EMHASH_COMMIT}"					"${WORKDIR}/_deps/emhash-headers-src"
+	dep_prepare_mv "${WORKDIR}/parallel-hashmap-${PARALLEL_HASHMAP_COMMIT}"			"${WORKDIR}/_deps/parallel-hashmap-src"
+
 	pushd "${S}" >/dev/null 2>&1 || die
 		eapply "${FILESDIR}/${PN}-2025.01.08-hardcoded-paths.patch"
 	popd >/dev/null 2>&1 || die
 
 	pushd "${WORKDIR}/unified-runtime-${UNIFIED_RUNTIME_COMMIT}" >/dev/null 2>&1 || die
 		eapply "${FILESDIR}/${PN}-2025.01.08-unified-runtime-da04d13-exp-headers-path.patch"
-#		eapply "${FILESDIR}/${PN}-2025.01.08-no-copy-zero-headers.patch"
 	popd >/dev/null 2>&1 || die
 
 	# Speed up symbol replacmenet for @...@ by reducing the search space
@@ -660,6 +662,7 @@ src_configure() {
 		-DFETCHCONTENT_FULLY_DISCONNECTED=ON
 		-DFETCHCONTENT_QUIET=OFF
 #		-DFETCHCONTENT_SOURCE_DIR_LEVEL_ZERO_LOADER="${WORKDIR}/level-zero-loader-${LEVEL_ZERO_PV}"
+		-DFETCHCONTENT_SOURCE_DIR_EXP_HEADERS="${WORKDIR}/_deps/content-exp-headers/level_zero/include"
 		-DEXP_HEADERS_SOURCE_DIR="${WORKDIR}/_deps/exp_headers-src"
 		-DFETCHCONTENT_BASE_DIR="${WORKDIR}/_deps" # Default:  ${CMAKE_BINARY_DIR}/_deps
 #		-DLEVEL_ZERO_INCLUDE_DIR="${ESYSROOT}/usr/include/level_zero"
