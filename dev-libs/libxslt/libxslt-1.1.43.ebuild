@@ -6,6 +6,7 @@ EAPI=8
 # Note: Please bump this in sync with dev-libs/libxml2.
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF FS HO IO TC UAF UM"
 MULTILIB_CHOST_TOOLS=(
 	"/usr/bin/xslt-config"
 )
