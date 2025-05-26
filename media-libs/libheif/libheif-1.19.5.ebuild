@@ -4,6 +4,7 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO"
 PATENT_STATUS_USE=(
 	"patent_status_nonfree"
 )

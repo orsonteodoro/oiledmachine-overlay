@@ -3,7 +3,10 @@
 
 EAPI=8
 
-inherit meson
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="UAF"
+
+inherit cflags-hardened meson
 
 if [[ "${PV}" == *"9999"* ]]; then
 	inherit git-r3
@@ -35,6 +38,7 @@ BDEPEND="
 "
 
 src_configure() {
+	cflags-hardened_append
 	local emesonargs=(
 		$(meson_use test tests)
 	)
