@@ -151,13 +151,9 @@ src_unpack() {
 set_tc() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
-	if ! which ${CC} 2>&1 >/dev/null ; then
-		export CC="gcc"
-		export CXX="g++"
-		export CPP="${CC} -E"
-	fi
-	if tc-is-clang ; then
-		export LLVM_SLOT=$(clang-major-version)
+	export CPP="${CC} -E"
+	if [[ "${CC}" == ^"clang-"[0-9]+$ ]] ; then
+		export LLVM_SLOT="${CC#*-}"
 einfo "PATH=${PATH} (before)"
 		export PATH=$(echo "${PATH}" \
 			| tr ":" "\n" \
@@ -165,6 +161,26 @@ einfo "PATH=${PATH} (before)"
 			| tr "\n" ":" \
 			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin|g")
 einfo "PATH=${PATH} (after)"
+	elif [[ "${CC}" == ^"${CHOST}-clang-"[0-9]+$ ]] ; then
+		export LLVM_SLOT="${CC##*-}"
+einfo "PATH=${PATH} (before)"
+		export PATH=$(echo "${PATH}" \
+			| tr ":" "\n" \
+			| sed -E -e "/llvm\/[0-9]+/d" \
+			| tr "\n" ":" \
+			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin|g")
+einfo "PATH=${PATH} (after)"
+	fi
+	if ! which ${CC} 2>&1 >/dev/null ; then
+		export CC="gcc"
+		export CXX="g++"
+		export CPP="${CC} -E"
+	fi
+	if tc-is-clang ; then
+		export LLVM_SLOT=$(clang-major-version)
+		export CC="${CHOST}-clang-${LLVM_SLOT}"
+		export CXX="${CHOST}-clang++-${LLVM_SLOT}"
+		export CPP="${CC} -E"
 einfo "Using Clang ${LLVM_SLOT}"
 	else
 		local gcc_slot=$(gcc-major-version)
