@@ -163,9 +163,10 @@ exist in build files.
 * (2) D12 uses Python 3.11 for ROCm support
 * (3) F41, F42 uses Python 3.13 for ROCm support
 * (4) Backporting security patches is likely to be incomplete.  No hardened
-      ebuilds will be provided.  You must either keep a local fork
-      or add per-package CFLAGS for UI toolkit packages that have a password UI
-      widget, or process untrusted data, or process sensitive data.
+      ebuilds will be provided.  You must either keep a local fork or add
+      per-package hardening CFLAGS (e.g. Retpoline, CET) for UI toolkit packages
+      that have a password UI widget, or process untrusted data, or process
+      sensitive data.
 
 Gentoo Prefix is not supported and deprecated on this overlay.
 
