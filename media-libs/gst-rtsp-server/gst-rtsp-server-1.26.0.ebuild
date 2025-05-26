@@ -8,6 +8,7 @@ EAPI=8
 # gst-plugins-srtp for srtpenc and srtpdec elements
 
 CFLAGS_HARDENED_USE_CASES="network untrusted-data server"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO"
 
 inherit cflags-hardened gstreamer-meson
 

@@ -230,6 +230,18 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # UAF - Use After Free
 # UM - Uninitalized Memory
 
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_PROTECT_SPECTRUM_USER
+# @USER_VARIABLE
+# @DESCRIPTION:
+# Allow to override the CFI vs Retpoline automagic.  This allows the user to
+# optimize mitigation either against information disclosure with Retpoline; or
+# code execution, privilege escalation, and information disclosure with CFI.
+#
+# Valid values:
+# arm-cfi  - Apply PAC/BTI/MTE
+# cet      - Apply CET
+# llvm-cfi - Apply LLVM CFI
+# none     - Do not apply CFI or Retpoline
 
 # @FUNCTION: _rustflags-hardened_sanitizers_compat
 # @DESCRIPTION:
@@ -628,6 +640,9 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		protect_spectrum="retpoline"
 	else
 		protect_spectrum="none"
+	fi
+	if [[ -n "${RUSTFLAGS_HARDENED_PROTECT_SPECTRUM_USER}" ]] ; then
+		protect_spectrum="${RUSTFLAGS_HARDENED_PROTECT_SPECTRUM_USER}"
 	fi
 einfo "Protect spectrum:  ${protect_spectrum}"
 

@@ -300,6 +300,20 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # UAF - Use After Free
 # UM - Uninitalized Memory
 
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_PROTECT_SPECTRUM_USER
+# @USER_VARIABLE
+# @DESCRIPTION:
+# Allow to override the CFI vs Retpoline automagic.  This allows the user to
+# optimize mitigation either against information disclosure with Retpoline; or
+# code execution, privilege escalation, and information disclosure with CFI.
+#
+# Valid values:
+# arm-cfi  - Apply PAC/BTI/MTE
+# cet      - Apply CET
+# llvm-cfi - Apply LLVM CFI
+# none     - Do not apply CFI or Retpoline
+
+
 # @FUNCTION: _cflags-hardened_fcmp
 # @DESCRIPTION:
 # Floating point compare.  Bash does not support floating point comparison
@@ -999,6 +1013,9 @@ ewarn
 		protect_spectrum="retpoline"
 	else
 		protect_spectrum="none"
+	fi
+	if [[ -n "${CFLAGS_HARDENED_PROTECT_SPECTRUM_USER}" ]] ; then
+		protect_spectrum="${CFLAGS_HARDENED_PROTECT_SPECTRUM_USER}"
 	fi
 einfo "Protect spectrum:  ${protect_spectrum}"
 
