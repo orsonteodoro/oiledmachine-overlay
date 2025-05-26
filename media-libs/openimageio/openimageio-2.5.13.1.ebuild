@@ -6,6 +6,8 @@ EAPI=8
 # Requirements:
 # https://github.com/AcademySoftwareFoundation/OpenImageIO/blob/v2.5.13.1/INSTALL.md
 
+CFLAGS_HARDENED_USE_CASES="ip-assets untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO SO"
 CXX_STD_MIN="14"
 FONT_PN="OpenImageIO"
 LEGACY_TBB_SLOT="2"
@@ -41,7 +43,7 @@ OPENEXR_V3_PV=(
 OPENVDB_APIS=( {11..5} )
 OPENVDB_APIS_=( ${OPENVDB_APIS[@]/#/abi} )
 OPENVDB_APIS_=( ${OPENVDB_APIS_[@]/%/-compat} )
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{11..12} )
 QT5_PV="5.15"
 QT6_PV="6.6"
 TEST_OEXR_IMAGE_COMMIT="df16e765fee28a947244657cae3251959ae63c00" # committer-date:<=2024-05-01
@@ -59,7 +61,7 @@ X86_CPU_FEATURES=(
 )
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} ) # Place after X86_CPU_FEATURES
 
-inherit cmake flag-o-matic font llvm python-single-r1 virtualx
+inherit cflags-hardened cmake flag-o-matic font llvm python-single-r1 virtualx
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/OpenImageIO-${PV}"
@@ -115,7 +117,7 @@ aom avif clang color-management cuda cxx17 dds dicom +doc ffmpeg field3d fits
 gif gui heif icc jpeg2k opencv opengl openvdb png ptex +python qt5 +qt6 raw
 rav1e tbb tools +truetype wayland webp X
 
-ebuild_revision_7
+ebuild_revision_8
 "
 gen_abi_compat_required_use() {
 	local s
@@ -577,6 +579,8 @@ eerror
 	# will turn on NEON support if it is available.
 	#
 	use arm64 && append-flags -flax-vector-conversions
+
+	cflags-hardened_append
 
 	local has_qt="OFF"
 	if use qt5 || use qt6 ; then
