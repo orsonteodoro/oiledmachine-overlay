@@ -6,6 +6,7 @@ EAPI=8
 APNG_REPO="libpng-apng" # Sometimes libpng-apng is more up to date.
 APNG_PV="1.6.47"
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO IO SO UAF UM"
 
 inherit cflags-hardened libtool multilib-minimal
 
