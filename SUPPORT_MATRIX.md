@@ -143,7 +143,7 @@ exist in build files.
 | PyTorch 2.5 (ROCm 6.2)            | Available                             |                                                          |
 | PyTorch 2.7 (CUDA 12.8)           | Planned                               |                                                          |
 | PyTorch 2.7 (ROCm 6.3)            | Planned                               |                                                          |
-| Qt 5.x (4)                        | Not Supported, but Available          |                                                          |
+| Qt 5.x (4)                        | Not supported, but available          |                                                          |
 | Qt 6.x                            | Fully supported                       |                                                          |
 | ROCm 6.2                          | Available                             | F41 (6.2.1) (3), U24 (>= 6.2.0) (1)                      |
 | ROCm 6.3                          | Planned                               | D12 (>= 6.3.1) (2), F42 (6.3.1) (3)                      |
