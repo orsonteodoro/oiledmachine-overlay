@@ -943,7 +943,7 @@ ewarn
 	local protect_spectrum="none" # retpoline, cfi, gain, none
 	if \
 		[[ \
-			"${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"DF"|"DP"|"IO"|"UAF"|"TC") \
+			"${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"SO"|"TC"|"UAF") \
 				|| \
 			"${CFLAGS_HARDENED_USE_CASES}" =~ "untrusted-data" \
 		]] \
@@ -955,7 +955,7 @@ ewarn
 		protect_spectrum="cet"
 	elif \
 		[[ \
-			"${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"UAF"|"TC") \
+			"${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"SO"|"TC"|"UAF") \
 				|| \
 			"${CFLAGS_HARDENED_USE_CASES}" =~ "untrusted-data" \
 		]] \
@@ -969,13 +969,13 @@ ewarn
 		[[ "${CFLAGS_HARDENED_ARM_CFI:-0}" == "1" ]] \
 	; then
 	# TODO
-	# PAC:  BO, DP, TC, UAF
-	# BTI:  DP, TC, UAF
-	# MTE:  BO, DP, UAF
+	# PAC:  "BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"SO"|"TC"|"UAF"
+	# BTI:  "BO"|"BU"|"CE"|"DF"|"DP"|"HO"|"IO"|"IU"|"SO"|"TC"|"UAF"
+	# MTE:  "BO"|"BU"|"CE"|"DF"|"DP"|"HO"|"IO"|"IU"|"SO"|"TC"|"UAF"
 		protect_spectrum="arm-cfi"
 	elif \
 		[[ \
-			"${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"DP"|"UAF"|"TC") \
+			"${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"SO"|"TC"|"UAF") \
 				|| \
 			"${CFLAGS_HARDENED_USE_CASES}" =~ "untrusted-data" \
 		]] \
@@ -988,7 +988,7 @@ ewarn
 		protect_spectrum="llvm-cfi"
 	elif \
 		[[ \
-			"${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("DP"|"UM"|"FS") \
+			"${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("UM"|"FS") \
 				|| \
 			"${CFLAGS_HARDENED_USE_CASES}" =~ "sensitive-data" \
 		]] \

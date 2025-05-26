@@ -572,7 +572,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	local protect_spectrum="none" # retpoline, cfi, gain, none
 	if \
 		[[ \
-			"${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"DF"|"DP"|"IO"|"UAF"|"TC") \
+			"${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"SO"|"TC"|"UAF") \
 				|| \
 			"${RUSTFLAGS_HARDENED_USE_CASES}" =~ "untrusted-data" \
 		]] \
@@ -586,7 +586,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		protect_spectrum="cet"
 	elif \
 		[[ \
-			"${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"UAF"|"TC") \
+			"${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"SO"|"TC"|"UAF") \
 				|| \
 			"${RUSTFLAGS_HARDENED_USE_CASES}" =~ "untrusted-data" \
 		]] \
@@ -599,13 +599,13 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 			&& \
 		[[ "${RUSTFLAGS_HARDENED_PAUTH:-1}" == "1" ]] \
 	; then
-	# PAC:  BO, DP, TC, UAF
-	# BTI:  DP, TC, UAF
-	# MTE:  BO, DP, UAF
+	# PAC:  "BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"SO"|"TC"|"UAF"
+	# BTI:  "BO"|"BU"|"CE"|"DF"|"DP"|"HO"|"IO"|"IU"|"SO"|"TC"|"UAF"
+	# MTE:  "BO"|"BU"|"CE"|"DF"|"DP"|"HO"|"IO"|"IU"|"SO"|"TC"|"UAF"
 		protect_spectrum="arm-cfi"
 	elif \
 		[[ \
-			"${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"DP"|"UAF"|"TC") \
+			"${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"SO"|"TC"|"UAF") \
 				|| \
 			"${RUSTFLAGS_HARDENED_USE_CASES}" =~ "untrusted-data" \
 		]] \
@@ -617,7 +617,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		protect_spectrum="llvm-cfi"
 	elif \
 		[[ \
-			"${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("DP"|"UM"|"FS") \
+			"${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("UM"|"FS") \
 				|| \
 			"${RUSTFLAGS_HARDENED_USE_CASES}" =~ "sensitive-data" \
 		]] \
