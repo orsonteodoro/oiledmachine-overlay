@@ -6,6 +6,10 @@ EAPI=8
 
 # Worth keeping an eye on 'develop' branch upstream for possible backports.
 AUTOTOOLS_AUTO_DEPEND="no"
+# This is a security-critical package.  This means if it breaks, then all applications will break.
+# This is why newer flags like -fhardened, -cf-protection, -mbranch-protection, -mspeculative-load-hardening need to be actually tested.
+# For noobs, it is usually a complete clean format.
+# For pros, you can try to undo the damage with untested experimental flags with a stage 3 tarball.
 CFLAGS_HARDENED_CF_PROTECTION=0		# -cf-protection is untested or unverified
 CFLAGS_HARDENED_FHARDENED=0		# -fhardened is untested or unverified
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"

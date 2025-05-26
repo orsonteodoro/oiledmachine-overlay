@@ -7,7 +7,7 @@ EAPI=8
 CFLAGS_HARDENED_CF_PROTECTION=0		# Untested
 CFLAGS_HARDENED_FHARDENED=0		# Untested
 CFLAGS_HARDENED_TRAPV=0
-# This is a security critical package.  This means if it breaks, then @system and the compiler toolchain can break.
+# This is a security-critical package.  This means if it breaks, then @system and the compiler toolchain can break.
 # This is why newer flags like -fhardened, -cf-protection, -mbranch-protection, -mspeculative-load-hardening need to be actually tested.
 # For noobs, it is usually a complete clean format.
 # For pros, you can try to undo the damage with untested experimental flags with a stage 3 tarball.
