@@ -112,6 +112,7 @@ exist in build files.
 | gRPC 1.49 - 1.54                  | Fully supported                       | D12 (1.51.1), F41 (1.48.4), F42 (1.48.4), U24 (1.51.1)   |
 | gRPC 1.55 - 1.62                  | Available                             |                                                          |
 | gRPC >= 1.63                      | Available                             |                                                          |
+| GTK+2 (4)                         | Not Supported                         |
 | GTK+3                             | Fully supported                       |                                                          |
 | GTK 4                             | Fully supported                       |                                                          |
 | OpenGL <= 4.6                     | Fully supported                       |                                                          |
@@ -142,7 +143,7 @@ exist in build files.
 | PyTorch 2.5 (ROCm 6.2)            | Available                             |                                                          |
 | PyTorch 2.7 (CUDA 12.8)           | Planned                               |                                                          |
 | PyTorch 2.7 (ROCm 6.3)            | Planned                               |                                                          |
-| Qt 5.x                            | Not Supported, but Available (4)      |                                                          |
+| Qt 5.x (4)                        | Not Supported, but Available          |                                                          |
 | Qt 6.x                            | Fully supported                       |                                                          |
 | ROCm 6.2                          | Available                             | F41 (6.2.1) (3), U24 (>= 6.2.0) (1)                      |
 | ROCm 6.3                          | Planned                               | D12 (>= 6.3.1) (2), F42 (6.3.1) (3)                      |
@@ -162,8 +163,8 @@ exist in build files.
 * (2) D12 uses Python 3.11 for ROCm support
 * (3) F41, F42 uses Python 3.13 for ROCm support
 * (4) Backporting security patches is likely to be incomplete.  No hardened
-      ebuilds will be provided for Qt5.  You must either keep a local fork
-      or add per-package CFLAGS for Qt5 packages that have a password UI
+      ebuilds will be provided.  You must either keep a local fork
+      or add per-package CFLAGS for UI toolkit packages that have a password UI
       widget, or process untrusted data, or process sensitive data.
 
 Gentoo Prefix is not supported and deprecated on this overlay.
