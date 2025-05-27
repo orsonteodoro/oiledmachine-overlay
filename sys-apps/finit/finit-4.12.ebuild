@@ -4,12 +4,14 @@
 
 EAPI=8
 
+# U22, U24
+
 inherit autotools flag-o-matic
 
+S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/troglobit/finit/archive/refs/tags/${PV}.tar.gz -> ${P}.tar.gz
 "
-S="${WORKDIR}/${P}"
 
 DESCRIPTION="Fast init for Linux. Cookies included"
 HOMEPAGE="
@@ -63,7 +65,6 @@ INIT_SYSTEMS_DEPENDS="
 	!sys-apps/sysvinit
 	!sys-process/runit
 "
-# U 22.04
 # sys-apps/util-linux - for getty.conf contrib, swapoff
 # sys-apps/kbd - for keymap.conf in contrib
 LIBITE_PV="2.2.0"
@@ -115,7 +116,7 @@ BDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-4.6-override-bshell.patch"
+	"${FILESDIR}/${PN}-4.12-override-bshell.patch"
 )
 
 pkg_setup() {
