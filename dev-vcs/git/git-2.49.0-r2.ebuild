@@ -10,6 +10,7 @@ DOC_VER="${MY_PV}"
 # Live ebuilds or git modules with no https (MITM attack) are assumed untrusted.
 # Added retpoline for passwords.
 CFLAGS_HARDENED_USE_CASES="daemon network sensitive-data server untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO IO PE SO"
 GENTOO_DEPEND_ON_PERL="no"
 PLOCALES="bg ca de es fr is it ko pt_PT ru sv vi zh_CN"
 # bug #329479: git-remote-testgit is not multiple-version aware \
