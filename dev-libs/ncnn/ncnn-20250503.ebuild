@@ -5,6 +5,7 @@ EAPI=8
 
 # When you update this, update also dev-util/pnnx and dev-python/ncnn
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
 DISTUTILS_OPTIONAL=1
 DISTUTILS_USE_PEP517="setuptools"
 GLSLANG_COMMIT="a9ac7d5f307e5db5b8c4fbf904bdba8fca6283bc"
@@ -141,7 +142,7 @@ CPU_FLAGS_X86=(
 
 PYTHON_COMPAT=( "python3_"{11..13} )
 
-inherit cmake dep-prepare distutils-r1 optfeature toolchain-funcs
+inherit cflags-hardened cmake dep-prepare distutils-r1 optfeature toolchain-funcs
 
 DESCRIPTION="High-performance neural network inference framework"
 HOMEPAGE="https://github.com/Tencent/ncnn/"
@@ -188,6 +189,7 @@ ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
 examples openmp python tools +vulkan
+ebuild_revision
 "
 REQUIRED_USE="
 	cpu_flags_arm_bf16? (
@@ -370,6 +372,7 @@ src_prepare() {
 }
 
 src_configure() {
+	cflags-hardened_append
 	mycmakeargs+=(
 		-DGLSLANG_TARGET_DIR="${ESYSROOT}/usr/$(get_libdir)/cmake"
 		-DNCNN_BUILD_EXAMPLES=$(usex examples)
