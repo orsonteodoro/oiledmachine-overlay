@@ -3,6 +3,7 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
@@ -140,7 +141,7 @@ CPU_FLAGS_X86=(
 
 PYTHON_COMPAT=( "python3_"{11,12} )
 
-inherit distutils-r1 dep-prepare toolchain-funcs
+inherit cflags-hardened distutils-r1 dep-prepare toolchain-funcs
 
 DESCRIPTION="Python bindings for the high-performance neural network inference framework"
 HOMEPAGE="https://github.com/Tencent/ncnn/"
@@ -185,6 +186,7 @@ ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
 openmp
+ebuild_revision_1
 "
 REQUIRED_USE="
 	cpu_flags_arm_bf16? (
@@ -341,6 +343,7 @@ src_prepare() {
 }
 
 src_configure() {
+	cflags-hardened_append
 #	export GLSLANG_TARGET_DIR="${ESYSROOT}/usr/$(get_libdir)/cmake"
 	export NCNN_BUILD_EXAMPLES=OFF
 	export NCNN_BUILD_TOOLS=OFF
