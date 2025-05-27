@@ -13,6 +13,7 @@ AUTOTOOLS_AUTO_DEPEND="no"
 CFLAGS_HARDENED_CF_PROTECTION=0		# -cf-protection is untested or unverified
 CFLAGS_HARDENED_FHARDENED=0		# -fhardened is untested or unverified
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF"
 
 TRAINERS=(
 	zlib_trainers_minizip_binary_long

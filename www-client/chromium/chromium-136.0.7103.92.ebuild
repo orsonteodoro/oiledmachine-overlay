@@ -77,6 +77,7 @@ CFLAGS_HARDENED_LEVEL="1" # Global variable
 CFLAGS_HARDENED_USE_CASES="jit network scripting sensitive-data untrusted-data web-browser"
 CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 #CFLAGS_HARDENED_SANITIZERS_COMPAT=( "llvm" )
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF HO IO PE SO UAF TC"
 CHROMIUM_EBUILD_MAINTAINER=0 # See also GEN_ABOUT_CREDITS
 
 #
