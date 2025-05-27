@@ -14,21 +14,26 @@ HOMEPAGE="https://www.gnu.org/software/screen/"
 if [[ "${PV}" != "9999" ]] ; then
 	SRC_URI="mirror://gnu/${PN}/${P}.tar.gz"
 	KEYWORDS="
-~alpha amd64 arm arm64 hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86
-~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos ~x64-solaris
+~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390
+~sparc ~x86 ~amd64-linux ~x86-linux ~arm64-macos ~ppc-macos ~x64-macos
+~x64-solaris
 	"
 else
 	inherit git-r3
 	EGIT_REPO_URI="https://git.savannah.gnu.org/git/screen.git"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}" # needed for setting S later on
-	S="${WORKDIR}"/${P}/src
+	S="${WORKDIR}/${P}/src"
 fi
 
 LICENSE="GPL-3+"
 SLOT="0"
 IUSE="
-debug nethack pam selinux multiuser
+debug nethack pam selinux utempter multiuser
 ebuild_revision_1
+"
+# Prevent privilege escalation with multiuser
+REQUIRED_USE="
+	!multiuser
 "
 DEPEND="
 	>=sys-libs/ncurses-5.2:=
@@ -43,15 +48,15 @@ RDEPEND="
 	selinux? (
 		sec-policy/selinux-screen
 	)
+	utempter? (
+		sys-libs/libutempter:=
+	)
 "
 BDEPEND="
 	sys-apps/texinfo
 "
 PATCHES=(
-	# Don't use utempter even if it is found on the system.
-	"${FILESDIR}/${PN}-4.3.0-no-utempter.patch"
-	"${FILESDIR}/${PN}-4.9.1-utmp-exit.patch"
-	"${FILESDIR}/${PN}-4.9.1-add-missing-pty.h-header.patch"
+	"${FILESDIR}/${PN}-5.0.0-utmp-musl.patch"
 )
 
 src_prepare() {
@@ -59,7 +64,8 @@ src_prepare() {
 
 	# sched.h is a system header and causes problems with some C libraries
 	mv sched.h _sched.h || die
-	sed -i '/include/ s:sched.h:_sched.h:' screen.h || die
+	sed -i '/include/ s:sched.h:_sched.h:' canvas.h sched.c screen.h window.h winmsg.c || die
+	sed -i 's:sched.h:_sched.h:' Makefile.in || die
 
 	# Fix manpage
 	sed -i \
@@ -70,20 +76,11 @@ src_prepare() {
 		-e "s:/local/screens/S\\\-:${EPREFIX}/tmp/screen/S\\\-:g" \
 		doc/screen.1 || die
 
-	if [[ ${CHOST} == *-darwin* ]] || use elibc_musl; then
-		sed -i -e '/^#define UTMPOK/s/define/undef/' acconfig.h || die
-	fi
-
-	# disable musl dummy headers for utmp[x]
-	use elibc_musl && append-cppflags "-D_UTMP_H -D_UTMPX_H"
-
 	# reconfigure
 	eautoreconf
 }
 
 src_configure() {
-	# bug #944429 (revisit this on >= 5.0.0)
-	append-cflags -std=gnu17
 	append-lfs-flags
 	append-cppflags "-DMAXWIN=${MAX_SCREEN_WINDOWS:-100}"
 	cflags-hardened_append
@@ -99,20 +96,21 @@ src_configure() {
 
 	local myeconfargs=(
 		--with-socket-dir="${EPREFIX}/tmp/${PN}"
-		--with-sys-screenrc="${EPREFIX}/etc/screenrc"
+		--with-system-screenrc="${EPREFIX}/etc/screenrc"
 		--with-pty-mode=0620
 		--with-pty-group=5
 		--enable-rxvt_osc
 		--enable-telnet
 		--enable-colors256
 		$(use_enable pam)
+		$(use_enable utempter utmp)
 	)
+
 	econf "${myeconfargs[@]}"
 }
 
 src_compile() {
 	LC_ALL=POSIX emake comm.h term.h
-	emake osdef.h
 
 	emake -C doc screen.info
 	default
@@ -120,7 +118,7 @@ src_compile() {
 
 src_install() {
 	local DOCS=(
-		"README" "ChangeLog" "INSTALL" "TODO" "NEWS"* "patchlevel.h"
+		"README" "ChangeLog" "INSTALL" "TODO" "NEWS"*
 		"doc/"{"FAQ","README.DOTSCREEN","fdpat.ps","window_to_display.ps"}
 	)
 
