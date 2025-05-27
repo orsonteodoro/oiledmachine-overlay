@@ -34,6 +34,7 @@ EAPI=8
 # For driver version, see
 # https://github.com/openvinotoolkit/openvino/blob/2024.3.0/.github/workflows/job_gpu_tests.yml#L88
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx2"
 	"cpu_flags_x86_avx512f"
@@ -80,7 +81,7 @@ XBYAK_RISCV_COMMIT="0233c991a0c1608be671dc63d63f450e7a2178ff"
 YAML_CPP_COMMIT="da82fd982c260e7f335ce5acbceff24b270544d1"
 ZLIB_COMMIT="51b7f2abdade71cd9bb0e7a373ef2610ec6f9daf"
 
-inherit cmake dep-prepare distutils-r1
+inherit cflags-hardened cmake dep-prepare distutils-r1
 
 _gen_gh_uri() {
 	local org="${1}"
@@ -191,7 +192,7 @@ ${CPU_FLAGS_X86[@]}
 development-tools doc -lto +mlas +npu -openmp python runtime +samples
 -system-flatbuffers system-opencl system-protobuf system-pugixml system-snappy
 system-tbb -telemetry test +tbb video_cards_intel
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE="
 	?? (
@@ -718,6 +719,7 @@ python_prepare_all() {
 }
 
 src_configure() {
+	cflags-hardened_append
 	local mycmakeargs
 	local _mycmakeargs=(
 		-DBUILD_SHARED_LIBS=ON
