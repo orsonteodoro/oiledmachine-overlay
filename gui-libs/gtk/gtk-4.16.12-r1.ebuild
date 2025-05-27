@@ -4,6 +4,7 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data" # Harden password widget with retpoline
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO PE"
 PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit cflags-hardened gnome.org gnome2-utils meson optfeature python-any-r1 toolchain-funcs virtualx xdg

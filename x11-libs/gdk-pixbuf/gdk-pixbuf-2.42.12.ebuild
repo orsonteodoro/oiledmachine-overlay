@@ -4,6 +4,7 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO IU SO"
 
 inherit cflags-hardened gnome.org gnome2-utils meson-multilib multilib xdg
 
