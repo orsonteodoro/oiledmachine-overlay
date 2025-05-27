@@ -7,6 +7,7 @@ CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" )
 CFLAGS_HARDENED_TOLERANCE="4.00"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO IO SO"
 # CVE-2015-8863 - network zero click attack, heap-based overflow (ASAN), off-by-one (UBSAN)
 
 inherit autotools cflags-hardened flag-o-matic
