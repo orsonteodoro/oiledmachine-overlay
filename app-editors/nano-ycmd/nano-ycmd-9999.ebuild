@@ -6,9 +6,11 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
+
 LIVE_TYPE="git"
-PYTHON_COMPAT=( "python3_"{10..11} )
-inherit autotools flag-o-matic git-r3 java-pkg-opt-2 python-single-r1
+PYTHON_COMPAT=( "python3_11" )
+inherit autotools cflags-hardened flag-o-matic git-r3 java-pkg-opt-2 python-single-r1
 
 NANO_YCMD_COMMIT="4f52bbc46b1c593f3f7ae58f76820297251fe5ad"
 if [[ "${LIVE_TYPE}" == "git" ]] ; then
@@ -37,7 +39,7 @@ system-godef system-gopls system-mono system-omnisharp system-racerd system-rust
 system-rustc system-tsserver unicode ycm-generator ycmd-43 ycmd-44 ycmd-45
 ycmd-46 +ycmd-47
 
-ebuild_revision_19
+ebuild_revision_20
 "
 GNULIB_PV="2023.01.16.09.58.30"
 REQUIRED_USE+="
@@ -312,6 +314,7 @@ src_configure() {
 	done
 	BD_ABS="$(python_get_sitedir)/ycmd/${ycmd_slot}"
 	use static && append-ldflags -static
+	cflags-hardened_append
 	local myconf=()
 	case ${CHOST} in
 		*-gnu*|*-uclibc*)
