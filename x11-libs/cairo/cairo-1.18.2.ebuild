@@ -15,6 +15,8 @@ EAPI=8
 # 2.  2nd emerge will do actual PGO or testing.
 #
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO IO UAF"
 TRAIN_NO_X_DEPENDS=1
 TRAIN_USE_X=0
 UOPTS_SUPPORT_EBOLT=0
@@ -23,7 +25,7 @@ UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=1
 
 inherit meson
-inherit flag-o-matic multilib-minimal toolchain-funcs uopts virtualx
+inherit cflags-hardened flag-o-matic multilib-minimal toolchain-funcs uopts virtualx
 
 if [[ "${PV}" == *"9999"* ]] ; then
 	inherit git-r3
@@ -167,6 +169,7 @@ _src_configure() {
 	cd "${EMESON_SOURCE}" || die
 
 	uopts_src_configure
+	cflags-hardened_append
 
         if tc-is-gcc && [[ "${PGO_PHASE}" == "PGO" ]] ; then
                 append-flags -Wno-error=coverage-mismatch
