@@ -5,6 +5,7 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO UAF"
 
 # EPGO (custom pgo training) disabled for simplification reasons.
 UOPTS_SUPPORT_EPGO=0
