@@ -10,11 +10,13 @@ EAPI=7
 MY_PN="godot"
 MY_P="${MY_PN}-${PV}"
 
+CFLAGS_HARDENED_USE_CASES="network server untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE IO SO"
 FRAMEWORK="4.5" # Target .NET Framework
 VIRTUALX_REQUIRED="manual"
 
 inherit godot-4.0
-inherit desktop flag-o-matic llvm python-any-r1 sandbox-changes scons-utils virtualx
+inherit cflags-hardened desktop flag-o-matic llvm python-any-r1 sandbox-changes scons-utils virtualx
 
 SRC_URI="
 	https://github.com/godotengine/${MY_PN}/archive/${PV}-${STATUS}.tar.gz -> ${MY_P}.tar.gz
@@ -670,6 +672,7 @@ eerror
 
 src_configure() {
 	default
+	cflags-hardened_append
 	if use portable ; then
 		strip-flags
 		filter-flags -march=*
