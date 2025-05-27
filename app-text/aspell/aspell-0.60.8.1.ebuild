@@ -4,17 +4,20 @@
 
 EAPI=8
 
+MY_P="${P/_/-}"
+
 # All available language app-dicts/aspell-* packages.
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO"
 LANGUAGES=(
 af am ar ast az be bg bn br ca cs csb cy da de de-1901 el en eo es et fa fi fo
 fr fy ga gd gl grc gu gv he hi hil hr hsb hu hus hy ia id is it kn ku ky la lt
 lv mg mi mk ml mn mr ms mt nb nds nl nn no ny or pa pl pt-PT pt-BR qu ro ru rw
 sc sk sl sr sv sw ta te tet tk tl tn tr uk uz vi wa yi zu
 )
-MY_P="${P/_/-}"
 TEST_TARBALL="aspell6-en-2018.04.16-0.tar.bz2"
 
-inherit autotools flag-o-matic libtool multilib-minimal toolchain-funcs
+inherit autotools cflags-hardened flag-o-matic libtool multilib-minimal toolchain-funcs
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MY_P}"
@@ -56,7 +59,10 @@ LICENSE="
 # myspell-en_CA-KevinAtkinson - common/lsort.hpp
 #			      - common/clone_ptr-t.hpp
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" nls regex test unicode"
+IUSE+="
+nls regex test unicode
+ebuild_revision_1
+"
 for LANG in ${LANGUAGES[@]}; do
 	IUSE+="
 		l10n_${LANG}
@@ -155,6 +161,7 @@ src_configure() {
 		local build_type
 		for build_type in $(get_build_type) ; do
 			cd "${S}-${MULTIBUILD_VARIANT}_${build_type}" || die
+			cflags-hardened_append
 			local myeconfargs=(
 				$(use_enable nls)
 				$(use_enable regex)

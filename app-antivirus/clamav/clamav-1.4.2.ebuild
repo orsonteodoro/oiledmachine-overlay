@@ -41,7 +41,8 @@ CFLAGS_HARDENED_TRAPV=0
 CFLAGS_HARDENED_USE_CASES="jit network security-critical sensitive-data untrusted-data"
 # Sanitizers are broken during tests
 CFLAGS_HARDENED_VTABLE_VERIFY=1
-# From "./convert-cargo-lock.sh 1.4.2 1.4.2"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF HO UAF"
+# From "./convert-cargo-lock.sh 1.4.2 1.4.2" \
 CRATES="
 adler-1.0.2
 adler32-1.2.0

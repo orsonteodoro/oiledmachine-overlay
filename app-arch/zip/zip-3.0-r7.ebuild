@@ -6,6 +6,7 @@ EAPI=8
 MY_P="${PN}${PV//.}"
 
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO"
 
 inherit cflags-hardened edo toolchain-funcs flag-o-matic
 
