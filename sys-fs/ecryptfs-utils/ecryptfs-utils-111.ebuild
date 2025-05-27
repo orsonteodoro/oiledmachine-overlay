@@ -8,6 +8,7 @@ CFLAGS_HARDENED_USE_CASES="plugin secure-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 #CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" "llvm" ) # Needs integration testing
 CFLAGS_HARDENED_TOLERANCE="4.0"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="PE"
 LANGS=( "ca" )
 PYTHON_COMPAT=( "python3_11" )
 
