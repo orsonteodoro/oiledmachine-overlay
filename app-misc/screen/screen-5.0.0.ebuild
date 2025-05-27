@@ -6,7 +6,7 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE PE"
 
-inherit autotools flag-o-matic pam tmpfiles
+inherit autotools cflags-hardened flag-o-matic pam tmpfiles
 
 DESCRIPTION="screen manager with VT100/ANSI terminal emulation"
 HOMEPAGE="https://www.gnu.org/software/screen/"
@@ -27,7 +27,10 @@ fi
 
 LICENSE="GPL-3+"
 SLOT="0"
-IUSE="debug nethack pam selinux utempter multiuser"
+IUSE="
+debug nethack pam selinux utempter multiuser
+ebuild_revision_1
+"
 # Prevent privilege escalation with multiuser
 REQUIRED_USE="
 	!multiuser
@@ -80,6 +83,7 @@ src_prepare() {
 src_configure() {
 	append-lfs-flags
 	append-cppflags "-DMAXWIN=${MAX_SCREEN_WINDOWS:-100}"
+	cflags-hardened_append
 
 	if [[ "${CHOST}" == *"-solaris"* ]]; then
 	# Enable msg_header by upping the feature standard compatible with c99
