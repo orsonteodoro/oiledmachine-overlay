@@ -31,10 +31,6 @@ IUSE="
 debug nethack pam selinux utempter multiuser
 ebuild_revision_1
 "
-# Prevent privilege escalation with multiuser
-REQUIRED_USE="
-	!multiuser
-"
 DEPEND="
 	>=sys-libs/ncurses-5.2:=
 	virtual/libcrypt:=
