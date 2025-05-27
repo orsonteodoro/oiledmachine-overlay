@@ -35,8 +35,9 @@ EAPI=8
 # CUDA version:  https://github.com/google/jax/blob/jaxlib-v0.4.28/docs/installation.md?plain=1#L116
 # ROCm version:  https://github.com/google/jax/blob/jaxlib-v0.4.28/build/rocm/ci_build.sh#L52
 
-MAINTAINER_MODE=0
 MY_PN="jax"
+
+MAINTAINER_MODE=0
 
 AMDGPU_TARGETS_COMPAT=(
 # See https://github.com/google/jax/blob/jaxlib-v0.4.28/.bazelrc#L119
@@ -52,6 +53,7 @@ AMDGPU_TARGETS_COMPAT=(
 	gfx1100
 )
 BAZEL_PV="6.5.0"
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CPU_FLAGS_X86_64=(
 	cpu_flags_x86_avx
 )
@@ -74,7 +76,7 @@ LLVM_COMPAT=( 17 ) # From .bazelrc
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 PYTHON_COMPAT=( "python3_"{11..12} ) # Limited by Flax CI
 
-inherit bazel cuda distutils-r1 dhms flag-o-matic git-r3 hip-versions java-pkg-opt-2
+inherit bazel cflags-hardened cuda distutils-r1 dhms flag-o-matic git-r3 hip-versions java-pkg-opt-2
 inherit llvm rocm sandbox-changes toolchain-funcs
 
 # DO NOT HARD WRAP
@@ -207,7 +209,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${CPU_FLAGS_X86_64[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang cpu cuda debug rocm rocm_6_0
-ebuild_revision_3
+ebuild_revision_4
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
 
@@ -968,6 +970,9 @@ python_compile() {
 		BUILD_LDFLAGS+=" -fuse-ld=lld"
 		strip-unsupported-flags # Filter LDFLAGS after switch
 	fi
+	cflags-hardened_append
+	BUILD_CXXFLAGS+=" ${CFLAGS_HARDENED_CXXFLAGS}"
+	BUILD_LDFLAGS+=" ${CFLAGS_HARDENED_LDFLAGS}"
 	bazel_setup_bazelrc # Save CFLAGS
 
 	if is-flagq '-march=native' ; then
