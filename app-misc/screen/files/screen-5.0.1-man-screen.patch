@@ -1,0 +1,11 @@
+--- a/doc/screen.texinfo.orig	2025-05-15 08:39:40.000000000 -0700
++++ b/doc/screen.texinfo	2025-05-27 10:42:40.397392441 -0700
+@@ -5940,7 +5940,7 @@ of @code{Screen} which you are using.  A
+ hardware and operating system, the compiler used to compile, a
+ description of the bug behavior, and the conditions that triggered the
+ bug. In case of security issue please send an mail to
+-@w{@samp{alexander_naumov@opensuse.org}}.
++@w{@samp{alexander_naumov@@opensuse.org}}.
+ 
+ @node Availability,  , Reporting Bugs, Bugs
+ @section Availability

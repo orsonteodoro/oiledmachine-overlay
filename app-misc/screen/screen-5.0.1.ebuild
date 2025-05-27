@@ -57,6 +57,7 @@ BDEPEND="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-5.0.0-utmp-musl.patch"
+	"${FILESDIR}/${PN}-5.0.1-man-screen.patch"
 )
 
 src_prepare() {
