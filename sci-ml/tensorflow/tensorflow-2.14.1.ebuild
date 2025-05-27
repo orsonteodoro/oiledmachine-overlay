@@ -34,6 +34,8 @@ BAZEL_PV="6.1.0"
 DISTUTILS_OPTIONAL=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="no"
+CFLAGS_HARDENED_USE_CASES="jit untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF SO HO IO UAF"
 CHECKREQS_DISK_BUILD="19G"
 CHECKREQS_DISK_USR="5G"
 CHECKREQS_MEMORY="11G" # Linking goes above 10 GiB
@@ -128,7 +130,7 @@ gen_seq_inc() {
 	done
 }
 
-inherit bazel check-reqs cuda distutils-r1 dhms flag-o-matic lcnr llvm prefix
+inherit bazel cflags-hardened check-reqs cuda distutils-r1 dhms flag-o-matic lcnr llvm prefix
 inherit rocm toolchain-funcs
 
 # For deps versioning, see
@@ -1477,6 +1479,9 @@ ewarn
 	replace-flags '-O*' '-O2' # Prevent possible runtime breakage with llvm parts.
 
 	allow_lto
+	cflags-hardened_append
+	BUILD_CXXFLAGS+=" ${CFLAGS_HARDENED_CXXFLAGS}"
+	BUILD_LDFLAGS+=" ${CFLAGS_HARDENED_LDFLAGS}"
 
 	bazel_setup_bazelrc # Save CFLAGS
 
