@@ -174,7 +174,7 @@ wizardlm2 xwinlm yarn-llama2 yarn-mistral yi yi-coder zephyr
 )
 LLVM_COMPAT=( 17 )
 CFLAGS_HARDENED_APPEND_GOFLAGS=1
-CFLAGS_HARDENED_USE_CASES="daemon execution-integrity server"
+CFLAGS_HARDENED_USE_CASES="daemon network server untrusted-data"
 #
 # To update use this run `ebuild ollama-0.4.2.ebuild digest clean unpack`
 # changing GEN_EBUILD with the following transition states 0 -> 1 -> 2 -> 0
@@ -2614,7 +2614,8 @@ ${LLMS[@]/#/ollama_llms_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
-sandbox systemd unrestrict video_cards_intel ebuild_revision_54
+sandbox systemd unrestrict video_cards_intel
+ebuild_revision_55
 "
 gen_rocm_required_use() {
 	local s
