@@ -3,6 +3,8 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO IO"
 PYTHON_COMPAT=( python3_{8..11} )
 
 inherit cmake-multilib flag-o-matic python-any-r1
@@ -22,7 +24,10 @@ LICENSE="
 HOMEPAGE="https://abseil.io"
 KEYWORDS="~amd64 ~ppc64 ~x86"
 SLOT="0/${PV%%.*}"
-IUSE+=" +cxx17 test -test-helpers ebuild_revision_2"
+IUSE+="
++cxx17 test -test-helpers
+ebuild_revision_3
+"
 BDEPEND+="
 	${PYTHON_DEPS}
 	test? (
@@ -54,6 +59,7 @@ src_prepare() {
 }
 
 src_configure() {
+	cflags-hardened_append
 	local mycmakeargs=(
 		-DABSL_BUILD_TESTING=$(usex test ON OFF)
 		-DABSL_BUILD_TEST_HELPERS=$(usex test-helpers ON OFF)
