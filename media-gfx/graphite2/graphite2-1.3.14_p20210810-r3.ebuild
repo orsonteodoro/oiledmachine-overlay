@@ -9,7 +9,7 @@ EGIT_COMMIT="80c52493ef42e6fe605a69dcddd2a691cd8a1380"
 GENTOO_DEPEND_ON_PERL="no"
 PYTHON_COMPAT=( "python3_"{10..13} )
 
-inherit flag-o-matic perl-module python-any-r1 cmake-multilib
+inherit cflags-hardened flag-o-matic perl-module python-any-r1 cmake-multilib
 
 KEYWORDS="
 ~alpha amd64 arm arm64 hppa ~loong ~mips ppc ppc64 ~riscv ~s390 sparc x86
@@ -20,10 +20,12 @@ SRC_URI="https://github.com/silnrsi/graphite/archive/${EGIT_COMMIT}.tar.gz -> ${
 
 DESCRIPTION="Library providing rendering capabilities for complex non-Roman writing systems"
 HOMEPAGE="https://scripts.sil.org/cms/scripts/page.php?site_id=projects&item_id=graphite_home"
-
 LICENSE="LGPL-2.1"
 SLOT="0"
-IUSE="perl test"
+IUSE="
+perl test
+ebuild_revision_4
+"
 RESTRICT="
 	!test? (
 		test
