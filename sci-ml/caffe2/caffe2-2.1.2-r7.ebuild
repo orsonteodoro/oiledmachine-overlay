@@ -69,8 +69,9 @@ BENCHMARK_COMMIT_1="0d98dba29d66e93259db7daa53a9327df767a415"
 BENCHMARK_COMMIT_2="5b7683f49e1e9223cf9927b24f6fd3d6bd82e3f8" # protobuf dep
 BENCHMARK_COMMIT_3="0d98dba29d66e93259db7daa53a9327df767a415" # onnx dep
 BENCHMARK_COMMIT_4="e776aa0275e293707b6a0901e0e8d8a8a3679508" # onnx-tensorrt/third_party/onnx dep
+CFLAGS_HARDENED_USE_CASES="jit untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO UAF"
 CLANG_CINDEX_PYTHON3_COMMIT="6a00cbc4a9b8e68b71caf7f774b3f9c753ae84d5" # onnx-tensorrt/third_party/onnx/third_party/pybind11 dep
-GCC_SLOTS=( {15..9} ) # Upstream uses 9 or 7
 CPUINFO_COMMIT_1="6481e8bef08f606ddd627e4d3be89f64d62e1b8a"
 CPUINFO_COMMIT_2="ed8b86a253800bafdb7b25c5c399f91bff9cb1f3" # fbgemm dep
 # CUDA 12 not supported yet: https://github.com/pytorch/pytorch/issues/91122
@@ -132,6 +133,7 @@ CUDNN_FRONTEND_COMMIT="12f35fa2be5994c1106367cac2fba21457b064f4"
 CUTLASS_COMMIT_1="6f47420213f757831fae65c686aa471749fa8d60"
 CUTLASS_COMMIT_2="fc9ebc645b63f3a6bc80aaefde5c063fb72110d6" # fbgemm dep
 DYNOLOG_COMMIT="00d9c475d3bbd8cd9fc200837b1781306e6cff3a" # kineto dep ; committer-date:<=2023-08-08
+GCC_SLOTS=( {15..9} ) # Upstream uses 9 or 7
 GFLAGS_COMMIT="e171aa2d15ed9eb17054558e0b3a6a413bb01067" # dynolog dep
 GFLAGS_DOC_COMMIT="8411df715cf522606e3b1aca386ddfc0b63d34b4" # dynolog/third_party/gflags/doc dep
 GLOG_COMMIT="b33e3bad4c46c8a6345525fd822af355e5ef9446" # dynolog dep
@@ -227,7 +229,7 @@ ZSTD_COMMIT="aec56a52fbab207fc639a1937d1e708a282edca8"
 
 
 
-inherit cmake cuda dep-prepare dhms flag-o-matic llvm rocm python-single-r1 toolchain-funcs
+inherit cflags-hardened cmake cuda dep-prepare dhms flag-o-matic llvm rocm python-single-r1 toolchain-funcs
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MYP}"
@@ -1272,6 +1274,7 @@ gen_cuda_arch_list() {
 }
 
 src_configure() {
+	cflags-hardened_append
 	if use cuda && [[ -z ${TORCH_CUDA_ARCH_LIST} ]]; then
 einfo
 einfo "You can look up your GPU's CUDA compute capability at"

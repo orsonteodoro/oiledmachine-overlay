@@ -69,6 +69,8 @@ BENCHMARK_COMMIT_1="0d98dba29d66e93259db7daa53a9327df767a415"
 BENCHMARK_COMMIT_2="5b7683f49e1e9223cf9927b24f6fd3d6bd82e3f8" # protobuf dep
 BENCHMARK_COMMIT_3="0d98dba29d66e93259db7daa53a9327df767a415" # onnx dep
 BENCHMARK_COMMIT_4="e776aa0275e293707b6a0901e0e8d8a8a3679508" # onnx-tensorrt/third_party/onnx dep
+CFLAGS_HARDENED_USE_CASES="jit untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO UAF"
 CLANG_CINDEX_PYTHON3_COMMIT="6a00cbc4a9b8e68b71caf7f774b3f9c753ae84d5" # onnx-tensorrt/third_party/onnx/third_party/pybind11 dep
 GCC_SLOTS=( {15..7} ) # Upstream uses 9 or 7
 CPR_COMMIT="871ed52d350214a034f6ef8a3b8f51c5ce1bd400" # dynolog dep
@@ -225,7 +227,7 @@ XNNPACK_COMMIT="51a987591a6fc9f0fc0707077f53d763ac132cbf"
 ZSTD_COMMIT="aec56a52fbab207fc639a1937d1e708a282edca8"
 
 
-inherit cmake cuda dep-prepare dhms flag-o-matic llvm rocm python-single-r1 toolchain-funcs
+inherit cflags-hardened cmake cuda dep-prepare dhms flag-o-matic llvm rocm python-single-r1 toolchain-funcs
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MYP}"
@@ -1275,6 +1277,7 @@ gen_cuda_arch_list() {
 }
 
 src_configure() {
+	cflags-hardened_append
 	if use cuda && [[ -z ${TORCH_CUDA_ARCH_LIST} ]]; then
 einfo
 einfo "You can look up your GPU's CUDA compute capability at"

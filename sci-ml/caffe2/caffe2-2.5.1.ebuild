@@ -80,8 +80,9 @@ BENCHMARK_COMMIT_1="0d98dba29d66e93259db7daa53a9327df767a415"
 BENCHMARK_COMMIT_2="5b7683f49e1e9223cf9927b24f6fd3d6bd82e3f8" # protobuf dep
 BENCHMARK_COMMIT_3="2dd015dfef425c866d9a43f2c67d8b52d709acb6" # onnx dep
 BENCHMARK_COMMIT_5="d572f4777349d43653b21d6c2fc63020ab326db2"
+CFLAGS_HARDENED_USE_CASES="jit untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO UAF"
 CIVETWEB_COMMIT="eefb26f82b233268fc98577d265352720d477ba4"
-GCC_SLOTS=( {15..9} ) # Upstream uses 11 or 9
 CPP_HTTPLIB_COMMIT="3b6597bba913d51161383657829b7e644e59c006"
 CPR_COMMIT="871ed52d350214a034f6ef8a3b8f51c5ce1bd400" # dynolog dep
 CPU_FLAGS_ARM=(
@@ -154,6 +155,7 @@ FMT_COMMIT_3="cd4af11efc9c622896a3e4cb599fa28668ca3d05" # dynolog dep
 FOXI_COMMIT="c278588e34e535f0bb8f00df3880d26928038cad"
 FP16_COMMIT="4dfe081cf6bcd15db339cf2680b9281b8451eeb3"
 FXDIV_COMMIT="b408327ac2a15ec3e43352421954f5b1967701d1"
+GCC_SLOTS=( {15..9} ) # Upstream uses 11 or 9
 GFLAGS_COMMIT="e171aa2d15ed9eb17054558e0b3a6a413bb01067" # dynolog dep
 GFLAGS_DOC_COMMIT="8411df715cf522606e3b1aca386ddfc0b63d34b4" # dynolog/third_party/gflags/doc dep
 GLOG_COMMIT="b33e3bad4c46c8a6345525fd822af355e5ef9446" # dynolog dep
@@ -242,7 +244,7 @@ TRITON_SHARED_COMMIT="450e6be65f99a0b15fd130892594b85e0897574c" # aotriton/third
 VULKANMEMORYALLOCATOR_COMMIT="a6bfc237255a6bac1513f7c1ebde6d8aed6b5191"
 XNNPACK_COMMIT="fcbf55af6cf28a4627bcd1f703ab7ad843f0f3a2"
 
-inherit cmake cuda dep-prepare dhms flag-o-matic llvm rocm python-single-r1 toolchain-funcs
+inherit cflags-hardened cmake cuda dep-prepare dhms flag-o-matic llvm rocm python-single-r1 toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${MYP}"
@@ -1370,6 +1372,7 @@ gen_cuda_arch_list() {
 }
 
 src_configure() {
+	cflags-hardened_append
 	if use cuda && [[ -z ${TORCH_CUDA_ARCH_LIST} ]]; then
 einfo
 einfo "You can look up your GPU's CUDA compute capability at"

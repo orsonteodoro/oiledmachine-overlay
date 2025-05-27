@@ -15,6 +15,7 @@ EAPI=8
 # sphinxcontrib-mockautodoc
 # sphinxcontrib-video
 
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE"
 DISTUTILS_USE_PEP517="setuptools"
 DISTUTILS_SINGLE_IMPL=1
 export PACKAGE_NAME="pytorch"
