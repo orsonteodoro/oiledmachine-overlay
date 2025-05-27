@@ -6,6 +6,7 @@ EAPI=8
 # For the version, see
 # https://github.com/ispc/ispc/blob/main/common/version.h
 
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="PE"
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_COMPAT=( {18..14} ) # See https://github.com/ispc/ispc/blob/v1.23.0/src/ispc_version.h

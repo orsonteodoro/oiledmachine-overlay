@@ -16,7 +16,9 @@ EAPI="8"
 # 128.9.0 -> 128.10.0
 
 CFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO TC"
 RUSTFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
+RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="IO TC"
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_neon"
 )

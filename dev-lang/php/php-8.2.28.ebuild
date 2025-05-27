@@ -5,6 +5,7 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="language-runtime security-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF FS HO IO SO UAF"
 GCC_SLOT=12
 LLVM_COMPAT=( {19..15} )
 LLVM_MAX_SLOT=${LLVM_COMPAT[0]}

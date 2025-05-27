@@ -13,7 +13,7 @@ CFLAGS_HARDENED_TRAPV=0
 # For pros, you can try to undo the damage with untested experimental flags with a stage 3 tarball.
 # Some crypto algorithms may implemented with just perl.  This just increases the mitigation for -D_FORTIFY_SOURCE by disabling interfering optimizations for theoretical security-critical.
 CFLAGS_HARDENED_USE_CASES="crypto language-runtime security-critical sensitive-data untrusted-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO PE"
 
 inherit alternatives cflags-hardened flag-o-matic toolchain-funcs multilib multiprocessing
 

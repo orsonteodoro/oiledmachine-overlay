@@ -13,7 +13,9 @@ EAPI="8"
 # /var/tmp/portage/dev-lang/spidermonkey-115.23.0/work/firefox-115.23.0/taskcluster/ci/fetch/toolchains.yml
 
 CFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO TC"
 RUSTFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
+RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="IO TC"
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_neon"
 )
