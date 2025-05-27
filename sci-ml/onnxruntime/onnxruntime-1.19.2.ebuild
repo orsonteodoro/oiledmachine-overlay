@@ -51,6 +51,7 @@ AMDGPU_TARGETS_COMPAT=(
 BENCHMARK_PV="1.8.5" # onnxruntime dep
 BENCHMARK_COMMIT_1="2dd015dfef425c866d9a43f2c67d8b52d709acb6" # onnx dep
 BENCHMARK_COMMIT_2="0d98dba29d66e93259db7daa53a9327df767a415" # flatbuffers dep, from cmake/external/flatbuffers/benchmarks/CMakeLists.txt
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CMAKE_IN_SOURCE_BUILD=1
 COMPOSABLE_KERNEL_COMMIT="204da9c522cebec5220bba52cd3542ebcaf99e7a" # From cmake/deps.txt, >= rocm-6.2.0
 CPU_FLAGS="
@@ -139,7 +140,7 @@ TVM_VTA_COMMIT="36a91576edf633479c78649e050f18dd2ddc8103" # tvm dep
 UTF8_RANGE_COMMIT="72c943dea2b9240cd09efde15191e144bc7c7d38" # From cmake/deps.txt, protobuf dep
 XNNPACK_COMMIT="0da379fc4808f9601faef392352018c741c0f297" # From cmake/deps.txt
 
-inherit cmake cuda dep-prepare distutils-r1 flag-o-matic llvm-r1 rocm toolchain-funcs
+inherit cflags-hardened cmake cuda dep-prepare distutils-r1 flag-o-matic llvm-r1 rocm toolchain-funcs
 
 DESCRIPTION="Cross-platform inference and training machine-learning accelerator."
 HOMEPAGE="
@@ -363,7 +364,7 @@ ${ROCM_SLOTS[@]}
 openvino-auto
 openvino-hetero
 openvino-multi
-ebuild_revision_6
+ebuild_revision_7
 "
 gen_cuda_required_use() {
 	local x
@@ -888,6 +889,8 @@ src_configure() {
 		$(test-flags-CXX -Wno-error=maybe-uninitialized) \
 		$(test-flags-CXX -Wno-array-bounds) \
 		$(test-flags-CXX -Wno-stringop-overread)
+
+	cflags-hardened_append
 
 	local mycmakeargs=(
 		-DABSL_ENABLE_INSTALL=ON
