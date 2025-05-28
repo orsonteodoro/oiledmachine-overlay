@@ -33,7 +33,7 @@ declare -A QT6_IUSE=(
 )
 IUSE="
 ${QT6_IUSE[*]}
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	?? ( journald syslog )
