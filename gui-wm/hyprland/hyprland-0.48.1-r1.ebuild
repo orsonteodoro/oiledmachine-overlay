@@ -11,13 +11,16 @@ inherit cflags-hardened meson toolchain-funcs
 DESCRIPTION="A dynamic tiling Wayland compositor that doesn't sacrifice on its looks"
 HOMEPAGE="https://github.com/hyprwm/Hyprland"
 
-if [[ "${PV}" = *9999 ]]; then
+if [[ "${PV}" == *"9999" ]] ; then
 	inherit git-r3
 	EGIT_REPO_URI="https://github.com/hyprwm/${PN^}.git"
 else
 	KEYWORDS="~amd64"
 	S="${WORKDIR}/${PN}-source"
-	SRC_URI="https://github.com/hyprwm/${PN^}/releases/download/v${PV}/source-v${PV}.tar.gz -> ${P}.gh.tar.gz"
+	SRC_URI="
+https://github.com/hyprwm/${PN^}/releases/download/v${PV}/source-v${PV}.tar.gz
+	-> ${P}.gh.tar.gz
+	"
 fi
 
 LICENSE="BSD"
