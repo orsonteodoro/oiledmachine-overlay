@@ -442,6 +442,7 @@ _configure_cpu_flags_x86() {
 }
 
 multilib_src_configure() {
+ewarn "Rebuild with GCC 12 if it fails."
 	local cpp_flags=""
 	local mycmakeargs=(
 		-DBUILD_TESTING=$(usex test)
