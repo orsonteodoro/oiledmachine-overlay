@@ -1455,10 +1455,7 @@ ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_S
 	# to avoid the 2x slowdown when adding -fno-flags to unbreak
 	# -D_FORTIFY_SOURCE.
 
-	if _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" "<" "1.02" ; then
-	# -D_FORTIFY_SOURCE is disabled
-		:
-	else
+	if [[ "${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL}" == ("1"|"2"|"3") ]] ; then
 		replace-flags "-Ofast" "-O2"
 		replace-flags "-O4" "-O2"
 		replace-flags "-O3" "-O2"
@@ -1469,12 +1466,13 @@ ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_S
 	# CWE-119
 	# Design notes:  Make sure you review the estimated CVSS score, when making a custom flag set.
 	local coverage_pct=""
-	if _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" "<" "1.02" ; then
-	# -D_FORTIFY_SOURCE is disabled
+	if [[ "${CFLAGS_HARDENED_FORTIFY_SOURCE}" == "0" ]] ; then
 		:
-	elif [[ "${CFLAGS_HARDENED_FORTIFY_SOURCE}" == "0" ]] ; then
-		:
-	elif [[ "${fortify_fix_level}" == "1" ]] ; then
+	elif \
+		[[ "${fortify_fix_level}" == "1" ]] \
+			&& \
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" \
+	; then
 	# For low risk trusted data
 	#                    :  no-lto, lto
 	# -D_FORTIFY_SOURCE=2:  0.5-2%,   1-4% performance impact
@@ -1503,7 +1501,11 @@ ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_S
 				"-fno-ipa-icf"
 			)
 		fi
-	elif [[ "${fortify_fix_level}" == "2" ]] ; then
+	elif \
+		[[ "${fortify_fix_level}" == "2" ]] \
+			&& \
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.07" \
+	; then
 	# Practical security-critical, untrusted data/connections
 	#                    :  no-lto, lto
 	# -D_FORTIFY_SOURCE=2:  1-3%,   2-6% performance impact
@@ -1536,7 +1538,11 @@ ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_S
 				"-fno-ipa-icf"
 			)
 		fi
-	elif [[ "${fortify_fix_level}" == "3" ]] ; then
+	elif \
+		[[ "${fortify_fix_level}" == "3" ]] \
+			&& \
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.16" \
+	; then
 	# Theoretical security-critical (crypto, audits, logins)
 	#                    :  no-lto, lto
 	# -D_FORTIFY_SOURCE=2:  5-12%,   6-15% performance impact
