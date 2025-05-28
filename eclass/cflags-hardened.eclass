@@ -374,9 +374,9 @@ _cflags-hardened_sanitizers_compat() {
 # @DESCRIPTION:
 # Check if CPU supports MTE (Memory Tagging Extension)
 _cflags-hardened_has_mte() {
-	local mte=0
+	local mte=1
 	if grep "Features" "/proc/cpuinfo" | grep -q -e "mte" ; then
-		mte=1
+		mte=0
 	fi
 	return ${mte}
 }
@@ -385,9 +385,9 @@ _cflags-hardened_has_mte() {
 # @DESCRIPTION:
 # Check if CPU supports PAC (Pointer Authentication Code)
 _cflags-hardened_has_pauth() {
-	local pauth=0
+	local pauth=1
 	if grep "Features" "/proc/cpuinfo" | grep -q -e "pauth" ; then
-		pauth=1
+		pauth=0
 	fi
 	return ${pauth}
 }
@@ -396,15 +396,15 @@ _cflags-hardened_has_pauth() {
 # @DESCRIPTION:
 # Check if CET is supported for -fcf-protection=full.
 _cflags-hardened_has_cet() {
-	local ibt=0
-	local user_shstk=0
+	local ibt=1
+	local user_shstk=1
 	if grep -q -e "flags.*ibt" "/proc/cpuinfo" ; then
-		ibt=1
+		ibt=0
 	fi
 	if grep -q -e "flags.*user_shstk" "/proc/cpuinfo" ; then
-		user_shstk=1
+		user_shstk=0
 	fi
-	if (( ${ibt} == 1 && ${user_shstk} )) ; then
+	if (( ${ibt} == 0 && ${user_shstk} == 0 )) ; then
 		return 0
 	else
 		return 1

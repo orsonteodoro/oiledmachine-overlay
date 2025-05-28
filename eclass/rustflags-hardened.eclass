@@ -323,9 +323,9 @@ einfo
 # @DESCRIPTION:
 # Check if CPU supports MTE (Memory Tagging Extension)
 _rustflags-hardened_has_mte() {
-	local mte=0
+	local mte=1
 	if grep "Features" "/proc/cpuinfo" | grep -q -e "mte" ; then
-		mte=1
+		mte=0
 	fi
 	return ${mte}
 }
@@ -335,9 +335,9 @@ _rustflags-hardened_has_mte() {
 # @DESCRIPTION:
 # Check if CPU supports PAC (Pointer Authentication Code)
 _rustflags-hardened_has_pauth() {
-	local pauth=0
+	local pauth=1
 	if grep "Features" "/proc/cpuinfo" | grep -q -e "pauth" ; then
-		pauth=1
+		pauth=0
 	fi
 	return ${pauth}
 }
@@ -346,15 +346,15 @@ _rustflags-hardened_has_pauth() {
 # @DESCRIPTION:
 # Check if CET is supported for -fcf-protection=full.
 _rustflags-hardened_has_cet() {
-	local ibt=0
-	local user_shstk=0
+	local ibt=1
+	local user_shstk=1
 	if grep -q -e "flags.*ibt" "/proc/cpuinfo" ; then
-		ibt=1
+		ibt=0
 	fi
 	if grep -q -e "flags.*user_shstk" "/proc/cpuinfo" ; then
-		user_shstk=1
+		user_shstk=0
 	fi
-	if (( ${ibt} == 1 && ${user_shstk} )) ; then
+	if (( ${ibt} == 0 && ${user_shstk} == 0 )) ; then
 		return 0
 	else
 		return 1
@@ -457,24 +457,53 @@ ewarn
 
 	RUSTFLAGS=$(echo "${RUSTFLAGS}" \
 		| sed \
-			-e "s|-C target-feature=[+]pac-ret,[+]bti||g" \
-			-e "s|-C target-feature=[+]pac-ret||g" \
-			-e "s|-C target-feature=[+]bti||g" \
-			-e "s|-C target-feature=-pac-ret,-bti||g")
-	if [[ "${bti}" == "1" ]] && _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.07" ; then
+			-e "s|-Z[ ]*branch-protection=[+]pac-ret,[+]bti||g" \
+			-e "s|-Z[ ]*branch-protection=[+]pac-ret||g" \
+			-e "s|-Z[ ]*branch-protection=[+]bti||g" \
+			-e "s|-Z[ ]*branch-protection=-pac-ret,-bti||g")
+
+	${RUSTC} -Z help | grep -q -e "branch-protection"
+	has_unstable_branch_protection=$?
+
+	${RUSTC} --print target-features | grep -q -e "paca"
+	has_target_feature_paca=$?
+	${RUSTC} --print target-features | grep -q -e "pacg"
+	has_target_feature_pacg=$?
+	${RUSTC} --print target-features | grep -q -e "bti"
+	has_target_feature_bti=$?
+
+	if (( ${has_target_feature_bti} == 0 && ${has_target_feature_paca} == 0 && ${has_target_feature_pacg} == 0 )) ; then
+		if [[ "${bti}" == "1" ]] && _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.07" ; then
 	# Partial heap overflow mitigation, jop, rop
-		RUSTFLAGS+=" -C target-feature=+pac-ret,+bti"	# security-critical
-	elif [[ "${pac}" == "1" ]] && _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" ; then
+			RUSTFLAGS+=" -C target-feature=+paca,+pacg,+bti"	# security-critical
+		elif [[ "${pac}" == "1" ]] && _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" ; then
 	# Partial heap overflow mitigation, jop, rop
-		RUSTFLAGS+=" -C target-feature=+pac-ret,+bti"	# balance
-	elif [[ "${pac}" == "1" ]] && _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" ; then
+			RUSTFLAGS+=" -C target-feature=+paca,+pacg,+bti"	# balance
+		elif [[ "${pac}" == "1" ]] && _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" ; then
 	# Partial heap overflow mitigation, rop
-		RUSTFLAGS+=" -C target-feature=+pac-ret"	# balance
-	elif [[ "${bti}" == "1" ]] && _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" ; then
+			RUSTFLAGS+=" -C target-feature=+paca,+pacg"		# balance
+		elif [[ "${bti}" == "1" ]] && _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" ; then
 	# jop
-		RUSTFLAGS+=" -C target-feature=+bti"		# performance-critical
-	else
-		RUSTFLAGS+=" -C target-feature=-pac-ret,-bti"	# performance-critical
+			RUSTFLAGS+=" -C target-feature=+bti"			# performance-critical
+		else
+			RUSTFLAGS+=" -C target-feature=-paca,-pacg,-bti"	# performance-critical
+		fi
+	elif (( ${has_unstable_branch_protection} == 0 )) ; then
+		if [[ "${bti}" == "1" ]] && _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.07" ; then
+	# Partial heap overflow mitigation, jop, rop
+			RUSTFLAGS+=" -Z branch-protection=+pac-ret,+bti"	# security-critical
+		elif [[ "${pac}" == "1" ]] && _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" ; then
+	# Partial heap overflow mitigation, jop, rop
+			RUSTFLAGS+=" -Z branch-protection=+pac-ret,+bti"	# balance
+		elif [[ "${pac}" == "1" ]] && _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" ; then
+	# Partial heap overflow mitigation, rop
+			RUSTFLAGS+=" -Z branch-protection=+pac-ret"	# balance
+		elif [[ "${bti}" == "1" ]] && _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" ; then
+	# jop
+			RUSTFLAGS+=" -Z branch-protection=+bti"		# performance-critical
+		else
+			RUSTFLAGS+=" -Z branch-protection=-pac-ret,-bti"	# performance-critical
+		fi
 	fi
 }
 
@@ -486,6 +515,23 @@ _cflags-hardened_has_llvm_cfi() {
 		return 0
 	else
 		return 1
+	fi
+}
+
+
+# @FUNCTION: _rustflags-hardened_cf_protection
+# @DESCRIPTION:
+# Apply cf-protection
+_rustflags-hardened_cf_protection() {
+	[[ "${ARCH}" == "amd64" ]] || return
+
+	${RUSTC} -Z help | grep -q -e "cf-protection"
+	has_unstable_cf_protection=$?
+
+	if (( ${has_unstable_cf_protection} == 0 )) ; then
+		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+			| sed -r -e "s#-Z[ ]*cf-protection=(none|branch|return|full)##g")
+		RUSTFLAGS+=" -Z cf-protection=full"
 	fi
 }
 
@@ -534,8 +580,6 @@ einfo "CC:  ${CC}"
 	; then
 		need_cfi=1
 		need_clang=1
-	elif [[ "${ARCH}" == "arm64" ]] ; then
-		_rustflags-hardened_arm_cfi
 	fi
 
 	if tc-is-clang ; then
@@ -621,6 +665,12 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 	# PAC:  "BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF"
 	# BTI:  "BO"|"BU"|"CE"|"DF"|"DP"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF"
 	# MTE:  "BO"|"BU"|"CE"|"DF"|"DP"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF"
+		if _rustflags-hardened_has_pauth ; then
+einfo "Yes pauth"
+		fi
+		if _rustflags-hardened_has_mte ; then
+einfo "Yes mte"
+		fi
 		protect_spectrum="arm-cfi"
 	elif \
 		[[ \
@@ -684,22 +734,6 @@ einfo "Protect spectrum:  ${protect_spectrum}"
 		RUSTFLAGS+=" -C opt-level=${opt_level}"
 	fi
 
-	if ! _rustflags-hardened_has_cet ; then
-	# Allow -mretpoline-external-thunk
-		filter-flags "-f*cf-protection=*"
-	fi
-	if [[ "${protect_spectrum}" == "cet" ]] ; then
-	# ZC, CE, PE
-		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
-			| sed -r -e "s#-C[ ]*target-feature=[-+]cet##g")
-		RUSTFLAGS+=" -C target-feature=+cet"
-	elif [[ "${protect_spectrum}" == "arm-cfi" ]] ; then
-	# ZC, CE, PE
-		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
-			| sed -r -e "s#-C[ ]*control-flow-protection##g")
-		RUSTFLAGS+=" -C control-flow-protection"
-	fi
-
 	${RUSTC} -Z help | grep -q -e "stack-protector"
 	has_stack_protector=$?
 
@@ -723,6 +757,18 @@ einfo "Protect spectrum:  ${protect_spectrum}"
 	# ZC, CE, EP
 			RUSTFLAGS+=" -Z stack-protector=strong"
 		fi
+	fi
+
+	if ! _rustflags-hardened_has_cet ; then
+	# Allow -mretpoline-external-thunk
+		filter-flags "-f*cf-protection=*"
+	fi
+	if [[ "${protect_spectrum}" == "cet" ]] ; then
+	# ZC, CE, PE
+		_rustflags-hardened_cf_protection
+	elif [[ "${protect_spectrum}" == "arm-cfi" ]] ; then
+	# ZC, CE, PE
+		_rustflags-hardened_arm_cfi
 	fi
 
 	# Spectre V2 mitigation Linux kernel case
