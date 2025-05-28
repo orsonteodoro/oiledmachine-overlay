@@ -472,8 +472,8 @@ package has memory corruption, it is likely to choose either `cet`, `arm-cfi`,
 history of uninitalized memory, or has only support for retpoline will
 automatically choose `retpoline`.  If a package handles both untrusted data and
 sensitive data, it will prioritize CFI otherwise retpoline.  These options are
-mutually exclusive so you can only choose one.  You can also disable it by
-choosing `none`.  You can also override the auto selected option.
+mutually exclusive so you can only choose one.  You can also disable both CFI and
+Retpoline by choosing `none`.  You can also override the auto selected option.
 
 The compromised execution-integrity is more dangerous than compromised
 confidentiality because it can do impersonation or increase attacker capabilties.
