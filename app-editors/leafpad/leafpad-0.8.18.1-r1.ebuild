@@ -13,7 +13,10 @@ SRC_URI="mirror://nongnu/${PN}/${P}.tar.gz"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="amd64 ~arm ~ppc ~ppc64 ~riscv x86 ~amd64-linux ~x86-linux"
-IUSE="emacs"
+IUSE="
+emacs
+ebuild_revision_1
+"
 BDEPEND="
 	dev-util/intltool
 	sys-devel/gettext
