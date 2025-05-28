@@ -36,7 +36,7 @@ SLOT="0"
 IUSE+="
 ${LANGS[@]/#/l10n_}
 doc gpg gtk nls openssl pam pkcs11 python suid test tpm
-ebuild_revision_11
+ebuild_revision_12
 "
 REQUIRED_USE+="
 	pam? (
