@@ -478,7 +478,7 @@ one on the protect spectrum.  This is another Faustian bargan.  If you choose
 vulnerable to Spectre v2 attack.  If you choose `none` to disable both CFI and
 Repoline, you are vulnerable to both ROP/JOP and Spectre v2 attack.
 
-The compromised execution-integrity is more dangerous than compromised
+A compromised execution-integrity is more dangerous than compromised
 confidentiality because it can do impersonation or increase attacker capabilties.
 If an attacker compromised execution-integrity, then it can also lead to
 compromised confidentiality, run attacker code, and irreversable damage.
