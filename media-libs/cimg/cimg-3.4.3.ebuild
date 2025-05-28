@@ -27,7 +27,7 @@ LICENSE="
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 doc examples
-ebuild_revision_5
+ebuild_revision_6
 "
 
 src_configure() {
