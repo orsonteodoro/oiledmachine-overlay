@@ -12,7 +12,7 @@ KEYWORDS="~amd64 ~arm64 ~x86"
 
 DESCRIPTION="Smooth Streaming plugin for GStreamer"
 IUSE="
-ebuild_revision_8
+ebuild_revision_9
 "
 RDEPEND="
 	>=dev-libs/libxml2-2.8[${MULTILIB_USEDEP}]
