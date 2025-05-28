@@ -34,7 +34,7 @@ RESTRICT="
 SLOT="0/6.0.0"
 IUSE="
 +cairo debug doc experimental +glib +graphite icu +introspection test +truetype
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE="
 	introspection? (
