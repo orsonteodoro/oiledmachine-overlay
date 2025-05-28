@@ -186,10 +186,12 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # admin-access (e.g. sudo)
 # container-runtime
 # copy-paste-password
+# credentials (access tokens, ssh keys)
 # crypto
 # daemon
 # dss (e.g. cryptocurrency, finance)
 # extension
+# facial-embedding (e.g. aka facial recogniton key)
 # fp-determinism
 # game-engine
 # high-precision-research
@@ -1009,7 +1011,7 @@ ewarn
 		[[ \
 			"${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("UM"|"FS") \
 				|| \
-			"${CFLAGS_HARDENED_USE_CASES}" =~ ("copy-paste-password"|"ip-assets"|"sensitive-data") \
+			"${CFLAGS_HARDENED_USE_CASES}" =~ ("copy-paste-password"|"credentials"|"facial-embedding"|"ip-assets"|"sensitive-data") \
 		]] \
 			&& \
 		[[ "${ARCH}" =~ ("amd64"|"s390"|"x86") ]] \
@@ -1372,7 +1374,7 @@ ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_S
 	local fortify_fix_level
 	# Increase CFLAGS_HARDENED_FORTIFY_FIX_LEVEL manually by inspection to
 	# avoid inline build-time failure.
-	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("crypto"|"dss"|"login") ]] ; then
+	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("credentials"|"crypto"|"dss"|"facial-embedding"|"login") ]] ; then
 		fortify_fix_level="${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:-3}"
 	elif [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("copy-paste-password"|"untrusted-data"|"network"|"server"|"web-browser") ]] ; then
 		fortify_fix_level="${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:-2}"

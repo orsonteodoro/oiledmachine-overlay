@@ -64,10 +64,12 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # admin-access (e.g. sudo)
 # container-runtime
 # copy-paste-password
+# credentials (access tokens, ssh keys)
 # crypto
 # daemon
 # dss (e.g. cryptocurrency, finance)
 # extension
+# facial-embedding (e.g. aka facial recogniton key)
 # fp-determinism
 # high-precision-research
 # hypervisor
@@ -636,7 +638,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		[[ \
 			"${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("UM"|"FS") \
 				|| \
-			"${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("copy-paste-password"|"ip-assets"|"sensitive-data") \
+			"${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("copy-paste-password"|"credentials"|"facial-embedding"|"ip-assets"|"sensitive-data") \
 		]] \
 			&& \
 		[[ "${ARCH}" =~ ("amd64"|"x86") ]] \
