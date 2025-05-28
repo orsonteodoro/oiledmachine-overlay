@@ -455,7 +455,8 @@ cflags-hardened and rustflags-hardened.
 * RUSTFLAGS_HARDENED_ARM_CFI_USER - Add -mbranch-protection for Rust packages
 * RUSTFLAGS_HARDENED_LLVM_CFI_USER - Add -fsanitize=cfi for Rust packages
 
-The above flags accept 1, 0, or unset.
+The above flags accept 1, 0, or unset.  By default CFI is opt-out (0) and
+retpoline is default opt-in (1).
 
 * CFLAGS_HARDENED_PROTECT_SPECTRUM_USER - Select between `arm-cfi`, `cet`, `llvm-cfi`, `retpoline`, `none` for C/C++ programs
 * RUSTFLAGS_HARDENED_PROTECT_SPECTRUM_USER - Select between `arm-cfi`, `cet`, `llvm-cfi`, `retpoline`, `none` for Rust programs
