@@ -24,7 +24,10 @@ HOMEPAGE="http://pam-python.sourceforge.net/"
 LICENSE="AGPL-3+"
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc test"
+IUSE+="
+doc test
+ebuild_revision_2
+"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 "
