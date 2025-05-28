@@ -23,7 +23,7 @@ MY_PV="${PV/m/}"
 MY_P="${PN}-${MY_PV}"
 MY_PVR="${PVR/m/}"
 
-CFLAGS_HARDENED_LEVEL=3 # SSP all is upstream default
+CFLAGS_HARDENED_SSP_LEVEL=3 # SSP all is upstream default
 CFLAGS_HARDENED_USE_CASES="network sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF HO IO SO"
 CUDA_TARGETS_COMPAT=(
@@ -500,7 +500,7 @@ alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm liblensfun
 mold openvino oss pgo +re-codecs sndio soc sr static-libs tensorflow test v4l
 wayland
 
-ebuild_revision_26
+ebuild_revision_27
 "
 
 # x means plus.  There is a bug in the USE flag system where + is not recognized.

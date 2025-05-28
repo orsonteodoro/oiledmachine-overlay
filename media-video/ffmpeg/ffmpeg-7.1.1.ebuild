@@ -21,7 +21,7 @@ MY_PV="${PV/m/}"
 MY_P="${PN}-${MY_PV}"
 MY_PVR="${PVR/m/}"
 
-CFLAGS_HARDENED_LEVEL=3 # SSP all is upstream default
+CFLAGS_HARDENED_SSP_LEVEL=3 # SSP all is upstream default
 CFLAGS_HARDENED_USE_CASES="network sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF HO IO SO"
 CUDA_TARGETS_COMPAT=(
@@ -509,7 +509,7 @@ alsa chromium -clear-config-first cuda cuda-filters doc dvdvideo +encode gdbm
 liblensfun libqrencode mold openvino oss pgo pipewire +re-codecs sndio soc sr
 static-libs tensorflow test torch v4l wayland
 
-ebuild_revision_26
+ebuild_revision_27
 "
 
 # The distro has frei0r-plugins as GPL-2 only but source is actually GPL-2+, GPL-3+ [baltan.cpp], LGPL-2.1+ [nois0r.cpp].
