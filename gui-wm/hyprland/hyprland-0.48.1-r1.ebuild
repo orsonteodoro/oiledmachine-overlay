@@ -4,6 +4,7 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data secure-data"
+LLVM_COMPAT=( 19 )
 
 inherit cflags-hardened meson toolchain-funcs
 
@@ -25,10 +26,17 @@ fi
 LICENSE="BSD"
 SLOT="0"
 IUSE="
+${LLVM_COMPAT[@]/#/llvm_slot_}
 clang legacy-renderer +qtutils systemd X
 ebuild_revision_1
 "
-
+REQUIRED_USE="
+	clang? (
+		^^ (
+			${LLVM_COMPAT[@]/#/llvm_slot_}
+		)
+	)
+"
 # hyprpm (hyprland plugin manager) requires the dependencies at runtime
 # so that it can clone, compile and install plugins.
 HYPRPM_RDEPEND="
@@ -76,60 +84,43 @@ DEPEND="
 	>=dev-libs/hyprland-protocols-0.6.0
 	>=dev-libs/wayland-protocols-1.41
 "
+gen_clang_slot() {
+	for x in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${x}? (
+				llvm-core/clang:${x}
+			)
+		"
+	done
+}
 BDEPEND="
 	>=dev-util/hyprwayland-scanner-0.3.10
 	app-misc/jq
 	dev-build/cmake
 	virtual/pkgconfig
 	!clang? (
-		>=sys-devel/gcc-14:*
+		>=sys-devel/gcc-15:15
 	)
 	clang? (
-		>=sys-devel/gcc-14:*
-		>=llvm-core/clang-18:*
+		(
+			$(gen_clang_slot)
+			llvm-core/clang:=
+		)
+		>=sys-devel/gcc-15:15
 	)
 "
 
 pkg_setup() {
 	[[ "${MERGE_TYPE}" == "binary" ]] && return
 
-	CC=$(tc-getCC)
-	CXX=$(tc-getCXX)
-	CPP="${CC} -E"
-
-	if tc-is-clang && ! use clang ; then
-eerror "Enable the clang USE flag"
-		die
-	fi
-
-	if tc-is-gcc && ver_test $(gcc-version) -lt 14 && ! use clang; then
-eerror
-eerror "Switch compiler"
-eerror
-eerror "Actual GCC:      "$(gcc-major-version)
-eerror "Expected GCC:    >=14"
-eerror "Expected Clang:  >=18"
-eerror
-		die
-	fi
-}
-
-src_prepare() {
-	# skip version.h
-	sed -i -e "s|scripts/generateVersion.sh|echo|g" "meson.build" || die
-	default
-}
-
-src_configure() {
 	if use clang ; then
-		if tc-is-gcc ; then
-			CC="clang"
-			CXX="clang++"
-			CPP="${CC} -E"
-			LLVM_SLOT=$(clang-major-version)
-		else
-			LLVM_SLOT=$(clang-major-version)
-		fi
+		local x
+		for x in ${LLVM_COMPAT[@]} ; do
+			if use "llvm_slot_${x}" ; then
+				LLVM_SLOT="${x}"
+				break
+			fi
+		done
 		local path
 		path="/usr/lib/llvm/${LLVM_SLOT}/bin"
 einfo "PATH:  ${PATH} (before)"
@@ -142,9 +133,31 @@ einfo "PATH:  ${PATH} (after)"
 		export CC="${CHOST}-clang-${LLVM_SLOT}"
 		export CXX="${CHOST}-clang++-${LLVM_SLOT}"
 		export CPP="${CC} -E"
+	else
+		CC=$(tc-getCC)
+		CXX=$(tc-getCXX)
+		CPP="${CC} -E"
+		if ver_test $(gcc-major-version) -ne "15" ; then
+eerror "Switch to GCC 15"
+			die
+		fi
 	fi
 	strip-unsupported-flags
 	${CC} --version || die
+
+	if tc-is-clang && ! use clang ; then
+eerror "Enable the clang USE flag"
+		die
+	fi
+}
+
+src_prepare() {
+	# skip version.h
+	sed -i -e "s|scripts/generateVersion.sh|echo|g" "meson.build" || die
+	default
+}
+
+src_configure() {
 	cflags-hardened_append
 	local emesonargs=(
 		$(meson_feature legacy-renderer legacy_renderer)
