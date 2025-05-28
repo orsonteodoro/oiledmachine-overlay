@@ -79,7 +79,7 @@ declare -A CFLAGS_RDEPEND=(
 	["media-libs/dav1d"]=">=;-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
 	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
 )
-CFLAGS_HARDENED_LEVEL=1
+CFLAGS_HARDENED_SSP_LEVEL=1
 CFLAGS_HARDENED_TRAPV=0 # Apply per component using custom patch
 CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network sensitive-data untrusted-data web-browser"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO IO UAF TC"
@@ -538,7 +538,7 @@ aqua +avif -bmalloc -cache-partitioning clang dash debug +doc -eme +flite
 +opengl openmp -seccomp +speech-synthesis -spell -system-malloc test thunder
 +variation-fonts wayland +webassembly -webdriver +webgl webm-eme -webrtc webvtt
 -webxr +woff2 +X
-ebuild_revision_7
+ebuild_revision_8
 "
 
 gen_gst_plugins_duse() {
