@@ -436,7 +436,7 @@ There are two narratives in this Faustian bargain.
 While it may ideal to auto opt-in into CFI, it is not so easy and straightforward
 based on past experience.  This is why it was decided to make it optional
 especially for untested ARCHes.  The worst case possible scenario is that it
-can break the entire toolchain which makes it very risky especially for LLVM CFI.
+can break the entire toolchain which makes it very risky especially with LLVM CFI.
 
 Environment variables that control CFI.  New user environment variables for
 cflags-hardened and rustflags-hardened.
