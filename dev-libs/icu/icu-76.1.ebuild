@@ -58,7 +58,7 @@ RESTRICT="
 SLOT="0/${PV%.*}"
 IUSE="
 debug doc examples static-libs test
-ebuild_revision_10
+ebuild_revision_11
 "
 BDEPEND+="
 	${PYTHON_DEPS}
