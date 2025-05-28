@@ -27,7 +27,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc
 DESCRIPTION="A Qt6 video sink plugin for GStreamer"
 IUSE="
 egl wayland +X
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE="
 	|| (
