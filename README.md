@@ -476,8 +476,8 @@ choosing `none`.  You can also override the auto selected option.
 
 The compromised execution-integrity is more dangerous than compromised
 confidentiality because it can do impersonation or increase attacker capabilties.
-If an attacker compromised execution-integrity, then it can also compromise
-confidentiality and run attacker code and irreversable damage.
+If an attacker compromised execution-integrity, then it can also lead to
+compromised confidentiality, run attacker code, and irreversable damage.
 
 For `llvm-cfi` using `RUSTFLAGS_HARDENED_LLVM_CFI_USER` doesn't automatically
 allow you to use it.  The package must be marked and tested with
