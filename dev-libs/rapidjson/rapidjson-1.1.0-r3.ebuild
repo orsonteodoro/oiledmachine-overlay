@@ -24,7 +24,7 @@ HOMEPAGE="https://rapidjson.org/"
 LICENSE="MIT"
 IUSE="
 doc examples test
-ebuild_revision_4
+ebuild_revision_5
 "
 RESTRICT="!test? ( test )"
 SLOT="0/$(ver_cut 1-2 ${PV})"
