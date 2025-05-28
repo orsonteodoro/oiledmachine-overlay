@@ -25,7 +25,10 @@ LICENSE="
 	CeCILL-C
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE="doc examples"
+IUSE="
+doc examples
+ebuild_revision_1
+"
 
 src_configure() {
 	cflags-hardened_append
