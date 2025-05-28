@@ -19,7 +19,7 @@ esac
 if [[ -z ${_RUSTFLAGS_HARDENED_ECLASS} ]]; then
 _RUSTFLAGS_HARDENED_ECLASS=1
 
-# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_LEVEL
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SSP_LEVEL
 # @DESCRIPTION:
 # Sets the SSP (Stack Smashing Protection) level.  Set it before inheriting rustflags-hardened.
 # 1 = basic (recommended for heavy packages or performance-critical packages)
@@ -35,9 +35,9 @@ _RUSTFLAGS_HARDENED_ECLASS=1
 # 3 = strongest (for legacy or EOL packages, or safety-critical packages or critical infrastructure)
 #     Use cases:
 #     For DSS builds if test suite passed for this level
-RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
+RUSTFLAGS_HARDENED_SSP_LEVEL=${RUSTFLAGS_HARDENED_SSP_LEVEL:-2}
 
-# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_USER_LEVEL
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SSP_LEVEL_USER
 # @DESCRIPTION:
 # Same as above but the user can override the SSP level.
 
@@ -106,25 +106,28 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # Estimates:
 # Flag						Performance as a normalized decimal multiple
 # No mitigation						   1
+# -C target-feature=+stack-probe			0.005 -  1.03
 # -C link-arg=-D_FORTIFY_SOURCE=2			1.01
 # -C link-arg=-D_FORTIFY_SOURCE=3			1.02
-# -C overflow-checks=on					1.01 -  1.20
-# -C soft-float						2.00 -  10.00
-# -Z stack-protector=all				1.05 -  1.10
-# -Z stack-protector=strong				1.02 -  1.05
-# -Z stack-protector=basic				1.01 -  1.03
-# -C target-feature=+bti				1.00 -  1.05
-# -C target-feature=+pac-ret				1.01 -  1.05
-# -C target-feature=+pac-ret,+bti			1.02 -  1.07
-# -C target-feature=+retpoline				1.01 -  1.20
-# -Zsanitizer=address					1.50 -  4.0 (ASan); 1.01 - 1.1 (GWP-ASan)
-# -Zsanitizer=cfi					1.10 -  2.0
-# -Zsanitizer=hwaddress					1.15 -  1.50 (ARM64)
-# -Zsanitizer=leak					1.05 -  1.5
-# -Zsanitizer=memory					3.00 - 11.00
-# -Zsanitizer=safestack					1.01 -  1.20
-# -Zsanitizer=shadow-call-stack				1.01 -  1.15
-# -Zsanitizer=thread					4.00 - 16.00
+# -C link-arg=-Wl,-z,relro -C link-arg=-Wl,-z,now	1.05
+# -C overflow-checks=on					1.01  -  1.20
+# -C relocation-model=pic				1.05  - 1.10
+# -C soft-float						2.00  -  10.00
+# -Z stack-protector=all				1.05  -  1.10
+# -Z stack-protector=basic				1.01  -  1.03
+# -Z stack-protector=strong				1.02  -  1.05
+# -C target-feature=+bti				1.00  -  1.05
+# -C target-feature=+pac-ret				1.01  -  1.05
+# -C target-feature=+pac-ret,+bti			1.02  -  1.07
+# -C target-feature=+retpoline				1.01  -  1.20
+# -Zsanitizer=address					1.50  -  4.0 (ASan); 1.01 - 1.1 (GWP-ASan)
+# -Zsanitizer=cfi					1.10  -  2.0
+# -Zsanitizer=hwaddress					1.15  -  1.50 (ARM64)
+# -Zsanitizer=leak					1.05  -  1.5
+# -Zsanitizer=memory					3.00  - 11.00
+# -Zsanitizer=safestack					1.01  -  1.20
+# -Zsanitizer=shadow-call-stack				1.01  -  1.15
+# -Zsanitizer=thread					4.00  - 16.00
 
 # Setting to 4.0 will enable ASan and other faster sanitizers.
 # Setting to 15.0 will enable TSan and other faster sanitizers.
@@ -530,7 +533,7 @@ ewarn
 }
 
 # @FUNCTION: _rustflags-hardened_has_llvm_cfi
-_cflags-hardened_has_llvm_cfi() {
+_rustflags-hardened_has_llvm_cfi() {
 	if ! tc-is-clang ; then
 		return 1
 	elif has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[cfi]" ; then
@@ -561,8 +564,8 @@ _rustflags-hardened_cf_protection() {
 # @DESCRIPTION:
 # Apply RUSTFLAG hardening to Rust packages.
 rustflags-hardened_append() {
-	if [[ -n "${RUSTFLAGS_HARDENED_USER_LEVEL}" ]] ; then
-		RUSTFLAGS_HARDENED_LEVEL="${RUSTFLAGS_HARDENED_USER_LEVEL}"
+	if [[ -n "${RUSTFLAGS_HARDENED_SSP_LEVEL_USER}" ]] ; then
+		RUSTFLAGS_HARDENED_SSP_LEVEL="${RUSTFLAGS_HARDENED_SSP_LEVEL_USER}"
 	fi
 
 	if [[ -n "${RUSTFLAGS_HARDENED_TOLERANCE_USER}" ]] ; then
@@ -661,6 +664,8 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		[[ "${RUSTFLAGS_HARDENED_CF_PROTECTION_USER:-0}" == "1" ]] \
 			&& \
 		_rustflags-hardened_has_target_feature "cet" \
+			&& \
+		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" \
 	; then
 		protect_spectrum="cet"
 	elif \
@@ -683,6 +688,8 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		) \
 			&& \
 		[[ "${RUSTFLAGS_HARDENED_ARM_CFI_USER:-0}" == "1" ]] \
+			&& \
+		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.07" \
 	; then
 	# PAC:  "BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF"
 	# BTI:  "BO"|"BU"|"CE"|"DF"|"DP"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF"
@@ -695,11 +702,13 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 			"${RUSTFLAGS_HARDENED_USE_CASES}" =~ "untrusted-data" \
 		]] \
 			&& \
-		_cflags-hardened_has_llvm_cfi \
+		_rustflags-hardened_has_llvm_cfi \
 			&& \
 		[[ "${RUSTFLAGS_HARDENED_LLVM_CFI:-0}" == "1" ]] \
 			&&
 		[[ "${RUSTFLAGS_HARDENED_LLVM_CFI_USER:-0}" == "1" ]] \
+			&& \
+		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "2.0" \
 	; then
 		protect_spectrum="llvm-cfi"
 	elif \
@@ -709,7 +718,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 			"${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("copy-paste-password"|"credentials"|"facial-embedding"|"ip-assets"|"sensitive-data") \
 		]] \
 			&& \
-		[[ "${ARCH}" =~ ("amd64"|"x86") ]] \
+		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.2" \
 	; then
 		protect_spectrum="retpoline"
 	else
@@ -765,13 +774,25 @@ einfo "Protect spectrum:  ${protect_spectrum}"
 		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
 			| sed -r \
 				-e "s#-Z[ ]*stack-protector=(all|basic|none|strong)##g")
-		if [[ "${RUSTFLAGS_HARDENED_LEVEL}" == "3" ]] ; then
+		if \
+			[[ "${RUSTFLAGS_HARDENED_SSP_LEVEL}" == "3" ]] \
+				&& \
+			_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" \
+		; then
 	# ZC, CE, EP
 			RUSTFLAGS+=" -Z stack-protector=all"
-		elif [[ "${RUSTFLAGS_HARDENED_LEVEL}" == "1" ]] ; then
+		elif \
+			[[ "${RUSTFLAGS_HARDENED_SSP_LEVEL}" == "1" ]] \
+				&& \
+			_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.03" \
+		; then
 	# ZC, CE, EP
 			RUSTFLAGS+=" -Z stack-protector=basic"
-		elif [[ "${RUSTFLAGS_HARDENED_LEVEL}" == "2" ]] ; then
+		elif \
+			[[ "${RUSTFLAGS_HARDENED_SSP_LEVEL}" == "2" ]] \
+				&& \
+			_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" \
+		; then
 	# ZC, CE, EP
 			RUSTFLAGS+=" -Z stack-protector=strong"
 		fi
@@ -837,7 +858,10 @@ einfo "Protect spectrum:  ${protect_spectrum}"
 	filter-flags "-U_FORTIFY_SOURCE"
 	append-flags "-U_FORTIFY_SOURCE"
 	RUSTFLAGS=$(echo "${RUSTFLAGS}" | sed -r -e "s#-C[ ]*link-arg=-D_FORTIFY_SOURCE=[0-3]##g")
-	if [[ -n "${RUSTFLAGS_HARDENED_FORTIFY_SOURCE}" ]] ; then
+	if _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" "<" "1.02" ; then
+	# -D_FORTIFY_SOURCE is disabled
+		:
+	elif [[ -n "${RUSTFLAGS_HARDENED_FORTIFY_SOURCE}" ]] ; then
 		local level="${RUSTFLAGS_HARDENED_FORTIFY_SOURCE}"
 		append-flags -D_FORTIFY_SOURCE=${level}
 		RUSTFLAGS+=" -C link-arg=-D_FORTIFY_SOURCE=${level}"
@@ -930,7 +954,11 @@ einfo "rustc host:  ${host}"
 	; then
 	# For CFLAGS equivalent list, see also `rustc --print target-features`
 	# For -mllvm option, see `rustc -C llvm-args="--help"`
-		if _rustflags-hardened_has_target_feature "stack-probe" ; then
+		if \
+			_rustflags-hardened_has_target_feature "stack-probe" \
+				&& \
+			_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.03" \
+		; then
 	# Mitigation for stack clash, stack overflow
 	# Not available for ARCH=amd64 prebuilt build.
 			RUSTFLAGS=$(echo "${RUSTFLAGS}" \
@@ -939,9 +967,11 @@ einfo "rustc host:  ${host}"
 		fi
 
 	# ZC, CE, EP, DoS, DT
-		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
-			| sed -r -e "s#-C[ ]*link-arg=[-+]fstack-clash-protection##g")
-		RUSTFLAGS+=" -C link-arg=-fstack-clash-protection"
+		if _rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" ; then
+			RUSTFLAGS=$(echo "${RUSTFLAGS}" \
+				| sed -r -e "s#-C[ ]*link-arg=[-+]fstack-clash-protection##g")
+			RUSTFLAGS+=" -C link-arg=-fstack-clash-protection"
+		fi
 	fi
 
 	if \
@@ -960,6 +990,8 @@ einfo "rustc host:  ${host}"
 |"untrusted-data"\
 |"web-server")\
 		]] \
+				&& \
+		_rustflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.0" \
 	; then
 	# ZC, CE, PE
 		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
@@ -971,7 +1003,11 @@ einfo "rustc host:  ${host}"
 
 	# For executable packages only.
 	# Do not apply to hybrid (executible with libs) packages
-	if [[ "${RUSTFLAGS_HARDENED_PIE:-0}" == "1" ]] ; then
+	if \
+		[[ "${RUSTFLAGS_HARDENED_PIE:-0}" == "1" ]] \
+			&& \
+		_rustflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" \
+	; then
 	# ZC, CE, PE, ID
 		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
 			| sed -r -e "s#-C[ ]*relocation-model=pie##g")
@@ -983,14 +1019,22 @@ einfo "rustc host:  ${host}"
 	fi
 
 	# For library packages only
-	if [[ "${RUSTFLAGS_HARDENED_PIC:-0}" == "1" ]] ; then
+	if \
+		[[ "${RUSTFLAGS_HARDENED_PIC:-0}" == "1" ]] \
+			&& \
+		_rustflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" \
+	; then
 	# ZC, CE, PE, ID
 		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
 			| sed -r -e "s#-C[ ]*relocation-model=pic##g")
 		RUSTFLAGS+=" -C relocation-model=pic"
 	fi
 
-	if ver_test "${rust_pv}" -ge "1.79" ; then
+	if \
+		ver_test "${rust_pv}" -ge "1.79" \
+			&& \
+		_rustflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" \
+	; then
 	# DoS, DT
 		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
 			| sed -r -e "s#-C[ ]*relro-level=(off|partial|full)##g")
@@ -1009,9 +1053,10 @@ einfo "rustc host:  ${host}"
 		RUSTFLAGS+=" -C link-arg=-Wl,-z,now"
 	fi
 
-	if [[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"fp-determinism"|"high-precision-research") ]] \
-		&& \
-	_rustflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "10.00" \
+	if \
+		[[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"fp-determinism"|"high-precision-research") ]] \
+			&& \
+		_rustflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "10.00" \
 	; then
 		if [[ "${ARCH}" == "amd64" ]] ; then
 			replace-flags "-march=*" "-march=generic"

@@ -23,7 +23,7 @@ _CFLAGS_HARDENED_ECLASS=1
 
 inherit flag-o-matic toolchain-funcs
 
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_LEVEL
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_SSP_LEVEL
 # @DESCRIPTION:
 # Sets the SSP (Stack Smashing Protection) level.  Set it before inheriting cflags-hardened.
 # 1 = basic (recommended for heavy packages or performance-critical packages)
@@ -39,9 +39,9 @@ inherit flag-o-matic toolchain-funcs
 # 3 = strongest (for legacy or EOL packages, or safety-critical packages or critical infrastructure)
 #     Use cases:
 #     For DSS builds if test suite passed for this level
-CFLAGS_HARDENED_LEVEL=${CFLAGS_HARDENED_LEVEL:-2}
+CFLAGS_HARDENED_SSP_LEVEL=${CFLAGS_HARDENED_SSP_LEVEL:-2}
 
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_LEVEL_USER
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_SSP_LEVEL_USER
 # @USER_VARIABLE
 # @DESCRIPTION:
 # Same as above but the user can override the SSP level.
@@ -123,7 +123,10 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # No mitigation				1.00
 # -D_FORTIFY_SOURCE=2			1.01
 # -D_FORTIFY_SOURCE=3			1.02
-# -fcf-protection=full			1.03 -  1.10
+# -fPIC					1.05 -  1.10
+# -fPIE -pie				1.05 -  1.10
+# -fcf-protection=full			1.03 -  1.05
+# -fhardened				1.03 -  1.08
 # -fstack-clash-protection		1.02 -  1.10
 # -fstack-protect			1.01 -  1.05
 # -fstack-protect-strong		1.03 -  1.10
@@ -138,6 +141,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # -fsanitize=shadowcallstack		1.01 -  1.15
 # -fsanitize=thread			4.00 - 16.00
 # -fsanitize=undefined			1.10 -  2.00
+# -ftrivial-auto-var-init=zero		1.01 -  1.05
 # -mbranch-protection=bti		1.00 -  1.05
 # -mbranch-protection=pac-ret		1.01 -  1.05
 # -mbranch-protection=pac-ret+bti	1.02 -  1.07
@@ -155,6 +159,9 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # -mretpoline-external-thunk		1.15 -  1.35
 # -fvtable-verify=preinit		1.06 -  1.16
 # -fvtable-verify=std			1.05 -  1.15
+# -Wa,--noexecstack			1.00
+# -Wl,-z,noexecstack			1.00
+# -Wl,-z,relro,-z,now			1.01 -  1.05
 
 # Setting to 4.0 will enable ASAN and other faster sanitizers.
 # Setting to 15.0 will enable TSan and other faster sanitizers.
@@ -782,16 +789,16 @@ ewarn
 	fi
 
 	filter-flags "-m*branch-protection=*"
-	if [[ "${bti}" == "1" ]] && _cflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.07" ; then
+	if [[ "${bti}" == "1" ]] && _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.07" ; then
 	# Partial heap overflow mitigation, jop, rop
 		append-flags "-mbranch-protection=pac-ret+bti"	# security-critical
-	elif [[ "${pac}" == "1" ]] && _cflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" ; then
+	elif [[ "${pac}" == "1" ]] && _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" ; then
 	# Partial heap overflow mitigation, jop, rop
 		append-flags "-mbranch-protection=standard"	# balance
-	elif [[ "${pac}" == "1" ]] && _cflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" ; then
+	elif [[ "${pac}" == "1" ]] && _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" ; then
 	# Partial heap overflow mitigation, rop
 		append-flags "-mbranch-protection=pac-ret"	# balance
-	elif [[ "${bti}" == "1" ]] && _cflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" ; then
+	elif [[ "${bti}" == "1" ]] && _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" ; then
 	# jop
 		append-flags "-mbranch-protection=bti"		# performance-critical
 	else
@@ -966,8 +973,8 @@ ewarn
 		fi
 	fi
 
-	if [[ -n "${CFLAGS_HARDENED_LEVEL_USER}" ]] ; then
-		CFLAGS_HARDENED_LEVEL="${CFLAGS_HARDENED_LEVEL_USER}"
+	if [[ -n "${CFLAGS_HARDENED_SSP_LEVEL_USER}" ]] ; then
+		CFLAGS_HARDENED_SSP_LEVEL="${CFLAGS_HARDENED_SSP_LEVEL_USER}"
 	fi
 
 	if [[ -n "${CFLAGS_HARDENED_TOLERANCE_USER}" ]] ; then
@@ -987,6 +994,8 @@ ewarn
 		_cflags-hardened_has_cet \
 			&& \
 		[[ "${CFLAGS_HARDENED_CF_PROTECTION_USER:-0}" == "1" ]] \
+			&& \
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" \
 	; then
 		protect_spectrum="cet"
 	elif \
@@ -1009,6 +1018,8 @@ ewarn
 		) \
 			&& \
 		[[ "${CFLAGS_HARDENED_ARM_CFI_USER:-0}" == "1" ]] \
+			&& \
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.07" \
 	; then
 	# TODO
 	# PAC:  "BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF"
@@ -1027,6 +1038,8 @@ ewarn
 		[[ "${CFLAGS_HARDENED_LLVM_CFI:-0}" == "1" ]] \
 			&&
 		[[ "${CFLAGS_HARDENED_LLVM_CFI_USER:-0}" == "1" ]] \
+			&&
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "2.0" \
 	; then
 	# TODO
 		protect_spectrum="llvm-cfi"
@@ -1038,6 +1051,8 @@ ewarn
 		]] \
 			&& \
 		[[ "${ARCH}" =~ ("amd64"|"s390"|"x86") ]] \
+			&&
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.3" \
 	; then
 		protect_spectrum="retpoline"
 	else
@@ -1054,7 +1069,7 @@ einfo "Protect spectrum:  ${protect_spectrum}"
 	local gcc_pv=$(gcc-version)
 	if \
 		[[ \
-			"${CFLAGS_HARDENED_LEVEL}" == "2" \
+			"${CFLAGS_HARDENED_SSP_LEVEL}" == "2" \
 		]] \
 				&& \
 		[[ \
@@ -1090,6 +1105,8 @@ einfo "Protect spectrum:  ${protect_spectrum}"
 		ver_test "${gcc_pv}" -ge "14.2" \
 			&& \
 		[[ "${CFLAGS_HARDENED_FHARDENED:-1}" == "1" ]] \
+			&&
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" \
 	; then
 einfo "Appending -fhardened"
 einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with local arrays or local pointers)"
@@ -1149,6 +1166,8 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 			]] \
 					&&
 			test-flags-CC "-fstack-clash-protection" \
+					&& \
+			_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" \
 		; then
 	# ZC, CE, EP, DoS, DT
 			filter-flags "-f*stack-clash-protection"
@@ -1156,21 +1175,39 @@ einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with
 			CFLAGS_HARDENED_CFLAGS+=" -fstack-clash-protection"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fstack-clash-protection"
 		fi
-		if [[ "${CFLAGS_HARDENED_LEVEL}" == "1" ]] && ! tc-enables-ssp ; then
+		if \
+			[[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "1" ]] \
+				&& \
+			! tc-enables-ssp \
+				&& \
+			_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" \
+		; then
 	# ZC, CE, EP
 einfo "Standard SSP hardening (>= 8 byte buffers, *alloc functions)"
 			filter-flags "-f*stack-protector"
 			append-flags "-fstack-protector"
 			CFLAGS_HARDENED_CFLAGS+=" -fstack-protector"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fstack-protector"
-		elif [[ "${CFLAGS_HARDENED_LEVEL}" == "2" ]] && ! tc-enables-ssp-strong ; then
+		elif \
+			[[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "2" ]] \
+				&& \
+			! tc-enables-ssp-strong \
+				&& \
+			_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" \
+		; then
 	# ZC, CE, EP
 einfo "Strong SSP hardening (>= 8 byte buffers, *alloc functions, functions with local arrays or local pointers)"
 			filter-flags "-f*stack-protector-strong"
 			append-flags "-fstack-protector-strong"
 			CFLAGS_HARDENED_CFLAGS+=" -fstack-protector-strong"
 			CFLAGS_HARDENED_CXXFLAGS+=" -fstack-protector-strong"
-		elif [[ "${CFLAGS_HARDENED_LEVEL}" == "3" ]] && ! tc-enables-ssp-all ; then
+		elif \
+			[[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "3" ]] \
+				&& \
+			! tc-enables-ssp-all \
+				&& \
+			_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" \
+		; then
 	# ZC, CE, EP
 einfo "All SSP hardening (All functions hardened)"
 			filter-flags "-f*stack-protector-all"
@@ -1180,10 +1217,12 @@ einfo "All SSP hardening (All functions hardened)"
 		fi
 
 	# ZC, CE, PE, DT
-		append-ldflags "-Wl,-z,relro"
-		append-ldflags "-Wl,-z,now"
-		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,relro"
-		CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,now"
+		if _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" ; then
+			append-ldflags "-Wl,-z,relro"
+			append-ldflags "-Wl,-z,now"
+			CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,relro"
+			CFLAGS_HARDENED_LDFLAGS+=" -Wl,-z,now"
+		fi
 
 		if [[ "${protect_spectrum}" == "cet" ]] ; then
 	# ZC, CE, PE
@@ -1207,6 +1246,8 @@ einfo "All SSP hardening (All functions hardened)"
 |"safety-critical"\
 |"security-critical") \
 			]] \
+				&& \
+			_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" \
 		; then
 	# CE, PE, DoS, DT, ID
 			filter-flags "-f*trivial-auto-var-init=*"
@@ -1232,6 +1273,8 @@ einfo "All SSP hardening (All functions hardened)"
 |"untrusted-data"\
 |"web-server")\
 		]] \
+			&& \
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.0" \
 	; then
 	# ZC, CE, PE
 		filter-flags "-Wa,--noexecstack"
@@ -1320,7 +1363,10 @@ einfo "All SSP hardening (All functions hardened)"
 	CFLAGS_HARDENED_CXXFLAGS+=" -U_FORTIFY_SOURCE"
 
 	# ZC, CE, PE, DoS, DT, ID
-	if [[ -n "${CFLAGS_HARDENED_FORTIFY_SOURCE}" ]] ; then
+	if _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" "<" "1.02" ; then
+	# -D_FORTIFY_SOURCE is disabled
+		:
+	elif [[ -n "${CFLAGS_HARDENED_FORTIFY_SOURCE}" ]] ; then
 		local level="${CFLAGS_HARDENED_FORTIFY_SOURCE}"
 		append-flags -D_FORTIFY_SOURCE=${level}
 		CFLAGS_HARDENED_CFLAGS+=" -D_FORTIFY_SOURCE=${level}"
@@ -1409,7 +1455,10 @@ ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_S
 	# CWE-119
 	# Design notes:  Make sure you review the estimated CVSS score, when making a custom flag set.
 	local coverage_pct=""
-	if [[ "${CFLAGS_HARDENED_FORTIFY_SOURCE}" == "0" ]] ; then
+	if _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" "<" "1.02" ; then
+	# -D_FORTIFY_SOURCE is disabled
+		:
+	elif [[ "${CFLAGS_HARDENED_FORTIFY_SOURCE}" == "0" ]] ; then
 		:
 	elif [[ "${fortify_fix_level}" == "1" ]] ; then
 	# For low risk trusted data
@@ -1417,6 +1466,7 @@ ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_S
 	# -fno-tree-dce -> -mllvm -disable-dce
 	# -fno-tree-loop-optimize -> -fno-unroll-loops
 	# -fno-tree-vectorize -> -fno-vectorize
+	# 1.5 - 1.8 worst case performance impact
 		coverage_pct="95%"
 		if tc-is-clang || tc-is-gcc ; then
 			flags+=(
@@ -1463,6 +1513,7 @@ ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_S
 	# -fno-tree-loop-optimize -> -fno-unroll-loops
 	# -fno-tree-vectorize -> -fno-vectorize -fno-slp-vectorize
 	# -fno-tree-vrp -> -fno-strict-overflow
+	# 1.8 - 2.2 worst case performance impact
 		coverage_pct="99%"
 		if tc-is-clang || tc-is-gcc ; then
 			flags+=(
@@ -1482,9 +1533,9 @@ ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_S
 		elif tc-is-gcc ; then
 			flags+=(
 				"-fno-aggressive-loop-optimizations"
-				"-fno-tree-loop-optimize"
 				"-fno-tree-dce"
 				"-fno-tree-dse"
+				"-fno-tree-loop-optimize"
 				"-fno-tree-vectorize"
 				"-fno-tree-vrp"
 			)
@@ -1517,6 +1568,7 @@ ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_S
 	# -fno-tree-loop-optimize -> -fno-unroll-loops
 	# -fno-tree-vectorize -> -fno-vectorize -fno-slp-vectorize
 	# -fno-tree-vrp -> -fno-strict-overflow
+	# 1.85 - 2.3 worst case performance impact
 		coverage_pct="~99%"
 		if tc-is-clang || tc-is-gcc ; then
 			flags+=(
@@ -2042,7 +2094,15 @@ ewarn "vtable hardening is required for the oiledmachine overlay for C++.  Rebui
 		fi
 	fi
 
-	if [[ "${CFLAGS_HARDENED_VTABLE_VERIFY:-0}" == "1" ]] && tc-is-gcc && ver_test $(gcc-version) -ge "4.9" ; then
+	if \
+		[[ "${CFLAGS_HARDENED_VTABLE_VERIFY:-0}" == "1" ]] \
+			&& \
+		tc-is-gcc \
+			&& \
+		ver_test $(gcc-version) -ge "4.9" \
+			&& \
+		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" \
+	; then
 	# The package manager is not designed to track updates which makes it a
 	# maintenance nightmare.  vtv can only be applied to c++ to the
 	# following cases to simplify maintenance.
