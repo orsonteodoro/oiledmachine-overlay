@@ -198,7 +198,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # jit
 # kernel
 # language-runtime (e.g. compiler, interpeter, language virtual machine)
-# login (sudo)
+# login (e.g. sudo, shadow, pam, login)
 # messenger
 # modular-app (an app that uses plugins)
 # realtime-integrity
@@ -1373,9 +1373,9 @@ ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_S
 	local fortify_fix_level
 	# Increase CFLAGS_HARDENED_FORTIFY_FIX_LEVEL manually by inspection to
 	# avoid inline build-time failure.
-	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("copy-paste-password"|"crypto"|"dss"|"login"|"password") ]] ; then
+	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("crypto"|"dss"|"login") ]] ; then
 		fortify_fix_level="${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:-3}"
-	elif [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("untrusted-data"|"network"|"server"|"web-browser") ]] ; then
+	elif [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("copy-paste-password"|"untrusted-data"|"network"|"password"|"server"|"web-browser") ]] ; then
 		fortify_fix_level="${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:-2}"
 	else
 		fortify_fix_level="${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:-1}"

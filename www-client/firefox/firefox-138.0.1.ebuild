@@ -115,7 +115,7 @@ unset __
 
 APPLY_OILEDMACHINE_OVERLAY_PATCHSET="1"
 BUILD_OBJ_DIR="" # global var not const
-CFLAGS_HARDENED_USE_CASES="jit language-runtime network scripting sensitive-data untrusted-data web-browser"
+CFLAGS_HARDENED_USE_CASES="copy-paste-password jit language-runtime network scripting sensitive-data untrusted-data web-browser"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO PE SO UAF UM TC"
 RUSTFLAGS_HARDENED_USE_CASES="jit language-runtime network scripting sensitive-data untrusted-data web-browser"
 DBUS_PV="0.60"

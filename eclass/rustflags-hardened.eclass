@@ -74,7 +74,7 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # ip-assets
 # jit
 # kernel
-# login (sudo)
+# login (e.g. sudo, shadow, pam, login)
 # messenger
 # realtime-integrity
 # safety-critical
