@@ -245,7 +245,7 @@ eerror
 	)
 	if has_version "media-libs/mesa[vulkan]" || has_version "media-video/ffmpeg[glslang]" ; then
 		linked_libs+=(
-			"/usr/$(libdir)/libglslang.so;media-libs/glslang"
+			"/usr/${libdir}/libglslang.so;media-libs/glslang"
 		)
 	fi
 	if use qt6 ; then
