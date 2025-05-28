@@ -21,7 +21,10 @@ DESCRIPTION="Info ZIP (encryption support)"
 HOMEPAGE="https://infozip.sourceforge.net/Zip.html"
 LICENSE="Info-ZIP"
 SLOT="0"
-IUSE="bzip2 crypt natspec unicode"
+IUSE="
+bzip2 crypt natspec unicode
+ebuild_revision_1
+"
 RDEPEND="
 	bzip2? (
 		app-arch/bzip2
