@@ -4,7 +4,7 @@
 EAPI=8
 
 CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=3
-CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data"
+CFLAGS_HARDENED_USE_CASES="copy-paste-password credentials security-critical sensitive-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=0 # Retest
 VIRTUALX_REQUIRED="manual"
 
