@@ -17,7 +17,10 @@ HOMEPAGE="
 "
 LICENSE="GPL-2+"
 SLOT="0"
-IUSE="policykit spell +shortcuts"
+IUSE="
+policykit spell +shortcuts
+ebuild_revision_1
+"
 DEPEND="
 	>=dev-libs/glib-2.56.2
 	>=x11-libs/gtk+-3.22.0:3
