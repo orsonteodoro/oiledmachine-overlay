@@ -14,7 +14,10 @@ DESCRIPTION="Crypt::CBC compliant Rijndael encryption module"
 LICENSE="LGPL-3"
 SLOT="0"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~mips ppc ppc64 ~riscv sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x64-solaris"
-IUSE="test"
+IUSE="
+test
+ebuild_revision_1
+"
 RESTRICT="!test? ( test )"
 
 BDEPEND="
