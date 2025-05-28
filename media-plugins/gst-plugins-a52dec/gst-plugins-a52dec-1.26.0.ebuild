@@ -13,7 +13,7 @@ inherit cflags-hardened gstreamer-meson
 DESCRIPTION="ATSC A/52 audio decoder plugin for GStreamer"
 IUSE="
 +orc
-ebuild_revision_5
+ebuild_revision_6
 "
 RDEPEND="
 	media-libs/a52dec[${MULTILIB_USEDEP}]
