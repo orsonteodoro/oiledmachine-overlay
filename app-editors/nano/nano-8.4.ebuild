@@ -33,7 +33,10 @@ LICENSE="
 	)
 "
 SLOT="0"
-IUSE="debug justify magic minimal ncurses nls +spell unicode"
+IUSE="
+debug justify magic minimal ncurses nls +spell unicode
+ebuild_revision_1
+"
 REQUIRED_USE="
 	magic? (
 		!minimal
