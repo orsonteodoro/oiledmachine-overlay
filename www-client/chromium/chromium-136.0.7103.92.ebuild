@@ -73,10 +73,10 @@ ALLOW_SYSTEM_TOOLCHAIN=0
 CFI_CAST=0 # Global variable
 CFI_ICALL=0 # Global variable
 CFI_VCALL=0 # Global variable
-CFLAGS_HARDENED_LEVEL="1" # Global variable
-CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network scripting sensitive-data untrusted-data web-browser"
+CFLAGS_HARDENED_SSP_LEVEL="1" # Global variable
 CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 #CFLAGS_HARDENED_SANITIZERS_COMPAT=( "llvm" )
+CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network scripting sensitive-data untrusted-data web-browser"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF HO IO PE SO UAF TC"
 CHROMIUM_EBUILD_MAINTAINER=0 # See also GEN_ABOUT_CREDITS
 
@@ -716,7 +716,7 @@ ${PATENT_STATUS[@]}
 -system-libwebp -system-libxml -system-libxslt -system-openh264 -system-opus
 -system-re2 -system-zlib +system-zstd systemd test +wayland +webassembly
 -widevine +X
-ebuild_revision_10
+ebuild_revision_11
 "
 if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
 	IUSE+="
@@ -2444,13 +2444,13 @@ einfo
 	check_ulimit
 
 	if use official ; then
-		CFLAGS_HARDENED_LEVEL="1"
+		CFLAGS_HARDENED_SSP_LEVEL="1"
 	elif is-flagq "-fstack-protector" ; then
-		CFLAGS_HARDENED_LEVEL="1"
+		CFLAGS_HARDENED_SSP_LEVEL="1"
 	elif is-flagq "-fstack-protector-strong" ; then
-		CFLAGS_HARDENED_LEVEL="2"
+		CFLAGS_HARDENED_SSP_LEVEL="2"
 	elif is-flagq "-fstack-protector-all" ; then
-		CFLAGS_HARDENED_LEVEL="3"
+		CFLAGS_HARDENED_SSP_LEVEL="3"
 	fi
 }
 
@@ -4158,23 +4158,23 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 				myconf_gn+=" use_rust_stack_protector_level=\"none\""
 			fi
 		else
-			if [[ "${CFLAGS_HARDENED_LEVEL}" == "0" ]] ; then
+			if [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "0" ]] ; then
 				myconf_gn+=" use_stack_protector_level=\"none\""
-			elif [[ "${CFLAGS_HARDENED_LEVEL}" == "1" ]] ; then
+			elif [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "1" ]] ; then
 				myconf_gn+=" use_stack_protector_level=\"basic\""
-			elif [[ "${CFLAGS_HARDENED_LEVEL}" == "2" ]] ; then
+			elif [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "2" ]] ; then
 				myconf_gn+=" use_stack_protector_level=\"strong\""
-			elif [[ "${CFLAGS_HARDENED_LEVEL}" == "3" ]] ; then
+			elif [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "3" ]] ; then
 				myconf_gn+=" use_stack_protector_level=\"all\""
 			fi
 			if (( ${is_rust_nightly} == 0 )) ; then
-				if [[ "${CFLAGS_HARDENED_LEVEL}" == "0" ]] ; then
+				if [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "0" ]] ; then
 					myconf_gn+=" use_rust_stack_protector_level=\"none\""
-				elif [[ "${CFLAGS_HARDENED_LEVEL}" == "1" ]] ; then
+				elif [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "1" ]] ; then
 					myconf_gn+=" use_rust_stack_protector_level=\"basic\""
-				elif [[ "${CFLAGS_HARDENED_LEVEL}" == "2" ]] ; then
+				elif [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "2" ]] ; then
 					myconf_gn+=" use_rust_stack_protector_level=\"strong\""
-				elif [[ "${CFLAGS_HARDENED_LEVEL}" == "3" ]] ; then
+				elif [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "3" ]] ; then
 					myconf_gn+=" use_rust_stack_protector_level=\"all\""
 				fi
 			fi
