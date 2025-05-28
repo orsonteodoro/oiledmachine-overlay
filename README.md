@@ -463,18 +463,20 @@ retpoline is default opt-in (1).
 
 The *FLAGS_HARDENED_PROTECT_SPECTRUM_USER options can be used to optimize
 security for either confidentiality or for execution-integrity on a per-package
-basis.  `retpoline` is associated with confidentiality.  `arm-cfi`, `cet`,
-`llvm-cfi` are associated with execution-integrity or anti execution hijack.  If
-you do not select, it will automatically decide based on the vulnerability
-history of the package and how it processes sensitive or untrusted data.  So if a
-package has memory corruption, it is likely to choose either `cet`, `arm-cfi`,
-`llvm-cfi`.  If the package only handles sensitive data, has past vulnerability
-history of uninitalized memory, or has only support for retpoline will
-automatically choose `retpoline`.  If a package handles both untrusted data and
-sensitive data, it will prioritize CFI otherwise retpoline.  These options are
-mutually exclusive so you can only choose one on the protect spectrum.  You can
-also disable both CFI and Retpoline by choosing `none`.  You can also override
-the auto selected option.
+basis or override the auto selected option.  `retpoline` is associated with
+confidentiality.  `arm-cfi`, `cet`, `llvm-cfi` are associated with
+execution-integrity or anti execution hijack.  If you do not select, it will
+automatically decide based on the vulnerability history of the package and how
+it processes sensitive or untrusted data.  So if a package has memory corruption,
+it is likely to choose either `cet`, `arm-cfi`, `llvm-cfi`.  If the package only
+handles sensitive data, has past vulnerability history of uninitalized memory,
+or has only support for retpoline will automatically choose `retpoline`.  If a
+package handles both untrusted data and sensitive data, it will prioritize CFI
+otherwise retpoline.  These options are mutually exclusive so you can only choose
+one on the protect spectrum.  This is another Faustian bargan.  If you choose
+`retpoline` you are vulnerable to JOP/ROP attack.  If you choose ROP/JOP, you are
+vulnerable to Spectre v2 attack.  If you choose `none` to disable both CFI and
+Repoline, you are vulnerable to both ROP/JOP and Spectre v2 attack.
 
 The compromised execution-integrity is more dangerous than compromised
 confidentiality because it can do impersonation or increase attacker capabilties.
