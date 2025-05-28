@@ -474,8 +474,10 @@ sensitive data, it will prioritize CFI otherwise retpoline.  These options are
 mutually exclusive so you can only choose one.  You can also disable it by
 choosing `none`.  You can also override the auto selected option.
 
-The execution-integrity is more dangerous than confidentiality because it can
-do impersonation or increase attacker capabilties.
+The compromised execution-integrity is more dangerous than compromised
+confidentiality because it can do impersonation or increase attacker capabilties.
+If an attacker compromised execution-integrity then it can also compromise
+confidentiality and run attacker code.
 
 For `llvm-cfi` using `RUSTFLAGS_HARDENED_LLVM_CFI_USER` doesn't automatically
 allow you to use it.  The package must be marked and tested with
