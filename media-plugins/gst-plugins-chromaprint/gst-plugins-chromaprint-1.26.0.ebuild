@@ -12,7 +12,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~riscv ~sparc ~x86"
 
 DESCRIPTION="Calculate Chromaprint fingerprint from audio files for GStreamer"
 IUSE="
-ebuild_revision_7
+ebuild_revision_8
 "
 RDEPEND="
 	media-libs/chromaprint[${MULTILIB_USEDEP}]
