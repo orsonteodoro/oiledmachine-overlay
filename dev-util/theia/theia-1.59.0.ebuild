@@ -486,7 +486,7 @@ LICENSE="
 RESTRICT="mirror"
 IUSE+="
 ${!THEIA_PLUGINS[@]}
-git ollama ebuild_revision_14
+git ollama ebuild_revision_24
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
