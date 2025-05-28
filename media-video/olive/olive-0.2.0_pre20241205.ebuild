@@ -52,7 +52,7 @@ IUSE+="
 ${PATENT_STATUS_IUSE[@]}
 alsa doc jack +jpeg2k +mp3 +opus oss +png qt5 qt6 test srt +svt-av1 +theora
 +truetype +vorbis wayland +webp X +xvid x264 x265
-ebuild_revision_1
+ebuild_revision_2
 "
 PATENT_STATUS_REQUIRED_USE="
 	patent_status_nonfree? (
