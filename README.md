@@ -467,9 +467,12 @@ basis.  `retpoline` is associated with confidentiality.  `arm-cfi`, `cet`,
 you do not select, it will automatically decide based on the vulnerability
 history of the package and how it processes sensitive or untrusted data.  So if a
 package has memory corruption, it is likely to choose either `cet`, `arm-cfi`,
-`llvm-cfi`.  If the package only handles sensitive data or has support it will
-automatically choose `retpoline`.  These options are mutually exclusive so you
-can only choose one.  You can also disable it by choosing `none`.
+`llvm-cfi`.  If the package only handles sensitive data, has past vulnerability
+history of uninitalized memory, or has only support for retpoline will
+automatically choose `retpoline`.  If a package handles both untrusted data and
+sensitive data, it will prioritize CFI otherwise retpoline.  These options are
+mutually exclusive so you can only choose one.  You can also disable it by
+choosing `none`.  You can also override the auto selected option.
 
 The execution-integrity is more dangerous than confidentiality because it can
 do impersonation or increase attacker capabilties.
