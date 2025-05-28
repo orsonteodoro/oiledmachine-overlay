@@ -28,7 +28,7 @@ SLOT="0"
 IUSE="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang legacy-renderer +qtutils systemd X
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	clang? (
