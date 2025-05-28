@@ -19,7 +19,7 @@ DESCRIPTION="The QML and Quick modules for the Qt5 framework"
 
 IUSE="
 gles2-only +jit localstorage vulkan +widgets
-ebuild_revision_5
+ebuild_revision_6
 "
 
 # qtgui[gles2-only=] is needed because of bug 504322
