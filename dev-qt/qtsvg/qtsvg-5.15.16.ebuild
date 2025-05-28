@@ -15,7 +15,9 @@ inherit cflags-hardened qt5-build
 
 DESCRIPTION="SVG rendering library for the Qt5 framework"
 
-IUSE=""
+IUSE="
+ebuild_revision_1
+"
 
 RDEPEND="
 	=dev-qt/qtcore-${QT5_PV}*
