@@ -1455,7 +1455,7 @@ ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_S
 	# to avoid the 2x slowdown when adding -fno-flags to unbreak
 	# -D_FORTIFY_SOURCE.
 
-	if [[ "${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL}" == ("1"|"2"|"3") ]] ; then
+	if [[ "${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL}" =~ ("1"|"2"|"3") ]] ; then
 		replace-flags "-Ofast" "-O2"
 		replace-flags "-O4" "-O2"
 		replace-flags "-O3" "-O2"
