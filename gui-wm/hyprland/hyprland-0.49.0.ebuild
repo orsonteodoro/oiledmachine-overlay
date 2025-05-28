@@ -3,8 +3,7 @@
 
 EAPI=8
 
-# Add retpoline for end-to-end copy-paste mitigation
-CFLAGS_HARDENED_USE_CASES="sensitive-data secure-data"
+CFLAGS_HARDENED_USE_CASES="copy-paste-password sensitive-data secure-data"
 
 inherit cflags-hardened meson toolchain-funcs
 

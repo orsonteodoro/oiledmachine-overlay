@@ -3,9 +3,8 @@
 
 EAPI=8
 
-# Add retpoline for end-to-end password copy-paste mitigation
-CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=3
-CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
+# A middle man package for copy-paste
+CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 
 inherit cflags-hardened qt6-build

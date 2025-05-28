@@ -3,8 +3,8 @@
 
 EAPI=8
 
-# Add retpoline for end-to-end retpoline copy-paste
-CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=3
+CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data"
 
 inherit cflags-hardened fcaps meson optfeature
 

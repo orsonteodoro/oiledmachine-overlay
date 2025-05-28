@@ -3,7 +3,10 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data" # Add retpoline to password widget
+# Add retpoline to password widget
+CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_VTABLE_VERIFY=1
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE"
 
 inherit cflags-hardened flag-o-matic qt6-build toolchain-funcs
 
@@ -28,7 +31,10 @@ declare -A QT6_IUSE=(
 
 	[optfeature]="nls" #810802
 )
-IUSE="${QT6_IUSE[*]}"
+IUSE="
+${QT6_IUSE[*]}
+ebuild_revision_1
+"
 REQUIRED_USE="
 	?? ( journald syslog )
 	$(

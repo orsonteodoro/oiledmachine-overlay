@@ -63,6 +63,7 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 #
 # admin-access (e.g. sudo)
 # container-runtime
+# copy-paste-password
 # crypto
 # daemon
 # dss (e.g. cryptocurrency, finance)
@@ -81,6 +82,7 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # multiuser-system
 # network
 # p2p
+# password
 # plugin
 # sandbox
 # security-critical (e.g. sandbox, antivirus, crypto libs, memory allocator libs)
@@ -635,7 +637,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		[[ \
 			"${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("UM"|"FS") \
 				|| \
-			"${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("ip-assets"|"sensitive-data") \
+			"${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("copy-paste-password"|"ip-assets"|"password"|"sensitive-data") \
 		]] \
 			&& \
 		[[ "${ARCH}" =~ ("amd64"|"x86") ]] \
@@ -789,6 +791,7 @@ einfo "Protect spectrum:  ${protect_spectrum}"
 	; then
 		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
 			| sed -r -e "s#-C[ ]*link-arg=-D_FORTIFY_SOURCE=[0-3]+##g")
+
 		if tc-is-clang && ver_test $(clang-major-version) -ge "15" ; then
 			append-flags "-D_FORTIFY_SOURCE=3"
 			RUSTFLAGS+=" -C link-arg=-D_FORTIFY_SOURCE=3"

@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data" # Harden password widget with retpoline
+CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data" # Harden password widget with retpoline
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO PE"
 PYTHON_COMPAT=( "python3_"{10..13} )
 
@@ -14,7 +14,11 @@ HOMEPAGE="https://www.gtk.org/ https://gitlab.gnome.org/GNOME/gtk/"
 
 LICENSE="LGPL-2+"
 SLOT="4"
-IUSE="aqua broadway cloudproviders colord cups examples gstreamer +introspection sysprof test vulkan wayland +X cpu_flags_x86_f16c"
+IUSE="
+aqua broadway cloudproviders colord cups examples gstreamer +introspection
+sysprof test vulkan wayland +X cpu_flags_x86_f16c
+ebuild_revision_2
+"
 REQUIRED_USE="
 	|| ( aqua wayland X )
 	test? ( introspection )

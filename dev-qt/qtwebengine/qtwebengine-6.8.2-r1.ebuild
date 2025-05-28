@@ -3,7 +3,8 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="jit network security-critical sensitive-data untrusted-data web-browser"
+CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network security-critical sensitive-data untrusted-data web-browser"
+CFLAGS_HARDENED_VTABLE_VERIFY=1
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="UAF" # Based on Chromium
 PYTHON_COMPAT=( python3_{10..13} )
 PYTHON_REQ_USE="xml(+)"
@@ -23,7 +24,7 @@ IUSE="
 	accessibility +alsa bindist custom-cflags designer geolocation
 	+jumbo-build kerberos opengl pdfium pulseaudio qml screencast
 	+system-icu vaapi vulkan webdriver +widgets
-	ebuild_revision_1
+	ebuild_revision_2
 "
 REQUIRED_USE="
 	designer? ( qml widgets )

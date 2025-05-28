@@ -3,9 +3,8 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=3
-CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data"
-CFLAGS_HARDENED_VTABLE_VERIFY="0"
+CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data"
+CFLAGS_HARDENED_VTABLE_VERIFY=0 # Retest
 QT5_PV="5.2.0"
 QT6_PV="6.6.1"
 VIRTUALX_REQUIRED="manual"

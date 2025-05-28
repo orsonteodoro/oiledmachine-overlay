@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data" # Add retpoline to password widget
+CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data" # Add retpoline to password widget
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO PE"
 GNOME_ORG_MODULE="gtk"
 
@@ -14,7 +14,11 @@ HOMEPAGE="https://www.gtk.org/"
 
 LICENSE="LGPL-2+"
 SLOT="3"
-IUSE="aqua broadway cloudproviders colord cups examples gtk-doc +introspection sysprof test vim-syntax wayland +X xinerama"
+IUSE="
+aqua broadway cloudproviders colord cups examples gtk-doc +introspection sysprof
+test vim-syntax wayland +X xinerama
+ebuild_revision_2
+"
 REQUIRED_USE="
 	|| ( aqua wayland X )
 	test? ( X )

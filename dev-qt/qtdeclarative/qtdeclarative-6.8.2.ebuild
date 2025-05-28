@@ -3,7 +3,9 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="jit security-critical sensitive-data untrusted-data" # Add retpoline to textfield widgets which collects passwords
+# Add retpoline to textfield widgets which collects passwords
+CFLAGS_HARDENED_USE_CASES="copy-paste-password jit security-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_VTABLE_VERIFY=1
 PYTHON_COMPAT=( "python3_"{10..13} )
 
 # behaves very badly when qtdeclarative is not already installed, also
@@ -20,7 +22,7 @@ fi
 
 IUSE="
 accessibility +jit +network opengl qmlls +sql +ssl svg vulkan +widgets
-ebuild_revision_1
+ebuild_revision_2
 "
 
 RDEPEND="

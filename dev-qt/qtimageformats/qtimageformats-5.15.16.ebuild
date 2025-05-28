@@ -13,9 +13,9 @@ fi
 inherit cflags-hardened qt5-build
 
 DESCRIPTION="Additional format plugins for the Qt image I/O system"
-
-IUSE="mng"
-
+IUSE="
+mng
+"
 DEPEND="
 	=dev-qt/qtcore-${QT5_PV}*
 	=dev-qt/qtgui-${QT5_PV}*

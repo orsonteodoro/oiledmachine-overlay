@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data" # Add retpoline to password widget
+CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data" # Add retpoline to password widget
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO PE"
 GNOME2_EAUTORECONF="yes"
 
@@ -14,7 +14,10 @@ HOMEPAGE="https://www.gtk.org/"
 
 LICENSE="LGPL-2+"
 SLOT="2"
-IUSE="aqua cups examples +introspection test vim-syntax xinerama"
+IUSE="
+aqua cups examples +introspection test vim-syntax xinerama
+ebuild_revision_2
+"
 REQUIRED_USE="
 	xinerama? ( !aqua )
 "
