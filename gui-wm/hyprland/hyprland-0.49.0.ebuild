@@ -102,20 +102,11 @@ eerror "Enable the clang USE flag"
 		die
 	fi
 
-	if tc-is-gcc && ver_test $(gcc-version) -lt 14 ; then
+	if tc-is-gcc && ver_test $(gcc-version) -lt 14 && ! use clang ; then
 eerror
 eerror "Switch compiler"
 eerror
 eerror "Actual GCC:      "$(gcc-major-version)
-eerror "Expected GCC:    >=14"
-eerror "Expected Clang:  >=18"
-eerror
-		die
-	elif tc-is-clang && ver_test $(clang-version) -lt 18 ; then
-eerror
-eerror "Switch compiler"
-eerror
-eerror "Actual Clang:      "$(clang-major-version)
 eerror "Expected GCC:    >=14"
 eerror "Expected Clang:  >=18"
 eerror
