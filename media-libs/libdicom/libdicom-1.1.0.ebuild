@@ -26,7 +26,10 @@ HOMEPAGE="
 "
 LICENSE="MIT"
 SLOT="0"
-IUSE="test"
+IUSE="
+test
+ebuild_revision_1
+"
 RDEPEND="
 	dev-libs/uthash
 "
