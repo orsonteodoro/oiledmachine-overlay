@@ -1,0 +1,100 @@
+diff '--color=auto' -urp olive-7e0e94abf6610026aebb9ddce8564c39522fac6e.orig/cmake/FindFFMPEG.cmake olive-7e0e94abf6610026aebb9ddce8564c39522fac6e/cmake/FindFFMPEG.cmake
+--- olive-7e0e94abf6610026aebb9ddce8564c39522fac6e.orig/cmake/FindFFMPEG.cmake	2025-05-27 23:21:45.139753457 -0700
++++ olive-7e0e94abf6610026aebb9ddce8564c39522fac6e/cmake/FindFFMPEG.cmake	2025-05-27 23:24:39.903452408 -0700
+@@ -38,19 +38,11 @@ function (_ffmpeg_find component headern
+     NAMES
+       "lib${component}/${headername}"
+     PATHS
+-      "${FFMPEG_ROOT}/include"
+-      ~/Library/Frameworks
+-      /Library/Frameworks
+-      /usr/local/include
+-      /usr/include
+-      /sw/include # Fink
+-      /opt/local/include # DarwinPorts
+-      /opt/csw/include # Blastwave
+-      /opt/include
+-      /usr/freeware/include
++      "${FFMPEG_INCLUDES}"
+     PATH_SUFFIXES
+       ffmpeg
+-    DOC "FFMPEG's ${component} include directory")
++    DOC "FFMPEG's ${component} include directory"
++    NO_CMAKE_SYSTEM_PATH)
+   mark_as_advanced("FFMPEG_${component}_INCLUDE_DIR")
+ 
+   # On Windows, static FFMPEG is sometimes built as `lib<name>.a`.
+@@ -63,20 +55,9 @@ function (_ffmpeg_find component headern
+     NAMES
+       "${component}"
+     PATHS
+-      "${FFMPEG_ROOT}/lib"
+-      ~/Library/Frameworks
+-      /Library/Frameworks
+-      /usr/local/lib
+-      /usr/local/lib64
+-      /usr/lib
+-      /usr/lib64
+-      /sw/lib
+-      /opt/local/lib
+-      /opt/csw/lib
+-      /opt/lib
+-      /usr/freeware/lib64
+-      "${FFMPEG_ROOT}/bin"
+-    DOC "FFMPEG's ${component} library")
++      "${FFMPEG_LIBS}"
++    DOC "FFMPEG's ${component} library"
++    NO_CMAKE_SYSTEM_PATH)
+   mark_as_advanced("FFMPEG_${component}_LIBRARY")
+ 
+   if (FFMPEG_${component}_LIBRARY AND FFMPEG_${component}_INCLUDE_DIR)
+diff '--color=auto' -urp olive-7e0e94abf6610026aebb9ddce8564c39522fac6e.orig/ext/core/cmake/FindFFMPEG.cmake olive-7e0e94abf6610026aebb9ddce8564c39522fac6e/ext/core/cmake/FindFFMPEG.cmake
+--- olive-7e0e94abf6610026aebb9ddce8564c39522fac6e.orig/ext/core/cmake/FindFFMPEG.cmake	2025-05-27 23:21:45.139998027 -0700
++++ olive-7e0e94abf6610026aebb9ddce8564c39522fac6e/ext/core/cmake/FindFFMPEG.cmake	2025-05-27 23:24:44.431380589 -0700
+@@ -38,19 +38,11 @@ function (_ffmpeg_find component headern
+     NAMES
+       "lib${component}/${headername}"
+     PATHS
+-      "${FFMPEG_ROOT}/include"
+-      ~/Library/Frameworks
+-      /Library/Frameworks
+-      /usr/local/include
+-      /usr/include
+-      /sw/include # Fink
+-      /opt/local/include # DarwinPorts
+-      /opt/csw/include # Blastwave
+-      /opt/include
+-      /usr/freeware/include
++      "${FFMPEG_INCLUDES}"
+     PATH_SUFFIXES
+       ffmpeg
+-    DOC "FFMPEG's ${component} include directory")
++    DOC "FFMPEG's ${component} include directory"
++    NO_CMAKE_SYSTEM_PATH)
+   mark_as_advanced("FFMPEG_${component}_INCLUDE_DIR")
+ 
+   # On Windows, static FFMPEG is sometimes built as `lib<name>.a`.
+@@ -63,20 +55,9 @@ function (_ffmpeg_find component headern
+     NAMES
+       "${component}"
+     PATHS
+-      "${FFMPEG_ROOT}/lib"
+-      ~/Library/Frameworks
+-      /Library/Frameworks
+-      /usr/local/lib
+-      /usr/local/lib64
+-      /usr/lib
+-      /usr/lib64
+-      /sw/lib
+-      /opt/local/lib
+-      /opt/csw/lib
+-      /opt/lib
+-      /usr/freeware/lib64
+-      "${FFMPEG_ROOT}/bin"
+-    DOC "FFMPEG's ${component} library")
++      "${FFMPEG_LIBS}"
++    DOC "FFMPEG's ${component} library"
++    NO_CMAKE_SYSTEM_PATH)
+   mark_as_advanced("FFMPEG_${component}_LIBRARY")
+ 
+   if (FFMPEG_${component}_LIBRARY AND FFMPEG_${component}_INCLUDE_DIR)

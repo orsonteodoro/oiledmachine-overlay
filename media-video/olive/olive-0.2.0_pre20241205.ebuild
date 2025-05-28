@@ -95,13 +95,48 @@ RESTRICT="
 	)
 "
 #	media-libs/olivecore
+# 56.58.58 57.59.59  58.60.60
 PATENT_STATUS_RDEPEND="
 	virtual/patent-status[patent_status_nonfree=]
 	!patent_status_nonfree? (
-		>=media-video/ffmpeg-3.0.0:0[jpeg2k?,mp3?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
+		|| (
+			(
+				>=media-video/ffmpeg-3.0.0:0[jpeg2k?,mp3?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
+				<media-video/ffmpeg-7:0
+			)
+			(
+				>=media-video/ffmpeg-3.0.0:56.58.58[jpeg2k?,mp3?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
+				<media-video/ffmpeg-7:56.58.58
+			)
+			(
+				>=media-video/ffmpeg-3.0.0:57.59.59[jpeg2k?,mp3?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
+				<media-video/ffmpeg-7:57.59.59
+			)
+			(
+				>=media-video/ffmpeg-3.0.0:58.60.60[jpeg2k?,mp3?,opus?,-patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,-x264,-x265]
+				<media-video/ffmpeg-7:58.60.60
+			)
+		)
 	)
 	patent_status_nonfree? (
-		>=media-video/ffmpeg-3.0.0:0[jpeg2k?,mp3?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
+		|| (
+			(
+				>=media-video/ffmpeg-3.0.0:0[jpeg2k?,mp3?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
+				<media-video/ffmpeg-7:0
+			)
+			(
+				>=media-video/ffmpeg-3.0.0:56.58.58[jpeg2k?,mp3?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
+				<media-video/ffmpeg-7:56.58.58
+			)
+			(
+				>=media-video/ffmpeg-3.0.0:57.59.59[jpeg2k?,mp3?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
+				<media-video/ffmpeg-7:57.59.59
+			)
+			(
+				>=media-video/ffmpeg-3.0.0:58.60.60[jpeg2k?,mp3?,opus?,patent_status_nonfree,srt?,svt-av1?,theora?,truetype?,vorbis?,webp?,x264?,x265?]
+				<media-video/ffmpeg-7:58.60.60
+			)
+		)
 		x264? (
 			media-video/ffmpeg[gpl]
 		)
@@ -351,6 +386,7 @@ src_prepare() {
 	if use qt6 ; then
 		eapply "${FILESDIR}/${PN}-7e0e94a-stringref-header.patch"
 	fi
+	eapply "${FILESDIR}/${PN}-7e0e94a-ffmpeg-paths.patch"
 	local pv=$(grep -o -E -e "olive-editor VERSION [0-9.]+" "CMakeLists.txt" \
 		| cut -f 3 -d " ")
 	if [[ "${pv}" != "${MY_PV}" ]] ; then
@@ -372,6 +408,33 @@ src_configure() {
 		-DBUILD_QT6=$(usex qt6)
 		-DBUILD_TESTS=$(usex test)
 	)
+
+	if has_version "media-video/ffmpeg:58.60.60" ; then
+einfo "Using FFMPEG 6.x"
+		mycmakeargs+=(
+			-DFFMPEG_INCLUDES="/usr/lib/ffmpeg/58.60.60/include"
+			-DFFMPEG_LIBS="/usr/lib/ffmpeg/58.60.60/$(get_libdir)"
+		)
+	elif has_version "media-video/ffmpeg:57.59.59" ; then
+einfo "Using FFMPEG 5.x"
+		mycmakeargs+=(
+			-DFFMPEG_INCLUDES="/usr/lib/ffmpeg/57.59.59/include"
+			-DFFMPEG_LIBS="/usr/lib/ffmpeg/57.59.59/$(get_libdir)"
+		)
+	elif has_version "media-video/ffmpeg:56.58.58" ; then
+einfo "Using FFMPEG 4.x"
+		mycmakeargs+=(
+			-DFFMPEG_INCLUDES="/usr/lib/ffmpeg/56.58.58/include"
+			-DFFMPEG_LIBS="/usr/lib/ffmpeg/56.58.58/$(get_libdir)"
+		)
+	elif has_version "media-video/ffmpeg:0" ; then
+einfo "Using FFMPEG:0"
+		mycmakeargs+=(
+			-DFFMPEG_INCLUDES="/usr/include"
+			-DFFMPEG_LIBS="/usr/$(get_libdir)"
+		)
+	fi
+
 	cmake_src_configure
 }
 
