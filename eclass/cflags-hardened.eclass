@@ -1451,6 +1451,20 @@ ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_S
 		fortify_fix_level="${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:-1}"
 	fi
 
+	# We cap the -O level so that the performance is not counterproductive
+	# to avoid the 2x slowdown when adding -fno-flags to unbreak
+	# -D_FORTIFY_SOURCE.
+
+	if _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" "<" "1.02" ; then
+	# -D_FORTIFY_SOURCE is disabled
+		:
+	else
+		replace-flags "-Ofast" "-O2"
+		replace-flags "-O4" "-O2"
+		replace-flags "-O3" "-O2"
+		replace-flags "-O0" "-O1"
+	fi
+
 	# Sorted by coverage
 	# CWE-119
 	# Design notes:  Make sure you review the estimated CVSS score, when making a custom flag set.
@@ -1462,164 +1476,109 @@ ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_S
 		:
 	elif [[ "${fortify_fix_level}" == "1" ]] ; then
 	# For low risk trusted data
-	# -fno-aggressive-loop-optimizations -> -fno-loop-optimize
-	# -fno-tree-dce -> -mllvm -disable-dce
-	# -fno-tree-loop-optimize -> -fno-unroll-loops
-	# -fno-tree-vectorize -> -fno-vectorize
-	# 1.5 - 1.8 worst case performance impact
-		coverage_pct="95%"
-		if tc-is-clang || tc-is-gcc ; then
-			flags+=(
-				"-fno-strict-aliasing"
-			)
+	#                    :  no-lto, lto
+	# -D_FORTIFY_SOURCE=2:  0.5-2%,   1-4% performance impact
+	# -D_FORTIFY_SOURCE=3:    1-3%, 1.5-5% performance impact
+		if is-flag-q "-D_FORTIFY_SOURCE=2" ; then
+			coverage_pct="~90%"
+		elif is-flag-q "-D_FORTIFY_SOURCE=3" ; then
+			coverage_pct="~91%"
 		fi
 		if tc-is-clang ; then
 			flags+=(
-				"-fno-loop-optimize"
-				"-fno-unroll-loops"
-				"-fno-vectorize"
-				"-mllvm -disable-dce"
+				"-fno-strict-aliasing"
+				"-mllvm -disable-loop-optimizations"
 			)
 		elif tc-is-gcc ; then
 			flags+=(
-				"-fno-aggressive-loop-optimizations"
-				"-fno-tree-dce"
+				"-fno-strict-aliasing"
 				"-fno-tree-loop-optimize"
 			)
 		fi
-		if ! [[ "${fortify_fix_level}" =~ "-inline" ]] ; then
-			if tc-is-clang || tc-is-gcc ; then
-				flags+=(
-					"-fno-inline-small-functions"
-				)
-			fi
-		fi
 		if [[ "${CFLAGS}" =~ "-flto" ]] || ( has "lto" ${IUSE} && use lto ) ; then
-			if tc-is-clang ; then
-				flags+=(
-					"-fno-whole-program-vtables"
-				)
-			elif tc-is-gcc ; then
-				flags+=(
-					"-fno-ipa-cp"
-				)
-			fi
+			flags+=(
+				"-fno-lto-promote-static-vtables"
+				"-fno-whole-program-vtables"
+				"-fno-ipa-cp"
+				"-fno-ipa-icf"
+			)
 		fi
 	elif [[ "${fortify_fix_level}" == "2" ]] ; then
 	# Practical security-critical, untrusted data/connections
-	# -fno-aggressive-loop-optimizations -> -fno-loop-optimize
-	# -fno-tree-dce -> -mllvm -disable-dce
-	# -fno-tree-dse -> -mllvm -disable-dse
-	# -fno-tree-loop-optimize -> -fno-unroll-loops
-	# -fno-tree-vectorize -> -fno-vectorize -fno-slp-vectorize
-	# -fno-tree-vrp -> -fno-strict-overflow
-	# 1.8 - 2.2 worst case performance impact
-		coverage_pct="99%"
-		if tc-is-clang || tc-is-gcc ; then
-			flags+=(
-				"-fno-inline-functions"
-				"-fno-strict-aliasing"
-			)
+	#                    :  no-lto, lto
+	# -D_FORTIFY_SOURCE=2:  1-3%,   2-6% performance impact
+	# -D_FORTIFY_SOURCE=3:  2-4%,   3-7% performance impact
+		if is-flag-q "-D_FORTIFY_SOURCE=2" ; then
+			coverage_pct="~99%"
+		elif is-flag-q "-D_FORTIFY_SOURCE=3" ; then
+			coverage_pct="~99.5%"
 		fi
 		if tc-is-clang ; then
 			flags+=(
-				"-fno-loop-optimize"
-				"-fno-slp-vectorize"
-				"-fno-unroll-loops"
-				"-fno-vectorize"
+				"-fno-strict-aliasing"
 				"-mllvm -disable-dce"
-				"-mllvm -disable-dse"
+				"-mllvm -disable-loop-optimizations"
+				"-fno-optimize-sibling-calls"
 			)
 		elif tc-is-gcc ; then
 			flags+=(
-				"-fno-aggressive-loop-optimizations"
+				"-fno-strict-aliasing"
 				"-fno-tree-dce"
-				"-fno-tree-dse"
 				"-fno-tree-loop-optimize"
-				"-fno-tree-vectorize"
-				"-fno-tree-vrp"
+				"-fno-optimize-sibling-calls"
 			)
 		fi
-		if ! [[ "${fortify_fix_level}" =~ "-inline" ]] ; then
-			if tc-is-clang || tc-is-gcc ; then
-				flags+=(
-					"-fno-inline-small-functions"	# Clang, GCC
-				)
-			fi
-		fi
 		if [[ "${CFLAGS}" =~ "-flto" ]] || ( has "lto" ${IUSE} && use lto ) ; then
-			if tc-is-clang ; then
-				flags+=(
-					"-fno-lto-promote-static-vtables"
-					"-fno-whole-program-vtables"
-				)
-			elif tc-is-gcc ; then
-				flags+=(
-					"-fno-ipa-cp"
-					"-fno-ipa-icf"
-				)
-			fi
+			flags+=(
+				"-fno-lto-promote-static-vtables"
+				"-fno-whole-program-vtables"
+				"-fno-ipa-cp"
+				"-fno-ipa-icf"
+			)
 		fi
 	elif [[ "${fortify_fix_level}" == "3" ]] ; then
 	# Theoretical security-critical (crypto, audits, logins)
-	# -fno-aggressive-loop-optimizations -> -fno-loop-optimize
-	# -fno-tree-dce -> -mllvm -disable-dce
-	# -fno-tree-dse -> -mllvm -disable-dse
-	# -fno-tree-loop-optimize -> -fno-unroll-loops
-	# -fno-tree-vectorize -> -fno-vectorize -fno-slp-vectorize
-	# -fno-tree-vrp -> -fno-strict-overflow
-	# 1.85 - 2.3 worst case performance impact
-		coverage_pct="~99%"
-		if tc-is-clang || tc-is-gcc ; then
-			flags+=(
-				"-fno-inline-functions"
-				"-fno-optimize-sibling-calls"
-				"-fno-strict-aliasing"
-			)
+	#                    :  no-lto, lto
+	# -D_FORTIFY_SOURCE=2:  5-12%,   6-15% performance impact
+	# -D_FORTIFY_SOURCE=3:  7-14%,   8-16% performance impact
+		if is-flag-q "-D_FORTIFY_SOURCE=2" ; then
+			coverage_pct="~99%"
+		elif is-flag-q "-D_FORTIFY_SOURCE=3" ; then
+			coverage_pct="~99.5%"
 		fi
 		if tc-is-clang ; then
 			flags+=(
-				"-fno-loop-optimize"
-				"-fno-slp-vectorize"
-				"-fno-strict-overflow"
-				"-fno-unroll-loops"
-				"-fno-vectorize"
+				"-fno-strict-aliasing"
 				"-mllvm -disable-dce"
-				"-mllvm -disable-dse"
+				"-mllvm -disable-loop-optimizations"
+				"-fno-optimize-sibling-calls"
 			)
 		elif tc-is-gcc ; then
 			flags+=(
-				"-fno-aggressive-loop-optimizations"
+				"-fno-strict-aliasing"
 				"-fno-tree-dce"
-				"-fno-tree-dse"
 				"-fno-tree-loop-optimize"
-				"-fno-tree-vectorize"
-				"-fno-tree-vrp"
+				"-fno-optimize-sibling-calls"
 			)
 		fi
 		if ! [[ "${fortify_fix_level}" =~ "-inline" ]] ; then
 			if tc-is-clang || tc-is-gcc ; then
 				flags+=(
-					"-fno-inline-small-functions"
+					"-fno-inline"
 				)
 			fi
 		fi
 		if [[ "${CFLAGS}" =~ "-flto" ]] || ( has "lto" ${IUSE} && use lto ) ; then
-			if tc-is-clang ; then
-				flags+=(
-					"-fno-lto-promote-static-vtables"
-					"-fno-whole-program-vtables"
-				)
-			elif tc-is-gcc ; then
-				flags+=(
-					"-fno-ipa-cp"
-					"-fno-ipa-icf"
-				)
-			fi
+			flags+=(
+				"-fno-lto-promote-static-vtables"
+				"-fno-whole-program-vtables"
+				"-fno-ipa-cp"
+				"-fno-ipa-icf"
+			)
 		fi
 	fi
 	if (( ${#flags[@]} > 0 )) ; then
-einfo "Adding extra flags to unbreak ${coverage_pct} of -D_FORTIFY_SOURCE check coverage"
+einfo "Adding extra flags to unbreak -D_FORTIFY_SOURCE check coverage"
 		filter-flags ${flags[@]}
 		local flag
 		for flag in "${flags[@]}" ; do
