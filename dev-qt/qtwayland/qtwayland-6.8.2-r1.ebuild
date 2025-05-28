@@ -14,7 +14,10 @@ if [[ "${QT6_BUILD_TYPE}" == "release" ]]; then
 fi
 
 DESCRIPTION="Wayland platform plugin for Qt"
-IUSE="accessibility compositor gnome qml vulkan"
+IUSE="
+accessibility compositor gnome qml vulkan
+ebuild_revision_1
+"
 RDEPEND="
 	dev-libs/wayland
 	media-libs/libglvnd

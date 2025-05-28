@@ -15,7 +15,10 @@ if [[ "${QT6_BUILD_TYPE}" == "release" ]]; then
 	KEYWORDS="amd64 arm arm64 ~loong ~ppc ppc64 ~riscv x86"
 fi
 
-IUSE="accessibility compositor gnome qml vulkan"
+IUSE="
+accessibility compositor gnome qml vulkan
+ebuild_revision_1
+"
 
 RDEPEND="
 	dev-libs/wayland
