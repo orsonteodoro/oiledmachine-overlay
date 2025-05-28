@@ -13,7 +13,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="OpenEXR plugin for GStreamer"
 IUSE="
-ebuild_revision_5
+ebuild_revision_6
 "
 RDEPEND="
 	media-libs/openexr[${MULTILIB_USEDEP}]
