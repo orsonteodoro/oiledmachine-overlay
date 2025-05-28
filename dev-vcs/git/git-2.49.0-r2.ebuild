@@ -9,7 +9,8 @@ DOC_VER="${MY_PV}"
 
 # Live ebuilds or git modules with no https (MITM attack) are assumed untrusted.
 # Added retpoline for passwords.
-CFLAGS_HARDENED_USE_CASES="daemon network password sensitive-data server untrusted-data"
+CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=3
+CFLAGS_HARDENED_USE_CASES="daemon network sensitive-data server untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO IO PE SO"
 GENTOO_DEPEND_ON_PERL="no"
 PLOCALES="bg ca de es fr is it ko pt_PT ru sv vi zh_CN"
@@ -70,7 +71,7 @@ SLOT="0"
 IUSE="
 +curl cgi cvs doc keyring +gpg highlight +iconv mediawiki +nls +pcre perforce
 +perl +safe-directory selinux subversion test tk +webdav xinetd
-ebuild_revision_2
+ebuild_revision_3
 "
 
 # Common to both DEPEND and RDEPEND

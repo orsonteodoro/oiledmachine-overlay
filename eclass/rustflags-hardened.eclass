@@ -82,7 +82,6 @@ RUSTFLAGS_HARDENED_LEVEL=${RUSTFLAGS_HARDENED_LEVEL:-2}
 # multiuser-system
 # network
 # p2p
-# password
 # plugin
 # sandbox
 # security-critical (e.g. sandbox, antivirus, crypto libs, memory allocator libs)
@@ -637,7 +636,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 		[[ \
 			"${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("UM"|"FS") \
 				|| \
-			"${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("copy-paste-password"|"ip-assets"|"password"|"sensitive-data") \
+			"${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("copy-paste-password"|"ip-assets"|"sensitive-data") \
 		]] \
 			&& \
 		[[ "${ARCH}" =~ ("amd64"|"x86") ]] \
