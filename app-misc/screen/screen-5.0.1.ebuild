@@ -173,4 +173,30 @@ ewarn
 ewarn "For the current window:"
 ewarn "Ctrl+a : scrollback 0"
 ewarn
+
+einfo
+einfo "The keybinding of xfce-terminal may interfere.  To fix, edit .screenrc"
+einfo "and add"
+einfo
+einfo "escape ^Jj"
+einfo
+einfo "  or"
+einfo
+einfo "escape ^Tt"
+einfo
+
+einfo
+einfo "Cheat sheet"
+einfo
+einfo "Ctrl a c		# create a new window"
+einfo "Ctrl a p		# goto previous window"
+einfo "Ctrl a n		# goto next window"
+einfo
+einfo "Moving X11 into TTY or vice-versa:"
+einfo
+einfo "Ctrl a Ctrl D"
+einfo "screen -r"
+einfo
+einfo "Change Ctrl a to either Ctrl J or Ctrl T if using the new keybindings."
+einfo
 }
