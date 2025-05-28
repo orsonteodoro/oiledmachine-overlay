@@ -33,7 +33,7 @@ LICENSE="BSD"
 SLOT="0/${SONAME}"
 IUSE="
 -debug icu python test
-ebuild_revision_7
+ebuild_revision_8
 "
 RDEPEND="
 	>=dev-cpp/abseil-cpp-20240116.2:0/20240116
