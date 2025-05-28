@@ -95,7 +95,7 @@ ${PPC_IUSE}
 ${PGO_TRAINERS}
 ${X86_IUSE}
 +asm big-endian chromium debug doc +examples lossless pgo static-libs test
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	cpu_flags_x86_sse2? (
