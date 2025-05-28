@@ -3,12 +3,13 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
-CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" "llvm" )
+# Breaks during linking dev-util/hyprwayland-scanner
+#CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
+#CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" "llvm" )
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 
-inherit cflags-hardened cmake-multilib
+inherit cflags-hardened cmake-multilib flag-o-matic
 
 KEYWORDS="
 ~amd64 ~arm64 ~x86
@@ -28,7 +29,7 @@ HOMEPAGE="
 LICENSE="MIT"
 IUSE+="
 doc static-libs test
-ebuild_revision_9
+ebuild_revision_10
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 # U 22.04
