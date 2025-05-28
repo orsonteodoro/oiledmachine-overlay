@@ -18,7 +18,7 @@ DESCRIPTION="Wayland platform plugin for Qt"
 SLOT="5/${QT5_PV}" # bug 815646
 IUSE="
 compositor vulkan
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND="
 	=dev-qt/qtcore-${QT5_PV}*:5=
