@@ -12,7 +12,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc
 
 DESCRIPTION="ID3v2/APEv2 tagger plugin for GStreamer"
 IUSE="
-ebuild_revision_7
+ebuild_revision_8
 "
 RDEPEND="
 	>=media-libs/taglib-1.5[${MULTILIB_USEDEP}]
