@@ -15,7 +15,7 @@ LICENSE="MIT"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64"
 IUSE+="
-ebuild_revision_5
+ebuild_revision_6
 "
 RDEPEND+="
 	>=app-arch/brotli-1.0.1[${MULTILIB_USEDEP}]
