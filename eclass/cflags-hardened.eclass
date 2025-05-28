@@ -319,6 +319,30 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # llvm-cfi - Apply LLVM CFI
 # none     - Do not apply CFI or Retpoline
 
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_CF_PROTECTION_USER
+# @USER_VARIABLE
+# @DESCRIPTION:
+# Allow to use the -cf-protection=full flag for ARCH=amd64
+# Due to a lack of hardware, CET support is made optional.
+# Valid values: 0 to enable, 1 to disable, unset to disable (default)
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_ARM_CFI_USER
+# @USER_VARIABLE
+# @DESCRIPTION:
+# Allow to use the -mbranch-protection flag for ARCH=arm64
+# Due to a lack of hardware, ARM JOP/ROP mitigations are made optional.
+# Valid values: 0 to enable, 1 to disable, unset to disable (default)
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_LLVM_CFI_USER
+# @USER_VARIABLE
+# @DESCRIPTION:
+# Allow to use the -fsanitize=cfi flag for ARCH=amd64
+# Valid values: 0 to enable, 1 to disable, unset to disable (default
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_LLVM_CFI
+# @DESCRIPTION:
+# Marking to allow LLVM CFI to be used for the package.
+# Valid values: 0 to enable, 1 to disable, unset to disable (default)
 
 # @FUNCTION: _cflags-hardened_fcmp
 # @DESCRIPTION:
@@ -684,10 +708,7 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 # Adjust flags for CFI
 _cflags-hardened_arm_cfi() {
 	[[ "${ARCH}" == "amd64" ]] || return
-	[[ "${CFLAGS_HARDENED_ARM_CFI_USER}" == "0" ]] && return
-
-	# The default setting, not ready for production
-	[[ "${CFLAGS_HARDENED_ARM_CFI:-0}" == "0" ]] && return
+	[[ "${CFLAGS_HARDENED_ARM_CFI_USER:-0}" == "0" ]] && return
 
 	declare -A BTI=(
 		["armv8.3-a"]="0"
@@ -965,7 +986,7 @@ ewarn
 			&& \
 		_cflags-hardened_has_cet \
 			&& \
-		[[ "${CFLAGS_HARDENED_CF_PROTECTION:-1}" == "1" ]] \
+		[[ "${CFLAGS_HARDENED_CF_PROTECTION_USER:-0}" == "1" ]] \
 	; then
 		protect_spectrum="cet"
 	elif \
@@ -987,7 +1008,7 @@ ewarn
 			[[ "${CFLAGS_HARDENED_PAC_USER}" == "1" ]] \
 		) \
 			&& \
-		[[ "${CFLAGS_HARDENED_ARM_CFI:-0}" == "1" ]] \
+		[[ "${CFLAGS_HARDENED_ARM_CFI_USER:-0}" == "1" ]] \
 	; then
 	# TODO
 	# PAC:  "BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF"
@@ -1004,6 +1025,8 @@ ewarn
 		_cflags-hardened_has_llvm_cfi \
 			&& \
 		[[ "${CFLAGS_HARDENED_LLVM_CFI:-0}" == "1" ]] \
+			&&
+		[[ "${CFLAGS_HARDENED_LLVM_CFI_USER:-0}" == "1" ]] \
 	; then
 	# TODO
 		protect_spectrum="llvm-cfi"

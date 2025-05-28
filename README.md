@@ -431,6 +431,59 @@ There are two narratives in this Faustian bargain.
   The CVSS score maybe drops a quarter in this narrative but estimated to be
   high severity.
 
+##### CFI is optional on untested arches
+
+While it may ideal to auto opt-in into CFI, it is not so easy and straightforward
+based on past experience.  This is why it was decided to make it optional
+especially for untested ARCHes.  The worst case possible scenario is that it
+can break the entire toolchain which makes it very risky especially for LLVM CFI.
+
+Environment variables that control CFI.  New user environment variables for
+cflags-hardened and rustflags-hardened.
+
+* CFLAGS_HARDENED_BTI_USER - Add BTI support for C/C++ packages
+* CFLAGS_HARDENED_MTE_USER - Add MTE support for C/C++ packages
+* CFLAGS_HARDENED_PAC_USER - Add PAC support for C/C++ packages
+* CFLAGS_HARDENED_CF_PROTECTION_USER - Add -fcf-protection for C/C++ packages
+* CFLAGS_HARDENED_ARM_CFI_USER - Add -mbranch-protection for C/C++ packages
+* CFLAGS_HARDENED_LLVM_CFI_USER - Add -fsanitize=cfi for C/C++ packages
+
+* RUSTFLAGS_HARDENED_BTI_USER - Add BTI support for Rust packages
+* RUSTFLAGS_HARDENED_MTE_USER - Add MTE support for Rust packages
+* RUSTFLAGS_HARDENED_PAC_USER - Add PAC support for Rust packages
+* RUSTFLAGS_HARDENED_CF_PROTECTION_USER - Add -fcf-protection for Rust packages
+* RUSTFLAGS_HARDENED_ARM_CFI_USER - Add -mbranch-protection for Rust packages
+* RUSTFLAGS_HARDENED_LLVM_CFI_USER - Add -fsanitize=cfi for Rust packages
+
+* CFLAGS_HARDENED_PROTECT_SPECTRUM_USER - Select between `arm-cfi`, `cet`, `llvm-cfi`, `retpoline`, `none` for C/C++ programs
+* RUSTFLAGS_HARDENED_PROTECT_SPECTRUM_USER - Select between `arm-cfi`, `cet`, `llvm-cfi`, `retpoline`, `none` for Rust programs
+
+The *FLAGS_HARDENED_PROTECT_SPECTRUM_USER options can be used to optimize
+security for either confidentiality or for execution-integrity on a per-package
+basis.  `retpoline` is associated with confidentiality.  `arm-cfi`, `cet`,
+`llvm-cfi` are associated with execution-integrity or anti execution hijack.  If
+you do not select, it will automatically decide based on the vulnerability
+history of the package and how it processes trusted or untrusted data.  So if a
+package has memory corruption, it is likely to choose either `cet`, `arm-cfi`,
+`llvm-cfi`.  If the package only handles sensitive data or has support it will
+automatically choose `retpoline`.  These options are mutually exclusive so you
+can only choose one.  You can also disable it by choosing `none`.
+
+The execution-integrity is more dangerous than confidentiality because it can
+do impersonation or increase attacker capabilties.
+
+For `llvm-cfi` using `RUSTFLAGS_HARDENED_LLVM_CFI_USER` doesn't automatically
+allow you to use it.  The package must be marked and tested with
+`RUSTFLAGS_HARDENED_LLVM_CFI=1` before it can be used.
+
+Why environment variables over per-package cflags?  Because the eclasses have
+scripting capabilities, but the per-package env files do not have this
+capabilities and are typically static not dynamically applied.  The eclasses are
+more consistent when applying per-package cflags.  The eclasses also can take
+advantage of other environment variables that act like metadata or use hints to
+apply hardening.  The eclasses/ebuilds can be modified to add more hints to
+improve auto applying CFI flags or to minimize build time failures.
+
 #### Requirements
 
 ```

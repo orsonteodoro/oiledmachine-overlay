@@ -249,6 +249,31 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # llvm-cfi - Apply LLVM CFI
 # none     - Do not apply CFI or Retpoline
 
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_CF_PROTECTION_USER
+# @USER_VARIABLE
+# @DESCRIPTION:
+# Allow to use the -C cf-protection=full flag for ARCH=amd64
+# Due to a lack of hardware, CET support is made optional.
+# Valid values: 0 to enable, 1 to disable, unset to disable (default)
+
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_ARM_CFI_USER
+# @USER_VARIABLE
+# @DESCRIPTION:
+# Allow to use the -mbranch-protection flag for ARCH=arm64
+# Due to a lack of hardware, ARM JOP/ROP mitigations are made optional.
+# Valid values: 0 to enable, 1 to disable, unset to disable (default)
+
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_LLVM_CFI_USER
+# @USER_VARIABLE
+# @DESCRIPTION:
+# Allow to use the -Z sanitize=cfi flag for ARCH=amd64
+# Valid values: 0 to enable, 1 to disable, unset to disable (default)
+
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_LLVM_CFI
+# @DESCRIPTION:
+# Marking to allow LLVM CFI to be used for the package.
+# Valid values: 0 to enable, 1 to disable, unset to disable (default)
+
 # @FUNCTION: _rustflags-hardened_sanitizers_compat
 # @DESCRIPTION:
 # Check the sanitizer compatibility
@@ -378,10 +403,7 @@ _rustflags-hardened_has_target_feature() {
 # Adjust flags for CFI
 _rustflags-hardened_arm_cfi() {
 	[[ "${ARCH}" == "amd64" ]] || return
-	[[ "${RUSTFLAGS_HARDENED_ARM_CFI_USER}" == "0" ]] && return
-
-	# The default setting, not ready for production
-	[[ "${RUSTFLAGS_HARDENED_ARM_CFI:-0}" == "0" ]] && return
+	[[ "${RUSTFLAGS_HARDENED_ARM_CFI_USER:-0}" == "0" ]] && return
 
 	declare -A BTI=(
 		["armv8.3-a"]="0"
@@ -636,7 +658,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 			&& \
 		_rustflags-hardened_has_cet \
 			&& \
-		[[ "${RUSTFLAGS_HARDENED_CET:-1}" == "1" ]] \
+		[[ "${RUSTFLAGS_HARDENED_CF_PROTECTION_USER:-0}" == "1" ]] \
 			&& \
 		_rustflags-hardened_has_target_feature "cet" \
 	; then
@@ -660,17 +682,11 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 			[[ "${RUSTFLAGS_HARDENED_PAC_USER}" == "1" ]] \
 		) \
 			&& \
-		[[ "${RUSTFLAGS_HARDENED_PAUTH:-1}" == "1" ]] \
+		[[ "${RUSTFLAGS_HARDENED_ARM_CFI_USER:-0}" == "1" ]] \
 	; then
 	# PAC:  "BO"|"BU"|"CE"|"DF"|"DP"|"FS"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF"
 	# BTI:  "BO"|"BU"|"CE"|"DF"|"DP"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF"
 	# MTE:  "BO"|"BU"|"CE"|"DF"|"DP"|"HO"|"IO"|"IU"|"PE"|"SO"|"TC"|"UAF"
-		if _rustflags-hardened_has_pauth ; then
-einfo "Yes pauth"
-		fi
-		if _rustflags-hardened_has_mte ; then
-einfo "Yes mte"
-		fi
 		protect_spectrum="arm-cfi"
 	elif \
 		[[ \
@@ -682,6 +698,8 @@ einfo "Yes mte"
 		_cflags-hardened_has_llvm_cfi \
 			&& \
 		[[ "${RUSTFLAGS_HARDENED_LLVM_CFI:-0}" == "1" ]] \
+			&&
+		[[ "${RUSTFLAGS_HARDENED_LLVM_CFI_USER:-0}" == "1" ]] \
 	; then
 		protect_spectrum="llvm-cfi"
 	elif \
