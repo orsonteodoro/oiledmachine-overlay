@@ -62,7 +62,7 @@ SLOT="1.0"
 IUSE="
 ${VIDEO_CARDS[@]}
 +drm +egl +gles2 opengl wayland +X
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE="
 	gles2? (
