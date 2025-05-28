@@ -16,7 +16,7 @@ LICENSE="LGPL-2+"
 SLOT="2"
 IUSE="
 aqua cups examples +introspection test vim-syntax xinerama
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	xinerama? ( !aqua )
