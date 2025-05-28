@@ -39,7 +39,7 @@ LICENSE="BSD"
 SLOT="0/3" # libpcre2-posix.so version
 IUSE="
 bzip2 +jit libedit +pcre16 +pcre32 +readline static-libs unicode valgrind zlib
-ebuild_revision_26
+ebuild_revision_27
 "
 REQUIRED_USE="
 	?? (
