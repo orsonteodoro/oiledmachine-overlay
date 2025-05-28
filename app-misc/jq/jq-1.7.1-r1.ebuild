@@ -32,7 +32,7 @@ LICENSE="MIT CC-BY-3.0"
 SLOT="0"
 IUSE="
 +oniguruma static-libs test
-ebuild_revision_9
+ebuild_revision_10
 "
 DEPEND="
 	>=sys-devel/bison-3.0
