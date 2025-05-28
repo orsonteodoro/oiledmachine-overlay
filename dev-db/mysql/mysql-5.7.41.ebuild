@@ -41,7 +41,7 @@ SLOT="5.7/18"
 IUSE="
 cjk client-libs cracklib debug experimental jemalloc latin1 numa +perl profiling
 selinux +server static static-libs systemtap tcmalloc test
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	?? (
