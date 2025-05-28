@@ -1452,8 +1452,11 @@ ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_S
 	fi
 
 	# We cap the -O level so that the performance is not counterproductive
-	# to avoid the 2x slowdown when adding -fno-flags to unbreak
-	# -D_FORTIFY_SOURCE.
+	# to avoid the 2.3x slowdown when adding -fno-flags to unbreak
+	# -D_FORTIFY_SOURCE.  It turns out that the performance if you try to
+	# fix fortify source with a set that has plenty of -fno-* flags, it's
+	# performance impact is worst than ASan.  This -O flag cap prevents
+	# this from happening.
 
 	if [[ "${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL}" =~ ("1"|"2"|"3") ]] ; then
 		replace-flags "-Ofast" "-O2"
