@@ -194,7 +194,10 @@ einfo "Ctrl a n		# goto next window"
 einfo
 einfo "Moving X11 into TTY or vice-versa:"
 einfo
+einfo "From X11 do:"
 einfo "Ctrl a Ctrl D"
+einfo
+einfo "To TTY do:"
 einfo "screen -r"
 einfo
 einfo "Change Ctrl a to either Ctrl J or Ctrl T if using the new keybindings."
