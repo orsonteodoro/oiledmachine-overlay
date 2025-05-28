@@ -14,7 +14,10 @@ inherit cflags-hardened qt5-build
 
 DESCRIPTION="Multimedia (audio, video, radio, camera) library for the Qt5 framework"
 
-IUSE="alsa gles2-only gstreamer openal pulseaudio qml widgets"
+IUSE="
+alsa gles2-only gstreamer openal pulseaudio qml widgets
+ebuild_revision_1
+"
 
 RDEPEND="
 	=dev-qt/qtcore-${QT5_PV}*
