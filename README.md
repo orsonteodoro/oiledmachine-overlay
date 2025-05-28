@@ -465,7 +465,7 @@ security for either confidentiality or for execution-integrity on a per-package
 basis.  `retpoline` is associated with confidentiality.  `arm-cfi`, `cet`,
 `llvm-cfi` are associated with execution-integrity or anti execution hijack.  If
 you do not select, it will automatically decide based on the vulnerability
-history of the package and how it processes trusted or untrusted data.  So if a
+history of the package and how it processes sensitive or untrusted data.  So if a
 package has memory corruption, it is likely to choose either `cet`, `arm-cfi`,
 `llvm-cfi`.  If the package only handles sensitive data or has support it will
 automatically choose `retpoline`.  These options are mutually exclusive so you
