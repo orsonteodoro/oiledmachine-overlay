@@ -486,9 +486,10 @@ allow you to use it.  The package must be marked and tested with
 Why environment variables over per-package cflags?  Because the eclasses have
 scripting capabilities, but the per-package env files do not have this
 capabilities and are typically static not dynamically applied.  The eclasses are
-more consistent when applying per-package cflags.  The eclasses also can take
-advantage of other environment variables that act like metadata or use hints to
-apply hardening.  The eclasses/ebuilds can be modified to add more hints to
+more consistent when applying per-package cflags.  The coverage is also increased
+as more packages are reviewed and more metatags are added.  The eclasses also can
+take advantage of other environment variables that act like metadata or use hints
+to apply hardening.  The eclasses/ebuilds can be modified to add more hints to
 improve auto applying CFI flags or to minimize build time failures.
 
 #### Requirements
