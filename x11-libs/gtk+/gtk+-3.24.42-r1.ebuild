@@ -16,7 +16,7 @@ SLOT="3"
 IUSE="
 aqua broadway cloudproviders colord cups examples gtk-doc +introspection sysprof
 test vim-syntax wayland +X xinerama
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	|| ( aqua wayland X )
