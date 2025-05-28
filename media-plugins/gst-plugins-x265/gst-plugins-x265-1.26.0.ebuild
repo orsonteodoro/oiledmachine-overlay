@@ -11,7 +11,7 @@ inherit cflags-hardened gstreamer-meson
 KEYWORDS="~amd64 ~arm64 ~x86"
 DESCRIPTION="H.265 encoder plugin for GStreamer"
 IUSE="
-ebuild_revision_7
+ebuild_revision_8
 "
 RDEPEND="
 	media-libs/x265:=[${MULTILIB_USEDEP}]
