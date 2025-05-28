@@ -34,7 +34,7 @@ SLOT="0/32"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 doc examples -large-stack +utils test +threads
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE="
 	doc? (
