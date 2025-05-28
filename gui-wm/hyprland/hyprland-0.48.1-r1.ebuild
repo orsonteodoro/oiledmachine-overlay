@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="copy-paste-password sensitive-data secure-data"
+CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data secure-data"
 
 inherit cflags-hardened meson toolchain-funcs
 
@@ -24,7 +24,10 @@ fi
 
 LICENSE="BSD"
 SLOT="0"
-IUSE="clang legacy-renderer +qtutils systemd X"
+IUSE="
+clang legacy-renderer +qtutils systemd X
+ebuild_revision_1
+"
 
 # hyprpm (hyprland plugin manager) requires the dependencies at runtime
 # so that it can clone, compile and install plugins.
@@ -90,14 +93,33 @@ BDEPEND="
 pkg_setup() {
 	[[ "${MERGE_TYPE}" == "binary" ]] && return
 
+	CC=$(tc-getCC)
+	CXX=$(tc-getCXX)
+	CPP="${CC} -E"
+
+	if tc-is-clang && ! use clang ; then
+eerror "Enable the clang USE flag"
+		die
+	fi
+
 	if tc-is-gcc && ver_test $(gcc-version) -lt 14 ; then
-		eerror "Hyprland requires >=sys-devel/gcc-14 to build"
-		eerror "Please upgrade GCC: emerge -v1 sys-devel/gcc"
-		die "GCC version is too old to compile Hyprland!"
+eerror
+eerror "Switch compiler"
+eerror
+eerror "Actual GCC:      "$(gcc-major-version)
+eerror "Expected GCC:    >=14"
+eerror "Expected Clang:  >=18"
+eerror
+		die
 	elif tc-is-clang && ver_test $(clang-version) -lt 18 ; then
-		eerror "Hyprland requires >=llvm-core/clang-18 to build"
-		eerror "Please upgrade Clang: emerge -v1 llvm-core/clang"
-		die "Clang version is too old to compile Hyprland!"
+eerror
+eerror "Switch compiler"
+eerror
+eerror "Actual Clang:      "$(clang-major-version)
+eerror "Expected GCC:    >=14"
+eerror "Expected Clang:  >=18"
+eerror
+		die
 	fi
 }
 
@@ -108,6 +130,30 @@ src_prepare() {
 }
 
 src_configure() {
+	if use clang ; then
+		if tc-is-gcc ; then
+			CC="clang"
+			CXX="clang++"
+			CPP="${CC} -E"
+			LLVM_SLOT=$(clang-major-version)
+		else
+			LLVM_SLOT=$(clang-major-version)
+		fi
+		local path
+		path="/usr/lib/llvm/${LLVM_SLOT}/bin"
+einfo "PATH:  ${PATH} (before)"
+		PATH=$(echo "${PATH}" \
+			| tr ":" "\n" \
+			| sed -e "\|/usr/lib/llvm|d" \
+			| sed -e "s|/opt/bin|/opt/bin\n${path}|g" \
+			| tr "\n" ":")
+einfo "PATH:  ${PATH} (after)"
+		export CC="${CHOST}-clang-${LLVM_SLOT}"
+		export CXX="${CHOST}-clang++-${LLVM_SLOT}"
+		export CPP="${CC} -E"
+	fi
+	strip-unsupported-flags
+	${CC} --version || die
 	cflags-hardened_append
 	local emesonargs=(
 		$(meson_feature legacy-renderer legacy_renderer)
