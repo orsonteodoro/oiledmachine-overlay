@@ -15,7 +15,7 @@ fi
 
 IUSE="
 mng
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND="
 	~dev-qt/qtbase-${PV}:6[gui]
