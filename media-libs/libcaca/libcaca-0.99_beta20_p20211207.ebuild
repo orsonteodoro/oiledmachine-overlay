@@ -49,7 +49,7 @@ LICENSE="
 IUSE="
 256-colors-ncurses cxx doc examples imlib java mono ncurses network opengl perl
 php python ruby slang static-libs test truetype X
-ebuild_revision_4
+ebuild_revision_5
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 REQUIRED_USE+="
