@@ -54,7 +54,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 X aqua debug gles2-only gles3 +glib gtk-doc opengl spectre test
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	gles2-only? (
