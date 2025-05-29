@@ -26,7 +26,7 @@ LICENSE="BSD"
 SLOT="0"
 IUSE+="
 low-accuracy
-ebuild_revision_12
+ebuild_revision_13
 "
 RDEPEND="
 	>=media-libs/libogg-1.3.0:=[${MULTILIB_USEDEP}]
