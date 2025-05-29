@@ -12,7 +12,7 @@ KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 
 DESCRIPTION="H.264 encoder/decoder plugin for GStreamer"
 IUSE="
-ebuild_revision_9
+ebuild_revision_10
 "
 RDEPEND="
 	>=media-libs/openh264-1.3.0:=[${MULTILIB_USEDEP}]
