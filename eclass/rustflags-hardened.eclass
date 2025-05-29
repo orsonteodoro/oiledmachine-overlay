@@ -235,8 +235,9 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # HO - Heap Overflow
 # IO - Integer Overflow
 # IU - Integer Underflow
+# MC - Memory Corruption
 # OOBR - Out Of Bound Read
-# OOBW - Out Of Bound Read
+# OOBW - Out Of Bound Write
 # PE - Privilege Escalation
 # SO - Stack Overflow
 # TC - Type Confusion
