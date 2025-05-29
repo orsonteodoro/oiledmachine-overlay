@@ -1503,9 +1503,9 @@ ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_S
 	#                    :  no-lto, lto
 	# -D_FORTIFY_SOURCE=2:  0.5-2%,   1-4% performance impact
 	# -D_FORTIFY_SOURCE=3:    1-3%, 1.5-5% performance impact
-		if is-flag-q "-D_FORTIFY_SOURCE=2" ; then
+		if is-flagq "-D_FORTIFY_SOURCE=2" ; then
 			coverage_pct="~90%"
-		elif is-flag-q "-D_FORTIFY_SOURCE=3" ; then
+		elif is-flagq "-D_FORTIFY_SOURCE=3" ; then
 			coverage_pct="~91%"
 		fi
 		if tc-is-clang ; then
@@ -1536,9 +1536,9 @@ ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_S
 	#                    :  no-lto, lto
 	# -D_FORTIFY_SOURCE=2:  1-3%,   2-6% performance impact
 	# -D_FORTIFY_SOURCE=3:  2-4%,   3-7% performance impact
-		if is-flag-q "-D_FORTIFY_SOURCE=2" ; then
+		if is-flagq "-D_FORTIFY_SOURCE=2" ; then
 			coverage_pct="~99%"
-		elif is-flag-q "-D_FORTIFY_SOURCE=3" ; then
+		elif is-flagq "-D_FORTIFY_SOURCE=3" ; then
 			coverage_pct="~99.5%"
 		fi
 		if tc-is-clang ; then
@@ -1573,9 +1573,9 @@ ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_S
 	#                    :  no-lto, lto
 	# -D_FORTIFY_SOURCE=2:  5-12%,   6-15% performance impact
 	# -D_FORTIFY_SOURCE=3:  7-14%,   8-16% performance impact
-		if is-flag-q "-D_FORTIFY_SOURCE=2" ; then
+		if is-flagq "-D_FORTIFY_SOURCE=2" ; then
 			coverage_pct="~99%"
-		elif is-flag-q "-D_FORTIFY_SOURCE=3" ; then
+		elif is-flagq "-D_FORTIFY_SOURCE=3" ; then
 			coverage_pct="~99.5%"
 		fi
 		if tc-is-clang ; then
