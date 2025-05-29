@@ -351,6 +351,19 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # Marking to allow LLVM CFI to be used for the package.
 # Valid values: 0 to enable, 1 to disable, unset to disable (default)
 
+# @FUNCTION: _cflags-hardened_clang_flavor
+# @DESCRIPTION:
+# Print the name of the clang compiler flavor
+_cflags-hardened_clang_flavor() {
+	if ${CC} --version | grep -q -e "AOCC" ; then
+		echo "aocc"
+	elif tc-is-clang ; then
+		echo "vanilla"
+	else
+		echo "unknown"
+	fi
+}
+
 # @FUNCTION: _cflags-hardened_fcmp
 # @DESCRIPTION:
 # Floating point compare.  Bash does not support floating point comparison
@@ -811,10 +824,15 @@ ewarn
 _cflags-hardened_has_llvm_cfi() {
 	if ! tc-is-clang ; then
 		return 1
-	elif has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[cfi]" ; then
-		return 0
 	else
-		return 1
+		local flavor=$(_cflags-hardened_clang_flavor)
+		if [[ "${flavor}" == "aocc" ]] ; then
+			return 0
+		elif [[ "${flavor}" == "vanilla" ]] && has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[cfi]" ; then
+			return 0
+		else
+			return 1
+		fi
 	fi
 }
 
@@ -892,6 +910,8 @@ einfo "CC:  ${CC}"
 eerror "Did not detect a compiler."
 		die
 	fi
+
+	local clang_flavor=$(_rustflags-hardened_clang_flavor)
 
 	local s
 
@@ -1943,6 +1963,8 @@ eerror "emerge -1vuDN sys-devel/gcc:${GCC_SLOT}[sanitize]"
 				! has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[${module}]" \
 					&& \
 				[[ ${added[${module}]} == "0" ]] \
+					&& \
+				[[ "${clang_flavor}" == "vanilla" ]] \
 			; then
 eerror "Missing ${module} sanitizer.  Do the following:"
 eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
