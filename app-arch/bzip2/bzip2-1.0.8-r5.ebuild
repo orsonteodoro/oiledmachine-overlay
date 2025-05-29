@@ -31,7 +31,7 @@ KEYWORDS="
 "
 IUSE="
 static static-libs
-ebuild_revision_10
+ebuild_revision_11
 "
 
 BDEPEND="
