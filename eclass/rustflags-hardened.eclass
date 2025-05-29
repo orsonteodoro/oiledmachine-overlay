@@ -1291,7 +1291,7 @@ eerror "For GCC:  ${_RUSTFLAGS_SANITIZER_GCC_SLOTS_COMPAT}"
 		sanitizers_compat=0
 	fi
 
-	if [[ "${RUSTFLAGS_HARDENED_SANITIZER_SWITCHED_COMPILER_VENDOR:-0}" == 1 ]] ; then
+	if [[ "${RUSTFLAGS_HARDENED_SANITIZER_SWITCHED_COMPILER_VENDOR:-0}" == "1" ]] ; then
 		sanitizers_compat=0
 	fi
 
