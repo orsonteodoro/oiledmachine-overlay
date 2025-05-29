@@ -12,7 +12,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="MPEG2 encoder plugin for GStreamer"
 IUSE="
-ebuild_revision_10
+ebuild_revision_11
 "
 RDEPEND="
 	>=media-sound/twolame-0.3.10[${MULTILIB_USEDEP}]
