@@ -12,7 +12,7 @@ KEYWORDS="~amd64 ~arm64"
 
 DESCRIPTION="aalib text console plugin for GStreamer"
 IUSE="
-ebuild_revision_9
+ebuild_revision_10
 "
 RDEPEND="
 	media-libs/aalib[${MULTILIB_USEDEP}]
