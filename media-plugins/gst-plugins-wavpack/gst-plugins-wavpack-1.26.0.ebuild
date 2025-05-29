@@ -12,7 +12,7 @@ KEYWORDS="~alpha ~amd64 ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86
 
 DESCRIPTION="Wavpack audio encoder/decoder plugin for GStreamer"
 IUSE="
-ebuild_revision_11
+ebuild_revision_12
 "
 RDEPEND="
 	>=media-sound/wavpack-4.60.0[${MULTILIB_USEDEP}]
