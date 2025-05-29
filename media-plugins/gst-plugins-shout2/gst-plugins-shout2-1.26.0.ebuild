@@ -14,7 +14,7 @@ DESCRIPTION="Icecast server sink plugin for GStreamer"
 KEYWORDS="~alpha ~amd64 ~arm64 ~ppc ~ppc64 ~x86"
 
 IUSE="
-ebuild_revision_10
+ebuild_revision_11
 "
 RDEPEND="
 	>=media-libs/libshout-2.4.3[${MULTILIB_USEDEP}]
