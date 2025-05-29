@@ -4,8 +4,10 @@
 EAPI=8
 
 # ASan does not work with f16c and introspection
+CFLAGS_HARDENED_ASSEMBLERS="inline"
 CFLAGS_HARDENED_CI_SANITIZERS="asan"
 CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="17" # F39
+CFLAGS_HARDENED_LANGS="asm c-lang"
 CFLAGS_HARDENED_SANITIZERS_DISABLE=1 # Disabled because introspection needs review.  It will break apps with GTK Python bindings.
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data" # Harden password widget with retpoline
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO IO PE"
