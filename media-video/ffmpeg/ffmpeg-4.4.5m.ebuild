@@ -474,7 +474,7 @@ alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm liblensfun
 mold openvino oss pgo +re-codecs sndio sr static-libs tensorflow test v4l
 wayland
 
-ebuild_revision_40
+ebuild_revision_41
 "
 
 # x means plus.  There is a bug in the USE flag system where + is not recognized.
