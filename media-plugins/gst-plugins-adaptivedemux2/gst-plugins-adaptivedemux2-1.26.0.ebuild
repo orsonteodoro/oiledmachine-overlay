@@ -13,7 +13,7 @@ KEYWORDS="~amd64 ~arm64"
 DESCRIPTION="Adaptive demuxer plugins for GStreamer"
 IUSE="
 libgcrypt nettle openssl
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE="
 	|| (
