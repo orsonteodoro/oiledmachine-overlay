@@ -4,7 +4,7 @@
 EAPI=8
 
 CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
-CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" )
+CFLAGS_HARDENED_SANITIZERS_COMPAT="gcc"
 CFLAGS_HARDENED_TOLERANCE="4.00"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO IO SO"
@@ -32,7 +32,7 @@ LICENSE="MIT CC-BY-3.0"
 SLOT="0"
 IUSE="
 +oniguruma static-libs test
-ebuild_revision_25
+ebuild_revision_26
 "
 DEPEND="
 	>=sys-devel/bison-3.0
