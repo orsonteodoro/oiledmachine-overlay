@@ -12,7 +12,7 @@ KEYWORDS="~alpha ~amd64 ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86
 
 DESCRIPTION="MPEG/DVD/SVCD/VCD video/audio multiplexing plugin for GStreamer"
 IUSE="
-ebuild_revision_11
+ebuild_revision_12
 "
 RDEPEND="
 	>=media-video/mjpegtools-2.0.0:=[${MULTILIB_USEDEP}]
