@@ -1931,6 +1931,12 @@ eerror "For GCC:  ${_CFLAGS_SANITIZER_GCC_SLOTS_COMPAT}"
 		sanitizers_compat=0
 	fi
 
+	if [[ -n "${auto_sanitize}" && "${sanitizers_compat}" == "1" ]] ; then
+einfo "Auto-sanitizing package:  Yes"
+	elif [[ -n "${auto_sanitize}" && "${sanitizers_compat}" == "0" ]] ; then
+einfo "Auto-sanitizing package:  No"
+	fi
+
 	filter-flags "-f*sanitize=*"
 	if [[ -n "${CFLAGS_HARDENED_SANITIZERS}" ]] && (( ${sanitizers_compat} == 1 )) ; then
 		local l="${CFLAGS_HARDENED_SANITIZERS}"

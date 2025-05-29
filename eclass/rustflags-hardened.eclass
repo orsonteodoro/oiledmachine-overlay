@@ -1311,6 +1311,12 @@ eerror "For GCC:  ${_RUSTFLAGS_SANITIZER_GCC_SLOTS_COMPAT}"
 		sanitizers_compat=0
 	fi
 
+	if [[ -n "${auto_sanitize}" && "${sanitizers_compat}" == "1" ]] ; then
+einfo "Auto-sanitizing package:  Yes"
+	elif [[ -n "${auto_sanitize}" && "${sanitizers_compat}" == "0" ]] ; then
+einfo "Auto-sanitizing package:  No"
+	fi
+
 	if [[ -n "${RUSTFLAGS_HARDENED_SANITIZERS}" ]] && (( ${sanitizers_compat} == 1 )) ; then
 		local l="${RUSTFLAGS_HARDENED_SANITIZERS}"
 		declare -A GCC_M=(
