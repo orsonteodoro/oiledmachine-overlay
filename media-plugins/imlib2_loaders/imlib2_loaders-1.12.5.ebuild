@@ -17,7 +17,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~hppa ~ppc ~ppc64 ~sparc ~x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-solaris"
 IUSE="
 xcf
-ebuild_revision_4
+ebuild_revision_5
 "
 
 RDEPEND=">=media-libs/imlib2-${PV}"
