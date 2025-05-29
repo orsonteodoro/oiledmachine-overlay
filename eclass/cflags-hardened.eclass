@@ -1546,7 +1546,7 @@ ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_S
 	# avoid inline build-time failure.
 	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("credentials"|"crypto"|"dss"|"facial-embedding"|"login") ]] ; then
 		fortify_fix_level="${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:-3}"
-	elif [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("copy-paste-password"|"untrusted-data"|"network"|"server"|"web-browser") ]] ; then
+	elif [[ "${CFLAGS_HARDENED_USE_CASES}" =~ ("copy-paste-password"|"network"|"server"|"untrusted-data"|"web-browser") ]] ; then
 		fortify_fix_level="${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:-2}"
 	else
 		fortify_fix_level="${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL:-1}"

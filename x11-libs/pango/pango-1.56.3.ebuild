@@ -4,9 +4,11 @@
 EAPI=8
 
 # Add retpoline for the show password feature
+CFLAGS_HARDENED_CI_SANITIZERS="asan"
+CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18" # F40
 CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=3
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO"
 
 inherit cflags-hardened flag-o-matic gnome2-utils meson-multilib xdg
 
