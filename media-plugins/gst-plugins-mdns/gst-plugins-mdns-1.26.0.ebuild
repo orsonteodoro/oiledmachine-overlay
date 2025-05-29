@@ -15,7 +15,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="A device provider plugin and RTSP server discovery for GStreamer"
 IUSE="
-ebuild_revision_9
+ebuild_revision_10
 "
 # Force libmicrodns-0.2.0 to avoid critical vulnerability
 RDEPEND="
