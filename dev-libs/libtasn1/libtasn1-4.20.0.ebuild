@@ -5,11 +5,13 @@ EAPI=8
 
 # GCC breaks with asan
 # CVE-2021-46848:  off-by-one read (ASAN)
+CFLAGS_HARDENED_CI_SANITIZERS="asan ubsan"
+CFLAGS_HARDENED_CI_SANITIZERS_GCC_COMPAT="10"
 CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO SO"
+CFLAGS_HARDENED_SANITIZERS_COMPAT="clang"
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="security-critical network untrusted-data"
-CFLAGS_HARDENED_SANITIZERS_COMPAT="clang"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO DOS NPD SO"
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/libtasn1.asc"
 
 inherit cflags-hardened multilib-minimal libtool toolchain-funcs verify-sig
