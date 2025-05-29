@@ -35,7 +35,7 @@ LICENSE="MIT"
 SLOT="0"
 IUSE="
 crypt debug examples python static-libs
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE="
 	python? (
