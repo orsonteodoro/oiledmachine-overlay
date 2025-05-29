@@ -5,7 +5,7 @@ EAPI=8
 
 # Breaks during linking dev-util/hyprwayland-scanner
 #CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
-#CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" "llvm" )
+#CFLAGS_HARDENED_SANITIZERS_COMPAT="clang gcc"
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 
@@ -29,7 +29,7 @@ HOMEPAGE="
 LICENSE="MIT"
 IUSE+="
 doc static-libs test
-ebuild_revision_26
+ebuild_revision_27
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 # U 22.04
