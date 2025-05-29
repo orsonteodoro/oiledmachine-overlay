@@ -30,7 +30,7 @@ LICENSE="libpng2"
 SLOT="0/16"
 IUSE="
 apng cpu_flags_x86_sse static-libs test
-ebuild_revision_12
+ebuild_revision_13
 "
 RESTRICT="
 	!test? (
