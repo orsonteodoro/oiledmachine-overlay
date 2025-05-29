@@ -13,7 +13,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="Elements to interact with Google Cloud Storage for GStreamer"
 IUSE="
-ebuild_revision_11
+ebuild_revision_12
 "
 RDEPEND="
 	>=net-libs/google-cloud-cpp-1.25.0
