@@ -16,7 +16,7 @@ fi
 DESCRIPTION="Wayland platform plugin for Qt"
 IUSE="
 accessibility compositor gnome qml vulkan
-ebuild_revision_5
+ebuild_revision_6
 "
 RDEPEND="
 	dev-libs/wayland
