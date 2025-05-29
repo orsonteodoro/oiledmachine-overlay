@@ -1482,7 +1482,8 @@ ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_S
 	# performance impact is worst than HWASan or even possibly ASan if taken
 	# to the logical extreme.  This -O flag cap prevents this from happening.
 
-	if [[ "${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL}" =~ ("1"|"2"|"3") ]] ; then
+	if [[ "${fortify_fix_level}" =~ ("1"|"2"|"3") ]] ; then
+einfo "CFLAGS_HARDENED_FORTIFY_FIX_LEVEL: ${CFLAGS_HARDENED_FORTIFY_FIX_LEVEL}"
 		replace-flags "-Ofast" "-O2"
 		replace-flags "-O4" "-O2"
 		replace-flags "-O3" "-O2"
