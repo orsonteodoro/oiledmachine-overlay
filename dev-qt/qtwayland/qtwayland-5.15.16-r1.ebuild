@@ -19,7 +19,7 @@ DESCRIPTION="Wayland platform plugin for Qt"
 SLOT=5/${QT5_PV} # bug 815646
 IUSE="
 compositor vulkan
-ebuild_revision_6
+ebuild_revision_7
 "
 
 RDEPEND="
