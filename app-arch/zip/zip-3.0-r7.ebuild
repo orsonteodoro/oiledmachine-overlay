@@ -23,7 +23,7 @@ LICENSE="Info-ZIP"
 SLOT="0"
 IUSE="
 bzip2 crypt natspec unicode
-ebuild_revision_5
+ebuild_revision_6
 "
 RDEPEND="
 	bzip2? (
