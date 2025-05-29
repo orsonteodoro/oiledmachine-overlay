@@ -25,7 +25,7 @@ SLOT="2.91"      # vte_api_version in meson.build
 KEYWORDS="amd64 arm arm64 ~hppa ~loong ~mips ppc ppc64 ~riscv sparc x86"
 IUSE="
 +crypt debug gtk-doc +icu +introspection systemd +vala vanilla
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	gtk-doc? ( introspection )
