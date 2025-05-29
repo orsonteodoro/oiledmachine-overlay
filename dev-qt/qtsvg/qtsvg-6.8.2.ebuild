@@ -15,7 +15,7 @@ if [[ ${QT6_BUILD_TYPE} == release ]]; then
 fi
 
 IUSE="
-ebuild_revision_5
+ebuild_revision_6
 "
 RDEPEND="
 	~dev-qt/qtbase-${PV}:6[gui,widgets]
