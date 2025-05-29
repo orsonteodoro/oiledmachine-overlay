@@ -13,7 +13,7 @@ KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 ~x86"
 DESCRIPTION="Ladspa elements for GStreamer"
 IUSE="
 rdf
-ebuild_revision_9
+ebuild_revision_10
 "
 RDEPEND="
 	media-libs/ladspa-sdk[${MULTILIB_USEDEP}]
