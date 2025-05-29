@@ -19,7 +19,7 @@ MY_PN="jemalloc"
 # asan breaks test suite.  ubsan works with test suite.
 # ubsan breaks dev-util/ruff
 #CFLAGS_HARDENED_SANITIZERS="undefined"
-#CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" )
+#CFLAGS_HARDENED_SANITIZERS_COMPAT="gcc"
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO"
@@ -60,7 +60,7 @@ SLOT="0/2"
 IUSE+="
 ${TRAINERS[@]}
 custom-cflags debug lazy-lock prof static-libs stats test xmalloc
-ebuild_revision_33
+ebuild_revision_34
 "
 REQUIRED_USE+="
 	!custom-cflags? (
@@ -114,7 +114,7 @@ einfo "Editing ${f}:  Removing ${lib}"
 
 pkg_setup() {
 	uopts_setup
-	if use test && [[ "${FEATURES}" =~ "userpriv" ]] && (( ${#CFLAGS_HARDENED_SANITIZERS_COMPAT[@]} > 0 )) ; then
+	if use test && [[ "${FEATURES}" =~ "userpriv" ]] && [[ -n "${CFLAGS_HARDENED_SANITIZERS_COMPAT}" ]] ; then
 eerror "FEATURES=\"${FEATURES} -userpriv\" needs to be added as a per-package env file in order to run tests."
 		die
 	fi
@@ -248,13 +248,13 @@ train_override_duration() {
 }
 
 multilib_src_test() {
-	if (( ${#CFLAGS_HARDENED_SANITIZERS_COMPAT[@]} > 0 )) ; then
+	if [[ -n "${CFLAGS_HARDENED_SANITIZERS_COMPAT}" ]] ; then
 		addwrite "/dev/"
 		rm -f "/dev/null."*
 	fi
 	emake check
 	emake stress
-	if (( ${#CFLAGS_HARDENED_SANITIZERS_COMPAT[@]} > 0 )) ; then
+	if [[ -n "${CFLAGS_HARDENED_SANITIZERS_COMPAT}" ]] ; then
 		rm -f "/dev/null."*
 		grep -e "^ERROR:" "${T}/build.log" && die "Detected error"
 	fi
