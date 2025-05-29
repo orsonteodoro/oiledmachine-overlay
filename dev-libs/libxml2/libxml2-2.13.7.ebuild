@@ -43,7 +43,7 @@ LICENSE="MIT"
 SLOT="2"
 IUSE="
 examples icu lzma +python readline static-libs test
-ebuild_revision_9
+ebuild_revision_10
 "
 RESTRICT="
 	!test? (
