@@ -46,7 +46,7 @@ SLOT="0/$(ver_cut 1)" # .so version of libssl/libcrypto
 IUSE="
 +asm cpu_flags_x86_sse2 fips ktls +quic rfc3779 sctp static-libs test
 tls-compression vanilla weak-ssl-ciphers
-ebuild_revision_23
+ebuild_revision_24
 "
 RESTRICT="
 	!test? (
