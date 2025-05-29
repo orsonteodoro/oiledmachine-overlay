@@ -41,7 +41,7 @@ SLOT="2"
 IUSE="
 dbus debug +elf doc +introspection +mime selinux static-libs sysprof systemtap
 test utils xattr
-ebuild_revision_12
+ebuild_revision_13
 "
 #RESTRICT="
 #	!test? (
