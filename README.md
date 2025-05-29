@@ -433,7 +433,7 @@ There are two narratives in this Faustian bargain.
 
 ##### CFI is optional on untested arches
 
-While it may ideal to auto opt-in into CFI, it is not so easy and straightforward
+While it may be ideal to auto opt-in into CFI, it is not so easy and straightforward
 based on past experience.  This is why it was decided to make it optional
 especially for untested ARCHes.  The worst case possible scenario is that it
 can break the entire toolchain which makes it very risky especially with LLVM CFI.
