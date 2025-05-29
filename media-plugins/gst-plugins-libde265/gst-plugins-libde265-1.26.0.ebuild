@@ -12,7 +12,7 @@ KEYWORDS="~amd64 ~arm64 ~x86"
 
 DESCRIPTION="H.265 decoder plugin for GStreamer"
 IUSE="
-ebuild_revision_10
+ebuild_revision_11
 "
 RDEPEND="
 	>=media-libs/libde265-0.9[${MULTILIB_USEDEP}]
