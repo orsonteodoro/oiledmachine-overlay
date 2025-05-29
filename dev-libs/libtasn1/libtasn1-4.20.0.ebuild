@@ -9,7 +9,7 @@ CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO SO"
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="security-critical network untrusted-data"
-CFLAGS_HARDENED_SANITIZERS_COMPAT=( "llvm" )
+CFLAGS_HARDENED_SANITIZERS_COMPAT="clang"
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/libtasn1.asc"
 
 inherit cflags-hardened multilib-minimal libtool toolchain-funcs verify-sig
@@ -31,7 +31,7 @@ LICENSE="LGPL-2.1+"
 SLOT="0/6" # subslot = libtasn1 soname version
 IUSE="
 static-libs test
-ebuild_revision_31
+ebuild_revision_32
 "
 RESTRICT="
 	!test? (
