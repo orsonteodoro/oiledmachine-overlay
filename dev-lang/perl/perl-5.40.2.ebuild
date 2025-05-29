@@ -72,7 +72,7 @@ fi
 
 IUSE="
 berkdb perl_features_debug doc gdbm perl_features_ithreads minimal perl_features_quadmath
-ebuild_revision_5
+ebuild_revision_6
 "
 
 RDEPEND="
