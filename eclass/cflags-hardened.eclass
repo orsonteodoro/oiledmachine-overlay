@@ -298,6 +298,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # BO - Buffer Overflow
 # BU - Buffer Underflow
 # CE - Code Execution
+# DOS - Denial Of Service
 # DF - Double Free
 # DP - Dangling Pointer
 # FS - Format String
@@ -305,6 +306,8 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # IO - Integer Overflow
 # IU - Integer Underflow
 # PE - Privilege Escalation
+# OOBR - Out Of Bound Read
+# OOBW - Out Of Bound Read
 # SO - Stack Overflow
 # TC - Type Confusion
 # UAF - Use After Free
@@ -350,6 +353,38 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # @DESCRIPTION:
 # Marking to allow LLVM CFI to be used for the package.
 # Valid values: 0 to enable, 1 to disable, unset to disable (default)
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_SANITIZER_CC_USER
+# @DESCRIPTION:
+# The sanitizer CC to use.  Only one sanitizer compiler toolchain can be used.
+# This implies that you can only choose this compiler for LTO because of LLVM CFI.
+# Valid values:  gcc clang
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_SANITIZER_CC_SLOT
+# @DESCRIPTION:
+# The sanitizer slot to use.
+# Valid values:
+# For Clang:  18 19 20 21
+# For GCC:  12 13 14 15
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_CI_SANITIZERS
+# Space separated list of sanitizers used to increase sanitizer instrumentation
+# chances or enablement for automagic.
+# Valid values:  asan lsan msan ubsan tsan
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_CI_SANITIZER_GCC_SLOTS
+# Space separated list of slots to increase ASan chances or allow ASan.
+# Valid values:  12 13 14 15
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_CI_SANITIZER_CLANG_SLOTS
+# Space separated list of slots to increase ASan chances or allow ASan.
+# Valid values:  18 19 20 21
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_ASSEMBLERS
+# @DESCRIPTION:
+# Space separated list of assembers which disable ASan for automagic to minimize
+# build failure.
+# Valid values:  gas inline integrated-as nasm yasm
 
 # @FUNCTION: _cflags-hardened_clang_flavor
 # @DESCRIPTION:
