@@ -16,7 +16,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64"
 IUSE="
 doc fixed-point +float +http libressl static-libs
-ebuild_revision_12
+ebuild_revision_13
 "
 RDEPEND="media-libs/libogg[${MULTILIB_USEDEP}]
 	media-libs/opus[${MULTILIB_USEDEP}]
