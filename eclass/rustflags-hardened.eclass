@@ -1221,25 +1221,25 @@ einfo "rustc host:  ${host}"
 	# We will need to test them before allowing users to use them.
 	# Enablement is complicated by LLVM_COMPAT and compile time to build LLVM with sanitizers enabled.
 
-	local sanitizers_compat=0
-	local cc_current_vendor=""
 	local cc_current_slot=""
+	local cc_current_vendor=""
+	local sanitizers_compat=0
 	if \
 		tc-is-gcc \
 			&& \
 		_rustflags-hardened_sanitizers_compat "gcc" \
 	; then
-		sanitizers_compat=1
 		cc_current_slot=$(gcc-major-version)
 		cc_current_vendor="gcc"
+		sanitizers_compat=1
 	elif \
 		tc-is-clang \
 			&& \
 		_rustflags-hardened_sanitizers_compat "llvm" \
 	; then
-		sanitizers_compat=1
 		cc_current_slot=$(_rustflags-hardened_clang_flavor_slot)
 		cc_current_vendor="clang"
+		sanitizers_compat=1
 	fi
 
 	local auto_sanitize=${CFLAGS_HARDENED_AUTO_SANITIZE_USER:-""}

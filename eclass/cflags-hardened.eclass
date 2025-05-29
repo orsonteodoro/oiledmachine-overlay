@@ -1841,25 +1841,25 @@ einfo "Adding extra flags to unbreak ${coverage_pct} of -D_FORTIFY_SOURCE checks
 	# Enablement is complicated by LLVM_COMPAT and compile time to build LLVM with sanitizers enabled.
 	# Worst case scores for tolerance
 
-	local sanitizers_compat=0
-	local cc_current_vendor=""
 	local cc_current_slot=""
+	local cc_current_vendor=""
+	local sanitizers_compat=0
 	if \
 		tc-is-gcc \
 			&& \
 		_cflags-hardened_sanitizers_compat "gcc" \
 	; then
-		sanitizers_compat=1
 		cc_current_slot=$(gcc-major-version)
 		cc_current_vendor="gcc"
+		sanitizers_compat=1
 	elif \
 		tc-is-clang \
 			&& \
 		_cflags-hardened_sanitizers_compat "llvm" \
 	; then
-		sanitizers_compat=1
 		cc_current_slot=$(_cflags-hardened_clang_flavor_slot)
 		cc_current_vendor="clang"
+		sanitizers_compat=1
 	fi
 
 	local auto_sanitize=${CFLAGS_HARDENED_AUTO_SANITIZE_USER:-""}
