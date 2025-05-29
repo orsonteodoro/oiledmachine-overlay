@@ -4,9 +4,12 @@
 EAPI=8
 
 # Add retpoline to password widget
+CFLAGS_HARDENED_ASSEMBLERS="inline"
+CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan msan tasn ubsan"
+CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS OOBA"
 
 inherit cflags-hardened flag-o-matic qt6-build toolchain-funcs
 

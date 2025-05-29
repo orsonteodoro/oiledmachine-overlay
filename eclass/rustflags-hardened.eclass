@@ -303,6 +303,12 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # This implies that you can only choose this compiler for LTO because of LLVM CFI.
 # Valid values:  gcc, clang
 
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_BUILDFILES_SANITIZERS
+# @USER_VARIABLE
+# A space separated list of sanitizers used to increase sanitizer instrumentation
+# chances or enablement for automagic.  Data observed from build files.
+# Valid values:  asan, lsan, msan, tsan, ubsan
+
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_CI_SANITIZERS
 # A space separated list of sanitizers used to increase sanitizer instrumentation
 # chances or enablement for automagic.
