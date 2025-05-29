@@ -283,7 +283,7 @@ IUSE="
 	${PATENT_STATUS_IUSE[@]}
 	debug doc +eigen gflags glog -halide +java -non-free +opencvapps +python
 	-system-flatbuffers test -testprograms -vulkan
-	ebuild_revision_28
+	ebuild_revision_29
 "
 # hal for acceleration
 IUSE+="
