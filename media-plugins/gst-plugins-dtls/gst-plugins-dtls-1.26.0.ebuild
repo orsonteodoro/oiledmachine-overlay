@@ -12,7 +12,7 @@ KEYWORDS="~amd64 ~arm64 ~x86"
 
 DESCRIPTION="DTLS encoder/decoder with SRTP support plugin for GStreamer"
 IUSE="
-ebuild_revision_10
+ebuild_revision_11
 "
 RDEPEND="
 	>=dev-libs/openssl-1.0.1:0=[${MULTILIB_USEDEP}]
