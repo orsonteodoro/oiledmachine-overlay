@@ -13,7 +13,7 @@ inherit cflags-hardened gstreamer-meson
 DESCRIPTION="A FireWire DV/HDV capture plugin for GStreamer"
 KEYWORDS="~amd64 ~arm64 ~ppc ~ppc64 ~x86"
 IUSE="
-ebuild_revision_11
+ebuild_revision_12
 "
 RDEPEND="
 	>=media-libs/libiec61883-1.0.0[${MULTILIB_USEDEP}]
