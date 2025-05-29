@@ -202,7 +202,7 @@ ${TRAINERS[@]}
 doc jemalloc jemalloc-assert jemalloc-custom-cflags jemalloc-default minimal nls
 pax-kernel xen
 
-ebuild_revision_12
+ebuild_revision_13
 "
 REQUIRED_USE+="
 	jemalloc-assert? (
