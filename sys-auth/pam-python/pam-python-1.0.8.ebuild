@@ -26,7 +26,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 doc test
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
