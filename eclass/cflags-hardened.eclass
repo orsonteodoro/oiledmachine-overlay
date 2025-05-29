@@ -399,13 +399,20 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # Valid values:  gas, inline, integrated-as, nasm, yasm
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_INTEGRATION_TEST_FAILED
+# @DESCRIPTION:
 # Disable sanitizers if the library broke app.
 # Valid values:  1, 0, unset
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_AUTO_SANITIZE_USER
 # @USER_VARIABLE
+# @DESCRIPTION:
 # Enable auto sanitization with halt on violation.
 # Valid values:  asan, ubsan
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_LANGS
+# @DESCRIPTION:
+# Language hints to improve hardening or to reduce sanitizer build failure.
+# Valid values:  asm, c-lang, cxx
 
 # @FUNCTION: _cflags-hardened_clang_flavor
 # @DESCRIPTION:
@@ -1934,7 +1941,7 @@ eerror "For GCC:  ${_CFLAGS_SANITIZER_GCC_SLOTS_COMPAT}"
 		sanitizers_compat=0
 	fi
 
-	if [[ -n "${CFLAGS_HARDENED_SANITIZERS_ASSEMBLERS}" ]] ; then
+	if [[ -n "${CFLAGS_HARDENED_SANITIZERS_ASSEMBLERS}" || "${CFLAGS_HARDENED_LANGS}" =~ "asm" ]] ; then
 		sanitizers_compat=0
 	fi
 

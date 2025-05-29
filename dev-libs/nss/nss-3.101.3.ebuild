@@ -5,6 +5,7 @@ EAPI=8
 
 # Sanitizers break test results
 CFLAGS_HARDENED_ASSEMBLERS="inline"
+CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 #CFLAGS_HARDENED_SANITIZERS="address"
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="crypto security-critical sensitive-data untrusted-data"

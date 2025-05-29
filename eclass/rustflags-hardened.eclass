@@ -333,6 +333,11 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # Enable auto sanitization with halt on violation.
 # Valid values:  asan, ubsan
 
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_LANGS
+# @DESCRIPTION:
+# Language hints to improve hardening or to reduce sanitizer build failure.
+# Valid values:  asm, c-lang, cxx
+
 # @FUNCTION: _rustflags-hardened_clang_flavor
 # @DESCRIPTION:
 # Print the name of the clang compiler flavor
@@ -1314,7 +1319,7 @@ eerror "For GCC:  ${_RUSTFLAGS_SANITIZER_GCC_SLOTS_COMPAT}"
 		sanitizers_compat=0
 	fi
 
-	if [[ -n "${RUSTFLAGS_HARDENED_SANITIZERS_ASSEMBLERS}" ]] ; then
+	if [[ -n "${RUSTFLAGS_HARDENED_SANITIZERS_ASSEMBLERS}" || "${RUSTFLAGS_HARDENED_LANGS}" =~ "asm" ]] ; then
 		sanitizers_compat=0
 	fi
 
