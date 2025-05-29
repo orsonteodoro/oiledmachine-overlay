@@ -7,6 +7,7 @@ EAPI=8
 CFLAGS_HARDENED_ASSEMBLERS="gas inline"
 CFLAGS_HARDENED_CI_SANITIZERS="asan lsan ubsan"
 CFLAGS_HARDENED_CI_SANITIZERS_GCC_COMPAT="14"
+CFLAGS_HARDENED_LANGS="asm c-lang"
 #CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data untrusted-data"
