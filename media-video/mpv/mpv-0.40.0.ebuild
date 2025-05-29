@@ -50,7 +50,7 @@ ${PATENT_STATUS_IUSE[@]}
 +iconv jack javascript jpeg lcms libcaca +libmpv +lua network nvenc openal
 pipewire pulseaudio rubberband sdl selinux sixel sndio soc test tools +uchardet
 vaapi vapoursynth vdpau vulkan wayland xv zimg zlib
-ebuild_revision_8
+ebuild_revision_9
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
