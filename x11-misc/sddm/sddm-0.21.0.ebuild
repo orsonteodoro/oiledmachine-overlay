@@ -40,7 +40,7 @@ SLOT="0"
 # systemd is the fallback default upstream.
 IUSE="
 -elogind +systemd +qt5 -qt6 test -wayland -weston +X
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE="
 	^^ (
