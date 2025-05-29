@@ -858,7 +858,7 @@ einfo "Protect spectrum:  ${protect_spectrum}"
 	filter-flags "-U_FORTIFY_SOURCE"
 	append-flags "-U_FORTIFY_SOURCE"
 	RUSTFLAGS=$(echo "${RUSTFLAGS}" | sed -r -e "s#-C[ ]*link-arg=-D_FORTIFY_SOURCE=[0-3]##g")
-	if _cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" "<" "1.02" ; then
+	if _cflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" "<" "1.02" ; then
 	# -D_FORTIFY_SOURCE is disabled
 		:
 	elif [[ -n "${RUSTFLAGS_HARDENED_FORTIFY_SOURCE}" ]] ; then
@@ -991,7 +991,7 @@ einfo "rustc host:  ${host}"
 |"web-server")\
 		]] \
 				&& \
-		_rustflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.0" \
+		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.0" \
 	; then
 	# ZC, CE, PE
 		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
@@ -1006,7 +1006,7 @@ einfo "rustc host:  ${host}"
 	if \
 		[[ "${RUSTFLAGS_HARDENED_PIE:-0}" == "1" ]] \
 			&& \
-		_rustflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" \
+		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" \
 	; then
 	# ZC, CE, PE, ID
 		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
@@ -1022,7 +1022,7 @@ einfo "rustc host:  ${host}"
 	if \
 		[[ "${RUSTFLAGS_HARDENED_PIC:-0}" == "1" ]] \
 			&& \
-		_rustflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" \
+		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" \
 	; then
 	# ZC, CE, PE, ID
 		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
@@ -1033,7 +1033,7 @@ einfo "rustc host:  ${host}"
 	if \
 		ver_test "${rust_pv}" -ge "1.79" \
 			&& \
-		_rustflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" \
+		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" \
 	; then
 	# DoS, DT
 		RUSTFLAGS=$(echo "${RUSTFLAGS}" \
@@ -1056,7 +1056,7 @@ einfo "rustc host:  ${host}"
 	if \
 		[[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ ("dss"|"fp-determinism"|"high-precision-research") ]] \
 			&& \
-		_rustflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "10.00" \
+		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "10.00" \
 	; then
 		if [[ "${ARCH}" == "amd64" ]] ; then
 			replace-flags "-march=*" "-march=generic"

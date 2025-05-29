@@ -649,7 +649,7 @@ _cflags-hardened_append_gcc_retpoline() {
 		CFLAGS_HARDENED_CFLAGS=$(echo "${CFLAGS_HARDENED_CFLAGS}" \
 			| sed \
 				-e "s|-mindirect-branch-register||g")
-		CFLAGS_HARDENED_CXXFLAGS=$(echo "${CXXFLAGS_HARDENED_CFLAGS}" \
+		CFLAGS_HARDENED_CXXFLAGS=$(echo "${CFLAGS_HARDENED_CXXFLAGS}" \
 			| sed \
 				-e "s|-mindirect-branch-register||g")
 		CFLAGS_HARDENED_CFLAGS=$(echo "${CFLAGS_HARDENED_CFLAGS}" \
@@ -658,7 +658,7 @@ _cflags-hardened_append_gcc_retpoline() {
 				-e "s|-mfunction-return=thunk||g" \
 				-e "s|-mfunction-return=thunk-inline||g" \
 				-e "s|-mfunction-return=thunk-extern||g")
-		CFLAGS_HARDENED_CXXFLAGS=$(echo "${CXXFLAGS_HARDENED_CFLAGS}" \
+		CFLAGS_HARDENED_CXXFLAGS=$(echo "${CFLAGS_HARDENED_CXXFLAGS}" \
 			| sed \
 				-e "s|-mfunction-return=keep||g" \
 				-e "s|-mfunction-return=thunk||g" \
@@ -671,7 +671,7 @@ _cflags-hardened_append_gcc_retpoline() {
 				-e "s|-mindirect-branch=thunk||g" \
 				-e "s|-mindirect-branch=none||g" \
 				-e "s|-mindirect-branch=ibrs||g")
-		CFLAGS_HARDENED_CXXFLAGS=$(echo "${CXXFLAGS_HARDENED_CXXFLAGS}" \
+		CFLAGS_HARDENED_CXXFLAGS=$(echo "${CFLAGS_HARDENED_CXXFLAGS}" \
 			| sed \
 				-e "s|-mindirect-branch=thunk-extern||g" \
 				-e "s|-mindirect-branch=thunk-inline||g" \
@@ -1347,7 +1347,7 @@ einfo "All SSP hardening (All functions hardened)"
 		"-Wall" \
 		"-Wformat-security"
 	CFLAGS_HARDENED_CFLAGS="${CFLAGS_HARDENED_CFLAGS//-Wformat-security/}"
-	CFLAGS_HARDENED_CXXFLAGS="${CXXFLAGS_HARDENED_CFLAGS//-Wformat-security/}"
+	CFLAGS_HARDENED_CXXFLAGS="${CFLAGS_HARDENED_CXXFLAGS//-Wformat-security/}"
 	if [[ "${CFLAGS_HARDENED_FORMAT_SECURITY:-0}" == "1" ]] ; then
 		append-flags -Wall -Wformat-security
 		CFLAGS_HARDENED_CFLAGS+=" -Werror -Wformat-security"
@@ -1618,7 +1618,7 @@ einfo "Adding extra flags to unbreak -D_FORTIFY_SOURCE check coverage"
 			local pat2=$(echo "${flag}" | sed -r -e "s#^-fno-#-f*#g")
 			filter-flags "${pat2}"
 			CFLAGS_HARDENED_CFLAGS=$(echo "${CFLAGS_HARDENED_CFLAGS}" | sed -r -e "s#${pat1}( |$)#\1#g")
-			CFLAGS_HARDENED_CXXFLAGS=$(echo "${CXXFLAGS_HARDENED_CFLAGS}" | sed -r -e "s#${pat1}( |$)#\1#g")
+			CFLAGS_HARDENED_CXXFLAGS=$(echo "${CFLAGS_HARDENED_CXXFLAGS}" | sed -r -e "s#${pat1}( |$)#\1#g")
 		done
 		for flag in "${flags[@]}" ; do
 			local flag=$(test-flags-CC "${flag}")
@@ -2003,7 +2003,7 @@ einfo "Deduping signed integer overflow check"
 						filter-flags "-f*trapv"
 						CFLAGS_HARDENED_CFLAGS=$(echo "${CFLAGS_HARDENED_CFLAGS}" \
 							| sed -r -e "s#-f(-no|)trapv##g")
-						CFLAGS_HARDENED_CXXFLAGS=$(echo "${CXXFLAGS_HARDENED_CFLAGS}" \
+						CFLAGS_HARDENED_CXXFLAGS=$(echo "${CFLAGS_HARDENED_CXXFLAGS}" \
 							| sed -r -e "s#-f(-no|)trapv##g")
 					fi
 				fi
@@ -2056,7 +2056,7 @@ einfo "Deduping stack overflow check"
 					-e "s#-f(no-|)stack-protector-all##g" \
 					-e "s#-f(no-|)stack-protector-strong##g" \
 					-e "s#-f(no-|)stack-protector##g")
-			CFLAGS_HARDENED_CXXFLAGS=$(echo "${CXXFLAGS_HARDENED_CFLAGS}" \
+			CFLAGS_HARDENED_CXXFLAGS=$(echo "${CFLAGS_HARDENED_CXXFLAGS}" \
 				| sed \
 					-r \
 					-e "s#-f(no-|)stack-protector-all##g" \
