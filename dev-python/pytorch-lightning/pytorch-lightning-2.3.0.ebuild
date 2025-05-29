@@ -41,7 +41,7 @@ LICENSE="Apache-2.0"
 SLOT="0"
 IUSE+="
 doc examples extra -strict test test-gpu
-ebuild_revision_5
+ebuild_revision_6
 "
 PYTORCH_BASE_RDEPEND="
 	$(python_gen_cond_dep '
