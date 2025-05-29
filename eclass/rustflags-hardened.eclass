@@ -283,6 +283,8 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 _rustflags-hardened_clang_flavor() {
 	if ${CC} --version | grep -q -e "AOCC" ; then
 		echo "aocc"
+	elif ${CC} --version | grep -q -e "/opt/rocm" ; then
+		echo "rocm"
 	elif tc-is-clang ; then
 		echo "vanilla"
 	else
@@ -552,6 +554,8 @@ _rustflags-hardened_has_llvm_cfi() {
 	else
 		local flavor=$(_rustflags-hardened_clang_flavor)
 		if [[ "${flavor}" == "aocc" ]] ; then
+			return 0
+		elif [[ "${flavor}" == "rocm" ]] ; then
 			return 0
 		elif [[ "${flavor}" == "vanilla" ]] && has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[cfi]" ; then
 			return 0
