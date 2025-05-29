@@ -12,7 +12,7 @@ KEYWORDS="~amd64 ~arm64 ~x86"
 
 DESCRIPTION="AMR-WB audio encoder plugin for GStreamer"
 IUSE="
-ebuild_revision_9
+ebuild_revision_10
 "
 RDEPEND="
 	>=media-libs/vo-amrwbenc-0.1.0[${MULTILIB_USEDEP}]
