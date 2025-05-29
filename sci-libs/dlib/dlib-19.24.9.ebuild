@@ -32,7 +32,7 @@ SLOT="0/${PV}"
 IUSE="
 ${CPU_FLAGS_X86[@]}
 cblas cuda debug examples ffmpeg gif jpeg lapack mkl png python sqlite test webp X
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE="
 	python? (
