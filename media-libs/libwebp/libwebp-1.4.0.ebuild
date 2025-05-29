@@ -28,7 +28,7 @@ SLOT="0/7" # subslot = libwebp soname version
 IUSE="
 cpu_flags_arm_neon cpu_flags_x86_sse2 cpu_flags_x86_sse4_1 gif +jpeg opengl +png
 static-libs swap-16bit-csp tiff
-ebuild_revision_10
+ebuild_revision_11
 "
 RDEPEND="
 	gif? (
