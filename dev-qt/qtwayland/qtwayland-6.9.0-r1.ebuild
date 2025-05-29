@@ -4,6 +4,7 @@
 EAPI=8
 
 # A middle man package for copy-paste
+CFLAGS_HARDENED_LANGS="cxx"
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 

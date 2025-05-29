@@ -3,6 +3,8 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_ASSEMBLERS="inline"
+CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 
 inherit cflags-hardened qt6-build
