@@ -78,7 +78,7 @@ https://github.com/prantlf/jsonlint
 LICENSE="MIT"
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" test ebuild_revision_9"
+IUSE+=" test ebuild_revision_10"
 DEPEND+="
 "
 RDEPEND+="
