@@ -911,7 +911,7 @@ eerror "Did not detect a compiler."
 		die
 	fi
 
-	local clang_flavor=$(_rustflags-hardened_clang_flavor)
+	local clang_flavor=$(_cflags-hardened_clang_flavor)
 
 	local s
 
