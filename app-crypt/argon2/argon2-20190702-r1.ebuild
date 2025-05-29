@@ -29,7 +29,7 @@ LICENSE="
 SLOT="0/1"
 IUSE="
 static-libs
-ebuild_revision_27
+ebuild_revision_28
 "
 DOCS=(
 	"argon2-specs.pdf" "CHANGELOG.md" "README.md"
