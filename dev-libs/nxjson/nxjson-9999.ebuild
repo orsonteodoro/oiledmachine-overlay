@@ -5,7 +5,7 @@
 EAPI=8
 
 CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
-CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" "llvm" )
+CFLAGS_HARDENED_SANITIZERS_COMPAT="clang gcc"
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 
@@ -34,7 +34,7 @@ HOMEPAGE="https://github.com/yarosla/nxjson"
 SLOT="0/${EXPECTED_FINGERPRINT:0:7}"
 IUSE+="
 debug static-libs test
-ebuild_revision_27
+ebuild_revision_28
 "
 RDEPEND+="
 	virtual/libc
