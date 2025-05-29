@@ -106,7 +106,7 @@ CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 # @DESCRIPTION:
 # A space delimited list of allowed sanitizer options.
 
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_SANITIZERS_DEACTIVATE
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_SANITIZERS_DISABLE_USER
 # @USER_VARIABLE
 # @DESCRIPTION:
 # Enable or disable sanitizers for a package.  To be used on a per-package basis.
@@ -1925,7 +1925,11 @@ eerror "For GCC:  ${_CFLAGS_SANITIZER_GCC_SLOTS_COMPAT}"
 		sanitizers_compat=0
 	fi
 
-	if [[ "${CFLAGS_HARDENED_SANITIZERS_DEACTIVATE}" == "0" ]] ; then
+	if [[ "${CFLAGS_HARDENED_SANITIZERS_DISABLE:-0}" == "1" ]] ; then
+		sanitizers_compat=0
+	fi
+
+	if [[ "${CFLAGS_HARDENED_SANITIZERS_DISABLE_USER:-0}" == "1" ]] ; then
 		sanitizers_compat=0
 	fi
 
@@ -1936,6 +1940,7 @@ eerror "For GCC:  ${_CFLAGS_SANITIZER_GCC_SLOTS_COMPAT}"
 	if [[ "${CFLAGS_HARDENED_INTEGRATION_TEST_FAILED:-0}" == "1" ]] ; then
 		sanitizers_compat=0
 	fi
+
 
 	if [[ -n "${auto_sanitize}" && "${sanitizers_compat}" == "1" ]] ; then
 einfo "Auto-sanitizing package:  Yes"

@@ -213,7 +213,7 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # Allow build to be built with JOP, ROP mitigations
 # Valid values: 1, 0, unset
 
-# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SANITIZERS_DEACTIVATE
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SANITIZERS_DISABLE_USER
 # @USER_VARIABLE
 # @DESCRIPTION:
 # Enable or disable sanitizers for a package.  To be used on a per-package basis.
@@ -1301,7 +1301,11 @@ eerror "For GCC:  ${_RUSTFLAGS_SANITIZER_GCC_SLOTS_COMPAT}"
 		sanitizers_compat=0
 	fi
 
-	if [[ "${RUSTFLAGS_HARDENED_SANITIZERS_DEACTIVATE}" == "0" ]] ; then
+	if [[ "${RUSTFLAGS_HARDENED_SANITIZERS_DISABLE:0}" == "1" ]] ; then
+		sanitizers_compat=0
+	fi
+
+	if [[ "${RUSTFLAGS_HARDENED_SANITIZERS_DISABLE_USER:0}" == "1" ]] ; then
 		sanitizers_compat=0
 	fi
 
