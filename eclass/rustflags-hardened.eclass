@@ -243,6 +243,7 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # PE - Privilege Escalation
 # RC - Race Condition
 # SO - Stack Overflow
+# TA - Timing Attack
 # TC - Type Confusion
 # UAF - Use After Free
 # UM - Uninitalized Memory

@@ -317,6 +317,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # PE - Privilege Escalation
 # RC - Race Condition
 # SO - Stack Overflow
+# TA - Timing Attack
 # TC - Type Confusion
 # UAF - Use After Free
 # UM - Uninitalized Memory
