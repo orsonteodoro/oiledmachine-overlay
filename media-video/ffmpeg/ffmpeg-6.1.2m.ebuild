@@ -503,7 +503,7 @@ alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm liblensfun
 mold openvino oss pgo +re-codecs sndio soc sr static-libs tensorflow test v4l
 wayland
 
-ebuild_revision_39
+ebuild_revision_40
 "
 
 # x means plus.  There is a bug in the USE flag system where + is not recognized.
