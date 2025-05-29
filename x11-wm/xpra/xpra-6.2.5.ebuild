@@ -81,7 +81,7 @@ pyinotify qrencode +quic -qt6 -rencode +rencodeplus +rfb sd_listen selinux
 +server +socks sound-forwarding spng sql sqlite +ssh sshpass +ssl systemd
 +tcp-wrappers test tiff u2f -uinput +v4l2 vaapi vpx vsock -wayland +webcam
 webcam-forwarding webp +websockets +X x264 +xdg +xinput yaml zeroconf zlib
-ebuild_revision_11
+ebuild_revision_12
 "
 # Upstream enables uinput by default.  Disabled because ebuild exists.
 # Upstream enables drm by default.  Disabled because unfinished.
