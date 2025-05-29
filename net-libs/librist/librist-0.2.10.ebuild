@@ -22,7 +22,7 @@ LICENSE="BSD-2"
 SLOT="0"
 IUSE="
 -nettle -gnutls +mbedtls +tools -tun
-ebuild_revision_10
+ebuild_revision_11
 "
 REQUIRED_USE="
 	!kernel_linux? (
