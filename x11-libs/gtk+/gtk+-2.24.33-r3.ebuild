@@ -4,7 +4,7 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data" # Add retpoline to password widget
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO PE"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO IO PE"
 GNOME2_EAUTORECONF="yes"
 
 inherit cflags-hardened flag-o-matic gnome2 multilib multilib-minimal readme.gentoo-r1 virtualx
