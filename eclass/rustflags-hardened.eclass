@@ -278,6 +278,7 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # Valid values: 0 to enable, 1 to disable, unset to disable (default)
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SANITIZER_CC_USER
+# @USER_VARIABLE
 # @DESCRIPTION:
 # The sanitizer CC to use.  Only one sanitizer compiler toolchain can be used.
 # This implies that you can only choose this compiler for LTO because of LLVM CFI.
@@ -291,23 +292,27 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # For GCC:  12 13 14 15
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_CI_SANITIZERS
-# Space separated list of sanitizers used to increase sanitizer instrumentation
+# A space separated list of sanitizers used to increase sanitizer instrumentation
 # chances or enablement for automagic.
 # Valid values:  asan lsan msan ubsan tsan
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_CI_SANITIZER_GCC_SLOTS
-# Space separated list of slots to increase ASan chances or allow ASan.
+# A space separated list of slots to increase ASan chances or allow ASan.
 # Valid values:  12 13 14 15
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_CI_SANITIZER_CLANG_SLOTS
-# Space separated list of slots to increase ASan chances or allow ASan.
+# A space separated list of slots to increase ASan chances or allow ASan.
 # Valid values:  18 19 20 21
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_ASSEMBLERS
 # @DESCRIPTION:
-# Space separated list of assembers which disable ASan for automagic to minimize
+# A space separated list of assembers which disable ASan for automagic to minimize
 # build failure.
 # Valid values:  gas inline integrated-as nasm yasm
+
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_INTEGRATION_TEST_FAILED
+# Disable sanitizers if the library broke app.
+# Valid values:  1, 0, unset
 
 # @FUNCTION: _rustflags-hardened_clang_flavor
 # @DESCRIPTION:
@@ -1202,6 +1207,14 @@ einfo "rustc host:  ${host}"
 	fi
 
 	if (( ${is_rust_nightly} != 0 )) ; then
+		sanitizers_compat=0
+	fi
+
+	if [[ -n "${RUSTFLAGS_HARDENED_SANITIZERS_ASSEMBLERS}" ]] ; then
+		sanitizers_compat=0
+	fi
+
+	if [[ "${RUSTFLAGS_HARDENED_INTEGRATION_TEST_FAILED:-0}" == "1" ]] ; then
 		sanitizers_compat=0
 	fi
 

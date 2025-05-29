@@ -368,23 +368,28 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # For GCC:  12 13 14 15
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_CI_SANITIZERS
-# Space separated list of sanitizers used to increase sanitizer instrumentation
+# @USER_VARIABLE
+# A space separated list of sanitizers used to increase sanitizer instrumentation
 # chances or enablement for automagic.
 # Valid values:  asan lsan msan ubsan tsan
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_CI_SANITIZER_GCC_SLOTS
-# Space separated list of slots to increase ASan chances or allow ASan.
+# A space separated list of slots to increase ASan chances or allow ASan.
 # Valid values:  12 13 14 15
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_CI_SANITIZER_CLANG_SLOTS
-# Space separated list of slots to increase ASan chances or allow ASan.
+# A space separated list of slots to increase ASan chances or allow ASan.
 # Valid values:  18 19 20 21
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_ASSEMBLERS
 # @DESCRIPTION:
-# Space separated list of assembers which disable ASan for automagic to minimize
+# A space separated list of assembers which disable ASan for automagic to minimize
 # build failure.
 # Valid values:  gas inline integrated-as nasm yasm
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_INTEGRATION_TEST_FAILED
+# Disable sanitizers if the library broke app.
+# Valid values:  1, 0, unset
 
 # @FUNCTION: _cflags-hardened_clang_flavor
 # @DESCRIPTION:
@@ -1821,6 +1826,14 @@ einfo "Adding extra flags to unbreak ${coverage_pct} of -D_FORTIFY_SOURCE checks
 	fi
 
 	if [[ "${CFLAGS_HARDENED_SANITIZERS_DEACTIVATE}" == "0" ]] ; then
+		sanitizers_compat=0
+	fi
+
+	if [[ -n "${CFLAGS_HARDENED_SANITIZERS_ASSEMBLERS}" ]] ; then
+		sanitizers_compat=0
+	fi
+
+	if [[ "${CFLAGS_HARDENED_INTEGRATION_TEST_FAILED:-0}" == "1" ]] ; then
 		sanitizers_compat=0
 	fi
 
