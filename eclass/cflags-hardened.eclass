@@ -2220,8 +2220,8 @@ einfo "Linking -static-libsan for Clang $(clang-major-version)"
 						CXXFLAGS=$(echo "${CXXFLAGS}" | sed -r -e "s|${pat}||g")
 						LDFLAGS=$(echo "${LDFLAGS}" | sed -r -e "s|${pat}||g")
 						CFLAGS_HARDENED_LDFLAGS=$(echo "${CFLAGS_HARDENED_LDFLAGS}" | sed -e "s|${pat}||g")
-		# Prevent linking to shared lib.  When you unemerge gcc slot
-		# containing the sanitizer lib, it could lead to a DoS.
+	# Prevent linking to shared lib.  When you unemerge gcc slot
+	# containing the sanitizer lib, it could lead to a DoS.
 						filter-flags "-Wl,--as-needed"
 						append-ldflags "-Wl,--push-state,--whole-archive" "-static-lib${module}" "-Wl,--pop-state"
 						CFLAGS_HARDENED_LDFLAGS+=" -Wl,--push-state,--whole-archive -static-lib${module} -Wl,--pop-state"
