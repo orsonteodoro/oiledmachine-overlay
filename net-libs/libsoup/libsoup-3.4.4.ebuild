@@ -16,7 +16,7 @@ LICENSE="LGPL-2.1+"
 SLOT="3.0"
 IUSE="
 +brotli gssapi gtk-doc +introspection samba ssl sysprof test +vala
-ebuild_revision_24
+ebuild_revision_25
 "
 RESTRICT="
 	!test? (
