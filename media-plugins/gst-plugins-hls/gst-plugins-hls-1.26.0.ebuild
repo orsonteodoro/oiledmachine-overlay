@@ -13,7 +13,7 @@ KEYWORDS="~amd64 ~arm64 ~x86"
 DESCRIPTION="HTTP live streaming plugin for GStreamer"
 IUSE="
 libgcrypt nettle openssl
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE="
 	|| (
