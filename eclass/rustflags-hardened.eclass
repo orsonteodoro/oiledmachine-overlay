@@ -236,9 +236,12 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # IO - Integer Overflow
 # IU - Integer Underflow
 # MC - Memory Corruption
+# NPD - Null Pointer Dereference
+# OOBA - Out Of Bound Access
 # OOBR - Out Of Bound Read
 # OOBW - Out Of Bound Write
 # PE - Privilege Escalation
+# RC - Race Condition
 # SO - Stack Overflow
 # TC - Type Confusion
 # UAF - Use After Free

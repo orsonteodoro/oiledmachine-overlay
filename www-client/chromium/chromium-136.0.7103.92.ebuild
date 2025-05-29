@@ -75,9 +75,9 @@ CFI_ICALL=0 # Global variable
 CFI_VCALL=0 # Global variable
 CFLAGS_HARDENED_SSP_LEVEL="1" # Global variable
 CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
-#CFLAGS_HARDENED_SANITIZERS_COMPAT=( "llvm" )
+#CFLAGS_HARDENED_SANITIZERS_COMPAT="clang"
 CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network scripting sensitive-data untrusted-data web-browser"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF HO IO PE SO UAF TC"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF HO IO NPD OOBA OOBR OOBW PE RC SO UAF TC"
 CHROMIUM_EBUILD_MAINTAINER=0 # See also GEN_ABOUT_CREDITS
 
 #
@@ -716,7 +716,7 @@ ${PATENT_STATUS[@]}
 -system-libwebp -system-libxml -system-libxslt -system-openh264 -system-opus
 -system-re2 -system-zlib +system-zstd systemd test +wayland +webassembly
 -widevine +X
-ebuild_revision_15
+ebuild_revision_16
 "
 if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
 	IUSE+="
