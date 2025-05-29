@@ -35,7 +35,7 @@ declare -A GIT_CRATES=(
 
 #CFLAGS_HARDENED_SANITIZERS="address"
 #CFLAGS_HARDENED_SANITIZERS="undefined" # with llvm all unit test fail for both asan, ubsan
-#CFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" )
+#CFLAGS_HARDENED_SANITIZERS_COMPAT="gcc"
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_TRAPV=0
 CFLAGS_HARDENED_USE_CASES="jit network security-critical sensitive-data untrusted-data"
@@ -273,7 +273,7 @@ SLOT="0/sts"
 IUSE="
 doc clamonacc +clamapp custom-cflags experimental jit libclamav-only man milter rar
 selinux +system-mspack systemd test valgrind
-ebuild_revision_26
+ebuild_revision_27
 "
 REQUIRED_USE="
 	clamonacc? (
@@ -586,7 +586,7 @@ src_test() {
 	export TEST_CASE_TIMEOUT="40"
 	local -x SANDBOX_ON=0 # Required so libsandbox.so will not crash test because of libasan.so...
 	export LD_PRELOAD="" # Required for sanitizer testing
-	if (( ${#CFLAGS_HARDENED_SANITIZERS_COMPAT[@]} > 0 )) ; then
+	if [[ -n "${CFLAGS_HARDENED_SANITIZERS_COMPAT}" ]] ; then
 		addwrite "/dev/"
 		rm -f "/dev/null."*
 	fi
@@ -597,7 +597,7 @@ einfo "LD_PRELOAD:  ${LD_PRELOAD}"
 		"./unit_tests/check_clamav" || die
 	fi
 	cmake_src_test
-	if (( ${#CFLAGS_HARDENED_SANITIZERS_COMPAT[@]} > 0 )) ; then
+	if [[ -n "${CFLAGS_HARDENED_SANITIZERS_COMPAT}" ]] ; then
 		rm -f "/dev/null."*
 		grep -e "^ERROR:" "${T}/build.log" && die "Detected error"
 	fi

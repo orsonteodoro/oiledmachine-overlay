@@ -13,6 +13,7 @@ EAPI=8
 # Going with the CI tested interpretation.
 # CI disables deprecated but enabled by default in meson_options.txt
 
+CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18"
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="UAF"
 CPU_FLAGS_X86=(

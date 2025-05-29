@@ -177,12 +177,12 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 #
 # Acceptable values:
 #
-#   llvm - via llvm-runtimes/compiler-rt-sanitizers
+#   clang - via llvm-runtimes/compiler-rt-sanitizers
 #   gcc  - via sys-devel/gcc[sanitizers]
 #
 # Example:
 #
-#   RUSTFLAGS_HARDENED_SANITIZERS_COMPAT=( "gcc" "llvm" )
+#   RUSTFLAGS_HARDENED_SANITIZERS_COMPAT="gcc clang"
 #
 
 
@@ -304,9 +304,15 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # chances or enablement for automagic.
 # Valid values:  asan, lsan, msan, tsan, ubsan
 
-# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_CI_SANITIZERS_COMPAT
-# A space separated list of compiler vendors used for sanitizers tests
-# Valid values:  gcc, clang
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT
+# @DESCRIPTION:
+# A space separated list of LLVM slots used for sanitizers.
+# For Clang:  14, 15, 16, 17, 18, 19, 20
+
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_CI_SANITIZERS_GCC_COMPAT
+# @DESCRIPTION:
+# A space separated list of GCC slots used for sanitizers.
+# For GCC:  12, 13, 14, 15
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_ASSEMBLERS
 # @DESCRIPTION:
