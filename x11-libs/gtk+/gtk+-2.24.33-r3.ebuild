@@ -3,6 +3,7 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_LANGS="c-lang"
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data" # Add retpoline to password widget
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO IO PE"
 GNOME2_EAUTORECONF="yes"
