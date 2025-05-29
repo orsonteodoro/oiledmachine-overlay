@@ -72,7 +72,7 @@ LICENSE+="
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 IUSE="
-ebuild_revision_4
+ebuild_revision_5
 "
 RDEPEND="
 	>=dev-libs/openssl-1.0.2o-r6:0=
