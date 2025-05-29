@@ -1610,7 +1610,7 @@ ewarn "Disabling the ${flag} USE flag may make it easier to exploit -D_FORTIFY_S
 		fi
 	fi
 	if (( ${#flags[@]} > 0 )) ; then
-einfo "Adding extra flags to unbreak ${coverage_pct} -D_FORTIFY_SOURCE check coverage"
+einfo "Adding extra flags to unbreak ${coverage_pct} of -D_FORTIFY_SOURCE checks"
 		filter-flags ${flags[@]}
 		local flag
 		for flag in "${flags[@]}" ; do
