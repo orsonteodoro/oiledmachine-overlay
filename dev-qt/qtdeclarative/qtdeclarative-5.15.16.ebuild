@@ -9,6 +9,8 @@ if [[ ${PV} != *9999* ]]; then
 fi
 
 # Add retpoline to textfield widgets which collects passwords
+CFLAGS_HARDENED_ASSEMBLERS="inline"
+CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="copy-paste-password jit security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 PYTHON_COMPAT=( "python3_"{8..13} )
