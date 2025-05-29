@@ -13,7 +13,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~ppc ~ppc64 ~sparc ~x86"
 
 DESCRIPTION="The analyticsoverlay plugin can highlight and assign AI categorized labels to detected objects for GStreamer"
 IUSE="
-ebuild_revision_9
+ebuild_revision_10
 "
 RDEPEND="
 	>=x11-libs/cairo-1.22.0[${MULTILIB_USEDEP}]
