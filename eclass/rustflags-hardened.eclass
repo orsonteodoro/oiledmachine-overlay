@@ -19,6 +19,10 @@ esac
 if [[ -z ${_RUSTFLAGS_HARDENED_ECLASS} ]]; then
 _RUSTFLAGS_HARDENED_ECLASS=1
 
+# See compiler section in https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/SUPPORT_MATRIX.md
+_RUSTFLAGS_SANITIZER_GCC_SLOTS_COMPAT=( {12..15} )	# Limited based on CI testing
+_RUSTFLAGS_SANITIZER_CLANG_SLOTS_COMPAT=( {14..20} )	# Limited based on CI testing
+
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SSP_LEVEL
 # @DESCRIPTION:
 # Sets the SSP (Stack Smashing Protection) level.  Set it before inheriting rustflags-hardened.
@@ -224,12 +228,15 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # BO - Buffer Overflow
 # BU - Buffer Underflow
 # CE - Code Execution
+# DOS - Denial Of Service
 # DF - Double Free
 # DP - Dangling Pointer
 # FS - Format String
 # HO - Heap Overflow
 # IO - Integer Overflow
 # IU - Integer Underflow
+# OOBR - Out Of Bound Read
+# OOBW - Out Of Bound Read
 # PE - Privilege Escalation
 # SO - Stack Overflow
 # TC - Type Confusion
@@ -277,42 +284,47 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # Marking to allow LLVM CFI to be used for the package.
 # Valid values: 0 to enable, 1 to disable, unset to disable (default)
 
-# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SANITIZER_CC_USER
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT_USER
+# @DESCRIPTION:
+# The sanitizer slot to use.
+# Valid values:
+# For Clang:  14, 15, 16, 17, 18, 19, 20
+# For GCC:  12, 13, 14, 15
+
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SANITIZER_CC_FLAVOR_USER
 # @USER_VARIABLE
 # @DESCRIPTION:
 # The sanitizer CC to use.  Only one sanitizer compiler toolchain can be used.
 # This implies that you can only choose this compiler for LTO because of LLVM CFI.
-# Valid values:  gcc clang
-
-# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT
-# @DESCRIPTION:
-# The sanitizer slot to use.
-# Valid values:
-# For Clang:  18 19 20 21
-# For GCC:  12 13 14 15
+# Valid values:  gcc, clang
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_CI_SANITIZERS
 # A space separated list of sanitizers used to increase sanitizer instrumentation
 # chances or enablement for automagic.
-# Valid values:  asan lsan msan ubsan tsan
+# Valid values:  asan, lsan, msan, tsan, ubsan
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_CI_SANITIZER_GCC_SLOTS
 # A space separated list of slots to increase ASan chances or allow ASan.
-# Valid values:  12 13 14 15
+# Valid values:  12, 13, 14, 15
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_CI_SANITIZER_CLANG_SLOTS
 # A space separated list of slots to increase ASan chances or allow ASan.
-# Valid values:  18 19 20 21
+# Valid values:  14, 15, 16, 17, 18, 19, 20
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_ASSEMBLERS
 # @DESCRIPTION:
 # A space separated list of assembers which disable ASan for automagic to minimize
 # build failure.
-# Valid values:  gas inline integrated-as nasm yasm
+# Valid values:  gas, inline, integrated-as, nasm, yasm
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_INTEGRATION_TEST_FAILED
 # Disable sanitizers if the library broke app.
 # Valid values:  1, 0, unset
+
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_AUTO_SANITIZE_USER
+# @USER_VARIABLE
+# Enable auto sanitization with halt on violation.
+# Valid values:  asan, ubsan
 
 # @FUNCTION: _rustflags-hardened_clang_flavor
 # @DESCRIPTION:
@@ -323,9 +335,27 @@ _rustflags-hardened_clang_flavor() {
 	elif ${CC} --version | grep -q -e "/opt/rocm" ; then
 		echo "rocm"
 	elif tc-is-clang ; then
-		echo "vanilla"
+		echo "llvm"
 	else
 		echo "unknown"
+	fi
+}
+
+# @FUNCTION: _rustflags-hardened_clang_flavor_slot
+# @DESCRIPTION:
+# Print the slot of the clang compiler
+_rustflags-hardened_clang_flavor_slot() {
+	local flavor=$(_rustflags-hardened_clang_flavor)
+	if [[ "${flavor}" == "aocc" ]] ; then
+		local pv=$(${CC} --version | head -n 1 | cut -f 4 -d " ")
+		echo "${pv%%.*}"
+	elif [[ "${flavor}" == "rocm" ]] ; then
+		local pv=$(${CC} --version | head -n 1 | cut -f 3 -d " ")
+		echo "${pv%%.*}"
+	elif [[ "${flavor}" == "llvm" ]] ; then
+		echo $(clang-major-version)
+	else
+		die "Not clang compiler"
 	fi
 }
 
@@ -591,10 +621,14 @@ _rustflags-hardened_has_llvm_cfi() {
 	else
 		local flavor=$(_rustflags-hardened_clang_flavor)
 		if [[ "${flavor}" == "aocc" ]] ; then
-			return 0
+	# Stable versioning
+			return 1
 		elif [[ "${flavor}" == "rocm" ]] ; then
-			return 0
-		elif [[ "${flavor}" == "vanilla" ]] && has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[cfi]" ; then
+	# Unstable versioning
+			return 1
+		elif [[ "${flavor}" == "llvm" ]] && has_version "llvm-runtimes/compiler-rt-sanitizers:${LLVM_SLOT}[cfi]" ; then
+	# Only system compiler allowed to avoid issues with LTO IR
+	# (Intermediate Representation) or symbol changes.
 			return 0
 		else
 			return 1
@@ -1188,18 +1222,77 @@ einfo "rustc host:  ${host}"
 	# Enablement is complicated by LLVM_COMPAT and compile time to build LLVM with sanitizers enabled.
 
 	local sanitizers_compat=0
+	local cc_current_vendor=""
+	local cc_current_slot=""
 	if \
 		tc-is-gcc \
 			&& \
 		_rustflags-hardened_sanitizers_compat "gcc" \
 	; then
 		sanitizers_compat=1
+		cc_current_slot=$(gcc-major-version)
+		cc_current_vendor="gcc"
 	elif \
 		tc-is-clang \
 			&& \
 		_rustflags-hardened_sanitizers_compat "llvm" \
 	; then
 		sanitizers_compat=1
+		cc_current_slot=$(_rustflags-hardened_clang_flavor_slot)
+		cc_current_vendor="clang"
+	fi
+
+	local auto_sanitize=${CFLAGS_HARDENED_AUTO_SANITIZE_USER:-""}
+
+	if [[ "${auto_sanitize}" =~ "asan" && "${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("CE"|"DF"|"DOS"|"DP"|"HO"|"MC"|"OOBR"|"OOBW"|"PE"|"SO"|"SU"|"TC"|"UAF"|"UM") ]] ; then
+		if ! [[ "${RUSTFLAGS_HARDENED_SANITIZERS}" =~ "address" ]] ; then
+			RUSTFLAGS_HARDENED_SANITIZERS+=" address"
+		fi
+		if ! [[ "${RUSTFLAGS_HARDENED_SANITIZERS}" =~ "hwaddress" ]] ; then
+			RUSTFLAGS_HARDENED_SANITIZERS+=" hwaddress"
+		fi
+	fi
+
+	if [[ "${auto_sanitize}" =~ "ubsan" && "${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("IO"|"IU") ]] ; then
+		if ! [[ "${RUSTFLAGS_HARDENED_SANITIZERS}" =~ "undefined" ]] ; then
+			RUSTFLAGS_HARDENED_SANITIZERS+=" undefined"
+		fi
+	fi
+
+	if [[ "${auto_sanitize}" =~ "ubsan" && "${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("SF") ]] ; then
+		if ! [[ "${RUSTFLAGS_HARDENED_SANITIZERS}" =~ "undefined" ]] ; then
+			RUSTFLAGS_HARDENED_SANITIZERS+=" undefined"
+		fi
+	fi
+
+	if [[ -n "${auto_sanitize}" ]] ; then
+		if [[ -z "${RUSTFLAGS_HARDENED_SANITIZER_CC_FLAVOR_USER}" ]] ; then
+eerror "Set RUSTFLAGS_HARDENED_SANITIZER_CC_FLAVOR_USER in /etc/portage/make.conf to either gcc or clang"
+			die
+		fi
+		if [[ -z "${RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT_USER}" ]] ; then
+eerror "Set RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT_USER in /etc/portage/make.conf to either"
+eerror "For Clang:  ${_RUSTFLAGS_SANITIZER_CLANG_SLOTS_COMPAT}"
+eerror "For GCC:  ${_RUSTFLAGS_SANITIZER_GCC_SLOTS_COMPAT}"
+			die
+		fi
+	fi
+
+	# You can only use the same gcc-<slot> or clang-<slot> to increase build success.
+	if [[ -n "${auto_sanitize}" && "${cc_current_vendor}-${cc_current_slot}" != "${RUSTFLAGS_HARDENED_SANITIZER_CC_FLAVOR_USER}-${RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT_USER}" ]] ; then
+		sanitizers_compat=0
+	fi
+
+	#if [[ "${auto_sanitize}" =~ ("asan"|"ubsan") && "${CI_CC}" == "${RUSTFLAGS_HARDENED_SANITIZER_CC_USER}" && "${CI_CC_SLOT}" == "${RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT_USER}" ]] ; then
+	#	sanitizers_compat=0
+	#fi
+
+	if ! [[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ "security-critical" ]] ; then
+		sanitizers_compat=0
+	fi
+
+	if [[ "${RUSTFLAGS_HARDENED_SANITIZER_SWITCHED_COMPILER_VENDOR:-0}" == 1 ]] ; then
+		sanitizers_compat=0
 	fi
 
 	if [[ "${RUSTFLAGS_HARDENED_SANITIZERS_DEACTIVATE}" == "0" ]] ; then
@@ -1327,7 +1420,7 @@ eerror "emerge -1vuDN sys-devel/gcc:${GCC_SLOT}[sanitize]"
 					&& \
 				[[ ${added[${module}]} == "0" ]] \
 					&& \
-				[[ "${clang_flavor}" == "vanilla" ]] \
+				[[ "${clang_flavor}" == "llvm" ]] \
 			; then
 eerror "Missing ${module} sanitizer.  Do the following:"
 eerror "emerge -1vuDN llvm-runtimes/compiler-rt:${LLVM_SLOT}"
@@ -1341,13 +1434,7 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 					&& \
 				[[ ${added[${module}]} == "0" ]] \
 			; then
-				if [[ "${x}" =~ "address" ]] && (( ${asan} == 1 )) ; then
-					skip=1
-				elif [[ "${x}" == "ubsan" ]] ; then
-	# Not supported
-	# Many of the above sanitizer options are not supported
-					skip=1
-				elif [[ "${x}" == "hwaddress" ]] && _rustflags-hardened_has_mte && [[ "${ARCH}" == "arm64" ]] ; then
+				if [[ "${x}" == "hwaddress" ]] && _rustflags-hardened_has_mte && [[ "${ARCH}" == "arm64" ]] ; then
 					RUSTFLAGS+=" -Zsanitizer=${x}"
 					asan=1
 				elif [[ "${x}" == "hwaddress" ]] ; then
@@ -1355,9 +1442,15 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 				elif [[ "${x}" == "address" ]] ; then
 					RUSTFLAGS+=" -Zsanitizer=${x}"
 					asan=1
+				elif [[ "${x}" =~ "address" ]] && (( ${asan} == 1 )) ; then
+					skip=1
 				elif [[ "${x}" == "cfi" && "${protect_spectrum}" == "llvm-cfi" ]] ; then
 					RUSTFLAGS+=" -Zsanitizer=${x}"
 				elif [[ "${x}" == "cfi" ]] ; then
+					skip=1
+				elif [[ "${x}" == "ubsan" ]] ; then
+	# Not supported
+	# Many of the above sanitizer options are not supported
 					skip=1
 				else
 					RUSTFLAGS+=" -Zsanitizer=${x}"
