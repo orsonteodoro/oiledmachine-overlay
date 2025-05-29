@@ -303,13 +303,9 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # chances or enablement for automagic.
 # Valid values:  asan, lsan, msan, tsan, ubsan
 
-# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_CI_SANITIZER_GCC_SLOTS
-# A space separated list of slots to increase ASan chances or allow ASan.
-# Valid values:  12, 13, 14, 15
-
-# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_CI_SANITIZER_CLANG_SLOTS
-# A space separated list of slots to increase ASan chances or allow ASan.
-# Valid values:  14, 15, 16, 17, 18, 19, 20
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_CI_SANITIZERS_COMPAT
+# A space separated list of compiler vendors used for sanitizers tests
+# Valid values:  gcc, clang
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_ASSEMBLERS
 # @DESCRIPTION:
