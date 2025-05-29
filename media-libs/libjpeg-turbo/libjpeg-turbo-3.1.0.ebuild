@@ -234,6 +234,7 @@ is_pgo_ready() {
 }
 
 pkg_setup() {
+ewarn "Use GCC 12 if build fails for =${CATEGORY}/${PN}-${PVR}."
 	if use pgo && ! is_pgo_ready ; then
 		local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 ewarn
