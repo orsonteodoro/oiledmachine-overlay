@@ -11,6 +11,7 @@ BUILD_TARGETS="all"
 DKMS_MODULES=(
 	"xpmem kernel /kernel/../updates/"
 )
+FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 MODULE_NAMES="knem(misc:${S}/driver/linux)"
 
 inherit autotools flag-o-matic linux-mod linux-info toolchain-funcs udev
