@@ -181,6 +181,7 @@ CFLAGS_HARDENED_USE_CASES="daemon network server untrusted-data"
 #
 GEN_EBUILD=0
 EGO_PN="github.com/ollama/ollama"
+FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 LLAMA_CPP_UPDATE=0
 ROCM_SLOTS=(
 	# Limited by libhipblas.so.2 hardcoded SOVERSION
