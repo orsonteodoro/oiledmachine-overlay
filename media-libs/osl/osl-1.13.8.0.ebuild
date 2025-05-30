@@ -420,7 +420,6 @@ src_configure() {
 			[[ -z "${mysimd[*]}" ]] && mysimd=("0")
 			[[ -z "${mybatched[*]}" ]] && mybatched=("0")
 
-			local gcc=$(tc-getCC)
 			# LLVM needs CPP11. Do not disable.
 			# LLVM_STATIC=ON is broken for llvm:10
 

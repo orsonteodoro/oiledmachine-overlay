@@ -415,6 +415,7 @@ _src_configure_compiler() {
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)
 	fi
+	strip-unsupported-flags
 }
 
 _src_configure() {

@@ -257,12 +257,12 @@ _src_configure_compiler() {
 		export CC="${CHOST}-clang-${LLVM_SLOT}"
 		export CXX="${CHOST}-clang++-${LLVM_SLOT}"
 		export CPP="${CC} -E"
-		strip-unsupported-flags
 	else
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)
 		export CPP=$(tc-getCPP)
 	fi
+	strip-unsupported-flags
 }
 
 _src_configure() {
@@ -277,11 +277,14 @@ _src_configure() {
 	if use lto || (( ${wants_llvm} == 1 )) ; then
 		export CC="${CHOST}-clang-${LLVM_SLOT}"
 		export CXX="${CHOST}-clang++-${LLVM_SLOT}"
+		export CPP="${CC} -E"
 	else
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)
+		export CPP="${CC} -E"
 	fi
 	unset LD
+	strip-unsupported-flags
 	if ! has_version "llvm-core/llvm:${LLVM_SLOT}=[dump(+)]" ; then
 		append-cppflags -DNDEBUG
 	fi

@@ -9,6 +9,7 @@ EAPI=8
 AOCC_COMPAT=( 14 16 )
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO IO"
+FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 LIBVPX_TESTDATA_VER="1.14.1"
 N_SAMPLES=1
 PYTHON_COMPAT=( "python3_"{10..12} )
@@ -458,6 +459,7 @@ _src_configure_compiler() {
 		export CXX=$(tc-getCXX)
 		export CPP=$(tc-getCPP)
 	fi
+	strip-unsupported-flags
 }
 
 _src_configure() {

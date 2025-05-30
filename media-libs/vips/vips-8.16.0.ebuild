@@ -330,6 +330,7 @@ eerror
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
+	strip-unsupported-flags
 
 	if [[ "${CXX}" =~ 'g++' ]] ; then
 		if ver_test $(gcc-version) -lt ${GCC_PV} ; then
@@ -741,6 +742,8 @@ einfo "Running test for ${configuration}"
 	cd "${BUILD_DIR}" || die
 	export CC="${CHOST}-clang"
 	export CXX="${CHOST}-clang++"
+	export CPP="${CC} -E"
+	strip-unsupported-flags
 	_clear_env
 	_apply_env 1
 	${EPYTHON} -m pytest -sv --log-cli-level=WARNING test/test-suite || die

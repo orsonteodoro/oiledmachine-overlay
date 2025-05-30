@@ -257,12 +257,12 @@ _src_configure_compiler() {
 		export CC="${CHOST}-clang-${LLVM_SLOT}"
 		export CXX="${CHOST}-clang++-${LLVM_SLOT}"
 		export CPP="${CC} -E"
-		strip-unsupported-flags
 	else
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)
 		export CPP=$(tc-getCPP)
 	fi
+	strip-unsupported-flags
 }
 
 _src_configure() {
