@@ -14,17 +14,19 @@ _CHECK_COMPILER_SWITCH_ECLASS=1
 
 inherit toolchain-funcs
 
-DETECT_COMPILER_SWITCH_T0_FINGERPRINT=""
-DETECT_COMPILER_SWITCH_T0_FLAVOR=""
-DETECT_COMPILER_SWITCH_T0_SLOT=""
-DETECT_COMPILER_SWITCH_T0_VENDOR=""
-DETECT_COMPILER_SWITCH_T0_VER=""
+DETECT_COMPILER_SWITCH_T0_ARCH=""		# Compiler architecture
+DETECT_COMPILER_SWITCH_T0_FINGERPRINT=""	# Compiler fingerprint
+DETECT_COMPILER_SWITCH_T0_FLAVOR=""		# Compiler fork flavor
+DETECT_COMPILER_SWITCH_T0_SLOT=""		# Compiler slot
+DETECT_COMPILER_SWITCH_T0_VENDOR=""		# Compiler manufacturer
+DETECT_COMPILER_SWITCH_T0_VER=""		# Compiler full version
 
-DETECT_COMPILER_SWITCH_T1_FINGERPRINT=""
-DETECT_COMPILER_SWITCH_T1_FLAVOR=""
-DETECT_COMPILER_SWITCH_T1_SLOT=""
-DETECT_COMPILER_SWITCH_T1_VENDOR=""
-DETECT_COMPILER_SWITCH_T1_VER=""
+DETECT_COMPILER_SWITCH_T1_ARCH=""		# Compiler architecture
+DETECT_COMPILER_SWITCH_T1_FINGERPRINT=""	# Compiler fingerprint
+DETECT_COMPILER_SWITCH_T1_FLAVOR=""		# Compiler fork flavor
+DETECT_COMPILER_SWITCH_T1_SLOT=""		# Compiler slot
+DETECT_COMPILER_SWITCH_T1_VENDOR=""		# Compiler manufacturer
+DETECT_COMPILER_SWITCH_T1_VER=""		# Compiler full version
 
 # @FUNCTION: check-compiler-switch_start
 # @DESCRIPTION:
@@ -34,8 +36,12 @@ check-compiler-switch_start() {
 	CXX=$(tc-getCXX)
 	CPP=$(tc-getCPP)
 	DETECT_COMPILER_SWITCH_T0_FINGERPRINT=$(${CC} --version 2>&1 | sha1sum | cut -f 1 -d " ")
-	${CC} --version | grep -q -e "gcc" && DETECT_COMPILER_SWITCH_T0_VENDOR="gcc"
-	${CC} --version | grep -q -e "clang" && DETECT_COMPILER_SWITCH_T0_VENDOR="clang"
+	${CC} --version | grep -q -e "gcc" && DETECT_COMPILER_SWITCH_T0_ARCH="gcc"
+	${CC} --version | grep -q -e "clang" && DETECT_COMPILER_SWITCH_T0_ARCH="clang"
+
+	${CC} --version | grep -q -e "gcc" && DETECT_COMPILER_SWITCH_T0_VENDOR="GNU"
+	${CC} --version | grep -q -E -e "^clang" && DETECT_COMPILER_SWITCH_T0_VENDOR="LLVM"
+	${CC} --version | grep -q -E -e "^AMD" && DETECT_COMPILER_SWITCH_T0_VENDOR="AMD"
 	if [[ "${_DETECT_COMPILER_SWITCH_T0_VENDOR}" == "gcc" ]] ; then
 		DETECT_COMPILER_SWITCH_T0_FLAVOR="gcc"
 		DETECT_COMPILER_SWITCH_T0_VER=$(gcc-fullversion)
@@ -65,8 +71,12 @@ check-compiler-switch_end() {
 	CXX=$(tc-getCXX)
 	CPP=$(tc-getCPP)
 	DETECT_COMPILER_SWITCH_T1_FINGERPRINT=$(${CC} --version 2>&1 | sha1sum | cut -f 1 -d " ")
-	${CC} --version | grep -q -e "gcc" && _DETECT_COMPILER_SWITCH_T1_VENDOR="gcc"
-	${CC} --version | grep -q -e "clang" && _DETECT_COMPILER_SWITCH_T1_VENDOR="clang"
+	${CC} --version | grep -q -e "gcc" && _DETECT_COMPILER_SWITCH_T1_ARCH="gcc"
+	${CC} --version | grep -q -e "clang" && _DETECT_COMPILER_SWITCH_T1_ARCH="clang"
+
+	${CC} --version | grep -q -e "gcc" && _DETECT_COMPILER_SWITCH_T1_VENDOR="GNU"
+	${CC} --version | grep -q -E -e "^clang" && _DETECT_COMPILER_SWITCH_T1_VENDOR="LLVM"
+	${CC} --version | grep -q -E -e "AMD" && _DETECT_COMPILER_SWITCH_T1_VENDOR="AMD"
 	if [[ "${_DETECT_COMPILER_SWITCH_T0_VENDOR}" == "gcc" ]] ; then
 		DETECT_COMPILER_SWITCH_T1_SLOT=$(gcc-major-version)
 		DETECT_COMPILER_SWITCH_T1_FLAVOR="gcc"
@@ -89,9 +99,32 @@ check-compiler-switch_end() {
 
 # @FUNCTION: check-compiler-switch_is_same
 # @DESCRIPTION:
-# Did the compiler change
-check-compiler-switch_is_same() {
+# Did the compiler change fingerprints?
+# Don't use this if the CHOST changes.  Use either is_same_flavor_slot or is_same_arch_slot instead.
+check-compiler-switch_is_same_fingerprint() {
 	if [[ "${DETECT_COMPILER_SWITCH_T0_FINGERPRINT}" == "${DETECT_COMPILER_SWITCH_T1_FINGERPRINT}" ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION: check-compiler-switch_is_same_flavor_slot
+# @DESCRIPTION:
+# Did the compiler change the flavor-slot?
+check-compiler-switch_is_same_flavor_slot() {
+	if [[ "${DETECT_COMPILER_SWITCH_T0_FLAVOR}" == "${DETECT_COMPILER_SWITCH_T1_FLAVOR}" && "${DETECT_COMPILER_SWITCH_T0_SLOT}" == "${DETECT_COMPILER_SWITCH_T1_SLOT}" ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION: check-compiler-switch_is_same_arch_slot
+# @DESCRIPTION:
+# Did the compiler change the arch-slot?
+check-compiler-switch_is_same_arch_slot() {
+	if [[ "${DETECT_COMPILER_SWITCH_T0_ARCH}" == "${DETECT_COMPILER_SWITCH_T1_ARCH}" && "${DETECT_COMPILER_SWITCH_T0_SLOT}" == "${DETECT_COMPILER_SWITCH_T1_SLOT}" ]] ; then
 		return 0
 	else
 		return 1
