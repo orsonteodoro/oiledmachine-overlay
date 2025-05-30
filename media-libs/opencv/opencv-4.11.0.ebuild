@@ -156,8 +156,10 @@ _MULTILIB_WRAPPED_HEADERS=( # {{{
 
 	"/usr/include/opencv4/opencv2/wechat_qrcode.hpp"
 ) # }}}
+CFLAGS_HARDENED_ASSEMBLERS="inline nasm yasm"
+CFLAGS_HARDENED_LANGS="asm c-lang"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data" # Biometrics TFA
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS HO IO NPD OOBR OOBW"
 CMAKE_PV="3.26"
 # TODO make this only relevant for binhost \
 CPU_FEATURES_MAP=(
