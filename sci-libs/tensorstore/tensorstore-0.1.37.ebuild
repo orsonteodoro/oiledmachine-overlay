@@ -16,6 +16,7 @@ BAZEL_PV="6.1.0"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 GCC_COMPAT=( {12..9} )							# Verified working
+FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 GRPC_PV="1.52.0"							# Found in https://github.com/google/tensorstore/blob/v0.1.37/third_party/com_github_grpc_grpc/workspace.bzl#L31C51-L31C91, https://github.com/grpc/grpc/blob/a02cc7d88ae45abf7ccb742c7c61345f7ef6d0d2/CMakeLists.txt#L28
 JAVA_SLOT="11"
 LIBJPEG_TURBO_PV="2.1.4"						# Found in https://github.com/google/tensorstore/blob/v0.1.37/third_party/jpeg/workspace.bzl
