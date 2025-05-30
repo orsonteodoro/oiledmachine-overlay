@@ -15,6 +15,7 @@ DRIVER_VERSIONS=(
 	525.147.05
 	# 515.43.04 is the last tag
 )
+FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 declare -A CUDA_GCC_SLOT=(
 	["12.6"]="13"
 	["12.5"]="13"
