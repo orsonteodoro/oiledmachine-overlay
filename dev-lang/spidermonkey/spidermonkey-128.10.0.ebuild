@@ -17,6 +17,7 @@ EAPI="8"
 
 CFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO TC"
+FLAG_O_MATIC_FILTER_LTO=1
 RUSTFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="IO TC"
 CPU_FLAGS_ARM=(
