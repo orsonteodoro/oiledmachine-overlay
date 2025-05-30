@@ -4,6 +4,7 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data secure-data"
+FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 LLVM_COMPAT=( 19 )
 
 inherit cflags-hardened meson toolchain-funcs
