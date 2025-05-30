@@ -108,9 +108,9 @@ check-compiler-switch_end() {
 # @RETURN: 0 - yes, 1 - no
 check-compiler-switch_is_fingerprint_changed() {
 	if [[ "${DETECT_COMPILER_SWITCH_T0_FINGERPRINT}" == "${DETECT_COMPILER_SWITCH_T1_FINGERPRINT}" ]] ; then
-		return 0
-	else
 		return 1
+	else
+		return 0
 	fi
 }
 
@@ -120,9 +120,9 @@ check-compiler-switch_is_fingerprint_changed() {
 # @RETURN: 0 - yes, 1 - no
 check-compiler-switch_is_flavor_slot_changed() {
 	if [[ "${DETECT_COMPILER_SWITCH_T0_FLAVOR}" == "${DETECT_COMPILER_SWITCH_T1_FLAVOR}" && "${DETECT_COMPILER_SWITCH_T0_SLOT}" == "${DETECT_COMPILER_SWITCH_T1_SLOT}" ]] ; then
-		return 0
-	else
 		return 1
+	else
+		return 0
 	fi
 }
 
@@ -132,9 +132,9 @@ check-compiler-switch_is_flavor_slot_changed() {
 # @RETURN: 0 - yes, 1 - no
 check-compiler-switch_is_arch_slot_changed() {
 	if [[ "${DETECT_COMPILER_SWITCH_T0_ARCH}" == "${DETECT_COMPILER_SWITCH_T1_ARCH}" && "${DETECT_COMPILER_SWITCH_T0_SLOT}" == "${DETECT_COMPILER_SWITCH_T1_SLOT}" ]] ; then
-		return 0
-	else
 		return 1
+	else
+		return 0
 	fi
 }
 
@@ -144,9 +144,9 @@ check-compiler-switch_is_arch_slot_changed() {
 # @RETURN: 0 - yes, 1 - no
 check-compiler-switch_is_arch_changed() {
 	if [[ "${DETECT_COMPILER_SWITCH_T0_ARCH}" == "${DETECT_COMPILER_SWITCH_T1_ARCH}" ]] ; then
-		return 0
-	else
 		return 1
+	else
+		return 0
 	fi
 }
 
