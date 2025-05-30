@@ -17,6 +17,7 @@ DKMS_MODULES=(
 	"amdxcp amd/amdxcp /kernel/drivers/gpu/drm/amd/amdxcp"
 )
 DKMS_PKG_NAME="amdgpu"
+FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 KV="6.8.0" # See https://github.com/RadeonOpenCompute/ROCK-Kernel-Driver/blob/rocm-6.2.4/Makefile#L2
 KVS=(
 # See https://github.com/ROCm/rocm-install-on-linux/blob/docs/6.2.4/docs/reference/system-requirements.rst#supported-operating-systems
