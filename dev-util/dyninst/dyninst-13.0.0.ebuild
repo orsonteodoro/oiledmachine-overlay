@@ -3,6 +3,8 @@
 
 EAPI=8
 
+FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
+
 inherit cmake flag-o-matic
 
 if [[ ${PV} == *"9999" ]] ; then
