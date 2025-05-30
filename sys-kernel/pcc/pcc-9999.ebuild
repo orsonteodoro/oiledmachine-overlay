@@ -5,6 +5,7 @@
 EAPI=8
 
 MAINTAINER_MODE=0
+FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit flag-o-matic linux-info linux-mod-r1
