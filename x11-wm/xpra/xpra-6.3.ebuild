@@ -10,6 +10,8 @@ EAPI=8
 
 MY_PV="$(ver_cut 1-4)"
 
+CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan"
+CFLAGS_HARDENED_LANGS="c-lang python"
 CFLAGS_HARDENED_USE_CASES="daemon secure-critical sensitive-data server untrusted-data"
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
