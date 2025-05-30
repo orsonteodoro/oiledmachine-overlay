@@ -311,7 +311,7 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_CI_SANITIZERS
 # A space separated list of sanitizers used to increase sanitizer instrumentation
-# chances or enablement for automagic.
+# chances or enablement for automagic.  Data observed from CI files or logs.
 # Valid values:  asan, lsan, msan, tsan, ubsan
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT
@@ -712,7 +712,7 @@ einfo "CC:  ${CC}"
 			&& \
 		[[ "${ARCH}" == "amd64" ]] \
 			&& \
-		_rustflags-hardened_sanitizers_compat "llvm" \
+		_rustflags-hardened_sanitizers_compat "clang" \
 	; then
 		need_cfi=1
 		need_clang=1
@@ -727,7 +727,7 @@ einfo "CC:  ${CC}"
 		export CC="${CHOST}-clang"
 		export CXX="${CHOST}-clang++"
 		export CPP="${CC} -E"
-		LLVM_SLOT=$(clang-major-version)
+		export LLVM_SLOT=$(clang-major-version)
 
 	# Avoid wrong clang used bug
 		local path
@@ -1239,6 +1239,8 @@ einfo "rustc host:  ${host}"
 	# We will need to test them before allowing users to use them.
 	# Enablement is complicated by LLVM_COMPAT and compile time to build LLVM with sanitizers enabled.
 
+	local auto_sanitize=${CFLAGS_HARDENED_AUTO_SANITIZE_USER:-""}
+
 	local cc_current_slot=""
 	local cc_current_vendor=""
 	local sanitizers_compat=0
@@ -1259,8 +1261,6 @@ einfo "rustc host:  ${host}"
 		cc_current_vendor="clang"
 		sanitizers_compat=1
 	fi
-
-	local auto_sanitize=${CFLAGS_HARDENED_AUTO_SANITIZE_USER:-""}
 
 	if [[ "${auto_sanitize}" =~ "asan" && "${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("CE"|"DF"|"DOS"|"DP"|"HO"|"MC"|"OOBR"|"OOBW"|"PE"|"SO"|"SU"|"TC"|"UAF"|"UM") ]] ; then
 		if ! [[ "${RUSTFLAGS_HARDENED_SANITIZERS}" =~ "address" ]] ; then

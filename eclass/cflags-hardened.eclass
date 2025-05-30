@@ -962,7 +962,7 @@ einfo "CC:  ${CC}"
 			&& \
 		[[ "${ARCH}" == "amd64" ]] \
 			&& \
-		_cflags-hardened_sanitizers_compat "llvm" \
+		_cflags-hardened_sanitizers_compat "clang" \
 	; then
 		need_cfi=1
 		need_clang=1
@@ -1861,6 +1861,8 @@ einfo "Adding extra flags to unbreak ${coverage_pct} of -D_FORTIFY_SOURCE checks
 	# Enablement is complicated by LLVM_COMPAT and compile time to build LLVM with sanitizers enabled.
 	# Worst case scores for tolerance
 
+	local auto_sanitize=${CFLAGS_HARDENED_AUTO_SANITIZE_USER:-""}
+
 	local cc_current_slot=""
 	local cc_current_vendor=""
 	local sanitizers_compat=0
@@ -1881,8 +1883,6 @@ einfo "Adding extra flags to unbreak ${coverage_pct} of -D_FORTIFY_SOURCE checks
 		cc_current_vendor="clang"
 		sanitizers_compat=1
 	fi
-
-	local auto_sanitize=${CFLAGS_HARDENED_AUTO_SANITIZE_USER:-""}
 
 	local auto_asan=0
 	if [[ "${auto_sanitize}" =~ "asan" && "${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("CE"|"DF"|"DOS"|"DP"|"HO"|"MC"|"OOBR"|"OOBW"|"PE"|"SO"|"SU"|"TC"|"UAF"|"UM") ]] ; then
