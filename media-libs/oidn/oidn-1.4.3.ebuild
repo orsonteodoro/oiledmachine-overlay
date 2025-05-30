@@ -10,6 +10,7 @@ EAPI=8
 # MKL_DNN is oneDNN 2.2.4 with additional custom commits.
 
 CMAKE_BUILD_TYPE=Release
+FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 LEGACY_TBB_SLOT="2"
 LLVM_COMPAT=( {16..10} ) # Based on 2.0.1
 LLVM_SLOT="${LLVM_COMPAT[0]}"
