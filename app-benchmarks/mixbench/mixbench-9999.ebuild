@@ -3,6 +3,7 @@
 
 EAPI=8
 
+FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 IMPLS=(
 	"cuda"
 	"opencl"
