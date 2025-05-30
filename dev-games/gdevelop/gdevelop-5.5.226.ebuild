@@ -53,6 +53,7 @@ ELECTRON_APP_REACT_PV="ignore" # The lock file says >=0.10.0 but it is wrong.  W
 EMBUILD_DIR="${WORKDIR}/build"
 EMSCRIPTEN_PV="1.39.20"
 # Emscripten 3.1.21 requires llvm 16 for wasm, 4.1.1 nodejs
+FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 # For LLVM_COMPAT; 9, 8, and 7 was deleted because asm.js support was dropped.
 #LLVM_COMPAT=( 16 ) # For Emscripten 3.1.30.
 LLVM_COMPAT=( 14 ) # For Emscripten 1.39.20.
