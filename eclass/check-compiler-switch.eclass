@@ -100,7 +100,12 @@ check-compiler-switch_end() {
 # @FUNCTION: check-compiler-switch_is_same
 # @DESCRIPTION:
 # Did the compiler change fingerprints?
-# Don't use this if the CHOST changes.  Use either is_same_flavor_slot or is_same_arch_slot instead.
+# Don't use this if the CHOST changes.
+# Use instead either
+# check-compiler-switch_is_same_flavor_slot()
+# check-compiler-switch_is_same_arch_slot()
+# check-compiler-switch_is_same_arch()
+# @RETURN: 0 - yes, 1 - no
 check-compiler-switch_is_same_fingerprint() {
 	if [[ "${DETECT_COMPILER_SWITCH_T0_FINGERPRINT}" == "${DETECT_COMPILER_SWITCH_T1_FINGERPRINT}" ]] ; then
 		return 0
@@ -111,7 +116,8 @@ check-compiler-switch_is_same_fingerprint() {
 
 # @FUNCTION: check-compiler-switch_is_same_flavor_slot
 # @DESCRIPTION:
-# Did the compiler change the flavor-slot?
+# Did the compiler change the compiler fork flavor and the compiler slot?
+# @RETURN: 0 - yes, 1 - no
 check-compiler-switch_is_same_flavor_slot() {
 	if [[ "${DETECT_COMPILER_SWITCH_T0_FLAVOR}" == "${DETECT_COMPILER_SWITCH_T1_FLAVOR}" && "${DETECT_COMPILER_SWITCH_T0_SLOT}" == "${DETECT_COMPILER_SWITCH_T1_SLOT}" ]] ; then
 		return 0
@@ -122,9 +128,22 @@ check-compiler-switch_is_same_flavor_slot() {
 
 # @FUNCTION: check-compiler-switch_is_same_arch_slot
 # @DESCRIPTION:
-# Did the compiler change the arch-slot?
+# Did the compiler change the compiler arch and the compiler slot?
+# @RETURN: 0 - yes, 1 - no
 check-compiler-switch_is_same_arch_slot() {
 	if [[ "${DETECT_COMPILER_SWITCH_T0_ARCH}" == "${DETECT_COMPILER_SWITCH_T1_ARCH}" && "${DETECT_COMPILER_SWITCH_T0_SLOT}" == "${DETECT_COMPILER_SWITCH_T1_SLOT}" ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION: check-compiler-switch_is_same_arch
+# @DESCRIPTION:
+# Did the compiler change the compiler architecture?
+# @RETURN: 0 - yes, 1 - no
+check-compiler-switch_is_same_arch() {
+	if [[ "${DETECT_COMPILER_SWITCH_T0_ARCH}" == "${DETECT_COMPILER_SWITCH_T1_ARCH}" ]] ; then
 		return 0
 	else
 		return 1
