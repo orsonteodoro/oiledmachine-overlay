@@ -5,8 +5,9 @@ EAPI=8
 
 # Note: Please bump in sync with dev-libs/libxslt
 
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO DF HO IO SO UAF"
+CFLAGS_HARDENED_LANGS="c-lang"
+CFLAGS_HARDENED_USE_CASES="untrusted-data" # TODO:  review if it references senstive data
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO DF DOS FS HO IO MC NPD OOBA OOBR OOBW SO UAF"
 PYTHON_COMPAT=( "python3_"{10..13} )
 PYTHON_REQ_USE="xml(+)"
 XSTS_HOME="http://www.w3.org/XML/2004/xml-schema-test-suite"
