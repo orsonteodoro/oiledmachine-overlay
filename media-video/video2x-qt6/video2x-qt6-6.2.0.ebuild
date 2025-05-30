@@ -7,7 +7,7 @@ EAPI=8
 # U24
 
 CMAKE_MAKEFILE_GENERATOR="emake"
-
+FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 PYTHON_COMPAT=( "python3_12" )
 
 inherit cmake dep-prepare flag-o-matic python-single-r1 toolchain-funcs xdg
