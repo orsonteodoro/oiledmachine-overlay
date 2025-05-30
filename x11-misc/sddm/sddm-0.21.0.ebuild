@@ -7,7 +7,7 @@ EAPI=8
 # U 22.04.4
 
 CFLAGS_HARDENED_USE_CASES="admin-access multiuser-system security-critical sensitive-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="PE"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="PE RC"
 PYTHON_COMPAT=( "python3_"{10,13} "pypy3" ) # Limited by dev-python/docutils
 QT5_PV="5.15.3"
 QT6_PV="6.4.2"
