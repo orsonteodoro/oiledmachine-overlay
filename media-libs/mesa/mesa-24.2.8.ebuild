@@ -7,7 +7,7 @@ EAPI=8
 CARGO_OPTIONAL=1
 CFLAGS_HARDENED_CI_SANITIZERS="asan msan ubsan"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan tsan ubsan"
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO NPD IO"
 CRATES="
 	syn@2.0.68
@@ -116,6 +116,7 @@ ${PATENT_STATUS[@]}
 cpu_flags_x86_sse2 d3d9 debug +llvm lm-sensors opencl +opengl
 osmesa selinux test unwind vaapi valgrind vdpau vulkan
 vulkan-overlay wayland +X xa +zstd
+ebuild_revision_1
 "
 REQUIRED_USE="
 	d3d9? (
