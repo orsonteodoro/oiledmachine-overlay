@@ -6,7 +6,7 @@ EAPI=8
 # Note: Please bump in sync with dev-libs/libxslt
 
 CFLAGS_HARDENED_LANGS="c-lang"
-CFLAGS_HARDENED_USE_CASES="untrusted-data" # TODO:  review if it references senstive data
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO DF DOS FS HO IO MC NPD OOBA OOBR OOBW SO UAF"
 PYTHON_COMPAT=( "python3_"{10..13} )
 PYTHON_REQ_USE="xml(+)"
@@ -44,7 +44,7 @@ LICENSE="MIT"
 SLOT="2"
 IUSE="
 examples icu lzma +python readline static-libs test
-ebuild_revision_11
+ebuild_revision_12
 "
 RESTRICT="
 	!test? (
