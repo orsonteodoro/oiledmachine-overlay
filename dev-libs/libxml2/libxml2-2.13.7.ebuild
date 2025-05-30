@@ -5,6 +5,8 @@ EAPI=8
 
 # Note: Please bump in sync with dev-libs/libxslt
 
+CFLAGS_HARDENED_CI_SANITIZERS="asan msan ubsan"
+CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18" # U24
 CFLAGS_HARDENED_LANGS="c-lang"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO DF DOS FS HO IO MC NPD OOBA OOBR OOBW SO UAF"
