@@ -4,17 +4,7 @@
 
 EAPI=8
 
-inherit cmake flag-o-matic git-r3 lcnr
-
 MY_PV="$(ver_cut 1-4 ${PV})"
-
-TARGET_FRAMEWORK="netstandard2.1"
-DOTNET_V="6.0"
-DESCRIPTION=".NET wrapper for the Bullet physics library using Platform Invoke"
-HOMEPAGE="http://andrestraks.github.io/BulletSharp/"
-LICENSE="MIT ZLIB"
-KEYWORDS="~amd64"
-IUSE+=" developer nupkg test"
 
 # For dotnet runtimes, see https://github.com/dotnet/runtime/blob/main/src/libraries/Microsoft.NETCore.Platforms/src/runtime.json
 # For CI and supported platforms, see https://github.com/MonoGame/MonoGame/blob/v3.8.1_HOTFIX/build.cake
@@ -22,30 +12,26 @@ IUSE+=" developer nupkg test"
 ANDROID_MARCH=( arm arm64 x64 x86 ) # dotnet runtimes available
 #   arm=armv7
 ANDROID_ERIDS="${ANDROID_MARCH[@]/#/dotnet_android_}"
-
+DOTNET_V="6.0"
+FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 IOS_MARCH=( arm arm64 x64 x86 ) # dotnet runtimes available
 IOS_ERIDS="${IOS_MARCH[@]/#/dotnet_ios_}"
 # OS >= 11.2
-
 IOSSIMULATOR_MARCH=( arm64 x64 x86 ) # dotnet runtimes available
 IOSSIMULATOR_ERIDS="${IOSSIMULATOR_MARCH[@]/#/dotnet_iossimulator_}"
-
 # arm here is armv7*hf only; armel is armv7*s*
 LINUX_MARCH=( arm arm64 armel armv6 loongarch64 ppc64le mips64 s390x x64 x86 ) # dotnet runtimes available
 LINUX_ERIDS="${LINUX_MARCH[@]/#/dotnet_linux_}"
-
 # arm here is armv7 or armv6; armel is armv7*s*
 LINUX_MUSL_MARCH=( arm arm64 armel ppc64le s390x x64 x86 ) # dotnet runtimes available
 LINUX_MUSL_ERIDS="${LINUX_MUSL_MARCH[@]/#/dotnet_linux_musl_}"
-
 OSX_MARCH=( arm64 x64 ) # dotnet runtimes available
 OSX_ERIDS="${OSX_MARCH[@]/#/dotnet_osx_}"
-
+TARGET_FRAMEWORK="netstandard2.1"
 # Not supported by ebuild because of dotnet workload install uwp missing
 # Based on Wikipedia
 UWP_MARCH=( arm arm64 x64 x86)
 UWP_ERIDS="${UWP_MARCH[@]/#/dotnet_uap_}"
-
 WIN_MARCH=( arm arm64 x64 x86 ) # dotnet runtimes available
 WIN_ERIDS="${WIN_MARCH[@]/#/dotnet_win_}"
 
@@ -61,6 +47,13 @@ ERIDS=(
 	${WIN_ERIDS[@]}
 )
 
+inherit cmake flag-o-matic git-r3 lcnr
+
+DESCRIPTION=".NET wrapper for the Bullet physics library using Platform Invoke"
+HOMEPAGE="http://andrestraks.github.io/BulletSharp/"
+LICENSE="MIT ZLIB"
+KEYWORDS="~amd64"
+IUSE+=" developer nupkg test"
 IUSE+=" ${ERIDS[@]} mono"
 REQUIRED_USE+="
 	^^ (
