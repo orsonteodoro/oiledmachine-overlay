@@ -24,6 +24,7 @@ unset -f _llvm_set_globals
 
 GCC_SLOT=13
 CMAKE_ECLASS="cmake"
+FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 PYTHON_COMPAT=( "python3_11" )
 
 inherit cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
