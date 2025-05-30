@@ -23,6 +23,7 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx512bf16"
 	"cpu_flags_x86_ssse3"
 )
+FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 GCC_PV="11.3.0"
 LIBJPEG_TURBO_V="2.1.2"
 LLVM_COMPAT=( 15 ) # CI uses 15
