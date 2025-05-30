@@ -11,6 +11,7 @@ CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18"
 CFLAGS_HARDENED_LANGS="asm c-lang"
 CFLAGS_HARDENED_USE_CASES="crypto network security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF HO IO SO UM"
+FLAG_O_MATIC_FILTER_LTO=1
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/openssl.org.asc"
 
 inherit cflags-hardened edo flag-o-matic linux-info toolchain-funcs
