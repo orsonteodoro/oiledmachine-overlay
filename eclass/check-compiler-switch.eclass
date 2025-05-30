@@ -28,7 +28,7 @@ DETECT_COMPILER_SWITCH_T1_SLOT=""		# Compiler slot
 DETECT_COMPILER_SWITCH_T1_VENDOR=""		# Compiler manufacturer
 DETECT_COMPILER_SWITCH_T1_VER=""		# Compiler full version
 
-# @FUNCTION: check-compiler-switch_start
+# @FUNCTION:  check-compiler-switch_start
 # @DESCRIPTION:
 # Get the starting fingerprint
 check-compiler-switch_start() {
@@ -63,7 +63,7 @@ check-compiler-switch_start() {
 	fi
 }
 
-# @FUNCTION: check-compiler-switch_end
+# @FUNCTION:  check-compiler-switch_end
 # @DESCRIPTION:
 # Get the ending fingerprint
 check-compiler-switch_end() {
@@ -97,7 +97,7 @@ check-compiler-switch_end() {
 	fi
 }
 
-# @FUNCTION: check-compiler-switch_is_same
+# @FUNCTION:  check-compiler-switch_is_fingerprint_changed
 # @DESCRIPTION:
 # Did the compiler change fingerprints?
 # Don't use this if the CHOST changes.
@@ -106,7 +106,7 @@ check-compiler-switch_end() {
 # check-compiler-switch_is_same_arch_slot()
 # check-compiler-switch_is_same_arch()
 # @RETURN: 0 - yes, 1 - no
-check-compiler-switch_is_same_fingerprint() {
+check-compiler-switch_is_fingerprint_changed() {
 	if [[ "${DETECT_COMPILER_SWITCH_T0_FINGERPRINT}" == "${DETECT_COMPILER_SWITCH_T1_FINGERPRINT}" ]] ; then
 		return 0
 	else
@@ -114,11 +114,11 @@ check-compiler-switch_is_same_fingerprint() {
 	fi
 }
 
-# @FUNCTION: check-compiler-switch_is_same_flavor_slot
+# @FUNCTION:  check-compiler-switch_is_flavor_slot_changed
 # @DESCRIPTION:
-# Did the compiler change the compiler fork flavor and the compiler slot?
+# Did the change the compiler fork flavor and the compiler slot?
 # @RETURN: 0 - yes, 1 - no
-check-compiler-switch_is_same_flavor_slot() {
+check-compiler-switch_is_flavor_slot_changed() {
 	if [[ "${DETECT_COMPILER_SWITCH_T0_FLAVOR}" == "${DETECT_COMPILER_SWITCH_T1_FLAVOR}" && "${DETECT_COMPILER_SWITCH_T0_SLOT}" == "${DETECT_COMPILER_SWITCH_T1_SLOT}" ]] ; then
 		return 0
 	else
@@ -126,11 +126,11 @@ check-compiler-switch_is_same_flavor_slot() {
 	fi
 }
 
-# @FUNCTION: check-compiler-switch_is_same_arch_slot
+# @FUNCTION:  check-compiler-switch_is_arch_slot_changed
 # @DESCRIPTION:
-# Did the compiler change the compiler arch and the compiler slot?
+# Did the compiler the compiler arch and the compiler slot stay the same?
 # @RETURN: 0 - yes, 1 - no
-check-compiler-switch_is_same_arch_slot() {
+check-compiler-switch_is_arch_slot_changed() {
 	if [[ "${DETECT_COMPILER_SWITCH_T0_ARCH}" == "${DETECT_COMPILER_SWITCH_T1_ARCH}" && "${DETECT_COMPILER_SWITCH_T0_SLOT}" == "${DETECT_COMPILER_SWITCH_T1_SLOT}" ]] ; then
 		return 0
 	else
@@ -138,11 +138,11 @@ check-compiler-switch_is_same_arch_slot() {
 	fi
 }
 
-# @FUNCTION: check-compiler-switch_is_same_arch
+# @FUNCTION:  check-compiler-switch_is_arch_changed
 # @DESCRIPTION:
-# Did the compiler change the compiler architecture?
+# Did the compiler architecture stay the same?
 # @RETURN: 0 - yes, 1 - no
-check-compiler-switch_is_same_arch() {
+check-compiler-switch_is_arch_changed() {
 	if [[ "${DETECT_COMPILER_SWITCH_T0_ARCH}" == "${DETECT_COMPILER_SWITCH_T1_ARCH}" ]] ; then
 		return 0
 	else
