@@ -22,6 +22,7 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
+FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 GCC_SLOT=13
 CMAKE_ECLASS="cmake"
 LLVM_COMPONENTS=(
