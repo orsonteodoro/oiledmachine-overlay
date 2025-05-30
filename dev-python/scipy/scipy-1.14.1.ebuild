@@ -6,6 +6,7 @@ EAPI=8
 FORTRAN_NEEDED="fortran"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="meson-python"
+FLAG_O_MATIC_FILTER_LTO=1
 PYTHON_COMPAT=( "pypy3" "python3_"{10..13} )
 PYTHON_REQ_USE="threads(+)"
 
