@@ -8,6 +8,7 @@ RUSTFLAGS_HARDENED_USE_CASES="crypto security-critical sensitive-data untrusted-
 CARGO_OPTIONAL=yes
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517=maturin
+FLAG_O_MATIC_FILTER_LTO=1
 PYTHON_COMPAT=( python3_{11..14} pypy3_11 )
 PYTHON_REQ_USE="threads(+)"
 
