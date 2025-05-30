@@ -9,9 +9,13 @@ DOC_VER="${MY_PV}"
 
 # Live ebuilds or git modules with no https (MITM attack) are assumed untrusted.
 # Added retpoline for passwords.
+CFLAGS_HARDENED_ASSEMBLERS="gas inline"
+CFLAGS_HARDENED_CI_SANITIZERS="asan lsan ubsan"
+CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="20"
 CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=3
+CFLAGS_HARDENED_LANGS="asm c-lang"
 CFLAGS_HARDENED_USE_CASES="daemon network sensitive-data server untrusted-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO IO PE SO"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO PE SO"
 GENTOO_DEPEND_ON_PERL="no"
 PLOCALES="bg ca de es fr is it ko pt_PT ru sv vi zh_CN"
 # bug #329479: git-remote-testgit is not multiple-version aware \
