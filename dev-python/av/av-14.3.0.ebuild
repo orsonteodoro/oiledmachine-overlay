@@ -9,6 +9,7 @@ MY_P="${MY_PN}-${PV}"
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
+FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit distutils-r1 flag-o-matic
