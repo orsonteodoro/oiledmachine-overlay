@@ -10,6 +10,7 @@ RE2_VER="${RE2_VER//./-}"
 
 # Different date format used upstream.
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CFLAGS_HARDENED_LANGS="cxx"
 SONAME="10"				# https://github.com/google/re2/blob/2023-03-01/CMakeLists.txt#L33
 
 inherit cflags-hardened cmake-multilib toolchain-funcs

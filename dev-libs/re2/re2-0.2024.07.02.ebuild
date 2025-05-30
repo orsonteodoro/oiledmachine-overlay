@@ -11,6 +11,8 @@ RE2_VER="${RE2_VER//./-}"
 
 # Different date format used upstream.
 ABSEIL_CPP_PV="20240116.2"		# https://github.com/google/re2/blob/2024-07-02/MODULE.bazel#L16
+CFLAGS_HARDENED_ASSEMBLERS="inline"
+CFLAGS_HARDENED_LANGS="asm cxx"
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
