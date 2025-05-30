@@ -11,6 +11,7 @@ CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_TRAPV="0" # Breaks during test suite
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO SO"
+FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 
 inherit cflags-hardened cmake flag-o-matic toolchain-funcs xdg-utils
 
