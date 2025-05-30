@@ -16,6 +16,7 @@ ERROR_MEDIA_USB_SUPPORT="${P} requires Media USB Adapters (CONFIG_MEDIA_USB_SUPP
 ERROR_USB="${P} requires Support for Host-side USB (CONFIG_USB)"
 ERROR_USB_GSPCA="${P} requires GSPCA based webcams (CONFIG_USB_GSPCA)"
 ERROR_VIDEO_V4L2="${P} requires CONFIG_VIDEO_V4L2"
+FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 MODULE_NAMES="ep800(kernel/drivers/media/usb/gspca:${S})"
 
 inherit flag-o-matic linux-mod
