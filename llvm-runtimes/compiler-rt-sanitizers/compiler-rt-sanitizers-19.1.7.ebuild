@@ -28,6 +28,7 @@ PYTHON_COMPAT=( "python3_12" )
 
 inherit check-reqs cmake flag-o-matic linux-info llvm.org llvm-utils python-any-r1
 
+FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 LLVM_MAX_SLOT=${LLVM_MAJOR}
 KEYWORDS="
 amd64 arm arm64 ~loong ~mips ppc64 ~riscv x86 ~amd64-linux ~ppc-macos ~x64-macos
