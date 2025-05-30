@@ -5,8 +5,9 @@ EAPI=8
 
 # doc needs a bunch of deps not in portage
 
+CFLAGS_HARDENED_ASSEMBLERS="inline"
 CFLAGS_HARDENED_USE_CASES="facial-embedding security-critical sensitive-data untrusted-data" # Biometrics TFA
-
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS"
 DISTUTILS_EXT=1
 DISTUTILS_OPTIONAL=1
 DISTUTILS_USE_PEP517="setuptools"
