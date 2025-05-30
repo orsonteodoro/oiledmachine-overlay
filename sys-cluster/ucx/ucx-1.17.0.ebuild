@@ -6,6 +6,8 @@ EAPI=8
 
 # See also https://openucx.readthedocs.io/en/master/faq.html?highlight=cuda#what-stuff-should-i-have-on-my-machine-to-use-ucx
 
+MY_PV="${PV/_/-}"
+
 CUDA_TARGETS_COMPAT=(
 	sm_35
 	sm_60
@@ -14,7 +16,7 @@ CUDA_TARGETS_COMPAT=(
 	sm_75
 )
 CLANG_COMPAT=( {18..15} )
-MY_PV="${PV/_/-}"
+FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 inherit hip-versions
 RDMA_CORE_PV="28.0"
 ROCM_VERSIONS=(
