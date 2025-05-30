@@ -4,6 +4,8 @@
 
 EAPI=8
 
+FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
+
 inherit flag-o-matic git-r3 linux-info linux-mod-r1
 
 S="${WORKDIR}"
