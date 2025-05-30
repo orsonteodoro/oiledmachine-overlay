@@ -19,6 +19,7 @@ DISTUTILS_USE_PEP517="no"
 DOUBLE_CONVERSION_PV="3.2.0"						# https://github.com/tensorflow/tensorflow/blob/v2.15.0/tensorflow/workspace2.bzl#L634
 EIGEN_COMMIT="66e8f38891841bf88ee976a316c0c78a52f0cee5"			# https://github.com/tensorflow/tensorflow/blob/v2.15.0/third_party/eigen3/workspace.bzl#L10
 FARMHASH_COMMIT="0d859a811870d10f53a594927d0d0b97573ad06d"		# https://github.com/tensorflow/tensorflow/blob/v2.15.0/third_party/farmhash/workspace.bzl#L10
+FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 FLATBUFFERS_PV="23.5.26"						# https://github.com/tensorflow/tensorflow/blob/v2.15.0/third_party/flatbuffers/workspace.bzl#L10
 GCC_COMPAT=( {12..9} )
 GIFLIB_PV="5.2.1"							# https://github.com/tensorflow/tensorflow/blob/v2.15.0/tensorflow/workspace2.bzl#L341
