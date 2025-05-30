@@ -18,6 +18,7 @@ HOMEPAGE="http://gambas.sourceforge.net/en/main.html"
 LICENSE="GPL-2"
 RESTRICT="mirror"
 SLOT="0"
+FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 GAMBAS_MODULES=(
 bzip2 cairo crypt curl dbus gmp gnome-keyring gsl gstreamer gtk3 htmlview httpd
 imlib2 jit mime mixer mysql ncurses network odbc openal opengl openssl pcre pdf
