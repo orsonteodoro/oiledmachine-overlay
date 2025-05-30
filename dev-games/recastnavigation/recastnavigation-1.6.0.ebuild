@@ -6,6 +6,7 @@ EAPI=8
 # U22.04.2
 
 EXPECTED_FINGERPRINT="disable"
+FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 
 inherit cmake flag-o-matic git-r3 multilib-minimal toolchain-funcs
 
