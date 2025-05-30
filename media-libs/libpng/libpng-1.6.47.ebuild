@@ -5,8 +5,12 @@ EAPI=8
 
 APNG_REPO="libpng-apng" # Sometimes libpng-apng is more up to date.
 APNG_PV="1.6.47"
+CFLAGS_HARDENED_ASSEMBLERS="gas inline"
+##CFLAGS_HARDENED_CI_SANITIZERS="asan lsan msan ubsan" # Beta only
+CFLAGS_HARDENED_CI_SANITIZERS="asan lsan" # Before .travis.yml removal
+CFLAGS_HARDENED_CI_SANITIZERS_GCC_COMPAT="13"
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO IO SO UAF UM"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO NPD MC OOBR SO UAF UM"
 
 inherit cflags-hardened libtool multilib-minimal
 
