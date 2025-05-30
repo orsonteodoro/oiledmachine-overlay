@@ -16,6 +16,7 @@ CRATES="
 	unicode-ident@1.0.12
 	paste@1.0.14
 "
+FLAG_O_MATIC_FILTER_LTO=1
 GCC_SLOT=12
 LIBDRM_DEPSTRING=">=x11-libs/libdrm-2.4.121"
 LIBDRM_USEDEP="\

@@ -23,6 +23,7 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
+FLAG_O_MATIC_FILTER_LTO=1
 PYTHON_COMPAT=( "python3_12" )
 
 inherit cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1

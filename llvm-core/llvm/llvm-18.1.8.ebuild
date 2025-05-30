@@ -4,6 +4,7 @@
 
 EAPI=8
 
+FLAG_O_MATIC_FILTER_LTO=1
 PYTHON_COMPAT=( "python3_11" )
 
 if [[ "${PV}" =~ "9999" ]] ; then

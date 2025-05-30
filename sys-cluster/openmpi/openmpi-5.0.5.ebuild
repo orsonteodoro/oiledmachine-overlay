@@ -3,6 +3,7 @@
 
 EAPI=8
 
+FLAG_O_MATIC_FILTER_LTO=1
 FORTRAN_NEEDED="fortran"
 MY_P="${P/-mpi}"
 inherit hip-versions

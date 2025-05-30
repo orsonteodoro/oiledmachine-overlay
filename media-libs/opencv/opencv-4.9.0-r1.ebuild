@@ -202,6 +202,7 @@ CPU_FEATURES_MAP=(
 	"cpu_flags_x86_sse4_2:SSE4_2"
 	"cpu_flags_x86_ssse3:SSSE3"
 )
+FLAG_O_MATIC_FILTER_LTO=1
 GSTREAMER_PV="1.16.2"
 PATENT_STATUS_IUSE=(
 	patent_status_nonfree

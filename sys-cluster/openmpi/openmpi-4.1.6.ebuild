@@ -5,6 +5,7 @@ EAPI=8
 
 MY_P="${P/-mpi}"
 
+FLAG_O_MATIC_FILTER_LTO=1
 FORTRAN_NEEDED="fortran"
 IUSE_OPENMPI_FABRICS="
 	openmpi_fabrics_knem

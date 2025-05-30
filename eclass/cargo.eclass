@@ -22,6 +22,8 @@ esac
 if [[ -z ${_CARGO_ECLASS} ]]; then
 _CARGO_ECLASS=1
 
+FLAG_O_MATIC_FILTER_LTO=1
+
 if [[ -n ${RUST_NEEDS_LLVM} ]]; then
 		inherit llvm-r1
 fi

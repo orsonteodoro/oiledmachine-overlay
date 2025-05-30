@@ -173,6 +173,7 @@ FFMPEG_FLAG_MAP=(
 )
 FFMPEG_REVISION="${MY_PV#*_p}"
 FFMPEG_SUBSLOT="58.60.60"
+FLAG_O_MATIC_FILTER_LTO=1
 MULTILIB_WRAPPED_HEADERS=(
 	"/usr/include/libavutil/avconfig.h"
 )
@@ -1595,7 +1596,11 @@ src_prepare() {
 	if tc-is-lto ; then
 		# Respect -flto value, e.g -flto=thin
 		local v="$(get-flag flto)"
-		[[ ${v} != -flto ]] && LTO_FLAG="--enable-lto=${v}" || LTO_FLAG="--enable-lto"
+		if [[ "${v}" != "-flto" ]] ; then
+			LTO_FLAG="--enable-lto=${v}"
+		else
+			LTO_FLAG="--enable-lto"
+		fi
 	fi
 	filter-lto
 

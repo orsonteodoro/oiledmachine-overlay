@@ -9,6 +9,7 @@ CFLAGS_HARDENED_SSP_LEVEL="1" # Global variable
 CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network security-critical sensitive-data untrusted-data web-browser"
 CFLAGS_HARDENED_VTABLE_VERIFY=1
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF HO IO NPD OOBA OOBR OOBW PE RC SO UAF TC" # Based on Chromium
+FLAG_O_MATIC_FILTER_LTO=1
 PYTHON_COMPAT=( "python3_"{10..13} )
 PYTHON_REQ_USE="xml(+)"
 

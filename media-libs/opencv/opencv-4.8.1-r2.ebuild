@@ -166,6 +166,7 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS HO IO NPD OOBR OOBW"
 CMAKE_PV="3.26"
 DNN_SAMPLES_FACE_DETECTOR_COMMIT="b2bfc75f6aea5b1f834ff0f0b865a7c18ff1459f"	# See https://github.com/opencv/opencv_extra/blob/4.8.1/testdata/dnn/download_models.py#L311
 FACE_ALIGNMENT_COMMIT="8afa57abc8229d611c4937165d20e2a2d9fc5a12"		# See https://github.com/opencv/opencv_contrib/blob/4.8.1/modules/face/CMakeLists.txt#L11
+FLAG_O_MATIC_FILTER_LTO=1
 GSTREAMER_PV="1.16.2"
 NVIDIA_OPTICAL_FLOW_COMMIT="edb50da3cf849840d680249aa6dbef248ebce2ca"		# See https://github.com/opencv/opencv_contrib/blob/4.8.1/modules/cudaoptflow/CMakeLists.txt#L12
 OPENEXR2_PV="2.5.10 2.5.9 2.5.8 2.5.7 2.4.3 2.4.2 2.4.1 2.4.0 2.3.0"

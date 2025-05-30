@@ -7,6 +7,7 @@ ARM_CPU_FLAGS=(
 	neon:neon
 	neon2x:neon2x
 )
+FLAG_O_MATIC_FILTER_LTO=1
 PYTHON_COMPAT=( python3_{8..11} )
 X86_CPU_FLAGS=(
 	sse4_1:sse4_1
