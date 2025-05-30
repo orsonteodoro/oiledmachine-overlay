@@ -5,6 +5,10 @@
 EAPI=8
 
 CARGO_OPTIONAL=1
+CFLAGS_HARDENED_CI_SANITIZERS="asan msan ubsan"
+CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan tsan ubsan"
+CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO NPD IO"
 CRATES="
 	syn@2.0.68
 	proc-macro2@1.0.86
@@ -64,7 +68,7 @@ VIDEO_CARDS=(
 
 # Bug
 inherit cargo
-inherit flag-o-matic llvm-r1 python-any-r1 linux-info meson multilib-build toolchain-funcs uopts
+inherit cflags-hardened flag-o-matic llvm-r1 python-any-r1 linux-info meson multilib-build toolchain-funcs uopts
 
 LLVM_USE_DEPS="llvm_targets_AMDGPU(+),${MULTILIB_USEDEP}"
 
@@ -632,6 +636,7 @@ _src_configure() {
 	filter-lto
 
 	uopts_src_configure
+	cflags-hardened_append
 
 	local platforms
 	use X && platforms+="x11"
