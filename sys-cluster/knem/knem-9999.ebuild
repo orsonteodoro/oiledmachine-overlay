@@ -6,12 +6,13 @@ EAPI="8"
 
 BUILD_PARAMS="KDIR=${KERNEL_DIR}"
 BUILD_TARGETS="all"
-MAX_KERNEL_VER="6.4"
-MAX_KERNEL_COMMIT="4b4ebc6b"
-MODULE_NAMES="knem(misc:${S}/driver/linux)"
 DKMS_MODULES=(
 	"knem driver/linux /kernel/../updates/"
 )
+FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
+MAX_KERNEL_VER="6.4"
+MAX_KERNEL_COMMIT="4b4ebc6b"
+MODULE_NAMES="knem(misc:${S}/driver/linux)"
 
 inherit autotools flag-o-matic linux-mod linux-info toolchain-funcs udev
 
