@@ -32,7 +32,7 @@ SLOT_MAJ="$(ver_cut 1-2 ${PV})"
 SLOT="${SLOT_MAJ}/${PV}"
 IUSE+="
 doc examples static-libs test
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE+="
 	test? (
