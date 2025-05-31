@@ -423,10 +423,10 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # Enable auto sanitization with halt on violation.
 # Valid values:  asan, ubsan
 
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_LLVM_CFI
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_AUTO_SANITIZE_EXCLUDE
 # @DESCRIPTION:
-# Disable LLVM CFI it doesn't work.
-# Valid values:  0 - disallow, 1 - allow, unset - allow
+# Disable broken sanitizers.
+# Valid values: asan, cfi, lsan, msan, tsan, ubsan
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_LANGS
 # @DESCRIPTION:
@@ -1197,7 +1197,7 @@ ewarn
 			&& \
 		_cflags-hardened_has_llvm_cfi \
 			&& \
-		[[ "${CFLAGS_HARDENED_LLVM_CFI:-1}" == "1" ]] \
+		[[ ! "${CFLAGS_HARDENED_AUTO_SANITIZE_EXCLUDE}" =~ "cfi" ]] \
 			&& \
 		[[ "${CFLAGS_HARDENED_AUTO_SANITIZE_USER}" =~ "cfi" ]] \
 			&& \

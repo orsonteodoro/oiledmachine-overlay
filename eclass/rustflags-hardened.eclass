@@ -343,6 +343,11 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # Enable auto sanitization with halt on violation.
 # Valid values:  asan, ubsan
 
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_AUTO_SANITIZE_EXCLUDE
+# @DESCRIPTION:
+# Disable broken sanitizers.
+# Valid values: asan, cfi, lsan, msan, tsan, ubsan
+
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_LLVM_CFI
 # @DESCRIPTION:
 # Disable LLVM CFI it doesn't work.
@@ -847,7 +852,7 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 			&& \
 		_rustflags-hardened_has_llvm_cfi \
 			&& \
-		[[ "${RUSTFLAGS_HARDENED_LLVM_CFI:-1}" == "1" ]] \
+		[[ ! "${RUSTFLAGS_HARDENED_AUTO_SANITIZE_EXCLUDE}" =~ "cfi" ]] \
 			&& \
 		[[ "${RUSTFLAGS_HARDENED_AUTO_SANITIZE_USER}" =~ "cfi" ]] \
 			&& \
