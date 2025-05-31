@@ -27,7 +27,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 -debuginfod +openmp -valgrind
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE="
 "
@@ -74,6 +74,7 @@ src_configure() {
 	export CPP="${CC} -E"
 	strip-unsupported-flags
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
