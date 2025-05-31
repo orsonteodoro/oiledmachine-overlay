@@ -53,7 +53,7 @@ SLOT="${PV%%.*}"
 IUSE+="
 ${LLVM_EBUILDS_LLVM19_REVISION}
 -openmp -tbb test
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND="
 	openmp? (
