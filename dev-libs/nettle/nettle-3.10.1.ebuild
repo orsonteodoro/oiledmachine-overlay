@@ -3,15 +3,17 @@
 
 EAPI=8
 
-# Sanitizers disabled because it breaks gnutls tests
-#CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
-# CVE-2023-36660 - out of bounds write, memory corruption (ASAN)
+CFLAGS_HARDENED_CF_PROTECTION=0											# Untested or unverified
 CFLAGS_HARDENED_CI_SANITIZERS="asan ubsan"
 CFLAGS_HARDENED_CI_SANITIZERS_GCC_COMPAT="12" # D12
+CFLAGS_HARDENED_FHARDENED=0											# Untested or unverified
 CFLAGS_HARDENED_LANGS="c-lang"
+# Sanitizers disabled because it breaks gnutls tests
+#CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="crypto security-critical sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS MC"
+# CVE-2023-36660 - out of bounds write, memory corruption (ASAN)
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_aes"
 	"cpu_flags_arm_neon"
@@ -65,7 +67,7 @@ ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
 +asm doc +gmp static-libs
-ebuild_revision_29
+ebuild_revision_30
 "
 # The arm64 crypto option controls AES, SHA1, and SHA2 usage.
 REQUIRED_USE="
