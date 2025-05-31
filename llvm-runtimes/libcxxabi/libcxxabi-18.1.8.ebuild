@@ -44,7 +44,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM18_REVISION}
 hardened +static-libs test
-ebuild_revision_10
+ebuild_revision_11
 "
 # in 15.x, cxxabi.h is moving from libcxx to libcxxabi
 RDEPEND="
