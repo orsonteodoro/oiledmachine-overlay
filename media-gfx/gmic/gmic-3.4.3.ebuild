@@ -31,7 +31,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="
 +bash-completion +cli +curl +ffmpeg +fftw +graphicsmagick +jpeg -lto -opencv
 +openexr +openmp +png static-libs +tiff wayland +X +zlib
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 "
@@ -129,6 +129,7 @@ eerror
 		die
 	fi
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
