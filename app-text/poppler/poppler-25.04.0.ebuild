@@ -47,7 +47,7 @@ LICENSE="
 IUSE="
 boost cairo cjk curl +cxx debug doc gpgme +introspection +jpeg +jpeg2k +lcms nss
 png qt5 qt6 test tiff +utils
-ebuild_revision_17
+ebuild_revision_18
 "
 RESTRICT="
 	!test? (
@@ -196,6 +196,7 @@ einfo "Using GCC ${gcc_slot}"
 	fi
 	strip-unsupported-flags
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
