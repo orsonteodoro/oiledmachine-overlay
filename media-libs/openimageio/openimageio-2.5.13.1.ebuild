@@ -62,7 +62,7 @@ X86_CPU_FEATURES=(
 )
 CPU_FEATURES=( ${X86_CPU_FEATURES[@]/#/cpu_flags_x86_} ) # Place after X86_CPU_FEATURES
 
-inherit cflags-hardened cmake flag-o-matic font llvm python-single-r1 virtualx
+inherit cflags-hardened check-compiler-switch cmake flag-o-matic font llvm python-single-r1 virtualx
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/OpenImageIO-${PV}"
@@ -117,8 +117,7 @@ ${OPENVDB_APIS_[@]}
 aom avif clang color-management cuda cxx17 dds dicom +doc ffmpeg field3d fits
 gif gui heif icc jpeg2k opencv opengl openvdb png ptex +python qt5 +qt6 raw
 rav1e tbb tools +truetype wayland webp X
-
-ebuild_revision_25
+ebuild_revision_26
 "
 gen_abi_compat_required_use() {
 	local s
@@ -452,6 +451,7 @@ _oiio_use() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	if use clang && [[ -z "${CC}" || -z "${CXX}" ]] ; then
 		export CC="${CHOST}-clang"
 		export CXX="${CHOST}-clang++"
@@ -580,6 +580,12 @@ eerror
 	# will turn on NEON support if it is available.
 	#
 	use arm64 && append-flags -flax-vector-conversions
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	cflags-hardened_append
 
