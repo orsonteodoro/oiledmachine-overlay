@@ -16,7 +16,7 @@ MY_PV=$(ver_rs "1-3" '_')
 ONETBB_SLOT="0"
 PYTHON_COMPAT=( python3_{8..11} )
 
-inherit cmake cuda flag-o-matic python-any-r1 toolchain-funcs
+inherit check-compiler-switch cmake cuda flag-o-matic python-any-r1 toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/OpenSubdiv-${MY_PV}"
@@ -42,6 +42,7 @@ IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 cuda +doc +examples -glew +glfw +opencl +openmp +opengl +ptex +tbb test
 +tutorials +X
+ebuild_revision_2
 "
 gen_required_use_cuda_targets() {
 	local x
@@ -128,6 +129,7 @@ PATCHES_=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	python-any-r1_pkg_setup
 }
 
@@ -148,6 +150,13 @@ src_configure() {
 		export CPP="${CXX} -E"
 		strip-unsupported-flags
 	fi
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 einfo "CC:\t\t${CC}"
 einfo "CXX:\t\t${CXX}"
 	${CC} --version
