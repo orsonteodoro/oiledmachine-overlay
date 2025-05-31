@@ -10,7 +10,7 @@ UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=1
 
-inherit autotools cflags-hardened portability toolchain-funcs uopts
+inherit autotools cflags-hardened check-compiler-switch portability toolchain-funcs uopts
 
 # Tarballs are produced from ${PV} branches in
 # https://gitweb.gentoo.org/proj/lua-patches.git
@@ -26,7 +26,7 @@ LICENSE="MIT"
 SLOT="5.3"
 IUSE="
 +deprecated readline static-libs test
-ebuild_revision_13
+ebuild_revision_14
 "
 REQUIRED_USE="
 	pgo? (
@@ -58,6 +58,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	uopts_setup
 }
 
@@ -82,6 +83,7 @@ _src_configure_compiler() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
+	strip-unsupported-flags
 }
 
 _src_configure() {
@@ -90,6 +92,13 @@ _src_configure() {
 		append-flags -Wno-error=coverage-mismatch
 	fi
 	use deprecated && append-cppflags -DLUA_COMPAT_5_1 -DLUA_COMPAT_5_2
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 	econf
 }
