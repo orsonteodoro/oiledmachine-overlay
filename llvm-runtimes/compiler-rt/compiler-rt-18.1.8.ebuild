@@ -51,7 +51,7 @@ SLOT="${LLVM_MAJOR}"
 IUSE+="
 ${LLVM_EBUILDS_LLVM18_REVISION}
 +abi_x86_32 abi_x86_64 +clang +debug test
-ebuild_revision_4
+ebuild_revision_5
 "
 DEPEND="
 	llvm-core/llvm:${LLVM_MAJOR}
@@ -137,6 +137,7 @@ src_configure() {
 		strip-unsupported-flags
 	fi
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
