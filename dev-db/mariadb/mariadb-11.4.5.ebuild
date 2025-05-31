@@ -15,7 +15,7 @@ UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 
-inherit cflags-hardened cmake flag-o-matic java-pkg-opt-2 multiprocessing prefix
+inherit cflags-hardened check-compiler-switch cmake flag-o-matic java-pkg-opt-2 multiprocessing prefix
 inherit systemd toolchain-funcs uopts
 
 KEYWORDS="~amd64 ~arm64 ~arm64-macos"
@@ -45,7 +45,7 @@ IUSE="
 innodb-lzo innodb-snappy jdbc jemalloc kerberos latin1 mroonga numa odbc oqgraph
 pam +perl profiling rocksdb selinux +server sphinx sst-rsync sst-mariabackup
 static systemd systemtap s3 tcmalloc test xml yassl
-ebuild_revision_12
+ebuild_revision_13
 "
 REQUIRED_USE="
 	?? (
@@ -297,6 +297,7 @@ ewarn
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	if [[ ${MERGE_TYPE} != binary ]] ; then
 		if has test ${FEATURES} ; then
 			# Bug #213475 - MySQL _will_ object strenuously if your machine is named
@@ -400,6 +401,12 @@ _src_configure_compiler() {
 
 _src_configure() {
 	uopts_src_configure # Wipes -fprofile*
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	# bug #855233 (MDEV-11914, MDEV-25633) at least
 	filter-lto
 	# bug 508724 mariadb cannot use ld.gold
