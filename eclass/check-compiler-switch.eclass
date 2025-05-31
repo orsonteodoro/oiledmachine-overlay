@@ -119,8 +119,6 @@ check-compiler-switch_is_fingerprint_changed() {
 # Did either the compiler fork flavor and the compiler slot change?
 # @RETURN: 0 - yes, 1 - no
 check-compiler-switch_is_flavor_slot_changed() {
-einfo "t0: ${DETECT_COMPILER_SWITCH_T0_FLAVOR}-${DETECT_COMPILER_SWITCH_T0_SLOT}"
-einfo "t1: ${DETECT_COMPILER_SWITCH_T1_FLAVOR}-${DETECT_COMPILER_SWITCH_T1_SLOT}"
 	if [[ "${DETECT_COMPILER_SWITCH_T0_FLAVOR}" == "${DETECT_COMPILER_SWITCH_T1_FLAVOR}" && "${DETECT_COMPILER_SWITCH_T0_SLOT}" == "${DETECT_COMPILER_SWITCH_T1_SLOT}" ]] ; then
 		return 1
 	else
@@ -133,8 +131,6 @@ einfo "t1: ${DETECT_COMPILER_SWITCH_T1_FLAVOR}-${DETECT_COMPILER_SWITCH_T1_SLOT}
 # Did either the compiler the compiler arch or the compiler slot change?
 # @RETURN: 0 - yes, 1 - no
 check-compiler-switch_is_arch_slot_changed() {
-einfo "t0: ${DETECT_COMPILER_SWITCH_T0_ARCH}-${DETECT_COMPILER_SWITCH_T0_SLOT}"
-einfo "t1: ${DETECT_COMPILER_SWITCH_T1_ARCH}-${DETECT_COMPILER_SWITCH_T1_SLOT}"
 	if [[ "${DETECT_COMPILER_SWITCH_T0_ARCH}" == "${DETECT_COMPILER_SWITCH_T1_ARCH}" && "${DETECT_COMPILER_SWITCH_T0_SLOT}" == "${DETECT_COMPILER_SWITCH_T1_SLOT}" ]] ; then
 		return 1
 	else

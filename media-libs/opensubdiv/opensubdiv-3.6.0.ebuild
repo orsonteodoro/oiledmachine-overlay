@@ -41,7 +41,7 @@ IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 cuda +doc +examples -glew +glfw +opencl +openmp +opengl +ptex +tbb test
 +tutorials +X
-ebuild_revision_4
+ebuild_revision_5
 "
 gen_required_use_cuda_targets() {
 	local x
