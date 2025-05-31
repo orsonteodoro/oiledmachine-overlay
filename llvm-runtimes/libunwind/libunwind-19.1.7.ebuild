@@ -23,8 +23,6 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-FLAG_O_MATIC_FILTER_LTO=1
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 PYTHON_COMPAT=( "python3_12" )
 
 KEYWORDS="
@@ -47,7 +45,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM19_REVISION}
 +clang debug static-libs test
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	test? (
