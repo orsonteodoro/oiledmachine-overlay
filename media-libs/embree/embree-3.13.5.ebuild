@@ -9,7 +9,6 @@ EAPI=8
 
 CMAKE_BUILD_TYPE="Release"
 CXXABI_V=11
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 IMAGEMAGICK_PV="6.9.10.23"
 LEGACY_TBB_SLOT="2"
 MIN_CLANG_PV="3.3" # for c++11
@@ -76,7 +75,7 @@ ${CPU_FLAGS[@]%:*}
 -compact-polys -custom-cflags custom-optimization debug doc doc-docfiles
 doc-html doc-images doc-man +hardened +filter-function gcc ispc raymask -ssp
 static-libs +tbb test tutorials
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
