@@ -102,7 +102,7 @@ RUSTFLAGS_HARDENED_SSP_LEVEL=${RUSTFLAGS_HARDENED_SSP_LEVEL:-2}
 # security-critical (e.g. sandbox, antivirus, crypto libs, memory allocator libs)
 # sensitive-data
 # server
-# system-set (e.g. emerge -pve @system)
+# system-set (e.g. console only packages in `emerge -pve @system`)
 # untrusted-data (e.g. user generated content, unreviewed-data, unsanitized-data, unreviewed-scripts, unreviewed-anything)
 # web-browser
 # web-server
