@@ -33,16 +33,18 @@ EAPI=8
 # You cannot pick both asan and ubsan at the same in this package because it
 # will break the login, pam, or a pam based module.
 # Disabled because it breaks clamav tests during build time so integration test issues.
-#CFLAGS_HARDENED_SANITIZERS="address hwaddress"
-#CFLAGS_HARDENED_SANITIZERS_COMPAT="gcc" # llvm build failing with and without sanitizers.
-# CVE-2018-16840 - heap use-after-free (ASAN)
-# CVE-2017-8818 - out of bounds (UBSAN)
+CFLAGS_HARDENED_ASSEMBLERS="gas inline"
+CFLAGS_HARDENED_CF_PROTECTION=0											# Untested or unverified
 CFLAGS_HARDENED_CI_SANITIZERS="asan msan tsan"
 CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18"
-CFLAGS_HARDENED_ASSEMBLERS="gas inline"
+CFLAGS_HARDENED_FHARDENED=0											# Untested or unverified
+#CFLAGS_HARDENED_SANITIZERS="address hwaddress"
+#CFLAGS_HARDENED_SANITIZERS_COMPAT="gcc" # llvm build failing with and without sanitizers.
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="security-critical network sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO OOBR SO UAF"
+# CVE-2018-16840 - heap use-after-free (ASAN)
+# CVE-2017-8818 - out of bounds (UBSAN)
 MULTILIB_WRAPPED_HEADERS=(
 	"/usr/include/curl/curlbuild.h"
 )
@@ -114,7 +116,7 @@ ${IMPLS[@]}
 +adns +alt-svc brotli debug ech +ftp gnutls gopher +hsts +http2 +http3 +httpsrr
 idn +imap kerberos ldap mbedtls +openssl +pop3 +psl +quic rtmp rustls samba
 sasl-scram +smtp ssh ssl static-libs test telnet +tftp +websockets zstd
-ebuild_revision_39
+ebuild_revision_40
 "
 RESTRICT="
 	!test? (
