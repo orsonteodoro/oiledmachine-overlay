@@ -3,8 +3,6 @@
 
 EAPI=8
 
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
-
 inherit check-compiler-switch cmake flag-o-matic
 
 if [[ ${PV} == *"9999" ]] ; then
@@ -29,7 +27,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 -debuginfod +openmp -valgrind
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE="
 "
