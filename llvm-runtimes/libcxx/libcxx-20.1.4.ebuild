@@ -66,7 +66,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM20_REVISION}
 hardened +libcxxabi +static-libs test +threads
-ebuild_revision_13
+ebuild_revision_14
 "
 RDEPEND="
 	!libcxxabi? (
