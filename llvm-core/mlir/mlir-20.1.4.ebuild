@@ -21,7 +21,6 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-FLAG_O_MATIC_FILTER_LTO=1
 LLVM_SLOT=${PV%%.*}
 PYTHON_COMPAT=( "python3_12" )
 
@@ -40,7 +39,7 @@ LICENSE="
 SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 	debug test
-	ebuild_revision_4
+	ebuild_revision_5
 ${LLVM_EBUILDS_LLVM20_REVISION}
 "
 REQUIRED_USE="
