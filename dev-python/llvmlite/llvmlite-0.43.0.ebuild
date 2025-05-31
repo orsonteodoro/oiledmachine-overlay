@@ -26,7 +26,7 @@ HOMEPAGE="https://github.com/numba/llvmlite"
 LICENSE="BSD"
 SLOT="0"
 IUSE="
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE+="
 	^^ (
