@@ -4,6 +4,8 @@
 EAPI=8
 
 CFLAGS_HARDENED_ASSEMBLERS="gas inline"
+CFLAGS_HARDENED_CF_PROTECTION=0											# Untested or unverified
+CFLAGS_HARDENED_FHARDENED=0											# Untested or unverified
 CFLAGS_HARDENED_USE_CASES="security-critical system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS SO"
 PYTHON_COMPAT=( "python3_"{10..13} )
@@ -27,7 +29,7 @@ KEYWORDS="
 IUSE="
 cookie-check debug gnutls idn ipv6 libproxy metalink nls ntlm pcre +ssl static
 test uuid zlib
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE="
 	ntlm? (
