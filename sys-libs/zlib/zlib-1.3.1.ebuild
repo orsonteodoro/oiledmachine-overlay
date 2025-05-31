@@ -74,7 +74,7 @@ SLOT="0/1" # subslot = SONAME
 IUSE="
 ${TRAINERS[@]}
 minizip minizip-utils pgo static-libs backup-copy
-ebuild_revision_17
+ebuild_revision_18
 "
 REQUIRED_USE="
 	pgo? (
@@ -189,7 +189,7 @@ REQUIRED_USE="
 		pgo
 	)
 "
-PDEPEND="
+APDEPEND="
 	pgo? (
 		app-arch/pigz[${MULTILIB_USEDEP}]
 		|| (
@@ -398,6 +398,7 @@ _src_configure() {
 	cd "${BUILD_DIR}" || die
 	uopts_src_configure
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
