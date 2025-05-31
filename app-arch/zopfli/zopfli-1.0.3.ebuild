@@ -12,7 +12,7 @@ TRAINERS=(
 zopfli_trainers_zopflipng_with_noto_emoji
 )
 
-inherit cmake flag-o-matic uopts
+inherit check-compiler-switch cmake flag-o-matic uopts
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${P}"
@@ -59,6 +59,7 @@ REQUIRED_USE+="
 DOCS=( CONTRIBUTORS README README.zopflipng )
 
 pkg_setup() {
+	check-compiler-switch_start
 	export ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES_=${ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES:-30}
 	if [[ -z "${ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES_}" ]] ; then
 		ZOPFLI_TRAINER_NOTO_EMOJI_N_IMAGES_=30
@@ -118,6 +119,12 @@ _src_configure_compiler() {
 _src_configure() {
 	uopts_src_configure
 
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	# Upstream uses -O3 instead of -O2 recently
 	replace-flags -O0 -O3
 	replace-flags -O1 -O3
@@ -126,7 +133,7 @@ _src_configure() {
 	replace-flags -Oz -O3
 	# Allow -Ofast
 	if is-flagq '-O3' || is-flag '-Ofast' ; then
-		:;
+		:
 	else
 		append-flags -O3
 	fi

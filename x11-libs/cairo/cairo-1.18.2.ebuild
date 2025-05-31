@@ -25,7 +25,7 @@ UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=1
 
 inherit meson
-inherit cflags-hardened flag-o-matic multilib-minimal toolchain-funcs uopts virtualx
+inherit check-compiler-switch cflags-hardened flag-o-matic multilib-minimal toolchain-funcs uopts virtualx
 
 if [[ "${PV}" == *"9999"* ]] ; then
 	inherit git-r3
@@ -141,6 +141,7 @@ ewarn "The pgo profile may need to be deleted if it produces artifacts or missin
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	uopts_setup
 	if use pgo || use test ; then
 		check_test_depends
@@ -169,6 +170,13 @@ _src_configure() {
 	cd "${EMESON_SOURCE}" || die
 
 	uopts_src_configure
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 
         if tc-is-gcc && [[ "${PGO_PHASE}" == "PGO" ]] ; then
