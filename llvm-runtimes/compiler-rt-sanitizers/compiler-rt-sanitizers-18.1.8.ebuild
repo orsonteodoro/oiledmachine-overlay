@@ -472,6 +472,7 @@ ewarn "Rebuild with GCC 12 if \"Assumed value of MB_LEN_MAX wrong\" pops up."
 		# them down to a subset supported by clang
 		CC="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/bin/clang" \
 		CXX="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/bin/clang++" \
+		CPP="${CC} -E" \
 		strip-unsupported-flags
 	fi
 
