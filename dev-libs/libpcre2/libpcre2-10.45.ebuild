@@ -7,11 +7,9 @@ MY_P="pcre2-${PV/_rc/-RC}"
 
 # Breaks /usr/lib64/qt6/libexec/moc
 CFLAGS_HARDENED_ASSEMBLERS="inline"
-CFLAGS_HARDENED_CF_PROTECTION=0											# Untested or unverified
 CFLAGS_HARDENED_CI_SANITIZERS="asan ubsan"
 CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18" # U24
 CFLAGS_HARDENED_CI_SANITIZERS_GCC_COMPAT="13" # U24
-CFLAGS_HARDENED_FHARDENED=0											# Untested or unverified
 CFLAGS_HARDENED_LANGS="asm c-lang"
 #CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 #CFLAGS_HARDENED_SANITIZERS_COMPAT="clang gcc"
@@ -47,7 +45,7 @@ LICENSE="BSD"
 SLOT="0/3" # libpcre2-posix.so version
 IUSE="
 bzip2 +jit libedit +pcre16 +pcre32 +readline static-libs unicode valgrind zlib
-ebuild_revision_33
+ebuild_revision_34
 "
 REQUIRED_USE="
 	?? (
