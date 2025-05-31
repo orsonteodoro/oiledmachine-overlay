@@ -14,8 +14,6 @@ EAPI="8"
 
 CFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO TC"
-FLAG_O_MATIC_FILTER_LTO=1
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 RUSTFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="IO TC"
 CPU_FLAGS_ARM=(
@@ -105,7 +103,7 @@ IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang debug +jit lto rust-simd test
-ebuild_revision_15
+ebuild_revision_16
 "
 REQUIRED_USE="
 	rust-simd? (
