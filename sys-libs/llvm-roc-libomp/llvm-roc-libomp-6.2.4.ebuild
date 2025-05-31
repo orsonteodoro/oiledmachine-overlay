@@ -3,7 +3,6 @@
 
 EAPI=8
 
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 LLVM_TARGETS_CPU_COMPAT=(
 	llvm_targets_X86
 )
@@ -128,7 +127,7 @@ ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 +archer -cuda +gdb-plugin -offload -ompt +ompd -rpc
-ebuild_revision_26
+ebuild_revision_27
 "
 
 gen_cuda_required_use() {
