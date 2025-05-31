@@ -13,7 +13,7 @@ UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_TPGO=1
 UOPTS_SUPPORT_TBOLT=1
 
-inherit flag-o-matic cflags-hardened multilib multilib-minimal toolchain-funcs uopts
+inherit flag-o-matic cflags-hardened check-compiler-switch multilib multilib-minimal toolchain-funcs uopts
 
 # On version updates, make sure to read the forum (https://sqlite.org/forum/forum)
 # for hints regarding test failures, backports, etc.
@@ -48,7 +48,7 @@ RESTRICT="
 SLOT="3"
 IUSE="
 debug doc icu +readline static-libs tcl test tools
-ebuild_revision_13
+ebuild_revision_14
 "
 REQUIRED_USE="
 	pgo? (
@@ -210,6 +210,7 @@ fossil_fetch() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	uopts_setup
 }
 
