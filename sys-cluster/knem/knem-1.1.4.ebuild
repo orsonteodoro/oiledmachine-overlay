@@ -9,7 +9,6 @@ BUILD_TARGETS="all"
 DKMS_MODULES=(
 	"knem driver/linux /kernel/../updates/"
 )
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 MAX_KERNEL_VER="5.7"
 MODULE_NAMES="knem(misc:${S}/driver/linux)"
 
@@ -39,7 +38,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 compress debug modules sign-modules
-ebuild_revision_3
+ebuild_revision_4
 "
 DEPEND="
 	sys-apps/hwloc:=
