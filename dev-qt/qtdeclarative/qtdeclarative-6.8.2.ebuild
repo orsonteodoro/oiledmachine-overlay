@@ -24,7 +24,7 @@ fi
 
 IUSE="
 accessibility +jit +network opengl qmlls +sql +ssl svg vulkan +widgets
-ebuild_revision_9
+ebuild_revision_10
 "
 
 RDEPEND="
