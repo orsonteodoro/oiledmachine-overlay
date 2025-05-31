@@ -52,7 +52,7 @@ IUSE="
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
 cacert test test-full +utils
-ebuild_revision_29
+ebuild_revision_30
 "
 REQUIRED_USE="
 	test-full? (
