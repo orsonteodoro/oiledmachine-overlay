@@ -61,7 +61,7 @@ TENSORFLOW_RUNTIME_COMMIT="70637966e2ec9afccc2cf4d51ed2391172b1b9c5"	# https://g
 UPB_COMMIT="9effcbcb27f0a665f9f345030188c0b291e32482"			# https://github.com/tensorflow/tensorflow/blob/v2.15.0/tensorflow/workspace2.bzl#L807
 ZLIB_PV="1.2.13"							# https://github.com/tensorflow/tensorflow/blob/v2.15.0/tensorflow/workspace2.bzl#L484
 
-inherit bazel distutils-r1 flag-o-matic
+inherit bazel check-compiler-switch distutils-r1 flag-o-matic
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/text-${PV}"
@@ -134,6 +134,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 big-endian doc python test
+ebuild_revision_2
 "
 REQUIRED_USE+="
 "
@@ -190,6 +191,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	python_setup
 	# Building with clang is broken.
 	local s
@@ -211,6 +213,12 @@ eerror "You need slot 9-12 for sys-devel/gcc."
 	export GCC_HOST_COMPILER_PATH="${EPREFIX}/usr/${CHOST}/gcc-bin/${gcc_slot}/${CHOST}-gcc-${GCC_SLOT}"
 	export HOST_C_COMPILER="${EPREFIX}/usr/bin/${CC}"
 	export HOST_CXX_COMPILER="${EPREFIX}/usr/bin/${CXX}"
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 }
 
 src_unpack() {
