@@ -12,7 +12,7 @@ DISTUTILS_USE_PEP517="setuptools"
 FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 PYTHON_COMPAT=( "python3_"{10..13} )
 
-inherit distutils-r1 flag-o-matic
+inherit check-compiler-switch distutils-r1 flag-o-matic
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${MY_P}"
@@ -25,7 +25,10 @@ DESCRIPTION="Pythonic bindings for FFmpeg's libraries."
 HOMEPAGE="https://github.com/PyAV-Org/PyAV https://pypi.org/project/av/"
 LICENSE="BSD"
 SLOT="0"
-IUSE="lint test ebuild_revision_1"
+IUSE="
+lint test
+ebuild_revision_2
+"
 RESTRICT="
 	!test? (
 		test
@@ -68,11 +71,17 @@ BDEPEND="
 distutils_enable_tests "pytest"
 
 pkg_setup() {
+	check-compiler-switch_start
 	python_setup
 	export CC="${CHOST}-gcc"
 	export CXX="${CHOST}-g++"
 	export CPP="${CC} -E"
 	strip-unsupported-flags
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 }
 
 check_cython() {
