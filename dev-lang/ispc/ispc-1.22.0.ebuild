@@ -6,6 +6,8 @@ EAPI=8
 # For the version, see
 # https://github.com/ispc/ispc/blob/main/common/version.h
 
+CFLAGS_HARDENED_CI_SANITIZERS="asan"
+CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="16"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="PE"
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 CMAKE_MAKEFILE_GENERATOR="emake"
@@ -17,7 +19,7 @@ UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 
-inherit check-compiler-switch cmake flag-o-matic python-any-r1 llvm toolchain-funcs uopts
+inherit check-compiler-switch cflags-hardened cmake flag-o-matic python-any-r1 llvm toolchain-funcs uopts
 
 if [[ "${PV}" =~ "9999" ]]; then
 	inherit git-r3
@@ -309,11 +311,17 @@ einfo "CXX:  ${CXX}"
 			'-Wl,--icf=all'
 	fi
 
+	if use pgo && tc-is-clang ; then
+		append-flags -mllvm -vp-counters-per-site=8
+	fi
+
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
+
+	cflags-hardened_append
 
 	local mycmakeargs=(
 		-DARM_ENABLED=$(usex arm)
@@ -332,18 +340,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 			-DISPC_FAST_MATH=ON
 		)
 	fi
-	if use pgo && tc-is-clang ; then
-		append-flags -mllvm -vp-counters-per-site=8
-	fi
-	if use pgo || use bolt ; then
-		if ! is-flagq '-O3' ; then
-ewarn "PGO has -O3 in CFLAGS as default ON upstream but not currently as a per-package CFLAGS."
-		fi
-	else
-		if ! is-flagq '-O3' ; then
-ewarn "PGO has -O3 in CFLAGS as default ON upstream for release builds but not currently as a per-package CFLAGS."
-		fi
-	fi
+
 	if use pgo || use bolt ; then
 		# These will need to be built in PGO phase for BOLT.
 		mycmakeargs+=(
