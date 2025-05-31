@@ -6,7 +6,7 @@ EAPI=8
 CMAKE_MAKEFILE_GENERATOR="emake"
 CMAKE_BUILD_TYPE="Release"
 
-inherit bash-completion-r1 cmake flag-o-matic optfeature qmake-utils toolchain-funcs
+inherit bash-completion-r1 check-compiler-switch cmake flag-o-matic optfeature qmake-utils toolchain-funcs
 
 S="${WORKDIR}/${PN}-v.${PV}"
 SRC_URI="
@@ -31,6 +31,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="
 +bash-completion +cli +curl +ffmpeg +fftw +graphicsmagick +jpeg -lto -opencv
 +openexr +openmp +png static-libs +tiff wayland +X +zlib
+ebuild_revision_2
 "
 REQUIRED_USE="
 "
@@ -94,6 +95,10 @@ BDEPEND="
 	)
 "
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_prepare() {
 	cp -a \
 		"${DISTDIR}/gmic_stdlib_community$(ver_rs 1- '').h" \
@@ -122,6 +127,11 @@ eerror "You need at least GCC 4.7.x or Clang >= 3.3 for C++11-specific compiler"
 eerror "flags"
 eerror
 		die
+	fi
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
 	fi
 
 	local mycmakeargs=(

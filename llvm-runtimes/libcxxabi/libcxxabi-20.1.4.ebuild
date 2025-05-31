@@ -28,7 +28,7 @@ FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 GCC_SLOT=14
 PYTHON_COMPAT=( "python3_12" )
 
-inherit cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
+inherit check-compiler-switch cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
 
 LLVM_MAX_SLOT=${LLVM_MAJOR}
 KEYWORDS="
@@ -46,9 +46,9 @@ LICENSE="
 "
 SLOT="0"
 IUSE+="
-hardened +static-libs test
-ebuild_revision_9
 ${LLVM_EBUILDS_LLVM20_REVISION}
+hardened +static-libs test
+ebuild_revision_10
 "
 # in 15.x, cxxabi.h is moving from libcxx to libcxxabi
 RDEPEND="
@@ -117,6 +117,7 @@ eerror
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	python-any-r1_pkg_setup
 	check_libstdcxx
 }
@@ -302,6 +303,17 @@ einfo
 	local _cfi_vcall=$(_usex_cfi_vcall)
 	local _cross_dso_cfi=$(_usex_cfi_cross_dso)
 	local _shadowcallstack=$(_usex_shadowcallstack)
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+		_lto=0
+		_cfi=0
+		_cfi_cast=0
+		_cfi_icall=0
+		_cfi_vcall=0
+		_cross_dso_cfi=0
+	fi
 
 	filter-flags \
 		'--param=ssp-buffer-size=*' \

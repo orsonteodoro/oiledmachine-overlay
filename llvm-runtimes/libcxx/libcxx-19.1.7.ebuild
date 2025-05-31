@@ -36,7 +36,7 @@ LLVM_COMPONENTS=(
 LLVM_MAX_SLOT=${PV%%.*}
 PYTHON_COMPAT=( "python3_12" )
 
-inherit cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
+inherit check-compiler-switch cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
 
 KEYWORDS="
 amd64 arm arm64 ~loong ~riscv sparc x86 ~arm64-macos ~x64-macos
@@ -65,7 +65,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM19_REVISION}
 hardened +libcxxabi +static-libs test +threads
-ebuild_revision_12
+ebuild_revision_13
 "
 RDEPEND="
 	!libcxxabi? (
@@ -232,6 +232,7 @@ _usex_lto() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	python-any-r1_pkg_setup
 
 	if ! use libcxxabi && ! tc-is-gcc ; then
@@ -320,10 +321,8 @@ eerror
 		strip-unsupported-flags
 	fi
 
-einfo
 einfo "CC:\t${CC}"
 einfo "CXX:\t${CXX}"
-einfo
 
 	local _lto=$(_usex_lto)
 	local _cfi=$(_usex_cfi)
@@ -332,6 +331,17 @@ einfo
 	local _cfi_vcall=$(_usex_cfi_vcall)
 	local _cross_dso_cfi=$(_usex_cfi_cross_dso)
 	local _shadowcallstack=$(_usex_shadowcallstack)
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+		_lto=0
+		_cfi=0
+		_cfi_cast=0
+		_cfi_icall=0
+		_cfi_vcall=0
+		_cross_dso_cfi=0
+	fi
 
 	filter-flags \
 		'--param=ssp-buffer-size=*' \

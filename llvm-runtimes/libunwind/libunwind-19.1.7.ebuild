@@ -31,7 +31,7 @@ KEYWORDS="
 amd64 arm arm64 ~loong ~mips ~ppc ppc64 ~riscv sparc x86 ~arm64-macos ~x64-macos
 "
 
-inherit cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1
+inherit check-compiler-switch cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1
 inherit toolchain-funcs
 
 DESCRIPTION="C++ runtime stack unwinder from LLVM"
@@ -47,6 +47,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM19_REVISION}
 +clang debug static-libs test
+ebuild_revision_2
 "
 REQUIRED_USE="
 	test? (
@@ -93,6 +94,7 @@ python_check_deps() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	python-any-r1_pkg_setup
 }
 
@@ -109,6 +111,11 @@ multilib_src_configure() {
 		export CXX="${CHOST}-clang++"
 		export CPP="${CC} -E"
 		strip-unsupported-flags
+	fi
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
 	fi
 
 	# link to compiler-rt

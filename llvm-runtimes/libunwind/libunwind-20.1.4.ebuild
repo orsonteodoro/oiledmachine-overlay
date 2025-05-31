@@ -27,7 +27,7 @@ FLAG_O_MATIC_FILTER_LTO=1
 FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 PYTHON_COMPAT=( "python3_12" )
 
-inherit cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1
+inherit check-compiler-switch cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1
 inherit toolchain-funcs
 
 KEYWORDS="
@@ -48,6 +48,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM20_REVISION}
 +clang debug static-libs test
+ebuild_revision_2
 "
 REQUIRED_USE="
 	test? (
@@ -95,6 +96,7 @@ python_check_deps() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	python-any-r1_pkg_setup
 }
 
@@ -111,6 +113,11 @@ multilib_src_configure() {
 		export CXX="${CHOST}-clang++"
 		export CPP="${CC} -E"
 		strip-unsupported-flags
+	fi
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
 	fi
 
 	# link to compiler-rt

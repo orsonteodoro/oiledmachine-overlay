@@ -7,7 +7,7 @@ CMAKE_MAKEFILE_GENERATOR="emake"
 CMAKE_BUILD_TYPE="Release"
 GMIC_QT_DIR="gmic-qt-v.${PV}"
 
-inherit cmake flag-o-matic qmake-utils toolchain-funcs
+inherit check-compiler-switch cmake flag-o-matic qmake-utils toolchain-funcs
 
 S="${WORKDIR}/${PN}-v.${PV}"
 SRC_URI="
@@ -26,6 +26,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="
 +curl +fftw gimp2 gimp3 lto openmp qt5 qt6 standalone
+ebuild_revision_2
 "
 REQUIRED_USE="
 	?? (
@@ -144,6 +145,10 @@ eerror
 	fi
 }
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_prepare() {
 	cd "${S}" || die
 	patch -p1 -i "${FILESDIR}/gmic-3.1.6-stripping.patch" || die
@@ -180,6 +185,11 @@ eerror "You need at least GCC 4.7.x or Clang >= 3.3 for C++11-specific compiler"
 eerror "flags"
 eerror
 		die
+	fi
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
 	fi
 
 	# For "lrelease"
