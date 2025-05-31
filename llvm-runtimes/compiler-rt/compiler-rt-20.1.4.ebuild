@@ -26,7 +26,7 @@ unset -f _llvm_set_globals
 FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 PYTHON_COMPAT=( "python3_12" )
 
-inherit cmake crossdev flag-o-matic llvm.org llvm-utils python-any-r1
+inherit check-compiler-switch cmake crossdev flag-o-matic llvm.org llvm-utils python-any-r1
 inherit toolchain-funcs
 
 KEYWORDS="
@@ -55,7 +55,7 @@ SLOT="${LLVM_MAJOR}"
 IUSE+="
 ${LLVM_EBUILDS_LLVM20_REVISION}
 +abi_x86_32 abi_x86_64 +atomic-builtins +clang +debug test
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	atomic-builtins? (
@@ -108,6 +108,7 @@ ewarn
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	if target_is_not_host || tc-is-cross-compiler ; then
 		# strips vars like CFLAGS="-march=x86_64-v3" for non-x86 architectures
 		CHOST="${CTARGET}" \
@@ -142,9 +143,15 @@ src_configure() {
 		if ! tc-is-clang ; then
 			local -x CC="${CHOST}-clang"
 			local -x CXX="${CHOST}-clang++"
+			local -x CPP="${CC} -E"
 		fi
 
 		strip-unsupported-flags
+	fi
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
 	fi
 
 	if ! test_compiler && ! test_compiler ; then
