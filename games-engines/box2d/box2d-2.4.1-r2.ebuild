@@ -14,7 +14,7 @@ UOPTS_SUPPORT_EPGO=1
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 
-inherit cmake multilib-build toolchain-funcs uopts
+inherit check-compiler-switch cmake multilib-build toolchain-funcs uopts
 
 KEYWORDS="~amd64 ~x86"
 S="${WORKDIR}/${P}"
@@ -37,7 +37,10 @@ LICENSE="MIT"
 RESTRICT="mirror"
 SLOT_MAJ="$(ver_cut 1-2 ${PV})" # API change between 2.4.1 breaks 2.4.0
 SLOT="${SLOT_MAJ}/${PV}"
-IUSE+=" doc examples static-libs test ebuild_revision_1"
+IUSE+="
+doc examples static-libs test
+ebuild_revision_2
+"
 REQUIRED_USE+="
 	bolt? (
 		examples
@@ -84,6 +87,7 @@ get_lib_types() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	uopts_setup
 
 	# The GLFW does not allow for software rendering.
@@ -176,6 +180,11 @@ _src_configure() {
 	einfo "BUILD_DIR:  ${BUILD_DIR}"
 	cd "${CMAKE_USE_DIR}" || die
 	uopts_src_configure
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	# Performance drops observed with testbed's tumbler test.
 	replace-flags -Os -O2

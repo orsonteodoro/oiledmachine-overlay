@@ -15,7 +15,7 @@ UOPTS_SUPPORT_EPGO=1
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 
-inherit cmake multilib-build toolchain-funcs uopts
+inherit check-compiler-switch cmake multilib-build toolchain-funcs uopts
 
 KEYWORDS="~amd64 ~x86"
 S="${WORKDIR}/${P}/Box2D"
@@ -30,7 +30,10 @@ LICENSE="ZLIB"
 RESTRICT="mirror"
 SLOT_MAJ="$(ver_cut 1-2 ${PV})"
 SLOT="${SLOT_MAJ}/${PV}"
-IUSE+=" doc examples static-libs test ebuild_revision_1"
+IUSE+="
+doc examples static-libs test
+ebuild_revision_2
+"
 REQUIRED_USE+="
 	test? (
 		examples
@@ -81,6 +84,7 @@ get_lib_types() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	uopts_setup
 
 	# The GLFW does not allow for software rendering.
@@ -157,6 +161,11 @@ _src_configure() {
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 	cd "${CMAKE_USE_DIR}" || die
 	uopts_src_configure
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	# Big performance drop with Testbed's tumbler with all -O* flags
 
