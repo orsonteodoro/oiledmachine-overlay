@@ -18,7 +18,7 @@ UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 
-inherit cmake flag-o-matic python-any-r1 llvm toolchain-funcs uopts
+inherit check-compiler-switch cmake flag-o-matic python-any-r1 llvm toolchain-funcs uopts
 
 if [[ "${PV}" =~ "9999" ]]; then
 	inherit git-r3
@@ -62,7 +62,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +cpu +examples -fast-math lto +openmp pthread tbb test +video_cards_intel -xe
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE+="
 	kernel_Darwin? (
@@ -163,6 +163,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
 		if use "llvm_slot_${s}" ; then
@@ -304,6 +305,13 @@ einfo "CXX:  ${CXX}"
 			'-Wl,--lto-O3' \
 			'-Wl,--icf=all'
 	fi
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	local mycmakeargs=(
 		-DARM_ENABLED=$(usex arm)
 		-DBUILD_GPU=$(usex video_cards_intel)
@@ -324,6 +332,7 @@ einfo "CXX:  ${CXX}"
 	if use pgo && tc-is-clang ; then
 		append-flags -mllvm -vp-counters-per-site=8
 	fi
+
 	if use pgo || use bolt ; then
 		if ! is-flagq '-O3' ; then
 ewarn "PGO has -O3 in CFLAGS as default ON upstream but not currently as a per-package CFLAGS."
