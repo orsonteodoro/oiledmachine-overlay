@@ -31,7 +31,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="
 +bash-completion +cli +curl +ffmpeg +fftw +graphicsmagick +jpeg -lto -opencv
 +openexr +openmp +png static-libs +tiff wayland +X +zlib
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 "
