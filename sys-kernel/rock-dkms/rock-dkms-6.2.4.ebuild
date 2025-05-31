@@ -51,7 +51,7 @@ else
 	KV_SUPPORTED_MIN="5.15"
 fi
 
-inherit check-compiler-switch flag-o-matic linux-info toolchain-funcs
+inherit flag-o-matic linux-info toolchain-funcs
 
 #KEYWORDS="~amd64"
 S="${WORKDIR}/usr/src/amdgpu-${SUFFIX}"
@@ -110,7 +110,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 acpi +build +check-mmu-notifier +compress custom-kernel directgma gzip hybrid-graphics
 numa +sign-modules ssg strict-pairing xz zstd
-ebuild_revision_19
+ebuild_revision_20
 "
 REQUIRED_USE="
 	compress? (
@@ -513,7 +513,6 @@ ewarn
 }
 
 pkg_setup() {
-	check-compiler-switch_start
 	show_supported_kv
 	if [[ -z "${ROCK_DKMS_KERNELS_6_2}" ]] ; then
 eerror
