@@ -37,7 +37,7 @@ UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=0 # bolt and asan/ubsan are mutually exclusive
 UOPTS_SUPPORT_TPGO=1
 
-inherit autotools cflags-hardened multilib-minimal uopts
+inherit autotools cflags-hardened check-compiler-switch multilib-minimal uopts
 
 KEYWORDS+=" ~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 S="${WORKDIR}/${MY_PN}-${PV}"
@@ -61,7 +61,7 @@ SLOT="0/2"
 IUSE+="
 ${TRAINERS[@]}
 custom-cflags debug lazy-lock prof static-libs stats test xmalloc
-ebuild_revision_34
+ebuild_revision_35
 "
 REQUIRED_USE+="
 	!custom-cflags? (
@@ -114,6 +114,7 @@ einfo "Editing ${f}:  Removing ${lib}"
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	uopts_setup
 	if use test && [[ "${FEATURES}" =~ "userpriv" ]] && [[ -n "${CFLAGS_HARDENED_SANITIZERS_COMPAT}" ]] ; then
 eerror "FEATURES=\"${FEATURES} -userpriv\" needs to be added as a per-package env file in order to run tests."
@@ -156,6 +157,12 @@ _src_configure_compiler() {
 
 _src_configure() {
 	uopts_src_configure
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	filter-flags -fprofile-arcs
 	if [[ "${PGO_PHASE}" == "PGI" ]] ; then
 		append-flags -fprofile-arcs
