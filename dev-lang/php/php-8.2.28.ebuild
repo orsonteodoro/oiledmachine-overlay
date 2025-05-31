@@ -4,8 +4,10 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="language-runtime security-critical sensitive-data untrusted-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF FS HO IO SO UAF"
+CFLAGS_HARDENED_CI_SANITIZERS="asan ubsan"
+CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="17"
+CFLAGS_HARDENED_USE_CASES="jit language-runtime security-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS FS HO IO MC NPD OOBA OOBR OOBW PE SO TC UAF UM"
 GCC_SLOT=12
 LLVM_COMPAT=( {19..15} )
 LLVM_MAX_SLOT=${LLVM_COMPAT[0]}
@@ -91,7 +93,7 @@ trainer-ext-reflection
 trainer-ext-spl
 trainer-ext-standard
 trainer-zend
-ebuild_revision_16
+ebuild_revision_17
 "
 # Without USE=readline or libedit, the interactive "php -a" CLI will hang.
 # The Oracle instant client provides its own incompatible ldap library.
