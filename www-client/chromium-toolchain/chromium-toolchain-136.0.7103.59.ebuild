@@ -24,7 +24,7 @@ RUST_PV="${RUST_MIN_VER}"
 VENDORED_CLANG_VER="llvmorg-${LLVM_OFFICIAL_SLOT}-init-${LLVM_N_COMMITS}-g${LLVM_COMMIT:0:8}-${LLVM_SUB_REV}"
 VENDORED_RUST_VER="${RUST_COMMIT}-${RUST_SUB_REV}"
 
-inherit edo flag-o-matic ninja-utils
+inherit check-compiler-switch edo flag-o-matic ninja-utils
 
 KEYWORDS="~amd64"
 S="${WORKDIR}"
@@ -156,7 +156,9 @@ LICENSE="
 
 RESTRICT="binchecks mirror strip test"
 SLOT="0/${PV%.*}.x"
-IUSE+=" ebuild_revision_6"
+IUSE+="
+ebuild_revision_7
+"
 REQUIRED_USE="
 "
 RDEPEND+="
@@ -170,6 +172,7 @@ DOCS=( )
 
 pkg_setup() {
 	dhms_start
+	check-compiler-switch_start
 }
 
 src_unpack() {
@@ -251,6 +254,12 @@ src_compile() {
 	export CC="clang"
 	export CXX="clang++"
 	export CPP="${CC} -E"
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	build_gn
 
 	cd "${WORKDIR}/clang" || die
