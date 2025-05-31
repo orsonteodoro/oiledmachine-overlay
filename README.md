@@ -459,9 +459,9 @@ cflags-hardened and rustflags-hardened.
 The above flags accept 1, 0, or unset.  By default CFI is opt-out (0) and
 retpoline is default opt-in (1).
 
-* CFLAGS_HARDENED_AUTO_SANITIZE_USER - Select between `asan`, `lsan`, `msan`, `tsan`, `ubsan` for C/C++ programs.
+* CFLAGS_HARDENED_AUTO_SANITIZE_USER - Select between `asan`, `hwasan`, `lsan`, `msan`, `tsan`, `ubsan` for C/C++ programs.
 * CFLAGS_HARDENED_PROTECT_SPECTRUM_USER - Select between `arm-cfi`, `cet`, `llvm-cfi`, `retpoline`, `none` for C/C++ programs.
-* RUSTFLAGS_HARDENED_AUTO_SANITIZE_USER - Select between `asan`, `lsan`, `msan`, `tsan`, `ubsan` for Rust programs.
+* RUSTFLAGS_HARDENED_AUTO_SANITIZE_USER - Select between `asan`, `hwasan`, `lsan`, `msan`, `tsan`, `ubsan` for Rust programs.
 * RUSTFLAGS_HARDENED_PROTECT_SPECTRUM_USER - Select between `arm-cfi`, `cet`, `llvm-cfi`, `retpoline`, `none` for Rust programs.
 
 The *FLAGS_HARDENED_PROTECT_SPECTRUM_USER options can be used to optimize
