@@ -286,7 +286,7 @@ ewarn
 	fi
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
-	export CPP="${CC} -E"
+	export CPP=$(tc-getCPP)
 	strip-unsupported-flags
 	if tc-is-gcc ; then
 		if ver_test $(gcc-major-version) -lt "${GCC_MIN_SLOT}" ; then
@@ -414,6 +414,7 @@ _src_configure_compiler() {
 	else
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)
+		export CPP="${CC} -E"
 	fi
 	strip-unsupported-flags
 }
