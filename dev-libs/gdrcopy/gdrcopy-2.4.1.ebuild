@@ -57,7 +57,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="0"
 IUSE="
-ebuild_revision_3
+ebuild_revision_4
 "
 gen_driver_versions() {
 	local ver
