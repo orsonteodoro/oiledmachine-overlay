@@ -481,6 +481,10 @@ ewarn "Rebuild with GCC 12 if \"Assumed value of MB_LEN_MAX wrong\" pops up."
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
+	if is-flagq '-flto*' && check-compiler-switch_is_lto_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	if use prefix && [[ "${CHOST}" == *-darwin* ]] ; then
 		mycmakeargs+=(
