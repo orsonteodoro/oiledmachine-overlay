@@ -73,7 +73,7 @@ LICENSE="ZLIB"
 SLOT="0/1" # subslot = SONAME
 IUSE="
 ${TRAINERS[@]}
-minizip minizip-utils pgo static-libs backup-copy
+minizip minizip-utils pgo static-libs
 ebuild_revision_19
 "
 REQUIRED_USE="
@@ -1176,18 +1176,6 @@ src_install() {
 			cd "${BUILD_DIR}" || die
 			_install
 			uopts_src_install
-			if use backup-copy ; then
-				local p=$(realpath "${ESYSROOT}/$(get_libdir)/libz.so.1")
-				einfo "DEBUG:  p=${p}"
-				if [[ -e "${p}" ]] ; then
-					einfo "Making backup of ${p}"
-					exeinto "/$(get_libdir)"
-					local bn=$(basename "${p}")
-					newexe "${p}" "${bn}.bak"
-				else
-					ewarn "No backup made for ${ABI}"
-				fi
-			fi
 		done
 		multilib_check_headers
 	}

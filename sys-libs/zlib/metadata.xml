@@ -56,9 +56,6 @@
 
   -->
   <use>
-    <flag name="backup-copy">
-      Make a backup copy of the previous libz.so
-    </flag>
     <flag name="minizip">
       Include the minizip library for quick and dirty zip extraction
     </flag>
