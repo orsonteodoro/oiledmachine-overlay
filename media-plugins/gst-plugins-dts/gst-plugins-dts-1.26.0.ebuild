@@ -13,7 +13,7 @@ KEYWORDS="~amd64 ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~x86"
 DESCRIPTION="DTS audio decoder plugin for GStreamer"
 IUSE="
 +orc
-ebuild_revision_12
+ebuild_revision_13
 "
 RDEPEND="
 	media-libs/libdca[${MULTILIB_USEDEP}]
