@@ -293,7 +293,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
 aot cet cfi clang cuda esimd_emulator hardened native-cpu openmp rocm +sycl-fusion test
 video_cards_intel
-ebuild_revision_5
+ebuild_revision_6
 "
 gen_cuda_required_use() {
 	local x
@@ -648,6 +648,7 @@ src_configure() {
 
 	strip-unsupported-flags
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
