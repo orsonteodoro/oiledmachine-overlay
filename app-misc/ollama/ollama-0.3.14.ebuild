@@ -2456,7 +2456,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl native openblas openrc rocm
 sandbox systemd unrestrict video_cards_intel
-ebuild_revision_70
+ebuild_revision_71
 "
 gen_rocm_required_use() {
 	local s
