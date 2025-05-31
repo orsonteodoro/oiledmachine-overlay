@@ -1962,7 +1962,7 @@ eerror "Set CFLAGS_HARDENED_SANITIZER_CC_SLOT in /etc/portage/make.conf to eithe
 		fi
 	fi
 
-	if [[ "${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("IO"|"IU") ]] ; then
+	if [[ "${auto_sanitize}" =~ "ubsan" && "${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("IO"|"IU") ]] ; then
 		sanitizers+=" signed-integer-overflow"
 	fi
 

@@ -1327,7 +1327,7 @@ eerror "Set RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT in /etc/portage/make.conf to ei
 		fi
 	fi
 
-	#if [[ "${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("IO"|"IU") ]] ; then
+	#if [[ "${auto_sanitize}" =~ "ubsan" && "${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("IO"|"IU") ]] ; then
 	#	sanitizers+=" signed-integer-overflow"
 	#fi
 
