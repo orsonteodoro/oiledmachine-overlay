@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO"
 
 AUTOTOOLS_AUTO_DEPEND="no"
@@ -29,7 +29,7 @@ LICENSE="MIT"
 SLOT="0"
 IUSE="
 examples static-libs test unicode
-ebuild_revision_12
+ebuild_revision_13
 "
 RESTRICT="
 	!test? (
