@@ -47,7 +47,7 @@ ROCM_IUSE=(
 )
 UCG_COMMIT="aaa65c30af52115aa601c9b17529cb295797864f"
 
-inherit autotools dep-prepare flag-o-matic rocm linux-info toolchain-funcs
+inherit autotools check-compiler-switch dep-prepare flag-o-matic rocm linux-info toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${PN}-${MY_PV}"
@@ -68,7 +68,7 @@ ${ROCM_IUSE[@]}
 clang +cma cuda custom-kernel dc debug devx dm dmabuf fuse3 gcc examples gdrcopy
 hip-clang knem mlx5-dv +numa +openmp rc rdma rocm roce threads tm ud verbs xpmem
 video_cards_intel
-ebuild_revision_3
+ebuild_revision_4
 "
 get_cuda_targets_required_use() {
 	local x
@@ -486,6 +486,7 @@ eerror
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	[[ "${MERGE_TYPE}" != "binary" ]] && use openmp && tc-check-openmp
 	_init_rocm_variables
 	if use clang ; then
@@ -629,6 +630,12 @@ _configure() {
 	fi
 	${CC} --version || die
 	strip-unsupported-flags
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	if use debug ; then
 		filter-flags '-fuse-ld=*'
 		append-ldflags '-fuse-ld=bfd'
