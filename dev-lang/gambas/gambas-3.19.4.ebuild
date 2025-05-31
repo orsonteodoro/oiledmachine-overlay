@@ -47,7 +47,7 @@ IUSE+="
 ${GAMBAS_MODULES_DEFAULTS[@]}
 debug doc +glsl +glu +ide +jit +glsl +sge remove_deprecated +remove_not_finished
 remove_stable_not_finished +remove_unstable smtp +webview
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE+="
 	glsl? (
