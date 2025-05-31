@@ -6,7 +6,7 @@ EAPI=8
 
 GCC_SLOT="11"
 
-inherit cmake
+inherit check-compiler-switch cmake
 
 if [[ "${PV}" =~ "99999999" ]] ; then
 	IUSE+=" fallback-commit"
@@ -33,7 +33,8 @@ CUDA_TARGETS_COMPAT=(
 	sm_60
 )
 IUSE+="
-	${CUDA_TARGETS_COMPAT[@]/#/+cuda_targets_}
+${CUDA_TARGETS_COMPAT[@]/#/+cuda_targets_}
+ebuild_revision_2
 "
 REQUIRED_USE="
 	${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
@@ -65,6 +66,10 @@ BDEPEND+="
 "
 DOCS=( LICENSE )
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_unpack() {
 	if [[ "${PV}" =~ "99999999" ]] ; then
 		if use fallback-commit ; then
@@ -81,6 +86,11 @@ src_configure() {
 	export CC="${CHOST}-gcc-11"
 	export CXX="${CHOST}-g++-11"
 	export CPP="${CC} -E"
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	local gcc_current_profile=$(gcc-config -c)
 	local gcc_current_profile_slot=${gcc_current_profile##*-}
