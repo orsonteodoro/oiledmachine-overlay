@@ -481,34 +481,6 @@ retpoline is default opt-in (1).
 * RUSTFLAGS_HARDENED_AUTO_SANITIZE_USER - Select between `asan`, `hwasan`, `lsan`, `msan`, `tsan`, `ubsan` for Rust programs.
 * RUSTFLAGS_HARDENED_PROTECT_SPECTRUM_USER - Select between `arm-cfi`, `cet`, `llvm-cfi`, `retpoline`, `none` for Rust programs.
 
-```
-Examples:
-
-Contents of /etc/portage/make.conf
-CFLAGS_HARDENED_AUTO_SANITIZE_USER="asan ubsan"
-CFLAGS_HARDENED_FHARDENED_USER=1
-CFLAGS_HARDENED_SANITIZER_CC_NAME="gcc"
-CFLAGS_HARDENED_SANITIZER_CC_SLOT=13
-DETECT_COMPILER_LTO_CC_NAME="gcc"
-DETECT_COMPILER_LTO_CC_SLOT=13
-RUSTFLAGS_HARDENED_AUTO_SANITIZE_USER="asan ubsan"
-RUSTFLAGS_HARDENED_SANITIZER_CC_NAME="gcc"
-RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT=13
-
-Contents of /etc/portage/env/libxml.conf
-CFLAGS_HARDENED_FHARDENED_USER=0
-CFLAGS_HARDENED_CF_PROTECTION_USER=1
-CFLAGS_HARDENED_TOLERANCE_USER="2.0"
-
-Contents of /etc/portage/env/mesa.conf
-CFLAGS_HARDENED_TOLERANCE_USER="1.0"
-
-Contents of /etc/portage/env/package.env:
-dev-libs/libxml2 libxml2.conf
-media-libs/mesa mesa.conf
-
-```
-
 The *FLAGS_HARDENED_PROTECT_SPECTRUM_USER options can be used to optimize
 security for either confidentiality or for execution-integrity on a per-package
 basis or override the auto selected option.  `retpoline` is associated with
@@ -534,6 +506,39 @@ compromised confidentiality, run attacker code, and irreversable damage.
 For `llvm-cfi` using `RUSTFLAGS_HARDENED_LLVM_CFI_USER` doesn't automatically
 allow you to use it.  The package must be marked and tested with
 `RUSTFLAGS_HARDENED_LLVM_CFI=1` before it can be used.
+
+```
+Examples:
+
+Contents of /etc/portage/make.conf
+CFLAGS_HARDENED_AUTO_SANITIZE_USER="asan ubsan"
+CFLAGS_HARDENED_FHARDENED_USER=1
+CFLAGS_HARDENED_SANITIZER_CC_NAME="gcc"
+CFLAGS_HARDENED_SANITIZER_CC_SLOT=13
+DETECT_COMPILER_SWITCH_LTO_CC_NAME="gcc"
+DETECT_COMPILER_SWITCH_LTO_CC_SLOT=13
+RUSTFLAGS_HARDENED_AUTO_SANITIZE_USER="asan ubsan"
+RUSTFLAGS_HARDENED_SANITIZER_CC_NAME="gcc"
+RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT=13
+
+Contents of /etc/portage/env/libxml.conf
+CFLAGS_HARDENED_FHARDENED_USER=0
+CFLAGS_HARDENED_CF_PROTECTION_USER=1
+CFLAGS_HARDENED_TOLERANCE_USER="2.0"
+
+Contents of /etc/portage/env/mesa.conf
+CFLAGS_HARDENED_TOLERANCE_USER="1.0"
+
+Contents of /etc/portage/env/package.env:
+dev-libs/libxml2 libxml2.conf
+media-libs/mesa mesa.conf
+
+```
+
+For eclass documentation, see the options marked `@USER_VARIABLE` in
+* [check-compiler-switch.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/check-compiler-switch.eclass)
+* [cflags-hardened.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/cflags-hardened.eclass)
+* [rustflags-hardened.eclass](https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/rustflags-hardened.eclass)
 
 Why environment variables over per-package cflags?  Because the eclasses have
 scripting capabilities, but the per-package env files do not have this

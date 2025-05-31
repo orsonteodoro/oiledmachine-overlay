@@ -1318,14 +1318,14 @@ einfo "rustc host:  ${host}"
 	if [[ -n "${auto_sanitize}" ]] ; then
 		if [[ -z "${RUSTFLAGS_HARDENED_SANITIZER_CC_NAME}" ]] ; then
 eerror "Set RUSTFLAGS_HARDENED_SANITIZER_CC_NAME in /etc/portage/make.conf to either gcc or clang"
-eerror "RUSTFLAGS_HARDENED_SANITIZER_CC_NAME should be the same as DETECT_COMPILER_LTO_CC_NAME"
+eerror "RUSTFLAGS_HARDENED_SANITIZER_CC_NAME should be the same as DETECT_COMPILER_SWITCH_LTO_CC_NAME"
 			die
 		fi
 		if [[ -z "${RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT}" ]] ; then
 eerror "Set RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT in /etc/portage/make.conf to one of the following"
 eerror "For GCC, ${_RUSTFLAGS_SANITIZER_GCC_SLOTS_COMPAT}."
 eerror "For Clang, ${_RUSTFLAGS_SANITIZER_Clang_SLOTS_COMPAT}."
-eerror "RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT should be the same as DETECT_COMPILER_LTO_CC_SLOT"
+eerror "RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT should be the same as DETECT_COMPILER_SWITCH_LTO_CC_SLOT"
 			die
 		fi
 	fi
