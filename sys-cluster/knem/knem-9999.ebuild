@@ -14,7 +14,7 @@ MAX_KERNEL_VER="6.4"
 MAX_KERNEL_COMMIT="4b4ebc6b"
 MODULE_NAMES="knem(misc:${S}/driver/linux)"
 
-inherit autotools flag-o-matic linux-mod linux-info toolchain-funcs udev
+inherit autotools check-compiler-switch flag-o-matic linux-mod linux-info toolchain-funcs udev
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -40,7 +40,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 compress debug modules sign-modules
-ebuild_revision_1
+ebuild_revision_2
 "
 DEPEND="
 	sys-apps/hwloc:=
@@ -194,6 +194,7 @@ _compress_modules() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	linux-info_pkg_setup
 	check_module
 	check_sign_module
