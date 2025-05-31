@@ -72,7 +72,7 @@ UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 WRK_PV="1.2.1" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 
-inherit bash-completion-r1 cflags-hardened check-linker flag-o-matic
+inherit bash-completion-r1 cflags-hardened check-compiler-switch check-linker flag-o-matic
 inherit flag-o-matic-om lcnr linux-info multiprocessing ninja-utils pax-utils
 inherit python-any-r1 sandbox-changes toolchain-funcs uopts xdg-utils
 
@@ -124,7 +124,7 @@ $(gen_iuse_pgo)
 acorn +asm +corepack cpu_flags_x86_sse2 -custom-optimization debug doc fips +icu
 inspector npm man mold pax-kernel pgo -pointer-compression +snapshot +ssl
 system-icu +system-ssl systemtap test
-ebuild_revision_39
+ebuild_revision_40
 "
 
 gen_required_use_pgo() {
@@ -273,6 +273,7 @@ check_kernel_config() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	python-any-r1_pkg_setup
 	check_kernel_config
 
@@ -637,9 +638,15 @@ _src_configure() {
 		--shared-zlib
 	)
 
-	[[ "${LTO_TYPE}" =~ "lto"     ]] && myconf+=( --enable-lto )
-	[[ "${LTO_TYPE}" =~ "thinlto" ]] && myconf+=( --with-thinlto )
-	[[ "${LTO_TYPE}" =~ "goldlto" ]] && myconf+=( --with-goldlto )
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	else
+		[[ "${LTO_TYPE}" =~ "lto"     ]] && myconf+=( --enable-lto )
+		[[ "${LTO_TYPE}" =~ "thinlto" ]] && myconf+=( --with-thinlto )
+		[[ "${LTO_TYPE}" =~ "goldlto" ]] && myconf+=( --with-goldlto )
+	fi
 
 	# LTO compiler flags are handled by configure.py itself
 	# Ban mold only for this slot for license compatibility reasons.
