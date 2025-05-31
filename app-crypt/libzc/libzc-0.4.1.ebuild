@@ -14,7 +14,7 @@ TRAINERS=(
 	"libzc_trainers_bruteforce"
 )
 
-inherit autotools flag-o-matic toolchain-funcs uopts
+inherit autotools check-compiler-switch flag-o-matic toolchain-funcs uopts
 
 KEYWORDS="
 ~amd64
@@ -35,6 +35,7 @@ SLOT="0"
 IUSE="
 ${TRAINERS[@]}
 test
+ebuild_revision_2
 "
 REQUIRED_USE="
 	bolt? (
@@ -68,6 +69,7 @@ BDEPEND="
 "
 
 pkg_setup() {
+	check-compiler-switch_start
 	uopts_setup
 }
 
@@ -98,6 +100,12 @@ _src_configure() {
 	tc-is-gcc && replace-flags '-O*' '-O1' # >= -O2 breaks with instrumented PGO by gcc.
 	tc-is-clang && replace-flags '-O*' '-O3'
 	strip-unsupported-flags
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	local len=${ZC_PW_MAXLEN:-16}
 	einfo "ZC_PW_MAXLEN:  ${len}"
 	sed -i -e "s|ZC_PW_MAXLEN 16|ZC_PW_MAXLEN ${len}|g" lib/libzc.h || die
