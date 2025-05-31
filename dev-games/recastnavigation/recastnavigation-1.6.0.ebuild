@@ -8,7 +8,7 @@ EAPI=8
 EXPECTED_FINGERPRINT="disable"
 FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 
-inherit cmake flag-o-matic git-r3 multilib-minimal toolchain-funcs
+inherit check-compiler-switch cmake flag-o-matic git-r3 multilib-minimal toolchain-funcs
 
 if [[ ${PV} =~ "99999999" ]] ; then
 	IUSE+=" fallback-commit"
@@ -33,6 +33,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 debug +demo -dt-polyref64 -dt-virtual-queryfilter +examples static-libs test
 wayland X
+ebuild_revision_2
 "
 REQUIRED_USE+="
 	demo? (
@@ -64,6 +65,7 @@ BDEPEND+="
 "
 
 pkg_setup() {
+	check-compiler-switch_start
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
@@ -76,8 +78,14 @@ pkg_setup() {
 	if tc-is-gcc ; then
 		local gcc_pv=$(gcc-fullversion)
 		if ver_test "${gcc_pv}" -lt "8.0" ; then
-			die "You need at least gcc 8.0 to compile."
+eerror "You need at least gcc 8.0 to compile."
+			die
 		fi
+	fi
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
 	fi
 }
 
