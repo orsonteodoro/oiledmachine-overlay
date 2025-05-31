@@ -12,7 +12,7 @@ KEYWORDS="~amd64 ~arm64"
 
 DESCRIPTION="Video overlay plugin based on cairo for GStreamer"
 IUSE="
-ebuild_revision_12
+ebuild_revision_13
 "
 RDEPEND="
 	>=x11-libs/cairo-1.10.0[${MULTILIB_USEDEP},glib]
