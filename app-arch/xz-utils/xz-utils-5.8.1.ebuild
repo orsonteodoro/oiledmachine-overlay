@@ -64,7 +64,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 cpu_flags_arm_crc32 doc +extra-filters pgo nls static-libs
-ebuild_revision_12
+ebuild_revision_13
 "
 if [[ "${PV}" != "9999" ]] ; then
 	BDEPEND+="
