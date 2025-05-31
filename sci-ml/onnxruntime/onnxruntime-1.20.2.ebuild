@@ -315,7 +315,7 @@ XNNPACK_COMMIT="309b75c9e56e0a674bf78d59872ce131f814dfb6" # From cmake/deps.txt
 ZLIB_COMMIT_1="209717dd69cd62f24cbacc4758261ae2dd78cfac" # dawn (DAWN_COMMIT_1) dep
 ZLIB_COMMIT_2="d3aea2341cdeaf7e717bc257a59aa7a9407d318a" # dawn/angle dep
 
-inherit cflags-hardened cmake cuda dep-prepare distutils-r1 flag-o-matic llvm-r1 rocm toolchain-funcs
+inherit cflags-hardened check-compiler-switch cmake cuda dep-prepare distutils-r1 flag-o-matic llvm-r1 rocm toolchain-funcs
 
 # Vendored packages need to be added or reviewed for compleness.
 # The reason for delay is submodule hell (the analog of dll hell or dependency hell).
@@ -863,7 +863,7 @@ ${ROCM_SLOTS[@]}
 openvino-auto
 openvino-hetero
 openvino-multi
-ebuild_revision_14
+ebuild_revision_15
 "
 gen_cuda_required_use() {
 	local x
@@ -1219,6 +1219,7 @@ _PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	python-single-r1_pkg_setup
 	use llvm && llvm-r1_pkg_setup
 
@@ -1918,6 +1919,12 @@ src_configure() {
 		$(test-flags-CXX -Wno-error=maybe-uninitialized) \
 		$(test-flags-CXX -Wno-array-bounds) \
 		$(test-flags-CXX -Wno-stringop-overread)
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	cflags-hardened_append
 

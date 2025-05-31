@@ -365,7 +365,7 @@ ${ROCM_SLOTS[@]}
 openvino-auto
 openvino-hetero
 openvino-multi
-ebuild_revision_14
+ebuild_revision_15
 "
 gen_cuda_required_use() {
 	local x
