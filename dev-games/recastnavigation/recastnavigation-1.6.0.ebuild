@@ -32,7 +32,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 debug +demo -dt-polyref64 -dt-virtual-queryfilter +examples static-libs test
 wayland X
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE+="
 	demo? (
@@ -77,6 +77,7 @@ eerror "You need at least gcc 8.0 to compile."
 		fi
 	fi
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
