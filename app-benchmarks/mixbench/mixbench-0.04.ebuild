@@ -50,7 +50,7 @@ SLOT="0"
 IUSE+="
 ${ROCM_SLOTS[@]}
 cuda doc rocm opencl sycl
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	rocm? (
