@@ -2581,7 +2581,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
 sandbox systemd unrestrict video_cards_intel
-ebuild_revision_77
+ebuild_revision_78
 "
 gen_rocm_required_use() {
 	local s
@@ -3276,6 +3276,7 @@ einfo "gcc_slot: ${gcc_slot}"
 
 	strip-unsupported-flags
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
