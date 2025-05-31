@@ -3,8 +3,6 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_CF_PROTECTION=0									# Untested or unverified
-CFLAGS_HARDENED_FHARDENED=0									# Untested or unverified
 CFLAGS_HARDENED_USE_CASES="sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="RC PE"
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/madler.asc"
