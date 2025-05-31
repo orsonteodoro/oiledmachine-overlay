@@ -42,7 +42,7 @@ SLOT="2"
 IUSE="
 X +adobe-cff brotli bzip2 +cleartype-hinting debug doc fontforge harfbuzz +png
 static-libs svg utils
-ebuild_revision_13
+ebuild_revision_14
 "
 RDEPEND="
 	>=sys-libs/zlib-1.2.8-r1[${MULTILIB_USEDEP}]
