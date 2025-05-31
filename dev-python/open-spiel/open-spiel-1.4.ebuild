@@ -8,7 +8,6 @@ EAPI=8
 
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="setuptools"
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream only tests up to 3.11
 
 # Limited by jax
@@ -31,7 +30,7 @@ RESTRICT="mirror test" # Not tested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 doc -eigen -go -jax -julia -libnop -python-misc -pytorch -rust -tensorflow test
-ebuild_revision_3
+ebuild_revision_4
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
