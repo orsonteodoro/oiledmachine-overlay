@@ -3,8 +3,6 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_CF_PROTECTION=0											# Untested or unverified
-CFLAGS_HARDENED_FHARDENED=0											# Untested or unverified
 #CFLAGS_HARDENED_SANITIZERS="address undefined"
 CFLAGS_HARDENED_TOLERANCE="4.00"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data system-set untrusted-data"
@@ -44,7 +42,7 @@ SLOT="2"
 IUSE="
 dbus debug +elf doc +introspection +mime selinux static-libs sysprof systemtap
 test utils xattr
-ebuild_revision_17
+ebuild_revision_18
 "
 #RESTRICT="
 #	!test? (
