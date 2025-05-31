@@ -406,7 +406,7 @@ src_prepare() {
 
 src_configure() {
 	llvm_prepend_path "${LLVM_MAJOR}"
-	llvm-ebuilds_fix_toolchain
+	llvm-ebuilds_fix_toolchain # Compiler switch
 
 	# LLVM_ENABLE_ASSERTIONS=NO does not guarantee this for us, #614844
 	use debug || local -x CPPFLAGS="${CPPFLAGS} -DNDEBUG"
@@ -476,6 +476,7 @@ ewarn "Rebuild with GCC 12 if \"Assumed value of MB_LEN_MAX wrong\" pops up."
 		strip-unsupported-flags
 	fi
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto

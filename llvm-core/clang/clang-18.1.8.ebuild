@@ -24,7 +24,7 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-inherit cmake dhms flag-o-matic git-r3 hip-versions llvm.org llvm-utils multilib
+inherit check-compiler-switch cmake dhms flag-o-matic git-r3 hip-versions llvm.org llvm-utils multilib
 inherit multilib-minimal ninja-utils prefix python-single-r1 toolchain-funcs
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux ~arm64-macos ~x64-macos"
@@ -585,12 +585,18 @@ _src_configure_compiler() {
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
 	llvm_prepend_path "${LLVM_MAJOR}"
-	llvm-ebuilds_fix_toolchain
+	llvm-ebuilds_fix_toolchain # Compiler switch
 }
 
 _src_configure() {
 	llvm_prepend_path "${LLVM_MAJOR}"
-	llvm-ebuilds_fix_toolchain
+	llvm-ebuilds_fix_toolchain # Compiler switch
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	# LLVM can have very high memory consumption while linking,
 	# exhausting the limit on 32-bit linker executable

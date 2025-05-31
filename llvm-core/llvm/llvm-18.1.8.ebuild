@@ -25,7 +25,7 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-inherit cmake dhms llvm.org multilib-minimal pax-utils python-any-r1 toolchain-funcs
+inherit check-compiler-switch cmake dhms llvm.org multilib-minimal pax-utils python-any-r1 toolchain-funcs
 inherit flag-o-matic git-r3 ninja-utils
 
 KEYWORDS="
@@ -562,7 +562,12 @@ _src_configure_compiler() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
-	llvm-ebuilds_fix_toolchain
+	llvm-ebuilds_fix_toolchain # Compiler switch
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 }
 
 _src_configure() {

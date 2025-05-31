@@ -51,7 +51,7 @@ FORTRAN_STANDARD="77 90"
 MY_PV=$(ver_cut 1-3)
 PYTHON_COMPAT=( "python3_"{11..12} )
 
-inherit cmake flag-o-matic fortran-2 python-any-r1 toolchain-funcs
+inherit check-compiler-switch cmake flag-o-matic fortran-2 python-any-r1 toolchain-funcs
 if [[ "${MAGMA_ROCM}" == "1" ]] ; then
 	inherit rocm
 else
@@ -340,6 +340,7 @@ PATCHES=(
 S="${WORKDIR}/${PN}-${MY_PV}"
 
 icl-magma-v2_8_pkg_setup() {
+	check-compiler-switch_start
 	fortran-2_pkg_setup
 	python-any-r1_pkg_setup
 	if [[ "${MAGMA_ROCM}" == "1" ]] ; then
@@ -657,6 +658,12 @@ get_cuda_flags() {
 
 icl-magma-v2_8_src_configure() {
 	replace-flags '-O0' '-O1'
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	local mycmakeargs=(
 		-DBUILD_SHARED_LIBS=ON

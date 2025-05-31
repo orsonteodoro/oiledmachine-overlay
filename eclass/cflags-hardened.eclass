@@ -1955,6 +1955,16 @@ eerror "For GCC:  ${_CFLAGS_SANITIZER_GCC_SLOTS_COMPAT}"
 		sanitizers_compat=0
 	fi
 
+	# Strips LTO which strips CFI
+	local disable_cfi=0
+	if [[ "${_CARGO_ECLASS}" == "1" ]] ; then
+		disable_cfi=1
+	fi
+
+	# Strips LTO which strips CFI
+	if [[ "${FLAG_O_MATIC_FILTER_LTO}" == 1 ]] ; then
+		disable_cfi=1
+	fi
 
 	if [[ -n "${auto_sanitize}" && "${sanitizers_compat}" == "1" ]] ; then
 einfo "Auto-sanitizing package:  Yes"

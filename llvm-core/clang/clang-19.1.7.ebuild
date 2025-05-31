@@ -31,7 +31,7 @@ amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv sparc x86 ~amd64-linux
 ~arm64-macos ~x64-macos
 "
 
-inherit cmake dhms flag-o-matic git-r3 hip-versions llvm.org multilib
+inherit check-compiler-switch cmake dhms flag-o-matic git-r3 hip-versions llvm.org multilib
 inherit multilib-minimal ninja-utils prefix python-single-r1 toolchain-funcs
 
 DESCRIPTION="C language family frontend for LLVM"
@@ -593,11 +593,17 @@ _src_configure_compiler() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
-	llvm-ebuilds_fix_toolchain
+	llvm-ebuilds_fix_toolchain # Compiler switch
 }
 
 _src_configure() {
-	llvm-ebuilds_fix_toolchain
+	llvm-ebuilds_fix_toolchain # Compiler switch
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	# LLVM can have very high memory consumption while linking,
 	# exhausting the limit on 32-bit linker executable

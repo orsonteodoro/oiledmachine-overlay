@@ -35,7 +35,7 @@ unset -f _blender_set_globals
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO IO SO"
 CFLAGS_HARDENED_USE_CASES="ip-assets untrusted-data"
 
-inherit cflags-hardened cuda check-reqs cmake dhms flag-o-matic hip-versions llvm pax-utils
+inherit cflags-hardened check-compiler-switch cuda check-reqs cmake dhms flag-o-matic hip-versions llvm pax-utils
 inherit python-single-r1 rocm toolchain-funcs xdg
 
 DESCRIPTION="3D Creation/Animation/Publishing System"
@@ -325,6 +325,7 @@ eerror
 
 blender_pkg_setup() {
 	dhms_start
+	check-compiler-switch_start
 	local s
 	for s in ${LLVM_COMPAT[@]} ; do
 		if use "llvm_slot_${s}" ; then
@@ -337,6 +338,13 @@ blender_pkg_setup() {
 	python-single-r1_pkg_setup
 	check_cpu
 	check_optimal_compiler_for_cycles_x86
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	check_embree
 	check_compiler
 	if declare -f _blender_pkg_setup >/dev/null 2>&1 ; then
