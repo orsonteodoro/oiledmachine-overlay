@@ -10,7 +10,6 @@ EAPI=8
 # MKL_DNN is oneDNN 2.2.4 with additional custom commits.
 
 CMAKE_BUILD_TYPE=Release
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 LEGACY_TBB_SLOT="2"
 LLVM_COMPAT=( {16..10} ) # Based on 2.0.1
 LLVM_SLOT="${LLVM_COMPAT[0]}"
@@ -50,7 +49,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +apps +built-in-weights +clang doc gcc openimageio
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}

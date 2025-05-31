@@ -29,7 +29,6 @@ CUDA_TARGETS_COMPAT=(
 	sm_90
 )
 CUTLASS_COMMIT="66d9cddc832c1cdc2b30a8755274f7f74640cfe6"
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 inherit hip-versions
 HIP_VERSIONS=(
 	"${HIP_5_5_VERSION}"
@@ -91,7 +90,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
 aot +apps +built-in-weights +clang cpu cuda doc gcc openimageio rocm sycl
-ebuild_revision_5
+ebuild_revision_6
 "
 
 gen_required_use_cuda_targets() {
