@@ -26,7 +26,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="
 +curl +fftw gimp2 gimp3 lto openmp qt5 qt6 standalone
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	?? (
@@ -188,6 +188,7 @@ eerror
 	fi
 
 	lto_option=()
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		lto_option=(
