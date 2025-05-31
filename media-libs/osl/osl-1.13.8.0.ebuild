@@ -96,7 +96,7 @@ ${CPU_FEATURES[@]%:*}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 cuda doc gui libcxx nofma optix partio python qt5 qt6 static-libs test wayland X
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE+="
 	^^ (
