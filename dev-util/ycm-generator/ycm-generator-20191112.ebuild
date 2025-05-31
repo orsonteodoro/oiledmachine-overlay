@@ -133,7 +133,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 +cmake +make kbuild +meson +qmake qt5 qt6 +wmake test
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE+="
 	cmake? (
@@ -431,6 +431,8 @@ eerror "ARCH not supported for wmake"
 	export CC="gcc"
 	export CXX="g++"
 	export CPP="${CC} -E"
+
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
