@@ -94,7 +94,7 @@ ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
 ax +blosc cuda doc -imath-half +jemalloc -log4cplus -numpy -python +static-libs
 -tbbmalloc nanovdb -no-concurrent-malloc -openexr -png test -vdb_lod +vdb_print
 -vdb_render -vdb_view
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE+="
 	^^ (
