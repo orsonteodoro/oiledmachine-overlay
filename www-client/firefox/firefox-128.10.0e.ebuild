@@ -479,7 +479,7 @@ alsa cups +dbus debug eme-free firejail +hardened -hwaccel jack +jemalloc
 +system-harfbuzz +system-icu +system-jpeg +system-libevent +system-libvpx
 system-png +system-webp systemd -telemetry +vaapi +wayland +webrtc wifi
 webspeech +X
-ebuild_revision_15
+ebuild_revision_16
 "
 
 # Firefox-only IUSE
