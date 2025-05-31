@@ -24,7 +24,7 @@ ROCM_SLOTS=(
 	rocm_6_1
 )
 
-inherit cmake flag-o-matic rocm
+inherit check-compiler-switch cmake flag-o-matic rocm
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	FALLBACK_COMMIT="440a133a6423840ce613d1eaab43cd586effd389" # Feb 23, 2024
@@ -49,8 +49,9 @@ HOMEPAGE="https://github.com/ekondis/mixbench"
 LICENSE="GPL-2"
 SLOT="0"
 IUSE+="
-	${ROCM_SLOTS[@]}
-	cuda doc rocm opencl openmp sycl ebuild_revision_0
+${ROCM_SLOTS[@]}
+cuda doc rocm opencl openmp sycl
+ebuild_revision_2
 "
 REQUIRED_USE="
 	rocm? (
@@ -128,6 +129,7 @@ _PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	if use rocm ; then
 		if use rocm_4_5 ; then
 			LLVM_SLOT="${HIP_4_5_LLVM_SLOT}"
@@ -296,6 +298,12 @@ src_configure() {
 						-DCMAKE_CXX_FLAGS="-fsycl -std=c++17 -fsycl-targets=${sycl_targets}"
 					)
 				fi
+
+				if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+					filter-lto
+				fi
+
 				if [[ "${x}" == "rocm" ]] ; then
 					CMAKE_USE_DIR="${S}/mixbench-${x2}" \
 					BUILD_DIR="${S}_${x2}_build" \
