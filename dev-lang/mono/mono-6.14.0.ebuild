@@ -23,7 +23,6 @@ CFLAGS_HARDENED_USE_CASES="jit language-runtime sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE BO PE"
 CHECKREQS_DISK_BUILD="4500M"
 DEBIANSHOOTOUTMONO_COMMIT="3fde2ced806c1fe7eed81120a40d99474fa009f0"
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 FLAMEGRAPH_COMMIT="f857ebc94bfe2a9bfdc4f1536ebacfb7466f69ba"
 JEMALLOC_PV="5.3.0" # 5.0.1 (circa 2018) was the upstream selected.
 MONO_CORECLR_COMMIT="90f7060935732bb624e1f325d23f63072433725f"
@@ -202,7 +201,7 @@ IUSE+="
 ${TRAINERS[@]}
 doc jemalloc jemalloc-assert jemalloc-custom-cflags jemalloc-default minimal nls
 pax-kernel xen
-ebuild_revision_15
+ebuild_revision_16
 "
 REQUIRED_USE+="
 	jemalloc-assert? (
