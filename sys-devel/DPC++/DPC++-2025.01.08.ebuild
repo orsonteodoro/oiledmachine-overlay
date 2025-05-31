@@ -183,7 +183,6 @@ GCC_COMPAT=( 13 ) # Should only list non EOL
 # that we are building here. Otherwise we run into problems running the compiler.
 CPU_EMUL_COMMIT="38f070a7e1de00d0398224e9d6306cc59010d147" # Same as 1.0.31 ; Search committer-date:<=2025-01-08
 EMHASH_COMMIT="96dcae6fac2f5f90ce97c9efee61a1d702ddd634"
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 LEVEL_ZERO_PV="1.19.2"
 LLVM_COMPAT=( 20 18 ) # Should only list non EOL
 LLVM_TARGET_USEDEPS=${ALL_LLVM_TARGETS[@]/%/(-)?}
@@ -294,7 +293,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
 aot cet cfi clang cuda esimd_emulator hardened native-cpu openmp rocm +sycl-fusion test
 video_cards_intel
-ebuild_revision_4
+ebuild_revision_5
 "
 gen_cuda_required_use() {
 	local x
