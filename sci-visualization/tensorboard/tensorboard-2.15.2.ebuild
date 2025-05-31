@@ -12,7 +12,7 @@ LLVM_COMPAT=( {17..15} )
 PYTHON_COMPAT=( "python3_"{10..11} )
 YARN_SLOT="1"
 
-inherit bazel flag-o-matic llvm-r1 distutils-r1 yarn
+inherit bazel check-compiler-switch flag-o-matic llvm-r1 distutils-r1 yarn
 
 KEYWORDS="~amd64 ~arm64"
 bazel_external_uris="
@@ -37,7 +37,10 @@ LICENSE="
 # The distro Apache-2.0 template doesn't have all-rights-reserved
 PROPERTIES="live"
 SLOT="0"
-IUSE+=" test ebuild_revision_3"
+IUSE+="
+test
+ebuild_revision_4
+"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
@@ -277,8 +280,15 @@ eerror
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	yarn_pkg_setup
 	use_clang
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 # Avoid /usr/include/bits/stdlib.h:86:3: error: "Assumed value of MB_LEN_MAX wrong" \
 	check_libstdcxx ${GCC_SLOT}
 	python_setup
