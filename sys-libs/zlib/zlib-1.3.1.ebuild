@@ -10,8 +10,8 @@ AUTOTOOLS_AUTO_DEPEND="no"
 # This is why newer flags like -fhardened, -cf-protection, -mbranch-protection, -mspeculative-load-hardening need to be actually tested.
 # For noobs, it is usually a complete clean format.
 # For pros, you can try to undo the damage with untested experimental flags with a stage 3 tarball.
-CFLAGS_HARDENED_CF_PROTECTION=0		# -cf-protection is untested or unverified
-CFLAGS_HARDENED_FHARDENED=0		# -fhardened is untested or unverified
+CFLAGS_HARDENED_CF_PROTECTION=0									# Untested or unverified
+CFLAGS_HARDENED_FHARDENED=0									# Untested or unverified
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF"
 
@@ -74,7 +74,7 @@ SLOT="0/1" # subslot = SONAME
 IUSE="
 ${TRAINERS[@]}
 minizip minizip-utils pgo static-libs backup-copy
-ebuild_revision_16
+ebuild_revision_17
 "
 REQUIRED_USE="
 	pgo? (
