@@ -68,7 +68,7 @@ ${ROCM_IUSE[@]}
 clang +cma cuda custom-kernel dc debug devx dm dmabuf fuse3 gcc examples gdrcopy
 hip-clang knem mlx5-dv +numa +openmp rc rdma rocm roce threads tm ud verbs xpmem
 video_cards_intel
-ebuild_revision_4
+ebuild_revision_5
 "
 get_cuda_targets_required_use() {
 	local x
