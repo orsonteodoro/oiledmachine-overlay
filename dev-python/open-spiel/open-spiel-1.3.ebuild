@@ -12,7 +12,7 @@ FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 PYTHON_COMPAT=( "python3_"{10..11} ) # Upstream only tests up to 3.11
 
 # Limited by jax
-inherit distutils-r1 flag-o-matic
+inherit check-compiler-switch distutils-r1 flag-o-matic
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
@@ -29,7 +29,10 @@ https://github.com/deepmind/open_spiel
 LICENSE="Apache-2.0"
 RESTRICT="mirror test" # Not tested
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" doc -eigen -go -jax -julia -libnop -python-misc -pytorch -rust -tensorflow test"
+IUSE+="
+doc -eigen -go -jax -julia -libnop -python-misc -pytorch -rust -tensorflow test
+ebuild_revision_2
+"
 RDEPEND+="
 	$(python_gen_cond_dep '
 		>=dev-python/attrs-19.3.0[${PYTHON_USEDEP}]
@@ -114,11 +117,22 @@ BDEPEND+="
 
 distutils_enable_sphinx="docs"
 
+pkg_setup() {
+	check-compiler-switch_start
+	python_setup
+}
+
 src_configure() {
 	export CC="${CHOST}-clang"
 	export CXX="${CHOST}-clang++"
 	export CPP="${CPP} -E"
 	strip-unsupported-flags
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	# If it is marked off, it means I don't have time to package it at this time.
 	export OPEN_SPIEL_BUILD_WITH_ACPC=OFF
 	export OPEN_SPIEL_BUILD_WITH_EIGEN=$(usex eigen "ON" "OFF")
