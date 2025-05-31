@@ -35,7 +35,7 @@ SLOT="0"
 IUSE="
 ${TRAINERS[@]}
 test
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	bolt? (
