@@ -23,7 +23,6 @@ MY_PN="jemalloc"
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO"
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 MULTILIB_WRAPPED_HEADERS=(
 	"/usr/include/jemalloc/jemalloc.h"
 )
@@ -61,7 +60,7 @@ SLOT="0/2"
 IUSE+="
 ${TRAINERS[@]}
 custom-cflags debug lazy-lock prof static-libs stats test xmalloc
-ebuild_revision_36
+ebuild_revision_37
 "
 REQUIRED_USE+="
 	!custom-cflags? (
