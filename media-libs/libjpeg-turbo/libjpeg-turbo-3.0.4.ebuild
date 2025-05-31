@@ -325,6 +325,11 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
+	if is-flagq '-flto*' && check-compiler-switch_is_lto_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 
 	if use pgo && tc-is-clang ; then

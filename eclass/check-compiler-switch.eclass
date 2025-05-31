@@ -15,18 +15,18 @@ _CHECK_COMPILER_SWITCH_ECLASS=1
 inherit toolchain-funcs
 
 DETECT_COMPILER_SWITCH_T0_ARCH=""		# Compiler architecture
-DETECT_COMPILER_SWITCH_T0_FINGERPRINT=""		# Compiler fingerprint
+DETECT_COMPILER_SWITCH_T0_FINGERPRINT=""	# Compiler fingerprint
 DETECT_COMPILER_SWITCH_T0_FLAVOR=""		# Compiler fork flavor
 DETECT_COMPILER_SWITCH_T0_SLOT=""		# Compiler slot
 DETECT_COMPILER_SWITCH_T0_VENDOR=""		# Compiler manufacturer
-DETECT_COMPILER_SWITCH_T0_VER=""			# Compiler full version
+DETECT_COMPILER_SWITCH_T0_VER=""		# Compiler full version
 
 DETECT_COMPILER_SWITCH_T1_ARCH=""		# Compiler architecture
-DETECT_COMPILER_SWITCH_T1_FINGERPRINT=""		# Compiler fingerprint
+DETECT_COMPILER_SWITCH_T1_FINGERPRINT=""	# Compiler fingerprint
 DETECT_COMPILER_SWITCH_T1_FLAVOR=""		# Compiler fork flavor
 DETECT_COMPILER_SWITCH_T1_SLOT=""		# Compiler slot
 DETECT_COMPILER_SWITCH_T1_VENDOR=""		# Compiler manufacturer
-DETECT_COMPILER_SWITCH_T1_VER=""			# Compiler full version
+DETECT_COMPILER_SWITCH_T1_VER=""		# Compiler full version
 
 # @FUNCTION:  check-compiler-switch_start
 # @DESCRIPTION:
@@ -140,10 +140,45 @@ check-compiler-switch_is_arch_slot_changed() {
 
 # @FUNCTION:  check-compiler-switch_is_arch_changed
 # @DESCRIPTION:
-# Did the compiler architecture stay the same?
+# Did the compiler architecture change?
 # @RETURN: 0 - yes, 1 - no
 check-compiler-switch_is_arch_changed() {
 	if [[ "${DETECT_COMPILER_SWITCH_T0_ARCH}" == "${DETECT_COMPILER_SWITCH_T1_ARCH}" ]] ; then
+		return 1
+	else
+		return 0
+	fi
+}
+
+# @FUNCTION:  check-compiler-switch_is_lto_changed
+# @DESCRIPTION:
+# Did the IR for the LTO compiler change?
+#
+# Use this if the package has a version range limit for compiler
+# (i.e. requires GCC 12) or installs a static-lib unconditionally.
+#
+check-compiler-switch_is_lto_changed() {
+	if [[ -z "${DETECT_COMPILER_LTO_CC_NAME}" || -z "${DETECT_COMPILER_LTO_CC_SLOT}" ]] ; then
+eerror
+eerror "You must set both DETECT_COMPILER_LTO_CC_NAME and"
+eerror "DETECT_COMPILER_LTO_CC_SLOT for LTO IR compatibility."
+eerror
+eerror "DETECT_COMPILER_LTO_CC_NAME - The name of the C/C++ compiler architecture"
+eerror "Valid values:  gcc, clang"
+eerror
+eerror "DETECT_COMPILER_LTO_CC_SLOT - A single compiler slot for LTO builds"
+eerror "Valid values for GCC:    11, 12, 13, 14, 15, 16"
+eerror "Valid values for Clang:  15, 16, 17, 18, 19, 20, 21"
+eerror
+eerror "For LLVM CFI users,  use the same values for"
+eerror "CFLAGS_HARDENED_SANITIZER_CC_NAME and CFLAGS_HARDENED_SANITIZER_CC_SLOT"
+eerror
+eerror "You can set the above variables or remove the -flto flag to remove this"
+eerror "fatal error."
+eerror
+		die
+	fi
+	if [[ "${DETECT_COMPILER_LTO_CC_NAME}" == "${DETECT_COMPILER_SWITCH_T1_ARCH}" && "${DETECT_COMPILER_LTO_CC_SLOT}" == "${DETECT_COMPILER_SWITCH_T1_SLOT}" ]] ; then
 		return 1
 	else
 		return 0
