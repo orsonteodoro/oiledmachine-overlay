@@ -21,7 +21,6 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 PYTHON_COMPAT=( "python3_11" )
 
 inherit check-compiler-switch cmake crossdev flag-o-matic llvm.org llvm-utils python-any-r1
@@ -52,7 +51,7 @@ SLOT="${LLVM_MAJOR}"
 IUSE+="
 ${LLVM_EBUILDS_LLVM18_REVISION}
 +abi_x86_32 abi_x86_64 +clang +debug test
-ebuild_revision_3
+ebuild_revision_4
 "
 DEPEND="
 	llvm-core/llvm:${LLVM_MAJOR}
