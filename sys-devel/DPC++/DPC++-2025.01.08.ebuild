@@ -294,7 +294,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
 aot cet cfi clang cuda esimd_emulator hardened native-cpu openmp rocm +sycl-fusion test
 video_cards_intel
-ebuild_revision_3
+ebuild_revision_4
 "
 gen_cuda_required_use() {
 	local x
