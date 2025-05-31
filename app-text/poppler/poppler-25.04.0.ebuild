@@ -48,7 +48,7 @@ LICENSE="
 IUSE="
 boost cairo cjk curl +cxx debug doc gpgme +introspection +jpeg +jpeg2k +lcms nss
 png qt5 qt6 test tiff +utils
-ebuild_revision_13
+ebuild_revision_14
 "
 RESTRICT="
 	!test? (
