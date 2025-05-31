@@ -20,7 +20,7 @@ KEYWORDS="
 DESCRIPTION="Change terminal modes, and perform non-blocking reads"
 SLOT="0"
 IUSE="
-ebuild_revision_8
+ebuild_revision_9
 "
 BDEPEND="
 	>=virtual/perl-ExtUtils-MakeMaker-6.580.0
