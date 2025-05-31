@@ -12,7 +12,7 @@ KEYWORDS="~amd64 ~arm64"
 
 DESCRIPTION="WebP image format support for GStreamer"
 IUSE="
-ebuild_revision_12
+ebuild_revision_13
 "
 RDEPEND="
 	>=media-libs/libwebp-0.2.1[${MULTILIB_USEDEP}]
