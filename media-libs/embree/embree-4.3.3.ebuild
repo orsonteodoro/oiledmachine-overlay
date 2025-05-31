@@ -47,7 +47,7 @@ CPU_FLAGS=(
 	${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
 )
 
-inherit cmake flag-o-matic linux-info python-r1 sandbox-changes toolchain-funcs uopts
+inherit check-compiler-switch cmake flag-o-matic linux-info python-r1 sandbox-changes toolchain-funcs uopts
 
 S="${WORKDIR}/embree-${PV}-blender"
 SRC_URI="
@@ -78,7 +78,7 @@ ${CPU_FLAGS[@]%:*}
 -compact-polys -custom-cflags custom-optimization debug doc doc-docfiles
 doc-html doc-images doc-man +hardened +filter-function gcc ispc raymask -ssp
 static-libs sycl +tbb test tutorials
-r1
+ebuild_revision_3
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -216,6 +216,7 @@ eerror
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	export CMAKE_BUILD_TYPE=$(usex debug "RelWithDebInfo" "Release")
 	if use kernel_linux ; then
 		CONFIG_CHECK="~TRANSPARENT_HUGEPAGE"
@@ -334,6 +335,12 @@ eerror
 	# https://github.com/embree/embree/issues/115
 
 	filter-flags -march=*
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 # FIXME:
 #	any option with a comment # default at the end of the line is
