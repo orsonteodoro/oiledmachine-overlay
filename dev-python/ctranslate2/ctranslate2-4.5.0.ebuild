@@ -13,7 +13,6 @@ CUTLASS_COMMIT="bbe579a9e3beb6ea6626d9227ec32d0dae119a49"
 CXXOPTS_COMMIT="c74846a891b3cc3bfa992d588b1295f528d43039"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 GOOGLETEST_COMMIT_1="f8d7d77c06936315286eb55f8de22cd23c188571"
 GOOGLETEST_COMMIT_2="6c58c11d5497b6ee1df3cb400ce30deb72fc28c0"
 PYTHON_COMPAT=( "python3_"{10..12} )
@@ -79,7 +78,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 +cli +cpu-dispatch -cuda -cudnn -dnnl dev -flash +openmp -tensor-parallel
 +mkl -openblas -profiling +python -ruy test
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	flash? (
