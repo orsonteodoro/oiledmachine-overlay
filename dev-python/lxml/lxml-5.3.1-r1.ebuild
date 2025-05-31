@@ -35,7 +35,10 @@ LICENSE="
 	PSF-2
 "
 SLOT="0"
-IUSE="doc examples +threads test"
+IUSE="
+doc examples +threads test
+ebuild_revision_1
+"
 RESTRICT="
 	!test? (
 		test
