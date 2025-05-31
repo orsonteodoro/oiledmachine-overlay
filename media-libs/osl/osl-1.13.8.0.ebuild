@@ -64,7 +64,7 @@ CPU_FEATURES=(
 	${X86_CPU_FEATURES[@]/#/cpu_flags_x86_}
 )
 
-inherit cmake cuda flag-o-matic llvm multilib-minimal python-single-r1 toolchain-funcs
+inherit check-compiler-switch cmake cuda flag-o-matic llvm multilib-minimal python-single-r1 toolchain-funcs
 
 S="${WORKDIR}/OpenShadingLanguage-${PV}"
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -97,7 +97,7 @@ ${CPU_FEATURES[@]%:*}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 cuda doc gui libcxx nofma optix partio python qt5 qt6 static-libs test wayland X
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE+="
 	^^ (
@@ -296,6 +296,7 @@ get_lib_type() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	# See https://github.com/imageworks/OpenShadingLanguage/blob/master/INSTALL.md
 	# Supports LLVM-{7..13} but should be the same throughout the system.
 
@@ -354,6 +355,12 @@ src_configure() {
 		export CXX="${CHOST}-clang++-${llvm_slot}"
 		export CPP="${CC} -E"
 		strip-unsupported-flags
+
+		check-compiler-switch_end
+		if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+			filter-lto
+		fi
 
 		local lib_type
 		for lib_type in $(get_lib_type) ; do
