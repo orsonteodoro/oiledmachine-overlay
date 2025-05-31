@@ -441,6 +441,23 @@ can break the entire toolchain which makes it very risky especially with LLVM CF
 Environment variables that control CFI.  New user environment variables for
 cflags-hardened and rustflags-hardened.
 
+* CFLAGS_HARDENED_SANITIZERS_DISABLE_USER - Per-package disable sanitizers for C/C++ packages.
+* RUSTFLAGS_HARDENED_SANITIZERS_DISABLE_USER - Per-package disable sanitizers for Rust packages.
+
+The above flag if set to 1 will disable sanitizers for a package.
+
+```
+Examples:
+
+Contents of /etc/portage/env/disable-sanitizers.conf:
+CFLAGS_HARDENED_SANITIZERS_DISABLE_USER=1
+RUSTFLAGS_HARDENED_SANITIZERS_DISABLE_USER=1
+
+Contents of /etc/portage/env/package.env:
+dev-libs/libxml2 disable-sanitizers.conf
+
+```
+
 * CFLAGS_HARDENED_CF_PROTECTION_USER - Add -fcf-protection for C/C++ packages.
 * CFLAGS_HARDENED_AUTO_SANITIZE_USER - Add ASan, LLVM CFI, TSan, UBSan for C/C++ packages.
 * CFLAGS_HARDENED_ARM_CFI_USER - Add -mbranch-protection for C/C++ packages.
@@ -463,6 +480,28 @@ retpoline is default opt-in (1).
 * CFLAGS_HARDENED_PROTECT_SPECTRUM_USER - Select between `arm-cfi`, `cet`, `llvm-cfi`, `retpoline`, `none` for C/C++ programs.
 * RUSTFLAGS_HARDENED_AUTO_SANITIZE_USER - Select between `asan`, `hwasan`, `lsan`, `msan`, `tsan`, `ubsan` for Rust programs.
 * RUSTFLAGS_HARDENED_PROTECT_SPECTRUM_USER - Select between `arm-cfi`, `cet`, `llvm-cfi`, `retpoline`, `none` for Rust programs.
+
+```
+Examples:
+
+Contents of /etc/portage/make.conf
+CFLAGS_HARDENED_AUTO_SANITIZE_USER="asan ubsan"
+RUSTFLAGS_HARDENED_AUTO_SANITIZE_USER="asan ubsan"
+CFLAGS_HARDENED_FHARDENED_USER=1
+
+Contents of /etc/portage/env/libxml.conf
+CFLAGS_HARDENED_FHARDENED_USER=0
+CFLAGS_HARDENED_CF_PROTECTION_USER=1
+CFLAGS_HARDENED_TOLERANCE_USER="2.0"
+
+Contents of /etc/portage/env/mesa.conf
+CFLAGS_HARDENED_TOLERANCE_USER="1.0"
+
+Contents of /etc/portage/env/package.env:
+dev-libs/libxml2 libxml2.conf
+media-libs/mesa mesa.conf
+
+```
 
 The *FLAGS_HARDENED_PROTECT_SPECTRUM_USER options can be used to optimize
 security for either confidentiality or for execution-integrity on a per-package
