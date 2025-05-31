@@ -7,7 +7,6 @@
 
 EAPI=8
 
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 LEGACY_TBB_SLOT="2"
 LLVM_COMPAT=( {15..10} ) # Max limit for Blender
 LLVM_COMPAT_AX=( {14..10} )
@@ -94,7 +93,7 @@ ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
 -alembic ax +blosc cuda doc -imath-half +jemalloc -jpeg -log4cplus -numpy
 -python +static-libs -tbbmalloc nanovdb -no-concurrent-malloc -openexr -png test
 -vdb_lod +vdb_print -vdb_render -vdb_view
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE+="
 	^^ (
