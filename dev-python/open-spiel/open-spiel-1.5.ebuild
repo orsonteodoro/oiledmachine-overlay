@@ -30,7 +30,7 @@ RESTRICT="mirror test" # Not tested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 doc -eigen -go -jax -julia -libnop -python-misc -pytorch -rust -tensorflow test
-ebuild_revision_4
+ebuild_revision_5
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
@@ -128,6 +128,7 @@ src_configure() {
 	export CPP="${CPP} -E"
 	strip-unsupported-flags
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
