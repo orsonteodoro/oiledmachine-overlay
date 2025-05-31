@@ -51,7 +51,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 autotype browser doc keeshare +network qt5 qt5compat qt6 test wayland X yubikey
-ebuild_revision_26
+ebuild_revision_27
 "
 RESTRICT="
 	!test? (
