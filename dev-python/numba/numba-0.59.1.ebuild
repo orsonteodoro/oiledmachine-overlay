@@ -8,7 +8,6 @@ EAPI=8
 
 DISTUTILS_USE_PEP517="setuptools"
 DISTUTILS_EXT=1
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 PYTHON_COMPAT=( "python3_"{10..12} )
 LLVM_COMPAT=( {15..14} )
 
@@ -43,7 +42,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 doc clang cuda openmp tbb
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	clang? (
