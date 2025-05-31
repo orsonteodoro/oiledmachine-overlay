@@ -27,7 +27,7 @@ LICENSE="BSD"
 SLOT="0"
 IUSE="
 lint test
-ebuild_revision_2
+ebuild_revision_3
 "
 RESTRICT="
 	!test? (
