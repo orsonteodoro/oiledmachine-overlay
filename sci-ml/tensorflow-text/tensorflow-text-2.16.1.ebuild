@@ -25,7 +25,6 @@ DISTUTILS_USE_PEP517="no"
 DOUBLE_CONVERSION_PV="3.2.0"						# https://github.com/tensorflow/tensorflow/blob/v2.16.1/tensorflow/workspace2.bzl#L644
 EIGEN_COMMIT="aa6964bf3a34fd607837dd8123bc42465185c4f8"			# https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/eigen3/workspace.bzl#L10
 FARMHASH_COMMIT="0d859a811870d10f53a594927d0d0b97573ad06d"		# https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/farmhash/workspace.bzl#L10
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 FLATBUFFERS_COMMIT="7d6d99c6befa635780a4e944d37ebfd58e68a108"		# https://github.com/tensorflow/tensorflow/blob/v2.16.1/third_party/flatbuffers/workspace.bzl#L8
 GCC_COMPAT=( {12..9} )
 GIFLIB_PV="5.2.1"							# https://github.com/tensorflow/tensorflow/blob/v2.16.1/tensorflow/workspace2.bzl#L350
@@ -134,7 +133,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 big-endian doc python test
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE+="
 "
