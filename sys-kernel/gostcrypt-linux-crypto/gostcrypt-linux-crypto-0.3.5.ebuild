@@ -4,8 +4,6 @@
 
 EAPI=8
 
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
-
 inherit flag-o-matic git-r3 linux-info linux-mod-r1
 
 S="${WORKDIR}"
@@ -26,7 +24,7 @@ RESTRICT="mirror strip" # No strip required by CONFIG_MODULE_SIG
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 custom-kernel doc
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 "
