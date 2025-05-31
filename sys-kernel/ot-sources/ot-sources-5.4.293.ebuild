@@ -3,7 +3,7 @@
 
 EAPI=8
 
-EBUILD_REV="ebuild_revision_4"
+EBUILD_REV="ebuild_revision_5"
 PATCH_BMQ_VER="5.4-r2"
 BMQ_FN="bmq_v${PATCH_BMQ_VER}.patch"
 GENPATCHES_VER="264"
