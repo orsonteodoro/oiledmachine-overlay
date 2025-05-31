@@ -700,7 +700,7 @@ ewarn "Replace individual library or executable files from stage3 tarball if"
 ewarn "hardened flags breaks system and use the per-package"
 ewarn "RUSTFLAGS_HARDENED_DISABLED=1 environment variable."
 ewarn
-ewarn "For safety, have an updated stage3 tarball pre-unpacked and ready."
+ewarn "For safety, have an updated stage3 tarball pre-unpacked."
 ewarn
 	fi
 
