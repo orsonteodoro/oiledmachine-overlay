@@ -105,7 +105,7 @@ IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang debug +jit lto rust-simd test
-ebuild_revision_14
+ebuild_revision_15
 "
 REQUIRED_USE="
 	rust-simd? (
@@ -597,15 +597,21 @@ eerror "Use eselect to switch rust to < 1.78 or disable the rust-simd USE flag."
 					--enable-linker=lld
 				)
 			fi
-			myeconfargs+=(
-				--enable-lto=cross
-			)
+			if ! check-compiler-switch_is_flavor_slot_changed ; then
+				myeconfargs+=(
+					--enable-lto=cross
+				)
+			fi
 
 		else
 			myeconfargs+=(
 				--enable-linker=bfd
-				--enable-lto=full
 			)
+			if ! check-compiler-switch_is_flavor_slot_changed ; then
+				myeconfargs+=(
+					--enable-lto=full
+				)
+			fi
 		fi
 	fi
 

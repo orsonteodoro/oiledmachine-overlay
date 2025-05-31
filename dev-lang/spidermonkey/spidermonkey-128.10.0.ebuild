@@ -104,7 +104,7 @@ IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang debug +jit lto rust-simd test
-ebuild_revision_14
+ebuild_revision_15
 "
 REQUIRED_USE="
 	rust-simd? (
@@ -699,11 +699,14 @@ eerror "Use eselect to switch rust to < 1.78 or disable the rust-simd USE flag."
 			else
 				mozconfig_add_options_ac '+lto' --enable-linker=lld
 			fi
-			mozconfig_add_options_ac '+lto' --enable-lto=cross
-
+			if ! check-compiler-switch_is_flavor_slot_changed ; then
+				mozconfig_add_options_ac '+lto' --enable-lto=cross
+			fi
 		else
 			mozconfig_add_options_ac '+lto' --enable-linker=bfd
-			mozconfig_add_options_ac '+lto' --enable-lto=full
+			if ! check-compiler-switch_is_flavor_slot_changed ; then
+				mozconfig_add_options_ac '+lto' --enable-lto=full
+			fi
 		fi
 	fi
 
