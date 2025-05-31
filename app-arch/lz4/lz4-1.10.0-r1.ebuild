@@ -3,8 +3,6 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_CF_PROTECTION=0									# Untested or unverified
-CFLAGS_HARDENED_FHARDENED=0									# Untested or unverified
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO IO"
 EMESON_SOURCE="${S}/build/meson"
@@ -30,7 +28,7 @@ RESTRICT="
 SLOT="0/1.10.0-meson"
 IUSE="
 static-libs test
-ebuild_revision_14
+ebuild_revision_15
 "
 
 PATCHES=(
