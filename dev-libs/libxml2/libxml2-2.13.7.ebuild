@@ -5,10 +5,8 @@ EAPI=8
 
 # Note: Please bump in sync with dev-libs/libxslt
 
-CFLAGS_HARDENED_CF_PROTECTION=0									# Untested or unverified
 CFLAGS_HARDENED_CI_SANITIZERS="asan msan ubsan"
 CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18" # U24
-CFLAGS_HARDENED_FHARDENED=0									# Untested or unverified
 CFLAGS_HARDENED_LANGS="c-lang"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO DF DOS FS HO IO MC NPD OOBA OOBR OOBW SO UAF"
@@ -48,7 +46,7 @@ LICENSE="MIT"
 SLOT="2"
 IUSE="
 examples icu lzma +python readline static-libs test
-ebuild_revision_15
+ebuild_revision_16
 "
 RESTRICT="
 	!test? (
