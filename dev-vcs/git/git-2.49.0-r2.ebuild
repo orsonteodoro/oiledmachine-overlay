@@ -10,8 +10,10 @@ DOC_VER="${MY_PV}"
 # Live ebuilds or git modules with no https (MITM attack) are assumed untrusted.
 # Added retpoline for passwords.
 CFLAGS_HARDENED_ASSEMBLERS="gas inline"
+CFLAGS_HARDENED_CF_PROTECTION=0									# Untested or unverified
 CFLAGS_HARDENED_CI_SANITIZERS="asan lsan ubsan"
 CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="20"
+CFLAGS_HARDENED_FHARDENED=0									# Untested or unverified
 CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=3
 CFLAGS_HARDENED_LANGS="asm c-lang"
 CFLAGS_HARDENED_USE_CASES="daemon network sensitive-data server system-set untrusted-data"
@@ -75,7 +77,7 @@ SLOT="0"
 IUSE="
 +curl cgi cvs doc keyring +gpg highlight +iconv mediawiki +nls +pcre perforce
 +perl +safe-directory selinux subversion test tk +webdav xinetd
-ebuild_revision_12
+ebuild_revision_13
 "
 
 # Common to both DEPEND and RDEPEND
