@@ -65,7 +65,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM20_REVISION}
 hardened +libcxxabi +static-libs test +threads
-ebuild_revision_15
+ebuild_revision_16
 "
 RDEPEND="
 	!libcxxabi? (
@@ -334,6 +334,7 @@ einfo
 	local _cross_dso_cfi=$(_usex_cfi_cross_dso)
 	local _shadowcallstack=$(_usex_shadowcallstack)
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
