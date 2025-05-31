@@ -7,7 +7,7 @@ CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data 
 FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 LLVM_COMPAT=( 19 )
 
-inherit cflags-hardened meson toolchain-funcs
+inherit cflags-hardened check-compiler-switch meson toolchain-funcs
 
 DESCRIPTION="A dynamic tiling Wayland compositor that doesn't sacrifice on its looks"
 HOMEPAGE="https://github.com/hyprwm/Hyprland"
@@ -29,7 +29,7 @@ SLOT="0"
 IUSE="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang legacy-renderer +qtutils systemd X
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE="
 	clang? (
@@ -112,6 +112,7 @@ BDEPEND="
 "
 
 pkg_setup() {
+	check-compiler-switch_start
 	[[ "${MERGE_TYPE}" == "binary" ]] && return
 
 	if use clang ; then
@@ -144,6 +145,12 @@ eerror "Switch to GCC 15"
 		fi
 	fi
 	strip-unsupported-flags
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	${CC} --version || die
 
 	if tc-is-clang && ! use clang ; then
