@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data system-set untrusted-data"
 # CVE-2018-16428 - network zero click attack, null pointer dereference (UBSAN)
 #CFLAGS_HARDENED_SANITIZERS="address undefined"
 CFLAGS_HARDENED_TOLERANCE="4.00"
@@ -42,7 +42,7 @@ SLOT="2"
 IUSE="
 dbus debug +elf doc +introspection +mime selinux static-libs sysprof systemtap
 test utils xattr
-ebuild_revision_14
+ebuild_revision_15
 "
 #RESTRICT="
 #	!test? (

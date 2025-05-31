@@ -6,6 +6,7 @@ EAPI=8
 
 # U 20.04
 
+CFLAGS_HARDENED_USE_CASES="system-set"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..11} "pypy3" )

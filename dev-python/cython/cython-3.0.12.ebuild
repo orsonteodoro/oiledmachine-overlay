@@ -9,6 +9,7 @@ EAPI=8
 MY_PV="${PV/_beta/b}"
 MY_PV="${MY_PV/_rc/rc}"
 
+CFLAGS_HARDENED_USE_CASES="system-set"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10..13} "pypy3" )
