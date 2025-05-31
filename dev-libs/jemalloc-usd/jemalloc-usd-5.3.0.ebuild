@@ -60,7 +60,7 @@ SLOT="0/2"
 IUSE+="
 ${TRAINERS[@]}
 custom-cflags debug lazy-lock prof static-libs stats test xmalloc
-ebuild_revision_38
+ebuild_revision_39
 "
 REQUIRED_USE+="
 	!custom-cflags? (
@@ -157,6 +157,7 @@ _src_configure_compiler() {
 _src_configure() {
 	uopts_src_configure
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
