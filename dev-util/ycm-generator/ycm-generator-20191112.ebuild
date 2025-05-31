@@ -13,7 +13,7 @@ OPENFOAM_PV="3.0.1"
 PYTHON_COMPAT=( "python3_11" )
 VIM_QT_PV="20170421"
 
-inherit distutils-r1
+inherit check-compiler-switch distutils-r1 flag-o-matic
 
 # Live ebuilds don't get KEYWORDed
 S="${WORKDIR}/YCM-Generator-${EGIT_COMMIT}"
@@ -133,7 +133,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 +cmake +make kbuild +meson +qmake qt5 qt6 +wmake test
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE+="
 	cmake? (
@@ -215,6 +215,11 @@ BDEPEND+="
 		)
 	)
 "
+
+pkg_setup() {
+	check-compiler-switch_start
+	python_setup
+}
 
 src_unpack() {
 	unpack "${PN}-${EGIT_COMMIT:0:7}.tar.gz"
@@ -421,6 +426,14 @@ test_wmake() {
 	else
 eerror "ARCH not supported for wmake"
 		die
+	fi
+
+	export CC="gcc"
+	export CXX="g++"
+	export CPP="${CC} -E"
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
 	fi
 
 	export WM_PROJECT_DIR="${WORKDIR}/OpenFOAM-$(ver_cut 1-2 ${OPENFOAM_PV}).x-version-${OPENFOAM_PV}"
