@@ -3,11 +3,13 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data system-set untrusted-data"
-# CVE-2018-16428 - network zero click attack, null pointer dereference (UBSAN)
+CFLAGS_HARDENED_CF_PROTECTION=0											# Untested or unverified
+CFLAGS_HARDENED_FHARDENED=0											# Untested or unverified
 #CFLAGS_HARDENED_SANITIZERS="address undefined"
 CFLAGS_HARDENED_TOLERANCE="4.00"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO IO"
+# CVE-2018-16428 - network zero click attack, null pointer dereference (UBSAN)
 INTROSPECTION_PN="gobject-introspection"
 INTROSPECTION_PV="1.82.0"
 INTROSPECTION_P="${INTROSPECTION_PN}-${INTROSPECTION_PV}"
@@ -42,7 +44,7 @@ SLOT="2"
 IUSE="
 dbus debug +elf doc +introspection +mime selinux static-libs sysprof systemtap
 test utils xattr
-ebuild_revision_15
+ebuild_revision_16
 "
 #RESTRICT="
 #	!test? (
