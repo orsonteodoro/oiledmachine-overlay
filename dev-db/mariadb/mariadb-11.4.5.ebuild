@@ -44,7 +44,7 @@ IUSE="
 innodb-lzo innodb-snappy jdbc jemalloc kerberos latin1 mroonga numa odbc oqgraph
 pam +perl profiling rocksdb selinux +server sphinx sst-rsync sst-mariabackup
 static systemd systemtap s3 tcmalloc test xml yassl
-ebuild_revision_17
+ebuild_revision_18
 "
 REQUIRED_USE="
 	?? (
@@ -401,6 +401,7 @@ _src_configure_compiler() {
 _src_configure() {
 	uopts_src_configure # Wipes -fprofile*
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
