@@ -149,6 +149,7 @@ python_check_deps() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	python-single-r1_pkg_setup
 
 # See https://bugs.gentoo.org/767700

@@ -213,6 +213,7 @@ PDEPEND+=" "$(gen_pdepend)
 
 pkg_setup() {
 	dhms_start
+	check-compiler-switch_start
 	python-single-r1_pkg_setup
 	if tc-is-gcc ; then
 		local gcc_slot=$(best_version "sys-devel/gcc" \

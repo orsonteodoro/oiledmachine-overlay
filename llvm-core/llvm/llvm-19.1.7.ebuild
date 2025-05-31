@@ -199,6 +199,7 @@ BDEPEND+="
 
 pkg_setup() {
 	dhms_start
+	check-compiler-switch_start
 	python_setup
 ewarn
 ewarn "To avoid long linking delays, close programs that produce unexpectedly"
