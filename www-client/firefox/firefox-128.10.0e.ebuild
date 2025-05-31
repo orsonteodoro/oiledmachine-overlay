@@ -117,8 +117,11 @@ unset __
 
 APPLY_OILEDMACHINE_OVERLAY_PATCHSET="1"
 BUILD_OBJ_DIR="" # global var not const
+CFLAGS_HARDENED_ASSEMBLERS="gas inline nasm yasm"
+CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan msan tsan"
+CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="copy-paste-password jit language-runtime network scripting sensitive-data untrusted-data web-browser"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO PE SO UAF UM TC"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO MC NPD OOBA OOBR OOBW PE SO UAF UM TC"
 RUSTFLAGS_HARDENED_USE_CASES="jit language-runtime network scripting sensitive-data untrusted-data web-browser"
 # One of the major sources of lag comes from dependencies.  These are strict to
 # match performance to competition or normal builds.
