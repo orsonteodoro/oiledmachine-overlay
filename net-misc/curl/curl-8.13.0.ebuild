@@ -34,10 +34,8 @@ EAPI=8
 # will break the login, pam, or a pam based module.
 # Disabled because it breaks clamav tests during build time so integration test issues.
 CFLAGS_HARDENED_ASSEMBLERS="gas inline"
-CFLAGS_HARDENED_CF_PROTECTION=0											# Untested or unverified
 CFLAGS_HARDENED_CI_SANITIZERS="asan msan tsan"
 CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18"
-CFLAGS_HARDENED_FHARDENED=0											# Untested or unverified
 #CFLAGS_HARDENED_SANITIZERS="address hwaddress"
 #CFLAGS_HARDENED_SANITIZERS_COMPAT="gcc" # llvm build failing with and without sanitizers.
 CFLAGS_HARDENED_TOLERANCE="4.0"
@@ -116,7 +114,7 @@ ${IMPLS[@]}
 +adns +alt-svc brotli debug ech +ftp gnutls gopher +hsts +http2 +http3 +httpsrr
 idn +imap kerberos ldap mbedtls +openssl +pop3 +psl +quic rtmp rustls samba
 sasl-scram +smtp ssh ssl static-libs test telnet +tftp +websockets zstd
-ebuild_revision_41
+ebuild_revision_42
 "
 RESTRICT="
 	!test? (
