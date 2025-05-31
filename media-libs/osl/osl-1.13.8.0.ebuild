@@ -11,7 +11,6 @@ EAPI=8
 CUDA_TARGETS_COMPAT=(
 	sm_60
 )
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 LLVM_COMPAT=( {15..13} ) # clang is 16 supported but not llvm 16
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 OPENEXR_V2_PV=(
@@ -97,7 +96,7 @@ ${CPU_FEATURES[@]%:*}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 cuda doc gui libcxx nofma optix partio python qt5 qt6 static-libs test wayland X
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE+="
 	^^ (
