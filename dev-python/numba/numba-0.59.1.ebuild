@@ -12,7 +12,7 @@ FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 PYTHON_COMPAT=( "python3_"{10..12} )
 LLVM_COMPAT=( {15..14} )
 
-inherit distutils-r1 flag-o-matic toolchain-funcs
+inherit check-compiler-switch distutils-r1 flag-o-matic toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
@@ -41,8 +41,9 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
-	${LLVM_COMPAT[@]/#/llvm_slot_}
-	doc clang cuda openmp tbb
+${LLVM_COMPAT[@]/#/llvm_slot_}
+doc clang cuda openmp tbb
+ebuild_revision_2
 "
 REQUIRED_USE="
 	clang? (
@@ -108,6 +109,11 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.59.1-tbb-libdir.patch"
 )
 
+pkg_setup() {
+	check-compiler-switch_start
+	python_setup
+}
+
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
@@ -143,6 +149,12 @@ python_configure() {
 		export CPP="${CC} -E"
 	fi
 	strip-unsupported-flags
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	if use tbb ; then
 		unset NUMBA_DISABLE_TBB
 		export TBBROOT="${ESYSROOT}/usr"
