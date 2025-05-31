@@ -120,7 +120,8 @@ CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan msan tsan"
 CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="copy-paste-password jit language-runtime network scripting sensitive-data untrusted-data web-browser"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO MC NPD OOBA OOBR OOBW PE SO UAF UM TC"
-RUSTFLAGS_HARDENED_USE_CASES="jit language-runtime network scripting sensitive-data untrusted-data web-browser"
+RUSTFLAGS_HARDENED_USE_CASES="network sensitive-data untrusted-data web-browser"
+RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO MC NPD OOBA OOBR OOBW PE SO UAF UM TC"
 DBUS_PV="0.60"
 # One of the major sources of lag comes from dependencies.  These are strict to
 # match performance to competition or normal builds.
