@@ -242,7 +242,7 @@ ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
 cli system-boost system-ncnn system-spdlog
-ebuild_revision_3
+ebuild_revision_4
 "
 # Using the vendored ncnn will break libplacebo.
 REQUIRED_USE="
