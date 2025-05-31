@@ -134,7 +134,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 big-endian doc python test
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE+="
 "
