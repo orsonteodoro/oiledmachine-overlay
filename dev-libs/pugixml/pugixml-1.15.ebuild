@@ -29,7 +29,7 @@ HOMEPAGE="
 LICENSE="MIT"
 IUSE+="
 doc static-libs test
-ebuild_revision_27
+ebuild_revision_28
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 # U 22.04
