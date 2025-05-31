@@ -169,7 +169,7 @@ SLOT="${SLOT_MAJOR}/${PV}"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 -analytics
-ebuild_revision_14
+ebuild_revision_15
 "
 REQUIRED_USE+="
 	!wayland
@@ -500,6 +500,7 @@ eerror
 	export CPP="${CC} -E"
 	strip-unsupported-flags
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
