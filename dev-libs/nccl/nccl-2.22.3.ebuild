@@ -53,7 +53,7 @@ SLOT="0"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 -gdrcopy peermem rdma roce test -verbs
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	|| (
