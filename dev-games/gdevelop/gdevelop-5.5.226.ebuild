@@ -93,7 +93,7 @@ RUST_MIN_VER="1.71.1" # rust 1.70.0, llvm 16.0, required by @swc/core.  Distro d
 RUST_PV="${RUST_MIN_VER}"
 
 # Using yarn results in failures.
-inherit check-reqs desktop electron-app evar_dump flag-o-matic llvm npm
+inherit check-compiler-switch check-reqs desktop electron-app evar_dump flag-o-matic llvm npm
 inherit python-r1 rust toolchain-funcs xdg
 
 SRC_URI="
@@ -168,9 +168,9 @@ KEYWORDS="~amd64"
 SLOT_MAJOR=$(ver_cut 1 ${PV})
 SLOT="${SLOT_MAJOR}/${PV}"
 IUSE+="
-	${LLVM_COMPAT[@]/#/llvm_slot_}
-	-analytics
-	ebuild_revision_11
+${LLVM_COMPAT[@]/#/llvm_slot_}
+-analytics
+ebuild_revision_12
 "
 REQUIRED_USE+="
 	!wayland
@@ -246,6 +246,7 @@ BDEPEND+="
 RESTRICT="mirror"
 
 pkg_pretend() {
+	check-compiler-switch_start
 	check-reqs_pkg_setup
 }
 
@@ -499,6 +500,12 @@ eerror
 	export CXX="em++"
 	export CPP="${CC} -E"
 	strip-unsupported-flags
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
         export CLOSURE_COMPILER="${EMSDK_CLOSURE_COMPILER}"
         export EM_BINARYEN_ROOT="${EMSDK_BINARYEN_BASE_PATH}"
 	export EM_CACHE="${T}/emscripten/cache"
