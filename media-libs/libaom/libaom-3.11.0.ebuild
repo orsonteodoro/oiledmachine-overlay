@@ -26,7 +26,7 @@ UOPTS_BOLT_INST_ARGS=(
 )
 
 inherit aocc cmake-multilib flag-o-matic flag-o-matic-om cflags-hardened
-inherit multiprocessing python-single-r1 toolchain-funcs uopts
+inherit check-compiler-switch multiprocessing python-single-r1 toolchain-funcs uopts
 
 if [[ ${PV} == *9999* ]]; then
 	inherit git-r3
@@ -96,7 +96,7 @@ ${PPC_IUSE}
 ${PGO_TRAINERS}
 ${X86_IUSE}
 +asm big-endian chromium debug doc +examples lossless pgo static-libs test
-ebuild_revision_24
+ebuild_revision_25
 "
 REQUIRED_USE="
 	cpu_flags_x86_sse2? (
@@ -253,6 +253,7 @@ check_video() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	python_setup
 	if use aocc ; then
 		aocc_pkg_setup
@@ -429,6 +430,12 @@ einfo "CFLAGS:  ${CFLAGS}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}_build"
 	cd "${CMAKE_USE_DIR}" || die
 	uopts_src_configure
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	if tc-is-clang && ( use pgo || ( has epgo ${IUSE_EFFECTIVE} && use epgo ) ) ; then
 #
