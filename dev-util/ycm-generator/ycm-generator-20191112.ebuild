@@ -133,7 +133,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 +cmake +make kbuild +meson +qmake qt5 qt6 +wmake test
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE+="
 	cmake? (
