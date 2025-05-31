@@ -22,7 +22,7 @@ ONETBB_SLOT="0"
 ORG_GH="https://github.com/OpenImageDenoise"
 PYTHON_COMPAT=( "python3_"{10..11} )
 
-inherit cmake flag-o-matic llvm python-single-r1 toolchain-funcs
+inherit check-compiler-switch cmake flag-o-matic llvm python-single-r1 toolchain-funcs
 
 if [[ ${PV} = *9999 ]]; then
 	inherit git-r3
@@ -50,7 +50,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +apps +built-in-weights +clang doc gcc openimageio
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -95,13 +95,11 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-lang/ispc-1.20.0
 	>=dev-build/cmake-3.1
-	|| (
-		clang? (
-			$(gen_clang_depends)
-		)
-		gcc? (
-			>=sys-devel/gcc-${MIN_GCC_PV}
-		)
+	clang? (
+		$(gen_clang_depends)
+	)
+	gcc? (
+		>=sys-devel/gcc-${MIN_GCC_PV}
 	)
 "
 DOCS=( "CHANGELOG.md" "README.md" "readme.pdf" )
@@ -123,6 +121,7 @@ ewarn
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	if [[ "${CHOST}" == "${CBUILD}" ]] && use kernel_linux ; then
 		check_cpu
 	fi
@@ -175,11 +174,15 @@ src_configure() {
 	test-flags-CXX "-std=c++14" 2>/dev/null 1>/dev/null \
                 || die "Switch to a c++14 compatible compiler."
 
-einfo
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 einfo "CC:\t${CC}"
 einfo "CXX:\t${CXX}"
 einfo "CHOST:\t${CHOST}"
-einfo
 
 	mycmakeargs+=(
 		-DCMAKE_CXX_COMPILER="${CXX}"

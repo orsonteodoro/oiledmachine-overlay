@@ -59,7 +59,7 @@ ONETBB_SLOT="0"
 ORG_GH="https://github.com/OpenImageDenoise"
 PYTHON_COMPAT=( "python3_"{10..11} )
 
-inherit cmake cuda flag-o-matic llvm python-single-r1 rocm toolchain-funcs
+inherit check-compiler-switch cmake cuda flag-o-matic llvm python-single-r1 rocm toolchain-funcs
 
 if [[ ${PV} = *9999 ]]; then
 	inherit git-r3
@@ -100,7 +100,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
 aot +apps +built-in-weights +clang cpu cuda doc gcc openimageio rocm sycl
-ebuild_revision_3
+ebuild_revision_4
 "
 gen_required_use_cuda_targets() {
 	local x
@@ -231,9 +231,15 @@ BDEPEND+="
 	${PYTHON_DEPS}
 	>=dev-lang/ispc-1.21.0
 	>=dev-build/cmake-3.15
+	clang? (
+		$(gen_clang_depends)
+	)
 	cuda? (
 		>=dev-util/nvidia-cuda-toolkit-11.8
 		sys-devel/binutils[gold,plugins]
+	)
+	gcc? (
+		>=sys-devel/gcc-${MIN_GCC_PV}
 	)
 	rocm? (
 		rocm_5_5? (
@@ -254,14 +260,6 @@ BDEPEND+="
 		sys-devel/llvm-roc:=
 		$(gen_hip_depends)
 		>=dev-build/cmake-3.21
-	)
-	|| (
-		clang? (
-			$(gen_clang_depends)
-		)
-		gcc? (
-			>=sys-devel/gcc-${MIN_GCC_PV}
-		)
 	)
 "
 DOCS=( "CHANGELOG.md" "README.md" "readme.pdf" )
@@ -287,6 +285,7 @@ ewarn
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	if [[ "${CHOST}" == "${CBUILD}" ]] && use kernel_linux ; then
 		use cpu && check_cpu
 	fi
@@ -469,11 +468,15 @@ eerror
 	# error: Illegal instruction detected: Operand has incorrect register class.
 	replace-flags '-O0' '-O1'
 
-einfo
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 einfo "CC:\t${CC}"
 einfo "CXX:\t${CXX}"
 einfo "CHOST:\t${CHOST}"
-einfo
 
 	mycmakeargs+=(
 		-DCMAKE_CXX_COMPILER="${CXX}"
