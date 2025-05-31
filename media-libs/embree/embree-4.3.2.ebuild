@@ -77,7 +77,7 @@ ${CPU_FLAGS[@]%:*}
 -compact-polys -custom-cflags custom-optimization debug doc doc-docfiles
 doc-html doc-images doc-man +hardened +filter-function gcc ispc raymask -ssp
 static-libs sycl +tbb test tutorials
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
