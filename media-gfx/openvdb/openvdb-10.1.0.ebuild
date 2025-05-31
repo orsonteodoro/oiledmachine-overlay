@@ -93,7 +93,7 @@ ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
 -alembic ax +blosc cuda doc -imath-half +jemalloc -jpeg -log4cplus -numpy
 -python +static-libs -tbbmalloc nanovdb -no-concurrent-malloc -openexr -png test
 -vdb_lod +vdb_print -vdb_render -vdb_view
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE+="
 	^^ (
@@ -331,6 +331,7 @@ eerror
 		die
 	fi
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
