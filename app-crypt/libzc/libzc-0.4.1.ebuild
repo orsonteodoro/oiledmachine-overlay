@@ -4,7 +4,6 @@
 
 EAPI=8
 
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
@@ -35,7 +34,7 @@ SLOT="0"
 IUSE="
 ${TRAINERS[@]}
 test
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	bolt? (
