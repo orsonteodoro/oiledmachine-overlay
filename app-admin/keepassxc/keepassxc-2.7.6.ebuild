@@ -6,7 +6,6 @@ EAPI=8
 CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=3
 CFLAGS_HARDENED_USE_CASES="copy-paste-password credentials security-critical sensitive-data"
 CFLAGS_HARDENED_VTABLE_VERIFY=0 # Retest
-FLAG_O_MATIC_FILTER_LTO=1
 VIRTUALX_REQUIRED="manual"
 
 inherit cflags-hardened cmake flag-o-matic virtualx xdg
@@ -52,7 +51,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 autotype browser doc keeshare +network qt5 qt5compat qt6 test wayland X yubikey
-ebuild_revision_25
+ebuild_revision_26
 "
 RESTRICT="
 	!test? (
