@@ -181,7 +181,7 @@ ${CPU_FLAGS_X86_64[@]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang cpu cuda debug rocm rocm_5_6
-ebuild_revision_14
+ebuild_revision_15
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
 
