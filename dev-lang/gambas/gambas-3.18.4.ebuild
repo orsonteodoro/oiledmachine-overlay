@@ -3,7 +3,7 @@
 
 EAPI=8
 
-inherit autotools desktop flag-o-matic toolchain-funcs xdg
+inherit autotools check-compiler-switch desktop flag-o-matic toolchain-funcs xdg
 
 KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
 S="${WORKDIR}/${PN}-${PV}"
@@ -48,6 +48,7 @@ IUSE+="
 ${GAMBAS_MODULES_DEFAULTS[@]}
 debug doc +glsl +glu +ide +jit +glsl +sge remove_deprecated +remove_not_finished
 remove_stable_not_finished +remove_unstable smtp +webview
+ebuild_revision_2
 "
 REQUIRED_USE+="
 	glsl? (
@@ -451,6 +452,7 @@ eerror
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	if [[ "$(tc-getCC)" == "clang" || "$(tc-getCXX)" == "clang++" ]]; then
 ewarn
 ewarn "Gambas does not support clang/clang++ as the primary compiler.  Clang"
@@ -507,6 +509,16 @@ _use_enable_lto() {
 }
 
 src_configure() {
+	local lto_option=""
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+		lto_option="--disable-lto"
+	else
+		lto_option=$(_use_enable_lto)
+	fi
+
 	econf \
 		$(use_enable bzip2) \
 		$(use_enable bzip2 bzlib2) \
@@ -602,7 +614,7 @@ src_configure() {
 		) \
 		$(use_enable zlib) \
 		$(use_enable zstd) \
-		$(_use_enable_lto) \
+		${lto_option} \
 		--disable-jitllvm \
 		--disable-gtk2 \
 		--disable-qt4 \
