@@ -320,7 +320,7 @@ IUSE+="
 	-tbb
 	test
 	-threads
-	ebuild_revision_2
+	ebuild_revision_3
 "
 REQUIRED_USE+="
 	bullet-robotics? (
