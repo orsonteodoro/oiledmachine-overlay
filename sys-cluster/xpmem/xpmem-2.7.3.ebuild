@@ -45,7 +45,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 compress debug modules sign-modules
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND="
 	sys-apps/kmod[tools]
