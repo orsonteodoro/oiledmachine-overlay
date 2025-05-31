@@ -155,7 +155,7 @@ CPU_FLAGS_X86=(
 
 PYTHON_COMPAT=( "python3_12" )
 
-inherit cmake dep-prepare flag-o-matic optfeature python-single-r1 toolchain-funcs
+inherit check-compiler-switch cmake dep-prepare flag-o-matic optfeature python-single-r1 toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -242,7 +242,7 @@ ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
 cli system-boost system-ncnn system-spdlog
-ebuild_revision_2
+ebuild_revision_3
 "
 # Using the vendored ncnn will break libplacebo.
 REQUIRED_USE="
@@ -435,6 +435,11 @@ unpack_deps() {
 	gen_git_tag "${S}" "${PV}"
 }
 
+pkg_setup() {
+	check-compiler-switch_start
+	python_setup
+}
+
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
@@ -507,6 +512,11 @@ src_configure() {
 	export CXX="${CHOST}-g++"
 	export CPP="${CHOST}-gcc -E"
 	strip-unsupported-flags
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	export MAKEOPTS="-j1"
 
