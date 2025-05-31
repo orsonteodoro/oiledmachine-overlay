@@ -10,7 +10,7 @@ CMAKE_MAKEFILE_GENERATOR="emake"
 FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 PYTHON_COMPAT=( "python3_12" )
 
-inherit cmake dep-prepare flag-o-matic python-single-r1 toolchain-funcs xdg
+inherit check-compiler-switch cmake dep-prepare flag-o-matic python-single-r1 toolchain-funcs xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -41,6 +41,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 wayland X
+ebuild_revision_2
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -86,6 +87,11 @@ einfo "Generating tag start for ${path}"
 		git tag ${tag_name} || die
 	popd >/dev/null 2>&1 || die
 einfo "Generating tag done"
+}
+
+pkg_setup() {
+	check-compiler-switch_start
+	python_setup
 }
 
 src_unpack() {
@@ -161,6 +167,11 @@ src_configure() {
 	export CXX="${CHOST}-g++"
 	export CPP="${CHOST}-gcc -E"
 	strip-unsupported-flags
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	check_cxxabi
 
