@@ -5,10 +5,8 @@ EAPI=8
 
 # 32-bit breaks with asan and ubsan sanitizers on
 CFLAGS_HARDENED_ASSEMBLERS="gas inline"
-CFLAGS_HARDENED_CF_PROTECTION=0										# Untested or unverified
 CFLAGS_HARDENED_CI_SANITIZERS="asan lsan ubsan"
 CFLAGS_HARDENED_CI_SANITIZERS_GCC_COMPAT="14"
-CFLAGS_HARDENED_FHARDENED=0										# Untested or unverified
 CFLAGS_HARDENED_LANGS="asm c-lang"
 #CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 CFLAGS_HARDENED_TOLERANCE="4.0"
@@ -47,7 +45,7 @@ KEYWORDS="
 IUSE="
 brotli +cxx dane doc examples +idn nls +openssl pkcs11 sslv2 sslv3 static-libs
 test test-full +tls-heartbeat tools zlib zstd
-ebuild_revision_31
+ebuild_revision_32
 "
 REQUIRED_USE="
 	test-full? (
