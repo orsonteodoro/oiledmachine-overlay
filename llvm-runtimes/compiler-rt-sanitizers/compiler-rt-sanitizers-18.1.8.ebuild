@@ -26,7 +26,6 @@ PYTHON_COMPAT=( "python3_11" )
 
 inherit check-compiler-switch check-reqs cmake flag-o-matic linux-info llvm.org llvm-utils python-any-r1
 
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 LLVM_MAX_SLOT=${LLVM_MAJOR}
 KEYWORDS="
 ~amd64 ~arm ~arm64 ~loong ~ppc64 ~riscv ~x86 ~amd64-linux ~ppc-macos ~x64-macos
@@ -46,7 +45,7 @@ IUSE+="
 ${LLVM_EBUILDS_LLVM18_REVISION}
 +abi_x86_32 abi_x86_64 +clang +debug hexagon +libfuzzer +memprof +orc +profile
 test +xray
-ebuild_revision_11
+ebuild_revision_12
 "
 # sanitizer targets, keep in sync with config-ix.cmake
 # NB: ubsan, scudo deliberately match two entries
