@@ -317,7 +317,7 @@ LICENSE="
 SLOT="2"
 IUSE="
 gtk-doc +introspection +vala
-ebuild_revision_11
+ebuild_revision_12
 "
 REQUIRED_USE="
 	gtk-doc? (
