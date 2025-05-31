@@ -9,7 +9,7 @@ FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 PYTHON_COMPAT=( "python3_"{10..12} )
 LLVM_COMPAT=( 15 ) # Based on CI
 
-inherit cmake distutils-r1 flag-o-matic llvm-r1 pypi toolchain-funcs
+inherit check-compiler-switch cmake distutils-r1 flag-o-matic llvm-r1 pypi toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -25,6 +25,9 @@ DESCRIPTION="A lightweight wrapper around basic LLVM functionality"
 HOMEPAGE="https://github.com/numba/llvmlite"
 LICENSE="BSD"
 SLOT="0"
+IUSE="
+ebuild_revision_2
+"
 REQUIRED_USE+="
 	^^ (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
@@ -52,6 +55,11 @@ PATCHES=(
 )
 
 distutils_enable_tests "unittest"
+
+pkg_setup() {
+	check-compiler-switch_start
+	python_setup
+}
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
@@ -81,6 +89,12 @@ python_configure() {
 		export CPP="${CC} -E"
 		strip-unsupported-flags
 	fi
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	${CC} --version || die
 }
 
