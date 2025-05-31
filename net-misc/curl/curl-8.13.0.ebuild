@@ -43,7 +43,6 @@ CFLAGS_HARDENED_ASSEMBLERS="gas inline"
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="security-critical network sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO OOBR SO UAF"
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 MULTILIB_WRAPPED_HEADERS=(
 	"/usr/include/curl/curlbuild.h"
 )
@@ -115,7 +114,7 @@ ${IMPLS[@]}
 +adns +alt-svc brotli debug ech +ftp gnutls gopher +hsts +http2 +http3 +httpsrr
 idn +imap kerberos ldap mbedtls +openssl +pop3 +psl +quic rtmp rustls samba
 sasl-scram +smtp ssh ssl static-libs test telnet +tftp +websockets zstd
-ebuild_revision_37
+ebuild_revision_38
 "
 RESTRICT="
 	!test? (
