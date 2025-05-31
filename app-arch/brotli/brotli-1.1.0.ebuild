@@ -3,8 +3,6 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_CF_PROTECTION=0									# Untested or unverified
-CFLAGS_HARDENED_FHARDENED=0									# Untested or unverified
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO IU"
 DISTUTILS_EXT=1
@@ -39,7 +37,7 @@ LICENSE="
 SLOT="0/$(ver_cut 1)"
 IUSE="
 python test
-ebuild_revision_15
+ebuild_revision_16
 "
 REQUIRED_USE="
 	python? (

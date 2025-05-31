@@ -273,11 +273,17 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # llvm-cfi - Apply LLVM CFI
 # none     - Do not apply CFI or Retpoline
 
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_CF_PROTECTION
+# @DESCRIPTION:
+# Disable -cf-protection if problem for package.
+# Valid values: 0 to enable, 1 to disable, unset to enable
+
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_CF_PROTECTION_USER
 # @USER_VARIABLE
 # @DESCRIPTION:
-# Allow to use the -C cf-protection=full flag for ARCH=amd64
+# Opt-in to use -cf-protection=full for ARCH=amd64
 # Due to a lack of hardware, CET support is made optional.
+# There is a risk to break the system if this is enabled.
 # Valid values: 0 to enable, 1 to disable, unset to disable (default)
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_ARM_CFI_USER
@@ -352,6 +358,14 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # @DESCRIPTION:
 # Language hints to improve hardening or to reduce sanitizer build failure.
 # Valid values:  asm, c-lang, cxx
+
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SANITIZE_SYSTEM_SET_USER
+# @DESCRIPTION:
+# Opt in to sanitizing the system set.  There is a high risk to
+# break the system if this is enabled.  It should not be used only
+# by developers or testers.
+# (EXPERIMENTAL)
+# Valid values:  1, 0, unset
 
 # @FUNCTION: _rustflags-hardened_clang_flavor
 # @DESCRIPTION:
@@ -1413,7 +1427,7 @@ eerror "RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT should be the same as DETECT_COMPIL
 	fi
 
 	# Reduce chances of breaking the entire system
-	if [[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ "system-set" && "${RUSTFLAGS_HARDENED_SYSTEM_SET_USER}" != "1" ]] ; then
+	if [[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ "system-set" && "${RUSTFLAGS_HARDENED_SANITIZE_SYSTEM_SET_USER}" != "1" ]] ; then
 		sanitizers_compat=0
 	fi
 

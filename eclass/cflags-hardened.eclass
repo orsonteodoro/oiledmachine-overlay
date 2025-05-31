@@ -339,11 +339,29 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # llvm-cfi - Apply LLVM CFI
 # none     - Do not apply CFI or Retpoline
 
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_FHARDENED
+# @DESCRIPTION:
+# Disable -fhardened if broken for package.
+# Valid values:  1 to enable, 0 to disable, unset to enable (default)
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_FHARDENED_USER
+# @DESCRIPTION:
+# Opt-in to using -fhardened.  There is a risk to break the system if this is
+# enabled.
+# (EXPERIMENTAL)
+# Valid values:  1 to enable, 0 to disable, unset to disable (default)
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_CF_PROTECTION
+# @DESCRIPTION:
+# Disable -cf-protection if problem for package.
+# Valid values: 0 to enable, 1 to disable, unset to enable (default)
+
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_CF_PROTECTION_USER
 # @USER_VARIABLE
 # @DESCRIPTION:
-# Allow to use the -cf-protection=full flag for ARCH=amd64
+# Opt-in to use -cf-protection=full for ARCH=amd64
 # Due to a lack of hardware, CET support is made optional.
+# There is a risk to break the system if this is enabled.
 # Valid values: 0 to enable, 1 to disable, unset to disable (default)
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_ARM_CFI_USER
@@ -420,6 +438,14 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # @DESCRIPTION:
 # Language hints to improve hardening or to reduce sanitizer build failure.
 # Valid values:  asm, c-lang, cxx
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_SANITIZE_SYSTEM_SET_USER
+# @DESCRIPTION:
+# Opt-in to sanitizing the system set.  There is a high risk to
+# break the system if this is enabled.  It should not be used only
+# by developers or testers.
+# (EXPERIMENTAL)
+# Valid values:  1, 0, unset
 
 # @FUNCTION: _cflags-hardened_compiler_arch
 # @DESCRIPTION:
@@ -1133,6 +1159,8 @@ ewarn
 			&& \
 		_cflags-hardened_has_cet \
 			&& \
+		[[ "${CFLAGS_HARDENED_CF_PROTECTION:-1}" == "1" ]] \
+			&& \
 		[[ "${CFLAGS_HARDENED_CF_PROTECTION_USER:-0}" == "1" ]] \
 			&& \
 		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.05" \
@@ -1245,6 +1273,8 @@ einfo "Protect spectrum:  ${protect_spectrum}"
 		ver_test "${gcc_pv}" -ge "14.2" \
 			&& \
 		[[ "${CFLAGS_HARDENED_FHARDENED:-1}" == "1" ]] \
+			&&
+		[[ "${CFLAGS_HARDENED_FHARDENED_USER:-0}" == "1" ]] \
 			&&
 		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "1.10" \
 	; then
@@ -2038,7 +2068,7 @@ eerror "CFLAGS_HARDENED_SANITIZER_CC_SLOT should be the same as DETECT_COMPILER_
 	fi
 
 	# Reduce chances of breaking the entire system
-	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ "system-set" && "${CFLAGS_HARDENED_SYSTEM_SET_USER}" != "1" ]] ; then
+	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ "system-set" && "${CFLAGS_HARDENED_SANITIZE_SYSTEM_SET_USER}" != "1" ]] ; then
 		sanitizers_compat=0
 	fi
 
