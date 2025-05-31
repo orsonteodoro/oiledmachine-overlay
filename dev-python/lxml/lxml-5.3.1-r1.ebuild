@@ -3,8 +3,6 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_CF_PROTECTION=0									# Untested or unverified
-CFLAGS_HARDENED_FHARDENED=0									# Untested or unverified
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="system-set"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
@@ -37,7 +35,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 doc examples +threads test
-ebuild_revision_1
+ebuild_revision_2
 "
 RESTRICT="
 	!test? (
