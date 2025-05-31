@@ -13,7 +13,7 @@ CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO SO"
 FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 
-inherit cflags-hardened cmake flag-o-matic toolchain-funcs xdg-utils
+inherit cflags-hardened check-compiler-switch cmake flag-o-matic toolchain-funcs xdg-utils
 
 if [[ "${PV}" == *"9999"* ]] ; then
 	EGIT_REPO_URI="https://gitlab.freedesktop.org/poppler/poppler"
@@ -48,7 +48,7 @@ LICENSE="
 IUSE="
 boost cairo cjk curl +cxx debug doc gpgme +introspection +jpeg +jpeg2k +lcms nss
 png qt5 qt6 test tiff +utils
-ebuild_revision_12
+ebuild_revision_13
 "
 RESTRICT="
 	!test? (
@@ -140,6 +140,10 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.57.0-disable-internal-jpx.patch"
 )
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_unpack() {
 	if [[ "${PV}" == *"9999"* ]] ; then
 		git-r3_src_unpack
@@ -192,6 +196,12 @@ einfo "Using Clang ${LLVM_SLOT}"
 einfo "Using GCC ${gcc_slot}"
 	fi
 	strip-unsupported-flags
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	${CC} --version || die "Compiler check failed."
 }
 
