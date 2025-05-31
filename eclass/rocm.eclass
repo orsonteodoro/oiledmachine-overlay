@@ -1568,6 +1568,7 @@ rocm_set_default_aocc() {
 	filter-flags '-fuse-ld=*'
 	append-ldflags -fuse-ld=lld
 	export _USE_AOCC=1
+	filter-lto
 }
 
 # @FUNCTION: rocm_set_default_hipcc
@@ -1607,6 +1608,7 @@ eerror "CUDA version not supported.  Use dev-util/nvidia-cuda-toolkit must be 11
 		filter-flags '-fuse-ld=*'
 		append-ldflags -fuse-ld=lld
 	fi
+	filter-lto
 }
 
 # @FUNCTION: hip_nvcc_get_gcc_slot
