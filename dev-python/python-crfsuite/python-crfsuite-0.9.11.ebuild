@@ -11,7 +11,7 @@ PYTHON_COMPAT=( "python3_"{10..12} ) # upstream listed up to 3.10
 CRFSUITE_COMMIT="dc5b6c7b726de90ca63cbf269e6476e18f1dd0d9"
 LIBLBFGS_COMMIT="57678b188ae34c2fb2ed36baf54f9a58b4260d1c"
 
-inherit distutils-r1 dep-prepare flag-o-matic
+inherit check-compiler-switch distutils-r1 dep-prepare flag-o-matic
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${PN}-${PV}"
@@ -36,7 +36,7 @@ RESTRICT="mirror test" # untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 dev doc test
-ebuild_revision_1
+ebuild_revision_2
 "
 RDEPEND+="
 "
@@ -67,6 +67,11 @@ PATCHES=(
 	"${FILESDIR}/${PN}-0.9.11-no-win32.patch"
 )
 
+pkg_setup() {
+	check-compiler-switch_start
+	python_setup
+}
+
 src_unpack() {
 	unpack ${A}
 	dep_prepare_mv "${WORKDIR}/crfsuite-${CRFSUITE_COMMIT}" "${S}/crfsuite"
@@ -78,6 +83,12 @@ python_configure() {
 	export CXX="g++"
 	export CPP="${CC} -E"
 	strip-unsupported-flags
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	# Fix ModuleNotFoundError: No module named 'distutils.msvccompiler'
 #	sed -i -e "s|if c.compiler_type|if True or c.compiler_type|g" "setup.py" || die
 
