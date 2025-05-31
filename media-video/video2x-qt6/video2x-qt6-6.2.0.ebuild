@@ -40,7 +40,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 wayland X
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -167,6 +167,7 @@ src_configure() {
 	export CPP="${CHOST}-gcc -E"
 	strip-unsupported-flags
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
