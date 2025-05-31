@@ -18,7 +18,7 @@ UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 
-inherit cflags-hardened check-reqs cmake edo flag-o-matic linux-info
+inherit cflags-hardened check-compiler-switch check-reqs cmake edo flag-o-matic linux-info
 inherit multiprocessing prefix toolchain-funcs uopts
 
 KEYWORDS="
@@ -50,7 +50,7 @@ SLOT="8.0"
 IUSE="
 cjk cracklib debug jemalloc latin1 numa +perl profiling router selinux +server
 tcmalloc test test-install
-ebuild_revision_12
+ebuild_revision_13
 "
 REQUIRED_USE="
 	?? (
@@ -203,6 +203,7 @@ pkg_pretend() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	if [[ ${MERGE_TYPE} != binary ]] ; then
 		CHECKREQS_DISK_BUILD="3G"
 
@@ -287,6 +288,12 @@ _src_configure_compiler() {
 
 _src_configure() {
 	uopts_src_configure # Wipes -fprofile*
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 	# Bug #114895, bug #110149
 	filter-flags "-O" "-O[01]"
