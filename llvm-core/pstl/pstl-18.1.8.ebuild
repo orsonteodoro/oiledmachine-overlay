@@ -24,7 +24,6 @@ unset -f _llvm_set_globals
 
 GCC_SLOT=13
 CMAKE_ECLASS="cmake"
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 PYTHON_COMPAT=( "python3_11" )
 
 inherit check-compiler-switch cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
@@ -52,7 +51,7 @@ SLOT="${PV%%.*}"
 IUSE+="
 ${LLVM_EBUILDS_LLVM18_REVISION}
 -openmp -tbb test
-ebuild_revision_3
+ebuild_revision_4
 "
 RDEPEND="
 	openmp? (

@@ -23,7 +23,6 @@ _llvm_set_globals
 unset -f _llvm_set_globals
 
 CMAKE_ECLASS="cmake"
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 GCC_SLOT=13
 LLVM_MAX_SLOT=${LLVM_MAJOR}
 PYTHON_COMPAT=( "python3_12" )
@@ -51,7 +50,7 @@ SLOT="${PV%%.*}"
 IUSE+="
 ${LLVM_EBUILDS_LLVM20_REVISION}
 -openmp -tbb test
-ebuild_revision_3
+ebuild_revision_4
 "
 RDEPEND="
 	openmp? (
