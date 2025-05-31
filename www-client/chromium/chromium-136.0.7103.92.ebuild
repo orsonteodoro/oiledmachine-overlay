@@ -235,7 +235,7 @@ TESTDATA_P="${PN}-${PV}"
 #V8_PV="13.7.152.7" # About the same as the latest Chromium beta release.
 ZLIB_PV="1.3.0"
 
-inherit cflags-depends cflags-hardened check-linker check-reqs chromium-2 dhms
+inherit cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs chromium-2 dhms
 inherit desktop edo flag-o-matic flag-o-matic-om linux-info lcnr
 inherit multilib-minimal multiprocessing ninja-utils pax-utils python-any-r1
 inherit readme.gentoo-r1 systemd toolchain-funcs vf xdg-utils
@@ -2240,6 +2240,8 @@ eerror
 }
 
 pkg_setup() {
+	dhms_start
+	check-compiler-switch_start
 	# The emerge package system will over prune when it should not when it
 	# uses the mv merge technique with sandbox disabled.
 
@@ -2267,7 +2269,6 @@ ewarn "Expected file count:  ${sources_count_expected}"
 ewarn
 	fi
 
-	dhms_start
 einfo "Release channel:  ${SLOT#*/}"
 	if [[ -n "${MITIGATION_URI}" ]] ; then
 einfo "Security announcement date:  ${MITIGATION_DATE}"
@@ -5405,9 +5406,15 @@ eerror
 	#
 ewarn "Disabling LTO for older machines."
 		USE_LTO=0
-		filter-flags '-flto*'
+		filter-lto
 		use cfi         && fatal_message_lto_banned "cfi"
 		use official    && fatal_message_lto_banned "official"
+	fi
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+		USE_LTO=0
 	fi
 
 	if ! use mold && is-flagq '-fuse-ld=mold' && has_version "sys-devel/mold" ; then
@@ -5461,7 +5468,7 @@ eerror "To use mold, enable the mold USE flag."
 	; then
 einfo "Using ThinLTO"
 		myconf_gn+=" use_thin_lto=true "
-		filter-flags '-flto*'
+		filter-lto
 		filter-flags '-fuse-ld=*'
 		filter-flags '-Wl,--lto-O*'
 		if [[ "${THINLTO_OPT:-1}" == "1" ]] ; then
@@ -5484,7 +5491,7 @@ einfo "Using Clang MoldLTO"
 		else
 ewarn "Forcing use of GCC Mold without LTO.  GCC MoldLTO is not supported."
 ewarn "To use LTO, use either Clang MoldLTO, Clang ThinLTO, GCC BFDLTO."
-			filter-flags '-flto*'
+			filter-lto
 		fi
 	elif use mold && (( ${use_thinlto} == 0 && ${USE_LTO} == 0 )) ; then
 einfo "Using Mold without LTO"
