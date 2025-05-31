@@ -50,7 +50,7 @@ SLOT="8.0"
 IUSE="
 cjk cracklib debug jemalloc latin1 numa +perl profiling router selinux +server
 tcmalloc test test-install
-ebuild_revision_17
+ebuild_revision_18
 "
 REQUIRED_USE="
 	?? (
@@ -289,6 +289,7 @@ _src_configure_compiler() {
 _src_configure() {
 	uopts_src_configure # Wipes -fprofile*
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
