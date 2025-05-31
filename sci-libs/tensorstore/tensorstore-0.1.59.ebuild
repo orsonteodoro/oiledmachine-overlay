@@ -32,7 +32,7 @@ EGIT_CR_ZLIB_COMMIT="3787595bbbd3a374613713164db935e8331f5825"		# Found in https
 PROTOBUF_PV="26.1"							# Found in https://github.com/google/tensorstore/blob/v0.1.59/third_party/com_google_protobuf/workspace.bzl#L27C96-L27C100
 PYTHON_COMPAT=( "python3_"{8..11} ) # CI uses 3.9
 
-inherit distutils-r1 flag-o-matic llvm sandbox-changes toolchain-funcs
+inherit check-compiler-switch distutils-r1 flag-o-matic llvm sandbox-changes toolchain-funcs
 
 # We may need to prefix with gh so that the fingerprints do not conflict between releases and snapshots.
 bazel_external_uris="
@@ -65,7 +65,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang doc
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE+="
 	^^ (
@@ -305,6 +305,7 @@ einfo
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	if ! [[ "${BAZEL_LD_PRELOAD_IGNORED_RISKS}" =~ ("allow"|"accept") ]] ; then
 	# A reaction to "WARNING: ignoring LD_PRELOAD in environment" maybe
 	# reported by Bazel.
@@ -327,6 +328,12 @@ eerror
 	sandbox-changes_no_network_sandbox "For downloading micropackages"
 
 	setup_tc
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 }
 
 src_unpack() {
