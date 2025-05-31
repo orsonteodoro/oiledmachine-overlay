@@ -22,7 +22,7 @@ UOPTS_BOLT_INST_ARGS=(
 	"libturbojpeg.so.0.2.0:--skip-funcs=.text/1"
 )
 
-inherit cflags-hardened cmake-multilib java-pkg-opt-2 flag-o-matic
+inherit cflags-hardened check-compiler-switch cmake-multilib java-pkg-opt-2 flag-o-matic
 inherit flag-o-matic-om toolchain-funcs uopts
 
 # Unkeyworded for test failures: https://github.com/libjpeg-turbo/libjpeg-turbo/issues/705
@@ -75,7 +75,7 @@ libjpeg_turbo_trainers_decode
 libjpeg_turbo_trainers_grayscale
 libjpeg_turbo_trainers_transformations
 pgo static-libs
-ebuild_revision_24
+ebuild_revision_25
 "
 REQUIRED_USE="
 	pgo? (
@@ -238,6 +238,7 @@ is_pgo_ready() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 ewarn "Use GCC 12 if build fails for =${CATEGORY}/${PN}-${PVR}."
 	if use pgo && ! is_pgo_ready ; then
 		local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
@@ -318,6 +319,13 @@ _src_configure() {
 	fi
 
 	uopts_src_configure
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	if use pgo && tc-is-clang ; then
 		append-flags $(test-flags -Wno-backend-plugin)
 		if [[ "${PGO_PHASE}" == "PGI" ]] ; then
