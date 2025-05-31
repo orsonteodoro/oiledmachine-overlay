@@ -441,25 +441,28 @@ can break the entire toolchain which makes it very risky especially with LLVM CF
 Environment variables that control CFI.  New user environment variables for
 cflags-hardened and rustflags-hardened.
 
-* CFLAGS_HARDENED_BTI_USER - Add BTI support for C/C++ packages
-* CFLAGS_HARDENED_MTE_USER - Add MTE support for C/C++ packages
-* CFLAGS_HARDENED_PAC_USER - Add PAC support for C/C++ packages
-* CFLAGS_HARDENED_CF_PROTECTION_USER - Add -fcf-protection for C/C++ packages
-* CFLAGS_HARDENED_ARM_CFI_USER - Add -mbranch-protection for C/C++ packages
-* CFLAGS_HARDENED_LLVM_CFI_USER - Add -fsanitize=cfi for C/C++ packages
+* CFLAGS_HARDENED_CF_PROTECTION_USER - Add -fcf-protection for C/C++ packages.
+* CFLAGS_HARDENED_AUTO_SANITIZE_USER - Add ASan, LLVM CFI, TSan, UBSan for C/C++ packages.
+* CFLAGS_HARDENED_ARM_CFI_USER - Add -mbranch-protection for C/C++ packages.
+* CFLAGS_HARDENED_BTI_USER - Add BTI support for C/C++ packages.
+* CFLAGS_HARDENED_FHARDENED_USER - Add -fhardened for C/C++ packages.
+* CFLAGS_HARDENED_MTE_USER - Add MTE support for C/C++ packages.
+* CFLAGS_HARDENED_PAC_USER - Add PAC support for C/C++ packages.
 
-* RUSTFLAGS_HARDENED_BTI_USER - Add BTI support for Rust packages
-* RUSTFLAGS_HARDENED_MTE_USER - Add MTE support for Rust packages
-* RUSTFLAGS_HARDENED_PAC_USER - Add PAC support for Rust packages
-* RUSTFLAGS_HARDENED_CF_PROTECTION_USER - Add -fcf-protection for Rust packages
-* RUSTFLAGS_HARDENED_ARM_CFI_USER - Add -mbranch-protection for Rust packages
-* RUSTFLAGS_HARDENED_LLVM_CFI_USER - Add -fsanitize=cfi for Rust packages
+* RUSTFLAGS_HARDENED_ARM_CFI_USER - Add -mbranch-protection for Rust packages.
+* RUSTFLAGS_HARDENED_AUTO_SANITIZE_USER - Add ASan, LLVM CFI, TSan, UBSan for C/C++ packages.
+* RUSTFLAGS_HARDENED_BTI_USER - Add BTI support for Rust packages.
+* RUSTFLAGS_HARDENED_CF_PROTECTION_USER - Add -fcf-protection for Rust packages.
+* RUSTFLAGS_HARDENED_MTE_USER - Add MTE support for Rust packages.
+* RUSTFLAGS_HARDENED_PAC_USER - Add PAC support for Rust packages.
 
 The above flags accept 1, 0, or unset.  By default CFI is opt-out (0) and
 retpoline is default opt-in (1).
 
-* CFLAGS_HARDENED_PROTECT_SPECTRUM_USER - Select between `arm-cfi`, `cet`, `llvm-cfi`, `retpoline`, `none` for C/C++ programs
-* RUSTFLAGS_HARDENED_PROTECT_SPECTRUM_USER - Select between `arm-cfi`, `cet`, `llvm-cfi`, `retpoline`, `none` for Rust programs
+* CFLAGS_HARDENED_AUTO_SANITIZE_USER - Select between `asan`, `lsan`, `msan`, `tsan`, `ubsan` for C/C++ programs.
+* CFLAGS_HARDENED_PROTECT_SPECTRUM_USER - Select between `arm-cfi`, `cet`, `llvm-cfi`, `retpoline`, `none` for C/C++ programs.
+* RUSTFLAGS_HARDENED_AUTO_SANITIZE_USER - Select between `asan`, `lsan`, `msan`, `tsan`, `ubsan` for Rust programs.
+* RUSTFLAGS_HARDENED_PROTECT_SPECTRUM_USER - Select between `arm-cfi`, `cet`, `llvm-cfi`, `retpoline`, `none` for Rust programs.
 
 The *FLAGS_HARDENED_PROTECT_SPECTRUM_USER options can be used to optimize
 security for either confidentiality or for execution-integrity on a per-package

@@ -293,17 +293,6 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # Due to a lack of hardware, ARM JOP/ROP mitigations are made optional.
 # Valid values: 0 to enable, 1 to disable, unset to disable (default)
 
-# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_LLVM_CFI_USER
-# @USER_VARIABLE
-# @DESCRIPTION:
-# Allow to use the -Z sanitize=cfi flag for ARCH=amd64
-# Valid values: 0 to enable, 1 to disable, unset to disable (default)
-
-# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_LLVM_CFI
-# @DESCRIPTION:
-# Marking to allow LLVM CFI to be used for the package.
-# Valid values: 0 to enable, 1 to disable, unset to disable (default)
-
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT_USER
 # @DESCRIPTION:
 # The sanitizer slot to use.
@@ -353,6 +342,11 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # @USER_VARIABLE
 # Enable auto sanitization with halt on violation.
 # Valid values:  asan, ubsan
+
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_LLVM_CFI
+# @DESCRIPTION:
+# Disable LLVM CFI it doesn't work.
+# Valid values:  0 - disallow, 1 - allow, unset - allow
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_LANGS
 # @DESCRIPTION:
@@ -742,7 +736,7 @@ einfo "CC:  ${CC}"
 	if \
 		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "1.15" \
 			&& \
-		[[ "${RUSTFLAGS_HARDENED_CFI:-0}" == "1" ]] \
+		[[ "${RUSTFLAGS_HARDENED_AUTO_SANITIZE_USER}" =~ "cfi" ]] \
 			&& \
 		! _rustflags-hardened_has_cet \
 			&& \
@@ -853,9 +847,9 @@ eerror "QA:  RUSTC is not initialized.  Did you rust_pkg_setup?"
 			&& \
 		_rustflags-hardened_has_llvm_cfi \
 			&& \
-		[[ "${RUSTFLAGS_HARDENED_LLVM_CFI:-0}" == "1" ]] \
-			&&
-		[[ "${RUSTFLAGS_HARDENED_LLVM_CFI_USER:-0}" == "1" ]] \
+		[[ "${RUSTFLAGS_HARDENED_LLVM_CFI:-1}" == "1" ]] \
+			&& \
+		[[ "${RUSTFLAGS_HARDENED_AUTO_SANITIZE_USER}" =~ "cfi" ]] \
 			&& \
 		_rustflags-hardened_fcmp "${RUSTFLAGS_HARDENED_TOLERANCE}" ">=" "2.0" \
 	; then

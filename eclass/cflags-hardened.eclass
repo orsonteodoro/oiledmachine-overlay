@@ -371,17 +371,6 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # Due to a lack of hardware, ARM JOP/ROP mitigations are made optional.
 # Valid values: 0 to enable, 1 to disable, unset to disable (default)
 
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_LLVM_CFI_USER
-# @USER_VARIABLE
-# @DESCRIPTION:
-# Allow to use the -fsanitize=cfi flag for ARCH=amd64
-# Valid values: 0 to enable, 1 to disable, unset to disable (default
-
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_LLVM_CFI
-# @DESCRIPTION:
-# Marking to allow LLVM CFI to be used for the package.
-# Valid values: 0 to enable, 1 to disable, unset to disable (default)
-
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_SANITIZER_CC_SLOT_USER
 # @DESCRIPTION:
 # The sanitizer slot to use.
@@ -433,6 +422,11 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # @DESCRIPTION:
 # Enable auto sanitization with halt on violation.
 # Valid values:  asan, ubsan
+
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_LLVM_CFI
+# @DESCRIPTION:
+# Disable LLVM CFI it doesn't work.
+# Valid values:  0 - disallow, 1 - allow, unset - allow
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_LANGS
 # @DESCRIPTION:
@@ -1203,10 +1197,10 @@ ewarn
 			&& \
 		_cflags-hardened_has_llvm_cfi \
 			&& \
-		[[ "${CFLAGS_HARDENED_LLVM_CFI:-0}" == "1" ]] \
-			&&
-		[[ "${CFLAGS_HARDENED_LLVM_CFI_USER:-0}" == "1" ]] \
-			&&
+		[[ "${CFLAGS_HARDENED_LLVM_CFI:-1}" == "1" ]] \
+			&& \
+		[[ "${CFLAGS_HARDENED_AUTO_SANITIZE_USER}" =~ "cfi" ]] \
+			&& \
 		_cflags-hardened_fcmp "${CFLAGS_HARDENED_TOLERANCE}" ">=" "2.0" \
 	; then
 	# TODO
