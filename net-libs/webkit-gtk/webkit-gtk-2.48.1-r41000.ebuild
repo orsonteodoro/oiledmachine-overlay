@@ -139,7 +139,7 @@ SO_VERSION=$(( ${SO_CURRENT} - ${SO_AGE} ))
 USE_RUBY=" ruby32 ruby33"
 WK_PAGE_SIZE=64 # global var not const
 
-inherit cflags-depends cflags-hardened check-linker check-reqs cmake desktop dhms flag-o-matic
+inherit cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs cmake desktop dhms flag-o-matic
 inherit git-r3 gnome2 lcnr linux-info llvm multilib-minimal multiprocessing
 inherit pax-utils python-single-r1 ruby-single toolchain-funcs vf
 
@@ -539,7 +539,7 @@ aqua +avif -bmalloc -cache-partitioning clang dash debug +doc -eme +flite
 +opengl openmp -seccomp +speech-synthesis -spell -system-malloc test thunder
 +variation-fonts wayland +webassembly -webdriver +webgl webm-eme -webrtc webvtt
 -webxr +woff2 +X
-ebuild_revision_13
+ebuild_revision_14
 "
 
 gen_gst_plugins_duse() {
@@ -1973,6 +1973,8 @@ eerror
 }
 
 pkg_setup() {
+	dhms_start
+	check-compiler-switch_start
 	if is-flagq '-Oshit' ; then
 einfo "Detected -Oshit"
 		replace-flags '-O*' '-O1'
@@ -1980,7 +1982,6 @@ einfo "Detected -Oshit"
 	else
 		export OSHIT=0
 	fi
-	dhms_start
 einfo "This is the stable branch."
 	if [[ -n "${MITIGATION_URI}" ]] ; then
 einfo "Security advisory date:  ${MITIGATION_DATE}"
@@ -2711,11 +2712,23 @@ einfo "CPPFLAGS:  ${CPPFLAGS}"
 
 einfo "Add -flto to CFLAGS/CXXFLAGS and -fuse-ld=<bfd|gold|lld|mold> to LDFLAGS for LTO optimization."
 	local linker_type=$(check-linker_get_lto_type)
-	if [[ \
-		    "${linker_type}" =~ ("bfdlto"|"goldlto"|"moldlto"|"thinlto") \
-		|| "${SELECTED_LTO}" =~ ("bfdlto"|"goldlto"|"moldlto"|"thinlto") \
-	   ]] \
-		&& tc-is-clang ; then
+	local allow_lto=1
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+		allow_lto=0
+	fi
+	if \
+		[[ \
+			"${linker_type}" =~ ("bfdlto"|"goldlto"|"moldlto"|"thinlto") \
+				|| \
+			"${SELECTED_LTO}" =~ ("bfdlto"|"goldlto"|"moldlto"|"thinlto") \
+		]] \
+				&& \
+		tc-is-clang \
+				&& \
+		(( ${allow_lto} == 1 )) \
+	; then
 		local clang_major_pv=$(clang-major-version)
 		mycmakeargs+=(
 			-DCMAKE_C_COMPILER="${CHOST}-clang-${clang_major_pv}"
@@ -2724,22 +2737,22 @@ einfo "Add -flto to CFLAGS/CXXFLAGS and -fuse-ld=<bfd|gold|lld|mold> to LDFLAGS 
 		[[ -z "${SELECTED_LTO}" ]] && SELECTED_LTO="${linker_type}"
 		if [[ "${SELECTED_LTO}" == "bfdlto" ]] ; then
 			mycmakeargs+=(
-				-DLTO_MODE=full
+				-DLTO_MODE="full"
 				-DUSE_LD_BFD=ON
 			)
 		elif [[ "${SELECTED_LTO}" == "goldlto" ]] ; then
 			mycmakeargs+=(
-				-DLTO_MODE=full
+				-DLTO_MODE="full"
 				-DUSE_LD_GOLD=ON
 			)
 		elif [[ "${SELECTED_LTO}" == "moldlto" ]] ; then
 			mycmakeargs+=(
-				-DLTO_MODE=full
+				-DLTO_MODE="full"
 				-DUSE_LD_MOLD=ON
 			)
 		elif [[ "${SELECTED_LTO}" == "thinlto" ]] ; then
 			mycmakeargs+=(
-				-DLTO_MODE=thin
+				-DLTO_MODE="thin"
 				-DUSE_LD_LLD=ON
 			)
 		fi
