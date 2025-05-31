@@ -5,7 +5,7 @@ EAPI=8
 
 FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 
-inherit cmake flag-o-matic
+inherit check-compiler-switch cmake flag-o-matic
 
 if [[ ${PV} == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/dyninst/dyninst/"
@@ -29,7 +29,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 -debuginfod +openmp -valgrind
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE="
 "
@@ -61,7 +61,7 @@ PATCHES=(
 DOCS=( "CHANGELOG.md" )
 
 pkg_setup() {
-	:
+	check-compiler-switch_start
 }
 
 src_prepare() {
@@ -75,6 +75,11 @@ src_configure() {
 	export CXX="${CHOST}-g++"
 	export CPP="${CC} -E"
 	strip-unsupported-flags
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	strip-flags
 	filter-flags '-O0' '-pipe'
