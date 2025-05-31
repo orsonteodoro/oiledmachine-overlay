@@ -498,7 +498,7 @@ einfo "CFLAGS_HARDENED_TOLERANCE:  ${CFLAGS_HARDENED_TOLERANCE} (similar to -Ofa
 	fi
 einfo
 einfo "The CFLAGS_HARDENED_TOLERANCE_USER can override this.  See"
-einfo "cflags-hardened.eclass for details."
+einfo "cflags-hardened.eclass in the oiledmachine-overlay for details."
 einfo
 }
 

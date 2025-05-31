@@ -443,7 +443,7 @@ einfo "RUSTFLAGS_HARDENED_TOLERANCE:  ${RUSTFLAGS_HARDENED_TOLERANCE} (similar t
 	fi
 einfo
 einfo "The RUSTFLAGS_HARDENED_TOLERANCE_USER can override this.  See"
-einfo "rustflags-hardened.eclass for details."
+einfo "rustflags-hardened.eclass in the oiledmachine-overlay for details."
 einfo
 }
 
