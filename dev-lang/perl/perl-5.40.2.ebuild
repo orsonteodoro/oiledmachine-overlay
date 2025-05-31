@@ -4,8 +4,6 @@
 EAPI=8
 
 # Add retpoline for kpcli
-CFLAGS_HARDENED_CF_PROTECTION=0												# Untested or unverified
-CFLAGS_HARDENED_FHARDENED=0												# Untested or unverified
 CFLAGS_HARDENED_TRAPV=0
 CFLAGS_HARDENED_USE_CASES="crypto language-runtime security-critical sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO PE"
@@ -67,7 +65,7 @@ fi
 
 IUSE="
 berkdb perl_features_debug doc gdbm perl_features_ithreads minimal perl_features_quadmath
-ebuild_revision_9
+ebuild_revision_10
 "
 
 RDEPEND="
