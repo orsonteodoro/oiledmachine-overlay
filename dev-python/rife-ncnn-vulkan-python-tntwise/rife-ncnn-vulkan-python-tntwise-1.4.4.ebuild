@@ -218,7 +218,7 @@ ${CPU_FLAGS_MIPS[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -397,6 +397,7 @@ src_configure() {
 	export CPP="${CHOST}-gcc -E"
 	strip-unsupported-flags
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
