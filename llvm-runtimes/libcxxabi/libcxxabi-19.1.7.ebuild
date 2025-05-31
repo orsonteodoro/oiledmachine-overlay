@@ -48,7 +48,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM19_REVISION}
 hardened +static-libs test
-ebuild_revision_12
+ebuild_revision_13
 "
 # in 15.x, cxxabi.h is moving from libcxx to libcxxabi
 RDEPEND="
@@ -303,6 +303,7 @@ einfo
 	local _cross_dso_cfi=$(_usex_cfi_cross_dso)
 	local _shadowcallstack=$(_usex_shadowcallstack)
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
