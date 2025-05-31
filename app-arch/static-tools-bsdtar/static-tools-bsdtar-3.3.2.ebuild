@@ -6,7 +6,7 @@ EAPI=7
 
 # You can build this in a musl container to get strictly musl libs.
 
-inherit check-compiler-switch
+inherit check-compiler-switch toolchain-funcs
 
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 S="${WORKDIR}/libarchive-${PV}"
@@ -104,6 +104,15 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 		LIBSTDCXX_LIBS="-lstdc++"
 	fi
 
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+	export CPP=$(tc-getCPP)
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	# Build static bsdtar
 	./configure \
 		--disable-shared \
@@ -120,16 +129,6 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 		LDFLAGS="-static" \
 		|| die
 	emake
-	if [[ -z "${CC}" ]] ; then
-		export CC="gcc"
-		export CXX="g++"
-		export CPP="${CC} -E"
-	fi
-
-	if check-compiler-switch_is_flavor_slot_changed ; then
-einfo "Detected compiler switch.  Disabling LTO."
-		filter-lto
-	fi
 
 	${CC} \
 		-static \

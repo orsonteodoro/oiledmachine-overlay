@@ -68,12 +68,7 @@ pkg_setup() {
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
-	if [[ -z "${CC}" ]] ; then
-		export CC="${CHOST}-gcc"
-		export CXX="${CHOST}-g++"
-		export CPP="${CC} -E"
-		strip-unsupported-flags
-	fi
+	strip-unsupported-flags
 	if tc-is-gcc ; then
 		local gcc_pv=$(gcc-fullversion)
 		if ver_test "${gcc_pv}" -lt "8.0" ; then

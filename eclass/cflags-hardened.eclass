@@ -420,6 +420,19 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # Language hints to improve hardening or to reduce sanitizer build failure.
 # Valid values:  asm, c-lang, cxx
 
+# @FUNCTION: _cflags-hardened_compiler_arch
+# @DESCRIPTION:
+# Print the name of the compiler_architecture
+_cflags-hardened_compiler_arch() {
+	if ${CC} --version | grep -q -e "gcc" ; then
+		echo "gcc"
+	elif ${CC} --version | grep -q -e "clang" ; then
+		echo "clang"
+	else
+		echo "unknown"
+	fi
+}
+
 # @FUNCTION: _cflags-hardened_clang_flavor
 # @DESCRIPTION:
 # Print the name of the clang compiler flavor
@@ -449,7 +462,7 @@ _cflags-hardened_clang_flavor_slot() {
 	elif [[ "${flavor}" == "llvm" ]] ; then
 		echo $(clang-major-version)
 	else
-		die "Not clang compiler"
+		echo "0"
 	fi
 }
 
@@ -1864,7 +1877,7 @@ einfo "Adding extra flags to unbreak ${coverage_pct} of -D_FORTIFY_SOURCE checks
 	local auto_sanitize=${CFLAGS_HARDENED_AUTO_SANITIZE_USER:-""}
 
 	local cc_current_slot=""
-	local cc_current_vendor=""
+	local cc_current_name=""
 	local sanitizers_compat=0
 	if \
 		tc-is-gcc \
@@ -1872,7 +1885,7 @@ einfo "Adding extra flags to unbreak ${coverage_pct} of -D_FORTIFY_SOURCE checks
 		_cflags-hardened_sanitizers_compat "gcc" \
 	; then
 		cc_current_slot=$(gcc-major-version)
-		cc_current_vendor="gcc"
+		cc_current_name="gcc"
 		sanitizers_compat=1
 	elif \
 		tc-is-clang \
@@ -1880,63 +1893,124 @@ einfo "Adding extra flags to unbreak ${coverage_pct} of -D_FORTIFY_SOURCE checks
 		_cflags-hardened_sanitizers_compat "llvm" \
 	; then
 		cc_current_slot=$(_cflags-hardened_clang_flavor_slot)
-		cc_current_vendor="clang"
+		cc_current_name="clang"
 		sanitizers_compat=1
 	fi
 
+	local sanitizers_tested=0
+	if [[ -n "${CFLAGS_HARDENED_CI_SANITIZERS}" || -n "${CFLAGS_HARDENED_BUILDFILES_SANITIZERS}" ]] ; then
+		sanitizers_tested=1
+	fi
+
+	ci_compiler_compat=0
+	local current_compiler_arch=$(_cflags-hardened_compiler_arch)
+	if [[ -n "${CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT}" && "${current_compiler_arch}" == "clang" && "${clang_flavor}" == "llvm" ]] ; then
+		ci_compiler_compat=1
+	elif [[ -n "${CFLAGS_HARDENED_CI_SANITIZERS_GCC_COMPAT}" && "${current_compiler_arch}" == "gcc" ]] ; then
+		ci_compiler_compat=1
+	fi
+
 	local auto_asan=0
-	if [[ "${auto_sanitize}" =~ "asan" && "${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("CE"|"DF"|"DOS"|"DP"|"HO"|"MC"|"OOBR"|"OOBW"|"PE"|"SO"|"SU"|"TC"|"UAF"|"UM") ]] ; then
-		if ! [[ "${CFLAGS_HARDENED_SANITIZERS}" =~ "address" ]] ; then
-			CFLAGS_HARDENED_SANITIZERS+=" address"
-		fi
-		if ! [[ "${CFLAGS_HARDENED_SANITIZERS}" =~ "hwaddress" ]] ; then
-			CFLAGS_HARDENED_SANITIZERS+=" hwaddress"
-		fi
-	fi
+	local sanitizers=""
 
-	if [[ "${auto_sanitize}" =~ "ubsan" && "${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("IO"|"IU") ]] ; then
-		if ! [[ "${CFLAGS_HARDENED_SANITIZERS}" =~ "signed-integer-overflow" ]] ; then
-			CFLAGS_HARDENED_SANITIZERS+=" signed-integer-overflow"
-		fi
-	fi
-
-	if [[ "${auto_sanitize}" =~ "ubsan" && "${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("SF") ]] ; then
-		if ! [[ "${CFLAGS_HARDENED_SANITIZERS}" =~ "undefined" ]] ; then
-			CFLAGS_HARDENED_SANITIZERS+=" undefined"
-		fi
-		append-flags "-Wformat" "-Wformat-security"
-		CFLAGS_HARDENED_CFLAGS+=" -Wformat -Wformat-security"
-		CFLAGS_HARDENED_CXXFLAGS+=" -Wformat -Wformat-security"
-	fi
+	local auto_sanitize=${CFLAGS_HARDENED_AUTO_SANITIZE_USER}
 
 	if [[ -n "${auto_sanitize}" ]] ; then
-		if [[ -z "${CFLAGS_HARDENED_SANITIZER_CC_FLAVOR_USER}" ]] ; then
-eerror "Set CFLAGS_HARDENED_SANITIZER_CC_FLAVOR_USER in /etc/portage/make.conf to either gcc or clang"
+		if [[ -z "${CFLAGS_HARDENED_SANITIZER_CC_NAME}" ]] ; then
+eerror "Set CFLAGS_HARDENED_SANITIZER_CC_NAME in /etc/portage/make.conf to either gcc or clang"
 			die
 		fi
-		if [[ -z "${CFLAGS_HARDENED_SANITIZER_CC_SLOT_USER}" ]] ; then
-eerror "Set CFLAGS_HARDENED_SANITIZER_CC_SLOT_USER in /etc/portage/make.conf to either"
-eerror "For Clang:  ${_CFLAGS_SANITIZER_CLANG_SLOTS_COMPAT}"
-eerror "For GCC:  ${_CFLAGS_SANITIZER_GCC_SLOTS_COMPAT}"
+		if [[ -z "${CFLAGS_HARDENED_SANITIZER_CC_SLOT}" ]] ; then
+eerror "Set CFLAGS_HARDENED_SANITIZER_CC_SLOT in /etc/portage/make.conf to either"
 			die
 		fi
 	fi
 
-	# You can only use the same gcc-<slot> or clang-<slot> to increase build success.
-	if [[ -n "${auto_sanitize}" && "${cc_current_vendor}-${cc_current_slot}" != "${CFLAGS_HARDENED_SANITIZER_CC_FLAVOR_USER}-${CFLAGS_HARDENED_SANITIZER_CC_SLOT_USER}" ]] ; then
-		sanitizers_compat=0
+	if [[ "${auto_sanitize}" =~ (^| )"asan" ]] ; then
+		if ! [[ "${CFLAGS_HARDENED_SANITIZERS}" =~ "address" ]] ; then
+			sanitizers+=" address"
+		fi
 	fi
 
-	#if [[ "${auto_sanitize}" =~ ("asan"|"ubsan") && "${CI_CC}" == "${CFLAGS_HARDENED_SANITIZER_CC_USER}" && "${CI_CC_SLOT}" == "${CFLAGS_HARDENED_SANITIZER_CC_SLOT_USER}" ]] ; then
-	#	sanitizers_compat=0
-	#fi
-
-	if ! [[ "${CFLAGS_HARDENED_USE_CASES}" =~ "security-critical" ]] ; then
-		sanitizers_compat=0
+	if [[ "${auto_sanitize}" =~ "hwasan" ]] ; then
+		if ! [[ "${CFLAGS_HARDENED_SANITIZERS}" =~ "hwaddress" ]] ; then
+			sanitizers+=" hwaddress"
+		fi
 	fi
 
-	if [[ "${CFLAGS_HARDENED_SANITIZER_SWITCHED_COMPILER_VENDOR:-0}" == "1" ]] ; then
+	if [[ "${auto_sanitize}" =~ "ubsan" ]] ; then
+		if ! [[ "${CFLAGS_HARDENED_SANITIZERS}" =~ "ubsan" ]] ; then
+			sanitizers+=" undefined"
+		fi
+	fi
+
+	if [[ "${auto_sanitize}" =~ "lsan" ]] ; then
+		if ! [[ "${CFLAGS_HARDENED_SANITIZERS}" =~ "leak" ]] ; then
+			sanitizers+=" leak"
+		fi
+	fi
+
+	if [[ "${auto_sanitize}" =~ "msan" ]] ; then
+		if ! [[ "${CFLAGS_HARDENED_SANITIZERS}" =~ "memory" ]] && [[ "${CFLAGS_HARDENED_SANITIZER_CC_NAME}" == "clang" ]] ; then
+			sanitizers+=" memory"
+		fi
+	fi
+
+	if [[ "${auto_sanitize}" =~ "tsan" ]] ; then
+		if ! [[ "${CFLAGS_HARDENED_SANITIZERS}" =~ "thread" ]] ; then
+			sanitizers+=" thread"
+		fi
+	fi
+
+	if [[ "${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("IO"|"IU") ]] ; then
+		sanitizers+=" signed-integer-overflow"
+	fi
+
+	local warn_flags=""
+	if [[ "${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("SF") ]] ; then
+		warn_flags+=" -Wformat -Wformat-security"
+	fi
+
+	if [[ "${CFLAGS_HARDENED_INTEGRATION_TEST_FAILED:-0}" == "1" ]] ; then
 		sanitizers_compat=0
+	elif (( ${sanitizers_tested} == 1 && ${ci_compiler_compat} == 1 )) ; then
+		if \
+			[[ "${cc_current_name}" == "clang" && "${cc_current_name}" == "${CFLAGS_HARDENED_SANITIZER_CC_NAME}" && "${cc_current_slot}" == "${CFLAGS_HARDENED_SANITIZER_CC_SLOT}" ]] \
+				|| \
+			[[ "${cc_current_name}" == "gcc" && "${cc_current_name}" == "${CFLAGS_HARDENED_SANITIZER_CC_NAME}" && "${cc_current_slot}" == "${CFLAGS_HARDENED_SANITIZER_CC_SLOT}" ]] \
+		; then
+			append-flags -fno-omit-frame-pointer ${warn_flags}
+			CFLAGS_HARDENED_SANITIZERS="${sanitizers}"
+		fi
+	elif (( ${sanitizers_tested} == 1 && ${ci_compiler_compat} == 0 )) ; then
+		if \
+			[[ "${cc_current_name}" == "clang" && "${cc_current_name}" == "${CFLAGS_HARDENED_SANITIZER_CC_NAME}" && "${cc_current_slot}" == "${CFLAGS_HARDENED_SANITIZER_CC_SLOT}" ]] \
+				|| \
+			[[ "${cc_current_name}" == "gcc" && "${cc_current_name}" == "${CFLAGS_HARDENED_SANITIZER_CC_NAME}" && "${cc_current_slot}" == "${CFLAGS_HARDENED_SANITIZER_CC_SLOT}" ]] \
+		; then
+			append-flags -fno-omit-frame-pointer ${warn_flags}
+			CFLAGS_HARDENED_SANITIZERS="${sanitizers}"
+		fi
+	elif [[ "${CFLAGS_HARDENED_USE_CASES}" =~ "security-critical" && "${CFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("CE"|"DF"|"DOS"|"DP"|"HO"|"MC"|"OOBR"|"OOBW"|"PE"|"SO"|"SU"|"TC"|"UAF"|"UM") ]] ; then
+		if \
+			[[ "${cc_current_name}" == "clang" && "${cc_current_name}" == "${CFLAGS_HARDENED_SANITIZER_CC_NAME}" && "${cc_current_slot}" == "${CFLAGS_HARDENED_SANITIZER_CC_SLOT}" ]] \
+				|| \
+			[[ "${cc_current_name}" == "gcc" && "${cc_current_name}" == "${CFLAGS_HARDENED_SANITIZER_CC_NAME}" && "${cc_current_slot}" == "${CFLAGS_HARDENED_SANITIZER_CC_SLOT}" ]] \
+		; then
+			append-flags -fno-omit-frame-pointer ${warn_flags}
+			CFLAGS_HARDENED_SANITIZERS="${sanitizers}"
+		fi
+	elif [[ -n "${CFLAGS_HARDENED_ASSEMBLERS}" || "${CFLAGS_HARDENED_LANGS}" =~ "asm" ]] ; then
+		if \
+			[[ "${cc_current_name}" == "clang" && "${cc_current_name}" == "${CFLAGS_HARDENED_SANITIZER_CC_NAME}" && "${cc_current_slot}" == "${CFLAGS_HARDENED_SANITIZER_CC_SLOT}" ]] \
+				|| \
+			[[ "${cc_current_name}" == "gcc" && "${cc_current_name}" == "${CFLAGS_HARDENED_SANITIZER_CC_NAME}" && "${cc_current_slot}" == "${CFLAGS_HARDENED_SANITIZER_CC_SLOT}" ]] \
+		; then
+			append-flags -fno-omit-frame-pointer ${warn_flags}
+			if [[ "${auto_sanitize}" =~ (^| )"asan" ]] ; then
+				CFLAGS_HARDENED_SANITIZERS="address"
+			fi
+		fi
 	fi
 
 	if [[ "${CFLAGS_HARDENED_SANITIZERS_DISABLE:-0}" == "1" ]] ; then
@@ -1947,14 +2021,6 @@ eerror "For GCC:  ${_CFLAGS_SANITIZER_GCC_SLOTS_COMPAT}"
 		sanitizers_compat=0
 	fi
 
-	if [[ -n "${CFLAGS_HARDENED_SANITIZERS_ASSEMBLERS}" || "${CFLAGS_HARDENED_LANGS}" =~ "asm" ]] ; then
-		sanitizers_compat=0
-	fi
-
-	if [[ "${CFLAGS_HARDENED_INTEGRATION_TEST_FAILED:-0}" == "1" ]] ; then
-		sanitizers_compat=0
-	fi
-
 	# Strips LTO which strips CFI
 	local disable_cfi=0
 	if [[ "${_CARGO_ECLASS}" == "1" ]] ; then
@@ -1962,6 +2028,7 @@ eerror "For GCC:  ${_CFLAGS_SANITIZER_GCC_SLOTS_COMPAT}"
 	fi
 
 	# Strips LTO which strips CFI
+	# filter-lto is used to detect compiler switch
 	if [[ "${FLAG_O_MATIC_FILTER_LTO}" == "1" ]] ; then
 		disable_cfi=1
 	fi

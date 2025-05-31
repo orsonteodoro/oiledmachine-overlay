@@ -1242,7 +1242,7 @@ einfo "rustc host:  ${host}"
 	local auto_sanitize=${CFLAGS_HARDENED_AUTO_SANITIZE_USER:-""}
 
 	local cc_current_slot=""
-	local cc_current_vendor=""
+	local cc_current_name=""
 	local sanitizers_compat=0
 	if \
 		tc-is-gcc \
@@ -1250,7 +1250,7 @@ einfo "rustc host:  ${host}"
 		_rustflags-hardened_sanitizers_compat "gcc" \
 	; then
 		cc_current_slot=$(gcc-major-version)
-		cc_current_vendor="gcc"
+		cc_current_name="gcc"
 		sanitizers_compat=1
 	elif \
 		tc-is-clang \
@@ -1258,78 +1258,135 @@ einfo "rustc host:  ${host}"
 		_rustflags-hardened_sanitizers_compat "llvm" \
 	; then
 		cc_current_slot=$(_rustflags-hardened_clang_flavor_slot)
-		cc_current_vendor="clang"
+		cc_current_name="clang"
 		sanitizers_compat=1
 	fi
 
-	if [[ "${auto_sanitize}" =~ "asan" && "${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("CE"|"DF"|"DOS"|"DP"|"HO"|"MC"|"OOBR"|"OOBW"|"PE"|"SO"|"SU"|"TC"|"UAF"|"UM") ]] ; then
-		if ! [[ "${RUSTFLAGS_HARDENED_SANITIZERS}" =~ "address" ]] ; then
-			RUSTFLAGS_HARDENED_SANITIZERS+=" address"
-		fi
-		if ! [[ "${RUSTFLAGS_HARDENED_SANITIZERS}" =~ "hwaddress" ]] ; then
-			RUSTFLAGS_HARDENED_SANITIZERS+=" hwaddress"
-		fi
+	local sanitizers_tested=0
+	if [[ -n "${RUSTFLAGS_HARDENED_CI_SANITIZERS}" || -n "${RUSTFLAGS_HARDENED_BUILDFILES_SANITIZERS}" ]] ; then
+		sanitizers_tested=1
 	fi
 
-	if [[ "${auto_sanitize}" =~ "ubsan" && "${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("IO"|"IU") ]] ; then
-		if ! [[ "${RUSTFLAGS_HARDENED_SANITIZERS}" =~ "undefined" ]] ; then
-			RUSTFLAGS_HARDENED_SANITIZERS+=" undefined"
-		fi
+	ci_compiler_compat=0
+	local current_compiler_arch=$(_rustflags-hardened_compiler_arch)
+	if [[ -n "${RUSTFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT}" && "${current_compiler_arch}" == "clang" && "${clang_flavor}" == "llvm" ]] ; then
+		ci_compiler_compat=1
+	elif [[ -n "${RUSTFLAGS_HARDENED_CI_SANITIZERS_GCC_COMPAT}" && "${current_compiler_arch}" == "gcc" ]] ; then
+		ci_compiler_compat=1
 	fi
 
-	if [[ "${auto_sanitize}" =~ "ubsan" && "${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("SF") ]] ; then
-		if ! [[ "${RUSTFLAGS_HARDENED_SANITIZERS}" =~ "undefined" ]] ; then
-			RUSTFLAGS_HARDENED_SANITIZERS+=" undefined"
-		fi
-	fi
+	local auto_asan=0
+	local sanitizers=""
+
+	local auto_sanitize=${RUSTFLAGS_HARDENED_AUTO_SANITIZE_USER}
 
 	if [[ -n "${auto_sanitize}" ]] ; then
-		if [[ -z "${RUSTFLAGS_HARDENED_SANITIZER_CC_FLAVOR_USER}" ]] ; then
-eerror "Set RUSTFLAGS_HARDENED_SANITIZER_CC_FLAVOR_USER in /etc/portage/make.conf to either gcc or clang"
+		if [[ -z "${RUSTFLAGS_HARDENED_SANITIZER_CC_NAME}" ]] ; then
+eerror "Set RUSTFLAGS_HARDENED_SANITIZER_CC_NAME in /etc/portage/make.conf to either gcc or clang"
 			die
 		fi
-		if [[ -z "${RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT_USER}" ]] ; then
-eerror "Set RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT_USER in /etc/portage/make.conf to either"
-eerror "For Clang:  ${_RUSTFLAGS_SANITIZER_CLANG_SLOTS_COMPAT}"
-eerror "For GCC:  ${_RUSTFLAGS_SANITIZER_GCC_SLOTS_COMPAT}"
+		if [[ -z "${RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT}" ]] ; then
+eerror "Set RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT in /etc/portage/make.conf to either"
 			die
 		fi
 	fi
 
-	# You can only use the same gcc-<slot> or clang-<slot> to increase build success.
-	if [[ -n "${auto_sanitize}" && "${cc_current_vendor}-${cc_current_slot}" != "${RUSTFLAGS_HARDENED_SANITIZER_CC_FLAVOR_USER}-${RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT_USER}" ]] ; then
-		sanitizers_compat=0
+	if [[ "${auto_sanitize}" =~ (^| )"asan" ]] ; then
+		if ! [[ "${RUSTFLAGS_HARDENED_SANITIZERS}" =~ "address" ]] ; then
+			sanitizers+=" address"
+		fi
 	fi
 
-	#if [[ "${auto_sanitize}" =~ ("asan"|"ubsan") && "${CI_CC}" == "${RUSTFLAGS_HARDENED_SANITIZER_CC_USER}" && "${CI_CC_SLOT}" == "${RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT_USER}" ]] ; then
-	#	sanitizers_compat=0
+	if [[ "${auto_sanitize}" =~ "hwasan" ]] ; then
+		if ! [[ "${RUSTFLAGS_HARDENED_SANITIZERS}" =~ "hwaddress" ]] ; then
+			sanitizers+=" hwaddress"
+		fi
+	fi
+
+	if [[ "${auto_sanitize}" =~ "ubsan" ]] ; then
+		if ! [[ "${RUSTFLAGS_HARDENED_SANITIZERS}" =~ "ubsan" ]] ; then
+			sanitizers+=" undefined"
+		fi
+	fi
+
+	if [[ "${auto_sanitize}" =~ "lsan" ]] ; then
+		if ! [[ "${RUSTFLAGS_HARDENED_SANITIZERS}" =~ "leak" ]] ; then
+			sanitizers+=" leak"
+		fi
+	fi
+
+	if [[ "${auto_sanitize}" =~ "msan" ]] ; then
+		if ! [[ "${RUSTFLAGS_HARDENED_SANITIZERS}" =~ "memory" ]] && [[ "${RUSTFLAGS_HARDENED_SANITIZER_CC_NAME}" == "clang" ]] ; then
+			sanitizers+=" memory"
+		fi
+	fi
+
+	if [[ "${auto_sanitize}" =~ "tsan" ]] ; then
+		if ! [[ "${RUSTFLAGS_HARDENED_SANITIZERS}" =~ "thread" ]] ; then
+			sanitizers+=" thread"
+		fi
+	fi
+
+	#if [[ "${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("IO"|"IU") ]] ; then
+	#	sanitizers+=" signed-integer-overflow"
 	#fi
 
-	if ! [[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ "security-critical" ]] ; then
+	local warn_flags=""
+	if [[ "${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("SF") ]] ; then
+		warn_flags+=" -Wformat -Wformat-security"
+	fi
+
+	if [[ "${RUSTFLAGS_HARDENED_INTEGRATION_TEST_FAILED:-0}" == "1" ]] ; then
+		sanitizers_compat=0
+	elif (( ${sanitizers_tested} == 1 && ${ci_compiler_compat} == 1 )) ; then
+		if \
+			[[ "${cc_current_name}" == "clang" && "${cc_current_name}" == "${RUSTFLAGS_HARDENED_SANITIZER_CC_NAME}" && "${cc_current_slot}" == "${RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT}" ]] \
+				|| \
+			[[ "${cc_current_name}" == "gcc" && "${cc_current_name}" == "${RUSTFLAGS_HARDENED_SANITIZER_CC_NAME}" && "${cc_current_slot}" == "${RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT}" ]] \
+		; then
+			append-flags -fno-omit-frame-pointer ${warn_flags}
+			RUSTFLAGS_HARDENED_SANITIZERS="${sanitizers}"
+		fi
+	elif (( ${sanitizers_tested} == 1 && ${ci_compiler_compat} == 0 )) ; then
+		if \
+			[[ "${cc_current_name}" == "clang" && "${cc_current_name}" == "${RUSTFLAGS_HARDENED_SANITIZER_CC_NAME}" && "${cc_current_slot}" == "${RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT}" ]] \
+				|| \
+			[[ "${cc_current_name}" == "gcc" && "${cc_current_name}" == "${RUSTFLAGS_HARDENED_SANITIZER_CC_NAME}" && "${cc_current_slot}" == "${RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT}" ]] \
+		; then
+			append-flags -fno-omit-frame-pointer ${warn_flags}
+			RUSTFLAGS_HARDENED_SANITIZERS="${sanitizers}"
+		fi
+	elif [[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ "security-critical" && "${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY}" =~ ("CE"|"DF"|"DOS"|"DP"|"HO"|"MC"|"OOBR"|"OOBW"|"PE"|"SO"|"SU"|"TC"|"UAF"|"UM") ]] ; then
+		if \
+			[[ "${cc_current_name}" == "clang" && "${cc_current_name}" == "${RUSTFLAGS_HARDENED_SANITIZER_CC_NAME}" && "${cc_current_slot}" == "${RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT}" ]] \
+				|| \
+			[[ "${cc_current_name}" == "gcc" && "${cc_current_name}" == "${RUSTFLAGS_HARDENED_SANITIZER_CC_NAME}" && "${cc_current_slot}" == "${RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT}" ]] \
+		; then
+			append-flags -fno-omit-frame-pointer ${warn_flags}
+			RUSTFLAGS_HARDENED_SANITIZERS="${sanitizers}"
+		fi
+	elif [[ -n "${RUSTFLAGS_HARDENED_ASSEMBLERS}" || "${RUSTFLAGS_HARDENED_LANGS}" =~ "asm" ]] ; then
+		if \
+			[[ "${cc_current_name}" == "clang" && "${cc_current_name}" == "${RUSTFLAGS_HARDENED_SANITIZER_CC_NAME}" && "${cc_current_slot}" == "${RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT}" ]] \
+				|| \
+			[[ "${cc_current_name}" == "gcc" && "${cc_current_name}" == "${RUSTFLAGS_HARDENED_SANITIZER_CC_NAME}" && "${cc_current_slot}" == "${RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT}" ]] \
+		; then
+			append-flags -fno-omit-frame-pointer ${warn_flags}
+			if [[ "${auto_sanitize}" =~ (^| )"asan" ]] ; then
+				RUSTFLAGS_HARDENED_SANITIZERS="address"
+			fi
+		fi
+	fi
+
+	if [[ "${RUSTFLAGS_HARDENED_SANITIZERS_DISABLE:-0}" == "1" ]] ; then
 		sanitizers_compat=0
 	fi
 
-	if [[ "${RUSTFLAGS_HARDENED_SANITIZER_SWITCHED_COMPILER_VENDOR:-0}" == "1" ]] ; then
-		sanitizers_compat=0
-	fi
-
-	if [[ "${RUSTFLAGS_HARDENED_SANITIZERS_DISABLE:0}" == "1" ]] ; then
-		sanitizers_compat=0
-	fi
-
-	if [[ "${RUSTFLAGS_HARDENED_SANITIZERS_DISABLE_USER:0}" == "1" ]] ; then
+	if [[ "${RUSTFLAGS_HARDENED_SANITIZERS_DISABLE_USER:-0}" == "1" ]] ; then
 		sanitizers_compat=0
 	fi
 
 	if (( ${is_rust_nightly} != 0 )) ; then
-		sanitizers_compat=0
-	fi
-
-	if [[ -n "${RUSTFLAGS_HARDENED_SANITIZERS_ASSEMBLERS}" || "${RUSTFLAGS_HARDENED_LANGS}" =~ "asm" ]] ; then
-		sanitizers_compat=0
-	fi
-
-	if [[ "${RUSTFLAGS_HARDENED_INTEGRATION_TEST_FAILED:-0}" == "1" ]] ; then
 		sanitizers_compat=0
 	fi
 
@@ -1340,6 +1397,7 @@ eerror "For GCC:  ${_RUSTFLAGS_SANITIZER_GCC_SLOTS_COMPAT}"
 	fi
 
 	# Strips LTO which strips CFI
+	# filter-lto is used to detect compiler switch
 	if [[ "${FLAG_O_MATIC_FILTER_LTO}" == "1" ]] ; then
 		disable_cfi=1
 	fi
