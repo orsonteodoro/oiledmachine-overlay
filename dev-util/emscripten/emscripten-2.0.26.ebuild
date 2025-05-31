@@ -134,7 +134,7 @@ SLOT="${LLVM_SLOT}-$(ver_cut 1-2 ${PV})"
 IUSE+="
 -closure-compiler closure_compiler_java closure_compiler_native
 closure_compiler_nodejs java test
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -227,6 +227,7 @@ eerror
 	export CPP="${CC} -E"
 	strip-unsupported-flags
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
