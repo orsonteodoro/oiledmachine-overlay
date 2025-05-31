@@ -19,7 +19,7 @@ ERROR_VIDEO_V4L2="${P} requires CONFIG_VIDEO_V4L2"
 FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 MODULE_NAMES="ep800(kernel/drivers/media/usb/gspca:${S})"
 
-inherit check-compiler-switch flag-o-matic linux-mod
+inherit flag-o-matic linux-mod
 
 KEYWORDS="~amd64 ~x86"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}/trunk"
@@ -34,10 +34,6 @@ LICENSE="GPL-2"
 RESTRICT="mirror"
 SLOT="0"
 
-pkg_setup() {
-	check-compiler-switch_start
-}
-
 src_configure() {
 	export CC=$(grep -E -e "CONFIG_CC_VERSION_TEXT" "${KERNEL_DIR}/.config" \
 		| cut -f 1 -d " " \
@@ -45,12 +41,12 @@ src_configure() {
 		| sed -e "s/[\"|']//g")
 	export CPP="${CC} -E"
 	strip-unsupported-flags
-	einfo "CC: ${CC}"
+einfo "CC: ${CC}"
 }
 
 pkg_postinst() {
 	linux-mod_pkg_postinst
-	einfo "Your module is called ep800.  You can do a modprobe ep800 to use it."
+einfo "Your module is called ep800.  You can do a modprobe ep800 to use it."
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
