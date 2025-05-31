@@ -9,7 +9,6 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="ip-assets untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO SO"
 CXX_STD_MIN="14"
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 FONT_PN="OpenImageIO"
 LEGACY_TBB_SLOT="2"
 LLVM_COMPAT=( {16..13} )
@@ -100,7 +99,7 @@ ${OPENVDB_APIS_[@]}
 aom avif clang color-management cuda cxx17 dds dicom +doc ffmpeg field3d fits
 gif gui heif icc jpeg2k opencv opengl openvdb png ptex +python qt5 +qt6 raw
 rav1e tbb tools +truetype wayland webp X
-ebuild_revision_27
+ebuild_revision_28
 "
 gen_abi_compat_required_use() {
 	local s
