@@ -1929,11 +1929,15 @@ einfo "Adding extra flags to unbreak ${coverage_pct} of -D_FORTIFY_SOURCE checks
 
 	if [[ -n "${auto_sanitize}" ]] ; then
 		if [[ -z "${CFLAGS_HARDENED_SANITIZER_CC_NAME}" ]] ; then
-eerror "Set CFLAGS_HARDENED_SANITIZER_CC_NAME in /etc/portage/make.conf to either gcc or clang"
+eerror "Set CFLAGS_HARDENED_SANITIZER_CC_NAME in /etc/portage/make.conf to either gcc or clang."
+eerror "CFLAGS_HARDENED_SANITIZER_CC_NAME should be the same as DETECT_COMPILER_LTO_CC_NAME."
 			die
 		fi
 		if [[ -z "${CFLAGS_HARDENED_SANITIZER_CC_SLOT}" ]] ; then
-eerror "Set CFLAGS_HARDENED_SANITIZER_CC_SLOT in /etc/portage/make.conf to either"
+eerror "Set CFLAGS_HARDENED_SANITIZER_CC_SLOT in /etc/portage/make.conf to one of the following"
+eerror "For GCC, ${_CFLAGS_SANITIZER_GCC_SLOTS_COMPAT}."
+eerror "For Clang, ${_CFLAGS_SANITIZER_Clang_SLOTS_COMPAT}."
+eerror "CFLAGS_HARDENED_SANITIZER_CC_SLOT should be the same as DETECT_COMPILER_LTO_CC_SLOT."
 			die
 		fi
 	fi

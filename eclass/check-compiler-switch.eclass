@@ -170,7 +170,7 @@ eerror "DETECT_COMPILER_LTO_CC_SLOT - A single compiler slot for LTO builds"
 eerror "Valid values for GCC:    11, 12, 13, 14, 15, 16"
 eerror "Valid values for Clang:  15, 16, 17, 18, 19, 20, 21"
 eerror
-eerror "For LLVM CFI users,  use the same values for"
+eerror "For sanitizer users, use the same values for"
 eerror "CFLAGS_HARDENED_SANITIZER_CC_NAME and CFLAGS_HARDENED_SANITIZER_CC_SLOT"
 eerror
 eerror "You can set the above variables or remove the -flto flag to remove this"
