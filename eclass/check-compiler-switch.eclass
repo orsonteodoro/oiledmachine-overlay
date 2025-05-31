@@ -63,7 +63,7 @@ _CHECK_COMPILER_SWITCH_ECLASS=1
 # The full compiler version after compiler switching phase.
 
 
-# @ECLASS_VARIABLE:  DETECT_COMPILER_SWITCH_LTO_CC_Name
+# @ECLASS_VARIABLE:  DETECT_COMPILER_SWITCH_LTO_CC_NAME
 # @USER_VARIABLE
 # @DESCRIPTION:
 # Set the default compiler name used by default for systemwide LTO.
