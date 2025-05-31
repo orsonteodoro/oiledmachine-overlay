@@ -37,7 +37,7 @@ SO_R=5
 SO_A=17
 SO_MAJOR=$((${SO_C} - ${SO_A})) # Currently 42
 
-inherit cflags-hardened flag-o-matic llvm meson-multilib multilib-minimal
+inherit cflags-hardened check-compiler-switch flag-o-matic llvm meson-multilib multilib-minimal
 inherit python-r1 toolchain-funcs vala
 
 KEYWORDS="~amd64 ~arm64"
@@ -62,7 +62,7 @@ ${PATENT_STATUS_IUSE[@]}
 +jpeg2k -jxl +lcms +matio -minimal -nifti +openexr +openslide +orc
 +pangocairo +png +poppler +python +ppm -spng +svg test +tiff
 +vala +webp +zlib
-ebuild_revision_29
+ebuild_revision_30
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -304,6 +304,7 @@ PDEPEND+="
 DOCS=( "ChangeLog" "README.md" )
 
 pkg_setup() {
+	check-compiler-switch_start
 	python_setup
 	use vala && vala_setup
 	if use test ; then
@@ -551,6 +552,7 @@ eerror
 		export CXX="${CHOST}-clang++"
 		export CPP="${CC} -E"
 		strip-unsupported-flags
+
 		_strip_flags
 		_apply_flags
 		if use fuzz-testing ; then
@@ -559,6 +561,12 @@ eerror
 				| ${CC} -shared -xc -o "${BUILD_DIR}/dlclose.so" - || die
 		fi
 		_apply_env 0
+	fi
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
 	fi
 
 	if use highway ; then
