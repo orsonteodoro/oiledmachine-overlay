@@ -16,7 +16,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~m68k ~mips ~ppc ~ppc64 ~s390 ~sparc ~
 DESCRIPTION="V4L2 source/sink plugin for GStreamer"
 IUSE="
 udev
-ebuild_revision_12
+ebuild_revision_13
 "
 RDEPEND="
 	~media-libs/gst-plugins-base-${PV}:${SLOT}[${MULTILIB_USEDEP}]
