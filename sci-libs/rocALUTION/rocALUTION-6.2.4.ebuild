@@ -29,7 +29,7 @@ CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_SLOT=18
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake rocm
+inherit check-compiler-switch cmake rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-rocm-${PV}"
@@ -44,7 +44,8 @@ LICENSE="MIT"
 RESTRICT="mirror"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
-rocm samples +openmp mpi ebuild_revision_6
+rocm samples +openmp mpi
+ebuild_revision_7
 "
 gen_rocm_required_use() {
 	local x
@@ -97,6 +98,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	rocm_pkg_setup
 }
 
@@ -139,6 +141,12 @@ src_configure() {
 	)
 
 	rocm_set_default_hipcc
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	if use openmp ; then
 		mycmakeargs+=(
