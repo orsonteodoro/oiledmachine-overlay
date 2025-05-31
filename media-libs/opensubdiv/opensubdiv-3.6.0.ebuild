@@ -10,7 +10,6 @@ CUDA_TARGETS_COMPAT=(
 	sm_35
 	sm_50
 )
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 LEGACY_TBB_SLOT="2" # For TBB 2020
 MY_PV=$(ver_rs "1-3" '_')
 ONETBB_SLOT="0"
@@ -42,7 +41,7 @@ IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 cuda +doc +examples -glew +glfw +opencl +openmp +opengl +ptex +tbb test
 +tutorials +X
-ebuild_revision_3
+ebuild_revision_4
 "
 gen_required_use_cuda_targets() {
 	local x
