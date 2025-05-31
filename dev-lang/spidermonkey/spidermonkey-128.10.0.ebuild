@@ -76,7 +76,7 @@ RUST_MIN_VER="1.76.0" # Corresponds to llvm 17
 
 WANT_AUTOCONF="2.1"
 
-inherit autotools cflags-hardened check-reqs dhms flag-o-matic llvm-r1
+inherit autotools cflags-hardened check-compiler-switch check-reqs dhms flag-o-matic llvm-r1
 inherit multiprocessing prefix python-any-r1 rust rustflags-hardened
 inherit toolchain-funcs
 
@@ -104,7 +104,7 @@ IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang debug +jit lto rust-simd test
-ebuild_revision_12
+ebuild_revision_13
 "
 REQUIRED_USE="
 	rust-simd? (
@@ -345,6 +345,7 @@ pkg_pretend() {
 
 pkg_setup() {
 	dhms_start
+	check-compiler-switch_start
 
 	# Get LTO from environment; export after this phase for use in src_configure (etc)
 	use_lto=no
@@ -590,6 +591,13 @@ einfo "Enforcing the use of gcc due to USE=-clang ..."
 	# that no unsupported flags are set
 		strip-unsupported-flags
 	fi
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 	rustflags-hardened_append
 
