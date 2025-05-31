@@ -4,14 +4,9 @@
 EAPI=8
 
 # Add retpoline for kpcli
-CFLAGS_HARDENED_CF_PROTECTION=0		# Untested
-CFLAGS_HARDENED_FHARDENED=0		# Untested
+CFLAGS_HARDENED_CF_PROTECTION=0												# Untested or unverified
+CFLAGS_HARDENED_FHARDENED=0												# Untested or unverified
 CFLAGS_HARDENED_TRAPV=0
-# This is a security-critical package.  This means if it breaks, then @system and the compiler toolchain can break.
-# This is why newer flags like -fhardened, -cf-protection, -mbranch-protection, -mspeculative-load-hardening need to be actually tested.
-# For noobs, it is usually a complete clean format.
-# For pros, you can try to undo the damage with untested experimental flags with a stage 3 tarball.
-# Some crypto algorithms may implemented with just perl.  This just increases the mitigation for -D_FORTIFY_SOURCE by disabling interfering optimizations for theoretical security-critical.
 CFLAGS_HARDENED_USE_CASES="crypto language-runtime security-critical sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO PE"
 
@@ -72,7 +67,7 @@ fi
 
 IUSE="
 berkdb perl_features_debug doc gdbm perl_features_ithreads minimal perl_features_quadmath
-ebuild_revision_8
+ebuild_revision_9
 "
 
 RDEPEND="
