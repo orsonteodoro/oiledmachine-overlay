@@ -19,7 +19,7 @@ ERROR_VIDEO_V4L2="${P} requires CONFIG_VIDEO_V4L2"
 FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 MODULE_NAMES="ep800(kernel/drivers/media/usb/gspca:${S})"
 
-inherit flag-o-matic linux-mod
+inherit check-compiler-switch flag-o-matic linux-mod
 
 KEYWORDS="~amd64 ~x86"
 S="${WORKDIR}/${PN}-${EGIT_COMMIT}/trunk"
@@ -33,6 +33,10 @@ HOMEPAGE="https://github.com/orsonteodoro/gspca_ep800"
 LICENSE="GPL-2"
 RESTRICT="mirror"
 SLOT="0"
+
+pkg_setup() {
+	check-compiler-switch_start
+}
 
 src_configure() {
 	export CC=$(grep -E -e "CONFIG_CC_VERSION_TEXT" "${KERNEL_DIR}/.config" \
