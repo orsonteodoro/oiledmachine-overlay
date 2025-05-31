@@ -11,7 +11,6 @@ BINARYEN_SLOT="93" # Consider using Binaryen as part of SLOT_MAJOR for ABI/TC co
 CLOSURE_COMPILER_SLOT="0"
 DEST_FILENAME="${P}.tar.gz"
 EMSCRIPTEN_CONFIG_VER="2.0.26"
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 INSTALL_PATH="/usr/share/"
 JAVA_SLOT="1.8"
 LLVM_SLOT="14" # Upstream requires 12 for wasm and 6 for asmjs.
@@ -136,7 +135,7 @@ SLOT="${LLVM_SLOT}-$(ver_cut 1-2 ${PV})"
 IUSE+="
 -closure-compiler closure_compiler_java closure_compiler_native
 closure_compiler_nodejs java test
-ebuild_revision_34
+ebuild_revision_35
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
