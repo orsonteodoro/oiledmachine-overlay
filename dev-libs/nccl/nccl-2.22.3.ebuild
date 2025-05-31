@@ -18,7 +18,6 @@ CUDA_TARGETS_COMPAT=(
 	compute_80
 	compute_90
 )
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 NCCL_TESTS_COMMIT="1292b25553bd0384f2faa2965f9d82b99797a348" # committer-date:<=2024-06-19
 S_TESTS="${WORKDIR}/nccl-tests-${NCCL_TESTS_COMMIT}"
 PYTHON_COMPAT=( python3_{10..12} )
@@ -53,7 +52,7 @@ SLOT="0"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 -gdrcopy peermem rdma roce test -verbs
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE="
 	|| (
