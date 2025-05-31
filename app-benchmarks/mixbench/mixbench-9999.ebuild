@@ -3,7 +3,6 @@
 
 EAPI=8
 
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 IMPLS=(
 	"cuda"
 	"opencl"
@@ -51,7 +50,7 @@ SLOT="0"
 IUSE+="
 ${ROCM_SLOTS[@]}
 cuda doc rocm opencl openmp sycl
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	rocm? (
