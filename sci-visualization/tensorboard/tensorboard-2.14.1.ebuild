@@ -39,7 +39,7 @@ PROPERTIES="live"
 SLOT="0"
 IUSE+="
 test
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
