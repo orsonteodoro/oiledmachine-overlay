@@ -77,7 +77,7 @@ LLVM_COMPAT=( 17 ) # From .bazelrc
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 PYTHON_COMPAT=( "python3_"{11..12} ) # Limited by Flax CI
 
-inherit bazel cuda distutils-r1 dhms flag-o-matic git-r3 hip-versions java-pkg-opt-2
+inherit bazel cflags-hardened check-compiler-switch cuda distutils-r1 dhms flag-o-matic git-r3 hip-versions java-pkg-opt-2
 inherit llvm pypi rocm sandbox-changes toolchain-funcs
 
 # DO NOT HARD WRAP
@@ -340,7 +340,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${CPU_FLAGS_X86_64[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang cpu cuda debug rocm rocm_6_0
-ebuild_revision_11
+ebuild_revision_12
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
 
@@ -870,8 +870,14 @@ einfo
 
 pkg_setup() {
 	dhms_start
+	check-compiler-switch_start
 	python_setup
 	setup_tc
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	if ! [[ "${BAZEL_LD_PRELOAD_IGNORED_RISKS}" =~ ("allow"|"accept") ]] ; then
 	# A reaction to "WARNING: ignoring LD_PRELOAD in environment" maybe
