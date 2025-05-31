@@ -6,7 +6,7 @@ EAPI=8
 
 FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 
-inherit flag-o-matic git-r3 linux-info linux-mod-r1
+inherit check-compiler-switch flag-o-matic git-r3 linux-info linux-mod-r1
 
 S="${WORKDIR}"
 SRC_URI="
@@ -24,7 +24,10 @@ LICENSE="
 KEYWORDS="~amd64 ~x86"
 RESTRICT="mirror strip" # No strip required by CONFIG_MODULE_SIG
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" custom-kernel doc ebuild_revision_1"
+IUSE+="
+custom-kernel doc
+ebuild_revision_2
+"
 REQUIRED_USE="
 "
 # If you have a custom kernel, it is recommended to maintain a local copy to add
@@ -75,6 +78,7 @@ _pkg_setup_one() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	linux-info_pkg_setup
 	linux-mod-r1_pkg_setup
 	if [[ -z "${GHOSTCRIPT_GHOST_KERNELS}" ]] ; then
