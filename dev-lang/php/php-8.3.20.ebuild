@@ -33,7 +33,7 @@ UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 WANT_AUTOMAKE="none"
 
-inherit autotools cflags-hardened flag-o-matic llvm multilib postgres systemd uopts
+inherit autotools cflags-hardened check-compiler-switch flag-o-matic llvm multilib postgres systemd uopts
 
 KEYWORDS="
 ~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390
@@ -103,7 +103,7 @@ trainer-ext-reflection
 trainer-ext-spl
 trainer-ext-standard
 trainer-zend
-ebuild_revision_11
+ebuild_revision_12
 "
 # Without USE=readline or libedit, the interactive "php -a" CLI will hang.
 REQUIRED_USE_BENCHMARK_SYMFONY_DEMO="
@@ -543,6 +543,7 @@ use_dba() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	use postgres && postgres_pkg_setup
 
 	if use pgo || use bolt ; then
@@ -831,6 +832,12 @@ eerror "Bugged optimized version.  Disable either clang USE flag or both bolt an
 
 	# https://bugs.gentoo.org/866683, https://bugs.gentoo.org/913527
 	filter-lto
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	PHP_DESTDIR="${EPREFIX}/usr/$(get_libdir)/php${SLOT}"
 
