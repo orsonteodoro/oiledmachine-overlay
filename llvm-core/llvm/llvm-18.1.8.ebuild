@@ -50,7 +50,7 @@ SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 +binutils-plugin bolt bolt-heatmap +debug debuginfod doc -dump exegesis jemalloc
 libedit +libffi ncurses tcmalloc test xml z3 zstd
-ebuild_revision_8
+ebuild_revision_9
 ${LLVM_EBUILDS_LLVM18_REVISION}
 "
 REQUIRED_USE+="
@@ -563,6 +563,7 @@ _src_configure_compiler() {
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
 	llvm-ebuilds_fix_toolchain # Compiler switch
+
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
