@@ -43,7 +43,7 @@ UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=1
 XMRNBENCHMARKER_COMMIT="97f618cd585af549dd861b7c142656c496f6a89b"
 
-inherit autotools cflags-hardened check-reqs lcnr linux-info mono-env pax-utils
+inherit autotools cflags-hardened check-compiler-switch check-reqs lcnr linux-info mono-env pax-utils
 inherit multilib-minimal sandbox-changes toolchain-funcs uopts
 
 KEYWORDS="~amd64 ~arm ~arm64 ~ppc ~ppc64 -riscv ~x86 ~amd64-linux"
@@ -202,8 +202,7 @@ IUSE+="
 ${TRAINERS[@]}
 doc jemalloc jemalloc-assert jemalloc-custom-cflags jemalloc-default minimal nls
 pax-kernel xen
-
-ebuild_revision_13
+ebuild_revision_14
 "
 REQUIRED_USE+="
 	jemalloc-assert? (
@@ -269,6 +268,7 @@ _get_build_dir() {
 }
 
 pkg_pretend() {
+	check-compiler-switch_start
 	linux-info_pkg_setup
 
 	if use kernel_linux ; then
@@ -428,6 +428,13 @@ _src_configure_compiler() {
 
 _src_configure() {
 	uopts_src_configure
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 
 	if tc-is-gcc && [[ "${PGO_PHASE}" == "PGO" ]] ; then
