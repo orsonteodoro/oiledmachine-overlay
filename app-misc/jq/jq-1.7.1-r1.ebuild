@@ -11,7 +11,7 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO IO SO"
 FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 # CVE-2015-8863 - network zero click attack, heap-based overflow (ASAN), off-by-one (UBSAN)
 
-inherit autotools cflags-hardened flag-o-matic
+inherit autotools cflags-hardened check-compiler-switch flag-o-matic
 
 MY_PV="${PV/_/}"
 MY_P="${PN}-${MY_PV}"
@@ -33,7 +33,7 @@ LICENSE="MIT CC-BY-3.0"
 SLOT="0"
 IUSE="
 +oniguruma static-libs test
-ebuild_revision_26
+ebuild_revision_27
 "
 DEPEND="
 	>=sys-devel/bison-3.0
@@ -64,6 +64,10 @@ REQUIRED_USE="
 		oniguruma
 	)
 "
+
+pkg_setup() {
+	check-compiler-switch_start
+}
 
 src_prepare() {
 	sed -i \
@@ -100,6 +104,11 @@ src_configure() {
 	export CXX="g++"
 	export CPP="${CC} -E"
 	strip-unsupported-flags
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	# TODO: Drop on next release > 1.7.1
 	# bug #944014
