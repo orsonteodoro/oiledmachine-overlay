@@ -27,7 +27,7 @@ CMAKE_ECLASS="cmake"
 FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 PYTHON_COMPAT=( "python3_11" )
 
-inherit cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
+inherit check-compiler-switch cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
 
 LLVM_MAX_SLOT=${LLVM_MAJOR}
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~riscv ~sparc ~x86 ~arm64-macos ~x64-macos"
@@ -50,8 +50,9 @@ RESTRICT="
 "
 SLOT="${PV%%.*}"
 IUSE+="
--openmp -tbb test
 ${LLVM_EBUILDS_LLVM18_REVISION}
+-openmp -tbb test
+ebuild_revision_2
 "
 RDEPEND="
 	openmp? (
@@ -93,6 +94,7 @@ get_lib_types() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	python-any-r1_pkg_setup
 }
 
@@ -128,10 +130,13 @@ eerror
 		strip-unsupported-flags
 	fi
 
-einfo
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 einfo "CC:\t${CC}"
 einfo "CXX:\t${CXX}"
-einfo
 
 	local libdir=$(get_libdir)
 	local mycmakeargs=(

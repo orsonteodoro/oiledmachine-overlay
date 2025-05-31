@@ -28,7 +28,7 @@ GCC_SLOT=13
 LLVM_MAX_SLOT=${LLVM_MAJOR}
 PYTHON_COMPAT=( "python3_12" )
 
-inherit cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
+inherit check-compiler-switch cmake-multilib flag-o-matic llvm.org llvm-utils python-any-r1 toolchain-funcs
 
 SRC_URI+="
 "
@@ -49,8 +49,9 @@ RESTRICT="
 "
 SLOT="${PV%%.*}"
 IUSE+="
--openmp -tbb test
 ${LLVM_EBUILDS_LLVM20_REVISION}
+-openmp -tbb test
+ebuild_revision_2
 "
 RDEPEND="
 	openmp? (
@@ -92,6 +93,7 @@ get_lib_types() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	python-any-r1_pkg_setup
 }
 
@@ -129,10 +131,13 @@ eerror
 		strip-unsupported-flags
 	fi
 
-einfo
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 einfo "CC:\t${CC}"
 einfo "CXX:\t${CXX}"
-einfo
 
 	local libdir=$(get_libdir)
 	local mycmakeargs=(
