@@ -6,7 +6,6 @@ EAPI="8"
 
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO PE SO UAF"
-FLAG_O_MATIC_FILTER_LTO=1
 JAVA_PKG_OPT_USE="jdbc"
 PATCHSET_VER="11.4.2:01"
 SUBSLOT="18"
@@ -45,7 +44,7 @@ IUSE="
 innodb-lzo innodb-snappy jdbc jemalloc kerberos latin1 mroonga numa odbc oqgraph
 pam +perl profiling rocksdb selinux +server sphinx sst-rsync sst-mariabackup
 static systemd systemtap s3 tcmalloc test xml yassl
-ebuild_revision_14
+ebuild_revision_15
 "
 REQUIRED_USE="
 	?? (
