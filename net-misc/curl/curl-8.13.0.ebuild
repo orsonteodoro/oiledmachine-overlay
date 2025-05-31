@@ -65,7 +65,7 @@ QA_CONFIG_IMPL_DECL_SKIP=(
 )
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/danielstenberg.asc"
 
-inherit autotools cflags-hardened multilib-minimal multiprocessing
+inherit autotools cflags-hardened check-compiler-switch multilib-minimal multiprocessing
 inherit prefix toolchain-funcs verify-sig
 
 if [[ "${PV}" == "9999" ]]; then
@@ -115,7 +115,7 @@ ${IMPLS[@]}
 +adns +alt-svc brotli debug ech +ftp gnutls gopher +hsts +http2 +http3 +httpsrr
 idn +imap kerberos ldap mbedtls +openssl +pop3 +psl +quic rtmp rustls samba
 sasl-scram +smtp ssh ssl static-libs test telnet +tftp +websockets zstd
-ebuild_revision_35
+ebuild_revision_36
 "
 RESTRICT="
 	!test? (
@@ -273,6 +273,10 @@ PATCHES=(
 	"${FILESDIR}/${PN}-8.13.0-openssl-quic-stream-shutdown.patch"
 )
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_prepare() {
 	default
 	eprefixify "curl-config.in"
@@ -351,6 +355,12 @@ multilib_src_configure() {
 	export CXX="g++ ${!abi_flags}"
 	export CPP="${CC} -E"
 	strip-unsupported-flags
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 	# We make use of the fact that later flags override earlier ones
 	# So start with all ssl providers off until proven otherwise
