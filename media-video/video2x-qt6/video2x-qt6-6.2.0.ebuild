@@ -7,7 +7,6 @@ EAPI=8
 # U24
 
 CMAKE_MAKEFILE_GENERATOR="emake"
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 PYTHON_COMPAT=( "python3_12" )
 
 inherit check-compiler-switch cmake dep-prepare flag-o-matic python-single-r1 toolchain-funcs xdg
@@ -41,7 +40,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 wayland X
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
