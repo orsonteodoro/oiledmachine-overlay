@@ -63,7 +63,7 @@ LICENSE="GPL-2+ LGPL-2+"
 IUSE="
 alsa +egl gbm +gles2 +introspection ivorbis nls +ogg opengl +orc +pango theora
 +vorbis wayland +X
-ebuild_revision_14
+ebuild_revision_15
 "
 GL_REQUIRED_USE="
 	|| (
