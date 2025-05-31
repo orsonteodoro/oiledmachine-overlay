@@ -299,7 +299,7 @@ contribovis contribsfm contribxfeatures2d -cuda -cudnn debug dnnsamples +eigen
 +opencl +openexr -opengl -openmp +opencvapps +openh264 openvino -openvx +png
 +python +quirc -qt5 -qt6 rocm -spng +sun -system-flatbuffers tesseract -testprograms
 -tbb +tiff +vaapi +v4l +vpx +vtk -wayland +webp x264 x265 -xine video_cards_intel
--vulkan ebuild_revision_31
+-vulkan ebuild_revision_32
 "
 # OpenGL needs gtk or Qt installed to activate, otherwise build system
 # will silently disable it without the user knowing, which defeats the
