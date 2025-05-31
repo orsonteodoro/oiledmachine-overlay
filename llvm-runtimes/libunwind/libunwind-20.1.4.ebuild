@@ -48,7 +48,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM20_REVISION}
 +clang debug static-libs test
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	test? (
