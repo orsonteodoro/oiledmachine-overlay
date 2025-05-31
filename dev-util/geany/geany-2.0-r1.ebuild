@@ -28,7 +28,7 @@ LICENSE="
 	HPND
 "
 SLOT="0"
-IUSE="+vte ebuild_revision_10"
+IUSE="+vte ebuild_revision_11"
 RDEPEND="
 	>=dev-libs/glib-2.32:2
 	>=x11-libs/gtk+-3.24:3
