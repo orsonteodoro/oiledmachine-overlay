@@ -4,7 +4,6 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="untrusted-data sensitive-data"
-FLAG_O_MATIC_FILTER_LTO=1
 PYTHON_COMPAT=( python3_{10..13} )
 
 inherit cflags-hardened flag-o-matic gnome.org meson python-any-r1 vala xdg
@@ -19,7 +18,7 @@ SLOT="2.91"      # vte_api_version in meson.build
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~mips ~ppc ~ppc64 ~riscv ~sparc ~x86"
 IUSE="
 +crypt debug gtk-doc +icu +introspection systemd +vala
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	gtk-doc? ( introspection )
@@ -66,10 +65,10 @@ src_prepare() {
 }
 
 src_configure() {
-	cflags-hardened_append
-
 	# Upstream don't support LTO & error out on it in meson.build
 	filter-lto
+
+	cflags-hardened_append
 
 	local emesonargs=(
 		-Da11y=true
