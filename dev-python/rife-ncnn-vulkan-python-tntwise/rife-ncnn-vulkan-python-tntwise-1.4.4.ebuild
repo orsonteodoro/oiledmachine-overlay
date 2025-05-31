@@ -147,7 +147,7 @@ CPU_FLAGS_X86=(
 	cpu_flags_x86_xop
 )
 
-inherit dep-prepare distutils-r1 pypi
+inherit check-compiler-switch dep-prepare distutils-r1 pypi
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -219,7 +219,7 @@ ${CPU_FLAGS_MIPS[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_RISCV[@]}
 ${CPU_FLAGS_X86[@]}
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -368,6 +368,11 @@ einfo "Generating tag start for ${path}"
 einfo "Generating tag done"
 }
 
+pkg_setup() {
+	check-compiler-switch_start
+	python_setup
+}
+
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
@@ -392,6 +397,11 @@ src_configure() {
 	export CXX="${CHOST}-g++"
 	export CPP="${CHOST}-gcc -E"
 	strip-unsupported-flags
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	export MAKEOPTS="-j1"
 
