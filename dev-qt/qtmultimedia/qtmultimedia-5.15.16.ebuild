@@ -18,7 +18,7 @@ DESCRIPTION="Multimedia (audio, video, radio, camera) library for the Qt5 framew
 
 IUSE="
 alsa gles2-only gstreamer openal pulseaudio qml widgets
-ebuild_revision_7
+ebuild_revision_8
 "
 
 RDEPEND="

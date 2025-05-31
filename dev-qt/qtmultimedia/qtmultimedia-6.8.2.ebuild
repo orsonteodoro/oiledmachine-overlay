@@ -18,7 +18,7 @@ fi
 IUSE="
 	+X alsa eglfs +ffmpeg gstreamer opengl pulseaudio
 	qml screencast v4l vaapi vulkan wayland
-	ebuild_revision_7
+	ebuild_revision_8
 "
 # tst_qmediaplayerbackend hard requires qml, review in case becomes optional
 REQUIRED_USE="
