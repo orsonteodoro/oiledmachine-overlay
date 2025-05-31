@@ -13,7 +13,6 @@ ANDROID_MARCH=( arm arm64 x64 x86 ) # dotnet runtimes available
 #   arm=armv7
 ANDROID_ERIDS="${ANDROID_MARCH[@]/#/dotnet_android_}"
 DOTNET_V="6.0"
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 IOS_MARCH=( arm arm64 x64 x86 ) # dotnet runtimes available
 IOS_ERIDS="${IOS_MARCH[@]/#/dotnet_ios_}"
 # OS >= 11.2
@@ -56,7 +55,7 @@ KEYWORDS="~amd64"
 IUSE+="
 ${ERIDS[@]}
 developer mono nupkg test
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE+="
 	^^ (
