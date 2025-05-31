@@ -229,7 +229,7 @@ XNNPACK_COMMIT="51a987591a6fc9f0fc0707077f53d763ac132cbf"
 ZSTD_COMMIT="aec56a52fbab207fc639a1937d1e708a282edca8"
 
 
-inherit cflags-hardened cmake cuda dep-prepare dhms flag-o-matic llvm rocm python-single-r1 toolchain-funcs
+inherit cflags-hardened check-compiler-switch cmake cuda dep-prepare dhms flag-o-matic llvm rocm python-single-r1 toolchain-funcs
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${MYP}"
@@ -463,7 +463,7 @@ ${ROCM_SLOTS2[@]}
 clang cuda +distributed +eigen +fbgemm -ffmpeg +flash-attention +gloo -jit +kineto +magma
 -mkl +mpi +nccl +nnpack +numpy +onednn -openblas -opencl -opencv +openmp +rccl rocm
 roctracer -ssl system-libs +tensorpipe +qnnpack test +xnnpack
-ebuild_revision_24
+ebuild_revision_25
 "
 gen_cuda_required_use() {
 	local x
@@ -1028,6 +1028,7 @@ ewarn "${gpu} is not CI tested upstream."
 
 pkg_setup() {
 	dhms_start
+	check-compiler-switch_start
 	warn_untested_gpu
 	if use rocm_5_4 ; then
 		LLVM_SLOT="15"
@@ -1279,6 +1280,12 @@ gen_cuda_arch_list() {
 }
 
 src_configure() {
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 	if use cuda && [[ -z ${TORCH_CUDA_ARCH_LIST} ]]; then
 einfo
