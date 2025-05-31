@@ -15,18 +15,18 @@ _CHECK_COMPILER_SWITCH_ECLASS=1
 inherit toolchain-funcs
 
 DETECT_COMPILER_SWITCH_T0_ARCH=""		# Compiler architecture
-DETECT_COMPILER_SWITCH_T0_FINGERPRINT=""	# Compiler fingerprint
+DETECT_COMPILER_SWITCH_T0_FINGERPRINT=""		# Compiler fingerprint
 DETECT_COMPILER_SWITCH_T0_FLAVOR=""		# Compiler fork flavor
 DETECT_COMPILER_SWITCH_T0_SLOT=""		# Compiler slot
 DETECT_COMPILER_SWITCH_T0_VENDOR=""		# Compiler manufacturer
-DETECT_COMPILER_SWITCH_T0_VER=""		# Compiler full version
+DETECT_COMPILER_SWITCH_T0_VER=""			# Compiler full version
 
 DETECT_COMPILER_SWITCH_T1_ARCH=""		# Compiler architecture
-DETECT_COMPILER_SWITCH_T1_FINGERPRINT=""	# Compiler fingerprint
+DETECT_COMPILER_SWITCH_T1_FINGERPRINT=""		# Compiler fingerprint
 DETECT_COMPILER_SWITCH_T1_FLAVOR=""		# Compiler fork flavor
 DETECT_COMPILER_SWITCH_T1_SLOT=""		# Compiler slot
 DETECT_COMPILER_SWITCH_T1_VENDOR=""		# Compiler manufacturer
-DETECT_COMPILER_SWITCH_T1_VER=""		# Compiler full version
+DETECT_COMPILER_SWITCH_T1_VER=""			# Compiler full version
 
 # @FUNCTION:  check-compiler-switch_start
 # @DESCRIPTION:
@@ -42,19 +42,19 @@ check-compiler-switch_start() {
 	${CC} --version | grep -q -e "gcc" && DETECT_COMPILER_SWITCH_T0_VENDOR="GNU"
 	${CC} --version | grep -q -E -e "^clang" && DETECT_COMPILER_SWITCH_T0_VENDOR="LLVM"
 	${CC} --version | grep -q -E -e "^AMD" && DETECT_COMPILER_SWITCH_T0_VENDOR="AMD"
-	if [[ "${_DETECT_COMPILER_SWITCH_T0_VENDOR}" == "gcc" ]] ; then
+	if [[ "${DETECT_COMPILER_SWITCH_T0_ARCH}" == "gcc" ]] ; then
 		DETECT_COMPILER_SWITCH_T0_FLAVOR="gcc"
 		DETECT_COMPILER_SWITCH_T0_VER=$(gcc-fullversion)
 		DETECT_COMPILER_SWITCH_T0_SLOT=$(gcc-major-version)
-	elif [[ "${_DETECT_COMPILER_SWITCH_T0_VENDOR}" == "clang" ]] ; then
+	elif [[ "${DETECT_COMPILER_SWITCH_T0_ARCH}" == "clang" ]] ; then
 		if ${CC} --version 2>&1 | grep -q -e "AOCC" ; then
 			DETECT_COMPILER_SWITCH_T0_FLAVOR="aocc"
 			DETECT_COMPILER_SWITCH_T0_VER=$(${CC} --version | head -n 1 | cut -f 4 -d " ")
-			DETECT_COMPILER_SWITCH_T0_SLOT="${_DETECT_COMPILER_SWITCH_T0_VER%%.*}"
+			DETECT_COMPILER_SWITCH_T0_SLOT="${DETECT_COMPILER_SWITCH_T0_VER%%.*}"
 		elif ${CC} --version 2>&1 | grep "/opt/rocm" ; then
 			DETECT_COMPILER_SWITCH_T0_FLAVOR="rocm"
 			DETECT_COMPILER_SWITCH_T0_VER=$(${CC} --version | head -n 1 | cut -f 3 -d " ")
-			DETECT_COMPILER_SWITCH_T0_SLOT="${_DETECT_COMPILER_SWITCH_T0_VER%%.*}"
+			DETECT_COMPILER_SWITCH_T0_SLOT="${DETECT_COMPILER_SWITCH_T0_VER%%.*}"
 		else
 			DETECT_COMPILER_SWITCH_T0_FLAVOR="llvm"
 			DETECT_COMPILER_SWITCH_T0_VER=$(clang-fullversion)
@@ -71,24 +71,24 @@ check-compiler-switch_end() {
 	CXX=$(tc-getCXX)
 	CPP=$(tc-getCPP)
 	DETECT_COMPILER_SWITCH_T1_FINGERPRINT=$(${CC} --version 2>&1 | sha1sum | cut -f 1 -d " ")
-	${CC} --version | grep -q -e "gcc" && _DETECT_COMPILER_SWITCH_T1_ARCH="gcc"
-	${CC} --version | grep -q -e "clang" && _DETECT_COMPILER_SWITCH_T1_ARCH="clang"
+	${CC} --version | grep -q -e "gcc" && DETECT_COMPILER_SWITCH_T1_ARCH="gcc"
+	${CC} --version | grep -q -e "clang" && DETECT_COMPILER_SWITCH_T1_ARCH="clang"
 
-	${CC} --version | grep -q -e "gcc" && _DETECT_COMPILER_SWITCH_T1_VENDOR="GNU"
-	${CC} --version | grep -q -E -e "^clang" && _DETECT_COMPILER_SWITCH_T1_VENDOR="LLVM"
-	${CC} --version | grep -q -E -e "AMD" && _DETECT_COMPILER_SWITCH_T1_VENDOR="AMD"
-	if [[ "${_DETECT_COMPILER_SWITCH_T0_VENDOR}" == "gcc" ]] ; then
+	${CC} --version | grep -q -e "gcc" && DETECT_COMPILER_SWITCH_T1_VENDOR="GNU"
+	${CC} --version | grep -q -E -e "^clang" && DETECT_COMPILER_SWITCH_T1_VENDOR="LLVM"
+	${CC} --version | grep -q -E -e "AMD" && DETECT_COMPILER_SWITCH_T1_VENDOR="AMD"
+	if [[ "${DETECT_COMPILER_SWITCH_T1_ARCH}" == "gcc" ]] ; then
 		DETECT_COMPILER_SWITCH_T1_SLOT=$(gcc-major-version)
 		DETECT_COMPILER_SWITCH_T1_FLAVOR="gcc"
-	elif [[ "${_DETECT_COMPILER_SWITCH_T0_VENDOR}" == "clang" ]] ; then
+	elif [[ "${DETECT_COMPILER_SWITCH_T1_ARCH}" == "clang" ]] ; then
 		if ${CC} --version 2>&1 | grep -q -e "AOCC" ; then
 			DETECT_COMPILER_SWITCH_T1_FLAVOR="aocc"
 			DETECT_COMPILER_SWITCH_T1_VER=$(${CC} --version | head -n 1 | cut -f 4 -d " ")
-			DETECT_COMPILER_SWITCH_T1_SLOT="${_DETECT_COMPILER_SWITCH_T1_VER%%.*}"
+			DETECT_COMPILER_SWITCH_T1_SLOT="${DETECT_COMPILER_SWITCH_T1_VER%%.*}"
 		elif ${CC} --version 2>&1 | grep "/opt/rocm" ; then
 			DETECT_COMPILER_SWITCH_T1_FLAVOR="rocm"
 			DETECT_COMPILER_SWITCH_T1_VER=$(${CC} --version | head -n 1 | cut -f 3 -d " ")
-			DETECT_COMPILER_SWITCH_T1_SLOT="${_DETECT_COMPILER_SWITCH_T1_VER%%.*}"
+			DETECT_COMPILER_SWITCH_T1_SLOT="${DETECT_COMPILER_SWITCH_T1_VER%%.*}"
 		else
 			DETECT_COMPILER_SWITCH_T1_FLAVOR="llvm"
 			DETECT_COMPILER_SWITCH_T1_SLOT=$(clang-major-version)
