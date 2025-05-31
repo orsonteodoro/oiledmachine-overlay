@@ -54,7 +54,7 @@ SLOT="0/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 
 IUSE="
 emacs examples static-libs test zlib
-ebuild_revision_13
+ebuild_revision_14
 "
 RDEPEND="
 	zlib? (
