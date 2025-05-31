@@ -15,7 +15,7 @@ UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=1
 
-inherit cmake flag-o-matic lcnr multilib-build python-single-r1 toolchain-funcs uopts
+inherit check-compiler-switch cmake flag-o-matic lcnr multilib-build python-single-r1 toolchain-funcs uopts
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}3-${PV}"
@@ -320,6 +320,7 @@ IUSE+="
 	-tbb
 	test
 	-threads
+	ebuild_revision_2
 "
 REQUIRED_USE+="
 	bullet-robotics? (
@@ -493,6 +494,7 @@ einfo
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	#use ebolt && ewarn "The ebolt USE flag may not generate a BOLT profile."
 	#use bolt && ewarn "The bolt USE flag may not generate a BOLT profile."
 einfo
@@ -530,6 +532,13 @@ _src_configure() {
 	export CMAKE_USE_DIR="${S}"
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_build"
 	uopts_src_configure
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cd "${CMAKE_USE_DIR}" || die
 	local mycmakeargs=(
 		-DBUILD_BULLET2_DEMOS=$(usex demos)
