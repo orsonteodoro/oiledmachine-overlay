@@ -4,7 +4,6 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data secure-data"
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 LLVM_COMPAT=( 19 )
 
 inherit cflags-hardened check-compiler-switch meson toolchain-funcs
@@ -29,7 +28,7 @@ SLOT="0"
 IUSE="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang legacy-renderer +qtutils systemd X
-ebuild_revision_10
+ebuild_revision_11
 "
 REQUIRED_USE="
 	clang? (
