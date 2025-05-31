@@ -23,7 +23,6 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx512bf16"
 	"cpu_flags_x86_ssse3"
 )
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 GCC_PV="11.3.0"
 LIBJPEG_TURBO_V="2.1.2"
 LLVM_COMPAT=( 15 ) # CI uses 15
@@ -62,7 +61,7 @@ ${PATENT_STATUS_IUSE[@]}
 +jpeg2k -jxl +lcms +matio -minimal -nifti +openexr +openslide +orc
 +pangocairo +png +poppler +python +ppm -spng +svg test +tiff
 +vala +webp +zlib
-ebuild_revision_31
+ebuild_revision_32
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
