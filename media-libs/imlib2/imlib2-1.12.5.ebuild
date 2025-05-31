@@ -21,7 +21,7 @@ IUSE="
 +X apidoc avif bzip2 cpu_flags_x86_mmx cpu_flags_x86_sse2 debug
 eps +filters +gif +jpeg jpeg2k jpegxl heif lzma mp3 packing +png
 raw +shm static-libs svg +text +tools +tiff +webp y4m +zlib
-ebuild_revision_8
+ebuild_revision_9
 "
 
 REQUIRED_USE="shm? ( X )"
