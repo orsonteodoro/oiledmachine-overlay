@@ -77,6 +77,7 @@ CFLAGS_HARDENED_SSP_LEVEL=${CFLAGS_HARDENED_SSP_LEVEL:-2}
 CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_RETPOLINE_FLAVOR_USER
+# @USER_VARIABLE
 # @DESCRIPTION:
 # Allows the user to override retpoline protection versus speed tradeoff.
 # See CFLAGS_HARDENED_RETPOLINE_FLAVOR for details.
@@ -345,6 +346,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # Valid values:  1 to enable, 0 to disable, unset to enable (default)
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_FHARDENED_USER
+# @USER_VARIABLE
 # @DESCRIPTION:
 # Opt-in to using -fhardened.  There is a risk to break the system if this is
 # enabled.
@@ -371,14 +373,16 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # Due to a lack of hardware, ARM JOP/ROP mitigations are made optional.
 # Valid values: 0 to enable, 1 to disable, unset to disable (default)
 
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_SANITIZER_CC_SLOT_USER
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_SANITIZER_CC_SLOT
+# @USER_VARIABLE
 # @DESCRIPTION:
 # The sanitizer slot to use.
 # Valid values:
 # For Clang:  14, 15, 16, 17, 18, 19, 20
 # For GCC:  12, 13, 14, 15
 
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_SANITIZER_CC_FLAVOR_USER
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_SANITIZER_CC_NAME
+# @USER_VARIABLE
 # @DESCRIPTION:
 # The sanitizer CC to use.  Only one sanitizer compiler toolchain can be used.
 # This implies that you can only choose this compiler for LTO because of LLVM CFI.
@@ -434,6 +438,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # Valid values:  asm, c-lang, cxx
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_SANITIZE_SYSTEM_SET_USER
+# @USER_VARIABLE
 # @DESCRIPTION:
 # Opt-in to sanitizing the system set.  There is a high risk to
 # break the system if this is enabled.  It should not be used only

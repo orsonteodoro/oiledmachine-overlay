@@ -50,6 +50,7 @@ _RUSTFLAGS_SANITIZER_CLANG_SLOTS_COMPAT=( {14..20} )	# Limited based on CI testi
 RUSTFLAGS_HARDENED_SSP_LEVEL=${RUSTFLAGS_HARDENED_SSP_LEVEL:-2}
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SSP_LEVEL_USER
+# @USER_VARIABLE
 # @DESCRIPTION:
 # Same as above but the user can override the SSP level.
 
@@ -148,6 +149,7 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # For example, TSan is about 4-16x slower compared to the unmitigated build.
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_TOLERANCE_USER
+# @USER_VARIABLE
 # @DESCRIPTION:
 # A user override for RUSTFLAGS_HARDENED_TOLERANCE.
 # Acceptable values: 1.0-16, unset
@@ -293,14 +295,15 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # Due to a lack of hardware, ARM JOP/ROP mitigations are made optional.
 # Valid values: 0 to enable, 1 to disable, unset to disable (default)
 
-# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT_USER
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT
+# @USER_VARIABLE
 # @DESCRIPTION:
 # The sanitizer slot to use.
 # Valid values:
 # For Clang:  14, 15, 16, 17, 18, 19, 20
 # For GCC:  12, 13, 14, 15
 
-# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SANITIZER_CC_FLAVOR_USER
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SANITIZER_CC_NAME
 # @USER_VARIABLE
 # @DESCRIPTION:
 # The sanitizer CC to use.  Only one sanitizer compiler toolchain can be used.
