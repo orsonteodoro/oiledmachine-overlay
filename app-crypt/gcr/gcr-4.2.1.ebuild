@@ -6,7 +6,6 @@ EAPI=8
 # For dependencies see:  gcr-4.2.1/meson.build
 # Upstream says GPG is optional to avoid circular dependency
 
-FLAG_O_MATIC_FILTER_LTO=1
 PYTHON_COMPAT=( "python3_"{10..12} )
 VALA_USE_DEPEND="vapigen"
 
