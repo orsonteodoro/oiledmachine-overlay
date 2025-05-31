@@ -3,10 +3,8 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_CF_PROTECTION=0											# Untested or unverified
 CFLAGS_HARDENED_CI_SANITIZERS="asan ubsan"
 CFLAGS_HARDENED_CI_SANITIZERS_GCC_COMPAT="12" # D12
-CFLAGS_HARDENED_FHARDENED=0											# Untested or unverified
 CFLAGS_HARDENED_LANGS="c-lang"
 # Sanitizers disabled because it breaks gnutls tests
 #CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
@@ -67,7 +65,7 @@ ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
 +asm doc +gmp static-libs
-ebuild_revision_30
+ebuild_revision_31
 "
 # The arm64 crypto option controls AES, SHA1, and SHA2 usage.
 REQUIRED_USE="
