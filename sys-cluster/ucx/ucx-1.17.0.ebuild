@@ -67,7 +67,7 @@ ${ROCM_IUSE[@]}
 clang +cma cuda custom-kernel dc debug devx dm dmabuf fuse3 gcc examples gdrcopy
 hip-clang knem mlx5-dv +numa +openmp rc rdma rocm roce threads tm ud verbs xpmem
 video_cards_intel
-ebuild_revision_6
+ebuild_revision_7
 "
 get_cuda_targets_required_use() {
 	local x
@@ -630,6 +630,7 @@ _configure() {
 	${CC} --version || die
 	strip-unsupported-flags
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
