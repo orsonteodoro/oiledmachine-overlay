@@ -89,7 +89,6 @@ CUDA_TARGETS_COMPAT=(
 EIGEN_COMMIT="e7248b26a1ed53fa030c5c459f7ea095dfd276ac" # From cmake/deps.txt
 EMSDK_COMMIT="d52c46520124845b1e0e0525f2759299d840143f"
 FLATBUFFERS_PV="23.5.26" # From cmake/deps.txt
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 FP16_COMMIT="0a92994d729ff76a58f692d3028ca1b64b145d91" # From cmake/deps.txt
 FXDIV_COMMIT="63058eff77e11aa15bf531df5dd34395ec3017c8" # From cmake/deps.txt
 GOOGLETEST_PV="1.15.0" # From cmake/deps.txt
@@ -365,7 +364,7 @@ ${ROCM_SLOTS[@]}
 openvino-auto
 openvino-hetero
 openvino-multi
-ebuild_revision_16
+ebuild_revision_17
 "
 gen_cuda_required_use() {
 	local x
