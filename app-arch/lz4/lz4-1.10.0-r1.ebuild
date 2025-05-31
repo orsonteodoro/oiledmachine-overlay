@@ -30,7 +30,7 @@ RESTRICT="
 SLOT="0/1.10.0-meson"
 IUSE="
 static-libs test
-ebuild_revision_11
+ebuild_revision_12
 "
 
 PATCHES=(
