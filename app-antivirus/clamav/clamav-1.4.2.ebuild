@@ -273,7 +273,7 @@ SLOT="0/sts"
 IUSE="
 doc clamonacc +clamapp custom-cflags experimental jit libclamav-only man milter rar
 selinux +system-mspack systemd test valgrind
-ebuild_revision_28
+ebuild_revision_29
 "
 REQUIRED_USE="
 	clamonacc? (
