@@ -38,7 +38,7 @@ PROPERTIES="live"
 SLOT="0"
 IUSE+="
 test
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -271,6 +271,7 @@ pkg_setup() {
 	yarn_pkg_setup
 	use_clang
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
