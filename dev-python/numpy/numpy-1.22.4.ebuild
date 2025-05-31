@@ -32,7 +32,7 @@ SRC_URI="
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="~amd64 ~arm64 ~arm64-linux ~ppc64 ~s390"
-IUSE="doc lapack ebuild_revision_1"
+IUSE="doc lapack ebuild_revision_2"
 
 RDEPEND="
 	lapack? (
