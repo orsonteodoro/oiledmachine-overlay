@@ -44,7 +44,7 @@ cet +debug default-fortify-source-2 default-fortify-source-3 default-full-relro
 default-partial-relro default-ssp-buffer-size-4 default-stack-clash-protection
 doc +extra hardened hardened-compat ieee-long-double +pie ssp +static-analyzer
 test xml
-ebuild_revision_9
+ebuild_revision_10
 ${LLVM_EBUILDS_LLVM18_REVISION}
 "
 REQUIRED_USE="
