@@ -92,7 +92,6 @@ FFMPEG_COMPAT=(
 	"0/57.59.59" # 5.1
 	"0/56.58.58" # 4.3
 )
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 FONTCONFIG_PV="2.13.0"
 FREETYPE_PV="2.9.0"
 GCC_PV="11.2.0"
@@ -539,7 +538,7 @@ aqua +avif -bmalloc -cache-partitioning clang dash debug +doc -eme +flite
 +opengl openmp -seccomp +speech-synthesis -spell -system-malloc test thunder
 +variation-fonts wayland +webassembly -webdriver +webgl webm-eme -webrtc webvtt
 -webxr +woff2 +X
-ebuild_revision_15
+ebuild_revision_16
 "
 
 gen_gst_plugins_duse() {
