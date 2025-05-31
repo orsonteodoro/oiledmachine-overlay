@@ -3,6 +3,8 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_CF_PROTECTION=0											# Untested or unverified
+CFLAGS_HARDENED_FHARDENED=0											# Untested or unverified
 CFLAGS_HARDENED_USE_CASES="system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO"
 
@@ -29,7 +31,7 @@ LICENSE="MIT"
 SLOT="0"
 IUSE="
 examples static-libs test unicode
-ebuild_revision_13
+ebuild_revision_14
 "
 RESTRICT="
 	!test? (
