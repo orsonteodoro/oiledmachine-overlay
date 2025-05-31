@@ -1340,7 +1340,7 @@ eerror "For GCC:  ${_RUSTFLAGS_SANITIZER_GCC_SLOTS_COMPAT}"
 	fi
 
 	# Strips LTO which strips CFI
-	if [[ "${FLAG_O_MATIC_FILTER_LTO}" == 1 ]] ; then
+	if [[ "${FLAG_O_MATIC_FILTER_LTO}" == "1" ]] ; then
 		disable_cfi=1
 	fi
 
@@ -1483,7 +1483,7 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 					asan=1
 				elif [[ "${x}" =~ "address" ]] && (( ${asan} == 1 )) ; then
 					skip=1
-				elif [[ "${x}" == "cfi" && "${protect_spectrum}" == "llvm-cfi" ]] ; then
+				elif [[ "${x}" == "cfi" && "${protect_spectrum}" == "llvm-cfi" ]] && (( ${disable_cfi} == 0 )) ; then
 					RUSTFLAGS+=" -Zsanitizer=${x}"
 				elif [[ "${x}" == "cfi" ]] ; then
 					skip=1

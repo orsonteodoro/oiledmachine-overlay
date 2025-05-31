@@ -1962,7 +1962,7 @@ eerror "For GCC:  ${_CFLAGS_SANITIZER_GCC_SLOTS_COMPAT}"
 	fi
 
 	# Strips LTO which strips CFI
-	if [[ "${FLAG_O_MATIC_FILTER_LTO}" == 1 ]] ; then
+	if [[ "${FLAG_O_MATIC_FILTER_LTO}" == "1" ]] ; then
 		disable_cfi=1
 	fi
 
@@ -2184,7 +2184,7 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 					CFLAGS_HARDENED_CXXFLAGS+=" -fsanitize=${x}"
 					CFLAGS_HARDENED_LDFLAGS+=" -fsanitize=${x}"
 					asan=1
-				elif [[ "${x}" == "cfi" && "${protect_spectrum}" == "llvm-cfi" ]] ; then
+				elif [[ "${x}" == "cfi" && "${protect_spectrum}" == "llvm-cfi" ]] && (( ${disable_cfi} == 0 )) ; then
 					append-flags "-fsanitize=${x}"
 					append-ldflags "-fsanitize=${x}"
 					CFLAGS_HARDENED_CFLAGS+=" -fsanitize=${x}"
