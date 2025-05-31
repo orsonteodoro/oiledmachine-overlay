@@ -47,7 +47,7 @@ UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=1
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/madler.asc"
 
-inherit autotools cflags-hardened edo flag-o-matic flag-o-matic-om
+inherit autotools cflags-hardened check-compiler-switch edo flag-o-matic flag-o-matic-om
 inherit multilib-minimal toolchain-funcs uopts verify-sig
 
 KEYWORDS="~amd64  ~arm ~arm-linux ~arm64 ~arm64-linux ~arm64-macos ~ppc ~ppc64 ~ppc64-linux ~s390"
@@ -74,7 +74,7 @@ SLOT="0/1" # subslot = SONAME
 IUSE="
 ${TRAINERS[@]}
 minizip minizip-utils pgo static-libs backup-copy
-ebuild_revision_13
+ebuild_revision_14
 "
 REQUIRED_USE="
 	pgo? (
@@ -329,6 +329,7 @@ get_arch_enabled_use_flags() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 ewarn
 ewarn "If you use experimental features, patches, optimizations, please make a"
 ewarn "backup of the package first.  Not doing so may make your computer"
@@ -396,6 +397,11 @@ _src_configure() {
 	einfo "Called _src_configure"
 	cd "${BUILD_DIR}" || die
 	uopts_src_configure
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	# Prevents libpng from being built, breaks pngfix when zlib libs are being replaced
 	# Prevents loading of precompiled www browser
