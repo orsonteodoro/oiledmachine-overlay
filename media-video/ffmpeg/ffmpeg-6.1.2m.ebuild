@@ -26,6 +26,9 @@ MY_PV="${PV/m/}"
 MY_P="${PN}-${MY_PV}"
 MY_PVR="${PVR/m/}"
 
+CFLAGS_HARDENED_ASSEMBLERS="gas inline nasm yasm"
+CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan lsan msan tsan ubsan"
+CFLAGS_HARDENED_LANGS="asm c-lang"
 CFLAGS_HARDENED_SSP_LEVEL=3 # SSP all is upstream default
 CFLAGS_HARDENED_USE_CASES="network sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF HO IO SO"
