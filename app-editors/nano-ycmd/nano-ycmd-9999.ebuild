@@ -38,7 +38,7 @@ bear debug justify libgcrypt +magic minimal ncurses nettle ninja nls slang
 system-godef system-gopls system-mono system-omnisharp system-racerd system-rust
 system-rustc system-tsserver unicode ycm-generator ycmd-43 ycmd-44 ycmd-45
 ycmd-46 +ycmd-47
-ebuild_revision_40
+ebuild_revision_41
 "
 GNULIB_PV="2023.01.16.09.58.30"
 REQUIRED_USE+="
