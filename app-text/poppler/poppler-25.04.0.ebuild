@@ -11,7 +11,6 @@ CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_TRAPV="0" # Breaks during test suite
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO SO"
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 
 inherit cflags-hardened check-compiler-switch cmake flag-o-matic toolchain-funcs xdg-utils
 
@@ -48,7 +47,7 @@ LICENSE="
 IUSE="
 boost cairo cjk curl +cxx debug doc gpgme +introspection +jpeg +jpeg2k +lcms nss
 png qt5 qt6 test tiff +utils
-ebuild_revision_14
+ebuild_revision_15
 "
 RESTRICT="
 	!test? (
