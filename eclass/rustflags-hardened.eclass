@@ -98,10 +98,11 @@ RUSTFLAGS_HARDENED_SSP_LEVEL=${RUSTFLAGS_HARDENED_SSP_LEVEL:-2}
 # p2p
 # plugin
 # sandbox
+# scripting
 # security-critical (e.g. sandbox, antivirus, crypto libs, memory allocator libs)
 # sensitive-data
-# scripting
 # server
+# system-set (e.g. emerge -pve @system)
 # untrusted-data (e.g. user generated content, unreviewed-data, unsanitized-data, unreviewed-scripts, unreviewed-anything)
 # web-browser
 # web-server
