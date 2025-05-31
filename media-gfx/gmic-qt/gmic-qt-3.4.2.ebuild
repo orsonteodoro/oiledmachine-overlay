@@ -26,7 +26,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="
 +curl +fftw gimp2 gimp3 lto openmp qt5 qt6 standalone
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	?? (
