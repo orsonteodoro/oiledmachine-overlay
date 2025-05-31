@@ -67,7 +67,7 @@ VDB_UTILS="
 "
 X86_CPU_FLAGS=( avx sse4_2 )
 
-inherit cmake flag-o-matic llvm python-single-r1 toolchain-funcs
+inherit check-compiler-switch cmake flag-o-matic llvm python-single-r1 toolchain-funcs
 
 KEYWORDS="~amd64"
 SRC_URI="
@@ -94,6 +94,7 @@ ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
 ax +blosc cuda doc -imath-half +jemalloc -log4cplus -numpy -python +static-libs
 -tbbmalloc nanovdb -no-concurrent-malloc -openexr -png test -vdb_lod +vdb_print
 -vdb_render -vdb_view
+ebuild_revision_2
 "
 REQUIRED_USE+="
 	^^ (
@@ -298,6 +299,7 @@ is_crosscompile() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	python-single-r1_pkg_setup
 	if ! is_crosscompile && which jemalloc-confg ; then
 		if jemalloc-config --cflags | grep -q -e "cfi" ; then
@@ -337,6 +339,7 @@ check_clang() {
 			break
 		fi
 	done
+
 	if (( ${found} == 0 )) ; then
 eerror
 eerror "${PN} requires either clang ${LLVM_COMPAT[@]}"
@@ -345,6 +348,12 @@ eerror "Either use GCC or install and use one of those clang slots."
 eerror
 		die
 	fi
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	clang --version || die
 }
 
