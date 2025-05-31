@@ -26,7 +26,7 @@ LICENSE="BSD"
 SLOT="0"
 IUSE="
 lint test
-ebuild_revision_4
+ebuild_revision_5
 "
 RESTRICT="
 	!test? (
@@ -77,6 +77,7 @@ pkg_setup() {
 	export CPP="${CC} -E"
 	strip-unsupported-flags
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
