@@ -5,7 +5,6 @@
 EAPI=8
 
 MAINTAINER_MODE=0
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 PYTHON_COMPAT=( "python3_"{8..11} )
 
 inherit flag-o-matic linux-info linux-mod-r1
@@ -41,7 +40,7 @@ RESTRICT="mirror strip" # No strip required by CONFIG_MODULE_SIG
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 allegro custom-kernel doc +vivace
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	^^ (
