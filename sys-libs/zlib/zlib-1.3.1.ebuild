@@ -74,7 +74,7 @@ SLOT="0/1" # subslot = SONAME
 IUSE="
 ${TRAINERS[@]}
 minizip minizip-utils pgo static-libs backup-copy
-ebuild_revision_18
+ebuild_revision_19
 "
 REQUIRED_USE="
 	pgo? (
@@ -189,7 +189,7 @@ REQUIRED_USE="
 		pgo
 	)
 "
-APDEPEND="
+PDEPEND="
 	pgo? (
 		app-arch/pigz[${MULTILIB_USEDEP}]
 		|| (
