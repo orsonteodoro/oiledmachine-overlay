@@ -6,8 +6,8 @@
 
 EAPI=7
 
-CFLAGS_HARDENED_CF_PROTECTION=0         # -cf-protection is untested or unverified
-CFLAGS_HARDENED_FHARDENED=0             # -fhardened is untested or unverified
+CFLAGS_HARDENED_CF_PROTECTION=0									# Untested or unverified
+CFLAGS_HARDENED_FHARDENED=0									# Untested or unverified
 CFLAGS_HARDENED_USE_CASES="security-criticial sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE IO UAF"
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/bzip2.gpg"
@@ -31,7 +31,7 @@ KEYWORDS="
 "
 IUSE="
 static static-libs
-ebuild_revision_13
+ebuild_revision_14
 "
 
 BDEPEND="
