@@ -157,7 +157,7 @@ LICENSE="
 RESTRICT="binchecks mirror strip test"
 SLOT="0/${PV%.*}.x"
 IUSE+="
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE="
 "
