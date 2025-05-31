@@ -75,7 +75,7 @@ libjpeg_turbo_trainers_decode
 libjpeg_turbo_trainers_grayscale
 libjpeg_turbo_trainers_transformations
 pgo static-libs
-ebuild_revision_26
+ebuild_revision_27
 "
 REQUIRED_USE="
 	pgo? (
@@ -304,7 +304,6 @@ _src_configure() {
 	if tc-is-clang && has_version "llvm-runtimes/compiler-rt-sanitizers[cfi]" ; then
 		append_all -fno-sanitize=cfi-icall # breaks precompiled cef based apps
 	fi
-	cflags-hardened_append
 
 	if use static-libs && [[ "${lib_type}" == "static" ]] ;then
 		mycmakeargs+=(
@@ -325,6 +324,8 @@ _src_configure() {
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
+
+	cflags-hardened_append
 
 	if use pgo && tc-is-clang ; then
 		append-flags $(test-flags -Wno-backend-plugin)
