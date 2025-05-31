@@ -458,10 +458,10 @@ dev-libs/libxml2 disable-sanitizers.conf
 
 ```
 
-* CFLAGS_HARDENED_CF_PROTECTION_USER - Add -fcf-protection for C/C++ packages.
 * CFLAGS_HARDENED_AUTO_SANITIZE_USER - Add ASan, LLVM CFI, TSan, UBSan for C/C++ packages.
 * CFLAGS_HARDENED_ARM_CFI_USER - Add -mbranch-protection for C/C++ packages.
 * CFLAGS_HARDENED_BTI_USER - Add BTI support for C/C++ packages.
+* CFLAGS_HARDENED_CF_PROTECTION_USER - Add -fcf-protection for C/C++ packages.
 * CFLAGS_HARDENED_FHARDENED_USER - Add -fhardened for C/C++ packages.
 * CFLAGS_HARDENED_MTE_USER - Add MTE support for C/C++ packages.
 * CFLAGS_HARDENED_PAC_USER - Add PAC support for C/C++ packages.
