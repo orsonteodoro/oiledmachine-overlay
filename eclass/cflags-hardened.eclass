@@ -2021,6 +2021,7 @@ eerror "Set CFLAGS_HARDENED_SANITIZER_CC_SLOT in /etc/portage/make.conf to eithe
 		sanitizers_compat=0
 	fi
 
+	# Reduce chances of breaking the entire system
 	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ "system-set" && "${CFLAGS_HARDENED_SYSTEM_SET_USER}" != "1" ]] ; then
 		sanitizers_compat=0
 	fi
