@@ -3247,7 +3247,8 @@ get_cuda_flags() {
 
 _NVCC_FLAGS=""
 src_configure() {
-	if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12.4*" ; then
+	if use cuda && has_version "=dev-util/nvidia-cuda-toolkit-12.8*" ; then
+	# It is possible to use GCC 14, but U24 uses GCC 13
 		export CC="${CHOST}-gcc-13"
 		export CXX="${CHOST}-g++-13"
 		export CPP="${CC} -E"
