@@ -15,7 +15,7 @@ UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 PYTHON_COMPAT=( "python3_"{10..12} ) # Limited by distro for dev-python/mkdocs-material
 
-inherit flag-o-matic cflags-hardened meson multilib-build python-any-r1 toolchain-funcs uopts
+inherit check-compiler-switch flag-o-matic cflags-hardened meson multilib-build python-any-r1 toolchain-funcs uopts
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/${P}"
@@ -45,7 +45,7 @@ RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 doc examples +opt -static-libs -test -threads zlib
-ebuild_revision_24
+ebuild_revision_25
 "
 REQUIRED_USE+="
 	pgo? (
@@ -85,6 +85,7 @@ DOCS=( "${S}/CONTRIBUTING.md" "${S}/README.md" "${S}/docs" )
 HTML_DOCS=( "${S}/site" )
 
 pkg_setup() {
+	check-compiler-switch_start
 	uopts_setup
 	python-any-r1_pkg_setup
 }
@@ -130,6 +131,11 @@ _src_configure() {
 	local d="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}-${lib_type}"
 	mkdir -p "${d}" || die
 	uopts_src_configure
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 	cflags-hardened_append
 
 	local emesonargs=(
