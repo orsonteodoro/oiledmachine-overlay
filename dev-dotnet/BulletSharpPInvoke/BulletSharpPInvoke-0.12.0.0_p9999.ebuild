@@ -56,7 +56,7 @@ KEYWORDS="~amd64"
 IUSE+="
 ${ERIDS[@]}
 developer mono nupkg test
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE+="
 	^^ (
