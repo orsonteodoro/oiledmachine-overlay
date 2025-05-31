@@ -67,7 +67,7 @@ dev-tensorflow dev-pytorch flax flax-speech ftfy hub-kernels integrations modelc
 num2words onnx onnxruntime optuna pillow pytorch quality ray retrieval ruff sentencepiece
 serving sagemaker sigopt sklearn speech test tf tf-cpu tf-speech tiktoken timm
 torch-speech torch-vision torchhub tokenizers vision
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	agents? (
