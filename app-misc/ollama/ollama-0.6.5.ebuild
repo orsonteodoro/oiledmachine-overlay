@@ -181,7 +181,6 @@ CFLAGS_HARDENED_USE_CASES="daemon network server untrusted-data"
 #
 GEN_EBUILD=0
 EGO_PN="github.com/ollama/ollama"
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 LLAMA_CPP_UPDATE=0
 ROCM_SLOTS=(
 	# Limited by libhipblas.so.2 hardcoded SOVERSION
@@ -2616,7 +2615,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
 sandbox systemd unrestrict video_cards_intel
-ebuild_revision_73
+ebuild_revision_74
 "
 gen_rocm_required_use() {
 	local s

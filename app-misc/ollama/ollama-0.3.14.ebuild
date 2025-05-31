@@ -165,7 +165,6 @@ CFLAGS_HARDENED_APPEND_GOFLAGS=1
 CFLAGS_HARDENED_USE_CASES="daemon network server untrusted-data"
 GEN_EBUILD=0
 EGO_PN="github.com/ollama/ollama"
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 LLAMA_CPP_COMMIT="3f1ae2e32cde00c39b96be6d01c2997c29bae555"
 KOMPUTE_COMMIT="4565194ed7c32d1d2efa32ceab4d3c6cae006306"
 LLAMA_CPP_UPDATE=0
@@ -2457,7 +2456,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl native openblas openrc rocm
 sandbox systemd unrestrict video_cards_intel
-ebuild_revision_69
+ebuild_revision_70
 "
 gen_rocm_required_use() {
 	local s
