@@ -34,7 +34,7 @@ CUDA_TARGETS_COMPAT=(
 )
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/+cuda_targets_}
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
