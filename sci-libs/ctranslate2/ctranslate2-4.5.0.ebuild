@@ -21,7 +21,7 @@ RUY_COMMIT="363f252289fb7a1fba1703d99196524698cb884d"
 SPDLOG_COMMIT="76fb40d95455f249bd70824ecfcae7a8f0930fa3"
 THRUST_COMMIT="d997cd37a95b0fa2f1a0cd4697fd1188a842fbc8"
 
-inherit cmake dep-prepare flag-o-matic python-r1
+inherit check-compiler-switch cmake dep-prepare flag-o-matic python-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -75,6 +75,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 +cli +cpu-dispatch -cuda -cudnn -dnnl dev -flash +openmp -tensor-parallel
 +mkl -openblas -profiling +python -ruy test
+ebuild_revision_2
 "
 REQUIRED_USE="
 	flash? (
@@ -116,6 +117,11 @@ PDEPEND+="
 "
 DOCS=( "README.md" )
 
+pkg_setup() {
+	check-compiler-switch_start
+	python_setup
+}
+
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
@@ -145,6 +151,12 @@ src_configure() {
 	export CXX="${CHOST}-g++"
 	export CPP="${CHOST}-gcc -E"
 	strip-unsupported-flags
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	local mycmakeargs=(
 		-DCUDA_DYNAMIC_LOADING=ON
@@ -190,7 +202,7 @@ src_compile() {
 	cmake_src_compile
 	compile_impl() {
 		pushd "${S}/python" >/dev/null 2>&1 || die
-			
+			:
 		popd >/dev/null 2>&1 || die
 	}
 	python_foreach_impl compile_impl
