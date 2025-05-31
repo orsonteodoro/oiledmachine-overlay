@@ -5,7 +5,6 @@ EAPI=8
 
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 PYTHON_COMPAT=( "python3_"{10..12} )
 LLVM_COMPAT=( 15 ) # Based on CI
 
@@ -26,7 +25,7 @@ HOMEPAGE="https://github.com/numba/llvmlite"
 LICENSE="BSD"
 SLOT="0"
 IUSE="
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE+="
 	^^ (
