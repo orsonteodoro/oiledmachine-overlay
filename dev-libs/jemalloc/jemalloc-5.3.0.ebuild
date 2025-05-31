@@ -7,6 +7,8 @@ EAPI=8
 # PGOing this library is justified because the size of the library is over a
 # 1000 4k pages in size.
 
+CFLAGS_HARDENED_CF_PROTECTION=0											# Untested or unverified
+CFLAGS_HARDENED_FHARDENED=0											# Untested or unverified
 # asan breaks test suite.  ubsan works with test suite.
 # ubsan breaks dev-util/ruff
 #CFLAGS_HARDENED_SANITIZERS="undefined"
@@ -53,7 +55,7 @@ SLOT="0/2"
 IUSE+="
 ${TRAINERS[@]}
 custom-cflags debug lazy-lock prof static-libs stats test xmalloc
-ebuild_revision_37
+ebuild_revision_38
 "
 REQUIRED_USE+="
 	!custom-cflags? (
