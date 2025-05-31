@@ -25,7 +25,7 @@ HOMEPAGE="https://github.com/numba/llvmlite"
 LICENSE="BSD"
 SLOT="0"
 IUSE="
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE+="
 	^^ (
@@ -89,6 +89,7 @@ python_configure() {
 		strip-unsupported-flags
 	fi
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
