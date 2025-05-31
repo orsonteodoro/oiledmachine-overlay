@@ -203,7 +203,7 @@ UNIFIED_RUNTIME_COMMIT="da04d13807044aaf17615b66577fb0e832011ab1" # \
 VC_INTR_COMMIT="4e51b2467104a257c22788e343dafbdde72e28bb" # Newer versions cause compile failure \
 
 inherit hip-versions
-inherit cmake dep-prepare dhms flag-o-matic llvm python-any-r1 rocm toolchain-funcs
+inherit check-compiler-switch cmake dep-prepare dhms flag-o-matic llvm python-any-r1 rocm toolchain-funcs
 
 DOCS_BUILDER="doxygen"
 DOCS_DIR="build/docs"
@@ -294,7 +294,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
 aot cet cfi clang cuda esimd_emulator hardened native-cpu openmp rocm +sycl-fusion test
 video_cards_intel
-ebuild_revision_2
+ebuild_revision_3
 "
 gen_cuda_required_use() {
 	local x
@@ -468,6 +468,7 @@ ewarn "${gpu} is available but support is not feature complete."
 
 pkg_setup() {
 	dhms_start
+	check-compiler-switch_start
 	warn_untested_gpu
 	warn_partial_gpu_support
 	if ! use clang ; then
@@ -647,6 +648,11 @@ src_configure() {
 	export MAKEOPTS="-j1"
 
 	strip-unsupported-flags
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	# Extracted from buildbot/configure.py
 	mycmakeargs+=(
