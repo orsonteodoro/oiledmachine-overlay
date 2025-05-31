@@ -6,7 +6,6 @@ EAPI=8
 
 # Last update:  2024-08-22
 
-FLAG_O_MATIC_FILTER_LTO=1
 PYTHON_COMPAT=( "python3_12" )
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -53,7 +52,7 @@ SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 +binutils-plugin bolt bolt-heatmap debug debuginfod doc -dump exegesis jemalloc
 libedit +libffi tcmalloc test xml z3 zstd
-ebuild_revision_0
+ebuild_revision_1
 ${LLVM_EBUILDS_LLVM20_REVISION}
 "
 REQUIRED_USE+="
