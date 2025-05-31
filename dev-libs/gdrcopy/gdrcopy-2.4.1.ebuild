@@ -24,7 +24,7 @@ declare -A CUDA_GCC_SLOT=(
 	["11.8"]="11"
 )
 
-inherit flag-o-matic linux-mod-r1
+inherit check-compiler-switch flag-o-matic linux-mod-r1
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
@@ -56,7 +56,9 @@ LICENSE="
 # BSD - open-gpu-kernel-modules-550.100/src/common/softfloat/COPYING.txt
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="0"
-IUSE="ebuild_revision_2"
+IUSE="
+ebuild_revision_3
+"
 gen_driver_versions() {
 	local ver
 	for ver in ${DRIVER_VERSIONS[@]} ; do
@@ -105,6 +107,7 @@ eerror
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	linux-mod-r1_pkg_setup
 }
 
@@ -229,7 +232,7 @@ einfo "PATH (before):  ${PATH}"
 		fi
 einfo "PATH (after):  ${PATH}"
 		strip-unsupported-flags
-		einfo "CC: ${CC}"
+einfo "CC: ${CC}"
 		local kernel_gcc_slot=$(gcc-major-version)
 		if tc-is-gcc && ver_test ${kernel_gcc_slot} -ne ${cuda_gcc_slot} ; then
 eerror
