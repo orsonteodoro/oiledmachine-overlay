@@ -57,7 +57,7 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_vpclmulqdq"
 )
 
-inherit cmake-multilib flag-o-matic toolchain-funcs
+inherit check-compiler-switch cmake-multilib flag-o-matic toolchain-funcs
 
 if [[ "${PV}" == *"9999"* ]]; then
 	inherit git-r3
@@ -266,6 +266,10 @@ RESTRICT="
 PATCHES=(
 )
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 _configure_cpu_flags_arm() {
 	if ! use cpu_flags_arm_neon ; then
 		disabled_cpu_flags+=(
@@ -443,6 +447,12 @@ _configure_cpu_flags_x86() {
 
 multilib_src_configure() {
 ewarn "Rebuild with GCC 12 if it fails."
+	check-compiler-switch_end
+	if is-flagq '-flto*' && check-compiler-switch_is_lto_changed ; then
+eerror "Detected compiler switch.  Removing LTO."
+		filter-lto
+	fi
+
 	local cpp_flags=""
 	local mycmakeargs=(
 		-DBUILD_TESTING=$(usex test)
