@@ -125,7 +125,7 @@ IUSE+=" ibm +firmware"
 IUSE+=" crypt_root_plain"			# Added by oteodoro.
 IUSE+=" subdir_mount"				# Added by the muslx32 overlay.
 IUSE+=" +llvm +lto cfi shadowcallstack"		# Added by the oiledmachine-overlay.
-IUSE+=" ebuild_revision_16"
+IUSE+=" ebuild_revision_17"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	cfi? (
