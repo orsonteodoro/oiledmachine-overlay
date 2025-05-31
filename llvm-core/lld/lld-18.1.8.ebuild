@@ -4,7 +4,6 @@
 
 EAPI=8
 
-FLAG_O_MATIC_FILTER_LTO=1
 PYTHON_COMPAT=( "python3_11" )
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -41,7 +40,7 @@ SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 +debug default-full-relro default-no-relro +default-partial-relro hardened
 hardened-compat test zstd
-ebuild_revision_1
+ebuild_revision_2
 ${LLVM_EBUILDS_LLVM18_REVISION}
 "
 REQUIRED_USE+="
