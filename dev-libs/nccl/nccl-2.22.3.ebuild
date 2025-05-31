@@ -52,7 +52,7 @@ SLOT="0"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 -gdrcopy peermem rdma roce test -verbs
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 	|| (
@@ -366,6 +366,7 @@ eerror "Unsupported cuda version."
 		die
 	fi
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
