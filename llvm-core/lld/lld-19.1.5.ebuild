@@ -42,7 +42,7 @@ SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 debug default-full-relro default-no-relro +default-partial-relro hardened
 hardened-compat test zstd
-ebuild_revision_2
+ebuild_revision_3
 ${LLVM_EBUILDS_LLVM19_REVISION}
 "
 REQUIRED_USE+="
@@ -218,6 +218,7 @@ _src_configure_compiler() {
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
 	llvm-ebuilds_fix_toolchain # Compiler switch
+
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
