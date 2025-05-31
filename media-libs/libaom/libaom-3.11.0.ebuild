@@ -11,7 +11,6 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO HO IO UAF"
 CMAKE_ECLASS="cmake"
 GCC_MIN_SLOT=6
 CLANG_MIN_SLOT=7
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 N_SAMPLES=1
 PYTHON_COMPAT=( "python3_"{10..12} )
 UOPTS_SUPPORT_EBOLT=0
@@ -96,7 +95,7 @@ ${PPC_IUSE}
 ${PGO_TRAINERS}
 ${X86_IUSE}
 +asm big-endian chromium debug doc +examples lossless pgo static-libs test
-ebuild_revision_26
+ebuild_revision_27
 "
 REQUIRED_USE="
 	cpu_flags_x86_sse2? (
