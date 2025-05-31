@@ -49,7 +49,7 @@ SLOT="0"
 IUSE+="
 ${ROCM_SLOTS[@]}
 cuda doc rocm opencl sycl
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	rocm? (
@@ -283,6 +283,7 @@ src_configure() {
 					)
 				fi
 
+				check-compiler-switch_end
 				if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 					filter-lto
