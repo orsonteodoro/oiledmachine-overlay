@@ -184,7 +184,7 @@ ${CPU_FLAGS_X86_64[@]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang cpu cuda debug rocm rocm_6_0
-ebuild_revision_15
+ebuild_revision_16
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
 
@@ -718,6 +718,7 @@ pkg_setup() {
 	python_setup
 	setup_tc
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
