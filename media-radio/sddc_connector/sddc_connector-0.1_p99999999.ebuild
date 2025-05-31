@@ -34,7 +34,7 @@ CUDA_TARGETS_COMPAT=(
 )
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/+cuda_targets_}
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
@@ -87,6 +87,7 @@ src_configure() {
 	export CXX="${CHOST}-g++-11"
 	export CPP="${CC} -E"
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
