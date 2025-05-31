@@ -1193,8 +1193,9 @@ get_olast() {
 	if [[ -n "${olast}" ]] ; then
 		echo "${olast}"
 	else
-		# Upstream default
-		echo "-O3"
+	# cflags-hardened default
+	# Prevent breaking -D_FORTIFY_SOURCE even more.
+		echo "-O2"
 	fi
 }
 
@@ -2189,8 +2190,6 @@ ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
 	# DT - Data Tamperint
 	# ID - Information Disclosure
 
-	cflags-hardened_append
-
 	# Add more swap if linker OOMs computer.
 
 	# Multiple rendering bugs on youtube, github, etc without this, bug #547224
@@ -2336,13 +2335,18 @@ ewarn
 	# -O2 feels like C- grade relative other browser engines.
 
 	if [[ "${OSHIT}" == "1" ]] ; then
-		replace-flags "-O*" "-O1"
+		replace-flags "-Ofast" "-O2"
+		replace-flags "-O4" "-O2"
+		replace-flags "-O3" "-O2"
+		replace-flags "-Os" "-O2"
+		replace-flags "-Oz" "-O2"
+		replace-flags "-O0" "-O1"
 	# Input validate to prevent artifacts or weakend security.
 		if [[ -n "${OSHIT_OPT_LEVEL_ANGLE}" ]] ; then
-			if [[ "${OSHIT_OPT_LEVEL_ANGLE}" == "1" || "${OSHIT_OPT_LEVEL_ANGLE}" == "2" || "${OSHIT_OPT_LEVEL_ANGLE}" == "3" || "${OSHIT_OPT_LEVEL_ANGLE}" == "fast" ]] ; then
+			if [[ "${OSHIT_OPT_LEVEL_ANGLE}" == "1" || "${OSHIT_OPT_LEVEL_ANGLE}" == "2" ]] ; then
 				export OSHIT_OPT_LEVEL_ANGLE
-			elif [[ "${OSHIT_OPT_LEVEL_ANGLE}" == "4" ]] ; then
-				export OSHIT_OPT_LEVEL_ANGLE="3"
+			elif [[ "${OSHIT_OPT_LEVEL_ANGLE}" == "3" || "${OSHIT_OPT_LEVEL_ANGLE}" == "4" || "${OSHIT_OPT_LEVEL_ANGLE}" == "fast" ]] ; then
+				export OSHIT_OPT_LEVEL_ANGLE="2"
 			else
 				export OSHIT_OPT_LEVEL_ANGLE="1"
 			fi
@@ -2351,22 +2355,22 @@ ewarn
 		fi
 
 		if [[ -n "${OSHIT_OPT_LEVEL_JSC}" ]] ; then
-			if [[ "${OSHIT_OPT_LEVEL_JSC}" == "2" || "${OSHIT_OPT_LEVEL_JSC}" == "3" ]] ; then
+			if [[ "${OSHIT_OPT_LEVEL_JSC}" == "2" ]] ; then
 				export OSHIT_OPT_LEVEL_JSC
-			elif [[ "${OSHIT_OPT_LEVEL_JSC}" == "fast" || "${OSHIT_OPT_LEVEL_JSC}" == "4" ]] ; then
-				export OSHIT_OPT_LEVEL_JSC="3"
+			elif [[ "${OSHIT_OPT_LEVEL_JSC}" == "3" || "${OSHIT_OPT_LEVEL_JSC}" == "4" || "${OSHIT_OPT_LEVEL_JSC}" == "fast" ]] ; then
+				export OSHIT_OPT_LEVEL_JSC="2"
 			else
 				export OSHIT_OPT_LEVEL_JSC="2"
 			fi
 		else
-			export OSHIT_OPT_LEVEL_JSC="2" # ~90% to ~95% optimized
+			export OSHIT_OPT_LEVEL_JSC="2"
 		fi
 
 		if [[ -n "${OSHIT_OPT_LEVEL_SHA1}" ]] ; then
-			if [[ "${OSHIT_OPT_LEVEL_SHA1}" == "1" || "${OSHIT_OPT_LEVEL_SHA1}" == "2" || "${OSHIT_OPT_LEVEL_SHA1}" == "3" || "${OSHIT_OPT_LEVEL_SHA1}" == "fast" ]] ; then
+			if [[ "${OSHIT_OPT_LEVEL_SHA1}" == "1" || "${OSHIT_OPT_LEVEL_SHA1}" == "2" ]] ; then
 				export OSHIT_OPT_LEVEL_SHA1
-			elif [[ "${OSHIT_OPT_LEVEL_SHA1}" == "4" ]] ; then
-				export OSHIT_OPT_LEVEL_SHA1="3"
+			elif [[ "${OSHIT_OPT_LEVEL_SHA1}" == "3" || "${OSHIT_OPT_LEVEL_SHA1}" == "4" || "${OSHIT_OPT_LEVEL_SHA1}" == "fast" ]] ; then
+				export OSHIT_OPT_LEVEL_SHA1="2"
 			else
 				export OSHIT_OPT_LEVEL_SHA1="1"
 			fi
@@ -2375,10 +2379,10 @@ ewarn
 		fi
 
 		if [[ -n "${OSHIT_OPT_LEVEL_SKIA}" ]] ; then
-			if [[ "${OSHIT_OPT_LEVEL_SKIA}" == "1" || "${OSHIT_OPT_LEVEL_SKIA}" == "2" || "${OSHIT_OPT_LEVEL_SKIA}" == "3" || "${OSHIT_OPT_LEVEL_SKIA}" == "fast" ]] ; then
+			if [[ "${OSHIT_OPT_LEVEL_SKIA}" == "1" || "${OSHIT_OPT_LEVEL_SKIA}" == "2" ]] ; then
 				export OSHIT_OPT_LEVEL_SKIA
-			elif [[ "${OSHIT_OPT_LEVEL_SKIA}" == "4" ]] ; then
-				export OSHIT_OPT_LEVEL_SKIA="3"
+			elif [[ "${OSHIT_OPT_LEVEL_SKIA}" == "3" || "${OSHIT_OPT_LEVEL_SKIA}" == "4" || "${OSHIT_OPT_LEVEL_SKIA}" == "fast" ]] ; then
+				export OSHIT_OPT_LEVEL_SKIA="2"
 			else
 				export OSHIT_OPT_LEVEL_SKIA="1"
 			fi
@@ -2387,10 +2391,10 @@ ewarn
 		fi
 
 		if [[ -n "${OSHIT_OPT_LEVEL_WEBCORE}" ]] ; then
-			if [[ "${OSHIT_OPT_LEVEL_WEBCORE}" == "1" || "${OSHIT_OPT_LEVEL_WEBCORE}" == "2" || "${OSHIT_OPT_LEVEL_WEBCORE}" == "3" ]] ; then
+			if [[ "${OSHIT_OPT_LEVEL_WEBCORE}" == "1" || "${OSHIT_OPT_LEVEL_WEBCORE}" == "2" ]] ; then
 				export OSHIT_OPT_LEVEL_WEBCORE
-			elif [[ "${OSHIT_OPT_LEVEL_WEBCORE}" == "fast" || "${OSHIT_OPT_LEVEL_WEBCORE}" == "4" ]] ; then
-				export OSHIT_OPT_LEVEL_WEBCORE="3"
+			elif [[ "${OSHIT_OPT_LEVEL_WEBCORE}" == "3" || "${OSHIT_OPT_LEVEL_WEBCORE}" == "4" || "${OSHIT_OPT_LEVEL_WEBCORE}" == "fast" ]] ; then
+				export OSHIT_OPT_LEVEL_WEBCORE="2"
 			else
 				export OSHIT_OPT_LEVEL_WEBCORE="1"
 			fi
@@ -2399,10 +2403,10 @@ ewarn
 		fi
 
 		if [[ -n "${OSHIT_OPT_LEVEL_XXHASH}" ]] ; then
-			if [[ "${OSHIT_OPT_LEVEL_XXHASH}" == "1" || "${OSHIT_OPT_LEVEL_XXHASH}" == "2" || "${OSHIT_OPT_LEVEL_XXHASH}" == "3" || "${OSHIT_OPT_LEVEL_XXHASH}" == "fast" ]] ; then
+			if [[ "${OSHIT_OPT_LEVEL_XXHASH}" == "1" || "${OSHIT_OPT_LEVEL_XXHASH}" == "2" ]] ; then
 				export OSHIT_OPT_LEVEL_XXHASH
-			elif [[ "${OSHIT_OPT_LEVEL_XXHASH}" == "4" ]] ; then
-				export OSHIT_OPT_LEVEL_XXHASH="3"
+			elif [[ "${OSHIT_OPT_LEVEL_XXHASH}" == "3" || "${OSHIT_OPT_LEVEL_XXHASH}" == "4" || "${OSHIT_OPT_LEVEL_XXHASH}" == "fast" ]] ; then
+				export OSHIT_OPT_LEVEL_XXHASH="2"
 			else
 				export OSHIT_OPT_LEVEL_XXHASH="1"
 			fi
@@ -2417,16 +2421,14 @@ einfo "OSHIT_OPT_LEVEL_SKIA: ${OSHIT_OPT_LEVEL_SKIA}"
 einfo "OSHIT_OPT_LEVEL_WEBCORE: ${OSHIT_OPT_LEVEL_WEBCORE}"
 einfo "OSHIT_OPT_LEVEL_XXHASH: ${OSHIT_OPT_LEVEL_XXHASH}"
 	else
+		filter-flags "-Ofast" "-O2"
+		filter-flags "-O4" "-O2"
+		filter-flags "-O3" "-O2"
+		filter-flags "-Os" "-O2"
+		filter-flags "-Oz" "-O2"
+		filter-flags "-O0" "-O1"
 		local olast=$(get_olast)
-		if [[ "${olast}" == "-O3" || "${olast}" == "-O4" || "${olast}" == "-Ofast" ]] ; then
-			replace-flags "-O*" "-O3"
-			OSHIT_OPT_LEVEL_ANGLE=3
-			OSHIT_OPT_LEVEL_JSC=3
-			OSHIT_OPT_LEVEL_SHA1=3
-			OSHIT_OPT_LEVEL_SKIA=3
-			OSHIT_OPT_LEVEL_WEBCORE=3
-			OSHIT_OPT_LEVEL_XXHASH=3
-		elif [[ "${olast}" == "-O2" ]] ; then
+		if [[ "${olast}" == "-O2" ]] ; then
 			replace-flags "-O*" "-O2"
 			OSHIT_OPT_LEVEL_ANGLE=2
 			OSHIT_OPT_LEVEL_JSC=2
@@ -2573,6 +2575,12 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 		fi
 	}
 
+	filter-flags "-Ofast" "-O2"
+	filter-flags "-O4" "-O2"
+	filter-flags "-O3" "-O2"
+	filter-flags "-Os" "-O2"
+	filter-flags "-Oz" "-O2"
+	filter-flags "-O0" "-O1"
 	local olast=$(get_olast)
 	if [[ "${OSHIT}" == "1" ]] ; then
 		if [[ "${OSHIT_OPT_LEVEL_JSC}" == "3" ]] ; then
@@ -2772,6 +2780,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 	filter-flags \
 		'-flto*' \
 		'-fuse-ld=*'
+
+	cflags-hardened_append
 
 	if use mediastream ; then
 		sed -i -e "s|ENABLE_MEDIA_STREAM PRIVATE|ENABLE_MEDIA_STREAM PUBLIC|g" \

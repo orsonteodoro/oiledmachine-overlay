@@ -83,10 +83,10 @@ src_prepare() {
 }
 
 src_configure() {
-	cflags-hardened_append
-
 	# Upstream don't support LTO & error out on it in meson.build
 	filter-lto
+
+	cflags-hardened_append
 
 	local emesonargs=(
 		-Da11y=true

@@ -183,15 +183,6 @@ src_prepare() {
 }
 
 src_configure() {
-	if is-flagq "-fstack-protector" ; then
-		CFLAGS_HARDENED_SSP_LEVEL="1"
-	elif is-flagq "-fstack-protector-strong" ; then
-		CFLAGS_HARDENED_SSP_LEVEL="2"
-	elif is-flagq "-fstack-protector-all" ; then
-		CFLAGS_HARDENED_SSP_LEVEL="3"
-	fi
-
-	cflags-hardened_append
 	local mycmakeargs=(
 		$(qt_feature pdfium qtpdf_build)
 		$(use pdfium && qt_feature qml qtpdf_quick_build)
@@ -281,6 +272,15 @@ src_configure() {
 	# chromium passes this by default, but qtwebengine does not and it may
 	# "possibly" get enabled by some paths and cause issues (bug #953111)
 	append-ldflags -Wl,-z,noexecstack
+
+	if is-flagq "-fstack-protector" ; then
+		CFLAGS_HARDENED_SSP_LEVEL="1"
+	elif is-flagq "-fstack-protector-strong" ; then
+		CFLAGS_HARDENED_SSP_LEVEL="2"
+	elif is-flagq "-fstack-protector-all" ; then
+		CFLAGS_HARDENED_SSP_LEVEL="3"
+	fi
+	cflags-hardened_append
 
 	export NINJAFLAGS=$(get_NINJAOPTS)
 	[[ ${NINJA_VERBOSE^^} == OFF ]] || NINJAFLAGS+=" -v"

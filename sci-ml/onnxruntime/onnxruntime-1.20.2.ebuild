@@ -1925,8 +1925,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
-	cflags-hardened_append
-
 	local mycmakeargs=(
 		-DABSL_ENABLE_INSTALL=ON
 		-DCMAKE_INSTALL_INCLUDEDIR="include"
@@ -2054,6 +2052,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 		)
 	fi
 	filter-lto
+
+	cflags-hardened_append
 
 	if use abseil-cpp ; then
 		mycmakeargs+=(

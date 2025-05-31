@@ -802,7 +802,6 @@ eerror "Bugged optimized version.  Disable either clang USE flag or both bolt an
 			die
 		fi
 	fi
-	cflags-hardened_append
 	einfo "CFLAGS:  ${CFLAGS}"
 	einfo "CXXFLAGS:  ${CXXFLAGS}"
 	addpredict /usr/share/snmp/mibs/.index #nowarn
@@ -816,6 +815,8 @@ eerror "Bugged optimized version.  Disable either clang USE flag or both bolt an
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
+
+	cflags-hardened_append
 
 	PHP_DESTDIR="${EPREFIX}/usr/$(get_libdir)/php${SLOT}"
 

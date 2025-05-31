@@ -499,9 +499,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
-	cflags-hardened_append
-	rustflags-hardened_append
-
 	# Ensure we use correct toolchain,
 	# AS is used in a non-standard way by upstream, #bmo1654031
 	export HOST_CC="$(tc-getBUILD_CC)"
@@ -615,6 +612,9 @@ eerror "Use eselect to switch rust to < 1.78 or disable the rust-simd USE flag."
 
 	# LTO flag was handled via configure
 	filter-lto
+
+	cflags-hardened_append
+	rustflags-hardened_append
 
 	# Use system's Python environment
 	export MACH_BUILD_PYTHON_NATIVE_PACKAGE_SOURCE="none"

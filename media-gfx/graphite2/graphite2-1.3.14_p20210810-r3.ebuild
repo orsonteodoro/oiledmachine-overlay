@@ -83,10 +83,10 @@ src_prepare() {
 }
 
 multilib_src_configure() {
-	cflags-hardened_append
-
 	# ODR (bug #875224)
 	filter-lto
+
+	cflags-hardened_append
 
 	local mycmakeargs=(
 		# Renamed VM_MACHINE_TYPE to GRAPHITE2_VM_TYPE

@@ -160,16 +160,16 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
     It controls the JIT teir enablement and consequently build time, the runtime
     performance possibilities of JITed hot functions similar to the -Oflag
     level.
-    Valid values:  0, 1, 2, ..., 7, unset (default)
+    Valid values:  0, 1, 2, 3, 4, 5, 6, 7 unset (default)
 
-    7 - -Ofast [do not use]
+    7 - -Ofast
     6 - -O3
     5 - -O2
     4 - -Os
     3 - -Oz
     2 - -O1
-    1 - -O0 [with JIT, best case performance for -O0]
-    0 - -O0 [without JIT, worst case performance for -O0]
+    1 - -O0
+    0 - -O0
     unset - if USE=-official, it is automatic based on -Oflag level.
             if USE=official, it is equivalent to 6.
 
@@ -203,7 +203,7 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
 
 
     OSHIT_OPT_LEVEL_DAV1D="2" - Optimize dav1d at -O2
-    Valid values:  2, 3, fast
+    Valid values:  2
     Note:  May be set to 1 if dav1d is supported using vaapi and are using
     vaapi USE flag.
 
@@ -214,41 +214,41 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
 
 
     OSHIT_OPT_LEVEL_LIBVPX="fast" - Optimize libvpx at -Ofast
-    Valid values:  2, 3, fast
+    Valid values:  2
     Note:  May be set to 1 if vpx is supported using vaapi and are using vaapi
     USE flag.
 
 
     OSHIT_OPT_LEVEL_OPENH264="2" - Optimize openh264 at -O2
-    Valid values:  1, 2, 3, fast
+    Valid values:  1, 2
     Note:  May be set to 1 if h264 is supported using vaapi and are using
     vaapi USE flag.
 
 
     OSHIT_OPT_LEVEL_OPUS="1" - Optimize Opus at -O1
-    Valid values:  1, 2, 3, fast
+    Valid values:  1, 2
 
 
     OSHIT_OPT_LEVEL_RNNOISE="1" - Optimize rnnoise at -O2
-    Valid values:  1, 2, 3, fast
+    Valid values:  1, 2
 
 
     OSHIT_OPT_LEVEL_RUY="1" - Optimize ruy at -O1
-    Valid values:  1, 2, 3
+    Valid values:  1, 2
     Note:  May be set to 1 if disinterested in AI/ML.
 
 
     OSHIT_OPT_LEVEL_TFLITE="1" - Optimize TFLite build speed at -O1
-    Valid values:  1, 2, 3
+    Valid values:  1, 2
     Note:  May be set to 1 if disinterested in AI/ML.
 
 
     OSHIT_OPT_LEVEL_V8="3" - Optimize v8 at O3
-    Valid values:  2, 3
+    Valid values:  2
 
 
     OSHIT_OPT_LEVEL_XNNPACK="1" - Optimize xnnpack build speed at at -O1
-    Valid values:  1, 2, 3
+    Valid values:  1, 2
     Note:  May be set to 1 if disinterested in AI/ML.
 
 

@@ -465,7 +465,6 @@ _strip_flags() {
 }
 
 _apply_flags() {
-	cflags-hardened_append
 	if [[ "${configuration}" == "release" ]] ; then
 		:
 	elif use fuzz-testing && [[ "${configuration}" == "test" ]] ; then
@@ -576,6 +575,8 @@ ewarn "Please use the dev-cpp/highway::oiledmachine-overlay ebuild instead."
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
+
+	cflags-hardened_append
 
 	local emesonargs=(
 		-Dmodules=enabled

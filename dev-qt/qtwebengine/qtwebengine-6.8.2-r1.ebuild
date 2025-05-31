@@ -176,15 +176,6 @@ src_prepare() {
 }
 
 src_configure() {
-	if is-flagq "-fstack-protector" ; then
-		CFLAGS_HARDENED_SSP_LEVEL="1"
-	elif is-flagq "-fstack-protector-strong" ; then
-		CFLAGS_HARDENED_SSP_LEVEL="2"
-	elif is-flagq "-fstack-protector-all" ; then
-		CFLAGS_HARDENED_SSP_LEVEL="3"
-	fi
-
-	cflags-hardened_append
 	local mycmakeargs=(
 		$(qt_feature pdfium qtpdf_build)
 		$(qt_feature qml qtpdf_quick_build)
@@ -270,6 +261,15 @@ src_configure() {
 		# report if above -march works again so can cleanup.
 		use arm64 && tc-is-gcc && filter-flags '-march=*' '-mcpu=*'
 	fi
+
+	if is-flagq "-fstack-protector" ; then
+		CFLAGS_HARDENED_SSP_LEVEL="1"
+	elif is-flagq "-fstack-protector-strong" ; then
+		CFLAGS_HARDENED_SSP_LEVEL="2"
+	elif is-flagq "-fstack-protector-all" ; then
+		CFLAGS_HARDENED_SSP_LEVEL="3"
+	fi
+	cflags-hardened_append
 
 	export NINJAFLAGS=$(get_NINJAOPTS)
 	[[ ${NINJA_VERBOSE^^} == OFF ]] || NINJAFLAGS+=" -v"

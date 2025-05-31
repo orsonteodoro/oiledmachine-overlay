@@ -1920,8 +1920,9 @@ get_olast() {
 	if [[ -n "${olast}" ]] ; then
 		echo "${olast}"
 	else
-		# Upstream default
-		echo "-O3"
+	# cflags-hardened default
+	# This is to minimize -D_FORITIFY_SOURCE breakage.
+		echo "-O2"
 	fi
 }
 
@@ -2516,56 +2517,35 @@ einfo "Detected compiler switch.  Disabling LTO."
 			mozconfig_add_options_ac 'Gentoo default' --disable-debug-symbols
 		fi
 
-		if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" != "1" ]] ; then
-ewarn "APPLY_OILEDMACHINE_OVERLAY_PATCHSET is currently disabled."
-			if is_flagq_last '-Ofast' ; then
-				OFLAG="-O3"
-			fi
-			filter-flags '-ffast-math'
-		fi
-
-		# Breaks webgl aquarium
-		replace-flags '-Ofast' '-O3'
+		# -Ofast or -ffast-math breaks webgl aquarium
+		# Downgrade to -O2 to unbreak -D_FORTIFY_SOURCE
+		# cflags-hardened_append will apply additional flags to unbreak -D_FORTIFY_SOURCE
+		replace-flags '-Ofast' '-O2'
+		replace-flags '-O4' '-O2'
+		replace-flags '-O3' '-O2'
+		replace-flags '-Os' '-O2'
+		replace-flags '-Oz' '-O2'
+		replace-flags '-O0' '-O1'
 		filter-flags '-ffast-math'
 
-		if is_flagq_last '-Ofast' || [[ "${OFLAG}" == "-Ofast" ]] ; then
-			OFLAG="-Ofast"
-			mozconfig_add_options_ac \
-				"from CFLAGS" \
-				--enable-optimize="-Ofast"
-		elif is_flagq_last '-O4' || [[ "${OFLAG}" == "-O4" ]] ; then
-	# O4 is the same as O3.
-			OFLAG="-O4"
-			mozconfig_add_options_ac \
-				"from CFLAGS" \
-				--enable-optimize="-O4"
-		elif is_flagq_last '-O3' || [[ "${OFLAG}" == "-O3" ]] ; then
-	# Repeated for multiple Oflags
-			OFLAG="-O3"
-			mozconfig_add_options_ac \
-				"from CFLAGS" \
-				--enable-optimize="-O3"
-		elif is_flagq_last '-O2' || [[ "${OFLAG}" == "-O2" ]] ; then
-			OFLAG="-O2"
-			mozconfig_add_options_ac \
-				"from CFLAGS" \
-				--enable-optimize="-O2"
-		else
-			OFLAG="-O3"
-			mozconfig_add_options_ac \
-				"Upstream default" \
-				--enable-optimize="-O3"
-		fi
+		OFLAG=$(get_olast)
+		mozconfig_add_options_ac \
+			"${OFLAG}" \
+			--enable-optimize="${OFLAG}"
 einfo "Using ${OFLAG}"
 	fi
 
-	local oflag_safe
 	if [[ -z "${OFLAG}" ]] ; then
+		replace-flags '-Ofast' '-O2'
+		replace-flags '-O4' '-O2'
+		replace-flags '-O3' '-O2'
+		replace-flags '-Os' '-O2'
+		replace-flags '-Oz' '-O2'
+		replace-flags '-O0' '-O1'
 		oflag_safe=$(get_olast)
 	else
-		oflag_safe="${OFLAG}"
+		oflag_safe="-O2"
 	fi
-	[[ "${oflag_safe}" == "-Ofast" ]] && oflag_safe="-O3"
 einfo "oflag_safe:\t${oflag_safe}"
 
 	local L=(

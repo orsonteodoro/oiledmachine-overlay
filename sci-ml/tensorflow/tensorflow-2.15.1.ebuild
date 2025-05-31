@@ -1506,7 +1506,6 @@ ewarn
 	# with -O3.
 	replace-flags '-O*' '-O2' # Prevent possible runtime breakage with llvm parts.
 
-	allow_lto
 	cflags-hardened_append
 	BUILD_CXXFLAGS+=" ${CFLAGS_HARDENED_CXXFLAGS}"
 	BUILD_LDFLAGS+=" ${CFLAGS_HARDENED_LDFLAGS}"

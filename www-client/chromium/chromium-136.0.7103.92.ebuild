@@ -4010,6 +4010,134 @@ einfo "Using the bundled toolchain"
 		myconf_gn+=" is_clang=true"
 	fi
 
+
+	local use_thinlto=0
+
+	if is-flagq '-flto' || is-flagq '-flto=*' ; then
+		USE_LTO=1
+	fi
+
+	fatal_message_lto_banned() {
+# Critical vulnerabilities must be fixed within 24 hrs, which implies the ebuild
+# must be completely installed in that time.
+		local flag="${1}"
+# A LTO required flag
+eerror
+eerror "The ${flag} USE flag is not supported for older machines."
+eerror
+eerror "Workarounds:"
+eerror
+eerror "1.  Replace this package with www-client/google-chrome"
+eerror "2.  Build this ebuild on a faster machine and install it with a local -bin ebuild you created"
+eerror
+eerror "https://wiki.gentoo.org/wiki/Binary_package_guide#Creating_binary_packages"
+eerror
+		die
+	}
+
+	if (( ${actual_gib_per_core%.*} <= 3 || ${nprocs} <= 4 )) ; then
+	#
+	# This section assumes 4 core and 4 GiB total with 8 GiB swap as
+	# disqualified for LTO treatment.  LTO could increase build times by
+	# 5 times.
+	#
+	# One of the goals is to prevent a systemwide vulnerability backlog or
+	# a ebuild update backlog that lasts 6 months.
+	#
+ewarn "Disabling LTO for older machines."
+		USE_LTO=0
+		filter-lto
+		use cfi         && fatal_message_lto_banned "cfi"
+		use official    && fatal_message_lto_banned "official"
+	fi
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+		USE_LTO=0
+	fi
+
+	if ! use mold && is-flagq '-fuse-ld=mold' && has_version "sys-devel/mold" ; then
+eerror "To use mold, enable the mold USE flag."
+		die
+	fi
+
+	if use mold ; then
+	# Handled by build scripts
+		filter-flags '-fuse-ld=*'
+	fi
+
+	myconf_gn+=" is_official_build=$(usex official true false)"
+	if ! use official ; then
+	# The reason why we disable official in this ebuild fork is to drop the
+	# lock-in to proprietary settings including proprietary codecs.
+
+	# The MiraclePtr is default enabled on official Linux.
+	# MiraclePtr is software based UAF detection.
+	# When official is disabled, it reduces the attack surface and adds a
+	# UAF critical-high vulnerability.
+	# We force MiraclePtr on since GWP-ASan is default off.
+	# It may overlap with GWP-ASan's UAF mitigation.
+	# See also https://security.googleblog.com/2022/09/use-after-freedom-miracleptr.html
+		myconf_gn+=" enable_backup_ref_ptr_support=$(usex miracleptr true false)"
+	fi
+
+	if [[ -z "${LTO_TYPE}" ]] ; then
+		LTO_TYPE=$(check-linker_get_lto_type)
+	fi
+	if \
+		(( ${USE_LTO} == 1 )) \
+					&&
+		( \
+			( \
+				tc-is-clang \
+					&& \
+				[[ "${LTO_TYPE}" == "thinlto" ]] \
+			) \
+					|| \
+			( \
+				use cfi \
+			) \
+					|| \
+			( \
+				use official \
+					&& \
+				[[ "${PGO_PHASE}" != "PGI" ]] \
+			) \
+		) \
+	; then
+einfo "Using ThinLTO"
+		myconf_gn+=" use_thin_lto=true "
+		filter-lto
+		filter-flags '-fuse-ld=*'
+		filter-flags '-Wl,--lto-O*'
+		if [[ "${THINLTO_OPT:-1}" == "1" ]] ; then
+			myconf_gn+=" thin_lto_enable_optimizations=true"
+		fi
+		use_thinlto=1
+	else
+	# gcc will never use ThinLTO.
+	# gcc doesn't like -fsplit-lto-unit and -fwhole-program-vtables
+	# We want the faster LLD but without LTO.
+		myconf_gn+=" thin_lto_enable_optimizations=false"
+		myconf_gn+=" use_thin_lto=false"
+	fi
+
+	# See https://github.com/rui314/mold/issues/336
+	if use mold && (( ${use_thinlto} == 0 && ${USE_LTO} == 1 )) ; then
+		if tc-is-clang ; then
+einfo "Using Clang MoldLTO"
+			myconf_gn+=" use_mold=true"
+		else
+ewarn "Forcing use of GCC Mold without LTO.  GCC MoldLTO is not supported."
+ewarn "To use LTO, use either Clang MoldLTO, Clang ThinLTO, GCC BFDLTO."
+			filter-lto
+		fi
+	elif use mold && (( ${use_thinlto} == 0 && ${USE_LTO} == 0 )) ; then
+einfo "Using Mold without LTO"
+		myconf_gn+=" use_mold=true"
+	fi
+
 	if use official ; then
 		:
 	elif use cpu_flags_arm_bti && use cpu_flags_arm_pac ; then
@@ -4850,13 +4978,13 @@ ewarn "The v8 sandbox is not supported for 32-bit.  Consider using 64-bit only t
 
 	# Safety/sanity checks
 
-	if [[ "${oshit_opt_level_dav1d}" =~ ("2"|"3"|"fast") ]] ; then
+	if [[ "${oshit_opt_level_dav1d}" =~ ("2") ]] ; then
 		:
 	else
 		oshit_opt_level_dav1d="2"
 	fi
 
-	if [[ "${oshit_opt_level_libaom}" =~ ("1"|"2"|"3"|"fast") ]] ; then
+	if [[ "${oshit_opt_level_libaom}" =~ ("1"|"2") ]] ; then
 	# If you don't care, then just use -O1.
 	# If you have hardware av1 encoding, use -O1.
 	# If you have a lot of CPU cores, use Ofast.
@@ -4865,54 +4993,54 @@ ewarn "The v8 sandbox is not supported for 32-bit.  Consider using 64-bit only t
 		oshit_opt_level_libaom="2" # I don't use, and it is too slow for realtime encoding.
 	fi
 
-	if [[ "${oshit_opt_level_libvpx}" =~ ("2"|"3"|"fast") ]] ; then
+	if [[ "${oshit_opt_level_libvpx}" =~ ("2") ]] ; then
 		:
 	else
 		oshit_opt_level_libvpx="2"
 	fi
 
-	if [[ "${oshit_opt_level_openh264}" =~ ("1"|"2"|"3"|"fast") ]] ; then
+	if [[ "${oshit_opt_level_openh264}" =~ ("1"|"2") ]] ; then
 	# If you have hardware acceleration or don't use it, then just use -O1.
 		:
 	else
 		oshit_opt_level_openh264="2"
 	fi
 
-	if [[ "${oshit_opt_level_opus}" =~ ("1"|"2"|"3"|"fast") ]] ; then
+	if [[ "${oshit_opt_level_opus}" =~ ("1"|"2") ]] ; then
 	# If you don't care, then just use -O1.
 		:
 	else
 		oshit_opt_level_opus="1"
 	fi
 
-	if [[ "${oshit_opt_level_rnnoise}" =~ ("1"|"2"|"3"|"fast") ]] ; then
+	if [[ "${oshit_opt_level_rnnoise}" =~ ("1"|"2") ]] ; then
 	# If you don't care about AI/ML or noise reduction, then just use -O1.
 		:
 	else
 		oshit_opt_level_rnnoise="2"
 	fi
 
-	if [[ "${oshit_opt_level_ruy}" =~ ("1"|"2"|"3"|"fast") ]] ; then
+	if [[ "${oshit_opt_level_ruy}" =~ ("1"|"2") ]] ; then
 	# If you don't care about AI/ML, then just use -O1.
 		:
 	else
 		oshit_opt_level_ruy="2"
 	fi
 
-	if [[ "${oshit_opt_level_tflite}" =~ ("1"|"2"|"3") ]] ; then
+	if [[ "${oshit_opt_level_tflite}" =~ ("1"|"2") ]] ; then
 	# If you don't care, then just use -O1.
 		:
 	else
 		oshit_opt_level_tflite="2"
 	fi
 
-	if [[ "${oshit_opt_level_v8}" =~ ("2"|"3") ]] ; then
+	if [[ "${oshit_opt_level_v8}" =~ ("2") ]] ; then
 		:
 	else
 		oshit_opt_level_v8="2"
 	fi
 
-	if [[ "${oshit_opt_level_xnnpack}" =~ ("1"|"2"|"3") ]] ; then
+	if [[ "${oshit_opt_level_xnnpack}" =~ ("1"|"2") ]] ; then
 	# If you don't care, then just use -O1.
 		:
 	else
@@ -4951,14 +5079,15 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	# 2. Fast build time to prevent systemwide vulnerability backlog.
 	# 3. Critical vulnerabilities should be fixed in one day, which implies
 	#    that the ebuild has to be completely merged within a day.
+	# 4. Does not introduce more vulnerabilities or increase the estimated CVSS score.
 	#
 
 	replace-flags "-O0" "-O2"
 	replace-flags "-O1" "-O2"
-	replace-flags "-Os" "-O2"
 	replace-flags "-Oz" "-O2"
-	replace-flags "-Ofast" "-O3" # -Ofast is broken.  TODO: fix crashes by using O3 in some *.gn* files
-	replace-flags "-O4" "-O3" # -O4 is the same as -O3
+	replace-flags "-Os" "-O2"
+	replace-flags "-O4" "-O2"
+	replace-flags "-Ofast" "-O2"
 
 	if ! _use_system_toolchain ; then
 	# The vendored clang/rust is likely built for portability not performance
@@ -5363,138 +5492,6 @@ einfo "Configuring bundled ffmpeg..."
 		myconf_gn+=" ozone_platform_wayland=$(usex wayland true false)"
 		myconf_gn+=" ozone_platform=$(usex wayland \"wayland\" \"x11\")"
 		use wayland && myconf_gn+=" use_system_libffi=true"
-	fi
-
-	#
-	#
-	#
-	#
-
-	local use_thinlto=0
-
-	if is-flagq '-flto' || is-flagq '-flto=*' ; then
-		USE_LTO=1
-	fi
-
-	fatal_message_lto_banned() {
-# Critical vulnerabilities must be fixed within 24 hrs, which implies the ebuild
-# must be completely installed in that time.
-		local flag="${1}"
-# A LTO required flag
-eerror
-eerror "The ${flag} USE flag is not supported for older machines."
-eerror
-eerror "Workarounds:"
-eerror
-eerror "1.  Replace this package with www-client/google-chrome"
-eerror "2.  Build this ebuild on a faster machine and install it with a local -bin ebuild you created"
-eerror
-eerror "https://wiki.gentoo.org/wiki/Binary_package_guide#Creating_binary_packages"
-eerror
-		die
-	}
-
-	if (( ${actual_gib_per_core%.*} <= 3 || ${nprocs} <= 4 )) ; then
-	#
-	# This section assumes 4 core and 4 GiB total with 8 GiB swap as
-	# disqualified for LTO treatment.  LTO could increase build times by
-	# 5 times.
-	#
-	# One of the goals is to prevent a systemwide vulnerability backlog or
-	# a ebuild update backlog that lasts 6 months.
-	#
-ewarn "Disabling LTO for older machines."
-		USE_LTO=0
-		filter-lto
-		use cfi         && fatal_message_lto_banned "cfi"
-		use official    && fatal_message_lto_banned "official"
-	fi
-
-	if check-compiler-switch_is_flavor_slot_changed ; then
-einfo "Detected compiler switch.  Disabling LTO."
-		filter-lto
-		USE_LTO=0
-	fi
-
-	if ! use mold && is-flagq '-fuse-ld=mold' && has_version "sys-devel/mold" ; then
-eerror "To use mold, enable the mold USE flag."
-		die
-	fi
-
-	if use mold ; then
-	# Handled by build scripts
-		filter-flags '-fuse-ld=*'
-	fi
-
-	myconf_gn+=" is_official_build=$(usex official true false)"
-	if ! use official ; then
-	# The reason why we disable official in this ebuild fork is to drop the
-	# lock-in to proprietary settings including proprietary codecs.
-
-	# The MiraclePtr is default enabled on official Linux.
-	# MiraclePtr is software based UAF detection.
-	# When official is disabled, it reduces the attack surface and adds a
-	# UAF critical-high vulnerability.
-	# We force MiraclePtr on since GWP-ASan is default off.
-	# It may overlap with GWP-ASan's UAF mitigation.
-	# See also https://security.googleblog.com/2022/09/use-after-freedom-miracleptr.html
-		myconf_gn+=" enable_backup_ref_ptr_support=$(usex miracleptr true false)"
-	fi
-
-	if [[ -z "${LTO_TYPE}" ]] ; then
-		LTO_TYPE=$(check-linker_get_lto_type)
-	fi
-	if \
-		(( ${USE_LTO} == 1 )) \
-					&&
-		( \
-			( \
-				tc-is-clang \
-					&& \
-				[[ "${LTO_TYPE}" == "thinlto" ]] \
-			) \
-					|| \
-			( \
-				use cfi \
-			) \
-					|| \
-			( \
-				use official \
-					&& \
-				[[ "${PGO_PHASE}" != "PGI" ]] \
-			) \
-		) \
-	; then
-einfo "Using ThinLTO"
-		myconf_gn+=" use_thin_lto=true "
-		filter-lto
-		filter-flags '-fuse-ld=*'
-		filter-flags '-Wl,--lto-O*'
-		if [[ "${THINLTO_OPT:-1}" == "1" ]] ; then
-			myconf_gn+=" thin_lto_enable_optimizations=true"
-		fi
-		use_thinlto=1
-	else
-	# gcc will never use ThinLTO.
-	# gcc doesn't like -fsplit-lto-unit and -fwhole-program-vtables
-	# We want the faster LLD but without LTO.
-		myconf_gn+=" thin_lto_enable_optimizations=false"
-		myconf_gn+=" use_thin_lto=false"
-	fi
-
-	# See https://github.com/rui314/mold/issues/336
-	if use mold && (( ${use_thinlto} == 0 && ${USE_LTO} == 1 )) ; then
-		if tc-is-clang ; then
-einfo "Using Clang MoldLTO"
-			myconf_gn+=" use_mold=true"
-		else
-ewarn "Forcing use of GCC Mold without LTO.  GCC MoldLTO is not supported."
-ewarn "To use LTO, use either Clang MoldLTO, Clang ThinLTO, GCC BFDLTO."
-			filter-lto
-		fi
-	elif use mold && (( ${use_thinlto} == 0 && ${USE_LTO} == 0 )) ; then
-einfo "Using Mold without LTO"
-		myconf_gn+=" use_mold=true"
 	fi
 
 	if use official ; then

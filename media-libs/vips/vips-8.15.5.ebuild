@@ -464,7 +464,6 @@ _strip_flags() {
 }
 
 _apply_flags() {
-	cflags-hardened_append
 	if [[ "${configuration}" == "release" ]] ; then
 		:
 	elif use fuzz-testing && [[ "${configuration}" == "test" ]] ; then
@@ -567,6 +566,8 @@ eerror
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
+
+	cflags-hardened_append
 
 	if use highway ; then
 # The highway automagic for cpu flags could be broken.
