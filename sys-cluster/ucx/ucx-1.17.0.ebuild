@@ -16,7 +16,6 @@ CUDA_TARGETS_COMPAT=(
 	sm_75
 )
 CLANG_COMPAT=( {18..15} )
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 inherit hip-versions
 RDMA_CORE_PV="28.0"
 ROCM_VERSIONS=(
@@ -68,7 +67,7 @@ ${ROCM_IUSE[@]}
 clang +cma cuda custom-kernel dc debug devx dm dmabuf fuse3 gcc examples gdrcopy
 hip-clang knem mlx5-dv +numa +openmp rc rdma rocm roce threads tm ud verbs xpmem
 video_cards_intel
-ebuild_revision_5
+ebuild_revision_6
 "
 get_cuda_targets_required_use() {
 	local x
