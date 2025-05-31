@@ -170,8 +170,6 @@ FFMPEG_FLAG_MAP=(
 )
 FFMPEG_REVISION="${MY_PV#*_p}"
 FFMPEG_SUBSLOT="58.60.60"
-FLAG_O_MATIC_FILTER_LTO=1
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 MULTILIB_WRAPPED_HEADERS=(
 	"/usr/include/libavutil/avconfig.h"
 )
@@ -501,7 +499,7 @@ ${USE_LICENSES[@]}
 alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm liblensfun
 mold openvino oss pgo +re-codecs sndio soc sr static-libs tensorflow test v4l
 wayland
-ebuild_revision_43
+ebuild_revision_44
 "
 
 # x means plus.  There is a bug in the USE flag system where + is not recognized.

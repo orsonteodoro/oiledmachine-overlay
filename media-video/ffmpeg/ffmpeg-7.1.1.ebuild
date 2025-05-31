@@ -171,8 +171,6 @@ FFMPEG_FLAG_MAP=(
 )
 FFMPEG_REVISION="${MY_PV#*_p}"
 FFMPEG_SUBSLOT="59.61.61"
-FLAG_O_MATIC_FILTER_LTO=1
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 MULTILIB_WRAPPED_HEADERS=(
 	"/usr/include/libavutil/avconfig.h"
 )
@@ -510,7 +508,7 @@ ${USE_LICENSES[@]}
 alsa chromium -clear-config-first cuda cuda-filters doc dvdvideo +encode gdbm
 liblensfun libqrencode mold openvino oss pgo pipewire +re-codecs sndio soc sr
 static-libs tensorflow test torch v4l wayland
-ebuild_revision_43
+ebuild_revision_44
 "
 
 # The distro has frei0r-plugins as GPL-2 only but source is actually GPL-2+, GPL-3+ [baltan.cpp], LGPL-2.1+ [nois0r.cpp].
