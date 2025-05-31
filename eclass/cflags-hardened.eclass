@@ -179,7 +179,8 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # @DESCRIPTION:
 # A user override for CFLAGS_HARDENED_TOLERANCE.  This is to allow the user to
 # set the security-performance tradeoff especially for performance-critical
-# apps/libs.
+# apps/libs.  Setting to lower values towards 1.0 will prevent expensive
+# hardening flags from being applied.
 # Acceptable values: 1.0-20.00, unset (same as CFLAGS_HARDENED_TOLERANCE)
 # Default: unset
 # It is assumed that these don't stack and are mutually exclusive.

@@ -151,7 +151,10 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_TOLERANCE_USER
 # @USER_VARIABLE
 # @DESCRIPTION:
-# A user override for RUSTFLAGS_HARDENED_TOLERANCE.
+# A user override for RUSTFLAGS_HARDENED_TOLERANCE.  This is to allow the user
+# to set the security-performance tradeoff especially for performance-critical
+# apps/libs.  Setting to lower values towards 1.0 will prevent expensive
+# hardening flags from being applied.
 # Acceptable values: 1.0-16, unset
 # Default: unset
 # It is assumed that these don't stack and are mutually exclusive.
