@@ -46,7 +46,7 @@ IUSE+="
 ${LLVM_EBUILDS_LLVM18_REVISION}
 +abi_x86_32 abi_x86_64 +clang +debug hexagon +libfuzzer +memprof +orc +profile
 test +xray
-ebuild_revision_10
+ebuild_revision_11
 "
 # sanitizer targets, keep in sync with config-ix.cmake
 # NB: ubsan, scudo deliberately match two entries
