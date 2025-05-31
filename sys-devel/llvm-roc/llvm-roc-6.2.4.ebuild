@@ -5,7 +5,6 @@
 EAPI=8
 
 CMAKE_BUILD_TYPE="RelWithDebInfo"
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 LLVM_SLOT=18
 LLVM_TARGETS=(
 	AMDGPU
@@ -90,7 +89,7 @@ IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 bolt -mlir profile +runtime
-ebuild_revision_23
+ebuild_revision_24
 "
 REQUIRED_USE="
 	cfi? (
