@@ -47,14 +47,17 @@ ERIDS=(
 	${WIN_ERIDS[@]}
 )
 
-inherit cmake flag-o-matic git-r3 lcnr
+inherit check-compiler-switch cmake flag-o-matic git-r3 lcnr
 
 DESCRIPTION=".NET wrapper for the Bullet physics library using Platform Invoke"
 HOMEPAGE="http://andrestraks.github.io/BulletSharp/"
 LICENSE="MIT ZLIB"
 KEYWORDS="~amd64"
-IUSE+=" developer nupkg test"
-IUSE+=" ${ERIDS[@]} mono"
+IUSE+="
+${ERIDS[@]}
+developer mono nupkg test
+ebuild_revision_2
+"
 REQUIRED_USE+="
 	^^ (
 		${ERIDS[@]}
@@ -205,6 +208,7 @@ get_hrid() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	local found=0
 	for sdk in ${DOTNET_SUPPORTED_SDKS[@]} ; do
 		if [[ -e "${EPREFIX}/opt/${sdk}/dotnet" ]] ; then
@@ -308,6 +312,11 @@ src_configure() {
 				strip-unsupported-flags
 			fi
 
+			if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+				filter-lto
+			fi
+
 		        local mycmakeargs=( -DBUILD_BULLET3=1 -DBUILD_EXTRAS=1 )
 			filter-flags -DBULLET_VER=*
 			if use bullet_2_89 ; then
@@ -320,11 +329,9 @@ src_configure() {
 				append-cppflags -DBULLET_VER=9999999
 			fi
 
-einfo
 einfo "CC:\t${CC}"
 einfo "CXX:\t${CXX}"
 einfo "CHOST:\t${CHOST}"
-einfo
 
 			export CMAKE_USE_DIR="${S}-${hrid}/libbulletc"
 			export BUILD_DIR="${S}-${hrid}/libbulletc"
