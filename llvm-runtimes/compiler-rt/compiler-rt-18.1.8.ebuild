@@ -52,7 +52,7 @@ SLOT="${LLVM_MAJOR}"
 IUSE+="
 ${LLVM_EBUILDS_LLVM18_REVISION}
 +abi_x86_32 abi_x86_64 +clang +debug test
-ebuild_revision_2
+ebuild_revision_3
 "
 DEPEND="
 	llvm-core/llvm:${LLVM_MAJOR}

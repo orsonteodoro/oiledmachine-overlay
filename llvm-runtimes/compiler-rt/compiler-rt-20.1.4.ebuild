@@ -55,7 +55,7 @@ SLOT="${LLVM_MAJOR}"
 IUSE+="
 ${LLVM_EBUILDS_LLVM20_REVISION}
 +abi_x86_32 abi_x86_64 +atomic-builtins +clang +debug test
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE="
 	atomic-builtins? (
