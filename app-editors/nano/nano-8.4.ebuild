@@ -35,7 +35,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 debug justify magic minimal ncurses nls +spell unicode
-ebuild_revision_10
+ebuild_revision_11
 "
 REQUIRED_USE="
 	magic? (
