@@ -48,7 +48,6 @@ CUDA_TARGETS_COMPAT=(
 	sm_75 # Supported
 	compute_80 # Supported
 )
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 GCC_COMPAT=( {12..9} )
 GCC_MAX_SLOT="${GCC_COMPAT[0]}"
 GCC_MIN_SLOT="${GCC_COMPAT[-1]}"
@@ -436,7 +435,7 @@ ${HIP_SLOTS2[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 alt-ssl -big-endian clang cuda models -mpi +python rocm
 system-flatbuffers test +xla
-ebuild_revision_12
+ebuild_revision_13
 "
 gen_required_use_cuda_targets() {
 	local x
