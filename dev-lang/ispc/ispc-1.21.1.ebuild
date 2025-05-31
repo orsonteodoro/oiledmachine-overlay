@@ -6,8 +6,10 @@ EAPI=8
 # For the version, see
 # https://github.com/ispc/ispc/blob/main/common/version.h
 
+CFLAGS_HARDENED_ASSEMBLERS="inline"
 CFLAGS_HARDENED_CI_SANITIZERS="asan"
 CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="15"
+CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="PE"
 CMAKE_BUILD_TYPE="RelWithDebInfo"
