@@ -11,7 +11,6 @@ CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18"
 CFLAGS_HARDENED_LANGS="asm c-lang"
 CFLAGS_HARDENED_USE_CASES="crypto network security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS HO IO SO UAF UM"
-FLAG_O_MATIC_FILTER_LTO=1
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/openssl.org.asc"
 
 inherit cflags-hardened edo flag-o-matic linux-info toolchain-funcs
@@ -51,7 +50,7 @@ SLOT="0/$(ver_cut 1)" # .so version of libssl/libcrypto
 IUSE="
 +asm cpu_flags_x86_sse2 fips ktls +quic rfc3779 sctp static-libs test
 tls-compression vanilla weak-ssl-ciphers
-ebuild_revision_25
+ebuild_revision_26
 "
 RESTRICT="
 	!test? (
