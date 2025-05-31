@@ -6,10 +6,8 @@ EAPI=8
 MY_P="${P/_/-}"
 
 CFLAGS_HARDENED_ASSEMBLERS="gas inline nasm"
-CFLAGS_HARDENED_CF_PROTECTION=0											# Untested or unverified
 CFLAGS_HARDENED_CI_SANITIZERS="asan msan tsan ubsan"
 CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18"
-CFLAGS_HARDENED_FHARDENED=0											# Untested or unverified
 CFLAGS_HARDENED_LANGS="asm c-lang"
 CFLAGS_HARDENED_USE_CASES="crypto network security-critical sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS HO IO SO UAF UM"
@@ -52,7 +50,7 @@ SLOT="0/$(ver_cut 1)" # .so version of libssl/libcrypto
 IUSE="
 +asm cpu_flags_x86_sse2 fips ktls +quic rfc3779 sctp static-libs test
 tls-compression vanilla weak-ssl-ciphers
-ebuild_revision_30
+ebuild_revision_31
 "
 RESTRICT="
 	!test? (
