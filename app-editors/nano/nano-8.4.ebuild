@@ -3,6 +3,8 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_CF_PROTECTION=0							# Untested or unverified
+CFLAGS_HARDENED_FHARDENED=0							# Untested or unverified
 CFLAGS_HARDENED_USE_CASES="sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="PE"
 # gnulib FPs \
@@ -35,7 +37,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 debug justify magic minimal ncurses nls +spell unicode
-ebuild_revision_12
+ebuild_revision_15
 "
 REQUIRED_USE="
 	magic? (
