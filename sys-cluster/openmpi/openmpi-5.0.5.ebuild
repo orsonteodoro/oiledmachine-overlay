@@ -3,7 +3,6 @@
 
 EAPI=8
 
-FLAG_O_MATIC_FILTER_LTO=1
 FORTRAN_NEEDED="fortran"
 MY_P="${P/-mpi}"
 inherit hip-versions
@@ -58,7 +57,7 @@ ${IUSE_OPENMPI_FABRICS}
 ${IUSE_OPENMPI_RM}
 ${ROCM_IUSE[@]}
 cma cuda custom-kernel fortran hcoll ipv6 peruse rocm romio system-ucx ucx valgrind
-ebuild_revision_4
+ebuild_revision_5
 "
 
 gen_rocm_iuse_required_use() {

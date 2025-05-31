@@ -5,7 +5,6 @@ EAPI=8
 
 MY_P="${P/-mpi}"
 
-FLAG_O_MATIC_FILTER_LTO=1
 FORTRAN_NEEDED="fortran"
 IUSE_OPENMPI_FABRICS="
 	openmpi_fabrics_knem
@@ -74,7 +73,7 @@ ${IUSE_OPENMPI_RM}
 ${ROCM_IUSE[@]}
 cma cuda custom-kernel cxx fortran hcoll ipv6 knem libompitrace peruse rocm romio
 system-ucx ucx valgrind xpmem
-ebuild_revision_4
+ebuild_revision_5
 "
 
 gen_rocm_iuse_required_use() {
