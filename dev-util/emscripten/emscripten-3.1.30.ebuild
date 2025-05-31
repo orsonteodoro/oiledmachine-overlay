@@ -137,7 +137,7 @@ SLOT="${LLVM_SLOT}-$(ver_cut 1-2 ${PV})"
 IUSE+="
 -closure-compiler closure_compiler_java closure_compiler_native
 closure_compiler_nodejs java test
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
