@@ -42,6 +42,7 @@ SLOT="0/1"
 IUSE+="
 ${TRAINERS[@]}
 bolt-aggressive-optimizations
+ebuild_revision_1
 "
 REQUIRED_USE+="
 	bolt-aggressive-optimizations? (
