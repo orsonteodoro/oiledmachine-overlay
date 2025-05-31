@@ -69,7 +69,7 @@ VIDEO_CARDS=(
 
 # Bug
 inherit cargo
-inherit cflags-hardened flag-o-matic llvm-r1 python-any-r1 linux-info meson multilib-build toolchain-funcs uopts
+inherit cflags-hardened check-compiler-switch flag-o-matic llvm-r1 python-any-r1 linux-info meson multilib-build toolchain-funcs uopts
 
 LLVM_USE_DEPS="llvm_targets_AMDGPU(+),${MULTILIB_USEDEP}"
 
@@ -118,7 +118,7 @@ ${PATENT_STATUS[@]}
 cpu_flags_x86_sse2 d3d9 debug +llvm lm-sensors opencl +opengl
 osmesa selinux test unwind vaapi valgrind vdpau vulkan
 vulkan-overlay wayland +X xa +zstd
-ebuild_revision_1
+ebuild_revision_2
 "
 REQUIRED_USE="
 	d3d9? (
@@ -520,6 +520,7 @@ ewarn "OSMesa will be slow without enabling USE=llvm"
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	check_libstdcxx
 	# Warning message for bug 459306
 	if use llvm && has_version "llvm-core/llvm[!debug=]" ; then
@@ -630,6 +631,13 @@ _src_configure() {
 	filter-lto
 
 	uopts_src_configure
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 
 	local platforms
