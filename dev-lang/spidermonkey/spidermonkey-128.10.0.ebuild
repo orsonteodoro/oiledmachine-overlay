@@ -104,7 +104,7 @@ IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang debug +jit lto rust-simd test
-ebuild_revision_13
+ebuild_revision_14
 "
 REQUIRED_USE="
 	rust-simd? (
