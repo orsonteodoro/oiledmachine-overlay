@@ -29,7 +29,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 -debuginfod +openmp -valgrind
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE="
 "
