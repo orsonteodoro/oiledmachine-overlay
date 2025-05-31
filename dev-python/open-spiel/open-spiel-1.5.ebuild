@@ -31,7 +31,7 @@ RESTRICT="mirror test" # Not tested
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 doc -eigen -go -jax -julia -libnop -python-misc -pytorch -rust -tensorflow test
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND+="
 	$(python_gen_cond_dep '
