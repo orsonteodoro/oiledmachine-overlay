@@ -12,6 +12,70 @@
 if [[ -z "${_CHECK_COMPILER_SWITCH_ECLASS}" ]] ; then
 _CHECK_COMPILER_SWITCH_ECLASS=1
 
+
+# @ECLASS_VARIABLE:  DETECT_COMPILER_SWITCH_T0_ARCH
+# @DESCRIPTION:
+# The compiler architecture before emerging package.
+
+# @ECLASS_VARIABLE:  DETECT_COMPILER_SWITCH_T0_FINGERPRINT
+# @DESCRIPTION:
+# The compiler version fingerprint before emerging package.
+
+# @ECLASS_VARIABLE:  DETECT_COMPILER_SWITCH_T0_FLAVOR
+# @DESCRIPTION:
+# The compiler flavor before emerging package.
+
+# @ECLASS_VARIABLE:  DETECT_COMPILER_SWITCH_T0_SLOT
+# @DESCRIPTION:
+# The compiler slot before emerging package.
+
+# @ECLASS_VARIABLE:  DETECT_COMPILER_SWITCH_T0_VENDOR
+# @DESCRIPTION:
+# The compiler vendor/owner before emerging package.
+
+# @ECLASS_VARIABLE:  DETECT_COMPILER_SWITCH_T0_VER
+# @DESCRIPTION:
+# The full compiler version before emerging package.
+
+
+# @ECLASS_VARIABLE:  DETECT_COMPILER_SWITCH_T1_ARCH
+# @DESCRIPTION:
+# The compiler architecture after compiler switching phase.
+
+# @ECLASS_VARIABLE:  DETECT_COMPILER_SWITCH_T1_FINGERPRINT
+# @DESCRIPTION:
+# The compiler version fingerprint after compiler switching phase.
+
+# @ECLASS_VARIABLE:  DETECT_COMPILER_SWITCH_T1_FLAVOR
+# @DESCRIPTION:
+# The compiler flavor after compiler switching phase.
+
+# @ECLASS_VARIABLE:  DETECT_COMPILER_SWITCH_T1_SLOT
+# @DESCRIPTION:
+# The compiler slot after compiler switching phase.
+
+# @ECLASS_VARIABLE:  DETECT_COMPILER_SWITCH_T1_VENDOR
+# @DESCRIPTION:
+# The compiler vendor/owner after compiler switching phase.
+
+# @ECLASS_VARIABLE:  DETECT_COMPILER_SWITCH_T1_VER
+# @DESCRIPTION:
+# The full compiler version after compiler switching phase.
+
+
+# @ECLASS_VARIABLE:  DETECT_COMPILER_SWITCH_LTO_CC_Name
+# @USER_VARIABLE
+# @DESCRIPTION:
+# Set the default compiler name used by default for systemwide LTO.
+# Valid values:  gcc, clang
+
+# @ECLASS_VARIABLE:  DETECT_COMPILER_SWITCH_LTO_CC_SLOT
+# @USER_VARIABLE
+# @DESCRIPTION:
+# Set the default compiler slot used by default for systemwide LTO.
+# Valid values for GCC:    11, 12, 13, 14, 15, 16
+# Valid values for Clang:  15, 16, 17, 18, 19, 20, 21
+
 inherit toolchain-funcs
 
 DETECT_COMPILER_SWITCH_T0_ARCH=""		# Compiler architecture
