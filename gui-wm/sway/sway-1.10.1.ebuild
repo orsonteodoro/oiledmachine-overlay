@@ -25,7 +25,7 @@ LICENSE="MIT"
 SLOT="0"
 IUSE="
 +man +swaybar +swaynag tray wallpapers X
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE="
 	tray? (
