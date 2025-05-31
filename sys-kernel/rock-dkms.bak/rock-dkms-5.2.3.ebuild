@@ -5,7 +5,7 @@ EAPI=8
 
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit linux-info toolchain-funcs
+inherit check-compiler-switch linux-info toolchain-funcs
 
 DKMS_MODULES=(
 	"amdgpu amd/amdgpu /kernel/drivers/gpu/drm/amd/amdgpu"
@@ -46,7 +46,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 acpi +build +check-mmu-notifier +compress custom-kernel directgma gzip hybrid-graphics
 numa +sign-modules ssg strict-pairing xz zstd
-r16
+ebuild_revision_17
 "
 REQUIRED_USE="
 	compress? (
@@ -469,6 +469,7 @@ ewarn
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	show_supported_kv
 	if [[ -z "${ROCK_DKMS_KERNELS_5_2}" ]] ; then
 eerror
