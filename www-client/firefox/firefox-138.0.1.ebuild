@@ -484,7 +484,7 @@ rust-simd selinux sndio speech +system-av1
 +system-harfbuzz +system-icu +system-jpeg +system-libevent
 +system-libvpx system-png +system-webp systemd -telemetry +vaapi -valgrind
 +wayland +webrtc wifi webspeech
-ebuild_revision_16
+ebuild_revision_17
 "
 # telemetry disabled for crypto/security reasons
 
@@ -2336,6 +2336,7 @@ einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 		LTO_TYPE=$(check-linker_get_lto_type)
 	fi
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
