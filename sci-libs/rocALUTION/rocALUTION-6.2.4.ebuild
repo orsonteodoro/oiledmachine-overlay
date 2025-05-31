@@ -45,7 +45,7 @@ RESTRICT="mirror"
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 rocm samples +openmp mpi
-ebuild_revision_7
+ebuild_revision_8
 "
 gen_rocm_required_use() {
 	local x
