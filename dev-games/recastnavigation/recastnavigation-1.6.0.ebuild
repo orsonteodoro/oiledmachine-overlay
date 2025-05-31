@@ -6,7 +6,6 @@ EAPI=8
 # U22.04.2
 
 EXPECTED_FINGERPRINT="disable"
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 
 inherit check-compiler-switch cmake flag-o-matic git-r3 multilib-minimal toolchain-funcs
 
@@ -33,7 +32,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 debug +demo -dt-polyref64 -dt-virtual-queryfilter +examples static-libs test
 wayland X
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE+="
 	demo? (
