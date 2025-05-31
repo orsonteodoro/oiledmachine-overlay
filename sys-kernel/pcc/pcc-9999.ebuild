@@ -8,7 +8,7 @@ MAINTAINER_MODE=0
 FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 PYTHON_COMPAT=( "python3_"{8..11} )
 
-inherit flag-o-matic linux-info linux-mod-r1
+inherit check-compiler-switch flag-o-matic linux-info linux-mod-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
@@ -39,7 +39,10 @@ LICENSE="
 KEYWORDS="~amd64 ~x86"
 RESTRICT="mirror strip" # No strip required by CONFIG_MODULE_SIG
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" allegro custom-kernel doc +vivace ebuild_revision_2"
+IUSE+="
+allegro custom-kernel doc +vivace
+ebuild_revision_3
+"
 REQUIRED_USE="
 	^^ (
 		allegro
@@ -94,6 +97,7 @@ _pkg_setup_one() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	linux-info_pkg_setup
 	linux-mod-r1_pkg_setup
 	if [[ -z "${PCC_KERNELS}" ]] ; then
