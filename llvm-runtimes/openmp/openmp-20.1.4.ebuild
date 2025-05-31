@@ -32,8 +32,6 @@ CUDA_TARGETS_COMPAT=(
 	sm_89
 	sm_90
 )
-FLAG_O_MATIC_FILTER_LTO=1
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 LLVM_SLOT="${PV%%.*}"
 PYTHON_COMPAT=( "python3_12" )
 
@@ -72,7 +70,7 @@ SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 debug gdb-plugin hwloc offload ompt test llvm_targets_NVPTX
-ebuild_revision_8
+ebuild_revision_9
 ${LLVM_EBUILDS_LLVM20_REVISION}
 "
 gen_cuda_required_use() {
