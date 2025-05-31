@@ -375,7 +375,7 @@ CPU_REQUIRED_USE="
 
 # +re-codecs is based on unpatched behavior to prevent breaking changes.
 
-inherit cflags-hardened cuda flag-o-matic flag-o-matic-om llvm multilib
+inherit cflags-hardened check-compiler-switch cuda flag-o-matic flag-o-matic-om llvm multilib
 inherit multilib-minimal python-single-r1 toolchain-funcs uopts
 
 if [[ "${MY_PV#9999}" == "${MY_PV}" ]] ; then
@@ -504,8 +504,7 @@ ${USE_LICENSES[@]}
 alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm liblensfun
 mold openvino oss pgo +re-codecs sndio soc sr static-libs tensorflow test v4l
 wayland
-
-ebuild_revision_41
+ebuild_revision_42
 "
 
 # x means plus.  There is a bug in the USE flag system where + is not recognized.
@@ -1404,6 +1403,7 @@ eprintf() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	if [[ "${PV}" =~ "m" ]] ; then
 ewarn
 ewarn "You are installing a multislot ${PN} designed for indirect use."
@@ -1593,12 +1593,12 @@ src_prepare() {
 	ln -snf "${FILESDIR}/chromium.c" "chromium.c" || die
 	echo 'include $(SRC_PATH)/ffbuild/libffmpeg.mak' >> "Makefile" || die
 
-	# We need to detect LTO usage before multilib stuff and filter-lto is called (bug #923491)
+	# Handle *FLAGS here to avoid repeating for each ABI below (bug #923491)
+	LTO_FLAG=
 	if tc-is-lto ; then
-		# Respect -flto value, e.g -flto=thin
-		local v="$(get-flag flto)"
 		if [[ "${v}" != "-flto" ]] ; then
-			LTO_FLAG="--enable-lto=${v}"
+			: "$(get-flag flto)" # get -flto=<val> (e.g. =thin)
+			LTO_FLAG="--enable-lto=${_#-flto}"
 		else
 			LTO_FLAG="--enable-lto"
 		fi
@@ -2062,24 +2062,10 @@ eerror
 	done
 
 	# Disabling LTO is a security risk.  It disables Clang CFI.
-	#if [[ "${ABI}" != "x86" ]] && is-flagq "-flto*"; then
-	#	# Respect -flto value, e.g -flto=thin
-	#	local v="$(get-flag flto)"
-	#	if [[ -n ${v} ]] ; then
-	#		myconf+=(
-	#			"--enable-lto=${v}"
-	#		)
-	#	else
-	#		myconf+=(
-	#			"--enable-lto"
-	#		)
-	#	fi
-	#fi
-	#filter-lto
-
-	# LTO support, bug #566282, bug #754654, bug #772854
-	if [[ "${ABI}" != "x86" && ! -z "${LTO_FLAG}" ]]; then
-		myconf+=( "${LTO_FLAG}" )
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+		LTO_FLAG=""
 	fi
 
 	# Mandatory configuration
@@ -2200,6 +2186,8 @@ einfo
 		--shlibdir="${root}/$(get_libdir)"
 		--docdir="${root}/share/doc/${PF}/html"
 		--mandir="${root}/share/man"
+		# Pass option over *FLAGS due to special logic (bug #566282,#754654)
+		${LTO_FLAG}
 	)
 
 	set -- "${S}/configure" \
