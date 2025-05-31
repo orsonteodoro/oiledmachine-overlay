@@ -239,7 +239,7 @@ VIRTUALX_REQUIRED="pgo"
 WASI_SDK_VER="25.0"
 WASI_SDK_LLVM_VER="19"
 
-inherit autotools cflags-depends cflags-hardened check-linker check-reqs desktop
+inherit autotools cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs desktop
 inherit dhms flag-o-matic gnome2-utils lcnr linux-info llvm multilib-minimal
 inherit multiprocessing optfeature pax-utils python-any-r1 readme.gentoo-r1 rust
 inherit rustflags-hardened toolchain-funcs virtualx vf xdg
@@ -485,7 +485,7 @@ rust-simd selinux sndio speech +system-av1
 +system-harfbuzz +system-icu +system-jpeg +system-libevent
 +system-libvpx system-png +system-webp systemd -telemetry +vaapi -valgrind
 +wayland +webrtc wifi webspeech
-ebuild_revision_12
+ebuild_revision_13
 "
 # telemetry disabled for crypto/security reasons
 
@@ -1315,6 +1315,7 @@ eerror
 
 pkg_setup() {
 	dhms_start
+	check-compiler-switch_start
 einfo "Release type:  rapid"
 	if [[ -n "${MITIGATION_URI}" ]] ; then
 einfo "Security announcement date:  ${MITIGATION_DATE}"
@@ -2335,13 +2336,19 @@ einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 		LTO_TYPE=$(check-linker_get_lto_type)
 	fi
 
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+		LTO_TYPE=""
+	fi
+
 	# Upstream only supports lld or mold when using clang.
 	if [[ "${LTO_TYPE}" =~ ("bfdlto"|"moldlto"|"thinlto") ]]
 	then
 	# Mold for gcc works for non-lto but for lto it is likely WIP.
 		if tc-is-clang && [[ "${LTO_TYPE}" == "moldlto" ]] ; then
 	# Mold expects the -flto line from *FLAGS configuration, bgo#923119
-			filter-flags '-flto*'
+			filter-lto
 			append-flags '-flto'
 			mozconfig_add_options_ac \
 				"forcing ld=mold" \
@@ -2372,7 +2379,7 @@ einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 		fi
 	else
 		if tc-is-clang && is-flagq '-fuse-ld=mold' || use mold ; then
-			filter-flags '-flto*'
+			filter-lto
 			append-flags '-flto'
 			mozconfig_add_options_ac \
 				"forcing ld=mold" \
@@ -2400,7 +2407,7 @@ einfo "PGO/LTO requires per-package -flto in {C,CXX,LD}FLAGS"
 	filter-flags '-fuse-ld=*'
 
 	# LTO flag was handled via configure
-	filter-flags '-flto*'
+	filter-lto
 
 	# Filter ldflags after linker switch
 	strip-unsupported-flags
