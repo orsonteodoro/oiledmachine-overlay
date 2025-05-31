@@ -5,8 +5,10 @@ EAPI=8
 
 # Note: Please bump this in sync with dev-libs/libxml2.
 
+CFLAGS_HARDENED_CF_PROTECTION=0											# Untested or unverified
 CFLAGS_HARDENED_CI_SANITIZERS="asan msan ubsan"
 CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18" # U24
+CFLAGS_HARDENED_FHARDENED=0											# Untested or unverified
 CFLAGS_HARDENED_USE_CASES="system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS FS HO IO MC NPD OOBW TC UAF UM"
 MULTILIB_CHOST_TOOLS=(
@@ -37,7 +39,7 @@ LICENSE="MIT"
 SLOT="0"
 IUSE="
 crypt debug examples python static-libs
-ebuild_revision_13
+ebuild_revision_14
 "
 REQUIRED_USE="
 	python? (
