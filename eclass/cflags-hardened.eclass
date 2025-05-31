@@ -956,6 +956,14 @@ _cflags-hardened_has_llvm_cfi() {
 cflags-hardened_append() {
 	[[ "${CFLAGS_HARDENED_DISABLED:-0}" == 1 ]] && return
 
+	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ "system-set" ]] ; then
+ewarn
+ewarn "${CATEGORY}/${PN}-${PVR} is identified as being part of the @system set."
+ewarn "Replace files from stage3 tarball if hardened flags breaks system and"
+ewarn "use the per-package CFLAGS_HARDENED_DISABLED=1 environment variable."
+ewarn
+	fi
+
 	if [[ -z "${CC}" ]] && [[ "${CFLAGS_HARDENED_NO_COMPILER_SWITCH:-0}" != "1" ]] ; then
 		export CC=$(tc-getCC)
 		export CXX=$(tc-getCXX)

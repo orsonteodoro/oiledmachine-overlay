@@ -683,6 +683,14 @@ rustflags-hardened_append() {
 		RUSTFLAGS_HARDENED_TOLERANCE="${RUSTFLAGS_HARDENED_TOLERANCE_USER}"
 	fi
 
+	if [[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ "system-set" ]] ; then
+ewarn
+ewarn "${CATEGORY}/${PN}-${PVR} is identified as being part of the @system set."
+ewarn "Replace files from stage3 tarball if hardened flags breaks system and"
+ewarn "use the per-package CFLAGS_HARDENED_DISABLED=1 environment variable."
+ewarn
+	fi
+
 ewarn "=dev-lang/rust-bin-9999 or =dev-lang/rust-9999 will be required for security-critical rust packages."
 
 	if [[ -z "${CC}" ]] && [[ "${RUSTFLAGS_HARDENED_NO_COMPILER_SWITCH:-0}" != "1" ]] ; then

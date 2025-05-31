@@ -330,23 +330,6 @@ get_arch_enabled_use_flags() {
 
 pkg_setup() {
 	check-compiler-switch_start
-ewarn
-ewarn "If you use experimental features, patches, optimizations, please make a"
-ewarn "backup of the package first.  Not doing so may make your computer"
-ewarn "unbootable.  This copy should be already uncompressed."
-ewarn
-ewarn "In an event that the ebuild breaks, DO NOT REBOOT the computer but"
-ewarn "try to replace the broken /$(get_libdir)/libz.so.${PV} with a"
-ewarn "working copy matching the ABI and SOVERSION."
-ewarn
-ewarn "A backup copy can be made with USE=backup-copy with the previous"
-ewarn "install.  It is important that the previous build to be replaced is"
-ewarn "working properly for this to work."
-ewarn
-ewarn "Emerge this package twice to see if the patch/optimization works"
-ewarn "properly."
-ewarn
-sleep 15
 	if [[ "${IUSE}" =~ "zlib_trainers_zlib_images_" ]] ; then
 		check_img_converter
 	fi
