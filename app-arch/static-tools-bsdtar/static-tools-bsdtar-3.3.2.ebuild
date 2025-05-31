@@ -6,6 +6,8 @@ EAPI=7
 
 # You can build this in a musl container to get strictly musl libs.
 
+inherit check-compiler-switch
+
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 S="${WORKDIR}/libarchive-${PV}"
 SRC_URI="
@@ -23,7 +25,10 @@ LICENSE="
 	BSD-4
 	public-domain
 "
-IUSE="libcxx"
+IUSE="
+libcxx
+ebuild_revision_3
+"
 REQUIRED_USE+="
 "
 RESTRICT="mirror"
@@ -58,6 +63,10 @@ get_arch() {
 	elif use x86 ; then
 		echo "i686"
 	fi
+}
+
+pkg_setup() {
+	check-compiler-switch_start
 }
 
 src_compile() {
@@ -111,7 +120,17 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 		LDFLAGS="-static" \
 		|| die
 	emake
-	[[ -z "${CC}" ]] && CC="gcc"
+	if [[ -z "${CC}" ]] ; then
+		export CC="gcc"
+		export CXX="g++"
+		export CPP="${CC} -E"
+	fi
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	${CC} \
 		-static \
 		-o bsdtar \
