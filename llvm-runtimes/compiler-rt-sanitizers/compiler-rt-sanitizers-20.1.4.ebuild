@@ -26,7 +26,7 @@ unset -f _llvm_set_globals
 
 PYTHON_COMPAT=( "python3_12" )
 
-inherit check-reqs cmake flag-o-matic linux-info llvm.org llvm-utils python-any-r1
+inherit check-compiler-switch check-reqs cmake flag-o-matic linux-info llvm.org llvm-utils python-any-r1
 
 FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 LLVM_MAX_SLOT=${LLVM_MAJOR}
@@ -49,7 +49,7 @@ IUSE+="
 ${LLVM_EBUILDS_LLVM20_REVISION}
 +abi_x86_32 abi_x86_64 +clang +ctx-profile debug hexagon +libfuzzer +memprof
 +orc +profile test +xray
-ebuild_revision_9
+ebuild_revision_10
 "
 # sanitizer targets, keep in sync with config-ix.cmake
 # NB: ubsan, scudo deliberately match two entries
@@ -367,6 +367,7 @@ pkg_pretend() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	linux-info_pkg_setup
 	# See https://llvm.org/docs/ScudoHardenedAllocator.html#randomness
 	CONFIG_CHECK="
@@ -480,6 +481,11 @@ ewarn "Rebuild with GCC 12 if \"Assumed value of MB_LEN_MAX wrong\" pops up."
 		CC="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/bin/clang" \
 		CXX="${EPREFIX}/usr/lib/llvm/${LLVM_MAJOR}/bin/clang++" \
 		strip-unsupported-flags
+	fi
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
 	fi
 
 	if use prefix && [[ "${CHOST}" == *-darwin* ]] ; then
