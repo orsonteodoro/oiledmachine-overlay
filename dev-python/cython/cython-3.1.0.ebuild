@@ -12,8 +12,6 @@ EAPI=8
 MY_PV="${PV/_beta/b}"
 MY_PV="${MY_PV/_rc/rc}"
 
-CFLAGS_HARDENED_CF_PROTECTION=0									# Untested or unverified
-CFLAGS_HARDENED_FHARDENED=0									# Untested or unverified
 CFLAGS_HARDENED_USE_CASES="system-set"
 DISTUTILS_EXT=1
 DISTUTILS_USE_PEP517="setuptools"
@@ -47,7 +45,7 @@ RESTRICT="
 	)
 "
 SLOT="${SLOT_MAJOR}/${PV}"
-IUSE="emacs test ebuild_revision_6"
+IUSE="emacs test ebuild_revision_7"
 RDEPEND="
 	!dev-python/cython:3
 	app-eselect/eselect-cython
