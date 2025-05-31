@@ -27,6 +27,15 @@ inherit flag-o-matic toolchain-funcs
 _CFLAGS_SANITIZER_GCC_SLOTS_COMPAT=( {12..15} )		# Limited based on CI testing
 _CFLAGS_SANITIZER_CLANG_SLOTS_COMPAT=( {14..20} )	# Limited based on CI testing
 
+# @ECLASS_VARIABLE:  CFLAGS_HARDENED_DISABLED
+# @USER_VARIABLE
+# @DESCRIPTION:
+# A user variable to disable hardening flags.
+#
+# Example contents of /etc/make.conf:
+# CFLAGS_HARDENED_DISABLED=1
+#
+
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_SSP_LEVEL
 # @DESCRIPTION:
 # Sets the SSP (Stack Smashing Protection) level.  Set it before inheriting cflags-hardened.
@@ -77,15 +86,6 @@ CFLAGS_HARDENED_RETPOLINE_FLAVOR=${CFLAGS_HARDENED_RETPOLINE_FLAVOR:-"default"}
 # Append flags to CGO_CFLAGS, GO_CXXFLAGS, CGO_LDFLAGS when
 # cflags-hardened_append is called.
 # Acceptable values: 1, 0, unset
-
-# @ECLASS_VARIABLE:  CFLAGS_HARDENED_DISABLED
-# @USER_VARIABLE
-# @DESCRIPTION:
-# A user variable to disable hardening flags.
-#
-# Example contents of /etc/make.conf:
-# CFLAGS_HARDENED_DISABLED=1
-#
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_NOEXECSTACK
 # @DESCRIPTION:
@@ -959,8 +959,11 @@ cflags-hardened_append() {
 	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ "system-set" ]] ; then
 ewarn
 ewarn "${CATEGORY}/${PN}-${PVR} is identified as being part of the @system set."
-ewarn "Replace files from stage3 tarball if hardened flags breaks system and"
-ewarn "use the per-package CFLAGS_HARDENED_DISABLED=1 environment variable."
+ewarn "Replace individual library or executable files from stage3 tarball if"
+ewarn "hardened flags breaks system and use the per-package"
+ewarn "CFLAGS_HARDENED_DISABLED=1 environment variable."
+ewarn
+ewarn "For safety, have an updated stage3 tarball pre-unpacked and ready."
 ewarn
 	fi
 

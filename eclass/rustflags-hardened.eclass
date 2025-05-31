@@ -23,6 +23,14 @@ _RUSTFLAGS_HARDENED_ECLASS=1
 _RUSTFLAGS_SANITIZER_GCC_SLOTS_COMPAT=( {12..15} )	# Limited based on CI testing
 _RUSTFLAGS_SANITIZER_CLANG_SLOTS_COMPAT=( {14..20} )	# Limited based on CI testing
 
+# @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_DISABLED
+# @USER_VARIABLE
+# @DESCRIPTION:
+# A user variable to disable hardening flags.
+#
+# Example contents of /etc/make.conf:
+# RUSTFLAGS_HARDENED_DISABLED=1
+
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_SSP_LEVEL
 # @DESCRIPTION:
 # Sets the SSP (Stack Smashing Protection) level.  Set it before inheriting rustflags-hardened.
@@ -675,6 +683,8 @@ _rustflags-hardened_cf_protection() {
 # @DESCRIPTION:
 # Apply RUSTFLAG hardening to Rust packages.
 rustflags-hardened_append() {
+	[[ "${RUSTFLAGS_HARDENED_DISABLED:-0}" == 1 ]] && return
+
 	if [[ -n "${RUSTFLAGS_HARDENED_SSP_LEVEL_USER}" ]] ; then
 		RUSTFLAGS_HARDENED_SSP_LEVEL="${RUSTFLAGS_HARDENED_SSP_LEVEL_USER}"
 	fi
@@ -686,8 +696,11 @@ rustflags-hardened_append() {
 	if [[ "${RUSTFLAGS_HARDENED_USE_CASES}" =~ "system-set" ]] ; then
 ewarn
 ewarn "${CATEGORY}/${PN}-${PVR} is identified as being part of the @system set."
-ewarn "Replace files from stage3 tarball if hardened flags breaks system and"
-ewarn "use the per-package CFLAGS_HARDENED_DISABLED=1 environment variable."
+ewarn "Replace individual library or executable files from stage3 tarball if"
+ewarn "hardened flags breaks system and use the per-package"
+ewarn "RUSTFLAGS_HARDENED_DISABLED=1 environment variable."
+ewarn
+ewarn "For safety, have an updated stage3 tarball pre-unpacked and ready."
 ewarn
 	fi
 
