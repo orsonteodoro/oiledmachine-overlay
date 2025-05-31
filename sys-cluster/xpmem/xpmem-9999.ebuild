@@ -11,7 +11,6 @@ BUILD_TARGETS="all"
 DKMS_MODULES=(
 	"xpmem kernel /kernel/../updates/"
 )
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 MODULE_NAMES="knem(misc:${S}/driver/linux)"
 
 inherit autotools check-compiler-switch flag-o-matic linux-mod linux-info toolchain-funcs udev
@@ -45,7 +44,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 compress debug modules sign-modules
-ebuild_revision_3
+ebuild_revision_4
 "
 RDEPEND="
 	sys-apps/kmod[tools]
