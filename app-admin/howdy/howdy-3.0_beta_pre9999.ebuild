@@ -57,7 +57,7 @@ CUDA_TARGETS_COMPAT=(
 IUSE+="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 +bash-completion cuda -ffmpeg +gtk -pyv4l2
-ebuild_revision_45
+ebuild_revision_46
 "
 REQUIRED_USE+="
 	!ffmpeg
