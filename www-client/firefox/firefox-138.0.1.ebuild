@@ -154,7 +154,6 @@ FFMPEG_COMPAT=(
 )
 FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-01.tar.xz"
 FIREFOX_LOONG_PATCHSET="firefox-${PV%%.*}-loong-patches-01.tar.xz"
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 GTK3_PV="3.14.5"
@@ -485,7 +484,7 @@ rust-simd selinux sndio speech +system-av1
 +system-harfbuzz +system-icu +system-jpeg +system-libevent
 +system-libvpx system-png +system-webp systemd -telemetry +vaapi -valgrind
 +wayland +webrtc wifi webspeech
-ebuild_revision_14
+ebuild_revision_15
 "
 # telemetry disabled for crypto/security reasons
 

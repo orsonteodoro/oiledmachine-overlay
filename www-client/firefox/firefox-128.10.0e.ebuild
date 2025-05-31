@@ -156,7 +156,6 @@ FFMPEG_COMPAT=(
 	"50.53.53" # 0.8
 )
 FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-11.tar.xz"
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 GTK3_PV="3.14.5"
@@ -480,7 +479,7 @@ alsa cups +dbus debug eme-free firejail +hardened -hwaccel jack +jemalloc
 +system-harfbuzz +system-icu +system-jpeg +system-libevent +system-libvpx
 system-png +system-webp systemd -telemetry +vaapi +wayland +webrtc wifi
 webspeech +X
-ebuild_revision_14
+ebuild_revision_15
 "
 
 # Firefox-only IUSE
