@@ -12,7 +12,7 @@ KEYWORDS="~amd64 ~arm64 ~x86"
 
 DESCRIPTION="Alliance for Open Media AV1 plugin for GStreamer"
 IUSE="
-ebuild_revision_12
+ebuild_revision_13
 "
 RDEPEND="
 	>=media-libs/libaom-3.2:0=[${MULTILIB_USEDEP}]
