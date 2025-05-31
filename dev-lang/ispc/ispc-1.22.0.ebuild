@@ -9,7 +9,6 @@ EAPI=8
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="PE"
 CMAKE_BUILD_TYPE="RelWithDebInfo"
 CMAKE_MAKEFILE_GENERATOR="emake"
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 LLVM_COMPAT=( {18..14} ) # See https://github.com/ispc/ispc/blob/v1.22.0/src/ispc_version.h
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 PYTHON_COMPAT=( python3_{10..11} )
@@ -62,7 +61,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +cpu +examples -fast-math lto +openmp pthread tbb test +video_cards_intel -xe
-ebuild_revision_11
+ebuild_revision_12
 "
 REQUIRED_USE+="
 	kernel_Darwin? (
