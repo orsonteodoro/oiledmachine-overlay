@@ -74,7 +74,7 @@ SLOT="0/1" # subslot = SONAME
 IUSE="
 ${TRAINERS[@]}
 minizip minizip-utils pgo static-libs backup-copy
-ebuild_revision_14
+ebuild_revision_15
 "
 REQUIRED_USE="
 	pgo? (
