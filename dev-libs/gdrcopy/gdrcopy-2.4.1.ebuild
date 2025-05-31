@@ -15,7 +15,6 @@ DRIVER_VERSIONS=(
 	525.147.05
 	# 515.43.04 is the last tag
 )
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 declare -A CUDA_GCC_SLOT=(
 	["12.6"]="13"
 	["12.5"]="13"
@@ -57,7 +56,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="0"
 IUSE="
-ebuild_revision_4
+ebuild_revision_5
 "
 gen_driver_versions() {
 	local ver
