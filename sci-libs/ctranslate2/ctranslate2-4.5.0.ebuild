@@ -14,7 +14,6 @@ CPUINFO_COMMIT="082deffc80ce517f81dc2f3aebe6ba671fcd09c9"
 CPU_FEATURES_COMMIT="8a494eb1e158ec2050e5f699a504fbc9b896a43b"
 CUTLASS_COMMIT="bbe579a9e3beb6ea6626d9227ec32d0dae119a49"
 CXXOPTS_COMMIT="c74846a891b3cc3bfa992d588b1295f528d43039"
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 GOOGLETEST_COMMIT_1="f8d7d77c06936315286eb55f8de22cd23c188571"
 GOOGLETEST_COMMIT_2="6c58c11d5497b6ee1df3cb400ce30deb72fc28c0"
 RUY_COMMIT="363f252289fb7a1fba1703d99196524698cb884d"
@@ -75,7 +74,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 +cli +cpu-dispatch -cuda -cudnn -dnnl dev -flash +openmp -tensor-parallel
 +mkl -openblas -profiling +python -ruy test
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	flash? (
