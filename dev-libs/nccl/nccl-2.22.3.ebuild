@@ -23,7 +23,7 @@ NCCL_TESTS_COMMIT="1292b25553bd0384f2faa2965f9d82b99797a348" # committer-date:<=
 S_TESTS="${WORKDIR}/nccl-tests-${NCCL_TESTS_COMMIT}"
 PYTHON_COMPAT=( python3_{10..12} )
 
-inherit autotools flag-o-matic linux-info python-any-r1
+inherit autotools check-compiler-switch flag-o-matic linux-info python-any-r1
 
 S="${WORKDIR}/${P}-1"
 KEYWORDS="~amd64"
@@ -53,7 +53,7 @@ SLOT="0"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 -gdrcopy peermem rdma roce test -verbs
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 	|| (
@@ -308,6 +308,7 @@ check_kernel_setup() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	check_kernel_setup
 	python-any-r1_pkg_setup
 }
@@ -365,6 +366,12 @@ src_configure() {
 eerror "Unsupported cuda version."
 		die
 	fi
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	export CUDA_HOME="/opt/cuda"
 	local list=()
 	if use cuda_targets_sm_35 ; then
