@@ -16,8 +16,6 @@ CRATES="
 	unicode-ident@1.0.12
 	paste@1.0.14
 "
-FLAG_O_MATIC_FILTER_LTO=1
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 GCC_SLOT=12
 LIBDRM_DEPSTRING=">=x11-libs/libdrm-2.4.121"
 LIBDRM_USEDEP="\
@@ -119,7 +117,7 @@ ${PATENT_STATUS[@]}
 cpu_flags_x86_sse2 d3d9 debug +llvm lm-sensors opencl +opengl
 osmesa selinux test unwind vaapi valgrind vdpau vulkan
 wayland +X xa +zstd
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	d3d9? (
