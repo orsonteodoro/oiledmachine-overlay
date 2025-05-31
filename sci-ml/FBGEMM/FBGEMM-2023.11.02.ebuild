@@ -4,7 +4,6 @@
 EAPI=8
 
 CommitId="cdae5d97e3aa9fda4222f31c04dbd80249c918d1" # committer-date:2023-11-02
-FLAG_O_MATIC_FILTER_LTO=1
 PYTHON_COMPAT=( python3_{9..12} )
 
 inherit python-any-r1 flag-o-matic cmake
