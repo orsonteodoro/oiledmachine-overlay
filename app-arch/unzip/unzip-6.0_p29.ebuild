@@ -29,7 +29,7 @@ LICENSE="Info-ZIP"
 SLOT="0"
 IUSE="
 bzip2 natspec unicode
-ebuild_revision_9
+ebuild_revision_10
 "
 DEPEND="
 	bzip2? (
