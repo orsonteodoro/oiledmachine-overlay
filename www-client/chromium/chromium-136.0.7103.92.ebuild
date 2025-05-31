@@ -4051,6 +4051,7 @@ ewarn "Disabling LTO for older machines."
 		use official    && fatal_message_lto_banned "official"
 	fi
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto

@@ -2725,11 +2725,14 @@ einfo "CPPFLAGS:  ${CPPFLAGS}"
 einfo "Add -flto to CFLAGS/CXXFLAGS and -fuse-ld=<bfd|gold|lld|mold> to LDFLAGS for LTO optimization."
 	local linker_type=$(check-linker_get_lto_type)
 	local allow_lto=1
+
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 		allow_lto=0
 	fi
+
 	if \
 		[[ \
 			"${linker_type}" =~ ("bfdlto"|"goldlto"|"moldlto"|"thinlto") \

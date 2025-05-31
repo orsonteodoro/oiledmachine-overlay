@@ -509,6 +509,7 @@ _use_enable_lto() {
 
 src_configure() {
 	local lto_option=""
+
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."

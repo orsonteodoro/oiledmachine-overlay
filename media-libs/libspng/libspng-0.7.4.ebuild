@@ -131,6 +131,7 @@ _src_configure() {
 	local d="${T}/pgo-${MULTILIB_ABI_FLAG}.${ABI}-${lib_type}"
 	mkdir -p "${d}" || die
 	uopts_src_configure
+
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."

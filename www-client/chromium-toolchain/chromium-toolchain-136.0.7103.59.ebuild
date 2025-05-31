@@ -255,6 +255,7 @@ src_compile() {
 	export CXX="clang++"
 	export CPP="${CC} -E"
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto

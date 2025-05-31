@@ -27,7 +27,7 @@ LICENSE="
 "
 IUSE="
 libcxx
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE+="
 "
@@ -108,6 +108,7 @@ ewarn "Upstream intends that artifacts be built from a musl chroot or container.
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
