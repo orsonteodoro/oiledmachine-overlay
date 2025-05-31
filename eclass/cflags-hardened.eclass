@@ -2021,6 +2021,10 @@ eerror "Set CFLAGS_HARDENED_SANITIZER_CC_SLOT in /etc/portage/make.conf to eithe
 		sanitizers_compat=0
 	fi
 
+	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ "system-set" && "${CFLAGS_HARDENED_SYSTEM_SET_USER}" != "1" ]] ; then
+		sanitizers_compat=0
+	fi
+
 	# Strips LTO which strips CFI
 	local disable_cfi=0
 	if [[ "${_CARGO_ECLASS}" == "1" ]] ; then

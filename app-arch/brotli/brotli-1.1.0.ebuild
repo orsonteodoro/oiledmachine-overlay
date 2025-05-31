@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO IU"
 DISTUTILS_EXT=1
 DISTUTILS_OPTIONAL="1"

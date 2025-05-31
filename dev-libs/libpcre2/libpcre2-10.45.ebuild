@@ -14,7 +14,7 @@ CFLAGS_HARDENED_LANGS="asm c-lang"
 #CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 #CFLAGS_HARDENED_SANITIZERS_COMPAT="clang gcc"
 CFLAGS_HARDENED_TOLERANCE="4.0"
-CFLAGS_HARDENED_USE_CASES="security-critical jit sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical jit sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS"
 MULTILIB_CHOST_TOOLS=(
 	"/usr/bin/pcre2-config"

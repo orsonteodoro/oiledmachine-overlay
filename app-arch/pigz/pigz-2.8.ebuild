@@ -3,9 +3,11 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="sensitive-data system-set untrusted-data"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="RC PE"
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/madler.asc"
 
-inherit toolchain-funcs flag-o-matic multilib-minimal
+inherit cflags-hardened toolchain-funcs flag-o-matic multilib-minimal
 
 SRC_URI="
 	https://www.zlib.net/pigz/${P}.tar.gz
@@ -45,6 +47,10 @@ BDEPEND="
 src_prepare() {
 	default
 	multilib_copy_sources
+}
+
+multilib_src_configure() {
+	cflags-hardened_append
 }
 
 multilib_src_compile() {

@@ -10,7 +10,7 @@ CFLAGS_HARDENED_CI_SANITIZERS="asan ubsan"
 CFLAGS_HARDENED_CI_SANITIZERS_GCC_COMPAT="12" # D12
 CFLAGS_HARDENED_LANGS="c-lang"
 CFLAGS_HARDENED_TOLERANCE="4.0"
-CFLAGS_HARDENED_USE_CASES="crypto security-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="crypto security-critical sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS MC"
 CPU_FLAGS_ARM=(
 	"cpu_flags_arm_aes"

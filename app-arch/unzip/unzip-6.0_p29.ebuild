@@ -8,7 +8,7 @@ MY_PV="${MY_PV%_p*}"
 MY_P="${PN}${MY_PV}"
 
 # Add retpoline for passwords
-CFLAGS_HARDENED_USE_CASES="crypto security-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="crypto security-critical sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO"
 
 inherit cflags-hardened flag-o-matic multilib toolchain-funcs

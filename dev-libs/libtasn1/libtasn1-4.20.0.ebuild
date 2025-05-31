@@ -12,7 +12,7 @@ CFLAGS_HARDENED_LANGS="assembly c-lang"
 CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 CFLAGS_HARDENED_SANITIZERS_COMPAT="clang"
 CFLAGS_HARDENED_TOLERANCE="4.0"
-CFLAGS_HARDENED_USE_CASES="security-critical network untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical network system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO DOS NPD SO"
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/libtasn1.asc"
 

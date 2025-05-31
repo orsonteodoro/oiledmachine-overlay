@@ -8,7 +8,7 @@ EAPI=8
 
 CFLAGS_HARDENED_CF_PROTECTION=0         # -cf-protection is untested or unverified
 CFLAGS_HARDENED_FHARDENED=0             # -fhardened is untested or unverified
-CFLAGS_HARDENED_USE_CASES="security-critical untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="UAF"
 
 inherit cflags-hardened libtool multilib multilib-minimal preserve-libs

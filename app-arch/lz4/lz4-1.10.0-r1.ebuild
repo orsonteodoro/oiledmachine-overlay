@@ -5,7 +5,7 @@ EAPI=8
 
 CFLAGS_HARDENED_CF_PROTECTION=0         # -cf-protection is untested or unverified
 CFLAGS_HARDENED_FHARDENED=0             # -fhardened is untested or unverified
-CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO IO"
 EMESON_SOURCE="${S}/build/meson"
 

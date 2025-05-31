@@ -41,7 +41,7 @@ CFLAGS_HARDENED_CI_SANITIZERS="asan msan tsan"
 CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18"
 CFLAGS_HARDENED_ASSEMBLERS="gas inline"
 CFLAGS_HARDENED_TOLERANCE="4.0"
-CFLAGS_HARDENED_USE_CASES="security-critical network sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical network sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO IO OOBR SO UAF"
 MULTILIB_WRAPPED_HEADERS=(
 	"/usr/include/curl/curlbuild.h"

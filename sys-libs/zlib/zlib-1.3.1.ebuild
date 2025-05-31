@@ -12,7 +12,7 @@ AUTOTOOLS_AUTO_DEPEND="no"
 # For pros, you can try to undo the damage with untested experimental flags with a stage 3 tarball.
 CFLAGS_HARDENED_CF_PROTECTION=0		# -cf-protection is untested or unverified
 CFLAGS_HARDENED_FHARDENED=0		# -fhardened is untested or unverified
-CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF"
 
 TRAINERS=(
