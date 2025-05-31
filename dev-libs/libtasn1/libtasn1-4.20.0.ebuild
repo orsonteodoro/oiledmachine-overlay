@@ -6,10 +6,8 @@ EAPI=8
 # GCC breaks with asan
 # CVE-2021-46848:  off-by-one read (ASAN)
 CFLAGS_HARDENED_ASSEMBLERS="gas inline"
-CFLAGS_HARDENED_CF_PROTECTION=0											# Untested or unverified
 CFLAGS_HARDENED_CI_SANITIZERS="asan ubsan"
 CFLAGS_HARDENED_CI_SANITIZERS_GCC_COMPAT="10"
-CFLAGS_HARDENED_FHARDENED=0											# Untested or unverified
 CFLAGS_HARDENED_LANGS="assembly c-lang"
 CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 CFLAGS_HARDENED_SANITIZERS_COMPAT="clang"
@@ -37,7 +35,7 @@ LICENSE="LGPL-2.1+"
 SLOT="0/6" # subslot = libtasn1 soname version
 IUSE="
 static-libs test
-ebuild_revision_34
+ebuild_revision_35
 "
 RESTRICT="
 	!test? (
