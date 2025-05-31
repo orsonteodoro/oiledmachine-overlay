@@ -191,7 +191,7 @@ if ! [[ "${PV}" =~ "9999" ]] ; then
 	export S_GO="${WORKDIR}/go-mod"
 fi
 
-inherit cflags-hardened dep-prepare edo flag-o-matic go-module lcnr multiprocessing optfeature rocm
+inherit cflags-hardened check-compiler-switch dep-prepare edo flag-o-matic go-module lcnr multiprocessing optfeature rocm
 
 
 # protobuf-go 1.34.1 tests with protobuf 5.27.0-rc1
@@ -2482,7 +2482,7 @@ ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_IUSE[@]}
 blis chroot cuda debug emoji flash lapack mkl openblas openrc rocm
 sandbox systemd unrestrict video_cards_intel
-ebuild_revision_66
+ebuild_revision_67
 "
 gen_rocm_required_use() {
 	local s
@@ -2874,6 +2874,7 @@ eerror
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 ewarn "If the prebuilt LLM is marked all-rights-reserved, it is a placeholder and the actual license is still trying to be resolved.  See the LLM project for the actual license."
 	local llvm_base_path
 	if use rocm ; then
@@ -3151,9 +3152,14 @@ src_configure() {
 			|| die
 	fi
 
-	cflags-hardened_append
-
 	strip-unsupported-flags
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	cflags-hardened_append
 
 	if use debug ; then
 	# Increase build verbosity
