@@ -18,7 +18,7 @@ UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 
-inherit aocc cflags-hardened flag-o-matic flag-o-matic-om llvm multilib-minimal
+inherit aocc cflags-hardened check-compiler-switch flag-o-matic flag-o-matic-om llvm multilib-minimal
 inherit python-single-r1 toolchain-funcs uopts
 
 KEYWORDS="
@@ -55,7 +55,7 @@ IUSE="
 ${PPC_IUSE}
 ${TRAINER_IUSE}
 chromium doc +examples +highbitdepth pgo postproc static-libs svc test +threads
-ebuild_revision_24
+ebuild_revision_25
 "
 REQUIRED_USE="
 	pgo? (
@@ -416,6 +416,7 @@ get_arch_enabled_use_flags() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	python_setup
 	__pgo_setup
 	if use aocc ; then
@@ -473,6 +474,12 @@ _src_configure() {
 	add_sandbox_exceptions
 
 	uopts_src_configure
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	# Prevent below 25 FPS and erratic FPS
 	# Fork ebuild if you need -O0
