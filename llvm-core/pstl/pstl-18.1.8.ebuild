@@ -51,7 +51,7 @@ SLOT="${PV%%.*}"
 IUSE+="
 ${LLVM_EBUILDS_LLVM18_REVISION}
 -openmp -tbb test
-ebuild_revision_4
+ebuild_revision_5
 "
 RDEPEND="
 	openmp? (
@@ -129,6 +129,7 @@ eerror
 		strip-unsupported-flags
 	fi
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
