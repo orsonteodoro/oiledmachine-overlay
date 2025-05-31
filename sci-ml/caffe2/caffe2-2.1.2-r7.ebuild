@@ -151,8 +151,6 @@ FFMPEG_COMPAT=(
 	"0/54.56.56" # 2.8 (U16 docs)
 	"0/52.54.54" # 1.2 (U14 docs)
 )
-FLAG_O_MATIC_FILTER_LTO=1
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 FLATBUFFERS_COMMIT="01834de25e4bf3975a9a00e816292b1ad0fe184b"
 FMT_COMMIT_1="e57ca2e3685b160617d3d95fcd9e789c4e06ca88"
 FMT_COMMIT_2="ee475d64095091aa683664a209a9bcdd3496c743" # kineto dep ; committer-date:<=2023-08-08
@@ -468,7 +466,7 @@ ${ROCM_SLOTS2[@]}
 clang cuda +distributed +eigen +fbgemm -ffmpeg +flash-attention +gloo -jit +kineto +magma
 -mimalloc -mkl +nccl +mpi +nnpack +numpy +onednn -openblas -opencl -opencv +openmp
 +rccl rocm roctracer -ssl system-libs +tensorpipe +qnnpack test +xnnpack
-ebuild_revision_26
+ebuild_revision_27
 "
 gen_cuda_required_use() {
 	local x

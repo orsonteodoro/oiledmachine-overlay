@@ -148,8 +148,6 @@ CUTLASS_COMMIT_1="bbe579a9e3beb6ea6626d9227ec32d0dae119a49"
 CUTLASS_COMMIT_2="fc9ebc645b63f3a6bc80aaefde5c063fb72110d6" # fbgemm dep
 DCGM_COMMIT="ffde4e54bc7249a6039a5e6b45b395141e1217f9" # dynolog dep
 DYNOLOG_COMMIT="7d04a0053a845370ae06ce317a22a48e9edcc74e" # kineto dep ; committer-date:<=2024-05-24
-FLAG_O_MATIC_FILTER_LTO=1
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 FLATBUFFERS_COMMIT="01834de25e4bf3975a9a00e816292b1ad0fe184b"
 FMT_COMMIT_1="0c9fce2ffefecfdce794e1859584e25877b7b592"
 FMT_COMMIT_2="0041a40c1350ba702d475b9c4ad62da77caea164" # kineto dep ; committer-date:<=2024-05-24
@@ -497,7 +495,7 @@ ${ROCM_SLOTS2[@]}
 clang cuda +distributed +eigen +fbgemm +flash-attention +gloo -jit +kineto +magma -mimalloc
 -mkl +mpi +nccl +nnpack +numpy +onednn openblas -opencl +openmp +tensorpipe
 +qnnpack +rccl rocm roctracer -ssl system-libs test +xnnpack
-ebuild_revision_26
+ebuild_revision_27
 "
 # bin/torch_shm_manager requires openmp
 gen_cuda_required_use() {
