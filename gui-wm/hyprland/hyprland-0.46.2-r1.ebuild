@@ -28,7 +28,7 @@ SLOT="0"
 IUSE="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang legacy-renderer +qtutils systemd X
-ebuild_revision_12
+ebuild_revision_13
 "
 REQUIRED_USE="
 	clang? (
@@ -144,6 +144,7 @@ eerror "Switch to GCC 15"
 	fi
 	strip-unsupported-flags
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
