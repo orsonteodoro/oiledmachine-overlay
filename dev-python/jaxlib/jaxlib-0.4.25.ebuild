@@ -47,7 +47,6 @@ DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="standalone"
 EGIT_COMMIT="f9e20d58754283de87b2ed35cc9df58bcdff2073"
 EROCM_SKIP_EXCLUSIVE_LLVM_SLOT_IN_PATH=1
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 GCC_COMPAT=( {11..9} ) # Based on U22, U20
 JAVA_SLOT="11"
 LLVM_COMPAT=( 17 ) # From .bazelrc
@@ -185,7 +184,7 @@ ${CPU_FLAGS_X86_64[@]}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang cpu cuda debug rocm rocm_6_0
-ebuild_revision_13
+ebuild_revision_14
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
 
