@@ -117,7 +117,7 @@ ${PATENT_STATUS[@]}
 cpu_flags_x86_sse2 d3d9 debug +llvm lm-sensors opencl +opengl
 osmesa selinux test unwind vaapi valgrind vdpau vulkan
 wayland +X xa +zstd
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE="
 	d3d9? (
