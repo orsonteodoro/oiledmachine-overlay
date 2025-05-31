@@ -26,7 +26,7 @@ TEST_PATH="${WORKDIR}/test/"
 # https://github.com/emscripten-core/emscripten/blob/3.0.1/requirements-dev.txt
 # flake8 (3.7.8) - <= 3.7
 
-inherit flag-o-matic java-pkg-opt-2 llvm python-single-r1 toolchain-funcs
+inherit check-compiler-switch flag-o-matic java-pkg-opt-2 llvm python-single-r1 toolchain-funcs
 
 KEYWORDS="~amd64 ~amd64-linux ~arm64 ~arm64-macos" # See tests/clang_native.py for supported arches
 SRC_URI="https://github.com/kripken/${PN}/archive/${PV}.tar.gz -> ${DEST_FILENAME}"
@@ -135,8 +135,7 @@ SLOT="${LLVM_SLOT}-$(ver_cut 1-2 ${PV})"
 IUSE+="
 -closure-compiler closure_compiler_java closure_compiler_native
 closure_compiler_nodejs java test
-
-ebuild_revision_2
+ebuild_revision_3
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -209,6 +208,7 @@ _PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	java-pkg-opt-2_pkg_setup
 	if use test ; then
 		if [[ ! "${FEATURES}" =~ "test" ]] ; then
@@ -226,6 +226,12 @@ eerror
 	export CXX="${CHOST}-clang++-${LLVM_SLOT}"
 	export CPP="${CC} -E"
 	strip-unsupported-flags
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 einfo "CXX:\t${CXX}"
 }
 
