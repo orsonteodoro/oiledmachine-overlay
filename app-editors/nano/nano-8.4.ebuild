@@ -3,7 +3,7 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="PE"
 # gnulib FPs \
 QA_CONFIG_IMPL_DECL_SKIP=( "unreachable" "MIN" "static_assert" )
@@ -35,7 +35,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 debug justify magic minimal ncurses nls +spell unicode
-ebuild_revision_11
+ebuild_revision_12
 "
 REQUIRED_USE="
 	magic? (

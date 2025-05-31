@@ -7,7 +7,7 @@ EAPI=8
 
 CFLAGS_HARDENED_CI_SANITIZERS="asan msan ubsan"
 CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18" # U24
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS FS HO IO MC NPD OOBW TC UAF UM"
 MULTILIB_CHOST_TOOLS=(
 	"/usr/bin/xslt-config"
@@ -37,7 +37,7 @@ LICENSE="MIT"
 SLOT="0"
 IUSE="
 crypt debug examples python static-libs
-ebuild_revision_12
+ebuild_revision_13
 "
 REQUIRED_USE="
 	python? (
