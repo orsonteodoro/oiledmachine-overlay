@@ -24,7 +24,6 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 GCC_SLOT=14
 CMAKE_ECLASS="cmake"
 LLVM_COMPONENTS=(
@@ -65,7 +64,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM19_REVISION}
 hardened +libcxxabi +static-libs test +threads
-ebuild_revision_14
+ebuild_revision_15
 "
 RDEPEND="
 	!libcxxabi? (
