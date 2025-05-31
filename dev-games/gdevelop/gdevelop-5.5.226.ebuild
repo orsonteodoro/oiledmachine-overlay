@@ -170,7 +170,7 @@ SLOT="${SLOT_MAJOR}/${PV}"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 -analytics
-ebuild_revision_12
+ebuild_revision_13
 "
 REQUIRED_USE+="
 	!wayland
