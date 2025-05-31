@@ -6,8 +6,8 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_CF_PROTECTION=0         # -cf-protection is untested or unverified
-CFLAGS_HARDENED_FHARDENED=0             # -fhardened is untested or unverified
+CFLAGS_HARDENED_CF_PROTECTION=0									# Untested or unverified
+CFLAGS_HARDENED_FHARDENED=0									# Untested or unverified
 CFLAGS_HARDENED_USE_CASES="security-critical system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="UAF"
 
@@ -64,7 +64,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 cpu_flags_arm_crc32 doc +extra-filters pgo nls static-libs
-ebuild_revision_14
+ebuild_revision_15
 "
 if [[ "${PV}" != "9999" ]] ; then
 	BDEPEND+="
