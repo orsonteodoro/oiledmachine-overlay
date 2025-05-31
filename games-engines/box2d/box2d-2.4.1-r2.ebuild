@@ -39,7 +39,7 @@ SLOT_MAJ="$(ver_cut 1-2 ${PV})" # API change between 2.4.1 breaks 2.4.0
 SLOT="${SLOT_MAJ}/${PV}"
 IUSE+="
 doc examples static-libs test
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE+="
 	bolt? (
@@ -181,6 +181,7 @@ _src_configure() {
 	cd "${CMAKE_USE_DIR}" || die
 	uopts_src_configure
 
+	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
