@@ -6,7 +6,6 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO UM"
 EGIT_COMMIT="80c52493ef42e6fe605a69dcddd2a691cd8a1380"
-FLAG_O_MATIC_FILTER_LTO=1
 GENTOO_DEPEND_ON_PERL="no"
 PYTHON_COMPAT=( "python3_"{10..13} )
 
@@ -25,7 +24,7 @@ LICENSE="LGPL-2.1"
 SLOT="0"
 IUSE="
 perl test
-ebuild_revision_11
+ebuild_revision_12
 "
 RESTRICT="
 	!test? (
