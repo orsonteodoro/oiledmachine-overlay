@@ -8,7 +8,6 @@ CFLAGS_HARDENED_SANITIZERS_COMPAT="gcc"
 CFLAGS_HARDENED_TOLERANCE="4.00"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO IO SO"
-FLAG_O_MATIC_STRIP_UNSUPPORTED_FLAGS=1
 # CVE-2015-8863 - network zero click attack, heap-based overflow (ASAN), off-by-one (UBSAN)
 
 inherit autotools cflags-hardened check-compiler-switch flag-o-matic
@@ -33,7 +32,7 @@ LICENSE="MIT CC-BY-3.0"
 SLOT="0"
 IUSE="
 +oniguruma static-libs test
-ebuild_revision_28
+ebuild_revision_29
 "
 DEPEND="
 	>=sys-devel/bison-3.0
