@@ -26,7 +26,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="
 +curl +fftw gimp2 gimp3 lto openmp qt5 qt6 standalone
-ebuild_revision_3
+ebuild_revision_4
 "
 REQUIRED_USE="
 	?? (
@@ -187,10 +187,18 @@ eerror
 		die
 	fi
 
+	lto_option=()
 	if check-compiler-switch_is_flavor_slot_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
-		filter-lto
+		lto_option=(
+			-DENABLE_LTO=OFF
+		)
+	else
+		lto_option=(
+			-DENABLE_LTO=$(usex lto)
+		)
 	fi
+	filter-lto
 
 	# For "lrelease"
 	if use qt5 ; then
@@ -202,13 +210,14 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	local CMAKE_USE_DIR="${WORKDIR}/${GMIC_QT_DIR}"
 	mycmakeargs=(
+		${lto_option[@]}
 		-DBUILD_WITH_QT6=$(usex qt6)
 		-DENABLE_FFTW3=$(usex fftw)
 		-DENABLE_DYNAMIC_LINKING=ON
-		-DENABLE_LTO=$(usex lto)
 		-DENABLE_SYSTEM_GMIC=ON
 		-DGMIC_LIB_PATH="${WORKDIR}/gmic-v.${PV}_build"
 	)
+
 	local BUILD_DIR
 	if use gimp2 ; then
 		BUILD_DIR="${WORKDIR}/gimp_build"

@@ -945,7 +945,6 @@ src_configure() {
 		-Donnxruntime_ENABLE_EXTERNAL_CUSTOM_OP_SCHEMAS=OFF
 		-Donnxruntime_ENABLE_LANGUAGE_INTEROP_OPS=OFF
 		-Donnxruntime_ENABLE_LAZY_TENSOR=OFF
-		-Donnxruntime_ENABLE_LTO=$(usex lto)
 		-Donnxruntime_ENABLE_MEMLEAK_CHECKER=ON
 		-Donnxruntime_ENABLE_MEMORY_PROFILE=OFF
 		-Donnxruntime_ENABLE_MICROSOFT_INTERNAL=OFF
@@ -1006,6 +1005,18 @@ src_configure() {
 		-Donnxruntime_TVM_USE_HASH=OFF
 		-Donnxruntime_WEBASSEMBLY_RUN_TESTS_IN_BROWSER=OFF
 	)
+
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		mycmakeargs+=(
+			-Donnxruntime_ENABLE_LTO=OFF
+		)
+	else
+		mycmakeargs+=(
+			-Donnxruntime_ENABLE_LTO=$(usex lto)
+		)
+	fi
+	filter-lto
 
 	if use abseil-cpp ; then
 		mycmakeargs+=(
