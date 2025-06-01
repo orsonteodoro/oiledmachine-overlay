@@ -15,7 +15,7 @@ PHP_EXT_NEEDED_USE="cli,gd,unicode"
 PHP_EXT_SKIP_PATCHES="yes"
 PHP_EXT_S="${WORKDIR}/${MY_PN}-${EGIT_COMMIT}"
 USE_PHP="php7-4 php8-0 php8-1 php8-2"
-inherit autotools flag-o-matic php-ext-source-r3-caca
+inherit autotools check-compiler-switch flag-o-matic php-ext-source-r3-caca
 
 DESCRIPTION="A library that creates colored ASCII-art graphics"
 HOMEPAGE="http://libcaca.zoy.org/"
@@ -137,6 +137,7 @@ PATCHES=(
 # e4968ba : Fix-a-problem-in-the-caca_resize-overflow-detection-.patch
 
 pkg_setup() {
+	check-compiler-switch_start
 ewarn
 ewarn "A random configure time failure may be encountered.  Try:"
 ewarn
@@ -232,6 +233,13 @@ _php-ext-source-r3-caca_src_configure() {
 }
 
 src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	php-ext-source-r3-caca_src_configure
 }
 
