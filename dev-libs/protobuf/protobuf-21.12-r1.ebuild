@@ -8,7 +8,7 @@ CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO"
 INTERNAL_VERSION="3.21.12" # From configure.ac L20
 
-inherit cflags-hardened cmake-multilib elisp-common flag-o-matic
+inherit cflags-hardened check-compiler-switch cmake-multilib elisp-common flag-o-matic
 inherit multilib-minimal toolchain-funcs
 
 if [[ "${PV}" == *"9999" ]]; then
@@ -54,7 +54,7 @@ SLOT="0/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 
 IUSE="
 emacs examples static-libs test zlib
-ebuild_revision_14
+ebuild_revision_15
 "
 RDEPEND="
 	zlib? (
@@ -83,7 +83,11 @@ PATCHES=(
 	"${FILESDIR}/${PN}-3.20.2-protoc_input_output_files.patch"
 	"${FILESDIR}/${PN}-21.9-disable-32-bit-tests.patch"
 )
-DOCS=( CHANGES.txt CONTRIBUTORS.txt README.md )
+DOCS=( "CHANGES.txt" "CONTRIBUTORS.txt" "README.md" )
+
+pkg_setup() {
+	check-compiler-switch_start
+}
 
 src_unpack() {
 	unpack ${A}
@@ -125,6 +129,13 @@ src_prepare() {
 
 
 src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	local with_ccache=OFF
 	if [[ "${FEATURES}" =~ "ccache" ]] ; then
 		with_ccache=ON

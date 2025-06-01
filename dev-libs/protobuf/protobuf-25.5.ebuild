@@ -8,7 +8,7 @@ CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO"
 INTERNAL_VERSION="4.25.5" # From CMakeLists.txt L82
 
-inherit cflags-hardened cmake-multilib elisp-common flag-o-matic
+inherit cflags-hardened check-compiler-switch cmake-multilib elisp-common flag-o-matic
 inherit multilib-minimal toolchain-funcs
 
 if [[ "${PV}" == *"9999" ]]; then
@@ -54,7 +54,7 @@ SLOT="0/$(ver_cut 1-2 ${INTERNAL_VERSION})"
 
 IUSE="
 emacs examples -jsoncpp static-libs test zlib
-ebuild_revision_14
+ebuild_revision_15
 "
 REQUIRED_USE="
 	jsoncpp? (
@@ -91,7 +91,11 @@ PATCHES=(
 	"${FILESDIR}/protobuf-22.3-zero_copy_stream_unittest-mutex-header.patch"
 	"${FILESDIR}/protobuf-22.3-utf8_range.patch"
 )
-DOCS=( CONTRIBUTORS.txt README.md )
+DOCS=( "CONTRIBUTORS.txt" "README.md" )
+
+pkg_setup() {
+	check-compiler-switch_start
+}
 
 src_unpack() {
 	unpack ${A}
@@ -133,6 +137,13 @@ src_prepare() {
 
 
 src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	local with_ccache=OFF
 	if [[ "${FEATURES}" =~ "ccache" ]] ; then
 		with_ccache=ON
