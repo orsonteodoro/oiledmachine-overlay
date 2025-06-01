@@ -52,7 +52,7 @@ SLOT="${LLVM_MAJOR}/${LLVM_SOABI}"
 IUSE+="
 +binutils-plugin bolt bolt-heatmap debug debuginfod doc -dump exegesis jemalloc
 libedit +libffi tcmalloc test xml z3 zstd
-ebuild_revision_2
+ebuild_revision_3
 ${LLVM_EBUILDS_LLVM20_REVISION}
 "
 REQUIRED_USE+="
