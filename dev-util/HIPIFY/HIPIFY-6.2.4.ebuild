@@ -6,7 +6,7 @@ EAPI=8
 LLVM_SLOT=18
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake rocm
+inherit check-compiler-switch cmake flag-o-matic rocm
 
 if [[ ${PV} == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/HIPIFY/"
@@ -34,7 +34,7 @@ LICENSE="
 # MIT - LICENSE.txt
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild_revision_16"
+IUSE="test ebuild_revision_17"
 # https://github.com/ROCm/HIPIFY/blob/rocm-6.2.4/docs/hipify-clang.rst
 RDEPEND="
 	!test? (
@@ -67,6 +67,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	if ! use test ; then
 		:
 	elif has_version "=dev-util/nvidia-cuda-toolkit-12.6*" && has_version "=llvm-core/clang-19*" && has_version "=llvm-core/llvm-17*" ; then
@@ -102,6 +103,23 @@ src_prepare() {
 
 src_configure() {
 	rocm_set_default_clang
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! check-compiler-switch_is_system_flavor ; then
+einfo "Detected GPU compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
