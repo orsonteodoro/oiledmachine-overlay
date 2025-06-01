@@ -21,7 +21,7 @@ QA_CONFIG_IMPL_DECL_SKIP=(
 )
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/gnutls.asc"
 
-inherit autotools cflags-hardened multilib-minimal verify-sig
+inherit autotools cflags-hardened check-compiler-switch flag-o-matic multilib-minimal verify-sig
 
 SRC_URI="
 mirror://gnupg/gnutls/v$(ver_cut 1-2)/${P}.tar.xz
@@ -45,7 +45,7 @@ KEYWORDS="
 IUSE="
 brotli +cxx dane doc examples +idn nls +openssl pkcs11 sslv2 sslv3 static-libs
 test test-full +tls-heartbeat tools zlib zstd
-ebuild_revision_32
+ebuild_revision_33
 "
 REQUIRED_USE="
 	test-full? (
@@ -126,6 +126,10 @@ BDEPEND="
 DOCS=( "README.md" "doc/certtool.cfg" )
 HTML_DOCS=()
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_prepare() {
 	default
 
@@ -147,6 +151,13 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 	LINGUAS="${LINGUAS//en/en@boldquot en@quot}"
 
