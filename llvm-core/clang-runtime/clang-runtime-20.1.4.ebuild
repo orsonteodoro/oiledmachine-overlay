@@ -3,7 +3,7 @@
 
 EAPI=8
 
-inherit multilib multilib-build
+inherit check-compiler-switch flag-o-matic multilib multilib-build
 
 DESCRIPTION="Meta-ebuild for clang runtime libraries"
 HOMEPAGE="https://clang.llvm.org/"
@@ -73,6 +73,16 @@ RDEPEND="
 		llvm-core/pstl:${PV%%.*}
 	)
 "
+
+pkg_setup() {
+	check-compiler-switch_start
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+}
 
 _doclang_cfg() {
 	local triple="${1}"
