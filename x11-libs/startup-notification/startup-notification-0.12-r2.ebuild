@@ -5,6 +5,7 @@ EAPI=8
 
 # Based on startup-notification-0.12-r1.  Revisions may change on the oiledmachine-overlay.
 
+CFLAGS_HARDENED_LANGS="c-lang"
 XORG_MULTILIB="yes"
 
 inherit multilib-minimal xorg-3
