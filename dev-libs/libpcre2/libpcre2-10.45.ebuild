@@ -21,7 +21,7 @@ MULTILIB_CHOST_TOOLS=(
 )
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/nicholaswilson.asc"
 
-inherit cflags-hardened flag-o-matic libtool multilib multilib-minimal
+inherit cflags-hardened check-compiler-switch flag-o-matic libtool multilib multilib-minimal
 inherit toolchain-funcs verify-sig
 
 if [[ "${PV}" != *"_rc"* ]] ; then
@@ -45,7 +45,7 @@ LICENSE="BSD"
 SLOT="0/3" # libpcre2-posix.so version
 IUSE="
 bzip2 +jit libedit +pcre16 +pcre32 +readline static-libs unicode valgrind zlib
-ebuild_revision_34
+ebuild_revision_35
 "
 REQUIRED_USE="
 	?? (
@@ -84,12 +84,23 @@ PATCHES=(
 	"${FILESDIR}/${PN}-10.10-000-Fix-multilib.patch"
 )
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_prepare() {
 	default
 	elibtoolize
 }
 
 multilib_src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 	if tc-is-clang && is-flagq "-fsanitize=undefined" ; then
 		append-flags "-fno-sanitize=function"
