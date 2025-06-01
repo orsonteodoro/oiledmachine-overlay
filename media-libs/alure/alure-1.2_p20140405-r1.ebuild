@@ -3,7 +3,7 @@
 
 EAPI=8
 
-inherit cmake-multilib
+inherit check-compiler-switch cmake-multilib flag-o-matic
 
 EGIT_COMMIT="e9d4fb8a6a3dd367fc4611fcdc48a22d0c7da6a5"
 SRC_URI="
@@ -46,6 +46,10 @@ DEPEND="
 "
 RESTRICT="mirror"
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_prepare() {
 	cmake_src_prepare
 	sed -i \
@@ -55,6 +59,13 @@ src_prepare() {
 }
 
 src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	local mycmakeargs=(
 		-DBUILD_EXAMPLES=$(usex examples)
 		-DBUILD_STATIC=$(usex static-libs)
