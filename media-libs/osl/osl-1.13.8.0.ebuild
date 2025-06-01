@@ -96,7 +96,7 @@ ${CPU_FEATURES[@]%:*}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 cuda doc gui libcxx nofma optix partio python qt5 qt6 static-libs test wayland X
-ebuild_revision_7
+ebuild_revision_8
 "
 REQUIRED_USE+="
 	^^ (
@@ -357,6 +357,12 @@ src_configure() {
 
 		check-compiler-switch_end
 		if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+			filter-lto
+		fi
+
+		if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
 einfo "Detected compiler switch.  Disabling LTO."
 			filter-lto
 		fi
