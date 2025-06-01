@@ -290,8 +290,9 @@
   6.  filter-lto when ODR violation(s) are encountered while LTOing
   7.  filter-lto when runtime issue(s) are encountered.
   8.  filter-lto when switching between an unstable compiler slot and stable
-      compiler slot to mitigate against the possibile of unstable Intermediate
-      Representation (IR).  (proposed rule)
+      compiler slot to mitigate against the possibility of an unstable
+      Intermediate Representation (IR) mixed in for static-libs.  (proposed
+      rule)
 
 # Ebuild organization
 
