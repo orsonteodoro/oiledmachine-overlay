@@ -20,7 +20,6 @@ UOPTS_SUPPORT_TPGO=1
 UOPTS_BOLT_INST_ARGS=(
 	"libjpeg.so.62.3.0:--skip-funcs=.text/1"
 	"libturbojpeg.so.0.2.0:--skip-funcs=.text/1"
-	"tjbench:--skip-funcs=.text/1"
 )
 
 inherit cflags-hardened check-compiler-switch cmake-multilib java-pkg-opt-2 flag-o-matic
