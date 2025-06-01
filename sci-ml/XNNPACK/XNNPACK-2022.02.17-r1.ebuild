@@ -5,7 +5,7 @@ EAPI=8
 
 CommitId="84b02ad55f089598aa42a557573dc4eb6f92f3ff"
 
-inherit cmake
+inherit check-compiler-switch cmake flag-o-matic
 
 S="${WORKDIR}/${PN}-${CommitId}"
 SRC_URI="
@@ -47,6 +47,10 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2022.02.17-gentoo.patch"
 )
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_prepare() {
 	sed -i \
 		-e "/PRIVATE fp16)/d" \
@@ -79,6 +83,13 @@ src_prepare() {
 }
 
 src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	local mycmakeargs=(
 		-DXNNPACK_BUILD_BENCHMARKS=OFF
 		-DXNNPACK_USE_SYSTEM_LIBS=ON

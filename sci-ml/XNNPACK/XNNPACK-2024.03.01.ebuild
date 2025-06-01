@@ -12,7 +12,7 @@ CommitId="86e00162c213f56a4e70abd3d8f2488bb0ae2eed" # committer-date:2024-03-01
 # https://github.com/google/XNNPACK/blob/86e00162c213f56a4e70abd3d8f2488bb0ae2eed/cmake/DownloadFXdiv.cmake
 # https://github.com/google/XNNPACK/blob/86e00162c213f56a4e70abd3d8f2488bb0ae2eed/cmake/DownloadGoogleTest.cmake
 
-inherit cmake
+inherit check-compiler-switch cmake flag-o-matic
 
 S="${WORKDIR}/${PN}-${CommitId}"
 SRC_URI="
@@ -25,7 +25,7 @@ HOMEPAGE="https://github.com/google/XNNPACK/"
 LICENSE="MIT"
 SLOT="0"
 KEYWORDS="~amd64 ~arm ~arm64 ~riscv"
-IUSE="+assembly jit +memopt +sparse static-libs test ebuild_revision_2"
+IUSE="+assembly jit +memopt +sparse static-libs test ebuild_revision_3"
 RDEPEND="
 	>=dev-libs/cpuinfo-2023.11.03
 	>=dev-libs/pthreadpool-2023.08.28
@@ -53,6 +53,10 @@ REQUIRED_USE="
 PATCHES=(
 	"${FILESDIR}/${PN}-2024.03.01-gentoo.patch"
 )
+
+pkg_setup() {
+	check-compiler-switch_start
+}
 
 src_prepare() {
 	sed -i \
@@ -86,6 +90,13 @@ src_prepare() {
 }
 
 src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	local mycmakeargs=(
 		-DXNNPACK_BUILD_BENCHMARKS=OFF
 		-DXNNPACK_USE_SYSTEM_LIBS=ON
