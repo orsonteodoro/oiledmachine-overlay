@@ -518,6 +518,7 @@ ewarn "OSMesa will be slow without enabling USE=llvm"
 }
 
 pkg_setup() {
+einfo "Switch to GCC 12 if build fails."
 	check-compiler-switch_start
 	check_libstdcxx
 	# Warning message for bug 459306
