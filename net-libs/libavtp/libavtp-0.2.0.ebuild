@@ -5,6 +5,8 @@ EAPI=8
 
 # See https://bugs.gentoo.org/822012
 
+CFLAGS_HARDENED_LANGS="c-lang"
+
 inherit meson-multilib
 
 KEYWORDS="~amd64"
