@@ -79,10 +79,11 @@ declare -A CFLAGS_RDEPEND=(
 	["media-libs/dav1d"]=">=;-O2" # -O0 skippy, -O1 faster but blurry, -Os blurry still, -O2 not blurry
 	["media-libs/libvpx"]=">=;-O1" # -O0 causes FPS to lag below 25 FPS.
 )
+CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan lsan msan tsan ubsan"
 CFLAGS_HARDENED_SSP_LEVEL=1
 CFLAGS_HARDENED_TRAPV=0 # Apply per component using custom patch
 CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network sensitive-data untrusted-data web-browser"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO IO UAF TC"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO MC UAF TC"
 CHECKREQS_DISK_BUILD="18G" # and even this might not be enough, bug #417307
 CLANG_PV="18"
 CMAKE_MAKEFILE_GENERATOR="ninja"
