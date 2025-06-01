@@ -45,7 +45,7 @@ LICENSE="
 # MIT - LICENSE
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE+=" samples static-libs test ebuild_revision_8"
+IUSE+=" samples static-libs test ebuild_revision_9"
 # glog downgraded originally 0.7.0
 RDEPEND="
 	>=dev-cpp/glog-0.6.0
