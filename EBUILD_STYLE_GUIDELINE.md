@@ -210,6 +210,11 @@
   - [FORCEDENTRY](https://en.wikipedia.org/wiki/FORCEDENTRY)
   - [CVE-2025-27363](https://nvd.nist.gov/vuln/detail/CVE-2025-27363)
 
+* All C/C++ programs that handle untrusted data or sensitive data must use the
+  cflags-hardened eclass.  This is to prevent the possibility that the distro
+  forgets to apply hardening patches to clang, which they have done in the
+  past, and to apply hardening flags to packages consistently.
+
 * C/C++ daemons and suid packages require `-fstack-clash-protection` C{,XX}FLAG.
 
 * Telemetry should be disabled by default.  Any telemetry requires additional
