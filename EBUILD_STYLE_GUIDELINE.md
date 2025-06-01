@@ -147,6 +147,10 @@
   prevent Denial of Service (e.g. crash) vulnerability.
 * If -O3 or -Ofast causes a crash, then the CFLAG must be downgraded to -O2 or
   whatever is necessary to prevent a crash.
+* -O3 and -Ofast cannot be used in ebuilds/eclass where cflags-hardened or
+  rustflags-hardened eclasses are inherited.  Do not change the optimization
+  after {c,rust}flags-hardened_append or it may increase the estimated CVSS 3.1
+  score/severity or break the security guarantees of -D_FORITIFY_SOURCE.
 * The CFLAGS must be bumped or boosted if degraded runtime performance is
   severe.
 * If below 24 FPS, then bump the -Oflag minimum allowed.
@@ -263,6 +267,18 @@
   vendor lock-in, as an undisclosed sponsored project, as fanboyism by the
   project, or as underoptimized.  It must also accommodate builder machines
   building portable prebuilt packages.
+
+* Ebuilds that do compiler-switch must filter-lto.  This overlay should resolve
+  all LTO issues without user intervention.
+  1.  filter-lto when the compiler at the beginning of the pkg_setup phase is
+      not the same after a forced compiler switch.
+  2.  filter-lto when LTO compiler is not the same after the compiler switch
+      phase for static-libs or static builds.
+  3.  filter-lto when using a GPU compiler
+  4.  filter-lto when not using system compilers
+  5.  filter-lto when using forked compilers
+  6.  filter-lto when ODR violations encountered
+  7.  filter-lto when runtime issues are encountered.
 
 # Ebuild organization
 
