@@ -33,8 +33,8 @@ MULTILIB_WRAPPED_HEADERS=(
 )
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/nettle.asc"
 
-inherit cflags-hardened multilib-build multilib-minimal toolchain-funcs
-inherit verify-sig flag-o-matic
+inherit cflags-hardened check-compiler-switch flag-o-matic multilib-build multilib-minimal toolchain-funcs
+inherit verify-sig
 
 KEYWORDS="
 ~alpha amd64 arm arm64 hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86
@@ -65,7 +65,7 @@ ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
 +asm doc +gmp static-libs
-ebuild_revision_31
+ebuild_revision_32
 "
 # The arm64 crypto option controls AES, SHA1, and SHA2 usage.
 REQUIRED_USE="
@@ -102,6 +102,10 @@ BDEPEND="
 DOCS=()
 HTML_DOCS=()
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_prepare() {
 	default
 
@@ -125,6 +129,13 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	# We don't want to run Valgrind within ebuilds, it often gets
 	# confused by sandbox, etc.
 	export nettle_cv_prog_valgrind="no"
