@@ -56,7 +56,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test" # Not tested
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE+=" doc +esmi test ebuild_revision_3"
+IUSE+=" doc +esmi test ebuild_revision_4"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	esmi
