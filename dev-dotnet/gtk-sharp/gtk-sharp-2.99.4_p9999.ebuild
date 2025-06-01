@@ -8,7 +8,7 @@ EAPI=7
 
 FRAMEWORK="3.5"
 MY_PV=$(ver_cut 1-3 ${PV})
-inherit autotools dotnet git-r3 sandbox-changes
+inherit autotools check-compiler-switch dotnet flag-o-matic git-r3 sandbox-changes
 
 DESCRIPTION="Gtk# is a Mono/.NET binding to the cross platform Gtk+ GUI toolkit \
 and the foundation of most GUI apps built with Mono"
@@ -74,6 +74,7 @@ declare -A DTFM=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	sandbox-changes_no_network_sandbox "To download micropackages"
 
 	local
@@ -120,6 +121,13 @@ src_prepare() {
 }
 
 src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	local myconf=()
 	! use static-libs && myconf+=( --disable-static )
 	econf ${myconf[@]}
