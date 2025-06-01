@@ -68,7 +68,7 @@ libjpeg_turbo_trainers_decode
 libjpeg_turbo_trainers_grayscale
 libjpeg_turbo_trainers_transformations
 pgo  static-libs
-ebuild_revision_29
+ebuild_revision_30
 "
 REQUIRED_USE="
 	pgo? (
@@ -339,7 +339,8 @@ _src_configure() {
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
-	if is-flagq '-flto*' && check-compiler-switch_is_lto_changed ; then
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
