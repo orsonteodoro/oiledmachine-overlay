@@ -9,7 +9,7 @@ LLVM_SLOT=18
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit cmake rocm
+inherit check-compiler-switch cmake flag-o-matic rocm
 
 if [[ ${PV} == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCm/rocprofiler-register.git"
@@ -45,7 +45,7 @@ LICENSE="
 # MIT - LICENSE
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE+=" samples static-libs test ebuild_revision_6"
+IUSE+=" samples static-libs test ebuild_revision_7"
 # glog downgraded originally 0.7.0
 RDEPEND="
 	>=dev-cpp/glog-0.6.0
@@ -64,11 +64,12 @@ PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	rocm_pkg_setup
 }
 
 src_unpack() {
-	if [[ ${PV} == *"9999" ]] ; then
+	if [[ "${PV}" == *"9999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		git-r3_fetch
 		git-r3_checkout
@@ -96,6 +97,14 @@ src_prepare() {
 
 src_configure() {
 	rocm_set_default_clang
+
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	local mycmakeargs=(
 		-DBUILD_STATIC_LIBS=$(usex static-libs)
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
