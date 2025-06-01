@@ -64,7 +64,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM19_REVISION}
 hardened +libcxxabi +static-libs test +threads
-ebuild_revision_16
+ebuild_revision_17
 "
 RDEPEND="
 	!libcxxabi? (
@@ -245,6 +245,13 @@ pkg_setup() {
 
 src_configure() {
 	llvm_prepend_path "${PV%%.*}"
+
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	# note: we need to do this before multilib kicks in since it will
 	# alter the CHOST
