@@ -74,7 +74,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
-IUSE="-bake-kernels -bitcode cuda encrypt precompile rocm system-orochi test ebuild_revision_8"
+IUSE="-bake-kernels -bitcode cuda encrypt precompile rocm system-orochi test ebuild_revision_9"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 	?? (
