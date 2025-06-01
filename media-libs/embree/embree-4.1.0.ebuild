@@ -75,7 +75,7 @@ ${CPU_FLAGS[@]%:*}
 -compact-polys -custom-cflags custom-optimization debug doc doc-docfiles
 doc-html doc-images doc-man +filter-function gcc +hardened ispc -level-zero
 raymask -ssp static-libs sycl +tbb test tutorials
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -342,6 +342,12 @@ eerror
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
