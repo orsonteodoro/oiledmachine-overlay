@@ -18,7 +18,7 @@ MULTILIB_WRAPPED_HEADERS=(
 )
 PYTHON_COMPAT=( "python3_"{10..13} )
 
-inherit cflags-hardened python-r1 multilib-minimal
+inherit cflags-hardened check-compiler-switch flag-o-matic python-r1 multilib-minimal
 
 DESCRIPTION="XSLT libraries and tools"
 HOMEPAGE="https://gitlab.gnome.org/GNOME/libxslt"
@@ -37,7 +37,7 @@ LICENSE="MIT"
 SLOT="0"
 IUSE="
 crypt debug examples python static-libs
-ebuild_revision_15
+ebuild_revision_16
 "
 REQUIRED_USE="
 	python? (
@@ -61,6 +61,11 @@ DEPEND="
 	${RDEPEND}
 "
 
+pkg_setup() {
+	check-compiler-switch_start
+	python_setup
+}
+
 src_prepare() {
 	default
 	if [[ "${PV}" == "9999" ]] ; then
@@ -72,6 +77,13 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 	libxslt_configure() {
 		ECONF_SOURCE="${S}" \
