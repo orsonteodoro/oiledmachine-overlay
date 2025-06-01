@@ -157,7 +157,7 @@ LICENSE="
 RESTRICT="binchecks mirror strip test"
 SLOT="0/${PV%.*}.x"
 IUSE+="
-ebuild_revision_9
+ebuild_revision_10
 "
 REQUIRED_USE="
 "
@@ -257,6 +257,12 @@ src_compile() {
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
