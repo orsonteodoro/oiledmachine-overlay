@@ -31,7 +31,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="
 +bash-completion +cli +curl +ffmpeg +fftw +graphicsmagick +jpeg -lto -opencv
 +openexr +openmp +png static-libs +tiff wayland +X +zlib
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE="
 "
@@ -131,6 +131,12 @@ eerror
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
