@@ -4,6 +4,8 @@
 
 EAPI=7
 
+inherit check-compiler-switch flag-o-matic
+
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 S="${WORKDIR}/squashfs-tools-${PV}/squashfs-tools"
 SRC_URI="
@@ -51,6 +53,16 @@ get_arch() {
 		echo "x86_64"
 	elif use x86 ; then
 		echo "i686"
+	fi
+}
+
+pkg_setup() {
+	check-compiler-switch_start
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
 	fi
 }
 
