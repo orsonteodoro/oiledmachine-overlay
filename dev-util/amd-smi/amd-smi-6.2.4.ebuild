@@ -12,7 +12,7 @@ PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 MY_PN="amdsmi"
 
-inherit cmake flag-o-matic python-single-r1 rocm
+inherit check-compiler-switch cmake flag-o-matic python-single-r1 rocm
 
 if [[ "${PV}" == *"9999" ]] ; then
 	EGIT_BRANCH="amd-staging"
@@ -56,7 +56,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test" # Not tested
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE+=" doc +esmi test ebuild_revision_2"
+IUSE+=" doc +esmi test ebuild_revision_3"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	esmi
@@ -91,6 +91,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	python-single-r1_pkg_setup
 	rocm_pkg_setup
 }
@@ -122,6 +123,24 @@ src_prepare() {
 
 src_configure() {
 	rocm_set_default_gcc
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! check-compiler-switch_is_system_flavor ; then
+einfo "Detected GPU compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	local mycmakeargs=(
 		-DBUILD_TESTS=$(usex test)
 		-DCMAKE_INSTALL_LIBDIR=$(rocm_get_libdir)
