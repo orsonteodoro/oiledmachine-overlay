@@ -7,7 +7,7 @@ EAPI=8
 
 # TODO delete exlibs and replace with external libraries
 
-inherit cmake multilib-build
+inherit check-compiler-switch cmake flag-o-matic multilib-build
 
 KEYWORDS="~arm64 ~amd64"
 S="${WORKDIR}/CSFML-${PV}"
@@ -45,7 +45,18 @@ _get_lib_types() {
 	use static-libs && echo "static-libs"
 }
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	local lib_type
 	configure_abi() {
 		local lib_type
