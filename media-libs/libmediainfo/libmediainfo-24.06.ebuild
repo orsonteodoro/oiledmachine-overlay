@@ -5,7 +5,7 @@ EAPI=8
 
 MY_PN="MediaInfo"
 
-inherit autotools edos2unix flag-o-matic multilib-minimal
+inherit autotools check-compiler-switch edos2unix flag-o-matic multilib-minimal
 
 SRC_URI="https://mediaarea.net/download/source/${PN}/${PV}/${P/-/_}.tar.xz"
 S="${WORKDIR}/${MY_PN}Lib"
@@ -46,6 +46,10 @@ BDEPEND+="
 	)
 "
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_prepare() {
 	cd "${S}/Project/GNU/Library" || die
 	eapply_user
@@ -59,6 +63,13 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cd "${BUILD_DIR}/Project/GNU/Library" || die
 	eautoreconf
 	econf \
