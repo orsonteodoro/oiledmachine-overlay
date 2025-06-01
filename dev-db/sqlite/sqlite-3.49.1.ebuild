@@ -13,7 +13,7 @@ UOPTS_SUPPORT_EBOLT=0
 UOPTS_SUPPORT_TPGO=1
 UOPTS_SUPPORT_TBOLT=1
 
-inherit flag-o-matic cflags-hardened check-compiler-switch multilib multilib-minimal toolchain-funcs uopts
+inherit cflags-hardened check-compiler-switch flag-o-matic multilib multilib-minimal toolchain-funcs uopts
 
 # On version updates, make sure to read the forum (https://sqlite.org/forum/forum)
 # for hints regarding test failures, backports, etc.
@@ -48,7 +48,7 @@ RESTRICT="
 SLOT="3"
 IUSE="
 debug doc icu +readline static-libs tcl test tools
-ebuild_revision_17
+ebuild_revision_18
 "
 REQUIRED_USE="
 	pgo? (
@@ -257,6 +257,14 @@ _src_configure() {
         export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}"
 	cd "${BUILD_DIR}" || die
 	uopts_src_configure
+
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	# Skip configure check
 	append-flags -Wno-error=coverage-mismatch
 	cflags-hardened_append
