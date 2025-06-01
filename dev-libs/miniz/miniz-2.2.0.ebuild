@@ -3,7 +3,7 @@
 
 EAPI=8
 
-inherit cmake
+inherit check-compiler-switch cmake flag-o-matic
 
 SRC_URI="https://github.com/richgel999/miniz/archive/${PV}.tar.gz -> ${P}.tar.gz"
 
@@ -26,7 +26,18 @@ get_lib_type() {
 	echo "shared"
 }
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	CMAKE_BUILD_TYPE=Release
 
 	local lib_type
