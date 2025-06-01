@@ -6,7 +6,7 @@ EAPI=7
 
 # You can build this in a musl container to get strictly musl libs.
 
-inherit check-compiler-switch toolchain-funcs
+inherit check-compiler-switch flag-o-matic toolchain-funcs
 
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 S="${WORKDIR}/libarchive-${PV}"
@@ -27,7 +27,7 @@ LICENSE="
 "
 IUSE="
 libcxx
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE+="
 "
@@ -67,6 +67,12 @@ get_arch() {
 
 pkg_setup() {
 	check-compiler-switch_start
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 }
 
 src_compile() {
