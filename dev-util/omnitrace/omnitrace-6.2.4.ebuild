@@ -36,7 +36,7 @@ LEGACY_TBB_SLOT=2
 TIMEMORY_COMMIT="2a1bcba0cad46efd4421c0c7a145e83b161fb934"
 YAML_CPP_COMMIT="1b50109f7bea60bd382d8ea7befce3d2bd67da5f"
 
-inherit cmake dep-prepare flag-o-matic python-single-r1 rocm
+inherit check-compiler-switch cmake dep-prepare flag-o-matic python-single-r1 rocm
 
 if [[ ${PV} == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCm/omnitrace/"
@@ -106,7 +106,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 -debuginfod examples -mpi +openmp +papi -python +rccl +rocprofiler
 +roctracer test system-dyninst system-libunwind system-papi +rocm-smi
-ebuild_revision_0
+ebuild_revision_1
 "
 # The vendored dyninst is build-time broken.
 REQUIRED_USE="
@@ -167,6 +167,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	python_setup
 	rocm_pkg_setup
 }
@@ -222,6 +223,24 @@ src_prepare() {
 
 src_configure() {
 	rocm_set_default_gcc
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! check-compiler-switch_is_system_flavor ; then
+einfo "Detected GPU compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	if use system-dyninst ; then
 		append-cppflags -I"${ESYSROOT}/usr/include/dyninst"
 	fi
