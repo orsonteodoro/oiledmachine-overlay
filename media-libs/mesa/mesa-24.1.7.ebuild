@@ -619,13 +619,23 @@ src_configure() { :; }
 _src_configure() {
 	local emesonargs=()
 
+	# LTO was not an issue in the past.
 	# bug #932591 and https://gitlab.freedesktop.org/mesa/mesa/-/issues/11140
-	filter-lto
+	export CC=$(tc-getCC)
+	export CXX=$(tc-getCXX)
+	export CPP=$(tc-getCPP)
+	if ver_test $(gcc-major-version) -ge "14" ; then
+		filter-lto
+	fi
 
 	uopts_src_configure
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+	if is-flagq '-flto*' && check-compiler-switch_is_lto_changed ; then
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
