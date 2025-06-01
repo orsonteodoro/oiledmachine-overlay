@@ -14,7 +14,7 @@ cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce\
 47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e\
 "
 
-inherit cflags-hardened cmake git-r3 multilib-minimal toolchain-funcs
+inherit cflags-hardened check-compiler-switch cmake flag-o-matic git-r3 multilib-minimal toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
@@ -34,7 +34,7 @@ HOMEPAGE="https://github.com/yarosla/nxjson"
 SLOT="0/${EXPECTED_FINGERPRINT:0:7}"
 IUSE+="
 debug static-libs test
-ebuild_revision_29
+ebuild_revision_30
 "
 RDEPEND+="
 	virtual/libc
@@ -78,6 +78,10 @@ eerror
 	fi
 }
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
 		live_unpack
@@ -105,6 +109,13 @@ src_prepare() {
 }
 
 src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	export CMAKE_BUILD_TYPE=$(usex debug "Debug" "Release")
 	local mycmakeargs=(
 		-DBUILD_TESTS=$(usex test)
