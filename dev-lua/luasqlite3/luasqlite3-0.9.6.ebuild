@@ -7,7 +7,7 @@ MY_PN="lsqlite3_v096"
 
 LUA_COMPAT=( "lua5-"{1..4} )
 
-inherit lua toolchain-funcs
+inherit check-compiler-switch flag-o-matic lua toolchain-funcs
 
 KEYWORDS="~amd64 ~ppc ~x86"
 S="${WORKDIR}/${MY_PN}"
@@ -38,6 +38,10 @@ get_lib_types() {
 	echo "shared"
 }
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_prepare() {
 	default
 	local lib_type
@@ -63,6 +67,19 @@ lua_src_compile()
 	export CC=$(tc-getCC ${ABI})
 	export CXX=$(tc-getCXX ${ABI})
 	export CPP=$(tc-getCPP ${ABI})
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	mkdir -p "shared" || die
 einfo "ELUA:\t${ELUA}"
 einfo "Building shared-lib"
