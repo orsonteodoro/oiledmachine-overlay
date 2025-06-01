@@ -8,7 +8,7 @@ EXPECTED_FINGERPRINT="\
 8e1ea4325d982f902f7c9e093c78752cd9a4f5aa893faf0deb7af0791cd96a04\
 "
 
-inherit multilib-build git-r3
+inherit check-compiler-switch flag-o-matic multilib-build git-r3
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
@@ -60,6 +60,10 @@ eerror
 	fi
 }
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
 		unpack_live
@@ -84,7 +88,14 @@ src_prepare() {
 	multilib_foreach_abi prepare_abi
 }
 
-src_configure() { :; }
+src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+}
 
 src_compile() {
 	local mydebug=$(usex debug "debug" "release")
