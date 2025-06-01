@@ -32,7 +32,7 @@ LICENSE="MIT CC-BY-3.0"
 SLOT="0"
 IUSE="
 +oniguruma static-libs test
-ebuild_revision_32
+ebuild_revision_33
 "
 DEPEND="
 	>=sys-devel/bison-3.0
@@ -106,6 +106,13 @@ src_configure() {
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
