@@ -7,7 +7,7 @@ CONFIG_CHECK="~HSA_AMD"
 LLVM_SLOT=18
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake flag-o-matic linux-info rocm
+inherit check-compiler-switch cmake flag-o-matic linux-info rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/rocr_debug_agent-rocm-${PV}"
@@ -23,7 +23,7 @@ RESTRICT="
 	test
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild_revision_6"
+IUSE="test ebuild_revision_7"
 RDEPEND="
 	!dev-libs/rocm-debug-agent:0
 	dev-libs/elfutils
@@ -47,6 +47,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	linux-info_pkg_setup
 	rocm_pkg_setup
 }
@@ -69,6 +70,24 @@ src_prepare() {
 
 src_configure() {
 	rocm_set_default_gcc
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! check-compiler-switch_is_system_flavor ; then
+einfo "Detected GPU compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	append-flags -fno-stack-protector
 	replace-flags -O0 -O1
 	local mycmakeargs=(
