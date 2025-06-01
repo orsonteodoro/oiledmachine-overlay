@@ -17,7 +17,7 @@ NEVERBLEED_COMMIT="929e470260d460dacc20a10601c2d3c7a9f386b2"
 PYTHON_COMPAT=( "python3_"{10..12} )
 USE_RUBY="ruby32 ruby33"
 
-inherit cflags-hardened cmake multilib-minimal python-r1 ruby-single toolchain-funcs
+inherit cflags-hardened check-compiler-switch cmake flag-o-matic multilib-minimal python-r1 ruby-single toolchain-funcs
 
 KEYWORDS="
 ~amd64 ~arm64 ~x86
@@ -77,7 +77,7 @@ SLOT="0/1.$((${SO_CURRENT} - ${SO_AGE}))"
 IUSE="
 -bpf debug doc +hpack-tools -http3 -mruby -neverbleed +jemalloc -static-libs
 systemd test +threads +utils +xml
-ebuild_revision_14
+ebuild_revision_15
 "
 REQUIRED_USE="
 	doc? (
@@ -147,6 +147,8 @@ BDEPEND="
 "
 
 pkg_setup() {
+	check-compiler-switch_start
+	ruby-single_setup
 	python_setup
 	if tc-is-clang && use http3 && ! use bpf ; then
 ewarn "bpf is default ON upstream if clang ON, http3 ON"
@@ -183,6 +185,13 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	local so_c=$(grep -F "set(LT_CURRENT" "${S}/CMakeLists.txt" \
 		| grep -E -o "[0-9]+")
 	local so_r=$(grep -F "set(LT_REVISION" "${S}/CMakeLists.txt" \
