@@ -11,7 +11,7 @@ PYTHON_COMPAT=( "python3_"{10..13} )
 QA_CONFIG_IMPL_DECL_SKIP=( "unreachable" "MIN" "alignof" "static_assert" "fpurge" )
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/wget.asc"
 
-inherit cflags-hardened flag-o-matic python-any-r1 toolchain-funcs unpacker verify-sig
+inherit cflags-hardened check-compiler-switch flag-o-matic python-any-r1 toolchain-funcs unpacker verify-sig
 
 DESCRIPTION="Network utility to retrieve files from the WWW"
 HOMEPAGE="https://www.gnu.org/software/wget/"
@@ -27,7 +27,7 @@ KEYWORDS="
 IUSE="
 cookie-check debug gnutls idn ipv6 libproxy metalink nls ntlm pcre +ssl static
 test uuid zlib
-ebuild_revision_11
+ebuild_revision_12
 "
 REQUIRED_USE="
 	ntlm? (
@@ -113,7 +113,8 @@ BDEPEND="
 DOCS=( "AUTHORS" "MAILING-LIST" "NEWS" "README" )
 
 pkg_setup() {
-	use test && python-any-r1_pkg_setup
+	check-compiler-switch_start
+	python-any-r1_pkg_setup
 }
 
 src_unpack() {
@@ -127,6 +128,13 @@ src_prepare() {
 }
 
 src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 	# Fix compilation on Solaris, we need filio.h for FIONBIO as used in
 	# the included gnutls -- force ioctl.h to include this header
