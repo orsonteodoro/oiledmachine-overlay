@@ -13,7 +13,7 @@ EGIT_COMMIT="f42aa68fc798db63b7b2a789ae8cf5b90b57b752"
 JAVA_SLOT="1.8"
 PYTHON_COMPAT=( "python3_"{8..11} )
 
-inherit autotools cflags-hardened flag-o-matic mono-env java-pkg-opt-2 multilib-minimal
+inherit autotools cflags-hardened check-compiler-switch flag-o-matic mono-env java-pkg-opt-2 multilib-minimal
 inherit python-r1 virtualx
 
 # Live/snapshots ebuilds do not get KEYWORDed
@@ -49,7 +49,7 @@ LICENSE="
 IUSE="
 256-colors-ncurses cxx doc examples imlib java mono ncurses network opengl perl
 php python ruby slang static-libs test truetype X
-ebuild_revision_13
+ebuild_revision_14
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 REQUIRED_USE+="
@@ -197,6 +197,7 @@ PATCHES=(
 # e4968ba : Fix-a-problem-in-the-caca_resize-overflow-detection-.patch
 
 pkg_setup() {
+	check-compiler-switch_start
 	python_setup
 	java-pkg-opt-2_pkg_setup
 	use java && java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
@@ -259,6 +260,13 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	replace-flags '-O*' '-O2'
 	if use 256-colors-ncurses ; then
 		append-cppflags -DUSE_NCURSES_256_COLORS=1
