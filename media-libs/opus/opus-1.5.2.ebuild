@@ -13,7 +13,7 @@ CPU_FLAGS_X86=(
 )
 PYTHON_COMPAT=( "python3_"{10..13} )
 
-inherit cflags-hardened flag-o-matic meson-multilib python-any-r1
+inherit cflags-hardened check-compiler-switch flag-o-matic meson-multilib python-any-r1
 
 KEYWORDS="
 ~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv sparc x86
@@ -28,7 +28,7 @@ IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
 custom-modes debug deep-plc dred doc hardened osce static-libs test
-ebuild_revision_13
+ebuild_revision_14
 "
 REQUIRED_USE="
 	dred? (
@@ -57,7 +57,19 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.4-arm64-neon.patch"
 )
 
+pkg_setup() {
+	check-compiler-switch_start
+	python-single-r1_pkg_setup
+}
+
 multilib_src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 	local emesonargs=(
 		$(meson_feature deep-plc)
