@@ -46,7 +46,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="benchmark hip-cpu +rocm test ebuild_revision_7"
+IUSE="benchmark hip-cpu +rocm test ebuild_revision_8"
 gen_rocm_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
