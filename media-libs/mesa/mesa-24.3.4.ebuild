@@ -643,6 +643,7 @@ _src_configure() {
 	if ver_test $(gcc-major-version) -ge "14" ; then
 		filter-lto
 	fi
+ewarn "LTO test changes are being conducted.  If LTO breaks integration tests or presents glitches, manually disable LTO."
 
 	uopts_src_configure
 
