@@ -54,7 +54,7 @@ WINE_STAGING_PV="${WINE_PV}"
 WINE_VANILLA_PV="${WINE_PV}"
 ZLIB_PV="1.3"
 
-inherit desktop flag-o-matic git-r3 grpc-ver multilib-minimal toolchain-funcs
+inherit check-compiler-switch desktop flag-o-matic git-r3 grpc-ver multilib-minimal toolchain-funcs
 
 GRPC_SLOTS=(
 	"1.59"
@@ -351,6 +351,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
@@ -401,7 +402,12 @@ src_unpack() {
 }
 
 src_configure() {
-	:
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 }
 
 src_compile() {
