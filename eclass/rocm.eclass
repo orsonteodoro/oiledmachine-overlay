@@ -1538,6 +1538,7 @@ rocm_set_default_gcc() {
 	strip-unsupported-flags
 	filter-flags '-fuse-ld=*'
 	append-ldflags -fuse-ld=bfd
+	filter-lto
 }
 
 # @FUNCTION: rocm_set_default_clang
@@ -1552,6 +1553,7 @@ rocm_set_default_clang() {
 	strip-unsupported-flags
 	filter-flags '-fuse-ld=*'
 	append-ldflags -fuse-ld=lld
+	filter-lto
 }
 
 # @FUNCTION: rocm_set_default_aocc
