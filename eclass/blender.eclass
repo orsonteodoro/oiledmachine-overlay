@@ -345,6 +345,12 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	check_embree
 	check_compiler
 	if declare -f _blender_pkg_setup >/dev/null 2>&1 ; then
