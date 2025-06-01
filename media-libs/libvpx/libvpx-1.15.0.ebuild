@@ -54,7 +54,7 @@ IUSE="
 ${PPC_IUSE}
 ${TRAINER_IUSE}
 chromium doc +examples +highbitdepth pgo postproc static-libs svc test +threads
-ebuild_revision_29
+ebuild_revision_30
 "
 REQUIRED_USE="
 	pgo? (
@@ -475,7 +475,8 @@ _src_configure() {
 	uopts_src_configure
 
 	check-compiler-switch_end
-	if check-compiler-switch_is_flavor_slot_changed ; then
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
