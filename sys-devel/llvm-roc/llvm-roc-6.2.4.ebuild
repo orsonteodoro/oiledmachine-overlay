@@ -16,7 +16,7 @@ SANITIZER_FLAGS=(
 	cfi
 )
 
-inherit cmake dhms flag-o-matic rocm toolchain-funcs
+inherit check-compiler-switch cmake dhms flag-o-matic rocm toolchain-funcs
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/llvm-project-rocm-${PV}/llvm"
@@ -89,7 +89,7 @@ IUSE="
 ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${SANITIZER_FLAGS[@]}
 bolt -mlir profile +runtime
-ebuild_revision_24
+ebuild_revision_25
 "
 REQUIRED_USE="
 	cfi? (
@@ -114,6 +114,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	dhms_start
 	rocm_pkg_setup
 }
@@ -189,6 +190,23 @@ src_configure() {
 }
 
 _src_configure() {
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! check-compiler-switch_is_system_flavor ; then
+einfo "Detected GPU compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	addpredict "/dev/nvidiactl"
 	addpredict "/proc/self/task/"
 	local mycmakeargs=()
