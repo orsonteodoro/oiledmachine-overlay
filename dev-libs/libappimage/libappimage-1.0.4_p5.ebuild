@@ -6,7 +6,7 @@ EAPI=8
 
 CMAKE_MAKEFILE_GENERATOR="emake" # required for downloading in compile phase
 
-inherit cmake linux-info sandbox-changes
+inherit check-compiler-switch cmake flag-o-matic linux-info sandbox-changes
 
 DESCRIPTION="Implements functionality for dealing with AppImage files"
 LICENSE="MIT" # project default license
@@ -75,6 +75,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	sandbox-changes_no_network_sandbox "To download squashfuse dependencies"
 
 	linux-info_pkg_setup
@@ -107,6 +108,13 @@ src_unpack() {
 }
 
 src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	local mycmakeargs=(
 		-DGIT_COMMIT="${EGIT_COMMIT}"
 		-DUSE_SYSTEM_BOOST=$(usex system-boost)
