@@ -5,7 +5,7 @@ EAPI=8
 
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan msan tsan ubsan"
 CFLAGS_HARDENED_LANGS="cxx"
-CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
+CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data untrusted-data"
 # From cmake/GoogleapisConfig.cmake \
 GOOGLEAPIS_COMMIT="c0b5730937e56047dc11900463ff87be7c80e8cc"
 
@@ -23,7 +23,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="
 test
-ebuild_revision_3
+ebuild_revision_4
 "
 # Tests need a GCP account
 RESTRICT="test"
