@@ -7,10 +7,10 @@ EAPI=7
 # You can build this in a musl container to get strictly musl libs.
 
 LMDB_PV="0.9.29"
-PYTHON_COMPAT=( python3_{10..13} pypy3 )
+PYTHON_COMPAT=( "python3_"{10..13} "pypy3" )
 S_LMDB="${WORKDIR}/openldap-LMDB_${LMDB_PV}/libraries/liblmdb"
 
-inherit python-r1
+inherit check-compiler-switch flag-o-matic python-r1
 
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 S="${WORKDIR}/appstream-${PV}"
@@ -71,6 +71,13 @@ get_arch() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 	python_setup
 }
 
