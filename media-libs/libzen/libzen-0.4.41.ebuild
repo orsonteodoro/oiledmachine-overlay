@@ -3,7 +3,7 @@
 
 EAPI=8
 
-inherit autotools multilib-minimal
+inherit autotools check-compiler-switch flag-o-matic multilib-minimal
 
 MY_PN="ZenLib"
 DESCRIPTION="Shared library for libmediainfo and mediainfo"
@@ -23,6 +23,10 @@ BDEPEND+="
 SRC_URI="https://mediaarea.net/download/source/${PN}/${PV}/${P/-/_}.tar.bz2"
 S="${WORKDIR}/${MY_PN}"
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_prepare() {
 	default
 	pushd "Project/GNU/Library" || die
@@ -33,6 +37,13 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cd "Project/GNU/Library" || die
 	econf \
 		--enable-unicode \
