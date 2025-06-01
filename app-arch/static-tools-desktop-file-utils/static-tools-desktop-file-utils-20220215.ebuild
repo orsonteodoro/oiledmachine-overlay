@@ -4,6 +4,8 @@
 
 EAPI=7
 
+inherit check-compiler-switch flag-o-matic
+
 # You can build this in a musl container to get strictly musl libs.
 COMMIT="56d220dd679c7c3a8f995a41a27a7d6f3df49dea"
 COMMIT2="28ea239c53a2d5d8800c472bc2452eaa16e37af2"
@@ -58,6 +60,16 @@ get_arch() {
 		echo "x86_64"
 	elif use x86 ; then
 		echo "i686"
+	fi
+}
+
+pkg_setup() {
+	check-compiler-switch_start
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
 	fi
 }
 
