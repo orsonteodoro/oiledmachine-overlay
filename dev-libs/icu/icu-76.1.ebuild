@@ -19,7 +19,7 @@ MULTILIB_CHOST_TOOLS=(
 PYTHON_COMPAT=( "python3_"{10..13} )
 VERIFY_SIG_OPENPGP_KEY_PATH="${BROOT}/usr/share/openpgp-keys/icu.asc"
 
-inherit autotools cflags-hardened flag-o-matic flag-o-matic-om llvm
+inherit autotools cflags-hardened check-compiler-switch flag-o-matic flag-o-matic-om llvm
 inherit multilib-minimal python-any-r1 toolchain-funcs verify-sig
 
 if [[ "${PV}" =~ "_rc" ]] ; then
@@ -61,7 +61,7 @@ RESTRICT="
 SLOT="0/${PV%.*}"
 IUSE="
 debug doc examples static-libs test
-ebuild_revision_16
+ebuild_revision_17
 "
 BDEPEND+="
 	${PYTHON_DEPS}
@@ -88,6 +88,11 @@ PATCHES=(
 get_lib_types() {
 	echo "shared"
 	use static-libs && echo "static"
+}
+
+pkg_setup() {
+	check-compiler-switch_start
+	python-any-r1_pkg_setup
 }
 
 src_prepare() {
@@ -140,44 +145,14 @@ append_all() {
 	append-ldflags ${@}
 }
 
-src_configure() {
-	if tc-is-cross-compiler ; then
-		mkdir "${WORKDIR}/host" || die
-		pushd "${WORKDIR}/host" >/dev/null || die
-
-		CFLAGS="" \
-		CXXFLAGS="" \
-		ASFLAGS="" \
-		LDFLAGS="" \
-		CC="$(tc-getBUILD_CC)" \
-		CXX="$(tc-getBUILD_CXX)" \
-		AR="$(tc-getBUILD_AR)" \
-		RANLIB="$(tc-getBUILD_RANLIB)" \
-		LD="$(tc-getBUILD_LD)" \
-		"${S}/configure" \
-			--disable-renaming \
-			--disable-debug \
-			--disable-samples \
-			--enable-static \
-			|| die
-		emake
-
-		popd >/dev/null || die
+_configure_abi() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
 	fi
 
-	configure_abi() {
-		local lib_type
-		for lib_type in $(get_lib_types) ; do
-			export S="${S_ORIG}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
-			export BUILD_DIR="${S}"
-			cd "${BUILD_DIR}" || die
-			_configure_abi
-		done
-	}
-	multilib_foreach_abi configure_abi
-}
-
-_configure_abi() {
 	filter-flags \
 		"-DDHAVE_DLOPEN=0" \
 		"-DU_DISABLE_RENAMING=1" \
@@ -267,6 +242,43 @@ _configure_abi() {
 
 	ECONF_SOURCE="${S}" \
 	econf "${myeconfargs[@]}"
+}
+
+src_configure() {
+	if tc-is-cross-compiler ; then
+		mkdir "${WORKDIR}/host" || die
+		pushd "${WORKDIR}/host" >/dev/null || die
+
+		CFLAGS="" \
+		CXXFLAGS="" \
+		ASFLAGS="" \
+		LDFLAGS="" \
+		CC="$(tc-getBUILD_CC)" \
+		CXX="$(tc-getBUILD_CXX)" \
+		AR="$(tc-getBUILD_AR)" \
+		RANLIB="$(tc-getBUILD_RANLIB)" \
+		LD="$(tc-getBUILD_LD)" \
+		"${S}/configure" \
+			--disable-renaming \
+			--disable-debug \
+			--disable-samples \
+			--enable-static \
+			|| die
+		emake
+
+		popd >/dev/null || die
+	fi
+
+	configure_abi() {
+		local lib_type
+		for lib_type in $(get_lib_types) ; do
+			export S="${S_ORIG}-${MULTILIB_ABI_FLAG}.${ABI}_${lib_type}"
+			export BUILD_DIR="${S}"
+			cd "${BUILD_DIR}" || die
+			_configure_abi
+		done
+	}
+	multilib_foreach_abi configure_abi
 }
 
 src_compile() {
