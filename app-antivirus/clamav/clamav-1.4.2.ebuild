@@ -33,6 +33,9 @@ declare -A GIT_CRATES=(
 [onenote_parser]="https://github.com/Cisco-Talos/onenote.rs;8b450447e58143004b68dd21c11b710fdb79be92;onenote.rs-%commit%" # 0.3.1
 )
 
+CFLAGS_HARDENED_ASSEMBLERS="inline nasm"
+CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan msan ubsan"
+CFLAGS_HARDENED_LANGS="asm c-lang cxx"
 #CFLAGS_HARDENED_SANITIZERS="address"
 #CFLAGS_HARDENED_SANITIZERS="undefined" # with llvm all unit test fail for both asan, ubsan
 #CFLAGS_HARDENED_SANITIZERS_COMPAT="gcc"
