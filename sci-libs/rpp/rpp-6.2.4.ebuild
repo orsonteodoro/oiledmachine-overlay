@@ -37,7 +37,7 @@ LLVM_SLOT=${LLVM_COMPAT[0]}
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit cmake flag-o-matic rocm toolchain-funcs
+inherit check-compiler-switch cmake flag-o-matic rocm toolchain-funcs
 
 if [[ ${PV} == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/"
@@ -62,7 +62,7 @@ IUSE+="
 ${LLVM_COMPAT/#/llvm_slot_}
 ${ROCM_IUSE}
 cpu opencl rocm test
-ebuild_revision_14
+ebuild_revision_15
 "
 gen_rocm_required_use() {
 	local x
@@ -127,6 +127,7 @@ ewarn "${gpu} is not CI tested upstream."
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	rocm_pkg_setup
 	warn_untested_gpu
 }
@@ -169,6 +170,23 @@ src_configure() {
 	)
 
 	rocm_set_default_clang
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! check-compiler-switch_is_system_flavor ; then
+einfo "Detected GPU compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 ewarn
 ewarn "If the build fails, use either -O0 or the systemwide optimization level."
