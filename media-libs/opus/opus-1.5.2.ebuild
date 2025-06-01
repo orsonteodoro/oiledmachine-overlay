@@ -28,7 +28,7 @@ IUSE="
 ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_X86[@]}
 custom-modes debug deep-plc dred doc hardened osce static-libs test
-ebuild_revision_14
+ebuild_revision_15
 "
 REQUIRED_USE="
 	dred? (
@@ -59,7 +59,7 @@ PATCHES=(
 
 pkg_setup() {
 	check-compiler-switch_start
-	python-single-r1_pkg_setup
+	python-any-r1_pkg_setup
 }
 
 multilib_src_configure() {
