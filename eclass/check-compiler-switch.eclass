@@ -254,7 +254,7 @@ eerror
 # Is the compiler flavor llvm?
 # @RETURN: 0 - yes, 1 - no
 check-compiler-switch_is_flavor_llvm() {
-	if [[ "${DETECT_COMPILER_SWITCH_T1_ARCH}" == "llvm" ]] ; then
+	if [[ "${DETECT_COMPILER_SWITCH_T1_FLAVOR}" == "llvm" ]] ; then
 		return 0
 	else
 		return 1
@@ -266,7 +266,7 @@ check-compiler-switch_is_flavor_llvm() {
 # Is the compiler flavor gcc?
 # @RETURN: 0 - yes, 1 - no
 check-compiler-switch_is_flavor_gcc() {
-	if [[ "${DETECT_COMPILER_SWITCH_T1_ARCH}" == "gcc" ]] ; then
+	if [[ "${DETECT_COMPILER_SWITCH_T1_FLAVOR}" == "gcc" ]] ; then
 		return 0
 	else
 		return 1
@@ -278,7 +278,7 @@ check-compiler-switch_is_flavor_gcc() {
 # Is the compiler flavor gcc or llvm?
 # @RETURN: 0 - yes, 1 - no
 check-compiler-switch_is_system_flavor() {
-	if [[ "${DETECT_COMPILER_SWITCH_T1_ARCH}" == "gcc" || "${DETECT_COMPILER_SWITCH_T1_ARCH}" == "llvm" ]] ; then
+	if [[ "${DETECT_COMPILER_SWITCH_T1_FLAVOR}" == "gcc" || "${DETECT_COMPILER_SWITCH_T1_FLAVOR}" == "llvm" ]] ; then
 		return 0
 	else
 		return 1
