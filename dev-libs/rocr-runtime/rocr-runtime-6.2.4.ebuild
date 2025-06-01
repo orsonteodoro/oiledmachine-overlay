@@ -35,7 +35,7 @@ RESTRICT="strip" # Fix issue with finding symbols
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 	debug
-	ebuild_revision_15
+	ebuild_revision_16
 "
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
