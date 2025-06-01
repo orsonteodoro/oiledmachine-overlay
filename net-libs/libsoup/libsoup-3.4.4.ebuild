@@ -3,8 +3,10 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_CI_SANITIZERS="asan"
+CFLAGS_HARDENED_CI_SANITIZERS_GCC_COMPAT="12" # F34
 CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data untrusted-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE IO IU SO"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS IO IU NPD OOBR SO UAF"
 
 inherit cflags-hardened gnome.org meson-multilib vala xdg
 

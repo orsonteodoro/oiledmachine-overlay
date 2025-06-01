@@ -5,8 +5,10 @@ EAPI=7
 
 # TODO: Default enable brotli at some point? But in 2.70.0 not advertised to servers yet - https://gitlab.gnome.org/GNOME/libsoup/issues/146
 
+CFLAGS_HARDENED_CI_SANITIZERS="asan"
+CFLAGS_HARDENED_CI_SANITIZERS_GCC_COMPAT="9" # F31
 CFLAGS_HARDENED_USE_CASES="network security-critical sensitive-data untrusted-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE IO IU SO"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS IO IU NPD OOBR SO UAF"
 VALA_USE_DEPEND="vapigen"
 
 inherit cflags-hardened gnome.org meson-multilib vala xdg
