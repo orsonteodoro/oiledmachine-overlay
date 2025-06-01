@@ -249,4 +249,40 @@ eerror
 	fi
 }
 
+# @FUNCTION:  check-compiler-switch_is_flavor_llvm
+# @DESCRIPTION:
+# Is the compiler flavor llvm?
+# @RETURN: 0 - yes, 1 - no
+check-compiler-switch_is_flavor_llvm() {
+	if [[ "${DETECT_COMPILER_SWITCH_T1_ARCH}" == "llvm" ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION:  check-compiler-switch_is_flavor_gcc
+# @DESCRIPTION:
+# Is the compiler flavor gcc?
+# @RETURN: 0 - yes, 1 - no
+check-compiler-switch_is_flavor_gcc() {
+	if [[ "${DETECT_COMPILER_SWITCH_T1_ARCH}" == "gcc" ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# @FUNCTION:  check-compiler-switch_is_system_flavor
+# @DESCRIPTION:
+# Is the compiler flavor gcc or llvm?
+# @RETURN: 0 - yes, 1 - no
+check-compiler-switch_is_system_flavor() {
+	if [[ "${DETECT_COMPILER_SWITCH_T1_ARCH}" == "gcc" || "${DETECT_COMPILER_SWITCH_T1_ARCH}" == "llvm" ]] ; then
+		return 0
+	else
+		return 1
+	fi
+}
+
 fi
