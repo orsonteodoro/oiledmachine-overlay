@@ -6,7 +6,7 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO"
 
-inherit cflags-hardened meson-multilib
+inherit cflags-hardened check-compiler-switch flag-o-matic meson-multilib
 
 KEYWORDS="
 ~alpha amd64 arm arm64 hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc x86
@@ -28,7 +28,7 @@ LICENSE="
 SLOT="0/1"
 IUSE="
 +lzma lz4 static-libs test zlib
-ebuild_revision_28
+ebuild_revision_29
 "
 RESTRICT="
 	!test? (
@@ -59,6 +59,10 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.5.7-move-pragma-before-static.patch"
 )
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_prepare() {
 	cd "${WORKDIR}/${P}" || die
 	default
@@ -67,6 +71,13 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 	local native_file="${T}/meson.${CHOST}.${ABI}.ini.local"
 	# This replaces the no-find-valgrind patch once bugfix lands in a meson
