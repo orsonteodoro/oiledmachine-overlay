@@ -339,7 +339,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${CPU_FLAGS_X86_64[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 clang cpu cuda debug rocm rocm_6_0
-ebuild_revision_16
+ebuild_revision_17
 "
 # We don't add tpu because licensing issue with libtpu_nightly.
 
@@ -873,12 +873,6 @@ pkg_setup() {
 	python_setup
 	setup_tc
 
-	check-compiler-switch_end
-	if check-compiler-switch_is_flavor_slot_changed ; then
-einfo "Detected compiler switch.  Disabling LTO."
-		filter-lto
-	fi
-
 	if ! [[ "${BAZEL_LD_PRELOAD_IGNORED_RISKS}" =~ ("allow"|"accept") ]] ; then
 	# A reaction to "WARNING: ignoring LD_PRELOAD in environment" maybe
 	# reported by Bazel.
@@ -1108,6 +1102,24 @@ python_compile() {
 		BUILD_LDFLAGS+=" -fuse-ld=lld"
 		strip-unsupported-flags # Filter LDFLAGS after switch
 	fi
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! check-compiler-switch_is_system_flavor ; then
+einfo "Detected GPU compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 	BUILD_CXXFLAGS+=" ${CFLAGS_HARDENED_CXXFLAGS}"
 	BUILD_LDFLAGS+=" ${CFLAGS_HARDENED_LDFLAGS}"
