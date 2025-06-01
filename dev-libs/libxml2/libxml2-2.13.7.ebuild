@@ -19,7 +19,7 @@ XSTS_TARBALL_1="xsts-2002-01-16.tar.gz"
 XSTS_TARBALL_2="xsts-2004-01-14.tar.gz"
 XMLCONF_TARBALL="xmlts20130923.tar.gz"
 
-inherit autotools cflags-hardened python-r1 multilib-minimal
+inherit autotools cflags-hardened check-compiler-switch flag-o-matic python-r1 multilib-minimal
 
 if [[ ${PV} == 9999 ]] ; then
 	EGIT_REPO_URI="https://gitlab.gnome.org/GNOME/libxml2"
@@ -46,7 +46,7 @@ LICENSE="MIT"
 SLOT="2"
 IUSE="
 examples icu lzma +python readline static-libs test
-ebuild_revision_16
+ebuild_revision_17
 "
 RESTRICT="
 	!test? (
@@ -94,6 +94,11 @@ PATCHES=(
 	"${FILESDIR}/${PN}-2.12.9-icu-pkgconfig.patch"
 )
 
+pkg_setup() {
+	check-compiler-switch_start
+	python_setup
+}
+
 src_unpack() {
 	if [[ "${PV}" == "9999" ]] ; then
 		git-r3_src_unpack
@@ -132,6 +137,13 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 	libxml2_configure() {
 		ECONF_SOURCE="${S}" \
