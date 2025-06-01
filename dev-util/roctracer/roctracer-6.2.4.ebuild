@@ -8,7 +8,7 @@ PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit cmake flag-o-matic prefix python-any-r1 rocm
+inherit check-compiler-switch cmake flag-o-matic prefix python-any-r1 rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/roctracer-rocm-${PV}"
@@ -32,7 +32,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" test ebuild_revision_8"
+IUSE=" test ebuild_revision_9"
 CDEPEND="
 	${ROCM_CLANG_DEPEND}
 "
@@ -66,6 +66,7 @@ python_check_deps() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	python-any-r1_pkg_setup
 	rocm_pkg_setup
 }
@@ -86,6 +87,23 @@ src_configure() {
 	addpredict "/dev/kfd"
 
 	rocm_set_default_clang
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! check-compiler-switch_is_system_flavor ; then
+einfo "Detected GPU compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	hipconfig --help >/dev/null || die
 	export HIP_PLATFORM="amd"
