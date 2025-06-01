@@ -71,7 +71,7 @@ LICENSE="
 # UoI-NCSA - llvm-project-rocm-6.2.4/amd/device-libs/LICENSE.TXT
 
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm +rocprofiler-register test ebuild_revision_40"
+IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm +rocprofiler-register test ebuild_revision_41"
 REQUIRED_USE="
 	hsa? (
 		rocm
