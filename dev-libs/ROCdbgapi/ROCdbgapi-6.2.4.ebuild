@@ -6,7 +6,7 @@ EAPI=8
 LLVM_SLOT=18
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake rocm
+inherit check-compiler-switch cmake flag-o-matic rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/ROCdbgapi-rocm-${PV}"
@@ -29,7 +29,7 @@ LICENSE="
 "
 # || ( ( GPL-2.0 Linux-syscall-note ) MIT ) - src/linux/kfd_sysfs.h
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" ebuild_revision_8"
+IUSE=" ebuild_revision_9"
 RDEPEND="
 	!dev-libs/ROCdbgapi:0
 	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
@@ -52,6 +52,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	rocm_pkg_setup
 }
 
@@ -64,6 +65,24 @@ src_prepare() {
 
 src_configure() {
 	rocm_set_default_gcc
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! check-compiler-switch_is_system_flavor ; then
+einfo "Detected GPU compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 	)
