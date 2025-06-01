@@ -7,7 +7,7 @@ LLVM_SLOT=18
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit python-single-r1 rocm
+inherit check-compiler-switch flag-o-matic python-single-r1 rocm
 
 if [[ "${PV}" == *"9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCm-Developer-Tools/ROCgdb/"
@@ -85,7 +85,7 @@ LICENSE="
 # The distro's GPL-3+ license template does not contain all rights reserved.
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="ebuild_revision_8"
+IUSE="ebuild_revision_9"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
@@ -121,6 +121,7 @@ PATCHES=(
 DOCS=( "README-ROCM.md" )
 
 pkg_setup() {
+	check-compiler-switch_start
 	python-single-r1_pkg_setup
 	rocm_pkg_setup
 }
@@ -138,6 +139,24 @@ src_prepare() {
 
 src_configure() {
 	rocm_set_default_gcc
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! check-compiler-switch_is_system_flavor ; then
+einfo "Detected GPU compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	local myconf=(
 		--enable-targets="${CHOST},amdgcn-amd-amdhsa"
 		--enable-64-bit-bfd
