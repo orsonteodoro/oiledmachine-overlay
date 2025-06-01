@@ -7,7 +7,7 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO IO SO"
 
-inherit cflags-hardened libtool multilib-minimal toolchain-funcs
+inherit cflags-hardened check-compiler-switch flag-o-matic libtool multilib-minimal toolchain-funcs
 
 DESCRIPTION="Version 2 of an advanced replacement library for libraries like libXpm"
 HOMEPAGE="https://www.enlightenment.org/
@@ -21,7 +21,7 @@ IUSE="
 +X apidoc avif bzip2 cpu_flags_x86_mmx cpu_flags_x86_sse2 debug
 eps +filters +gif +jpeg jpeg2k jpegxl heif lzma mp3 packing +png
 raw +shm static-libs svg +text +tools +tiff +webp y4m +zlib
-ebuild_revision_9
+ebuild_revision_10
 "
 
 REQUIRED_USE="shm? ( X )"
@@ -63,12 +63,23 @@ BDEPEND="
 # default DOCS will haul README.in we do not need
 DOCS=( AUTHORS ChangeLog README TODO )
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_prepare() {
 	default
 	elibtoolize
 }
 
 multilib_src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 	local myeconfargs=(
 		$(use_with X x)
