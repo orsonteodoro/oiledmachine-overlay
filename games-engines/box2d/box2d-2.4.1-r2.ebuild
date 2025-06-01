@@ -14,7 +14,7 @@ UOPTS_SUPPORT_EPGO=1
 UOPTS_SUPPORT_TBOLT=1
 UOPTS_SUPPORT_TPGO=1
 
-inherit check-compiler-switch cmake multilib-build toolchain-funcs uopts
+inherit check-compiler-switch cmake flag-o-matic multilib-build toolchain-funcs uopts
 
 KEYWORDS="~amd64 ~x86"
 S="${WORKDIR}/${P}"
@@ -39,7 +39,7 @@ SLOT_MAJ="$(ver_cut 1-2 ${PV})" # API change between 2.4.1 breaks 2.4.0
 SLOT="${SLOT_MAJ}/${PV}"
 IUSE+="
 doc examples static-libs test
-ebuild_revision_4
+ebuild_revision_5
 "
 REQUIRED_USE+="
 	bolt? (
@@ -183,6 +183,12 @@ _src_configure() {
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
