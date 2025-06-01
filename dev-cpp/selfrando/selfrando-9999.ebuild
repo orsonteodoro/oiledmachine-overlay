@@ -10,7 +10,7 @@ EXPECTED_BUILD_FINGERPRINT="\
 34d5dd4c2f2fcd708ca826714e1a4bc0fc331ae48d20883c47d0a2fca62fb413\
 20f00fd42c2232881b8532530fa8ccfdabed6e30107a082ee5c9f300155c1f68"
 
-inherit cmake flag-o-matic git-r3 python-any-r1 sandbox-changes
+inherit check-compiler-switch cmake flag-o-matic git-r3 python-any-r1 sandbox-changes
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -80,6 +80,11 @@ PATCHES=(
 	"${FILESDIR}/${PN}-fe47bc0-nginx-fPIC.patch"
 )
 
+pkg_setup() {
+	check-compiler-switch_start
+	python-any-r1_pkg_setup
+}
+
 unpack_live() {
 	use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 	git-r3_fetch
@@ -130,6 +135,13 @@ einfo "${x} python2.7 -> python"
 }
 
 src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	[[ "${ARCH}" == "amd64" ]] && export SR_ARCH="x86_64"
 	[[ "${ARCH}" == "arm" ]] && die "64-bit only supported"
 	[[ "${ARCH}" == "arm64" ]] && export SR_ARCH="arm64"
