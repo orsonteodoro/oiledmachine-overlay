@@ -42,7 +42,7 @@ OPENEXR_V3_PV=(
 )
 PYTHON_COMPAT=( "python3_"{8..11} )
 
-inherit cmake python-single-r1 flag-o-matic
+inherit check-compiler-switch cmake python-single-r1 flag-o-matic
 
 KEYWORDS="~amd64 ~arm64"
 S="${WORKDIR}/USD-${PV}"
@@ -265,6 +265,7 @@ PATCHES=(
 DOCS=( "CHANGELOG.md" "README.md" )
 
 pkg_setup() {
+	check-compiler-switch_start
 	python-single-r1_pkg_setup
 }
 
@@ -302,6 +303,13 @@ einfo "Using legacy TBB"
 }
 
 src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	if has_version "media-libs/openusd" ; then
 ewarn
 ewarn "Uninstall ${PN} to avoid build failure."
