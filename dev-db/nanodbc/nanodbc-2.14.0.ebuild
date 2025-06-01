@@ -7,7 +7,7 @@ EAPI=8
 
 PYTHON_COMPAT=( "python3_"{8..11} )
 
-inherit cmake flag-o-matic multilib-build python-any-r1 sandbox-changes toolchain-funcs
+inherit check-compiler-switch cmake flag-o-matic multilib-build python-any-r1 sandbox-changes toolchain-funcs
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
@@ -73,6 +73,7 @@ BDEPEND+="
 "
 
 pkg_setup() {
+	check-compiler-switch_start
 	if [[ "$(tc-getCC)" == "clang" || "$(tc-getCXX)" == "clang++" ]]; then
 		if ! use libcxx; then
 			die "Clang requires libcxx for this ebuild."
@@ -116,6 +117,13 @@ get_lib_types() {
 }
 
 src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	configure_abi() {
 		local lib_type
 		for lib_type in $(get_lib_types) ; do
