@@ -3,10 +3,13 @@
 
 EAPI=8
 
-# From cmake/GoogleapisConfig.cmake
+CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan msan tsan ubsan"
+CFLAGS_HARDENED_LANGS="cxx"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
+# From cmake/GoogleapisConfig.cmake \
 GOOGLEAPIS_COMMIT="c0b5730937e56047dc11900463ff87be7c80e8cc"
 
-inherit cmake grpc-ver
+inherit cflags-hardened cmake grpc-ver
 
 SRC_URI="
 https://github.com/GoogleCloudPlatform/google-cloud-cpp/archive/v${PV}.tar.gz -> ${P}.tar.gz
@@ -18,7 +21,10 @@ HOMEPAGE="https://cloud.google.com/"
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE=" test ebuild_revision_2"
+IUSE="
+test
+ebuild_revision_2
+"
 # Tests need a GCP account
 RESTRICT="test"
 # U 18.04
@@ -67,6 +73,7 @@ src_unpack() {
 }
 
 src_configure() {
+	cflags-hardened_append
 	local mycmakeargs=(
 		-DGOOGLE_CLOUD_CPP_ENABLE_WERROR=OFF
 		-DGOOGLE_CLOUD_CPP_ENABLE_EXAMPLES=OFF
