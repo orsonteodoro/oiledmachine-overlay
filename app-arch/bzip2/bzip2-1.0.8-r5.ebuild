@@ -10,7 +10,7 @@ CFLAGS_HARDENED_USE_CASES="security-criticial sensitive-data system-set untruste
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE IO UAF"
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/bzip2.gpg"
 
-inherit cflags-hardened multilib multilib-minimal toolchain-funcs verify-sig
+inherit cflags-hardened check-compiler-switch flag-o-matic multilib multilib-minimal toolchain-funcs verify-sig
 
 DESCRIPTION="A high-quality data compressor used extensively by Gentoo Linux"
 HOMEPAGE="https://sourceware.org/bzip2/"
@@ -29,7 +29,7 @@ KEYWORDS="
 "
 IUSE="
 static static-libs
-ebuild_revision_15
+ebuild_revision_16
 "
 
 BDEPEND="
@@ -53,6 +53,10 @@ PATCHES=(
 DOCS=( "CHANGES" "README"{"",".COMPILATION.PROBLEMS",".XML.STUFF"} "manual.pdf" )
 HTML_DOCS=( "manual.html" )
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_prepare() {
 	default
 
@@ -68,6 +72,13 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 	default
 }
