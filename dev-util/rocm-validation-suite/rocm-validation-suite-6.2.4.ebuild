@@ -45,7 +45,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test" # Needs SRC_URI changes for offline install.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE+=" doc test ebuild_revision_2"
+IUSE+=" doc test ebuild_revision_3"
 RDEPEND="
 	dev-cpp/yaml-cpp
 	sys-apps/pciutils
