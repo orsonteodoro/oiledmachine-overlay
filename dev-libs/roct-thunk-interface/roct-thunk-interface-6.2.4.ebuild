@@ -40,7 +40,7 @@ RESTRICT="
 "
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE+="
-ebuild_revision_10
+ebuild_revision_11
 "
 # See https://github.com/ROCm/rocm-install-on-linux/blob/docs/6.2.4/docs/reference/user-kernel-space-compat-matrix.rst
 RDEPEND="
