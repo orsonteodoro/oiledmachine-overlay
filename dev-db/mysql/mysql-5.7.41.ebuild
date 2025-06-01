@@ -41,7 +41,7 @@ SLOT="5.7/18"
 IUSE="
 cjk client-libs cracklib debug experimental jemalloc latin1 numa +perl profiling
 selinux +server static static-libs systemtap tcmalloc test
-ebuild_revision_18
+ebuild_revision_19
 "
 REQUIRED_USE="
 	?? (
@@ -325,6 +325,12 @@ _src_configure() {
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
