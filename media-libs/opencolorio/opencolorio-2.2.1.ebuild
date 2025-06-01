@@ -38,7 +38,7 @@ OPENEXR_V3_PV=(
 )
 PYTHON_COMPAT=( "python3_"{8..11} )
 
-inherit cmake flag-o-matic python-single-r1
+inherit check-compiler-switch cmake flag-o-matic python-single-r1
 
 gen_half_pairs_rdepend() {
 	local row
@@ -89,7 +89,7 @@ RESTRICT="
 	test
 "
 SLOT="0/$(ver_cut 1-2)"
-IUSE="cpu_flags_x86_sse2 doc opengl python static-libs test ebuild_revision_1"
+IUSE="cpu_flags_x86_sse2 doc opengl python static-libs test ebuild_revision_2"
 REQUIRED_USE="
 	doc? (
 		python
@@ -162,6 +162,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	python-single-r1_pkg_setup
 }
 
@@ -184,6 +185,13 @@ src_prepare() {
 }
 
 src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	#
 	# Missing features:
 	# - Truelight and Nuke are not in portage for now, so their support are disabled
