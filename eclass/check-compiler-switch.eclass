@@ -219,7 +219,7 @@ check-compiler-switch_is_arch_changed() {
 # Did the IR for the LTO compiler change?
 #
 # Use this if the package has a version range limit for compiler
-# (i.e. requires GCC 12) or installs a static-lib unconditionally.
+# (i.e. requires GCC 12) or installs a static-lib.
 #
 check-compiler-switch_is_lto_changed() {
 	if [[ -z "${DETECT_COMPILER_SWITCH_LTO_CC_NAME}" || -z "${DETECT_COMPILER_SWITCH_LTO_CC_SLOT}" ]] ; then
