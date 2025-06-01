@@ -43,7 +43,7 @@ SLOT="0"
 IUSE+="
 ${LLVM_EBUILDS_LLVM18_REVISION}
 hardened +static-libs test
-ebuild_revision_13
+ebuild_revision_14
 "
 # in 15.x, cxxabi.h is moving from libcxx to libcxxabi
 RDEPEND="
@@ -137,6 +137,14 @@ is_hardened_gcc() {
 
 src_configure() {
 	llvm_prepend_path "${LLVM_MAJOR}"
+
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	is-flagq '-flto*' && HAVE_FLAG_LTO="1"
 	has_sanitizer_option "cfi-icall" && HAVE_FLAG_CFI_ICALL="1"
 	has_sanitizer_option "cfi-vcall" && HAVE_FLAG_CFI_VCALL="1"
