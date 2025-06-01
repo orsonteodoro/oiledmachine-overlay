@@ -7,7 +7,7 @@ CFLAGS_HARDENED_USE_CASES="sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="RC PE"
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/madler.asc"
 
-inherit cflags-hardened toolchain-funcs flag-o-matic multilib-minimal
+inherit cflags-hardened check-compiler-switch flag-o-matic multilib-minimal toolchain-funcs
 
 SRC_URI="
 	https://www.zlib.net/pigz/${P}.tar.gz
@@ -44,12 +44,23 @@ BDEPEND="
 	)
 "
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_prepare() {
 	default
 	multilib_copy_sources
 }
 
 multilib_src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 }
 
