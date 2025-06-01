@@ -9,7 +9,7 @@ EAPI=8
 CFLAGS_HARDENED_TOLERANCE="4.0"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 
-inherit cflags-hardened cmake-multilib flag-o-matic
+inherit cflags-hardened check-compiler-switch cmake-multilib flag-o-matic
 
 KEYWORDS="
 ~amd64 ~arm64 ~x86
@@ -29,7 +29,7 @@ HOMEPAGE="
 LICENSE="MIT"
 IUSE+="
 doc static-libs test
-ebuild_revision_28
+ebuild_revision_29
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 # U 22.04
@@ -47,9 +47,20 @@ BDEPEND+="
 	>=dev-build/cmake-3.5
 "
 RESTRICT="mirror"
-DOCS=( docs readme.txt )
+DOCS=( "docs" "readme.txt" )
+
+pkg_setup() {
+	check-compiler-switch_start
+}
 
 src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 	local mycmakeargs=(
 		-DBUILD_SHARED_LIBS=ON
