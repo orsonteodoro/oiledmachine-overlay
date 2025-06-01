@@ -6,7 +6,7 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="ip-assets untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO SO"
 
-inherit cflags-hardened cmake-multilib
+inherit cflags-hardened check-compiler-switch cmake-multilib flag-o-matic
 
 KEYWORDS="~amd64 ~arm64"
 SRC_URI="https://github.com/${PN}/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
@@ -35,7 +35,7 @@ RESTRICT="
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE="
 samples static-libs test
-ebuild_revision_10
+ebuild_revision_11
 "
 RDEPEND="
 	sys-libs/zlib[${MULTILIB_USEDEP},minizip]
@@ -59,6 +59,10 @@ PATCHES=(
 )
 DOCS=( "CodeConventions.md" "Readme.md" )
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_prepare() {
 	if use x86 ; then
 		eapply "${FILESDIR}/${PN}-5.2.4-drop-failing-tests-for-abi_x86_32.patch"
@@ -67,6 +71,13 @@ src_prepare() {
 }
 
 src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 	local mycmakeargs=(
 		-DASSIMP_ASAN=OFF
