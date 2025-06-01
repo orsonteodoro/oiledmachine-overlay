@@ -8,7 +8,7 @@ GRADLE_PV="8.10.2" # https://github.com/grpc/grpc-java/blob/v1.69.0/gradle/wrapp
 JAVA_COMPAT=( "java_slot_"{17,11,1_8} ) # https://github.com/grpc/grpc-java/blob/v1.69.0/.github/workflows/testing.yml#L20
 PROTOBUF_PV="29.0"
 
-inherit flag-o-matic gradle java-pkg-2
+inherit check-compiler-switch flag-o-matic gradle java-pkg-2
 
 #KEYWORDS="~amd64" # Build untested
 S="${WORKDIR}/${P}"
@@ -104,7 +104,7 @@ SLOT="0"
 IUSE+="
 ${JAVA_COMPAT[@]}
 android codegen doc source test
-ebuild_revision_2
+ebuild_revision_3
 "
 # Cannot fix at the moment ANDROID_HOME="/var/lib/portage/home/.android" sandbox violation
 #	!android
@@ -160,6 +160,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	gradle_check_network_sandbox
 	if use java_slot_17 ; then
 		export JAVA_PKG_WANT_TARGET="17"
@@ -195,6 +196,13 @@ src_prepare() {
 }
 
 src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	gradle_src_configure
 
 	# See https://github.com/grpc/grpc-java/blob/v1.69.0/COMPILING.md?plain=1#L9
