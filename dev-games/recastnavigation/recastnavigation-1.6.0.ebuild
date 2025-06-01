@@ -32,7 +32,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 debug +demo -dt-polyref64 -dt-virtual-queryfilter +examples static-libs test
 wayland X
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE+="
 	demo? (
@@ -140,6 +140,13 @@ src_prepare() {
 }
 
 src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	configure_abi() {
 		local lib_type
 		for lib_type in $(get_lib_type) ; do
