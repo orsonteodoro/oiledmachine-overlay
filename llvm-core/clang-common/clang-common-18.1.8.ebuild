@@ -21,7 +21,7 @@ llvm_ebuilds_message "${PV%%.*}" "_llvm_set_globals"
 _llvm_set_globals
 unset -f _llvm_set_globals
 
-inherit bash-completion-r1 llvm.org
+inherit bash-completion-r1 check-compiler-switch flag-o-matic llvm.org
 
 KEYWORDS="
 ~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~sparc ~x86 ~amd64-linux
@@ -102,6 +102,16 @@ pkg_pretend() {
 		eerror
 		eerror "or build with CLANG_IGNORE_DEFAULT_RUNTIMES=1."
 		die "Mismatched defaults detected between llvm-core/clang and llvm-core/clang-common"
+	fi
+}
+
+pkg_setup() {
+	check-compiler-switch_start
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
 	fi
 }
 
