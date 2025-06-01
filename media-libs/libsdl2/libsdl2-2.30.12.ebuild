@@ -11,7 +11,7 @@ MY_P="SDL2-${PV/_pre}"
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DF HO"
 
-inherit cflags-hardened cmake flag-o-matic linux-info toolchain-funcs multilib-minimal
+inherit cflags-hardened check-compiler-switch cmake flag-o-matic linux-info toolchain-funcs multilib-minimal
 
 KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~x86"
 S="${WORKDIR}/${MY_P}"
@@ -130,7 +130,7 @@ ${X86_CPU_FLAGS[@]}
 +libsamplerate +nas +nls +opengl +openurl oss +pipewire +pulseaudio
 +sndio +sound +static-libs test +udev +video +vulkan +wayland +X
 +xscreensaver
-ebuild_revision_9
+ebuild_revision_10
 "
 # libdecor is not in main repo but in community repos
 REQUIRED_USE="
@@ -322,6 +322,10 @@ MULTILIB_WRAPPED_HEADERS=(
 PATCHES=(
 )
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_prepare() {
 	cmake_src_prepare
 
@@ -337,6 +341,14 @@ src_prepare() {
 
 multilib_src_configure() {
 	use custom-cflags || strip-flags
+
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 
 	local mycmakeargs=(
