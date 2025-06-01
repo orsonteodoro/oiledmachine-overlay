@@ -3,8 +3,9 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_LANGS="c-lang cxx"
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO IO"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DOS HO IO NPD"
 PYTHON_COMPAT=( "python3_"{10..13} )
 
 inherit cflags-hardened flag-o-matic meson-multilib python-any-r1 xdg-utils
