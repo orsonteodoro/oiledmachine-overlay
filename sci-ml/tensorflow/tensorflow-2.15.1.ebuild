@@ -449,7 +449,7 @@ ${HIP_SLOTS2[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 alt-ssl -big-endian clang cuda models -mpi +python rocm
 system-flatbuffers test +xla
-ebuild_revision_15
+ebuild_revision_16
 "
 gen_required_use_cuda_targets() {
 	local x
@@ -1244,12 +1244,6 @@ einfo
 	#	llvm_pkg_setup called in use_clang
 	fi
 
-	check-compiler-switch_end
-	if check-compiler-switch_is_flavor_slot_changed ; then
-einfo "Detected compiler switch.  Disabling LTO."
-		filter-lto
-	fi
-
 	local num_pythons_enabled
 	num_pythons_enabled=0
 	count_py_impls() {
@@ -1485,6 +1479,23 @@ einfo "Actual GiB per core:  ${actual_gib_per_core} GiB"
 		append-ldflags -fuse-ld=lld
 		BUILD_LDFLAGS+=" -fuse-ld=lld"
 		strip-unsupported-flags # Filter linker flags
+	fi
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! check-compiler-switch_is_system_flavor ; then
+einfo "Detected GPU compiler switch.  Disabling LTO."
+		filter-lto
 	fi
 
 ewarn
