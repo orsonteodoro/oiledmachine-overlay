@@ -16,7 +16,7 @@ CFLAGS_HARDENED_USE_CASES="security-critical network system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO DOS NPD SO"
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/libtasn1.asc"
 
-inherit cflags-hardened multilib-minimal libtool toolchain-funcs verify-sig
+inherit cflags-hardened check-compiler-switch flag-o-matic multilib-minimal libtool toolchain-funcs verify-sig
 
 KEYWORDS="
 ~alpha amd64 arm arm64 hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86
@@ -35,7 +35,7 @@ LICENSE="LGPL-2.1+"
 SLOT="0/6" # subslot = libtasn1 soname version
 IUSE="
 static-libs test
-ebuild_revision_35
+ebuild_revision_36
 "
 RESTRICT="
 	!test? (
@@ -51,6 +51,10 @@ BDEPEND="
 "
 DOCS=( "AUTHORS" "ChangeLog" "NEWS" "README.md" "THANKS" )
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_prepare() {
 	default
 	# For Solaris shared library
@@ -58,6 +62,13 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 	# -fanalyzer substantially slows down the build and isn't useful for
 	# us. It's useful for upstream as it's static analysis, but it's not
