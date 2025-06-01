@@ -10,7 +10,8 @@ CFLAGS_HARDENED_USE_CASES="untrusted-data"
 
 LIVE_TYPE="git"
 PYTHON_COMPAT=( "python3_11" )
-inherit autotools cflags-hardened flag-o-matic git-r3 java-pkg-opt-2 python-single-r1
+
+inherit autotools cflags-hardened check-compiler-switch flag-o-matic git-r3 java-pkg-opt-2 python-single-r1
 
 NANO_YCMD_COMMIT="4f52bbc46b1c593f3f7ae58f76820297251fe5ad"
 if [[ "${LIVE_TYPE}" == "git" ]] ; then
@@ -38,7 +39,7 @@ bear debug justify libgcrypt +magic minimal ncurses nettle ninja nls slang
 system-godef system-gopls system-mono system-omnisharp system-racerd system-rust
 system-rustc system-tsserver unicode ycm-generator ycmd-43 ycmd-44 ycmd-45
 ycmd-46 +ycmd-47
-ebuild_revision_41
+ebuild_revision_42
 "
 GNULIB_PV="2023.01.16.09.58.30"
 REQUIRED_USE+="
@@ -162,6 +163,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	if use java ; then
 		java-pkg-opt-2_pkg_setup
 		local java_vendor=$(java-pkg_get-vm-vendor)
@@ -313,7 +315,16 @@ src_configure() {
 	done
 	BD_ABS="$(python_get_sitedir)/ycmd/${ycmd_slot}"
 	use static && append-ldflags -static
+
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
+
 	local myconf=()
 	case ${CHOST} in
 		*-gnu*|*-uclibc*)
