@@ -9,7 +9,7 @@ EAPI=8
 
 EGIT_COMMIT="f42aa68fc798db63b7b2a789ae8cf5b90b57b752"
 USE_RUBY="ruby32" # TODO retest, originally ruby30 ruby31
-inherit autotools check-compiler-switch flag-o-maticruby-ng virtualx
+inherit autotools check-compiler-switch flag-o-matic ruby-ng virtualx
 
 DESCRIPTION="A library that creates colored ASCII-art graphics"
 HOMEPAGE="http://libcaca.zoy.org/"
@@ -24,7 +24,8 @@ LICENSE="
 
 IUSE="
 256-colors-ncurses examples imlib ncurses network opengl slang static-libs
-test truetype X r1
+test truetype X
+ebuild_revision_2
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"
 REQUIRED_USE+="
