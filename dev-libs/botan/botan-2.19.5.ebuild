@@ -29,7 +29,7 @@ CFLAGS_HARDENED_USE_CASES="crypto security-critical sensitive-data"
 PYTHON_COMPAT=( "python3_"{10..12} )
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/botan.asc"
 
-inherit cflags-hardened edo flag-o-matic multiprocessing python-r1
+inherit cflags-hardened check-compiler-switch edo flag-o-matic multiprocessing python-r1
 inherit toolchain-funcs verify-sig
 
 # We don't list 32-bit because of unpatched vulnerabilities in those arches.
@@ -54,7 +54,7 @@ ${CPU_FLAGS_ARM[@]}
 ${CPU_FLAGS_PPC[@]}
 ${CPU_FLAGS_X86[@]}
 doc boost bzip2 lzma python static-libs sqlite test tools zlib
-ebuild_revision_28
+ebuild_revision_29
 "
 RESTRICT="
 	!test? (
@@ -117,6 +117,11 @@ PATCHES=(
 python_check_deps() {
 	use doc || return 0
 	python_has_version "dev-python/sphinx[${PYTHON_USEDEP}]"
+}
+
+pkg_setup() {
+	check-compiler-switch_start
+	python_setup
 }
 
 src_configure() {
@@ -228,6 +233,13 @@ elog "Disabling module(s): ${disable_modules[@]}"
 	fi
 
 	tc-export AR CC CXX
+
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	cflags-hardened_append
 
