@@ -12,7 +12,7 @@ CFLAGS_HARDENED_CI_SANITIZERS_GCC_COMPAT="13"
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DOS HO IO NPD MC OOBR SO UAF UM"
 
-inherit cflags-hardened libtool multilib-minimal
+inherit cflags-hardened check-compiler-switch flag-o-matic libtool multilib-minimal
 
 KEYWORDS="
 ~alpha amd64 arm arm64 ~hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 ~sparc
@@ -34,7 +34,7 @@ LICENSE="libpng2"
 SLOT="0/16"
 IUSE="
 apng cpu_flags_x86_sse static-libs test
-ebuild_revision_14
+ebuild_revision_15
 "
 RESTRICT="
 	!test? (
@@ -49,6 +49,10 @@ DEPEND="
 "
 
 DOCS=( "ANNOUNCE" "CHANGES" "libpng-manual.txt" "README" "TODO" )
+
+pkg_setup() {
+	check-compiler-switch_start
+}
 
 src_prepare() {
 	default
@@ -77,6 +81,13 @@ eerror "Unknown APNG_REPO!"
 }
 
 multilib_src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 	local myeconfargs=(
 		$(multilib_native_enable tools)
