@@ -27,7 +27,7 @@ LUA_PV_SUPPORTED=(
 	"5.4.0"
 ) # Upstream supported specifically
 
-inherit cflags-hardened cmake flag-o-matic lua multilib-minimal sandbox-changes
+inherit cflags-hardened check-compiler-switch cmake flag-o-matic lua multilib-minimal sandbox-changes
 
 KEYWORDS="~amd64 ~ppc ~x86"
 S="${WORKDIR}/civetweb-${PV}"
@@ -45,7 +45,7 @@ ${LUA_COMPAT[@]/#/lua_targets_}
 +asan +c11 c89 c99 cxx98 cxx11 +cxx14 +cgi gnu17 -cxx +caching debug doc
 -duktape +ipv6 -lua -serve_no_files +server_executable -server_stats +ssl
 static-libs -test -websockets -zlib
-ebuild_revision_14
+ebuild_revision_15
 "
 REQUIRED_USE+="
 	lua? (
@@ -133,6 +133,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	if use lua_targets_lua5-3 || use lua_targets_lua5-4 ; then
 ewarn "Lua >=5.3 support is for testing only."
 	fi
@@ -281,7 +282,15 @@ _configure() {
 		)
 	fi
 
-	filter-flags '-flto*'
+	filter-lto
+
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	if has_version "dev-libs/openssl:0/3" ; then
 		mycmakeargs+=(
 			-DCIVETWEB_SSL_OPENSSL_API_1_0=OFF
