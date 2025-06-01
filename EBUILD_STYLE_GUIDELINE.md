@@ -171,7 +171,7 @@
 * C/C++ packages that process user generated content from the Internet need to
   be hardened to prevent Arbitrary Code Execution (ACE) based Zero Click Attack
   (ZCA), in addition we should also mitigate against some Information
-  Disclosure (ID) based Zero Click Attacks.
+  Disclosure (ID) based Zero Click Attacks (ZCA).
 
   Use the cflags-hardened or the rustflags-hardened eclass to apply hardening
   consistently.
@@ -214,7 +214,9 @@
   cflags-hardened eclass.  This is to prevent the possibility that the distro
   forgets to apply hardening patches to clang, which they have done in the
   past, and to apply hardening flags to packages consistently.  In addition
-  to apply missed hardening flags which they still do today.
+  to apply missed hardening flags which they still forget to do today.  While
+  hardening does not completely mitigate, we want to increase the difficulty
+  for the attacker or increase the height of the security fence higher.
 
 * C/C++ daemons and suid packages require `-fstack-clash-protection` C{,XX}FLAG.
 
@@ -274,17 +276,22 @@
   project, or as underoptimized.  It must also accommodate builder machines
   building portable prebuilt packages.
 
-* Ebuilds that do compiler-switch must filter-lto.  This overlay should resolve
+* Ebuilds that do a compiler switch must filter-lto.  This overlay should resolve
   all LTO issues without user intervention.
   1.  filter-lto when the compiler at the beginning of the pkg_setup phase is
-      not the same after a forced compiler switch.
-  2.  filter-lto when LTO compiler is not the same after the compiler switch
-      phase for static-libs or static builds.
+      not the same after a forced compiler switch.  It is assumed that the
+      initial compiler is an LTO compiler.
+  2.  filter-lto when the explicit LTO compiler is not the same after the
+      compiler switch phase for static-libs in any of IUSE or *DEPENDS or for
+      static builds.
   3.  filter-lto when using a GPU compiler
   4.  filter-lto when not using system compilers
   5.  filter-lto when using forked compilers
-  6.  filter-lto when ODR violations encountered
-  7.  filter-lto when runtime issues are encountered.
+  6.  filter-lto when ODR violation(s) are encountered while LTOing
+  7.  filter-lto when runtime issue(s) are encountered.
+  8.  filter-lto when switching between an unstable compiler slot and stable
+      compiler slot to mitigate against the possibile of unstable Intermediate
+      Representation (IR).  (proposed rule)
 
 # Ebuild organization
 
