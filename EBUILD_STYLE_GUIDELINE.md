@@ -213,7 +213,8 @@
 * All C/C++ programs that handle untrusted data or sensitive data must use the
   cflags-hardened eclass.  This is to prevent the possibility that the distro
   forgets to apply hardening patches to clang, which they have done in the
-  past, and to apply hardening flags to packages consistently.
+  past, and to apply hardening flags to packages consistently.  In addition
+  to apply missed hardening flags which they still do today.
 
 * C/C++ daemons and suid packages require `-fstack-clash-protection` C{,XX}FLAG.
 
