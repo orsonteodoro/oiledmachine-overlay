@@ -9,7 +9,7 @@ EAPI=8
 
 EGIT_COMMIT="f42aa68fc798db63b7b2a789ae8cf5b90b57b752"
 USE_RUBY="ruby32" # TODO retest, originally ruby30 ruby31
-inherit autotools flag-o-matic ruby-ng virtualx
+inherit autotools check-compiler-switch flag-o-maticruby-ng virtualx
 
 DESCRIPTION="A library that creates colored ASCII-art graphics"
 HOMEPAGE="http://libcaca.zoy.org/"
@@ -124,6 +124,7 @@ PATCHES=(
 # e4968ba : Fix-a-problem-in-the-caca_resize-overflow-detection-.patch
 
 pkg_setup() {
+	check-compiler-switch_start
 # Some indeterministic or random failures may still exist, but
 # the below may fix it.
 ewarn
@@ -185,6 +186,14 @@ eerror
 
 each_ruby_configure() {
 	check_ruby
+
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	replace-flags '-O*' '-O2'
 	if use 256-colors-ncurses ; then
 		append-cppflags -DUSE_NCURSES_256_COLORS=1
