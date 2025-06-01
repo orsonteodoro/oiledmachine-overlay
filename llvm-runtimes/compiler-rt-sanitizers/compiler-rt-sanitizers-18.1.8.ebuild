@@ -45,7 +45,7 @@ IUSE+="
 ${LLVM_EBUILDS_LLVM18_REVISION}
 +abi_x86_32 abi_x86_64 +clang +debug hexagon +libfuzzer +memprof +orc +profile
 test +xray
-ebuild_revision_13
+ebuild_revision_14
 "
 # sanitizer targets, keep in sync with config-ix.cmake
 # NB: ubsan, scudo deliberately match two entries
@@ -481,7 +481,9 @@ ewarn "Rebuild with GCC 12 if \"Assumed value of MB_LEN_MAX wrong\" pops up."
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
-	if is-flagq '-flto*' && check-compiler-switch_is_lto_changed ; then
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
