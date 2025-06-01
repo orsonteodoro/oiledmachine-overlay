@@ -12,8 +12,9 @@ EAPI=8
 #       ebuilds, we RDEPEND on xproto. See bug #903707 and others.
 
 # Add retpoline for end-to-end copy-paste
+CFLAGS_HARDENED_LANGS="c-lang"
 CFLAGS_HARDENED_USE_CASES="copy-paste-password sensitive-data untrusted-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE IO PE"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF DOS IO OOBR OOBW PE"
 XORG_DOC=doc
 XORG_MULTILIB=yes
 
