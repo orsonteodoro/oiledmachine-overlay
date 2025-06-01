@@ -6,7 +6,7 @@ EAPI=8
 LLVM_SLOT=18
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake edo flag-o-matic rocm
+inherit check-compiler-switch cmake edo flag-o-matic rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_CLR_REPO_URI="https://github.com/ROCm-Developer-Tools/ROCclr"
@@ -46,7 +46,7 @@ RESTRICT="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 debug test
-ebuild_revision_5
+ebuild_revision_6
 "
 # ROCclr uses clang -print-libgcc-file-name which may output a static-lib to link to.
 RDEPEND="
@@ -82,6 +82,7 @@ ROCCLR_PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	rocm_pkg_setup
 }
 
@@ -111,6 +112,24 @@ src_prepare() {
 
 src_configure() {
 	rocm_set_default_gcc
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! check-compiler-switch_is_system_flavor ; then
+einfo "Detected GPU compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 #
 # Reported upstream:
 #
