@@ -231,7 +231,7 @@ is_pgo_ready() {
 
 pkg_setup() {
 	check-compiler-switch_start
-ewarn "Use GCC 12 if build fails for =${CATEGORY}/${PN}-${PVR}."
+ewarn "Use eselect to switch to GCC 12 and build with clang-18 if build fails for =${CATEGORY}/${PN}-${PVR}."
 	if use pgo && ! is_pgo_ready ; then
 		local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 ewarn
