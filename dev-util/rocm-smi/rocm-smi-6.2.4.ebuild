@@ -37,7 +37,7 @@ LICENSE="
 # NCSA-AMD - src/rocm_smi.cc
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" ebuild_revision_9"
+IUSE=" ebuild_revision_10"
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
 "
