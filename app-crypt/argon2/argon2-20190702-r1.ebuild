@@ -6,7 +6,7 @@ EAPI=7
 CFLAGS_HARDENED_FORTIFY_FIX_LEVEL=3
 CFLAGS_HARDENED_USE_CASES="crypto security-critical sensitive-data"
 
-inherit cflags-hardened toolchain-funcs
+inherit cflags-hardened check-compiler-switch flag-o-matic toolchain-funcs
 
 # We don't list the 32 bit versions because of missing mitigations for those arches.
 KEYWORDS="
@@ -29,11 +29,15 @@ LICENSE="
 SLOT="0/1"
 IUSE="
 static-libs
-ebuild_revision_30
+ebuild_revision_31
 "
 DOCS=(
 	"argon2-specs.pdf" "CHANGELOG.md" "README.md"
 )
+
+pkg_setup() {
+	check-compiler-switch_start
+}
 
 src_prepare() {
 	default
@@ -65,8 +69,15 @@ src_prepare() {
 }
 
 src_configure() {
-	default
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
+	econf
 }
 
 src_compile() {
