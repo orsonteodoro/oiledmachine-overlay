@@ -68,7 +68,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" plugins samples test ebuild_revision_16"
+IUSE=" plugins samples test ebuild_revision_17"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
