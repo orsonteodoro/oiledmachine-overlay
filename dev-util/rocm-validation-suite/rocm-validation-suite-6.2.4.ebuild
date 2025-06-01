@@ -8,7 +8,7 @@ MY_PN="ROCmValidationSuite"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_VERSION="${PV}"
 
-inherit check-glibcxx-ver cmake rocm
+inherit check-compiler-switch flag-o-matic check-glibcxx-ver cmake rocm
 
 if [[ ${PV} == *"9999" ]] ; then
 	EGIT_BRANCH="master"
@@ -45,7 +45,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test" # Needs SRC_URI changes for offline install.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE+=" doc test ebuild_revision_1"
+IUSE+=" doc test ebuild_revision_2"
 RDEPEND="
 	dev-cpp/yaml-cpp
 	sys-apps/pciutils
@@ -70,6 +70,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	rocm_pkg_setup
 }
 
@@ -80,6 +81,23 @@ src_prepare() {
 
 src_configure() {
 	rocm_set_default_gcc
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! check-compiler-switch_is_system_flavor ; then
+einfo "Detected GPU compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 # Prevent:
 # ld.bfd: /usr/lib/gcc/x86_64-pc-linux-gnu/12/../../../../lib64/libyaml-cpp.so: undefined reference to `std::ios_base_library_init()@GLIBCXX_3.4.32'
