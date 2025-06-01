@@ -6,7 +6,7 @@ EAPI=8
 LLVM_SLOT=18 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.4/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake flag-o-matic rocm
+inherit check-compiler-switch cmake flag-o-matic rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/ROCR-Runtime/"
@@ -35,7 +35,7 @@ RESTRICT="strip" # Fix issue with finding symbols
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 	debug
-	ebuild_revision_14
+	ebuild_revision_15
 "
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
@@ -59,6 +59,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	rocm_pkg_setup
 }
 
@@ -72,6 +73,23 @@ src_prepare() {
 
 src_configure() {
 	rocm_set_default_clang
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! check-compiler-switch_is_system_flavor ; then
+einfo "Detected GPU compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	use debug || append-cxxflags "-DNDEBUG"
 	local mycmakeargs=(
