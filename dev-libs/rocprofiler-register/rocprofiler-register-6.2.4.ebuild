@@ -45,7 +45,7 @@ LICENSE="
 # MIT - LICENSE
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE+=" samples static-libs test ebuild_revision_7"
+IUSE+=" samples static-libs test ebuild_revision_8"
 # glog downgraded originally 0.7.0
 RDEPEND="
 	>=dev-cpp/glog-0.6.0
@@ -99,9 +99,19 @@ src_configure() {
 	rocm_set_default_clang
 
 	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
 	# Prevent static-libs IR mismatch.
 einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! check-compiler-switch_is_system_flavor ; then
+einfo "Detected GPU compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
