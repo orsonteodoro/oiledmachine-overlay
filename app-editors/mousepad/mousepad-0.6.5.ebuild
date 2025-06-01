@@ -3,6 +3,7 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_LANGS="c-lang"
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 
 inherit cflags-hardened gnome2-utils meson xdg-utils
