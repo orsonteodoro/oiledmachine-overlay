@@ -3,6 +3,8 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_ASSEMBLERS="gas inline"
+CFLAGS_HARDENED_LANGS="asm c-lang"
 CFLAGS_HARDENED_USE_CASES="sensitive-data system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="PE"
 # gnulib FPs \
