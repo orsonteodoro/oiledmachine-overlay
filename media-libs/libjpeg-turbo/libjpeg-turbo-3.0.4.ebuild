@@ -239,7 +239,30 @@ is_pgo_ready() {
 
 pkg_setup() {
 	check-compiler-switch_start
-ewarn "Use eselect to switch to GCC 12 and build with clang-18 if build fails for =${CATEGORY}/${PN}-${PVR}."
+ewarn
+ewarn "If the build fails for =${CATEGORY}/${PN}-${PVR}, do the following:"
+ewarn
+ewarn "eselect gcc set ${CHOST}-12"
+ewarn "source /etc/profile"
+ewarn
+ewarn "Contents of /etc/portage/env/clang-18.conf:"
+ewarn "CC=\"clang-18\""
+ewarn "CXX=\"clang++-18\""
+ewarn "CPP=\"clang-18 -E\""
+ewarn "AR=\"llvm-ar\""
+ewarn "NM=\"llvm-nm\""
+ewarn "OBJCOPY=\"llvm-objcopy\""
+ewarn "OBJDUMP=\"llvm-objdump\""
+ewarn "READELF=\"llvm-readelf\""
+ewarn "STRIP=\"llvm-strip\""
+ewarn
+ewarn "Contents of /etc/portage/package.env:"
+ewarn "media-libs/libjpeg-turbo clang-18.conf"
+ewarn
+ewarn "emerge -1vO =${CATEGORY}/${PN}-${PVR}"
+ewarn "eselect gcc set ${CHOST}-13 # Restore previous gcc slot for LTO/GPU packages"
+ewarn "source /etc/profile"
+ewarn
 	if use pgo && ! is_pgo_ready ; then
 		local distdir="${PORTAGE_ACTUAL_DISTDIR:-${DISTDIR}}"
 ewarn
