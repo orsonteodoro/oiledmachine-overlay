@@ -32,7 +32,7 @@ LLVM_SLOT=18
 ROCM_SLOT="${PV%.*}"
 ROCM_VERSION="${PV}"
 
-inherit cmake dhms flag-o-matic rocm
+inherit check-compiler-switch cmake dhms flag-o-matic rocm
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="develop"
@@ -61,7 +61,7 @@ LICENSE="
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/$(ver_cut 1-2)"
 IUSE+="
-test ebuild_revision_11
+test ebuild_revision_12
 "
 REQUIRED_USE="
 "
@@ -100,6 +100,7 @@ ewarn "${gpu} is not tested upstream."
 
 pkg_setup() {
 	dhms_start
+	check-compiler-switch_start
 	rocm_pkg_setup
 	warn_untested_gpu
 }
@@ -131,6 +132,23 @@ src_configure() {
 	local llvm_slot="${LLVM_SLOT}"
 
 	rocm_set_default_clang
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! check-compiler-switch_is_system_flavor ; then
+einfo "Detected GPU compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	# Prevent
 	# error: Illegal instruction detected: Operand has incorrect register class.
