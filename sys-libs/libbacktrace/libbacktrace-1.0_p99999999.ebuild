@@ -3,7 +3,7 @@
 
 EAPI=8
 
-inherit autotools git-r3 multilib-minimal
+inherit autotools check-compiler-switch flag-o-matic git-r3 multilib-minimal
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
@@ -65,6 +65,10 @@ PATCHES=(
 )
 DOCS=( README.md )
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]] ; then
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
@@ -83,6 +87,13 @@ multilib_src_prepare() {
 }
 
 multilib_src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	local mymakeargs=(
 		--enable-shared
 		$(use_enable static{-libs,})
