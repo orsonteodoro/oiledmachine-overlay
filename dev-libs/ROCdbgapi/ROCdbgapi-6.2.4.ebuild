@@ -29,7 +29,7 @@ LICENSE="
 "
 # || ( ( GPL-2.0 Linux-syscall-note ) MIT ) - src/linux/kfd_sysfs.h
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" ebuild_revision_9"
+IUSE=" ebuild_revision_10"
 RDEPEND="
 	!dev-libs/ROCdbgapi:0
 	~dev-libs/rocm-comgr-${PV}:${ROCM_SLOT}
