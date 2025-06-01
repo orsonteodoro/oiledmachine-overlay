@@ -42,7 +42,7 @@ inherit hip-versions
 ROCM_VERSION="${HIP_5_3_VERSION}"
 EGIT_COMMIT="4996b9794cdbc3852fad6e2ae0dbab1e48f2e5f0"
 
-inherit cmake rocm
+inherit check-compiler-switch cmake flag-o-matic rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/HIPRT-${EGIT_COMMIT}"
@@ -74,7 +74,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${ROCM_VERSION}"
-IUSE="-bake-kernels -bitcode cuda encrypt precompile rocm system-orochi test ebuild_revision_7"
+IUSE="-bake-kernels -bitcode cuda encrypt precompile rocm system-orochi test ebuild_revision_8"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 	?? (
@@ -118,6 +118,7 @@ PATCHES=(
 DOCS=( "README.md" )
 
 pkg_setup() {
+	check-compiler-switch_start
 	rocm_pkg_setup
 }
 
@@ -161,6 +162,24 @@ src_prepare() {
 
 src_configure() {
 	rocm_set_default_clang
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! check-compiler-switch_is_system_flavor ; then
+einfo "Detected GPU compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	export HIP_PATH="/opt/rocm-${ROCM_VERSION}"
 	local mycmakeargs=(
 		-DBITCODE=$(usex bitcode)
