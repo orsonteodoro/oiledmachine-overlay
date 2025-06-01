@@ -10,7 +10,7 @@ af bg ca cs cy da de de-1901 el en eo es et fo fr ga gl he hr hu ia id is it kk
 km ku lt lv mi mk ms nb nl nn pl pt pt-BR ro ru sk sl sq sv sw tn uk zu
 "
 
-inherit autotools flag-o-matic multilib-minimal
+inherit autotools check-compiler-switch flag-o-matic multilib-minimal
 
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~s390"
 SRC_URI="
@@ -69,6 +69,10 @@ PATCHES=(
 )
 DOCS=( "AUTHORS" "ChangeLog" "license."{"hunspell","myspell"} "NEWS" "README" "THANKS" )
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_prepare() {
 	default
 	eautoreconf
@@ -76,6 +80,13 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	# Missing somehow...
 	[[ "${CHOST}" == *"-darwin"* ]] && append-libs -liconv
 	#
