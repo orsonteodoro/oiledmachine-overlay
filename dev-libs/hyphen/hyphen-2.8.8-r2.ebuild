@@ -3,7 +3,7 @@
 
 EAPI=8
 
-inherit multilib-minimal
+inherit check-compiler-switch flag-o-matic multilib-minimal
 
 SRC_URI="
 mirror://sourceforge/hunspell/${P}.tar.gz
@@ -38,12 +38,23 @@ DOCS=(
 	TODO
 )
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_prepare() {
 	default
 	multilib_copy_sources
 }
 
 multilib_src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	econf $(use_enable static-libs static)
 }
 
