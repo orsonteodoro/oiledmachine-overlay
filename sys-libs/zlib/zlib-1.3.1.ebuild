@@ -72,7 +72,7 @@ SLOT="0/1" # subslot = SONAME
 IUSE="
 ${TRAINERS[@]}
 minizip minizip-utils pgo static-libs
-ebuild_revision_20
+ebuild_revision_21
 "
 REQUIRED_USE="
 	pgo? (
@@ -381,6 +381,12 @@ _src_configure() {
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
