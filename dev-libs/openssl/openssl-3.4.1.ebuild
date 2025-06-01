@@ -13,7 +13,7 @@ CFLAGS_HARDENED_USE_CASES="crypto network security-critical sensitive-data syste
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF HO IO SO UM"
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/openssl.org.asc"
 
-inherit cflags-hardened edo flag-o-matic linux-info toolchain-funcs
+inherit cflags-hardened check-compiler-switch edo flag-o-matic linux-info toolchain-funcs
 inherit multilib multilib-minimal multiprocessing preserve-libs
 
 S="${WORKDIR}/${MY_P}"
@@ -50,7 +50,7 @@ SLOT="0/$(ver_cut 1)" # .so version of libssl/libcrypto
 IUSE="
 +asm cpu_flags_x86_sse2 fips ktls +quic rfc3779 sctp static-libs test
 tls-compression vanilla weak-ssl-ciphers
-ebuild_revision_31
+ebuild_revision_32
 "
 RESTRICT="
 	!test? (
@@ -89,6 +89,7 @@ MULTILIB_WRAPPED_HEADERS=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	if use ktls ; then
 		if kernel_is -lt 4 18 ; then
 ewarn "Kernel implementation of TLS (USE=ktls) requires kernel >=4.18!"
@@ -162,6 +163,13 @@ src_configure() {
 	# warnings/errors (which may or may not be false positives), it's considered
 	# unsupported, and it's not tested in CI: https://github.com/openssl/openssl/issues/18663.
 	filter-lto
+
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	append-flags $(test-flags-CC -Wa,--noexecstack)
 
