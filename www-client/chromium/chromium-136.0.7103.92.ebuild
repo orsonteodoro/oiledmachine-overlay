@@ -3055,7 +3055,7 @@ eerror
 
 src_prepare() {
 	# Calling this here supports resumption via FEATURES=keepwork
-	python_setup
+	python-any-r1_pkg_setup
 
 	check_deps_cfi_cross_dso
 
@@ -3978,7 +3978,7 @@ _src_configure() {
 	cd "${s}" || die
 
 	# Calling this here supports resumption via FEATURES=keepwork
-	python_setup
+	python-any-r1_pkg_setup
 
 	local total_ram=$(free | grep "Mem:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
 	local total_ram_gib=$(( ${total_ram} / (1024*1024) ))
@@ -5880,7 +5880,7 @@ _src_compile() {
 	cd "${s}" || die
 
 	# Calling this here supports resumption via FEATURES=keepwork
-	python_setup
+	python-any-r1_pkg_setup
 
 	# Don't inherit PYTHONPATH from environment, bug #789021, #812689
 	local -x PYTHONPATH=

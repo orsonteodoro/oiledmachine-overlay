@@ -696,7 +696,7 @@ einfo
 pkg_setup() {
 	dhms_start
 	check-compiler-switch_start
-	python_setup
+	python-single-r1_pkg_setup
 	setup_tc
 
 	if ! [[ "${BAZEL_LD_PRELOAD_IGNORED_RISKS}" =~ ("allow"|"accept") ]] ; then

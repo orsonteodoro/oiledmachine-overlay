@@ -380,7 +380,7 @@ einfo "Building flang"
 
 pkg_setup() {
 	llvm_pkg_setup
-	python_setup
+	python-any-r1_pkg_setup
 }
 
 src_prepare() {

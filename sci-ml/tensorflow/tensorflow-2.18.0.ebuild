@@ -1332,7 +1332,7 @@ einfo
 	count_py_impls() {
 		num_pythons_enabled=$((${num_pythons_enabled} + 1))
 	}
-	python_setup
+	python-single-r1_pkg_setup
 	python_foreach_impl count_py_impls
 
 	# 10G to build C/C++ libs, 6G per python impl

@@ -434,7 +434,7 @@ BDEPEND="
 DOCS=( )
 
 pkg_setup() {
-	python_setup
+	python-single-r1_pkg_setup
 	rust_pkg_setup
 }
 

@@ -476,7 +476,7 @@ eerror "Switch to >=sys-devel/gcc-13.2"
 			die
 		fi
 	fi
-	python_setup
+	python-any-r1_pkg_setup
 	if use rocm ; then
 		if use rocm_6_3 ; then
 			export LLVM_SLOT="18"

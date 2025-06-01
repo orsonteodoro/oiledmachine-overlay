@@ -71,7 +71,7 @@ distutils_enable_tests "pytest"
 
 pkg_setup() {
 	check-compiler-switch_start
-	python_setup
+	python-single-r1_pkg_setup
 	export CC="${CHOST}-gcc"
 	export CXX="${CHOST}-g++"
 	export CPP="${CC} -E"

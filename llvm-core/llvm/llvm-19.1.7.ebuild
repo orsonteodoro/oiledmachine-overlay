@@ -199,7 +199,7 @@ BDEPEND+="
 pkg_setup() {
 	dhms_start
 	check-compiler-switch_start
-	python_setup
+	python-any-r1_pkg_setup
 ewarn
 ewarn "To avoid long linking delays, close programs that produce unexpectedly"
 ewarn "high disk activity (web browsers) and possibly switch to -j1."

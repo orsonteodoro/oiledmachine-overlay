@@ -5,7 +5,7 @@ EAPI=8
 
 # U 22.04
 
-PYTHON_COMPAT=( "python3_10" ) # CI only tests with 3.10
+PYTHON_COMPAT=( "python3_11" ) # CI only tests with 3.10, testing bump
 
 inherit cmake python-any-r1
 
@@ -43,7 +43,7 @@ BDEPEND="
 DOCS=( "README.md" )
 
 pkg_setup() {
-	python_setup
+	python-any-r1_pkg_setup
 }
 
 src_configure() {

@@ -99,7 +99,7 @@ pkg_setup() {
 	java-pkg-opt-2_pkg_setup
 	java-pkg_ensure-vm-version-eq ${JAVA_SLOT}
 	javac --version || die
-	python_setup
+	python-single-r1_pkg_setup
 }
 
 src_unpack() {

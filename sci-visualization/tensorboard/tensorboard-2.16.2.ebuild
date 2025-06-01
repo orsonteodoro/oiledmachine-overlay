@@ -279,7 +279,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 # Avoid /usr/include/bits/stdlib.h:86:3: error: "Assumed value of MB_LEN_MAX wrong" \
 	check_libstdcxx ${GCC_SLOT}
-	python_setup
+	python-single-r1_pkg_setup
 einfo "CC:\t\t${CC}"
 einfo "CXX:\t\t${CXX}"
 einfo "CFLAGS:\t${CFLAGS}"

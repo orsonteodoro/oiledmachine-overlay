@@ -21,7 +21,7 @@ CHROMA_CORE_HNSWLIB_PV="0.8.1"
 DISTUTILS_EXT=1
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="maturin"
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{11..12} )
 GRPC_SLOTS_DEV=(
 # Based on protobuf requirement for opentelemetry-proto 1.29.0
 	"1.63" # protobuf 5.26
@@ -1071,7 +1071,7 @@ BDEPEND+="
 DOCS=( "README.md" )
 
 pkg_setup() {
-	python_setup
+	python-single-r1_pkg_setup
 	rust_pkg_setup
 
 	# Prevent overswapping

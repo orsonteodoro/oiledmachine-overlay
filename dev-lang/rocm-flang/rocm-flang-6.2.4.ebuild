@@ -183,7 +183,7 @@ eerror
 }
 
 pkg_setup() {
-	python_setup
+	python-any-r1_pkg_setup
 	if ! use aocc ; then
 		ROCM_USE_LLVM_ROC=1
 	fi

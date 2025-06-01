@@ -1836,7 +1836,7 @@ src_prepare() {
 
 	CMAKE_USE_DIR="${S}/cmake"
 
-	python_setup
+	python-single-r1_pkg_setup
 
 	use cuda && cuda_src_prepare
 

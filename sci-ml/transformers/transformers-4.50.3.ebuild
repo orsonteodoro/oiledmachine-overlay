@@ -367,7 +367,7 @@ BDEPEND="
 distutils_enable_tests "pytest"
 
 pkg_setup() {
-	python_setup
+	python-single-r1_pkg_setup
 	if has_version ">=dev-python/keras-3" ; then
 ewarn "You must emerge dev-python/tf-keras"
 	fi

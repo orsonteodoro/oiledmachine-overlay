@@ -249,7 +249,7 @@ ewarn
 }
 
 pkg_setup() {
-	python_setup
+	python-single-r1_pkg_setup
 	npm_pkg_setup
 	check_virtual_mem
 }

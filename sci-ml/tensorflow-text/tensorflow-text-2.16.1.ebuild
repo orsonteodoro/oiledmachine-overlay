@@ -191,7 +191,7 @@ PATCHES=(
 
 pkg_setup() {
 	check-compiler-switch_start
-	python_setup
+	python-single-r1_pkg_setup
 	# Building with clang is broken.
 	local s
 	local GCC_SLOT="-1"

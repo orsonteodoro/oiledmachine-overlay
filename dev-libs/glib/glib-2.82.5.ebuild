@@ -482,7 +482,7 @@ multilib_src_test() {
 	export LC_TIME="C" # bug #411967
 	export TZ="UTC"
 	unset GSETTINGS_BACKEND # bug #596380
-	python_setup
+	python-any-r1_pkg_setup
 
 	# https://bugs.gentoo.org/839807
 	local -x SANDBOX_PREDICT="${SANDBOX_PREDICT}"
