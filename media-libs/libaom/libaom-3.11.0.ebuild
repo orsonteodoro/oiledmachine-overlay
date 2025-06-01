@@ -24,8 +24,8 @@ UOPTS_BOLT_INST_ARGS=(
 	"libaom_av1_rc.so:--skip-funcs=.text/1"
 )
 
-inherit aocc cmake-multilib flag-o-matic flag-o-matic-om cflags-hardened
-inherit check-compiler-switch multiprocessing python-single-r1 toolchain-funcs uopts
+inherit aocc cflags-hardened check-compiler-switch cmake-multilib flag-o-matic flag-o-matic-om
+inherit multiprocessing python-single-r1 toolchain-funcs uopts
 
 if [[ ${PV} == *9999* ]]; then
 	inherit git-r3
@@ -95,7 +95,7 @@ ${PPC_IUSE}
 ${PGO_TRAINERS}
 ${X86_IUSE}
 +asm big-endian chromium debug doc +examples lossless pgo static-libs test
-ebuild_revision_29
+ebuild_revision_30
 "
 REQUIRED_USE="
 	cpu_flags_x86_sse2? (
@@ -432,7 +432,8 @@ einfo "CFLAGS:  ${CFLAGS}"
 	uopts_src_configure
 
 	check-compiler-switch_end
-	if check-compiler-switch_is_flavor_slot_changed ; then
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
