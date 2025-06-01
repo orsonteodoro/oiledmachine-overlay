@@ -43,7 +43,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE+="
 cpu enhanced-message ffmpeg ieee1394 opencv python system-rapidjson system-jpeg
 test
-ebuild_revision_3
+ebuild_revision_4
 "
 RDEPEND="
 	${PYTHON_DEPS}
