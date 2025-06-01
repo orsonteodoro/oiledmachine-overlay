@@ -7,7 +7,7 @@ CMAKE_BUILD_TYPE="Release"
 LLVM_SLOT=18 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.4/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake rocm
+inherit check-compiler-switch cmake flag-o-matic rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/ROCm/llvm-project.git"
@@ -89,7 +89,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild_revision_11"
+IUSE="test ebuild_revision_12"
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
 	!dev-libs/rocm-device-libs:0
@@ -106,6 +106,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	rocm_pkg_setup
 }
 
@@ -130,6 +131,24 @@ src_prepare() {
 src_configure() {
 	export LD_LIBRARY_PATH="${EROCM_PATH}/llvm/$(rocm_get_libdir):${LD_LIBRARY_PATH}"
 	rocm_set_default_clang
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! check-compiler-switch_is_system_flavor ; then
+einfo "Detected GPU compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	local mycmakeargs=(
 		-DCMAKE_INSTALL_PREFIX="${EPREFIX}${EROCM_PATH}"
 		-DLLVM_DIR="${ESYSROOT}${EROCM_LLVM_PATH}"
