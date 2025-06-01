@@ -49,7 +49,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 +apps +built-in-weights +clang doc gcc openimageio
-ebuild_revision_8
+ebuild_revision_9
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}

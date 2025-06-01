@@ -90,7 +90,7 @@ ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${ROCM_SLOTS[@]}
 aot +apps +built-in-weights +clang cpu cuda doc gcc openimageio rocm sycl
-ebuild_revision_8
+ebuild_revision_9
 "
 
 gen_required_use_cuda_targets() {
