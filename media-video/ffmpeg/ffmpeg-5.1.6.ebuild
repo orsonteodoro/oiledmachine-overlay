@@ -473,7 +473,7 @@ ${USE_LICENSES[@]}
 alsa chromium -clear-config-first cuda cuda-filters doc +encode gdbm liblensfun
 mold openvino oss pgo +re-codecs sndio sr static-libs tensorflow test v4l
 wayland
-ebuild_revision_46
+ebuild_revision_47
 "
 
 # x means plus.  There is a bug in the USE flag system where + is not recognized.
@@ -1998,6 +1998,13 @@ eerror
 	# Disabling LTO is a security risk.  It disables Clang CFI.
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+		LTO_FLAG=""
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 		LTO_FLAG=""
