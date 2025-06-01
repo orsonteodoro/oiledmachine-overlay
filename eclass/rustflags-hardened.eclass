@@ -317,12 +317,12 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # @USER_VARIABLE
 # A space separated list of sanitizers used to increase sanitizer instrumentation
 # chances or enablement for automagic.  Data observed from build files.
-# Valid values:  asan, cfi, lsan, msan, tsan, ubsan
+# Valid values:  asan, cfi, lsan, msan, scs, tsan, ubsan
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_CI_SANITIZERS
 # A space separated list of sanitizers used to increase sanitizer instrumentation
 # chances or enablement for automagic.  Data observed from CI files or logs.
-# Valid values:  asan, cfi, lsan, msan, tsan, ubsan
+# Valid values:  asan, cfi, lsan, msan, scs, tsan, ubsan
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT
 # @DESCRIPTION:
@@ -347,12 +347,12 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_AUTO_SANITIZE_USER
 # @USER_VARIABLE
 # Enable auto sanitization with halt on violation.
-# Valid values:  asan, ubsan
+# Valid values:  asan, cfi, lsan, msan, scs, tsan, ubsan
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_AUTO_SANITIZE_EXCLUDE
 # @DESCRIPTION:
 # Disable broken sanitizers.
-# Valid values: asan, cfi, lsan, msan, tsan, ubsan
+# Valid values:  asan, cfi, lsan, msan, scs, tsan, ubsan
 
 # @ECLASS_VARIABLE:  RUSTFLAGS_HARDENED_LLVM_CFI
 # @DESCRIPTION:
@@ -1464,7 +1464,7 @@ einfo "Auto-sanitizing package:  No"
 			["address"]="asan"
 			["hwaddress"]="hwasan"
 			["leak"]="lsan"
-			["shadow-call-stack"]="shadowcallstack"
+			["shadow-call-stack"]="scs"
 			["thread"]="tsan"
 			["undefined"]="ubsan"
 		)
@@ -1476,8 +1476,8 @@ einfo "Auto-sanitizing package:  No"
 			["leak"]="lsan"
 			["memory"]="msan"
 			["safe-stack"]="safestack"
-			["shadow-call-stack"]="shadowcallstack"
-			["shadowcallstack"]="shadowcallstack"
+			["shadow-call-stack"]="scs"
+			["shadowcallstack"]="scs"
 			["realtime"]="rtsan"
 			["thread"]="tsan"
 			["type"]="tysan"
@@ -1517,7 +1517,7 @@ einfo "Auto-sanitizing package:  No"
 			["msan"]="0"			# DoS, ID
 			["rtsan"]="0"
 			["safestack"]="0"		# ZC, CE, PE
-			["shadowcallstack"]="0"		# ZC, CE, PE
+			["scs"]="0"		# ZC, CE, PE
 			["tsan"]="0"			# ZC, CE, PE, DoS, DT
 			["ubsan"]="0"			# ZC, CE, PE, DoS, DT, ID
 			["tysan"]="0"			# ZC, CE, PE, DoS, DT, ID

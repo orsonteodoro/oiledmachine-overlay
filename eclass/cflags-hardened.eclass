@@ -393,13 +393,13 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # @USER_VARIABLE
 # A space separated list of sanitizers used to increase sanitizer instrumentation
 # chances or enablement for automagic.  Data observed from build files.
-# Valid values:  asan, cfi, lsan, msan, tsan, ubsan
+# Valid values:  asan, cfi, lsan, msan, scs, tsan, ubsan
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_CI_SANITIZERS
 # @USER_VARIABLE
 # A space separated list of sanitizers used to increase sanitizer instrumentation
 # chances or enablement for automagic.  Data observed from CI files or logs.
-# Valid values:  asan, cfi, lsan, msan, tsan, ubsan
+# Valid values:  asan, cfi, lsan, msan, scs, tsan, ubsan
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT
 # @DESCRIPTION:
@@ -426,12 +426,12 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # @USER_VARIABLE
 # @DESCRIPTION:
 # Enable auto sanitization with halt on violation.
-# Valid values:  asan, ubsan
+# Valid values:  asan, cfi, lsan, msan, scs, tsan, ubsan
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_AUTO_SANITIZE_EXCLUDE
 # @DESCRIPTION:
 # Disable broken sanitizers.
-# Valid values: asan, cfi, lsan, msan, tsan, ubsan
+# Valid values: asan, cfi, lsan, msan, scs, tsan, ubsan
 
 # @ECLASS_VARIABLE:  CFLAGS_HARDENED_LANGS
 # @DESCRIPTION:
@@ -2124,7 +2124,7 @@ einfo "Auto-sanitizing package:  No"
 			["leak"]="lsan"
 			["pointer-compare"]="asan"
 			["pointer-subtract"]="asan"
-			["shadow-call-stack"]="shadowcallstack"
+			["shadow-call-stack"]="scs"
 			["thread"]="tsan"
 			["undefined"]="ubsan"
 		)
@@ -2181,7 +2181,7 @@ einfo "Auto-sanitizing package:  No"
 			["leak"]="lsan"
 			["memory"]="msan"
 			["safe-stack"]="safestack"
-			["shadowcallstack"]="shadowcallstack"
+			["shadowcallstack"]="scs"
 			["realtime"]="rtsan"
 			["thread"]="tsan"
 			["type"]="tysan"
@@ -2197,7 +2197,7 @@ einfo "Auto-sanitizing package:  No"
 			["msan"]="11.0"
 			["rtsan"]="1.05" # placeholder
 			["safestack"]="1.20"
-			["shadowcallstack"]="1.15"
+			["scs"]="1.15"
 			["tsan"]="16.0"
 			["ubsan"]="2.0"
 			["tysan"]="1.05" # placeholder
@@ -2221,7 +2221,7 @@ einfo "Auto-sanitizing package:  No"
 			["msan"]="0"			# DoS, ID
 			["rtsan"]="0"
 			["safestack"]="0"		# ZC, CE, PE
-			["shadowcallstack"]="0"		# ZC, CE, PE
+			["scs"]="0"		# ZC, CE, PE
 			["tsan"]="0"			# ZC, CE, PE, DoS, DT
 			["ubsan"]="0"			# ZC, CE, PE, DoS, DT, ID
 			["tysan"]="0"			# ZC, CE, PE, DoS, DT, ID
