@@ -88,7 +88,7 @@ PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 ROCM_USE_LLVM_ROC=1
 
-inherit cmake flag-o-matic grpc-ver python-single-r1 rocm
+inherit check-compiler-switch cmake flag-o-matic grpc-ver python-single-r1 rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/llvm-project-rocm-${PV}/openmp"
@@ -127,7 +127,7 @@ ${LLVM_TARGETS[@]/#/llvm_targets_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${ROCM_IUSE}
 +archer -cuda +gdb-plugin -offload -ompt +ompd -rpc
-ebuild_revision_27
+ebuild_revision_28
 "
 
 gen_cuda_required_use() {
@@ -322,6 +322,7 @@ gen_nvptx_list() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	rocm_pkg_setup
 	python-single-r1_pkg_setup
 }
@@ -408,6 +409,24 @@ src_configure() {
 	addpredict "/dev/kfd"
 	addpredict "/proc/self/task/"
 	rocm_set_default_gcc
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! check-compiler-switch_is_system_flavor ; then
+einfo "Detected GPU compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	replace-flags '-O0' '-O1'
 
 # Fixes:
