@@ -7,7 +7,7 @@ CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data system-set untrusted
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="HO IO"
 EMESON_SOURCE="${S}/build/meson"
 
-inherit cflags-hardened meson-multilib
+inherit cflags-hardened check-compiler-switch flag-o-matic meson-multilib
 
 KEYWORDS="
 ~alpha amd64 arm arm64 hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86
@@ -28,7 +28,7 @@ RESTRICT="
 SLOT="0/1.10.0-meson"
 IUSE="
 static-libs test
-ebuild_revision_15
+ebuild_revision_16
 "
 
 PATCHES=(
@@ -37,7 +37,18 @@ PATCHES=(
 	"${FILESDIR}/${PV}-meson-do-not-force-c99-mode.patch"
 )
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 multilib_src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 	local emesonargs=(
 		-Dtests=$(usex test true false)
