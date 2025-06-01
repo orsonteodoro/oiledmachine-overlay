@@ -8,7 +8,7 @@ EGIT_BRANCH="master"
 EGIT_REPO_URI="https://github.com/probonopd/static-tools.git"
 FALLBACK_COMMIT="f0f6e679a001c4ad0e393f829a2396bf41f59cfe" # Apr 14, 2024
 
-inherit git-r3
+inherit check-compiler-switch flag-o-matic git-r3
 
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 SRC_URI=""
@@ -45,6 +45,16 @@ PATCHES=(
 	"${FILESDIR}/static-tools-runtime-fuse2-9999-9bf80ec-flags.patch"
 	"${FILESDIR}/static-tools-runtime-fuse2-9999-9bf80ec-link-to-lzma.patch" # Required by squashfuse
 )
+
+pkg_setup() {
+	check-compiler-switch_start
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+}
 
 src_unpack() {
 	if use fallback-commit ; then
