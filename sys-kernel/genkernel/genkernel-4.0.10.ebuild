@@ -34,7 +34,7 @@ LLVM_CFI_ARM64_SLOTS=( {18..12} )
 LLVM_CFI_X86_SLOTS=( {18..13} )
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit bash-completion-r1
+inherit bash-completion-r1 flag-o-matic
 
 # Whenever you bump a GKPKG, check if you have to move
 # or add new patches!
@@ -125,7 +125,7 @@ IUSE+=" ibm +firmware"
 IUSE+=" crypt_root_plain"			# Added by oteodoro.
 IUSE+=" subdir_mount"				# Added by the muslx32 overlay.
 IUSE+=" +llvm +lto cfi shadowcallstack"		# Added by the oiledmachine-overlay.
-IUSE+=" ebuild_revision_17"
+IUSE+=" ebuild_revision_18"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	cfi? (
@@ -263,6 +263,11 @@ RDEPEND+="
 if [[ "${PV}" =~ "9999" ]]; then
 	DEPEND="${DEPEND} app-text/asciidoc"
 fi
+
+pkg_setup() {
+	filter-lto
+	python-single-r1_pkg_setup
+}
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]]; then

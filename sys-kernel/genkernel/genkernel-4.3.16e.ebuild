@@ -47,7 +47,7 @@ LLVM_CFI_X86_SLOTS=( {18..13} )
 LLVM_PGO_SLOTS=( {18..13} )
 PYTHON_COMPAT=( "python3_"{10..12} )
 
-inherit bash-completion-r1 python-single-r1
+inherit bash-completion-r1 flag-o-matic python-single-r1
 
 # Whenever you bump a GKPKG, check if you have to move
 # or add new patches!
@@ -445,6 +445,11 @@ RDEPEND+="
 "
 PATCHES=(
 )
+
+pkg_setup() {
+	filter-lto
+	python-single-r1_pkg_setup
+}
 
 src_unpack() {
 	if [[ "${PV}" =~ "9999" ]]; then
