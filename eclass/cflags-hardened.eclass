@@ -1960,22 +1960,29 @@ einfo "Adding extra flags to unbreak ${coverage_pct} of -D_FORTIFY_SOURCE checks
 	if [[ -n "${auto_sanitize}" ]] ; then
 		if [[ -z "${CFLAGS_HARDENED_SANITIZER_CC_NAME}" ]] ; then
 eerror
-eerror "Set CFLAGS_HARDENED_SANITIZER_CC_NAME in /etc/portage/make.conf to either gcc or clang."
-eerror "CFLAGS_HARDENED_SANITIZER_CC_NAME should be the same as DETECT_COMPILER_SWITCH_LTO_CC_NAME."
+eerror "Set CFLAGS_HARDENED_SANITIZER_CC_NAME in /etc/portage/make.conf to"
+eerror "either gcc or clang.  CFLAGS_HARDENED_SANITIZER_CC_NAME should be the"
+eerror "same as DETECT_COMPILER_SWITCH_LTO_CC_NAME."
 eerror
-eerror "Do not use live gcc/clang compiler ebuilds for sanitizers at this time."
+eerror "Do not use live GCC/Clang compiler ebuilds for LTO or sanitizers at"
+eerror "this time to avoid mixing stable/unstable (Intermediate Representation)"
+eerror "IR in the same compiler slot."
 eerror
 			die
 		fi
 		if [[ -z "${CFLAGS_HARDENED_SANITIZER_CC_SLOT}" ]] ; then
 eerror
-eerror "Set CFLAGS_HARDENED_SANITIZER_CC_SLOT in /etc/portage/make.conf to one of the following"
+eerror "Set CFLAGS_HARDENED_SANITIZER_CC_SLOT in /etc/portage/make.conf to one"
+eerror "of the following"
 eerror
 eerror "- For GCC, ${_CFLAGS_SANITIZER_GCC_SLOTS_COMPAT}."
 eerror "- For Clang, ${_CFLAGS_SANITIZER_Clang_SLOTS_COMPAT}."
-eerror "  CFLAGS_HARDENED_SANITIZER_CC_SLOT should be the same as DETECT_COMPILER_SWITCH_LTO_CC_SLOT."
+eerror "  CFLAGS_HARDENED_SANITIZER_CC_SLOT should be the same as"
+eerror "  DETECT_COMPILER_SWITCH_LTO_CC_SLOT."
 eerror
-eerror "Do not use live gcc/clang compiler ebuilds for sanitizers at this time."
+eerror "Do not use live GCC/Clang compiler ebuilds for LTO or sanitizers at"
+eerror "this time to avoid mixing stable/unstable (Intermediate Representation)"
+eerror "IR in the same compiler slot."
 eerror
 			die
 		fi

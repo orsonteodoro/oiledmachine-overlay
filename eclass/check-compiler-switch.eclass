@@ -240,8 +240,9 @@ eerror
 eerror "You can set the above variables or remove the -flto flag to remove this"
 eerror "fatal error."
 eerror
-eerror "When LTOing, do not use any live compiler ebuilds or hard masked"
-eerror "ebuilds at this time for proper detection."
+eerror "Do not use live GCC/Clang compiler ebuilds for LTO or sanitizers at"
+eerror "this time to avoid mixing stable/unstable (Intermediate Representation)"
+eerror "IR in the same compiler slot."
 eerror
 		die
 	fi
