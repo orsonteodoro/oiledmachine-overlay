@@ -34,7 +34,7 @@ LICENSE="
 # MIT - LICENSE.txt
 # The distro's MIT license template does not contain all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild_revision_17"
+IUSE="test ebuild_revision_18"
 # https://github.com/ROCm/HIPIFY/blob/rocm-6.2.4/docs/hipify-clang.rst
 RDEPEND="
 	!test? (
