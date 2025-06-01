@@ -29,7 +29,7 @@ LICENSE="
 "
 # The distro's MIT license template does not have all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="debug ebuild_revision_11"
+IUSE="debug ebuild_revision_12"
 RDEPEND="
 	!dev-util/hipfort:0
 	|| (
