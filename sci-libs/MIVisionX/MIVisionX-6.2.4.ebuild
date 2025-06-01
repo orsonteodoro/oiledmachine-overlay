@@ -12,7 +12,7 @@ RAPIDJSON_COMMIT="f9d53419e912910fd8fa57d5705fa41425428c35" # committer-date:<=2
 RRAWTHER_LIBJPEG_TURBO_COMMIT="ae4e2a24e54514d1694d058650c929e6086cc4bb"
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake python-single-r1 rocm toolchain-funcs
+inherit check-compiler-switch cmake flag-o-matic python-single-r1 rocm toolchain-funcs
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_REPO_URI="https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX/"
@@ -64,7 +64,7 @@ IUSE="
 caffe cpu +enhanced-message ffmpeg -fp16 +ieee1394 +loom +migraphx +neural-net
 nnef onnx opencl opencv +rocal +rocal-python +rocm +rpp system-nnef-parser
 system-rapidjson
-ebuild_revision_16
+ebuild_revision_17
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -209,6 +209,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	python-single-r1_pkg_setup
 	rocm_pkg_setup
 }
@@ -254,6 +255,23 @@ src_configure() {
 	)
 
 	rocm_set_default_clang
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! check-compiler-switch_is_system_flavor ; then
+einfo "Detected GPU compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	if use opencl ; then
 		mycmakeargs+=(
