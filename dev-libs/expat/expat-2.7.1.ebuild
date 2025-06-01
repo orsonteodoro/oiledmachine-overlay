@@ -13,7 +13,7 @@ QA_CONFIG_IMPL_DECL_SKIP=(
 	"arc4random_buf"
 )
 
-inherit autotools cflags-hardened multilib-minimal
+inherit autotools cflags-hardened check-compiler-switch flag-o-matic multilib-minimal
 
 KEYWORDS="
 ~alpha amd64 arm arm64 hppa ~loong ~m68k ~mips ppc ppc64 ~riscv ~s390 sparc x86
@@ -29,7 +29,7 @@ LICENSE="MIT"
 SLOT="0"
 IUSE="
 examples static-libs test unicode
-ebuild_revision_15
+ebuild_revision_16
 "
 RESTRICT="
 	!test? (
@@ -43,6 +43,9 @@ BDEPEND="
 "
 DOCS=( "README.md" )
 
+pkg_setup() {
+	check-compiler-switch_start
+}
 
 src_prepare() {
 	default
@@ -70,6 +73,13 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 	local myconf="$(use_with test tests) $(use_enable static-libs static) --without-docbook"
 
