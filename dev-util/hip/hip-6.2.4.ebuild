@@ -12,7 +12,7 @@ LLVM_SLOT=18 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake docs prefix python-any-r1 rocm
+inherit check-compiler-switch cmake docs flag-o-matic prefix python-any-r1 rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/clr-rocm-${PV}/hipamd"
@@ -71,7 +71,7 @@ LICENSE="
 # UoI-NCSA - llvm-project-rocm-6.2.4/amd/device-libs/LICENSE.TXT
 
 SLOT="$(ver_cut 1-2)/${PV}"
-IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm +rocprofiler-register test ebuild_revision_39"
+IUSE="cuda debug +hsa -hsail +lc -pal numa +rocm +rocprofiler-register test ebuild_revision_40"
 REQUIRED_USE="
 	hsa? (
 		rocm
@@ -178,6 +178,7 @@ OCL_PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	if use rocm ; then
 ewarn
 ewarn "The lc USE flag may be required."
@@ -339,6 +340,24 @@ src_prepare() {
 
 src_configure() {
 	rocm_set_default_gcc
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! check-compiler-switch_is_system_flavor ; then
+einfo "Detected GPU compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	use debug && CMAKE_BUILD_TYPE="Debug"
 
 	# TODO: Currently the distro configuration is to build.
