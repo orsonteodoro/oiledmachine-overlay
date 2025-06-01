@@ -10,7 +10,7 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE DF HO IO SO"
 LIBFLAC_SONAME="10"
 LIBFLACXX_SONAME="12"
 
-inherit autotools cflags-hardened flag-o-matic multilib-minimal toolchain-funcs
+inherit autotools cflags-hardened check-compiler-switch flag-o-matic multilib-minimal toolchain-funcs
 
 KEYWORDS="~amd64 ~arm64 ~ppc64 ~x86"
 S="${WORKDIR}/${P}"
@@ -33,7 +33,7 @@ X86_IUSE="
 IUSE="
 ${X86_IUSE}
 +cxx debug ogg static-libs
-ebuild_revision_25
+ebuild_revision_26
 "
 # AVX configure switch is for both AVX & AVX2
 REQUIRED_USE="
@@ -65,6 +65,10 @@ PATCHES=(
 get_lib_types() {
 	echo "shared"
 	use static-libs && echo "static"
+}
+
+pkg_setup() {
+	check-compiler-switch_start
 }
 
 src_prepare() {
@@ -104,6 +108,13 @@ has_sanitizer() {
 }
 
 _src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	filter-flags -fsanitize=cfi-icall
 	if tc-is-clang && has_version "llvm-runtimes/compiler-rt-sanitizers[cfi]" && has_sanitizer "cfi" ; then
 		append_all -fno-sanitize=cfi-icall # cfi-icall breaks CEF with illegal instruction
