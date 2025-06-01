@@ -64,7 +64,7 @@ QA_CONFIG_IMPL_DECL_SKIP=(
 )
 VERIFY_SIG_OPENPGP_KEY_PATH="/usr/share/openpgp-keys/danielstenberg.asc"
 
-inherit autotools cflags-hardened check-compiler-switch multilib-minimal multiprocessing
+inherit autotools cflags-hardened check-compiler-switch flag-o-matic multilib-minimal multiprocessing
 inherit prefix toolchain-funcs verify-sig
 
 if [[ "${PV}" == "9999" ]]; then
@@ -114,7 +114,7 @@ ${IMPLS[@]}
 +adns +alt-svc brotli debug ech +ftp gnutls gopher +hsts +http2 +http3 +httpsrr
 idn +imap kerberos ldap mbedtls +openssl +pop3 +psl +quic rtmp rustls samba
 sasl-scram +smtp ssh ssl static-libs test telnet +tftp +websockets zstd
-ebuild_revision_42
+ebuild_revision_43
 "
 RESTRICT="
 	!test? (
@@ -357,6 +357,12 @@ multilib_src_configure() {
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
