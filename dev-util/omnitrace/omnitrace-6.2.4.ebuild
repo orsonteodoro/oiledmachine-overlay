@@ -168,7 +168,7 @@ PATCHES=(
 
 pkg_setup() {
 	check-compiler-switch_start
-	python_setup
+	python-single-r1_pkg_setup
 	rocm_pkg_setup
 }
 

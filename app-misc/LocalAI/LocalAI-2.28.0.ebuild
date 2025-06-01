@@ -403,7 +403,7 @@ PATCHES=(
 
 pkg_setup() {
 ewarn "This ebuild is still in development"
-	python_setup
+	python-single-r1_pkg_setup
 }
 
 gen_git_tag() {

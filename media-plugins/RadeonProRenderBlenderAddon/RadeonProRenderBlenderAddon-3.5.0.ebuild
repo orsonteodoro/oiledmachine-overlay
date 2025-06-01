@@ -534,7 +534,7 @@ ewarn "You may disable the rocr USE flag for legacy OpenCL support."
 		ERROR_HSA_AMD="Change CONFIG_HSA_AMD=y in kernel config.  It's required for ROCr OpenCL support."
 		linux-info_pkg_setup
 	fi
-	python_setup
+	python-single-r1_pkg_setup
 }
 
 get_rpipsdk() {

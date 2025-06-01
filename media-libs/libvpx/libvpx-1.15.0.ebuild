@@ -416,7 +416,7 @@ get_arch_enabled_use_flags() {
 
 pkg_setup() {
 	check-compiler-switch_start
-	python_setup
+	python-single-r1_pkg_setup
 	__pgo_setup
 	if use aocc ; then
 		aocc_pkg_setup

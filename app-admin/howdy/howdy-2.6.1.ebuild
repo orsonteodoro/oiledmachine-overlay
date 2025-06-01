@@ -116,7 +116,7 @@ ewarn "Only one capture source is allowed.  Disable either ffmpeg, pyv4l2, or"
 ewarn "all."
 ewarn
 	fi
-	python_setup
+	python-single-r1_pkg_setup
 }
 
 src_unpack() {

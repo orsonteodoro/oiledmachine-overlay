@@ -219,9 +219,7 @@ ewarn "with USE=dso, there may be weird crashes in git-svn. You"
 ewarn "have been warned!"
 	fi
 
-	if use perforce ; then
-		python-single-r1_pkg_setup
-	fi
+	python-single-r1_pkg_setup
 }
 
 src_unpack() {

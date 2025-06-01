@@ -704,7 +704,7 @@ DOCS=( "README.md" )
 pkg_setup() {
 	npm_pkg_setup
 	export NEXT_TELEMETRY_DISABLED=1
-	python_setup
+	python-single-r1_pkg_setup
 	node-sharp_pkg_setup
 	rust_pkg_setup
 	if has_version "dev-lang/rust-bin:${RUST_PV}" ; then

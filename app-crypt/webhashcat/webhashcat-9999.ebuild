@@ -83,7 +83,7 @@ ewarn "The apache USE flag is not fully implemented.  Please disable."
 ewarn "The ssl USE flag is not fully implemented.  Please disable."
 		die
 	fi
-	python_setup
+	python-single-r1_pkg_setup
 }
 
 set_vhost_config_with_ssl() {

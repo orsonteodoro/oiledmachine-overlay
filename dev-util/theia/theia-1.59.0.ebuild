@@ -534,7 +534,7 @@ einfo "PUPPETEER_CACHE_FOLDER:  ${PUPPETEER_CACHE_FOLDER}"
 
 pkg_setup() {
 	einfo "This is the monthly release."
-	python_setup
+	python-single-r1_pkg_setup
 	npm_pkg_setup
 }
 
