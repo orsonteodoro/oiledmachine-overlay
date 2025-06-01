@@ -1582,12 +1582,17 @@ rocm_set_default_hipcc() {
 	if has cuda ${IUSE_EFFECTIVE} && use cuda ; then
 		# Limited by HIPIFY.  See _rocm_set_globals_default()
 		local s
-		if has_version "=dev-util/nvidia-cuda-toolkit-12.3*" && has_version "=sys-devel/gcc-12" ; then
-			s="12"
-		elif has_version "=dev-util/nvidia-cuda-toolkit-11.8*" && has_version "=sys-devel/gcc-11" ; then
-			s="11"
+		if has_version "=dev-util/nvidia-cuda-toolkit-12.6*" && has_version "=sys-devel/gcc-13" ; then
+			s="13"
+		elif has_version "=dev-util/nvidia-cuda-toolkit-12.5*" && has_version "=sys-devel/gcc-13" ; then
+			s="13"
 		else
-eerror "CUDA version not supported.  Use dev-util/nvidia-cuda-toolkit must be 11.8 or 12.3."
+eerror
+eerror "Your CUDA version not supported.  The CUDA pairing must be the following:"
+eerror
+eerror "For HIP 6.3, =dev-util/nvidia-cuda-toolkit-12.6 with sys-devel/gcc-13"
+eerror "For HIP 6.2, =dev-util/nvidia-cuda-toolkit-12.5 with sys-devel/gcc-13"
+eerror
 			die
 		fi
 
