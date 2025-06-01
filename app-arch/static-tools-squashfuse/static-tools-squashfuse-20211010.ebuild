@@ -4,6 +4,8 @@
 
 EAPI=7
 
+inherit check-compiler-switch flag-o-matic
+
 COMMIT="e51978cd6bb5c4d16fae9eee43d0b258f570bb0f"
 KEYWORDS="~amd64 ~arm ~arm64 ~x86"
 S="${WORKDIR}/squashfuse-${COMMIT}"
@@ -74,6 +76,16 @@ get_libc() {
 		libc="native"
 	fi
 	echo "${libc}"
+}
+
+pkg_setup() {
+	check-compiler-switch_start
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 }
 
 src_compile() {
