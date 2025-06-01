@@ -10,7 +10,7 @@ UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=1
 
-inherit autotools cflags-hardened check-compiler-switch portability toolchain-funcs uopts
+inherit autotools cflags-hardened check-compiler-switch flag-o-matic portability toolchain-funcs uopts
 
 # Tarballs are produced from ${PV} branches in
 # https://gitweb.gentoo.org/proj/lua-patches.git
@@ -26,7 +26,7 @@ LICENSE="MIT"
 SLOT="5.4"
 IUSE="
 +deprecated readline static-libs test
-ebuild_revision_16
+ebuild_revision_17
 "
 REQUIRED_USE="
 	pgo? (
@@ -87,6 +87,14 @@ _src_configure_compiler() {
 
 _src_configure() {
 	uopts_src_configure
+
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	if tc-is-gcc && [[ "${PGO_PHASE}" == "PGO" ]] ; then
 		append-flags -Wno-error=coverage-mismatch
 	fi
