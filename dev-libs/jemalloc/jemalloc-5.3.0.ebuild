@@ -27,7 +27,7 @@ UOPTS_SUPPORT_EPGO=0
 UOPTS_SUPPORT_TBOLT=0 # bolt and asan/ubsan are mutually exclusive
 UOPTS_SUPPORT_TPGO=1
 
-inherit autotools cflags-hardened check-compiler-switch multilib-minimal uopts
+inherit autotools cflags-hardened check-compiler-switch flag-o-matic multilib-minimal uopts
 
 KEYWORDS+=" ~alpha ~amd64 ~arm ~arm64 ~hppa ~loong ~m68k ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86"
 SRC_URI="https://github.com/jemalloc/jemalloc/releases/download/${PV}/${P}.tar.bz2"
@@ -53,7 +53,7 @@ SLOT="0/2"
 IUSE+="
 ${TRAINERS[@]}
 custom-cflags debug lazy-lock prof static-libs stats test xmalloc
-ebuild_revision_40
+ebuild_revision_41
 "
 REQUIRED_USE+="
 	!custom-cflags? (
@@ -143,6 +143,12 @@ einfo "Adding ${lib_name} for GCC $(gcc-major-version)"
 
 	check-compiler-switch_end
 	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
 einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
