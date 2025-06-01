@@ -33,7 +33,7 @@ HIP_SUPPORT_CUDA=1
 LLVM_SLOT=18
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake flag-o-matic rocm
+inherit check-compiler-switch cmake flag-o-matic rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/rocRAND-rocm-${PV}"
@@ -59,7 +59,7 @@ RESTRICT="
 SLOT="${ROCM_SLOT}/${PV}"
 IUSE="
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
-benchmark cuda hip-cpu +rocm test ebuild_revision_11
+benchmark cuda hip-cpu +rocm test ebuild_revision_12
 "
 gen_cuda_required_use() {
 	local x
@@ -130,6 +130,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	rocm_pkg_setup
 }
 
@@ -226,6 +227,24 @@ src_configure() {
 	else
 		rocm_set_default_hipcc
 	fi
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! check-compiler-switch_is_system_flavor ; then
+einfo "Detected GPU compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	rocm_src_configure
 }
 
