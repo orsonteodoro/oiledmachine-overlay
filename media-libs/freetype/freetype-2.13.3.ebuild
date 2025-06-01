@@ -6,7 +6,7 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO IO SO UAF UM"
 
-inherit autotools cflags-hardened flag-o-matic libtool multilib-minimal
+inherit autotools cflags-hardened check-compiler-switch flag-o-matic libtool multilib-minimal
 inherit toolchain-funcs
 
 if [[ "${PV}" == "9999" ]] ; then
@@ -42,7 +42,7 @@ SLOT="2"
 IUSE="
 X +adobe-cff brotli bzip2 +cleartype-hinting debug doc fontforge harfbuzz +png
 static-libs svg utils
-ebuild_revision_14
+ebuild_revision_15
 "
 RDEPEND="
 	>=sys-libs/zlib-1.2.8-r1[${MULTILIB_USEDEP}]
@@ -106,6 +106,10 @@ pkg_pretend() {
 	if use svg && ! use utils ; then
 einfo "The \"svg\" USE flag only has effect when the \"utils\" USE flag is also enabled."
 	fi
+}
+
+pkg_setup() {
+	check-compiler-switch_start
 }
 
 src_unpack() {
@@ -226,7 +230,15 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	append-flags -fno-strict-aliasing
+
 	cflags-hardened_append
 
 	export GNUMAKE="gmake"
