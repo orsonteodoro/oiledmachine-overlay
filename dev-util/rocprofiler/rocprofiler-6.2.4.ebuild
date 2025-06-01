@@ -44,7 +44,7 @@ LLVM_SLOT=18
 PYTHON_COMPAT=( "python3_12" )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake flag-o-matic python-any-r1 rocm
+inherit check-compiler-switch cmake flag-o-matic python-any-r1 rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-rocm-${PV}"
@@ -68,7 +68,7 @@ LICENSE="
 # The distro's MIT license template does not contain all rights reserved.
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE=" plugins samples test ebuild_revision_15"
+IUSE=" plugins samples test ebuild_revision_16"
 REQUIRED_USE="
 	${ROCM_REQUIRED_USE}
 "
@@ -124,6 +124,7 @@ ewarn "${gpu} is not CI tested upstream."
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	python-any-r1_pkg_setup
 	rocm_pkg_setup
 	warn_untested_gpu
@@ -137,6 +138,23 @@ src_prepare() {
 src_configure() {
 	# Fixes for libhsa-runtime64.so.1.12.0: undefined reference to `hsaKmtGetAMDGPUDeviceHandle'
 	rocm_set_default_clang
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! check-compiler-switch_is_system_flavor ; then
+einfo "Detected GPU compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	[[ -e "${ESYSROOT}/opt/rocm-${PV}/$(rocm_get_libdir)/hsa-amd-aqlprofile/librocprofv2_att.so" ]] \
 		|| die "Missing" # For e80f7cb
