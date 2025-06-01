@@ -7,7 +7,7 @@ CMAKE_BUILD_TYPE="RELEASE"
 LLVM_SLOT=18
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake rocm
+inherit check-compiler-switch cmake flag-o-matic rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-rocm-${PV}"
@@ -29,7 +29,7 @@ LICENSE="
 "
 # The distro's MIT license template does not have all rights reserved.
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="debug ebuild_revision_10"
+IUSE="debug ebuild_revision_11"
 RDEPEND="
 	!dev-util/hipfort:0
 	|| (
@@ -52,6 +52,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	rocm_pkg_setup
 }
 
@@ -67,6 +68,24 @@ src_prepare() {
 
 src_configure() {
 	rocm_set_default_gcc
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! check-compiler-switch_is_system_flavor ; then
+einfo "Detected GPU compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	export FC="${CHOST}-gfortran-${HIP_6_2_GCC_SLOT}"
 	local mycmakeargs=(
 		-DCMAKE_BUILD_TYPE=$(usex debug "DEBUG" "RELEASE")
