@@ -5,7 +5,7 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="network untrusted-data"
 
-inherit cflags-hardened multilib-minimal
+inherit cflags-hardened check-compiler-switch flag-o-matic multilib-minimal
 
 SRC_URI="https://downloads.xiph.org/releases/opus/${P}.tar.gz"
 
@@ -16,7 +16,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 KEYWORDS="~amd64"
 IUSE="
 doc fixed-point +float +http libressl static-libs
-ebuild_revision_15
+ebuild_revision_16
 "
 RDEPEND="media-libs/libogg[${MULTILIB_USEDEP}]
 	media-libs/opus[${MULTILIB_USEDEP}]
@@ -42,12 +42,23 @@ REQUIRED_USE="
 	)
 "
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_prepare() {
 	default
 	multilib_copy_sources
 }
 
 multilib_src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 	local myeconfargs=(
 		$(use_enable doc)
