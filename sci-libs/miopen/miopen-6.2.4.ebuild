@@ -32,7 +32,7 @@ MIOPENKERNELS_TARGETS_COMPAT=(
 )
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 LLVM_SLOT=18
-inherit cmake flag-o-matic rocm
+inherit check-compiler-switch cmake flag-o-matic rocm
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/MIOpen-rocm-${PV}"
@@ -58,7 +58,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="comgr composable-kernel debug hiprtc kernels mlir opencl +rocm test ebuild_revision_13"
+IUSE="comgr composable-kernel debug hiprtc kernels mlir opencl +rocm test ebuild_revision_14"
 gen_amdgpu_required_use() {
 	local x
 	for x in ${AMDGPU_TARGETS_COMPAT[@]} ; do
@@ -153,6 +153,7 @@ ewarn "${gpu} is not tested upstream but may still be available."
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	rocm_pkg_setup
 	warn_untested_gpu
 }
@@ -318,6 +319,24 @@ src_configure() {
 	fi
 
 	rocm_set_default_clang
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! check-compiler-switch_is_system_flavor ; then
+einfo "Detected GPU compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	rocm_src_configure
 }
 
