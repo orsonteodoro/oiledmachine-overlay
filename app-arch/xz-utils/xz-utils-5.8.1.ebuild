@@ -9,7 +9,7 @@ EAPI=8
 CFLAGS_HARDENED_USE_CASES="security-critical system-set untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="UAF"
 
-inherit cflags-hardened libtool multilib multilib-minimal preserve-libs
+inherit cflags-hardened check-compiler-switch flag-o-matic libtool multilib multilib-minimal preserve-libs
 inherit toolchain-funcs
 
 if [[ "${PV}" == "9999" ]] ; then
@@ -62,7 +62,7 @@ LICENSE="
 SLOT="0"
 IUSE="
 cpu_flags_arm_crc32 doc +extra-filters pgo nls static-libs
-ebuild_revision_17
+ebuild_revision_18
 "
 if [[ "${PV}" != "9999" ]] ; then
 	BDEPEND+="
@@ -71,6 +71,10 @@ if [[ "${PV}" != "9999" ]] ; then
 		)
 	"
 fi
+
+pkg_setup() {
+	check-compiler-switch_start
+}
 
 src_prepare() {
 	default
@@ -84,6 +88,13 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 	local myconf=(
 		$(multilib_native_use_enable doc)
