@@ -93,7 +93,7 @@ ${X86_CPU_FLAGS[@]/#/cpu_flags_x86_}
 -alembic ax +blosc cuda doc -imath-half +jemalloc -jpeg -log4cplus -numpy
 -python +static-libs -tbbmalloc nanovdb -no-concurrent-malloc -openexr -png test
 -vdb_lod +vdb_print -vdb_render -vdb_view
-ebuild_revision_5
+ebuild_revision_6
 "
 REQUIRED_USE+="
 	^^ (
@@ -331,12 +331,6 @@ eerror
 		die
 	fi
 
-	check-compiler-switch_end
-	if check-compiler-switch_is_flavor_slot_changed ; then
-einfo "Detected compiler switch.  Disabling LTO."
-		filter-lto
-	fi
-
 	clang --version || die
 }
 
@@ -345,6 +339,19 @@ src_configure() {
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
 	tc-is-clang && check_clang
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	export MAKEOPTS="-j1" # prevent stall
 
 	local version
