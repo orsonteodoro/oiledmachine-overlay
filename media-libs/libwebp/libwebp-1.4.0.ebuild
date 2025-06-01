@@ -10,7 +10,7 @@ MY_P="${P/_/-}"
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DF HO IO UAF UM"
 
-inherit autotools cflags-hardened multilib-minimal
+inherit autotools cflags-hardened check-compiler-switch flag-o-matic multilib-minimal
 
 if [[ "${PV}" != *"_rc"* ]] ; then
 	KEYWORDS="
@@ -28,7 +28,7 @@ SLOT="0/7" # subslot = libwebp soname version
 IUSE="
 cpu_flags_arm_neon cpu_flags_x86_sse2 cpu_flags_x86_sse4_1 gif +jpeg opengl +png
 static-libs swap-16bit-csp tiff
-ebuild_revision_13
+ebuild_revision_14
 "
 RDEPEND="
 	gif? (
@@ -55,6 +55,10 @@ PATCHES=(
 	"${FILESDIR}/${PN}-1.2.3-libpng-pkg-config.patch"
 )
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_prepare() {
 	default
 	# Needed for pkg-config patch; use elibtoolize instead if that's ever dropped
@@ -62,6 +66,13 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 	local args=(
 		$(use_enable cpu_flags_arm_neon neon)
