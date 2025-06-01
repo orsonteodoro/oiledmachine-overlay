@@ -14,7 +14,7 @@ CMAKE_MAKEFILE_GENERATOR="emake"
 LLVM_SLOT=18
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake grpc-ver rocm
+inherit check-compiler-switch cmake flag-o-matic grpc-ver rocm
 
 GRPC_SLOTS=(
 	"1.61"
@@ -52,7 +52,7 @@ LICENSE="
 RESTRICT="test"
 SLOT="${ROCM_SLOT}/${PV}"
 # raslib is installed by default, but disabled for security.
-IUSE="+compile-commands doc +raslib +standalone systemd test ebuild_revision_14"
+IUSE="+compile-commands doc +raslib +standalone systemd test ebuild_revision_15"
 REQUIRED_USE="
 	raslib
 	systemd? (
@@ -115,6 +115,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	rocm_pkg_setup
 }
 
@@ -134,6 +135,24 @@ src_prepare() {
 
 src_configure() {
 	rocm_set_default_gcc
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! check-compiler-switch_is_system_flavor ; then
+einfo "Detected GPU compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	local mycmakeargs=(
 		-DBUILD_RASLIB=OFF # No repo
 		-DBUILD_ROCPTEST=$(usex test ON OFF)
