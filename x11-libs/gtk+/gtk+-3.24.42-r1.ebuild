@@ -7,7 +7,7 @@ CFLAGS_HARDENED_LANGS="c-lang"
 CFLAGS_HARDENED_USE_CASES="copy-paste-password security-critical sensitive-data untrusted-data" # Add retpoline to password widget
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DOS HO IO PE"
 
-inherit cflags-hardened gnome2 meson-multilib multilib toolchain-funcs virtualx
+inherit cflags-hardened check-compiler-switch flag-o-matic gnome2 meson-multilib multilib toolchain-funcs virtualx
 
 DESCRIPTION="Gimp ToolKit +"
 HOMEPAGE="https://www.gtk.org/"
@@ -17,7 +17,7 @@ SLOT="3"
 IUSE="
 aqua broadway cloudproviders colord cups examples gtk-doc +introspection sysprof
 test vim-syntax wayland +X xinerama
-ebuild_revision_10
+ebuild_revision_11
 "
 REQUIRED_USE="
 	|| ( aqua wayland X )
@@ -110,6 +110,10 @@ PATCHES=(
 	"${FILESDIR}"/0001-gdk-add-a-poison-macro-to-hide-GDK_WINDOWING_.patch
 )
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 src_prepare() {
 	default
 
@@ -130,6 +134,13 @@ src_prepare() {
 }
 
 multilib_src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 	local emesonargs=(
 		$(meson_use aqua quartz_backend)
