@@ -13,7 +13,7 @@ ROCM_SLOT="6.2"
 ROCM_VERSION="6.2.4"
 RRAWTHER_LIBJPEG_TURBO_COMMIT="ae4e2a24e54514d1694d058650c929e6086cc4bb"
 
-inherit cmake python-single-r1 rocm
+inherit check-compiler-switch cmake flag-o-matic python-single-r1 rocm
 
 #KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-rocm-${PV}"
@@ -43,7 +43,7 @@ SLOT="${ROCM_SLOT}/${PV}"
 IUSE+="
 cpu enhanced-message ffmpeg ieee1394 opencv python system-rapidjson system-jpeg
 test
-ebuild_revision_2
+ebuild_revision_3
 "
 RDEPEND="
 	${PYTHON_DEPS}
@@ -94,6 +94,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	rocm_pkg_setup
 	python-single-r1_pkg_setup
 }
@@ -152,6 +153,24 @@ src_prepare() {
 
 src_configure() {
 	rocm_set_default_gcc
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! check-compiler-switch_is_system_flavor ; then
+einfo "Detected GPU compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	build_libjpeg_turbo
 	build_rapidjson
 	local mycmakeargs=(
