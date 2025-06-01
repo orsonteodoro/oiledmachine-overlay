@@ -7,7 +7,7 @@ CMAKE_BUILD_TYPE="Release"
 LLVM_SLOT=18 # See https://github.com/RadeonOpenCompute/llvm-project/blob/rocm-6.2.4/llvm/CMakeLists.txt
 ROCM_SLOT="$(ver_cut 1-2 ${PV})"
 
-inherit cmake flag-o-matic prefix rocm
+inherit check-compiler-switch cmake flag-o-matic prefix rocm
 
 if [[ ${PV} == *9999 ]] ; then
 	EGIT_REPO_URI="https://github.com/RadeonOpenCompute/ROCm-CompilerSupport/"
@@ -87,7 +87,7 @@ RESTRICT="
 	)
 "
 SLOT="${ROCM_SLOT}/${PV}"
-IUSE="test ebuild_revision_15"
+IUSE="test ebuild_revision_16"
 RDEPEND="
 	${ROCM_CLANG_DEPEND}
 	!dev-libs/rocm-comgr:0
@@ -111,6 +111,7 @@ PATCHES=(
 )
 
 pkg_setup() {
+	check-compiler-switch_start
 	rocm_pkg_setup
 }
 
@@ -134,6 +135,23 @@ src_prepare() {
 
 src_configure() {
 	rocm_set_default_clang
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	if ! check-compiler-switch_is_system_flavor ; then
+einfo "Detected GPU compiler switch.  Disabling LTO."
+		filter-lto
+	fi
 
 	export COMGR="${S}/amd/comgr"
 	export DEVICE_LIBS="${S}/amd/device-libs"
