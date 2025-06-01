@@ -16,7 +16,7 @@ INTROSPECTION_SOURCE_DIR="${WORKDIR}/${INTROSPECTION_P}"
 PYTHON_COMPAT=( "python3_"{10..13} )
 PYTHON_REQ_USE="xml(+)"
 
-inherit cflags-hardened eapi9-ver gnome.org gnome2-utils linux-info
+inherit cflags-hardened check-compiler-switch eapi9-ver flag-o-matic gnome.org gnome2-utils linux-info
 inherit meson-multilib multilib python-any-r1 toolchain-funcs xdg
 
 MULTILIB_CHOST_TOOLS=(
@@ -41,7 +41,7 @@ SLOT="2"
 IUSE="
 dbus debug +elf doc +introspection +mime selinux static-libs sysprof systemtap
 test utils xattr
-ebuild_revision_18
+ebuild_revision_19
 "
 #RESTRICT="
 #	!test? (
@@ -141,6 +141,7 @@ python_check_deps() {
 }
 
 pkg_setup() {
+	check-compiler-switch_start
 	if use kernel_linux ; then
 		CONFIG_CHECK="~INOTIFY_USER"
 		if use test ; then
@@ -300,6 +301,13 @@ EOF
 }
 
 multilib_src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	cflags-hardened_append
 	# TODO: figure a way to pass appropriate values for all cross properties
 	# that glib uses (search for get_cross_property)
