@@ -17,7 +17,7 @@ PROFILES_IUSE="
 PROFILES_REQUIRED_USE="${PROFILES_IUSE//-/}"
 PROFILES_REQUIRED_USE="${PROFILES_REQUIRED_USE//+/}"
 
-inherit cmake git-r3
+inherit check-compiler-switch cmake flag-o-matic git-r3
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
@@ -73,6 +73,10 @@ PATCHES=(
 	"${FILESDIR}/${PN}-dbc721c-sdl2-link.patch"
 )
 
+pkg_setup() {
+	check-compiler-switch_start
+}
+
 unpack_live() {
 	use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 	git-r3_fetch
@@ -107,6 +111,13 @@ src_unpack() {
 }
 
 src_configure() {
+	check-compiler-switch_end
+	if is-flagq "-flto*" && check-compiler-switch_is_lto_changed ; then
+	# Prevent static-libs IR mismatch.
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
 	if use debug ; then
 		CMAKE_BUILD_TYPE="Debug"
 	else
