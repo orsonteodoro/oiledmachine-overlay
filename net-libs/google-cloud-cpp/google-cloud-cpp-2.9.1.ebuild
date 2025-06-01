@@ -23,7 +23,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="
 test
-ebuild_revision_2
+ebuild_revision_3
 "
 # Tests need a GCP account
 RESTRICT="test"
