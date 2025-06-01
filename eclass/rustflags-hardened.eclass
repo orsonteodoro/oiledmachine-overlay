@@ -1323,15 +1323,24 @@ einfo "rustc host:  ${host}"
 
 	if [[ -n "${auto_sanitize}" ]] ; then
 		if [[ -z "${RUSTFLAGS_HARDENED_SANITIZER_CC_NAME}" ]] ; then
+eerror
 eerror "Set RUSTFLAGS_HARDENED_SANITIZER_CC_NAME in /etc/portage/make.conf to either gcc or clang"
 eerror "RUSTFLAGS_HARDENED_SANITIZER_CC_NAME should be the same as DETECT_COMPILER_SWITCH_LTO_CC_NAME"
+eerror
+eerror "Do not use live gcc/clang compiler ebuilds for sanitizers at this time."
+eerror
 			die
 		fi
 		if [[ -z "${RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT}" ]] ; then
+eerror
 eerror "Set RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT in /etc/portage/make.conf to one of the following"
-eerror "For GCC, ${_RUSTFLAGS_SANITIZER_GCC_SLOTS_COMPAT}."
-eerror "For Clang, ${_RUSTFLAGS_SANITIZER_Clang_SLOTS_COMPAT}."
-eerror "RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT should be the same as DETECT_COMPILER_SWITCH_LTO_CC_SLOT"
+eerror
+eerror "- For GCC, ${_RUSTFLAGS_SANITIZER_GCC_SLOTS_COMPAT}."
+eerror "- For Clang, ${_RUSTFLAGS_SANITIZER_Clang_SLOTS_COMPAT}."
+eerror "  RUSTFLAGS_HARDENED_SANITIZER_CC_SLOT should be the same as DETECT_COMPILER_SWITCH_LTO_CC_SLOT"
+eerror
+eerror "Do not use live gcc/clang compiler ebuilds for sanitizers at this time."
+eerror
 			die
 		fi
 	fi

@@ -240,6 +240,9 @@ eerror
 eerror "You can set the above variables or remove the -flto flag to remove this"
 eerror "fatal error."
 eerror
+eerror "When LTOing, do not use any live compiler ebuilds or hard masked"
+eerror "ebuilds at this time for proper detection."
+eerror
 		die
 	fi
 	if [[ "${DETECT_COMPILER_SWITCH_LTO_CC_NAME}" == "${DETECT_COMPILER_SWITCH_T1_ARCH}" && "${DETECT_COMPILER_SWITCH_LTO_CC_SLOT}" == "${DETECT_COMPILER_SWITCH_T1_SLOT}" ]] ; then
