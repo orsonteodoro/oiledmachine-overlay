@@ -129,7 +129,7 @@ gen_iuse_pgo() {
 
 IUSE+="
 $(gen_iuse_pgo)
-acorn +asm +corepack cpu_flags_x86_sse2 -custom-optimization debug doc
+acorn +asm +corepack cpu_flags_x86_sse2 debug doc
 -drumbrake fips +icu inspector +npm man mold pax-kernel pgo +snapshot +ssl
 system-icu +system-ssl test
 ebuild_revision_43
@@ -377,70 +377,37 @@ src_prepare() {
 		"node.gypi"
 	)
 
-	# -O3 removal breaks _FORITIFY_SOURCE
-	# Flags for sanitizers off (default): \
-	local a1="-O3" # Similar to replace-flags
-	local r1="-O2" # Similar to filter-flags
-	# Flags for sanitizers on: \
-	local a2="-O2" # Similar to replace-flags
-	local r2="-O3" # Similar to filter-flags
-	# Upstream does not like -O3 when running sanitizers (aka fuzz-testing)
-	if use custom-optimization ; then
-		replace-flags '-O0' '-O1'
-		r1=""
-		local oflag="-O3"
-		if _is_flagq_last '-O0' || _is_flagq_last '-O1' ; then
-			oflag="-O2"
-			replace-flags '-O0' '-O2'
-			replace-flags '-O1' '-O2'
 # With -O1:
 #../../deps/ada/ada.cpp:10664:34: error: inlining failed in call to 'always_inline' 'constexpr bool ada::unicode::is_alnum_plus(char) noexcept': indirect function call with a yet undetermined callee
 #10664 | ada_really_inline constexpr bool is_alnum_plus(const char c) noexcept {
 #      |                                  ^~~~~~~~~~~~~
-ewarn "Changing -O0 or -O1 -> -O2 to avoid always_inline build error."
-		elif _is_flagq_last '-Og'; then
-			if use pgo ; then
-ewarn "Using -Og with PGO is uncommon"
-			fi
-			oflag="-Og"
-		elif _is_flagq_last '-O2'; then
-			if use pgo ; then
-ewarn "Using -O2 with PGO is uncommon"
-			fi
-			oflag="-O2"
-		elif _is_flagq_last '-O3'; then
-			oflag="-O3"
-		elif _is_flagq_last '-O4'; then
-			oflag="-O4"
-		elif _is_flagq_last '-Ofast'; then
-			oflag="-Ofast"
-		elif _is_flagq_last '-Os'; then
-			if use pgo ; then
-ewarn "Using -Os with PGO is uncommon"
-			fi
-			oflag="-Os"
-		elif _is_flagq_last '-Oz'; then
-			if use pgo ; then
-ewarn "Using -Oz with PGO is uncommon"
-			fi
-			oflag="-Oz"
-		#else
-		#	-O3 is the upstream default
-		fi
-		sed -i -e "s|-O3|${oflag}|g" ${FP[@]} || die
-		a1="${oflag}"
-		a2="${oflag}"
-		sed -i -e "s|-O3|${oflag}|g" "common.gypi" || die
-	fi
+	# Upstream does not like -O3 when running sanitizers (aka fuzz-testing)
+	# Similar to replace-flags F2 F1 in sanitizers off case:
+	local f1="-O2"
+	local f2="-O3"
+	# Similar to replace-flags F4 F3 in sanitizer on case:
+	local f3="-O2"
+	local f4="-O3"
+	replace-flags '-Ofast' '-O2'
+	replace-flags '-O4' '-O2'
+	replace-flags '-O3' '-O2'
+	replace-flags '-O2' '-O2'
+	replace-flags '-O1' '-O2'
+	replace-flags '-O0' '-O2'
+	local oflag="-O2" # cflags-hardened default flag
+	f1="${oflag}"
+	f3="${oflag}"
+	sed -i -e "s|-O3|${oflag}|g" ${FP[@]} || die
+	sed -i -e "s|-O3|${oflag}|g" "common.gypi" || die
 	sed -i \
-		-e "s|__OFLAGS_A1__|${a1}|g" \
-		-e "s|__OFLAGS_R1__|${r1}|g" \
-		-e "s|__OFLAGS_A2__|${a2}|g" \
-		-e "s|__OFLAGS_R2__|${r2}|g" \
+		-e "s|__OFLAGS_F1__|${f1}|g" \
+		-e "s|__OFLAGS_F2__|${f2}|g" \
+		-e "s|__OFLAGS_F3__|${f3}|g" \
+		-e "s|__OFLAGS_F4__|${f4}|g" \
 		"tools/v8_gypfiles/toolchain.gypi" \
 		|| die
 
-	# debug builds. change install path, remove optimisations and override CONFIGURATION
+	# For debug builds, change install path; remove optimisations and override CONFIGURATION.
 	if use debug; then
 		sed -i \
 			-e "s|out/Release/|out/Debug/|g" \
