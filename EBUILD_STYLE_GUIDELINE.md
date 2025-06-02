@@ -298,6 +298,7 @@
       compiler slot (e.g. upgrading/downgrading between =sys-devel/gcc-14.4.9999
       and =sys-devel/gcc-14.3.0, upgrading/downgrading between or
       =llvm-core/clang-21.0.0.9999 and =llvm-core/clang-21.0.1). (proposed rule)
+  10. filter-lto when there is a performance regression.
 
 # Ebuild organization
 
