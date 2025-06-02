@@ -4628,7 +4628,7 @@ ewarn
 	replace-flags "-O0" "-O2"
 	if ! is-flagq "-O2" ; then
 	# Optimize for performance by default.
-	# GCC/Clang use -O0 by default
+	# GCC/Clang uses -O0 by default
 		append-flags "-O2"
 	fi
 
