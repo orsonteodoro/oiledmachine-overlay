@@ -12,7 +12,6 @@
 if [[ -z "${_CHECK_COMPILER_SWITCH_ECLASS}" ]] ; then
 _CHECK_COMPILER_SWITCH_ECLASS=1
 
-
 # @ECLASS_VARIABLE:  DETECT_COMPILER_SWITCH_T0_ARCH
 # @DESCRIPTION:
 # The compiler architecture before emerging package.
