@@ -226,7 +226,6 @@ MOZILLA_FIVE_HOME="" # Global variable
 NABIS=0 # Global variable
 NASM_PV="2.14.02"
 NODE_VERSION=18
-OFLAG="" # Global variable
 PYTHON_COMPAT=( "python3_"{10..11} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
 RUST_MAX_VER="1.81.0" # Inclusive.  Corresponds to llvm 18
@@ -1905,18 +1904,6 @@ append_all() {
 	append-ldflags ${@}
 }
 
-is_flagq_last() {
-	local flag="${1}"
-	local olast=$(echo "${CFLAGS}" \
-		| grep -o -E -e "-O(0|1|z|s|2|3|4|fast)" \
-		| tr " " "\n" \
-		| tail -n 1)
-einfo "CFLAGS:\t${CFLAGS}"
-einfo "olast:\t${olast}"
-	[[ "${flag}" == "${olast}" ]] && return 0
-	return 1
-}
-
 get_olast() {
 	local olast=$(echo "${CFLAGS}" \
 		| grep -o -E -e "-O(0|1|z|s|2|3|4|fast)" \
@@ -2492,23 +2479,21 @@ einfo "Detected compiler switch.  Disabling LTO."
 	# -Ofast or -ffast-math breaks webgl aquarium
 	# Downgrade to -O2 to unbreak -D_FORTIFY_SOURCE
 	# cflags-hardened_append will apply additional flags to unbreak -D_FORTIFY_SOURCE
-	replace-flags '-Ofast' '-O2'
-	replace-flags '-O4' '-O2'
-	replace-flags '-O3' '-O2'
-	replace-flags '-Os' '-O2'
-	replace-flags '-Oz' '-O2'
-	replace-flags '-O0' '-O1'
-	filter-flags '-ffast-math'
-	if \
-		   is-flagq '-O2' \
-		|| is-flagq '-O1' \
-	; then
-		:
-	else
+	replace-flags "-Ofast" "-O2"
+	replace-flags "-O4" "-O2"
+	replace-flags "-O3" "-O2"
+	replace-flags "-Os" "-O2"
+	replace-flags "-Oz" "-O2"
+	replace-flags "-O0" "-O1"
+	filter-flags "-ffast-math"
+	if ! is-flagq "-O2" && ! is-flagq "-O1" ; then
 	# Fallback for performance
 	# GCC/Clang use -O0 as default
 		append-flags -O2
 	fi
+	local olast
+	olast=$(get_olast)
+	replace-flags "-O*" "${olast}"
 
 	# Default upstream Oflag is -O0 in script, but -bin's default is -O3,
 	# but dav1d's FPS + image quality is only acceptable at >= -O2.
@@ -2538,15 +2523,11 @@ einfo "Detected compiler switch.  Disabling LTO."
 			mozconfig_add_options_ac 'Gentoo default' --disable-debug-symbols
 		fi
 
-		OFLAG=$(get_olast)
 		mozconfig_add_options_ac \
-			"${OFLAG}" \
-			--enable-optimize="${OFLAG}"
-einfo "Using ${OFLAG}"
+			"${oflag}" \
+			--enable-optimize="${oflag}"
+einfo "Using ${oflag}"
 	fi
-
-	oflag_safe=$(get_olast)
-einfo "oflag_safe:\t${oflag_safe}"
 
 	local L=(
 		"dom/bindings/moz.build"
@@ -2558,8 +2539,8 @@ einfo "oflag_safe:\t${oflag_safe}"
 	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" == "1" ]] ; then
 		local f
 		for f in ${L[@]} ; do
-einfo "Editing ${f}:  __OFLAG_SAFE__ -> ${oflag_safe}"
-			sed -i -e "s|__OFLAG_SAFE__|${oflag_safe}|g" \
+einfo "Editing ${f}:  __OFLAG_SAFE__ -> ${oflag}"
+			sed -i -e "s|__OFLAG_SAFE__|${oflag}|g" \
 				"${f}" \
 				|| die
 		done
@@ -2573,7 +2554,7 @@ einfo "Editing ${f}:  __OFLAG_SAFE__ -> ${oflag_safe}"
 
 	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" != "1" ]] ; then
 		:
-	elif is-flagq '-ffast-math' || [[ "${OFLAG}" == "-Ofast" ]] ; then
+	elif is-flagq '-ffast-math' || [[ "${oflag}" == "-Ofast" ]] ; then
 		local pos=$(grep -n "#define OPUS_DEFINES_H" \
 			"${s}/media/libopus/include/opus_defines.h" \
 			| cut -f 1 -d ":")
@@ -3170,16 +3151,6 @@ ewarn "        Identifier  \"...\""
 ewarn "        Driver      \"...\""
 ewarn "        Option      \"TearFree\"                  \"true\""
 ewarn "EndSection"
-ewarn
-	fi
-
-	if [[ "${OFLAG}" =~ "-Ofast" ]] ; then
-ewarn
-ewarn "Not all use cases for -Ofast have been tested.  Please send an issue"
-ewarn "request to the oiledmachine-overlay describing the bug, steps to"
-ewarn "reproduce bug, and the website."
-ewarn
-ewarn "If a bug has been observed with -Ofast, you may also downgrade to -O3."
 ewarn
 	fi
 
