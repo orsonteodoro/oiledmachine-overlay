@@ -4,6 +4,10 @@
 
 EAPI=8
 
+# See https://gitlab.freedesktop.org/mesa/mesa/-/blob/mesa-25.1.1/.gitlab-ci/container/gitlab-ci.yml?ref_type=tags
+# D12 (LLVM 14, 15; Python 3.11)
+# F41 (LLVM 19; Python 3.13)
+
 CARGO_OPTIONAL=1
 CFLAGS_HARDENED_CI_SANITIZERS="asan msan ubsan"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan tsan ubsan"
@@ -17,6 +21,9 @@ CRATES="
 	paste@1.0.14
 "
 GCC_SLOT=12
+CPU_FLAGS_X86=(
+	"cpu_flags_x86_sse2"
+)
 LIBDRM_DEPSTRING=">=x11-libs/libdrm-2.4.121"
 LIBDRM_USEDEP="\
 video_cards_freedreno?,\
@@ -26,20 +33,21 @@ video_cards_vc4?,\
 video_cards_vivante?,\
 video_cards_vmware?,\
 "
-LLVM_COMPAT=( {18..15} )
+LLVM_COMPAT=( {19..15} )
 MY_P="${P/_/-}"
 PATENT_STATUS=(
 	"patent_status_nonfree"
 )
-PYTHON_COMPAT=( "python3_"{10..13} )
+PYTHON_COMPAT=( "python3_"{11..13} )
 RADEON_CARDS=(
 	"r300"
 	"r600"
 	"radeon"
 	"radeonsi"
 )
-RUST_MAX_VER="1.81.0" # Inclusive
+RUST_MAX_VER="1.78.0" # Inclusive
 RUST_MIN_VER="1.71.1"
+RUST_MULTILIB=1
 RUST_OPTIONAL=1
 UOPTS_BOLT_EXCLUDE_BINS="libglapi.so.0.0.0"
 UOPTS_BOLT_EXCLUDE_FLAGS=( "-hugify" ) # Broken
@@ -49,6 +57,7 @@ UOPTS_SUPPORT_TBOLT=0
 UOPTS_SUPPORT_TPGO=0
 VIDEO_CARDS=(
 	${RADEON_CARDS[@]}
+	"asahi"
 	"d3d12"
 	"freedreno"
 	"intel"
@@ -83,8 +92,8 @@ if [[ "${PV}" == "9999" ]] ; then
 	inherit git-r3
 else
 	KEYWORDS="
-~amd64 ~amd64-linux ~arm ~arm-linux ~arm64 ~arm64-linux ~loong ~mips ~ppc ~ppc64
-~riscv ~s390 ~sparc ~x86 ~x86-linux
+~alpha ~amd64 ~arm64 ~hppa ~loong ~mips ~ppc ~ppc64 ~riscv ~s390 ~sparc ~x86
+~amd64-linux ~x86-linux ~x64-solaris
 	"
 	SRC_URI="
 		https://archive.mesa3d.org/${MY_P}.tar.xz
@@ -113,9 +122,9 @@ IUSE+="
 ${IUSE_VIDEO_CARDS}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
-cpu_flags_x86_sse2 d3d9 debug +llvm lm-sensors opencl +opengl
-osmesa selinux test unwind vaapi valgrind vdpau vulkan
-vulkan-overlay wayland +X xa +zstd
+asahi d3d9 debug +llvm lm-sensors opencl +opengl
++proprietary-codecs test unwind vaapi valgrind vdpau vulkan
+wayland +X xa +zstd
 ebuild_revision_6
 "
 REQUIRED_USE="
@@ -131,9 +140,6 @@ REQUIRED_USE="
 			video_cards_vmware
 			video_cards_zink
 		)
-	)
-	vulkan-overlay? (
-		vulkan
 	)
 	video_cards_lavapipe? (
 		llvm
@@ -175,6 +181,7 @@ REQUIRED_USE="
 RDEPEND="
 	${LIBDRM_DEPSTRING}[${LIBDRM_USEDEP}${MULTILIB_USEDEP}]
 	>=dev-libs/expat-2.1.0-r3[${MULTILIB_USEDEP}]
+	>=dev-util/spirv-tools-1.3.231.0[${MULTILIB_USEDEP}]
 	>=media-libs/libglvnd-1.3.2[X?,${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.9[${MULTILIB_USEDEP}]
 	virtual/patent-status[patent_status_nonfree=]
@@ -190,13 +197,9 @@ RDEPEND="
 		sys-apps/lm-sensors:=[${MULTILIB_USEDEP}]
 	)
 	opencl? (
-		>=dev-util/spirv-tools-1.3.231.0
 		>=virtual/opencl-3
 		llvm-core/libclc[spirv(-)]
 		virtual/libelf:0=
-	)
-	selinux? (
-		sys-libs/libselinux[${MULTILIB_USEDEP}]
 	)
 	unwind? (
 		sys-libs/libunwind[${MULTILIB_USEDEP}]
@@ -212,6 +215,9 @@ RDEPEND="
 	)
 	video_cards_zink? (
 		media-libs/vulkan-loader:=[${MULTILIB_USEDEP}]
+	)
+	vulkan? (
+		virtual/libudev:=
 	)
 	wayland? (
 		>=dev-libs/wayland-1.18.0[${MULTILIB_USEDEP}]
@@ -258,7 +264,6 @@ gen_llvm_depstr() {
 				opencl? (
 					dev-util/spirv-llvm-translator:${s}
 					llvm-core/clang:${s}[${LLVM_USE_DEPS}]
-					=llvm-core/libclc-${s}*[spirv(-)]
 				)
 			)
 		"
@@ -286,15 +291,19 @@ DEPEND="
 		dev-debug/valgrind
 	)
 	video_cards_d3d12? (
-		>=dev-util/directx-headers-1.613.0[${MULTILIB_USEDEP}]
+		>=dev-util/directx-headers-1.614.1[${MULTILIB_USEDEP}]
 	)
 	wayland? (
-		>=dev-libs/wayland-protocols-1.34
+		>=dev-libs/wayland-protocols-1.41
 	)
 	X? (
 		x11-base/xorg-proto
 		x11-libs/libXrandr[${MULTILIB_USEDEP}]
 	)
+"
+CLC_DEPSTRING="
+	~dev-util/mesa_clc-${PV}[video_cards_asahi?,video_cards_panfrost?]
+	llvm-core/libclc[spirv(-)]
 "
 BDEPEND="
 	$(python_gen_any_dep "
@@ -303,7 +312,7 @@ BDEPEND="
 		dev-python/pyyaml[\${PYTHON_USEDEP}]
 	")
 	${PYTHON_DEPS}
-	>=dev-build/meson-1.3.1
+	>=dev-build/meson-1.7.0
 	app-alternatives/yacc
 	app-alternatives/lex
 	virtual/pkgconfig
@@ -359,22 +368,38 @@ BDEPEND="
 				=dev-lang/rust-bin-1.78*
 			)
 		)
+		llvm_slot_19? (
+			|| (
+				=dev-lang/rust-1.82*
+				=dev-lang/rust-1.83*
+				=dev-lang/rust-1.84*
+				=dev-lang/rust-1.85*
+				=dev-lang/rust-bin-1.82*
+				=dev-lang/rust-bin-1.83*
+				=dev-lang/rust-bin-1.84*
+				=dev-lang/rust-bin-1.85*
+			)
+		)
 		|| (
 			dev-lang/rust:=
 			dev-lang/rust-bin:=
 		)
 	)
+	video_cards_asahi? (
+		${CLC_DEPSTRING}
+	)
 	video_cards_intel? (
-		$(python_gen_any_dep "
-			dev-python/ply[\${PYTHON_USEDEP}]
-		")
-		llvm-core/libclc[spirv(-)]
-		~dev-util/intel_clc-${PV}
+		${CLC_DEPSTRING}
+	)
+	video_cards_panfrost? (
+		${CLC_DEPSTRING}
 	)
 	vulkan? (
 		dev-util/glslang
 		video_cards_nvk? (
-			>=dev-util/bindgen-0.68.1
+			${CLC_DEPSTRING}
+			${RUST_DEPEND}
+			>=dev-util/bindgen-0.71.0
 			>=dev-util/cbindgen-0.26.0
 			|| (
 				(
@@ -394,9 +419,8 @@ BDEPEND="
 "
 QA_WX_LOAD="
 	x86? (
-		usr/lib/libglapi.so.0.0.0
+		usr/lib/libgallium-*.so
 		usr/lib/libGLX_mesa.so.0.0.0
-		usr/lib/libOSMesa.so.8.0.0
 	)
 "
 
@@ -447,10 +471,6 @@ python_check_deps() {
 	python_has_version -b "dev-python/packaging[${PYTHON_USEDEP}]" \
 		&& python_has_version -b "dev-python/pyyaml[${PYTHON_USEDEP}]" \
 		|| return 1
-	if use llvm && use vulkan && use video_cards_intel && use amd64 ; then
-		python_has_version -b "dev-python/ply[${PYTHON_USEDEP}]" \
-			|| return 1
-	fi
 }
 
 check_libstdcxx() {
@@ -501,7 +521,7 @@ tc-is-lto() {
 }
 
 pkg_pretend() {
-	ignore_video_card_use "vulkan" "d3d12" "freedreno" "intel" "lavapipe" "nouveau" "nvk" "panfrost" "radeonsi" "v3d" "virgl"
+	ignore_video_card_use "vulkan" "asahi" "d3d12" "freedreno" "intel" "lavapipe" "nouveau" "nvk" "panfrost" "radeonsi" "v3d" "virgl"
 	ignore_video_card_use "vaapi" "d3d12" "nouveau" "r600" "radeonsi" "virgl"
 	ignore_video_card_use "vdpau" "d3d12" "nouveau" "r300" "r600" "radeonsi" "virgl"
 	ignore_video_card_use "xa" "freedreno" "intel" "nouveau" "vmware"
@@ -510,10 +530,6 @@ pkg_pretend() {
 		if use opencl ; then
 ewarn "Ignoring USE=opencl since USE does not contain llvm"
 		fi
-	fi
-
-	if use osmesa && ! use llvm ; then
-ewarn "OSMesa will be slow without enabling USE=llvm"
 	fi
 }
 
@@ -731,6 +747,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 
 	gallium_enable !llvm softpipe
 	gallium_enable llvm llvmpipe
+	gallium_enable video_cards_asahi asahi
 	gallium_enable video_cards_d3d12 d3d12
 	gallium_enable video_cards_freedreno freedreno
 	gallium_enable video_cards_intel crocus i915 iris
@@ -764,6 +781,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 
 	if use vulkan ; then
+		vulkan_enable video_cards_asahi asahi
 		vulkan_enable video_cards_d3d12 microsoft-experimental
 		vulkan_enable video_cards_freedreno freedreno
 		vulkan_enable video_cards_intel intel intel_hasvk
@@ -782,19 +800,15 @@ einfo "Detected compiler switch.  Disabling LTO."
 				)
 			fi
 		fi
+		emesonargs+=(
+			-Dvulkan-layers=device-select,overlay
+		)
 	fi
 
 	driver_list() {
 		local drivers="$(sort -u <<< "${1// /$'\n'}")"
 		echo "${drivers//$'\n'/,}"
 	}
-
-	local vulkan_layers
-	use vulkan && vulkan_layers+="device-select"
-	use vulkan-overlay && vulkan_layers+=",overlay"
-	emesonargs+=(
-		-Dvulkan-layers=${vulkan_layers#,}
-	)
 
 	if use opengl && use X ; then
 		emesonargs+=(
@@ -812,6 +826,26 @@ einfo "Detected compiler switch.  Disabling LTO."
 		)
 	fi
 
+	if \
+		   use video_cards_asahi \
+		|| use video_cards_intel \
+		|| use video_cards_nvk \
+		|| use video_cards_panfrost \
+	; then
+		emesonargs+=(
+			-Dmesa-clc=system
+		)
+	fi
+
+	if \
+		   use video_cards_asahi \
+		|| use video_cards_panfrost \
+	; then
+		emesonargs+=(
+			-Dprecomp-compiler=system
+		)
+	fi
+
 	use debug && EMESON_BUILDTYPE="debug"
 
 	emesonargs+=(
@@ -826,15 +860,11 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(meson_feature zstd)
 		$(meson_use cpu_flags_x86_sse2 sse2)
 		$(meson_use opengl)
-		$(meson_use osmesa)
-		$(meson_use selinux)
 		$(meson_use test build-tests)
 		-Db_ndebug=$(usex debug false true)
-		-Ddri3=enabled
 		-Dexpat=enabled
 		-Dgallium-drivers=$(driver_list "${GALLIUM_DRIVERS[*]}")
-		-Dintel-clc=$(usex video_cards_intel system auto)
-		-Dshared-glapi=enabled
+		-Dlegacy-x11=dri2
 		-Dvalgrind=$(usex valgrind auto disabled)
 		-Dvideo-codecs=$(usex patent_status_nonfree "all" "all_free")
 		-Dvulkan-drivers=$(driver_list "${VULKAN_DRIVERS[*]}")

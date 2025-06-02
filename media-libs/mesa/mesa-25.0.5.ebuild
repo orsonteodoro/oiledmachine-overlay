@@ -4,20 +4,27 @@
 
 EAPI=8
 
+# See https://gitlab.freedesktop.org/mesa/mesa/-/blob/mesa-25.0.5/.gitlab-ci/container/gitlab-ci.yml?ref_type=tags
+# D12 (LLVM 14, 15; Python 3.11)
+# F41 (LLVM 19; Python 3.13)
+
 CARGO_OPTIONAL=1
 CFLAGS_HARDENED_CI_SANITIZERS="asan msan ubsan"
 CFLAGS_HARDENED_BUILDFILES_SANITIZERS="asan tsan ubsan"
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO NPD IO"
 CRATES="
-	syn@2.0.39
-	proc-macro2@1.0.70
+	syn@2.0.68
+	proc-macro2@1.0.86
 	quote@1.0.33
 	unicode-ident@1.0.12
 	paste@1.0.14
 "
 GCC_SLOT=12
-LIBDRM_DEPSTRING=">=x11-libs/libdrm-2.4.119"
+CPU_FLAGS_X86=(
+	"cpu_flags_x86_sse2"
+)
+LIBDRM_DEPSTRING=">=x11-libs/libdrm-2.4.121"
 LIBDRM_USEDEP="\
 video_cards_freedreno?,\
 video_cards_intel?,\
@@ -26,20 +33,22 @@ video_cards_vc4?,\
 video_cards_vivante?,\
 video_cards_vmware?,\
 "
-LLVM_COMPAT=( {18..15} )
+LLVM_COMPAT=( {19..15} )
 MY_P="${P/_/-}"
 PATENT_STATUS=(
 	"patent_status_nonfree"
 )
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{11..13} )
 RADEON_CARDS=(
 	"r300"
 	"r600"
 	"radeon"
 	"radeonsi"
 )
-RUST_MAX_VER="1.81.0" # Inclusive
+RUST_MAX_VER="1.78.0" # Inclusive
 RUST_MIN_VER="1.71.1"
+RUST_MULTILIB=1
+RUST_OPTIONAL=1
 UOPTS_BOLT_EXCLUDE_BINS="libglapi.so.0.0.0"
 UOPTS_BOLT_EXCLUDE_FLAGS=( "-hugify" ) # Broken
 UOPTS_SUPPORT_EBOLT=1
@@ -82,8 +91,8 @@ if [[ "${PV}" == "9999" ]] ; then
 	inherit git-r3
 else
 	KEYWORDS="
-~amd64 ~amd64-linux ~arm ~arm-linux ~arm64 ~arm64-linux ~loong ~mips ~ppc64
-~riscv ~s390 ~sparc ~x86 ~x86-linux
+~alpha amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~s390 ~sparc x86
+~amd64-linux ~x86-linux ~x64-solaris
 	"
 	SRC_URI="
 		https://archive.mesa3d.org/${MY_P}.tar.xz
@@ -112,9 +121,9 @@ IUSE+="
 ${IUSE_VIDEO_CARDS}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
-cpu_flags_x86_sse2 d3d9 debug +llvm lm-sensors opencl +opengl
-osmesa selinux test unwind vaapi valgrind vdpau vulkan
-vulkan-overlay wayland +X xa +zstd
+d3d9 debug +llvm lm-sensors opencl +opengl osmesa
++proprietary-codecs test unwind vaapi valgrind vdpau vulkan
+wayland +X xa +zstd
 ebuild_revision_6
 "
 REQUIRED_USE="
@@ -130,9 +139,6 @@ REQUIRED_USE="
 			video_cards_vmware
 			video_cards_zink
 		)
-	)
-	vulkan-overlay? (
-		vulkan
 	)
 	video_cards_lavapipe? (
 		llvm
@@ -174,6 +180,7 @@ REQUIRED_USE="
 RDEPEND="
 	${LIBDRM_DEPSTRING}[${LIBDRM_USEDEP}${MULTILIB_USEDEP}]
 	>=dev-libs/expat-2.1.0-r3[${MULTILIB_USEDEP}]
+	>=dev-util/spirv-tools-1.3.231.0[${MULTILIB_USEDEP}]
 	>=media-libs/libglvnd-1.3.2[X?,${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.2.9[${MULTILIB_USEDEP}]
 	virtual/patent-status[patent_status_nonfree=]
@@ -189,13 +196,9 @@ RDEPEND="
 		sys-apps/lm-sensors:=[${MULTILIB_USEDEP}]
 	)
 	opencl? (
-		>=dev-util/spirv-tools-1.3.231.0
 		>=virtual/opencl-3
 		llvm-core/libclc[spirv(-)]
 		virtual/libelf:0=
-	)
-	selinux? (
-		sys-libs/libselinux[${MULTILIB_USEDEP}]
 	)
 	unwind? (
 		sys-libs/libunwind[${MULTILIB_USEDEP}]
@@ -211,6 +214,9 @@ RDEPEND="
 	)
 	video_cards_zink? (
 		media-libs/vulkan-loader:=[${MULTILIB_USEDEP}]
+	)
+	vulkan? (
+		virtual/libudev:=
 	)
 	wayland? (
 		>=dev-libs/wayland-1.18.0[${MULTILIB_USEDEP}]
@@ -284,10 +290,10 @@ DEPEND="
 		dev-debug/valgrind
 	)
 	video_cards_d3d12? (
-		>=dev-util/directx-headers-1.613.0[${MULTILIB_USEDEP}]
+		>=dev-util/directx-headers-1.614.1[${MULTILIB_USEDEP}]
 	)
 	wayland? (
-		>=dev-libs/wayland-protocols-1.34
+		>=dev-libs/wayland-protocols-1.38
 	)
 	X? (
 		x11-base/xorg-proto
@@ -298,13 +304,15 @@ BDEPEND="
 	$(python_gen_any_dep "
 		>=dev-python/mako-0.8.0[\${PYTHON_USEDEP}]
 		dev-python/packaging[\${PYTHON_USEDEP}]
+		dev-python/pyyaml[\${PYTHON_USEDEP}]
 	")
 	${PYTHON_DEPS}
-	>=dev-build/meson-1.3.1
+	>=dev-build/meson-1.4.1
 	app-alternatives/yacc
 	app-alternatives/lex
 	virtual/pkgconfig
 	opencl? (
+		>=dev-build/meson-1.7.0
 		>=dev-util/bindgen-0.58.0
 		llvm_slot_15? (
 			|| (
@@ -356,22 +364,34 @@ BDEPEND="
 				=dev-lang/rust-bin-1.78*
 			)
 		)
+		llvm_slot_19? (
+			|| (
+				=dev-lang/rust-1.82*
+				=dev-lang/rust-1.83*
+				=dev-lang/rust-1.84*
+				=dev-lang/rust-1.85*
+				=dev-lang/rust-bin-1.82*
+				=dev-lang/rust-bin-1.83*
+				=dev-lang/rust-bin-1.84*
+				=dev-lang/rust-bin-1.85*
+			)
+		)
 		|| (
 			dev-lang/rust:=
 			dev-lang/rust-bin:=
 		)
 	)
 	video_cards_intel? (
-		$(python_gen_any_dep "
-			dev-python/ply[\${PYTHON_USEDEP}]
-		")
+		$(python_gen_any_dep "dev-python/ply[\${PYTHON_USEDEP}]")
+		~dev-util/mesa_clc-${PV}
 		llvm-core/libclc[spirv(-)]
-		~dev-util/intel_clc-${PV}
 	)
 	vulkan? (
 		dev-util/glslang
 		video_cards_nvk? (
-			>=dev-util/bindgen-0.68.1
+			${CLC_DEPSTRING}
+			${RUST_DEPEND}
+			>=dev-util/bindgen-0.71.0
 			>=dev-util/cbindgen-0.26.0
 			|| (
 				(
@@ -391,11 +411,14 @@ BDEPEND="
 "
 QA_WX_LOAD="
 	x86? (
-		usr/lib/libglapi.so.0.0.0
-		usr/lib/libGLX_mesa.so.0.0.0
+		usr/lib/libgallium-*.so
 		usr/lib/libOSMesa.so.8.0.0
+		usr/lib/libGLX_mesa.so.0.0.0
 	)
 "
+PATCHES=(
+	"${FILESDIR}/${PN}_egl_fix_sw_fallback_rejection.patch"
+)
 
 llvm_check_deps() {
 	if use opencl ; then
@@ -442,10 +465,11 @@ python_check_deps() {
 	python_has_version -b ">=dev-python/mako-0.8.0[${PYTHON_USEDEP}]" \
 		|| return 1
 	python_has_version -b "dev-python/packaging[${PYTHON_USEDEP}]" \
+		&& python_has_version -b "dev-python/pyyaml[${PYTHON_USEDEP}]" \
 		|| return 1
 	if use llvm && use vulkan && use video_cards_intel && use amd64 ; then
 		python_has_version -b "dev-python/ply[${PYTHON_USEDEP}]" \
-			|| return 1
+		|| return 1
 	fi
 }
 
@@ -509,7 +533,7 @@ ewarn "Ignoring USE=opencl since USE does not contain llvm"
 	fi
 
 	if use osmesa && ! use llvm ; then
-ewarn "OSMesa will be slow without enabling USE=llvm"
+		ewarn "OSMesa will be slow without enabling USE=llvm"
 	fi
 }
 
@@ -559,7 +583,10 @@ einfo "PATH=${PATH} (after)"
 	fi
 	python-any-r1_pkg_setup
 	uopts_setup
-	rust_pkg_setup
+
+	if use opencl || ( use vulkan && use video_cards_nvk ) ; then
+		rust_pkg_setup
+	fi
 }
 
 src_unpack() {
@@ -657,7 +684,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	   use video_cards_r300 ||
 	   use video_cards_r600 ||
 	   use video_cards_radeonsi ||
-	   use video_cards_vmware || # swrast
+	   use video_cards_vmware || # svga
 	   use video_cards_zink \
 	; then
 		emesonargs+=(
@@ -722,17 +749,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 		)
 	fi
 
-	if use video_cards_freedreno ||
-	   use video_cards_lima ||
-	   use video_cards_panfrost ||
-	   use video_cards_v3d ||
-	   use video_cards_vc4 ||
-	   use video_cards_vivante \
-	; then
-		gallium_enable -- kmsro
-	fi
-
-	gallium_enable -- swrast
+	gallium_enable !llvm softpipe
+	gallium_enable llvm llvmpipe
 	gallium_enable video_cards_d3d12 d3d12
 	gallium_enable video_cards_freedreno freedreno
 	gallium_enable video_cards_intel crocus i915 iris
@@ -784,19 +802,15 @@ einfo "Detected compiler switch.  Disabling LTO."
 				)
 			fi
 		fi
+		emesonargs+=(
+			-Dvulkan-layers=device-select,overlay
+		)
 	fi
 
 	driver_list() {
 		local drivers="$(sort -u <<< "${1// /$'\n'}")"
 		echo "${drivers//$'\n'/,}"
 	}
-
-	local vulkan_layers
-	use vulkan && vulkan_layers+="device-select"
-	use vulkan-overlay && vulkan_layers+=",overlay"
-	emesonargs+=(
-		-Dvulkan-layers=${vulkan_layers#,}
-	)
 
 	if use opengl && use X ; then
 		emesonargs+=(
@@ -824,18 +838,17 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(meson_feature opengl egl)
 		$(meson_feature llvm)
 		$(meson_feature lm-sensors lmsensors)
+		$(meson_use osmesa)
 		$(meson_feature unwind libunwind)
 		$(meson_feature zstd)
 		$(meson_use cpu_flags_x86_sse2 sse2)
 		$(meson_use opengl)
-		$(meson_use osmesa)
-		$(meson_use selinux)
 		$(meson_use test build-tests)
 		-Db_ndebug=$(usex debug false true)
-		-Ddri3=enabled
 		-Dexpat=enabled
 		-Dgallium-drivers=$(driver_list "${GALLIUM_DRIVERS[*]}")
-		-Dintel-clc=$(usex video_cards_intel system auto)
+		-Dlegacy-x11=dri2
+		-Dmesa-clc=$(usex video_cards_intel system auto)
 		-Dshared-glapi=enabled
 		-Dvalgrind=$(usex valgrind auto disabled)
 		-Dvideo-codecs=$(usex patent_status_nonfree "all" "all_free")
@@ -852,7 +865,13 @@ einfo "Detected compiler switch.  Disabling LTO."
 }
 
 _src_compile() {
-	meson_src_compile
+	if [[ "${ABI}" == "x86" ]] ; then
+		# Bug 939803
+		BINDGEN_EXTRA_CLANG_ARGS="-m32" \
+		meson_src_compile
+	else
+		meson_src_compile
+	fi
 }
 
 src_compile() {
