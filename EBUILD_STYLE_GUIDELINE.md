@@ -93,6 +93,9 @@
 
     - If the CI image is D12, use python3_11.
     - If the CI image is U24, use python3_12.
+    - If the CI image is F37-F38, use python3_11.
+    - If the CI image is F39-F40, use python3_12.
+    - If the CI image is F41-F.., use python3_13.
     - If the CI image tests both D12 and U24, use python3_{11,12}.
     - If a Dockerfile exists, use the above rules.
     - If the app is set to USE="python_single_target_python3_11" and you tested lib/app interactively or by test suite, use python3_11.
