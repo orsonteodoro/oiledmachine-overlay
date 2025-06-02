@@ -490,10 +490,11 @@ is_flagq_last() {
 		| grep -o -E -e "-O(0|1|z|s|2|3|4|fast)" \
 		| tr " " "\n" \
 		| tail -n 1)
-einfo "CFLAGS:\t${CFLAGS}"
-einfo "olast:\t${olast}"
-	[[ "${flag}" == "${olast}" ]] && return 0
-	return 1
+	if [[ "${flag}" == "${olast}" ]] ; then
+		return 0
+	else
+		return 1
+	fi
 }
 
 src_configure_abi() {
