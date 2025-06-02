@@ -2338,16 +2338,15 @@ ewarn
 	replace-flags "-Os" "-O2"
 	replace-flags "-Oz" "-O2"
 	replace-flags "-O0" "-O1"
-	if \
-		   is-flagq '-O1' \
-		|| is-flagq '-O2' \
-	; then
-		:
-	else
+	if ! is-flagq '-O1' && ! is-flagq '-O2' ; then
 	# Add missing -O level for performance.
 	# GCC/Clang default at -O0 if optimization level is unspecified.
 		append-flags '-O2'
 	fi
+	local olast
+	olast=$(get_olast)
+	replace-flags "-O*" "${olast}"
+
 	if [[ "${OSHIT}" == "1" ]] ; then
 	# Input validate to prevent artifacts or weakend security.
 		if [[ -n "${OSHIT_OPT_LEVEL_ANGLE}" ]] ; then
@@ -2429,7 +2428,6 @@ einfo "OSHIT_OPT_LEVEL_SKIA: ${OSHIT_OPT_LEVEL_SKIA}"
 einfo "OSHIT_OPT_LEVEL_WEBCORE: ${OSHIT_OPT_LEVEL_WEBCORE}"
 einfo "OSHIT_OPT_LEVEL_XXHASH: ${OSHIT_OPT_LEVEL_XXHASH}"
 	else
-		local olast=$(get_olast)
 		if [[ "${olast}" == "-O2" ]] ; then
 			replace-flags "-O*" "-O2"
 			OSHIT_OPT_LEVEL_ANGLE=2
