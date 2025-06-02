@@ -4607,6 +4607,49 @@ ewarn
 	myconf_gn+=" use_minikin_hyphenation=$(usex css-hyphen true false)"
 	myconf_gn+=" use_mpris=$(usex mpris true false)"
 	myconf_gn+=" use_partition_alloc=$(usex partitionalloc true false)" # See issue 40277359
+
+
+	#
+	# Oflag and or compiler flag requirements:
+	#
+	# 1. Smooth playback (>=25 FPS) for vendored codecs like dav1d.
+	# 2. Fast build time to prevent systemwide vulnerability backlog.
+	# 3. Critical vulnerabilities should be fixed in one day, which implies
+	#    that the ebuild has to be completely merged within a day.
+	# 4. Does not introduce more vulnerabilities or increase the estimated CVSS score.
+	#
+
+	replace-flags "-Ofast" "-O2"
+	replace-flags "-O4" "-O2"
+	replace-flags "-O3" "-O2"
+	replace-flags "-Os" "-O2"
+	replace-flags "-Oz" "-O2"
+	replace-flags "-O1" "-O2"
+	replace-flags "-O0" "-O2"
+	if ! is-flagq "-O2" ; then
+	# Optimize for performance by default.
+	# GCC/Clang use -O0 by default
+		append-flags "-O2"
+	fi
+
+	if ! _use_system_toolchain ; then
+	# The vendored clang/rust is likely built for portability not performance
+	# that is why it is very slow.
+		replace-flags "-O*" "-O2"
+	fi
+	if (( ${nprocs} <= 4 )) ; then
+		replace-flags "-O*" "-O2"
+	fi
+
+	# Prevent crash for now
+	filter-flags "-ffast-math"
+
+	if (( ${OSHIT_OPTIMIZED} == 1 )) ; then
+		replace-flags "-O*" "-O1"
+	fi
+	local olast=$(get_olast)
+	replace-flags "-O*" "${get_olast}"
+
 	if use official ; then
 		: # Automagic
 	else
@@ -4687,7 +4730,6 @@ ewarn
 			myconf_gn+=" v8_jitless=false"
 		}
 
-		local olast=$(get_olast)
 		if [[ "${olast}" =~ "-Ofast" ]] ; then
 			jit_level=7
 		elif [[ "${olast}" =~ "-O3" ]] ; then
@@ -5067,46 +5109,6 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 		myconf_gn+=" tflite_custom_optimization_level=${oshit_opt_level_tflite}"
 		myconf_gn+=" v8_custom_optimization_level=${oshit_opt_level_v8}"
 		myconf_gn+=" xnnpack_custom_optimization_level=${oshit_opt_level_xnnpack}"
-	fi
-
-	#
-	# Oflag and or compiler flag requirements:
-	#
-	# 1. Smooth playback (>=25 FPS) for vendored codecs like dav1d.
-	# 2. Fast build time to prevent systemwide vulnerability backlog.
-	# 3. Critical vulnerabilities should be fixed in one day, which implies
-	#    that the ebuild has to be completely merged within a day.
-	# 4. Does not introduce more vulnerabilities or increase the estimated CVSS score.
-	#
-
-	replace-flags "-O0" "-O2"
-	replace-flags "-O1" "-O2"
-	replace-flags "-Oz" "-O2"
-	replace-flags "-Os" "-O2"
-	replace-flags "-O4" "-O2"
-	replace-flags "-Ofast" "-O2"
-	if is-flagq "-O1" || is-flagq "-O2" ; then
-		:
-	else
-	# Optimize for performance by default.
-	# GCC/Clang use -O0 by default
-		append-flags "-O2"
-	fi
-
-	if ! _use_system_toolchain ; then
-	# The vendored clang/rust is likely built for portability not performance
-	# that is why it is very slow.
-		replace-flags "-O*" "-O2"
-	fi
-	if (( ${nprocs} <= 4 )) ; then
-		replace-flags "-O*" "-O2"
-	fi
-
-	# Prevent crash for now
-	filter-flags "-ffast-math"
-
-	if (( ${OSHIT_OPTIMIZED} == 1 )) ; then
-		replace-flags "-O*" "-O1"
 	fi
 
 	#
