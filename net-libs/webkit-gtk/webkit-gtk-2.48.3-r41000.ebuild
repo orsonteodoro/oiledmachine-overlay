@@ -8,7 +8,7 @@ EAPI=8
 
 # -r revision notes
 # -rabcde
-# ab = WEBKITGTK_API_VERSION version (4.0)
+# ab = WEBKITGTK_API_VERSION version (4.1)
 # c = reserved
 # de = ebuild revision
 
@@ -71,7 +71,7 @@ EAPI=8
 # Do not use trunk!
 # media-libs/gst-plugins-bad should check libkate as a *DEPENDS but does not
 
-API_VERSION="4.0"
+API_VERSION="4.1"
 CAIRO_PV="1.16.0"
 # One of the major sources of lag comes from dependencies
 # These are strict to match performance to competition or normal builds.
@@ -114,17 +114,18 @@ tr uk vi zh_CN
 LLVM_COMPAT=( 18 14 )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MESA_PV="18.0.0_rc5"
-MITIGATION_DATE="Apr 7, 2025"
-MITIGATION_LAST_UPDATE=1743585600 # From `date +%s -d "2025-04-02 2:20 AM PDT"` from tag in GH for this version
+MITIGATION_DATE="May 15, 2025"
+MITIGATION_LAST_UPDATE=1748524080 # From `date +%s -d "2025-05-29 6:08 AM PDT"` from tag in GH for this version
 MITIGATION_URI="https://webkitgtk.org/security/WSA-2025-0003.html"
 VULNERABILITIES_FIXED=(
-	"CVE-2024-54551;ZC, DoS;High"
-	"CVE-2025-24208;XSS, DT, ID;Medium"
-	"CVE-2025-24209;BO, ZC, DoS, DT, ID;High"
-	"CVE-2025-24213;MC, DoS, DT, ID;High"
-	"CVE-2025-24216;DoS;Medium"
-	"CVE-2025-24264;ZC, DoS, DT, ID;Critical"
-	"CVE-2025-30427;DoS;Medium"
+	"CVE-2023-42970;CE, DoS, DT, ID;High"
+	"CVE-2025-24223;MC, DoS, DT, ID;High"
+	"CVE-2025-31204;MC, DoS, DT, ID;High"
+	"CVE-2023-42875;CE, DT, ID;High"
+	"CVE-2025-31205;ID;Medium"
+	"CVE-2025-31206;TC, DoS;Medium"
+	"CVE-2025-31215;DoS;Medium"
+	"CVE-2025-31257;DoS;Medium"
 )
 OCDM_WV="virtual/libc" # Placeholder
 PYTHON_COMPAT=( "python3_"{10..12} )
@@ -133,10 +134,10 @@ SLOT_MAJOR=$(ver_cut 1 "${API_VERSION}")
 # See Source/cmake/OptionsGTK.cmake
 # CALCULATE_LIBRARY_VERSIONS_FROM_LIBTOOL_TRIPLE(WEBKIT C R A),
 # SO_VERSION = C - A
-# WEBKITGTK_API_VERSION is 4.0
-SO_CURRENT="109"
+# WEBKITGTK_API_VERSION is 4.1
+SO_CURRENT="17"
 #SO_REVISION=""
-SO_AGE="72"
+SO_AGE="17"
 SO_VERSION=$(( ${SO_CURRENT} - ${SO_AGE} ))
 USE_RUBY=" ruby32 ruby33"
 WK_PAGE_SIZE=64 # global var not const
@@ -163,7 +164,7 @@ SRC_URI="
 "
 S="${WORKDIR}/webkitgtk-${PV}"
 
-DESCRIPTION="Open source web browser engine (GTK+3 with HTTP/1.1 support)"
+DESCRIPTION="Open source web browser engine (GTK+3 with HTTP/2 support)"
 HOMEPAGE="https://www.webkitgtk.org"
 LICENSE_DROMAEO="
 	(
@@ -440,7 +441,7 @@ LICENSE="
 # distributes these browsers with unicode licensed data without
 # restrictions.
 RESTRICT="test"
-SLOT="${API_VERSION%.*}/${SO_VERSION}"
+SLOT="${API_VERSION}/${SO_VERSION}"
 # SLOT=6/4    GTK4 SOUP3
 # SLOT=4.1/0  GTK3 SOUP3
 # SLOT=4/37   GTK3 SOUP2
@@ -811,7 +812,7 @@ RDEPEND+="
 	>=media-libs/libepoxy-1.5.4[${MULTILIB_USEDEP}]
 	>=media-libs/libpng-1.6.34:0=[${MULTILIB_USEDEP}]
 	>=media-libs/libwebp-0.6.1:=[${MULTILIB_USEDEP}]
-	>=net-libs/libsoup-2.54.0:2.4[${MULTILIB_USEDEP},introspection?]
+	>=net-libs/libsoup-2.99.9:3.0[${MULTILIB_USEDEP},introspection?]
 	>=sys-libs/zlib-1.2.11:0[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-${CAIRO_PV}:=[${MULTILIB_USEDEP},X?]
 	>=x11-libs/gtk+-3.22.0:3[${MULTILIB_USEDEP},aqua?,introspection?,wayland?,X?]
@@ -1193,13 +1194,7 @@ get_olast() {
 		| grep -o -E -e "-O(0|1|z|s|2|3|4|fast)" \
 		| tr " " "\n" \
 		| tail -n 1)
-	if [[ -n "${olast}" ]] ; then
-		echo "${olast}"
-	else
-	# cflags-hardened default
-	# Prevent breaking -D_FORTIFY_SOURCE even more.
-		echo "-O2"
-	fi
+	echo "${olast}"
 }
 
 pkg_pretend() {
@@ -2292,7 +2287,7 @@ ewarn
 		-DUSE_LIBBACKTRACE=$(usex libbacktrace)
 		-DUSE_LIBSECRET=$(usex gnome-keyring)
 		-DUSE_OPENMP=$(usex openmp)
-		-DUSE_SOUP2=ON
+		-DUSE_SOUP2=OFF
 		-DUSE_SPIEL=OFF
 		-DUSE_SYSTEM_MALLOC=$(usex system-malloc)
 		-DUSE_WOFF2=$(usex woff2)
@@ -2329,16 +2324,31 @@ ewarn
 	# Anything less than -O2 may break rendering.
 	# GCC -O1:  pas_generic_large_free_heap.h:140:1: error: inlining failed in call to 'always_inline'
 	# Clang -Os:  slower than expected rendering.
-	# Forced >= -O3 to be about same relative performance to other browser engines.
 	# -O2 feels like C- grade relative other browser engines.
+	# Capped at -O2 to unbreak -D_FORTIFY_SOURCE checks.
 
+	replace-flags "-Ofast" "-O2"
+	replace-flags "-O4" "-O2"
+	replace-flags "-O3" "-O2"
+	replace-flags "-Os" "-O2"
+	replace-flags "-Oz" "-O2"
+	replace-flags "-O0" "-O1"
+	if \
+		   is-flagq '-O0' \
+		|| is-flagq '-O1' \
+		|| is-flagq '-Oz' \
+		|| is-flagq '-Os' \
+		|| is-flagq '-O2' \
+		|| is-flagq '-O3' \
+		|| is-flagq '-Ofast' \
+	; then
+		:
+	else
+	# Add missing -O level for performance.
+	# GCC/Clang default at -O0 if optimization level is unspecified.
+		append-flags '-O2'
+	fi
 	if [[ "${OSHIT}" == "1" ]] ; then
-		replace-flags "-Ofast" "-O2"
-		replace-flags "-O4" "-O2"
-		replace-flags "-O3" "-O2"
-		replace-flags "-Os" "-O2"
-		replace-flags "-Oz" "-O2"
-		replace-flags "-O0" "-O1"
 	# Input validate to prevent artifacts or weakend security.
 		if [[ -n "${OSHIT_OPT_LEVEL_ANGLE}" ]] ; then
 			if [[ "${OSHIT_OPT_LEVEL_ANGLE}" == "1" || "${OSHIT_OPT_LEVEL_ANGLE}" == "2" ]] ; then
@@ -2419,12 +2429,6 @@ einfo "OSHIT_OPT_LEVEL_SKIA: ${OSHIT_OPT_LEVEL_SKIA}"
 einfo "OSHIT_OPT_LEVEL_WEBCORE: ${OSHIT_OPT_LEVEL_WEBCORE}"
 einfo "OSHIT_OPT_LEVEL_XXHASH: ${OSHIT_OPT_LEVEL_XXHASH}"
 	else
-		filter-flags "-Ofast" "-O2"
-		filter-flags "-O4" "-O2"
-		filter-flags "-O3" "-O2"
-		filter-flags "-Os" "-O2"
-		filter-flags "-Oz" "-O2"
-		filter-flags "-O0" "-O1"
 		local olast=$(get_olast)
 		if [[ "${olast}" == "-O2" ]] ; then
 			replace-flags "-O*" "-O2"
@@ -2573,12 +2577,6 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 		fi
 	}
 
-	filter-flags "-Ofast" "-O2"
-	filter-flags "-O4" "-O2"
-	filter-flags "-O3" "-O2"
-	filter-flags "-Os" "-O2"
-	filter-flags "-Oz" "-O2"
-	filter-flags "-O0" "-O1"
 	local olast=$(get_olast)
 	if [[ "${OSHIT}" == "1" ]] ; then
 		if [[ "${OSHIT_OPT_LEVEL_JSC}" == "3" ]] ; then
@@ -2888,13 +2886,6 @@ eerror
 		mycmakeargs+=( -DFORCE_32BIT=ON )
 	fi
 
-	# Anything less than -O2 may break rendering.
-	# GCC -O1:  pas_generic_large_free_heap.h:140:1: error: inlining failed in call to 'always_inline'
-	# Clang -Os:  slower than expected rendering.
-	# Forced >= -O3 to be about same relative performance to other browser engines.
-	# -O2 feels like C- grade relative other browser engines.
-
-
 	filter-flags '-ffast-math'
 
 	if is-flagq "-Ofast" ; then
@@ -3052,32 +3043,3 @@ ewarn
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  license-transparency, webvtt, avif
 # OILEDMACHINE-OVERLAY-META-WIP:  pgo, webrtc
-
-# OILEDMACHINE-OVERLAY-TEST: passed with -Oshit, clang 18.1.8 (2.46.3, 20241116):
-# OILEDMACHINE-OVERLAY-TEST: passed with -Oshit, clang 18.1.8 (2.48.1, 20250422) for slot 4.1/0:
-#
-#   CFLAGS=-Oshit build config:
-#
-#     OSHIT_OPT_LEVEL_ANGLE="fast"
-#     OSHIT_OPT_LEVEL_JSC="3"
-#     OSHIT_OPT_LEVEL_SHA1="fast"
-#     OSHIT_OPT_LEVEL_SKIA="fast"
-#     OSHIT_OPT_LEVEL_XXHASH="fast"
-#     OSHIT_OPT_LEVEL_WEBCORE="1"
-#
-#   interactive test:
-#
-#     minibrowser:  passed
-#     surf:  passed
-#     search engine(s):  passed
-#     video site(s):  fail (minibrowser), passed (surf)
-#       vpx (streaming):  passed
-#       vpx (on demand):  passed
-#       opus:  passed
-#       misc notes:  bad render on chat
-#     wiki(s):  passed
-#     audio:  fail
-#       streaming radio:  segfault
-#     scroll: fast, random slowdown
-#     stability:  unstable
-#

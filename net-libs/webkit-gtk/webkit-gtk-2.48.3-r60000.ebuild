@@ -114,17 +114,18 @@ tr uk vi zh_CN
 LLVM_COMPAT=( 18 14 )
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MESA_PV="18.0.0_rc5"
-MITIGATION_DATE="Apr 7, 2025"
-MITIGATION_LAST_UPDATE=1743585600 # From `date +%s -d "2025-04-02 2:20 AM PDT"` from tag in GH for this version
+MITIGATION_DATE="May 15, 2025"
+MITIGATION_LAST_UPDATE=1748524080 # From `date +%s -d "2025-05-29 6:08 AM PDT"` from tag in GH for this version
 MITIGATION_URI="https://webkitgtk.org/security/WSA-2025-0003.html"
 VULNERABILITIES_FIXED=(
-	"CVE-2024-54551;ZC, DoS;High"
-	"CVE-2025-24208;XSS, DT, ID;Medium"
-	"CVE-2025-24209;BO, ZC, DoS, DT, ID;High"
-	"CVE-2025-24213;MC, DoS, DT, ID;High"
-	"CVE-2025-24216;DoS;Medium"
-	"CVE-2025-24264;ZC, DoS, DT, ID;Critical"
-	"CVE-2025-30427;DoS;Medium"
+	"CVE-2023-42970;CE, DoS, DT, ID;High"
+	"CVE-2025-24223;MC, DoS, DT, ID;High"
+	"CVE-2025-31204;MC, DoS, DT, ID;High"
+	"CVE-2023-42875;CE, DT, ID;High"
+	"CVE-2025-31205;ID;Medium"
+	"CVE-2025-31206;TC, DoS;Medium"
+	"CVE-2025-31215;DoS;Medium"
+	"CVE-2025-31257;DoS;Medium"
 )
 OCDM_WV="virtual/libc" # Placeholder
 PYTHON_COMPAT=( "python3_"{10..12} )
@@ -1193,13 +1194,7 @@ get_olast() {
 		| grep -o -E -e "-O(0|1|z|s|2|3|4|fast)" \
 		| tr " " "\n" \
 		| tail -n 1)
-	if [[ -n "${olast}" ]] ; then
-		echo "${olast}"
-	else
-	# cflags-hardened default
-	# Prevent breaking -D_FORTIFY_SOURCE even more.
-		echo "-O2"
-	fi
+	echo "${olast}"
 }
 
 pkg_pretend() {
@@ -2334,16 +2329,31 @@ ewarn
 	# Anything less than -O2 may break rendering.
 	# GCC -O1:  pas_generic_large_free_heap.h:140:1: error: inlining failed in call to 'always_inline'
 	# Clang -Os:  slower than expected rendering.
-	# Forced >= -O3 to be about same relative performance to other browser engines.
 	# -O2 feels like C- grade relative other browser engines.
+	# Capped at -O2 to unbreak -D_FORTIFY_SOURCE checks.
 
+	replace-flags "-Ofast" "-O2"
+	replace-flags "-O4" "-O2"
+	replace-flags "-O3" "-O2"
+	replace-flags "-Os" "-O2"
+	replace-flags "-Oz" "-O2"
+	replace-flags "-O0" "-O1"
+	if \
+		   is-flagq '-O0' \
+		|| is-flagq '-O1' \
+		|| is-flagq '-Oz' \
+		|| is-flagq '-Os' \
+		|| is-flagq '-O2' \
+		|| is-flagq '-O3' \
+		|| is-flagq '-Ofast' \
+	; then
+		:
+	else
+	# Add missing -O level for performance.
+	# GCC/Clang default at -O0 if optimization level is unspecified.
+		append-flags '-O2'
+	fi
 	if [[ "${OSHIT}" == "1" ]] ; then
-		replace-flags "-Ofast" "-O2"
-		replace-flags "-O4" "-O2"
-		replace-flags "-O3" "-O2"
-		replace-flags "-Os" "-O2"
-		replace-flags "-Oz" "-O2"
-		replace-flags "-O0" "-O1"
 	# Input validate to prevent artifacts or weakend security.
 		if [[ -n "${OSHIT_OPT_LEVEL_ANGLE}" ]] ; then
 			if [[ "${OSHIT_OPT_LEVEL_ANGLE}" == "1" || "${OSHIT_OPT_LEVEL_ANGLE}" == "2" ]] ; then
@@ -2424,12 +2434,6 @@ einfo "OSHIT_OPT_LEVEL_SKIA: ${OSHIT_OPT_LEVEL_SKIA}"
 einfo "OSHIT_OPT_LEVEL_WEBCORE: ${OSHIT_OPT_LEVEL_WEBCORE}"
 einfo "OSHIT_OPT_LEVEL_XXHASH: ${OSHIT_OPT_LEVEL_XXHASH}"
 	else
-		filter-flags "-Ofast" "-O2"
-		filter-flags "-O4" "-O2"
-		filter-flags "-O3" "-O2"
-		filter-flags "-Os" "-O2"
-		filter-flags "-Oz" "-O2"
-		filter-flags "-O0" "-O1"
 		local olast=$(get_olast)
 		if [[ "${olast}" == "-O2" ]] ; then
 			replace-flags "-O*" "-O2"
@@ -2578,12 +2582,6 @@ einfo "WK_PAGE_SIZE:  ${WK_PAGE_SIZE}"
 		fi
 	}
 
-	filter-flags "-Ofast" "-O2"
-	filter-flags "-O4" "-O2"
-	filter-flags "-O3" "-O2"
-	filter-flags "-Os" "-O2"
-	filter-flags "-Oz" "-O2"
-	filter-flags "-O0" "-O1"
 	local olast=$(get_olast)
 	if [[ "${OSHIT}" == "1" ]] ; then
 		if [[ "${OSHIT_OPT_LEVEL_JSC}" == "3" ]] ; then
