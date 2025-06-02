@@ -2339,13 +2339,8 @@ ewarn
 	replace-flags "-Oz" "-O2"
 	replace-flags "-O0" "-O1"
 	if \
-		   is-flagq '-O0' \
-		|| is-flagq '-O1' \
-		|| is-flagq '-Oz' \
-		|| is-flagq '-Os' \
+		   is-flagq '-O1' \
 		|| is-flagq '-O2' \
-		|| is-flagq '-O3' \
-		|| is-flagq '-Ofast' \
 	; then
 		:
 	else
