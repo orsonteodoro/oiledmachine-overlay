@@ -2397,9 +2397,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 	# Filter ldflags after linker switch
 	strip-unsupported-flags
 
-	cflags-hardened_append
-	rustflags-hardened_append
-
 	# PGO was moved outside lto block to allow building pgo without lto.
 	if use pgo ; then
 		mozconfig_add_options_ac '+pgo' MOZ_PGO=1
@@ -2555,6 +2552,9 @@ ewarn "Add more swap space if linker causes an out of memory (OOM) condition."
 	mozconfig_add_options_mk \
 		'Gentoo default' \
 		"MOZ_OBJDIR=${BUILD_OBJ_DIR}"
+
+	cflags-hardened_append
+	rustflags-hardened_append
 
 einfo "Cross-compile ABI:\t\t${ABI}"
 einfo "Cross-compile CFLAGS:\t${CFLAGS}"
