@@ -484,17 +484,12 @@ einfo "CPPFLAGS:\t${CPPFLAGS}"
 einfo "LDFLAGS:\t${LDFLAGS}"
 }
 
-is_flagq_last() {
-	local flag="${1}"
+get_olast() {
 	local olast=$(echo "${CFLAGS}" \
 		| grep -o -E -e "-O(0|1|z|s|2|3|4|fast)" \
 		| tr " " "\n" \
 		| tail -n 1)
-	if [[ "${flag}" == "${olast}" ]] ; then
-		return 0
-	else
-		return 1
-	fi
+	echo "${olast}"
 }
 
 src_configure_abi() {
@@ -656,19 +651,25 @@ ewarn "Please use the dev-cpp/highway::oiledmachine-overlay ebuild instead."
 		)
 	fi
 
-	if is_flagq_last '-O3' ; then
-		emesonargs+=(
-			-Doptimization=3
-		)
-	elif is_flagq_last '-O2' ; then
-		emesonargs+=(
-			-Doptimization=2
-		)
-	elif is_flagq_last '-Os' ; then
-		emesonargs+=(
-			-Doptimization=s
-		)
+	replace-flags "-Ofast" "-O2"
+	replace-flags "-O4" "-O2"
+	replace-flags "-O3" "-O2"
+	replace-flags "-Os" "-O2"
+	replace-flags "-Oz" "-O2"
+	replace-flags "-O0" "-O1"
+	if is-flagq "-O1" || is-flagq "-O2" ; then
+		:
+	else
+		append-flags "-O2"
 	fi
+
+	local olast
+	olast=$(get_olast)
+	replace-flags "-O*" "${olast}"
+
+	emesonargs+=(
+		-Doptimization="${olast/-O/}"
+	)
 	meson_src_configure
 }
 
