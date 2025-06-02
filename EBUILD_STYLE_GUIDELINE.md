@@ -306,7 +306,7 @@
       machine.
   12. filter-lto when the machine is too slow (>= 24 hours) to handle LTO builds
       because it a security backlog issue that should be prevented.  If the
-      ebuild does not proactively disable the LTO, the the developers could be
+      ebuild does not proactively disable the LTO, the developers could be
       perceived as assisting the attackers.
 
 # Ebuild organization
