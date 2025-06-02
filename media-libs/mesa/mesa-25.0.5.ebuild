@@ -383,7 +383,9 @@ BDEPEND="
 		)
 	)
 	video_cards_intel? (
-		$(python_gen_any_dep "dev-python/ply[\${PYTHON_USEDEP}]")
+		$(python_gen_any_dep "
+			dev-python/ply[\${PYTHON_USEDEP}]
+		")
 		~dev-util/mesa_clc-${PV}
 		llvm-core/libclc[spirv(-)]
 	)
