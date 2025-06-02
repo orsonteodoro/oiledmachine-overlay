@@ -281,10 +281,11 @@
   1.  filter-lto when the compiler at the beginning of the pkg_setup phase is
       not the same after a forced compiler switch.  It is assumed that the
       initial compiler is the default systemwide LTO compiler.
-  2.  filter-lto when the explicit LTO compiler is not the same after the
-      compiler switch phase for static-libs contained in any of IUSE or *DEPENDS
-      variable or for ebuilds that link to static-libs during static builds or
-      have static in IUSE.
+  2.  filter-lto when the user verified default system LTO compiler, set as
+      DETECT_COMPILER_SWITCH_LTO_CC_NAME and DETECT_COMPILER_SWITCH_LTO_CC_SLOT,
+      is not the same after the compiler switch phase for static-libs contained
+      in any of IUSE or *DEPENDS variables or for ebuilds that link to
+      static-libs during static builds or have static in IUSE.
   3.  filter-lto when using a GPU compiler
   4.  filter-lto when not using system compilers
   5.  filter-lto when using forked compilers
