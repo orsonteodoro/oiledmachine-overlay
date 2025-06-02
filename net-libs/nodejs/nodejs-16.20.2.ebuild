@@ -223,18 +223,6 @@ _count_useflag_slots() {
 	echo "${tot}"
 }
 
-_is_flagq_last() {
-	local flag="${1}"
-	local olast=$(echo "${CFLAGS}" \
-		| grep -o -E -e "-O(0|1|z|s|2|3|4|fast)" \
-		| tr " " "\n" \
-		| tail -n 1)
-einfo "CFLAGS:\t${CFLAGS}"
-einfo "olast:\t${olast}"
-	[[ "${flag}" == "${olast}" ]] && return 0
-	return 1
-}
-
 _print_merge_useflag_conflicts() {
 	local useflag="${1}"
 	local x
@@ -378,8 +366,8 @@ src_prepare() {
 #      |                                  ^~~~~~~~~~~~~
 	#
 	# Limit to -O2 to prevent the 2.3x performance penalty when adding
-	# -fno-* flags to unbreak -D_FORTIFY_SOURCE checks at -O3. When -O2 with
-	# -fno-* set, the performance penalty is 1.16x.
+	# -fno-* flags to unbreak -D_FORTIFY_SOURCE checks at -O3. When using
+	# -O2 with -fno-* set, the performance penalty is 1.16x.
 	#
 	# Upstream does not like -O3 when running sanitizers (aka fuzz-testing)
 	#
@@ -396,9 +384,17 @@ src_prepare() {
 	replace-flags '-O4' '-O2'
 	replace-flags '-O3' '-O2'
 	replace-flags '-O2' '-O2'
+	replace-flags '-Os' '-O2'
+	replace-flags '-Oz' '-O2'
 	replace-flags '-O1' '-O2'
 	replace-flags '-O0' '-O2'
-	local oflag="-O2" # cflags-hardened default flag
+	if ! isflagq "-O2" ; then
+	# Add fallback flag.
+	# Default to performance.
+	# GCC/Clang default to -O0
+		append-flags '-O2'
+	fi
+	local oflag="-O2"
 	f1="${oflag}"
 	f3="${oflag}"
 	sed -i -e "s|-O3|${oflag}|g" ${FP[@]} || die
@@ -486,12 +482,7 @@ get_olast() {
 		| grep -o -E -e "-O(0|1|z|s|2|3|4|fast)" \
 		| tr " " "\n" \
 		| tail -n 1)
-	if [[ -n "${olast}" ]] ; then
-		echo "${olast}"
-	else
-		# Upstream default
-		echo "-O3"
-	fi
+	echo "${olast}"
 }
 
 enable_gdb() {
