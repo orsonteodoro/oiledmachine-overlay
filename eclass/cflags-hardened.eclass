@@ -2390,27 +2390,6 @@ einfo "Added ${x} from ${module} sanitizer"
 				fi
 			fi
 		done
-
-		if (( ${asan} == 1 )) ; then
-einfo "Deduping stack overflow check"
-			filter-flags "-f*stack-protector*"
-			CFLAGS_HARDENED_CFLAGS=$(echo "${CFLAGS_HARDENED_CFLAGS}" \
-				| sed \
-					-r \
-					-e "s#-f(no-|)stack-protector-all##g" \
-					-e "s#-f(no-|)stack-protector-strong##g" \
-					-e "s#-f(no-|)stack-protector##g")
-			CFLAGS_HARDENED_CXXFLAGS=$(echo "${CFLAGS_HARDENED_CXXFLAGS}" \
-				| sed \
-					-r \
-					-e "s#-f(no-|)stack-protector-all##g" \
-					-e "s#-f(no-|)stack-protector-strong##g" \
-					-e "s#-f(no-|)stack-protector##g")
-	# Disable the compiler default.
-			append-flags "-fno-stack-protector"
-			CFLAGS_HARDENED_CFLAGS+=" -fno-stack-protector"
-			CFLAGS_HARDENED_CXXFLAGS+=" -fno-stack-protector"
-		fi
 	fi
 
 	filter-flags "-f*sanitize-recover"

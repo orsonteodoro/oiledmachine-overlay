@@ -12984,7 +12984,6 @@ ot-kernel_set_security_critical() {
 			|| \
 		[[ "${work_profile}" == "dss" ]] \
 	; then
-		local need_stack_protector=0
 		local asan=0
 		local enabled=0
 
@@ -13045,7 +13044,6 @@ ot-kernel_set_security_critical() {
 				else
 					ot-kernel_set_kconfig_kernel_cmdline "kasan.page_alloc.sample=${kasan_sample_interval}"
 				fi
-				need_stack_protector=1
 			elif \
 				[[ \
 					"${arch}" == "arm64" \
@@ -13218,7 +13216,6 @@ ot-kernel_set_security_critical() {
 				ot-kernel_set_configopt "CONFIG_KFENCE_SAMPLE_INTERVAL" "${kfence_sample_interval}"
 			fi
 			ot-kernel_set_kconfig_kernel_cmdline "kfence.fault=panic"
-			need_stack_protector=1
 			enabled=1
 		else
 			ot-kernel_unset_configopt "CONFIG_KFENCE"
@@ -13303,11 +13300,6 @@ ot-kernel_set_security_critical() {
 			ot-kernel_unset_pat_kconfig_kernel_cmdline "ubsan=(on|off)"
 		fi
 
-#		if (( ${need_stack_protector} == 0 )) && (( ${asan} == 1 )) ; then
-#einfo "Deduping stack overflow check"
-#			ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR"
-#			ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR_STRONG"
-#		fi
 		if (( ${enabled} == 1 )) ; then
 einfo "Enabled security critical settings"
 einfo "Sanitizers:  ${types}"

@@ -1647,19 +1647,6 @@ einfo "Added ${x} from ${module} sanitizer"
 				fi
 			fi
 		done
-
-		if (( ${is_rust_nightly} != 0 )) ; then
-			:
-		elif (( ${has_stack_protector} != 0 )) ; then
-			:
-		else
-einfo "Deduping stack overflow check"
-			RUSTFLAGS=$(echo "${RUSTFLAGS}" \
-				| sed -r \
-					-e "s#-Z[ ]*stack-protector=(all|basic|none|strong)##g")
-	# Disable if it was the compiler default
-			RUSTFLAGS+=" -Z stack-protector=none"
-		fi
 	fi
 
 	export RUSTFLAGS
