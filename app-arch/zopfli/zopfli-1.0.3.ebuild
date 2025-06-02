@@ -58,6 +58,9 @@ REQUIRED_USE+="
 	)
 "
 DOCS=( CONTRIBUTORS README README.zopflipng )
+PATCHES=(
+	"${FILESDIR}/${PN}-1.0.3-cmake4.patch"
+)
 
 pkg_setup() {
 	check-compiler-switch_start
