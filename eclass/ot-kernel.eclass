@@ -13303,11 +13303,11 @@ ot-kernel_set_security_critical() {
 			ot-kernel_unset_pat_kconfig_kernel_cmdline "ubsan=(on|off)"
 		fi
 
-		if (( ${need_stack_protector} == 0 )) && (( ${asan} == 1 )) ; then
-einfo "Deduping stack overflow check"
-			ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR"
-			ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR_STRONG"
-		fi
+#		if (( ${need_stack_protector} == 0 )) && (( ${asan} == 1 )) ; then
+#einfo "Deduping stack overflow check"
+#			ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR"
+#			ot-kernel_unset_configopt "CONFIG_STACKPROTECTOR_STRONG"
+#		fi
 		if (( ${enabled} == 1 )) ; then
 einfo "Enabled security critical settings"
 einfo "Sanitizers:  ${types}"
