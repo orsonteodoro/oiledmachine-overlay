@@ -132,7 +132,7 @@ $(gen_iuse_pgo)
 acorn +asm +corepack cpu_flags_x86_sse2 debug doc
 -drumbrake fips +icu inspector +npm man mold pax-kernel pgo +snapshot +ssl
 system-icu +system-ssl test
-ebuild_revision_43
+ebuild_revision_44
 "
 
 gen_required_use_pgo() {
@@ -381,13 +381,22 @@ src_prepare() {
 #../../deps/ada/ada.cpp:10664:34: error: inlining failed in call to 'always_inline' 'constexpr bool ada::unicode::is_alnum_plus(char) noexcept': indirect function call with a yet undetermined callee
 #10664 | ada_really_inline constexpr bool is_alnum_plus(const char c) noexcept {
 #      |                                  ^~~~~~~~~~~~~
+	#
+	# Limit to -O2 to prevent the 2.3x performance penalty when adding
+	# -fno-* flags to unbreak -D_FORTIFY_SOURCE checks at -O3. When -O2 with
+	# -fno-* set, the performance penalty is 1.16x.
+	#
 	# Upstream does not like -O3 when running sanitizers (aka fuzz-testing)
+	#
+
 	# Similar to replace-flags F2 F1 in sanitizers off case:
 	local f1="-O2"
 	local f2="-O3"
+
 	# Similar to replace-flags F4 F3 in sanitizer on case:
 	local f3="-O2"
 	local f4="-O3"
+
 	replace-flags '-Ofast' '-O2'
 	replace-flags '-O4' '-O2'
 	replace-flags '-O3' '-O2'
