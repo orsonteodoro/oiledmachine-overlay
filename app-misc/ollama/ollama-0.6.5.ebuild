@@ -3507,10 +3507,7 @@ eerror "You need to set -march= to one of ${SVE_ARCHES[@]}"
 	replace-flags '-Os' '-O2'
 	replace-flags '-Oz' '-O2'
 	replace-flags '-O0' '-O1'
-
-	if is-flagq "-O1" || is-flagq "-O2" ; then
-		:
-	else
+	if ! is-flagq "-O1" && ! is-flagq "-O2" ; then
 	# Add fallback flag.
 	# Optimize for performance.
 	# GCC/Clang use -O0 by default.
