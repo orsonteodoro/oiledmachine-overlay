@@ -657,9 +657,7 @@ ewarn "Please use the dev-cpp/highway::oiledmachine-overlay ebuild instead."
 	replace-flags "-Os" "-O2"
 	replace-flags "-Oz" "-O2"
 	replace-flags "-O0" "-O1"
-	if is-flagq "-O1" || is-flagq "-O2" ; then
-		:
-	else
+	if ! is-flagq "-O1" && ! is-flagq "-O2" ; then
 		append-flags "-O2"
 	fi
 
