@@ -291,7 +291,8 @@
   5.  filter-lto when using forked compilers
   6.  filter-lto when ODR violation(s) are encountered while LTOing
   7.  filter-lto when runtime issue(s) are encountered.
-  8.  filter-lto when switching between an unstable compiler slot and stable
+  8.  filter-lto when LTO build issue(s) are encountered.
+  9.  filter-lto when switching between an unstable compiler slot and stable
       compiler slot to mitigate against the possibility of an unstable
       Intermediate Representation (IR) mixed in for static-libs for the same
       compiler slot (e.g. upgrading/downgrading between =sys-devel/gcc-14.4.9999
