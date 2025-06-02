@@ -136,8 +136,17 @@ einfo "MT = Missing Terminator Character"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "NPD" ]] ; then
 einfo "NPD = Null Pointer Dereference"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "OOB" ]] ; then
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^| )"OOB" ]] ; then
 einfo "OOB = Out Of Bounds Access"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "OOBA" ]] ; then
+einfo "OOB = Out Of Bounds Access"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "OOBR" ]] ; then
+einfo "OOB = Out Of Bounds Read"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "OOBW" ]] ; then
+einfo "OOB = Out Of Bounds Write"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "OOR" ]] ; then
 einfo "OOR = Out Of Range Access"
@@ -185,6 +194,9 @@ einfo "UI = UI Spoofing"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "UM" ]] ; then
 einfo "UM = Uninitialized Memory"
+		fi
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "UP" ]] ; then
+einfo "UP = Uninitialized Pointer"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "UV" ]] ; then
 einfo "UV = Uninitialized Value"

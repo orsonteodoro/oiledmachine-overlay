@@ -3,21 +3,21 @@
 
 EAPI=8
 
-GENPATCHES_FALLBACK_COMMIT="4d22cd24ec825388ef8b0dd320b2994064491536" # 2025-05-11 15:41:55 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="7586ac7c340c3672f116052c1d150f134810965b" # 2025-05-23 09:47:43 -0700
-RC_PV="rc7" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
+GENPATCHES_FALLBACK_COMMIT="7847c71705cc92ba9e9b1d8728fa8692270170e8" # 2024-11-30 12:29:45 -0500
+LINUX_SOURCES_FALLBACK_COMMIT="586de92313fcab8ed84ac5f78f4d2aae2db92c59" # 2025-03-22 17:33:38 -0700
+RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
 
 # See
-# https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.15
+# https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.14
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-CLEAR_LINUX_PATCHES_VER="6.13.8-1555"
+CLEAR_LINUX_PATCHES_VER="6.14.8-1574"
 EBUILD_REV="ebuild_revision_7"
-GENPATCHES_VER="live" # can be live only when 9999
+GENPATCHES_VER="11" # can be live only when 9999
 PATCH_PROJC_VER="6.14-r0"
-PATCH_RT_VER="6.15-rc1-rt1"
+PATCH_RT_VER="6.14-rt3"
 
-inherit ot-kernel-v6.15
+inherit ot-kernel-v6.14
 
 # See also,
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel.eclass
@@ -27,9 +27,8 @@ inherit ot-kernel-v6.15
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  modularize-ebuild-as-milestone-eclasses
 # OILEDMACHINE-OVERLAY-META-TAGS:  see-eclass-for-full-details
 # OILEDMACHINE-OVERLAY-META-WIP:  tresor, signed-kexec-kernel, signed-kernels
-
-
-# OILEDMACHINE-OVERLAY-TEST:  N/A
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.14.2 (20250415) with builder profile with -O2 and -march=native and no PGI/PGO
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.14.6 (20250515) with builder profile with -O2 and -march=native and no PGI/PGO, with sanitizers
 
 #
 # Some USE or OT_KERNEL_USE may be ignored in eclasses.
@@ -47,7 +46,7 @@ inherit ot-kernel-v6.15
 # OT_KERNEL_USE="-rt c2tcp -O3 -bbrv2 -bbrv3 disable_debug -tresor -tresor_sysfs
 # -tresor_x86_64 -tresor_x86_64-256-bit-key-support -tresor_aesni cfs -prjc
 # kernel_compiler_patch futex futex-proton multigen_lru -genpatches -clang pgo
-# -zen-muqss -zen-sauce -cfi -kcfi -zen-multigen_lru -genpatches_1510 build zstd
+# -zen-muqss -zen-sauce -cfi kcfi -zen-multigen_lru -genpatches_1510 build zstd
 # openssl -lto ncurses"
 # OT_KERNEL_VERBOSITY=1
 # OT_KERNEL_WORK_PROFILE="builder-interactive"
@@ -59,6 +58,8 @@ inherit ot-kernel-v6.15
 # OT_KERNEL_LOGO_URI="<redacted>"
 # OT_KERNEL_MODULES_COMPRESSOR="zstd"
 # OT_KERNEL_MODULES_SUPPORT="1"
+# OT_KERNEL_SECURITY_CRITICAL=1
+# OT_KERNEL_SECURITY_CRITICAL_TYPES="kfence ubsan kcfi"
 # OT_KERNEL_SLAB_ALLOCATOR="slub"
 # OT_KERNEL_USB_AUTOSUSPEND=-1
 
