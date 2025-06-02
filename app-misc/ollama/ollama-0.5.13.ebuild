@@ -3046,17 +3046,11 @@ src_unpack() {
 }
 
 get_olast() {
-	local default_level="${1}"
 	local olast=$(echo "${CFLAGS}" \
 		| grep -o -E -e "-O(0|1|z|s|2|3|4|fast)" \
 		| tr " " "\n" \
 		| tail -n 1)
-	if [[ -n "${olast}" ]] ; then
-		echo "${olast}"
-	else
-		# Upstream default
-		echo "${default_level}"
-	fi
+	echo "${olast}"
 }
 
 src_prepare() {
@@ -3471,17 +3465,16 @@ eerror "You need to set -march= to one of ${SVE_ARCHES[@]}"
 		done
 	fi
 
-	local olast=$(get_olast)
-
-	# For _FORTIFY_SOURCE
+	# -Ofast breaks nvcc
+	# -D_FORTIFY_SOURCE needs -O1 or higher
+	replace-flags '-Ofast' '-O2'
+	replace-flags '-O4' '-O2'
+	replace-flags '-O3' '-O2'
+	replace-flags '-Os' '-O2'
+	replace-flags '-Oz' '-O2'
 	replace-flags '-O0' '-O1'
 
-	# -Ofast breaks nvcc
-	if use cuda ; then
-		if [[ "${olast}" == "-Ofast" ]] ; then
-			olast="-O3"
-		fi
-	fi
+	local olast=$(get_olast)
 
 	replace-flags "-O*" "${olast}"
 
@@ -3498,8 +3491,6 @@ eerror "You need to set -march= to one of ${SVE_ARCHES[@]}"
 		|| die
 #		"make/cuda.make" \
 #		"make/Makefile.rocm" \
-
-	replace-flags "-O*" "${olast}"
 
 	_NVCC_FLAGS+=" -Xcompiler ${olast}"
 
