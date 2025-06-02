@@ -284,7 +284,7 @@
   2.  filter-lto when the user verified default system LTO compiler, set as
       DETECT_COMPILER_SWITCH_LTO_CC_NAME and DETECT_COMPILER_SWITCH_LTO_CC_SLOT,
       is not the same after the compiler switch phase for static-libs contained
-      in any of IUSE or *DEPENDS variables or for ebuilds that link to
+      in any of IUSE or *DEPENDS variables, or for ebuilds that link to
       static-libs during static builds or have static in IUSE.
   3.  filter-lto when using a GPU compiler
   4.  filter-lto when not using system compilers
