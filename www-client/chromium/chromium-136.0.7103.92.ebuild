@@ -1885,12 +1885,7 @@ get_olast() {
 		| grep -o -E -e "-O(0|1|z|s|2|3|4|fast)" \
 		| tr " " "\n" \
 		| tail -n 1)
-	if [[ -n "${olast}" ]] ; then
-		echo "${olast}"
-	else
-		# Upstream default
-		echo "-O3"
-	fi
+	echo "${olast}"
 }
 
 pkg_pretend() {
@@ -5090,6 +5085,13 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	replace-flags "-Os" "-O2"
 	replace-flags "-O4" "-O2"
 	replace-flags "-Ofast" "-O2"
+	if is-flagq "-O1" || is-flagq "-O2" ; then
+		:
+	else
+	# Optimize for performance by default.
+	# GCC/Clang use -O0 by default
+		append-flags "-O2"
+	fi
 
 	if ! _use_system_toolchain ; then
 	# The vendored clang/rust is likely built for portability not performance
