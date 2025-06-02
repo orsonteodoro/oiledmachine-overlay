@@ -309,6 +309,10 @@
       handle LTO builds because it a security backlog issue that should be
       prevented.  If the ebuild does not proactively disable the LTO, the
       ebuild developer(s) could be perceived as assisting the attackers.
+      Hints that can help determine if it qualifies for filter-lto:
+      - Project or package is 10M Lines Of Code (MLOC) or more.
+      - The machine that builds has less than 4 cores.
+      - The machine that builds has less than 8 GiB of RAM.
 
 # Ebuild organization
 
