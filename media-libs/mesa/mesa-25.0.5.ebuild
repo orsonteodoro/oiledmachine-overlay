@@ -118,6 +118,7 @@ RESTRICT="
 "
 SLOT="0"
 IUSE+="
+${CPU_FLAGS_X86[@]}
 ${IUSE_VIDEO_CARDS}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
