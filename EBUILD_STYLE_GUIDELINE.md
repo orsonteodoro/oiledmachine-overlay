@@ -304,6 +304,8 @@
       irrational overreaction case.  The ebuild developer can remove/revert the
       filter-lto if a verified reason is not provided and LTO works on their
       machine.
+  12. filter-lto when the machine is too slow (>= 24 hours) to handle LTO builds
+      because it a security backlog issue that should be prevented.
 
 # Ebuild organization
 
