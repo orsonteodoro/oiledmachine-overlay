@@ -3508,6 +3508,15 @@ eerror "You need to set -march= to one of ${SVE_ARCHES[@]}"
 	replace-flags '-Oz' '-O2'
 	replace-flags '-O0' '-O1'
 
+	if is-flagq "-O1" || is-flagq "-O2" ; then
+		:
+	else
+	# Add fallback flag.
+	# Optimize for performance.
+	# GCC/Clang use -O0 by default.
+		append-flags "-O2"
+	fi
+
 	local olast=$(get_olast)
 
 	replace-flags "-O*" "${olast}"
