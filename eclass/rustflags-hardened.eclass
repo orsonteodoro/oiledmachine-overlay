@@ -1619,6 +1619,13 @@ eerror "emerge -1vuDN llvm-core/clang-runtime:${LLVM_SLOT}[sanitize]"
 					RUSTFLAGS+=" -Zsanitizer=${x}"
 				fi
 
+	#
+	# It is still possible to have compilation units where
+	# SSP-basic/SSP-strong is applied but ASan disabled when both are
+	# enabled.  This is why deduping the ASan's SSP overlap should be
+	# avoided.
+	#
+
 				if (( ${skip} == 0 )) ; then
 	#
 	# We need to statically link sanitizers to avoid breaking some of the

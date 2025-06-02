@@ -13300,6 +13300,10 @@ ot-kernel_set_security_critical() {
 			ot-kernel_unset_pat_kconfig_kernel_cmdline "ubsan=(on|off)"
 		fi
 
+	# It is still possible to have compilation units where
+	# SSP-basic/SSP-strong is applied but ASan disabled when both are
+	# enabled.  This is why deduping the ASan's SSP overlap should be
+	# avoided.
 		if (( ${enabled} == 1 )) ; then
 einfo "Enabled security critical settings"
 einfo "Sanitizers:  ${types}"
