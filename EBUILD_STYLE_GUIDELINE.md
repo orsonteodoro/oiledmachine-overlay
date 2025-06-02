@@ -291,8 +291,9 @@
   7.  filter-lto when runtime issue(s) are encountered.
   8.  filter-lto when switching between an unstable compiler slot and stable
       compiler slot to mitigate against the possibility of an unstable
-      Intermediate Representation (IR) mixed in for static-libs.  (proposed
-      rule)
+      Intermediate Representation (IR) mixed in for static-libs for the same
+      compiler slot (e.g. upgrading/downgrading between =sys-devel/gcc-14.4.9999
+      and =sys-devel/gcc-14.3.0).  (proposed rule)
 
 # Ebuild organization
 
