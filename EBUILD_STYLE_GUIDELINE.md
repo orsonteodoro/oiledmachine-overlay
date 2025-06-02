@@ -299,6 +299,9 @@
       and =sys-devel/gcc-14.3.0, upgrading/downgrading between or
       =llvm-core/clang-21.0.0.9999 and =llvm-core/clang-21.0.1). (proposed rule)
   10. filter-lto when there is a performance regression.
+  11. leave a comment to why the filter-lto is necessary; otherwise, it is
+      assumed that it is either a user misconfiguration, user ignorance, or
+      irrational overreaction case.
 
 # Ebuild organization
 
