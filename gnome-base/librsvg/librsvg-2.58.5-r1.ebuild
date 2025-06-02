@@ -289,22 +289,18 @@ CRATES="
 "
 PYTHON_COMPAT=( "python3_"{10..13} )
 QA_FLAGS_IGNORED="
-	"usr/bin/rsvg-convert"
-	"usr/lib."*"/librsvg."*
+	usr/bin/rsvg-convert
+	usr/lib.*/librsvg.*
 "
 RUST_MIN_VER="1.71.1"
 RUST_MULTILIB=1
 
-inherit cargo cflags-hardened gnome2 multilib-minimal python-any-r1
-inherit rustflags-hardened rust-toolchain vala
-
-KEYWORDS="amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~s390 sparc x86"
-SRC_URI+=" ${CARGO_CRATE_URIS}"
+inherit cargo gnome2 multilib-minimal python-any-r1 rust-toolchain vala
 
 DESCRIPTION="Scalable Vector Graphics (SVG) rendering library"
 HOMEPAGE="https://wiki.gnome.org/Projects/LibRsvg https://gitlab.gnome.org/GNOME/librsvg"
-LICENSE="
-	LGPL-2.1+
+SRC_URI+=" ${CARGO_CRATE_URIS}"
+CRATE_LICENSES="
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
 	BSD
@@ -313,8 +309,12 @@ LICENSE="
 	MPL-2.0
 	Unicode-DFS-2016
 "
-# LGPL-2.1+ is the project license.  The rest are crate licenses
+LICENSE="
+	${CRATE_LICENSES}
+	LGPL-2.1+
+"
 SLOT="2"
+KEYWORDS="amd64 arm arm64 ~loong ~mips ppc ppc64 ~riscv ~s390 sparc x86"
 IUSE="
 gtk-doc +introspection +vala
 ebuild_revision_12
@@ -329,7 +329,7 @@ REQUIRED_USE="
 "
 RDEPEND="
 	>=dev-libs/glib-2.50.0:2[${MULTILIB_USEDEP}]
-	>=dev-libs/libxml2-2.9.1-r4:2[${MULTILIB_USEDEP}]
+	>=dev-libs/libxml2-2.9.1-r4:2=[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.9:2[${MULTILIB_USEDEP}]
 	>=media-libs/harfbuzz-2.0.0:=[${MULTILIB_USEDEP}]
 	>=x11-libs/cairo-1.17.0[glib,svg(+),${MULTILIB_USEDEP}]
@@ -358,10 +358,9 @@ BDEPEND="
 		$(vala_depend)
 	)
 "
-# dev-libs/gobject-introspection-common, dev-libs/vala-common are needed by eautoreconf.
+# dev-libs/gobject-introspection-common, dev-libs/vala-common needed by eautoreconf
 PATCHES=(
-	"${FILESDIR}/${PN}-2.58.5-time-rust-1.80.patch"
-	"${FILESDIR}/${PN}-2.58.5-rust-target.patch"
+	"${FILESDIR}/librsvg-2.58.5-time-rust-1.80.patch"
 )
 
 pkg_setup() {
@@ -382,21 +381,18 @@ multilib_src_configure() {
 	cflags-hardened_append
 	rustflags-hardened_append
 	local myconf=(
+		--disable-static
+		--disable-debug
 		$(multilib_native_use_enable gtk-doc)
 		$(multilib_native_use_enable introspection)
 		$(multilib_native_use_enable vala)
-		--disable-static
-		--disable-debug
 		--enable-pixbuf-loader
 	)
 
-	myconf+=(
-	# Set the rust target, which can differ from CHOST
-		RUST_TARGET="$(rust_abi)"
-	)
-
-	if ! multilib_is_native_abi ; then
+	if ! multilib_is_native_abi; then
 		myconf+=(
+	# Set the rust target, which can differ from CHOST
+			RUST_TARGET="$(rust_abi)"
 	# RUST_TARGET is only honored if cross_compiling, but non-native ABIs aren't cross as
 	# far as C parts and configure auto-detection are concerned as CHOST equals CBUILD
 			cross_compiling="yes"
@@ -419,7 +415,6 @@ src_compile() {
 }
 
 multilib_src_compile() {
-	export RUST_TARGET
 	cargo_env gnome2_src_compile
 }
 
@@ -442,7 +437,7 @@ multilib_src_install() {
 multilib_src_install_all() {
 	find "${ED}" -name '*.la' -delete || die
 
-	if use gtk-doc ; then
+	if use gtk-doc; then
 		mkdir -p "${ED}/usr/share/gtk-doc/html/" || die
 		mv \
 			"${ED}/usr/share/doc/Rsvg-2.0" \
