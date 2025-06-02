@@ -372,6 +372,19 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # (EXPERIMENTAL)
 # Valid values:  1, 0, unset
 
+# @FUNCTION: _rustflags-hardened_compiler_arch
+# @DESCRIPTION:
+# Print the name of the compiler_architecture
+_rustflags-hardened_compiler_arch() {
+	if ${CC} --version | grep -q -e "gcc" ; then
+		echo "gcc"
+	elif ${CC} --version | grep -q -e "clang" ; then
+		echo "clang"
+	else
+		echo "unknown"
+	fi
+}
+
 # @FUNCTION: _rustflags-hardened_clang_flavor
 # @DESCRIPTION:
 # Print the name of the clang compiler flavor

@@ -1062,9 +1062,7 @@ moz_install_xpi() {
 -e '/install-manifest/,$ { /em:id/!d; s/.*[\">]\([^\"<>]*\)[\"<].*/\1/; p; q }' \
 				"${xpi_tmp_dir}/install.rdf")
 			if [[ -z "${emid}" ]] ; then
-eerror
 eerror "Failed to determine the extension id from install.rdf"
-eerror
 				die
 			fi
 		elif [[ -f "${xpi_tmp_dir}/manifest.json" ]] ; then
@@ -1072,15 +1070,11 @@ eerror
 				-e 's/.*"id": "\([^"]*\)".*/\1/p' \
 				"${xpi_tmp_dir}/manifest.json")
 			if [[ -z "${emid}" ]] ; then
-eerror
 eerror "Failed to determine the extension id from manifest.json"
-eerror
 				die
 			fi
 		else
-eerror
 eerror "Failed to determine the extension id"
-eerror
 			die
 		fi
 
@@ -1185,9 +1179,7 @@ virtwl() {
 
 	(( ${#} < 1 )) && die "${FUNCNAME} needs at least one argument"
 	if [[ -n "${XDG_RUNTIME_DIR}" ]] ; then
-eerror
 eerror "${FUNCNAME} needs XDG_RUNTIME_DIR to be set; try xdg_environment_reset"
-eerror
 		die
 	fi
 	tinywl -h >/dev/null || die 'tinywl -h failed'
@@ -1216,9 +1208,7 @@ pkg_pretend() {
 		if use pgo ; then
 			if ! has usersandbox $FEATURES ; then
 	# Generally speaking, PGO doesn't require usersandbox dropped.
-eerror
 eerror "You must enable usersandbox as X server can not run as root!"
-eerror
 				die
 			fi
 		fi
@@ -1273,9 +1263,7 @@ eerror
 eerror "  eselect nodejs set node${s}"
 			done
 
-eerror
 eerror "See eselect nodejs for more details."
-eerror
 			die
 		fi
 	elif [[ -n "${NODE_VERSION}" ]] ; then
@@ -1422,9 +1410,7 @@ ewarn "Building ${PN} with USE=pgo and FEATURES=-userpriv is not supported!"
 				lld_pv=$(ver_cut 1 "${lld_pv}")
 			fi
 			if [[ -z ${lld_pv} ]] ; then
-eerror
 eerror "Failed to read ld.lld version!"
-eerror
 				die
 			fi
 
@@ -1435,9 +1421,7 @@ eerror
 				llvm_rust_pv=$(ver_cut 1 "${llvm_rust_pv}")
 			fi
 			if [[ -z ${llvm_rust_pv} ]] ; then
-eerror
 eerror "Failed to read used LLVM version from rustc!"
-eerror
 				die
 			fi
 		fi
@@ -1567,9 +1551,7 @@ src_unpack() {
 	for _src_file in ${A} ; do
 		if [[ ${_src_file} == *.xpi ]]; then
 			if ! cp "${DISTDIR}/${_src_file}" "${_lp_dir}" ; then
-eerror
 eerror "Failed to copy '${_src_file}' to '${_lp_dir}'!"
-eerror
 				die
 			fi
 		else
@@ -1884,9 +1866,7 @@ _fix_paths() {
 		if [[ -n "${version_clang}" ]] ; then
 			version_clang=$(ver_cut 1 "${version_clang}")
 		else
-eerror
 eerror "Failed to read clang version!"
-eerror
 			die
 		fi
 		CC="${CHOST}-clang-${version_clang}"
@@ -1915,9 +1895,7 @@ get_olast() {
 check_speech_dispatcher() {
 	if use speech ; then
 		if [[ ! -f "${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ]] ; then
-eerror
 eerror "Missing ${ESYSROOT}/etc/speech-dispatcher/speechd.conf"
-eerror
 			die
 		fi
 		if has_version "app-accessibility/speech-dispatcher[pulseaudio]" ; then
@@ -2038,46 +2016,34 @@ eerror
 }
 
 _set_cc() {
-	local have_switched_compiler=
+	CC=$(tc-getCC)
+	CXX=$(tc-getCC)
+	CPP=$(tc-getCC)
 	# Disabled jumbo-build requires clang
 	if tc-is-clang || use debug ; then
 	# Force clang
 einfo "Switching to clang"
-		local version_clang=$(clang --version 2>/dev/null \
-			| grep -F -- 'clang version' \
-			| awk '{ print $3 }')
-		if [[ -n "${version_clang}" ]] ; then
-			version_clang=$(ver_cut 1 "${version_clang}")
-		else
-eerror
-eerror "Failed to read clang version!"
-eerror
-			die
-		fi
-		have_switched_compiler="yes"
+		${CC} --version || die
+		local slot
+		slot=$(clang-major-version)
 		AR="llvm-ar"
 		AS="llvm-as"
-		CC="${CHOST}-clang-${version_clang}"
-		CXX="${CHOST}-clang++-${version_clang}"
+		CC="${CHOST}-clang-${slot}"
+		CXX="${CHOST}-clang++-${slot}"
 		NM="llvm-nm"
 		RANLIB="llvm-ranlib"
 		local clang_slot=$(clang-major-version)
-		if ! has_version "llvm-core/lld:${clang_slot}" ; then
-eerror
-eerror "You need to emerge llvm-core/lld:${clang_slot}"
-eerror
+		if ! has_version "llvm-core/lld:${slot}" ; then
+eerror "You need to emerge llvm-core/lld:${slot}"
 			die
 		fi
-		if ! has_version "=llvm-runtimes/compiler-rt-sanitizers-${clang_slot}*[profile]" ; then
-eerror
-eerror "You need to emerge =llvm-runtimes/compiler-rt-sanitizers-${clang_slot}*[profile]"
-eerror
+		if ! has_version "=llvm-runtimes/compiler-rt-sanitizers-${slot}*[profile]" ; then
+eerror "You need to emerge =llvm-runtimes/compiler-rt-sanitizers-${slot}*[profile]"
 			die
 		fi
 	else
 	# Force gcc
 ewarn "GCC is not the upstream default"
-		have_switched_compiler="yes"
 einfo "Switching to gcc"
 		AR="gcc-ar"
 		CC="${CHOST}-gcc"
@@ -2085,11 +2051,7 @@ einfo "Switching to gcc"
 		NM="gcc-nm"
 		RANLIB="gcc-ranlib"
 	fi
-	if [[ -n "${have_switched_compiler}" ]] ; then
-	# Because we switched active compiler, we have to ensure that no
-	# unsupported flags are set.
-		strip-unsupported-flags
-	fi
+	strip-unsupported-flags
 }
 
 _src_configure_compiler() {
@@ -2103,6 +2065,13 @@ src_configure() {
 _src_configure() {
 	local s=$(_get_s)
 	cd "${s}" || die
+
+	if ! has_version "dev-util/sccache" ; then
+einfo "Didn't detect sccache.  Removing sccache environment variables."
+		unset RUSTC_WRAPPER
+		unset SCCACHE_DIR
+		unset SCCACHE_MAX_FRAME_LENGTH
+	fi
 
 	local CDEFAULT=$(get_abi_CHOST "${DEFAULT_ABI}")
 	# Show flags set at the beginning
@@ -2191,7 +2160,7 @@ einfo
 		--target="${CHOST}" \
 		--without-ccache \
 		--with-intl-api \
-		\
+		--with-system-ffi \
 		--with-system-nspr \
 		--with-system-nss \
 		--with-system-zlib \
@@ -2377,9 +2346,7 @@ einfo "Building without Mozilla API key ..."
 	fi
 
 	if ! use mold && is-flagq '-fuse-ld=mold' ; then
-eerror
 eerror "-fuse-ld=mold requires the mold USE flag."
-eerror
 		die
 	fi
 
@@ -2521,9 +2488,9 @@ einfo "Detected compiler switch.  Disabling LTO."
 		fi
 
 		mozconfig_add_options_ac \
-			"${oflag}" \
-			--enable-optimize="${oflag}"
-einfo "Using ${oflag}"
+			"${olast}" \
+			--enable-optimize="${olast}"
+einfo "Using ${olast}"
 	fi
 
 	local L=(
@@ -2536,8 +2503,8 @@ einfo "Using ${oflag}"
 	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" == "1" ]] ; then
 		local f
 		for f in ${L[@]} ; do
-einfo "Editing ${f}:  __OFLAG_SAFE__ -> ${oflag}"
-			sed -i -e "s|__OFLAG_SAFE__|${oflag}|g" \
+einfo "Editing ${f}:  __OFLAG_SAFE__ -> ${olast}"
+			sed -i -e "s|__OFLAG_SAFE__|${olast}|g" \
 				"${f}" \
 				|| die
 		done
@@ -2551,7 +2518,7 @@ einfo "Editing ${f}:  __OFLAG_SAFE__ -> ${oflag}"
 
 	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" != "1" ]] ; then
 		:
-	elif is-flagq '-ffast-math' || [[ "${oflag}" == "-Ofast" ]] ; then
+	elif is-flagq '-ffast-math' || [[ "${olast}" == "-Ofast" ]] ; then
 		local pos=$(grep -n "#define OPUS_DEFINES_H" \
 			"${s}/media/libopus/include/opus_defines.h" \
 			| cut -f 1 -d ":")

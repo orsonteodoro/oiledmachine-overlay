@@ -157,15 +157,15 @@ FFMPEG_COMPAT=(
 	"51.53.53" # 0.10
 	"50.53.53" # 0.8
 )
-FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-01.tar.xz"
+FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-03.tar.xz"
 FIREFOX_LOONG_PATCHSET="firefox-${PV%%.*}-loong-patches-01.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 GTK3_PV="3.14.5"
 LICENSE_FILE_NAME="FF-$(ver_cut 1-2 ${PV})-THIRD-PARTY-LICENSES.html"
 LICENSE_FINGERPRINT="\
-bf2c7ce41eda92a85a28cde63257620e3ad1e8406dce0bc4e6654d7f63e2ecc4\
-ecfe882331c663056933cc078a91eee4978ae46faf3e0442159b523227a5c7ee\
+dd6256b7efd8816420b21b72373ee03490f5a0add8a6b3023987b9da0b23e59b\
+f083c0a8f948b411fff5fd067f17ac5f825bb7e8e918e5c0c3739c49df26c491\
 " # SHA512
 LLVM_COMPAT=( 19 ) # Limited based on rust
 LTO_TYPE="" # Global variable
@@ -240,7 +240,7 @@ VIRTUALX_REQUIRED="pgo"
 WASI_SDK_VER="25.0"
 WASI_SDK_LLVM_VER="19"
 
-inherit autotools cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs desktop
+inherit cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs desktop
 inherit dhms flag-o-matic gnome2-utils lcnr linux-info llvm multilib-minimal
 inherit multiprocessing optfeature pax-utils python-any-r1 readme.gentoo-r1 rust
 inherit rustflags-hardened toolchain-funcs virtualx vf xdg
@@ -480,11 +480,11 @@ ${CODEC_IUSE}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 alsa cpu_flags_arm_neon cups +dbus debug eme-free firejail +hardened
--hwaccel jack +jemalloc +jit libcanberra libnotify libproxy
+-hwaccel jack +jemalloc +jit jpegxl libcanberra libnotify libproxy
 libsecret mold +pgo +pulseaudio
 rust-simd selinux sndio speech +system-av1
 +system-harfbuzz +system-icu +system-jpeg +system-libevent
-+system-libvpx system-png +system-webp systemd -telemetry +vaapi -valgrind
++system-libvpx system-pipewire system-png +system-webp systemd -telemetry +vaapi -valgrind
 +wayland +webrtc wifi webspeech
 ebuild_revision_17
 "
@@ -513,12 +513,6 @@ PATENT_REQUIRED_USE="
 		patent_status_nonfree
 	)
 "
-# "wasm-sandbox? ( llvm_slot_19 )" is most likely due to wasi-sdk-25.0 being
-# llvm-19 based and llvm/clang-19 turning on reference types for wasm targets.
-# Luckily, clang-19 is already stable on the distro, so it should be widely
-# adopted already.  However, it might be possible to workaround the constraint
-# simply by modifying CFLAGS when using clang-17/18. Will need to investigate
-# (bmo#1905251)
 REQUIRED_USE="
 	${PATENT_REQUIRED_USE}
 	^^ (
@@ -541,9 +535,6 @@ REQUIRED_USE="
 	)
 	vaapi? (
 		wayland
-	)
-	wasm-sandbox? (
-		llvm_slot_19
 	)
 	wayland? (
 		dbus
@@ -691,6 +682,7 @@ CDEPEND="
 	virtual/freedesktop-icon-theme
 	x11-libs/cairo[${MULTILIB_USEDEP}]
 	x11-libs/gdk-pixbuf:2[${MULTILIB_USEDEP}]
+	x11-libs/libdrm
 	dbus? (
 		>=sys-apps/dbus-${DBUS_PV}[${MULTILIB_USEDEP}]
 	)
@@ -734,6 +726,9 @@ CDEPEND="
 	)
 	system-libvpx? (
 		>=media-libs/libvpx-1.15.0:0=[${MULTILIB_USEDEP},postproc]
+	)
+	system-pipewire? (
+		media-video/pipewire:=
 	)
 	system-png? (
 		>=media-libs/libpng-1.6.45:0=[${MULTILIB_USEDEP},apng]
@@ -875,7 +870,7 @@ BDEPEND+="
 	${RUST_CDEPEND}
 	=net-libs/nodejs-${NODE_VERSION}*
 	>=dev-lang/perl-5.006
-	>=dev-util/cbindgen-0.28.0
+	>=dev-util/cbindgen-0.27.0
 	>=dev-util/pkgconf-1.8.0[${MULTILIB_USEDEP},pkg-config(+)]
 	app-alternatives/awk
 	app-arch/unzip
@@ -1032,18 +1027,16 @@ moz_install_xpi() {
 		emid=
 		xpi_tmp_dir=$(mktemp -d --tmpdir="${T}")
 
-		# Unpack XPI
+	# Unpack XPI
 		unzip -qq "${xpi_file}" -d "${xpi_tmp_dir}" || die
 
-		# Determine extension ID
+	# Determine extension ID
 		if [[ -f "${xpi_tmp_dir}/install.rdf" ]] ; then
 			emid=$(sed -n \
 -e '/install-manifest/,$ { /em:id/!d; s/.*[\">]\([^\"<>]*\)[\"<].*/\1/; p; q }' \
 				"${xpi_tmp_dir}/install.rdf")
 			if [[ -z "${emid}" ]] ; then
-eerror
 eerror "Failed to determine the extension id from install.rdf"
-eerror
 				die
 			fi
 		elif [[ -f "${xpi_tmp_dir}/manifest.json" ]] ; then
@@ -1051,15 +1044,11 @@ eerror
 				-e 's/.*"id": "\([^"]*\)".*/\1/p' \
 				"${xpi_tmp_dir}/manifest.json")
 			if [[ -z "${emid}" ]] ; then
-eerror
 eerror "Failed to determine the extension id from manifest.json"
-eerror
 				die
 			fi
 		else
-eerror
 eerror "Failed to determine the extension id"
-eerror
 			die
 		fi
 
@@ -1129,9 +1118,7 @@ virtwl() {
 
 	(( ${#} < 1 )) && die "${FUNCNAME} needs at least one argument"
 	if [[ -z "${XDG_RUNTIME_DIR}" ]] ; then
-eerror
 eerror "${FUNCNAME} needs XDG_RUNTIME_DIR to be set; try xdg_environment_reset"
-eerror
 		die
 	fi
 	tinywl -h >/dev/null || die 'tinywl -h failed'
@@ -1359,9 +1346,7 @@ ewarn "Building ${PN} with USE=pgo and FEATURES=-userpriv is not supported!"
 				lld_pv=$(ver_cut 1 "${lld_pv}")
 			fi
 			if [[ -z ${lld_pv} ]] ; then
-eerror
 eerror "Failed to read ld.lld version!"
-eerror
 				die
 			fi
 
@@ -1372,9 +1357,7 @@ eerror
 				llvm_rust_pv=$(ver_cut 1 "${llvm_rust_pv}")
 			fi
 			if [[ -z ${llvm_rust_pv} ]] ; then
-eerror
 eerror "Failed to read used LLVM version from rustc!"
-eerror
 				die
 			fi
 		fi
@@ -1504,9 +1487,7 @@ src_unpack() {
 	for _src_file in ${A} ; do
 		if [[ ${_src_file} == *.xpi ]]; then
 			if ! cp "${DISTDIR}/${_src_file}" "${_lp_dir}" ; then
-eerror
 eerror "Failed to copy '${_src_file}' to '${_lp_dir}'!"
-eerror
 				die
 			fi
 		else
@@ -1818,9 +1799,7 @@ _fix_paths() {
 		if [[ -n "${version_clang}" ]] ; then
 			version_clang=$(ver_cut 1 "${version_clang}")
 		else
-eerror
 eerror "Failed to read clang version!"
-eerror
 			die
 		fi
 		CC="${CHOST}-clang-${version_clang}"
@@ -1849,9 +1828,7 @@ get_olast() {
 check_speech_dispatcher() {
 	if use speech ; then
 		if [[ ! -f "${ESYSROOT}/etc/speech-dispatcher/speechd.conf" ]] ; then
-eerror
 eerror "Missing ${ESYSROOT}/etc/speech-dispatcher/speechd.conf"
-eerror
 			die
 		fi
 		if has_version "app-accessibility/speech-dispatcher[pulseaudio]" ; then
@@ -1972,47 +1949,35 @@ eerror
 }
 
 _set_cc() {
-	local have_switched_compiler=
+	CC=$(tc-getCC)
+	CXX=$(tc-getCC)
+	CPP=$(tc-getCC)
 	# Using disabled jumbo-build requires clang
 	if tc-is-clang || use debug ; then
 	# Force clang
 einfo "Switching to clang"
-		local version_clang=$(clang --version 2>/dev/null \
-			| grep -F -- 'clang version' \
-			| awk '{ print $3 }')
-		if [[ -n "${version_clang}" ]] ; then
-			version_clang=$(ver_cut 1 "${version_clang}")
-		else
-eerror
-eerror "Failed to read clang version!"
-eerror
-			die
-		fi
-		have_switched_compiler="yes"
+		${CC} --version || die
+		local slot
+		slot=$(clang-major-version)
 		AR="llvm-ar"
 		AS="llvm-as"
-		CC="${CHOST}-clang-${version_clang}"
-		CXX="${CHOST}-clang++-${version_clang}"
+		CC="${CHOST}-clang-${slot}"
+		CXX="${CHOST}-clang++-${slot}"
 		NM="llvm-nm"
 		RANLIB="llvm-ranlib"
 		local clang_slot=$(clang-major-version)
-		if ! has_version "llvm-core/lld:${clang_slot}" ; then
-eerror
-eerror "You need to emerge llvm-core/lld:${clang_slot}"
-eerror
+		if ! has_version "llvm-core/lld:${slot}" ; then
+eerror "You need to emerge llvm-core/lld:${slot}"
 			die
 		fi
-		if ! has_version "=llvm-runtimes/compiler-rt-sanitizers-${clang_slot}*[profile]" ; then
-eerror
-eerror "You need to emerge =llvm-runtimes/compiler-rt-sanitizers-${clang_slot}*[profile]"
-eerror
+		if ! has_version "=llvm-runtimes/compiler-rt-sanitizers-${slot}*[profile]" ; then
+eerror "You need to emerge =llvm-runtimes/compiler-rt-sanitizers-${slot}*[profile]"
 			die
 		fi
 	else
 	# Force gcc
 ewarn "GCC is not the upstream default"
 		# Force gcc
-		have_switched_compiler="yes"
 einfo "Switching to gcc"
 		AR="gcc-ar"
 		CC="${CHOST}-gcc"
@@ -2020,11 +1985,7 @@ einfo "Switching to gcc"
 		NM="gcc-nm"
 		RANLIB="gcc-ranlib"
 	fi
-	if [[ -n "${have_switched_compiler}" ]] ; then
-	# Because we switched active compiler we have to ensure that no
-	# unsupported flags are set
-		strip-unsupported-flags
-	fi
+	strip-unsupported-flags
 }
 
 _src_configure_compiler() {
@@ -2036,6 +1997,13 @@ src_configure() { :; }
 _src_configure() {
 	local s=$(_get_s)
 	cd "${s}" || die
+
+	if ! has_version "dev-util/sccache" ; then
+einfo "Didn't detect sccache.  Removing sccache environment variables."
+		unset RUSTC_WRAPPER
+		unset SCCACHE_DIR
+		unset SCCACHE_MAX_FRAME_LENGTH
+	fi
 
 	local CDEFAULT=$(get_abi_CHOST "${DEFAULT_ABI}")
 	# Show flags set at the beginning
@@ -2109,6 +2077,7 @@ einfo
 		--enable-negotiateauth \
 		--enable-new-pass-manager \
 		--enable-official-branding \
+		--enable-packed-relative-relocs \
 		--enable-release \
 		--enable-system-ffi \
 		--enable-system-pixman \
@@ -2119,14 +2088,15 @@ einfo
 		--target="${CHOST}" \
 		--without-ccache \
 		--with-intl-api \
+		--with-system-ffi \
+		--with-system-gbm \
+		--with-system-libdrm \
 		--with-system-nspr \
 		--with-system-nss \
 		--with-system-pixman \
 		--with-system-zlib \
 		--with-toolchain-prefix="${CHOST}-" \
-		--with-unsigned-addon-scopes="app,system" \
-		--x-includes="${ESYSROOT}/usr/include" \
-		--x-libraries="${ESYSROOT}/usr/$(get_libdir)"
+		--with-unsigned-addon-scopes="app,system"
 
 	# mozconfig_add_options_ac \
 	#	'' \
@@ -2239,6 +2209,7 @@ einfo "Building without Mozilla API key ..."
 	mozconfig_use_with system-jpeg
 	mozconfig_use_with system-libevent
 	mozconfig_use_with system-libvpx
+	mozconfig_use_with system-pipewire
 	mozconfig_use_with system-png
 	mozconfig_use_with system-webp
 
@@ -2309,9 +2280,7 @@ einfo "Building without Mozilla API key ..."
 	fi
 
 	if ! use mold && is-flagq '-fuse-ld=mold' ; then
-eerror
 eerror "-fuse-ld=mold requires the mold USE flag."
-eerror
 		die
 	fi
 
@@ -2326,6 +2295,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 		LTO_TYPE=""
 	fi
+
+	use jpegxl || mozconfig_add_options_ac '-jpegxl' --disable-jxl
 
 	# Upstream only supports lld or mold when using clang.
 	if [[ "${LTO_TYPE}" =~ ("bfdlto"|"moldlto"|"thinlto") ]]
@@ -2449,9 +2420,9 @@ einfo "Detected compiler switch.  Disabling LTO."
 		fi
 
 		mozconfig_add_options_ac \
-			"${oflag}" \
-			--enable-optimize="${oflag}"
-einfo "Using ${oflag}"
+			"${olast}" \
+			--enable-optimize="${olast}"
+einfo "Using ${olast}"
 	fi
 
 	local L=(
@@ -2464,8 +2435,8 @@ einfo "Using ${oflag}"
 	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" == "1" ]] ; then
 		local f
 		for f in ${L[@]} ; do
-einfo "Editing ${f}:  __OFLAG_SAFE__ -> ${oflag}"
-			sed -i -e "s|__OFLAG_SAFE__|${oflag}|g" \
+einfo "Editing ${f}:  __OFLAG_SAFE__ -> ${olast}"
+			sed -i -e "s|__OFLAG_SAFE__|${olast}|g" \
 				"${f}" \
 				|| die
 		done
@@ -2479,7 +2450,7 @@ einfo "Editing ${f}:  __OFLAG_SAFE__ -> ${oflag}"
 
 	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" != "1" ]] ; then
 		:
-	elif is-flagq '-ffast-math' || [[ "${oflag}" == "-Ofast" ]] ; then
+	elif is-flagq '-ffast-math' || [[ "${olast}" == "-Ofast" ]] ; then
 		local pos=$(grep -n "#define OPUS_DEFINES_H" \
 			"${s}/media/libopus/include/opus_defines.h" \
 			| cut -f 1 -d ":")
@@ -2849,7 +2820,8 @@ EOF
 
 	# Prefer the upstream svg file they use when packaging flatpak so it's always up-to-date.
 	insinto "/usr/share/icons/hicolor/symbolic/apps"
-	newins "${S}/taskcluster/docker/firefox-flatpak/firefox-symbolic.svg" "firefox-symbolic.svg"
+	newins "${S}/browser/installer/linux/app/flatpak/files/share/icons/hicolor/symbolic/apps/org.mozilla.firefox-symbolic.svg" "firefox-symbolic.svg"
+	dosym -r "/usr/share/icons/hicolor/symbolic/apps/firefox-symbolic.svg" "/usr/share/icons/hicolor/symbolic/apps/org.mozilla.firefox-symbolic.svg"
 
 	local icon size
 	for icon in "${icon_srcdir}/default"*".png" ; do
