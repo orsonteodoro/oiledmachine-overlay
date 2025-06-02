@@ -293,7 +293,8 @@
       compiler slot to mitigate against the possibility of an unstable
       Intermediate Representation (IR) mixed in for static-libs for the same
       compiler slot (e.g. upgrading/downgrading between =sys-devel/gcc-14.4.9999
-      and =sys-devel/gcc-14.3.0).  (proposed rule)
+      and =sys-devel/gcc-14.3.0, upgrading/downgrading between or
+      =llvm-core/clang-21.0.0.9999 and =llvm-core/clang-21.0.1). (proposed rule)
 
 # Ebuild organization
 
