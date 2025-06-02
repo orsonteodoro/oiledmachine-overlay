@@ -280,7 +280,7 @@
   all LTO issues without user intervention.
   1.  filter-lto when the compiler at the beginning of the pkg_setup phase is
       not the same after a forced compiler switch.  It is assumed that the
-      initial compiler is a LTO compiler.
+      initial compiler is the default systemwide LTO compiler.
   2.  filter-lto when the explicit LTO compiler is not the same after the
       compiler switch phase for static-libs in any of IUSE or *DEPENDS or for
       static builds.
