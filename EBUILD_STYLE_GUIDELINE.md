@@ -301,7 +301,9 @@
   10. filter-lto when there is a performance regression.
   11. leave a comment to why the filter-lto is necessary; otherwise, it is
       assumed that it is either an user misconfiguration, user ignorance, or
-      irrational overreaction case.
+      irrational overreaction case.  The ebuild developer can remove/revert the
+      filter-lto if a verified reason is not provided and LTO works on their
+      machine.
 
 # Ebuild organization
 
