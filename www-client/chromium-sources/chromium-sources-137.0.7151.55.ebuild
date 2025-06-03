@@ -103,6 +103,8 @@ ewarn "When emerge runs after the speedup changes it will wipe some files.  Plea
 	local count=$(find "/usr/share/chromium/sources/" -type f | wc -l)
 einfo "QA:  Update chromium ebuild with sources_count_expected=${count}"
 	echo "${count}" > "/usr/share/chromium/sources/file-count"
+einfo "Files merged:"
+	file "/usr/share/chromium/sources"
 }
 
 pkg_postrm() {
