@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# D11, U22, U24
+
 # Monitor
 #   https://chromereleases.googleblog.com/search/label/Dev%20updates
 # for security updates.  They are announced faster than NVD.
@@ -31,7 +33,7 @@ EAPI=8
 # 137.0.7151.55 -> 137.0.7151.68
 
 # For depends see:
-# https://github.com/chromium/chromium/tree/137.0.7151.68/build/linux/sysroot_scripts/generated_package_lists				; Last update 20240501
+# https://github.com/chromium/chromium/tree/137.0.7151.68/build/linux/sysroot_scripts/generated_package_lists				; Last update 20240501, D11
 #   alsa-lib, at-spi2-core, bluez (bluetooth), cairo, cups, curl, expat,
 #   flac [older], fontconfig [older], freetype [older], gcc, gdk-pixbuf, glib,
 #   glibc [missing check], gtk+3, gtk4, harfbuzz [older], libdrm [older], libffi, libglvnd,
