@@ -3679,8 +3679,12 @@ einfo "Using the bundled toolchain"
 	# Prevent linker from running out of address space, bug #471810.
 		filter-flags '-g*'
 	fi
-}
 
+	myconf_gn+=(
+	# The sysroot is the oldest debian image that chromium supports, we don't need it.
+		"use_sysroot=false"
+	)
+}
 
 _configure_build_system() {
 	if \
@@ -4440,6 +4444,21 @@ eerror
 	if is-flagq "-Ofast" ; then
 	# Precaution
 		append_all $(test-flags -fno-allow-store-data-races)
+	fi
+
+	# This determines whether or not GN uses the bundled libcxx
+	# There was some discussion that libcxx could be ASan-ed which would be
+	# a security advantage over the system's libstdc++.
+	# default: true
+	if use official && use cfi || use bundled-libcxx ; then
+		# If you didn't do systemwide CFI Cross-DSO, it must be static.
+		myconf_gn+=(
+			"use_custom_libcxx=true"
+		)
+	else
+		myconf_gn+=(
+			"use_custom_libcxx=false"
+		)
 	fi
 }
 
@@ -5307,6 +5326,19 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 }
 
 _configure_debug() {
+	myconf_gn+=(
+	# Disable profiling/tracing these should not be enabled in production.
+#		"rtc_use_perfetto=false"
+#		"v8_use_perfetto=false"
+
+	# Disable code formating of generated files
+		"blink_enable_generated_code_formatting=false"
+
+	# Enable DCHECK with USE=debug only, increases chrome binary size by 30%, bug #811138.
+	# DCHECK is fatal by default, make it configurable at runtime, #bug 807881.
+		"dcheck_always_on=$(usex debug true false)"
+		"dcheck_is_configurable=$(usex debug true false)"
+
 	# Debug symbols level 2 is still on when official is on even though
 	# is_debug=false.
 	#
@@ -5314,31 +5346,27 @@ _configure_debug() {
 	#
 	# GN needs explicit config for Debug/Release as opposed to inferring it
 	# from the build directory.
-	myconf_gn+=(
 		"is_debug=false"
-	)
-	if ! use debug ; then
-		myconf_gn+=(
-			"symbol_level=0"
-			"blink_symbol_level=0"
-			"v8_symbol_level=0"
-		)
-	fi
 
-	myconf_gn+=(
-	# Disable profiling/tracing these should not be enabled in production.
-#		"v8_use_perfetto=false"
-#		"rtc_use_perfetto=false"
+	# Non-developer builds of Chromium (for example, non-Chrome browsers, or
+	# Chromium builds provided by Linux distros) should disable the testing config.
+		"disable_fieldtrial_testing_config=true"
 
-	# Enable DCHECK with USE=debug only, increases chrome binary size by 30%, bug #811138.
-	# DCHECK is fatal by default, make it configurable at runtime, #bug 807881.
-		"dcheck_always_on=$(usex debug true false)"
-		"dcheck_is_configurable=$(usex debug true false)"
+	# Disable pseudolocales, only used for testing
+		"enable_pseudolocales=false"
 
 	# Component build isn't generally intended for use by end users. It's mostly useful
 	# for development and debugging.
 		"is_component_build=false"
 	)
+
+	if ! use debug ; then
+		myconf_gn+=(
+			"blink_symbol_level=0"
+			"symbol_level=0"
+			"v8_symbol_level=0"
+		)
+	fi
 
 	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium && has cromite ${IUSE_EFFECTIVE} && use cromite ; then
 		TARGET_ISDEBUG=$(usex debug "true" "false")
@@ -5497,12 +5525,8 @@ ewarn
 		"use_partition_alloc=$(usex partitionalloc true false)" # See issue 40277359
 	)
 
-
-
-
 # For Node.js, the v8 sandbox is disabled.  This is temporary until a fix can be
 # found or fixed in the next major version.
-
 
 	myconf_gn+=(
 	# Forced because of asserts
@@ -5572,36 +5596,6 @@ ewarn
 			"link_pulseaudio=true"
 		)
 	fi
-
-	myconf_gn+=(
-	# Non-developer builds of Chromium (for example, non-Chrome browsers, or
-	# Chromium builds provided by Linux distros) should disable the testing config.
-		"disable_fieldtrial_testing_config=true"
-
-	# The sysroot is the oldest debian image that chromium supports, we don't need it.
-		"use_sysroot=false"
-	)
-
-	# This determines whether or not GN uses the bundled libcxx
-	# default: true
-	if use official && use cfi || use bundled-libcxx ; then
-		# If you didn't do systemwide CFI Cross-DSO, it must be static.
-		myconf_gn+=(
-			"use_custom_libcxx=true"
-		)
-	else
-		myconf_gn+=(
-			"use_custom_libcxx=false"
-		)
-	fi
-
-	myconf_gn+=(
-	# Disable pseudolocales, only used for testing
-		"enable_pseudolocales=false"
-
-	# Disable code formating of generated files
-		"blink_enable_generated_code_formatting=false"
-	)
 
 	# See https://github.com/chromium/chromium/blob/137.0.7151.55/media/media_options.gni#L19
 
