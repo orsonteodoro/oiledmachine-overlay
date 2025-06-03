@@ -1,0 +1,39 @@
+--- a/configure.py.orig	2025-06-03 07:56:36.857561117 -0700
++++ b/configure.py	2025-06-03 07:57:35.862733199 -0700
+@@ -640,6 +640,12 @@ parser.add_argument('--experimental-enab
+     default=None,
+     help='[Experimental] Enable V8 pointer compression (limits max heap to 4GB and breaks ABI compatibility)')
+ 
++parser.add_argument('--experimental-enable-v8-sandbox',
++    action='store_true',
++    dest='enable_v8_sandbox',
++    default=None,
++    help='[Experimental] Enable V8 sandbox')
++
+ parser.add_argument('--v8-options',
+     action='store',
+     dest='v8_options',
+@@ -1761,7 +1767,10 @@ def configure_v8(o, configs):
+   o['variables']['v8_enable_maglev'] = B(not options.v8_disable_maglev and
+                                          o['variables']['target_arch'] in maglev_enabled_architectures)
+   o['variables']['v8_enable_pointer_compression'] = 1 if options.enable_pointer_compression else 0
+-  o['variables']['v8_enable_sandbox'] = 1 if options.enable_pointer_compression else 0
++  if options.enable_v8_sandbox and not options.enable_pointer_compression:
++    raise Exception(
++        '--experimental-enable-v8-sandbox needs --experimental-enable-pointer-compression')
++  o['variables']['v8_enable_sandbox'] = 1 if options.enable_v8_sandbox else 0
+   o['variables']['v8_enable_31bit_smis_on_64bit_arch'] = 1 if options.enable_pointer_compression else 0
+   o['variables']['v8_enable_extensible_ro_snapshot'] = 0
+   o['variables']['v8_trace_maps'] = 1 if options.trace_maps else 0
+--- a/test/cctest/node_test_fixture.cc.orig	2025-05-20 16:12:32.000000000 -0700
++++ b/test/cctest/node_test_fixture.cc	2025-06-03 07:57:12.223996489 -0700
+@@ -21,9 +21,6 @@ void NodeTestEnvironment::SetUp() {
+   NodeZeroIsolateTestFixture::platform.reset(
+       new node::NodePlatform(kV8ThreadPoolSize, tracing_controller));
+   v8::V8::InitializePlatform(NodeZeroIsolateTestFixture::platform.get());
+-#ifdef V8_ENABLE_SANDBOX
+-  ASSERT_TRUE(v8::V8::InitializeSandbox());
+-#endif
+   cppgc::InitializeProcess(
+       NodeZeroIsolateTestFixture::platform->GetPageAllocator());
+ 

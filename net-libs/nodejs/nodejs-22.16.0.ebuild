@@ -5,18 +5,18 @@
 EAPI=8
 
 # IMPORTANT:  The ${FILESDIR}/node-multiplexer-v* must be updated each time a new major version is introduced.
-# For ebuild delayed removal safety track "security release" : https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V20.md
+# For ebuild delayed removal safety track "security release" : https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V22.md
 
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
 
-# Last deps commit date:  Mar 7, 2025
+# Last deps commit date:  May 19, 2025
 
 ACORN_PV="8.14.0"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 CFLAGS_HARDENED_PIE="1"
 CFLAGS_HARDENED_USE_CASES="jit language-runtime network security-critical server untrusted-data web-server"
-CFLAGS_HARDENED_VTABLE_VERIFY="0" # It may break during build.
+CFLAGS_HARDENED_VTABLE_VERIFY="1"
 TRAINER_TYPES=(
 	abort_controller
 	assert
@@ -48,7 +48,6 @@ TRAINER_TYPES=(
 	path
 	perf_hooks
 	permission
-	policy
 	process
 	querystring
 	readline
@@ -64,15 +63,16 @@ TRAINER_TYPES=(
 	validators
 	vm
 	websocket
+	webstorage
 	webstreams
 	worker
 	zlib
 )
-COREPACK_PV="0.31.0"
+COREPACK_PV="0.32.0"
 LTO_TYPE="none" # Global var
 MULTIPLEXER_VER="11"
-NGHTTP2_PV="1.60.0"
-NPM_PV="10.8.2" # See https://github.com/nodejs/node/blob/v20.19.0/deps/npm/package.json
+NGHTTP2_PV="1.64.0"
+NPM_PV="10.9.2" # See https://github.com/nodejs/node/blob/v22.16.0/deps/npm/package.json
 PYTHON_COMPAT=( "python3_"{11..13} ) # See configure
 PYTHON_REQ_USE="threads(+)"
 TPGO_CONFIGURE_DONT_SET_FLAGS=1
@@ -161,16 +161,16 @@ RDEPEND+="
 	!net-libs/nodejs:0
 	>=app-arch/brotli-1.1.0
 	>=app-eselect/eselect-nodejs-20230521
-	>=dev-libs/libuv-1.47.0:=
-	>=net-dns/c-ares-1.34.4
+	>=dev-libs/libuv-1.49.2:=
+	>=net-dns/c-ares-1.34.5
 	>=net-libs/nghttp2-${NGHTTP2_PV}
 	>=sys-libs/zlib-1.3
 	sys-kernel/mitigate-id
 	system-icu? (
-		>=dev-libs/icu-76.1:=
+		>=dev-libs/icu-77.1:=
 	)
 	system-ssl? (
-		>=dev-libs/openssl-3.0.15:0[asm?,fips?]
+		>=dev-libs/openssl-3.0.16:0[asm?,fips?]
 		dev-libs/openssl:=
 	)
 "
@@ -206,11 +206,11 @@ PDEPEND+="
 PATCHES=(
 	"${FILESDIR}/${PN}-12.22.5-shared_c-ares_nameser_h.patch"
 	"${FILESDIR}/${PN}-22.2.0-global-npm-config.patch"
-	"${FILESDIR}/${PN}-20.18.0-lto-update.patch"
+	"${FILESDIR}/${PN}-22.2.0-lto-update.patch"
 	"${FILESDIR}/${PN}-20.1.0-support-clang-pgo.patch"
 	"${FILESDIR}/${PN}-19.3.0-v8-oflags.patch"
 	"${FILESDIR}/${PN}-23.5.0-split-pointer-compression-and-v8-sandbox-options.patch"
-	"${FILESDIR}/${PN}-20.18.1-add-v8-jit-fine-grained-options.patch"
+	"${FILESDIR}/${PN}-22.13.0-add-v8-jit-fine-grained-options.patch"
 )
 
 _count_useflag_slots() {
@@ -268,7 +268,7 @@ pkg_setup() {
 
 # See https://github.com/nodejs/release#release-schedule
 # See https://github.com/nodejs/release#end-of-life-releases
-einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2026-04-30."
+einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2027-04-30."
 
 	# Prevent merge conflicts
 	if use man && (( $(_count_useflag_slots "man") > 1 ))
@@ -450,9 +450,7 @@ src_configure() { :; }
 
 __pgo_configure() {
 	if [[ "${CC}" =~ "clang" ]] ; then
-ewarn
 ewarn "PGO clang support is experimental"
-ewarn
 	fi
 	export PGO_PROFILE_DIR="${T}/pgo-${ABI}"
 	export PGO_PROFILE_PROFDATA="${PGO_PROFILE_DIR}/pgo-custom.profdata"
@@ -533,8 +531,10 @@ set_jit_level() {
 	_jit_level_6() {
 		# 100% performance
 		myconf+=( $(enable_gdb) )
-	# https://github.com/nodejs/node/blob/v20.18.1/deps/v8/BUILD.gn#L485
-		#myconf+=( --v8-disable-maglev ) # %5 runtime benefit; disabled because of pointer-compression conditional
+	# https://github.com/nodejs/node/blob/v22.13.0/deps/v8/BUILD.gn#L516
+		if use amd64 || use arm || use arm64 ; then
+			myconf+=( --v8-enable-maglev ) # %5 runtime benefit
+		fi
 		myconf+=( --v8-enable-sparkplug ) # 5% benefit
 		myconf+=( --v8-enable-turbofan ) # Subset of -O1, -O2, -O3; 100% performance
 		#myconf+=( --v8-disable-lite-mode )
@@ -616,7 +616,13 @@ _src_configure() {
 		--shared-brotli
 		--shared-cares
 		--shared-libuv
-		--shared-nghttp2
+
+# Commenting out fixes:
+# ld: obj/deps/ngtcp2/nghttp3/lib/nghttp3.nghttp3_http.o: in function `nghttp3_http_parse_priority':
+# nghttp3_http.c:(.text+0x30): undefined reference to `sf_parser_init'
+# ld: nghttp3_http.c:(.text+0x42): undefined reference to `sf_parser_dict'
+		#--shared-nghttp2
+
 		--shared-zlib
 	)
 

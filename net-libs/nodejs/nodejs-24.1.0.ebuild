@@ -4,15 +4,18 @@
 
 EAPI=8
 
+# FIXME:
+# ../../deps/v8/src/heap/memory-chunk.h:361:2: error: #error The global metadata pointer table requires a single external code space.
+
 # IMPORTANT:  The ${FILESDIR}/node-multiplexer-v* must be updated each time a new major version is introduced.
 # For ebuild delayed removal safety track "security release" : https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V22.md
 
 # Keep versions in sync with deps folder
 # nodejs uses Chromium's zlib not vanilla zlib
 
-# Last deps commit date:  Apr 17, 2025
+# Last deps commit date:  May 15, 2025
 
-ACORN_PV="8.14.0"
+ACORN_PV="8.14.1"
 AUTOCANNON_PV="7.4.0" # The following are locked for deterministic builds.  Bump if vulnerability encountered.
 CFLAGS_HARDENED_PIE="1"
 CFLAGS_HARDENED_USE_CASES="jit language-runtime network security-critical server untrusted-data web-server"
@@ -25,8 +28,8 @@ TRAINER_TYPES=(
 	buffers
 	child_process
 	cluster
-	crypto
 	custom
+	crypto
 	dgram
 	diagnostics_channel
 	dns
@@ -72,7 +75,8 @@ COREPACK_PV="0.32.0"
 LTO_TYPE="none" # Global var
 MULTIPLEXER_VER="11"
 NGHTTP2_PV="1.64.0"
-NPM_PV="10.9.2" # See https://github.com/nodejs/node/blob/v22.15.0/deps/npm/package.json
+NGHTTP3_PV="1.6.0"
+NPM_PV="11.3.0" # See https://github.com/nodejs/node/blob/v24.1.0/deps/npm/package.json
 PYTHON_COMPAT=( "python3_"{11..13} ) # See configure
 PYTHON_REQ_USE="threads(+)"
 TPGO_CONFIGURE_DONT_SET_FLAGS=1
@@ -125,9 +129,9 @@ gen_iuse_pgo() {
 
 IUSE+="
 $(gen_iuse_pgo)
-acorn +asm +corepack cpu_flags_x86_sse2 debug doc fips +icu
-inspector +npm man mold pax-kernel pgo +snapshot +ssl system-icu +system-ssl
-test
+acorn +asm +corepack cpu_flags_x86_sse2 debug doc
+-drumbrake fips +icu inspector +npm man mold pax-kernel pgo +snapshot +ssl
+system-icu +system-ssl test
 ebuild_revision_46
 "
 
@@ -161,13 +165,13 @@ RDEPEND+="
 	!net-libs/nodejs:0
 	>=app-arch/brotli-1.1.0
 	>=app-eselect/eselect-nodejs-20230521
-	>=dev-libs/libuv-1.49.2:=
+	>=dev-libs/libuv-1.50.0:=
 	>=net-dns/c-ares-1.34.5
 	>=net-libs/nghttp2-${NGHTTP2_PV}
 	>=sys-libs/zlib-1.3
 	sys-kernel/mitigate-id
 	system-icu? (
-		>=dev-libs/icu-76.1:=
+		>=dev-libs/icu-77.1:=
 	)
 	system-ssl? (
 		>=dev-libs/openssl-3.0.16:0[asm?,fips?]
@@ -209,8 +213,8 @@ PATCHES=(
 	"${FILESDIR}/${PN}-22.2.0-lto-update.patch"
 	"${FILESDIR}/${PN}-20.1.0-support-clang-pgo.patch"
 	"${FILESDIR}/${PN}-19.3.0-v8-oflags.patch"
-	"${FILESDIR}/${PN}-23.5.0-split-pointer-compression-and-v8-sandbox-options.patch"
-	"${FILESDIR}/${PN}-22.13.0-add-v8-jit-fine-grained-options.patch"
+	"${FILESDIR}/${PN}-24.1.0-split-pointer-compression-and-v8-sandbox-options.patch"
+	"${FILESDIR}/${PN}-23.6.0-add-v8-jit-fine-grained-options.patch"
 )
 
 _count_useflag_slots() {
@@ -268,7 +272,7 @@ pkg_setup() {
 
 # See https://github.com/nodejs/release#release-schedule
 # See https://github.com/nodejs/release#end-of-life-releases
-einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2027-04-30."
+einfo "The ${SLOT_MAJOR}.x series will be End Of Life (EOL) on 2028-04-30."
 
 	# Prevent merge conflicts
 	if use man && (( $(_count_useflag_slots "man") > 1 ))
@@ -494,6 +498,7 @@ enable_gdb() {
 set_jit_level() {
 	_jit_level_0() {
 		# ~20%/~50% performance similar to light swap, but a feeling of less progress (20-25%)
+		#myconf+=( --v8-disable-drumbrake )
 		#myconf+=( --disable-gdb )
 		#myconf+=( --v8-disable-maglev )
 		#myconf+=( --v8-disable-sparkplug )
@@ -503,6 +508,7 @@ set_jit_level() {
 
 	_jit_level_1() {
 		# 28%/71% performance similar to light swap, but a feeling of more progress (33%)
+		myconf+=( $(usex drumbrake "--v8-enable-drumbrake" "") )
 		myconf+=( $(enable_gdb) )
 		#myconf+=( --v8-disable-maglev ) # Requires turbofan
 		myconf+=( --v8-enable-sparkplug )
@@ -512,6 +518,7 @@ set_jit_level() {
 
 	_jit_level_2() {
 		# > 75% performance
+		myconf+=( $(usex drumbrake "--v8-enable-drumbrake" "") )
 		myconf+=( $(enable_gdb) )
 		#myconf+=( --v8-disable-maglev )
 		#myconf+=( --v8-disable-sparkplug )
@@ -521,6 +528,7 @@ set_jit_level() {
 
 	_jit_level_5() {
 		# > 90% performance
+		myconf+=( $(usex drumbrake "--v8-enable-drumbrake" "") )
 		myconf+=( $(enable_gdb) )
 		#myconf+=( --v8-disable-maglev )
 		myconf+=( --v8-enable-sparkplug )
@@ -530,8 +538,9 @@ set_jit_level() {
 
 	_jit_level_6() {
 		# 100% performance
+		myconf+=( $(usex drumbrake "--v8-enable-drumbrake" "") )
 		myconf+=( $(enable_gdb) )
-	# https://github.com/nodejs/node/blob/v22.13.0/deps/v8/BUILD.gn#L516
+	# https://github.com/nodejs/node/blob/v23.6.0/deps/v8/BUILD.gn#L542
 		if use amd64 || use arm || use arm64 ; then
 			myconf+=( --v8-enable-maglev ) # %5 runtime benefit
 		fi
