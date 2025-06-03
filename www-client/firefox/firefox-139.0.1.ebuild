@@ -228,7 +228,7 @@ NODE_VERSION=18
 PYTHON_COMPAT=( "python3_"{10..11} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
 RUST_MAX_VER="1.86.0" # Inclusive
-RUST_MIN_VER="1.83.0" # Corresponds to llvm 19, rust min required for llvm 19
+RUST_MIN_VER="1.82.0" # Corresponds to llvm 19, rust min required for llvm 19
 RUST_NEEDS_LLVM=1
 RUST_PV="${RUST_MIN_VER}"
 SPEECH_DISPATCHER_PV="0.11.4-r1"
@@ -478,10 +478,12 @@ RUST_CDEPEND="
 			=dev-lang/rust-1.85*[${MULTILIB_USEDEP}]
 			=dev-lang/rust-1.84*[${MULTILIB_USEDEP}]
 			=dev-lang/rust-1.83*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.82*[${MULTILIB_USEDEP}]
 			=dev-lang/rust-bin-1.86*[${MULTILIB_USEDEP}]
 			=dev-lang/rust-bin-1.85*[${MULTILIB_USEDEP}]
 			=dev-lang/rust-bin-1.84*[${MULTILIB_USEDEP}]
 			=dev-lang/rust-bin-1.83*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.82*[${MULTILIB_USEDEP}]
 		)
 	)
 	|| (
@@ -495,7 +497,7 @@ CDEPEND="
 	>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.42:2[${MULTILIB_USEDEP}]
 	>=dev-libs/nss-3.110[${MULTILIB_USEDEP}]
-	>=dev-libs/nspr-4.36[${MULTILIB_USEDEP}]
+	>=dev-libs/nspr-4.36.0[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.7.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.13.3[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.3.1[${MULTILIB_USEDEP}]
@@ -530,17 +532,17 @@ CDEPEND="
 		>=media-sound/sndio-1.8.0-r1[${MULTILIB_USEDEP}]
 	)
 	system-av1? (
-		>=media-libs/dav1d-1.5.0:=[${MULTILIB_USEDEP},8bit]
+		>=media-libs/dav1d-1.5.1:=[${MULTILIB_USEDEP},8bit]
 		>=media-libs/libaom-1.0.0:=[${MULTILIB_USEDEP}]
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-10.2.0:0=[${MULTILIB_USEDEP}]
+		>=media-libs/harfbuzz-11.1.0:0=[${MULTILIB_USEDEP}]
 		!wasm-sandbox? (
 			>=media-gfx/graphite2-1.3.14[${MULTILIB_USEDEP}]
 		)
 	)
 	system-icu? (
-		>=dev-libs/icu-76.1:=[${MULTILIB_USEDEP}]
+		>=dev-libs/icu-77.1:=[${MULTILIB_USEDEP}]
 	)
 	system-jpeg? (
 		>=media-libs/libjpeg-turbo-3.0.4[${MULTILIB_USEDEP}]
@@ -556,7 +558,7 @@ CDEPEND="
 		media-video/pipewire:=
 	)
 	system-png? (
-		>=media-libs/libpng-1.6.45:0=[${MULTILIB_USEDEP},apng]
+		>=media-libs/libpng-1.6.47:0=[${MULTILIB_USEDEP},apng]
 	)
 	system-webp? (
 		>=media-libs/libwebp-1.5.0:0=[${MULTILIB_USEDEP}]
