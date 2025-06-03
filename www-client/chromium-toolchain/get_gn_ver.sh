@@ -1,8 +1,8 @@
 #!/bin/bash
 
 main() {
-	# Commit from https://github.com/chromium/chromium/blob/136.0.7103.59/DEPS#L506
-	GN_COMMIT=${GN_COMMIT:-"6e8e0d6d4a151ab2ed9b4a35366e630c55888444"}
+	# Commit from https://github.com/chromium/chromium/blob/137.0.7151.68/DEPS#L506
+	GN_COMMIT=${GN_COMMIT:-"85cc21e94af590a267c1c7a47020d9b420f8a033"}
 	echo "GN_COMMIT: ${GN_COMMIT}"
 
 	if ! [[ -e "gn" ]] ; then

@@ -6,20 +6,20 @@ EAPI=8
 
 inherit dhms
 
-# https://github.com/chromium/chromium/blob/136.0.7103.59/DEPS#L533
-GN_COMMIT="6e8e0d6d4a151ab2ed9b4a35366e630c55888444"
-GN_PV="0.2223" # See get_gn_ver.sh
-# https://github.com/chromium/chromium/blob/136.0.7103.59/tools/clang/scripts/update.py#L38 \
-LLVM_COMMIT="52cd27e6"
-LLVM_N_COMMITS="5118"
+# https://github.com/chromium/chromium/blob/137.0.7151.68/DEPS#L533
+GN_COMMIT="85cc21e94af590a267c1c7a47020d9b420f8a033"
+GN_PV="0.2233" # See get_gn_ver.sh
+# https://github.com/chromium/chromium/blob/137.0.7151.68/tools/clang/scripts/update.py#L38 \
+LLVM_COMMIT="09006611"
+LLVM_N_COMMITS="9266"
 LLVM_OFFICIAL_SLOT="21" # Cr official slot
-LLVM_SUB_REV="5"
-# https://github.com/chromium/chromium/blob/136.0.7103.59/tools/rust/update_rust.py#L37 \
+LLVM_SUB_REV="1"
+# https://github.com/chromium/chromium/blob/137.0.7151.68/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
-RUST_COMMIT="f7b43542838f0a4a6cfdb17fbeadf45002042a77"
+RUST_COMMIT="c8f94230282a8e8c1148f3e657f0199aad909228"
 RUST_SUB_REV="1"
-RUST_MAX_VER="1.85.0" # Inclusive
-RUST_MIN_VER="1.85.0" # Corresponds to llvm-20.1, see https://github.com/rust-lang/rust/blob/f7b43542838f0a4a6cfdb17fbeadf45002042a77/RELEASES.md
+RUST_MAX_VER="1.86.0" # Inclusive
+RUST_MIN_VER="1.86.0" # Corresponds to llvm-20.1, see https://github.com/rust-lang/rust/blob/c8f94230282a8e8c1148f3e657f0199aad909228/RELEASES.md
 RUST_PV="${RUST_MIN_VER}"
 VENDORED_CLANG_VER="llvmorg-${LLVM_OFFICIAL_SLOT}-init-${LLVM_N_COMMITS}-g${LLVM_COMMIT:0:8}-${LLVM_SUB_REV}"
 VENDORED_RUST_VER="${RUST_COMMIT}-${RUST_SUB_REV}"
@@ -315,6 +315,8 @@ pkg_preinst() {
 	local count=$(find "/usr/share/chromium/toolchain/" -type f | wc -l)
 einfo "QA:  Update chromium ebuild with tc_count_expected=${count}"
 	echo "${count}" >> "/usr/share/chromium/toolchain/file-count"
+einfo "Files merged:"
+	find "/usr/share/chromium/toolchain/"
 }
 
 pkg_postrm() {
