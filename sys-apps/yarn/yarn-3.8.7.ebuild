@@ -22,7 +22,7 @@ SLOT="${SLOT_MAJOR}/$(ver_cut 1-2 ${PV})"
 IUSE+=" +ssl ebuild_revision_3"
 CDEPEND+="
 	!sys-apps/yarn:0
-	>=net-libs/nodejs-14[corepack,ssl?]
+	>=net-libs/nodejs-14.10.0[corepack,ssl?]
 "
 DEPEND+="
 	${CDEPEND}
