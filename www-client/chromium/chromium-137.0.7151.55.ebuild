@@ -27,9 +27,10 @@ EAPI=8
 # 135.0.7049.84 -> 135.0.7049.114
 # 135.0.7049.114 -> 136.0.7103.59
 # 136.0.7103.59 -> 136.0.7103.92
+# 136.0.7103.92 -> 137.0.7151.55
 
 # For depends see:
-# https://github.com/chromium/chromium/tree/136.0.7103.92/build/linux/sysroot_scripts/generated_package_lists				; Last update 20240501
+# https://github.com/chromium/chromium/tree/137.0.7151.55/build/linux/sysroot_scripts/generated_package_lists				; Last update 20240501
 #   alsa-lib, at-spi2-core, bluez (bluetooth), cairo, cups, curl, expat,
 #   flac [older], fontconfig [older], freetype [older], gcc, gdk-pixbuf, glib,
 #   glibc [missing check], gtk+3, gtk4, harfbuzz [older], libdrm [older], libffi, libglvnd,
@@ -38,20 +39,20 @@ EAPI=8
 #   libxkbcommon, libxml2 [older], libxrandr, libxrender, libxshmfence,
 #   libxslt [older], nspr, nss, opus [older], pango, pciutils, pipewire,
 #   libpulse, qt5, qt6, re2 [older], systemd, udev, wayland, zlib [older]
-# https://github.com/chromium/chromium/blob/136.0.7103.92/build/install-build-deps.py
+# https://github.com/chromium/chromium/blob/137.0.7151.55/build/install-build-deps.py
 
 #
 # Additional DEPENDS versioning info:
 #
-# https://github.com/chromium/chromium/blob/136.0.7103.92/third_party/dav1d/version/vcs_version.h#L2					; newer than generated_package_lists *
-# https://github.com/chromium/chromium/blob/136.0.7103.92/third_party/libaom/source/config/config/aom_version.h#L19			; newer than generated_package_lists *
-# https://github.com/chromium/chromium/blob/136.0.7103.92/third_party/libpng/png.h#L288							; newer than generated_package_lists
-# https://github.com/chromium/chromium/blob/136.0.7103.92/third_party/libxml/linux/config.h#L86						; older than generated_package_lists *
-# https://github.com/chromium/chromium/blob/136.0.7103.92/third_party/libxslt/linux/config.h#L116					; newer than generated_package_lists *
-# https://github.com/chromium/chromium/blob/136.0.7103.92/third_party/node/update_node_binaries#L18					; *
-# https://github.com/chromium/chromium/blob/136.0.7103.92/third_party/re2/README.chromium#L4						; newer than generated_package_lists, (live) [rounded in ebuild]
-# https://github.com/chromium/chromium/blob/136.0.7103.92/third_party/zlib/zlib.h#L40
-# https://github.com/chromium/chromium/blob/136.0.7103.92/tools/rust/update_rust.py#L35							; commit *
+# https://github.com/chromium/chromium/blob/137.0.7151.55/third_party/dav1d/version/vcs_version.h#L2					; newer than generated_package_lists *
+# https://github.com/chromium/chromium/blob/137.0.7151.55/third_party/libaom/source/config/config/aom_version.h#L19			; newer than generated_package_lists *
+# https://github.com/chromium/chromium/blob/137.0.7151.55/third_party/libpng/png.h#L288							; newer than generated_package_lists
+# https://github.com/chromium/chromium/blob/137.0.7151.55/third_party/libxml/linux/config.h#L86						; older than generated_package_lists *
+# https://github.com/chromium/chromium/blob/137.0.7151.55/third_party/libxslt/linux/config.h#L116					; newer than generated_package_lists *
+# https://github.com/chromium/chromium/blob/137.0.7151.55/third_party/node/update_node_binaries#L18					; *
+# https://github.com/chromium/chromium/blob/137.0.7151.55/third_party/re2/README.chromium#L4						; newer than generated_package_lists, (live) [rounded in ebuild]
+# https://github.com/chromium/chromium/blob/137.0.7151.55/third_party/zlib/zlib.h#L40
+# https://github.com/chromium/chromium/blob/137.0.7151.55/tools/rust/update_rust.py#L35							; commit *
 #   https://github.com/rust-lang/rust/blob/f7b43542838f0a4a6cfdb17fbeadf45002042a77/src/version						; live version
 # /usr/share/chromium/sources/third_party/flac/BUILD.gn										L122	; newer than generated_package_lists
 # /usr/share/chromium/sources/third_party/fontconfig/src/fontconfig/fontconfig.h						L54     ; newer than generated_package_lists
@@ -67,7 +68,7 @@ EAPI=8
 # /usr/share/chromium/sources/third_party/zstd/README.chromium										; live version *
 #   https://github.com/facebook/zstd/commit/ef2bf5781112a4cd6b62ac1817f7842bbdc7ea8f							; check if commit part of tag
 #   https://github.com/facebook/zstd/blob/ef2bf5781112a4cd6b62ac1817f7842bbdc7ea8f/lib/zstd.h#L107					; version
-# https://github.com/chromium/chromium/blob/136.0.7103.92/DEPS#L512									; live
+# https://github.com/chromium/chromium/blob/137.0.7151.55/DEPS#L512									; live
 
 ALLOW_SYSTEM_TOOLCHAIN=0
 CFI_CAST=0 # Global variable
@@ -133,7 +134,7 @@ CROMITE_PV="136.0.7103.60"
 # https://github.com/llvm/llvm-project/blob/7b473dfe/cmake/Modules/LLVMVersion.cmake
 
 # LLVM timestamp can be obtained from \
-# https://github.com/chromium/chromium/blob/136.0.7103.92/tools/clang/scripts/update.py#L42 \
+# https://github.com/chromium/chromium/blob/137.0.7151.55/tools/clang/scripts/update.py#L42 \
 # https://github.com/llvm/llvm-project/commit/7b473dfe
 # Change also LLVM_OFFICIAL_SLOT
 CURRENT_PROFDATA_VERSION= # Global variable
@@ -197,7 +198,7 @@ PATENT_STATUS=(
 )
 PPC64_HASH="a85b64f07b489b8c6fdb13ecf79c16c56c560fc6"
 PATCHSET_PPC64="128.0.6613.84-1raptor0~deb12u1"
-PATCH_REVISION="-2"
+PATCH_REVISION=""
 PATCH_VER="${PV%%\.*}${PATCH_REVISION}"
 PGO_LLVM_SUPPORTED_VERSIONS=(
 	"22.0.0.9999"
@@ -211,11 +212,11 @@ PYTHON_REQ_USE="xml(+)"
 QT6_PV="6.4.2"
 UNGOOGLED_CHROMIUM_PV="136.0.7103.49-1"
 USE_LTO=0 # Global variable
-# https://github.com/chromium/chromium/blob/136.0.7103.92/tools/clang/scripts/update.py#L38 \
+# https://github.com/chromium/chromium/blob/137.0.7151.55/tools/clang/scripts/update.py#L38 \
 # grep 'CLANG_REVISION = ' ${S}/tools/clang/scripts/update.py -A1 | cut -c 18- # \
 LLVM_OFFICIAL_SLOT="21" # Cr official slot
 TEST_FONT="f26f29c9d3bfae588207bbc9762de8d142e58935c62a86f67332819b15203b35"
-# https://github.com/chromium/chromium/blob/136.0.7103.92/tools/rust/update_rust.py#L37 \
+# https://github.com/chromium/chromium/blob/137.0.7151.55/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
 RUST_NEEDS_LLVM="yes please"
 RUST_OPTIONAL="yes" # Not actually optional, but we don't need system Rust (or LLVM) with USE=bundled-toolchain
@@ -319,99 +320,7 @@ HOMEPAGE="https://www.chromium.org/"
 # emerge does not understand ^^ in the LICENSE variable and have been replaced
 # with ||.  You should choose at most one at some instances.
 LICENSE="
-	(
-		all-rights-reserved
-		MIT
-	)
-	(
-		CC-BY-SA-4.0
-		ISC
-	)
-	(
-		CC0-1.0
-		MIT
-	)
-	(
-		all-rights-reserved
-		HPND
-	)
-	Alliance-for-Open-Media-Patent-License-1.0
-	APSL-2
-	Apache-2.0
-	Apache-2.0-with-LLVM-exceptions
-	base64
-	Boost-1.0
-	BSD
-	BSD-2
-	BSD-4
-	CC-BY-3.0
-	CC-BY-4.0
-	CC-BY-ND-2.5
-	CC0-1.0
 	chromium-$(ver_cut 1-3 ${PV}).x.html
-	custom
-	fft2d
-	FLEX
-	FTL
-	g711
-	g722
-	GPL-2+
-	HPND
-	icu
-	IJG
-	ILA-OpenCV
-	ISC
-	Khronos-CLHPP
-	LGPL-2
-	LGPL-2+
-	LGPL-2.1+
-	libpng2
-	libvpx-PATENTS
-	libwebrtc-PATENTS
-	MIT
-	MPL-1.1
-	MPL-2.0
-	neon_2_sse
-	OFL-1.1
-	ooura
-	openssl
-	PSF-2.4
-	QU-fft
-	Unlicense
-	UoI-NCSA
-	unicode
-	Unicode-DFS-2016
-	unRAR
-	SGI-B-2.0
-	sigslot
-	SunPro
-	svgo
-	trio
-	W3C
-	W3C-Document-License-2002
-	WTFPL-2
-	x11proto
-	ZLIB
-	widevine? (
-		widevine
-	)
-	|| (
-		GPL-2
-		LGPL-2.1
-		MPL-1.1
-	)
-	|| (
-		(
-			GPL-2+
-			MPL-2.0
-		)
-		(
-			LGPL-2.1+
-			MPL-2.0
-		)
-		GPL-2.0+
-		MPL-2.0
-	)
 "
 if is_cromite_compatible ; then
 	LICENSE+="
@@ -428,149 +337,6 @@ if [[ "${UNGOOGLED_CHROMIUM_PV%-*}" == "${PV}" ]] ; then
 		)
 	"
 fi
-
-#
-# Benchmark website licenses:
-# See the webkit-gtk ebuild
-#
-# BSD-2 BSD LGPL-2.1 - Kraken benchmark
-#   ( ( all-rights-reserved || ( MIT AFL-2.1 ) ) (MIT GPL) BSD MIT )
-#   ( all-rights-reserved GPL-3+ ) tests/kraken-1.0/audio-beat-detection-data.js
-#   MPL-1.1 tests/kraken-1.0/imaging-desaturate.js
-#   public-domain hosted/json2.js
-#   || ( MPL-1.1 GPL-2+ LGPL-2.1+ )
-#   || ( BSD GPL-2 ) ; for SJCL
-
-# Third Party Licenses:
-#
-# TODO:  The rows marked custom need to have or be placed a license file or
-#        reevaluated.
-# TODO:  scan all font files for embedded licenses
-#
-# Alliance-for-Open-Media-Patent-License-1.0 third_party/libaom/source/libaom/PATENTS
-# APSL-2 - third_party/apple_apsl/LICENSE
-# APSL-2 Apache-2.0 BSD MIT - third_party/breakpad/LICENSE
-# Apache-2.0 - CIPD - https://chromium.googlesource.com/infra/luci/luci-go/+/refs/heads/main/cipd
-# Apache-2.0 - third_party/node/node_modules/typescript/LICENSE.txt
-# Apache-2.0-with-LLVM-exceptions UoI-NCSA - \
-#   third_party/llvm/debuginfo-tests/dexter/LICENSE.txt
-# Apache-2.0-with-LLVM-exceptions UoI-NCSA MIT - third_party/llvm/libclc/LICENSE.TXT
-# all-rights-reserved MIT - third_party/xcbproto/LICENSE ; the plain MIT \
-#   license doesn't come with all rights reserved in the license template
-# BSD - third_party/vulkan-deps/glslang/src/LICENSE.txt
-# BSD || ( MPL-1.1 GPL-2+ LGPL-2+ ) - \
-#   third_party/openscreen/src/third_party/mozilla/LICENSE.txt
-# BSD CC-BY-3.0 CC-BY-4.0 MIT public-domain - third_party/snappy/src/COPYING
-# BSD HPND (modified) - native_client_sdk/src/libraries/third_party/newlib-extras/netdb.h
-# BSD ISC MIT openssl - third_party/boringssl/src/LICENSE
-# BSD || ( MPL-1.1 GPL-2+ LGPL-2+ ) - url/third_party/mozilla/LICENSE.txt
-# BSD-2 - third_party/node/node_modules/eslint-scope/LICENSE
-# BSD-2 IJG MIT - third_party/libavif/src/LICENSE
-# BSD-2 - third_party/libaom/source/libaom/LICENSE
-# base64 - third_party/webrtc/rtc_base/third_party/base64/LICENSE
-# custom - out/Release/gen/components/resources/about_credits.html [Same as chromium-121.0.6167.x.html license file]
-#   keyword search: "venue in the state and federal courts"
-# custom - third_party/llvm/clang-tools-extra/clang-tidy/cert/LICENSE.TXT
-# custom - third_party/llvm/clang-tools-extra/clang-tidy/hicpp/LICENSE.TXT
-# custom ^^ ( BSD-2 BSD ) - third_party/blink/LICENSE_FOR_ABOUT_CREDITS
-# custom Apache-2.0-with-LLVM-exceptions UoI-NCSA third_party/llvm/openmp/LICENSE.TXT
-# custom CC-BY-ND-2.5 LGPL-2.1+ GPL-2+ public-domain - \
-#   third_party/blink/perf_tests/svg/resources/LICENSES
-# custom BSD APSL-2 MIT BSD-4 - third_party/breakpad/breakpad/LICENSE
-# custom Boost-1.0 BSD BSD-2 BSD-4 gcc-runtime-library-exception-3.1 FDL-1.1 \
-#   GPL-2 GPL-2+ GPL-2-with-classpath-exception GPL-3 HPND icu LIBGLOSS LGPL-2
-#   LGPL-2.1 LGPL-2.1+ LGPL-3 MIT NEWLIB PSF-2.4 rc UoI-NCSA ZLIB \
-#   || ( MPL-1.1 GPL-2.0+ LGPL-2.1+ ) - native_client/NOTICE
-#   NSIS: BZIP2 CPL-1.0 libpng ZLIB
-#   (Some third_party modules do not exist like NSIS)
-# custom, W3C-IPR, BSD, MIT, GPL-2, LPGL-2.1, PSF-2.4, BSD-2, SunPro, \
-#   GPL-2+, ZLIB, LGPL-2.1+, NEWLIB, LIBGLOSS, GPL-2-with-classpath-exception, \
-#   SAX-PD, GPL-2-with-classpath-exception, UoI-NCSA, FDL-1.1, Boost-1.0, \
-#   CPL-1.0, BZIP2, ZLIB, LGPL-3, GPL-3, gcc-runtime-library-exception-3.1, \
-#   W3C-SOFTWARE-NOTICE-AND-LICENSE-2004 (LICENSE.DOM), HPND, BSD-4, \
-#   || ( MPL-1.1 GPL-2+ LGPL-2.1+ ),    - native_client/NOTICE \
-#   Not all folders present so not all licenses will apply.
-# custom IJG - third_party/iccjpeg/LICENSE
-# custom MPL-2.0 BSD GPL-3 LGPL-3 Apache-1.1 - \
-#   third_party/tflite/src/third_party/eigen3/LICENSE ; Only MPL-2.0 files are \
-#   found
-# custom UoI-NCSA - third_party/llvm/llvm/include/llvm/Support/LICENSE.TXT
-# custom public-domain - third_party/sqlite/LICENSE
-# CC-BY-3.0 https://peach.blender.org/download/ # avi is mp4 and h264 is mov
-#   (c) copyright 2008, Blender Foundation / www.bigbuckbunny.org
-# CC-BY-4.0 - third_party/devtools-frontend/src/node_modules/caniuse-lite/LICENSE
-# CC0-1.0 - tools/perf/page_sets/trivial_sites/trivial_fullscreen_video.html
-# fft2d - third_party/tflite/src/third_party/fft2d/LICENSE
-# g711 - third_party/webrtc/modules/third_party/g711/LICENSE
-# g722 - third_party/webrtc/modules/third_party/g722/LICENSE
-# GPL-2 - third_party/freetype-testing/LICENSE
-# GPL-2+ - third_party/devscripts/licensecheck.pl.vanilla
-# HPND PSF-2.4 - v8/third_party/v8/builtins/LICENSE
-# ILA-OpenCV (BSD with additional clauses) - third_party/opencv/src/LICENSE
-# icu Unicode-DFS-2016 - base/third_party/icu/LICENSE
-# ISC - third_party/node/node_modules/rimraf/LICENSE
-# ISC - third_party/libaom/source/libaom/third_party/x86inc/LICENSE
-# ISC CC-BY-SA-4.0 - third_party/node/node_modules/glob/LICENSE ; no logo \
-#   image file found
-# ISC MIT - third_party/devtools-frontend/src/node_modules/rollup/LICENSE.md
-# Khronos-CLHPP - third_party/vulkan-deps/spirv-headers/src/LICENSE
-# LGPL-2 - third_party/blink/renderer/core/LICENSE-LGPL-2
-#   third_party/blink/renderer/core/layout/table_layout_algorithm.h
-# LGPL-2+ - third_party/blink/renderer/core/svg/svg_set_element.h
-# LGPL-2.1 - third_party/blink/renderer/core/LICENSE-LGPL-2.1 ; cannot find a \
-#   file that is 2.1 only
-# LGPL-2.1+ - third_party/blink/renderer/core/paint/paint_layer.h
-# LGPL-2.1+ - third_party/libsecret/LICENSE
-# libpng2 - third_party/pdfium/third_party/libpng16/LICENSE
-# libvpx-PATENTS - third_party/libvpx/source/libvpx/PATENTS
-# MIT CC0-1.0 - third_party/node/node_modules/eslint/node_modules/lodash/LICENSE
-# MIT SGI-B-2.0 - third_party/khronos/LICENSE
-# MIT Unicode-DFS-2016 CC-BY-4.0 W3C W3C-Community-Final-Specification-Agreement - third_party/node/node_modules/typescript/ThirdPartyNoticeText.txt
-# MPL-2.0 - third_party/node/node_modules/mdn-data/LICENSE
-# neon_2_sse - third_party/neon_2_sse/LICENSE
-# OFL-1.1 - third_party/freetype-testing/src/fuzzing/corpora/cff-render-ftengine/bungeman/HangingS.otf
-# ooura - third_party/webrtc/common_audio/third_party/ooura/LICENSE
-# PATENTS - third_party/dav1d/libdav1d/doc/PATENTS
-# PATENTS - third_party/libaom/source/libaom/PATENTS
-# PATENTS - third_party/libaom/source/libaom/third_party/libwebm/PATENTS.TXT
-# PATENTS - third_party/libjxl/src/PATENTS
-# PATENTS - third_party/libvpx/source/libvpx/PATENTS
-# PATENTS - third_party/libvpx/source/libvpx/third_party/libwebm/PATENTS.TXT
-# PATENTS - third_party/libwebm/source/PATENTS.TXT
-# PATENTS - third_party/libwebp/src/PATENTS
-# PATENTS - third_party/libyuv/PATENTS
-# PATENTS - third_party/webrtc/PATENTS
-# public-domain - third_party/lzma_sdk/LICENSE
-# public-domain with no warranty - third_party/pdfium/third_party/bigint/LICENSE
-# public-domain - \
-#   third_party/webrtc/common_audio/third_party/spl_sqrt_floor/LICENSE
-# PSF-2 - third_party/devtools-frontend/src/node_modules/mocha/node_modules/argparse/LICENSE
-# QU-fft - third_party/webrtc/modules/third_party/fft/LICENSE
-# sigslot - third_party/webrtc/rtc_base/third_party/sigslot/LICENSE
-# SunPro - third_party/fdlibm/LICENSE
-# svgo (with russian MIT license translation) - \
-#   third_party/node/node_modules/svgo/LICENSE
-# Unlicense Apache-2.0 - \
-#   third_party/devtools-frontend/src/node_modules/@sinonjs/text-encoding/LICENSE.md
-# unicode [3 clause DFS] - third_party/icu4j/LICENSE
-# Unicode-DFS-2016 [2 clause DFS] - third_party/cldr/LICENSE
-# unRAR - third_party/unrar/LICENSE
-# UoI-NCSA - third_party/swiftshader/third_party/llvm-subzero/LICENSE.TXT
-# W3C-Document-License-2002, MIT, Unicode-DFS-2016, CC-BY-4.0, W3C-Community-Final-Specification-Agreement - third_party/node/node_modules/typescript/ThirdPartyNoticeText.txt
-# widevine - third_party/widevine/LICENSE
-# WTFPL BSD-2 - third_party/catapult/third_party/polymer2/bower_components/sinon-chai/LICENSE.txt
-# x11proto - third_party/x11proto/LICENSE
-# ^^ ( FTL GPL-2 ) ZLIB public-domain - third_party/freetype/src/LICENSE.TXT
-# || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) - chrome/utility/importer/nss_decryptor.cc
-# || ( WTFPL-2 Apache-2.0 ) - \
-#   third_party/catapult/third_party/polymer2/bower_components/sinon-chai/LICENSE.txt ; \
-#   the WTFPL is the better choice because Apache-2.0 has more restrictions
-# || ( MIT GPL-3 ) third_party/catapult/tracing/third_party/jszip/LICENSE.markdown ; \
-#   upstream has more MIT than GPL3 copyright notices, so MIT is assumed
-# * The public-domain entry was not added to the LICENSE ebuild variable to not
-#   give the wrong impression that the entire software was released in public
-#   domain.
-#
 RESTRICT="
 	mirror
 	!bindist? (
@@ -583,13 +349,13 @@ RESTRICT="
 SLOT="0/stable"
 #
 # vaapi is enabled by default upstream for some arches \
-# See https://github.com/chromium/chromium/blob/136.0.7103.92/media/gpu/args.gni#L24
+# See https://github.com/chromium/chromium/blob/137.0.7151.55/media/gpu/args.gni#L24
 #
 # Using the system-ffmpeg or system-icu breaks cfi-icall or cfi-cast which is
 #   incompatible as a shared lib.
 #
 # The suid is built by default upstream but not necessarily used:  \
-#   https://github.com/chromium/chromium/blob/136.0.7103.92/sandbox/linux/BUILD.gn
+#   https://github.com/chromium/chromium/blob/137.0.7151.55/sandbox/linux/BUILD.gn
 #
 CPU_FLAGS_ARM=(
 	aes
@@ -713,7 +479,7 @@ ${PATENT_STATUS[@]}
 -debug -drumbrake +encode +extensions ffmpeg-chromium firejail -gtk4 -gwp-asan
 -hangouts -headless +hidpi +jit +js-type-check +kerberos +mdns +miracleptr mold +mpris
 -official +partitionalloc pax-kernel +pdf pic +pgo +plugins
-+pre-check-vaapi +pulseaudio +reporting-api qt6 +screencast selinux
++pre-check-vaapi +pulseaudio +reporting-api qt6 +rar +screencast selinux
 -system-dav1d +system-ffmpeg -system-flac -system-fontconfig -system-freetype
 -system-harfbuzz -system-icu -system-libaom -system-libjpeg-turbo -system-libpng
 -system-libwebp -system-libxml -system-libxslt -system-openh264 -system-opus
@@ -730,24 +496,24 @@ fi
 
 # What is considered a proprietary codec can be found at:
 #
-#   https://github.com/chromium/chromium/blob/136.0.7103.92/media/filters/BUILD.gn#L160
-#   https://github.com/chromium/chromium/blob/136.0.7103.92/media/media_options.gni#L38
-#   https://github.com/chromium/chromium/blob/136.0.7103.92/media/base/supported_types.cc#L203
-#   https://github.com/chromium/chromium/blob/136.0.7103.92/media/base/supported_types.cc#L284
+#   https://github.com/chromium/chromium/blob/137.0.7151.55/media/filters/BUILD.gn#L160
+#   https://github.com/chromium/chromium/blob/137.0.7151.55/media/media_options.gni#L38
+#   https://github.com/chromium/chromium/blob/137.0.7151.55/media/base/supported_types.cc#L203
+#   https://github.com/chromium/chromium/blob/137.0.7151.55/media/base/supported_types.cc#L284
 #
 # Codec upstream default:
-#   https://github.com/chromium/chromium/blob/136.0.7103.92/tools/mb/mb_config_expectations/chromium.linux.json#L89
+#   https://github.com/chromium/chromium/blob/137.0.7151.55/tools/mb/mb_config_expectations/chromium.linux.json#L89
 #
 
 #
 # For cfi-vcall, cfi-icall defaults status, see \
-#   https://github.com/chromium/chromium/blob/136.0.7103.92/build/config/sanitizers/sanitizers.gni
+#   https://github.com/chromium/chromium/blob/137.0.7151.55/build/config/sanitizers/sanitizers.gni
 # For cfi-cast default status, see \
-#   https://github.com/chromium/chromium/blob/136.0.7103.92/build/config/sanitizers/sanitizers.gni#L123
+#   https://github.com/chromium/chromium/blob/137.0.7151.55/build/config/sanitizers/sanitizers.gni#L123
 # For pgo default status, see \
-#   https://github.com/chromium/chromium/blob/136.0.7103.92/build/config/compiler/pgo/pgo.gni#L15
+#   https://github.com/chromium/chromium/blob/137.0.7151.55/build/config/compiler/pgo/pgo.gni#L15
 # For libcxx default, see \
-#   https://github.com/chromium/chromium/blob/136.0.7103.92/build/config/c++/c++.gni#L14
+#   https://github.com/chromium/chromium/blob/137.0.7151.55/build/config/c++/c++.gni#L14
 # For cdm availability see third_party/widevine/cdm/widevine.gni#L28
 #
 
@@ -1691,7 +1457,7 @@ fi
 # This is why LLVM13 was set as the minimum and did fix the problem.
 
 # For the current llvm for this project, see
-#   https://github.com/chromium/chromium/blob/136.0.7103.92/tools/clang/scripts/update.py#L42
+#   https://github.com/chromium/chromium/blob/137.0.7151.55/tools/clang/scripts/update.py#L42
 # Use the same clang for official USE flag because of older llvm bugs which
 #   could result in security weaknesses (explained in the llvm:12 note below).
 # Used llvm >= 12 for arm64 for the same reason in the Linux kernel CFI comment.
@@ -1840,7 +1606,7 @@ is_debug_flags() {
 pre_build_checks() {
 	# Check build requirements: bugs #471810, #541816, #914220
 	if use official ; then
-	# https://github.com/chromium/chromium/blob/136.0.7103.92/docs/linux/build_instructions.md#system-requirements
+	# https://github.com/chromium/chromium/blob/137.0.7151.55/docs/linux/build_instructions.md#system-requirements
 		CHECKREQS_DISK_BUILD="100G"
 		CHECKREQS_MEMORY="16G"
 	else
@@ -2240,7 +2006,7 @@ pkg_setup() {
 	# The emerge package system will over prune when it should not when it
 	# uses the mv merge technique with sandbox disabled.
 
-	local tc_count_expected=5450
+	local tc_count_expected=5478
 	local tc_count_actual=$(cat "/usr/share/chromium/toolchain/file-count")
 	if (( ${tc_count_actual} != ${tc_count_expected} )) ; then
 ewarn
@@ -2252,7 +2018,7 @@ ewarn "Expected file count:  ${tc_count_expected}"
 ewarn
 	fi
 
-	local sources_count_expected=534350
+	local sources_count_expected=536652
 	local sources_count_actual=$(cat "/usr/share/chromium/sources/file-count")
 	if (( ${sources_count_actual} != ${sources_count_expected} )) ; then
 ewarn
@@ -2609,7 +2375,8 @@ einfo "Applying the distro patchset ..."
 		"${FILESDIR}/chromium-135-oauth2-client-switches.patch"
 		"${FILESDIR}/chromium-135-map_droppable-glibc.patch"
 		"${FILESDIR}/chromium-136-drop-nodejs-ver-check.patch"
-		"${FILESDIR}/chromium-135-gperf.patch"
+		"${FILESDIR}/chromium-137-openh264-include-path.patch"
+		"${FILESDIR}/chromium-137-pdfium-system-libpng.patch"
 	)
 
 	if _use_system_toolchain ; then
@@ -3184,6 +2951,8 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		third_party/ced
 		third_party/cld_3
 		third_party/closure_compiler
+	# Since M137 atomic is required; we could probably unbundle this as a target of opportunity. \
+		third_party/compiler-rt
 		third_party/content_analysis_sdk
 		third_party/cpuinfo
 		third_party/crabbyavif
@@ -3366,7 +3135,6 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		third_party/tflite/src/third_party/xla/xla/tsl/protobuf
 		third_party/tflite/src/third_party/xla/xla/tsl/util
 		third_party/ukey2
-		third_party/unrar
 		third_party/utf
 		third_party/vulkan
 		third_party/wasm_tts_engine
@@ -3405,6 +3173,10 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 
 	# Required in both cases
 		third_party/ffmpeg
+
+		$(use rar && echo "
+			third_party/unrar
+		")
 
 		$(use !system-dav1d && echo "
 			third_party/dav1d
@@ -3853,19 +3625,118 @@ src_configure() {
 	:
 }
 
-configure_system_toolchain() {
+_configure_compiler_common() {
+	if _use_system_toolchain ; then
+		_configure_system_toolchain
+	else
+einfo "Using the bundled toolchain"
+		myconf_gn+=(
+			"is_clang=true"
+		)
+	fi
+
+	check-compiler-switch_end
+
+	# Strip incompatable linker flags
+	strip-unsupported-flags
+
+	# Handled by the build scripts
+	filter-flags '-f*visibility*'
+
+	# Avoid CFLAGS problems, bug #352457, bug #390147.
+	if ! use custom-cflags ; then
+		strip-flags
+	fi
+
+	if _use_system_toolchain ; then
+		myconf_gn+=(
+			"llvm_libdir=\"$(get_libdir)\""
+		)
+	fi
+
+	if tc-is-clang ; then
+		if ver_test $(clang-major-version) -ge 16 ; then
+			myconf_gn+=(
+				"clang_version=$(clang-major-version)"
+			)
+		else
+			myconf_gn+=(
+				"clang_version=$(clang-fullversion)"
+			)
+		fi
+	fi
+
+	# We don't use the same clang version as upstream, and with -Werror
+	# we need to make sure that we don't get superfluous warnings.
+	append-flags -Wno-unknown-warning-option
+	if tc-is-cross-compiler ; then
+		export BUILD_CXXFLAGS+=" -Wno-unknown-warning-option"
+		export BUILD_CFLAGS+=" -Wno-unknown-warning-option"
+	fi
+
+	if ! use custom-cflags ; then
+	# Debug info section overflows without component build
+	# Prevent linker from running out of address space, bug #471810.
+		filter-flags '-g*'
+	fi
+}
+
+
+_configure_build_system() {
+	if \
+		( \
+			   use bundled-libcxx \
+			|| use cfi \
+			|| use official \
+			|| use pgo \
+		) \
+			&& \
+		[[ "${FEATURES}" =~ "icecream" ]] \
+	; then
+eerror
+eerror "FEATURES=icecream can only use GCC.  It can't use USE flags that depend"
+eerror "on clang."
+eerror
+eerror "Solutions"
+eerror
+eerror "1.  Replace this package with www-client/google-chrome."
+eerror "2.  Disable bundled-libcxx, cfi, official, pgo USE flags."
+eerror "3.  Disable icecream in FEATURES."
+eerror
+		die
+	fi
+
+	if [[ "${FEATURES}" =~ "icecream" ]] && has_version "sys-devel/icecream" ; then
+		myconf_gn+=(
+			"use_debug_fission=false"
+		)
+	fi
+
+	# I noticed that the vendored clang doesn't use ccache.  Let us explicitly use ccache if requested.
+	# See https://github.com/chromium/chromium/blob/137.0.7151.55/build/toolchain/cc_wrapper.gni#L36
+	if ! _use_system_toolchain ; then
+		if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
+			myconf_gn+=(
+				"cc_wrapper=\"ccache\""
+			)
+			export CCACHE_BASEDIR="${TMPDIR}"
+		fi
+
+		[[ "${FEATURES}" =~ "distcc" ]] && die "FEATURES=distcc with USE=-system-toolchain is not supported by the ebuild."
+		[[ "${FEATURES}" =~ "icecream" ]] && die "FEATURES=icecream with USE=-system-toolchain is not supported by the ebuild."
+	fi
+}
+
+_configure_system_toolchain() {
 einfo "Using the system toolchain"
 	# We already forced the "correct" clang via pkg_setup
 	# See _set_system_cc
 
-	# Handled by the build scripts
-	filter-flags \
-		'-f*sanitize*' \
-		'-f*visibility*'
-
 	if tc-is-clang ; then
-		myconf_gn+=" is_clang=true"
-		myconf_gn+=" clang_use_chrome_plugins=false"
+		myconf_gn+=(
+			"is_clang=true"
+			"clang_use_chrome_plugins=false"
+		)
 	# Workaround for build failure with clang-18 and -march=native without
 	# avx512. Does not affect e.g. -march=skylake, only native (bug #931623).
 		use amd64 && is-flagq -march=native &&
@@ -3873,7 +3744,9 @@ einfo "Using the system toolchain"
 			tc-cpp-is-true "!defined(__AVX512F__)" ${CXXFLAGS} &&
 			append-flags -mevex512
 	else
-		myconf_gn+=" is_clang=false"
+		myconf_gn+=(
+			"is_clang=false"
+		)
 	fi
 
 	# Handled by build scripts
@@ -3882,15 +3755,16 @@ einfo "Using the system toolchain"
 	if tc-is-clang ; then
 	# https://bugs.gentoo.org/918897#c32
 		append-ldflags -Wl,--undefined-version
-		myconf_gn+=" use_lld=true"
+		myconf_gn+=(
+			"use_lld=true"
+		)
 	else
 	# This doesn't prevent lld from being used, but rather prevents gn from
 	# forcing it.
-		myconf_gn+=" use_lld=false"
+		myconf_gn+=(
+			"use_lld=false"
+		)
 	fi
-
-	# Strip incompatable linker flags
-	strip-unsupported-flags
 
 	if is-flagq '-flto' || tc-is-clang ; then
 		AR="llvm-ar"
@@ -3902,18 +3776,24 @@ einfo "Using the system toolchain"
 	fi
 
 	# Define a custom toolchain for GN
-	myconf_gn+=" custom_toolchain=\"//build/toolchain/linux/unbundle:default\""
+	myconf_gn+=(
+		"custom_toolchain=\"//build/toolchain/linux/unbundle:default\""
+	)
 
 	if tc-is-clang ; then
-		myconf_gn+=" clang_base_path=\"${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}\""
+		myconf_gn+=(
+			"clang_base_path=\"${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}\""
+		)
 	fi
 
 	if tc-is-cross-compiler ; then
 		tc-export BUILD_{AR,CC,CXX,NM}
-		myconf_gn+=" host_toolchain=\"//build/toolchain/linux/unbundle:host\""
-		myconf_gn+=" v8_snapshot_toolchain=\"//build/toolchain/linux/unbundle:host\""
-		myconf_gn+=" pkg_config=\"$(tc-getPKG_CONFIG)\""
-		myconf_gn+=" host_pkg_config=\"$(tc-getBUILD_PKG_CONFIG)\""
+		myconf_gn+=(
+			"host_toolchain=\"//build/toolchain/linux/unbundle:host\""
+			"v8_snapshot_toolchain=\"//build/toolchain/linux/unbundle:host\""
+			"pkg_config=\"$(tc-getPKG_CONFIG)\""
+			"host_pkg_config=\"$(tc-getBUILD_PKG_CONFIG)\""
+		)
 
 	# Setup cups-config, build system only uses --libs option
 		if use cups ; then
@@ -3928,12 +3808,16 @@ einfo "Using the system toolchain"
 	# Don't inherit PKG_CONFIG_PATH from environment
 		local -x PKG_CONFIG_PATH=
 	else
-		myconf_gn+=" host_toolchain=\"//build/toolchain/linux/unbundle:default\""
+		myconf_gn+=(
+			"host_toolchain=\"//build/toolchain/linux/unbundle:default\""
+		)
 	fi
 
 	# Silence
 	# The expected Rust version is [...] but the actual version is None
-	#myconf_gn+=" use_chromium_rust_toolchain=false"
+	myconf_gn+=(
+		#"use_chromium_rust_toolchain=false"
+	)
 
 	# We don't want to depend on llvm/llvm-r1 eclasses.
 
@@ -3955,186 +3839,21 @@ einfo "Using the system toolchain"
 	# From 127, to make bindgen work, we need to provide a location for libclang.
 	# We patch this in for gentoo - see chromium-*-bindgen-custom-toolchain.patch
 	# rust_bindgen_root = directory with `bin/bindgen` beneath it.
-	myconf_gn+=" rust_bindgen_root=\"${EPREFIX}/usr/\""
+	myconf_gn+=(
+		"rust_bindgen_root=\"${EPREFIX}/usr/\""
 
-	myconf_gn+=" bindgen_libclang_path=\"$(get_llvm_prefix)/$(get_libdir)\""
+		"bindgen_libclang_path=\"$(get_llvm_prefix)/$(get_libdir)\""
 	# We don't need to set 'clang_base_bath' for anything in our build
 	# and it defaults to the google toolchain location. Instead provide a location
 	# to where system clang lives sot that bindgen can find system headers (e.g. stddef.h)
-	myconf_gn+=" clang_base_path=\"${EPREFIX}/usr/lib/clang/${LLVM_SLOT}/\""
+		"clang_base_path=\"${EPREFIX}/usr/lib/clang/${LLVM_SLOT}/\""
 
-	myconf_gn+=" rust_sysroot_absolute=\"$(get_rust_prefix)\""
-	myconf_gn+=" rustc_version=\"${RUST_SLOT}\""
+		"rust_sysroot_absolute=\"$(get_rust_prefix)\""
+		"rustc_version=\"${RUST_SLOT}\""
+	)
 }
 
-_src_configure() {
-	local s
-	s=$(_get_s)
-	cd "${s}" || die
-
-	# Calling this here supports resumption via FEATURES=keepwork
-	python-any-r1_pkg_setup
-
-	local total_ram=$(free | grep "Mem:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
-	local total_ram_gib=$(( ${total_ram} / (1024*1024) ))
-	local total_swap=$(free | grep "Swap:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
-	[[ -z "${total_swap}" ]] && total_swap=0
-	local total_swap_gib=$(( ${total_swap} / (1024*1024) ))
-	local total_mem=$(free -t | grep "Total:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
-	local total_mem_gib=$(( ${total_mem} / (1024*1024) ))
-
-	local jobs=$(get_makeopts_jobs)
-	local nprocs=$(get_nproc) # It is the same as the number of cores.
-
-	local minimal_gib_per_core=4
-	local actual_gib_per_core=$(python -c "print(${total_mem_gib} / ${nprocs})")
-
-	if (( ${actual_gib_per_core%.*} >= ${minimal_gib_per_core} )) ; then
-einfo "Minimal GiB per core:  >= ${minimal_gib_per_core} GiB"
-einfo "Actual GiB per core:  ${actual_gib_per_core} GiB"
-	else
-ewarn "Minimal GiB per core:  >= ${minimal_gib_per_core} GiB"
-ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
-	fi
-
-	local myconf_gn=""
-
-	if _use_system_toolchain ; then
-		configure_system_toolchain
-	else
-einfo "Using the bundled toolchain"
-		myconf_gn+=" is_clang=true"
-	fi
-
-
-	local use_thinlto=0
-
-	if is-flagq '-flto' || is-flagq '-flto=*' ; then
-		USE_LTO=1
-	fi
-
-	fatal_message_lto_banned() {
-# Critical vulnerabilities must be fixed within 24 hrs, which implies the ebuild
-# must be completely installed in that time.
-		local flag="${1}"
-# A LTO required flag
-eerror
-eerror "The ${flag} USE flag is not supported for older machines."
-eerror
-eerror "Workarounds:"
-eerror
-eerror "1.  Replace this package with www-client/google-chrome"
-eerror "2.  Build this ebuild on a faster machine and install it with a local -bin ebuild you created"
-eerror
-eerror "https://wiki.gentoo.org/wiki/Binary_package_guide#Creating_binary_packages"
-eerror
-		die
-	}
-
-	if (( ${actual_gib_per_core%.*} <= 3 || ${nprocs} <= 4 )) ; then
-	#
-	# This section assumes 4 core and 4 GiB total with 8 GiB swap as
-	# disqualified for LTO treatment.  LTO could increase build times by
-	# 5 times.
-	#
-	# One of the goals is to prevent a systemwide vulnerability backlog or
-	# a ebuild update backlog that lasts 6 months.
-	#
-ewarn "Disabling LTO for older machines."
-		USE_LTO=0
-		filter-lto
-		use cfi         && fatal_message_lto_banned "cfi"
-		use official    && fatal_message_lto_banned "official"
-	fi
-
-	check-compiler-switch_end
-	if check-compiler-switch_is_flavor_slot_changed ; then
-einfo "Detected compiler switch.  Disabling LTO."
-		filter-lto
-		USE_LTO=0
-	fi
-
-	if ! use mold && is-flagq '-fuse-ld=mold' && has_version "sys-devel/mold" ; then
-eerror "To use mold, enable the mold USE flag."
-		die
-	fi
-
-	if use mold ; then
-	# Handled by build scripts
-		filter-flags '-fuse-ld=*'
-	fi
-
-	myconf_gn+=" is_official_build=$(usex official true false)"
-	if ! use official ; then
-	# The reason why we disable official in this ebuild fork is to drop the
-	# lock-in to proprietary settings including proprietary codecs.
-
-	# The MiraclePtr is default enabled on official Linux.
-	# MiraclePtr is software based UAF detection.
-	# When official is disabled, it reduces the attack surface and adds a
-	# UAF critical-high vulnerability.
-	# We force MiraclePtr on since GWP-ASan is default off.
-	# It may overlap with GWP-ASan's UAF mitigation.
-	# See also https://security.googleblog.com/2022/09/use-after-freedom-miracleptr.html
-		myconf_gn+=" enable_backup_ref_ptr_support=$(usex miracleptr true false)"
-	fi
-
-	if [[ -z "${LTO_TYPE}" ]] ; then
-		LTO_TYPE=$(check-linker_get_lto_type)
-	fi
-	if \
-		(( ${USE_LTO} == 1 )) \
-					&&
-		( \
-			( \
-				tc-is-clang \
-					&& \
-				[[ "${LTO_TYPE}" == "thinlto" ]] \
-			) \
-					|| \
-			( \
-				use cfi \
-			) \
-					|| \
-			( \
-				use official \
-					&& \
-				[[ "${PGO_PHASE}" != "PGI" ]] \
-			) \
-		) \
-	; then
-einfo "Using ThinLTO"
-		myconf_gn+=" use_thin_lto=true "
-		filter-lto
-		filter-flags '-fuse-ld=*'
-		filter-flags '-Wl,--lto-O*'
-		if [[ "${THINLTO_OPT:-1}" == "1" ]] ; then
-			myconf_gn+=" thin_lto_enable_optimizations=true"
-		fi
-		use_thinlto=1
-	else
-	# gcc will never use ThinLTO.
-	# gcc doesn't like -fsplit-lto-unit and -fwhole-program-vtables
-	# We want the faster LLD but without LTO.
-		myconf_gn+=" thin_lto_enable_optimizations=false"
-		myconf_gn+=" use_thin_lto=false"
-	fi
-
-	# See https://github.com/rui314/mold/issues/336
-	if use mold && (( ${use_thinlto} == 0 && ${USE_LTO} == 1 )) ; then
-		if tc-is-clang ; then
-einfo "Using Clang MoldLTO"
-			myconf_gn+=" use_mold=true"
-		else
-ewarn "Forcing use of GCC Mold without LTO.  GCC MoldLTO is not supported."
-ewarn "To use LTO, use either Clang MoldLTO, Clang ThinLTO, GCC BFDLTO."
-			filter-lto
-		fi
-	elif use mold && (( ${use_thinlto} == 0 && ${USE_LTO} == 0 )) ; then
-einfo "Using Mold without LTO"
-		myconf_gn+=" use_mold=true"
-	fi
-
+_configure_security(){
 	if use official ; then
 		:
 	elif use cpu_flags_arm_bti && use cpu_flags_arm_pac ; then
@@ -4240,70 +3959,112 @@ eerror "Enable the cet USE flag"
 ewarn "You are using official settings.  For strong hardening, disable this USE flag."
 	else
 		if use cet ; then
-			myconf_gn+=" use_cf_protection=\"full\""
-			myconf_gn+=" use_rust_cet=true"
+			myconf_gn+=(
+				"use_cf_protection=\"full\""
+				"use_rust_cet=true"
+			)
 		else
-			myconf_gn+=" use_cf_protection=\"none\""
+			myconf_gn+=(
+				"use_cf_protection=\"none\""
+			)
 		fi
 		if [[ "${ARCH}" == "amd64" ]] && is-flagq "-mretpoline" ; then
-			myconf_gn+=" use_retpoline=true"
-			myconf_gn+=" use_rust_retpoline=true"
+			myconf_gn+=(
+				"use_retpoline=true"
+				"use_rust_retpoline=true"
+			)
 		fi
-		myconf_gn+=" use_stack_clash_protection=true"
-		myconf_gn+=" use_rust_stack_clash_protection=true"
+		myconf_gn+=(
+			"use_stack_clash_protection=true"
+			"use_rust_stack_clash_protection=true"
+		)
 		if is-flagq "-ftrapv" ; then
-			myconf_gn+=" use_trapv=true"
-			myconf_gn+=" use_rust_overflow_checks=true"
+			myconf_gn+=(
+				"use_trapv=true"
+				"use_rust_overflow_checks=true"
+			)
 		fi
 		if is-flagq "-D_FORITFY_SOURCE=3" ; then
-			myconf_gn+=" use_fortify_source=3"
-			myconf_gn+=" use_rust_fortify_source_level=3"
+			myconf_gn+=(
+				"use_fortify_source=3"
+				"use_rust_fortify_source_level=3"
+			)
 		elif is-flagq "-D_FORITFY_SOURCE=2" ; then
-			myconf_gn+=" use_fortify_source=2"
-			myconf_gn+=" use_rust_fortify_source_level=2"
+			myconf_gn+=(
+				"use_fortify_source=2"
+				"use_rust_fortify_source_level=2"
+			)
 		fi
 
 		# For sanitizers on internal libc++, SSP for Rust
 		if is-flagq "-fsanitize=address" ; then
-			myconf_gn+=" is_asan=true"
-			myconf_gn+=" use_rust_asan=true"
+			myconf_gn+=(
+				"is_asan=true"
+				"use_rust_asan=true"
+			)
 		fi
 		if is-flagq "-fsanitize=hwaddress" ; then
-			myconf_gn+=" is_hwasan=true"
-			myconf_gn+=" use_rust_hwasan=true"
+			myconf_gn+=(
+				"is_hwasan=true"
+				"use_rust_hwasan=true"
+			)
 		fi
 		if is-flagq "-fsanitize=undefined" ; then
-			myconf_gn+=" is_ubsan=true"
-			myconf_gn+=" use_rust_ubsan=true"
+			myconf_gn+=(
+				"is_ubsan=true"
+				"use_rust_ubsan=true"
+			)
 		fi
 		if is-flagq "-fsanitize=address" || is-flagq "-fsanitize=hwaddress" || is-flagq "-fsanitize=undefined" ; then
-			myconf_gn+=" use_rust_no_sanitize_recover=true"
+			myconf_gn+=(
+				"use_rust_no_sanitize_recover=true"
+			)
 		fi
 		if is-flagq "-fsanitize=address" || is-flagq "-fsanitize=hwaddress" ; then
 	# Dedupe SSP overlap
-			myconf_gn+=" use_stack_protector_level=\"none\""
+			myconf_gn+=(
+				"use_stack_protector_level=\"none\""
+			)
 			if (( ${is_rust_nightly} == 0 )) ; then
-				myconf_gn+=" use_rust_stack_protector_level=\"none\""
+				myconf_gn+=(
+					"use_rust_stack_protector_level=\"none\""
+				)
 			fi
 		else
 			if [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "0" ]] ; then
-				myconf_gn+=" use_stack_protector_level=\"none\""
+				myconf_gn+=(
+					"use_stack_protector_level=\"none\""
+				)
 			elif [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "1" ]] ; then
-				myconf_gn+=" use_stack_protector_level=\"basic\""
+				myconf_gn+=(
+					"use_stack_protector_level=\"basic\""
+				)
 			elif [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "2" ]] ; then
-				myconf_gn+=" use_stack_protector_level=\"strong\""
+				myconf_gn+=(
+					"use_stack_protector_level=\"strong\""
+				)
 			elif [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "3" ]] ; then
-				myconf_gn+=" use_stack_protector_level=\"all\""
+				myconf_gn+=(
+					"use_stack_protector_level=\"all\""
+				)
 			fi
 			if (( ${is_rust_nightly} == 0 )) ; then
 				if [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "0" ]] ; then
-					myconf_gn+=" use_rust_stack_protector_level=\"none\""
+					myconf_gn+=(
+						"use_rust_stack_protector_level=\"none\""
+					)
 				elif [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "1" ]] ; then
-					myconf_gn+=" use_rust_stack_protector_level=\"basic\""
+					myconf_gn+=(
+						"use_rust_stack_protector_level=\"basic\""
+					)
 				elif [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "2" ]] ; then
-					myconf_gn+=" use_rust_stack_protector_level=\"strong\""
+					myconf_gn+=(
+						"use_rust_stack_protector_level=\"strong\""
+					)
 				elif [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "3" ]] ; then
-					myconf_gn+=" use_rust_stack_protector_level=\"all\""
+					myconf_gn+=(
+						"use_rust_stack_protector_level=\"all\""
+					)
 				fi
 			fi
 		fi
@@ -4312,35 +4073,51 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 	if is-flagq "-fsanitize=address" || is-flagq "-fsanitize=hwaddress" ; then
 einfo "Disabling GWP-ASan which overlaps with ASan or HWASan"
 einfo "To deactivate ASan, HWASan, or UBSan sanitizers set CFLAGS_HARDENED_SANITIZERS_DEACTIVATE=1"
-		myconf_gn+=" enable_gwp_asan_partitionalloc=false"
-		myconf_gn+=" enable_gwp_asan=false"
+		myconf_gn+=(
+			"enable_gwp_asan_partitionalloc=false"
+			"enable_gwp_asan=false"
+		)
 	elif tc-is-clang && [[ "${ABI}" == "arm" || "${ABI}" == "ppc" || "${ABI}" == "x86" ]] ; then
 einfo "Disabling GWP-ASan for 32-bit"
 	# Any 32-bit ABI
-		myconf_gn+=" enable_gwp_asan_partitionalloc=false"
-		myconf_gn+=" enable_gwp_asan=false"
+		myconf_gn+=(
+			"enable_gwp_asan_partitionalloc=false"
+			"enable_gwp_asan=false"
+		)
 	elif tc-is-clang && use gwp-asan && use partitionalloc ; then
 einfo "Enabling GWP-ASan for PartitionAlloc"
-		myconf_gn+=" enable_gwp_asan_partitionalloc=true"
-		myconf_gn+=" enable_gwp_asan=true"
+		myconf_gn+=(
+			"enable_gwp_asan_partitionalloc=true"
+			"enable_gwp_asan=true"
+		)
 	elif tc-is-clang && use gwp-asan ; then
 einfo "Enabling GWP-ASan for an alternative heap allocator"
-		myconf_gn+=" use_allocator_shim=true"
-		myconf_gn+=" enable_gwp_asan=true"
+		myconf_gn+=(
+			"use_allocator_shim=true"
+			"enable_gwp_asan=true"
+		)
 	else
 einfo "Disabling GWP-ASan"
-		myconf_gn+=" enable_gwp_asan_partitionalloc=false"
-		myconf_gn+=" enable_gwp_asan=false"
+		myconf_gn+=(
+			"enable_gwp_asan_partitionalloc=false"
+			"enable_gwp_asan=false"
+		)
 	fi
 
 	if use official ; then
-		myconf_gn+=" use_memory_tagging=true"
+		myconf_gn+=(
+			"use_memory_tagging=true"
+		)
 	# It it will be default off.
 	elif tc-is-clang && [[ "${ABI}" == "arm64" ]] ; then
-		myconf_gn+=" use_memory_tagging=$(usex cpu_flags_arm_mte true false)"
-		myconf_gn+=" use_full_mte=$(usex cpu_flags_arm_mte true false)"
+		myconf_gn+=(
+			"use_memory_tagging=$(usex cpu_flags_arm_mte true false)"
+			"use_full_mte=$(usex cpu_flags_arm_mte true false)"
+		)
 	else
-		myconf_gn+=" use_memory_tagging=false"
+		myconf_gn+=(
+			"use_memory_tagging=false"
+		)
 	fi
 
 	if use official ; then
@@ -4414,6 +4191,22 @@ ewarn "corruption related vulnerabilities."
 ewarn
 	fi
 
+	if ! use official ; then
+	# The reason why we disable official in this ebuild fork is to drop the
+	# lock-in to proprietary settings including proprietary codecs.
+
+	# The MiraclePtr is default enabled on official Linux.
+	# MiraclePtr is software based UAF detection.
+	# When official is disabled, it reduces the attack surface and adds a
+	# UAF critical-high vulnerability.
+	# We force MiraclePtr on since GWP-ASan is default off.
+	# It may overlap with GWP-ASan's UAF mitigation.
+	# See also https://security.googleblog.com/2022/09/use-after-freedom-miracleptr.html
+		myconf_gn+=(
+			"enable_backup_ref_ptr_support=$(usex miracleptr true false)"
+		)
+	fi
+
 	# Handled in build scripts.
 	filter-flags \
 		"-D_FORTIFY_SOURCE" \
@@ -4443,269 +4236,730 @@ ewarn "For proper hardening, disable the pgo USE flag."
 			"-mretpoline-external-thunk"
 	fi
 
-	# Debug symbols level 2 is still on when official is on even though
-	# is_debug=false.
-	#
-	# See https://github.com/chromium/chromium/blob/136.0.7103.92/build/config/compiler/compiler.gni#L276
-	#
-	# GN needs explicit config for Debug/Release as opposed to inferring it
-	# from the build directory.
-	myconf_gn+=" is_debug=false"
-	if ! use debug ; then
-		myconf_gn+=" symbol_level=0"
-		myconf_gn+=" blink_symbol_level=0"
-		myconf_gn+=" v8_symbol_level=0"
+	# See https://github.com/chromium/chromium/blob/137.0.7151.55/build/config/sanitizers/BUILD.gn#L196
+	# See https://github.com/chromium/chromium/blob/137.0.7151.55/tools/mb/mb_config.pyl#L2950
+	local is_cfi_custom=0
+	if use official ; then
+	# Forced because it is the final official settings.
+		if [[ "${ABI}" == "amd64" ]] ; then
+			myconf_gn+=(
+				"is_cfi=true"
+				"use_cfi_icall=true"
+				"use_cfi_cast=false"
+			)
+		else
+			myconf_gn+=(
+				"is_cfi=false"
+				"use_cfi_cast=false"
+				"use_cfi_icall=false"
+			)
+		fi
+	elif use cfi ; then
+		local f
+		local F=(
+			"cfi-derived-cast"
+			"cfi-icall"
+			"cfi-underived-cast"
+			"cfi-vcall"
+		)
+		for f in ${F[@]} ; do
+			if has_sanitizer_option "${f}" ; then
+				is_cfi_custom=1
+			fi
+		done
+		(( ${CFI_VCALL} == 1 )) && is_cfi_custom=1
+		(( ${CFI_CAST} == 1 )) && is_cfi_custom=1
+		(( ${CFI_ICALL} == 1 )) && is_cfi_custom=1
+
+		if (( ${is_cfi_custom} == 1 )) ; then
+	# Change by CFLAGS
+			if \
+				has_sanitizer_option "cfi-vcall" \
+					|| \
+				(( ${CFI_VCALL} == 1 )) \
+			; then
+				myconf_gn+=(
+					"is_cfi=true"
+				)
+				CFI_VCALL=1
+			fi
+
+			if \
+				has_sanitizer_option "cfi-derived-cast" \
+					|| \
+				has_sanitizer_option "cfi-unrelated-cast" \
+					|| \
+				(( ${CFI_CAST} == 1 )) \
+			; then
+				myconf_gn+=(
+					"use_cfi_cast=true"
+				)
+				CFI_CAST=1
+			else
+				myconf_gn+=(
+					"use_cfi_cast=false"
+				)
+			fi
+
+			if \
+				has_sanitizer_option "cfi-icall" \
+					|| \
+				(( ${CFI_ICALL} == 1 )) \
+			; then
+				myconf_gn+=(
+					"use_cfi_icall=true"
+				)
+				CFI_ICALL=1
+			else
+				myconf_gn+=(
+					"use_cfi_icall=false"
+				)
+			fi
+		else
+	# Fallback to autoset in non-official
+			myconf_gn+=(
+				"is_cfi=true"
+			)
+
+			local cfi_cast_default="false"
+			local cfi_icall_default="false"
+
+			if [[ "${ABI}" == "amd64" ]] ; then
+				cfi_icall_default="true"
+			fi
+
+	# Allow change by environment variables
+			if [[ "${USE_CFI_CAST:-${cfi_cast_default}}" == "1" ]] ; then
+				myconf_gn+=(
+					"use_cfi_cast=true"
+				)
+			else
+				myconf_gn+=(
+					"use_cfi_cast=false"
+				)
+			fi
+
+			if [[ "${USE_CFI_ICALL:-${cfi_icall_default}}" == "1" ]] ; then
+				myconf_gn+=(
+					"use_cfi_icall=true"
+				)
+			else
+				myconf_gn+=(
+					"use_cfi_icall=false"
+				)
+			fi
+		fi
+	else
+		myconf_gn+=(
+			"is_cfi=false"
+			"use_cfi_cast=false"
+			"use_cfi_icall=false"
+		)
 	fi
 
-	# Disable profiling/tracing these should not be enabled in production.
-#	myconf_gn+=" v8_use_perfetto=false"
-#	myconf_gn+=" rtc_use_perfetto=false"
+	# Dedupe flags which are already added by build scripts
+	strip-flag-value "cfi-vcall"
+	strip-flag-value "cfi-icall"
+	strip-flag-value "cfi-derived-cast"
+	strip-flag-value "cfi-unrelated-cast"
 
-	# Enable DCHECK with USE=debug only, increases chrome binary size by 30%, bug #811138.
-	# DCHECK is fatal by default, make it configurable at runtime, #bug 807881.
-	myconf_gn+=" dcheck_always_on=$(usex debug true false)"
-	myconf_gn+=" dcheck_is_configurable=$(usex debug true false)"
-
-	# Component build isn't generally intended for use by end users. It's mostly useful
-	# for development and debugging.
-	myconf_gn+=" is_component_build=false"
-
-	# Disable nacl, we can't build without pnacl (http://crbug.com/269560).
-	myconf_gn+=" enable_nacl=false"
-
-	# Use system-provided libraries.
-	# TODO: freetype -- remove sources
-	# (https://bugs.chromium.org/p/pdfium/issues/detail?id=733).
-	# TODO: use_system_hunspell (upstream changes needed).
-	# TODO: use_system_protobuf (bug #525560).
-	# TODO: use_system_sqlite (http://crbug.com/22208).
-
-	# libevent: https://bugs.gentoo.org/593458
-	# [B] all of gn_system_libraries set
-	# List obtained from /usr/share/chromium/sources/build/linux/unbundle/
-	local gn_system_libraries=(
-		$(use system-dav1d && echo "
-			dav1d
-		")
-		$(use system-ffmpeg && echo "
-			ffmpeg
-		")
-		$(use system-flac && echo "
-			flac
-		")
-		$(use system-freetype && echo "
-			freetype
-		")
-		$(use system-fontconfig && echo "
-			fontconfig
-		")
-	# harfbuzz_from_pkgconfig target is needed.
-		$(use system-harfbuzz && echo "
-			harfbuzz-ng
-		")
-		$(use system-icu && echo "
-			icu
-		")
-		$(use system-libaom && echo "
-			libaom
-		")
-		$(use system-libjpeg-turbo && echo "
-			libjpeg
-		")
-		$(use system-libpng && echo "
-			libpng
-		")
-		$(use system-libwebp && echo "
-			libwebp
-		")
-		$(use system-libxml && echo "
-			libxml
-		")
-		$(use system-libxslt && echo "
-			libxslt
-		")
-		$(use system-openh264 && echo "
-			openh264
-		")
-		$(use system-opus && echo "
-			opus
-		")
-		$(use system-re2 && echo "
-			re2
-		")
-
-	#
-	# ld.lld: error: undefined symbol: Cr_z_adler32
-	#
-		$(use system-zlib && echo "
-			zlib
-		")
-
-		$(use system-zstd && echo "
-			zstd
-		")
-
-	)
-	# [C]
-	if \
-		use bundled-libcxx \
-			|| \
-		use cfi \
-			|| \
-		use official \
-	; then
-	# Unbundling breaks cfi-icall and cfi-cast.
-	# Unbundling weakens the security because it removes noexecstack,
-	# full RELRO, SSP.
-einfo
-einfo "Forcing use of internal libs to maintain upstream security expectations"
-einfo "and requirements."
-einfo
-	else
-		if ! is_generating_credits ; then
-ewarn
-ewarn "Unbundling libs and disabling hardening (CFI, SSP, noexecstack,"
-ewarn "Full RELRO)."
-ewarn
-			"build/linux/unbundle/replace_gn_files.py" \
-				--system-libraries \
-				"${gn_system_libraries[@]}" \
-				|| die
+	local expected_lto_type="thinlto"
+	if [[ "${myconf_gn}" =~ "is_cfi=true" ]] ; then
+		if ! [[ "${LTO_TYPE}" =~ ("${expected_lto_type}") ]] ; then
+	# Build scripts can only use ThinLTO for CFI.
+eerror
+eerror "CFI requires ThinLTO."
+eerror
+eerror "Contents of ${ESYSROOT}/etc/portage/env/thinlto.conf:"
+eerror
+eerror "CFLAGS=\"\${CFLAGS} -flto=thin\""
+eerror "CXXFLAGS=\"\${CXXFLAGS} -flto=thin\""
+eerror "LDFLAGS=\"\${LDFLAGS} -fuse-ld=lld\""
+eerror
+eerror
+eerror "You must apply one of the above linkers to the following file:"
+eerror
+eerror "Contents of ${ESYSROOT}/etc/portage/package.env"
+eerror "www-client/chromium thinlto.conf"
+eerror
+eerror "Expected LTO type:  ${expected_lto_type}"
+eerror "Actual LTO type:    ${LTO_TYPE}"
+eerror
+			die
 		fi
 	fi
 
-	if is_generating_credits ; then
-		myconf_gn+=" generate_about_credits=true"
+	if use cet ; then
+		myconf_gn+=(
+			"v8_enable_cet_ibt=$(usex cet true false)"
+			"v8_enable_cet_shadow_stack=false" # unfinished, windows only
+		)
 	fi
 
-	# TODO 131: The above call clobbers `enable_freetype = true` in the freetype gni file
-	# drop the last line, then append the freetype line and a new curly brace to end the block
-	local freetype_gni="build/config/freetype/freetype.gni"
-	sed -i -e '$d' "${freetype_gni}" || die
-	echo "  enable_freetype = true" >> "${freetype_gni}" || die
-	echo "}" >> "${freetype_gni}" || die
+	if use arm64 ; then
+		if use official ; then
+			myconf_gn+=(
+				"arm_control_flow_integrity=standard"
+			)
+		else
+			if use cpu_flags_arm_pac && use cpu_flags_arm_bti ; then
+	# ROP + JOP mitigation
+				myconf_gn+=(
+					"arm_control_flow_integrity=standard"
+				)
+			elif use cpu_flags_arm_pac ; then
+	# ROP mitigation
+				myconf_gn+=(
+					"arm_control_flow_integrity=pac"
+				)
+			fi
+		fi
+	# Dedupe flags
+		filter-flags '-mbranch-protection=*'
+		if use cpu_flags_arm_bti || use official ; then
+			filter-flags '-Wl,-z,force-bti'
+		fi
+	fi
 
-	# See dependency logic in third_party/BUILD.gn
-	myconf_gn+=" use_system_harfbuzz=$(usex system-harfbuzz true false)"
+	if \
+		use arm64 \
+				&& \
+		( \
+			has_sanitizer_option "shadow-call-stack" \
+				|| \
+			(( ${SHADOW_CALL_STACK} == 1 )) \
+		) \
+	; then
+		myconf_gn+=(
+			"use_shadow_call_stack=true"
+		)
+		strip-flag-value "shadow-call-stack" # Dedupe flag
+		SHADOW_CALL_STACK=1
+	fi
 
-	# Optional dependencies.
-	myconf_gn+=" enable_chrome_notifications=true" # Depends on enable_message_center?
-	myconf_gn+=" enable_hangout_services_extension=$(usex hangouts true false)"
-	myconf_gn+=" enable_hidpi=$(usex hidpi true false)"
-	myconf_gn+=" enable_mdns=$(usex mdns true false)"
-	myconf_gn+=" enable_message_center=true" # Required for linux, but not Fucshia and Android
-	myconf_gn+=" enable_ml_internal=false"	# components/optimization_guide/internal is empty.  It is default disabled for unbranded.
-	myconf_gn+=" enable_plugins=$(usex plugins true false)"
-	myconf_gn+=" enable_ppapi=false"
-	myconf_gn+=" enable_reporting=$(usex reporting-api true false)"
-	myconf_gn+=" enable_service_discovery=true" # Required by chrome/browser/extensions/api/BUILD.gn.  mdns may be a dependency.
-	myconf_gn+=" enable_speech_service=false" # It is enabled but missing backend either local service or remote service.
-	myconf_gn+=" enable_widevine=$(usex widevine true false)"
-	myconf_gn+=" enable_openxr=false"	# https://github.com/chromium/chromium/tree/136.0.7103.92/device/vr#platform-support
-	myconf_gn+=" enable_vr=false"		# https://github.com/chromium/chromium/blob/136.0.7103.92/device/vr/buildflags/buildflags.gni#L32
-	myconf_gn+=" enable_websockets=true"	# requires devtools/devtools_http_handler.cc which is unconditionally added.
-	myconf_gn+=" use_minikin_hyphenation=$(usex css-hyphen true false)"
-	myconf_gn+=" use_mpris=$(usex mpris true false)"
-	myconf_gn+=" use_partition_alloc=$(usex partitionalloc true false)" # See issue 40277359
+	if is-flagq "-Ofast" ; then
+	# Precaution
+		append_all $(test-flags -fno-allow-store-data-races)
+	fi
+}
+
+_configure_performance(){
+	if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" ]] ; then # Disable annoying check
+		:
+	elif use pgo ; then
+
+		if ! tc-is-clang ; then
+			die "The prebuilt PGO profile requires clang."
+		fi
+
+		local profdata_index_version=$(get_llvm_profdata_version_info)
+		CURRENT_PROFDATA_VERSION=$(echo "${profdata_index_version}" \
+			| cut -f 1 -d ":")
+		CURRENT_PROFDATA_LLVM_VERSION=$(echo "${profdata_index_version}" \
+			| cut -f 2 -d ":")
+		if ! is_profdata_compatible ; then
+eerror
+eerror "Profdata compatibility:"
+eerror
+eerror "The PGO profile is not compatible with this version of LLVM."
+eerror
+eerror "Expected:\t$(get_pregenerated_profdata_index_version)"
+eerror "Found:\t${CURRENT_PROFDATA_VERSION} for ~llvm-core/llvm-${CURRENT_PROFDATA_LLVM_VERSION}"
+eerror
+eerror "The solution is to rebuild using a newer/older commit or tag."
+eerror
+eerror "The mapping between INSTR_PROF_INDEX_VERSION and the commit or tag can be"
+eerror "found in InstrProfData.inc in the LLVM repo."
+eerror
+			die
+		else
+einfo
+einfo "Profdata compatibility:"
+einfo
+einfo "Expected:\t$(get_pregenerated_profdata_index_version)"
+einfo "Found:\t${CURRENT_PROFDATA_VERSION} for ~llvm-core/llvm-${CURRENT_PROFDATA_LLVM_VERSION}"
+einfo
+		fi
+	fi
+
+	# See also build/config/compiler/pgo/BUILD.gn#L71 for PGO flags.
+	# See also https://github.com/chromium/chromium/blob/137.0.7151.55/docs/pgo.md
+	# profile-instr-use is clang which that file assumes but gcc doesn't have.
+	# chrome_pgo_phase:  0=NOP, 1=PGI, 2=PGO
+	if use pgo && tc-is-clang && ver_test "$(clang-major-version)" -ge "${PREGENERATED_PGO_PROFILE_MIN_LLVM_SLOT}" ; then
+	# The profile data is already shipped so use it.
+	# PGO profile location: chrome/build/pgo_profiles/chrome-linux-*.profdata
+		myconf_gn+=(
+			"chrome_pgo_phase=2"
+		)
+	else
+	# The pregenerated profiles are not GCC compatible.
+		myconf_gn+=(
+			"chrome_pgo_phase=0"
+		)
+	fi
+}
+
+_configure_simd(){
+	if false && ! use custom-cflags ; then
+	# Prevent libvpx/xnnpack build failures. Bug 530248, 544702,
+	# 546984, 853646.
+		if [[ "${myarch}" == "amd64" || "${myarch}" == "x86" ]] ; then
+			filter-flags \
+				'-mno-avx*' \
+				'-mno-fma*' \
+				'-mno-mmx*' \
+				'-mno-sse*' \
+				'-mno-ssse*' \
+				'-mno-xop'
+		fi
+	fi
+
+	if ! use cpu_flags_arm_dotprod ; then
+		sed -r -i \
+			-e "s|XNN_ENABLE_ARM_DOTPROD=1|XNN_ENABLE_ARM_DOTPROD=0|g" \
+			-e "/:.*[+]dotprod/d" \
+			"third_party/xnnpack/BUILD.gn" \
+			|| die
+	fi
+	if ! use cpu_flags_arm_fp16 ; then
+		sed -r -i -e "/:.*[+]fp16/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_arm_i8mm ; then
+		sed -r -i \
+			-e "s|XNN_ENABLE_ARM_I8MM=1|XNN_ENABLE_ARM_I8MM=0|g" \
+			-e "/:.*[+]i8mm/d" \
+			"third_party/xnnpack/BUILD.gn" \
+			|| die
+	fi
+	if ! use cpu_flags_x86_avx ; then
+		sed -r -i -e "/:.*_avx-/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if use cpu_flags_x86_avx2 ; then
+		sed -r -i -e "/:.*-no-avx2/d" "third_party/xnnpack/BUILD.gn" || die
+	else
+		sed -r -i -e "/:.*_avx2/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_x86_avx512f ; then
+		sed -r -i -e "/:.*_avx512f/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_x86_avx512fp16 ; then
+		sed -r -i -e "/:.*-avx512fp16/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if use cpu_flags_x86_f16c ; then
+		sed -r -i -e "/:.*-no-f16c/d" "third_party/xnnpack/BUILD.gn" || die
+	else
+		sed -r -i -e "/:.*_f16c/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if use cpu_flags_x86_fma ; then
+		sed -r -i -e ":/-no-fma/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_x86_gfni ; then
+		sed -r -i -e "/:.*-gfni/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_x86_sse ; then
+		sed -r -i -e "/:.*_sse-/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if use cpu_flags_x86_sse2 ; then
+		sed -r -i -e "/:.*-no-sse2/d" "third_party/xnnpack/BUILD.gn" || die
+	else
+		sed -r -i -e "/:.*_sse2/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if use cpu_flags_x86_sse3 ; then
+		sed -r -i -e "/:.*-no-sse3/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if use cpu_flags_x86_sse4_1 ; then
+		sed -r -i -e "/:.*-no-sse4[.]1/d" "third_party/xnnpack/BUILD.gn" || die
+	else
+		sed -r -i -e "/:.*_sse4[.]1/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if use cpu_flags_x86_sse4_2 ; then
+		sed -r -i -e "/:.*-no-sse4[.]1/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_x86_ssse3 ; then
+		sed -r -i -e "/:.*_ssse3/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_x86_amx-tile ; then
+		sed -r -i -e "/:.*amx-tile/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_x86_amx-int8 ; then
+		sed -r -i -e "/:.*amx-int8/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_x86_avxvnni ; then
+		sed -r -i -e "/:.*avxvnni-/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+	if ! use cpu_flags_x86_avxvnniint8 ; then
+		sed -r -i -e "/:.*avxvnniint8-/d" "third_party/xnnpack/BUILD.gn" || die
+	fi
+
+	myconf_gn+=(
+		"libyuv_disable_rvv=$(usex cpu_flags_riscv_rvv false true)"
+		"libyuv_use_lasx=$(usex cpu_flags_loong_lasx true false)"
+		"libyuv_use_lsx=$(usex cpu_flags_loong_lsx true false)"
+		"libyuv_use_msa=$(usex cpu_flags_mips_msa true false)"
+		"libyuv_use_neon=$(usex cpu_flags_arm_neon true false)"
+		"libyuv_use_sme=$(usex cpu_flags_arm_sme true false)"
+		"libyuv_use_sve=$(usex cpu_flags_arm_sve2 true false)" # This line is not a typo.
+	)
+
+	if [[ "${ARCH}" == "loong" ]] ; then
+		myconf_gn+=(
+			"loongarch64_use_lasx=$(usex cpu_flags_loong_lasx true false)" # libyuv
+			"loongarch64_use_lsx=$(usex cpu_flags_loong_lsx true false)" # libpng, libyuv
+		)
+	fi
+
+	myconf_gn+=(
+		"rtc_build_with_neon=$(usex cpu_flags_arm_neon true false)" # webrtc
+
+		"use_aes=$(usex cpu_flags_arm_aes true false)"
+		"use_armv4=$(usex cpu_flags_arm_armv4 true false)"
+		"use_armv6=$(usex cpu_flags_arm_armv6 true false)"
+		"use_bf16=$(usex cpu_flags_arm_bf16 true false)"
+		"use_crc32=$(usex cpu_flags_arm_crc32 true false)"
+		"use_dotprod=$(usex cpu_flags_arm_dotprod true false)"
+		"use_edsp=$(usex cpu_flags_arm_edsp true false)"
+		"use_fp16=$(usex cpu_flags_arm_fp16 true false)"
+		"use_i8mm=$(usex cpu_flags_arm_i8mm true false)"
+		"use_neon=$(usex cpu_flags_arm_neon true false)"
+		"use_sve=$(usex cpu_flags_arm_sve true false)"
+		"use_sve_256=$(usex cpu_flags_arm_sve_256 true false)"
+		"use_sve2=$(usex cpu_flags_arm_sve2 true false)"
+		"use_sve2_128=$(usex cpu_flags_arm_sve2_128 true false)"
+	)
+
+	if [[ "${ABI}" == "arm" || "${ABI}" == "arm64" ]] ; then
+		myconf_gn+=(
+			"arm_use_neon=$(usex cpu_flags_arm_neon true false)" # blink, ffmpeg, libjpeg_turbo, libpng, libvpx, lzma_sdk, opus, pdfium, pffft, skia, webrtc, zlib
+			"arm_use_thumb=$(usex cpu_flags_arm_thumb true false)" # compiler
+			"arm_optionally_use_neon=false"
+		)
+	fi
+
+	myconf_gn+=(
+		"use_lsx=$(usex cpu_flags_loong_lsx true false)"
+		"use_lasx=$(usex cpu_flags_loong_lasx true false)"
+
+		"use_dsp=$(usex cpu_flags_mips_dsp true false)"
+		"use_dspr2=$(usex cpu_flags_mips_dspr2 true false)"
+		"use_msa=$(usex cpu_flags_mips_msa true false)"
+	)
+	if [[ "${ABI}" =~ "mips" ]] ; then
+		myconf_gn+=(
+			"mips_use_msa=$(usex cpu_flags_mips_msa true false)" # libyuv, libpng
+		)
+	fi
+
+	myconf_gn+=(
+		"use_altivec=$(usex cpu_flags_ppc_altivec true false)"
+		"use_crypto=$(usex cpu_flags_ppc_crypto true false)"
+		"use_ppc8=$(usex cpu_flags_ppc_power8-vector true false)"
+		"use_ppc9=$(usex cpu_flags_ppc_power9-vector true false)"
+		"use_ppc10=$(usex cpu_flags_ppc_power10-vector true false)"
+		"use_vsx=$(usex cpu_flags_ppc_vsx true false)"
+
+		"use_rvv=$(usex cpu_flags_riscv_rvv true false)"
+
+		"use_z15=$(usex cpu_flags_s390_z15 true false)"
+		"use_z16=$(usex cpu_flags_s390_z16 true false)"
+
+		"use_3dnow=$(usex cpu_flags_x86_3dnow true false)"
+		"use_aes=$(usex cpu_flags_x86_aes true false)"
+		"use_avx=$(usex cpu_flags_x86_avx true false)"
+		"use_avx2=$(usex cpu_flags_x86_avx2 true false)"
+		"use_avx512fp16=$(usex cpu_flags_x86_avx512fp16 true false)"		# Sapphire Rapids or better
+		"use_avx512bf16=$(usex cpu_flags_x86_avx512bf16 true false)"		# Zen 4 or better
+		"use_avxvnni=$(usex cpu_flags_x86_avxvnni true false)"
+		"use_avxvnniint8=$(usex cpu_flags_x86_avxvnniint8 true false)"
+		"use_bmi=$(usex cpu_flags_x86_bmi true false)"
+		"use_bmi2=$(usex cpu_flags_x86_bmi2 true false)"
+		"use_f16c=$(usex cpu_flags_x86_f16c true false)"
+		"use_fma=$(usex cpu_flags_x86_fma true false)"
+		"use_gfni=$(usex cpu_flags_x86_gfni true false)"
+		"use_pclmul=$(usex cpu_flags_x86_pclmul true false)"
+		"use_popcnt=$(usex cpu_flags_x86_popcnt true false)"
+		"use_sse=$(usex cpu_flags_x86_sse true false)"
+		"use_sse2=$(usex cpu_flags_x86_sse2 true false)"
+		"use_sse3=$(usex cpu_flags_x86_sse3 true false)"
+		"use_sse4_1=$(usex cpu_flags_x86_sse4_1 true false)"
+		"use_sse4_2=$(usex cpu_flags_x86_sse4_2 true false)"
+		"use_ssse3=$(usex cpu_flags_x86_ssse3 true false)"
+	)
+
+	# For AVX3, see \
+	# https://github.com/google/highway/blob/00fe003dac355b979f36157f9407c7c46448958e/hwy/ops/set_macros-inl.h#L136
+	# For AVX3_DL, see \
+	# https://github.com/google/highway/blob/00fe003dac355b979f36157f9407c7c46448958e/hwy/ops/set_macros-inl.h#L138
+
+	if \
+		   use cpu_flags_x86_avx512vbmi \
+		&& use cpu_flags_x86_avx512vbmi2 \
+		&& use cpu_flags_x86_avx512vnni \
+		&& use cpu_flags_x86_avx512bitalg \
+		&& use cpu_flags_x86_avx512vpopcntdq \
+		&& use cpu_flags_x86_gfni \
+		&& use cpu_flags_x86_vaes \
+		&& use cpu_flags_x86_vpclmulqdq \
+	; then
+	# Ice Lake or better
+		myconf_gn+=(
+			"use_avx512vbmi2=true"
+		)
+	else
+		myconf_gn+=(
+			"use_avx512vbmi2=false"
+		)
+	fi
+
+	if \
+		   use cpu_flags_x86_avx512bw \
+		&& use cpu_flags_x86_avx512cd \
+		&& use cpu_flags_x86_avx512dq \
+		&& use cpu_flags_x86_avx512f  \
+		&& use cpu_flags_x86_avx512vl \
+	; then
+	# The same as AVX512
+		myconf_gn+=(
+			"use_avx512=true"
+		)
+	else
+		myconf_gn+=(
+			"use_avx512=false"
+		)
+	fi
+
+	myconf_gn+=(
+		"rtc_enable_avx2=$(usex cpu_flags_x86_avx2 true false)"
+
+		"use_wasm=$(usex webassembly true false)"
+	)
+	if use webassembly ; then
+		if [[ "${ABI}" == "x86" || "${ABI}" == "amd64" ]] ; then
+			myconf_gn+=(
+				"use_wasm_emu256=$(usex cpu_flags_x86_sse2 true false)"
+			)
+		elif [[ "${ABI}" == "arm" || "${ABI}" == "arm64" ]] ; then
+			myconf_gn+=(
+				"use_wasm_emu256=$(usex cpu_flags_arm_neon true false)"
+			)
+		else
+			myconf_gn+=(
+				"use_wasm_emu256=false"
+			)
+		fi
+	fi
 
 
+	if use cpu_flags_x86_avx ; then
+	# Default on upstream for 64-bit with wasm enabled
+		myconf_gn+=(
+			"v8_enable_wasm_simd256_revec=true"
+		)
+	else
+		myconf_gn+=(
+			"v8_enable_wasm_simd256_revec=false"
+		)
+	# It will override the config.
+		sed -i -e "s|v8_enable_wasm_simd256_revec = true|v8_enable_wasm_simd256_revec = false|g" \
+			"v8/BUILD.gn" \
+			"v8/test/unittests/BUILD.gn" \
+			|| die
+	fi
+}
+
+
+_configure_linker() {
+	local use_thinlto=0
+
+	if is-flagq '-flto' || is-flagq '-flto=*' ; then
+		USE_LTO=1
+	fi
+
+	if (( ${actual_gib_per_core%.*} <= 3 || ${nprocs} <= 4 )) ; then
 	#
-	# Oflag and or compiler flag requirements:
+	# This section assumes 4 core and 4 GiB total with 8 GiB swap as
+	# disqualified for LTO treatment.  LTO could increase build times by
+	# 5 times.
 	#
-	# 1. Smooth playback (>=25 FPS) for vendored codecs like dav1d.
-	# 2. Fast build time to prevent systemwide vulnerability backlog.
-	# 3. Critical vulnerabilities should be fixed in one day, which implies
-	#    that the ebuild has to be completely merged within a day.
-	# 4. Does not introduce more vulnerabilities or increase the estimated CVSS score.
+	# One of the goals is to prevent a systemwide vulnerability backlog or
+	# a ebuild update backlog that lasts 6 months.
 	#
-
-	replace-flags "-Ofast" "-O2"
-	replace-flags "-O4" "-O2"
-	replace-flags "-O3" "-O2"
-	replace-flags "-Os" "-O2"
-	replace-flags "-Oz" "-O2"
-	replace-flags "-O1" "-O2"
-	replace-flags "-O0" "-O2"
-	if ! is-flagq "-O2" ; then
-	# Optimize for performance by default.
-	# GCC/Clang uses -O0 by default
-		append-flags "-O2"
+ewarn "Disabling LTO for older machines."
+		USE_LTO=0
+		filter-lto
+		use cfi         && fatal_message_lto_banned "cfi"
+		use official    && fatal_message_lto_banned "official"
 	fi
 
-	if ! _use_system_toolchain ; then
-	# The vendored clang/rust is likely built for portability not performance
-	# that is why it is very slow.
-		replace-flags "-O*" "-O2"
-	fi
-	if (( ${nprocs} <= 4 )) ; then
-		replace-flags "-O*" "-O2"
+	# Already called check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+		USE_LTO=0
 	fi
 
-	# Prevent crash for now
-	filter-flags "-ffast-math"
+	fatal_message_lto_banned() {
+# Critical vulnerabilities must be fixed within 24 hrs, which implies the ebuild
+# must be completely installed in that time.
+		local flag="${1}"
+# A LTO required flag
+eerror
+eerror "The ${flag} USE flag is not supported for older machines."
+eerror
+eerror "Workarounds:"
+eerror
+eerror "1.  Replace this package with www-client/google-chrome"
+eerror "2.  Build this ebuild on a faster machine and install it with a local -bin ebuild you created"
+eerror
+eerror "https://wiki.gentoo.org/wiki/Binary_package_guide#Creating_binary_packages"
+eerror
+		die
+	}
 
-	if (( ${OSHIT_OPTIMIZED} == 1 )) ; then
-		replace-flags "-O*" "-O1"
+	if [[ -z "${LTO_TYPE}" ]] ; then
+		LTO_TYPE=$(check-linker_get_lto_type)
 	fi
-	local olast=$(get_olast)
-	replace-flags "-O*" "${get_olast}"
+	if \
+		(( ${USE_LTO} == 1 )) \
+					&&
+		( \
+			( \
+				tc-is-clang \
+					&& \
+				[[ "${LTO_TYPE}" == "thinlto" ]] \
+			) \
+					|| \
+			( \
+				use cfi \
+			) \
+					|| \
+			( \
+				use official \
+					&& \
+				[[ "${PGO_PHASE}" != "PGI" ]] \
+			) \
+		) \
+	; then
+einfo "Using ThinLTO"
+		myconf_gn+=(
+			"use_thin_lto=true "
+		)
+		filter-lto
+		filter-flags '-fuse-ld=*'
+		filter-flags '-Wl,--lto-O*'
+		if [[ "${THINLTO_OPT:-1}" == "1" ]] ; then
+			myconf_gn+=(
+				"thin_lto_enable_optimizations=true"
+			)
+		fi
+		use_thinlto=1
+	else
+	# gcc will never use ThinLTO.
+	# gcc doesn't like -fsplit-lto-unit and -fwhole-program-vtables
+	# We want the faster LLD but without LTO.
+		myconf_gn+=(
+			"thin_lto_enable_optimizations=false"
+			"use_thin_lto=false"
+		)
+	fi
 
+	if ! use mold && is-flagq '-fuse-ld=mold' && has_version "sys-devel/mold" ; then
+eerror "To use mold, enable the mold USE flag."
+		die
+	fi
+
+	if use mold ; then
+	# Handled by build scripts
+		filter-flags '-fuse-ld=*'
+	fi
+
+	# See https://github.com/rui314/mold/issues/336
+	if use mold && (( ${use_thinlto} == 0 && ${USE_LTO} == 1 )) ; then
+		if tc-is-clang ; then
+einfo "Using Clang MoldLTO"
+			myconf_gn+=(
+				"use_mold=true"
+			)
+		else
+ewarn "Forcing use of GCC Mold without LTO.  GCC MoldLTO is not supported."
+ewarn "To use LTO, use either Clang MoldLTO, Clang ThinLTO, GCC BFDLTO."
+			filter-lto
+		fi
+	elif use mold && (( ${use_thinlto} == 0 && ${USE_LTO} == 0 )) ; then
+einfo "Using Mold without LTO"
+		myconf_gn+=(
+			"use_mold=true"
+		)
+	fi
+}
+
+_configure_v8() {
 	if use official ; then
 		: # Automagic
 	else
 		_jit_level_0() {
 			# ~20%/~50% performance similar to light swap, but a feeling of less progress (20-25%)
-			myconf_gn+=" v8_enable_drumbrake=false"
-			myconf_gn+=" v8_enable_gdbjit=false"
-			myconf_gn+=" v8_enable_lite_mode=true"
-			myconf_gn+=" v8_enable_maglev=false"
-			myconf_gn+=" v8_enable_sparkplug=false"
-			myconf_gn+=" v8_enable_turbofan=false"
-			myconf_gn+=" v8_enable_webassembly=false"
-			myconf_gn+=" v8_jitless=true"
+			myconf_gn+=(
+				"v8_enable_drumbrake=false"
+				"v8_enable_gdbjit=false"
+				"v8_enable_lite_mode=true"
+				"v8_enable_maglev=false"
+				"v8_enable_sparkplug=false"
+				"v8_enable_turbofan=false"
+				"v8_enable_webassembly=false"
+				"v8_jitless=true"
+			)
 		}
 
 		_jit_level_1() {
 			# 28%/71% performance similar to light swap, but a feeling of more progress (33%)
-			myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
-			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
-			myconf_gn+=" v8_enable_lite_mode=false"
-			myconf_gn+=" v8_enable_maglev=false" # Requires turbofan
-			myconf_gn+=" v8_enable_sparkplug=true"
-			myconf_gn+=" v8_enable_turbofan=false"
-			myconf_gn+=" v8_enable_webassembly=false"
-			myconf_gn+=" v8_jitless=false"
+			myconf_gn+=(
+				"v8_enable_drumbrake=$(usex drumbrake true false)"
+				"v8_enable_gdbjit=$(usex debug true false)"
+				"v8_enable_lite_mode=false"
+				"v8_enable_maglev=false" # Requires turbofan
+				"v8_enable_sparkplug=true"
+				"v8_enable_turbofan=false"
+				"v8_enable_webassembly=false"
+				"v8_jitless=false"
+			)
 		}
 
 		_jit_level_2() {
 			# > 75% performance
-			myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
-			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
-			myconf_gn+=" v8_enable_lite_mode=false"
-			myconf_gn+=" v8_enable_maglev=false"
-			myconf_gn+=" v8_enable_sparkplug=false"
-			myconf_gn+=" v8_enable_turbofan=true"
-			myconf_gn+=" v8_enable_webassembly=$(usex webassembly true false)"
-			myconf_gn+=" v8_jitless=false"
+			myconf_gn+=(
+				"v8_enable_drumbrake=$(usex drumbrake true false)"
+				"v8_enable_gdbjit=$(usex debug true false)"
+				"v8_enable_lite_mode=false"
+				"v8_enable_maglev=false"
+				"v8_enable_sparkplug=false"
+				"v8_enable_turbofan=true"
+				"v8_enable_webassembly=$(usex webassembly true false)"
+				"v8_jitless=false"
+			)
 		}
 
 		_jit_level_5() {
 			# > 90% performance
-			myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
-			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
-			myconf_gn+=" v8_enable_lite_mode=false"
-			myconf_gn+=" v8_enable_maglev=false"
-			myconf_gn+=" v8_enable_sparkplug=true"
-			myconf_gn+=" v8_enable_turbofan=true"
-			myconf_gn+=" v8_enable_webassembly=$(usex webassembly true false)"
-			myconf_gn+=" v8_jitless=false"
+			myconf_gn+=(
+				"v8_enable_drumbrake=$(usex drumbrake true false)"
+				"v8_enable_gdbjit=$(usex debug true false)"
+				"v8_enable_lite_mode=false"
+				"v8_enable_maglev=false"
+				"v8_enable_sparkplug=true"
+				"v8_enable_turbofan=true"
+				"v8_enable_webassembly=$(usex webassembly true false)"
+				"v8_jitless=false"
+			)
 		}
 
 		_jit_level_6() {
 			# 100% performance
-			myconf_gn+=" v8_enable_drumbrake=$(usex drumbrake true false)"
-			myconf_gn+=" v8_enable_gdbjit=$(usex debug true false)"
-			myconf_gn+=" v8_enable_lite_mode=false"
+			myconf_gn+=(
+				"v8_enable_drumbrake=$(usex drumbrake true false)"
+				"v8_enable_gdbjit=$(usex debug true false)"
+				"v8_enable_lite_mode=false"
+			)
 	# See L553 in /usr/share/chromium/sources/v8/BUILD.gn
 			if \
 				[[ \
@@ -4720,14 +4974,20 @@ ewarn
 					"${CHOST}" =~ "s390x" \
 				]] \
 			; then
-				myconf_gn+=" v8_enable_maglev=true" # %5 runtime benefit
+				myconf_gn+=(
+					"v8_enable_maglev=true" # %5 runtime benefit
+				)
 			else
-				myconf_gn+=" v8_enable_maglev=false"
+				myconf_gn+=(
+					"v8_enable_maglev=false"
+				)
 			fi
-			myconf_gn+=" v8_enable_sparkplug=true" # 5% benefit
-			myconf_gn+=" v8_enable_turbofan=true" # Subset of -O1, -O2, -O3; 100% performance
-			myconf_gn+=" v8_enable_webassembly=$(usex webassembly true false)" # Requires it turbofan
-			myconf_gn+=" v8_jitless=false"
+			myconf_gn+=(
+				"v8_enable_sparkplug=true" # 5% benefit
+				"v8_enable_turbofan=true" # Subset of -O1, -O2, -O3; 100% performance
+				"v8_enable_webassembly=$(usex webassembly true false)" # Requires it turbofan
+				"v8_jitless=false"
+			)
 		}
 
 		if [[ "${olast}" =~ "-Ofast" ]] ; then
@@ -4792,13 +5052,24 @@ einfo "JIT off is similar to -O${jit_level_desc} worst case."
 			_jit_level_0
 		fi
 	fi
-	myconf_gn+=" v8_enable_vtunejit=false"
+
+	myconf_gn+=(
+		"${myconf_gn//v8_enable_drumbrake=true/v8_enable_drumbrake=false}"
+		"v8_enable_pointer_compression=false"
+		"v8_enable_pointer_compression_shared_cage=false"
+		"v8_enable_vtunejit=false"
+	)
+
 	if use official ; then
 		: # Use automagic
 	elif use kernel_linux && linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
-		myconf_gn+=" v8_enable_hugepage=true"
+		myconf_gn+=(
+			"v8_enable_hugepage=true"
+		)
 	else
-		myconf_gn+=" v8_enable_hugepage=false"
+		myconf_gn+=(
+			"v8_enable_hugepage=false"
+		)
 	fi
 
 # ERROR:
@@ -4822,162 +5093,53 @@ einfo "JIT off is similar to -O${jit_level_desc} worst case."
 	if [[ "${ABI}" == "arm" || "${ABI}" == "x86" || "${ABI}" == "ppc" ]] ; then
 # Upstream doesn't support it.
 ewarn "The v8 sandbox is not supported for 32-bit.  Consider using 64-bit only to avoid high-critical severity memory corruption that leads to code execution."
-		myconf_gn+=" v8_enable_sandbox=false"
+		myconf_gn+=(
+			"v8_enable_sandbox=false"
+		)
 	fi
+}
 
-# For Node.js, the v8 sandbox is disabled.  This is temporary until a fix can be
-# found or fixed in the next major version.
-
-	myconf_gn="${myconf_gn//v8_enable_drumbrake=true/v8_enable_drumbrake=false}"
-	myconf_gn+=" v8_enable_pointer_compression=false"
-	myconf_gn+=" v8_enable_pointer_compression_shared_cage=false"
-
-	# Forced because of asserts
-	myconf_gn+=" enable_screen_ai_service=true" # Required by chrome/renderer:renderer
-
-	if use headless ; then
-		myconf_gn+=" enable_extensions=false"
-		myconf_gn+=" enable_pdf=false"
-		myconf_gn+=" use_atk=false"
-		myconf_gn+=" use_cups=false"
-		myconf_gn+=" use_kerberos=false"
-		myconf_gn+=" use_pulseaudio=false"
-		myconf_gn+=" use_vaapi=false"
-		myconf_gn+=" rtc_use_pipewire=false"
-		myconf_gn+=" toolkit_views=false"
-	else
-		myconf_gn+=" enable_extensions=$(usex extensions true false)"
-		myconf_gn+=" enable_pdf=true" # required by chrome/browser/ui/lens:browser_tests and toolkit_views=true
-		myconf_gn+=" gtk_version=$(usex gtk4 4 3)"
-		myconf_gn+=" use_atk=$(usex accessibility true false)"
-		myconf_gn+=" use_cups=$(usex cups true false)"
-		myconf_gn+=" use_kerberos=$(usex kerberos true false)"
-		myconf_gn+=" use_pulseaudio=$(usex pulseaudio true false)"
-		myconf_gn+=" use_vaapi=$(usex vaapi true false)"
-		myconf_gn+=" rtc_use_pipewire=$(usex screencast true false)"
-		myconf_gn+=" toolkit_views=true"
-	fi
-
-	if use pdf || use cups ; then
-		if use headless ; then
-			myconf_gn+=" enable_print_preview=false"
-		else
-			local print_preview="${PRINT_PREVIEW:-1}"
-			if [[ "${print_preview}" == "1" ]] ; then
-				myconf_gn+=" enable_print_preview=true"
-			else
-				myconf_gn+=" enable_print_preview=false"
-			fi
-		fi
-		myconf_gn+=" enable_printing=true"
-	else
-		myconf_gn+=" enable_print_preview=false"
-		myconf_gn+=" enable_printing=false"
-	fi
-
-	# Allows distributions to link pulseaudio directly (DT_NEEDED) instead of
-	# using dlopen. This helps with automated detection of ABI mismatches and
-	# prevents silent errors.
-	if use pulseaudio ; then
-		myconf_gn+=" link_pulseaudio=true"
-	fi
-
-	# Non-developer builds of Chromium (for example, non-Chrome browsers, or
-	# Chromium builds provided by Linux distros) should disable the testing config.
-	myconf_gn+=" disable_fieldtrial_testing_config=true"
-
-	# The sysroot is the oldest debian image that chromium supports, we don't need it.
-	myconf_gn+=" use_sysroot=false"
-
-	# This determines whether or not GN uses the bundled libcxx
-	# default: true
-	if use official && use cfi || use bundled-libcxx ; then
-		# If you didn't do systemwide CFI Cross-DSO, it must be static.
-		myconf_gn+=" use_custom_libcxx=true"
-	else
-		myconf_gn+=" use_custom_libcxx=false"
-	fi
-
-	# Disable pseudolocales, only used for testing
-	myconf_gn+=" enable_pseudolocales=false"
-
-	# Disable code formating of generated files
-	myconf_gn+=" blink_enable_generated_code_formatting=false"
-
-	# See https://github.com/chromium/chromium/blob/136.0.7103.92/media/media_options.gni#L19
-
-	if use bindist ; then
+_configure_optimization_level() {
 	#
-	# Distro maintainer note:
+	# Oflag and or compiler flag requirements:
 	#
-	# The proprietary_codecs USE flag just forces Chromium to say that it
-	# can use h264/aac, the work is still done by ffmpeg.  If this is set to
-	# no, Chromium won't be able to load the codec even if the library can
-	# handle it.
+	# 1. Smooth playback (>=25 FPS) for vendored codecs like dav1d.
+	# 2. Fast build time to prevent systemwide vulnerability backlog.
+	# 3. Critical vulnerabilities should be fixed in one day, which implies
+	#    that the ebuild has to be completely merged within a day.
+	# 4. Does not introduce more vulnerabilities or increase the estimated CVSS score.
 	#
-	# oiledmachine-overlay note:
-	#
-	# Bindist changes are reverted to free codecs only.
-	#
-		myconf_gn+=" proprietary_codecs=false"
-		myconf_gn+=" ffmpeg_branding=\"Chromium\""
-		myconf_gn+=" is_component_ffmpeg=false"
-	else
-		ffmpeg_branding="$(usex patent_status_nonfree Chrome Chromium)"
-		myconf_gn+=" proprietary_codecs=$(usex patent_status_nonfree true false)"
-		myconf_gn+=" ffmpeg_branding=\"${ffmpeg_branding}\""
+
+	replace-flags "-Ofast" "-O2"
+	replace-flags "-O4" "-O2"
+	replace-flags "-O3" "-O2"
+	replace-flags "-Os" "-O2"
+	replace-flags "-Oz" "-O2"
+	replace-flags "-O1" "-O2"
+	replace-flags "-O0" "-O2"
+	if ! is-flagq "-O2" ; then
+	# Optimize for performance by default.
+	# GCC/Clang uses -O0 by default
+		append-flags "-O2"
 	fi
 
-	myconf_gn+=" enable_av1_decoder=$(usex dav1d true false)"
-	myconf_gn+=" enable_dav1d_decoder=$(usex dav1d true false)"
-	myconf_gn+=" enable_hevc_parser_and_hw_decoder=$(usex patent_status_nonfree $(usex vaapi-hevc true false) false)"
-	myconf_gn+=" enable_libaom=$(usex libaom $(usex encode true false) false)"
-	myconf_gn+=" enable_platform_hevc=$(usex patent_status_nonfree $(usex vaapi-hevc true false) false)"
-	myconf_gn+=" media_use_libvpx=$(usex vpx true false)"
-	myconf_gn+=" media_use_openh264=$(usex patent_status_nonfree $(usex openh264 true false) false)"
-	myconf_gn+=" rtc_include_opus=$(usex opus true false)"
-	myconf_gn+=" rtc_use_h264=$(usex patent_status_nonfree true false)"
-
-	#
-	# Set up Google API keys, see http://www.chromium.org/developers/how-tos/api-keys .
-	# Note: these are for Gentoo use ONLY. For your own distribution,
-	# please get your own set of keys. Feel free to contact chromium@gentoo.org
-	# for more info. The OAuth2 credentials, however, have been left out.
-	# Those OAuth2 credentials have been broken for quite some time anyway.
-	# Instead we apply a patch to use the --oauth2-client-id= and
-	# --oauth2-client-secret= switches for setting GOOGLE_DEFAULT_CLIENT_ID and
-	# GOOGLE_DEFAULT_CLIENT_SECRET at runtime. This allows signing into
-	# Chromium without baked-in values.
-	#
-	local google_api_key="AIzaSyDEAOvatFo0eTgsV_ZlEzx0ObmepsMzfAc"
-	myconf_gn+=" google_api_key=\"${google_api_key}\""
-	local myarch="$(tc-arch)"
-
-	# Avoid CFLAGS problems, bug #352457, bug #390147.
-	if ! use custom-cflags ; then
-		strip-flags
-
-	# Debug info section overflows without component build
-	# Prevent linker from running out of address space, bug #471810.
-		filter-flags '-g*'
-
-	# Prevent libvpx/xnnpack build failures. Bug 530248, 544702,
-	# 546984, 853646.
-		if [[ "${myarch}" == "amd64" || "${myarch}" == "x86" ]] ; then
-			filter-flags \
-				'-mno-avx*' \
-				'-mno-fma*' \
-				'-mno-mmx*' \
-				'-mno-sse*' \
-				'-mno-ssse*' \
-				'-mno-xop'
-		fi
+	if ! _use_system_toolchain ; then
+	# The vendored clang/rust is likely built for portability not performance
+	# that is why it is very slow.
+		replace-flags "-O*" "-O2"
+	fi
+	if (( ${nprocs} <= 4 )) ; then
+		replace-flags "-O*" "-O2"
 	fi
 
-	if is-flagq "-Ofast" ; then
-	# Precaution
-		append_all $(test-flags -fno-allow-store-data-races)
+	# Prevent crash for now
+	filter-flags "-ffast-math"
+
+	if (( ${OSHIT_OPTIMIZED} == 1 )) ; then
+		replace-flags "-O*" "-O1"
 	fi
+	local olast=$(get_olast)
+	replace-flags "-O*" "${get_olast}"
 
 	local oshit_opt_level_dav1d
 	local oshit_opt_level_libaom
@@ -5099,17 +5261,399 @@ einfo "OSHIT_OPT_LEVEL_RUY=${oshit_opt_level_ruy}"
 einfo "OSHIT_OPT_LEVEL_TFLITE=${oshit_opt_level_tflite}"
 einfo "OSHIT_OPT_LEVEL_V8=${oshit_opt_level_v8}"
 einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
-		myconf_gn+=" dav1d_custom_optimization_level=${oshit_opt_level_dav1d}"
-		myconf_gn+=" libaom_custom_optimization_level=${oshit_opt_level_libaom}"
-		myconf_gn+=" libvpx_custom_optimization_level=${oshit_opt_level_libvpx}"
-		myconf_gn+=" openh264_custom_optimization_level=${oshit_opt_level_openh264}"
-		myconf_gn+=" opus_custom_optimization_level=${oshit_opt_level_opus}"
-		myconf_gn+=" rnnoise_custom_optimization_level=${oshit_opt_level_rnnoise}"
-		myconf_gn+=" ruy_custom_optimization_level=${oshit_opt_level_ruy}"
-		myconf_gn+=" tflite_custom_optimization_level=${oshit_opt_level_tflite}"
-		myconf_gn+=" v8_custom_optimization_level=${oshit_opt_level_v8}"
-		myconf_gn+=" xnnpack_custom_optimization_level=${oshit_opt_level_xnnpack}"
+		myconf_gn+=(
+			"dav1d_custom_optimization_level=${oshit_opt_level_dav1d}"
+			"libaom_custom_optimization_level=${oshit_opt_level_libaom}"
+			"libvpx_custom_optimization_level=${oshit_opt_level_libvpx}"
+			"openh264_custom_optimization_level=${oshit_opt_level_openh264}"
+			"opus_custom_optimization_level=${oshit_opt_level_opus}"
+			"rnnoise_custom_optimization_level=${oshit_opt_level_rnnoise}"
+			"ruy_custom_optimization_level=${oshit_opt_level_ruy}"
+			"tflite_custom_optimization_level=${oshit_opt_level_tflite}"
+			"v8_custom_optimization_level=${oshit_opt_level_v8}"
+			"xnnpack_custom_optimization_level=${oshit_opt_level_xnnpack}"
+		)
 	fi
+
+	if use official ; then
+		:
+	elif is-flagq "-Ofast" ; then
+# DO NOT USE
+		myconf_gn+=(
+			"custom_optimization_level=fast"
+		)
+	elif is-flagq "-O4" ; then
+		myconf_gn+=(
+			"custom_optimization_level=4"
+		)
+	elif is-flagq "-O3" ; then
+		myconf_gn+=(
+			"custom_optimization_level=3"
+		)
+	elif is-flagq "-O2" ; then
+		myconf_gn+=(
+			"custom_optimization_level=2"
+		)
+	elif is-flagq "-O1" ; then
+		myconf_gn+=(
+			"custom_optimization_level=1"
+		)
+	elif is-flagq "-O0" ; then
+# DO NOT USE
+		myconf_gn+=(
+			"custom_optimization_level=0"
+		)
+	fi
+}
+
+
+_configure_features() {
+	myconf_gn+=(
+		"is_official_build=$(usex official true false)"
+	)
+
+
+
+	# Debug symbols level 2 is still on when official is on even though
+	# is_debug=false.
+	#
+	# See https://github.com/chromium/chromium/blob/137.0.7151.55/build/config/compiler/compiler.gni#L276
+	#
+	# GN needs explicit config for Debug/Release as opposed to inferring it
+	# from the build directory.
+	myconf_gn+=(
+		"is_debug=false"
+	)
+	if ! use debug ; then
+		myconf_gn+=(
+			"symbol_level=0"
+			"blink_symbol_level=0"
+			"v8_symbol_level=0"
+		)
+	fi
+
+	myconf_gn+=(
+	# Disable profiling/tracing these should not be enabled in production.
+#		"v8_use_perfetto=false"
+#		"rtc_use_perfetto=false"
+
+	# Enable DCHECK with USE=debug only, increases chrome binary size by 30%, bug #811138.
+	# DCHECK is fatal by default, make it configurable at runtime, #bug 807881.
+		"dcheck_always_on=$(usex debug true false)"
+		"dcheck_is_configurable=$(usex debug true false)"
+
+	# Component build isn't generally intended for use by end users. It's mostly useful
+	# for development and debugging.
+		"is_component_build=false"
+
+	# Disable nacl, we can't build without pnacl (http://crbug.com/269560).
+		"enable_nacl=false"
+	)
+
+	# Use system-provided libraries.
+	# TODO: freetype -- remove sources
+	# (https://bugs.chromium.org/p/pdfium/issues/detail?id=733).
+	# TODO: use_system_hunspell (upstream changes needed).
+	# TODO: use_system_protobuf (bug #525560).
+	# TODO: use_system_sqlite (http://crbug.com/22208).
+
+	# libevent: https://bugs.gentoo.org/593458
+	# [B] all of gn_system_libraries set
+	# List obtained from /usr/share/chromium/sources/build/linux/unbundle/
+	local gn_system_libraries=(
+		$(use system-dav1d && echo "
+			dav1d
+		")
+		$(use system-ffmpeg && echo "
+			ffmpeg
+		")
+		$(use system-flac && echo "
+			flac
+		")
+		$(use system-freetype && echo "
+			freetype
+		")
+		$(use system-fontconfig && echo "
+			fontconfig
+		")
+	# harfbuzz_from_pkgconfig target is needed.
+		$(use system-harfbuzz && echo "
+			harfbuzz-ng
+		")
+		$(use system-icu && echo "
+			icu
+		")
+		$(use system-libaom && echo "
+			libaom
+		")
+		$(use system-libjpeg-turbo && echo "
+			libjpeg
+		")
+		$(use system-libpng && echo "
+			libpng
+		")
+		$(use system-libwebp && echo "
+			libwebp
+		")
+		$(use system-libxml && echo "
+			libxml
+		")
+		$(use system-libxslt && echo "
+			libxslt
+		")
+		$(use system-openh264 && echo "
+			openh264
+		")
+		$(use system-opus && echo "
+			opus
+		")
+		$(use system-re2 && echo "
+			re2
+		")
+
+	#
+	# ld.lld: error: undefined symbol: Cr_z_adler32
+	#
+		$(use system-zlib && echo "
+			zlib
+		")
+
+		$(use system-zstd && echo "
+			zstd
+		")
+
+	)
+	# [C]
+	if \
+		use bundled-libcxx \
+			|| \
+		use cfi \
+			|| \
+		use official \
+	; then
+	# Unbundling breaks cfi-icall and cfi-cast.
+	# Unbundling weakens the security because it removes noexecstack,
+	# full RELRO, SSP.
+einfo
+einfo "Forcing use of internal libs to maintain upstream security expectations"
+einfo "and requirements."
+einfo
+	else
+		if ! is_generating_credits ; then
+ewarn
+ewarn "Unbundling libs and disabling hardening (CFI, SSP, noexecstack,"
+ewarn "Full RELRO)."
+ewarn
+			"build/linux/unbundle/replace_gn_files.py" \
+				--system-libraries \
+				"${gn_system_libraries[@]}" \
+				|| die "Failed to replace GN files for system libraries"
+		fi
+	fi
+
+	if is_generating_credits ; then
+		myconf_gn+=(
+			"generate_about_credits=true"
+		)
+	fi
+
+	# TODO 131: The above call clobbers `enable_freetype = true` in the freetype gni file
+	# drop the last line, then append the freetype line and a new curly brace to end the block
+	local freetype_gni="build/config/freetype/freetype.gni"
+	sed -i -e '$d' "${freetype_gni}" || die
+	echo "  enable_freetype = true" >> "${freetype_gni}" || die
+	echo "}" >> "${freetype_gni}" || die
+
+	# See dependency logic in third_party/BUILD.gn
+	myconf_gn+=(
+		"use_system_harfbuzz=$(usex system-harfbuzz true false)"
+
+	# Optional dependencies.
+		"enable_chrome_notifications=true" # Depends on enable_message_center?
+		"enable_hangout_services_extension=$(usex hangouts true false)"
+		"enable_hidpi=$(usex hidpi true false)"
+		"enable_mdns=$(usex mdns true false)"
+		"enable_message_center=true" # Required for linux, but not Fucshia and Android
+		"enable_ml_internal=false"	# components/optimization_guide/internal is empty.  It is default disabled for unbranded.
+		"enable_plugins=$(usex plugins true false)"
+		"enable_ppapi=false"
+		"enable_reporting=$(usex reporting-api true false)"
+		"enable_service_discovery=true" # Required by chrome/browser/extensions/api/BUILD.gn.  mdns may be a dependency.
+		"enable_speech_service=false" # It is enabled but missing backend either local service or remote service.
+		"enable_widevine=$(usex widevine true false)"
+		"enable_openxr=false"	# https://github.com/chromium/chromium/tree/137.0.7151.55/device/vr#platform-support
+		"enable_vr=false"		# https://github.com/chromium/chromium/blob/137.0.7151.55/device/vr/buildflags/buildflags.gni#L32
+		"enable_websockets=true"	# requires devtools/devtools_http_handler.cc which is unconditionally added.
+		"use_minikin_hyphenation=$(usex css-hyphen true false)"
+		"use_mpris=$(usex mpris true false)"
+		"use_partition_alloc=$(usex partitionalloc true false)" # See issue 40277359
+	)
+
+
+
+
+# For Node.js, the v8 sandbox is disabled.  This is temporary until a fix can be
+# found or fixed in the next major version.
+
+
+	myconf_gn+=(
+	# Forced because of asserts
+	# Required by chrome/renderer:renderer
+		"enable_screen_ai_service=true"
+	)
+
+	if use headless ; then
+		myconf_gn+=(
+			"enable_extensions=false"
+			"enable_pdf=false"
+			"use_atk=false"
+			"use_cups=false"
+			"use_kerberos=false"
+			"use_pulseaudio=false"
+			"use_vaapi=false"
+			"rtc_use_pipewire=false"
+			"toolkit_views=false"
+		)
+	else
+		myconf_gn+=(
+			"enable_extensions=$(usex extensions true false)"
+			"enable_pdf=true" # required by chrome/browser/ui/lens:browser_tests and toolkit_views=true
+			"gtk_version=$(usex gtk4 4 3)"
+			"use_atk=$(usex accessibility true false)"
+			"use_cups=$(usex cups true false)"
+			"use_kerberos=$(usex kerberos true false)"
+			"use_pulseaudio=$(usex pulseaudio true false)"
+			"use_vaapi=$(usex vaapi true false)"
+			"rtc_use_pipewire=$(usex screencast true false)"
+			"toolkit_views=true"
+		)
+	fi
+
+	if use pdf || use cups ; then
+		if use headless ; then
+			myconf_gn+=(
+				"enable_print_preview=false"
+			)
+		else
+			local print_preview="${PRINT_PREVIEW:-1}"
+			if [[ "${print_preview}" == "1" ]] ; then
+				myconf_gn+=(
+					"enable_print_preview=true"
+				)
+			else
+				myconf_gn+=(
+					"enable_print_preview=false"
+				)
+			fi
+		fi
+		myconf_gn+=(
+			"enable_printing=true"
+		)
+	else
+		myconf_gn+=(
+			"enable_print_preview=false"
+			"enable_printing=false"
+		)
+	fi
+
+	# Allows distributions to link pulseaudio directly (DT_NEEDED) instead of
+	# using dlopen. This helps with automated detection of ABI mismatches and
+	# prevents silent errors.
+	if use pulseaudio ; then
+		myconf_gn+=(
+			"link_pulseaudio=true"
+		)
+	fi
+
+	myconf_gn+=(
+	# Non-developer builds of Chromium (for example, non-Chrome browsers, or
+	# Chromium builds provided by Linux distros) should disable the testing config.
+		"disable_fieldtrial_testing_config=true"
+
+	# The sysroot is the oldest debian image that chromium supports, we don't need it.
+		"use_sysroot=false"
+	)
+
+	# This determines whether or not GN uses the bundled libcxx
+	# default: true
+	if use official && use cfi || use bundled-libcxx ; then
+		# If you didn't do systemwide CFI Cross-DSO, it must be static.
+		myconf_gn+=(
+			"use_custom_libcxx=true"
+		)
+	else
+		myconf_gn+=(
+			"use_custom_libcxx=false"
+		)
+	fi
+
+	myconf_gn+=(
+	# Disable pseudolocales, only used for testing
+		"enable_pseudolocales=false"
+
+	# Disable code formating of generated files
+		"blink_enable_generated_code_formatting=false"
+	)
+
+	# See https://github.com/chromium/chromium/blob/137.0.7151.55/media/media_options.gni#L19
+
+	if use bindist ; then
+	#
+	# Distro maintainer note:
+	#
+	# The proprietary_codecs USE flag just forces Chromium to say that it
+	# can use h264/aac, the work is still done by ffmpeg.  If this is set to
+	# no, Chromium won't be able to load the codec even if the library can
+	# handle it.
+	#
+	# oiledmachine-overlay note:
+	#
+	# Bindist changes are reverted to free codecs only.
+	#
+		myconf_gn+=(
+			"proprietary_codecs=false"
+			"ffmpeg_branding=\"Chromium\""
+			"is_component_ffmpeg=false"
+		)
+	else
+		ffmpeg_branding="$(usex patent_status_nonfree Chrome Chromium)"
+		myconf_gn+=(
+			"proprietary_codecs=$(usex patent_status_nonfree true false)"
+			"ffmpeg_branding=\"${ffmpeg_branding}\""
+		)
+	fi
+
+	myconf_gn+=(
+		"enable_av1_decoder=$(usex dav1d true false)"
+		"enable_dav1d_decoder=$(usex dav1d true false)"
+		"enable_hevc_parser_and_hw_decoder=$(usex patent_status_nonfree $(usex vaapi-hevc true false) false)"
+		"enable_libaom=$(usex libaom $(usex encode true false) false)"
+		"enable_platform_hevc=$(usex patent_status_nonfree $(usex vaapi-hevc true false) false)"
+		"media_use_libvpx=$(usex vpx true false)"
+		"media_use_openh264=$(usex patent_status_nonfree $(usex openh264 true false) false)"
+		"rtc_include_opus=$(usex opus true false)"
+		"rtc_use_h264=$(usex patent_status_nonfree true false)"
+	)
+
+	#
+	# Set up Google API keys, see http://www.chromium.org/developers/how-tos/api-keys .
+	# Note: these are for Gentoo use ONLY. For your own distribution,
+	# please get your own set of keys. Feel free to contact chromium@gentoo.org
+	# for more info. The OAuth2 credentials, however, have been left out.
+	# Those OAuth2 credentials have been broken for quite some time anyway.
+	# Instead we apply a patch to use the --oauth2-client-id= and
+	# --oauth2-client-secret= switches for setting GOOGLE_DEFAULT_CLIENT_ID and
+	# GOOGLE_DEFAULT_CLIENT_SECRET at runtime. This allows signing into
+	# Chromium without baked-in values.
+	#
+	local google_api_key="AIzaSyDEAOvatFo0eTgsV_ZlEzx0ObmepsMzfAc"
+	myconf_gn+=(
+		"google_api_key=\"${google_api_key}\""
+	)
+	local myarch="$(tc-arch)"
+
+
+
 
 	#
 	# Turn off all the static checker stuff, linter stuff, style formatting
@@ -5123,28 +5667,13 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	# build/config/clang/BUILD.gn
 	# build/config/clang/clang.gni
 	#
-	myconf_gn+=" clang_use_chrome_plugins=false"
-	myconf_gn+=" clang_use_raw_ptr_plugin=false"
-	myconf_gn+=" enable_check_raw_ptr_fields=false"
-	myconf_gn+=" enable_check_raw_ref_fields=false"
+	myconf_gn+=(
+		"clang_use_chrome_plugins=false"
+		"clang_use_raw_ptr_plugin=false"
+		"enable_check_raw_ptr_fields=false"
+		"enable_check_raw_ref_fields=false"
+	)
 
-	if use official ; then
-		:
-	elif is-flagq "-Ofast" ; then
-# DO NOT USE
-		myconf_gn+=" custom_optimization_level=fast"
-	elif is-flagq "-O4" ; then
-		myconf_gn+=" custom_optimization_level=4"
-	elif is-flagq "-O3" ; then
-		myconf_gn+=" custom_optimization_level=3"
-	elif is-flagq "-O2" ; then
-		myconf_gn+=" custom_optimization_level=2"
-	elif is-flagq "-O1" ; then
-		myconf_gn+=" custom_optimization_level=1"
-	elif is-flagq "-O0" ; then
-# DO NOT USE
-		myconf_gn+=" custom_optimization_level=0"
-	fi
 
 	local ffmpeg_target_arch
 	local target_cpu
@@ -5170,243 +5699,35 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 		die "Failed to determine target arch, got '${myarch}'."
 	fi
 
-	myconf_gn+=" current_cpu=\"${target_cpu}\""
-	myconf_gn+=" host_cpu=\"${target_cpu}\""
-	myconf_gn+=" target_cpu=\"${target_cpu}\""
-	myconf_gn+=" v8_current_cpu=\"${target_cpu}\""
-
-	if ! use cpu_flags_arm_dotprod ; then
-		sed -r -i \
-			-e "s|XNN_ENABLE_ARM_DOTPROD=1|XNN_ENABLE_ARM_DOTPROD=0|g" \
-			-e "/:.*[+]dotprod/d" \
-			"third_party/xnnpack/BUILD.gn" \
-			|| die
-	fi
-	if ! use cpu_flags_arm_fp16 ; then
-		sed -r -i -e "/:.*[+]fp16/d" "third_party/xnnpack/BUILD.gn" || die
-	fi
-	if ! use cpu_flags_arm_i8mm ; then
-		sed -r -i \
-			-e "s|XNN_ENABLE_ARM_I8MM=1|XNN_ENABLE_ARM_I8MM=0|g" \
-			-e "/:.*[+]i8mm/d" \
-			"third_party/xnnpack/BUILD.gn" \
-			|| die
-	fi
-	if ! use cpu_flags_x86_avx ; then
-		sed -r -i -e "/:.*_avx-/d" "third_party/xnnpack/BUILD.gn" || die
-	fi
-	if use cpu_flags_x86_avx2 ; then
-		sed -r -i -e "/:.*-no-avx2/d" "third_party/xnnpack/BUILD.gn" || die
-	else
-		sed -r -i -e "/:.*_avx2/d" "third_party/xnnpack/BUILD.gn" || die
-	fi
-	if ! use cpu_flags_x86_avx512f ; then
-		sed -r -i -e "/:.*_avx512f/d" "third_party/xnnpack/BUILD.gn" || die
-	fi
-	if ! use cpu_flags_x86_avx512fp16 ; then
-		sed -r -i -e "/:.*-avx512fp16/d" "third_party/xnnpack/BUILD.gn" || die
-	fi
-	if use cpu_flags_x86_f16c ; then
-		sed -r -i -e "/:.*-no-f16c/d" "third_party/xnnpack/BUILD.gn" || die
-	else
-		sed -r -i -e "/:.*_f16c/d" "third_party/xnnpack/BUILD.gn" || die
-	fi
-	if use cpu_flags_x86_fma ; then
-		sed -r -i -e ":/-no-fma/d" "third_party/xnnpack/BUILD.gn" || die
-	fi
-	if ! use cpu_flags_x86_gfni ; then
-		sed -r -i -e "/:.*-gfni/d" "third_party/xnnpack/BUILD.gn" || die
-	fi
-	if ! use cpu_flags_x86_sse ; then
-		sed -r -i -e "/:.*_sse-/d" "third_party/xnnpack/BUILD.gn" || die
-	fi
-	if use cpu_flags_x86_sse2 ; then
-		sed -r -i -e "/:.*-no-sse2/d" "third_party/xnnpack/BUILD.gn" || die
-	else
-		sed -r -i -e "/:.*_sse2/d" "third_party/xnnpack/BUILD.gn" || die
-	fi
-	if use cpu_flags_x86_sse3 ; then
-		sed -r -i -e "/:.*-no-sse3/d" "third_party/xnnpack/BUILD.gn" || die
-	fi
-	if use cpu_flags_x86_sse4_1 ; then
-		sed -r -i -e "/:.*-no-sse4[.]1/d" "third_party/xnnpack/BUILD.gn" || die
-	else
-		sed -r -i -e "/:.*_sse4[.]1/d" "third_party/xnnpack/BUILD.gn" || die
-	fi
-	if use cpu_flags_x86_sse4_2 ; then
-		sed -r -i -e "/:.*-no-sse4[.]1/d" "third_party/xnnpack/BUILD.gn" || die
-	fi
-	if ! use cpu_flags_x86_ssse3 ; then
-		sed -r -i -e "/:.*_ssse3/d" "third_party/xnnpack/BUILD.gn" || die
-	fi
-	if ! use cpu_flags_x86_amx-tile ; then
-		sed -r -i -e "/:.*amx-tile/d" "third_party/xnnpack/BUILD.gn" || die
-	fi
-	if ! use cpu_flags_x86_amx-int8 ; then
-		sed -r -i -e "/:.*amx-int8/d" "third_party/xnnpack/BUILD.gn" || die
-	fi
-	if ! use cpu_flags_x86_avxvnni ; then
-		sed -r -i -e "/:.*avxvnni-/d" "third_party/xnnpack/BUILD.gn" || die
-	fi
-	if ! use cpu_flags_x86_avxvnniint8 ; then
-		sed -r -i -e "/:.*avxvnniint8-/d" "third_party/xnnpack/BUILD.gn" || die
-	fi
-
-	myconf_gn+=" libyuv_disable_rvv=$(usex cpu_flags_riscv_rvv false true)"
-	myconf_gn+=" libyuv_use_lasx=$(usex cpu_flags_loong_lasx true false)"
-	myconf_gn+=" libyuv_use_lsx=$(usex cpu_flags_loong_lsx true false)"
-	myconf_gn+=" libyuv_use_msa=$(usex cpu_flags_mips_msa true false)"
-	myconf_gn+=" libyuv_use_neon=$(usex cpu_flags_arm_neon true false)"
-	myconf_gn+=" libyuv_use_sme=$(usex cpu_flags_arm_sme true false)"
-	myconf_gn+=" libyuv_use_sve=$(usex cpu_flags_arm_sve2 true false)" # This line is not a typo.
-
-	if [[ "${ARCH}" == "loong" ]] ; then
-		myconf_gn+=" loongarch64_use_lasx=$(usex cpu_flags_loong_lasx true false)" # libyuv
-		myconf_gn+=" loongarch64_use_lsx=$(usex cpu_flags_loong_lsx true false)" # libpng, libyuv
-	fi
-
-	myconf_gn+=" rtc_build_with_neon=$(usex cpu_flags_arm_neon true false)" # webrtc
-
-	myconf_gn+=" use_aes=$(usex cpu_flags_arm_aes true false)"
-	myconf_gn+=" use_armv4=$(usex cpu_flags_arm_armv4 true false)"
-	myconf_gn+=" use_armv6=$(usex cpu_flags_arm_armv6 true false)"
-	myconf_gn+=" use_bf16=$(usex cpu_flags_arm_bf16 true false)"
-	myconf_gn+=" use_crc32=$(usex cpu_flags_arm_crc32 true false)"
-	myconf_gn+=" use_dotprod=$(usex cpu_flags_arm_dotprod true false)"
-	myconf_gn+=" use_edsp=$(usex cpu_flags_arm_edsp true false)"
-	myconf_gn+=" use_fp16=$(usex cpu_flags_arm_fp16 true false)"
-	myconf_gn+=" use_i8mm=$(usex cpu_flags_arm_i8mm true false)"
-	myconf_gn+=" use_neon=$(usex cpu_flags_arm_neon true false)"
-	myconf_gn+=" use_sve=$(usex cpu_flags_arm_sve true false)"
-	myconf_gn+=" use_sve_256=$(usex cpu_flags_arm_sve_256 true false)"
-	myconf_gn+=" use_sve2=$(usex cpu_flags_arm_sve2 true false)"
-	myconf_gn+=" use_sve2_128=$(usex cpu_flags_arm_sve2_128 true false)"
-
-	if [[ "${ABI}" == "arm" || "${ABI}" == "arm64" ]] ; then
-		myconf_gn+=" arm_use_neon=$(usex cpu_flags_arm_neon true false)" # blink, ffmpeg, libjpeg_turbo, libpng, libvpx, lzma_sdk, opus, pdfium, pffft, skia, webrtc, zlib
-		myconf_gn+=" arm_use_thumb=$(usex cpu_flags_arm_thumb true false)" # compiler
-		myconf_gn+=" arm_optionally_use_neon=false"
-	fi
-
-	myconf_gn+=" use_lsx=$(usex cpu_flags_loong_lsx true false)"
-	myconf_gn+=" use_lasx=$(usex cpu_flags_loong_lasx true false)"
-
-	myconf_gn+=" use_dsp=$(usex cpu_flags_mips_dsp true false)"
-	myconf_gn+=" use_dspr2=$(usex cpu_flags_mips_dspr2 true false)"
-	myconf_gn+=" use_msa=$(usex cpu_flags_mips_msa true false)"
-	if [[ "${ABI}" =~ "mips" ]] ; then
-		myconf_gn+=" mips_use_msa=$(usex cpu_flags_mips_msa true false)" # libyuv, libpng
-	fi
-
-	myconf_gn+=" use_altivec=$(usex cpu_flags_ppc_altivec true false)"
-	myconf_gn+=" use_crypto=$(usex cpu_flags_ppc_crypto true false)"
-	myconf_gn+=" use_ppc8=$(usex cpu_flags_ppc_power8-vector true false)"
-	myconf_gn+=" use_ppc9=$(usex cpu_flags_ppc_power9-vector true false)"
-	myconf_gn+=" use_ppc10=$(usex cpu_flags_ppc_power10-vector true false)"
-	myconf_gn+=" use_vsx=$(usex cpu_flags_ppc_vsx true false)"
-
-	myconf_gn+=" use_rvv=$(usex cpu_flags_riscv_rvv true false)"
-
-	myconf_gn+=" use_z15=$(usex cpu_flags_s390_z15 true false)"
-	myconf_gn+=" use_z16=$(usex cpu_flags_s390_z16 true false)"
-
-	myconf_gn+=" use_3dnow=$(usex cpu_flags_x86_3dnow true false)"
-	myconf_gn+=" use_aes=$(usex cpu_flags_x86_aes true false)"
-	myconf_gn+=" use_avx=$(usex cpu_flags_x86_avx true false)"
-	myconf_gn+=" use_avx2=$(usex cpu_flags_x86_avx2 true false)"
-	myconf_gn+=" use_avx512fp16=$(usex cpu_flags_x86_avx512fp16 true false)"		# Sapphire Rapids or better
-	myconf_gn+=" use_avx512bf16=$(usex cpu_flags_x86_avx512bf16 true false)"		# Zen 4 or better
-	myconf_gn+=" use_avxvnni=$(usex cpu_flags_x86_avxvnni true false)"
-	myconf_gn+=" use_avxvnniint8=$(usex cpu_flags_x86_avxvnniint8 true false)"
-	myconf_gn+=" use_bmi=$(usex cpu_flags_x86_bmi true false)"
-	myconf_gn+=" use_bmi2=$(usex cpu_flags_x86_bmi2 true false)"
-	myconf_gn+=" use_f16c=$(usex cpu_flags_x86_f16c true false)"
-	myconf_gn+=" use_fma=$(usex cpu_flags_x86_fma true false)"
-	myconf_gn+=" use_gfni=$(usex cpu_flags_x86_gfni true false)"
-	myconf_gn+=" use_pclmul=$(usex cpu_flags_x86_pclmul true false)"
-	myconf_gn+=" use_popcnt=$(usex cpu_flags_x86_popcnt true false)"
-	myconf_gn+=" use_sse=$(usex cpu_flags_x86_sse true false)"
-	myconf_gn+=" use_sse2=$(usex cpu_flags_x86_sse2 true false)"
-	myconf_gn+=" use_sse3=$(usex cpu_flags_x86_sse3 true false)"
-	myconf_gn+=" use_sse4_1=$(usex cpu_flags_x86_sse4_1 true false)"
-	myconf_gn+=" use_sse4_2=$(usex cpu_flags_x86_sse4_2 true false)"
-	myconf_gn+=" use_ssse3=$(usex cpu_flags_x86_ssse3 true false)"
-
-	# For AVX3, see \
-	# https://github.com/google/highway/blob/00fe003dac355b979f36157f9407c7c46448958e/hwy/ops/set_macros-inl.h#L136
-	# For AVX3_DL, see \
-	# https://github.com/google/highway/blob/00fe003dac355b979f36157f9407c7c46448958e/hwy/ops/set_macros-inl.h#L138
-
-	if \
-		   use cpu_flags_x86_avx512vbmi \
-		&& use cpu_flags_x86_avx512vbmi2 \
-		&& use cpu_flags_x86_avx512vnni \
-		&& use cpu_flags_x86_avx512bitalg \
-		&& use cpu_flags_x86_avx512vpopcntdq \
-		&& use cpu_flags_x86_gfni \
-		&& use cpu_flags_x86_vaes \
-		&& use cpu_flags_x86_vpclmulqdq \
-	; then
-	# Ice Lake or better
-		myconf_gn+=" use_avx512vbmi2=true"
-	else
-		myconf_gn+=" use_avx512vbmi2=false"
-	fi
-
-	if \
-		   use cpu_flags_x86_avx512bw \
-		&& use cpu_flags_x86_avx512cd \
-		&& use cpu_flags_x86_avx512dq \
-		&& use cpu_flags_x86_avx512f  \
-		&& use cpu_flags_x86_avx512vl \
-	; then
-	# The same as AVX512
-		myconf_gn+=" use_avx512=true"
-	else
-		myconf_gn+=" use_avx512=false"
-	fi
-
-	myconf_gn+=" rtc_enable_avx2=$(usex cpu_flags_x86_avx2 true false)"
-
-	myconf_gn+=" use_wasm=$(usex webassembly true false)"
-	if use webassembly ; then
-		if [[ "${ABI}" == "x86" || "${ABI}" == "amd64" ]] ; then
-			myconf_gn+=" use_wasm_emu256=$(usex cpu_flags_x86_sse2 true false)"
-		elif [[ "${ABI}" == "arm" || "${ABI}" == "arm64" ]] ; then
-			myconf_gn+=" use_wasm_emu256=$(usex cpu_flags_arm_neon true false)"
-		else
-			myconf_gn+=" use_wasm_emu256=false"
-		fi
-	fi
+	myconf_gn+=(
+		"current_cpu=\"${target_cpu}\""
+		"host_cpu=\"${target_cpu}\""
+		"target_cpu=\"${target_cpu}\""
+		"v8_current_cpu=\"${target_cpu}\""
+	)
 
 
-	if use cpu_flags_x86_avx ; then
-	# Default on upstream for 64-bit with wasm enabled
-		myconf_gn+=" v8_enable_wasm_simd256_revec=true"
-	else
-		myconf_gn+=" v8_enable_wasm_simd256_revec=false"
-	# It will override the config.
-		sed -i -e "s|v8_enable_wasm_simd256_revec = true|v8_enable_wasm_simd256_revec = false|g" \
-			"v8/BUILD.gn" \
-			"v8/test/unittests/BUILD.gn" \
-			|| die
-	fi
-
-	myconf_gn+=" treat_warnings_as_errors=false"
+	myconf_gn+=(
+		"treat_warnings_as_errors=false"
 
 	# Disable fatal linker warnings, bug 506268.
-	myconf_gn+=" fatal_linker_warnings=false"
+		"fatal_linker_warnings=false"
+	)
 
 	# Disable external code space for V8 for ppc64. It is disabled for ppc64
 	# by default, but cross-compiling on amd64 enables it again.
 	if tc-is-cross-compiler ; then
 		if ! use amd64 && ! use arm64 ; then
-			myconf_gn+=" v8_enable_external_code_space=false"
+			myconf_gn+=(
+				"v8_enable_external_code_space=false"
+			)
 		fi
 	fi
 
 	# Only enabled for clang, but gcc has endian macros too
-	myconf_gn+=" v8_use_libm_trig_functions=true"
+	myconf_gn+=(
+		"v8_use_libm_trig_functions=true"
+	)
 
 	# Bug 491582.
 	export TMPDIR="${WORKDIR}/temp"
@@ -5435,50 +5756,52 @@ einfo "Configuring bundled ffmpeg..."
 		popd >/dev/null 2>&1 || die
 	fi
 
-	# We don't use the same clang version as upstream, and with -Werror
-	# we need to make sure that we don't get superfluous warnings.
-	append-flags -Wno-unknown-warning-option
-	if tc-is-cross-compiler ; then
-		export BUILD_CXXFLAGS+=" -Wno-unknown-warning-option"
-		export BUILD_CFLAGS+=" -Wno-unknown-warning-option"
-	fi
-
 	# Explicitly disable ICU data file support for system-icu/headless builds.
 	if use system-icu || use headless ; then
-		myconf_gn+=" icu_use_data_file=false"
+		myconf_gn+=(
+			"icu_use_data_file=false"
+		)
 	fi
 
+	myconf_gn+=(
 	# Don't need nocompile checks and GN crashes with our config
-	myconf_gn+=" enable_nocompile_tests=false"
+		"enable_nocompile_tests=false"
 
 	# 131 began laying the groundwork for replacing freetype with
 	# "Rust-based Fontations set of libraries plus Skia path rendering"
 	# We now need to opt-in
-	myconf_gn+=" enable_freetype=true"
+		"enable_freetype=true"
 
 	# Enable ozone wayland and/or headless support
-	myconf_gn+=" use_ozone=true"
-	myconf_gn+=" ozone_auto_platforms=false"
-	myconf_gn+=" ozone_platform_headless=true"
+		"use_ozone=true"
+		"ozone_auto_platforms=false"
+		"ozone_platform_headless=true"
+	)
 	if use headless ; then
-		myconf_gn+=" ozone_platform=\"headless\""
-		myconf_gn+=" use_xkbcommon=false"
-		myconf_gn+=" use_gtk=false"
-		myconf_gn+=" use_qt5=false"
-		myconf_gn+=" use_qt6=false"
-		myconf_gn+=" use_glib=false"
-		myconf_gn+=" use_gio=false"
-		myconf_gn+=" use_pangocairo=false"
-		myconf_gn+=" use_alsa=false"
-		myconf_gn+=" use_libpci=false"
-		myconf_gn+=" use_udev=false"
-		myconf_gn+=" enable_remoting=false"
+		myconf_gn+=(
+			"ozone_platform=\"headless\""
+			"use_xkbcommon=false"
+			"use_gtk=false"
+			"use_qt5=false"
+			"use_qt6=false"
+			"use_glib=false"
+			"use_gio=false"
+			"use_pangocairo=false"
+			"use_alsa=false"
+			"use_libpci=false"
+			"use_udev=false"
+			"enable_remoting=false"
+		)
 	else
-		myconf_gn+=" use_system_minigbm=true"
-		myconf_gn+=" use_xkbcommon=true"
-		myconf_gn+=" use_qt5=false"
+		myconf_gn+=(
+			"use_system_minigbm=true"
+			"use_xkbcommon=true"
+			"use_qt5=false"
+		)
 		if use qt6 ; then
-			myconf_gn+=" use_qt6=true"
+			myconf_gn+=(
+				"use_qt6=true"
+			)
 			local cbuild_libdir=$(get_libdir)
 			if tc-is-cross-compiler ; then
 	# Hack to workaround get_libdir not being able to handle CBUILD, bug
@@ -5489,15 +5812,25 @@ einfo "Configuring bundled ffmpeg..."
 					libxslt)
 				cbuild_libdir=${cbuild_libdir/% }
 			fi
-			myconf_gn+=" moc_qt6_path=\"${EPREFIX}/usr/${cbuild_libdir}/qt6/libexec\""
+			myconf_gn+=(
+				"moc_qt6_path=\"${EPREFIX}/usr/${cbuild_libdir}/qt6/libexec\""
+			)
 		else
-			myconf_gn+=" use_qt6=false"
+			myconf_gn+=(
+				"use_qt6=false"
+			)
 		fi
-		myconf_gn+=" use_qt6=$(usex qt6 true false)"
-		myconf_gn+=" ozone_platform_x11=$(usex X true false)"
-		myconf_gn+=" ozone_platform_wayland=$(usex wayland true false)"
-		myconf_gn+=" ozone_platform=$(usex wayland \"wayland\" \"x11\")"
-		use wayland && myconf_gn+=" use_system_libffi=true"
+		myconf_gn+=(
+			"use_qt6=$(usex qt6 true false)"
+			"ozone_platform_x11=$(usex X true false)"
+			"ozone_platform_wayland=$(usex wayland true false)"
+			"ozone_platform=$(usex wayland \"wayland\" \"x11\")"
+		)
+		if use wayland ; then
+			myconf_gn+=(
+				"use_system_libffi=true"
+			)
+		fi
 	fi
 
 	if use official ; then
@@ -5510,298 +5843,78 @@ einfo "Configuring bundled ffmpeg..."
 
 	# Skipping typecheck is only supported on amd64, bug #876157
 	if ! use amd64 ; then
-		myconf_gn+=" devtools_skip_typecheck=false"
-	fi
-
-	# See https://github.com/chromium/chromium/blob/136.0.7103.92/build/config/sanitizers/BUILD.gn#L196
-	# See https://github.com/chromium/chromium/blob/136.0.7103.92/tools/mb/mb_config.pyl#L2950
-	local is_cfi_custom=0
-	if use official ; then
-	# Forced because it is the final official settings.
-		if [[ "${ABI}" == "amd64" ]] ; then
-			myconf_gn+=" is_cfi=true"
-			myconf_gn+=" use_cfi_icall=true"
-			myconf_gn+=" use_cfi_cast=false"
-		else
-			myconf_gn+=" is_cfi=false"
-			myconf_gn+=" use_cfi_cast=false"
-			myconf_gn+=" use_cfi_icall=false"
-		fi
-	elif use cfi ; then
-		local f
-		local F=(
-			"cfi-derived-cast"
-			"cfi-icall"
-			"cfi-underived-cast"
-			"cfi-vcall"
+		myconf_gn+=(
+			"devtools_skip_typecheck=false"
 		)
-		for f in ${F[@]} ; do
-			if has_sanitizer_option "${f}" ; then
-				is_cfi_custom=1
-			fi
-		done
-		(( ${CFI_VCALL} == 1 )) && is_cfi_custom=1
-		(( ${CFI_CAST} == 1 )) && is_cfi_custom=1
-		(( ${CFI_ICALL} == 1 )) && is_cfi_custom=1
+	fi
 
-		if (( ${is_cfi_custom} == 1 )) ; then
-	# Change by CFLAGS
-			if \
-				has_sanitizer_option "cfi-vcall" \
-					|| \
-				(( ${CFI_VCALL} == 1 )) \
-			; then
-				myconf_gn+=" is_cfi=true"
-				CFI_VCALL=1
-			fi
+}
 
-			if \
-				has_sanitizer_option "cfi-derived-cast" \
-					|| \
-				has_sanitizer_option "cfi-unrelated-cast" \
-					|| \
-				(( ${CFI_CAST} == 1 )) \
-			; then
-				myconf_gn+=" use_cfi_cast=true"
-				CFI_CAST=1
-			else
-				myconf_gn+=" use_cfi_cast=false"
-			fi
+_src_configure() {
+	local s
+	s=$(_get_s)
+	cd "${s}" || die
 
-			if \
-				has_sanitizer_option "cfi-icall" \
-					|| \
-				(( ${CFI_ICALL} == 1 )) \
-			; then
-				myconf_gn+=" use_cfi_icall=true"
-				CFI_ICALL=1
-			else
-				myconf_gn+=" use_cfi_icall=false"
-			fi
-		else
-	# Fallback to autoset in non-official
-			myconf_gn+=" is_cfi=true"
+	# Calling this here supports resumption via FEATURES=keepwork
+	python-any-r1_pkg_setup
 
-			local cfi_cast_default="false"
-			local cfi_icall_default="false"
+	local total_ram=$(free | grep "Mem:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
+	local total_ram_gib=$(( ${total_ram} / (1024*1024) ))
+	local total_swap=$(free | grep "Swap:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
+	[[ -z "${total_swap}" ]] && total_swap=0
+	local total_swap_gib=$(( ${total_swap} / (1024*1024) ))
+	local total_mem=$(free -t | grep "Total:" | sed -E -e "s|[ ]+| |g" | cut -f 2 -d " ")
+	local total_mem_gib=$(( ${total_mem} / (1024*1024) ))
 
-			if [[ "${ABI}" == "amd64" ]] ; then
-				cfi_icall_default="true"
-			fi
+	local jobs=$(get_makeopts_jobs)
+	local nprocs=$(get_nproc) # It is the same as the number of cores.
 
-	# Allow change by environment variables
-			if [[ "${USE_CFI_CAST:-${cfi_cast_default}}" == "1" ]] ; then
-				myconf_gn+=" use_cfi_cast=true"
-			else
-				myconf_gn+=" use_cfi_cast=false"
-			fi
+	local minimal_gib_per_core=4
+	local actual_gib_per_core=$(python -c "print(${total_mem_gib} / ${nprocs})")
 
-			if [[ "${USE_CFI_ICALL:-${cfi_icall_default}}" == "1" ]] ; then
-				myconf_gn+=" use_cfi_icall=true"
-			else
-				myconf_gn+=" use_cfi_icall=false"
-			fi
-		fi
+	if (( ${actual_gib_per_core%.*} >= ${minimal_gib_per_core} )) ; then
+einfo "Minimal GiB per core:  >= ${minimal_gib_per_core} GiB"
+einfo "Actual GiB per core:  ${actual_gib_per_core} GiB"
 	else
-		myconf_gn+=" is_cfi=false"
-		myconf_gn+=" use_cfi_cast=false"
-		myconf_gn+=" use_cfi_icall=false"
+ewarn "Minimal GiB per core:  >= ${minimal_gib_per_core} GiB"
+ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
 	fi
 
-	# Dedupe flags which are already added by build scripts
-	strip-flag-value "cfi-vcall"
-	strip-flag-value "cfi-icall"
-	strip-flag-value "cfi-derived-cast"
-	strip-flag-value "cfi-unrelated-cast"
+	local myconf_gn=()
 
-	local expected_lto_type="thinlto"
-	if [[ "${myconf_gn}" =~ "is_cfi=true" ]] ; then
-		if ! [[ "${LTO_TYPE}" =~ ("${expected_lto_type}") ]] ; then
-	# Build scripts can only use ThinLTO for CFI.
-eerror
-eerror "CFI requires ThinLTO."
-eerror
-eerror "Contents of ${ESYSROOT}/etc/portage/env/thinlto.conf:"
-eerror
-eerror "CFLAGS=\"\${CFLAGS} -flto=thin\""
-eerror "CXXFLAGS=\"\${CXXFLAGS} -flto=thin\""
-eerror "LDFLAGS=\"\${LDFLAGS} -fuse-ld=lld\""
-eerror
-eerror
-eerror "You must apply one of the above linkers to the following file:"
-eerror
-eerror "Contents of ${ESYSROOT}/etc/portage/package.env"
-eerror "www-client/chromium thinlto.conf"
-eerror
-eerror "Expected LTO type:  ${expected_lto_type}"
-eerror "Actual LTO type:    ${LTO_TYPE}"
-eerror
-			die
-		fi
-	fi
-
-	if use cet ; then
-		myconf_gn+=" v8_enable_cet_ibt=$(usex cet true false)"
-		myconf_gn+=" v8_enable_cet_shadow_stack=false" # unfinished, windows only
-	fi
-
-	if use arm64 ; then
-		if use official ; then
-			myconf_gn+=" arm_control_flow_integrity=standard"
-		else
-			if use cpu_flags_arm_pac && use cpu_flags_arm_bti ; then
-	# ROP + JOP mitigation
-				myconf_gn+=" arm_control_flow_integrity=standard"
-			elif use cpu_flags_arm_pac ; then
-	# ROP mitigation
-				myconf_gn+=" arm_control_flow_integrity=pac"
-			fi
-		fi
-	# Dedupe flags
-		filter-flags '-mbranch-protection=*'
-		if use cpu_flags_arm_bti || use official ; then
-			filter-flags '-Wl,-z,force-bti'
-		fi
-	fi
-
-	if \
-		use arm64 \
-				&& \
-		( \
-			has_sanitizer_option "shadow-call-stack" \
-				|| \
-			(( ${SHADOW_CALL_STACK} == 1 )) \
-		) \
-	; then
-		myconf_gn+=" use_shadow_call_stack=true"
-		strip-flag-value "shadow-call-stack" # Dedupe flag
-		SHADOW_CALL_STACK=1
-	fi
-
-	if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" ]] ; then # Disable annoying check
-		:
-	elif use pgo ; then
-
-		if ! tc-is-clang ; then
-			die "The prebuilt PGO profile requires clang."
-		fi
-
-		local profdata_index_version=$(get_llvm_profdata_version_info)
-		CURRENT_PROFDATA_VERSION=$(echo "${profdata_index_version}" \
-			| cut -f 1 -d ":")
-		CURRENT_PROFDATA_LLVM_VERSION=$(echo "${profdata_index_version}" \
-			| cut -f 2 -d ":")
-		if ! is_profdata_compatible ; then
-eerror
-eerror "Profdata compatibility:"
-eerror
-eerror "The PGO profile is not compatible with this version of LLVM."
-eerror
-eerror "Expected:\t$(get_pregenerated_profdata_index_version)"
-eerror "Found:\t${CURRENT_PROFDATA_VERSION} for ~llvm-core/llvm-${CURRENT_PROFDATA_LLVM_VERSION}"
-eerror
-eerror "The solution is to rebuild using a newer/older commit or tag."
-eerror
-eerror "The mapping between INSTR_PROF_INDEX_VERSION and the commit or tag can be"
-eerror "found in InstrProfData.inc in the LLVM repo."
-eerror
-			die
-		else
-einfo
-einfo "Profdata compatibility:"
-einfo
-einfo "Expected:\t$(get_pregenerated_profdata_index_version)"
-einfo "Found:\t${CURRENT_PROFDATA_VERSION} for ~llvm-core/llvm-${CURRENT_PROFDATA_LLVM_VERSION}"
-einfo
-		fi
-	fi
-
-	# See also build/config/compiler/pgo/BUILD.gn#L71 for PGO flags.
-	# See also https://github.com/chromium/chromium/blob/136.0.7103.92/docs/pgo.md
-	# profile-instr-use is clang which that file assumes but gcc doesn't have.
-	# chrome_pgo_phase:  0=NOP, 1=PGI, 2=PGO
-	if use pgo && tc-is-clang && ver_test "$(clang-major-version)" -ge "${PREGENERATED_PGO_PROFILE_MIN_LLVM_SLOT}" ; then
-	# The profile data is already shipped so use it.
-	# PGO profile location: chrome/build/pgo_profiles/chrome-linux-*.profdata
-		myconf_gn+=" chrome_pgo_phase=2"
-	else
-	# The pregenerated profiles are not GCC compatible.
-		myconf_gn+=" chrome_pgo_phase=0"
-	fi
-
-	if _use_system_toolchain ; then
-		myconf_gn+=" llvm_libdir=\"$(get_libdir)\""
-	fi
-
-	if tc-is-clang ; then
-		if ver_test $(clang-major-version) -ge 16 ; then
-			myconf_gn+=" clang_version=$(clang-major-version)"
-		else
-			myconf_gn+=" clang_version=$(clang-fullversion)"
-		fi
-	fi
-
-	if \
-		( \
-			   use bundled-libcxx \
-			|| use cfi \
-			|| use official \
-			|| use pgo \
-		) \
-			&& \
-		[[ "${FEATURES}" =~ "icecream" ]] \
-	; then
-eerror
-eerror "FEATURES=icecream can only use GCC.  It can't use USE flags that depend"
-eerror "on clang."
-eerror
-eerror "Solutions"
-eerror
-eerror "1.  Replace this package with www-client/google-chrome."
-eerror "2.  Disable bundled-libcxx, cfi, official, pgo USE flags."
-eerror "3.  Disable icecream in FEATURES."
-eerror
-		die
-	fi
-
-	if [[ "${FEATURES}" =~ "icecream" ]] && has_version "sys-devel/icecream" ; then
-		myconf_gn+=" use_debug_fission=false"
-	fi
-
-	# I noticed that the vendored clang doesn't use ccache.  Let us explicitly use ccache if requested.
-	# See https://github.com/chromium/chromium/blob/136.0.7103.92/build/toolchain/cc_wrapper.gni#L36
-	if ! _use_system_toolchain ; then
-		if [[ "${FEATURES}" =~ "ccache" ]] && has_version "dev-util/ccache" ; then
-			myconf_gn+=" cc_wrapper=\"ccache\""
-			export CCACHE_BASEDIR="${TMPDIR}"
-		fi
-
-		[[ "${FEATURES}" =~ "distcc" ]] && die "FEATURES=distcc with USE=-system-toolchain is not supported by the ebuild."
-		[[ "${FEATURES}" =~ "icecream" ]] && die "FEATURES=icecream with USE=-system-toolchain is not supported by the ebuild."
-	fi
+	_configure_compiler_common
+	_configure_build_system
+	_configure_linker
+	_configure_optimization_level
+	_configure_performance
+	_configure_simd
+	_configure_security
+	_configure_features
 
 	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium && has cromite ${IUSE_EFFECTIVE} && use cromite ; then
 einfo "Configuring Cromite + ungoogled-chromium..."
 		[[ "${ABI}" == "amd64" ]] || die "Cromite only supports ARCH=${ARCH}"
 		TARGET_ISDEBUG=$(usex debug "true" "false")
-		myconf_gn+=" target_os =\"linux\" "$(cat "${S_CROMITE}/build/cromite.gn_args")
-		myconf_gn+=" "$(cat "${S_UNGOOGLED_CHROMIUM}/flags.gn")
-		set -- gn gen --args="${myconf_gn} ${EXTRA_GN}" "out/Release"
+		myconf_gn+=(
+			"target_os =\"linux\" "$(cat "${S_CROMITE}/build/cromite.gn_args")
+			""$(cat "${S_UNGOOGLED_CHROMIUM}/flags.gn")
+		)
 	elif has cromite ${IUSE_EFFECTIVE} && use cromite ; then
 einfo "Configuring Cromite..."
 		[[ "${ABI}" == "amd64" ]] || die "Cromite only supports ARCH=${ARCH}"
 		TARGET_ISDEBUG=$(usex debug "true" "false")
-		myconf_gn+=" target_os =\"linux\" "$(cat "${S_CROMITE}/build/cromite.gn_args")
-		set -- gn gen --args="${myconf_gn} ${EXTRA_GN}" "out/Release"
+		myconf_gn+=(
+			"target_os =\"linux\" "$(cat "${S_CROMITE}/build/cromite.gn_args")
+		)
 	elif has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
 einfo "Configuring ungoogled-chromium..."
-		myconf_gn+=" "$(cat "${S_UNGOOGLED_CHROMIUM}/flags.gn")
-		set -- gn gen --args="${myconf_gn} ${EXTRA_GN}" "out/Release"
+		myconf_gn+=(
+			""$(cat "${S_UNGOOGLED_CHROMIUM}/flags.gn")
+		)
 	else
 einfo "Configuring Chromium..."
-		set -- gn gen --args="${myconf_gn} ${EXTRA_GN}" "out/Release"
 	fi
-
+	set -- gn gen --args="${myconf_gn[*]}${EXTRA_GN:+ ${EXTRA_GN}}" "out/Release"
 
 	echo "$@"
 	"$@" || die
@@ -6195,6 +6308,7 @@ src_test() {
 		"ToolsSanityTest.BadVirtualCallNull"
 		"ToolsSanityTest.BadVirtualCallWrongType"
 		"CancelableEventTest.BothCancelFailureAndSucceedOccurUnderContention" #new m133: TODO investigate
+		"DriveInfoTest.GetFileDriveInfo" # New in M137: TODO investigate
 	)
 	local test_filter="-$(IFS=:; printf '%s' "${skip_tests[*]}")"
 	# test-launcher-bot-mode enables parallelism and plain output.
@@ -6228,7 +6342,7 @@ pkg_postinst() {
 	if ! use headless ; then
 		if use vaapi ; then
 	# It says 3 args:
-	# https://github.com/chromium/chromium/blob/136.0.7103.92/docs/gpu/vaapi.md#vaapi-on-linux
+	# https://github.com/chromium/chromium/blob/137.0.7151.55/docs/gpu/vaapi.md#vaapi-on-linux
 einfo
 einfo "VA-API is disabled by default at runtime.  You have to enable it by"
 einfo "adding --enable-features=VaapiVideoDecoder --ignore-gpu-blocklist with"
@@ -6280,6 +6394,7 @@ ewarn "Chromium is known to behave unpredictably with this system configuration;
 ewarn "please complete the configuration of this system before logging any bugs."
 ewarn
 	fi
+einfo "Since the build is done, you may remove /usr/share/chromium folder."
 }
 
 # OILEDMACHINE-OVERLAY-META:  LEGAL-PROTECTIONS
