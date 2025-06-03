@@ -3702,9 +3702,6 @@ einfo "Using the bundled toolchain"
 		"enable_check_raw_ref_fields=false"
 
 		"treat_warnings_as_errors=false"
-
-	# Only enabled for clang, but gcc has endian macros too
-		"v8_use_libm_trig_functions=true"
 	)
 
 }
@@ -4537,20 +4534,6 @@ einfo
 }
 
 _configure_performance_simd(){
-	if false && ! use custom-cflags ; then
-	# Prevent libvpx/xnnpack build failures. Bug 530248, 544702,
-	# 546984, 853646.
-		if [[ "${myarch}" == "amd64" || "${myarch}" == "x86" ]] ; then
-			filter-flags \
-				'-mno-avx*' \
-				'-mno-fma*' \
-				'-mno-mmx*' \
-				'-mno-sse*' \
-				'-mno-ssse*' \
-				'-mno-xop'
-		fi
-	fi
-
 	if ! use cpu_flags_arm_dotprod ; then
 		sed -r -i \
 			-e "s|XNN_ENABLE_ARM_DOTPROD=1|XNN_ENABLE_ARM_DOTPROD=0|g" \
@@ -4629,25 +4612,7 @@ _configure_performance_simd(){
 	fi
 
 	myconf_gn+=(
-		"libyuv_disable_rvv=$(usex cpu_flags_riscv_rvv false true)"
-		"libyuv_use_lasx=$(usex cpu_flags_loong_lasx true false)"
-		"libyuv_use_lsx=$(usex cpu_flags_loong_lsx true false)"
-		"libyuv_use_msa=$(usex cpu_flags_mips_msa true false)"
-		"libyuv_use_neon=$(usex cpu_flags_arm_neon true false)"
-		"libyuv_use_sme=$(usex cpu_flags_arm_sme true false)"
-		"libyuv_use_sve=$(usex cpu_flags_arm_sve2 true false)" # This line is not a typo.
-	)
-
-	if [[ "${ARCH}" == "loong" ]] ; then
-		myconf_gn+=(
-			"loongarch64_use_lasx=$(usex cpu_flags_loong_lasx true false)" # libyuv
-			"loongarch64_use_lsx=$(usex cpu_flags_loong_lsx true false)" # libpng, libyuv
-		)
-	fi
-
-	myconf_gn+=(
-		"rtc_build_with_neon=$(usex cpu_flags_arm_neon true false)" # webrtc
-
+	# ARM
 		"use_aes=$(usex cpu_flags_arm_aes true false)"
 		"use_armv4=$(usex cpu_flags_arm_armv4 true false)"
 		"use_armv6=$(usex cpu_flags_arm_armv6 true false)"
@@ -4662,31 +4627,17 @@ _configure_performance_simd(){
 		"use_sve_256=$(usex cpu_flags_arm_sve_256 true false)"
 		"use_sve2=$(usex cpu_flags_arm_sve2 true false)"
 		"use_sve2_128=$(usex cpu_flags_arm_sve2_128 true false)"
-	)
 
-	if [[ "${ABI}" == "arm" || "${ABI}" == "arm64" ]] ; then
-		myconf_gn+=(
-			"arm_use_neon=$(usex cpu_flags_arm_neon true false)" # blink, ffmpeg, libjpeg_turbo, libpng, libvpx, lzma_sdk, opus, pdfium, pffft, skia, webrtc, zlib
-			"arm_use_thumb=$(usex cpu_flags_arm_thumb true false)" # compiler
-			"arm_optionally_use_neon=false"
-		)
-	fi
-
-	myconf_gn+=(
+	# LOONG
 		"use_lsx=$(usex cpu_flags_loong_lsx true false)"
 		"use_lasx=$(usex cpu_flags_loong_lasx true false)"
 
+	# MIPS
 		"use_dsp=$(usex cpu_flags_mips_dsp true false)"
 		"use_dspr2=$(usex cpu_flags_mips_dspr2 true false)"
 		"use_msa=$(usex cpu_flags_mips_msa true false)"
-	)
-	if [[ "${ABI}" =~ "mips" ]] ; then
-		myconf_gn+=(
-			"mips_use_msa=$(usex cpu_flags_mips_msa true false)" # libyuv, libpng
-		)
-	fi
 
-	myconf_gn+=(
+	# PPC
 		"use_altivec=$(usex cpu_flags_ppc_altivec true false)"
 		"use_crypto=$(usex cpu_flags_ppc_crypto true false)"
 		"use_ppc8=$(usex cpu_flags_ppc_power8-vector true false)"
@@ -4694,11 +4645,14 @@ _configure_performance_simd(){
 		"use_ppc10=$(usex cpu_flags_ppc_power10-vector true false)"
 		"use_vsx=$(usex cpu_flags_ppc_vsx true false)"
 
+	# RISCV
 		"use_rvv=$(usex cpu_flags_riscv_rvv true false)"
 
+	# S390
 		"use_z15=$(usex cpu_flags_s390_z15 true false)"
 		"use_z16=$(usex cpu_flags_s390_z16 true false)"
 
+	# X86
 		"use_3dnow=$(usex cpu_flags_x86_3dnow true false)"
 		"use_aes=$(usex cpu_flags_x86_aes true false)"
 		"use_avx=$(usex cpu_flags_x86_avx true false)"
@@ -4720,7 +4674,71 @@ _configure_performance_simd(){
 		"use_sse4_1=$(usex cpu_flags_x86_sse4_1 true false)"
 		"use_sse4_2=$(usex cpu_flags_x86_sse4_2 true false)"
 		"use_ssse3=$(usex cpu_flags_x86_ssse3 true false)"
+
+	# LIBYUV
+		"libyuv_disable_rvv=$(usex cpu_flags_riscv_rvv false true)"
+		"libyuv_use_lasx=$(usex cpu_flags_loong_lasx true false)"
+		"libyuv_use_lsx=$(usex cpu_flags_loong_lsx true false)"
+		"libyuv_use_msa=$(usex cpu_flags_mips_msa true false)"
+		"libyuv_use_neon=$(usex cpu_flags_arm_neon true false)"
+		"libyuv_use_sme=$(usex cpu_flags_arm_sme true false)"
+		"libyuv_use_sve=$(usex cpu_flags_arm_sve2 true false)" # This line is not a typo.
+
+	# RTC
+		"rtc_enable_avx2=$(usex cpu_flags_x86_avx2 true false)"
+		"rtc_build_with_neon=$(usex cpu_flags_arm_neon true false)" # webrtc
+
+	# WASM
+		"use_wasm=$(usex webassembly true false)"
 	)
+
+	if [[ "${ABI}" == "arm" || "${ABI}" == "arm64" ]] ; then
+		myconf_gn+=(
+			"arm_use_neon=$(usex cpu_flags_arm_neon true false)" # blink, ffmpeg, libjpeg_turbo, libpng, libvpx, lzma_sdk, opus, pdfium, pffft, skia, webrtc, zlib
+			"arm_use_thumb=$(usex cpu_flags_arm_thumb true false)" # compiler
+			"arm_optionally_use_neon=false"
+		)
+	fi
+
+	if [[ "${ARCH}" == "loong" ]] ; then
+		myconf_gn+=(
+			"loongarch64_use_lasx=$(usex cpu_flags_loong_lasx true false)" # libyuv
+			"loongarch64_use_lsx=$(usex cpu_flags_loong_lsx true false)" # libpng, libyuv
+		)
+	fi
+
+	if [[ "${ABI}" =~ "mips" ]] ; then
+		myconf_gn+=(
+			"mips_use_msa=$(usex cpu_flags_mips_msa true false)" # libyuv, libpng
+		)
+	fi
+
+	# This is normally defined by compiler_cpu_abi in
+	# build/config/compiler/BUILD.gn, but we patch that part out.
+	if use cpu_flags_x86_mmx ; then
+		append-flags "-mmmx"
+	fi
+	if use cpu_flags_x86_sse ; then
+		append-flags "-mfpmath=sse"
+	fi
+	if use cpu_flags_x86_sse2 ; then
+		append-flags "-msse2"
+	fi
+
+	if false && ! use custom-cflags ; then
+	# Prevent libvpx/xnnpack build failures. Bug 530248, 544702,
+	# 546984, 853646.
+		if [[ "${myarch}" == "amd64" || "${myarch}" == "x86" ]] ; then
+			filter-flags \
+				'-mno-avx*' \
+				'-mno-fma*' \
+				'-mno-mmx*' \
+				'-mno-sse*' \
+				'-mno-ssse*' \
+				'-mno-xop'
+		fi
+	fi
+
 
 	# For AVX3, see \
 	# https://github.com/google/highway/blob/00fe003dac355b979f36157f9407c7c46448958e/hwy/ops/set_macros-inl.h#L136
@@ -4764,11 +4782,6 @@ _configure_performance_simd(){
 		)
 	fi
 
-	myconf_gn+=(
-		"rtc_enable_avx2=$(usex cpu_flags_x86_avx2 true false)"
-
-		"use_wasm=$(usex webassembly true false)"
-	)
 	if use webassembly ; then
 		if [[ "${ABI}" == "x86" || "${ABI}" == "amd64" ]] ; then
 			myconf_gn+=(
@@ -4784,7 +4797,6 @@ _configure_performance_simd(){
 			)
 		fi
 	fi
-
 
 	if use cpu_flags_x86_avx ; then
 	# Default on upstream for 64-bit with wasm enabled
@@ -4931,6 +4943,27 @@ einfo "Using Mold without LTO"
 	filter-flags '-fuse-ld=*'
 }
 
+get_target_cpu() {
+	local myarch="$(tc-arch)"
+	local target_cpu
+	if [[ "${myarch}" == "amd64" ]] ; then
+		target_cpu="x64"
+	elif [[ "${myarch}" == "x86" ]] ; then
+		target_cpu="x86"
+	elif [[ "${myarch}" == "arm64" ]] ; then
+		target_cpu="arm64"
+	elif [[ "${myarch}" == "arm" ]] ; then
+		target_cpu="arm"
+	elif [[ "${myarch}" == "ppc64" ]] ; then
+		target_cpu="ppc64"
+	else
+eerror "Failed to determine target arch, got '${myarch}'."
+		die
+	fi
+	echo "${target_cpu}"
+}
+
+# javascript engine
 _configure_v8() {
 	if use official ; then
 		: # Automagic
@@ -5091,16 +5124,6 @@ einfo "JIT off is similar to -O${jit_level_desc} worst case."
 		fi
 	fi
 
-# For Node.js, the v8 sandbox is disabled.  This is temporary until a fix can be
-# found or fixed in the next major version.  Disabling pointer compression
-# disables the v8 sandbox.
-	myconf_gn+=(
-		"${myconf_gn//v8_enable_drumbrake=true/v8_enable_drumbrake=false}"
-		"v8_enable_pointer_compression=false"
-		"v8_enable_pointer_compression_shared_cage=false"
-		"v8_enable_vtunejit=false"
-	)
-
 # ERROR:
 #
 # [15818/27103] python3.12 ../../v8/tools/run.py ./mksnapshot --turbo_instruction_scheduling --stress-turbo-late-spilling --target_os=linux --target_arch=x64 --embedded_src gen/v8/embedded.S --predictable --no-use-ic --turbo-elide-frames --embedded_variant Default --random-seed 314159265 --startup_blob snapshot_blob.bin --no-native-code-counters --concurrent-builtin-generation --concurrent-turbofan-max-threads=0
@@ -5119,6 +5142,23 @@ einfo "JIT off is similar to -O${jit_level_desc} worst case."
 # Disabling pointer compression will disable both v8 sandbox and drumbrake.
 #
 # To fix disable either v8_enable_sandbox=false or v8_enable_pointer_compression=false
+
+	local target_cpu=$(get_target_cpu)
+	myconf_gn+=(
+		"${myconf_gn//v8_enable_drumbrake=true/v8_enable_drumbrake=false}"
+	# For Node.js, the v8 sandbox is disabled.  This is temporary until a
+	# fix can be found or fixed in the next major version.
+	# Disabling pointer compression disables the v8 sandbox.
+		"v8_enable_pointer_compression=false"
+		"v8_enable_pointer_compression_shared_cage=false"
+		"v8_enable_vtunejit=false"
+
+		"v8_current_cpu=\"${target_cpu}\""
+
+	# Only enabled for clang, but gcc has endian macros too
+		"v8_use_libm_trig_functions=true"
+	)
+
 	if [[ "${ABI}" == "arm" || "${ABI}" == "x86" || "${ABI}" == "ppc" ]] ; then
 # Upstream doesn't support it.
 ewarn "The v8 sandbox is not supported for 32-bit.  Consider using 64-bit only to avoid high-critical severity memory corruption that leads to code execution."
@@ -5334,33 +5374,11 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 		)
 	fi
 
-	local myarch="$(tc-arch)"
-	local target_cpu
-	if [[ "${myarch}" == "amd64" ]] ; then
-		target_cpu="x64"
-	elif [[ "${myarch}" == "x86" ]] ; then
-		target_cpu="x86"
-	elif [[ "${myarch}" == "arm64" ]] ; then
-		target_cpu="arm64"
-	elif [[ "${myarch}" == "arm" ]] ; then
-		target_cpu="arm"
-	elif [[ "${myarch}" == "ppc64" ]] ; then
-		target_cpu="ppc64"
-	else
-		die "Failed to determine target arch, got '${myarch}'."
-	fi
-
-	if [[ "${myarch}" == "x86" ]] ; then
-	# This is normally defined by compiler_cpu_abi in
-	# build/config/compiler/BUILD.gn, but we patch that part out.
-		append-flags "-msse2" "-mfpmath=sse" "-mmmx"
-	fi
-
+	local target_cpu=$(get_target_cpu)
 	myconf_gn+=(
 		"current_cpu=\"${target_cpu}\""
 		"host_cpu=\"${target_cpu}\""
 		"target_cpu=\"${target_cpu}\""
-		"v8_current_cpu=\"${target_cpu}\""
 	)
 }
 
@@ -5875,6 +5893,7 @@ ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
 	_configure_performance_pgo
 	_configure_performance_simd
 	_configure_performance_thp
+	_configure_v8
 	_configure_security
 	_configure_debug
 	_configure_features
