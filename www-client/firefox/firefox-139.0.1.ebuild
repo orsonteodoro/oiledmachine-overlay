@@ -162,7 +162,6 @@ FIREFOX_LOONG_PATCHSET="firefox-${PV%%.*}-loong-patches-01.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 GTK3_PV="3.14.5"
-LICENSE_FILE_NAME="FF-$(ver_cut 1-2 ${PV})-THIRD-PARTY-LICENSES.html"
 LICENSE_FINGERPRINT="\
 dd6256b7efd8816420b21b72373ee03490f5a0add8a6b3023987b9da0b23e59b\
 f083c0a8f948b411fff5fd067f17ac5f825bb7e8e918e5c0c3739c49df26c491\
@@ -277,183 +276,12 @@ HOMEPAGE="https://www.mozilla.com/firefox"
 # llvm_gen_dep is broken for ${MULTILIB_USEDEP} if inserted directly.
 RESTRICT="mirror"
 SLOT="rapid"
-LICENSE="MPL-2.0 GPL-2 LGPL-2.1"
-# MPL-2.0 is the mostly used and default
-# FF-XX.YY-THIRD-PARTY-LICENSES should be updated per new feature or if the \
-# fingerprint changes.
-# Update the license version also.
-LICENSE+="
-	${LICENSE_FILE_NAME}
-	(
-		(
-			all-rights-reserved
-			|| (
-				AFL-2.1
-				MIT
-			)
-		)
-		(
-			all-rights-reserved
-			|| (
-				AFL-2.1
-				BSD
-			)
-		)
-		(
-			GPL-2
-			MIT
-		)
-		BSD-2
-		BSD
-		LGPL-2.1
-		|| (
-			GPL-2+
-			LGPL-2.1+
-			MPL-1.1
-		)
-	)
-	all-rights-reserved
-	Apache-2.0
-	Apache-2.0-with-LLVM-exceptions
-	Boost-1.0
-	BSD
-	BSD-2
-	CC0-1.0
-	CC-BY-4.0
-	curl
-	GPL-2+
-	GPL-3+
-	HPND
-	icu-71.1
-	ISC
-	Ispell
-	libpng
-	MIT
-	NAIST-IPADIC
-	OFL-1.1
-	Old-MIT
-	OPENLDAP
-	PSF-2
-	PSF-2.4
-	SunPro
-	unicode
-	Unicode-DFS-2016
-	UoI-NCSA
-	ZLIB
-	pgo? (
-		(
-			(
-				all-rights-reserved
-				|| (
-					AFL-2.1
-					MIT
-				)
-			)
-			(
-				GPL-2
-				MIT
-			)
-			BSD
-			BSD-2
-			MIT
-		)
-		BSD
-		BSD-2
-		LGPL-2.1
-		LGPL-2.1+
-		MPL-2.0
-	)
-	|| (
-		BSD
-		W3C-Document-License-2002
-	)
-	|| (
-		GPL-2+
-		LGPL-2.1+
-		MPL-1.1
-	)
-" # \
-# emerge does not recognize ^^ for the LICENSE variable.  You must choose
-# at most one for some packages when || is present.
-
-# Third party licenses:
-#
-# build/pgo/** folder:
-#   ( BSD-2
-#     ( all-rights-reserved || ( MIT AFL-2.1 ) )
-#     ( MIT GPL-2 )
-#     BSD
-#     MIT
-#   ) \
-#     build/pgo/js-input/sunspider/string-unpack-code.html
-#   || ( MIT GPL-2 ) build/pgo/blueprint/LICENSE
-#   BSD
-#   BSD-2
-#   LGPL-2.1
-#   LGPL-2.1+
-#   MPL-2.0
-#
-# ( BSD-2 BSD LGPL-2.1
-#   ( all-rights-reserved || ( AFL-2.1 MIT ) )
-#   ( all-rights-reserved || ( AFL-2.1 BSD ) )
-#   ( all-rights-reserved Apache-2.0 )
-#   ( all-rights-reserved MIT )
-#   ( MIT GPL-2 )
-#   || ( MPL-1.1 GPL-2+ LGPL-2.1+ )
-# ) \
-#     third_party/webkit/PerformanceTests/**
-# || ( MPL-1.1 GPL-2+ LGPL-2.1+ ) \
-#   testing/talos/talos/pageloader/chrome/pageloader.xhtml
-# ^^ ( GPL-3? ( FTL ) GPL-2 ) modules/freetype2/LICENSE.TXT - GPL-2 assumed # \
-#   since original ebuild cites it
-# all-rights-reserved third_party/webkit/PerformanceTests/MotionMark/tests/master/resources/timeline.svg
-# all-rights-reserved MIT mfbt/Span.h \
-#   The standard MIT license template does not contain all rights reserved.
-# all-rights-reserved MIT devtools/client/shared/widgets/CubicBezierWidget.js \
-#   The standard MIT license template does not contain all rights reserved.
-# Apache-2.0 for files listed in dom/encoding/test/stringencoding-license.txt
-# Apache-2.0-with-LLVM-exceptions tools/fuzzing/libfuzzer/FuzzerUtilLinux.cpp
-# Boost-1.0 - third_party/msgpack/include/msgpack/predef/compiler/ibm.h
-# BSD media/kiss_fft/_kiss_fft_guts.h
-# BSD dom/media/webrtc/transport/third_party/nrappkit/src/util/util.c
-# BSD-2 ISC third_party/dav1d/tools/compat/getopt.c
-# BSD, MIT, ISC nsprpub/pr/src/misc/praton.c
-# || ( BSD W3C-Document-License-2002 ) testing/web-platform/tests/css/css-color/LICENSE
-# CC-BY-4.0 browser/fonts/TwemojiMozilla.ttf \
-#   (See https://github.com/mozilla/twemoji-colr/blob/master/LICENSE.md)
-# curl - toolkit/crashreporter/google-breakpad/src/third_party/curl/COPYING
-# custom testing/web-platform/tests/css/tools/w3ctestlib/catalog/xhtml11.dtd *
-# custom testing/web-platform/tests/css/CSS2/LICENSE-W3CTS *
-# custom js/src/tests/test262/built-ins/RegExp/S15.10.2_A1_T1.js *
-# FTL modules/freetype2/builds/windows/w32-icc.mk
-# GlyphWiki - layout/reftests/fonts/glyphwiki-license.txt *
-# GPL-2+ testing/talos/talos/tests/v8_7/deltablue.js
-# GPL-3+ js/src/devtools/rootAnalysis/run_complete
-# HPND gfx/cairo/cairo/src/cairo-time.c
-# ISC ipc/chromium/src/third_party/libevent/arc4random.c
-# libpng media/libpng/pngconf.h
-# OFL-1.1 layout/reftests/fonts/Chunkfive-license.txt
-# OPENLDAP ISC third_party/rust/lmdb-rkv-sys/lmdb/libraries/liblmdb/mdb.c
-# Old-MIT gfx/harfbuzz/
-# PSF-2.4 (is a variation of) third_party/python/virtualenv/__virtualenv__/typing-3.7.4.3-py2-none-any/typing-3.7.4.3.dist-info/LICENSE
-# PSF-2 third_party/python/virtualenv/__virtualenv__/contextlib2-0.6.0.post1-py2.py3-none-any/contextlib2-0.6.0.post1.dist-info/LICENSE.txt
-# M+ FONTS LICENSE_E - layout/reftests/fonts/mplus/mplus-license.txt *
-# MIT CC0-1.0 devtools/client/shared/vendor/lodash.js (more details can be \
-#   found at https://github.com/lodash/lodash/blob/master/LICENSE)
-# MIT UoI-NCSA js/src/jit/arm/llvm-compiler-rt/assembly.h
-# UoI-NCSA tools/fuzzing/libfuzzer/LICENSE.TXT
-# unicode [terms of use] Unicode-DFS-2016 [2 clause from website] BSD NAIST-IPADIC intl/icu/source/data/brkitr/dictionaries/cjdict.txt
-# Unicode-DFS-2016 [2 clause] icu security/sandbox/chromium/base/third_party/icu/LICENSE
-# Unicode-DFS-2016 [2 clause] third_party/rust/regex-syntax/src/unicode_tables/LICENSE-UNICODE
-# unicode [3 clause] intl/icu/source/data/dtd/cldr-40/common/dtd/ldml.dtd
-# Spencer-94 js/src/editline/README *
-# SunPro modules/fdlibm/src/math_private.h
-# ZLIB gfx/sfntly/cpp/src/test/tinyxml/tinyxml.cpp
-# ZLIB media/ffvpx/libavutil/adler32.c
-# ZLIB third_party/rust/libz-sys/src/zlib/zlib.h
-# ZLIB MIT devtools/client/shared/vendor/jszip.js
-# ZLIB all-rights-reserved media/libjpeg/simd/powerpc/jdsample-altivec.c -- \#
-#   the vanilla ZLIB lib license doesn't contain all rights reserved
+LICENSE="
+	FF-$(ver_cut 1-2 ${PV})-THIRD-PARTY-LICENSES.html
+	MPL-2.0
+	GPL-2
+	LGPL-2.1
+"
 
 # (unforced) -hwaccel, pgo, x11 + wayland are defaults in -bin browser
 PATENT_STATUS=(
