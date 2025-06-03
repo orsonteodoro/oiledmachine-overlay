@@ -3683,7 +3683,6 @@ einfo "Using the bundled toolchain"
 	myconf_gn+=(
 	# The sysroot is the oldest debian image that chromium supports, we don't need it.
 		"use_sysroot=false"
-	)
 
 	#
 	# Turn off all the static checker stuff, linter stuff, style formatting
@@ -3697,16 +3696,17 @@ einfo "Using the bundled toolchain"
 	# build/config/clang/BUILD.gn
 	# build/config/clang/clang.gni
 	#
-	myconf_gn+=(
 		"clang_use_chrome_plugins=false"
 		"clang_use_raw_ptr_plugin=false"
 		"enable_check_raw_ptr_fields=false"
 		"enable_check_raw_ref_fields=false"
+
+		"treat_warnings_as_errors=false"
+
+	# Only enabled for clang, but gcc has endian macros too
+		"v8_use_libm_trig_functions=true"
 	)
 
-	myconf_gn+=(
-		"treat_warnings_as_errors=false"
-	)
 }
 
 _configure_build_system() {
@@ -5100,6 +5100,9 @@ einfo "JIT off is similar to -O${jit_level_desc} worst case."
 		fi
 	fi
 
+# For Node.js, the v8 sandbox is disabled.  This is temporary until a fix can be
+# found or fixed in the next major version.  Disabling pointer compression
+# disables the v8 sandbox.
 	myconf_gn+=(
 		"${myconf_gn//v8_enable_drumbrake=true/v8_enable_drumbrake=false}"
 		"v8_enable_pointer_compression=false"
@@ -5340,6 +5343,7 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 		)
 	fi
 
+	local myarch="$(tc-arch)"
 	local target_cpu
 	if [[ "${myarch}" == "amd64" ]] ; then
 		target_cpu="x64"
@@ -5358,7 +5362,7 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	if [[ "${myarch}" == "x86" ]] ; then
 	# This is normally defined by compiler_cpu_abi in
 	# build/config/compiler/BUILD.gn, but we patch that part out.
-		append-flags -msse2 -mfpmath=sse -mmmx
+		append-flags "-msse2" "-mfpmath=sse" "-mmmx"
 	fi
 
 	myconf_gn+=(
@@ -5570,36 +5574,68 @@ ewarn
 
 	# See dependency logic in third_party/BUILD.gn
 	myconf_gn+=(
-		"use_system_harfbuzz=$(usex system-harfbuzz true false)"
+		"enable_av1_decoder=$(usex dav1d true false)"
+		"enable_dav1d_decoder=$(usex dav1d true false)"
+		"enable_chrome_notifications=true"					# Depends on enable_message_center?
 
-	# Optional dependencies.
-		"enable_chrome_notifications=true" # Depends on enable_message_center?
+	# 131 began laying the groundwork for replacing freetype with
+	# "Rust-based Fontations set of libraries plus Skia path rendering"
+	# We now need to opt-in
+		"enable_freetype=true"
+
 		"enable_hangout_services_extension=$(usex hangouts true false)"
+		"enable_hevc_parser_and_hw_decoder=$(usex patent_status_nonfree $(usex vaapi-hevc true false) false)"
 		"enable_hidpi=$(usex hidpi true false)"
+		"enable_libaom=$(usex libaom $(usex encode true false) false)"
 		"enable_mdns=$(usex mdns true false)"
-		"enable_message_center=true" # Required for linux, but not Fucshia and Android
-		"enable_ml_internal=false"	# components/optimization_guide/internal is empty.  It is default disabled for unbranded.
-		"enable_openxr=false"	# https://github.com/chromium/chromium/tree/137.0.7151.55/device/vr#platform-support
+		"enable_message_center=true"						# Required for Linux, but not Fucshia and Android
+		"enable_ml_internal=false"						# components/optimization_guide/internal is empty.  It is default disabled for unbranded.
+		"enable_openxr=false"							# https://github.com/chromium/chromium/tree/137.0.7151.55/device/vr#platform-support
+		"enable_platform_hevc=$(usex patent_status_nonfree $(usex vaapi-hevc true false) false)"
 		"enable_plugins=$(usex plugins true false)"
 		"enable_ppapi=false"
 		"enable_reporting=$(usex reporting-api true false)"
-		"enable_service_discovery=true" # Required by chrome/browser/extensions/api/BUILD.gn.  mdns may be a dependency.
-		"enable_speech_service=false" # It is enabled but missing backend either local service or remote service.
-		"enable_vr=false"		# https://github.com/chromium/chromium/blob/137.0.7151.55/device/vr/buildflags/buildflags.gni#L32
-		"enable_websockets=true"	# requires devtools/devtools_http_handler.cc which is unconditionally added.
+
+	# Forced because of asserts.  Required by chrome/renderer:renderer
+		"enable_screen_ai_service=true"
+
+		"enable_service_discovery=true"						# Required by chrome/browser/extensions/api/BUILD.gn.  mdns may be a dependency.
+		"enable_speech_service=false"						# It is enabled but missing backend either local service or remote service.
+		"enable_vr=false"							# https://github.com/chromium/chromium/blob/137.0.7151.55/device/vr/buildflags/buildflags.gni#L32
+		"enable_websockets=true"						# requires devtools/devtools_http_handler.cc which is unconditionally added.
 		"enable_widevine=$(usex widevine true false)"
+
+	#
+	# Set up Google API keys, see http://www.chromium.org/developers/how-tos/api-keys .
+	# Note: these are for Gentoo use ONLY. For your own distribution,
+	# please get your own set of keys. Feel free to contact chromium@gentoo.org
+	# for more info. The OAuth2 credentials, however, have been left out.
+	# Those OAuth2 credentials have been broken for quite some time anyway.
+	# Instead we apply a patch to use the --oauth2-client-id= and
+	# --oauth2-client-secret= switches for setting GOOGLE_DEFAULT_CLIENT_ID and
+	# GOOGLE_DEFAULT_CLIENT_SECRET at runtime. This allows signing into
+	# Chromium without baked-in values.
+	#
+		"google_api_key=\"AIzaSyDEAOvatFo0eTgsV_ZlEzx0ObmepsMzfAc\""
+
+	# Link pulseaudio directly (DT_NEEDED) instead of using dlopen.
+	# It helps with automated detection of ABI mismatches and prevents silent errors.
+		"link_pulseaudio=$(usex pulseaudio true false)"
+
+		"media_use_libvpx=$(usex vpx true false)"
+		"media_use_openh264=$(usex patent_status_nonfree $(usex openh264 true false) false)"
+		"ozone_auto_platforms=false"
+		"ozone_platform_headless=true"
 		"use_minikin_hyphenation=$(usex css-hyphen true false)"
 		"use_mpris=$(usex mpris true false)"
-		"use_partition_alloc=$(usex partitionalloc true false)" # See issue 40277359
-	)
 
-# For Node.js, the v8 sandbox is disabled.  This is temporary until a fix can be
-# found or fixed in the next major version.
+	# Enable ozone wayland and/or headless support
+		"use_ozone=true"
 
-	myconf_gn+=(
-	# Forced because of asserts
-	# Required by chrome/renderer:renderer
-		"enable_screen_ai_service=true"
+		"use_partition_alloc=$(usex partitionalloc true false)"			# See issue 40277359
+		"use_system_harfbuzz=$(usex system-harfbuzz true false)"
+		"rtc_include_opus=$(usex opus true false)"
+		"rtc_use_h264=$(usex patent_status_nonfree true false)"
 	)
 
 	if use headless ; then
@@ -5656,14 +5692,6 @@ ewarn
 		)
 	fi
 
-	# Allows distributions to link pulseaudio directly (DT_NEEDED) instead of
-	# using dlopen. This helps with automated detection of ABI mismatches and
-	# prevents silent errors.
-	if use pulseaudio ; then
-		myconf_gn+=(
-			"link_pulseaudio=true"
-		)
-	fi
 
 	# See https://github.com/chromium/chromium/blob/137.0.7151.55/media/media_options.gni#L19
 
@@ -5693,35 +5721,6 @@ ewarn
 		)
 	fi
 
-	myconf_gn+=(
-		"enable_av1_decoder=$(usex dav1d true false)"
-		"enable_dav1d_decoder=$(usex dav1d true false)"
-		"enable_hevc_parser_and_hw_decoder=$(usex patent_status_nonfree $(usex vaapi-hevc true false) false)"
-		"enable_libaom=$(usex libaom $(usex encode true false) false)"
-		"enable_platform_hevc=$(usex patent_status_nonfree $(usex vaapi-hevc true false) false)"
-		"media_use_libvpx=$(usex vpx true false)"
-		"media_use_openh264=$(usex patent_status_nonfree $(usex openh264 true false) false)"
-		"rtc_include_opus=$(usex opus true false)"
-		"rtc_use_h264=$(usex patent_status_nonfree true false)"
-	)
-
-	#
-	# Set up Google API keys, see http://www.chromium.org/developers/how-tos/api-keys .
-	# Note: these are for Gentoo use ONLY. For your own distribution,
-	# please get your own set of keys. Feel free to contact chromium@gentoo.org
-	# for more info. The OAuth2 credentials, however, have been left out.
-	# Those OAuth2 credentials have been broken for quite some time anyway.
-	# Instead we apply a patch to use the --oauth2-client-id= and
-	# --oauth2-client-secret= switches for setting GOOGLE_DEFAULT_CLIENT_ID and
-	# GOOGLE_DEFAULT_CLIENT_SECRET at runtime. This allows signing into
-	# Chromium without baked-in values.
-	#
-	local google_api_key="AIzaSyDEAOvatFo0eTgsV_ZlEzx0ObmepsMzfAc"
-	myconf_gn+=(
-		"google_api_key=\"${google_api_key}\""
-	)
-	local myarch="$(tc-arch)"
-
 	# Disable external code space for V8 for ppc64. It is disabled for ppc64
 	# by default, but cross-compiling on amd64 enables it again.
 	if tc-is-cross-compiler ; then
@@ -5732,11 +5731,6 @@ ewarn
 		fi
 	fi
 
-	# Only enabled for clang, but gcc has endian macros too
-	myconf_gn+=(
-		"v8_use_libm_trig_functions=true"
-	)
-
 	# Bug 491582.
 	export TMPDIR="${WORKDIR}/temp"
 	mkdir -p -m 755 "${TMPDIR}" || die
@@ -5744,6 +5738,7 @@ ewarn
 	# https://bugs.gentoo.org/654216
 	addpredict "/dev/dri/" #nowarn
 
+	local myarch="$(tc-arch)"
 	if use system-ffmpeg ; then
 		local ffmpeg_target_arch
 		if [[ "${myarch}" == "amd64" ]] ; then
@@ -5786,17 +5781,6 @@ einfo "Configuring bundled ffmpeg..."
 		)
 	fi
 
-	myconf_gn+=(
-	# 131 began laying the groundwork for replacing freetype with
-	# "Rust-based Fontations set of libraries plus Skia path rendering"
-	# We now need to opt-in
-		"enable_freetype=true"
-
-	# Enable ozone wayland and/or headless support
-		"use_ozone=true"
-		"ozone_auto_platforms=false"
-		"ozone_platform_headless=true"
-	)
 	if use headless ; then
 		myconf_gn+=(
 			"ozone_platform=\"headless\""
