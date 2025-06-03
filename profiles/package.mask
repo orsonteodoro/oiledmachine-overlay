@@ -116,7 +116,9 @@ www-misc/rainbowstream
 #>=dev-python/grpcio-tools-1.53
 
 # End of Life (EOL)
-<net-libs/nodejs-15
+<net-libs/nodejs-20
+=net-libs/nodejs-21*
+=net-libs/nodejs-23*
 =media-gfx/blender-4.1*
 =media-gfx/blender-3.3*
 =virtual/blender-lts-3.3*
