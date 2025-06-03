@@ -128,7 +128,7 @@ $(gen_iuse_pgo)
 acorn +asm +corepack cpu_flags_x86_sse2 debug doc fips +icu
 inspector +npm man mold pax-kernel pgo +snapshot +ssl system-icu +system-ssl
 test
-ebuild_revision_45
+ebuild_revision_46
 "
 
 gen_required_use_pgo() {
@@ -389,7 +389,7 @@ src_prepare() {
 	replace-flags '-Oz' '-O2'
 	replace-flags '-O1' '-O2'
 	replace-flags '-O0' '-O2'
-	if ! isflagq "-O2" ; then
+	if ! is-flagq "-O2" ; then
 	# Add fallback flag.
 	# Default to performance.
 	# GCC/Clang default to -O0
