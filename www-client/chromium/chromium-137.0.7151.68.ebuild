@@ -54,7 +54,7 @@ EAPI=8
 # https://github.com/chromium/chromium/blob/137.0.7151.68/third_party/re2/README.chromium#L4						; newer than generated_package_lists, (live) [rounded in ebuild]
 # https://github.com/chromium/chromium/blob/137.0.7151.68/third_party/zlib/zlib.h#L40
 # https://github.com/chromium/chromium/blob/137.0.7151.68/tools/rust/update_rust.py#L35							; commit *
-#   https://github.com/rust-lang/rust/blob/f7b43542838f0a4a6cfdb17fbeadf45002042a77/src/version						; live version
+#   https://github.com/rust-lang/rust/blob/c8f94230282a8e8c1148f3e657f0199aad909228/src/version						; live version
 # /usr/share/chromium/sources/third_party/flac/BUILD.gn										L122	; newer than generated_package_lists
 # /usr/share/chromium/sources/third_party/fontconfig/src/fontconfig/fontconfig.h						L54     ; newer than generated_package_lists
 # /usr/share/chromium/sources/third_party/freetype/src/CMakeLists.txt								L165	; newer than generated_package_lists *
@@ -65,10 +65,10 @@ EAPI=8
 # /usr/share/chromium/sources/third_party/libwebp/src/configure.ac								L1	; newer than generated_package_lists *
 # /usr/share/chromium/sources/third_party/openh264/src/meson.build								L2
 # /usr/share/chromium/sources/third_party/opus/README.chromium									L3	; newer than generated_package_lists, live
-#   https://gitlab.xiph.org/xiph/opus/-/commit/8cf872a186b96085b1bb3a547afd598354ebeb87							; see tag
-# /usr/share/chromium/sources/third_party/zstd/README.chromium										; live version *
-#   https://github.com/facebook/zstd/commit/ef2bf5781112a4cd6b62ac1817f7842bbdc7ea8f							; check if commit part of tag
-#   https://github.com/facebook/zstd/blob/ef2bf5781112a4cd6b62ac1817f7842bbdc7ea8f/lib/zstd.h#L107					; version
+#   https://gitlab.xiph.org/xiph/opus/-/commit/55513e81d8f606bd75d0ff773d2144e5f2a732f5							; see tag (live, 20250318) *
+# /usr/share/chromium/sources/third_party/zstd/README.chromium										; live version (20250414) *
+#   https://github.com/facebook/zstd/commit/d654fca78690fa15cceb8058ac47454d914a0e63							; check if commit part of tag
+#   https://github.com/facebook/zstd/blob/d654fca78690fa15cceb8058ac47454d914a0e63/lib/zstd.h#L107					; version
 # https://github.com/chromium/chromium/blob/137.0.7151.68/DEPS#L512									; live
 
 ALLOW_SYSTEM_TOOLCHAIN=0
@@ -228,7 +228,7 @@ TESTDATA_P="${PN}-${PV}"
 # possible to use all 3.  The 13.7 series fixes contains the 5c595ad commit \
 # to fix a compile error when DrumBrake is enabled. \
 #V8_PV="13.7.152.7" # About the same as the latest Chromium beta release.
-ZLIB_PV="1.3.0"
+ZLIB_PV="1.3.1"
 
 inherit cflags-depends cflags-hardened check-compiler-switch check-linker check-reqs chromium-2 dhms
 inherit desktop edo flag-o-matic flag-o-matic-om linux-info lcnr
@@ -1181,7 +1181,7 @@ COMMON_SNAPSHOT_DEPEND="
 		media-libs/freetype:=
 	)
 	system-harfbuzz? (
-		>=media-libs/harfbuzz-10.2.0:0[${MULTILIB_USEDEP},icu(-)]
+		>=media-libs/harfbuzz-11.0.0:0[${MULTILIB_USEDEP},icu(-)]
 		media-libs/harfbuzz:=
 	)
 	system-icu? (
@@ -1189,7 +1189,7 @@ COMMON_SNAPSHOT_DEPEND="
 		dev-libs/icu:=
 	)
 	system-libaom? (
-		>=media-libs/libaom-3.12.0[${MULTILIB_USEDEP}]
+		>=media-libs/libaom-3.12.1[${MULTILIB_USEDEP}]
 		media-libs/libaom:=
 	)
 	system-libjpeg-turbo? (
@@ -1205,7 +1205,7 @@ COMMON_SNAPSHOT_DEPEND="
 		media-libs/libwebp:=
 	)
 	system-libxml? (
-		>=dev-libs/libxml2-2.14.0[${MULTILIB_USEDEP},icu]
+		>=dev-libs/libxml2-2.14.2[${MULTILIB_USEDEP},icu]
 		dev-libs/libxml2:=
 	)
 	system-libxslt? (
