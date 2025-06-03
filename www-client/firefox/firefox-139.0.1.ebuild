@@ -162,7 +162,6 @@ FIREFOX_LOONG_PATCHSET="firefox-${PV%%.*}-loong-patches-01.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 GTK3_PV="3.14.5"
-LICENSE_FILE_NAME="Firefox-$(ver_cut 1-2 ${PV}).x-Licenses.html"
 LICENSE_FINGERPRINT="\
 dd6256b7efd8816420b21b72373ee03490f5a0add8a6b3023987b9da0b23e59b\
 f083c0a8f948b411fff5fd067f17ac5f825bb7e8e918e5c0c3739c49df26c491\
@@ -278,7 +277,7 @@ HOMEPAGE="https://www.mozilla.com/firefox"
 RESTRICT="mirror"
 SLOT="rapid"
 LICENSE="
-	${LICENSE_FILE_NAME}
+	Firefox-$(ver_cut 1-2 ${PV}).x-Licenses.html
 "
 
 # (unforced) -hwaccel, pgo, x11 + wayland are defaults in -bin browser
@@ -1329,16 +1328,17 @@ einfo "Verifying about:license fingerprint"
 	# Check patched versions and/or new features for differences.
 	if [[ "${EBUILD_MAINTAINER_MODE}" == "1" ]] ; then
 	# For ebuild maintainers
+		local license_file_name="Firefox-$(ver_cut 1-2 ${PV}).x-Licenses.html"
 		if [[ \
-			   ! ( "${LICENSE}" =~ "${LICENSE_FILE_NAME}" ) \
-			|| ! -e "${MY_OVERLAY_DIR}/licenses/${LICENSE_FILE_NAME}" \
+			   ! ( "${LICENSE}" =~ "${license_file_name}" ) \
+			|| ! -e "${MY_OVERLAY_DIR}/licenses/${license_file_name}" \
 			|| "${actual_fp}" != "${LICENSE_FINGERPRINT}" \
 		]] ; then
 eerror
 eerror "A change in the license was detected.  Please change"
 eerror "LICENSE_FINGERPRINT=${actual_fp} and do a"
 eerror
-eerror "  \`cp -a ${S}/toolkit/content/license.html ${MY_OVERLAY_DIR}/licenses/${LICENSE_FILE_NAME}\`"
+eerror "  \`cp -a ${S}/toolkit/content/license.html ${MY_OVERLAY_DIR}/licenses/${license_file_name}\`"
 eerror
 			die
 		fi

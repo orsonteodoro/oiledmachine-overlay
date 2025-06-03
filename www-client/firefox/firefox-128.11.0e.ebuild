@@ -164,7 +164,6 @@ FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-11.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 GTK3_PV="3.14.5"
-LICENSE_FILE_NAME="Firefox-ESR-$(ver_cut 1-2 ${PV}).x-Licenses.html"
 LICENSE_FINGERPRINT="\
 dcda5b12dce8c42c9a09e28f5320679d1d6bb506a0c429005046b5606a341ab2\
 2a1798763b46e4002e33d80cd416fb285494e88a8fd8413a97019c7772373a32\
@@ -276,7 +275,7 @@ DESCRIPTION="Firefox Web Browser"
 # llvm_gen_dep is broken for ${MULTILIB_USEDEP} if inserted directly.
 RESTRICT="mirror"
 LICENSE="
-	${LICENSE_FILE_NAME}
+	Firefox-ESR-$(ver_cut 1-2 ${PV}).x-Licenses.html
 "
 
 # (unforced) -hwaccel, pgo, x11 + wayland are defaults in -bin browser
@@ -1393,16 +1392,17 @@ einfo "Verifying about:license fingerprint"
 	# Check patched versions and/or new features for differences.
 	if [[ "${EBUILD_MAINTAINER_MODE}" == "1" ]] ; then
 	# For ebuild maintainers
+		local license_file_name="Firefox-ESR-$(ver_cut 1-2 ${PV}).x-Licenses.html"
 		if [[ \
-			   ! ( "${LICENSE}" =~ "${LICENSE_FILE_NAME}" ) \
-			|| ! -e "${MY_OVERLAY_DIR}/licenses/${LICENSE_FILE_NAME}" \
+			   ! ( "${LICENSE}" =~ "${license_file_name}" ) \
+			|| ! -e "${MY_OVERLAY_DIR}/licenses/${license_file_name}" \
 			|| "${actual_fp}" != "${LICENSE_FINGERPRINT}" \
 		]] ; then
 eerror
 eerror "A change in the license was detected.  Please change"
 eerror "LICENSE_FINGERPRINT=${actual_fp} and do a"
 eerror
-eerror "  \`cp -a ${S}/toolkit/content/license.html ${MY_OVERLAY_DIR}/licenses/${LICENSE_FILE_NAME}\`"
+eerror "  \`cp -a ${S}/toolkit/content/license.html ${MY_OVERLAY_DIR}/licenses/${license_file_name}\`"
 eerror
 			die
 		fi
