@@ -3942,7 +3942,7 @@ ewarn
 		export RUSTC="${S}/third_party/rust-toolchain/bin/rustc"
 	fi
 einfo "RUSTC:  ${RUSTC}"
-	if ! ${RUSTC} --version ; then
+	if ! ${RUSTC} --version 2>&1 >/dev/null ; then
 eerror "QA:  RUSTC is not initialized or missing."
 		die
 	fi
@@ -5206,6 +5206,9 @@ _configure_optimization_level() {
 
 	if (( ${OSHIT_OPTIMIZED} == 1 )) ; then
 		replace-flags "-O*" "-O1"
+	fi
+	if use official ; then
+		replace-flags "-O*" "-O3"
 	fi
 	local olast=$(get_olast)
 	replace-flags "-O*" "${get_olast}"
