@@ -3684,6 +3684,29 @@ einfo "Using the bundled toolchain"
 	# The sysroot is the oldest debian image that chromium supports, we don't need it.
 		"use_sysroot=false"
 	)
+
+	#
+	# Turn off all the static checker stuff, linter stuff, style formatting
+	# stuff that is supposed to be only enabled in upstream and dev
+	# branches.
+	#
+	# These are assumed to only do fatal checks but do not actually
+	# fix/modify anything.
+	#
+	# See
+	# build/config/clang/BUILD.gn
+	# build/config/clang/clang.gni
+	#
+	myconf_gn+=(
+		"clang_use_chrome_plugins=false"
+		"clang_use_raw_ptr_plugin=false"
+		"enable_check_raw_ptr_fields=false"
+		"enable_check_raw_ref_fields=false"
+	)
+
+	myconf_gn+=(
+		"treat_warnings_as_errors=false"
+	)
 }
 
 _configure_build_system() {
@@ -4910,6 +4933,11 @@ einfo "Using Mold without LTO"
 			"use_mold=true"
 		)
 	fi
+
+	myconf_gn+=(
+	# Disable fatal linker warnings, bug 506268.
+		"fatal_linker_warnings=false"
+	)
 }
 
 _configure_v8() {
@@ -5078,18 +5106,6 @@ einfo "JIT off is similar to -O${jit_level_desc} worst case."
 		"v8_enable_pointer_compression_shared_cage=false"
 		"v8_enable_vtunejit=false"
 	)
-
-	if use official ; then
-		: # Use automagic
-	elif use kernel_linux && linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
-		myconf_gn+=(
-			"v8_enable_hugepage=true"
-		)
-	else
-		myconf_gn+=(
-			"v8_enable_hugepage=false"
-		)
-	fi
 
 # ERROR:
 #
@@ -5323,6 +5339,48 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 			"custom_optimization_level=0"
 		)
 	fi
+
+	local target_cpu
+	if [[ "${myarch}" == "amd64" ]] ; then
+		target_cpu="x64"
+	elif [[ "${myarch}" == "x86" ]] ; then
+		target_cpu="x86"
+	elif [[ "${myarch}" == "arm64" ]] ; then
+		target_cpu="arm64"
+	elif [[ "${myarch}" == "arm" ]] ; then
+		target_cpu="arm"
+	elif [[ "${myarch}" == "ppc64" ]] ; then
+		target_cpu="ppc64"
+	else
+		die "Failed to determine target arch, got '${myarch}'."
+	fi
+
+	if [[ "${myarch}" == "x86" ]] ; then
+	# This is normally defined by compiler_cpu_abi in
+	# build/config/compiler/BUILD.gn, but we patch that part out.
+		append-flags -msse2 -mfpmath=sse -mmmx
+	fi
+
+	myconf_gn+=(
+		"current_cpu=\"${target_cpu}\""
+		"host_cpu=\"${target_cpu}\""
+		"target_cpu=\"${target_cpu}\""
+		"v8_current_cpu=\"${target_cpu}\""
+	)
+}
+
+_configure_performance_thp() {
+	if use official ; then
+		: # Use automagic
+	elif use kernel_linux && linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
+		myconf_gn+=(
+			"v8_enable_hugepage=true"
+		)
+	else
+		myconf_gn+=(
+			"v8_enable_hugepage=false"
+		)
+	fi
 }
 
 _configure_debug() {
@@ -5352,6 +5410,9 @@ _configure_debug() {
 	# Chromium builds provided by Linux distros) should disable the testing config.
 		"disable_fieldtrial_testing_config=true"
 
+	# Don't need nocompile checks and GN crashes with our config
+		"enable_nocompile_tests=false"
+
 	# Disable pseudolocales, only used for testing
 		"enable_pseudolocales=false"
 
@@ -5359,6 +5420,13 @@ _configure_debug() {
 	# for development and debugging.
 		"is_component_build=false"
 	)
+
+	# Skipping typecheck is only supported on amd64, bug #876157
+	if ! use amd64 ; then
+		myconf_gn+=(
+			"devtools_skip_typecheck=false"
+		)
+	fi
 
 	if ! use debug ; then
 		myconf_gn+=(
@@ -5511,15 +5579,15 @@ ewarn
 		"enable_mdns=$(usex mdns true false)"
 		"enable_message_center=true" # Required for linux, but not Fucshia and Android
 		"enable_ml_internal=false"	# components/optimization_guide/internal is empty.  It is default disabled for unbranded.
+		"enable_openxr=false"	# https://github.com/chromium/chromium/tree/137.0.7151.55/device/vr#platform-support
 		"enable_plugins=$(usex plugins true false)"
 		"enable_ppapi=false"
 		"enable_reporting=$(usex reporting-api true false)"
 		"enable_service_discovery=true" # Required by chrome/browser/extensions/api/BUILD.gn.  mdns may be a dependency.
 		"enable_speech_service=false" # It is enabled but missing backend either local service or remote service.
-		"enable_widevine=$(usex widevine true false)"
-		"enable_openxr=false"	# https://github.com/chromium/chromium/tree/137.0.7151.55/device/vr#platform-support
 		"enable_vr=false"		# https://github.com/chromium/chromium/blob/137.0.7151.55/device/vr/buildflags/buildflags.gni#L32
 		"enable_websockets=true"	# requires devtools/devtools_http_handler.cc which is unconditionally added.
+		"enable_widevine=$(usex widevine true false)"
 		"use_minikin_hyphenation=$(usex css-hyphen true false)"
 		"use_mpris=$(usex mpris true false)"
 		"use_partition_alloc=$(usex partitionalloc true false)" # See issue 40277359
@@ -5613,15 +5681,15 @@ ewarn
 	# Bindist changes are reverted to free codecs only.
 	#
 		myconf_gn+=(
-			"proprietary_codecs=false"
-			"ffmpeg_branding=\"Chromium\""
 			"is_component_ffmpeg=false"
+			"ffmpeg_branding=\"Chromium\""
+			"proprietary_codecs=false"
 		)
 	else
 		ffmpeg_branding="$(usex patent_status_nonfree Chrome Chromium)"
 		myconf_gn+=(
-			"proprietary_codecs=$(usex patent_status_nonfree true false)"
 			"ffmpeg_branding=\"${ffmpeg_branding}\""
+			"proprietary_codecs=$(usex patent_status_nonfree true false)"
 		)
 	fi
 
@@ -5654,68 +5722,6 @@ ewarn
 	)
 	local myarch="$(tc-arch)"
 
-
-
-
-	#
-	# Turn off all the static checker stuff, linter stuff, style formatting
-	# stuff that is supposed to be only enabled in upstream and dev
-	# branches.
-	#
-	# These are assumed to only do fatal checks but do not actually
-	# fix/modify anything.
-	#
-	# See
-	# build/config/clang/BUILD.gn
-	# build/config/clang/clang.gni
-	#
-	myconf_gn+=(
-		"clang_use_chrome_plugins=false"
-		"clang_use_raw_ptr_plugin=false"
-		"enable_check_raw_ptr_fields=false"
-		"enable_check_raw_ref_fields=false"
-	)
-
-
-	local ffmpeg_target_arch
-	local target_cpu
-	if [[ "${myarch}" == "amd64" ]] ; then
-		target_cpu="x64"
-		ffmpeg_target_arch="x64"
-	elif [[ "${myarch}" == "x86" ]] ; then
-		target_cpu="x86"
-		ffmpeg_target_arch="ia32"
-	# This is normally defined by compiler_cpu_abi in
-	# build/config/compiler/BUILD.gn, but we patch that part out.
-		append-flags -msse2 -mfpmath=sse -mmmx
-	elif [[ "${myarch}" == "arm64" ]] ; then
-		target_cpu="arm64"
-		ffmpeg_target_arch="arm64"
-	elif [[ "${myarch}" == "arm" ]] ; then
-		target_cpu="arm"
-		ffmpeg_target_arch=$(usex cpu_flags_arm_neon arm-neon arm)
-	elif [[ "${myarch}" == "ppc64" ]] ; then
-		target_cpu="ppc64"
-		ffmpeg_target_arch="ppc64"
-	else
-		die "Failed to determine target arch, got '${myarch}'."
-	fi
-
-	myconf_gn+=(
-		"current_cpu=\"${target_cpu}\""
-		"host_cpu=\"${target_cpu}\""
-		"target_cpu=\"${target_cpu}\""
-		"v8_current_cpu=\"${target_cpu}\""
-	)
-
-
-	myconf_gn+=(
-		"treat_warnings_as_errors=false"
-
-	# Disable fatal linker warnings, bug 506268.
-		"fatal_linker_warnings=false"
-	)
-
 	# Disable external code space for V8 for ppc64. It is disabled for ppc64
 	# by default, but cross-compiling on amd64 enables it again.
 	if tc-is-cross-compiler ; then
@@ -5739,6 +5745,21 @@ ewarn
 	addpredict "/dev/dri/" #nowarn
 
 	if use system-ffmpeg ; then
+		local ffmpeg_target_arch
+		if [[ "${myarch}" == "amd64" ]] ; then
+			ffmpeg_target_arch="x64"
+		elif [[ "${myarch}" == "x86" ]] ; then
+			ffmpeg_target_arch="ia32"
+		elif [[ "${myarch}" == "arm64" ]] ; then
+			ffmpeg_target_arch="arm64"
+		elif [[ "${myarch}" == "arm" ]] ; then
+			ffmpeg_target_arch=$(usex cpu_flags_arm_neon "arm-neon" "arm")
+		elif [[ "${myarch}" == "ppc64" ]] ; then
+			ffmpeg_target_arch="ppc64"
+		else
+			die "Failed to determine target arch, got '${myarch}'."
+		fi
+
 		local build_ffmpeg_args=""
 		if use pic && [[ "${ffmpeg_target_arch}" == "ia32" ]] ; then
 			build_ffmpeg_args+=" --disable-asm"
@@ -5766,9 +5787,6 @@ einfo "Configuring bundled ffmpeg..."
 	fi
 
 	myconf_gn+=(
-	# Don't need nocompile checks and GN crashes with our config
-		"enable_nocompile_tests=false"
-
 	# 131 began laying the groundwork for replacing freetype with
 	# "Rust-based Fontations set of libraries plus Skia path rendering"
 	# We now need to opt-in
@@ -5782,23 +5800,22 @@ einfo "Configuring bundled ffmpeg..."
 	if use headless ; then
 		myconf_gn+=(
 			"ozone_platform=\"headless\""
-			"use_xkbcommon=false"
-			"use_gtk=false"
+			"use_alsa=false"
 			"use_qt5=false"
 			"use_qt6=false"
-			"use_glib=false"
 			"use_gio=false"
-			"use_pangocairo=false"
-			"use_alsa=false"
+			"use_glib=false"
 			"use_libpci=false"
+			"use_pangocairo=false"
 			"use_udev=false"
+			"use_xkbcommon=false"
 			"enable_remoting=false"
 		)
 	else
 		myconf_gn+=(
+			"use_qt5=false"
 			"use_system_minigbm=true"
 			"use_xkbcommon=true"
-			"use_qt5=false"
 		)
 		if use qt6 ; then
 			myconf_gn+=(
@@ -5824,9 +5841,9 @@ einfo "Configuring bundled ffmpeg..."
 		fi
 		myconf_gn+=(
 			"use_qt6=$(usex qt6 true false)"
+			"ozone_platform=$(usex wayland \"wayland\" \"x11\")"
 			"ozone_platform_x11=$(usex X true false)"
 			"ozone_platform_wayland=$(usex wayland true false)"
-			"ozone_platform=$(usex wayland \"wayland\" \"x11\")"
 		)
 		if use wayland ; then
 			myconf_gn+=(
@@ -5842,14 +5859,6 @@ einfo "Configuring bundled ffmpeg..."
 			"tools/generate_shim_headers/generate_shim_headers.py" \
 			|| die
 	fi
-
-	# Skipping typecheck is only supported on amd64, bug #876157
-	if ! use amd64 ; then
-		myconf_gn+=(
-			"devtools_skip_typecheck=false"
-		)
-	fi
-
 }
 
 _src_configure() {
@@ -5890,6 +5899,7 @@ ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
 	_configure_optimization_level
 	_configure_performance_pgo
 	_configure_performance_simd
+	_configure_performance_thp
 	_configure_security
 	_configure_debug
 	_configure_features
@@ -6057,9 +6067,9 @@ _src_compile() {
 		"
 	fi
 
-	mv out/Release/chromedriver{.unstripped,} || die
+	mv "out/Release/chromedriver"{".unstripped",""} || die
 
-	rm -f out/Release/locales/*.pak.info || die
+	rm -f "out/Release/locales/"*".pak.info" || die
 
 	# Build manpage; bug #684550
 	sed -e  '
