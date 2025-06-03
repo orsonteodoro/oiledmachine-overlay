@@ -14,6 +14,7 @@ EAPI="8"
 # 128.7.0 -> 128.8.0
 # 128.8.0 -> 128.9.0
 # 128.9.0 -> 128.10.0
+# 128.10.0 -> 128.11.0
 
 CFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO TC"
@@ -78,7 +79,7 @@ inherit autotools cflags-hardened check-compiler-switch check-reqs dhms flag-o-m
 inherit multiprocessing prefix python-any-r1 rust rustflags-hardened
 inherit toolchain-funcs
 
-KEYWORDS="~amd64 ~arm ~arm64 ~riscv ~x86"
+KEYWORDS="~amd64 ~arm ~arm64 ~loong ~ppc ~ppc64 ~riscv ~x86"
 S="${WORKDIR}/firefox-${PV%_*}"
 SRC_URI="
 	${MOZ_SRC_BASE_URI}/source/${MOZ_P}.source.tar.xz -> ${MOZ_P_DISTFILES}.source.tar.xz
@@ -126,14 +127,6 @@ gen_clang_bdepend() {
 
 }
 RUST_CDEPEND="
-	llvm_slot_17? (
-		|| (
-			=dev-lang/rust-1.77*
-			=dev-lang/rust-1.76*
-			=dev-lang/rust-bin-1.77*
-			=dev-lang/rust-bin-1.76*
-		)
-	)
 	llvm_slot_18? (
 		|| (
 			=dev-lang/rust-1.81*
@@ -144,6 +137,14 @@ RUST_CDEPEND="
 			=dev-lang/rust-bin-1.80*
 			=dev-lang/rust-bin-1.79*
 			=dev-lang/rust-bin-1.78*
+		)
+	)
+	llvm_slot_17? (
+		|| (
+			=dev-lang/rust-1.77*
+			=dev-lang/rust-1.76*
+			=dev-lang/rust-bin-1.77*
+			=dev-lang/rust-bin-1.76*
 		)
 	)
 	|| (
