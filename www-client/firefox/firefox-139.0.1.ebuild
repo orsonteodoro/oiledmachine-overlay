@@ -4,6 +4,9 @@
 
 EAPI=8
 
+# D11, D12, D13, F36, F37, F38, F39, F40, F41, F42, U22, U24
+# See /var/tmp/portage/www-client/firefox-139.0.1/work/firefox-139.0.1/taskcluster/kinds/bootstrap/kind.yml
+
 # 127.0.1 -> 129.0.2
 # 129.0.2 -> 130.0.0
 # 130.0 -> 131.0
@@ -166,7 +169,7 @@ LICENSE_FINGERPRINT="\
 dd6256b7efd8816420b21b72373ee03490f5a0add8a6b3023987b9da0b23e59b\
 f083c0a8f948b411fff5fd067f17ac5f825bb7e8e918e5c0c3739c49df26c491\
 " # SHA512
-LLVM_COMPAT=( 19 ) # Limited based on rust
+LLVM_COMPAT=( 20 19 ) # Limited based on rust
 LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
 MITIGATION_DATE="May 27, 2025" # Advisory date
@@ -225,9 +228,9 @@ MOZILLA_FIVE_HOME="" # Global variable
 NABIS=0 # Global variable
 NASM_PV="2.14.02"
 NODE_VERSION=18
-PYTHON_COMPAT=( "python3_"{10..11} )
+PYTHON_COMPAT=( "python3_"{10..13} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
-RUST_MAX_VER="1.86.0" # Inclusive
+RUST_MAX_VER="9999" # Inclusive
 RUST_MIN_VER="1.82.0" # Corresponds to llvm 19, rust min required for llvm 19
 RUST_NEEDS_LLVM=1
 RUST_PV="${RUST_MIN_VER}"
@@ -472,6 +475,14 @@ PATENT_CDEPENDS="
 "
 # ZLIB relaxed
 RUST_CDEPEND="
+	llvm_slot_20? (
+		|| (
+			=dev-lang/rust-9999[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.87*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-9999*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.87*[${MULTILIB_USEDEP}]
+		)
+	)
 	llvm_slot_19? (
 		|| (
 			=dev-lang/rust-1.86*[${MULTILIB_USEDEP}]

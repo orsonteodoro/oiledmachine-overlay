@@ -68,6 +68,7 @@ fi
 # Definitive list of Rust slots and the associated LLVM slot, newest first.
 declare -A -g -r _RUST_LLVM_MAP=(
 	["9999"]=20
+	["1.87.0"]=20
 	["1.86.0"]=19
 	["1.85.1"]=19
 	["1.85.0"]=19
@@ -94,6 +95,7 @@ declare -A -g -r _RUST_LLVM_MAP=(
 # this array is used to store the Rust slots in a more convenient order for iteration.
 declare -a -g -r _RUST_SLOTS_ORDERED=(
 	"9999"
+	"1.87.0"
 	"1.86.0"
 	"1.85.1"
 	"1.85.0"
@@ -238,10 +240,8 @@ _rust_set_globals() {
 	local slot
 	# Try to keep this in order of newest to oldest
 	for slot in "${_RUST_SLOTS_ORDERED[@]}"; do
-		if ver_test "${slot}" -le "${RUST_MAX_VER:-9999}" &&
-			ver_test "${slot}" -ge "${RUST_MIN_VER:-0}"
-			then
-				_RUST_SLOTS+=( "${slot}" )
+		if ver_test "${RUST_MIN_VER:-0}" -le "${slot}" && ver_test "${slot}" -le "${RUST_MAX_VER:-9999}" ; then
+			_RUST_SLOTS+=( "${slot}" )
 		fi
 	done
 
@@ -275,7 +275,7 @@ _rust_set_globals() {
 	else
 		for llvm_slot in "${LLVM_COMPAT[@]}"; do
 			# Quick sanity check to make sure that the llvm slot is valid for Rust.
-			if [[ "${_RUST_LLVM_MAP[@]}" == *"${llvm_slot}"* ]]; then
+			if [[ "${_RUST_LLVM_MAP[@]}" =~ (^| )"${llvm_slot}"( |$) ]]; then
 				# We're working a bit backwards here; iterate over _RUST_LLVM_MAP, check the
 				# LLVM slot, and if it matches add this to a new array because it may (and likely will)
 				# match multiple Rust slots. We already filtered Rust max/min slots.

@@ -4,6 +4,9 @@
 
 EAPI=8
 
+# D11, D12, D13, F36, F37, F38, F39, F40, F41, F42, U22, U23, U24
+# See /var/tmp/portage/www-client/firefox-128.11.0e/work/firefox-128.11.0/taskcluster/kinds/bootstrap/kind.yml
+
 # 115.12.0 -> 128.1.0
 # 128.1.0 -> 128.2.0
 # 128.2.0 -> 128.3.0
@@ -225,7 +228,7 @@ MOZILLA_FIVE_HOME="" # Global variable
 NABIS=0 # Global variable
 NASM_PV="2.14.02"
 NODE_VERSION=18
-PYTHON_COMPAT=( "python3_"{10..11} )
+PYTHON_COMPAT=( "python3_"{10..13} )
 PYTHON_REQ_USE="ncurses,sqlite,ssl"
 RUST_MAX_VER="1.81.0" # Inclusive.  Corresponds to llvm 18
 RUST_MIN_VER="1.76.0" # Corresponds to llvm 17
@@ -468,14 +471,6 @@ PATENT_CDEPENDS="
 	)
 "
 RUST_CDEPEND="
-	llvm_slot_17? (
-		|| (
-			=dev-lang/rust-1.77*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-1.76*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.77*[${MULTILIB_USEDEP}]
-			=dev-lang/rust-bin-1.76*[${MULTILIB_USEDEP}]
-		)
-	)
 	llvm_slot_18? (
 		|| (
 			=dev-lang/rust-1.81*[${MULTILIB_USEDEP}]
@@ -486,6 +481,14 @@ RUST_CDEPEND="
 			=dev-lang/rust-bin-1.80*[${MULTILIB_USEDEP}]
 			=dev-lang/rust-bin-1.79*[${MULTILIB_USEDEP}]
 			=dev-lang/rust-bin-1.78*[${MULTILIB_USEDEP}]
+		)
+	)
+	llvm_slot_17? (
+		|| (
+			=dev-lang/rust-1.77*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-1.76*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.77*[${MULTILIB_USEDEP}]
+			=dev-lang/rust-bin-1.76*[${MULTILIB_USEDEP}]
 		)
 	)
 	|| (
@@ -499,7 +502,7 @@ CDEPEND="
 	>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.42:2[${MULTILIB_USEDEP}]
 	>=dev-libs/nss-3.101[${MULTILIB_USEDEP}]
-	>=dev-libs/nspr-4.35[${MULTILIB_USEDEP}]
+	>=dev-libs/nspr-4.35.0[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.7.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.13.2[${MULTILIB_USEDEP}]
 	>=sys-libs/zlib-1.3.1[${MULTILIB_USEDEP}]
