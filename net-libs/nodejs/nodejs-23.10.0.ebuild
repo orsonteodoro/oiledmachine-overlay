@@ -132,7 +132,7 @@ $(gen_iuse_pgo)
 acorn +asm +corepack cpu_flags_x86_sse2 debug doc
 -drumbrake fips +icu inspector +npm man mold pax-kernel pgo +snapshot +ssl
 system-icu +system-ssl test
-ebuild_revision_44
+ebuild_revision_45
 "
 
 gen_required_use_pgo() {
@@ -656,9 +656,6 @@ ewarn "If moldlto fails for gcc, try clang."
 		'-fprofile*' \
 		'-fuse-ld*'
 
-	# Already set in src_prepare()
-	filter-flags '-O*'
-
 	if use mold && [[ "${LTO_TYPE}" == "none" || -z "${LTO_TYPE}" ]] ; then
 		append-ldflags -fuse-ld=mold
 	fi
@@ -713,6 +710,9 @@ ewarn
 		myconf+=( --v8-enable-hugepage )
 	fi
 	set_jit_level
+
+	# Already set in src_prepare()
+	filter-flags '-O*'
 
 	local myarch
 	myarch="${ABI/amd64/x64}"
