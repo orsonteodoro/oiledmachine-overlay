@@ -4,6 +4,9 @@
 
 EAPI=8
 
+# For node range see:
+# https://github.com/acornjs/acorn/blob/8.14.1/acorn/package.json#L21
+
 KEYWORDS="~amd64"
 S="${WORKDIR}"
 SRC_URI=""
@@ -19,6 +22,7 @@ RESTRICT="mirror"
 SLOT="$(ver_cut 1-2 ${PV})"
 IUSE+=" "
 CDEPEND+="
+	>=net-libs/nodejs-0.4.0
 	!sys-apps/npm:0
 	sys-apps/npm
 "
