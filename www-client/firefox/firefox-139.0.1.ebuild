@@ -1175,7 +1175,7 @@ eerror "Failed to read ld.lld version!"
 				die
 			fi
 
-			local llvm_rust_pv=$(rustc -Vv 2>/dev/null \
+			local llvm_rust_pv=$(${RUSTC} -Vv 2>/dev/null \
 				| grep -F -- 'LLVM version:' \
 				| awk '{ print $3 }')
 			if [[ -n ${llvm_rust_pv} ]] ; then
@@ -1188,6 +1188,7 @@ eerror "Failed to read used LLVM version from rustc!"
 		fi
 
 		rust_pkg_setup
+		${RUSTC} --version 2>&1 >/dev/null || die "QA:  RUSTC is not initalized"
 		python-any-r1_pkg_setup
 
 	# Avoid PGO profiling problems due to enviroment leakage
@@ -1619,7 +1620,7 @@ _fix_paths() {
 
 	# For rust crates libloading and glslopt
 	if tc-is-clang ; then
-		local version_clang=$(clang --version 2>/dev/null \
+		local version_clang=$(${CC} --version 2>/dev/null \
 			| grep -F -- 'clang version' \
 			| awk '{ print $3 }')
 		if [[ -n "${version_clang}" ]] ; then
@@ -1812,6 +1813,7 @@ einfo "Switching to gcc"
 		RANLIB="gcc-ranlib"
 	fi
 	strip-unsupported-flags
+	${CC} --version 2>&1 >/dev/null || die "QA:  CC is not initalized"
 }
 
 _src_configure_compiler() {
@@ -1941,7 +1943,7 @@ einfo
 	mozconfig_add_options_ac '' --enable-update-channel=${update_channel}
 
 	if use rust-simd ; then
-		local rust_pv=$(rustc --version | cut -f 2 -d " ")
+		local rust_pv=$(${RUSTC} --version | cut -f 2 -d " ")
 		if ver_test "${rust_pv}" -gt "1.78" ; then
 eerror "Use eselect to switch rust to < 1.78 or disable the rust-simd USE flag."
 			die
