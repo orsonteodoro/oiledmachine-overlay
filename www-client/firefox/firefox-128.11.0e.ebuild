@@ -1226,6 +1226,8 @@ ewarn "Building ${PN} with USE=pgo and FEATURES=-userpriv is not supported!"
 		done
 		llvm_pkg_setup
 
+		rust_pkg_setup
+		${RUSTC} --version 2>&1 >/dev/null || die "QA:  RUSTC is not initalized"
 		if tc-is-clang && is-flagq '-flto*' && tc-ld-is-lld ; then
 			has_version "llvm-core/lld:$(clang-major-version)" \
 				|| die "Clang PGO requires LLD."
@@ -1251,8 +1253,6 @@ eerror "Failed to read used LLVM version from rustc!"
 			fi
 		fi
 
-		rust_pkg_setup
-		${RUSTC} --version 2>&1 >/dev/null || die "QA:  RUSTC is not initalized"
 		python-any-r1_pkg_setup
 
 	# Avoid PGO profiling problems due to enviroment leakage
