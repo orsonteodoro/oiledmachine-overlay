@@ -279,9 +279,6 @@ RESTRICT="mirror"
 SLOT="rapid"
 LICENSE="
 	${LICENSE_FILE_NAME}
-	GPL-2
-	LGPL-2.1
-	MPL-2.0
 "
 
 # (unforced) -hwaccel, pgo, x11 + wayland are defaults in -bin browser

@@ -277,9 +277,6 @@ DESCRIPTION="Firefox Web Browser"
 RESTRICT="mirror"
 LICENSE="
 	${LICENSE_FILE_NAME}
-	GPL-2
-	LGPL-2.1
-	MPL-2.0
 "
 
 # (unforced) -hwaccel, pgo, x11 + wayland are defaults in -bin browser
