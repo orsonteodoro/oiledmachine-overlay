@@ -4443,7 +4443,7 @@ eerror
 	fi
 }
 
-_configure_performance(){
+_configure_performance_pgo(){
 	if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" ]] ; then # Disable annoying check
 		:
 	elif use pgo ; then
@@ -4500,7 +4500,7 @@ einfo
 	fi
 }
 
-_configure_simd(){
+_configure_performance_simd(){
 	if false && ! use custom-cflags ; then
 	# Prevent libvpx/xnnpack build failures. Bug 530248, 544702,
 	# 546984, 853646.
@@ -5306,14 +5306,7 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 	fi
 }
 
-
-_configure_features() {
-	myconf_gn+=(
-		"is_official_build=$(usex official true false)"
-	)
-
-
-
+_configure_debug() {
 	# Debug symbols level 2 is still on when official is on even though
 	# is_debug=false.
 	#
@@ -5345,7 +5338,22 @@ _configure_features() {
 	# Component build isn't generally intended for use by end users. It's mostly useful
 	# for development and debugging.
 		"is_component_build=false"
+	)
 
+	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium && has cromite ${IUSE_EFFECTIVE} && use cromite ; then
+		TARGET_ISDEBUG=$(usex debug "true" "false")
+	elif has cromite ${IUSE_EFFECTIVE} && use cromite ; then
+		TARGET_ISDEBUG=$(usex debug "true" "false")
+	fi
+}
+
+
+_configure_features() {
+	myconf_gn+=(
+		"is_official_build=$(usex official true false)"
+	)
+
+	myconf_gn+=(
 	# Disable nacl, we can't build without pnacl (http://crbug.com/269560).
 		"enable_nacl=false"
 	)
@@ -5886,15 +5894,15 @@ ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
 	_configure_build_system
 	_configure_linker
 	_configure_optimization_level
-	_configure_performance
-	_configure_simd
+	_configure_performance_pgo
+	_configure_performance_simd
 	_configure_security
+	_configure_debug
 	_configure_features
 
 	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium && has cromite ${IUSE_EFFECTIVE} && use cromite ; then
 einfo "Configuring Cromite + ungoogled-chromium..."
 		[[ "${ABI}" == "amd64" ]] || die "Cromite only supports ARCH=${ARCH}"
-		TARGET_ISDEBUG=$(usex debug "true" "false")
 		myconf_gn+=(
 			"target_os =\"linux\" "$(cat "${S_CROMITE}/build/cromite.gn_args")
 			""$(cat "${S_UNGOOGLED_CHROMIUM}/flags.gn")
@@ -5902,7 +5910,6 @@ einfo "Configuring Cromite + ungoogled-chromium..."
 	elif has cromite ${IUSE_EFFECTIVE} && use cromite ; then
 einfo "Configuring Cromite..."
 		[[ "${ABI}" == "amd64" ]] || die "Cromite only supports ARCH=${ARCH}"
-		TARGET_ISDEBUG=$(usex debug "true" "false")
 		myconf_gn+=(
 			"target_os =\"linux\" "$(cat "${S_CROMITE}/build/cromite.gn_args")
 		)
