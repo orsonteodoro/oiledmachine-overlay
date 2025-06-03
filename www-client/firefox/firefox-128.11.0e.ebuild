@@ -164,6 +164,7 @@ FIREFOX_PATCHSET="firefox-${PV%%.*}esr-patches-11.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 GTK3_PV="3.14.5"
+LICENSE_FILE_NAME="Firefox-$(ver_cut 1-2 ${PV})-ESR-Licenses.html"
 LICENSE_FINGERPRINT="\
 dcda5b12dce8c42c9a09e28f5320679d1d6bb506a0c429005046b5606a341ab2\
 2a1798763b46e4002e33d80cd416fb285494e88a8fd8413a97019c7772373a32\
@@ -275,10 +276,10 @@ DESCRIPTION="Firefox Web Browser"
 # llvm_gen_dep is broken for ${MULTILIB_USEDEP} if inserted directly.
 RESTRICT="mirror"
 LICENSE="
-	FF-$(ver_cut 1-2 ${PV})-ESR-THIRD-PARTY-LICENSES.html
-	MPL-2.0
+	${LICENSE_FILE_NAME}
 	GPL-2
 	LGPL-2.1
+	MPL-2.0
 "
 
 # (unforced) -hwaccel, pgo, x11 + wayland are defaults in -bin browser

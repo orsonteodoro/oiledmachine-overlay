@@ -162,6 +162,7 @@ FIREFOX_LOONG_PATCHSET="firefox-${PV%%.*}-loong-patches-01.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 GTK3_PV="3.14.5"
+LICENSE_FILE_NAME="Firefox-$(ver_cut 1-2 ${PV})-Licenses.html"
 LICENSE_FINGERPRINT="\
 dd6256b7efd8816420b21b72373ee03490f5a0add8a6b3023987b9da0b23e59b\
 f083c0a8f948b411fff5fd067f17ac5f825bb7e8e918e5c0c3739c49df26c491\
@@ -277,10 +278,10 @@ HOMEPAGE="https://www.mozilla.com/firefox"
 RESTRICT="mirror"
 SLOT="rapid"
 LICENSE="
-	FF-$(ver_cut 1-2 ${PV})-THIRD-PARTY-LICENSES.html
-	MPL-2.0
+	${LICENSE_FILE_NAME}
 	GPL-2
 	LGPL-2.1
+	MPL-2.0
 "
 
 # (unforced) -hwaccel, pgo, x11 + wayland are defaults in -bin browser
