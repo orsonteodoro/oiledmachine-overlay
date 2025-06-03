@@ -312,10 +312,10 @@ src_install() {
 pkg_preinst() {
 	dhms_end
 	local count=$(find "/usr/share/chromium/toolchain/" -type f | wc -l)
-einfo "QA:  Update chromium ebuild with tc_count_expected=${count}"
 	echo "${count}" >> "/usr/share/chromium/toolchain/file-count"
 einfo "Files merged:"
 	find "/usr/share/chromium/toolchain/"
+einfo "QA:  Update chromium ebuild with tc_count_expected=${count}"
 }
 
 pkg_postrm() {
