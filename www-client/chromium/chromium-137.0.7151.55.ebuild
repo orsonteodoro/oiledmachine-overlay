@@ -3776,9 +3776,6 @@ einfo "Using the system toolchain"
 		)
 	fi
 
-	# Handled by build scripts
-	filter-flags '-fuse-ld=*'
-
 	if tc-is-clang ; then
 	# https://bugs.gentoo.org/918897#c32
 		append-ldflags -Wl,--undefined-version
@@ -3801,11 +3798,6 @@ einfo "Using the system toolchain"
 			BUILD_NM="llvm-nm"
 		fi
 	fi
-
-	# Define a custom toolchain for GN
-	myconf_gn+=(
-		"custom_toolchain=\"//build/toolchain/linux/unbundle:default\""
-	)
 
 	if tc-is-clang ; then
 		myconf_gn+=(
@@ -3840,12 +3832,6 @@ einfo "Using the system toolchain"
 		)
 	fi
 
-	# Silence
-	# The expected Rust version is [...] but the actual version is None
-	myconf_gn+=(
-		#"use_chromium_rust_toolchain=false"
-	)
-
 	# We don't want to depend on llvm/llvm-r1 eclasses.
 
 	# Set LLVM_CONFIG to help Meson (bug #907965) but only do it
@@ -3862,21 +3848,29 @@ einfo "Using the system toolchain"
 	# are required for CFI.
 	export RUSTC_BOOTSTRAP=1
 
-	# bindgen settings
-	# From 127, to make bindgen work, we need to provide a location for libclang.
-	# We patch this in for gentoo - see chromium-*-bindgen-custom-toolchain.patch
-	# rust_bindgen_root = directory with `bin/bindgen` beneath it.
 	myconf_gn+=(
-		"rust_bindgen_root=\"${EPREFIX}/usr/\""
-
 		"bindgen_libclang_path=\"$(get_llvm_prefix)/$(get_libdir)\""
 	# We don't need to set 'clang_base_bath' for anything in our build
 	# and it defaults to the google toolchain location. Instead provide a location
 	# to where system clang lives sot that bindgen can find system headers (e.g. stddef.h)
 		"clang_base_path=\"${EPREFIX}/usr/lib/clang/${LLVM_SLOT}/\""
 
+	# Define a custom toolchain for GN
+		"custom_toolchain=\"//build/toolchain/linux/unbundle:default\""
+
+	# bindgen settings
+	# From 127, to make bindgen work, we need to provide a location for libclang.
+	# We patch this in for gentoo - see chromium-*-bindgen-custom-toolchain.patch
+	# rust_bindgen_root = directory with `bin/bindgen` beneath it.
+		"rust_bindgen_root=\"${EPREFIX}/usr/\""
+
 		"rust_sysroot_absolute=\"$(get_rust_prefix)\""
 		"rustc_version=\"${RUST_SLOT}\""
+
+	# Silence
+	# The expected Rust version is [...] but the actual version is None
+		#"use_chromium_rust_toolchain=false"
+
 	)
 }
 
@@ -4809,7 +4803,6 @@ _configure_performance_simd(){
 	fi
 }
 
-
 _configure_linker() {
 	local use_thinlto=0
 
@@ -4884,7 +4877,7 @@ eerror
 	; then
 einfo "Using ThinLTO"
 		myconf_gn+=(
-			"use_thin_lto=true "
+			"use_thin_lto=true"
 		)
 		filter-lto
 		filter-flags '-fuse-ld=*'
@@ -4910,11 +4903,6 @@ eerror "To use mold, enable the mold USE flag."
 		die
 	fi
 
-	if use mold ; then
-	# Handled by build scripts
-		filter-flags '-fuse-ld=*'
-	fi
-
 	# See https://github.com/rui314/mold/issues/336
 	if use mold && (( ${use_thinlto} == 0 && ${USE_LTO} == 1 )) ; then
 		if tc-is-clang ; then
@@ -4938,6 +4926,9 @@ einfo "Using Mold without LTO"
 	# Disable fatal linker warnings, bug 506268.
 		"fatal_linker_warnings=false"
 	)
+
+	# Handled by build scripts
+	filter-flags '-fuse-ld=*'
 }
 
 _configure_v8() {
