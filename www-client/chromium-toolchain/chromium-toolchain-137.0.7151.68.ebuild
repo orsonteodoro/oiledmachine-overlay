@@ -43,7 +43,6 @@ DESCRIPTION="The Chromium toolchain (Clang + Rust + gn)"
 HOMEPAGE="https://www.chromium.org/"
 LICENSE="
 	chromium-$(ver_cut 1-3 ${PV}).x.html
-
 	(
 		all-rights-reserved
 		OFL-1.1
