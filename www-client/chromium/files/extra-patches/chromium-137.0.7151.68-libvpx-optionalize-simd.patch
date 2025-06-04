@@ -1,0 +1,277 @@
+--- a/third_party/libvpx/BUILD.gn.orig	2025-05-30 12:50:32.000000000 -0700
++++ b/third_party/libvpx/BUILD.gn	2025-06-03 16:36:17.026796232 -0700
+@@ -5,6 +5,7 @@
+ import("//build/config/android/config.gni")
+ import("//build/config/arm.gni")
+ import("//build/config/chromeos/ui_mode.gni")
++import("//build/config/simd.gni")
+ import("//testing/test.gni")
+ import("//third_party/libvpx/libvpx_srcs.gni")
+ import("//third_party/libvpx/libvpx_test_srcs.gni")
+@@ -151,9 +152,33 @@ executable("decode_encode_profile_test")
+ if (current_cpu == "x86" || (current_cpu == "x64" && !is_msan)) {
+   nasm_assemble("libvpx_asm") {
+     if (current_cpu == "x86") {
+-      sources = libvpx_srcs_x86_assembly
++      sources = libvpx_srcs_x86_assembly_common
++      if (use_mmx) {
++        sources += libvpx_srcs_x86_assembly_mmx
++      }
++      if (use_sse2) {
++        sources += libvpx_srcs_x86_assembly_sse2
++      }
++      if (use_sse3) {
++        sources += libvpx_srcs_x86_assembly_sse3
++      }
++      if (use_ssse3) {
++        sources += libvpx_srcs_x86_assembly_ssse3
++      }
+     } else if (current_cpu == "x64") {
+-      sources = libvpx_srcs_x86_64_assembly
++      sources = libvpx_srcs_x86_64_assembly_common
++      if (use_mmx) {
++        sources += libvpx_srcs_x86_64_assembly_mmx
++      }
++      if (use_sse2) {
++        sources += libvpx_srcs_x86_64_assembly_sse2
++      }
++      if (use_sse3) {
++        sources += libvpx_srcs_x86_64_assembly_sse3
++      }
++      if (use_ssse3) {
++        sources += libvpx_srcs_x86_64_assembly_ssse3
++      }
+     }
+     inputs = [
+       "$platform_include_dir/vpx_config.asm",
+@@ -583,16 +608,46 @@ static_library("libvpx") {
+   configs += [ ":libvpx_config" ]
+   deps = []
+   if (current_cpu == "x86" || (current_cpu == "x64" && !is_msan)) {
+-    deps += [
+-      ":libvpx_asm",
+-      ":libvpx_intrinsics_avx",
+-      ":libvpx_intrinsics_avx2",
+-      ":libvpx_intrinsics_avx512",
+-      ":libvpx_intrinsics_mmx",
+-      ":libvpx_intrinsics_sse2",
+-      ":libvpx_intrinsics_sse4_1",
+-      ":libvpx_intrinsics_ssse3",
+-    ]
++    if (use_mmx || use_sse2 || use_sse3 || use_ssse3) {
++      deps += [
++        ":libvpx_asm",
++      ]
++    }
++    if (use_avx) {
++       deps += [
++       ":libvpx_intrinsics_avx",
++      ]
++    }
++    if (use_avx2) {
++      deps += [
++        ":libvpx_intrinsics_avx2",
++      ]
++    }
++    if (use_avx512) {
++      deps += [
++        ":libvpx_intrinsics_avx512",
++      ]
++    }
++    if (use_mmx) {
++      deps += [
++        ":libvpx_intrinsics_mmx",
++      ]
++    }
++    if (use_sse2) {
++      deps += [
++        ":libvpx_intrinsics_sse2",
++      ]
++    }
++    if (use_sse4_1) {
++      deps += [
++        ":libvpx_intrinsics_sse4_1",
++      ]
++    }
++    if (use_ssse3) {
++      deps += [
++        ":libvpx_intrinsics_ssse3",
++      ]
++    }
+   }
+   if (cpu_arch_full == "arm-neon-highbd" || cpu_arch_full == "arm-neon" ||
+       cpu_arch_full == "arm-neon-cpu-detect" || current_cpu == "arm64" ||
+@@ -600,23 +655,37 @@ static_library("libvpx") {
+     deps += [ ":libvpx_intrinsics_neon" ]
+   }
+   if (current_cpu == "arm64" || current_cpu == "arm64e") {
+-    deps += [ ":libvpx_intrinsics_neon_dotprod" ]
+-    deps += [ ":libvpx_intrinsics_neon_i8mm" ]
++    if (use_neon && use_dotprod) {
++      deps += [ ":libvpx_intrinsics_neon_dotprod" ]
++    }
++    if (use_neon && use_i8mm) {
++      deps += [ ":libvpx_intrinsics_neon_i8mm" ]
++    }
+     if (!is_win) {
+-      deps += [
+-        ":libvpx_intrinsics_sve",
+-        ":libvpx_intrinsics_sve2",
+-      ]
++      if (use_sve) {
++        deps += [
++          ":libvpx_intrinsics_sve",
++        ]
++      }
++      if (use_sve2) {
++        deps += [
++          ":libvpx_intrinsics_sve2",
++        ]
++      }
+     }
+   }
+   if (is_android) {
+     deps += [ "//third_party/cpu_features:ndk_compat" ]
+   }
+   if (current_cpu == "arm" && arm_assembly_sources != []) {
+-    deps += [ ":libvpx_assembly_arm" ]
++    if (use_neon) {
++      deps += [ ":libvpx_assembly_arm" ]
++    }
+   }
+   if (current_cpu == "loong64") {
+-    deps += [ ":libvpx_loongarch_lsx" ]
++    if (use_lsx) {
++      deps += [ ":libvpx_loongarch_lsx" ]
++    }
+   }
+ 
+   public_configs = [ ":libvpx_public_config" ]
+--- a/third_party/libvpx/libvpx_srcs.gni.orig	2025-05-30 12:50:32.000000000 -0700
++++ b/third_party/libvpx/libvpx_srcs.gni	2025-06-03 16:34:04.091066551 -0700
+@@ -374,21 +374,23 @@ libvpx_srcs_x86_headers = [
+   "//third_party/libvpx/source/libvpx/vpx_util/vpx_timestamp.h",
+   "//third_party/libvpx/source/libvpx/vpx_util/vpx_write_yuv_frame.h",
+ ]
+-libvpx_srcs_x86_assembly = [
++libvpx_srcs_x86_assembly_common = [
++]
++libvpx_srcs_x86_assembly_mmx = [
+   "//third_party/libvpx/source/libvpx/vp8/common/x86/dequantize_mmx.asm",
+   "//third_party/libvpx/source/libvpx/vp8/common/x86/idctllm_mmx.asm",
++  "//third_party/libvpx/source/libvpx/vp8/common/x86/recon_mmx.asm",
++  "//third_party/libvpx/source/libvpx/vp8/common/x86/subpixel_mmx.asm",
++]
++libvpx_srcs_x86_assembly_sse2 = [
+   "//third_party/libvpx/source/libvpx/vp8/common/x86/idctllm_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vp8/common/x86/iwalsh_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vp8/common/x86/loopfilter_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vp8/common/x86/mfqe_sse2.asm",
+-  "//third_party/libvpx/source/libvpx/vp8/common/x86/recon_mmx.asm",
+   "//third_party/libvpx/source/libvpx/vp8/common/x86/recon_sse2.asm",
+-  "//third_party/libvpx/source/libvpx/vp8/common/x86/subpixel_mmx.asm",
+   "//third_party/libvpx/source/libvpx/vp8/common/x86/subpixel_sse2.asm",
+-  "//third_party/libvpx/source/libvpx/vp8/common/x86/subpixel_ssse3.asm",
+   "//third_party/libvpx/source/libvpx/vp8/encoder/x86/block_error_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vp8/encoder/x86/copy_sse2.asm",
+-  "//third_party/libvpx/source/libvpx/vp8/encoder/x86/copy_sse3.asm",
+   "//third_party/libvpx/source/libvpx/vp8/encoder/x86/dct_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vp8/encoder/x86/fwalsh_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vp9/common/x86/vp9_mfqe_sse2.asm",
+@@ -402,7 +404,6 @@ libvpx_srcs_x86_assembly = [
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_subpel_variance_impl_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_variance_impl_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/intrapred_sse2.asm",
+-  "//third_party/libvpx/source/libvpx/vpx_dsp/x86/intrapred_ssse3.asm",
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/inv_wht_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/sad4d_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/sad_sse2.asm",
+@@ -412,8 +413,15 @@ libvpx_srcs_x86_assembly = [
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_high_subpixel_8t_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_high_subpixel_bilinear_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_subpixel_8t_sse2.asm",
+-  "//third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_subpixel_8t_ssse3.asm",
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_subpixel_bilinear_sse2.asm",
++]
++libvpx_srcs_x86_assembly_sse3 = [
++  "//third_party/libvpx/source/libvpx/vp8/encoder/x86/copy_sse3.asm",
++]
++libvpx_srcs_x86_assembly_ssse3 = [
++  "//third_party/libvpx/source/libvpx/vp8/common/x86/subpixel_ssse3.asm",
++  "//third_party/libvpx/source/libvpx/vpx_dsp/x86/intrapred_ssse3.asm",
++  "//third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_subpixel_8t_ssse3.asm",
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_subpixel_bilinear_ssse3.asm",
+ ]
+ libvpx_srcs_x86_mmx = [
+@@ -867,52 +875,60 @@ libvpx_srcs_x86_64_headers = [
+   "//third_party/libvpx/source/libvpx/vpx_util/vpx_timestamp.h",
+   "//third_party/libvpx/source/libvpx/vpx_util/vpx_write_yuv_frame.h",
+ ]
+-libvpx_srcs_x86_64_assembly = [
++libvpx_srcs_x86_64_assembly_mmx = [
+   "//third_party/libvpx/source/libvpx/vp8/common/x86/dequantize_mmx.asm",
+   "//third_party/libvpx/source/libvpx/vp8/common/x86/idctllm_mmx.asm",
++  "//third_party/libvpx/source/libvpx/vp8/common/x86/recon_mmx.asm",
++  "//third_party/libvpx/source/libvpx/vp8/common/x86/subpixel_mmx.asm",
++  "//third_party/libvpx/source/libvpx/vpx_ports/emms_mmx.asm",
++]
++libvpx_srcs_x86_64_assembly_sse2 = [
+   "//third_party/libvpx/source/libvpx/vp8/common/x86/idctllm_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vp8/common/x86/iwalsh_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vp8/common/x86/loopfilter_block_sse2_x86_64.asm",
+   "//third_party/libvpx/source/libvpx/vp8/common/x86/loopfilter_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vp8/common/x86/mfqe_sse2.asm",
+-  "//third_party/libvpx/source/libvpx/vp8/common/x86/recon_mmx.asm",
+   "//third_party/libvpx/source/libvpx/vp8/common/x86/recon_sse2.asm",
+-  "//third_party/libvpx/source/libvpx/vp8/common/x86/subpixel_mmx.asm",
+   "//third_party/libvpx/source/libvpx/vp8/common/x86/subpixel_sse2.asm",
+-  "//third_party/libvpx/source/libvpx/vp8/common/x86/subpixel_ssse3.asm",
+   "//third_party/libvpx/source/libvpx/vp8/encoder/x86/block_error_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vp8/encoder/x86/copy_sse2.asm",
+-  "//third_party/libvpx/source/libvpx/vp8/encoder/x86/copy_sse3.asm",
+   "//third_party/libvpx/source/libvpx/vp8/encoder/x86/dct_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vp8/encoder/x86/fwalsh_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vp9/common/x86/vp9_mfqe_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_dct_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vp9/encoder/x86/vp9_error_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/add_noise_sse2.asm",
+-  "//third_party/libvpx/source/libvpx/vpx_dsp/x86/avg_ssse3_x86_64.asm",
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/deblock_sse2.asm",
+-  "//third_party/libvpx/source/libvpx/vpx_dsp/x86/fwd_txfm_ssse3_x86_64.asm",
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_intrapred_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_sad4d_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_sad_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_subpel_variance_impl_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/highbd_variance_impl_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/intrapred_sse2.asm",
+-  "//third_party/libvpx/source/libvpx/vpx_dsp/x86/intrapred_ssse3.asm",
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/inv_wht_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/sad4d_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/sad_sse2.asm",
+-  "//third_party/libvpx/source/libvpx/vpx_dsp/x86/ssim_opt_x86_64.asm",
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/subpel_variance_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/subtract_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_convolve_copy_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_high_subpixel_8t_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_high_subpixel_bilinear_sse2.asm",
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_subpixel_8t_sse2.asm",
+-  "//third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_subpixel_8t_ssse3.asm",
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_subpixel_bilinear_sse2.asm",
++  "//third_party/libvpx/source/libvpx/vpx_dsp/x86/ssim_opt_x86_64.asm", # mmx, sse2
++]
++libvpx_srcs_x86_64_assembly_sse3 = [
++  "//third_party/libvpx/source/libvpx/vp8/encoder/x86/copy_sse3.asm",
++]
++libvpx_srcs_x86_64_assembly_ssse3 = [
++  "//third_party/libvpx/source/libvpx/vp8/common/x86/subpixel_ssse3.asm",
++  "//third_party/libvpx/source/libvpx/vpx_dsp/x86/avg_ssse3_x86_64.asm",
++  "//third_party/libvpx/source/libvpx/vpx_dsp/x86/fwd_txfm_ssse3_x86_64.asm",
++  "//third_party/libvpx/source/libvpx/vpx_dsp/x86/intrapred_ssse3.asm",
++  "//third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_subpixel_8t_ssse3.asm",
+   "//third_party/libvpx/source/libvpx/vpx_dsp/x86/vpx_subpixel_bilinear_ssse3.asm",
+-  "//third_party/libvpx/source/libvpx/vpx_ports/emms_mmx.asm",
++]
++libvpx_srcs_x86_64_assembly_common = [
+   "//third_party/libvpx/source/libvpx/vpx_ports/float_control_word.asm",
+ ]
+ libvpx_srcs_x86_64_mmx =

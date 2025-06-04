@@ -1,0 +1,16 @@
+--- a/third_party/lzma_sdk/BUILD.gn.orig	2025-05-30 12:50:32.000000000 -0700
++++ b/third_party/lzma_sdk/BUILD.gn	2025-06-03 17:02:54.109124354 -0700
+@@ -4,11 +4,12 @@
+ 
+ import("//build/config/arm.gni")
+ import("//build/config/compiler/compiler.gni")
++import("//build/config/simd.gni")
+ 
+ # TODO(ritownsend@google.com): Optimizations temporarily disabled for
+ # Windows on Arm MSVC builds, see http://crbug.com/v8/10012.
+ use_arm_neon_optimizations = (target_cpu == "arm" || target_cpu == "arm64") &&
+-                             arm_use_neon && !(is_win && !is_clang)
++                             arm_use_neon && !(is_win && !is_clang) && (use_crc32 && use_crypto)
+ 
+ # TODO(crbug.com/1341436) For Windows, to assemble lzma_sdk's assembly files,
+ # ml64.exe needs to be utilized as llvm-ml cannot yet assemble it. Once llvm-ml

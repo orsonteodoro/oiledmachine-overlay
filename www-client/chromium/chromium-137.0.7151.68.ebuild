@@ -2013,7 +2013,7 @@ ewarn "Expected file count:  ${tc_count_expected}"
 ewarn
 	fi
 
-	local sources_count_expected=536652
+	local sources_count_expected=536653
 	local sources_count_actual=$(cat "/usr/share/chromium/sources/file-count")
 	if (( ${sources_count_actual} != ${sources_count_expected} )) ; then
 ewarn
@@ -2404,8 +2404,8 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-highway-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-simd-defaults.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-build-config-compiler-optionalize-simd.patch"
-		"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-libaom-optionalize-simd.patch"
-		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-libvpx-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-137.0.7151.68-libaom-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-137.0.7151.68-libvpx-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-pdfium-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-skia-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-perfetto-optionalize-simd.patch"
@@ -2419,7 +2419,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-fuzztest-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-crc32c-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-blink-optionalize-simd.patch"
-		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-lzma_sdk-optionalize-simd.patch"
+		"${FILESDIR}/extra-patches/${PN}-137.0.7151.68-lzma_sdk-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-libyuv-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-cpuinfo-optionalize-simd.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-opus-inline.patch"
@@ -2478,16 +2478,8 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	PATCHES+=(
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-custom-optimization-level.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-hardening.patch"
+		"${FILESDIR}/extra-patches/v8-13.7.152.13-custom-optimization-level.patch"			# Patch for the original version in the Chromium tarball.  Different v8 versions needs forward port.
 	)
-	if [[ -n "${V8_PV}" ]] && ver_test "${V8_PV}" -ge "13.7" ; then
-		PATCHES+=(
-			"${FILESDIR}/extra-patches/v8-13.7.152.7-custom-optimization-level.patch" # updated
-		)
-	else
-		PATCHES+=(
-			"${FILESDIR}/extra-patches/v8-13.6.233.8-custom-optimization-level.patch" # original in chromium tarball
-		)
-	fi
 
 	if ! use official ; then
 	# This section contains significant changes.  The above sections contains minor changes.
@@ -2518,11 +2510,11 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 	fi
 
 	# For v8 13.6.233.8
-	if ( use webassembly || use drumbrake ) && ( [[ -z "${V8_PV}" ]] || ver_test "${V8_PV}" -eq "13.6.233.8" ) ; then
-		PATCHES+=(
-			"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-v8-5c595ad.patch"
-		)
-	fi
+#	if ( use webassembly || use drumbrake ) && ( [[ -z "${V8_PV}" ]] || ver_test "${V8_PV}" -eq "13.6.233.8" ) ; then
+#		PATCHES+=(
+#			"${FILESDIR}/extra-patches/${PN}-136.0.7103.59-v8-5c595ad.patch"
+#		)
+#	fi
 }
 
 is_cromite_patch_non_fatal() {
