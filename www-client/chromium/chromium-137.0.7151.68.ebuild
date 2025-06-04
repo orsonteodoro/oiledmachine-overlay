@@ -4947,7 +4947,7 @@ eerror "Failed to determine target arch, got '${myarch}'."
 	echo "${target_cpu}"
 }
 
-# javascript engine
+# JavaScript engine
 _configure_v8() {
 	if use official ; then
 		: # Automagic
@@ -5129,13 +5129,12 @@ einfo "JIT off is similar to -O${jit_level_desc} worst case."
 
 	local target_cpu=$(get_target_cpu)
 	myconf_gn+=(
-		"${myconf_gn//v8_enable_drumbrake=true/v8_enable_drumbrake=false}"
+#		"${myconf_gn//v8_enable_drumbrake=true/v8_enable_drumbrake=false}"
 	# For Node.js, the v8 sandbox is disabled.  This is temporary until a
 	# fix can be found or fixed in the next major version.
 	# Disabling pointer compression disables the v8 sandbox.
-		"v8_enable_pointer_compression=false"
-		"v8_enable_pointer_compression_shared_cage=false"
-		"v8_enable_vtunejit=false"
+#		"v8_enable_pointer_compression=false"
+#		"v8_enable_pointer_compression_shared_cage=false"
 
 		"v8_current_cpu=\"${target_cpu}\""
 
@@ -5425,6 +5424,7 @@ _configure_debug() {
 		myconf_gn+=(
 			"blink_symbol_level=0"
 			"symbol_level=0"
+			"v8_enable_vtunejit=false"
 			"v8_symbol_level=0"
 		)
 	fi
