@@ -2000,7 +2000,11 @@ ewarn
 ewarn "This ebuild is under maintenance."
 ewarn "This ebuild may fail to build/link."
 ewarn "Dav1d may fail to link."
-ewarn "Disable the dav1d USE flag or use the prebuilt instead until it is fixed."
+ewarn "Do one of the following until it is fixed..."
+ewarn "(1) disable the dav1d USE flag"
+ewarn "(2) use the system-dav1d USE flag"
+ewarn "(3) use the distro ebuild"
+ewarn "(4) use the prebuilt ebuild"
 ewarn
 	dhms_start
 	check-compiler-switch_start
