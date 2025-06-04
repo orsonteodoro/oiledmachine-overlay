@@ -85,13 +85,13 @@ CFLAGS_HARDENED_SANITIZERS="address hwaddress undefined"
 CFLAGS_HARDENED_SSP_LEVEL="1" # Global variable
 CFLAGS_HARDENED_USE_CASES="copy-paste-password jit network scripting sensitive-data untrusted-data web-browser"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE DF HO IO NPD OOBA OOBR OOBW PE RC SO UAF TC"
-CHROMIUM_EBUILD_MAINTAINER=1 # See also GEN_ABOUT_CREDITS
+CHROMIUM_EBUILD_MAINTAINER=0 # See also GEN_ABOUT_CREDITS
 
 #
 # Set to 1 below to generate an about_credits.html including bundled internal
 # dependencies.
 #
-GEN_ABOUT_CREDITS=1
+GEN_ABOUT_CREDITS=0
 #
 
 # One of the major sources of lag comes from dependencies
@@ -162,8 +162,8 @@ GTK4_PV="4.8.3"
 LIBVA_PV="2.17.0"
 # SHA512 about_credits.html fingerprint: \
 LICENSE_FINGERPRINT="\
-21ce463cb4996d6690f64d923a2c80021f3a7f521f184490ee2f367f000c11a8\
-d94396bbbc4f8b2eaf7488eeac4a54578c29e2dcd721e92be2adfd6ab6948055\
+fbe8f82c32a852554f7912c4bfece47dc5c1654f5d62b627e7506b03b87a7189\
+d52141b38a970bc4b539d0d0ec0f711781e259b179f2631aaa4b1849bdfc0e1b\
 "
 if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
 	LLVM_COMPAT=( 22 21 ) # Can use [CURRENT_LLVM_MAJOR_VERSION+1 or CURRENT_LLVM_MAJOR_VERSION] inclusive
