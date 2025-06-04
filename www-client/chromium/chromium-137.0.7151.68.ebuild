@@ -480,7 +480,7 @@ ${PATENT_STATUS[@]}
 -system-libwebp -system-libxml -system-libxslt -system-openh264 -system-opus
 -system-re2 -system-zlib +system-zstd systemd test +wayland +webassembly
 -widevine +X
-ebuild_revision_17
+ebuild_revision_18
 "
 if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
 	IUSE+="
@@ -1996,6 +1996,12 @@ eerror
 }
 
 pkg_setup() {
+ewarn
+ewarn "This ebuild is under maintenance."
+ewarn "This ebuild may fail to build/link."
+ewarn "Dav1d may fail to link."
+ewarn "Disable the dav1d USE flag or use the prebuilt instead until it is fixed."
+ewarn
 	dhms_start
 	check-compiler-switch_start
 	# The emerge package system will over prune when it should not when it
@@ -4024,52 +4030,42 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 				"use_rust_no_sanitize_recover=true"
 			)
 		fi
-		if is-flagq "-fsanitize=address" || is-flagq "-fsanitize=hwaddress" ; then
-	# Dedupe SSP overlap
+	# It is possible where some compilation units are SSP protected but not
+	# ASan protected if both flags are enabled.
+		if [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "0" ]] ; then
 			myconf_gn+=(
 				"use_stack_protector_level=\"none\""
 			)
-			if (( ${is_rust_nightly} == 0 )) ; then
+		elif [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "1" ]] ; then
+			myconf_gn+=(
+				"use_stack_protector_level=\"basic\""
+			)
+		elif [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "2" ]] ; then
+			myconf_gn+=(
+				"use_stack_protector_level=\"strong\""
+			)
+		elif [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "3" ]] ; then
+			myconf_gn+=(
+				"use_stack_protector_level=\"all\""
+			)
+		fi
+		if (( ${is_rust_nightly} == 0 )) ; then
+			if [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "0" ]] ; then
 				myconf_gn+=(
 					"use_rust_stack_protector_level=\"none\""
 				)
-			fi
-		else
-			if [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "0" ]] ; then
-				myconf_gn+=(
-					"use_stack_protector_level=\"none\""
-				)
 			elif [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "1" ]] ; then
 				myconf_gn+=(
-					"use_stack_protector_level=\"basic\""
+					"use_rust_stack_protector_level=\"basic\""
 				)
 			elif [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "2" ]] ; then
 				myconf_gn+=(
-					"use_stack_protector_level=\"strong\""
+					"use_rust_stack_protector_level=\"strong\""
 				)
 			elif [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "3" ]] ; then
 				myconf_gn+=(
-					"use_stack_protector_level=\"all\""
+					"use_rust_stack_protector_level=\"all\""
 				)
-			fi
-			if (( ${is_rust_nightly} == 0 )) ; then
-				if [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "0" ]] ; then
-					myconf_gn+=(
-						"use_rust_stack_protector_level=\"none\""
-					)
-				elif [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "1" ]] ; then
-					myconf_gn+=(
-						"use_rust_stack_protector_level=\"basic\""
-					)
-				elif [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "2" ]] ; then
-					myconf_gn+=(
-						"use_rust_stack_protector_level=\"strong\""
-					)
-				elif [[ "${CFLAGS_HARDENED_SSP_LEVEL}" == "3" ]] ; then
-					myconf_gn+=(
-						"use_rust_stack_protector_level=\"all\""
-					)
-				fi
 			fi
 		fi
 	fi
