@@ -1,0 +1,20 @@
+--- a/ui/webui/resources/tools/bundle_js.gni.orig	2025-05-30 12:50:32.000000000 -0700
++++ b/ui/webui/resources/tools/bundle_js.gni	2025-06-04 18:20:51.629059531 -0700
+@@ -115,8 +115,15 @@ template("bundle_js") {
+     }
+     external_paths += [ "//resources/polymer/v3_0/|$polymer_path" ]
+ 
+-    lit_path = rebase_path("${root_gen_dir}/third_party/lit/v3_0/minified/",
+-                           root_build_dir)
++    if (bundle) {
++      lit_path = rebase_path("${root_gen_dir}/third_party/lit/v3_0/bundled/",
++                             root_build_dir)
++    }
++    if (minify) {
++      lit_path = rebase_path("${root_gen_dir}/third_party/lit/v3_0/minified/",
++                             root_build_dir)
++    }
++
+     if (!is_chrome_untrusted) {
+       external_paths += [ "chrome://resources/lit/v3_0/|$lit_path" ]
+     }

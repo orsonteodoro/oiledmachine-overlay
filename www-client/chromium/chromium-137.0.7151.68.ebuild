@@ -2435,6 +2435,7 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-opus-inline.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-sanitizers-build-config.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-linker-warn-missing-symbols.patch"
+		"${FILESDIR}/extra-patches/${PN}-137.0.7151.68-lit_path.patch"
 	)
 
 	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
@@ -3068,7 +3069,7 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		third_party/omnibox_proto
 		third_party/one_euro_filter
 		third_party/openscreen
-		third_party/openscreen/src/third_party
+		third_party/openscreen/src/third_party/
 		third_party/openscreen/src/third_party/tinycbor/src/src
 		third_party/ots
 		third_party/pdfium
