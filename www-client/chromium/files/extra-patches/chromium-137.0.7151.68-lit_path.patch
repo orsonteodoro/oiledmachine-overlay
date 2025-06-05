@@ -1,11 +1,20 @@
---- a/ui/webui/resources/tools/bundle_js.gni.orig	2025-06-04 19:05:34.138035568 -0700
-+++ b/ui/webui/resources/tools/bundle_js.gni	2025-06-04 19:09:11.264898305 -0700
-@@ -115,8 +115,18 @@ template("bundle_js") {
+--- a/ui/webui/resources/tools/bundle_js.gni.orig	2025-06-04 20:09:49.509593120 -0700
++++ b/ui/webui/resources/tools/bundle_js.gni	2025-06-04 20:20:02.289165027 -0700
+@@ -3,6 +3,7 @@
+ # found in the LICENSE file.
+ 
+ import("//third_party/node/node.gni")
++import("//ui/webui/webui_features.gni")
+ 
+ template("bundle_js") {
+   node(target_name) {
+@@ -115,8 +116,19 @@ template("bundle_js") {
      }
      external_paths += [ "//resources/polymer/v3_0/|$polymer_path" ]
  
 -    lit_path = rebase_path("${root_gen_dir}/third_party/lit/v3_0/minified/",
 -                           root_build_dir)
++    optimize = optimize_webui
 +    minify = optimize
 +    bundle = optimize && defined(invoker.optimize_webui_in_files)
 +
