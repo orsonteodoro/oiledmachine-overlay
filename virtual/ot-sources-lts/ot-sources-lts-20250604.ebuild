@@ -13,22 +13,22 @@ KEYWORDS="
 IUSE=" 5_4 5_10 5_15 6_1 6_6 6_12"
 RDEPEND="
 	5_4? (
-		~sys-kernel/ot-sources-5.4.293
+		~sys-kernel/ot-sources-5.4.294
 	)
 	5_10? (
-		~sys-kernel/ot-sources-5.10.237
+		~sys-kernel/ot-sources-5.10.238
 	)
 	5_15? (
-		~sys-kernel/ot-sources-5.15.184
+		~sys-kernel/ot-sources-5.15.185
 	)
 	6_1? (
-		~sys-kernel/ot-sources-6.1.140
+		~sys-kernel/ot-sources-6.1.141
 	)
 	6_6? (
-		~sys-kernel/ot-sources-6.6.92
+		~sys-kernel/ot-sources-6.6.93
 	)
 	6_12? (
-		~sys-kernel/ot-sources-6.12.31
+		~sys-kernel/ot-sources-6.12.32
 	)
 "
 SLOT="0/$(ver_cut 1-2 ${PV})"

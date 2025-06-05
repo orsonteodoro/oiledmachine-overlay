@@ -3,75 +3,60 @@
 
 EAPI=8
 
-GENPATCHES_FALLBACK_COMMIT="048b8bf91f9c66c86e37d33b654cc9a92b087322" # 2024-10-21 09:33:31 -0400
-LINUX_SOURCES_FALLBACK_COMMIT="	f66d6acccbc08b4146f4c2cf9445241f70f5517d" # 2024-11-17 09:35:51 -0800
-RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Makefile#n5
+EBUILD_REV=""
+GENPATCHES_VER="151"
+PATCH_PROJC_VER="6.1-r4"
+PATCH_RT_VER="6.1.134-rt51"
 
-# See
-# https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.12
-# https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-
-CLEAR_LINUX_PATCHES_VER="6.12.11-1537"
-EBUILD_REV="ebuild_revision_7"
-GENPATCHES_VER="36" # can be live only when 9999
-PATCH_PROJC_VER="6.12-r1"
-PATCH_RT_VER="6.12.28-rt10"
-
-inherit ot-kernel-v6.12
+inherit ot-kernel-v6.1
 
 # See also,
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel.eclass
-# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v6.12.eclass
+# https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/ot-kernel-v6.1.eclass
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  modularize-ebuild-as-milestone-eclasses
 # OILEDMACHINE-OVERLAY-META-TAGS:  see-eclass-for-full-details
 # OILEDMACHINE-OVERLAY-META-WIP:  tresor, signed-kexec-kernel, signed-kernels
 
-
-# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.7.0.9999 (6.7.0-rc7 commit: 98b1cc82c4affc16f5598d4fa14b1858671b2263) (20231121) with builder profile
-
-#
-# Some USE or OT_KERNEL_USE may be ignored in eclasses.
-#
-# USE="build cfs disable_debug -genpatches kpgo-utils ncurses openssl pgo symlink
-# -zen-sauce zstd -bbrv2 -bbrv3 -bzip2 (-c2tcp) -clang (-deepcc) -exfat
-# -fallback-commit -genpatches_1510 -graphicsmagick -gtk -gzip -imagemagick
-# -intel-microcode -kcfi -linux-firmware -lto -lz4 -lzma -lzo (-orca) -pcc -prjc
-# (-qt5) -reiserfs -rt -rust -shadowcallstack -tresor -tresor_aesni -tresor_i686
-# -tresor_prompt -tresor_sysfs -tresor_x86_64 -tresor_x86_64-256-bit-key-support
-# -xz"
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 6.1.38 (20230711) with builder profile
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 6.1.38 (20230711) with gamer profile
+# USE="bbrv2 build cfs disable_debug genpatches ncurses openssl symlink
+# zen-sauce zstd -bzip2 -cfi -clang -clang-pgo -cve_hotfix -exfat
+# -genpatches_1510 -graphicsmagick -gtk -gzip -imagemagick -kcfi -lto -lz4
+# -lzma -lzo -multigen_lru -pcc -prjc (-qt5) -reiserfs -rt -rust
+# -shadowcallstack -tresor -tresor_aesni -tresor_i686 -tresor_prompt
+# -tresor_sysfs -tresor_x86_64 -tresor_x86_64-256-bit-key-support -uksm -xz
+# -zen-multigen_lru -zen-sauce-all -zen-tune"
 # OT_KERNEL_PGT="-2d -3d -crypto_chn -crypto_common -crypto_deprecated
 # -crypto_kor -crypto_less_common -crypto_rus -crypto_std -custom -emerge1
 # -emerge2 -filesystem -memory -network -p2p -webcam -yt"
-# PYTHON_TARGETS="python3_10 -python3_11" 0 KiB
-
-# boot time test - pass
-# emerge/compile test - pass
-# network - pass
-# streaming video playback - pass
-# initscript - pass
-# runtime stability note:  TBA
+# PYTHON_TARGETS="python3_10 -python3_11"
+# CFLAGS=-O2
+# Compiler:  GCC 12
 
 # env file builder profile sample:
-# OT_KERNEL_CPU_SCHED="cfs-throughput"
-# OT_KERNEL_USE="-rt c2tcp -O3 -bbrv2 -bbrv3 disable_debug -tresor -tresor_sysfs
-# -tresor_x86_64 -tresor_x86_64-256-bit-key-support -tresor_aesni cfs -prjc
-# kernel_compiler_patch futex futex-proton multigen_lru -genpatches -clang pgo
-# -zen-muqss -zen-sauce -cfi -kcfi -zen-multigen_lru -genpatches_1510 build zstd
-# openssl -lto ncurses"
-# OT_KERNEL_VERBOSITY=1
-# OT_KERNEL_WORK_PROFILE="builder-interactive"
 # OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1
 # OT_KERNEL_CPU_SCHED="cfs-throughput"
 # OT_KERNEL_EXTRAVERSION="builder"
 # OT_KERNEL_LOGO_COUNT=1
 # OT_KERNEL_LOGO_MAGICK_ARGS="-geometry x112 -colors 224"
 # OT_KERNEL_LOGO_URI="<redacted>"
-# OT_KERNEL_MODULES_COMPRESSOR="zstd"
 # OT_KERNEL_MODULES_SUPPORT="1"
+# OT_KERNEL_MODULES_COMPRESSOR="zstd"
 # OT_KERNEL_SLAB_ALLOCATOR="slub"
 # OT_KERNEL_USB_AUTOSUSPEND=-1
+# OT_KERNEL_USE="-c2tcp O3 bbrv2 disable_debug -tresor -tresor_sysfs
+# -tresor_x86_64 -tresor_x86_64-256-bit-key-support -tresor_aesni cfs -prjc
+# kernel_compiler_patch futex futex-proton multigen_lru genpatches -clang
+# -clang-pgo -zen-muqss zen-sauce -zen-tune -cfi -kcfi -zen-multigen_lru
+# -zen-sauce-all -genpatches_1510 build zstd openssl -lto ncurses"
+# OT_KERNEL_WORK_PROFILE="builder-interactive"
+# OT_KERNEL_ZSWAP_ALLOCATOR="zsmalloc"
+# OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
+# boot:       passed
+# show logo:  passed
+# network:    passed
 
 # env file gamer profile sample (disabled):
 # OT_KERNEL_AUTO_CONFIGURE_KERNEL_FOR_PKGS=1
@@ -80,68 +65,74 @@ inherit ot-kernel-v6.12
 # OT_KERNEL_LOGO_COUNT=1
 # OT_KERNEL_LOGO_MAGICK_ARGS="-geometry x112 -colors 224"
 # OT_KERNEL_LOGO_URI="<redacted>"
-# OT_KERNEL_MODULES_COMPRESSOR="zstd"
 # OT_KERNEL_MODULES_SUPPORT="1"
+# OT_KERNEL_MODULES_COMPRESSOR="zstd"
 # OT_KERNEL_SLAB_ALLOCATOR="slab"
 # OT_KERNEL_USB_AUTOSUSPEND=-1
+# OT_KERNEL_USE="-c2tcp O3 bbrv2 disable_debug -tresor -tresor_sysfs
+# -tresor_x86_64 -tresor_x86_64-256-bit-key-support -tresor_aesni cfs -prjc
+# kernel_compiler_patch futex futex-proton multigen_lru genpatches -clang
+# -clang-pgo -zen-muqss zen-sauce -zen-tune -cfi -kcfi -zen-multigen_lru
+# -zen-sauce-all -genpatches_1510 build zstd openssl -lto ncurses"
 # OT_KERNEL_WORK_PROFILE="pro-gaming"
 # OT_KERNEL_ZSWAP_ALLOCATOR="zsmalloc"
 # OT_KERNEL_ZSWAP_COMPRESSOR="zstd"
+# boot:       passed
+# show logo:  passed
+# network:    passed
 
-# USE="build cfs disable_debug linux-firmware ncurses openssl symlink tresor
-# tresor_prompt tresor_sysfs tresor_x86_64 zstd -bbrv2 -bbrv3 -bzip2 (-c2tcp)
-# -clang (-deepcc) -exfat -fallback-commit -genpatches -genpatches_1510
-# -graphicsmagick -gtk -gzip -imagemagick -intel-microcode -kcfi -kpgo-utils
-# -lto -lz4 -lzma -lzo (-orca) -pcc -pgo -prjc (-qt5) -r6 -reiserfs -rt -rust
-# -shadowcallstack -tresor_aesni -tresor_i686 -tresor_x86_64-256-bit-key-support
-# -xz -zen-sauce"
+
+# USE="build cfs disable_debug genpatches linux-firmware ncurses openssl
+# symlink tresor tresor_prompt tresor_sysfs tresor_x86_64 zen-sauce zstd -bbrv2
+# -bzip2 (-c2tcp) -clang (-deepcc) -exfat -genpatches_1510 -graphicsmagick -gtk
+# -gzip -imagemagick -intel-microcode -kcfi -kpgo-utils -lto -lz4 -lzma -lzo
+# (-orca) -pcc -pgo -prjc (-qt5) -reiserfs -rt -rust -shadowcallstack
+# -tresor_aesni -tresor_i686 -tresor_x86_64-256-bit-key-support -xz"
 # CPU_FLAGS_X86="-aes -avx -avx2 -avx512vl -sha -sse2 -sse4_2 -ssse3"
 # OT_KERNEL_PGT="-2d -3d -crypto_chn -crypto_common -crypto_deprecated
 # -crypto_kor -crypto_less_common -crypto_rus -crypto_std -custom -emerge1
 # -emerge2 -filesystem -memory -network -p2p -webcam -yt"
-# PYTHON_TARGETS="python3_10 -python3_11"
-# OILEDMACHINE-OVERLAY-TEST:  passed (6.8.0.9999 commit 54be6c6, 20240205)
+# PYTHON_TARGETS="python3_10 -python3_11" 0 KiB
+# OILEDMACHINE-OVERLAY-TEST:  passed (6.1.76, 20240205)
 # tresor prompt - passed
 # tresor self test from /proc/crypto for tresor-cbc (128 bit key size) - passed
 # tresor self test from /proc/crypto for tresor-ecb (128 bit key size) - passed
 # tresor self test from /proc/crypto for tresor-ctr (128 bit key size) - unknown (unsupported until pass)
 
-# USE="build cfs disable_debug linux-firmware ncurses openssl symlink tresor
-# tresor_prompt tresor_sysfs tresor_x86_64 tresor_x86_64-256-bit-key-support
-# zstd -bbrv2 -bbrv3 -bzip2 (-c2tcp) -clang (-deepcc) -exfat -fallback-commit
-# -genpatches -genpatches_1510 -graphicsmagick -gtk -gzip -imagemagick
+# USE="build cfs disable_debug genpatches linux-firmware ncurses openssl symlink
+# tresor tresor_prompt tresor_sysfs tresor_x86_64
+# tresor_x86_64-256-bit-key-support zen-sauce zstd -bbrv2 -bzip2 (-c2tcp) -clang
+# (-deepcc) -exfat -genpatches_1510 -graphicsmagick -gtk -gzip -imagemagick
 # -intel-microcode -kcfi -kpgo-utils -lto -lz4 -lzma -lzo (-orca) -pcc -pgo
-# -prjc (-qt5) -r6 -reiserfs -rt -rust -shadowcallstack -tresor_aesni
-# -tresor_i686 -xz -zen-sauce"
+# -prjc (-qt5) -reiserfs -rt -rust -shadowcallstack -tresor_aesni -tresor_i686
+# -xz"
 # CPU_FLAGS_X86="-aes -avx -avx2 -avx512vl -sha -sse2 -sse4_2 -ssse3"
 # OT_KERNEL_PGT="-2d -3d -crypto_chn -crypto_common -crypto_deprecated
 # -crypto_kor -crypto_less_common -crypto_rus -crypto_std -custom -emerge1
 # -emerge2 -filesystem -memory -network -p2p -webcam -yt"
 # PYTHON_TARGETS="python3_10 -python3_11"
-# OILEDMACHINE-OVERLAY-TEST:  passed (6.8.0.9999 commit 0473719, 20240208)
+# OILEDMACHINE-OVERLAY-TEST:  passed (6.1.77, 20240208)
 # tresor prompt - passed
 # tresor self test from /proc/crypto for tresor-cbc skcipher (128-256 bit key size) - passed
 # tresor self test from /proc/crypto for tresor-ecb skcipher (128-256 bit key size) - passed
 # tresor self test from /proc/crypto for tresor-ctr skcipher (128-256 bit key size) - passed
 # tresor self test from /proc/crypto for tresor cipher (128-256 bit key size) - passed
 
-# USE="build cfs linux-firmware ncurses openssl symlink tresor tresor_aesni
-# tresor_prompt tresor_sysfs zstd -bbrv2 -bbrv3 -bzip2 (-c2tcp) -clang (-deepcc)
-# -disable_debug -exfat -fallback-commit -genpatches -genpatches_1510
-# -graphicsmagick -gtk -gzip -imagemagick -intel-microcode -kcfi -kpgo-utils
-# -lto -lz4 -lzma -lzo (-orca) -pcc -pgo -prjc (-qt5) -r6 -reiserfs -rt -rust
-# -shadowcallstack -tresor_i686 -tresor_x86_64
-# -tresor_x86_64-256-bit-key-support -xz -zen-sauce"
+# USE="build cfs genpatches linux-firmware ncurses openssl symlink tresor
+# tresor_aesni tresor_prompt tresor_sysfs zen-sauce zstd -bbrv2 -bzip2 (-c2tcp)
+# -clang (-deepcc) -disable_debug -exfat -genpatches_1510 -graphicsmagick -gtk
+# -gzip -imagemagick -intel-microcode -kcfi -kpgo-utils -lto -lz4 -lzma -lzo
+# (-orca) -pcc -pgo -prjc (-qt5) -reiserfs -rt -rust -shadowcallstack
+# -tresor_i686 -tresor_x86_64 -tresor_x86_64-256-bit-key-support -xz"
 # CPU_FLAGS_X86="-aes -avx -avx2 -avx512vl -sha -sse2 -sse4_2 -ssse3"
 # OT_KERNEL_PGT="-2d -3d -crypto_chn -crypto_common -crypto_deprecated
 # -crypto_kor -crypto_less_common -crypto_rus -crypto_std -custom -emerge1
 # -emerge2 -filesystem -memory -network -p2p -webcam -yt"
 # PYTHON_TARGETS="python3_10 -python3_11"
-# OILEDMACHINE-OVERLAY-TEST:  (6.8.0.9999 commit 4a7bbe7, 20240210)
+# OILEDMACHINE-OVERLAY-TEST:  (6.1.77, 20240210)
 # tresor prompt - passed (missing press any key message)
 # tresor self test from /proc/crypto for tresor-cbc skcipher (128-256 bit key size) - passed
 # tresor self test from /proc/crypto for tresor-ecb skcipher (128-256 bit key size) - passed
-# tresor self test from /proc/crypto for tresor-ctr skcipher (128-256 bit key size) - unknown
 # tresor self test from /proc/crypto for tresor cipher (128-256 bit key size) - passed
 # tresor boot init from /var/log/kern.log (expected fail, need aesni tester):
 # alg: skcipher: testing: vec->klen=16 for ecb-tresor-aesni.  enc=1.
