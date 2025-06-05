@@ -136,7 +136,7 @@ einfo "MT = Missing Terminator Character"
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "NPD" ]] ; then
 einfo "NPD = Null Pointer Dereference"
 		fi
-		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^| )"OOB" ]] ; then
+		if [[ "${VULNERABILITIES_FIXED[@]}" =~ (^| )"OOB"( |$) ]] ; then
 einfo "OOB = Out Of Bounds Access"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "OOBA" ]] ; then
