@@ -5096,7 +5096,7 @@ einfo "JIT off is similar to -O${jit_level_desc} worst case."
 	# For Node.js, the v8 sandbox is disabled.  This is temporary until a
 	# fix can be found or fixed in the next major version.
 	# Disabling pointer compression disables the v8 sandbox.
-		"v8_enable_pointer_compression=false"
+#		"v8_enable_pointer_compression=false"
 #		"v8_enable_pointer_compression_shared_cage=false"
 
 		"v8_current_cpu=\"${target_cpu}\""
