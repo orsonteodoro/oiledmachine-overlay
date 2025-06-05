@@ -1407,7 +1407,7 @@ RUST_BDEPEND="
 if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
 	BDEPEND+="
 		${CLANG_BDEPEND}
-		>=net-libs/nodejs-22.11.0:${NODE_VERSION}[inspector]
+		>=net-libs/nodejs-22.11.0:${NODE_VERSION%%.*}[inspector]
 		app-eselect/eselect-nodejs
 	"
 fi
@@ -1866,68 +1866,16 @@ is_using_clang() {
 # @DESCRIPTION:
 # Checks node slot required for building
 node_pkg_setup() {
-	local found=0
-	local slot
 	which node 2>&1 >/dev/null || die "Missing node"
-	local node_pv=$(node --version \
-		| sed -e "s|v||g")
-	if [[ -n "${NODE_SLOTS}" ]] ; then
-		for slot in ${NODE_SLOTS} ; do
-			if \
-				has_version "=net-libs/nodejs-${slot}*" \
-					&& \
-				(( ${node_pv%%.*} == ${slot} )) \
-			; then
-				export NODE_VERSION=${slot}
-				found=1
-				break
-			fi
-		done
-		if (( ${found} == 0 )) ; then
-eerror
-eerror "Did not find the preferred Node.js slot."
-eerror "Expected node versions:  ${NODE_SLOTS}"
-eerror
-eerror "Try one of the following:"
-eerror
-			local s
-			for s in ${NODE_SLOTS} ; do
-eerror "  eselect nodejs set node${s}"
-			done
-
-eerror
-eerror "See \`eselect nodejs\` for more details."
-eerror
-			die
-		fi
-	elif [[ -n "${NODE_VERSION}" ]] ; then
-		if \
-			has_version "=net-libs/nodejs-${NODE_VERSION%%.*}*" \
-				&& \
-			(( ${node_pv%%.*} == ${NODE_VERSION%%.*} )) \
-		; then
-			found=1
-		fi
-		if (( ${found} == 0 )) ; then
-eerror
-eerror "Did not find the preferred Node.js slot."
-eerror "Expected node version:  ${NODE_VERSION}"
-eerror
-eerror "Try the following:"
-eerror
-eerror "  eselect nodejs set node${NODE_VERSION%%.*}"
-eerror
-eerror "See \`eselect nodejs\` for more details."
-eerror
-			die
-		fi
-	fi
 	local node_pv=$(node --version | sed -e "s|v||g")
 	if ver_test "${node_pv%%.*}" -ne "${NODE_VERSION%%.*}" ; then
 eerror
 eerror "Node ${NODE_VERSION} must be installed and selected.  To switch, do"
 eerror
 eerror "  eselect nodejs set node${NODE_VERSION%%.*}"
+eerror
+eerror "Expected version:  ${NODE_VERSION}"
+eerror "Actual version:    ${node_pv}"
 eerror
 		die
 	fi
