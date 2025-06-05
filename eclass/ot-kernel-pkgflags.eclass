@@ -3713,7 +3713,7 @@ ot-kernel-pkgflags_discord() { # DONE
 	pkg="net-im/discord"
 	if ot-kernel_has_version_slow "${pkg}" ; then
 		local pv=$(best_version "${pkg}" | sed -e "s|${pkg}-||g")
-		local expected_pv="0.0.72" # 20241023
+		local expected_pv="0.0.96" # 20250605
 		if ver_test "${actual_pv}" -ne "${expected_pv}" ; then
 ewarn
 ewarn "Detected older ${pkg} ebuild.  Bump the ebuild manually in local repo or"
@@ -3730,7 +3730,7 @@ ewarn
 	if ot-kernel_has_version "${pkg}" ; then
 # The ebuild should be deleted.
 		local pv=$(best_version "${pkg}" | sed -e "s|${pkg}-||g")
-		local expected_pv="0.0.508" # 20241023
+		local expected_pv="0.0.689" # 20250605
 		if ver_test "${actual_pv}" -ne "${expected_pv}" ; then
 ewarn
 ewarn "Detected older ${pkg} ebuild.  Bump the ebuild or use distro ebuild"
@@ -3749,7 +3749,7 @@ ewarn
 	if ot-kernel_has_version "${pkg}" ; then
 # The ebuild should be deleted.
 		local actual_pv=$(best_version "${pkg}" | sed -e "s|${pkg}-||g")
-		local expected_pv="0.0.112" # 20241023
+		local expected_pv="0.0.147" # 20250605
 		if ver_test "${actual_pv}" -ne "${expected_pv}" ; then
 ewarn
 ewarn "Detected older ${pkg} ebuild.  Bump the ebuild or use distro ebuild"
