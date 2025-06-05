@@ -1927,7 +1927,7 @@ eerror
 eerror
 eerror "Node ${NODE_VERSION} must be installed and selected.  To switch, do"
 eerror
-eerror "  eselect nodejs set node${%%.*}"
+eerror "  eselect nodejs set node${NODE_VERSION%%.*}"
 eerror
 		die
 	fi
