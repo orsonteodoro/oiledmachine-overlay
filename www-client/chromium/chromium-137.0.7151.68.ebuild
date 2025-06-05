@@ -5070,12 +5070,13 @@ einfo "JIT off is similar to -O${jit_level_desc} worst case."
 		fi
 	fi
 
-# ERROR:
-#
-# [15818/27103] python3.12 ../../v8/tools/run.py ./mksnapshot --turbo_instruction_scheduling --stress-turbo-late-spilling --target_os=linux --target_arch=x64 --embedded_src gen/v8/embedded.S --predictable --no-use-ic --turbo-elide-frames --embedded_variant Default --random-seed 314159265 --startup_blob snapshot_blob.bin --no-native-code-counters --concurrent-builtin-generation --concurrent-turbofan-max-threads=0
+# Caused by pointer-compression enabled
+# python3.11 ../../v8/tools/run.py ./mksnapshot --turbo_instruction_scheduling --stress-turbo-late-spilling --target_os=linux --target_arch=x64 --embedded_src gen/v8/embedded.S --predictable --no-use-ic --turbo-elide-frames --embedded_variant Default --random-seed 314159265 --startup_blob snapshot_blob.bin --no-native-code-counters --concurrent-builtin-generation --concurrent-turbofan-max-threads=0
 # FAILED: gen/v8/embedded.S snapshot_blob.bin
-# python3.12 ../../v8/tools/run.py ./mksnapshot --turbo_instruction_scheduling --stress-turbo-late-spilling --target_os=linux --target_arch=x64 --embedded_src gen/v8/embedded.S --predictable --no-use-ic --turbo-elide-frames --embedded_variant Default --random-seed 314159265 --startup_blob snapshot_blob.bin --no-native-code-counters --concurrent-builtin-generation --concurrent-turbofan-max-threads=0
+# python3.11 ../../v8/tools/run.py ./mksnapshot --turbo_instruction_scheduling --stress-turbo-late-spilling --target_os=linux --target_arch=x64 --embedded_src gen/v8/embedded.S --predictable --no-use-ic --turbo-elide-frames --embedded_variant Default --random-seed 314159265 --startup_blob snapshot_blob.bin --no-native-code-counters --concurrent-builtin-generation --concurrent-turbofan-max-threads=0
 # Return code is -11
+
+# ERROR:
 #
 # Reported by elfx86exts:
 # Instruction set extensions used: AVX, AVX2, AVX512, BMI, BMI2, BWI, CMOV, DQI, MODE64, NOVLX, PCLMUL, SSE1, SSE2, SSE3, SSE41, SSSE3, VLX
@@ -5095,7 +5096,7 @@ einfo "JIT off is similar to -O${jit_level_desc} worst case."
 	# For Node.js, the v8 sandbox is disabled.  This is temporary until a
 	# fix can be found or fixed in the next major version.
 	# Disabling pointer compression disables the v8 sandbox.
-#		"v8_enable_pointer_compression=false"
+		"v8_enable_pointer_compression=false"
 #		"v8_enable_pointer_compression_shared_cage=false"
 
 		"v8_current_cpu=\"${target_cpu}\""
