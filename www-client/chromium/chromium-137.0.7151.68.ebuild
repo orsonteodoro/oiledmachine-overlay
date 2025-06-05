@@ -1870,7 +1870,7 @@ node_pkg_setup() {
 	local node_pv=$(node --version | sed -e "s|v||g")
 	if ver_test "${node_pv%%.*}" -ne "${NODE_VERSION%%.*}" ; then
 eerror
-eerror "Node ${NODE_VERSION} must be installed and selected.  To switch, do"
+eerror "Node.js must be installed and selected.  To switch, do"
 eerror
 eerror "  eselect nodejs set node${NODE_VERSION%%.*}"
 eerror
