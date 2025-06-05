@@ -8,14 +8,15 @@
  
  template("bundle_js") {
    node(target_name) {
-@@ -115,8 +116,18 @@ template("bundle_js") {
+@@ -115,8 +116,19 @@ template("bundle_js") {
      }
      external_paths += [ "//resources/polymer/v3_0/|$polymer_path" ]
  
 -    lit_path = rebase_path("${root_gen_dir}/third_party/lit/v3_0/minified/",
 -                           root_build_dir)
++    optimize = optimize_webui
 +    minify = false
-+    bundle = true
++    bundle = optimize && defined(invoker.optimize_webui_in_files)
 +
 +    if (bundle) {
 +      lit_path = rebase_path("${root_gen_dir}/third_party/lit/v3_0/bundled/",
@@ -38,7 +39,7 @@
 -  minify = optimize
 -  bundle = optimize && defined(invoker.optimize_webui_in_files)
 +  minify = false
-+  bundle = true
++  bundle = optimize && defined(invoker.optimize_webui_in_files)
  
    has_ts_in_files =
        defined(invoker.web_component_files) || defined(invoker.ts_files)
@@ -57,7 +58,7 @@
    # for runtime performance purposes. This does more work at compile time for
    # speed benefits at runtime (so we skip in debug builds).
 -  optimize_webui = !is_debug
-+  optimize_webui = false
++  optimize_webui = !is_debug
  
    # Enable the WebUI version of the browser's tab strip.
    enable_webui_tab_strip = is_chromeos || is_linux || is_win
