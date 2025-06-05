@@ -1,5 +1,5 @@
---- a/ui/webui/resources/tools/bundle_js.gni.orig	2025-06-04 20:09:49.509593120 -0700
-+++ b/ui/webui/resources/tools/bundle_js.gni	2025-06-04 20:20:02.289165027 -0700
+--- a/ui/webui/resources/tools/bundle_js.gni.orig	2025-06-04 21:50:02.869041527 -0700
++++ b/ui/webui/resources/tools/bundle_js.gni	2025-06-04 21:54:50.668350584 -0700
 @@ -3,6 +3,7 @@
  # found in the LICENSE file.
  
@@ -8,15 +8,14 @@
  
  template("bundle_js") {
    node(target_name) {
-@@ -115,8 +116,19 @@ template("bundle_js") {
+@@ -115,8 +116,18 @@ template("bundle_js") {
      }
      external_paths += [ "//resources/polymer/v3_0/|$polymer_path" ]
  
 -    lit_path = rebase_path("${root_gen_dir}/third_party/lit/v3_0/minified/",
 -                           root_build_dir)
-+    optimize = optimize_webui
-+    minify = optimize
-+    bundle = optimize && defined(invoker.optimize_webui_in_files)
++    minify = false
++    bundle = true
 +
 +    if (bundle) {
 +      lit_path = rebase_path("${root_gen_dir}/third_party/lit/v3_0/bundled/",
@@ -30,3 +29,35 @@
      if (!is_chrome_untrusted) {
        external_paths += [ "chrome://resources/lit/v3_0/|$lit_path" ]
      }
+--- a/ui/webui/resources/tools/build_webui.gni.orig	2025-05-30 12:50:32.000000000 -0700
++++ b/ui/webui/resources/tools/build_webui.gni	2025-06-04 21:56:13.147336559 -0700
+@@ -62,8 +62,8 @@ template("build_webui") {
+     optimize = invoker.optimize
+   }
+ 
+-  minify = optimize
+-  bundle = optimize && defined(invoker.optimize_webui_in_files)
++  minify = false
++  bundle = true
+ 
+   has_ts_in_files =
+       defined(invoker.web_component_files) || defined(invoker.ts_files)
+@@ -85,6 +85,7 @@ template("build_webui") {
+   if (defined(invoker.generate_code_cache)) {
+     generate_code_cache = invoker.generate_code_cache
+   }
++  generate_code_cache = false
+ 
+   ### Compute the lists of files that are used across multiple targets.
+ 
+--- a/ui/webui/webui_features.gni.orig	2025-05-30 12:50:32.000000000 -0700
++++ b/ui/webui/webui_features.gni	2025-06-04 21:56:33.579012958 -0700
+@@ -10,7 +10,7 @@ declare_args() {
+   # Optimize parts of Chrome's UI written with web technologies (HTML/CSS/JS)
+   # for runtime performance purposes. This does more work at compile time for
+   # speed benefits at runtime (so we skip in debug builds).
+-  optimize_webui = !is_debug
++  optimize_webui = false
+ 
+   # Enable the WebUI version of the browser's tab strip.
+   enable_webui_tab_strip = is_chromeos || is_linux || is_win
