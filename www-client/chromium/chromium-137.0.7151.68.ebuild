@@ -1868,6 +1868,7 @@ is_using_clang() {
 node_pkg_setup() {
 	local found=0
 	local slot
+	which node 2>&1 >/dev/null || die "Missing node"
 	local node_pv=$(node --version \
 		| sed -e "s|v||g")
 	if [[ -n "${NODE_SLOTS}" ]] ; then
@@ -1895,7 +1896,7 @@ eerror "  eselect nodejs set node${s}"
 			done
 
 eerror
-eerror "See eselect nodejs for more details."
+eerror "See \`eselect nodejs\` for more details."
 eerror
 			die
 		fi
@@ -1914,12 +1915,21 @@ eerror "Expected node version:  ${NODE_VERSION}"
 eerror
 eerror "Try the following:"
 eerror
-eerror "  eselect nodejs set node$(ver_cut 1 ${NODE_VERSION})"
+eerror "  eselect nodejs set node${NODE_VERSION%%.*}"
 eerror
-eerror "See eselect nodejs for more details."
+eerror "See \`eselect nodejs\` for more details."
 eerror
 			die
 		fi
+	fi
+	local node_pv=$(node --version | sed -e "s|v||g")
+	if ver_test "${node_pv%%.*}" -ne "${NODE_VERSION}" ; then
+eerror
+eerror "Node ${NODE_VERSION} must be installed and selected.  To switch, do"
+eerror
+eerror "  eselect nodejs set node${%%.*}"
+eerror
+		die
 	fi
 }
 
@@ -2435,7 +2445,6 @@ einfo "Applying the oiledmachine-overlay patchset ..."
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-opus-inline.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-sanitizers-build-config.patch"
 		"${FILESDIR}/extra-patches/${PN}-136.0.7103.92-linker-warn-missing-symbols.patch"
-		"${FILESDIR}/extra-patches/${PN}-137.0.7151.68-lit_path.patch"
 	)
 
 	if has ungoogled-chromium ${IUSE_EFFECTIVE} && use ungoogled-chromium ; then
