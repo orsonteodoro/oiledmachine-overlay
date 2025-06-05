@@ -1066,7 +1066,7 @@ ewarn
 # @DESCRIPTION:
 # Checks node slot required for building
 node_pkg_setup() {
-	which node 2>&1 >/dev/null || die "Missing node"
+	which node 2>&1 >/dev/null || die "Missing Node.js ${NODE_VERSION%%.*}"
 	local node_pv=$(node --version | sed -e "s|v||g")
 	if ver_test "${node_pv%%.*}" -ne "${NODE_VERSION%%.*}" ; then
 eerror
