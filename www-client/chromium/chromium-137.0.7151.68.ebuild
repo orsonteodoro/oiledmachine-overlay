@@ -1885,7 +1885,7 @@ node_pkg_setup() {
 		done
 		if (( ${found} == 0 )) ; then
 eerror
-eerror "Did not find the preferred nodejs slot."
+eerror "Did not find the preferred Node.js slot."
 eerror "Expected node versions:  ${NODE_SLOTS}"
 eerror
 eerror "Try one of the following:"
@@ -1902,15 +1902,15 @@ eerror
 		fi
 	elif [[ -n "${NODE_VERSION}" ]] ; then
 		if \
-			has_version "=net-libs/nodejs-${NODE_VERSION}*" \
+			has_version "=net-libs/nodejs-${NODE_VERSION%%.*}*" \
 				&& \
-			(( ${node_pv%%.*} == ${NODE_VERSION} )) \
+			(( ${node_pv%%.*} == ${NODE_VERSION%%.*} )) \
 		; then
 			found=1
 		fi
 		if (( ${found} == 0 )) ; then
 eerror
-eerror "Did not find the preferred nodejs slot."
+eerror "Did not find the preferred Node.js slot."
 eerror "Expected node version:  ${NODE_VERSION}"
 eerror
 eerror "Try the following:"
@@ -1923,7 +1923,7 @@ eerror
 		fi
 	fi
 	local node_pv=$(node --version | sed -e "s|v||g")
-	if ver_test "${node_pv%%.*}" -ne "${NODE_VERSION}" ; then
+	if ver_test "${node_pv%%.*}" -ne "${NODE_VERSION%%.*}" ; then
 eerror
 eerror "Node ${NODE_VERSION} must be installed and selected.  To switch, do"
 eerror

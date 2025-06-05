@@ -1010,12 +1010,16 @@ ewarn
 node_pkg_setup() {
 	local found=0
 	local slot
+	which node 2>&1 >/dev/null || die "Missing node"
 	local node_pv=$(node --version \
 		| sed -e "s|v||g")
 	if [[ -n "${NODE_SLOTS}" ]] ; then
 		for slot in ${NODE_SLOTS} ; do
-			if has_version "=net-libs/nodejs-${slot}*" \
-				&& (( ${node_pv%%.*} == ${slot} )) ; then
+			if \
+				has_version "=net-libs/nodejs-${slot}*" \
+					&& \
+				(( ${node_pv%%.*} == ${slot} )) \
+			; then
 				export NODE_VERSION=${slot}
 				found=1
 				break
@@ -1023,7 +1027,7 @@ node_pkg_setup() {
 		done
 		if (( ${found} == 0 )) ; then
 eerror
-eerror "Did not find the preferred nodejs slot."
+eerror "Did not find the preferred Node.js slot."
 eerror "Expected node versions:  ${NODE_SLOTS}"
 eerror
 eerror "Try one of the following:"
@@ -1034,28 +1038,40 @@ eerror "  eselect nodejs set node${s}"
 			done
 
 eerror
-eerror "See eselect nodejs for more details."
+eerror "See \`eselect nodejs\` for more details."
 eerror
 			die
 		fi
 	elif [[ -n "${NODE_VERSION}" ]] ; then
-		if has_version "=net-libs/nodejs-${NODE_VERSION}*" \
-			&& (( ${node_pv%%.*} == ${NODE_VERSION} )) ; then
+		if \
+			has_version "=net-libs/nodejs-${NODE_VERSION%%.*}*" \
+				&& \
+			(( ${node_pv%%.*} == ${NODE_VERSION%%.*} )) \
+		; then
 			found=1
 		fi
 		if (( ${found} == 0 )) ; then
 eerror
-eerror "Did not find the preferred nodejs slot."
+eerror "Did not find the preferred Node.js slot."
 eerror "Expected node version:  ${NODE_VERSION}"
 eerror
 eerror "Try the following:"
 eerror
-eerror "  eselect nodejs set node$(ver_cut 1 ${NODE_VERSION})"
+eerror "  eselect nodejs set node${NODE_VERSION%%.*}"
 eerror
-eerror "See eselect nodejs for more details."
+eerror "See \`eselect nodejs\` for more details."
 eerror
 			die
 		fi
+	fi
+	local node_pv=$(node --version | sed -e "s|v||g")
+	if ver_test "${node_pv%%.*}" -ne "${NODE_VERSION%%.*}" ; then
+eerror
+eerror "Node ${NODE_VERSION} must be installed and selected.  To switch, do"
+eerror
+eerror "  eselect nodejs set node${NODE_VERSION%%.*}"
+eerror
+		die
 	fi
 }
 
