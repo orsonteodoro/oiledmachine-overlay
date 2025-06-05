@@ -81,6 +81,9 @@
     <flag name="max-uptime">
       Verifies defaults for security and compiler settings in order mitigate
       against deadlock or hard reset.
+
+      It will check hardened and performance settings are reset back to the
+      vanilla Linux kernel defaults.
     </flag>
     <flag name="video_cards_nvidia">
       Mitigate against Denial of Service for the NVIDIA® video driver.

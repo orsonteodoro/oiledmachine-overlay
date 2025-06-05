@@ -519,6 +519,17 @@ eerror "Set FIRMWARE_VENDOR as the fallback corresponding to the CPU manufacture
 		die
 	fi
 
+	# In essence, make everything the default vanilla kernel settings.
+
+	_check_n "KASAN"
+	_check_n "KCSAN"
+
+	# The vanilla kernel makes this disabled but sometimes it is enabled for distro kernels.
+	_check_n "KFENCE"
+
+	_check_n "KMSAN"
+	_check_n "UBSAN"
+
 	# Force -O2 to reduce encountering bad generated code.
 	_check_n "CC_OPTIMIZE_FOR_PERFORMANCE_O3"
 	_check_y "CC_OPTIMIZE_FOR_PERFORMANCE"
