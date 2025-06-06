@@ -140,13 +140,13 @@ einfo "NPD = Null Pointer Dereference"
 einfo "OOB = Out Of Bounds Access"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "OOBA" ]] ; then
-einfo "OOB = Out Of Bounds Access"
+einfo "OOBA = Out Of Bounds Access"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "OOBR" ]] ; then
-einfo "OOB = Out Of Bounds Read"
+einfo "OOBR = Out Of Bounds Read"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "OOBW" ]] ; then
-einfo "OOB = Out Of Bounds Write"
+einfo "OOBW = Out Of Bounds Write"
 		fi
 		if [[ "${VULNERABILITIES_FIXED[@]}" =~ "OOR" ]] ; then
 einfo "OOR = Out Of Range Access"
