@@ -3913,7 +3913,8 @@ eerror "QA:  RUSTC is not initialized or missing."
 		"-f*stack-protector" \
 		"-ftrivial-auto-var-init=*" \
 		"-Wl,-z,now" \
-		"-Wl,-z,relro"
+		"-Wl,-z,relro" \
+		"-fstack-clash-protection"
 	local wants_fc_protection=0
 	if \
 		   is-flagq "-fcf-protection=all" \
@@ -3947,8 +3948,8 @@ ewarn "You are using official settings.  For strong hardening, disable this USE 
 			)
 		fi
 		myconf_gn+=(
-			"use_stack_clash_protection=true"
-			"use_rust_stack_clash_protection=true"
+			"use_stack_clash_protection=false"
+			"use_rust_stack_clash_protection=false"
 		)
 		if is-flagq "-ftrapv" ; then
 			myconf_gn+=(
