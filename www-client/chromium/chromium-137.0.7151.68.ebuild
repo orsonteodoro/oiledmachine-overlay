@@ -5070,9 +5070,8 @@ einfo "JIT off is similar to -O${jit_level_desc} worst case."
 		fi
 	fi
 
-# Caused by pointer-compression enabled
-# python3.11 ../../v8/tools/run.py ./mksnapshot --turbo_instruction_scheduling --stress-turbo-late-spilling --target_os=linux --target_arch=x64 --embedded_src gen/v8/embedded.S --predictable --no-use-ic --turbo-elide-frames --embedded_variant Default --random-seed 314159265 --startup_blob snapshot_blob.bin --no-native-code-counters --concurrent-builtin-generation --concurrent-turbofan-max-threads=0
-# FAILED: gen/v8/embedded.S snapshot_blob.bin
+# [15742/26557] python3.11 ../../v8/tools/run.py ./mksnapshot --turbo_instruction_scheduling --stress-turbo-late-spilling --target_os=linux --target_arch=x64 --embedded_src gen/v8/embedded.S --predictable --no-use-ic --turbo-elide-frames --embedded_variant Default --random-seed 314159265 --startup_blob snapshot_blob.bin --no-native-code-counters --concurrent-builtin-generation --concurrent-turbofan-max-threads=0
+# FAILED: gen/v8/embedded.S snapshot_blob.bin 
 # python3.11 ../../v8/tools/run.py ./mksnapshot --turbo_instruction_scheduling --stress-turbo-late-spilling --target_os=linux --target_arch=x64 --embedded_src gen/v8/embedded.S --predictable --no-use-ic --turbo-elide-frames --embedded_variant Default --random-seed 314159265 --startup_blob snapshot_blob.bin --no-native-code-counters --concurrent-builtin-generation --concurrent-turbofan-max-threads=0
 # Return code is -11
 
@@ -5090,7 +5089,6 @@ einfo "JIT off is similar to -O${jit_level_desc} worst case."
 #
 # To fix disable either v8_enable_sandbox=false or v8_enable_pointer_compression=false
 
-ewarn "The mksnapshot may segfault when the kernel is compiled with KFENCE of KCFI."
 	local target_cpu=$(get_target_cpu)
 	myconf_gn+=(
 #		"${myconf_gn//v8_enable_drumbrake=true/v8_enable_drumbrake=false}"
