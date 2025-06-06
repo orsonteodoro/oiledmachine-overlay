@@ -16443,8 +16443,8 @@ ewarn "Vulnerability classes:"
 ewarn
 ewarn "CE - Code Execution"
 ewarn "DoS - Denial of Service"
-ewarn "ID - Information Disclosure"
 ewarn "DT - Data Tampering"
+ewarn "ID - Information Disclosure"
 ewarn "PE - Privilege Escalation"
 ewarn
 ewarn "Recent CPU vulnerabilities for Q1 2025:"
