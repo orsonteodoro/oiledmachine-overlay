@@ -5552,7 +5552,7 @@ ewarn
 		"enable_screen_ai_service=true"
 
 		"enable_service_discovery=true"						# Required by chrome/browser/extensions/api/BUILD.gn.  mdns may be a dependency.
-		"enable_speech_service=false"						# It is enabled but missing backend either local service or remote service.
+#		"enable_speech_service=false"						# It is enabled but missing backend either local service or remote service.
 		"enable_vr=false"							# https://github.com/chromium/chromium/blob/137.0.7151.68/device/vr/buildflags/buildflags.gni#L32
 		"enable_websockets=true"						# requires devtools/devtools_http_handler.cc which is unconditionally added.
 		"enable_widevine=$(usex widevine true false)"
