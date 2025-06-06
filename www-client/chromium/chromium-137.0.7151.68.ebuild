@@ -5090,6 +5090,7 @@ einfo "JIT off is similar to -O${jit_level_desc} worst case."
 #
 # To fix disable either v8_enable_sandbox=false or v8_enable_pointer_compression=false
 
+ewarn "The mksnapshot may segfault when the kernel is compiled with KFENCE of KCFI."
 	local target_cpu=$(get_target_cpu)
 	myconf_gn+=(
 #		"${myconf_gn//v8_enable_drumbrake=true/v8_enable_drumbrake=false}"
