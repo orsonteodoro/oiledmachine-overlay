@@ -376,6 +376,9 @@ www-client/chromium -abi_x86_64 -abi_x86_32 -abi_x86_x32 -abi_mips_n64 -abi_ppc_
 
       The CFI sanitizer can mitigate only a few top 50 reported vulnerabilities.
     </flag>
+    <flag name="closure-compiler">
+      Use closure-compiler to optimize JavaScript scripts.
+    </flag>
     <flag name="component-build">
       Split build into more shared libraries to speed up linking. Mostly
       intended for debugging and development, NOT RECOMMENDED for general use.

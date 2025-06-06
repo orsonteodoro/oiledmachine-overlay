@@ -2798,11 +2798,11 @@ src_prepare() {
 	# lib.
 	apply_distro_patchset
 
-	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" == "1" ]] ; then
-		apply_oiledmachine_overlay_patchset
-	else
-ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
-	fi
+#	if [[ "${APPLY_OILEDMACHINE_OVERLAY_PATCHSET:-1}" == "1" ]] ; then
+#		apply_oiledmachine_overlay_patchset
+#	else
+#ewarn "The oiledmachine-overlay patchset is not ready.  Skipping."
+#	fi
 
 	default
 
@@ -5807,13 +5807,13 @@ ewarn "Actual GiB per core:  ${actual_gib_per_core} GiB"
 
 	_configure_compiler_common
 	_configure_build_system
-	_configure_linker
-	_configure_optimization_level
-	_configure_performance_pgo
-	_configure_performance_simd
-	_configure_performance_thp
-	_configure_v8
-	_configure_security
+	#_configure_linker
+	#_configure_optimization_level
+	#_configure_performance_pgo
+	#_configure_performance_simd
+	#_configure_performance_thp
+	#_configure_v8
+	#_configure_security
 	_configure_debug
 	_configure_features
 
