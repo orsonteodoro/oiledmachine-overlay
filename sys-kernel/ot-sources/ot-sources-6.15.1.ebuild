@@ -27,6 +27,7 @@ inherit ot-kernel-v6.15
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  modularize-ebuild-as-milestone-eclasses
 # OILEDMACHINE-OVERLAY-META-TAGS:  see-eclass-for-full-details
 # OILEDMACHINE-OVERLAY-META-WIP:  tresor, signed-kexec-kernel, signed-kernels
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.15.1 (20250605) with modified builder profile with -O2 and -march=native, no KFENCE, no CFI, yes -D_FORTIFY_SOURCE
 
 
 # OILEDMACHINE-OVERLAY-TEST:  N/A
