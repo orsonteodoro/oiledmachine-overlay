@@ -1,0 +1,10 @@
+--- ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/__main__.py	2024-12-14 14:23:38.000000000 -0800
++++ ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/__main__.py	2025-06-07 13:40:35.582234090 -0700
+@@ -33,7 +33,6 @@ if PY_VERSION < ( 3, 8, 0 ):
+ ROOT_DIR = os.path.abspath( os.path.join( os.path.dirname( __file__ ), '..' ) )
+ DIR_OF_THIRD_PARTY = os.path.join( ROOT_DIR, 'third_party' )
+ DIR_OF_WATCHDOG_DEPS = os.path.join( DIR_OF_THIRD_PARTY, 'watchdog_deps' )
+-DIR_OF_REQUESTS_DEPS = os.path.join( DIR_OF_THIRD_PARTY, 'requests_deps' )
+ sys.path[ 0:0 ] = [
+     os.path.join( ROOT_DIR ),
+     os.path.join( DIR_OF_THIRD_PARTY, 'regex-build' ),

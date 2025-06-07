@@ -1,0 +1,571 @@
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/__main__.py ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/__main__.py
+--- ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/__main__.py	2025-06-07 13:55:06.953014048 -0700
++++ ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/__main__.py	2025-06-07 13:58:05.384726043 -0700
+@@ -17,6 +17,7 @@
+ 
+ import sys
+ import os
++import build_prefs
+ 
+ if 'YCMD_DEBUGPY_PORT' in os.environ:
+   try:
+@@ -32,14 +33,26 @@ if PY_VERSION < ( 3, 8, 0 ):
+ 
+ ROOT_DIR = os.path.abspath( os.path.join( os.path.dirname( __file__ ), '..' ) )
+ DIR_OF_THIRD_PARTY = os.path.join( ROOT_DIR, 'third_party' )
+-DIR_OF_WATCHDOG_DEPS = os.path.join( DIR_OF_THIRD_PARTY, 'watchdog_deps' )
+-sys.path[ 0:0 ] = [
+-    os.path.join( ROOT_DIR ),
+-    os.path.join( DIR_OF_THIRD_PARTY, 'regex-build' ),
+-    os.path.join( DIR_OF_THIRD_PARTY, 'jedi_deps', 'jedi' ),
+-    os.path.join( DIR_OF_THIRD_PARTY, 'jedi_deps', 'parso' ),
+-    os.path.join( DIR_OF_WATCHDOG_DEPS, 'watchdog', 'build', 'lib3' ) ]
+-sys.path.append( os.path.join( DIR_OF_THIRD_PARTY, 'jedi_deps', 'numpydoc' ) )
++
++sys.path[ 0:0 ] = [ os.path.join( ROOT_DIR ) ]
++
++if build_prefs.USE_SYSTEM_REGEX:
++  sys.path.append( build_prefs.SYSTEM_REGEX_PATH )
++else:
++  sys.path.append( os.path.join( DIR_OF_THIRD_PARTY, 'regex-build' ) )
++
++if build_prefs.USE_SYSTEM_JEDI:
++  sys.path.append( build_prefs.SYSTEM_JEDI_PATH )
++else:
++  sys.path.append( os.path.join( DIR_OF_THIRD_PARTY, 'jedi_deps', 'jedi' ) )
++  sys.path.append( os.path.join( DIR_OF_THIRD_PARTY, 'jedi_deps', 'parso' ) )
++  sys.path.append( os.path.join( DIR_OF_THIRD_PARTY, 'jedi_deps', 'numpydoc' ) )
++
++if build_prefs.USE_SYSTEM_WATCHDOG:
++  sys.path.append( build_prefs.SYSTEM_WATCHDOG_PATH )
++else:
++  DIR_OF_WATCHDOG_DEPS = os.path.join( DIR_OF_THIRD_PARTY, 'watchdog_deps' )
++  sys.path.append( os.path.join( DIR_OF_WATCHDOG_DEPS, 'watchdog', 'build', 'lib3' ) )
+ 
+ import atexit
+ import logging
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/build_prefs.py ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/build_prefs.py
+--- ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/build_prefs.py	1969-12-31 16:00:00.000000000 -0800
++++ ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/build_prefs.py	2025-06-07 13:55:22.532229012 -0700
+@@ -0,0 +1,59 @@
++# Copyright (C) 2021 ycmd contributors
++#
++# This file is part of ycmd.
++#
++# ycmd is free software: you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation, either version 3 of the License, or
++# (at your option) any later version.
++#
++# ycmd is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with ycmd.  If not, see <http://www.gnu.org/licenses/>.
++
++USE_SYSTEM_RUST = False
++SYSTEM_RA_PATH = "___SYSTEM_RA_PATH___"
++SYSTEM_RUSTC_PATH = "___SYSTEM_RUSTC_PATH___"
++
++USE_SYSTEM_TYPESCRIPT = False
++SYSTEM_TSSERVER_PATH = "___SYSTEM_TSSERVER_PATH___"
++
++USE_SYSTEM_TERN = False
++SYSTEM_TERN_PATH = "___SYSTEM_TERN_PATH___"
++
++USE_SYSTEM_CLANGD = False
++SYSTEM_CLANGD_PATH = "___SYSTEM_CLANGD_PATH___"
++
++USE_SYSTEM_GOPLS = False
++SYSTEM_GOPLS_PATH = "___SYSTEM_GOPLS_PATH___"
++
++USE_SYSTEM_ROSLYN_OMNISHARP = False
++SYSTEM_ROSLYN_OMNISHARP_PATH = "___SYSTEM_OMNISHARP_PATH___"
++SYSTEM_OMNISHARP_ROSLYN_BINARY_PATH = "___SYSTEM_ROSYLN_BINARY_PATH___"
++
++USE_SYSTEM_JDTLS = False
++SYSTEM_JDTLS_LANGUAGE_SERVER_HOME_PATH = "___SYSTEM_JDTLS_LANGUAGE_SERVER_HOME_PATH___"
++SYSTEM_JDTLS_WORKSPACE_ROOT_PATH = "___SYSTEM_JDTLS_WORKSPACE_ROOT_PATH___"
++SYSTEM_JDTLS_EXTENSION_PATH = "___SYSTEM_JDTLS_EXTENSION_PATH___"
++
++USE_SYSTEM_LIBCLANG = False
++SYSTEM_CLANG_LIB_PATH = "___SYSTEM_CLANG_LIB_PATH___"
++
++USE_SYSTEM_BOTTLE = False
++SYSTEM_BOTTLE_PATH = "___SYSTEM_BOTTLE_PATH___"
++
++USE_SYSTEM_REGEX = False
++SYSTEM_REGEX_PATH = "___SYSTEM_REGEX_PATH___"
++
++USE_SYSTEM_JEDI = False
++SYSTEM_JEDI_PATH = "___SYSTEM_JEDI_PATH___"
++
++USE_SYSTEM_WATCHDOG = False
++SYSTEM_WATCHDOG_PATH = "___SYSTEM_WATCHDOG_PATH___"
++
++USE_CLANGD = False
++USE_LIBCLANG = False
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/completers/c/hook.py ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/completers/c/hook.py
+--- ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/completers/c/hook.py	2024-12-14 14:23:38.000000000 -0800
++++ ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/completers/c/hook.py	2025-06-07 13:55:22.532605436 -0700
+@@ -15,16 +15,19 @@
+ # You should have received a copy of the GNU General Public License
+ # along with ycmd.  If not, see <http://www.gnu.org/licenses/>.
+ 
+-from ycmd.completers.cpp.clang_completer import ClangCompleter
+-from ycmd.completers.cpp.clangd_completer import ( ShouldEnableClangdCompleter,
+-                                                   ClangdCompleter )
++from ycmd import build_prefs
++if build_prefs.USE_LIBCLANG:
++  from ycmd.completers.cpp.clang_completer import ClangCompleter
++if build_prefs.USE_CLANGD:
++  from ycmd.completers.cpp.clangd_completer import ( ShouldEnableClangdCompleter,
++                                                     ClangdCompleter )
+ from ycmd.utils import ImportCore
+ ycm_core = ImportCore()
+ 
+ 
+ def GetCompleter( user_options ):
+-  if ShouldEnableClangdCompleter( user_options ):
++  if build_prefs.USE_CLANGD and ShouldEnableClangdCompleter( user_options ):
+     return ClangdCompleter( user_options )
+-  if ycm_core.HasClangSupport():
++  if build_prefs.USE_LIBCLANG and ycm_core.HasClangSupport():
+     return ClangCompleter( user_options )
+   return None
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/completers/cpp/clangd_completer.py ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/completers/cpp/clangd_completer.py
+--- ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/completers/cpp/clangd_completer.py	2024-12-14 14:23:38.000000000 -0800
++++ ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/completers/cpp/clangd_completer.py	2025-06-07 13:55:22.532807678 -0700
+@@ -33,6 +33,7 @@ from ycmd.utils import ( CLANG_RESOURCE_
+                          OnMac,
+                          PathsToAllParentFolders,
+                          re )
++from ycmd import build_prefs
+ 
+ # NOTES: We bundle latest stable release, but as this is very new, we still
+ # allow the use of earlier version to avoid breaking users who have set
+@@ -43,16 +44,20 @@ INCLUDE_REGEX = re.compile(
+   '(\\s*#\\s*(?:include|import)\\s*)(?:"[^"]*|<[^>]*)' )
+ NOT_CACHED = 'NOT_CACHED'
+ CLANGD_COMMAND = NOT_CACHED
+-PRE_BUILT_CLANGD_DIR = os.path.abspath( os.path.join(
+-  os.path.dirname( __file__ ),
+-  '..',
+-  '..',
+-  '..',
+-  'third_party',
+-  'clangd',
+-  'output',
+-  'bin' ) )
+-PRE_BUILT_CLANDG_PATH = os.path.join( PRE_BUILT_CLANGD_DIR, 'clangd' )
++if build_prefs.USE_SYSTEM_CLANGD:
++  PRE_BUILT_CLANGD_DIR = os.path.dirname( build_prefs.SYSTEM_CLANGD_PATH )
++  PRE_BUILT_CLANDG_PATH = build_prefs.SYSTEM_CLANGD_PATH
++else:
++  PRE_BUILT_CLANGD_DIR = os.path.abspath( os.path.join(
++    os.path.dirname( __file__ ),
++    '..',
++    '..',
++    '..',
++    'third_party',
++    'clangd',
++    'output',
++    'bin' ) )
++  PRE_BUILT_CLANDG_PATH = os.path.join( PRE_BUILT_CLANGD_DIR, 'clangd' )
+ 
+ 
+ def ParseClangdVersion( version_str ):
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/completers/cpp/hook.py ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/completers/cpp/hook.py
+--- ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/completers/cpp/hook.py	2024-12-14 14:23:38.000000000 -0800
++++ ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/completers/cpp/hook.py	2025-06-07 13:55:22.532938218 -0700
+@@ -15,16 +15,19 @@
+ # You should have received a copy of the GNU General Public License
+ # along with ycmd.  If not, see <http://www.gnu.org/licenses/>.
+ 
+-from ycmd.completers.cpp.clang_completer import ClangCompleter
+-from ycmd.completers.cpp.clangd_completer import ( ShouldEnableClangdCompleter,
+-                                                   ClangdCompleter )
++from ycmd import build_prefs
++if build_prefs.USE_LIBCLANG:
++  from ycmd.completers.cpp.clang_completer import ClangCompleter
++if build_prefs.USE_CLANGD:
++  from ycmd.completers.cpp.clangd_completer import ( ShouldEnableClangdCompleter,
++                                                     ClangdCompleter )
+ from ycmd.utils import ImportCore
+ ycm_core = ImportCore()
+ 
+ 
+ def GetCompleter( user_options ):
+-  if ShouldEnableClangdCompleter( user_options ):
++  if build_prefs.USE_CLANGD and ShouldEnableClangdCompleter( user_options ):
+     return ClangdCompleter( user_options )
+-  if ycm_core.HasClangSupport():
++  if build_prefs.USE_LIBCLANG and ycm_core.HasClangSupport():
+     return ClangCompleter( user_options )
+   return None
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/completers/cs/cs_completer.py ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/completers/cs/cs_completer.py
+--- ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/completers/cs/cs_completer.py	2024-12-14 14:23:38.000000000 -0800
++++ ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/completers/cs/cs_completer.py	2025-06-07 13:55:22.533110398 -0700
+@@ -36,18 +36,23 @@ from ycmd.utils import ( ByteOffsetToCod
+                          ToBytes )
+ from ycmd import responses
+ from ycmd import utils
++from ycmd import build_prefs
+ 
+ SERVER_NOT_FOUND_MSG = ( 'OmniSharp server binary not found at {0}. ' +
+                          'Did you compile it? You can do so by running ' +
+                          '"./install.py --cs-completer".' )
+ INVALID_FILE_MESSAGE = 'File is invalid.'
+ NO_DIAGNOSTIC_MESSAGE = 'No diagnostic for current line!'
+-PATH_TO_ROSLYN_OMNISHARP = os.path.join(
+-  os.path.abspath( os.path.dirname( __file__ ) ),
+-  '..', '..', '..', 'third_party', 'omnisharp-roslyn'
+-)
+-PATH_TO_OMNISHARP_ROSLYN_BINARY = os.path.join(
+-  PATH_TO_ROSLYN_OMNISHARP, 'Omnisharp.exe' )
++if build_prefs.USE_SYSTEM_ROSLYN_OMNISHARP:
++  PATH_TO_ROSLYN_OMNISHARP = build_prefs.SYSTEM_ROSLYN_OMNISHARP_PATH
++  PATH_TO_OMNISHARP_ROSLYN_BINARY = build_prefs.SYSTEM_OMNISHARP_ROSLYN_BINARY_PATH
++else:
++  PATH_TO_ROSLYN_OMNISHARP = os.path.join(
++    os.path.abspath( os.path.dirname( __file__ ) ),
++    '..', '..', '..', 'third_party', 'omnisharp-roslyn'
++  )
++  PATH_TO_OMNISHARP_ROSLYN_BINARY = os.path.join(
++    PATH_TO_ROSLYN_OMNISHARP, 'Omnisharp.exe' )
+ if ( not os.path.isfile( PATH_TO_OMNISHARP_ROSLYN_BINARY )
+      and os.path.isfile( os.path.join(
+        PATH_TO_ROSLYN_OMNISHARP, 'omnisharp', 'OmniSharp.exe' ) ) ):
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/completers/cuda/hook.py ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/completers/cuda/hook.py
+--- ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/completers/cuda/hook.py	2024-12-14 14:23:38.000000000 -0800
++++ ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/completers/cuda/hook.py	2025-06-07 13:55:22.533288425 -0700
+@@ -15,16 +15,19 @@
+ # You should have received a copy of the GNU General Public License
+ # along with ycmd.  If not, see <http://www.gnu.org/licenses/>.
+ 
+-from ycmd.completers.cpp.clang_completer import ClangCompleter
+-from ycmd.completers.cpp.clangd_completer import ( ShouldEnableClangdCompleter,
+-                                                   ClangdCompleter )
++from ycmd import build_prefs
++if build_prefs.USE_LIBCLANG:
++  from ycmd.completers.cpp.clang_completer import ClangCompleter
++if build_prefs.USE_CLANGD:
++  from ycmd.completers.cpp.clangd_completer import ( ShouldEnableClangdCompleter,
++                                                     ClangdCompleter )
+ from ycmd.utils import ImportCore
+ ycm_core = ImportCore()
+ 
+ 
+ def GetCompleter( user_options ):
+-  if ShouldEnableClangdCompleter( user_options ):
++  if build_prefs.USE_CLANGD and ShouldEnableClangdCompleter( user_options ):
+     return ClangdCompleter( user_options )
+-  if ycm_core.HasClangSupport():
++  if build_prefs.USE_LIBCLANG and ycm_core.HasClangSupport():
+     return ClangCompleter( user_options )
+   return None
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/completers/go/go_completer.py ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/completers/go/go_completer.py
+--- ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/completers/go/go_completer.py	2024-12-14 14:23:38.000000000 -0800
++++ ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/completers/go/go_completer.py	2025-06-07 13:55:22.533396695 -0700
+@@ -22,16 +22,19 @@ import os
+ from ycmd import responses
+ from ycmd import utils
+ from ycmd.completers.language_server import language_server_completer
++from ycmd import build_prefs
+ 
+-
+-PATH_TO_GOPLS = os.path.abspath( os.path.join( os.path.dirname( __file__ ),
+-  '..',
+-  '..',
+-  '..',
+-  'third_party',
+-  'go',
+-  'bin',
+-  utils.ExecutableName( 'gopls' ) ) )
++if build_prefs.USE_SYSTEM_GOPLS:
++  PATH_TO_GOPLS = build_prefs.SYSTEM_GOPLS_PATH
++else:
++  PATH_TO_GOPLS = os.path.abspath( os.path.join( os.path.dirname( __file__ ),
++    '..',
++    '..',
++    '..',
++    'third_party',
++    'go',
++    'bin',
++    utils.ExecutableName( 'gopls' ) ) )
+ 
+ 
+ def ShouldEnableGoCompleter( user_options ):
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/completers/java/java_completer.py ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/completers/java/java_completer.py
+--- ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/completers/java/java_completer.py	2024-12-14 14:23:38.000000000 -0800
++++ ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/completers/java/java_completer.py	2025-06-07 13:55:22.533581937 -0700
+@@ -27,19 +27,10 @@ from collections import OrderedDict
+ from ycmd import responses, utils
+ from ycmd.completers.language_server import language_server_completer
+ from ycmd.utils import LOGGER
++from ycmd import build_prefs
+ 
+ NO_DOCUMENTATION_MESSAGE = 'No documentation available for current context'
+ 
+-LANGUAGE_SERVER_HOME = os.path.abspath( os.path.join(
+-  os.path.dirname( __file__ ),
+-  '..',
+-  '..',
+-  '..',
+-  'third_party',
+-  'eclipse.jdt.ls',
+-  'target',
+-  'repository' ) )
+-
+ PATH_TO_JAVA = None
+ 
+ PROJECT_FILE_TAILS = OrderedDict( {
+@@ -50,23 +41,38 @@ PROJECT_FILE_TAILS = OrderedDict( {
+   '.project': 'eclipse',
+ } )
+ 
+-DEFAULT_WORKSPACE_ROOT_PATH = os.path.abspath( os.path.join(
+-  os.path.dirname( __file__ ),
+-  '..',
+-  '..',
+-  '..',
+-  'third_party',
+-  'eclipse.jdt.ls',
+-  'workspace' ) )
+-
+-DEFAULT_EXTENSION_PATH = os.path.abspath( os.path.join(
+-  os.path.dirname( __file__ ),
+-  '..',
+-  '..',
+-  '..',
+-  'third_party',
+-  'eclipse.jdt.ls',
+-  'extensions' ) )
++if build_prefs.USE_SYSTEM_JDTLS:
++  LANGUAGE_SERVER_HOME = build_prefs.SYSTEM_JDTLS_LANGUAGE_SERVER_HOME_PATH
++  DEFAULT_WORKSPACE_ROOT_PATH = build_prefs.SYSTEM_JDTLS_WORKSPACE_ROOT_PATH
++  DEFAULT_EXTENSION_PATH = build_prefs.SYSTEM_JDTLS_EXTENSION_PATH
++else:
++  LANGUAGE_SERVER_HOME = os.path.abspath( os.path.join(
++    os.path.dirname( __file__ ),
++    '..',
++    '..',
++    '..',
++    'third_party',
++    'eclipse.jdt.ls',
++    'target',
++    'repository' ) )
++
++  DEFAULT_WORKSPACE_ROOT_PATH = os.path.abspath( os.path.join(
++    os.path.dirname( __file__ ),
++    '..',
++    '..',
++    '..',
++    'third_party',
++    'eclipse.jdt.ls',
++    'workspace' ) )
++
++  DEFAULT_EXTENSION_PATH = os.path.abspath( os.path.join(
++    os.path.dirname( __file__ ),
++    '..',
++    '..',
++    '..',
++    'third_party',
++    'eclipse.jdt.ls',
++    'extensions' ) )
+ 
+ 
+ # The authors of jdt.ls say that we should re-use workspaces. They also say that
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/completers/javascript/tern_completer.py ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/completers/javascript/tern_completer.py
+--- ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/completers/javascript/tern_completer.py	2024-12-14 14:23:38.000000000 -0800
++++ ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/completers/javascript/tern_completer.py	2025-06-07 13:55:22.533753305 -0700
+@@ -27,21 +27,25 @@ from ycmd import utils, responses
+ from ycmd.completers.completer import Completer
+ from ycmd.completers.completer_utils import GetFileLines
+ from ycmd.utils import LOGGER, ToBytes, ToUnicode
++from ycmd import build_prefs
+ 
+ HTTP_OK = 200
+ 
+-PATH_TO_TERN_BINARY = os.path.abspath(
+-  os.path.join(
+-    os.path.dirname( __file__ ),
+-    '..',
+-    '..',
+-    '..',
+-    'third_party',
+-    'tern_runtime',
+-    'node_modules',
+-    'tern',
+-    'bin',
+-    'tern' ) )
++if config.USE_SYSTEM_TERN:
++  PATH_TO_TERN_BINARY = build_prefs.SYSTEM_TERN_PATH
++else:
++  PATH_TO_TERN_BINARY = os.path.abspath(
++    os.path.join(
++      os.path.dirname( __file__ ),
++      '..',
++      '..',
++      '..',
++      'third_party',
++      'tern_runtime',
++      'node_modules',
++      'tern',
++      'bin',
++      'tern' ) )
+ 
+ PATH_TO_NODE = utils.FindExecutable( 'node' )
+ 
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/completers/objc/hook.py ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/completers/objc/hook.py
+--- ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/completers/objc/hook.py	2024-12-14 14:23:38.000000000 -0800
++++ ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/completers/objc/hook.py	2025-06-07 13:55:22.533908461 -0700
+@@ -15,16 +15,19 @@
+ # You should have received a copy of the GNU General Public License
+ # along with ycmd.  If not, see <http://www.gnu.org/licenses/>.
+ 
+-from ycmd.completers.cpp.clang_completer import ClangCompleter
+-from ycmd.completers.cpp.clangd_completer import ( ShouldEnableClangdCompleter,
+-                                                   ClangdCompleter )
++from ycmd import build_prefs
++if build_prefs.USE_LIBCLANG:
++  from ycmd.completers.cpp.clang_completer import ClangCompleter
++if build_prefs.USE_CLANGD:
++  from ycmd.completers.cpp.clangd_completer import ( ShouldEnableClangdCompleter,
++                                                     ClangdCompleter )
+ from ycmd.utils import ImportCore
+ ycm_core = ImportCore()
+ 
+ 
+ def GetCompleter( user_options ):
+-  if ShouldEnableClangdCompleter( user_options ):
++  if build_prefs.USE_CLANGD and ShouldEnableClangdCompleter( user_options ):
+     return ClangdCompleter( user_options )
+-  if ycm_core.HasClangSupport():
++  if build_prefs.USE_LIBCLANG and ycm_core.HasClangSupport():
+     return ClangCompleter( user_options )
+   return None
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/completers/objcpp/hook.py ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/completers/objcpp/hook.py
+--- ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/completers/objcpp/hook.py	2024-12-14 14:23:38.000000000 -0800
++++ ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/completers/objcpp/hook.py	2025-06-07 13:55:22.534005655 -0700
+@@ -15,16 +15,19 @@
+ # You should have received a copy of the GNU General Public License
+ # along with ycmd.  If not, see <http://www.gnu.org/licenses/>.
+ 
+-from ycmd.completers.cpp.clang_completer import ClangCompleter
+-from ycmd.completers.cpp.clangd_completer import ( ShouldEnableClangdCompleter,
+-                                                   ClangdCompleter )
++from ycmd import build_prefs
++if build_prefs.USE_LIBCLANG:
++  from ycmd.completers.cpp.clang_completer import ClangCompleter
++if build_prefs.USE_CLANGD:
++  from ycmd.completers.cpp.clangd_completer import ( ShouldEnableClangdCompleter,
++                                                     ClangdCompleter )
+ from ycmd.utils import ImportCore
+ ycm_core = ImportCore()
+ 
+ 
+ def GetCompleter( user_options ):
+-  if ShouldEnableClangdCompleter( user_options ):
++  if build_prefs.USE_CLANGD and ShouldEnableClangdCompleter( user_options ):
+     return ClangdCompleter( user_options )
+-  if ycm_core.HasClangSupport():
++  if build_prefs.USE_LIBCLANG and ycm_core.HasClangSupport():
+     return ClangCompleter( user_options )
+   return None
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/completers/rust/rust_completer.py ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/completers/rust/rust_completer.py
+--- ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/completers/rust/rust_completer.py	2024-12-14 14:23:38.000000000 -0800
++++ ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/completers/rust/rust_completer.py	2025-06-07 13:55:22.534117546 -0700
+@@ -22,16 +22,21 @@ from subprocess import PIPE
+ from ycmd import responses, utils
+ from ycmd.completers.language_server import language_server_completer
+ from ycmd.utils import LOGGER, re
++from ycmd import build_prefs
+ 
+ 
+ LOGFILE_FORMAT = 'ra_'
+-RUST_ROOT = os.path.abspath(
+-  os.path.join( os.path.dirname( __file__ ), '..', '..', '..', 'third_party',
++if build_prefs.USE_SYSTEM_RUST:
++  RUSTC_EXECUTABLE = utils.FindExecutable( build_prefs.SYSTEM_RUSTC_PATH )
++  RA_EXECUTABLE = utils.FindExecutable( build_prefs.SYSTEM_RA_PATH )
++else:
++  RUST_ROOT = os.path.abspath(
++    os.path.join( os.path.dirname( __file__ ), '..', '..', '..', 'third_party',
+                 'rust-analyzer' ) )
+-RA_BIN_DIR = os.path.join( RUST_ROOT, 'bin' )
+-RUSTC_EXECUTABLE = utils.FindExecutable( os.path.join( RA_BIN_DIR, 'rustc' ) )
+-RA_EXECUTABLE = utils.FindExecutable( os.path.join(
+-    RA_BIN_DIR, 'rust-analyzer' ) )
++  RA_BIN_DIR = os.path.join( RUST_ROOT, 'bin' )
++  RUSTC_EXECUTABLE = utils.FindExecutable( os.path.join( RA_BIN_DIR, 'rustc' ) )
++  RA_EXECUTABLE = utils.FindExecutable( os.path.join(
++      RA_BIN_DIR, 'rust-analyzer' ) )
+ RA_VERSION_REGEX = re.compile( r'^rust-analyzer (?P<version>.*)$' )
+ 
+ 
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/completers/typescript/typescript_completer.py ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/completers/typescript/typescript_completer.py
+--- ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/completers/typescript/typescript_completer.py	2024-12-14 14:23:38.000000000 -0800
++++ ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/completers/typescript/typescript_completer.py	2025-06-07 13:55:22.534386642 -0700
+@@ -32,15 +32,19 @@ from ycmd import utils
+ from ycmd.completers.completer import Completer
+ from ycmd.completers.completer_utils import GetFileLines, GetFileContents
+ from ycmd.utils import LOGGER, re
++from ycmd import build_prefs
+ 
+ SERVER_NOT_RUNNING_MESSAGE = 'TSServer is not running.'
+ NO_DIAGNOSTIC_MESSAGE = 'No diagnostic for current line!'
+ 
+ RESPONSE_TIMEOUT_SECONDS = 20
+ 
+-TSSERVER_DIR = os.path.abspath(
+-  os.path.join( os.path.dirname( __file__ ), '..', '..', '..', 'third_party',
+-                'tsserver' ) )
++if build_prefs.USE_SYSTEM_TYPESCRIPT:
++  TSSERVER_DIR = os.path.dirname( build_prefs.SYSTEM_TSSERVER_PATH )
++else:
++  TSSERVER_DIR = os.path.abspath(
++    os.path.join( os.path.dirname( __file__ ), '..', '..', '..', 'third_party',
++                  'tsserver' ) )
+ 
+ LOGFILE_FORMAT = 'tsserver_'
+ 
+@@ -78,11 +82,15 @@ def FindTSServer( user_options_path ):
+     return tsserver
+   # The TSServer executable is installed at the root directory on Windows while
+   # it's installed in the bin folder on other platforms.
+-  for executable in [ os.path.join( TSSERVER_DIR,
++  if ycmd.USE_SYSTEM_TYPESCRIPT:
++    tspaths = [ ycmd.SYSTEM_TSSERVER_PATH ]
++  else:
++    tpaths = [ os.path.join( TSSERVER_DIR,
+                                     'node_modules',
+                                     '.bin',
+                                     'tsserver' ),
+                       'tsserver' ]:
++  for executable in tpaths:
+     tsserver = utils.FindExecutable( executable )
+     if tsserver:
+       return tsserver
+diff '--color=auto' -x '*.rej' -x '*.orig' -urpN ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/utils.py ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/utils.py
+--- ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/ycmd/utils.py	2024-12-14 14:23:38.000000000 -0800
++++ ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/ycmd/utils.py	2025-06-07 13:55:22.534598713 -0700
+@@ -25,11 +25,15 @@ import sys
+ import tempfile
+ import time
+ import threading
++import build_prefs
+ 
+ LOGGER = logging.getLogger( 'ycmd' )
+ ROOT_DIR = os.path.normpath( os.path.join( os.path.dirname( __file__ ), '..' ) )
+ DIR_OF_THIRD_PARTY = os.path.join( ROOT_DIR, 'third_party' )
+-LIBCLANG_DIR = os.path.join( DIR_OF_THIRD_PARTY, 'clang', 'lib' )
++if build_prefs.USE_SYSTEM_LIBCLANG:
++  LIBCLANG_DIR = build_prefs.SYSTEM_CLANG_LIB_PATH
++else:
++  LIBCLANG_DIR = os.path.join( DIR_OF_THIRD_PARTY, 'clang', 'lib' )
+ if hasattr( os, 'add_dll_directory' ):
+   os.add_dll_directory( LIBCLANG_DIR )
+ 

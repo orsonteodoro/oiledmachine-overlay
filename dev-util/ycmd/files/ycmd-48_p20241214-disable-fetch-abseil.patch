@@ -1,0 +1,19 @@
+diff '--color=auto' -urp ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/cpp/CMakeLists.txt ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/cpp/CMakeLists.txt
+--- ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954.orig/cpp/CMakeLists.txt	2024-12-14 14:23:38.000000000 -0800
++++ ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/cpp/CMakeLists.txt	2025-06-07 13:49:42.070256176 -0700
+@@ -242,13 +242,7 @@ if ( USE_SYSTEM_ABSEIL )
+   find_package( absl REQUIRED )
+ else()
+   include( FetchContent )
+-  FetchContent_Declare(
+-    absl
+-    GIT_REPOSITORY https://github.com/abseil/abseil-cpp
+-    GIT_TAG d7aaad83b488fd62bd51c81ecf16cd938532cc0a
+-    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/absl
+-  )
+-  FetchContent_MakeAvailable( absl )
++  add_subdirectory( absl )
+ endif()
+ 
+ add_subdirectory( ycm )
+Only in ycmd-a51329a55f02ee3f16218c25ed5ee57b44cfc954/cpp: CMakeLists.txt.orig
