@@ -430,6 +430,7 @@ src_install() {
 
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 7497cc6 9999_p20210419 (20230630) with ycmd-47
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) 1d09284 9999 (20230702) with ycmd-47
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (interactive) a8aa4bb 9999 (20250607) with ycmd-48
 # connecting to ycmd:  passed
 # python completion:  passed
 # GetDoc (python):  passed with workaround ; requires removal of invalid .ycm_extra_conf.py, or setting confirm_extra_conf=0 in ycmd.c, or source code change to handle this.
