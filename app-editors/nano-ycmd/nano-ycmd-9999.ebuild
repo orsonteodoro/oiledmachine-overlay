@@ -43,7 +43,7 @@ bear debug justify libgcrypt +magic minimal ncurses nettle ninja nls slang
 system-godef system-gopls system-mono system-omnisharp system-racerd system-rust
 system-rustc system-tsserver unicode ycm-generator
 +ycmd-48
-ebuild_revision_42
+ebuild_revision_43
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
