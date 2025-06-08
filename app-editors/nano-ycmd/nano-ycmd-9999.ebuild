@@ -56,7 +56,7 @@ bear debug justify libgcrypt +magic minimal ncurses nettle ninja nls slang
 system-godef system-gopls system-mono system-omnisharp system-racerd system-rust
 system-rustc system-tsserver unicode ycm-generator
 +ycmd-48
-ebuild_revision_44
+ebuild_revision_45
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -214,7 +214,7 @@ eerror
 src_prepare() {
 ewarn "This ebuild is a Work In Progress (WIP)"
 	default
-	eapply "A${FILESDIR}/${PN}-9999-3b23184-rename-as-ynano.patch"
+	eapply "${FILESDIR}/${PN}-9999-3b23184-rename-as-ynano.patch"
 	export GNULIB_USE_TARBALL=1
 	if use system-gnulib ; then
 		export GNULIB_USE_SYSTEM=1
