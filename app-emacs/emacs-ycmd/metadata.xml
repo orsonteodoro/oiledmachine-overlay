@@ -91,14 +91,8 @@
     <flag name="typescript-mode">
       Adds support for the TypeScript programming language via typescript-mode.
     </flag>
-    <flag name="ycmd-43">
-      Set up ycmd for compatibility with core version 43
-    </flag>
-    <flag name="ycmd-44">
-      Set up ycmd for compatibility with core version 44
-    </flag>
-    <flag name="ycmd-45">
-      Set up ycmd for compatibility with core version 45
+    <flag name="ycmd-48">
+      Set up ycmd for compatibility with core version 48
     </flag>
   </use>
 </pkgmetadata>

@@ -4,16 +4,27 @@
 
 EAPI=8
 
+BD_ABS=""
 NEED_EMACS="27.2"
+EGIT_COMMIT="c17ff9e0250a9b39d23af37015a2b300e2f36fed"
 EMACS_SLOT="${NEED_EMACS%%.*}"
-PYTHON_COMPAT=( python3_{8..11} )
+PYTHON_COMPAT=( "python3_"{8..11} )
+SITEFILE="50emacs-ycmd-gentoo.el"
+
 inherit elisp java-pkg-opt-2 python-single-r1 sandbox-changes
+
+KEYWORDS="~amd64 ~x86"
+S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+SRC_URI="
+https://github.com/abingham/emacs-ycmd/archive/${EGIT_COMMIT}.tar.gz
+	-> ${P}.tar.gz
+"
 
 DESCRIPTION="Emacs client for ycmd, the code completion system"
 HOMEPAGE="https://github.com/abingham/emacs-ycmd"
 LICENSE="
-	MIT
 	GPL-3+
+	MIT
 	company-mode? (
 		GPL-3+
 	)
@@ -32,41 +43,29 @@ LICENSE="
 	)
 "
 # The required dependencies are GPL-3+ but scripts or package alone itself is MIT.
-KEYWORDS="~amd64 ~x86"
+RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 builtin-completion +company-mode debug eldoc +flycheck +go-mode next-error
 +rust-mode system-gocode system-godef system-gopls system-jdtls system-mono
 system-omnisharp system-racerd system-rust system-typescript +typescript-mode
-ycmd-43 ycmd-44 ycmd-45 ycmd-46 +ycmd-47 r1
++ycmd-48
+ebuild_revision_3
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	company-mode
 	^^ (
-		ycmd-43
-		ycmd-44
-		ycmd-45
-		ycmd-47
+		ycmd-48
 	)
 "
 RDEPEND+="
 	${PYTHON_DEPS}
 	>=app-editors/emacs-${NEED_EMACS}:${EMACS_SLOT}
-	ycmd-43? (
-		$(python_gen_cond_dep 'dev-util/ycmd:43[${PYTHON_USEDEP}]')
-	)
-	ycmd-44? (
-		$(python_gen_cond_dep 'dev-util/ycmd:44[${PYTHON_USEDEP}]')
-	)
-	ycmd-45? (
-		$(python_gen_cond_dep 'dev-util/ycmd:45[${PYTHON_USEDEP}]')
-	)
-	ycmd-46? (
-		$(python_gen_cond_dep 'dev-util/ycmd:46[${PYTHON_USEDEP}]')
-	)
-	ycmd-47? (
-		$(python_gen_cond_dep 'dev-util/ycmd:47[${PYTHON_USEDEP}]')
+	ycmd-48? (
+		$(python_gen_cond_dep '
+			dev-util/ycmd:48[${PYTHON_USEDEP}]
+		')
 	)
 "
 DEPEND+="
@@ -76,17 +75,8 @@ BDEPEND+="
 	dev-vcs/git
 	net-libs/gnutls[tools]
 "
-EGIT_COMMIT="c17ff9e0250a9b39d23af37015a2b300e2f36fed"
-SRC_URI="
-https://github.com/abingham/emacs-ycmd/archive/${EGIT_COMMIT}.tar.gz
-	-> ${P}.tar.gz
-"
-S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
-RESTRICT="mirror"
-SITEFILE="50emacs-ycmd-gentoo.el"
-BD_ABS=""
-PATCHES=(
-	"${FILESDIR}/${PN}-1.3_p20191206-support-core-version-44.patch"
+_PATCHES=(
+	"${FILESDIR}/${PN}-1.3_p20191206-support-core-version-45.patch"
 )
 
 pkg_setup() {
@@ -160,16 +150,8 @@ install_deps() {
 	fi
 	cask install
 	cask build
-	if use ycmd-43 ; then
-		export YCMD_SLOT=43
-	elif use ycmd-44 ; then
-		export YCMD_SLOT=44
-	elif use ycmd-45 ; then
-		export YCMD_SLOT=45
-	elif use ycmd-46 ; then
-		export YCMD_SLOT=46
-	elif use ycmd-47 ; then
-		export YCMD_SLOT=47
+	if use ycmd-48 ; then
+		export YCMD_SLOT=48
 	fi
 	BD_ABS="${PYTHON_SITEDIR}/ycmd/${YCMD_SLOT}"
 }
@@ -178,6 +160,12 @@ src_unpack() {
 	unpack ${A}
 	cd "${S}" || die
 	install_deps
+}
+
+src_prepare() {
+	elisp_src_prepare
+	java-pkg-opt-2_src_prepare
+	eapply "${_PATCHES[@]}"
 }
 
 src_configure() {
@@ -295,12 +283,8 @@ src_configure() {
 	if use java ; then
 		local java_vendor=$(java-pkg_get-vm-vendor)
 		local java_slot
-		if use ycmd-46 || use ycmd-47 ; then
+		if use ycmd-48 ; then
 			java_slot=17
-		elif use ycmd-44 || use ycmd-45 ; then
-			java_slot=11
-		else
-			java_slot=8
 		fi
 		  if [[ -L "${EPREFIX}/usr/lib/jvm/${java_vendor}-${java_slot}" ]] ; then
 			jp="${EPREFIX}/usr/lib/jvm/${java_vendor}-${java_slot}"
@@ -347,7 +331,7 @@ src_configure() {
 	if use system-omnisharp ; then
 		rosyln_abspath_str="${BD_ABS}/ycmd/completers/cs/omnisharp.sh"
 	else
-		if use ycmd-43 || use ycmd-44 || use ycmd-45 || use ycmd-46 || use ycmd-47 ; then
+		if use ycmd-48 ; then
 			rosyln_abspath_str="${BD_ABS}/third_party/omnisharp-roslyn/run"
 		else
 			rosyln_abspath_str=""
@@ -452,7 +436,7 @@ src_configure() {
 
 
 src_compile() {
-	:;
+	:
 }
 
 src_install() {
@@ -465,9 +449,7 @@ src_install() {
 pkg_postinst() {
         elisp-site-regen
 	if ! use company-mode ; then
-ewarn
 ewarn "company-mode is strongly recommended for popup suggestions."
-ewarn
 	fi
 einfo
 einfo "Keybindings can be found in"
@@ -489,9 +471,9 @@ einfo
 
 pkg_postrm() {
 	elisp-site-regen
-ewarn
 # Design not implemented correctly.
 # It should show the document before prompting.
+ewarn
 ewarn "SECURITY:  Before answering y for loading .ycm_extra_conf.py, you need to"
 ewarn "manually inspect the contents of that script for malicious code outside"
 ewarn "of emacs before ycmd executes it."

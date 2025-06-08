@@ -1,6 +1,6 @@
-diff -urp emacs-ycmd-bc81b992f79100c98f56b7b83caf64cb8ea60477.orig/ycmd.el emacs-ycmd-bc81b992f79100c98f56b7b83caf64cb8ea60477/ycmd.el
---- emacs-ycmd-bc81b992f79100c98f56b7b83caf64cb8ea60477.orig/ycmd.el	2019-12-06 04:23:09.000000000 -0800
-+++ emacs-ycmd-bc81b992f79100c98f56b7b83caf64cb8ea60477/ycmd.el	2021-04-15 21:01:59.790251165 -0700
+diff '--color=auto' -urp emacs-ycmd-c17ff9e0250a9b39d23af37015a2b300e2f36fed.orig/ycmd.el emacs-ycmd-c17ff9e0250a9b39d23af37015a2b300e2f36fed/ycmd.el
+--- emacs-ycmd-c17ff9e0250a9b39d23af37015a2b300e2f36fed.orig/ycmd.el	2020-11-01 02:45:46.000000000 -0800
++++ emacs-ycmd-c17ff9e0250a9b39d23af37015a2b300e2f36fed/ycmd.el	2025-06-07 21:38:32.255531382 -0700
 @@ -135,6 +135,26 @@
  Whitelisted configs are loaded without confirmation."
    :type '(repeat string))
@@ -28,10 +28,11 @@ diff -urp emacs-ycmd-bc81b992f79100c98f56b7b83caf64cb8ea60477.orig/ycmd.el emacs
  (defcustom ycmd-extra-conf-handler 'ask
    "What to do when an un-whitelisted extra config is encountered.
  
-@@ -203,6 +223,10 @@ re-parsing the contents."
+@@ -203,6 +223,11 @@ re-parsing the contents."
    "Seconds to wait for the server to finish before killing the process."
    :type '(number))
  
++;; If CORE_VERSION >= 43, clangd_args=1.  If CORE_VERSION < 43, clangd_args="Auto".
 +(defcustom ycmd-use-clangd 1
 +  "Use the clangd completer."
 +  :type '(number))
@@ -39,7 +40,7 @@ diff -urp emacs-ycmd-bc81b992f79100c98f56b7b83caf64cb8ea60477.orig/ycmd.el emacs
  (defcustom ycmd-parse-conditions '(save new-line mode-enabled)
    "When ycmd should reparse the buffer.
  
-@@ -344,6 +368,10 @@ engine."
+@@ -344,6 +369,10 @@ engine."
    "Function to get keywords for current mode."
    :type 'symbol)
  
@@ -50,7 +51,7 @@ diff -urp emacs-ycmd-bc81b992f79100c98f56b7b83caf64cb8ea60477.orig/ycmd.el emacs
  (defcustom ycmd-gocode-binary-path nil
    "Gocode binary path."
    :type 'string)
-@@ -352,22 +380,58 @@ engine."
+@@ -352,22 +381,58 @@ engine."
    "Godef binary path."
    :type 'string)
  
@@ -115,7 +116,36 @@ diff -urp emacs-ycmd-bc81b992f79100c98f56b7b83caf64cb8ea60477.orig/ycmd.el emacs
  (defcustom ycmd-global-modes t
    "Modes for which `ycmd-mode' is turned on by `global-ycmd-mode'.
  
-@@ -2092,12 +2156,25 @@ file."
+@@ -2088,16 +2153,54 @@ reads this file and then deletes it sinc
+ key.  So we need to generate a new options file for each ycmd
+ instance.  This function effectively produces the contents of that
+ file."
++;;
++;; 2025 Change.
++;;
++;; There is a confusion on the meaing of CORE_VERSION because ycmd doesn't tag
++;; releases.  The version required is based on the bump of CORE_VERSION which is
++;; assumed to be the final version.  Bumps are assumed similar to Python
++;; packages changes to version variable in __init__.py or setup.py that are
++;; usually simultaneously tagged.
++;;
++;; 48 https://github.com/ycm-core/ycmd/blob/99c068120c14257c236e1dcfbf55838e33ae141e/ycmd/default_settings.json ;; no change between 45-48
++;; 47 https://github.com/ycm-core/ycmd/blob/671fee16bbaa5da3858108b3717b76bc833b3953/ycmd/default_settings.json ;;
++;; 46 https://github.com/ycm-core/ycmd/blob/18808eae493548f37c50e1e3e0b5607b5f94093d/ycmd/default_settings.json ;;
++;; 45 https://github.com/ycm-core/ycmd/blob/a9f616e24f4bc71cd0e7f227a41e8bc2640193fd/ycmd/default_settings.json ;;
++;; 44 https://github.com/ycm-core/ycmd/blob/ff428c9976c93e217cd3f502d92ea68ca2ac5210/ycmd/default_settings.json
++;; 43 https://github.com/ycm-core/ycmd/blob/228adf91f5ea15cca837f3ccc85f4e55edfa1b4f/ycmd/default_settings.json
++;; 42 https://github.com/ycm-core/ycmd/blob/49939649ce138ed5135df66fde564759097f68fd/ycmd/default_settings.json
++;; 41 https://github.com/ycm-core/ycmd/blob/187e83629fda6f44a1dad0d2259bee16e9ecf90f/ycmd/default_settings.json ;; no change between 41-40
++;; 40 https://github.com/ycm-core/ycmd/blob/d357e4c50459dbc04cf7ddc2aa20e8cdffea7d44/ycmd/default_settings.json
++;; 39 https://github.com/ycm-core/ycmd/blob/683cb5e51d9e2379903189d7be6b16cf7fe80e7e/ycmd/default_settings.json
++;; 38 https://github.com/ycm-core/ycmd/blob/dbc337da4c9cd72bca95930e38fbe758d7d55d57/ycmd/default_settings.json
++;; 37 https://github.com/ycm-core/ycmd/blob/21fae11dc2073b91249e1a6e1ea419ba0005c9ae/ycmd/default_settings.json
++;; 33 https://github.com/ycm-core/ycmd/blob/81daa298d82bc80f85a197710dcf8bbb5f37a9be/ycmd/default_settings.json
++;; 32 https://github.com/ycm-core/ycmd/blob/28804e77242b05d7241012ff8bec924ec7d21291/ycmd/default_settings.json
++;; 31 https://github.com/ycm-core/ycmd/blob/a585e12d7ab01b54c8b146a710849b68c3fd84ea/ycmd/default_settings.json
++;;
+   (let ((hmac-secret (base64-encode-string hmac-secret))
          (global-config (or ycmd-global-config ""))
          (extra-conf-whitelist (or ycmd-extra-conf-whitelist []))
          (confirm-extra-conf (if (eq ycmd-extra-conf-handler 'load) 0 1))
@@ -143,17 +173,17 @@ diff -urp emacs-ycmd-bc81b992f79100c98f56b7b83caf64cb8ea60477.orig/ycmd.el emacs
          (auto-trigger (if ycmd-auto-trigger-semantic-completion 1 0)))
      `((filepath_completion_use_working_dir . 0)
        (auto_trigger . ,auto-trigger)
-@@ -2107,22 +2184,43 @@ file."
+@@ -2107,22 +2210,43 @@ file."
        (filetype_specific_completion_to_disable (gitcommit . 1))
        (collect_identifiers_from_comments_and_strings . 0)
        (max_num_identifier_candidates . ,ycmd-max-num-identifier-candidates)
 +      (max_num_candidates . 50)
-+      (if (>= ycmd-core-version 44) (max_num_candidates_to_detail . -1) '())
++      (if (>= ycmd-core-version 45) (max_num_candidates_to_detail . -1) '())
        (extra_conf_globlist . ,extra-conf-whitelist)
        (global_ycm_extra_conf . ,global-config)
        (confirm_extra_conf . ,confirm-extra-conf)
-+      (if (>= ycmd-core-version 39) (filepath_blacklist . ,ycmd-filepath-blacklist) '())
-+      (if (>= ycmd-core-version 42) (language_server . ,language-server) '())
++      (if (>= ycmd-core-version 40) (filepath_blacklist . ,ycmd-filepath-blacklist) '())
++      (if (>= ycmd-core-version 43) (language_server . ,language-server) '())
        (max_diagnostics_to_display . 30)
        (auto_start_csharp_server . 1)
        (auto_stop_csharp_server . 1)
@@ -172,24 +202,24 @@ diff -urp emacs-ycmd-bc81b992f79100c98f56b7b83caf64cb8ea60477.orig/ycmd.el emacs
 +      (if (>= ycmd-core-version 41) (clangd_args . ,clangd-args) '())
 +      (if (>= ycmd-core-version 41) (clangd_binary_path . ,clangd-binary-path) '())
 +      (if (>= ycmd-core-version 41) (clangd_uses_ycmd_caching . 1) '())
-+      (if (>= ycmd-core-version 42) (disable_signature_help . 0) '())
-+      (if (< ycmd-core-version 42) (gocode_binary_path . ,gocode-binary-path) '())
-+      (if (< ycmd-core-version 42) (godef_binary_path . ,godef-binary-path) '())
-+      (if (>= ycmd-core-version 42) (gopls_args . ,gopls-args) '())
-+      (if (>= ycmd-core-version 42) (gopls_binary_path . ,gopls-binary-path) '())
-+      (if (>= ycmd-core-version 44) (java_binary_path . ,java-binary-path '())
-+      (if (>= ycmd-core-version 42) (java_jdtls_extension_path . ,java-jdtls-extension-path) '())
-+      (if (>= ycmd-core-version 31) (java_jdtls_use_clean_workspace . 1) '())
-+      (if (>= ycmd-core-version 42) (java_jdtls_workspace_root_path . ,java-jdtls-workspace-root-path '())
-+      (if (>= ycmd-core-version 43) (mono_binary_path . ,mono-binary-path) '())
-+      (if (< ycmd-core-version 42) (racerd_binary_path . ,racerd-binary-path) '())
-+      (if (and (>= ycmd-core-version 42) (< ycmd-core-version 44)) (rls_binary_path . ,rls-binary-path) '())
-+      (if (>= ycmd-core-version 42) (roslyn_binary_path . ,roslyn-binary-path) '())
-+      (if (< ycmd-core-version 42) (rust_src_path . ,rust-src-path) '())
-+      (if (and (>= ycmd-core-version 42) (< ycmd-core-version 44)) (rustc_binary_path . ,rustc-binary-path) '())
-+      (if (>= ycmd-core-version 44) (rust_toolchain_root . ,rust-toolchain-root) '())
-+      (if (>= ycmd-core-version 42) (tsserver_binary_path . ,tsserver-binary-path) '())
-+      (if (>= ycmd-core-version 41) (use_clangd . ,ycmd-use-clangd) '()))))
++      (if (>= ycmd-core-version 43) (disable_signature_help . 0) '())
++      (if (< ycmd-core-version 43) (gocode_binary_path . ,gocode-binary-path) '())
++      (if (< ycmd-core-version 43) (godef_binary_path . ,godef-binary-path) '())
++      (if (>= ycmd-core-version 43) (gopls_args . ,gopls-args) '())
++      (if (>= ycmd-core-version 43) (gopls_binary_path . ,gopls-binary-path) '())
++      (if (>= ycmd-core-version 45) (java_binary_path . ,java-binary-path '())
++      (if (>= ycmd-core-version 43) (java_jdtls_extension_path . ,java-jdtls-extension-path) '())
++      (if (>= ycmd-core-version 32) (java_jdtls_use_clean_workspace . 1) '())
++      (if (>= ycmd-core-version 43) (java_jdtls_workspace_root_path . ,java-jdtls-workspace-root-path '())
++      (if (>= ycmd-core-version 44) (mono_binary_path . ,mono-binary-path) '())
++      (if (< ycmd-core-version 43) (racerd_binary_path . ,racerd-binary-path) '())
++      (if (and (>= ycmd-core-version 43) (< ycmd-core-version 45)) (rls_binary_path . ,rls-binary-path) '())
++      (if (>= ycmd-core-version 43) (roslyn_binary_path . ,roslyn-binary-path) '())
++      (if (< ycmd-core-version 43) (rust_src_path . ,rust-src-path) '())
++      (if (and (>= ycmd-core-version 43) (< ycmd-core-version 45)) (rustc_binary_path . ,rustc-binary-path) '())
++      (if (>= ycmd-core-version 45) (rust_toolchain_root . ,rust-toolchain-root) '())
++      (if (>= ycmd-core-version 43) (tsserver_binary_path . ,tsserver-binary-path) '())
++      (if (>= ycmd-core-version 43) (use_clangd . ,ycmd-use-clangd) '()))))
  
  (defun ycmd--create-options-file (hmac-secret)
    "Create a new options file for a ycmd server with HMAC-SECRET.
