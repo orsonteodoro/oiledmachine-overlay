@@ -218,52 +218,7 @@ src_prepare() {
 	./autogen.sh
 }
 
-econf_ycmd_slot_43() {
-	local envars=(
-		GOPLS_PATH="${gopls_path}"
-		MONO_PATH="${mono_path}"
-		NINJA_PATH="/usr/bin/ninja"
-		OMNISHARP_PATH="${omnisharp_path}"
-		RLS_PATH="${rls_path}"
-		RUST_TOOLCHAIN_PATH=""
-		RUSTC_PATH="${rustc_path}"
-		TSSERVER_PATH="${tsserver_path}"
-		YCMD_PATH="${BD_ABS}/ycmd"
-		YCMD_PYTHON_PATH="/usr/bin/${EPYTHON}"
-		YCMG_PATH="/usr/bin/config_gen.py"
-		YCMG_PYTHON_PATH="/usr/bin/${EPYTHON}"
-	)
-	local args=(
-		"${myconf[@]}"
-		--bindir="${EPREFIX}/bin"
-		--disable-wrapping-as-root
-		--enable-ycmd
-		--htmldir=/trash
-		$(use_enable !minimal color)
-		$(use_enable !minimal multibuffer)
-		$(use_enable !minimal nanorc)
-		$(use_enable debug)
-		$(use_enable justify)
-		$(use_enable magic libmagic)
-		$(use_enable minimal tiny)
-		$(use_enable nls)
-		$(use_enable spell speller)
-		$(use_enable unicode utf8)
-		$(use_with bear)
-		$(use_with libgcrypt)
-		$(use_with nettle)
-		$(use_with ninja)
-		$(use_with openmp)
-		$(use_with openssl)
-		$(use_with ycm-generator)
-		$(usex ncurses --without-slang $(use_with slang))
-	)
-	export ${envars[@]}
-	einfo "${envars[@]} econf ${args[@]}"
-	econf ${args[@]}
-}
-
-econf_ycmd_slot_44() {
+econf_ycmd_slot_45() {
 	local envars=(
 		RUST_TOOLCHAIN_PATH=""
 		GOPLS_PATH="${gopls_path}"
@@ -430,7 +385,7 @@ eerror "Unsupported ycmd version for system-rust USE flag"
 	fi
 
 	if use ycmd-48 ; then
-		econf_ycmd_slot_44
+		econf_ycmd_slot_45
 	else
 eerror "You must choose either ${YCMD_SLOTS[@]/#/ycmd-} USE flag."
 		die
