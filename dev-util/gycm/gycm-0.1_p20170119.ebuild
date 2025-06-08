@@ -6,26 +6,34 @@
 
 EAPI=8
 
-PYTHON_COMPAT=( python3_{8..11} )
+EGIT_COMMIT="3abe1419d22ad19acbd96f66864ec00a0a256689"
+PYTHON_COMPAT=( "python3_"{11..13} ) # Same as ycmd
+
 inherit cmake java-pkg-opt-2 python-single-r1 toolchain-funcs
 
-DESCRIPTION="A Geany plugin to support the ycmd code completion server"
-LICENSE="GPL-3"
-HOMEPAGE="https://github.com/jakeanq/gycm"
 KEYWORDS="~amd64 ~x86"
-EGIT_COMMIT="3abe1419d22ad19acbd96f66864ec00a0a256689"
+S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
+SRC_URI="
+https://github.com/jakeanq/gycm/archive/${EGIT_COMMIT}.tar.gz
+	-> ${P}.tar.gz
+"
+
+DESCRIPTION="A Geany plugin to support the ycmd code completion server"
+HOMEPAGE="https://github.com/jakeanq/gycm"
+LICENSE="GPL-3"
+RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 debug system-clangd system-gopls system-mono system-rust system-typescript
-system-omnisharp +ycmd-47
-r16
+system-omnisharp +ycmd-48
+ebuild_revision_17
 "
-YCMD_SLOT_47_LLVM_PV=16.0.1
-YCMD_SLOT_47_LLVM_PV_MAJ=$(ver_cut 1 ${YCMD_SLOT_47_LLVM_PV})
+YCMD_SLOT_48_LLVM_PV="19.1.0"
+YCMD_SLOT_48_LLVM_PV_MAJ="${YCMD_SLOT_48_LLVM_PV%%.*}"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	^^ (
-		ycmd-47
+		ycmd-48
 	)
 "
 DEPEND+="
@@ -36,22 +44,18 @@ DEPEND+="
 	net-libs/libssh
 	net-libs/neon
 	system-clangd? (
-		llvm-core/clang:${YCMD_SLOT_47_LLVM_PV_MAJ}
-		llvm-core/llvm:${YCMD_SLOT_47_LLVM_PV_MAJ}
+		llvm-core/clang:${YCMD_SLOT_48_LLVM_PV_MAJ}
+		llvm-core/llvm:${YCMD_SLOT_48_LLVM_PV_MAJ}
 	)
-	ycmd-47? (
-		$(python_gen_cond_dep 'dev-util/ycmd:47[${PYTHON_USEDEP}]')
+	ycmd-48? (
+		$(python_gen_cond_dep '
+			dev-util/ycmd:48[${PYTHON_USEDEP}]
+		')
 	)
 "
 RDEPEND+="
 	${DEPEND}
 "
-SRC_URI="
-https://github.com/jakeanq/gycm/archive/${EGIT_COMMIT}.tar.gz
-	-> ${P}.tar.gz
-"
-S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
-RESTRICT="mirror"
 
 pkg_setup() {
 	if use java ; then
@@ -77,11 +81,11 @@ src_prepare() {
 	local python_bin_path="${EPREFIX}/usr/bin/${EPYTHON}"
 	sed -i \
 		-e "s|\"python\"|\"${python_bin_path}\"|g" \
-		ycmd.cpp \
+		"ycmd.cpp" \
 		|| die
 	sed -i \
 		-e "s|\"/usr/bin/python\"|\"/${python_bin_path}\"|g" \
-		config.cpp \
+		"config.cpp" \
 		|| die
 
 	eapply "${FILESDIR}/${PN}-0.1_p20170119-python-unbuffered-io.patch"
@@ -93,31 +97,36 @@ src_prepare() {
 		eapply "${FILESDIR}/${PN}-9999-20141216-debug-keep-log-files.patch"
 	fi
 
-	if use ycmd-47 ; then
-		src_prepare_ycmd-47
+	if use ycmd-48 ; then
+		src_prepare_ycmd-48
 	fi
 }
 
-src_prepare_ycmd-47() {
+src_prepare_ycmd-48() {
 	local sitedir=$(python_get_sitedir)
-	local ycmd_slot=47
+	local ycmd_slot=48
 	local ycmd_dir="${sitedir}/ycmd/${ycmd_slot}"
-	eapply "${FILESDIR}/gycm-0.1_p20170119-init-struct-for-ycmd-core-version-47.patch"
+	eapply "${FILESDIR}/gycm-0.1_p20170119-init-struct-for-ycmd-core-version-45.patch"
 	local json_config="${S}/ycmd.json"
-	cat "${FILESDIR}/default_settings.json.47_7d8791d.json" > "${json_config}"
+	cat \
+		"${FILESDIR}/default_settings.json.45.json" \
+		> \
+		"${json_config}" \
+		|| die
 
 	local clang_includes_path=""
 	if use system-clangd ; then
 		clang_includes_path=$(realpath \
-			${EPREFIX}/usr/lib/clang/${YCMD_SLOT_47_LLVM_PV_MAJ}*/include \
+			"${EPREFIX}/usr/lib/clang/${YCMD_SLOT_48_LLVM_PV_MAJ}"*"/include" \
                         | sort \
 			| tail -n 1)
 	else
-		clang_includes_path="${ycmd_dir}/third_party/clang/lib/clang/${YCMD_SLOT_47_LLVM_PV}/include"
+		clang_includes_path="${ycmd_dir}/third_party/clang/lib/clang/${YCMD_SLOT_48_LLVM_PV}/include"
 	fi
 	sed -i \
 		-e "s|../llvm/tools/clang/include|${clang_includes_path}|g" \
-		.ycm_extra_conf.py || die
+		".ycm_extra_conf.py" \
+		|| die
 
 	local global_ycmd_extra_conf=""
 	if [[ -n "${GYCM_GLOBAL_YCMD_EXTRA_CONF}" ]] ; then
@@ -136,7 +145,7 @@ src_prepare_ycmd-47() {
 		"${json_config}" \
 		|| die
 
-	einfo "GYCM_JDTLS_WORKSPACE_ROOT_PATH:  ${GYCM_JDTLS_WORKSPACE_ROOT_PATH} (from package.env)"
+einfo "GYCM_JDTLS_WORKSPACE_ROOT_PATH:  ${GYCM_JDTLS_WORKSPACE_ROOT_PATH} (from package.env)"
 	local java_jdtls_workspace_root_path="${GYCM_JDTLS_WORKSPACE_ROOT_PATH}"
 	sed -i \
 		-e "s|___JAVA_JDTLS_WORKSPACE_ROOT_PATH___|${java_jdtls_workspace_root_path}|g" \
@@ -145,7 +154,7 @@ src_prepare_ycmd-47() {
 
 	local clangd_bin_path=""
 	if use system-clangd ; then
-		clangd_bin_path="/usr/lib/llvm/${YCMD_SLOT_47_LLVM_PV_MAJ}/bin/clangd"
+		clangd_bin_path="/usr/lib/llvm/${YCMD_SLOT_48_LLVM_PV_MAJ}/bin/clangd"
 	else
 		clangd_bin_path="${ycmd_dir}/third_party/clangd/output/bin/clangd"
 	fi
@@ -213,16 +222,15 @@ src_prepare_ycmd-47() {
         if use java ; then
                 local java_vendor=$(java-pkg_get-vm-vendor)
                 local java_slot
-                if use ycmd-47 ; then
+                if use ycmd-48 ; then
                         java_slot=17
 		fi
 		  if [[ -L "${EPREFIX}/usr/lib/jvm/${java_vendor}-${java_slot}" ]] ; then
-			jp="${EPREFIX}/usr/lib/jvm/${java_vendor}-${java_slot}"
+			java_bin_path="${EPREFIX}/usr/lib/jvm/${java_vendor}-${java_slot}"
 		elif [[ -L "${EPREFIX}/usr/lib/jvm/${java_vendor}-bin-${java_slot}" ]] ; then
-			jp="${EPREFIX}/usr/lib/jvm/${java_vendor}-bin-${java_slot}"
+			java_bin_path="${EPREFIX}/usr/lib/jvm/${java_vendor}-bin-${java_slot}"
 		fi
-		[[ -n "${jp}" ]] && jp="${jp}/bin/java"
-		java_bin_path="${jp}"
+		[[ -n "${java_bin_path}" ]] && java_bin_path="${java_bin_path}/bin/java"
 	fi
 	sed -i \
 		-e "s|___JAVA_BIN_PATH___|${java_bin_path}|g" \
@@ -240,7 +248,7 @@ src_install() {
 	exeinto "/usr/$(get_libdir)/geany"
 	doexe "${S}_build/${PN}.so"
 	insinto "/usr/share/${PN}"
-	doins .ycm_extra_conf.py ycmd.json
+	doins ".ycm_extra_conf.py" "ycmd.json"
 }
 
 pkg_postinst() {

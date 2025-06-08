@@ -57,8 +57,8 @@
       Configure the plugin to use the system's TypeScript instead of ycmd
       internal TypeScript.
     </flag>
-    <flag name="ycmd-47">
-      Make it compatible ycmd core version 47.
+    <flag name="ycmd-48">
+      Make it compatible ycmd core version 48.
     </flag>
     <flag name="rN">
       The internal ebuild revision
