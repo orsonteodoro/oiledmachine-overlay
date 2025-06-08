@@ -1,6 +1,6 @@
-diff -urp nano-ycmd-9999.orig/src/Makefile.am nano-ycmd-9999/src/Makefile.am
---- nano-ycmd-9999.orig/src/Makefile.am	2023-07-04 15:59:46.988439733 -0700
-+++ nano-ycmd-9999/src/Makefile.am	2023-07-04 16:05:28.320446691 -0700
+diff '--color=auto' -urp nano-ycmd-9999.orig/src/Makefile.am nano-ycmd-9999/src/Makefile.am
+--- nano-ycmd-9999.orig/src/Makefile.am	2025-06-08 12:30:07.061052576 -0700
++++ nano-ycmd-9999/src/Makefile.am	2025-06-08 12:31:21.615674235 -0700
 @@ -151,8 +151,8 @@ revision.h: FORCE
  			echo "#define $(SOMETHING)" > $@
  FORCE:
@@ -21,9 +21,9 @@ diff -urp nano-ycmd-9999.orig/src/Makefile.am nano-ycmd-9999/src/Makefile.am
  		ycmd.c
  endif
  
--nano_LDADD = @LIBINTL@ $(top_builddir)/lib/libgnu.a \
-+ynano_LDADD = @LIBINTL@ $(top_builddir)/lib/libgnu.a \
- 		$(LIB_CLOCK_GETTIME) $(LIBTHREAD)
+-nano_LDADD = $(top_builddir)/lib/libgnu.a @LIBINTL@ \
++ynano_LDADD = $(top_builddir)/lib/libgnu.a @LIBINTL@ \
+ 		$(GETRANDOM_LIB) $(CLOCK_TIME_LIB) $(LIBTHREAD)
  
  if USE_YCMD
 -nano_LDADD += @NEON_LIBS@
@@ -50,3 +50,5 @@ diff -urp nano-ycmd-9999.orig/src/Makefile.am nano-ycmd-9999/src/Makefile.am
  endif
  
  install-exec-hook:
+Only in nano-ycmd-9999/src: Makefile.am.orig
+Only in nano-ycmd-9999/src: Makefile.am.rej

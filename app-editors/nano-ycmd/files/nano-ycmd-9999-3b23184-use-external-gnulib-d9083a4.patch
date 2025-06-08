@@ -1,17 +1,15 @@
-diff -urp nano-ycmd-9999.orig/autogen.sh nano-ycmd-9999/autogen.sh
---- nano-ycmd-9999.orig/autogen.sh	2023-07-02 08:45:17.874077620 -0700
-+++ nano-ycmd-9999/autogen.sh	2023-07-02 08:51:13.830086452 -0700
-@@ -29,25 +29,31 @@ modules="
- 	wcwidth
+diff '--color=auto' -urp nano-ycmd-9999.orig/autogen.sh nano-ycmd-9999/autogen.sh
+--- nano-ycmd-9999.orig/autogen.sh	2025-06-08 12:11:30.686576975 -0700
++++ nano-ycmd-9999/autogen.sh	2025-06-08 12:13:38.009577139 -0700
+@@ -31,21 +31,27 @@ modules="
  "
  
--# Make sure the local gnulib git repo is up-to-date.
+ # Make sure the local gnulib git repo is up-to-date.
 -if [ ! -d "gnulib" ]; then
--	git clone --depth=1111 ${gnulib_url}
+-	git clone --depth=2222 ${gnulib_url}
 +if [[ "${GNULIB_USE_TARBALL:-0}" == "0" ]] ; then
-+	# Make sure the local gnulib git repo is up-to-date.
 +	if [ ! -d "gnulib" ]; then
-+		git clone --depth=1111 ${gnulib_url}
++		git clone --depth=2222 ${gnulib_url}
 +	fi
 +	cd gnulib >/dev/null || exit 1
 +	curr_hash=$(git log -1 --format=%H)
@@ -31,9 +29,6 @@ diff -urp nano-ycmd-9999.orig/autogen.sh nano-ycmd-9999/autogen.sh
 -fi
 -cd .. >/dev/null || exit 1
  
- echo "Autopoint..."
- autopoint --force
- 
  rm -rf lib
  echo "Gnulib-tool..."
 -./gnulib/gnulib-tool --import ${modules}
@@ -44,4 +39,6 @@ diff -urp nano-ycmd-9999.orig/autogen.sh nano-ycmd-9999/autogen.sh
 +fi
  echo
  
- echo "Aclocal..."
+ echo "Autoreconf..."
+Only in nano-ycmd-9999: autogen.sh.orig
+Only in nano-ycmd-9999: autogen.sh.rej

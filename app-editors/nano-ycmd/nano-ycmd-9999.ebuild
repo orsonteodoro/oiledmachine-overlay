@@ -10,10 +10,9 @@ CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 
 BD_ABS=""
 LIVE_TYPE="git"
-FALLBACK_COMMIT="a8aa4bb24e25b5bda72e1c1c4c24dae90a5ba8f5" # 20250607
-GNULIB_COMMIT="2cf7f442f52f70b3df6eb396eb93ea08e54883c5" # listed in ./autogen.sh
-GNULIB_COMMIT_SHORT="${GNULIB_COMMIT:0:7}"
-GNULIB_PV="2023.01.16.09.58.30"
+FALLBACK_COMMIT="3b23184025f74b6d885fc9010eb4d8a40268dbae" # 20250608
+GNULIB_COMMIT="d9083a4cc638cf9c7dfc3cc534a7c6b4debf50ab" # listed in ./autogen.sh
+GNULIB_PV="2025.04.10.16.42.14" # See committer timestamp from https://cgit.git.savannah.gnu.org/cgit/gnulib.git/commit/?id=d9083a4cc638cf9c7dfc3cc534a7c6b4debf50ab
 PYTHON_COMPAT=( "python3_"{11..13} ) # Same as ycmd
 YCMD_SLOTS=( 48 )
 
@@ -36,7 +35,7 @@ https://github.com/orsonteodoro/nano-ycmd/archive/${EGIT_COMMIT}.tar.gz
 fi
 SRC_URI+="
 http://git.savannah.gnu.org/gitweb/?p=gnulib.git;a=snapshot;h=${GNULIB_COMMIT};sf=tgz
-	-> gnulib-${GNULIB_COMMIT_SHORT}.tar.gz
+	-> gnulib-${GNULIB_COMMIT:0:7}.tar.gz
 "
 
 DESCRIPTION="GNU GPL'd Pico clone with more functionality with ycmd support"
@@ -57,7 +56,7 @@ bear debug justify libgcrypt +magic minimal ncurses nettle ninja nls slang
 system-godef system-gopls system-mono system-omnisharp system-racerd system-rust
 system-rustc system-tsserver unicode ycm-generator
 +ycmd-48
-ebuild_revision_43
+ebuild_revision_44
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -163,7 +162,7 @@ BDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/nano-ycmd-9999-use-external-gnulib.patch"
+	"${FILESDIR}/nano-ycmd-9999-3b23184-use-external-gnulib-${GNULIB_COMMIT:0:7}.patch"
 )
 
 pkg_setup() {
@@ -207,7 +206,7 @@ eerror
 		die
 	fi
 	mv \
-		"gnulib-${GNULIB_COMMIT_SHORT}" \
+		"gnulib-${GNULIB_COMMIT:0:7}" \
 		"${S}/gnulib" \
 		|| die
 }
@@ -215,7 +214,7 @@ eerror
 src_prepare() {
 ewarn "This ebuild is a Work In Progress (WIP)"
 	default
-	eapply "${FILESDIR}/${PN}-9999-rename-as-ynano.patch"
+	eapply "A${FILESDIR}/${PN}-9999-3b23184-rename-as-ynano.patch"
 	export GNULIB_USE_TARBALL=1
 	if use system-gnulib ; then
 		export GNULIB_USE_SYSTEM=1
