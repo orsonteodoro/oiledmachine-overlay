@@ -537,7 +537,7 @@ libclang minimal netcore netfx objc objcxx python rust system-abseil
 system-clangd system-gopls system-jdtls system-jedi
 system-libclang system-mono system-mrab-regex system-requests system-rust
 system-rust system-tern system-typescript system-watchdog test typescript vim
-ebuild_revision_1
+ebuild_revision_2
 "
 if [[ "${PV}" =~ "9999" || "${PV}" =~ "_p" ]] ; then
 	IUSE+="
@@ -705,8 +705,8 @@ RDEPEND+="
 	)
 	system-rust? (
 		|| (
-			>=dev-lang/rust-9999:1.58.0[clippy,rustfmt]
-			>=dev-lang/rust-1.58.0_beta20241212:1.58.0[clippy,rustfmt]
+			>=dev-lang/rust-9999:1.83.0[clippy,rustfmt]
+			>=dev-lang/rust-1.83.0_beta20241212:1.83.0[clippy,rustfmt]
 		)
 	)
 	system-tern? (
