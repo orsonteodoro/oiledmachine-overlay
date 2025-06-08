@@ -6,20 +6,24 @@
 
 EAPI=8
 
-CFLAGS_HARDENED_USE_CASES="untrusted-data"
+CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 
+BD_ABS=""
 LIVE_TYPE="git"
-PYTHON_COMPAT=( "python3_11" )
+FALLBACK_COMMIT="a8aa4bb24e25b5bda72e1c1c4c24dae90a5ba8f5" # 20250607
+GNULIB_COMMIT="2cf7f442f52f70b3df6eb396eb93ea08e54883c5" # listed in ./autogen.sh
+GNULIB_COMMIT_SHORT="${GNULIB_COMMIT:0:7}"
+GNULIB_PV="2023.01.16.09.58.30"
+PYTHON_COMPAT=( "python3_"{11..13} ) # Same as ycmd
 
 inherit autotools cflags-hardened check-compiler-switch flag-o-matic git-r3 java-pkg-opt-2 python-single-r1
 
-NANO_YCMD_COMMIT="4f52bbc46b1c593f3f7ae58f76820297251fe5ad"
 if [[ "${LIVE_TYPE}" == "git" ]] ; then
 	IUSE+=" +fallback-commit"
 	inherit git-r3
 	S="${WORKDIR}/${PN}-${PV}"
 elif [[ "${LIVE_TYPE}" == "snapshot" ]] ; then
-	EGIT_COMMIT="${NANO_YCMD_COMMIT}"
+	EGIT_COMMIT="${FALLBACK_COMMIT}"
 	S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 fi
 
@@ -32,16 +36,15 @@ HOMEPAGE="
 LICENSE="GPL-3+ LGPL-2+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
-YCMD_SLOTS=( 47 46 45 44 43 )
+YCMD_SLOTS=( 48 )
 IUSE+="
 bear debug justify libgcrypt +magic minimal ncurses nettle ninja nls slang
 +spell static openmp openssl system-clangd -system-gnulib system-gocode
 system-godef system-gopls system-mono system-omnisharp system-racerd system-rust
-system-rustc system-tsserver unicode ycm-generator ycmd-43 ycmd-44 ycmd-45
-ycmd-46 +ycmd-47
+system-rustc system-tsserver unicode ycm-generator
++ycmd-48
 ebuild_revision_42
 "
-GNULIB_PV="2023.01.16.09.58.30"
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	!minimal
@@ -145,8 +148,6 @@ BDEPEND+="
 		${LIB_DEPEND}
 	)
 "
-GNULIB_COMMIT="2cf7f442f52f70b3df6eb396eb93ea08e54883c5" # listed in ./autogen.sh
-GNULIB_COMMIT_SHORT="${GNULIB_COMMIT:0:7}"
 if [[ "${LIVE_TYPE}" == "snapshot" ]] ; then
 	SRC_URI+="
 https://github.com/orsonteodoro/nano-ycmd/archive/${EGIT_COMMIT}.tar.gz
@@ -157,7 +158,6 @@ SRC_URI+="
 http://git.savannah.gnu.org/gitweb/?p=gnulib.git;a=snapshot;h=${GNULIB_COMMIT};sf=tgz
 	-> gnulib-${GNULIB_COMMIT_SHORT}.tar.gz
 "
-BD_ABS=""
 PATCHES=(
 	"${FILESDIR}/nano-ycmd-9999-use-external-gnulib.patch"
 )
@@ -182,7 +182,7 @@ ewarn
 src_unpack() {
 	if [[ ${PV} =~ 9999 && "${LIVE_TYPE}" == "git" ]] ; then
 		EGIT_REPO_URI="https://github.com/orsonteodoro/nano-ycmd.git"
-		use fallback-commit && EGIT_COMMIT="${NANO_YCMD_COMMIT}"
+		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		EGIT_BRANCH="ymcd-code-completion"
 		git-r3_fetch
 		git-r3_checkout
@@ -220,14 +220,14 @@ src_prepare() {
 
 econf_ycmd_slot_43() {
 	local envars=(
-		RUST_TOOLCHAIN_PATH=""
 		GOPLS_PATH="${gopls_path}"
 		MONO_PATH="${mono_path}"
 		NINJA_PATH="/usr/bin/ninja"
+		OMNISHARP_PATH="${omnisharp_path}"
 		RLS_PATH="${rls_path}"
+		RUST_TOOLCHAIN_PATH=""
 		RUSTC_PATH="${rustc_path}"
 		TSSERVER_PATH="${tsserver_path}"
-		OMNISHARP_PATH="${omnisharp_path}"
 		YCMD_PATH="${BD_ABS}/ycmd"
 		YCMD_PYTHON_PATH="/usr/bin/${EPYTHON}"
 		YCMG_PATH="/usr/bin/config_gen.py"
@@ -326,9 +326,11 @@ einfo "Detected compiler switch.  Disabling LTO."
 	cflags-hardened_append
 
 	local myconf=()
-	case ${CHOST} in
-		*-gnu*|*-uclibc*)
-			myconf+=( "--with-wordbounds" )
+	case "${CHOST}" in
+		*"-gnu"*|*"-uclibc"*)
+			myconf+=(
+				"--with-wordbounds"
+			)
 			;; #467848
 	esac
 
@@ -347,20 +349,15 @@ einfo "Detected compiler switch.  Disabling LTO."
 	if use java ; then
 		local java_vendor=$(java-pkg_get-vm-vendor)
 		local java_slot
-		if use ycmd-46 || use ycmd-47 ; then
+		if use ycmd-48 ; then
 			java_slot=17
-		elif use ycmd-44 || use ycmd-45 ; then
-			java_slot=11
-		else
-			java_slot=8
 		fi
 		  if [[ -L "${EPREFIX}/usr/lib/jvm/${java_vendor}-${java_slot}" ]] ; then
-			jp="${EPREFIX}/usr/lib/jvm/${java_vendor}-${java_slot}"
+			java_path="${EPREFIX}/usr/lib/jvm/${java_vendor}-${java_slot}"
 		elif [[ -L "${EPREFIX}/usr/lib/jvm/${java_vendor}-bin-${java_slot}" ]] ; then
-			jp="${EPREFIX}/usr/lib/jvm/${java_vendor}-bin-${java_slot}"
+			java_path="${EPREFIX}/usr/lib/jvm/${java_vendor}-bin-${java_slot}"
 		fi
-		[[ -n "${jp}" ]] && jp="${jp}/bin/java"
-		java_path="${jp}"
+		[[ -n "${java_path}" ]] && java_path="${java_path}/bin/java"
 	fi
 	if use system-clangd ; then
 		gocode_path="/usr/bin/clangd"
@@ -393,19 +390,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		racerd_path="${BD_ABS}/third_party/racerd/racerd"
 	fi
 	if use system-rust ; then
-		if use ycmd-43 ; then
-			if has_version 'dev-lang/rust-bin' ; then
-				local rv=$(best_version 'dev-lang/rust-bin' \
-					| sed -e "s|dev-lang/rust-bin-||")
-				rv=$(ver_cut 1-3 ${rv})
-				rls_path="/opt/rust-bin-${rv}/bin/rls"
-			elif has_version 'dev-lang/rust' ; then
-				local rv=$(best_version 'dev-lang/rust' \
-					| sed -e "s|dev-lang/rust-||")
-				rv=$(ver_cut 1-3 ${rv})
-				rls_path="/usr/lib/rust/${rv}/bin/rls"
-			fi
-		elif use ycmd-44 || use ycmd-45 || use ycmd-46 || use ycmd-47 ; then
+		if use ycmd-48 ; then
 			if has_version 'dev-lang/rust-bin' ; then
 				local rv=$(best_version 'dev-lang/rust-bin' \
 					| sed -e "s|dev-lang/rust-bin-||")
@@ -418,15 +403,11 @@ einfo "Detected compiler switch.  Disabling LTO."
 				rust_toolchain_path="/usr/lib/rust/${rv}"
 			fi
 		else
-eerror
 eerror "Unsupported ycmd version for system-rust USE flag"
-eerror
 			die
 		fi
 	else
-		if use ycmd-43 ; then
-			rls_path="${BD_ABS}/third_party/rls/bin/rls"
-		elif use ycmd-44 || use ycmd-45 || use ycmd-46 || use ycmd-47 ; then
+		if use ycmd-48 ; then
 			rust_toolchain_path="${BD_ABS}/third_party/rust-analyzer"
 		fi
 	fi
@@ -443,21 +424,15 @@ eerror
 	if use system-tsserver ; then
 		tsserver_path="/usr/bin/tsserver"
 	else
-		if use ycmd-43 ; then
-			tsserver_path="${BD_ABS}/third_party/tsserver/$(get_libdir)/node_modules/typescript/bin/tsserver"
-		elif use ycmd-44 || use ycmd-45 || use ycmd-46 || use ycmd-47 ; then
+		if use ycmd-48 ; then
 			tsserver_path="${BD_ABS}/third_party/tsserver/node_modules/typescript/bin/tsserver"
 		fi
 	fi
 
-	if use ycmd-43 ; then
-		econf_ycmd_slot_43
-	elif use ycmd-44 || use ycmd-45 || use ycmd-46 || use ycmd-47 ; then
+	if use ycmd-48 ; then
 		econf_ycmd_slot_44
 	else
-eerror
 eerror "You must choose either ${YCMD_SLOTS[@]/#/ycmd-} USE flag."
-eerror
 		die
 	fi
 }
@@ -465,25 +440,30 @@ eerror
 src_install() {
 	default
 	# Removes htmldir
-	rm -rf "${ED}"/trash || die
+	rm -rf \
+		"${ED}/trash" \
+		|| die
 	# Remove merge conflicts
-	rm -rf "${ED}/etc/" \
+	rm -rf \
+		"${ED}/etc/" \
 		"${ED}/bin/rnano" \
-		"${ED}/usr/share" || die
-	dodoc doc/sample.nanorc
-	docinto html
-	dodoc doc/faq.html
-	insinto /etc
-	newins doc/sample.nanorc nanorc
+		"${ED}/usr/share" \
+		|| die
+	dodoc "doc/sample.nanorc"
+	docinto "html"
+	dodoc "doc/faq.html"
+	insinto "/etc"
+	newins "doc/sample.nanorc" "nanorc"
 	if ! use minimal ; then
 		# Enable colorization by default.
 		sed -i \
 			-e '/^# include /s:# *::' \
-			"${ED}/etc/nanorc" || die
+			"${ED}/etc/nanorc" \
+			|| die
 	fi
-	dodir /usr/bin
-	dosym /bin/ynano /usr/bin/ynano
-	newdoc README.md README.nano-ycmd.md
+	dodir "/usr/bin"
+	dosym "/bin/ynano" "/usr/bin/ynano"
+	newdoc "README.md" "README.nano-ycmd.md"
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
