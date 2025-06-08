@@ -15,17 +15,29 @@ GNULIB_COMMIT="2cf7f442f52f70b3df6eb396eb93ea08e54883c5" # listed in ./autogen.s
 GNULIB_COMMIT_SHORT="${GNULIB_COMMIT:0:7}"
 GNULIB_PV="2023.01.16.09.58.30"
 PYTHON_COMPAT=( "python3_"{11..13} ) # Same as ycmd
+YCMD_SLOTS=( 48 )
 
 inherit autotools cflags-hardened check-compiler-switch flag-o-matic git-r3 java-pkg-opt-2 python-single-r1
 
 if [[ "${LIVE_TYPE}" == "git" ]] ; then
-	IUSE+=" +fallback-commit"
 	inherit git-r3
+	IUSE+=" +fallback-commit"
 	S="${WORKDIR}/${PN}-${PV}"
 elif [[ "${LIVE_TYPE}" == "snapshot" ]] ; then
 	EGIT_COMMIT="${FALLBACK_COMMIT}"
 	S="${WORKDIR}/${PN}-${EGIT_COMMIT}"
 fi
+
+if [[ "${LIVE_TYPE}" == "snapshot" ]] ; then
+	SRC_URI+="
+https://github.com/orsonteodoro/nano-ycmd/archive/${EGIT_COMMIT}.tar.gz
+	-> ${P}-${EGIT_COMMIT:0:7}.tar.gz
+	"
+fi
+SRC_URI+="
+http://git.savannah.gnu.org/gitweb/?p=gnulib.git;a=snapshot;h=${GNULIB_COMMIT};sf=tgz
+	-> gnulib-${GNULIB_COMMIT_SHORT}.tar.gz
+"
 
 DESCRIPTION="GNU GPL'd Pico clone with more functionality with ycmd support"
 HOMEPAGE="
@@ -33,10 +45,12 @@ HOMEPAGE="
 	https://wiki.gentoo.org/wiki/Nano/Basics_Guide
 	https://github.com/orsonteodoro/nano-ycmd
 "
-LICENSE="GPL-3+ LGPL-2+"
+LICENSE="
+	GPL-3+
+	LGPL-2+
+"
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
-YCMD_SLOTS=( 48 )
 IUSE+="
 bear debug justify libgcrypt +magic minimal ncurses nettle ninja nls slang
 +spell static openmp openssl system-clangd -system-gnulib system-gocode
@@ -70,13 +84,13 @@ REQUIRED_USE+="
 	)
 "
 LIB_DEPEND="
+	>=sys-libs/ncurses-5.9-r1:0=[unicode(+)]
+	sys-libs/ncurses:0=[static-libs(+)]
 	!ncurses? (
 		slang? (
 			sys-libs/slang:=[static-libs(+)]
 		)
 	)
-	>=sys-libs/ncurses-5.9-r1:0=[unicode(+)]
-	sys-libs/ncurses:0=[static-libs(+)]
 	magic? (
 		sys-apps/file:=[static-libs(+)]
 	)
@@ -148,16 +162,6 @@ BDEPEND+="
 		${LIB_DEPEND}
 	)
 "
-if [[ "${LIVE_TYPE}" == "snapshot" ]] ; then
-	SRC_URI+="
-https://github.com/orsonteodoro/nano-ycmd/archive/${EGIT_COMMIT}.tar.gz
-	-> ${P}-${EGIT_COMMIT:0:7}.tar.gz
-	"
-fi
-SRC_URI+="
-http://git.savannah.gnu.org/gitweb/?p=gnulib.git;a=snapshot;h=${GNULIB_COMMIT};sf=tgz
-	-> gnulib-${GNULIB_COMMIT_SHORT}.tar.gz
-"
 PATCHES=(
 	"${FILESDIR}/nano-ycmd-9999-use-external-gnulib.patch"
 )
@@ -180,7 +184,7 @@ ewarn
 }
 
 src_unpack() {
-	if [[ ${PV} =~ 9999 && "${LIVE_TYPE}" == "git" ]] ; then
+	if [[ "${PV}" =~ "9999" && "${LIVE_TYPE}" == "git" ]] ; then
 		EGIT_REPO_URI="https://github.com/orsonteodoro/nano-ycmd.git"
 		use fallback-commit && EGIT_COMMIT="${FALLBACK_COMMIT}"
 		EGIT_BRANCH="ymcd-code-completion"
@@ -202,11 +206,14 @@ eerror "Actual commit:\t${actual_gnulib_commit}"
 eerror
 		die
 	fi
-	mv gnulib-${GNULIB_COMMIT_SHORT} "${S}/gnulib" || die
+	mv \
+		"gnulib-${GNULIB_COMMIT_SHORT}" \
+		"${S}/gnulib" \
+		|| die
 }
 
 src_prepare() {
-	ewarn "This ebuild is a Work In Progress (WIP)"
+ewarn "This ebuild is a Work In Progress (WIP)"
 	default
 	eapply "${FILESDIR}/${PN}-9999-rename-as-ynano.patch"
 	export GNULIB_USE_TARBALL=1
@@ -238,7 +245,7 @@ econf_ycmd_slot_45() {
 		--bindir="${EPREFIX}/bin"
 		--disable-wrapping-as-root
 		--enable-ycmd
-		--htmldir=/trash
+		--htmldir="/trash"
 		$(use_enable !minimal color)
 		$(use_enable !minimal multibuffer)
 		$(use_enable !minimal nanorc)
@@ -295,11 +302,11 @@ einfo "Detected compiler switch.  Disabling LTO."
 	local gopls_path=""
 	local java_path=""
 	local mono_path=""
+	local omnisharp_path=""
 	local racerd_path=""
 	local rls_path=""
 	local rust_toolchain_path=""
 	local rustc_path=""
-	local omnisharp_path=""
 	local tsserver_path=""
 	if use java ; then
 		local java_vendor=$(java-pkg_get-vm-vendor)
@@ -410,7 +417,7 @@ src_install() {
 	insinto "/etc"
 	newins "doc/sample.nanorc" "nanorc"
 	if ! use minimal ; then
-		# Enable colorization by default.
+	# Enable colorization by default.
 		sed -i \
 			-e '/^# include /s:# *::' \
 			"${ED}/etc/nanorc" \
