@@ -81,18 +81,18 @@ RDEPEND="
 		>=media-libs/libvorbis-1.3.7
 	)
 	wayland? (
-		>=gnome-extra/zenity-4.0.1
+		gnome-extra/zenity
 		gui-libs/gtk:4[gles2,video,wayland]
 	)
 	X? (
-		>=gnome-extra/zenity-4.0.1
+		gnome-extra/zenity
 		gui-libs/gtk:4[video,X]
 	)
 "
 BDEPEND="
 	${PYTHON_DEPS}
+	>=dev-build/automake-1.8.0
 	dev-build/autoconf
-	dev-build/automake
 	dev-build/make
 	virtual/pkgconfig
 	|| (
