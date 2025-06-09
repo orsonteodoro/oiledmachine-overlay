@@ -8,7 +8,8 @@ EAPI=8
 # https://github.com/keras-team/keras/blob/v3.1.0/WORKSPACE
 
 DISTUTILS_SINGLE_IMPL=1
-PYTHON_COMPAT=( "python3_"{10..11} )
+DISTUTILS_USE_PEP517="setuptools"
+PYTHON_COMPAT=( "python3_11" )
 TENSORFLOW_PV="2.16.1"
 
 inherit distutils-r1 protobuf-ver

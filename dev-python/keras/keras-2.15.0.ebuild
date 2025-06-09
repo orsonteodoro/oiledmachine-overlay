@@ -9,7 +9,8 @@ EAPI=8
 # https://github.com/keras-team/keras/blob/v2.15.0/.bazelversion
 
 DISTUTILS_SINGLE_IMPL=1
-PYTHON_COMPAT=( "python3_"{10..11} )
+DISTUTILS_USE_PEP517="setuptools"
+PYTHON_COMPAT=( "python3_11" )
 
 inherit bazel distutils-r1 protobuf-ver
 
