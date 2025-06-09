@@ -49,7 +49,7 @@ BDEPEND="
 	${PYTHON_DEPS}
 "
 
-distutils_enable_tests setup.py
+distutils_enable_tests "pytest"
 
 # Same than PATCHES but from repository's root directory,
 # please see function `python_prepare_all` below.
