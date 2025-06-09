@@ -81,11 +81,11 @@ RDEPEND="
 		>=media-libs/libvorbis-1.3.7
 	)
 	wayland? (
-		gnome-extra/zenity
+		>=gnome-extra/zenity-3.44
 		gui-libs/gtk:4[gles2,video,wayland]
 	)
 	X? (
-		gnome-extra/zenity
+		>=gnome-extra/zenity-3.44
 		gui-libs/gtk:4[video,X]
 	)
 "
