@@ -17,7 +17,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	inherit git-r3
 	IUSE+=" fallback-commit"
 else
-	KEYWORDS="amd64"
+	KEYWORDS="~amd64"
 	S="${WORKDIR}/psdoom-ng-${PV}"
 	SRC_URI="
 https://github.com/orsonteodoro/psdoom-ng1/archive/refs/tags/psdoom-ng-${PV}.tar.gz
