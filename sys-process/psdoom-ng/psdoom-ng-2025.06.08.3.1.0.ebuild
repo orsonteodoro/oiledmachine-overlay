@@ -4,11 +4,14 @@
 
 EAPI=8
 
+# U24
+
 FALLBACK_COMMIT="736d55ca94b5e0a4140c9cc3bfe762152b2dffba"
 PSDOOM_DATA_PV="2000.05.03"
+PYTHON_COMPAT=( "python3_12" )
 QUICKCHECK_COMMIT="ef816accb377a5be05c5debf096dd038eee98aa8"
 
-inherit autotools dep-prepare
+inherit autotools dep-prepare python-any-r1
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="psdoom-ng"
@@ -38,8 +41,8 @@ HOMEPAGE="https://github.com/orsonteodoro/psdoom-ng"
 LICENSE="GPL-2"
 SLOT="0"
 IUSE+="
-bash-completion cloudfoundry fluidsynth kms libsamplerate png psdoom-wads
-sdl2mixer sound X wayland
+bash-completion cloudfoundry flac fluidsynth kms libsamplerate png psdoom-wads
+sdl2mixer sound vorbis X wayland
 ebuild_revision_1
 "
 REQUIRED_USE="
@@ -57,6 +60,9 @@ REQUIRED_USE="
 "
 RDEPEND="
 	>=media-libs/libsdl2-2.0.14[kms?,libsamplerate?,sound?,wayland?,X?]
+	flac? (
+		media-libs/flac
+	)
 	fluidsynth? (
 		>=media-sound/fluidsynth-2.2.0
 	)
@@ -69,6 +75,9 @@ RDEPEND="
 	sdl2mixer? (
 		>=media-libs/sdl2-mixer-2.0.2
 	)
+	vorbis? (
+		media-libs/libvorbis
+	)
 	wayland? (
 		gnome-extra/zenity
 		gui-libs/gtk[gles2,video,wayland]
@@ -77,6 +86,9 @@ RDEPEND="
 		gnome-extra/zenity
 		gui-libs/gtk[video,X]
 	)
+"
+BDEPEND="
+	${PYTHON_DEPS}
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-2025.06.08.3.1.0-fix-setup.patch"
