@@ -6476,3 +6476,34 @@ einfo "Since the build is done, you may remove /usr/share/chromium folder."
 # -system-libxml -system-libxslt -system-openh264 -system-opus -system-re2
 # (-system-toolchain) -system-zlib -system-zstd -systemd -vaapi-hevc -vorbis
 # -webassembly -widevine"
+
+# OILEDMACHINE-OVERLAY-TEST: FAILED 137.0.7151.68 (20250608) - segfaults when playing videos, browsing without videos works.  distro patches only.  no oiledmachine-overlay settings or patchset.
+# CFLAGS:  Same as build scripts (-O3 or -O2).
+# USE="X bundled-libcxx custom-cflags dav1d extensions gwp-asan jit miracleptr mold opus
+# partitionalloc pdf plugins pulseaudio qt6 vpx wayland webassembly -accessibility -bindist
+# -bluetooth -cet -cfi -css-hyphen -cups (-debug) -drumbrake -encode -ffmpeg-chromium -firejail
+# -gtk4 -hangouts (-headless) -hidpi -js-type-check -kerberos -libaom -mdns -mpris -official
+# -openh264 -pax-kernel -pgo -pic -pre-check-vaapi -rar -reporting-api -screencast (-selinux)
+# -system-dav1d -system-ffmpeg -system-flac -system-fontconfig -system-freetype -system-harfbuzz
+# (-system-icu) -system-libaom -system-libjpeg-turbo -system-libpng -system-libstdcxx
+# -system-libwebp -system-libxml -system-libxslt -system-openh264 -system-opus -system-re2
+# -system-zlib -system-zstd -systemd -test -ungoogled-chromium -vaapi -vaapi-hevc -vorbis -widevine"
+# ABI_X86="<REDACTED>"
+# CPU_FLAGS_LOONG="<REDACTED>" CPU_FLAGS_MIPS="<REDACTED>" CPU_FLAGS_RISCV="<REDACTED>"
+# CPU_FLAGS_S390="<REDACTED>"
+# CPU_FLAGS_X86="<REDACTED>"
+# EBUILD_REVISION="-18"
+# L10N="-af -am -ar -bg -bn -ca -cs -da -de -el -en-GB -en-US -es -es-419 -et -fa -fi -fil -fr -gu
+# -he -hi -hr -hu -id -it -ja -kn -ko -lt -lv -ml -mr -ms -nb -nl -pl -pt-BR -pt-PT -ro -ru -sk -sl
+# -sr -sv -sw -ta -te -th -tr -uk -ur -vi -zh-CN -zh-TW" PATENT_STATUS="-nonfree -sponsored_ncp_nb"
+# drumbrake:  off
+# pointer-compression: automagic, based on build scripts
+# v8-sandbox:  automagic, based on build scripts
+#
+# Build time for 137.0.7151.68:
+# Using distro patches only without oiledmachine-overlay patches:
+# * Completion time:  2 days, 7 hrs, 33 mins, 34 secs
+#
+# The reason why long build time is because mksnapshot should only be enabled for distcc/goma
+# builds, but disabled for most users because the costs outweigh the benefits.
+#
