@@ -33,7 +33,6 @@ sys-libs/libbacktrace
 app-text/pdfchain
 media-gfx/nvidia-texture-tools
 media-plugins/bitlbee-facebook
-sys-process/psdoom-ng
 
 # Old versions; EOL (End Of Life)?; no longer receiving security updates
 media-libs/alure

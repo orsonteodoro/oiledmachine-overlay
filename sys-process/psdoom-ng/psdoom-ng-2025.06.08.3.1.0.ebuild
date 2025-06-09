@@ -1,0 +1,90 @@
+# Copyright 2022-2025 Orson Teodoro <orsonteodoro@hotmail.com>
+# Copyright 1999-2025 Gentoo Authors
+# Distributed under the terms of the GNU General Public License v2
+
+EAPI=8
+
+FALLBACK_COMMIT="736d55ca94b5e0a4140c9cc3bfe762152b2dffba"
+PSDOOM_DATA_PV="2000.05.03"
+QUICKCHECK_COMMIT="ef816accb377a5be05c5debf096dd038eee98aa8"
+
+inherit autotools
+
+if [[ "${PV}" =~ "9999" ]] ; then
+	EGIT_BRANCH="psdoom-ng"
+	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
+	EGIT_REPO_URI="https://github.com/orsonteodoro/psdoom-ng1.git"
+	inherit git-r3
+	IUSE+=" fallback-commit"
+else
+	KEYWORDS="amd64"
+	S="${WORKDIR}/psdoom-ng-${PV}"
+	SRC_URI="
+https://github.com/orsonteodoro/psdoom-ng1/archive/refs/tags/psdoom-ng-${PV}.tar.gz
+	-> ${PN}-${FALLBACK_COMMIT:0:7}.tar.gz
+https://github.com/chocolate-doom/quickcheck/archive/${QUICKCHECK_COMMIT}.tar.gz
+	-> chocolate-doom-quickcheck-${QUICKCHECK_COMMIT:0:7}.tar.gz
+	"
+fi
+SRC_URI+="
+	psdoom-wads? (
+http://downloads.sourceforge.net/project/psdoom/psdoom-data/${PSDOOM_DATA_PV}/psdoom-${PSDOOM_DATA_PV}-data.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fpsdoom%2Ffiles%2Fpsdoom-data%2F${PSDOOM_DATA_PV}%2F&ts=1452812220&use_mirror=tcpdiag
+	-> psdoom-data-${PSDOOM_DATA_PV}.tar.gz
+	)
+"
+
+DESCRIPTION="A First Person Shooter (FPS) process killer"
+HOMEPAGE="https://github.com/orsonteodoro/psdoom-ng"
+LICENSE="GPL-2"
+SLOT="0"
+IUSE+=" cloudfoundry psdoom-wads"
+RDEPEND="
+	>=media-libs/libsdl-1.1.3
+	gnome-extra/zenity
+	media-libs/sdl-mixer
+	media-libs/sdl2-net
+"
+PATCHES=(
+)
+
+src_unpack() {
+	if [[ "${PV}" =~ "9999" ]] ; then
+		git-r3_fetch
+		git-r3_checkout
+	else
+		unpack "${PN}-${FALLBACK_COMMIT:0:7}.tar.gz"
+	fi
+	cd "${WORKDIR}" || die
+	if use psdoom-wads ; then
+		unpack "psdoom-data-${PSDOOM_DATA_PV}.tar.gz"
+	fi
+	dep_prepare_mv "${WORKDIR}/quick-check-${QUICKCHECK_COMMIT}" "${S}/quickcheck"
+}
+
+src_prepare() {
+	default
+	eautoreconf || die
+}
+
+src_configure(){
+	local myconf=(
+		$(use_enable cloudfoundry)
+	)
+	econf ${myconf[@]} || die
+}
+
+src_compile() {
+	emake || die
+}
+
+src_install() {
+	emake DESTDIR="${D}" install
+	insinto "/usr/share/psdoom-ng"
+	if use psdoom-wads ; then
+		doins "${WORKDIR}/psdoom-data/psdoom1.wad" || die
+		doins "${WORKDIR}/psdoom-data/psdoom2.wad" || die
+		newins "${WORKDIR}/psdoom-data/README" "README.wad" || die
+	fi
+}
+
+# OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
