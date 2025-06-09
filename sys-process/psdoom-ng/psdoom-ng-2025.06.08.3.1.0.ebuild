@@ -8,7 +8,7 @@ FALLBACK_COMMIT="736d55ca94b5e0a4140c9cc3bfe762152b2dffba"
 PSDOOM_DATA_PV="2000.05.03"
 QUICKCHECK_COMMIT="ef816accb377a5be05c5debf096dd038eee98aa8"
 
-inherit autotools
+inherit autotools dep-prepare
 
 if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="psdoom-ng"
@@ -18,7 +18,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	IUSE+=" fallback-commit"
 else
 	KEYWORDS="~amd64"
-	S="${WORKDIR}/psdoom-ng-${PV}"
+	S="${WORKDIR}/psdoom-ng1-psdoom-ng-${PV}"
 	SRC_URI="
 https://github.com/orsonteodoro/psdoom-ng1/archive/refs/tags/psdoom-ng-${PV}.tar.gz
 	-> ${PN}-${FALLBACK_COMMIT:0:7}.tar.gz
@@ -37,7 +37,10 @@ DESCRIPTION="A First Person Shooter (FPS) process killer"
 HOMEPAGE="https://github.com/orsonteodoro/psdoom-ng"
 LICENSE="GPL-2"
 SLOT="0"
-IUSE+=" cloudfoundry psdoom-wads"
+IUSE+="
+cloudfoundry psdoom-wads
+ebuild_revision_1
+"
 RDEPEND="
 	>=media-libs/libsdl-1.1.3
 	gnome-extra/zenity
@@ -55,10 +58,11 @@ src_unpack() {
 		unpack "${PN}-${FALLBACK_COMMIT:0:7}.tar.gz"
 	fi
 	cd "${WORKDIR}" || die
+	unpack "chocolate-doom-quickcheck-${QUICKCHECK_COMMIT:0:7}.tar.gz"
 	if use psdoom-wads ; then
 		unpack "psdoom-data-${PSDOOM_DATA_PV}.tar.gz"
 	fi
-	dep_prepare_mv "${WORKDIR}/quick-check-${QUICKCHECK_COMMIT}" "${S}/quickcheck"
+	dep_prepare_mv "${WORKDIR}/quickcheck-${QUICKCHECK_COMMIT}" "${S}/quickcheck"
 }
 
 src_prepare() {
