@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <remote-id type="github">orsonteodoro/psdoom-ng1</remote-id>
+  </upstream>
+  <use>
+    <flag name="fluidsynth">
+      Add support for MIDI music.
+    </flag>
+    <flag name="cloudfoundry">
+      Add support for Cloud Foundry.
+    </flag>
+    <flag name="kms">
+      Add support for TTY.
+    </flag>
+    <flag name="png">
+      Add support for PNG screenshots.
+    </flag>
+    <flag name="psdoom-wads">
+      Add additional maps.
+    </flag>
+  </use>
+</pkgmetadata>

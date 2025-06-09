@@ -62,11 +62,11 @@ RDEPEND="
 	)
 	wayland? (
 		gnome-extra/zenity
-		gui-libs/gtk[wayland]
+		gui-libs/gtk[gles2,video,wayland]
 	)
 	X? (
 		gnome-extra/zenity
-		gui-libs/gtk[X]
+		gui-libs/gtk[video,X]
 	)
 "
 PATCHES=(
