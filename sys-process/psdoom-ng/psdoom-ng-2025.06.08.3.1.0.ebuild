@@ -48,6 +48,12 @@ REQUIRED_USE="
 		wayland
 		X
 	)
+	libsamplerate? (
+		sound
+	)
+	sdl2mixer? (
+		sound
+	)
 "
 RDEPEND="
 	>=media-libs/libsdl2-2.0.14[kms?,libsamplerate?,sound?,wayland?,X?]
