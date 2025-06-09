@@ -63,6 +63,9 @@ RDEPEND="
 	libsamplerate? (
 		>=media-libs/libsamplerate-0.1.8
 	)
+	png? (
+		>=media-libs/libpng-1.2.50
+	)
 	sdl2mixer? (
 		>=media-libs/sdl2-mixer-2.0.2
 	)
@@ -76,6 +79,7 @@ RDEPEND="
 	)
 "
 PATCHES=(
+	"${FILESDIR}/${PN}-2025.06.08.3.1.0-fix-setup.patch"
 )
 
 src_unpack() {
