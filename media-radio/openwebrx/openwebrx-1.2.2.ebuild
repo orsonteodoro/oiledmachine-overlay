@@ -2,7 +2,7 @@
 # Copyright 1999-2025 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=7
+EAPI=8
 
 # Items in the RDEPEND_UNPACKAGED list should be packaged by yourself.
 # Upstream uses codec2 with deprecated code, but the distro uses the recent one.
