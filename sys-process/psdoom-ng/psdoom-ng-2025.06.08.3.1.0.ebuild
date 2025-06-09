@@ -38,14 +38,36 @@ HOMEPAGE="https://github.com/orsonteodoro/psdoom-ng"
 LICENSE="GPL-2"
 SLOT="0"
 IUSE+="
-cloudfoundry psdoom-wads
+bash-completion cloudfoundry fluidsynth kms libsamplerate png psdoom-wads
+sdl2mixer sound X wayland
 ebuild_revision_1
 "
+REQUIRED_USE="
+	|| (
+		kms
+		wayland
+		X
+	)
+"
 RDEPEND="
-	>=media-libs/libsdl-1.1.3
-	gnome-extra/zenity
-	media-libs/sdl-mixer
-	media-libs/sdl2-net
+	>=media-libs/libsdl2-2.0.14[kms?,libsamplerate?,sound?,wayland?,X?]
+	fluidsynth? (
+		>=media-sound/fluidsynth-2.2.0
+	)
+	libsamplerate? (
+		>=media-libs/libsamplerate-0.1.8
+	)
+	sdl2mixer? (
+		>=media-libs/sdl2-mixer-2.0.2
+	)
+	wayland? (
+		gnome-extra/zenity
+		gui-libs/gtk[wayland]
+	)
+	X? (
+		gnome-extra/zenity
+		gui-libs/gtk[X]
+	)
 "
 PATCHES=(
 )
@@ -72,7 +94,17 @@ src_prepare() {
 
 src_configure(){
 	local myconf=(
+		$(use_enable bash-completion)
 		$(use_enable cloudfoundry)
+		$(use_enable sdl2mixer)
+		$(use_with fluidsynth)
+		$(use_with libsamplerate)
+		$(use_with png libpng)
+		--disable-all-games
+
+	# For security reasons.  It is possible to use psdoom-ng for any reason
+	# but most use cases it is for killing pid.
+		--disable-sdl2net
 	)
 	econf ${myconf[@]} || die
 }
