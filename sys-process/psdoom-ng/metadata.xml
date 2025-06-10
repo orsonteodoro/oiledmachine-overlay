@@ -17,7 +17,7 @@
       Support for FLAC based music packs.
     </flag>
     <flag name="fluidsynth">
-      Add support for MIDI music.
+      Add support for MUS or MIDI background music.
     </flag>
     <flag name="kms">
       Add support for TTY.
