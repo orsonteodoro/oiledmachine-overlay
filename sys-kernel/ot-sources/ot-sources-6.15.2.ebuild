@@ -11,9 +11,9 @@ RC_PV="" # See https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi
 # https://gitweb.gentoo.org/proj/linux-patches.git/log/?h=6.15
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 
-CLEAR_LINUX_PATCHES_VER="6.13.8-1555"
+CLEAR_LINUX_PATCHES_VER="6.15.1-1584"
 EBUILD_REV="ebuild_revision_7"
-GENPATCHES_VER="2" # can be live only when 9999
+GENPATCHES_VER="3" # can be live only when 9999
 PATCH_PROJC_VER="6.15-r0"
 PATCH_RT_VER="6.15-rt2"
 
@@ -27,7 +27,7 @@ inherit ot-kernel-v6.15
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  modularize-ebuild-as-milestone-eclasses
 # OILEDMACHINE-OVERLAY-META-TAGS:  see-eclass-for-full-details
 # OILEDMACHINE-OVERLAY-META-WIP:  tresor, signed-kexec-kernel, signed-kernels
-# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.15.1 (20250605) with modified builder profile with -O2 and -march=native, no KFENCE, no CFI, yes -D_FORTIFY_SOURCE
+# OILEDMACHINE-OVERLAY-TEST:  PASS (interactive) 6.15.1 (20250605) with modified builder profile with -O2 and -march=native, no KFENCE, no KCFI, yes -D_FORTIFY_SOURCE
 
 
 # OILEDMACHINE-OVERLAY-TEST:  N/A

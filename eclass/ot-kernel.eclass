@@ -478,6 +478,15 @@ MITIGATION_URI="https://lore.kernel.org/linux-cve-announce/"
 VULNERABILITIES_FIXED=(
 # High and critical are noted and only those that are fixed on this release day
 # Medium and low are shown optionally.
+	# 20250608
+	"CVE-2025-38003;;"
+	"CVE-2025-38004;;"
+
+	# 20250606
+	"CVE-2025-38002;;"
+	"CVE-2025-38001;;"
+	"CVE-2025-38000;;"
+
 	# 20250605
 	"CVE-2023-53025;UAF;Rejected"
 
