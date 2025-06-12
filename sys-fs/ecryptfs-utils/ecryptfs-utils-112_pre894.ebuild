@@ -14,7 +14,7 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="PE"
 LANGS=( "ca" )
 PYTHON_COMPAT=( "python3_11" )
 
-inherit autotools cflags-hardened flag-o-matic linux-info pam python-single-r1
+inherit autotools cflags-hardened flag-o-matic linux-info pam python-single-r1 sandbox-changes
 
 KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86"
 EBRZ_REPO_URI="lp:~ecryptfs/ecryptfs/trunk"
