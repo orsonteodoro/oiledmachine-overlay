@@ -905,6 +905,11 @@ src_install() {
 
 pkg_postinst() {
 	uopts_pkg_postinst
+ewarn
+ewarn "If X11 or Wayland hard freezes on loading the desktop environment,  Do"
+ewarn "rm -rf ~/.cache/mesa_shader_cache ~/.cache/mesa_shader_cache_db"
+ewarn "to remove corrupted cache."
+ewarn
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  pgo, bolt
