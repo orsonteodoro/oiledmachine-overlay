@@ -153,6 +153,10 @@
     <flag name="patent_status_nonfree">
       Allow unexpired nonfree patents.
     </flag>
+    <flag name="shader-cache">
+      Allow to use shader cache to skip recompilation of GPU programs.  Enabling
+      may add an availability (DoS) security vulnerability.
+    </flag>
     <flag name="vdpau">
       Enable the VDPAU acceleration interface for the Gallium3D Video Layer.
     </flag>

@@ -124,7 +124,7 @@ ${IUSE_VIDEO_CARDS}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS[@]}
 asahi d3d9 debug +llvm lm-sensors opencl +opengl
-+proprietary-codecs test unwind vaapi valgrind vdpau vulkan
++proprietary-codecs +shader-cache test unwind vaapi valgrind vdpau vulkan
 wayland +X xa +zstd
 ebuild_revision_6
 "
@@ -914,15 +914,26 @@ src_install() {
 		uopts_src_install
 	}
 	multilib_foreach_abi install_abi
+
+	# Mesa should verify integrity before crashing, or it can be abused to crash.
+	# Prevent hard freeze on startup of X11.
+	if ! use shader-cache ; then
+cat <<-EOF > "${T}/99${PN}"
+MESA_GLSL_CACHE_DISABLE=true
+EOF
+		doenvd "${T}/99${PN}"
+	fi
 }
 
 pkg_postinst() {
 	uopts_pkg_postinst
+	if use shader-cache ; then
 ewarn
 ewarn "If X11 or Wayland hard freezes on loading the desktop environment,  Do"
 ewarn "rm -rf ~/.cache/mesa_shader_cache ~/.cache/mesa_shader_cache_db"
 ewarn "to remove corrupted cache."
 ewarn
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META-EBUILD-CHANGES:  pgo, bolt
