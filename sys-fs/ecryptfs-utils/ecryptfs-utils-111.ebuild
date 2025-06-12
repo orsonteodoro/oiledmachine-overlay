@@ -141,11 +141,11 @@ src_prepare() {
 	default
 	eautoreconf
 	if use python ; then
-		futurize -0 -v -w ./ || die
+		futurize -0 -v -w "./" || die
 	fi
 	if use python ; then
 		# Remove to regenerate  Don't fail on cached version.
-		rm src/libecryptfs-swig/libecryptfs_wrap.c || die
+		rm "src/libecryptfs-swig/libecryptfs_wrap.c" || die
 		sed -i \
 			-e "s|#!/usr/bin/env python|#!/usr/bin/env ${EPYTHON}|g" \
 			"src/python/ecryptfsapi.py" || die
