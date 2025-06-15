@@ -1,0 +1,128 @@
+--- node-v24.2.0.orig/common.gypi	2025-06-09 09:53:41.000000000 -0700
++++ node-v24.2.0/common.gypi	2025-06-14 22:42:59.965065953 -0700
+@@ -188,11 +188,21 @@
+             }, {
+               'MSVC_runtimeType': 2   # MultiThreadedDLL (/MD)
+             }],
+-            ['clang==1', {
+-              'lto': ' -flto ', # Clang
+-            }, {
++            ['clang==0', {
+               'lto': ' -flto=4 -fuse-linker-plugin -ffat-lto-objects ', # GCC
+             }],
++            ['clang==1 and with_goldlto=="true"', {
++              'lto': ' -flto', # Clang Gold LTO
++            }],
++            ['clang==1 and with_moldlto=="true"', {
++              'lto': ' -flto', # Mold LTO
++            }],
++            ['clang==1 and with_thinlto=="true"', {
++              'lto': ' -flto=thin', # Clang ThinLTO
++            }],
++            ['clang==1 and with_goldlto=="false" and with_thinlto=="false" and with_mold=="false"', {
++              'lto': ' -flto', # Clang with system default
++            }],
+           ],
+         },
+         'cflags': [ '-O3' ],
+@@ -204,6 +214,21 @@
+               'LLVM_LTO': 'YES',
+             },
+           }],
++          ['OS=="linux" and with_moldlto=="true"', {
++            'ldflags': [
++              '-fuse-ld=mold',
++            ],
++          }],
++          ['OS=="linux" and with_thinlto=="true"', {
++            'ldflags': [
++              '-fuse-ld=lld',
++            ],
++          }],
++          ['OS=="linux" and (with_goldlto=="true" or node_section_ordering_info!="")', {
++            'ldflags': [
++              '-fuse-ld=gold',
++            ],
++          }],
+           ['OS=="linux" or OS=="openharmony"', {
+             'conditions': [
+               ['node_section_ordering_info!=""', {
+@@ -212,7 +237,6 @@
+                   '-ffunction-sections',
+                 ],
+                 'ldflags': [
+-                  '-fuse-ld=gold',
+                   '-Wl,--section-ordering-file=<(node_section_ordering_info)',
+                 ],
+               }],
+--- node-v24.2.0.orig/configure.py	2025-06-09 09:53:41.000000000 -0700
++++ node-v24.2.0/configure.py	2025-06-14 22:42:27.954879696 -0700
+@@ -704,6 +704,24 @@ parser.add_argument('--use-section-order
+          'Node.js be linked using the gold linker. The gold linker must have ' +
+          'version 1.2 or greater.')
+ 
++parser.add_argument('--with-goldlto',
++    action='store_true',
++    dest='with_goldlto',
++    default=None,
++    help='Use Gold LTO')
++
++parser.add_argument('--with-moldlto',
++    action='store_true',
++    dest='with_moldlto',
++    default=None,
++    help='Use Mold LTO')
++
++parser.add_argument('--with-thinlto',
++    action='store_true',
++    dest='with_thinlto',
++    default=None,
++    help='Use ThinLTO and LLD')
++
+ intl_optgroup.add_argument('--with-intl',
+     action='store',
+     dest='with_intl',
+@@ -1663,6 +1681,23 @@ def configure_node(o):
+     print('Warning! Loading builtin modules from disk is for development')
+     o['variables']['node_builtin_modules_path'] = options.node_builtin_modules_path
+ 
++  o['variables']['with_goldlto'] = 'false'
++  o['variables']['with_moldlto'] = 'false'
++  o['variables']['with_thinlto'] = 'false'
++  if options.enable_lto:
++    if options.with_goldlto and options.with_moldlto:
++      error('''with_goldlto and with_moldlto cannot both be enabled''')
++    if options.with_thinlto and options.with_goldlto:
++      error('''with_thinlto and with_goldlto cannot both be enabled''')
++    if options.with_thinlto and options.with_moldlto:
++      error('''with_thinlto and with_moldlto cannot both be enabled''')
++    if options.with_goldlto:
++      o['variables']['with_goldlto'] = 'true'
++    elif options.with_moldlto:
++      o['variables']['with_moldlto'] = 'true'
++    elif options.with_thinlto:
++      o['variables']['with_thinlto'] = 'true'
++
+ def configure_napi(output):
+   version = getnapibuildversion.get_napi_version()
+   output['variables']['napi_build_version'] = version
+@@ -2186,6 +2221,10 @@ def configure_inspector(o):
+   o['variables']['v8_enable_inspector'] = 0 if disable_inspector else 1
+ 
+ def configure_section_file(o):
++  if options.with_thinlto and options.node_section_ordering_info != "":
++    error('''node_section_ordering_info cannot be combined with thinlto''')
++  if options.with_moldlto and options.node_section_ordering_info != "":
++    error('''node_section_ordering_info cannot be combined with moldlto''')
+   try:
+     proc = subprocess.Popen(['ld.gold'] + ['-v'], stdin = subprocess.PIPE,
+                             stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+@@ -2205,7 +2244,7 @@ def configure_section_file(o):
+       error('''GNU gold version must be greater than 1.2 in order to use section
+             reordering''')
+ 
+-  if options.node_section_ordering_info != "":
++  if options.node_section_ordering_info != "" and options.with_thinlto == None and options.with_moldlto == None:
+     o['variables']['node_section_ordering_info'] = os.path.realpath(
+       str(options.node_section_ordering_info))
+   else:
