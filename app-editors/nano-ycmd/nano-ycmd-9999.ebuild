@@ -10,7 +10,7 @@ CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 
 BD_ABS=""
 LIVE_TYPE="git"
-FALLBACK_COMMIT="6402abe2d2b25fdffb85a30a34e48743c2a6d32b" # 20250608
+FALLBACK_COMMIT="b13998f46446998f1b788455934ef546ab06d6a1" # 20250616
 GNULIB_COMMIT="d9083a4cc638cf9c7dfc3cc534a7c6b4debf50ab" # listed in ./autogen.sh
 GNULIB_PV="2025.04.10.16.42.14" # See committer timestamp from https://cgit.git.savannah.gnu.org/cgit/gnulib.git/commit/?id=d9083a4cc638cf9c7dfc3cc534a7c6b4debf50ab
 PYTHON_COMPAT=( "python3_"{11..13} ) # Same as ycmd
@@ -51,11 +51,11 @@ LICENSE="
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
 IUSE+="
-bear debug justify libgcrypt +magic minimal ncurses nettle ninja nls slang
-+spell static openmp openssl system-clangd -system-gnulib system-gocode
-system-godef system-gopls system-mono system-omnisharp system-racerd system-rust
-system-rustc system-tsserver unicode ycm-generator
-+ycmd-48
+bear debug hardened_malloc justify libgcrypt +magic minimal mimalloc
+ncurses nettle ninja nls random safeclib +spell static
+openssl system-clangd -system-gnulib system-gocode system-godef system-gopls
+system-mono system-omnisharp system-racerd system-rust system-rustc
+system-tsserver unicode ycm-generator +ycmd-48
 ebuild_revision_55
 "
 REQUIRED_USE+="
@@ -68,6 +68,10 @@ REQUIRED_USE+="
 	)
 	^^ (
 		${YCMD_SLOTS[@]/#/ycmd-}
+	)
+	?? (
+		hardened_malloc
+		mimalloc
 	)
 	bear? (
 		ycm-generator
@@ -85,11 +89,6 @@ REQUIRED_USE+="
 LIB_DEPEND="
 	>=sys-libs/ncurses-5.9-r1:0=[unicode(+)]
 	sys-libs/ncurses:0=[static-libs(+)]
-	!ncurses? (
-		slang? (
-			sys-libs/slang:=[static-libs(+)]
-		)
-	)
 	magic? (
 		sys-apps/file:=[static-libs(+)]
 	)
@@ -120,22 +119,26 @@ RDEPEND+="
 	)
 	>=app-shells/bash-4
 	dev-libs/nxjson
+	dev-libs/safeclib
 	net-libs/neon
 	bear? (
 		dev-util/bear[${PYTHON_SINGLE_USEDEP}]
 	)
+	hardened_malloc? (
+		dev-libs/hardened_malloc
+	)
 	libgcrypt? (
 		dev-libs/glib
 		dev-libs/libgcrypt
+	)
+	mimalloc? (
+		dev-libs/mimalloc[hardened(+)]
 	)
 	ninja? (
 		dev-build/ninja
 	)
 	nettle? (
 		dev-libs/nettle
-	)
-	openmp? (
-		llvm-runtimes/openmp
 	)
 	openssl? (
 		>=dev-libs/openssl-3
@@ -215,6 +218,7 @@ src_prepare() {
 ewarn "This ebuild is a Work In Progress (WIP)"
 	default
 	eapply "${FILESDIR}/${PN}-9999-3b23184-rename-as-ynano.patch"
+	eapply "${FILESDIR}/test.patch"
 	export GNULIB_USE_TARBALL=1
 	if use system-gnulib ; then
 		export GNULIB_USE_SYSTEM=1
@@ -231,9 +235,9 @@ econf_ycmd_slot_45() {
 		JAVA_PATH="${java_path}"
 		MONO_PATH="${mono_path}"
 		NINJA_PATH="/usr/bin/ninja"
+		OMNISHARP_PATH="${omnisharp_path}"
 		RUST_TOOLCHAIN_PATH="${rust_toolchain_path}"
 		TSSERVER_PATH="${tsserver_path}"
-		OMNISHARP_PATH="${omnisharp_path}"
 		YCMD_PATH="${BD_ABS}/ycmd"
 		YCMD_PYTHON_PATH="/usr/bin/${EPYTHON}"
 		YCMG_PATH="/usr/bin/config_gen.py"
@@ -242,7 +246,6 @@ econf_ycmd_slot_45() {
 	local args=(
 		"${myconf[@]}"
 		--bindir="${EPREFIX}/bin"
-		--disable-wrapping-as-root
 		--enable-ycmd
 		--htmldir="/trash"
 		$(use_enable !minimal color)
@@ -253,16 +256,15 @@ econf_ycmd_slot_45() {
 		$(use_enable magic libmagic)
 		$(use_enable minimal tiny)
 		$(use_enable nls)
+		$(use_enable random)
 		$(use_enable spell speller)
 		$(use_enable unicode utf8)
 		$(use_with bear)
 		$(use_with libgcrypt)
 		$(use_with nettle)
 		$(use_with ninja)
-		$(use_with openmp)
 		$(use_with openssl)
 		$(use_with ycm-generator)
-		$(usex ncurses --without-slang $(use_with slang))
 	)
 	export ${envars[@]}
 	einfo "${envars[@]} econf ${args[@]}"
@@ -287,14 +289,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 	cflags-hardened_append
 
 	local myconf=()
-	case "${CHOST}" in
-		*"-gnu"*|*"-uclibc"*)
-			myconf+=(
-				"--with-wordbounds"
-			)
-			;; #467848
-	esac
-
 	local clangd_path=""
 	local gocode_path=""
 	local godef_path=""
@@ -307,6 +301,27 @@ einfo "Detected compiler switch.  Disabling LTO."
 	local rust_toolchain_path=""
 	local rustc_path=""
 	local tsserver_path=""
+
+	if use hardened_malloc ; then
+		myconf+=(
+			--with-allocator=hardened-malloc
+		)
+	elif use mimalloc ; then
+		myconf+=(
+			--with-allocator=mimalloc-secure
+		)
+	else
+		myconf+=(
+			--with-allocator=libc
+		)
+	fi
+
+	if use safeclib ; then
+		myconf+=(
+			--with-safeclib
+		)
+	fi
+
 	if use java ; then
 		local java_vendor=$(java-pkg_get-vm-vendor)
 		local java_slot
