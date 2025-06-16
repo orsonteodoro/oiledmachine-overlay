@@ -10,7 +10,7 @@ CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 
 BD_ABS=""
 LIVE_TYPE="git"
-FALLBACK_COMMIT="522282b16643486dd5c7f082a56e39f9506c7130" # 20250616
+FALLBACK_COMMIT="9d0c3c07a58c30c32e930c7d0f4e6054aa3b0003" # 20250616
 GNULIB_COMMIT="d9083a4cc638cf9c7dfc3cc534a7c6b4debf50ab" # listed in ./autogen.sh
 GNULIB_PV="2025.04.10.16.42.14" # See committer timestamp from https://cgit.git.savannah.gnu.org/cgit/gnulib.git/commit/?id=d9083a4cc638cf9c7dfc3cc534a7c6b4debf50ab
 PYTHON_COMPAT=( "python3_"{11..13} ) # Same as ycmd
@@ -165,7 +165,7 @@ BDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/nano-ycmd-9999-3b23184-use-external-gnulib-${GNULIB_COMMIT:0:7}.patch"
+	"${FILESDIR}/nano-ycmd-9999-9d0c3c0-use-external-gnulib-${GNULIB_COMMIT:0:7}.patch"
 )
 
 pkg_setup() {
@@ -218,7 +218,7 @@ src_prepare() {
 ewarn "This ebuild is a Work In Progress (WIP)"
 	default
 	eapply "${FILESDIR}/${PN}-9999-3b23184-rename-as-ynano.patch"
-#	eapply "${FILESDIR}/test.patch"
+	#eapply "A${FILESDIR}/test.patch"
 	export GNULIB_USE_TARBALL=1
 	if use system-gnulib ; then
 		export GNULIB_USE_SYSTEM=1

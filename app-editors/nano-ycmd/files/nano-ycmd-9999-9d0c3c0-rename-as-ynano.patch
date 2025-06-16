@@ -1,7 +1,7 @@
 diff '--color=auto' -urp nano-ycmd-9999.orig/src/Makefile.am nano-ycmd-9999/src/Makefile.am
---- nano-ycmd-9999.orig/src/Makefile.am	2025-06-08 12:30:07.061052576 -0700
-+++ nano-ycmd-9999/src/Makefile.am	2025-06-08 12:31:21.615674235 -0700
-@@ -151,8 +151,8 @@ revision.h: FORCE
+--- nano-ycmd-9999.orig/src/Makefile.am	2025-06-16 12:36:07.722285907 -0700
++++ nano-ycmd-9999/src/Makefile.am	2025-06-16 12:37:06.867732694 -0700
+@@ -152,8 +152,8 @@ revision.h: FORCE
  			echo "#define $(SOMETHING)" > $@
  FORCE:
  
@@ -12,7 +12,7 @@ diff '--color=auto' -urp nano-ycmd-9999.orig/src/Makefile.am nano-ycmd-9999/src/
  		definitions.h \
  		prototypes.h \
  		browser.c \
-@@ -173,29 +173,29 @@ nano_SOURCES = \
+@@ -175,44 +175,44 @@ nano_SOURCES = \
  		winio.c
  
  if USE_YCMD
@@ -25,6 +25,16 @@ diff '--color=auto' -urp nano-ycmd-9999.orig/src/Makefile.am nano-ycmd-9999/src/
 +ynano_LDADD = $(top_builddir)/lib/libgnu.a @LIBINTL@ \
  		$(GETRANDOM_LIB) $(CLOCK_TIME_LIB) $(LIBTHREAD)
  
+ if USE_HARDENED_MALLOC
+-nano_LDADD += -lhardened_malloc
++ynano_LDADD += -lhardened_malloc
+ endif
+ 
+ if USE_MIMALLOC_SECURE
+-nano_LDADD += -lmimalloc-secure
++ynano_LDADD += -lmimalloc-secure
+ endif
+ 
  if USE_YCMD
 -nano_LDADD += @NEON_LIBS@
 +ynano_LDADD += @NEON_LIBS@
@@ -34,16 +44,24 @@ diff '--color=auto' -urp nano-ycmd-9999.orig/src/Makefile.am nano-ycmd-9999/src/
 -nano_LDADD += @NETTLE_LIBS@
 +ynano_LDADD += @NETTLE_LIBS@
  endif
+ 
  if HAVE_OPENSSL
 -nano_LDADD += @OPENSSL_LIBS@
 +ynano_LDADD += @OPENSSL_LIBS@
  endif
+ 
  if HAVE_LIBGCRYPT
 -nano_LDADD += @GLIB_LIBS@
 -nano_LDFLAGS = $(LIBGCRYPT_LIBS)
 +ynano_LDADD += @GLIB_LIBS@
 +ynano_LDFLAGS = $(LIBGCRYPT_LIBS)
  endif
+ 
+ if HAVE_SAFECLIB
+-nano_LDADD += @SAFECLIB_LIBS@
++ynano_LDADD += @SAFECLIB_LIBS@
+ endif
+ 
  if HAVE_YCMD
 -nano_LDADD += @GLIB_LIBS@
 +ynano_LDADD += @GLIB_LIBS@
