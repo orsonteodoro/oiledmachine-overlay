@@ -120,7 +120,7 @@ einfo "SAFECLIB_MEMMAX=${SAFECLIB_MEMMAX}"
 	else
 		local x
 		for x in ${MEMMAX_SIZES[@]} ; do
-			if use "${x}" ; then
+			if use "memmax-${x}mb" ; then
 einfo "SAFECLIB_MEMMAX=${x}MB"
 				myconf+=(
 					--enable-memmax=${x}MB
@@ -138,7 +138,7 @@ einfo "SAFECLIB_STRMAX=${SAFECLIB_STRMAX}"
 	else
 		local x
 		for x in ${STRMAX_SIZES[@]} ; do
-			if use "${x}" ; then
+			if use "strmax-${x}k" ; then
 einfo "SAFECLIB_STRMAX=${x}K"
 				myconf+=(
 					--enable-strmax=${x}K
