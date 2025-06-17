@@ -10,7 +10,7 @@ CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 
 BD_ABS=""
 LIVE_TYPE="git"
-FALLBACK_COMMIT="cba5474cfb08be393c046fabc5e2a91f7aeadf79" # 20250617
+FALLBACK_COMMIT="a002f036678f5a0698cf221164df9b68b230d384" # 20250617
 GNULIB_COMMIT="d9083a4cc638cf9c7dfc3cc534a7c6b4debf50ab" # listed in ./autogen.sh
 GNULIB_PV="2025.04.10.16.42.14" # See committer timestamp from https://cgit.git.savannah.gnu.org/cgit/gnulib.git/commit/?id=d9083a4cc638cf9c7dfc3cc534a7c6b4debf50ab
 PYTHON_COMPAT=( "python3_"{11..13} ) # Same as ycmd
@@ -56,7 +56,7 @@ ncurses nettle ninja nls random safeclib +spell static
 openssl system-clangd -system-gnulib system-gocode system-godef system-gopls
 system-mono system-omnisharp system-racerd system-rust system-rustc
 system-tsserver unicode ycm-generator +ycmd-48
-ebuild_revision_56
+ebuild_revision_57
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
