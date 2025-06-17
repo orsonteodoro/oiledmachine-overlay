@@ -7,22 +7,30 @@ EAPI=8
 MEMMAX_SIZES=(
 	# Limit to half 4 GiB RAM to mitigate DoS.
 	# Assuming the machine has >= 4 GiB of RAM.
-	2048
-	1024
-	512
+	2048 # 2 GiB
+	1024 # 1 GiB
+	512 # 512 MiB
 )
 STRMAX_SIZES=(
 	# Limit to half 4 GiB RAM to mitigate DoS.
 	# Assuming the machine has >= 4 GiB of RAM.
-	2048
-	1024
-	512
-	256
-	128
-	64
-	32
-	16
-	8
+	524288 # 2 GiB
+	262144 # 1 GiB
+	128000 # 512 MiB
+	65536 # 256 MiB
+	32768 # 128 MiB
+	16384 # 64 MiB
+	8192 # 32 MiB
+	4096 # 16 MiB
+	2048 # 8 MiB
+	1024 # 4 MiB
+	512 # 2 MiB
+	256 # 1 MiB
+	128 # KiB
+	64 # KiB
+	32 # KiB
+	16 # KiB
+	8 # KiB
 )
 
 inherit autotools check-compiler-switch flag-o-matic
