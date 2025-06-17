@@ -17,11 +17,42 @@
   SAFECLIB_STRMAX - Override the max str* object size.  Default is 4K.
   -->
   <use>
+    <flag name="memmax-2048mb">
+      Increase the mem* function largest object size to 2048MB.
+    </flag>
+    <flag name="memmax-1024mb">
+      Increase the mem* function largest object size to 1024MB.
+    </flag>
     <flag name="memmax-512mb">
-      Double the mem* function largest object size to 512MB.
+      Increase the mem* function largest object size to 512MB.
+    </flag>
+
+    <flag name="strmax-2048k">
+      Increase the str* function largest object size to 2048K.
+    </flag>
+    <flag name="strmax-1024k">
+      Increase the str* function largest object size to 1024K.
+    </flag>
+    <flag name="strmax-512k">
+      Increase the str* function largest object size to 512K.
+    </flag>
+    <flag name="strmax-256k">
+      Increase the str* function largest object size to 256K.
+    </flag>
+    <flag name="strmax-128k">
+      Increase the str* function largest object size to 128K.
+    </flag>
+    <flag name="strmax-64k">
+      Increase the str* function largest object size to 32K.
+    </flag>
+    <flag name="strmax-32k">
+      Increase the str* function largest object size to 32K.
+    </flag>
+    <flag name="strmax-16k">
+      Increase the str* function largest object size to 16K.
     </flag>
     <flag name="strmax-8k">
-      Double the str* function largest object size to 8K.
+      Increase the str* function largest object size to 8K.
     </flag>
   </use>
 </pkgmetadata>

@@ -4,6 +4,27 @@
 
 EAPI=8
 
+MEMMAX_SIZES=(
+	# Limit to half 4 GiB RAM to mitigate DoS.
+	# Assuming the machine has >= 4 GiB of RAM.
+	2048
+	1024
+	512
+)
+STRMAX_SIZES=(
+	# Limit to half 4 GiB RAM to mitigate DoS.
+	# Assuming the machine has >= 4 GiB of RAM.
+	2048
+	1024
+	512
+	256
+	128
+	64
+	32
+	16
+	8
+)
+
 inherit autotools check-compiler-switch flag-o-matic
 
 KEYWORDS="~amd64"
@@ -20,8 +41,22 @@ HOMEPAGE="
 "
 LICENSE="MIT"
 SLOT="0"
+gen_iuse_memmax() {
+	local x
+	for x in ${MEMMAX_SIZES[@]} ; do
+		echo "memmax-${x}mb"
+	done
+}
+gen_iuse_strmax() {
+	local x
+	for x in ${STRMAX_SIZES[@]} ; do
+		echo "strmax-${x}k"
+	done
+}
 IUSE="
-doc static-libs memmax-512mb strmax-8k
+$(gen_iuse_memmax)
+$(gen_iuse_strmax)
+doc static-libs
 "
 RDEPEND="
 "
@@ -68,24 +103,23 @@ src_configure() {
 		"-fno-strict-overflow" \
 		"-fno-delete-null-pointer-checks" \
 		"-fno-lifetime-dse"
-	strip-flags
-	replace-flags '-O*' '-O2'
 	local myconf=(
 		$(use_enable doc)
 		$(use_enable static-libs static)
 	)
 	if [[ -n "${SAFECLIB_MEMMAX}" ]] ; then
 einfo "SAFECLIB_MEMMAX=${SAFECLIB_MEMMAX}"
-		myconf+=(
-			--enable-memmax=${SAFECLIB_MEMMAX}
-		)
-	elif use memmax-512mb ; then
-einfo "SAFECLIB_MEMMAX=512MB"
-		myconf+=(
-			--enable-memmax=512MB
-		)
 	else
-einfo "SAFECLIB_MEMMAX=256MB"
+		local x
+		for x in ${MEMMAX_SIZES[@]} ; do
+			if use "${x}" ; then
+einfo "SAFECLIB_MEMMAX=${x}MB"
+				myconf+=(
+					--enable-memmax=${x}MB
+				)
+				break
+			fi
+		done
 	fi
 
 	if [[ -n "${SAFECLIB_STRMAX}" ]] ; then
@@ -93,13 +127,17 @@ einfo "SAFECLIB_STRMAX=${SAFECLIB_STRMAX}"
 		myconf+=(
 			--enable-strmax=${SAFECLIB_STRMAX}
 		)
-	elif use strmax-8k ; then
-einfo "SAFECLIB_STRMAX=8K"
-		myconf+=(
-			--enable-strmax=8K
-		)
 	else
-einfo "SAFECLIB_STRMAX=4K"
+		local x
+		for x in ${STRMAX_SIZES[@]} ; do
+			if use "${x}" ; then
+einfo "SAFECLIB_STRMAX=${x}K"
+				myconf+=(
+					--enable-strmax=${x}K
+				)
+				break
+			fi
+		done
 	fi
 	econf ${myconf[@]}
 }
