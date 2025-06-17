@@ -52,13 +52,13 @@ SLOT="0"
 gen_iuse_memmax() {
 	local x
 	for x in ${MEMMAX_SIZES[@]} ; do
-		echo "memmax-${x}mb"
+		echo " memmax-${x}mb "
 	done
 }
 gen_iuse_strmax() {
 	local x
 	for x in ${STRMAX_SIZES[@]} ; do
-		echo "strmax-${x}k"
+		echo " strmax-${x}k "
 	done
 }
 IUSE="
