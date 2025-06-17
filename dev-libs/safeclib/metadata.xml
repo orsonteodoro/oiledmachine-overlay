@@ -9,4 +9,19 @@
   <upstream>
     <remote-id type="github">rurban/safeclib</remote-id>
   </upstream>
+  <!--
+  Build time environment variables:
+  
+
+  SAFECLIB_MEMMAX - Override the max mem* object size.  Default is 256MB.
+  SAFECLIB_STRMAX - Override the max str* object size.  Default is 4K.
+  -->
+  <use>
+    <flag name="memmax-512mb">
+      Double the mem* function largest object size to 512MB.
+    </flag>
+    <flag name="strmax-8k">
+      Double the str* function largest object size to 8K.
+    </flag>
+  </use>
 </pkgmetadata>

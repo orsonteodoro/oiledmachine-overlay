@@ -4,7 +4,7 @@
 
 EAPI=8
 
-inherit autotools check-compiler-switch
+inherit autotools check-compiler-switch flag-o-matic
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
@@ -21,7 +21,7 @@ HOMEPAGE="
 LICENSE="MIT"
 SLOT="0"
 IUSE="
-doc static-libs
+doc static-libs memmax-512mb strmax-8k
 "
 RDEPEND="
 "
@@ -60,10 +60,47 @@ src_prepare() {
 }
 
 src_configure() {
+	# Dedupe flags
+	filter-flags \
+		"-fstack-protector-strong" \
+		"-fstack-clash-protection" \
+		"-fcf-protection" \
+		"-fno-strict-overflow" \
+		"-fno-delete-null-pointer-checks" \
+		"-fno-lifetime-dse"
+	strip-flags
+	replace-flags '-O*' '-O2'
 	local myconf=(
 		$(use_enable doc)
 		$(use_enable static-libs static)
 	)
+	if [[ -n "${SAFECLIB_MEMMAX}" ]] ; then
+einfo "SAFECLIB_MEMMAX=${SAFECLIB_MEMMAX}"
+		myconf+=(
+			--enable-memmax=${SAFECLIB_MEMMAX}
+		)
+	elif use memmax-512mb ; then
+einfo "SAFECLIB_MEMMAX=512MB"
+		myconf+=(
+			--enable-memmax=512MB
+		)
+	else
+einfo "SAFECLIB_MEMMAX=256MB"
+	fi
+
+	if [[ -n "${SAFECLIB_STRMAX}" ]] ; then
+einfo "SAFECLIB_STRMAX=${SAFECLIB_STRMAX}"
+		myconf+=(
+			--enable-strmax=${SAFECLIB_STRMAX}
+		)
+	elif use strmax-8k ; then
+einfo "SAFECLIB_STRMAX=8K"
+		myconf+=(
+			--enable-strmax=8K
+		)
+	else
+einfo "SAFECLIB_STRMAX=4K"
+	fi
 	econf ${myconf[@]}
 }
 
