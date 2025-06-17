@@ -13,8 +13,12 @@
   Build time environment variables:
   
 
-  SAFECLIB_MEMMAX - Override the max mem* object size.  Default is 256MB.
-  SAFECLIB_STRMAX - Override the max str* object size.  Default is 4K.
+  SAFECLIB_MEMMAX - Override the max mem* object size in MiB.  Default is 256 MiB.
+  SAFECLIB_STRMAX - Override the max str* object size in KiB.  Default is 4 KiB.
+
+  Examples:
+  SAFECLIB_MEMMAX=256
+  SAFECLIB_STRMAX=4
   -->
   <use>
     <flag name="memmax-2048mb">

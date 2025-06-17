@@ -65,6 +65,7 @@ IUSE="
 $(gen_iuse_memmax)
 $(gen_iuse_strmax)
 doc static-libs
+ebuild_revision_1
 "
 RDEPEND="
 "
@@ -117,13 +118,16 @@ src_configure() {
 	)
 	if [[ -n "${SAFECLIB_MEMMAX}" ]] ; then
 einfo "SAFECLIB_MEMMAX=${SAFECLIB_MEMMAX}"
+		myconf+=(
+			--enable-memmax=$(python -c "print(${SAFECLIB_MEMMAX}<<20)")
+		)
 	else
 		local x
 		for x in ${MEMMAX_SIZES[@]} ; do
 			if use "memmax-${x}mb" ; then
 einfo "SAFECLIB_MEMMAX=${x}MB"
 				myconf+=(
-					--enable-memmax=${x}MB
+					--enable-memmax=$(python -c "print(${x}<<20)")
 				)
 				break
 			fi
@@ -133,7 +137,7 @@ einfo "SAFECLIB_MEMMAX=${x}MB"
 	if [[ -n "${SAFECLIB_STRMAX}" ]] ; then
 einfo "SAFECLIB_STRMAX=${SAFECLIB_STRMAX}"
 		myconf+=(
-			--enable-strmax=${SAFECLIB_STRMAX}
+			--enable-strmax=$(python -c "print(${SAFECLIB_STRMAX}<<10)")
 		)
 	else
 		local x
@@ -141,7 +145,7 @@ einfo "SAFECLIB_STRMAX=${SAFECLIB_STRMAX}"
 			if use "strmax-${x}k" ; then
 einfo "SAFECLIB_STRMAX=${x}K"
 				myconf+=(
-					--enable-strmax=${x}K
+					--enable-strmax=$(python -c "print(${x}<<10)")
 				)
 				break
 			fi
