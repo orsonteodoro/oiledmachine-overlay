@@ -10,7 +10,7 @@ CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 
 BD_ABS=""
 LIVE_TYPE="git"
-FALLBACK_COMMIT="499137e6d41840fcbf3e34de45db93cedb34077d" # 20250617
+FALLBACK_COMMIT="7ef4bb0e8f9ca6d8fc7517f7c00f5bc2c11f4721" # 20250617
 GNULIB_COMMIT="d9083a4cc638cf9c7dfc3cc534a7c6b4debf50ab" # listed in ./autogen.sh
 GNULIB_PV="2025.04.10.16.42.14" # See committer timestamp from https://cgit.git.savannah.gnu.org/cgit/gnulib.git/commit/?id=d9083a4cc638cf9c7dfc3cc534a7c6b4debf50ab
 PYTHON_COMPAT=( "python3_"{11..13} ) # Same as ycmd
@@ -51,18 +51,19 @@ LICENSE="
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
 IUSE+="
-bear debug hardened_malloc justify libgcrypt +magic minimal mimalloc
+bear debug hardened_malloc justify libgcrypt libsodium +magic minimal mimalloc
 ncurses nettle ninja nls random safeclib +spell static
 openssl system-clangd -system-gnulib system-gocode system-godef system-gopls
 system-mono system-omnisharp system-racerd system-rust system-rustc
 system-tsserver unicode ycm-generator +ycmd-48
-ebuild_revision_61
+ebuild_revision_62
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
 	!minimal
 	^^ (
 		libgcrypt
+		libsodium
 		nettle
 		openssl
 	)
@@ -130,6 +131,9 @@ RDEPEND+="
 	libgcrypt? (
 		dev-libs/glib
 		dev-libs/libgcrypt
+	)
+	libsodium? (
+		dev-libs/libsodium
 	)
 	mimalloc? (
 		dev-libs/mimalloc[hardened(+)]
@@ -261,6 +265,7 @@ econf_ycmd_slot_45() {
 		$(use_enable unicode utf8)
 		$(use_with bear)
 		$(use_with libgcrypt)
+		$(use_with libsodium)
 		$(use_with nettle)
 		$(use_with ninja)
 		$(use_with openssl)

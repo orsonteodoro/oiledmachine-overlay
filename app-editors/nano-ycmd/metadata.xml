@@ -101,6 +101,9 @@
     <flag name="libgcrypt">
       Uses Libgcrypt for HMAC computation.
     </flag>
+    <flag name="libsodium">
+      Uses libgcrypt for HMAC computation and memory scrubbing.
+    </flag>
     <flag name="magic">
       Add magic file support (sys-apps/file) to automatically detect appropriate
       syntax highlighting
