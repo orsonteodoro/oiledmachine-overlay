@@ -76,7 +76,7 @@ _XEN_PV=0
 
 LTS_VERSIONS=("5.4" "5.10" "5.15" "6.1" "6.6" "6.12")
 ACTIVE_VERSIONS=("5.4" "5.10" "5.15" "6.1" "6.6" "6.12" "6.15")
-STABLE_OR_MAINLINE_VERSIONS=("6.12" "6.13" "6.15")
+STABLE_OR_MAINLINE_VERSIONS=("6.12" "6.15")
 ALL_VERSIONS=(
 	"0"
 	"1"
@@ -97,7 +97,7 @@ EOL_VERSIONS=(
 )
 
 # For zero-tolerance mode
-MULTISLOT_LATEST_KERNEL_RELEASE=("5.4.294" "5.10.238" "5.15.185" "6.1.141" "6.6.93" "6.12.33" "6.14.11" "6.15.2")
+MULTISLOT_LATEST_KERNEL_RELEASE=("5.4.294" "5.10.238" "5.15.185" "6.1.141" "6.6.94" "6.12.34" "6.15.3")
 
 inherit mitigate-dos toolchain-funcs
 
