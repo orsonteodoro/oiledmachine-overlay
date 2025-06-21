@@ -56,7 +56,7 @@ ncurses nettle ninja nls random safeclib +spell static
 openssl system-clangd -system-gnulib system-gocode system-godef system-gopls
 system-mono system-omnisharp system-racerd system-rust system-rustc
 system-tsserver unicode ycm-generator +ycmd-48
-ebuild_revision_64
+ebuild_revision_65
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -217,7 +217,7 @@ eerror
 src_prepare() {
 ewarn "This ebuild is a Work In Progress (WIP)"
 	default
-	eapply "${FILESDIR}/${PN}-9999-9d0c3c0-rename-as-ynano.patch"
+	eapply "${FILESDIR}/${PN}-9999-7c76ee8-rename-as-ynano.patch"
 #	eapply "A${FILESDIR}/test.patch"
 	export GNULIB_USE_TARBALL=1
 	if use system-gnulib ; then
