@@ -218,7 +218,7 @@ src_prepare() {
 ewarn "This ebuild is a Work In Progress (WIP)"
 	default
 	eapply "${FILESDIR}/${PN}-9999-9d0c3c0-rename-as-ynano.patch"
-	eapply "A${FILESDIR}/test.patch"
+#	eapply "A${FILESDIR}/test.patch"
 	export GNULIB_USE_TARBALL=1
 	if use system-gnulib ; then
 		export GNULIB_USE_SYSTEM=1
