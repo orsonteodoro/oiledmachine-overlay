@@ -1,7 +1,7 @@
 diff '--color=auto' -urp nano-ycmd-9999.orig/src/Makefile.am nano-ycmd-9999/src/Makefile.am
---- nano-ycmd-9999.orig/src/Makefile.am	2025-06-21 04:36:14.475912532 -0700
-+++ nano-ycmd-9999/src/Makefile.am	2025-06-21 04:37:24.173129806 -0700
-@@ -152,8 +152,8 @@ revision.h: FORCE
+--- nano-ycmd-9999.orig/src/Makefile.am	2025-06-21 09:28:15.567889093 -0700
++++ nano-ycmd-9999/src/Makefile.am	2025-06-21 09:29:07.440690249 -0700
+@@ -151,8 +151,8 @@ revision.h: FORCE
  			echo "#define $(SOMETHING)" > $@
  FORCE:
  
@@ -12,7 +12,7 @@ diff '--color=auto' -urp nano-ycmd-9999.orig/src/Makefile.am nano-ycmd-9999/src/
  		definitions.h \
  		prototypes.h \
  		browser.c \
-@@ -175,44 +175,44 @@ nano_SOURCES = \
+@@ -174,45 +174,45 @@ nano_SOURCES = \
  		winio.c
  
  if USE_YCMD
@@ -64,7 +64,9 @@ diff '--color=auto' -urp nano-ycmd-9999.orig/src/Makefile.am nano-ycmd-9999/src/
  
  if HAVE_YCMD
 -nano_LDADD += @GLIB_LIBS@
+-nano_LDADD += @JANSSON_LIBS@
 +ynano_LDADD += @GLIB_LIBS@
++ynano_LDADD += @JANSSON_LIBS@
  endif
  
  install-exec-hook:
