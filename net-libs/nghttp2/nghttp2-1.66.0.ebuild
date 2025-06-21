@@ -11,13 +11,16 @@ CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18"
 CFLAGS_HARDENED_CI_SANITIZERS_GCC_COMPAT="14"
 CFLAGS_HARDENED_USE_CASES="network"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="DF DOS UAF"
-MRUBY_COMMIT="32279e4128527bab4c961854b9cce727a060abea"
-MUNIT_COMMIT="7f53fea8901089d46233302b3af35bf8be93cfc5"
-NEVERBLEED_COMMIT="929e470260d460dacc20a10601c2d3c7a9f386b2"
+HTTP_PARSER_COMMIT="ec8b5ee63f0e51191ea43bb0c6eac7bfbff3141d"
+MRUBY_COMMIT="31ebcb349eb1c4749e3dcbd554db5f12bcd6b5e5"
+MUNIT_COMMIT_1="114805e1bab0222574b5eb3a92461ad5216647ed"
+MUNIT_COMMIT_2="3cf9c79f3a76f313d560dedd5b47c0416a0fbb6e"
+NEVERBLEED_COMMIT="8a91f9be3438d70b7cd005f8e9dfb418894c5c06"
 PYTHON_COMPAT=( "python3_"{10..12} )
+URLPARSE_COMMIT="59b068a7618a256c6823b0b9801b61d1d04677a3"
 USE_RUBY="ruby32 ruby33"
 
-inherit cflags-hardened check-compiler-switch cmake flag-o-matic multilib-minimal python-r1 ruby-single toolchain-funcs
+inherit cflags-hardened check-compiler-switch cmake dep-prepare flag-o-matic multilib-minimal python-r1 ruby-single toolchain-funcs
 
 KEYWORDS="
 ~amd64 ~arm64 ~x86
@@ -25,6 +28,12 @@ KEYWORDS="
 S="${WORKDIR}/${P}"
 SRC_URI="
 https://github.com/nghttp2/nghttp2/releases/download/v${PV}/${P}.tar.xz
+https://github.com/ngtcp2/urlparse/archive/${URLPARSE_COMMIT}.tar.gz
+	-> urlparse-${URLPARSE_COMMIT:0:7}.tar.gz
+https://github.com/nodejs/http-parser/archive/${HTTP_PARSER_COMMIT}.tar.gz
+	-> http-parser-${HTTP_PARSER_COMMIT:0:7}.tar.gz
+https://github.com/ngtcp2/munit/archive/${MUNIT_COMMIT_2}.tar.gz
+	-> munit-${MUNIT_COMMIT_2:0:7}.tar.gz
 	mruby? (
 https://github.com/mruby/mruby/archive/${MRUBY_COMMIT}.tar.gz
 	-> mruby-${MRUBY_COMMIT:0:7}.tar.gz
@@ -34,8 +43,8 @@ https://github.com/tatsuhiro-t/neverbleed/archive/${NEVERBLEED_COMMIT}.tar.gz
 	-> neverbleed-${NEVERBLEED_COMMIT:0:7}.tar.gz
 	)
 	test? (
-https://github.com/ngtcp2/munit/archive/${MUNIT_COMMIT}.tar.gz
-	-> munit-${MUNIT_COMMIT:0:7}.tar.gz
+https://github.com/ngtcp2/munit/archive/${MUNIT_COMMIT_1}.tar.gz
+	-> munit-${MUNIT_COMMIT_1:0:7}.tar.gz
 	)
 "
 
@@ -86,14 +95,14 @@ REQUIRED_USE="
 "
 SSL_DEPEND="
 	>=dev-libs/libevent-2.0.8[${MULTILIB_USEDEP},ssl]
-	>=net-libs/ngtcp2-1.8.1[${MULTILIB_USEDEP},openssl]
+	>=net-libs/ngtcp2-1.12.0[${MULTILIB_USEDEP},openssl]
 	|| (
 		(
 			>=dev-libs/openssl-1.1.1w:0[${MULTILIB_USEDEP},-bindist(-)]
 			=dev-libs/openssl-1*:=[${MULTILIB_USEDEP},-bindist(-)]
 		)
 		(
-			>=dev-libs/openssl-3.1.7:0[${MULTILIB_USEDEP},-bindist(-)]
+			>=dev-libs/openssl-3.5.0:0[${MULTILIB_USEDEP},-bindist(-)]
 			=dev-libs/openssl-3*:=[${MULTILIB_USEDEP},-bindist(-)]
 		)
 	)
@@ -157,26 +166,17 @@ ewarn "bpf is default ON upstream if clang ON, http3 ON"
 
 src_unpack() {
 	unpack ${A}
+	dep_prepare_mv "${WORKDIR}/urlparse-${URLPARSE_COMMIT}" "${S}/third-party/urlparse"
+	dep_prepare_mv "${WORKDIR}/http-parser-${HTTP_PARSER_COMMIT}" "${S}/third-party/urlparse/http-parser"
+	dep_prepare_mv "${WORKDIR}/munit-${MUNIT_COMMIT_2}" "${S}/third-party/urlparse/munit"
 	if use mruby ; then
-		rm -rf "${S}/third-party/mruby"
-		mv \
-			"${WORKDIR}/mruby-${MRUBY_COMMIT}" \
-			"${S}/third-party/mruby" \
-			|| die
+		dep_prepare_mv "${WORKDIR}/mruby-${MRUBY_COMMIT}" "${S}/third-party/mruby"
 	fi
 	if use neverbleed ; then
-		rm -rf "${S}/third-party/neverbleed"
-		mv \
-			"${WORKDIR}/neverbleed-${NEVERBLEED_COMMIT}" \
-			"${S}/third-party/neverbleed" \
-			|| die
+		dep_prepare_mv "${WORKDIR}/neverbleed-${NEVERBLEED_COMMIT}" "${S}/third-party/neverbleed"
 	fi
 	if use test ; then
-		rm -rf "${S}/tests/munit"
-		mv \
-			"${WORKDIR}/munit-${MUNIT_COMMIT}" \
-			"${S}/tests/munit" \
-			|| die
+		dep_prepare_mv "${WORKDIR}/munit-${MUNIT_COMMIT_1}" "${S}/tests/munit"
 	fi
 }
 
