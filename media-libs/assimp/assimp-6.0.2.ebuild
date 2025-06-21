@@ -4,7 +4,7 @@
 EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="ip-assets untrusted-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="CE HO SO"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE HO NPD OOBR OOBW UAF SO"
 
 inherit cflags-hardened check-compiler-switch cmake-multilib flag-o-matic
 
