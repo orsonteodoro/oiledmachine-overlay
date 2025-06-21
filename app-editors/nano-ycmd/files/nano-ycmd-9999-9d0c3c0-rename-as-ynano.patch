@@ -1,6 +1,6 @@
 diff '--color=auto' -urp nano-ycmd-9999.orig/src/Makefile.am nano-ycmd-9999/src/Makefile.am
---- nano-ycmd-9999.orig/src/Makefile.am	2025-06-18 19:39:20.405106733 -0700
-+++ nano-ycmd-9999/src/Makefile.am	2025-06-18 19:40:27.078526651 -0700
+--- nano-ycmd-9999.orig/src/Makefile.am	2025-06-18 23:10:30.378552497 -0700
++++ nano-ycmd-9999/src/Makefile.am	2025-06-18 23:11:23.790795865 -0700
 @@ -152,8 +152,8 @@ revision.h: FORCE
  			echo "#define $(SOMETHING)" > $@
  FORCE:
@@ -12,7 +12,7 @@ diff '--color=auto' -urp nano-ycmd-9999.orig/src/Makefile.am nano-ycmd-9999/src/
  		definitions.h \
  		prototypes.h \
  		browser.c \
-@@ -175,23 +175,23 @@ nano_SOURCES = \
+@@ -175,44 +175,44 @@ nano_SOURCES = \
  		winio.c
  
  if USE_YCMD
@@ -41,7 +41,10 @@ diff '--color=auto' -urp nano-ycmd-9999.orig/src/Makefile.am nano-ycmd-9999/src/
  endif
  
  if HAVE_LIBGCRYPT
-@@ -200,19 +200,19 @@ ynano_LDFLAGS = $(LIBGCRYPT_LIBS)
+-nano_LDADD += @GLIB_LIBS@
+-nano_LDFLAGS += $(LIBGCRYPT_LIBS)
++ynano_LDADD += @GLIB_LIBS@
++ynano_LDADD += $(LIBGCRYPT_LIBS)
  endif
  
  if HAVE_NETTLE
