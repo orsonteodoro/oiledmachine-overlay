@@ -10,7 +10,7 @@ CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 
 BD_ABS=""
 LIVE_TYPE="git"
-FALLBACK_COMMIT="fba18e2c3bd34ea89fd9517f91b96151eab96840" # 20250626
+FALLBACK_COMMIT="73af79b7ade6a4cd078d9ead7bdb5adc7ac66fa8" # 20250626
 GNULIB_COMMIT="d9083a4cc638cf9c7dfc3cc534a7c6b4debf50ab" # listed in ./autogen.sh
 GNULIB_PV="2025.04.10.16.42.14" # See committer timestamp from https://cgit.git.savannah.gnu.org/cgit/gnulib.git/commit/?id=d9083a4cc638cf9c7dfc3cc534a7c6b4debf50ab
 PYTHON_COMPAT=( "python3_"{11..13} ) # Same as ycmd
@@ -56,7 +56,7 @@ ncurses nettle ninja nls +popup random safeclib +spell static
 openssl system-clangd -system-gnulib system-gocode system-godef system-gopls
 system-mono system-omnisharp system-racerd system-rust system-rustc
 system-tsserver unicode ycm-generator +ycmd-48
-ebuild_revision_67
+ebuild_revision_68
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -218,7 +218,7 @@ src_prepare() {
 ewarn "This ebuild is a Work In Progress (WIP)"
 	default
 	eapply "${FILESDIR}/${PN}-9999-5d8a094-rename-as-ynano.patch"
-	eapply "${FILESDIR}/test.patch"
+#	eapply "${FILESDIR}/test.patch"
 	export GNULIB_USE_TARBALL=1
 	if use system-gnulib ; then
 		export GNULIB_USE_SYSTEM=1
@@ -229,6 +229,13 @@ ewarn "This ebuild is a Work In Progress (WIP)"
 }
 
 econf_ycmd_slot_45() {
+	safe_paths=$(echo "${safe_paths}" \
+		| tr ";" "\n" \
+		| sort \
+		| uniq \
+		| tr "\n" ";" \
+		| sed -e "s|;$||g" -e "s|^;||g")
+	einfo "safe_paths=|${safe_paths}|"
 	local envars=(
 		RUST_TOOLCHAIN_PATH=""
 		GOPLS_PATH="${gopls_path}"
@@ -248,6 +255,7 @@ econf_ycmd_slot_45() {
 		--bindir="${EPREFIX}/bin"
 		--enable-ycmd
 		--htmldir="/trash"
+		--with-safe-paths="${safe_paths}"
 		$(use_enable !minimal color)
 		$(use_enable !minimal multibuffer)
 		$(use_enable !minimal nanorc)
@@ -304,6 +312,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 	local rust_toolchain_path=""
 	local rustc_path=""
 	local tsserver_path=""
+	local safe_paths=""
 
 	if use hardened_malloc ; then
 		myconf+=(
@@ -340,33 +349,45 @@ einfo "Detected compiler switch.  Disabling LTO."
 	fi
 	if use system-clangd ; then
 		gocode_path="/usr/bin/clangd"
+		safe_paths+=";/usr/bin"
 	else
 		gocode_path="${BD_ABS}/third_party/clangd/output/bin/clangd"
+		safe_paths+=";${BD_ABS}/third_party/clangd/output/bin"
 	fi
 	if use system-gocode ; then
 		gocode_path="/usr/bin/gocode"
+		safe_paths+=";/usr/bin"
 	else
 		gocode_path="${BD_ABS}/third_party/gocode/gocode"
+		safe_paths+=";${BD_ABS}/third_party/gocode"
 	fi
 	if use system-godef ; then
 		godef_path="/usr/bin/godef"
+		safe_paths+=";/usr/bin"
 	else
 		godef_path="${BD_ABS}/third_party/godef/godef"
+		safe_paths+=";${BD_ABS}/third_party/godef"
 	fi
 	if use system-gopls ; then
 		godef_path="/usr/bin/gopls"
+		safe_paths+=";/usr/bin"
 	else
 		godef_path="${BD_ABS}/third_party/go/bin/gopls"
+		safe_paths+=";${BD_ABS}/third_party/go/bin"
 	fi
 	if use system-mono ; then
 		mono_path="/usr/bin/mono"
+		safe_paths+=";/usr/bin"
 	else
 		mono_path="${BD_ABS}/third_party/omnisharp-roslyn/bin/mono"
+		safe_paths+=";${BD_ABS}/third_party/omnisharp-roslyn/bin"
 	fi
 	if use system-racerd ; then
 		racerd_path="/usr/bin/racerd"
+		safe_paths+=";/usr/bin"
 	else
 		racerd_path="${BD_ABS}/third_party/racerd/racerd"
+		safe_paths+=";${BD_ABS}/third_party/racerd"
 	fi
 	if use system-rust ; then
 		if use ycmd-48 ; then
@@ -375,11 +396,13 @@ einfo "Detected compiler switch.  Disabling LTO."
 					| sed -e "s|dev-lang/rust-bin-||")
 				rv=$(ver_cut 1-3 ${rv})
 				rust_toolchain_path="/opt/rust-bin-${rv}"
+				safe_paths+=";/opt/rust-bin-${rv}"
 			elif has_version 'dev-lang/rust' ; then
 				local rv=$(best_version 'dev-lang/rust' \
 					| sed -e "s|dev-lang/rust-||")
 				rv=$(ver_cut 1-3 ${rv})
 				rust_toolchain_path="/usr/lib/rust/${rv}"
+				safe_paths+=";/usr/lib/rust/${rv}"
 			fi
 		else
 eerror "Unsupported ycmd version for system-rust USE flag"
@@ -388,23 +411,29 @@ eerror "Unsupported ycmd version for system-rust USE flag"
 	else
 		if use ycmd-48 ; then
 			rust_toolchain_path="${BD_ABS}/third_party/rust-analyzer"
+			safe_paths+=";${BD_ABS}/third_party/rust-analyzer"
 		fi
 	fi
 	if use system-rustc ; then
 		rustc_path=""
 	else
 		rustc_path="${BD_ABS}/third_party/rls/bin/rustc"
+		safe_paths+=";${BD_ABS}/third_party/rls/bin"
 	fi
 	if use system-omnisharp ; then
 		omnisharp_path="${BD_ABS}/ycmd/completers/cs/omnisharp.sh"
+		safe_paths+=";${BD_ABS}/ycmd/completers/cs"
 	else
 		omnisharp_path="${BD_ABS}/third_party/omnisharp-roslyn/run"
+		safe_paths+=";${BD_ABS}/third_party/omnisharp-roslyn"
 	fi
 	if use system-tsserver ; then
 		tsserver_path="/usr/bin/tsserver"
+		safe_paths+=";/usr/bin"
 	else
 		if use ycmd-48 ; then
 			tsserver_path="${BD_ABS}/third_party/tsserver/node_modules/typescript/bin/tsserver"
+			safe_paths+=";${BD_ABS}/third_party/tsserver/node_modules/typescript/bin"
 		fi
 	fi
 
