@@ -12,7 +12,7 @@ LLVM_COMPAT=( {20..18} )
 
 BD_ABS=""
 LIVE_TYPE="git"
-FALLBACK_COMMIT="59219643e9a44f30641b4cd4fbfaaea4338ef2fd" # 20250627
+FALLBACK_COMMIT="1494c8dba6dab493d53df3a18b90d616ec111657" # 20250628
 GNULIB_COMMIT="d9083a4cc638cf9c7dfc3cc534a7c6b4debf50ab" # listed in ./autogen.sh
 GNULIB_PV="2025.04.10.16.42.14" # See committer timestamp from https://cgit.git.savannah.gnu.org/cgit/gnulib.git/commit/?id=d9083a4cc638cf9c7dfc3cc534a7c6b4debf50ab
 PYTHON_COMPAT=( "python3_"{11..13} ) # Same as ycmd
@@ -59,7 +59,7 @@ ncurses nettle ninja nls +popup random safeclib +spell static
 openssl scudo system-clangd -system-gnulib system-gocode system-godef system-gopls
 system-mono system-omnisharp system-racerd system-rust system-rustc
 system-tsserver unicode ycm-generator +ycmd-48
-ebuild_revision_78
+ebuild_revision_79
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -261,7 +261,7 @@ eerror
 src_prepare() {
 ewarn "This ebuild is a Work In Progress (WIP)"
 	default
-	eapply "${FILESDIR}/${PN}-9999-5d8a094-rename-as-ynano.patch"
+	eapply "${FILESDIR}/${PN}-9999-5921964-rename-as-ynano.patch"
 #	eapply "${FILESDIR}/test.patch"
 	export GNULIB_USE_TARBALL=1
 	if use system-gnulib ; then
