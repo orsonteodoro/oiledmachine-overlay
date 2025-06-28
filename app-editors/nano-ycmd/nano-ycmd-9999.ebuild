@@ -12,7 +12,7 @@ LLVM_COMPAT=( {20..18} )
 
 BD_ABS=""
 LIVE_TYPE="git"
-FALLBACK_COMMIT="2b8869ead01d2d485d766d303e8e83496a09af82" # 20250628
+FALLBACK_COMMIT="569cf4ca5031c1aade5f2ee32478375c6565d115" # 20250628
 GNULIB_COMMIT="d9083a4cc638cf9c7dfc3cc534a7c6b4debf50ab" # listed in ./autogen.sh
 GNULIB_PV="2025.04.10.16.42.14" # See committer timestamp from https://cgit.git.savannah.gnu.org/cgit/gnulib.git/commit/?id=d9083a4cc638cf9c7dfc3cc534a7c6b4debf50ab
 PYTHON_COMPAT=( "python3_"{11..13} ) # Same as ycmd
