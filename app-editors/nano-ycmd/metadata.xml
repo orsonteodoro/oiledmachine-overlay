@@ -74,6 +74,16 @@
     C-` M-f         - Displays all FixIts
     C-` C-t         - Gets type
 
+    Build time environment variables
+
+    SAFECLIB_FALLBACK - Change mem*/str* functions policy for fallbacks.
+
+    Valid values:
+
+      fallback - for performance critical
+      fatal - for security-critical (default in this ebuild)
+      return_error - for balanced
+
   -->
   <upstream>
     <maintainer type="person">

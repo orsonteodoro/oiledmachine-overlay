@@ -10,7 +10,7 @@ CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 
 BD_ABS=""
 LIVE_TYPE="git"
-FALLBACK_COMMIT="7cf651f983a701acad78d19ce14510fba69a5d0e" # 20250627
+FALLBACK_COMMIT="20498f8663aea3c76d204f46ce5a4bd0743f3101" # 20250627
 GNULIB_COMMIT="d9083a4cc638cf9c7dfc3cc534a7c6b4debf50ab" # listed in ./autogen.sh
 GNULIB_PV="2025.04.10.16.42.14" # See committer timestamp from https://cgit.git.savannah.gnu.org/cgit/gnulib.git/commit/?id=d9083a4cc638cf9c7dfc3cc534a7c6b4debf50ab
 PYTHON_COMPAT=( "python3_"{11..13} ) # Same as ycmd
@@ -56,7 +56,7 @@ ncurses nettle ninja nls +popup random safeclib +spell static
 openssl system-clangd -system-gnulib system-gocode system-godef system-gopls
 system-mono system-omnisharp system-racerd system-rust system-rustc
 system-tsserver unicode ycm-generator +ycmd-48
-ebuild_revision_74
+ebuild_revision_77
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -256,7 +256,6 @@ econf_ycmd_slot_45() {
 		--enable-ycmd
 		--htmldir="/trash"
 		--with-safe-paths="${safe_paths}"
-		--with-safeclib-error=fatal
 		$(use_enable !minimal color)
 		$(use_enable !minimal multibuffer)
 		$(use_enable !minimal nanorc)
@@ -276,6 +275,26 @@ econf_ycmd_slot_45() {
 		$(use_with openssl)
 		$(use_with ycm-generator)
 	)
+
+	local safeclib_fallback="${SAFECLIB_FALLBACK:-fatal}"
+	if [[ "${safeclib_fallback}" == "fatal" ]] ; then
+		args+=(
+			--with-safeclib-error=fatal
+		)
+	elif [[ "${safeclib_fallback}" == "fallback" ]] ; then
+		args+=(
+			--with-safeclib-error=fallback
+		)
+	elif [[ "${safeclib_fallback}" == "return_error" ]] ; then
+		args+=(
+			--with-safeclib-error=return_error
+		)
+	else
+		args+=(
+			--with-safeclib-error=fatal
+		)
+	fi
+
 	export ${envars[@]}
 	einfo "${envars[@]} econf ${args[@]}"
 	econf ${args[@]}
