@@ -8,15 +8,17 @@ EAPI=8
 
 CFLAGS_HARDENED_USE_CASES="security-critical sensitive-data untrusted-data"
 
+LLVM_COMPAT=( {20..18} )
+
 BD_ABS=""
 LIVE_TYPE="git"
-FALLBACK_COMMIT="20498f8663aea3c76d204f46ce5a4bd0743f3101" # 20250627
+FALLBACK_COMMIT="59219643e9a44f30641b4cd4fbfaaea4338ef2fd" # 20250627
 GNULIB_COMMIT="d9083a4cc638cf9c7dfc3cc534a7c6b4debf50ab" # listed in ./autogen.sh
 GNULIB_PV="2025.04.10.16.42.14" # See committer timestamp from https://cgit.git.savannah.gnu.org/cgit/gnulib.git/commit/?id=d9083a4cc638cf9c7dfc3cc534a7c6b4debf50ab
 PYTHON_COMPAT=( "python3_"{11..13} ) # Same as ycmd
 YCMD_SLOTS=( 48 )
 
-inherit autotools cflags-hardened check-compiler-switch flag-o-matic git-r3 java-pkg-opt-2 python-single-r1
+inherit autotools cflags-hardened check-compiler-switch flag-o-matic git-r3 java-pkg-opt-2 llvm-r1 python-single-r1
 
 if [[ "${LIVE_TYPE}" == "git" ]] ; then
 	inherit git-r3
@@ -51,12 +53,13 @@ LICENSE="
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
 IUSE+="
+${LLVM_COMPAT[@]/#/llvm_slot_}
 bear debug hardened_malloc justify libgcrypt +magic minimal mimalloc
 ncurses nettle ninja nls +popup random safeclib +spell static
-openssl system-clangd -system-gnulib system-gocode system-godef system-gopls
+openssl scudo system-clangd -system-gnulib system-gocode system-godef system-gopls
 system-mono system-omnisharp system-racerd system-rust system-rustc
 system-tsserver unicode ycm-generator +ycmd-48
-ebuild_revision_77
+ebuild_revision_78
 "
 REQUIRED_USE+="
 	${PYTHON_REQUIRED_USE}
@@ -78,6 +81,11 @@ REQUIRED_USE+="
 	)
 	ninja? (
 		ycm-generator
+	)
+	scudo? (
+		^^ (
+			${LLVM_COMPAT[@]/#/llvm_slot_}
+		)
 	)
 	ycm-generator? (
 		|| (
@@ -111,6 +119,20 @@ gen_ycmd_rdepend() {
 		done
 	done
 }
+
+gen_scudo_rdepend() {
+	local s
+	for s in ${LLVM_COMPAT[@]} ; do
+		echo "
+			llvm_slot_${s}? (
+				llvm-core/clang-runtime:${s}[sanitize]
+				llvm-core/llvm:${s}
+				llvm-runtimes/compiler-rt-sanitizers:${s}[scudo]
+			)
+		"
+	done
+}
+
 RDEPEND+="
 	$(gen_ycmd_rdepend)
 	${PYTHON_DEPS}
@@ -142,6 +164,9 @@ RDEPEND+="
 	)
 	openssl? (
 		>=dev-libs/openssl-3
+	)
+	scudo? (
+		$(gen_scudo_rdepend)
 	)
 	ycm-generator? (
 		$(python_gen_cond_dep '
@@ -183,6 +208,25 @@ ewarn
 		fi
 	fi
 	python-single-r1_pkg_setup
+
+
+	if use scudo ; then
+		local llvm_slot
+		for llvm_slot in ${LLVM_COMPAT[@]} ; do
+			if use "llvm_slot_${llvm_slot}" ; then
+				LLVM_SLOT="${llvm_slot}"
+				break
+			fi
+		done
+		llvm-r1_pkg_setup
+einfo "PATH=${PATH} (before)"
+		export PATH=$(echo "${PATH}" \
+			| tr ":" "\n" \
+			| sed -E -e "/llvm\/[0-9]+/d" \
+			| tr "\n" ":" \
+			| sed -e "s|/opt/bin|/opt/bin:${ESYSROOT}/usr/lib/llvm/${LLVM_SLOT}/bin|g")
+einfo "PATH=${PATH} (after)"
+        fi
 }
 
 src_unpack() {
@@ -218,7 +262,7 @@ src_prepare() {
 ewarn "This ebuild is a Work In Progress (WIP)"
 	default
 	eapply "${FILESDIR}/${PN}-9999-5d8a094-rename-as-ynano.patch"
-#	eapply "A${FILESDIR}/test.patch"
+#	eapply "${FILESDIR}/test.patch"
 	export GNULIB_USE_TARBALL=1
 	if use system-gnulib ; then
 		export GNULIB_USE_SYSTEM=1
@@ -228,14 +272,54 @@ ewarn "This ebuild is a Work In Progress (WIP)"
 	./autogen.sh
 }
 
+get_llvm_arch() {
+	if [[ "${ABI}" == "amd64" ]] ; then
+		echo "x86_64"
+	elif [[ "${ABI}" == "x86" ]] ; then
+		echo "i386"
+	elif [[ "${ABI}" == "arm64" ]] ; then
+		echo "aarch64"
+	elif [[ "${ABI}" == "arm" ]] ; then
+		echo "arm"
+	elif [[ "${CHOST}" =~ "mipsel" ]] ; then
+		echo "mipsel"
+	elif [[ "${CHOST}" =~ "mips64el" ]] ; then
+		echo "mips64el"
+	elif [[ "${CHOST}" =~ "mips64" ]] ; then
+		echo "mips64"
+	elif [[ "${CHOST}" == "mips-" ]] ; then
+		echo "mips"
+	elif [[ "${CHOST}" =~ "powerpc64le" ]] ; then
+		echo "powerpc64le"
+	elif [[ "${CHOST}" =~ "powerpc64" ]] ; then
+		echo "powerpc64"
+	elif [[ "${ABI}" == "hexagon" ]] ; then
+		echo "hexagon"
+	elif [[ "${CHOST}" == "loongarch64" ]] ; then
+		echo "loongarch64"
+	elif [[ "${CHOST}" == "riscv" ]] ; then
+		echo "riscv64"
+	fi
+}
+
 econf_ycmd_slot_45() {
-	safe_paths=$(echo "${safe_paths}" \
+	local lib_safe_paths="/usr/$(get_libdir)"
+	local bin_safe_paths=$(echo "${safe_paths}" \
 		| tr ";" "\n" \
 		| sort \
 		| uniq \
 		| tr "\n" ";" \
 		| sed -e "s|;$||g" -e "s|^;||g")
-	einfo "safe_paths=|${safe_paths}|"
+	local scudo_path=""
+	if use scudo ; then
+		local arch=$(get_llvm_arch)
+		which "${CHOST}-clang-${LLVM_SLOT}" 2>&1 >/dev/null || die
+		scudo_path=$(realpath $("${CHOST}-clang-${LLVM_SLOT}" -print-file-name="libclang_rt.scudo_standalone-${arch}.so"))
+		einfo "scudo_path:  ${scudo_path}"
+		lib_safe_paths+=";"$(dirname "${scudo_path}")
+	fi
+	einfo "bin_safe_paths:  ${bin_safe_paths}"
+	einfo "lib_safe_paths:  ${lib_safe_paths}"
 	local envars=(
 		RUST_TOOLCHAIN_PATH=""
 		GOPLS_PATH="${gopls_path}"
@@ -255,7 +339,8 @@ econf_ycmd_slot_45() {
 		--bindir="${EPREFIX}/bin"
 		--enable-ycmd
 		--htmldir="/trash"
-		--with-safe-paths="${safe_paths}"
+		--with-bin-safe-paths="${bin_safe_paths}"
+		--with-lib-safe-paths="${lib_safe_paths}"
 		$(use_enable !minimal color)
 		$(use_enable !minimal multibuffer)
 		$(use_enable !minimal nanorc)
@@ -276,7 +361,7 @@ econf_ycmd_slot_45() {
 		$(use_with ycm-generator)
 	)
 
-	local safeclib_fallback="${SAFECLIB_FALLBACK:-fatal}"
+	local safeclib_fallback="${SAFECLIB_FALLBACK:-return_error}"
 	if [[ "${safeclib_fallback}" == "fatal" ]] ; then
 		args+=(
 			--with-safeclib-error=fatal
@@ -294,6 +379,18 @@ econf_ycmd_slot_45() {
 			--with-safeclib-error=fatal
 		)
 	fi
+
+	if use scudo ; then
+		args+=(
+			--with-scudo-lib="${scudo_path}"
+		)
+	fi
+
+	local sandbox_lib_path="/usr/$(get_libdir)/libsandbox.so"
+	einfo "sandbox_lib_path:  ${sandbox_lib_path}"
+	args+=(
+		--with-sandbox-lib="${sandbox_lib_path}"
+	)
 
 	export ${envars[@]}
 	einfo "${envars[@]} econf ${args[@]}"
