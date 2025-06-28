@@ -589,6 +589,9 @@ src_install() {
 	dodir "/usr/bin"
 	dosym "/bin/ynano" "/usr/bin/ynano"
 	newdoc "README.md" "README.nano-ycmd.md"
+	if use scudo ; then
+ewarn "You must re-emerge this package if Scudo is updated or recompiled."
+	fi
 }
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
