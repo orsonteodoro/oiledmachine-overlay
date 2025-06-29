@@ -1,7 +1,7 @@
 {
 	"name": "Blockbench",
 	"description": "Low-poly modeling and animation software",
-	"version": "4.12.3",
+	"version": "4.12.5",
 	"license": "GPL-3.0-or-later",
 	"author": {
 		"name": "JannisX11",
@@ -128,7 +128,7 @@
 	"devDependencies": {
 		"@electron/notarize": "^2.5.0",
 		"blockbench-types": "^4.6.1",
-		"electron": "^35.0.1",
+		"electron": "^37.1.0",
 		"electron-builder": "^25.1.8",
 		"serialize-javascript": "^6.0.2",
 		"webpack": "^5.74.0",
