@@ -2,7 +2,7 @@
 
 main() {
 	# Commit from https://github.com/chromium/chromium/blob/137.0.7151.68/DEPS#L506
-	GN_COMMIT=${GN_COMMIT:-"85cc21e94af590a267c1c7a47020d9b420f8a033"}
+	GN_COMMIT=${GN_COMMIT:-"ebc8f16ca7b0d36a3e532ee90896f9eb48e5423b"}
 	echo "GN_COMMIT: ${GN_COMMIT}"
 
 	if ! [[ -e "gn" ]] ; then
