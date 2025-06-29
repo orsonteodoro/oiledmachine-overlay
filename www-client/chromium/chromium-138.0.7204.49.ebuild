@@ -149,6 +149,7 @@ DISK_BUILD["debug"]=$((${DISK_BASE} + 13))
 DISK_BUILD["pgo"]=$((${DISK_BASE} + 8))
 DISK_BUILD["lto"]=$((${DISK_BASE} + 9))
 DISK_BUILD["fallback"]=$((${DISK_BASE} + 1))
+DISTRIBUTED_BUILD=0 # Global variable
 # See also
 # third_party/ffmpeg/libavutil/version.h
 # third_party/ffmpeg/libavcodec/version*.h
@@ -254,13 +255,13 @@ is_cromite_compatible() {
 	fi
 }
 
-if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" ]] ; then
-	:
-elif [[ "${PATCHSET_PPC64%%.*}" == "${PV%%.*}" ]] ; then
-	KEYWORDS="~amd64 ~arm64 ~ppc64"
-else
-	KEYWORDS="~amd64 ~arm64"
-fi
+#if [[ "${CHROMIUM_EBUILD_MAINTAINER}" == "1" ]] ; then
+#	:
+#elif [[ "${PATCHSET_PPC64%%.*}" == "${PV%%.*}" ]] ; then
+#	KEYWORDS="~amd64 ~arm64 ~ppc64"
+#else
+#	KEYWORDS="~amd64 ~arm64"
+#fi
 
 # See https://gsdview.appspot.com/chromium-browser-official/?marker=chromium-137.0.7151.0.tar.x%40
 SRC_URI+="
@@ -1954,8 +1955,9 @@ eerror
 }
 
 pkg_setup() {
+ewarn "This ebuild is under development and the non-production version.  Use ${PV} (without -r1) instead."
 ewarn
-ewarn "This ebuild is the production version but under maintenance."
+ewarn "This ebuild is under maintenance."
 ewarn "This ebuild may fail to build/link."
 ewarn "Dav1d may fail to link."
 ewarn "Do one of the following until it is fixed..."
@@ -3703,6 +3705,10 @@ eerror
 
 		[[ "${FEATURES}" =~ "distcc" ]] && die "FEATURES=distcc with USE=-system-toolchain is not supported by the ebuild."
 		[[ "${FEATURES}" =~ "icecream" ]] && die "FEATURES=icecream with USE=-system-toolchain is not supported by the ebuild."
+	fi
+
+	if [[ "${FEATURES}" =~ ("distcc"|"icecream") ]] ; then
+		export DISTRIBUTED_BUILD=1
 	fi
 }
 
@@ -5936,21 +5942,24 @@ _src_compile() {
 	_update_licenses
 	__clean_build
 
+	# TODO:  completely disable v8_snapshot use
+	if [[ "${DISTRIBUTED_BUILD}" == "1" ]] ; then
 	# Build mksnapshot and pax-mark it.
-	local x
-	for x in "mksnapshot" "v8_context_snapshot_generator" ; do
-		if tc-is-cross-compiler ; then
-			_eninja \
-				"out/Release" \
-				"host/${x}" \
-				"out/Release/host/${x}"
-		else
-			_eninja \
-				"out/Release" \
-				"${x}" \
-				"out/Release/${x}"
-		fi
-	done
+		local x
+		for x in "mksnapshot" "v8_context_snapshot_generator" ; do
+			if tc-is-cross-compiler ; then
+				_eninja \
+					"out/Release" \
+					"host/${x}" \
+					"out/Release/host/${x}"
+			else
+				_eninja \
+					"out/Release" \
+					"${x}" \
+					"out/Release/${x}"
+			fi
+		done
+	fi
 
 	# Even though ninja autodetects number of CPUs, we respect user's
 	# options, for debugging with -j 1 or any other reason.

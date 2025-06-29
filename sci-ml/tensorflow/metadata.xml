@@ -51,6 +51,9 @@
     <flag name="cuda">
       Enable support for NVIDIA® GPUs
     </flag>
+    <flag name="keras3">
+      Install Keras 3.
+    </flag>
     <flag name="models">
       Install official models.
     </flag>

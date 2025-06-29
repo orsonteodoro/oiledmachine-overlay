@@ -447,7 +447,7 @@ ${CPU_USE_FLAGS_X86[@]/#/cpu_flags_x86_}
 ${CUDA_TARGETS_COMPAT[@]/#/cuda_targets_}
 ${HIP_SLOTS2[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
-alt-ssl -big-endian clang cuda models -mpi +python rocm
+alt-ssl -big-endian clang cuda keras3 models -mpi +python rocm
 system-flatbuffers test +xla
 ebuild_revision_17
 "
@@ -802,8 +802,10 @@ PDEPEND="
 		$(python_gen_cond_dep '
 			=sci-ml/tensorflow-io-0.36.0[${PYTHON_SINGLE_USEDEP},tensorflow-io-gcs-filesystem]
 		' python3_{10,11})
-		=dev-python/keras-${DEP_VER}*[${PYTHON_SINGLE_USEDEP}]
 		=sci-ml/tensorflow-estimator-${DEP_VER}*[${PYTHON_SINGLE_USEDEP}]
+		keras3? (
+			=dev-python/keras-${DEP_VER}*[${PYTHON_SINGLE_USEDEP}]
+		)
 	)
 "
 gen_llvm_bdepend() {
