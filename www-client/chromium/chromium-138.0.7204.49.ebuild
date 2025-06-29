@@ -5942,6 +5942,9 @@ _src_compile() {
 	_update_licenses
 	__clean_build
 
+	# If we find a way to disable mksnapshot, we can cut the build time by
+	# half for non-distributed builds.
+	#
 	# TODO:  completely disable v8_snapshot use
 	if [[ "${DISTRIBUTED_BUILD}" == "1" ]] ; then
 	# Build mksnapshot and pax-mark it.
