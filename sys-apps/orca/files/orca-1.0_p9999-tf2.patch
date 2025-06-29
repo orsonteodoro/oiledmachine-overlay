@@ -1,302 +1,595 @@
-# Patch Status: Work In Progress (WIP)
-
-rl-module.orig/agent.py:396:8: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
-
-diff '--color=auto' -urpN orca-1.0_p9999.orig/rl-module/agent.py orca-1.0_p9999/rl-module/agent.py
---- orca-1.0_p9999.orig/rl-module/agent.py	2024-10-29 23:36:25.943113143 -0700
-+++ orca-1.0_p9999/rl-module/agent.py	2024-10-29 23:38:26.286184672 -0700
-@@ -49,21 +49,21 @@ class Actor():
+WIP:  Needs testing.  TensorFlow 1 to TensorFlow 2 conversion with help of AI/LLM.
+--- orca-1.0_p9999/rl-module/agent.py.orig	2025-06-28 20:37:35.541453208 -0700
++++ orca-1.0_p9999/rl-module/agent.py	2025-06-28 20:46:21.610710288 -0700
+@@ -20,7 +20,6 @@
+   SOFTWARE.
+ '''
  
+-
+ import tensorflow as tf
+ import numpy as np
+ import os
+@@ -30,78 +29,64 @@ EXPLORE = 4000
+ STDDEV = 0.1
+ NSTEP = 0.3
  
-     def train_var(self):
+-
+ from utils import OU_Noise, ReplayBuffer, G_Noise, Prioritized_ReplayBuffer
+ 
+-def create_input_op_shape(obs, tensor):
+-    input_shape = [x or -1 for x in tensor.shape.as_list()]
++def create_input_op_shape(obs, shape):
++    """Reshape observation to match expected shape."""
++    input_shape = [x if x is not None else -1 for x in shape]
+     return np.reshape(obs, input_shape)
+ 
+-class Actor():
+-
+-    def __init__(self, s_dim, a_dim,h1_shape,h2_shape, action_scale=1.0, name='actor'):
++class Actor:
++    def __init__(self, s_dim, a_dim, h1_shape, h2_shape, action_scale=1.0, name='actor'):
+         self.s_dim = s_dim
+         self.a_dim = a_dim
+         self.name = name
+         self.action_scale = action_scale
+         self.h1_shape = h1_shape
+         self.h2_shape = h2_shape
++        self.model = self._build()
+ 
++    def _build(self):
++        model = tf.keras.Sequential([
++            tf.keras.layers.Dense(self.h1_shape, activation='leaky_relu', name='fc1',
++                                input_shape=(self.s_dim,)),
++            tf.keras.layers.BatchNormalization(scale=False),
++            tf.keras.layers.Dense(self.h2_shape, activation='leaky_relu', name='fc2'),
++            tf.keras.layers.Dense(self.a_dim, activation='tanh'),
++            tf.keras.layers.Lambda(lambda x: x * self.action_scale)
++        ], name=self.name)
++        return model
+ 
+-    def train_var(self):
 -        return tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=self.name)
-+        return tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.TRAINABLE_VARIABLES, scope=self.name)
- 
+-
 -    def build(self, s, is_training):
-+    def build(self, s, learning):
- 
+-
 -        with tf.variable_scope(self.name, reuse=tf.AUTO_REUSE):
-+        with tf.compat.v1.variable_scope(self.name, reuse=tf.compat.v1.AUTO_REUSE):
- 
+-
 -            h1 = tf.layers.dense(s, units=self.h1_shape, name='fc1')
 -            h1 = tf.layers.batch_normalization(h1, training=is_training, scale=False)
-+            h1 = tf.keras.layers.Dense(units=self.h1_shape, name='fc1')(s)
-+            h1 = tf.keras.layers.BatchNormalization(scale=False)(h1, training=learning)
-             h1 = tf.nn.leaky_relu(h1)
- 
+-            h1 = tf.nn.leaky_relu(h1)
+-
 -            h2 = tf.layers.dense(h1, units=self.h2_shape,  name='fc2')
 -            h2 = tf.layers.batch_normalization(h2, training=is_training, scale=False)
-+            h2 = tf.keras.layers.Dense(units=self.h2_shape,  name='fc2')(h1)
-+            h2 = tf.keras.layers.BatchNormalization(scale=False)(h2, training=learning)
-             h2 = tf.nn.leaky_relu(h2)
- 
+-            h2 = tf.nn.leaky_relu(h2)
+-
 -            output = tf.layers.dense(h2, units=self.a_dim, activation=tf.nn.tanh)
-+            output = tf.keras.layers.Dense(units=self.a_dim, activation=tf.nn.tanh)(h2)
+-
+-            scale_output = tf.multiply(output, self.action_scale)
+-
+-
+-        return scale_output
+-
+-
+-class Critic():
++    def __call__(self, s, training=False):
++        return self.model(s, training=training)
  
-             scale_output = tf.multiply(output, self.action_scale)
+-    def __init__(self, s_dim, a_dim,h1_shape,h2_shape, action_scale=1.0, name='critic'):
+-
+-        self.a_dim = a_dim
++class Critic:
++    def __init__(self, s_dim, a_dim, h1_shape, h2_shape, action_scale=1.0, name='critic'):
+         self.s_dim = s_dim
++        self.a_dim = a_dim
+         self.name = name
+         self.action_scale = action_scale
+         self.h1_shape = h1_shape
+         self.h2_shape = h2_shape
++        self.model = self._build()
  
-@@ -84,23 +84,23 @@ class Critic():
- 
- 
-     def train_var(self):
+-
+-    def train_var(self):
 -        return tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=self.name)
-+        return tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.TRAINABLE_VARIABLES, scope=self.name)
- 
- 
-     def build(self, s, action):
- 
+-
+-
+-    def build(self, s, action):
+-
 -        with tf.variable_scope(self.name, reuse=tf.AUTO_REUSE):
-+        with tf.compat.v1.variable_scope(self.name, reuse=tf.compat.v1.AUTO_REUSE):
- 
+-
 -            h1 = tf.layers.dense(s, units=self.h1_shape, activation=tf.nn.leaky_relu, name='fc1')
-+            h1 = tf.keras.layers.Dense(units=self.h1_shape, activation=tf.nn.leaky_relu, name='fc1')(s)
- 
+-
 -            h2 = tf.layers.dense(tf.concat([h1, action], -1), units=self.h2_shape, activation=tf.nn.leaky_relu, name='fc2')
 -            output = tf.layers.dense(h2, units=1)
-+            h2 = tf.keras.layers.Dense(units=self.h2_shape, activation=tf.nn.leaky_relu, name='fc2')(tf.concat([h1, action], -1))
-+            output = tf.keras.layers.Dense(units=1)(h2)
- 
-         return output
- 
- 
- class Agent():
+-
+-        return output
+-
+-
+-class Agent():
 -    def __init__(self, s_dim, a_dim, h1_shape,h2_shape,gamma=0.995, batch_size=8, lr_a=1e-4, lr_c=1e-3, tau=1e-3, mem_size=1e5,action_scale=1.0, action_range=(-1.0, 1.0),
-+    def __init__(self, learning, s_dim, a_dim, h1_shape,h2_shape,gamma=0.995, batch_size=8, lr_a=1e-4, lr_c=1e-3, tau=1e-3, mem_size=1e5,action_scale=1.0, action_range=(-1.0, 1.0),
-                 noise_type=3, noise_exp=50000, summary=None,stddev=0.1, PER=False, alpha=0.6, CDQ=True, LOSS_TYPE='HUBERT'):
+-                noise_type=3, noise_exp=50000, summary=None,stddev=0.1, PER=False, alpha=0.6, CDQ=True, LOSS_TYPE='HUBERT'):
++    def _build(self):
++        state_input = tf.keras.Input(shape=(self.s_dim,), name='state')
++        action_input = tf.keras.Input(shape=(self.a_dim,), name='action')
++        h1 = tf.keras.layers.Dense(self.h1_shape, activation='leaky_relu', name='fc1')(state_input)
++        concat = tf.keras.layers.Concatenate()([h1, action_input])
++        h2 = tf.keras.layers.Dense(self.h2_shape, activation='leaky_relu', name='fc2')(concat)
++        output = tf.keras.layers.Dense(1)(h2)
++        return tf.keras.Model([state_input, action_input], output, name=self.name)
++
++    def __call__(self, s, action):
++        return self.model([s, action])
++
++class Agent:
++    def __init__(self, s_dim, a_dim, h1_shape, h2_shape, gamma=0.995, batch_size=8, lr_a=1e-4, lr_c=1e-3, 
++                 tau=1e-3, mem_size=1e5, action_scale=1.0, action_range=(-1.0, 1.0),
++                 noise_type=3, noise_exp=50000, summary=None, stddev=0.1, PER=False, alpha=0.6, 
++                 CDQ=True, LOSS_TYPE='HUBER'):
          self.PER = PER
          self.CDQ = CDQ
-@@ -112,13 +112,14 @@ class Agent():
+         self.LOSS_TYPE = LOSS_TYPE
+@@ -110,302 +95,229 @@ class Agent():
+         self.s_dim = s_dim
+         self.a_dim = a_dim
          self.gamma = gamma
++        self.batch_size = batch_size
++        self.tau = tau
          self.train_dir = './train_dir'
-         self.step_epochs = tf.Variable(0, trainable=False, name='epoch')
+-        self.step_epochs = tf.Variable(0, trainable=False, name='epoch')
 -        self.global_step = tf.train.get_or_create_global_step(graph=None)
-+        self.global_step = tf.compat.v1.train.get_or_create_global_step(graph=None)
-+        self.learning = learning
- 
- 
+-
+-
 -        self.s0 = tf.placeholder(tf.float32, shape=[None, self.s_dim], name='s0')
 -        self.s1 = tf.placeholder(tf.float32, shape=[None, self.s_dim], name='s1')
 -        self.is_training = tf.placeholder(tf.bool, name='Actor_is_training')
 -        self.action = tf.placeholder(tf.float32, shape=[None, a_dim], name='action')
-+        self.s0 = tf.compat.v1.placeholder(tf.float32, shape=[None, self.s_dim], name='s0')
-+        self.s1 = tf.compat.v1.placeholder(tf.float32, shape=[None, self.s_dim], name='s1')
-+        self.is_training = tf.compat.v1.placeholder(tf.bool, shape=(), name='Actor_is_training')
-+        self.action = tf.compat.v1.placeholder(tf.float32, shape=[None, a_dim], name='action')
++        self.action_range = action_range
          self.noise_type = noise_type
          self.noise_exp = noise_exp
-         self.action_range = action_range
-@@ -151,7 +152,7 @@ class Agent():
-         self.actor = Actor(self.s_dim, self.a_dim, action_scale=action_scale,h1_shape=self.h1_shape,h2_shape=self.h2_shape)
-         self.critic = Critic(self.s_dim, self.a_dim, action_scale=action_scale,h1_shape=self.h1_shape,h2_shape=self.h2_shape)
-         self.critic2 = Critic(self.s_dim, self.a_dim, action_scale=action_scale, name='critic2',h1_shape=self.h1_shape,h2_shape=self.h2_shape)
+-        self.action_range = action_range
+-        self.h1_shape=h1_shape
+-        self.h2_shape=h2_shape
+-        self.stddev=stddev
++        self.h1_shape = h1_shape
++        self.h2_shape = h2_shape
++        self.stddev = stddev
++        self.step_epochs = tf.Variable(0, trainable=False, dtype=tf.int64, name='epoch')
++        self.global_step = tf.Variable(0, trainable=False, dtype=tf.int64, name='global_step')
++
++        # Initialize replay buffer
+         if not self.PER:
+             self.rp_buffer = ReplayBuffer(int(mem_size), s_dim, a_dim, batch_size=batch_size)
+         else:
+             self.rp_buffer = Prioritized_ReplayBuffer(int(mem_size), s_dim, a_dim, batch_size=batch_size, alpha=alpha)
+ 
+-
++        # Initialize noise
+         if noise_type == 1:
+-            self.actor_noise = OU_Noise(mu=np.zeros(a_dim), sigma=float(self.stddev) * np.ones(a_dim),dt=1,exp=self.noise_exp)
++            self.actor_noise = OU_Noise(mu=np.zeros(a_dim), sigma=float(self.stddev) * np.ones(a_dim), dt=1, exp=self.noise_exp)
+         elif noise_type == 2:
+-            ## Gaussian with gradually decay
+-            self.actor_noise = G_Noise(mu=np.zeros(a_dim), sigma=float(self.stddev) * np.ones(a_dim), explore =self.noise_exp)
++            self.actor_noise = G_Noise(mu=np.zeros(a_dim), sigma=float(self.stddev) * np.ones(a_dim), explore=self.noise_exp)
+         elif noise_type == 3:
+-            ## Gaussian without gradually decay
+-            self.actor_noise = G_Noise(mu=np.zeros(a_dim), sigma=float(self.stddev) * np.ones(a_dim), explore = None,theta=0.1)
++            self.actor_noise = G_Noise(mu=np.zeros(a_dim), sigma=float(self.stddev) * np.ones(a_dim), explore=None, theta=0.1)
+         elif noise_type == 4:
+-            ## Gaussian without gradually decay
+-            self.actor_noise = G_Noise(mu=np.zeros(a_dim), sigma=float(self.stddev) * np.ones(a_dim), explore = EXPLORE,theta=0.1,mode="step",step=NSTEP)
++            self.actor_noise = G_Noise(mu=np.zeros(a_dim), sigma=float(self.stddev) * np.ones(a_dim), explore=EXPLORE, theta=0.1, mode="step", step=NSTEP)
+         elif noise_type == 5:
+             self.actor_noise = None
+         else:
+-            self.actor_noise = OU_Noise(mu=np.zeros(a_dim), sigma=float(self.stddev) * np.ones(a_dim),dt=0.5)
+-
+-        # Main Actor/Critic Network
+-        self.actor = Actor(self.s_dim, self.a_dim, action_scale=action_scale,h1_shape=self.h1_shape,h2_shape=self.h2_shape)
+-        self.critic = Critic(self.s_dim, self.a_dim, action_scale=action_scale,h1_shape=self.h1_shape,h2_shape=self.h2_shape)
+-        self.critic2 = Critic(self.s_dim, self.a_dim, action_scale=action_scale, name='critic2',h1_shape=self.h1_shape,h2_shape=self.h2_shape)
 -        self.actor_out = self.actor.build(self.s0, self.is_training)
-+        self.actor_out = self.actor.build(self.s0, self.learning)
-         self.critic_out = self.critic.build(self.s0, self.action)
-         self.critic_out2 = self.critic2.build(self.s0, self.action)
-         self.critic_actor_out = self.critic.build(self.s0, self.actor_out)
-@@ -161,7 +162,7 @@ class Agent():
-         self.target_critic = Critic(self.s_dim, self.a_dim, action_scale=action_scale ,h1_shape=self.h1_shape,h2_shape=self.h2_shape,name='target_critic')
-         self.target_critic2 = Critic(self.s_dim, self.a_dim, action_scale=action_scale, name='target_critic2',h1_shape=self.h1_shape,h2_shape=self.h2_shape)
- 
+-        self.critic_out = self.critic.build(self.s0, self.action)
+-        self.critic_out2 = self.critic2.build(self.s0, self.action)
+-        self.critic_actor_out = self.critic.build(self.s0, self.actor_out)
+-
+-        # Target Actor/Critic network
+-        self.target_actor = Actor(self.s_dim, self.a_dim, action_scale=action_scale,h1_shape=self.h1_shape,h2_shape=self.h2_shape,name="target_actor")
+-        self.target_critic = Critic(self.s_dim, self.a_dim, action_scale=action_scale ,h1_shape=self.h1_shape,h2_shape=self.h2_shape,name='target_critic')
+-        self.target_critic2 = Critic(self.s_dim, self.a_dim, action_scale=action_scale, name='target_critic2',h1_shape=self.h1_shape,h2_shape=self.h2_shape)
+-
 -        self.target_actor_out = self.target_actor.build(self.s1, self.is_training)
-+        self.target_actor_out = self.target_actor.build(self.s1, self.learning)
-         self.target_actor_policy = self.get_target_actor_policy()
-         self.target_critic_actor_out = self.target_critic.build(self.s1, self.target_actor_policy)
-         self.target_critic_actor_out2 = self.target_critic2.build(self.s1, self.target_actor_policy)
-@@ -174,14 +175,14 @@ class Agent():
-         self.target_cri_init_op = self.target_init(self.target_critic.train_var(), self.critic.train_var())
-         self.target_cri_init_op2 = self.target_init(self.target_critic2.train_var(), self.critic2.train_var())
- 
+-        self.target_actor_policy = self.get_target_actor_policy()
+-        self.target_critic_actor_out = self.target_critic.build(self.s1, self.target_actor_policy)
+-        self.target_critic_actor_out2 = self.target_critic2.build(self.s1, self.target_actor_policy)
+-
+-        self.target_actor_update_op = self.target_update_op(self.target_actor.train_var(), self.actor.train_var(), tau)
+-        self.target_critic_update_op = self.target_update_op(self.target_critic.train_var(), self.critic.train_var(), tau)
+-        self.target_critic_update_op2 = self.target_update_op(self.target_critic2.train_var(), self.critic2.train_var(), tau)
+-
+-        self.target_act_init_op = self.target_init(self.target_actor.train_var(), self.actor.train_var())
+-        self.target_cri_init_op = self.target_init(self.target_critic.train_var(), self.critic.train_var())
+-        self.target_cri_init_op2 = self.target_init(self.target_critic2.train_var(), self.critic2.train_var())
+-
 -        self.extra_update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
-+        self.extra_update_ops = tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.UPDATE_OPS)
- 
+-
 -        self.terminal = tf.placeholder(tf.float32, shape=[None, 1], name='is_terminal')
 -        self.reward = tf.placeholder(tf.float32, shape=[None, 1], name='reward')
-+        self.terminal = tf.compat.v1.placeholder(tf.float32, shape=[None, 1], name='is_terminal')
-+        self.reward = tf.compat.v1.placeholder(tf.float32, shape=[None, 1], name='reward')
-         self.y = self.reward + self.gamma * (1-self.terminal) * self.target_critic_actor_out
-         self.y2 = self.reward + self.gamma * (1-self.terminal) * self.target_critic_actor_out2
- 
+-        self.y = self.reward + self.gamma * (1-self.terminal) * self.target_critic_actor_out
+-        self.y2 = self.reward + self.gamma * (1-self.terminal) * self.target_critic_actor_out2
+-
 -        self.importance = tf.placeholder(tf.float32, [None,1], name='imporance_weights')
-+        self.importance = tf.compat.v1.placeholder(tf.float32, [None,1], name='imporance_weights')
-         self.td_error = self.critic_out - self.y
- 
-         self.summary_writer = summary
-@@ -189,8 +190,8 @@ class Agent():
- 
-     def build_learn(self):
- 
+-        self.td_error = self.critic_out - self.y
+-
+-        self.summary_writer = summary
+-
+-
+-    def build_learn(self):
+-
 -        self.actor_optimizer = tf.train.AdamOptimizer(self.lr_a)
 -        self.critic_optimizer = tf.train.AdamOptimizer(self.lr_c)
-+        self.actor_optimizer = tf.compat.v1.train.AdamOptimizer(self.lr_a)
-+        self.critic_optimizer = tf.compat.v1.train.AdamOptimizer(self.lr_c)
+-
+-        self.actor_train_op = self.build_actor_train_op()
+-
+-        use_huber = True
+-
+-        if use_huber:
+-            self.critic_train_op = self.build_critic_train_op_huber()
+-        else:
+-            self.critic_train_op = self.build_critic_train_op()
+-
+-
+-    def build_critic_train_op_huber(self):
+-
+-        def f1(y,pred, weights=1.0):
+-            error = tf.square(y - pred)
+-            weighted_error = tf.reduce_mean(error*weights)
+-            return weighted_error
++            self.actor_noise = OU_Noise(mu=np.zeros|a_dim), sigma=float(self.stddev) * np.ones(a_dim), dt=0.5)
  
-         self.actor_train_op = self.build_actor_train_op()
- 
-@@ -247,7 +248,7 @@ class Agent():
- 
-         tf.summary.scalar('Loss/actor_loss:', self.a_loss)
- 
+-        loss_function = {
+-            'HUBER':tf.compat.v1.losses.huber_loss,
+-            'MSE': f1
+-        }
+-        if self.CDQ:
+-            q_min_target = tf.minimum(self.y, self.y2)
+-
+-            if self.PER:
+-                self.c_loss = loss_function[self.LOSS_TYPE](q_min_target, self.critic_out, weights=self.importance)
+-                self.c_loss2 = loss_function[self.LOSS_TYPE](q_min_target, self.critic_out2, weights=self.importance)
+-
+-            else:
+-                self.c_loss = loss_function[self.LOSS_TYPE](q_min_target, self.critic_out)
+-                self.c_loss2 = loss_function[self.LOSS_TYPE](q_min_target, self.critic_out2)
+-
+-
+-            critic_op = []
+-            critic_op.append(self.critic_optimizer.minimize(self.c_loss, var_list=self.critic.train_var(), global_step = self.global_step))
+-            critic_op.append(self.critic_optimizer.minimize(self.c_loss2, var_list=self.critic2.train_var(), global_step = self.global_step))
+-            return critic_op
+-        else:
+-
+-            if self.PER:
+-                self.critic_loss = loss_function[self.LOSS_TYPE](self.y, self.critic_out, weights=self.importance)
+-            else:
+-                self.critic_loss = loss_function[self.LOSS_TYPE](self.y, self.critic_out)
+-            loss_op = self.critic_optimizer.minimize(self.critic_loss, var_list=self.critic.train_var(), global_step = self.global_step)
+-            return loss_op
+-
+-    def create_tf_summary(self):
+-        if self.CDQ:
+-            tf.summary.scalar('Loss/critic_loss:', self.c_loss)
+-            tf.summary.scalar('Loss/critic_loss_2:', self.c_loss2)
+-        else:
+-            tf.summary.scalar('Loss/critic_loss:', self.critic_loss)
+-
+-        tf.summary.scalar('Loss/actor_loss:', self.a_loss)
+-
 -        self.summary_op = tf.summary.merge_all()
-+        self.summary_op = tf.compat.v1.summary.merge_all()
- 
-     def init_target(self):
-         self.sess.run(self.target_act_init_op)
-@@ -255,7 +256,7 @@ class Agent():
-         self.sess.run(self.target_cri_init_op2)
- 
-     def get_target_actor_policy(self):
+-
+-    def init_target(self):
+-        self.sess.run(self.target_act_init_op)
+-        self.sess.run(self.target_cri_init_op)
+-        self.sess.run(self.target_cri_init_op2)
+-
+-    def get_target_actor_policy(self):
 -        eps = tf.random_normal(tf.shape(self.target_actor_out), stddev=0.1)
-+        eps = tf.random.normal(tf.shape(self.target_actor_out), stddev=0.1)
++        # Main Actor/Critic Networks
++        self.actor = Actor(self.s_dim, self.a_dim, h1_shape, h2_shape, action_scale=action_scale)
++        self.critic = Critic(self.s_dim, self.a_dim, h1_shape, h2_shape, action_scale=action_scale)
++        self.critic2 = Critic(self.s_dim, self.a_dim, h1_shape, h2_shape, action_scale=action_scale, name='critic2')
++
++        # Target Actor/Critic Networks
++        self.target_actor = Actor(self.s_dim, self.a_dim, h1_shape, h2_shape, action_scale=action_scale, name="target_actor")
++        self.target_critic = Critic(self.s_dim, self.a_dim, h1_shape, h2_shape, action_scale=action_scale, name='target_critic')
++        self.target_critic2 = Critic(self.s_dim, self.a_dim, h1_shape, h2_shape, action_scale=action_scale, name='target_critic2')
++
++        # Initialize target networks with main network weights
++        self.target_actor.model.set_weights(self.actor.model.get_weights())
++        self.target_critic.model.set_weights(self.critic.model.get_weights())
++        self.target_critic2.model.set_weights(self.critic2.model.get_weights())
++
++        # Optimizers
++        self.actor_optimizer = tf.keras.optimizers.Adam(learning_rate=lr_a)
++        self.critic_optimizer = tf.keras.optimizers.Adam(learning_rate=lr_c)
++
++        # Summary writer
++        self.summary_writer = summary or tf.summary.create_file_writer(os.path.join(self.train_dir, 'summaries'))
++
++    @tf.function
++    def get_target_actor_policy(self, s1):
++        target_actor_out = self.target_actor(s1, training=False)
++        eps = tf.random.normal(tf.shape(target_actor_out), stddev=0.1)
          eps = tf.clip_by_value(eps, -0.2, 0.2)
-         t_a = self.target_actor_out + eps
-         t_a = tf.clip_by_value(t_a, -1.0, 1.0)
-@@ -284,13 +285,13 @@ class Agent():
-         return self.actor_optimizer.minimize(self.a_loss, var_list=self.actor.train_var(), global_step = self.global_step)
+-        t_a = self.target_actor_out + eps
+-        t_a = tf.clip_by_value(t_a, -1.0, 1.0)
++        t_a = target_actor_out + eps
++        t_a = tf.clip_by_value(t_a, self.action_range[0], self.action_range[1])
+         return t_a
  
-     def target_init(self, target, vars):
+-    def assign_sess(self, sess):
+-        self.sess = sess
+-
+-
+-    def build_critic_train_op(self):
+-
+-        critic_op = []
+-        _q_min_target = tf.minimum(self.y, self.y2)
+-
+-        q_min_target = _q_min_target
+-        self.c_loss = tf.reduce_mean(tf.square(q_min_target - self.critic_out))
+-        self.c_loss2 = tf.reduce_mean(tf.square(q_min_target - self.critic_out2))
+-        critic_op.append(self.critic_optimizer.minimize(self.c_loss, var_list=self.critic.train_var(), global_step = self.global_step))
+-        critic_op.append(self.critic_optimizer.minimize(self.c_loss2, var_list=self.critic2.train_var(), global_step = self.global_step))
+-        tf.summary.scalar('Loss/critic_loss:', self.c_loss)
+-        tf.summary.scalar('Loss/critic_loss_2:', self.c_loss2)
+-        return critic_op
+-
+-    def build_actor_train_op(self):
+-        self.a_loss = -tf.reduce_mean(self.critic_actor_out)
+-        return self.actor_optimizer.minimize(self.a_loss, var_list=self.actor.train_var(), global_step = self.global_step)
+-
+-    def target_init(self, target, vars):
 -        return [tf.assign(target[i], vars[i]) for i in range(len(vars))]
-+        return [tf.compat.v1.assign(target[i], vars[i]) for i in range(min(len(vars),len(target)))]
- 
-     def target_update_op(self, target, vars, tau):
+-
+-    def target_update_op(self, target, vars, tau):
 -        return [tf.assign(target[i], vars[i] * tau + target[i] * (1 - tau)) for i in range(len(vars))]
-+        return [tf.compat.v1.assign(target[i], vars[i] * tau + target[i] * (1 - tau)) for i in range(min(len(vars),len(target)))]
- 
-     def target_update_hard_op(self, target, vars):
+-
+-    def target_update_hard_op(self, target, vars):
 -        return [tf.assign(target[i], vars[i]) for i in range(len(vars))]
-+        return [tf.compat.v1.assign(target[i], vars[i]) for i in range(min(len(vars),len(target)))]
+-
+-
+-    def target_update(self):
+-        self.sess.run([self.target_actor_update_op, self.target_critic_update_op, self.target_critic_update_op2])
+-
+-    def actor_clone_update(self):
+-        self.sess.run(self.actor_clone_update_op)
+-
+     def get_action(self, s, use_noise=True):
+-
+-        fd = {self.s0: create_input_op_shape(s, self.s0), self.is_training:False}
+-
+-        action = self.sess.run([self.actor_out], feed_dict=fd)
+-        if use_noise:
+-            noise = self.actor_noise(action[0])
++        s = create_input_op_shape(s, [None, self.s_dim])
++        s = tf.convert_to_tensor(s, dtype=tf.float32)
++        action = self.actor(s, training=False).numpy()
++        if use_noise and self.actor_noise is not None:
++            noise = self.actor_noise(action)
+             action += noise
+             action = np.clip(action, self.action_range[0], self.action_range[1])
+         return action
  
+     def get_q(self, s, a):
+-
+-        fd = {self.s0: create_input_op_shape(s, self.s0),
+-              self.action: create_input_op_shape(a, self.action)}
+-
+-        return self.sess.run([self.critic_out], feed_dict=fd)
++        s = create_input_op_shape(s, [None, self.s_dim])
++        a = create_input_op_shape(a, [None, self.a_dim])
++        s = tf.convert_to_tensor(s, dtype=tf.float32)
++        a = tf.convert_to_tensor(a, dtype=tf.float32)
++        return self.critic(s, a).numpy()
  
-     def target_update(self):
-@@ -343,7 +344,7 @@ class Agent():
+     def get_q_actor(self, s):
+-
+-        fd = {self.s0: create_input_op_shape(s, self.s0)}
+-        return self.sess.run([self.critic_actor_out], feed_dict=fd)
++        s = create_input_op_shape(s, [None, self.s_dim])
++        s = tf.convert_to_tensor(s, dtype=tf.float32)
++        actor_out = self.actor(s, training=False)
++        return self.critic(s, actor_out).numpy()
  
-     def train_step(self):
+     def store_experience(self, s0, a, r, s1, terminal):
+         self.rp_buffer.store(s0, a, r, s1, terminal)
+ 
+     def store_many_experience(self, s0, a, r, s1, terminal, length):
+-
+         if self.PER:
+             for i in range(length):
+-
+                 self.rp_buffer.store(s0[i], a[i], r[i], s1[i], terminal[i])
+         else:
+             self.rp_buffer.store_many(s0, a, r, s1, terminal, length)
+ 
+-    def sample_experince(self):
++    def sample_experience(self):
+         return self.rp_buffer.sample()
+ 
+-    def train_step_td(self):
+-        return None
++    def target_update(self):
++        # Soft update for target networks
++        for target, source in [(self.target_actor.model, self.actor.model),
++                              (self.target_critic.model, self.critic.model),
++                              (self.target_critic2.model, self.critic2.model)]:
++            target_weights = target.get_weights()
++            source_weights = source.get_weights()
++            for i in range(len(target_weights)):
++                target_weights[i] = self.tau * source_weights[i] + (1 - self.tau) * target_weights[i]
++            target.set_weights(target_weights)
++
++    @tf.function
++    def train_step(self, s0, action, reward, s1, terminal, importance=None):
++        s0 = tf.convert_to_tensor(s0, dtype=tf.float32)
++        action = tf.convert_to_tensor(action, dtype=tf.float32)
++        reward = tf.convert_to_tensor(reward, dtype=tf.float32)
++        s1 = tf.convert_to_tensor(s1, dtype=tf.float32)
++        terminal = tf.convert_to_tensor(terminal, dtype=tf.float32)
++        importance = tf.convert_to_tensor(importance, dtype=tf.float32) if importance is not None else None
++
++        # Update critic
++        with tf.GradientTape(persistent=True) as tape:
++            target_actor_policy = self.get_target_actor_policy(s1)
++            y = self.target_critic(s1, target_actor_policy)
++            y2 = self.target_critic2(s1, target_actor_policy) if self.CDQ else y
++            q_min_target = tf.minimum(y, y2) if self.CDQ else y
++            y = reward + self.gamma * (1 - terminal) * q_min_target
++
++            critic_out = self.critic(s0, action)
++            critic_out2 = self.critic2(s0, action) if self.CDQ else critic_out
++
++            if self.LOSS_TYPE == 'HUBER':
++                c_loss = tf.reduce_mean(tf.keras.losses.huber(y, critic_out, delta=1.0))
++                c_loss2 = tf.reduce_mean(tf.keras.losses.huber(y, critic_out2, delta=1.0)) if self.CDQ else c_loss
++            else:  # MSE
++                c_loss = tf.reduce_mean(tf.square(y - critic_out))
++                c_loss2 = tf.reduce_mean(tf.square(y - critic_out2)) if self.CDQ else c_loss
++
++            if self.PER and importance is not None:
++                c_loss *= tf.reduce_mean(importance)
++                c_loss2 *= tf.reduce_mean(importance) if self.CDQ else c_loss
++
++        # Compute critic gradients
++        c_grads = tape.gradient(c_loss, self.critic.model.trainable_variables)
++        self.critic_optimizer.apply_gradients(zip(c_grads, self.critic.model.trainable_variables))
++        if self.CDQ:
++            c_grads2 = tape.gradient(c_loss2, self.critic2.model.trainable_variables)
++            self.critic_optimizer.apply_gradients(zip(c_grads2, self.critic2.model.trainable_variables))
+ 
++        # Compute TD error for PER
++        td_error = critic_out - y
+ 
+-    def train_step(self):
++        # Update actor
++        with tf.GradientTape() as tape:
++            actor_out = self.actor(s0, training=True)
++            a_loss = -tf.reduce_mean(self.critic(s0, actor_out))
++        a_grads = tape.gradient(a_loss, self.actor.model.trainable_variables)
++        self.actor_optimizer.apply_gradients(zip(a_grads, self.actor.model.trainable_variables))
++
++        # Log summaries
++        with self.summary_writer.as_default():
++            tf.summary.scalar('Loss/critic_loss', c_loss, step=self.global_step)
++            if self.CDQ:
++                tf.summary.scalar('Loss/critic_loss_2', c_loss2, step=self.global_step)
++            tf.summary.scalar('Loss/actor_loss', a_loss, step=self.global_step)
++        self.global_step.assign_add(1)
  
 -        extra_update_ops = [v for v in tf.get_collection(tf.GraphKeys.UPDATE_OPS) if
-+        extra_update_ops = [v for v in tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.UPDATE_OPS) if
-                             "actor" in v.name and "target" not in v.name]
+-                            "actor" in v.name and "target" not in v.name]
++        return td_error.numpy() if self.PER else None
  
-         if self.PER == True:
-@@ -388,7 +389,7 @@ class Agent():
+-        if self.PER == True:
++    def train_step_wrapper(self):
++        if self.PER:
+             batch_samples, weights, idxes = self.rp_buffer.sample()
+-
+-            t2 = time.time()
+-            fd = {self.s0: create_input_op_shape(batch_samples[0], self.s0),
+-                self.action: create_input_op_shape(batch_samples[1], self.action),
+-                self.reward: create_input_op_shape(batch_samples[2], self.reward),
+-                self.s1: create_input_op_shape(batch_samples[3], self.s1),
+-                self.terminal: create_input_op_shape(batch_samples[4], self.terminal),
+-                self.is_training: True,
+-                self.importance: np.expand_dims(weights,axis=1)
+-                }
+-
++            s0, action, reward, s1, terminal = batch_samples
++            importance = np.expand_dims(weights, axis=1)
+         else:
+             batch_samples = self.rp_buffer.sample()
+-            t2 = time.time()
+-            fd = {self.s0: create_input_op_shape(batch_samples[0], self.s0),
+-                self.action: create_input_op_shape(batch_samples[1], self.action),
+-                self.reward: create_input_op_shape(batch_samples[2], self.reward),
+-                self.s1: create_input_op_shape(batch_samples[3], self.s1),
+-                self.terminal: create_input_op_shape(batch_samples[4], self.terminal),
+-                self.is_training: True
+-                }
++            s0, action, reward, s1, terminal = batch_samples
++            importance = None
  
+-        if self.PER:
+-            _, td_errors = self.sess.run([self.critic_train_op, self.td_error], feed_dict=fd)
+-        else:
+-            self.sess.run([self.critic_train_op], feed_dict=fd)
+-
+-        self.sess.run([self.actor_train_op, extra_update_ops], feed_dict=fd)
++        s0 = create_input_op_shape(s0, [None, self.s_dim])
++        action = create_input_op_shape(action, [None, self.a_dim])
++        reward = create_input_op_shape(reward, [None, 1])
++        s1 = create_input_op_shape(s1, [None, self.s_dim])
++        terminal = create_input_op_shape(terminal, [None, 1])
  
+-        summary, step = self.sess.run([self.summary_op, self.global_step], feed_dict=fd)
+-
+-        self.summary_writer.add_summary(summary, global_step=step)
++        td_error = self.train_step(s0, action, reward, s1, terminal, importance)
+ 
+         if self.PER:
+-            new_priorities = np.abs(np.squeeze(td_errors)) + 1e-6
++            new_priorities = np.abs(np.squeeze(td_error)) + 1e-6
+             self.rp_buffer.update_priorities(idxes, new_priorities)
+ 
+-
+-
      def log_tf(self, val, tag=None, step_counter=0):
 -        summary = tf.Summary()
-+        summary = tf.compat.v1.Summary()
-         summary.value.add(tag= tag, simple_value=val)
-         self.summary_writer.add_summary(summary, step_counter)
+-        summary.value.add(tag= tag, simple_value=val)
+-        self.summary_writer.add_summary(summary, step_counter)
++        with self.summary_writer.as_default():
++            tf.summary.scalar(tag, val, step=step_counter)
  
-@@ -404,7 +405,7 @@ class Agent():
+     def save_model(self, step=None):
+-        self.saver.save(self.sess, os.path.join(self.train_dir, 'model'), global_step =step)
++        checkpoint_dir = os.path.join(self.train_dir, 'model')
++        os.makedirs(checkpoint_dir, exist_ok=True)
++        self.actor.model.save_weights(os.path.join(checkpoint_dir, f'actor_{step}.h5'))
++        self.critic.model.save_weights(os.path.join(checkpoint_dir, f'critic_{step}.h5'))
++        if self.CDQ:
++            self.critic2.model.save_weights(os.path.join(checkpoint_dir, f'critic2_{step}.h5'))
++        self.target_actor.model.save_weights(os.path.join(checkpoint_dir, f'target_actor_{step}.h5'))
++        self.target_critic.model.save_weights(os.path.join(checkpoint_dir, f'target_critic_{step}.h5'))
++        if self.CDQ:
++            self.target_critic2.model.save_weights(os.path.join(checkpoint_dir, f'target_critic2_{step}.h5'))
  
-     def updat_step_epochs(self, epoch):
+     def load_model(self, name=None):
++        checkpoint_dir = os.path.join(self.train_dir, 'model')
+         if name is not None:
+-            print(os.path.join(self.train_dir, name))
+-            self.saver.restore(self.sess, os.path.join(self.train_dir, name))
++            checkpoint_path = os.path.join(checkpoint_dir, name)
+         else:
+-            self.saver.restore(self.sess, tf.train.latest_checkpoint(self.train_dir))
+-
+-    def updat_step_epochs(self, epoch):
++            checkpoint_path = checkpoint_dir  # Assumes latest weights in directory
++        self.actor.model.load_weights(os.path.join(checkpoint_path, f'actor_{name}.h5'))
++        self.critic.model.load_weights(os.path.join(checkpoint_path, f'critic_{name}.h5'))
++        if self.CDQ:
++            self.critic2.model.load_weights(os.path.join(checkpoint_path, f'critic2_{name}.h5'))
++        self.target_actor.model.load_weights(os.path.join(checkpoint_path, f'target_actor_{name}.h5'))
++        self.target_critic.model.load_weights(os.path.join(checkpoint_path, f'target_critic_{name}.h5'))
++        if self.CDQ:
++            self.target_critic2.model.load_weights(os.path.join(checkpoint_path, f'target_critic2_{name}.h5'))
  
 -        self.sess.run(tf.assign(self.step_epochs, epoch))
-+        self.sess.run(tf.compat.v1.assign(self.step_epochs, epoch))
++    def update_step_epochs(self, epoch):
++        self.step_epochs.assign(epoch)
  
      def get_step_epochs(self):
- 
-diff '--color=auto' -urpN orca-1.0_p9999.orig/rl-module/d5.py orca-1.0_p9999/rl-module/d5.py
---- orca-1.0_p9999.orig/rl-module/d5.py	2024-10-29 23:36:25.947113112 -0700
-+++ orca-1.0_p9999/rl-module/d5.py	2024-10-29 23:37:10.754768688 -0700
-@@ -99,7 +99,7 @@ def evaluate_TCP(env, agent, epoch, summ
- 
-             if (step_counter+1) % params.dict['tb_interval'] == 0:
- 
--                summary = tf.summary.Summary()
-+                summary = tf.compat.v1.summary.Summary()
-                 summary.value.add(tag='Eval/Step/0-Actions', simple_value=env.map_action(a))
-                 summary.value.add(tag='Eval/Step/2-Reward', simple_value=r)
-             summary_writer.add_summary(summary, eval_step_counter)
-@@ -114,7 +114,7 @@ def evaluate_TCP(env, agent, epoch, summ
-                 score_list.append(ep_r)
-                 break
- 
--    summary = tf.summary.Summary()
-+    summary = tf.compat.v1.summary.Summary()
-     summary.value.add(tag='Eval/Return', simple_value=np.mean(score_list))
-     summary_writer.add_summary(summary, epoch)
- 
-@@ -171,7 +171,7 @@ def main():
-         def is_actor_fn(i): return True
-         global_variable_device = '/cpu'
-         is_learner = False
--        server = tf.train.Server.create_local_server()
-+        server = tf.distribute.Server.create_local_server()
-         filters = []
-     else:
- 
-@@ -198,7 +198,7 @@ def main():
-                 })
- 
- 
--        server = tf.train.Server(cluster, job_name=config.job_name,
-+        server = tf.distribute.Server(cluster, job_name=config.job_name,
-                                 task_index=config.task)
-         filters = [shared_job_device, local_job_device]
- 
-@@ -230,7 +230,7 @@ def main():
-     with tf.Graph().as_default(),\
-         tf.device(local_job_device + '/cpu'):
- 
--        tf.set_random_seed(1234)
-+        tf.compat.v1.set_random_seed(1234)
-         random.seed(1234)
-         np.random.seed(1234)
- 
-@@ -241,18 +241,19 @@ def main():
- 
-         if not os.path.exists(tfeventdir):
-             os.makedirs(tfeventdir)
--        summary_writer = tf.summary.FileWriterCache.get(tfeventdir)
-+        summary_writer = tf.compat.v1.summary.FileWriterCache.get(tfeventdir)
- 
-+        learning = not eval
-         with tf.device(shared_job_device):
- 
--            agent = Agent(s_dim, a_dim, batch_size=params.dict['batch_size'], summary=summary_writer,h1_shape=params.dict['h1_shape'],
-+            agent = Agent(learning, s_dim, a_dim, batch_size=params.dict['batch_size'], summary=summary_writer,h1_shape=params.dict['h1_shape'],
-                         h2_shape=params.dict['h2_shape'],stddev=params.dict['stddev'],mem_size=params.dict['memsize'],gamma=params.dict['gamma'],
-                         lr_c=params.dict['lr_c'],lr_a=params.dict['lr_a'],tau=params.dict['tau'],PER=params.dict['PER'],CDQ=params.dict['CDQ'],
-                         LOSS_TYPE=params.dict['LOSS_TYPE'],noise_type=params.dict['noise_type'],noise_exp=params.dict['noise_exp'])
- 
-             dtypes = [tf.float32, tf.float32, tf.float32, tf.float32, tf.float32]
-             shapes = [[s_dim], [a_dim], [1], [s_dim], [1]]
--            queue = tf.FIFOQueue(10000, dtypes, shapes, shared_name="rp_buf")
-+            queue = tf.queue.FIFOQueue(10000, dtypes, shapes, shared_name="rp_buf")
- 
- 
-         if is_learner:
-@@ -278,11 +279,11 @@ def main():
-                     else:
-                         env = GYM_Env_Wrapper(env_str, params)
- 
--                    a_s0 = tf.placeholder(tf.float32, shape=[s_dim], name='a_s0')
--                    a_action = tf.placeholder(tf.float32, shape=[a_dim], name='a_action')
--                    a_reward = tf.placeholder(tf.float32, shape=[1], name='a_reward')
--                    a_s1 = tf.placeholder(tf.float32, shape=[s_dim], name='a_s1')
--                    a_terminal = tf.placeholder(tf.float32, shape=[1], name='a_terminal')
-+                    a_s0 = tf.compat.v1.placeholder(tf.float32, shape=[s_dim], name='a_s0')
-+                    a_action = tf.compat.v1.placeholder(tf.float32, shape=[a_dim], name='a_action')
-+                    a_reward = tf.compat.v1.placeholder(tf.float32, shape=[1], name='a_reward')
-+                    a_s1 = tf.compat.v1.placeholder(tf.float32, shape=[s_dim], name='a_s1')
-+                    a_terminal = tf.compat.v1.placeholder(tf.float32, shape=[1], name='a_terminal')
-                     a_buf = [a_s0, a_action, a_reward, a_s1, a_terminal]
- 
- 
-@@ -305,13 +306,13 @@ def main():
-         else:
-             params.dict['ckptdir'] = tfeventdir
- 
--        tfconfig = tf.ConfigProto(allow_soft_placement=True)
-+        tfconfig = tf.compat.v1.ConfigProto(allow_soft_placement=True)
- 
-         if params.dict['single_actor_eval']:
--            mon_sess = tf.train.SingularMonitoredSession(
-+            mon_sess = tf.compat.v1.train.SingularMonitoredSession(
-                 checkpoint_dir=params.dict['ckptdir'])
-         else:
--            mon_sess = tf.train.MonitoredTrainingSession(master=server.target,
-+            mon_sess = tf.compat.v1.train.MonitoredTrainingSession(master=server.target,
-                     save_checkpoint_secs=15,
-                     save_summaries_secs=None,
-                     save_summaries_steps=None,
+-
+-        return self.sess.run(self.step_epochs)
++        return self.step_epochs.numpy()

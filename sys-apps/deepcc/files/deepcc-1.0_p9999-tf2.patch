@@ -1,324 +1,1047 @@
-# Patch status:  Work In Progress (WIP)
-
-deepcc.v1.0.orig/rl-module/drl_agent.py:134:4: WARNING: *.save requires manual check. (This warning is only applicable if the code saves a tf.Keras model) Keras model.save now saves to the Tensorflow SavedModel format by default, instead of HDF5. To continue saving to HDF5, add the argument save_format='h5' to the save() function.
-deepcc.v1.0.orig/rl-module/models.py:44:12: WARNING: tf.get_variable requires manual check. tf.get_variable returns ResourceVariables by default in 2.0, which have well-defined semantics and are stricter about shapes. You can disable this behavior by passing use_resource=False, or by calling tf.compat.v1.disable_resource_variables().
-deepcc.v1.0.orig/rl-module/models.py:48:12: WARNING: tf.get_variable requires manual check. tf.get_variable returns ResourceVariables by default in 2.0, which have well-defined semantics and are stricter about shapes. You can disable this behavior by passing use_resource=False, or by calling tf.compat.v1.disable_resource_variables().
-
-diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.py deepcc-1.0_p9999/deepcc.v1.0/rl-module/drl_agent.py
---- deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.py	2024-10-29 22:36:39.401415649 -0700
-+++ deepcc-1.0_p9999/deepcc.v1.0/rl-module/drl_agent.py	2024-10-29 22:39:14.752615484 -0700
-@@ -38,7 +38,7 @@ import collections
- from time import sleep
+WIP:  Converted code from TensorFlow 1 to TensorFlow 2 with help of AI/LLM
+--- deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/drl_agent.py	2025-06-28 20:54:19.067934064 -0700
++++ deepcc-1.0_p9999/deepcc.v1.0/rl-module/drl_agent.py	2025-06-28 20:56:09.345894249 -0700
+@@ -25,158 +25,249 @@ import tensorflow as tf
+ import signal
+ import sys
+ import pickle
+-
+-from utils import configure_logging
+-
+-#import gym
+-from models import *
+-from memory import Memory
++import math
+ import time
+ import os
+ import sysv_ipc
+ import collections
+-from time import sleep
  import argparse
- #import random
+-#import random
 -tf.logging.set_verbosity(tf.logging.ERROR)
-+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
- FORCE_ALPHA_INIT = 2     #if not "0",will force action to be FORCE_ALPHA*100
+-FORCE_ALPHA_INIT = 2     #if not "0",will force action to be FORCE_ALPHA*100
  
++from utils import configure_logging
++from memory import Memory
++
++# Constants
++FORCE_ALPHA_INIT = 2
  state_dim = 6
-@@ -130,7 +130,7 @@ def handler_ctrlc(signum, frame):
+ state_dim_extra = 1
+-
+ final_state_dim = 5
+-# Number of inputs coming from rl-server.cc
+ input_dim = 7
+-
+ rec_dim = 20
+ action_dim = 1
+ action_bound = 1
+-
+ TARGET_MARGIN = 1
+-
+ TEST_MEM_READ_WRITE = 0
+ MAX_EPISODES = 300
+-
+ MAX_EP_STEPS = 5
+ MVWIN = 2
+-#MAX_EP_STEPS
+-
+ PMWSIZE = 20
+ RENDER = 0
+ USEGYM = 1
+-MEMSIZE = 16*1e4 #1e4
++MEMSIZE = 16 * 1e4
+ RESTORE = 0
+ EVAL = 0
+ BATCHSIZE = 512
+ ZERO_DELAY = 10000000
+ ZERO_THRPT = 0.001
+-
+ GAMMA = 0.995
+ TAU = 0.001
+ LR_A = 0.0001
+ LR_C = 0.001
+-
+-# Noise_TYPE 0: OU noise (original version), whatever explore step
+-# Noise_TYPE 1: OU noise with decay by explore step, low noise after explore step
+-# Noise_TYPE 2: Gaussian noise with decay by explore step, no noise after explore step
+-# Noise_TYPE 3: Gaussian noise without decay
+-# Noise_TYPE 4: Gaussian noise with stepwise decay: after EXPLORE steps: sigma=NSTEP*sigma
+-# Noise_type 5: None
+-
+ NOISE_TYPE = 3
+ EXPLORE = 4000
+ STDDEV = 0.1
+ NSTEP = 0.3
+-#memory1 = sysv_ipc.SharedMemory(123456)
+-#memory2 = sysv_ipc.SharedMemory(12345)
  
+-def log_parameters():
++def log_parameters(logger):
+     logger.info("------------RL Training Hyper Parameters--------------")
+-    logger.info("LR_A: {}".format(LR_A))
+-    logger.info("LR_C: {}".format(LR_C))
+-    logger.info("tau: {}".format(TAU))
+-    logger.info("MAX_EP_STEP: {}".format(MAX_EP_STEPS))
+-    logger.info("Noise STDDEV: {}".format(STDDEV))
+-    logger.info("MEMSIZE: {}".format(MEMSIZE))
+-    logger.info("Batch_Size: {}".format(BATCHSIZE))
++    logger.info(f"LR_A: {LR_A}")
++    logger.info(f"LR_C: {LR_C}")
++    logger.info(f"tau: {TAU}")
++    logger.info(f"MAX_EP_STEP: {MAX_EP_STEPS}")
++    logger.info(f"Noise STDDEV: {STDDEV}")
++    logger.info(f"MEMSIZE: {MEMSIZE}")
++    logger.info(f"Batch_Size: {BATCHSIZE}")
+     logger.info("-------------------------------------------------------")
+-#a_glo = 13
  
- def terminated_save():
+-def handler_term(signum, frame):
+-    # handle: pkill -15 -f p1.py
+-    #print(signum, frame)
+-    #if signum ==signal.SIGUSR1:
+-
+-    print("python program terminated usking Kill -15")
+-    #logger.info("python program terminated usking Kill -15")
+-    # func()
++def handler_term(signum, frame, normalizer, replay_memory, train_dir, logger, actor, critic):
++    print("python program terminated using Kill -15")
++    logger.info("python program terminated using Kill -15")
+     if not config.eval:
+-        terminated_save()
+-        normalizer.save_stats()
+-    #sess.close()
++        terminated_save(normalizer, replay_memory, train_dir, logger, actor, critic)
+     sys.exit(1)
+ 
+-
+-def handler_ctrlc(signum, frame):
+-    # handle: ctrl + c
++def handler_ctrlc(signum, frame, normalizer, replay_memory, train_dir, logger, actor, critic):
+     print("python program terminated using Ctrl+c")
+-    #logger.info("python program terminated using Ctrl+c")
+-    # func()
++    logger.info("python program terminated using Ctrl+c")
+     if not config.eval:
+-        terminated_save()
+-        normalizer.save_stats()
+-    sess.close()
++        terminated_save(normalizer, replay_memory, train_dir, logger, actor, critic)
+     sys.exit(1)
+ 
+-
+-def terminated_save():
 -    saver = tf.train.Saver()
-+    saver = tf.compat.v1.train.Saver()
-     saver.save(sess, os.path.join(train_dir, 'model'))
-     print("--------save checkpoint model at{}--------".format(train_dir))
-     logger.info("--------save checkpoint model at{}--------".format(train_dir))
-@@ -476,9 +476,10 @@ def main_tcp():
-     )
-     train_dir = str(config.train_dir)+'/train_dir-'+str(config.scheme)
+-    saver.save(sess, os.path.join(train_dir, 'model'))
+-    print("--------save checkpoint model at{}--------".format(train_dir))
+-    logger.info("--------save checkpoint model at{}--------".format(train_dir))
+-    ## save replay buffer
++def terminated_save(normalizer, replay_memory, train_dir, logger, actor, critic):
++    os.makedirs(train_dir, exist_ok=True)
++    actor.model.save_weights(os.path.join(train_dir, 'model_actor.h5'))
++    critic.model.save_weights(os.path.join(train_dir, 'model_critic.h5'))
++    print(f"--------𝚛--------save checkpoint model at {train_dir}--------")
++    logger.info(f"--------save checkpoint model at {train_dir}--------")
+     with open(os.path.join(train_dir, "replay_memory.pkl"), "wb") as fp:
+         pickle.dump(replay_memory, fp)
+-    print("--------save replay memory at{}---------".format(train_dir))
+-    logger.info("--------save replay memory at{}---------".format(train_dir))
++    print(f"--------save replay memory at {train_dir}---------")
++    logger.info(f"--------save replay memory at {train_dir}---------")
++    normalizer.save_stats()
  
+-signal.signal(signal.SIGTERM, handler_term)
+-signal.signal(signal.SIGINT, handler_ctrlc)
++def map_action(a):
++    out = math.pow(2, a) * 100
++    return int(out)
+ 
+-def eval_policy(env, learner):
+-    s0 = env.reset()
+-    ep_r = 0
+-    print("=======EVALUATION=========")
+-    for j in range(MAX_EP_STEPS):
+-        if RENDER:
+-            env.render()
+-        # a = learner.get_actor_out(s0)
+-        a, _ = learner.actor_step(s0)
+-        a = a[0]
+-        s1, r, done, _ = env.step(a)
+-        s0 = s1
+-        ep_r += r
++def map_action_reverse(a):
++    return math.log(a / 100, 2)
+ 
+-    print("Total return in an episode:", ep_r)
++# Classes from models.py (assumed DDPG structure)
++class Actor:
++    def __init__(self, s_dim, a_dim, a_bound, name, use_gym=False):
++        self.s_dim = s_dim
++        self.a_dim = a_dim
++        self.a_bound = a_bound
++        self.name = name
++        self.model = self._build()
++
++    def _build(self):
++        model = tf.keras.Sequential([
++            tf.keras.layers.Dense(400, activation='relu', input_shape=(self.s_dim,)),
++            tf.keras.layers.Dense(300, activation='relu'),
++            tf.keras.layers.Dense(self.a_dim, activation='tanh'),
++            tf.keras.layers.Lambda(lambda x: x * self.a_bound)
++        ], name=self.name)
++        return model
++
++    def __call__(self, s, training=False):
++        return self.model(s, training=training)
++
++class Critic:
++    def __init__(self, s_dim, a_dim, a_bound, name, use_gym=False):
++        self.s_dim = s_dim
++        self.a_dim = a_dim
++        self.name = name
++        self.model = self._build()
++
++    def _build(self):
++        state_input = tf.keras.Input(shape=(self.s_dim,))
++        action_input = tf.keras.Input(shape=(self.a_dim,))
++        concat = tf.keras.layers.Concatenate()([state_input, action_input])
++        x = tf.keras.layers.Dense(400, activation='relu')(concat)
++        x = tf.keras.layers.Dense(300, activation='relu')(x)
++        output = tf.keras.layers.Dense(1)(x)
++        return tf.keras.Model([state_input, action_input], output, name=self.name)
++
++    def __call__(self, s, a):
++        return self.model([s, a])
++
++class OrnsteinUhlenbeckActionNoise:
++    def __init__(self, mu, sigma, dt=0.5, exp=None):
++    self.mu = mu
++    self.sigma = sigma
++    self.dt = dt
++    self.exp = exp
++    self.x_prev = np.zeros_like(mu)
++
++    def __call__(self):
++        x = (self.x_prev + self.dt * (self.mu - self.x_prev) +
++             self.sigma * np.sqrt(self.dt) * np.random.normal(size=self.mu.shape))
++        self.x_prev = x
++        return x
++
++    def show(self):
++        return self.x_prev
++
++class GaussianActionNoise:
++    def __init__(self, mu, sigma, explore=None, theta=0.1, mode='normal', step=1.0):
++        self.mu = mu
++        self.sigma = sigma
++        self.explore = explore
++        self.theta = theta
++        self.mode = mode
++        self.step = step
++        self.t = 0
++
++    def __call__(self):
++        self.t += 1
++        if self.explore is not None and self.t > self.explore:
++            if self.mode == 'step':
++                self.sigma *= self.step
++            else:
++                self.sigma *= self.theta
++        return np.random.normal(self.mu, self.sigma, size=self.mu.shape)
+ 
++    def show(self):
++        return self.sigma
+ 
+-def map_action_reverse(a):
+-    out =  math.log(a/100,2)
+-    return out
++class Learner:
++    def __init__(self, actor, critic, replay_memory, s_dim, a_dim, action_noise, batch_size, 
++                 gamma, tau, lr_a, lr_c, action_range, summary_writer):
++        self.actor = actor
++        self.critic = critic
++        self.target_actor = Actor(s_dim, a_dim, action_bound, "target_actor")
++        self.target_critic = Critic(s_dim, a_dim, action_bound, "target_critic")
++        self.replay_memory = replay_memory
++        self.s_dim = s_dim
++        self.a_dim = a_dim
++        self.action_noise = action_noise
++        self.batch_size = batch_size
++        self.gamma = gamma
++        self.tau = tau
++        self.action_range = action_range
++        self.summary_writer = summary_writer
++        self.actor_optimizer = tf.keras.optimizers.Adam(lr_a)
++        self.critic_optimizer = tf.keras.optimizers.Adam(lr_c)
++        self.global_step = tf.Variable(0, trainable=False, dtype=tf.int64)
++
++        self.target_actor.model.set_weights(self.actor.model.get_weights())
++        self.target_critic.model.set_weights(self.critic.model.get_weights())
++
++    def initialize(self):
++        pass  # No session to initialize in TF2
++
++    def actor_step(self, s):
++        s = np.array(s, dtype=np.float32).reshape(-1, self.s_dim)
++        a = self.actor(s, training=False).numpy()
++        noise = self.action_noise() if self.action_noise is not None else 0
++        return np.clip(a + noise, self.action_range[0], self.action_range[1]), noise
++
++    def store_transition(self, s0, a, r, s1, done):
++        self.replay_memory.store(s0, a, r, s1, done)
++
++    @tf.function
++    def train_step(self):
++        if len(self.replay_memory) < self.batch_size:
++            return
++
++        s0, a, r, s1, done = self.replay_memory.sample(self.batch_size)
++        s0 = tf.convert_to_tensor(s0, dtype=tf.float32)
++        a = tf.convert_to_tensor(a, dtype=tf.float32)
++        r = tf.convert_to_tensor(r, dtype=tf.float32)
++        s1 = tf.convert_to_tensor(s1, dtype=tf.float32)
++        done = tf.convert_to_tensor(done, dtype=tf.float32)
++
++        with tf.GradientTape() as tape:
++            target_a = self.target_actor(s1)
++            target_q = self.target_critic(s1, target_a)
++            y = r + self.gamma * (1 - done) * target_q
++            q = self.critic(s0, a)
++            c_loss = tf.reduce_mean(tf.square(y - q))
++        c_grads = tape.gradient(c_loss, self.critic.model.trainable_variables)
++        self.critic_optimizer.apply_gradients(zip(c_grads, self.critic.model.trainable_variables))
++
++        with tf.GradientTape() as tape:
++            actor_a = self.actor(s0)
++            a_loss = -tf.reduce_mean(self.critic(s0, actor_a))
++        a_grads = tape.gradient(a_loss, self.actor.model.trainable_variables)
++        self.actor_optimizer.apply_gradients(zip(a_grads, self.actor.model.trainable_variables))
++
++        with self.summary_writer.as_default():
++            tf.summary.scalar('Loss/critic_loss', c_loss, step=self.global_step)
++            tf.summary.scalar('Loss/actor_loss', a_loss, step=self.global_step)
++        self.global_step.assign_add(1)
++
++    def update_target(self):
++        for target, source in [(self.target_actor.model, self.actor.model),
++                              (self.target_critic.model, self.critic.model)]:
++            target_weights = target.get_weights()
++            source_weights = source.get_weights()
++            for i in range(len(target_weights)):
++                target_weights[i] = self.tau * source_weights[i] + (1 - self.tau) * target_weights[i]
++            target.set_weights(target_weights)
+ 
+-def map_action(a):
+-    out = math.pow(2,a)
+-    out *= 100
+-    out = int(out)
+-    return out
+-'''
+-def map_action(a):
+-    out =  (a - (-1))/2.0 * 9 + 1.0
+-    out *= 100
+-    out = int(out)
+-    return out
+-'''
+-class state():
++# State, Moving_Win, Normalizer classes (unchanged, non-TF)
++class state:
+     def __init__(self):
+         self.reset()
+ 
+@@ -187,166 +278,122 @@ class state():
+         self.avg_thr = 0.0
+         self.thr_ = 0.0
+         self.del_ = 0.0
+-        self.norm=Normalizer(1)
++        self.norm = Normalizer(input_dim)
+         self.del_moving_win = Moving_Win(MVWIN)
+         self.thr_moving_win = Moving_Win(MVWIN)
+ 
+-    def get_state(self,memory, prev_rid,target,normalizer,evaluation=False):
+-        # [Output] delay: s0[0], thrpt: s0[1]
++    def get_state(self, memory, prev_rid, target, normalizer, evaluation=False):
+         succeed = False
+-        error_cnt=0
+-        #for cnt_ in range(100):
+-        while(1):
+-        # Read value from shared memory
++        error_cnt = 0
++        while True:
+             try:
+                 memory_value = memory.read()
+-
+             except sysv_ipc.ExistentialError:
+                 print("No shared memory Now, python ends gracefully :)")
+                 logger.info("No shared memory Now, python ends gracefully :)")
+-                sess.close()
+-                exit(1)
+-
+-            memory_value = memory_value.decode('unicode_escape')
++                sys.exit(1)
+ 
+-            #print("memory_value", memory_value)
+-            # Find the 'end' of the string and strip
++            memory_value457 = memory_value.decode('unicode_escape')
+             i = memory_value.find('\0')
+-
+             if i != -1:
+-
+                 memory_value = memory_value[:i]
+-                #print("i:{}, memory_value{} ".format(i,memory_value))
+                 readstate = np.fromstring(memory_value, dtype=float, sep=' ')
+                 try:
+                     rid = readstate[0]
+-                except :
++                except:
+                     rid = prev_rid
+-    #                print("rid waring")
+                     continue
+                 try:
+                     s0 = readstate[1:]
+-                except :
+-                    print("s0 waring")
++                except:
++                    print("s0 warning")
+                     continue
+ 
+-                #print(prev_rid, rid)
+-
+                 if rid != prev_rid:
+-                    #prev_rid = rid
+                     succeed = True
+-                    #print("Got the new state! finish reading "+str(rid))
+                     break
+                 else:
+-                    wwwwww=""
+-        #            print("SAME ID, wait and read again "+str(rid))
+-            error_cnt=error_cnt+1
+-            if error_cnt > 1000:
+-#                print ("no new state given rid: "+str(rid)+" prev_rid: "+str(prev_rid)+" ****************** \n")
+-                error_cnt=0
+-            sleep(0.01)
++                    error_cnt += 1
++                    if error_cnt > 1000:
++                        error_cnt = 0
++                    time.sleep(0.01)
+ 
+-        error_cnt=0
+-        if succeed == False:
++        if not succeed:
+             raise ValueError('read Nothing new from shrmem for a long time')
+-        reward=0
+-        state=np.zeros(1)
+-        w=s0
+-        if len(s0) == (input_dim):
+-#            if evaluation==True:
+-#                s0[0]=s0[0]*target/50.0
+-            d=s0[0]
+-            thr=s0[1]
+-            samples=s0[2]
+-            delta_t=s0[3]
+-            target_=s0[4]
+-            cwnd=s0[5]
+-            pacing_rate=s0[6]
++        reward = 0
++        state = np.zeros(1)
++        w = s0
++        if len(s0) == input_dim:
++            d = s0[0]
++            thr = s0[1]
++            samples = s0[2]
++            delta_t = s0[3]
++            target_ = s0[4]
++            cwnd = s0[5]
++            pacing_rate = s0[6]
+ 
+-            if evaluation!=True:
++            if not evaluation:
+                 normalizer.observe(s0)
+             s0 = normalizer.normalize(s0)
+ 
+-            ############# Reward:
+             min_ = normalizer.stats()
+-#            d_n=d
+-            d_n=s0[0]-min_[0]
+-            thr_n=s0[1]
+-            thr_n_min=s0[1]-min_[1]
+-            samples_n=s0[2]
+-            samples_n_min=s0[2]-min_[2]
+-            delta_t_n=s0[3]
+-            delta_t_n_min=s0[3]-min_[3]
+-
+-            cwnd_n_min=s0[5]-min_[5]
+-            pacing_rate_n_min=s0[6]-min_[6]
++            d_n = s0[0] - min_[0]
++            thr_n = s0[1]
++            thr_n_min = s0[1] - min_[1]
++            samples_n = s0[2]
++            samples_n_min = s0[2] - min_[2]
++            delta_t_n = s0[3]
++            delta_t_n_min = s0[3] - min_[3]
++            cwnd_n_min = s0[5] - min_[5]
++            pacing_rate_n_min = s0[6] - min_[6]
++            target_n_min = normalizer.normalize_delay(target_ * TARGET_MARGIN) - min_[0]
+ 
+-            target_n_min=(normalizer.normalize_delay(target_*TARGET_MARGIN)-min_[0])
++            delay_ratio = d_n / target_n_min if target_n_min != 0 else d_n
+ 
+-            if target_n_min!=0:
+-                delay_ratio=d_n/target_n_min
+-            else:
+-                delay_ratio=d_n
+-
+-            ############# Reward3:
+             self.pre_avg_delay = self.avg_delay
+-            self.del_moving_win.push(delay_ratio,samples)
++            self.del_moving_win.push(delay_ratio, samples)
+             self.avg_delay = self.del_moving_win.get_avg()
+             self.pre_thr = self.avg_thr
+-#            self.thr_moving_win.push(thr_n_min,1)
+-#            self.avg_thr = self.thr_moving_win.get_avg()
+-#            self.avg_thr = thr_n_min
+             self.avg_thr = samples_n_min
+ 
+-            reward = self.avg_thr*thr_n_min*(delay_ratio)
+-            if reward>100.0:
+-                reward=100.0
+-            sign=1
+-            if self.avg_delay>1:
+-                reward= -reward
+-                sign=0
+-
+-            state[0]=delay_ratio*(1-sign)
+-            state=np.append(state,[(1-delay_ratio)*sign])
+-            state=np.append(state,[samples_n_min*sign,thr_n_min*sign])
+-            state=np.append(state,[cwnd_n_min])
+-            #print ("d/T: "+str(state[0])+" avg-del: "+str(self.avg_delay)+" reward: "+str(reward)+" \n w[]: "+str(w)+"\n")
++            reward = self.avg_thr * thr_n_min * delay_ratio
++            if reward > 100.0:
++                reward = 100.0
++            sign = 1 if self.avg_delay <= 1 else 0
++            if not sign:
++                reward = -reward
+ 
++            state[0] = delay_ratio * (1 - sign)
++            state = np.append(state, [(1 - delay_ratio) * sign, samples_n_min * sign, thr_n_min * sign, cwnd_n_min])
+             return rid, state, d, reward, True
+         else:
+             return rid, state, 0.0, reward, False
+ 
+-class Moving_Win():
+-    def __init__(self,win_size):
++class Moving_Win:
++    def __init__(self, win_size):
+         self.queue_main = collections.deque(maxlen=win_size)
+         self.queue_aux = collections.deque(maxlen=win_size)
+         self.length = 0
+         self.avg = 0.0
+         self.size = win_size
+-        self.total_samples=0
++        self.total_samples = 0
+ 
+-    def push(self,sample_value,sample_num):
+-        if self.length<self.size:
++    def push(self, sample_value, sample_num):
++        if self.length < self.size:
+             self.queue_main.append(sample_value)
+             self.queue_aux.append(sample_num)
+-            self.length=self.length+1
+-            self.avg=(self.avg*self.total_samples+sample_value*sample_num)
+-            self.total_samples+=sample_num
+-            if self.total_samples>0:
+-                self.avg=self.avg/self.total_samples
+-            else:
+-                self.avg=0.0
++            self.length += 1
++            self.avg = (self.avg * self.total_samples + sample_value * sample_num)
++            self.total_samples += sample_num
++            self.avg = self.avg / self.total_samples if self.total_samples > 0 else 0.0
+         else:
+-            pop_value=self.queue_main.popleft()
+-            pop_num=self.queue_aux.popleft()
++            pop_value = self.queue_main.popleft()
++            pop_num = self.queue_aux.popleft()
+             self.queue_main.append(sample_value)
+             self.queue_aux.append(sample_num)
+-            self.avg=(self.avg*self.total_samples+sample_value*sample_num-pop_value*pop_num)
+-            self.total_samples=self.total_samples+(sample_num-pop_num)
+-            if self.total_samples>0:
+-                self.avg=self.avg/self.total_samples
+-            else:
+-                self.avg=0.0
++            self.avg = (self.avg * self.total_samples + sample_value * sample_num - pop_value * pop_num)
++            self.total_samples += sample_num - pop_num
++            self.avg = self.avg / self.total_samples if self.total_samples > 0 else 0.0
+ 
+     def get_avg(self):
+         return self.avg
+@@ -354,9 +401,9 @@ class Moving_Win():
+     def get_length(self):
+         return self.length
+ 
+-class Normalizer():
++class Normalizer:
+     def __init__(self, num_inputs):
+-        self.n = 1e-5 #np.zeros(num_inputs)
++        self.n = 1e-5
+         self.mean = np.zeros(num_inputs)
+         self.mean_diff = np.zeros(num_inputs)
+         self.var = np.zeros(num_inputs)
+@@ -366,83 +413,63 @@ class Normalizer():
+     def observe(self, x):
+         self.n += 1
+         last_mean = np.copy(self.mean)
+-        self.mean += (x-self.mean)/self.n
+-        self.mean_diff += (x-last_mean)*(x-self.mean)
+-        self.var = self.mean_diff/self.n
++        self.mean += (x - self.mean) / self.n
++        self.mean_diff += (x - last_mean) * (x - self.mean)
++        self.var = self.mean_diff / self.n
+ 
+     def normalize(self, inputs):
+         obs_std = np.sqrt(self.var)
+-        a=np.zeros(self.dim)
++        a = np.zeros(self.dim)
+         if self.n > 2:
+-            a=(inputs - self.mean)/obs_std
+-            for i in range(0,self.dim):
++            a = (inputs - self.mean) / obs_std
++            for i in range(self.dim):
+                 if a[i] < self.min[i]:
+                     self.min[i] = a[i]
+             return a
+-        else:
+-            return np.zeros(self.dim)
++        return np.zeros(self.dim)
+ 
+-    def normalize_delay(self,delay):
++    def normalize_delay(self, delay):
+         obs_std = math.sqrt(self.var[0])
+-        if self.n > 2:
+-            return (delay - self.mean[0])/obs_std
+-        else:
+-            return 0
++        return (delay - self.mean[0]) / obs_std if self.n > 2 else 0
+ 
+     def stats(self):
+         return self.min
+ 
+     def save_stats(self):
+-        dic={}
+-        dic['n']=self.n
+-        dic['mean'] = self.mean.tolist()
+-        dic['mean_diff'] = self.mean_diff.tolist()
+-        dic['var'] = self.var.tolist()
+-        dic['min'] = self.min.tolist()
+-        import json
++        dic = {
++            'n': self.n,
++            'mean': self.mean.tolist(),
++            'mean_diff': self.mean_diff.tolist(),
++            'var': self.var.tolist(),
++            'min': self.min.tolist()
++        }
+         with open(os.path.join(train_dir, 'stats.json'), 'w') as fp:
+-             json.dump(dic, fp)
+-
+-        print("--------save stats at{}--------".format(train_dir))
+-        logger.info("--------save stats at{}--------".format(train_dir))
+-
+-
++            json.dump(dic, fp)
++        print(f"--------save stats at {train_dir}--------")
++        logger.info(f"--------save stats at {train_dir}--------")
+ 
+     def load_stats(self, file='stats.json'):
+-        import json
+-
+         with open(os.path.join(train_dir, file), 'r') as fp:
+             history_stats = json.load(fp)
+-            #print(history_stats)
+         self.n = history_stats['n']
+         self.mean = np.asarray(history_stats['mean'])
+         self.mean_diff = np.asarray(history_stats['mean_diff'])
+         self.var = np.asarray(history_stats['var'])
+         self.min = np.asarray(history_stats['min'])
+ 
+-    def adjust_state(self,target):
+-        self.mean[0] = self.mean[0]*50.0/target
+-        self.mean_diff[0] = self.mean_diff[0]*50.0/target
+-        self.var[0] = self.var[0]*50.0/target
+-        self.min[0] = self.min[0]*50.0/target
+-        print("Adjusting normalizer's values for D/Target by a="+str(50.0/target)+"\n")
+-
+-def write_action(memory2, aciton, wid):
+-    #alpha = 13525
+-    msg = str(wid)+" "+str(aciton)+"\0"
++    def adjust_state(self, target):
++        self.mean[0] *= 50.0 / target
++        self.mean_diff[0] *= 50.0 / target
++        self.var[0] *= 50.0 / target
++        self.min[0] *= 50.0 / target
++        print(f"Adjusting normalizer's values for D/Target by a={50.0/target}\n")
++
++def write_action(memory2, action, wid):
++    msg = f"{wid} {action}\0"
+     memory2.write(msg)
+ 
+ def main_tcp():
+-    global memory1
+-    global memory2
+-    #memory1 = sysv_ipc.SharedMemory(123456)
+-    #memory2 = sysv_ipc.SharedMemory(12345)
+-    global train_dir
+-    global sess
+-    global config
+-    global logger
+-    global normalizer
+-    global replay_memory
++    global train_dir, config, logger, normalizer, replay_memory
+ 
+     parser = argparse.ArgumentParser()
+     parser.add_argument('--target', type=float, default=1)
+@@ -451,283 +478,158 @@ def main_tcp():
+     parser.add_argument('--eval', action='store_true', default=False)
+     parser.add_argument('--scheme', type=str, default=None)
+     parser.add_argument('--train_dir', type=str, default=None)
+-    parser.add_argument('--mem_r', type=int, default = 123456)
+-    parser.add_argument('--mem_w', type=int, default = 12345)
+-
++    parser.add_argument('--mem_r', type=int, default=123456)
++    parser.add_argument('--mem_w', type=int, default=12345)
+     config = parser.parse_args()
+ 
+     if config.scheme is None:
+         sys.exit('***********************Error: No Valid TCP is given *****************')
+-
+     if config.train_dir is None:
+         sys.exit('***********************Error: Where is train_dir?! *****************')
+-    #print(config.target)
+ 
+     memory1 = sysv_ipc.SharedMemory(config.mem_r)
+     memory2 = sysv_ipc.SharedMemory(config.mem_w)
+ 
+-
+-    # TCP env parameters:
+     action_range = [-1.0, 1.0]
+     prefix = 'v0'
+-    train_dir = './train_dir/%s-%s' % (
+-        prefix,
+-        time.strftime("%m%d-%H%M%S")
+-    )
+-    train_dir = str(config.train_dir)+'/train_dir-'+str(config.scheme)
+-
 -    sess = tf.Session()
 -    global_step = tf.train.get_or_create_global_step(graph=None)
 -    summary_writer = tf.summary.FileWriter(train_dir, sess.graph)
-+    sess = tf.compat.v1.Session()
-+    global_step = tf.compat.v1.train.get_or_create_global_step(graph=None)
-+    tf.compat.v1.disable_eager_execution()
-+    summary_writer = tf.compat.v1.summary.FileWriter(train_dir, sess.graph)
++    train_dir = f"{config.train_dir}/train_dir-{config.scheme}"
++    os.makedirs(train_dir, exist_ok=True)
  
      logger = configure_logging(train_dir)
-     #logger.info("--------------------------------------------------------------------------------")
-@@ -521,12 +522,13 @@ def main_tcp():
-         action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(action_dim), sigma=float(STDDEV) * np.ones(action_dim),dt=0.5)
- #        action_noise = None
+-    #logger.info("--------------------------------------------------------------------------------")
+-    #logger.info("--------------------------------------------------------------------------------")
+-    #logger.info("--------------------------------------------------------------------------------")
+-    #logger.info("--------------------------------------------------------------------------------")
+-    #logger.info("------------------------------Start Training !!!!!------------------------------")
+-    #logger.info("--------------------------------------------------------------------------------")
+-
+-    actor = Actor(final_state_dim*rec_dim, action_dim, action_bound, "actor", use_gym=False)
+-    critic = Critic(final_state_dim*rec_dim, action_dim, action_bound, "critic", use_gym=False)
+-    #replay_memory = Memory(limit=int(MEMSIZE), action_shape=(action_dim,),
+-    #                observation_shape=(final_state_dim*rec_dim,))
++    summary_writer = tf.summary.create_file_writer(train_dir)
+ 
+-    if config.load is not None and config.eval==False:
++    actor = Actor(final_state_dim * rec_dim, action_dim, action_bound, "actor", use_gym=False)
++    critic = Critic(final_state_dim * rec_dim, action_dim, action_bound, "critic", use_gym=False)
++    replay_memory = Memory(limit=int(MEMSIZE), action_shape=(action_dim,), 
++                         observation_shape=(final_state_dim * rec_dim,))
++
++    if config.load is not None and not config.eval:
+         if os.path.isfile(os.path.join(train_dir, "replay_memory.pkl")):
+             with open(os.path.join(train_dir, "replay_memory.pkl"), 'rb') as fp:
+                 replay_memory = pickle.load(fp)
+-            print("--------load replay memory at{}---------".format(train_dir))
+-            logger.info("--------load replay memory at{}---------".format(train_dir))
+-        else:
+-            replay_memory = Memory(limit=int(MEMSIZE), action_shape=(action_dim,), observation_shape=(final_state_dim*rec_dim,))
+-    else:
+-        replay_memory = Memory(limit=int(MEMSIZE), action_shape=(action_dim,), observation_shape=(final_state_dim*rec_dim,))
++            print(f"--------load replay memory at {train_dir}---------")
++            logger.info(f"--------load replay memory at {train_dir}---------")
++        actor.model.load_weights(os.path.join(train_dir, 'model_actor.h5'))
++        critic.model.load_weights(os.path.join(train_dir, 'model_critic.h5'))
++        normalizer.load_stats()
+ 
+     if NOISE_TYPE == 1:
+-        action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(action_dim), sigma=float(STDDEV) * np.ones(action_dim),dt=1,exp=EXPLORE)
++        action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(action_dim), sigma=float(STDDEV) * np.ones(action_dim), dt=1, exp=EXPLORE)
+     elif NOISE_TYPE == 2:
+-        ## Gaussian with gradually decay
+-        action_noise = GaussianActionNoise(mu=np.zeros(action_dim), sigma=float(STDDEV) * np.ones(action_dim), explore = EXPLORE)
++        action_noise = GaussianActionNoise(mu=np.zeros(action_dim), sigma=float(STDDEV) * np.ones(action_dim), explore=EXPLORE)
+     elif NOISE_TYPE == 3:
+-        ## Gaussian without gradually decay
+-        action_noise = GaussianActionNoise(mu=np.zeros(action_dim), sigma=float(STDDEV) * np.ones(action_dim), explore = None,theta=0.1)
++        action_noise = GaussianActionNoise(mu=np.zeros(action_dim), sigma=float(STDDEV) * np.ones(action_dim), explore=None, theta=0.1)
+     elif NOISE_TYPE == 4:
+-    ## Gaussian without gradually decay
+-        action_noise = GaussianActionNoise(mu=np.zeros(action_dim), sigma=float(STDDEV) * np.ones(action_dim), explore = EXPLORE,theta=0.1,mode="step",step=NSTEP)
++        action_noise = GaussianActionNoise(mu=np.zeros(action_dim), sigma=float(STDDEV) * np.ones(action_dim), explore=EXPLORE, theta=0.1, mode="step", step=NSTEP)
+     elif NOISE_TYPE == 5:
+         action_noise = None
+     else:
+-        action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(action_dim), sigma=float(STDDEV) * np.ones(action_dim),dt=0.5)
+-#        action_noise = None
++        action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(action_dim), sigma=float(STDDEV) * np.ones(action_dim), dt=0.5)
  
 -    learner = Learner(sess, actor, critic, replay_memory, final_state_dim*rec_dim, 1, action_noise, batch_size=BATCHSIZE,
-+    learning = not config.eval
-+    learner = Learner(sess, learning, actor, critic, replay_memory, final_state_dim*rec_dim, 1, action_noise, batch_size=BATCHSIZE,
-                     gamma=GAMMA, tau=TAU, lr_a=LR_A, lr_c=LR_C,
-                     action_range=action_range, summary_writer=summary_writer)
+-                    gamma=GAMMA, tau=TAU, lr_a=LR_A, lr_c=LR_C,
+-                    action_range=action_range, summary_writer=summary_writer)
++    learner = Learner(actor, critic, replay_memory, final_state_dim * rec_dim, action_dim, action_noise,
++                     batch_size=BATCHSIZE, gamma=GAMMA, tau=TAU, lr_a=LR_A, lr_c=LR_C,
++                     action_range=action_range, summary_writer=summary_writer)
      learner.initialize()
  
 -    saver = tf.train.Saver()
-+    saver = tf.compat.v1.train.Saver()
- 
-     summary_writer.add_graph(sess.graph)
-     normalizer = Normalizer(input_dim)
-@@ -616,7 +618,7 @@ def main_tcp():
- 
-             if (j+1) % config.tb_interval == 0:
-                 # tensorboard
--                act_summary = tf.Summary()
-+                act_summary = tf.compat.v1.Summary()
-                 act_summary.value.add(tag='Step/0-Actions-Eval', simple_value=map_a0)
-                 for i in range(0,len(s1)):
-                     act_summary.value.add(tag='Step/1-Input-Eval'+str(i), simple_value=s1[i])
-@@ -638,7 +640,7 @@ def main_tcp():
-             ep_r += rew0
- 
-             if done:
--                ret_summary = tf.Summary()
-+                ret_summary = tf.compat.v1.Summary()
-                 ret_summary.value.add(tag='Performance/ReturnInEpisode-Eval', simple_value=ep_r)
-                 summary_writer.add_summary(ret_summary, episode_counter)
-                 break
-@@ -694,7 +696,7 @@ def main_tcp():
- 
-             if (j+1) % config.tb_interval == 0:
-                 # tensorboard
--                act_summary = tf.Summary()
-+                act_summary = tf.compat.v1.Summary()
-                 act_summary.value.add(tag='Step/0-Actions', simple_value=map_a0)
-                 for i in range(0,len(s1)):
-                     act_summary.value.add(tag='Step/1-Input'+str(i), simple_value=s1[i])
-@@ -721,7 +723,7 @@ def main_tcp():
-             ep_r += rew0
- 
-             if done:
--                ret_summary = tf.Summary()
-+                ret_summary = tf.compat.v1.Summary()
-                 ret_summary.value.add(tag='Performance/ReturnInEpisode', simple_value=ep_r)
-                 summary_writer.add_summary(ret_summary, episode_counter)
-                 break
-diff '--color=auto' -urp deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py deepcc-1.0_p9999/deepcc.v1.0/rl-module/models.py
---- deepcc-1.0_p9999.orig/deepcc.v1.0/rl-module/models.py	2024-10-29 22:36:39.401415649 -0700
-+++ deepcc-1.0_p9999/deepcc.v1.0/rl-module/models.py	2024-10-29 22:40:54.976580210 -0700
-@@ -26,7 +26,6 @@ SOFTWARE.
- 
- from copy import copy
- import tensorflow as tf
--import tensorflow.contrib as tc
- import numpy as np
- import math
- H1_SHAPE = 1000
-@@ -39,31 +38,32 @@ def create_input_op_shape(obs, tensor):
- 
- 
- def fc(input, output_shape, name='fc'):
--    with tf.variable_scope(name):
-+    with tf.compat.v1.variable_scope(name):
-         in_shape = input.get_shape()[-1]
--        w = tf.get_variable('w', [in_shape, output_shape],
--                            initializer=tf.contrib.layers.variance_scaling_initializer())
-+        w = tf.compat.v1.get_variable('w', [in_shape, output_shape],
-+                            initializer=tf.compat.v1.keras.initializers.VarianceScaling(scale=2.0))
-         # relu: tf.contrib.layers.variance_scaling_initializer()
-         # tanh: tf.contrib.layers.xavier_initializer()
--        b = tf.get_variable('b', [output_shape], initializer=tf.constant_initializer(0.0))
-+        b = tf.compat.v1.get_variable('b', [output_shape], initializer=tf.compat.v1.constant_initializer(0.0))
-         return tf.matmul(input, w) + b
- 
- def target_init(target, vars):
- 
--    return [tf.assign(target[i], vars[i]) for i in range(len(vars))]
-+    return [tf.compat.v1.assign(target[i], vars[i]) for i in range(min(len(vars),len(target)))]
- 
- def target_update(target, vars, tau):
-     # update target network
--    return [tf.assign(target[i], vars[i]*tau + target[i]*(1-tau)) for i in range(len(vars))]
-+    return [tf.compat.v1.assign(target[i], vars[i]*tau + target[i]*(1-tau)) for i in range(min(len(vars),len(target)))]
- 
- 
- 
- class Learner(object):
--    def __init__(self, sess, actor, critic, memory, state_dim, action_dim, action_noise, batch_size=32,
-+    def __init__(self, sess, learning, actor, critic, memory, state_dim, action_dim, action_noise, batch_size=32,
- #                 gamma=0.99, tau=0.01, lr_a=0.001, lr_c=0.002, action_range=(-1., 1.), summary_writer=None):
- #   actor'a rl is 10x smaller in the paper (0.001)
-                   gamma=0.9, tau=0.1, lr_a=0.01, lr_c=0.01, action_range=(-1., 1.), summary_writer=None):
-         self.sess = sess
-+        self.learning = learning
-         self.s_dim = state_dim
-         self.actor = actor
-         self.critic = critic
-@@ -76,27 +76,27 @@ class Learner(object):
-         self.action_noise = action_noise
-         self.action_range = action_range
-         self.summary_writer = summary_writer
--        self.s0 = tf.placeholder(tf.float32, shape=[None, self.s_dim], name='s0')
--        self.s1 = tf.placeholder(tf.float32, shape=[None, self.s_dim], name='s1')
--        self.reward = tf.placeholder(tf.float32, shape=[None, 1], name='reward')
--        self.action = tf.placeholder(tf.float32, shape=[None, action_dim], name='action')
--        self.is_terminal = tf.placeholder(tf.float32, shape=[None, 1], name='is_terminal')
--        self.critic_target = tf.placeholder(tf.float32, shape=(None, 1), name='critic_target')
 -
--        self.actor_optimizer = tf.train.AdamOptimizer(self.lr_a)
--        self.critic_optimizer = tf.train.AdamOptimizer(self.lr_c)
--        self.is_training = tf.placeholder(tf.bool, name='Actor_is_training')
--        self.is_training_c = tf.placeholder(tf.bool, name='Critic_is_training')
-+        self.s0 = tf.compat.v1.placeholder(tf.float32, shape=[None, self.s_dim], name='s0')
-+        self.s1 = tf.compat.v1.placeholder(tf.float32, shape=[None, self.s_dim], name='s1')
-+        self.reward = tf.compat.v1.placeholder(tf.float32, shape=[None, 1], name='reward')
-+        self.action = tf.compat.v1.placeholder(tf.float32, shape=[None, action_dim], name='action')
-+        self.is_terminal = tf.compat.v1.placeholder(tf.float32, shape=[None, 1], name='is_terminal')
-+        self.critic_target = tf.compat.v1.placeholder(tf.float32, shape=(None, 1), name='critic_target')
-+
-+        self.actor_optimizer = tf.compat.v1.train.AdamOptimizer(self.lr_a)
-+        self.critic_optimizer = tf.compat.v1.train.AdamOptimizer(self.lr_c)
-+        self.is_training = tf.compat.v1.placeholder(tf.bool, shape=(), name='Actor_is_training')
-+        self.is_training_c = tf.compat.v1.placeholder(tf.bool, shape=(), name='Critic_is_training')
-         # Actor
-         target_actor = copy(actor)
-         self.target_actor = target_actor
-         self.target_actor.name = 'target_actor'
-         #self.target_actor.training = False
+-    summary_writer.add_graph(sess.graph)
+     normalizer = Normalizer(input_dim)
+     state_ = state()
  
--        self.actor_out, self.scaled_actor_out = actor.create_actor_network(self.s0, self.is_training)
-+        self.actor_out, self.scaled_actor_out = actor.create_actor_network(self.s0, self.learning)
+-    if config.load is not None:
+-        saver.restore(sess, os.path.join(train_dir, 'model'))
+-        #print("loaded from checkpoint!")
+-        #logger.info("load model from checkpoint!")
++    signal.signal(signal.SIGTERM, lambda s, f: handler_term(s, f, normalizer, replay_memory, train_dir, logger, actor, critic))
++    signal.signal(signal.SIGINT, lambda s, f: handler_ctrlc(s, f, normalizer, replay_memory, train_dir, logger, actor, critic))
  
-         # create target network
--        self.target_actor_out_s1, self.target_scaled_actor_out_s1 = self.target_actor.create_actor_network(self.s1, self.is_training)
-+        self.target_actor_out_s1, self.target_scaled_actor_out_s1 = self.target_actor.create_actor_network(self.s1, self.learning)
+-        #print("loaded stats from json")
+-        #logger.info("load stats from json!")
+-        normalizer.load_stats()
+-
+-    #if EVAL:
+-    #    eval_policy(env, learner)
+-    #    return None
+-    #sleep(5)
+     prev_rid = 99999
+     target = config.target
+     p_max_window = collections.deque(maxlen=PMWSIZE)
+     p_max_window.append(0.0)
+     wid = 23
  
-         self.target_actor_update_init = target_init(self.target_actor.trainable_vars(), self.actor.trainable_vars())
-         self.target_actor_update = target_update(self.target_actor.trainable_vars(), self.actor.trainable_vars(), self.tau)
-@@ -121,7 +121,7 @@ class Learner(object):
-         self.target_q = self.reward + (1. - self.is_terminal) * gamma * self.q_s1
-         self.target_q_debug =  gamma * self.q_s1
+-    # start signal
+-    memory2.write(str(99999) + " " + str(99999) + "\0")
+-    #logger.info("ID 99999-------- RL module is ready")
+-    #logger.info("target:{}, PMWSIZE:{}".format(target, PMWSIZE))
+-    #logger.info("action, delay, throughput, reward")
+-
++    memory2.write(f"{99999} {99999}\0")
+     zero_delay_counter = 0
  
--        self.extra_update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
-+        self.extra_update_ops = tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.UPDATE_OPS)
+-    if config.eval==True:
++    if config.eval:
+         learner.action_noise = None
+-#        normalizer.adjust_state(target)
  
-         #with tf.control_dependencies(self.extra_update_ops):
-         self.actor_train_op = self.build_actor_train_op()
-@@ -129,7 +129,7 @@ class Learner(object):
+-    s0_rec_buffer = np.zeros([final_state_dim*rec_dim])
+-    s1_rec_buffer = np.zeros([final_state_dim*rec_dim])
+-    prev_rid, s0, delay_,rew0,error_code =state_.get_state(memory1, prev_rid,target,normalizer)
+-    s0_rec_buffer[-1*final_state_dim:] = s0
+-    if error_code == True:
++    s0_rec_buffer = np.zeros([final_state_dim * rec_dim])
++    s1_rec_buffer = np.zeros([final_state_dim * rec_dim])
++    prev_rid, s0, delay_, rew0, error_code = state_.get_state(memory1, prev_rid, target, normalizer)
++    s0_rec_buffer[-final_state_dim:] = s0
++    if error_code:
+         a0, _ = learner.actor_step(s0_rec_buffer)
+         a0 = a0[0]
+         map_a0 = map_action(a0)
+     else:
+-        #Using previous action:
+         map_a0 = 10
+     write_action(memory2, map_a0, wid)
+     wid = (wid + 1) % 1000
  
-         if self.summary_writer is not None:
-             # All tf.summaries should have been defined prior to running this.
--            self._merged_summaries = tf.summary.merge_all()
-+            self._merged_summaries = tf.compat.v1.summary.merge_all()
+-
+     step_counter = np.int64(0)
+     episode_counter = np.int64(0)
  
+-#### evaluation ####
+-# Evaluation the trained model
+-# usage: --load=1 --eval
+-    while(config.eval==True):
+-        #logger.info("---------Evaluation--------------------------")
+-        episode_counter += 1
+-        start_time = time.time()
+-
+-        done = False
+-        ep_r = 0.
+-        log_buffer = []
+-
+-        for j in range(MAX_EP_STEPS):
+-            step_counter += 1
+-
+-            if j == MAX_EP_STEPS-1:
+-                done = True
+-
+-            prev_rid, s1,delay_,rew0,error_code = state_.get_state(memory1, prev_rid,target,normalizer,config.eval)
+-            if error_code == True:
+-                s1_rec_buffer = np.concatenate( (s0_rec_buffer[final_state_dim:], s1) )
+-                a1, _ = learner.actor_step(s1_rec_buffer)
+-            else:
+-                #Using previous action:
+-                wid = (wid + 1) % 1000
+-                write_action(memory2, map_a0, wid)
+-                continue
+-
+-            a1 = a1[0]
+-            map_a1 = map_action(a1)
+-
+-            write_action(memory2, map_a1, wid)
+-
+-            if (j+1) % config.tb_interval == 0:
+-                # tensorboard
+-                act_summary = tf.Summary()
+-                act_summary.value.add(tag='Step/0-Actions-Eval', simple_value=map_a0)
+-                for i in range(0,len(s1)):
+-                    act_summary.value.add(tag='Step/1-Input-Eval'+str(i), simple_value=s1[i])
+-                act_summary.value.add(tag='Step/2-Reward-Eval', simple_value=rew0)
+-                if learner.action_noise!=None:
+-                    act_summary.value.add(tag='Step/3-Noise-Eval', simple_value=map_action(learner.action_noise.show()))
+-                summary_writer.add_summary(act_summary, step_counter)
++    FORCE_ALPHA = FORCE_ALPHA_INIT if config.load is None else 0
  
-     def get_target_actor_out(self, obs):
-@@ -149,12 +149,12 @@ class Learner(object):
-         self.a_gradients = self.actor_optimizer.compute_gradients(self.a_loss, var_list=self.actor.trainable_vars())
-         #print(self.actor.trainable_vars())
-         if self.summary_writer is not None:
--            with tf.variable_scope('Losses'):
-+            with tf.compat.v1.variable_scope('Losses'):
-                 a_loss_summary = tf.summary.scalar('ActorLoss', self.a_loss)
-                 for index, grad in enumerate(self.a_gradients):
-                     a_grad_summary = tf.summary.histogram("{}-grad".format(self.a_gradients[index][1].name), self.a_gradients[index])
+-            if 1:  #(j+1)%10 == 0:
+-                log_buffer = []
+-
+-            a0 = a1
+-            s0 = s1
+-            s0_rec_buffer = s1_rec_buffer
+-
+-            map_a0 = map_a1
+-            wid = (wid + 1) % 1000
+-
+-            ep_r += rew0
+-
+-            if done:
+-                ret_summary = tf.Summary()
+-                ret_summary.value.add(tag='Performance/ReturnInEpisode-Eval', simple_value=ep_r)
+-                summary_writer.add_summary(ret_summary, episode_counter)
+-                break
+-
+-        duration = time.time() - start_time
+-
+-##### training####
+-    log_parameters()
+-    if config.load==None:
+-        FORCE_ALPHA=FORCE_ALPHA_INIT
+-    else:
+-        FORCE_ALPHA=0
+-
+-    while 1:
++    while True:
+         episode_counter += 1
+         start_time = time.time()
+-
+-
+-
+         done = False
+-        ep_r = 0.
++        ep_r = 0.0
+         log_buffer = []
  
--                self._merged_summaries_actor = tf.summary.merge([a_loss_summary, a_grad_summary])
-+                self._merged_summaries_actor = tf.compat.v1.summary.merge([a_loss_summary, a_grad_summary])
- #                tf.summary.histogram('Actor_grad', self.a_gradients)
+         for j in range(MAX_EP_STEPS):
+             step_counter += 1
+-
+-            if j == MAX_EP_STEPS-1:
++            if j == MAX_EP_STEPS - 1:
+                 done = True
  
-         #self.a_gradients = list(zip(grads, self.actor.trainable_vars()))
-@@ -181,13 +181,16 @@ class Learner(object):
-         self.c_loss = tf.reduce_mean(tf.square(self.critic_out - self.target_q))
+-            prev_rid, s1,delay_,rew0,error_code = state_.get_state(memory1, prev_rid,target,normalizer,config.eval)
+-            if error_code == True:
+-                s1_rec_buffer = np.concatenate( (s0_rec_buffer[final_state_dim:], s1))
++            prev_rid, s1, delay_, rew0, error_code = state_.get_state(memory1, prev_rid, target, normalizer, config.eval)
++            if error_code:
++                s1_rec_buffer = np.concatenate((s0_rec_buffer[final_state_dim:], s1))
+                 a1, _ = learner.actor_step(s1_rec_buffer)
+             else:
+-                #Using previous action:
+                 wid = (wid + 1) % 1000
+                 write_action(memory2, map_a0, wid)
+                 continue
  
-         reg_var = [x for x in  self.critic.trainable_vars() if (x.name.endswith('w:0') or x.name.endswith('kernel:0'))]
--        reg_loss =  tc.layers.apply_regularization( tc.layers.l2_regularizer(1e-2), weights_list = reg_var  )
-+        l2_regularizer = tf.keras.regularizers.l2(1e-2)
-+        reg_loss = 0
-+        for var in reg_var:
-+            reg_loss += l2_regularizer(var)
-         self.c_loss += reg_loss
+             a1 = a1[0]
+             map_a1 = map_action(a1)
+-            if FORCE_ALPHA>0:
+-                if (step_counter%1000)==0:
+-                    FORCE_ALPHA-=0.1
+-                if FORCE_ALPHA<0.5:
+-                    FORCE_ALPHA=0
++            if FORCE_ALPHA > 0:
++                if step_counter % 1000 == 0:
++                    FORCE_ALPHA -= 0.1
++                if FORCE_ALPHA < 0.5:
++                    FORCE_ALPHA = 0
+                 else:
+-                    map_a1=FORCE_ALPHA*100
++                    map_a1 = FORCE_ALPHA * 100
+                     a1 = map_action_reverse(map_a1)
  
-         if self.summary_writer is not None:
--            with tf.variable_scope('Losses'):
-+            with tf.compat.v1.variable_scope('Losses'):
-                 c_loss_summary = tf.summary.scalar('CriticLoss', self.c_loss)
--            self._merged_summaries_critic = tf.summary.merge([c_loss_summary])
-+            self._merged_summaries_critic = tf.compat.v1.summary.merge([c_loss_summary])
+             write_action(memory2, map_a1, wid)
+             learner.store_transition(s0_rec_buffer, a0, rew0, s1_rec_buffer, done)
  
-         self.c_gradients = self.critic_optimizer.compute_gradients(self.c_loss, var_list=self.critic.trainable_vars())
-         #for i, (grad, var) in enumerate(self.c_gradients):
-@@ -200,7 +203,7 @@ class Learner(object):
+-            if (j+1) % config.tb_interval == 0:
+-                # tensorboard
+-                act_summary = tf.Summary()
+-                act_summary.value.add(tag='Step/0-Actions', simple_value=map_a0)
+-                for i in range(0,len(s1)):
+-                    act_summary.value.add(tag='Step/1-Input'+str(i), simple_value=s1[i])
+-                act_summary.value.add(tag='Step/2-Reward', simple_value=rew0)
+-                if learner.action_noise!=None:
+-                    act_summary.value.add(tag='Step/3-Noise', simple_value=map_action(learner.action_noise.show()))
+-                summary_writer.add_summary(act_summary, step_counter)
+-
+-            if 1:  #(j+1)%10 == 0:
+-                log_buffer = []
++            if (j + 1) % config.tb_interval == 0:
++                with summary_writer.as_default():
++                    tf.summary.scalar('Step/0-Actions' if not config.eval else 'Step/0-Actions-Eval', map_a0, step=step_counter)
++                    for i, val in enumerate(s1):
++                        tf.summary.scalar(f'Step/1-Input{i}' if not config.eval else f'Step/1-Input-Eval{i}', val, step=step_counter)
++                    tf.summary.scalar('Step/2-Reward' if not config.eval else 'Step/2-Reward-Eval', rew0, step=step_counter)
++                    if learner.action_noise is not None:
++                        tf.summary.scalar('Step/3-Noise' if not config.eval else 'Step/3-Noise-Eval', 
++                                        map_action(learner.action_noise.show()), step=step_counter)
  
-     def initialize(self):
+-            if episode_counter >= 0:
++            if episode_counter >= 0 and not config.eval:
+                 learner.train_step()
+                 learner.update_target()
  
--        self.sess.run(tf.global_variables_initializer())
-+        self.sess.run(tf.compat.v1.global_variables_initializer())
-         self.sess.run(self.target_actor_update_init)
-         self.sess.run(self.target_critic_update_init)
+-
+             a0 = a1
+             s0 = s1
+             s0_rec_buffer = s1_rec_buffer
+-
+             map_a0 = map_a1
+             wid = (wid + 1) % 1000
+-
+             ep_r += rew0
  
-@@ -242,7 +245,7 @@ class Learner(object):
+             if done:
+-                ret_summary = tf.Summary()
+-                ret_summary.value.add(tag='Performance/ReturnInEpisode', simple_value=ep_r)
+-                summary_writer.add_summary(ret_summary, episode_counter)
++                with summary_writer.as_default():
++                    tf.summary.scalar('Performance/ReturnInEpisode' if not config.eval else 'Performance/ReturnInEpisode-Eval', 
++                                    ep_r, step=episode_counter)
+                 break
  
-     def train_step(self):
-         #print("Hello:", tf.get_collection(tf.GraphKeys.UPDATE_OPS))
--        extra_update_ops = [v for v in tf.get_collection(tf.GraphKeys.UPDATE_OPS) if "actor" in v.name and "target" not in v.name]
-+        extra_update_ops = [v for v in tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.UPDATE_OPS) if "actor" in v.name and "target" not in v.name]
-         #extra_update_ops_c = [v for v in tf.get_collection(tf.GraphKeys.UPDATE_OPS) if "critic/" in v.name and "target" not in v.name]
-         #extra_update_ops_c1 = [v for v in tf.get_collection(tf.GraphKeys.UPDATE_OPS) if "critic_1" in v.name and "target" not in v.name]
-         #extra_update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
-@@ -322,23 +325,23 @@ class Actor(object):
-         #self.obs0 = tf.placeholder(tf.float32, shape=[None, self.s_dim], name='obs0')
+         duration = time.time() - start_time
+-    terminated_save()
  
-     def trainable_vars(self):
--        return tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=self.name)
-+        return tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.TRAINABLE_VARIABLES, scope=self.name)
- 
--    def create_actor_network(self, obs, is_training, reuse=False):
-+    def create_actor_network(self, obs, learning, reuse=False):
-         #inputs = tf.placeholder(tf.float32, [None, self.s_dim])
- 
--        with tf.variable_scope(self.name, reuse=tf.AUTO_REUSE):
-+        with tf.compat.v1.variable_scope(self.name, reuse=tf.compat.v1.AUTO_REUSE):
-             h1 = fc(obs, H1_SHAPE, name='fc1')
--            h1 = tf.layers.batch_normalization(h1, training = is_training, scale=False)
-+            h1 = tf.keras.layers.BatchNormalization(scale=False)(h1, training = learning)
-             h1 = tf.nn.relu(h1)
-             h2 = fc(h1, H2_SHAPE, name='fc2')
--            h2 = tf.layers.batch_normalization(h2, training = is_training, scale=False)
-+            h2 = tf.keras.layers.BatchNormalization(scale=False)(h2, training = learning)
-             h2 = tf.nn.relu(h2)
- 
--            #out = tf.layers.dense(h2, self.action_dim, kernel_initializer=tf.random_uniform_initializer(minval=-3e-3, maxval=3e-3))
--            #out = tf.layers.dense(h2, self.action_dim, kernel_initializer=tf.contrib.layers.xavier_initializer())
--            out = tf.layers.dense(h2, self.action_dim)#, kernel_initializer=tf.contrib.layers.xavier_initializer())
--            #out = tf.layers.batch_normalization(out, training = is_training)
-+            #out = tf.keras.layers.Dense(units=self.action_dim, kernel_initializer=tf.random_uniform_initializer(minval=-3e-3, maxval=3e-3))(h2)
-+            #out = tf.keras.layers.Dense(units=self.action_dim, kernel_initializer=tf.contrib.layers.xavier_initializer())(h2)
-+            out = tf.keras.layers.Dense(units=self.action_dim)(h2) #, kernel_initializer=tf.contrib.layers.xavier_initializer())
-+            #out = tf.keras.layers.BatchNormalization()(out, training = is_training)
-             out = tf.nn.tanh(out)
- 
-             # scale the output here, [-action_bound, action_bound]
-@@ -359,12 +362,12 @@ class Critic(object):
-         # self.obs0 = tf.placeholder(tf.float32, shape=[None, self.s_dim], name='obs0')
- 
-     def trainable_vars(self):
--        return tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=self.name)
-+        return tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.TRAINABLE_VARIABLES, scope=self.name)
- 
-     def create_critic_network(self, obs, action, is_training, reuse=False):
-         # inputs = tf.placeholder(tf.float32, [None, self.s_dim])
- 
--        with tf.variable_scope(self.name, reuse=tf.AUTO_REUSE):
-+        with tf.compat.v1.variable_scope(self.name, reuse=tf.compat.v1.AUTO_REUSE):
-             '''
-             h1 = fc(tf.concat([obs, action], axis=-1), H1_SHAPE, name='fc1')
-             h1 = tf.nn.relu(h1)
-@@ -373,7 +376,7 @@ class Critic(object):
-             h2 = tf.nn.relu(h2)
-             '''
-             h1 = fc(obs, H1_SHAPE, name='fc1')
--            #h1 = tf.layers.batch_normalization(h1, training = is_training, scale=False)
-+            #h1 = tf.keras.layers.BatchNormalization(scale=False)(h1, training = is_training)
-             #h1 = tf.contrib.layers.layer_norm(h1)
-             h1 = tf.nn.relu(h1)
- 
-@@ -387,8 +390,8 @@ class Critic(object):
-             #b2 = tf.get_variable('b', [H2_SHAPE])
-             #h2 = tf.nn.relu(tf.matmul(h1, w2_s) + tf.matmul(action, w2_a) + b2)
- 
--            #out = tf.layers.dense(h2, 1, kernel_initializer=tf.random_uniform_initializer(minval=-3e-3, maxval=3e-3))
--            out = tf.layers.dense(h2, 1)
-+            #out = tf.keras.layers.Dense(units=1, kernel_initializer=tf.random_uniform_initializer(minval=-3e-3, maxval=3e-3))(h2)
-+            out = tf.keras.layers.Dense(units=1)(h2)
-         return out
- 
- 
+ if __name__ == '__main__':
+     main_tcp()

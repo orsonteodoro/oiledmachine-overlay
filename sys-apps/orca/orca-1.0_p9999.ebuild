@@ -84,7 +84,7 @@ BDEPEND+="
 "
 PATCHES+=(
 	"${FILESDIR}/${PN}-1.0_p9999-production-with-agnostic-sudo.patch"
-	"${FILESDIR}/${PN}-1.0_p9999-tf2.patch"
+	"A${FILESDIR}/${PN}-1.0_p9999-tf2.patch"
 )
 
 unpack_live() {
