@@ -49,7 +49,13 @@ RDEPEND+="
 	$(python_gen_cond_dep '
 		dev-python/sysv-ipc[${PYTHON_USEDEP}]
 	')
-	=sci-ml/tensorflow-2.17*[${PYTHON_SINGLE_USEDEP},python]
+	|| (
+		=sci-ml/tensorflow-2.17*[${PYTHON_SINGLE_USEDEP},-keras3,python]
+		=sci-ml/tensorflow-2.18*[${PYTHON_SINGLE_USEDEP},-keras3,python]
+		=sci-ml/tensorflow-2.19*[${PYTHON_SINGLE_USEDEP},-keras3,python]
+	)
+	sci-ml/tensorflow:=
+	!dev-python/keras
 	dev-python/gym[${PYTHON_SINGLE_USEDEP}]
 	app-alternatives/sh
 	sys-process/procps

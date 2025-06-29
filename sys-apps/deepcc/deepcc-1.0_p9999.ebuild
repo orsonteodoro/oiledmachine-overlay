@@ -48,7 +48,13 @@ RDEPEND+="
 		>=dev-python/sysv-ipc-1.0.0[${PYTHON_USEDEP}]
 	')
 	>=net-misc/iperf-3.1.3
-	=sci-ml/tensorflow-2.17*[${PYTHON_SINGLE_USEDEP},python]
+	|| (
+		=sci-ml/tensorflow-2.17*[${PYTHON_SINGLE_USEDEP},-keras3,python]
+		=sci-ml/tensorflow-2.18*[${PYTHON_SINGLE_USEDEP},-keras3,python]
+		=sci-ml/tensorflow-2.19*[${PYTHON_SINGLE_USEDEP},-keras3,python]
+	)
+	sci-ml/tensorflow:=
+	!dev-python/keras
 	app-alternatives/sh
 	sys-process/procps
 	sys-process/psmisc
