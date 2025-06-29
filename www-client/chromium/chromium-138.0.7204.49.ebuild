@@ -119,8 +119,8 @@ te th tr uk ur vi zh-CN zh-TW
 "
 CHROMIUM_TOOLCHAIN=1
 
-CROMITE_COMMIT="b4f8d96284c854cbe6448d2e30ee5a30ce3f0b82" # Based on most recent either tools/under-control/src/RELEASE or build/RELEASE
-CROMITE_PV="137.0.7151.56"
+CROMITE_COMMIT="f00a8496d6df699c627007803f8f653b949a0db3" # Based on most recent either tools/under-control/src/RELEASE or build/RELEASE
+CROMITE_PV="138.0.7204.50"
 
 # About PGO version compatibility
 #
@@ -163,8 +163,8 @@ GTK4_PV="4.8.3"
 LIBVA_PV="2.17.0"
 # SHA512 about_credits.html fingerprint: \
 LICENSE_FINGERPRINT="\
-fbe8f82c32a852554f7912c4bfece47dc5c1654f5d62b627e7506b03b87a7189\
-d52141b38a970bc4b539d0d0ec0f711781e259b179f2631aaa4b1849bdfc0e1b\
+ef11ff7228c6f8a59b62a70741907cfaff2ff335fa7b39f659a08430a188e4fc\
+353df502aeaa315263b5b7b05ec49d2286f49d7219b63212123654a99acc92ed\
 "
 if [[ "${ALLOW_SYSTEM_TOOLCHAIN}" == "1" ]] ; then
 	LLVM_COMPAT=( 22 21 ) # Can use [CURRENT_LLVM_MAJOR_VERSION+1 or CURRENT_LLVM_MAJOR_VERSION] inclusive
@@ -179,13 +179,13 @@ LLVM_OFFICIAL_SLOT="${LLVM_COMPAT[-1]}" # Cr official slot
 LLVM_SLOT="" # Global variable
 LTO_TYPE="" # Global variable
 MESA_PV="20.3.5"
-MITIGATION_DATE="Jun 02, 2025" # Official annoucement (blog)
-MITIGATION_LAST_UPDATE=1748634600 # From `date +%s -d "2025-05-30 12:50 PM PDT"` From tag in GH
-MITIGATION_URI="https://chromereleases.googleblog.com/2025/06/stable-channel-update-for-desktop.html"
+MITIGATION_DATE="Jun 24, 2025" # Official annoucement (blog)
+MITIGATION_LAST_UPDATE=1750714440 # From `date +%s -d "2025-06-23 2:34 PM PDT"` From tag in GH
+MITIGATION_URI="https://chromereleases.googleblog.com/2025/06/stable-channel-update-for-desktop_24.html"
 VULNERABILITIES_FIXED=(
-	# 20250602
-	"CVE-2025-5419;OOBR, DoS, DT, ID;High"
-	"CVE-2025-5068;UAF, DoS, DT, ID;High"
+	"CVE-2025-6557;CE, DT, ID;Medium"
+	"CVE-2025-6555;DT, ID;Medium"
+	"CVE-2025-6556;DT, ID;Medium"
 )
 NABIS=0 # Global variable
 NODE_VERSION=22
@@ -195,7 +195,7 @@ PATENT_STATUS=(
 )
 PPC64_HASH="a85b64f07b489b8c6fdb13ecf79c16c56c560fc6"
 PATCHSET_PPC64="128.0.6613.84-1raptor0~deb12u1"
-PATCH_REVISION=""
+PATCH_REVISION="-1"
 PATCH_VER="${PV%%\.*}${PATCH_REVISION}"
 PGO_LLVM_SUPPORTED_VERSIONS=(
 	"22.0.0.9999"
@@ -207,12 +207,12 @@ PREGENERATED_PGO_PROFILE_MIN_LLVM_SLOT="${LLVM_MIN_SLOT}"
 PYTHON_COMPAT=( "python3_"{9..13} )
 PYTHON_REQ_USE="xml(+)"
 QT6_PV="6.4.2"
-UNGOOGLED_CHROMIUM_PV="137.0.7151.68-1"
+UNGOOGLED_CHROMIUM_PV="138.0.7204.49-1"
 USE_LTO=0 # Global variable
 # https://github.com/chromium/chromium/blob/137.0.7151.68/tools/clang/scripts/update.py#L38 \
 # grep 'CLANG_REVISION = ' ${S}/tools/clang/scripts/update.py -A1 | cut -c 18- # \
 LLVM_OFFICIAL_SLOT="21" # Cr official slot
-TEST_FONT="f26f29c9d3bfae588207bbc9762de8d142e58935c62a86f67332819b15203b35"
+TEST_FONT="a28b222b79851716f8358d2800157d9ffe117b3545031ae51f69b7e1e1b9a969"
 # https://github.com/chromium/chromium/blob/137.0.7151.68/tools/rust/update_rust.py#L37 \
 # grep 'RUST_REVISION = ' ${S}/tools/rust/update_rust.py -A1 | cut -c 17- # \
 RUST_NEEDS_LLVM="yes please"
@@ -1971,7 +1971,7 @@ ewarn
 	# The emerge package system will over prune when it should not when it
 	# uses the mv merge technique with sandbox disabled.
 
-	local tc_count_expected=5478
+	local tc_count_expected=4743
 	local tc_count_actual=$(cat "/usr/share/chromium/toolchain/file-count")
 	if (( ${tc_count_actual} != ${tc_count_expected} )) ; then
 ewarn
@@ -1983,7 +1983,7 @@ ewarn "Expected file count:  ${tc_count_expected}"
 ewarn
 	fi
 
-	local sources_count_expected=536653
+	local sources_count_expected=536234
 	local sources_count_actual=$(cat "/usr/share/chromium/sources/file-count")
 	if (( ${sources_count_actual} != ${sources_count_expected} )) ; then
 ewarn
@@ -2339,9 +2339,8 @@ einfo "Applying the distro patchset ..."
 		"${FILESDIR}/chromium-134-bindgen-custom-toolchain.patch"
 		"${FILESDIR}/chromium-135-oauth2-client-switches.patch"
 		"${FILESDIR}/chromium-135-map_droppable-glibc.patch"
-		"${FILESDIR}/chromium-136-drop-nodejs-ver-check.patch"
 		"${FILESDIR}/chromium-137-openh264-include-path.patch"
-		"${FILESDIR}/chromium-137-pdfium-system-libpng.patch"
+		"${FILESDIR}/chromium-138-nodejs-version-check.patch"
 	)
 
 	if _use_system_toolchain ; then
@@ -2948,8 +2947,8 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		third_party/devtools-frontend/src/front_end/third_party/wasmparser
 		third_party/devtools-frontend/src/front_end/third_party/web-vitals
 		third_party/devtools-frontend/src/third_party
-		third_party/distributed_point_functions
 		third_party/dom_distiller_js
+		third_party/dragonbox
 		third_party/eigen3
 		third_party/emoji-segmenter
 		third_party/farmhash
@@ -3084,7 +3083,6 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		third_party/tensorflow_models
 		third_party/tensorflow-text
 		third_party/tflite
-		third_party/tflite/src/third_party/eigen3
 		third_party/tflite/src/third_party/fft2d
 		third_party/tflite/src/third_party/xla/third_party/tsl
 		third_party/tflite/src/third_party/xla/xla/tsl/framework
@@ -3104,7 +3102,6 @@ ewarn "The use of patching can interfere with the pregenerated PGO profile."
 		third_party/webrtc/modules/third_party/fft
 		third_party/webrtc/modules/third_party/g711
 		third_party/webrtc/modules/third_party/g722
-		third_party/webrtc/rtc_base/third_party/base64
 		third_party/webrtc/rtc_base/third_party/sigslot
 		third_party/widevine
 		third_party/woff2
@@ -6276,29 +6273,63 @@ pkg_postinst() {
 	readme.gentoo_print_elog
 
 	if ! use headless ; then
-		if use vaapi ; then
+		if use vaapi; then
 	# It says 3 args:
 	# https://github.com/chromium/chromium/blob/137.0.7151.68/docs/gpu/vaapi.md#vaapi-on-linux
 einfo
-einfo "VA-API is disabled by default at runtime.  You have to enable it by"
-einfo "adding --enable-features=VaapiVideoDecoder --ignore-gpu-blocklist with"
-einfo "either --use-gl=desktop or --use-gl=egl to the CHROMIUM_FLAGS in"
-einfo "/etc/chromium/default."
+einfo "Hardware-accelerated video decoding configuration:"
+einfo
+einfo "Chromium supports multiple backends for hardware acceleration. To enable one,"
+einfo "Add to CHROMIUM_FLAGS in /etc/chromium/default:"
+einfo
+einfo "1. VA-API with OpenGL (recommended for most users):"
+einfo
+einfo "   --enable-features=AcceleratedVideoDecodeLinuxGL"
+einfo "   VaapiVideoDecoder may need to be added as well, but try without first."
+einfo
+			if use wayland ; then
+einfo "2. Enhanced Wayland/EGL performance:"
+einfo
+einfo "   --enable-features=AcceleratedVideoDecodeLinuxGL,AcceleratedVideoDecodeLinuxZeroCopyGL"
+einfo
+			fi
+			if use X ; then
+einfo "$(usex wayland "3" "2"). VA-API with Vulkan:"
+einfo
+einfo "   --enable-features=VaapiVideoDecoder,VaapiIgnoreDriverChecks,Vulkan,DefaultANGLEVulkan,VulkanFromANGLE"
+einfo
+				if use wayland ; then
+einfo "   NOTE: Vulkan acceleration requires X11 and will not work under Wayland sessions."
+einfo "   Use OpenGL-based acceleration instead when running under Wayland."
+einfo
+				fi
+			fi
+einfo "Additional options:"
+einfo
+einfo "  To enable hardware-accelerated encoding (if supported)"
+einfo "  add 'AcceleratedVideoEncoder' to your feature list"
+einfo "  VaapiIgnoreDriverChecks bypasses driver compatibility checks"
+einfo "  (may be needed for newer/unsupported hardware)"
+einfo
+		else
+einfo
+einfo "This Chromium build was compiled without VA-API support, which provides"
+einfo "hardware-accelerated video decoding."
 einfo
 		fi
-		if use screencast ; then
+		if use screencast; then
 einfo
-einfo "Screencast is disabled by default at runtime. Either enable it by"
-einfo "navigating to chrome://flags/#enable-webrtc-pipewire-capturer inside"
-einfo "Chromium or add --enable-features=WebRTCPipeWireCapturer to"
-einfo "CHROMIUM_FLAGS in /etc/chromium/default."
+einfo "Screencast is disabled by default at runtime. Either enable it"
+einfo "by navigating to chrome://flags/#enable-webrtc-pipewire-capturer"
+einfo "inside Chromium or add --enable-features=WebRTCPipeWireCapturer"
+einfo "to CHROMIUM_FLAGS in /etc/chromium/default."
 einfo
 		fi
-		if use gtk4 ; then
+		if use gtk4; then
 einfo
-einfo "Chromium prefers GTK3 over GTK4 at runtime. To override this behavior"
-einfo "you need to pass --gtk-version=4, e.g. by adding it to CHROMIUM_FLAGS in"
-einfo "/etc/chromium/default."
+einfo "Chromium prefers GTK3 over GTK4 at runtime. To override this"
+einfo "behavior you need to pass --gtk-version=4, e.g. by adding it"
+einfo "to CHROMIUM_FLAGS in /etc/chromium/default."
 einfo
 		fi
 	fi
