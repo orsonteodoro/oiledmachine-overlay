@@ -19,6 +19,7 @@ EAPI=8
 # 128.8.0 -> 128.9.0
 # 128.9.0 -> 128.10.0
 # 128.10.0 -> 128.11.0
+# 128.11.0 -> 128.12.0
 
 # SECURITY:  If this gets bumped, then dev-lang/spidermonkey should be bumped too with the same ESR version.
 

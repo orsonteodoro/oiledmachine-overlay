@@ -19,6 +19,7 @@ EAPI=8
 # 136.0 -> 137.0
 # 137.0.2 -> 138.0.1
 # 138.0.1 -> 139.0.1
+# 139.0.1 -> 140.0
 
 # Originally based on the firefox-89.0.ebuild from the gentoo-overlay,
 # with update sync updated to this version of the ebuild.
@@ -160,8 +161,10 @@ FFMPEG_COMPAT=(
 	"51.53.53" # 0.10
 	"50.53.53" # 0.8
 )
-FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-03.tar.xz"
+#FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-03.tar.xz"
+FIREFOX_PATCHSET="firefox-139-patches-03.tar.xz"
 FIREFOX_LOONG_PATCHSET="firefox-${PV%%.*}-loong-patches-01.tar.xz"
+FIREFOX_LOONG_PATCHSET="firefox-139-loong-patches-02.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
 GTK3_PV="3.14.5"
