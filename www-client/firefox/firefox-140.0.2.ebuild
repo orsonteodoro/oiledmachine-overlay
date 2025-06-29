@@ -163,7 +163,7 @@ FFMPEG_COMPAT=(
 )
 #FIREFOX_PATCHSET="firefox-${PV%%.*}-patches-03.tar.xz"
 FIREFOX_PATCHSET="firefox-139-patches-03.tar.xz"
-FIREFOX_LOONG_PATCHSET="firefox-${PV%%.*}-loong-patches-01.tar.xz"
+#FIREFOX_LOONG_PATCHSET="firefox-${PV%%.*}-loong-patches-01.tar.xz"
 FIREFOX_LOONG_PATCHSET="firefox-139-loong-patches-02.tar.xz"
 GAPI_KEY_MD5="709560c02f94b41f9ad2c49207be6c54"
 GLOCATIONAPI_KEY_MD5="ffb7895e35dedf832eb1c5d420ac7420"
@@ -175,21 +175,24 @@ f083c0a8f948b411fff5fd067f17ac5f825bb7e8e918e5c0c3739c49df26c491\
 LLVM_COMPAT=( 20 19 ) # Limited based on rust
 LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
-MITIGATION_DATE="May 27, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1748563500 # From `date +%s -d "2025-05-29 17:05"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-42/"
+MITIGATION_DATE="Jun 24, 2025" # Advisory date
+MITIGATION_LAST_UPDATE=1751064780 # From `date +%s -d "2025-06-27 15:53"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-51/"
 SEVERITY_LABEL="Severity:"
 VULNERABILITIES_FIXED=(
-	"MFSA-TMP-2025-0001;DF, MC;Critical"
-	"CVE-2025-5272;ZC, MC, CE, DoS, DT, ID;High"
-	"CVE-2025-5268;ZC, MC, CE, DT, ID;Medium"
-	"CVE-2025-5270;ZC, ID;High"
-	"CVE-2025-5266;ZC, DT, ID;Medium"
-	"CVE-2025-5271;ZC, DT, ID;Medium"
-	"CVE-2025-5264;CE, DoS, DT, ID;Medium"
-	"CVE-2025-5265;CE, DoS, DT, ID;Medium"
-	"CVE-2025-5267;DT, ID;Medium"
-	"CVE-2025-5263;ID;Medium"
+	"CVE-2025-6424;UAF, ZC, DoS, DT, ID;Critical"
+	"CVE-2025-6433;ZC, DoS, DT, ID;Critical"
+	"CVE-2025-6427;ZC, DoS, DT, ID;Critical"
+	"CVE-2025-6432;ZC, DoS, DT, ID;High"
+	"CVE-2025-6435;ZC, DoS, DT, ID;High"
+	"CVE-2025-6436;ZC, DoS, DT, ID;High"
+	"CVE-2025-6426;DoS, DT, ID;High"
+	"CVE-2025-6430;DT, ID;Medium"
+	"CVE-2025-6425;ID;Medium"
+	"CVE-2025-6428;DT;Medium"
+	"CVE-2025-6429;DT;Medium"
+	"CVE-2025-6431;DT;Medium"
+	"CVE-2025-6434;DT;Medium"
 )
 MOZ_ESR=
 MOZ_LANGS=(
@@ -510,7 +513,7 @@ CDEPEND="
 	${PATENT_CDEPENDS}
 	>=app-accessibility/at-spi2-core-2.46.0:2[${MULTILIB_USEDEP}]
 	>=dev-libs/glib-2.42:2[${MULTILIB_USEDEP}]
-	>=dev-libs/nss-3.110[${MULTILIB_USEDEP}]
+	>=dev-libs/nss-3.112[${MULTILIB_USEDEP}]
 	>=dev-libs/nspr-4.36.0[${MULTILIB_USEDEP}]
 	>=media-libs/fontconfig-2.7.0[${MULTILIB_USEDEP}]
 	>=media-libs/freetype-2.13.3[${MULTILIB_USEDEP}]

@@ -175,19 +175,16 @@ dcda5b12dce8c42c9a09e28f5320679d1d6bb506a0c429005046b5606a341ab2\
 LLVM_COMPAT=( 18 17 ) # Limited based on rust
 LTO_TYPE="" # Global variable
 MAPI_KEY_MD5="3927726e9442a8e8fa0e46ccc39caa27"
-MITIGATION_DATE="May 27, 2025" # Advisory date
-MITIGATION_LAST_UPDATE=1748272680 # From `date +%s -d "2025-05-26 08:18"` from ftp date matching version in report
-MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-44/"
+MITIGATION_DATE="Jun 24, 2025" # Advisory date
+MITIGATION_LAST_UPDATE=1750707660 # From `date +%s -d "2025-06-23 12:41"` from ftp date matching version in report
+MITIGATION_URI="https://www.mozilla.org/en-US/security/advisories/mfsa2025-53/"
 SEVERITY_LABEL="Severity:"
 VULNERABILITIES_FIXED=(
-	"MFSA-TMP-2025-0001;DF, MC;Critical"
-	"CVE-2025-5268;ZC, MC, CE, DT, ID;Medium"
-	"CVE-2025-5269;ZC, MC, CE, DT, ID;Medium"
-	"CVE-2025-5266;ZC, DT, ID;Medium"
-	"CVE-2025-5264;CE, DoS, DT, ID;Medium"
-	"CVE-2025-5265;CE, DoS, DT, ID;Medium"
-	"CVE-2025-5267;DT, ID;Medium"
-	"CVE-2025-5263;ID;Medium"
+	"CVE-2025-6424;UAF, ZC, DoS, DT, ID;Critical"
+	"CVE-2025-6426;DoS, DT, ID;High"
+	"CVE-2025-6430;DT, ID;Medium"
+	"CVE-2025-6425;ID;Medium"
+	"CVE-2025-6429;DT;Medium"
 )
 MOZ_ESR="yes"
 MOZ_LANGS=(
@@ -249,7 +246,7 @@ inherit dhms flag-o-matic gnome2-utils lcnr linux-info llvm multilib-minimal
 inherit multiprocessing optfeature pax-utils python-any-r1 readme.gentoo-r1 rust
 inherit rustflags-hardened toolchain-funcs virtualx vf xdg
 
-KEYWORDS="~amd64 ~arm64 ~ppc64 ~riscv ~x86"
+KEYWORDS="amd64 ~arm64 ~ppc64 ~riscv ~x86"
 S="${WORKDIR}/${PN}-${PV/e}"
 S_BAK="${WORKDIR}/${PN}-${PV/e}"
 if [[ "${PV}" =~ *"_rc"* ]] ; then
