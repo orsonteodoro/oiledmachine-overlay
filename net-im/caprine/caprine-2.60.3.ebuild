@@ -17,7 +17,7 @@ ELECTRON_APP_SNAP_ARCHIVE_NAME="${PN}_${PV}_amd64.snap"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="35.0.1" # Cr 134.0.6998.44, node 22.14.0
+	ELECTRON_APP_ELECTRON_PV="37.1.0" # Cr 138.0.7204.35, node 22.16.0
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="29.0.1" # Cr 122.0.6261.57, node 20.9.0
@@ -50,9 +50,9 @@ KEYWORDS="~amd64"
 DESCRIPTION="Elegant Facebook Messenger desktop app"
 HOMEPAGE="https://github.com/sindresorhus/caprine"
 LICENSE="
-	MIT
-	electron-35.0.1-chromium.html
 	${ELECTRON_APP_LICENSES}
+	electron-37.1.0-chromium.html
+	MIT
 "
 # For ELECTRON_APP_LICENSES, see
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/eclass/electron-app.eclass#L67
@@ -61,7 +61,7 @@ SLOT="0"
 # Deps based on their CI
 IUSE+="
 	firejail
-	ebuild_revision_13
+	ebuild_revision_14
 "
 BDEPEND+="
 	>=net-libs/nodejs-${NODE_VERSION}:${NODE_VERSION}[webassembly(+)]
@@ -125,6 +125,11 @@ einfo "Updating lockfile done."
 	fi
 }
 
+src_prepare() {
+	eapply "${FILESDIR}/${PN}-2.60.3-app-dock-optional-chaining.patch"
+	eapply_user
+}
+
 src_compile() {
 	cd "${S}" || die
 	chmod +x "${S}/node_modules/electron/install.js" || die
@@ -177,3 +182,4 @@ einfo
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (2.60.3, 20250116 with Electron 34.0.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (2.60.3, 20250228 with Electron 35.0.0-beta.11)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (2.60.3, 20250311 with Electron 35.0.1)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (2.60.3, 20250629 with Electron 37.1.0)

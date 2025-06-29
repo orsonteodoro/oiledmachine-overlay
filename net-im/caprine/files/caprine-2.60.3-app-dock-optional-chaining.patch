@@ -1,0 +1,59 @@
+--- a/source/index.ts.orig	2024-12-01 11:22:52.000000000 -0800
++++ b/source/index.ts	2025-06-29 11:02:08.838248686 -0700
+@@ -116,7 +116,7 @@ async function updateBadge(messageCount:
+ 			&& config.get('bounceDockOnMessage')
+ 			&& previousMessageCount !== messageCount
+ 		) {
+-			app.dock.bounce('informational');
++			app.dock?.bounce('informational');
+ 			previousMessageCount = messageCount;
+ 		}
+ 	}
+@@ -389,11 +389,11 @@ function createMainWindow(): BrowserWind
+ 		};
+ 
+ 		dockMenu = Menu.buildFromTemplate([firstItem]);
+-		app.dock.setMenu(dockMenu);
++		app.dock?.setMenu(dockMenu);
+ 
+ 		// Dock icon is hidden initially on macOS
+ 		if (config.get('showDockIcon')) {
+-			app.dock.show();
++			app.dock?.show();
+ 		}
+ 
+ 		ipc.once('conversations', () => {
+@@ -416,7 +416,7 @@ function createMainWindow(): BrowserWind
+ 				},
+ 			}));
+ 
+-			app.dock.setMenu(Menu.buildFromTemplate([firstItem, {type: 'separator'}, ...items]));
++			app.dock?.setMenu(Menu.buildFromTemplate([firstItem, {type: 'separator'}, ...items]));
+ 		});
+ 	}
+ 
+--- a/source/menu-bar-mode.ts.orig	2024-12-01 11:22:52.000000000 -0800
++++ b/source/menu-bar-mode.ts	2025-06-29 11:02:14.422126663 -0700
+@@ -32,7 +32,7 @@ export function toggleMenuBarMode(window
+ 		globalShortcut.unregister(menuBarShortcut);
+ 
+ 		tray.destroy();
+-		app.dock.show();
++		app.dock?.show();
+ 		window.show();
+ 	}
+ }
+--- a/source/tray.ts.orig	2024-12-01 11:22:52.000000000 -0800
++++ b/source/tray.ts	2025-06-29 11:02:21.846121666 -0700
+@@ -56,9 +56,9 @@ export default {
+ 						config.set('showDockIcon', menuItem.checked);
+ 
+ 						if (menuItem.checked) {
+-							app.dock.show();
++							app.dock?.show();
+ 						} else {
+-							app.dock.hide();
++							app.dock?.hide();
+ 						}
+ 
+ 						const dockMenuItem = contextMenu.getMenuItemById('dockMenu')!;
