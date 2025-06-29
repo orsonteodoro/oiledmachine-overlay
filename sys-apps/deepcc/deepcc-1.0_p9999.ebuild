@@ -44,27 +44,11 @@ REQUIRED_USE+="
 # Keras is not an upstream requirement but used to replace deprecated functions/methods
 RDEPEND+="
 	${PYTHON_DEPS}
-	|| (
-		(
-			=dev-python/keras-2.14*[${PYTHON_SINGLE_USEDEP}]
-			=sci-ml/tensorflow-2.14*[${PYTHON_SINGLE_USEDEP},python]
-			=sci-visualization/tensorboard-2.14*[${PYTHON_SINGLE_USEDEP}]
-		)
-		(
-			=dev-python/keras-2.15[${PYTHON_SINGLE_USEDEP}]
-			=sci-ml/tensorflow-2.15*[${PYTHON_SINGLE_USEDEP},python]
-			=sci-visualization/tensorboard-2.15*[${PYTHON_SINGLE_USEDEP}]
-		)
-		(
-			>=dev-python/keras-3.1[${PYTHON_SINGLE_USEDEP}]
-			=sci-ml/tensorflow-2.16*[${PYTHON_SINGLE_USEDEP},python]
-			=sci-visualization/tensorboard-2.16*[${PYTHON_SINGLE_USEDEP}]
-		)
-	)
 	$(python_gen_cond_dep '
 		>=dev-python/sysv-ipc-1.0.0[${PYTHON_USEDEP}]
 	')
 	>=net-misc/iperf-3.1.3
+	=sci-ml/tensorflow-2.17*[${PYTHON_SINGLE_USEDEP},python]
 	app-alternatives/sh
 	sys-process/procps
 	sys-process/psmisc
