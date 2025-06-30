@@ -9,12 +9,12 @@ MY_PV="${PV/_beta/-beta.}"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="35.0.1" # Cr 134.0.6998.44, node 22.14.0
+	ELECTRON_APP_ELECTRON_PV="37.1.0" # Cr 138.0.7204.35, node 22.16.0
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="28.3.3" # Cr 120.0.6099.291, node 18.18.2
 fi
-NODE_VERSION=18
+NODE_VERSION=20
 #NPM_AUDIT_FIX=0
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
@@ -64,7 +64,7 @@ LICENSE="
 # OFL-1.1 - Poppins-*.ttf
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	LICENSE+="
-		electron-35.0.1-chromium.html
+		electron-37.1.0-chromium.html
 	"
 else
 	LICENSE+="
@@ -188,6 +188,7 @@ src_install() {
 	electron-app_set_sandbox_suid "/opt/${PN}/chrome-sandbox"
 }
 
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta11 (20250630 with electron 37.1.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta8 (20250312 with electron 35.0.1)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta8 (20250208 with electron 34.1.1)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 1.0.0_beta7 (20250117 with electron 34.0.0)
