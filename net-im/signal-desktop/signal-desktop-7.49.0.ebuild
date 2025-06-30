@@ -27,11 +27,12 @@ NPM_DEDUPE_ARGS=(
 # prebuilt-install depends on node-abi
 # Use the newer Electron to increase mitigation with vendor static libs.
 AT_TYPES_NODE_PV="20.17.6"
-ELECTRON_BUILDER_PV="24.13.3"
+ELECTRON_BUILDER_PV="26.0.14"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
-	ELECTRON_APP_ELECTRON_PV="35.0.3" # Cr 134.0.6998.88, node 22.14.0
+	ELECTRON_APP_ELECTRON_PV="37.1.0" # Cr 138.0.7204.35, node 22.16.0
+#	ELECTRON_APP_ELECTRON_PV="35.0.3" # Cr 134.0.6998.88, node 22.14.0
 else
 	# Upstream's choice
 	ELECTRON_APP_ELECTRON_PV="34.2.0" # Cr 132.0.6834.196, node 20.18.2
@@ -45,7 +46,7 @@ if [[ "${PNPM_UPDATE_LOCK}" != "1" ]] ; then
 	PNPM_INSTALL_ARGS+=( "--force" )
 fi
 RUST_MAX_VER="1.81.0" # Inclusive
-RUST_MIN_VER="1.81.0" # Corresponds to llvm-18.1.  Rust is required for @swc/core
+RUST_MIN_VER="1.81.0" # Corresponds to llvm-19.1.  Rust is required for @swc/core
 RUST_PV="${RUST_MIN_VER}"
 QA_PREBUILT="
 	opt/Signal/chrome_crashpad_handler
@@ -83,7 +84,7 @@ LICENSE="
 "
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	LICENSE+="
-		electron-35.0.1-chromium.html
+		electron-37.1.0-chromium.html
 	"
 else
 	LICENSE+="
@@ -285,7 +286,7 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 																								#   @octokit/request-error
 																								# CVE-2025-25289, CVE-2025-25288, CVE-2025-25290; DoS; Low
 		}
-		patch_edits_pnpm
+#		patch_edits_pnpm
 
 		local deps=()
 		pushd "sticker-creator" >/dev/null 2>&1 || die
@@ -293,7 +294,7 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 				"@babel/runtime@7.26.10"
 				"@babel/helpers@7.26.10"
 			)
-			epnpm install ${deps[@]} -P ${PNPM_INSTALL_ARGS[@]}
+#			epnpm install ${deps[@]} -P ${PNPM_INSTALL_ARGS[@]}
 			deps=(
 				"cross-spawn@6.0.6"
 				"esbuild@0.25.0"
@@ -301,7 +302,7 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 				"rollup@3.29.5"
 				"vite@4.5.6"
 			)
-			epnpm install ${deps[@]} -D ${PNPM_INSTALL_ARGS[@]}
+#			epnpm install ${deps[@]} -D ${PNPM_INSTALL_ARGS[@]}
 		popd >/dev/null 2>&1 || die
 
 		pushd "danger" >/dev/null 2>&1 || die
@@ -313,7 +314,7 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 				"micromatch@4.0.8"
 				"@octokit/rest@20.1.2"
 			)
-			epnpm install ${deps[@]} -P ${PNPM_INSTALL_ARGS[@]}
+#			epnpm install ${deps[@]} -P ${PNPM_INSTALL_ARGS[@]}
 		popd >/dev/null 2>&1 || die
 
 		deps=(
@@ -322,7 +323,7 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 			"esbuild@0.25.0"
 			"got@11.8.5"
 		)
-		epnpm install ${deps[@]} -P ${PNPM_INSTALL_ARGS[@]}
+#		epnpm install ${deps[@]} -P ${PNPM_INSTALL_ARGS[@]}
 		deps=(
 			"@octokit/plugin-paginate-rest@9.2.2"
 			"@octokit/request@8.4.1"
@@ -331,7 +332,7 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 			"axios@1.8.2"
 			"patch-package@8.0.0"
 		)
-		epnpm install ${deps[@]} -D ${PNPM_INSTALL_ARGS[@]}
+#		epnpm install ${deps[@]} -D ${PNPM_INSTALL_ARGS[@]}
 
 		epnpm audit fix ${PNPM_AUDIT_FIX_ARGS[@]}
 
