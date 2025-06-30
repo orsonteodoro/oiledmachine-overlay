@@ -13,7 +13,7 @@ MY_PN="${PN/-/}"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="34.3.2" # Cr 132.0.6834.210, node 20.18.3
+	ELECTRON_APP_ELECTRON_PV="37.1.0" # Cr 138.0.7204.35, node 22.16.0
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="31.3.1" # Cr 126.0.6478.185, node 20.15.1
@@ -70,7 +70,7 @@ LICENSE="
 "
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	LICENSE+="
-		electron-34.3.2-chromium.html
+		electron-37.1.0-chromium.html
 	"
 else
 	LICENSE+="
@@ -317,6 +317,7 @@ pkg_postinst() {
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20250117 with electron 34.0.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20250214 with electron 34.1.1)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20250312 with electron 34.3.2)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED (3.64.0, 20250630 with electron 37.1.0)
 # UI load:  pass
 # Load video:  pass
 # Export by segment:  pass
