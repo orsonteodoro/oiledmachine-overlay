@@ -14,7 +14,7 @@ _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 # See https://releases.electronjs.org/releases.json for version details.
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer preference
-	ELECTRON_APP_ELECTRON_PV="34.3.2" # Cr 132.0.6834.210, node 20.18.3
+	ELECTRON_APP_ELECTRON_PV="37.1.0" # Cr 138.0.7204.35, node 22.16.0
 else
 	# Upstream preference
 	ELECTRON_APP_ELECTRON_PV="27.3.10" # Cr 118.0.5993.159, node 18.17.1
@@ -103,7 +103,7 @@ THIRD_PARTY_LICENSES="
 "
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	THIRD_PARTY_LICENSES+="
-		electron-34.3.2-chromium.html
+		electron-37.1.0-chromium.html
 	"
 else
 	THIRD_PARTY_LICENSES+="
@@ -119,7 +119,7 @@ RESTRICT="mirror"
 SLOT="0"
 IUSE+="
 	custom-models
-	ebuild_revision_9
+	ebuild_revision_10
 	firejail
 "
 RDEPEND+="
@@ -257,3 +257,4 @@ ewarn "You need vulkan drivers to use ${PN}."
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 2.9.9 (20240211)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20250115, electron 34.0.0)
 # OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20250312, electron 34.3.2)
+# OILEDMACHINE-OVERLAY-TEST:  PASSED 2.15.1 (20250630, electron 37.1.0)

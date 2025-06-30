@@ -211,7 +211,7 @@
     "autoprefixer": "^10.4.16",
     "cross-env": "^7.0.3",
     "daisyui": "^4.10.2",
-    "electron": "^34.3.2",
+    "electron": "^37.1.0",
     "electron-builder": "^24.13.3",
     "next": "^14.2.25",
     "postcss": "^8.4.31",
