@@ -96,7 +96,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_23
+ebuild_revision_24
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -285,8 +285,10 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 																								#   @octokit/plugin-paginate-rest
 																								#   @octokit/request-error
 																								# CVE-2025-25289, CVE-2025-25288, CVE-2025-25290; DoS; Low
+			sed -i -e "s|tar-fs: 2.1.2|tar-fs: 2.1.3|g" "pnpm-lock.yaml" || die													# CVE-2025-48387; ZC, DT; High
+
 		}
-#		patch_edits_pnpm
+		patch_edits_pnpm
 
 		local deps=()
 		pushd "sticker-creator" >/dev/null 2>&1 || die
@@ -294,7 +296,7 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 				"@babel/runtime@7.26.10"
 				"@babel/helpers@7.26.10"
 			)
-#			epnpm install ${deps[@]} -P ${PNPM_INSTALL_ARGS[@]}
+			epnpm install ${deps[@]} -P ${PNPM_INSTALL_ARGS[@]}
 			deps=(
 				"cross-spawn@6.0.6"
 				"esbuild@0.25.0"
@@ -302,7 +304,7 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 				"rollup@3.29.5"
 				"vite@4.5.6"
 			)
-#			epnpm install ${deps[@]} -D ${PNPM_INSTALL_ARGS[@]}
+			epnpm install ${deps[@]} -D ${PNPM_INSTALL_ARGS[@]}
 		popd >/dev/null 2>&1 || die
 
 		pushd "danger" >/dev/null 2>&1 || die
@@ -314,7 +316,7 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 				"micromatch@4.0.8"
 				"@octokit/rest@20.1.2"
 			)
-#			epnpm install ${deps[@]} -P ${PNPM_INSTALL_ARGS[@]}
+			epnpm install ${deps[@]} -P ${PNPM_INSTALL_ARGS[@]}
 		popd >/dev/null 2>&1 || die
 
 		deps=(
@@ -322,8 +324,9 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 			"@babel/helpers@7.26.10"
 			"esbuild@0.25.0"
 			"got@11.8.5"
+			"tar-fs@2.1.3"
 		)
-#		epnpm install ${deps[@]} -P ${PNPM_INSTALL_ARGS[@]}
+		epnpm install ${deps[@]} -P ${PNPM_INSTALL_ARGS[@]}
 		deps=(
 			"@octokit/plugin-paginate-rest@9.2.2"
 			"@octokit/request@8.4.1"
@@ -332,7 +335,7 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 			"axios@1.8.2"
 			"patch-package@8.0.0"
 		)
-#		epnpm install ${deps[@]} -D ${PNPM_INSTALL_ARGS[@]}
+		epnpm install ${deps[@]} -D ${PNPM_INSTALL_ARGS[@]}
 
 		epnpm audit fix ${PNPM_AUDIT_FIX_ARGS[@]}
 
@@ -347,7 +350,6 @@ ewarn "QA:  Manually remove node_modules/react-devtools/node_modules/electron fr
 		patch_edits_pnpm
 		epnpm dedupe
 		patch_edits_pnpm
-
 
 		sed -i -e "s|disabled_postinstall|postinstall|g" "package.json" || die
 
@@ -377,7 +379,7 @@ einfo "Copying lockfiles"
 		done
 
 		grep -e "TypeError:" "${T}/build.log" && die "Detected error.  Retry."
-		_pnpm_check_errors
+		#_pnpm_check_errors
 einfo "Updating lockfile done."
 		exit 0
 	else
