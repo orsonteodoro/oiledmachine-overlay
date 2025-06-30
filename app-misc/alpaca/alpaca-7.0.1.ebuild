@@ -4,7 +4,15 @@
 
 EAPI=8
 
-# U22
+# U24
+
+# TODO package:
+# duckduckgo-search
+# kokoro
+# libportaudio
+# openai-whisper
+# youtube-transcript-api
+
 
 PYTHON_COMPAT=( "python3_"{10..12} ) # Upstream tests with python3.11
 
@@ -36,19 +44,30 @@ REQUIRED_USE="
 "
 RDEPEND="
 	$(python_gen_cond_dep '
-		>=dev-python/html2text-2024.2.26[${PYTHON_USEDEP}]
-		>=virtual/pillow-10.3.0[${PYTHON_USEDEP}]
-		>=dev-python/pypdf-4.2.0[${PYTHON_USEDEP}]
-		>=dev-python/pytube-15.0.0[${PYTHON_USEDEP}]
-		>=dev-python/requests-2.31.0[${PYTHON_USEDEP}]
+		>=dev-python/duckduckgo-search-8.0.4[${PYTHON_USEDEP}]
+		>=dev-python/html2text-2025.4.15[${PYTHON_USEDEP}]
+		>=dev-python/kokoro-0.9.2[${PYTHON_USEDEP}]
+		>=dev-python/lxml-5.3.1[${PYTHON_USEDEP}]
+		>=dev-python/markitdown-0.1.1[${PYTHON_USEDEP}]
+		>=dev-python/matplotlib-3.10.0[${PYTHON_USEDEP}]
+		>=dev-python/odfpy-1.4.1[${PYTHON_USEDEP}]
+		>=dev-python/openai-1.84.0[${PYTHON_USEDEP}]
+		>=dev-python/openai-whisper-20240930[${PYTHON_USEDEP}]
+		>=dev-python/pydbus-0.6.0[${PYTHON_USEDEP}]
+		>=dev-python/pyicu-2.15.2[${PYTHON_USEDEP}]
+		>=dev-python/requests-2.32.3[${PYTHON_USEDEP}]
+		>=dev-python/youtube-transcript-api-1.0.3[${PYTHON_USEDEP}]
+		>=media-libs/opencv-4.11.0[${PYTHON_USEDEP},python]
+		>=virtual/pillow-11.2.1[${PYTHON_USEDEP}]
 	')
-	>=gui-libs/gtksourceview-5[introspection]
 	>=app-misc/ollama-0.3.12
+	>=app-text/libspelling-0.4.7
+	>=media-libs/portaudio-19.07.00
+	>=gui-libs/gtk-4:4[wayland?,X?]
+	>=gui-libs/vte-0.78.0[introspection]
 	dev-libs/appstream
 	dev-libs/gobject-introspection[${PYTHON_SINGLE_USEDEP}]
-	gui-libs/gtk[wayland?,X?]
 	gui-libs/libadwaita[introspection]
-	gui-libs/vte[introspection]
 	sys-apps/xdg-desktop-portal
 "
 DEPEND="
