@@ -6,12 +6,13 @@ EAPI=8
 
 # U24
 
-# TODO package:
+# TODO bump package:
 # duckduckgo-search
-# kokoro
-# libportaudio
-# openai-whisper
 # youtube-transcript-api
+
+# TODO package:
+# kokoro
+# openai-whisper
 
 
 PYTHON_COMPAT=( "python3_"{10..12} ) # Upstream tests with python3.11
