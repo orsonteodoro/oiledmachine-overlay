@@ -1,0 +1,220 @@
+{
+  "name": "@theia/core",
+  "version": "1.63.0",
+  "description": "Theia is a cloud & desktop IDE framework implemented in TypeScript.",
+  "main": "lib/common/index.js",
+  "typings": "lib/common/index.d.ts",
+  "dependencies": {
+    "@babel/runtime": "^7.10.0",
+    "@parcel/watcher": "^2.5.0",
+    "@lumino/algorithm": "^2.0.2",
+    "@lumino/commands": "^2.3.1",
+    "@lumino/coreutils": "^2.2.0",
+    "@lumino/domutils": "^2.0.2",
+    "@lumino/dragdrop": "^2.1.5",
+    "@lumino/messaging": "^2.0.2",
+    "@lumino/properties": "^2.0.2",
+    "@lumino/signaling": "^2.1.3",
+    "@lumino/virtualdom": "^2.0.2",
+    "@lumino/widgets": "2.5.0",
+    "@theia/application-package": "1.63.0",
+    "@theia/request": "1.63.0",
+    "@types/body-parser": "^1.16.4",
+    "@types/cookie": "^0.3.3",
+    "@types/express": "^4.17.21",
+    "@types/fs-extra": "^4.0.2",
+    "@types/lodash.debounce": "4.0.3",
+    "@types/lodash.throttle": "^4.1.3",
+    "@types/markdown-it": "^12.2.3",
+    "@types/react": "^18.0.15",
+    "@types/react-dom": "^18.0.6",
+    "@types/route-parser": "^0.1.1",
+    "@types/safer-buffer": "^2.1.0",
+    "@types/uuid": "^9.0.8",
+    "@types/ws": "^8.5.5",
+    "@types/yargs": "^15",
+    "@vscode/codicons": "*",
+    "ajv": "^6.5.3",
+    "async-mutex": "^0.4.0",
+    "body-parser": "^1.17.2",
+    "cookie": "^0.4.0",
+    "dompurify": "^3.2.4",
+    "drivelist": "^12.0.2",
+    "express": "^4.21.0",
+    "fast-json-stable-stringify": "^2.1.0",
+    "file-icons-js": "~1.0.3",
+    "font-awesome": "^4.7.0",
+    "fs-extra": "^4.0.2",
+    "fuzzy": "^0.1.3",
+    "http-proxy-agent": "^5.0.0",
+    "https-proxy-agent": "^5.0.0",
+    "iconv-lite": "^0.6.0",
+    "inversify": "^6.1.3",
+    "jschardet": "^2.1.1",
+    "keytar": "7.9.0",
+    "lodash.debounce": "^4.0.8",
+    "lodash.throttle": "^4.1.1",
+    "markdown-it": "^12.3.2",
+    "msgpackr": "^1.10.2",
+    "p-debounce": "^2.1.0",
+    "perfect-scrollbar": "1.5.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-tooltip": "^4.2.21",
+    "react-virtuoso": "^2.17.0",
+    "reflect-metadata": "^0.2.2",
+    "route-parser": "^0.0.5",
+    "safer-buffer": "^2.1.2",
+    "socket.io": "^4.5.3",
+    "socket.io-client": "^4.5.3",
+    "tslib": "^2.6.2",
+    "uuid": "^9.0.1",
+    "vscode-languageserver-protocol": "^3.17.2",
+    "vscode-uri": "^2.1.1",
+    "ws": "^8.17.1",
+    "yargs": "^15.3.1"
+  },
+  "peerDependencies": {
+    "@theia/electron": "*"
+  },
+  "peerDependenciesMeta": {
+    "@theia/electron": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "theiaReExports": {
+    "electron-shared": {
+      "copy": "@theia/electron#shared"
+    },
+    "shared": {
+      "export *": [
+        "@lumino/algorithm",
+        "@lumino/commands",
+        "@lumino/coreutils",
+        "@lumino/domutils",
+        "@lumino/dragdrop",
+        "@lumino/messaging",
+        "@lumino/properties",
+        "@lumino/signaling",
+        "@lumino/virtualdom",
+        "@lumino/widgets",
+        "@theia/application-package",
+        "@theia/application-package/lib/api",
+        "@theia/application-package/lib/environment",
+        "@theia/request",
+        "@theia/request/lib/proxy",
+        "@theia/request/lib/node-request-service",
+        "fs-extra",
+        "fuzzy",
+        "inversify",
+        "react-dom",
+        "react-dom/client",
+        "react-virtuoso",
+        "vscode-languageserver-protocol",
+        "vscode-uri"
+      ],
+      "export =": [
+        "@parcel/watcher as parcelWatcher",
+        "dompurify as DOMPurify",
+        "express",
+        "lodash.debounce as debounce",
+        "lodash.throttle as throttle",
+        "markdown-it as markdownit",
+        "react as React",
+        "ws as WebSocket",
+        "yargs"
+      ]
+    }
+  },
+  "theiaExtensions": [
+    {
+      "frontendPreload": "lib/browser/preload/preload-module",
+      "preload": "lib/electron-browser/preload"
+    },
+    {
+      "frontendOnlyPreload": "lib/browser-only/preload/frontend-only-preload-module"
+    },
+    {
+      "frontend": "lib/browser/i18n/i18n-frontend-module",
+      "frontendOnly": "lib/browser-only/i18n/i18n-frontend-only-module",
+      "backend": "lib/node/i18n/i18n-backend-module"
+    },
+    {
+      "frontend": "lib/browser/menu/browser-menu-module",
+      "frontendElectron": "lib/electron-browser/menu/electron-menu-module"
+    },
+    {
+      "frontend": "lib/browser/window/browser-window-module",
+      "frontendElectron": "lib/electron-browser/window/electron-window-module"
+    },
+    {
+      "backendElectron": "lib/electron-node/cli/electron-backend-cli-module"
+    },
+    {
+      "frontend": "lib/browser/keyboard/browser-keyboard-module",
+      "frontendElectron": "lib/electron-browser/keyboard/electron-keyboard-module",
+      "backendElectron": "lib/electron-node/keyboard/electron-backend-keyboard-module"
+    },
+    {
+      "frontendElectron": "lib/electron-browser/token/electron-token-frontend-module",
+      "backendElectron": "lib/electron-node/token/electron-token-backend-module"
+    },
+    {
+      "backend": "lib/node/hosting/backend-hosting-module",
+      "backendElectron": "lib/electron-node/hosting/electron-backend-hosting-module"
+    },
+    {
+      "frontend": "lib/browser/request/browser-request-module",
+      "frontendElectron": "lib/electron-browser/request/electron-browser-request-module"
+    },
+    {
+      "backend": "lib/node/request/backend-request-module",
+      "backendElectron": "lib/electron-node/request/electron-backend-request-module"
+    }
+  ],
+  "keywords": [
+    "theia-extension"
+  ],
+  "license": "EPL-2.0 OR GPL-2.0-only WITH Classpath-exception-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eclipse-theia/theia.git"
+  },
+  "bugs": {
+    "url": "https://github.com/eclipse-theia/theia/issues"
+  },
+  "homepage": "https://github.com/eclipse-theia/theia",
+  "files": [
+    "electron-shared",
+    "i18n",
+    "lib",
+    "shared",
+    "src"
+  ],
+  "scripts": {
+    "build": "theiaext build",
+    "clean": "theiaext clean",
+    "compile": "theiaext compile",
+    "generate-layout": "electron ./scripts/generate-layout",
+    "afterInstall": "npm run generate-theia-re-exports && npm run download:json-schema",
+    "generate-theia-re-exports": "theia-re-exports generate && theia-re-exports template README_TEMPLATE.md > README.md",
+    "lint": "theiaext lint",
+    "download:json-schema": "node ./scripts/download-catalog.js",
+    "test": "theiaext test",
+    "version": "npm run -s generate-theia-re-exports",
+    "watch": "theiaext watch"
+  },
+  "devDependencies": {
+    "@theia/ext-scripts": "1.63.0",
+    "@theia/re-exports": "1.63.0",
+    "minimist": "^1.2.0",
+    "nodejs-file-downloader": "4.13.0"
+  },
+  "nyc": {
+    "extends": "../../configs/nyc.json"
+  },
+  "gitHead": "21358137e41342742707f660b8e222f940a27652"
+}

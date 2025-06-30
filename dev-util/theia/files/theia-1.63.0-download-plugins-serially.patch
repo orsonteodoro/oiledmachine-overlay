@@ -1,0 +1,221 @@
+--- /dev/null	2025-06-18 23:40:53.871039330 -0700
++++ b/download_plugins_serial.js	2025-06-29 22:10:18.367128804 -0700
+@@ -0,0 +1,207 @@
++//
++// MIT License
++//
++// Copyright (c) 2025 xAI
++//
++// Permission is hereby granted, free of charge, to any person obtaining a copy
++// of this software and associated documentation files (the "Software"), to deal
++// in the Software without restriction, including without limitation the rights
++// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++// copies of the Software, and to permit persons to whom the Software is
++// furnished to do so, subject to the following conditions:
++//
++// The above copyright notice and this permission notice shall be included in all
++// copies or substantial portions of the Software.
++//
++// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++// SOFTWARE.
++//
++
++const fs = require('fs');
++const path = require('path');
++const https = require('https');
++const unzipper = require('unzipper');
++const packageJson = require('./package.json');
++
++const pluginsDir = packageJson.theiaPluginsDir || 'plugins';
++const plugins = packageJson.theiaPlugins || {};
++const TIMEOUT_MS = 180000; // 180s timeout
++const RETRY_DELAY_MS = 5000; // 5s delay between retries
++const RETRY_COUNT = 5; // Retry up to 5 times
++const MAX_REDIRECTS = 5; // Max redirects
++
++async function downloadPlugin(url, dest, retry = 0, redirectCount = 0) {
++  return new Promise((resolve, reject) => {
++    console.log(`Attempting to download ${url} (Attempt ${retry + 1}/${RETRY_COUNT + 1}, Redirect ${redirectCount}/${MAX_REDIRECTS})...`);
++    const file = fs.createWriteStream(dest);
++    const request = https.get(url, { timeout: TIMEOUT_MS }, (response) => {
++      if (response.statusCode >= 300 && response.statusCode < 400 && response.headers.location) {
++        file.close();
++        fs.unlink(dest, () => {});
++        if (redirectCount >= MAX_REDIRECTS) {
++          reject(new Error(`Too many redirects for ${url}`));
++          return;
++        }
++        console.log(`Following redirect to ${response.headers.location}`);
++        downloadPlugin(response.headers.location, dest, retry, redirectCount + 1)
++          .then(resolve)
++          .catch(reject);
++        return;
++      }
++      if (response.statusCode !== 200) {
++        file.close();
++        fs.unlink(dest, () => {});
++        if (retry < RETRY_COUNT) {
++          console.log(`Retrying ${url} due to status ${response.statusCode}`);
++          setTimeout(() => downloadPlugin(url, dest, retry + 1, 0).then(resolve).catch(reject), RETRY_DELAY_MS);
++          return;
++        }
++        reject(new Error(`Failed to download ${url}: Status ${response.statusCode}`));
++        return;
++      }
++      response.pipe(file);
++      file.on('finish', () => {
++        file.close();
++        console.log(`Downloaded ${url} to ${dest}`);
++        resolve();
++      });
++    });
++
++    request.on('error', (err) => {
++      file.close();
++      fs.unlink(dest, () => {});
++      if (retry < RETRY_COUNT) {
++        console.log(`Retrying ${url} due to error: ${err.message}`);
++        setTimeout(() => downloadPlugin(url, dest, retry + 1, 0).then(resolve).catch(reject), RETRY_DELAY_MS);
++        return;
++      }
++      reject(err);
++    });
++
++    request.on('timeout', () => {
++      request.destroy();
++      file.close();
++      fs.unlink(dest, () => {});
++      if (retry < RETRY_COUNT) {
++        console.log(`Retrying ${url} due to timeout`);
++        setTimeout(() => downloadPlugin(url, dest, retry + 1, 0).then(resolve).catch(reject), RETRY_DELAY_MS);
++        return;
++      }
++      reject(new Error(`Request to ${url} timed out after ${TIMEOUT_MS}ms`));
++    });
++  });
++}
++
++async function unzipPlugin(vsixPath, pluginName) {
++  if (!fs.existsSync(vsixPath)) {
++    throw new Error(`Cannot unpack ${pluginName}: ${vsixPath} does not exist`);
++  }
++  const extractDir = path.join(pluginsDir, pluginName);
++  console.log(`Unpacking ${vsixPath} to ${extractDir}...`);
++  try {
++    await new Promise((resolve, reject) => {
++      fs.createReadStream(vsixPath)
++        .pipe(unzipper.Extract({ path: extractDir }))
++        .on('close', resolve)
++        .on('error', reject);
++    });
++    console.log(`Successfully unpacked ${pluginName}`);
++  } catch (err) {
++    console.error(`Failed to unpack ${pluginName}: ${err.message}`);
++    throw err;
++  }
++}
++
++function getExtensionPackDependencies() {
++  const builtinPackPath = path.join(pluginsDir, 'eclipse-theia.builtin-extension-pack/extension/package.json');
++  if (fs.existsSync(builtinPackPath)) {
++    const builtinPackJson = JSON.parse(fs.readFileSync(builtinPackPath, 'utf8'));
++    const version = builtinPackJson.version || '1.95.3'; // Fallback to 1.95.3
++    const extensionPack = builtinPackJson.extensionPack || [];
++    const excludeIds = new Set(['vscode.extension-editing', 'vscode.github', 'vscode.github-authentication', 'ms-vscode.js-debug-companion', 'ms-python.vscode-pylance']);
++    const dependencies = {};
++    for (const ext of extensionPack) {
++      if (!excludeIds.has(ext)) {
++        const extName = ext.split('.').pop();
++        dependencies[ext] = `https://open-vsx.org/api/vscode/${extName}/${version}/file/vscode.${extName}-${version}.vsix`;
++      }
++    }
++    return { dependencies, version };
++  }
++  return { dependencies: {}, version: '1.95.3' };
++}
++
++async function downloadPluginsSerially() {
++  if (!fs.existsSync(pluginsDir)) {
++    fs.mkdirSync(pluginsDir, { recursive: true });
++  }
++
++  // Base plugins from package.json
++  const allPlugins = { ...plugins };
++
++  // Add specified additional plugins
++  const additionalPlugins = {
++    'ms-toolsai.jupyter-renderers': 'https://open-vsx.org/api/ms-toolsai/jupyter-renderers/1.0.17/file/ms-toolsai.jupyter-renderers-1.0.17.vsix',
++    'ms-python.debugpy': 'https://open-vsx.org/api/ms-python/debugpy/2024.12.0/file/ms-python.debugpy-2024.12.0.vsix',
++    'vscode.json-language-features': 'https://open-vsx.org/api/vscode/json-language-features/1.95.3/file/vscode.json-language-features-1.95.3.vsix',
++    'ms-vscode.js-debug': 'https://open-vsx.org/api/ms-vscode/js-debug/1.95.3/file/ms-vscode.js-debug-1.95.3.vsix'
++  };
++  Object.assign(allPlugins, additionalPlugins);
++
++  // Download base plugins
++  for (const [pluginName, url] of Object.entries(plugins)) {
++    const vsixPath = path.join(pluginsDir, `${pluginName}.vsix`);
++    try {
++      await downloadPlugin(url, vsixPath);
++      await unzipPlugin(vsixPath, pluginName);
++      console.log(`Successfully processed ${pluginName}`);
++      // Parse extensionPack after downloading builtin-extension-pack
++      if (pluginName === 'eclipse-theia.builtin-extension-pack') {
++        const { dependencies, version } = getExtensionPackDependencies();
++        for (const [ext, extUrl] of Object.entries(dependencies)) {
++          if (!allPlugins[ext]) {
++            allPlugins[ext] = extUrl;
++          }
++        }
++      }
++    } catch (err) {
++      console.error(`Failed to process ${pluginName}: ${err.message}`);
++      // Continue to next plugin instead of exiting
++    }
++  }
++
++  // Download remaining plugins (including extensionPack dependencies)
++  for (const [pluginName, url] of Object.entries(allPlugins)) {
++    const vsixPath = path.join(pluginsDir, `${pluginName}.vsix`);
++    if (!fs.existsSync(vsixPath)) {
++      try {
++        await downloadPlugin(url, vsixPath);
++        await unzipPlugin(vsixPath, pluginName);
++        console.log(`Successfully processed ${pluginName}`);
++      } catch (err) {
++        console.error(`Failed to process ${pluginName}: ${err.message}`);
++        // Continue to next plugin
++      }
++    } else {
++      try {
++        await unzipPlugin(vsixPath, pluginName);
++        console.log(`Successfully processed existing ${pluginName}`);
++      } catch (err) {
++        console.error(`Failed to unpack existing ${pluginName}: ${err.message}`);
++      }
++    }
++  }
++}
++
++downloadPluginsSerially().then(() => {
++  console.log('All plugin downloads and installations completed.');
++  process.exit(0);
++}).catch((err) => {
++  console.error('Serial download/installation failed:', err);
++  process.exit(1);
++});
+--- a/package.json.orig	2025-06-29 14:50:16.864081280 -0700
++++ b/package.json	2025-06-29 22:56:12.991058676 -0700
+@@ -72,7 +72,7 @@
+     "compute-references": "node scripts/compile-references.js",
+     "docs": "npm run -s update-typedoc-refs && rimraf gh-pages/docs/next && typedoc --tsconfig typedoc.tsconfig.json --plugin typedoc-plugin-external-module-map --options configs/typedoc.json .",
+     "update-typedoc-refs": "node scripts/update-typedoc-references.js",
+-    "download:plugins": "theia download:plugins",
++    "download:plugins": "node download_plugins_serial.js",
+     "license:check": "node scripts/check_3pp_licenses.js",
+     "license:check:review": "node scripts/check_3pp_licenses.js --review",
+     "lint": "lerna run lint",
