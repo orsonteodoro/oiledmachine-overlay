@@ -670,7 +670,7 @@ WEBKIT_GTK_STABLE=(
 	"2.28"
 )
 
-inherit cargo edo electron-app lcnr node-sharp npm xdg
+inherit cargo edo lcnr node-sharp npm xdg
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${P}"
