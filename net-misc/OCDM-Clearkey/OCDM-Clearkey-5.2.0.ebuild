@@ -10,7 +10,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/rdkcentral/OCDM-Clearkey.git"
-	FALLBACK_COMMIT="5b671d82ee3c66fd995101e1f9124dc8506d550f" # Sep 30, 2024
+	FALLBACK_COMMIT="e736533495d05a28248f4e38328d4459991b221d" # Mar 19, 2024
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
@@ -48,6 +48,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	>=dev-build/cmake-3.15
 "
 DOCS=()
 
