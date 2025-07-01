@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# U 22.04
+# D12, U22
 
 # NPM_AUDIT_FIX=0
 NPM_INSTALL_ARGS=(
@@ -13,136 +13,132 @@ NPM_INSTALL_ARGS=(
 
 # To update npm side use:
 # PATH="/usr/local/oiledmachine-overlay/scripts:${PATH}"
-# NPM_UPDATER_PROJECT_ROOT="coolercontrol-1.4.5/coolercontrol-ui" NPM_UPDATER_VERSIONS="1.4.5" npm_updater_update_locks.sh
+# NPM_UPDATER_PROJECT_ROOT="coolercontrol-2.2.1/coolercontrol-ui" NPM_UPDATER_VERSIONS="2.2.1" npm_updater_update_locks.sh
 
 # To update cargo size use:
-# ./convert-cargo-lock.sh 1.4.5 1.4.5
+# ./convert-cargo-lock.sh 2.2.1 2.2.1
 
 declare -A GIT_CRATES=(
-[nvml-wrapper-sys]="https://github.com/codifryed/nvml-wrapper;c8dd9b97a872f6252a48c61dfc6e1c0b61eab39b;plugins-workspace-%commit%/nvml-wrapper-sys" # 0.8.0
-[nvml-wrapper]="https://github.com/codifryed/nvml-wrapper;c8dd9b97a872f6252a48c61dfc6e1c0b61eab39b;plugins-workspace-%commit%/nvml-wrapper" # 0.10.0
+[nvml-wrapper-sys]="https://github.com/codifryed/nvml-wrapper;572095f631da93be8d243c73820e581676969897;nvml-wrapper-%commit%/nvml-wrapper-sys" # 0.8.0
+[nvml-wrapper]="https://github.com/codifryed/nvml-wrapper;572095f631da93be8d243c73820e581676969897;nvml-wrapper-%commit%/nvml-wrapper" # 0.10.0
+[tower_governor]="https://github.com/codifryed/tower-governor;fd799d86418e58179468953c80ad7094a81a9e37;tower-governor-%commit%" # 0.4.3
 )
 
 CRATES="
-actix-codec-0.5.2
-actix-cors-0.7.1
-actix-http-3.10.0
-actix-macros-0.2.4
-actix-multipart-0.7.2
-actix-multipart-derive-0.7.0
-actix-router-0.5.3
-actix-rt-2.10.0
-actix-server-2.5.1
-actix-service-2.0.3
-actix-session-0.10.1
-actix-utils-3.0.1
-actix-web-4.10.2
-actix-web-codegen-4.3.0
-actix-web-static-files-4.0.1
 addr2line-0.24.2
-adler2-2.0.0
+adler2-2.0.1
 aead-0.5.2
 aes-0.8.4
 aes-gcm-0.10.3
-ahash-0.8.11
+ahash-0.7.8
+ahash-0.8.12
 aho-corasick-1.1.3
-aligned-vec-0.5.0
+aide-0.13.5
+aligned-vec-0.6.4
 alloc-no-stdlib-2.0.4
 alloc-stdlib-0.2.2
 allocator-api2-0.2.21
 android-tzdata-0.1.1
 android_system_properties-0.1.5
-anstream-0.6.18
-anstyle-1.0.10
-anstyle-parse-0.2.6
-anstyle-query-1.1.2
-anstyle-wincon-3.0.7
-anyhow-1.0.97
+anstream-0.6.19
+anstyle-1.0.11
+anstyle-parse-0.2.7
+anstyle-query-1.1.3
+anstyle-wincon-3.0.9
+anyhow-1.0.98
 arbitrary-1.4.1
 arg_enum_proc_macro-0.3.4
 arrayref-0.3.9
 arrayvec-0.7.6
 async-broadcast-0.7.2
+async-compression-0.4.25
 async-recursion-1.1.1
-async-trait-0.1.87
-atomic-0.6.0
-autocfg-1.4.0
-av1-grain-0.2.3
-avif-serialize-0.8.3
-backtrace-0.3.74
-base64-0.20.0
+async-trait-0.1.88
+autocfg-1.5.0
+av1-grain-0.2.4
+avif-serialize-0.8.4
+axum-0.7.9
+axum-core-0.4.5
+axum-extra-0.9.6
+axum-macros-0.4.2
+axum_typed_multipart-0.14.0
+axum_typed_multipart_macros-0.14.0
+backtrace-0.3.75
 base64-0.22.1
 bitflags-1.3.2
-bitflags-2.9.0
+bitflags-2.9.1
 bitstream-io-2.6.0
+bitvec-1.0.1
 block-buffer-0.10.4
-brotli-7.0.0
-brotli-decompressor-4.0.2
+borsh-1.5.7
+borsh-derive-1.5.7
+brotli-8.0.1
+brotli-decompressor-5.0.0
 built-0.7.7
-bumpalo-3.17.0
-bytemuck-1.22.0
-bytemuck_derive-1.8.1
+bumpalo-3.19.0
+bytecheck-0.6.12
+bytecheck_derive-0.6.12
+bytemuck-1.23.1
 byteorder-lite-0.1.0
 bytes-1.10.1
-bytestring-1.4.0
-cached-0.54.0
-cached_proc_macro-0.23.0
+cached-0.55.1
+cached_proc_macro-0.24.0
 cached_proc_macro_types-0.1.1
-cc-1.2.16
+cc-1.2.27
 cfg-expr-0.15.8
-cfg-if-1.0.0
+cfg-if-1.0.1
 cfg_aliases-0.2.1
-chrono-0.4.40
+chrono-0.4.41
 cipher-0.4.4
-clap-4.5.32
-clap_builder-4.5.32
-clap_derive-4.5.32
-clap_lex-0.7.4
+clap-4.5.40
+clap_builder-4.5.40
+clap_derive-4.5.40
+clap_lex-0.7.5
 color_quant-1.1.0
-colorchoice-1.0.3
+colorchoice-1.0.4
 concurrent-queue-2.5.0
 const_format-0.2.34
 const_format_proc_macros-0.2.34
-convert_case-0.4.0
-cookie-0.16.2
+cookie-0.18.1
 core-foundation-sys-0.8.7
 cpufeatures-0.2.17
 crc32fast-1.4.2
-crossbeam-channel-0.5.14
+crossbeam-channel-0.5.15
 crossbeam-deque-0.8.6
 crossbeam-epoch-0.9.18
 crossbeam-utils-0.8.21
 crypto-common-0.1.6
 ctr-0.9.2
-darling-0.20.10
-darling_core-0.20.10
-darling_macro-0.20.10
-deranged-0.3.11
-derive_more-0.99.19
-derive_more-1.0.0
+darling-0.20.11
+darling_core-0.20.11
+darling_macro-0.20.11
+deranged-0.4.0
 derive_more-2.0.1
-derive_more-impl-1.0.0
 derive_more-impl-2.0.1
 digest-0.10.7
-displaydoc-0.2.5
+dyn-clone-1.0.19
 either-1.15.0
 encoding_rs-0.8.35
 endi-1.1.0
-enumflags2-0.7.11
-enumflags2_derive-0.7.11
+enumflags2-0.7.12
+enumflags2_derive-0.7.12
 env_filter-0.1.3
-env_logger-0.11.7
+env_logger-0.11.8
+equator-0.4.2
+equator-macro-0.4.2
 equivalent-1.0.2
-errno-0.3.10
+errno-0.3.13
 event-listener-5.4.0
-event-listener-strategy-0.5.3
+event-listener-strategy-0.5.4
 fastrand-2.3.0
 fdeflate-0.3.7
-flate2-1.1.0
+flate2-1.1.2
 fnv-1.0.7
-foldhash-0.1.4
+foldhash-0.1.5
 fontdue-0.7.3
 form_urlencoded-1.2.1
+forwarded-header-value-0.1.1
+funty-2.0.0
 futures-0.3.31
 futures-channel-0.3.31
 futures-core-0.3.31
@@ -152,296 +148,318 @@ futures-lite-2.6.0
 futures-macro-0.3.31
 futures-sink-0.3.31
 futures-task-0.3.31
+futures-timer-3.0.3
 futures-util-0.3.31
 generic-array-0.14.7
-getrandom-0.2.15
-getrandom-0.3.1
+getrandom-0.2.16
+getrandom-0.3.3
 ghash-0.5.1
-gif-0.13.1
+gif-0.13.3
 gif-dispose-5.0.1
-gifski-1.32.0
+gifski-1.33.0
 gimli-0.31.1
 glob-0.3.2
-h2-0.3.26
+governor-0.7.0
+hashbrown-0.12.3
 hashbrown-0.13.2
 hashbrown-0.14.5
-hashbrown-0.15.2
+hashbrown-0.15.4
+hashlink-0.10.0
+headers-0.4.1
+headers-core-0.3.0
 heck-0.5.0
-hermit-abi-0.3.9
+hermit-abi-0.5.2
 hex-0.4.3
 hkdf-0.12.4
 hmac-0.12.1
-http-0.2.12
 http-1.3.1
-http-auth-basic-0.3.5
 http-body-1.0.1
 http-body-util-0.1.3
 httparse-1.10.1
 httpdate-1.0.3
 hyper-1.6.0
-hyper-util-0.1.10
-iana-time-zone-0.1.61
+hyper-util-0.1.14
+iana-time-zone-0.1.63
 iana-time-zone-haiku-0.1.2
-icu_collections-1.5.0
-icu_locid-1.5.0
-icu_locid_transform-1.5.0
-icu_locid_transform_data-1.5.0
-icu_normalizer-1.5.0
-icu_normalizer_data-1.5.0
-icu_properties-1.5.1
-icu_properties_data-1.5.0
-icu_provider-1.5.0
-icu_provider_macros-1.5.0
 ident_case-1.0.1
-idna-1.0.3
-idna_adapter-1.2.0
-image-0.25.5
-image-webp-0.2.1
+image-0.25.6
+image-webp-0.2.3
 imagequant-4.3.4
 imgref-1.11.0
-impl-more-0.1.9
-indexmap-2.8.0
+include_dir-0.7.4
+include_dir_macros-0.7.4
+indexmap-2.10.0
 inout-0.1.4
 interpolate_name-0.2.4
+io-uring-0.6.4
 is_terminal_polyfill-1.70.1
 itertools-0.12.1
 itoa-1.0.15
-jiff-0.2.4
-jiff-static-0.2.4
-jobserver-0.1.32
-jpeg-decoder-0.3.1
+jiff-0.2.15
+jiff-static-0.2.15
+jobserver-0.1.33
+jpeg-decoder-0.3.2
 js-sys-0.3.77
-language-tags-0.3.2
-lazy_static-1.5.0
-libc-0.2.171
-libdrm_amdgpu_sys-0.7.7
+lazy_format-2.0.3
+libc-0.2.174
+libdrm_amdgpu_sys-0.8.3
 libfuzzer-sys-0.4.9
-libloading-0.8.6
-linux-raw-sys-0.4.15
-linux-raw-sys-0.9.3
-litemap-0.7.5
-local-channel-0.1.5
-local-waker-0.1.4
-lock_api-0.4.12
-log-0.4.26
+libloading-0.8.8
+linux-raw-sys-0.9.4
+lock_api-0.4.13
+log-0.4.27
 loop9-0.1.5
-mach2-0.4.2
+mach2-0.4.3
+matchit-0.7.3
 maybe-rayon-0.1.1
-memchr-2.7.4
+memchr-2.7.5
 memoffset-0.9.1
-miette-7.5.0
-miette-derive-7.5.0
 mime-0.3.17
 mime_guess-2.0.5
 minimal-lexical-0.2.1
-miniz_oxide-0.8.5
-mio-1.0.3
+miniz_oxide-0.8.9
+mio-1.0.4
+moro-local-0.4.0
+multer-3.1.0
 new_debug_unreachable-1.0.6
-nix-0.24.3
 nix-0.29.0
+nix-0.30.1
+no-std-compat-0.4.1
 nom-7.1.3
+nonempty-0.7.0
+nonzero_ext-0.3.0
 noop_proc_macro-0.3.0
 ntapi-0.4.1
-nu-glob-0.100.0
+nu-glob-0.104.1
 num-bigint-0.4.6
 num-conv-0.1.0
 num-derive-0.4.2
 num-integer-0.1.46
 num-rational-0.4.2
 num-traits-0.2.19
-num_cpus-1.16.0
+num_cpus-1.17.0
+objc2-core-foundation-0.3.1
+objc2-io-kit-0.3.1
 object-0.36.7
-once_cell-1.21.1
+once_cell-1.21.3
+once_cell_polyfill-1.70.1
 opaque-debug-0.3.1
 ordered-channel-1.2.0
 ordered-stream-0.2.0
 parking-2.2.1
-parking_lot-0.12.3
-parking_lot_core-0.9.10
-parse-size-1.1.0
+parking_lot-0.12.4
+parking_lot_core-0.9.11
 paste-1.0.15
-path-slash-0.1.5
-pciid-parser-0.7.2
+pciid-parser-0.8.0
 percent-encoding-2.3.1
+pin-project-1.1.10
+pin-project-internal-1.1.10
 pin-project-lite-0.2.16
 pin-utils-0.1.0
 pkg-config-0.3.32
 png-0.17.16
 polyval-0.6.2
-portable-atomic-1.11.0
+portable-atomic-1.11.1
 portable-atomic-util-0.2.4
 powerfmt-0.2.0
 ppv-lite86-0.2.21
 proc-macro-crate-3.3.0
-proc-macro2-1.0.94
-profiling-1.0.16
-profiling-procmacros-1.0.16
-psutil-3.3.0
+proc-macro-error-attr2-2.0.0
+proc-macro-error2-2.0.1
+proc-macro2-1.0.95
+profiling-1.0.17
+profiling-procmacros-1.0.17
+psutil-5.2.0
+ptr_meta-0.1.4
+ptr_meta_derive-0.1.4
 quick-error-2.0.1
 quote-1.0.40
+r-efi-5.3.0
+radium-0.7.0
 rand-0.8.5
-rand-0.9.0
 rand_chacha-0.3.1
-rand_chacha-0.9.0
 rand_core-0.6.4
-rand_core-0.9.3
 rav1e-0.7.1
-ravif-0.11.11
+ravif-0.11.20
 rayon-1.10.0
 rayon-core-1.12.1
-redox_syscall-0.5.10
+redox_syscall-0.5.13
 regex-1.11.1
 regex-automata-0.4.9
-regex-lite-0.1.6
 regex-syntax-0.8.5
+rend-0.4.2
 resize-0.8.8
 rgb-0.8.50
 ril-0.10.3
-rustc-demangle-0.1.24
-rustc_version-0.4.1
-rustix-0.38.44
-rustix-1.0.2
-rustversion-1.0.20
+rkyv-0.7.45
+rkyv_derive-0.7.45
+rust_decimal-1.37.2
+rustc-demangle-0.1.25
+rustix-1.0.7
+rustversion-1.0.21
 ryu-1.0.20
+scc-2.3.4
+schemars-0.8.22
+schemars_derive-0.8.22
 scopeguard-1.2.0
-semver-1.0.26
+sdd-3.0.8
+seahash-4.1.0
 serde-1.0.219
 serde_derive-1.0.219
+serde_derive_internals-0.29.1
 serde_json-1.0.140
-serde_plain-1.0.2
+serde_path_to_error-0.1.17
+serde_qs-0.13.0
 serde_repr-0.1.20
-serde_spanned-0.6.8
+serde_spanned-0.6.9
 serde_urlencoded-0.7.1
+serial_test-3.2.0
+serial_test_derive-3.2.0
 sha1-0.10.6
-sha2-0.10.8
+sha2-0.10.9
 shlex-1.3.0
-signal-hook-0.3.17
-signal-hook-registry-1.4.2
+signal-hook-registry-1.4.5
 simd-adler32-0.3.7
 simd_helpers-0.1.0
-slab-0.4.9
-smallvec-1.14.0
-socket2-0.5.8
-stable_deref_trait-1.2.0
-static-files-0.2.4
+simdutf8-0.1.5
+slab-0.4.10
+smallvec-1.15.1
+socket2-0.4.10
+socket2-0.5.10
+spin-0.9.8
+spinning_top-0.3.0
 static_assertions-1.1.0
 strict-num-0.1.1
 strsim-0.11.1
-strum-0.26.3
-strum_macros-0.26.4
+strum-0.27.1
+strum_macros-0.27.1
 subtle-2.6.1
-syn-2.0.100
-synstructure-0.13.1
-sysinfo-0.33.1
+syn-1.0.109
+syn-2.0.104
+sync_wrapper-1.0.2
+sysinfo-0.35.2
 system-deps-6.2.2
-systemd-journal-logger-2.2.0
+systemd-journal-logger-2.2.2
+tap-1.0.1
 target-lexicon-0.12.16
-tempfile-3.19.0
-test-context-0.3.0
-test-context-macros-0.3.0
+tempfile-3.20.0
 thiserror-1.0.69
 thiserror-2.0.12
 thiserror-impl-1.0.69
 thiserror-impl-2.0.12
-thread_local-1.1.8
+thread_local-1.1.9
 tiff-0.9.1
-time-0.3.39
-time-core-0.1.3
-time-macros-0.2.20
+time-0.3.41
+time-core-0.1.4
+time-macros-0.2.22
 tiny-skia-0.11.4
 tiny-skia-path-0.11.4
-tinystr-0.7.6
-tokio-1.44.1
-tokio-graceful-shutdown-0.15.4
+tinyvec-1.9.0
+tinyvec_macros-0.1.1
+tokio-1.45.1
 tokio-macros-2.5.0
-tokio-util-0.7.14
-toml-0.8.20
-toml_datetime-0.6.8
-toml_edit-0.22.24
+tokio-stream-0.1.17
+tokio-uring-0.5.0
+tokio-util-0.7.15
+toml-0.8.23
+toml_datetime-0.6.11
+toml_edit-0.22.27
+toml_write-0.1.2
+tower-0.5.2
+tower-cookies-0.10.0
+tower-http-0.6.6
+tower-layer-0.3.3
+tower-serve-static-0.1.1
 tower-service-0.3.3
+tower-sessions-0.13.0
+tower-sessions-core-0.13.0
+tower-sessions-memory-store-0.13.0
 tracing-0.1.41
-tracing-attributes-0.1.28
-tracing-core-0.1.33
+tracing-attributes-0.1.30
+tracing-core-0.1.34
 try-lock-0.2.5
 ttf-parser-0.15.2
 typenum-1.18.0
+ubyte-0.10.4
 uds_windows-1.1.0
 unicase-2.8.1
 unicode-ident-1.0.18
-unicode-width-0.1.14
 unicode-xid-0.2.6
 universal-hash-0.5.1
-url-2.5.4
-utf16_iter-1.0.5
-utf8_iter-1.0.4
 utf8parse-0.2.2
-uuid-1.16.0
-v_frame-0.3.8
+uuid-1.17.0
+v_frame-0.3.9
 version-compare-0.2.0
 version_check-0.9.5
 want-0.3.1
-wasi-0.11.0+wasi-snapshot-preview1
-wasi-0.13.3+wasi-0.2.2
+wasi-0.11.1+wasi-snapshot-preview1
+wasi-0.14.2+wasi-0.2.4
 wasm-bindgen-0.2.100
 wasm-bindgen-backend-0.2.100
 wasm-bindgen-macro-0.2.100
 wasm-bindgen-macro-support-0.2.100
 wasm-bindgen-shared-0.2.100
 web-time-1.1.0
-weezl-0.1.8
+weezl-0.1.10
 winapi-0.3.9
 winapi-i686-pc-windows-gnu-0.4.0
 winapi-x86_64-pc-windows-gnu-0.4.0
-windows-0.57.0
-windows-core-0.52.0
-windows-core-0.57.0
-windows-implement-0.57.0
-windows-interface-0.57.0
-windows-link-0.1.0
-windows-result-0.1.2
+windows-0.61.3
+windows-collections-0.2.0
+windows-core-0.61.2
+windows-future-0.2.1
+windows-implement-0.60.0
+windows-interface-0.59.1
+windows-link-0.1.3
+windows-numerics-0.2.0
+windows-result-0.3.4
+windows-strings-0.4.2
 windows-sys-0.52.0
 windows-sys-0.59.0
+windows-sys-0.60.2
 windows-targets-0.52.6
+windows-targets-0.53.2
+windows-threading-0.1.0
 windows_aarch64_gnullvm-0.52.6
+windows_aarch64_gnullvm-0.53.0
 windows_aarch64_msvc-0.52.6
+windows_aarch64_msvc-0.53.0
 windows_i686_gnu-0.52.6
+windows_i686_gnu-0.53.0
 windows_i686_gnullvm-0.52.6
+windows_i686_gnullvm-0.53.0
 windows_i686_msvc-0.52.6
+windows_i686_msvc-0.53.0
 windows_x86_64_gnu-0.52.6
+windows_x86_64_gnu-0.53.0
 windows_x86_64_gnullvm-0.52.6
+windows_x86_64_gnullvm-0.53.0
 windows_x86_64_msvc-0.52.6
-winnow-0.7.4
-wit-bindgen-rt-0.33.0
+windows_x86_64_msvc-0.53.0
+winnow-0.7.11
+wit-bindgen-rt-0.39.0
 wrapcenum-derive-0.4.1
-write16-1.0.0
-writeable-0.5.5
-xdg-home-1.3.0
+wyz-0.5.1
 yata-0.7.0
-yoke-0.7.5
-yoke-derive-0.7.5
-zbus-5.5.0
-zbus_macros-5.5.0
+zbus-5.7.1
+zbus_macros-5.7.1
 zbus_names-4.2.0
-zerocopy-0.7.35
-zerocopy-0.8.23
-zerocopy-derive-0.7.35
-zerocopy-derive-0.8.23
-zerofrom-0.1.6
-zerofrom-derive-0.1.6
-zerovec-0.10.4
-zerovec-derive-0.10.3
+zerocopy-0.8.26
+zerocopy-derive-0.8.26
 zstd-0.13.3
-zstd-safe-7.2.3
-zstd-sys-2.0.14+zstd.1.5.7
+zstd-safe-7.2.4
+zstd-sys-2.0.15+zstd.1.5.7
 zune-core-0.4.12
-zune-jpeg-0.4.14
-zvariant-5.4.0
-zvariant_derive-5.4.0
+zune-jpeg-0.4.18
+zvariant-5.5.3
+zvariant_derive-5.5.3
 zvariant_utils-3.2.0
 "
 
 NPM_TARBALL="coolercontrol-${PV}.tar.bz2"
 PYTHON_COMPAT=( "python3_"{10,11} ) # Can support 3.12 but limited by Nuitka
+RUST_MAX_VER="1.82.0" # Inclusive
+RUST_MIN_VER="1.82.0" # llvm-19.1, required for:  feature `edition2024` is required
 
 inherit cargo lcnr npm
 
@@ -554,9 +572,11 @@ BDEPEND+="
 	>=dev-build/make-4.3
 	virtual/pkgconfig
 	|| (
-		dev-lang/rust:=
-		dev-lang/rust-bin:=
+		=dev-lang/rust-1.82*
+		=dev-lang/rust-bin-1.82*
 	)
+	dev-lang/rust:=
+	dev-lang/rust-bin:=
 "
 
 # @FUNCTION: cargo_src_unpack
@@ -574,37 +594,62 @@ _cargo_src_unpack() {
 		"${S}" \
 		|| die
 
+	mkdir -p "${ECARGO_VENDOR}" "${S}" || die
+
 	local archive shasum pkg
-	for archive in ${A} ; do
+	local crates=()
+	einfo "${A}"
+	for archive in ${A}; do
 		case "${archive}" in
 			*.crate)
-				ebegin "Loading ${archive} into Cargo registry"
-				tar -xf "${DISTDIR}"/${archive} -C "${ECARGO_VENDOR}/" || die
-				# generate sha256sum of the crate itself as cargo needs this
-				shasum=$(sha256sum "${DISTDIR}"/${archive} | cut -d ' ' -f 1)
-				pkg=$(basename ${archive} .crate)
-				cat <<- EOF > ${ECARGO_VENDOR}/${pkg}/.cargo-checksum.json
-				{
-					"package": "${shasum}",
-					"files": {}
-				}
-				EOF
-				# if this is our target package we need it in ${WORKDIR} too
-				# to make ${S} (and handle any revisions too)
-				if [[ ${P} == ${pkg}* ]]; then
-					tar -xf "${DISTDIR}"/${archive} -C "${WORKDIR}" || die
-				fi
-				eend $?
+				crates+=( "${archive}" )
 				;;
 			*)
-				#unpack ${archive} # don't unpack npm tarballs yet
+				einfo "pwd:  "$(pwd)
+				if [[ "${archive}" == "coolercontrol-${PV}.tar.bz2" ]] ; then
+					einfo "Skipping coolercontrol-${PV}.tar.bz2"
+				else
+					pushd "${WORKDIR}" || die
+						unpack "${archive}"
+					popd || die
+				fi
 				;;
 		esac
 	done
 
+	if [[ ${PKGBUMPING} != ${PVR} && ${crates[@]} ]]; then
+		pushd "${DISTDIR}" >/dev/null || die
+
+		ebegin "Unpacking crates"
+		printf '%s\0' "${crates[@]}" |
+			xargs -0 -P "$(makeopts_jobs)" -n 1 -t -- \
+				tar -x -C "${ECARGO_VENDOR}" -f
+		assert
+		eend $?
+
+		while read -d '' -r shasum archive; do
+			pkg=${archive%.crate}
+			cat <<- EOF > ${ECARGO_VENDOR}/${pkg}/.cargo-checksum.json || die
+			{
+				"package": "${shasum}",
+				"files": {}
+			}
+			EOF
+
+			# if this is our target package we need it in ${WORKDIR} too
+			# to make ${S} (and handle any revisions too)
+			if [[ ${P} == ${pkg}* ]]; then
+				tar -xf "${archive}" -C "${WORKDIR}" || die
+			fi
+		done < <(sha256sum -z "${crates[@]}" || die)
+
+		popd >/dev/null || die
+	fi
+
 	cargo_gen_config
 }
 
+# FIXME:  Change port
 set_gui_port() {
 	local L=(
 		"coolercontrold/src/api/mod.rs"
@@ -719,3 +764,5 @@ ewarn
 
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.17.2, 20231201)
+# OILEDMACHINE-OVERLAY-TEST:  passed (2.2.1, 20250701)
+

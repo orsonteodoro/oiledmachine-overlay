@@ -4,7 +4,7 @@
 
 EAPI=8
 
-# U 22.04
+# D12, U22
 
 DISTUTILS_USE_PEP517="setuptools"
 PYTHON_COMPAT=( "python3_"{10,11} ) # Can support 3.12 but limited by Nuitka
@@ -42,8 +42,8 @@ DEPEND+="
 "
 BDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-python/setuptools-46.4[${PYTHON_USEDEP}]
 	>=dev-build/make-4.3
+	>=dev-python/setuptools-46.4[${PYTHON_USEDEP}]
 	dev-python/wheel[${PYTHON_USEDEP}]
 "
 
