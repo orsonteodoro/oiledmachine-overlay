@@ -25,7 +25,7 @@
     "app-builder-lib": "^24.13.2",
     "dotenv": "^8.2.0",
     "ejs": "^3.1.10",
-    "electron": "^22.3.27",
+    "electron": "^37.1.0",
     "electron-builder": "^24.9.1",
     "http-cache-semantics": "^4.1.1",
     "minimist": "^1.2.3",
