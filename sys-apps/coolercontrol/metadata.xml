@@ -18,11 +18,8 @@
 
   -->
   <use>
-    <flag name="gtk3">
-      Use the newer user interface.  (EXPERIMENTAL/WIP)
-    </flag>
     <flag name="html">
-      Use the web browser to access cooler control.
+      Use the web browser to access the CoolerControl web app from the daemon.
     </flag>
     <flag name="hwmon">
       Add support for CPU and motherboard fan/temperature monitoring.
@@ -31,7 +28,8 @@
       Add liquidctl device support for AIOs, USB fan hubs, etc.
     </flag>
     <flag name="qt6">
-      Use the standalone desktop application.
+      Use the standalone desktop application (i.e. a limited web browser that
+      opens the web app from the dameon).
     </flag>
   </use>
 </pkgmetadata>
