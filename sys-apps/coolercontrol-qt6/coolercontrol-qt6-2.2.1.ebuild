@@ -9,7 +9,7 @@ EAPI=8
 
 CMAKE_MAKEFILE_GENERATOR="emake"
 
-inherit check-compiler-switch cmake flag-o-matic
+inherit check-compiler-switch cmake flag-o-matic xdg
 
 SRC_URI="
 https://gitlab.com/coolercontrol/coolercontrol/-/archive/${PV}/coolercontrol-${PV}.tar.bz2
