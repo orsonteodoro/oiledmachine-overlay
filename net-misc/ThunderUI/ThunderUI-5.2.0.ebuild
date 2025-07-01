@@ -49,6 +49,12 @@ DOCS=( "readme.md" )
 
 npm_update_lock_install_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
+		# DoS = Denial of Service
+		# DT = Data Tampering
+		# ID = Information Disclosure
+		# SS = Subsequent System (Indirect System)
+		# VS = Vulnerable System (Direct System)
+		# ZC = Zero Click Attack
 		patch_lockfile() {
 			sed -i -e "s|\"braces\": \"^2.3.1\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die
 			sed -i -e "s|\"braces\": \"^2.3.2\"|\"braces\": \"^3.0.3\"|g" "package-lock.json" || die
@@ -58,12 +64,19 @@ npm_update_lock_install_post() {
 			sed -i -e "s|\"postcss\": \"^7.0.14\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
 			sed -i -e "s|\"postcss\": \"^7.0.32\"|\"postcss\": \"^8.4.31\"|g" "package-lock.json" || die
 			sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
+			sed -i -e "s|\"pbkdf2\": \"^3.1.2\"|\"pbkdf2\": \"^3.1.3\"|g" "package-lock.json" || die
 		}
 		patch_lockfile
 
-		enpm add "braces@3.0.3" -D --prefer-offline			# CVE-2024-4068; DoS; High
-		enpm add "postcss@8.4.31" -D --prefer-offline			# CVE-2023-44270; DT; Medium
-		enpm add "serialize-javascript@^6.0.2" -D --prefer-offline	# CVE-2024-11831; DT, ID; Medium
+		local pkgs=(
+			"braces@3.0.3"				# CVE-2024-4068; DoS; High
+			"postcss@8.4.31"			# CVE-2023-44270; DT; Medium
+			"serialize-javascript@^6.0.2"		# CVE-2024-11831; DT, ID; Medium
+
+			"pbkdf2@3.1.3"				# CVE-2025-6547; ZC, VS(DT), SS(DoS, DT, ID)
+								# CVE-2025-6545; ZC, VS(DT, ID), SS(DoS, DT, ID)
+		)
+		enpm add "${pkgs[@]}" -D --prefer-offline
 		patch_lockfile
 	fi
 }
