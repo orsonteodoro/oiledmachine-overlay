@@ -7,51 +7,51 @@ EAPI=8
 # U24
 
 # To generate crates:
-# ./convert-cargo-lock.sh 0.2.1_p20250311 1f1578b1630cec5aef8256d9a84d0e3bb5cefa1d
+# ./convert-cargo-lock.sh 0.2.1_p20250610 75c19b915b839e22d1a47db584b1f91b4d69074e
 
 #GENERATE_LOCKFILE=${GENERATE_LOCKFILE:-1}
 
-AT_TYPES_NODE_PV="22.7.5"
+AT_TYPES_NODE_PV="22.7.4"
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_sse4_2"
 )
 CRATES="
 addr2line-0.24.2
-adler2-2.0.0
+adler2-2.0.1
 aho-corasick-1.1.3
 alloc-no-stdlib-2.0.4
 alloc-stdlib-0.2.2
 android-tzdata-0.1.1
 android_system_properties-0.1.5
-anyhow-1.0.97
+anyhow-1.0.98
 atk-0.15.1
 atk-sys-0.15.1
-autocfg-1.4.0
-backtrace-0.3.74
+autocfg-1.5.0
+backtrace-0.3.75
 base64-0.13.1
 base64-0.21.7
 base64-0.22.1
 bitflags-1.3.2
-bitflags-2.9.0
+bitflags-2.9.1
 block-0.1.6
 block-buffer-0.10.4
 brotli-7.0.0
-brotli-decompressor-4.0.2
-bstr-1.11.3
-bumpalo-3.17.0
-bytemuck-1.22.0
+brotli-decompressor-4.0.3
+bstr-1.12.0
+bumpalo-3.19.0
+bytemuck-1.23.1
 byteorder-1.5.0
 bytes-1.10.1
 cairo-rs-0.15.12
 cairo-sys-rs-0.15.1
 cargo_toml-0.15.3
-cc-1.2.16
+cc-1.2.27
 cesu8-1.1.0
 cfb-0.7.3
 cfg-expr-0.15.8
 cfg-expr-0.9.1
-cfg-if-1.0.0
-chrono-0.4.40
+cfg-if-1.0.1
+chrono-0.4.41
 cocoa-0.24.1
 cocoa-foundation-0.1.2
 color_quant-1.1.0
@@ -63,7 +63,7 @@ core-graphics-0.22.3
 core-graphics-types-0.1.3
 cpufeatures-0.2.17
 crc32fast-1.4.2
-crossbeam-channel-0.5.14
+crossbeam-channel-0.5.15
 crossbeam-deque-0.8.6
 crossbeam-epoch-0.9.18
 crossbeam-utils-0.8.21
@@ -71,11 +71,11 @@ crypto-common-0.1.6
 cssparser-0.27.2
 cssparser-macros-0.6.1
 ctor-0.2.9
-darling-0.20.10
-darling_core-0.20.10
-darling_macro-0.20.10
-deranged-0.3.11
-derive_more-0.99.19
+darling-0.20.11
+darling_core-0.20.11
+darling_macro-0.20.11
+deranged-0.4.0
+derive_more-0.99.20
 digest-0.10.7
 dirs-next-2.0.0
 dirs-sys-next-0.1.2
@@ -84,16 +84,17 @@ displaydoc-0.2.5
 dtoa-1.0.10
 dtoa-short-0.3.5
 dunce-1.0.5
-embed-resource-2.5.1
+dyn-clone-1.0.19
+embed-resource-2.5.2
 embed_plist-1.2.2
 encoding_rs-0.8.35
 equivalent-1.0.2
-errno-0.3.10
+errno-0.3.13
 fastrand-2.3.0
 fdeflate-0.3.7
 field-offset-0.3.6
 filetime-0.2.25
-flate2-1.1.0
+flate2-1.1.2
 fluent-uri-0.1.4
 fnv-1.0.7
 foreign-types-0.3.2
@@ -117,8 +118,8 @@ gdkx11-sys-0.15.1
 generator-0.7.5
 generic-array-0.14.7
 getrandom-0.1.16
-getrandom-0.2.15
-getrandom-0.3.1
+getrandom-0.2.16
+getrandom-0.3.3
 gimli-0.31.1
 gio-0.15.12
 gio-sys-0.15.10
@@ -132,7 +133,7 @@ gtk-0.15.5
 gtk-sys-0.15.3
 gtk3-macros-0.15.6
 hashbrown-0.12.3
-hashbrown-0.15.2
+hashbrown-0.15.4
 heck-0.3.3
 heck-0.4.1
 heck-0.5.0
@@ -140,26 +141,23 @@ hex-0.4.3
 html5ever-0.26.0
 http-0.2.12
 http-range-0.1.5
-iana-time-zone-0.1.61
+iana-time-zone-0.1.63
 iana-time-zone-haiku-0.1.2
 ico-0.4.0
-icu_collections-1.5.0
-icu_locid-1.5.0
-icu_locid_transform-1.5.0
-icu_locid_transform_data-1.5.0
-icu_normalizer-1.5.0
-icu_normalizer_data-1.5.0
-icu_properties-1.5.1
-icu_properties_data-1.5.0
-icu_provider-1.5.0
-icu_provider_macros-1.5.0
+icu_collections-2.0.0
+icu_locale_core-2.0.0
+icu_normalizer-2.0.0
+icu_normalizer_data-2.0.0
+icu_properties-2.0.1
+icu_properties_data-2.0.1
+icu_provider-2.0.0
 ident_case-1.0.1
 idna-1.0.3
-idna_adapter-1.2.0
+idna_adapter-1.2.1
 ignore-0.4.23
 image-0.24.9
 indexmap-1.9.3
-indexmap-2.8.0
+indexmap-2.10.0
 infer-0.13.0
 instant-0.1.13
 itoa-0.4.8
@@ -175,22 +173,22 @@ kuchikiki-0.8.2
 lazy_static-1.5.0
 libappindicator-0.7.1
 libappindicator-sys-0.7.3
-libc-0.2.171
+libc-0.2.174
 libloading-0.7.4
-libredox-0.1.3
-linux-raw-sys-0.9.3
-litemap-0.7.5
-lock_api-0.4.12
-log-0.4.26
+libredox-0.1.4
+linux-raw-sys-0.9.4
+litemap-0.8.0
+lock_api-0.4.13
+log-0.4.27
 loom-0.5.6
 mac-0.1.1
 malloc_buf-0.0.6
 markup5ever-0.11.0
 matchers-0.1.0
 matches-0.1.10
-memchr-2.7.4
+memchr-2.7.5
 memoffset-0.9.1
-miniz_oxide-0.8.5
+miniz_oxide-0.8.9
 ndk-0.6.0
 ndk-context-0.1.1
 ndk-sys-0.3.0
@@ -205,13 +203,13 @@ objc-0.2.7
 objc_exception-0.1.2
 objc_id-0.1.1
 object-0.36.7
-once_cell-1.21.1
+once_cell-1.21.3
 open-3.2.0
 overload-0.1.1
 pango-0.15.10
 pango-sys-0.15.10
-parking_lot-0.12.3
-parking_lot_core-0.9.10
+parking_lot-0.12.4
+parking_lot_core-0.9.11
 pathdiff-0.2.3
 percent-encoding-2.3.1
 phf-0.10.1
@@ -230,8 +228,9 @@ phf_shared-0.8.0
 pin-project-lite-0.2.16
 pin-utils-0.1.0
 pkg-config-0.3.32
-plist-1.7.0
+plist-1.7.2
 png-0.17.16
+potential_utf-0.1.2
 powerfmt-0.2.0
 ppv-lite86-0.2.21
 precomputed-hash-0.1.1
@@ -239,9 +238,10 @@ proc-macro-crate-1.3.1
 proc-macro-error-1.0.4
 proc-macro-error-attr-1.0.4
 proc-macro-hack-0.5.20+deprecated
-proc-macro2-1.0.94
-quick-xml-0.32.0
+proc-macro2-1.0.95
+quick-xml-0.37.5
 quote-1.0.40
+r-efi-5.3.0
 rand-0.7.3
 rand-0.8.5
 rand_chacha-0.2.2
@@ -251,19 +251,23 @@ rand_core-0.6.4
 rand_hc-0.2.0
 rand_pcg-0.2.1
 raw-window-handle-0.5.2
-redox_syscall-0.5.10
+redox_syscall-0.5.13
 redox_users-0.4.6
+ref-cast-1.0.24
+ref-cast-impl-1.0.24
 regex-1.11.1
 regex-automata-0.1.10
 regex-automata-0.4.9
 regex-syntax-0.6.29
 regex-syntax-0.8.5
-rustc-demangle-0.1.24
+rustc-demangle-0.1.25
 rustc_version-0.4.1
-rustix-1.0.2
-rustversion-1.0.20
+rustix-1.0.7
+rustversion-1.0.21
 ryu-1.0.20
 same-file-1.0.6
+schemars-0.9.0
+schemars-1.0.3
 scoped-tls-1.0.1
 scopeguard-1.2.0
 selectors-0.22.0
@@ -272,37 +276,37 @@ serde-1.0.219
 serde_derive-1.0.219
 serde_json-1.0.140
 serde_repr-0.1.20
-serde_spanned-0.6.8
-serde_with-3.12.0
-serde_with_macros-3.12.0
+serde_spanned-0.6.9
+serde_with-3.14.0
+serde_with_macros-3.14.0
 serialize-to-javascript-0.1.2
 serialize-to-javascript-impl-0.1.2
 servo_arc-0.1.1
-sha2-0.10.8
+sha2-0.10.9
 sharded-slab-0.1.7
 shlex-1.3.0
 simd-adler32-0.3.7
 siphasher-0.3.11
 siphasher-1.0.1
-slab-0.4.9
-smallvec-1.14.0
+slab-0.4.10
+smallvec-1.15.1
 soup2-0.2.1
 soup2-sys-0.2.0
 stable_deref_trait-1.2.0
 state-0.5.3
-string_cache-0.8.8
+string_cache-0.8.9
 string_cache_codegen-0.5.4
 strsim-0.11.1
 syn-1.0.109
-syn-2.0.100
-synstructure-0.13.1
+syn-2.0.104
+synstructure-0.13.2
 system-deps-5.0.0
 system-deps-6.2.2
 tao-0.16.10
 tao-macros-0.1.3
 tar-0.4.44
 target-lexicon-0.12.16
-tauri-1.8.2
+tauri-1.8.3
 tauri-build-1.5.6
 tauri-codegen-1.4.6
 tauri-macros-1.4.7
@@ -310,26 +314,27 @@ tauri-runtime-0.14.6
 tauri-runtime-wry-0.14.11
 tauri-utils-1.6.2
 tauri-winres-0.1.1
-tempfile-3.19.0
+tempfile-3.20.0
 tendril-0.4.3
 thin-slice-0.1.1
 thiserror-1.0.69
 thiserror-impl-1.0.69
-thread_local-1.1.8
-time-0.3.39
-time-core-0.1.3
-time-macros-0.2.20
-tinystr-0.7.6
-tokio-1.44.1
+thread_local-1.1.9
+time-0.3.41
+time-core-0.1.4
+time-macros-0.2.22
+tinystr-0.8.1
+tokio-1.45.1
 toml-0.5.11
 toml-0.7.8
-toml-0.8.20
-toml_datetime-0.6.8
+toml-0.8.23
+toml_datetime-0.6.11
 toml_edit-0.19.15
-toml_edit-0.22.24
+toml_edit-0.22.27
+toml_write-0.1.2
 tracing-0.1.41
-tracing-attributes-0.1.28
-tracing-core-0.1.33
+tracing-attributes-0.1.30
+tracing-core-0.1.34
 tracing-log-0.2.0
 tracing-subscriber-0.3.19
 typenum-1.18.0
@@ -337,9 +342,8 @@ unicode-ident-1.0.18
 unicode-segmentation-1.12.0
 url-2.5.4
 utf-8-0.7.6
-utf16_iter-1.0.5
 utf8_iter-1.0.4
-uuid-1.16.0
+uuid-1.17.0
 valuable-0.1.1
 version-compare-0.0.11
 version-compare-0.2.0
@@ -347,8 +351,8 @@ version_check-0.9.5
 vswhom-0.1.0
 vswhom-sys-0.1.3
 walkdir-2.5.0
-wasi-0.11.0+wasi-snapshot-preview1
-wasi-0.13.3+wasi-0.2.2
+wasi-0.11.1+wasi-snapshot-preview1
+wasi-0.14.2+wasi-0.2.4
 wasi-0.9.0+wasi-snapshot-preview1
 wasm-bindgen-0.2.100
 wasm-bindgen-backend-0.2.100
@@ -367,66 +371,80 @@ winapi-x86_64-pc-windows-gnu-0.4.0
 windows-0.39.0
 windows-0.48.0
 windows-bindgen-0.39.0
-windows-core-0.52.0
+windows-core-0.61.2
 windows-implement-0.39.0
-windows-link-0.1.0
+windows-implement-0.60.0
+windows-interface-0.59.1
+windows-link-0.1.3
 windows-metadata-0.39.0
+windows-result-0.3.4
+windows-strings-0.4.2
 windows-sys-0.42.0
 windows-sys-0.48.0
 windows-sys-0.59.0
+windows-sys-0.60.2
 windows-targets-0.48.5
 windows-targets-0.52.6
+windows-targets-0.53.2
 windows-tokens-0.39.0
-windows-version-0.1.3
+windows-version-0.1.4
 windows_aarch64_gnullvm-0.42.2
 windows_aarch64_gnullvm-0.48.5
 windows_aarch64_gnullvm-0.52.6
+windows_aarch64_gnullvm-0.53.0
 windows_aarch64_msvc-0.39.0
 windows_aarch64_msvc-0.42.2
 windows_aarch64_msvc-0.48.5
 windows_aarch64_msvc-0.52.6
+windows_aarch64_msvc-0.53.0
 windows_i686_gnu-0.39.0
 windows_i686_gnu-0.42.2
 windows_i686_gnu-0.48.5
 windows_i686_gnu-0.52.6
+windows_i686_gnu-0.53.0
 windows_i686_gnullvm-0.52.6
+windows_i686_gnullvm-0.53.0
 windows_i686_msvc-0.39.0
 windows_i686_msvc-0.42.2
 windows_i686_msvc-0.48.5
 windows_i686_msvc-0.52.6
+windows_i686_msvc-0.53.0
 windows_x86_64_gnu-0.39.0
 windows_x86_64_gnu-0.42.2
 windows_x86_64_gnu-0.48.5
 windows_x86_64_gnu-0.52.6
+windows_x86_64_gnu-0.53.0
 windows_x86_64_gnullvm-0.42.2
 windows_x86_64_gnullvm-0.48.5
 windows_x86_64_gnullvm-0.52.6
+windows_x86_64_gnullvm-0.53.0
 windows_x86_64_msvc-0.39.0
 windows_x86_64_msvc-0.42.2
 windows_x86_64_msvc-0.48.5
 windows_x86_64_msvc-0.52.6
+windows_x86_64_msvc-0.53.0
 winnow-0.5.40
-winnow-0.7.4
+winnow-0.7.11
 winreg-0.52.0
-wit-bindgen-rt-0.33.0
-write16-1.0.0
-writeable-0.5.5
+wit-bindgen-rt-0.39.0
+writeable-0.6.1
 wry-0.24.11
 x11-2.21.0
 x11-dl-2.21.0
-xattr-1.5.0
-yoke-0.7.5
-yoke-derive-0.7.5
-zerocopy-0.8.23
-zerocopy-derive-0.8.23
+xattr-1.5.1
+yoke-0.8.0
+yoke-derive-0.8.0
+zerocopy-0.8.26
+zerocopy-derive-0.8.26
 zerofrom-0.1.6
 zerofrom-derive-0.1.6
-zerovec-0.10.4
-zerovec-derive-0.10.3
+zerotrie-0.2.2
+zerovec-0.11.2
+zerovec-derive-0.11.1
 "
-EGIT_COMMIT="1f1578b1630cec5aef8256d9a84d0e3bb5cefa1d"
+EGIT_COMMIT="75c19b915b839e22d1a47db584b1f91b4d69074e" # Jun 10, 2025
 NODE_ENV="development"
-NODE_VERSION=18
+NODE_VERSION=18 # Upstream uses 18 and 20
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 	"--prefer-offline"
@@ -443,12 +461,13 @@ NPM_UNINSTALL_ARGS=(
 	"--prefer-offline"
 )
 PYTHON_COMPAT=( "python3_"{10..12} )
-RUST_MAX_VER="1.81.0" # Inclusive
-RUST_MIN_VER="1.81.0" # llvm-18.1, required by @swc/core
+RUST_MAX_VER="1.82.0" # Inclusive
+RUST_MIN_VER="1.82.0" # llvm-19.1
 RUST_PV="${RUST_MIN_VER}"
 SHARP_PV="0.32.6"
 VIPS_PV="8.14.5"
 WEBKIT_GTK_STABLE=(
+	"2.48"
 	"2.46"
 	"2.44"
 	"2.42"
@@ -695,8 +714,8 @@ BDEPEND+="
 	=net-libs/nodejs-${NODE_VERSION}*[npm,webassembly(+)]
 	virtual/pkgconfig
 	|| (
-		dev-lang/rust:${RUST_PV}
-		dev-lang/rust-bin:${RUST_PV}
+		=dev-lang/rust-1.81*:=
+		=dev-lang/rust-bin-1.81*:=
 	)
 "
 DOCS=( "README.md" )
@@ -711,6 +730,22 @@ pkg_setup() {
 		rust_prepend_path "${RUST_PV}" "binary"
 	elif has_version "dev-lang/rust:${RUST_PV}" ; then
 		rust_prepend_path "${RUST_PV}" "source"
+	fi
+	[[ -z "${RUSTC}" ]] && die "RUSTC is not defined"
+	local actual_rust_pv=$(${RUSTC} --version | cut -f 2 -d " ")
+	if ver_test "${actual_rust_pv}" -ne "${RUST_PV}" ; then
+eerror
+eerror "Use \`eselect rust\` to switch to Rust ${RUST_PV}"
+eerror
+eerror "Actual Rust version:  ${actual_rust_pv}"
+eerror "Expected Rust version:  ${RUST_PV}"
+eerror
+		die
+	else
+einfo
+einfo "Actual Rust version:  ${actual_rust_pv}"
+einfo "Expected Rust version:  ${RUST_PV}"
+einfo
 	fi
 }
 
@@ -821,8 +856,10 @@ npm_update_lock_install_post() {
 }
 
 src_unpack() {
+	# For updating cargo lockfile.
 	unpack "${TARBALL}"
-#die # debug / fixme
+	#die
+
 einfo "Unpacking npm packages"
 	if [[ "${PV}" =~ "_p" ]] ; then
 		S="${S_PROJECT}/" \
@@ -853,6 +890,11 @@ src_prepare() {
 }
 
 src_configure() {
+	if ! has_version "dev-util/sccache" ; then
+einfo "Disabling sccache support"
+		unset RUSTC_WRAPPER
+		unset SCCACHE_DIR
+	fi
 	sed \
 		-i \
 		-e "s|\"targets\": \"all\"|\"targets\": \"deb\"|g" \
