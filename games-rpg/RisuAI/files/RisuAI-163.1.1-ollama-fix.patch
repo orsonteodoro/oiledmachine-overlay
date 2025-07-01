@@ -1,0 +1,15 @@
+--- a/src/ts/process/request/request.ts.orig	2025-06-30 16:22:54.321089176 -0700
++++ b/src/ts/process/request/request.ts	2025-06-30 16:22:03.362335172 -0700
+@@ -1189,9 +1189,11 @@ async function requestOllama(arg:Request
+ 
+     const readableStream = new ReadableStream<StreamResponseChunk>({
+         async start(controller){
++            let text = '';
+             for await(const chunk of response){
++                text += chunk.message.content;
+                 controller.enqueue({
+-                    "0": chunk.message.content
++                    "0": text
+                 })
+             }
+             controller.close()
