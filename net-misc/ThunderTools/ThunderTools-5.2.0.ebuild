@@ -12,7 +12,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/rdkcentral/ThunderTools.git"
-	FALLBACK_COMMIT="4ceccbc111e9e9fb73ec6182c6886d84c2037517" # Oct 3, 2024
+	FALLBACK_COMMIT="0efdfe97e363892d387ba07b43be07a05512c222" # Mar 19, 2025
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
@@ -44,6 +44,8 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	${PYTHON_DEPS}
+	>=dev-build/cmake-3.15
 "
 DOCS=( "README.md" )
 
