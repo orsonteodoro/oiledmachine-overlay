@@ -10,7 +10,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/rdkcentral/ThunderClientLibraries.git"
-	FALLBACK_COMMIT="910022d1aada134cdf63b9c5bf8021f1a9c928ed" # Aug 20, 2024
+	FALLBACK_COMMIT="6f1361630983b956efb26f17590293911ef2272c" # Feb 12, 2025
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
@@ -86,6 +86,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	>=dev-build/cmake-3.15
 	virtual/pkgconfig
 "
 DOCS=( "README.md" )

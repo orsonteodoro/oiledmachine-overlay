@@ -43,6 +43,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	>=dev-build/cmake-3.15
 "
 DOCS=( "README.md" )
 
