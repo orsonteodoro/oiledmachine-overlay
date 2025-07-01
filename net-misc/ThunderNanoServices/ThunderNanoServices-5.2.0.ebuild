@@ -12,7 +12,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/rdkcentral/ThunderNanoServices.git"
-	FALLBACK_COMMIT="2235972f41a8452467b34a25a4ae71b328d9c958" # Oct 8, 2024
+	FALLBACK_COMMIT="6413b642652e1d1ed0441363b0fc6dd64bdc46f5" # Mar 19, 2025
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
@@ -43,20 +43,23 @@ bluetooth-kernel-connection-control bluetooth-remote-control
 bluetooth-sdp-server cec-control cobalt commander compositor debug dhcp-server
 dial-server dictionary firmware-control input-switch language-administrator
 network-control performance-monitor power process-containers process-monitor
-remote-control resource-monitor rust-bridge ssh-server snapshot spark streamer
+remote-control resource-monitor rust-bridge script-engine ssh-server snapshot
+spark streamer
 subsystem-controller svalbard switchboard system-commands systemd
 vault-provisioning volume-control watchdog webpa web-proxy web-server web-shell
 wifi-control
 )
 EXAMPLES=(
 example-client-server example-comrpc-client
-example-config-update-example example-dynamic-loading
+example-config-update-example example-dynamic-json-rpc-error-message
+example-dynamic-loading
 example-dynamic-loading-yang example-dynamic-loading-yin example-file-transfer
 example-io-connector-test example-jsonrpc example-message-control-udp-client
 example-out-of-process example-simple-comrpc-test example-state-controller
 example-smart-interface-type
 )
 FEATS=(
+compositor-allow-unauthenticated-clients
 dial-server-amazon-prime dial-server-netflix dial-server-youtube
 dump-on-completed gles2 portaudio power-mfr-persist-state rdk-audio-hal
 remote-control-cec +remote-control-rf4ce streamer-aamp streamer-cenc
@@ -134,6 +137,9 @@ RDEPEND+="
 		x11-libs/libdrm
 		~net-misc/ThunderClientLibraries-${PV}[compositor-buffer-type]
 	)
+	script-engine? (
+		dev-libs/nodejs
+	)
 	spark? (
 		media-libs/freetype
 	)
@@ -182,6 +188,7 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	>=dev-build/cmake-3.15
 	virtual/pkgconfig
 "
 DOCS=( "README.md" )
@@ -204,6 +211,7 @@ src_configure() {
 		-DENABLE_DUMP_ON_COMPLETED=$(usex dump-on-completed)
 		-DEXAMPLE_CLIENT_SERVER=$(usex example-client-server)
 		-DEXAMPLE_COMRPCCLIENT=$(usex example-comrpc-client)
+		-DEXAMPLE_DYNAMICJSONRPCERRORMESSAGE_EXAMPLE=$(usex example-dynamic-json-rpc-error-message)
 		-DEXAMPLE_DYNAMICLOADING=$(usex example-dynamic-loading)
 		-DEXAMPLE_DYNAMICLOADING_YIN=$(usex example-dynamic-loading-yin)
 		-DEXAMPLE_DYNAMICLOADING_YANG=$(usex example-dynamic-loading-yang)
@@ -227,6 +235,7 @@ src_configure() {
 		-DPLUGIN_COBALT=$(usex cobalt)
 		-DPLUGIN_COMMANDER=$(usex commander)
 		-DPLUGIN_COMPOSITOR=$(usex compositor)
+		-DPLUGIN_COMPOSITOR_ALLOW_UNAUTHENTICATED_CLIENTS=$(usex compositor-allow-unauthenticated-clients)
 		-DPLUGIN_COMPOSITOR_HARDWAREREADY=0
 		-DPLUGIN_COMPOSITOR_TEST=$(usex test-compositor)
 		-DPLUGIN_COMPOSITOR_NXSERVER=OFF
@@ -255,6 +264,7 @@ src_configure() {
 		-DPLUGIN_REMOTECONTROL_RFCE=$(usex remote-control-rf4ce)
 		-DPLUGIN_RESOURCEMONITOR=$(usex resource-monitor)
 		-DPLUGIN_RUSTBRIDGE=$(usex rust-bridge)
+		-DPLUGIN_SCRIPTENGINE=$(usex script-engine)
 		-DPLUGIN_SECURESHELLSERVER=$(usex ssh-server)
 		-DPLUGIN_SNAPSHOT=$(usex snapshot)
 		-DPLUGIN_SPARK=$(usex spark)
@@ -310,6 +320,12 @@ src_configure() {
 		impls="${impls:1}"
 		mycmakeargs+=(
 			-DPLUGIN_STREAMER_IMPLEMENTATIONS="${impls}"
+		)
+	fi
+
+	if [[ -n "${PLUGIN_BLUETOOTH_FIRMWARE_DIRECTORY}" ]] ; then
+		mycmakeargs+=(
+			-DPLUGIN_BLUETOOTH_FIRMWARE_DIRECTORY="${PLUGIN_BLUETOOTH_FIRMWARE_DIRECTORY}"
 		)
 	fi
 

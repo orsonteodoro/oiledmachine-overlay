@@ -47,6 +47,9 @@
     <flag name="compositor">
       Add the Compositor plugin
     </flag>
+    <flag name="compositor-allow-unauthenticated-clients">
+      Disable nxserver client authentication
+    </flag>
     <flag name="process-containers">
       Add the ProcessContainers plugin
     </flag>
@@ -68,6 +71,9 @@
     <flag name="example-comrpc-client">
       Add an example to show how to hook up Thunder COMRPC
     </flag>
+    <flag name="example-dynamic-json-rpc-error-message">
+      Add an example JSON-RPC error message for dynamic loading.
+    </flag.
     <flag name="example-config-update-example">
       Add an example plugin to get/set plugin config
     </flag>
@@ -154,6 +160,9 @@
     </flag>
     <flag name="rust-bridge">
       Add the RustBridge plugin
+    </flag>
+    <flag name="script-engine">
+      Add the ScriptEngine plugin
     </flag>
     <flag name="ssh-server">
       Add the SecureShellServer plugin
