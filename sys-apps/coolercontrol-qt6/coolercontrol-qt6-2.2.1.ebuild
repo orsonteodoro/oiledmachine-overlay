@@ -36,7 +36,7 @@ REQUIRED_USE="
 RDEPEND+="
 	>=dev-qt/qtbase-6:6[dbus,network,wayland?,widgets,X?]
 	>=dev-qt/qtwebchannel-6:6
-	>=dev-qt/qtwebengine-6:6
+	>=dev-qt/qtwebengine-6:6[widgets]
 	~sys-apps/coolercontrold-${PV}
 "
 DEPEND+="
