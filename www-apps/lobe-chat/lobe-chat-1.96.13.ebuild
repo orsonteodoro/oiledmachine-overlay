@@ -4,6 +4,9 @@
 
 EAPI=8
 
+# Version bump history for configuration update reviews:
+# 1.74.0 -> 1.96.13
+
 # This ebuild uses npm to unbreak sharp.
 
 # Ebuild using React 19
@@ -33,7 +36,7 @@ EAPI=8
 
 # @serwist/next needs pnpm workspaces
 
-# Use `NPM_UPDATER_VERSIONS="1.65.0" npm_updater_update_locks.sh` to update lockfile
+# Use `NPM_UPDATER_VERSIONS="1.96.13" npm_updater_update_locks.sh` to update lockfile
 
 MY_PN="LobeChat"
 
@@ -45,7 +48,7 @@ NODE_VERSION=22
 NPM_SLOT="3"
 PNPM_DEDUPE=0 # Still debugging
 PNPM_SLOT="9"
-NEXTJS_PV="15.2.3"
+NEXTJS_PV="15.3.3"
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 	"--prefer-offline"
@@ -62,12 +65,16 @@ NPM_UNINSTALL_ARGS=(
 	"--prefer-offline"
 )
 PNPM_AUDIT_FIX=0
-RUST_MAX_VER="1.71.1" # Inclusive
-RUST_MIN_VER="1.76.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0 for next.js 14.2.24 dependency of @swc/core 1.4.4
+RUST_MAX_VER="1.81.0" # Inclusive
+RUST_MIN_VER="1.81.0" # dependency graph:  next -> @swc/core -> rust.  llvm 17.0 for next.js 15.3.3 dependency of @swc/core 1.11.24 \
+# Obtained from https://github.com/swc-project/swc/blob/v1.11.24/rust-toolchain \
+# Obtained from commit from committer-date:2024-10-07 GH search \
+# Obtained from https://github.com/rust-lang/rust/blob/<commit-id>/RELEASES.md
 RUST_PV="${RUST_MIN_VER}"
 SHARP_PV="0.30.7" # 0.33.5 segfaults during build time and runtime
 VIPS_PV="8.15.3"
 
+# Use npm for npm_updater_update_locks.sh
 inherit dhms desktop edo node-sharp npm pnpm rust xdg
 
 if [[ "${PV}" =~ "9999" ]] ; then
@@ -309,7 +316,7 @@ ewarn "result in data loss."
 ewarn
 ewarn "Save work immediately."
 ewarn
-	sleep 15
+#	sleep 15
 	dhms_start
 	# If a "next" package is found in package.json, this should be added.
 	# Otherwise, the license variable should be updated with additional
@@ -362,7 +369,7 @@ npm_unpack_post() {
 # The prebuilt vips could be causing the segfault.  The sharp package need to
 # reference the system's vips package not the prebuilt one.
 	eapply "${FILESDIR}/${PN}-1.47.17-hardcoded-paths.patch"
-	eapply "${FILESDIR}/${PN}-1.55.4-next-config.patch"
+	eapply "${FILESDIR}/${PN}-1.96.13-next-config.patch"
 	eapply "${FILESDIR}/${PN}-1.65.0-sharp-declaration.patch"
 
 #	if [[ "${NPM_UPDATE_LOCK}" != "1" ]] ; then
@@ -383,13 +390,13 @@ npm_unpack_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 	# Fixes to unmet peer or missing references
 		pkgs=(
-			"@next/bundle-analyzer@^15.2.0"
+			"@next/bundle-analyzer@^${NEXTJS_PV}"
 		)
 		enpm add ${pkgs[@]} -D --legacy-peer-deps
 		pkgs=(
-			"next@${NEXTJS_PV}"								# CVE-2025-29927; DT, ID; Critical
-			"react@19.0.0"
-			"react-dom@19.0.0"
+			"next@${NEXTJS_PV}"								# CVE-2025-29927; ZC, DoS, DT, ID; Critical
+#			"react@19.0.0"
+#			"react-dom@19.0.0"
 			"svix@1.45.1"
 		)
 		enpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
