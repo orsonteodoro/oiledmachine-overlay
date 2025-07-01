@@ -70,7 +70,7 @@ set_liqctld_port() {
 }
 
 pkg_setup() {
-ewarn "Do not emerge ${CATEGORY}/${PN} package directly.  Emerge sys-apps/coolercontrol instead."
+ewarn "Do not emerge ${CATEGORY}/${PN} package directly.  Emerge the sys-apps/coolercontrol metapackage instead."
 	python_setup
 }
 

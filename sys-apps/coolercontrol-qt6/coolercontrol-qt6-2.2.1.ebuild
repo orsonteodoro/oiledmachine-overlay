@@ -77,6 +77,7 @@ eerror
 }
 
 pkg_setup() {
+ewarn "Do not emerge ${CATEGORY}/${PN} directly.  Emerge the sys-apps/coolercontrol metapackage instead."
 	check-compiler-switch_start
 }
 
