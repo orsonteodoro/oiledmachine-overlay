@@ -12,7 +12,7 @@ if [[ "${PV}" =~ "9999" ]] ; then
 	EGIT_BRANCH="main"
 	EGIT_CHECKOUT_DIR="${WORKDIR}/${P}"
 	EGIT_REPO_URI="https://github.com/rdkcentral/ThunderUI.git"
-	FALLBACK_COMMIT="7fd8bd29280cc9c2261d1b25f154386d2aae0091" # Jul 23, 2024
+	FALLBACK_COMMIT="598fec0f931b1ed334810dfc505252a1d7d54ddf" # Feb 10, 2025
 	IUSE+=" fallback-commit"
 	S="${WORKDIR}/${P}"
 	inherit git-r3
