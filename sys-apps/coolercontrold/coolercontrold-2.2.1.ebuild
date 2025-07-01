@@ -457,7 +457,7 @@ zvariant_utils-3.2.0
 "
 
 NPM_TARBALL="coolercontrol-${PV}.tar.bz2"
-PYTHON_COMPAT=( "python3_"{10,11} ) # Can support 3.12 but limited by Nuitka
+PYTHON_COMPAT=( "python3_"{10,11} )
 RUST_MAX_VER="1.82.0" # Inclusive
 RUST_MIN_VER="1.82.0" # llvm-19.1, required for:  feature `edition2024` is required
 
@@ -470,7 +470,7 @@ $(cargo_crate_uris ${CRATES})
 https://gitlab.com/coolercontrol/coolercontrol/-/archive/${PV}/coolercontrol-${PV}.tar.bz2
 "
 
-DESCRIPTION="The main daemon containing the core logic for interfacing with devices"
+DESCRIPTION="The CoolerControl system service that handles controlling hardware"
 HOMEPAGE="
 https://gitlab.com/coolercontrol/coolercontrol
 https://gitlab.com/coolercontrol/coolercontrol/-/tree/main/coolercontrold
@@ -765,4 +765,3 @@ ewarn
 # OILEDMACHINE-OVERLAY-META:  CREATED-EBUILD
 # OILEDMACHINE-OVERLAY-TEST:  passed (0.17.2, 20231201)
 # OILEDMACHINE-OVERLAY-TEST:  passed (2.2.1, 20250701)
-
