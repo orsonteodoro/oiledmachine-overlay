@@ -110,6 +110,10 @@ BDEPEND+="
 		dev-lang/rust:${RUST_PV}
 		dev-lang/rust-bin:${RUST_PV}
 	)
+	|| (
+		dev-lang/rust:=
+		dev-lang/rust-bin:=
+	)
 "
 PDEPEND+="
 	firejail? (

@@ -351,14 +351,12 @@ BDEPEND="
 		)
 	)
 	|| (
-		(
-			=dev-lang/rust-1.71.0
-			dev-lang/rust:=
-		)
-		(
-			>=dev-lang/rust-bin-1.71.0
-			dev-lang/rust-bin:=
-		)
+		=dev-lang/rust-bin-9999
+		=dev-lang/rust-9999
+	)
+	|| (
+		dev-lang/rust-bin:=
+		dev-lang/rust:=
 	)
 "
 DEPEND="

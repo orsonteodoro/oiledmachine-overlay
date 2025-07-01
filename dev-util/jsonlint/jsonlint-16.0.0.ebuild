@@ -91,6 +91,10 @@ BDEPEND+="
 		dev-lang/rust:${RUST_PV}
 		dev-lang/rust-bin:${RUST_PV}
 	)
+	|| (
+		dev-lang/rust:=
+		dev-lang/rust-bin:=
+	)
 "
 SRC_URI="
 https://github.com/prantlf/jsonlint/archive/refs/tags/v${PV}.tar.gz

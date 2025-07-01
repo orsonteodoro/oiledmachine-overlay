@@ -63,8 +63,8 @@ RDEPEND+="
 		)
 		rust? (
 			|| (
-				dev-lang/rust
-				dev-lang/rust-bin
+				dev-lang/rust:=
+				dev-lang/rust-bin:=
 			)
 		)
 		tensorflow? (

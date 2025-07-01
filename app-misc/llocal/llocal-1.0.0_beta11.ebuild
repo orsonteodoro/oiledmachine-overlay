@@ -81,6 +81,10 @@ BDEPEND="
 		dev-lang/rust:${RUST_PV}
 		dev-lang/rust-bin:${RUST_PV}
 	)
+	|| (
+		dev-lang/rust:=
+		dev-lang/rust-bin:=
+	)
 "
 
 _puppeteer_setup_offline_cache() {

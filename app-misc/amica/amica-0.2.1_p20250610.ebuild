@@ -714,8 +714,12 @@ BDEPEND+="
 	=net-libs/nodejs-${NODE_VERSION}*[npm,webassembly(+)]
 	virtual/pkgconfig
 	|| (
-		=dev-lang/rust-1.81*:=
-		=dev-lang/rust-bin-1.81*:=
+		=dev-lang/rust-1.81*
+		=dev-lang/rust-bin-1.81*
+	)
+	|| (
+		dev-lang/rust:=
+		dev-lang/rust-bin:=
 	)
 "
 DOCS=( "README.md" )

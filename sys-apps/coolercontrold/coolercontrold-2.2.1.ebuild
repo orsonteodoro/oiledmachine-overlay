@@ -575,8 +575,10 @@ BDEPEND+="
 		=dev-lang/rust-1.82*
 		=dev-lang/rust-bin-1.82*
 	)
-	dev-lang/rust:=
-	dev-lang/rust-bin:=
+	|| (
+		dev-lang/rust:=
+		dev-lang/rust-bin:=
+	)
 "
 
 # @FUNCTION: cargo_src_unpack

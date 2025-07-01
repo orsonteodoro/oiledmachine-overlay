@@ -705,8 +705,12 @@ RDEPEND+="
 	)
 	system-rust? (
 		|| (
-			>=dev-lang/rust-9999:1.83.0[clippy,rustfmt]
-			>=dev-lang/rust-1.83.0_beta20241212:1.83.0[clippy,rustfmt]
+			>=dev-lang/rust-9999[clippy,rustfmt]
+			>=dev-lang/rust-bin-9999[clippy,rustfmt]
+		)
+		|| (
+			dev-lang/rust:=
+			dev-lang/rust-bin:=
 		)
 	)
 	system-tern? (

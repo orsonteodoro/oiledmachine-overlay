@@ -745,6 +745,10 @@ TAURI_RDEPEND="
 		dev-lang/rust-bin:${RUST_PV}
 		dev-lang/rust:${RUST_PV}
 	)
+	|| (
+		dev-lang/rust-bin:=
+		dev-lang/rust:=
+	)
 "
 RDEPEND+="
 	${TAURI_RDEPEND}

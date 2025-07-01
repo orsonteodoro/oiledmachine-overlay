@@ -420,8 +420,10 @@ BDEPEND+="
 		>=dev-lang/rust-1.17.1
 		>=dev-lang/rust-bin-1.17.1
 	)
-	dev-lang/rust:=
-	dev-lang/rust-bin:=
+	|| (
+		dev-lang/rust:=
+		dev-lang/rust-bin:=
+	)
 	>=dev-util/blueprint-compiler-0.10.0
 	>=dev-build/make-4.3
 	virtual/pkgconfig

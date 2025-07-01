@@ -599,10 +599,10 @@ gen_rust_cdepend() {
 			(
 				llvm-core/clang:${llvm_slot}
 				llvm-core/llvm:${llvm_slot}
-				=dev-lang/rust-${s}
-				=dev-lang/rust-bin-${s}
-				dev-lang/rust:=
-				dev-lang/rust-bin:=
+				|| (
+					=dev-lang/rust-${s}
+					=dev-lang/rust-bin-${s}
+				)
 			)
 		"
 	done
@@ -873,6 +873,10 @@ CDEPEND+="
 		>=dev-util/pahole-1.16[${PYTHON_SINGLE_USEDEP}]
 		|| (
 			$(gen_rust_cdepend)
+		)
+		|| (
+			dev-lang/rust:=
+			dev-lang/rust-bin:=
 		)
 	)
 	xz? (

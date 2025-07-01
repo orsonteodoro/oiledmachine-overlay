@@ -1331,6 +1331,10 @@ BDEPEND+="
 		>=dev-lang/rust-1.76
 		>=dev-lang/rust-bin-1.76
 	)
+	|| (
+		dev-lang/rust:=
+		dev-lang/rust-bin:=
+	)
 	dev? (
 		>=dev-python/kornia-0.7.2[${PYTHON_SINGLE_USEDEP}]
 		dev-python/jax[${PYTHON_SINGLE_USEDEP},cpu]

@@ -425,11 +425,15 @@ BDEPEND="
 
 			dev-python/grpcio-testing:=[${PYTHON_USEDEP}]
 		)
-		|| (
-			dev-lang/rust:'${RUST_PV}'[rustfmt]
-			dev-lang/rust-bin:'${RUST_PV}'[rustfmt]
-		)
 	')
+	|| (
+		dev-lang/rust:${RUST_PV}[rustfmt]
+		dev-lang/rust-bin:${RUST_PV}[rustfmt]
+	)
+	|| (
+		dev-lang/rust:=
+		dev-lang/rust-bin:=
+	)
 "
 DOCS=( )
 
