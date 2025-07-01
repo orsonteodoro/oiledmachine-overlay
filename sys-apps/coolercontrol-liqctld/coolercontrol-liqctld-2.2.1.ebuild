@@ -42,8 +42,6 @@ DEPEND+="
 "
 BDEPEND+="
 	${PYTHON_DEPS}
-	>=dev-python/Nuitka-0.6.19.1[${PYTHON_USEDEP}]
-	>=dev-python/poetry-1.1.12[${PYTHON_USEDEP}]
 	>=dev-python/setuptools-46.4[${PYTHON_USEDEP}]
 	>=dev-build/make-4.3
 	dev-python/wheel[${PYTHON_USEDEP}]
@@ -83,12 +81,6 @@ python_configure() {
 	popd
 }
 
-# Disabled
-_python_compile() {
-	#poetry install
-	poetry run ${EPYTHON} -m nuitka coolercontrol-liqctld.py
-}
-
 python_install_all() {
 	distutils-r1_python_install_all
 	python_optimize
@@ -97,11 +89,11 @@ ewarn
 ewarn "The OpenRC script is experimental for ${CATEGORY}/${PN}."
 ewarn "If it works, send an issue request to remove this message."
 ewarn
-		exeinto /etc/init.d
+		exeinto "/etc/init.d"
 		doexe "${FILESDIR}/coolercontrol-liqctld"
 	fi
 	if use systemd ; then
-		insinto /lib/systemd/system
+		insinto "/lib/systemd/system"
 		doins "${WORKDIR}/coolercontrol-${PV}/packaging/systemd/coolercontrol-liqctld.service"
 	fi
 	if ! use openrc && ! use systemd ; then
