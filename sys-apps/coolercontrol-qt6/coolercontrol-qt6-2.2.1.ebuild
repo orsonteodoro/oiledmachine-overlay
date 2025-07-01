@@ -34,7 +34,7 @@ REQUIRED_USE="
 	)
 "
 RDEPEND+="
-	>=dev-qt/qtbase-6:6[wayland?,X?]
+	>=dev-qt/qtbase-6:6[dbus,network,wayland?,widgets,X?]
 	>=dev-qt/qtwebchannel-6:6
 	>=dev-qt/qtwebengine-6:6
 	~sys-apps/coolercontrold-${PV}
@@ -54,8 +54,10 @@ verify_qt_consistency() {
 	local qt_pv_major=$(ver_cut 1 "${QTCORE_PV}")
 
 	local L=(
-		"Qt${QT_SLOT}Webchannel"
-		"Qt${QT_SLOT}Webengine"
+		"Qt${QT_SLOT}DBus"
+		"Qt${QT_SLOT}WebChannel"
+		"Qt${QT_SLOT}WebEngine"
+		"Qt${QT_SLOT}Widgets"
 	)
 	local QTPKG_PV
 	local pkg_name
