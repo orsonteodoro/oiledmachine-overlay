@@ -32,7 +32,7 @@ https://pypi.org/project/dash-svg/
 LICENSE="MIT" # https://github.com/stevej2608/dash-svg/blob/0.0.12/DESCRIPTION#L8
 RESTRICT="mirror test" # Missing sci-visualization/dash[testing]
 SLOT="0"
-IUSE="test ebuild_revision_4"
+IUSE="test ebuild_revision_5"
 RDEPEND+="
 	>=dev-python/twine-3.7.1[${PYTHON_USEDEP}]
 	>=dev-python/keyrings-alt-4.1.0[${PYTHON_USEDEP}]
@@ -99,47 +99,64 @@ npm_update_lock_audit_post() {
 		sed -i -e "s|\"cheerio\": \"^0.22.0\"|\"cheerio\": \"1.0.0\"|g" "package-lock.json" || die
 
 		sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
+
+		sed -i -e "s|\"pbkdf2\": \"^3.1.2\"|\"pbkdf2\": \"3.1.3\"|" "package-lock.json" || die
+		sed -i -e "s|\"http-proxy-middleware\": \"^1.0.3\"|\"http-proxy-middleware\": \"^2.0.8\"|g" "package-lock.json" || die
+		sed -i -e "s|\"koa\": \"^2.5.3\"|\"koa\": \"^2.16.1\"|g" "package-lock.json" || die
+		sed -i -e "s|\"undici\": \"^6.19.5\"|\"undici\": \"6.21.2\"|g" "package-lock.json" || die
 	}
 	localfile_edits
 
 	# DoS = Denial of Service
 	# DT = Data Tampering
 	# ID = Information Disclosure
+	# ZC = Zero Click Attack
 
-	enpm uninstall npm -D --prefer-offline
+	local pkgs=(
+		# webpack
+		"loader-utils@^1.4.2"			# CVE-2022-37601			# DoS, DT, ID
 
-	# webpack
-	enpm install "loader-utils@^1.4.2" -D --prefer-offline	# CVE-2022-37601	# DoS, DT, ID
+		# watchpack
+		"braces@^3.0.3"				# CVE-2024-4068				# DoS
 
-	# watchpack
-	enpm install "braces@^3.0.3" -D --prefer-offline	# CVE-2024-4068		# DoS
+		"tough-cookie@^4.1.3"			# CVE-2023-26136			# DT, ID
 
-	enpm install "tough-cookie@^4.1.3" -D --prefer-offline	# CVE-2023-26136	# DT, ID
+		# npm
+#		"ansi-regex@^4.1.1"			# CVE-2021-3807				# DoS
+#		"got@^11.8.5"				# CVE-2022-33987			# DT
+#		"ip@^1.1.9"				# CVE-2023-42282			# DoS, DT, ID # For npm
 
-	# npm
-#	enpm install "ansi-regex@^4.1.1" -D --prefer-offline	# CVE-2021-3807		# DoS
-#	enpm install "got@^11.8.5" -D --prefer-offline		# CVE-2022-33987	# DT
-#	enpm install "ip@^1.1.9" -D --prefer-offline		# CVE-2023-42282	# DoS, DT, ID # For npm
+		# css loader
+		"postcss@^8.4.31"			# CVE-2023-44270			# DT
 
-	# css loader
-	enpm install "postcss@^8.4.31" -D --prefer-offline	# CVE-2023-44270	# DT
+		# cheerio, parent webpack
+		# lodash.pick				# CVE-2020-8203				# DT, ID
+		"cheerio@1.0.0"				# Bumped version to prune lodash.pick
 
-	# cheerio, parent webpack
-	# lodash.pick						# CVE-2020-8203		# DT, ID
-	enpm install "cheerio@1.0.0" -D --prefer-offline	# Bump version to prune lodash.pick
+		# Bump parent packages to remove vulnerable dependencies while node 14.x compatible
+#		"npm@8.12.2"
 
-	# Bump parent packages to remove vulnerable dependencies while node 14.x compatible
-#	enpm install "npm@8.12.2" -D --prefer-offline
+		"webpack@^4.47.0"			# 4.x series
+		"webpack-cli@^4.10.0"
+		"webpack-serve@^4.0.0"
 
-	enpm install "webpack@^4.47.0" -D --prefer-offline		# 4.x series
-	enpm install "webpack-cli@^4.10.0" -D --prefer-offline
-	enpm install "webpack-serve@^4.0.0" -D --prefer-offline
+		"serialize-javascript@6.0.2"		# CVE-2024-11831			# DT, ID
 
-	# request EOL						# CVE-2023-28155	# DT, ID
-	enpm uninstall "request" -D --prefer-offline		# CVE-2023-28155	# DT, ID
-	enpm uninstall "request-promise" -D --prefer-offline
+		"pbkdf2@3.1.3"				# CVE-2025-6547				# ZC, VS(DT), SS(DoS, DT, ID)
+							# CVE-2025-6545				# ZC, VS(DT, ID), SS(DoS, DT, ID)
+		"http-proxy-middleware@2.0.8"		# CVE-2025-32996			# DoS
+		"koa@2.16.1"				# CVE-2025-32379			# DoS, DT, ID
+		"undici@6.21.2"				# CVE-2025-47279			# DoS
+	)
+	enpm install "${pkgs[@]}" -D --prefer-offline
 
-	enpm install "serialize-javascript@6.0.2"		# CVE-2024-11831	# DT, ID
+	local pkgs=(
+		"npm"
+	# request EOL so remove it			# CVE-2023-28155			# DT, ID
+		"request"				# CVE-2023-28155			# DT, ID
+		"request-promise"
+	)
+	enpm uninstall "${pkgs[@]}" -D --prefer-offline
 
 	# Reapply
 
