@@ -11,10 +11,10 @@ CMAKE_MAKEFILE_GENERATOR="emake"
 
 inherit check-compiler-switch cmake flag-o-matic xdg
 
+S="${WORKDIR}/${PN}-${PV}"
 SRC_URI="
 https://gitlab.com/coolercontrol/coolercontrol/-/archive/${PV}/coolercontrol-${PV}.tar.bz2
 "
-S="${WORKDIR}/${PN}-${PV}"
 
 DESCRIPTION="A standalone desktop app for CoolerControl based on Qt6"
 HOMEPAGE="
@@ -81,8 +81,8 @@ pkg_setup() {
 }
 
 src_configure() {
-	export CC="gcc"
-	export CXX="g++"
+	export CC="${CHOST}-gcc"
+	export CXX="${CHOST}-g++"
 	export CPP="${CC} -E"
 
 	check-compiler-switch_end
