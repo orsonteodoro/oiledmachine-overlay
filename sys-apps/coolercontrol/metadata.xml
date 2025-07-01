@@ -27,8 +27,11 @@
     <flag name="hwmon">
       Add support for CPU and motherboard fan/temperature monitoring.
     </flag>
+    <flag name="liqctld">
+      Add liquidctl device support for AIOs, USB fan hubs, etc.
+    </flag>
     <flag name="qt6">
-      Use the older user interface.
+      Use the standalone desktop application.
     </flag>
   </use>
 </pkgmetadata>

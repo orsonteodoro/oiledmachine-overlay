@@ -7,7 +7,7 @@ EAPI=8
 # This is a meta package
 # D12, U22
 
-PYTHON_COMPAT=( python3_{10,11} ) # It can support 3.12 but limited by Nuitka.
+PYTHON_COMPAT=( "python3_"{10,11} ) # It can support 3.12 but limited by Nuitka.
 # D12 - Python 3.11
 # U22 - Python 3.10
 
@@ -27,24 +27,26 @@ LICENSE="
 "
 KEYWORDS="~amd64"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" gtk3 html hwmon openrc systemd wayland X ebuild_revision_1"
+IUSE+=" qt6 html hwmon liqctld openrc systemd wayland X ebuild_revision_1"
 REQUIRED_USE="
-	gtk3? (
+	qt6? (
 		|| (
 			wayland
 			X
 		)
 	)
 	|| (
-		gtk3
+		qt6
 		html
 	)
 "
 RDEPEND+="
-	~sys-apps/coolercontrol-liqctld-${PV}[${PYTHON_USEDEP},openrc?,systemd?]
 	~sys-apps/coolercontrold-${PV}[hwmon?,openrc?,systemd?]
-	gtk3? (
-		~sys-apps/coolercontrol-ui-${PV}[wayland?,X?]
+	liqctld? (
+		~sys-apps/coolercontrol-liqctld-${PV}[${PYTHON_USEDEP},openrc?,systemd?]
+	)
+	qt6? (
+		~sys-apps/coolercontrol-qt6-${PV}[wayland?,X?]
 	)
 "
 DEPEND+="
@@ -55,9 +57,13 @@ src_configure() {
 	default
 }
 
-src_configure() { :; }
+src_configure() {
+	:
+}
 
-src_compile() { :; }
+src_compile() {
+	:
+}
 
 gen_html_wrapper() {
 	local www_browser="xdg-open"
