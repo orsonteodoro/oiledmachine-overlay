@@ -101,7 +101,7 @@ npm_update_lock_audit_post() {
 		sed -i -e "s|\"serialize-javascript\": \"^4.0.0\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
 
 		sed -i -e "s|\"pbkdf2\": \"^3.1.2\"|\"pbkdf2\": \"3.1.3\"|" "package-lock.json" || die
-		sed -i -e "s|\"http-proxy-middleware\": \"^1.0.3\"|\"http-proxy-middleware\": \"^2.0.8\"|g" "package-lock.json" || die
+		sed -i -e "s|\"http-proxy-middleware\": \"^1.0.3\"|\"http-proxy-middleware\": \"2.0.8\"|g" "package-lock.json" || die
 		sed -i -e "s|\"koa\": \"^2.5.3\"|\"koa\": \"^2.16.1\"|g" "package-lock.json" || die
 		sed -i -e "s|\"undici\": \"^6.19.5\"|\"undici\": \"6.21.2\"|g" "package-lock.json" || die
 	}
