@@ -3712,8 +3712,9 @@ ot-kernel-pkgflags_discord() { # DONE
 	local pkg
 	pkg="net-im/discord"
 	if ot-kernel_has_version_slow "${pkg}" ; then
+# Download link for stable at https://discord.com/download near the top of the page.
 		local pv=$(best_version "${pkg}" | sed -e "s|${pkg}-||g")
-		local expected_pv="0.0.96" # 20250605
+		local expected_pv="0.0.100" # 20250701
 		if ver_test "${actual_pv}" -ne "${expected_pv}" ; then
 ewarn
 ewarn "Detected older ${pkg} ebuild.  Bump the ebuild manually in local repo or"
@@ -3729,8 +3730,10 @@ ewarn
 	pkg="net-im/discord-canary-bin"
 	if ot-kernel_has_version "${pkg}" ; then
 # The ebuild should be deleted.
+# Download link for canary at https://support.discord.com/hc/en-us/articles/360035675191-Discord-Testing-Clients \
+# in section "Where can I download these clients?" > "Linux:"
 		local pv=$(best_version "${pkg}" | sed -e "s|${pkg}-||g")
-		local expected_pv="0.0.689" # 20250605
+		local expected_pv="0.0.709" # 20250701
 		if ver_test "${actual_pv}" -ne "${expected_pv}" ; then
 ewarn
 ewarn "Detected older ${pkg} ebuild.  Bump the ebuild or use distro ebuild"
@@ -3748,8 +3751,9 @@ ewarn
 	pkg="net-im/discord-ptb-bin" # Public Test Build
 	if ot-kernel_has_version "${pkg}" ; then
 # The ebuild should be deleted.
+# Download link for PTB at https://ptb.discord.com/ at bottom of the page.
 		local actual_pv=$(best_version "${pkg}" | sed -e "s|${pkg}-||g")
-		local expected_pv="0.0.147" # 20250605
+		local expected_pv="0.0.150" # 20250701
 		if ver_test "${actual_pv}" -ne "${expected_pv}" ; then
 ewarn
 ewarn "Detected older ${pkg} ebuild.  Bump the ebuild or use distro ebuild"
