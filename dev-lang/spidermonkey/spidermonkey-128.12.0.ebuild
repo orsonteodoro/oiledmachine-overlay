@@ -15,6 +15,7 @@ EAPI="8"
 # 128.8.0 -> 128.9.0
 # 128.9.0 -> 128.10.0
 # 128.10.0 -> 128.11.0
+# 128.11.0 -> 128.12.0
 
 CFLAGS_HARDENED_USE_CASES="jit language-runtime scripting sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="IO TC"
