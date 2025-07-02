@@ -112,7 +112,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0"
-IUSE=" ebuild_revision_1"
+IUSE=" ebuild_revision_2"
 BDEPEND="
 	dev-util/cargo-c
 	|| (
@@ -225,6 +225,21 @@ get_rust_chost() {
 	elif [[ "${CHOST}" =~ "loongarch64" && "${ELIBC}" == "musl" ]] ; then
 		echo "loongarch64-unknown-linux-musl"
 
+	elif [[ "${CHOST}" =~ "mips64el-" && "${ELIBC}" == "glibc" ]] ; then
+		echo "mips64el-unknown-linux-gnuabi64"
+	elif [[ "${CHOST}" =~ "mips64el-" && "${ELIBC}" == "musl" ]] ; then
+		echo "mips64el-unknown-linux-muslabi64"
+
+	elif [[ "${CHOST}" =~ "mips64-" && "${ELIBC}" == "glibc" ]] ; then
+		echo "mips64-unknown-linux-gnuabi64"
+	elif [[ "${CHOST}" =~ "mips64-" && "${ELIBC}" == "musl" ]] ; then
+		echo "mips64-unknown-linux-muslabi64"
+
+	elif [[ "${CHOST}" =~ "mips-" && "${ELIBC}" == "glibc" ]] ; then
+		echo "mips-unknown-linux-gnu"
+	elif [[ "${CHOST}" =~ "mips-" && "${ELIBC}" == "musl" ]] ; then
+		echo "mips-unknown-linux-musl"
+
 	elif [[ "${CHOST}" =~ "powerpc64le-" && "${ELIBC}" == "glibc" ]] ; then
 		echo "powerpc64le-unknown-linux-gnu"
 	elif [[ "${CHOST}" =~ "powerpc64le-" && "${ELIBC}" == "musl" ]] ; then
@@ -239,8 +254,6 @@ get_rust_chost() {
 		echo "riscv64gc-unknown-linux-gnu"
 	elif [[ "${CHOST}" =~ "riscv64" && "${CHOST}" =~ "gentoo" && "${ELIBC}" == "musl" ]] ; then
 		echo "riscv64gc-unknown-linux-musl"
-	elif [[ "${CHOST}" =~ "" && "${ELIBC}" == "glibc" ]] ; then
-		echo ""
 
 	elif [[ "${CHOST}" =~ "sparc64-" && "${ELIBC}" == "glibc" ]] ; then
 		echo "sparc64-unknown-linux-gnu"
