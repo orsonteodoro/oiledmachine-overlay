@@ -889,7 +889,7 @@ einfo "Unpacking npm side"
 	S="${WORKDIR}/${MY_PN}-${PV}" \
 	enpm i --save-dev "@types/testing-library__react"
 
-einfo "Unpacking tauri side"
+einfo "Unpacking Tauri side"
 	pushd "${WORKDIR}/${MY_PN}-${PV}/src-tauri" || die
 		S="${WORKDIR}/${MY_PN}-${PV}/src-tauri" \
 		_cargo_src_unpack
@@ -947,7 +947,7 @@ src_compile() {
 einfo "Inspecting code for new tauri-plugin-autostart{,-api} references.  Please wait..."
 	grep -q -r -e "tauri-plugin-autostart-api" "${S}/"{"src","src-tauri"} && die "Detected unpatched project (1)"
 	grep -q -r -e "tauri-plugin-autostart" "${S}/"{"src","src-tauri"} && die "Detected unpatched project (2)"
-einfo "Building NPM side"
+einfo "Building npm side"
 	S="${WORKDIR}/${MY_PN}-${PV}" \
 	npm_src_compile
 	grep -e "- error TS" "${T}/build.log" && die "Detected error.  Emerge again."
