@@ -112,7 +112,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0"
-IUSE=" ebuild_revision_3"
+IUSE=" ebuild_revision_4"
 BDEPEND="
 	dev-util/cargo-c
 	|| (
@@ -210,14 +210,14 @@ get_rust_chost() {
 	elif [[ "${ABI}" == "arm64" && "${ELIBC}" == "musl" ]] ; then
 		echo "aarch64-unknown-linux-musl"
 
-	elif [[ "${CHOST}" =~ "armv7" && "${CHOST}" =~ "gnueabihf" && "${ELIBC}" == "glibc" ]] ; then
+	elif [[ "${CHOST}" =~ "armv7a-" && "${CHOST}" =~ "gnueabihf" && "${ELIBC}" == "glibc" ]] ; then
 		echo "armv7-unknown-linux-gnueabihf"
-	elif [[ "${CHOST}" =~ "armv7" && "${CHOST}" =~ "gnueabihf" && "${ELIBC}" == "musl" ]] ; then
+	elif [[ "${CHOST}" =~ "armv7a-" && "${CHOST}" =~ "gnueabihf" && "${ELIBC}" == "musl" ]] ; then
 		echo "armv7-unknown-linux-musleabihf"
 
-	elif [[ "${CHOST}" =~ "armv7" && "${ELIBC}" == "glibc" ]] ; then
+	elif [[ "${CHOST}" =~ "armv7a-" && "${ELIBC}" == "glibc" ]] ; then
 		echo "armv7-unknown-linux-gnueabi"
-	elif [[ "${CHOST}" =~ "armv7" && "${ELIBC}" == "musl" ]] ; then
+	elif [[ "${CHOST}" =~ "armv7a-" && "${ELIBC}" == "musl" ]] ; then
 		echo "armv7-unknown-linux-musleabi"
 
 	elif [[ "${CHOST}" =~ "loongarch64" && "${ELIBC}" == "glibc" ]] ; then
