@@ -486,7 +486,7 @@ LICENSE="
 RESTRICT="mirror"
 IUSE+="
 ${!THEIA_PLUGINS[@]}
-git ollama ebuild_revision_29
+git ollama ebuild_revision_30
 "
 REQUIRED_USE="
 	${PYTHON_REQUIRED_USE}
@@ -624,10 +624,21 @@ einfo "Fixing vulnerabilities"
 		sed -i -e "s|\"serialize-javascript\": \"^5.0.1\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
 		sed -i -e "s|\"serialize-javascript\": \"6.0.0\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
 		sed -i -e "s|\"serialize-javascript\": \"^6.0.0\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
+		sed -i -e "s|\"serialize-javascript\": \"^6.0.2\"|\"serialize-javascript\": \"^6.0.2\"|g" "package-lock.json" || die
 
 		sed -i -e "s|\"tar-fs\": \"^3.0.6\"|\"tar-fs\": \"3.0.9\"|g" "package-lock.json" || die
 		sed -i -e "s|\"tar-fs\": \"~2.1.2\"|\"tar-fs\": \"2.1.3\"|g" "package-lock.json" || die
 		sed -i -e "s|\"tar-fs\": \"^2.0.0\"|\"tar-fs\": \"3.0.9\"|g" "package-lock.json" || die
+
+		sed -i -e "s|\"tar\": \"^6.0.5\"|\"tar\": \"6.2.1\"|g" "package-lock.json" || die
+		sed -i -e "s|\"tar\": \"6.1.11\"|\"tar\": \"6.2.1\"|g" "package-lock.json" || die
+		sed -i -e "s|\"tar\": \"^6.1.2\"|\"tar\": \"6.2.1\"|g" "package-lock.json" || die
+		sed -i -e "s|\"tar\": \"^6.1.11\"|\"tar\": \"6.2.1\"|g" "package-lock.json" || die
+		sed -i -e "s|\"tar\": \"^6.2.1\"|\"tar\": \"6.2.1\"|g" "package-lock.json" || die
+
+		sed -i -e "s|\"brace-expansion\": \"^2.0.1\"|\"brace-expansion\": \"1.1.12\"|g" "package-lock.json" || die
+		sed -i -e "s|\"brace-expansion\": \"^1.1.7\"|\"brace-expansion\": \"1.1.12\"|g" "package-lock.json" || die
+
 	}
 	patch_lockfile
 
@@ -659,16 +670,16 @@ einfo "Fixing vulnerabilities"
 
 	enpm add "tar-fs@3.0.9" -D															# CVE-2025-48387; ZC, VS(DT); High
 	enpm add "tar-fs@2.1.3" -D															# CVE-2025-48387; ZC, VS(DT); High
-	
 
+	enpm add "tar@6.2.1" -D																# CVE-2024-28863; DoS; Medium
+	enpm add "brace-expansion@1.1.12" -D														# CVE-2025-5889; DoS; Low
 
 	patch_lockfile
 }
 
 npm_update_lock_audit_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
-		#fix_vulnerabilities
-		:
+		fix_vulnerabilities
 	fi
 }
 

@@ -24,6 +24,8 @@
     "@typescript-eslint/parser": "^7.18.0",
     "@vscode/vsce": "^2.15.0",
     "archiver": "^5.3.1",
+    "axios": "^1.10.0",
+    "brace-expansion": "^1.1.12",
     "chai": "4.3.10",
     "chai-spies": "1.0.0",
     "chai-string": "^1.4.0",
@@ -52,6 +54,8 @@
     "puppeteer-to-istanbul": "1.4.0",
     "rimraf": "^5.0.0",
     "sinon": "^12.0.0",
+    "tar": "^6.2.1",
+    "tar-fs": "^2.1.3",
     "temp": "^0.9.1",
     "tslint": "^5.12.0",
     "typedoc": "0.25.13",
@@ -126,5 +130,9 @@
     "vscode.microsoft-authentication",
     "ms-vscode.references-view",
     "ms-python.vscode-pylance"
-  ]
+  ],
+  "dependencies": {
+    "@babel/runtime": "^7.27.6",
+    "serialize-javascript": "^6.0.2"
+  }
 }
