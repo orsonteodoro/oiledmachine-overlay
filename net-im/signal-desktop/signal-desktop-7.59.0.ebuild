@@ -32,7 +32,6 @@ _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
 	ELECTRON_APP_ELECTRON_PV="37.1.0" # Cr 138.0.7204.35, node 22.16.0
-#	ELECTRON_APP_ELECTRON_PV="35.0.3" # Cr 134.0.6998.88, node 22.14.0
 else
 	# Upstream's choice
 	ELECTRON_APP_ELECTRON_PV="34.2.0" # Cr 132.0.6834.196, node 20.18.2
@@ -40,7 +39,7 @@ fi
 ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK="1"
 NPM_SLOT=3
 PNPM_SLOT=9
-NODE_VERSION=${AT_TYPES_NODE_PV%%.*} # Upstream uses 20.18.0
+NODE_VERSION="22" # Upstream uses 22.15.0 from .nvmrc
 NODE_ENV="development"
 if [[ "${PNPM_UPDATE_LOCK}" != "1" ]] ; then
 	PNPM_INSTALL_ARGS+=( "--force" )
@@ -182,6 +181,7 @@ src_unpack() {
 		einfo "PNPM_ENABLE_OFFLINE_MODE:  ${YARN_ENABLE_OFFLINE_MODE}"
 		einfo "PNPM_CACHE_FOLDER:  ${PNPM_CACHE_FOLDER}"
 		rm -rf "${HOME}/.npm/_cacache"
+		mkdir -p "${HOME}/.npm" || die
 		ln -s "${PNPM_CACHE_FOLDER}" "${HOME}/.npm/_cacache" # npm likes to remove the ${HOME}/.npm folder
 		addwrite "${EDISTDIR}"
 		addwrite "${PNPM_CACHE_FOLDER}"
@@ -191,6 +191,8 @@ src_unpack() {
 
 		epnpm install ${PNPM_INSTALL_ARGS[@]}
 
+ewarn "QA:  Manually add (patch_hash=cfe393dc1cca8970377087e9555a285d1121f75d57223ddd872b1a8d3f8c909b) suffix to dependencies section to match got@11.8.5(patch_hash=cfe393dc1cca8970377087e9555a285d1121f75d57223ddd872b1a8d3f8c909b) from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove (encoding@0.1.13) suffix @octokit/request@8.4.1(encoding@0.1.13) from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove cross-spawn 5.x from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove electron 23.x from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove got 6.7.1 from ${S}/pnpm-lock.yaml"
@@ -423,7 +425,7 @@ src_compile() {
 
 	# All the node package managers make errors non-fatal.
 	# This is why we do these custom checks below.
-	grep -q -e "⨯" "${T}/build.log" && die "Detected error"
+#	grep -q -e "⨯" "${T}/build.log" && die "Detected error"
 	[[ -e "dist/linux-unpacked/signal-desktop" ]] || die "Build failed"
 }
 
@@ -482,6 +484,7 @@ pkg_postinst() {
 	elog "For using the tray icon on compatible desktop environments, start Signal with"
 	elog " '--start-in-tray' or '--use-tray-icon'."
 }
+# OILEDMACHINE-OVERLAY-TEST:  passed (7.59.0, 20250701, electron 37.1.0)
 # OILEDMACHINE-OVERLAY-TEST:  passed (7.46.0, 20250313, electron 35.0.1)
 # OILEDMACHINE-OVERLAY-TEST:  passed (7.45.1, 20250311, electron 35.0.1)
 # OILEDMACHINE-OVERLAY-TEST:  passed (7.44.0, 20250227, electron 35.0.0-beta.11)

@@ -6,7 +6,7 @@
   "description": "Private messaging from your desktop",
   "desktopName": "signal.desktop",
   "repository": "https://github.com/signalapp/Signal-Desktop.git",
-  "version": "7.49.0",
+  "version": "7.59.0",
   "license": "AGPL-3.0-only",
   "author": {
     "name": "Signal Messenger, LLC",
@@ -30,7 +30,7 @@
     "mark-unusued-strings-deleted": "ts-node ./ts/scripts/mark-unused-strings-deleted.ts",
     "get-expire-time": "node ts/scripts/get-expire-time.js",
     "copy-components": "node ts/scripts/copy.js",
-    "sass": "sass stylesheets/manifest.scss:stylesheets/manifest.css stylesheets/manifest_bridge.scss:stylesheets/manifest_bridge.css",
+    "sass": "sass stylesheets/manifest.scss:stylesheets/manifest.css stylesheets/manifest_bridge.scss:stylesheets/manifest_bridge.css --fatal-deprecation=1.80.7",
     "build-module-protobuf": "pbjs --root='signal-desktop' --target static-module --force-long --no-typeurl --no-verify --no-create --no-convert --wrap commonjs --out ts/protobuf/compiled.js protos/*.proto && pbts --no-comments --out ts/protobuf/compiled.d.ts ts/protobuf/compiled.js",
     "clean-module-protobuf": "rm -f ts/protobuf/compiled.d.ts ts/protobuf/compiled.js",
     "build-protobuf": "pnpm run build-module-protobuf",
@@ -43,11 +43,10 @@
     "prepare-adhoc-build": "node scripts/prepare_adhoc_build.js",
     "prepare-adhoc-version": "node scripts/prepare_tagged_version.js adhoc",
     "prepare-staging-build": "node scripts/prepare_staging_build.js",
-    "prepare-windows-cert": "node scripts/prepare_windows_cert.js",
     "test": "run-s test-node test-electron test-lint-intl test-eslint",
     "test-electron": "node ts/scripts/test-electron.js",
     "test-release": "node ts/scripts/test-release.js",
-    "test-node": "cross-env LANG=en-us electron-mocha --timeout 10000 --file test/setup-test-node.js --recursive ts/test-node ts/test-both",
+    "test-node": "cross-env LANG=en-us electron-mocha --timeout 10000 --main test/fix-linux-gtk.js --file test/setup-test-node.js --recursive ts/test-node ts/test-both",
     "test-mock": "mocha --require ts/test-mock/setup-ci.js ts/test-mock/**/*_test.js",
     "test-eslint": "mocha .eslint/rules/**/*.test.js --ignore-leaks",
     "test-lint-intl": "ts-node ./build/intl-linter/linter.ts --test",
@@ -107,24 +106,29 @@
   "dependencies": {
     "@babel/helpers": "7.26.10",
     "@babel/runtime": "7.26.10",
-    "@electron/asar": "3.3.1",
+    "@electron/asar": "3.4.1",
     "@formatjs/fast-memoize": "2.2.3",
     "@formatjs/icu-messageformat-parser": "2.9.3",
     "@formatjs/intl-localematcher": "0.2.32",
     "@indutny/dicer": "0.3.2",
     "@indutny/mac-screen-share": "1.0.13",
     "@indutny/range-finder": "1.3.4",
-    "@indutny/simple-windows-notifications": "2.0.7",
+    "@indutny/simple-windows-notifications": "2.0.16",
     "@indutny/sneequals": "4.0.0",
     "@popperjs/core": "2.11.8",
+    "@radix-ui/react-tooltip": "1.2.7",
     "@react-aria/focus": "3.19.1",
+    "@react-aria/interactions": "3.23.0",
     "@react-aria/utils": "3.25.3",
     "@react-spring/web": "9.7.5",
-    "@signalapp/libsignal-client": "0.67.4",
+    "@react-types/shared": "3.27.0",
+    "@signalapp/libsignal-client": "0.74.1",
     "@signalapp/quill-cjs": "2.1.2",
-    "@signalapp/ringrtc": "2.50.3",
-    "@signalapp/sqlcipher": "1.0.0",
+    "@signalapp/ringrtc": "2.53.0",
+    "@signalapp/sqlcipher": "2.0.3",
+    "@signalapp/windows-ucv": "1.0.0",
     "@tanstack/react-virtual": "3.11.2",
+    "@types/dom-mediacapture-transform": "0.1.11",
     "@types/fabric": "4.5.3",
     "backbone": "1.6.0",
     "blob-util": "2.0.2",
@@ -163,7 +167,6 @@
     "lodash": "4.17.21",
     "long": "5.2.3",
     "lru-cache": "11.0.2",
-    "mac-screen-capture-permissions": "2.0.0",
     "memoizee": "0.4.17",
     "moment": "2.30.1",
     "mp4box": "0.5.3",
@@ -178,19 +181,16 @@
     "protobufjs": "7.3.2",
     "proxy-agent": "6.4.0",
     "qrcode-generator": "1.4.4",
-    "react": "17.0.2",
+    "react": "18.3.1",
     "react-aria": "3.35.1",
     "react-aria-components": "1.4.1",
     "react-blurhash": "0.3.0",
     "react-contextmenu": "2.14.0",
-    "react-dom": "17.0.2",
-    "react-hot-loader": "4.13.1",
-    "react-intl": "6.8.7",
+    "react-dom": "18.3.1",
+    "react-intl": "7.1.11",
     "react-popper": "2.3.0",
-    "react-redux": "8.1.3",
-    "react-router-dom": "5.0.1",
-    "react-textarea-autosize": "8.5.5",
-    "react-virtualized": "9.22.5",
+    "react-redux": "9.2.0",
+    "react-virtualized": "9.22.6",
     "read-last-lines": "1.8.0",
     "redux": "5.0.1",
     "redux-logger": "3.0.6",
@@ -230,7 +230,7 @@
     "@octokit/request": "8.4.1",
     "@octokit/request-error": "5.1.1",
     "@octokit/rest": "20.1.2",
-    "@signalapp/mock-server": "11.2.0",
+    "@signalapp/mock-server": "12.0.0",
     "@storybook/addon-a11y": "8.4.4",
     "@storybook/addon-actions": "8.4.4",
     "@storybook/addon-controls": "8.4.4",
@@ -271,11 +271,10 @@
     "@types/pify": "5.0.4",
     "@types/pixelmatch": "5.2.6",
     "@types/pngjs": "6.0.5",
-    "@types/react": "17.0.45",
-    "@types/react-dom": "17.0.17",
+    "@types/react": "18.3.20",
+    "@types/react-dom": "18.3.6",
     "@types/react-redux": "7.1.34",
-    "@types/react-router-dom": "4.3.4",
-    "@types/react-virtualized": "9.21.30",
+    "@types/react-virtualized": "9.22.2",
     "@types/redux-logger": "3.0.13",
     "@types/semver": "7.5.8",
     "@types/sinon": "17.0.3",
@@ -302,7 +301,7 @@
     "danger": "12.3.3",
     "debug": "4.3.7",
     "electron": "37.1.0",
-    "electron-builder": "26.0.10",
+    "electron-builder": "26.0.14",
     "electron-mocha": "13.0.1",
     "endanger": "7.0.4",
     "enquirer": "2.4.1",
@@ -356,37 +355,35 @@
   "pnpm": {
     "overrides": {
       "@storybook/core>node-fetch": "$node-fetch",
-      "@types/react": "17.0.45",
-      "@types/react-dom": "17.0.17",
       "eslint-config-airbnb-typescript-prettier>eslint-plugin-prettier": "5.2.1",
       "canvas": "-",
       "jsdom": "-",
-      "thenify-all>thenify": "3.3.1"
+      "thenify-all>thenify": "3.3.1",
+      "@electron/rebuild@3.7.2>@electron/node-gyp": "10.2.0-electron.2",
+      "react-contextmenu>react": "18.3.1",
+      "react-contextmenu>react-dom": "18.3.1"
     },
     "patchedDependencies": {
       "@types/backbone@1.4.22": "patches/@types+backbone+1.4.22.patch",
       "casual@1.6.2": "patches/casual+1.6.2.patch",
       "protobufjs@7.3.2": "patches/protobufjs+7.3.2.patch",
       "@types/express@4.17.21": "patches/@types+express+4.17.21.patch",
-      "dmg-builder@26.0.10": "patches/dmg-builder@26.0.10.patch",
       "protobufjs-cli@1.1.1": "patches/protobufjs-cli+1.1.1.patch",
       "@types/fabric@4.5.3": "patches/@types+fabric+4.5.3.patch",
-      "electron-util@0.13.1": "patches/electron-util+0.13.1.patch",
       "qrcode-generator@1.4.4": "patches/qrcode-generator+1.4.4.patch",
       "@types/node-fetch@2.6.12": "patches/@types+node-fetch+2.6.12.patch",
       "fabric@4.6.0": "patches/fabric+4.6.0.patch",
       "react-contextmenu@2.14.0": "patches/react-contextmenu+2.14.0.patch",
       "@vitest/expect@2.0.5": "patches/@vitest+expect+2.0.5.patch",
       "got@11.8.5": "patches/got+11.8.5.patch",
-      "react-textarea-autosize@8.5.5": "patches/react-textarea-autosize+8.5.5.patch",
-      "app-builder-lib@26.0.10": "patches/app-builder-lib@26.0.10.patch",
       "growing-file@0.1.3": "patches/growing-file+0.1.3.patch",
       "websocket@1.0.34": "patches/websocket+1.0.34.patch",
       "@types/websocket@1.0.0": "patches/@types+websocket+1.0.0.patch",
       "backbone@1.6.0": "patches/backbone+1.6.0.patch",
       "node-fetch@2.6.7": "patches/node-fetch+2.6.7.patch",
       "zod@3.23.8": "patches/zod+3.23.8.patch",
-      "mac-screen-capture-permissions": "patches/mac-screen-capture-permissions.patch"
+      "app-builder-lib": "patches/app-builder-lib.patch",
+      "dmg-builder": "patches/dmg-builder.patch"
     },
     "onlyBuiltDependencies": [
       "@indutny/mac-screen-share",
@@ -395,12 +392,12 @@
       "@signalapp/libsignal-client",
       "@signalapp/sqlcipher",
       "@signalapp/ringrtc",
+      "@signalapp/windows-ucv",
       "@swc/core",
       "bufferutil",
       "electron",
       "esbuild",
       "fs-xattr",
-      "mac-screen-capture-permissions",
       "utf-8-validate"
     ],
     "ignoredBuiltDependencies": [
@@ -411,7 +408,7 @@
     ]
   },
   "engines": {
-    "node": "22.14.0"
+    "node": "22.15.0"
   },
   "build": {
     "appId": "org.whispersystems.signal-desktop",
@@ -491,7 +488,17 @@
     },
     "nsis": {
       "deleteAppDataOnUninstall": true,
-      "differentialPackage": true
+      "differentialPackage": true,
+      "customNsisBinary": {
+        "url": "https://updates.signal.org/desktop/nsis/nsis-3.0.4.1.7z",
+        "version": "3.0.4.1-signal",
+        "checksum": "D6XH03F8A4Vzfjpq6zS9eZYXGXktdoaeQh5QgxAZ01pdts3KaDfMilem0x+HUzn9FpzfpgZrD8MVTcFlcPfcWg=="
+      },
+      "customNsisResources": {
+        "url": "https://updates.signal.org/desktop/nsis/nsis-resources-3.4.1.7z",
+        "version": "3.4.1-signal",
+        "checksum": "KmySC53iz92XNYVgEy5gc0/cpXiyWsxxOX5UETBAt889TIvsNlUx7uKBxkQVf3D2Ycex0D2IPGjRdGYr1bftrw=="
+      }
     },
     "linux": {
       "category": "Network;InstantMessaging;Chat",
@@ -499,7 +506,16 @@
         "deb"
       ],
       "icon": "build/icons/png",
-      "publish": []
+      "publish": [],
+      "extraResources": [
+        {
+          "from": "build",
+          "to": "",
+          "filter": [
+            "org.signalapp.*.policy"
+          ]
+        }
+      ]
     },
     "deb": {
       "depends": [
@@ -604,7 +620,7 @@
       "!node_modules/spellchecker/vendor/hunspell/**/*",
       "!node_modules/@formatjs/intl-displaynames/**/*",
       "!node_modules/@formatjs/intl-listformat/**/*",
-      "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme,test,__tests__,tests,powered-test,example,examples,*.d.ts,*d.ts.map,*.js.map,*.gypi,.snyk-*.flag,benchmark}",
+      "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme,test,__tests__,tests,powered-test,example,examples,*.d.ts,*.d.ts.map,*.js.map,*.gypi,.snyk-*.flag,benchmark}",
       "!**/node_modules/.bin",
       "!**/node_modules/**/build/**",
       "node_modules/intl-tel-input/build/**",
@@ -623,8 +639,8 @@
       "node_modules/@signalapp/libsignal-client/prebuilds/${platform}-${arch}/*.node",
       "!node_modules/@signalapp/ringrtc/scripts/*",
       "node_modules/@signalapp/ringrtc/build/${platform}/*${arch}*.node",
-      "node_modules/mac-screen-capture-permissions/build/Release/*.node",
-      "node_modules/@indutny/simple-windows-notifications/build/Release/*.node",
+      "node_modules/@signalapp/windows-ucv/build/Release/*.node",
+      "node_modules/@indutny/simple-windows-notifications/prebuilds/${platform}-${arch}/*.node",
       "node_modules/@indutny/mac-screen-share/build/Release/*.node",
       "node_modules/fs-xattr/build/Release/*.node",
       "!node_modules/@indutny/simple-windows-notifications/*.cpp",
