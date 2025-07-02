@@ -112,7 +112,7 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0"
-IUSE=" ebuild_revision_2"
+IUSE=" ebuild_revision_3"
 BDEPEND="
 	dev-util/cargo-c
 	|| (
@@ -245,10 +245,15 @@ get_rust_chost() {
 	elif [[ "${CHOST}" =~ "powerpc64le-" && "${ELIBC}" == "musl" ]] ; then
 		echo "powerpc64le-unknown-linux-musl"
 
-	elif [[ "${CHOST}" =~ "powerpc64" && "${ELIBC}" == "glibc" ]] ; then
+	elif [[ "${CHOST}" =~ "powerpc64-" && "${ELIBC}" == "glibc" ]] ; then
 		echo "powerpc64-unknown-linux-gnu"
+	elif [[ "${CHOST}" =~ "powerpc64-" && "${ELIBC}" == "musl" ]] ; then
+		echo "powerpc64-unknown-linux-musl"
+
 	elif [[ "${CHOST}" =~ "powerpc-" && "${ELIBC}" == "glibc" ]] ; then
 		echo "powerpc-unknown-linux-gnu"
+	elif [[ "${CHOST}" =~ "powerpc-" && "${ELIBC}" == "musl" ]] ; then
+		echo "powerpc-unknown-linux-musl"
 
 	elif [[ "${CHOST}" =~ "riscv64" && "${CHOST}" =~ "gentoo" && "${ELIBC}" == "glibc" ]] ; then
 		echo "riscv64gc-unknown-linux-gnu"
