@@ -72,8 +72,15 @@ yuv-0.1.9
 zlib-rs-0.5.1
 "
 # Upstream uses Rust 1.72, but not in distro
-RUST_MAX_VER="1.75.0" # Inclusive
-RUST_MIN_VER="1.75.0" # Rust 17.0
+#
+# Using 9999 because of:
+# error: the `-Z unstable-options` flag must also be passed to enable the flag `check-cfg`
+# error: could not compile `bytemuck` (lib)
+#
+# For 9999, the compiler used was rustc 1.89.0-nightly (bf64d66bd 2025-05-21)
+#
+RUST_MAX_VER="9999" # Inclusive
+RUST_MIN_VER="9999" # Rust 20.1
 RUST_PV="${RUST_MIN_VER}"
 
 inherit cargo edo
@@ -191,10 +198,66 @@ src_compile() {
 	edo cargo cbuild --release
 }
 
+# See https://doc.rust-lang.org/rustc/platform-support.html
+get_rust_chost() {
+	if [[ "${ABI}" == "amd64" && "${ELIBC}" == "glibc" ]] ; then
+		echo "x86_64-unknown-linux-gnu"
+	elif [[ "${ABI}" == "amd64" && "${ELIBC}" == "musl" ]] ; then
+		echo "x86_64-unknown-linux-musl"
+
+	elif [[ "${ABI}" == "arm64" && "${ELIBC}" == "glibc" ]] ; then
+		echo "aarch64-unknown-linux-gnu"
+	elif [[ "${ABI}" == "arm64" && "${ELIBC}" == "musl" ]] ; then
+		echo "aarch64-unknown-linux-musl"
+
+	elif [[ "${CHOST}" =~ "armv7" && "${CHOST}" =~ "gnueabihf" && "${ELIBC}" == "glibc" ]] ; then
+		echo "armv7-unknown-linux-gnueabihf"
+	elif [[ "${CHOST}" =~ "armv7" && "${CHOST}" =~ "gnueabihf" && "${ELIBC}" == "musl" ]] ; then
+		echo "armv7-unknown-linux-musleabihf"
+
+	elif [[ "${CHOST}" =~ "armv7" && "${ELIBC}" == "glibc" ]] ; then
+		echo "armv7-unknown-linux-gnueabi"
+	elif [[ "${CHOST}" =~ "armv7" && "${ELIBC}" == "musl" ]] ; then
+		echo "armv7-unknown-linux-musleabi"
+
+	elif [[ "${CHOST}" =~ "loongarch64" && "${ELIBC}" == "glibc" ]] ; then
+		echo "loongarch64-unknown-linux-gnu"
+	elif [[ "${CHOST}" =~ "loongarch64" && "${ELIBC}" == "musl" ]] ; then
+		echo "loongarch64-unknown-linux-musl"
+
+	elif [[ "${CHOST}" =~ "powerpc64le-" && "${ELIBC}" == "glibc" ]] ; then
+		echo "powerpc64le-unknown-linux-gnu"
+	elif [[ "${CHOST}" =~ "powerpc64le-" && "${ELIBC}" == "musl" ]] ; then
+		echo "powerpc64le-unknown-linux-musl"
+
+	elif [[ "${CHOST}" =~ "powerpc64" && "${ELIBC}" == "glibc" ]] ; then
+		echo "powerpc64-unknown-linux-gnu"
+	elif [[ "${CHOST}" =~ "powerpc-" && "${ELIBC}" == "glibc" ]] ; then
+		echo "powerpc-unknown-linux-gnu"
+
+	elif [[ "${CHOST}" =~ "riscv64" && "${CHOST}" =~ "gentoo" && "${ELIBC}" == "glibc" ]] ; then
+		echo "riscv64gc-unknown-linux-gnu"
+	elif [[ "${CHOST}" =~ "riscv64" && "${CHOST}" =~ "gentoo" && "${ELIBC}" == "musl" ]] ; then
+		echo "riscv64gc-unknown-linux-musl"
+	elif [[ "${CHOST}" =~ "" && "${ELIBC}" == "glibc" ]] ; then
+		echo ""
+
+	elif [[ "${CHOST}" =~ "sparc64-" && "${ELIBC}" == "glibc" ]] ; then
+		echo "sparc64-unknown-linux-gnu"
+
+	elif [[ "${ABI}" == "x86" && "${ELIBC}" == "glibc" ]] ; then
+		echo "i686-unknown-linux-gnu"
+	elif [[ "${ABI}" == "x86" && "${ELIBC}" == "musl" ]] ; then
+		echo "i686-unknown-linux-musl"
+
+	fi
+}
+
 src_install() {
 	einstalldocs
 	cargo_src_install
-	cd "${S}/dssim-core/target/x86_64-unknown-linux-gnu/release" || die
+	local rust_chost=$(get_rust_chost)
+	cd "${S}/target/${rust_chost}/release" || die
 	insinto "/usr/include"
 	doins "include/dssim.h"
 	dolib.so "libdssim.so"
