@@ -6,6 +6,7 @@ EAPI=8
 
 # Version bump history for configuration update reviews:
 # 1.74.0 -> 1.96.13
+# 1.96.13 -> 1.96.14
 
 # This ebuild uses npm to unbreak sharp.
 
@@ -36,7 +37,7 @@ EAPI=8
 
 # @serwist/next needs pnpm workspaces
 
-# Use `NPM_UPDATER_VERSIONS="1.96.13" npm_updater_update_locks.sh` to update lockfile
+# Use `NPM_UPDATER_VERSIONS="1.96.14" npm_updater_update_locks.sh` to update lockfile
 
 MY_PN="LobeChat"
 
@@ -447,7 +448,6 @@ npm_update_lock_audit_post() {
 npm_dedupe_post() {
 	if [[ "${NPM_UPDATE_LOCK}" == "1" ]] ; then
 		pnpm_patch_lockfile() {
-	# TODO: update
 			sed -i -e "s|'@apidevtools/json-schema-ref-parser': 11.1.0|'@apidevtools/json-schema-ref-parser': 11.2.0|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|esbuild: 0.18.20|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|esbuild: 0.19.12|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die
@@ -456,6 +456,8 @@ npm_dedupe_post() {
 			sed -i -e "s|esbuild: 0.23.1|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|esbuild: 0.24.2|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die
 			sed -i -e "s|esbuild: '>=0.12 <1'|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|snowflake-sdk: 2.0.2|snowflake-sdk: 2.0.4|g" "pnpm-lock.yaml" || die
+			sed -i -e "s|snowflake-sdk: 2.0.3|snowflake-sdk: 2.0.4|g" "pnpm-lock.yaml" || die
 		}
 
 		npm_patch_lockfile() {
@@ -467,12 +469,19 @@ npm_dedupe_post() {
 			sed -i -e "s|\"esbuild\": \"^0.24.0\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die
 			sed -i -e "s|\"esbuild\": \"~0.25.0\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die
 			sed -i -e "s|\"esbuild\": \">=0.12 <1\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die
-			sed -i -e "s|\"snowflake-sdk\": \"^1.12.0\"|\"snowflake-sdk\": \"^2.0.2\"|g" "package-lock.json" || die
+			sed -i -e "s|\"snowflake-sdk\": \"^1.12.0\"|\"snowflake-sdk\": \"2.0.4\"|g" "package-lock.json" || die
+			sed -i -e "s|\"snowflake-sdk\": \"^2.0.2\"|\"snowflake-sdk\": \"^2.0.4\"|g" "package-lock.json" || die
+			sed -i -e "s|\"snowflake-sdk\": \"^2.0.3\"|\"snowflake-sdk\": \"^2.0.4\"|g" "package-lock.json" || die
 		}
 		npm_patch_lockfile
 
 ewarn "QA:  Manually remove @apidevtools/json-schema-ref-parser@11.1.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/package-lock.json or ${S}/pnpm-lock.yaml"
+
+		# DoS = Denial of Service
+		# DT = Data Tampering
+		# ID = Information Disclosure
+		# ZC = Zero Click Attack (AV:N, PR:N, UI:N)
 
 		local pkgs
 		pkgs=(
@@ -486,7 +495,8 @@ ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/package-lock.json or ${S}/
 		enpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 
 		pkgs=(
-			"snowflake-sdk@2.0.2"								# CVE-2025-24791; DT, ID; Medium
+			"snowflake-sdk@2.0.4"								# CVE-2025-24791; DT, ID; Medium
+													# CVE-2025-46328; DoS, DT, ID; High
 		)
 		enpm add ${pkgs[@]} -D --legacy-peer-deps
 
