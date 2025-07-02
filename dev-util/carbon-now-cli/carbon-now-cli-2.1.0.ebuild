@@ -182,7 +182,10 @@ LICENSE="
 	MIT
 "
 SLOT="0"
-IUSE+="+chromium clipboard ebuild_revision_13"
+IUSE+="
++chromium clipboard
+ebuild_revision_14
+"
 REQUIRED_USE+="
 	|| (
 		${PLAYWRIGHT_BROWSERS[@]}
