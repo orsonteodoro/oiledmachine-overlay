@@ -10,9 +10,9 @@ license = "AGPL-3.0"
 name = "dssim"
 readme = "README.md"
 repository = "https://github.com/kornelski/dssim.git"
-version = "3.3.1"
+version = "3.4.0"
 edition = "2021"
-rust-version = "1.71"
+rust-version = "1.72"
 
 [[bin]]
 doctest = false
@@ -20,14 +20,15 @@ name = "dssim"
 path = "src/main.rs"
 
 [dependencies]
-dssim-core = { path = "./dssim-core", version = "3.2.5", default-features = false }
-imgref = "1.10.0"
+dssim-core = { path = "./dssim-core", version = "3.4.0", default-features = false }
+imgref = "1.11.0"
 getopts = "0.2.21"
-rayon = { version = "1.8.1", optional = true }
-rgb = "0.8.37"
-lodepng = "3.10.0"
-load_image = { version = "3.1.4", features = ["lcms2-static"] }
-crossbeam-channel = "0.5.11"
+rayon = { version = "1.10.0", optional = true }
+rgb = "0.8.50"
+lodepng = { version = "3.11", default-features = false, features = ["rust_backend"] }
+load_image = { version = "3.2", features = ["lcms2-static"] }
+crossbeam-channel = "0.5.13"
+ordered-channel = { version = "1.1.0" }
 
 [features]
 default = ["threads", "dssim-core/default", "no-macos-vimage"]
@@ -39,7 +40,6 @@ no-macos-vimage = ["dssim-core/no-macos-vimage"]
 
 [package.metadata.release]
 consolidate-commits = true
-consolidate-pushes = true
 tag-message = ""
 tag-name = "{{version}}"
 
@@ -61,6 +61,7 @@ opt-level = 3
 lto = "fat"
 debug = false
 panic = "abort"
+strip = true
 
 [badges]
 maintenance = { status = "actively-developed" }

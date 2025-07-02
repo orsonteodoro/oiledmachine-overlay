@@ -8,75 +8,73 @@ EAPI=8
 #GENERATE_LOCKFILE=1
 
 CRATES="
-adler-1.0.2
-ahash-0.8.7
-aom-decode-0.2.7
-autocfg-1.1.0
-avif-parse-1.0.0
-bitreader-0.3.8
-bytemuck-1.14.0
+adler2-2.0.1
+aom-decode-0.2.13
+arrayvec-0.7.6
+autocfg-1.5.0
+avif-parse-1.4.0
+bitflags-2.9.1
+bitreader-0.3.11
+bytemuck-1.23.1
 byteorder-1.5.0
-cc-1.0.83
-cfg-if-1.0.0
-cmake-0.1.50
-crc32fast-1.3.2
-crossbeam-channel-0.5.11
-crossbeam-deque-0.8.5
+cc-1.2.27
+cfg-if-1.0.1
+cmake-0.1.54
+crc32fast-1.4.2
+crossbeam-channel-0.5.15
+crossbeam-deque-0.8.6
 crossbeam-epoch-0.9.18
-crossbeam-utils-0.8.19
-dssim-3.3.1
-dssim-core-3.2.8
-dunce-1.0.4
-either-1.9.0
-fallible_collections-0.4.9
-flate2-1.0.28
+crossbeam-utils-0.8.21
+dunce-1.0.5
+either-1.15.0
+fallible_collections-0.5.1
+flate2-1.1.2
 foreign-types-0.5.0
 foreign-types-macros-0.2.3
 foreign-types-shared-0.3.1
-getopts-0.2.21
-hashbrown-0.13.2
-hermit-abi-0.3.4
-imgref-1.10.0
-itertools-0.12.0
-jobserver-0.1.27
-jpeg-decoder-0.3.1
-lcms2-6.0.4
-lcms2-sys-4.0.4
-libaom-sys-0.15.0
-libc-0.2.152
+getopts-0.2.23
+getrandom-0.3.3
+imgref-1.11.0
+itertools-0.14.0
+jobserver-0.1.33
+jpeg-decoder-0.3.2
+lcms2-6.1.0
+lcms2-sys-4.0.5
+leb128-0.2.5
+libaom-sys-0.17.2+libaom.3.11.0
+libc-0.2.174
 libwebp-0.1.2
-libwebp-sys2-0.1.9
-load_image-3.1.4
-lodepng-3.10.0
-log-0.4.20
-miniz_oxide-0.7.1
-num-0.4.1
-num-bigint-0.4.4
-num-complex-0.4.4
-num-integer-0.1.45
-num-iter-0.1.43
-num-rational-0.4.1
-num-traits-0.2.17
-num_cpus-1.16.0
-once_cell-1.19.0
-pkg-config-0.3.29
-proc-macro2-1.0.76
+libwebp-sys2-0.1.11
+libz-rs-sys-0.5.1
+load_image-3.2.1
+lodepng-3.12.1
+log-0.4.27
+miniz_oxide-0.8.9
+num-traits-0.2.19
+ordered-channel-1.2.0
+pkg-config-0.3.32
+proc-macro2-1.0.95
 quick-error-2.0.1
-quote-1.0.35
-rayon-1.8.1
+quote-1.0.40
+r-efi-5.3.0
+rayon-1.10.0
 rayon-core-1.12.1
-rexif-0.7.3
-rgb-0.8.37
-static_assertions-1.1.0
-syn-2.0.48
-unicode-ident-1.0.12
-unicode-width-0.1.11
+rexif-0.7.5
+rgb-0.8.50
+shlex-1.3.0
+syn-2.0.104
+unicode-ident-1.0.18
+unicode-width-0.2.1
 vcpkg-0.2.15
-version_check-0.9.4
-yuv-0.1.5
-zerocopy-0.7.32
-zerocopy-derive-0.7.32
+wasi-0.14.2+wasi-0.2.4
+wit-bindgen-rt-0.39.0
+yuv-0.1.9
+zlib-rs-0.5.1
 "
+# Upstream uses Rust 1.72, but not in distro
+RUST_MAX_VER="1.75.0" # Inclusive
+RUST_MIN_VER="1.75.0" # Rust 17.0
+RUST_PV="${RUST_MIN_VER}"
 
 inherit cargo edo
 QA_FLAGS_IGNORED="usr/bin/dssim"
@@ -110,6 +108,14 @@ SLOT="0"
 IUSE=" ebuild_revision_1"
 BDEPEND="
 	dev-util/cargo-c
+	|| (
+		dev-lang/rust:${RUST_PV}
+		dev-lang/rust-bin:${RUST_PV}
+	)
+	|| (
+		dev-lang/rust:=
+		dev-lang/rust-bin:=
+	)
 "
 
 pkg_setup() {
@@ -164,6 +170,8 @@ _cargo_src_unpack() {
 
 src_unpack() {
 	unpack "${P}.tar.gz"
+	#die # For lockfile updates
+
 	if [[ "${GENERATE_LOCKFILE}" == "1" ]] ; then
 		cd "${S}" || die
 # Regenerate and replace vulnerable cargo crates
