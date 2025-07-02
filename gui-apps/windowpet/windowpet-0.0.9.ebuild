@@ -18,9 +18,9 @@ EAPI=8
 # https://github.com/orsonteodoro/oiledmachine-overlay/blob/master/metadata/news/2025-01-16-rotate-passwords/2025-01-16-rotate-passwords.txt
 #
 
-AT_TYPES_NODE_PV="20.12.12"
+AT_TYPES_NODE_PV="22.13.4" # Same as TypeScript
 MY_PN="WindowPet"
-NODE_VERSION="${AT_TYPES_NODE_PV%%.*}"
+NODE_VERSION="23"
 NPM_AUDIT_FIX=1
 NPM_SKIP_TARBALL_UNPACK="1"
 PLUGINS_WORKSPACE_COMMIT="a0a310756ab3d770ed554c9801d3bea5940eb31e" # Obtained from GIT_CRATES
@@ -32,7 +32,8 @@ declare -A GIT_CRATES=(
 [tauri-plugin-store]="https://github.com/tauri-apps/plugins-workspace;a0a310756ab3d770ed554c9801d3bea5940eb31e;plugins-workspace-%commit%/plugins/store" # 0.0.0
 )
 
-# Remove the following in src-tauri/Cargo.toml, src-tauri/Cargo,lock and from CRATES autostart Arbitrary Code Execution (ACE):
+# Autostart is disabled to mitigate Arbitrary Code Execution (ACE).
+# Remove the following in src-tauri/Cargo.toml, src-tauri/Cargo,lock and from CRATES:
 # auto-launch 0.5.0
 # dirs 4.0.0
 # dirs-sys 0.3.7
@@ -613,12 +614,13 @@ RUST_PV="${RUST_MIN_VER}"
 
 inherit cargo desktop lcnr npm xdg
 
+#KEYWORDS="~amd64" # Needs code audit or code review
+S="${WORKDIR}/${MY_PN}-${PV}"
 SRC_URI="
 $(cargo_crate_uris ${CRATES})
 https://github.com/SeakMengs/WindowPet/archive/refs/tags/v${PV}.tar.gz
 	-> ${P}.tar.gz
 "
-S="${WORKDIR}/${MY_PN}-${PV}"
 
 DESCRIPTION="Adorable anime pet companions on your screen"
 HOMEPAGE="
@@ -653,11 +655,10 @@ LICENSE="
 	${THIRD_PARTY_LICENSES}
 	MIT
 "
-#KEYWORDS="~amd64" # Needs code audit or code review
 SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 tray wayland +X
-ebuild_revision_6
+ebuild_revision_7
 "
 REQUIRED_USE="
 	|| (
@@ -685,16 +686,17 @@ gen_webkit_depend() {
 	done
 }
 # React depends has been relaxed
-# See https://github.com/facebook/react/blob/v18.2.0/package.json#L103
+# See https://github.com/facebook/react/blob/v18.3.1/package.json#L103
 TYPESCRIPT_DEPEND="
 	(
-                >=net-libs/nodejs-20.1
+                >=net-libs/nodejs-22.13
 	)
 "
+# The upper bound has been relaxed.  React requires node between 12.17 - 17.x
 REACT_DEPEND="
 	(
                 >=net-libs/nodejs-12.17
-                <net-libs/nodejs-21
+                <net-libs/nodejs-24
 	)
 "
 RUST_BINDINGS_DEPEND="
