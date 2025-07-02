@@ -20,6 +20,9 @@
     <flag name="ahead">
       Build a plugin to display text buffers ahead of time
     </flag>
+    <flag name="analytics">
+      Build the analytics plugin to convert to/from relation metadata to ONVIF metadata.
+    </flag>
     <flag name="audiofx">
       Build the Rust AudioFx Plugin to apply audio effects (echo, reverb, noise
       removal, normalization)
@@ -38,6 +41,9 @@
     </flag>
     <flag name="csound">
       Build the audio effects plugin using Csound
+    </flag>
+    <flag name="elevenlabs">
+      Build the Text-To-Speech (TTS) plugin using ElevenLabs
     </flag>
     <flag name="dav1d">
       Build the dav1d Plugin for decoding AV1 video
@@ -120,9 +126,6 @@
     <flag name="regex">
       Build the Rust regular expression plugin
     </flag>
-    <flag name="relationmeta">
-      Build support for converting between ONVIF metadata and relation metadata
-    </flag>
     <flag name="rtp">
       Build support for the RTP protocol
     </flag>
@@ -139,11 +142,11 @@
       Build support for Forward Error Correction (FEC) using the RaptorQ codes
       to protect against packet loss.
     </flag>
-    <flag name="relationmeta">
-      Build support to convert relation metadata to and from ONVIF
-    </flag>
     <flag name="rusoto">
       Build the Amazon Web Services source and sink plugin
+    </flag>
+    <flag name="skia">
+      Build the Skia based compositor
     </flag>
     <flag name="sodium">
       Build the libsodium-based file encryption and decryption

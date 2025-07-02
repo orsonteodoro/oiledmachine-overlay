@@ -28,6 +28,7 @@ GST_PV="${MY_PV}"
 LLVM_COMPAT=( 19 ) # For clang-sys ; slot based on rust subslot
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 MODULES=(
+	"analytics"
 	"audiofx"
 	"aws"
 	"cdg"
@@ -36,6 +37,7 @@ MODULES=(
 	"csound"
 	"dav1d"
 	"doc"
+	"elevenlabs"
 	"examples"
 	"fallbackswitch"
 	"ffv1"
@@ -62,10 +64,10 @@ MODULES=(
 	"raptorq"
 	"rav1e"
 	"regex"
-	"relationmeta"
 	"reqwest"
 	"rtp"
 	"rtsp"
+	"skia"
 	"speechmatics"
 	"spotify"
 	"sodium"
@@ -1257,6 +1259,9 @@ RDEPEND+="
 	${GST_PLUGINS_META}
 	${PATENT_STATUS_RDEPEND}
 	~media-plugins/gst-plugins-meta-${GST_PV}:1.0[${MULTILIB_USEDEP}]
+	analytics? (
+		>=media-plugins/gst-plugins-analyticsoverlay-${GST_PV}:1.0[${MULTILIB_USEDEP}]
+	)
 	aws? (
 		>=dev-libs/openssl-3.0.11[${MULTILIB_USEDEP}]
 	)
@@ -1278,9 +1283,6 @@ RDEPEND+="
 	onvif? (
 		${CARGO_BINDINGS_DEPENDS_CAIRO}
 		${CARGO_BINDINGS_DEPENDS_PANGO}
-	)
-	relationmeta? (
-		>=media-plugins/gst-plugins-analyticsoverlay-${GST_PV}:1.0[${MULTILIB_USEDEP}]
 	)
 	system-libsodium? (
 		>=dev-libs/libsodium-1.0.18[${MULTILIB_USEDEP}]
