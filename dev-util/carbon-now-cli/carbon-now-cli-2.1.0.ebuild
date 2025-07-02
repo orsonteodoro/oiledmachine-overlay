@@ -212,7 +212,7 @@ einfo "Running:  npx ${@}"
 
 npm_update_lock_install_pre() {
 	# This is to prevent the sudden ***untrustworthy*** sudo prompt.
-	sed -i -e "s|npx playwright|true npx playwright|g" package.json || die
+	sed -i -e "s|npx playwright|true npx playwright|g" "package.json" || die
 }
 
 npm_update_lock_audit_post() {
@@ -224,18 +224,35 @@ einfo "Applying mitigation"
 		sed -i -e "s|\"esbuild\": \"~0.23.0\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die
 		sed -i -e "s|\"phin\": \"^2.9.1\"|\"phin\": \"^3.7.1\"|g" "package-lock.json" || die
 		sed -i -e "s|\"phin\": \"^2.9.3\"|\"phin\": \"^3.7.1\"|g" "package-lock.json" || die
+		sed -i -e "s|\"vite\": \"^5.0.0\"|\"vite\": \"^5.4.19\"|g" "package-lock.json" || die
 	}
 	patch_edits
 
 	# ID = Information Disclosure
-	enpm install "@babel/runtime@7.26.10" -P			# DoS		# CVE-2025-27789
-	enpm install "esbuild@^0.25.0" -D --prefer-offline		# ID		# GHSA-67mh-4wv8-2f99
-	enpm install "phin@^3.7.1" -P --prefer-offline			# ID		# GHSA-x565-32qp-m3vf
+	# DoS = Denial of Service
+	local pkgs
+	pkgs=(
+		"phin@^3.7.1"						# ID		# GHSA-x565-32qp-m3vf
+		"@babel/runtime@7.26.10"				# DoS		# CVE-2025-27789
 
-	# Explicit version required for corresponding cache update.
-	# --prefer-offline is broken
-	enpm install "playwright@${PLAYWRIGHT_PV}" -P
-	enpm install "@playwright/test@${PLAYWRIGHT_PV}" -P
+		# Explicit version required for corresponding cache update.
+		# --prefer-offline is broken
+		"playwright@${PLAYWRIGHT_PV}"
+		"@playwright/test@${PLAYWRIGHT_PV}"
+
+	)
+	enpm install -P --prefer-offline "${pkgs[@]}"
+
+	pkgs=(
+		"esbuild@^0.25.0"					# ID		# GHSA-67mh-4wv8-2f99
+
+		"vite@^5.4.19"						# ID		# CVE-2025-46565
+									# ID		# CVE-2025-32395
+									# ID		# CVE-2025-31486
+									# ID		# CVE-2025-31125
+									# ID		# CVE-2025-30208
+	)
+	enpm install -D --prefer-offline "${pkgs[@]}"
 
 	patch_edits
 
