@@ -600,7 +600,6 @@ _cargo_src_unpack() {
 
 	local archive shasum pkg
 	local crates=()
-	einfo "${A}"
 	for archive in ${A}; do
 		case "${archive}" in
 			*.crate)
@@ -609,7 +608,7 @@ _cargo_src_unpack() {
 			*)
 				einfo "pwd:  "$(pwd)
 				if [[ "${archive}" == "coolercontrol-${PV}.tar.bz2" ]] ; then
-					einfo "Skipping coolercontrol-${PV}.tar.bz2"
+					einfo "Skipping unpack for coolercontrol-${PV}.tar.bz2"
 				else
 					pushd "${WORKDIR}" || die
 						unpack "${archive}"
