@@ -4,6 +4,8 @@
 
 EAPI=8
 
+# U 20.04
+
 #
 # Security note:
 #
@@ -630,8 +632,8 @@ REQUIRED_USE="
 		X
 	)
 "
-# U 20.04
 WEBKIT_GTK_STABLE=(
+	"2.48"
 	"2.46"
 	"2.44"
 	"2.42"
