@@ -95,7 +95,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_27
+ebuild_revision_28
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -234,6 +234,7 @@ ewarn "QA:  Manually remove @octokit/plugin-request-log@1.0.4 from ${S}/pnpm-loc
 ewarn "QA:  Manually remove @octokit/plugin-rest-endpoint-methods@5.16.2 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/rest@18.12.0 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change @octokit/rest@18.12.0 references to @octokit/rest@20.1.2"
+ewarn "QA:  Manually remove @octokit/request-error@2.1.0 from ${S}/pnpm-lock.yaml"
 		patch_edits_npm() {
 			pushd "sticker-creator" >/dev/null 2>&1 || die
 				sed -i -e "s|\"cross-spawn\": \"^6.0.5\"|\"cross-spawn\": \"^6.0.6\"|g" "package-lock.json" || die								# CVE-2024-21538; DoS; High
