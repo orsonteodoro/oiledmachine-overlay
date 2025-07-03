@@ -6,7 +6,7 @@
   "description": "Private messaging from your desktop",
   "desktopName": "signal.desktop",
   "repository": "https://github.com/signalapp/Signal-Desktop.git",
-  "version": "7.59.0",
+  "version": "7.60.0",
   "license": "AGPL-3.0-only",
   "author": {
     "name": "Signal Messenger, LLC",
@@ -211,7 +211,7 @@
     "zod": "3.23.8"
   },
   "devDependencies": {
-    "@babel/core": "7.26.0",
+    "@babel/core": "^7.26.0",
     "@babel/plugin-proposal-class-properties": "7.18.6",
     "@babel/plugin-proposal-nullish-coalescing-operator": "7.18.6",
     "@babel/plugin-proposal-optional-chaining": "7.21.0",
@@ -301,7 +301,7 @@
     "csv-parse": "5.5.6",
     "danger": "12.3.3",
     "debug": "4.3.7",
-    "electron": "37.1.0",
+    "electron": "37.2.0",
     "electron-builder": "26.0.14",
     "electron-mocha": "13.0.1",
     "endanger": "7.0.4",
@@ -316,6 +316,7 @@
     "eslint-plugin-react": "7.31.10",
     "execa": "5.1.1",
     "html-webpack-plugin": "5.6.3",
+    "http-proxy-middleware": "2.0.9",
     "http-server": "14.1.1",
     "json-to-ast": "2.1.0",
     "log-symbols": "4.1.0",

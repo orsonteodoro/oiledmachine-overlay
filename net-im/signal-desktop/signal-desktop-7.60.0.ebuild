@@ -31,10 +31,11 @@ ELECTRON_BUILDER_PV="26.0.14"
 _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
-	ELECTRON_APP_ELECTRON_PV="37.1.0" # Cr 138.0.7204.35, node 22.16.0
+	ELECTRON_APP_ELECTRON_PV="37.2.0" # Cr 138.0.7204.97, node 22.17.0
+#	ELECTRON_APP_ELECTRON_PV="37.1.0" # Cr 138.0.7204.35, node 22.16.0
 else
 	# Upstream's choice
-	ELECTRON_APP_ELECTRON_PV="34.2.0" # Cr 132.0.6834.196, node 20.18.2
+	ELECTRON_APP_ELECTRON_PV="36.3.2" # Cr 136.0.7103.115, node 22.15.1
 fi
 ELECTRON_APP_REQUIRES_MITIGATE_ID_CHECK="1"
 NPM_SLOT=3
@@ -76,7 +77,7 @@ HOMEPAGE="
 	https://github.com/signalapp/Signal-Desktop
 "
 
-# electron-33.1.0-chromium.html fingerprint is the same as electron-33.0.0-beta.9-chromium.html
+# The electron 37.2.0 license file fingerprint is the same as 37.1.0.
 LICENSE="
 	${ELECTRON_APP_LICENSES}
 	AGPL-3
@@ -87,7 +88,7 @@ if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	"
 else
 	LICENSE+="
-		electron-34.2.0-chromium.html
+		electron-36.3.2-chromium.html
 	"
 fi
 SLOT="0"
@@ -200,9 +201,11 @@ src_unpack() {
 
 ewarn "QA:  Manually add (patch_hash=cfe393dc1cca8970377087e9555a285d1121f75d57223ddd872b1a8d3f8c909b) suffix to dependencies section to match got@11.8.5(patch_hash=cfe393dc1cca8970377087e9555a285d1121f75d57223ddd872b1a8d3f8c909b) from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove (encoding@0.1.13) suffix @octokit/request@8.4.1(encoding@0.1.13) from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove cross-spawn 5.x from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove electron 23.x from ${S}/pnpm-lock.yaml"
-ewarn "QA:  Manually remove got 6.7.1 from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove cross-spawn@5.1.0 from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove electron@23.3.13 from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove got@6.7.1 from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @types/keyv@3.1.4 from ${S}/pnpm-lock.yaml"
+
 ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and all 0.18.* associated packages from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/core from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/plugin-paginate-rest from ${S}/danger/pnpm-lock.yaml"
@@ -223,6 +226,9 @@ ewarn "QA:  Manually remove @octokit/request-error@2.1.0 from ${S}/danger/pnpm-l
 ewarn "QA:  Manually remove @octokit/endpoint@6.0.12 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/request@5.6.3 from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2 to 11.4.4-cjs.2 in ${S}/danger/package.json and ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2(@octokit/core@3.6.0) to 11.4.4-cjs.2(@octokit/core@5.2.1) in ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually change @octokit/request-error references from 2.1.0 to 5.1.1 in ${S}/danger/pnpm-lock.yaml"
 
 ewarn "QA:  Manually remove @octokit/request@5.6.3 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@2.21.3 from ${S}/pnpm-lock.yaml"
@@ -235,6 +241,8 @@ ewarn "QA:  Manually remove @octokit/plugin-rest-endpoint-methods@5.16.2 from ${
 ewarn "QA:  Manually remove @octokit/rest@18.12.0 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change @octokit/rest@18.12.0 references to @octokit/rest@20.1.2"
 ewarn "QA:  Manually remove @octokit/request-error@2.1.0 from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2 to 11.4.4-cjs.2 in ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2(@octokit/core@3.6.0(encoding@0.1.13)) to 11.4.4-cjs.2(@octokit/core@5.2.1) in ${S}/pnpm-lock.yaml"
 
 ewarn "QA:  Manually remove esbuild@0.24.0 and arch implementations from ${S}/pnpm-lock.yaml"
 		patch_edits_npm() {
