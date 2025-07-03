@@ -1,0 +1,30 @@
+[package]
+name = "kornia"
+description = "kornia - low-level 3D computer vision library in Rust"
+readme = "../../README.md"
+
+authors.workspace = true
+edition.workspace = true
+homepage.workspace = true
+license.workspace = true
+publish = true
+repository.workspace = true
+rust-version.workspace = true
+version.workspace = true
+
+[features]
+gstreamer = ["kornia-io/gstreamer"]
+turbojpeg = ["kornia-io/turbojpeg"]
+
+[dependencies]
+kornia-3d = { workspace = true }
+kornia-icp = { workspace = true }
+kornia-image.workspace = true
+kornia-imgproc.workspace = true
+kornia-io = { workspace = true, features = [] }
+kornia-linalg = { workspace = true }
+kornia-tensor.workspace = true
+kornia-tensor-ops.workspace = true
+
+[lib]
+doctest = false

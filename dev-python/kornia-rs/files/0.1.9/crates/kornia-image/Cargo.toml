@@ -1,0 +1,17 @@
+[package]
+name = "kornia-image"
+description = "Image types and traits for generating and manipulating images"
+
+authors.workspace = true
+edition.workspace = true
+homepage.workspace = true
+license.workspace = true
+publish = true
+repository.workspace = true
+rust-version.workspace = true
+version.workspace = true
+
+[dependencies]
+kornia-tensor = { workspace = true }
+num-traits = { workspace = true }
+thiserror = { workspace = true }

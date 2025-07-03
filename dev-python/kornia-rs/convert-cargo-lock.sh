@@ -19,9 +19,8 @@ main() {
 	local l
 
 	local lockfiles=(
-		"files/0.1.7/Cargo.lock"
-		"files/0.1.7/kornia-serve/Cargo.lock"
-		"files/0.1.7/kornia-py/Cargo.lock"
+		"files/${PV}/Cargo.lock"
+		"files/${PV}/kornia-py/Cargo.lock"
 	)
 
 	local s_live=""
