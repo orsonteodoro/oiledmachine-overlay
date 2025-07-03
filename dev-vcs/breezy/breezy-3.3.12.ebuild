@@ -244,7 +244,7 @@ einfo "Generating lockfile"
 
 _production_unpack() {
 	unpack "brz-${PV}.tar.gz"
-	die # For manual lockfile updates
+	#die # For manual lockfile updates
 	if [[ -e "${FILESDIR}/${PV}/Cargo.lock" ]] ; then
 einfo "Adding Cargo.lock"
 		cp -a \
