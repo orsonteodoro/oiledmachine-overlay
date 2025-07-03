@@ -117,7 +117,7 @@ SLOT="0/$(ver_cut 1-2 ${PV})"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 file-management +indexdb +openrc postgres systemd +system-vips
-ebuild_revision_21
+ebuild_revision_22
 "
 REQUIRED_USE="
 	!cpu_flags_x86_sse4_2? (
