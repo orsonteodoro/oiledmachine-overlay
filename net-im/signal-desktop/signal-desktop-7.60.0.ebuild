@@ -96,7 +96,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_29
+ebuild_revision_30
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -243,6 +243,7 @@ ewarn "QA:  Manually change @octokit/rest@18.12.0 references to @octokit/rest@20
 ewarn "QA:  Manually remove @octokit/request-error@2.1.0 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2 to 11.4.4-cjs.2 in ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2(@octokit/core@3.6.0(encoding@0.1.13)) to 11.4.4-cjs.2(@octokit/core@5.2.1) in ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/request-error@2.1.0 from ${S}/pnpm-lock.yaml"
 
 ewarn "QA:  Manually remove esbuild@0.24.0 and arch implementations from ${S}/pnpm-lock.yaml"
 		patch_edits_npm() {
