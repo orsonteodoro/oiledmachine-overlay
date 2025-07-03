@@ -1,0 +1,10 @@
+--- a/packages/file-loaders/src/loaders/excel/index.ts.orig	2025-07-01 09:57:42.000000000 -0700
++++ b/packages/file-loaders/src/loaders/excel/index.ts	2025-07-01 23:58:33.238735880 -0700
+@@ -1,6 +1,6 @@
+ import debug from 'debug';
+ import { readFile } from 'node:fs/promises';
+-import * as xlsx from 'xlsx';
++import * as xlsx from '@e965/xlsx';
+ 
+ import type { DocumentPage, FileLoaderInterface } from '../../types';
+ import { promptTemplate } from './prompt';
