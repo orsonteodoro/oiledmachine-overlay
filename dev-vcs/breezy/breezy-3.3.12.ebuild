@@ -215,7 +215,7 @@ BDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/breezy-3.3.3-fix-compile-test.patch" # Added by oiledmachine-overlay
+#	"${FILESDIR}/breezy-3.3.3-fix-compile-test.patch" # Added by oiledmachine-overlay
 )
 
 pkg_setup() {
