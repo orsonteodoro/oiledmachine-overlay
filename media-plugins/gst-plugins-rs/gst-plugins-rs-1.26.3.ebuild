@@ -1222,7 +1222,7 @@ REQUIRED_USE+="
 # openssl requirement relaxed CI uses 3.0.8
 #	>=dev-libs/libgit2-1.5
 CARGO_BINDINGS_DEPENDS_GLIB="
-	>=dev-libs/glib-2.56[${MULTILIB_USEDEP}]
+	>=dev-libs/glib-2.62[${MULTILIB_USEDEP}]
 	>=dev-libs/gobject-introspection-${GOBJECT_INTROSPECTION_PV}
 	elibc_glibc? (
 		>=sys-libs/glibc-2.36
@@ -1256,14 +1256,13 @@ PATENT_STATUS_RDEPEND="
 "
 RDEPEND+="
 	${CARGO_BINDINGS_DEPENDS_GLIB}
-	${GST_PLUGINS_META}
 	${PATENT_STATUS_RDEPEND}
 	~media-plugins/gst-plugins-meta-${GST_PV}:1.0[${MULTILIB_USEDEP}]
 	analytics? (
 		>=media-plugins/gst-plugins-analyticsoverlay-${GST_PV}:1.0[${MULTILIB_USEDEP}]
 	)
 	aws? (
-		>=dev-libs/openssl-3.0.11[${MULTILIB_USEDEP}]
+		>=dev-libs/openssl-1.1[${MULTILIB_USEDEP}]
 	)
 	closedcaption? (
 		${CARGO_BINDINGS_DEPENDS_CAIRO}
@@ -1309,6 +1308,7 @@ RDEPEND+="
 			~media-plugins/gst-plugins-bad-${GST_PV}:1.0[${MULTILIB_USEDEP},qsv]
 		)
 		rav1e? (
+			${CARGO_BINDINGS_DEPENDS_CAIRO}
 			~media-plugins/gst-plugins-rav1e-${GST_PV}:1.0[${MULTILIB_USEDEP}]
 		)
 		va? (
@@ -1334,7 +1334,7 @@ RDEPEND+="
 		~media-plugins/gst-plugins-webrtc-${GST_PV}:1.0[${MULTILIB_USEDEP}]
 	)
 	vvdec? (
-		media-libs/vvdec[${MULTILIB_USEDEP}]
+		>=media-libs/vvdec-3.0[${MULTILIB_USEDEP}]
 	)
 "
 DEPEND+="
