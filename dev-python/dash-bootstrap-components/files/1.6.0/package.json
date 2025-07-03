@@ -45,6 +45,7 @@
     "babel-jest": "^27.2.4",
     "babel-loader": "^8.1.0",
     "css-loader": "^6.6.0",
+    "http-proxy-middleware": "^2.0.9",
     "jest": "^27.2.4",
     "jsdom": "^17.0.0",
     "npm-run-all": "^4.1.5",
@@ -53,7 +54,7 @@
     "style-loader": "^0.23.1",
     "webpack": "^5.68.0",
     "webpack-cli": "^4.9.2",
-    "webpack-dev-server": "^4.7.4"
+    "webpack-dev-server": "^5.2.1"
   },
   "dependencies": {
     "@babel/runtime": "^7.26.10",
