@@ -4,12 +4,20 @@
 
 EAPI=8
 
+# We don't eager bump because of torchvision requirements is not up to date.
+
 MY_PN="Open WebUI"
 
 AT_TYPES_NODE_PV="20.11.30"
 DISTUTILS_SINGLE_IMPL=1
 DISTUTILS_USE_PEP517="hatchling"
 NODE_VERSION="22" # From https://github.com/open-webui/open-webui/blob/v0.5.20/Dockerfile#L24
+NPM_AUDIT_FIX_ARGS=(
+	"--prefer-offline"
+)
+NPM_INSTALL_ARGS=(
+	"--prefer-offline"
+)
 PYTHON_COMPAT=( "python3_"{11..12} )
 
 inherit desktop distutils-r1 pypi npm xdg
@@ -252,6 +260,49 @@ pkg_setup() {
 	python-single-r1_pkg_setup
 	npm_pkg_setup
 	check_virtual_mem
+}
+
+npm_update_lock_install_post() {
+	patch_lockfile() {
+		# DoS = Denial of Service
+		# DT = Data Tampering
+		# ID = Information Disclosure
+		# SS = Subsequent System (Indirect attack)
+		# VS = Vulnerable System (Direct attack)
+
+		sed -i -e "s|\"brace-expansion\": \"^1.1.7\"|\"brace-expansion\": \"2.0.2\"|g" "package-lock.json" || die
+
+		sed -i -e "s|\"cookie\": \"^0.6.0\"|\"cookie\": \"0.7.0\"|g" "package-lock.json" || die
+
+		sed -i -e "s|\"dompurify\": \"^3.1.6\"|\"dompurify\": \"3.2.4\"|g" "package-lock.json" || die
+		sed -i -e "s|\"dompurify\": \"^3.2.4\"|\"dompurify\": \"3.2.4\"|g" "package-lock.json" || die
+		sed -i -e "s|\"dompurify\": \"^3.0.5 <3.1.7\"|\"dompurify\": \"3.2.4\"|g" "package-lock.json" || die
+
+		sed -i -e "s|\"esbuild\": \"^0.25.0\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die
+		sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die
+
+		sed -i -e "s|\"vite\": \"^5.0.0\"|\"vite\": \"5.4.19\"|g" "package-lock.json" || die
+		sed -i -e "s|\"vite\": \"^5.4.14\"|\"vite\": \"5.4.19\"|g" "package-lock.json" || die
+		sed -i -e "s#\"vite\": \"^3.0.0 || ^4.0.0 || ^5.0.0\"#\"vite\": \"5.4.19\"#g" "package-lock.json" || die
+		sed -i -e "s#\"vite\": \"^5.0.3 || ^6.0.0\"#\"vite\": \"5.4.19\"#g" "package-lock.json" || die
+	}
+	patch_lockfile
+
+	local pkgs
+	pkgs=(
+		"brace-expansion@2.0.2"						# CVE-2025-5889; DoS; Low
+		"cookie@0.7.0"							# CVE-2024-47764; VS(DT); Medium
+		"esbuild@0.25.0"						# GHSA-67mh-4wv8-2f99; ID; Moderate
+		"vite@5.4.19"							# CVE-2025-46565; VS(ID); Low
+	)
+	enpm install -D --prefer-offline "${pkgs[@]}"
+
+	pkgs=(
+		"dompurify@3.2.4"
+	)
+	enpm install -P --prefer-offline "${pkgs[@]}"
+
+	patch_lockfile
 }
 
 src_unpack() {
