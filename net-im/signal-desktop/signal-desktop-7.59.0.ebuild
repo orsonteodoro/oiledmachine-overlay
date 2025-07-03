@@ -191,6 +191,13 @@ src_unpack() {
 
 		epnpm install ${PNPM_INSTALL_ARGS[@]}
 
+		# DoS = Denial of Service
+		# DT = Data Tampering
+		# ID = Information Disclosure
+		# SS = Subsequent System (Indirect attack)
+		# VS = Vulnerable System (Direct attack)
+		# ZC = Zero Click Attack (AV:N, PR:N, UI:N)
+
 ewarn "QA:  Manually add (patch_hash=cfe393dc1cca8970377087e9555a285d1121f75d57223ddd872b1a8d3f8c909b) suffix to dependencies section to match got@11.8.5(patch_hash=cfe393dc1cca8970377087e9555a285d1121f75d57223ddd872b1a8d3f8c909b) from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove (encoding@0.1.13) suffix @octokit/request@8.4.1(encoding@0.1.13) from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove cross-spawn 5.x from ${S}/pnpm-lock.yaml"
@@ -203,15 +210,28 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/request from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/request-error from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/rest from ${S}/danger/pnpm-lock.yaml"
+
+ewarn "QA:  Manually remove @octokit/rest@18.12.0 from ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/types@6.41.0 from ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/core@3.6.0 from ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/plugin-rest-endpoint-methods@5.16.2 from ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/plugin-paginate-rest@9.2.2 from ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/plugin-request-log@1.0.4 from ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/auth-token@2.5.0 from ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/graphql@4.8.0 from ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/request-error@2.1.0 from ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/endpoint@6.0.12 from ${S}/danger/pnpm-lock.yaml"
+ewarn "QA:  Manually remove @octokit/request@5.6.3 from ${S}/danger/pnpm-lock.yaml"
 		patch_edits_npm() {
 			pushd "sticker-creator" >/dev/null 2>&1 || die
 				sed -i -e "s|\"cross-spawn\": \"^6.0.5\"|\"cross-spawn\": \"^6.0.6\"|g" "package-lock.json" || die								# CVE-2024-21538; DoS; High
 				sed -i -e "s|\"esbuild\": \"^0.18.10\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die									# GHSA-67mh-4wv8-2f99; ID; Moderate
 				sed -i -e "s|\"happy-dom\": \"8.9.0\"|\"happy-dom\": \"15.10.2\"|g" "package-lock.json" || die									# CVE-2024-51757; DoS, DT, ID; Critical
 				sed -i -e "s|\"rollup\": \"^3.27.1\"|\"rollup\": \"^3.29.5\"|g" "package-lock.json" || die									# CVE-2024-47068; DT, ID; Medium
-				sed -i -e "s|\"vite\": \"4.5.3\"|\"vite\": \"4.5.6\"|g" "package-lock.json" || die										# CVE-2025-24010; ID; Medium
+				sed -i -e "s|\"vite\": \"4.5.3\"|\"vite\": \"4.5.14\"|g" "package-lock.json" || die										# CVE-2025-24010; ID; Medium
 																								# CVE-2024-45812; DoS, DT, ID; Medium
 																								# CVE-2024-45811; ID; Medium
+																								# CVE-2025-46565; VS(ID); Medium
 			popd >/dev/null 2>&1 || die
 			pushd "danger" >/dev/null 2>&1 || die
 				sed -i -e "s|\"cross-spawn\": \"^7.0.3\"|\"cross-spawn\": \"^7.0.5\"|g" "package-lock.json" || die								# CVE-2024-21538; DoS; High
@@ -223,6 +243,12 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 																								#   @octokit/request-error
 																								# CVE-2025-25289, CVE-2025-25288, CVE-2025-25290; DoS; Low
 			popd >/dev/null 2>&1 || die
+			sed -i -e "s|\"@octokit/rest\": \"^18.12.0\"|\"@octokit/rest\": \"^20.1.2\"|g" "package-lock.json" || die								# Bump for
+																								#   @octokit/request
+																								#   @octokit/plugin-paginate-rest
+																								#   @octokit/request-error
+																								# CVE-2025-25289, CVE-2025-25288, CVE-2025-25290; DoS; Low
+
 			sed -i -e "s|\"electron\": \"^23.1.2\"|\"electron\": \"^${ELECTRON_APP_ELECTRON_PV}\"|g" "package-lock.json" || die							# CVE-2023-44402; DoS, DT, ID; High
 			sed -i -e "s|\"esbuild\": \"0.24.0\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die										# GHSA-67mh-4wv8-2f99; ID; Moderate
 			sed -i -e "s#\"esbuild\": \"^0.18.0 || ^0.19.0 || ^0.20.0 || ^0.21.0 || ^0.22.0 || ^0.23.0 || ^0.24.0\"#\"esbuild\": \"^0.25.0\"#g" "package-lock.json" || die		# GHSA-67mh-4wv8-2f99; ID; Moderate
@@ -231,11 +257,8 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 			sed -i -e "s|\"got\": \"^11.7.0\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die											# CVE-2022-33987; DT; Medium
 			sed -i -e "s|\"got\": \"^11.8.2\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die											# CVE-2022-33987; DT; Medium
 			sed -i -e "s|\"got\": \"^6.7.1\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die											# CVE-2022-33987; DT; Medium
-			sed -i -e "s|\"@octokit/rest\": \"^18.12.0\"|\"@octokit/rest\": \"^20.1.2\"|g" "package-lock.json" || die								# Bump for
-																								#   @octokit/request
-																								#   @octokit/plugin-paginate-rest
-																								#   @octokit/request-error
-																								# CVE-2025-25289, CVE-2025-25288, CVE-2025-25290; DoS; Low
+
+
 		}
 
 		patch_edits_pnpm() {
@@ -248,13 +271,16 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 				sed -i -e "s|happy-dom: 8.9.0|happy-dom: 15.10.2|g" "pnpm-lock.yaml" || die											# CVE-2024-51757; DoS, DT, ID; Critical
 				sed -i -e "s|rollup: 3.27.1|rollup: 3.29.5|g" "pnpm-lock.yaml" || die												# CVE-2024-47068; DT, ID; Medium
 
-				sed -i -e "s|vite: 4.5.3|vite: 4.5.6|g" "pnpm-lock.yaml" || die													# CVE-2025-24010; ID; Medium
+				sed -i -e "s|vite: 4.5.3|vite: 4.5.14|g" "pnpm-lock.yaml" || die												# CVE-2025-24010; ID; Medium
 																								# CVE-2024-45812; DoS, DT, ID; Medium
 																								# CVE-2024-45811; ID; Medium
+																								# CVE-2025-46565; VS(ID); Medium
 
-				sed -i -e "s|vite: ^4.1.0-beta.0|vite: 4.5.6|g" "pnpm-lock.yaml" || die												# CVE-2025-24010; ID; Medium
+
+				sed -i -e "s|vite: ^4.1.0-beta.0|vite: 4.5.14|g" "pnpm-lock.yaml" || die											# CVE-2025-24010; ID; Medium
 																								# CVE-2024-45812; DoS, DT, ID; Medium
 																								# CVE-2024-45811; ID; Medium
+																								# CVE-2025-46565; VS(ID); Medium
 			popd >/dev/null 2>&1 || die
 			pushd "danger" >/dev/null 2>&1 || die
 				sed -i -e "s|'@octokit/plugin-paginate-rest': 2.21.3|'@octokit/plugin-paginate-rest': 9.2.2|g" "pnpm-lock.yaml" || die						# CVE-2025-25288, DoS, Moderate
@@ -274,7 +300,15 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 			sed -i -e "s|'@octokit/plugin-paginate-rest': 2.21.3|'@octokit/plugin-paginate-rest': 9.2.2|g" "pnpm-lock.yaml" || die							# CVE-2025-25288, DoS, Moderate
 			sed -i -e "s|'@octokit/request': 5.6.3|'@octokit/request': 8.4.1|g" "pnpm-lock.yaml" || die										# CVE-2025-25290, DoS, Moderate
 			sed -i -e "s|'@octokit/request-error': 2.1.0|'@octokit/request-error': 5.1.1|g" "pnpm-lock.yaml" || die									# CVE-2025-25289, DoS, Moderate
+			sed -i -e "s|@octokit/rest: 18.12.0|@octokit/rest: 20.1.2|g" "pnpm-lock.yaml" || die											# Bump for
+																								#   @octokit/request
+																								#   @octokit/plugin-paginate-rest
+																								#   @octokit/request-error
 			sed -i -e "s|axios: 1.7.9|axios: 1.8.2|g" "pnpm-lock.yaml" || die													# CVE-2025-27152, ID, High
+			sed -i -e "s|brace-expansion: 1.1.11|brace-expansion: 1.1.12|g" "pnpm-lock.yaml" || die											# CVE-2025-5889; DoS; Low
+			sed -i -e "s|brace-expansion: 2.0.1|brace-expansion: 2.0.2|g" "pnpm-lock.yaml" || die											# CVE-2025-5889; DoS; Low
+			sed -i -e "s|brace-expansion: 1.1.11|brace-expansion: 1.1.12|g" "sticker-creator/pnpm-lock.yaml" || die									# CVE-2025-5889; DoS; Low
+			sed -i -e "s|brace-expansion: 2.0.1|brace-expansion: 2.0.2|g" "sticker-creator/pnpm-lock.yaml" || die									# CVE-2025-5889; DoS; Low
 			sed -i -e "s|cross-spawn: 5.1.0|cross-spawn: 6.0.6|g" "pnpm-lock.yaml" || die												# CVE-2024-21538, DoS, High
 			sed -i -e "s|electron: 23.1.2|electron: ${ELECTRON_APP_ELECTRON_PV}|g" "pnpm-lock.yaml" || die										# CVE-2023-44402; DoS, DT, ID; High
 			sed -i -e "s|electron: 23.3.13|electron: ${ELECTRON_APP_ELECTRON_PV}|g" "pnpm-lock.yaml" || die										# CVE-2023-44402; DoS, DT, ID; High
@@ -286,13 +320,11 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 			sed -i -e "s|got: 11.7.0|got: 11.8.5|g" "pnpm-lock.yaml" || die														# CVE-2022-33987; DT; Medium
 			sed -i -e "s|got: 11.8.2|got: 11.8.5|g" "pnpm-lock.yaml" || die														# CVE-2022-33987; DT; Medium
 			sed -i -e "s|got: 6.7.1|got: 11.8.5|g" "pnpm-lock.yaml" || die														# CVE-2022-33987; DT; Medium
-			sed -i -e "s|@octokit/rest: 18.12.0|@octokit/rest: 20.1.2|g" "pnpm-lock.yaml" || die											# Bump for
-																								#   @octokit/request
-																								#   @octokit/plugin-paginate-rest
-																								#   @octokit/request-error
 																								# CVE-2025-25289, CVE-2025-25288, CVE-2025-25290; DoS; Low
 			sed -i -e "s|tar-fs: 2.1.2|tar-fs: 2.1.3|g" "pnpm-lock.yaml" || die													# CVE-2025-48387; ZC, DT; High
 
+			sed -i -e "s|webpack-dev-server: 5.1.0|webpack-dev-server: 5.2.1|g" "pnpm-lock.yaml" || die										# CVE-2025-30359; ID; Medium
+																								# CVE-2025-30360; ID; Medium
 		}
 		patch_edits_pnpm
 
@@ -301,14 +333,16 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 			deps=(
 				"@babel/runtime@7.26.10"
 				"@babel/helpers@7.26.10"
+				"brace-expansion@2.0.2"
 			)
 			epnpm install ${deps[@]} -P ${PNPM_INSTALL_ARGS[@]}
 			deps=(
+				"brace-expansion@1.1.12"
 				"cross-spawn@6.0.6"
 				"esbuild@0.25.0"
 				"happy-dom@15.10.2"
 				"rollup@3.29.5"
-				"vite@4.5.6"
+				"vite@4.5.14"
 			)
 			epnpm install ${deps[@]} -D ${PNPM_INSTALL_ARGS[@]}
 		popd >/dev/null 2>&1 || die
@@ -339,7 +373,10 @@ ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node
 			"@octokit/request-error@5.1.1"
 			"@octokit/rest@20.1.2"
 			"axios@1.8.2"
+			"brace-expansion@2.0.2"
+			"brace-expansion@1.1.12"
 			"patch-package@8.0.0"
+			"webpack-dev-server@5.2.1"
 		)
 		epnpm install ${deps[@]} -D ${PNPM_INSTALL_ARGS[@]}
 
