@@ -5,7 +5,7 @@
 
 CATEGORY="dev-vcs"
 PN="breezy"
-MY_PN="breezy"
+MY_PN="breezy-brz"
 PV="${1}"
 MY_PV="${1}"
 
