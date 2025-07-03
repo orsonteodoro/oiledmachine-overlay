@@ -32,7 +32,6 @@ _ELECTRON_DEP_ROUTE="secure" # reproducible or secure
 if [[ "${_ELECTRON_DEP_ROUTE}" == "secure" ]] ; then
 	# Ebuild maintainer's choice
 	ELECTRON_APP_ELECTRON_PV="37.2.0" # Cr 138.0.7204.97, node 22.17.0
-#	ELECTRON_APP_ELECTRON_PV="37.1.0" # Cr 138.0.7204.35, node 22.16.0
 else
 	# Upstream's choice
 	ELECTRON_APP_ELECTRON_PV="36.3.2" # Cr 136.0.7103.115, node 22.15.1
@@ -96,7 +95,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_30
+ebuild_revision_31
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -246,6 +245,7 @@ ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2(
 ewarn "QA:  Manually remove @octokit/request-error@2.1.0 from ${S}/pnpm-lock.yaml"
 
 ewarn "QA:  Manually remove esbuild@0.24.0 and arch implementations from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/sticker-creator/pnpm-lock.yaml"
 		patch_edits_npm() {
 			pushd "sticker-creator" >/dev/null 2>&1 || die
 				sed -i -e "s|\"cross-spawn\": \"^6.0.5\"|\"cross-spawn\": \"^6.0.6\"|g" "package-lock.json" || die								# CVE-2024-21538; DoS; High
