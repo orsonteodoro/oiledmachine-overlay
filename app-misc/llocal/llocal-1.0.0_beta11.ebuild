@@ -72,7 +72,7 @@ else
 	"
 fi
 SLOT="0"
-IUSE+=" ebuild_revision_6"
+IUSE+=" ebuild_revision_7"
 RDEPEND="
 	app-misc/ollama
 "
@@ -122,9 +122,23 @@ npm_update_lock_install_post() {
 		enpm install "electron@${ELECTRON_APP_ELECTRON_PV}" -D
 	fi
 	patch_lockfile() {
+ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.0 from package-lock.json"
+		# DoS = Denial of Service
+		# DT = Data Tampering
+		# ID = Information Disclosure
+		# SS = Subsequent System (Indirect attack)
+		# VS = Vulnerable System (Direct attack)
 		sed -i -e "s|\"@langchain/community\": \"^0.2.25\"|\"@langchain/community\": \"0.3.3\"|g" "package-lock.json" || die		# CVE-2024-7042; DoS, DT, ID; Critical
-		sed -i -e "s|\"vite\": \"^5.0.12\"|\"vite\": \"5.4.12\"|g" "package-lock.json" || die						# CVE-2025-24010; ID; Medium
-		sed -i -e "s#\"vite\": \"^4.0.0 || ^5.0.0\"#\"vite\": \"5.4.12\"#g" "package-lock.json" || die
+
+		sed -i -e "s#\"vite\": \"^4.0.0 || ^5.0.0\"#\"vite\": \"5.4.19\"#g" "package-lock.json" || die					# CVE-2025-30208; ID; Medium
+		sed -i -e "s#\"vite\": \"^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0-beta.0\"#\"vite\": \"5.4.19\"#g" "package-lock.json" || die	# CVE-2025-30208; ID; Medium
+		sed -i -e "s|\"vite\": \"^5.0.12\"|\"vite\": \"5.4.19\"|g" "package-lock.json" || die						# CVE-2025-24010; ID; Medium
+		sed -i -e "s|\"vite\": \"^5.4.12\"|\"vite\": \"5.4.19\"|g" "package-lock.json" || die						# CVE-2025-30208; ID; Medium
+		sed -i -e "s|\"vite\": \"5.4.12\"|\"vite\": \"5.4.19\"|g" "package-lock.json" || die						# CVE-2025-30208; ID; Medium
+																		# CVE-2025-46565; VS(ID); Medium
+																		# CVE-2025-32395; VS(ID); Medium
+																		# CVE-2025-31486; ID; Medium
+
 		sed -i -e "s|\"ws\": \"^8.14.2\"|\"ws\": \"^8.17.1\"|g" "package-lock.json" || die						# CVE-2024-37890; DoS; High
 		sed -i -e "s|\"ws\": \"8.13.0\"|\"ws\": \"^8.17.1\"|g" "package-lock.json" || die
 	}
@@ -151,8 +165,9 @@ ewarn "QA:  Remove node_modules/vite/node_modules/esbuild and @esbuild/* <0.25.0
 		patch_lockfile() {
 			sed -i -e "s|\"@babel/runtime\": \"^7.3.1\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die			# CVE-2025-27789; DoS; Medium
 			sed -i -e "s|\"axios\": \"^1.6.8\"|\"axios\": \"^1.8.2\"|g" "package-lock.json" || die						# CVE-2025-27152; ID; High
-			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die					# GHSA-67mh-4wv8-2f99
-			sed -i -e "s|\"esbuild\": \"^0.21.5\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die					# GHSA-67mh-4wv8-2f99
+			sed -i -e "s|\"esbuild\": \"^0.21.3\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die					# GHSA-67mh-4wv8-2f99; ID; Medium
+			sed -i -e "s|\"esbuild\": \"^0.21.5\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json" || die					# GHSA-67mh-4wv8-2f99; ID; Medium
+			sed -i -e "s|\"esbuild\": \"^0.25.0\"|\"esbuild\": \"0.25.0\"|g" "package-lock.json"						# GHSA-67mh-4wv8-2f99; ID; Medium
 			sed -i -e "s|\"prismjs\": \"^1.27.0\"|\"prismjs\": \"^1.30.0\"|g" "package-lock.json" || die					# CVE-2024-53382; DT, ID; Medium
 			sed -i -e "s|\"prismjs\": \"~1.27.0\"|\"prismjs\": \"^1.30.0\"|g" "package-lock.json" || die					# CVE-2024-53382; DT, ID; Medium
 		}
