@@ -376,6 +376,7 @@ npm_unpack_post() {
 	eapply "${FILESDIR}/${PN}-1.47.17-hardcoded-paths.patch"
 	eapply "${FILESDIR}/${PN}-1.96.13-next-config.patch"
 	eapply "${FILESDIR}/${PN}-1.65.0-sharp-declaration.patch"
+	eapply "${FILESDIR}/${PN}-1.96.14-use-e965-xlsx.patch"
 
 #	if [[ "${NPM_UPDATE_LOCK}" != "1" ]] ; then
 #		eapply "${FILESDIR}/lobe-chat-1.62.4-pnpm-patches.patch"
@@ -472,6 +473,8 @@ npm_dedupe_post() {
 			sed -i -e "s|\"snowflake-sdk\": \"^1.12.0\"|\"snowflake-sdk\": \"2.0.4\"|g" "package-lock.json" || die
 			sed -i -e "s|\"snowflake-sdk\": \"^2.0.2\"|\"snowflake-sdk\": \"^2.0.4\"|g" "package-lock.json" || die
 			sed -i -e "s|\"snowflake-sdk\": \"^2.0.3\"|\"snowflake-sdk\": \"^2.0.4\"|g" "package-lock.json" || die
+
+			sed -i -e "s|\"xlsx\": \"^0.18.5\"|\"@e965/xlsx\": \"^0.20.3\"|g" "packages/file-loaders/package.json" || die
 		}
 		npm_patch_lockfile
 
@@ -483,6 +486,8 @@ ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/package-lock.json or ${S}/
 		# ID = Information Disclosure
 		# ZC = Zero Click Attack (AV:N, PR:N, UI:N)
 
+		enpm remove "xlsx"
+
 		local pkgs
 		pkgs=(
 			"@apidevtools/json-schema-ref-parser@11.2.0"					# CVE-2024-29651; DoS, DT, ID; High
@@ -491,6 +496,9 @@ ewarn "QA:  Manually remove <esbuild-0.25.0 from ${S}/package-lock.json or ${S}/
 
 		pkgs=(
 			"esbuild@0.25.0"								# GHSA-67mh-4wv8-2f99
+
+			"@e965/xlsx"									# CVE-2024-22363; DoS; High
+													# CVE-2023-30533; DoS, DT, ID; High
 		)
 		enpm add ${pkgs[@]} ${NPM_INSTALL_ARGS[@]}
 
