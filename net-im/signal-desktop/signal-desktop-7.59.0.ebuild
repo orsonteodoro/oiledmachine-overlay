@@ -95,7 +95,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_28
+ebuild_revision_29
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -235,6 +235,8 @@ ewarn "QA:  Manually remove @octokit/plugin-rest-endpoint-methods@5.16.2 from ${
 ewarn "QA:  Manually remove @octokit/rest@18.12.0 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually change @octokit/rest@18.12.0 references to @octokit/rest@20.1.2"
 ewarn "QA:  Manually remove @octokit/request-error@2.1.0 from ${S}/pnpm-lock.yaml"
+
+ewarn "QA:  Manually remove esbuild@0.24.0 and arch implementations from ${S}/pnpm-lock.yaml"
 		patch_edits_npm() {
 			pushd "sticker-creator" >/dev/null 2>&1 || die
 				sed -i -e "s|\"cross-spawn\": \"^6.0.5\"|\"cross-spawn\": \"^6.0.6\"|g" "package-lock.json" || die								# CVE-2024-21538; DoS; High
@@ -338,6 +340,9 @@ ewarn "QA:  Manually remove @octokit/request-error@2.1.0 from ${S}/pnpm-lock.yam
 
 			sed -i -e "s|webpack-dev-server: 5.1.0|webpack-dev-server: 5.2.1|g" "pnpm-lock.yaml" || die										# CVE-2025-30359; ID; Medium
 																								# CVE-2025-30360; ID; Medium
+
+			sed -i -e "s|http-proxy-middleware: 2.0.7|http-proxy-middleware: 2.0.9|g" "pnpm-lock.yaml" || die									# CVE-2025-32997; DT; Medium
+																								# CVE-2025-32996; DoS; Medium
 		}
 		patch_edits_pnpm
 
@@ -390,6 +395,7 @@ ewarn "QA:  Manually remove @octokit/request-error@2.1.0 from ${S}/pnpm-lock.yam
 			"brace-expansion@1.1.12"
 			"patch-package@8.0.0"
 			"webpack-dev-server@5.2.1"
+			"http-proxy-middleware@2.0.9"		# This must go after webpack-dev-server.
 		)
 		epnpm install ${deps[@]} -D ${PNPM_INSTALL_ARGS[@]}
 
