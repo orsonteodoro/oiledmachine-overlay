@@ -118,9 +118,8 @@ LICENSE="
 RESTRICT="mirror"
 SLOT="0"
 IUSE+="
-	custom-models
-	ebuild_revision_10
-	firejail
+	custom-models firejail
+	ebuild_revision_12
 "
 RDEPEND+="
 	media-libs/vulkan-drivers
@@ -157,19 +156,31 @@ npm_update_lock_audit_post() {
 	enpm install -D "electron@${ELECTRON_APP_ELECTRON_PV}"
 
 	patch_lockfile() {
+		# DoS = Denial of Service
+		# DT = Data Tampering
+		# ID = Information Disclosure
+		# SS = Subsequent System (Indirect attack)
+		# VS = Vulnerable System (Direct attack)
 		sed -i -e "s|\"@babel/runtime\": \"^7.5.5\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die	# CVE-2025-27789; DoS; Medium
 		sed -i -e "s|\"@babel/runtime\": \"^7.8.7\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die	# CVE-2025-27789; DoS; Medium
 		sed -i -e "s|\"@babel/runtime\": \"^7.12.0\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die	# CVE-2025-27789; DoS; Medium
 		sed -i -e "s|\"@babel/runtime\": \"^7.12.5\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die	# CVE-2025-27789; DoS; Medium
 		sed -i -e "s|\"@babel/runtime\": \"^7.18.3\"|\"@babel/runtime\": \"^7.26.10\"|g" "package-lock.json" || die	# CVE-2025-27789; DoS; Medium
-		sed -i -e "s|\"undici\": \"6.19.7\"|\"undici\": \"6.21.1\"|g" "package-lock.json" || die			# CVE-2025-22150; DT, ID; Medium
-		sed -i -e "s|\"next\": \"^14.2.10\"|\"next\": \"^14.2.25\"|g" "package-lock.json" || die			# CVE-2025-29927; DT, ID; Critical
+
+		sed -i -e "s|\"undici\": \"^6.21.1\"|\"undici\": \"6.21.2\"|g" "package-lock.json" || die			# CVE-2025-47279; DoS; Low
+		sed -i -e "s|\"undici\": \"6.19.7\"|\"undici\": \"6.21.2\"|g" "package-lock.json" || die			# CVE-2025-22150; DT, ID; Medium
+																# CVE-2025-47279; DoS; Low
+
+		sed -i -e "s|\"next\": \"^14.2.10\"|\"next\": \"14.2.30\"|g" "package-lock.json" || die				# CVE-2025-29927; DT, ID; Critical
+		sed -i -e "s|\"next\": \"^14.2.25\"|\"next\": \"14.2.30\"|g" "package-lock.json" || die				# CVE-2025-48068; VS(ID), SS(ID); Low
+																# CVE-2025-48068; VS(ID), SS(ID); Low
+																# CVE-2025-30218; VS(ID)
 	}
 	patch_lockfile
 	local pkgs
 	pkgs=(
-		"undici@6.21.1"
-		"next@14.2.25"
+		"undici@6.21.2"
+		"next@14.2.30"
 	)
 	enpm install -D ${pkgs[@]}
 
