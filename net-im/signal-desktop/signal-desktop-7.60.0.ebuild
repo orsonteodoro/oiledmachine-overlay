@@ -95,7 +95,7 @@ KEYWORDS="-* amd64"
 RESTRICT="splitdebug binchecks strip"
 IUSE+="
 firejail wayland X
-ebuild_revision_31
+ebuild_revision_32
 "
 # RRDEPEND already added from electron-app
 RDEPEND+="
@@ -205,7 +205,7 @@ ewarn "QA:  Manually remove electron@23.3.13 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove got@6.7.1 from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @types/keyv@3.1.4 from ${S}/pnpm-lock.yaml"
 
-ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and all 0.18.* associated packages from ${S}/sticker-creator/pnpm-lock.yaml"
+ewarn "QA:  Manually remove node_modules/vite/node_modules/esbuild and all @esbuild/<arch>@0.18.20 associated packages from ${S}/sticker-creator/pnpm-lock.yaml"
 ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/core from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/plugin-paginate-rest from ${S}/danger/pnpm-lock.yaml"
 ewarn "QA:  Manually remove node_modules/memfs-or-file-map-to-github-branch/node_modules/@octokit/plugin-request-log from ${S}/danger/pnpm-lock.yaml"
@@ -244,8 +244,10 @@ ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2 
 ewarn "QA:  Manually change @octokit/plugin-paginate-rest references from 9.2.2(@octokit/core@3.6.0(encoding@0.1.13)) to 11.4.4-cjs.2(@octokit/core@5.2.1) in ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove @octokit/request-error@2.1.0 from ${S}/pnpm-lock.yaml"
 
-ewarn "QA:  Manually remove esbuild@0.24.0 and arch implementations from ${S}/pnpm-lock.yaml"
+ewarn "QA:  Manually remove esbuild@0.24.0 and arch implementations (@esbuild/<arch>@0.24.0) from ${S}/pnpm-lock.yaml"
 ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/sticker-creator/pnpm-lock.yaml"
+
+ewarn "QA:  Manually remove danger@12.3.4 from ${S}/danger/pnpm-lock.yaml and ${S}/pnpm-lock.yaml"
 		patch_edits_npm() {
 			pushd "sticker-creator" >/dev/null 2>&1 || die
 				sed -i -e "s|\"cross-spawn\": \"^6.0.5\"|\"cross-spawn\": \"^6.0.6\"|g" "package-lock.json" || die								# CVE-2024-21538; DoS; High
@@ -259,6 +261,8 @@ ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/s
 			popd >/dev/null 2>&1 || die
 			pushd "danger" >/dev/null 2>&1 || die
 				sed -i -e "s|\"cross-spawn\": \"^7.0.3\"|\"cross-spawn\": \"^7.0.5\"|g" "package-lock.json" || die								# CVE-2024-21538; DoS; High
+				sed -i -e "s|\"danger: \"^10.5.3\"|\"danger\": \"13.0.4\"|g" "pnpm-lock.yaml" || die										# CVE-2025-25975; DoS, DT, ID; High
+				sed -i -e "s|\"danger: \"12.3.4\"|\"danger\": \"13.0.4\"|g" "pnpm-lock.yaml" || die										# CVE-2025-25975; DoS, DT, ID; High
 				sed -i -e "s|\"micromatch\": \"^4.0.2\"|\"micromatch\": \"^4.0.8\"|g" "package-lock.json" || die								# CVE-2024-4067; DoS; Medium
 				sed -i -e "s|\"micromatch\": \"^4.0.4\"|\"micromatch\": \"^4.0.8\"|g" "package-lock.json" || die								# CVE-2024-4067; DoS; Medium
 				sed -i -e "s|\"@octokit/rest\": \"^18.12.0\"|\"@octokit/rest\": \"^20.1.2\"|g" "package-lock.json" || die							# Bump for
@@ -273,6 +277,8 @@ ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/s
 																								#   @octokit/request-error
 																								# CVE-2025-25289, CVE-2025-25288, CVE-2025-25290; DoS; Low
 
+			sed -i -e "s|\"danger: \"^10.5.3\"|\"danger\": \"13.0.4\"|g" "pnpm-lock.yaml" || die											# CVE-2025-25975; DoS, DT, ID; High
+			sed -i -e "s|\"danger: \"12.3.4\"|\"danger\": \"13.0.4\"|g" "pnpm-lock.yaml" || die											# CVE-2025-25975; DoS, DT, ID; High
 			sed -i -e "s|\"electron\": \"^23.1.2\"|\"electron\": \"^${ELECTRON_APP_ELECTRON_PV}\"|g" "package-lock.json" || die							# CVE-2023-44402; DoS, DT, ID; High
 			sed -i -e "s|\"esbuild\": \"0.24.0\"|\"esbuild\": \"^0.25.0\"|g" "package-lock.json" || die										# GHSA-67mh-4wv8-2f99; ID; Moderate
 			sed -i -e "s#\"esbuild\": \"^0.18.0 || ^0.19.0 || ^0.20.0 || ^0.21.0 || ^0.22.0 || ^0.23.0 || ^0.24.0\"#\"esbuild\": \"^0.25.0\"#g" "package-lock.json" || die		# GHSA-67mh-4wv8-2f99; ID; Moderate
@@ -281,8 +287,6 @@ ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/s
 			sed -i -e "s|\"got\": \"^11.7.0\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die											# CVE-2022-33987; DT; Medium
 			sed -i -e "s|\"got\": \"^11.8.2\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die											# CVE-2022-33987; DT; Medium
 			sed -i -e "s|\"got\": \"^6.7.1\"|\"got\": \"^11.8.5\"|g" "package-lock.json" || die											# CVE-2022-33987; DT; Medium
-
-
 		}
 
 		patch_edits_pnpm() {
@@ -311,6 +315,8 @@ ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/s
 				sed -i -e "s|'@octokit/request': 5.6.3|'@octokit/request': 8.4.1|g" "pnpm-lock.yaml" || die									# CVE-2025-25290, DoS, Moderate
 				sed -i -e "s|'@octokit/request-error': 2.1.0|'@octokit/request-error': 2.1.0|g" "pnpm-lock.yaml" || die								# CVE-2025-25289, DoS, Moderate
 				sed -i -e "s|cross-spawn: 7.0.3|cross-spawn: 7.0.5|g" "pnpm-lock.yaml" || die											# CVE-2024-21538; DoS; High
+				sed -i -e "s|danger: ^10.5.3|danger: 13.0.4|g" "pnpm-lock.yaml" || die												# CVE-2025-25975; DoS, DT, ID; High
+				sed -i -e "s|danger: 12.3.4|danger: 13.0.4|g" "pnpm-lock.yaml" || die												# CVE-2025-25975; DoS, DT, ID; High
 				sed -i -e "s|micromatch: 4.0.2|micromatch: 4.0.8|g" "pnpm-lock.yaml" || die											# CVE-2024-4067; DoS; Medium
 				sed -i -e "s|micromatch: 4.0.4|micromatch: 4.0.8|g" "pnpm-lock.yaml" || die											# CVE-2024-4067; DoS; Medium
 				sed -i -e "s|'@octokit/rest': 18.12.0|'@octokit/rest': 20.1.2|g" "pnpm-lock.yaml" || die									# Bump for
@@ -318,6 +324,8 @@ ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/s
 																								#   @octokit/plugin-paginate-rest
 																								#   @octokit/request-error
 																								# CVE-2025-25289, CVE-2025-25288, CVE-2025-25290; DoS; Low
+
+
 			popd >/dev/null 2>&1 || die
 			sed -i -e "s|'@babel/runtime': 7.26.7|'@babel/runtime': 7.26.10|g" "pnpm-lock.yaml" || die										# CVE-2025-27789, DoS, Moderate
 			sed -i -e "s|'@babel/helpers': 7.26.7|'@babel/helpers': 7.26.10|g" "pnpm-lock.yaml" || die										# CVE-2025-27789, DoS, Moderate
@@ -334,6 +342,8 @@ ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/s
 			sed -i -e "s|brace-expansion: 1.1.11|brace-expansion: 1.1.12|g" "sticker-creator/pnpm-lock.yaml" || die									# CVE-2025-5889; DoS; Low
 			sed -i -e "s|brace-expansion: 2.0.1|brace-expansion: 2.0.2|g" "sticker-creator/pnpm-lock.yaml" || die									# CVE-2025-5889; DoS; Low
 			sed -i -e "s|cross-spawn: 5.1.0|cross-spawn: 6.0.6|g" "pnpm-lock.yaml" || die												# CVE-2024-21538, DoS, High
+			sed -i -e "s|danger: ^10.5.3|danger: 13.0.4|g" "pnpm-lock.yaml" || die													# CVE-2025-25975; DoS, DT, ID; High
+			sed -i -e "s|danger: 12.3.4|danger: 13.0.4|g" "pnpm-lock.yaml" || die													# CVE-2025-25975; DoS, DT, ID; High
 			sed -i -e "s|electron: 23.1.2|electron: ${ELECTRON_APP_ELECTRON_PV}|g" "pnpm-lock.yaml" || die										# CVE-2023-44402; DoS, DT, ID; High
 			sed -i -e "s|electron: 23.3.13|electron: ${ELECTRON_APP_ELECTRON_PV}|g" "pnpm-lock.yaml" || die										# CVE-2023-44402; DoS, DT, ID; High
 			sed -i -e "s|esbuild: 0.24.0|esbuild: 0.25.0|g" "pnpm-lock.yaml" || die													# GHSA-67mh-4wv8-2f99; ID; Moderate
@@ -376,6 +386,7 @@ ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/s
 
 		pushd "danger" >/dev/null 2>&1 || die
 			deps=(
+				"danger@13.0.4"
 				"@octokit/plugin-paginate-rest@9.2.2"
 				"@octokit/request@8.4.1"
 				"@octokit/request-error@2.1.0"
@@ -395,6 +406,7 @@ ewarn "QA:  Manually remove esbuild@0.18.20 and arch implementations from ${S}/s
 		)
 		epnpm install ${deps[@]} -P ${PNPM_INSTALL_ARGS[@]}
 		deps=(
+			"danger@13.0.4"
 			"@octokit/plugin-paginate-rest@9.2.2"
 			"@octokit/request@8.4.1"
 			"@octokit/request-error@5.1.1"
