@@ -216,7 +216,7 @@ RDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-8.16.0-simd-options.patch"
+	"${FILESDIR}/${PN}-8.17.0-simd-options.patch"
 #	"${FILESDIR}/${PN}-8.16.0-remove-release-changes.patch"
 )
 

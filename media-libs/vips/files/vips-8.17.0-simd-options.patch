@@ -1,0 +1,77 @@
+diff '--color=auto' -urp libvips-8.17.0.orig/meson.build libvips-8.17.0/meson.build
+--- libvips-8.17.0.orig/meson.build	2025-06-05 04:54:40.000000000 -0700
++++ libvips-8.17.0/meson.build	2025-07-03 19:25:36.327683305 -0700
+@@ -166,7 +166,7 @@ int main(void) {
+     return func();
+ }
+ '''
+-if meson.can_run_host_binaries()
++if meson.can_run_host_binaries() and get_option('avx')
+     rres = cc.run(target_clones_check, args: '-Werror', name: 'Has target_clones attribute')
+     have_target_clones = rres.compiled() and rres.returncode() == 0
+ else
+@@ -447,13 +447,20 @@ if libhwy_dep.found()
+     cfg_var.set('HAVE_HWY', true)
+     # 1.1.0 adds `InterleaveWhole{Lower,Upper}` and `Dup128VecFromValues`
+     cfg_var.set('HAVE_HWY_1_1_0', libhwy_dep.version().version_compare('>=1.1.0'))
+-    # Always disable SSSE3 since it is rare to have SSSE3 but not SSE4
+-    disabled_targets = ['HWY_SSSE3']
+-    # Optionally, build without AVX512 support (helps to reduce binary size at the cost of performance)
+-    #disabled_targets += ['HWY_AVX3']
+-    #disabled_targets += ['HWY_AVX3_ZEN4']
+-    #disabled_targets += ['HWY_AVX3_SPR']
+-    add_project_arguments('-DHWY_DISABLED_TARGETS=@0@'.format('|'.join(disabled_targets)), language: ['cpp'])
++    disabled_targets = []
++    if not get_option('ssse3')
++        disabled_targets += ['HWY_SSSE3']
++    endif
++    if not get_option('avx512bw')
++        disabled_targets += ['HWY_AVX3']
++    endif
++    if not get_option('bf16_zen4')
++        disabled_targets += ['HWY_AVX3_ZEN4']
++    endif
++    if not get_option('bf16_spr')
++        disabled_targets += ['HWY_AVX3_SPR']
++    endif
++    add_project_arguments('-DHWY_DISABLED_TARGETS=(@0@)'.format('|'.join(disabled_targets)), language: ['cpp'])
+     simd_package = libhwy_dep
+ endif
+ 
+Only in libvips-8.17.0: meson.build.orig
+Only in libvips-8.17.0: meson.build.rej
+diff '--color=auto' -urp libvips-8.17.0.orig/meson_options.txt libvips-8.17.0/meson_options.txt
+--- libvips-8.17.0.orig/meson_options.txt	2025-06-05 04:54:40.000000000 -0700
++++ libvips-8.17.0/meson_options.txt	2025-07-03 19:24:56.578117285 -0700
+@@ -262,3 +262,31 @@ option('fuzzing_engine',
+ option('fuzzer_ldflags',
+     type: 'string',
+     description: 'Extra LDFLAGS used during linking of fuzzing binaries')
++
++# SIMD
++
++option('ssse3',
++  type: 'boolean',
++  value: true,
++  description: 'Build with SSSE3')
++
++option('avx',
++  type: 'boolean',
++  value: true,
++  description: 'Build with AVX')
++
++option('avx512bw',
++  type: 'boolean',
++  value: true,
++  description: 'Build with AVX512')
++
++option('bf16_zen4',
++  type: 'boolean',
++  value: true,
++  description: 'Build with AVX512 + BF16 + CompressStore workaround on Zen 4')
++
++option('bf16_spr',
++  type: 'boolean',
++  value: true,
++  description: 'Build with AVX512 + BF16 for Sapphire Rapids')
++
