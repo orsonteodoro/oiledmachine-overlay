@@ -24,16 +24,16 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_ssse3"
 )
 GCC_PV="14"
-LIBJPEG_TURBO_V="2.1.2"
+LIBJPEG_TURBO_PV="2.1.2"
 LLVM_COMPAT=( 18 ) # CI uses 14
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 PATENT_STATUS_IUSE=(
 	"patent_status_nonfree"
 )
 PYTHON_COMPAT=( "python3_"{8..11} )
-SO_C=60
-SO_R=0
-SO_A=18
+SO_C=61
+SO_R=1
+SO_A=19
 SO_MAJOR=$((${SO_C} - ${SO_A})) # Currently 42
 
 inherit cflags-hardened check-compiler-switch flag-o-matic llvm meson-multilib multilib-minimal
@@ -99,18 +99,18 @@ PATENT_STATUS_RDEPEND="
 	virtual/patent-status[patent_status_nonfree=]
 	!patent_status_nonfree? (
 		avif? (
-			>=media-libs/libheif-1.12.0[${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
+			>=media-libs/libheif-1.7.0[${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
 		)
 		heic? (
-			>=media-libs/libheif-1.12.0[${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
+			>=media-libs/libheif-1.7.0[${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
 		)
 	)
 	patent_status_nonfree? (
 		avif? (
-			>=media-libs/libheif-1.12.0[${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
+			>=media-libs/libheif-1.7.0[${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
 		)
 		heic? (
-			>=media-libs/libheif-1.12.0[${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
+			>=media-libs/libheif-1.7.0[${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
 		)
 	)
 "
@@ -170,7 +170,7 @@ RDEPEND+="
 		>=media-libs/openjpeg-2.4.0[${MULTILIB_USEDEP}]
 	)
 	jxl? (
-		>=media-libs/libjxl-0.7.0[${MULTILIB_USEDEP}]
+		>=media-libs/libjxl-0.11.0[${MULTILIB_USEDEP}]
 	)
 	lcms? (
 		>=media-libs/lcms-2.12[${MULTILIB_USEDEP}]
@@ -182,7 +182,7 @@ RDEPEND+="
 		>=media-libs/openexr-2.5.7[${MULTILIB_USEDEP}]
 	)
 	openslide? (
-		>=media-libs/openslide-3.4.1[${MULTILIB_USEDEP}]
+		>=media-libs/openslide-3.4.0[${MULTILIB_USEDEP}]
 	)
 	orc? (
 		>=dev-lang/orc-0.4.32[${MULTILIB_USEDEP}]
@@ -217,6 +217,7 @@ RDEPEND+="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-8.16.0-simd-options.patch"
+#	"${FILESDIR}/${PN}-8.16.0-remove-release-changes.patch"
 )
 
 get_configurations() {
@@ -349,9 +350,9 @@ ewarn
 	fi
 
 	if use jpeg \
-	&& has_version "<media-libs/libjpeg-turbo-${LIBJPEG_TURBO_V}" ; then
+	&& has_version "<media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}" ; then
 eerror
-eerror "Update to >=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_V}"
+eerror "Update to >=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}"
 eerror
 		die
 	fi
@@ -481,6 +482,20 @@ _apply_flags() {
 			-shared-libsan \
 			"${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}"
 	fi
+
+	if use debug ; then
+einfo "Adding debug flags"
+		replace-flags '-O*' '-O0'
+		replace-flags '-O*' '-Og'
+		append-flags -ggdb3 -O0 -UNDEBUG -UG_DISABLE_CAST_CHECKS -UG_DISABLE_CHECKS -UG_DISABLE_ASSERT
+	else
+einfo "Adding release flags"
+		replace-flags '-O0' '-O1'
+		append-flags -DNDEBUG -DG_DISABLE_CAST_CHECKS -DG_DISABLE_CHECKS -DG_DISABLE_ASSERT
+	fi
+
+einfo "CFLAGS:\t${CFLAGS}"
+einfo "CXXFLAGS:\t${CXXFLAGS}"
 einfo "CPPFLAGS:\t${CPPFLAGS}"
 einfo "LDFLAGS:\t${LDFLAGS}"
 }
@@ -605,8 +620,8 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(meson_feature tiff)
 		$(meson_feature webp)
 		$(meson_feature zlib)
-		$(meson_native_use_bool doxygen)
-		$(meson_native_use_bool gtk-doc gtk_doc)
+		$(meson_native_use_bool doxygen cpp-docs)
+		$(meson_native_use_bool gtk-doc docs)
 		$(meson_native_use_feature introspection)
 		$(meson_use analyze)
 		$(meson_use cpu_flags_x86_avx avx)
@@ -624,6 +639,24 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(meson_use vala vapi)
 		$(usex nifti '-Dnifti-prefix-dir=/usr' '')
 	)
+
+	if use debug ; then
+einfo "Adding debug flags"
+		export MESON_ARGS="-Dbuildtype=debug -Db_ndebug=false"
+		emesonargs+=(
+			-Dbuildtype=debug
+			-Db_ndebug=false
+			-Dcpp_args="-UNDEBUG -UG_DISABLE_CHECKS -UG_DISABLE_CAST_CHECKS -UG_DISABLE_ASSERT"
+		)
+	else
+einfo "Adding release flags"
+		export MESON_ARGS="-Dbuildtype=release -Db_ndebug=true"
+		emesonargs+=(
+			-Dbuildtype=release
+			-Db_ndebug=true
+			-Dcpp_args="-DNDEBUG -DG_DISABLE_CHECKS -DG_DISABLE_CAST_CHECKS -DG_DISABLE_ASSERT"
+		)
+	fi
 
 	if use avif || use heic ; then
 		emesonargs+=(
@@ -661,13 +694,19 @@ einfo "Detected compiler switch.  Disabling LTO."
 		append-flags "-O2"
 	fi
 
-	local olast
-	olast=$(get_olast)
-	replace-flags "-O*" "${olast}"
-
-	emesonargs+=(
-		-Doptimization="${olast/-O/}"
-	)
+	if use debug ; then
+		replace-flags '-O*' '-Og'
+		emesonargs+=(
+			-Doptimization="g"
+		)
+	else
+		local olast
+		olast=$(get_olast)
+		replace-flags "-O*" "${olast}"
+		emesonargs+=(
+			-Doptimization="${olast/-O/}"
+		)
+	fi
 	meson_src_configure
 }
 

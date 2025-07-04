@@ -1,0 +1,27 @@
+--- a/meson.build.orig	2025-07-03 16:42:33.177095192 -0700
++++ b/meson.build	2025-07-03 16:43:13.636829531 -0700
+@@ -6,10 +6,6 @@ project('vips', 'c', 'cpp',
+         'c_std=gnu99',
+         # we use some C++11 features
+         'cpp_std=c++11',
+-        # do a release (optimised) build by default
+-        'buildtype=release',
+-        # turn off asserts etc. in release mode
+-        'b_ndebug=if-release'
+     ]
+ )
+ 
+@@ -34,13 +30,6 @@ pymod = import('python')
+ pkg = import('pkgconfig')
+ i18n = import('i18n')
+ 
+-# if we're optimising (eg. release mode) we turn off cast checks and g_asserts
+-if get_option('optimization') not in ['0', 'g']
+-    add_project_arguments('-DG_DISABLE_CAST_CHECKS', language : ['cpp', 'c'])
+-    add_project_arguments('-DG_DISABLE_CHECKS', language : ['cpp', 'c'])
+-    add_project_arguments('-DG_DISABLE_ASSERT', language : ['cpp', 'c'])
+-endif
+-
+ # in debug mode we automatically enable leak checks
+ # also true for 'debugoptimized'
+ if get_option('debug')

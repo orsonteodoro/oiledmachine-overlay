@@ -3,9 +3,9 @@
 
 EAPI=8
 
-# U22
+# U24
 # For deps, see
-# https://github.com/libvips/libvips/blob/v8.15.5/.github/workflows/ci.yml
+# https://github.com/libvips/libvips/blob/v8.16.0/.github/workflows/ci.yml
 
 # See CI logs for deps versioning.
 
@@ -23,17 +23,17 @@ CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx512bf16"
 	"cpu_flags_x86_ssse3"
 )
-GCC_PV="11.3.0"
-LIBJPEG_TURBO_V="2.1.2"
-LLVM_COMPAT=( 15 ) # CI uses 15
+GCC_PV="14"
+LIBJPEG_TURBO_PV="2.1.2"
+LLVM_COMPAT=( 18 ) # CI uses 14
 LLVM_MAX_SLOT="${LLVM_COMPAT[0]}"
 PATENT_STATUS_IUSE=(
 	"patent_status_nonfree"
 )
 PYTHON_COMPAT=( "python3_"{8..11} )
-SO_C=59
-SO_R=5
-SO_A=17
+SO_C=60
+SO_R=1
+SO_A=18
 SO_MAJOR=$((${SO_C} - ${SO_A})) # Currently 42
 
 inherit cflags-hardened check-compiler-switch flag-o-matic llvm meson-multilib multilib-minimal
@@ -58,7 +58,7 @@ ${PATENT_STATUS_IUSE[@]}
 +analyze +archive +avif +cairo +cgif +cxx debug +deprecated -doxygen
 +examples +exif +fftw +fits fuzz-testing +gif -graphicsmagick -gtk-doc -heic
 +fontconfig +hdr -highway +imagemagick +imagequant -introspection +jpeg
-+jpeg2k -jxl +lcms +matio -minimal -nifti +openexr +openslide +orc
++jpeg2k +jxl +lcms +matio -minimal -nifti +openexr +openslide +orc
 +pangocairo +png +poppler +python +ppm -spng +svg test +tiff
 +vala +webp +zlib
 ebuild_revision_35
@@ -99,18 +99,18 @@ PATENT_STATUS_RDEPEND="
 	virtual/patent-status[patent_status_nonfree=]
 	!patent_status_nonfree? (
 		avif? (
-			>=media-libs/libheif-1.12.0[${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
+			>=media-libs/libheif-1.4.0[${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
 		)
 		heic? (
-			>=media-libs/libheif-1.12.0[${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
+			>=media-libs/libheif-1.4.0[${MULTILIB_USEDEP},avif?,heic?,-patent_status_nonfree]
 		)
 	)
 	patent_status_nonfree? (
 		avif? (
-			>=media-libs/libheif-1.12.0[${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
+			>=media-libs/libheif-1.4.0[${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
 		)
 		heic? (
-			>=media-libs/libheif-1.12.0[${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
+			>=media-libs/libheif-1.4.0[${MULTILIB_USEDEP},avif?,heic?,patent_status_nonfree]
 		)
 	)
 "
@@ -170,7 +170,7 @@ RDEPEND+="
 		>=media-libs/openjpeg-2.4.0[${MULTILIB_USEDEP}]
 	)
 	jxl? (
-		>=media-libs/libjxl-0.7.0[${MULTILIB_USEDEP}]
+		>=media-libs/libjxl-0.6.0[${MULTILIB_USEDEP}]
 	)
 	lcms? (
 		>=media-libs/lcms-2.12[${MULTILIB_USEDEP}]
@@ -182,7 +182,7 @@ RDEPEND+="
 		>=media-libs/openexr-2.5.7[${MULTILIB_USEDEP}]
 	)
 	openslide? (
-		>=media-libs/openslide-3.4.1[${MULTILIB_USEDEP}]
+		>=media-libs/openslide-3.3.0[${MULTILIB_USEDEP}]
 	)
 	orc? (
 		>=dev-lang/orc-0.4.32[${MULTILIB_USEDEP}]
@@ -216,7 +216,8 @@ RDEPEND+="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/${PN}-8.15.5-simd-options.patch"
+	"${FILESDIR}/${PN}-8.16.0-simd-options.patch"
+#	"${FILESDIR}/${PN}-8.16.0-remove-release-changes.patch"
 )
 
 get_configurations() {
@@ -330,6 +331,7 @@ eerror
 	export CC=$(tc-getCC)
 	export CXX=$(tc-getCXX)
 	export CPP=$(tc-getCPP)
+	strip-unsupported-flags
 
 	if [[ "${CXX}" =~ 'g++' ]] ; then
 		if ver_test $(gcc-version) -lt ${GCC_PV} ; then
@@ -348,9 +350,9 @@ ewarn
 	fi
 
 	if use jpeg \
-	&& has_version "<media-libs/libjpeg-turbo-${LIBJPEG_TURBO_V}" ; then
+	&& has_version "<media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}" ; then
 eerror
-eerror "Update to >=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_V}"
+eerror "Update to >=media-libs/libjpeg-turbo-${LIBJPEG_TURBO_PV}"
 eerror
 		die
 	fi
@@ -480,6 +482,20 @@ _apply_flags() {
 			-shared-libsan \
 			"${ESYSROOT}/usr/lib/llvm/${LLVM_MAX_SLOT}/$(get_libdir)/libomp.so.${LLVM_MAX_SLOT}"
 	fi
+
+	if use debug ; then
+einfo "Adding debug flags"
+		replace-flags '-O*' '-O0'
+		replace-flags '-O*' '-Og'
+		append-flags -ggdb3 -O0 -UNDEBUG -UG_DISABLE_CAST_CHECKS -UG_DISABLE_CHECKS -UG_DISABLE_ASSERT
+	else
+einfo "Adding release flags"
+		replace-flags '-O0' '-O1'
+		append-flags -DNDEBUG -DG_DISABLE_CAST_CHECKS -DG_DISABLE_CHECKS -DG_DISABLE_ASSERT
+	fi
+
+einfo "CFLAGS:\t${CFLAGS}"
+einfo "CXXFLAGS:\t${CXXFLAGS}"
 einfo "CPPFLAGS:\t${CPPFLAGS}"
 einfo "LDFLAGS:\t${LDFLAGS}"
 }
@@ -546,7 +562,6 @@ eerror
 		export CXX="${CHOST}-clang++"
 		export CPP="${CC} -E"
 		strip-unsupported-flags
-
 		_strip_flags
 		_apply_flags
 		if use fuzz-testing ; then
@@ -557,14 +572,6 @@ eerror
 		_apply_env 0
 	fi
 
-	check-compiler-switch_end
-	if check-compiler-switch_is_flavor_slot_changed ; then
-einfo "Detected compiler switch.  Disabling LTO."
-		filter-lto
-	fi
-
-	cflags-hardened_append
-
 	if use highway ; then
 # The highway automagic for cpu flags could be broken.
 ewarn "Please use the dev-cpp/highway::oiledmachine-overlay ebuild instead."
@@ -573,6 +580,14 @@ ewarn "Please use the dev-cpp/highway::oiledmachine-overlay ebuild instead."
 	if ! use cpu_flags_x86_avx ; then
 		append-flags -mno-avx
 	fi
+
+	check-compiler-switch_end
+	if check-compiler-switch_is_flavor_slot_changed ; then
+einfo "Detected compiler switch.  Disabling LTO."
+		filter-lto
+	fi
+
+	cflags-hardened_append
 
 	local emesonargs=(
 		-Dmodules=enabled
@@ -625,6 +640,24 @@ ewarn "Please use the dev-cpp/highway::oiledmachine-overlay ebuild instead."
 		$(usex nifti '-Dnifti-prefix-dir=/usr' '')
 	)
 
+	if use debug ; then
+einfo "Adding debug flags"
+		export MESON_ARGS="-Dbuildtype=debug -Db_ndebug=false"
+		emesonargs+=(
+			-Dbuildtype=debug
+			-Db_ndebug=false
+			-Dcpp_args="-UNDEBUG -UG_DISABLE_CHECKS -UG_DISABLE_CAST_CHECKS -UG_DISABLE_ASSERT"
+		)
+	else
+einfo "Adding release flags"
+		export MESON_ARGS="-Dbuildtype=release -Db_ndebug=true"
+		emesonargs+=(
+			-Dbuildtype=release
+			-Db_ndebug=true
+			-Dcpp_args="-DNDEBUG -DG_DISABLE_CHECKS -DG_DISABLE_CAST_CHECKS -DG_DISABLE_ASSERT"
+		)
+	fi
+
 	if use avif || use heic ; then
 		emesonargs+=(
 			-Dheif=enabled
@@ -661,13 +694,19 @@ ewarn "Please use the dev-cpp/highway::oiledmachine-overlay ebuild instead."
 		append-flags "-O2"
 	fi
 
-	local olast
-	olast=$(get_olast)
-	replace-flags "-O*" "${olast}"
-
-	emesonargs+=(
-		-Doptimization="${olast/-O/}"
-	)
+	if use debug ; then
+		replace-flags '-O*' '-Og'
+		emesonargs+=(
+			-Doptimization="g"
+		)
+	else
+		local olast
+		olast=$(get_olast)
+		replace-flags "-O*" "${olast}"
+		emesonargs+=(
+			-Doptimization="${olast/-O/}"
+		)
+	fi
 	meson_src_configure
 }
 
@@ -749,6 +788,8 @@ einfo "Running test for ${configuration}"
 	cd "${BUILD_DIR}" || die
 	export CC="${CHOST}-clang"
 	export CXX="${CHOST}-clang++"
+	export CPP="${CC} -E"
+	strip-unsupported-flags
 	_clear_env
 	_apply_env 1
 	${EPYTHON} -m pytest -sv --log-cli-level=WARNING test/test-suite || die
