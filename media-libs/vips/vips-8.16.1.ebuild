@@ -61,7 +61,7 @@ ${PATENT_STATUS_IUSE[@]}
 +jpeg2k +jxl +lcms +matio -minimal -nifti +openexr +openslide +orc
 +pangocairo +png +poppler +python +ppm -spng +svg test +tiff
 +vala +webp +zlib
-ebuild_revision_35
+ebuild_revision_37
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -77,11 +77,17 @@ REQUIRED_USE="
 	cgif? (
 		imagequant
 	)
+	debug? (
+		!jxl
+	)
 	fuzz-testing? (
 		test
 	)
 	imagequant? (
 		png
+	)
+	jxl? (
+		!debug
 	)
 	poppler? (
 		cairo
@@ -220,7 +226,7 @@ RDEPEND+="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-8.16.0-simd-options.patch"
-#	"${FILESDIR}/${PN}-8.16.0-remove-release-changes.patch"
+	"${FILESDIR}/${PN}-8.16.0-remove-release-changes.patch"
 )
 
 get_configurations() {
@@ -490,11 +496,12 @@ _apply_flags() {
 einfo "Adding debug flags"
 		replace-flags '-O*' '-O0'
 		replace-flags '-O*' '-Og'
-		append-flags -ggdb3 -O0 -UNDEBUG -UG_DISABLE_CAST_CHECKS -UG_DISABLE_CHECKS -UG_DISABLE_ASSERT
+		append-flags -Og -ggdb3
+		append-cppflags -DG_ENABLE_DEBUG -DDEBUG
 	else
 einfo "Adding release flags"
 		replace-flags '-O0' '-O1'
-		append-flags -DNDEBUG -DG_DISABLE_CAST_CHECKS -DG_DISABLE_CHECKS -DG_DISABLE_ASSERT
+		append-cppflags -DG_DISABLE_CAST_CHECKS -DG_DISABLE_CHECKS -DG_DISABLE_ASSERT
 	fi
 
 einfo "CFLAGS:\t${CFLAGS}"
@@ -590,7 +597,9 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
-	cflags-hardened_append
+	if ! use debug ; then
+		cflags-hardened_append
+	fi
 
 	local emesonargs=(
 		-Dmodules=enabled
@@ -633,7 +642,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(meson_use cpu_flags_x86_avx512bf16 bf16_zen4)
 		$(meson_use cpu_flags_x86_ssse3 ssse3)
 		$(meson_use cxx cplusplus)
-		$(meson_use debug)
 		$(meson_use deprecated)
 		$(meson_use examples)
 		$(meson_use gif nsgif)
@@ -642,22 +650,21 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(meson_use vala vapi)
 		$(usex nifti '-Dnifti-prefix-dir=/usr' '')
 	)
+#		$(meson_use debug)
 
 	if use debug ; then
 einfo "Adding debug flags"
-		export MESON_ARGS="-Dbuildtype=debug -Db_ndebug=false"
 		emesonargs+=(
 			-Dbuildtype=debug
+			-Ddebug=true
 			-Db_ndebug=false
-			-Dcpp_args="-UNDEBUG -UG_DISABLE_CHECKS -UG_DISABLE_CAST_CHECKS -UG_DISABLE_ASSERT"
 		)
 	else
 einfo "Adding release flags"
-		export MESON_ARGS="-Dbuildtype=release -Db_ndebug=true"
 		emesonargs+=(
+			-Ddebug=false
 			-Dbuildtype=release
 			-Db_ndebug=true
-			-Dcpp_args="-DNDEBUG -DG_DISABLE_CHECKS -DG_DISABLE_CAST_CHECKS -DG_DISABLE_ASSERT"
 		)
 	fi
 
