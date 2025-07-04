@@ -178,6 +178,9 @@ RDEPEND+="
 	matio? (
 		>=sci-libs/matio-1.5.21[${MULTILIB_USEDEP}]
 	)
+	nifti? (
+		media-libs/nifti_clib[${MULTILIB_USEDEP}]
+	)
 	openexr? (
 		>=media-libs/openexr-2.5.7[${MULTILIB_USEDEP}]
 	)
@@ -217,7 +220,7 @@ RDEPEND+="
 "
 PATCHES=(
 	"${FILESDIR}/${PN}-8.17.0-simd-options.patch"
-#	"${FILESDIR}/${PN}-8.16.0-remove-release-changes.patch"
+	"${FILESDIR}/${PN}-8.17.0-remove-release-changes.patch"
 )
 
 get_configurations() {
