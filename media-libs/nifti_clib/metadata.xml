@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "https://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/NIFTI-Imaging/nifti_clib/issues</bugs-to>
+    <remote-id type="github">NIFTI-Imaging/nifti_clib</remote-id>
+  </upstream>
+  <use>
+    <flag name="fsliolib">
+      Add support for I/O routines for nifti-1 format.
+    </flag>
+  </use>
+</pkgmetadata>
