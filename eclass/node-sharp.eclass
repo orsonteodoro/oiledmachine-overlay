@@ -38,7 +38,28 @@ eerror "QA:  VIPS_PV needs to be defined"
 		die
 	fi
 	local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
-	if ver_test "${sharp_pv}" -eq "0.33" ; then
+	if ver_test "${sharp_pv}" -eq "0.34" ; then
+# See https://github.com/lovell/sharp/blob/v0.34.2/docs/src/content/docs/install.md
+		NODE_SHARP_GLIBC_PV="2.31"
+		NODE_SHARP_MUSL_PV="1.2.2"
+		NODE_SHARP_NODEJS_CDEPEND="
+			|| (
+				>=net-libs/nodejs-18.17.0:18
+				>=net-libs/nodejs-20.3.0
+			)
+		"
+		if [[ "${ARCH}" == "amd64" ]] ; then
+			NODE_SHARP_GLIBC_PV="2.26"
+			NODE_SHARP_MUSL_PV="1.2.2"
+		elif [[ "${ARCH}" == "arm" ]] ; then
+			NODE_SHARP_GLIBC_PV="2.31"
+		elif [[ "${ARCH}" == "arm64" ]] ; then
+			NODE_SHARP_GLIBC_PV="2.26"
+			NODE_SHARP_MUSL_PV="1.2.2"
+		elif [[ "${ARCH}" == "s390x" ]] ; then
+			NODE_SHARP_GLIBC_PV="2.31"
+		fi
+	elif ver_test "${sharp_pv}" -eq "0.33" ; then
 # See https://github.com/lovell/sharp/blob/v0.33.5/docs/install.md#prebuilt-binaries
 		NODE_SHARP_GLIBC_PV="2.31"
 		NODE_SHARP_MUSL_PV="1.2.2"
@@ -198,7 +219,7 @@ node-sharp_npm_rebuild_sharp() {
 		edo rm -vrf "node_modules/@img/sharp"*
 		pushd "${S}/node_modules/sharp" >/dev/null 2>&1 || die
 			local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
-			if ver_test "${sharp_pv}" -eq "0.33" ; then
+			if ver_test "${sharp_pv}" -eq "0.33" || ver_test "${sharp_pv}" -eq "0.34" ; then
 				edo node "install/check"
 			elif ver_test "${sharp_pv}" -lt "0.33" ; then
 	# The --build-from-source is not deterministic.
@@ -271,7 +292,7 @@ node-sharp_yarn_rebuild_sharp() {
 		edo rm -vrf "node_modules/@img/sharp"*
 		pushd "${S}/node_modules/sharp" >/dev/null 2>&1 || die
 			local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
-			if ver_test "${sharp_pv}" -eq "0.33" ; then
+			if ver_test "${sharp_pv}" -eq "0.33" || ver_test "${sharp_pv}" -eq "0.34" ; then
 				edo node "install/check"
 			elif ver_test "${sharp_pv}" -lt "0.33"  ; then
 	# The --build-from-source is not deterministic.
