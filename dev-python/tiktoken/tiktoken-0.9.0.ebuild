@@ -4,6 +4,9 @@
 
 EAPI=8
 
+# To update lockfile:
+# cargo update
+
 GENERATE_LOCKFILE=${GENERATE_LOCKFILE:-0}
 
 DISTUTILS_EXT=1
