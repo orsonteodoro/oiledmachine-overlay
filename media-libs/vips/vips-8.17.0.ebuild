@@ -597,9 +597,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		filter-lto
 	fi
 
-	if ! use debug ; then
-		cflags-hardened_append
-	fi
+	cflags-hardened_append
 
 	local emesonargs=(
 		-Dmodules=enabled
