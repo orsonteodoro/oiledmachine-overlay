@@ -669,7 +669,7 @@ eerror "To use mold, enable the mold USE flag."
 		fi
 	fi
 einfo "${pointer_compression_msg}"
-	if use kernel_linux && linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
+	if use kernel_linux && linux_chkconfig_present "TRANSPARENT_HUGEPAGE" && ! use debug ; then
 		myconf+=( --v8-enable-hugepage )
 	fi
 	set_jit_level
