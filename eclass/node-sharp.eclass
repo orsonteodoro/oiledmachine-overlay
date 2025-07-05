@@ -225,7 +225,11 @@ node-sharp_npm_rebuild_sharp() {
 	# The --build-from-source is not deterministic.
 	# The sharp install in package.json does short circuit and bypasses native build.
 				edo node "install/can-compile"
-				edo node-gyp rebuild
+				if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+					edo node-gyp rebuild --debug
+				else
+					edo node-gyp rebuild
+				fi
 				edo node "install/dll-copy"
 			fi
 		popd >/dev/null 2>&1 || die
@@ -276,6 +280,11 @@ node-sharp_yarn_rebuild_sharp() {
 		eyarn add "node-gyp" ${NODE_GYP_INSTALL_ARGS[@]} ${YARN_INSTALL_ARGS[@]}
 	fi
 
+	if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+einfo "Adding debug flags for sharp"
+		append-flags -ggdb3 -O0 -UNDEBUG -DG_ENABLE_DEBUG -DDEBUG
+	fi
+
 	if use system-vips ; then
 		append-flags $(pkg-config --cflags "glib-2.0")
 		edo rm -vrf "node_modules/@img/sharp"*
@@ -294,11 +303,15 @@ node-sharp_yarn_rebuild_sharp() {
 			local sharp_pv=$(ver_cut 1-2 "${SHARP_PV}")
 			if ver_test "${sharp_pv}" -eq "0.33" || ver_test "${sharp_pv}" -eq "0.34" ; then
 				edo node "install/check"
-			elif ver_test "${sharp_pv}" -lt "0.33"  ; then
+			elif ver_test "${sharp_pv}" -lt "0.33" ; then
 	# The --build-from-source is not deterministic.
 	# The sharp install in package.json does short circuit and bypasses native build.
 				edo node "install/can-compile"
-				edo node-gyp rebuild
+				if [[ "${NODE_SHARP_DEBUG}" == "1" ]] ; then
+					edo node-gyp rebuild --debug
+				else
+					edo node-gyp rebuild
+				fi
 				edo node "install/dll-copy"
 			fi
 		popd >/dev/null 2>&1 || die

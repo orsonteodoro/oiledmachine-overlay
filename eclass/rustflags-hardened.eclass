@@ -718,6 +718,11 @@ _rustflags-hardened_cf_protection() {
 rustflags-hardened_append() {
 	[[ "${RUSTFLAGS_HARDENED_DISABLED:-0}" == 1 ]] && return
 
+	if has debug ${IUSE} && use debug ; then
+ewarn "Disabling rustflags-hardenend for USE=debug"
+		return
+	fi
+
 	if [[ -n "${RUSTFLAGS_HARDENED_SSP_LEVEL_USER}" ]] ; then
 		RUSTFLAGS_HARDENED_SSP_LEVEL="${RUSTFLAGS_HARDENED_SSP_LEVEL_USER}"
 	fi

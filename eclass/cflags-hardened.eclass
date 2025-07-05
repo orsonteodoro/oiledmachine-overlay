@@ -983,6 +983,11 @@ _cflags-hardened_has_llvm_cfi() {
 cflags-hardened_append() {
 	[[ "${CFLAGS_HARDENED_DISABLED:-0}" == 1 ]] && return
 
+	if has debug ${IUSE} && use debug ; then
+ewarn "Disabling cflags-hardenend for USE=debug"
+		return
+	fi
+
 	if [[ "${CFLAGS_HARDENED_USE_CASES}" =~ "system-set" ]] ; then
 ewarn
 ewarn "${CATEGORY}/${PN}-${PVR} is identified as being part of the @system set."
