@@ -395,7 +395,15 @@ src_prepare() {
 	# GCC/Clang default to -O0
 		append-flags '-O2'
 	fi
-	local oflag="-O2"
+	local oflag
+	if use debug ; then
+		oflag="-O0"
+		replace-flags '-O*' '-O0'
+		append-flags -ggdb3
+		append-cppflags -DDEBUG
+	else
+		oflag="-O2"
+	fi
 	f1="${oflag}"
 	f3="${oflag}"
 	sed -i -e "s|-O3|${oflag}|g" ${FP[@]} || die
