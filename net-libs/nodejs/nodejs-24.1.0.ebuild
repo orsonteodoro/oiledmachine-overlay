@@ -266,6 +266,7 @@ check_kernel_config() {
 }
 
 pkg_setup() {
+einfo "FEATURES:  ${FEATURES}"
 	check-compiler-switch_start
 	python-any-r1_pkg_setup
 	check_kernel_config
