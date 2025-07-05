@@ -5335,7 +5335,11 @@ einfo "OSHIT_OPT_LEVEL_XNNPACK=${oshit_opt_level_xnnpack}"
 }
 
 _configure_performance_thp() {
-	if use official ; then
+	if use debug ; then
+		myconf_gn+=(
+			"v8_enable_hugepage=false"
+		)
+	elif use official ; then
 		: # Use automagic
 	elif use kernel_linux && linux_chkconfig_present "TRANSPARENT_HUGEPAGE" ; then
 		myconf_gn+=(
