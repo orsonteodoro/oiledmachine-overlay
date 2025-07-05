@@ -16,25 +16,25 @@ RUST_NEEDS_LLVM=1
 
 CRATES="
 aho-corasick-1.1.3
-autocfg-1.4.0
+autocfg-1.5.0
 bit-set-0.5.3
 bit-vec-0.6.3
 bstr-1.12.0
-cfg-if-1.0.0
+cfg-if-1.0.1
 fancy-regex-0.13.0
 heck-0.5.0
 indoc-2.0.6
-libc-0.2.172
-memchr-2.7.4
+libc-0.2.174
+memchr-2.7.5
 memoffset-0.9.1
 once_cell-1.21.3
-portable-atomic-1.11.0
+portable-atomic-1.11.1
 proc-macro2-1.0.95
-pyo3-0.22.6
-pyo3-build-config-0.22.6
-pyo3-ffi-0.22.6
-pyo3-macros-0.22.6
-pyo3-macros-backend-0.22.6
+pyo3-0.24.2
+pyo3-build-config-0.24.2
+pyo3-ffi-0.24.2
+pyo3-macros-0.24.2
+pyo3-macros-backend-0.24.2
 quote-1.0.40
 regex-1.11.1
 regex-automata-0.4.9
@@ -42,8 +42,8 @@ regex-syntax-0.8.5
 rustc-hash-1.1.0
 serde-1.0.219
 serde_derive-1.0.219
-syn-2.0.100
-target-lexicon-0.12.16
+syn-2.0.104
+target-lexicon-0.13.2
 unicode-ident-1.0.18
 unindent-0.2.4
 "
@@ -68,7 +68,7 @@ LICENSE="
 "
 RESTRICT="mirror test" # Untested
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" blobfile dev ebuild_revision_1"
+IUSE+=" blobfile dev ebuild_revision_2"
 RDEPEND+="
 	>=dev-python/regex-2022.1.18[${PYTHON_USEDEP}]
 	>=dev-python/requests-2.26.0[${PYTHON_USEDEP}]
@@ -100,11 +100,7 @@ einfo "Fixing vulnerabilities"
 
 _production_unpack() {
 	unpack "${P}.tar.gz"
-#	die
-	cp -aT \
-		"${FILESDIR}/${PV}"* \
-		"${S}" \
-		|| die
+	#die # For lockfile update
 }
 
 pkg_setup() {
@@ -124,6 +120,12 @@ src_unpack() {
 			_production_unpack
 		fi
 		cargo_src_unpack
+		if [[ "${GENERATE_LOCKFILE}" != "1" ]] ; then
+			cp -vaT \
+				"${FILESDIR}/${PV}" \
+				"${S}" \
+				|| die
+		fi
 	fi
 }
 
