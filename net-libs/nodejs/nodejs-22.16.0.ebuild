@@ -409,9 +409,9 @@ src_prepare() {
 		|| die
 
 	# For debug builds, change install path; remove optimisations and override CONFIGURATION.
-	if use debug; then
+	if use debug ; then
 		sed -i \
-			-e "s|out/Release/|out/Debug/|g" \
+			-e "s|out/Release|out/Debug|g" \
 			"tools/install.py" \
 			|| die
 		CONFIGURATION="Debug"
