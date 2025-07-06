@@ -68,12 +68,14 @@ PATENT_STATUS_REQUIRED_USE="
 		!heic
 	)
 "
-REQUIRED_USE="
-	${PATENT_STATUS_REQUIRED_USE}
-	${PYTHON_REQUIRED_USE}
+TRASH="
 	?? (
 		${LLVM_COMPAT[@]/#/llvm_slot_}
 	)
+"
+REQUIRED_USE="
+	${PATENT_STATUS_REQUIRED_USE}
+	${PYTHON_REQUIRED_USE}
 	cgif? (
 		imagequant
 	)
