@@ -147,9 +147,10 @@ unset -f _node_sharp_set_globals
 # required to prevent a segfault and to prevent force adding the old vulnerable
 # sharp.  It has been bugged since 0.31.0 for system-wide vips users.
 #
-# We don't use the prebuilt sharp because it builds for -march=nehalem
+# We don't use the prebuilt sharp because it builds for non-portable
+# -march=nehalem
 # <https://github.com/lovell/sharp-libvips/blob/v8.16.1/platforms/linux-x64/Dockerfile>
-# and doesn't work.
+# and doesn't work on my machine.
 #
 # See also:  https://github.com/lovell/sharp-libvips/blob/main/build/posix.sh
 #
