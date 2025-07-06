@@ -1907,8 +1907,8 @@ einfo "Adding extra flags to unbreak ${coverage_pct} of -D_FORTIFY_SOURCE checks
 			"-fexcess-precision=standard" \
 			"-ffp-contract=off" \
 			"-frounding-math"
-		CFLAGS_HARDENED_CFLAGS+=" -ffloat-store -fexcess-precision=standard -ffp-contract=off -frounding-math"
-		CFLAGS_HARDENED_CXXFLAGS+=" -ffloat-store -fexcess-precision=standard -ffp-contract=off -frounding-math"
+		CFLAGS_HARDENED_CFLAGS+=" -fno-fast-math -ffloat-store -fexcess-precision=standard -ffp-contract=off -frounding-math"
+		CFLAGS_HARDENED_CXXFLAGS+=" -fno-fast-math -ffloat-store -fexcess-precision=standard -ffp-contract=off -frounding-math"
 	fi
 
 	# We want to fallback to CFI if CET is missing to mitigate against CE.
