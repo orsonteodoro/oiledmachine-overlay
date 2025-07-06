@@ -173,7 +173,7 @@ if [[ -n "${SHARP_PV}" ]] ; then
 			>=sys-libs/musl-${NODE_SHARP_MUSL_PV}
 		)
 		system-vips? (
-			>=media-libs/vips-${VIPS_PV}[avif,dzi,exif,fits,fontconfig,gif,hdr,imagemagick,imagequant,lcms,nifti,jpeg,jpeg2k,jpegxl,openslide,pango,pdf,png,poppler,svg,tiff,webp,zlib]
+			>=media-libs/vips-${VIPS_PV}[avif,cgif,dzi,exif,fits,fontconfig,gif,hdr,imagemagick,imagequant,lcms,nifti,jpeg,jpeg2k,jpegxl,openslide,pango,pdf,png,poppler,svg,tiff,webp,zlib]
 			media-libs/freetype[harfbuzz,png]
 		)
 	"
