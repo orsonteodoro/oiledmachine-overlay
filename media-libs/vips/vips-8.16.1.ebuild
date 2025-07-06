@@ -61,7 +61,7 @@ ${PATENT_STATUS_IUSE[@]}
 +jpeg2k +jpegxl +lcms +matio -minimal -nifti +openexr +openslide +orc
 +pango +png +poppler +python +ppm -spng +svg test +tiff
 +vala +webp +zlib
-ebuild_revision_37
+ebuild_revision_38
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -645,7 +645,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(meson_feature imagequant)
 		$(meson_feature highway)
 		$(meson_feature jpeg)
-		$(meson_feature jpeg-xl)
+		$(meson_feature jpegxl jpeg-xl)
 #		$(meson_feature jpeg-xl-module)
 		$(meson_feature lcms)
 		$(meson_feature matio)
