@@ -37,6 +37,10 @@
     <flag name="doc">
       Generates documentation
     </flag>
+    <flag name="dzi">
+      Enables support for image pyramids compatible for DeepZoom and Google Maps
+      image viewers.
+    </flag>
     <flag name="exif">
       Enables support for saving and loading EXIF image metadata.
     </flag>

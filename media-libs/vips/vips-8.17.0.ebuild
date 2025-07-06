@@ -55,8 +55,8 @@ IUSE+="
 ${CPU_FLAGS_X86[@]}
 ${LLVM_COMPAT[@]/#/llvm_slot_}
 ${PATENT_STATUS_IUSE[@]}
-+analyze +archive +avif +cairo +cgif +cxx debug +deprecated -doxygen
-+examples +exif +fftw +fits fuzz-testing +gif -graphicsmagick -gtk-doc -heic
++analyze +avif +cairo +cgif +cxx debug +deprecated -doxygen
++dzi +examples +exif +fftw +fits fuzz-testing +gif -graphicsmagick -gtk-doc -heic
 +fontconfig +hdr -highway +imagemagick +imagequant -introspection +jpeg
 +jpeg2k +jpegxl +lcms +matio -minimal -nifti +openexr +openslide +orc
 +pango +png +poppler +python +ppm -spng +svg test +tiff
@@ -148,14 +148,14 @@ RDEPEND+="
 	>=dev-libs/expat-2.4.7[${MULTILIB_USEDEP}]
 	>=dev-libs/libffi-3.4.2[${MULTILIB_USEDEP}]
 	>=sci-libs/gsl-2.7.1
-	archive? (
-		>=app-arch/libarchive-3.6.0[${MULTILIB_USEDEP}]
-	)
 	cairo? (
 		>=x11-libs/cairo-1.16.0[${MULTILIB_USEDEP}]
 	)
 	cgif? (
 		>=media-libs/cgif-0.2.0[${MULTILIB_USEDEP}]
+	)
+	dzi? (
+		>=app-arch/libarchive-3.6.0[${MULTILIB_USEDEP}]
 	)
 	exif? (
 		>=media-libs/libexif-0.6.24[${MULTILIB_USEDEP}]
@@ -634,10 +634,10 @@ einfo "Detected compiler switch.  Disabling LTO."
 		-Dmodules=enabled
 		-Dpdfium=disabled
 		-Dquantizr=disabled
-		$(meson_feature archive)
-		$(meson_feature fits cfitsio)
+		$(meson_feature dzi archive)
 		$(meson_feature exif)
 		$(meson_feature fftw)
+		$(meson_feature fits cfitsio)
 		$(meson_feature fontconfig)
 #		$(meson_feature heif-module)
 		$(meson_feature imagequant)
