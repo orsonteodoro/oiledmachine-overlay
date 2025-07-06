@@ -891,6 +891,9 @@ src_compile() {
 }
 
 src_install() {
+	if use debug && [[ "${FEATURES}" =~ "splitdebug" ]] ; then
+		export STRIP="/bin/true"
+	fi
 	LCNR_SOURCE="${S}"
 	lcnr_install_files
 
@@ -950,6 +953,12 @@ src_install() {
 	rm -rf "${ED}/usr/bin/corepack"
 
 	uopts_src_install
+	if use debug && [[ "${FEATURES}" =~ "splitdebug" ]] ; then
+		objcopy --only-keep-debug "out/Debug/node" "${T}/node${SLOT_MAJOR}.debug" || die
+		exeinto "/usr/lib/debug/usr/bin"
+		doexe "${T}/node${SLOT_MAJOR}.debug"
+		strip --strip-unneeded "${ED}/usr/bin/node${SLOT_MAJOR}" || die
+	fi
 }
 
 src_test() {
