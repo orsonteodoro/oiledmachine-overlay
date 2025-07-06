@@ -90,6 +90,12 @@
     <flag name="jpeg">
       Enables import and export of JPEG images.
     </flag>
+    <flag name="jpegxl">
+      Enables support for JPEG XL images.
+    </flag>
+    <flag name="jpeg2k">
+      Enables support for JPEG 2000 images.
+    </flag>
     <flag name="lcms">
       Enables ICC profile support.
     </flag>
@@ -112,7 +118,7 @@
     <flag name="orc">
       Enables loop acceleration.
     </flag>
-    <flag name="pangocairo">
+    <flag name="pango">
       Enables text rendering support.
     </flag>
     <flag name="pangoft2">

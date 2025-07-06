@@ -58,8 +58,8 @@ ${PATENT_STATUS_IUSE[@]}
 +analyze +archive +avif +cairo +cgif +cxx debug +deprecated -doxygen
 +examples +exif +fftw +fits fuzz-testing +gif -graphicsmagick -gtk-doc -heic
 +fontconfig +hdr -highway +imagemagick +imagequant -introspection +jpeg
-+jpeg2k +jxl +lcms +matio -minimal -nifti +openexr +openslide +orc
-+pangocairo +png +poppler +python +ppm -spng +svg test +tiff
++jpeg2k +jpegxl +lcms +matio -minimal -nifti +openexr +openslide +orc
++pango +png +poppler +python +ppm -spng +svg test +tiff
 +vala +webp +zlib
 ebuild_revision_37
 "
@@ -78,22 +78,39 @@ REQUIRED_USE="
 		imagequant
 	)
 	debug? (
-		!jxl
+		!jpegxl
+	)
+	fontconfig? (
+		imagemagick
 	)
 	fuzz-testing? (
 		test
 	)
+	imagemagick? (
+		fontconfig
+		pango
+	)
 	imagequant? (
 		png
 	)
-	jxl? (
+	jpegxl? (
 		!debug
+	)
+	pango? (
+		imagemagick
+	)
+	png? (
+		zlib
 	)
 	poppler? (
 		cairo
 	)
 	svg? (
 		cairo
+		fontconfig
+		pango
+		imagemagick
+		zlib
 	)
 	test? (
 		|| (
@@ -160,10 +177,22 @@ RDEPEND+="
 	)
 	imagemagick? (
 		!graphicsmagick? (
-			>=media-gfx/imagemagick-6.9.11.60[cxx?]
+			>=media-gfx/imagemagick-6.9.11.60[cxx?,jpeg?,jpeg2k?,jpegxl?,lcms?,pango?,png?,svg?,tiff?,webp?,zlib?]
+			avif? (
+				media-gfx/imagemagick[heif]
+			)
+			heic? (
+				media-gfx/imagemagick[heif]
+			)
 		)
 		graphicsmagick? (
-			>=media-gfx/graphicsmagick-1.4[cxx?]
+			>=media-gfx/graphicsmagick-1.4[cxx?,jpeg?,jpeg2k?,jpegxl?,lcms?,png?,tiff?,webp?,zlib?]
+			avif? (
+				media-gfx/graphicsmagick[heif]
+			)
+			heic? (
+				media-gfx/graphicsmagick[heif]
+			)
 		)
 	)
 	imagequant? (
@@ -175,7 +204,7 @@ RDEPEND+="
 	jpeg2k? (
 		>=media-libs/openjpeg-2.4.0[${MULTILIB_USEDEP}]
 	)
-	jxl? (
+	jpegxl? (
 		>=media-libs/libjxl-0.6.0[${MULTILIB_USEDEP}]
 	)
 	lcms? (
@@ -202,7 +231,7 @@ RDEPEND+="
 	spng? (
 		>=media-libs/libspng-0.7[${MULTILIB_USEDEP}]
 	)
-	pangocairo? (
+	pango? (
 		>=x11-libs/pango-1.50.6[${MULTILIB_USEDEP}]
 	)
 	poppler? (
@@ -614,7 +643,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(meson_feature imagequant)
 		$(meson_feature highway)
 		$(meson_feature jpeg)
-		$(meson_feature jxl jpeg-xl)
+		$(meson_feature jpeg-xl)
 #		$(meson_feature jpeg-xl-module)
 		$(meson_feature lcms)
 		$(meson_feature matio)
@@ -623,7 +652,7 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(meson_feature jpeg2k openjpeg)
 		$(meson_feature openslide)
 		$(meson_feature orc)
-		$(meson_feature pangocairo)
+		$(meson_feature pango pangocairo)
 		$(meson_feature png)
 		$(meson_feature poppler)
 #		$(meson_feature poppler-module)
