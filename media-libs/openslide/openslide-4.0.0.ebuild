@@ -36,7 +36,7 @@ RDEPEND="
 	>=media-libs/libdicom-1.0.5
 	>=sys-libs/zlib-1.2.11
 	>=x11-libs/gdk-pixbuf-2.40.0
-	>=x11-libs/cairo-1.20
+	>=x11-libs/cairo-1.2
 	virtual/libc
 "
 DEPEND="
