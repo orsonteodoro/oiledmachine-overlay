@@ -120,6 +120,7 @@ PATENT_STATUS_RDEPEND="
 		)
 	)
 "
+
 RDEPEND+="
 	${PATENT_STATUS_RDEPEND}
 	${PYTHON_DEPS}
@@ -130,7 +131,6 @@ RDEPEND+="
 	>=dev-libs/expat-2.4.7[${MULTILIB_USEDEP}]
 	>=dev-libs/libffi-3.4.2[${MULTILIB_USEDEP}]
 	>=sci-libs/gsl-2.7.1
-	llvm-runtimes/openmp:14[${MULTILIB_USEDEP}]
 	archive? (
 		>=app-arch/libarchive-3.6.0[${MULTILIB_USEDEP}]
 	)
@@ -243,7 +243,9 @@ gen_llvm_bdepend()
 				llvm-core/clang:${s}[${MULTILIB_USEDEP}]
 				llvm-core/lld:${s}
 				llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
-				llvm-runtimes/openmp:${s}[${MULTILIB_USEDEP}]
+				fuzz-testing? (
+					llvm-runtimes/openmp:${s}[${MULTILIB_USEDEP}]
+				)
 			)
 		"
 	done
@@ -261,10 +263,10 @@ gen_llvm_test_bdepend()
 				llvm-core/clang:${s}[${MULTILIB_USEDEP}]
 				llvm-core/lld:${s}
 				llvm-core/llvm:${s}[${MULTILIB_USEDEP}]
-				llvm-runtimes/openmp:${s}[${MULTILIB_USEDEP}]
 				fuzz-testing? (
 					=llvm-core/clang-runtime-${s}*[${MULTILIB_USEDEP},compiler-rt,sanitize]
 					=llvm-runtimes/compiler-rt-sanitizers-${s}*:=[libfuzzer,asan,ubsan]
+					llvm-runtimes/openmp:${s}[${MULTILIB_USEDEP}]
 				)
 			)
 		"
