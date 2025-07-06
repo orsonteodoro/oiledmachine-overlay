@@ -3,6 +3,7 @@
 
 EAPI=8
 
+CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY="BO CE CI DOS HO ID IO NPD OOBA OOBR OOBW SO UAF UV UB" # UV = Uninitalized Value
 QA_PKGCONFIG_VERSION=$(ver_cut 1-3)
 inherit autotools cflags-hardened flag-o-matic perl-functions toolchain-funcs
