@@ -139,6 +139,20 @@ _node_sharp_set_globals
 unset -f _node_sharp_set_globals
 
 # See also node-sharp_pkg_setup().
+#
+# For system-vips, the reason why there are so many requirements is because they
+# do not do testing on the format() checker in
+# https://github.com/lovell/sharp/blob/v0.34.2/src/utilities.cc#L120 for
+# custom vips builds with enabled/disabled image formats.  All checked are
+# required to prevent a segfault and to prevent force adding the old vulnerable
+# sharp.  It has been bugged since 0.31.0 for system-wide vips users.
+#
+# We don't use the prebuilt sharp because it builds for -march=nehalem
+# <https://github.com/lovell/sharp-libvips/blob/v8.16.1/platforms/linux-x64/Dockerfile>
+# and doesn't work.
+#
+# See also:  https://github.com/lovell/sharp-libvips/blob/main/build/posix.sh
+#
 if [[ -n "${SHARP_PV}" ]] ; then
 	IUSE+=" +system-vips"
 	if ver_test "${SHARP_PV}" -ge "0.30" ; then
@@ -158,7 +172,8 @@ if [[ -n "${SHARP_PV}" ]] ; then
 			>=sys-libs/musl-${NODE_SHARP_MUSL_PV}
 		)
 		system-vips? (
-			>=media-libs/vips-${VIPS_PV}
+			>=media-libs/vips-${VIPS_PV}[avif,dzi,exif,fits,fontconfig,gif,hdr,imagemagick,imagequant,lcms,nifti,jpeg,jpeg2k,jpegxl,openslide,pango,pdf,png,poppler,svg,tiff,webp,zlib]
+			media-libs/freetype[harfbuzz,png]
 		)
 	"
 	RDEPEND+="
@@ -217,6 +232,10 @@ node-sharp_npm_rebuild_sharp() {
 		eapply "${SHARP_NODE_DEBUG_PATCH_PATH}"
 	else
 		ewarn "QA:  Missing SHARP_NODE_DEBUG_PATCH_PATH"
+	fi
+
+	if [[ -n "${SHARP_NODE_PATCH_FIX_PATH}" ]] ; then
+		eapply "${SHARP_NODE_PATCH_FIX_PATH}"
 	fi
 
 	if use system-vips ; then
@@ -308,11 +327,15 @@ einfo "Adding debug flags for sharp"
 			${YARN_INSTALL_ARGS[@]} \
 			${SHARP_INSTALL_ARGS[@]}
 
-	if [[ -n "${SHARP_NODE_DEBUG_PATCH_PATH}" ]] ; then
-		eapply "${SHARP_NODE_DEBUG_PATCH_PATH}"
-	else
-		ewarn "QA:  Missing SHARP_NODE_DEBUG_PATCH_PATH"
-	fi
+		if [[ -n "${SHARP_NODE_DEBUG_PATCH_PATH}" ]] ; then
+			eapply "${SHARP_NODE_DEBUG_PATCH_PATH}"
+		else
+			ewarn "QA:  Missing SHARP_NODE_DEBUG_PATCH_PATH"
+		fi
+
+		if [[ -n "${SHARP_NODE_PATCH_FIX_PATH}" ]] ; then
+			eapply "${SHARP_NODE_PATCH_FIX_PATH}"
+		fi
 
 		edo rm -vrf "node_modules/sharp/build"
 		edo rm -vrf "node_modules/@img/sharp"*
