@@ -1902,7 +1902,7 @@ einfo "Adding extra flags to unbreak ${coverage_pct} of -D_FORTIFY_SOURCE checks
 			"-f*rounding-math" \
 			"-m*fpmath=*"
 		append-flags \
-			"-ffast-math" \
+			"-fno-fast-math" \
 			"-ffloat-store" \
 			"-fexcess-precision=standard" \
 			"-ffp-contract=off" \
