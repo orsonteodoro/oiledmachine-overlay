@@ -259,6 +259,7 @@ PATCHES=(
 	"${FILESDIR}/${PN}-8.17.0-simd-options.patch"
 	"${FILESDIR}/${PN}-8.17.0-remove-release-changes.patch"
 	"${FILESDIR}/${PN}-8.17.0-magick-suffixes.patch"
+	"${FILESDIR}/${PN}-8.17.0-vips-cpp-soversion.patch"
 )
 
 get_configurations() {
