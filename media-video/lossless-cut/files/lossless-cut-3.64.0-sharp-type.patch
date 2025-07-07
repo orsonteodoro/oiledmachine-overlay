@@ -1,5 +1,8 @@
 diff '--color=auto' -urpN lossless-cut-3.64.0.orig/src/types/sharp.d.ts lossless-cut-3.64.0/src/types/sharp.d.ts
 --- lossless-cut-3.64.0.orig/src/types/sharp.d.ts	1969-12-31 16:00:00.000000000 -0800
 +++ lossless-cut-3.64.0/src/types/sharp.d.ts	2025-03-01 09:03:54.151808152 -0800
-@@ -0,0 +1 @@
-+declare module 'sharp';
+@@ -0,0 +4 @@
++declare module 'sharp' {
++  import * as sharp from '@types/sharp';
++  export = sharp;
++}

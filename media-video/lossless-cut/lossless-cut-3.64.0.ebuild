@@ -19,7 +19,7 @@ else
 	ELECTRON_APP_ELECTRON_PV="31.3.1" # Cr 126.0.6478.185, node 20.15.1
 fi
 # TODO:  Fix newer sharp with ICON_TYPE="png"
-ICON_TYPE=${ICON_TYPE:-"svg"} # svg or png.  png is used by upstream and is broken for newer sharp.
+ICON_TYPE=${ICON_TYPE:-"png"} # svg or png.  png is used by upstream and is broken for newer sharp.
 NPM_AUDIT_FIX=0 # Breaks build
 YARN_AUDIT_FIX=0
 NODE_GYP_PV="9.3.0"
@@ -30,14 +30,15 @@ PATENT_STATUS=(
 YARN_INSTALL_PATH="/opt/${MY_PN}"
 YARN_LOCKFILE_SOURCE="ebuild"
 YARN_SLOT=8
+export NODE_SHARP_DEBUG=1
 NPM_INSTALL_ARGS=(
 	"--legacy-peer-deps"
 )
 NPM_AUDIT_FIX_ARGS=(
 	"--legacy-peer-deps"
 )
-SHARP_PV="0.30.7" # 0.32.4, 0.33.5 are broken
-VIPS_PV="8.14.5"
+SHARP_PV="0.34.2" # patched 0.34.7 works, non-patched 0.30.7 works; 0.31.0 introduced format() regression
+VIPS_PV="8.16.1"
 
 inherit edo electron-app flag-o-matic lcnr node-sharp optfeature xdg yarn
 
@@ -122,6 +123,8 @@ BDEPEND+="
 DOCS=( "README.md" )
 
 pkg_setup() {
+# Sharp is used for icon conversions.
+ewarn "Part of the sharp fix requires the use of the media-libs/vips ebuilds from the oiledmachine-overlay."
 	yarn_pkg_setup
 	node-sharp_pkg_setup
 }
@@ -151,7 +154,8 @@ yarn_update_lock_yarn_import_post() {
 ewarn "QA:  Change prismjs ~x.xx to ^1.30.0 in lockfile"							# CVE-2024-53382; DT, ID; Medium
 
 		eyarn add "typescript@5.5.4" -D
-		eyarn add "@types/node@20.14.14" -D
+		#eyarn add "@types/node@20.14.14" -D
+		eyarn add "@types/node@20.19.4" -D
 		eyarn add "@types/node@18.19.21" -D
 
 		eyarn add "electron@${ELECTRON_APP_ELECTRON_PV}" -D						# Enable for offline cache speed up
@@ -223,9 +227,16 @@ src_unpack() {
 		yarn_src_unpack
 	fi
 
+	export NODE_ENV="development"
+einfo "NODE_ENV:  ${NODE_ENV}"
+
 	if [[ "${ICON_TYPE}" == "png" ]] ; then
-		eyarn add "@types/sharp" -D # Must go before node-sharp_yarn_rebuild_sharp
+		if ver_test ${SHARP_PV%.*} -le "0.32" ; then
+			eyarn add "@types/sharp" -D # Must go before node-sharp_yarn_rebuild_sharp
+		fi
 		eyarn add "icon-gen@3.0.1" -D # Must go before node-sharp_yarn_rebuild_sharp
+		export SHARP_NODE_DEBUG_PATCH_PATH="${FILESDIR}/sharp-0.34.2-debug.patch"
+		export SHARP_NODE_PATCH_FIX_PATH="${FILESDIR}/sharp-0.34.2-format-fixes.patch"
 
 		SHARP_INSTALL_ARGS=( "-D" )
 		node-sharp_yarn_rebuild_sharp
