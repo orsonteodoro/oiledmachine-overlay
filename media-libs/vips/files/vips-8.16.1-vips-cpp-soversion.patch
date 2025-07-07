@@ -1,5 +1,5 @@
---- cplusplus/meson.build.orig	2025-03-09 04:13:50.000000000 -0700
-+++ cplusplus/meson.build	2025-07-07 16:53:56.456094354 -0700
+--- a/cplusplus/meson.build.orig	2025-03-09 04:13:50.000000000 -0700
++++ b/cplusplus/meson.build	2025-07-07 16:53:56.456094354 -0700
 @@ -8,8 +8,8 @@ libvips_cpp_lib = library('vips-cpp',
      'VError.cpp',
      dependencies: libvips_dep,
