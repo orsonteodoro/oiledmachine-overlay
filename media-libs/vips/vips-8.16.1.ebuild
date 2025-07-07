@@ -163,7 +163,7 @@ RDEPEND+="
 		>=media-libs/libexif-0.6.24[${MULTILIB_USEDEP}]
 	)
 	fftw? (
-		>=sci-libs/fftw-3.3.8:3.0=[${MULTILIB_USEDEP}]
+		>=sci-libs/fftw-3.3.8:3.0[${MULTILIB_USEDEP}]
 	)
 	fits? (
 		>=sci-libs/cfitsio-4.0.0[${MULTILIB_USEDEP}]
@@ -201,7 +201,7 @@ RDEPEND+="
 		>=media-gfx/libimagequant-2.17.0
 	)
 	jpeg? (
-		virtual/jpeg:0=[${MULTILIB_USEDEP}]
+		media-libs/libjpeg-turbo[${MULTILIB_USEDEP}]
 	)
 	jpeg2k? (
 		>=media-libs/openjpeg-2.4.0[${MULTILIB_USEDEP}]
@@ -263,7 +263,7 @@ PATCHES=(
 
 get_configurations() {
 	use test && echo "test"
-	echo "release"
+	echo "shared-libs"
 }
 
 gen_llvm_bdepend()
@@ -461,8 +461,8 @@ _apply_env()
 {
 	use fuzz-testing || return
 	local detect_leaks="${1}"
-	if [[ "${configuration}" == "release" ]] ; then
-		:;
+	if [[ "${configuration}" == "shared-libs" || "${configuration}" == "static-libs" ]] ; then
+		:
 	elif [[ "${configuration}" == "test" ]] ; then
 		export ASAN_OPTIONS=\
 "suppressions=${S}/suppressions/asan.supp:fast_unwind_on_malloc=0:allocator_may_return_null=1:intercept_tls_get_addr=0:detect_leaks=${detect_leaks}"
@@ -509,7 +509,7 @@ _strip_flags() {
 }
 
 _apply_flags() {
-	if [[ "${configuration}" == "release" ]] ; then
+	if [[ "${configuration}" == "shared-libs" || "${configuration}" == "static-libs" ]] ; then
 		:
 	elif use fuzz-testing && [[ "${configuration}" == "test" ]] ; then
 		append-cppflags \
@@ -557,7 +557,7 @@ src_configure_abi() {
 	export BUILD_DIR="${S}-${MULTILIB_ABI_FLAG}.${ABI}_${configuration}"
 	mkdir -p "${BUILD_DIR}" || die
 	cd "${EMESON_SOURCE}" || die
-	if [[ "${configuration}" == "release" ]] ; then
+	if [[ "${configuration}" == "shared-libs" || "${configuration}" == "static-libs" ]] ; then
 		_clear_env
 		_strip_flags
 		_apply_flags
@@ -665,8 +665,6 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(meson_feature webp)
 		$(meson_feature zlib)
 		$(meson_native_use_bool doxygen)
-		$(meson_native_use_bool gtk-doc gtk_doc)
-		$(meson_native_use_feature introspection)
 		$(meson_use analyze)
 		$(meson_use cpu_flags_x86_avx avx)
 		$(meson_use cpu_flags_x86_avx512bw avx512bw)
@@ -679,10 +677,26 @@ einfo "Detected compiler switch.  Disabling LTO."
 		$(meson_use gif nsgif)
 		$(meson_use ppm)
 		$(meson_use hdr radiance)
-		$(meson_use vala vapi)
 		$(usex nifti '-Dnifti-prefix-dir=/usr' '')
 	)
 #		$(meson_use debug)
+
+	if [[ "${configuration}" == "static-libs" ]] ; then
+		emesonargs+=(
+			--default-library=static
+			-Dgtk_doc=false
+			-Dintrospection=disabled
+			-Dvala=disabled
+			-Dwith-pixbuf=disabled
+			-Dwith-tests=disabled
+		)
+	else
+		emesonargs+=(
+			$(meson_native_use_feature introspection)
+			$(meson_native_use_bool gtk-doc gtk_doc)
+			$(meson_use vala vapi)
+		)
+	fi
 
 	if use debug ; then
 einfo "Adding debug flags"
