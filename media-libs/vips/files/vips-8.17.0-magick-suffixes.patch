@@ -1,0 +1,15 @@
+diff '--color=auto' -urp libvips-8.17.0.orig/libvips/foreign/magick7load.c libvips-8.17.0/libvips/foreign/magick7load.c
+--- libvips-8.17.0.orig/libvips/foreign/magick7load.c	2025-06-05 04:54:40.000000000 -0700
++++ libvips-8.17.0/libvips/foreign/magick7load.c	2025-07-06 17:47:13.681261038 -0700
+@@ -342,6 +342,11 @@ vips_foreign_load_magick7_class_init(Vip
+ 	VipsForeignClass *foreign_class = (VipsForeignClass *) class;
+ 	VipsForeignLoadClass *load_class = (VipsForeignLoadClass *) class;
+ 
++	static const char *magick_suffs[] = {
++		".bmp", ".gif", ".png", ".psd", ".jpg", ".jpeg", ".xcf", ".sgi", ".mng", ".wbmp", NULL
++	};
++	foreign_class->suffs = magick_suffs;
++
+ 	gobject_class->finalize = vips_foreign_load_magick7_finalize;
+ 	gobject_class->set_property = vips_object_set_property;
+ 	gobject_class->get_property = vips_object_get_property;

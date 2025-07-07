@@ -258,6 +258,7 @@ RDEPEND+="
 PATCHES=(
 	"${FILESDIR}/${PN}-8.17.0-simd-options.patch"
 	"${FILESDIR}/${PN}-8.17.0-remove-release-changes.patch"
+	"${FILESDIR}/${PN}-8.17.0-magick-suffixes.patch"
 )
 
 get_configurations() {
