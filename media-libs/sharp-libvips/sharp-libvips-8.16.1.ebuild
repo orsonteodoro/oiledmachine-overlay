@@ -697,7 +697,9 @@ einfo "Applying Cargo.toml patches to librsvg ${VERSION_RSVG}"
 
 src_configure() {
 	local rust_pv=$(rustc --version | cut -f 2 -d " " | cut -f 1 -d "-")
-	if ver_test "${RUST_MIN_VER}" -le "${rust_pv}" && ver_test "${rust_pv}" -le "${RUST_MAX_VER}" ; then
+	if [[ -n "${ERUST_SLOT_OVERRIDE}" ]] ; then
+		RUST_SLOT="${ERUST_SLOT_OVERRIDE}"
+	elif ver_test "${RUST_MIN_VER}" -le "${rust_pv}" && ver_test "${rust_pv}" -le "${RUST_MAX_VER}" ; then
 		:
 	else
 eerror "Use \`eselect rust\` to switch to Rust ${RUST_MIN_VER} <= x <= ${RUST_MAX_VER}"
@@ -722,9 +724,20 @@ einfo "Didn't detect sccache.  Removing sccache environment variables."
 	unset LD
 	check-compiler-switch_end
 
-	local rust_path=$(get_rust_path "${RUST_SLOT}")
-	export PATH="${rust_path}/bin:${PATH}"
 einfo "RUST_SLOT:  ${RUST_SLOT}"
+	local rust_type=""
+	if [[ -n "${ERUST_TYPE_OVERRIDE}" ]] ; then
+		rust_type="${ERUST_TYPE_OVERRIDE}"
+	elif has_version "dev-lang/rust-bin:${RUST_SLOT}" ; then
+		rust_type="binary"
+	elif has_version "dev-lang/rust:${RUST_SLOT}" ; then
+		rust_type="source"
+	else
+		die "You must select a Rust ${RUST_MIN_VER} <= x <= ${RUST_MAX_VER}"
+	fi
+
+	local rust_path=$(get_rust_path "${EPREFIX}" "${RUST_SLOT}" "${rust_type}")
+	export PATH="${rust_path}/bin:${PATH}"
 einfo "PATH:  ${PATH}"
 
 	strip-unsupported-flags
