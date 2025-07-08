@@ -444,7 +444,10 @@ zerovec-derive-0.10.3
 zune-core-0.4.12
 zune-jpeg-0.4.14
 "
-
+# Rust requirements relaxed.  Use the same rust as librsvg 2.60.0
+RUST_MAX_VER="1.77.2" # Inclusive
+RUST_MIN_VER="1.77.2" # llvm-17.0
+RUST_PV="${RUST_MIN_VER}"
 
 inherit cargo cflags-hardened rustflags-hardened check-compiler-switch flag-o-matic python-single-r1 meson rust
 
@@ -587,8 +590,8 @@ BDEPEND="
 	sys-devel/gcc
 	virtual/pkgconfig
 	|| (
-		dev-lang/rust:1.88.0
-		dev-lang/rust-bin:1.88.0
+		dev-lang/rust:${RUST_PV}
+		dev-lang/rust-bin:${RUST_PV}
 	)
 	|| (
 		dev-lang/rust:=
@@ -687,6 +690,11 @@ einfo "Applying Cargo.toml patches to librsvg ${VERSION_RSVG}"
 }
 
 src_configure() {
+	local rust_pv=$(rustc --version | cut -f 2 -d " " | cut -f 1 -d "-")
+	if ver_test "${rust_pv}" -ne "${RUST_PV}" ; then
+eerror "Use \`eselect rust\` to switch to Rust ${RUST_PV}"
+		die
+	fi
 	if ! has_version "dev-util/sccache" ; then
 einfo "Didn't detect sccache.  Removing sccache environment variables."
 		unset RUSTC_WRAPPER

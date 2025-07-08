@@ -570,7 +570,7 @@
 +PKG_CONFIG=${PKG_CONFIG/ --static/} meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
    -Dintrospection=disabled -Dpixbuf{,-loader}=disabled -Ddocs=disabled -Dvala=disabled -Dtests=false \
 -  ${RUST_TARGET:+-Dtriplet=$RUST_TARGET}
-+  ${RUST_TARGET:+-Dtriplet=$RUST_TARGET} -Dcargo-options=['--offline']
++  ${RUST_TARGET:+-Dtriplet=$RUST_TARGET}
  meson install -C _build --tag devel
  
 -mkdir ${DEPS}/cgif
