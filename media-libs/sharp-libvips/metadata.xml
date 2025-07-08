@@ -11,7 +11,7 @@
   </upstream>
   <use>
     <flag name="cpu_flags_x86_sse4">
-      Use SSE4 for libspng.
+      Use SSE 4 for bundled libspng.
     </flag>
     <flag name="vanilla">
       Use the project default compiler flags, per-package optimization levels, and
