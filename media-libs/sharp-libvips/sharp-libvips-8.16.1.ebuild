@@ -6,6 +6,10 @@ EAPI=8
 
 # A:3.15, AL:2, D11, U22
 
+# Why this ebuild exists:
+# 1.  The prebuilt sharp-libvips is non-portable for older processors.
+# 2.  Sharp's format() is broken for globally installed vips.  The static build and pinned versions may resolve it.
+
 RUSTFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY_CAIRO="CE DOS HO IO NPD OOBR OOBW UAF"
