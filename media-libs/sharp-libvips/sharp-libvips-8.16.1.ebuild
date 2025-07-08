@@ -451,7 +451,7 @@ zune-jpeg-0.4.14
 # Rust requirements relaxed.  Use almost the same Rust version as librsvg-2.60.0's Cargo.toml.
 RUST_MAX_VER="1.78.0" # Inclusive
 RUST_MIN_VER="1.77.2" # llvm-17.0
-RUST_PV="${RUST_MIN_VER}"
+RUST_PV="${RUST_MAX_VER}"
 
 inherit cargo cflags-hardened rustflags-hardened check-compiler-switch flag-o-matic python-single-r1 meson rust
 
@@ -697,8 +697,10 @@ einfo "Applying Cargo.toml patches to librsvg ${VERSION_RSVG}"
 
 src_configure() {
 	local rust_pv=$(rustc --version | cut -f 2 -d " " | cut -f 1 -d "-")
-	if ver_test "${rust_pv}" -ne "${RUST_PV}" ; then
-eerror "Use \`eselect rust\` to switch to Rust ${RUST_PV}"
+	if ver_test "${RUST_MIN_VER}" -le "${rust_pv}" && ver_test "${rust_pv}" -le "${RUST_MAX_VER}" ; then
+		:
+	else
+eerror "Use \`eselect rust\` to switch to Rust ${RUST_MIN_VER} <= x <= ${RUST_MAX_VER}"
 		die
 	fi
 	if ! has_version "dev-util/sccache" ; then
