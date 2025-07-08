@@ -15,7 +15,7 @@ EAPI=8
 
 CFLAGS_HARDENED_CI_SANITIZERS_CLANG_COMPAT="18"
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY="UAF"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY="NPD UAF"
 CPU_FLAGS_X86=(
 	"cpu_flags_x86_avx"
 	"cpu_flags_x86_avx512bw"
@@ -58,7 +58,7 @@ ${PATENT_STATUS_IUSE[@]}
 +analyze +avif +cairo +cgif +cxx debug +deprecated -doxygen
 +dzi +examples +exif +fftw +fits fuzz-testing +gif -graphicsmagick -gtk-doc -heic
 +fontconfig +hdr -highway +imagemagick +imagequant -introspection +jpeg
-+jpeg2k +jpegxl +lcms +matio -minimal -nifti +openexr +openslide +orc
++jpeg2k +jpegxl +lcms +matio -nifti +openexr +openslide +orc
 +pango +png +poppler +python +ppm -spng +svg test +tiff
 +vala +webp +zlib
 ebuild_revision_38
