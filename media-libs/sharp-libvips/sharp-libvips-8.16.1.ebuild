@@ -6,6 +6,7 @@ EAPI=8
 
 # A:3.15, AL:2, D11, U22
 
+RUSTFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY_CAIRO="CE DOS HO IO NPD OOBR OOBW UAF"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY_EXPAT="IO"
@@ -415,7 +416,7 @@ zune-jpeg-0.4.14
 "
 
 
-inherit cargo cflags-hardened check-compiler-switch flag-o-matic python-single-r1 meson rust
+inherit cargo cflags-hardened rustflags-hardened check-compiler-switch flag-o-matic python-single-r1 meson rust
 
 KEYWORDS="~amd64"
 S="${WORKDIR}/${PN}-${PV}"
@@ -659,6 +660,7 @@ src_configure() {
 	replace-flags '-O*' '-O2'
 
 	cflags-hardened_append
+	rustflags-hardened_append
 	if check-compiler-switch_is_flavor_slot_changed ; then
 ewarn "Detected compiler switch.  Disabling LTO."
 		filter-lto
