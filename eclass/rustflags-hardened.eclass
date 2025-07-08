@@ -245,8 +245,10 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # DOS - Denial Of Service
 # DF - Double Free
 # DP - Dangling Pointer
+# DT - Data Tampering
 # FS - Format String
 # HO - Heap Overflow
+# ID - Information Disclosure
 # IO - Integer Overflow
 # IU - Integer Underflow
 # MC - Memory Corruption
@@ -255,6 +257,7 @@ RUSTFLAGS_HARDENED_TOLERANCE=${RUSTFLAGS_HARDENED_TOLERANCE:-"1.20"}
 # OOBR - Out Of Bound Read
 # OOBW - Out Of Bound Write
 # PE - Privilege Escalation
+# PT - Path Traversal
 # RC - Race Condition
 # SO - Stack Overflow
 # TA - Timing Attack

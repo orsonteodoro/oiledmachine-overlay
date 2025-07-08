@@ -308,8 +308,10 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # DOS - Denial Of Service
 # DF - Double Free
 # DP - Dangling Pointer
+# DT - Data Tampering
 # FS - Format String
 # HO - Heap Overflow
+# ID - Information Disclosure
 # IO - Integer Overflow
 # IU - Integer Underflow
 # MC - Memory Corruption
@@ -318,6 +320,7 @@ CFLAGS_HARDENED_TOLERANCE=${CFLAGS_HARDENED_TOLERANCE:-"1.35"}
 # OOBR - Out Of Bound Read
 # OOBW - Out Of Bound Write
 # PE - Privilege Escalation
+# PT - Path Traversal
 # RC - Race Condition
 # SO - Stack Overflow
 # TA - Timing Attack
