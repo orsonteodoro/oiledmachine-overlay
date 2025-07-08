@@ -16,9 +16,9 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY_FONTCONFIG="CE DF"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY_GLIB="CE HO IO"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY_HARFBUZZ="CE DOS HO IO NPD"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY_HEIF="BO"
+CFLAGS_HARDENED_VULNERABILITY_HISTORY_LCMS2="DOS HO ID OOBR OOBW"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY_LIBAOM="BO HO IO UAF"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY_LIBARCHIVE="CE DOS HO IO MC NPD OOBA OOBR PT RC UAF UB"
-CFLAGS_HARDENED_VULNERABILITY_HISTORY_LCMS2="DOS HO ID OOBR OOBW"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY_LIBEXIF="CE DOS HO ID IO OOBR UAF"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY_LIBFFI="CE"
 CFLAGS_HARDENED_VULNERABILITY_HISTORY_LIBHEIF="BO CE DOS NPD UAF"
@@ -671,6 +671,13 @@ src_prepare() {
 }
 
 src_configure() {
+	if ! has_version "dev-util/sccache" ; then
+einfo "Didn't detect sccache.  Removing sccache environment variables."
+		unset RUSTC_WRAPPER
+		unset SCCACHE_DIR
+		unset SCCACHE_MAX_FRAME_LENGTH
+	fi
+
 	export CC="${CHOST}-gcc"
 	export CXX="${CHOST}-g++"
 	export CPP="${CC} -E"
@@ -722,8 +729,8 @@ get_platform() {
 setup_arch() {
 	local platform=$(get_platform)
 	pushd "platforms/${platform}" 2>&1 >/dev/null || die
-		export RUSTUP_HOME="${HOME}/rustup"
-		export CARGO_HOME="${HOME}/cargo"
+		export RUSTUP_HOME="${WORKDIR}/rustup_home"
+		export CARGO_HOME="${WORKDIR}/cargo_home"
 		export PKG_CONFIG="${CHOST}-pkg-config --static"
 		#export MESON="--cross-file='${HOME}/meson.ini'" # Breaks during building glib
 		export FLAGS=""
