@@ -444,9 +444,9 @@ zerovec-derive-0.10.3
 zune-core-0.4.12
 zune-jpeg-0.4.14
 "
-# Rust requirements relaxed.  Use the same rust as librsvg 2.60.0
-RUST_MAX_VER="1.77.2" # Inclusive
-RUST_MIN_VER="1.77.2" # llvm-17.0
+# Rust requirements relaxed.  Use almost the same Rust version as librsvg-2.60.0's Cargo.toml.
+RUST_MAX_VER="1.77.1" # Inclusive
+RUST_MIN_VER="1.77.1" # llvm-17.0
 RUST_PV="${RUST_MIN_VER}"
 
 inherit cargo cflags-hardened rustflags-hardened check-compiler-switch flag-o-matic python-single-r1 meson rust
