@@ -1,5 +1,5 @@
---- a/build/lin.sh.orig	2025-07-08 09:15:30.324085337 -0700
-+++ b/build/lin.sh	2025-07-08 09:21:49.331698567 -0700
+--- a/build/lin.sh.orig	2025-07-08 10:01:24.130985572 -0700
++++ b/build/lin.sh	2025-07-08 10:04:16.525530311 -0700
 @@ -14,28 +14,27 @@ without_prerelease() {
  case ${PLATFORM} in
    linux*)
@@ -41,7 +41,7 @@
  
  # Force "new" C++11 ABI compliance
  # Remove async exception unwind/backtrace tables
-@@ -45,15 +44,15 @@ if [ "$LINUX" = true ]; then
+@@ -45,20 +44,25 @@ if [ "$LINUX" = true ]; then
  fi
  
  # Common build paths and flags
@@ -64,7 +64,17 @@
  
  # On Linux, we need to create a relocatable library
  # Note: this is handled for macOS using the `install_name_tool` (see below)
-@@ -67,8 +66,8 @@ if [ "$DARWIN" = true ]; then
+ if [ "$LINUX" = true ]; then
+   export LDFLAGS+=" -Wl,--gc-sections -Wl,-rpath=\$ORIGIN/"
++  export CARGO_HOME="${WORKDIR}/cargo_home"
++  export RUSTUP_HOME="${WORKDIR}/rustup_home"
++  mkdir -p "${CARGO_HOME}"
++  mkdir -p "${RUSTUP_HOME}"
++  export PATH="${CARGO_HOME}/bin:${PATH}"
+ fi
+ 
+ if [ "$DARWIN" = true ]; then
+@@ -67,8 +71,8 @@ if [ "$DARWIN" = true ]; then
    # Local rust installation
    export CARGO_HOME="${DEPS}/cargo"
    export RUSTUP_HOME="${DEPS}/rustup"
@@ -75,7 +85,7 @@
    export PATH="${CARGO_HOME}/bin:${PATH}"
    if [ "$PLATFORM" == "darwin-arm64v8" ]; then
      export DARWIN_ARM=true
-@@ -98,7 +97,8 @@ export RUSTFLAGS+=" --remap-path-prefix=
+@@ -98,7 +102,8 @@ export RUSTFLAGS+=" --remap-path-prefix=
  unset PKG_CONFIG_PATH
  
  # Common options for curl
@@ -85,7 +95,7 @@
  
  # Dependency version numbers
  VERSION_ZLIB_NG=2.2.4
-@@ -129,10 +129,39 @@ VERSION_AOM=3.12.0
+@@ -129,10 +134,39 @@ VERSION_AOM=3.12.0
  VERSION_HEIF=1.19.7
  VERSION_CGIF=0.5.0
  
@@ -125,7 +135,7 @@
    if [ "$VERSION_LATEST_REQUIRED" == "false" ]; then
      echo "Skipping latest version check for $1"
      return
-@@ -190,182 +219,220 @@ if [ "$DARWIN" = true ]; then
+@@ -190,182 +224,220 @@ if [ "$DARWIN" = true ]; then
    CFLAGS= cargo install cargo-c --locked
  fi
  
@@ -436,14 +446,20 @@
    -Dgobject=disabled -Dicu=disabled -Dtests=disabled -Dintrospection=disabled -Ddocs=disabled -Dbenchmark=disabled ${DARWIN:+-Dcoretext=enabled}
  meson install -C _build --tag devel
  
-@@ -373,46 +440,51 @@ meson install -C _build --tag devel
+@@ -373,46 +445,57 @@ meson install -C _build --tag devel
  # https://bugs.freedesktop.org/show_bug.cgi?id=7331
  # https://gitlab.freedesktop.org/pkg-config/pkg-config/-/commit/6d6dd43e75e2bc82cfe6544f8631b1bef6e1cf45
  # TODO(kleisauke): Remove when Amazon Linux 2 reaches EOL.
 -sed -i'.bak' "/^Requires:/s/ freetype2.*,//" ${TARGET}/lib/pkgconfig/harfbuzz.pc
 -sed -i'.bak' "/^Libs:/s/$/ -lfreetype/" ${TARGET}/lib/pkgconfig/harfbuzz.pc
-+sed -i'.bak' "/^Requires:/s/ freetype2.*,//" "${TARGET}/lib/pkgconfig/harfbuzz.pc"
-+sed -i'.bak' "/^Libs:/s/$/ -lfreetype/" "${TARGET}/lib/pkgconfig/harfbuzz.pc"
++libdir=""
++if [[ -e "${TARGET}/lib64/pkgconfig/harfbuzz.pc" ]] ; then
++  libdir="lib64"
++else
++  libdir="lib"
++fi
++sed -i'.bak' "/^Requires:/s/ freetype2.*,//" "${TARGET}/${libdir}/pkgconfig/harfbuzz.pc"
++sed -i'.bak' "/^Libs:/s/$/ -lfreetype/" "${TARGET}/${libdir}/pkgconfig/harfbuzz.pc"
  
  build_freetype -Dharfbuzz=enabled
  
@@ -509,8 +525,12 @@
  # Disallow GIF and WebP embedded in SVG images
  sed -i'.bak' "/image = /s/, \"gif\", \"webp\"//" rsvg/Cargo.toml
  # We build Cairo with `-Dzlib=disabled`, which implicitly disables the PDF/PostScript surface backends
-@@ -425,25 +497,29 @@ sed -i'.bak' "/^if host_system in \['win
- cargo update --workspace
+@@ -422,28 +505,32 @@ sed -i'.bak' "/subdir('rsvg_convert')/d"
+ # https://gitlab.gnome.org/GNOME/librsvg/-/merge_requests/1066#note_2356762
+ sed -i'.bak' "/^if host_system in \['windows'/s/, 'linux'//" meson.build
+ # Regenerate the lockfile after making the above changes
+-cargo update --workspace
++#cargo update --workspace
  # Remove the --static flag from the PKG_CONFIG env since Rust does not
  # parse that correctly.
 -PKG_CONFIG=${PKG_CONFIG/ --static/} meson setup _build --default-library=static --buildtype=release --strip --prefix=${TARGET} ${MESON} \
@@ -549,7 +569,7 @@
  # Link libvips.so statically into libvips-cpp.so
  sed -i'.bak' "s/library('vips'/static_&/" libvips/meson.build
  sed -i'.bak' "/version: library_version/{N;d;}" libvips/meson.build
-@@ -451,7 +527,7 @@ if [ "$LINUX" = true ]; then
+@@ -451,7 +538,7 @@ if [ "$LINUX" = true ]; then
    # Ensure libvips-cpp.so is linked with -z nodelete
    sed -i'.bak' "/gnu_symbol_visibility: 'hidden',/a link_args: nodelete_link_args," cplusplus/meson.build
    # Ensure symbols from external libs (except for libglib-2.0.a and libgobject-2.0.a) are not exposed
@@ -558,7 +578,7 @@
    EXCLUDE_LIBS=${EXCLUDE_LIBS%?}
    # Localize the g_param_spec_types symbol to avoid collisions with shared libraries
    # See: https://github.com/lovell/sharp/issues/2535#issuecomment-766400693
-@@ -459,64 +535,66 @@ if [ "$LINUX" = true ]; then
+@@ -459,64 +546,66 @@ if [ "$LINUX" = true ]; then
  fi
  # Disable building man pages, gettext po files, tools, and (fuzz-)tests
  sed -i'.bak' "/subdir('man')/{N;N;N;N;d;}" meson.build
@@ -575,7 +595,7 @@
  # Cleanup
 -rm -rf ${TARGET}/lib/{pkgconfig,.libs,*.la,cmake}
 +echo "DEBUG:  Performing clean-up"
-+rm -rf "${TARGET}/lib/"{"pkgconfig",".libs",*".la","cmake"}
++rm -rf "${TARGET}/lib"*"/"{"pkgconfig",".libs",*".la","cmake"}
  
 -mkdir ${TARGET}/lib-filtered
 -mv ${TARGET}/lib/glib-2.0 ${TARGET}/lib-filtered
@@ -643,7 +663,7 @@
  printf "{\n\
    \"aom\": \"${VERSION_AOM}\",\n\
    \"archive\": \"${VERSION_ARCHIVE}\",\n\
-@@ -551,17 +629,21 @@ printf "{\n\
+@@ -551,17 +640,21 @@ printf "{\n\
  printf "\"${PLATFORM}\"" >platform.json
  
  # Add third-party notices

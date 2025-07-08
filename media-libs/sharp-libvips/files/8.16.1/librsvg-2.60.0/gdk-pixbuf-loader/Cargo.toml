@@ -1,0 +1,30 @@
+[package]
+name = "pixbufloader-svg"
+version = "0.0.1"
+authors = ["Alberto Ruiz <aruiz@gnome.org>"]
+license.workspace = true
+repository.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+gdk-pixbuf.workspace = true
+gio.workspace = true
+glib.workspace = true
+
+[build-dependencies]
+system-deps.workspace = true
+
+[package.metadata.system-deps]
+librsvg = { name = "librsvg-2.0-uninstalled", version = "2.57", fallback-names = [
+    "librsvg-2.0",
+] }
+
+[package.metadata.capi.header]
+enabled = false
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(check)'] }
