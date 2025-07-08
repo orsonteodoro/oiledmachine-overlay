@@ -1,0 +1,10 @@
+--- librsvg-2.60.0/meson.build.orig	2025-07-08 13:31:21.112730988 -0700
++++ librsvg-2.60.0/meson.build	2025-07-08 14:18:22.829470077 -0700
+@@ -467,6 +467,7 @@ endif
+ cargo_wrapper_args = [
+   '--cargo', cargo.full_path(),
+   '--manifest-path', cargo_toml,
++  '--offline',
+   '--project-build-root', meson.project_build_root(),
+   '--prefix', get_option('prefix'),
+   '--libdir', get_option('libdir'),

@@ -56,6 +56,9 @@ CFLAGS_HARDENED_VULNERABILITY_HISTORY="
 	${CFLAGS_HARDENED_VULNERABILITY_HISTORY_WEBP}
 	${CFLAGS_HARDENED_VULNERABILITY_HISTORY_ZLIB_NG}
 "
+CPU_FLAGS_X86=(
+	cpu_flags_x86_sse4
+)
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY_LIBRSVG="DOS NPD OOBR PT"
 RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY="
 	${RUSTFLAGS_HARDENED_VULNERABILITY_HISTORY_LIBRSVG}
@@ -488,6 +491,10 @@ https://raw.githubusercontent.com/lovell/sharp-libvips/main/THIRD-PARTY-NOTICES.
 
 DESCRIPTION="libvips static build for sharp, matching sharp-libvips"
 HOMEPAGE="https://github.com/lovell/sharp-libvips"
+IUSE+="
+${CPU_FLAGS_X86[@]}
+-vanilla
+"
 LICENSE="
 	Apache-2.0
 	Apache-2.0-with-LLVM-exceptions
@@ -605,6 +612,9 @@ pkg_setup() {
 _cargo_src_unpack() {
 	debug-print-function ${FUNCNAME} "$@"
 
+einfo "ECARGO_VENDOR:  ${ECARGO_VENDOR}"
+einfo "S:  ${S}"
+
 	mkdir -p "${ECARGO_VENDOR}" || die
 	mkdir -p "${S}" || die
 
@@ -668,6 +678,12 @@ src_unpack() {
 
 src_prepare() {
 	default
+einfo "Applying Cargo.toml patches to librsvg ${VERSION_RSVG}"
+	sed -i "/image = /s/, \"gif\", \"webp\"//" "${WORKDIR}/librsvg-${VERSION_RSVG}/rsvg/Cargo.toml" || die
+	sed -i "/cairo-rs = /s/, \"pdf\", \"ps\"//" "${WORKDIR}/librsvg-${VERSION_RSVG}/"{"librsvg-c","rsvg"}"/Cargo.toml" || die
+	pushd "${WORKDIR}/librsvg-${VERSION_RSVG}" 2>&1 >/dev/null || die
+		eapply "${FILESDIR}/librsvg-2.60.0-offline.patch"
+	popd 2>&1 >/dev/null || die
 }
 
 src_configure() {
@@ -693,8 +709,18 @@ einfo "Didn't detect sccache.  Removing sccache environment variables."
 	strip-unsupported-flags
 	replace-flags '-O*' '-O2'
 
-	cflags-hardened_append
-	rustflags-hardened_append
+	if use cpu_flags_x86_sse4 ; then
+		export USE_SSE4="1"
+	fi
+
+	if use vanilla ; then
+		export VANILLA=1
+		strip-flags
+	else
+		export VANILLA=0
+		cflags-hardened_append
+		rustflags-hardened_append
+	fi
 	if check-compiler-switch_is_flavor_slot_changed ; then
 ewarn "Detected compiler switch.  Disabling LTO."
 		filter-lto
@@ -737,28 +763,39 @@ setup_arch() {
 		#cp -a "meson.ini" "${HOME}" || die
 		cp -a "Toolchain.cmake" "${HOME}" || die
 		if [[ "${ABI}" == "amd64" && "${ELIBC}" == "glibc" ]] ; then
-			#export FLAGS="-march=nehalem"
-			:
+			if use vanilla ; then
+				export FLAGS="-march=nehalem"
+			fi
 		elif [[ "${ABI}" == "amd64" && "${ELIBC}" == "musl" ]] ; then
-			#export FLAGS="-march=nehalem"
-			:
+			if use vanilla ; then
+				export FLAGS="-march=nehalem"
+			fi
 		elif [[ "${ABI}" == "arm64" && "${ELIBC}" == "glibc" ]] ; then
-			#export FLAGS="-march=armv8-a"
-			:
+			if use vanilla ; then
+				export FLAGS="-march=armv8-a"
+			fi
 		elif [[ "${ABI}" == "arm64" && "${ELIBC}" == "musl" ]] ; then
-			#export FLAGS="-march=armv8-a"
+			if use vanilla ; then
+				export FLAGS="-march=armv8-a"
+			fi
 			export RUST_TARGET="aarch64-unknown-linux-musl"
 		elif [[ "${CHOST}" == "armv6" && "${ELIBC}" == "glibc" ]] ; then
-			#export FLAGS="-marm -mcpu=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard"
+			if use vanilla ; then
+				export FLAGS="-marm -mcpu=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard"
+			fi
 			export RUST_TARGET="arm-unknown-linux-gnueabihf"
 			export WITHOUT_HIGHWAY="true"
 			export WITHOUT_NEON="true"
 		elif [[ "${CHOST}" =~ "powerpc64le-" && "${ELIBC}" == "glibc" ]] ; then
-			#export FLAGS=""
+			if use vanilla ; then
+				export FLAGS=""
+			fi
 			export RUST_TARGET="powerpc64le-unknown-linux-gnu"
 		elif [[ "${CHOST}" == "s390x" && "${ELIBC}" == "glibc" ]] ; then
-			#export FLAGS=""
-			#export FLAGS="-march=z14 -mzvector"
+			if use vanilla ; then
+				export FLAGS=""
+				export FLAGS="-march=z14 -mzvector"
+			fi
 			export RUST_TARGET="s390x-unknown-linux-gnu"
 			export WITHOUT_HIGHWAY="true"
 		else

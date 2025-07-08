@@ -9,4 +9,15 @@
   <upstream>
     <remote-id type="github">lovell/sharp-libvips</remote-id>
   </upstream>
+  <use>
+    <flag name="cpu_flags_x86_sse4">
+      Use SSE4 for libspng.
+    </flag>
+    <flag name="vanilla">
+      Use the project default compiler flags, per-package optimization levels, and
+      non-portable march settings.  Disables security-critical hardening compiler
+      flags and uses upstream's performance-criticial settings.  Lowers the
+      security of the build.
+    </flag>
+  <use>
 </pkgmetadata>

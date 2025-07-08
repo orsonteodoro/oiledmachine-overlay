@@ -1,6 +1,6 @@
---- a/build/lin.sh.orig	2025-07-08 10:01:24.130985572 -0700
-+++ b/build/lin.sh	2025-07-08 10:04:16.525530311 -0700
-@@ -14,28 +14,27 @@ without_prerelease() {
+--- a/build/lin.sh.orig	2025-07-08 13:58:42.146019348 -0700
++++ b/build/lin.sh	2025-07-08 14:15:42.207997108 -0700
+@@ -14,28 +14,46 @@ without_prerelease() {
  case ${PLATFORM} in
    linux*)
      LINUX=true
@@ -36,31 +36,64 @@
 -# Default optimisation level is for binary size (-Os)
 -# Overriden to performance (-O3) for select dependencies that benefit
 -export FLAGS+=" -Os -fPIC"
-+# Removed -Os and -O3 for security-critical and to maintain _FORTIFY_SOURCE integrity.
-+export FLAGS+=" -fPIC"
++if [[ "${VANILLA}" == "1" ]] ; then
++	# For performance-criticial builds.
++	# Default optimisation level is for binary size (-Os)
++	# Overriden to performance (-O3) for select dependencies that benefit
++	# O3 will reduce _FORTIFY_SOURCE integrity.
++	export FLAGS+=" -Os -fPIC"
++	export FLAGS_OPTIMIZED="-O3"
++	export LIBSPNG_SSE4_FLAG="-DSPNG_SSE=4"
++else
++	# For security-criticial builds.
++	# Removed -Os and -O3 for security-critical and to maintain _FORTIFY_SOURCE integrity assumptions.
++	export FLAGS+=" -fPIC"
++	export FLAGS_OPTIMIZED=""
++
++	# Control portability
++	if [[ "${USE_SSE4}" == "1" ]] ; then
++		export LIBSPNG_SSE4_FLAG="-DSPNG_SSE=4"
++	else
++		export LIBSPNG_SSE4_FLAG=""
++	fi
++fi
  
  # Force "new" C++11 ABI compliance
  # Remove async exception unwind/backtrace tables
-@@ -45,20 +44,25 @@ if [ "$LINUX" = true ]; then
+@@ -45,20 +63,37 @@ if [ "$LINUX" = true ]; then
  fi
  
  # Common build paths and flags
 -export PKG_CONFIG_LIBDIR="${TARGET}/lib/pkgconfig"
-+export PKG_CONFIG_LIBDIR="${PKG_CONFIG_LIBDIR}:${TARGET}/lib/pkgconfig:${TARGET}/lib64/pkgconfig"
- export PATH="${PATH}:${TARGET}/bin"
- export LD_LIBRARY_PATH="${TARGET}/lib"
+-export PATH="${PATH}:${TARGET}/bin"
+-export LD_LIBRARY_PATH="${TARGET}/lib"
 -export CFLAGS="${FLAGS}"
 -export CXXFLAGS="${FLAGS}"
 -export OBJCFLAGS="${FLAGS}"
 -export OBJCXXFLAGS="${FLAGS}"
 -export CPPFLAGS="-I${TARGET}/include"
 -export LDFLAGS="-L${TARGET}/lib"
-+export CFLAGS="${CFLAGS} ${FLAGS}"
-+export CXXFLAGS="${CXXFLAGS} ${FLAGS}"
-+export OBJCFLAGS="${OBJCFLAGS} ${FLAGS}"
-+export OBJCXXFLAGS="${OBJCXXFLAGS} ${FLAGS}"
-+export CPPFLAGS="${CPPFLAGS} -I${TARGET}/include"
-+export LDFLAGS="${LDFLAGS} -L${TARGET}/lib"
++if [[ "${VANILLA}" == "1" ]] ; then
++	export PKG_CONFIG_LIBDIR="${TARGET}/lib/pkgconfig:${TARGET}/lib64/pkgconfig"
++	export PATH="${PATH}:${TARGET}/bin"
++	export LD_LIBRARY_PATH="${TARGET}/lib"
++	export CFLAGS="${FLAGS}"
++	export CXXFLAGS="${FLAGS}"
++	export OBJCFLAGS="${FLAGS}"
++	export OBJCXXFLAGS="${FLAGS}"
++	export CPPFLAGS="-I${TARGET}/include"
++	export LDFLAGS="-L${TARGET}/lib"
++else
++	export PKG_CONFIG_LIBDIR="${PKG_CONFIG_LIBDIR}:${TARGET}/lib/pkgconfig:${TARGET}/lib64/pkgconfig"
++	export PATH="${PATH}:${TARGET}/bin"
++	export LD_LIBRARY_PATH="${TARGET}/lib"
++	export CFLAGS="${CFLAGS} ${FLAGS}"
++	export CXXFLAGS="${CXXFLAGS} ${FLAGS}"
++	export OBJCFLAGS="${OBJCFLAGS} ${FLAGS}"
++	export OBJCXXFLAGS="${OBJCXXFLAGS} ${FLAGS}"
++	export CPPFLAGS="${CPPFLAGS} -I${TARGET}/include"
++	export LDFLAGS="${LDFLAGS} -L${TARGET}/lib"
++fi
  
  # On Linux, we need to create a relocatable library
  # Note: this is handled for macOS using the `install_name_tool` (see below)
@@ -74,7 +107,7 @@
  fi
  
  if [ "$DARWIN" = true ]; then
-@@ -67,8 +71,8 @@ if [ "$DARWIN" = true ]; then
+@@ -67,8 +102,8 @@ if [ "$DARWIN" = true ]; then
    # Local rust installation
    export CARGO_HOME="${DEPS}/cargo"
    export RUSTUP_HOME="${DEPS}/rustup"
@@ -85,7 +118,7 @@
    export PATH="${CARGO_HOME}/bin:${PATH}"
    if [ "$PLATFORM" == "darwin-arm64v8" ]; then
      export DARWIN_ARM=true
-@@ -98,7 +102,8 @@ export RUSTFLAGS+=" --remap-path-prefix=
+@@ -98,7 +133,8 @@ export RUSTFLAGS+=" --remap-path-prefix=
  unset PKG_CONFIG_PATH
  
  # Common options for curl
@@ -95,7 +128,7 @@
  
  # Dependency version numbers
  VERSION_ZLIB_NG=2.2.4
-@@ -129,10 +134,39 @@ VERSION_AOM=3.12.0
+@@ -129,10 +165,39 @@ VERSION_AOM=3.12.0
  VERSION_HEIF=1.19.7
  VERSION_CGIF=0.5.0
  
@@ -135,7 +168,7 @@
    if [ "$VERSION_LATEST_REQUIRED" == "false" ]; then
      echo "Skipping latest version check for $1"
      return
-@@ -190,182 +224,220 @@ if [ "$DARWIN" = true ]; then
+@@ -190,182 +255,220 @@ if [ "$DARWIN" = true ]; then
    CFLAGS= cargo install cargo-c --locked
  fi
  
@@ -178,7 +211,7 @@
 +#mkdir ${DEPS}/zlib-ng
 +#$CURL https://github.com/zlib-ng/zlib-ng/archive/${VERSION_ZLIB_NG}.tar.gz | tar xzC ${DEPS}/zlib-ng --strip-components=1
 +cd "${WORKDIR}/zlib-ng-${VERSION_ZLIB_NG}"
-+CFLAGS="${CFLAGS}" cmake -G"Unix Makefiles" \
++CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED}" cmake -G"Unix Makefiles" \
 +  -DCMAKE_TOOLCHAIN_FILE="${ROOT}/Toolchain.cmake" -DCMAKE_INSTALL_PREFIX="${TARGET}" -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release \
    -DBUILD_SHARED_LIBS=FALSE -DZLIB_COMPAT=TRUE -DWITH_ARMV6=FALSE
  make install/strip
@@ -249,7 +282,7 @@
 +#mkdir ${DEPS}/lcms2
 +#$CURL https://github.com/mm2/Little-CMS/releases/download/lcms${VERSION_LCMS2}/lcms2-${VERSION_LCMS2}.tar.gz | tar xzC ${DEPS}/lcms2 --strip-components=1
 +cd "${WORKDIR}/lcms2-${VERSION_LCMS2}"
-+CFLAGS="${CFLAGS}" meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
++CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED}" meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
    -Dtests=disabled 
  meson install -C _build --tag devel
  
@@ -282,7 +315,7 @@
  sed -i'.bak' "/^cmake_minimum_required/s/3.16.3/3.12/" CMakeLists.txt
 -CFLAGS="${CFLAGS} -O3" CXXFLAGS="${CXXFLAGS} -O3" cmake -G"Unix Makefiles" \
 -  -DCMAKE_TOOLCHAIN_FILE=${ROOT}/Toolchain.cmake -DCMAKE_INSTALL_PREFIX=${TARGET} -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release \
-+CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" cmake -G"Unix Makefiles" \
++CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED}" CXXFLAGS="${CXXFLAGS} ${FLAGS_OPTIMIZED}" cmake -G"Unix Makefiles" \
 +  -DCMAKE_TOOLCHAIN_FILE="${ROOT}/Toolchain.cmake" -DCMAKE_INSTALL_PREFIX="${TARGET}" -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release \
    -DBUILD_SHARED_LIBS=FALSE -DBUILD_TESTING=0 -DENABLE_PLUGIN_LOADING=0 -DWITH_EXAMPLES=0 -DWITH_LIBDE265=0 -DWITH_X265=0
  make install/strip
@@ -320,7 +353,7 @@
 +#mkdir ${DEPS}/spng
 +#$CURL https://github.com/randy408/libspng/archive/v${VERSION_SPNG}.tar.gz | tar xzC ${DEPS}/spng --strip-components=1
 +cd "${WORKDIR}/libspng-${VERSION_SPNG}"
-+CFLAGS="${CFLAGS} -DSPNG_SSE=4" meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
++CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED} ${LIBSPNG_SSE4_FLAG}" meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
    -Dstatic_zlib=true -Dbuild_examples=false
  meson install -C _build --tag devel
  
@@ -332,7 +365,7 @@
 +#mkdir ${DEPS}/imagequant
 +#$CURL https://github.com/lovell/libimagequant/archive/v${VERSION_IMAGEQUANT}.tar.gz | tar xzC ${DEPS}/imagequant --strip-components=1
 +cd "${WORKDIR}/libimagequant-${VERSION_IMAGEQUANT}"
-+CFLAGS="${CFLAGS}" meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON}
++CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED}" meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON}
  meson install -C _build --tag devel
  
 -mkdir ${DEPS}/webp
@@ -370,7 +403,7 @@
 +  #mkdir ${DEPS}/hwy
 +  #$CURL https://github.com/google/highway/archive/${VERSION_HWY}.tar.gz | tar xzC ${DEPS}/hwy --strip-components=1
 +  cd "${WORKDIR}/highway-${VERSION_HWY}"
-+  CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" cmake -G"Unix Makefiles" \
++  CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED}" CXXFLAGS="${CXXFLAGS} ${FLAGS_OPTIMIZED}" cmake -G"Unix Makefiles" \
 +    -DCMAKE_TOOLCHAIN_FILE="${ROOT}/Toolchain.cmake" -DCMAKE_INSTALL_PREFIX="${TARGET}" -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release \
      -DBUILD_SHARED_LIBS=FALSE -DBUILD_TESTING=0 -DHWY_ENABLE_CONTRIB=0 -DHWY_ENABLE_EXAMPLES=0 -DHWY_ENABLE_TESTS=0
    make install/strip
@@ -446,7 +479,7 @@
    -Dgobject=disabled -Dicu=disabled -Dtests=disabled -Dintrospection=disabled -Ddocs=disabled -Dbenchmark=disabled ${DARWIN:+-Dcoretext=enabled}
  meson install -C _build --tag devel
  
-@@ -373,46 +445,57 @@ meson install -C _build --tag devel
+@@ -373,46 +476,57 @@ meson install -C _build --tag devel
  # https://bugs.freedesktop.org/show_bug.cgi?id=7331
  # https://gitlab.freedesktop.org/pkg-config/pkg-config/-/commit/6d6dd43e75e2bc82cfe6544f8631b1bef6e1cf45
  # TODO(kleisauke): Remove when Amazon Linux 2 reaches EOL.
@@ -525,7 +558,7 @@
  # Disallow GIF and WebP embedded in SVG images
  sed -i'.bak' "/image = /s/, \"gif\", \"webp\"//" rsvg/Cargo.toml
  # We build Cairo with `-Dzlib=disabled`, which implicitly disables the PDF/PostScript surface backends
-@@ -422,28 +505,32 @@ sed -i'.bak' "/subdir('rsvg_convert')/d"
+@@ -422,28 +536,32 @@ sed -i'.bak' "/subdir('rsvg_convert')/d"
  # https://gitlab.gnome.org/GNOME/librsvg/-/merge_requests/1066#note_2356762
  sed -i'.bak' "/^if host_system in \['windows'/s/, 'linux'//" meson.build
  # Regenerate the lockfile after making the above changes
@@ -536,7 +569,8 @@
 -PKG_CONFIG=${PKG_CONFIG/ --static/} meson setup _build --default-library=static --buildtype=release --strip --prefix=${TARGET} ${MESON} \
 +PKG_CONFIG=${PKG_CONFIG/ --static/} meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
    -Dintrospection=disabled -Dpixbuf{,-loader}=disabled -Ddocs=disabled -Dvala=disabled -Dtests=false \
-   ${RUST_TARGET:+-Dtriplet=$RUST_TARGET}
+-  ${RUST_TARGET:+-Dtriplet=$RUST_TARGET}
++  ${RUST_TARGET:+-Dtriplet=$RUST_TARGET} -Dcargo-options=['--offline']
  meson install -C _build --tag devel
  
 -mkdir ${DEPS}/cgif
@@ -547,7 +581,7 @@
 +#mkdir ${DEPS}/cgif
 +#$CURL https://github.com/dloebl/cgif/archive/v${VERSION_CGIF}.tar.gz | tar xzC ${DEPS}/cgif --strip-components=1
 +cd "${WORKDIR}/cgif-${VERSION_CGIF}"
-+CFLAGS="${CFLAGS}" meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
++CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED}" meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
    -Dexamples=false -Dtests=false
  meson install -C _build --tag devel
  
@@ -569,7 +603,7 @@
  # Link libvips.so statically into libvips-cpp.so
  sed -i'.bak' "s/library('vips'/static_&/" libvips/meson.build
  sed -i'.bak' "/version: library_version/{N;d;}" libvips/meson.build
-@@ -451,7 +538,7 @@ if [ "$LINUX" = true ]; then
+@@ -451,7 +569,7 @@ if [ "$LINUX" = true ]; then
    # Ensure libvips-cpp.so is linked with -z nodelete
    sed -i'.bak' "/gnu_symbol_visibility: 'hidden',/a link_args: nodelete_link_args," cplusplus/meson.build
    # Ensure symbols from external libs (except for libglib-2.0.a and libgobject-2.0.a) are not exposed
@@ -578,12 +612,12 @@
    EXCLUDE_LIBS=${EXCLUDE_LIBS%?}
    # Localize the g_param_spec_types symbol to avoid collisions with shared libraries
    # See: https://github.com/lovell/sharp/issues/2535#issuecomment-766400693
-@@ -459,64 +546,66 @@ if [ "$LINUX" = true ]; then
+@@ -459,64 +577,66 @@ if [ "$LINUX" = true ]; then
  fi
  # Disable building man pages, gettext po files, tools, and (fuzz-)tests
  sed -i'.bak' "/subdir('man')/{N;N;N;N;d;}" meson.build
 -CFLAGS="${CFLAGS} -O3" CXXFLAGS="${CXXFLAGS} -O3" meson setup _build --default-library=shared --buildtype=release --strip --prefix=${TARGET} ${MESON} \
-+CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" meson setup _build --default-library=shared --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
++CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED}" CXXFLAGS="${CXXFLAGS} ${FLAGS_OPTIMIZED}" meson setup _build --default-library=shared --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
    -Ddeprecated=false -Dexamples=false -Dintrospection=disabled -Dmodules=disabled -Dcfitsio=disabled -Dfftw=disabled -Djpeg-xl=disabled \
    ${WITHOUT_HIGHWAY:+-Dhighway=disabled} -Dorc=disabled -Dmagick=disabled -Dmatio=disabled -Dnifti=disabled -Dopenexr=disabled \
    -Dopenjpeg=disabled -Dopenslide=disabled -Dpdfium=disabled -Dpoppler=disabled -Dquantizr=disabled \
@@ -663,7 +697,7 @@
  printf "{\n\
    \"aom\": \"${VERSION_AOM}\",\n\
    \"archive\": \"${VERSION_ARCHIVE}\",\n\
-@@ -551,17 +640,21 @@ printf "{\n\
+@@ -551,17 +671,21 @@ printf "{\n\
  printf "\"${PLATFORM}\"" >platform.json
  
  # Add third-party notices
