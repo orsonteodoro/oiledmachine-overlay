@@ -449,8 +449,8 @@ zune-core-0.4.12
 zune-jpeg-0.4.14
 "
 # Rust requirements relaxed.  Use almost the same Rust version as librsvg-2.60.0's Cargo.toml.
-RUST_MAX_VER="1.77.1" # Inclusive
-RUST_MIN_VER="1.77.1" # llvm-17.0
+RUST_MAX_VER="1.78.0" # Inclusive
+RUST_MIN_VER="1.77.2" # llvm-17.0
 RUST_PV="${RUST_MIN_VER}"
 
 inherit cargo cflags-hardened rustflags-hardened check-compiler-switch flag-o-matic python-single-r1 meson rust
@@ -594,8 +594,10 @@ BDEPEND="
 	sys-devel/gcc
 	virtual/pkgconfig
 	|| (
-		dev-lang/rust:${RUST_PV}
-		dev-lang/rust-bin:${RUST_PV}
+		dev-lang/rust:1.78.0
+		dev-lang/rust:1.77.2
+		dev-lang/rust-bin:1.78.0
+		dev-lang/rust-bin:1.77.2
 	)
 	|| (
 		dev-lang/rust:=
@@ -717,6 +719,9 @@ einfo "Didn't detect sccache.  Removing sccache environment variables."
 	export READELF="readelf"
 	unset LD
 	check-compiler-switch_end
+
+	export PATH="$(get_rust_path)/bin:${PATH}"
+einfo "PATH:  ${PATH}"
 
 	strip-unsupported-flags
 	replace-flags '-O*' '-O2'
