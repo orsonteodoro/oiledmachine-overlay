@@ -722,7 +722,9 @@ einfo "Didn't detect sccache.  Removing sccache environment variables."
 	unset LD
 	check-compiler-switch_end
 
-	export PATH="$(get_rust_path)/bin:${PATH}"
+	local rust_path=$(get_rust_path "${RUST_SLOT}")
+	export PATH="${rust_path}/bin:${PATH}"
+einfo "RUST_SLOT:  ${RUST_SLOT}"
 einfo "PATH:  ${PATH}"
 
 	strip-unsupported-flags
