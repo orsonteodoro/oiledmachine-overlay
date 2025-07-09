@@ -502,7 +502,7 @@ HOMEPAGE="https://github.com/lovell/sharp-libvips"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 -vanilla
-ebuild_revision_1
+ebuild_revision_2
 "
 LICENSE="
 	Apache-2.0
@@ -942,7 +942,7 @@ src_compile() {
 
 src_install() {
 	local libdir=$(get_libdir)
-	insinto "/usr/lib/sharp-vips"
+	insinto "/usr/lib/sharp-vips/${libdir}"
 	# Install shared and static libraries
 	if [[ -d "${WORKDIR}/build/deps/${libdir}-original" ]] ; then
 		if ls "${WORKDIR}/build/deps/${libdir}-original/"*".so"* >/dev/null ; then
