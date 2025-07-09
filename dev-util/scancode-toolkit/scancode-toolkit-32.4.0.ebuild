@@ -45,6 +45,7 @@ EAPI=8
 # regipy
 # rpm-inspector-rpm
 # go-inspector
+# rust-inspector
 
 # TODO package (rdepend, USE=native)
 # intbitset
@@ -54,8 +55,11 @@ EAPI=8
 # aboutcode-toolkit
 # vendorize
 
+# TODO package (doc)
+# sphinx-rtd-dark-mode
+
 DISTUTILS_USE_PEP517="setuptools"
-PYTHON_COMPAT=( "python3_"{10..12} )
+PYTHON_COMPAT=( "python3_"{11..13} )
 
 inherit distutils-r1 pypi
 
@@ -85,7 +89,12 @@ LICENSE="
 "
 RESTRICT="mirror"
 SLOT="0/$(ver_cut 1-2 ${PV})"
-IUSE+=" dev native"
+IUSE+=" dev doc full native"
+REQUIRED_USE="
+	dev? (
+		doc
+	)
+"
 
 # packageurl-python -> packageurl
 # pdfminer.six -> pdfminer
@@ -110,7 +119,7 @@ RDEPEND+="
 	>=dev-python/debian-inspector-31.1.0[${PYTHON_USEDEP}]
 	>=dev-python/dockerfile-parse-2.0.1[${PYTHON_USEDEP}]
 	>=dev-python/dparse2-0.7.0[${PYTHON_USEDEP}]
-	>=dev-python/extractcode-31.0.0[${PYTHON_USEDEP}]
+	>=dev-python/extractcode-31.0.0[${PYTHON_USEDEP},full(+)]
 	>=dev-python/extractcode_7z-16.5.210531[${PYTHON_USEDEP}]
 	>=dev-python/extractcode-libarchive-3.5.1.210531[${PYTHON_USEDEP}]
 	>=dev-python/fasteners-0.19[${PYTHON_USEDEP}]
@@ -124,7 +133,7 @@ RDEPEND+="
 	>=dev-python/inflection-0.5.1[${PYTHON_USEDEP}]
 	>=dev-python/intbitset-4.0.0[${PYTHON_USEDEP}]
 	>=dev-python/isodate-0.7.2[${PYTHON_USEDEP}]
-	>=dev-python/jaraco0functools-4.2.1[${PYTHON_USEDEP}]
+	>=dev-python/jaraco-functools-4.2.1[${PYTHON_USEDEP}]
 	>=dev-python/javaproperties-0.8.2[${PYTHON_USEDEP}]
 	>=dev-python/jinja2-3.1.6[${PYTHON_USEDEP}]
 	>=dev-python/jsonstreams-0.6.0[${PYTHON_USEDEP}]
@@ -162,7 +171,7 @@ RDEPEND+="
 	>=dev-python/spdx-tools-0.8.2[${PYTHON_USEDEP}]
 	>=dev-python/text-unidecode-1.3[${PYTHON_USEDEP}]
 	>=dev-python/toml-0.10.2[${PYTHON_USEDEP}]
-	>=dev-python/typecode-30.0.2[${PYTHON_USEDEP}]
+	>=dev-python/typecode-30.0.2[${PYTHON_USEDEP},full(+)]
 	>=dev-python/typecode-libmagic-5.39.210531[${PYTHON_USEDEP}]
 	>=dev-python/typing-extensions-4.14.0[${PYTHON_USEDEP}]
 	>=dev-python/uritools-5.0.0[${PYTHON_USEDEP}]
@@ -172,11 +181,26 @@ RDEPEND+="
 	>=dev-python/webencodings-0.5.1[${PYTHON_USEDEP}]
 	>=dev-python/xmltodict-0.14.2[${PYTHON_USEDEP}]
 	>=dev-python/zipp-3.23.0[${PYTHON_USEDEP}]
+	app-arch/bzip2
+	app-arch/xz-utils
+	app-arch/zstd
+	dev-db/sqlite:3
+	dev-libs/libgcrypt
+	dev-libs/libxml2
+	dev-libs/libxslt
+	dev-libs/popt
+	sys-devel/gcc[openmp]
+	sys-libs/zlib
+	full? (
+		>=dev-python/extractcode-31.0.0[${PYTHON_USEDEP},full]
+		>=dev-python/typecode-30.0.0[${PYTHON_USEDEP},full]
+	)
 	kernel_linux? (
 		>=dev-python/packagedcode-msitools-0.101.210706[${PYTHON_USEDEP}]
 		>=dev-python/regipy-3.1.0[${PYTHON_USEDEP}]
 		>=dev-python/rpm-inspector-rpm-4.16.1.3.210404[${PYTHON_USEDEP}]
 		>=dev-python/go-inspector-0.5.0[${PYTHON_USEDEP}]
+		>=dev-python/rust-inspector-0.1.0[${PYTHON_USEDEP}]
 	)
 	native? (
 		>=dev-python/cffi-1.17.1[${PYTHON_USEDEP}]
@@ -191,6 +215,8 @@ DEPEND+="
 	${RDEPEND}
 "
 BDEPEND+="
+	dev-python/setuptools[${PYTHON_USEDEP}]
+	dev-python/wheel[${PYTHON_USEDEP}]
 	dev? (
 		>=dev-python/aboutcode-toolkit-11.1.1[${PYTHON_USEDEP}]
 		>=dev-python/black-22.6.0[${PYTHON_USEDEP}]
@@ -224,6 +250,18 @@ BDEPEND+="
 		>=dev-python/twine-6.1.0[${PYTHON_USEDEP}]
 		>=dev-python/typing-extensions-4.14.0[${PYTHON_USEDEP}]
 		>=dev-python/vendorize-0.3.0[${PYTHON_USEDEP}]
+
+		dev-util/ruff
+		dev-python/pytest-rerunfailures
+	)
+	doc? (
+		>=dev-python/sphinx-5.0.2[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-rtd-theme-1.0.0[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-reredirects-0.1.2[${PYTHON_USEDEP}]
+		>=dev-python/doc8-0.8.1[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-rtd-dark-mode-1.3.0[${PYTHON_USEDEP}]
+		dev-python/sphinx-autobuild[${PYTHON_USEDEP}]
+		dev-python/sphinx-copybutton[${PYTHON_USEDEP}]
 	)
 "
 DOCS=( "AUTHORS.rst" "CHANGELOG.rst" "NOTICE" "README.rst" )
