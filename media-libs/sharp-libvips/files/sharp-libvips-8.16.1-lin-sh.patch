@@ -1,5 +1,5 @@
---- a/build/lin.sh.orig	2025-07-09 03:19:24.596086833 -0700
-+++ b/build/lin.sh	2025-07-09 03:21:04.415460635 -0700
+--- a/build/lin.sh.orig	2025-07-09 14:06:33.049390678 -0700
++++ b/build/lin.sh	2025-07-09 14:51:32.038378734 -0700
 @@ -14,28 +14,46 @@ without_prerelease() {
  case ${PLATFORM} in
    linux*)
@@ -173,7 +173,7 @@
    if [ "$VERSION_LATEST_REQUIRED" == "false" ]; then
      echo "Skipping latest version check for $1"
      return
-@@ -190,182 +259,226 @@ if [ "$DARWIN" = true ]; then
+@@ -190,182 +259,234 @@ if [ "$DARWIN" = true ]; then
    CFLAGS= cargo install cargo-c --locked
  fi
  
@@ -249,10 +249,15 @@
    -Dtests=false -Dglib_assert=false -Dglib_checks=false -Dglib_debug=disabled ${DARWIN:+-Dbsymbolic_functions=false}
  # bin-devel is needed for glib-compile-resources
  meson install -C _build --tag bin-devel,devel
- 
+-
 -mkdir ${DEPS}/xml2
 -$CURL https://download.gnome.org/sources/libxml2/$(without_patch $VERSION_XML2)/libxml2-${VERSION_XML2}.tar.xz | tar xJC ${DEPS}/xml2 --strip-components=1
 -cd ${DEPS}/xml2
++# Ensure glibconfig.h is installed
++echo "DEBUG:  Installing glibconfig.h"
++mkdir -p "${WORKDIR}/build/deps/lib64/glib-2.0/include"
++cp "${WORKDIR}/glib-${VERSION_GLIB}/_build/glib/glibconfig.h" "${WORKDIR}/build/deps/lib64/glib-2.0/include/" || die "Failed to install glibconfig.h"
++
 +echo "DEBUG:  Building libxml2 ${VERSION_XML2}"
 +#mkdir ${DEPS}/xml2
 +#$CURL https://download.gnome.org/sources/libxml2/$(without_patch $VERSION_XML2)/libxml2-${VERSION_XML2}.tar.xz | tar xJC ${DEPS}/xml2 --strip-components=1
@@ -400,9 +405,13 @@
 +# Downgrade minimum required CMake version to 3.12 - https://github.com/strukturag/libheif/issues/975
 +sed -i'.bak' "/^cmake_minimum_required/s/3.16.3/3.12/" CMakeLists.txt
 +# oteodoro:  Add -DZLIB_ROOT, -DTIFF_ROOT, -DJPEG_ROOT, -DPNG_ROOT to prevent referencing system copy.
++# oteodoro:  Add explicit aom settings
 +CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED}" CXXFLAGS="${CXXFLAGS} ${FLAGS_OPTIMIZED}" cmake -G"Unix Makefiles" \
 +  -DCMAKE_TOOLCHAIN_FILE="${ROOT}/Toolchain.cmake" -DCMAKE_INSTALL_PREFIX="${TARGET}" -DCMAKE_INSTALL_LIBDIR=${LIBDIR} -DCMAKE_BUILD_TYPE=Release \
 +  -DBUILD_SHARED_LIBS=FALSE -DBUILD_TESTING=0 -DENABLE_PLUGIN_LOADING=0 -DWITH_EXAMPLES=0 -DWITH_LIBDE265=0 -DWITH_X265=0 \
++  -DWITH_AOM=ON \
++  -DWITH_AOM_DECODER=ON \
++  -DWITH_AOM_ENCODER=ON \
 +  -DPNG_ROOT="${TARGET}" \
 +  -DJPEG_ROOT="${TARGET}" \
 +  -DTIFF_ROOT="${TARGET}" \
@@ -495,7 +504,7 @@
    -Dgobject=disabled -Dicu=disabled -Dtests=disabled -Dintrospection=disabled -Ddocs=disabled -Dbenchmark=disabled ${DARWIN:+-Dcoretext=enabled}
  meson install -C _build --tag devel
  
-@@ -373,46 +486,51 @@ meson install -C _build --tag devel
+@@ -373,46 +494,51 @@ meson install -C _build --tag devel
  # https://bugs.freedesktop.org/show_bug.cgi?id=7331
  # https://gitlab.freedesktop.org/pkg-config/pkg-config/-/commit/6d6dd43e75e2bc82cfe6544f8631b1bef6e1cf45
  # TODO(kleisauke): Remove when Amazon Linux 2 reaches EOL.
@@ -568,7 +577,7 @@
  # Disallow GIF and WebP embedded in SVG images
  sed -i'.bak' "/image = /s/, \"gif\", \"webp\"//" rsvg/Cargo.toml
  # We build Cairo with `-Dzlib=disabled`, which implicitly disables the PDF/PostScript surface backends
-@@ -422,28 +540,32 @@ sed -i'.bak' "/subdir('rsvg_convert')/d"
+@@ -422,28 +548,32 @@ sed -i'.bak' "/subdir('rsvg_convert')/d"
  # https://gitlab.gnome.org/GNOME/librsvg/-/merge_requests/1066#note_2356762
  sed -i'.bak' "/^if host_system in \['windows'/s/, 'linux'//" meson.build
  # Regenerate the lockfile after making the above changes
@@ -612,7 +621,7 @@
  # Link libvips.so statically into libvips-cpp.so
  sed -i'.bak' "s/library('vips'/static_&/" libvips/meson.build
  sed -i'.bak' "/version: library_version/{N;d;}" libvips/meson.build
-@@ -451,7 +573,7 @@ if [ "$LINUX" = true ]; then
+@@ -451,7 +581,7 @@ if [ "$LINUX" = true ]; then
    # Ensure libvips-cpp.so is linked with -z nodelete
    sed -i'.bak' "/gnu_symbol_visibility: 'hidden',/a link_args: nodelete_link_args," cplusplus/meson.build
    # Ensure symbols from external libs (except for libglib-2.0.a and libgobject-2.0.a) are not exposed
@@ -621,13 +630,14 @@
    EXCLUDE_LIBS=${EXCLUDE_LIBS%?}
    # Localize the g_param_spec_types symbol to avoid collisions with shared libraries
    # See: https://github.com/lovell/sharp/issues/2535#issuecomment-766400693
-@@ -459,64 +581,99 @@ if [ "$LINUX" = true ]; then
+@@ -459,64 +589,77 @@ if [ "$LINUX" = true ]; then
  fi
  # Disable building man pages, gettext po files, tools, and (fuzz-)tests
  sed -i'.bak' "/subdir('man')/{N;N;N;N;d;}" meson.build
 -CFLAGS="${CFLAGS} -O3" CXXFLAGS="${CXXFLAGS} -O3" meson setup _build --default-library=shared --buildtype=release --strip --prefix=${TARGET} ${MESON} \
 +export PKG_CONFIG_PATH="${PKG_CONFIG_PATH}"
-+CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED}" CXXFLAGS="${CXXFLAGS} ${FLAGS_OPTIMIZED}" meson setup _build --default-library=shared --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
++# oteodoro:  change to static
++CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED}" CXXFLAGS="${CXXFLAGS} ${FLAGS_OPTIMIZED}" meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
    -Ddeprecated=false -Dexamples=false -Dintrospection=disabled -Dmodules=disabled -Dcfitsio=disabled -Dfftw=disabled -Djpeg-xl=disabled \
    ${WITHOUT_HIGHWAY:+-Dhighway=disabled} -Dorc=disabled -Dmagick=disabled -Dmatio=disabled -Dnifti=disabled -Dopenexr=disabled \
    -Dopenjpeg=disabled -Dopenslide=disabled -Dpdfium=disabled -Dpoppler=disabled -Dquantizr=disabled \
@@ -636,12 +646,31 @@
 +  ${LINUX:+-Dcpp_link_args="$LDFLAGS -Wl,-Bsymbolic-functions -Wl,--version-script='${WORKDIR}/vips-${VERSION_VIPS}/vips.map' $EXCLUDE_LIBS"}
  meson install -C _build --tag runtime,devel
  
+-# Cleanup
+-rm -rf ${TARGET}/lib/{pkgconfig,.libs,*.la,cmake}
+-
+-mkdir ${TARGET}/lib-filtered
+-mv ${TARGET}/lib/glib-2.0 ${TARGET}/lib-filtered
+-
+-# Pack only the relevant libraries
+-# Note: we can't use ldd on Linux, since that can only be executed on the target machine
+-# Note 2: we modify all dylib dependencies to use relative paths on macOS
+-function copydeps {
+-  local base=$1
+-  local dest_dir=$2
+-
+-  cp -L $base $dest_dir/$base
+-  chmod 644 $dest_dir/$base
 +die() {
 +  local message="${1}"
 +  echo "DEBUG:  ${message}"
 +  exit 1
 +}
-+
+ 
+-  if [ "$LINUX" = true ]; then
+-    local dependencies=$(readelf -d $base | grep NEEDED | awk '{ print $5 }' | tr -d '[]')
+-  elif [ "$DARWIN" = true ]; then
+-    local dependencies=$(otool -LX $base | awk '{print $1}' | grep $TARGET)
 +# Create symlinks for shared libraries
 +cd "${TARGET}/${LIBDIR}"
 +if [ -f "libvips-cpp.so.${VERSION_VIPS}" ]; then
@@ -650,20 +679,24 @@
 +if [ -f "libvips.so.${VERSION_VIPS}" ]; then
 +  ln -sf libvips.so.${VERSION_VIPS} libvips.so || die "Failed to create libvips.so symlink"
 +fi
-+
-+# Move .pc files to expected location
+ 
+-    install_name_tool -id @rpath/$base $dest_dir/$base
+-  fi
++# Skip shared library symlinks for static build
++cd "${TARGET}/${LIBDIR}"
 +mkdir -p "${TARGET}/${LIBDIR}/pkgconfig"
 +cp -f "${WORKDIR}/vips-${VERSION_VIPS}/_build/meson-private/"*".pc" "${TARGET}/${LIBDIR}/pkgconfig/" || die "Failed to copy .pc files"
-+
-+# Preserve original lib64 directory for ebuild
 +mkdir -p "${TARGET}/${LIBDIR}-original"
 +cp -r "${TARGET}/${LIBDIR}/"* "${TARGET}/${LIBDIR}-original/"
-+
- # Cleanup
--rm -rf ${TARGET}/lib/{pkgconfig,.libs,*.la,cmake}
+ 
+-  for dep in $dependencies; do
+-    base_dep=$(basename $dep)
++# Cleanup
 +#echo "DEBUG:  Performing clean-up"
 +#rm -rf "${TARGET}/${LIBDIR}/"{"pkgconfig",".libs",*".la","cmake"}
-+
+ 
+-    [ ! -f "$PWD/$base_dep" ] && echo "$base_dep does not exist in $PWD" && continue
+-    echo "$base depends on $base_dep"
 +IFS=$'\n'
 +for path in $(find "${TARGET}") ; do
 +	if [[ -L "${path}" && ! -e "${path}" ]] ; then
@@ -672,66 +705,40 @@
 +done
 +IFS=$' \n\r\t'
  
--mkdir ${TARGET}/lib-filtered
--mv ${TARGET}/lib/glib-2.0 ${TARGET}/lib-filtered
+-    if [ ! -f "$dest_dir/$base_dep" ]; then
+-      if [ "$DARWIN" = true ]; then
+-        install_name_tool -change $dep @rpath/$base_dep $dest_dir/$base
+-      fi
 +#mkdir ${TARGET}/${LIBDIR}-filtered
 +#mv "${TARGET}/${LIBDIR}/glib-2.0" "${TARGET}/${LIBDIR}-filtered"
  
- # Pack only the relevant libraries
- # Note: we can't use ldd on Linux, since that can only be executed on the target machine
- # Note 2: we modify all dylib dependencies to use relative paths on macOS
- function copydeps {
--  local base=$1
--  local dest_dir=$2
-+  local base="$1"
-+  local dest_dir="$2"
- 
--  cp -L $base $dest_dir/$base
--  chmod 644 $dest_dir/$base
-+  echo "DEBUG:  copydeps() called"
-+  cp -L "$base" "$dest_dir/$base"
-+  chmod 644 "$dest_dir/$base"
- 
-   if [ "$LINUX" = true ]; then
--    local dependencies=$(readelf -d $base | grep NEEDED | awk '{ print $5 }' | tr -d '[]')
-+    local dependencies=$(readelf -d "$base" | grep NEEDED | awk '{ print $5 }' | tr -d '[]')
-   elif [ "$DARWIN" = true ]; then
--    local dependencies=$(otool -LX $base | awk '{print $1}' | grep $TARGET)
-+    local dependencies=$(otool -LX "$base" | awk '{print $1}' | grep "$TARGET")
- 
--    install_name_tool -id @rpath/$base $dest_dir/$base
-+    install_name_tool -id "@rpath/$base" "$dest_dir/$base"
-   fi
- 
-   for dep in $dependencies; do
--    base_dep=$(basename $dep)
-+    base_dep=$(basename "$dep")
- 
-     [ ! -f "$PWD/$base_dep" ] && echo "$base_dep does not exist in $PWD" && continue
-     echo "$base depends on $base_dep"
- 
-     if [ ! -f "$dest_dir/$base_dep" ]; then
-       if [ "$DARWIN" = true ]; then
--        install_name_tool -change $dep @rpath/$base_dep $dest_dir/$base
-+        install_name_tool -change "$dep" "@rpath/$base_dep" "$dest_dir/$base"
-       fi
- 
-       # Call this function (recursive) on each dependency of this library
+-      # Call this function (recursive) on each dependency of this library
 -      copydeps $base_dep $dest_dir
-+      copydeps "$base_dep" "$dest_dir"
++function copydeps {
++  echo "DEBUG:  copydeps() called"
++  mkdir -p "${2}" || die "Failed to create destination directory ${2}"
++  # Copy static libraries
++  for lib in libvips.a libvips-cpp.a libheif.a libaom.a libglib-2.0.a libgobject-2.0.a libgio-2.0.a libz.a libjpeg.a libpng.a libtiff.a libwebp.a libarchive.a liblcms2.a libfontconfig.a libpangocairo.a libpangoft2.a librsvg-2.a libcairo.a libxml2.a libsharpyuv.a libhwy.a; do
++    if [ -f "${TARGET}/${LIBDIR}/${lib}" ]; then
++      cp "${TARGET}/${LIBDIR}/${lib}" "${2}/${lib}" || die "Failed to copy ${lib}"
++    elif [ -f "${TARGET}/${LIBDIR}-original/${lib}" ]; then
++      cp "${TARGET}/${LIBDIR}-original/${lib}" "${2}/${lib}" || die "Failed to copy ${lib}"
      fi
-   done;
+-  done;
++  done
  }
  
 -cd ${TARGET}/lib
 +cd "${TARGET}/${LIBDIR}"
  if [ "$LINUX" = true ]; then
    # Check that we really linked with -z nodelete
-   readelf -Wd ${VIPS_CPP_DEP} | grep -qF NODELETE || (echo "$VIPS_CPP_DEP was not linked with -z nodelete" && exit 1)
+-  readelf -Wd ${VIPS_CPP_DEP} | grep -qF NODELETE || (echo "$VIPS_CPP_DEP was not linked with -z nodelete" && exit 1)
++  # oteodoro:  disabling since building vips static lib
++  : #readelf -Wd ${VIPS_CPP_DEP} | grep -qF NODELETE || (echo "$VIPS_CPP_DEP was not linked with -z nodelete" && exit 1)
  fi
 -copydeps ${VIPS_CPP_DEP} ${TARGET}/lib-filtered
 +mkdir -p "${TARGET}/${LIBDIR}-filtered"
-+copydeps ${VIPS_CPP_DEP} "${TARGET}/${LIBDIR}-filtered"
++copydeps "" "${TARGET}/${LIBDIR}-filtered"
  
  # Create JSON file of version numbers
 -cd ${TARGET}
@@ -739,7 +746,7 @@
  printf "{\n\
    \"aom\": \"${VERSION_AOM}\",\n\
    \"archive\": \"${VERSION_ARCHIVE}\",\n\
-@@ -551,17 +708,25 @@ printf "{\n\
+@@ -551,17 +694,25 @@ printf "{\n\
  printf "\"${PLATFORM}\"" >platform.json
  
  # Add third-party notices

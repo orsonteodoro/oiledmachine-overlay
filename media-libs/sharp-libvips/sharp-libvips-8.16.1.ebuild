@@ -502,7 +502,7 @@ HOMEPAGE="https://github.com/lovell/sharp-libvips"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 -vanilla
-ebuild_revision_3
+ebuild_revision_4
 "
 LICENSE="
 	Apache-2.0
@@ -984,12 +984,22 @@ src_install() {
 	fi
 	if [ -d "${ED}/usr/lib/sharp-vips/${libdir}/pkgconfig" ]; then
 		sed -i "s|${WORKDIR}/build/deps|/usr/lib/sharp-vips|" "${ED}/usr/lib/sharp-vips/${libdir}/pkgconfig/"*".pc" || die "Failed to fix .pc file paths"
+		sed -i '/Libs:/ s|$| -laom -lheif -lvips -lglib-2.0 -lgobject-2.0 -lgio-2.0 -lz -ljpeg -lpng -ltiff -lwebp -larchive -llcms2 -lfontconfig -lpangocairo -lpangoft2 -lrsvg-2|' "${ED}/usr/lib/sharp-vips/${libdir}/pkgconfig/vips.pc" || die "Failed to add static libs to vips.pc"
+		sed -i '/Libs:/ s|$| -laom -lsharpyuv|' "${ED}/usr/lib/sharp-vips/${libdir}/pkgconfig/libheif.pc" || die "Failed to add static libs to libheif.pc"
 	fi
 
 	# Install include
 	insinto "/usr/lib/sharp-vips/include"
 	if [[ -d "${WORKDIR}/build/deps/include" ]] ; then
 		doins -r "${WORKDIR}/build/deps/include/"*
+	fi
+
+	# Install glib-2.0/include (for glibconfig.h)
+	insinto "/usr/lib/sharp-vips/${libdir}/glib-2.0/include"
+	if [[ -d "${WORKDIR}/build/deps/${libdir}/glib-2.0/include" ]] ; then
+		doins -r "${WORKDIR}/build/deps/${libdir}/glib-2.0/include/"*
+	else
+		die "No glib-2.0/include directory found in ${WORKDIR}/build/deps/${libdir}/glib-2.0/include"
 	fi
 
 	# Create symlinks for shared libraries
