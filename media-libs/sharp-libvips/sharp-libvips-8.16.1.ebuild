@@ -925,6 +925,7 @@ ewarn "Detected compiler switch.  Disabling LTO."
 	fi
 
 	unset MESON_CROSS_FILE
+	export LIBDIR=$(get_libdir)
 	export PLATFORM=$(get_platform)
 	export PKG_CONFIG_LIBDIR=""
 	export PKG_CONFIG_PATH=""
@@ -939,28 +940,29 @@ src_compile() {
 }
 
 src_install() {
-	insinto "/usr/$(get_libdir)/sharp-vips"
+	local libdir=$(get_libdir)
+	insinto "/usr/${libdir}/sharp-vips"
 	# Install shared and static libraries
-	if [[ -d "${WORKDIR}/build/deps/lib" ]] ; then
-		if ls "${WORKDIR}/build/deps/lib/"*".so"* 2>&1 >/dev/null ; then
-			doins -r "${WORKDIR}/build/deps/lib/"*".so"*
+	if [[ -d "${WORKDIR}/build/deps/${libdir}" ]] ; then
+		if ls "${WORKDIR}/build/deps/${libdir}/"*".so"* >/dev/null ; then
+			doins -r "${WORKDIR}/build/deps/${libdir}/"*".so"*
 		fi
-		if ls "${WORKDIR}/build/deps/lib/"*".a" 2>&1 >/dev/null ; then
-			doins -r "${WORKDIR}/build/deps/lib/"*".a"
+		if ls "${WORKDIR}/build/deps/${libdir}/"*".a" >/dev/null ; then
+			doins -r "${WORKDIR}/build/deps/${libdir}/"*".a"
 		fi
 	fi
-	insinto "/usr/$(get_libdir)/pkgconfig"
+	insinto "/usr/${libdir}/pkgconfig"
 	# Install .pc files
-	if [[ -d "${WORKDIR}/build/deps/lib/pkgconfig" ]] ; then
-		doins "${WORKDIR}/build/deps/lib/pkgconfig/"*".pc"
+	if [[ -d "${WORKDIR}/build/deps/${libdir}/pkgconfig" ]] ; then
+		doins "${WORKDIR}/build/deps/${libdir}/pkgconfig/"*".pc"
 	fi
 	if [[ -d "${WORKDIR}/vips-${VERSION_VIPS}/_build/meson-private" ]] ; then
 		doins "${WORKDIR}/vips-${VERSION_VIPS}/_build/meson-private/"*".pc"
 	fi
-	if [[ -d "${D}/usr/$(get_libdir)/pkgconfig" ]] ; then
-		sed -i "s|${WORKDIR}/build/deps|/usr/$(get_libdir)/sharp-vips|" "${D}/usr/$(get_libdir)/pkgconfig/"*".pc" || die
+	if [[ -d "${D}/usr/${libdir}/pkgconfig" ]] ; then
+		sed -i "s|${WORKDIR}/build/deps|/usr/${libdir}/sharp-vips|" "${D}/usr/${libdir}/pkgconfig/"*".pc" || die
 	fi
 	# Install tarball for debugging
-	insinto "/usr/$(get_libdir)/sharp-vips"
+	insinto "/usr/${libdir}/sharp-vips"
 	doins "${WORKDIR}/packaging/libvips-${VERSION_VIPS}-${PLATFORM}.tar.gz"
 }

@@ -1,5 +1,5 @@
---- a/build/lin.sh.orig	2025-07-08 23:34:00.939575659 -0700
-+++ b/build/lin.sh	2025-07-08 23:36:05.926688959 -0700
+--- a/build/lin.sh.orig	2025-07-09 00:28:16.618824370 -0700
++++ b/build/lin.sh	2025-07-09 00:43:39.337781604 -0700
 @@ -14,28 +14,46 @@ without_prerelease() {
  case ${PLATFORM} in
    linux*)
@@ -74,25 +74,25 @@
 -export CPPFLAGS="-I${TARGET}/include"
 -export LDFLAGS="-L${TARGET}/lib"
 +if [[ "${VANILLA}" == "1" ]] ; then
-+	export PKG_CONFIG_LIBDIR="${TARGET}/lib/pkgconfig"
++	export PKG_CONFIG_LIBDIR="${TARGET}/${LIBDIR}/pkgconfig"
 +	export PATH="${PATH}:${TARGET}/bin"
-+	export LD_LIBRARY_PATH="${TARGET}/lib"
++	export LD_LIBRARY_PATH="${TARGET}/${LIBDIR}"
 +	export CFLAGS="${FLAGS}"
 +	export CXXFLAGS="${FLAGS}"
 +	export OBJCFLAGS="${FLAGS}"
 +	export OBJCXXFLAGS="${FLAGS}"
 +	export CPPFLAGS="-I${TARGET}/include"
-+	export LDFLAGS="-L${TARGET}/lib"
++	export LDFLAGS="-L${TARGET}/${LIBDIR}"
 +else
-+	export PKG_CONFIG_LIBDIR="${TARGET}/lib/pkgconfig"
++	export PKG_CONFIG_LIBDIR="${TARGET}/${LIBDIR}/pkgconfig"
 +	export PATH="${PATH}:${TARGET}/bin"
-+	export LD_LIBRARY_PATH="${TARGET}/lib"
++	export LD_LIBRARY_PATH="${TARGET}/${LIBDIR}"
 +	export CFLAGS="${CFLAGS} ${FLAGS}"
 +	export CXXFLAGS="${CXXFLAGS} ${FLAGS}"
 +	export OBJCFLAGS="${OBJCFLAGS} ${FLAGS}"
 +	export OBJCXXFLAGS="${OBJCXXFLAGS} ${FLAGS}"
 +	export CPPFLAGS="${CPPFLAGS} -I${TARGET}/include"
-+	export LDFLAGS="${LDFLAGS} -L${TARGET}/lib"
++	export LDFLAGS="${LDFLAGS} -L${TARGET}/${LIBDIR}"
 +fi
  
  # On Linux, we need to create a relocatable library
@@ -123,8 +123,8 @@
  unset PKG_CONFIG_PATH
  
 +# Prevent libheif from referencing system-libs
-+export PKG_CONFIG_PATH="${TARGET}/lib/pkgconfig"
-+export LD_LIBRARY_PATH="${TARGET}/lib"
++export PKG_CONFIG_PATH="${TARGET}/${LIBDIR}/pkgconfig"
++export LD_LIBRARY_PATH="${TARGET}/${LIBDIR}"
 +
  # Common options for curl
 -CURL="curl --silent --location --retry 3 --retry-max-time 30"
@@ -217,7 +217,7 @@
 +#$CURL https://github.com/zlib-ng/zlib-ng/archive/${VERSION_ZLIB_NG}.tar.gz | tar xzC ${DEPS}/zlib-ng --strip-components=1
 +cd "${WORKDIR}/zlib-ng-${VERSION_ZLIB_NG}"
 +CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED}" cmake -G"Unix Makefiles" \
-+  -DCMAKE_TOOLCHAIN_FILE="${ROOT}/Toolchain.cmake" -DCMAKE_INSTALL_PREFIX="${TARGET}" -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release \
++  -DCMAKE_TOOLCHAIN_FILE="${ROOT}/Toolchain.cmake" -DCMAKE_INSTALL_PREFIX="${TARGET}" -DCMAKE_INSTALL_LIBDIR=${LIBDIR} -DCMAKE_BUILD_TYPE=Release \
    -DBUILD_SHARED_LIBS=FALSE -DZLIB_COMPAT=TRUE -DWITH_ARMV6=FALSE
  make install/strip
  
@@ -302,7 +302,7 @@
  cd aom_build
  AOM_AS_FLAGS="${FLAGS}" cmake -G"Unix Makefiles" \
 -  -DCMAKE_TOOLCHAIN_FILE=${ROOT}/Toolchain.cmake -DCMAKE_INSTALL_PREFIX=${TARGET} -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=MinSizeRel \
-+  -DCMAKE_TOOLCHAIN_FILE="${ROOT}/Toolchain.cmake" -DCMAKE_INSTALL_PREFIX="${TARGET}" -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=MinSizeRel \
++  -DCMAKE_TOOLCHAIN_FILE="${ROOT}/Toolchain.cmake" -DCMAKE_INSTALL_PREFIX="${TARGET}" -DCMAKE_INSTALL_LIBDIR=${LIBDIR} -DCMAKE_BUILD_TYPE=MinSizeRel \
    -DBUILD_SHARED_LIBS=FALSE -DENABLE_DOCS=0 -DENABLE_TESTS=0 -DENABLE_TESTDATA=0 -DENABLE_TOOLS=0 -DENABLE_EXAMPLES=0 \
    -DCONFIG_PIC=1 -DENABLE_NASM=1 ${WITHOUT_NEON:+-DENABLE_NEON=0} ${DARWIN_ARM:+-DCONFIG_RUNTIME_CPU_DETECT=0} \
    -DCONFIG_AV1_HIGHBITDEPTH=0 -DCONFIG_WEBM_IO=0 \
@@ -401,7 +401,7 @@
 +sed -i'.bak' "/^cmake_minimum_required/s/3.16.3/3.12/" CMakeLists.txt
 +# oteodoro:  Add -DZLIB_ROOT, -DTIFF_ROOT, -DJPEG_ROOT, -DPNG_ROOT to prevent referencing system copy.
 +CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED}" CXXFLAGS="${CXXFLAGS} ${FLAGS_OPTIMIZED}" cmake -G"Unix Makefiles" \
-+  -DCMAKE_TOOLCHAIN_FILE="${ROOT}/Toolchain.cmake" -DCMAKE_INSTALL_PREFIX="${TARGET}" -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release \
++  -DCMAKE_TOOLCHAIN_FILE="${ROOT}/Toolchain.cmake" -DCMAKE_INSTALL_PREFIX="${TARGET}" -DCMAKE_INSTALL_LIBDIR=${LIBDIR} -DCMAKE_BUILD_TYPE=Release \
 +  -DBUILD_SHARED_LIBS=FALSE -DBUILD_TESTING=0 -DENABLE_PLUGIN_LOADING=0 -DWITH_EXAMPLES=0 -DWITH_LIBDE265=0 -DWITH_X265=0 \
 +  -DPNG_ROOT="${TARGET}" \
 +  -DJPEG_ROOT="${TARGET}" \
@@ -420,7 +420,7 @@
 +  #$CURL https://github.com/google/highway/archive/${VERSION_HWY}.tar.gz | tar xzC ${DEPS}/hwy --strip-components=1
 +  cd "${WORKDIR}/highway-${VERSION_HWY}"
 +  CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED}" CXXFLAGS="${CXXFLAGS} ${FLAGS_OPTIMIZED}" cmake -G"Unix Makefiles" \
-+    -DCMAKE_TOOLCHAIN_FILE="${ROOT}/Toolchain.cmake" -DCMAKE_INSTALL_PREFIX="${TARGET}" -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release \
++    -DCMAKE_TOOLCHAIN_FILE="${ROOT}/Toolchain.cmake" -DCMAKE_INSTALL_PREFIX="${TARGET}" -DCMAKE_INSTALL_LIBDIR=${LIBDIR} -DCMAKE_BUILD_TYPE=Release \
      -DBUILD_SHARED_LIBS=FALSE -DBUILD_TESTING=0 -DHWY_ENABLE_CONTRIB=0 -DHWY_ENABLE_EXAMPLES=0 -DHWY_ENABLE_TESTS=0
    make install/strip
  fi
@@ -501,8 +501,8 @@
  # TODO(kleisauke): Remove when Amazon Linux 2 reaches EOL.
 -sed -i'.bak' "/^Requires:/s/ freetype2.*,//" ${TARGET}/lib/pkgconfig/harfbuzz.pc
 -sed -i'.bak' "/^Libs:/s/$/ -lfreetype/" ${TARGET}/lib/pkgconfig/harfbuzz.pc
-+sed -i'.bak' "/^Requires:/s/ freetype2.*,//" "${TARGET}/lib/pkgconfig/harfbuzz.pc"
-+sed -i'.bak' "/^Libs:/s/$/ -lfreetype/" "${TARGET}/lib/pkgconfig/harfbuzz.pc"
++sed -i'.bak' "/^Requires:/s/ freetype2.*,//" "${TARGET}/${LIBDIR}/pkgconfig/harfbuzz.pc"
++sed -i'.bak' "/^Libs:/s/$/ -lfreetype/" "${TARGET}/${LIBDIR}/pkgconfig/harfbuzz.pc"
  
  build_freetype -Dharfbuzz=enabled
  
@@ -617,11 +617,11 @@
    sed -i'.bak' "/gnu_symbol_visibility: 'hidden',/a link_args: nodelete_link_args," cplusplus/meson.build
    # Ensure symbols from external libs (except for libglib-2.0.a and libgobject-2.0.a) are not exposed
 -  EXCLUDE_LIBS=$(find ${TARGET}/lib -maxdepth 1 -name '*.a' ! -name 'libglib-2.0.a' ! -name 'libgobject-2.0.a' -printf "-Wl,--exclude-libs=%f ")
-+  EXCLUDE_LIBS=$(find "${TARGET}/lib" -maxdepth 1 -name '*.a' ! -name 'libglib-2.0.a' ! -name 'libgobject-2.0.a' -printf "-Wl,--exclude-libs=%f ")
++  EXCLUDE_LIBS=$(find "${TARGET}/${LIBDIR}" -maxdepth 1 -name '*.a' ! -name 'libglib-2.0.a' ! -name 'libgobject-2.0.a' -printf "-Wl,--exclude-libs=%f ")
    EXCLUDE_LIBS=${EXCLUDE_LIBS%?}
    # Localize the g_param_spec_types symbol to avoid collisions with shared libraries
    # See: https://github.com/lovell/sharp/issues/2535#issuecomment-766400693
-@@ -459,64 +581,72 @@ if [ "$LINUX" = true ]; then
+@@ -459,64 +581,94 @@ if [ "$LINUX" = true ]; then
  fi
  # Disable building man pages, gettext po files, tools, and (fuzz-)tests
  sed -i'.bak' "/subdir('man')/{N;N;N;N;d;}" meson.build
@@ -636,20 +636,42 @@
 +  ${LINUX:+-Dcpp_link_args="$LDFLAGS -Wl,-Bsymbolic-functions -Wl,--version-script='${WORKDIR}/vips-${VERSION_VIPS}/vips.map' $EXCLUDE_LIBS"}
  meson install -C _build --tag runtime,devel
  
++die() {
++  local message="${1}"
++  echo "DEBUG:  ${message}"
++  exit 1
++}
++
++# Create symlinks for shared libraries
++cd "${TARGET}/${LIBDIR}"
++if [ -f "libvips-cpp.so.${VERSION_VIPS}" ]; then
++  ln -sf libvips-cpp.so.${VERSION_VIPS} libvips-cpp.so || die "Failed to create libvips-cpp.so symlink"
++fi
++if [ -f "libvips.so.${VERSION_VIPS}" ]; then
++  ln -sf libvips.so.${VERSION_VIPS} libvips.so || die "Failed to create libvips.so symlink"
++fi
++
 +# Move .pc files to expected location
-+mkdir -p "${TARGET}/lib/pkgconfig"
-+cp -f "${WORKDIR}/vips-${VERSION_VIPS}/_build/meson-private/"*".pc" "${TARGET}/lib/pkgconfig/"
++mkdir -p "${TARGET}/${LIBDIR}/pkgconfig"
++cp -f "${WORKDIR}/vips-${VERSION_VIPS}/_build/meson-private/"*".pc" "${TARGET}/${LIBDIR}/pkgconfig/" || die "Failed to copy .pc files"
++
++# Preserve original lib64 directory for ebuild
++mkdir -p "${TARGET}/${LIBDIR}-original"
++cp -r "${TARGET}/${LIBDIR}/"* "${TARGET}/${LIBDIR}-original/"
++
++mkdir -p "${TARGET}/${LIBDIR}-filtered"
++copydeps ${VIPS_CPP_DEP} "${TARGET}/${LIBDIR}-filtered"
 +
 +
  # Cleanup
 -rm -rf ${TARGET}/lib/{pkgconfig,.libs,*.la,cmake}
 +#echo "DEBUG:  Performing clean-up"
-+#rm -rf "${TARGET}/lib"*"/"{"pkgconfig",".libs",*".la","cmake"}
++#rm -rf "${TARGET}/${LIBDIR}/"{"pkgconfig",".libs",*".la","cmake"}
  
 -mkdir ${TARGET}/lib-filtered
 -mv ${TARGET}/lib/glib-2.0 ${TARGET}/lib-filtered
-+#mkdir ${TARGET}/lib-filtered
-+mv "${TARGET}/lib/glib-2.0" "${TARGET}/lib-filtered"
++#mkdir ${TARGET}/${LIBDIR}-filtered
++#mv "${TARGET}/${LIBDIR}/glib-2.0" "${TARGET}/${LIBDIR}-filtered"
  
  # Pack only the relevant libraries
  # Note: we can't use ldd on Linux, since that can only be executed on the target machine
@@ -698,13 +720,13 @@
  }
  
 -cd ${TARGET}/lib
-+cd "${TARGET}/lib"
++cd "${TARGET}/${LIBDIR}"
  if [ "$LINUX" = true ]; then
    # Check that we really linked with -z nodelete
    readelf -Wd ${VIPS_CPP_DEP} | grep -qF NODELETE || (echo "$VIPS_CPP_DEP was not linked with -z nodelete" && exit 1)
  fi
 -copydeps ${VIPS_CPP_DEP} ${TARGET}/lib-filtered
-+copydeps ${VIPS_CPP_DEP} "${TARGET}/lib-filtered"
++copydeps ${VIPS_CPP_DEP} "${TARGET}/${LIBDIR}-filtered"
  
  # Create JSON file of version numbers
 -cd ${TARGET}
@@ -712,7 +734,7 @@
  printf "{\n\
    \"aom\": \"${VERSION_AOM}\",\n\
    \"archive\": \"${VERSION_ARCHIVE}\",\n\
-@@ -551,17 +681,21 @@ printf "{\n\
+@@ -551,17 +703,24 @@ printf "{\n\
  printf "\"${PLATFORM}\"" >platform.json
  
  # Add third-party notices
@@ -722,16 +744,22 @@
 +cat "${DISTDIR}/${P}-THIRD-PARTY-NOTICES.md" > "THIRD-PARTY-NOTICES.md"
  
  # Create the tarball
-+echo "DEBUG:  Creating tarball"
- ls -al lib
- rm -rf lib
- mv lib-filtered lib
+-ls -al lib
+-rm -rf lib
+-mv lib-filtered lib
 -tar chzf ${PACKAGE}/libvips-${VERSION_VIPS}-${PLATFORM}.tar.gz \
++echo "DEBUG:  Creating tarball"
++ls -al ${LIBDIR}
++#rm -rf lib
++mv ${LIBDIR} ${LIBDIR}-filtered-tmp
++mv ${LIBDIR}-original ${LIBDIR}
 +tar chzf "${PACKAGE}/libvips-${VERSION_VIPS}-${PLATFORM}.tar.gz" \
    include \
    lib \
    *.json \
    THIRD-PARTY-NOTICES.md
++mv ${LIBDIR} ${LIBDIR}-original
++mv ${LIBDIR}-filtered-tmp ${LIBDIR}
  
  # Allow tarballs to be read outside container
 -chmod 644 ${PACKAGE}/libvips-${VERSION_VIPS}-${PLATFORM}.tar.*
