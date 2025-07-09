@@ -22,7 +22,6 @@ EAPI=8
 # extractcode
 # extractcode_7z
 # extractcode-libarchive
-# gemfileparser2
 # plugincode
 # pygmars
 # typecode
