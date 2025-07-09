@@ -502,6 +502,7 @@ HOMEPAGE="https://github.com/lovell/sharp-libvips"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 -vanilla
+ebuild_revision_1
 "
 LICENSE="
 	Apache-2.0
@@ -773,7 +774,6 @@ gen_meson_ini() {
 	local cpu=$(get_cpu)
 	local endian=$(get_endian)
 	local libdir=$(get_libdir)
-	mkdir -p "${WORKDIR}/trash"
 cat <<EOF > "${HOME}/meson.ini"
 [host_machine]
 system = 'linux'
@@ -798,10 +798,10 @@ have_unix98_printf = true
 [built-in options]
 libdir = '${libdir}'
 prefix = '${WORKDIR}/build/deps'
-datadir = '${WORKDIR}/trash/usr/share'
-localedir = '${WORKDIR}/trash/usr/share/locale'
-sysconfdir = '${WORKDIR}/trash/etc'
-localstatedir = '${WORKDIR}/trash/var'
+datadir = '${WORKDIR}/build/deps/share'
+localedir = '${WORKDIR}/build/deps/share/locale'
+sysconfdir = '/etc'
+localstatedir = '/var'
 wrap_mode = 'nofallback'
 EOF
 }
@@ -964,8 +964,14 @@ src_install() {
 
 	# Install binaries
 	insinto "/usr/lib/sharp-vips/bin"
-	if [ -d "${WORKDIR}/build/deps/bin" ]; then
+	if [[ -d "${WORKDIR}/build/deps/bin" ]] ; then
 		doins -r "${WORKDIR}/build/deps/bin/"*
+	fi
+
+	# Install share
+	insinto "/usr/lib/sharp-vips/share"
+	if [[ -d "${WORKDIR}/build/deps/share" ]] ; then
+		doins -r "${WORKDIR}/build/deps/share/"*
 	fi
 
 	insinto "/usr/lib/sharp-vips/${libdir}/pkgconfig"
@@ -977,17 +983,15 @@ src_install() {
 		doins "${WORKDIR}/vips-${VERSION_VIPS}/_build/meson-private/"*".pc"
 	fi
 	if [ -d "${ED}/usr/lib/sharp-vips/${libdir}/pkgconfig" ]; then
-		sed -i "s|${WORKDIR}/build/deps|/usr/lib64/sharp-vips|" "${D}/usr/lib/sharp-vips/${libdir}/pkgconfig/"*".pc" || die "Failed to fix .pc file paths"
-		sed -i "s|lib/|${libdir}/|g" "${D}/usr/lib/sharp-vips/${libdir}/pkgconfig/"*".pc" || die "Failed to fix libdir in .pc files"
-
+		sed -i "s|${WORKDIR}/build/deps|/usr/lib/sharp-vips|" "${ED}/usr/lib/sharp-vips/${libdir}/pkgconfig/"*".pc" || die "Failed to fix .pc file paths"
 	fi
 
 	# Create symlinks for shared libraries
 	if [[ -f "${ED}/usr/lib/sharp-vips/${libdir}/libvips-cpp.so.${PV}" ]] ; then
-		ln -sf libvips-cpp.so.${PV} "${D}/usr/lib/sharp-vips/${libdir}/libvips-cpp.so" || die "Failed to create libvips-cpp.so symlink"
+		ln -sf "libvips-cpp.so.${PV}" "${ED}/usr/lib/sharp-vips/${libdir}/libvips-cpp.so" || die "Failed to create libvips-cpp.so symlink"
 	fi
 	if [[ -f "${ED}/usr/lib/sharp-vips/${libdir}/libvips.so.${PV}" ]] ; then
-		ln -sf libvips.so.${PV} "${D}/usr/lib/sharp-vips/${libdir}/libvips.so" || die "Failed to create libvips.so symlink"
+		ln -sf "libvips.so.${PV}" "${ED}/usr/lib/sharp-vips/${libdir}/libvips.so" || die "Failed to create libvips.so symlink"
 	fi
 
 	# Install tarball for debugging

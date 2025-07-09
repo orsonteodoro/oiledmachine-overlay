@@ -154,6 +154,12 @@ unset -f _node_sharp_set_globals
 #
 # See also:  https://github.com/lovell/sharp-libvips/blob/main/build/posix.sh
 #
+TRASH="
+		system-vips? (
+			>=media-libs/vips-${VIPS_PV}[avif,cgif,dzi,exif,fits,fontconfig,gif,hdr,imagemagick,imagequant,lcms,nifti,jpeg,jpeg2k,jpegxl,openslide,pango,pdf,png,poppler,svg,tiff,webp,zlib]
+			media-libs/freetype[harfbuzz,png]
+		)
+"
 if [[ -n "${SHARP_PV}" ]] ; then
 	IUSE+=" +system-vips"
 	if ver_test "${SHARP_PV}" -ge "0.30" ; then
@@ -166,15 +172,12 @@ if [[ -n "${SHARP_PV}" ]] ; then
 	fi
 	NODE_SHARP_CDEPEND+="
 		${NODE_SHARP_NODEJS_CDEPEND}
+		media-libs/sharp-libvips
 		elibc_glibc? (
 			>=sys-libs/glibc-${NODE_SHARP_GLIBC_PV}
 		)
 		elibc_musl? (
 			>=sys-libs/musl-${NODE_SHARP_MUSL_PV}
-		)
-		system-vips? (
-			>=media-libs/vips-${VIPS_PV}[avif,cgif,dzi,exif,fits,fontconfig,gif,hdr,imagemagick,imagequant,lcms,nifti,jpeg,jpeg2k,jpegxl,openslide,pango,pdf,png,poppler,svg,tiff,webp,zlib]
-			media-libs/freetype[harfbuzz,png]
 		)
 	"
 	RDEPEND+="
@@ -317,6 +320,10 @@ einfo "Adding debug flags for sharp"
 	fi
 
 	if use system-vips ; then
+		local libdir=$(get_libdir)
+		export PKG_CONFIG_PATH="/usr/lib/sharp-vips/${libdir}/pkgconfig:${PKG_CONFIG_PATH}"
+		export LD_LIBRARY_PATH="/usr/lib/sharp-vips/${libdir}:${LD_LIBRARY_PATH}"
+
 		append-flags $(pkg-config --cflags "glib-2.0")
 		edo rm -vrf "node_modules/@img/sharp"*
 		edo rm -vrf "${HOME}/.cache/node-gyp"
