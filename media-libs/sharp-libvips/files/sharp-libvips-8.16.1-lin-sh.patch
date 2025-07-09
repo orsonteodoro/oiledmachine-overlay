@@ -1,5 +1,5 @@
---- a/build/lin.sh.orig	2025-07-08 18:04:56.208127350 -0700
-+++ b/build/lin.sh	2025-07-08 18:06:34.691375039 -0700
+--- a/build/lin.sh.orig	2025-07-08 18:57:03.130140861 -0700
++++ b/build/lin.sh	2025-07-08 19:04:35.777558849 -0700
 @@ -14,28 +14,46 @@ without_prerelease() {
  case ${PLATFORM} in
    linux*)
@@ -74,7 +74,7 @@
 -export CPPFLAGS="-I${TARGET}/include"
 -export LDFLAGS="-L${TARGET}/lib"
 +if [[ "${VANILLA}" == "1" ]] ; then
-+	export PKG_CONFIG_LIBDIR="${TARGET}/lib/pkgconfig:${TARGET}/lib64/pkgconfig"
++	export PKG_CONFIG_LIBDIR="${TARGET}/lib/pkgconfig"
 +	export PATH="${PATH}:${TARGET}/bin"
 +	export LD_LIBRARY_PATH="${TARGET}/lib"
 +	export CFLAGS="${FLAGS}"
@@ -84,7 +84,7 @@
 +	export CPPFLAGS="-I${TARGET}/include"
 +	export LDFLAGS="-L${TARGET}/lib"
 +else
-+	export PKG_CONFIG_LIBDIR="${PKG_CONFIG_LIBDIR}:${TARGET}/lib/pkgconfig:${TARGET}/lib64/pkgconfig"
++	export PKG_CONFIG_LIBDIR="${TARGET}/lib/pkgconfig"
 +	export PATH="${PATH}:${TARGET}/bin"
 +	export LD_LIBRARY_PATH="${TARGET}/lib"
 +	export CFLAGS="${CFLAGS} ${FLAGS}"
@@ -479,20 +479,14 @@
    -Dgobject=disabled -Dicu=disabled -Dtests=disabled -Dintrospection=disabled -Ddocs=disabled -Dbenchmark=disabled ${DARWIN:+-Dcoretext=enabled}
  meson install -C _build --tag devel
  
-@@ -373,46 +476,57 @@ meson install -C _build --tag devel
+@@ -373,46 +476,51 @@ meson install -C _build --tag devel
  # https://bugs.freedesktop.org/show_bug.cgi?id=7331
  # https://gitlab.freedesktop.org/pkg-config/pkg-config/-/commit/6d6dd43e75e2bc82cfe6544f8631b1bef6e1cf45
  # TODO(kleisauke): Remove when Amazon Linux 2 reaches EOL.
 -sed -i'.bak' "/^Requires:/s/ freetype2.*,//" ${TARGET}/lib/pkgconfig/harfbuzz.pc
 -sed -i'.bak' "/^Libs:/s/$/ -lfreetype/" ${TARGET}/lib/pkgconfig/harfbuzz.pc
-+libdir=""
-+if [[ -e "${TARGET}/lib64/pkgconfig/harfbuzz.pc" ]] ; then
-+  libdir="lib64"
-+else
-+  libdir="lib"
-+fi
-+sed -i'.bak' "/^Requires:/s/ freetype2.*,//" "${TARGET}/${libdir}/pkgconfig/harfbuzz.pc"
-+sed -i'.bak' "/^Libs:/s/$/ -lfreetype/" "${TARGET}/${libdir}/pkgconfig/harfbuzz.pc"
++sed -i'.bak' "/^Requires:/s/ freetype2.*,//" "${TARGET}/lib/pkgconfig/harfbuzz.pc"
++sed -i'.bak' "/^Libs:/s/$/ -lfreetype/" "${TARGET}/lib/pkgconfig/harfbuzz.pc"
  
  build_freetype -Dharfbuzz=enabled
  
@@ -558,7 +552,7 @@
  # Disallow GIF and WebP embedded in SVG images
  sed -i'.bak' "/image = /s/, \"gif\", \"webp\"//" rsvg/Cargo.toml
  # We build Cairo with `-Dzlib=disabled`, which implicitly disables the PDF/PostScript surface backends
-@@ -422,28 +536,32 @@ sed -i'.bak' "/subdir('rsvg_convert')/d"
+@@ -422,28 +530,32 @@ sed -i'.bak' "/subdir('rsvg_convert')/d"
  # https://gitlab.gnome.org/GNOME/librsvg/-/merge_requests/1066#note_2356762
  sed -i'.bak' "/^if host_system in \['windows'/s/, 'linux'//" meson.build
  # Regenerate the lockfile after making the above changes
@@ -602,7 +596,7 @@
  # Link libvips.so statically into libvips-cpp.so
  sed -i'.bak' "s/library('vips'/static_&/" libvips/meson.build
  sed -i'.bak' "/version: library_version/{N;d;}" libvips/meson.build
-@@ -451,7 +569,7 @@ if [ "$LINUX" = true ]; then
+@@ -451,7 +563,7 @@ if [ "$LINUX" = true ]; then
    # Ensure libvips-cpp.so is linked with -z nodelete
    sed -i'.bak' "/gnu_symbol_visibility: 'hidden',/a link_args: nodelete_link_args," cplusplus/meson.build
    # Ensure symbols from external libs (except for libglib-2.0.a and libgobject-2.0.a) are not exposed
@@ -611,7 +605,7 @@
    EXCLUDE_LIBS=${EXCLUDE_LIBS%?}
    # Localize the g_param_spec_types symbol to avoid collisions with shared libraries
    # See: https://github.com/lovell/sharp/issues/2535#issuecomment-766400693
-@@ -459,64 +577,72 @@ if [ "$LINUX" = true ]; then
+@@ -459,64 +571,66 @@ if [ "$LINUX" = true ]; then
  fi
  # Disable building man pages, gettext po files, tools, and (fuzz-)tests
  sed -i'.bak' "/subdir('man')/{N;N;N;N;d;}" meson.build
@@ -632,14 +626,8 @@
  
 -mkdir ${TARGET}/lib-filtered
 -mv ${TARGET}/lib/glib-2.0 ${TARGET}/lib-filtered
-+libdir=""
-+if [[ -e "${TARGET}/lib64/glib-2.0" ]] ; then
-+  libdir="lib64"
-+else
-+  libdir="lib"
-+fi
 +#mkdir ${TARGET}/lib-filtered
-+mv "${TARGET}/${libdir}/glib-2.0" "${TARGET}/lib-filtered"
++mv "${TARGET}/lib/glib-2.0" "${TARGET}/lib-filtered"
  
  # Pack only the relevant libraries
  # Note: we can't use ldd on Linux, since that can only be executed on the target machine
@@ -702,7 +690,7 @@
  printf "{\n\
    \"aom\": \"${VERSION_AOM}\",\n\
    \"archive\": \"${VERSION_ARCHIVE}\",\n\
-@@ -551,17 +677,21 @@ printf "{\n\
+@@ -551,17 +665,21 @@ printf "{\n\
  printf "\"${PLATFORM}\"" >platform.json
  
  # Add third-party notices

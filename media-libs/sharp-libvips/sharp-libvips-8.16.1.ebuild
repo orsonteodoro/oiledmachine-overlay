@@ -721,14 +721,98 @@ get_platform() {
 	fi
 }
 
+get_cpu_family() {
+# See https://mesonbuild.com/Reference-tables.html#cpu-families
+	if [[ "${CHOST}" =~ "alpha" ]] ; then
+		echo "alpha"
+	elif [[ "${CHOST}" =~ "aarch64" ]] ; then
+		echo "aarch64"
+	elif [[ "${CHOST}" =~ "arm" ]] ; then
+		echo "arm"
+	elif [[ "${CHOST}" =~ "i686" ]] ; then
+		echo "x86"
+	elif [[ "${CHOST}" =~ "loongarch64" ]] ; then
+		echo "loongarch64"
+	elif [[ "${CHOST}" =~ "mips64-" ]] ; then
+		echo "mips64"
+	elif [[ "${CHOST}" =~ "mips-" ]] ; then
+		echo "mips"
+	elif [[ "${CHOST}" =~ "powerpc64" ]] ; then
+		echo "ppc64"
+	elif [[ "${CHOST}" =~ "powerpc-" ]] ; then
+		echo "ppc"
+	elif [[ "${CHOST}" =~ "s390x" ]] ; then
+		echo "s390x"
+	elif [[ "${CHOST}" =~ "s390" ]] ; then
+		echo "s390"
+	elif [[ "${CHOST}" =~ "sparc64" ]] ; then
+		echo "sparc64"
+	elif [[ "${CHOST}" =~ "sparc" ]] ; then
+		echo "sparc"
+	elif [[ "${CHOST}" =~ "x86_64" ]] ; then
+		echo "x86_64"
+	fi
+}
+get_cpu() {
+	echo "${CHOST%%-*}"
+}
+get_endian() {
+	local endian=$(tc-endian)
+	if [[ "${endian}" == "big" ]] ; then
+		echo "big"
+	elif [[ "${endian}" == "little" ]] ; then
+		echo "little"
+	else
+eerror "Unknown endianness"
+		die
+	fi
+}
+
+gen_meson_ini() {
+	local cpu_family=$(get_cpu_family)
+	local cpu=$(get_cpu)
+	local endian=$(get_endian)
+	mkdir -p "${WORKDIR}/trash"
+cat <<EOF > "${HOME}/meson.ini"
+[host_machine]
+system = 'linux'
+cpu_family = '${cpu_family}'
+cpu = '${cpu}'
+endian = '${endian}'
+
+[binaries]
+c = '${CHOST}-gcc'
+cpp = '${CHOST}-g++'
+ar = 'ar'
+nm = 'nm'
+ld = 'ld'
+strip = 'strip'
+ranlib = 'ranlib'
+
+[properties]
+have_c99_vsnprintf = true
+have_c99_snprintf = true
+have_unix98_printf = true
+
+[built-in options]
+libdir = 'lib'
+datadir = '${WORKDIR}/trash/usr/share'
+localedir = '${WORKDIR}/trash/usr/share/locale'
+sysconfdir = '${WORKDIR}/trash/etc'
+localstatedir = '${WORKDIR}/trash/var'
+wrap_mode = 'nofallback'
+EOF
+}
+
 setup_arch() {
 	local platform=$(get_platform)
 	pushd "platforms/${platform}" 2>&1 >/dev/null || die
 		export RUSTUP_HOME="${WORKDIR}/rustup_home"
 		export CARGO_HOME="${WORKDIR}/cargo_home"
 		export PKG_CONFIG="${CHOST}-pkg-config --static"
-		#export MESON="--cross-file='${HOME}/meson.ini'" # Breaks during building glib
+		export MESON="--cross-file=${HOME}/meson.ini" # Breaks during building glib
 		export FLAGS=""
+		gen_meson_ini
 		#cp -a "meson.ini" "${HOME}" || die
 		cp -a "Toolchain.cmake" "${HOME}" || die
 		if [[ "${ABI}" == "amd64" && "${ELIBC}" == "glibc" ]] ; then
@@ -840,12 +924,10 @@ ewarn "Detected compiler switch.  Disabling LTO."
 	fi
 
 	unset MESON_CROSS_FILE
-	export VERSION_VIPS="${VERSION_VIPS}"
 	export PLATFORM=$(get_platform)
 	export PKG_CONFIG_LIBDIR=""
 	export PKG_CONFIG_PATH=""
-#	export SHARP_LIBVIPS_PREFIX="${WORKDIR}/build/deps"
-#	export PKG_CONFIG_PATH="${SHARP_LIBVIPS_PREFIX}/lib/pkgconfig:${PKG_CONFIG_PATH}"
+	export VERSION_VIPS="${VERSION_VIPS}"
 	setup_arch
 }
 
@@ -856,8 +938,14 @@ src_compile() {
 src_install() {
 #	meson install -C "${WORKDIR}/vips-${LIBVIPS_PV}/build" || die "Meson install failed"
 	insinto "/usr/$(get_libdir)/sharp-vips"
-	doins -r "${WORKDIR}/build/deps/lib/"*
-	doins -r "${WORKDIR}/build/deps/lib64/"*
+	if [[ -e "${WORKDIR}/build/deps/lib" ]] ; then
+einfo "Copying ${WORKDIR}/build/deps/lib/* to /usr/$(get_libdir)/sharp-vips"
+		doins -r "${WORKDIR}/build/deps/lib/"*
+	fi
+	if [[ -e "${WORKDIR}/build/deps/$(get_libdir)" ]] ; then
+einfo "Copying ${WORKDIR}/build/deps/$(get_libdir)/* to /usr/$(get_libdir)/sharp-vips"
+		doins -r "${WORKDIR}/build/deps/$(get_libdir)/"*
+	fi
 	insinto "/usr/$(get_libdir)/pkgconfig"
 	doins "${WORKDIR}/build/deps/lib64/pkgconfig/"*".pc"
 	sed -i "s|${WORKDIR}/build/deps|/usr/$(get_libdir)/sharp-vips|" "${D}/usr/$(get_libdir)/pkgconfig/"*".pc" || die
