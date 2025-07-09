@@ -25,7 +25,6 @@ EAPI=8
 # gemfileparser2
 # javaproperties
 # jsonstreams
-# packvers
 # parameter-expansion-patched
 # pip-requirements-parser
 # plugincode
