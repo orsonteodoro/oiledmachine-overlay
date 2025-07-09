@@ -243,6 +243,10 @@ node-sharp_npm_rebuild_sharp() {
 	fi
 
 	if use system-vips ; then
+		local libdir=$(get_libdir)
+		export PKG_CONFIG_PATH="/usr/lib/sharp-vips/${libdir}/pkgconfig:${PKG_CONFIG_PATH}"
+		export LD_LIBRARY_PATH="/usr/lib/sharp-vips/${libdir}:${LD_LIBRARY_PATH}"
+
 		append-flags $(pkg-config --cflags "glib-2.0")
 		edo rm -vrf "node_modules/sharp/build"
 		edo rm -vrf "node_modules/@img/sharp"*
