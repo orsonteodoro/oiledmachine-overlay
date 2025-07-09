@@ -172,7 +172,8 @@ if [[ -n "${SHARP_PV}" ]] ; then
 	fi
 	NODE_SHARP_CDEPEND+="
 		${NODE_SHARP_NODEJS_CDEPEND}
-		media-libs/sharp-libvips
+		>=media-libs/sharp-libvips-8.16.1
+		media-libs/sharp-libvips:=
 		elibc_glibc? (
 			>=sys-libs/glibc-${NODE_SHARP_GLIBC_PV}
 		)
