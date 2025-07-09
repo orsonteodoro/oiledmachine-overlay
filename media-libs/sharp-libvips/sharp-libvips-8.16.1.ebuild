@@ -839,6 +839,7 @@ ewarn "Detected compiler switch.  Disabling LTO."
 	fi
 
 	unset MESON_CROSS_FILE
+	export VERSION_VIPS="${VERSION_VIPS}"
 	export PLATFORM=$(get_platform)
 	export PKG_CONFIG_LIBDIR=""
 	export PKG_CONFIG_PATH=""
