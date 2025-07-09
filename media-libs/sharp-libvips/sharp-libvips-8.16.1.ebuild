@@ -772,6 +772,7 @@ gen_meson_ini() {
 	local cpu_family=$(get_cpu_family)
 	local cpu=$(get_cpu)
 	local endian=$(get_endian)
+	local libdir=$(get_libdir)
 	mkdir -p "${WORKDIR}/trash"
 cat <<EOF > "${HOME}/meson.ini"
 [host_machine]
@@ -795,7 +796,7 @@ have_c99_snprintf = true
 have_unix98_printf = true
 
 [built-in options]
-libdir = 'lib'
+libdir = '${libdir}'
 prefix = '${WORKDIR}/build/deps'
 datadir = '${WORKDIR}/trash/usr/share'
 localedir = '${WORKDIR}/trash/usr/share/locale'
