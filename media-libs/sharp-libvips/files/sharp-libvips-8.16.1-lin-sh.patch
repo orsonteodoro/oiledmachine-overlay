@@ -1,5 +1,5 @@
---- a/build/lin.sh.orig	2025-07-09 02:16:46.715556980 -0700
-+++ b/build/lin.sh	2025-07-09 03:08:57.210021093 -0700
+--- a/build/lin.sh.orig	2025-07-09 03:19:24.596086833 -0700
++++ b/build/lin.sh	2025-07-09 03:21:04.415460635 -0700
 @@ -14,28 +14,46 @@ without_prerelease() {
  case ${PLATFORM} in
    linux*)
@@ -663,9 +663,7 @@
 -rm -rf ${TARGET}/lib/{pkgconfig,.libs,*.la,cmake}
 +#echo "DEBUG:  Performing clean-up"
 +#rm -rf "${TARGET}/${LIBDIR}/"{"pkgconfig",".libs",*".la","cmake"}
- 
--mkdir ${TARGET}/lib-filtered
--mv ${TARGET}/lib/glib-2.0 ${TARGET}/lib-filtered
++
 +IFS=$'\n'
 +for path in $(find "${TARGET}") ; do
 +	if [[ -L "${path}" && ! -e "${path}" ]] ; then
@@ -673,7 +671,9 @@
 +	fi
 +done
 +IFS=$' \n\r\t'
-+
+ 
+-mkdir ${TARGET}/lib-filtered
+-mv ${TARGET}/lib/glib-2.0 ${TARGET}/lib-filtered
 +#mkdir ${TARGET}/${LIBDIR}-filtered
 +#mv "${TARGET}/${LIBDIR}/glib-2.0" "${TARGET}/${LIBDIR}-filtered"
  
@@ -739,7 +739,7 @@
  printf "{\n\
    \"aom\": \"${VERSION_AOM}\",\n\
    \"archive\": \"${VERSION_ARCHIVE}\",\n\
-@@ -551,17 +708,27 @@ printf "{\n\
+@@ -551,17 +708,25 @@ printf "{\n\
  printf "\"${PLATFORM}\"" >platform.json
  
  # Add third-party notices
@@ -747,8 +747,6 @@
 +echo "DEBUG:  Adding THIRD-PARTY-NOTICES.md"
 +#$CURL -O https://raw.githubusercontent.com/lovell/sharp-libvips/main/THIRD-PARTY-NOTICES.md
 +cat "${DISTDIR}/${P}-THIRD-PARTY-NOTICES.md" > "THIRD-PARTY-NOTICES.md"
-+
-+rm
  
  # Create the tarball
 -ls -al lib
