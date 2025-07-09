@@ -34,7 +34,6 @@ EAPI=8
 # saneyaml
 # typecode
 # typecode-libmagic
-# urlpy
 
 # TODO package (rdepend, USE=linux_kernel)
 # packagedcode-msitools
