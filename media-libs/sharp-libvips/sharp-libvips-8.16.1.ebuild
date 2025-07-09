@@ -942,17 +942,33 @@ src_compile() {
 
 src_install() {
 	local libdir=$(get_libdir)
-	insinto "/usr/${libdir}/sharp-vips"
+	insinto "/usr/lib/sharp-vips"
 	# Install shared and static libraries
-	if [[ -d "${WORKDIR}/build/deps/${libdir}" ]] ; then
+	if [[ -d "${WORKDIR}/build/deps/${libdir}-original" ]] ; then
+		if ls "${WORKDIR}/build/deps/${libdir}-original/"*".so"* >/dev/null ; then
+			doins -r "${WORKDIR}/build/deps/${libdir}-original/"*".so"*
+		fi
+		if ls "${WORKDIR}/build/deps/${libdir}-original/"*".a" >/dev/null ; then
+			doins -r "${WORKDIR}/build/deps/${libdir}-original/"*".a"
+		fi
+	elif [[ -d "${WORKDIR}/build/deps/${libdir}" ]] ; then
 		if ls "${WORKDIR}/build/deps/${libdir}/"*".so"* >/dev/null ; then
 			doins -r "${WORKDIR}/build/deps/${libdir}/"*".so"*
 		fi
 		if ls "${WORKDIR}/build/deps/${libdir}/"*".a" >/dev/null ; then
 			doins -r "${WORKDIR}/build/deps/${libdir}/"*".a"
 		fi
+	else
+		die "No libraries found in ${WORKDIR}/build/deps/${libdir} or ${libdir}-original"
 	fi
-	insinto "/usr/${libdir}/pkgconfig"
+
+	# Install binaries
+	insinto "/usr/lib/sharp-vips/bin"
+	if [ -d "${WORKDIR}/build/deps/bin" ]; then
+		doins -r "${WORKDIR}/build/deps/bin/"*
+	fi
+
+	insinto "/usr/lib/sharp-vips/${libdir}/pkgconfig"
 	# Install .pc files
 	if [[ -d "${WORKDIR}/build/deps/${libdir}/pkgconfig" ]] ; then
 		doins "${WORKDIR}/build/deps/${libdir}/pkgconfig/"*".pc"
@@ -960,10 +976,21 @@ src_install() {
 	if [[ -d "${WORKDIR}/vips-${VERSION_VIPS}/_build/meson-private" ]] ; then
 		doins "${WORKDIR}/vips-${VERSION_VIPS}/_build/meson-private/"*".pc"
 	fi
-	if [[ -d "${D}/usr/${libdir}/pkgconfig" ]] ; then
-		sed -i "s|${WORKDIR}/build/deps|/usr/${libdir}/sharp-vips|" "${D}/usr/${libdir}/pkgconfig/"*".pc" || die
+	if [ -d "${ED}/usr/lib/sharp-vips/${libdir}/pkgconfig" ]; then
+		sed -i "s|${WORKDIR}/build/deps|/usr/lib64/sharp-vips|" "${D}/usr/lib/sharp-vips/${libdir}/pkgconfig/"*".pc" || die "Failed to fix .pc file paths"
+		sed -i "s|lib/|${libdir}/|g" "${D}/usr/lib/sharp-vips/${libdir}/pkgconfig/"*".pc" || die "Failed to fix libdir in .pc files"
+
 	fi
+
+	# Create symlinks for shared libraries
+	if [[ -f "${ED}/usr/lib/sharp-vips/${libdir}/libvips-cpp.so.${PV}" ]] ; then
+		ln -sf libvips-cpp.so.${PV} "${D}/usr/lib/sharp-vips/${libdir}/libvips-cpp.so" || die "Failed to create libvips-cpp.so symlink"
+	fi
+	if [[ -f "${ED}/usr/lib/sharp-vips/${libdir}/libvips.so.${PV}" ]] ; then
+		ln -sf libvips.so.${PV} "${D}/usr/lib/sharp-vips/${libdir}/libvips.so" || die "Failed to create libvips.so symlink"
+	fi
+
 	# Install tarball for debugging
-	insinto "/usr/${libdir}/sharp-vips"
+	insinto "/usr/lib/sharp-vips"
 	doins "${WORKDIR}/packaging/libvips-${VERSION_VIPS}-${PLATFORM}.tar.gz"
 }
