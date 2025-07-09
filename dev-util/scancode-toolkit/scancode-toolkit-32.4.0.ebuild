@@ -31,7 +31,6 @@ EAPI=8
 # plugincode
 # pygmars
 # pymaven-patch
-# saneyaml
 # typecode
 # typecode-libmagic
 
