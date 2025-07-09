@@ -24,7 +24,6 @@ EAPI=8
 # extractcode-libarchive
 # fingerprints
 # gemfileparser2
-# intbitset
 # javaproperties
 # jsonstreams
 # packvers
