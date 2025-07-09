@@ -502,7 +502,7 @@ HOMEPAGE="https://github.com/lovell/sharp-libvips"
 IUSE+="
 ${CPU_FLAGS_X86[@]}
 -vanilla
-ebuild_revision_2
+ebuild_revision_3
 "
 LICENSE="
 	Apache-2.0
@@ -984,6 +984,12 @@ src_install() {
 	fi
 	if [ -d "${ED}/usr/lib/sharp-vips/${libdir}/pkgconfig" ]; then
 		sed -i "s|${WORKDIR}/build/deps|/usr/lib/sharp-vips|" "${ED}/usr/lib/sharp-vips/${libdir}/pkgconfig/"*".pc" || die "Failed to fix .pc file paths"
+	fi
+
+	# Install include
+	insinto "/usr/lib/sharp-vips/include"
+	if [[ -d "${WORKDIR}/build/deps/include" ]] ; then
+		doins -r "${WORKDIR}/build/deps/include/"*
 	fi
 
 	# Create symlinks for shared libraries
