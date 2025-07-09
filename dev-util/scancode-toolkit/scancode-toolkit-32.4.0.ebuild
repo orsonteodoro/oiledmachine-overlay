@@ -22,7 +22,6 @@ EAPI=8
 # extractcode
 # extractcode_7z
 # extractcode-libarchive
-# fingerprints
 # gemfileparser2
 # javaproperties
 # jsonstreams
