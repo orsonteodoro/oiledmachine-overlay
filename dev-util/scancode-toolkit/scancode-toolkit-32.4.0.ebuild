@@ -25,7 +25,6 @@ EAPI=8
 # gemfileparser2
 # plugincode
 # pygmars
-# pymaven-patch
 # typecode
 # typecode-libmagic
 
