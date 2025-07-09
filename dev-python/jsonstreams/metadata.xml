@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <!-- Ebuild on the oiledmachine-overlay -->
+    <email>orsonteodoro@hotmail.com</email>
+    <name>Orson Teodoro</name>
+  </maintainer>
+  <upstream>
+    <bugs-to>https://github.com/dcbaker/jsonstreams/issues</bugs-to>
+    <changelog>https://github.com/dcbaker/jsonstreams/blob/main/docs/source/changes.rst</changelog>
+    <remote-id type="github">dcbaker/jsonstreams</remote-id>
+    <remote-id type="pypi">jsonstreams</remote-id>
+  </upstream>
+</pkgmetadata>
