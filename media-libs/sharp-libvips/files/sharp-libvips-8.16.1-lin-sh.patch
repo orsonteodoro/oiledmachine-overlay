@@ -1,5 +1,5 @@
---- a/build/lin.sh.orig	2025-07-08 17:42:02.539067931 -0700
-+++ b/build/lin.sh	2025-07-08 17:44:42.513475641 -0700
+--- a/build/lin.sh.orig	2025-07-08 18:04:56.208127350 -0700
++++ b/build/lin.sh	2025-07-08 18:06:34.691375039 -0700
 @@ -14,28 +14,46 @@ without_prerelease() {
  case ${PLATFORM} in
    linux*)
@@ -611,7 +611,7 @@
    EXCLUDE_LIBS=${EXCLUDE_LIBS%?}
    # Localize the g_param_spec_types symbol to avoid collisions with shared libraries
    # See: https://github.com/lovell/sharp/issues/2535#issuecomment-766400693
-@@ -459,64 +577,66 @@ if [ "$LINUX" = true ]; then
+@@ -459,64 +577,72 @@ if [ "$LINUX" = true ]; then
  fi
  # Disable building man pages, gettext po files, tools, and (fuzz-)tests
  sed -i'.bak' "/subdir('man')/{N;N;N;N;d;}" meson.build
@@ -632,8 +632,14 @@
  
 -mkdir ${TARGET}/lib-filtered
 -mv ${TARGET}/lib/glib-2.0 ${TARGET}/lib-filtered
++libdir=""
++if [[ -e "${TARGET}/lib64/glib-2.0" ]] ; then
++  libdir="lib64"
++else
++  libdir="lib"
++fi
 +#mkdir ${TARGET}/lib-filtered
-+mv "${TARGET}/lib/glib-2.0" "${TARGET}/lib-filtered"
++mv "${TARGET}/${libdir}/glib-2.0" "${TARGET}/lib-filtered"
  
  # Pack only the relevant libraries
  # Note: we can't use ldd on Linux, since that can only be executed on the target machine
@@ -696,7 +702,7 @@
  printf "{\n\
    \"aom\": \"${VERSION_AOM}\",\n\
    \"archive\": \"${VERSION_ARCHIVE}\",\n\
-@@ -551,17 +671,21 @@ printf "{\n\
+@@ -551,17 +677,21 @@ printf "{\n\
  printf "\"${PLATFORM}\"" >platform.json
  
  # Add third-party notices
