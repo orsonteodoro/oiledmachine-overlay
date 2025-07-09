@@ -30,7 +30,6 @@ EAPI=8
 # packvers
 # parameter-expansion-patched
 # pip-requirements-parser
-# pkginfo2
 # plugincode
 # pyahocorasick
 # pygmars
