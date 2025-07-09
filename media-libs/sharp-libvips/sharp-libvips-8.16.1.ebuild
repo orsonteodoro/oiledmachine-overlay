@@ -606,7 +606,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"A${FILESDIR}/sharp-libvips-8.16.1-lin-sh.patch"
+	"${FILESDIR}/sharp-libvips-8.16.1-lin-sh.patch"
 )
 
 pkg_setup() {
