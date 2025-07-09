@@ -1,5 +1,5 @@
---- a/build/lin.sh.orig	2025-07-09 02:03:53.095587597 -0700
-+++ b/build/lin.sh	2025-07-09 02:04:23.444137621 -0700
+--- a/build/lin.sh.orig	2025-07-09 02:16:46.715556980 -0700
++++ b/build/lin.sh	2025-07-09 03:08:57.210021093 -0700
 @@ -14,28 +14,46 @@ without_prerelease() {
  case ${PLATFORM} in
    linux*)
@@ -621,7 +621,7 @@
    EXCLUDE_LIBS=${EXCLUDE_LIBS%?}
    # Localize the g_param_spec_types symbol to avoid collisions with shared libraries
    # See: https://github.com/lovell/sharp/issues/2535#issuecomment-766400693
-@@ -459,64 +581,91 @@ if [ "$LINUX" = true ]; then
+@@ -459,64 +581,99 @@ if [ "$LINUX" = true ]; then
  fi
  # Disable building man pages, gettext po files, tools, and (fuzz-)tests
  sed -i'.bak' "/subdir('man')/{N;N;N;N;d;}" meson.build
@@ -666,6 +666,14 @@
  
 -mkdir ${TARGET}/lib-filtered
 -mv ${TARGET}/lib/glib-2.0 ${TARGET}/lib-filtered
++IFS=$'\n'
++for path in $(find "${TARGET}") ; do
++	if [[ -L "${path}" && ! -e "${path}" ]] ; then
++		rm -v "${path}"
++	fi
++done
++IFS=$' \n\r\t'
++
 +#mkdir ${TARGET}/${LIBDIR}-filtered
 +#mv "${TARGET}/${LIBDIR}/glib-2.0" "${TARGET}/${LIBDIR}-filtered"
  
@@ -731,7 +739,7 @@
  printf "{\n\
    \"aom\": \"${VERSION_AOM}\",\n\
    \"archive\": \"${VERSION_ARCHIVE}\",\n\
-@@ -551,17 +700,25 @@ printf "{\n\
+@@ -551,17 +708,27 @@ printf "{\n\
  printf "\"${PLATFORM}\"" >platform.json
  
  # Add third-party notices
@@ -739,6 +747,8 @@
 +echo "DEBUG:  Adding THIRD-PARTY-NOTICES.md"
 +#$CURL -O https://raw.githubusercontent.com/lovell/sharp-libvips/main/THIRD-PARTY-NOTICES.md
 +cat "${DISTDIR}/${P}-THIRD-PARTY-NOTICES.md" > "THIRD-PARTY-NOTICES.md"
++
++rm
  
  # Create the tarball
 -ls -al lib
