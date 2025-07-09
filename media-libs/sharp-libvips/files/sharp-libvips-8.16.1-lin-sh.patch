@@ -1,5 +1,5 @@
---- a/build/lin.sh.orig	2025-07-09 00:28:16.618824370 -0700
-+++ b/build/lin.sh	2025-07-09 00:43:39.337781604 -0700
+--- a/build/lin.sh.orig	2025-07-09 01:03:41.147423215 -0700
++++ b/build/lin.sh	2025-07-09 01:09:44.509443384 -0700
 @@ -14,28 +14,46 @@ without_prerelease() {
  case ${PLATFORM} in
    linux*)
@@ -229,7 +229,7 @@
 +#mkdir ${DEPS}/ffi
 +#$CURL https://github.com/libffi/libffi/releases/download/v${VERSION_FFI}/libffi-${VERSION_FFI}.tar.gz | tar xzC ${DEPS}/ffi --strip-components=1
 +cd "${WORKDIR}/libffi-${VERSION_FFI}"
-+./configure --host=${CHOST} --prefix="${TARGET}" --enable-static --disable-shared --disable-dependency-tracking \
++./configure --host=${CHOST} --prefix="${TARGET}" --libdir="${TARGET}/${LIBDIR}" --enable-static --disable-shared --disable-dependency-tracking \
    --disable-builddir --disable-multi-os-directory --disable-raw-api --disable-structs --disable-docs
  make install-strip
  
@@ -274,7 +274,7 @@
 +#mkdir ${DEPS}/exif
 +#$CURL https://github.com/libexif/libexif/releases/download/v${VERSION_EXIF}/libexif-${VERSION_EXIF}.tar.xz | tar xJC ${DEPS}/exif --strip-components=1
 +cd "${WORKDIR}/libexif-${VERSION_EXIF}"
-+./configure --host=${CHOST} --prefix="${TARGET}" --enable-static --disable-shared --disable-dependency-tracking \
++./configure --host=${CHOST} --prefix="${TARGET}" --libdir="${TARGET}/${LIBDIR}" --enable-static --disable-shared --disable-dependency-tracking \
    --disable-nls --without-libiconv-prefix --without-libintl-prefix \
    CPPFLAGS="${CPPFLAGS} -DNO_VERBOSE_TAG_DATA"
  make install-strip doc_DATA=
@@ -340,7 +340,7 @@
 +#mkdir ${DEPS}/png16
 +#$CURL https://downloads.sourceforge.net/project/libpng/libpng16/${VERSION_PNG16}/libpng-${VERSION_PNG16}.tar.xz | tar xJC ${DEPS}/png16 --strip-components=1
 +cd "${WORKDIR}/libpng-${VERSION_PNG16}"
-+./configure --host=${CHOST} --prefix="${TARGET}" --enable-static --disable-shared --disable-dependency-tracking \
++./configure --host=${CHOST} --prefix="${TARGET}" --libdir="${TARGET}/${LIBDIR}" --enable-static --disable-shared --disable-dependency-tracking \
    --disable-tools --without-binconfigs --disable-unversioned-libpng-config
  make install-strip dist_man_MANS=
  
@@ -375,7 +375,7 @@
 +#mkdir ${DEPS}/webp
 +#$CURL https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-${VERSION_WEBP}.tar.gz | tar xzC ${DEPS}/webp --strip-components=1
 +cd "${WORKDIR}/libwebp-${VERSION_WEBP}"
-+./configure --host=${CHOST} --prefix="${TARGET}" --enable-static --disable-shared --disable-dependency-tracking \
++./configure --host=${CHOST} --prefix="${TARGET}" --libdir="${TARGET}/${LIBDIR}" --enable-static --disable-shared --disable-dependency-tracking \
    --enable-libwebpmux --enable-libwebpdemux ${WITHOUT_NEON:+--disable-neon}
  make install-strip bin_PROGRAMS= noinst_PROGRAMS= man_MANS=
  
@@ -388,7 +388,7 @@
 +cd "${WORKDIR}/tiff-${VERSION_TIFF}"
  # Propagate -pthread into CFLAGS to ensure WebP support
 -CFLAGS="${CFLAGS} -pthread" ./configure --host=${CHOST} --prefix=${TARGET} --enable-static --disable-shared --disable-dependency-tracking \
-+CFLAGS="${CFLAGS} -pthread" ./configure --host=${CHOST} --prefix="${TARGET}" --enable-static --disable-shared --disable-dependency-tracking \
++CFLAGS="${CFLAGS} -pthread" ./configure --host=${CHOST} --prefix="${TARGET}" --libdir="${TARGET}/${LIBDIR}" --enable-static --disable-shared --disable-dependency-tracking \
    --disable-tools --disable-tests --disable-contrib --disable-docs --disable-mdi --disable-pixarlog --disable-old-jpeg --disable-cxx --disable-lzma --disable-zstd --disable-libdeflate
  make install-strip noinst_PROGRAMS= dist_doc_DATA=
  
@@ -450,7 +450,7 @@
 +#mkdir ${DEPS}/expat
 +#$CURL https://github.com/libexpat/libexpat/releases/download/R_${VERSION_EXPAT//./_}/expat-${VERSION_EXPAT}.tar.xz | tar xJC ${DEPS}/expat --strip-components=1
 +cd "${WORKDIR}/expat-${VERSION_EXPAT}"
-+./configure --host=${CHOST} --prefix="${TARGET}" --enable-static --disable-shared \
++./configure --host=${CHOST} --prefix="${TARGET}" --libdir="${TARGET}/${LIBDIR}" --enable-static --disable-shared \
    --disable-dependency-tracking --without-xmlwf --without-docbook --without-getrandom --without-sys-getrandom \
    --without-libbsd --without-examples --without-tests
  make install-strip dist_cmake_DATA= nodist_cmake_DATA=
@@ -463,7 +463,7 @@
 +#mkdir ${DEPS}/archive
 +#$CURL https://github.com/libarchive/libarchive/releases/download/v${VERSION_ARCHIVE}/libarchive-${VERSION_ARCHIVE}.tar.xz | tar xJC ${DEPS}/archive --strip-components=1
 +cd "${WORKDIR}/libarchive-${VERSION_ARCHIVE}"
-+./configure --host=${CHOST} --prefix="${TARGET}" --enable-static --disable-shared --disable-dependency-tracking \
++./configure --host=${CHOST} --prefix="${TARGET}" --libdir="${TARGET}/${LIBDIR}" --enable-static --disable-shared --disable-dependency-tracking \
    --disable-bsdtar --disable-bsdcat --disable-bsdcpio --disable-bsdunzip --disable-posix-regex-lib --disable-xattr --disable-acl \
    --without-bz2lib --without-libb2 --without-iconv --without-lz4 --without-zstd --without-lzma \
    --without-lzo2 --without-cng --without-openssl --without-xml2 --without-expat
@@ -734,7 +734,7 @@
  printf "{\n\
    \"aom\": \"${VERSION_AOM}\",\n\
    \"archive\": \"${VERSION_ARCHIVE}\",\n\
-@@ -551,17 +703,24 @@ printf "{\n\
+@@ -551,17 +703,25 @@ printf "{\n\
  printf "\"${PLATFORM}\"" >platform.json
  
  # Add third-party notices
@@ -756,6 +756,7 @@
 +tar chzf "${PACKAGE}/libvips-${VERSION_VIPS}-${PLATFORM}.tar.gz" \
    include \
    lib \
++  bin \
    *.json \
    THIRD-PARTY-NOTICES.md
 +mv ${LIBDIR} ${LIBDIR}-original
