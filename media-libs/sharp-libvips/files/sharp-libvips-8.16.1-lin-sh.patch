@@ -1,5 +1,5 @@
---- a/build/lin.sh.orig	2025-07-08 13:58:42.146019348 -0700
-+++ b/build/lin.sh	2025-07-08 14:15:42.207997108 -0700
+--- a/build/lin.sh.orig	2025-07-08 17:42:02.539067931 -0700
++++ b/build/lin.sh	2025-07-08 17:44:42.513475641 -0700
 @@ -14,28 +14,46 @@ without_prerelease() {
  case ${PLATFORM} in
    linux*)
@@ -569,8 +569,7 @@
 -PKG_CONFIG=${PKG_CONFIG/ --static/} meson setup _build --default-library=static --buildtype=release --strip --prefix=${TARGET} ${MESON} \
 +PKG_CONFIG=${PKG_CONFIG/ --static/} meson setup _build --default-library=static --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
    -Dintrospection=disabled -Dpixbuf{,-loader}=disabled -Ddocs=disabled -Dvala=disabled -Dtests=false \
--  ${RUST_TARGET:+-Dtriplet=$RUST_TARGET}
-+  ${RUST_TARGET:+-Dtriplet=$RUST_TARGET}
+   ${RUST_TARGET:+-Dtriplet=$RUST_TARGET}
  meson install -C _build --tag devel
  
 -mkdir ${DEPS}/cgif
@@ -623,7 +622,7 @@
    -Dopenjpeg=disabled -Dopenslide=disabled -Dpdfium=disabled -Dpoppler=disabled -Dquantizr=disabled \
    -Dppm=false -Danalyze=false -Dradiance=false \
 -  ${LINUX:+-Dcpp_link_args="$LDFLAGS -Wl,-Bsymbolic-functions -Wl,--version-script=$DEPS/vips/vips.map $EXCLUDE_LIBS"}
-+  ${LINUX:+-Dcpp_link_args="$LDFLAGS -Wl,-Bsymbolic-functions -Wl,--version-script='$DEPS/vips/vips.map' $EXCLUDE_LIBS"}
++  ${LINUX:+-Dcpp_link_args="$LDFLAGS -Wl,-Bsymbolic-functions -Wl,--version-script='${WORKDIR}/vips-${VERSION_VIPS}/vips.map' $EXCLUDE_LIBS"}
  meson install -C _build --tag runtime,devel
  
  # Cleanup

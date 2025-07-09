@@ -9,6 +9,7 @@ EAPI=8
 # Why this ebuild exists:
 # 1.  The prebuilt sharp-libvips is non-portable for older processors.
 # 2.  Sharp's format() is broken for globally installed vips.  The static build and pinned versions may resolve it.
+#     While is it is unnecessary to use format(), some downstream projects may require it.
 
 RUSTFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
 CFLAGS_HARDENED_USE_CASES="sensitive-data untrusted-data"
@@ -853,5 +854,11 @@ src_compile() {
 }
 
 src_install() {
-	meson install -C "${WORKDIR}/vips-${LIBVIPS_PV}/build" || die "Meson install failed"
+#	meson install -C "${WORKDIR}/vips-${LIBVIPS_PV}/build" || die "Meson install failed"
+	insinto "/usr/$(get_libdir)/sharp-vips"
+	doins -r "${WORKDIR}/build/deps/lib/"*
+	doins -r "${WORKDIR}/build/deps/lib64/"*
+	insinto "/usr/$(get_libdir)/pkgconfig"
+	doins "${WORKDIR}/build/deps/lib64/pkgconfig/"*".pc"
+	sed -i "s|${WORKDIR}/build/deps|/usr/$(get_libdir)/sharp-vips|" "${D}/usr/$(get_libdir)/pkgconfig/"*".pc" || die
 }
