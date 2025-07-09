@@ -23,7 +23,6 @@ EAPI=8
 # extractcode_7z
 # extractcode-libarchive
 # gemfileparser2
-# javaproperties
 # parameter-expansion-patched
 # pip-requirements-parser
 # plugincode
