@@ -942,8 +942,12 @@ src_install() {
 	insinto "/usr/$(get_libdir)/sharp-vips"
 	# Install shared and static libraries
 	if [[ -d "${WORKDIR}/build/deps/lib" ]] ; then
-		doins -r "${WORKDIR}/build/deps/lib/"*".so"
-		doins -r "${WORKDIR}/build/deps/lib/"*".a"
+		if ls "${WORKDIR}/build/deps/lib/"*".so"* 2>&1 >/dev/null ; then
+			doins -r "${WORKDIR}/build/deps/lib/"*".so"*
+		fi
+		if ls "${WORKDIR}/build/deps/lib/"*".a" 2>&1 >/dev/null ; then
+			doins -r "${WORKDIR}/build/deps/lib/"*".a"
+		fi
 	fi
 	insinto "/usr/$(get_libdir)/pkgconfig"
 	# Install .pc files
