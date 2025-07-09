@@ -606,7 +606,7 @@ BDEPEND="
 	)
 "
 PATCHES=(
-	"${FILESDIR}/sharp-libvips-8.16.1-lin-sh.patch"
+	"A${FILESDIR}/sharp-libvips-8.16.1-lin-sh.patch"
 )
 
 pkg_setup() {
@@ -796,6 +796,7 @@ have_unix98_printf = true
 
 [built-in options]
 libdir = 'lib'
+prefix = '${WORKDIR}/build/deps'
 datadir = '${WORKDIR}/trash/usr/share'
 localedir = '${WORKDIR}/trash/usr/share/locale'
 sysconfdir = '${WORKDIR}/trash/etc'
@@ -932,21 +933,29 @@ ewarn "Detected compiler switch.  Disabling LTO."
 }
 
 src_compile() {
+	mkdir -p "${WORKDIR}/packaging" || die
 	bash "${S}/build/lin.sh" || die
 }
 
 src_install() {
-#	meson install -C "${WORKDIR}/vips-${LIBVIPS_PV}/build" || die "Meson install failed"
 	insinto "/usr/$(get_libdir)/sharp-vips"
-	if [[ -e "${WORKDIR}/build/deps/lib" ]] ; then
-einfo "Copying ${WORKDIR}/build/deps/lib/* to /usr/$(get_libdir)/sharp-vips"
-		doins -r "${WORKDIR}/build/deps/lib/"*
-	fi
-	if [[ -e "${WORKDIR}/build/deps/$(get_libdir)" ]] ; then
-einfo "Copying ${WORKDIR}/build/deps/$(get_libdir)/* to /usr/$(get_libdir)/sharp-vips"
-		doins -r "${WORKDIR}/build/deps/$(get_libdir)/"*
+	# Install shared and static libraries
+	if [[ -d "${WORKDIR}/build/deps/lib" ]] ; then
+		doins -r "${WORKDIR}/build/deps/lib/"*".so"
+		doins -r "${WORKDIR}/build/deps/lib/"*".a"
 	fi
 	insinto "/usr/$(get_libdir)/pkgconfig"
-	doins "${WORKDIR}/build/deps/lib64/pkgconfig/"*".pc"
-	sed -i "s|${WORKDIR}/build/deps|/usr/$(get_libdir)/sharp-vips|" "${D}/usr/$(get_libdir)/pkgconfig/"*".pc" || die
+	# Install .pc files
+	if [[ -d "${WORKDIR}/build/deps/lib/pkgconfig" ]] ; then
+		doins "${WORKDIR}/build/deps/lib/pkgconfig/"*".pc"
+	fi
+	if [[ -d "${WORKDIR}/vips-${VERSION_VIPS}/_build/meson-private" ]] ; then
+		doins "${WORKDIR}/vips-${VERSION_VIPS}/_build/meson-private/"*".pc"
+	fi
+	if [[ -d "${D}/usr/$(get_libdir)/pkgconfig" ]] ; then
+		sed -i "s|${WORKDIR}/build/deps|/usr/$(get_libdir)/sharp-vips|" "${D}/usr/$(get_libdir)/pkgconfig/"*".pc" || die
+	fi
+	# Install tarball for debugging
+	insinto "/usr/$(get_libdir)/sharp-vips"
+	doins "${WORKDIR}/packaging/libvips-${VERSION_VIPS}-${PLATFORM}.tar.gz"
 }

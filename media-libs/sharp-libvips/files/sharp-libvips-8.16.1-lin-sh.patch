@@ -1,5 +1,5 @@
---- a/build/lin.sh.orig	2025-07-08 18:57:03.130140861 -0700
-+++ b/build/lin.sh	2025-07-08 19:04:35.777558849 -0700
+--- a/build/lin.sh.orig	2025-07-08 23:34:00.939575659 -0700
++++ b/build/lin.sh	2025-07-08 23:36:05.926688959 -0700
 @@ -14,28 +14,46 @@ without_prerelease() {
  case ${PLATFORM} in
    linux*)
@@ -9,7 +9,7 @@
 -    PACKAGE=/packaging
 -    ROOT=/root
 +    DEPS="${WORKDIR}/deps"
-+    TARGET="${WORKDIR}/target"
++    TARGET="${WORKDIR}/build/deps"
 +    PACKAGE="${WORKDIR}/packaging"
 +    ROOT="${HOME}"
      VIPS_CPP_DEP=libvips-cpp.so.$(without_prerelease $VERSION_VIPS)
@@ -21,7 +21,7 @@
 -    PACKAGE=$PWD
 -    ROOT=$PWD/platforms/$PLATFORM
 +    DEPS="$PWD/deps"
-+    TARGET="$PWD/target"
++    TARGET="$PWD/build/deps"
 +    PACKAGE="$PWD"
 +    ROOT="$PWD/platforms/$PLATFORM"
      VIPS_CPP_DEP=libvips-cpp.$(without_prerelease $VERSION_VIPS).dylib
@@ -118,9 +118,14 @@
    export PATH="${CARGO_HOME}/bin:${PATH}"
    if [ "$PLATFORM" == "darwin-arm64v8" ]; then
      export DARWIN_ARM=true
-@@ -98,7 +133,8 @@ export RUSTFLAGS+=" --remap-path-prefix=
+@@ -97,8 +132,13 @@ export RUSTFLAGS+=" --remap-path-prefix=
+ # We don't want to use any native libraries, so unset PKG_CONFIG_PATH
  unset PKG_CONFIG_PATH
  
++# Prevent libheif from referencing system-libs
++export PKG_CONFIG_PATH="${TARGET}/lib/pkgconfig"
++export LD_LIBRARY_PATH="${TARGET}/lib"
++
  # Common options for curl
 -CURL="curl --silent --location --retry 3 --retry-max-time 30"
 +#CURL="curl --silent --location --retry 3 --retry-max-time 30"
@@ -128,7 +133,7 @@
  
  # Dependency version numbers
  VERSION_ZLIB_NG=2.2.4
-@@ -129,10 +165,39 @@ VERSION_AOM=3.12.0
+@@ -129,10 +169,39 @@ VERSION_AOM=3.12.0
  VERSION_HEIF=1.19.7
  VERSION_CGIF=0.5.0
  
@@ -168,7 +173,7 @@
    if [ "$VERSION_LATEST_REQUIRED" == "false" ]; then
      echo "Skipping latest version check for $1"
      return
-@@ -190,182 +255,220 @@ if [ "$DARWIN" = true ]; then
+@@ -190,182 +259,226 @@ if [ "$DARWIN" = true ]; then
    CFLAGS= cargo install cargo-c --locked
  fi
  
@@ -307,19 +312,13 @@
 -mkdir ${DEPS}/heif
 -$CURL https://github.com/strukturag/libheif/releases/download/v${VERSION_HEIF}/libheif-${VERSION_HEIF}.tar.gz | tar xzC ${DEPS}/heif --strip-components=1
 -cd ${DEPS}/heif
-+echo "DEBUG:  Building libheif ${VERSION_HEIF}"
-+#mkdir ${DEPS}/heif
-+#$CURL https://github.com/strukturag/libheif/releases/download/v${VERSION_HEIF}/libheif-${VERSION_HEIF}.tar.gz | tar xzC ${DEPS}/heif --strip-components=1
-+cd "${WORKDIR}/libheif-${VERSION_HEIF}"
- # Downgrade minimum required CMake version to 3.12 - https://github.com/strukturag/libheif/issues/975
- sed -i'.bak' "/^cmake_minimum_required/s/3.16.3/3.12/" CMakeLists.txt
+-# Downgrade minimum required CMake version to 3.12 - https://github.com/strukturag/libheif/issues/975
+-sed -i'.bak' "/^cmake_minimum_required/s/3.16.3/3.12/" CMakeLists.txt
 -CFLAGS="${CFLAGS} -O3" CXXFLAGS="${CXXFLAGS} -O3" cmake -G"Unix Makefiles" \
 -  -DCMAKE_TOOLCHAIN_FILE=${ROOT}/Toolchain.cmake -DCMAKE_INSTALL_PREFIX=${TARGET} -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release \
-+CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED}" CXXFLAGS="${CXXFLAGS} ${FLAGS_OPTIMIZED}" cmake -G"Unix Makefiles" \
-+  -DCMAKE_TOOLCHAIN_FILE="${ROOT}/Toolchain.cmake" -DCMAKE_INSTALL_PREFIX="${TARGET}" -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release \
-   -DBUILD_SHARED_LIBS=FALSE -DBUILD_TESTING=0 -DENABLE_PLUGIN_LOADING=0 -DWITH_EXAMPLES=0 -DWITH_LIBDE265=0 -DWITH_X265=0
- make install/strip
- 
+-  -DBUILD_SHARED_LIBS=FALSE -DBUILD_TESTING=0 -DENABLE_PLUGIN_LOADING=0 -DWITH_EXAMPLES=0 -DWITH_LIBDE265=0 -DWITH_X265=0
+-make install/strip
+-
 -mkdir ${DEPS}/jpeg
 -$CURL https://github.com/mozilla/mozjpeg/archive/v${VERSION_MOZJPEG}.tar.gz | tar xzC ${DEPS}/jpeg --strip-components=1
 -cd ${DEPS}/jpeg
@@ -393,6 +392,23 @@
    --disable-tools --disable-tests --disable-contrib --disable-docs --disable-mdi --disable-pixarlog --disable-old-jpeg --disable-cxx --disable-lzma --disable-zstd --disable-libdeflate
  make install-strip noinst_PROGRAMS= dist_doc_DATA=
  
++# oteodoro:  Changed build order to prevent referencing system-libs (libjpeg, libpng, libtiff, zlib).
++echo "DEBUG:  Building libheif ${VERSION_HEIF}"
++#mkdir ${DEPS}/heif
++#$CURL https://github.com/strukturag/libheif/releases/download/v${VERSION_HEIF}/libheif-${VERSION_HEIF}.tar.gz | tar xzC ${DEPS}/heif --strip-components=1
++cd "${WORKDIR}/libheif-${VERSION_HEIF}"
++# Downgrade minimum required CMake version to 3.12 - https://github.com/strukturag/libheif/issues/975
++sed -i'.bak' "/^cmake_minimum_required/s/3.16.3/3.12/" CMakeLists.txt
++# oteodoro:  Add -DZLIB_ROOT, -DTIFF_ROOT, -DJPEG_ROOT, -DPNG_ROOT to prevent referencing system copy.
++CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED}" CXXFLAGS="${CXXFLAGS} ${FLAGS_OPTIMIZED}" cmake -G"Unix Makefiles" \
++  -DCMAKE_TOOLCHAIN_FILE="${ROOT}/Toolchain.cmake" -DCMAKE_INSTALL_PREFIX="${TARGET}" -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=Release \
++  -DBUILD_SHARED_LIBS=FALSE -DBUILD_TESTING=0 -DENABLE_PLUGIN_LOADING=0 -DWITH_EXAMPLES=0 -DWITH_LIBDE265=0 -DWITH_X265=0 \
++  -DPNG_ROOT="${TARGET}" \
++  -DJPEG_ROOT="${TARGET}" \
++  -DTIFF_ROOT="${TARGET}" \
++  -DZLIB_ROOT="${TARGET}"
++make install/strip
++
  if [ -z "$WITHOUT_HIGHWAY" ]; then
 -  mkdir ${DEPS}/hwy
 -  $CURL https://github.com/google/highway/archive/${VERSION_HWY}.tar.gz | tar xzC ${DEPS}/hwy --strip-components=1
@@ -479,7 +495,7 @@
    -Dgobject=disabled -Dicu=disabled -Dtests=disabled -Dintrospection=disabled -Ddocs=disabled -Dbenchmark=disabled ${DARWIN:+-Dcoretext=enabled}
  meson install -C _build --tag devel
  
-@@ -373,46 +476,51 @@ meson install -C _build --tag devel
+@@ -373,46 +486,51 @@ meson install -C _build --tag devel
  # https://bugs.freedesktop.org/show_bug.cgi?id=7331
  # https://gitlab.freedesktop.org/pkg-config/pkg-config/-/commit/6d6dd43e75e2bc82cfe6544f8631b1bef6e1cf45
  # TODO(kleisauke): Remove when Amazon Linux 2 reaches EOL.
@@ -552,7 +568,7 @@
  # Disallow GIF and WebP embedded in SVG images
  sed -i'.bak' "/image = /s/, \"gif\", \"webp\"//" rsvg/Cargo.toml
  # We build Cairo with `-Dzlib=disabled`, which implicitly disables the PDF/PostScript surface backends
-@@ -422,28 +530,32 @@ sed -i'.bak' "/subdir('rsvg_convert')/d"
+@@ -422,28 +540,32 @@ sed -i'.bak' "/subdir('rsvg_convert')/d"
  # https://gitlab.gnome.org/GNOME/librsvg/-/merge_requests/1066#note_2356762
  sed -i'.bak' "/^if host_system in \['windows'/s/, 'linux'//" meson.build
  # Regenerate the lockfile after making the above changes
@@ -596,7 +612,7 @@
  # Link libvips.so statically into libvips-cpp.so
  sed -i'.bak' "s/library('vips'/static_&/" libvips/meson.build
  sed -i'.bak' "/version: library_version/{N;d;}" libvips/meson.build
-@@ -451,7 +563,7 @@ if [ "$LINUX" = true ]; then
+@@ -451,7 +573,7 @@ if [ "$LINUX" = true ]; then
    # Ensure libvips-cpp.so is linked with -z nodelete
    sed -i'.bak' "/gnu_symbol_visibility: 'hidden',/a link_args: nodelete_link_args," cplusplus/meson.build
    # Ensure symbols from external libs (except for libglib-2.0.a and libgobject-2.0.a) are not exposed
@@ -605,11 +621,12 @@
    EXCLUDE_LIBS=${EXCLUDE_LIBS%?}
    # Localize the g_param_spec_types symbol to avoid collisions with shared libraries
    # See: https://github.com/lovell/sharp/issues/2535#issuecomment-766400693
-@@ -459,64 +571,66 @@ if [ "$LINUX" = true ]; then
+@@ -459,64 +581,72 @@ if [ "$LINUX" = true ]; then
  fi
  # Disable building man pages, gettext po files, tools, and (fuzz-)tests
  sed -i'.bak' "/subdir('man')/{N;N;N;N;d;}" meson.build
 -CFLAGS="${CFLAGS} -O3" CXXFLAGS="${CXXFLAGS} -O3" meson setup _build --default-library=shared --buildtype=release --strip --prefix=${TARGET} ${MESON} \
++export PKG_CONFIG_PATH="${PKG_CONFIG_PATH}"
 +CFLAGS="${CFLAGS} ${FLAGS_OPTIMIZED}" CXXFLAGS="${CXXFLAGS} ${FLAGS_OPTIMIZED}" meson setup _build --default-library=shared --buildtype=release --strip --prefix="${TARGET}" ${MESON} \
    -Ddeprecated=false -Dexamples=false -Dintrospection=disabled -Dmodules=disabled -Dcfitsio=disabled -Dfftw=disabled -Djpeg-xl=disabled \
    ${WITHOUT_HIGHWAY:+-Dhighway=disabled} -Dorc=disabled -Dmagick=disabled -Dmatio=disabled -Dnifti=disabled -Dopenexr=disabled \
@@ -619,10 +636,15 @@
 +  ${LINUX:+-Dcpp_link_args="$LDFLAGS -Wl,-Bsymbolic-functions -Wl,--version-script='${WORKDIR}/vips-${VERSION_VIPS}/vips.map' $EXCLUDE_LIBS"}
  meson install -C _build --tag runtime,devel
  
++# Move .pc files to expected location
++mkdir -p "${TARGET}/lib/pkgconfig"
++cp -f "${WORKDIR}/vips-${VERSION_VIPS}/_build/meson-private/"*".pc" "${TARGET}/lib/pkgconfig/"
++
++
  # Cleanup
 -rm -rf ${TARGET}/lib/{pkgconfig,.libs,*.la,cmake}
-+echo "DEBUG:  Performing clean-up"
-+rm -rf "${TARGET}/lib"*"/"{"pkgconfig",".libs",*".la","cmake"}
++#echo "DEBUG:  Performing clean-up"
++#rm -rf "${TARGET}/lib"*"/"{"pkgconfig",".libs",*".la","cmake"}
  
 -mkdir ${TARGET}/lib-filtered
 -mv ${TARGET}/lib/glib-2.0 ${TARGET}/lib-filtered
@@ -690,7 +712,7 @@
  printf "{\n\
    \"aom\": \"${VERSION_AOM}\",\n\
    \"archive\": \"${VERSION_ARCHIVE}\",\n\
-@@ -551,17 +665,21 @@ printf "{\n\
+@@ -551,17 +681,21 @@ printf "{\n\
  printf "\"${PLATFORM}\"" >platform.json
  
  # Add third-party notices
