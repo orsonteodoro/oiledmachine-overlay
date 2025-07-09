@@ -29,7 +29,6 @@ EAPI=8
 # parameter-expansion-patched
 # pip-requirements-parser
 # plugincode
-# pyahocorasick
 # pygmars
 # pymaven-patch
 # saneyaml
@@ -43,10 +42,6 @@ EAPI=8
 # rpm-inspector-rpm
 # go-inspector
 # rust-inspector
-
-# TODO package (rdepend, USE=native)
-# intbitset
-# pyahocorasick
 
 # TODO package (dev)
 # aboutcode-toolkit
