@@ -1,5 +1,5 @@
---- a/build/lin.sh.orig	2025-07-09 01:17:11.390994866 -0700
-+++ b/build/lin.sh	2025-07-09 01:19:32.138832137 -0700
+--- a/build/lin.sh.orig	2025-07-09 02:03:53.095587597 -0700
++++ b/build/lin.sh	2025-07-09 02:04:23.444137621 -0700
 @@ -14,28 +14,46 @@ without_prerelease() {
  case ${PLATFORM} in
    linux*)
@@ -621,7 +621,7 @@
    EXCLUDE_LIBS=${EXCLUDE_LIBS%?}
    # Localize the g_param_spec_types symbol to avoid collisions with shared libraries
    # See: https://github.com/lovell/sharp/issues/2535#issuecomment-766400693
-@@ -459,64 +581,94 @@ if [ "$LINUX" = true ]; then
+@@ -459,64 +581,91 @@ if [ "$LINUX" = true ]; then
  fi
  # Disable building man pages, gettext po files, tools, and (fuzz-)tests
  sed -i'.bak' "/subdir('man')/{N;N;N;N;d;}" meson.build
@@ -658,10 +658,6 @@
 +# Preserve original lib64 directory for ebuild
 +mkdir -p "${TARGET}/${LIBDIR}-original"
 +cp -r "${TARGET}/${LIBDIR}/"* "${TARGET}/${LIBDIR}-original/"
-+
-+mkdir -p "${TARGET}/${LIBDIR}-filtered"
-+copydeps ${VIPS_CPP_DEP} "${TARGET}/${LIBDIR}-filtered"
-+
 +
  # Cleanup
 -rm -rf ${TARGET}/lib/{pkgconfig,.libs,*.la,cmake}
@@ -726,6 +722,7 @@
    readelf -Wd ${VIPS_CPP_DEP} | grep -qF NODELETE || (echo "$VIPS_CPP_DEP was not linked with -z nodelete" && exit 1)
  fi
 -copydeps ${VIPS_CPP_DEP} ${TARGET}/lib-filtered
++mkdir -p "${TARGET}/${LIBDIR}-filtered"
 +copydeps ${VIPS_CPP_DEP} "${TARGET}/${LIBDIR}-filtered"
  
  # Create JSON file of version numbers
@@ -734,7 +731,7 @@
  printf "{\n\
    \"aom\": \"${VERSION_AOM}\",\n\
    \"archive\": \"${VERSION_ARCHIVE}\",\n\
-@@ -551,17 +703,25 @@ printf "{\n\
+@@ -551,17 +700,25 @@ printf "{\n\
  printf "\"${PLATFORM}\"" >platform.json
  
  # Add third-party notices
@@ -755,7 +752,8 @@
 +mv ${LIBDIR}-original ${LIBDIR}
 +tar chzf "${PACKAGE}/libvips-${VERSION_VIPS}-${PLATFORM}.tar.gz" \
    include \
-   lib \
+-  lib \
++  ${LIBDIR} \
 +  bin \
    *.json \
    THIRD-PARTY-NOTICES.md
