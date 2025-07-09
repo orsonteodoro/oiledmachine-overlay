@@ -61,7 +61,7 @@ ${PATENT_STATUS_IUSE[@]}
 +jpeg2k +jpegxl +lcms +matio -nifti +openexr +openslide +orc
 +pango +png +poppler +python +ppm -spng +svg test +tiff
 +vala +webp +zlib
-ebuild_revision_38
+ebuild_revision_39
 "
 PATENT_STATUS_REQUIRED_USE="
 	!patent_status_nonfree? (
@@ -295,7 +295,6 @@ PATCHES=(
 	"${FILESDIR}/${PN}-8.16.0-simd-options.patch"
 	"${FILESDIR}/${PN}-8.16.0-remove-release-changes.patch"
 	"${FILESDIR}/${PN}-8.16.1-magick-suffixes.patch"
-	"${FILESDIR}/${PN}-8.16.1-vips-cpp-soversion.patch"
 )
 
 get_configurations() {
