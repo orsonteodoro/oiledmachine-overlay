@@ -933,6 +933,7 @@ ewarn "Detected compiler switch.  Disabling LTO."
 }
 
 src_compile() {
+	mkdir -p "${WORKDIR}/build" || die
 	mkdir -p "${WORKDIR}/packaging" || die
 	bash "${S}/build/lin.sh" || die
 }
